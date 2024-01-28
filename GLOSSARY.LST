@@ -1,5 +1,5 @@
-GLOSSARY
-Last Change 8/13/95.
+GLOSSARY			Release 48		Last Change 10/29/95
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
 
 A20
 	(Address line 20) The 80286 and higher CPUs allow addresses in
@@ -91,7 +91,7 @@ expression "to lift oneself by one's boot straps."  The ROM BIOS on IBM
 PCs and compatibles reads in the first sector of the disk, which
 contains a short (less than 500 bytes) program that reads in a portion
 of the operating system, which in turn reads in the remainder of the
-operating system.
+operating system.  See also IPL.
 
 Boot Drive
 	The disk drive from which the operating system was booted.  See
@@ -471,9 +471,12 @@ IPC
 	(Inter-Process Communication) Any one of numerous methods for
 allowing two or more separate processes to exchange data.
 
+IPL
+	(Initial Program Load) See Boot.
+
 IPX
 	(Internetwork Packet Exchange) A low-level layer of Novell's
-	NetWare networking software.
+NetWare networking software.
 
 IRQ
 	(Interrupt ReQuest) A hardware line connected to the interrupt
@@ -541,6 +544,14 @@ for controlling musical instruments with a computer.
 
 Modem
 	(contraction of MOdulator/DEModulator)
+
+MSR
+	(Model-Specific Register) Additional, indirectly-accessible,
+registers containing control or status information about various
+aspects of the processor such as caches, performance counters, and the
+like.   These registers, accessible via the RDMSR and WRMSR
+instructions, were added with the Pentium and later-model 486
+processors.
 
 Multitasking
 	Any of a number of methods by which multiple programs may
@@ -630,14 +641,14 @@ to make room.  See also INT 0E.
 
 Page Register
 	A peripheral register or I/O port used to extend the addressing
-	range of some other register or I/O port.  The prime example are
-	the DMA page registers, which allow the DMA controller to address
-	more than 64K (since the DMA controller only contains 16 address
-	lines; this is the cause of the 64K DMA boundaries).
+range of some other register or I/O port.  The prime example are
+the DMA page registers, which allow the DMA controller to address
+more than 64K (since the DMA controller only contains 16 address
+lines; this is the cause of the 64K DMA boundaries).
 
 Palette Register
 	A memory location on the video controller which specifies the actual
-	color displayed for a particular color number.
+color displayed for a particular color number.
 
 Park
 	To move a hard disk's read/write heads to a position in which
@@ -774,6 +785,13 @@ this is normally 512 bytes.  See also Track.
 
 SFT
 	see System File Table
+
+SMM
+	(System Management Mode) A special CPU mode typically invoked
+on changes in power-supply status.  In this mode, additional hidden
+memory becomes available for storing the CPU's state and a control
+program to deal with the needs of power management or other critical
+events.
 
 SPOOL
 	(Simultaneous Peripheral Operation OnLine)  The process of
@@ -958,3 +976,5 @@ television signals.  Y represents luminance (overall brightness, the
 only part of the signal used by black-and-white televisions), while U
 and V are chrominance (color) information.  Also called YIQ.  See also
 RGB.
+
+			      --- end of file ---

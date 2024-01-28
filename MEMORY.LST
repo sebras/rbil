@@ -1,4 +1,4 @@
-MEMORY MAP			Release 47		Last Change 8/13/95
+MEMORY MAP			Release 48		Last Change 10/29/95
 This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
 
 --------H-M00000000--------------------------
@@ -524,7 +524,7 @@ SeeAlso: MEM 0040h:0069h"CASSETTE"
 ----------M0040006B--------------------------
 MEM 0040h:006Bh - POST LAST UNEXPECTED INTERRUPT (XT and later)
 Size:	BYTE
-Desc:   this is a bitmask of IRQs which have occurred while the corresponding
+Desc:	this is a bitmask of IRQs which have occurred while the corresponding
 	  interrupt vector points at the default system BIOS handler
 	  (bit 0 = IRQ0 to bit 7 = IRQ7)
 ----------M0040006C--------------------------
@@ -748,7 +748,7 @@ Bit(s)	Description	(Table M025)
 		  purposes. Bit 7 is reset to zero after the mode set.
  6	display switching enabled
  5	reserved
- 4	if set:   use 400-line mode at next mode set
+ 4	if set:	  use 400-line mode at next mode set
 	if clear: [VGA] emulate EGA at next mode set
 		[MCGA] emulate CGA, digital monitor, 200 lines, 8x8 text
 	Note: this bit is set by the video mode set on VGA, unchanged on MCGA
@@ -1311,6 +1311,10 @@ Size:	16 BYTEs
 ----------M00500000--------------------------
 MEM 0050h:0000h - PRINT-SCREEN STATUS
 Size:	BYTE
+--------J-M00500001--------------------------
+MEM 0050h:0001h - NEC PC-9800 series - SCREEN MODE
+Size:	BYTE
+Note:	if bit 3 set, the screen is in high-resolution mode
 ----------M00500004--------------------------
 MEM 0050h:0004h - MS-DOS - LOGICAL DRIVE FOR SINGLE-FLOPPY SYSTEM (A: / B:)
 Size:	BYTE
@@ -1339,6 +1343,36 @@ Size:	256 BYTEs
 Note:	used during DOS 2+ boot process
 ----------M00700000--------------------------
 MEM 0070h:0000h - DOS 2+ IO.SYS LOAD ADDRESS
+----------m80C00000--------------------------
+MEM 80C00000h - Compaq Deskpro 386 system memory board register
+Size:	BYTE
+
+80C00000  R   Diagnostics register (see #M051)
+80C00000   W  RAM relocation register (see #M052)
+
+Bitfields for Compaq Deskpro 386 diagnostics register:
+Bit(s)	Description	(Table M051)
+ 7	=0 memory expansion board is installed
+ 6	=0 second 1 MB of system memory board is installed
+ 5-4	base memory
+	00 set to 640 KB
+	01 invalid
+	10 set to 512 KB
+	11 set to 256 KB
+ 3	parity correct in byte 3
+ 2	parity correct in byte 2
+ 1	parity correct in byte 1
+ 0	parity correct in byte 0 (in 32-bit double word)
+SeeAlso: #M052
+
+Bitfields for Compaq Deskpro 386 RAM relocation register:
+Bit(s)	Description	(Table M052)
+ 7-2	reserved, always write 1's.
+ 1	=0  Write-protect 128-Kbyte RAM at FE0000.
+	=1  Do not write-protect RAM at FE0000.
+ 0	=0  Relocate 128-Kbyte block at FE0000 to address 0E0000
+	=1  128-Kbyte RAM is addressed only at FE0000.
+SeeAlso: #M051
 ----------MA0000000--------------------------
 MEM A000h:0000h - EGA+ GRAPHICS BUFFER
 Size:	65536 BYTEs
@@ -1377,15 +1411,15 @@ MEM BFF0h:0000h - ET4000/W32 ACL accelerator
 Size:	169 BYTES
 
 Format of ET4000/W32 memory-mapped registers:
-Offset	Size	Description	(Table M051)
- 00h	DWORD	MMU Registers: memory base pointer register 0 (see #M052)
- 04h	DWORD	MMU Registers: memory base pointer register 1 (see #M052)
- 08h	DWORD	MMU Registers: memory base pointer register 2 (see #M052)
+Offset	Size	Description	(Table M053)
+ 00h	DWORD	MMU Registers: memory base pointer register 0 (see #M054)
+ 04h	DWORD	MMU Registers: memory base pointer register 1 (see #M054)
+ 08h	DWORD	MMU Registers: memory base pointer register 2 (see #M054)
  0Ch  7 BYTEs	???
- 13h	BYTE	MMU Registers: MMU control register
+ 13h	BYTE	MMU Registers: MMU control register (see #M055)
  14h 28 BYTEs	???
  30h	BYTE	Non-Queued Registers: suspend/terminate
- 31h	BYTE	Non-Queued Registers: operation state (see #M054) (write-only)
+ 31h	BYTE	Non-Queued Registers: operation state (see #M056) (write-only)
  32h	BYTE	Non-Queued Registers: sync enable
  33h	BYTE	???
  34h	BYTE	Non-Queued Registers: interrupt mask
@@ -1394,37 +1428,37 @@ Offset	Size	Description	(Table M051)
 		bit 1: read status (RDST) 1=ACL active, queue not empty
 		bit 0: write status (WRST) 1=queue full
  37h 73 BYTEs	???
- 80h	DWORD	Queued Registers: pattern address (see #M055)
- 84h	DWORD	Queued Registers: source address (see #M055)
- 88h	WORD	Queued Registers: pattern Y offset (see #M056)
- 8Ah	WORD	Queued Registers: source Y offset (see #M056)
- 8Ch	WORD	Queued Registers: destination y offset (see #M056)
+ 80h	DWORD	Queued Registers: pattern address (see #M057)
+ 84h	DWORD	Queued Registers: source address (see #M057)
+ 88h	WORD	Queued Registers: pattern Y offset (see #M058)
+ 8Ah	WORD	Queued Registers: source Y offset (see #M058)
+ 8Ch	WORD	Queued Registers: destination y offset (see #M058)
  8Eh	BYTE	Queued Registers: virtual bus size
- 8Fh	BYTE	Queued Registers: X/Y direction (see #M057)
- 90h	BYTE	Queued Registers: pattern wrap (see #M058)
+ 8Fh	BYTE	Queued Registers: X/Y direction (see #M059)
+ 90h	BYTE	Queued Registers: pattern wrap (see #M060)
  91h	BYTE	???
- 92h	BYTE	Queued Registers: source wrap (see #M058)
+ 92h	BYTE	Queued Registers: source wrap (see #M060)
  93h	BYTE	???
  94h	WORD	Queued Registers: X position
  96h	WORD	Queued Registers: Y position
- 98h	WORD	Queued Registers: X count (see #M059)
- 9Ah	WORD	Queued Registers: Y count (see #M059)
- 9Ch	BYTE	Queued Registers: routine control (see #M060)
+ 98h	WORD	Queued Registers: X count (see #M061)
+ 9Ah	WORD	Queued Registers: Y count (see #M061)
+ 9Ch	BYTE	Queued Registers: routine control (see #M062)
  9Dh	BYTE	Queued Registers: reload control
  9Eh	BYTE	Queued Registers: background ROP for mixing
  9Fh	BYTE	Queued Registers: foreground ROP for mixing
- A0h	DWORD	Queued Registers: destination address (see #M055)
+ A0h	DWORD	Queued Registers: destination address
  A4h	DWORD	Queued Registers: internal pattern address
  A8h	DWORD	Queued Registers: internal source address
 
 Bitfields for ET4000/W32 memory base pointer register:
-Bit(s)	Description	(Table M052)
+Bit(s)	Description	(Table M054)
  31-22	reserved
  21-0	memory base pointer
-SeeAlso: #M051
+SeeAlso: #M053
 
 Bitfields for ET4000/W32 MMU control register:
-Bit(s)	Description	(Table M053)
+Bit(s)	Description	(Table M055)
  7	reserved
  6-4	linear address control (LAC)
 	  bit 6: MMU aperture 2
@@ -1435,37 +1469,37 @@ Bit(s)	Description	(Table M053)
 	  bit 2: MMU aperture 2
 	  bit 1: MMU aperture 1
 	  bit 0: MMU aperture 0
-SeeAlso: #M051 
+SeeAlso: #M053 
 
 Bitfields for ET4000/W32 operation state register:
-Bit(s)	Description	(Table M054)
+Bit(s)	Description	(Table M056)
  7-4	reserved
  3	restart operation after ACL-interruption
  2-1	reserved
  0	restore status before ACL-interruption
-SeeAlso: #M051
+SeeAlso: #M053
 
 Bitfields for ET4000/W32 memory address register:
-Bit(s)	Description	(Table M055)
+Bit(s)	Description	(Table M057)
  31-22	reserved
  21-0	memory base pointer
-SeeAlso: #M051
+SeeAlso: #M053
 
 Bitfields for ET4000/W32 offset register:
-Bit(s)	Description	(Table M056)
+Bit(s)	Description	(Table M058)
  15-12	reserved
  11-0	Y offset
-SeeAlso: #M051
+SeeAlso: #M053
 
 Bitfields for ET4000/W32 X/Y direction register:
-Bit(s)	Description	(Table M057)
+Bit(s)	Description	(Table M059)
  7-2	reserved
  1	X direction
  0	Y direction
-SeeAlso: #M051
+SeeAlso: #M053
 
 Bitfields for ET4000/W32 wrap register:
-Bit(s)	Description	(Table M058)
+Bit(s)	Description	(Table M060)
  7	reserved
  6-4	pattern Y wrap
 	000 = 1 line	
@@ -1486,35 +1520,38 @@ Bit(s)	Description	(Table M058)
 	101 = 32 byte	
 	110 = 64 byte	
 	111 = no wrap	
-SeeAlso: #M051
+SeeAlso: #M053
 
 Bitfields for ET4000/W32 count register:
-Bit(s)	Description	(Table M059)
+Bit(s)	Description	(Table M061)
  15-12	reserved
  11-0	pixel count
-SeeAlso: #M051
+SeeAlso: #M053
 
 Bitfields for ET4000/W32 routine control register:
-Bit(s)	Description	(Table M060)
+Bit(s)	Description	(Table M062)
  7-6	reserved			   
  5-4	routing of CPU address (ADRO)	   
-  	00 don't use CPU address	   
-  	01 CPU address is destination   
-  	10 reserved			   
-  	11 reserved			   
+	00 don't use CPU address	   
+	01 CPU address is destination	
+	10 reserved			   
+	11 reserved			   
  3	reserved			   
  2-0	routing of CPU data (DARQ)	   
-  	000 don't use CPU data	   
-  	001 CPU data is source data	   
-  	010 CPU data is mixed data	   
-  	011 reserved			   
-  	100 CPU data is x-count	   
-  	101 CPU data is y-count	   
-  	10x reserved                    
-SeeAlso: #M051 
+	000 don't use CPU data	   
+	001 CPU data is source data	   
+	010 CPU data is mixed data	   
+	011 reserved			   
+	100 CPU data is x-count	   
+	101 CPU data is y-count	   
+	10x reserved			
+SeeAlso: #M053 
 ----------MC0000000--------------------------
 MEM C000h:0000h - VIDEO BIOS (EGA and newer)
 Size:	varies (usually 16K-24K for EGA, 24K-32K for VGA)
+----------mC0000000--------------------------
+MEM C0000000h -	Weitek "Abacus" math coprocessor
+Size:	4096 BYTEs
 ----------MC8000000--------------------------
 MEM C800h:0000h - HARD DISK BIOS
 Size:	varies (usually 8K or 16K)
@@ -1525,7 +1562,8 @@ Notes:	The XGA memory mapped registers can be assigned to the last 1K block in
 	  in each 8K block in the range of C0000h-DFFFFh; the base offset of
 	  the 128 memory mapped lcoation for a particular XGA instance is
 	  Segment:(1C00h+instance*80h) for each XGA installed in a system
-	  (default instance is 6).
+	  (default instance is 6).  The instance number may be read from the
+	  XGA's Programmable Option Select registers
 	The XGA/A (PS/2 adapter) uses the 7KB area below the memory-mapped
 	  register area for ROM data; the XGA (PS/2 onboard) has included
 	  this area in it's video BIOS ROM.
@@ -1550,6 +1588,395 @@ Size:	BYTE
 MEM F000h:FFFEh - MACHINE TYPE CODE
 Size:	BYTE
 SeeAlso: INT 15/AH=C0h
+----------Mxxxxxxx0--------------------------
+MEM xxxxh:xxx0h - Multiprocessor Specification - FLOATING POINTER STRUCTURE
+Range: any paragraph boundary from E000h:0000h to F000h:FFE0h
+Note:	scan paragraph boundaries for the signature string "_MP_", followed
+	  by a valid floating pointer structure (see #M063)
+SeeAlso: MEM FEE00000h
+
+Format of Multiprocessor Specification Floating Pointer structure:
+Offset	Size	Description	(Table M063)
+ 00h  4 BYTEs	signature "_MP_"
+ 04h	DWORD	physical address of MP configuration table (see #M064)
+		00000000h if no configuration table
+ 08h	BYTE	length of this structure in paragraphs (currently 01h)
+ 09h	BYTE	revision of MP specification supported
+		01h = v1.1
+		04h = v1.4
+ 0Ah	BYTE	checksum (8-bit sum of entire structure, including this
+		  byte, must equal 00h)
+ 0Bh	BYTE	MP feature byte 1: system configuration type
+		00h: MP configuration table present
+		nonzero: default configuration implemented by system
+ 0Ch	BYTE	MP feature byte 2
+		bit 7: IMCR present
+		bits 6-0: reserved (0)
+ 0Dh  3	BYTEs	MP feature bytes 3-5 (reserved, must be 00h)
+
+Format of Multiprocessor Specification configuration table header:
+Offset	Size	Description	(Table M064)
+ 00h  4 BYTEs	signature "PCMP"
+ 04h	WORD	length of base configuration table in bytes, including
+		  this header
+ 06h	BYTE	revision of MP specification supported
+		01h = v1.1
+		04h = v1.4
+ 07h	BYTE	checksum of entire base configuration table
+ 08h  8 BYTEs	OEM identifier
+ 10h 12 BYTEs	product ID
+ 1Ch	DWORD	physical address to OEM-defined configuration table
+		00000000h if not present
+ 20h	WORD	size of base OEM table in bytes (0000h if not present)
+ 22h	WORD	number of entries in variable portion of base table
+ 24h	DWORD	address of local APIC (see also MEM FEE0h:0020h)
+ 28h	WORD	length of extended entries following end of base table
+		  (in bytes)
+ 2Ah	BYTE	checksum for extended table entries (includes only
+		  extended entries following base table)
+ 2Ch	var	configuration table entries (see #M065)
+SeeAlso: #M063
+
+Format of Multiprocessor Specification configuration table entries:
+Offset	Size	Description	(Table M065)
+ 00h	BYTE	entry type code
+		00h processor
+		01h bus
+		02h I/O APIC
+		03h I/IO interrupt assignment
+		04h local interrupt assignment
+		80h system address space mapping
+		81h bus hierarchy descriptor
+		82h compatibility bus address space modifier
+---processor---
+ 01h	BYTE	local APIC identifier
+ 02h	BYTE	local APIC version
+ 03h	BYTE	CPU flags
+		bit 0: processor usable
+		bit 1: bootstrap processor
+ 04h	WORD	CPU type
+		bits 11-8: CPU family
+		bits 7-4: CPU model
+		bits 3-0: stepping
+		(bits 11-0 all set indicate non-Intel-compatible CPU)
+ 06h  2 BYTEs	unused
+ 08h	DWORD	feature flags (as returned by Pentium CPUID instruction)
+ 0Ch  8 BYTEs	reserved
+---bus---
+ 01h	BYTE	bus ID (assigned sequentially from 00h by BIOS)
+ 02h  6 BYTEs	bus type (blank-padded ASCII string) (see #M066)
+---I/O APIC---
+ 01h	BYTE	APIC identifier
+ 02h	BYTE	APIC version
+ 03h	BYTE	I/O APIC flags
+		bit 0: enabled
+		bits 7-1: reserved
+ 04h	DWORD	base address for APIC
+---I/O,local interrupt assignment---
+ 01h	BYTE	interrupt type
+		00h vectored interrupt (from APIC)
+		01h NMI
+		02h system management interrupt
+		03h vectored interrupt (from external PIC)
+ 02h	BYTE	APIC control (see #M067)
+ 03h	BYTE	unused
+ 04h	BYTE	source bus identifier
+ 05h	BYTE	source bus IRQ
+ 06h	BYTE	destination I/O APIC identifier
+ 07h	BYTE	destination I/O APIC interrupt pin number
+---system address space mapping---
+ 01h	BYTE	entry length (14h)
+ 02h	BYTE	bus ID
+ 03h	BYTE	address type (00h I/O, 01h memory, 02h prefetch)
+ 04h	QWORD	starting address of region visible to bus
+ 0Ch	QWORD	length of region visible to bus
+---bus hierarchy descriptor---
+ 01h	BYTE	entry length (08h)
+ 02h	BYTE	bus ID
+ 03h	BYTE	bus information
+		bit 0: subtractive decoding
+ 04h	BYTE	ID of parent bus
+ 05h  3 BYTEs	reserved
+---compatibility bus address space modifier---
+ 01h	BYTE	entry length (08h)
+ 02h	BYTE	bus ID
+ 03h	BYTE	address modifier
+		bit 0: remove address ranges in predefined range list from
+			  bus's address space
+ 04h	DWORD	number indicating predefined address space range to be removed
+		00h ISA-compatible I/O range (x100h-x3FFh and aliases)
+		01h VGA-compatible I/O range (x3B0h-x3BBh,x3C0h-x3DFh,aliases)
+SeeAlso: #M064
+
+(Table M066)
+Values for Multiprocessor Specification bus name:
+ "CBUS"		Corollary CBus
+ "CBUSII"	Corollary CBus II
+ "EISA"
+ "FUTURE"	IEEE FutureBus
+ "INTERN"	internal bus
+ "ISA"
+ "MBI"		Multibus I
+ "MBII"		Multibus II
+ "MCA"		Microchannel
+ "MPI"
+ "MPSA"
+ "NUBUS"	Apple Macintosh NuBus
+ "PCI"
+ "PCMCIA"
+ "TC"		DEC TurboChannel
+ "VL"		VESA Local Bus
+ "VME"		VMEbus
+ "XPRESS"	Express System Bus
+SeeAlso: #M065
+
+Bitfields for Multiprocessor Specification APIC control:
+Bit(s)	Description	(Table M067)
+ 1-0	input signal polarity
+	00 conforms to bus specification
+	01 active high
+	10 reserved
+	11 active low
+ 3-2	trigger mode
+	00 conforms to bus specification
+	01 edge-triggered
+	10 reserved
+	11 level-triggered
+SeeAlso: #M065
+----------mFEC00000--------------------------
+MEM FEC00000h - Pentium - I/O APIC
+Size:	4096 BYTEs
+Range:	the Multiprocessor Specification calls for I/O APICs to be memory-
+	  mapped on 4K boundaries between FEC00000h and FEDFC000h
+SeeAlso: MEM FEE00000h,MEM xxxxh:xxx0h"Multiprocessor"
+----------mFEE00000--------------------------
+MEM FEE00000h - Pentium - LOCAL APIC
+Size:	4096 BYTEs
+Notes:	the Advanced Programmable Interrupt Controller built into
+	  multiprocessor-capable Pentiums (P54C, etc. -- basically 75MHz and
+	  faster Pentiums) maps its registers into the top of the physical
+	  address space on data reads and writes, but not on code reads;
+	  data accesses to the APIC registers do not cause external bus
+	  cycles
+	the APIC's registers are only visible when the APIC is enabled (which
+	  occurs at CPU reset when external data lines contain proper signals)
+SeeAlso: MEM FEC00000h,MEM FEE00020h,MEM xxxxh:xxx0h"Multiprocessor"
+----------mFEE00020--------------------------
+MEM FEE00020h - Pentium - LOCAL APIC - LOCAL APIC ID REGISTER
+SeeAlso: MEM FEE00030h
+----------mFEE00030--------------------------
+MEM FEE00030h - Pentium - LOCAL APIC - LOCAL APIC VERSION REGISTER
+Note:	read-only
+SeeAlso: MEM FEE00020h
+----------mFEE00040--------------------------
+MEM FEE00040h - Pentium - LOCAL APIC - RESERVED
+SeeAlso: MEM FEE00000h
+----------mFEE00050--------------------------
+MEM FEE00050h - Pentium - LOCAL APIC - RESERVED
+SeeAlso: MEM FEE00000h
+----------mFEE00060--------------------------
+MEM FEE00060h - Pentium - LOCAL APIC - RESERVED
+SeeAlso: MEM FEE00000h
+----------mFEE00070--------------------------
+MEM FEE00070h - Pentium - LOCAL APIC - RESERVED
+SeeAlso: MEM FEE00000h
+----------mFEE00080--------------------------
+MEM FEE00080h - Pentium - LOCAL APIC - TASK PRIORITY REGISTER (TPR)
+----------mFEE00090--------------------------
+MEM FEE00090h - Pentium - LOCAL APIC - ARBITRATION PRIORITY REGISTER (APR)
+Note:	read-only
+----------mFEE000A0--------------------------
+MEM FEE000A0h - Pentium - LOCAL APIC - END OF INTERRUPT REGISTER (EOI)
+Note:	write-only
+----------mFEE000A0--------------------------
+MEM FEE000A0h - Pentium - LOCAL APIC - PROCESSOR PRIORITY REGISTER (PPR)
+Note:	read-only
+SeeAlso: MEM FEE00000h
+----------mFEE000B0--------------------------
+MEM FEE000B0h - Pentium - LOCAL APIC - RESERVED
+SeeAlso: MEM FEE00000h
+----------mFEE000C0--------------------------
+MEM FEE000C0h - Pentium - LOCAL APIC - REMOTE READ REGISTER
+Note:	read-only
+----------mFEE000D0--------------------------
+MEM FEE000D0h - Pentium - LOCAL APIC - LOGICAL DURATION REGISTER (LDR)
+SeeAlso: MEM FEE00000h
+----------mFEE000E0--------------------------
+MEM FEE000E0h - Pentium - LOCAL APIC - DESTINATION FORMAT REGISTER (DFR)
+	bits 27-0: read-only
+	bits 31-28: read-write
+----------mFEE000F0--------------------------
+MEM FEE000F0h - Pentium - LOCAL APIC - SPURIOUS INTERRUPT VECTOR REGISTER
+	bits 3-0, read-only
+	bits 9-4, read/write
+----------mFEE00100--------------------------
+MEM FEE00100h - Pentium - LOCAL APIC - IN-SERVICE REGISTER (ISR)
+Size:	128 BYTEs
+Note:	read-only
+SeeAlso: MEM FEE00200h
+----------mFEE00180--------------------------
+MEM FEE00180h - Pentium - LOCAL APIC - TRIGGER MODE REGISTER (TMR)
+Size:	128 BYTEs
+Note:	read-only
+SeeAlso: MEM FEE00000h
+----------mFEE00200--------------------------
+MEM FEE00200h - Pentium - LOCAL APIC - INTERRUPT REQUEST REGISTER (IRR)
+Size:	128 BYTEs
+Note:	read-only
+SeeAlso: MEM FEE00100h
+----------mFEE00280--------------------------
+MEM FEE00280h - Pentium - LOCAL APIC - ERROR STATUS REGISTER
+Size:	4 BYTEs
+Note:	read-only
+
+Bitfields for Pentium APIC error status register:
+Bit(s)	Description	(Table M068)
+ 0	send checksum error
+ 1	receive checksum error
+ 2	send accept error
+ 3	receive accept error
+ 4	reserved
+ 5	send illegal vector
+ 6	receive illegal vector
+ 7	illegal register address
+ 31-8	reserved
+----------mFEE00300--------------------------
+MEM FEE00300h - Pentium - LOCAL APIC - INTERRUPT COMMAND REGISTER (ICR)
+Size:	4 BYTEs
+Note:	this is the low half of the 64-bit ICR
+SeeAlso: MEM FEE00310h,#M069
+
+Bitfields for Pentium APIC Interrupt Command Register:
+Bit(s)	Description	(Table M069)
+ 7-0	interrupt vector number
+ 10-8	delivery mode (see #M070)
+ 11	destination mode
+ 12	delivery status (read-only)
+	1 = transfer pending
+ 13	reserved
+ 14	level (0 = INIT Level Deassert message, 1 = anything else)
+ 15	trigger mode (1)
+ 17-16	remote read status (read-only)
+ 19-18	destination shorthand
+	00 as specified by destination field
+	01 self
+	10 all including self
+	11 all except self
+ 55-20	reserved
+ 63-56	destination for interrupt request or message
+SeeAlso: #M072
+
+(Table M070)
+Values for Pentium APIC delivery mode:
+ 000b	fixed
+ 001b	lowest-priority
+ 010b	SMI
+ 011b	remote read
+ 100b	NMI
+ 101b	INIT
+ 110b	start up
+ 111b	reserved
+SeeAlso: #M069
+----------mFEE00310--------------------------
+MEM FEE00310h - Pentium - LOCAL APIC - INTERRUPT COMMAND REGISTER (ICR)
+Size:	4 BYTEs
+Note:	this is the high half of the 64-bit ICR
+SeeAlso: MEM FEE00300h,#M069
+----------mFEE00320--------------------------
+MEM FEE00320h - Pentium - LOCAL APIC - LOCAL VECTOR TABLE ENTRY 0 (TIMER)
+Size:	4 BYTEs
+SeeAlso: MEM FEE00350h,MEM FEE00370h,MEM FEE003E0h,INT 70h
+
+Bitfields for Pentium APIC timer local vector entry:
+Bit(s)	Description	(Table M071)
+ 7-0	interrupt vector number
+ 11-8	reserved
+ 12	delivery status (read-only)
+	1 = interrupt being sent to APIC
+ 15-13	reserved
+ 16	interrupt delivery disabled
+ 17	timer mode (0=one-shot, 1=periodic)
+ 31-18	reserved
+SeeAlso: #M073,#M072
+----------mFEE00330--------------------------
+MEM FEE00330h - Pentium - LOCAL APIC - RESERVED
+SeeAlso: MEM FEE00000h
+----------mFEE00340--------------------------
+MEM FEE00340h - Pentium - LOCAL APIC - RESERVED
+SeeAlso: MEM FEE00000h
+----------mFEE00350--------------------------
+MEM FEE00350h - Pentium - LOCAL APIC - LOCAL VECTOR TABLE ENTRY 1 (LINT0)
+Size:	4 BYTEs
+SeeAlso: MEM FEE00320h,MEM FEE00360h
+
+Bitfields for Pentium APIC LINTx local vector entry:
+Bit(s)	Description	(Table M072)
+ 7-0	interrupt vector number
+ 10-8	delivery mode
+	000 fixed
+	100 NMI
+	111 external interrupt (8259A-compatibility)
+ 11	reserved
+ 12	delivery status (read-only)
+	1 = interrupt being sent to APIC
+ 13	interrupt pin is active low
+ 14	remote IRR
+ 15	trigger mode
+	0 edge-sensitive
+	1 level-sensitive
+ 16	interrupt delivery disabled
+ 31-17	reserved
+SeeAlso: #M071
+----------mFEE00360--------------------------
+MEM FEE00360h - Pentium - LOCAL APIC - LOCAL VECTOR TABLE ENTRY 2 (LINT1)
+Size:	4 BYTEs
+SeeAlso: MEM FEE00350h,MEM FEE00370h,#M072
+----------mFEE00370--------------------------
+MEM FEE00370h - Pentium - LOCAL APIC - LOCAL VECTOR TABLE ENTRY 3 (Error)
+Size:	4 BYTEs
+SeeAlso: MEM FEE00320h,MEM FEE00370h
+----------mFEE00380--------------------------
+MEM FEE00380h - Pentium - LOCAL APIC - INITIAL COUNT REGISTER (ICR) TIMER
+Desc:	timer start value, which together with the Divide Configuration
+	  Register also determines its period when periodic mode has been
+	  selected
+SeeAlso: MEM FEE00000h,MEM FEE00390h
+----------mFEE00390--------------------------
+MEM FEE00390h - Pentium - LOCAL APIC - CURRENT COUNT REGISTER (CCR) TIMER
+Desc:	current timer count; when this value reaches zero, an interrupt is
+	  generated
+Note:	read-only
+SeeAlso: MEM FEE00380h
+----------mFEE003A0--------------------------
+MEM FEE003A0h - Pentium - LOCAL APIC - RESERVED
+SeeAlso: MEM FEE00000h
+----------mFEE003B0--------------------------
+MEM FEE003B0h - Pentium - LOCAL APIC - RESERVED
+SeeAlso: MEM FEE00000h
+----------mFEE003C0--------------------------
+MEM FEE003C0h - Pentium - LOCAL APIC - RESERVED
+SeeAlso: MEM FEE00000h
+----------mFEE003D0--------------------------
+MEM FEE003D0h - Pentium - LOCAL APIC - RESERVED
+SeeAlso: MEM FEE00000h
+----------mFEE003E0--------------------------
+MEM FEE003E0h - Pentium - LOCAL APIC - TIMER DIVIDE CONFIGURATION REGISTER
+SeeAlso: MEM FEE00000h,MEM FEE00320h
+
+Bitfields for Pentium APIC timer divide configuration:
+Bit(s)	Description	(Table M073)
+ 3,1,0	divisor
+	000 divide by 2
+	001 by 4
+	010 by 8
+	...
+	110 by 128
+	111 by 1
+ 2	zero (0)
+ 31-4	reserved
+Note:	the divisor determines the timer's time base relative to the processor
+	  clock
+SeeAlso: #M071
 ----------MFFFF0010--------------------------
 MEM FFFFh:0010h - HIGH MEMORY AREA
 Size:	65520 BYTEs
@@ -1560,22 +1987,22 @@ Robin Walker	<rdhw@cus.cam.ac.uk> ORIGINAL FILE
 Wim Osterholt	<wim@djo.wtm.tudelft.nl> or Wim Osterholt 2:512/56
 	EHD floppy = 'KEGAN 4.0M Floppy Drive Controller.',
 		     'ACME FX4-K7tb2 v:2.5 11/5/91'
-Stanley Appel   <appel@stack.urc.tue.nl>
+Stanley Appel	<appel@stack.urc.tue.nl>
 Matthias Paul	<mpaul@ibh.rwth-aachen.de>
 --------!---Admin----------------------------
-Highest Table Number = M060
+Highest Table Number = M073
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER47A through INTER47D (preferably the original
+quartet of archives named INTER48A through INTER48D (preferably the original
 authenticated PKZIP archives), and the utility programs in a two additional
-archives called INTER47E.ZIP and INTER47F.ZIP
+archives called INTER48E.ZIP and INTER48F.ZIP
 
 This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
 --------!---CONTACT_INFO---------------------
-Internet: ralf@telerama.lm.com
-UUCP: {uunet,harvard}!telerama.lm.com!ralf
+Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
+UUCP: {uunet,harvard}!pobox.com!ralf
 FIDO: Ralf Brown 1:129/26.1
 	or post a message to me in the DR_DEBUG echo (I probably won't see it
 	unless you address it to me)
-CIS:  >INTERNET:ralf@telerama.lm.com
+CIS:  >INTERNET:ralf@pobox.com
