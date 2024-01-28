@@ -2,12 +2,14 @@
 /*	EEL code file for editing the Interrupt List		*/
 /*								*/
 /*	Written by Ralf Brown					*/
-/*	LastEdit: 7 May 94					*/
+/*	LastEdit: 13 Aug 95					*/
 /*								*/
 /*  This EEL file adds the following keybindings:		*/
 /*    Shf-Alt-B add another BUG: to the current entry           */
 /*    Shf-Alt-D add a Desc: section to the current entry	*/
+/*    Sft-Alt-I add an InstallCheck: section to current entry	*/
 /*    Shf-Alt-R add a Range: section to the current entry       */
+/*    Shf-Alt-S add a Size: section to the current entry	*/
 /*	Alt-I	add an Index: section to the current entry	*/
 /*		add another Index: line if already on Index:	*/
 /*      Alt-N   add a new note to current entry or data struct  */
@@ -25,7 +27,8 @@
 /*								*/
 /*  It adds the following unbound commands:		        */
 /*      renumber-tables					        */
-/*								*/
+/*	make-distribution					*/
+/*								*/ 
 /*  Other:							*/
 /*	adds intlist-mode for .LST and .1ST files		*/
 /*	switches current buffer into intlist-mode on loading	*/
@@ -46,7 +49,9 @@ keytable intlist_tab ;			/* key table for IntList mode */
 /*    Global Variables					       */
 /*=============================================================*/
 
+char size_section[] = "Size:\t" ;
 char return_section[] = "Return: " ;
+char install_section[] = " InstallCheck: " ;
 char program_section[] = "Program: " ;
 char desc_section[] = "Desc:\t" ;
 char range_section[] = "Range:\t" ;
@@ -55,21 +60,23 @@ char bugs_section[] = "BUGS*:\t" ;
 char seealso_section[] = "SeeAlso: " ;
 char index_section[] = "Index:\t" ;
 
-char *(section_order[9]) ;
+char *(section_order[11]) ;
 
 when_loading()
 {
    /* list the sections of an entry in the order they should appear (if */
    /* present at all) */
-   section_order[0] = return_section ;
-   section_order[1] = program_section ;
-   section_order[2] = desc_section ;
-   section_order[3] = range_section ;
-   section_order[4] = notes_section ;
-   section_order[5] = bugs_section ;
-   section_order[6] = seealso_section ;
-   section_order[7] = index_section ;
-   section_order[8] = NULL ;
+   section_order[0] = size_section ;
+   section_order[1] = return_section ;
+   section_order[2] = install_section ;
+   section_order[3] = program_section ;
+   section_order[4] = desc_section ;
+   section_order[5] = range_section ;
+   section_order[6] = notes_section ;
+   section_order[7] = bugs_section ;
+   section_order[8] = seealso_section ;
+   section_order[9] = index_section ;
+   section_order[10] = NULL ;
 }
 
 /*=============================================================*/
@@ -233,6 +240,17 @@ command desc() on intlist_tab[ALT('D')]
 }
 
 /*=============================================================*/
+/* Add a InstallCheck: section if the current entry does not   */
+/* already have one; if there is already a InstallCheck:       */
+/* section, move to the start of it			       */
+/*=============================================================*/
+
+command instcheck() on intlist_tab[ALT('I')]
+{
+   make_section(install_section,1,NULL) ;
+}
+
+/*=============================================================*/
 /* Add a Range: section if the current entry does not already  */
 /* have one; if there is already a Range: section, move to the */
 /* start of it						       */
@@ -241,6 +259,17 @@ command desc() on intlist_tab[ALT('D')]
 command range() on intlist_tab[ALT('R')]
 {
    make_section(range_section,1,NULL) ;
+}
+
+/*=============================================================*/
+/* Add a Size: section if the current entry does not already   */
+/* have one; if there is already a Size: section, move to the  */
+/* start of it						       */
+/*=============================================================*/
+
+command memsize() on intlist_tab[ALT('S')]
+{
+   make_section(size_section,1,NULL) ;
 }
 
 /*=============================================================*/
@@ -446,17 +475,12 @@ command bitfields_for_header() on intlist_tab[FALT(12)]
 /*=============================================================*/
 /*=============================================================*/
 
-char grab_entry_number(func_num)
+char grab_int_entry_number(func_num)
 char *func_num ;
 {
-   char c ;
    int i ;
-
-   strcpy(func_num,"------------") ;	/* 12 dashes */
-   point++ ;				/* go to first char of separator line */
-   nl_forward() ;			/* go to first line of entry */
-   if (parse_string(1,"INT ",NULL) == 0)
-      return 0 ;			/* not an interrupt entry, so return */
+   char c ;
+   
    point += 4 ;				/* skip the "INT " */
    func_num[0] = curchar() ;		/* grab the interrupt number */
    point++ ;
@@ -516,6 +540,81 @@ char *func_num ;
 	 grab(point,point+4,func_num+8) ;
       }
    return 1 ;				/* successful and have func number */
+}
+
+/*=============================================================*/
+
+char grab_cmos_entry_number(func_num)
+char *func_num ;
+{
+   func_num[0] = 'C' ;			/* mark this as a CMOS loc entry */
+   /* not implemented yet, since not used in CMOS.LST */
+   return 0 ;
+}
+
+/*=============================================================*/
+
+char grab_farcall_entry_number(func_num)
+char *func_num ;
+{
+   point += 5 ;				/* skip the "CALL " */
+   func_num[0] = '@' ;			/* mark this as a far call entry */
+   grab(point,point+4,func_num+1) ;	/* get segment of address */
+   grab(point+6,point+10,func_num+5) ;	/* get offset of address */
+   func_num[9] = '-' ;			/* grab() stuck a NUL into string */
+   return 1 ;
+}
+
+/*=============================================================*/
+
+char grab_memory_entry_number(func_num)
+char *func_num ;
+{
+   point += 4 ;				/* skip the "MEM " */
+   func_num[0] = 'M' ;		        /* mark this as a memory loc entry */
+   grab(point,point+4,func_num+1) ;	/* get segment of address */
+   grab(point+6,point+10,func_num+5) ;	/* get offset of address */
+   func_num[9] = '-' ;			/* grab() stuck a NUL into string */
+   return 1 ;
+}
+
+/*=============================================================*/
+
+char grab_port_entry_number(func_num)
+char *func_num ;
+{
+   point += 5 ;				/* skip the "PORT " */
+   func_num[0] = 'P' ;			/* mark this as an I/O port entry */
+   grab(point,point+4,func_num+1) ;	/* get starting port number */
+   func_num[5] = '-' ;			/* grab() stuck a NUL into string */
+   if (character(point+4) == '-')
+      {
+      grab(point+5,point+9,func_num+5) ; /* get ending port number */
+      func_num[9] = '-' ;		/* grab() stuck a NUL into string */
+      }
+   return 1 ;
+}
+
+/*=============================================================*/
+
+char grab_entry_number(func_num)
+char *func_num ;
+{
+   strcpy(func_num,"------------") ;	/* 12 dashes */
+   point++ ;				/* go to first char of separator line */
+   nl_forward() ;			/* go to first line of entry */
+   if (parse_string(1,"INT ",NULL))	/* is it an interrupt entry? */
+      return grab_int_entry_number(func_num) ;
+   else if (parse_string(1,"CMOS ",NULL) != 0)
+      return grab_cmos_entry_number(func_num) ;
+   else if (parse_string(1,"CALL ",NULL) != 0)
+      return grab_farcall_entry_number(func_num) ;
+   else if (parse_string(1,"MEM ",NULL) != 0)
+      return grab_memory_entry_number(func_num) ;
+   else if (parse_string(1,"PORT ",NULL) != 0)
+      return grab_port_entry_number(func_num) ;
+   else
+      return 0 ;
 }
 
 /*=============================================================*/
@@ -1005,6 +1104,8 @@ int *number_of_tables ;
    
    grab(*table_counter,*table_counter+4,counter) ;
    num_tables = strtoi(counter,10) ;
+   if (num_tables <= 0)			/* in case first char was a letter */
+      num_tables = strtoi(counter+1,10) ;
    new_numbers = (int *)malloc((num_tables+2)*sizeof(int)) ;
    for (i = 0 ; i <= num_tables ; i++)
       new_numbers[i] = 0 ;
@@ -1013,6 +1114,8 @@ int *number_of_tables ;
       {
       grab(point,point+4,counter) ;
       old_number = strtoi(counter,10) ;
+      if (old_number <= 0)
+	 old_number = strtoi(counter+1,10) ;
       if (old_number > 0 && old_number <= num_tables)
 	 new_numbers[old_number] = ++tcount ;
       }
@@ -1031,29 +1134,50 @@ int *new_numbers ;
    char counter[5] ;
    int old_number ;
    int dangling = 0 ;
+   int old_type ;
    
    point = 0 ;
    while (search(1,"(Table "))
       {
       grab(point,point+4,counter) ;
       old_number = strtoi(counter,10) ;
+      if (old_number <= 0)
+	 {
+	 old_type = counter[0] ;
+	 old_number = strtoi(counter+1,10) ;
+	 }
+      else
+	 old_type = 0 ;
       if (old_number > 0 && old_number <= num_tables)
 	 {
 	 delete(point,point+4) ;
-	 bprintf("%04d",new_numbers[old_number]) ;
+	 if (old_type)
+	    bprintf("%c%03d",old_type,new_numbers[old_number]) ;
+	 else
+	    bprintf("%04d",new_numbers[old_number]) ;
 	 }
       }
    point = 0 ;
-   while (re_search(1,"[, \t]%#[0-9][0-9][0-9][0-9]"))
+   while (re_search(1,"[, \t]%#[0-9CFMP][0-9][0-9][0-9]"))
       {
       grab(point-4,point,counter) ;
       old_number = strtoi(counter,10) ;
+      if (old_number <= 0)
+	 {
+	 old_type = counter[0] ;
+	 old_number = strtoi(counter+1,10) ;
+	 }
+      else
+	 old_type = 0 ;
       if (old_number > 0 && old_number <= num_tables)
 	 {
 	 if (new_numbers[old_number])
 	    {
 	    delete(point-4,point) ;
-	    bprintf("%04d",new_numbers[old_number]) ;
+	    if (old_type)
+	       bprintf("%c%03d",old_type,new_numbers[old_number]) ;
+	    else
+	       bprintf("%04d",new_numbers[old_number]) ;
 	    }
 	 else /* dangling xref */
 	    {
@@ -1078,11 +1202,11 @@ command renumber_tables()
    int dangling ;
    
    *start = point ;
-   say("Pass 1: numbering unnumbered tables") ;
+   say("Renumber Pass 1: numbering unnumbered tables") ;
    fix_unnumbered_tables() ;
-   say("Pass 2: gathering table numbers") ;
+   say("Renumber Pass 2: gathering table numbers") ;
    new_numbers = gather_table_numbers(&number_of_tables) ;
-   say("Pass 3: adjusting table numbers") ;
+   say("Renumber Pass 3: adjusting table numbers") ;
    dangling = adjust_table_numbers(number_of_tables,new_numbers) ;
    free(new_numbers) ;
    if (dangling)
@@ -1091,6 +1215,22 @@ command renumber_tables()
       say("Done") ;
    point = *start ;
    free_spot(start) ;
+}
+
+/*=============================================================*/
+/*=============================================================*/
+
+command make_distribution()
+{
+   renumber_tables() ;
+   say("Setting divider lines") ;
+   point = size() ;
+   while (point > 0)
+      if (!number_one_int())
+	 break ;
+   say("Ready for distribution") ;
+   point = 0 ;
+   /* !!! should also do auxiliary files, and split main list automatically */
 }
 
 /*=============================================================*/

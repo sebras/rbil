@@ -2658,7 +2658,7 @@ Offset	Size	Description	(Table 0753)
  05h	DWORD	(ret) pointer to 96-byte ??? data
  09h	DWORD	(ret) pointer to ??? data
  0Dh  3 BYTEs	reserved
-----------214404-----------------------------
+--------k-214404-----------------------------
 INT 21 U - DoubleTools v1.0 - GET ???
 	AX = 4404h
 	BL = drive number (00h = default, 01h = A:, etc)
@@ -5017,7 +5017,8 @@ BUGS:	under DOS 3.x and 4.x, the second and subsequent calls to this function
 	  searches are performed by CREATE (AH=3Ch), OPEN (AH=3Dh), UNLINK
 	  (AH=41h), and RENAME (AH=56h)
 	DR-DOS 3.41 and 5.0 return the Directory attribute for the volume label
-SeeAlso: AH=11h,AH=4Fh,AX=4301h,AH=71h,INT 2F/AX=111Bh,INT 2F/AX=B711h
+SeeAlso: AH=11h,AH=4Fh,AX=4301h,AX=714Eh,AX=71A1h,INT 2F/AX=111Bh
+SeeAlso: INT 2F/AX=B711h
 
 Format of FindFirst data block:
 Offset	Size	Description	(Table 0839)
@@ -5063,7 +5064,7 @@ Return: CF clear if successful
 Note:	under Novell DOS 7, if the FindFirst call (AH=4Eh) had CX=0088h, then
 	  the next matching deleted file will be returned
 BUG:	DR-DOS 3.41 and 5.0 return the Directory attribute for the volume label
-SeeAlso: AH=12h,AH=4Eh,AH=71h,AH=72h
+SeeAlso: AH=12h,AH=4Eh,AX=714Fh,AX=71A1h
 --------D-2150-------------------------------
 INT 21 - DOS 2+ internal - SET CURRENT PROCESS ID (SET PSP ADDRESS)
 	AH = 50h
@@ -6321,6 +6322,9 @@ Notes:	creates a "child" PSP rather than making an exact copy of the current
 	  reference count for each inherited file is incremented
 	(DOS 2.0+) sets current PSP to DX
 	(DOS 3.0+) marks "no inherit" file handles as closed in child PSP
+BUG:	OS/2 Warp's DOS box does not clear CF on success, instead leaving it
+	  in its former state; to work around this, ensure that CF is clear
+	  before calling
 SeeAlso: AH=26h,AH=50h
 --------D-2156-------------------------------
 INT 21 - DOS 2+ - "RENAME" - RENAME FILE
@@ -6529,7 +6533,7 @@ Return: CF clear if successful
 	    AX = error code (see #0885)
 Note:	the default DOS 4 behavior is to do nothing and return successfully
 SeeAlso: AX=5702h,AX=5703h,INT 2F/AX=112Dh
-----------215757BX5757-----------------------
+--------U-215757BX5757-----------------------
 INT 21 U - IBM Genie - Resident Manager - INSTALLATION CHECK
 	AX = 5757h
 	BX = 5757h
@@ -7476,7 +7480,7 @@ SeeAlso: #0892,#0894
 --------D-215E00-----------------------------
 INT 21 - DOS 3.1+ network - GET MACHINE NAME
 	AX = 5E00h
-	DS:DX -> 16-byte buffer for ASCIZ machine name
+	DS:DX -> 16-byte buffer for ASCII machine name
 Return: CF clear if successful
 	    CH = validity
 		00h name invalid
@@ -8360,14 +8364,67 @@ Offset	Size	Description	(Table 0918)
  12h 13 BYTEs	queue name
  1Fh  1 BYTE	pad
 --------N-215F44-----------------------------
-INT 21 u - LAN Manager Enhanced DOS - LOCAL NetWkstaGetInfo
+INT 21 - LAN Manager Enhanced DOS - LOCAL NetWkstaGetInfo
 	AX = 5F44h
 	BX = information level (00h, 01h, or 0Ah)
 	CX = buffer size
-	ES:DI -> buffer in which to store info
+	ES:DI -> buffer in which to store info (see #2715,#2716,#2717)
 Return: AX = error code
 	DX = amount of buffer used (or required)
 SeeAlso: AX=5F45h,AX=5F49h
+
+Format of LAN Manager wksta_info_0 structure:
+Offset	Size	Description	(Table 2715)
+ 00h    WORD     reserved (0)
+ 02h    DWORD    reserved (0)
+ 06h    DWORD    -> path to computer's LANMAN directory
+ 0Ah    DWORD    -> computername of the workstation
+ 0Eh    DWORD    -> username of user logged onto workstation
+ 12h    DWORD    -> domain to which workstation belongs
+ 16h    WORD     LAN Manager version number (2 bytes, Major, Minor)
+ 18h    DWORD    reserved (0)
+ 22h    WORD     number of seconds workstation waits for resource availability
+ 24h    DWORD    delay (in millsecs) before sending data to resource
+ 28h    WORD     reserved (0)
+ 2Ah    WORD     reserved (0)
+ 2Ch    WORD     number of seconds to maintain an inactive connection
+ 2Eh    WORD     number of seconds an inactive search continues
+ 30h    WORD     threads to dedicate to network (not supported in MSDOS)
+ 32h    WORD     number of simultaneous commands sent to network
+ 34h    WORD     reserved6 (must be 0)
+ 36h    WORD     number of internal buffers
+ 38h    WORD     size (in bytes) of each internal buffer
+ 3Ah    WORD     max size (in bytes) of an internal cache buffer (not MSDOS)
+ 3Ch    WORD     seconds before disconnecting inactive session (not MSDOS)
+ 3Eh    WORD     size (in bytes) of an internal error buffer (not MSDOS)
+ 40h    WORD     number of clients that can receive alert messages (not MSDOS)
+ 42h    WORD     number of services that can be started on workstation
+ 44h    WORD     max size (in kilobytes) of error log (not MSDOS)
+ 46h    WORD     number of secs before closing inactive print jobs (not MSDOS)
+ 48h    WORD     number of character buffers for workstation
+ 4Ah    WORD     max size (in bytes) of character buffer
+ 4Ch    DWORD    -> name of server that validated logon
+ 50h    DWORD    -> workstation heuristics
+ 52h    WORD     number of mailslots allowed
+SeeAlso: #2716,#2717
+
+Format of LAN Manager wksta_info_1 structure:
+Offset	Size	Description	(Table 2716)
+ 00h 84 BYTEs	wksta_info_0 structure (see #2715)
+ 54h    DWORD    -> name of domain which user is logged on to
+ 58h    DWORD    -> all domains in which computer is enlisted
+ 5Ch    WORD     number of buffers to allocate for receiving datagrams
+SeeAlso: #2717
+
+Format of LAN Manager wksta_info_10 structure:
+Offset	Size	Description	(Table 2717)
+ 00h    DWORD    -> computername of the workstation
+ 04h    DWORD    -> username of user logged onto workstation
+ 08h    DWORD    -> domain to which workstation belongs
+ 0Ch    WORD     LAN Manager version number (2 bytes, Major, Minor)
+ 0Eh    DWORD    -> name of domain which user is loggod on to
+ 12h    DWORD    -> all domains in which computer is enlisted
+SeeAlso: #2715,#2716
 --------N-215F45-----------------------------
 INT 21 u - LAN Manager Enhanced DOS - LOCAL NetWkstaSetInfo
 	AX = 5F45h
@@ -9406,93 +9463,4 @@ Return: CF clear if successful
 Notes:	handler must chain to previous handler as its first action
 	on invocation, ES:BX -> just-received message
 SeeAlso: AX=5FE2h
---------D-2160-------------------------------
-INT 21 - DOS 3.0+ - "TRUENAME" - CANONICALIZE FILENAME OR PATH
-	AH = 60h
-	DS:SI -> ASCIZ filename or path
-	ES:DI -> 128-byte buffer for canonicalized name
-Return: CF set on error
-	    AX = error code
-		02h invalid component in directory path or drive letter only
-		03h malformed path or invalid drive letter
-	    ES:DI buffer unchanged
-	CF clear if successful
-	    AH = 00h
-	    AL = destroyed (00h or 5Ch or last char of current dir on drive)
-	    buffer filled with qualified name of form D:\PATH\FILE.EXT or
-	      \\MACHINE\PATH\FILE.EXT
-Desc:	determine the canonical name of the specified filename or path,
-	  corresponding to the undocumented TRUENAME command in COMMAND.COM
-Notes:	the input path need not actually exist
-	letters are uppercased, forward slashes converted to backslashes,
-	  asterisks converted to appropriate number of question marks, and
-	  file and directory names are truncated to 8.3 if necessary.  (DR-DOS
-	  3.41 and 5.0 do not expand asterisks)
-	'.' and '..' in the path are resolved
-	filespecs on local drives always start with "d:", those on network
-	  drives always start with "\\"
-	if path string is on a JOINed drive, the returned name is the one that
-	  would be needed if the drive were not JOINed; similarly for a
-	  SUBSTed, ASSIGNed, or network drive letter.	Because of this, it is
-	  possible to get a qualified name that is not legal under the current
-	  combination of SUBSTs, ASSIGNs, JOINs, and network redirections
-	under DOS 3.3 through 6.00, a device name is translated differently if
-	  the device name does not have an explicit directory or the directory
-	  is \DEV (relative directory DEV from the root directory works
-	  correctly).  In these cases, the returned string consists of the
-	  unchanged device name and extension appended to the string X:/
-	  (forward slash instead of backward slash as in all other cases) where
-	  X is the default or explicit drive letter.
-	functions which take pathnames require canonical paths if invoked via
-	  INT 21/AX=5D00h
-	supported by OS/2 v1.1 compatibility box
-	NetWare 2.1x does not support characters with the high bit set; early
-	  versions of NetWare 386 support such characters except in this call.
-	  In addition, NetWare returns error code 3 for the path "X:\"; one
-	  should use "X:\." instead.
-	for DOS 3.3-6.0, the input and output buffers may be the same, as the
-	  canonicalized name is built in an internal buffer and copied to the
-	  specified output buffer as the very last step
-	for DR DOS 6.0, this function is not automatically called when on a
-	  network.  Device drivers reportedly cannot make this call from their
-	  INIT function.  Using the same pointer for both input and output
-	  buffers is not supported in the April 1992 and earlier versions of
-	  DR DOS
-	Corel's CORELCDX and MSCDEX without the /S switch return canonical
-	  names of the form "\\D.\A.\path", where "D" is the CD-ROM drive
-	  letter and "A" appears to indicate the first physical CD-ROM drive;
-	  MSCDEX with the /S switch returns a canonical name with embedded
-	  blanks.  Novell DOS 7 NWCDEX as of the 11/16/94 update returns the
-	  same canonical path as MSCDEX; earlier revisions returned
-	  "Cdex.D:\path", where "D" is the CD-ROM drive letter
-SeeAlso: AX=5FB3h,INT 2F/AX=1123h,INT 2F/AX=1221h
---------D-2161-------------------------------
-INT 21 - DOS 3.0+ - UNUSED
-	AH = 61h
-Return: AL = 00h
-Note:	this function does nothing and returns immediately
---------O-2161--BP6467-----------------------
-INT 21 U - OS/2 v1.x FAPI - OS/2 FILE SYSTEM JOIN/SUBST
-	AH = 61h
-	BP = 6467h ("dg")
-	AL = function
-	    00h list
-	    01h add
-	    02h delete
-	BX = drive number
-	CX = size of buffer
-	SI = type (0002h JOIN, 0003h SUBST)
-	ES:DI -> buffer
-Return: ???
-Notes:	used by JOIN and SUBST to communicate with the OS/2 file system
-	also supported by OS/2 v2.0+ Virtual DOS Machines
---------D-2162-------------------------------
-INT 21 - DOS 3.0+ - GET CURRENT PSP ADDRESS
-	AH = 62h
-Return: BX = segment of PSP for current process
-Notes:	this function does not use any of the DOS-internal stacks and may
-	  thus be called at any time, even during another INT 21h call
-	the current PSP is not necessarily the caller's PSP
-	identical to the undocumented AH=51h
-SeeAlso: AH=50h,AH=51h
 --------!---Section--------------------------

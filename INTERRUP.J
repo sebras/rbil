@@ -1,5 +1,762 @@
 Interrupt List, part 10 of 13
 This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+--------H-5B---------------------------------
+INT 5B - IRQ11 relocated by DESQview 2.26+
+Range:	INT 5B to INT FB, selected automatically
+Note:	this is the default, but other INTs may be used (see INT 50"DESQview")
+SeeAlso: INT 50"DESQview",INT 5A"DESQview",INT 5C"DESQview",INT 73
+--------H-5B---------------------------------
+INT 5B - IRQ3 relocated by DoubleDOS
+SeeAlso: INT 0B
+--------N-5B---------------------------------
+INT 5B - PC cluster adapter - RELOCATED INT 19
+SeeAlso: INT 19,INT 5A"PC Cluster"
+--------N-5B---------------------------------
+INT 5B - AT&T Starlan Extended NetBIOS (variable length names)
+	ES:BX -> Network Control Block (see #1891)
+Return: AL = status (see #1893)
+SeeAlso: INT 5C
+
+Format of Starlan Network Control Block:
+Offset	Size	Description	(Table 1891)
+ 00h	BYTE	ncb_command (see also #1895)
+		70h send net Break
+ 01h	BYTE	ncb_retcode
+ 02h	BYTE	ncb_lsn
+ 03h	BYTE	ncb_num
+ 04h	DWORD	-> ncb_buffer
+ 08h	WORD	ncb_length
+ 0Ah 16 BYTEs	ncb_callname
+ 1Ah 16 BYTEs	ncb_name
+ 2Ah	BYTE	ncb_rto
+ 2Bh	BYTE	ncb_sto
+ 2Ch	DWORD	-> ncb_post	/* int (far *ncb_post)(); */
+ 30h	BYTE	ncb_lana_num
+ 31h	BYTE	ncb_cmd_cplt
+ 32h	DWORD	-> ncb_vname
+ 36h	BYTE	ncb_vnamelen
+ 37h  9 BYTEs	ncb_reserve
+Note:	fields 00h-31h are the same as for a standard NetBIOS NCB (see #1894)
+--------N-5B---------------------------------
+INT 5B - Microsoft Network Transport Layer Interface
+Note:	used by MS-NET for executing network commands
+SeeAlso: INT 5C"NetBIOS"
+--------N-5B---------------------------------
+INT 5B - used by Alloy NTNX
+--------N-5B---------------------------------
+INT 5B - ISOLAN Multi Protocol Software
+	ES:BX -> Transfer Control Block (see #1892)
+Return: AL = status
+Note:	this software interface allows multiple protocols/software packages
+	  to access a BICC 411x network card
+
+Format of ISOLAN Transfer Control Block:
+Offset	Type	Description	(Table 1892)
+ 00h	BYTE	command code
+		B3h Status
+		F2h Activate
+		F3h Deactivate
+		F4h Send Data
+ 01h	BYTE	command identity
+ 02h	BYTE	virtual circuit ID
+ 03h	WORD	buffer length
+ 05h	DWORD	buffer pointer
+ 09h	BYTE	expedited data flag
+ 0Ah	BYTE	cancelable flag
+ 0Bh 16 BYTEs	local network address
+ 1Bh 16 BYTEs	remote network address
+ 2Bh	DWORD	asynchronous notification routine
+ 30h	DWORD	local network number
+ 34h	DWORD	remote network number
+ 38h	BYTE	call timeout
+ 39h	BYTE	not used
+ 3Ah  8 BYTEs	reserved
+ 42h	BYTE	command code extension
+ 43h	WORD	Blue Book MAC type
+--------b-5B---------------------------------
+INT 5B - TI Professional PC - KEYBOARD MAPPING HOOK
+	no details available
+Note:	used to remap the keyboard
+SeeAlso: INT 15/AH=4Fh,INT 4A"TI Professional",INT 59"TI Professional"
+SeeAlso: INT 5C"TI Professional",INT 5D"TI Professional"
+SeeAlso: INT 5E"TI Professional",INT 5F"TI Professional"
+--------U-5B5254DL04-------------------------
+INT 5B U - SitBack v3.02R - GET ???
+	AX = 5254h
+	DL = 04h
+Return: ES:BX -> ??? in resident portion
+Program: SitBack is a background file backup utility by SitBack Technologies,
+	  Inc. which initiates backups whenever the system is idle
+SeeAlso: AX=8485h/DL=71h,AX=8485h/DL=72h
+--------U-5B8485DL70-------------------------
+INT 5B U - SitBack v3.02R - INSTALLATION CHECK
+	AX = 8485h
+	DL = 70h
+Return: CX = 8485h if installed
+	    DX:AX -> ??? (configuration data?)
+Program: SitBack is a background file backup utility by SitBack Technologies,
+	  Inc. which initiates backups whenever the system is idle
+SeeAlso: AX=5254h/DL=04h,AX=8485h/DL=78h
+--------U-5B8485DL71-------------------------
+INT 5B U - SitBack v3.02R - SET ??? FLAG AND GET ??? ADDRESS
+	AX = 8485h
+	DL = 71h
+Return: ES:BX -> FAR entry point to ???
+Note:	the flag which is modified is located at the address returned by
+	   AX=5254h/DL=04h
+SeeAlso: AX=8485h/DL=72h
+--------U-5B8485DL72-------------------------
+INT 5B U - SitBack v3.02R - CLEAR ??? FLAG
+	AX = 8485h
+	DL = 72h
+Note:	the flag which is modified is located at the address returned by
+	   AX=5254h/DL=04h
+SeeAlso: AX=8485h/DL=71h
+--------U-5B8485DL73-------------------------
+INT 5B U - SitBack v3.02R - ???
+	AX = 8485h
+	DL = 73h
+	???
+Return: ???
+--------U-5B8485DL74-------------------------
+INT 5B U - SitBack v3.02R - ???
+	AX = 8485h
+	DL = 74h
+	???
+Return: ???
+--------U-5B8485DL75-------------------------
+INT 5B U - SitBack v3.02R - ???
+	AX = 8485h
+	DL = 75h
+	CX = ???
+Return: ???
+SeeAlso: AX=8485h/DL=76h
+--------U-5B8485DL76-------------------------
+INT 5B U - SitBack v3.02R - ???
+	AX = 8485h
+	DL = 76h
+	CX = ???
+Return: ???
+Note:	conditionally calls the code for AX=8485h/DL=75h
+SeeAlso: AX=8485h/DL=75h
+--------U-5B8485DL77-------------------------
+INT 5B U - SitBack v3.02R - SET ??? FLAG
+	AX = 8485h
+	DL = 77h
+--------U-5B8485DL78-------------------------
+INT 5B U - SitBack v3.02R - GET RESIDENT DATA SEGMENT
+	AX = 8485h
+	DL = 78h
+Return: CX = 5342h if supported
+	    ES = AX = segment of TSR data
+SeeAlso: AX=8485h/DL=70h,AX=8485h/DL=79h
+--------U-5B8485DL79-------------------------
+INT 5B U - SitBack v3.02R - GET DTA
+	AX = 8485h
+	DL = 79h
+Return: CX = 5342h if supported
+	    ES:BX -> DTA set by last INT 21/AH=1Ah
+Note:	this function is provided by SBOS.EXE rather than SB.EXE
+SeeAlso: INT 21/AH=1Ah
+--------U-5B8485DL7A-------------------------
+INT 5B U - SitBack v3.02R - TOGGLE ???
+	AX = 8485h
+	DL = 7Ah
+Return: CX = 5342h if supported
+	    AL = new value of ??? (00h or 01h)
+--------H-5C---------------------------------
+INT 5C - IRQ12 relocated by DESQview 2.26+
+Range:	INT 5C to INT FC, selected automatically
+Note:	this is the default, but other INTs may be used (see INT 50"DESQview")
+SeeAlso: INT 50"DESQview",INT 5B"DESQview",INT 5D"DESQview",INT 74
+--------H-5C---------------------------------
+INT 5C - IRQ4 relocated by DoubleDOS
+SeeAlso: INT 0C
+--------N-5C---------------------------------
+INT 5C - NetBIOS INTERFACE
+	ES:BX -> network control block (NCB) (see #1894)
+Return: AL = status (see #1893)
+Program: NetBIOS was developed by Sytek, Inc. in 1984 as a high-level
+	  programming interface to the IBM PC Network; the first implementation
+	  was a ROM BIOS extension on Sytek's PCnet LAN adapter card, but many
+	  current networks support NetBIOS as the session layer.
+Note:	The Sytek PCnet card uses DMA 3.
+SeeAlso: INT 2A/AH=01h,INT 2A/AH=04h,INT 5B
+
+(Table 1893)
+Values for NetBIOS status:
+ 00h	successful
+ 01h	bad buffer size
+ 03h	invalid NETBIOS command
+ 05h	timeout
+ 06h	receive buffer too small
+ 07h	No-ACK command failed
+ 08h	bad session number
+ 09h	LAN card out of memory
+ 0Ah	session closed
+ 0Bh	command has been cancelled
+ 0Dh	name already exists
+ 0Eh	local name table full
+ 0Fh	name still in use, can't delete
+ 11h	local session table full
+ 12h	remote PC not listening
+ 13h	bad NCB_NUM field
+ 14h	no answer to CALL or no such remote
+ 15h	name not in local name table
+ 16h	duplicate name
+ 17h	bad delete
+ 18h	abnormal end
+ 19h	name error, multiple identical names in use
+ 1Ah	bad packet
+ 21h	network card busy
+ 22h	too many commands queued
+ 23h	bad LAN card number
+ 24h	command finished while cancelling
+ 26h	command can't be cancelled
+ 30h	name defined by another process (OS/2)
+ 34h	NetBIOS environment not defined, must issue reset (OS/2)
+ 35h	required operating system resources exhausted (OS/2)
+ 36h	maximum applications exceeded (OS/2)
+ 37h	no SAPs available for NetBIOS (OS/2)
+ 38h	requested resources not available (OS/2)
+ 40h	Lana System Error
+ 41h	Lana Remote Hot Carrier
+ 42h	Lana Local Hot Carrier
+ 43h	Lana No Carrier Detected
+ 44h	unusual network condition
+ 45h-4Dh hardware error
+ 4Eh	token ring is broken
+ 4Fh	token ring error
+ 50h	adapter malfunction
+ F7h	error in explicit INITIALIZE
+ F8h	error in implicit OPEN
+ F9h	TOKREUI internal error
+ FAh	hardware adapter testing
+ FBh	NetBIOS emulator not found
+ FCh	OPEN or OPEN_SAP failure
+ FDh	unexpected adapter closure
+ FFh	NetBIOS busy (command pending)
+
+Format of NetBIOS Network Control Block:
+Offset	Size	Description	(Table 1894)
+ 00h	BYTE	command code (see #1895)
+ 01h	BYTE	return code (see #1893)
+ 02h	BYTE	local session number (LSN)
+ 03h	BYTE	"ncb_num" datagram table entry from ADD NAME
+ 04h	DWORD	-> I/O buffer
+ 08h	WORD	length of data in buffer
+ 0Ah 16 BYTEs	remote system to call
+ 1Ah 16 BYTEs	network name of local machine
+ 2Ah	BYTE	receive timeout in 1/2 seconds
+ 2Bh	BYTE	send timeout in 1/2 seconds
+ 2Ch	DWORD	-> FAR post handler	/* int (far *ncb_post)(); */
+ 30h	BYTE	network adapter number on which to execute command
+		00h-03h IBM NetBIOS specs
+		F0h-FFh Eicon NABios interface (see also INT 7B"Eicon")
+ 31h	BYTE	command completion code (see returned status above)
+ 32h 14 BYTEs	reserved for network card
+
+(Table 1895)
+Values for NetBIOS command code field in NCB:
+ 10h	start session with NCB_NAME name (call)
+ 11h	listen for call
+ 12h	end session with NCB_NAME name (hangup)
+ 14h	send data via NCB_LSN
+ 15h	receive data from a session
+ 16h	receive data from any session
+ 17h	send multiple data buffers
+ 20h	send unACKed message (datagram)
+ 21h	receive datagram
+ 22h	send broadcast datagram
+ 23h	receive broadcast datagram
+ 30h	add name to name table
+ 31h	delete name from name table
+ 32h	reset adapter card and tables
+ 33h	get adapter status (see #1896)
+ 34h	status of all sessions for name (see #1898)
+ 35h	cancel
+ 36h	add group name to name table
+ 48h	send data and receive data (LAN Manager NETBEUI.DOS)
+ 70h	unlink from IBM remote program (no F0h function)
+ 71h	send data without ACK
+ 72h	send multiple buffers without ACK
+ 72h	UngermannBass Register (conflicts with above function)
+ 73h	UngermannBass SendNmc
+ 74h	UngermannBass Callniu
+ 75h	UngermannBass Calladdr
+ 76h	UngermannBass Listenaddr
+ 77h	UngermannBass SendPkt
+ 78h	find name
+ 78h	UngermannBass RcvPkt (conflicts with above function)
+ 79h	token-ring protocol trace
+ 79h	UngermannBass SendAttn (conflicts with above function)
+ 7Ah	UngermannBass RcvAttn
+ 7Bh	UngermannBass Listenniu
+ 7Ch	UngermannBass RcvRaw
+ 7Dh	UngermannBass SendNmc2
+ 7Fh	Beame&Whiteside BWNB installation check (returns with return code and
+	  completion code both set to 03h, while invalid functions return only
+	  return code field set to 03h)
+Note:	OR any of the above except 70h with 80h for non-waiting call
+
+Format of NetBIOS structure "astatus":
+Offset	Size	Description	(Table 1896)
+ 00h  6 BYTEs as_id
+ 06h	BYTE  as_jumpers
+ 07h	BYTE  as_post
+ 08h	BYTE  as_major
+ 09h	BYTE  as_minor
+ 0Ah	WORD  as_interval
+ 0Ch	WORD  as_crcerr
+ 0Eh	WORD  as_algerr
+ 10h	WORD  as_colerr
+ 12h	WORD  as_abterr
+ 14h	DWORD as_tcount
+ 18h	DWORD as_rcount
+ 1Ch	WORD  as_retran
+ 1Eh	WORD  as_xresrc
+ 20h  8 BYTEs as_res0
+ 28h	WORD  as_ncbfree
+ 2Ah	WORD  as_ncbmax
+ 2Ch	WORD  as_ncbx
+ 2Eh  4 BYTEs as_res1
+ 32h	WORD  as_sespend
+ 34h	WORD  as_msp
+ 36h	WORD  as_sesmax
+ 38h	WORD  as_bufsize
+ 3Ah	WORD  as_names
+ 3Ch 16 name structures	 as_name (see #1897)
+
+Format of NetBIOS structure "name":
+Offset	Size	Description	(Table 1897)
+ 00h 16 BYTEs "nm_name" symbolic name
+ 10h	BYTE  "nm_num" number associated with name
+ 11h	BYTE  nm_status
+
+Format of NetBIOS structure "sstatus":
+Offset	Size	Description	(Table 1898)
+ 00h	BYTE	number of sessions being reported
+ 01h	BYTE	number of sessions with this name
+ 02h	BYTE	number of outstanding receive datagrams
+ 03h	BYTE	number of outstanding ReceiveAnys
+ 04h	var	session structures (see #1899)
+
+Format of NetBIOS structure "session":
+Offset	Size	Description	(Table 1899)
+ 00h	BYTE	local session number
+ 01h	BYTE	state
+		01h listen pending
+		02h call pending
+		03h session established
+		04h hangup pending
+		05h hangup done
+		06h session aborted
+ 02h 16 BYTEs	local name
+ 12h 16 BYTEs	remote name
+ 22h	BYTE	number of outstanding receives
+ 23h	BYTE	number of outstanding sends/chainsends
+--------N-5C---------------------------------
+INT 5C - TOPS INTERFACE
+	ES:BX -> Network Control Block
+Note:	TOPS card uses DMA 1, 3 or none.
+--------N-5C---------------------------------
+INT 5C - ATALK.SYS - AppleTalk INTERFACE
+	DX:BX -> control block (see #1901)
+Return: none
+Range:	INT 5Ch to INT 70h
+Notes:	the signature 'AppleTalk' appears 16 bytes prior to the interrupt
+	  handler; this serves as the installation check
+Index:	installation check;ATALK.SYS|installation check;AppleTalk interface
+
+(Table 1900)
+Values for ATALK.SYS command code:
+ 01h	"AT_INIT"	    initialize the driver
+ 02h	"AT_KILL"
+ 03h	"AT_GETNETINFO" get current network info incl init status
+ 04h	"AT_GETCLOCKTICKS"
+ 05h	"AT_STARTTIMER"
+ 06h	"AT_RESETTIMER"
+ 07h	"AT_CANCELTIMER"
+ 10h	"LAP_INSTALL"
+ 11h	"LAP_REMOVE"
+ 12h	"LAP_WRITE"
+ 13h	"LAP_READ"
+ 14h	"LAP_CANCEL"
+ 20h	"DDP_OPENSOCKET"
+ 21h	"DDP_CLOSESOCKET"
+ 22h	"DDP_WRITE"
+ 23h	"DDP_READ"
+ 24h	"DDP_CANCEL"
+ 30h	"NBP_REGISTER"
+ 31h	"NBP_REMOVE"
+ 32h	"NBP_LOOKUP"
+ 33h	"NBP_CONFIRM"
+ 34h	"NBP_CANCEL"
+ 35h	"ZIP_GETZONELIST"
+ 36h	"ZIP_GETMYZONE"
+ 37h	"ZIP_TAKEDOWN"
+ 38h	"ZIP_BRINGUP"
+ 40h	"ATP_OPENSOCKET"
+ 41h	"ATP_CLOSESOCKET"
+ 42h	"ATP_SENDREQUEST"
+ 43h	"ATP_GETREQUEST"
+ 44h	"ATP_SENDRESPONSE"
+ 45h	"ATP_ADDRESPONSE"
+ 46h	"ATP_CANCELTRANS"
+ 47h	"ATP_CANCELRESPONSE"
+ 48h	"ATP_CANCELREQUEST"
+ 50h	"ASP_GETPARMS"
+ 51h	"ASP_CLOSESESSION"
+ 52h	"ASP_CANCEL"
+ 53h	"ASP_INIT"
+ 54h	"ASP_KILL"
+ 55h	"ASP_GETSESSION"
+ 56h	"ASP_GETREQUEST"
+ 57h	"ASP_CMDREPLY"
+ 58h	"ASP_WRTCONTINUE"
+ 59h	"ASP_WRTREPLY"
+ 5Ah	"ASP_CLOSEREPLY"
+ 5Bh	"ASP_NEWSTATUS"
+ 5Ch	"ASP_ATTENTION"
+ 5Dh	"ASP_GETSTATUS"
+ 5Eh	"ASP_OPENSESSION"
+ 5Fh	"ASP_COMMAND"
+ 60h	"ASP_WRITE"
+ 61h	"ASP_GETATTENTION"
+ 70h	"PAP_OPEN"
+ 71h	"PAP_CLOSE"
+ 72h	"PAP_READ"
+ 73h	"PAP_WRITE"
+ 74h	"PAP_STATUS"
+ 75h	"PAP_REGNAME"
+ 76h	"PAP_REMNAME"
+ 77h	"PAP_INIT"
+ 78h	"PAP_NEWSTATUS"
+ 79h	"PAP_GETNEXTJOB"
+ 7Ah	"PAP_KILL"
+ 7Bh	"PAP_CANCEL"
+
+Format of AppleTalk control block:
+Offset	Size	Description	(Table 1901)
+ 00h	WORD	command code (see #1900)
+		OR with the following flags
+		8000h start command then return
+		4000h wait for interrupt service to complete
+ 02h	WORD	returned status
+		0000h success (already initialized if func 01h)
+ 04h	DWORD	pointer to completion function
+ 08h	WORD	network number
+ 0Ah	BYTE	node ID
+---if general func (01h,03h), control block continues:
+ 0Bh	BYTE	"inf_abridge"
+ 0Ch	WORD	"inf_config"
+ 0Eh	DWORD	pointer to buffer
+ 12h	WORD	buffer size
+---if DDP function (20h-24h), control block continues:
+ 0Bh	BYTE	"ddp_addr_socket"
+ 0Ch	BYTE	"ddp_socket"
+ 0Dh	BYTE	"ddp_type"
+ 0Eh	DWORD	pointer to buffer
+ 12h	WORD	buffer size
+ 14h	BYTE	"ddp_chksum"
+---if Name Binding Protocol (30h-34h), control block continues:
+ 0Bh	BYTE	"nbp_addr_socket"
+ 0Ch	WORD	"nbp_toget"
+ 0Eh	DWORD	pointer to buffer (see #1902)
+ 12h	WORD	buffer size
+ 14h	BYTE	"nbp_interval"
+ 15h	BYTE	"nbp_retry"
+ 16h	DWORD	"nbp_entptr"
+---if AppleTalk Transaction Protocol (42h), control block continues:
+ 0Bh	BYTE	"atp_addr_socket"
+ 0Ch	WORD	"atp_socket"
+ 0Eh	DWORD	pointer to buffer
+ 12h	WORD	buffer size
+ 14h	BYTE	"atp_interval"
+ 15h	BYTE	"atp_retry"
+ 16h	BYTE	ATP flags
+		bit 5: exactly one transaction
+ 17h	BYTE	"atp_seqbit"
+ 18h	BYTE	transaction ID
+ 19h  4 BYTEs	ATP user bytes
+ 1Dh	BYTE	number of BDS buffers
+ 1Eh	BYTE	number of BDS responses
+ 1Fh	DWORD	pointer to BDS buffers (see #1903)
+
+Format of Name Binding Protocol Name-to-Address binding entries for NBP_LOOKUP:
+Offset	Size	Description	(Table 1902)
+ 00h	WORD	"tup_address_network"
+ 02h	BYTE	"tup_address_notid"
+ 03h	BYTE	"tup_address_socket"
+ 04h	BYTE	"tup_enum"
+ 05h 99 BYTEs	name
+
+Format of BDS entries:
+Offset	Size	Description	(Table 1903)
+ 00h	DWORD	pointer to buffer
+ 04h	WORD	size of buffer
+ 06h	WORD	BDS data size
+ 08h  4 BYTEs	"bds_userbytes"
+--------N-5C---------------------------------
+INT 5C - IBM 802.2 INTERFACE (LLC)
+	ES:BX -> CCB (see #1904)
+Return: none
+
+Format of IBM 802.2 CCB:
+Offset	Size	Description	(Table 1904)
+ 00h	BYTE	adapter
+ 01h	BYTE	command code
+ 02h	BYTE	return code
+ 03h	BYTE	work
+ 04h	DWORD	pointer to ???
+ 08h	DWORD	pointer to completion function???
+ 0Ch	DWORD	pointer to parameters???
+--------b-5C---------------------------------
+INT 5C - TI Professional PC - KEYBOARD PAUSE KEY VECTOR
+Desc:	toggle a pause flag which is checked by the CRT Device Service Routine
+	  (see INT 49"TI Professional") and causes it to temporarily halt the
+	  machine on the next video-related function (until a key is pressed)
+SeeAlso: INT 09"IRQ1",INT 4A"TI Professional",INT 59"TI Professional"
+SeeAlso: INT 5B"TI Professional",INT 5D"TI Professional"
+SeeAlso: INT 5E"TI Professional",INT 5F"TI Professional"
+--------N-5C---------------------------------
+INT 5C - $25 LAN - INSTALLATION CHECK
+Notes:	current versions only check whether the vector is 0000h:0000h or not
+	future versions are supposed to have the signature "NET" in the three
+	  bytes preceding the INT 5C handler
+--------N-5C04-------------------------------
+INT 5C - $25 LAN - CHECK IF CONNECTION ALIVE
+	AH = 04h
+	AL = COM port (0 = default)
+	CX = wait count in character times (should be at least 100)
+Return: ZF set if link alive
+--------H-5D---------------------------------
+INT 5D - IRQ13 relocated by DESQview 2.26+
+Range:	INT 5D to INT FD, selected automatically
+Note:	this is the default, but other INTs may be used (see INT 50"DESQview")
+SeeAlso: INT 50"DESQview",INT 5C"DESQview",INT 5E"DESQview",INT 75
+--------H-5D---------------------------------
+INT 5D - IRQ5 relocated by DoubleDOS
+SeeAlso: INT 0D,INT 5C"DoubleDOS"
+--------b-5D---------------------------------
+INT 5D - TI Professional PC - KEYBOARD BREAK KEY VECTOR
+	no details available
+SeeAlso: INT 09"IRQ1",INT 4A"TI Professional",INT 59"TI Professional"
+SeeAlso: INT 5B"TI Professional",INT 5C"TI Professional"
+SeeAlso: INT 5E"TI Professional",INT 5F"TI Professional"
+--------H-5E---------------------------------
+INT 5E - IRQ14 relocated by DESQview 2.26+
+Range:	INT 5E to INT FE, selected automatically
+Note:	this is the default, but other INTs may be used (see INT 50"DESQview")
+SeeAlso: INT 50"DESQview",INT 5D"DESQview",INT 5F"DESQview",INT 76
+--------H-5E---------------------------------
+INT 5E - IRQ6 relocated by DoubleDOS
+SeeAlso: INT 0E,INT 5D"DoubleDOS"
+--------b-5E---------------------------------
+INT 5E - TI Professional PC - KEYBOARD PRINT-SCREEN VECTOR
+Desc:	dump the screen to the printer
+Notes:	hooked by TI MS-DOS, which provides a PRTSCRN character device which
+	  can invoke screen prints when a decimal digit (indicating the type
+	  of screen dump) is written to it
+	the TI MS-DOS print-screen routine allows selective dumps of text
+	  only, graphics only, or text and graphics superimposed, in either
+	  normal or reverse, by pressing the appropriate keystroke combination:
+	  Shift-Print, Ctrl-Print, Alt-Print, Shift-Alt-Print, Ctrl-Alt-Print,
+	  or Shift-Ctrl-Print.
+	the BIOS default routine for this vector is an IRET
+SeeAlso: INT 05,INT 4A"TI Professional",INT 59"TI Professional"
+SeeAlso: INT 5B"TI Professional",INT 5C"TI Professional"
+SeeAlso: INT 5D"TI Professional",INT 5F"TI Professional"
+--------H-5F---------------------------------
+INT 5F - IRQ15 relocated by DESQview 2.26+
+Range:	INT 5F to INT FF, selected automatically
+Note:	this is the default, but other INTs may be used (see INT 50"DESQview")
+SeeAlso: INT 50"DESQview",INT 5E"DESQview",INT 77
+--------H-5F---------------------------------
+INT 5F - IRQ7 relocated by DoubleDOS
+SeeAlso: INT 0F,INT 5E"DoubleDOS"
+--------b-5F---------------------------------
+INT 5F C - TI Professional PC - KEYBOARD QUEUEING VECTOR
+Desc:	hook for multitaskers to be informed when a keypress is placed in the
+	  keyboard buffer
+SeeAlso: INT 09,INT 4A"TI Professional",INT 59"TI Professional"
+SeeAlso: INT 5B"TI Professional",INT 5C"TI Professional"
+SeeAlso: INT 5D"TI Professional",INT 5E"TI Professional"
+--------b-5F00-------------------------------
+INT 5F - HP 95LX/100LX/200LX GRAPHICS PRIMITIVES - SET VIDEO MODE
+	AH = 00h
+	AL = video mode
+	    03h text,CGA color (100LX/200LX)
+	    06h 640x200 CGA graphics (100LX/200LX)
+	    07h text, system manager compliant
+	    20h 240x128 mono graphics, system manager compliant
+	    87h text, not system manager compliant
+	    A0h 240x128 mono graphics, not system manager compliant
+Notes:	the defaults after setting the mode to graphics are (0,0) logical
+	  origin, full-screen clip region, (0,0) pen location, pen color 1,
+	  pixel replacement FORCE, line type and fill mask all bits set
+	modes 03h and 06h can also be set with the standard INT 10/AH=00h
+SeeAlso: INT 0F"HP 95LX",INT 10/AH=00h,INT 15/AX=4DD4h
+--------b-5F01-------------------------------
+INT 5F - HP 95LX/100LX/200LX GRAPHICS PRIMITIVES - SET FILL MASK
+	AH = 01h
+	ES:DI -> 8-byte fill mask
+Note:	the fill mask represents an 8x8 pixel box and is repeated as necessary
+	  when drawing filled rectangles; it is always aligned with the byte
+	  boundaries of video memory, regardless of the actual boundaries of
+	  the rectangle
+SeeAlso: AH=02h
+--------b-5F02-------------------------------
+INT 5F - HP 95LX/100LX/200LX GRAPHICS PRIMITIVES - GET CURRENT GRAPHICS INFO
+	AH = 02h
+	ES:DI -> graphics info record (see #1905)
+Return: DX:AX -> filled graphics info record (for return to high-level langs)
+
+Format of HP 95LX graphics info record:
+Offset	Size	Description	(Table 1905)
+ 00h	BYTE	current video mode
+ 01h	BYTE	default video mode
+ 02h	WORD	display width in pixels
+ 04h	WORD	display height in pixels
+ 06h	WORD	current pen column
+ 08h	WORD	current pen row
+ 0Ah	WORD	current line type
+ 0Ch	WORD	current replacement rule
+ 0Eh	WORD	current pen color
+ 10h	WORD	current leftmost column of clip region
+ 12h	WORD	current rightmost column of clip region
+ 14h	WORD	current topmost row of clip region
+ 16h	WORD	current bottommost row of clip region
+ 18h	WORD	current column of logical origin
+ 1Ah	WORD	current row of logical origin
+ 1Ch  8 BYTEs	current fill mask
+--------b-5F03-------------------------------
+INT 5F - HP 95LX/100LX/200LX GRAPHICS PRIMITIVES - SET LOGICAL ORIGIN
+	AH = 03h
+	CX = column
+	DX = row
+SeeAlso: AH=04h
+--------b-5F04-------------------------------
+INT 5F - HP 95LX/100LX/200LX GRAPHICS PRIMITIVES - SET CLIP REGION
+	AH = 04h
+	CX = left-most column
+	DX = top-most row
+	SI = right-most column
+	DI = bottom-most row
+SeeAlso: AH=03h
+--------b-5F05-------------------------------
+INT 5F - HP 95LX/100LX/200LX GRAPHICS PRIMITIVES - DRAW RECTANGLE
+	AH = 05h
+	AL = fill type
+	    00h outline, using current line type and color
+	    01h solid, using current color
+	    02h pattern, using current fill mask and color
+	DX,CX = row,column of other corner of rectangle
+Note:	the rectangle is drawn starting at the current pen position
+SeeAlso: AH=01h,AH=06h,AH=07h
+--------b-5F06-------------------------------
+INT 5F - HP 95LX/100LX/200LX GRAPHICS PRIMITIVES - DRAW LINE
+	AH = 06h
+	DX,CX = row,column of end point
+Note:	the line is drawn starting at the current pen position
+SeeAlso: AH=05h,AH=07h
+--------b-5F07-------------------------------
+INT 5F - HP 95LX/100LX/200LX GRAPHICS PRIMITIVES - PLOT POINT
+	AH = 07h
+	DX,CX = row,column of point
+Note:	also sets pen position to the specified point
+SeeAlso: AH=06h,AH=08h,AH=0Ch
+--------b-5F08-------------------------------
+INT 5F - HP 95LX/100LX/200LX GRAPHICS PRIMITIVES - MOVE PEN
+	AH = 08h
+	DX,CX = row,column of new pen position
+SeeAlso: AH=07h,AH=09h
+--------b-5F09-------------------------------
+INT 5F - HP 95LX/100LX/200LX GRAPHICS PRIMITIVES - SET PEN COLOR
+	AH = 09h
+	AL = new color (00h = white, 01h = black)
+SeeAlso: AH=08h,AH=0Ah,AH=0Bh
+--------b-5F0A-------------------------------
+INT 5F - HP 95LX/100LX/200LX GRAPHICS PRIMITIVES - SET REPLACEMENT RULE
+	AH = 0Ah
+	AL = new replacement rule
+	    00h force
+	    01h AND
+	    02h OR
+	    03h XOR
+	    ---100LX/200LX---
+	    04h InvForce
+	    05h InvAND
+	    06h	InvOR
+	    07h InvXOR
+	    08h Txt
+SeeAlso: AH=01h,AH=09h,AH=0Bh
+--------b-5F0B-------------------------------
+INT 5F - HP 95LX/100LX/200LX GRAPHICS PRIMITIVES - SET LINE TYPE
+	AH = 0Bh
+	CX = new line type
+Note:	the line type specifies 16 bits which are repeated over and over while
+	  drawing the pixels of a line
+SeeAlso: AH=09h,AH=0Ah
+--------b-5F0C-------------------------------
+INT 5F - HP 95LX/100LX/200LX GRAPHICS PRIMITIVES - GET PIXEL
+	AH = 0Ch
+	DX,CX = row,column of pixel to read
+Return: AX = pixel color
+SeeAlso: AH=07h
+--------b-5F0D-------------------------------
+INT 5F - HP 95LX/100LX/200LX GRAPHICS PRIMITIVES - GET IMAGE
+	AH = 0Dh
+	DX,CX = row,column of first corner
+	BP,SI = row,column of second corner
+	ES:DI -> image buffer (see #1906)
+Note:	the specified corners are included in the saved image
+SeeAlso: AH=0Eh
+
+Format of HP 95LX image buffer:
+Offset	Size	Description	(Table 1906)
+ 00h	WORD	number of planes (always 01h on HP 95LX)
+ 02h	WORD	number of bits/pixel (always 01h on HP 95LX)
+ 04h	WORD	image width in pixels
+ 06h	WORD	image height in pixels
+ 08h  N BYTEs	image data
+		requires (WIDTH+7)/8 * HEIGHT bytes
+--------b-5F0E-------------------------------
+INT 5F - HP 95LX/100LX/200LX GRAPHICS PRIMITIVES - PUT IMAGE
+	AH = 0Eh
+	AL = replacement rule (see #1907)
+	DX,CX = row,column of top left corner
+	ES:DI -> image buffer (see #1906)
+Note:	if the specified image does not fit completely on the screen, this call
+	  does nothing
+SeeAlso: AH=0Dh
+
+Bitfields for replacement rule:
+Bit(s)	Description	(Table 1907)
+ 2	invert image before applying rule
+ 1-0	function (00 force, 01 AND, 10 OR, 11 XOR)
+--------b-5F0F-------------------------------
+INT 5F - HP 95LX/100LX/200LX GRAPHICS PRIMITIVES - WRITE TEXT
+	AH = 0Fh
+	AL = rotate flag (if nonzero, rotate 90 degrees counter-clockwise)
+	DX,CX = row,column of first character's top left corner
+	ES:DI -> ASCIZ text
+--------b-5F10-------------------------------
+INT 5F - HP 100LX/200LX GRAPHICS PRIMITIVES - GET FONT POINTER
+	AH = 10h
+	CX = font size of desired font
+	    0808h  8x8	small  (80x25 text)
+	    0A0Bh 11x10 medium (64x18 text)
+	    100Ch 12x16 large  (40x16 text)
+Return: DX:AX -> ptr to font or 0000h:fontID# if built-in font
+SeeAlso: AH=11h
+--------b-5F11-------------------------------
+INT 5F - HP 100LX/200LX GRAPHICS PRIMITIVES - SET CURRENT FONT
+	AH = 11h
+	ES:DI -> ptr to font or 0000h:fontID# for built-in font
+Note:	this function should be called immediately after AH=10h with the
+	  pointer supplied by that call
+SeeAlso: AH=10h
 --------*-60---------------------------------
 INT 60 - reserved for user interrupt
 --------v-60---------------------------------
@@ -5488,11 +6245,6 @@ INT 61 - Banyan VINES - ENHANCED 3270 SERVICE
 	AX = 000Eh
 	other parameters, if any, unknown
 --------N-61000F-----------------------------
-INT 61 - Banyan VINES - COMM WINDOWS ENTRY POINT
-	AX = 000Fh
-	other parameters, if any, unknown
-Note:	This service is handled by the adapter driver
---------N-61000F-----------------------------
 INT 61 - Banyan VINES - VINES SOCKET API (FAR DATA)
 	AX = 000Fh
 	CX:BX -> request block (see #2709)
@@ -5565,7 +6317,7 @@ INT 61 - Banyan VINES - SEND MESSAGE ON A SOCKET
 Return: AX = status
 	    0000h successful
 	    00A5h resource not available
-Desc:	Opens a socket and returns a socket handle
+Desc:	send data to a socket identified by its socket handle
 
 Format of request block:
 Offset	Size	Description	(Table 2705)

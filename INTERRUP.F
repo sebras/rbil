@@ -1,5 +1,94 @@
 Interrupt List, part 6 of 13
 This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+--------D-2160-------------------------------
+INT 21 - DOS 3.0+ - "TRUENAME" - CANONICALIZE FILENAME OR PATH
+	AH = 60h
+	DS:SI -> ASCIZ filename or path
+	ES:DI -> 128-byte buffer for canonicalized name
+Return: CF set on error
+	    AX = error code
+		02h invalid component in directory path or drive letter only
+		03h malformed path or invalid drive letter
+	    ES:DI buffer unchanged
+	CF clear if successful
+	    AH = 00h
+	    AL = destroyed (00h or 5Ch or last char of current dir on drive)
+	    buffer filled with qualified name of form D:\PATH\FILE.EXT or
+	      \\MACHINE\PATH\FILE.EXT
+Desc:	determine the canonical name of the specified filename or path,
+	  corresponding to the undocumented TRUENAME command in COMMAND.COM
+Notes:	the input path need not actually exist
+	letters are uppercased, forward slashes converted to backslashes,
+	  asterisks converted to appropriate number of question marks, and
+	  file and directory names are truncated to 8.3 if necessary.  (DR-DOS
+	  3.41 and 5.0 do not expand asterisks)
+	'.' and '..' in the path are resolved
+	filespecs on local drives always start with "d:", those on network
+	  drives always start with "\\"
+	if path string is on a JOINed drive, the returned name is the one that
+	  would be needed if the drive were not JOINed; similarly for a
+	  SUBSTed, ASSIGNed, or network drive letter.	Because of this, it is
+	  possible to get a qualified name that is not legal under the current
+	  combination of SUBSTs, ASSIGNs, JOINs, and network redirections
+	under DOS 3.3 through 6.00, a device name is translated differently if
+	  the device name does not have an explicit directory or the directory
+	  is \DEV (relative directory DEV from the root directory works
+	  correctly).  In these cases, the returned string consists of the
+	  unchanged device name and extension appended to the string X:/
+	  (forward slash instead of backward slash as in all other cases) where
+	  X is the default or explicit drive letter.
+	functions which take pathnames require canonical paths if invoked via
+	  INT 21/AX=5D00h
+	supported by OS/2 v1.1 compatibility box
+	NetWare 2.1x does not support characters with the high bit set; early
+	  versions of NetWare 386 support such characters except in this call.
+	  In addition, NetWare returns error code 3 for the path "X:\"; one
+	  should use "X:\." instead.
+	for DOS 3.3-6.0, the input and output buffers may be the same, as the
+	  canonicalized name is built in an internal buffer and copied to the
+	  specified output buffer as the very last step
+	for DR DOS 6.0, this function is not automatically called when on a
+	  network.  Device drivers reportedly cannot make this call from their
+	  INIT function.  Using the same pointer for both input and output
+	  buffers is not supported in the April 1992 and earlier versions of
+	  DR DOS
+	Corel's CORELCDX and MSCDEX without the /S switch return canonical
+	  names of the form "\\D.\A.\path", where "D" is the CD-ROM drive
+	  letter and "A" appears to indicate the first physical CD-ROM drive;
+	  MSCDEX with the /S switch returns a canonical name with embedded
+	  blanks.  Novell DOS 7 NWCDEX as of the 11/16/94 update returns the
+	  same canonical path as MSCDEX; earlier revisions returned
+	  "Cdex.D:\path", where "D" is the CD-ROM drive letter
+SeeAlso: AX=5FB3h,AX=7160h,INT 2F/AX=1123h,INT 2F/AX=1221h
+--------D-2161-------------------------------
+INT 21 - DOS 3.0+ - UNUSED
+	AH = 61h
+Return: AL = 00h
+Note:	this function does nothing and returns immediately
+--------O-2161--BP6467-----------------------
+INT 21 U - OS/2 v1.x FAPI - OS/2 FILE SYSTEM JOIN/SUBST
+	AH = 61h
+	BP = 6467h ("dg")
+	AL = function
+	    00h list
+	    01h add
+	    02h delete
+	BX = drive number
+	CX = size of buffer
+	SI = type (0002h JOIN, 0003h SUBST)
+	ES:DI -> buffer
+Return: ???
+Notes:	used by JOIN and SUBST to communicate with the OS/2 file system
+	also supported by OS/2 v2.0+ Virtual DOS Machines
+--------D-2162-------------------------------
+INT 21 - DOS 3.0+ - GET CURRENT PSP ADDRESS
+	AH = 62h
+Return: BX = segment of PSP for current process
+Notes:	this function does not use any of the DOS-internal stacks and may
+	  thus be called at any time, even during another INT 21h call
+	the current PSP is not necessarily the caller's PSP
+	identical to the undocumented AH=51h
+SeeAlso: AH=50h,AH=51h
 --------D-216300-----------------------------
 INT 21 - DOS 2.25 only - GET LEAD BYTE TABLE ADDRESS
 	AX = 6300h
@@ -407,7 +496,7 @@ Return: CF set on error
 		01h yes
 		02h neither yes nor no
 --------D-2165-------------------------------
-INT 21 U - DOS 4+ internal - COUNTRY-DEPENDENT FILENAME CAPITALIZATION
+INT 21 U - DOS 4.0+ internal - COUNTRY-DEPENDENT FILENAME CAPITALIZATION
 	AH = 65h
 	AL = function
 	    A0h capitalize filename character
@@ -784,6 +873,27 @@ Notes:	DOS saves only the pointer and assumes that the contents of the list
 	  are never changed, and that regions do not overlap
 	if AL > 03h on entry, DOS returns CF set/AL=01h
 SeeAlso: AX=6F01h,AX=6F02h
+--------D-2170-------------------------------
+INT 21 - MS-DOS 7 (Windows95) - ??? (country-specific?)
+	AH = 70h
+	AL = subfunction
+	    00h get ??? info
+		CX = buffer size (3Ah bytes needed)
+		ES:DI -> buffer
+	    01h set above info
+	    02h set ??? info
+		CX = buffer size >= 26h;
+		first three bytes are skipped, the rest is copied to somewhere
+		  in the DOS data segment
+Return: CF clear if successful
+	    ES:DI buffer filled (func 00h)
+		returned was (among others) "ENU USA GR"..."AM PM M/d/yy"...
+		 "dddd,MMMMdd,yyyy" in the German Preview version, and "US"
+		 instead of "GR" in the US build 450 version (with German
+		 country setting)
+	CF set on error
+	    AX = error code
+		7000h if function not supported
 ----------217070BX6060-----------------------
 INT 21 - PCW Weather Card interface - GET DATA SEGMENT
 	AX = 7070h
@@ -862,20 +972,24 @@ Return: CF set on error
 	    other registers as for corresponding "old" DOS function
 Notes:	if error 7100h is returned, the old-style function should be called
 	AX=714Eh returns a "search handle" which must be passed to AX=714Fh;
-	  when the search is complete, AH=72h must be called to terminate
+	  when the search is complete, AX=71A1h must be called to terminate
 	  the search
 SeeAlso: AH=39h,AH=3Ah,AH=3Bh,AH=41h,AH=43h,AH=47h,AH=4Eh,AH=4Fh,AH=56h,AH=6Ch
-SeeAlso: AH=72h
---------D-21714E-----------------------------
-INT 21 - MS-DOS 7 (Windows95) - LONG FILENAME FIND FIRST MATCHING FILE
+SeeAlso: AX=714Eh,AX=714Fh,AX=71A0h,AX=71A1h
+--------D-21714ESI0000-----------------------
+INT 21 - Windows95 - LONG FILENAME - FIND FIRST MATCHING FILE
 	AX = 714Eh
+	SI = 0000h
 	DS:DX -> ASCIZ filespec
 	ES:DI -> FindData record (see #2695)
 Return: CF clear if successful
 	    AX = filefind handle (needed to continue search)
 	CF set on error
 	    AX = error code
-SeeAlso: AX=714Fh
+		7100h if function not supported
+Note:	this function is only available when IFSMgr is running, not under bare
+	  MS-DOS 7
+SeeAlso: AX=714Fh,AX=71A1h
 
 Format of Windows95 long filename FindData record:
 Offset	Size	Description	(Table 2695)
@@ -890,22 +1004,104 @@ Offset	Size	Description	(Table 2695)
  24h  8 BYTEs	reserved
  2Ch 260 BYTEs	ASCIZ full filename
 130h 14 BYTEs	ASCIZ short filename (for backward compatibility)
---------D-21714F-----------------------------
-INT 21 - MS-DOS 7 (Windows95) - LONG FILENAME FIND NEXT MATCHING FILE
+--------D-21714FSI0000-----------------------
+INT 21 - Windows95 - LONG FILENAME - FIND NEXT MATCHING FILE
 	AX = 714Fh
+	SI = 0000h
 	BX = filefind handle (from AX=714Eh)
 	ES:DI -> FindData record (see #2695)
 Return: CF clear if successful
 	CF set on error
-SeeAlso: AX=714Fh
---------D-2172-------------------------------
-INT 21 - MS-DOS 7 (Windows95) - "FindClose" - TERMINATE DIRECTORY SEARCH
-	AH = 72h
-	details not yet available
-Note:	this function must be called after starting a search with AX=714Eh,
+	    AX = error code
+		7100h if function not supported
+Note:	this function is only available when IFSMgr is running, not under bare
+	  MS-DOS 7
+SeeAlso: AX=714Eh,AX=71A1h
+--------D-217160-----------------------------
+INT 21 - Windows95 - LONG FILENAME - "TRUENAME" - CANONICALIZE FILENAME OR PATH
+	AX = 7160h
+	CX = ??? (apparently must be 0002h)
+	DS:SI -> ASCIZ filename or path
+	ES:DI -> 128-byte buffer for canonicalized name
+Return: CF set on error
+	    AX = error code
+		02h invalid component in directory path or drive letter only
+		03h malformed path or invalid drive letter
+	    ES:DI buffer unchanged
+	CF clear if successful
+	    AH = 00h
+	    AL = destroyed (00h or 5Ch or last char of current dir on drive)
+	    buffer filled with qualified name of form D:\PATH\FILE.EXT or
+	      \\MACHINE\PATH\FILE.EXT
+Desc:	determine the canonical name of the specified filename or path,
+	  corresponding to the undocumented TRUENAME command in COMMAND.COM
+SeeAlso: AH=60h
+--------D-2171A0-----------------------------
+INT 21 - Windows95 - LONG FILENAME - GET VOLUME INFORMATION
+	AX = 71A0h
+	DS:SI -> ASCIZ root name (e.g. "C:\")
+	ES:DI -> buffer for file system name
+	CX = size of ES:DI buffer
+Return: CF clear if successful
+	    BX = flags (see below)
+	    CX = maximum length of file name [usually 255]
+	    DX = maximum length of path [usually 260]
+	    ES:DI buffer filled (ASCIZ, e.g. "FAT","NTFS","CDFS")
+	CF set on error
+	    AX = error code
+		7100h if function not supported
+Note:	for the file system name buffer, 32 bytes should be sufficient; that's
+	 what is used in some sample code by Walter Oney from Microsoft.
+SeeAlso: AX=714Eh
+
+Bitfields for flags:
+Bit(s)	Description
+ 0	searches are case sensitive
+ 1	preserves case in directory entries
+ 2	uses Unicode characters in file and directory names
+ 3-13	reserved (0)
+ 14	supports DOS long filename functions
+ 15	volume is compressed
+--------D-2171A1-----------------------------
+INT 21 - Windows95 - LONG FILENAME - "FindClose" - TERMINATE DIRECTORY SEARCH
+	AX = 71A1h
+	BX = filefind handle (from AX=714Eh)
+Return: CF clear if successful
+	CF set on error
+	   AX = error code
+		7100h if function not supported
+Notes:	this function must be called after starting a search with AX=714Eh,
 	  to indicate that the search handle returned by that function will
 	  no longer be used
-SeeAlso: AH=4Eh,AH=71h
+	this function is only available when IFSMgr is running, not under bare
+	  MS-DOS 7
+SeeAlso: AH=4Eh,AX=714Eh,AX=714Fh
+--------D-2172-------------------------------
+INT 21 - MS-DOS 7 (Windows95) - ???
+	AH = 72h
+	details not available
+--------D-2173-------------------------------
+INT 21 - MS-DOS 7 (Windows95) - DRIVE LOCKING ???
+	AH = 73h
+	AL = subfunction
+	    00h get ???: CL =
+		00h: drive flag???
+		01h: ??? flag
+	    01h set ???: CL =
+		00h: drive flag???
+		    set to 06h if CH bit 1 =1, else to 00h
+		01h: ??? flag
+		    set flag bit 3 to bit 3 of CH
+	DL = drive (0=current, 1=A:, etc.)
+Return: CF clear if successful
+	    for AL=00h:
+		AL = value of CL on entry
+		for CL=00h: AH = flag and 06h (i.e. bits 1 and 2 used)
+		for CL=01h: AH = flag and 08h (i.e. bit 3 used)
+		(flag being taken from a table of bytes)
+	CF set on error
+	    AX = error code
+		7300h if function not supported
 --------v-2176-------------------------------
 INT 21 - VIRUS - "Klaeren"/"Hate" - INSTALLATION CHECK
 	AH = 76h
@@ -929,7 +1125,7 @@ INT 21 - WATCH.COM v3.2+ - INSTALLATION CHECK
 Return: AX = 6177h
 Note:	WATCH.COM is part of the "TSR" package by TurboPower Software
 SeeAlso: INT 16/AX=7761h
-----------217BCE-----------------------------
+--------v-217BCE-----------------------------
 INT 21 - VIRUS - "Whisper"/"Taipan" - INSTALLATION CHECK???
 	AX = 7BCEh
 Return: ???
@@ -5451,7 +5647,7 @@ Offset	Size	Description	(Table 1167)
  00h	WORD	0045h (length of following data)
  02h	BYTE	77h (subfunction "Set Queue Server Current Status")
  03h	DWORD	(big-endian) object ID of queue
- 02h 64 BYTEs	server status record (format depends on server)
+ 07h 64 BYTEs	server status record (format depends on server)
 		first four bytes should contain estimated "price" for an
 		  average job
 
@@ -7713,6 +7909,61 @@ Format of NetWare reply buffer:
 Offset	Size	Description	(Table 1274)
  00h	DWORD	disk space limit
  04h	DWORD	disk space currently in use by object
+--------N-21F216SF33-------------------------
+INT 21 - Novell NetWare v4 - GET EXTENDED VOLUME INFORMATION
+	AX = F216h subfn 33h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #2733)
+	ES:DI -> reply buffer (see #2734)
+Return: AL = status (see #1572 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+
+Format of NetWare "Get Extended Volume Information" request buffer:
+Offset	Size	Description	(Table 2733)
+ 00h	WORD	length of following data
+ 02h	BYTE	33h (subfunction "Get Extended Volume Information")
+ 03h	DWORD	volume number
+SeeAlso: #2734
+
+Format of NetWare "Get Extended Volume Information" reply buffer:
+Offset	Size	Description	(Table 2734)
+ 00h	WORD	length of returned data
+ 02h	DWORD	volume type
+ 06h	DWORD	status flag bits
+ 0Ah	DWORD	sector size
+ 0Eh	DWORD	sectors per cluster
+ 12h	DWORD	total clusters in volume
+ 16h	DWORD	free clusters
+ 1Ah	DWORD	freeable suballocated clusters
+ 1Eh	DWORD	freeable in-limbo sectors
+ 22h	DWORD	non-freeable in-limbo sectors
+ 26h	DWORD	non-freeable available suballocated sectors
+ 2Ah	DWORD	unuable suballocated sectors
+ 2Eh	DWORD	total suballocated clusters
+ 32h	DWORD	number of data streams
+ 36h	DWORD	number of in-limbo data streams
+ 3Ah	DWORD	age of oldest deleted file in clock ticks
+ 3Eh	DWORD	number of compressed data streams
+ 42h	DWORD	number of compressed in-limbo data streams
+ 46h	DWORD	number of uncompressable data streams
+ 4Ah	DWORD	number of precompressed sectors
+ 4Eh	DWORD	number of compressed sectors
+ 52h	DWORD	number of migrated files
+ 56h	DWORD	number of migrated sectors
+ 5Ah	DWORD	number of clusters used by FAT
+ 5Eh	DWORD	number of clusters used by directories
+ 62h	DWORD	number of clusters used by extended directories
+ 66h	DWORD	total number of directory entries
+ 6Ah	DWORD	number of unused directory entries
+ 6Eh	DWORD	total number of extended directory extants
+ 72h	DWORD	number of unused extended directory extants
+ 76h	DWORD	number of extended attributes defined
+ 7Ah	DWORD	number of extended-attribute extants used
+ 7Eh	DWORD	object ID for Directory Services
+ 82h	DWORD	date and time volume last modified
+ 86h	var	counted??? volume name string
+SeeAlso: #2733
 --------N-21F217SF1C-------------------------
 INT 21 - Novell NetWare v3+ - GET CONNECTION INFORMATION
 	AX = F217h subfn 1Ch
@@ -7739,7 +7990,82 @@ Offset	Size	Description	(Table 1276)
  06h 48 BYTEs	user name
  36h  7 BYTEs	login time (see #1258)
  3Dh	BYTE	reserved
---------N-21F217SF1C-------------------------
+--------N-21F217SF1D-------------------------
+INT 21 - Novell NetWare v4 - CHANGE CONNECTION STATE
+	AX = F217h subfn 1Dh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #2729)
+	ES:DI -> reply buffer
+Return: AL = status (see #1572 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+
+Format of NetWare "Change Connection State" requst buffer:
+Offset	Size	Description	(Table 2729)
+ 00h	WORD	length of following data
+ 02h	BYTE	1Dh (subfunction "Change Connection State")
+ 03h	DWORD	new state
+--------N-21F217SF1E-------------------------
+INT 21 - Novell NetWare v4 - SET WATCHDOG DELAY INTERVAL
+	AX = F217h subfn 1Eh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #2732)
+	ES:DI -> reply buffer
+Return: AL = status (see #1572 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+
+Format of NetWare "Set Watchdog Delay Interval" request buffer:
+Offset	Size	Description	(Table 2732)
+ 00h	WORD	length of following data
+ 02h	BYTE	1Eh (subfunction "Set Watchdog Delay Interval")
+ 03h	DWORD	interval in minutes
+--------N-21F217SF1F-------------------------
+INT 21 - Novell NetWare v4 - GET CONNECTION LIST
+	AX = F217h subfn 1Fh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #2731)
+	ES:DI -> reply buffer
+Return: AL = status (see #1572 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+
+Format of NetWare "Get Connection List" request buffer:
+Offset	Size	Description	(Table 2731)
+ 00h	WORD	length of following data
+ 02h	BYTE	1Fh (subfunction "Get Connection List")
+ 03h	DWORD	object ID
+ 07h	DWORD	??? (initialize to FFFFFFFFh before first call)
+--------N-21F217SF33-------------------------
+INT 21 - Novell NetWare v2.2+ - GET VOLUME EXTENDED INFORMATION
+	AX = F217h subfn 33h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #2727)
+	ES:DI -> reply buffer (see #2728)
+Return: AX = status (see #1572 at INT 2F/AX=7A20h/BX=0000h)
+
+Format of NetWare "Get Volume Extended Information" request buffer:
+Offset	Size	Description	(Table 2727)
+ 00h	WORD	0002h (length of following data)
+ 02h	BYTE	33h (subfunction "Get Volume Extended Information")
+ 03h	BYTE	volume ID
+SeeAlso: #2728
+
+Format of NetWare "Get Volume Extended Information" reply buffer:
+Offset	Size	Description	(Table 2728)
+ 00h	WORD	(call) length of buffer
+		(ret) length of returned data
+ 02h	DWORD	???
+ 06h	DWORD	features
+		bit 0: suballocation
+		bit 1: compressoin
+		bit 2: migration
+		bit 3: auditing
+ 0Ah 31 DWORDs	???
+ 86h	var	ASCIZ volume name
+SeeAlso: #2727
+--------N-21F217SF41-------------------------
 INT 21 - Novell NetWare v2.2+ - ADD OBJECT TO SET
 	AX = F217h subfn 41h
 	BX = number of fragments in request packet (max 5)
@@ -7949,7 +8275,7 @@ Return: AL = status
 	reply buffer filled
 SeeAlso: AX=F217h/SF=F3h
 
-Format of NetWare request buffer:
+Format of NetWare "Convert Path to Directory Entry" request buffer:
 Offset	Size	Description	(Table 1291)
  00h	WORD	length of following data
  02h	BYTE	F4h (subfunction "Convert Path to Directory Entry")
@@ -7957,10 +8283,25 @@ Offset	Size	Description	(Table 1291)
  04h	BYTE	length of directory path
  05h  N BYTEs	directory path (must be fully qualified if no handle specified)
 
-Format of NetWare reply buffer:
+Format of NetWare "Convert Path to Directory Entry" reply buffer:
 Offset	Size	Description	(Table 1292)
  00h	BYTE	(ret) volume number
  01h	DWORD	(ret) directory entry number
+--------N-21F217SFFE-------------------------
+INT 21 - Novell NetWare v4 - CLEAR CONNECTION NUMBER
+	AX = F217h subfn FEh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #2730)
+	ES:DI -> reply buffer
+Return: AL = status (see #1572 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+
+Format of NetWare "Clear Connection Number" request buffer:
+Offset	Size	Description	(Table 2730)
+ 00h	WORD	length of following data
+ 02h	BYTE	FEh (subfunction "Clear Connection Number")
+ 03h	DWORD	connection number
 --------N-21F244-----------------------------
 INT 21 - Novell NetWare - FILE SERVICES - ERASE FILES
 	AX = F244h
@@ -8555,949 +8896,4 @@ INT 21 - VIRUS - "CIDER" - INSTALLATION CHECK
 	AX = FEFEh
 Return: SI = 1994h if resident
 SeeAlso: AX=FEDCh"VIRUS",AH=FFh"VIRUS"
---------D-21FF-------------------------------
-INT 21 - DOS v2.11-2.13 - OEM FUNCTION
-	AH = FFh
-Return: AL = 00h if no OEM function handler installed (see AH=F8h"OEM")
-SeeAlso: AH=F8h"OEM",AH=FEh"OEM"
---------K-21FF-------------------------------
-INT 21 - CED (Command EDitor) - INSTALLABLE COMMANDS
-	AH = FFh
-	AL = subfunction
-	    00h add installable command
-		BL = mode
-		    bit 0 = 1 callable from DOS prompt
-		    bit 1 = 1 callable from application
-		DS:SI -> CR-terminated command name
-		ES:DI -> FAR routine entry point
-	    01h remove installable command
-		DS:SI -> CR-terminated command name
-	    02h reserved, may be used to test for CED installation
-Return: CF clear if successful
-	CF set on error
-	    AX = error code
-		01h invalid function
-		02h command not found (subfunction 01h only)
-		08h insufficient memory (subfunction 00h only)
-		0Eh bad data (subfunction 00h only)
-	AH = FFh if CED not installed
-Program: CED is a shareware DOS command-line enhancer by Christopher J. Dunford
-SeeAlso: AX=0A00h
---------E-21FF-------------------------------
-INT 21 - DJ GO32.EXE 80386+ DOS extender - DOS EXTENSIONS
-	AH = FFh
-	AL = function
-	    01h create file
-	    02h open file
-	    03h get file statistics
-	    04h get time of day
-	    05h set time of day
-	    06h stat
-	    07h system
-Program: GO32.EXE is a DOS extender included as part of the 80386 port of the
-	  GNU C/C++ compiler by DJ Delorie and distributed as DJGPP
-SeeAlso: INT 10/AH=FFh"GO32"
---------K-21FF-------------------------------
-INT 21 - DOSED.COM - INSTALLATION CHECK
-	AH = FFh
-	DS:SI -> "DOSED"
-	ES = 0000h
-Return: ES:DI -> "DOSED" if installed
-Program: DOSED is a free DOS commandline editor/history buffer by Sverre H.
-	  Huseby
---------v-21FF-------------------------------
-INT 21 - VIRUS - "Sunday", "Tumen 0.5", "Hero" - INSTALLATION CHECK
-	AH = FFh
-Return: AH = 00h if "Tumen 0.5" or "Hero" resident
-	AX = 0400h if "Sunday" resident
-SeeAlso: AX=FEDCh"VIRUS",AX=FF0Fh
---------E-21FF-------------------------------
-INT 21 UP - Rational Systems DOS/4GW - API
-	AH = FFh
-	DH = function (00h-17h) (see also separate entries below)
-	DL = subfunction or argument
-Return: CF clear if valid function number
-	    AX = status???
-	CF set if invalid function
-SeeAlso: INT 15/AX=BFDCh
---------E-21FF--DH00-------------------------
-INT 21 UP - Rational Systems DOS/4GW - VERSION CHECK???
-	AH = FFh
-	DH = 00h
-	DL = ??? (78h seen)
-Return: CF clear
-	EAX = 4734FFFFh (high word is byte-swapped "4G") if DOS/4G installed
-Note:	Quarterdeck's DESQview/X X Toolkit library uses this call to determine
-	  whether the direct-mapped linear 4GB segment's selector is 34h or 38h
-SeeAlso: INT 21/AH=FFh"DOS/4GW"
---------E-21FF--DH02-------------------------
-INT 21 UP - Rational Systems DOS/4GW - SET ???
-	AH = FFh
-	DH = 02h
-	DL = ???
-Return: CF clear
---------E-21FF--DH05-------------------------
-INT 21 UP - Rational Systems DOS/4GW - ???
-	AH = FFh
-	DH = 05h
-	BX = ???
-Return: ???
---------E-21FF--DH06-------------------------
-INT 21 UP - Rational Systems DOS/4GW - ???
-	AH = FFh
-	DH = 06h
-	BX = ???
-Return: ???
---------E-21FF--DH07-------------------------
-INT 21 UP - Rational Systems DOS/4GW - ???
-	AH = FFh
-	DH = 07h
-	BX = ???
-Return: ???
---------E-21FF--DH08-------------------------
-INT 21 UP - Rational Systems DOS/4GW - ???
-	AH = FFh
-	DH = 08h
-	BX = ???
-	CX = ???
-	ES = ???
-Return: ???
---------E-21FF--DH09-------------------------
-INT 21 UP - Rational Systems DOS/4GW - GET ???
-	AH = FFh
-	DH = 09h
-Return: ES:BX -> ???
---------E-21FF--DH0A-------------------------
-INT 21 UP - Rational Systems DOS/4GW - ???
-	AH = FFh
-	DH = 0Ah
-	AL = ???
-	BX = ???
-	CX = ???
-Return: ES = ??? or 0000h
---------E-21FF--DH0B-------------------------
-INT 21 UP - Rational Systems DOS/4GW - ???
-	AH = FFh
-	DH = 0Bh
-	AL = ???
-	BX = ???
-	CX = ???
-Return: ???
---------E-21FF--DH0C-------------------------
-INT 21 UP - Rational Systems DOS/4GW - GET/SET ???
-	AH = FFh
-	DH = 0Ch
-	DL = ??? (00h or 01h)
-Return: CF clear if successful
-	    AL = previous value of ???
-	CF set on error (DL out of range)
-	    AX = FFFFh
---------E-21FF--DH0D-------------------------
-INT 21 UP - Rational Systems DOS/4GW - ???
-	AH = FFh
-	DH = 0Dh
-	???
-Return: ???
---------E-21FF--DH0E-------------------------
-INT 21 UP - Rational Systems DOS/4GW - ???
-	AH = FFh
-	DH = 0Eh
-Return: DX:AX -> XBRK structure (see #0382 at INT 15/AX=BF02h)
-	BX = ???
-	CX = ???
-SeeAlso: INT 15/AX=BF02h
---------E-21FF--DH0F-------------------------
-INT 21 UP - Rational Systems DOS/4GW - ???
-	AH = FFh
-	DH = 0Fh
-	???
-Return: ???
---------E-21FF--DH10-------------------------
-INT 21 UP - Rational Systems DOS/4GW - ???
-	AH = FFh
-	DH = 10h
-	AL = ???
-	BX = ???
-	CX = ???
-	DI = ???
-	SI = ???
-Return: ???
-Note:	among other things, frees two memory blocks via INT 21/AH=49h
---------E-21FF--DH11-------------------------
-INT 21 UP - Rational Systems DOS/4GW - NOP
-	AH = FFh
-	DH = 11h
---------E-21FF--DH12-------------------------
-INT 21 UP - Rational Systems DOS/4GW - EXCHANGE ??? POINTERS
-	AH = FFh
-	DH = 12h
-	DS:SI -> new ???
-	ES:DI -> new ???
-Return: DS:SI -> previous ???
-	ES:DI -> previous ???
---------E-21FF--DH13-------------------------
-INT 21 UP - Rational Systems DOS/4GW - ???
-	AH = FFh
-	DH = 13h
-	AL = ???
-	ES = ???
-Return: ???
---------E-21FF--DH14-------------------------
-INT 21 UP - Rational Systems DOS/4GW - ???
-	AH = FFh
-	DH = 14h
-	BX = ???
-	CX = ???
-Return: CF clear
-	    AX = ???
-	    DX = ???
---------E-21FF--DH15-------------------------
-INT 21 UP - Rational Systems DOS/4GW - GET ??? FUNCTIONS
-	AH = FFh
-	DH = 15h
-Return: CF clear
-	    DX:AX -> FAR function for ???
-	    CX:BX -> FAR function for ???
-	    SI:DI -> FAR function for ???
---------E-21FF--DH16-------------------------
-INT 21 UP - Rational Systems DOS/4GW - GET ???
-	AH = FFh
-	DH = 16h
-Return: AX = ???
---------E-21FF--DH17-------------------------
-INT 21 UP - Rational Systems DOS/4GW - ???
-	AH = FFh
-	DH = 17h
-	AL = ???
-	DL = ???
-Return: ???
---------N-21FF00-----------------------------
-INT 21 - TopWare Network OS v5.10+ - GET SYSTEM INFORMATION
-	AX = FF00h
-	CL = what to get
-	    00h user information (see #1319)
-	    01h drive mapping (see #1320)
-	    02h printer server(s)
-	    05h local DOS drive number
-Return: ES:BX -> desired information
-Program: TopWare Network Operating System is manufactured by Grand Computer
-	  Company
-Note:	this call is only supported on Workstations, not on the server
-SeeAlso: AX=FF04h,INT 2F/AX=FF00h
-
-Format of TopWare user information:
-Offset	Size	Description	(Table 1319)
- 00h	BYTE	node ID
- 01h 15 BYTEs	user name
- 10h	WORD	user number
- 12h	BYTE	group number
-
-Format of TopWare drive mapping [array]:
-Offset	Size	Description	(Table 1320)
- 00h	BYTE	bits 6-0: drive number (1=A:, etc.)
-		bit 7: this is a server drive
- 01h  3 BYTEs	mapping drive (for example, "C:\")
- 04h 64 BYTEs	current directory
---------E-21FF00DX0078-----------------------
-INT 21 - Rational Systems DOS/4G - INSTALLATION CHECK
-	AX = FF00h
-	DX = 0078h
-Return: AL <> 00h if installed
-	    GS = segment of kernel if nonzero
-SeeAlso: INT 15/AX=BF02h
---------N-21FF04-----------------------------
-INT 21 - TopWare Network OS v5.10+ - GET/SET DEFAULT FILE PROTECTION ATTRIBS
-	AX = FF04h
-	CL = function
-	    00h get protections
-		Return: BH = read attribute
-			BL = write attribute
-	    01h set protections
-		BH = read attribute
-		BL = write attribute
-Note:	this function is supported only on Workstations, not on the server
-SeeAlso: AX=FF00h"TopWare"
---------v-21FF0F-----------------------------
-INT 21 - FLU_SHOT+ v1.83 - INSTALLATION CHECK
-	AX = FF0Fh
-Return: AX = 0101h if resident
-Program: FLU_SHOT+ is an antivirus/antitrojan program by Ross M. Greenberg and
-	  Software Concepts Design
-Note:	the "PSQR/1720" virus calls this function to determine whether
-	  FLU_SHOT+ is present
-SeeAlso: AH=FFh"VIRUS",AX=FF10h
---------v-21FF10-----------------------------
-INT 21 - VIRUS - "Twins" - INSTALLATION CHECK
-	AX = FF10h
-Return: AL = 07h if resident
-SeeAlso: AX=FF0Fh,AX=FFFEh
---------N-21FF80DHFF-------------------------
-INT 21 - TopWare Network OS v5.10+ - SEND MESSAGE
-	AX = FF80h
-	DH = FFh
-	DL = destination address (FFh for broadcast)
-	CX = message length (max 2000)
-	DS:SI -> message to be sent (see #1321)
-Return: nothing
-Program: TopWare Network Operating System is manufactured by Grand Computer
-	  Company
-Notes:	this function is supported on both Workstations and the server
-	there is no guarantee that the message will be received correctly, or
-	  at all, by the destination
-
-Format of TopWare message:
-Offset	Size	Description	(Table 1321)
- 00h	BYTE	type code
-		07h TopSend
-		11h user application
-		other reserved for TopWare
- 01h	var	data
-Note:	sending messages with a type code other than 11h will cause
-	  unpredictable results
---------N-21FF82-----------------------------
-INT 21 - TopWare Network OS v5.10+ - GET STATION ADDRESS
-	AX = FF82h
-Return: AL = station address
-Note:	this function is supported on both Workstations and the server
-SeeAlso: AX=FF91h
---------N-21FF8C-----------------------------
-INT 21 - TopWare Network OS v5.10+ - GET STATUS OF TopShow/Emulated FUNCTION
-	AX = FF8Ch
-	BL = subfunction
-	    00h get TopShow status
-	    FFh get Emulated status
-Return: AL = status
-	    00h not installed
-	    01h already installed
---------N-21FF8D-----------------------------
-INT 21 - TopWare Network OS v5.10+ - CALL TopShow FUNCTION
-	AX = FF8Dh
-	CH = monochrome flag (01h monochrome, 00h not monochrome)
-	CL = screen mode of station to be viewed (see #1322)
-	BL = graphic page number for monochrome
-Return: AL = status (00h successful, else failed)
-SeeAlso: AX=FF8Eh,AX=FFCFh
-
-(Table 1322)
-Values for TopWare screen mode:
- 00h	text mode
- 01h	720x348
- 02h	640x408
- 03h	720x352
- 04h	640x390
- 05h	reserved
---------N-21FF8E-----------------------------
-INT 21 - TopWare Network OS v5.10+ - CANCEL TopShow FUNCTION
-	AX = FF8Eh
-Return: AL = 00h (successful, TopShow removed)
-SeeAlso: AX=FF8Dh
---------N-21FF91-----------------------------
-INT 21 - TopWare Network OS v5.10+ - GET FILE SERVER STATION NUMBER
-	AX = FF91h
-Return: AL = station number of file server
-SeeAlso: AX=FF82h
---------N-21FF97-----------------------------
-INT 21 - TopWare Network OS v5.10+ - GET MAXIMUM STATION NUMBER (server only)
-	AX = FF97h
-Return: AL = maximum station number
-SeeAlso: AX=FF98h
---------N-21FF98-----------------------------
-INT 21 - TopWare Network OS v5.10+ - GET MAXIMUM FILE NUMBER (server only)
-	AX = FF98h
-Return: AL = maximum file
-SeeAlso: AX=FF97h
---------N-21FF9A-----------------------------
-INT 21 - TopWare Network OS v5.10+ - RECEIVE OF USER-DEFINED PACKETS
-	AX = FF9Ah
-	ES:BX -> buffer for user-defined packet (see #1323)
-Return: nothing
-
-Format of TopWare user-defined packet:
-Offset	Size	Description	(Table 1323)
- 00h	BYTE	FFh
- 01h	WORD	(call) length of data field plus 3
-		(ret) length of received message (0000h if none received)
- 03h	BYTE	destination ID (FFh for broadcast message)
- 04h	BYTE	sending station ID
- 05h	BYTE	type code (11h; all other codes reserved for TopWare)
- 06h  N BYTEs	received message
---------N-21FF9F-----------------------------
-INT 21 - TopWare Network OS v5.10+ - ENABLE/DISABLE TopTerm SERVICE
-	AX = FF9Fh
-	CL = new state (00h disable [disregard TopTerm packets], 01h enable)
-Return: AL = status (00h successful, FFh failed)
-Note:	this function is only supported by Workstations, not the server
---------N-21FFB0-----------------------------
-INT 21 - TopWare Network OS v5.10+ - GET SPOOLER PRINTING PRIORITY
-	AX = FFB0h
-Return: AL = priority status (see #1324)
-SeeAlso: AX=FFB1h
-
-Bitfields for TopWare printer priority status:
-Bit(s)	Description	(Table 1324)
- 2	LPT3 has high priority
- 1	LPT2 has high priority
- 0	LPT1 has high priority
---------N-21FFB1-----------------------------
-INT 21 - TopWare Network OS v5.10+ - SET SPOOLER PRINTING PRIORITY
-	AX = FFB1h
-	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
-	CH = new priority (00h normal, 01h high)
-Return: nothing
-SeeAlso: AX=FFB0h
---------N-21FFB3-----------------------------
-INT 21 - TopWare Network OS v5.10+ - GET DEFAULT START-OF-JOB FORMFEED STATUS
-	AX = FFB3h
-Return: AL = starting formfeed status (see #1325)
-SeeAlso: AX=FFB4h,AX=FFC0h
-
-Bitfields for TopWare printer start-of-job formfeed status:
-Bit(s)	Description	(Table 1325)
- 2	LPT3 has formfeed enabled
- 1	LPT2 has formfeed enabled
- 0	LPT1 has formfeed enabled
---------N-21FFB4-----------------------------
-INT 21 - TopWare Network OS v5.10+ - SET DEFAULT START-OF-JOB FORMFEED STATUS
-	AX = FFB4h
-	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
-	CH = new formfeed status (00h off, 01h on)
-Return: nothing
-SeeAlso: AX=FFB3h,AX=FFC1h
---------N-21FFBB-----------------------------
-INT 21 - TopWare Network OS v5.10+ - GET PRINTER SERVER STATION ADDRESS
-	AX = FFBBh
-	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
-Return: AL = current mapping printer server station number
-	    00h if local
-SeeAlso: AX=FFBCh
---------N-21FFBC-----------------------------
-INT 21 - TopWare Network OS v5.10+ - CANCEL TopShow FUNCTION
-	AX = FFBCh
-	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
-	CL = printer server station address or 00h for local printer
-Return: AL = status (00h successful, else failed)
-SeeAlso: AX=FFBBh
---------N-21FFBD-----------------------------
-INT 21 - TopWare Network OS v5.10+ - GET CURRENT AUTOPRINT TIME
-	AX = FFBDh
-	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
-Return: AX = current AutoPrint timeout in clock ticks
-SeeAlso: AX=FFBEh
---------N-21FFBE-----------------------------
-INT 21 - TopWare Network OS v5.10+ - SET AUTOPRINT TIME
-	AX = FFBEh
-	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
-	BX = timeout in clock ticks
-SeeAlso: AX=FFBDh
---------N-21FFBF-----------------------------
-INT 21 - TopWare Network OS v5.10+ - GET LOGON USER INFORMATION
-	AX = FFBFh
-	DX:BX -> buffer for logon information (see #1326)
-Return: AL = status (00h successful, else failed)
-	AH = number of logged-in stations
-
-Format of TopWare logon information:
-Offset	Size	Description	(Table 1326)
- 00h	BYTE	station address
- 01h 15 BYTEs	username
---------N-21FFC0-----------------------------
-INT 21 - TopWare Network OS v5.10+ - GET DEFAULT END-OF-JOB FORMFEED STATUS
-	AX = FFC0h
-Return: AL = ending formfeed status (see #1327)
-SeeAlso: AX=FFB3h,AX=FFC1h
-
-Bitfields for TopWare printer end-of-job formfeed status:
-Bit(s)	Description	(Table 1327)
- 2	LPT3 has formfeed enabled
- 1	LPT2 has formfeed enabled
- 0	LPT1 has formfeed enabled
---------N-21FFC1-----------------------------
-INT 21 - TopWare Network OS v5.10+ - SET DEFAULT END-OF-JOB FORMFEED STATUS
-	AX = FFC1h
-	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
-	CH = new formfeed status (00h off, 01h on)
-Return: nothing
-SeeAlso: AX=FFB4h,AX=FFC0h
---------N-21FFC2-----------------------------
-INT 21 - TopWare Network OS v5.10+ - GET DEFAULT COPIES OF SPOOLING FILE
-	AX = FFC2h
-	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
-Return: AL = default number of copies printed
-SeeAlso: AX=FFC7h
---------N-21FFC3-----------------------------
-INT 21 - TopWare Network OS v5.10+ - GET SHARING STATUS OF PRINTER SERVER
-	AX = FFC3h
-Return: AL = sharing status of printers (see #1328)
-	    FFh if not a printer server
-
-Bitfields for TopWare printer sharing status:
-Bit(s)	Description	(Table 1328)
- 2	LPT3 is shared
- 1	LPT2 is shared
- 0	LPT1 is shared
---------N-21FFC4-----------------------------
-INT 21 - TopWare Network OS v5.10+ - GET/SET LPT PORT ON PRINT SERVER
-	AX = FFC4h
-	BL = subfunction
-	    00h get
-		Return: AL = mapped printer port on print server
-	    01h set
-		CL = network printer port (00h LPT1, 01h LPT2, 02h LPT3)
-	CH = local printer (00h LPT1, 01h LPT2, 02h LPT3)
---------N-21FFC6-----------------------------
-INT 21 - TopWare Network OS v5.10+ - SET DEFAULT PRINT FILE HEADER
-	AX = FFC6h
-	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
-	CL = header state (00h off, 01h on)
-SeeAlso: AX=FFC8h
---------N-21FFC7-----------------------------
-INT 21 - TopWare Network OS v5.10+ - SET DEFAULT PRINT COPIES
-	AX = FFC7h
-	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
-	CL = new default number of copies to print
-SeeAlso: AX=FFC2h
---------N-21FFC8-----------------------------
-INT 21 - TopWare Network OS v5.10+ - GET DEFAULT PRINT FILE HEADER STATUS
-	AX = FFC8h
-Return: AL = header status for printers (see #1329)
-SeeAlso: AX=FFC6h
-
-Bitfields for TopWare print header status:
-Bit(s)	Description	(Table 1329)
- 2	LPT3 has headers enabled
- 1	LPT2 has headers enabled
- 0	LPT1 has headers enabled
---------N-21FFC9-----------------------------
-INT 21 - TopWare Network OS v5.10+ - SET PRINTER SHARING
-	AX = FFC9h
-	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
-	CL = new sharing state (00h off, 01h on)
-Return: AL = status (00h successful, FFh not printer server)
---------N-21FFCA-----------------------------
-INT 21 - TopWare Network OS v5.10+ - MOVE FILE FROM ONE PRINT SERVER TO ANOTHER
-	AX = FFCAh
-	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
-	CL = original printer server station address
-	BL = target printer server station address
-	DS:DX -> filename (12 bytes)
-Return: AL = status (00h successful, else failed)
-SeeAlso: AX=FFCBh
---------N-21FFCB-----------------------------
-INT 21 - TopWare Network OS v5.10+ - DELETE FILE FROM SPOOLING QUEUE
-	AX = FFCBh
-	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
-	CL = printer server station address
-	DS:DX -> filename (12 bytes)
-Return: AL = status (00h successful, else failed)
-SeeAlso: AX=FFCAh
---------N-21FFCC-----------------------------
-INT 21 - TopWare Network OS v5.10+ - GET PRINT SERVER'S SPOOLING QUEUE STATUS
-	AX = FFCCh
-	CL = printer server station address
-	BH = start item number of spooling file for print server
-	BL = number of the item to be retrieved
-	DS:DX -> buffer for queued file information (see #1330)
-Return: AL = status
-	    00h successful
-		AH = number of spool files
-		DS:DX buffer filled
-	    nonzero failed
-
-Format of TopWare queued file information buffer [16-item array, one element]:
-Offset	Size	Description	(Table 1330)
- 00h 12 BYTEs	filename
- 0Ch	DWORD	size
- 10h	WORD	date
- 12h	WORD	time
- 14h 15 BYTEs	username
- 23h	BYTE	count
- 24h	BYTE	flag: header
- 25h	BYTE	print number
---------N-21FFCD-----------------------------
-INT 21 - TopWare Network OS v5.10+ - GET STATUS OF ALL PRINT SERVERS
-	AX = FFCDh
-	DS:DX -> buffer for server status (see #1331)
-Return: AL = status
-	    00h successful
-		AH = number of print servers
-	    nonzero failed
-
-Format of TopWare server status:
-Offset	Size	Description	(Table 1331)
- 00h	BYTE	station address
- 01h 15 BYTEs	username
- 10h	BYTE	flag: 01h printer is shared, 00h sharing disabled
- 11h	BYTE	number of files pending in queue
---------N-21FFCF-----------------------------
-INT 21 - TopWare Network OS v5.10+ - CALL TopLook FUNCTION
-	AX = FFCFh
-	DH = page number (0-2, 2 is text mode)
-	DL = type
-	    00h look at specific screen
-	    01h AutoLook on
-	    FFh AutoLook off
-	BH = station number wishing to look
-	BL = station number to be looked at
-	CH = monochrome flag (01h monochrome, 00h not monochrome)
-	CL = screen mode (see #1322)
-Return: AL = status (00h successful, nonzero failed)
-SeeAlso: AX=FF8Dh
---------N-21FFD6-----------------------------
-INT 21 - TopWare Network OS v5.10+ - GET KEYCARD SERIAL NUMBER AND MAX USERS
-	AX = FFD6h
-	ES:BX -> 12-byte buffer for keycard serial number
-Return: CX = maximum number of users
-	ES:BX buffer filled
---------N-21FFD7-----------------------------
-INT 21 - TopWare Network OS v5.10+ - GET NETWORK PROTECTION ATTRIBUTES STATUS
-	AX = FFD7h
-Return: AL = status (00h disabled, 01h enabled)
---------N-21FFE3DL00-------------------------
-INT 21 - TopWare Network OS v5.10+ - INITIATE ACCESS TO SPECIFIC PACKET TYPE
-	AX = FFE3h
-	DL = 00h
-	BX = packet type for Ethernet header (IP = 0800h, ARP = 0806h, etc.)
-	ES:DI -> receive routine (see #1333)
-Return: CF clear if successful
-	    AX = handle number
-	CF set on error
-	    DH = error code (03h,05h,09h,0Ah,11h) (see #1332)
-SeeAlso: AX=FFE3h/DL=01h
-
-(Table 1332)
-Values for TopWare error code:
- 01h	invalid handle
- 03h	no interfaces of the specified type found
- 05h	bad packet type
- 09h	insufficient space
- 0Ah	type already being accessed
- 0Ch	unable to send packet (usually hardware error)
- 11h	invalid function
-
-(Table 1333)
-Values TopWare receive routine is called with:
-	AX = function
-	    0000h request packet buffer
-		CX = packet size
-		Return: ES:DI -> buffer or 0000h:0000h to discard packet
-	    0001h packet copied
-		CX = packet size
-		DS:SI -> copied packet (same as returned ES:DI above)
---------N-21FFE3DL01-------------------------
-INT 21 - TopWare Network OS v5.10+ - END ACCESS TO SPECIFIC PACKET TYPE
-	AX = FFE3h
-	DL = 01h
-	BX = handle returned by AX=FFE3h/DL=00h
-Return: CF clear if successful
-	CF set on error
-	    DH = error code (01h,11h) (see #1332)
-Note:	the specified access handle will no longer be valid after this call
-SeeAlso: AX=FFE3h/DL=00h
---------N-21FFE3DL02-------------------------
-INT 21 - TopWare Network OS v5.10+ - SEND PACKET
-	AX = FFE3h
-	DL = 02h
-	CX = length of data buffer
-	DS:SI -> buffer containing data
-Return: CF clear if successful
-	CF set on error
-	    DH = error code (0Ch,11h) (see #1332)
---------N-21FFE3DL03-------------------------
-INT 21 - TopWare Network OS v5.10+ - GET LOCAL NETWORK INTERFACE ADDRESS
-	AX = FFE3h
-	DL = 03h
-	ES:DI -> 6-byte buffer for address
-SeeAlso: AX=FFE3h/DL=00h
---------v-21FFFE-----------------------------
-INT 21 - VIRUS - "08/15"/"Many Fingers" - INSTALLATION CHECK
-	AX = FFFEh
-Return: AX = 0815h if resident
-SeeAlso: AX=FF10h,AX=FFFFh
---------v-21FFFF-----------------------------
-INT 21 - VIRUS - "Ontario", "Year 1992"/"B1M92" - INSTALLATION CHECK
-	AX = FFFFh
-Return: AX = 0000h if "Ontario" resident
-	AX = 1992h if "Year 1992"/"B1M92" resident
-SeeAlso: AX=FF0Fh,AX=FFFFh/CX=0000h,INT 6B"VIRUS"
---------v-21FFFFCX0000-----------------------
-INT 21 - VIRUS - "Revenge" - INSTALLATION CHECK
-	AX = FFFFh
-	CX = 0000h
-Return: CX = 0006h if resident
-SeeAlso: AX=FFFFh,INT 6B"VIRUS"
---------D-22---------------------------------
-INT 22 - DOS 1+ - PROGRAM TERMINATION ADDRESS
-Desc:	this vector specifies the address of the routine which is to be given
-	  control after a program is terminated; it should never be called
-	  directly, since it does not point at an interrupt handler
-Notes:	this vector is restored from the DWORD at offset 0Ah in the PSP during
-	  termination, and then a FAR JMP is performed to the address in INT 22
-	normally points at the instruction immediately following INT 21/AH=4Bh
-	  call which loaded the current program
-SeeAlso: INT 20,INT 21/AH=00h,INT 21/AH=31h,INT 21/AH=4Ch
---------G-22---------------------------------
-INT 22 - COMTROL HOSTESS i/ISA DEBUGGER - CHANGE FIRMWARE DEBUGGING PORT
-	AL = new firmware debugging port
-Return: ???
-SeeAlso: INT 21"COMTROL",INT 23"COMTROL"
---------D-23---------------------------------
-INT 23 - DOS 1+ - CONTROL-C/CONTROL-BREAK HANDLER
----DOS 1.x---
-Return: AH = 00h abort program
-	if all registers preserved, restart DOS call
----DOS 2+---
-	CF clear
-Return: all registers preserved
-	return via RETF with CF set or (MS-DOS 1,DR-DOS) RETF 2 with CF set
-	    DOS will abort program with errorlevel 0
-	else (RETF/RETF 2 with CF clear or IRET with CF ignored)
-	    interrupted DOS call is restarted
-Notes:	this interrupt is invoked whenever DOS detects a ^C or ^Break; it
-	  should never be called directly
-	MS-DOS 1.25 also invokes INT 23 on a divide overflow (INT 00)
-	MS-DOS remembers the stack pointer before calling INT 23, and if it is
-	  not the same on return, pops and discards the top word; this is what
-	  permits a return with RETF as well as IRET or RETF 2
-	MS-DOS 2.1+ ignores the returned CF if SP is the same on return as it
-	  was when DOS called INT 23, so RETF 2 will not terminate the program
-	Novell DOS 7 always pops a word if CF is set on return, so one should
-	  not return with RETF 2 and CF set or IRET with the stored flags' CF
-	  set
-	any DOS call may safely be made within the INT 23 handler, although
-	  the handler must check for a recursive invocation if it does
-	  call DOS
-SeeAlso: INT 1B
---------G-23---------------------------------
-INT 23 - COMTROL HOSTESS i/ISA DEBUGGER - GET CONFIGURATION INFORMATION
-	AL = query type
-	    00h get old config map
-		Return: AX = old config map
-	    01h get dual-ported RAM map
-		Return: BX:AX = dual-ported RAM map
-	    02h get SCC port map
-		Return: BX:AX = SCC port map
-SeeAlso: INT 22"COMTROL",INT 26"COMTROL"
---------D-24---------------------------------
-INT 24 C - DOS 1+ - CRITICAL ERROR HANDLER
-Notes:	invoked when a critical (usually hardware) error is encountered by DOS
-	  (see #1334); should never be called directly
-	when DOS terminates a program, it copies the previous value of the
-	  INT 24 vector out of the PSP (see #0603) and into the interrupt
-	  vector table
-SeeAlso: INT 21/AH=95h
-
-(Table 1334)
-Values critical error handler is called with:
-	AH = type and processing flags (see #1335)
-	AL = drive number if AH bit 7 clear
-	BP:SI -> device driver header (BP:[SI+4] bit 15 set if char device)
-	DI low byte contains error code if AH bit 7 set (see #1336)
-	STACK:	DWORD	return address for INT 24 call
-		WORD	flags pushed by INT 24
-		WORD	original AX on entry to INT 21
-		WORD	BX
-		WORD	CX
-		WORD	DX
-		WORD	SI
-		WORD	DI
-		WORD	BP
-		WORD	DS
-		WORD	ES
-		DWORD	return address for INT 21 call
-		WORD	flags pushed by INT 21
-Return:	AL = action code (see #1337)
-	SS,SP,DS,ES,BX,CX,DX preserved
-Notes:	the only DOS calls the handler may make are INT 21/AH=01h-0Ch,30h,59h
-	if the handler returns to the application by popping the stack, DOS
-	  will be in an unstable state until the first call with AH > 0Ch
-	for DOS 3.1+, IGNORE (AL=00h) is turned into FAIL (AL=03h) on network
-	  critical errors
-	if IGNORE specified but not allowed, it is turned into FAIL
-	if RETRY specified but not allowed, it is turned into FAIL
-	if FAIL specified but not allowed, it is turned into ABORT
-	(DOS 3.0+) if a critical error occurs inside the critical error
-	  handler, the DOS call is automatically failed (AL set to 03h and
-	  the INT 24 call skipped)
-
-Bitfields for critical error type and processing flags:
-Bit(s)	Description	(Table 1335)
- 7	clear = disk I/O error
-	set   = -- if block device, bad FAT image in memory
-		-- if char device, error code in DI
- 6	unused
- 5	Ignore allowed (DOS 3.0+)
- 4	Retry allowed (DOS 3.0+)
- 3	Fail allowed (DOS 3.0+)
- 2-1	disk area of error
-	00 = DOS area	01 = FAT
-	10 = root dir	11 = data area
- 0	set if write, clear if read
-
-(Table 1336)
-Values for critical error code:
- 00h	write-protection violation attempted
- 01h	unknown unit for driver
- 02h	drive not ready
- 03h	unknown command given to driver
- 04h	data error (bad CRC)
- 05h	bad device driver request structure length
- 06h	seek error
- 07h	unknown media type
- 08h	sector not found
- 09h	printer out of paper
- 0Ah	write fault
- 0Bh	read fault
- 0Ch	general failure
- 0Dh	(DOS 3.0+) sharing violation
- 0Eh	(DOS 3.0+) lock violation
- 0Fh	invalid disk change
- 10h	(DOS 3.0+) FCB unavailable
- 11h	(DOS 3.0+) sharing buffer overflow
- 12h	(DOS 4.0+) code page mismatch
- 13h	(DOS 4.0+) out of input
- 14h	(DOS 4.0+) insufficient disk space
-
-(Table 1337)
-Values for critical error handler action code:
- 00h	ignore error and continue processing request
- 01h	retry operation
- 02h	terminate program as though INT 21/AH=4Ch called (INT 20h for DOS 1.x)
- 03h	fail system call in progress
---------D-25---------------------------------
-INT 25 - DOS 1+ - ABSOLUTE DISK READ (except partitions > 32M)
-	AL = drive number (00h = A:, 01h = B:, etc)
-	CX = number of sectors to read (not FFFFh)
-	DX = starting logical sector number (0000h - highest sector on drive)
-	DS:BX -> buffer for data
-Return: CF clear if successful
-	CF set on error
-	    AH = status (see #1338)
-	    AL = error code (same as passed to INT 24 in DI)
-	    AX = 0207h if more than 64K sectors on drive -- use new-style call
-	may destroy all other registers except segment registers
-Notes:	original flags are left on stack, and must be popped by caller
-	this call bypasses the DOS filesystem
-	examination of CPWIN386.CPL indicates that if this call fails with
-	  error 0408h on an old-style (<32M) call, one should retry the
-	  call with the high bit of the drive number in AL set
-	Novell DOS 7 decides whether the old-style or new-style (>32M) version
-	  of INT 25 must be used solely on the basis of the partition's size,
-	  thus forcing use of the new-style call even for data in the first
-	  32M of the partition
-BUGS:	DOS 3.1 through 3.3 set the word at ES:[BP+1Eh] to FFFFh if AL is an
-	  invalid drive number
-	DR-DOS 3.41 will return with a jump instead of RETF, leaving the
-	  wrong number of bytes on the stack; use the huge-partition version
-	  (INT 25/CX=FFFFh) for all partition sizes under DR-DOS 3.41
-SeeAlso: INT 13/AH=02h,INT 25/CX=FFFFh,INT 26
-
-(Table 1338)
-Values for disk I/O status:
- 80h	device failed to respond (timeout)
- 40h	seek operation failed
- 20h	controller failed
- 10h	data error (bad CRC)
- 08h	DMA failure
- 04h	requested sector not found
- 03h	write-protected disk (INT 26 only)
- 02h	bad address mark
- 01h	bad command
---------D-25----CXFFFF-----------------------
-INT 25 - DOS 3.31+ - ABSOLUTE DISK READ (>32M hard-disk partition)
-	CX = FFFFh
-	AL = drive number (0=A, 1=B, etc)
-	DS:BX -> disk read packet (see #1339)
-Return: CF clear if successful
-	CF set on error
-	    AH = status (see #1338)
-	    AL = error code (same as passed to INT 24 in DI)
-	    AX = 0207h if more than 64K sectors on drive -- use new-style call
-	may destroy all other registers except segment registers
-Notes:	partition is potentially >32M (and requires this form of the call) if
-	  bit 1 of the device attribute word in the device driver is set
-	original flags are left on stack, and must be removed by caller
-	this call bypasses the DOS filesystem
-SeeAlso: INT 13/AH=02h,INT 25,INT 26/CX=FFFFh
-
-Format of disk read packet:
-Offset	Size	Description	(Table 1339)
- 00h	DWORD	sector number
- 04h	WORD	number of sectors to read
- 06h	DWORD	transfer address
---------k-25CDCD-----------------------------
-INT 25 - Stacker - GET DEVICE DRIVER ADDRESS
-	AX = CDCDh
-	DS:BX -> buffer for address (see #1340)
-	CX = 0001h
-	DX = 0000h
-Return: AX = CDCDh if Stacker installed
-	    DS:BX buffer filled
-Note:	not supported by Stacker Anywhere; to obtain the Stacker device
-	  driver address and to detect drives controlled by all versions
-	  of Stacker, INT 21/AX=4404h"Stacker" or lookup via the CDS and DPB
-	  should be preferred (see INT 21/AH=52h)
-	Stacker Anywhere does not link its built-in device driver into
-	  the standard device driver chain, but it can be found via CDS/DPB
-SeeAlso: INT 21/AX=4404h"Stacker"
-
-Format of Stacker v2+ driver address buffer:
-Offset	Size	Description	(Table 1340)
- 00h	WORD	signature CDCDh
- 02h	WORD	??? 0001h
- 04h	DWORD	pointer to Stacker signature at device driver offset 1Ah
-		  (see #1341)
-
-Format of Stacker v2+ device driver:
-Offset	Size	Description	(Table 1341)
- 00h	DWORD	pointer to next driver, offset=FFFFh if last driver
-		FFFFh:FFFFh for Stacker Anywhere
- 04h	WORD	device attributes (see #0859,#0860)
- 06h	WORD	device strategy entry point
- 08h	WORD	device interrupt entry point
- 0Ah	BYTE	number of subunits (drives) supported by driver
-		0 for Stacker Anywhere
- 0Bh  7 BYTEs	signature "STAC-CD" for Stacker and Stacker Anywhere
- 12h  7 BYTEs	???
- 19h	BYTE	always = 01h ?? (Stacker Anywhere points here)
- 1Ah	WORD	signature A55Ah (all other Stacker versions point here)
- 1Ch	WORD	Stacker version * 64h
-		0C8h = 200, 012Ch = 300, 0190h = 400 (also Stacker Anywhere)
- 1Eh	WORD	offset of volume-specific information offset table
-		(list of WORDs, one per drive, containing offsets to various
-		  information)
- 20h 56 BYTEs	n/a
- 58h	BYTE	volume number, set after INT 21/AX=4404h, INT 21/AX=4408h
-		(use to index into volume-specific info offset table,
-		should be set to FFh before and tested for change after)
- 59h 19 BYTEs	n/a
- 6Ch  4 BYTEs	ASCII string "SWAP"
- 70h 26 BYTEs	drive mapping table (one byte for each drive A: through Z:)
-		(only used for drives swapped by SSWAP.COM; other drives
-		compressed by Stacker can be found with the standard device
-		driver header signature (see INT 21/AH=52h)
----Stacker 4, Stacker Anywhere---
- 8Ah 40	BYTEs	???
- B2h  4 BYTEs	ASCII string "SWP2"
- B6h 26 BYTEs	drive table ???
- D0h 150 BYTEs	???
-166h 60 BYTEs	LZSINFO structure (see #1523 at INT 2F/AX=4A12h)
-SeeAlso: #1342,#0858 at INT 21/AH=52h
-
-Format of Stacker boot record:
-Offset	Size	Description	(Table 1342)
-1F0h  8 BYTEs	Stacker signature (first byte is CDh)
-1F8h	DWORD	pointer to start of Stacker device driver
-1FCh	WORD	Stacker volume number
-1FEh	WORD	???
-SeeAlso: #1341
---------c-25--FFSI4358-----------------------
-INT 25 - PC-CACHE.SYS - INSTALLATION CHECK
-	AL = FFh
-	SI = 4358h
-Return: SI = 6378h if installed
-	    CX = segment of device driver PC-CACHE.SYS
-	    DX = version (major in DH, minor in DL)
-Program: PC-CACHE.SYS is a small device driver used by PC-Cache v5.x to obtain
-	  access to certain disk drivers for devices such as Bernoulli drives
-SeeAlso: INT 13/AH=A0h
 --------!---Section--------------------------

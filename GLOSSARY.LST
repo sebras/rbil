@@ -1,5 +1,5 @@
 GLOSSARY
-Last Change 6/04/95.
+Last Change 8/13/95.
 
 A20
 	(Address line 20) The 80286 and higher CPUs allow addresses in
@@ -425,7 +425,7 @@ system or environment; a particular handle may be valid system-wide or
 may have meaning only for a particular process.  See also File Handle.
 
 HGC
-	(Hercules Graphics Controller) A monochrome video adapter capable
+	(Hercules Graphics Card) A monochrome video adapter capable
 of 720x352 monochrome graphics.  The HGC was the first non-IBM video
 adapter for the IBM PC.  See also CGA, MDA.
 
@@ -627,6 +627,13 @@ generated when a program accesses a page of virtual memory which is not
 located in RAM at the time.  The operating system's response is to load in
 the required page, possibly writing some other page out to disk in order
 to make room.  See also INT 0E.
+
+Page Register
+	A peripheral register or I/O port used to extend the addressing
+	range of some other register or I/O port.  The prime example are
+	the DMA page registers, which allow the DMA controller to address
+	more than 64K (since the DMA controller only contains 16 address
+	lines; this is the cause of the 64K DMA boundaries).
 
 Palette Register
 	A memory location on the video controller which specifies the actual

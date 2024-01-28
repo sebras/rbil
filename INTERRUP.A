@@ -1,20 +1,20 @@
-Interrupt List		Release 46			Last change 6/04/95
+Interrupt List		Release 47			Last change 8/13/95
 This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
 --------!---FILELIST-------------------------
 Please redistribute the following files unmodified as a group, in a quartet of
-archives named INTER46A through INTER46D (preferably the original authenticated
+archives named INTER47A through INTER47D (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
 	INTERRUP.A	INT 00 through INT 13/2F  \
 	INTERRUP.B	INT 13/30 through INT 15/4F\
 	INTERRUP.C	INT 15/50 through INT 1A/5F \  
-	INTERRUP.D	INT 1A/60 through INT 21/43  \	 total 1835 pages at
-	INTERRUP.E	INT 21/44 through INT 21/62   \	 60 lines per page,
-	INTERRUP.F	INT 21/63 through INT 25       > 1957 with INTPRINT -p
-	INTERRUP.G	INT 26 through INT 2F/4A      /	 (7319 entries)
-	INTERRUP.H	INT 2F/4B through INT 2F/DF  /	 (2709 tables)
-	INTERRUP.I	INT 2F/E0 through INT 5F    /
-	INTERRUP.J	INT 60 through INT 61	   /
+	INTERRUP.D	INT 1A through INT 21/43     \	 total 1856 pages at
+	INTERRUP.E	INT 21/44 through INT 21/5F   \	 60 lines per page,
+	INTERRUP.F	INT 21/60 through INT 21/FE    > 1979 with INTPRINT -p
+	INTERRUP.G	INT 21/FF through INT 2F/42   /	 (7400 entries)
+	INTERRUP.H	INT 2F/43 through INT 2F/CF  /	 (2734 tables)
+	INTERRUP.I	INT 2F/D0 through INT 5A    /
+	INTERRUP.J	INT 5B through INT 61	   /
 	INTERRUP.K	INT 62 through INT 6E	  /
 	INTERRUP.L	INT 6F through INT 7F	 /
 	INTERRUP.M	INT 80 through INT FF   /
@@ -31,7 +31,7 @@ PKZIP archives):
 	PORTS.LST	a listing of I/O ports
 	CATEGORY.KEY	descriptions of divider-line category letters
 	COMBINE.BAT	combine the pieces of the list into a single file
-The following files should be distributed in an archive called INTER46E:
+The following files should be distributed in an archive called INTER47E:
 	86BUGSnn.ZIP	programs to test for CPU bugs
 	INT.*		invoke interrupts from commandline
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
@@ -45,7 +45,7 @@ The following files should be distributed in an archive called INTER46E:
 	INTERVUE.EXE	indexed interrupt list browser
 	INTLIST.ICO	Windows icon for INTERVUE
 	IV.BAT		wrapper for INTERVUE
-Finally, the following should be distributed in an archive called INTER46F:
+Finally, the following should be distributed in an archive called INTER47F:
 	INT2WHLP.ZIP	convert list into Windows Help database
 	HINTSRCH.ZIP	WinHelp DLL for full-text searches of interrupt list
 	WH_ED*.ZIP	WinHelp-file editor
@@ -101,7 +101,7 @@ a dash).  The codes currently in use are:
 	E - DOS extenders, e - electronic mail, F - FAX,
 	f - file manipulation, G - debuggers/debugging tools, g - games,
 	H - hardware, h - vendor-specific hardware,
-	I - IBM workstation/terminal emulators, i - system info/monitoring
+	I - IBM workstation/terminal emulators, i - system info/monitoring,
 	J - Japanese, j - joke programs,
 	K - keyboard enhancers, k - file/disk compression,
 	l - shells/command interpreters,
@@ -187,6 +187,11 @@ Notes:	used by debuggers to implement breakpoints, such as MS-DOS DEBUG's G
 	  command
 	also used by Turbo Pascal versions 1,2,3 when {$U+} specified
 	return address points to byte following the breakpoint instruction
+	called by Novell DOS 7 EMM386 after displaying an exception error
+	  message (GPF, illegal opcodes, etc.) and before waiting for user
+	  input
+	called by QEMM-386 if the user presses 'I' (undocumented) when prompted
+	  after an exception error message
 SeeAlso: INT 01
 --------G-03---------------------------------
 INT 03 - Columbia PCs (desktop,VP portables) - ROM DEBUGGER
@@ -210,6 +215,16 @@ Notes:	the INT 03h instruction which invokes the debugger must be followed by
 	  variable named ___WD_Present, which the debugger will set to 01h
 	  before running the program
 SeeAlso: AX=0910h
+--------U-03---------------------------------
+INT 03 - DTown Utilities - POP UP
+Program: DTown Software Development's DTown Utilities contains various tools
+	  which are useful to programmers, such as a memory viewer and
+	  disassembler
+Note:	DTU pops up on INT 03 (if not hooked by a debugger) to allow the
+	  user to inspect memory or code when the machine crashes; various
+	  memory managers will invoke INT 03 when displaying a CPU exception
+	  error message (either automatically or when the user presses a
+	  particular key)
 --------G-030910-----------------------------
 INT 03 - Soft-ICE - BACK DOOR COMMANDS - DISPLAY STRING IN Soft-ICE WINDOW
 	AX = 0910h
@@ -847,7 +862,9 @@ Values for video mode:
      = G  20x25	 8x8   160x200	 16	  .	.  PCjr, Tandy 1000
      = G  90x43	 8x8   720x348	mono	  .   B000 Hercules + MSHERC.COM
      = G  90x45	 8x8   720x360	mono	  .   B000 Hercules + HERKULES [11]
+     = G  90x29  8x12  720x348	mono	  .     .  Hercules + HERCBIOS [15]
  09h = G  40x25	 8x8   320x200	 16	  .	.  PCjr, Tandy 1000
+     = G  90x43  8x8   720x348	mono	  .     .  Hercules + HERCBIOS [15]
  0Ah = G  80x25	 8x8   640x200	  4	  .	.  PCjr, Tandy 1000
  0Bh =	 reserved				   (EGA BIOS internal use)
      = G  80x25	 8x8   640x200	 16	  .	.  Tandy 1000 SL/TL [13]
@@ -1525,6 +1542,10 @@ Notes:
 [14] HERCULES.COM is a graphics-mode BIOS extension for Hercules-compatible
       graphics cards by Soft Warehouse, Inc.  Its installation check is to
       test whether the word preceding the INT 10 handler is 4137h.
+[15] The Hercules-graphics video modes for HERCBIOS (shareware by Dave
+      Tutelman) may be changed by a command-line switch; the 90x43
+      character-cell mode's number is always one higher than the 90x29 mode
+      (whose default is mode 08h)
 Index:	video modes
 Index:	installation check;HERKULES|installation check;HERCULES.COM
 --------V-100070-----------------------------
@@ -1740,7 +1761,7 @@ INT 10 - VIDEO - SET CURSOR POSITION
 	    0 in graphics modes
 	DH = row (00h is top)
 	DL = column (00h is left)
-SeeAlso: AH=03h,AH=05h,INT 60/DI=030Bh
+SeeAlso: AH=03h,AH=05h,INT 60/DI=030Bh,MEM 0040h:0050h
 --------V-1003-------------------------------
 INT 10 - VIDEO - GET CURSOR POSITION AND SIZE
 	AH = 03h
@@ -1756,7 +1777,7 @@ Return: AX = 0000h (Phoenix BIOS)
 Notes:	a separate cursor is maintained for each of up to 8 display pages
 	many ROM BIOSes incorrectly return the default size for a color display
 	  (start 06h, end 07h) when a monochrome display is attached
-SeeAlso: AH=01h,AH=02h,AH=12h/BL=34h
+SeeAlso: AH=01h,AH=02h,AH=12h/BL=34h,MEM 0040h:0050h,MEM 0040h:0060h
 --------V-1004-------------------------------
 INT 10 - VIDEO - READ LIGHT PEN POSITION (except VGA)
 	AH = 04h
@@ -1792,7 +1813,7 @@ INT 10 - VIDEO -  SELECT ACTIVE DISPLAY PAGE
 Desc:	specify which of possibly multiple display pages will be visible
 Note:	to determine whether the requested page actually exists, use AH=0Fh
 	  to query the current page after making this call
-SeeAlso: AH=0Fh,AH=43h,AH=45h
+SeeAlso: AH=0Fh,AH=43h,AH=45h,MEM 0040h:0062h
 --------V-1005-------------------------------
 INT 10 - VIDEO - PCjr, Tandy 1000 - MANIPULATE CRT/CPU PAGE REGISTERS
 	AH = 05h
@@ -1920,12 +1941,14 @@ INT 10 - VIDEO - SET BACKGROUND/BORDER COLOR
 SeeAlso: AH=0Bh/BH=01h
 --------V-100B--BH01-------------------------
 INT 10 - VIDEO - SET PALETTE
-	AH = 0BH
+	AH = 0Bh
 	BH = 01h
 	BL = palette ID
 	    00h background, green, red, and brown/yellow
 	    01h background, cyan, magenta, and white
-SeeAlso: AH=0Bh/BH=00h
+Note:	this call was only valid in 320x200 graphics on the CGA, but newer
+	  cards support it in many or all graphics modes
+SeeAlso: AH=0Bh/BH=00h,MEM 0040h:0066h
 --------V-100C-------------------------------
 INT 10 - VIDEO - WRITE GRAPHICS PIXEL
 	AH = 0Ch
@@ -1962,7 +1985,7 @@ Notes:	characters 07h (BEL), 08h (BS), 0Ah (LF), and 0Dh (CR) are interpreted
 	IBM PC ROMs dated 4/24/81 and 10/19/81 require that BH be the same as
 	  the current active page
 SeeAlso: AH=02h,AH=0Ah
---------U-100E--CXABCD-----------------------
+--------b-100E--CXABCD-----------------------
 INT 10 - V20-XT-BIOS - TELETYPE OUTPUT WITH ATTRIBUTE
 	AH = 0Eh
 	CX = ABCDh
@@ -1970,7 +1993,8 @@ INT 10 - V20-XT-BIOS - TELETYPE OUTPUT WITH ATTRIBUTE
 	AL = character to write
 	BH = page number
 	BL = foreground color (text modes as well as graphics modes)
-Program: V20-XT-BIOS is a BIOS extension by Peter Koehlmann / c't magazine
+Program: V20-XT-BIOS is a ROM BIOS replacement with extensions by Peter
+	  Koehlmann / c't magazine
 Desc:	display a character on the screen, advancing the cursor and scrolling
 	  the screen as necessary
 Notes:	characters 07h (BEL), 08h (BS), 0Ah (LF), and 0Dh (CR) are interpreted
@@ -2715,8 +2739,10 @@ INT 10 - VIDEO - ALTERNATE FUNC SELECT (ATI,Tatung,Taxan) - ENHANCED FEATURES
 		ES:BP -> video mode table (see #0027)
 	    06h get mode table
 		AL = video mode
-		Return: ES:BP -> table suitable for mode AL (and subfnc BL=05h)
+		Return: ES:BP -> table suitable for mode AL
+				  (and subfunc BL=05h) (see #0027)
 			BP = FFFFh on error
+			SI = 0000h (ATI Mach32)
 Note:	the ATI Mouse driver (MOUSE.COM/MOUSE.SYS) uses subfunction 06h to get
 	  the mode table for mode 03h, and then looks for a signature string
 	  beginning within 32 bytes of the offset specified by the word at
@@ -2824,7 +2850,7 @@ INT 10 - Cirrus Logic BIOS - GET DESIGN REVISION CODE
 Return: AL = chip revision
 	AH = ??? (AFh for v1.01)
 SeeAlso: AH=12h/BL=80h,AH=12h/BL=81h
-----------1012--BL84-------------------------
+--------V-1012--BL84-------------------------
 INT 10 - Cirrus Logic BIOS v3.02 - INQUIRE OPTIONS
 	AH = 12h
 	BL = 84h
@@ -4730,7 +4756,7 @@ Return:	AL = 4Fh if function supported
 	    00h successful
 	    01h failed
 SeeAlso: AX=4F13h/BX=0000h,AX=4F13h/BX=0005h
-----------104F4D-----------------------------
+--------V-104F4D-----------------------------
 INT 10 - VESA - VIDEO CURSOR INTERFACE REQUEST
 	AX = 4F4Dh
 	BX = number of bytes available for VCI use
@@ -5029,7 +5055,7 @@ INT 10 - Chips & Technologies Extended BIOS - SET DISPLAY STATUS ???
 	AX = 5F51h
 	BX = ???
 Return: nothing
---------V-105F5E-----------------------------
+--------V-105F5EBL00-------------------------
 INT 10 - Chips & Technologies Extended BIOS - SET ???
 	AX = 5F5Eh
 	BL = 00h or 01h
@@ -6402,49 +6428,49 @@ INT 10 - CU Writer v1.4 - TEXT MENU
 	???
 Return: ???
 SeeAlso: AH=C0h,AH=C1h,AH=C3h,AH=D0h
-----------10CB00-----------------------------
+--------V-10CB00-----------------------------
 INT 10 - UNCHAIN - SAVE CURRENT VGA REGISTERS
 	AX = CB00h
 Note:	combined with AX=CB06h, this function permits the use of video mode
 	  13h together with the VGA's unchained mode
 SeeAlso: AX=CB06h,AX=CBFFh
-----------10CB01-----------------------------
+--------V-10CB01-----------------------------
 INT 10 - UNCHAIN - UPDATE PAGE 1 OFFSET
 	AX = CB01h
 	BX = offset of page 1
 Desc:	inform UNCHAIN of the location of video page 1 in video memory; the
 	  default is 0000h
 SeeAlso: AX=CB02h,AX=CB03h,AX=CB04h,AX=CBFFh
-----------10CB02-----------------------------
+--------V-10CB02-----------------------------
 INT 10 - UNCHAIN - UPDATE PAGE 2 OFFSET
 	AX = CB02h
 	BX = offset of page 2
 Desc:	inform UNCHAIN of the location of video page 2 in video memory; the
 	  default is 3E80h (16000, for 320x200)
 SeeAlso: AX=CB00h,AX=CB01h,AX=CB03h,AX=CB04h
-----------10CB03-----------------------------
+--------V-10CB03-----------------------------
 INT 10 - UNCHAIN - UPDATE PAGE 3 OFFSET
 	AX = CB03h
 	BX = offset of page 3
 Desc:	inform UNCHAIN of the location of video page 3 in video memory; the
 	  default is 7D00h (32000, for 320x200)
 SeeAlso: AX=CB01h,AX=CB02h,AX=CB04h
-----------10CB04-----------------------------
+--------V-10CB04-----------------------------
 INT 10 - UNCHAIN - UPDATE PAGE 4 OFFSET
 	AX = CB04h
 	BX = offset of page 4
 Desc:	inform UNCHAIN of the location of video page 4 in video memory; the
 	  default is BB80h (48000, for 320x200)
 SeeAlso: AX=CB01h,AX=CB02h,AX=CB03h,AX=CB05h
-----------10CB05-----------------------------
+--------V-10CB05-----------------------------
 INT 10 - UNCHAIN - SAVE PALETTE
 	AX = CB05h
 SeeAlso: AX=CB00h,AX=CB06h
-----------10CB06-----------------------------
+--------V-10CB06-----------------------------
 INT 10 - UNCHAIN - RESTORE VGA REGISTERS
 	AX = CB06h
 SeeAlso: AX=CB00h,AX=CB05h,AX=CBFFh
-----------10CBFF-----------------------------
+--------V-10CBFF-----------------------------
 INT 10 - UNCHAIN - INSTALLATION CHECK
 	AX = CBFFh
 Return: AX = CCBBh if installed
@@ -6687,9 +6713,9 @@ INT 10 - VIDEO - MSHERC.COM - GET VIDEO ADAPTER TYPE AND MODE
 	AH = EFh
 Return: DL = video adapter type
 	    00h original Hercules
-	    01h Hercules Plus
-	    02h Hercules InColor???
-	    FFh not a Hercules-compatible card
+	    01h Hercules Plus	 (port 03BAh reads x001xxxxx)
+	    02h Hercules InColor (port 03BAh reads x101xxxxx)
+	    FFh not a Hercules-compatible card (port 03BAh bit 7 not pulsing)
 	DH = memory mode byte
 	    00h "half" mode
 	    01h "full" mode
@@ -7124,7 +7150,7 @@ Values for Blank-It hotkey scan code:
  36h	Right Shift
  57h	F11
  58h	F12
-----------1105D7-----------------------------
+--------G-1105D7-----------------------------
 INT 11 CU - Borland C++ IDE - INSTALLED CALLOUT
 	AX = 05D7h
 	BX = product ID (0088h)
@@ -7292,13 +7318,13 @@ Return: AX = kilobytes of contiguous memory starting at absolute address 00000h
 	CX = 1961h if installed
 Program: PARKER is an optionally-resident hard disk parking program by Johan
 	  Zwiekhorst
-----------1205D7BX05D7-----------------------
+--------G-1205D7BX05D7-----------------------
 INT 12 U - Borland C++ IDE - INSTALLATION CHECK
 	AX = 05D7h (1495d)
 	BX = 05D7h
 Note:	the BC++ IDE will call INT 11/AX=05D7h/BX=0088h if it is loaded
 SeeAlso: INT 11/AX=05D7h/BX=0088h
-----------124350BX4920-----------------------
+--------v-124350BX4920-----------------------
 INT 12 C - CPI-standard virus - "FRIEND" CHECK
 	AX = 4350h
 	BX = 4920h
@@ -7442,7 +7468,7 @@ Return: CF clear if successful (returned status 00h)
 	AH = status of previous operation (see #0140)
 Note:	some BIOSes return the status in AL; the PS/2 Model 30/286 returns the
 	  status in both AH and AL
-SeeAlso: AH=00h,INT 4D/AH=01h
+SeeAlso: AH=00h,INT 4D/AH=01h,MEM 0040h:0074h
 
 (Table 0140)
 Values for disk operation status:
@@ -7499,6 +7525,12 @@ Return: CF set on error
 Notes:	errors on a floppy may be due to the motor failing to spin up quickly
 	  enough; the read should be retried at least three times, resetting
 	  the disk with AH=00h between attempts
+	most BIOSes support "multitrack" reads, where the value in AL
+	  exceeds the number of sectors remaining on the track, in which
+	  case any additional sectors are read beginning at sector 1 on
+	  the following head in the same cylinder; the CONFIG.SYS command
+	  MULTITRACK can be used to force DOS to split disk accesses which
+	  would wrap across a track boundary into two separate calls
 	the IBM AT BIOS and many other BIOSes use only the low four bits of
 	  DH (head number) since the WD-1003 controller which is the standard
 	  AT controller (and the controller that IDE emulates) only supports
@@ -7524,6 +7556,12 @@ Return: CF set on error
 Notes:	errors on a floppy may be due to the motor failing to spin up quickly
 	  enough; the write should be retried at least three times, resetting
 	  the disk with AH=00h between attempts
+	most BIOSes support "multitrack" writes, where the value in AL
+	  exceeds the number of sectors remaining on the track, in which
+	  case any additional sectors are written beginning at sector 1 on
+	  the following head in the same cylinder; the CONFIG.SYS command
+	  MULTITRACK can be used to force DOS to split disk accesses which
+	  would wrap across a track boundary into two separate calls
 	the IBM AT BIOS and many other BIOSes use only the low four bits of
 	  DH (head number) since the WD-1003 controller which is the standard
 	  AT controller (and the controller that IDE emulates) only supports
@@ -7658,7 +7696,7 @@ Notes:	it is not necessary to call AH=17h/AH=18h first (will be ignored)
 	  (by calling AH=02h with head number 00h in 2M v1.x and with head
 	  number 80h for 2M v2+)
 	the installation check for 2M must search for a "CiriSOFT:2M:1.3" or
-	  "CiriSOFT:2MX:3.0" or similar (recomended ":2M:" or ":2MX:"
+	  "CiriSOFT:2MX:3.0" or similar (recomended ":2M:", ":2MX:", or ":2MB:"
 	  substrings) in CiriSOFT TSR interface
 	since 2M v2.0, the BOOT sector is emulated using the first physical
 	  sector of FAT2; the second-sixth physical sectors of FAT2 in HD or ED
@@ -7833,6 +7871,8 @@ Notes:	may return successful even though specified drive is greater than the
 	may indicate only two drives present even if more are attached; to
 	  ensure a correct count, one can use AH=15h to scan through possible
 	  drives
+	for BIOSes which reserve the last cylinder for testing purposes, the
+	  cylinder count is automatically decremented
 SeeAlso: AH=06h"Adaptec",AH=13h"SyQuest",AH=48h,AH=15h,INT 1E,INT 41
 
 (Table 0148)
@@ -8244,6 +8284,35 @@ Values for Future Domain SCSI controller family code:
  040Ah	TMC-820/830/840/850/860/870/875/880/885 (ROM <= 6.0A)
  050Dh	TMC-840/841/880/881 (ROM 5.2D)
  0700h	TMC-830/850/860/875/885 (ROM 7.0)
+--------B-1318--CXD2C9-----------------------
+INT 13 - XDF.COM - API
+	AH = 18h
+	CX = D2C9h ("R"+80h, "I"+80h = Roger Ivey)
+	DX = 0
+	BX = function
+	    0000h installation check
+		  Return: AH =	 0Ch
+			  CX = 7269h ("ri" = Roger Ivey)
+			  ES = segment of driver
+			  CF set
+	    2F64h ("/d") disable the driver
+		  Return: AH =	 0Ch
+			  ES:BX = pointer to activation flag (it is set to 0:
+				  set it to 1 to enable the driver again)
+			  CX = 7269h
+			  CF set
+	    2F75h ("/u") unload the driver (restore interrupts & free memory)
+		  Return: AH =	 0Ch
+			  DL =	 55h ("U") if successful
+			     =	  0h	   if fails
+			  CX = 7269h
+			  ES = segment of driver
+			  CF set
+			  AL, BX, DH, and DI destroyed
+Program: XDF is a TSR provided with PC-DOS 7.0 to support XDF 1.84M disks,
+	  developed by Roger D. Ivey
+Note:	After disabling or enabling the driver, a disk change must be performed
+	  or simulated to reset the driver.
 --------B-1319-------------------------------
 INT 13 - FIXED DISK - PARK HEADS ON ESDI DRIVE (XT286,PS)
 	AH = 19h

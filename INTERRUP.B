@@ -286,7 +286,7 @@ Notes:	this function is required to be supported for any removable drives
 	up to 255 locks may be placed on a drive, and the media will not
 	  be physically unlocked until all locks have been removed
 SeeAlso: AH=41h"INT 13 Ext",AH=46h,AH=49h,INT 15/AH=52h"Phoenix"
-----------1346-------------------------------
+--------d-1346-------------------------------
 INT 13 - IBM/MS INT 13 Extensions - EJECT MEDIA
 	AH = 46h
 	AL = 00h (reserved)
@@ -296,7 +296,7 @@ Return: CF clear if successful
 	CF set on error
 	    AH = error code (see #0140)
 SeeAlso: AH=49h,INT 15/AH=52h"Phoenix"
-----------1347-------------------------------
+--------d-1347-------------------------------
 INT 13 - IBM/MS INT 13 Extensions - EXTENDED SEEK
 	AH = 47h
 	DL = drive number
@@ -3292,7 +3292,7 @@ INT 14 - HUNTER 16 - SET DTR
 Return: AH = 00h
 Desc:	determine whether the DTR signal on COM1 should be forced high
 SeeAlso: AX=2C00h
-----------1436-------------------------------
+--------N-1436-------------------------------
 INT 14 - ComShare - INSTALLATION CHECK
 	AH = 36h
 Return: AX = 4353h ('CS') if installed
@@ -9071,12 +9071,20 @@ INT 15 - Olivetti Quaderno - GET XBIOS VERSION
 Return: AL = major version
 	AH = minor version
 Note:	this function is also supported by XBIOS.COM
+--------b-1545-------------------------------
+INT 15 U - HP 100LX/200LX - SET DISPLAY CONTROL STATUS
+	AH = 45h
+	AL = new display control status
+	    bit 0: DISPCTL flag +C instead of -C
+	    bit 1: DISPCTL flag +K instead of -K
+SeeAlso: AH=46h"HP",AX=4700h"HP"
 --------b-1546-------------------------------
 INT 15 U - HP 100LX/200LX - SET POWER OFF TIMEOUT
 	AH = 46h
 	BX = timeout value in ticks
 	    0000h inhibit auto power off
 Note:	the 200LX default timeout is 0CCDh = 3277 ticks = approx. 3 min.
+SeeAlso: AH=45h"HP",AX=4700h"HP"
 --------b-154600-----------------------------
 INT 15 - Compaq SLT/286 - READ POWER CONSERVATION/MODEM CONFIGURATION
 	AX = 4600h
@@ -9147,6 +9155,23 @@ Return: CF clear if successful
 Note:	this function is a NOP (other than clearing CF) in the 08/05/93 version
 	  of the Contura 486/486c/486cx and "Aladdin" ROM, and the 7/26/93
 	  LTE Lite 386 ROM
+--------b-1547-------------------------------
+INT 15 U - HP 100LX/200LX - GET/SET DISPLAY CONTRAST
+	AH = 47h
+	AL = subfunction
+	   00h set contrast
+		BL = new contrast
+		    (00h-0Fh, 0Fh is darkest, 10h-FFh are same as 0Fh)
+	   other get current contrast
+Return:	AL = contrast (00h-0Fh, 0Fh is darkest)
+Note:	may be for backward compatibility with HP95LX, as INT 15/AH=62h does
+	  substantially the same thing as this function
+SeeAlso: AH=45h"HP",AH=48h"HP",AH=62h"HP"
+--------b-1548-------------------------------
+INT 15 U - HP 100LX/200LX - SET BUZZER VOLUME
+	AH = 48h
+	AL = volume (00h-03h; 03h is loudest, 04h-FFh are same as 03h)
+SeeAlso: AH=47h"HP"
 --------S-1549-------------------------------
 INT 15 U - HP 100LX/200LX - SERIAL INTERFACE SELECT
 	AH = 49h
@@ -9174,7 +9199,12 @@ INT 15 U - HP 100LX/200LX - SERIAL INTERFACE CONTROL
 	    00h deactivate
 	    01h activate
 Note:	interface selected with AH=49h will be (de)activated
-SeeAlso: AH=49h"HP"
+SeeAlso: AH=49h"HP",AH=4Bh"HP"
+--------b-154B-------------------------------
+INT 15 U - HP 100LX/200LX - ADJUST SYSTEM TIME
+	AH = 4Bh
+Desc:	adjust system time based on real-time clock
+SeeAlso: AH=4Ah"HP",INT 1A/AH=02h,INT 21/AH=2Ch
 --------b-154DD4-----------------------------
 INT 15 - HP 95LX/100LX/200LX - INSTALLATION CHECK
 	AX = 4DD4h

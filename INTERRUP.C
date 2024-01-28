@@ -69,7 +69,7 @@ Note:	CF convention is the reverse of the standard convention for this
 INT 15 - VMiX v2.???+ - "sys_vm_init" - INITIALIZE PROTECTED-MODE ENVIRONMENT
 	AH = 52h
 SeeAlso: AH=50h"VMiX",AH=51h"VMiX"
-----------1552-------------------------------
+--------d-1552-------------------------------
 INT 15 C - IBM/MS INT 13 Extensions - MEDIA EJECT INTERCEPT
 	AH = 52h
 	DL = drive number
@@ -91,6 +91,8 @@ Return: CF clear if successful
 	    CX = flags (see #0358)
 	CF set on error
 	    AH = error code (06h,86h) (see #0359)
+BUG:	early versions of the Award Modular BIOS with built-in APM support
+	  reportedly do not set BX on return
 
 Bitfields for APM flags:
 Bit(s)	Description	(Table 0358)
@@ -1030,7 +1032,7 @@ SeeAlso: AH=61h,AH=65h,AH=66h
 INT 15 U HP 100LX/200LX - SET DISPLAY CONTRAST
 	AH = 62h
 	BL = contrast (00h-1Fh, 1Fh is the darkest)
-SeeAlso: AH=61h"HP"
+SeeAlso: AH=47h"HP",AH=61h"HP"
 --------b-156300----------------------------------
 INT 15 - HUNTER 16 - GET IDLE TIMEOUT
 	AX = 6300h
@@ -1158,6 +1160,14 @@ INT 15 - HUNTER 16 - ACKNOWLEDGE EVENT
 Return: AH = 00h if successful
 Desc:	Acknowledges the event, so the next similar event can be detected
 SeeAlso: AH=6Dh"HUNTER",AH=6Eh
+--------b-1570------------------------------------
+INT 15 - HUNTER 16 - CONTROL SOUND
+	AH = 70h
+	AL = new state
+	    00h disable sound
+	    else enable sound
+Note:	the Husky Hunter 16 is an 8088-based ruggedized laptop.	 Other family
+	  members are the Husky Hunter, Husky Hunter 16/80, and Husky Hawk.
 ----------157000-----------------------------
 INT 15 - Tandy 1000SL/TL - READ FROM EEPROM
 	AX = 7000h
@@ -1176,14 +1186,26 @@ Return: CF clear if function supported
 Note:	the EEPROMs are normally written only by the system setup program;
 	  changing the values can badly mess up a Tandy
 SeeAlso: AX=7000h
---------b-1570------------------------------------
-INT 15 - HUNTER 16 - CONTROL SOUND
-	AH = 70h
-	AL = new state
-	    00h disable sound
-	    else enable sound
-Note:	the Husky Hunter 16 is an 8088-based ruggedized laptop.	 Other family
-	  members are the Husky Hunter, Husky Hunter 16/80, and Husky Hawk.
+----------157002-----------------------------
+INT 15 U - Tandy 1000 Model ??? - GET ROM PAGE
+	AX = 7002h
+Return: AL = ROM page mapped at 0E0000h (0-6 (13?))
+Note:	some Tandy machines have DOS and DeskMate in a 512k paged ROM.  The
+	  BIOS uses this call to determine what ROM page is mapped in the 64k
+	  segment at 0E0000h.
+	the 1000TL has 8 64k ROM pages; page 7 is permanently mapped at
+	  0F0000h.  There may be 16 32k ROM pages on other systems.
+SeeAlso: AX=7003h,INT E0"DeskMate"
+----------157003-----------------------------
+INT 15 U - Tandy 1000 Model ??? - SET ROM PAGE
+	AX = 7003h
+	DL = ROM page to be mapped at 0E0000h (0-6 (13?))
+Return: CF clear if valid ROM page specified
+Note:	Some Tandy machines have DOS and DeskMate in a 512k paged ROM.  The
+	  BIOS uses this call to map ROM pages in the 64k segment at 0E0000h.
+	The 1000TL has 8 64k ROM pages; page 7 is permanently mapped at
+	  0F0000h.  There may be 16 32k ROM pages on other systems.
+SeeAlso: AX=7002h,INT E0"DeskMate"
 --------b-1571------------------------------------
 INT 15 - HUNTER 16 - SELECT POWER UP KEYS
 	AH = 71h
@@ -1436,7 +1458,7 @@ Notes:	if no game port is installed, subfunction 0000h returns AL=00h (all
 	  switches open) and subfunction 0001h returns AX=BX=CX=DX=0000h
 	a 250kOhm joystick typically returns 0000h-01A0h
 SeeAlso: AH=84h"V20-XT-BIOS"
---------U-1584-------------------------------
+--------b-1584-------------------------------
 INT 15 - V20-XT-BIOS - JOYSTICK SUPPORT
 	AH = 84h
 	DX = subfunction
@@ -1450,7 +1472,8 @@ INT 15 - V20-XT-BIOS - JOYSTICK SUPPORT
 Return: CF set on error
 	    AH = status (see #0372)
 	CF clear if successful
-Program: V20-XT-BIOS is a BIOS extension by Peter Koehlmann / c't magazine
+Program: V20-XT-BIOS is a ROM BIOS replacement with extensions by Peter
+	   Koehlmann / c't magazine
 SeeAlso: AH=84h"PS",INT 10/AH=0Eh/CX=ABCDh
 --------b-158400----------------------------------
 INT 15 - HUNTER 16 - GET DISKETTE PORT
@@ -1759,12 +1782,14 @@ INT 15 U - AMI PCI BIOS - SET ??? FLAG
 	AX = A100h
 Return: AX = 0000h
 	CF clear
+	BX,CX,DI may be destroyed
 Desc:	sets bit 7 of CMOS RAM location 37h and updates the CMOS checksum in
 	  locations 3Eh and 3Fh
 Notes:	in the examined version of the BIOS, nonzero values in AL cause it to
 	  drop through to checking the next possible value of AH, i.e. only
 	  subfunction 00h is supported
-	also supported by Dell XPS P90, which also uses an AMI BIOS
+	also supported by Dell XPS P90 and IBM PS/PV 6384, which also use
+	  AMI BIOSes
 --------n-15BA10-----------------------------
 INT 15 - HP OmniShare - Pen Driver - REPORT PEN CONTROL AREA EVENT
 	AX = BA10h
@@ -2473,7 +2498,8 @@ Model  Submdl  Rev	BIOS date	System
  2Dh	*	*	  ???		Compaq PC/Compaq Deskpro
  ???	56h	???	  ???		Olivetti, unknown model
  ???	74h	???	  ???		Olivetti, unknown model
-Notes:
+Notes:	BIOS dates may vary without changes to the revision code, especially
+	  for non-IBM machines
     * This BIOS call is not implemented in these early versions.
       Read Model byte at F000h:FFFEh and BIOS date at F000h:FFF5h.
    ** These BIOS versions require the DASDDRVR.SYS patches.
@@ -3469,7 +3495,8 @@ INT 15 U - AMI PCI BIOS - GET ??? AND BIOS REVISION STRINGS
 Return: CF clear
 	ES:SI buffer filled
 	AL = 00h
-Note:	for BIOS v1.00.05.AX1, the ??? string is "IDNO" and the BIOS revision
+	CX = ??? (0000h)
+Notes:	for BIOS v1.00.05.AX1, the ??? string is "IDNO" and the BIOS revision
 	  string is "AX1 "
 SeeAlso: AX=DA15h,AX=DB04h
 ----------15DA08-----------------------------
@@ -3546,12 +3573,11 @@ Return: CF clear if successful
 Note:	the first ??? is stored in CMOS RAM locations 1Bh-1Eh, the second in
 	  locations 1Fh-22h in the v1.00.05.AX1 BIOS
 ----------15DA88-----------------------------
-INT 15 U - AMI PCI BIOS - GET EXTENDED MEMORY??? SIZE
+INT 15 U - AMI PCI BIOS - GET EXTENDED MEMORY SIZE
 	AX = DA88h
 Return: CF clear (successful)
 	AX = 0000h
-	CL:BX = ??? size in KBytes
-Note:	returned CL:BX = 00FC00h (15K) on a 16MB RAM machine
+	CL:BX = extended memory size in KBytes
 SeeAlso: AH=88h
 ----------15DA8C-----------------------------
 INT 15 U - AMI PCI BIOS - GET BIOS AND CHIPSET??? VERSION
@@ -3559,7 +3585,7 @@ INT 15 U - AMI PCI BIOS - GET BIOS AND CHIPSET??? VERSION
 	CL = subfunction
 	    00h get BIOS version string
 		ES:DI -> 12-byte buffer for version string
-	    01h get ???
+	    01h get chipset ???
 		BL = what to retrieve (00h,01h)
 		ES:DI -> 12-byte buffer for chipset info???
 Return: CF clear if successful
@@ -3570,7 +3596,8 @@ Notes:	the v1.00.05.AX1 BIOS returns "1.00.05.AX1 " as its version string
 	subfunction 01h returns five bytes read from the chipset registers
 	  at C000h-C004h (BL=00h) or C200h-C204h (BL=01h), padded to 12 bytes
 	  with NULs.  On my machine, the results were 86h 80h A3h 04h 46h and
-	  86h 80h 84h 04h 0Fh, respectively
+	  86h 80h 84h 04h 0Fh, respectively; on another machine, the results
+	  were identical except that the last byte was 07h instead of 0Fh
 SeeAlso: AX=DB04h
 ----------15DA8E-----------------------------
 INT 15 U - AMI PCI BIOS - ???
@@ -3582,14 +3609,20 @@ Return: CF clear if successful
 	    AH = error code (86h unsupported subfunction)
 Note:	in the	v1.00.05.AX1 BIOS, this call always returns failure
 ----------15DA92-----------------------------
-INT 15 U - AMI PCI BIOS - GET CPU TYPE
+INT 15 U - AMI PCI BIOS - GET CPU TYPE AND SPEED
 	AX = DA92h
 Return: CF clear (successful)
 	AL = CPU stepping (see also #0402 at INT 15/AH=C9h)
 	AH = CPU model
 	BL = CPU family (05h = Pentium, etc.)
-	CX = ??? (0040h,0050h,0060h,0066h
+	CX = external clock speed??? in BCD
+	    (0040h,0050h,0060h,0066h are possible return values on my
+	      Pentium with the Intel "Neptune" chipset)
 	EAX high word destroyed
+Note:	90 MHz and faster Pentium CPUs can be configured to run at 1.0, 1.5,
+	  or 2.0 times the external clock speed, i.e. a typical 90 MHz Pentium
+	  system will run the motherboard at 60 MHz (my 90 MHz Pentium returns
+	  0060h in CX)
 SeeAlso: AH=C9h
 ----------15DA99-----------------------------
 INT 15 U - AMI PCI BIOS - GET/SET ??? FLAG
@@ -3634,13 +3667,14 @@ Values for AMI BIOS v1.00.05.AX1 subsystem identifier:
  01h	system BIOS
  02h	PCI configuration data
  03h	logo data area
- 04h	system BIOS/Language
+ 04h	system BIOS/Language (one system)
+	configuration utility (another system)
 SeeAlso: #2619
 
 Format of AMI BIOS v1.00.05.AX1 subsystem information:
 Offset	Size	Description	(Table 2619)
  00h	BYTE	subsystem identifier (see #2618)
- 01h	WORD	???
+ 01h	WORD	subsystem size in bytes
  03h	WORD	???
  05h	BYTE	flag??? (zero/nonzero)
  06h	BYTE	???
@@ -3648,7 +3682,8 @@ Offset	Size	Description	(Table 2619)
  08h 24 BYTEs	subsystem name
  20h	BYTE	subsystem identifier???
  21h	BYTE	flag??? (00h or FFh)
- 22h  6 BYTEs	???
+ 22h	BYTE	??? (01h,03h seen)
+ 23h  5 BYTEs	??? (apparently always 00h)
  28h 16 BYTEs	version string???
 --------b-15DB02-----------------------------
 INT 15 U - AMI BIOS - Flash ROM - GET SIZE OF ??? CODE
@@ -3695,7 +3730,8 @@ Note:	DS:SI and ES:DI are ignored for function 02h
 INT 15 U - AMI BIOS - Flash ROM - GET BIOS REVISION
 	AX = DB04h
 Return: CF clear
-	BL:BH:DL:DH = BIOS revision string ('AX1 ' for v1.00.05.AX1)
+	BL:BH:DL:DH = BIOS revision string
+	    ('AX1 ' for v1.00.05.AX1, 'AV0M' for v1.00.03.AV0M)
 	CL = BIOS major version??? (01h)
 	CH = BIOS minor version??? (00h)
 	AL = ??? (02h)
@@ -4975,14 +5011,29 @@ INT 16 - KEYBOARD - SET KEYCLICK (PCjr only)
 	AL = keyclick state
 	    00h off
 	    01h on
-SeeAlso: AH=03h
+SeeAlso: AH=03h,AH=04h"K3PLUS"
+--------K-1604-------------------------------
+INT 16 - K3PLUS v6.22+ - SET KEYCLICK
+	AH = 04h
+	AL = keyclick state
+	    00h keyclick off, leave loudness setting unchanged
+	    01h keyclick on, leave loudness setting unchanged
+	    else
+	       bit 0: keyclick enabled if set
+	       bits 7-1: new keyclick loudness (non-zero)
+Note:	Applications which try to set a new loudness, but are unsure of the
+	  results of other INT 16/AH=04h implementations, should set the new
+	  loudness first, and then call this function again with AL=01h or
+	  AL=00h
+SeeAlso: AH=03h,AH=04h"KEYBOARD"
 --------B-1605-------------------------------
 INT 16 - KEYBOARD - STORE KEYSTROKE IN KEYBOARD BUFFER (AT/PS w enh keybd only)
 	AH = 05h
 	CH = scan code
 	CL = ASCII character
-Return: AL = 00h if successful
-	     01h if keyboard buffer full
+Return: AL = status
+	    00h if successful
+	    01h if keyboard buffer full
 Notes:	under DESQview, a number of "keystrokes" invoke specific
 	  DESQview-related actions when they are read from the keyboard
 	  buffer (see #0443)
@@ -5095,6 +5146,10 @@ Notes:	AL bit 3 set only for left Alt key on many machines
 	AH bits 7 through 4 always clear on a Compaq SLT/286
 	INT 16/AH=09h can be used to determine whether this function is
 	  supported, but only on later model PS/2s
+	many BIOSes (including at least some versions of Phoenix and AMI) will
+	  destroy AH on return from functions higher than AH=12h, returning
+	  12h less than was in AH on entry (due to a chain of DEC/JZ
+	  instructions)
 SeeAlso: AH=02h,AH=09h,AH=22h,AH=51h,INT 17/AH=0Dh
 
 Bitfields for keyboard shift flags 1:
@@ -6175,11 +6230,16 @@ Offset	Size	Description	(Table 0465)
  03h	BYTE	trigger time, minute
  04h	BYTE	trigger time, hour
  05h	WORD	offset of command to be executed
-----------1692-------------------------------
-INT 16 - ???
+--------K-1692-------------------------------
+INT 16 - KEYB.COM KEYBOARD CAPABILITIES CHECK (not an actual function!)
 	AH = 92h
-Return: AH <= 80h if ???
-Note:	this function is called by the DOS 3.2 KEYBxx.COM and DOS 5+ KEYB.COM
+Return: AH <= 80h if enhanced keyboard functions (AH=10h-12h) supported
+Desc:	this function is called by the DOS 3.2 KEYBxx.COM and DOS 5+ KEYB.COM
+	  to determine the highest supported keyboard function
+Note:	many BIOSes (including at least some versions of Phoenix and AMI) will
+	  destroy AH on return from functions higher than AH=12h, returning
+	  12h less than was in AH on entry (due to a chain of DEC/JZ
+	  instructions)
 SeeAlso: AH=05h"PCjr",AH=A2h
 --------U-1699-------------------------------
 INT 16 - SCOUT v5.4 - GET ???
@@ -6194,12 +6254,17 @@ INT 16 - SCOUT v5.4 - INSTALLATION CHECK
 Return: AX = ABCDh if installed
 Program: Scout is a memory-resident file manager by New-Ware
 SeeAlso: AH=99h
-----------16A2-------------------------------
-INT 16 - ???
+--------K-16A2-------------------------------
+INT 16 - KEYB.COM KEYBOARD CAPABILITIES CHECK (not an actual function!)
 	AH = A2h
-Return: AH <= 80h if ???
-Note:	this function is this function is called by the DOS 5+ KEYB.COM
-SeeAlso: AH=92h
+Return: AH <= 80h if 122-key keyboard functions (AH=20h-22h) supported
+Desc:	this function is called by the DOS 3.2 KEYBxx.COM and DOS 5+ KEYB.COM
+	  to determine the highest supported keyboard function
+Note:	many BIOSes (including at least some versions of Phoenix and AMI) will
+	  destroy AH on return from functions higher than AH=12h, returning
+	  12h less than was in AH on entry (due to a chain of DEC/JZ
+	  instructions)
+SeeAlso: AH=05h"PCjr",AH=92h
 --------V-16AA-------------------------------
 INT 16 - PTxxx.COM - (xxx=CGA,EGA,VGA,HER...) CALL GATE FOR GRAPHICS
 	AH = AAh
@@ -6450,6 +6515,60 @@ Return: AX = CAFFh if installed
 Program: VGAPAL is a TSR supplied with STACKEY which makes VGA palette settings
 	  permanent across mode switches
 SeeAlso: AX=CA00h/BX=6570h
+--------U-16CB00-----------------------------
+INT 16 - PUPClip v1.12+ - INSTALLATION CHECK
+	AX = CB00h
+Return: BX = 4342h if installed
+	    AX = version (AH = major version, AL = BCD minor version)
+Program: PUPClip is the freeware PopUP Clipboard for DOS and Windows DOS
+	 sessions by SkullC0DEr
+SeeAlso: AX=CB01h,AX=CB02h,AX=CB03h,AX=CB04h,AX=CB05h,AX=CB06h,AX=CB08h
+SeeAlso: INT 2F/AX=1701h
+--------U-16CB01-----------------------------
+INT 16 - PUPClip v1.12+ - GET CLIPBOARD CURSOR POSITION
+	AX = CB01h
+Return: BL = column (0-79)
+	BH = row (0-49)
+SeeAlso: AX=CB00h,AX=CB02h,AX=CB03h
+--------U-16CB02-----------------------------
+INT 16 - PUPClip v1.12+ - SET CLIPBOARD CURSOR POSITION
+	AX = CB02h
+	BL = column (0-79)
+	BH = row (0-49)
+Return: CF clear if successful
+	CF set on error (invalid position)
+SeeAlso: AX=CB00h,AX=CB01h,AX=CB04h
+--------U-16CB03-----------------------------
+INT 16 - PUPClip v1.12+ - GET CHARACTER FROM CURRENT CLIPBOARD CURSOR POSITION
+	AX = CB03h
+Return: BL = ASCII character at current position
+SeeAlso: AX=CB00h,AX=CB02h,AX=CB04h,INT 2F/AX=1705h
+--------U-16CB04-----------------------------
+INT 16 - PUPClip v1.12+ - WRITE CHARACTER TO CURRENT CLIPBOARD CURSOR POSITION
+	AX = CB04h
+	BL = ASCII character to store
+SeeAlso: AX=CB00h,AX=CB02h,AX=CB03h,AX=CB05h,INT 2F/AX=1703h
+--------U-16CB05-----------------------------
+INT 16 - PUPClip v1.12+ - CLEAR CLIPBOARD CONTENTS
+	AX = CB05h
+Return: nothing
+SeeAlso: AX=CB00h,AX=CB04h,AX=CB06h,AX=CB07h,INT 2F/AX=1702h
+--------U-16CB06-----------------------------
+INT 16 - PUPClip v1.12+ - SCROLL UP CLIPBOARD CONTENTS
+	AX = CB06h
+Return: nothing
+SeeAlso: AX=CB00h,AX=CB05h,AX=CB07h
+--------U-16CB07-----------------------------
+INT 16 - PUPClip v1.12+ - SCROLL DOWN CLIPBOARD CONTENTS
+	AX = CB07h
+Return: nothing
+SeeAlso: AX=CB00h,AX=CB05h,AX=CB06h
+--------U-16CB08-----------------------------
+INT 16 - PUPClip v1.12+ - POP UP
+	AX = CB08h
+Return: CF clear if successful
+	CF set on error (unsupported video mode)
+SeeAlso: AX=CB00h
 --------U-16D724CX00CB-----------------------
 INT 16 U - APCAL v3.20 - GET ???
 	AX = D724h
@@ -6484,7 +6603,7 @@ INT 16 U - Corel PowerSCSI - FDAUDIO.COM - INSTALLATION CHECK
 	AX = DFDFh
 Return: ES:DI -> ASCII signature "FDAUDIO/CD" followed by ASCII date, i.e.
 	  "06/18/93" if installed
-----------16E000-----------------------------
+--------b-16E000-----------------------------
 INT 16 - AMI BIOS - BIOS-FLASH Interface - GET VERSION NUMBER
 	AX = E000h
 Return: CF clear if successful
@@ -6497,7 +6616,7 @@ Notes:	this interface is available on AMI BIOSes built from AMI core version
 	  with an AMI BIOS; it is supposedly able to write itself into the
 	  Flash ROM and thus make itself part of the BIOS
 SeeAlso: AX=E001h,AX=E004h,AX=E006h,AX=E008h,AX=E00Ah,AX=E00Bh,AX=E0FFh
-----------16E001-----------------------------
+--------b-16E001-----------------------------
 INT 16 - AMI BIOS - BIOS-FLASH Interface - GET CHIPSET SAVE/RESTORE SIZE
 	AX = E001h
 Return: CF clear if successful
@@ -6505,7 +6624,7 @@ Return: CF clear if successful
 	    BX = number of bytes required to save chipset configuration
 	CF set on error
 SeeAlso: AX=E000h,AX=E002h,AX=E003h
-----------16E002-----------------------------
+--------b-16E002-----------------------------
 INT 16 - AMI BIOS - BIOS-FLASH Interface - SAVE CHIPSET STATUS & PREPARE CHPSET
 	AX = E002h
 	ES:DI -> buffer for storing chipset status
@@ -6513,7 +6632,7 @@ Return: CF clear if successful
 	    AL = FAh
 	CF set on error
 SeeAlso: AX=E000h,AX=E001h,AX=E003h
-----------16E003-----------------------------
+--------b-16E003-----------------------------
 INT 16 - AMI BIOS - BIOS-FLASH Interface -  RESTORE CHIPSET STATUS
 	AX = E003h
 	ES:DI -> buffer in which chipset status was previously stored
@@ -6521,7 +6640,7 @@ Return: CF clear if successful
 	    AL = FAh
 	CF set on error
 SeeAlso: AX=E000h,AX=E001h,AX=E002h
-----------16E004-----------------------------
+--------b-16E004-----------------------------
 INT 16 - AMI BIOS - BIOS-FLASH Interface - LOWER PROGRAMMING VOLTAGE Vpp
 	AX = E004h
 Return: CF clear if successful
@@ -6529,7 +6648,7 @@ Return: CF clear if successful
 	CF set on error
 Note:	this function does not return until the voltage level stabilizes
 SeeAlso: AX=E000h,AX=E005h,AX=E006h
-----------16E005-----------------------------
+--------b-16E005-----------------------------
 INT 16 - AMI BIOS - BIOS-FLASH Interface - RAISE PROGRAMMING VOLTAGE Vpp
 	AX = E005h
 Return: CF clear if successful
@@ -6537,7 +6656,7 @@ Return: CF clear if successful
 	CF set on error
 Note:	this function does not return until the voltage level stabilizes
 SeeAlso: AX=E000h,AX=E004h,AX=E007h
-----------16E006-----------------------------
+--------b-16E006-----------------------------
 INT 16 - AMI BIOS - BIOS-FLASH Interface - FLASH WRITE PROTECT
 	AX = E006h
 Return: CF clear if successful
@@ -6546,7 +6665,7 @@ Return: CF clear if successful
 Note:	this function performs any delay required to allow the Flash ROM to
 	  stabilize in the write-protected state
 SeeAlso: AX=E000h,AX=E004h,AX=E007h
-----------16E007-----------------------------
+--------b-16E007-----------------------------
 INT 16 - AMI BIOS - BIOS-FLASH Interface - FLASH WRITE ENABLE
 	AX = E007h
 Return: CF clear if successful
@@ -6555,7 +6674,7 @@ Return: CF clear if successful
 Note:	this function performs any delay required to allow the Flash ROM to
 	  stabilize in the write-enabled state
 SeeAlso: AX=E000h,AX=E005h,AX=E006h,AX=E008h
-----------16E008-----------------------------
+--------b-16E008-----------------------------
 INT 16 - AMI BIOS - BIOS-FLASH Interface - FLASH SELECT
 	AX = E008h
 Return: CF clear if successful
@@ -6566,7 +6685,7 @@ Note:	this function performs any delay required to allow the Flash ROM to
 	  stabilize in the selected state; if no EPROM is present, this
 	  function always returns successfully
 SeeAlso: AX=E000h,AX=E007h,AX=E009h
-----------16E009-----------------------------
+--------b-16E009-----------------------------
 INT 16 - AMI BIOS - BIOS-FLASH Interface - FLASH DE-SELECT
 	AX = E009h
 Return: CF clear if successful
@@ -6577,7 +6696,7 @@ Note:	this function performs any delay required to allow the Flash ROM to
 	  stabilize in the de-selected state; if no EPROM is present, this
 	  function always returns successfully
 SeeAlso: AX=E000h,AX=E006h,AX=E008h
-----------16E00A-----------------------------
+--------b-16E00A-----------------------------
 INT 16 - AMI BIOS - BIOS-FLASH Interface - VERIFY ALLOCATED MEMORY
 	AX = E00Ah
 	BX = number of paragraphs
@@ -6589,7 +6708,7 @@ Desc:	determine whether the specified memory may be used for flash
 	  programming
 Note:	always returns error if BX is zero on entry
 SeeAlso: AX=E000h,AX=E00Bh
-----------16E00B-----------------------------
+--------b-16E00B-----------------------------
 INT 16 - AMI BIOS - BIOS-FLASH Interface - SAVE INTERNAL CACHE STATUS
 	AX = E00Bh
 	ES:DI -> buffer for internal cache status (minimum 4Kbytes)
@@ -6599,7 +6718,7 @@ Return: CF clear if successful
 Note:	always returns error if the hardware does not contain internal
 	  cache or this call is made in protected mode
 SeeAlso: AX=E000h,AX=E00Ah,AX=E00Ch
-----------16E00C-----------------------------
+--------b-16E00C-----------------------------
 INT 16 - AMI BIOS - BIOS-FLASH Interface - RESTORE INTERNAL CACHE STATUS
 	AX = E00Ch
 	ES:DI -> buffer containing internal cache status (minimum 4Kbytes)
@@ -6618,7 +6737,7 @@ Note:	the returned TSR list provides support for communication among TSRs
 	  built with TurboPower's Turbo Professional and Object Professional
 	  libraries for Turbo Pascal
 SeeAlso: AX=F0F0h
-----------16E0FF-----------------------------
+--------b-16E0FF-----------------------------
 INT 16 - AMI BIOS - BIOS-FLASH Interface - GENERATE CPU RESET
 	AX = E0FFh
 Return: never
@@ -6758,7 +6877,7 @@ Note:	NG.EXE was written by John Socha
 --------b-16F400-----------------------------
 INT 16 - Compaq Systempro and higher - CACHE CONTROLLER STATUS
 	AX = F400h
-Return: AH = E2h
+Return: AH = E2h (*)
 	AL = status
 	    00h not present
 	    01h enabled
@@ -6776,19 +6895,28 @@ Return: AH = E2h
 	    bits 6-1:	reserved (0)
 	    bit 0:	0 = Direct mapped
 			1 = Two-way set-associative
-Note:	also supported by some versions of AMI BIOS dated June 1992 or later
+Notes:	also supported by some versions of AMI BIOS dated June 1992 or later
+	many (most) BIOSes return a modified AH when called for an unsupported
+	  or non-keyboard function (typically, the highest supported keyboard
+	  function [normally 12h] is subtracted from the original AH)
 SeeAlso: AX=F401h,AX=F402h
 --------b-16F401-----------------------------
 INT 16 - Compaq Systempro and higher - ENABLE CACHE CONTROLLER
 	AX = F401h
 Return: AX = E201h
-Note:	also supported by some versions of AMI BIOS dated June 1992 or later
+Notes:	also supported by some versions of AMI BIOS dated June 1992 or later
+	many (most) BIOSes return a modified AH when called for an unsupported
+	  or non-keyboard function (typically, the highest supported keyboard
+	  function [normally 12h] is subtracted from the original AH)
 SeeAlso: AX=F400h,AX=F402h
 --------b-16F402-----------------------------
 INT 16 - Compaq Systempro and higher - DISABLE CACHE CONTROLLER
 	AX = F402h
 Return: AX = E202h
-Note:	also supported by some versions of AMI BIOS dated June 1992 or later
+Notes:	also supported by some versions of AMI BIOS dated June 1992 or later
+	many (most) BIOSes return a modified AH when called for an unsupported
+	  or non-keyboard function (typically, the highest supported keyboard
+	  function [normally 12h] is subtracted from the original AH)
 SeeAlso: AX=F400h,AX=F401h
 --------v-16FA00DX5945-----------------------
 INT 16 U - PC Tools v8+ VSAFE, VWATCH - INSTALLATION CHECK
@@ -8310,7 +8438,7 @@ Desc:	send an entire string of chars to the print spooler with a single call
 Program: PC-MOS/386 v5.01 is a multitasking, multiuser MS-DOS 5.0-compatible
 	  operating system by The Software Link, Inc.
 SeeAlso: AH=00h,AH=01h,AH=02h,AH=FFh"PC-MOS"
-----------1703--BX5A00-----------------------
+--------c-1703--BX5A00-----------------------
 INT 17 - DMP Print Spooler v2.03 - INSTALLATION CHECK
 	AH = 03h
 	BX = 5A00h
@@ -9795,170 +9923,4 @@ Values for operating system indicator:
  FEh	LANstep
  FFh	Xenix bad block table
 SeeAlso: #0503
---------B-1A00-------------------------------
-INT 1A - TIME - GET SYSTEM TIME
-	AH = 00h
-Return: CX:DX = number of clock ticks since midnight
-	AL = midnight flag, nonzero if midnight passed since time last read
-Notes:	there are approximately 18.2 clock ticks per second, 1800B0h per 24 hrs
-	IBM and many clone BIOSes set the flag for AL rather than incrementing
-	  it, leading to loss of a day if two consecutive midnights pass
-	  without a request for the time (e.g. if the system is on but idle)
-	since the midnight flag is cleared, if an application calls this
-	  function after midnight before DOS does, DOS will not receive the
-	  midnight flag and will fail to advance the date
-SeeAlso: AH=01h,AH=02h,INT 21/AH=2Ch,INT 62/AX=0099h
---------B-1A01-------------------------------
-INT 1A - TIME - SET SYSTEM TIME
-	AH = 01h
-	CX:DX = number of clock ticks since midnight
-SeeAlso: AH=00h,AH=03h,INT 21/AH=2Dh
---------B-1A02-------------------------------
-INT 1A - TIME - GET REAL-TIME CLOCK TIME (AT,XT286,PS)
-	AH = 02h
-Return: CF clear if successful
-	    CH = hour (BCD)
-	    CL = minutes (BCD)
-	    DH = seconds (BCD)
-	    DL = daylight savings flag (00h standard time, 01h daylight time)
-	CF set on error (i.e. clock not running or in middle of update)
-Note:	this function is also supported by the Sperry PC, which predates the
-	  IBM AT; the data is returned in binary rather than BCD on the Sperry,
-	  and DL is always 00h
-SeeAlso: AH=00h
---------B-1A03-------------------------------
-INT 1A - TIME - SET REAL-TIME CLOCK TIME (AT,XT286,PS)
-	AH = 03h
-	CH = hour (BCD)
-	CL = minutes (BCD)
-	DH = seconds (BCD)
-	DL = daylight savings flag (00h standard time, 01h daylight time)
-Note:	this function is also supported by the Sperry PC, which predates the
-	  IBM AT; the data is specified in binary rather than BCD on the
-	  Sperry, and the value of DL is ignored
-SeeAlso: AH=01h
---------B-1A04-------------------------------
-INT 1A - TIME - GET REAL-TIME CLOCK DATE (AT,XT286,PS)
-	AH = 04h
-Return: CF clear if successful
-	    CH = century (BCD)
-	    CL = year (BCD)
-	    DH = month (BCD)
-	    DL = day (BCD)
-	CF set on error
-SeeAlso: AH=02h,AH=04h"Sperry",AH=05h,INT 21/AH=2Ah
---------b-1A04-------------------------------
-INT 1A - Sperry PC - GET REAL-TIME CLOCK DATE
-	AH = 04h
-Return: CF clear if successful
-	    CL = year-1980
-	    DH = month (binary)
-	    DL = day (binary)
-	CF set on error
-SeeAlso: AH=02h,AH=04h,AH=05h"Sperry",INT 21/AH=2Ah
---------B-1A05-------------------------------
-INT 1A - TIME - SET REAL-TIME CLOCK DATE (AT,XT286,PS)
-	AH = 05h
-	CH = century (BCD)
-	CL = year (BCD)
-	DH = month (BCD)
-	DL = day (BCD)
-SeeAlso: AH=04h,INT 21/AH=2Bh
---------b-1A04-------------------------------
-INT 1A - Sperry PC - SET REAL-TIME CLOCK DATE
-	AH = 04h
-	CL = year-1980
-	DH = month (binary)
-	DL = day (binary)
-SeeAlso: AH=02h,AH=04h"Sperry",AH=05h,INT 21/AH=2Bh
---------B-1A06-------------------------------
-INT 1A - TIME - SET ALARM (AT,XT286,PS)
-	AH = 06h
-	CH = hour (BCD)
-	CL = minutes (BCD)
-	DH = seconds (BCD)
-Return: CF set on error (alarm already set or clock stopped for update)
-	CF clear if successful
-Notes:	the alarm occurs every 24 hours until turned off, invoking INT 4A each
-	  time
-	the BIOS does not check for invalid values for the time, so the CMOS
-	  clock chip's "don't care" setting (any values between C0h and FFh)
-	  may be used for any or all three part.  For example, to create an
-	  alarm once a minute, every minute, call with CH=C0h, CL=C0h, and
-	  DH=00h.
-SeeAlso: AH=07h,INT 4A
---------B-1A07-------------------------------
-INT 1A - TIME - CANCEL ALARM (AT,XT286,PS)
-	AH = 07h
-Return: alarm disabled
-Note:	does not disable the real-time clock's IRQ
-SeeAlso: AH=06h,INT 70
---------B-1A08-------------------------------
-INT 1A - TIME - SET RTC ACTIVATED POWER ON MODE (CONVERTIBLE)
-	AH = 08h
-	CH = hours in BCD
-	CL = minutes in BCD
-	DH = seconds in BCD
-SeeAlso: AH=09h
---------B-1A09-------------------------------
-INT 1A - TIME - READ RTC ALARM TIME AND STATUS (CONV,PS30)
-	AH = 09h
-Return: CH = hours in BCD
-	CL = minutes in BCD
-	DH = seconds in BCD
-	DL = alarm status
-	    00h alarm not enabled
-	    01h alarm enabled but will not power up system
-	    02h alarm will power up system
-SeeAlso: AH=08h
---------B-1A0A-------------------------------
-INT 1A - TIME - READ SYSTEM-TIMER DAY COUNTER (XT2,PS)
-	AH = 0Ah
-Return: CF set on error
-	CF clear if successful
-	    CX = count of days since Jan 1,1980
-SeeAlso: AH=04h,AH=0Bh
---------B-1A0B-------------------------------
-INT 1A - TIME - SET SYSTEM-TIMER DAY COUNTER (XT2,PS)
-	AH = 0Bh
-	CX = count of days since Jan 1,1980
-Return: CF set on error
-	CF clear if successful
-SeeAlso: AH=05h,AH=0Ah
---------J-1A10-------------------------------
-INT 1A - NEC PC-9800 series - PRINTER - INITIALIZE
-	AH = 10h
-	???
-Return: ???
-SeeAlso: AH=11h,AH=12h,INT 17/AH=01h
---------J-1A11-------------------------------
-INT 1A - NEC PC-9800 series - PRINTER - OUTPUT CHARACTER
-	AH = 11h
-	???
-Return: ???
-SeeAlso: AH=10h,AH=12h,INT 17/AH=00h
---------J-1A12-------------------------------
-INT 1A - NEC PC-9800 series - PRINTER - SENSE STATUS
-	AH = 12h
-	???
-Return: ???
-SeeAlso: AH=10h,AH=11h,INT 17/AH=02h
---------A-1A3601-----------------------------
-INT 1A - WORD PERFECT v5.0 Third Party Interface - INSTALLATION CHECK
-	AX = 3601h
-Return: DS:SI = routine to monitor keyboard input, immediately preceded by the
-		ASCIZ string "WPCORP\0"
-Notes:	WordPerfect 5.0 will call this interrupt at start up to determine if a
-	  third party product wants to interface with it.  The third party
-	  product must intercept this interrupt and return the address of a
-	  keyboard monitor routine.
-	Before checking for keyboard input, and after every key entered by the
-	  user, Word Perfect will call the routine whose address was provided
-	  in DS:SI with the following parameters:
-		Entry:	AX = key code or 0
-			BX = WordPerfect state flag
-		Exit:	AX = 0 or key code
-			BX = 0 or segment address of buffer with key codes
-	See the "WordPerfect 5.0 Developer's Toolkit" for further information.
-SeeAlso: INT 16/AX=5500h
 --------!---Section--------------------------

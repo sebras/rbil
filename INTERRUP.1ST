@@ -1,19 +1,19 @@
-Interrupt List		Release 46			   Last change 6/04/95
+Interrupt List		Release 47			   Last change 8/13/95
 
 Please redistribute the following files unmodified as a group, in a quartet of
-archives named INTER46A through INTER46D (preferably the original authenticated
+archives named INTER47A through INTER47D (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	this file
 	INTERRUP.A	INT 00 through INT 13/2F  \
 	INTERRUP.B	INT 13/30 through INT 15/4F\
-	INTERRUP.C	INT 15/50 through INT 1A/5F \  
-	INTERRUP.D	INT 1A/60 through INT 21/43  \	 total 1835 pages at
-	INTERRUP.E	INT 21/44 through INT 21/62   \	 60 lines per page,
-	INTERRUP.F	INT 21/63 through INT 25       > 1957 with INTPRINT -p
-	INTERRUP.G	INT 26 through INT 2F/4A      /	 (7319 entries)
-	INTERRUP.H	INT 2F/4B through INT 2F/DF  /	 (2709 tables)
-	INTERRUP.I	INT 2F/E0 through INT 5F    /
-	INTERRUP.J	INT 60 through INT 61	   /
+	INTERRUP.C	INT 15/50 through INT 19    \  
+	INTERRUP.D	INT 1A through INT 21/43     \	 total 1856 pages at
+	INTERRUP.E	INT 21/44 through INT 21/5F   \	 60 lines per page,
+	INTERRUP.F	INT 21/60 through INT 21/FE    > 1979 with INTPRINT -p
+	INTERRUP.G	INT 21/FF through INT 2F/42   /	 (7400 entries)
+	INTERRUP.H	INT 2F/43 through INT 2F/CF  /	 (2734 tables)
+	INTERRUP.I	INT 2F/D0 through INT 5A    /
+	INTERRUP.J	INT 5B through INT 61	   /
 	INTERRUP.K	INT 62 through INT 6E	  /
 	INTERRUP.L	INT 6F through INT 7F	 /
 	INTERRUP.M	INT 80 through INT FF   /
@@ -30,7 +30,7 @@ PKZIP archives):
 	PORTS.LST	a listing of I/O ports
 	CATEGORY.KEY	descriptions of divider-line category letters
 	COMBINE.BAT	combine the pieces of the list into a single file
-The following files should be distributed in an archive called INTER46E:
+The following files should be distributed in an archive called INTER47E:
 	86BUGSnn.ZIP	programs to test for CPU bugs
 	INT.*		invoke interrupts from commandline
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
@@ -45,12 +45,12 @@ The following files should be distributed in an archive called INTER46E:
 	INTERVUE.EXE	indexed interrupt list browser
 	INTLIST.ICO	Windows icon for INTERVUE
 	IV.BAT		wrapper for INTERVUE
-Finally, the following files should be distributed in an archive INTER46F:
+Finally, the following files should be distributed in an archive INTER47F:
 	INT2WHLP.ZIP	convert list into Windows Help database
 	HINTSRCH.ZIP	WinHelp DLL for full-text searches of interrupt list
 	WH_ED*.ZIP	WinHelp-file editor
 
-Concatenate INTERRUP.A, .B, .C, .D, .E, .F, .G, .H, .I, .J, .K, and .L with
+Concatenate INTERRUP.A, .B, .C, .D, .E, .F, .G, .H, .I, .J, .K, .L, and .M with
 COMBINE.BAT to create an interrupt list file identical to my master copy.
 
 Use INTPRINT to generate a one-line-per-call summary file and/or a file
@@ -472,7 +472,7 @@ This list is the result of the time and effort of a large number of people:
 12/93 Alex Novgorodcev san@riaph.irkutsk.su	      AutoCAD Dev Interface
 12/93 Christian Kaiser	100065.2574@compuserve.com    Windows debugging kernel
 12/93 Colin Buckley    colin.buckley@CANREM.COM	      UNCHAIN
-12/93 Jeffrey L. Hayes IO91624@MAINE.maine.edu	      Tandy BIOS calls
+12/93 Jeffrey L. Hayes tvdog@delphi.com		      Tandy BIOS calls
 12/93 Finn Thoegersen  via jesperf@daimi.aau.dk	      VESA XGA BIOS Extensions
  1/94 David A. Mair    100137.264@COMPUSERVE.COM      NASI INT 6B calls
  1/94 Bill Hawkins     73650.167@compuserve.com	      Adv. Par. Port DAISY.SYS
@@ -549,11 +549,21 @@ This list is the result of the time and effort of a large number of people:
  4/95 Ralf Brown       ralf@telerama.lm.com	      AMI BIOS INT 15 extensns
  4/95 Tim Farley       TIM@magee.mhs.compuserve.com   PCMCIA Socket Serv. 2.1
  4/95 Matthias Paul    MPAUL@ibh.rwth-aachen.de       miscellaneous
+ 4/95 SkullC0DEr       SkullC0DEr 2:4631/7	      PUPClip
  5/95 Peter Charles Tonoli 071836@edna.cc.swin.edu.au CauseWay
  5/95 Stanley Appel    appel@stack.urc.tue.nl	      DOS32, virus inst.checks
  5/95 Tim Farley       TIM@magee.mhs.compuserve.com   Intel SMBus
  5/95 Stanley Appel    appel@stack.urc.tue.nl	      DIGPAK, MIDPAK
  5/95 Wolfgang Lierz   Wolfgang.Lierz@gmd.de	      C&T chips, LapLink RemAcc
+ 6/95 Jun-ichiro ITOH  itojun@csl.sony.co.jp	      HP 100LX/200LX
+ 6/95 Andreas Groegel groegeas@cip10.mathematik.uni-stuttgart.de  Windows95
+ 6/95 Tim Farley       TIM@magee.mhs.compuserve.com   XMZ
+ 6/95 James Roberts-Thomson COM3ROBERJD@ntu.ac.uk     LAN Manager wksta_info
+ 6/95 Peter Charles Tonoli 071836@edna.cc.swin.edu.au Linux DOSEMU
+ 7/95 Nico Looije      nico@djo.wtm.tudelft.nl	      NetWare printing, VLMs
+ 7/95 Matthias Paul    MPAUL@ibh.rwth-aachen.de       HugeRealMode server
+ 7/95 Steve Ryckman    76175.3515@compuserve.com      GO! directory locator
+ 7/95 Ciriaco G.de Celis  ciri@luna.gui.uva.es	      XDF
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -612,10 +622,10 @@ Also contributing:
  Serge Krupa <krupa@eig.unige.ch>, Tom Rawson <75300.210@compuserve.com>,
  Edwin Cleton 2:512/1007.2, Martin Wilde 2:247/352.2, Ed Palmer 1:140/1,
  Carlos Rioja <CarlosRioja@cpd.uva.es>,Torbj|rn Lindgren <tl@etek.chalmers.se>,
- Jens Bleuel <100064.1757@CompuServe.COM>, Morten Welinder <terra@diku.dk>,
- Dmitry Ablov <abl@ablov.comrel.msk.su>, Gianni Alb¢re (Taranto, Italy),
+ Jens Bleuel <100064.1757@CompuServe.COM>, Gianni Alb¢re (Taranto, Italy),
+ Morten Welinder <terra@APL.FOX.CS.CMU.EDU>, <Tim_-_Otholt@cup.portal.com>,
+ Serge Pachkovsky <ps@comcen.nsk.su>, Dmitry Ablov <abl@ablov.comrel.msk.su>,
  Nigel Bree <nigel@mwc.com>, Bob Aitchison via 76244.726@compuserve.com,
- Serge Pachkovsky <ps@comcen.nsk.su>, <Tim_-_Otholt@cup.portal.com>,
  Francis Turner <FTURNER@madge.MHS.CompuServe.COM>, kevinc@kpc.com,
  Vsevolod M. Shabad 2:5020/75.13,Peter van den Boogert <P.C.vdnBoogert@kub.nl>,
  Gordon Edwards <gedwards@ncratl.atlantaga.ncr.com>, John_Spinks@novell.com,
@@ -670,11 +680,15 @@ Also contributing:
  Ralf D. Kloth <kloth@sunwan.mpik-tueb.mpg.de>, eckertw@worms-emh4.army.mil,
  Giorgio Caimi <caimi@zeus.csr.unibo.it>, Bob Longnecker <blong@mav.com>,
  Jaroslaw Rafa <sfrafa@lfs.cyf-kr.edu.pl>, Mojmir Strhan <strhan@simultan.ch>,
- Axel C. Frinke <frinke@athene.informatik.uni-bonn.de>,
- Julian Nicholls <julian@aladdin.co.uk>,
- Jun-ichiro ITOH <itojun@csl.sony.co.jp>,
+ Axel C. Frinke <frinke@athene.informatik.uni-bonn.de>, avp@iron.misa.ac.ru,
+ Julian Nicholls <julian@aladdin.co.uk>, ricardo.ferreira@mpcbbs.com.br,
  Vincent Lyonel <vincentl@cc.ec-lyon.fr>, George Lefterov <george@virbus.bg>,
  Pascal Moulart <100572.1021@compuserve.com>, John Murphy <murf@perftech.com>,
+ Giacomo Amabile Catenazzi <gcatenaz@g26.ethz.ch>, Svante Frey <sfrey@kuai.se>,
+ Nils <xorax@Informatik.Uni-Bremen.DE>, Rod Mathews <rodmathews@earthlink.net>,
+ Pino Navato <morrone@ds.cised.unina.it>, <Gabor.Somlai@ohsh.u-szeged.hu>,
+ Morten Welinder <terra@APL.FOX.CS.CMU.EDU>,
+ Ervin Peretz <peretz@eagle.natinst.com>,
 --------!---BIBLIOGRAPHY---------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -1259,6 +1273,10 @@ ftp.pharlap.com:/pub/286dosx/pharlapx.zip.  Added by Ralf Brown, 4/14/95.
 Intel SMBus info from _Intel_System_Management_Bus_BIOS_Interface_
 _Specification_, _Revision_1.0_, February 15, 1995, by Intel Architecture
 Labs.  Added 5/14/95.
+
+Various Novell NetWare info available at
+ftp://ftp.urz.uni-heidelberg/pub/novell/unsupported; SC4X01.ZIP info added
+8/13/95. (!!! more to come!)
 --------!---ADDRESSES------------------------
 The following have provided API reference and other materials at no charge:
 

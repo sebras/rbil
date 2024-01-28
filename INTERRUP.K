@@ -1775,7 +1775,7 @@ Notes:	the FGDRIVER functions are rearranged with each major release, but
 	This call is ignored if asynchronous sound (AX=00A5h,AX=00A8h,
 	  AX=00AAh) is already in progress
 SeeAlso: AX=0081h,AX=00BCh,AX=00DBh
---------V-62006B-----------------------------
+--------V-620081-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_MUSICB" - PLAY SERIES OF NOTES IN BACKGROUND
 	AX = 0081h
 	CX = number of repetitions (negative = continuous play)
@@ -1785,7 +1785,7 @@ Notes:	the FGDRIVER functions are rearranged with each major release, but
 	This call is ignored if asynchronous sound (AX=00A5h,AX=00A8h,
 	  AX=00AAh) is already in progress
 SeeAlso: AX=0059h,AX=0081h,AX=00BDh,AX=00DCh
---------V-62006C-----------------------------
+--------V-620082-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_NUMLOCK" - GET STATE OF NUMLOCK KEY
 	AX = 0082h
 Return: AX = NumLock state (0000h off, 0001h on)
@@ -1807,14 +1807,14 @@ Offset	Size	Description	(Table 2683)
  02h	WORD	offset of source (mode-independent) bitmap
  04h	WORD	segment of buffer for result (mode-specific) bitmap
  06h	WORD	offset of buffer for result (mode-specific) bitmap
---------V-62006D-----------------------------
+--------V-620084-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PAGESIZE" - GET VIDEO PAGE SIZE FOR CURR MODE
 	AX = 0084h
 Return: DX:AX = page size in bytes
 Note:	the FGDRIVER functions are rearranged with each major release, but
 	  their parameters do not change (see #2667 at AX=0000h)
 SeeAlso: AX=0072h
---------V-62006E-----------------------------
+--------V-620085-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PAINT" - FLOOD CLOSED REGION WITH COLOR
 	AX = 0085h
 	BX = column
@@ -1826,7 +1826,7 @@ Notes:	the FGDRIVER functions are rearranged with each major release, but
 	  region boundaries
 	This call is ignored in text modes
 SeeAlso: AX=0035h
---------V-62006F-----------------------------
+--------V-620086-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PALETTE" - SET PALETTE / SET VIDEO DAC REGISTER
 	AX = 0086h
 ---CGA 4-color graphics---
@@ -1846,7 +1846,7 @@ Notes:	the FGDRIVER functions are rearranged with each major release, but
 	This function is ignored in text modes and Hercules graphics modes
 	Few EGA/VGA adapters correctly set the foreground color in CGA mode 6
 SeeAlso: AX=0041h,AX=004Eh,AX=0087h,AX=00ABh
---------V-620070-----------------------------
+--------V-620087-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PALETTES" - SET ALL PALETTE REGISTERS
 	AX = 0087h
 	ES:BX -> array of 16 WORDs containing values for palette registers
@@ -1855,7 +1855,7 @@ Notes:	the FGDRIVER functions are rearranged with each major release, but
 	  their parameters do not change (see #2667 at AX=0000h)
 	This function is ignored in text modes, CGA and Hercules graphics modes
 SeeAlso: AX=0041h,AX=004Eh,AX=0086h,AX=00ABh
---------V-620071-----------------------------
+--------V-620088-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PAN" - SET SCREEN ORIGIN
 	AX = 0088h
 	BX = new column for screen origin
@@ -1863,7 +1863,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_PAN" - SET SCREEN ORIGIN
 Note:	the FGDRIVER functions are rearranged with each major release, but
 	  their parameters do not change (see #2667 at AX=0000h)
 SeeAlso: AX=00B2h
---------V-620072-----------------------------
+--------V-620089-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PATTERN" - SPECIFY DISPLAY PATTERN FOR COLOR
 	AX = 0089h
 	BX = index of pattern to define
@@ -1874,7 +1874,7 @@ Notes:	the FGDRIVER functions are rearranged with each major release, but
 	  with each color index rather than displaying the actual color
 	This call has no effect in text and 256-color graphics modes
 SeeAlso: AX=0023h,AX=0045h
---------V-620073-----------------------------
+--------V-62008A-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PCXHEAD" - GET PCX FILE HEADER
 	AX = 008Ah
 	ES:BX -> variable pointer record (see #2107)
@@ -1892,7 +1892,7 @@ Offset	Size	Description	(Table 2107)
  02h	WORD	offset of ASCIZ filename
  04h	WORD	segment of 128-byte buffer for PCX header
  06h	WORD	offset of 128-byte buffer for PCX header
---------V-620074-----------------------------
+--------V-62008B-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PCXMODE" - GET OPTIMAL VIDEO MODE FOR DISPLAY
 	AX = 008Bh
 	ES:BX -> PCX header (see AX=008Ah)
@@ -1902,7 +1902,7 @@ Return: AX = optimal video mode for PCX file
 Note:	the FGDRIVER functions are rearranged with each major release, but
 	  their parameters do not change (see #2667 at AX=0000h)
 SeeAlso: AX=008Ah,AX=00B9h
---------V-620074-----------------------------
+--------V-62008C-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PCXPAL" - GET PALETTE STORED IN PCX FILE
 	AX = 008Ch
 	ES:BX -> variable pointer record (see #2684)
@@ -1922,7 +1922,7 @@ Offset	Size	Description	(Table 2684)
 Note:	the buffer for the palette must hold at least three times as many bytes
 	  as there are colors in the palette
 SeeAlso: #2685
---------V-620074-----------------------------
+--------V-62008D-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PCXRANGE" - GET EXTENT OF PCX IMAGE
 	AX = 008Dh
 	ES:BX -> variable pointer record (see #2685)
@@ -1945,14 +1945,14 @@ Offset	Size	Description	(Table 2685)
  10h	WORD	segment of WORD buffer for X coordinate of image's bottom edge
  12h	WORD	offset of WORD buffer for X coordinate of image's bottom edge
 SeeAlso: #2684
---------V-620075-----------------------------
+--------V-62008E-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PLAYING" - DETERMINE WHETHER ASYNC SOUND ACTIVE
 	AX = 008Eh
 Return: AX = sound state (0 = no asynchronous sound, 1 = async sound playing)
 Note:	the FGDRIVER functions are rearranged with each major release, but
 	  their parameters do not change (see #2667 at AX=0000h)
 SeeAlso: AX=0059h,AX=0081h,AX=00BDh,AX=00DCh
---------V-620076-----------------------------
+--------V-62008F-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_POINT" - DISPLAY A PIXEL
 	AX = 008Fh
 	BX = column
@@ -2000,7 +2000,7 @@ Offset	Size	Description	(Table 2108)
  04h	WORD	segment of work array
  06h	WORD	offset of work array
 SeeAlso: #2109
---------V-620079-----------------------------
+--------V-620093-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_POLYGON" - DRAW AN UNFILLED POLYGON
 	AX = 0093h
 	CX = number of vertices in polygon
@@ -2017,7 +2017,7 @@ Offset	Size	Description	(Table 2109)
  04h	WORD	segment of WORD array containing vertex rows
  06h	WORD	offset of WORD array containing vertex rows
 SeeAlso: #2108
---------V-62007A-----------------------------
+--------V-620094-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_POLYLINE" - DRAW AN UNFILLED POLYGON
 	AX = 0094h
 	CX = number of vertices in polygon
@@ -2034,7 +2034,7 @@ Offset	Size	Description	(Table 2110)
  00h	WORD	column
  02h	WORD	row
 SeeAlso: #2109
---------V-62007B-----------------------------
+--------V-620095-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_POLYOFF" - DEFINE POLYGON DRAWING OFFSET
 	AX = 0095h
 	BX = horizontal offset (default 0)
@@ -2044,7 +2044,7 @@ Desc:	define the offsets applied to all vertices of polygons drawn with
 Note:	the FGDRIVER functions are rearranged with each major release, but
 	  their parameters do not change (see #2667 at AX=0000h)
 SeeAlso: AX=0092h,AX=0094h
---------V-62007C-----------------------------
+--------V-620096-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PRINT" - DISPLAY STRING OF HARDWARE CHARACTERS
 	AX = 0096h
 	CX = length of string
@@ -2055,7 +2055,7 @@ Notes:	the FGDRIVER functions are rearranged with each major release, but
 	  is updated to be just to the right of the last displayed character
 	This function is ignored in text modes
 SeeAlso: AX=000Ch,AX=0037h,AX=0065h,AX=0097h
---------V-62007C-----------------------------
+--------V-620097-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PRINTC" - DISPLAY STRING OF HW CHARS (CLIPPED)
 	AX = 0097h
 	CX = length of string
@@ -2068,7 +2068,7 @@ Notes:	the FGDRIVER functions are rearranged with each major release, but
 	  area is displayed
 	This function is ignored in text modes
 SeeAlso: AX=0096h
---------V-62007D-----------------------------
+--------V-620098-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PUTBLOCK" - RESTORE RECTANGLE OF DISPLAY
 	AX = 0098h
 	ES:BX -> buffer containing previously-saved image
@@ -2082,7 +2082,7 @@ Notes:	the FGDRIVER functions are rearranged with each major release, but
 	  they are defined in screen space, and the left and right edges are
 	  adjusted to a byte boundary if necessary
 SeeAlso: AX=003Ch,AX=0099h
---------V-62007E-----------------------------
+--------V-620099-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PUTIMAGE" - DISPLAY MODE-SPECIFIC BITMAP IMAGE
 	AX = 0099h
 	ES:BX -> buffer containing mode-specific bitmap
@@ -2093,14 +2093,14 @@ Notes:	the FGDRIVER functions are rearranged with each major release, but
 	The bitmap is displayed with its lower left corner at the graphics
 	  cursor position; color 0 is NOT treated as transparent
 SeeAlso: AX=0011h,AX=0024h,AX=0036h,AX=0044h,AX=0098h
---------V-62007F-----------------------------
+--------V-62009A-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_QUIET" - STOP CONTINUOUS SYNCHRONOUS SOUND
 	AX = 009Ah
 Notes:	the FGDRIVER functions are rearranged with each major release, but
 	  their parameters do not change (see #2667 at AX=0000h)
 	This call has no effect if there is no continuous sound playing
 SeeAlso: AX=0059h,AX=0080h,AX=00BDh,AX=00DCh
---------V-620080-----------------------------
+--------V-62009B-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_RECT" - DRAW UNFILLED RECTANGLE IN SCREEN SPACE
 	AX = 009Bh
 	BX = left edge column
@@ -2110,7 +2110,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_RECT" - DRAW UNFILLED RECTANGLE IN SCREEN SPACE
 Note:	the FGDRIVER functions are rearranged with each major release, but
 	  their parameters do not change (see #2667 at AX=0000h)
 SeeAlso: AX=0006h,AX=0012h,AX=0023h,AX=003Ch
---------V-620081-----------------------------
+--------V-62009C-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_RESET" - ERASE SCREEN AND RESTORE SCREEN ATTR
 	AX = 009Ch
 Notes:	the FGDRIVER functions are rearranged with each major release, but
@@ -2118,7 +2118,7 @@ Notes:	the FGDRIVER functions are rearranged with each major release, but
 	This call is ignored in graphics modes
 	The screen attributes are only restored if ANSI.SYS is loaded
 SeeAlso: AX=0028h,AX=00B0h
---------V-620082-----------------------------
+--------V-62009D-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_RESIZE" - SET GRAPHICS MODE VIDEO PAGE SIZE
 	AX = 009Dh
 	BX = new page width in pixels
@@ -2129,7 +2129,7 @@ Notes:	the FGDRIVER functions are rearranged with each major release, but
 	The mouse, joysticks, expanded memory, and extended memory must be
 	  reinitialized after this call
 SeeAlso: AX=0084h,AX=00ACh
---------V-620083-----------------------------
+--------V-62009E-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_RESTORE" - COPY REGION FROM HIDDEN TO VIS PAGE
 	AX = 009Eh
 	BX = left edge column
@@ -2146,7 +2146,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_RESUME" - RESTART ASYNCHRONOUS SOUND
 Note:	the FGDRIVER functions are rearranged with each major release, but
 	  their parameters do not change (see #2667 at AX=0000h)
 SeeAlso: AX=00BDh,AX=00C0h
---------V-620085-----------------------------
+--------V-6200A0-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_REVIMAGE" - DISPLAY REVERSED IMAGE (BITMAP)
 	AX = 00A0h
 	ES:BX -> mode-specific bitmap
@@ -2158,7 +2158,7 @@ Notes:	the FGDRIVER functions are rearranged with each major release, but
 	The image is drawn with its lower left corner at the current graphics
 	  cursor position
 SeeAlso: AX=0011h,AX=0024h,AX=0036h,AX=0044h,AX=00A1h,AX=00A9h,AX=00B9h
---------V-620086-----------------------------
+--------V-6200A1-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_REVMASK" - DISPLAY REVERSED IMAGE (MASKING MAP)
 	AX = 00A1h
 	ES:BX -> array containing image stored as a masking map (see #2098)
@@ -2171,7 +2171,7 @@ Notes:	the FGDRIVER functions are rearranged with each major release, but
 	The image is drawn with its lower left corner at the current graphics
 	  cursor position
 SeeAlso: AX=0010h,AX=001Fh,AX=0034h,AX=00A0h,AX=00A9h,AX=00C5h
---------V-620087-----------------------------
+--------V-6200A2-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SAVE" - COPY REGION FROM VISIBLE TO HIDDEN PAGE
 	AX = 00A2h
 	BX = left edge column
@@ -2182,10 +2182,10 @@ Notes:	the FGDRIVER functions are rearranged with each major release, but
 	  their parameters do not change (see #2667 at AX=0000h)
 	The left and right edges are adjusted to byte boundaries if necessary
 SeeAlso: AX=009Eh,AX=00C6h
---------V-620087-----------------------------
+--------V-6200A3-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SCALE" - SCALE BITMAP
 	AX = 00A3h
-	ES:BX -> variable pointer record (see #2685)
+	ES:BX -> variable pointer record (see #2622)
 	CX = width of source bitmap in pixels (0 < width <= 1024)
 	DX = height of source bitmap in pixels (0 < height <= 1024)
 	SI = desired width of scaled bitmap (0 < width <= 1024)
@@ -2194,12 +2194,12 @@ Return: nothing
 SeeAlso: AX=00B7h
 
 Format of FGDRIVER SCALE variable pointer record:
-Offset	Size	Description	(Table 2685)
+Offset	Size	Description	(Table 2622)
  00h	WORD	segment of source bitmap (one pixel per byte)
  02h	WORD	offset of source bitmap
  04h	WORD	segment of buffer for resulting scaled bitmap
  06h	WORD	offset of buffer for resulting scaled bitmap
---------V-620088-----------------------------
+--------V-6200A4-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SCRLOCK" - GET STATE OF SCROLL LOCK KEY
 	AX = 00A4h
 Return: AX = ScrollLock state (0000h off, 0001h on)
@@ -2208,7 +2208,7 @@ Program: FGDRIVER is the external video driver for the shareware
 Note:	the FGDRIVER functions are rearranged with each major release, but
 	  their parameters do not change (see #2667 at AX=0000h)
 SeeAlso: AX=000Ah,AX=0082h,AX=00A8h,AX=00B1h
---------V-620089-----------------------------
+--------V-6200A5-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SCROLL" - VERTICALLY SCROLL SCREEN REGION
 	AX = 00A5h
 	BX = left edge column
@@ -2226,7 +2226,7 @@ Notes:	the FGDRIVER functions are rearranged with each major release, but
 	  boundaries if necessary
 	Circular scrolling uses part of the hidden page as a workspace
 SeeAlso: AX=0088h,AX=00B2h
---------V-62008A-----------------------------
+--------V-6200A6-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SETATTR" - SET TEXT-MODE CHARACTER ATTRIBUTE
 	AX = 00A6h
 	BX = foreground
@@ -2236,7 +2236,7 @@ Notes:	the FGDRIVER functions are rearranged with each major release, but
 	  their parameters do not change (see #2667 at AX=0000h)
 	This call is ignored in graphics modes
 SeeAlso: AX=000Bh,AX=003Ah,AX=0048h
---------V-62008B-----------------------------
+--------V-6200A7-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SETBANKS" - SET SVGA READ AND WRITE BANKS
 	AX = 00A7h
 	BX = memory bank from which to read (FFFFh leave unchanged)
@@ -2244,14 +2244,14 @@ INT 62 u - FGDRIVER v4.02 - "FG_SETBANKS" - SET SVGA READ AND WRITE BANKS
 Note:	the FGDRIVER functions are rearranged with each major release, but
 	  their parameters do not change (see #2667 at AX=0000h)
 SeeAlso: AX=003Bh
---------V-62008B-----------------------------
+--------V-6200A8-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SETCAPS" - SET STATE OF CAPSLOCK KEY
 	AX = 00A8h
 	BX = new state (0000h off, 0001h on)
 Note:	the FGDRIVER functions are rearranged with each major release, but
 	  their parameters do not change (see #2667 at AX=0000h)
 SeeAlso: AX=000Ah,AX=0082h,AX=00A4h,AX=00B1h
---------V-62008C-----------------------------
+--------V-6200A9-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SETCLIP" - SET CLIPPING REGION
 	AX = 00A9h
 	BX = left edge of clipping region
@@ -2261,14 +2261,14 @@ INT 62 u - FGDRIVER v4.02 - "FG_SETCLIP" - SET CLIPPING REGION
 Note:	the FGDRIVER functions are rearranged with each major release, but
 	  their parameters do not change (see #2667 at AX=0000h)
 SeeAlso: AX=0010h,AX=001Fh,AX=0034h,AX=003Eh,AX=00A1h,AX=00C5h
---------V-62008D-----------------------------
+--------V-6200AA-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SETCOLOR" - SET CURRENT COLOR
 	AX = 00AAh
 	BX = new color index (or text attribute in text modes)
 Note:	the FGDRIVER functions are rearranged with each major release, but
 	  their parameters do not change (see #2667 at AX=0000h)
 SeeAlso: AX=0018h,AX=0040h,AX=0045h
---------V-62008E-----------------------------
+--------V-6200AB-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SETDACS" - SET VIDEO DAC CONTENTS
 	AX = 00ABh
 	CX = number of DAC registers to set (0001h to 0100h)
@@ -2406,7 +2406,7 @@ Notes:	the FGDRIVER functions are rearranged with each major release, but
 	  their parameters do not change (see #2667 at AX=0000h)
 	The specified page must be a physical or virtual page
 SeeAlso: AX=0043h,AX=00AEh,AX=00B2h
---------V-6200B8-----------------------------
+--------V-6200B7-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SHEAR" - SHEAR UNPACKED BITMAP
 	AX = 00B7h
 	ES:BX -> variable pointer record (see #2687)
@@ -4512,7 +4512,7 @@ Notes:	the installation check for the MIDI driver is to test for the signature
 	also supported by MIDPAK, the successor to the Digitized Sound
 	  Package's MIDI driver
 SeeAlso: AX=0688h
---------s-660701-----------------------------
+--------s-660702-----------------------------
 INT 66 - MIDPAK - PLAY SEQUENCE
 	AX = 0702h
 	BX = Sequence number
@@ -4842,7 +4842,7 @@ Return: CF set
 INT 66 - PenDOS - PMOUSE - ALTERNATE API
 	AH = function (58h-5Fh)
 Note:	these functions exactly duplicate AH=50h-57h
-----------66AA02-----------------------------
+--------U-66AA02-----------------------------
 INT 66 - HelpTSR v2.10 - INSTALLATION CHECK
 	AX = AA02h
 Return: ES:DI -> 7 byte signature "HelpTSR" if resident
@@ -5659,9 +5659,21 @@ Note:	this function was officially documented with the release of QEMM 7.50
 (Table 2204)
 Values for calling QEMM v7.03+ "QPI_SetIOCallback" function:
 	AX = 1A07h
-	ES:DI -> new I/O callback function
+	ES:DI -> new I/O callback function (see #2711)
 Return: CF clear
 Note:	this function was officially documented with the release of QEMM 7.50
+
+(Table 2711)
+Values QEMM v7.03+ I/O callback function is called with:
+	AL/AX = data to/from trapped port
+	CL = I/O direction (00h = IN instruction, else OUT instruction)
+	DX = I/O port address
+Return: CF clear if port handled by callback function
+	CF set if not handled
+	all other registers returned to application executing the IN or OUT
+	  instruction (allowing arbitrary changes to port address, data value,
+	  etc.)
+SeeAlso: #2204
 
 (Table 2205)
 Values for calling QEMM v7.03+ "QPI_GetPortTrap" function:
@@ -6675,6 +6687,10 @@ SeeAlso: AX=5BF0h
 INT 67 - LIM EMS 4.0 - PREPARE EXPANDED MEMORY HARDWARE FOR WARM BOOT
 	AH = 5Ch
 Return: AH = status (see #2268)
+Note:	when MS-DOS v6.xx EMM386 is loaded and the keyboard driver supports
+	  INT 15/AH=4Fh (keyboard intercept) calls, the system may hang
+	  instead of booting if this function is called just prior to a jump
+	  to F000h:FFF0h
 
 (Table 2268)
 Values for EMS function status:
@@ -8140,7 +8156,7 @@ INT 68 U - ???
 Return: ???
 Note:	called by Novell DOS 7.0 EMM386.EXE if AX=4300h returns AX=F386h
 SeeAlso: AX=4300h
-----------6847-------------------------------
+--------W-6847-------------------------------
 INT 68 - MS Windows debugging kernel - OUTPUT STRING
 	AH = 47h
 	ES:SI -> string

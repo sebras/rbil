@@ -2727,6 +2727,8 @@ Program: UltraMid is a TSR from Advanced Gravis to play MIDI and digital data
 Range:	INT 78 to INT 7F
 Notes:	the installation check is testing for the signature "ULTRAMID" at
 	  offset 0103h in the interrupt handler's segment
+SeeAlso: INT 2F/AX=CD00h"ULTRAMID",INT 7E"SBOS"
+Index:	uninstall;UltraMID
 --------d-7800-------------------------------
 INT 78 - TARGA.DEV - CMC International SCSI device driver - SET I/O PORT
 	AH = 00h
@@ -2755,12 +2757,162 @@ Values for TARGA.DEV error code:
  08h	SCSI board not selected, BSY signal did not come on in response to
 	  raising SEL
  09h	time-out waiting for status state, signifying end of DMA transfer
+----------78--00-----------------------------
+INT 78 - HugeRealMode Server - ENABLE A20
+	AL = 00h
+Return: AX = error code (see #2721)
+Note:	The HugeRealMode Server requires an XMS-driver like HIMEM.SYS loaded
+	  before HUGEREAL (for XMS-memory allocation and A20 control). It
+	  utilizes some undocumented 386+ features to enable 4G code and data
+	  segments (flat memory model) in the CPUs real-mode. It is not
+	  compatible with V86-mode (as with most EMM386). For maximum speed
+	  and compatibility with DOS it uses a two stage interrupt model
+	  (see INT 78/AL=03h)
+SeeAlso: INT 78/AL=01h,INT 78/AL=02h,INT 78/AL=03h
+
+(Table 2721)
+Values for HugeRealMode Server error code:
+ 00h	successful
+ 01h	unknown function
+ 02h	A20 disabled
+ 03h	A20 enabled
+ 04h	memory allocation error
+ 05h	memory not fixeable (LOCK)
+ 06h	memory not deallocaable
+ 07h	memory not moveable (UNLOCK)
+ 08h	change in memory allocation size not possible
+ 09h	file error (with .XMF-file)
+ 0Ah	memory error (with .XMF-file)
+ 0Bh	unknown procedure (currently Turbo Pascal unit only)
+----------78--01-----------------------------
+INT 78 - HugeRealMode Server - DISABLE A20
+	AL = 01h
+Return: AX = error code (see #2721)
+SeeAlso: INT 78/AL=00h,INT 78/AL=02h
+----------78--02-----------------------------
+INT 78 - HugeRealMode Server - QUERY A20 STATE
+	AL = 02h
+Return: AX = A20 state (0000h disabled, 0001h enabled)
+SeeAlso: INT 78/AL=00h,INT 78/AL=01h
+----------78--03-----------------------------
+INT 78 - HugeRealMode Server - ENABLE TWO-STAGE INTERRUPT MODEL
+	AL = 03h
+Return: AX = error code (see #2721)
+Notes:	If the two stage interrupt model is disabled, the IP must stay below
+	  1MB, because the high word of EIP is not saved correctly by the
+	  standard interrupt management in real mode.  Routines in extended
+	  memory may only be called with interrupts disabled (only usable for
+	  very short routines).
+	If the two stage interupt model is enabled, these conventions are not
+	  required.  The outer (transparent) ISRs save the higher word of EIP
+	  in the high word of CR3 (possible modification: in memory, if this
+	  is not safe) and then invoke the standard ISRs.
+	Because of this handling, one should use pseudo segmented code even in
+	  extended memory (64K blocks located on 64K boundaries) to avoid the
+	  misalignment of the saved EIP (in CR3). Another way is to track and
+	  realign CR3 each time when jumping over a 64K boundary in extended
+	  memory
+SeeAlso: INT 78/AL=00h,INT 78/AL=04h
+----------78--04-----------------------------
+INT 78 - HugeRealMode Server - DISABLE TWO-STAGE INTERRUPT MODEL
+	AL = 04h
+Return: AX = error code (see #2721)
+SeeAlso: INT 78/AL=00h,INT 78/AL=03h
+----------78--05-----------------------------
+INT 78 - HugeRealMode Server - GET SEGMENT ADDRESS OF SERVER-MANAGEMENT RANGE
+	AL = 05h
+Return:	AX = error code (see #2721)
+	ES = segment address
+----------78--06-----------------------------
+INT 78 - HugeRealMode Server - ALLOCATE MEMORY
+	AL = 06h
+	DX = length in KB
+Return:	AX = error code (see #2721)
+	DX = handle
+	EBX = start address of allocated block
+SeeAlso: INT 78/AL=07h,INT 78/AL=08h
+----------78--07-----------------------------
+INT 78 - HugeRealMode Server - DEALLOCATE MEMORY
+	AL = 07h
+	DX = handle
+Return: AX = error code (see #2721)
+SeeAlso: INT 78/AL=06h,INT 78/AL=08h
+----------78--08-----------------------------
+INT 78 - HugeRealMode Server - MODIFY ALLOCATED MEMORY SIZE
+	AL = 08h
+	DX = handle
+	BX = new size in KB
+Return:	AX = error code (see #2721)
+	EBX = new address
+SeeAlso: INT 78/AL=06h,INT 78/AL=07h
+----------78--09-----------------------------
+INT 78 - HugeRealMode Server - LOAD .XMF-FILE
+	AL = 09h
+	ES:BX -> filename (see #2723)
+Return:	AX = error code (see #2721)
+	ECX = target address
+Notes:	memory must be allocated before loading
+	.XMF file format (eXtended Memory executable File format) is supported
+	  by the HugeRealMode server for easier handling of XMS-code.
+	The utility CONFXMF converts .OBJ-files (.COM 'tiny' model) to
+	  .XMF-format
+SeeAlso: INT 78/AL=06h
+
+Format of .XMF program file header::
+Offset	Size	Description	(Table 2723)
+ 00h	DWORD	signature "XMF_"
+ 04h	WORD	length of programs code
+ 06h	WORD	count of 32bit addresses to relocate
+ 08h	WORD	offset to code start (releative to file start) (see #2724)
+ 0Ah	WORD	relocation table
+Note:	each word contains a 16bit address, where a relocation has to be
+	  performed
+
+Format of .XMF-file code header::
+Offset	Size	Description	(Table 2724)
+ 00h	WORD	count of exported functions
+ 02h  N PWORDs	48bit pointers (16bit segment+32bit offset) to each function
+		(16bit segment is always zero)
+ var		start of program's code
+SeeAlso: #2723
+----------78--0A-----------------------------
+INT 78 - HugeRealMode Server - SET SEGMENT LIMITS
+	AL = 0Ah
+	BL = segment limits (see #2722)
+Return: AX = error code (see #2721)
+SeeAlso: INT 78/AL=05h
+
+Bitfields for HugeRealMode Server segment limits:
+Bit(s)	Description	(Table 2722)
+ 7	CS size: 1=4GB, 0=64KB
+ 6-5	not used
+ 4	SS size: 1=4GB, 0=64KB
+ 3	GS size
+ 2	FS size
+ 1	ES size
+ 0	DS size
+----------78--0B-----------------------------
+INT 78 - HugeRealMode Server - TRANSFER MEMORY FROM DOS TO XMS
+	AL = 0Bh
+	ES:SI = source address
+	EDI = target address
+	ECX = length
+Return: AX = error code
+SeeAlso: INT 78/AL=0Ch
+----------78--0C-----------------------------
+INT 78 - HugeRealMode Server - TRANSFER MEMORY FROM XMS TO DOS
+	AL = 0Ch
+	ESI = source address
+	ES:DI = target address
+	ECX = length
+Return: AX = error code
+SeeAlso: INT 78/AL=0Ch
 ----------7800-------------------------------
 INT 78 - HugeRealMode Driver - API
 	AH = 00h
 	AL = function
 	    00h installation check
-		Return: AX = DBCA if installed
+		Return: AX = DBCAh if installed
 	    01h get entry point
 		Return: ES:BX -> far call entry point
 Program: the HugeRealMode driver was published in the German DOS Extra Nr. 20
@@ -4148,6 +4300,10 @@ Return: nothing
 Notes:	This interrupt is called by AutoCAD to perform its output
 	A data length of 0000h indicates that a blank line is to be output
 SeeAlso: AX=8001h,AX=8002h,INT 78"AutoCAD",INT 7A/AX=0001h"AutoCAD"
+--------e-7B---------------------------------
+INT 7B U - MCI Express v2.11+ - DRIVER.EXE - ???
+Program: MCI Express is a front end to MCI Mail; DRIVER.EXE is its
+	  communication driver
 ----------7B---------------------------------
 INT 7B - Novell XQL - XQL PRIMITIVES MANAGER API
 	DS:DX -> parameter block (see #2429)
@@ -5046,7 +5202,7 @@ Note:	E.EXE checks whether this interrupt is in use (not 0000h:0000h),
 	  and if it is used, attempts to load E55VGA.EX instead of the
 	  default E.EX overlay.	 However, E55VGA.EX is not included in
 	  IBM DOS 6.1.
-----------7D00-------------------------------
+--------G-7D00-------------------------------
 INT 7D - SCSILink - RESET SCSI BUS
 	AH = 00h
 Program: SCSILink is a TSR by Cross Products Ltd which allows its PC-hosted
@@ -5056,7 +5212,7 @@ Desc:	reset all devices on the SCSI bus
 Note:	the installation check is the signature "SCSILINK" immediately prior
 	  to the interrupt handler
 Index:	installation check;SCSILink
-----------7D01-------------------------------
+--------G-7D01-------------------------------
 INT 7D - SCSILink - CONNECT TO TARGET
 	AH = 01h
 	AL = target ID
@@ -5065,7 +5221,7 @@ Return: CF clear if successful
 	    AL = initiator error
 	    AH = target error
 Desc:	arbitrate the use of the bus and select the specified target device
-----------7D02-------------------------------
+--------G-7D02-------------------------------
 INT 7D - SCSILink - SEND COMMAND
 	AH = 02h
 	ES:BX -> parameter block (see #2448)
@@ -5086,7 +5242,7 @@ Offset	Size	Description	(Table 2448)
 Format of SCSILink command block:
 Offset	Size	Description	(Table 2449)
  00h		info not yet available
-----------7D03-------------------------------
+--------G-7D03-------------------------------
 INT 7D - SCSILink - SET TIMEOUT
 	AH = 03h
 	AL = timeout selector (see #2450)
@@ -5100,19 +5256,19 @@ Values for SCSILink timeout selector:
  01h	time to wait for new phase (default 5)
  02h	maximum time to send/receive block (default 18)
  03h	time to wait for reselect (default 180)
-----------7D04-------------------------------
+--------G-7D04-------------------------------
 INT 7D - SCSILink - GET ERROR STRING
 	AH = 04h
 	AL = error number
 Return: ES:BX -> ASCIZ error string for error number
-----------7D05-------------------------------
+--------G-7D05-------------------------------
 INT 7D - SCSILink - GET ADDRESS
 	AH = 05h
 Return: AL = DMA channel
 	AH = initiator ID
 	BX = card address
 Desc:	determine the current hardware configuration
-----------7D06-------------------------------
+--------G-7D06-------------------------------
 INT 7D - SCSILink - PUT DATA
 	AH = 06h
 	CX = number of bytes to store (0001h-0100h)
@@ -5122,7 +5278,7 @@ Return: CF clear if successful
 	    AL = error code (01h = too much data)
 Note:	the specified data is stored in SCSILink's PSP
 SeeAlso: AH=07h
-----------7D07-------------------------------
+--------G-7D07-------------------------------
 INT 7D - SCSILink - GET DATA
 	AH = 07h
 	CX = number of bytes to retrieve (0001h-0100h)
@@ -5132,14 +5288,14 @@ Return: CF clear if successful
 	    AL = error code (01h = too much data)
 Note:	retrieve data previously stored with AH=06h
 SeeAlso: AH=06h
-----------7D08-------------------------------
+--------G-7D08-------------------------------
 INT 7D - SCSILink - TERMINATE SESSION
 	AH = 08h
 Desc:	indicate to any other programs that intercept INT 7D that the program
 	  has finished with the link
 Note:	the program should call this function even if a SCSI error caused its
 	  termination
-----------7D09-------------------------------
+--------G-7D09-------------------------------
 INT 7D - SCSILink - POLL REQUEST
 	AH = 09h
 	AL = target ID
@@ -5166,13 +5322,86 @@ Notes:	this vector is overwritten when GO32 starts but is not restored by
 	the newest versions of GO32 dynamically allocate the vectors used
 	  for the relocated IRQs, much as DESQview does (see INT 50"DESQview")
 SeeAlso: INT 0E,INT 7D"GO32",INT 7F"GO32"
+--------s-7E00-------------------------------
+INT 7E - MaxSBOS v0.21 - GET ???
+	AH = 00h
+Return: DX:AX -> ???
+SeeAlso: AH=01h,AH=02h,AH=03h
+--------s-7E00F6-----------------------------
+INT 7E - SBOS v3.82 - SET ???
+	AX = 00F6h
+	BL = ??? (max. 20h, value will be set to 20h if BL greater)
+Return: AX=00F9h,AX=00FEh
+--------s-7E00F7-----------------------------
+INT 7E - SBOS v3.82 - GET ???
+	AX = 00F7h
+Return:	AX = status
+	    0000h failed
+	    0001h successful
+		BX = ??? (if nonzero, ??? is hooked) (see AX=00FFh)
+		CH = ???
+		CL = ???
+SeeAlso: AX=00F6h,AX=00FDh,AX=00FFh
+--------s-7E00F9-----------------------------
+INT 7E - SBOS v3.82 - SET ???
+	AX = 00F9h
+	BX = ???
+SeeAlso: AX=00F6h,AX=00FBh,AX=00FDh
+--------s-7E00FB-----------------------------
+INT 7E - SBOS v3.82 - SET ???
+	AX = 00FBh
+	BL = ???
+SeeAlso: AX=00F6h,AX=00FDh,AX=00FFh
+--------s-7E00FF-----------------------------
+INT 7E - SBOS v3.82 - SET ???
+	AX = 00FDh
+	BL = ??? (max. 20h, value will be set to 20h if BL greater)
+SeeAlso: AX=00F9h,AX=00FEh
 --------s-7E00FE-----------------------------
-INT 7E - SBOS - UNINSTALL
+INT 7E - SBOS v3.82 - UNINSTALL
 	AX = 00FEh
-Return: nothing, SBOS removed
+Return: AX = status
+	    0000h successful
+	    00FCh unable to unhook INT 21
+	    00FDh unable to unhook INT 09
+	    00FEh unable to release memory
 Program: SBOS is a SoundBlaster emulator for the Gravis UltraSound
-Note:	this function may not be called if any SBOS vectors have been hooked
-SeeAlso: INT 21/AX=FD12h
+Range:	SBOS may use INT 78-INT 7F
+Notes:	the installation check for SBOS is to test for the ASCII signature
+	  "SBOS" at offset 0Ah in the interrupt handler's segment (similar
+	  to one of the possible EMS installation checks)
+	this function may not be called if any SBOS vectors have been hooked
+SeeAlso: INT 21/AX=FD12h,INT 78"UltraMID"
+--------s-7E00FF-----------------------------
+INT 7E - SBOS v3.82 - SET INTERRUPT FOR ???
+	AX = 00FFh
+	BL = new interrupt vector to hook
+Return: BX = 03CDh if supported
+Desc:	unhooks the current interrupt handler for ???, and reconnects it to the
+	  specified new interrupt number
+SeeAlso: AX=00F7h,AX=00F9h,AX=00FEh
+--------s-7E01-------------------------------
+INT 7E - MaxSBOS v0.21 - ???
+	AH = 01h
+	???
+Return: ???
+Program: MaxSBOS is a SoundBlaster FM synthesis emulator for the Gravis
+	  UltraSound MAX
+Range:	INT 78-INT 7F, selected by commandline parameter
+Note:	the installation check is the same as for 'regular' SBOS (see AX=00FEh)
+	  although the API in v0.21 does not provide the functions present in
+	  the older SBOS
+SeeAlso: AX=00FEh,AH=02h,AH=03h
+--------s-7E02-------------------------------
+INT 7E - MaxSBOS v0.21 - ???
+	AH = 02h
+Return: AX = FFFFh
+SeeAlso: AX=00FEh,AH=01h,AH=03h
+--------s-7E03-------------------------------
+INT 7E - MaxSBOS v0.21 - NOP
+	AH = 03h
+Return: nothing
+SeeAlso: AX=00FEh,AH=01h,AH=02h
 --------m-7E5857BL57-------------------------
 INT 7E - XLOAD - INSTALLATION CHECK
 	AX = 5857h
@@ -6481,7 +6710,7 @@ Return: CF set on error
 	    CX:DX -> array of FAR pointers to entry points (see #2461)
 Note:	this API is a superset of the 8514/A Adapter Interface
 	  (see AX=0105h"HDILOAD")
-----------7F0106-----------------------------
+--------V-7F0106-----------------------------
 INT 7F - HDILOAD Mach32 Adapter Interface - UNINSTALL
 	AX = 0106h
 Return: AX = 0105h if successfully unloaded
@@ -7226,7 +7455,7 @@ Values for Alloy network executive type:
  03h	BTNX
  04h	MW386
  05h	ANSK
-----------7F2525-----------------------------
+--------V-7F2525-----------------------------
 INT 7F - TIGA Communications Driver v2.05 - ???
 	AX = 2525h
 	BX = ???
@@ -7409,7 +7638,7 @@ Return: AL = status
 	    01h invalid function
 	    03h unable to unlock semaphore
 SeeAlso: AH=02h,AH=41h"MW386",AH=42h"NTNX"
-----------7F4321-----------------------------
+--------V-7F4321-----------------------------
 INT 7F - TIGA Communications Driver v2.05 - INSTALLATION CHECK
 	AX = 4321h
 Return: AX = 0000h if installed

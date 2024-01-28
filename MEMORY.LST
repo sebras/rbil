@@ -1,542 +1,101 @@
-[This file was originally provided by Robin Walker.  --Ralf]
-Last Update: 1/15/95
+MEMORY MAP			Release 47		Last Change 8/13/95
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
 
-Format of BIOS Data Segment at segment 40h:
-		{items in curly braces not documented by IBM}
-Offset	Size	Description
- 00h	WORD	Base I/O address of 1st serial I/O port, zero if none
- 02h	WORD	Base I/O address of 2nd serial I/O port, zero if none
- 04h	WORD	Base I/O address of 3rd serial I/O port, zero if none
- 06h	WORD	Base I/O address of 4th serial I/O port, zero if none
-		   Note: Above fields filled in turn by POST as it finds serial
-		    ports. POST never leaves gaps. DOS and BIOS serial device
-		    numbers may be redefined by re-assigning these fields.
- 08h	WORD	Base I/O address of 1st parallel I/O port, zero if none
- 0Ah	WORD	Base I/O address of 2nd parallel I/O port, zero if none
- 0Ch	WORD	Base I/O address of 3rd parallel I/O port, zero if none
- 0Eh	WORD	[non-PS] Base I/O address of 4th parallel port, zero if none
-		[PS] {Segment of Extended BIOS Data Segment}
-		    Note: Above fields filled in turn by POST as it finds
-		    parallel ports. POST never leaves gaps. DOS and BIOS
-		    parallel device numbers may de redefined by re-assigning
-		    these fields.
- 10h	WORD	Installed hardware:
-		    bits 15-14: number of parallel devices
-		    bit	    13: [Conv, PS/2-55LS] Internal modem
-		    bit	    12: reserved
-		    bits 11- 9: number of serial devices
-		    bit	     8: reserved
-		    bits  7- 6: number of diskette drives minus one
-		    bits  5- 4: Initial video mode:
-				    00b = EGA,VGA,PGA
-				    01b = 40 x 25 color
-				    10b = 80 x 25 color
-				    11b = 80 x 25 mono
-		    bit	     3: reserved
-		    bit	     2: [PS] =1 if pointing device
-				[non-PS] reserved
-		    bit	     1: =1 if math co-processor
-		    bit	     0: =1 if diskette available for boot
- 12h	BYTE	[Conv] POST status
-		[AT] {Manufacturing test initialisation flags}
-		    bit 0: Manufacturing test mode rather than normal operation
-		    bits 1-7 unused
-		[MCA] Manufacturing test
-		    bit 7: POST flag, ???
-		    bits 6-5 unused
-		    bit 4: POST flag, slot 4 has adapter identifier EDAFh
-		    bit 3: POST flag, 80x25 color video
-		    bit 2: POST flag, ???
-		    bit 1: unused
-		    bit 0: manufacturing test mode rather than normal operation
-		[PS/2-25] POST system flag
-		    bit 0: optional memory failed; memory remapped
-		    bit 1: real-time clock installed
- 13h	WORD	Base memory size in KBytes (0-640)
- 15h	WORD	[PC,XT] adapater memory size in KBytes
- 15h	BYTE	[AT] {Manufacturing test scratch pad}
-		[Compaq Deskpro 386] previous scan code
- 16h	BYTE	[AT] {Manufacturing test scratch pad}
-		[PS/2 Mod 30] {BIOS control flags}
-		[Compaq Deskpro 386] keyclick loudness (00h-7Fh)
- 17h	BYTE	Keyboard status flags 1:
-		    bit 7 =1 INSert active
-		    bit 6 =1 Caps Lock active
-		    bit 5 =1 Num Lock active
-		    bit 4 =1 Scroll Lock active
-		    bit 3 =1 either Alt pressed
-		    bit 2 =1 either Ctrl pressed
-		    bit 1 =1 Left Shift pressed
-		    bit 0 =1 Right Shift pressed
- 18h	BYTE	Keyboard status flags 2:
-		    bit 7 =1 INSert pressed
-		    bit 6 =1 Caps Lock pressed
-		    bit 5 =1 Num Lock pressed
-		    bit 4 =1 Scroll Lock pressed
-		    bit 3 =1 Pause state active
-		    bit 2 =1 Sys Req pressed
-		    bit 1 =1 Left Alt pressed
-		    bit 0 =1 Left Ctrl pressed
- 19h	BYTE	Keyboard: Alt-nnn keypad workspace
- 1Ah	WORD	Keyboard: pointer to next character in keyboard buffer
- 1Ch	WORD	Keyboard: pointer to first free slot in keyboard buffer
- 1Eh 16 WORDs	Keyboard circular buffer (but see 80h, 82h for override)
- 3Eh	BYTE	Diskette recalibrate status:
-		    bit 7 =1 Diskette hardware interrupt occurred
-		    bits 6-4 reserved
-		    bit 3 =1 Recalibrate diskette 3 (PC,XT only)
-		    bit 2 =1 Recalibrate diskette 2 (PC,XT only)
-		    bit 1 =1 Recalibrate diskette 1
-		    bit 0 =1 Recalibrate diskette 0
- 3Fh	BYTE	Diskette motor status:
-		    bit 7 =1 current operation is write or format
-			  =0 current operation is read or verify
-		    bit 6    reserved
-				(DMA enabled on 82077)
-		    bits 5-4 diskette drive number selected (0-3)
-		    bit 3 =1 diskette 3 motor on (PC,XT only)
-		    bit 2 =1 diskette 2 motor on (PC,XT only)
-		    bit 1 =1 diskette 1 motor on
-		    bit 0 =1 diskette 0 motor on
- 40h	BYTE	Diskette motor turn-off time-out count
- 41h	BYTE	Diskette last operation status (0 = OK)
-		    bit 7 =1 drive not ready
-		    bit 6 =1 seek error
-		    bit 5 =1 general controller failure
-		    bits 4-0:
-			    00h no error
-			    01h invalid request/parameter
-			    02h address mark not found
-			    03h write-protect error
-			    04h sector not found
-			    06h diskette change line active
-			    08h DMA overrun
-			    09h DMA across 64k boundary
-			    0Ch media type unknown
-			    10h CRC error on read
-		    Note: the following values for this byte differ somewhat
-			from the bitfield definition above:
-			    30h drive does not support media sense
-			    31h no media in drive
-			    32h drive does not support media type
-			    AAh diskette drive not ready
- 42h  7 BYTEs	Diskette/Fixed disk status/command bytes
-    42h BYTE	XT: command byte to hard disk controller
-		AT: write precompensation cylinder number / 4
-    43h	BYTE	XT: bit 5 = drive number, bits 3-0=head number
-		AT: sector count
-    44h BYTE	XT: bits 6,7 = high bits of track, bits 5-0 = start sector-1
-		AT: starting sector
-    45h BYTE	low byte of track number
-    46h BYTE	XT: sector count
-		AT: high bits of track number
-    47h BYTE	XT: controlbyte from HD parameters (step rate,...)
-		AT: 101DHHHH, D=drive number, HHHH=head number
-    48h BYTE	XT: INT 13h subfunction number
-		AT: comand byte to hard disk controller
- 42h	BYTE	disk controller status register 0
-		bits 7-6: interrupt code
-			00 normal completion
-			01 abnormal termination during execution
-			10 invalid command
-			11 abnormal termination: ready line on/diskette change
-		bit 5: requested seek complete
-		bit 4: drive fault
-		bit 3: drive not ready
-		bit 2: head state at time of interrupt
-		bits 1-0: selected drive (drives 2&3 on PC,XT only)
- 43h	BYTE	diskette controller status register 1
-		bit 7: attempted access beyon last cylinder
-		bit 6: unused
-		bit 5: CRC error on read
-		bit 4: DMA overrun
-		bit 3: unused
-		bit 2: data error
-		bit 1: disk write protected
-		bit 0: missing address mark
- 44h	BYTE	diskette controller status register 2
-		bit 7: unused
-		bit 6: found deleted data address mark
-		bit 5: CRC error in data field
-		bit 4: wrong cylinder number read
-		bit 3: verify equal
-		bit 2: can't find sector matching verify condition
-		bit 1: bad cylinder
-		bit 0: unable to find address mark
- 49h	BYTE	Video current mode
- 4Ah	WORD	Video columns on screen
- 4Ch	WORD	Video page (regen buffer) size in bytes
- 4Eh	WORD	Video current page start address in regen buffer
- 50h 16 BYTEs	Video cursor position (col, row) for eight pages, 0 based
- 60h	WORD	Video cursor type, 6845 compatible, hi=startline, lo=endline
- 62h	BYTE	Video current page number
- 63h	WORD	Video CRT controller base address: color=03D4h, mono=03B4h
- 65h	BYTE	Video current setting of mode select register 03D8h/03B8h
-		bits 7-6 unused
-		bit 5: attribute bit 7 controls blinking instead of background
-		bit 4: mode 6 graphics in monochrome
-		bit 3: video signal enabled
-		bit 2: monochrome
-		bit 1: graphics
-		bit 0: 80x25 text
- 66h	BYTE	Video current setting of CGA palette register 03D9h
-		bits 7-6 unused
-		bit 5: palette (0/1)
-		bit 4: intense background colors in text mode
-		bit 3: intense border color (40x25) / background color (mode 5)
-		bit 2: red
-		bit 1: green
-		bit 0: blue
- 67h	WORD	[PC only] cassette time count
- 67h	DWORD	{POST real mode re-entry point after certain resets}
-		[PS except Mod 25,30] pointer to reset code upon system reset
-		    with memory preserved (see offset 72h)
- 69h	WORD	[PC only] cassette CRC register
-		[V20-XT-BIOS] key repeat
-		bit 7: key repeat disabled
-		bit 6: Ctrl-Alt pressed instead of just Alt
- 6Bh	BYTE	[PC only] last value read from cassette
-		[XT+] POST last unexpected interrupt
-		bit 0 = IRQ0 to bit 7 = IRQ7
- 6Ch	DWORD	Timer ticks since midnight
- 70h	BYTE	Timer overflow, non-zero if has counted past midnight
- 71h	BYTE	Ctrl-Break flag: bit 7=1
- 72h	WORD	POST reset flag:
-		    1234h to bypass memory test (warm boot)
-		    4321h [PS/2 except Mod 25,30] to preserve memory
-		    5678h [Conv] system suspended
-		    9ABCh [Conv] manufacturing test mode
-		    ABCDh [Conv] POST loop mode
-		    0064h Burn-in mode
- 74h	BYTE	Fixed disk last operation status, except ESDI drives:
-		    00h no error
-		    01h invalid function request
-		    02h address mark not found
-		    03h write protect error
-		    04h sector not found
-		    05h reset failed
-		    06h diskette removed
-		    07h drive parameter activity failed
-		    08h DMA overrun
-		    09h DMA data boundary error
-		    0Ah bad sector flag detected
-		    0Bh bad track detected
-		    0Ch requested diskette media type not found
-			(PS/2 or extended BIOS only)
-			unsupported track
-		    0Dh invalid number of sectors for Format
-		    0Eh control data address mark detected
-		    0Fh DMA arbitration level out of range
-		    10h uncorrectable ECC or CRC error
-		    11h ECC corrected data error
-		    20h general controller failed
-		    40h seek failed
-		    80h time out
-		    AAh drive not ready
-		    BBh undefined error
-		    CCh write fault on selected drive
-		    E0h status error/error register is zero
-		    FFh sense failed
- 74h	BYTE	[WD1002-27X SuperBIOS] total drives, first controller only
- 75h	BYTE	Fixed disk: number of fixed disk drives
-		[WD1002-27X SuperBIOS] total fixed drives, both controllers
- 76h	BYTE	Fixed disk: control byte    {IBM document only for XT}
-		XT: hard disk controller's I/O address (Western Digital)
-		[WD1002-27X SuperBIOS] used in track recalculation
- 77h	BYTE	Fixed disk: I/O port offset {IBM document only for XT}
-		[WD1002-27X SuperBIOS] used in track recalculation
- 78h  3 BYTEs	Parallel devices 1-3 time-out counters
- 7Bh	BYTE	parallel device 4 time-out counter [non-PS and PS Mod 25,30]
-		bit 7-6 reserved
-		bit 5 set if Virtual DMA Spec supported [PS] (see INT 4B)
-		bit 4 reserved
-		bit 3 set if INT 4Bh intercepted and must be chained
-		bit 2 reserved
-		bit 1 set if Generic SCSI CBIOS services available on INT 4Bh
-		bit 0 reserved
- 7Ch  4 BYTEs	Serial devices 1-4 time-out counters
- 80h	WORD	Keyboard buffer start as offset from segment 40h (normally 1Eh)
- 82h	WORD	Keyboard buffer end+1 as offset from segment 40h (normally 3Eh)
-		[XT BIOS dated 11/08/82 ends here]
- 84h	BYTE	Video EGA/MCGA/VGA rows on screen minus one
- 85h	WORD	Video EGA/MCGA/VGA character height in scan-lines
- 87h	BYTE	Video EGA/VGA control: [MCGA: =00h]
-		bit 7:	=1 if not to clear RAM (see INT 10h, AH=00h)
-		bits 6-5: RAM on adapter = (this field + 1) * 64K
-		bit 4:	reserved
-		bit 3:	=0 if EGA/VGA video system active, =1 if inactive
-		bit 2:	=1 if to wait for display enable (what means this?)
-		bit 1:	=0 for color or ECD monitor, =1 for mono monitor
-		bit 0:	=0 alphanumeric cursor emulation enabled, =1 not.
-			When enabled, text mode cursor size (INT 10,AH=01h)
-			settings looking like CGA ones are translated to
-			equivalent EGA/VGA ones.
- 88h	BYTE	Video EGA/VGA switches: [MCGA: reserved]
-		    bits 7-4: power-on state of feature connector bits 3-0
-		    bits 3-0: configuration switches 4-1 (=0 on, =1 off)
-		      Values as read:
-			0h Pri MDA,	    Sec EGA+old color display 40 x 25
-			1h Pri MDA,	    Sec EGA+old color display 80 x 25
-			2h Pri MDA,	    Sec EGA+ECD normal mode (CGA emul)
-			3h Pri MDA,	    Sec EGA+ECD enhanced mode
-			4h Pri CGA 40 x 25, Sec EGA mono display
-			5h Pri CGA 80 x 25, Sec EGA mono display
-			6h Pri EGA+old color display 40 x 25,  Sec MDA
-			7h Pri EGA+old color display 80 x 25,  Sec MDA
-			8h Pri EGA+ECD normal mode (CGA emul), Sec MDA
-			9h Pri EGA+ECD enhanced mode,	       Sec MDA
-			Ah Pri EGA mono display,	       Sec CGA 40 x 25
-			Bh Pri EGA mono display,	       Sec CGA 80 x 25
-		    When bit4 of 40h:89h is 0, VGA emulates 350-line EGA if
-		    this byte is x3h or x9h, otherwise emulates 200-line CGA in
-		    400-line double scan. VGA resets this byte to x9h after the
-		    mode set.
-		    See also note for next byte.
- 89h	BYTE	{Video MCGA/VGA mode-set option control:}
-		    bits 7 and 4:
-			0 0  350-line mode requested
-			0 1  400-line mode at next mode set
-			1 0  200-line mode requested
-			1 1  reserved
-			Apparently VGA BIOS mode set disregards bit 7 and uses
-			byte 40h:88h to determine 200/350 selection when bit 4
-			is zero. Presumably bit 7 is a convenience for other
-			purposes. Bit 7 is reset to zero after the mode set.
-		    bit 6:  =1 if display switching enabled, =0 if disabled
-		    bit 5:  reserved
-		    bit 4:  [VGA]  =1 if to use 400-line mode at next mode set
-				   =0 if to emulate EGA at next mode set
-				      This bit set to 1 after the mode set.
-			    [MCGA] =1 use 400-line mode at next mode set
-				   =0 emulate CGA, digital monitor, 200 lines,
-					  8 x 8 text font at next mode set
-				      Bit unchanged by mode set.
-		    bit 3:  =0 if default palette loading enabled at mode set
-		    bit 2:  =1 if mono display, =0 if color display
-		    bit 1:  =1 if gray scale summing enabled, =0 if disabled
-		    bit 0:  [VGA] =1 if VGA active, =0 if not
-			    [MCGA] reserved, zero
-		Note: the Tseng ET4000 BIOS v3.00 uses bits 6-4 of 88h and
-			bits 6-5 of 89h to specify graphics-mode refresh
-			rates as follows
-				88h/6		640x480:  1 for 72Hz,0 for 60Hz
-				88h/5+89h/6	800x600:  00  60Hz
-							  01  56Hz
-							  11  72Hz
-				88h/4+89h/5	1024x768: 00  interlaced
-							  01  60Hz
-							  10  72Hz???
-							  11  70Hz
- 8Ah	BYTE	{Video [MCGA/VGA]: index into Display Combination Code table}
- 8Bh 11 BYTEs	reserved [PC, PCjr, PC/XT 11/8/82, and Convertible]
- 8Bh	BYTE	Diskette media control [not XT]:
-		    bits 7-6: Last data rate set by controller:
-			      00=500kbps, 01=300kbps, 10=250kbps, 11=1Mbps
-		    bits 5-4: Last diskette drive step rate selected
-			      00=0Ch, 01=0Dh, 10=0Eh, 11=0Ah
-		    bits 3-2: {Data rate at start of operation}
-		    bits 1-0: reserved
-		 Note: EHD BIOS sets this byte to 01h and never reads it back
- 8Ch	BYTE	Fixed disk controller status [not XT]
- 8Dh	BYTE	Fixed disk controller Error Status [not XT]
- 8Eh	BYTE	Fixed disk Interrupt Control [not XT]
-		cleared to 00h at start of disk operation, set to FFh by IRQ14
-		handler when hard disk controller completes command
- 8Fh	BYTE	{Diskette controller information [not XT]:}
-		    bit 7:  reserved
-		    bit 6:  =1 drive 1 determined
-		    bit 5:  =1 drive 1 is multi-rate, valid if drive determined
-		    bit 4:  =1 drive 1 supports 80 tracks, always valid
-		    bit 3:  reserved
-		    bit 2:  =1 drive 0 determined
-		    bit 1:  =1 drive 0 is multi-rate, valid if drive determined
-		    bit 0:  =1 drive 0 supports 80 tracks, always valid
-		 Note: EHD BIOS sets this byte to 01h and never alters it again
- 90h	BYTE	Diskette drive 0 media state
- 91h	BYTE	Diskette drive 1 media state
-		bits 7-6: Data rate
-			    00=500kbps, 01=300kbps, 10=250kbps, 11=1Mbps
-		bit    5: =1 if double stepping required (e.g. 360kB in 1.2MB)
-		bit    4: =1 if media established
-		bit    3: =1 if drive capable of supporting 4MB media
-		bits 2-0: on exit from BIOS, contain:
-			000 trying 360kB in 360kB
-			001 trying 360kB in 1.2MB
-			010 trying 1.2MB in 1.2MB
-			011 360kB in 360kB established
-			100 360kB in 1.2MB established
-			101 1.2MB in 1.2MB established
-			110 reserved
-			111 all other formats/drives
- 92h	BYTE	{Diskette drive 0 media state at start of operation}
-		officially "Drive 2 media state"
-		bits 7-3 as above
-		bit 2: =1 if multiple data rate capability determined
-		bit 1: =1 if multiple data rate capability
-		bit 0: =1 if drive has 80 tracks, =0 if 40 tracks
- 92h	BYTE	[Olivetti Quaderno] Hard Disk powerdown countdown in clock
-		ticks (HD turned off when counter reaches zero)
- 93h	BYTE	{Diskette drive 1 media state at start of operation}
-		officially "Drive 3 media state"
-		bits 7-3 as above
-		bit 2: =1 if multiple data rate capability determined
-		bit 1: =1 if multiple data rate capability
-		bit 0: =1 if drive has 80 tracks, =0 if 40 tracks
-		[HP 100LX/200LX] display control status
-		bit 0 =1 if DISPCTL -K
-		bit 1 =1 if DISPCTL -C
- 94h	BYTE	Diskette drive 0 current track number
- 95h	BYTE	Diskette drive 1 current track number
- 96h	BYTE	Keyboard status byte 1
-		bit 7 =1 read-ID in progress
-		bit 6 =1 last code read was first of two ID codes
-		bit 5 =1 force Num Lock if read-ID and enhanced keyboard
-		bit 4 =1 enhanced keyboard installed
-		bit 3 =1 Right Alt pressed
-		bit 2 =1 Right Ctrl pressed
-		bit 1 =1 last code read was E0h
-		bit 0 =1 last code read was E1h
- 97h	BYTE	Keyboard status byte 2
-		bit 7 =1 keyboard transmit error flag
-		bit 6 =1 LED update in progress
-		bit 5 =1 RESEND received from keyboard
-		bit 4 =1 ACK received from keyboard
-		bit 3 reserved, must be zero
-		bit 2 Caps Lock LED
-		bit 1 Num Lock LED
-		bit 0 Scroll Lock LED
- 98h	DWORD	Timer2: [AT, PS exc Mod 30] ptr to user wait-complete flag
-					    (see INT 15, AX=8300h)
- 9Ch	DWORD	Timer2: [AT, PS exc Mod 30] user wait count in microseconds
- 9Fh    BYTE    [HP 100LX/200LX] video zoom mode
-		02h 80x25 mono
-		03h 80x25 color
-		80h 64x18 mono
-		81h 64x18 color
-		82h 40x25 mono
-		83h 40x25 color
-		84h 40x16 mono
-		85h 40x16 color
-		(see INT 10/AH=D0h)
- A0h	BYTE	Timer2: [AT, PS exc Mod 30] Wait active flag:
-		    bit 7 =1 wait time elapsed
-		    bits 6-1 reserved
-		    bit 0 =1 INT 15h, AH=86h has occurred
- A1h	BYTE	bit 5 set if LAN Support Program Interrupt Arbitrator present
-		(DEVICE=DXMA0MOD.SYS)
- A2h  6 BYTEs	reserved for network adapters
- A4h	DWORD	[PS/2 Mod 30] Saved Fixed Disk Interrupt Vector
- A8h	DWORD	Video: EGA/MCGA/VGA ptr to Video Save Pointer Table (see below)
- ACh-AFh	reserved
- B0h	BYTE	(Phoenix 386 BIOS 1.10 10a) loop count for hard disk timeout
-		  and delaying when beeping due to full keyboard buffer
- B0h	DWORD	ptr to 3363 Optical disk driver or BIOS entry point.
-		    When 3363 BIOS present, the signature "OPTIC ",00h occurs 3
-		    bytes beyond this entry point.
-		    When 3363 BIOS and 3363 File System Driver present, the
-		    signature "FILE SYSTEM DRIVER",00h occurs 3 bytes beyond
-		    this entry point.
- B0h 16 BYTEs	(1988 Phoenix 386 BIOS 1.10 03) drive parameters for hard disk
-		type 48 (see INT 41,INT 46)
- B4h	WORD	reserved
- B5h	BYTE	(Dell 4xxDE)
-		bit 2: ??? (related to disk drives)
-		bit 5: page tables set to allow Weitek addressing in real mode
-		bit 6: Weitek math coprocessor present
- B6h  3 BYTEs	reserved for POST?
- B9h  7 BYTEs	???
- C0h 16 BYTEs	(1988 Phoenix 386 BIOS 1.10 03) drive parameters for hard disk
-		type 49 (see INT 41,INT 46)
- C0h 14 BYTEs	reserved
- CEh	WORD	count of days since last boot
- D0h-EFh	reserved
- D0h	BYTE	[Digiboard MV/4] length of data table
- D0h	BYTE	[EHD floppy]
-		     bit 4: installation completed
-		     bits 3-0: drives 0-3
- D1h	BYTE	[Digiboard MV/4] product ID
- D2h	WORD	[Digiboard MV/4] base address found
- D4h	BYTE	[Digiboard MV/4] ports
- D5h	BYTE	[Digiboard MV/4] IRQ
- D5h	BYTE	[EHD floppy] total number of floppy disk controllers in system
- D6h	BYTE	[EHD floppy] AND-bits for DL to adjust port address (FFh if
-		  at 03Fxh and 7Fh if at 037xh)
- D6h	WORD	[Digiboard MV/4] keyboards found
- D7h	BYTE	[EHD floppy] drive 0 diskette media status
-		    bits 7-6: Data rate: 00=500kbps,01=300kbps,10=250k,11=1M/S
-		    bit    5: =1 if double stepping reqd (e.g. 360kB in 1.2MB)
-		    bit    4: =1 if media established
-		    bit    3: reserved
-		    bits 2-0: on exit from BIOS, contain:
-			    000 trying 360kB in 360kB
-			    001 trying 360kB in 1.2MB
-			    010 trying 1.2MB in 1.2MB
-			    011 360kB in 360kB established
-			    100 360kB in 1.2MB established
-			    101 1.2MB in 1.2MB established
-			    110 reserved (2M8?)
-			    111 all other formats/drives
-		the value in 4D7 gets sent to 490 (diskette0 media state)
- D8h	BYTE	[EHD floppy] drive 1 diskette media state
- D8h	WORD	[Digiboard MV/4] mice found
- D9h	BYTE	[EHD floppy] drive 2 diskette media state
- DAh	BYTE	[Digiboard MV/4] current port (used by VGA initialization only)
- DAh	BYTE	[EHD floppy] drive 3 diskette media state
- DBh	BYTE	[Digiboard MV/4] master 8259 mask (used by VGA init only)
- DBh	BYTE	[EHD floppy] drive 0 needs recalibaration
- DCh	BYTE	[Digiboard MV/4] slave 8259 mask (used by VGA init only)
- DCh	BYTE	[EHD floppy] drive 1 needs recalibaration
- DDh	BYTE	[EHD floppy] drive 2 needs recalibaration
- DEh	BYTE	[EHD floppy] drive 3 needs recalibaration
- E0h-EFh	[Phoenix 386 BIOS] drive parameter table for first hard disk
-		  if configurable "type 47"
- E3h	BYTE	[EHD floppy] drive 0 diskette type (from jumpers)
-		    01h undefined by diskette change (360K)
-		    02h 1.2M
-		    03h 720K
-		    04h 1.44M
-		    05h 2.88M
- E4h	BYTE	[EHD floppy] drive 1 diskette type (from jumpers)
- E5h	BYTE	[EHD floppy] drive 2 diskette type (from jumpers)
- E6h	BYTE	[EHD floppy] drive 3 diskette type (from jumpers)
- EAh	WORD	[Omti controller] segment of extended BIOS data area???
-		drive parameter tables stored in specified segment
- ECh	WORD	(Dell 4xxDE BIOS A11) loop count for delays
- F0h-FFh	reserved for user
-100h	BYTE	Print Screen Status byte
-104h	BYTE	[MS-DOS] logical drive for single-floppy system (A: or B:)
-10Eh	BYTE	state of BREAK at start of BASICA.COM execution
-10Fh	BYTE	flag: 02h if BASICA v2.10 running
-116h	DWORD	INT 1Bh at start of BASICA.COM execution
-11Ah	DWORD	INT 24h at start of BASICA.COM execution
-
-Format of Interrupt Vector Table data storage (from 0000h:0000h):
-Offset	Size	Description
- 31Dh 16 BYTEs	user-definable hard disk parameters for drive type 47
-		(1989 AMI 386sx BIOS) (see INT 41,INT 46)
- 32Dh 16 BYTEs	user-definable hard disk parameters for drive type 48
-		(1989 AMI 386sx BIOS) (see INT 41,INT 46)
-Note:	these fields are used is the AMI BIOS setup is set to use the top of
+--------H-M00000000--------------------------
+MEM 0000h:0000h R - INTERRUPT VECTOR TABLE
+Size:	1024 BYTEs
+Note:	see also the main interrupt list
+--------b-M0000031D--------------------------
+MEM 0000h:031Dh - 1989 AMI 386sx BIOS - USER-DEFINABLE TYPE 47 HARD DISK PARMS
+Size:	16 BYTEs
+Note:	these fields are used if the AMI BIOS setup is set to use the top of
 	  the interrupt table for the extended BIOS data area
+SeeAlso: MEM 0000h:032Dh,INT 41
+--------b-M0000032D--------------------------
+MEM 0000h:032Dh - 1989 AMI 386sx BIOS - USER-DEFINABLE TYPE 48 HARD DISK PARMS
+Size:	16 BYTEs
+Note:	these fields are used if the AMI BIOS setup is set to use the top of
+	  the interrupt table for the extended BIOS data area
+SeeAlso: MEM 0000h:031Dh,INT 46
+--------B-M00000400--------------------------
+MEM 0000h:0400h - BIOS DATA AREA
+Size:	256 BYTEs
+Note:	see also the MEM 0040h:xxxxh entries
+----------M00000500--------------------------
+MEM 0000h:0500h - DATA AREA
+Size:	256 BYTEs
+----------M00000600--------------------------
+MEM 0000h:0600h - MS-DOS 1.x LOAD ADDRESS
+----------M00000700--------------------------
+MEM 0000h:0700h - MS-DOS 2+ LOAD ADDRESS
+----------M00400000--------------------------
+MEM 0040h:0000h - BASE I/O ADDRESS OF FIRST SERIAL I/O PORT
+Size:	WORD
+Notes:	the BIOS sets this word to zero if is unable to find any serial ports
+	  at the addresses it is programmed to check at boot
+	DOS and BIOS serial device numbers may be redefined by re-assigning
+	  these values of the base I/O addresses stored here
+SeeAlso: MEM 0040h:0002h,MEM 0040h:0004h,MEM 0040h:0006h,MEM 0040h:0008h
+SeeAlso: MEM 0040h:007Ch
+----------M00400002--------------------------
+MEM 0040h:0002h - BASE I/O ADDRESS OF SECOND SERIAL I/O PORT
+Size:	WORD
+Note:	the BIOS sets this word to zero if is unable to find more than one
+	  serial port at the addresses it is programmed to check at boot
+SeeAlso: MEM 0040h:0000h,MEM 0040h:0004h,MEM 0040h:0006h,MEM 0040h:000Ah
+SeeAlso: MEM 0040h:007Dh
+----------M00400004--------------------------
+MEM 0040h:0004h - BASE I/O ADDRESS OF THIRD SERIAL I/O PORT
+Size:	WORD
+Note:	the BIOS sets this word to zero if is unable to find more than two
+	  serial ports at the addresses it is programmed to check at boot
+SeeAlso: MEM 0040h:0000h,MEM 0040h:0002h,MEM 0040h:0006h,MEM 0040h:000Ch
+SeeAlso: MEM 0040h:007Eh
+----------M00400006--------------------------
+MEM 0040h:0006h - BASE I/O ADDRESS OF FOURTH SERIAL I/O PORT
+Size:	WORD
+Note:	the BIOS sets this word to zero if is unable to find more than three
+	  serial ports at the addresses it is programmed to check at boot
+SeeAlso: MEM 0040h:0000h,MEM 0040h:0002h,MEM 0040h:0004h,MEM 0040h:0008h
+SeeAlso: MEM 0040h:007Fh
+----------M00400008--------------------------
+MEM 0040h:0008h - BASE I/O ADDRESS OF FIRST PARALLEL I/O PORT
+Size:	WORD
+Notes:	the BIOS POST routine fills in the parallel port address fields in
+	  turn as it finds parallel ports.  All fields beyond the last one
+	  for which a valid parallel port was found are set to zero.
+	the BIOS INT 17 handler uses these fields to address the parallel
+	  ports
+SeeAlso: MEM 0040h:0000h,MEM 0040h:000Ah,MEM 0040h:000Ch
+----------M0040000A--------------------------
+MEM 0040h:000Ah - BASE I/O ADDRESS OF SECOND PARALLEL I/O PORT
+Size:	WORD
+Note:	zero if fewer than two parallel ports installed
+SeeAlso: MEM 0040h:0002h,MEM 0040h:0008h,MEM 0040h:000Ch
+----------M0040000C--------------------------
+MEM 0040h:000Ch - BASE I/O ADDRESS OF THIRD PARALLEL I/O PORT
+Size:	WORD
+Note:	zero if fewer than three parallel ports installed
+SeeAlso: MEM 0040h:0004h,MEM 0040h:0008h,MEM 0040h:000Ah,MEM 0040h:000Eh
+----------M0040000E--------------------------
+MEM 0040h:000Eh - BASE I/O ADDRESS OF FOURTH PARALLEL I/O PORT (pre-PS/2)
+Size:	WORD
+Note:	zero if fewer than four parallel ports installed
+SeeAlso: MEM 0040h:0008h,MEM 0040h:000Ah,MEM 0040h:000Eh"BIOS DATA"
+----------M0040000E--------------------------
+MEM 0040h:000Eh - SEGMENT OF EXTENDED BIOS DATA SEGMENT (PS/2, newer BIOSes)
+Size:	WORD
+SeeAlso: MEM 0040h:000Eh"PARALLEL"
 
-Format of Extended BIOS Data Area (see 40:0Eh for ptr) [PS only]
-Offset	Size	Description
- 00h	BYTE	Length of EBDA in kilobytes
+Format of Extended BIOS Data Area:
+Offset	Size	Description	(Table M001)
+ 00h	BYTE	length of EBDA in kilobytes
  01h 15 BYTEs	reserved
- 17h	BYTE	Number of entries in POST error log (0-5)
+ 17h	BYTE	number of entries in POST error log (0-5)
  18h  5 WORDs	POST error log (each word is a POST error number)
  22h	DWORD	Pointing Device Driver entry point
- 26h	BYTE	Pointing Device Flags 1
-		   bit 7:    command in progress
-		   bit 6:    resend byte (FAh) received
-		   bit 5:    acknowledge byte (FEh) received
-		   bit 4:    error byte (FCh) received
-		   bit 3:    unexpected value received
-		   bits 2-0: index count for auxiliary device data at 28h
- 27h	BYTE	Pointing Device Flags 2
-		   bit 7:    device driver far call flag
-		   bits 6-3: reserved
-		   bits 2-0: package size (number of bytes received) - 1
+ 26h	BYTE	Pointing Device Flags 1 (see #M002)
+ 27h	BYTE	Pointing Device Flags 2 (see #M003)
  28h  8 BYTEs	Pointing Device Auxiliary Device Data
  30h	DWORD	Vector for INT 07h stored here during 80387 interrupt
  34h	DWORD	Vector for INT 01h stored here during INT 07h emulation
@@ -579,14 +138,14 @@ Offset	Size	Description
 		bits 6-2: unused (0)
 		bit 1: drive 1 is 5.25" instead of 3.5"
 		bit 0: drive 0 is 5.25"
- E8h-EBh
+ E8h  4 BYTEs	???
  ECh	BYTE	hard disk parameters flag
 		bit 7: parameters loaded into EBDA
 		bits 6-0: unused (0)
  EDh	BYTE	???
  EEh	BYTE	CPU family ID (03h = 386, 04h = 486, etc.) (see INT 15/AH=C9h)
  EFh	BYTE	CPU stepping (see INT 15/AH=C9h)
- F0h 39 BYTEs  ???
+ F0h 39 BYTEs	???
 117h	WORD	keyboard ID (see INT 16/AH=0Ah)
 		(most commonly 41ABh)
 119h	BYTE	???
@@ -596,10 +155,811 @@ Offset	Size	Description
 11Bh  2 BYTE	???
 11Dh	DWORD	user INT 18h vector if BIOS has re-hooked INT 18h
 121h and up:	??? seen non-zero on Model 60
-3F0h	BYTE	Fixed disk buffer (???!!!)
- 
+3F0h	BYTE	Fixed disk buffer (???)
+
+Bitfields for Pointing Device Flags 1:
+Bit(s)	Description	(Table M002)
+ 7	command in progress
+ 6	resend byte (FAh) received
+ 5	acknowledge byte (FEh) received
+ 4	error byte (FCh) received
+ 3	unexpected value received
+ 2-0	index count for auxiliary device data at 28h
+SeeAlso: #M001,#M003
+
+Bitfields for Pointing Device Flags 2:
+Bit(s)	Description	(Table M003)
+ 7	device driver far call flag
+ 6-3	reserved
+ 2-0	package size (number of bytes received) - 1
+SeeAlso: #M001,#M002
+----------M00400010--------------------------
+MEM 0040h:0010h - INSTALLED HARDWARE
+Size:	WORD
+
+Bitfields for BIOS-detected installed hardware:
+Bit(s)	Description	(Table M004)
+ 15-14	number of parallel devices
+	00 or 11 sometimes used to indicate four LPT ports
+ 13	(Convertible, PS/2-55LS) internal modem
+ 12	game port installed
+ 11-9	number of serial devices
+	000 or 111 sometimes used to indicate eight COM ports
+ 8	reserved
+ 7-6	number of floppy disk drives (minus 1)
+ 5-4	initial video mode
+	00 EGA,VGA,PGA, or other with on-board video BIOS
+	01 40x25 CGA color
+	10 80x25 CGA color
+	11 80x25 mono text
+ 3-2	(PC only) RAM on motherboard
+	00 = 16K, 01 = 32K, 10 = 48K, 11 = 64K
+ 2	(pre-PS/2 except PC) reserved
+	(PS/2, newer BIOSes) pointing device installed
+ 1	math coprocessor installed
+ 0	floppy disk drives are installed
+	booted from floppy
+----------M00400012--------------------------
+MEM 0040h:0012h - Convertible - POST STATUS
+Size:	BYTE
+----------M00400012--------------------------
+MEM 0040h:0012h U - AT - MANUFACTURING TEST INITIALIZATION FLAGS
+Size:	BYTE
+
+Bitfields for AT manufacturing test initialization flags:
+Bit(s)	Description	(Table M005)
+ 0	start in manufacturing test mode rather than normal operation
+ 1-7	unused
+----------M00400012--------------------------
+MEM 0040h:0012h - MCA - MANUFACTURING TEST
+Size:	BYTE
+
+Bitfields for MCA manufacturing test flags :
+Bit(s)	Description	(Table M006)
+ 7	POST flag, ???
+ 6-5	unused
+ 4	POST flag, slot 4 has adapter identifier EDAFh
+ 3	POST flag, 80x25 color video
+ 2	POST flag, ???
+ 1	unused
+ 0	manufacturing test mode rather than normal operation
+----------M00400012--------------------------
+MEM 0040h:0012h - PS/2 Model 25 - POST SYSTEM FLAG
+Size:	BYTE
+
+Bitfields for PS/2 Model 25 POST sytem flag :
+Bit(s)	Description	(Table M007)
+ 0	optional memory failed; memory remapped
+ 1	real-time clock installed
+----------M00400013--------------------------
+MEM 0040h:0013h - BASE MEMORY SIZE IN KBYTES
+Size:	WORD
+----------M00400015--------------------------
+MEM 0040h:0015h - PC, XT - ADAPTER MEMORY SIZE IN KBYTES
+Size:	WORD
+----------M00400015--------------------------
+MEM 0040h:0015h U - AT - MANUFACTURING TEST SCRATCH PAD
+Size:	BYTE
+----------M00400015--------------------------
+MEM 0040h:0015h - Compaq Deskpro 386 - PREVIOUS SCAN CODE
+Size:	BYTE
+----------M00400016--------------------------
+MEM 0040h:0016h U - AT - MANUFACTURING TEST SCRATCH PAD
+Size:	BYTE
+----------M00400016--------------------------
+MEM 0040h:0016h U - PS/2 Model 30 - BIOS CONTROL FLAGS
+Size:	BYTE
+----------M00400016--------------------------
+MEM 0040h:0016h - Compaq Deskpro 386 - KEYCLICK VOLUME
+Size:	BYTE
+Range:	00h-7Fh
+--------K-M00400017--------------------------
+MEM 0040h:0017h - KEYBOARD - STATUS FLAGS 1
+Size:	BYTE
+SeeAlso: MEM 0040h:0018h,INT 16/AH=01h
+
+Bitfields for keyboard status flags 1:
+Bit(s)	Description	(Table M008)
+ 7	INSert active
+ 6	Caps Lock active
+ 5	Num Lock active
+ 4	Scroll Lock active
+ 3	either Alt pressed
+ 2	either Ctrl pressed
+ 1	Left Shift pressed
+ 0	Right Shift pressed
+SeeAlso: #M009
+--------K-M00400018--------------------------
+MEM 0040h:0018h - KEYBOARD - STATUS FLAGS 2
+Size:	BYTE
+SeeAlso: MEM 0040h:0017h,INT 16/AH=01h
+
+Bitfields for keyboard status flags 2 :
+Bit(s)	Description	(Table M009)
+ 7	INSert pressed
+ 6	Caps Lock pressed
+ 5	Num Lock pressed
+ 4	Scroll Lock pressed
+ 3	Pause state active
+ 2	Sys Req pressed
+ 1	Left Alt pressed
+ 0	Left Ctrl pressed
+SeeAlso: #M008
+--------K-M00400019--------------------------
+MEM 0040h:0019h - KEYBOARD - ALT-nnn KEYPAD WORKSPACE
+Size:	BYTE
+Desc:	holds the current value of an Alt-NNN keypad sequence; when Alt is
+	  released and this byte is non-zero, the appropriate character is
+	  placed in the keyboard buffer
+SeeAlso: INT 16/AH=00h
+--------K-M0040001A--------------------------
+MEM 0040h:001Ah - KEYBOARD - POINTER TO NEXT CHARACTER IN KEYBOARD BUFFER
+Size:	WORD
+SeeAlso: MEM 0040h:001Ch,MEM 0040h:0080h,MEM 0040h:0082h,INT 16/AH=00h
+--------K-M0040001C--------------------------
+MEM 0040h:001Ch - KEYBOARD - POINTER TO FIRST FREE SLOT IN KEYBOARD BUFFER
+Size:	WORD
+SeeAlso: MEM 0040h:001Ah,MEM 0040h:0080h,MEM 0040h:0082h,INT 16/AH=00h
+--------K-M0040001E--------------------------
+MEM 0040h:001Eh - KEYBOARD - DEFAULT KEYBOARD CIRCULAR BUFFER
+Size:	16 WORDs
+SeeAlso: MEM 0040h:001Ah,MEM 0040h:001Ch,MEM 0040h:0080h,MEM 0040h:0082h
+SeeAlso: INT 16/AH=00h
+----------M0040003E--------------------------
+MEM 0040h:003Eh - DISKETTE - RECALIBRATE STATUS
+Size:	BYTE
+SeeAlso: MEM 0040h:003Fh,MEM 0040h:0040h
+
+Bitfields for diskette recalibrate status:
+Bit(s)	Description	(Table M010)
+ 7	diskette hardware interrupt occurred
+ 6-4	reserved
+ 3	recalibrate diskette 3 (PC,XT only)
+ 2	recalibrate diskette 2 (PC,XT only)
+ 1	recalibrate diskette 1
+ 0	recalibrate diskette 0
+----------M0040003F--------------------------
+MEM 0040h:003Fh - DISKETTE - MOTOR STATUS
+Size:	BYTE
+SeeAlso: MEM 0040h:003Eh,MEM 0040h:0040h
+
+Bitfields for diskette motor status:
+Bit(s)	Description	(Table M011)
+ 7	current operation is write or format, rather than read or verify
+ 6	reserved (DMA enabled on 82077)
+ 5-4	diskette drive number selected (0-3)
+ 3	diskette 3 motor on (PC,XT only)
+ 2	diskette 2 motor on (PC,XT only)
+ 1	diskette 1 motor on
+ 0	diskette 0 motor on
+----------M00400040--------------------------
+MEM 0040h:0040h - DISKETTE - MOTOR TURN-OFF TIMEOUT COUNT
+Size:	BYTE
+Desc:	number of clock ticks until diskette motor is turned off
+Note:	the typical implementation of the timeout is to have the INT 08 
+	  handler decrement this byte on every clock tick, and force the
+	  diskette motor off if the result is equal to zero
+SeeAlso: MEM 0040h:003Eh,MEM 0040h:003Fh,MEM 0040h:0041h
+----------M00400041--------------------------
+MEM 0040h:0041h - DISKETTE - LAST OPERATION STATUS
+Size:	BYTE
+SeeAlso: MEM 0040h:003Eh
+
+Bitfields for diskette last operation status:
+Bit(s)	Description	(Table M012)
+ 7	drive not ready
+ 6	seek error
+ 5	general controller failure
+ 4-0	error reason
+	00h no error
+	01h invalid request/parameter
+	02h address mark not found
+	03h write-protect error
+	04h sector not found
+	06h diskette change line active
+	08h DMA overrun
+	09h DMA across 64k boundary
+	0Ch media type unknown
+	10h CRC error on read
+Note:	the following values for this byte differ somewhat from the
+	  bitfield definition above:
+	    30h drive does not support media sense
+	    31h no media in drive
+	    32h drive does not support media type
+	    AAh diskette drive not ready
+----------M00400042--------------------------
+MEM 0040h:0042h - DISK - FLOPPY/HARD DRIVE STATUS/COMMAND BYTES
+Size:	7 BYTEs
+
+    42h BYTE	XT: command byte to hard disk controller
+		AT: write precompensation cylinder number / 4
+    43h	BYTE	XT: bit 5 = drive number, bits 3-0=head number
+		AT: sector count
+    44h BYTE	XT: bits 6,7 = high bits of track, bits 5-0 = start sector-1
+		AT: starting sector
+    45h BYTE	low byte of track number
+    46h BYTE	XT: sector count
+		AT: high bits of track number
+    47h BYTE	XT: controlbyte from HD parameters (step rate,...)
+		AT: 101DHHHH, D=drive number, HHHH=head number
+    48h BYTE	XT: INT 13h subfunction number
+		AT: comand byte to hard disk controller
+----------M00400042--------------------------
+MEM 0040h:0042h - DISK CONTROLLER STATUS REGISTER 0
+Size:	BYTE
+
+Bitfields for diskette controller status register 0:
+Bit(s)	Description	(Table M013)
+ 7-6	interrupt code
+	00 normal completion
+	01 abnormal termination during execution
+	10 invalid command
+	11 abnormal termination: ready line on/diskette change
+ 5	requested seek complete
+ 4	drive fault
+ 3	drive not ready
+ 2	head state at time of interrupt
+ 1-0	selected drive (drives 2&3 on PC,XT only)
+----------M00400043--------------------------
+MEM 0040h:0043h - DISK CONTROLLER STATUS REGISTER 1
+Size:	BYTE
+
+Bitfields for diskette controller status register 0:
+Bit(s)	Description	(Table M014)
+ 7	attempted access beyon last cylinder
+ 6	unused
+ 5	CRC error on read
+ 4	DMA overrun
+ 3	unused
+ 2	data error
+ 1	disk write protected
+ 0	missing address mark
+----------M00400044--------------------------
+MEM 0040h:0044h - DISK CONTROLLER STATUS REGISTER 2
+Size:	BYTE
+
+Bitfields for diskette controller status register 0:
+Bit(s)	Description	(Table M015)
+ 7	unused
+ 6	found deleted data address mark
+ 5	CRC error in data field
+ 4	wrong cylinder number read
+ 3	verify equal
+ 2	can't find sector matching verify condition
+ 1	bad cylinder
+ 0	unable to find address mark
+----------M00400049--------------------------
+MEM 0040h:0049h - VIDEO - CURRENT VIDEO MODE
+Size:	BYTE
+SeeAlso: MEM 0040h:004Ah,INT 10/AH=00h
+----------M0040004A--------------------------
+MEM 0040h:004Ah - VIDEO - COLUMNS ON SCREEN
+Size:	WORD
+SeeAlso: MEM 0040h:0049h,MEM 0040h:004Ch,MEM 0040h:004Eh
+----------M0040004C--------------------------
+MEM 0040h:004Ch - VIDEO - PAGE (REGEN BUFFER) SIZE IN BYTES
+Size:	WORD
+SeeAlso: MEM 0040h:004Ah,MEM 0040h:004Eh,MEM 0040h:0050h
+----------M0040004E--------------------------
+MEM 0040h:004Eh - VIDEO - CURRENT PAGE START ADDRESS IN REGEN BUFFER
+Size:	WORD
+SeeAlso: MEM 0040h:004Ch,MEM 0040h:0050h,MEM 0040h:0062h
+----------M00400050--------------------------
+MEM 0040h:0050h - VIDEO - CURSOR POSITIONS
+Size:	8 WORDs
+Desc:	contains row and column position for the cursors on each of eight
+	  video pages
+SeeAlso: MEM 0040h:004Eh,MEM 0040h:0060h
+----------M00400060--------------------------
+MEM 0040h:0060h - VIDEO - CURSOR TYPE
+Size:	WORD	(big-endian)
+Desc:	contains cursor start scan line and cursor end scan line
+SeeAlso: MEM 0040h:0050h,MEM 0040h:0062h,INT 10/AH=03h
+----------M00400062--------------------------
+MEM 0040h:0062h - VIDEO - CURRENT PAGE NUMBER
+Size:	BYTE
+SeeAlso: MEM 0040h:004Eh,MEM 0040h:0063h
+----------M00400063--------------------------
+MEM 0040h:0063h - VIDEO - CRT CONTROLLER BASE I/O PORT ADDRESS
+Size:	WORD
+Note:	normally 03B4h for mono and 03D4h for color video boards
+SeeAlso: MEM 0040h:0065h,MEM 0040h:0066h
+----------M00400065--------------------------
+MEM 0040h:0065h - VIDEO - CURRENT MODE SELECT REGISTER
+Size:	BYTE
+Desc:	contains last value written to I/O port 03B8h / 03D8h
+SeeAlso: MEM 0040h:0063h,MEM 0040h:0066h
+
+Bitfields for current video mode select register:
+Bit(s)	Description	(Table M016)
+ 7-6	unused
+ 5	attribute bit 7 controls blinking instead of background
+ 4	mode 6 graphics in monochrome
+ 3	video signal enabled
+ 2	monochrome
+ 1	graphics
+ 0	80x25 text
+----------M00400066--------------------------
+MEM 0040h:0066h - VIDEO - CURRENT SETTING OF CGA PALETTE REGISTER
+Size:	BYTE
+Desc:	contains the last value written to I/O port 03D9h
+SeeAlso: MEM 0040h:0063h,MEM 0040h:0065h,INT 10h/AH=0Bh/BH=01h
+
+Bitfields for CGA palette register:
+Bit(s)	Description	(Table M017)
+ 7-6	unused
+ 5	palette (0/1)
+ 4	intense background colors in text mode
+ 3	intense border color (40x25) / background color (mode 5)
+ 2	red
+ 1	green
+ 0	blue
+----------M00400067--------------------------
+MEM 0040h:0067h - PC only - CASSETTE TIME COUNT
+Size:	WORD
+SeeAlso: INT 15/AH=00h
+----------M00400067--------------------------
+MEM 0040h:0067h - RESET RESTART ADDRESS
+Size:	DWORD
+Desc:	this address stores the address at which to resume execution after a
+	  CPU reset (or jump to F000h:FFF0h) when certain magic values are
+	  stored at 0040h:0072h or in CMOS RAM location 0Fh
+SeeAlso: MEM 0040h:0072h,MEM F000h:FFF0h,CMOS 0Fh,INT 19
+----------M00400069--------------------------
+MEM 0040h:0069h	- CASSETTE (PC only) - CASSETTE CRC REGISTER
+Size:	WORD
+SeeAlso: MEM 0040h:006Bh"CASSETTE"
+----------M00400069--------------------------
+MEM 0040h:0069h - V20-XT-BIOS - KEY REPEAT
+Size:	BYTE
+
+Bitfields for V20-XT-BIOS key repeat flags:
+Bit(s)	Description	(Table M018)
+ 7	key repeat disabled
+ 6	Ctrl-Alt pressed instead of just Alt
+----------M0040006B--------------------------
+MEM 0040h:006Bh - CASSETTE (PC only) - LAST VALUE READ FROM CASSETTE
+Size:	BYTE
+SeeAlso: MEM 0040h:0069h"CASSETTE"
+----------M0040006B--------------------------
+MEM 0040h:006Bh - POST LAST UNEXPECTED INTERRUPT (XT and later)
+Size:	BYTE
+Desc:   this is a bitmask of IRQs which have occurred while the corresponding
+	  interrupt vector points at the default system BIOS handler
+	  (bit 0 = IRQ0 to bit 7 = IRQ7)
+----------M0040006C--------------------------
+MEM 0040h:006Ch - TIMER TICKS SINCE MIDNIGHT
+Size:	DWORD
+SeeAlso: MEM 0040h:0070h,INT 1A/AH=00h
+----------M00400070--------------------------
+MEM 0040h:0070h - TIMER OVERFLOW
+Size:	BYTE
+Desc:	non-zero if timer has counted past midnight since last call to
+	  INT 1A/AH=00h
+Note:	the original IBM BIOS, and thus most other BIOSes, sets this byte to
+	  01h at midnight; a few (such as the Eagle PC-2) increment it each
+	  time midnight is passed.  The former behavior results in lost days
+	  if multiple midnights pass between "get-time" calls while the machine
+	  is powered up.
+SeeAlso: MEM 0040h:006Ch
+----------M00400071--------------------------
+MEM 0040h:0071h - Ctrl-Break FLAG
+Size:	BYTE
+Desc:	bit 7 is set when Ctrl-Break has been pressed
+----------M00400072--------------------------
+MEM 0040h:0072h - POST RESET FLAG
+Size:	WORD
+Desc:	specify the action the BIOS should take at the beginning of the
+	  power-on self-test when the machine is reset
+
+(Table M019)
+Values for POST reset flag:
+ 0000h	cold boot
+ 0064h	Burn-in mode
+ 1234h	to bypass memory test (warm boot)
+ 4321h	[PS/2 except Mod 25,30] to preserve memory
+ 5678h	[Conv] system suspended
+ 9ABCh	[Conv] manufacturing test mode
+ ABCDh	[Conv] POST loop mode
+----------M00400074--------------------------
+MEM 0040h:0074h - FIXED DISK LAST OPERATION STATUS (except ESDI drives)
+Size:	BYTE
+SeeAlso: INT 13/AH=01h
+
+(Table M020)
+Values for fixed disk last operation status:
+ 00h	no error
+ 01h	invalid function request
+ 02h	address mark not found
+ 03h	write protect error
+ 04h	sector not found
+ 05h	reset failed
+ 06h	diskette removed
+ 07h	drive parameter activity failed
+ 08h	DMA overrun
+ 09h	DMA data boundary error
+ 0Ah	bad sector flag detected
+ 0Bh	bad track detected
+ 0Ch	requested diskette media type not found
+	(PS/2 or extended BIOS only) unsupported track
+ 0Dh	invalid number of sectors for Format
+ 0Eh	control data address mark detected
+ 0Fh	DMA arbitration level out of range
+ 10h	uncorrectable ECC or CRC error
+ 11h	ECC corrected data error
+ 20h	general controller failed
+ 40h	seek failed
+ 80h	time out
+ AAh	drive not ready
+ BBh	undefined error
+ CCh	write fault on selected drive
+ E0h	status error/error register is zero
+ FFh	sense failed
+----------M00400074--------------------------
+MEM 0040h:0074h - WD1002-27X SuperBIOS - TOTAL DRIVES, FIRST CONTROLLER ONLY
+Size:	BYTE
+SeeAlso: MEM 0040h:0075h"SuperBIOS",MEM 0040h:0076h"SuperBIOS"
+----------M00400075--------------------------
+MEM 0040h:0075h - FIXED DISK - NUMBER OF FIXED DISK DRIVES
+Size:	BYTE
+SeeAlso: MEM 0040h:0076h"FIXED DISK",MEM 0040h:0077h"FIXED DISK"
+----------M00400075--------------------------
+MEM 0040h:0075h - WD1002-27X SuperBIOS - TOTAL FIXED DRIVES, BOTH CONTROLLERS
+Size:	BYTE
+SeeAlso: MEM 0040h:0074h"SuperBIOS",MEM 0040h:0076h"SuperBIOS"
+----------M00400076--------------------------
+MEM 0040h:0076h - FIXED DISK - CONTROL BYTE    {IBM document only for XT}
+Size:	BYTE
+SeeAlso: MEM 0040h:0075h"FIXED DISK",MEM 0040h:0077h"FIXED DISK"
+----------M00400076--------------------------
+MEM 0040h:0076h - XT: hard disk controller's I/O address (Western Digital)
+Size:	BYTE
+----------M00400076--------------------------
+MEM 0040h:0076h - WD1002-27X SuperBIOS - USED IN TRACK RECALCULATION
+Size:	BYTE
+SeeAlso: MEM 0040h:0074h"SuperBIOS",MEM 0040h:0075h"SuperBIOS"
+SeeAlso: MEM 0040h:0077h"SuperBIOS"
+----------M00400077--------------------------
+MEM 0040h:0077h	- FIXED DISK - I/O port offset {IBM document only for XT}
+Size:	BYTE
+SeeAlso: MEM 0040h:0075h"FIXED DISK",MEM 0040h:0076h"FIXED DISK"
+----------M00400077--------------------------
+MEM 0040h:0077h - WD1002-27X SuperBIOS - USED IN TRACK RECALCULATION
+Size:	BYTE
+SeeAlso: MEM 0040h:0076h"SuperBIOS"
+----------M00400078--------------------------
+MEM 0040h:0078h - PARALLEL DEVICE 1 TIME-OUT COUNTER
+Size:	BYTE
+SeeAlso: MEM 0040h:0079h,MEM 0040h:007Ah
+----------M00400079--------------------------
+MEM 0040h:0079h - PARALLEL DEVICE 2 TIME-OUT COUNTER
+Size:	BYTE
+SeeAlso: MEM 0040h:0078h,MEM 0040h:007Ah
+----------M0040007A--------------------------
+MEM 0040h:007Ah - PARALLEL DEVICE 3 TIME-OUT COUNTER
+Size:	BYTE
+SeeAlso: MEM 0040h:0078h,MEM 0040h:0079h,MEM 0040h:007Bh"PARALLEL"
+----------M0040007B--------------------------
+MEM 0040h:007Bh - PARALLEL DEVICE 4 TIME-OUT COUNTER (pre-PS, PS Models 25,30)
+Size:	BYTE
+SeeAlso: MEM 0040h:0078h,MEM 0040h:007Ah,MEM 0040h:007Bh"INT 4Bh"
+----------M0040007B--------------------------
+MEM 0040h:007Bh - INT 4Bh FLAGS (PS2 and newer)
+Size:	BYTE
+
+Bitfields for INT 4Bh flags:
+Bit(s)	Description	(Table M021)
+ 7-6	reserved
+ 5	set if Virtual DMA Spec supported [PS] (see INT 4B)
+ 4	reserved
+ 3	set if INT 4Bh intercepted and must be chained
+ 2	reserved
+ 1	set if Generic SCSI CBIOS services available on INT 4Bh
+ 0	reserved
+----------M0040007C--------------------------
+MEM 0040h:007Ch - SERIAL DEVICE 1 TIMEOUT COUNTER
+Size:	BYTE
+SeeAlso: MEM 0040h:0000h,MEM 0040h:007Dh,MEM 0040h:007Eh,MEM 0040h:007Fh
+----------M0040007D--------------------------
+MEM 0040h:007Dh - SERIAL DEVICE 2 TIMEOUT COUNTER
+Size:	BYTE
+SeeAlso: MEM 0040h:0002h,MEM 0040h:007Ch,MEM 0040h:007Eh,MEM 0040h:007Fh
+----------M0040007E--------------------------
+MEM 0040h:007Eh - SERIAL DEVICE 3 TIMEOUT COUNTER
+Size:	BYTE
+SeeAlso: MEM 0040h:0004h,MEM 0040h:007Ch,MEM 0040h:007Dh,MEM 0040h:007Fh
+----------M0040007F--------------------------
+MEM 0040h:007Fh - SERIAL DEVICE 4 TIMEOUT COUNTER
+Size:	BYTE
+SeeAlso: MEM 0040h:0006h,MEM 0040h:007Ch,MEM 0040h:007Dh,MEM 0040h:007Eh
+----------M00400080--------------------------
+MEM 0040h:0080h - KEYBOARD BUFFER START OFFSET FROM SEGMENT 40h (normally 1Eh)
+Size:	WORD
+SeeAlso: MEM 0040h:001Ah,MEM 0040h:001Eh,MEM 0040h:0082h
+----------M00400082--------------------------
+MEM 0040h:0082h - KEYBOARD BUFFER END+1 OFFSET FROM SEGMENT 40h (normally 3Eh)
+Size:	WORD
+Note:	XT BIOS dated 11/08/82 ends here
+SeeAlso: MEM 0040h:001Ch,MEM 0040h:003Eh,MEM 0040h:0080h
+----------M00400084--------------------------
+MEM 0040h:0084h - VIDEO (EGA/MCGA/VGA) - ROWS ON SCREEN MINUS ONE
+Size:	BYTE
+----------M00400085--------------------------
+MEM 0040h:0085h - VIDEO (EGA/MCGA/VGA) - CHARACTER HEIGHT IN SCAN-LINES
+Size:	WORD
+----------M00400087--------------------------
+MEM 0040h:0087h - VIDEO (EGA/VGA) CONTROL: [MCGA: =00h]
+Size:	BYTE
+
+Bitfields for EGA/VGA Video control flags:
+Bit(s)	Description	(Table M022)
+ 7	do not to clear RAM on mode set (see INT 10h, AH=00h)
+ 6-5	RAM on adapter = (this field + 1) * 64K
+ 4	reserved
+ 3	EGA/VGA video system INactive
+ 2	wait for display enable
+ 1	mono monitor
+ 0	alphanumeric cursor emulation DISabled
+	When enabled, text mode cursor size (INT 10,AH=01h) settings looking
+	 like CGA ones are translated to equivalent EGA/VGA ones.
+----------M00400088--------------------------
+MEM 0040h:0088h - VIDEO (EGA/VGA) SWITCHES: [MCGA: reserved]
+Size:	BYTE
+SeeAlso: MEM 0040h:0087h,MEM 0040h:0088h
+
+Bitfields for EGA/VGA Video switches:
+Bit(s)	Description	(Table M023)
+ 7-4	power-on state of feature connector bits 3-0
+ 3-0	configuration switches 4-1 (=0 on, =1 off) (see #M024)
+Note:	when bit 4 of 0040h:0089h is 0, VGA emulates 350-line EGA if this
+	  byte is x3h or x9h, otherwise emulates 200-line CGA in 400-line
+	  double scan. VGA resets this byte to x9h after the mode set.
+	See also note for 0040h:0089h.
+
+(Table M024)
+Values for EGA/VGA configuration switches:
+ 00h Pri MDA,				Sec EGA+old color display 40 x 25
+ 01h Pri MDA,				Sec EGA+old color display 80 x 25
+ 02h Pri MDA,				Sec EGA+ECD normal mode (CGA emul)
+ 03h Pri MDA,				Sec EGA+ECD enhanced mode
+ 04h Pri CGA 40 x 25,			Sec EGA mono display
+ 05h Pri CGA 80 x 25,			Sec EGA mono display
+ 06h Pri EGA+old color display 40 x 25, Sec MDA
+ 07h Pri EGA+old color display 80 x 25, Sec MDA
+ 08h Pri EGA+ECD normal mode (CGA emul), Sec MDA
+ 09h Pri EGA+ECD enhanced mode,		Sec MDA
+ 0Ah Pri EGA mono display,		Sec CGA 40 x 25
+ 0Bh Pri EGA mono display,		Sec CGA 80 x 25
+SeeAlso: #M023
+----------M00400089--------------------------
+MEM 0040h:0089h U - VIDEO (MCGA/VGA) - MODE-SET OPTION CONTROL
+Size:	BYTE
+
+Bitfields for Video mode-set option control:
+Bit(s)	Description	(Table M025)
+ 7,4	requested scan lines
+	0 0  350-line mode requested
+	0 1  400-line mode at next mode set
+	1 0  200-line mode requested
+	1 1  reserved
+	Note:	Apparently VGA BIOS mode set disregards bit 7 and uses
+		  byte 40h:88h to determine 200/350 selection when bit 4
+		  is zero. Presumably bit 7 is a convenience for other
+		  purposes. Bit 7 is reset to zero after the mode set.
+ 6	display switching enabled
+ 5	reserved
+ 4	if set:   use 400-line mode at next mode set
+	if clear: [VGA] emulate EGA at next mode set
+		[MCGA] emulate CGA, digital monitor, 200 lines, 8x8 text
+	Note: this bit is set by the video mode set on VGA, unchanged on MCGA
+ 3	default palette loading DISabled at mode set
+ 2	mono display
+ 1	gray scale summing enabled
+ 0	[VGA] =1 if VGA active, =0 if not
+	[MCGA] reserved, zero
+Note:	the Tseng ET4000 BIOS v3.00 uses bits 6-4 of 88h and bits 6-5 of 89h
+	  to specify graphics-mode refresh rates as follows
+		88h/6		640x480:  1 for 72Hz,0 for 60Hz
+		88h/5+89h/6	800x600:  00  60Hz
+					  01  56Hz
+					  11  72Hz
+		88h/4+89h/5	1024x768: 00  interlaced
+					  01  60Hz
+					  10  72Hz???
+					  11  70Hz
+----------M0040008A--------------------------
+MEM 0040h:008Ah U - VIDEO (MCGA/VGA) - INDEX INTO DISPLAY COMBINATION CODE TBL
+Size:	BYTE
+----------M0040008B--------------------------
+MEM 0040h:008Bh - PC, PCjr, PC/XT 11/8/82, Convertible - RESERVED
+Size:	11 BYTEs
+----------M0040008B--------------------------
+MEM 0040h:008Bh - DISKETTE MEDIA CONTROL
+Size:	BYTE
+
+Bitfields for diskette media control:
+Bit(s)	Description	(Table M026)
+ 7-6	last data rate set by controller
+	00=500kbps, 01=300kbps, 10=250kbps, 11=1Mbps
+ 5-4	last diskette drive step rate selected
+	00=0Ch, 01=0Dh, 10=0Eh, 11=0Ah
+ 3-2	{data rate at start of operation}
+ 1-0	reserved
+Note:	EHD BIOS sets this byte to 01h and never reads it back
+----------M0040008C--------------------------
+MEM 0040h:008Ch - FIXED DISK - CONTROLLER STATUS [not XT]
+Size:	BYTE
+SeeAlso: MEM 0040h:008Dh,MEM 0040h:008Eh
+----------M0040008D--------------------------
+MEM 0040h:008Dh - FIXED DISK - CONTROLLER ERROR STATUS [not XT]
+Size:	BYTE
+SeeAlso: MEM 0040h:008Ch,MEM 0040h:008Eh
+----------M0040008E--------------------------
+MEM 0040h:008Eh - FIXED DISK - INTERRUPT CONTROL [not XT]
+Size:	BYTE
+Note:	cleared to 00h at start of disk operation, set to FFh by IRQ14
+	  handler when hard disk controller completes command
+SeeAlso: MEM 0040h:008Ch,MEM 0040h:008Dh,MEM 0040h:008Fh
+----------M0040008F--------------------------
+MEM 0040h:008Fh U - DISKETTE CONTROLLER INFORMATION [not XT]
+Size:	BYTE
+SeeAlso: MEM 0040h:008Ch,MEM 0040h:008Dh,MEM 0040h:008Eh
+
+Bitfields for diskette controller information:
+Bit(s)	Description	(Table M027)
+ 7	reserved
+ 6	=1 drive 1 determined
+ 5	=1 drive 1 is multi-rate, valid if drive determined
+ 4	=1 drive 1 supports 80 tracks, always valid
+ 3	reserved
+ 2	=1 drive 0 determined
+ 1	=1 drive 0 is multi-rate, valid if drive determined
+ 0	=1 drive 0 supports 80 tracks, always valid
+Note:	EHD BIOS sets this byte to 01h and never alters it again
+----------M00400090--------------------------
+MEM 0040h:0090h - DISKETTE DRIVE 0 MEDIA STATE
+Size:	BYTE
+SeeAlso: MEM 0040h:0091h
+
+Bitfields for diskette drive media state:
+Bit(s)	Description	(Table M028)
+ 7-6	data rate
+	00=500kbps, 01=300kbps, 10=250kbps, 11=1Mbps
+ 5	double stepping required (e.g. 360kB in 1.2MB)
+ 4	media type established
+ 3	drive capable of supporting 4MB media
+ 2-0	on exit from BIOS, contains
+	000 trying 360kB in 360kB
+	001 trying 360kB in 1.2MB
+	010 trying 1.2MB in 1.2MB
+	011 360kB in 360kB established
+	100 360kB in 1.2MB established
+	101 1.2MB in 1.2MB established
+	110 reserved
+	111 all other formats/drives
+SeeAlso: #M029,#M030
+----------M00400091--------------------------
+MEM 0040h:0091h - DISKETTE DRIVE 1 MEDIA STATE
+Size:	BYTE
+SeeAlso: MEM 0040h:0090h,#M028
+----------M00400092--------------------------
+MEM 0040h:0092h U - DISKETTE DRIVE 0 MEDIA STATE AT START OF OPERATION
+Size:	BYTE
+Note:	officially "Drive 2 media state"
+SeeAlso: MEM 0040h:0093h"DRIVE 1"
+
+Bitfields for diskette drive 0 media state at start of operation:
+Bit(s)	Description	(Table M029)
+ 7-3 (see #M028)
+ 2	multiple data rate capability determined
+ 1	multiple data rate capability
+ 0	=1 if drive has 80 tracks, =0 if 40 tracks
+SeeAlso: #M028,#M030
+----------M00400092--------------------------
+MEM 0040h:0092h - Olivetti Quaderno - HARD DISK POWERDOWN COUNTDOWN CLOCK TICKS
+Size:	BYTE
+Note:	hard disk is turned off when counter reaches zero
+----------M00400093--------------------------
+MEM 0040h:0093h U - DISKETTE DRIVE 1 MEDIA STATE AT START OF OPERATION
+Size:	BYTE
+Note:	officially "Drive 3 media state"
+SeeAlso: MEM 0040h:0092h"DRIVE 0"
+
+Bitfields for diskette drive 1 media state at start of operation:
+Bit(s)	Description	(Table M030)
+ 7-3	(see #M028)
+ 2	multiple data rate capability determined
+ 1	multiple data rate capability
+ 0	=1 if drive has 80 tracks, =0 if 40 tracks
+--HP 100LX/200LX--
+	display control status
+ 0	=1 if DISPCTL -K
+ 1	=1 if DISPCTL -C
+----------M00400094--------------------------
+MEM 0040h:0094h - DISKETTE DRIVE 0 CURRENT TRACK NUMBER
+Size:	BYTE
+SeeAlso: MEM 0040h:0095h
+----------M00400095--------------------------
+MEM 0040h:0095h - DISKETTE DRIVE 1 CURRENT TRACK NUMBER
+Size:	BYTE
+SeeAlso: MEM 0040h:0094h
+----------M00400096--------------------------
+MEM 0040h:0096h - KEYBOARD STATUS BYTE 1
+Size:	BYTE
+
+Bitfields for keyboard status byte 1:
+Bit(s)	Description	(Table M031)
+ 7	=1 read-ID in progress
+ 6	=1 last code read was first of two ID codes
+ 5	=1 force Num Lock if read-ID and enhanced keyboard
+ 4	=1 enhanced keyboard installed
+ 3	=1 Right Alt pressed
+ 2	=1 Right Ctrl pressed
+ 1	=1 last code read was E0h
+ 0	=1 last code read was E1h
+SeeAlso: #M032
+----------M00400097--------------------------
+MEM 0040h:0097h - KEYBOARD STATUS BYTE 2
+Size:	BYTE
+
+Bitfields for keyboard status byte 2:
+Bit(s)	Description	(Table M032)
+ 7	=1 keyboard transmit error flag
+ 6	=1 LED update in progress
+ 5	=1 RESEND received from keyboard
+ 4	=1 ACK received from keyboard
+ 3	reserved, must be zero
+ 2	Caps Lock LED
+ 1	Num Lock LED
+ 0	Scroll Lock LED
+SeeAlso: #M031
+----------M00400098--------------------------
+MEM 0040h:0098h - TIMER2 (AT, PS exc Mod 30) - PTR TO USER WAIT-COMPLETE FLAG
+Size:	DWORD
+Note:	(see INT 15/AX=8300h)
+----------M0040009C--------------------------
+MEM 0040h:009Ch - TIMER2 (AT, PS exc Mod 30) - USER WAIT COUNT IN MICROSECONDS
+Size:	DWORD
+----------M0040009F--------------------------
+MEM 0040h:009Fh - HP 100LX/200LX - VIDEO ZOOM MODE
+Size:	BYTE
+
+(Table M033)
+Values for HP 100LX/200LX video zoom mode:
+ 02h	80x25 mono
+ 03h	80x25 color
+ 80h	64x18 mono
+ 81h	64x18 color
+ 82h	40x25 mono
+ 83h	40x25 color
+ 84h	40x16 mono
+ 85h	40x16 color
+SeeAlso: INT 10/AH=D0h
+----------M004000A0--------------------------
+MEM 0040h:00A0h - TIMER2 (AT, PS exc Mod 30) - WAIT ACTIVE FLAG
+Size:	BYTE
+
+Bitfields for Timer2 wait active flag:
+Bit(s)	Description	(Table M034)
+ 7	wait time elapsed
+ 6-1	reserved
+ 0	INT 15/AH=86h has occurred
+----------M004000A1--------------------------
+MEM 0040h:00A1h - BIT 5 SET IF LAN SUPPORT PROGRAM INTERRUPT ARBITRATOR PRESENT
+Size:	BYTE
+Note:	DEVICE=DXMA0MOD.SYS
+----------M004000A2--------------------------
+MEM 0040h:00A2h - RESERVED FOR NETWORK ADAPTERS
+Size:	6 BYTEs
+----------M004000A4--------------------------
+MEM 0040h:00A4h - PS/2 Mod 30 - SAVED FIXED DISK INTERRUPT VECTOR 
+Size:	DWORD
+----------M004000A8--------------------------
+MEM 0040h:00A8h - VIDEO (EGA/MCGA/VGA) - POINTER TO VIDEO SAVE POINTER TABLE
+Size:	DWORD
+
 Format of Video Save Pointer Table [EGA/VGA/MCGA only]:
-Offset	Size	Description
+Offset	Size	Description	(Table M035)
  00h	DWORD	ptr to Video Parameter Table
  04h	DWORD	ptr to Parameter Dynamic Save Area, else 0 [EGA/VGA only]
  08h	DWORD	ptr to Alphanumeric Character Set Override, else 0
@@ -610,7 +970,7 @@ Offset	Size	Description
 Note: table initially in ROM, copy to RAM to alter, then update 40h:A8h.
  
 Format of Secondary Video Save Pointer Table [VGA only]:
-Offset	Size	Description
+Offset	Size	Description	(Table M036)
  00h	WORD	Length of this table in bytes, including this word (1Ah)
  02h	DWORD	ptr to Display Combination Code Table, must be valid
  06h	DWORD	ptr to second Alphanumeric Character Set Override, else 0
@@ -620,102 +980,8 @@ Offset	Size	Description
  16h	DWORD	reserved, zero
 Note: table initially in ROM, copy to RAM to alter, then alter Save Ptr Table.
  
-Format of Video Parameter Table [EGA, VGA only]:
-An array of 23 [EGA] or 29 [VGA] elements, each element being 64 bytes long.
-Elements appear in the order:
- 00h-03h	Modes 00h-03h in 200-line CGA emulation mode
- 04h-0Eh	Modes 04h-0Eh
- 0Fh-10h	Modes 0Fh-10h when only 64kB RAM on adapter
- 11h-12h	Modes 0Fh-10h when >64kB RAM on adapter
- 13h-16h	Modes 00h-03h in 350-line mode
- 17h		VGA Modes 00h or 01h in 400-line mode
- 18h		VGA Modes 02h or 03h in 400-line mode
- 19h		VGA Mode  07h in 400-line mode
- 1Ah-1Ch	VGA Modes 11h-13h
- 
-Format of Video Parameter Table element [EGA, VGA only]:
-Offset	Size	Description
- 00h	BYTE	Columns on screen		  (see 40h:4Ah)
- 01h	BYTE	Rows on screen minus one	  (see 40h:84h)
- 02h	BYTE	Height of character in scan lines (see 40h:85h)
- 03h	WORD	Size of video buffer		  (see 40h:4Ch)
- 05h  4 BYTEs	Values for Sequencer Registers 1-4
- 09h	BYTE	Value for Miscellaneous Output Register
- 0Ah 25 BYTEs	Values for CRTC Registers 00h-18h
- 23h 20 BYTEs	Values for Attribute Controller Registers 00h-13h
- 37h  9 BYTEs	Values for Graphics Controller Registers 00h-08h
- 
-Format of Video Parameter Table [MCGA only] {guesswork from inspection}:
-    - 16 triplet BYTEs of R,G,B DAC info for 16 colors;
-    - An array of 11 elements, each element being 32 bytes long.
-	  Elements appear in the order:
-		Modes 00h,01h in 200-line mode for digital displays
-		Modes 00h,01h in 400-line mode for analog displays
-		Modes 02h,03h in 200-line mode for digital displays
-		Modes 02h,03h in 400-line mode for analog displays
-		Modes 04h,05h in 200-line mode for digital displays
-		Modes 04h,05h in 400-line mode for analog displays
-		Mode  06h in 200-line mode for digital displays
-		Mode  06h in 400-line mode for analog displays
-		Mode  11h
-		Mode  13h in 200-line mode for digital displays
-		Mode  13h in 400-line mode for analog displays
- 
-Format of Video Parameter Table element [MCGA only]:
-Offset	Size	Description
- 00h	BYTE	Columns on screen		  (see 40h:4Ah)
- 01h	BYTE	Rows on screen minus one	  (see 40h:84h)
- 02h	BYTE	Height of character in scan lines (see 40h:85h)
- 03h	WORD	Size of video buffer		  (see 40h:4Ch)
- 05h	WORD	??? always zero
- 07h 21 BYTEs	Video data registers 00h-14h to port 3D5h indexed by 3D4h
- 1Ch	BYTE	PEL Mask to port 3C6h
- 1Dh	BYTE	CGA Mode Control to port 3D8h
- 1Eh	BYTE	CGA Border Control to port 3D9h
- 1Fh	BYTE	Extended Mode Control to port 3DDh
- 
-Format of Video Parameter Dynamic Save Area [EGA, VGA only]:
-Offset	Size	Description
- 00h 16 BYTEs	Last data written to Attribute Contr. Palette Registers 0-15
- 10h	BYTE	Last data written to Attribute Controller Overscan Register
- 11h-FFh	Reserved
-		Note: Need for table was that EGA registers were write-only.
-		Note: If default values (from the Video Parameter Table) are
-		      over-ridden at a mode set by the VGA User Palette Profile
-		      Table, then the Dynamic Save Area is updated with the
-		      default values, not the User Profile ones.
- 
-Format of Alphanumeric Character Set Override:
-Offset	Size	Description
- 00h	BYTE	Length in bytes of each character in font table
- 01h	BYTE	Character generator RAM bank to load, 0=normal
- 02h	WORD	Number of characters in font table, normally 256
- 04h	WORD	Code of first character in font table, normally 0
- 06h	DWORD	ptr to font table
- 0Ah	BYTE	Displayable rows (FFh=use maximum calculated value)
- 0Bh	BYTEs	Array of mode values to which this font is to pertain
-	BYTE	FFh end of array
- 
-Format of Second Alphanumeric Character Set Override:
-Authorities differ, some say same as first override above, but IBM say:
-Offset	Size	Description
- 00h	BYTE	Length in bytes of each character in font table
- 01h	BYTE	Character generator RAM bank to load, normally non-zero
- 02h	BYTE	reserved
- 03h	DWORD	ptr to font table
- 07h	BYTEs	Array of mode values to which this font is to pertain
-	BYTE	FFh end of array
- 
-Format of Graphics Character Set Override:
-Offset	Size	Description
- 00h	BYTE	Number of displayable character rows
- 01h	WORD	Length in bytes of each character in font table
- 03h	DWORD	ptr to font table
- 07h	BYTEs	Array of mode values to which this font is to pertain
-	BYTE	FFh end of array
- 
 Format of Display Combination Code Table [VGA only]:
-Offset	Size	Description
+Offset	Size	Description	(Table M037)
  00h	BYTE	Number of entries in the DCC table at offset 04h
  01h	BYTE	Version number
  02h	BYTE	Maximum display type code that can appear in DCC table
@@ -737,8 +1003,105 @@ Offset	Size	Description
 		 0Ch	 MCGA with analog color display
 		 FFh	 unrecognised video system
  
+Format of Video Parameter Table [EGA, VGA only]:
+Offset	Size	Description	(Table M038)
+ 00h-03h	Modes 00h-03h in 200-line CGA emulation mode
+ 04h-0Eh	Modes 04h-0Eh
+ 0Fh-10h	Modes 0Fh-10h when only 64kB RAM on adapter
+ 11h-12h	Modes 0Fh-10h when >64kB RAM on adapter
+ 13h-16h	Modes 00h-03h in 350-line mode
+ 17h		VGA Modes 00h or 01h in 400-line mode
+ 18h		VGA Modes 02h or 03h in 400-line mode
+ 19h		VGA Mode  07h in 400-line mode
+ 1Ah-1Ch	VGA Modes 11h-13h
+Note:	An array of 23 [EGA] or 29 [VGA] elements, each element being 64
+	  bytes long.  Elements appear in the above order.
+ 
+Format of Video Parameter Table element [EGA, VGA only]:
+Offset	Size	Description	(Table M039)
+ 00h	BYTE	Columns on screen		  (see 40h:4Ah)
+ 01h	BYTE	Rows on screen minus one	  (see 40h:84h)
+ 02h	BYTE	Height of character in scan lines (see 40h:85h)
+ 03h	WORD	Size of video buffer		  (see 40h:4Ch)
+ 05h  4 BYTEs	Values for Sequencer Registers 1-4
+ 09h	BYTE	Value for Miscellaneous Output Register
+ 0Ah 25 BYTEs	Values for CRTC Registers 00h-18h
+ 23h 20 BYTEs	Values for Attribute Controller Registers 00h-13h
+ 37h  9 BYTEs	Values for Graphics Controller Registers 00h-08h
+ 
+Format of Video Parameter Table [MCGA only] {guesswork from inspection}:
+Offset	Size	Description	(Table M040)
+    - 16 triplet BYTEs of R,G,B DAC info for 16 colors;
+    - An array of 11 elements, each element being 32 bytes long.
+	  Elements appear in the order:
+		Modes 00h,01h in 200-line mode for digital displays
+		Modes 00h,01h in 400-line mode for analog displays
+		Modes 02h,03h in 200-line mode for digital displays
+		Modes 02h,03h in 400-line mode for analog displays
+		Modes 04h,05h in 200-line mode for digital displays
+		Modes 04h,05h in 400-line mode for analog displays
+		Mode  06h in 200-line mode for digital displays
+		Mode  06h in 400-line mode for analog displays
+		Mode  11h
+		Mode  13h in 200-line mode for digital displays
+		Mode  13h in 400-line mode for analog displays
+ 
+Format of Video Parameter Table element [MCGA only]:
+Offset	Size	Description	(Table M041)
+ 00h	BYTE	Columns on screen		  (see 40h:4Ah)
+ 01h	BYTE	Rows on screen minus one	  (see 40h:84h)
+ 02h	BYTE	Height of character in scan lines (see 40h:85h)
+ 03h	WORD	Size of video buffer		  (see 40h:4Ch)
+ 05h	WORD	??? always zero
+ 07h 21 BYTEs	Video data registers 00h-14h to port 3D5h indexed by 3D4h
+ 1Ch	BYTE	PEL Mask to port 3C6h
+ 1Dh	BYTE	CGA Mode Control to port 3D8h
+ 1Eh	BYTE	CGA Border Control to port 3D9h
+ 1Fh	BYTE	Extended Mode Control to port 3DDh
+ 
+Format of Video Parameter Dynamic Save Area [EGA, VGA only]:
+Offset	Size	Description	(Table M042)
+ 00h 16 BYTEs	Last data written to Attribute Contr. Palette Registers 0-15
+ 10h	BYTE	Last data written to Attribute Controller Overscan Register
+ 11h-FFh	Reserved
+		Note: Need for table was that EGA registers were write-only.
+		Note: If default values (from the Video Parameter Table) are
+		      over-ridden at a mode set by the VGA User Palette Profile
+		      Table, then the Dynamic Save Area is updated with the
+		      default values, not the User Profile ones.
+ 
+Format of Alphanumeric Character Set Override:
+Offset	Size	Description	(Table M043)
+ 00h	BYTE	Length in bytes of each character in font table
+ 01h	BYTE	Character generator RAM bank to load, 0=normal
+ 02h	WORD	Number of characters in font table, normally 256
+ 04h	WORD	Code of first character in font table, normally 0
+ 06h	DWORD	ptr to font table
+ 0Ah	BYTE	Displayable rows (FFh=use maximum calculated value)
+ 0Bh	BYTEs	Array of mode values to which this font is to pertain
+	BYTE	FFh end of array
+ 
+Format of Second Alphanumeric Character Set Override:
+Offset	Size	Description	(Table M044)
+ 00h	BYTE	Length in bytes of each character in font table
+ 01h	BYTE	Character generator RAM bank to load, normally non-zero
+ 02h	BYTE	reserved
+ 03h	DWORD	ptr to font table
+ 07h	BYTEs	Array of mode values to which this font is to pertain
+	BYTE	FFh end of array
+Note:	Authorities differ, some say same as first override above, but IBM
+	  says it is as shown above
+ 
+Format of Graphics Character Set Override:
+Offset	Size	Description	(Table M045)
+ 00h	BYTE	Number of displayable character rows
+ 01h	WORD	Length in bytes of each character in font table
+ 03h	DWORD	ptr to font table
+ 07h	BYTEs	Array of mode values to which this font is to pertain
+	BYTE	FFh end of array
+ 
 Format of User Palette Profile Table [VGA only]:
-Offset	Size	Description
+Offset	Size	Description	(Table M046)
  00h	BYTE	Underlining: 01h=enable in all alphanumeric modes
 			     00h=enable in monochrome alphanumeric modes only
 			     FFh=disable in all alphanumeric modes
@@ -754,28 +1117,465 @@ Offset	Size	Description
 			Table is ??? triplets ??? of BYTEs???
  14h	BYTEs	array of mode values to which this profile is to pertain
 	BYTE	FFh end of array
+----------M004000AC--------------------------
+MEM 0040h:00ACh - RESERVED
+Size:	4 BYTEs
+----------M004000B0--------------------------
+MEM 0040h:00B0h - Phoenix 386 BIOS 1.10 10a - LOOP COUNT FOR HARD DISK TIMEOUT
+Size:	BYTE
+Desc:	number of times a tight software delay loop should be executed to
+	  generate the sub-55ms delays used internally by the BIOS
+Note:	also used for delaying when beeping due to full keyboard buffer
+----------M004000B0--------------------------
+MEM 0040h:00B0h - PTR TO 3363 OPTICAL DISK DRIVER OR BIOS ENTRY POINT
+Size:	DWORD
+Notes:	When 3363 BIOS present, the ASCIZ signature "OPTIC "occurs 3 bytes
+	  beyond this entry point
+	When 3363 BIOS and 3363 File System Driver present, the ASCIZ signature
+	  "FILE SYSTEM DRIVER" occurs 3 bytes beyond this entry point
+----------M004000B0--------------------------
+MEM 0040h:00B0h	- 1988 Phoenix 386 BIOS 1.10 03 - PARAMS FOR TYPE 48 HARD DISK
+Size:	16 BYTEs
+SeeAlso: INT 41,INT 46
+----------M004000B4--------------------------
+MEM 0040h:00B4h	- RESERVED
+Size:	WORD
+----------M004000B5--------------------------
+MEM 0040h:00B5h	- Dell 4xxDE
+Size:	BYTE
 
-Format of System ROM:
- Address     ByteSize	Description
- F000h:6000h  32768	IBM PC ROM BASIC
- F000h:E000h   8192	original IBM PC ROM BIOS
- F000h:E739h	.	original IBM PC INT 14 handler
- F000h:E82Eh	.	original IBM PC INT 16 handler
- F000h:EC59h	.	original IBM PC INT 13 handler
- F000h:EFD2h	.	original IBM PC INT 17 handler
- F000h:F065h	.	original IBM PC INT 10 handler
- F000h:F841h	.	original IBM PC INT 12 handler
- F000h:F84Dh	.	original IBM PC INT 11 handler
- F000h:F859h	.	original IBM PC INT 15 handler
- F000h:FE6Eh	.	original IBM PC INT 1A handler
- FFFFh:0000h      5	reset jump 
- FFFFh:0005h	  8	ASCII BIOS date
- FFFFh:000Dh	  1	??? (generally unused or used to fix ROM checksum)
- FFFFh:000Eh	  1	machine type code (see INT 15h/AH=C0h)
- FFFFh:0010h  65520	HMA (when A20 enabled)
+Bitfields for Dell 4xxDE flags:
+Bit(s)	Description	(Table M047)
+ 2	??? (related to disk drives)
+ 5	page tables set to allow Weitek addressing in real mode
+ 6	Weitek math coprocessor present
+----------M004000B6--------------------------
+MEM 0040h:00B6h	- RESERVED FOR POST???
+Size:	3 BYTEs
+----------M004000B9--------------------------
+MEM 0040h:00B9h - ???
+Size:	7 BYTEs
+----------M004000C0--------------------------
+MEM 0040h:00C0h	- 1988 Phoenix 386 BIOS 1.10 03 - PARAMS FOR TYPE 49 HARD DISK
+Size:	16 BYTEs
+SeeAlso: INT 41,INT 46
+----------M004000C0--------------------------
+MEM 0040h:00C0h	- RESERVED
+Size:	14 BYTEs
+----------M004000CE--------------------------
+MEM 0040h:00CEh	- COUNT OF DAYS SINCE LAST BOOT
+Size:	WORD
+----------M004000D0--------------------------
+MEM 0040h:00D0h - RESERVED
+Size:	32 BYTEs
+----------M004000D0--------------------------
+MEM 0040h:00D0h	- Digiboard MV/4 - LENGTH OF DATA TABLE
+Size:	BYTE
+----------M004000D0--------------------------
+MEM 0040h:00D0h	EHD floppy - INSTALLATION FLAGS
+Size:	BYTE
 
------------CONTRIBUTORS----------------------
+Bitfields for EHD floppy installation flags:
+Bit(s)	Description	(Table M048)
+ 4	installation completed
+ 3-0	drives 0-3
+----------M004000D1--------------------------
+MEM 0040h:00D1h	- Digiboard MV/4 - PRODUCT ID
+Size:	BYTE
+----------M004000D2--------------------------
+MEM 0040h:00D2h	- Digiboard MV/4 - BASE ADDRESS FOUND
+Size:	WORD
+----------M004000D4--------------------------
+MEM 0040h:00D4h	- Digiboard MV/4 - PORTS
+Size:	BYTE
+----------M004000D5--------------------------
+MEM 0040h:00D5h	- Digiboard MV/4 - IRQ
+Size:	BYTE
+----------M004000D5--------------------------
+MEM 0040h:00D5h	- EHD floppy - NUMBER OF FLOPPY DISK CONTROLLERS IN SYSTEM
+Size:	BYTE
+----------M004000D6--------------------------
+MEM 0040h:00D6h	- EHD floppy - AND-BITS TO ADJUST PORT ADDRESS
+Size:	BYTE
+Note:	this byte contains FFh if controller at 03Fxh and 7Fh if at 037xh; the
+	  value is ANDed with DL prior to using IN A?,DX or OUT DX,A?
+	  instructions
+----------M004000D6--------------------------
+MEM 0040h:00D6h - Digiboard MV/4 - NUMBER OF KEYBOARDS FOUND
+Size:	WORD
+SeeAlso: MEM 0040h:00D8h"Digiboard"
+----------M004000D7--------------------------
+MEM 0040h:00D7h - EHD floppy - DRIVE 0 DISKETTE MEDIA STATE
+Size:	BYTE
+Note:	the value in this byte is copied into 0040h:0090h (diskette 0 status)
+SeeAlso: MEM 0040h:00D8h"EHD",MEM 0040h:00D9h"EHD",MEM 0040h:00DAh"EHD"
+
+Bitfields for EHD diskette media state:
+Bit(s)	Description	(Table M049)
+ 7-6	data rate: 00=500kbps,01=300kbps,10=250k,11=1M/S
+ 5	double stepping required (e.g. 360kB in 1.2MB)
+ 4	media type established
+ 3	reserved
+ 2-0	on exit from BIOS, contains:
+	000 trying 360kB in 360kB
+	001 trying 360kB in 1.2MB
+	010 trying 1.2MB in 1.2MB
+	011 360kB in 360kB established
+	100 360kB in 1.2MB established
+	101 1.2MB in 1.2MB established
+	110 reserved (2M8?)
+	111 all other formats/drives
+----------M004000D8--------------------------
+MEM 0040h:00D8h - Digiboard MV/4 - NUMBER OF MICE FOUND
+Size:	WORD
+SeeAlso: MEM 0040h:00D6h"Digiboard",MEM 0040h:00DAh"Digiboard"
+----------M004000D8--------------------------
+MEM 0040h:00D8h - EHD floppy - DRIVE 1 DISKETTE MEDIA STATE
+Size:	BYTE
+SeeAlso: MEM 0040h:00D7h"EHD",MEM 0040h:00D9h"EHD",MEM 0040h:00DAh"EHD"
+----------M004000D9--------------------------
+MEM 0040h:00D9h - EHD floppy - DRIVE 2 DISKETTE MEDIA STATE
+Size:	BYTE
+SeeAlso: MEM 0040h:00D7h"EHD",MEM 0040h:00D8h"EHD",MEM 0040h:00DAh"EHD"
+----------M004000DA--------------------------
+MEM 0040h:00DAh - Digiboard MV/4 - CURRENT PORT (used by VGA initializatn only)
+Size:	BYTE
+SeeAlso: MEM 0040h:00D8h"Digiboard"
+----------M004000DA--------------------------
+MEM 0040h:00DAh - EHD floppy - DRIVE 3 DISKETTE MEDIA STATE
+Size:	BYTE
+SeeAlso: MEM 0040h:00D7h"EHD",MEM 0040h:00D8h"EHD",MEM 0040h:00D9h"EHD"
+----------M004000DB--------------------------
+MEM 0040h:00DBh - Digiboard MV/4 - MASTER 8259 MASK (used by VGA init only)
+Size:	BYTE
+SeeAlso: MEM 0040h:00DCh"Digiboard"
+----------M004000DB--------------------------
+MEM 0040h:00DBh - EHD floppy - DRIVE 0 NEEDS RECALIBARATION
+Size:	BYTE
+SeeAlso: MEM 0040h:00DCh"EHD",MEM 0040h:00DDh"EHD",MEM 0040h:00DEh"EHD"
+----------M004000DC--------------------------
+MEM 0040h:00DCh - Digiboard MV/4 - SLAVE 8259 MASK (used by VGA init only)
+Size:	BYTE
+SeeAlso: MEM 0040h:00DBh"Digiboard"
+----------M004000DC--------------------------
+MEM 0040h:00DCh - EHD floppy - DRIVE 1 NEEDS RECALIBARATION
+Size:	BYTE
+SeeAlso: MEM 0040h:00DBh"EHD",MEM 0040h:00DDh"EHD",MEM 0040h:00DEh"EHD"
+----------M004000DD--------------------------
+MEM 0040h:00DDh - EHD floppy - DRIVE 2 NEEDS RECALIBARATION
+Size:	BYTE
+SeeAlso: MEM 0040h:00DBh"EHD",MEM 0040h:00DCh"EHD",MEM 0040h:00DEh"EHD"
+----------M004000DE--------------------------
+MEM 0040h:00DEh - EHD floppy - DRIVE 3 NEEDS RECALIBARATION
+Size:	BYTE
+SeeAlso: MEM 0040h:00DBh"EHD",MEM 0040h:00DCh"EHD",MEM 0040h:00DDh"EHD"
+----------M004000E0--------------------------
+MEM 0040h:00E0h - Phoenix 386 BIOS - DRIVE PARAMETER TABLE FOR FIRST HARD DISK
+Size:	16 BYTEs
+Note:	this area is used to store the driver parameter table for the first
+	  hard disk if it has been setup as the user-configurable "type 47"
+----------M004000E3--------------------------
+MEM 0040h:00E3h - EHD floppy - DRIVE 0 DISKETTE TYPE (from jumpers)
+Size:	BYTE
+SeeAlso: MEM 0040h:00E4h,MEM 0040h:00E5h"EHD",MEM 0040h:00E6h"EHD"
+
+(Table M050)
+Values for EHD floppy diskette type:
+ 01h	undefined by diskette change (360K)
+ 02h	1.2M
+ 03h	720K
+ 04h	1.44M
+ 05h	2.88M
+----------M004000E4--------------------------
+MEM 0040h:00E4h - EHD floppy - DRIVE 1 DISKETTE TYPE (from jumpers)
+Size:	BYTE
+SeeAlso: MEM 0040h:00E3h,MEM 0040h:00E5h"EHD",MEM 0040h:00E6h"EHD"
+----------M004000E5--------------------------
+MEM 0040h:00E5h - EHD floppy - DRIVE 2 DISKETTE TYPE (from jumpers)
+Size:	BYTE
+SeeAlso: MEM 0040h:00E3h,MEM 0040h:00E4h"EHD",MEM 0040h:00E6h"EHD"
+----------M004000E6--------------------------
+MEM 0040h:00E6h - EHD floppy - DRIVE 3 DISKETTE TYPE (from jumpers)
+Size:	BYTE
+SeeAlso: MEM 0040h:00E3h,MEM 0040h:00E4h"EHD",MEM 0040h:00E5h"EHD"
+----------M004000EA--------------------------
+MEM 0040h:00EAh - Omti controller - SEGMENT OF EXTENDED BIOS DATA AREA???
+Size:	WORD
+Note:	drive parameter tables stored in specified segment
+----------M004000EC--------------------------
+MEM 0040h:00ECh - Dell 4xxDE BIOS A11 - LOOP COUNT FOR DELAYS
+Size:	WORD
+----------M004000F0--------------------------
+MEM 0040h:00F0h - INTRA-APPLICATION COMMUNICATION AREA
+Size:	16 BYTEs
+----------M00500000--------------------------
+MEM 0050h:0000h - PRINT-SCREEN STATUS
+Size:	BYTE
+----------M00500004--------------------------
+MEM 0050h:0004h - MS-DOS - LOGICAL DRIVE FOR SINGLE-FLOPPY SYSTEM (A: / B:)
+Size:	BYTE
+----------M0050000E--------------------------
+MEM 0050h:000Eh - STATE OF BREAK CHECKING AT START OF BASICA.COM EXECUTION
+Size:	BYTE
+----------M0050000F--------------------------
+MEM 0050h:000Fh - BASICA VERSION FLAG
+Size:	BYTE
+Note:	this byte contains the value 02h if BASICA v2.10 is running
+----------M00500010--------------------------
+MEM 0050h:0010h - POINTER TO BASIC DATA SEGMENT
+Size:	WORD
+----------M00500012--------------------------
+MEM 0050h:0012h - INT 08 VECTOR AT START OF BASICA.COM EXECUTION
+Size:	DWORD
+----------M00500016--------------------------
+MEM 0050h:0016h - INT 1B VECTOR AT START OF BASICA.COM EXECUTION
+Size:	DWORD
+----------M0050001A--------------------------
+MEM 0050h:001Ah - INT 24 VECTOR AT START OF BASICA.COM EXECUTION
+Size:	DWORD
+----------M00600000--------------------------
+MEM 0060h:0000h - DOS SCRATCH SPACE
+Size:	256 BYTEs
+Note:	used during DOS 2+ boot process
+----------M00700000--------------------------
+MEM 0070h:0000h - DOS 2+ IO.SYS LOAD ADDRESS
+----------MA0000000--------------------------
+MEM A000h:0000h - EGA+ GRAPHICS BUFFER
+Size:	65536 BYTEs
+----------MB0000000--------------------------
+MEM B000h:0000h - MDA TEXT BUFFER
+Size:	4096 BYTEs
+----------MB0000000--------------------------
+MEM B000h:0000h - HGC+ RAMFont-MODE TEXT BUFFER
+Size:	16384 BYTEs
+Note:	in RAMFont Mode 1, the memory is filled with the usual
+	  character/attribute pairs; in RAMFont Mode 2, four bits of each
+	  'attribute' byte is used to provide 12 bits for specifying the
+	  character
+----------MB0000000--------------------------
+MEM B000h:0000h - HGC GRAPHICS BUFFER (PAGE 0)
+Size:	32768 BYTEs
+----------MB4000000--------------------------
+MEM B400h:0000h - HGC+ RAMFont BUFFER
+Size:	4096 BYTEs
+Notes:	apparently write-only
+	RAMFont Mode 1: 256 characters (8 bits each for char and attribute)
+	RAMFont Mode 2: 3072 characters (12 bits for char, 4 bits for attrib)
+	each character definition is 8 pixels wide (with 9th-column duplication
+	  if appropriate) by 8-16 pixels high
+----------MB8000000--------------------------
+MEM B800h:0000h - CGA TEXT/GRAPHICS BUFFER
+Size:	16384 BYTEs
+--------V-MB8000000--------------------------
+MEM B800h:0000h - EGA/VGA+ TEXT BUFFER
+Size:	32768 BYTEs
+--------V-MB8000000--------------------------
+MEM B800h:0000h - HGC GRAPHICS BUFFER (PAGE 1)
+Size:	32768 BYTEs
+----------MBFF00000--------------------------
+MEM BFF0h:0000h - ET4000/W32 ACL accelerator
+Size:	169 BYTES
+
+Format of ET4000/W32 memory-mapped registers:
+Offset	Size	Description	(Table M051)
+ 00h	DWORD	MMU Registers: memory base pointer register 0 (see #M052)
+ 04h	DWORD	MMU Registers: memory base pointer register 1 (see #M052)
+ 08h	DWORD	MMU Registers: memory base pointer register 2 (see #M052)
+ 0Ch  7 BYTEs	???
+ 13h	BYTE	MMU Registers: MMU control register
+ 14h 28 BYTEs	???
+ 30h	BYTE	Non-Queued Registers: suspend/terminate
+ 31h	BYTE	Non-Queued Registers: operation state (see #M054) (write-only)
+ 32h	BYTE	Non-Queued Registers: sync enable
+ 33h	BYTE	???
+ 34h	BYTE	Non-Queued Registers: interrupt mask
+ 35h	BYTE	Non-Queued Registers: interrupt status
+ 36h	BYTE	Non-Queued Registers: ACL status (read-only)
+		bit 1: read status (RDST) 1=ACL active, queue not empty
+		bit 0: write status (WRST) 1=queue full
+ 37h 73 BYTEs	???
+ 80h	DWORD	Queued Registers: pattern address (see #M055)
+ 84h	DWORD	Queued Registers: source address (see #M055)
+ 88h	WORD	Queued Registers: pattern Y offset (see #M056)
+ 8Ah	WORD	Queued Registers: source Y offset (see #M056)
+ 8Ch	WORD	Queued Registers: destination y offset (see #M056)
+ 8Eh	BYTE	Queued Registers: virtual bus size
+ 8Fh	BYTE	Queued Registers: X/Y direction (see #M057)
+ 90h	BYTE	Queued Registers: pattern wrap (see #M058)
+ 91h	BYTE	???
+ 92h	BYTE	Queued Registers: source wrap (see #M058)
+ 93h	BYTE	???
+ 94h	WORD	Queued Registers: X position
+ 96h	WORD	Queued Registers: Y position
+ 98h	WORD	Queued Registers: X count (see #M059)
+ 9Ah	WORD	Queued Registers: Y count (see #M059)
+ 9Ch	BYTE	Queued Registers: routine control (see #M060)
+ 9Dh	BYTE	Queued Registers: reload control
+ 9Eh	BYTE	Queued Registers: background ROP for mixing
+ 9Fh	BYTE	Queued Registers: foreground ROP for mixing
+ A0h	DWORD	Queued Registers: destination address (see #M055)
+ A4h	DWORD	Queued Registers: internal pattern address
+ A8h	DWORD	Queued Registers: internal source address
+
+Bitfields for ET4000/W32 memory base pointer register:
+Bit(s)	Description	(Table M052)
+ 31-22	reserved
+ 21-0	memory base pointer
+SeeAlso: #M051
+
+Bitfields for ET4000/W32 MMU control register:
+Bit(s)	Description	(Table M053)
+ 7	reserved
+ 6-4	linear address control (LAC)
+	  bit 6: MMU aperture 2
+	  bit 5: MMU aperture 1
+	  bit 4: MMU aperture 0
+ 3	reserved
+ t2-0	aperture type (APT)
+	  bit 2: MMU aperture 2
+	  bit 1: MMU aperture 1
+	  bit 0: MMU aperture 0
+SeeAlso: #M051 
+
+Bitfields for ET4000/W32 operation state register:
+Bit(s)	Description	(Table M054)
+ 7-4	reserved
+ 3	restart operation after ACL-interruption
+ 2-1	reserved
+ 0	restore status before ACL-interruption
+SeeAlso: #M051
+
+Bitfields for ET4000/W32 memory address register:
+Bit(s)	Description	(Table M055)
+ 31-22	reserved
+ 21-0	memory base pointer
+SeeAlso: #M051
+
+Bitfields for ET4000/W32 offset register:
+Bit(s)	Description	(Table M056)
+ 15-12	reserved
+ 11-0	Y offset
+SeeAlso: #M051
+
+Bitfields for ET4000/W32 X/Y direction register:
+Bit(s)	Description	(Table M057)
+ 7-2	reserved
+ 1	X direction
+ 0	Y direction
+SeeAlso: #M051
+
+Bitfields for ET4000/W32 wrap register:
+Bit(s)	Description	(Table M058)
+ 7	reserved
+ 6-4	pattern Y wrap
+	000 = 1 line	
+	001 = 2 lines	
+	010 = 4 lines	
+	011 = 8 lines	
+	100 = reserved
+	101 = reserved
+	110 = reserved
+	111 = no wrap 
+ 3	reserved
+ 2-0	pattern X wrap
+	000 = reserved	
+	001 = reserved	
+	010 = 4 byte	
+	011 = 8 byte	
+	100 = 16 byte	
+	101 = 32 byte	
+	110 = 64 byte	
+	111 = no wrap	
+SeeAlso: #M051
+
+Bitfields for ET4000/W32 count register:
+Bit(s)	Description	(Table M059)
+ 15-12	reserved
+ 11-0	pixel count
+SeeAlso: #M051
+
+Bitfields for ET4000/W32 routine control register:
+Bit(s)	Description	(Table M060)
+ 7-6	reserved			   
+ 5-4	routing of CPU address (ADRO)	   
+  	00 don't use CPU address	   
+  	01 CPU address is destination   
+  	10 reserved			   
+  	11 reserved			   
+ 3	reserved			   
+ 2-0	routing of CPU data (DARQ)	   
+  	000 don't use CPU data	   
+  	001 CPU data is source data	   
+  	010 CPU data is mixed data	   
+  	011 reserved			   
+  	100 CPU data is x-count	   
+  	101 CPU data is y-count	   
+  	10x reserved                    
+SeeAlso: #M051 
+----------MC0000000--------------------------
+MEM C000h:0000h - VIDEO BIOS (EGA and newer)
+Size:	varies (usually 16K-24K for EGA, 24K-32K for VGA)
+----------MC8000000--------------------------
+MEM C800h:0000h - HARD DISK BIOS
+Size:	varies (usually 8K or 16K)
+----------MC8001C00--------------------------
+MEM C800h:1C00h - IBM XGA, XGA/A - MEMORY-MAPPED REGISTERS
+Range:	any 8K boundary within segments C000h to DFFFh
+Notes:	The XGA memory mapped registers can be assigned to the last 1K block in
+	  in each 8K block in the range of C0000h-DFFFFh; the base offset of
+	  the 128 memory mapped lcoation for a particular XGA instance is
+	  Segment:(1C00h+instance*80h) for each XGA installed in a system
+	  (default instance is 6).
+	The XGA/A (PS/2 adapter) uses the 7KB area below the memory-mapped
+	  register area for ROM data; the XGA (PS/2 onboard) has included
+	  this area in it's video BIOS ROM.
+	Most of the memory mapped registers are from the graphics coprocessor,
+	  while the I/O-registers are for the display controller.
+----------MF0006000--------------------------
+MEM F000h:6000h - IBM PC ROM BASIC
+Size:	32768 BYTEs
+--------B-MF000E000--------------------------
+MEM F000h:E000h - ORIGINAL IBM PC ROM BIOS
+Size:	8192 BYTEs
+--------H-MF000FFF0--------------------------
+MEM F000h:FFF0h - RESET JUMP
+Size:	5 BYTEs
+--------B-MF000FFF5--------------------------
+MEM F000h:FFF5h - ASCII BIOS DATE
+Size:	8 BYTEs
+----------MF000FFFD--------------------------
+MEM F000h:FFFDh - OFTEN USED TO ENSURE CORRECT BIOS CHECKSUM
+Size:	BYTE
+--------B-MF000FFFE--------------------------
+MEM F000h:FFFEh - MACHINE TYPE CODE
+Size:	BYTE
+SeeAlso: INT 15/AH=C0h
+----------MFFFF0010--------------------------
+MEM FFFFh:0010h - HIGH MEMORY AREA
+Size:	65520 BYTEs
+---------------------------------------------
+
+--------!---CONTRIBUTORS---------------------
+Robin Walker	<rdhw@cus.cam.ac.uk> ORIGINAL FILE
 Wim Osterholt	<wim@djo.wtm.tudelft.nl> or Wim Osterholt 2:512/56
 	EHD floppy = 'KEGAN 4.0M Floppy Drive Controller.',
 		     'ACME FX4-K7tb2 v:2.5 11/5/91'
 Stanley Appel   <appel@stack.urc.tue.nl>
+Matthias Paul	<mpaul@ibh.rwth-aachen.de>
+--------!---Admin----------------------------
+Highest Table Number = M060
+--------!---FILELIST-------------------------
+Please redistribute all of the files comprising the interrupt list (listed at
+the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
+quartet of archives named INTER47A through INTER47D (preferably the original
+authenticated PKZIP archives), and the utility programs in a two additional
+archives called INTER47E.ZIP and INTER47F.ZIP
+
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+--------!---CONTACT_INFO---------------------
+Internet: ralf@telerama.lm.com
+UUCP: {uunet,harvard}!telerama.lm.com!ralf
+FIDO: Ralf Brown 1:129/26.1
+	or post a message to me in the DR_DEBUG echo (I probably won't see it
+	unless you address it to me)
+CIS:  >INTERNET:ralf@telerama.lm.com

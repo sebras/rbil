@@ -14,7 +14,7 @@ Note:	the extender relocates INT 05 to here by default, but can be told to
 	  leave INT 05 alone with the commandline (or DOSX= environment
 	  variable) flag -PRIVEC 5
 SeeAlso: INT 05
-----------80---------------------------------
+--------d-80---------------------------------
 INT 80 - BusLogic BT-946C PCI SCSI Adapter - SCRATCHPAD RAM (NOT A VECTOR!)
 Note:	the factory-default location for the eight bytes of scratchpad RAM
 	  needed by the SCSI adapter is 0000h:0200h, which is interrupt
@@ -295,12 +295,19 @@ SeeAlso: INT 80"BASIC",INT 82"BASIC"
 --------N-81---------------------------------
 INT 81 - IBM TOKEN RING ADAPTER - ???
 SeeAlso: INT 82"TOKEN RING",INT 91"TOKEN RING"
-----------81---------------------------------
+--------d-81---------------------------------
 INT 81 - BusLogic BT-946C PCI SCSI Adapter - SCRATCHPAD RAM (NOT A VECTOR!)
 Note:	the factory-default location for the eight bytes of scratchpad RAM
 	  needed by the SCSI adapter is 0000h:0200h, which is interrupt
 	  vectors 80h and 81h
 SeeAlso: INT 80"BusLogic"
+--------b-81---------------------------------
+INT 81 - AMI WinBIOS - SECOND HARD DRIVE AUTODETECTION
+Notes:	used by WinBIOS with core version of July 1994 or later
+	QEMM 7.5 began using this interrupt internally after the QPAT3
+	  maintenance release when searching for "ROM holes", causing a
+	  lengthy delay during bootup.  Adding the QEMM parameter RH:N will
+	  avoid the QEMM call to INT 81 and speed up the boot process
 --------s-810200---------------------------
 INT 81 - Gravis UltraSound - MegaEm - PROCESS COMMAND LINE
 	AX = 0200h
@@ -331,17 +338,17 @@ Values for MegaEm status:
  000Bh	/SC switch is no longer valid
  0100h	??? (some error on patch loading)
 --------s-810202---------------------------
-INT 81h - Gravis UltraSound - MegaEm - ???
+INT 81 - Gravis UltraSound - MegaEm - ???
 	AX = 0202h
 Return:	AX = ???
 SeeAlso: AX=0200h,AX=0300h,AX=0400h,INT 21/AX=FD12h/BX=3457h
 --------s-810300---------------------------
-INT 81h - Gravis UltraSound - MegaEm - LOAD SAMPLE ???
+INT 81 - Gravis UltraSound - MegaEm - LOAD SAMPLE ???
 	AX = 0300h
 Return:	AX = ???
 SeeAlso: AX=0200h,AX=0202h,AX=0400h,INT 21/AX=FD12h/BX=3457h
 --------s-810400---------------------------
-INT 81h - Gravis UltraSound - MegaEm - ???
+INT 81 - Gravis UltraSound - MegaEm - ???
 	AX = 0400h
 	BX = ??? (segment)
 Return:	AX = ???
@@ -2817,7 +2824,7 @@ Range:	INT 7Eh to INT E6h, selected by commandline switch
 Note:	(see INT D8"Screen Thief")
 SeeAlso: INT 0E"IRQ6",INT DD"Screen Thief",INT DF"Screen Thief"
 --------b-DF---------------------------------
-INT DF - Victor 9000 - SuperBIOS
+INT DF - Victor 9000/Sirius 1 - SuperBIOS
 --------r-DF---------------------------------
 INT DF - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
@@ -2843,6 +2850,16 @@ SeeAlso: INT CF"APL"
 INT E0 - VIRUS - "Micro-128" - ???
 Note:	Micro-128 also overwrites the upper half of the interrupt table
 SeeAlso: INT 9E"VIRUS",INT F1"VIRUS"
+----------E0---------------------------------
+INT E0 - DeskMate (Tandy) - DESK EXECUTIVE API
+	AX = function code (numerous)
+	parameters passed in BX, DX, ES, DI, and/or BP
+Return: AX = return from function
+Program: DeskMate is a proprietary GUI from Tandy distributed with several
+	  models of the Tandy 1000's, 2500's, 3000's, and laptops.  Retail
+	  and runtime versions also exist.  Some Tandy's are designed to
+	  boot directly into DeskMate.
+SeeAlso: INT 15/AX=7002h,INT E1"DeskMate"
 --------O-E0---------------------------------
 INT E0 - CP/M-86, Concurrent CP/M, DR Multiuser DOS - FUNCTION CALLS
 	CL = function number (see #2602,#2603)
@@ -3689,6 +3706,17 @@ Desc:	used by some applications which alter CP/M functions while running a
 	  child program, to store the original INT E0 vector before
 	  intercepting INT E0
 SeeAlso: INT E0"CP/M"
+----------E1---------------------------------
+INT E1 - DeskMate (Tandy) - TASK DATA SEGMENTS (NOT A VECTOR!)
+Desc:	used to store data; the	low word of the vector is the data segment for
+	  the first task; the high word is the data segment of the second task
+	  (DeskMate supports 2-way task switching between small- or
+	  medium-model applications)
+Program: DeskMate is a proprietary GUI from Tandy distributed with several
+	  models of the Tandy 1000's, 2500's, 3000's, and laptops.  Retail
+	  and runtime versions also exist.  Some Tandy's are designed to
+	  boot directly into DeskMate.
+SeeAlso: INT E0"DeskMate"
 --------r-E2---------------------------------
 INT E2 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
@@ -3721,6 +3749,69 @@ Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 INT E6 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
+--------O-E600-------------------------------
+INT E6 - Linux DOSEMU - INSTALLATION CHECK
+	AH = 00h
+Return: AX = AA55h if installed
+	    BX = DOSEMU version number * 100 (decimal)
+	    CX = patchlevel
+SeeAlso: AH=FFh
+--------O-E601-------------------------------
+INT E6 - Linux DOSEMU - REGISTER DUMP
+	AH = 01h
+SeeAlso: AH=00h
+--------O-E602-------------------------------
+INT E6 - Linux DOSEMU - SET I/O PORT PERMISSIONS
+	AH = 02h
+	BX = base I/O port address
+	CX = number of consecutive I/O ports
+	CF set to allow DOS to use ports
+	CF clear if DOS should not be allowed to use ports
+SeeAlso: AH=00h
+--------O-E605-------------------------------
+INT E6 - Linux DOSEMU - STARTUP BANNER
+	AH = 05h
+SeeAlso: AH=00h
+--------O-E612-------------------------------
+INT E6 - Linux DOSEMU - SET "HOGTHRESHOLD"
+	AH = 12h
+	BX = new "hogthreshold" (00h-99h)
+Desc:	specify how much CPU time DOSEMU may use
+SeeAlso: AH=00h
+--------O-E622-------------------------------
+INT E6 - Linux DOSEMU - GET EMS STATUS
+	AH = 22h
+SeeAlso: AH=00h
+--------O-E630-------------------------------
+INT E6 - Linux DOSEMU - SET BOOTDISK FLAG
+	AH = 30h
+	BX = new flag state (0 = false, 1 = true)
+SeeAlso: AH=00h
+--------O-E650-------------------------------
+INT E6 - Linux DOSEMU - EXECUTE UNIX COMMAND
+	AH = 50h
+	ES:DX -> ASCIZ Unix command
+SeeAlso: AH=00h,AH=51h
+--------O-E651-------------------------------
+INT E6 - Linux DOSEMU - EXECUTE DOS COMMAND FROM UNIX
+	AH = 51h
+	ES:DX -> ASCIZ DOS command
+SeeAlso: AH=00h,AH=50h
+--------O-E680-------------------------------
+INT E6 - Linux DOSEMU - GET CURRENT UNIX DIRECTORY
+	AH = 80h
+Return: ES:DX -> current Unix directory
+	AX = length of current directory name
+SeeAlso: AH=00h,AH=81h
+--------O-E681-------------------------------
+INT E6 - Linux DOSEMU - CHANGE CURRENT UNIX DIRECTORY
+	AH = 81h
+	ES:DX -> ASCIZ directory name
+SeeAlso: AH=00h,AH=80h
+--------O-E6FF-------------------------------
+INT E6 - Linux DOSEMU - TERMINATE
+	AH = FFh
+SeeAlso: AH=00h
 --------r-E7---------------------------------
 INT E7 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
@@ -3807,6 +3898,7 @@ INT F1 - NetWare Remote Boot - INSTALLATION CHECK (NOT A VECTOR!)
 Note:	if this vector contains the value 5774654Eh ("NetW"), the remote boot
 	  BIOS extension is active, and access to the floppy disk is redirected
 	  to an image file in the server's SYS:LOGIN directory
+SeeAlso: INT F2"NetWare",INT F3"NetWare",INT F4"NetWare"
 --------v-F1---------------------------------
 INT F1 - VIRUS - "Violetta" - ???
 Note:	used but not chained by virus
@@ -4133,7 +4225,7 @@ Notes:	the caller is required to provide at least 512 bytes of stack space
 	  interrupts disabled; the handler must preserve all registers and
 	  return with an IRET
 SeeAlso: AH=01h
-----------F105-------------------------------
+----------F1--05-----------------------------
 INT F1 - Common ISDN API (CAPI) v2.0 - "CAPI_SET_SIGNAL" - SIGNAL HANDLING
 	AL = 05h
 	AH = CAPI version number * 10 (14h for v2.0)
@@ -4296,6 +4388,9 @@ INT F2 - reserved for user interrupt
 --------s-F2---------------------------------
 INT F2 - Andy C. McGuire SPEECH.COM/SAY.COM
 SeeAlso: INT F1"SPEECH"
+--------N-F2---------------------------------
+INT F2 - NetWare Remote Boot - ORIGINAL INT 13
+SeeAlso: INT F1"NetWare",INT F3"NetWare",INT F4"NetWare"
 ----------F2---------------------------------
 INT F2 - ICCTSR 1.0 - ImageCapture COLOR Developer's Kit - API
 	AH = function number (see #2616)
@@ -4331,11 +4426,17 @@ SeeAlso: INT 2F/AX=FBFBh
 INT F3 - ICCTSR 1.0 - HANDSHAKE ID VECTOR
 Program: ImageCapture is a product of International Computers
 SeeAlso: INT F2"ICCTSR"
+--------N-F3---------------------------------
+INT F3 - NetWare Remote Boot - BOOT ROM'S INT 13 HANDLER
+SeeAlso: INT F1"NetWare",INT F2"NetWare",INT F4"NetWare"
 --------*-F4---------------------------------
 INT F4 - reserved for user interrupt
 --------T-F4---------------------------------
 INT F4 - DoubleDOS - GIVE UP REST OF CURRENT CLOCK TICK AND ALL OF NEXT TICK
 SeeAlso: INT 21/AH=EEh"DoubleDOS",INT FE"DoubleDOS"
+--------N-F2---------------------------------
+INT F4 - NetWare Remote Boot - ???
+SeeAlso: INT F1"NetWare",INT F2"NetWare",INT F3"NetWare"
 --------*-F5---------------------------------
 INT F5 - reserved for user interrupt
 --------T-F5---------------------------------
@@ -4608,14 +4709,14 @@ INT FF - PC/FORTH - GRAPHICS API
 	SS:SP -> FORTH return stack
 	details of parameters not available
 --------!---Admin----------------------------
-Highest Table Number = 2710
+Highest Table Number = 2734
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER46A through INTER46D (preferably the original
+quartet of archives named INTER47A through INTER47D (preferably the original
 authenticated PKZIP archives), the utility programs in a fifth archive
-called INTER46E.ZIP, and the WinHelp-related programs in a sixth archive
-named INTER46F.ZIP.
+called INTER47E.ZIP, and the WinHelp-related programs in a sixth archive
+named INTER47F.ZIP.
 
 This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
 --------!---CONTACT_INFO---------------------

@@ -6,12 +6,12 @@ The MSDOS Interrupt List
 	A comprehensive listing of over 7050 functions available through
 	interrupt calls on IBM PCs and compatibles.  Includes both
 	documented and undocumented functions.
-	Current version: INTER46A (release 46, 6/4/95)
-			 INTER46B
-			 INTER46C
-			 INTER46D
-			 INTER46E (conversion and utility programs)
-			 INTER46F (WinHelp-related programs)
+	Current version: INTER47A (release 47, 8/13/95)
+			 INTER47B
+			 INTER47C
+			 INTER47D
+			 INTER47E (conversion and utility programs)
+			 INTER47F (WinHelp-related programs)
 
 DVINT
 	An extract of the MSDOS Interrupt List containing the DESQview
@@ -127,7 +127,7 @@ If connected to AFS, you can simply perform standard Unix/VMS/whatever
 	directory listing and file copies from the above directory.
 
 Or visit my home page, and grab the files with your favorite web browser:
-     http://www.cs.cmu.edu:8001/afs/cs.cmu.edu/user/ralf/pub/WWW/ralf-home.html
+     http://www.cs.cmu.edu/afs/cs.cmu.edu/user/ralf/pub/WWW/ralf-home.html
 
 On FIDOnet, from Soundingboard BBS 1:129/26 1-412-621-4604 28.8k HST, file req.
 	My programs are kept in file area 8 for those wishing to download
@@ -135,7 +135,7 @@ On FIDOnet, from Soundingboard BBS 1:129/26 1-412-621-4604 28.8k HST, file req.
 
 Alternate Distribution Points (new versions will be available here
 usually within 24 hours of release):
-Internet:  SimTel Software Repository mirrors in directories /pub/msdos/X.
+Internet:  SimTel Software Repository mirrors in directories /SimTel/msdos/X.
 	X is 'info' for the Interrupt List, 'modem' for RBcomm, 'c' for
 	SPAWNO, 'asmutl' for AMISLIB, 'desqview' for DV-GLUE/DVKPOLL/DVPTAME,
 	and 'sprint' for SPTURBO. Note that you must use mode "binary" to
@@ -427,19 +427,22 @@ HK TAIC Maximus Kowloon              6:700/1    85-2-789-1267  PEPV32
 
 URLs: (still under construction)
 
-Home page:  http://www.cs.cmu.edu:8001/afs/cs/user/ralf/pub/WWW/ralf-home.html
+Home page:  http://www.cs.cmu.edu/afs/cs/user/ralf/pub/WWW/ralf-home.html
 
-Files on SimTel mirrors:
-	ftp://oak.oakland.edu/SimTel/msdos/info/inter45a.zip
-	ftp://oak.oakland.edu/SimTel/msdos/info/inter45b.zip
-	ftp://oak.oakland.edu/SimTel/msdos/info/inter45c.zip
-	ftp://oak.oakland.edu/SimTel/msdos/info/inter45d.zip
-	ftp://oak.oakland.edu/SimTel/msdos/info/inter45e.zip
-	ftp://oak.oakland.edu/SimTel/msdos/desqview/dvint43.zip
+Files on SimTel and mirrors:
+	ftp://ftp.coast.net/SimTel/msdos/info/inter47a.zip
+	ftp://ftp.coast.net/SimTel/msdos/info/inter47b.zip
+	ftp://ftp.coast.net/SimTel/msdos/info/inter47c.zip
+	ftp://ftp.coast.net/SimTel/msdos/info/inter47d.zip
+	ftp://ftp.coast.net/SimTel/msdos/info/inter47e.zip
+	ftp://ftp.coast.net/SimTel/msdos/info/inter47f.zip
+	ftp://ftp.coast.net/SimTel/msdos/desqview/dvint43.zip
+	ftp://ftp.coast.net/SimTel/msdos/modem/rbcom346.zip
 
 Files at Garbo:
-	ftp://garbo.uwasa.fi/pc/programming/inter45a.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter45b.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter45c.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter45d.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter45e.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter47a.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter47b.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter47c.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter47d.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter47e.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter47f.zip

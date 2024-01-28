@@ -1,5 +1,171 @@
 Interrupt List, part 4 of 13
 This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+--------B-1A00-------------------------------
+INT 1A - TIME - GET SYSTEM TIME
+	AH = 00h
+Return: CX:DX = number of clock ticks since midnight
+	AL = midnight flag, nonzero if midnight passed since time last read
+Notes:	there are approximately 18.2 clock ticks per second, 1800B0h per 24 hrs
+	IBM and many clone BIOSes set the flag for AL rather than incrementing
+	  it, leading to loss of a day if two consecutive midnights pass
+	  without a request for the time (e.g. if the system is on but idle)
+	since the midnight flag is cleared, if an application calls this
+	  function after midnight before DOS does, DOS will not receive the
+	  midnight flag and will fail to advance the date
+SeeAlso: AH=01h,AH=02h,INT 21/AH=2Ch,INT 62/AX=0099h,MEM 0040h:006Ch
+--------B-1A01-------------------------------
+INT 1A - TIME - SET SYSTEM TIME
+	AH = 01h
+	CX:DX = number of clock ticks since midnight
+SeeAlso: AH=00h,AH=03h,INT 21/AH=2Dh
+--------B-1A02-------------------------------
+INT 1A - TIME - GET REAL-TIME CLOCK TIME (AT,XT286,PS)
+	AH = 02h
+Return: CF clear if successful
+	    CH = hour (BCD)
+	    CL = minutes (BCD)
+	    DH = seconds (BCD)
+	    DL = daylight savings flag (00h standard time, 01h daylight time)
+	CF set on error (i.e. clock not running or in middle of update)
+Note:	this function is also supported by the Sperry PC, which predates the
+	  IBM AT; the data is returned in binary rather than BCD on the Sperry,
+	  and DL is always 00h
+SeeAlso: AH=00h,AH=03h,AH=04h,INT 21/AH=2Ch
+--------B-1A03-------------------------------
+INT 1A - TIME - SET REAL-TIME CLOCK TIME (AT,XT286,PS)
+	AH = 03h
+	CH = hour (BCD)
+	CL = minutes (BCD)
+	DH = seconds (BCD)
+	DL = daylight savings flag (00h standard time, 01h daylight time)
+Note:	this function is also supported by the Sperry PC, which predates the
+	  IBM AT; the data is specified in binary rather than BCD on the
+	  Sperry, and the value of DL is ignored
+SeeAlso: AH=01h,AH=03h,AH=05h,INT 21/AH=2Dh
+--------B-1A04-------------------------------
+INT 1A - TIME - GET REAL-TIME CLOCK DATE (AT,XT286,PS)
+	AH = 04h
+Return: CF clear if successful
+	    CH = century (BCD)
+	    CL = year (BCD)
+	    DH = month (BCD)
+	    DL = day (BCD)
+	CF set on error
+SeeAlso: AH=02h,AH=04h"Sperry",AH=05h,INT 21/AH=2Ah
+--------b-1A04-------------------------------
+INT 1A - Sperry PC - GET REAL-TIME CLOCK DATE
+	AH = 04h
+Return: CF clear if successful
+	    CL = year-1980
+	    DH = month (binary)
+	    DL = day (binary)
+	CF set on error
+SeeAlso: AH=02h,AH=04h,AH=05h"Sperry",INT 21/AH=2Ah
+--------B-1A05-------------------------------
+INT 1A - TIME - SET REAL-TIME CLOCK DATE (AT,XT286,PS)
+	AH = 05h
+	CH = century (BCD)
+	CL = year (BCD)
+	DH = month (BCD)
+	DL = day (BCD)
+SeeAlso: AH=04h,INT 21/AH=2Bh
+--------b-1A04-------------------------------
+INT 1A - Sperry PC - SET REAL-TIME CLOCK DATE
+	AH = 04h
+	CL = year-1980
+	DH = month (binary)
+	DL = day (binary)
+SeeAlso: AH=02h,AH=04h"Sperry",AH=05h,INT 21/AH=2Bh
+--------B-1A06-------------------------------
+INT 1A - TIME - SET ALARM (AT,XT286,PS)
+	AH = 06h
+	CH = hour (BCD)
+	CL = minutes (BCD)
+	DH = seconds (BCD)
+Return: CF set on error (alarm already set or clock stopped for update)
+	CF clear if successful
+Notes:	the alarm occurs every 24 hours until turned off, invoking INT 4A each
+	  time
+	the BIOS does not check for invalid values for the time, so the CMOS
+	  clock chip's "don't care" setting (any values between C0h and FFh)
+	  may be used for any or all three part.  For example, to create an
+	  alarm once a minute, every minute, call with CH=C0h, CL=C0h, and
+	  DH=00h.
+SeeAlso: AH=07h,INT 4A
+--------B-1A07-------------------------------
+INT 1A - TIME - CANCEL ALARM (AT,XT286,PS)
+	AH = 07h
+Return: alarm disabled
+Note:	does not disable the real-time clock's IRQ
+SeeAlso: AH=06h,INT 70
+--------B-1A08-------------------------------
+INT 1A - TIME - SET RTC ACTIVATED POWER ON MODE (CONVERTIBLE)
+	AH = 08h
+	CH = hours in BCD
+	CL = minutes in BCD
+	DH = seconds in BCD
+SeeAlso: AH=09h
+--------B-1A09-------------------------------
+INT 1A - TIME - READ RTC ALARM TIME AND STATUS (CONV,PS30)
+	AH = 09h
+Return: CH = hours in BCD
+	CL = minutes in BCD
+	DH = seconds in BCD
+	DL = alarm status
+	    00h alarm not enabled
+	    01h alarm enabled but will not power up system
+	    02h alarm will power up system
+SeeAlso: AH=08h
+--------B-1A0A-------------------------------
+INT 1A - TIME - READ SYSTEM-TIMER DAY COUNTER (XT2,PS)
+	AH = 0Ah
+Return: CF set on error
+	CF clear if successful
+	    CX = count of days since Jan 1,1980
+SeeAlso: AH=04h,AH=0Bh
+--------B-1A0B-------------------------------
+INT 1A - TIME - SET SYSTEM-TIMER DAY COUNTER (XT2,PS)
+	AH = 0Bh
+	CX = count of days since Jan 1,1980
+Return: CF set on error
+	CF clear if successful
+SeeAlso: AH=05h,AH=0Ah
+--------J-1A10-------------------------------
+INT 1A - NEC PC-9800 series - PRINTER - INITIALIZE
+	AH = 10h
+	???
+Return: ???
+SeeAlso: AH=11h,AH=12h,INT 17/AH=01h
+--------J-1A11-------------------------------
+INT 1A - NEC PC-9800 series - PRINTER - OUTPUT CHARACTER
+	AH = 11h
+	???
+Return: ???
+SeeAlso: AH=10h,AH=12h,INT 17/AH=00h
+--------J-1A12-------------------------------
+INT 1A - NEC PC-9800 series - PRINTER - SENSE STATUS
+	AH = 12h
+	???
+Return: ???
+SeeAlso: AH=10h,AH=11h,INT 17/AH=02h
+--------A-1A3601-----------------------------
+INT 1A - WORD PERFECT v5.0 Third Party Interface - INSTALLATION CHECK
+	AX = 3601h
+Return: DS:SI = routine to monitor keyboard input, immediately preceded by the
+		ASCIZ string "WPCORP\0"
+Notes:	WordPerfect 5.0 will call this interrupt at start up to determine if a
+	  third party product wants to interface with it.  The third party
+	  product must intercept this interrupt and return the address of a
+	  keyboard monitor routine.
+	Before checking for keyboard input, and after every key entered by the
+	  user, Word Perfect will call the routine whose address was provided
+	  in DS:SI with the following parameters:
+		Entry:	AX = key code or 0
+			BX = WordPerfect state flag
+		Exit:	AX = 0 or key code
+			BX = 0 or segment address of buffer with key codes
+	See the "WordPerfect 5.0 Developer's Toolkit" for further information.
+SeeAlso: INT 16/AX=5500h
 --------N-1A6108-----------------------------
 INT 1A - SNAP.EXE 3.2+ - "SNAP_SENDWITHREPLY" - SEND MSG AND GET REPLY
 	AX = 6108h
@@ -2109,13 +2275,13 @@ Return: AH = status
 Note:	this function is also supported by Vertisoft's Emulaser utility ELSPL,
 	  as that is a licensed version of Disk Spool II
 SeeAlso: AH=A0h,AH=E0h,AH=E2h
-----------1AE11B-----------------------------
+--------U-1AE11B-----------------------------
 INT 1A - TheGrab v4.60 - ???
 	AX = E11Bh
 	???
 Return: ??? (may destroy all registers)
 SeeAlso: AX=E11Dh
-----------1AE11D-----------------------------
+--------U-1AE11D-----------------------------
 INT 1A - TheGrab v4.60 - INSTALLATION CHECK
 	AX = E11Dh
 Return: ES:DI -> signature block (see #0569) if installed
@@ -2601,7 +2767,7 @@ INT 20 - COMTROL HOSTESS i/ISA DEBUGGER - INVOKE FIRMWARE DEBUGGER
 	???
 Return: ???
 SeeAlso: INT 21"COMTROL"
----------------------------------------------
+--------W-20---------------------------------
 INT 20 P - Microsoft Windows - VxD FUNCTIONS
 Note:	the desired VxD and function are identified by the data immediately
 	  following the INT 20 instruction, as in:
@@ -3562,8 +3728,8 @@ INT 21 - DOS 1+ - RENAME FILE USING FCB
 	AH = 17h
 	DS:DX -> modified FCB (see also #0574)
 		the old filename ('?' wildcards OK) is in the standard location
-		while the new filename ('?' wildcards OK) is stored in the 11
-		bytes beginning at offset 11h
+		while the new filename ('?' wildcards OK, no drive) is stored
+		in the 11 bytes beginning at offset 11h
 Return: AL = status
 	    00h successfully renamed
 	    FFh no matching files,file is read-only, or new name already exists
@@ -5479,7 +5645,7 @@ Values for pcANYWHERE function status:
  FFFBh	no session is active
  FFFCh	a remote access session is active
  FFFDh	the specified operating mode is invalid
-----------212B--CX6269-----------------------
+--------G-212B--CX6269-----------------------
 INT 21 - WDTSR.COM - INSTALLATION CHECK
 	AH = 2Bh
 	CX = 6269h ('bi')
@@ -6051,8 +6217,11 @@ Return: AL = status
 	    FFh unsupported subfunction
 Desc:	Determine the character which is used to introduce command switches.
 	  This setting is ignored by MS-DOS commands in version 4.0 and higher,
-	  but is honored by many third-party programs and by *some* Novell DOS
-	  7 commands (apparently only external commands honor the setting).
+	  but is honored by many third-party programs and by Novell DOS 7
+	  external commands
+BUG:	Novell DOS 7's COMMAND.COM fails to honor the SwitChar setting for
+	  internal commands even though COMMAND.COM honors it in its own
+	  command tail (i.e. COMMAND /?)
 Notes:	documented in some OEM versions of some releases of DOS
 	supported by OS/2 compatibility box
 	always returns AL=00h/DL=2Fh for MS-DOS 5+ and DR-DOS 3.41-6.0
@@ -7237,7 +7406,7 @@ Desc:	enable the emulator by setting the CPU MSW's EM bit and updating
 	  the BIOS equipment list
 Note:	this function is available only in virtual-86 mode
 SeeAlso: AX=4321h/BX=0000h,AX=4321h/BX=0002h
---------u-214321BX0001-----------------------
+--------u-214321BX0002-----------------------
 INT 21 R - Q87, Q387 - DISABLE EMULATOR
 	AX = 4321h
 	BX = 0002h
