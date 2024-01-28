@@ -1,21 +1,19 @@
-This is your chance to get your name in print and possibly a free book
-as well!
+As those who downloaded INTER35 know, Jim Kyle and I are working on a
+second edition of PC Interrupts, which should be available by
+Christmas.  As with the first edition, all contributors will be listed
+in the book (unless someone at the publisher deletes the list from the
+final manuscript again), and major contributors will be offered a
+complimentary copy of the finished book.  Due to the size of the
+interrupt list, it will actually appear as two related books: PC
+Interrupts, 2nd edition and Network Interrupts.
 
-Jim Kyle and I are starting work on a second edition of PC Interrupts,
-which should be available by Christmas.  As with the first edition, all
-contributors will be listed in the book (unless someone at the publisher
-drops the list from the final manuscript again), and major contributors
-will be offered a complimentary copy of the finished book.  Due to the
-size of the interrupt list, it will actually appear as two related
-books: PC Interrupts, 2nd edition and Network Interrupts.
-
-Anyone listed as a major contributor between June 1991 and the time we
-freeze the manuscript (mid-June 1993) will be entitled to a free copy of
-either PC Interrupts or Network Interrupts (the latter if you made a
-contribution of networking calls, the former if non-networking, and your
-choice if you contributed toward both).  I will be contacting those who
-are eligible for a free copy in July or August to get a mailing
-address, but feel free to send your address even before you hear from
-me (especially if your email address has changed).
-
+Anyone listed as a major contributor in INTERRUP.1ST between June 1991
+(beginning with Todor Todorov) and the time of this release is entitled
+to a free copy of either PC Interrupts or Network Interrupts (the
+latter if you made a contribution of networking calls, the former if
+non-networking, and your choice if you contributed toward both).
+During the month of August, I will be attempting to contact those who
+are eligible for a free copy to get a mailing address, but feel free to
+send your address even before you hear from me (especially if your
+email address has changed).
 

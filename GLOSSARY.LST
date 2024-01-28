@@ -1,5 +1,5 @@
 GLOSSARY
-Last Change 3/21/93.
+Last Change 7/13/93.
 
 A20
 	(Address line 20) The 80286 and higher CPUs allow addresses in
@@ -142,7 +142,7 @@ CDS
 
 CGA
 	(Color/Graphics Adapter) One of the two video display boards
-introduced together with the original IBM PC.  See also MDA.
+introduced together with the original IBM PC.  See also HGC, MDA.
 
 Clock Tick
 	1/18.2 second, or approximately 55 milliseconds.  This is the
@@ -299,6 +299,11 @@ Expanded Memory Specification
 accessing more than one megabyte of memory by bank-switching additional
 memory into the one megabyte real mode address space.
 
+Extended BIOS Data Area
+	A block of memory, typically the 1K at the top of conventional
+memory, which is used to store additional data for use by the BIOS which
+does not fit into the 256-byte data area at segment 0040h.
+
 Extended Memory
 	Memory beyond the one megabyte address which is available only
 on 80286 and higher machines.  Except for a small portion (the High
@@ -339,6 +344,13 @@ Flush
 	To force the copying of any data still stored in temporary
 buffers to its final destination.
 
+FM
+	(Frequency Modulation)  A method of encoding data as a series of
+magnetic flux reversals on disk or tape, commonly known as single-density
+recording.  In frequency modulation, a series of clock pulses are written
+at regular intervals, with one data bit for each clock pulse.  See also
+MFM, RLL.
+
 Formatting
 	Preparing a storage medium (usually magnetic media such as a
 disk or tape) for storing data.  Low-level or physical formatting
@@ -366,6 +378,11 @@ some other object which is maintained or controlled by the operating
 system or environment; a particular handle may be valid system-wide or
 may have meaning only for a particular process.  See also File Handle.
 
+HGC
+	(Hercules Graphics Controller) A monochrome video adapter capable
+of 720x352 monochrome graphics.  The HGC was the first non-IBM video
+adapter for the IBM PC.  See also CGA, MDA.
+
 High Memory Area
 	The first 65520 bytes (64K less 16 bytes) of extended memory.
 This area is accessible from real mode on the 80286 and higher
@@ -388,6 +405,10 @@ See also INT 21h Function 52h.
 IPX
 	(Internetwork Packet Exchange) A low-level layer of Novell's
 	NetWare networking software.
+
+IRQ
+	(Interrupt ReQuest) A hardware line connected to the interrupt
+controller chip which signals that a CPU interrupt should be generated.
 
 ISA
 	(Industry-Standard Architecture) The expansion bus used by the
@@ -419,10 +440,21 @@ LPT
 MCB
 	see Memory Control Block
 
+MDA
+	(Monochrome Display Adapter) A text-only video adapter introduced
+together with the original IBM PC.  See also CGA, HGC.
+
 Memory Control Block
 	The data structure containing the length and owner (among other
 things) of a portion of the memory managed by DOS.  See INT 21h
 Function 52h.
+
+MFM
+	(Modified Frequency Modulation) A method of encoding data as a
+series of magnetic flux reversals on disk or tape, commonly known as
+double-density recording.  In contrast to FM, modified frequency
+modulation omits all clock pulses except those between pairs of zero
+bits.  See also FM, RLL.
 
 Mickey
 	The smallest increment of motion a mouse can sense.
@@ -547,6 +579,22 @@ INT 21h calls made to DOS, allowing a program intercepting these
 functions to be simpler than one intercepting INT 21h calls.  See INT
 2Fh Functions 1100h through 1130h.
 
+RGB
+	(Red-Green-Blue) The color specification mechanism normally
+used in computer displays, where colors are separated into their
+primary-color components.  See also YUV.
+
+RLL
+	(Run-Length Limited) A method of encoding data as a series of
+magnetic flux reversals on disk or tape.  RLL can achieve higher data
+densities than MFM recording because it encodes the data such that
+(on average), fewer than one flux reversal per data bit is required
+(however, timing becomes more critical).  RLL is actually an entire
+family of encoding methods, specified with two numbers indicating the
+minimum and maximum distances between one bits (flux transitions).  The
+variant normally called RLL is RLL-2,7; RLL-1,7 and RLL-3,9 are also in
+use.  MFM is in effect RLL-1,3.  See also FM, MFM.
+
 SDA
 	see Swappable Data Area
 
@@ -556,6 +604,11 @@ this is normally 512 bytes.  See also Track.
 
 SFT
 	see System File Table
+
+SVGA
+	(Super VGA) A video adapter capable of higher resolution
+(pixels and/or colors) than the 320x200x256 and 640x480x16 which IBM's
+VGA adapter is capable of producing.  See also VESA.
 
 Swappable Data Area
 	The portion of the DOS data segment containing all of the
@@ -598,6 +651,13 @@ VDM
 
 VDS
 	see Virtual DMA Specification
+
+VESA
+	(Video Electronics Standards Association)  An industry group
+which sets both hardware and software standards and recommendations.
+The term VESA is also used to denote compliance with the VESA SuperVGA
+BIOS Extensions, a standard set of video BIOS functions for accessing
+video modes of higher resolution than those defined by IBM.
 
 VGA
 	(Video Graphics Array) The video adapter introduced with the
@@ -643,8 +703,18 @@ VxD
 	A virtual device driver for Windows 3.0 or 3.1.  See also
 device driver.
 
+XBDA
+	see Extended BIOS Data Area
+
 XDI
 	see External Device Interface
 
 XMS
 	see Extended Memory Specification
+
+YUV
+	A color specification mechanism used in NTSC-type color
+television signals.  Y represents luminance (overall brightness, the
+only part of the signal used by black-and-white televisions), while U
+and V are chrominance (color) information.  Also called YIQ.  See also
+RGB.

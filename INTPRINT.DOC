@@ -1,4 +1,4 @@
-			    INTPRINT v2.22
+			    INTPRINT v2.24
                             by Ralf Brown
 
 The INTPRINT program is hereby donated to the public domain, with the sincere
@@ -51,8 +51,16 @@ where the options are:
 	-I    assume the printer is capable of producing IBM character
 	      graphics.  Printers other than "default" may force this option.
 
+	-k    keep original divider lines instead of replacing them
+	      with all dashes.
+
 	-lN   print N lines per pages, overriding the printer-specific
-	      default.
+	      default.  Use 0 to omit page breaks (in this case, the
+	      reported number of pages and -r page restriction may be
+	      incorrect unless you also use -L); this can be useful if
+	      you only want to filter the list before processing it
+	      further.
+
 	-LN   assume N lines on a page.  If this is more than the number of
 	      lines to print on each page, INTPRINT will use line feeds to
 	      advance to the next page instead of form feeds.
@@ -83,7 +91,9 @@ where the options are:
 	      (see -F), page numbers are based on entries selected by the
 	      filter file.
 	      NOTE: you must put the page numbers immediately after the 'r';
-	      no blanks are allowed.
+	      no blanks are allowed.  When using -l0 together with -r,
+	      you must specify the appropriate page length with -L so
+	      that page numbers can be computed correctly.
 
         -sfile  create a one-line-per-function summary and write it to "file"
               if -n is also given, the summary will be appended to "file",

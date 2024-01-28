@@ -1,5 +1,5 @@
-[This file was provided by Robin Walker.  --Ralf]
-Last Update: 5/8/93
+[This file was originally provided by Robin Walker.  --Ralf]
+Last Update: 7/13/93
 
 Format of BIOS Data Segment at segment 40h:
 		{items in curly braces not documented by IBM}
@@ -8,13 +8,13 @@ Offset	Size	Description
  02h	WORD	Base I/O address of 2nd serial I/O port, zero if none
  04h	WORD	Base I/O address of 3rd serial I/O port, zero if none
  06h	WORD	Base I/O address of 4th serial I/O port, zero if none
-		    Note: Above fields filled in turn by POST as it finds serial
+		   Note: Above fields filled in turn by POST as it finds serial
 		    ports. POST never leaves gaps. DOS and BIOS serial device
 		    numbers may be redefined by re-assigning these fields.
  08h	WORD	Base I/O address of 1st parallel I/O port, zero if none
  0Ah	WORD	Base I/O address of 2nd parallel I/O port, zero if none
  0Ch	WORD	Base I/O address of 3rd parallel I/O port, zero if none
- 0Eh	WORD	[non-PS] Base I/O address of 4th parallel I/O port, zero if none
+ 0Eh	WORD	[non-PS] Base I/O address of 4th parallel port, zero if none
 		[PS] Segment of Extended BIOS Data Segment
 		    Note: Above fields filled in turn by POST as it finds
 		    parallel ports. POST never leaves gaps. DOS and BIOS
@@ -162,10 +162,14 @@ Offset	Size	Description
 		    CCh write fault on selected drive
 		    E0h status error/error register is zero
 		    FFh sense failed
+ 74h	BYTE	[WD1002-27X SuperBIOS] total drives, first controller only
  75h	BYTE	Fixed disk: number of fixed disk drives
+		[WD1002-27X SuperBIOS] total fixed drives, both controllers
  76h	BYTE	Fixed disk: control byte    {IBM document only for XT}
-		XT: hrad disk controller's I/O address (Western Digital)
+		XT: hard disk controller's I/O address (Western Digital)
+		[WD1002-27X SuperBIOS] used in track recalculation
  77h	BYTE	Fixed disk: I/O port offset {IBM document only for XT}
+		[WD1002-27X SuperBIOS] used in track recalculation
  78h  3 BYTEs	Parallel devices 1-3 time-out counters
  7Bh	BYTE	parallel device 4 time-out counter [non-PS]
 		bit 5 set if Virtual DMA Spec supported [PS] (see INT 4B)
@@ -234,7 +238,7 @@ Offset	Size	Description
 		Note: the Tseng ET4000 BIOS v3.00 uses bits 6-4 of 88h and
 			bits 6-5 of 89h to specify graphics-mode refresh
 			rates as follows
-				88h/6		640x480:  1 for 72Hz, 0 for 60Hz
+				88h/6		640x480:  1 for 72Hz,0 for 60Hz
 				88h/5+89h/6	800x600:  00  60Hz
 							  01  56Hz
 							  11  72Hz
@@ -319,9 +323,13 @@ Offset	Size	Description
 		    When 3363 BIOS and 3363 File System Driver present, the
 		    signature "FILE SYSTEM DRIVER",00h occurs 3 bytes beyond
 		    this entry point.
+ B0h 16 BYTEs	(1988 Phoenix 386 BIOS 1.10 03) drive parameters for hard disk
+		type 48 (see INT 41,INT 46)
  B4h	WORD	reserved
  B6h  3 BYTEs	reserved for POST?
  B9h  7 BYTEs	???
+ C0h 16 BYTEs	(1988 Phoenix 386 BIOS 1.10 03) drive parameters for hard disk
+		type 49 (see INT 41,INT 46)
  C0h 14 BYTEs	reserved
  CEh	WORD	count of days since last boot???
  D0h-EFh	reserved
@@ -335,12 +343,25 @@ Offset	Size	Description
  DAh	BYTE	[Digiboard MV/4] current port (used by VGA initialization only)
  DBh	BYTE	[Digiboard MV/4] master 8259 mask (used by VGA init only)
  DCh	BYTE	[Digiboard MV/4] slave 8259 mask (used by VGA init only)
+ E0h-EFh	[Phoenix 386 BIOS] drive parameter table for first hard disk
+		if configurable "type 47"
+ EAh	WORD	[Omti controller] segment of extended BIOS data area???
+		drive parameter tables stored in specified segment
  F0h-FFh	reserved for user
 100h	BYTE	Print Screen Status byte
 10Eh	BYTE	state of BREAK at start of BASICA.COM execution
 10Fh	BYTE	flag: 02h if BASICA v2.10 running
 116h	DWORD	INT 1Bh at start of BASICA.COM execution
 11Ah	DWORD	INT 24h at start of BASICA.COM execution
+
+Format of Interrupt Vector Table data storage (from 0000h:0000h):
+Offset	Size	Description
+ 31Dh 16 BYTEs	user-definable hard disk parameters for drive type 47
+		(1989 AMI 386sx BIOS) (see INT 41,INT 46)
+ 32Dh 16 BYTEs	user-definable hard disk parameters for drive type 48
+		(1989 AMI 386sx BIOS) (see INT 41,INT 46)
+Note:	these fields are used is the AMI BIOS setup is set to use the top of
+	  the interrupt table for the extended BIOS data area
 
 Format of Extended BIOS Data Area (see 40:0Eh for ptr) [PS only]
 Offset	Size	Description
@@ -369,9 +390,10 @@ Offset	Size	Description
  39h	WORD	Timer3: Watchdog timer initial count
  3Bh	BYTE	??? seen non-zero on Model 30
  3Ch	BYTE	???
- 3Dh 16 BYTEs	Fixed Disk parameter table for drive 0 (oh really?)
- 4Dh 16 BYTEs	Fixed Disk parameter table for drive 1 (oh really?)
-		    Neither of above seen on any Model 30, 50, 60 yet.
+ 3Dh 16 BYTEs	Fixed Disk parameter table for drive 0 (for older machines
+			which don't directly support the installed drive)
+ 4Dh 16 BYTEs	Fixed Disk parameter table for drive 1 (for older machines
+			which don't directly support the installed drive)
  5Dh-6Bh	???
  6Ch	BYTE	Fixed disk: (=FFh on ESDI systems)
 		    bits 7-4: Channel number 00-0Fh
@@ -461,7 +483,7 @@ Offset	Size	Description
  
 Format of Video Parameter Dynamic Save Area [EGA, VGA only]:
 Offset	Size	Description
- 00h 16 BYTEs	Last data written to Attribute Controller Palette Registers 0-15
+ 00h 16 BYTEs	Last data written to Attribute Contr. Palette Registers 0-15
  10h	BYTE	Last data written to Attribute Controller Overscan Register
  11h-FFh	Reserved
 		Note: Need for table was that EGA registers were write-only.

@@ -1,25 +1,29 @@
-Interrupt List		Release 35			Last change 6/5/93
+Interrupt List		Release 36			Last change 8/1/93
 
-Please redistribute the following files unmodified as a group, in a pair of
-archives named INTER35A and INTER35B (preferably the original authenticated
+Please redistribute the following files unmodified as a group, in a trio of
+archives named INTER36A through INTER36C (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	this file
 	INTERRUP.A	INT 00 through INT 14	 \
 	INTERRUP.B	INT 15 through INT 15     \
-	INTERRUP.C	INT 16 through INT 21/35   \   total 1179 pages at
-	INTERRUP.D	INT 21/36 through INT 21/7F \  60 lines per page,
-	INTERRUP.E	INT 21/80 through INT 21/FF  > 1262 with INTPRINT -p
-	INTERRUP.F	INT 22 through INT 2F/BF    /  (5058 entries)
-	INTERRUP.G	INT 2F/C0 through INT 4F   /
-	INTERRUP.H	INT 50 through INT 66	  /
-	INTERRUP.I	INT 67 through INT FF	 /
+	INTERRUP.C	INT 16 through INT 21/41   \   total 1302 pages at
+	INTERRUP.D	INT 21/42 through INT 21/7F \  60 lines per page,
+	INTERRUP.E	INT 21/80 through INT 21/FF  \ 1394 with INTPRINT -p
+	INTERRUP.F	INT 22 through INT 2F/7F     / (5573 entries)
+	INTERRUP.G	INT 2F/C0 through INT 2F/FF /
+	INTERRUP.H	INT 30 through INT 5F	   /
+	INTERRUP.I	INT 60 through INT 67	  /
+	INTERRUP.J	INT 68 through INT FF	 /
 	INTERRUP.PRI	a brief primer on interrupts
 	INTPRINT.COM	a simple formatter that also generates a list summary
 	INTPRINT.DOC	instructions for INTPRINT
+	86BUGS.LST	a listing of CPU bugs and undocumented features
+	CMOS.LST	a description of the CMOS RAM data bytes
 	GLOSSARY.LST	a glossary of terms, abbreviations, and acronyms
 	MEMORY.LST	format of the BIOS data area
-	COMBINE.BAT	combine the piece of the list into a single file
-The following files should be distributed in an archive called INTER35C:
+	PORTS.LST	a listing of I/O ports
+	COMBINE.BAT	combine the pieces of the list into a single file
+The following files should be distributed in an archive called INTER36D:
 	INT.COM		invoke interrupts from commandline
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
 	INT2HLP.BAT	Perl script to convert list into QuickHelp database
@@ -31,8 +35,8 @@ The following files should be distributed in an archive called INTER35C:
 	INTPRINT.C	source code for INTPRINT
 	RB2NG.*		convert list into Norton Guides database
 
-Concatenate INTERRUP.A, .B, .C, .D, .E, .F, .G, .H, and .I with COMBINE.BAT to
-create an interrupt list file identical to my master copy.
+Concatenate INTERRUP.A, .B, .C, .D, .E, .F, .G, .H, .I, and .J with COMBINE.BAT
+to create an interrupt list file identical to my master copy.
 
 Use INTPRINT to generate a one-line-per-call summary file and/or a file
 containing only data structure formats.	 See INTPRINT.DOC for details.
@@ -41,12 +45,13 @@ Note: in addition to the archives mentioned above, you may also find other
 archives named INTERrrx containing additional files generated from the
 original distribution for your convenience.  These other archives are
 maintained by other people, so please do not ask me any questions about them
-(all I'll do is refer you to the creator).  The only additional distributions
+(all I'll do is refer you to the creator).  The additional distributions
 I am currently aware of contain a ready-made Quick Help database (compiled
-by Brad Willcott <bxw@ccadfa.cc.adfa.oz.au>) and a ready-made Norton Guides
+by Brad Willcott <bxw@ccadfa.cc.adfa.oz.au>), a ready-made Norton Guides
 database (compiled by Michael Gallias <gallias@ph.und.ac.za> and distributed
-as RBNGrr.*).
----------------------------------------------
+as RBNGrr.*), and a ready-made WinHelp database (compiled by Loewy Ron
+<76350.333@compuserve.com> and distributed as INTWIN*.*).
+--------!---COPYRIGHT------------------------
 	NOTICE		NOTICE		NOTICE		NOTICE
 
 This compilation is (c) Copyright 1989, 1990, 1991, 1992, 1993 Ralf Brown
@@ -58,14 +63,14 @@ The above requirement to give credit is waived for excerpts totaling
 less than 2000 lines (although common courtesy indicates that you
 should give some form of acknowledgment).
 
-One of the archives in the distribution contains programs contributed by
-others; these programs are included as a service to users of the
+Some of the archives in the distribution contains programs contributed
+by others; these programs are included as a service to users of the
 interrupt list and the authors retain the rights to their programs.
 
 Please send corrections/additions to me rather than distributing a
 modified version of the list, so that all may benefit from your
 contribution.
----------------------------------------------
+--------!---DISCLAIMER-----------------------
 DISCLAIMER:  THIS MATERIAL IS PROVIDED "AS IS".	 I verify the information
 contained in this list to the best of my ability, but I cannot be held
 responsible for any problems caused by use or misuse of the information,
@@ -74,7 +79,7 @@ especially for those functions not officially documented.  If it is marked
 works the same way in your version of the software (and please let me know
 whether or not it works the same way).	Information marked with "???" is
 known to be incomplete or guesswork.
----------------------------------------------
+--------!---AVAILABILITY---------------------
 If the list is more than three months old by the time you get it, there
 is probably a newer release out already (R36 is planned for early August,
 R37 for early October).  Each release supersedes all previous versions, so
@@ -139,7 +144,7 @@ The list is also posted to USEnet in comp.binaries.ibm.pc about twice a year,
 concurrently with a new release of the list.  Since comp.binaries.ibm.pc is
 archived, you will be able to find a fairly recent release in the various UUCP
 archives.
----------------------------------------------
+--------!---ABBREVIATIONS--------------------
 Key to system abbreviations
 (unless otherwise indicated, a function is available on all systems)
 	PC	IBM PC
@@ -164,7 +169,7 @@ Key to system abbreviations
 	MCGA	Multi-Color Graphics Array
 	TopView TopView/DESQview/TaskView/OmniView/other compatibles
 	ConcCP/M Concurrent CP/M by Digital Research, now DR MultiUser DOS
----------------------------------------------
+--------!---CREDITS--------------------------
 This list is the result of the time and effort of a large number of people:
 
  1/85 Janet Jack  (original list)
@@ -365,7 +370,7 @@ This list is the result of the time and effort of a large number of people:
  8/92 Richard A Plinston  Auckland, New Zealand	      Europ.DOS4.0,DR DOS Plus
  8/92 Richard A Plinston  Auckland, New Zealand	      Acorn BBC Master 512
  8/92 Serge Pachkovsky ps@comcen.nsk.su		      PC-MOS/386 v3.0
- 8/92 Aki Korhonen     uttsbbs!aki.korhonen@PacBell.COM  Seagate disk BIOS
+ 8/92 Aki Korhonen     aki@holonet.net                Seagate disk BIOS
  8/92 Chris Hall       CAH17@phx.cam.ac.uk	      misc
  8/92 Michael A Shiels mshiels@masnet.uucp	      MTEZ XpressFax
  8/92 Tamura Jones     2:512/36.7		      Control Hostess i/ISA
@@ -417,6 +422,24 @@ This list is the result of the time and effort of a large number of people:
  5/93 Dmitry Stefankov wizard@npi.msu.su	      Soft-ICE v2.5x
  5/93 Mikael Rydberg   Sweden			      Cirrus/UM587/etc vidmodes
  5/93 Michael A Shiels mshiels@masnet.uucp	      more BAPI,Frieze,ANSIPLUS
+ 5/93 Steve Bromwich   cs9h1ssb@pyramid.swansea.ac.uk  MediaVision MVSOUND.SYS
+ 6/93 Roeland Jansen   2:512/153.1		      more PC-MOS/386 API
+ 6/93 Ralf Brown       ralf@telerama.pgh.pa.us        FAST! v5 API
+ 6/93 Ralf Brown       ralf@telerama.pgh.pa.us	      CEMM v5.10,v5.11
+ 6/93 Jens Vollmar     Erlangen, Germany	      Trident/C&T video, misc
+ 6/93 Boris M. Mostovoy vms@samsoby.cs.kiev.ua	      MX5 Extended FOSSIL
+ 6/93 Michael A Shiels mshiels@masnet.uucp	      Blank-It, TSRCOMM
+ 6/93 Michael A Shiels mshiels@masnet.uucp	      VxD, Al William's WINX
+ 6/93 Mark Aitchison   PHYS169@csc.canterbury.ac.nz   ScanBoot, partition types
+ 6/93 Warner Young     Net-Source, Santa Clara, CA    SilverNET, misc DOS int.
+ 7/93 Wim Osterholt    2:512/56.198		      PORTS.LST
+ 7/93 Aki Korhonen     aki@holonet.net		      Cirrus Logic BIOS
+ 7/93 Alexi Lookin     alexi@riaph.irkutsk.su	      Realtek RTVGA
+ 7/93 Alexi Lookin     alexi@riaph.irkutsk.su	      Phar Lap .EXP headers
+ 7/93 Jean-Francois Larvoire larvoire@hp6300.desk.hp.com  HP HIL Vectra BIOS
+ 7/93 Ralf Brown       ralf@telerama.pgh.pa.us	      386MAX v7.00/QEMM v7.01
+ 7/93 Joe Souza	       Webcorp, Sausalito, CA	      WEB API
+ 7/93 Michael Hung   mhkhung@electrical.watstar.uwaterloo.edu  PharLap 386/DOSX
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -441,7 +464,7 @@ Also contributing:
  Marco Lumachi <RARCHI06@IMIPOLI.BITNET>, Michael Dickson <mcd@ccsitn.att.com>,
  Andrew Torda <torda@igc.ethz.ch>, Madis Kaal 2:490/30 <mast@ce.ttu.ew.su>,
  Paul Williamson <pwilliamson@drzeus.qualcomm.com>, Jan Ceuleers 2:295/27,
- James Birdsall <jwbirdsa@picarefy.picarefy.com>, 
+ James Birdsall <jwbirdsa@picarefy.picarefy.com>, Guenther Thiele (Austria),
  Joe Morris <jcmorris@MWUNIX.MITRE.ORG>, Jim Peterson <jpeterso@vtssi.vt.edu>,
  Edwin Floyd <76067.747@CompuServe.COM>, James West 1:140/26, David G. Thomas,
  Simon Phipps <sphipps@cix.compulink.co.uk>, ecleton@bilftp.bouw.tno.nl,
@@ -464,12 +487,11 @@ Also contributing:
  Mark T Garlanger <garlangr@ecn.purdue.edu>, J. B. Gill <JBG@arlan.byu.edu>,
  Frank Behrens (Dresden, Germany), Bruce Gingery 1:310/5.1, John Navas,
  Johan Zwiekhorst 2:292/100, Klaus Fischer 2:243/64, Steve Grant (New Jersey),
- Jeff Pipkins <pipkins@cpqhou.se.hou.compaq.com>, Wim Osterholt 2:512/56,
+ Jeff Pipkins <pipkins@cpqhou.se.hou.compaq.com>, Nemrod Kedem 2:403/138,
  Brett Warthen <73270.405@compuserve.com>, Thomas Dwyer <tomiii@mtu.edu>,
  Brian.McGuinness@nirvonics.com, Mitch Davis 3:634/384.6, Steve Halko 1:365/12,
  noesis@ucscb.UCSC.EDU, Timo Salmi <ts@uwasa.fi>, Jack Alvrus (Florida),
  Eberhard Mattes <mattes@azu.informatik.uni-stuttgart.de>, Pete Peterson,
- Mark Aitchison <PHYS169@csc.canterbury.ac.nz>, Guenther Thiele (Austria),
  Alex Fedorov <inex@telebox.tele.fi>, Frank-Christian Kruegel 2:240/300.44,
  Heath Ian Hunnicutt <heathh@cco.caltech.edu>, Stefan Gustafsson <sg@diab.se>,
  Janos Haide <JHAIDE.NOVELL@sjfsmtp.novell.com>, Stan Brown <brown@ncoast.org>,
@@ -485,7 +507,6 @@ Also contributing:
  Gordon Edwards <gedwards@ncratl.atlantaga.ncr.com>, John_Spinks@novell.com,
  Jose R. Rodriguez Santia <100012.364@CompuServe.COM>,KUCHTA@dcse.fee.vutbr.cs,
  Michael Bootz <bootz@physik.uni-kl.de>,Sergey Danilov <victor@rodnik.msk.su>,
- JLAIDMAN.STINGRAY@orca.saas.ac.cowan.EDU.AU, Ben Castricum <benc@htsa.aha.nl>,
  Harald Langhammer <100114.114@compuserve.com>, Bert Baker (Texas),
  Gino Lucrezi <lucrezi@dsiaq1.ing.univaq.it>, Yousuf Khan 1:163/215.6,
  James Berry <jfb292@ecs.southampton.ac.uk>, Everett C. Johnson 70631,16,
@@ -493,13 +514,15 @@ Also contributing:
  Lutz Schroer <hmls@IDEFIX.RZ.TU-CLAUSTHAL.DE>, Per-Eric Larsson 2:203/410.15,
  Otto-Michael Braun <omb@ahobln.br.schule.de>, Martin Winkler 2:2402/330.6,
  Scott C. Pedigo <100020.723@CompuServe.COM>, Wilbert Van Leijen 2:281/256.14,
- Frank van der Linden <vdlinden@fwi.uva.nl>,
- Andrei Tsyganenko <ANDY@GODZILLA.UMD.EDU>,
- Paul Ratcliffe <70630.647@compuserve.com>,
- Jiri Kuchta <kuchta@dcse.fee.vutbr.cs>,
- Peter Singer <100024.1603@CompuServe.COM>,
- Brian Long <BLONG@boruk.mhs.compuserve.com>
----------------------------------------------
+ Frank van der Linden <vdlinden@fwi.uva.nl>, Ben Castricum <benc@htsa.aha.nl>,
+ Andrei Tsyganenko <ANDY@GODZILLA.UMD.EDU>, Jeremy.Laidman@cowan.EDU.AU,
+ Brian Long <BLONG@boruk.mhs.compuserve.com>, John_Murphy@perftech.com,
+ Peter Singer <100024.1603@CompuServe.COM>, Martin Shipley <martin@buss.co.uk>,
+ Jiri Kuchta <kuchta@dcse.fee.vutbr.cs>, Pavel Shtemenko <pasha@opi.odessa.ua>,
+ Paul Ratcliffe <70630.647@compuserve.com>, Ivan Martinez 4:801/6,
+ David Woolley <100121.53@compuserve.com>,Paul Vojta <vojta@math.berkeley.edu>,
+ Mark T. Vitt <70053.2236@compuserve.com>
+--------!---BIBLIOGRAPHY---------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
 
@@ -913,7 +936,6 @@ IBMSND driver API info from "Examining PC Audio, welcome to the wild and wooly
 world of PC Sound", John W. Ratcliff, DDJ #198 (March 1993), p. 78-85.
 Added 3/93.
 
-
 UM587 chipset video modes from "IBM VGA-Compatible Video Graphics Controller
 User's Manual".  Added by Ralf Brown, 5/22/93.
 
@@ -935,7 +957,32 @@ by Teddy Matsumoto, 11/22/91.  Added 6/4/93.
 
 xDISK v3.32+ installation check extracted from the xDISK v3.40 documentation.
 Added by Ralf Brown, 6/4/93.
----------------------------------------------
+
+NetWare Access Server Driver API extracted from "NetWare Access Server
+Driver Specification", Version 1.0 (November 17, 1992), Novell part number
+107-000018-002.  Added by Ralf Brown, 6/12/93.
+
+Chips&Technologies VGA BIOS INT 10/5Fxx extracted from Programmer's Guide to
+EGA and VGA Programming, 2nd edtion.  Added 6/24/93.
+
+Cloaking API based on CLOAKAPI.INC and RMFUNCS.DOC on Netroom Supplemental
+Disk.  Added by Ralf Brown, 6/24/93.
+
+Cirrus Logic BIOS info from the Cirrus Logic CL-GD542X Technical Reference
+Manual, dated April 1993.  Added 7/13/93.
+
+Some QEMM internal functions documented in Quarterdeck files QDMEM.DOC and
+QPI.DOC, dated 6/15/93.  Added by Ralf Brown, 7/18/93.
+
+10NET v5.0 calls and data structures extracted from "10NET 5.0 Implementation
+Spec", chapter 5.  Added by Ralf Brown, 7/24/93.
+
+Phar Lap 386|DOS-Extender v4.0/4.1 info extracted from 386DOSX.DOC.  Added
+7/27/93.
+
+Novell NetWare 3270 API (INT 6F) extracted from Novell SNA Note 3-133,
+"API/HLLAPI INFORMATION", dated March 7, 1991.  Added by Ralf Brown, 7/28/93.
+--------!---ADDRESSES------------------------
 The following have provided API reference materials at no charge:
 
 Alloy Computer Products, Inc.	(ANSK, NTNX, MW386)
@@ -951,9 +998,15 @@ Westboro, MA 01581
 Voice: (508) 898-1000
 FAX:   (508) 898-3604
 
-General Software		(STARLITE architecture [OEM DOS, SMP DOS])
+General Software		(STARLITE architecture [Embedded DOS])
 P.O. Box 2571
 Redmond, WA 98073
+
+Helix Software Company, Inc.	(Netroom, RM386, Cloaking)
+47-09 30th Street
+Long Island City, NY 11101
+Voice: (718) 392-3100
+FAX:   (718) 392-4212
 
 Intel Literature		(DOS Protected-Mode Interface)
 3065 Bowers Avenue
@@ -973,6 +1026,12 @@ Redmond, WA 98073-9717
 Voice: (206) 882-8080
 FAX:   (206) 883-8101
 
+Net-Source, Inc.		(SilverNET)
+1265 El Camino Real, Suite 101	[7/93]
+Santa Clara, CA 95050
+Voice: (408) 246-6679
+FAX:   (408) 246-7040
+
 Nanosoft, Inc.			(MultiDOS Plus, TurboNET)
 13 Westfield Road
 Natick, MA 01760
@@ -981,16 +1040,25 @@ Voice: (800) 678-2141
 FAX:   (508) 655-8860
 BBS:   (508) 650-9552
 
+NetManage, Inc.			(ChameleonNFS)
+20823 Stevens Creek Blvd	[6/93]
+Suite 100
+Cupertino, CA 95014
+Voice: (408) 973-7171
+FAX:   (408) 257-6405
+
 Novell, Inc.			(NetWare, LSL)
 122 East 1700 South
 Provo, UT 84601
 Voice: (800) 453-1267
        (801) 379-5900
+FTP:	ftp.novell.com, sjf-lwp.novell.com
 
 Phar Lap Software, Inc.		(Virtual Control Program Interface)
 60 Aberdeen Avenue
 Cambridge, MA 02138
 Voice: (617) 661-1510
+FTP:	pharlap.com
 
 Quarterdeck Office Systems	(DESQview 2.26)
 150 Pico Boulevard		[12/92]
@@ -998,11 +1066,16 @@ Santa Monica, CA 90405
 Voice: (213) 392-9701
 FAX:   (213) 399-3802
 BBS:   (213) 314-3227
+FTP:	qdeck.com
 
 Bernd Schemmer			(MDEBUG)
 Ostenbergstr. 99/137
 W4600 Dortmund 50
 GERMANY
+
+Tiara Computer Systems, Inc.	(10NET)
+1091 Shoreline Blvd		[7/93]
+Mountain View, CA 94043
 
 V Communications, Inc.		(RSIS)
 4320 Stevens Creek Blvd, Suite 275  [2/92]
@@ -1014,8 +1087,14 @@ Video Electronics Standards Association (VESA SuperVGA BIOS extensions)
 San Jose, CA 95128-4502
 Voice: (408) 971-7525
 FAX:   (408) 286-8988
----------------------------------------------
-Other addresses:
+
+Webcorp				(WEB)
+2750 Bridgeway			[7/93]
+Sausalito, CA 94965
+Voice: (415) 331-1449
+FAX:   (415) 331-0911
+--------!---ADDRESSES------------------------
+Other addresses: 
 
 J.M. Allen Creations		(PRINDIR)
 115 Lynn Street			[8/92]
@@ -1043,9 +1122,20 @@ Framingham, MA 01701
 Voice: (508) 879-0744
 FAX:   (508) 872-1734
 
+Beame & Whiteside Software Ltd	(BW-TCP)
+P.O. Box 8130			[6/93]
+Dundas, ON L9H 5E7
+Canada
+Voice: (416) 765-0822
+FTP:	ftp.bws.com
+
 Biologic			(HRAM, MIN-MEM)
 PO Box 1267			[9/91]
 Manassas, VA 22110
+
+BLOC Publishing Corp.		(FAST!)
+800 S.W. 37th Avenue		[6/93]
+Coral Gables, FL 33134
 
 Rich Bono			(ISR.COM)
 7 Redfield Circle		[2/91]
@@ -1057,6 +1147,12 @@ Borland International Inc.	(Turbo Pascal, Turbo C)
 1800 Green Hills Rd.
 Scotts Valley, CA 95066
 Voice: (408) 438-8400
+
+Bromfield Software Products	(SCROLLit)
+P.O. Box 70081			[5/93]
+Ottawa, Ontario K2P 2M3
+Canada
+CIS:  71054,3051
 
 Andrzej Brzezinski		(CALCULATOR)
 308-70 Garry St.		[12/90]
@@ -1078,6 +1174,7 @@ BBS:   (714) 720-1139 (24 Hrs.)
 Compaq Computer Corporation
 20555 S.H. 249
 Houston, TX 77070
+FTP:	ftp.compaq.com
 
 COMTROL Europe Ltd.		(COMTROL HOSTESS)
 Kill‚ House
@@ -1171,8 +1268,14 @@ Box 94				[10/92]
 Dauphin, Manitoba
 Canada R7N 2T9
 
+Frontier Technologies Corp.	(Super-TCP)
+10201 N. Port Washington
+Mequon, WI 53092
+Voice: (414) 241-4555
+
 FTP Software, Inc.		(PC/TCP)
 Voice: (800) 282-4387
+FTP:	vax.ftp.com
 
 Gamma Software			(APCAL)
 P.O. Box 8191			[2/93]
@@ -1228,6 +1331,12 @@ Menlo Park, CA 94025
 Voice: (415) 364-9847 [8am-6pm PST]
 BBS:   (415) 364-9847 [7pm-8am PST]
 
+Lassen Software, Inc.		(Trusted Access)
+5923 Clark Rd, Suite F		[4/93]
+P.O. Box 2319
+Paradise, CA 95967-2319
+Voice: (305) 445-6304
+
 Microsystems Software, Inc.	(MAGic)
 600 Worcester Road
 Framingham, MA 01701
@@ -1240,6 +1349,10 @@ MicroTalk			(ASAP)
 Louisville, KY 40206
 Voice: (502) 897-2705
 BBS:   (502) 893-2269
+
+Celso Minnitti, Jr.		(INTMON)
+139 Linden St
+Wellesley, MA 02181
 
 John Newlin
 New-Ware			(SCOUT)
@@ -1267,6 +1380,12 @@ P2 Enterprises			(Phantom of the Keyboard)
 P.O. Box 25			[5/91]
 Ben Lomond, CA 95005
 
+PC-Kwik Corporation		(Super PC-Kwik, PowerPak, PCKSPL, PCKSCRN,...)
+15100 SW Koll Parkway		[6/93]
+Beaverton, OR 97006-6026
+Voice: (503) 644-5644
+FAX:   (503) 646-8267
+
 PC Thuis BV			(PC Thuis Power magazine)
 Spaarne 55
 2011 CE HAARLEM
@@ -1276,6 +1395,11 @@ Voice: 023 - 366814
 Personics Corporation		(UltraVision)
 63 Great Road
 Maynard, MA 01754
+
+P.R. Glassel and Associates, Inc.	(QUICKCACHE II)
+30255 Fir Trail			[1/90]
+Stacy, MN 55079
+Voice: (619) 462-1337
 
 Progressive Solutions		(Back&Forth)
 Sandi and Shane Stump
@@ -1315,6 +1439,16 @@ Software Concepts Design	(FLU_SHOT)
 New York, NY 10016
 BBS:   (212) 889-6438
 
+The Software Link, Inc.		(PC-MOS/386)
+5575B Chamblee-Dunwoody Road, suite 205		[7/93]
+Atlanta, GA 30338
+Voice: (404) 512-0705
+BBS:   (404) 512-0643
+FAX:   (404) 512-7005
+
+Spirit of Performance, Inc.	(ASPIHOOK)
+Harvard, MA
+
 STSC, Inc.			(APL*Plus/PC)
 2115 E. Jefferson St.		[3/93]
 Rockville, MD 20852-9950
@@ -1352,6 +1486,12 @@ Vertisoft Systems, Inc.		(Double Disk,NOW!)
 153 B Grace Drive
 Easley, SC 29640
 
+Vadim V. Vlasov			(COMBI-disk)
+Inst. for Nuclear Research of Russian Acad. Sci.	[5/93]
+60th October Anniversary prospect, 7a
+117312 Moscow, Russia
+Voice:	7-095-133-6533
+
 Thomas Wagner			(CTask)
 Ferrari electronic GmbH
 Beusselstrasse 27
@@ -1375,7 +1515,7 @@ ZSoft Corporation		(FRIEZE)
 450 Franklin Rd. Suite 100
 Marietta, GA 30067
 Voice: (404) 428-0008
----------------------------------------------
+--------!---TRADEMARKS-----------------------
 To keep the lawyers happy:
 
 Microsoft, MS, MS DOS, OS/2 are trademarks of Microsoft Corp.
@@ -1412,23 +1552,31 @@ FlashTek, X-32, and X-32VM are trademarks fo FlashTek, Inc.
 SK-UPPS is a trademark of Schneider & Koch GmbH
 SK-PASSPORT is a trademark of SysKonnect, Inc.
 PostScript is a trademark of Adobe, Inc.
+Hayes is a trademark of Hayes Microcomputer Products Inc.
 Various other names are trademarks or registered trademarks of their respective
     holders
----------------------------------------------
+--------!---QUOTES---------------------------
 What they're saying about this list:
   "A cornucopia of descriptions of interrupt and function calls on the
    IBM PC.  A great thing to have on your hard disk if you don't have
    a Ray Duncan or Peter Norton book handy."
       _Turbo_Technix_, July/August 1988, p. 157.
-[and that was about the 1/30/88 version, which was only one-sixteenth the size
+[and that was about the 1/30/88 version, which was only one-eighteenth the size
  of the current version....]
 
   "An enormous listing of DOS and BIOS interrupt calls, many undocumented
    and program-specific.  Quite simply, some of Snooper's reports wouldn't
    be there without it.	 Very useful in that it reports bugs and
    incompatibilities books rarely mention.  And it's free!"
-      John P. Vias, SNOOPER.DOC v1.07.	
----------------------------------------------
+	John P. Vias, SNOOPER.DOC v1.07.	
+
+  "Ralf Brown maintains an astounding file which is chock-full of
+   detailed, absolutely-indispensable information for DOS programmers on
+   Hardware, BIOS, DOS, and other interrupts.  ....  You should not be
+   without this file, which is widely-known as "Ralf Brown's Interrupt
+   List". Ask about it. You will find it."
+	Robert Curtis Davis, TBONES07.DOC.
+--------!---CONTACT_INFO---------------------
 If you know of any information not in the list, or which is stated incorrectly,
 please let me know!  This list would be a pale shadow of its current self if it
 weren't for everybody's input.

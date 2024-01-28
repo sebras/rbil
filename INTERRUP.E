@@ -1,4 +1,4 @@
-Interrupt List, part 5 of 9
+Interrupt List, part 5 of 10
 This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
 --------D-2180-------------------------------
 INT 21 - European MS-DOS 4.0 - "AEXEC" - EXECUTE PROGRAM IN BACKGROUND
@@ -62,7 +62,7 @@ Return: CF clear if successful
 	    AX = error code (no such process)
 Desc:	restart a previously-suspended process or a process and all of its
 	  children
-SeeAlso: AX=81h,INT 15/AX=101Eh
+SeeAlso: AH=81h,INT 15/AX=101Eh
 --------D-2183-------------------------------
 INT 21 - European MS-DOS 4.0 - "PARTITION" - GET/SET FOREGROUND PARTITION SIZE
 	AH = 83h
@@ -123,7 +123,7 @@ Return: CF clear if successful
 	CF set on error
 	    AX = error code (invalid name)
 Desc:	get address of a previously-created area of memory which may be
-	  accessed by multiple processes	
+	  accessed by multiple processes
 Note:	this call increments the reference count for the shared memory area
 SeeAlso: AX=8400h,AX=8402h
 --------D-218402-----------------------------
@@ -424,7 +424,7 @@ Program: Attachmate Extra is a 3270 emulator by Attachmate Corporation
 SeeAlso: AH=A1h
 
 Bitfields for host window status:
- bit 15	reserved
+ bit 15 reserved
  bit 14 0=host E window installed, 1=not
  bit 13 0=host E terminal on, 1=off
  bit 12 0=host E window displayed, 1=not
@@ -538,7 +538,7 @@ Offset	Size	Description
 200h 256 BYTEs	3270 buffer code to EBCDIC translate table
 300h 256 BYTEs	EBCDIC to 3270 buffer code translate table
 --------N-21B4-------------------------------
-INT 21 U - Novell Netware - "AttachHandle" 
+INT 21 U - Novell Netware - "AttachHandle"
 	AH = B4h
 	DS:SI -> input buffer (see below)
 Return: AX = handle or return code
@@ -670,7 +670,7 @@ Offset	Size	Description
  14h	BYTE	reserved
  15h	BYTE	default local printer (00h = LPT1)
  16h	WORD	(big-endian) timeout in clock ticks for flushing capture file
- 		on inactivity, or 0000h to disable timeout
+		on inactivity, or 0000h to disable timeout
  18h	BYTE	flush capture file on LPT close if nonzero
  19h	WORD	(big-endian) maximum lines per page
  1Bh	WORD	(big-endian) maximum characters per line
@@ -1040,7 +1040,7 @@ INT 21 - Novell NetWare - SYNCHRONIZATION SERVICES - GET OR SET LOCK MODE
 	AH = C6h
 	AL = subfunction
 	    00h set old "compatibility" mode (default)
-	    01h set new extended locks mode 
+	    01h set new extended locks mode
 	    02h get lock mode
 Return: AL = current lock mode
 Note:	this function is supported by NetWare 4.6+, Advanced NetWare 1.0+, and
@@ -1453,7 +1453,7 @@ SeeAlso: AH=D9h
 INT 21 - Novell NetWare, Banyan VINES - DEALLOCATE RESOURCE
 	AH = D9h
 	DL = resource number
-Return:	AL = status (see AH=D8h)
+Return: AL = status (see AH=D8h)
 Note:	this function is no longer used or supported by NetWare, and is not
 	  documented in Novell documents
 SeeAlso: AH=D8h
@@ -1463,7 +1463,11 @@ INT 21 - Novell NetWare - DIRECTORY SERVICES - GET VOLUME INFO WITH NUMBER
 	DL = volume number
 	ES:DI -> reply buffer (see below)
 Return: AL = 00h
-Note:	this function is supported by NetWare 4.0+ and Advanced NetWare 1.0+
+Notes:	this function is supported by NetWare 4.0+ and Advanced NetWare 1.0+
+	operator console rights are not required to make this call
+	reported total blocks and total unused blocks include the Hot Fix
+	  Table; the NetWare shell's implementation of INT 21/AH=36h will
+	  report values larger than 268MB as 268MB.
 SeeAlso: AH=36h,AH=E2h/SF=15h,AH=E3h/SF=E9h
 
 Format of reply buffer:
@@ -1480,7 +1484,7 @@ Note:	all words are big-endian
 INT 21 - VIRUS - "Gotcha" - INSTALLATION CHECK
 	AX = DADAh
 Return: AH = A5h
-SeeAlso: AX=D5AAh,AH=DAFEh"VIRUS"
+SeeAlso: AX=D5AAh,AX=DAFEh"VIRUS"
 --------v-21DAFE-----------------------------
 INT 21 - VIRUS - "Plovdiv 1.3" - INSTALLATION CHECK
 	AX = DAFEh
@@ -2143,9 +2147,9 @@ Note:	this function is supported by NetWare 4.0+ and Advanced NetWare 1.0+
 SeeAlso: AH=E1h/SF=05h,AH=E1h/SF=06h,AH=E1h/SF=07h
 
 Values for status:
- 00h successful
- FCh full message queue
- FEh out of dynamic workspace
+ 00h	successful
+ FCh	full message queue
+ FEh	out of dynamic workspace
 
 Format of request buffer:
 Offset	Size	Description
@@ -2720,7 +2724,7 @@ Offset	Size	Description
 Format of reply buffer:
 Offset	Size	Description
  00h	WORD	(call) 0010h (length of following results buffer)
- 02h 16	BYTEs	save buffer
+ 02h 16 BYTEs	save buffer
 --------N-21E2--SF18-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - RESTORE DIRECTORY HANDLE
 	AH = E2h subfn 18h
@@ -2842,7 +2846,7 @@ Offset	Size	Description
 
 Format of object property:
 Offset	Size	Description
- 00h 1-16 BYTEs	property name
+ 00h 1-16 BYTEs property name
   N	BYTE	flags
 		bit 0: property is dynamic
 		bit 1: property is a set rather than an item
@@ -3036,7 +3040,7 @@ Offset	Size	Description
  03h	BYTE	file attributes (see AX=4301h for format)
  04h	BYTE	extended file attributes (see AH=B6h for format)
  05h  4 BYTEs	reserved
- 09h	WORD	(big-endian) file's creation date (see AX=5700h for format) 
+ 09h	WORD	(big-endian) file's creation date (see AX=5700h for format)
  0Bh	WORD	(big-endian) date of last access (see AX=5700h for format)
  0Dh	DWORD	(big-endian) date and time of last update (see AH=E2h/SF=02h)
  11h	DWORD	(big-endian) object ID of owner
@@ -3092,13 +3096,17 @@ Offset	Size	Description
 --------N-21E3--SF12--------------------
 INT 21 - Novell NetWare - GET SERIAL NUMBER
 	AH = E3h subfn 12h
+	AL = 00h
+	BX = CX = DX = 0000h
 	DS:SI -> request buffer (see below)
 	ES:DI -> reply buffer (see below)
 Return: AL = status
 	    00h successful
 Desc:	return the serial number and application number for the software
 	  installed on the file server
-Note:	this function is supported by Advanced Netware 2.1+
+Notes:	this function is supported by Advanced Netware 2.1+
+	reportedly, the workstation crashes if AL,BX,CX, and DX are not all
+	  zero
 SeeAlso: AH=E3h/SF=0Ch,AH=E3h/SF=11h
 
 Format of request buffer:
@@ -3230,18 +3238,18 @@ Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=33h,AH=E3h/SF=34h,AH=E3h/SF=38h,AH=E3h/SF=39h
 
 Values for status:
- 00h successful
- 96h server out of memory
- EEh object already exists
- EFh invalid name
- F0h wildcard not allowed
- F1h invalid bindery security level
- F3h not permitted to rename object
- F4h not permitted to delete objects
- F5h not permitted to create objects
- FCh no such object
- FEh server bindery locked
- FFh bindery failure
+ 00h	successful
+ 96h	server out of memory
+ EEh	object already exists
+ EFh	invalid name
+ F0h	wildcard not allowed
+ F1h	invalid bindery security level
+ F3h	not permitted to rename object
+ F4h	not permitted to delete objects
+ F5h	not permitted to create objects
+ FCh	no such object
+ FEh	server bindery locked
+ FFh	bindery failure
 
 Format of request buffer:
 Offset	Size	Description
@@ -3309,8 +3317,8 @@ Return: AL = status
 	    00h successful
 	    96h server out of memory
 	    FCh no such object
-	    FEh	server bindery locked
-	    FFh	bindery failure
+	    FEh server bindery locked
+	    FFh bindery failure
 Notes:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 	the requesting workstation must be logged into the file server with
 	  read access to the bindery object
@@ -3342,13 +3350,13 @@ Notes:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=35h,AH=E3h/SF=44h
 
 Values for status:
- 00h successful
- 96h server out of memory
- EFh invalid name
- F0h wildcard not allowed
- FCh no such object
- FEh server bindery locked
- FFh bindery failure
+ 00h	successful
+ 96h	server out of memory
+ EFh	invalid name
+ F0h	wildcard not allowed
+ FCh	no such object
+ FEh	server bindery locked
+ FFh	bindery failure
 
 Format of request buffer:
 Offset	Size	Description
@@ -3379,7 +3387,7 @@ Offset	Size	Description
  02h	BYTE	37h (subfunction "Scan Bindery Object")
  03h	DWORD	(big-endian) last object ID
  07h	WORD	(big-endian) type of object
- 09h  	BYTE	length of object's name
+ 09h	BYTE	length of object's name
  0Ah  N BYTEs	object's name
 
 Format of reply buffer:
@@ -3400,12 +3408,12 @@ INT 21 - Novell NetWare - BINDERY SERVICES - CHANGE BINDERY OBJECT SECURITY
 Return: AL = status
 	    00h successful
 	    96h server out of memory
-	    F0h	wildcard not allowed
+	    F0h wildcard not allowed
 	    F1h invalid bindery security level
-	    FBh	no such property
-	    FCh	no such object
-	    FEh	server bindery locked
-	    FFh	bindery failure
+	    FBh no such property
+	    FCh no such object
+	    FEh server bindery locked
+	    FFh bindery failure
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=32h,AH=E3h/SF=3Bh
 
@@ -3431,18 +3439,18 @@ Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=32h,AH=E3h/SF=3Bh
 
 Values for status:
- 00h successful
- 96h server out of memory
- EDh property already exists
- EFh invalid name
- F0h wildcard not allowed
- F1h invalid bindery security level
- F6h not permitted to delete properties
- F7h not permitted to create properties
- FBh no such property
- FCh no such object
- FEh server bindery locked
- FFh bindery failure
+ 00h	successful
+ 96h	server out of memory
+ EDh	property already exists
+ EFh	invalid name
+ F0h	wildcard not allowed
+ F1h	invalid bindery security level
+ F6h	not permitted to delete properties
+ F7h	not permitted to create properties
+ FBh	no such property
+ FCh	no such object
+ FEh	server bindery locked
+ FFh	bindery failure
 
 Format of request buffer:
 Offset	Size	Description
@@ -3489,12 +3497,12 @@ INT 21 - Novell NetWare - BINDERY SERVICES - CHANGE PROPERTY SECURITY
 Return: AL = status
 	    00h successful
 	    96h server out of memory
-	    F0h	wildcard not allowed
+	    F0h wildcard not allowed
 	    F1h invalid bindery security level
-	    FBh	no such property
-	    FCh	no such object
-	    FEh	server bindery locked
-	    FFh	bindery failure
+	    FBh no such property
+	    FCh no such object
+	    FEh server bindery locked
+	    FFh bindery failure
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=38h
 
@@ -3562,18 +3570,18 @@ Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=39h,AH=E3h/SF=3Ch,AH=E3h/SF=3Eh
 
 Values for status:
- 00h successful
- 96h server out of memory
- E8h not item property
- ECh no such segment
- F0h wildcard not allowed
- F1h invalid bindery security level
- F8h not permitted to write property
- F9h not permitted to read property
- FBh no such property
- FCh no such object
- FEh server bindery locked
- FFh bindery failure
+ 00h	successful
+ 96h	server out of memory
+ E8h	not item property
+ ECh	no such segment
+ F0h	wildcard not allowed
+ F1h	invalid bindery security level
+ F8h	not permitted to write property
+ F9h	not permitted to read property
+ FBh	no such property
+ FCh	no such object
+ FEh	server bindery locked
+ FFh	bindery failure
 
 Format of request buffer:
 Offset	Size	Description
@@ -3627,14 +3635,14 @@ Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=40h
 
 Values for status:
- 00h successful
- 96h server out of memory
- F0h wildcard not allowed
- FBh no such property
- FCh no such object
- FEh server bindery locked
- FFh bindery failure: no such object, bad password, no password for object,
- 			or invalid old password
+ 00h	successful
+ 96h	server out of memory
+ F0h	wildcard not allowed
+ FBh	no such property
+ FCh	no such object
+ FEh	server bindery locked
+ FFh	bindery failure: no such object, bad password, no password for object,
+			or invalid old password
 
 Format of request buffer:
 Offset	Size	Description
@@ -3684,18 +3692,18 @@ Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=40h,AH=E3h/SF=42h,AH=E3h/SF=43h
 
 Values for status:
- 00h successful
- 96h server out of memory
- E9h member already exists
- EAh member does not exist
- EBh not a group property
- F0h wildcard not allowed
- F8h can't write property
- F9h not permitted to read property
- FBh no such property
- FCh no such object
- FEh server bindery locked
- FFh bindery failure
+ 00h	successful
+ 96h	server out of memory
+ E9h	member already exists
+ EAh	member does not exist
+ EBh	not a group property
+ F0h	wildcard not allowed
+ F8h	can't write property
+ F9h	not permitted to read property
+ FBh	no such property
+ FCh	no such object
+ FEh	server bindery locked
+ FFh	bindery failure
 
 Format of request buffer:
 Offset	Size	Description
@@ -4151,9 +4159,9 @@ Bitfields for job control flags:
  bit 4	job remains in queue after server aborts job
  bit 5	client has not filled associated job file
  bit 6	User Hold--job advances, but cannot be serviced until this bit is
- 	  cleared by user or operator
+	  cleared by user or operator
  bit 7	Operator Hold--job advances, but cannot be serviced until this bit is
- 	  cleared by an operator
+	  cleared by an operator
 --------N-21E3--SF6D-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - CHANGE QUEUE JOB ENTRY
 	AH = E3h subfn 6Dh
@@ -4447,11 +4455,11 @@ Note:	this function is supported by Advanced NetWare 2.1+
 SeeAlso: AH=E3h/SF=97h,AH=E3h/SF=98h,AH=E3h/SF=99h
 
 Values for status:
- 00h successful
- C0h no account privileges
- C1h no account balance
- C2h credit limit exceeded
- C3h too many holds on account
+ 00h	successful
+ C0h	no account privileges
+ C1h	no account balance
+ C2h	credit limit exceeded
+ C3h	too many holds on account
 
 Format of request buffer:
 Offset	Size	Description
@@ -4530,7 +4538,7 @@ INT 21 - Novell NetWare - ACCOUNTING SERVICES - SUBMIT ACCOUNT NOTE
 	ES:DI -> reply buffer (see below)
 Return: AL = status
 	    00h successful
-	    C0h	no account privileges
+	    C0h no account privileges
 Note:	this function is supported by Advanced NetWare 2.1+
 SeeAlso: AH=E3h/SF=96h
 
@@ -4765,7 +4773,7 @@ Format of request buffer:
 Offset	Size	Description
  00h	WORD	length of following data (max A2h)
  02h	BYTE	D1h (subfunction "Send Console Broadcast")
- 03h	BYTE	number of connections to receive message 
+ 03h	BYTE	number of connections to receive message
 		00h = all, else specific list below
  04h  N BYTEs	connection list
 	BYTE	length of message (max 3Ch)
@@ -4969,7 +4977,7 @@ Offset	Size	Description
  06h	BYTE	fault tolerance (SFT) level
  07h	BYTE	number of logical drives attached to server
  08h	BYTE	number of physical drives attached to server
- 09h  5 BYTEs	disk channel types (00h none, 01h XT, 02h AT, 03h SCSI, 
+ 09h  5 BYTEs	disk channel types (00h none, 01h XT, 02h AT, 03h SCSI,
 		04h disk coprocessor drive, 32h-FFh value-added drive types)
  0Eh	WORD	(big-endian) number of outstanding controller commands
  10h 32 BYTEs	drive mapping table (FFh = no such drive)
@@ -5066,10 +5074,10 @@ Offset	Size	Description
  6Ah 80 BYTEs	ASCIZ configuration description
 
 Values for channel run state:
- 0000h running
- 0001h being stopped
- 0002h stopped
- 0003h nonfunctional
+ 0000h	running
+ 0001h	being stopped
+ 0002h	stopped
+ 0003h	nonfunctional
 
 Values for channel synchronization state:
  0000h	not in use
@@ -5111,11 +5119,11 @@ Offset	Size	Description
 			04h shared fileset lock active
 
 Values for lock status of connection:
- 00h no locks
- 01h waiting on physical record lock
- 02h waiting on file lock
- 03h waiting on logical record lock
- 04h waiting on semaphore
+ 00h	no locks
+ 01h	waiting on physical record lock
+ 02h	waiting on file lock
+ 03h	waiting on logical record lock
+ 04h	waiting on semaphore
 
 Format of Lock Status Information:
 Offset	Size	Description
@@ -5393,7 +5401,7 @@ Offset	Size	Description
  02h	WORD	(big-endian) number of logical connections logging the record
  04h	WORD	(big-endian) number of logical connections with shareable lock
  06h	WORD	(big-endian) next request record (place in "last record" field
- 			on next call)
+			on next call)
  08h	BYTE	locked exclusively if nonzero
  09h	BYTE	number of records following
  0Ah	var	array of Task Information Records (see below)
@@ -5630,8 +5638,8 @@ Offset	Size	Description
 		0000h = unlimited
  0Ch	WORD	(big-endian) maximum number of bindery objects used
  0Eh	WORD	(big-endian) current number of bindery objects in use
- 10h	WORD	(big-endian) total server memory in K
- 12h	WORD	(big-endian) wasted server memory in K
+ 10h	WORD	(big-endian) total server memory in KB
+ 12h	WORD	(big-endian) wasted server memory in KB
 		normally 0000h
  14h	WORD	number of records following (01h-03h)
  16h	var	array of Dynamic Memory Information records (see below)
@@ -5848,8 +5856,8 @@ Bitfields for keyboard control flags:
  bit 7	Ctrl-NumLock
  bit 8	shift-PrtSc
  bit 9-13 undefined
- bit 14	cancel key (clear keyboard buffer)
- bit 15	suspend key
+ bit 14 cancel key (clear keyboard buffer)
+ bit 15 suspend key
 Note:	setting a bit enables the corresponding key or operatin, clearing a
 	  bit disables it
 --------E-21E9-------------------------------
@@ -5857,7 +5865,7 @@ INT 21 P - OS/286, OS/386 - CHANGE SEGMENTS
 	AH = E9h
 	AL = function
 	    01h change code segment parameters
-	    02h	change data segment parameters
+	    02h change data segment parameters
 	    05h adjust segment limit
 	    06h change segment base address
 	???
@@ -6467,7 +6475,7 @@ SeeAlso: AH=ECh"DoubleDOS",INT FC"DoubleDOS"
 INT 21 - VIRUS - "Troi" - INSTALLATION CHECK
 	AH = FCh
 Return: AL = A5h if resident
-SeeAlso: AH=FB0Ah"VIRUS",AH=FDh"VIRUS"
+SeeAlso: AX=FB0Ah"VIRUS",AH=FDh"VIRUS"
 --------D-21FD-------------------------------
 INT 21 - DOS v2.11 - OEM FUNCTION
 	AH = FDh
@@ -6766,4 +6774,4 @@ INT 21 - VIRUS - "Revenge" - INSTALLATION CHECK
 	CX = 0000h
 Return: CX = 0006h if resident
 SeeAlso: AX=FFFFh,INT 6B"VIRUS"
----------------------------------------------
+--------!------------------------------------
