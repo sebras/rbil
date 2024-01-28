@@ -1,5 +1,5 @@
 Interrupt List, part 7 of 8
-This compilation is Copyright (c) 1989,1990,1991,1992 Ralf Brown
+This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
 ----------50---------------------------------
 INT 50 - TIL Xpert AIM (X.25)
 	AH = function
@@ -106,7 +106,7 @@ Return: AX = status
 Note:	file type numbers are maintained by John Vanderaart; if a new file type
 	  is needed, a type number should be requested from him through the
 	  magazine:
-	  	PC Thuis BV
+		PC Thuis BV
 		Spaarne 55
 		2011 CE HAARLEM
 		The Netherlands
@@ -303,12 +303,12 @@ SeeAlso: INT 50"OS/2",INT 54"OS/2"
 INT 53 - ??? - API
 	BX = function
 	    0000h ???
-	    	AX = ???
+		AX = ???
 		Return: AX = ???
 	    0004h ???
 	    0009h ???
 	    0015h
-	    	AX = ???
+		AX = ???
 		DX = ???
 	    0017h
 Return: ???
@@ -443,51 +443,62 @@ SeeAlso: INT 0C
 ----------5C---------------------------------
 INT 5C - NetBIOS INTERFACE
 	ES:BX -> network control block (NCB) (see below)
-Return: AL = status
-	    00h successful
-	    01h bad buffer size
-	    03h invalid NETBIOS command
-	    05h timeout
-	    06h receive buffer too small
-	    07h No-ACK command failed
-	    08h bad session number
-	    09h LAN card out of memory
-	    0Ah session closed
-	    0Bh command has been cancelled
-	    0Dh name already exists
-	    0Eh local name table full
-	    0Fh name still in use, can't delete
-	    11h local session table full
-	    12h remote PC not listening
-	    13h bad NCB_NUM field
-	    14h no answer to CALL or no such remote
-	    15h name not in local name table
-	    16h duplicate name
-	    17h bad delete
-	    18h abnormal end
-	    19h name error, multiple identical names in use
-	    1Ah bad packet
-	    21h network card busy
-	    22h too many commands queued
-	    23h bad LAN card number
-	    24h command finished while cancelling
-	    26h command can't be cancelled
-	    30h name defined by another process (OS/2)
-	    34h NetBIOS environment not defined, must issue reset (OS/2)
-	    35h required operating system resources exhausted (OS/2)
-	    36h maximum applications exceeded (OS/2)
-	    37h no SAPs available for NetBIOS (OS/2)
-	    38h requested resources not available (OS/2)
-	    40h Lana System Error
-	    41h Lana Remote Hot Carrier
-	    42h Lana Local Hot Carrier
-	    43h Lana No Carrier Detected
-	    44h unusual network condition
-	    45h-4Fh hardware error
-	    50h adapter malfunction
-	    FFh NetBIOS busy (command pending)
+Return: AL = status (see below)
 Note:	Sytek PCnet card uses DMA 3.
 SeeAlso: INT 2A/AH=01h,INT 2A/AH=04h,INT 5B
+
+Values for NetBIOS status:
+ 00h successful
+ 01h bad buffer size
+ 03h invalid NETBIOS command
+ 05h timeout
+ 06h receive buffer too small
+ 07h No-ACK command failed
+ 08h bad session number
+ 09h LAN card out of memory
+ 0Ah session closed
+ 0Bh command has been cancelled
+ 0Dh name already exists
+ 0Eh local name table full
+ 0Fh name still in use, can't delete
+ 11h local session table full
+ 12h remote PC not listening
+ 13h bad NCB_NUM field
+ 14h no answer to CALL or no such remote
+ 15h name not in local name table
+ 16h duplicate name
+ 17h bad delete
+ 18h abnormal end
+ 19h name error, multiple identical names in use
+ 1Ah bad packet
+ 21h network card busy
+ 22h too many commands queued
+ 23h bad LAN card number
+ 24h command finished while cancelling
+ 26h command can't be cancelled
+ 30h name defined by another process (OS/2)
+ 34h NetBIOS environment not defined, must issue reset (OS/2)
+ 35h required operating system resources exhausted (OS/2)
+ 36h maximum applications exceeded (OS/2)
+ 37h no SAPs available for NetBIOS (OS/2)
+ 38h requested resources not available (OS/2)
+ 40h Lana System Error
+ 41h Lana Remote Hot Carrier
+ 42h Lana Local Hot Carrier
+ 43h Lana No Carrier Detected
+ 44h unusual network condition
+ 45h-4Dh hardware error
+ 4Eh token ring is broken
+ 4Fh token ring error
+ 50h adapter malfunction
+ F7h error in explicit INITIALIZE
+ F8h error in implicit OPEN
+ F9h TOKREUI internal error
+ FAh hardware adapter testing
+ FBh NetBIOS emulator not found
+ FCh OPEN or OPEN_SAP failure
+ FDh unexpected adapter closure
+ FFh NetBIOS busy (command pending)
 
 Format of Network Control Block:
 Offset	Size	Description
@@ -508,7 +519,7 @@ Offset	Size	Description
  31h	BYTE	command completion code (see returned status above)
  32h 14 BYTEs	reserved for network card
 
-Values for command code field in NCB (or with 80h for non-waiting call):
+Values for command code field in NCB (OR with 80h for non-waiting call):
  10h start session with NCB_NAME name (call)
  11h listen for call
  12h end session with NCB_NAME name (hangup)
@@ -1118,28 +1129,28 @@ SeeAlso: INT 15/AX=4DD4h,INT 60/DI=0101h,INT 61"HP 95LX",INT 62"HP 95LX"
 Format of event record:
 Offset	Size	Description
  00h	WORD	event type
- 		00h no events
+		00h no events
 		01h keystroke available
 		02h Ctrl-Break
 		03h reactivation (always follows deactivation event)
 		04h about to deactivate (sleep)
 			next get-event call will not return until reactivated
 		05h forced application termination
-		06h 1-2-3 bridge service request (only given to  1-2-3)
+		06h 1-2-3 bridge service request (only given to	 1-2-3)
 		07h request to grow
 		08h request to shrink
 		09h application's alarm expired
 		0Ah daily chance to set an alarm
 		0Bh system date or time has been changed
  02h	WORD	ASCII code page 850 translation of keystroke
- 		or grow/shrink amount in paragraphs or 0000h if error
- 		or alarm expiration data
+		or grow/shrink amount in paragraphs or 0000h if error
+		or alarm expiration data
  04h	BYTE	scan code from BIOS
  05h	BYTE	shift key states at time keystroke is retrieved
  06h	WORD	LICS translation of keystroke
  08h	BYTE	function key number (1-2-3 only)
  09h	DWORD	pointer to 1-2-3 bridge record (see INT 60/DI=0104h)
- 		or pointer to time change structure (see below)
+		or pointer to time change structure (see below)
 Note:	if the System Manager is waiting the conclusion of a bridge service
 	  or grow/shrink call and the event type field is set to FFFFh on
 	  entry, the SysMgr will resume
@@ -1181,7 +1192,7 @@ Return: ???
 Format of bridge record:
 Offset	Size	Description
  00h	WORD	function code
- 		00h test
+		00h test
 		01h get range
 		02h "GETRANGE_ADDR"
 		03h "SETRANGE_ADDR"
@@ -1486,7 +1497,7 @@ Offset	Size	Description
  00h	WORD	current length of edit buffer
  02h	BYTE	flag for special processing on first character
  03h	BYTE	flags
- 		bit 0: tab handling
+		bit 0: tab handling
  04h	WORD	editing in prompt window?
  06h	DWORD	pointer to top line of prompt window message
  0Ah	WORD	length of top line of prompt
@@ -1513,7 +1524,7 @@ Offset	Size	Description
  16h	BYTE	first displayable column (ticker fields only)
  17h	BYTE	01h if wordwrap enabled, FFh if ticker field
  18h	DWORD	pointer to array of line starts (at least one bigger than edit
- 		  area is high)
+		  area is high)
  1Ch	BYTE	currently marking?
  1Dh	BYTE	flag
  1Eh	WORD	offset of mark start
@@ -1636,7 +1647,7 @@ Format of file state record:
 Offset	Size	Description
  00h	WORD	DOS file handle
  02h	WORD	flags
- 		bit 0: buffer contents valid
+		bit 0: buffer contents valid
 		bit 1: buffer is dirty and must be written
 		bit 2: unbuffered I/O
 		bit 3: file is a character device
@@ -2257,7 +2268,7 @@ Offset	Size	Description
  04h	WORD	contrast level (00h-0Fh)
  06h	WORD	week start (00h Sunday, 01h Monday)
  08h	WORD	punctuation format
- 		code	decimal	arg	thousands
+		code	decimal	arg	thousands
 		00h	.	,	,
 		01h	,	.	.
 		02h	.	;	;
@@ -2268,7 +2279,7 @@ Offset	Size	Description
 		07h	,	;	" "
  0Ah	WORD	two-character language code (only 5355h = "US" byte-swapped)
  0Ch	WORD	current date format
- 		00h dd-mmm-yy
+		00h dd-mmm-yy
 		01h dd-mmm
 		02h mmm-yy
 		03h mm/dd/yy
@@ -2280,7 +2291,7 @@ Offset	Size	Description
 		09h dd.mm
 		0Ah mm-dd
  0Eh	WORD	current time format
- 		00h HH:MM:SS am/pm
+		00h HH:MM:SS am/pm
 		01h HH:MM am/pm
 		02h HH:MM:SS
 		03h HH.MM.SS
@@ -2291,7 +2302,7 @@ Offset	Size	Description
 		08h HH,MM
 		09h HHhMMm
  10h	WORD	collating sequence
- 		00h numbers first, 01h letters first, 02h ASCII
+		00h numbers first, 01h letters first, 02h ASCII
  12h 80 BYTEs	name of picture file
  62h 30 BYTEs	name
  80h 30 BYTEs	title
@@ -2708,7 +2719,7 @@ Offset	Size	Description
  04h	BYTE	stop bits (00h one, 04h two)
  05h	BYTE	data bits - 5
  06h	BYTE	software handshake
- 		01h none, 02h XOFF/XON, 04h XOFF/any, 08h ENQ/ACK
+		01h none, 02h XOFF/XON, 04h XOFF/any, 08h ENQ/ACK
  07h	BYTE	infrared (01h off, 02h on)
  08h	BYTE	duplex (01h half, 02h full)
  09h	BYTE	echo (01h echo, 02h no echo)
@@ -3472,7 +3483,7 @@ INT 60 - MDEBUG v1.70+ - GET ACTIVE PART OF MDEBUG
 	AH = 07h
 Return: AL = active part for the next popup session of MDEBUG:
 	    bit 0: the next popup session will start in the interpreter rather
-	     		than in the monitor
+			than in the monitor
 	    bit 1: the next popup session will sart in the online-help
 SeeAlso: AH=03h"MDEBUG",AH=04h"MDEBUG"
 ----------6008-------------------------------
@@ -3558,7 +3569,7 @@ Return: CF set on error
 	CF clear if successful
 SeeAlso: AH=0Ch"Packet Driver"
 ----------6011-------------------------------
-INT 60 - 3com, 10-NET, Banyan VINES - LOCK AND WAIT
+INT 60 - 3com, 10NET, Banyan VINES - LOCK AND WAIT
 	AH = 11h
 	AL = drive number or 0
 	DX = number of seconds to wait
@@ -3577,7 +3588,7 @@ Return: AL = status
 	    09h semaphore already logged for this CPU
 SeeAlso: AH=12h,AH=13h
 ----------6012-------------------------------
-INT 60 - 3com, 10-NET, Banyan VINES - LOCK
+INT 60 - 3com, 10NET, Banyan VINES - LOCK
 	AH = 12h
 	AL = drive number or 00h
 	ES:SI = Ethernet address or 0000h:0000h
@@ -3587,7 +3598,7 @@ Return: AL = status (see also AH=11h)
 Note:	unlike function 11h, this function returns immediately
 SeeAlso: AH=11h,AH=13h
 ----------6013-------------------------------
-INT 60 - 3com, 10-NET, Banyan VINES - UNLOCK
+INT 60 - 3com, 10NET, Banyan VINES - UNLOCK
 	AH = 13h
 	AL = drive number or 00h
 	ES:SI = Ethernet address or 0000h:0000h
@@ -3769,12 +3780,12 @@ Values for error code:
  0Fh "NET_ERR_NOSERVERS" no name servers configured
  10h "NET_ERR_SERVER_ERR" bad reply from name server
  11h "NET_ERR_BADFORMAT" bad format for IP address or field in IP address struc
- 			is zero
+			is zero
  12h "NET_ERR_BADARG" invalid argument
  13h "NET_ERR_EOF" foreign host closed its end of connection
  14h "NET_ERR_RESET" connection has been reset
  15h "NET_ERR_WOULDBLOCK" recv() call was done on a non-blocking connection
- 			with no data available
+			with no data available
  16h "NET_ERR_UNBOUND" insufficient resources to do operation
  17h "NET_ERR_NODESC" could not allocate network descriptor
  18h "NET_ERR_BADSYSCALL" invalid/unsupported kernel call
@@ -6182,7 +6193,7 @@ Offset	Size	Description
  01h	BYTE	length of first "zero" run (pixels set to background color)
  02h	BYTE	length of second "protect" run
  03h	BYTE	length of second "zero" run
- 	...
+	...
 ----------620052-----------------------------
 INT 62 u - FGDRIVER v1.10 - "FG_CLIPMASK" - DISPLAY CLIPPED IMAGE (MASKING MAP)
 	AX = 0052h
@@ -7199,7 +7210,7 @@ SeeAlso: INT 64"Adaptec",INT 65"Adaptec",INT 67"Adaptec"
 INT 66 - Data General DG10 - MicroECLIPSE COPROCESSOR INTERFACE
 SeeAlso: INT 64"DG10"
 ----------66---------------------------------
-INT 66 - Nanosoft, Inc. TurboNET - NETWORK PROCESSING ???
+INT 66 C - Nanosoft, Inc. TurboNET - NETWORK PROCESSING ???
 Notes:	hooked but not used (IRET) by both redirector and server; called from
 	  server's INT 28 handler
 	TurboNET is a NetBIOS-based file redirector and server
@@ -7374,10 +7385,10 @@ Notes:	if no other program has hooked INT 67, an alternate installation
 	386MAX v6.01 responds to this call, but DESQview 2.42 does not
 	  recognize the returned entry point as providing QEMM's capabilities
 	  because a) only functions 0Ch (different from QEMM 0Ch) and
-	  		1000h-1009h are supported,
-	  	  b) status is returned as for EMS functions, not QEMM funcs
+			1000h-1009h are supported,
+		  b) status is returned as for EMS functions, not QEMM funcs
 		  c) the protected-mode entry point returned by function 1000h
-		  	only supports functions	0Ch, 1004h, 1005h, and 100Ah
+			only supports functions	0Ch, 1004h, 1005h, and 100Ah
 	the string check mentioned above is not supported by 386MAX
 SeeAlso: AH=DDh,AX=5BF0h,AX=FFA5h,INT 15/AX=11DEh,INT 21/AX=4402h"QEMM"
 SeeAlso: INT 21/AX=4402h"386MAX",INT 2F/AX=D201h/BX=5145h
@@ -7399,7 +7410,7 @@ Call QEMM entry point with:
 			Data Structure
 			Offset	Size	Description
 			 00h	DWORD	page table entry for ???
-			 	???
+				???
 	AH = 03h get QEMM version
 		Return: CF clear
 			AX = BX = version in BCD
@@ -7482,9 +7493,9 @@ Call QEMM entry point with:
 			ES:DI buffer filled
 	AX = 1002h set CPU debug registers
 		BL = INT01 handling
-		    00h  reflect all debugging exceptions as V86-mode INT 01's
+		    00h	 reflect all debugging exceptions as V86-mode INT 01's
 		    else convert debugging exceptions other than single-step
-		    	   into V86-mode INT 03's, single-step to INT 01's
+			   into V86-mode INT 03's, single-step to INT 01's
 		ES:DI -> buffer containing debug registers (8 DWORDs)
 		Return: CF clear
 		Notes:	identical to INT 67/AX=DE09h if BL=01h
@@ -7650,7 +7661,7 @@ Call QEMM entry point with:
 		Return: AX = ???
 		Data structure
 		Offset	Size	Description
-		 00h  	WORD	???
+		 00h	WORD	???
 		 02h	DWORD	far pointer to ???
 		 06h	DWORD	far pointer to ??? pointer array (see below)
 		 0Ah	DWORD	far pointer to ???
@@ -7680,7 +7691,7 @@ Call QEMM entry point with:
 		 02h	WORD	segment of ??? (word at X:0124h set to this)
 		 04h	WORD	number of paragraphs of ???
 		 06h  3 WORDs	??? (copied to X:0000h)
-		 0Ch  	WORD	???
+		 0Ch	WORD	???
 	AX = 1403h add ??? to list and ??? (execute func 1406h)
 		ES:DI -> ??? structure added to end of ??? list
 			(at least 31 bytes, DWORD at offset 06h used for
@@ -7736,7 +7747,7 @@ Call QEMM entry point with:
 		Return: CF clear
 			AL = 00h one or more pages is remapped
 			     01h all pages in range are conventional memory
-			     	(physical address == virtual address)
+				(physical address == virtual address)
 	AH = 19h NOP
 		Return: CF set
 	AH = 1Ah I/O port access
@@ -7772,7 +7783,7 @@ Call QEMM entry point with:
 			Return: CF set on error
 				CF clear if successful
 		    03h MS Windows initializing
-		    	CX = segment from which Windows init broadcast made???
+			CX = segment from which Windows init broadcast made???
 			DL = Windows startup flags???
 			DI = Windows version number (major in upper byte)
 			Return: ???
@@ -7807,7 +7818,7 @@ Call QEMM entry point with:
 	AH = 1Dh Stealth interrupts
 		AL = subfunction
 		    00h switch to pre-Stealth interrupt vector table
-		    	Note:	also switches VGA Save table pointer
+			Note:	also switches VGA Save table pointer
 				  (0040h:00A8h)	and overwrites the vectors
 				  currently assigned for use by the two
 				  interrupt controllers (see INT 67/AX=DE0Ah)
@@ -7841,7 +7852,7 @@ Call QEMM entry point with:
 			Return: CF clear
 				BX = number of Stealth'ed ROMs
 		    02h get Stealth'ed ROM info
-		    	ES:DI -> buffer for Stealth ROM info (see below)
+			ES:DI -> buffer for Stealth ROM info (see below)
 			Return: CF clear
 				BX = number of Stealth'ed ROMs
 				ES:DI buffer filled
@@ -7887,10 +7898,10 @@ Call QEMM entry point with:
 	AH = 22h DESQview/X support
 		AL = subfunction
 		    00h get ???
-		    	Return: CF clear
+			Return: CF clear
 				ES:DI -> ???
 		    01h set ???
-		    	ES:DI -> ??? or 0000h:0000h
+			ES:DI -> ??? or 0000h:0000h
 			Return: CF clear if successful
 				CF set on error
 	other
@@ -7921,7 +7932,7 @@ Offset	Size	Description
  49h	DWORD	Unavailable "top" or "shadow" memory in bytes
 		Add to offset 1Dh for Total unavailable top/shadow.
  4Dh	DWORD	conventional memory overhead in bytes
- 		(set to 0 by QEMM.COM prior to call)
+		(set to 0 by QEMM.COM prior to call)
 
 Format of Stealth ROM info [array]:
 Offset	Size	Description
@@ -8684,7 +8695,8 @@ SeeAlso: AH=3Fh,INT 15/AH=89h,INT 38/AH=10h
 
 Note:	in protected mode, calling the protected-mode VCPI entry point with 
 	  AX = DE0Ch
-	  DS = segment selector from function DE01h
+	  DS = segment selector mapping entire linear address space obtained
+		via AX=DE01h
 	  SS:ESP in first megabyte of linear memory
 	  STACK:QWORD  return address from FAR call to 32-bit segment
 		DWORD  EIP
@@ -8722,7 +8734,7 @@ SeeAlso: AH=3Fh
 Call API entry point with:
 	AH = 00h get memory manager's status
 	    Return: AH = status
-	    		bit 0: not active (OFF)
+			bit 0: not active (OFF)
 			bit 1: in "Auto" mode
 	AH = 01h set memory manager's state
 	    AL = new state (00h ON, 01h OFF, 02h AUTO)
@@ -8730,7 +8742,7 @@ Call API entry point with:
 	    AL = subfunction
 		00h get Weitek support state
 		    Return: AL = status
-		    		bit 0: Weitek coprocessor is present
+				bit 0: Weitek coprocessor is present
 				bit 1: Weitek support is enabled
 		01h turn on Weitek support
 		02h turn off Weitek support

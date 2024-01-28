@@ -22,6 +22,8 @@
 /*   v2.11  5/23/92  bugfix pointed out by Joe White			*/
 /*   v2.20  6/12/92  added -F based on code by Richard Brittain 	*/
 /*		     added -H and Panasonic printer def by Lewis Paper	*/
+/*   v2.21	     fixed error in -H/-r interaction			*/
+/*		     updated for new 'Bitmask of' section		*/
 /************************************************************************/
 /* Recompiling:								*/
 /*   Turbo C / Borland C++						*/
@@ -32,7 +34,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define VERSION "2.20"
+#define VERSION "2.21"
 
 #ifdef __TURBOC__
 #  define PROTOTYPES
@@ -57,33 +59,15 @@
 #if 1  /* set to 0 if library contains strupr(), 1 otherwise */
 #define NEED_STRUPR
 #endif
+#if 1  /* set to 0 if library contains three-arg itoa(), 1 otherwise */
+#define NEED_ITOA
+#endif
 
 #define _Cdecl
 
-char *itoa(num,buf,radix)   /* not everybody has the same itoa() as TurboC */
-int num ;		    /* minimal implementation */
-char *buf ;
-int radix ;
-{
-   int count = 0 ;
-   int i ; 
-   char tmp ;
-
-   do {
-      buf[count++] = '0' + num % radix ;
-      num = num / radix ;
-   } while (num) ;
-   buf[count] = '\0' ;
-   if (count > 1)
-      for (i = 0 ; i < count / 2 ; i++)
-	 {
-	 tmp = buf[i] ;
-	 buf[i] = buf[count-i-1] ;
-	 buf[count-i-1] = tmp ;
-	 }
-   return buf ;
-}
 #endif /* __TURBOC__ */
+
+/***********************************************/
 
 #ifndef FALSE
 #define FALSE 0
@@ -123,8 +107,10 @@ typedef struct _printer_def
    int page_width ;		/* how many printable columns per line? */
 #ifdef PROTOTYPES
    void (*put_line)(FILE *,int) ;/* function to call to print out divider line */
+   void (*set_typeface)(FILE *,char *) ;
 #else
    void (*put_line)() ;		/* function to call to print out divider line */
+   void (*set_typeface)() ;
 #endif /* PROTOTYPES */
    int *flag ;			/* flag to set when using this printer definition */
    } PRINTER_DEF ;
@@ -154,9 +140,11 @@ void indent_line(FILE *fp) ;
 void indent_to(int where,FILE *fp) ;
 void put_line(FILE *fp, int len) ;
 void HPPCL_put_line(FILE *fp, int len) ;
+void HPPCL_set_typeface(FILE *fp,char *typeface) ;
 void fputcstr(cstr *s, FILE *fp) ;
 int divider_line(char *line) ;
 int section_start(char *line) ;
+int start_of_table(char *line) ;
 void output_line(char *line,FILE *fp) ;
 void fill_buffer(int lines, int lines_per_page) ;
 int find_page_break(int lines) ;
@@ -231,6 +219,7 @@ PRINTER_DEF printers[] =
        79,
        put_line,
        NULL,
+       NULL,
      },
      { "Epson FX80, 12 cpi",
        CSTR("\033M"), CSTR(""),
@@ -243,6 +232,7 @@ PRINTER_DEF printers[] =
        0,
        87,	/* 96 - left margin - 1 right margin */
        put_line,
+       NULL,
        NULL,
      },
      { "Panasonic KX-P1124i / 10 cpi Epson",
@@ -257,6 +247,7 @@ PRINTER_DEF printers[] =
        79,
        put_line,
        NULL,
+       NULL,
      },
      { "HP PCL",
        CSTR("\033(8U"), CSTR(""),
@@ -269,6 +260,7 @@ PRINTER_DEF printers[] =
        0,
        87,	/* 96 - left margin - 1 right margin */
        HPPCL_put_line,
+       HPPCL_set_typeface,
        &HPPCL_mode,
      },
 #define HPPCL_FONT_ON_A "\033(s0p12h10v0s0b"
@@ -290,6 +282,7 @@ PRINTER_DEF printers[] =
        60,
        79,
        put_line,
+       NULL,
        &IBM_chars,
      },
    } ;
@@ -375,19 +368,49 @@ int c ;
 }
 #endif /* NEED_ISXDIGIT */
 
+#ifdef NEED_ITOA
+#ifdef PROTOTYPES
+char *itoa(int num,char *buf,int radix)
+#else
+char *itoa(num,buf,radix)   /* not everybody has the same itoa() as TurboC */
+int num ;		    /* minimal implementation */
+char *buf ;
+int radix ;
+#endif /* PROTOTYPES */
+{
+   int count = 0 ;
+   int i ; 
+   char tmp ;
+
+   do {
+      buf[count++] = '0' + num % radix ;
+      num = num / radix ;
+   } while (num) ;
+   buf[count] = '\0' ;
+   if (count > 1)
+      for (i = 0 ; i < count / 2 ; i++)
+	 {
+	 tmp = buf[i] ;
+	 buf[i] = buf[count-i-1] ;
+	 buf[count-i-1] = tmp ;
+	 }
+   return buf ;
+}
+#endif /* NEED_ITOA */
+
 /***********************************************/
 
 void usage()
 {
-   fputs("\nUsage: intprint [options] intlist [>|>>]output\n",stderr) ;
+   fputs("Usage: intprint [options] intlist [>|>>]output\n",stderr) ;
    fputs("Options:\n",stderr) ;
-   fputs("\t-b\tboldface title lines and Return:/Note:\n",stderr) ;
+   fputs("\t-b\tboldface title lines and section headings\n",stderr) ;
    fputs("\t-B\tboldface using printer control codes instead of overprinting\n",stderr) ;
    fputs("\t-d\t(duplex) print even/odd pages with different indents\n",stderr) ;
    fputs("\t-e\tassume 'elite' mode (96 chars per line) for default printer\n",stderr) ;
    fputs("\t-ffile\twrite all data structure formats to 'file'\n",stderr) ;
    fputs("\t-Ffile\tprint only entries matching filtering info in 'file'\n",stderr);
-   fputs("\t-H\tadd page headers\n",stderr) ;
+   fputs("\t-H\tadd page headers showing interrupt call(s) on page\n",stderr) ;
    fputs("\t-iN\tindent output N spaces (overridden by some printers)\n",stderr) ;
    fputs("\t-I\tprinter supports IBM graphics characters\n",stderr) ;
    fputs("\t-lN\tprint N lines per page (default depends on printer)\n",stderr) ;
@@ -470,6 +493,20 @@ int len ;
 
 /***********************************************/
 
+void HPPCL_set_typeface(fp,typeface)
+FILE *fp ;
+char *typeface ;
+{
+   fputs(HPPCL_FONT_ON_A,fp) ;
+   if (typeface)
+      fputs(typeface,fp) ;
+   else
+      fputs("8",fp) ;
+   fputs(HPPCL_FONT_ON_B,fp) ;
+}
+
+/***********************************************/
+
 void fputcstr(s,fp)		/* output the counted string to the given file */
 FILE *fp ;
 cstr *s ;
@@ -493,17 +530,29 @@ char *line ;
 int section_start(line)
 char *line ;
 {
-   if (strncmp(line,"Return:",7) == 0 ||
-       strncmp(line,"Desc:",5) == 0 ||
-       strncmp(line,"Note:",5) == 0 ||
-       strncmp(line,"Notes:",6) == 0 ||
-       strncmp(line,"SeeAlso:",8) == 0 ||
-       strncmp(line,"BUG:",4) == 0 ||
-       strncmp(line,"Program:",8) == 0)
-      return 1 ;
-   return 0 ;
+   return (strncmp(line,"Return:",7) == 0 ||
+	   strncmp(line,"Desc:",5) == 0 ||
+	   strncmp(line,"Note:",5) == 0 ||
+	   strncmp(line,"Notes:",6) == 0 ||
+	   strncmp(line,"SeeAlso:",8) == 0 ||
+	   strncmp(line,"BUG:",4) == 0 ||
+           strncmp(line,"BUGS:",5) == 0 ||
+           strncmp(line,"Program:",8) == 0
+	  ) ;
 }
 
+/***********************************************/
+
+int start_of_table(line)
+char *line ;
+{
+   return (strncmp(line,"Format of ",10) == 0 ||
+           strncmp(line,"Values ",7) == 0 ||
+           strncmp(line,"Call ",5) == 0 ||
+           strncmp(line,"Bitmask of ",11) == 0
+          ) ;
+}
+   
 /***********************************************/
 
 void output_line(line,fp)
@@ -515,8 +564,7 @@ FILE *fp ;
 
    if (boldface)
       {
-      if (start_of_entry(line) || strncmp(line,"Format of ",10) == 0 ||
-	  strncmp(line,"Values ",7) == 0)
+      if (start_of_entry(line) || start_of_table(line))
 	 {
 	 indent_line(fp) ;
 	 if (printer_bold)
@@ -551,7 +599,7 @@ FILE *fp ;
 	    fputc('\r',fp) ;
 	    }
 	 }
-      }
+      } /* boldface */
    if (line && *line)
       {
       if (pos == 0)	    /* are we currently at the left edge of the line? */
@@ -998,21 +1046,28 @@ int use_FF ;
       
       if ((heading = determine_heading(last)) != NULL)
 	 {
-         indent_to(40-strlen(heading)/2,outfile) ;
-	 if (boldface)
-	    if (printer_bold)
+	 if (pages_printed >= first_page && pages_printed <= last_page)
+	    {
+	    indent_to(40-strlen(heading)/2,outfile) ;
+	    if (boldface)
 	       {
-	       fputcstr(&printer->bold_on,outfile) ;
-	       fputs(heading,outfile) ;
-	       fputcstr(&printer->bold_off,outfile) ;
+	       if (printer_bold)
+		  {
+		  fputcstr(&printer->bold_on,outfile) ;
+		  fputs(heading,outfile) ;
+		  fputcstr(&printer->bold_off,outfile) ;
+		  }
+	       else
+		  {
+		  fputs(heading,outfile) ;
+		  fputc('\r',outfile) ;
+		  indent_to(40-strlen(heading)/2,outfile) ;
+		  fputs(heading,outfile) ;
+		  }
 	       }
 	    else
-	       {
 	       fputs(heading,outfile) ;
-	       fputc('\r',outfile) ;
-	       indent_to(40-strlen(heading)/2,outfile) ;
-	       fputs(heading,outfile) ;
-	       }
+	    }
 	 free(heading) ;
 	 }
       fputs("\n\n",outfile) ;
@@ -1341,15 +1396,8 @@ char *argv[] ;
    /* set up the printer */
    fputcstr(&printer->init1,outfile) ;
    fputcstr(&printer->init2,outfile) ;
-   if (HPPCL_mode)
-      {
-      fputs(HPPCL_FONT_ON_A,outfile) ;
-      if (typeface)
-	 fputs(typeface,outfile) ;
-      else
-	 fputs("8",outfile) ;
-      fputs(HPPCL_FONT_ON_B,outfile) ;
-      }
+   if (printer->set_typeface)
+      (*printer->set_typeface)(outfile,typeface) ;
    if (duplex)
       {
       fputcstr(&printer->duplex_on,outfile) ;

@@ -1,5 +1,5 @@
 Interrupt List, part 8 of 8
-This compilation is Copyright (c) 1989,1990,1991,1992 Ralf Brown
+This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
 ----------68---------------------------------
 INT 68 - Sangoma CCPOP 3270 resident module
 SeeAlso: INT 67"Sangoma",INT 92"Sangoma"
@@ -727,6 +727,68 @@ Offset	Type	Description
  24h	BYTE	maximum outstanding transmits/receives
  25h  2 BYTEs	protocol type
  27h	WORD	buffers lost
+----------694001-----------------------------
+INT 69 - 10NET v5.0 - SYSSVC.COM - ???
+	AX = 4001h
+Return: CF clear
+	AX = 0000h
+	ES:SI -> ???
+Note:	INT 69 is the default, and may be set to any interrupt from 60h-7Fh;
+	  the signature "SYSV" immediately before the interrupt handler serves
+	  as the installation check
+SeeAlso: AX=4002h
+----------694002-----------------------------
+INT 69 - 10NET v5.0 - SYSSVC.COM - ???
+	AX = 4002h
+	???
+Return: ???
+Note:	INT 69 is the default, and may be set to any interrupt from 60h-7Fh;
+	  the signature "SYSV" immediately before the interrupt handler serves
+	  as the installation check
+----------694101-----------------------------
+INT 69 - 10NET v5.0 - SYSSVC.COM - ???
+	AX = 4101h
+Return: CF clear
+	ES:SI -> ???
+SeeAlso: AX=4102h,AX=4103h,AX=4104h
+----------694102-----------------------------
+INT 69 - 10NET v5.0 - SYSSVC.COM - ???
+	AX = 4102h
+	???
+Return: ???
+----------694103-----------------------------
+INT 69 - 10NET v5.0 - SYSSVC.COM - ???
+	AX = 4103h
+	???
+Return: ???
+----------694104-----------------------------
+INT 69 - 10NET v5.0 - SYSSVC.COM - ???
+	AX = 4104h
+	???
+Return: ???
+----------6942-------------------------------
+INT 69 - 10NET v5.0 - SYSSVC.COM - ???
+	AH = 42h
+	AL = function (01h-14h)
+	???
+Return: ???
+----------6943-------------------------------
+INT 69 - 10NET v5.0 - SYSSVC.COM - ???
+	AH = 43h
+	AL = function (01h-05h)
+	???
+Return: ???
+----------6944-------------------------------
+INT 69 - 10NET v5.0 - SYSSVC.COM - ???
+	AH = 44h
+	AL = function (01h-03h)
+	???
+Return: ???
+----------6949-------------------------------
+INT 69 - 10NET v5.0 - SYSSVC.COM - BUG
+	AH = 49h
+Note:	due to a fencepost error, this function branches to hyperspace
+SeeAlso: AX=4001h,AH=FFh
 ----------696996-----------------------------
 INT 69 - ISR.COM v1.00 - SPECIFY INTERRUPT HANDLER
 	AX = 6996h
@@ -738,6 +800,15 @@ Notes:	ISR (Interrupt Service Reflector) is a TSR by Rich Bono which permits
 	  debugging.
 	the interrupt vector which is to be reflected is set at installation
 	  time and cannot be changed
+----------69FF-------------------------------
+INT 69 - 10NET v5.0 - SYSSVC.COM - SIGNAL SYSTEM ERROR
+	AH = FFh
+Return: never???
+Notes:	displays "System Error" message and register dump, then halts system
+	INT 69 is the default, and may be set to any interrupt from 60h-7Fh;
+	  the signature "SYSV" immediately before the interrupt handler serves
+	  as the installation check
+SeeAlso: AX=4001h,AH=49h
 ----------6A---------------------------------
 INT 6A - OPTHELP.COM
 Notes:	OPTHELP is an optionally-resident help system for SLR Systems's OPTASM
@@ -745,8 +816,15 @@ Notes:	OPTHELP is an optionally-resident help system for SLR Systems's OPTASM
 	may be configured to use any interrupt from 60h to 7Fh (default 6Ah)
 ----------6A---------------------------------
 INT 6A - DECnet DOS - LOCAL AREA TRANSPORT PROGRAM
-Note:	the 3 bytes preceding the interrupt handler are "LAT"; this serves as
-	  the installation check
+Note:	the installation check consists of testing for a signature area
+	  immediately preceding the interrupt handler
+SeeAlso: INT 6B"DECnet",INT 6D"DECnet"
+
+Format of signature area:
+Offset	Size	Description
+ -5	BYTE	major version number
+ -4	BYTE	minor version number
+ -3   3 BYTEs	signature (ASCII "LAT")
 ----------6A01--DHFF-------------------------
 INT 6A - DECnet DOS LOCAL AREA TRANSPORT - SEND BYTE
 	AH = 01h
@@ -865,6 +943,17 @@ Return: AX = number of service table entries
 	BX = 0000h service table has not overflowed
 	   = FFFFh service table has overflowed
 SeeAlso: AX=D500h
+---------------------------------------------
+INT 6B - DECnet DOS - PORT DRIVER
+Note:	the installation check consists of testing for a signature area
+	  immediately preceding the interrupt handler
+SeeAlso: INT 6A"DECnet",INT 6C"DECnet"
+
+Format of signature area:
+Offset	Size	Description
+ -5	BYTE	major version number
+ -4	BYTE	minor version number
+ -3   3 BYTEs	signature (ASCII "PDV")
 ----------6B0000-----------------------------
 INT 6B - Novell NASI/NACS, Ungermann-Bass Net One SERIAL I/O - BUFFERED WRITE
 	AX = 0000h
@@ -1017,7 +1106,16 @@ INT 6C - system resume vector (CONVERTIBLE)
 INT 6C - DOS 3.2 Realtime Clock update
 ----------6C---------------------------------
 INT 6C - DECnet DOS network scheduler
-SeeAlso: INT 6D"DECnet",INT 6E"DECnet"
+Notes:	the installation check consists of testing for a signature area
+	  immediately preceding the interrupt handler
+	also supported by DEC Pathworks for DOS
+SeeAlso: INT 6B"DECnet",INT 6D"DECnet",INT 6E"DECnet"
+
+Format of signature area:
+Offset	Size	Description
+ -5	BYTE	major version number
+ -4	BYTE	minor version number
+ -3   3 BYTEs	signature (ASCII "SCH")
 ----------6D---------------------------------
 INT 6D - VGA - internal
 Note:	used by IBM, Paradise, Video7, and NCR
@@ -1030,7 +1128,15 @@ INT 6D - DECnet DOS (before 2.1) - DATA LINK LAYER PROGRAM
 	AH = function
 	???
 Return: ???
+Note:	the installation check consists of testing for a signature area
+	  immediately preceding the interrupt handler
 SeeAlso: INT 69/AH=0Ah,INT 6C"DECnet",INT 6E"DECnet"
+
+Format of signature area:
+Offset	Size	Description
+ -5	BYTE	major version number
+ -4	BYTE	minor version number
+ -3   3 BYTEs	signature (ASCII "SCH")
 ----------6E---------------------------------
 INT 6E - DECnet DOS - DECnet NETWORK PROCESS API
 Notes:	this is the main DECnet DOS access, and is described in Digital manual
@@ -1064,11 +1170,20 @@ SeeAlso: BP=0012h/AH=22h
 ----------6F---------------------------------
 INT 6F - Novell NetWare - PCOX API (3270 PC terminal interface)
 ----------6F00-------------------------------
-INT 6F - 10-NET - LOGIN
+INT 6F - 10NET - LOGIN
 	AH = 00h
 	DS:DX -> login record (see below)
 Return: CL = security level
-	AX = status
+	AX = status (see below)
+SeeAlso: AH=01h,INT 21/AX=4402h"10MEMMGR"
+
+Format of login record:
+Offset	Size	Description
+ 00h  8 BYTEs	user name
+ 08h  8 BYTEs	password
+ 10h 12 BYTEs	name of SuperStation
+
+Values for status:
 	    0000h successful
 	    01FFh time out on response
 	    02FFh network (hardware) error
@@ -1130,15 +1245,8 @@ Return: CL = security level
 	    FF16h invalid parameter (bad length, invalid node ID, etc)
 	    FF17h record locked by another user
 	    FF18h sent message has been dropped
-SeeAlso: AH=01h
-
-Format of login record:
-Offset	Size	Description
- 00h  8 BYTEs	user name
- 08h  8 BYTEs	password
- 10h 12 BYTEs	name of SuperStation
 ----------6F01-------------------------------
-INT 6F - 10-NET - LOGOFF
+INT 6F - 10NET - LOGOFF
 	AH = 01h
 	DS:DX -> superstation ID or nulls (12 bytes)
 Return: CX = number of files closed
@@ -1146,7 +1254,7 @@ Return: CX = number of files closed
 	    FF08h superstation ID not already logged in
 SeeAlso: AH=00h
 ----------6F02-------------------------------
-INT 6F - 10-NET - STATUS OF NODE
+INT 6F - 10NET - STATUS OF NODE
 	AH = 02h
 	DS:DX -> 512-byte status record (see below)
 Return: CF set on error
@@ -1187,7 +1295,7 @@ Offset	Size	Description
 1F4h  3 BYTEs	time: sec/min/hrs
 1F7h  3 BYTEs	date: day/mon/year-1980
 ----------6F03-------------------------------
-INT 6F - 10-NET - GET ADDRESS OF CONFIGURATION TABLE
+INT 6F - 10NET - GET ADDRESS OF CONFIGURATION TABLE
 	AH = 03h
 	DS:DI -> node ID (optional)
 Return: ES:BX -> configuration table 
@@ -1205,7 +1313,7 @@ Offset	Size	Description
 -29	BYTE	enable flag
 -28	BYTE	FCB keep flag
 -27	WORD	reserved
----up to here, 10-Net v3.3---
+---up to here, 10NET v3.3---
 -25	WORD	count of dropped Send6F
 -23	WORD	buffer start address
 -21	WORD	comm driver base address
@@ -1247,14 +1355,14 @@ Offset	Size	Description
  3Ch	BYTE	active CB channel
  3Dh	BYTE	received 6F messages on queue
  3Eh  9 BYTEs	activity counters for channels 1-9
----beyond here, 10-Net v3.3---
+---beyond here, 10NET v3.3---
  47h	BYTE	bit 0 = RS232 gate
 		    1 = Send6F gate (user set)
  48h	DWORD	pointer into gate (user set)
  4Ch	DWORD	pointer into 10Net send
  50h  N WORDs	addresses of timer blocks
 ----------6F04-------------------------------
-INT 6F - 10-NET - SEND
+INT 6F - 10NET - SEND
 	AH = 04h
 	DS:BX -> record
 		12 BYTEs receiving node's ID
@@ -1270,7 +1378,7 @@ Return: CF set on error
 	CF clear if successful
 SeeAlso: AH=05h
 ----------6F05-------------------------------
-INT 6F - 10-NET - RECEIVE
+INT 6F - 10NET - RECEIVE
 	AH = 05h
 	CX = number of seconds before timeout
 	DS:DX -> receive buffer (see below)
@@ -1286,7 +1394,7 @@ Offset	Size	Description
  0Ch	WORD	length of message
  0Eh  N BYTEs	message (maximum 1024 bytes)
 ----------6F07-------------------------------
-INT 6F - 10-NET - LOCK HANDLE
+INT 6F - 10NET - LOCK HANDLE
 	AH = 07h
 	BX = file handle
 	CX:DX = starting offset in file
@@ -1297,7 +1405,7 @@ Return: CF set on error
 	CF clear if successful
 SeeAlso: AH=08h,INT 21/AH=5Ch
 ----------6F08-------------------------------
-INT 6F - 10-NET - UNLOCK HANDLE
+INT 6F - 10NET - UNLOCK HANDLE
 	AH = 08h
 	BX = file handle
 	AL = mode
@@ -1309,7 +1417,7 @@ Return: CF set on error
 	CF clear if successful
 SeeAlso: AH=07h,INT 21/AH=5Ch
 ----------6F09-------------------------------
-INT 6F - 10-NET - SUBMIT
+INT 6F - 10NET - SUBMIT
 	AH = 09h
 	DS:BX -> submit record (see below)
 
@@ -1319,7 +1427,7 @@ Offset	Size	Description
  0Ch	WORD	length+2 of following 'command line' text
  0Eh  N BYTEs	command line text (<=100 bytes), system adds CR
 ----------6F0A-------------------------------
-INT 6F - 10-NET - CHAT
+INT 6F - 10NET - CHAT
 	AH = 0Ah
 	DS:BX -> control parameters (see below)
 	DS:DX -> chat message (see below)
@@ -1335,7 +1443,7 @@ Offset	Size	Description
  00h	WORD	length+2 of following text
  02h  N BYTEs	text, max 101 bytes
 ----------6F0B-------------------------------
-INT 6F - 10-NET - LOCK SEMAPHORE, RETURN IMMEDIATELY
+INT 6F - 10NET - LOCK SEMAPHORE, RETURN IMMEDIATELY
 	AH = 0Bh
 	AL = drive number or 0
 	ES:SI = Ethernet address or 0
@@ -1354,7 +1462,7 @@ Return: AL = status
 Note:	same as INT 60/AH=12h
 SeeAlso: AH=0Ch,INT 60/AH=12h
 ----------6F0C-------------------------------
-INT 6F - 10-NET - UNLOCK SEMAPHORE
+INT 6F - 10NET - UNLOCK SEMAPHORE
 	AH = 0Ch
 	AL = drive number or 0
 	ES:SI = Ethernet address or 0
@@ -1364,7 +1472,7 @@ Return: AL = status (see also AH=0Bh)
 Note:	same as INT 60/AH=13h
 SeeAlso: AH=0Bh,INT 60/AH=13h
 ----------6F0D-------------------------------
-INT 6F - 10-NET - WHO
+INT 6F - 10NET - WHO
 	AH = 0Dh
 	AL = type code
 	    01h return superstations only
@@ -1390,7 +1498,7 @@ Offset	Size	Description
  15h	BYTE	version number
  16h	WORD	level number
 ----------6F0E-------------------------------
-INT 6F - 10-NET - SPOOL/PRINT
+INT 6F - 10NET - SPOOL/PRINT
 	AH = 0Eh
 	DS:DX -> spool/print record (see below)
 Return: CF set on error
@@ -1481,15 +1589,20 @@ Offset	Size	Description
  23h	WORD	bytes to print for test print
  25h	WORD	block number to start print
  27h	BYTE	reserved
+----------6F0F-------------------------------
+INT 6F - 10NET v5.0 - "RM LOCK" - ???
+	AH = 0Fh
+	???
+Return: ???
 ----------6F10-------------------------------
-INT 6F - 10-NET - ATTACH/DETACH PRINTER
+INT 6F - 10NET - ATTACH/DETACH PRINTER
 	AH = 10h
 	AL = subfunction
 	    00h initiate spooling if LPT1 is mounted
 	    01h terminate spooling if LPT1 is mounted
 SeeAlso: INT 21/AX=5D08h
 ----------6F11-------------------------------
-INT 6F - 10-NET - LOCK FCB
+INT 6F - 10NET - LOCK FCB
 	AH = 11h
 	AL = mode
 	    01h sequential
@@ -1503,7 +1616,7 @@ Return: CF set on error
 	CF clear if successful
 SeeAlso: AH=12h
 ----------6F12-------------------------------
-INT 6F - 10-NET - UNLOCK FCB
+INT 6F - 10NET - UNLOCK FCB
 	AH = 12h
 	AL = mode
 	    00h sequential
@@ -1517,7 +1630,7 @@ Return: CF set on error
 	CF clear if successful
 SeeAlso: AH=11h
 ----------6F13-------------------------------
-INT 6F - 10-NET v3.3 - GET REMOTE CONFIGURATION TABLE ADDRESS
+INT 6F - 10NET v3.3+ - GET REMOTE CONFIGURATION TABLE ADDRESS
 	AH = 13h
 	DS:DX -> node ID, 12 bytes blank-padded
 Return: CF set on error
@@ -1526,7 +1639,7 @@ Return: CF set on error
 	    ES:BX = configuration table address on given machine
 SeeAlso: AH=03h
 ----------6F14-------------------------------
-INT 6F - 10-NET v3.3 - GET REMOTE MEMORY
+INT 6F - 10NET v3.3+ - GET REMOTE MEMORY
 	AH = 14h
 	BX:SI = address of remote memory
 	CX = length (<=1024 bytes)
@@ -1537,7 +1650,7 @@ Return: CF set on error
 	CF clear if successful
 	    CX = amount of memory copied to DS:SI
 ----------6F1501-----------------------------
-INT 6F - 10-NET v3.3 - GET SHARED DEVICE ENTRY
+INT 6F - 10NET v3.3+ - GET SHARED DEVICE ENTRY
 	AX = 1501h
 	BX = zero-based index
 	DS:SI -> node ID, 12 bytes blank-padded
@@ -1557,7 +1670,7 @@ Offset	Size	Description
  58h	BYTE	access
  59h  4 BYTEs	mask
 ----------6F1502-----------------------------
-INT 6F - 10-NET v3.3 - SET SHARED DEVICE ENTRY
+INT 6F - 10NET v3.3+ - SET SHARED DEVICE ENTRY
 	AX = 1502h
 	DS:SI -> node ID, 12 bytes blank-padded
 	ES:DI -> valid shared device table entry
@@ -1566,7 +1679,7 @@ Return: CF set on error
 	CF clear if successful
 SeeAlso: AX=1501h,AX=1503h
 ----------6F1503-----------------------------
-INT 6F - 10-NET v3.3 - DELETE SHARED DEVICE ENTRY
+INT 6F - 10NET v3.3+ - DELETE SHARED DEVICE ENTRY
 	AX = 1503h
 	BX = zero-based index
 	DS:SI -> node ID, 12 bytes blank-padded
@@ -1574,8 +1687,13 @@ Return: CF set on error
 	    AX = error code (see AH=00h)
 	CF clear if successful
 SeeAlso: AX=1501h,AX=1502h
+----------6F16-------------------------------
+INT 6F - 10NET v5.0 - "GL WHO" - ???
+	AH = 16h
+	???
+Return: ???
 ----------6F17-------------------------------
-INT 6F - 10-NET v3.3 - MOUNT
+INT 6F - 10NET v3.3+ - MOUNT
 	AH = 17h
 	AL = local drive number (0=A:)
 	BL = remote drive letter or '1'..'3' for LPTn or '4' or '5' for COMx
@@ -1585,7 +1703,7 @@ Return: CF set on error
 	CF clear if successful
 SeeAlso: AH=18h
 ----------6F18-------------------------------
-INT 6F - 10-NET v3.3 - UNMOUNT
+INT 6F - 10NET v3.3+ - UNMOUNT
 	AH = 18h
 	AL = local drive number (0=A:)
 	BL = type
@@ -1596,13 +1714,63 @@ Return: CF set on error
 	    AX = error code (see AH=00h)
 	CF clear if successful
 SeeAlso: AH=17h
+----------6F19-------------------------------
+INT 6F - 10NET v5.0 - "AUDIT" - ???
+	AH = 19h
+	???
+Return: ???
+----------6F1A-------------------------------
+INT 6F - 10NET v5.0 - "BULL" - ???
+	AH = 1Ah
+	???
+Return: ???
+----------6F1B-------------------------------
+INT 6F - 10NET v5.0 - "GMOUNT" - ???
+	AH = 1Bh
+	???
+Return: ???
+----------6F1C-------------------------------
+INT 6F - 10NET v5.0 - "GLOGIN" - ???
+	AH = 1Ch
+	???
+Return: ???
+----------6F1D-------------------------------
+INT 6F - 10NET v5.0 - "TABDATA" - ???
+	AH = 1Dh
+	???
+Return: ???
+----------6F1E-------------------------------
+INT 6F - 10NET v5.0 - "SCHED" - ???
+	AH = 1Eh
+	???
+Return: ???
+----------6F1F-------------------------------
+INT 6F - 10NET v5.0 - "WHOAMI" - ???
+	AH = 1Fh
+	???
+Return: ???
+----------6F20-------------------------------
+INT 6F - 10NET v5.0 - ???
+	AH = 20h
+	???
+Return: ???
+----------6F21-------------------------------
+INT 6F - 10NET v5.0 - ???
+	AH = 21h
+	???
+Return: ???
+----------6F22-------------------------------
+INT 6F - 10NET v5.0 - ???
+	AH = 22h
+	???
+Return: ???
 ----------70---------------------------------
 INT 70 - IRQ8 - CMOS REAL-TIME CLOCK
-Notes:	this interrupt is called when the real-time clock chip generates an
+Desc:	this interrupt is called when the real-time clock chip generates an
 	  alarm or periodic interrupt, among others.  The periodic interrupt
-	  occurs 1024 times per second, although many BIOSes turn it off in
-	  the INT 70h handler unless in an event wait (see INT 15/AH=83h or
-	  INT 15/AH=86h).
+	  occurs 1024 times per second.
+Nots:	many BIOSes turn off the periodic interrupt in the INT 70h handler
+	  unless in an event wait (see INT 15/AH=83h or INT 15/AH=86h).
 	may be masked by setting bit 0 on I/O port A1h
 SeeAlso: INT 08,INT 0F"HP 95LX",INT 15/AH=01h"Amstrad",INT 15/AH=83h
 SeeAlso: INT 15/AH=86h,INT 1A/AH=02h,INT 58"DESQview"
@@ -1662,7 +1830,7 @@ INT 78 - UofSalford DBOS DOS extender - API
 	BYTE following INT instruction contains function code
 	    03h switch to protected mode
 	    1Eh set real-mode memory size (specify how much real-mode memory
-	    	  to leave free when running FTN77 programs)
+		  to leave free when running FTN77 programs)
 	    22h uninstall
 	???
 Return: ???
@@ -1675,20 +1843,20 @@ SeeAlso: INT 08,INT 10/AH=FFh"GO32",INT 79"GO32"
 INT 78 - AutoCAD 10 ADI for Plotters
 	AX = function
 	    0001h initialize comm port and reset plotter
-	    	BX = ??? (comm port?)
+		BX = ??? (comm port?)
 	    0002h close plotter
 	    0003h move (pen up)
-	    	BX = new X position
+		BX = new X position
 		CX = new Y position
 	    0004h move (pen down)
-	    	BX = new X position
+		BX = new X position
 		CX = new Y position
 	    0005h select pen
-	    	BX = pen number
+		BX = pen number
 	    0006h select drawing speed
-	    	BX = drawing speed N
+		BX = drawing speed N
 	    0007h select line style
-	    	BX = line style N
+		BX = line style N
 	    0008h return pen to pen carrier??? (called before change-pen cmd)
 Return: ???
 SeeAlso: INT 7A"AutoCAD",INT 7B"AutoCAD"
@@ -1906,13 +2074,13 @@ INT 79 U - AutoCAD Device Interface - DIGITIZER - GET DIGITIZER STATUS
 	AX = 0003h
 Return: AX = button state
 	    0002h no button pressed
-	    	BX = X coordinate
+		BX = X coordinate
 		CX = Y coordinate
 	    0003h Pick button (0,A,B,C,D) pressed
-	    	BX = X coordinate
+		BX = X coordinate
 		CX = Y coordinate
 	    0005h other button (1-9) pressed
-	    	BX = number of button - 1
+		BX = number of button - 1
 		CX = X coordinate
 		DX = Y coordinate
 Note:	these return values are valid for the Houston Instruments HiPad Plus
@@ -1934,6 +2102,10 @@ INT 7A - X.PC Packet software interface
 	ES:BX -> parameter block
 SeeAlso: INT 60/AX=01FFh
 ----------7A---------------------------------
+INT 7A - DJGPP GO32 DOS EXTENDER - RELOCATED IRQ2
+Note:	this vector is overwritten when GO32 starts but is not restored
+SeeAlso: INT 0A,INT 79"GO32",INT 7B"GO32"
+----------7A---------------------------------
 INT 7A - Novell NetWare - LOW-LEVEL API - Notes
 Note:	this interrupt is used for IPX/SPX access in NetWare versions through
 	  2.0a; in later versions, you should use INT 2F/AX=7A00h to get an
@@ -1941,10 +2113,6 @@ Note:	this interrupt is used for IPX/SPX access in NetWare versions through
 	  the FAR entry point, BX contains the function number; IPX is
 	  sometimes called internally with BX bit 15 set.
 SeeAlso: INT 2F/AX=7A00h,INT 64"Novell",INT 7A/BX=0000h
-----------7A---------------------------------
-INT 7A - DJGPP GO32 DOS EXTENDER - RELOCATED IRQ2
-Note:	this vector is overwritten when GO32 starts but is not restored
-SeeAlso: INT 0A,INT 79"GO32",INT 7B"GO32"
 ----------7A----BX0000-----------------------
 INT 7A - Novell NetWare - IPX Driver - OPEN SOCKET
 	BX = 0000h
@@ -1953,11 +2121,7 @@ INT 7A - Novell NetWare - IPX Driver - OPEN SOCKET
 	    FFh open until close
 	DX = socket number (high byte in DL)
 	    0000h dynamic allocation
-	    else  socket to open
-	    	0452h Service Advertising Socket
-		0456h diagnostics
-		4000h-7FFFh used for dynamic allocation
-		8000h-FFFFh assigned by Novell
+	    else  socket to open (see below)
 Return: AL = return code
 	    00h success
 		DX = socket number
@@ -1969,6 +2133,20 @@ Notes:	TSRs which need to use sockets should set AL to FFh, non-resident
 	  workstation, and defaults to 20
 	this function is supported by Advanced NetWare 1.02+
 SeeAlso: BX=0001h,BX=0004h
+
+Values for socket number:
+ 0451h File Service
+ 0452h Service Advertising Socket
+ 0453h Routing Information Packet
+ 0455h NetBIOS Packet
+ 0456h diagnostics
+ 0457h ??? (appears to be related to server serial numbers)
+ 4000h-7FFFh used for dynamic allocation
+ 4444h Brightwork Development's SiteLock server
+ 5555h Brightwork Development's SiteLock client (workstation)
+ 8000h-FFFFh assigned by Novell
+Note:	SiteLock is an application metering product using IPX to communicate
+	  between the application and the license server
 ----------7A----BX0001-----------------------
 INT 7A - Novell NetWare - IPX Driver - CLOSE SOCKET
 	BX = 0001h
@@ -1985,7 +2163,7 @@ INT 7A - Novell NetWare - IPX Driver - GET LOCAL TARGET
 Return: AL = return code
 	    00h success
 	       CX = expected one-way transfer time (clock ticks) for a 576-byte
-	       		packet
+			packet
 	       ES:DI -> local target
 	    FAh unsuccessful (no path to destination)
 Notes:	the internetwork address consists of a 4-byte network address followed
@@ -2003,27 +2181,35 @@ INT 7A - Novell NetWare - IPX Driver - SEND PACKET
 	ES:SI -> Event Control Block (see below)
 Notes:	returns immediately; IPX attempts to send the packet in the background
 	this function is supported by Advanced NetWare 1.02+
-SeeAlso: BX=0004h,BX=000Fh
+SeeAlso: BX=0004h,BX=000Fh,INT 21/AH=EEh"Novell"
 
 Format of Event Control Block:
 Offset	Size	Description
  00h	DWORD	Link
  04h	DWORD	-> Event Service Routine (00000000h if none)
  08h	BYTE	in use flag
- 		00h available
+		00h available
+		E0h AES temporary
+		F6h \ special IPX/SPX processing for v3.02+
+		F7h /
+		F8h IPX in critical section
+		F9h SPX listening
+		FAh processing
+		FBh holding
+		FCh AES waiting
 		FDh AES couting down delay time
 		FEh awaiting packet reception
 		FFh sending packet
  09h	BYTE	completion code (see below)
  0Ah	WORD	socket (big-endian)
- 		0452h Service Advertising Socket
+		0452h Service Advertising Socket
 		0456h diagnostics
 		other
  0Ch  4 BYTES	IPX workspace
  10h 12 BYTES	driver workspace
  1Ch  6 BYTES	immediate local node address
  22h	WORD	fragment count
- 26h	var	fragment descriptors
+ 24h	var	fragment descriptors
 		Offset	Size	Description
 		 00h	DWORD	-> fragment data
 		 04h	WORD	size of fragment in bytes.
@@ -2042,6 +2228,7 @@ Values for ECB completion code:
  EEh invalid connection ID
  EFh SPX connection table full
  F9h event should not be cancelled
+ FAh cannot establish connection with specified destination
  FCh cancelled
  FDh malformed packet
  FEh packet undeliverable
@@ -2064,11 +2251,11 @@ Offset	Size	Description
 		03h error packet
 		04h packet exchange packet (always use this one)
 		05h SPX packet
-		11h (used internally)
+		11h-1Eh experimental protocols
  06h 10 BYTES	destination internetwork address
  10h	WORD	destination socket (high byte first)
  12h 10 BYTES	source internetwork address
- 1Ch	WORD	source socket
+ 1Ch	WORD	source socket (high byte first)
 
 Format of Service Advertising Protocol Service Query Packet:
 Offset	Size	Description
@@ -2080,7 +2267,7 @@ Format of Service Advertising Protocol Server Identification Packet:
 Offset	Size	Description
  00h 30 BYTEs	IPX header
  1Eh	WORD	response type (big-endian)
- 		0002h general service
+		0002h general service
 		0004h nearest service
  20h	WORD	server type (big-endian) (see INT 21/AH=E3h"NetWare")
  22h 48 BYTEs	ASCIZ server name
@@ -2093,7 +2280,8 @@ INT 7A - Novell NetWare - IPX Driver - LISTEN FOR PACKET
 	BX = 0004h
 	ES:SI -> Event Control Block (see BX=0003h)
 Return: AL = status
-	    FFh no listening socket
+	    00h successful
+	    FFh no listening socket for packet
 Desc:	this function provides IPX with an ECB for receiving an IPX packet, but
 	  does not wait for a packet to arrive
 Notes:	the application must open a socket and initialize the ECB's ESR
@@ -2118,7 +2306,7 @@ Return: AL = return code
 	    00h success
 	    F9h event in use
 	    FCh event cancelled
-	    FFh unsuccessful, event not in use
+	    FFh unsuccessful, event not in use, or unrecognized ECB flag
 Notes:	cannot cancel packets which the node's driver has already sent
 	this function is supported by Advanced NetWare 1.02+
 SeeAlso: BX=0005h
@@ -2140,7 +2328,9 @@ SeeAlso: BX=0005h
 ----------7A----BX0009-----------------------
 INT 7A - Novell NetWare - IPX Driver - GET INTERNETWORK ADDRESS
 	BX = 0009h
-Return: ES:SI -> own internetwork address (see below)
+	ES:SI -> buffer for own internetwork address (see below)
+Return: ES:SI buffer filled
+	SI destroyed
 Note:	this function is supported by Advanced NetWare 1.02+
 SeeAlso: BX=0002h,BX=000Bh
 
@@ -2172,21 +2362,25 @@ Offset	Size	Description
  04h  6 BYTEs	destination node (big-endian)
  0Ah  2 BYTEs	destination socket (big-endian)
 ----------7A----BX000C-----------------------
-INT 7A U - Novell NetWare - IPX Driver - INTERNAL
+INT 7A U - Novell NetWare - IPX Driver - internal - INITIALIZE NETWORK ADDRESS
 	BX = 000Ch
-	???
-Return: ???
+	CX:DX = global network address (see INT 7A/BX=0002h)
+	ES:DI -> "OSINCRITICALSECTION" flag
+	DS:SI -> current mode for socket
+Note:	the address cannot be changed once it has been initialized
 ----------7A----BX000D-----------------------
-INT 7A U - Novell NetWare - IPX Driver - INTERNAL
+INT 7A U - Novell NetWare - IPX Driver - internal - IPX GET PACKET SIZE
 	BX = 000Dh
-	???
-Return: AX = ???
-	CL = ???
+Return: AX = maximum packet size
+	CX = retry count
+SeeAlso: BX=001Ah
 ----------7A----BX000E-----------------------
-INT 7A U - Novell NetWare - IPX Driver - INTERNAL
+INT 7A U - Novell NetWare - IPX Driver - internal - TERMINATE SOCKETS
 	BX = 000Eh
-	???
-Return: ???
+Return: nothing
+Note:	this function terminates all sockets opened with the current mode; this
+	  may be intended for future enhancements as the socket mode never
+	  changes in v2.15
 ----------7A----BX000F-----------------------
 INT 7A U - Novell NetWare - IPX Driver - INTERNAL - SEND PACKET
 	BX = 000Fh
@@ -2286,25 +2480,25 @@ SeeAlso: BX=0010h,BX=0011h
 Format of status buffer:
 Offset	Size	Description
  00h	BYTE	connection state
- 		01h waiting to establish connection
+		01h waiting to establish connection
 		02h starting (attempting to create connection)
 		03h connection established
 		04h terminating
  01h	BYTE	watchdog flag
- 		bit 0: used internally by SPX
- 		bit 1: SPX watchdog is monitoring connection
+		bit 0: used internally by SPX
+		bit 1: SPX watchdog is monitoring connection
 		bits 2-7: used internally by SPX
  02h	WORD	source connection ID (big-endian)
  04h	WORD	destination connection ID (big-endian)
  06h	WORD	sequence number of next packet sent (big-endian)
  08h	WORD	acknowledge number, expected sequence number of next received
- 		packet (big-endian)
+		packet (big-endian)
  0Ah	WORD	maximum sequence number remote SPX may send without ACK from
- 		local SPX (big-endian)
+		local SPX (big-endian)
  0Ch	WORD	remote acknowledge number, next sequence number remote SPX
- 		expects to receive (big-endian)
+		expects to receive (big-endian)
  0Eh	WORD	remote allocation number, maximum sequence number local SPX
- 		may send (big-endian)
+		may send (big-endian)
  10h	WORD	connection socket (big-endian)
  12h  6 BYTEs	immediate node address--bridge on local network to destination
  18h 10 BYTEs	destination internetwork address (see INT 7A/BX=000Bh)
@@ -2312,6 +2506,7 @@ Offset	Size	Description
  24h	WORD	estimated roundtrip delay (big-endian)
  26h	WORD	retransmitted packets (big-endian)
  28h	WORD	suppressed packets (big-endian)
+ 2Ah 12 BYTEs	??? (v2.15)
 ----------7A----BX0016-----------------------
 INT 7A - Novell NetWare - SPX Driver - SEND SPX PACKET
 	BX = 0016h
@@ -2323,30 +2518,46 @@ SeeAlso: BX=0011h,BX=0017h
 ----------7A----BX0017-----------------------
 INT 7A - Novell NetWare - SPX Driver - LISTEN FOR SPX PACKET
 	BX = 0017h
+	DX = connection ID (unused in v2.15)
 	ES:SI -> Event Control Block (see BX=0003h)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	CX may need to be 0001h ???
 SeeAlso: BX=0011h,BX=0016h
 ----------7A----BX0018-----------------------
-INT 7A U - Novell NetWare - SPX Driver - INTERNAL
+INT 7A U - Novell NetWare - SPX Driver - internal - ADD DIAGNOSTIC ELEMENT
 	BX = 0018h
-	???
-Return: ???
+	ES:SI -> diagnostic element (see below) to be added to Diagnostic Queue
+Note:	this function is supported on file servers only under v2.15; v3.02 also
+	  supports it on workstations
+SeeAlso: BX=0019h
+
+Format of diagnostic element:
+Offset	Size	Description
+ 00h	DWORD	pointer to next diagnostic element
+ 04h	DWORD	pointer to function for ???
+ 08h	DWORD	pointer to function for ???
 ----------7A----BX0019-----------------------
-INT 7A U - Novell NetWare - IPX Driver - INTERNAL
+INT 7A U - Novell NetWare - IPX Driver - internal - CANCEL DIAGNOSTIC ELEMENT
 	BX = 0019h
-	???
-Return: ???
+	ES:SI -> diagnostic element (see BX=0018h) to be removed
+Note:	this function is supported on file servers only under v2.15; v3.02 also
+	  supports it on workstations
+SeeAlso: BX=0018h
 ----------7A----BX001A-----------------------
-INT 7A U - Novell NetWare - IPX Driver - INTERNAL
+INT 7A U - Novell NetWare - IPX Driver - internal - GET DRIVER PACKT SIZE LIMIT
 	BX = 001Ah
-	???
-Return: ???
+Return: AX = packet size with preamble
+	CX = IPX retry count
+Note:	this function is supported on file servers only under v2.15; v3.02 also
+	  supports it on workstations
+SeeAlso: BX=000Dh
 ----------7A----BX001B-----------------------
 INT 7A U - Novell NetWare - IPX Driver - INTERNAL
 	BX = 001Bh
 	???
 Return: ???
+Note:	this function is supported on file servers only under v2.15; v3.02 also
+	  supports it on workstations
 ----------7A04-------------------------------
 INT 7A - IBM 3270 Workstation Program API - CREATE A QUEUE
 	AH = 04h
@@ -2595,7 +2806,7 @@ INT 7B - Btrieve API (single user)
 Return: return code field set
 Note:	Btrieve sets low byte of vector to 33h; this serves as the installation
 	  check
-SeeAlso: INT 21/AX=3000h"Btrieve",INT 2F/AX=AB01h,INT 7F/AX=0200h
+SeeAlso: INT 2F/AX=AB01h,INT 7F/AX=0200h
 
 Format of Btrieve parameter record:
 Offset	Size	Description
@@ -2611,7 +2822,7 @@ Offset	Size	Description
  15h	BYTE	key number
  16h	DWORD	pointer to status code (see below)
  1Ah	WORD	interface code (version specific)
- 		6176h version 5.10
+		6176h version 5.10
 
 Values for function code:
  00h open
@@ -2755,7 +2966,7 @@ Values for status code:
 ----------7B---------------------------------
 INT 7B - Eicon Access API (3270/5250 gateways)
 ----------7B---------------------------------
-INT 7B U - AutoCAD ADI INTERFACE
+INT 7B CU - AutoCAD ADI INTERFACE
 	AX = function
 	    0000h output blank line
 	    other ???
@@ -2796,7 +3007,7 @@ Format of HyperPAD data area:
 Offset	Size	Description
  -16h	DWORD	pointer to ??? FAR function
  -12h	DWORD	pointer to callback setting function
- 		[C calling conventions, (*callback)(int (_loadds far *)()) ]
+		[C calling conventions, (*callback)(int (_loadds far *)()) ]
  -0Eh 6 BYTEs	signature "BRC001"
  -08h	DWORD	pointer to previous INT 7D handler
  -04h	DWORD	pointer to ??? data
@@ -3277,8 +3488,7 @@ SeeAlso: AH=00h,AH=01h,AH=42h
 ----------7F0200-----------------------------
 INT 7F - Btrieve Multi-User - GIVE UP TIME???
 	AX = 0200h
-SeeAlso: INT 21/AX=3000h"Btrieve",INT 2F/AX=AB01h,INT 2F/AX=AB02h
-SeeAlso: INT 7B"Btrieve"
+SeeAlso: INT 2F/AX=AB01h,INT 2F/AX=AB02h,INT 7B"Btrieve"
 ----------7F03-------------------------------
 INT 7F - Alloy ANSK, NTNX, MW386 - GET USER NUMBER
 	AH = 03h
@@ -4153,11 +4363,48 @@ Note:	must have supervisor privilege to set another user's status
 INT 7F - IBM 8516 Touch Screen Device Driver - GET API ENTRY
 	AX = ABCDh
 	BX = 0000h
-Return: ???:??? -> entry point array
+Return: AX = total number of functions available
+	ES:BX -> entry point array
 SeeAlso: AX=0104h,AX=0105h
 
 Function numbers:
+ 00h	check initialization and reset
  14h	set user-defined subroutine
+Notes:	each driver function takes two stack parameters using Pascal calling
+	  conventions: address of parameter block and address of results buffer
+	all pointers are FAR pointers
+	on return, AX contains the status of the call:
+	    AX = 0000h successful
+		 0001h invalid input
+		 0002h interface error
+		 0003h unable to perform function
+
+Format of parameter block for function 00h:
+Offset	Size	Description
+ 00h	WORD	0000h (function number)
+Note:	this function should be called before any other device driver functions
+
+Format of results buffer for function 00h:
+Offset	Size	Description
+ 00h	WORD	touch screen status
+		0000h unavailable
+		0001h uncalibrated
+		FFFFh available
+ 02h	WORD	aux mouse status (0000h not present, FFFFh present)
+Notes:	the following driver parameters will have been reset to zero:
+	  touchdown counter, liftoff counter, position at last touch, position
+	  at last lift, int call mask, select on count, select off count,
+	  pos select on count, pos select off count.
+	the following driver parameters will have been reset as listed:
+	  mouse emulation mode: left on
+	  thresholds: 46 on screen, 96 push harder, 80 push release
+	  x, y hysteresis: 400
+	  data repeat rate: 40/sec
+	  select mechanism: push-harder - first-touch
+	  coordinate origin: upper left corner
+	  filter frequency: medium
+	  data block mask: all enabled
+	  click lock: on
 ----------7FB0-------------------------------
 INT 7F - Alloy NTNX, MW386 - RELEASE ALL SEMAPHORES FOR USER
 	AH = B0h
@@ -6185,9 +6432,9 @@ INT E0 - DR Multiuser DOS - "A_CONFIG" - GET/SET AUX DEVICE PARAMETERS
 	DX:DX -> AUX device parameter block (see below)
 Return: AX = status
 	    0000h successful
-	    	parameter block updated
+		parameter block updated
 	    FFFFh failed
-	    	CX = error code
+		CX = error code
 SeeAlso: INT E0/CL=A5h,INT E0/CL=B1h
 
 Format of AUX device parameter block:
@@ -6195,7 +6442,7 @@ Offset	Size	Description
  00h	BYTE	function (00h get, 01h set)
  01h	BYTE	baud rate (see below) FFh = don't change/unknown
  02h	BYTE	parity
- 		00h none
+		00h none
 		01h odd
 		02h none
 		03h even
@@ -6204,7 +6451,7 @@ Offset	Size	Description
  03h	BYTE	stop bits (00h one, 01h 1.5, 02h two, FFh unknown/don't change)
  04h	BYTE	data bits (05h-08h or FFh unknown/don't change)
  05h	BYTE	handshake (00h none, 01h DTS/DSR, 02h RTS/CTS, 04h XON/XOFF,
- 		FFh unknown/don't change)
+		FFh unknown/don't change)
  06h	BYTE	XON character, FFh unknown/don't change
  07h	BYTE	XOFF character, FFh unknown/don't change
 
@@ -6257,7 +6504,7 @@ INT E0 - DR Multiuser DOS - "A_BREAK" - SEND BREAK TO AUX DEVICE
 	DX = duration of break in system ticks (0001h-FFFFh)
 Return: AX = status
 	    0000h successful
-	    	break signal completed
+		break signal completed
 	    FFFFh failed
 		CX = error code
 Note:	if the AUX device is currently owned by another process, this call will
@@ -6582,7 +6829,7 @@ INT FF - Z100 - WARM BOOT
 SeeAlso: INT 40"Z100"
 ---------------------------------------------
 Please redistribute the following files unmodified as a group, in a pair of
-archives named INTER32A and INTER32B (preferably the original authenticated
+archives named INTER33A and INTER33B (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
 	INTERRUP.A	INT 00 through INT 14
@@ -6598,7 +6845,7 @@ PKZIP archives):
 	INTPRINT.DOC	instructions for INTPRINT
 	GLOSSARY.LST	a glossary of terms, abbreviations, and acronyms
 	MEMORY.LST	format of the BIOS data area
-The following files should be distributed in an archive called INTER32C:
+The following files should be distributed in an archive called INTER33C:
 	INT.COM		invoke interrupts from commandline
 	INT2HLP.BAT	Perl script to convert list into QuickHelp database
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
@@ -6606,7 +6853,7 @@ The following files should be distributed in an archive called INTER32C:
 	INTHELP.*	convert list into TurboPower GUIDE database
 	INTLIST.E	Epsilon extension for handling list
 	INTPRINT.C	source code for INTPRINT
-This compilation is Copyright (c) 1989, 1990, 1991, 1992 Ralf Brown
+This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
 ---------------------------------------------
 ARPA: ralf@cs.cmu.edu
 UUCP: {ucbvax,harvard}!cs.cmu.edu!ralf

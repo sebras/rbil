@@ -1,5 +1,5 @@
 Interrupt List, part 6 of 8
-This compilation is Copyright (c) 1989,1990,1991,1992 Ralf Brown
+This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
 ----------2FC0-------------------------------
 INT 2F - MTEZ XpressFax Hardware TSR (CLASS2) - API
 	AH = C0h
@@ -37,6 +37,141 @@ Return: AL = status
 		CX = 6A6Eh
 Note:	this TSR will use any free multiplex number from C0h to FFh
 SeeAlso: AH=C0h"MTEZ"
+----------2FC000-----------------------------
+INT 2F - AD-DOS - INSTALLATION CHECK
+	AX = C000h
+Return: AL = FFh if installed
+	    BX = 4144h ('AD')
+	    CX = 2D44h ('-D')
+	    DX = 4F53h ('OS')
+Program: AD-DOS is the DOS version of the After Dark screen blanker for
+	  MS Windows
+Note:	AH=C0h is the default multiplex number; if this is already in use,
+	  After Dark will try successive values up to AH=FFh
+SeeAlso: AX=C001h,AX=C003h,AX=C005h,AX=C007h,AX=C009h,AX=C020h
+----------2FC001ES0000-----------------------
+INT 2F - AD-DOS - GET RESIDENT CODE SEGMENT
+	AX = C001h
+	ES = 0000h
+Return: AL = 00h if successful
+	    ES = AD-DOS TSR Code Segment
+SeeAlso: AX=C000h"AD-DOS"
+----------2FC002-----------------------------
+INT 2F - AD-DOS - CHECK FOR NEW INPUT
+	AX = C002h
+Return: AL = 00h if succesful
+	    BX = status
+		0000h no input since last check
+		0001h new input available
+Note:	this call also resets the new-input flag
+SeeAlso: AX=C000h"AD-DOS",AX=C004h
+----------2FC003-----------------------------
+INT 2F - AD-DOS - SET MINUTES TO WAIT
+	AX = C003h
+	BX = minutes to wait before blanking screen
+Return: AL = 00h if successful
+Program: AD-DOS is the DOS version of the After Dark screen blanker for
+	  MS Windows
+Notes:	AH=C0h is the default multiplex number; if this is already in use,
+	  After Dark will try successive values up to AH=FFh
+	this call also resets the delay timer
+SeeAlso: AX=C000h"AD-DOS",AX=C004h
+----------2FC004-----------------------------
+INT 2F - AD-DOS - GET MINUTES TO WAIT
+	AX = C004h
+Return: AL = 00h if succesful
+	    BX = minutes to wait before blanking screen
+SeeAlso: AX=C000h"AD-DOS",AX=C003h
+----------2FC005-----------------------------
+INT 2F - AD-DOS - SET BLANKER STATUS
+	AX = C005h
+	BX = new state (0000h inactive, 0001h active) (default 0001h)
+Return: AL = 00h if successful
+SeeAlso: AX=C006h
+----------2F0C06-----------------------------
+INT 2F - AD-DOS - GET BLANKER STATUS
+	AX = C006h
+Return: AL = 00h if successful
+	    BX = current state of screen blanker (0000h inactive, 0001h active)
+Program: AD-DOS is the DOS version of the After Dark screen blanker for
+	  MS Windows
+Note:	AH=C0h is the default multiplex number; if this is already in use,
+	  After Dark will try successive values up to AH=FFh
+SeeAlso: AX=C000h"AD-DOS",AX=C005h
+----------2F0C07-----------------------------
+INT 2F - AD-DOS - SET HOT KEY
+	AX = C007h
+	BX = hot key
+	CL = hot key shift status
+Return: AL = 00h if successful
+SeeAlso: AX=C008h
+----------2F0C08-----------------------------
+INT 2F - AD-DOS - GET CURRENT HOT KEY
+	AX = C008h
+Return: AX = status
+	    0000h successful
+		BX = Hot Key
+		CL = Hot Key Shift Status
+	    0008h otherwise
+SeeAlso: AX=C000h"AD-DOS",AX=C007h
+----------2F0C09-----------------------------
+INT 2F - AD-DOS - UNBLANK MONITOR
+	AX = C009h
+Return: AL = 00h if successful
+Program: AD-DOS is the DOS version of the After Dark screen blanker for
+	  MS Windows
+Notes:	AH=C0h is the default multiplex number; if this is already in use,
+	  After Dark will try successive values up to AH=FFh
+	this function works by simulating keyboard activity
+----------2F0C0A-----------------------------
+INT 2F - AD-DOS - ???
+	AX = C00Ah
+Return: AX = status
+	    0000h successful
+		BH = ??
+		BL = ??
+	    000Ah failed
+----------2F0C0B-----------------------------
+INT 2F - AD-DOS - ???
+	AX = C00Bh
+Return: AX = status 
+	    0000h successful
+	    000Bh failed
+----------2F0C0C-----------------------------
+INT 2F - AD-DOS - SET ??? INTERNAL FLAG TO 01h
+	AX = C00Ch
+Return: AX = status
+	    0000h successful
+	    000Ch failed
+Program: AD-DOS is the DOS version of the After Dark screen blanker for
+	  MS Windows
+Note:	AH=C0h is the default multiplex number; if this is already in use,
+	  After Dark will try successive values up to AH=FFh
+----------2F0C0E-----------------------------
+INT 2F - AD-DOS - SET PASSWORD STATUS
+	AX = C00Eh
+	BX = new state (0000h disabled, 0001h enabled)
+Return: ???
+SeeAlso: AX=C000h"AD-DOS",AX=C00Fh
+----------2F0C0F-----------------------------
+INT 2F - AD-DOS - GET PASSWORD STATUS
+	AX = C00Fh
+Return: BX = current state (0000h disabled, 0001h enabled)
+SeeAlso: AX=C00Eh
+----------2F0C20-----------------------------
+INT 2F - AD-DOS - GET AND RESET VxD API STATUS
+	AX = C020h
+Return: AL = 00h if successful
+	    BX = VxD API Status
+		0000h no error
+		0001h error
+		0100h neither Windows 3.X enhanced mode nor
+			Windows/386 2.x is running
+		0200h VM API entry point not found (VxD not installed)
+Notes:	AH=C0h is the default multiplex number; if this is already in use,
+	  After Dark will try successive values up to AH=FFh
+	this call resets the VxD API Status to zero
+SeeAlso: AX=1602h,AX=1607h
 ----------2FC050-----------------------------
 INT 2F U - Explosiv 2.00 - INSTALLATION CHECK
 	AX = C050h
@@ -116,7 +251,7 @@ Return: AX = status
 Note:	called by TBSCANX
 SeeAlso: AX=CA00h
 ----------2FC9FF-----------------------------
-INT 2F - STACKMAN - INSTALLATION BROADCAST
+INT 2F C - STACKMAN - INSTALLATION BROADCAST
 	AX = C9FFh
 	BL = BCD version number
 	CX = number of stacks
@@ -204,7 +339,7 @@ Return: AL = status
 	    00h not installed, OK to install
 	    01h not installed, not OK to install
 	    FFh installed
-	     	BX = 6D73h
+		BX = 6D73h
 		CX = 6969h
 Note:	this function is equivalent to the standard CASMGR installation check,
 	  but uses the additional magic values to identify which CAS is
@@ -1199,7 +1334,7 @@ INT 2F - MDEBUG display driver - USER DEFINED FUNCTION NUMBERS
 Note:	these functions numbers are reserved for user defined features (e.g.
 	  communication between the transient und resident parts of the driver)
 ----------2FD100-----------------------------
-INT 2F - MDEBUG command driver - GET STATUS
+INT 2F C - MDEBUG command driver - GET STATUS
 	AX = D100h
 	BX = version of MDEBUG (BH = major, BL = minor)
 	CX = command driver counter
@@ -1326,7 +1461,7 @@ Offset	Size	Description
  32h	WORD	register CS, return-address
  34h	WORD	register IP, return-address
  36h	DWORD	saved pointer to data for key <F6> (v1.60)
- 		saved monitor address (v1.70)
+		saved monitor address (v1.70)
  3Ah 12 WORDs	saved register values on last popup entry (for <F8> key)
 		(original register values at popup entry of MDEBUG)
 		AX, BX, CX, DX, SI, DI, DS, ES, BP, SS, SP, flags
@@ -1530,24 +1665,47 @@ Note:	QEMM/QRAM/VIDRAM/MANIFEST will search for a free AH value from D2h
 Call VIDRAM entry point with:
 	AH = 00h get status
 		Return: AL = VIDRAM state (see below)
-			BL = bit 0: ???
-			     bits 1-7 not used
-			BH = flags???
-			    bit 4: high RAM exists in video area???
+			BL = extra RAM status
+			    00h VIDRAM does not use extra RAM
+			    01h VIDRAM uses EMS as extra RAM
+			    02h VIDRAM uses EGA as extra RAM
+			BH = feature flags
+			    bit 0: override enabled
+			    bit 1: mapped memory detected in A000h-B000h range
+			    bit 2: top of memory not at 640K
+			    bit 3: MDA detected
+			    bit 4: high RAM exists in video area
+			    bit 5: mapped memory detected in video area
+			    bits 6-7: reserved???
 			CL = current monitor (01h = mono, 80h = color)
-			SI = current top of memory (paragraph)???
-			DI = segment of ???
+			SI = current top of memory (paragraph)
+			DI = segment of start of HiRAM chain
 	AH = 01h setup
 		AL = VIDRAM state (00h off, 01h no EGA graphics, 02h no graph)
-		BL = bit 0: ???
-		     bits 1-7 not used
-		BH = flags???
+		BL = extra RAM status (see above)
+		BH = feature flags (see above)
 		CL = monitor (01h = monochrome, 80h = color)
-		SI = new top of memory (paragraph)???
-	AH = 02h get ???
-		Return: ES:DI -> ??? data
+		SI = new top of memory (paragraph)
+		DI = segment of start of HiRAM chain
+	AH = 02h get end address of VIDRAM code
+		Return: ES:DI -> VIDRAM partial map context (see below)
 Return: CF set on error
 	CF clear if successful
+
+Format of partial map context (EMS 3.2):
+Offset	Size	Description
+ 00h	BYTE	EMS version ID (32h)
+ 01h	WORD	EMM handle for this entry
+ 03h	BYTE	number of frames
+ 04h	BYTE	first page frame
+ 05h	WORD	offset from ES to previously saved map
+
+Format of partial map context (EMS 4.0):
+Offset	Size	Description
+ 00h	BYTE	EMS version ID (40h)
+ 01h	WORD	mappable segment count
+ 03h  N WORD	mappable segments
+	WORD	offset to previously saved map???
 ----------2FD300BX4562-----------------------
 INT 2F U - TeleReplica - INSTALLATION CHECK
 	AX = D300h
@@ -1682,7 +1840,7 @@ INT 2F U - VEDIT VSWAP - INSTALLATION CHECK
 	AX = D600h
 Return: AL = D6h if installed
 Note:	VSWAP is the resident portion of VEDIT's "swapper" capability.
-      	VEDIT is a programmer's text editor by Greenview Data.
+	VEDIT is a programmer's text editor by Greenview Data.
 SeeAlso: AX=D601h,AX=D602h
 ----------2FD601-----------------------------
 INT 2F U - VEDIT VSWAP - ???
@@ -1704,6 +1862,7 @@ SeeAlso: AX=D600h"VSWAP",INT 21/AH=4Bh"EXEC"
 ----------2FD701-----------------------------
 INT 2F - BANYAN VINES v4+ - GET BANV INTERRUPT NUMBER
 	AX = D701h
+	BX = 0000h
 Return: AX = 0000h installed
 	    BX = interrupt number (60h to 66h)
 	   nonzero not present
@@ -1964,7 +2123,7 @@ Offset	Size	Description
  00h	BYTE	flags
 		bit 7: process slot is valid
  01h	WORD	offset into DESQVIEW.DVO of program's record if started from
- 		Open Windows menu, else undefined
+		Open Windows menu, else undefined
  03h	WORD	Switch Windows window number
  05h	WORD	segment of process handle
  07h	WORD	number of tasks owned by process
@@ -1976,7 +2135,7 @@ Offset	Size	Description
  00h	BYTE	flags
 		bit 7: valid record
 		    6: (v2.00+) record is allocated; if bit 7 clear, process
-		    	is "(starting)" and only offsets 01h and 09h are valid
+			is "(starting)" and only offsets 01h and 09h are valid
 		    5: (v2.00+) this app currently owns the CPU
 		    4: reserved (0)
 		    3: DESQview system task
@@ -2005,14 +2164,14 @@ INT 2F U - DESQview v2.26+ XDI - DVXMS.DVR - ???
 Return: AL = FFh
 	DX = 584Dh
 ----------2FDE02-----------------------------
-INT 2F - DESQview v2.26+ External Device Interface - DV INITIALIZATION COMPLETE
+INT 2F C - DESQview v2.26+ External Dev Interface - DV INITIALIZATION COMPLETE
 	AX = DE02h
 	BX = mapping context of DESQview
 	DX = handle of DESQview system task
 Note:	driver should pass this call to previous handler after doing its work
 SeeAlso: AX=DE03h,AX=DE0Fh,INT 15/AX=5400h
 ----------2FDE03-----------------------------
-INT 2F - DESQview v2.26+ External Device Interface - DV TERMINATION
+INT 2F C - DESQview v2.26+ External Dev Interface - DV TERMINATION
 	AX = DE03h
 	BX = mapping context of DESQview
 	DX = handle of DESQview system task
@@ -2021,7 +2180,7 @@ Notes:	driver should pass this call to previous handler before doing its work
 	  interrupt vectors
 SeeAlso: AX=DE02h,AX=DE0Fh,INT 15/AX=5407h
 ----------2FDE04-----------------------------
-INT 2F - DESQview v2.26+ External Device Interface - ADD PROCESS
+INT 2F C - DESQview v2.26+ External Dev Interface - ADD PROCESS
 	AX = DE04h
 	BX = mapping context of new process
 	DX = handle of process
@@ -2043,7 +2202,7 @@ Offset	Size	Description
  10h  6 BYTEs	FAR handler for XMS driver entry point
 		(consists of a FAR CALL followed by RETF)
 ----------2FDE05-----------------------------
-INT 2F - DESQview v2.26+ External Device Interface - REMOVE PROCESS
+INT 2F C - DESQview v2.26+ External Dev Interface - REMOVE PROCESS
 	AX = DE05h
 	BX = mapping context of process
 	DX = handle of last task in process
@@ -2054,14 +2213,14 @@ Notes:	XMS XDI handler releases the structure allocated by AX=DE04h
 	  are valid in handler
 SeeAlso: AX=DE04h,AX=DE07h,INT 15/AX=5402h
 ----------2FDE06-----------------------------
-INT 2F - DESQview v2.26+ External Device Interface - CREATE TASK
+INT 2F C - DESQview v2.26+ External Dev Interface - CREATE TASK
 	AX = DE06h
 	BX = mapping context of process containing task
 	DX = handle of new task
 Notes:	driver should pass this call to previous handler after processing it
 	all DOS, BIOS, and DV API calls are valid in handler
 ----------2FDE07-----------------------------
-INT 2F - DESQview v2.26+ External Device Interface - TERMINATE TASK
+INT 2F C - DESQview v2.26+ External Dev Interface - TERMINATE TASK
 	AX = DE07h
 	BX = mapping context of process containing task
 	DX = handle of task
@@ -2070,7 +2229,7 @@ Notes:	driver should pass this call to previous handler before processing it
 	  are valid in handler
 SeeAlso: AX=DE04h,AX=DE06h,AX=DE10h
 ----------2FDE08-----------------------------
-INT 2F - DESQview v2.26+ External Device Interface - SAVE STATE
+INT 2F C - DESQview v2.26+ External Dev Interface - SAVE STATE
 	AX = DE08h
 	BX = mapping context of task being switched from
 	DX = handle of task being switched from
@@ -2078,7 +2237,7 @@ Notes:	invoked prior to task swap, interrupts, etc
 	driver should pass this call to previous handler after processing it
 SeeAlso: AX=DE09h,INT 15/AX=5403h,INT 15/AX=DE27h
 ----------2FDE09-----------------------------
-INT 2F - DESQview v2.26+ External Device Interface - RESTORE STATE
+INT 2F C - DESQview v2.26+ External Dev Interface - RESTORE STATE
 	AX = DE09h
 	BX = mapping context of task being switched to
 	DX = handle of task being switched to
@@ -2086,7 +2245,7 @@ Notes:	state is restored except for interrupts
 	driver should pass this call to previous handler before processing it
 SeeAlso: AX=DE08h,INT 15/AX=5404h,INT 15/AX=DE27h
 ----------2FDE0A-----------------------------
-INT 2F - DESQview v2.26+ External Device Interface - CHANGE KEYBOARD FOCUS
+INT 2F C - DESQview v2.26+ External Dev Interface - CHANGE KEYBOARD FOCUS
 	AX = DE0Ah
 	BX = mapping context of task receiving focus
 	DX = handle of running task
@@ -2094,7 +2253,7 @@ Notes:	driver should pass this call to previous handler before processing it
 	this call often occurs inside a keyboard interrupt
 SeeAlso: INT 15/AX=DE26h,INT 15/AX=DE2Fh
 ----------2FDE0B-----------------------------
-INT 2F - DESQview v2.26+ External Device Interface - DVP PROCESSING COMPLETE
+INT 2F C - DESQview v2.26+ External Dev Interface - DVP PROCESSING COMPLETE
 	AX = DE0Bh
 	BX = mapping context of DESQview system task
 	CX = number of system memory paragraphs required for the use of all
@@ -2106,33 +2265,33 @@ Return: CX incremented as needed
 Notes:	once DV invokes this function, the DVP buffer contents may be changed
 	driver should pass this call to previous handler before processing it
 ----------2FDE0C-----------------------------
-INT 2F - DESQview v2.26+ External Device Interface - SWAP OUT PROCESS
+INT 2F C - DESQview v2.26+ External Dev Interface - SWAP OUT PROCESS
 	AX = DE0Ch
 	BX = mapping context of task being swapped out
 	DX = handle of DESQview system task
 Note:	driver should pass this call to previous handler after processing it
 ----------2FDE0D-----------------------------
-INT 2F - DESQview v2.26+ External Device Interface - SWAP IN PROCESS
+INT 2F C - DESQview v2.26+ External Dev Interface - SWAP IN PROCESS
 	AX = DE0Dh
 	BX = mapping context of process just swapped in
 	DX = handle of DESQview system task
 Note:	driver should pass this call to previous handler before processing it
 ----------2FDE0E-----------------------------
-INT 2F - DESQview v2.26+ External Device Interface - DVP START FAILED
+INT 2F C - DESQview v2.26+ External Dev Interface - DVP START FAILED
 	AX = DE0Eh
 	BX = mapping context of DESQview system task
 	DX = handle of DESQview system task
 	SI = mapping context of failed process (same as for call to AX=DE0Bh)
 Note:	driver should pass this call to previous handler after processing it
 ----------2FDE0F-----------------------------
-INT 2F - DESQview v2.50+ External Device Interface - INITIALIZE DV
+INT 2F C - DESQview v2.50+ External Dev Interface - INITIALIZE DV
 	AX = DE0Fh
 Note:	DESQview 2.50+ calls this function just before it completes its
 	  initialization.  At the time of the call, DESQview has not yet
 	  changed any interrupt vectors
 SeeAlso: AX=DE02h
 ----------2FDE10-----------------------------
-INT 2F - DESQview v2.50+ External Device Interface - FREE TASK
+INT 2F C - DESQview v2.50+ External Dev Interface - FREE TASK
 	AX = DE10h
 	BX = mapping context of process
 	DX = task handle of process
@@ -2140,18 +2299,64 @@ Note:	DESQview 2.50+ calls this function before it frees the task; it is
 	  similar to AX=DE07h but allows the XDI handler to make calls which
 	  cause context switches
 SeeAlso: AX=DE06h,AX=DE07h
-----------2FDF--BX4448-----------------------
-INT 2F U - HyperDisk v4.20+ - INSTALLATION CHECK
-	AH = DFh
-	BX = 4448h ('DH')
-Return: AL = FFh if installed
-	    CX = 5948h ('YH')
-	    BX:DX -> ??? in resident portion if BX=4448h on entry
-Note:	HyperDisk is a shareware disk cache by HyperWare (Roger Cross)
+----------2FDF00-----------------------------
+INT 2F - HyperWare programs - INSTALLATION CHECK
+	AX = DF00h
+	BX = product code
+	    4248h ('BH') HyperStb
+	    4448h ('DH') HyperDisk v4.20+
+	    4B48h ('KH') HyperKey
+	    5348h ('SH') HyperScreen
+	CX = 0000h
+	DX = 0000h
+Return: AL = status
+	    00h not installed
+	    FFh multiplex number in use
+		CX = 5948h ('YH') if selected product installed
+		---HyperDisk---
+		BX = code segment of resident portion
+		DX = HyperDisk local data version
+Program: HyperDisk is a shareware disk cache by HyperWare (Roger Cross)
+Note:	AH=DFh is the default; if it is already in use by some other program,
+	  HyperWare programs then scan multiplex numbers from C0h through FFh
 SeeAlso: INT 13/AX=8EEDh
+---------------------------------------------
+INT 2F - HyperDisk v4.50+ - GET CURRENT CACHE STATE
+	AX = DF01h
+	BX = 4448h ('DH')
+Return: AX = 0000h if function supported
+	    BX = number of cache buffers in use
+	    CX = number of cache buffers which have been modified
+	    DL = caching flags (see below)
+Note:	AH=DFh is the default; if it is already in use by some other program,
+	  HyperWare programs then scan multiplex numbers from C0h through FFh
+SeeAlso: AX=DF00h,AX=DF02h
+
+Bitmask of caching flags:
+ bit 0: staged writes enabled for floppy disks
+ bit 1: staged writes enabled for hard disks
+ bit 2: writes verified on floppy disks
+ bit 3: writes verified on hard disks
+ bit 4: reserved (0)
+ bit 5: reserved (0)
+ bit 6: floppy caching enabled
+ bit 7: all caching functions enabled
+---------------------------------------------
+INT 2F - HyperDisk v4.50+ - SET CACHE STATE
+	AX = DF02h
+	BX = 4448h ('DH')
+	DL = new caching flags (see AX=DF01h)
+Return: AX = 0000h if supported
+	    BX = number of cache buffers in use
+	    CX = number of cache buffers which have been modified
+	    DL = previous caching flags (see AX=DF01h)
+Program: HyperDisk is a shareware disk cache by HyperWare (Roger Cross)
+Note:	AH=DFh is the default; if it is already in use by some other program,
+	  HyperWare programs then scan multiplex numbers from C0h through FFh
+SeeAlso: AX=DF00h,AX=DF01h
 ----------2FE000-----------------------------
 INT 2F - SETDRVER.COM v2.10+ - INSTALLATION CHECK
- 	AX = E000h
+	AX = E000h
 Return: AX = 4A52h ("JR") if present
 Program: SETDRVER is a public domain TSR by Jacob Rieper which sets the
 	  apparent DOS version analogously to MSDOS SETVER
@@ -2198,7 +2403,7 @@ INT 2F - SETDRVER.COM v2.10+ - GET TSR STATUS
 	AX = E006h
 Return: AL = FFh if successful
 	    BL = status
-	    	01h resident and active
+		01h resident and active
 		02h resident and inactive
 ----------2FE007-----------------------------
 INT 2F - SETDRVER.COM v2.10+ - GET TaskMAX STATUS AT INSTALLATION
@@ -2399,6 +2604,29 @@ Note:	AUTOPARK.COM is a resident hard disk parker by Alan D. Jones
 INT 2F - AUTOPARK.COM - SET PARKING DELAY
 	AX = F701h
 	BX:CX = 32-bit count of 55ms timer ticks
+----------2FF800CX4455-----------------------
+INT 2F U - SuperStor PRO 2XON.COM - INSTALLATION CHECK
+	AX = F800h
+	CX = 4455h ("DU")
+	DL = 45h ("E")
+Return: AL = FFh if installed
+	    ES:BX -> ASCII signature "Universal Data Exchange"
+Program: SuperStor is a disk-compression program by Addstor.
+Note:	returns AX=0001h if AL is not 00h or 01h
+SeeAlso: AX=1001h,AX=F801h
+----------2FF801CX4455-----------------------
+INT 2F U - SuperStor PRO 2XON.COM - UNINSTALL
+	AX = F801h
+	CX = 4455h ("DU")
+	DL = 45h ("E")
+	ES:BX = return address if successful
+Return: at specified address if successfully removed from memory
+	else
+	    AL = error code
+	    ???
+Program: SuperStor is a disk-compression program by Addstor.
+Note:	returns AX=0001h if AL is not 00h or 01h
+SeeAlso: AX=1001h,AX=F800h
 ----------2FFB-------------------------------
 INT 2F - Multiplex - RESERVED BY BORLAND INTERNATIONAL
 	AH = FBh
@@ -2577,7 +2805,7 @@ Offset	Size	Description
 ---
  0Ah	DWORD	linear address of memory
  0Eh	WORD	memory operation error code
- 		0008h no more free LDT descriptors
+		0008h no more free LDT descriptors
 ---if flags bit 0 clear---
  10h	WORD	code segment selector for memory block or 0000h or FFFFh
  12h	WORD	data alias selector for memory block or 0000h or FFFFh
@@ -2644,7 +2872,7 @@ Offset	Size	Description
  1Ch	WORD	number of memory control records
  1Eh 25 BYTEs	???
  37h	BYTE	??? bit flags
- 		bit 4: data valid???
+		bit 4: data valid???
  38h  4 BYTEs	???
  3Ch	WORD	???
  3Eh 12 BYTEs	???
@@ -2661,7 +2889,7 @@ Offset	Size	Description
  5Ah  8 BYTEs	???
  62h  9 BYTEs	ASCIZ name for ???
  6Bh  9 BYTEs	ASCIZ name for ???
- 	???
+	???
 
 Format of name list entry [array]:
 Offset	Size	Description
@@ -3001,7 +3229,7 @@ INT 2F PU - Borland C++ 3.0 DPMILOAD.EXE - ???
 	???
 Return: DX = status (0000h,0002h,FFF9h) (see AX=FB42h/BX=0004h)
 	    0000h successful
-	    	BX = offset of ??? within data structure
+		BX = offset of ??? within data structure
 ----------2FFB42BX0027-----------------------
 INT 2F PU - Borland C++ 3.0 DPMILOAD.EXE - GET ???
 	AX = FB42h
@@ -3033,7 +3261,7 @@ Notes:	this function is only present in protected mode; it does nothing but
 	  an immediate IRET
 	DPMILOAD.EXE itself calls various subfunctions:
 	    subfunction 0004h is called with CX=selector of ???, DI=selector
-	    	of DPMILOAD data
+		of DPMILOAD data
 	    subfunction 0008h is called with CX=selector of DPMILOAD data
 ----------2FFB64-----------------------------
 INT 2F U - AutoBraille v1.1A - GET ???
@@ -3067,15 +3295,15 @@ Offset	Size	Description
 Call entry point with:
 	AX = function number
 	    0000h initialize???
-	    	STACK:	WORD  ???
+		STACK:	WORD  ???
 		Return: AX = status???
 			STACK unchanged
 	    0001h get version???
-	    	Return: AX = 0200h for v2.0.34
+		Return: AX = 0200h for v2.0.34
 	    0002h get ???
-	    	Return: AX = ??? (011Eh or 0182h seen)
+		Return: AX = ??? (011Eh or 0182h seen)
 	    0003h load protected-mode executable
-	    	STACK:	DWORD -> ASCIZ filename of executable
+		STACK:	DWORD -> ASCIZ filename of executable
 			DWORD	???
 			DWORD -> program arguments (counted string plus CR)
 			DWORD -> environment for protected-mode executable
@@ -3093,8 +3321,8 @@ Call entry point with:
 			    AX destroyed???
 			STACK unchanged
 	    0005h ???
-	    	STACK:	WORD 	selector for ???
-			WORD 	subfunction number???
+		STACK:	WORD	selector for ???
+			WORD	subfunction number???
 				0000h run previously-loaded program???
 				0001h ??? (similar to 0000h)
 				0002h
@@ -3103,33 +3331,33 @@ Call entry point with:
 		Return: AX = status???
 			STACK unchanged
 	    0006h ???
-	    	STACK:	WORD ???
+		STACK:	WORD ???
 			DWORD -> WORD (call) max iterations of ???
 				      (return) remaining iterations
 		Return: AX = ???
 			STACK unchanged
 	    0007h unused
-	    	Return: AX = 0001h
+		Return: AX = 0001h
 	    0008h unused
-	    	Return: AX = 0001h
+		Return: AX = 0001h
 	    0009h copy protected-mode memory into conventional memory
-	    	STACK:	WORD 	selector for source segment
+		STACK:	WORD	selector for source segment
 			WORD	segment of source if in real mode???
 			DWORD	offset of source
-			WORD 	number of bytes to copy
+			WORD	number of bytes to copy
 			DWORD -> low-memory destination
 		Return: AX = status
 			STACK unchanged
 	    000Ah copy conventional memory into protected-mode memory
-	    	STACK:	WORD	selector for destination segment
-			WORD 	segment of destination if in real mode???
+		STACK:	WORD	selector for destination segment
+			WORD	segment of destination if in real mode???
 			DWORD	offset of destination
-			WORD 	number of bytes to copy
+			WORD	number of bytes to copy
 			DWORD -> low-memory source
 		Return: AX = status
 			STACK unchanged
 	    000Bh get ??? pointers
-	    	STACK:	WORD desired pointer
+		STACK:	WORD desired pointer
 				0000h get ???
 				0002h get protected-mode CR3
 				0003h get 4K page table buffer pointer
@@ -3137,7 +3365,7 @@ Call entry point with:
 		Return: DX:AX = requested pointer
 			STACK unchanged
 	    000Ch set ??? pointers
-	    	STACK:	WORD desired pointer
+		STACK:	WORD desired pointer
 				0000h set ???
 				0002h set protected-mode CR3
 				0003h set 4K page table buffer pointer
@@ -3145,7 +3373,7 @@ Call entry point with:
 			DWORD new value for pointer
 		Return: STACK unchanged
 	    000Dh get ??? pointers
-	    	STACK:	WORD desired pointer
+		STACK:	WORD desired pointer
 				0000h get ???
 				0001h get ???
 				0002h get ???
@@ -3157,8 +3385,8 @@ Call entry point with:
 				else Return: DX:AX = FFFFh:FFFFh
 		Return: DX:AX = desired pointer
 			STACK unchanged
-   	    000Eh set ??? pointer
-	    	STACK:	WORD desired pointer
+	    000Eh set ??? pointer
+		STACK:	WORD desired pointer
 				0000h set ???
 				0001h set ???
 				0002h set ???
@@ -3170,15 +3398,15 @@ Call entry point with:
 				else Return: DX:AX = FFFFh:FFFFh
 		Return: STACK unchanged
 	    000Fh get ???
-	    	Return: AX = ??? (seen 0008h)
+		Return: AX = ??? (seen 0008h)
 	    0010h get ???
-	    	Return: AX = ???
+		Return: AX = ???
 	    0011h determine whether selector is valid
-	    	STACK:	WORD	possible selector
+		STACK:	WORD	possible selector
 		Return: AX = selector or 0000h if invalid
 			STACK unchanged
 	    0012h get physical address
-	    	STACK:	WORD	selector for desired segment
+		STACK:	WORD	selector for desired segment
 			WORD	segment number if in real mode
 			DWORD	offset within segment
 		Return: DX:AX = 32-bit physical address or 00000000h on error
@@ -3187,7 +3415,7 @@ Call entry point with:
 	    0013h ???
 		Note:	normally jumps to code for function 0012h
 	    0014h copy protected-mode memory to conventional memory, with ???
-	    	STACK:	WORD	selector for source segment
+		STACK:	WORD	selector for source segment
 			WORD	segment of source if in real mode???
 			DWORD	offset of source
 			WORD	number of bytes to copy
@@ -3195,7 +3423,7 @@ Call entry point with:
 		Return: AX = status???
 			STACK unchanged
 	    0015h copy conventional memory to protected-mode memory, with ???
-	    	STACK:	WORD	selector for destination segment
+		STACK:	WORD	selector for destination segment
 			WORD	segment of destination if in real mode???
 			DWORD	offset of destination
 			WORD	number of bytes to copy
@@ -3203,12 +3431,12 @@ Call entry point with:
 		Return: AX = status???
 			STACK unchanged
 	    0016h set ??? pointer
-	    	STACK:	WORD	unused
+		STACK:	WORD	unused
 			DWORD -> ??? or 0000h:0000h
 		Return: AX = 0000h
 			STACK unchanged
 	    0017h allocate real-mode procedure???
-	    	STACK:	DWORD	ASCIZ name of procedure
+		STACK:	DWORD	ASCIZ name of procedure
 			DWORD ???
 			DWORD	address of subroutine to invoke
 		Return: AX = status
@@ -3217,25 +3445,25 @@ Call entry point with:
 			DX destroyed
 			STACK unchanged
 	    0018h unused
-	    	Return: AX = 0001h
+		Return: AX = 0001h
 	    0019h get parameter block
-	    	Return: DX:AX -> parameter block (format unknown at this time,
+		Return: DX:AX -> parameter block (format unknown at this time,
 				but 92h bytes)
 				(preceded by signature "!!PARAM-BLOCK!!")
 	    001Ah get ???
-	    	Return: AX = ??? (0148h seen)
+		Return: AX = ??? (0148h seen)
 	    001Bh free real-mode procedure???
-	    	STACK:	DWORD -> ASCIZ name of procedure
+		STACK:	DWORD -> ASCIZ name of procedure
 		Return: ???
 			STACK unchanged
 	    001Ch check whether packets from protected mode task pending
-	    	Return: AX = 0001h if packets pending, 0000h if not
+		Return: AX = 0001h if packets pending, 0000h if not
 	    001Dh set ???
-	    	STACK:	DWORD ??? or 0000h:0000h
+		STACK:	DWORD ??? or 0000h:0000h
 		Return: AX,BX destroyed
 			STACK unchanged
 	    001Eh ???
-	    	STACK:	WORD ??? (high byte ignored)
+		STACK:	WORD ??? (high byte ignored)
 			DWORD -> data structure (see below)
 		Return: AX,BX,CX,DX destroyed
 			data structure updated
@@ -3249,42 +3477,42 @@ Call entry point with:
 		 08h  2 BYTEs	unused
 		 0Ah	WORD	???
 		 0Ch	WORD	(call) ???
-		 		(return) offset of this data structure (BUG?)
+				(return) offset of this data structure (BUG?)
 	    001Fh set ???
-	    	STACK:	WORD ??? (set to 0001h if zero)
+		STACK:	WORD ??? (set to 0001h if zero)
 		Return: AX destroyed
 			STACK unchanged
 	    0020h ???
-	    	STACK:	DWORD -> ??? (8 bytes of data)
+		STACK:	DWORD -> ??? (8 bytes of data)
 		Return: AX = ???
 			STACK unchanged
 	    0021h ???
-	    	STACK:	DWORD -> ??? (8 bytes of data)
+		STACK:	DWORD -> ??? (8 bytes of data)
 			WORD	???
 			WORD	???
 		Return: AX = ???
 			STACK unchanged
 	    0022h ???
-	    	STACK:	DWORD -> ??? (8 bytes of data)
+		STACK:	DWORD -> ??? (8 bytes of data)
 			DWORD -> 4-byte buffer for results
 		Return: AX = ???
 			STACK unchanged
 	    0023h ???
-	    	STACK:	DWORD -> ??? (8 bytes of data)
+		STACK:	DWORD -> ??? (8 bytes of data)
 		Return: AX = ???
 			STACK unchanged
 	    0024h set ???
-	    	STACK:	WORD ???
+		STACK:	WORD ???
 		Return: AX destroyed
 			STACK unchanged
 	    0025h get ???
-	    	Return: AX = ??? (value set with func 0024h)
+		Return: AX = ??? (value set with func 0024h)
 	    0026h BUG: jumps to hyperspace due to fencepost error
 	    FFFFh set DOS memory management functions
 		BX:SI -> FAR routine for allocating DOS memory
 			(called with AH=48h,BX=number of paragraphs to alloc;
 			 returns CF clear, AX=segment of allocated memory, or
-			 	 CF set on error)
+				 CF set on error)
 		CX:DI -> FAR routine for freeing DOS memory
 			(called with AH=49h,ES=segment of block to free;
 			 returns CF set on error,AX=error code)
@@ -3327,7 +3555,7 @@ Offset	Size	Description
 Call driver entry point with:
 	AL = function
 	    07h speak a string
-	    	data buffer (see above) contains:
+		data buffer (see above) contains:
 			BYTE  length of string
 		      N BYTEs string to speak
 ----------2FFE00DI4E55-----------------------
@@ -3569,7 +3797,7 @@ Return: CF clear if successful
 	CF set on error
 	    AX = error code (DPMI 1.0+) (8022h) (see AX=0000h)
 Note:	not supported by MS Windows 3.0 in Standard mode
-SeeAlso: AX=0007h
+SeeAlso: AX=0007h,INT 21/AX=3504h
 ----------310007-----------------------------
 INT 31 P - DPMI 0.9+ - SET SEGMENT BASE ADDRESS
 	AX = 0007h
@@ -3600,7 +3828,7 @@ Notes:	CX must be zero for 16-bit DPMI implementations
 	DPMI 1.0+ automatically reloads any segment registers containing the
 	  selector being modified
 	not supported by MS Windows 3.0 in Standard mode
-SeeAlso: AX=0007h,AX=0009h,AX=000Ch,INT 21/AH=E9h"OS/286"
+SeeAlso: AX=0007h,AX=0009h,AX=000Ch,INT 21/AX=3505h,INT 21/AH=E9h"OS/286"
 ----------310009-----------------------------
 INT 31 P - DPMI 0.9+ - SET DESCRIPTOR ACCESS RIGHTS
 	AX = 0009h
@@ -5021,12 +5249,12 @@ Return: AX = general information
 	    bit 15: driver loaded as device driver rather than TSR
 	    bit 14: driver is newer integrated type
 	    bits 13,12: current cursor type
-	    		00 software text cursor
+			00 software text cursor
 			01 hardware text cursor
 			1X graphics cursor
 	    bits 11-8: interrupt rate (see AX=001Ch)
 	    bits 7-0:  count of currently-active Mouse Display Drivers (MDD),
-	    		the newer integrated driver type
+			the newer integrated driver type
 	BX = cursor lock flag for OS/2 to prevent reentrancy problems
 	CX = mouse code active flag (for OS/2)
 	DX = mouse driver busy flag (for OS/2)
@@ -5129,9 +5357,9 @@ INT 33 - MS MOUSE v7.0+ - SELECT ACCELERATION PROFILE
 		0001h-0004h to set profile, or FFFFh to get current profile
 Return: AX = status
 	    0000h successful
-	    	ES:SI -> 16-byte blank-padded name of acceleration profile
+		ES:SI -> 16-byte blank-padded name of acceleration profile
 	    FFFEh invalid acceleration curve number
-	    	ES:SI destroyed
+		ES:SI destroyed
 	BX = active acceleration curve number
 SeeAlso: AX=0013h,AX=002Bh,AX=002Ch,AX=002Eh
 ----------33002E-----------------------------
@@ -5198,7 +5426,7 @@ INT 33 - MS MOUSE v7.05+ - GET SWITCH SETTINGS AND ACCELERATION PROFILE DATA
 			CX = required size (0154h for Logitech v6.10, 0159h
 				for MS v8.10-8.20)
 	    other
-	    	ES:DX -> buffer of CX bytes
+		ES:DX -> buffer of CX bytes
 		Return: AX = 0000h
 			CX = number of bytes returned
 			ES:DX buffer filled (see below)
@@ -5234,14 +5462,14 @@ INT 33 - MS MOUSE v8.10+ - LCD SCREEN LARGE POINTER SUPPORT
 	AX = 0035h
 	BX = function
 	    FFFFh get current settings
-	    	Return: AX = 0000h
+		Return: AX = 0000h
 			BH = style (see below)
 			BL = size (see below)
 			CH = threshold
 			CL = active flag (00h disabled, 01h enabled)
 			DX = delay
 	    other
-	    	BH = style (00h normal, 01h reverse, 02h transparent)
+		BH = style (00h normal, 01h reverse, 02h transparent)
 		BL = size (00h small "1", 01h medium "1.5", 02h large "2")
 		CH = threshold (00h-64h)
 		CL = active flag (00h disable size change, 01h enable)
@@ -5270,7 +5498,7 @@ Notes:	also calls routines for INT 33/AX=0053h and INT 33/AX=004Fh
 Format of buffer:
 Offset	Size	Description
  00h	WORD	I/O port address
- 02h  	BYTE	???
+ 02h	BYTE	???
  03h	BYTE	interrupt number
  04h	BYTE	interrupt mask for interrupt controller
  05h  5 BYTEs	???
@@ -5448,7 +5676,7 @@ Offset	Size	Description
  00h	WORD	driver version
  02h  8 BYTEs	???
  0Ah	WORD	segment of ???
- 	???
+	???
 ----------330072BXABCD-----------------------
 INT 33 - Mouse Systems MOUSE DRIVER v7.01 - ???
 	AX = 0072h
@@ -5489,9 +5717,9 @@ INT 33 - LOGITECH MOUSE v6.10+ - GET/SET ???
 	AX = 146Ch
 	BL = function
 	    00h set ???
-	    	BH = new value (zero/nonzero to clear/set)
+		BH = new value (zero/nonzero to clear/set)
 	    else get ???
-	    	Return: ???
+		Return: ???
 ----------33156C-----------------------------
 INT 33 - LOGITECH MOUSE v6.10+ - GET SIGNATURE AND VERSION STRINGS
 	AX = 156Ch
@@ -5504,7 +5732,7 @@ INT 33 - LOGITECH MOUSE v6.10+ - ???
 	    00h ???
 	    01h ???
 	    other ???
-	    	BH = new value of ???
+		BH = new value of ???
 		Return: AX = FFFFh
 ----------33176C-----------------------------
 INT 33 - LOGITECH MOUSE v6.10+ - ???
@@ -5714,26 +5942,36 @@ Return: AX = 004Fh if supported
 SeeAlso: AX=4F00h
 ----------34---------------------------------
 INT 34 - FLOATING POINT EMULATION - OPCODE D8h
+Desc:	this interrupt is used to emulate floating-point instructions with
+	  an opcode of D8h
 Note:	the floating-point emulators in Borland and Microsoft languages and
 	  Lahey FORTRAN use this interrupt
 SeeAlso: INT 35,INT 3E
 ----------35---------------------------------
 INT 35 - FLOATING POINT EMULATION - OPCODE D9h
+Desc:	this interrupt is used to emulate floating-point instructions with
+	  an opcode of D9h
 Note:	the floating-point emulators in Borland and Microsoft languages and
 	  Lahey FORTRAN use this interrupt
 SeeAlso: INT 34,INT 36
 ----------36---------------------------------
 INT 36 - FLOATING POINT EMULATION - OPCODE DAh
+Desc:	this interrupt is used to emulate floating-point instructions with
+	  an opcode of DAh
 Note:	the floating-point emulators in Borland and Microsoft languages and
 	  Lahey FORTRAN use this interrupt
 SeeAlso: INT 35,INT 37
 ----------37---------------------------------
 INT 37 - FLOATING POINT EMULATION - OPCODE DBh
+Desc:	this interrupt is used to emulate floating-point instructions with
+	  an opcode of DBh
 Note:	the floating-point emulators in Borland and Microsoft languages and
 	  Lahey FORTRAN use this interrupt
 SeeAlso: INT 36,INT 38
 ----------38---------------------------------
 INT 38 - FLOATING POINT EMULATION - OPCODE DCh
+Desc:	this interrupt is used to emulate floating-point instructions with
+	  an opcode of DCh
 Note:	the floating-point emulators in Borland and Microsoft languages and
 	  Lahey FORTRAN use this interrupt
 SeeAlso: INT 37,INT 39
@@ -5744,12 +5982,12 @@ Return: AX = 0000h
 	ES:BX -> ??? internal data structure
 Program: PC-MOS/386 is a multitasking/multiuser MSDOS-compatible operating
 	  system by Software Links, Inc.
-SeeAlso: AH=04h,AH=10h,INT 21/AX=3000h
+SeeAlso: AH=04h,AH=10h,INT 21/AX=3000h,INT D4
 ----------3804-------------------------------
 INT 38 - PC-MOS/386 v3.0 - GET TASK CONTROL BLOCK
 	AH = 04h
 Return: ES = segment of Task Control Block (TCB) (see below)
-SeeAlso: AH=02h
+SeeAlso: AH=02h,INT D4
 
 Format of Task Control Block:
 Offset	Size	Description
@@ -5768,7 +6006,7 @@ INT 38 - PC-MOS/386 v3.0 - WAIT FOR KEYPRESS OR TIMEOUT
 	AX = 0703h
 	CX = timeout (in seconds???)
 Return: AH bit 0 set if key pressed, clear otherwise
-SeeAlso: INT 16/AH=00h
+SeeAlso: INT 16/AH=00h,INT D4
 ----------3810-------------------------------
 INT 38 - PC-MOS/386 v3.0 - ENTER NATIVE 386 EXECUTION MODE
 	AH = 10h
@@ -5777,30 +6015,36 @@ INT 38 - PC-MOS/386 v3.0 - ENTER NATIVE 386 EXECUTION MODE
 Return: in protected mode
 	all segment registers converted to appropriate selectors
 Note:	MSDOS calls are available in protected mode
-SeeAlso: AH=11h,AH=12h,INT 2F/AX=1687h,INT 67/AX=DE0Ch
+SeeAlso: AH=11h,AH=12h,INT 2F/AX=1687h,INT 67/AX=DE0Ch,INT D4
 ----------3811-------------------------------
 INT 38 - PC-MOS/386 v3.0 - ALLOCATE NATIVE MODE MEMORY BLOCK
 	AH = 11h
 	EBX = block length
 Return: ES = selector for allocated block
-SeeAlso: AH=10h,AH=12h
+SeeAlso: AH=10h,AH=12h,INT D4
 ----------3812-------------------------------
 INT 38 - PC-MOS/386 v3.0 - FREE NATIVE MODE MEMORY BLOCK
 	AH = 12h
 	ES = selector for block to free
-SeeAlso: AH=10h,AH=11h
+SeeAlso: AH=10h,AH=11h,INT D4
 ----------39---------------------------------
 INT 39 - FLOATING POINT EMULATION - OPCODE DDh
+Desc:	this interrupt is used to emulate floating-point instructions with
+	  an opcode of DDh
 Note:	the floating-point emulators in Borland and Microsoft languages and
 	  Lahey FORTRAN use this interrupt
 SeeAlso: INT 38,INT 3A
 ----------3A---------------------------------
 INT 3A - FLOATING POINT EMULATION - OPCODE DEh
+Desc:	this interrupt is used to emulate floating-point instructions with
+	  an opcode of DEh
 Note:	the floating-point emulators in Borland and Microsoft languages and
 	  Lahey FORTRAN use this interrupt
 SeeAlso: INT 39,INT 3B
 ----------3B---------------------------------
 INT 3B - FLOATING POINT EMULATION - OPCODE DFh
+Desc:	this interrupt is used to emulate floating-point instructions with
+	  an opcode of DFh
 Note:	the floating-point emulators in Borland and Microsoft languages and
 	  Lahey FORTRAN use this interrupt
 SeeAlso: INT 3A,INT 3C
@@ -5811,7 +6055,7 @@ Notes:	the floating-point emulators in Borland and Microsoft languages and
 	the generated code is  CD 3C xy mm ....
 	  where xy is a modified ESC instruction and mm is the modR/M byte.
 	  The xy byte appears to be encoded as
-		s s 0 1 1 x x x   or	s s 0 0 0 x x x
+		s s 0 1 1 x x x	  or	s s 0 0 0 x x x
 	  where "ss" specifies the segment override:
 		00 -> DS:
 		01 -> SS:
@@ -5820,8 +6064,8 @@ Notes:	the floating-point emulators in Borland and Microsoft languages and
 SeeAlso: INT 3B,INT 3D
 ----------3D---------------------------------
 INT 3D - FLOATING POINT EMULATION - STANDALONE FWAIT
-Notes:	the floating-point emulators in Borland and Microsoft languages use
-	  this interrupt
+Notes:	the floating-point emulators in Borland and Microsoft languages and
+	  Lahey FORTRAN use this interrupt
 	this vector is modified but not restored by Direct Access v4.0, and
 	  may be left dangling by other programs written with the same version
 	  of compiled BASIC
@@ -5838,24 +6082,24 @@ SeeAlso: INT 3D
 
 Subcode		Function
  DCh	load 8086 stack with 8087 registers; overwrites the 10*N bytes at the
- 	  top of the stack prior to the INT 3E with the 8087 register contents
+	  top of the stack prior to the INT 3E with the 8087 register contents
  DEh	load 8087 registers from top of 8086 stack; ST0 is furthest from top
- 	  of 8086 stack
+	  of 8086 stack
  E0h	round TOS and R1 to single precision, compare, pop twice
- 	  returns AX=8087 status word, FLAGS=8087 condition bits
+	  returns AX=8087 status word, FLAGS=8087 condition bits
  E2h	round TOS and R1 to double precision, compare, pop twice
- 	  returns AX=8087 status word, FLAGS=8087 condition bits
+	  returns AX=8087 status word, FLAGS=8087 condition bits
 	Note: buggy in TPas5.5, because it sets the 8087 precision control
 	  field to the undocumented value 01h; this results in actually
 	  rounding to single precision
  E4h	compare TOS/R1 with two POP's
- 	  returns FLAGS=8087 condition bits
+	  returns FLAGS=8087 condition bits
  E6h	compare TOS/R1 with POP
- 	  returns FLAGS=8087 condition bits
+	  returns FLAGS=8087 condition bits
  E8h	FTST (check TOS value)
- 	  returns FLAGS=8087 condition bits
+	  returns FLAGS=8087 condition bits
  EAh	FXAM (check TOS value)
- 	  returns AX=8087 status word
+	  returns AX=8087 status word
  ECh	sine(ST0)
  EEh	cosine(ST0)
  F0h	tangent(ST0)
@@ -6034,7 +6278,7 @@ Values for filing system:
 ----------45---------------------------------
 INT 45 - Z100 - Master 8259 - Serial B
 SeeAlso: INT 44"Z100",INT 46"Z100"
----------------------------------------------
+----------45---------------------------------
 INT 45 - Acorn BBC Master 512 - "OSFILE" - READ/WRITE FILE OR DIRECTORY INFO
 	AL = function
 	    00h save block of memory as file
@@ -6061,7 +6305,7 @@ Offset	Size	Description
  06h	DWORD	execution address of file
  0Ah	DWORD	start address of data to save
  0Eh	DWORD	end address of data to save, or file attributes
- 		file attributes in low byte:
+		file attributes in low byte:
 		    bit 0: no owner read access
 		    bit 1: no owner write access
 		    bit 2: not executable by owner
@@ -6328,11 +6572,12 @@ Notes:	this call specifies the amount a subsequent call to AX=0001h should
 	scaling factors greater than 2 are only available in MAGic Deluxe
 SeeAlso: AX=0001h
 ----------4A---------------------------------
-INT 4A - SYSTEM - USER ALARM HANDLER
-   This interrupt is invoked by the BIOS when a real-time clock alarm occurs.
-   An application may use it to perform an action at a predetermined time;
-   however, this interrupt is called from within a hardware interrupt handler,
-   so all usual precautions against reentering DOS must be taken.
+INT 4A C - SYSTEM - USER ALARM HANDLER
+Desc:	This interrupt is invoked by the BIOS when a real-time clock alarm
+	  occurs; an application may use it to perform an action at a
+	  predetermined time.
+Note:	this interrupt is called from within a hardware interrupt handler,
+	  so all usual precautions against reentering DOS must be taken
 SeeAlso: INT 1A/AH=06h
 ----------4A---------------------------------
 INT 4A - Z100 - Slave 8259 - S100 vectored line 2
@@ -6356,14 +6601,14 @@ Offset	Size	Description
  06h	DWORD	80186 segment:offset address
  0Ah	WORD	number of bytes to transfer
  0Ch	BYTE	operation type
- 		00h write to 65C12 at 24 us/byte
+		00h write to 65C12 at 24 us/byte
 		01h read from 65C12 at 24 us/byte
 		02h write to 65C12 at 26 us/word
 		03h read from 65C12 at 26 us/word
 		04h write to 65C12 at 10 us/byte using 256-byte blocks
 		05h read from 65C12 at 10 us/byte using 256-byte blocks
  0Dh	BYTE	65C12 memory access control (only used if offset 00h = 0Eh)
- 		bit 7: unused
+		bit 7: unused
 		bit 6: always use main screen memory if I/O addr 3000h-7FFFh
 			(overrides bit 5)
 		bit 5: use shadow screen memory if screen address specified
