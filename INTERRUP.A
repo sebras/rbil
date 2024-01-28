@@ -1,12 +1,12 @@
-Interrupt List		Release 91.1		Last change 1/5/91
+Interrupt List		Release 25 (v91.2)		Last change 3/24/91
 This compilation is Copyright (c) 1989, 1990, 1991 Ralf Brown
 ---------------------------------------------
 Please redistribute the following files unmodified as a group, in an archive
-named INTER191 (preferably the original authenticated PKZIP archive):
+named INTER291 (preferably the original authenticated PKZIP archive):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
 	INTERRUP.A	INT 00 through INT 1F \
-	INTERRUP.B	INT 20 through INT 27  \ total 448 pages at 60 lines
-	INTERRUP.C	INT 28 through INT 5F  / per page, 483 with INTPRINT -p
+	INTERRUP.B	INT 20 through INT 27  \ total 496 pages at 60 lines
+	INTERRUP.C	INT 28 through INT 5F  / per page, 536 with INTPRINT -p
 	INTERRUP.D	INT 60 through INT FF /
 	INTERRUP.PRI	a brief introduction to interrupts
 	INTPRINT.COM	a simple formatter that also generates the list summary
@@ -15,6 +15,12 @@ named INTER191 (preferably the original authenticated PKZIP archive):
 	MEMORY.LST	format of the BIOS data area
 	INT2QH.*	program for converting list to QuickHelp database
 ---------------------------------------------
+*******************************************************************************
+**  If you have contributed to the interrupt list in the past, please send   **
+**  me your current email address if it differs from the one shown in	     **
+**  INTERRUP.1ST.   Also see the file REQUEST.				     **
+*******************************************************************************
+
 If you notice any mistakes or omissions, please let me know!  It is only with
 YOUR help that the list can continue to grow at the current rate.  Please send
 all changes to me rather than distributing a modified version of the list.
@@ -39,127 +45,164 @@ harvard or ucbvax for UUCP, from the ARPA Internet for others).
 See INTERRUP.1ST for the key to system abbreviations and a list of the
 trademarks mentioned here.
 ---------------------------------------------
-DISCLAIMER:  I verify the information contained in this list to the best of my
-ability, but I cannot be held responsible for any problems caused by use or
-misuse of the information, especially for those functions not officially 
-documented.  If it is marked "internal", you should check it carefully to make
-sure it works the same way in your version of the software (and please let me
-know whether or not it works the same way).  Information marked with "???" is
-known to be incomplete or guesswork.
+DISCLAIMER:  THIS MATERIAL IS PROVIDED "AS IS".  I verify the information
+contained in this list to the best of my ability, but I cannot be held
+responsible for any problems caused by use or misuse of the information,
+especially for those functions not officially  documented.  If it is marked
+"internal", you should check it carefully to make sure it works the same
+way in your version of the software (and please let me know whether or not
+it works the same way).  Information marked with "???" is known to be
+incomplete or guesswork.
 ---------------------------------------------
 The use of -> instead of = signifies that the indicated register or register
 pair contains a pointer to the specified item, rather than the item itself
 ----------00---------------------------------
-INT 00 - internal hardware - DIVIDE ERROR
-   Automatically called at end of DIV or IDIV operation that results in error
-   or overflow.   Normally set by DOS to display an error message and abort
-   the program.
-Notes:	on an 8086/8088, the return address points to the following instruction
+INT 00 - CPU-generated - DIVIDE ERROR
+Notes:	generated if the divisor of a DIV or IDIV instruction is zero or the
+	  quotient overflows the result register; DX and AX will be unchanged.
+	on an 8086/8088, the return address points to the following instruction
 	on an 80286+, the return address points to the divide instruction
 SeeAlso: INT 04
 ----------01---------------------------------
-INT 01 - internal hardware - SINGLE-STEP
-   generated at end of each machine instruction if TF bit in FLAGS is set
-Notes:	this is what makes the T command of DEBUG work for single-stepping
-	on 8086 and 8088 CPUs, this interrupt is not generated after a MOV to
-	  segment register or POP of segment register unless you have a very
-	  early 8088 with a microcode bug
-	on 286 and up CPUs, this interrupt is not generated after a MOV to SS
-	  or POP SS
+INT 01 - CPU-generated - SINGLE STEP
+Notes:	generated after each instruction if TF (trap flag) is set; TF is
+	  cleared on invoking the single-step interrupt handler
+	interrupts are prioritized such that external interrupts are invoked
+	  after the INT 01 pushes CS:IP/FLAGS and clears TF, but before the
+	  first instruction of the handler executes
+	used by debuggers for single-instruction execution tracing, such as
+	  MSDOS DEBUG's T command
 SeeAlso: INT 03
 ----------01---------------------------------
-INT 01 - 80386+ internal hardware - DEBUGGING EXCEPTIONS
+INT 01 - CPU-generated (80386+) - DEBUGGING EXCEPTIONS
    Instruction address breakpoint fault - will return to execute instruction
    Data address breakpoint trap - will return to following instruction
    General detect fault, debug registers in use
    Task-switch breakpoint trap
+SeeAlso: INT 03
 ----------02---------------------------------
-INT 02 - external hardware - NMI (NON-MASKABLE INTERRUPT)
-   Generated by NMI signal in hardware.  This signal has various uses:
-
-   Breakout switch on hardware debuggers
-   Parity error: all except Jr and CONV
-   Coprocessor interrupt: all except Jr and CONV
-   Keyboard interrupt: Jr, CONV
-   I/O channel check: CONV, PS50+
-   Disk-controller power-on request: CONV
-   System suspend: CONV
-   Real-time clock: CONV
-   System watch-dog timer, time-out interrupt: PS50+
-   DMA timer time-out interrupt: PS50+
+INT 02 - external hardware - NON-MASKABLE INTERRUPT
+Notes:	generated by the CPU when the input to the NMI pin is asserted
+	return address points to start of interrupted instruction on 80286+
+	although the Intel documentation states that this interrupt is
+	  typically used for power-failure procedures, it has many other uses
+	  on IBM-compatible machines:
+		Memory parity error: all except Jr, CONV, and some machines
+				without memory parity
+		Breakout switch on hardware debuggers
+		Coprocessor interrupt: all except Jr and CONV
+		Keyboard interrupt: Jr, CONV
+		I/O channel check: CONV, PS50+
+		Disk-controller power-on request: CONV
+		System suspend: CONV
+		Real-time clock: CONV
+		System watch-dog timer, time-out interrupt: PS50+
+		DMA timer time-out interrupt: PS50+
 ----------03---------------------------------
-INT 03 - ONE-BYTE INTERRUPT
-   generated by opcode CCh
-Notes:	generally used to set breakpoints for debuggers
+INT 03 - CPU-generated - BREAKPOINT
+Notes:	generated by the one-byte breakpoint instruction (opcode CCh)
+	used by debuggers to implement breakpoints, such as MSDOS DEBUG's G
+	  command
 	also used by Turbo Pascal versions 1,2,3 when {$U+} specified
+	return address points to byte following the breakpoint instruction
 SeeAlso: INT 01
 ----------04---------------------------------
-INT 04 - internal hardware - OVERFLOW
-   Generated by INTO instruction if OF flag is set.  If flag is not set, INTO
-   is effectively a NOP.
-Note:	used to trap any arithmetic errors before the erroneous results
-	  propagate further through the computation
+INT 04 - CPU-generated - INTO DETECTED OVERFLOW
+Notes:	the INTO instruction will generate this interrupt if OF (Overflow Flag)
+	  is set; otherwise, INTO is effectively a NOP
+	may be used for convenient overflow testing (to prevent errors from
+	  propagating) instead of JO or a JNO/JMP combination
 SeeAlso: INT 00
 ----------05---------------------------------
-INT 05 - PRINT-SCREEN KEY
-   automatically called by keyboard scanner when print-screen key is pressed
-Notes:	normally executes routine to print the screen, but may call any routine
-	  that can safely be executed from inside the keyboard scanner
-	status and result byte for default handler is at address 0050:0000
+INT 05 - PRINT SCREEN
+Notes:	normally invoked by the INT 09 handler when PrtSc key is pressed, but
+	  may be invoked directly by applications
+	byte at 0050h:0000h contains status used by default handler
 	  00h not active
 	  01h PrtSc in progress
 	  FFh last PrtSc encountered error
+	default handler is at F000h:FF54h in IBM PC and 100%-compatible BIOSes
 SeeAlso: INT 10/AH=12h/BL=20h
 ----------05---------------------------------
-INT 05 - internal hardware - BOUND CHECK FAILED (80186+)
-   Generated by BOUND instruction when the value to be tested is less than the
-   indicated lower bound or greater than the indicated upper bound.  Returning
-   from this interrupt re-executes the failing BOUND instruction.
+INT 05 - CPU-generated (80186+) - BOUND RANGE EXCEEDED
+Notes:	generated by BOUND instruction when the value to be tested is less than
+	  the indicated lower bound or greater than the indicated upper bound.
+	returning from this interrupt re-executes the failing BOUND instruction
 ----------06---------------------------------
-INT 06 - internal hardware - UNDEFINED OPCODE (80286+)
+INT 06 - CPU-generated (80286+) - INVALID OPCODE
+Notes:	generated when the CPU attempts to execute an invalid opcode (most
+	  protected-mode instructions are considered invalid in real mode)
+	generated on BOUND, LDS, LES, or LIDT instructions which specify a
+	  register rather than a memory address
+	return address points to beginning of invalid instruction
+	with proper programming, this interrupt may be used to emulate
+	  instructions which do not exist; many 386 BIOSes emulate the 80286
+	  undocumented LOADALL instruction which was removed from the 80386+
+SeeAlso: INT 0C"CPU", INT 0D"CPU"
 ----------07---------------------------------
-INT 07 - internal hardware - NO MATH UNIT AVAILABLE (80286+)
-   automatically called if a coprocessor instruction is encountered when no
-   coprocessor is installed
-Note:	can be used to emulate a numeric coprocessor in software
+INT 07 - CPU-generated (80286+) - PROCESSOR EXTENSION NOT AVAILABLE
+Notes:	automatically called if a coprocessor instruction is encountered when
+	  no coprocessor is installed
+	can be used to emulate a numeric coprocessor in software
 SeeAlso: INT 09"MATH UNIT PROTECTION"
 ----------08---------------------------------
-INT 08 - IRQ0 - TIMER INTERRUPT
-   Generated 18.2 times per second, this interrupt is used to keep the
-   time-of-day clock updated.  Programs which need to be invoked regularly
-   should use INT 1C unless they need to reprogram the timer while still
-   keeping the time-of-day clock running at the proper rate.
-SeeAlso: INT 1C, INT 50
+INT 08 - IRQ0 - SYSTEM TIMER
+Notes:	generated 18.2 times per second by channel 0 of the 8254 system timer,
+	  this interrupt is used to keep the time-of-day clock updated
+	programs which need to be invoked regularly should use INT 1C unless
+	  they need to reprogram the timer while still keeping the time-of-day
+	  clock running at the proper rate
+	default handler is at F000h:FEA5h in IBM PC and 100%-compatible BIOSes
+	may be masked by setting bit 0 on I/O port 21h
+SeeAlso: INT 1C,INT 4A,INT 50"DESQview",INT 58"DoubleDOS",INT 70
 ----------08---------------------------------
-INT 08 - internal hardware - DOUBLE FAULT (80286+ protected mode)
-   Called when multiple exceptions occur on one instruction, or an exception
-   occurs in an exception handler.  If an exception occurs in the double fault
-   handler, the CPU goes into SHUTDOWN mode (which circuitry in the PC/AT
-   converts to a reset).
+INT 08 - CPU-generated (80286+) - DOUBLE EXCEPTION DETECTED
+Notes:	called when multiple exceptions occur on one instruction, or an
+	  exception occurs in an exception handler
+	called in protected mode if an interrupt above the defined limit of
+	  the interrupt vector table occurs
+	return address points at beginning of instruction with errors or the
+	  beginning of the instruction which was about to execute when the
+	  external interrupt caused the exception
+	if an exception occurs in the double fault handler, the CPU goes into
+	  SHUTDOWN mode (which circuitry in the PC/AT converts to a reset);
+	  this "triple fault" is a faster way of returning to real mode on
+	  many 80286 machines than the standard keyboard controller reset
 ----------09---------------------------------
-INT 09 - IRQ1 - KEYBOARD INTERRUPT
-   Generated when data is received from the keyboard.  This is normally a scan
-   code, but may also be an ACK or NAK of a command on AT-class keyboards.
-   If the BIOS supports an enhanced (101/102-key) keyboard, it calls
-     INT 15/AH=4Fh after reading the scan code from the keyboard and before
-     further processing.
-   The interrupt handler performs the following actions for certain special
-     keystrokes:
-	Ctrl-Break	invoke INT 1B, set flag at 0040h:0071h
-	SysRq		invoke INT 15/AH=85h
-	Ctrl-Numlock	place system in a tight wait loop
-	Ctrl-Alt-Del	jump to BIOS startup code (either F000h:FFFFh or the
-			  destination of the jump at that address)
-SeeAlso: INT 15/AH=4Fh, INT 15/AH=85h, INT 16, INT 1B, INT 51
+INT 09 - IRQ1 - KEYBOARD DATA READY
+Notes:	generated when data is received from the keyboard.  This is normally a
+	  scan code, but may also be an ACK or NAK of a command on AT-class
+	  keyboards.
+	may be masked by setting bit 1 on I/O port 21h
+	if the BIOS supports an enhanced (101/102-key) keyboard, it calls
+	  INT 15/AH=4Fh after reading the scan code from the keyboard and
+	  before further processing
+	the interrupt handler performs the following actions for certain
+	  special keystrokes:
+	    Ctrl-Break	 invoke INT 1B, set flag at 0040h:0071h
+	    SysRq	 invoke INT 15/AH=85h
+	    Ctrl-Numlock place system in a tight wait loop
+	    Ctrl-Alt-Del jump to BIOS startup code (either F000h:FFFFh or the
+			   destination of the jump at that address)
+	    Shift-PrtSc	 invoke INT 05
+SeeAlso: INT 05,INT 15/AH=4Fh,INT 15/AH=85h,INT 16,INT 1B,INT 51"DESQview"
+SeeAlso: INT 59"DoubleDOS"
 ----------09---------------------------------
-INT 09 - internal hardware - MATH UNIT PROTECTION FAULT (80286,80386 protected)
-SeeAlso: INT 07"NO MATH UNIT"
+INT 09 - CPU-generated (80286+) - PROCESSOR EXTENSION PROTECTION ERROR
+Notes:	called if the coprocessor attempts to access memory outside a segment
+	  boundary; it may occur at an arbitrary time after the coprocessor
+	  instruction was issued
+	until the condition is cleared or the coprocessor is reset, the only
+	  coprocessor instruction which may be used is FNINIT; WAIT or other
+	  coprocessor instructions will cause a deadlock because the
+	  coprocessor is still busy waiting for data
+SeeAlso: INT 07"CPU"
 ----------09---------------------------------
 INT 09 - internal hardware - RESERVED BY Intel (80486 protected mode)
 Note:	this exception has been moved to INT 0D
 SeeAlso: INT 09"MATH", INT 0D
 ----------0A---------------------------------
-INT 0A - IRQ2 - EGA VERTICAL RETRACE
+INT 0A - IRQ2 - LPT2 (PC), VERTICAL RETRACE INTERRUPT (EGA,VGA)
 Notes:	the TOPS and PCnet adapters use this interrupt request line by default
 	DOS 3.2 revectors IRQ2 to a stack-switching routine
 	on ATs and above, the physical data line for IRQ2 is labeled IRQ9 and
@@ -168,50 +211,72 @@ Notes:	the TOPS and PCnet adapters use this interrupt request line by default
 	under DESQview, only the INT 15h vector and BASIC segment address (the
 	  word at 0000h:0510h) may be assumed to be valid for the handler's
 	  process
-SeeAlso: INT 52, INT 71
+SeeAlso: INT 52"DESQview",INT 5A"DoubleDOS",INT 71
 ----------0A---------------------------------
 INT 0A - IRQ2 - Tandy 1000 HARD DISK
-SeeAlso: INT 52
+Note:	may be masked by setting bit 2 on I/O port 21h
+SeeAlso: INT 52"DESQview",INT 5A"DoubleDOS",INT 71
 ----------0A---------------------------------
 INT 0A - IRQ2 - ROLAND MPU MIDI INTERFACE
 Note:	newer Roland cards and MIDI interfaces by other manufacturers use
 	  a jumper-selectable IRQ, but software and hardware generally defaults
 	  to IRQ2
-SeeAlso: INT 52
+SeeAlso: INT 52"DESQview",INT 5A"DoubleDOS",INT 71
 ----------0A---------------------------------
-INT 0A - internal hardware - INVALID TASK STATE SEGMENT (80286+ protected-mode)
+INT 0A - CPU-generated (80286+ protected mode) - INVALID TASK STATE SEGMENT
+Notes:	automatically called during a task switch if the new TSS specified by
+	  the task gate is invalid for any of the following reasons:
+		TSS limit is less than 43 (80286)
+		LDT selector invalid or segment not present
+		null SS selector, or SS selector outside LDT/GDT limit
+		stack segment is read-only
+		stack segment DPL differs from new CPL, or RPL <> CPL
+		CS selector is outside LDT/GDT limit or not code
+		non-conforming code segment's DPL differs from CPL
+		conforming code segment's DPL > CPL
+		DS/ES selectors outside LDT/GDT limit or not readable segments
+	the handler must use a task gate in order to have a valid TSS under
+	  which to execute; it must also reset the busy bit in the new TSS
+SeeAlso: INT 0B"CPU"
 ----------0B---------------------------------
-INT 0B - IRQ3 - COM2 INTERRUPT
+INT 0B - IRQ3 - SERIAL COMMUNICATIONS (COM2)
 Notes:	the TOPS and PCnet adapters use this interrupt request line as an
 	  alternate
-	on PS/2's, COM2 through COM8 share this interrupt on many PC's, COM4
+	on PS/2's, COM2 through COM8 share this interrupt; on many PC's, COM4
 	  shares this interrupt
-SeeAlso: INT 0C, INT 53
+	may be masked by setting bit 3 on I/O port 21h
+SeeAlso: INT 0C"COM1", INT 53"DESQview", INT 5B"DoubleDOS"
 ----------0B---------------------------------
-INT 0B - internal hardware - NOT PRESENT (80286+ protected-mode)
-   Generated when loading a segment register if the segment descriptor
-   indicates that the segment is not currently in memory.  May be used to
-   implement virtual memory.
-SeeAlso: INT 0E"hardware"
+INT 0B - CPU-generated (80286+ protected mode) - SEGMENT NOT PRESENT
+Notes:	generated when loading a segment register if the segment descriptor
+	  indicates that the segment is not currently in memory, unless the
+	  segment is an LDT (see INT 0A"CPU") or stack segment (see
+	  INT 0C"CPU") needed by as task switch
+	may be used to implement virtual memory by loading in segments as they
+	  are accessed, clearing the "not present" bit after loading
+SeeAlso: INT 0A"CPU",INT 0E"hardware"
 ----------0C---------------------------------
-INT 0C - IRQ4 - COM1 INTERRUPT
-Note:	on many PC's, COM3 shares this interrupt
-SeeAlso: INT 0B, INT 54
+INT 0C - IRQ4 - SERIAL COMMUNICATIONS (COM1)
+Notes:	on many PC's, COM3 shares this interrupt
+	may be masked by setting bit 4 on I/O port 21h
+SeeAlso: INT 0B"COM2", INT 54"DESQview", INT 5C"DoubleDOS"
 ----------0C---------------------------------
-INT 0C - internal hardware - STACK FAULT (80286+)
-   Generated on stack overflow/underflow in protected mode.
-   Generated on accessing a word operand at SS:FFFFh in real mode.
-
-Note:	the 80286 will shut down in real mode if SP=1 before a push.  On the
+INT 0C - CPU-generated (80286+) - STACK FAULT
+Notes:	generated on stack overflow/underflow in protected mode
+	generated in protected mode if an inter-level transition or task switch
+	  references a stack segment marked "not present"
+	generated on accessing a word operand at SS:FFFFh in real mode
+	the 80286 will shut down in real mode if SP=1 before a push.  On the
 	  PC AT and compatibles, external circuitry generates a reset on
 	  shutdown.
+SeeAlso: INT 0B"CPU"
 ----------0C---------------------------------
 INT 0C - IBM SYSTEM 36/38 WORKSTATION EMULATION - API POINTER
    Call offset 100h in the interrupt handler's segment with
-   	AH = function
+	AH = function
 	    03h update screen
 	    05h select next session
-	    	AL = session number (00h-03h)
+		AL = session number (00h-03h)
 		Return: AL = session type code
 			    00h not active
 			    01h display session
@@ -240,40 +305,50 @@ Offset	Size	Description
 193h	BYTE	"STNAD"
 198h	BYTE	"NSDS"
 ----------0D---------------------------------
-INT 0D - IRQ5 - FIXED DISK (PC), LPT2 (AT/PS)
-Note:	under DESQview, only the INT 15h vector and BASIC segment address (the
+INT 0D - IRQ5 - FIXED DISK (PC,XT), LPT2 (AT), reserved (PS/2)
+Notes:	under DESQview, only the INT 15h vector and BASIC segment address (the
 	  word at 0000h:0510h) may be assumed to be valid for the handler's
 	  process
-SeeAlso: INT 0E, INT 55
+	may be masked by setting bit 5 on I/O port 21h
+SeeAlso: INT 0E"IRQ6",INT 0F"IRQ7",INT 55"DESQview",INT 5D"DoubleDOS"
 ----------0D---------------------------------
 INT 0D - IRQ5 - Tandy 1000 60 Hz RAM REFRESH
 SeeAlso: INT 55
 ----------0D---------------------------------
-INT 0D - internal hardware - GENERAL PROTECTION VIOLATION (80286+)
-   Called in real mode when
-	an instruction accesses a word operand located at offset FFFFh
-	a PUSH MEM or POP MEM instruction contains an invalid bit encoding in
-	  the second byte
-	an instruction exceeds the maximum length allowed (10 bytes for 80286,
-	  15 bytes for 80386)
-	an instruction wraps from offset FFFFh to offset 0000h
-   Called on 80486 protected-mode floating-point protection fault
-SeeAlso: INT 09"80486", INT 0C"STACK"
+INT 0D - CPU-generated (80286+) - GENERAL PROTECTION VIOLATION
+Notes:	called in real mode when
+	    an instruction accesses a word operand located at offset FFFFh
+	    a PUSH MEM or POP MEM instruction contains an invalid bit encoding
+	      in the second byte
+	    an instruction exceeds the maximum length allowed (10 bytes for
+	      80286, 15 bytes for 80386)
+	    an instruction wraps from offset FFFFh to offset 0000h
+	called in protected mode on protection violations not covered by INT 06
+	  through INT 0C, including
+	    segment limit violations
+	    write to read-only segments
+	    accesses using null DS or ES selectors
+	    accesses to segments with privilege greater than CPL
+	    wrong descriptor type
+	called on 80486 protected-mode floating-point protection fault
+SeeAlso: INT 09"80486",INT 0C"STACK"
 ----------0E---------------------------------
-INT 0E - IRQ6 - DISKETTE INTERRUPT
-Note:	generated by floppy disk controller on completion of an operation
-SeeAlso: INT 0D, INT 56
+INT 0E - IRQ6 - DISKETTE CONTROLLER
+Notes:	generated by floppy disk controller on completion of an operation
+	default handler is at F000h:EF57h in IBM PC and 100%-compatible BIOSes
+	may be masked by setting bit 6 on I/O port 21h
+SeeAlso: INT 0D"IRQ5",INT 56"DESQview",INT 5E"DoubleDOS"
 ----------0E---------------------------------
 INT 0E - internal hardware - PAGE FAULT (80386+ native mode)
-   used to implement virtual memory
+Note:	used to implement virtual memory
 SeeAlso: INT 0B"hardware"
 ----------0F---------------------------------
-INT 0F - IRQ7 - PRINTER INTERRUPT
-   Generated by the LPT1 printer adapter when printer becomes ready.
-Notes:	most printer adapters do not reliably generate this interrupt.
+INT 0F - IRQ7 - PARALLEL PRINTER
+Notes:	generated by the LPT1 printer adapter when printer becomes ready
+	most printer adapters do not reliably generate this interrupt
 	the 8259 interrupt controller generates an interrupt corresponding to
 	  IRQ7 when an error condition occurs
-SeeAlso: INT 57
+SeeAlso: INT 0D"LPT2",INT 57"DESQview",INT 5F"DoubleDOS"
 ----------10---------------------------------
 INT 10 - internal hardware - COPROCESSOR ERROR (80286+)
 Notes:	generated by the CPU when the -ERROR pin is asserted by the coprocessor
@@ -283,304 +358,325 @@ SeeAlso: INT 09"hardware", INT 75
 ----------1000-------------------------------
 INT 10 - VIDEO - SET VIDEO MODE
 	AH = 00h
-	AL = mode (graphics mode if graphics resolution listed)
-		 text  pixel graphic colors disp scrn  system
-		 resol	box  resoltn	    page addr
-	   00h = 40x25	8x8	       B&W     8 B800 CGA
-	       = 40x25	8x14	       B&W     8 B800 ATI VIP
-	   01h = 40x25	8x8		16     8 B800 CGA
-	       = 40x25	8x14		16     8 B800 ATI VIP
-	   02h = 80x25	8x8	       B&W     4 B800 CGA
-	       = 80x25	8x8	       B&W     8 B800 EGA,MCGA,VGA
-	       = 80x25	8x14	       B&W     8 B800 ATI VIP
-	   03h = 80x25	8x8		16     4 B800 CGA
-	       = 80x25	8x8		16     8 B800 EGA,MCGA,VGA
-	   04h = 40x25	8x8   320x200	 4     1 B800 CGA
-	   05h = 40x25	8x8   320x200 4 gray   1 B800 CGA
-	   06h = 80x25	8x8   640x200  B&W     1 B800 CGA
-	   07h = 80x25	9x14	      mono     1 B000 MDA,Hercules
-	       = 80x25			       8      EGA,VGA
-	       = 80x25	9x14	      mono	 B000 ATI VIP
-	   08h = 20x25	8x8   160x200	16	 B800 PCjr,Tandy 1000
-	       = 132x25 8x8		16	 B800 ATI EGA/VGA Wonder **
-	       = 132x25 8x8	      mono	 B000 ATI EGA/VGA Wonder **
-	   09h = 40x25	8x8   320x200	16	 B800 PCjr,Tandy 1000
-	   0Ah = 80x25	8x8   640x200	 4	 B800 PCjr,Tandy 1000
-	   0Bh = reserved (used internally by EGA BIOS)
-	   0Ch = reserved (used internally by EGA BIOS)
-	   0Dh = 40x25	8x8   320x200	16     8 A000 EGA,VGA
-	   0Eh = 80x25	8x8   640x200	16     4 A000 EGA,VGA
-	   0Fh = 80x25	8x14  640x350 mono     2 A000 EGA,VGA
-	   10h = 80x25	8x14  640x350 4or16    2 A000 EGA,VGA
-	   11h = 80x30	8x16  640x480 mono	 A000 VGA,MCGA,ATI EGA,ATI VIP
-	   12h = 80x30	8x16  640x480  16/256k	 A000 VGA,ATI VIP
-	       = 80x30	8x16  640x480  16/64	 A000 ATI EGA Wonder
-	   13h = 40x25	8x8   320x200 256/256k	 A000 VGA,MCGA,ATI VIP
-	   14h = 80x25	8x8   640x200		      Lava Chrome II EGA
-	       =	      640x400	16	      Tecmar VGA/AD
-	   15h = 80x25	8x14  640x350		      Lava Chrome II EGA
-	   16h = 80x25	8x14  640x350		      Lava Chrome II EGA
-	       =	      800x600	16	      Tecmar VGA/AD
-	   17h = 80x34	8x14  640x480		      Lava Chrome II EGA
-	       = 132x25				      Tecmar VGA/AD
-	   18h = 132x44 8x8	      mono	      Tseng Labs EVA
-	       = 132x44 8x8	      16/256   2 B000 Tseng ET4000 chipset
-	       = 80x34	8x14  640x480		      Lava Chrome II EGA
-	       =	     1024x768	16	      Tecmar VGA/AD
-	   19h = 132x25 8x14	      mono	      Tseng Labs EVA
-	       = 132x25 8x14	      16/256   4 B000 Tseng ET4000 chipset
-	   1Ah = 132x28 8x13	      mono	      Tseng Labs EVA
-	       = 132x28 8x13	      16/256   4 B000 Tseng ET4000 chipset
-	       =	      640x350  256	      Tecmar VGA/AD
-	   1Bh =	      640x400  256	      Tecmar VGA/AD
-	   1Ch =	      640x480  256	      Tecmar VGA/AD
-	   1Dh =	      800x600  256	      Tecmar VGA/AD
-	   21h = 80x43	8x8   720x348 mono	      DESQview 2.x+Hercules ***
-	   22h = 132x44 8x8			      Tseng Labs EVA
-	       = 132x44 8x8	      16/256   2 B800 Tseng ET4000 chipset
-	       = 132x44 8x8			      Ahead Systems EGA2001
-	       = 132x43				      Allstar Peacock (VGA)
-	       = 132x44 		16	      Orchid Prodesigner VGA
-	       = 80x43	8x8   720x348 mono	      DESQview 2.x+Hercules ***
-	   23h = 132x25 6x14			      Tseng Labs EVA
-	       = 132x25 8x14	      16/256   4 B800 Tseng ET4000 chipset
-	       = 132x25 8x14			      Ahead Systems EGA2001
-	       = 132x25 8x8		16	 B800 ATI EGA Wonder,ATI VIP
-	       = 132x28				      Allstar Peacock (VGA)
-	       = 132x28			16	      Orchid Prodesigner VGA
-	   24h = 132x28 6x13			      Tseng Labs EVA
-	       = 132x28 8x13	      16/256   4 B800 Tseng ET4000 chipset
-	       = 132x25				      Allstar Peacock (VGA)
-	       = 132x25 		16	      Orchid Prodesigner VGA
-	   25h = 80x60	8x8   640x480		      Tseng Labs EVA
-	       = 80x60	8x8   640x480 16/256   1 A000 Tseng ET4000 chipset
-	       =	      640x480	16	      VEGA VGA
-	       = 80x60	8x8   640x480	16	 A000 Orchid Prodesigner VGA
-	   26h = 80x60	8x8			      Tseng Labs EVA
-	       = 80x60	8x8	      16/256   2 B800 Tseng ET4000 chipset
-	       = 80x60	8x8   640x480		      Ahead Systems EGA2001
-	       = 80x60				      Allstar Peacock (VGA)
-	       = 80x60	 		16	      Orchid ProDesigner VGA
-	   27h =	      720x512	16	      VEGA VGA
-	       =	      720x512	16	      Genoa
-	       = 132x25 8x8	      mono	 B000 ATI EGA Wonder,ATI VIP
-	   28h = ???x???			      VEGA VGA
-	   29h =	      800x600	16	      VEGA VGA
-	       = 100x37 8x16  800x600	16	 A000 Orchid
-	       =	      800x600	16	 A000 STB,Genoa,Sigma
-	       =	      800x600	16	      Allstar Peacock (VGA)
-	       = 100x37 8x16  800x600 16/256   1 A000 Tseng ET4000 chipset
-	   2Ah = 100x40 			      Allstar Peacock (VGA)
-	       = 100x40 8x16		16	      Orchid Prodesigner VGA
-	       = 100x40 8x15	      16/256   4 B800 Tseng ET4000 chipset
-	   2Dh =	      640x350  256	      VEGA VGA
-	       =	      640x350 256/256k	 A000 Orchid, Genoa, STB
-	       = 80x25	8x14  640x350 256/256k 1 A000 Tseng ET4000 chipset
-	   2Eh =	      640x480  256	      VEGA VGA
-	       = 80x30	8x16  640x480 256/256k	 A000 Orchid
-	       =	      640x480 256/256k	 A000 STB,Genoa,Sigma
-	       = 80x30	8x16  640x480 256/256k 1 A000 Tseng ET4000 chipset
-	   2Fh =	      720x512  256	      VEGA VGA
-	       =	      720x512  256	      Genoa
-	       = 80x25	8x16  640x400 256/256k 1 A000 Tseng ET4000 chipset
-	   30h =	      800x600  256	      VEGA VGA
-	       = 100x37 8x16  800x600 256/256k	 A000 Orchid 
-	       =	      800x600 256/256k	 A000 STB,Genoa,Sigma
-	       =	      720x350	 2	      3270 PC
-	       =	      800x600  256	      Cardinal
-	       =	      ???x???		 B800 AT&T 6300
-	       = 100x37 8x16  800x600 256/256k 1 A000 Tseng ET4000 chipset
-	   33h = 132x44 8x8		16	 B800 ATI EGA Wonder,ATI VIP
-	   36h =	      960x720	16	      VEGA VGA
-	       =	      960x720	16	      STB
-	   37h =	     1024x768	16	      VEGA VGA
-	       = 128x48 8x16 1024x768	16	 A000 Orchid
-	       =	     1024x768	16	 A000 STB,Genoa,Sigma
-	       = 132x44 8x8	      mono	 B800 ATI EGA Wonder,ATI VIP
-	   38h =	     1024x768  256	      STB VGA/EM-16 Plus (1MB)
-	       = 128x48 8x16 1024x768 256/256k 1 A000 Tseng ET4000 chipset
-	   40h = 80x25	8x16  640x400	 2     1 B800 AT&T 6300, AT&T VDC600
-	       = 80x25	8x16  640x400	 2     1 B800 Compaq Portable
-	       = 80x43				      VEGA VGA, Tecmar VGA/AD
-	       = 80x43				      Video7 V-RAM VGA
-	       = 80x43				      Tatung VGA
-	   41h =	      640x200	16     1      AT&T 6300
-	       = 132x25 			      VEGA VGA
-	       = 132x25				      Tatung VGA
-	       = 132x25				      Video7 V-RAM VGA
-	   42h = 80x25	8x16  640x400	16	      AT&T 6300, AT&T VDC600
-	       = 132x43 			      VEGA VGA
-	       = 132x43				      Tatung VGA
-	       = 132x43				      Video7 V-RAM VGA
-	   43h = unsupported  640x200 of 640x400 viewport  AT&T 6300
-	       = 80x60				      VEGA VGA
-	       = 80x60				      Tatung VGA
-	       = 80x60				      Video7 V-RAM VGA
-	   44h = disable VDC and DEB output	      AT&T 6300
-	       = 100x60 			      VEGA VGA
-	       = 100x60 			      Tatung VGA
-	       = 100x60				      Video7 V-RAM VGA
-	   45h = 132x28				      Tatung VGA
-	       = 132x28				      Video7 V-RAM VGA
-	   46h = 100x40 8x15  800x600	 2	      AT&T VDC600
-	   47h = 100x37 8x16  800x600	16	      AT&T VDC600
-	   48h = 80x50	8x8   640x400	 2	 B800 AT&T 6300, AT&T VDC600
-	   49h = 80x30	8x16  640x480		      Lava Chrome II EGA
-	   4Dh = 120x25 			      VEGA VGA
-	   4Eh = 120x43 			      VEGA VGA
-	   4Fh = 132x25 			      VEGA VGA
-	   50h = 80x30	8x16  640x480	16	      Paradise EGA-480
-	       = 80x30	8x16	      16/256k	 B800 Trident TVGA 8800
-	       = 80x34				      Lava Chrome II EGA
-	       = 80x43		      mono	      VEGA VGA
-	       =	      640x480 mono???	      Taxan 565 EGA
-	       = 132x25 9x14	      mono	      Ahead Systems EGA2001
-	       = 132x25 8x14		16     8 B800 OAK Technologies VGA-16
-	   51h = 80x30	8x16			      Paradise EGA-480
-	       = 80x30				      Lava Chrome II EGA
-	       = 80x34	8x14  640x480	16	      ATI EGA Wonder
-	       = 80x43	8x11	      16/256k	 B800 Trident TVGA 8800
-	       = 132x25 	      mono	      VEGA VGA
-	       = 132x43 8x8		16     5 B800 OAK Technologies VGA-16
-	   52h = 80x60				      Lava Chrome II EGA
-	       = 80x60	8x8	      16/256k	 B800 Trident TVGA 8800
-	       = 94x29	8x14  752x410	16	      ATI EGA Wonder
-	       = 100x75	8x8   800x600	16     1 A000 OAK Technologies VGA-16
-	       = 132x43 	      mono	      VEGA VGA
-	       = 132x44 9x8	      mono	      Ahead Systems EGA2001
-	   53h = 100x40 8x14  800x560	16	      ATI EGA Wonder,ATI VIP
-	       = 132x25 8x14	      16/256k	 B800 Trident TVGA 8800
-	       = 132x43 			      Lava Chrome II EGA
-	   54h = 100x42 8x14  800x600	16	 A000 ATI EGA Wonder, VGA Wondr
-	       = 132x25 			      Lava Chrome II EGA
-	       = 132x30 8x16	      16/256k	 B800 Trident TVGA 8800
-	       = 132x43 8x8			      Paradise EGA-480
-	       = 132x43 7x9	      16/256k	 B800 Paradise VGA
-	       = 132x43 8x9	      16/256k	 B800 Paradise VGA on multisync
-	       = 132x43				      Taxan 565 EGA
-	       = 132x43				      AST VGA Plus
-	       = 132x43				      Hewlett-Packard D1180A
-	       = 132x43 7x9		16	      AT&T VDC600
-	   55h = 80x66	8x8	      16/256k	 A000 ATI VIP
-	       = 94x29	8x14  752x410		      Lava Chrome II EGA
-	       = 128x48 8x16 1024x768 16/256k	 A000 ATI VGA Wonder v4+  *!
-	       = 132x25 8x14			      Paradise EGA-480
-	       = 132x25 7x16	      16/256k	 B800 Paradise VGA
-	       = 132x25 8x16	      16/256k	 B800 Paradise VGA on multisync
-	       = 132x25				      Taxan 565 EGA
-	       = 132x25				      AST VGA Plus
-	       = 132x25				      Hewlett-Packard D1180A
-	       = 132x25 7x16		16	      AT&T VDC600
-	       = 132x43 8x11	      16/256k	 B800 Trident TVGA 8800
-	   56h = 132x43 8x8	      3???     2 B000 NSI Smart EGA+
-	       = 132x43 7x9		 4	 B000 Paradise VGA
-	       = 132x43 8x9		 4	 B000 Paradise VGA on multisync
-	       = 132x43 	      mono	      Taxan 565 EGA
-	       = 132x43 7x9		 2	      AT&T VDC600
-	       = 132x60 8x8	      16/256k	 B800 Trident TVGA 8800
-	   57h = 132x25 8x14	      3???     4 B000 NSI Smart EGA+
-	       = 132x25 7x16		 4	 B000 Paradise VGA
-	       = 132x25 8x16		 4	 B000 Paradise VGA on multisync
-	       = 132x25 	      mono	      Taxan 565 EGA
-	       = 132x25 7x16		 2	      AT&T VDC600
-	       = 132x25 9x14	      16/256k	 B800 Trident TVGA 8800
-	   58h = 100x75 8x8   800x600 16/256k	 A000 Paradise VGA
-	       = 100x75 8x8   800x600	16	      AT&T VDC600
-	       = 80x33	8x14		16	 B800 ATI EGA Wonder,ATI VIP
-	       =	      800x600	16	      AST VGA Plus, Compaq VGA
-	       =	      800x600	16	      Dell VGA
-	       =	      800x600	16	      Hewlett-Packard D1180A
-	       = 132x30 9x16	      16/256k	 B800 Trident TVGA 8800
-	   59h = 100x75 8x8   800x600	 2	 A000 Paradise VGA
-	       = 100x75 8x8   800x600	 2	      AT&T VDC600
-	       = 80x66	8x8	      16/256k	 A000 ATI VIP
-	       =	      800x600	 2	      AST VGA Plus, Compaq VGA
-	       =	      800x600	 2	      Dell VGA
-	       =	      800x600	 2	      Hewlett-Packard D1180A
-	       = 132x43 9x11	      16/256k	 B800 Trident TVGA 8800
-	   5Ah = 132x60 9x8	      16/256k	 B800 Trident TVGA 8800
-	   5Bh =	      800x600	16	      Maxxon, SEFCO TVGA, Imtec
-	       =	      640x350  256	      Genoa 6400
-	       = 80x30	8x16			 B800 ATI VGA Wonder (undoc)
-	       = 100x75 8x8   800x600 16/256k	 A000 Trident TVGA 8800
-	   5Ch =	      640x400  256	      Logix, ATI Prism Elite
-	       =	      640x400  256	      Maxxon, SEFCO TVGA, Imtec
-	       =	      640x400  256	      Zymos Poach
-	       = 80x25	8x16  640x400  256	 A000 Trident TVGA 8800
-	       =	      640x480  256	      Genoa 6400
-	   5Dh =	      640x480  256	      Logix, ATI Prism Elite
-	       =	      640x480  256	      Maxxon, SEFCO TVGA, Imtec
-	       =	      640x480  256	      Zymos Poach
-	       = 80x30	8x16  640x480  256	 A000 Trident TVGA 8800 (512K)
-	   5Eh =	      640x400  256	      Paradise VGA,VEGA VGA
-	       =	      640x400  256	      AST VGA Plus
-	       =	      640x400  256	      Compaq VGA, Dell VGA
-	       = 80x25	8x16  640x400  256	      AT&T VDC600
-	       =	      800x600	16	      Logix, ATI Prism Elite
-	       =	      800x600  256	      Genoa 6400
-	       =	      800x600  256	      Zymos Poach
-	   5Fh =	      640x480  256	      Paradise VGA
-	       =	      640x480  256	      AST VGA Plus
-	       =	      640x480  256	      Compaq VGA, Dell VGA
-	       =	      640x480  256	      Hewlett-Packard D1180A
-	       = 80x30	8x16  640x480  256	      AT&T VDC600 (512K)
-	       =	     1024x768	16	      Logix, ATI Prism Elite
-	       =	     1024x768	16	      Maxxon, Genoa 6400, Imtec
-	       =	     1024x768	16	      Zymos Poach
-	       = 128x48 8x16 1024x768 16/256k	 A000 Trident TVGA 8800 (512K)
-	   60h = 80x???       ???x400		      Corona/Cordata BIOS 4.10+
-	       =	      752x410		      VEGA VGA
-	       =	      752x410	16	      Tatung VGA
-	       =	      752x410	16	      Video7 V-RAM VGA
-	       =	      640x400  256	      Ahead B
-	   61h =	      ???x400		      Corona/Cordata BIOS 4.10+
-	       =	      720x540		      VEGA VGA
-	       =	      720x540	16	      Tatung VGA
-	       =	      720x540	16	      Video7 V-RAM VGA
-	       =	      640x400  256	 A000 ATI VGA Wonder
-	       =	      640x480  256	      Ahead B
-	       = 96x64	8x16 768x1024 16/256k	 A000 Trident TVGA 8800 (512K)
-	   62h =	      800x600		      VEGA VGA
-	       =	      800x600	16	      Tatung VGA
-	       =	      800x600	16	      Video7 V-RAM VGA
-	       =	      640x480  256	 A000 ATI VGA Wonder
-	       =	      800x600  256	      Ahead B
-	   63h =	     1024x768	 2	      Video7 V-RAM VGA
-	       =	      800x600  256	 A000 ATI VGA Wonder
-	       =	     1024x768  256	      Ahead B (1MB)
-	   64h =	     1024x768	 4	      Video7 V-RAM VGA
-	   65h =	     1024x768	16	      Video7 V-RAM VGA
-	       =	     1024x768	16	 A000 ATI VGA Wonder
-	   66h =	      640x400  256	      Tatung VGA
-	       =	      640x400  256	      Video7 V-RAM VGA
-	   67h =	      640x480  256	      Video7 V-RAM VGA
-	       =	     1024x768	 4	 A000 ATI VGA Wonder
-	   69h =	      720x540  256	      Video7 V-RAM VGA
-	   6Ah =	      800x600	16	      VESA standard interface
-	       =	      800x600	16	      Ahead B, Genoa 6400
-	       =	      800x600	16	      Zymos Poach
-	       = 100x42 8x14  800x600		 A000 ATI VGA Wonder (undoc)
-	   70h =	      800x600	16	      Cardinal
-	       = extended mode set (see AX=0070h)     Everex Micro Enhancer EGA
-	   71h = 100x35 8x16  800x600 16of64	 A000 NSI Smart EGA+
-	       =	      960x720	16	      Cardinal
-	   72h =	     1024x768	16	      Cardinal
-	   74h =	      640x400	 2	 B800 Toshiba 3100 AT&T mode
-	       =	     1024x768	16	      Ahead B
-	   78h =	      640x400  256	      STB VGA/EM-16 Plus
-	       =	      640x400  256	      Cardinal
-	   79h =	      640x480  256	      Cardinal
-	   7Ah =	      720x540  256	      Cardinal
-	   7Ch =	      512x512	16	      Genoa
-	   7Dh =	      512x512  256	      Genoa
-	   7Eh = special mode set (see AX=007Eh)      Paradise VGA, AT&T VDC600
-	   7Fh = special function set (see AX=007Fh)  Paradise VGA, AT&T VDC600
-	   82h = 80x25		       B&W	      AT&T VDC overlay mode *
-	   83h = 80x25				      AT&T VDC overlay mode *
-	   86h =	      640x200  B&W	      AT&T VDC overlay mode *
-	   C0h =	      640x400  2/prog pallet  AT&T VDC overlay mode *
-	   C4h = disable output 		      AT&T VDC overlay mode *
-	   D0h =	      640x400	 2	 B800 DEC VAXmate AT&T mode
+	AL = mode (see below)
+Return: AL = video mode flag (Phoenix BIOS)
+	    20h mode > 7
+	    30h modes <= 7 except mode 6
+	    3Fh mode 6
+Notes:	IBM standard modes do not clear the screen if the high bit of AL is set
+	  (EGA or higher only)
+	the Tseng ET4000 chipset is used by the Orchid Prodesigner II, Diamond
+	  SpeedSTAR VGA, Groundhog Graphics Shadow VGA
+SeeAlso: AX=0070h,AX=007Eh,AX=6F05h
+
+Values for video mode:
+      text/ text pixel	 pixel	colors	disply	scrn  system
+      grph resol  box	resoltn		pages	addr
+ 00h = T   40x25  8x8		16gray	   8	B800 CGA,PCjr
+     = T   40x25  8x14		16gray	   8	B800 EGA
+     = T   40x25  8x16		  16	   8	B800 MCGA
+     = T   40x25  9x16		  16	   8	B800 VGA
+ 01h = T   40x25  8x8		  16	   8	B800 CGA,PCjr
+     = T   40x25  8x14		  16	   8	B800 EGA
+     = T   40x25  8x16		  16	   8	B800 MCGA
+     = T   40x25  9x16		  16	   8	B800 VGA
+ 02h = T   80x25  8x8		16gray	   4	B800 CGA,PCjr
+     = T   80x25  8x14		16gray	   4	B800 EGA
+     = T   80x25  8x16		  16	   4	B800 MCGA
+     = T   80x25  9x16		  16	   4	B800 VGA
+ 03h = T   80x25  8x8		  16	   4	B800 CGA,PCjr
+     = T   80x25  8x14		  16	   4	B800 EGA
+     = T   80x25  8x16		  16	   4	B800 MCGA
+     = T   80x25  9x16		  16	   4	B800 VGA
+ 04h = G   40x25  8x8	320x200	   4		B800 CGA,PCjr,EGA,MCGA,VGA
+ 05h = G   40x25  8x8	320x200	 4gray		B800 CGA,PCjr,EGA
+     = G   40x25  8x8	320x200	   4		B800 MCGA,VGA
+ 06h = G   80x25  8x8	640x200	   2		B800 CGA,PCjr,EGA,MCGA,VGA
+ 07h = T   80x25  9x14		 mono	  var	B000 MDA,Hercules,EGA
+     = T   80x25  9x16		 mono		B000 VGA
+ 08h = G   20x25  8x8	160x200	  16		     PCjr
+     = T  132x25  8x8		  16		B800 ATI EGA/VGA Wonder **
+     = T  132x25  8x8		 mono		B000 ATI EGA/VGA Wonder **
+ 09h = G   40x25  8x8	320x200	  16		     PCjr
+ 0Ah = G   80x25  8x8	640x200	   4		     PCjr
+ 0Bh =	 reserved (used internally by EGA BIOS)
+ 0Ch =	 reserved (used internally by EGA BIOS)
+ 0Dh = G   40x25  8x8	320x200	  16	   8	A000 EGA,VGA
+ 0Eh = G   80x25  8x8	640x200	  16	   4	A000 EGA,VGA
+ 0Fh = G   80x25  8x14	640x350	 mono	   2	A000 EGA,VGA
+ 10h = G   80x25  8x14	640x350	   4	   2	A000 64k EGA
+     = G		640x350	  16		A000 256k EGA,VGA
+ 11h = G   80x30  8x16	640x480	 mono		A000 VGA,MCGA,ATI EGA,ATI VIP
+ 12h = G   80x30  8x16	640x480 16/256k		A000 VGA,ATI VIP
+     = G   80x30  8x16	640x480	 16/64		A000 ATI EGA Wonder
+ 13h = G   40x25  8x8	320x200 256/256k	A000 VGA,MCGA,ATI VIP
+ 14h = G   80x25  8x8	640x200			     Lava Chrome II EGA
+     = G		640x400	  16		     Tecmar VGA/AD
+ 15h = G   80x25  8x14	640x350			     Lava Chrome II EGA
+ 16h = G   80x25  8x14	640x350			     Lava Chrome II EGA
+     = G		800x600	  16		     Tecmar VGA/AD
+ 17h = G   80x34  8x14	640x480			     Lava Chrome II EGA
+     = T  132x25				     Tecmar VGA/AD
+ 18h = T  132x44  8x8		 mono		     Tseng Labs EVA
+     = T  132x44  8x8		 16/256	   2	B000 Tseng ET4000 chipset
+     = G   80x34  8x14	640x480			     Lava Chrome II EGA
+     = G	       1024x768	  16		     Tecmar VGA/AD
+ 19h = T  132x25  8x14		 mono		     Tseng Labs EVA
+     = T  132x25  8x14		 16/256	   4	B000 Tseng ET4000 chipset
+ 1Ah = T  132x28  8x13		 mono		     Tseng Labs EVA
+     = T  132x28  8x13		 16/256	   4	B000 Tseng ET4000 chipset
+     = G		640x350	 256		     Tecmar VGA/AD
+ 1Bh = G		640x400	 256		     Tecmar VGA/AD
+ 1Ch = G		640x480	 256		     Tecmar VGA/AD
+ 1Dh = G		800x600	 256		     Tecmar VGA/AD
+ 21h = G   80x43  8x8	720x348	 mono		B000 DESQview 2.x+Hercules ***
+ 22h = T  132x44  8x8				     Tseng Labs EVA
+     = T  132x44  8x8		 16/256	   2	B800 Tseng ET4000 chipset
+     = T  132x44  8x8				     Ahead Systems EGA2001
+     = T  132x43				     Allstar Peacock (VGA)
+     = T  132x44		  16		     Orchid Prodesigner VGA
+     = G   80x43  8x8	720x348	 mono		B800 DESQview 2.x+Hercules ***
+ 23h = T  132x25  6x14				     Tseng Labs EVA
+     = T  132x25  8x14		 16/256	   4	B800 Tseng ET4000 chipset
+     = T  132x25  8x14				     Ahead Systems EGA2001
+     = T  132x25  8x8		  16		B800 ATI EGA Wonder,ATI VIP
+     = T  132x28				     Allstar Peacock (VGA)
+     = T  132x28		  16		     Orchid Prodesigner VGA
+ 24h = T  132x28  6x13				     Tseng Labs EVA
+     = T  132x28  8x13		 16/256	   4	B800 Tseng ET4000 chipset
+     = T  132x25				     Allstar Peacock (VGA)
+     = T  132x25		  16		     Orchid Prodesigner VGA
+ 25h = G   80x60  8x8	640x480			     Tseng Labs EVA
+     = G   80x60  8x8	640x480	 16/256	   1	A000 Tseng ET4000 chipset
+     = G		640x480	  16		     VEGA VGA
+     = G   80x60  8x8	640x480	  16		A000 Orchid Prodesigner VGA
+ 26h = T   80x60  8x8				     Tseng Labs EVA
+     = T   80x60  8x8		 16/256	   2	B800 Tseng ET4000 chipset
+     = G   80x60  8x8	640x480			     Ahead Systems EGA2001
+     = T   80x60				     Allstar Peacock (VGA)
+     = T   80x60		  16		     Orchid ProDesigner VGA
+ 27h = G		720x512	  16		     VEGA VGA
+     = G		720x512	  16		     Genoa
+     = T  132x25  8x8		 mono		B000 ATI EGA Wonder,ATI VIP
+ 28h = T  ???x???				     VEGA VGA
+ 29h = G		800x600	  16		     VEGA VGA
+     = G  100x37  8x16	800x600	  16		A000 Orchid
+     = G		800x600	  16		A000 STB,Genoa,Sigma
+     = G		800x600	  16		     Allstar Peacock (VGA)
+     = G  100x37  8x16	800x600	 16/256	   1	A000 Tseng ET4000 chipset
+ 2Ah = T  100x40				     Allstar Peacock (VGA)
+     = T  100x40  8x16		  16		     Orchid Prodesigner VGA
+     = T  100x40  8x15		16/256	   4	B800 Tseng ET4000 chipset
+ 2Dh = G		640x350	 256		     VEGA VGA
+     = G		640x350 256/256k	A000 Orchid, Genoa, STB
+     = G   80x25  8x14	640x350 256/256k   1	A000 Tseng ET4000 chipset
+ 2Eh = G		640x480	 256		     VEGA VGA
+     = G   80x30  8x16	640x480 256/256k	A000 Orchid
+     = G		640x480 256/256k	A000 STB,Genoa,Sigma
+     = G   80x30  8x16	640x480 256/256k   1	A000 Tseng ET4000 chipset
+ 2Fh = G		720x512	 256		     VEGA VGA
+     = G		720x512	 256		     Genoa
+     = G   80x25  8x16	640x400 256/256k   1	A000 Tseng ET4000 chipset
+ 30h = G		800x600	 256		     VEGA VGA
+     = G  100x37  8x16	800x600 256/256k	A000 Orchid 
+     = G		800x600 256/256k	A000 STB,Genoa,Sigma
+     = G		720x350	   2		     3270 PC
+     = G		800x600	 256		     Cardinal
+     = G		???x???			B800 AT&T 6300
+     = G  100x37  8x16	800x600 256/256k   1	A000 Tseng ET4000 chipset
+ 33h = T  132x44  8x8		  16		B800 ATI EGA Wonder,ATI VIP
+ 36h = G		960x720	  16		     VEGA VGA
+     = G		960x720	  16		     STB
+ 37h = G	       1024x768	  16		     VEGA VGA
+     = G  128x48  8x16 1024x768	  16		A000 Orchid
+     = G	       1024x768	  16		A000 STB,Genoa,Sigma
+     = T  132x44  8x8		 mono		B800 ATI EGA Wonder,ATI VIP
+ 38h = G	       1024x768	 256		     STB VGA/EM-16 Plus (1MB)
+     = G  128x48  8x16 1024x768 256/256k   1	A000 Tseng ET4000 chipset
+ 40h = G   80x25  8x16	640x400	   2	   1	B800 AT&T 6300, AT&T VDC600
+     = G   80x25  8x16	640x400	   2	   1	B800 Compaq Portable
+     = T   80x43				     VEGA VGA, Tecmar VGA/AD
+     = T   80x43				     Video7 V-RAM VGA
+     = T   80x43				     Tatung VGA
+ 41h = G		640x200	  16	   1	     AT&T 6300
+     = T  132x25				     VEGA VGA
+     = T  132x25				     Tatung VGA
+     = T  132x25				     Video7 V-RAM VGA
+ 42h = G   80x25  8x16	640x400	  16		     AT&T 6300, AT&T VDC600
+     = T  132x43				     VEGA VGA
+     = T  132x43				     Tatung VGA
+     = T  132x43				     Video7 V-RAM VGA
+ 43h = G	     640x200 of 640x400 viewport     AT&T 6300 (unsupported)
+     = T   80x60				     VEGA VGA
+     = T   80x60				     Tatung VGA
+     = T   80x60				     Video7 V-RAM VGA
+ 44h =	 disable VDC and DEB output		     AT&T 6300
+     = T  100x60				     VEGA VGA
+     = T  100x60				     Tatung VGA
+     = T  100x60				     Video7 V-RAM VGA
+ 45h = T  132x28				     Tatung VGA
+     = T  132x28				     Video7 V-RAM VGA
+ 46h = G  100x40  8x15	800x600	   2		     AT&T VDC600
+ 47h = G  100x37  8x16	800x600	  16		     AT&T VDC600
+ 48h = G   80x50  8x8	640x400	   2		B800 AT&T 6300, AT&T VDC600
+ 49h = G   80x30  8x16	640x480			     Lava Chrome II EGA
+ 4Dh = T  120x25				     VEGA VGA
+ 4Eh = T  120x43				     VEGA VGA
+ 4Fh = T  132x25				     VEGA VGA
+ 50h = G   80x30  8x16	640x480	  16		     Paradise EGA-480
+     = T   80x30  8x16		 16/256k	B800 Trident TVGA 8800
+     = T   80x34				     Lava Chrome II EGA
+     = T   80x43		 mono		     VEGA VGA
+     = G		640x480	 mono???	     Taxan 565 EGA
+     = T  132x25  9x14		 mono		     Ahead Systems EGA2001
+     = T  132x25  8x14		  16	   8	B800 OAK Technologies VGA-16
+ 51h = T   80x30  8x16				     Paradise EGA-480
+     = T   80x30				     Lava Chrome II EGA
+     = G   80x34  8x14	640x480	  16		     ATI EGA Wonder
+     = T   80x43  8x11		 16/256k	B800 Trident TVGA 8800
+     = T  132x25		 mono		     VEGA VGA
+     = T  132x43  8x8		  16	   5	B800 OAK Technologies VGA-16
+ 52h = T   80x60				      Lava Chrome II EGA
+     = T   80x60  8x8		 16/256k	B800 Trident TVGA 8800
+     = G   94x29  8x14	752x410	  16		     ATI EGA Wonder
+     = G  100x75  8x8	800x600	  16	   1	A000 OAK Technologies VGA-16
+     = T  132x43		 mono		     VEGA VGA
+     = T  132x44  9x8		 mono		     Ahead Systems EGA2001
+ 53h = G  100x40  8x14	800x560	  16		     ATI EGA Wonder,ATI VIP
+     = T  132x25  8x14		 16/256k	B800 Trident TVGA 8800
+     = T  132x43				     Lava Chrome II EGA
+ 54h = G  100x42  8x14	800x600	  16		A000 ATI EGA Wonder, VGA Wondr
+     = T  132x25				     Lava Chrome II EGA
+     = T  132x30  8x16		 16/256k	B800 Trident TVGA 8800
+     = T  132x43  8x8				     Paradise EGA-480
+     = T  132x43  7x9		 16/256k	B800 Paradise VGA
+     = T  132x43  8x9		 16/256k	B800 Paradise VGA on multisync
+     = T  132x43				     Taxan 565 EGA
+     = T  132x43				     AST VGA Plus
+     = T  132x43				     Hewlett-Packard D1180A
+     = T  132x43  7x9		  16		     AT&T VDC600
+ 55h = T   80x66  8x8		 16/256k	A000 ATI VIP
+     = T  132x25  8x14				     Paradise EGA-480
+     = T  132x25  7x16		 16/256k	B800 Paradise VGA
+     = T  132x25  8x16		 16/256k	B800 Paradise VGA on multisync
+     = T  132x25				     Taxan 565 EGA
+     = T  132x25				     AST VGA Plus
+     = T  132x25				     Hewlett-Packard D1180A
+     = T  132x25  7x16		  16		     AT&T VDC600
+     = T  132x43  8x11		 16/256k	B800 Trident TVGA 8800
+     = G   94x29  8x14	752x410			     Lava Chrome II EGA
+     = G  128x48  8x16 1024x768	 16/256k	A000 ATI VGA Wonder v4+	 *!
+ 56h = T  132x43  8x8		   3???	   2	B000 NSI Smart EGA+
+     = T  132x43  7x9		   4		B000 Paradise VGA
+     = T  132x43  8x9		   4		B000 Paradise VGA on multisync
+     = T  132x43		 mono		     Taxan 565 EGA
+     = T  132x43  7x9		   2		     AT&T VDC600
+     = T  132x60  8x8		 16/256k	B800 Trident TVGA 8800
+ 57h = T  132x25  8x14		   3???	   4	B000 NSI Smart EGA+
+     = T  132x25  7x16		   4		B000 Paradise VGA
+     = T  132x25  8x16		   4		B000 Paradise VGA on multisync
+     = T  132x25		 mono		     Taxan 565 EGA
+     = T  132x25  7x16		   2		     AT&T VDC600
+     = T  132x25  9x14		 16/256k	B800 Trident TVGA 8800
+ 58h = G  100x75  8x8	800x600	 16/256k	A000 Paradise VGA
+     = G  100x75  8x8	800x600	  16		     AT&T VDC600
+     = T   80x33  8x14		  16		B800 ATI EGA Wonder,ATI VIP
+     = G		800x600	  16		     AST VGA Plus, Compaq VGA
+     = G		800x600	  16		     Dell VGA
+     = G		800x600	  16		     Hewlett-Packard D1180A
+     = T  132x30  9x16		 16/256k	B800 Trident TVGA 8800
+ 59h = G  100x75  8x8	800x600	   2		A000 Paradise VGA
+     = G  100x75  8x8	800x600	   2		     AT&T VDC600
+     = T   80x66  8x8		 16/256k	A000 ATI VIP
+     = G		800x600	   2		     AST VGA Plus, Compaq VGA
+     = G		800x600	   2		     Dell VGA
+     = G		800x600	   2		     Hewlett-Packard D1180A
+     = T  132x43  9x11		 16/256k	B800 Trident TVGA 8800
+ 5Ah = T  132x60  9x8		 16/256k	B800 Trident TVGA 8800
+ 5Bh = G		800x600	  16		     Maxxon, SEFCO TVGA, Imtec
+     = G		640x350	 256		     Genoa 6400
+     = T   80x30  8x16				B800 ATI VGA Wonder (undoc)
+     = G  100x75  8x8	800x600	 16/256k	A000 Trident TVGA 8800, 8900
+ 5Ch = G		640x400	 256		     Logix, ATI Prism Elite
+     = G		640x400	 256		     Maxxon, SEFCO TVGA, Imtec
+     = G		640x400	 256		     Zymos Poach
+     = G   80x25  8x16	640x400	 256		A000 Trident TVGA 8800
+     = G		640x480	 256		     Genoa 6400
+ 5Dh = G		640x480	 256		     Logix, ATI Prism Elite
+     = G		640x480	 256		     Maxxon, SEFCO TVGA, Imtec
+     = G		640x480	 256		     Zymos Poach
+     = G   80x30  8x16	640x480	 256		A000 Trident TVGA 8800 (512K)
+ 5Eh = G		640x400	 256		     Paradise VGA,VEGA VGA
+     = G		640x400	 256		     AST VGA Plus
+     = G		640x400	 256		     Compaq VGA, Dell VGA
+     = G   80x25  8x16	640x400	 256		     AT&T VDC600
+     = G		800x600	  16		     Logix, ATI Prism Elite
+     = G		800x600	 256		     Genoa 6400
+     = G		800x600	 256		     Zymos Poach, Trident 8900
+ 5Fh = G		640x480	 256		     Paradise VGA
+     = G		640x480	 256		     AST VGA Plus
+     = G		640x480	 256		     Compaq VGA, Dell VGA
+     = G		640x480	 256		     Hewlett-Packard D1180A
+     = G   80x30  8x16	640x480	 256		     AT&T VDC600 (512K)
+     = G	       1024x768	  16		     Logix, ATI Prism Elite
+     = G	       1024x768	  16		     Maxxon, Genoa 6400, Imtec
+     = G	       1024x768	  16		     Zymos Poach
+     = G  128x48  8x16 1024x768	 16/256k	A000 Trident TVGA 8800 (512K)
+ 60h = G   80x???	???x400			     Corona/Cordata BIOS 4.10+
+     = G		752x410			     VEGA VGA
+     = G		752x410	  16		     Tatung VGA
+     = G		752x410	  16		     Video7 V-RAM VGA
+     = G		640x400	 256		     Ahead B
+ 61h = G		???x400			     Corona/Cordata BIOS 4.10+
+     = G		720x540			     VEGA VGA
+     = G		720x540	  16		     Tatung VGA
+     = G		720x540	  16		     Video7 V-RAM VGA
+     = G		640x400	 256		A000 ATI VGA Wonder
+     = G		640x480	 256		     Ahead B
+     = G   96x64  8x16	768x1024 16/256k	A000 Trident TVGA 8800 (512K)
+ 62h = G		800x600			     VEGA VGA
+     = G		800x600	  16		     Tatung VGA
+     = G		800x600	  16		     Video7 V-RAM VGA
+     = G		640x480	 256		A000 ATI VGA Wonder
+     = G		800x600	 256		     Ahead B
+     = G	       1024x768	 256		     Trident TVGA 8900, Zymos
+ 63h = G	       1024x768	   2		     Video7 V-RAM VGA
+     = G		800x600	 256		A000 ATI VGA Wonder
+     = G	       1024x768	 256		     Ahead B (1MB)
+ 64h = G	       1024x768	   4		     Video7 V-RAM VGA
+ 65h = G	       1024x768	  16		     Video7 V-RAM VGA
+     = G	       1024x768	  16		A000 ATI VGA Wonder
+ 66h = G		640x400	 256		     Tatung VGA
+     = G		640x400	 256		     Video7 V-RAM VGA
+ 67h = G		640x480	 256		     Video7 V-RAM VGA
+     = G	       1024x768	   4		A000 ATI VGA Wonder
+ 69h = G		720x540	 256		     Video7 V-RAM VGA
+ 6Ah = G		800x600	  16		A000 VESA standard interface
+     = G		800x600	  16		     Ahead B, Genoa 6400
+     = G		800x600	  16		     Zymos Poach
+     = G  100x42  8x14	800x600			A000 ATI VGA Wonder (undoc)
+ 70h = G		800x600	  16		     Cardinal, C&T chipset
+     =	 extended mode set (see AX=0070h)	     Everex Micro Enhancer EGA
+ 71h = G  100x35  8x16	800x600	 16of64		A000 NSI Smart EGA+
+     = G		960x720	  16		     Cardinal
+ 72h = G	       1024x768	  16		     Cardinal, C&T chipset
+ 74h = G		640x400	   2		B800 Toshiba 3100 AT&T mode
+     = G	       1024x768	  16		     Ahead B
+ 78h = G		640x400	 256		     STB VGA/EM-16 Plus
+     = G		640x400	 256		     Cardinal, C&T chipset
+ 79h = G		640x480	 256		     Cardinal, C&T chipset
+ 7Ah = G		720x540	 256		     Cardinal
+ 7Bh = G		800x600	 256		     Cardinal
+ 7Ch = G		512x512	  16		     Genoa
+ 7Dh = G		512x512	 256		     Genoa
+ 7Eh =	 special mode set (see AX=007Eh)	     Paradise VGA, AT&T VDC600
+ 7Fh =	 special function set (see AX=007Fh)	     Paradise VGA, AT&T VDC600
+ 82h = T   80x25		 B&W		     AT&T VDC overlay mode *
+ 83h = T   80x25				     AT&T VDC overlay mode *
+ 86h = G		640x200	 B&W		     AT&T VDC overlay mode *
+ C0h = G		640x400	 2/prog pallet	     AT&T VDC overlay mode *
+ C4h =	 disable output				     AT&T VDC overlay mode *
+ D0h = G		640x400	   2		B800 DEC VAXmate AT&T mode
 
  *  for AT&T VDC overlay modes, BL contains the DEB mode, which may be 06h,
 	  40h, or 44h
@@ -593,48 +689,46 @@ INT 10 - VIDEO - SET VIDEO MODE
  *** DESQview intercepts calls to change into these two modes (21h is page 0,
       22h is page 1) even if there is no Hercules graphics board installed
  *! ATI BIOS v4-1.00 has a text-scrolling bug in this mode
-
-Notes:	IBM standard modes do not clear the screen if the high bit of AL is set
-	the Tseng ET4000 chipset is used by the Orchid Prodesigner II, Diamond
-	  SpeedSTAR VGA, Groundhog Graphics Shadow VGA
-SeeAlso: AX=0070h,007Eh,6F05h
 ----------100070-----------------------------
 INT 10 - VIDEO - Everex Micro Enhancer EGA/Viewpoint VGA - EXTENDED MODE SET
 	AX = 0070h
-	BL = mode (graphics mode if graphics resolution listed)
-		 text  pixel  graphic colr disp scrn  monitor	adapter
-		 resol	box   resoltn	   page addr
-	   00h =	      640x480  16	      multsync	EGA,VGA
-	   01h =	      752x410  16	      multsync	EGA,VGA
-	   02h =	      800x600  16	      multsync	EGA,VGA
-	   03h = 80x34				      multsync	EGA,VGA
-	   04h = 80x60				      multsync	EGA,VGA
-	   05h = 94x29				      multsync	EGA only
-	   06h = 94x51				      multsync	EGA only
-	   07h = 100x43 8x14	       16			VGA only
-	   08h = 100x75 8x8	       16			VGA only
-	   09h = 80x44				      EGA	EGA only
-	   0Ah = 132x25 			      EGA	EGA,VGA
-	   0Bh = 132x44 			      EGA	EGA,VGA
-	   0Ch = 132x25 			      CGA	EGA only
-	   0Dh = 80x44				      mono	EGA only
-	   0Eh = 132x25 			      mono
-	   0Fh = 132x44 			      mono
-	   10h = reserved
-	   11h =	     1280x350	4			EGA only
-	   12h =	     1280x600	4			EGA only
-	   13h =	      640x350 256			EGA only
-	   14h =	      640x400 256
-	   15h =	      512x480 256
-	   16h = 80x30	8x16	      256			VGA only
-	   18h = 100x27 8x16	       16			VGA only
-	   20h =	     1024x768  16			Everex 678 only
-	   21h = 160x64 8x16 1280x1024 16			1MB VGA only
-	   30h =	      640x480 256			Everex 678 only
-	   31h =	      800x600 256			Everex 678 only
-	   32h = 128x48 8x16 1024x768 256			1MB VGA only
-	   40h = 132x30 8x16	       16			VGA only
-	   50h = 132x32 8x16	      mono			VGA only
+	BL = mode (see below)
+SeeAlso: AH=00h,AX=6F05h
+
+Values for video mode:
+      text/ text pixel	 pixel	colors	disp	scrn  monitor	adapter
+      grph resol  box	resoltn		page	addr
+ 00h = G	      	640x480   16		     multsync	EGA,VGA
+ 01h = G	      	752x410   16		     multsync	EGA,VGA
+ 02h = G	      	800x600	  16		     multsync	EGA,VGA
+ 03h = T   80x34				     multsync	EGA,VGA
+ 04h = T   80x60				     multsync	EGA,VGA
+ 05h = T   94x29				     multsync	EGA only
+ 06h = T   94x51				     multsync	EGA only
+ 07h = T  100x43  8x14		  16		     		VGA only
+ 08h = T  100x75  8x8		  16		     		VGA only
+ 09h = T   80x44				     EGA	EGA only
+ 0Ah = T  132x25 			      	     EGA	EGA,VGA
+ 0Bh = T  132x44 				     EGA	EGA,VGA
+ 0Ch = T  132x25 				     CGA	EGA only
+ 0Dh = T   80x44				     mono	EGA only
+ 0Eh = T  132x25 			      	     mono
+ 0Fh = T  132x44 			      	     mono
+ 10h =	 reserved
+ 11h = G	       1280x350    4				EGA only
+ 12h = G	       1280x600	   4				EGA only
+ 13h = G	      	640x350  256				EGA only
+ 14h = G	      	640x400  256
+ 15h = G	      	512x480  256
+ 16h = T   80x30  8x16		 256				VGA only
+ 18h = T  100x27  8x16		  16				VGA only
+ 20h = G	       1024x768   16				Everex 678 only
+ 21h = T  160x64  8x16 1280x1024  16				1MB VGA only
+ 30h = G	      	640x480  256				Everex 678 only
+ 31h = G	      	800x600  256				Everex 678 only
+ 32h = G  128x48  8x16 1024x768	 256				1MB VGA only
+ 40h = T  132x30  8x16		  16				VGA only
+ 50h = T  132x32  8x16		 mono				VGA only
 ----------10007E-----------------------------
 INT 10 - VIDEO - Paradise VGA, AT&T VDC600 - SET SPECIAL MODE
 	AX = 007Eh
@@ -671,13 +765,14 @@ INT 10 - VIDEO - Paradise VGA, AT&T VDC600 - EXTENDED FUNCTIONS
 Return: AL = 7Fh if successful (AT&T VDC600)
 SeeAlso: AX=007Eh
 ----------1001-------------------------------
-INT 10 - VIDEO - SET CURSOR CHARACTERISTICS
+INT 10 - VIDEO - SET TEXT-MODE CURSOR SIZE
 	AH = 01h
-	CH bits 0-4 = start line for cursor in character cell
-	   bits 5-6 = blink attribute
-		     (00=normal, 01=invisible, 10=slow, 11=fast on CGA/mono)
+	CH = bit 7    should be zero
+	     bits 6,5 cursor blink
+	     	     (00=normal, 01=invisible, 10=erratic, 11=slow)
 		     (00=normal, other=invisible on EGA/VGA)
-	CL bits 0-4 = end line for cursor in character cell
+	     bits 4-0 top scan line containing cursor
+	CL = bottom scan line containing cursor (bits 0-4)
 Note:	buggy on EGA systems--BIOS remaps cursor shape in 43 line modes, but
 	  returns unmapped cursor shape
 BUG:	AMI 386 BIOS and AST Premier 386 BIOS will lock up the system if AL
@@ -686,53 +781,63 @@ SeeAlso: AH=03h
 ----------1002-------------------------------
 INT 10 - VIDEO - SET CURSOR POSITION
 	AH = 02h
-	DH,DL = row, column (0,0 = upper left)
 	BH = page number
-	    0 in graphics modes
 	    0-3 in modes 2&3
 	    0-7 in modes 0&1
-SeeAlso: AH=03h
+	    0 in graphics modes
+	DH = row (00h is top)
+	DL = column (00h is left)
+SeeAlso: AH=03h,AH=05h
 ----------1003-------------------------------
-INT 10 - VIDEO - READ CURSOR POSITION
+INT 10 - VIDEO - GET CURSOR POSITION AND SIZE
 	AH = 03h
 	BH = page number
-	    0 in graphics modes
 	    0-3 in modes 2&3
 	    0-7 in modes 0&1
-Return: DH,DL = row,column
-	CH = cursor start line
-	CL = cursor end line
+	    0 in graphics modes
+Return: AX = 0000h (Phoenix BIOS)
+	CH = start scan line
+	CL = end scan line
+	DH = row (00h is top)
+	DL = column (00h is left)
+Note:	a separate cursor is maintained for each of up to 8 display pages
 SeeAlso: AH=01h,02h
 ----------1004-------------------------------
-INT 10 - VIDEO - READ LIGHT PEN POSITION (all but PS)
+INT 10 - VIDEO - READ LIGHT PEN POSITION
 	AH = 04h
-Return: AH = 00h light pen switch not activated
-	   = 01h light pen values in registers
-	    DH,DL = row,column of current position
-	    CH = raster line (0-199) (EGA) old graphics modes
-	    CX = (EGA) raster line (0-nnn) new graphics modes
-	    BX = pixel column (0-319 or 0-639)
+Return: AH = light pen trigger flag
+	    00h not down/triggered
+	    01h down/triggered
+	    	DH,DL = row,column of character light pen is on
+		CH = pixel row (graphics modes 04h-06h)
+		CX = pixel row (graphics modes with >200 rows)
+		BX = pixel column
+Notes:	on a CGA, returned column numbers are always multiples of 2 (320-
+	  column modes) or 4 (640-column modes)
+	returned row numbers are only accurate to two lines
 ----------1005-------------------------------
-INT 10 - VIDEO - SELECT DISPLAY PAGE
+INT 10 - VIDEO -  SELECT ACTIVE DISPLAY PAGE
 	AH = 05h
-	AL = display page
-	    0-7  for modes 0 & 1
-	    0-3  for modes 2 & 3
+	AL = new page number (00h to number of pages - 1) (see AH=00h)
 SeeAlso: AH=0Fh
 ----------1005-------------------------------
-INT 10 - PCjr VIDEO - CRT/CPU PAGE REGISTERS
+INT 10 - VIDEO - MANIPULATE CRT/CPU PAGE REGISTERS (PCjr)
 	AH = 05h
-	AL =
-	    80h read CRT/CPU page registers
+	AL = subfunction
+	    80h read CRT and CPU page registers
+	    	Return: BH = CRT page register
+			BL = CPU page register
 	    81h set CPU page register
-		BL = new page register value
+	    	BL = CPU page
 	    82h set CRT page register
-		BH = new page register value
-	    83h set both display registers
-		BL = new CPU page register
-		BH = new CRT page register
-Return: BH = CRT page register
-	BL = CPU page register
+	    	BH = CRT page
+	    83h set both CPU and CRT page registers
+	    	BL = CPU page
+		BH = CRT page
+Notes:	the CPU page determines which 16K block of the first 128K of physical
+	  memory will be mapped at B800h by the hardware
+	the CRT page determines the start address of the memory used by the
+	  video controller
 ----------1005-------------------------------
 INT 10 - VIDEO - GRAPHICS BITMAP BUFFER (Corona/Cordata BIOS v4.10+)
 	AH = 05h
@@ -742,29 +847,30 @@ INT 10 - VIDEO - GRAPHICS BITMAP BUFFER (Corona/Cordata BIOS v4.10+)
 	    0Fh get address of graphics bitmap buffer (video modes 60h,61h)
 		Return: DX = segment of graphics bitmap buffer
 ----------1006-------------------------------
-INT 10 - VIDEO - SCROLL PAGE UP
+INT 10 - VIDEO - SCROLL UP WINDOW
 	AH = 06h
-	AL = number of lines to scroll window (0 = blank whole window)
-	BH = attributes to be used on blanked lines
-	CH,CL = row,column of upper left corner of window to scroll
-	DH,DL = row,column of lower right corner of window
+	AL = number of lines by which to scroll up (00h = clear entire window)
+	BH = attribute used to write blank lines at bottom of window
+	CH,CL = row,column of window's upper left corner
+	DH,DL = row,column of window's lower right corner
+Note:	affects only the currently active page (see AH=05h)
 Warning: some implementations have a bug which destroys BP
-SeeAlso: AH=07h,72h,73h
+SeeAlso: AH=07h,AH=72h,AH=73h
 ----------1007-------------------------------
-INT 10 - VIDEO - SCROLL PAGE DOWN
+INT 10 - VIDEO - SCROLL DOWN WINDOW
 	AH = 07h
-	AL = number of lines to scroll window (0 = blank whole window)
-	BH = attributes to be used on blanked lines
-	CH,CL = row,column of upper left corner of window to scroll
-	DH,DL = row,column of lower right corner of window
+	AL = number of lines by which to scroll down (00h=clear entire window)
+	BH = attribute used to write blank lines at top of window
+	CH,CL = row,column of window's upper left corner
+	DH,DL = row,column of window's lower right corner
+Note:	affects only the currently active page (see AH=05h)
 Warning: some implementations have a bug which destroys BP
-SeeAlso: AH=06h,72h,73h
+SeeAlso: AH=06h,AH=72h,AH=73h
 ----------1008-------------------------------
-INT 10 - VIDEO - READ ATTRIBUTES/CHARACTER AT CURSOR POSITION
+INT 10 - VIDEO - READ CHARACTER AND ATTRIBUTE AT CURSOR POSITION
 	AH = 08h
-	BH = display page
-Return: AL = character
-	AH = attribute of character (alpha modes)
+	BH = page number (00h to number of pages - 1) (see AH=00h)
+Return: AH = attribute
 		bit 7: blink
 		bits 6-4: background color
 			000 black
@@ -784,81 +890,92 @@ Return: AL = character
 			0101 magenta	 1101 light magenta
 			0110 brown	 1110 yellow
 			0111 light gray	 1111 white
+	AL = character
 Notes:	for monochrome displays, a foreground of 1 with background 0 is
 	  underlined 
 	the blink bit may be reprogrammed to enable intense background colors
 	  using AX=1003h or by programming the CRT controller
 SeeAlso: AH=09h,AX=1003h
 ----------1009-------------------------------
-INT 10 - VIDEO - WRITE ATTRIBUTES/CHARACTERS AT CURSOR POSITION
+INT 10 - VIDEO - WRITE CHARACTER AND ATTRIBUTE AT CURSOR POSITION
 	AH = 09h
-	AL = character
-	BH = display page
-	BL = attributes of character (alpha modes) or color (graphics modes)
+	AL = character to display
+	BH = page number (00h to number of pages - 1) (see AH=00h)
+	BL = attribute (text mode) or color (graphics mode)
 	     if bit 7 set in graphics mode, character is xor'ed onto screen
-	CX = number of times to write character
-Note:	all characters are displayed, including CR, LF, and BS
-SeeAlso: AH=08h,0Ah
+	CX = number of times to write characters
+Notes:	all characters are displayed, including CR, LF, and BS
+	replication count in CX may produce an unpredictable result in graphics
+	  modes if it is greater than the number of positions remaining in the
+	  current row
+SeeAlso: AH=08h,AH=0Ah,INT 1F,INT 43,INT 44
 ----------100A-------------------------------
-INT 10 - VIDEO - WRITE CHARACTERS ONLY AT CURSOR POSITION
-	AH = 0Ah
-	AL = character
-	BH = display page - alpha mode
-	BL = color of character (graphics mode, PCjr only)
+INT 10 - VIDEO - WRITE CHARACTER AND ATTRIBUTE AT CURSOR POSITION
+	AH = 09h
+	AL = character to display
+	BH = page number (00h to number of pages - 1) (see AH=00h)
+	BL = attribute (PCjr only) or color (graphics mode)
 	     if bit 7 set in graphics mode, character is xor'ed onto screen
-	CX = number of times to write character
-	     (EGA) in graphics modes, replication count in CX works correctly
-	     only if all character written are contains on the same row
-Note:	all characters are displayed, including CR, LF, and BS
-SeeAlso: AH=08h,09h
-----------100B-------------------------------
-INT 10 - VIDEO - SET COLOR PALETTE
+	CX = number of times to write characters
+Notes:	all characters are displayed, including CR, LF, and BS
+	replication count in CX may produce an unpredictable result in graphics
+	  modes if it is greater than the number of positions remaining in the
+	  current row
+SeeAlso: AH=08h,AH=09h,INT 1F,INT 43,INT 44
+----------100B--BH00-------------------------
+INT 10 - VIDEO - SET BACKGROUND/BORDER COLOR
 	AH = 0Bh
 	BH = 00h
-	    BL = border color (0-15) (text modes)
-		 border color and background color (graphics modes)
-	    (EGA)
-	    BL = border color (0-15) and high-intensity background color
-		  (16-31??? maybe should be high nybble?)
+	BL = background/border color (border only in text modes)
+SeeAlso: AH=0Bh/BH=01h
+----------100B--BH01-------------------------
+INT 10 - VIDEO - SET PALETTE
+	AH = 0BH
 	BH = 01h
-	    BL = palette (0-3)
+	BL = palette ID
+	    00h background, green, red, and brown/yellow
+	    01h background, cyan, magenta, and white
+SeeAlso: AH=0Bh/BH=00h
 ----------100C-------------------------------
-INT 10 - VIDEO - WRITE DOT ON SCREEN
+INT 10 - VIDEO - WRITE GRAPHICS PIXEL
 	AH = 0Ch
-	AL = color of dot (0/1 in mode 6, 0-3 in modes 4 and 5)
-	     if bit 7 set, new color will be XORed with current pixel
-	BH = display page (ignored if mode only supports one page)
+	BH = page number
+	AL = pixel color (if bit 7 set, value is xor'ed onto screen)
 	CX = column
 	DX = row
-Note:	only valid in graphics modes
+Notes:	valid only in graphics modes
+	BH is ignored if the current video mode supports only one page
 SeeAlso: AH=0Dh
 ----------100D-------------------------------
-INT 10 - VIDEO - READ DOT ON SCREEN
+INT 10 - VIDEO - READ GRAPHICS PIXEL
 	AH = 0Dh
-	BH = display page (ignored if mode only supports one page)
+	BH = page number
 	CX = column
 	DX = row
-Return: AL = color read
-Note:	only valid in graphics modes
+Return: AL = pixel color
+Notes:	valid only in graphics modes
+	BH is ignored if the current video mode supports only one page
 SeeAlso: AH=0Ch
 ----------100E-------------------------------
-INT 10 - VIDEO - WRITE CHARACTER AND ADVANCE CURSOR (TTY WRITE)
+INT 10 - VIDEO - TELETYPE OUTPUT
 	AH = 0Eh
-	AL = character
-	BH = display page (alpha modes)
-	BL = foreground color (graphics modes)
-Note:	characters 07h (BEL), 08h (BS), 0Ah (LF), and 0Dh (CR) are interpreted
+	AL = character to write
+	BH = page number
+	BL = foreground color (graphics modes only)
+Notes:	characters 07h (BEL), 08h (BS), 0Ah (LF), and 0Dh (CR) are interpreted
 	  and do the expected things
-SeeAlso: AH=02h,0Ah
+	IBM PC ROMs dated 4/24/81 and 10/19/81 require that BH be the same as
+	  the current active page
+SeeAlso: AH=02h,AH=0Ah
 ----------100F-------------------------------
 INT 10 - VIDEO - GET CURRENT VIDEO MODE
 	AH = 0Fh
-Return: AH = number of columns on screen
-	AL = current video mode (see INT 10/AH=00h)
-	BH = current active display page
+Return: AH = number of character columns
+	AL = display mode (see AH=00h)
+	BH = active page (see AH=05h)
 Note:	if mode was set with bit 7 set ("no blanking"), the returned mode will
 	  also have bit 7 set
-SeeAlso: AH=00h,05h
+SeeAlso: AH=00h,AH=05h
 ----------100F56-----------------------------
 INT 10 - VUIMG DISPLAY DRIVER (v2.20 and below)
 	AX = 0F56h
@@ -888,28 +1005,41 @@ Offset	Size	Description
  02h	WORD	starting column???
  04h	WORD	ending column???
 	???
+----------1010-------------------------------
+INT 10 - BIOS Window Extension v1.1 - SET WINDOW COORDINATES
+	AH = 10h
+	CH,CL = row,column of upper left corner of window
+	DH,DL = row,column of lower right corner of window
+Return: AL = status
+	    00h successful
+	    01h failed
+	AH destroyed
+Notes:	BWE is a TSR by John J. Seal published in May 1986 Dr. Dobbs' Journal
+	when a window has been set, all output via AH=0Eh is restricted to
+	  the specified window
+SeeAlso: AH=11h"Window",AH=12h"Window"
 ----------101000----------------------------
-INT 10 - VIDEO - SET PALETTE REGISTER (Jr, PS, TANDY 1000, EGA, VGA)
+INT 10 - VIDEO - SET SINGLE PALETTE REGISTER (PCjr,EGA,MCGA,VGA)
 	AX = 1000h
-	BL = palette register to set
-	BH = color value to store
+	BL = palette register number (00h-0Fh)
+	BH = color
 Note:	on MCGA, only BX = 0712h is supported
-SeeAlso: AX=1002h,1007h
+SeeAlso: AX=1002h,AX=1007h
 ----------101001-----------------------------
-INT 10 - VIDEO - SET BORDER COLOR REGISTER (Jr, PS, TANDY 1000, EGA, VGA)
+INT 10 - VIDEO - SET BORDER (OVERSCAN) COLOR (PCjr,EGA,VGA)
 	AX = 1001h
-	BH = color value to store
-SeeAlso: AX=1008h
+	BH = border color
+SeeAlso: AX=1001h,AX=1008h
 ----------101002-----------------------------
-INT 10 - VIDEO - SET ALL PALETTE REGISTERS (Jr, PS, TANDY 1000, EGA, VGA)
+INT 10 - VIDEO - SET ALL PALETTE REGISTERS (PCjr,EGA,VGA)
 	AX = 1002h
-	ES:DX -> 17-byte palette register list (see below)
-SeeAlso: AX=1000h,1009h
+	ES:DX -> palette register list
+SeeAlso: AX=1000h,AX=1001h,AX=1009h
 
 Format of palette register list:
 Offset	Size	Description
- 00h 16 BYTEs	values for palette registers 0-15
- 10h	BYTE	value for border color register
+ 00h 16 BYTEs	colors for palette registers 00h through 0Fh
+ 10h	BYTE	border color
 ----------101003-----------------------------
 INT 10 - VIDEO - TOGGLE INTENSITY/BLINKING BIT (Jr, PS, TANDY 1000, EGA, VGA)
 	AX = 1003h
@@ -999,6 +1129,13 @@ INT 10 - VIDEO - PERFORM GRAY-SCALE SUMMING (EGA, VGA/MCGA)
 	CX = number of registers to convert
 SeeAlso: AH=12h/BL=33h
 ----------1011-------------------------------
+INT 10 - BIOS Window Extension v1.1 - GET WINDOW COORDINATES
+	AH = 11h
+Return: CH,CL = row,column of upper left corner
+	DH,DL = row,column of lower right corner
+Note:	BWE is a TSR by John J. Seal published in May 1986 Dr. Dobbs' Journal
+SeeAlso: AH=10h"Window",AH=12h"Window"
+----------1011-------------------------------
 INT 10 - VIDEO - TEXT-MODE CHARACTER GENERATOR FUNCTIONS (PS, EGA, VGA)
 	AH = 11h
 	The following functions will cause a mode set, completely resetting
@@ -1072,6 +1209,12 @@ INT 10 - VIDEO - GET FONT INFORMATION (EGA, MCGA, VGA)
 Return: ES:BP = specified pointer
 	CX    = bytes/character
 	DL    = character rows on screen
+----------1012-------------------------------
+INT 10 - BIOS Window Extension v1.1 - GET BLANKING ATTRIBUTE
+	AH = 12h
+Return: BH = attribute to use on blanked lines when scrolling
+Note:	BWE is a TSR by John J. Seal published in May 1986 Dr. Dobbs' Journal
+SeeAlso: AH=11h"Window",AH=12h"Window"
 ----------1012--BL10-------------------------
 INT 10 - VIDEO - ALTERNATE FUNCTION SELECT (PS, EGA, VGA, MCGA) - GET EGA INFO
 	AH = 12h
@@ -1202,17 +1345,18 @@ Offset	Size	Description
  23h 20 BYTEs	default palette (values for Attribute Controller regs 00h-13h)
  37h  9 BYTEs	values for Graphics Controller registers 00h-08h
 ----------1013-------------------------------
-INT 10 - VIDEO - WRITE STRING (AT,XT286,PS,EGA,VGA)
+INT 10 - VIDEO - WRITE STRING (AT and later)
 	AH = 13h
-	AL = mode
-	    bit 1: set if string contains alternating characters and attributes
-	    bit 0: set in order to move cursor after write
-	BL = attribute if AL bit 1 clear
-	BH = display page number
-	DH,DL = row,column of starting cursor position
-	CX = length of string
-	ES:BP -> start of string
-Note:	recognizes CR, LF, BS, and bell
+	AL = write mode
+	   bit 0: update cursor after writing
+	       1: string contains alternating characters and attributes
+	BH = page number
+	BL = attribute if string contains only characters
+	CX = number of characters in string
+	DH,DL = row,column at which to start writing
+	ES:BP -> string to write
+Notes:	recognizes CR, LF, BS, and bell
+	also available PC or XT with EGA or higher
 SeeAlso: AH=09h,0Ah
 ----------101400-----------------------------
 INT 10 - VIDEO - LOAD USER-SPECIFIED LCD CHARACTER FONT (CONV,Compaq Port 386)
@@ -1340,7 +1484,7 @@ Offset	Size	Description
 		    3 default palette loading disabled
 		    4 cursor emulation enabled
 		    5 0 = intensity; 1 = blinking
-		    6 reserved
+		    6 PS/2 P70 plasma display (without 9-dot wide font) active
 		    7 reserved
  2Eh  3 BYTEs	reserved
  31h	BYTE	video memory available
@@ -1865,38 +2009,41 @@ SeeAlso: AX=6F05h
 ----------106F05-----------------------------
 INT 10 - VIDEO - SET VIDEO MODE (Video7 VGA, VEGA EXTENDED EGA/VGA)
 	AX = 6F05h
-	BL = mode (graphics mode if graphics resolution listed)
-		 text  pixel graphic color disp scrn  system
-		 resol	box  resoltn	   page addr
-	   00h-13h = standard IBM modes
-	   40h = 80x43	8x8			     Video7/VEGA VGA
-	   41h = 132x25 8x14			     Video7/VEGA VGA
-	   42h = 132x43 8x8			     Video7/VEGA VGA
-	   43h = 80x60	8x8			     Video7/VEGA VGA
-	   44h = 100x60 8x8			     Video7/VEGA VGA
-	   45h = 132x28 8x8			     Video7/VEGA VGA
-	   60h =	     752x410  16	     Video7 VGA, VEGA VGA
-	   61h =	     720x540  16	     Video7 VGA, VEGA VGA
-	       =	     720x540  16	     Northgate
-	   62h =	     800x600  16	     Video7 VGA, VEGA Ext EGA
-	   63h =	    1024x768   2	     Video7 VGA
-	   64h =	    1024x768   4	     Video7 VGA
-	   65h =	    1024x768  16	     Video7 VGA, VEGA Ext EGA
-	   66h =	     640x400 256	     Video7 VGA, VEGA Ext VGA
-	       =	     640x400 256	     Northgate
-	   67h =	     640x480 256	     Video7 VGA, VEGA Ext VGA
-	   68h =	     720x540 256	     Video7 VGA, VEGA Ext VGA
-	   69h =	     800x600 256	     Video7 VGA, VEGA Ext VGA
-	   70h =	     752x410  16gray	     Video7 VGA, VEGA VGA
-	   71h =	     720x540  16gray	     Video7 VGA, VEGA VGA
-	   72h =	     800x600  16gray	     Video7 VGA
-	   73h =	    1024x768   2gray	     Video7 VGA
-	   74h =	    1024x768   4gray	     Video7 VGA
-	   75h =	    1024x768  16gray	     Video7 VGA
-	   76h =	     640x400 256gray	     Video7 VGA
-	   77h =	     640x480 256gray	     Video7 VGA
-	   78h =	     720x540 256gray	     Video7 VGA
-	   79h =	     800x600 256gray	     (future)
+	BL = mode (see below)
+SeeAlso: AH=00h,AX=0070h
+
+Values for video mode:
+      text/ text pixel	 pixel	colors	disp	scrn  system
+      grph resol  box	resoltn		page	addr
+ 00h-13h = standard IBM modes (see AH=00h)
+ 40h = T   80x43  8x8				     Video7/VEGA VGA
+ 41h = T  132x25  8x14				     Video7/VEGA VGA
+ 42h = T  132x43  8x8				     Video7/VEGA VGA
+ 43h = T   80x60  8x8				     Video7/VEGA VGA
+ 44h = T  100x60  8x8				     Video7/VEGA VGA
+ 45h = T  132x28  8x8				     Video7/VEGA VGA
+ 60h = G	     	752x410   16		     Video7 VGA, VEGA VGA
+ 61h = G	     	720x540   16		     Video7 VGA, VEGA VGA
+     = G	     	720x540   16		     Northgate
+ 62h = G	     	800x600   16		     Video7 VGA, VEGA Ext EGA
+ 63h = G	       1024x768    2		     Video7 VGA
+ 64h = G	       1024x768    4		     Video7 VGA
+ 65h = G	       1024x768   16		     Video7 VGA, VEGA Ext EGA
+ 66h = G	     	640x400  256		     Video7 VGA, VEGA Ext VGA
+     = G	     	640x400  256		     Northgate
+ 67h = G	     	640x480  256		     Video7 VGA, VEGA Ext VGA
+ 68h = G	     	720x540  256		     Video7 VGA, VEGA Ext VGA
+ 69h = G	     	800x600  256		     Video7 VGA, VEGA Ext VGA
+ 70h = G	     	752x410   16gray	     Video7 VGA, VEGA VGA
+ 71h = G	     	720x540   16gray	     Video7 VGA, VEGA VGA
+ 72h = G	     	800x600   16gray	     Video7 VGA
+ 73h = G	       1024x768    2gray	     Video7 VGA
+ 74h = G	       1024x768    4gray	     Video7 VGA
+ 75h = G	       1024x768   16gray	     Video7 VGA
+ 76h = G	     	640x400  256gray	     Video7 VGA
+ 77h = G	     	640x480  256gray	     Video7 VGA
+ 78h = G	     	720x540  256gray	     Video7 VGA
+ 79h = G	     	800x600  256gray	     (future)
 SeeAlso: AH=00h,AX=0070h,AX=007Eh,AX=6F04h
 ----------106F06-----------------------------
 INT 10 - VIDEO - SELECT AUTOSWITCH MODE (V7VGA,VEGA VGA)
@@ -2313,24 +2460,24 @@ Return: AX = 00FAh if installed
 Note:	FASTBUFF.COM is a keyboard speedup/screen blanking utility by David
 	  Steiner
 ----------10FE------------------------------
-INT 10 - VIDEO (TopView) - GET VIDEO BUFFER
+INT 10 - TopView - GET SHADOW BUFFER
 	AH = FEh
-	ES:DI = segment:offset of assumed video buffer
-Return: ES:DI = segment:offset of actual video buffer
+	ES:DI -> assumed video buffer (B800h:0000h color, B000h:0000h mono)
+Return: ES:DI -> actual video buffer for calling process
 Notes:	if no multitasker is installed, ES:DI is returned unchanged
 	TopView requires a call to AH=FFh to notify if that the screen has
 	  changed; DESQview will check for changes itself until the first call
 	  to AH=FFh
-SeeAlso: INT 15/AX=1024h, INT 21/AH=2Bh"DESQview"
+SeeAlso: AH=FFh,INT 15/AX=1024h,INT 21/AH=2Bh"DESQview"
 ----------10FF-------------------------------
-INT 10 - VIDEO (TopView) - UPDATE REAL SCREEN FROM VIDEO BUFFER
+INT 10 - TopView - UPDATE SCREEN FROM SHADOW BUFFER
 	AH = FFh
-	CX = number of sequential characters that have been modified
-	DI = offset of first character that has been modified
-	ES = segment of video buffer
+	CX = number of consecutive changed characters
+	ES:DI -> first changed character in shadow buffer
 Notes:	avoid CX=0000h
 	DESQview will discontinue the automatic screen updating initiated by
 	  AH=FEh after this call
+SeeAlso: AH=FEh
 ----------10FF00-----------------------------
 INT 10 - CARBON COPY PLUS 5.0 - CHECK IF CC CONNECTED TO CCHELP
 	AX = FF00h
@@ -2348,27 +2495,27 @@ INT 11 - 80486 internal hardware - ALIGNMENT CHECK
    Bit AC in the EFLAGS register enables this interrupt on a memory reference
      on a mis-aligned address when in privilege mode 3.
 ----------11---------------------------------
-INT 11 - EQUIPMENT DETERMINATION
-Return: AX = equipment flag bits
-	    0	  diskette installed
-	    1	  8087 present
-	    2	  mouse installed (PS2 only)
+INT 11 - BIOS - GET EQUIPMENT LIST
+Return: AX = BIOS equipment list word
+	    bits
+	    0	  floppy disk(s) installed (see bits 6-7)
+	    1	  80x87 coprocessor installed
 	    2,3   number of 16K banks of RAM on motherboard (PC only)
 		  number of 64K banks of RAM on motherboard (XT only)
-		  always = 11 on AT and above
-	    4,5   initial video mode
-		  01 = 40x25 color
-		  10 = 80x25 color
-		  11 = 80X25 IBM monochrome
-	    6,7   number of diskette drives (only if bit 0 = 1)
-		  00 = 1, 01 = 2, 10 = 3, 11 = 4
-	    8	  0 = DMA present
-		  1 = no DMA on system (PCjr, some Tandy 1000s, 1400LT)
-	    9-11  number of RS232 cards
-	    12	  game I/O attached
-	    13	  serial printer installed (PCjr)
+	    2	  pointing device installed (PS)
+	    3	  unused (PS)
+	    4-5	  initial video mode
+	    	  00 EGA, VGA, or PGA
+		  01 40x25 color
+		  10 80x25 color
+		  11 80x25 monochrome
+	    6-7	  number of floppies installed less 1 (if bit 0 set)
+	    8	  DMA support installed (PCjr, some Tandy 1000s, 1400LT)
+	    9-11  number of serial ports installed
+	    12	  game port installed
+	    13	  serial printer attached (PCjr)
 		  internal modem installed (PC/Convertible)
-	    14,15 number of printers
+	    14-15 number of parallel ports installed
 ---Compaq and many other 386/486 machines--
 	EAX bit 23: page tables set so that Weitek coprocessor addressable in
 			real mode
@@ -2384,8 +2531,14 @@ Return: AX = equipment flag bits
 		    10 reserved
 		    11 DMA channel 3
 SeeAlso: INT 12
+----------11BC-------------------------------
+INT 11 - BNU FOSSIL - INSTALLATION CHECK
+	AH = BCh
+	DX = 1954h
+Return: AX = 1954h
+	ES:DX -> entry point of driver (instead of INT 14)
 ----------11FFFECXFFFE-----------------------
-INT 11 - BACK&FORTH API
+INT 11 - BACK&FORTH (before v1.62) API
 	AX = FFFEh
 	CX = FFFEh
 	BX = function
@@ -2402,114 +2555,161 @@ INT 11 - BACK&FORTH API
 		    yet announced itself installed
 	    06h ???
 		Return: AX = ???
+SeeAlso: INT 12/AX=FFFEh
 ----------12---------------------------------
-INT 12 - MEMORY SIZE
-Return: AX = number of contiguous 1K blocks of memory
+INT 12 - BIOS - GET MEMORY SIZE
+Return:	AX = kilobytes of contiguous memory starting at absolute address 00000h
+Note:	this call returns the contents of the word at 0040h:0013h; in PC and
+	  XT, this value is set from the switches on the motherboard
 SeeAlso: INT 11
+----------12FFFECXFFFE-----------------------
+INT 12 - Back&Forth v1.62+ - API
+	AX = FFFEh
+	CX = FFFEh
+	BX = function
+	    00h installation check
+		Return: AX = 0001h installed
+			     else  not loaded
+	    02h build program ID list
+	    	ES:DI -> buffer of at least 100 bytes, to be filled with words
+		Return: AX = number of programs defined
+			ES:DI buffer filled with AX words
+	    03h switch to specified task (task need not be open yet)
+		DX = two-letter program ID
+		Return: AX = 0000h if task undefined
+SeeAlso: INT 11/AX=FFFEh
 ----------1300-------------------------------
 INT 13 - DISK - RESET DISK SYSTEM
 	AH = 00h
 	DL = drive (if bit 7 is set both hard disks and floppy disks reset)
+Return: AH = status (see AH=01h)
 Note:	forces controller to recalibrate drive heads (seek to track 0)
-SeeAlso: AH=0Dh, INT 21/AH=0Dh
+SeeAlso: AH=0Dh,AH=11h,INT 21/AH=0Dh
 ----------1301-------------------------------
-INT 13 - DISK - STATUS OF DISK SYSTEM
+INT 13 - DISK - GET STATUS OF LAST OPERATION
 	AH = 01h
-Return: AH = status of last disk operation
-	    00h = successful completion
-	    01h = bad command
-	    02h = address mark not found
-	    03h = write attempted on write-protected disk
-	    04h = sector not found
-	    05h = reset failed (hard disk)
-	    06h = diskette changed
-	    07h = parameter act. failed (hard disk)
-	    08h = DMA overrun (floppy disk)
-	    09h = DMA across 64K boundary
-	    0Ah = bad sector detected (hard disk)
-	    0Bh = bad track detected (hard disk)
-	    0Ch = unsupported track
-	    0Dh = invalid number of sectors on format (hard disk)
-	    0Eh = control data address mark detected (hard disk)
-	    0Fh = DMA arbitration error (hard disk)
-	    10h = bad CRC/ECC
-	    11h = data ECC corrected (hard disk)
-	    20h = controller failure
-	    40h = seek failed
-	    80h = time out
-	    AAh = drive not ready (hard disk)
-	    BBh = undefined error (hard disk)
-	    CCh = write fault (hard disk)
-	    E0h = status register error (hard disk)
-	    FFh = sense operation failed (hard disk)
+	DL = drive (bit 7 set for hard disk)
+Return: AH = status of this call (00h)
+	AL = status of previous operation
+	    00h successful completion
+	    01h invalid function in AH or invalid parameter
+	    02h address mark not found
+	    03h disk write-protected (floppy)
+	    04h sector not found
+	    05h reset failed (hard disk)
+	    06h disk changed (floppy)
+	    07h drive parameter activity failed (hard disk)
+	    08h DMA overrun
+	    09h attempted DMA across 64K boundary
+	    0Ah bad sector detected (hard disk)
+	    0Bh bad track detected (hard disk)
+	    0Ch unsupported track or invalid media
+	    0Dh invalid number of sectors on format (hard disk)
+	    0Eh control data address mark detected (hard disk)
+	    0Fh DMA arbitration level out of range (hard disk)
+	    10h uncorrectable CRC or ECC error on read
+	    11h data ECC corrected (hard disk)
+	    20h controller failure
+	    40h seek failed
+	    80h timeout (not ready)
+	    AAh drive not ready (hard disk)
+	    BBh undefined error (hard disk)
+	    CCh write fault (hard disk)
+	    E0h status register error (hard disk)
+	    FFh sense operation failed (hard disk)
+Note:	some BIOSes return the status of the previous operation in AH
 ----------1302-------------------------------
-INT 13 - DISK - READ SECTORS INTO MEMORY
+INT 13 - DISK - READ SECTOR(S) INTO MEMORY
 	AH = 02h
-	AL = number of sectors to read
-	CH = track (for hard disk, bits 8,9 in high bits of CL)
-	CL = sector (01h to number of sectors/track for drive)
-	DH = head
-	DL = drive
-	ES:BX -> buffer to fill
+	AL = number of sectors to read (must be nonzero)
+	CH = low eight bits of cylinder number
+	CL = sector number (bits 0-5)
+	     high two bits of cylinder (bits 6-7, hard disk only)
+	DH = head number
+	DL = drive number (bit 7 set for hard disk)
+	ES:BX -> data buffer
 Return: CF set on error
+	    if AH = 11h (corrected ECC error), AL = burst length
+	CF clear if successful
 	AH = status (see AH=01h)
-	AL = number of sectors read
-Notes:	results undefined if attempting to read zero sectors
+	AL = number of sectors transferred
+Notes:	errors on a floppy may be due to the motor failing to spin up quickly
+	  enough; the read should be retried at least three times, resetting
+	  the disk with AH=00h between attempts
 	AWARD AT BIOS extended to handle more than 1024 cylinders by placing
 	  bits 10 and 11 of the cylinder number into bits 6 and 7 of DH
 	apparently, the AMI BIOS also follows this convention
 SeeAlso: AH=03h,AH=0Ah
 ----------1303-------------------------------
-INT 13 - DISK - WRITE SECTORS FROM MEMORY
+INT 13 - DISK - WRITE DISK SECTOR(S)
 	AH = 03h
-	AL = number of sectors to write
-	CH = track (if hard disk, bits 8,9 in high bits of CL)
-	CL = sector (if hard disk, high two bits are high bits of track #)
-	DH = head
-	DL = drive
-	ES:BX -> buffer
+	AL = number of sectors to write (must be nonzero)
+	CH = low eight bits of cylinder number
+	CL = sector number (bits 0-5)
+	     high two bits of cylinder (bits 6-7, hard disk only)
+	DH = head number
+	DL = drive number (bit 7 set for hard disk)
+	ES:BX -> data buffer
 Return: CF set on error
+	CF clear if successful
 	AH = status (see AH=01h)
-	AL = number of sectors written
-Notes:	results undefined if attempting to write zero sectors
+	AL = number of sectors transferred
+Notes:	errors on a floppy may be due to the motor failing to spin up quickly
+	  enough; the write should be retried at least three times, resetting
+	  the disk with AH=00h between attempts
 	AWARD AT BIOS extended to handle more than 1024 cylinders by placing
 	  bits 10 and 11 of the cylinder number into bits 6 and 7 of DH
 	apparently, the AMI BIOS also follows this convention
 SeeAlso: AH=02h,AH=0Bh
 ----------1304-------------------------------
-INT 13 - DISK - VERIFY SECTORS
-	AH = 04h
-	AL = number of sectors to verify
-	CH = track (for hard disk, bits 8,9 in high bits of CL)
-	CL = sector (01h to number of sectors per track for drive)
-	DH = head
-	DL = drive
+INT 13 - DISK - VERIFY DISK SECTOR(S)
+	AH = 03h
+	AL = number of sectors to verify (must be nonzero)
+	CH = low eight bits of cylinder number
+	CL = sector number (bits 0-5)
+	     high two bits of cylinder (bits 6-7, hard disk only)
+	DH = head number
+	DL = drive number (bit 7 set for hard disk)
+	ES:BX -> data buffer (PC,XT,AT with BIOS prior to 11/15/85)
 Return: CF set on error
+	CF clear if successful
 	AH = status (see AH=01h)
 	AL = number of sectors verified
-Notes:	AWARD AT BIOS extended to handle more than 1024 cylinders by placing
+Notes:	errors on a floppy may be due to the motor failing to spin up quickly
+	  enough; the write should be retried at least three times, resetting
+	  the disk with AH=00h between attempts
+	this function does not compare the disk with memory, it merely
+	  checks whether the sector's stored CRC matches the data's actual CRC
+	AWARD AT BIOS extended to handle more than 1024 cylinders by placing
 	  bits 10 and 11 of the cylinder number into bits 6 and 7 of DH
 	apparently, the AMI BIOS also follows this convention
 SeeAlso: AH=02h
 ----------1305-------------------------------
 INT 13 - FLOPPY - FORMAT TRACK
 	AH = 05h
-	AL = number of sectors to create on this track
-	CH = track
-	CL = sector (01h to number of sectors per track for drive)
-	DH = head
-	DL = drive
-	ES:BX -> array of 4-byte address fields
-		BYTE	track
-		BYTE	head
-		BYTE	sector
-		BYTE	bytes/sector  0=128, 1=256, 2=512, 3=1024
-Return: CF set if error occurred
-	AH = status code (see AH=01h)
+	AL = number of sectors to format
+	CH = track number
+	DH = head number
+	DL = drive number
+	ES:BX -> address field buffer (see below)
+Return: CF set on error
+	CF clear if successful
+	AH = status (see AH=01h)
+Notes:	on AT or higher, call AH=17h first
+	the number of sectors per track is read from the diskette parameter
+	  table pointed at by INT 1E
+SeeAlso: AH=05h"FIXED",AH=17h,AH=18h,INT 1E
+
+Format of address field buffer entry (one per sector in track):
+Offset	Size	Description
+ 00h	BYTE	track number
+ 01h	BYTE	head number (0-based)
+ 02h	BYTE	sector number
+ 03h	BYTE	sector size (00h=128 bytes, 01h=256 bytes, 02h=512, 03h=1024)
 ----------1305-------------------------------
 INT 13 - FIXED DISK - FORMAT TRACK
 	AH = 05h
-	AL = interleave value (XT only)
+	AL = interleave value (XT-type controllers only)
 	ES:BX = 512-byte format buffer
 		the first 2*(sectors/track) bytes contain F,N for each sector
 		   F = 00 for good sector, 80h for bad sector
@@ -2522,7 +2722,9 @@ Return: AH = status code (see AH=01h)
 Notes:	AWARD AT BIOS extended to handle more than 1024 cylinders by placing
 	  bits 10 and 11 of the cylinder number into bits 6 and 7 of DH
 	apparently, the AMI BIOS also follows this convention
-SeeAlso: AH=06h,07h,1Ah
+	for XT-type controllers on an AT or higher, AH=0Fh should be called
+	  first
+SeeAlso: AH=05h"FLOPPY",AH=06h,AH=07h,AH=0Fh,AH=18h,AH=1Ah
 ----------1306-------------------------------
 INT 13 - FIXED DISK - FORMAT TRACK AND SET BAD SECTOR FLAGS (XT,PORT)
 	AH = 06h
@@ -2550,105 +2752,142 @@ Note:	AWARD AT BIOS extended to handle more than 1024 cylinders by placing
 	apparently, the AMI BIOS also follows this convention
 SeeAlso: AH=1Ah
 ----------1308-------------------------------
-INT 13 - DISK - GET CURRENT DRIVE PARAMETERS (XT,AT,XT286,CONV,PS)
+INT 13 - DISK - GET DRIVE PARAMETERS (PC,XT286,CONV,PS)
 	AH = 08h
-	DL = drive number
+	DL = drive (bit 7 set for hard disk)
 Return: CF set on error
-	AH = status code (see AH=01h)
-	BL = drive type (see AH=17h) (AT/PS2 floppies only)
-	DL = number of consecutive acknowledging drives
-	DH = maximum value for head number
-	CL = maximum value for sector number (bits 0-5)
-	CH = maximum value for cylinder number (highest bits in bits 6,7 of CL)
+	    AH = status (07h) (see AH=01h)
+	CF clear if successful
+	    AH = 00h
+	    BL = drive type (see AH=17h) (AT/PS2 floppies only)
+	    CH = low eight bits of maximum cylinder number
+	    CL = maximum sector number (bits 5-0)
+		 high two bits of maximum cylinder number (bits 7-6)
+	    DH = maximum head number
+	    DL = number of drives
 	ES:DI -> drive parameter table
 SeeAlso: INT 1E,INT 41
 ----------1309-------------------------------
-INT 13 - FIXED DISK - INITIALIZE TWO FIXED DISK BASE TABLES (XT,AT,XT286,PS)
+INT 13 - HARD DISK - INITIALIZE CONTROLLER WITH DRIVE PARAMETERS (AT,PS)
 	AH = 09h
-Return: CF set on error
-	AH = status code (see AH=01h)
-	INT 41h points to table for drive 0
-	INT 46h points to table for drive 1
+	DL = drive (80h for first, 81h for second)
+Return: CF clear if successful
+	CF set on error
+	AH = status (see AH=01h)
+Notes:	on the PC and XT, this function uses the parameter table pointed at by
+	  INT 41
+	on the AT and later, this function uses the parameter table pointed at
+	  by INT 41 if DL=80h, and the parameter table pointed at by INT 46 if
+	  DL=81h
+SeeAlso: INT 41,INT 46
 ----------130A-------------------------------
-INT 13 - FIXED DISK - READ LONG (XT,AT,XT286,PS)
+INT 13 - HARD DISK - READ LONG SECTOR(S) (AT and later)
 	AH = 0Ah
-	DL = drive ID
-	DH = head
-	CH = cylinder (bits 8,9 in high bits of CL)
-	CL = sector (01h to number of sectors per track for drive)
-	ES:BX -> buffer to fill
-Return: CF set on error
-	AH = status code (see AH=01h)
-	AL = number of sectors read
-Note:	used for diagnostics only on PS/2 systems
+	AL = number of sectors
+	CH = low eight bits of cylinder number
+	CL = sector number (bits 5-0)
+	     high two bits of cylinder number (bits 7-6)
+	DH = head number
+	DL = drive number (80h = first, 81h = second)
+	ES:BX -> data buffer
+Return: CF clear if successful
+	CF set on error
+	AH = status (see AH=01h)
+	AL = number of sectors transferred
+Notes:	this function reads in four to seven bytes of error-correcting code
+	  along with each sector's worth of information
+	data errors are not automatically corrected, and the read is aborted
+	  after the first sector with an ECC error
+	used for diagnostics only on PS/2 systems
 SeeAlso: AH=02h,AH=0Bh
 ----------130B-------------------------------
-INT 13 - FIXED DISK - WRITE LONG (XT,AT,XT286,PS)
-	AH = 0Bh
-	DL = drive ID
-	DH = head
-	CH = cylinder (bits 8,9 in high bits of CL)
-	CL = sector (01h to number of sectors per track for drive)
-	ES:BX -> buffer containing data
-Return: CF set on error
-	AH = status code (see AH=01h)
-	AL = number of sectors written
-Note:	used for diagnostics only on PS/2 systems
+INT 13 - HARD DISK - WRITE LONG SECTOR(S) (AT and later)
+	AH = 0Ah
+	AL = number of sectors
+	CH = low eight bits of cylinder number
+	CL = sector number (bits 5-0)
+	     high two bits of cylinder number (bits 7-6)
+	DH = head number
+	DL = drive number (80h = first, 81h = second)
+	ES:BX -> data buffer
+Return: CF clear if successful
+	CF set on error
+	AH = status (see AH=01h)
+	AL = number of sectors transferred
+Notes:	each sector's worth of data must be followed by four to seven bytes of
+	  error-correction information
+	used for diagnostics only on PS/2 systems
 SeeAlso: AH=03h,AH=0Ah
 ----------130C-------------------------------
-INT 13 - FIXED DISK - SEEK TO CYLINDER (XT,AT,XT286,PS)
+INT 13 - HARD DISK - SEEK TO CYLINDER
 	AH = 0Ch
-	DL = drive ID
-	DH = head
-	CH = cylinder (bits 8,9 in high bits of CL)
+	CH = low eight bits of cylinder number
+	CL = sector number (bits 5-0)
+	     high two bits of cylinder number (bits 7-6)
+	DH = head number
+	DL = drive number (80h = first, 81h = second hard disk)
 Return: CF set on error
-	AH = status code (see AH=01h)
+	CF clear if successful
+	AH = status (see AH=01h)
+SeeAlso: AH=00h,AH=02h,AH=0Ah
 ----------130D-------------------------------
-INT 13 - FIXED DISK - ALTERNATE DISK RESET (XT,AT,XT286,PS)
+INT 13 - HARD DISK - RESET HARD DISKS
 	AH = 0Dh
-	DL = drive ID
+	DL = drive number (80h = first, 81h = second hard disk)
 Return: CF set on error
-	AH = status code (see AH=01h)
-Note:	not for PS/2 ESDI drives
+	CF clear if successful
+	AH = status (see AH=01h)
+Notes:	reinitializes the hard disk controller, resets the specified drive's
+	  parameters, and recalibrates the drive's heads (seek to track 0)
+	not for PS/2 ESDI drives
 SeeAlso: AH=00h,INT 21/AH=0Dh
 ----------130E-------------------------------
-INT 13 - FIXED DISK - READ SECTOR BUFFER (XT,PS)
+INT 13 - HARD DISK - READ SECTOR BUFFER (XT only)
 	AH = 0Eh
+	DL = drive number (80h = first, 81h = second hard disk)
 	ES:BX -> buffer
 Return: CF set on error
+	CF clear if successful
 	AH = status code (see AH=01h)
 Notes:	transfers controller's sector buffer.  No data is read from the drive
 	used for diagnostics only on PS/2 systems
 SeeAlso: AH=0Ah
 ----------130F-------------------------------
-INT 13 - FIXED DISK - WRITE SECTOR BUFFER (XT,PS)
+INT 13 - HARD DISK - WRITE SECTOR BUFFER (XT only)
 	AH = 0Fh
+	DL = drive number (80h = first, 81h = second hard disk)
 	ES:BX -> buffer
 Return: CF set on error
+	CF clear if successful
 	AH = status code (see AH=01h)
-Notes:	should be called before formatting to initialize the controller's
-	  sector buffer.
+Notes:	does not write data to the drive
+	should be called before formatting to initialize an XT-type
+	  controller's sector buffer
 	used for diagnostics only on PS/2 systems
 SeeAlso: AH=0Bh
 ----------1310-------------------------------
-INT 13 - FIXED DISK - TEST FOR DRIVE READY (XT,AT,XT286,PS)
+INT 13 - HARD DISK - CHECK IF DRIVE READY
 	AH = 10h
-	DL = drive ID
+	DL = drive number (80h = first, 81h = second hard disk)
 Return: CF set on error
-	AH = status code (see AH=01h)
+	CF clear if successful
+	AH = status (see AH=01h)
 ----------1311-------------------------------
-INT 13 - FIXED DISK - RECALIBRATE DRIVE (XT,AT,XT286,PS)
+INT 13 - HARD DISK - RECALIBRATE DRIVE
 	AH = 11h
-	DL = drive ID
-Return: CF set on error
-	AH = status code (see AH=01h)
-SeeAlso: AH=19h"FIXED DISK"
+	DL = drive number (80h = first, 81h = second hard disk)
+Return:	CF set on error
+	CF clear if successful
+	AH = status (see AH=01h)
+Note:	causes hard disk controller to seek the specified drive to cylinder 0
+SeeAlso: AH=00h,AH=0Ch,AH=19h"FIXED DISK"
 ----------1312-------------------------------
-INT 13 - FIXED DISK - CONTROLLER RAM DIAGNOSTIC (XT,PS)
+INT 13 - HARD DISK - CONTROLLER RAM DIAGNOSTIC (XT,PS)
 	AH = 12h
+	DL = drive number (80h = first, 81h = second hard disk)
 Return: CF set on error
+	CF clear if successful
 	AH = status code (see AH=01h)
-Note:	used for diagnostics only on PS/2 systems
 SeeAlso: AH=13h,AH=14h
 ----------1312-------------------------------
 INT 13 - Future Domain SCSI CONTROLLER - STOP SCSI DISK
@@ -2661,50 +2900,55 @@ Notes:	available at least on the TMC-870 8-bit SCSI controller BIOS v6.0A
 	  and either "Disk prepared for shipping" or "Disk Stop command failed"
 	  is displayed
 ----------1313-------------------------------
-INT 13 - FIXED DISK - DRIVE DIAGNOSTIC (XT,PS)
+INT 13 - HARD DISK - DRIVE DIAGNOSTIC (XT,PS)
 	AH = 13h
+	DL = drive number (80h = first, 81h = second hard disk)
 Return: CF set on error
+	CF clear if successful
 	AH = status code (see AH=01h)
-Note:	used for diagnostics only on PS/2 systems
 SeeAlso: AH=12h,AH=14h
 ----------1314-------------------------------
-INT 13 - FIXED DISK - CONTROLLER DIAGNOSTICS (XT,AT,XT286,PS)
+INT 13 - HARD DISK - CONTROLLER INTERNAL DIAGNOSTIC
 	AH = 14h
 Return: CF set on error
+	CF clear if successful
 	AH = status code (see AH=01h)
-Note:	used for diagnostics only on PS/2 systems
 SeeAlso: AH=12h,AH=13h
 ----------1315-------------------------------
-INT 13 - DISK - GET TYPE (AT,XT2,XT286,CONV,PS)
+INT 13 - DISK - GET DISK TYPE (XT 1/10/86 or later,XT286,AT,PS)
 	AH = 15h
-	DL = drive ID
-Return: CF set on error
-	AH = disk type
-	    00h = disk not there
-	    01h = floppy, no change detection present
-	    02h = floppy with change detection
-	    03h = fixed disk
-	       CX:DX = number of 512-byte sectors
-SeeAlso: AH=17h,AH=19h"SCSI"
+	DL = drive number (bit 7 set for hard disk)
+Return:	CF clear if successful
+	    AH = type code
+	    	00h no such drive
+		01h floppy without change-line support
+		02h floppy with change-line support
+		03h hard disk
+		    CX:DX = number of 512-byte sectors
+SeeAlso: AH=16h,AH=17h,AH=19h"SCSI"
 ----------1316-------------------------------
-INT 13 - FLOPPY DISK - CHANGE OF DISK STATUS (AT,XT2,XT286,CONV,PS)
+INT 13 - FLOPPY DISK - DETECT DISK CHANGE (XT 1/10/86 or later,XT286,AT,PS)
 	AH = 16h
-	DL = drive to check
-Return: AH = disk change status
-	    00h = no disk change
-	    06h = disk changed
+	DL = drive number
+Return: CF clear if change line inactive
+	    AH = 00h (disk not changed)
+	CF set if change line active
+	    AH = 06h change line active or not supported
+	       = 80h drive not ready or not present
 ----------1317-------------------------------
-INT 13 - DISK - SET TYPE (AT,XT2,XT286,CONV,PS)
+INT 13 - FLOPPY DISK - SET DISK TYPE FOR FORMAT (AT,PS)
 	AH = 17h
-	AL = disk type
-	    00h = no disk
-	    01h = regular disk in regular drive
-	    02h = regular disk in high-capacity drive
-	    03h = high-capacity disk in high-capacity drive
+	AL = format type
+	    01h = 320/360K disk in 360K drive
+	    02h = 320/360K disk in 1.2M drive
+	    03h = 1.2M disk in 1.2M drive
 	    04h = 720K disk in 720K drive
-	DL = drive ID
+	DL = drive number
+Return: CF set on error
+	CF clear if successful
+	AH = status (see AH=01h)
 Note:	I assume that 05h and 06h are 720K in 1.44M and 1.44M in 1.44M
-SeeAlso: AH=15h
+SeeAlso: AH=15h,AH=18h
 ----------1318-------------------------------
 INT 13 - DISK - SET MEDIA TYPE FOR FORMAT (AT model 3x9,XT2,XT286,PS)
 	AH = 18h
@@ -3146,39 +3390,19 @@ Notes:	standard INT 13/AH=08h will return a cylinder count truncated to 1024
 	  these calls
 SeeAlso: AH=EEh
 ----------1400-------------------------------
-INT 14 - SERIAL I/O - INITIALIZE USART
+INT 14 - SERIAL - INITIALIZE PORT
 	AH = 00h
-	AL = initializing parameters
-	    7 - 6 - 5	   4 - 3     2	  1 - 0
-	    -BAUD RATE-    PARITY   STOP   WORD
-				    BITS  LENGTH
-	    000  110 bd    00 none  0: 1   00: 5
-	    001  150 bd    01 odd   1: 2   01: 6
-	    010  300 bd    11 even	   10: 7
-	    011  600 bd 		   11: 8
-	    100 1200 bd
-	    101 2400 bd
-	    110 4800 bd
-	    111 9600 bd (4800 on PCjr)
-	DX = port number (0-3)
-Return: AH = RS-232 status code bits
-	    0: data ready
-	    1: overrun error
-	    2: parity error
-	    3: framing error
-	    4: break detected
-	    5: transmission buffer register empty
-	    6: transmission shift register empty
-	    7: time out--if set, other bits invalid
-	AL = modem status bits
-	    0: delta Clear-To-Send
-	    1: delta Data-Set-Ready
-	    2: trailing edge of ring detected
-	    3: change in receive line signal detected
-	    4: Clear-To-Send
-	    5: Data-Set-Ready
-	    6: ring detected
-	    7: receive line signal detected
+	AL = port parameters
+	    bits 7-5 data rate (110,150,300,600,1200,2400,4800,9600 bps)
+	    bits 4-3 parity (00 or 10 = none, 01 = odd, 11 = even)
+	    bit 2    stop bits (set = 2, clear = 1)
+	    bits 1-0 data bits (00 = 5, 01 = 6, 10 = 7, 11 = 8)
+	DX = port number (00h-03h)
+Return: AH = line status (see AH=03h)
+	AL = modem status (see AH=03h)
+Notes:	default handler is at F000h:E739h in IBM PC and 100% compatible BIOSes
+	since the PCjr supports a maximum of 4800 bps, attempting to set 9600
+	  bps will result in 4800 bps
 SeeAlso: AH=05h,AH=82h,AH=8Ch
 ----------1400-------------------------------
 INT 14 - FOSSIL (Fido/Opus/Seadog Standard Interface Level) - INITIALIZE
@@ -3206,18 +3430,20 @@ Return: AH = RS-232 status code bits
 	    7: DCD - carrier detect
 SeeAlso: AH=05h,AH=82h
 ----------1401-------------------------------
-INT 14 - SERIAL I/O - TRANSMIT CHARACTER
+INT 14 - SERIAL - WRITE CHARACTER TO PORT
 	AH = 01h
-	AL = character
-	DX = port number (0-3)
-Return: AX = port status (see AH=00h)
+	AL = character to write
+	DX = port number (00h-03h)
+Return: AH bit 7 clear if successful
+	AH bit 7 set on error
+	AH bits 6-0 = port status (see AH=03h)
 SeeAlso: AH=02h,AH=0Bh,AH=89h
 ----------1402-------------------------------
-INT 14 - SERIAL I/O - RECEIVE CHARACTER
+INT 14 - SERIAL - READ CHARACTER FROM PORT
 	AH = 02h
-	DX = port number (0-3)
-Return: AL = character received
-	AH = RS-232 status code (see AH=00h)
+	DX = port number (00h-03h)
+Return: AH = line status (see AH=03h)
+	AL = received character if AH bit 7 clear
 Note:	will timeout if DSR is not asserted, even if function 03h returns
 	  data ready
 SeeAlso: AH=01h,AH=84h
@@ -3227,12 +3453,30 @@ INT 14 - FOSSIL - RECEIVE CHARACTER WITH WAIT
 	DX = port number (0-3)
 Return: AL = character received
 	AH = 00h
+SeeAlso: AH=01h
 ----------1403-------------------------------
-INT 14 - SERIAL I/O - GET USART STATUS
+INT 14 - SERIAL - GET PORT STATUS
 	AH = 03h
-	DX = port number (0-3)
-Return: AX = port status code (see AH=00h)
-SeeAlso: AH=81h
+	DX = port number (00h-03h)
+Return: AH = line status
+	    bit 7: timeout
+		6: transmit shift register empty
+		5: transmit holding register empty
+		4: break detected
+		3: framing error
+		2: parity error
+		1: overrun error
+		0: receive data ready
+	AL = modem status
+	    bit 7: carrier detect
+		6: ring indicator
+		5: data set ready
+		4: clear to send
+		3: delta carrier detect
+		2: traling edge of ring indicator
+		1: delta data set ready
+		0: delta clear to send
+SeeAlso: AH=00h,AH=81h
 ----------1404-------------------------------
 INT 14 - SERIAL I/O - EXTENDED INITIALIZE (CONVERTIBLE,PS)
 	AH = 04h
@@ -3423,6 +3667,7 @@ INT 14 - FOSSIL - REBOOT SYSTEM
 	AL = method
 	    00h = cold boot
 	    01h = warm boot
+SeeAlso: INT 19
 ----------1418-------------------------------
 INT 14 - FOSSIL - READ BLOCK
 	AH = 18h
@@ -4027,9 +4272,12 @@ INT 14 - IBM/Yale EBIOS SERIAL I/O - BUFFERED READ
 Return: CX = number of characters read
 SeeAlso: AH=18h,AH=83h,AH=A5h
 ----------1500-------------------------------
-INT 15 - CASSETTE - TURN ON MOTOR (PC,Jr)
+INT 15 - CASSETTE - TURN ON TAPE DRIVE'S MOTOR (PC and PCjr only)
 	AH = 00h
-Return: CF set on error, AH = 86h if no cassette present
+Return: CF set on error
+	    AH = 86h no cassette present
+	CF clear if successful
+SeeAlso: AH=01h"CASSETTE"
 ----------1500-------------------------------
 INT 15 - Amstrad PC1512 - GET AND RESET MOUSE COUNTS
 	AH = 00h
@@ -4040,9 +4288,12 @@ INT 15 - VMiX v2+ - INSTALLATION CHECK???
 	AH = 00h
 Return: DX = 0798h???
 ----------1501-------------------------------
-INT 15 - CASSETTE - TURN OFF MOTOR (PC,Jr)
+INT 15 - CASSETTE - TURN OFF TAPE DRIVE'S MOTOR (PC and PCjr only)
 	AH = 01h
-Return: CF set on error, AH = 86h if no cassette present
+Return: CF set on error
+	    AH = 86h no cassette present
+	CF clear if successful
+SeeAlso: AH=00h"CASSETTE"
 ----------1501-------------------------------
 INT 15 - Amstrad PC1512 - WRITE DATA TO NON-VOLATILE RAM
 	AH = 01h
@@ -4115,19 +4366,22 @@ INT 15 - VMiX - I/O CHANNEL OBJECT MANAGER
 	       WORD  arg4
 Return: DX:AX??? -> IRP structure or 0000h:0000h 
 ----------1502-------------------------------
-INT 15 - CASSETTE - READ DATA BLOCKS (PC,Jr)
+INT 15 - CASSETTE - READ DATA
 	AH = 02h
-	CX = count of bytes
-	ES:BX -> data area
-Return: CF set on error
+	CX = number of bytes to read
+	ES:BX -> buffer
+Return:	CF clear if successful
+	    DX = number of bytes read
+	    ES:BX -> byte following last byte read
+	CF set on error
 	AH = status
+	    00h successful
 	    01h CRC error
 	    02h bad tape signals
 	    04h no data
 	    80h invalid command
 	    86h no cassette present
-	DX = count of bytes read
-	ES:BX = pointer past last byte read
+SeeAlso: AH=00h"CASSETTE",AH=03h"CASSETTE"
 ----------1502-------------------------------
 INT 15 - Amstrad PC1512 - READ DATA FROM NON-VOLATILE RAM
 	AH = 02h
@@ -4150,14 +4404,16 @@ INT 15 - VMiX - MEMORY OBJECT MANAGER
 		WORD	arg5
 Return: DX:AX??? = pointer to memory block
 ----------1503-------------------------------
-INT 15 - CASSETTE - WRITE DATA BLOCKS (PC,Jr)
+INT 15 - CASSETTE - WRITE DATA (PC and PCjr only)
 	AH = 03h
-	CX = count of bytes to write
-	ES:BX -> data area
-Return: CF set on error
-	   AH = status (see AH=02h)
-	ES:BX = pointer past last byte written
-	CX = 0
+	CX = number of bytes to write
+	ES:BX -> data buffer
+Return: CF clear if successful
+	    ES:BX -> byte following last byte written
+	CF set on error
+	AH = status (see AH=02h"CASSETTE")
+	CX = 0000h
+SeeAlso: AH=00h"CASSETTE",AH=02h"CASSETTE"
 ----------1503-------------------------------
 INT 15 - Amstrad PC1512 - WRITE VDU COLOR PLANE WRITE REGISTER
 	AH = 03h
@@ -4399,6 +4655,7 @@ Notes:	if another tone is already playing, the new tone does not start until
 	in DV 2.00, the lowest tone allowed is 20 Hz
 	if CX = 0, the current note is cancelled; if BX = 0 as well, all queued
 	  notes are also cancelled
+SeeAlso: INT 16/AH=73h
 ----------15101A-----------------------------
 INT 15 - TopView - "OSTACK" - SWITCH TO TASK'S INTERNAL STACK
 	AX = 101Ah
@@ -6328,94 +6585,127 @@ Note:	called by OmniView to notify programs loaded before OmniView of state
 	  changes inside OmniView
 SeeAlso: AX=5400h
 ----------1580-------------------------------
-INT 15 - OS HOOK - DEVICE OPEN (AT,XT2,XT286,PS)
+INT 15 - OS HOOK - DEVICE OPEN (AT,XT286,PS)
 	AH = 80h
 	BX = device ID
-	CX = process type
-Return: CF set on error
+	CX = process ID
+	CF clear
+Return: CF clear if successful
+	    AH = 00h
+	CF set on error
 	    AH = status
-	CF clear if successful
-	    AH = 00h	    
-SeeAlso: AH=81h,82h
+		80h invalid command (PC,PCjr)
+		86h function not supported (XT)
+Note:	this function should be hooked by a multitasker which wishes to keep
+	  track of device ownership; the default BIOS handler merely returns
+	  successfully
+SeeAlso: AH=81h,AH=82h
 ----------1581-------------------------------
-INT 15 - OS HOOK - DEVICE CLOSE (AT,XT2,XT286,PS)
+INT 15 - OS HOOK - DEVICE CLOSE
 	AH = 81h
 	BX = device ID
-	CX = process type
-Return: CF set on error
-	    AH = status
-	CF clear if successful
-	    AH = 00h	    
-SeeAlso: AH=80h,82h
+	CX = process ID
+	CF clear
+Return: CF clear if successful
+	    AH = 00h
+	CF set on error
+	    AH = status (see AH=80h)
+Note:	this function should be hooked by a multitasker which wishes to keep
+	  track of device ownership; the default BIOS handler merely returns
+	  successfully
+SeeAlso: AH=80h,AH=82h
 ----------1582-------------------------------
-INT 15 - OS HOOK - DEVICE PROGRAM TERMINATE (AT,XT2,XT286,PS)
+INT 15 - OS HOOK - PROGRAM TERMINATION
 	AH = 82h
-	BX = device ID
-Return: CF set on error
-	    AH = status
-	CF clear if successful
-	    AH = 00h	    
-Note:	closes all devices opened with function 80h
-SeeAlso: AH=80h,81h
+	BX = process ID
+	CF clear
+Return: CF clear if successful
+	    AH = 00h
+	CF set on error
+	    AH = status (see AH=80h)
+Notes:	closes all devices opened by the given process ID with function 80h
+	this function should be hooked by a multitasker which wishes to keep
+	  track of device ownership; the default BIOS handler merely returns
+	  successfully
+SeeAlso: AH=80h,AH=81h
 ----------1583-------------------------------
-INT 15 - SYSTEM - EVENT WAIT (AT,XT286,CONV,PS)
+INT 15 - BIOS - SET EVENT WAIT INTERVAL (AT,PS50+)
 	AH = 83h
-	AL = subservice
-	    00h = set interval
-	    01h = cancel
-	ES:BX -> event flag (bit 7 set when interval expires)
-	CX:DX = number of microseconds to wait (only accurate to 977 us)
-Return: CF set if function already busy
+	AL = subfunction
+	    00h set interval
+	    	CX:DX = microseconds to delay
+		ES:BX -> byte whose high bit is to be set at end of interval
+	    01h cancel wait interval
+Return: CF set on error or function already busy
+	    AH = status
+		80h invalid command (PC,PCjr)
+		86h function not supported (XT and later)
+	CF clear if successful
 Note:	the resolution of the wait period is 977 microseconds on most systems
 	  because most BIOSes use the 1/1024 second fast interrupt from the AT
 	  real-time clock chip which is available on INT 70
-SeeAlso: AH=86h, INT 70
+SeeAlso: AH=86h,INT 70
 ----------1584-------------------------------
-INT 15 - SYSTEM - READ JOYSTICK (AT,XT2,XT286,PS)
+INT 15 - BIOS - JOYSTICK SUPPORT (XT after 11/8/82,AT,XT286,PS)
 	AH = 84h
-	DX = subservice
-	    0000h get switch settings
-		Return: AL = switch settings
-			    bit 7: stick B button 2
-			    bit 6: stick B button 1
-			    bit 5: stick A button 2
-			    bit 4: stick A button 1
-	    0001h read joystick inputs
-		Return: AX = A(x) value
-			BX = A(y) value
-			CX = B(x) value
-			DX = B(y) value
-----------1585-------------------------------
-INT 15 - OS HOOK - SYSTEM REQUEST KEY PRESSED (AT,XT2,XT286,CONV,PS)
-	AH = 85h
-	AL = 00h press
-	   = 01h release
+	DX = subfunction
+	    0000h read joystick switches
+	    	Return: AL bits 7-4 = switch settings
+	    0001h read positions of joysticks
+		Return: AX = X position of joystick A
+			BX = Y position of joystick A
+			CX = X position of joystick B
+			DX = Y position of joystick B
 Return: CF set on error
-	AH = status
-Note:	called by keyboard decode routine
+	    AH = status
+	    	80h invalid command (PC,PCjr)
+		86h function not supported (other)
+	CF clear if successful
+Notes:	if no game port is installed, subfunction 0000h returns AL=00h (all
+	  switches open) and subfunction 0001h returns AX=BX=CX=DX=0000h
+	a 250kOhm joystick typically returns 0000h-01A0h
+----------1585-------------------------------
+INT 15 - OS HOOK - SysRq KEY ACTIVITY (AT,PS)
+	AH = 85h
+	AL = 00h SysRq key pressed
+	   = 01h SysRq key released
+	CF clear
+Return: CF clear if successful
+	    AH = 00h
+	CF set on error
+	    AH = status (see AH=84h)
+Notes:	called by keyboard decode routine
+	the default handler simply returns successfully; programs which wish
+	  to monitor the SysRq key must hook this call
 SeeAlso: INT 09
 ----------1586-------------------------------
-INT 15 - SYSTEM - WAIT (AT,XT2,XT286,CONV,PS)
+INT 15 - BIOS - WAIT (AT,PS)
 	AH = 86h
-	CX,DX = number of microseconds to wait (only accurate to 977 us)
-Return: CF clear: after wait elapses
-	CF set: immediately due to error
+	CX:DX = interval in microseconds
+Return: CF clear if successful (wait interval elapsed)
+	CF set on error or AH=83h wait already in progress
+	    AH = status (see AH=84h)
 Note:	the resolution of the wait period is 977 microseconds on most systems
 	  because most BIOSes use the 1/1024 second fast interrupt from the AT
 	  real-time clock chip which is available on INT 70
-SeeAlso: AH=83h, INT 70
+SeeAlso: AH=83h,INT 70
 ----------1587-------------------------------
-INT 15 - EXTENDED MEMORY - BLOCK MOVE (AT,XT286,PS)
+INT 15 - SYSTEM - COPY EXTENDED MEMORY
 	AH = 87h
-	CX = number of words to move
-	ES:SI -> global descriptor table (see below)
+	CX = number of words to copy (max 8000h)
+	ES:SI -> global descriptor table
 Return: CF set on error
+	CF clear if successful
 	AH = status
 	    00h source copied into destination
 	    01h parity error
 	    02h interrupt error
 	    03h address line 20 gating failed
-SeeAlso: AH=88h
+	    80h invalid command (PC,PCjr)
+	    86h unsupported function (XT,PS30)
+Notes:	copy is done in protected mode with interrupts disabled
+	this function is incompatible with the OS/2 compatibility box
+SeeAlso: AH=88h,AH=89h
 
 Format of global descriptor table:
 Offset	Size	Description
@@ -6429,20 +6719,25 @@ Offset	Size	Description
  1Dh	BYTE	destination segment access rights (93h)
  1Eh 18 BYTEs	zeros
 ----------1588-------------------------------
-INT 15 - EXTENDED MEMORY - GET MEMORY SIZE (AT,XT286,PS)
+INT 15 - SYSTEM - GET EXTENDED MEMORY SIZE (286+)
 	AH = 88h
-Return: AX = memory size in K
-SeeAlso: AH=87h
+Return: CF clear if successful
+	    AX = number of contiguous KB starting at absolute address 100000h
+	CF set on error
+	    AH = status
+		80h invalid command (PC,PCjr)
+		86h unsupported function (XT,PS30)
 Note:	TSRs which wish to allocate extended memory to themselves often hook
 	  this call, and return a reduced memory size.	They are then free to
 	  use the memory between the new and old sizes at will.
+SeeAlso: AH=87h
 ----------1589-------------------------------
-INT 15 - SYSTEM - SWITCH TO VIRTUAL MODE (AT,XT286,PS50+)
+INT 15 - SYSTEM - SWITCH TO PROTECTED MODE
 	AH = 89h
 	BL = interrupt number of IRQ0 (IRQ1-7 use next 7 interrupts)
 	BH = interrupt number of IRQ8 (IRQ9-F use next 7 interrupts)
-	DS:SI -> GDT for protected mode
-	       offset 0h  null descriptor
+	ES:SI -> GDT for protected mode
+	       offset 0h  null descriptor (initialize to zeros)
 		      8h  GDT descriptor
 		     10h  IDT descriptor
 		     18h  DS
@@ -6452,43 +6747,74 @@ INT 15 - SYSTEM - SWITCH TO VIRTUAL MODE (AT,XT286,PS50+)
 		     38h  uninitialized, used to build descriptor for BIOS CS
 	CX = offset into protected-mode CS to jump to
 Return: CF set on error
-	   AH = 0FFh  error enabling address line 20
-	in protected mode at specified address if successful
-SeeAlso: INT 67/AX=DE0Ch
+	   AH = FFh  error enabling address line 20
+	CF clear if successful
+	   AH = 00h
+	   in protected mode at specified address
+Note:	BL and BH must be multiples of 8
+SeeAlso: AH=87h,AH=88h,INT 67/AX=DE0Ch
 ----------1590-------------------------------
-INT 15 - OS HOOK - DEVICE BUSY LOOP (AT,XT2,XT286,CONV,PS)
+INT 15 - OS HOOK - DEVICE BUSY (AT,PS)
 	AH = 90h
-	AL = type code
+	AL = device type
 	    00h disk
 	    01h diskette
 	    02h keyboard
 	    03h PS/2 pointing device
+	    21h waiting for keyboard input (Phoenix BIOS)
 	    80h network
-	    FCh disk reset
+	    FCh disk reset (PS)
 	    FDh diskette motor start
 	    FEh printer
 	ES:BX -> request block for type codes 80h through BFh
+	CF clear
 Return: CF set if wait time satisfied
 	CF clear if driver must perform wait
-Note:	type codes are allocated as follows:
+	    AH = 00h
+Notes:	type codes are allocated as follows:
 	  00-7F non-reentrant devices; OS must arbitrate access
 	  80-BF reentrant devices; ES:BX points to a unique control block
 	  C0-FF wait-only calls, no complementary INT 15/AH=91h call
+	this function should be hooked by a multitasker to allow other tasks
+	  to execute while the BIOS is waiting for I/O completion; the default
+	  handler merely returns with AH=00h and CF clear
 SeeAlso: AH=91h
 ----------1591-------------------------------
-INT 15 - OS HOOK - SET FLAG AND COMPLETE INTERRUPT (AT,XT2,XT286,CONV,PS)
+INT 15 - OS HOOK - DEVICE POST (AT,PS)
 	AH = 91h
-	AL = type code (see AH=90h)
+	AL = device type (see AH=90h)
 	ES:BX -> request block for type codes 80h through BFh
+	CF clear
 Return: AH = 00h
+Note:	this function should be hooked by a multitasker to allow other tasks
+	  to execute while the BIOS is waiting for I/O completion; the default
+	  handler merely returns with AH=00h and CF clear
 SeeAlso: AH=90h
+----------15BC-------------------------------
+INT 15 - Phoenix 386 BIOS - DETERMINE CPU SPEED
+	AH = BCh
+Return: CF clear
+	BYTE 0040h:00B0h set to ??? (43 on my 386/33)
+Note:	reads system timer channel 0 twice, then does calculations on returned
+	  values
+----------15BF02-----------------------------
+INT 15 - DOS/16M - INSTALLATION CHECK
+	AX = BF02h
+	DX = 0000h
+Return: DX = nonzero if installed
+	    DX:SI -> XBRK structure
+SeeAlso: INT 2F/AH=A1h,INT 2F/AX=FBA1h
 ----------15C0-------------------------------
 INT 15 - SYSTEM - GET CONFIGURATION (XT after 1/10/86,AT mdl 3x9,CONV,XT286,PS)
 	AH = C0h
 Return: CF set if BIOS doesn't support call
 	CF clear on success
 	    ES:BX -> ROM table (see below)
-Note:	the 1/10/86 XT BIOS returns an incorrect value for the feature byte
+	AH = status
+	    00h successful
+	    86h unsupported function
+Notes:	the 1/10/86 XT BIOS returns an incorrect value for the feature byte
+	the configuration table is at F000h:E6F5h in 100% compatible BIOSes
 
 Format of ROM configuration table:
 Offset	Size	Description
@@ -6502,7 +6828,7 @@ Offset	Size	Description
 		bit 5 = Real-Time Clock installed
 		bit 4 = INT 15h/AH=4Fh called upon INT 9h
 		bit 3 = wait for external event supported
-		bit 2 = extended BIOS area allocated at 640K
+		bit 2 = extended BIOS area allocated (usually at top of RAM)
 		bit 1 = bus is Micro Channel instead of ISA
 		bit 0 reserved
  06h	WORD	reserved (0)
@@ -6546,7 +6872,7 @@ Model  Submdl  Rev	BIOS date	System
  F8h	09h	???	  ???		PS/2 Model 70 16MHz, type 1 system brd
  F8h	09h	02h	04/11/88	PS/2 Model 70 some models
  F8h	09h	03h	03/17/89	PS/2 Model 70 some models
- F8h	0Bh	00h	01/18/89	PS/2 Model P70 (8573-121)
+ F8h	0Bh	00h	01/18/89	PS/2 Model P70 (8573-121) typ 2 sys brd
  F8h	0Bh	02h	12/16/89	PS/2 Model P70 ??
  F8h	0Ch	00h	11/02/88	PS/2 Model 55SX
  F8h	0Dh	???	  ???		PS/2 Model 70 25MHz, type 3 system brd
@@ -6557,6 +6883,7 @@ Model  Submdl  Rev	BIOS date	System
  F8h	1Bh	00h	10/02/89	PS/2 Model 70-486
  F8h	1Ch	00h	02/08/90	PS/2 Model 65-121
  F8h	1Eh	00h	02/08/90	PS/2 Model ??
+ F8h	50h	00h	  ???		PS/2 Model P70 (8573) 16 MHz
  F8h	50h	01h	12/16/89	PS/2 Model P70 (8570-031)
  F8h	80h	01h	11/21/89	PS/2 Model 80-A21
  9Ah	*	*	  ???		Compaq XT/Compaq Plus
@@ -7108,94 +7435,110 @@ INT 15 - Compaq Systempro - MULTIPROCESSOR AVAILABLE
 	AX = E200h
 Return: AX = 8000h if 2nd processor available
 ----------1600-------------------------------
-INT 16 - KEYBOARD - READ CHAR FROM BUFFER, WAIT IF EMPTY
+INT 16 - KEYBOARD - GET KEYSTROKE
 	AH = 00h
 Return: AH = scan code
-	AL = character
+	AL = ASCII character
 Note:	on extended keyboards, this function discards any extended keystrokes,
 	  returning only when a non-extended keystroke is available
-SeeAlso: AH=01h,10h
+SeeAlso: AH=01h,AH=05h,AH=10h
 ----------1601-------------------------------
-INT 16 - KEYBOARD - CHECK BUFFER, DO NOT CLEAR
+INT 16 - KEYBOARD - CHECK FOR KEYSTROKE
 	AH = 01h
-Return: ZF clear if character in buffer
+Return: ZF set if no keystroke available
+	ZF clear if keystroke available
 	    AH = scan code
-	    AL = character
-	ZF set if no character in buffer
-SeeAlso: AH=00h,11h
+	    AL = ASCII character
+Note:	if a keystroke is present, it is not removed from the keyboard buffer;
+	  however, any extended keystrokes which are not compatible with 83/84-
+	  key keyboards are removed in the process of checking whether a
+	  non-extended keystroke is available
+SeeAlso: AH=00h,AH=11h
 ----------1602-------------------------------
-INT 16 - KEYBOARD - GET SHIFT STATUS
+INT 16 - KEYBOARD - GET SHIFT FLAGS
 	AH = 02h
-	AL = shift status bits
-	    0 = right shift key depressed
-	    1 = left shift key depressed
-	    2 = CTRL depressed
-	    3 = ALT depressed
-	    4 = SCROLL LOCK active
-	    5 = NUM LOCK active
-	    6 = CAPS LOCK active
-	    7 = INSERT state active
+Return: AL = shift flags
+	    bit 7: Insert active
+		6: CapsLock active
+		5: NumLock active
+		4: ScrollLock active
+		3: Alt key pressed (either Alt on 101/102-key keyboards)
+		2: Ctrl key pressed (either Ctrl on 101/102-key keyboards)
+		1: left shift key pressed
+		0: right shift key pressed
 SeeAlso: AH=12h
 ----------1603-------------------------------
-INT 16 - KEYBOARD - SET DELAYS (Jr,AT model 339,XT286,PS)
+INT 16 - KEYBOARD - SET TYPEMATIC RATE AND DELAY
 	AH = 03h
 	AL = subfunction
-	    00h reset typematic (PCjr)
-	    01h increase initial delay (PCjr)
-	    02h increase continuing delay (PCjr)
-	    03h increase both delays (PCjr)
-	    04h turn off typematic (PCjr)
-	    05h Set typematic rate (AT or PS/2)
-	BH = 00h - 03h for delays of 250ms, 500ms, 750ms, or 1s
-	BL = 00h - 1Fh for typematic rates of 30cps down to 2cps
+	    00h (PCjr) set default delay and rate
+	    01h (PCjr) increase delay before repeat
+	    02h (PCjr) decrease repeat rate by factor of 2
+	    03h (PCjr) increase delay and decrease repeat rate
+	    04h (PCjr) turn off typematic repeat
+	    05h (AT,PS) set repeat rate and delay
+		BH = delay value (00h = 250ms to 03h = 1000ms)
+		BL = repeat rate (00h=30/sec to 0Ch=10/sec [def] to 1Fh=2/sec)
 ----------1604-------------------------------
-INT 16 - KEYBOARD - KEYCLICK (Jr,CONV)
+INT 16 - KEYBOARD - SET KEYCLICK (PCjr only)
 	AH = 04h
-	AL = 00h click off
-	     01h click on
+	AL = keyclick state
+	    00h off
+	    01h on
+SeeAlso: AH=03h
 ----------1605-------------------------------
-INT 16 - KEYBOARD - WRITE TO KEYBOARD BUFFER (AT model 339,XT2,XT286,PS)
+INT 16 - KEYBOARD - STORE KEYSTROKE IN KEYBOARD BUFFER (AT/PS w enh keybd only)
 	AH = 05h
 	CH = scan code
-	CL = character
-Return: AL = 01h if buffer full
-SeeAlso: AH=71h, INT 15/AX=DE10h
+	CL = ASCII character
+Return: AL = 00h if successful
+	     01h if keyboard buffer full
+Note:	under DESQview, the following "keystrokes" invoke the following actions
+	  when they are read from the keyboard buffer:
+	  	38FCh	pop up DESQview main menu
+		38FEh	close the current window
+		38FFh	pop up DESQview learn menu
+SeeAlso: AH=00h,AH=71h,INT 15/AX=DE10h
 ----------1610-------------------------------
-INT 16 - KEYBOARD - GET ENHANCED KEYSTROKE (AT model 339,XT2,XT286,PS)
+INT 16 - KEYBOARD - GET ENHANCED KEYSTROKE (enhanced kbd support only)
 	AH = 10h
 Return: AH = scan code
-	AL = character
-Note:	unlike AH=00h, this function does not discard extended keystrokes
+	AL = ASCII character
+Notes:	if no keystroke is available, this function waits until one is placed
+	  in the keyboard buffer
+	unlike AH=00h, this function does not discard extended keystrokes
 SeeAlso: AH=00h,11h
 ----------1611-------------------------------
-INT 16 - KEYBOARD - CHECK ENHANCED KEYSTROKE (AT model 339,XT2,XT286,PS)
+INT 16 - KEYBOARD - CHECK FOR ENHANCED KEYSTROKE (enh kbd support only)
 	AH = 11h
-Return: ZF clear if keystroke available
-	    AH = scan code \ meaningless if ZF = 1
-	    AL = character /
-	ZF set if kbd buffer empty
+Return: ZF set if no keystroke available
+	ZF clear if keystroke available
+	    AH = scan code
+	    AL = ASCII character
+Notes:	if a keystroke is available, it is not removed from the keyboard buffer
+	unlike AH=01h, this function does not discard extended keystrokes
 SeeAlso: AH=01h,10h
 ----------1612-------------------------------
-INT 16 - KEYBOARD - GET ENHANCED SHIFT FLAGS (AT model 339,XT2,XT286,PS)
+INT 16 - KEYBOARD - GET EXTENDED SHIFT STATES (enh kbd support only)
 	AH = 12h
-Return: AL = shift flags (same as for AH=02h)
-	   bit 7: Ins ON
-	   bit 6: CapsLock ON
-	   bit 5: NumLock ON
-	   bit 4: ScrollLock ON
-	   bit 3: Either ALT key down
-	   bit 2: Either CTRL key down
-	   bit 1: Left shift key down
-	   bit 0: Right shift key down
-	AH
-	   bit 7: SysReq key down
-	   bit 6: CapsLock key down
-	   bit 5: NumLock key down
-	   bit 4: ScrollLock key down
-	   bit 3: Right Alt key down
-	   bit 2: Right Ctrl key down
-	   bit 1: Left Alt key down
-	   bit 0: Left Ctrl key down
+Return: AL = shift flags 1 (same as returned by AH=02h)
+	    bit 7: Insert active
+		6: CapsLock active
+		5: NumLock active
+		4: ScrollLock active
+		3: Alt key pressed (either Alt on 101/102-key keyboards)
+		2: Ctrl key pressed (either Ctrl on 101/102-key keyboards)
+		1: left shift key pressed
+		0: right shift key pressed
+	AH = shift flags 2
+	    bit 7: SysRq key pressed
+		6: CapsLock pressed
+		5: NumLock pressed
+		4: ScrollLock pressed
+		3: right Alt key pressed
+		2: right Ctrl key pressed
+		1: left Alt key pressed
+		0: left Ctrl key pressed
 Notes:	AL bit 3 set only for left Alt key on many machines
 	AH bits 7 through 4 always clear on a Compaq SLT/286
 SeeAlso: AH=02h
@@ -7249,24 +7592,25 @@ INT 16 - FAKEY.COM - PLAY TONES
 	CX = number of tones to play
 	DS:SI -> array of tones (see below)
 Note:	FAKEY is a keystroke faking utility by System Enhancement Associates
+SeeAlso: INT 15/AX=1019h
 
 Format of tone array entries:
 Offset	Size	Description
  00h	WORD	divisor for timer channel 2
  02h	WORD	duration in clock ticks
 ----------1675-------------------------------
-INT 16 - pcANYWHERE - SET TICK COUNT FOR SCANNING
+INT 16 - pcANYWHERE III - SET TICK COUNT FOR SCANNING
 	AH = 75h
 	AL = number of ticks between checks for new screen changes
 ----------1676-------------------------------
-INT 16 - pcANYWHERE - SET ERROR CHECKING TYPE
+INT 16 - pcANYWHERE III - SET ERROR CHECKING TYPE
 	AH = 76h
 	AL = error checking type
 	    00h none
 	    01h fast
 	    02h slow
 ----------1677-------------------------------
-INT 16 - pcANYWHERE - LOG OFF
+INT 16 - pcANYWHERE III - LOG OFF
 	AH = 77h
 	AL = mode
 	    00h wait for another call
@@ -7286,7 +7630,7 @@ Return: AX = 7789h
 	BX = 7788h
 	DS:SI -> signature string
 ----------1679-------------------------------
-INT 16 - pcANYWHERE - CHECK STATUS
+INT 16 - pcANYWHERE III - CHECK STATUS
 	AH = 79h
 Return: AX = status
 	    FFFFh if resident and active
@@ -7294,19 +7638,20 @@ Return: AX = status
 	    FFFDh if in Memory Resident mode
 	    FFFCh if in Automatic mode
 	    other value if not resident
+SeeAlso: AX=7B00h,INT 21/AX=2B44h
 ----------167A-------------------------------
-INT 16 - pcANYWHERE - CANCEL SESSION
+INT 16 - pcANYWHERE III - CANCEL SESSION
 	AH = 7Ah
 ----------167B00-----------------------------
-INT 16 - pcANYWHERE - SUSPEND
+INT 16 - pcANYWHERE III - SUSPEND
 	AX = 7B00h
-SeeAlso: AX=7B01h
+SeeAlso: AH=79h,AX=7B01h
 ----------167B01-----------------------------
-INT 16 - pcANYWHERE - RESUME
+INT 16 - pcANYWHERE III - RESUME
 	AX = 7B01h
-SeeAlso: AX=7B00h
+SeeAlso: AH=79h,AX=7B00h
 ----------167C-------------------------------
-INT 16 - pcANYWHERE - GET PORT CONFIGURATION
+INT 16 - pcANYWHERE III - GET PORT CONFIGURATION
 	AH = 7Ch
 Return: AH = port number
 	AL = baud rate
@@ -7326,7 +7671,7 @@ Return: AH = port number
 	    0Dh = 9600 baud
 	    0Eh = 19200 baud
 ----------167D-------------------------------
-INT 16 - pcANYWHERE - GET/SET TERMINAL PARAMETERS
+INT 16 - pcANYWHERE III - GET/SET TERMINAL PARAMETERS
 	AH = 7Dh
 	AL = subfunction
 	    00h set terminal parameters
@@ -7334,7 +7679,7 @@ INT 16 - pcANYWHERE - GET/SET TERMINAL PARAMETERS
 	    02h get configuration header and terminal parameters
 	DS:CX -> terminal parameter block
 ----------167E-------------------------------
-INT 16 - pcANYWHERE - COMMUNICATIONS I/O THROUGH PORT
+INT 16 - pcANYWHERE III - COMMUNICATIONS I/O THROUGH PORT
 	AH = 7Eh
 	AL = subfunction
 	    01h port input status
@@ -7345,7 +7690,7 @@ INT 16 - pcANYWHERE - COMMUNICATIONS I/O THROUGH PORT
 	    03h port output character in CX
 	    11h hang up phone
 ----------167F-------------------------------
-INT 16 - pcANYWHERE - SET KEYBOARD/SCREEN MODE
+INT 16 - pcANYWHERE III - SET KEYBOARD/SCREEN MODE
 	AH = 7Fh
 	AL = subfunction
 	    00h enable remote keyboard only
@@ -7369,6 +7714,15 @@ Return: Graphics performed
 Note:	PT stands for Paint Tools which is a graphics library for Turbo Pascal,
 	  Modula 2 and others from DataBiten in Sweden. The library is
 	  installed as a memory resident driver.
+----------16E0E0-----------------------------
+INT 16 - TurboPower TSRs - ALTERNATE INSTALLATION CHECK
+	AX = E0E0h
+Return: AX = 1F1Fh if installed
+	    DWORD 0040h:00F0h -> last data block in TSR list (see AX=F0F0h)
+Note:	the returned TSR list provides support for communication among TSRs
+	  built with TurboPower's Turbo Professional and Object Professional
+	  libraries for Turbo Pascal
+SeeAlso: AX=F0F0h
 ----------16F0-------------------------------
 INT 16 - Compaq 386 - SET CPU SPEED
 	AH = F0h
@@ -7383,20 +7737,25 @@ INT 16 - Compaq 386 - SET CPU SPEED
 		CX = speed value, 1 (slowest) to 50 (full), 3 ~= 8088
 SeeAlso: AH=F1h,AH=F3h
 ----------16F0F0-----------------------------
-INT 16 - PE.EXE - INSTALLATION CHECK
+INT 16 - TurboPower TSRs - INSTALLATION CHECK
 	AX = F0F0h
 Return: AX = 0F0Fh if installed
-	    ES:DI -> data block
-Note:	PE is a TSR screen grabber included with ASMED, an integrated
-	  environment for TASM and MASM
+	    ES:DI -> last data block in TSR list
+Note:	the returned TSR list provides support for communication among TSRs
+	  built with TurboPower's Turbo Professional and Object Professional
+	  libraries for Turbo Pascal
+SeeAlso: AX=E0E0h
 
 Format of data block:
 Offset	Size	Description
  00h	DWORD	pointer to program tag (counted ASCII string)
- 04h	WORD	???
- 06h	DWORD	pointer to ???
- 0Ah  4 BYTEs	???
- 0Eh	DWORD	???
+ 04h	WORD	interface version number (0400h)
+ 06h	DWORD	pointer to command entry point
+ 0Ah  	DWORD	pointer to previous data block (0000h:0000h if none)
+ 0Eh	DWORD	pointer to next data block (0000h:0000h if none)
+---swappable TSRs only---
+ 12h	DWORD	pointer to swapping data
+ 16h	DWORD	pointer to user data
 	more???
 ----------16F1-------------------------------
 INT 16 - Compaq 386 - READ CURRENT CPU SPEED
@@ -7435,33 +7794,64 @@ INT 16 - Compaq Systempro - DISABLE CACHE CONTROLLER
 	AX = F402h
 Return: AX = E202h
 SeeAlso: AX=F400h,AX=F401h
+----------16FFA6-----------------------------
+INT 16 - PC Tools v6.0 DESKTOP API - GET ???
+	AX = FFA6h
+Return: DS:SI -> ???
+----------16FFA7-----------------------------
+INT 16 - PC Tools v6.0 DESKTOP API - GET ??? PATH
+	AX = FFA7h
+Return: DS:SI -> ASCIZ path (directory from which PCTools was run???)
+----------16FFA8-----------------------------
+INT 16 - PC Tools v6.0 DESKTOP API - ???
+	AX = FFA8h
+	DS:SI -> three consecutive ASCIZ strings for ??? (max 256 bytes total)
+	???
+Return: ???
+Notes:	available only when popped up
+	strings copied into internal buffer, among other actions
+----------16FFA9-----------------------------
+INT 16 - PC Tools v6.0 DESKTOP API - GET ???
+	AX = FFA9h
+Return: DS:SI -> version string???
+----------16FFAA-----------------------------
+INT 16 - PC Tools v6.0 DESKTOP API - ???
+	AX = FFAAh
+	???
+Return: ???
+Note:	available only when popped up
+----------16FFAB-----------------------------
+INT 16 - PC Tools v6.0 DESKTOP API - GET EDITOR SETTINGS???
+	AX = FFABh
+Return: DS:SI -> editor setting strings???
+----------16FFAC-----------------------------
+INT 16 - PC Tools v6.0 DESKTOP API - SET ???
+	AX = FFACh
+	DL = ???
+Note:	available only when popped up
 ----------16FFAD-----------------------------
-INT 16 - PC Tools v6.0 DESKTOP API - ???
+INT 16 - PC Tools v6.0 DESKTOP API - SET ???
 	AX = FFADh
-	???
-Return: ???
+	DL = ???
 ----------16FFAE-----------------------------
-INT 16 - PC Tools v6.0 DESKTOP API - ???
+INT 16 - PC Tools v6.0 DESKTOP API - GET ???
 	AX = FFAEh
-	???
-Return: ???
+Return: AL = ???
 ----------16FFAF-----------------------------
-INT 16 - PC Tools v6.0 DESKTOP API - ???
+INT 16 - PC Tools v6.0 DESKTOP API - SET ???
 	AX = FFAFh
-	???
-Return: ???
+	DL = ???
 ----------16FFB0-----------------------------
-INT 16 - PC Tools v6.0 DESKTOP API - ???
+INT 16 - PC Tools v6.0 DESKTOP API - SET ???
 	AX = FFB0h
-	???
-Return: ???
+	BL = ???
 ----------16FFB1-----------------------------
 INT 16 - PC Tools v6.0 DESKTOP API - ???
 	AX = FFB1h
 	???
 Return: ???
 ----------16FFB2-----------------------------
-INT 16 - PC Tools v5.5+ DESKTOP API - ???
+INT 16 - PC Tools v5.5+ DESKTOP API - GET ???
 	AX = FFB2h
 Return: DS:SI -> ???
 ----------16FFB3-----------------------------
@@ -7471,37 +7861,68 @@ INT 16 - PC Tools v5.5+ DESKTOP API - ???
 Return: ???
 Note:	available only when popped up
 ----------16FFB4-----------------------------
-INT 16 - PC Tools v5.5+ DESKTOP API - ???
+INT 16 - PC Tools v5.5+ DESKTOP API - SET ??? FLAG
 	AX = FFB4h
-	???
-Return: ???
 Note:	available only when popped up
+SeeAlso: AX=FFBBh
 ----------16FFB5-----------------------------
-INT 16 - PC Tools v5.5+ DESKTOP API - GET/SET ???
+INT 16 - PC Tools v5.5+ DESKTOP API - GET/SET WINDOW PARAMETERS
 	AX = FFB5h
-	BX = ??? (000Fh to 0019h)
+	BX = window specifier (000Fh to 0019h) (see below)
 	DX = 0000h get, nonzero = set
-	ES:DI -> 16-byte buffer with new values or to receive old values
+	ES:DI -> window parameter buffer (see below)
+SeeAlso: AX=FFCBh
+
+Values for window specifier:
+ 000Fh	comm/FAX
+ 0014h	hotkey selection
+ 0015h	ASCII table
+ 0016h	system colors menu
+
+Format of window parameters:
+Offset	Size	Description
+ 00h	BYTE	rows in window, not counting frame
+ 01h	BYTE	columns in window, not counting frame
+ 02h	BYTE	row number of top of window
+ 03h	BYTE	2*column number of left of window
+ 04h	BYTE	character attribute for ???
+ 05h	BYTE	character attribute for background/border
+ 06h	BYTE	character attribute for ???
+ 07h	DWORD	pointer to ??? on screen
+ 0Bh  4 BYTEs	???
+ 0Fh	BYTE	nonzero if window may be resized
+Note:	if running in monochrome mode, character attributes at offsets 04h to
+	  06h are stored unchanged, but attributes other than 07h, 0Fh, or 70h
+	  are changed to 07h on reading
 ----------16FFB6-----------------------------
-INT 16 - PC Tools v5.5+ DESKTOP API - ???
+INT 16 - PC Tools v5.5+ DESKTOP API - GET ???
 	AX = FFB6h
-	???
 Return: AH = ???
 	AL = ???
 ----------16FFB7-----------------------------
-INT 16 - PC Tools v5.5+ DESKTOP API - SET ???
+INT 16 - PC Tools v5.5+ DESKTOP API - GET/SET ???
 	AX = FFB7h
-	DS:SI -> 10-byte buffer with ???
-	???
-Return: ???
+	BX = direction
+	    0000h copy to buffer
+	    else  copy from buffer
+	DS:SI -> 70-byte buffer with ???
+Return: data copied
+Note:	available only when popped up under v6.0+
 ----------16FFB8-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - GET/SET???
 	AX = FFB8h
 	BH = subfunction
 	    00h get
 		Return: BL = old value of ???
+			CL = old value of ??? (v6.0+)
+			CH = old value of ??? (v6.0+)
 	    nonzero set
 		BL = new value for ???
+		CL = new value for ??? (v6.0+)
+		CH = new value for ??? (v6.0+)
+		DH = ???
+		Return: AL = old value replaced by CL (v6.0+)
+			AH = old value replaced by CH (v6.0+)
 ----------16FFB9-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - ???
 	AX = FFB9h
@@ -7514,19 +7935,18 @@ Return: AX = ???
 INT 16 - PC Tools v5.1+ DESKTOP API - ???
 	AX = FFBAh
 	???
-Return: ???
+Return: AX = ???
 Note:	available only when popped up
 ----------16FFBB-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - CLEAR ??? FLAG
 	AX = FFBBh
-	???
-Return: ???
 Note:	available only when popped up
+SeeAlso: AX=FFB4h
 ----------16FFBC-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - RESTORE ORIGINAL SCREEN???
 	AX = FFBCh
 ----------16FFBD-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - POP DOWN???
+INT 16 - PC Tools v5.1+ DESKTOP API - ??? DATABASE INDEXING MESSAGES
 	AX = FFBDh
 	???
 Return: ???
@@ -7539,6 +7959,7 @@ Note:	available only when popped up
 ----------16FFBF-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - ???
 	AX = FFBFh
+	BX = DOS file handle to write on
 	???
 Return: ???
 Note:	available only when popped up
@@ -7546,78 +7967,107 @@ Note:	available only when popped up
 INT 16 - PC Tools v5.1+ DESKTOP API - ???
 	AX = FFC0h
 	???
-Return: ???
+Return: AX = 0000h if successful
+	AX = FFFFh on error
 Note:	available only when popped up
 ----------16FFC1-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - ???
 	AX = FFC1h
+	BL = ???
+	ES:DI -> data structure (see below)
 	???
-Return: ???
+Return: AX = ???
 Note:	available only when popped up
+
+Format of data structure:
+Offset	Size	Description
+ 00h	WORD	???
+ 02h	WORD	???
+ 04h	WORD	???
+ 06h	WORD	???
+ 08h	WORD	???
+ 0Ah	BYTE	???
+ 0Bh	BYTE	???
+	???
 ----------16FFC2-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - ???
 	AX = FFC2h
 	???
-Return: ???
+Return: AH = ???
+	CX = ???
+	DH = ???
+	DL = ???
 Note:	available only when popped up
+SeeAlso: AX=FFC3h
 ----------16FFC3-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - ???
 	AX = FFC3h
 	???
-Return: ???
+Return: AH = ???
+	CX = ???
+	DH = ???
+	DL = ???
 Note:	available only when popped up
+SeeAlso: AX=FFC2h
 ----------16FFC4-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - GET ???
 	AX = FFC4h
-	???
-Return: ???
-Note:	available only when popped up
+Return: AL = ???
+	BX = segment of scratch space???
+	CX = segment of stored screen data (section covered by window???)
+	DX = segment of window parameters for ???
+	ES:BP -> ???
+Note:	available only when popped up in versions prior to 6.0
 ----------16FFC5-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - CHECK WHETHER DESKTOP LOADED RESIDENT
 	AX = FFC5h
 Return: BL = nonzero if loaded resident
 	   = 00h if nonresident
 Note:	available only when popped up
+SeeAlso: AX=FFEFh,AX=FFF3h
 ----------16FFC6-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - SET ???
 	AX = FFC6h
 	BL = new value for ???
 ----------16FFC7-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - REMOVE WINDOW
 	AX = FFC7h
 	???
 Return: ???
-Note:	screen swapping???
 ----------16FFC8-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - GET ???
 	AX = FFC8h
 Return: DS:SI -> ???
+Note:	valid only while popped up
 ----------16FFC9-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - COPY DATA TO CLIPBOARD
 	AX = FFC9h
-	SI = ???
-	CX = ???
-Return: ???
-Note:	available only when popped up
+	DS:SI -> characters to store in clipboard
+	CX = size in bytes
+Return: CF set on error
+Notes:	available only when popped up
+	while copying, bytes of 00h and 0Ah are skipped
 ----------16FFCA-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - SET ???
 	AX = FFCAh
 	DX = ???
-Return: ???
+Return: AX destroyed
 Note:	available only when popped up
 ----------16FFCB-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - SELECT WINDOW PARAMETERS???
 	AX = FFCBh
-	DX = ???
-Return: ???
+	DX = window specifier???
+Return: AX destroyed
 Note:	available only when popped up
+SeeAlso: AX=FFB5h
 ----------16FFCC-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - DISPLAY ASCIZ STRING
+INT 16 - PC Tools v5.1+ DESKTOP API - DISPLAY ASCIZ STRING CENTERED IN WINDOW
 	AX = FFCCh
 	DS:SI -> ASCIZ string
 Return: AX = ???
 	CX = ???
-	ES:DI -> address past last character displayed
+	ES:DI -> address past last character displayed (v5.1/5.5)
+	      -> ??? on menu bar
 ----------16FFCD-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - ???
 	AX = FFCDh
@@ -7630,39 +8080,43 @@ INT 16 - PC Tools v5.1+ DESKTOP API - SET ??? DELAYS
 	CX = ???
 Return: nothing???
 ----------16FFCF-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - CLOSE PRINTER/PRINT FILE
 	AX = FFCFh
-	???
-Return: ???
 Note:	available only when popped up
 ----------16FFD0-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - PREPARE TO PRINT???
 	AX = FFD0h
 	???
 Return: ???
 Note:	available only when popped up
 ----------16FFD1-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - DISPLAY PRINT OPTIONS MENU
 	AX = FFD1h
-	???
-Return: ???
+Return: BX = number of copies
+	DX = destination
+	    00h cancel
+	    01h LPT1
+	    02h LPT2
+	    03h	LPT3
+	    04h	COM1
+	    05h	COM2
+	    06h disk file
 Note:	available only when popped up
 ----------16FFD2-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - ???
 	AX = FFD2h
 	BX = ???
-Return: ???
+Return: BL = ???
 Note:	available only when popped up
 ----------16FFD3-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - ???
 	AX = FFD3h
-	???
+	DS:SI -> 92-byte data record for ???
 Return: ???
 ----------16FFD4-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - CREATE/OPEN/DELETE FILE
 	AX = FFD4h
-	BH = 3Ch create file
-		CX = file attributes
+	BH = 3Ch create file (with no attributes)
 	     3Dh open file
 	     41h delete file
 	BL = access mode
@@ -7672,6 +8126,9 @@ INT 16 - PC Tools v5.1+ DESKTOP API - CREATE/OPEN/DELETE FILE
 	DS:SI -> ASCIZ filename
 Return: BX = file handle
 	    0000h on error
+Note:	operation is attempted in (in order) the directory from which the
+	  desktop was started/run???, the directory specified with the
+	  filename, X:\PCTOOLS\, and X:\
 ----------16FFD5-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - ???
 	AX = FFD5h
@@ -7681,6 +8138,9 @@ Note:	available only when popped up
 ----------16FFD6-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - ???
 	AX = FFD6h
+	BX = ???
+	CX = ???
+	DX = offset in ???
 	???
 Return: ???
 Note:	available only when popped up
@@ -7688,7 +8148,7 @@ Note:	available only when popped up
 INT 16 - PC Tools v5.1+ DESKTOP API - ???
 	AX = FFD7h
 	???
-Return: ???
+Return: BL = ???
 Note:	available only when popped up
 ----------16FFD8-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - SAFE CREATE FILE
@@ -7699,26 +8159,25 @@ Return: BX = file handle
 Note:	pops up confirmation menu if file already exists
 	only available when popped up???
 ----------16FFD9-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - GET ???
 	AX = FFD9h
-	???
-Return: ???
+Return: AX = ???
 Note:	available only when popped up
 ----------16FFDA-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - GET NAME OF LAST FILE OPENED
 	AX = FFDAh
-	DS:SI -> ???
-Return: DS:SI -> ???
+	DS:SI -> ??? (v5.1/5.5 only)
+Return: DS:SI -> filename
 ----------16FFDB-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - SET ???
 	AX = FFDBh
-	???
-Return: ???
+	BL = ???
 Note:	available only when popped up
 ----------16FFDC-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - UNHOOK
 	AX = FFDCh
-Return: interrupt vectors 09h, 16h, 1Ch, and 21h restored to original values
+Return: interrupt vectors 09h, 10h (v6.0+), 16h, 1Ch, and 21h restored to
+	  original values
 ----------16FFDDBX0000-----------------------
 INT 16 - PC Tools v5.1+ PCShell API - INSTALLATION CHECK
 	AX = FFDDh
@@ -7731,23 +8190,25 @@ INT 16 - PC Tools v5.1+ PCShell API - REQUEST POP-UP
 	BX = 0001h
 SeeAlso: AX=FFDDh/BX=0003h
 ----------16FFDDBX0002-----------------------
-INT 16 - PC Tools v5.1+ PCShell API - GET ???
+INT 16 - PC Tools v5.1-5.5 PCShell API - GET ???
 	AX = FFDDh
 	BX = 0002h
 Return: AL = 
 	    00h ???
 	    01h ???
+Note:	PCShell v6.0 displays the error message "Incorrect PCRUN version",
+	  awaits a keystroke, and aborts the current process
 ----------16FFDDBX0003-----------------------
 INT 16 - PC Tools v5.1+ PCShell API - REQUEST POP-UP
 	AX = FFDDh
 	BX = 0003h
 SeeAlso: AX=FFDDh/BX=0001h
 ----------16FFDDBX0004-----------------------
-INT 16 - PC Tools v5.1+ PCShell API - ???
+INT 16 - PC Tools v5.1+ PCShell API - GET ???
 	AX = FFDDh
 	BX = 0004h
-	???
-Return: DS:SI -> ???
+Return: CF clear if successful
+	    DS:SI -> ???
 ----------16FFDDBX0005-----------------------
 INT 16 - PC Tools v5.1+ PCShell API - ???
 	AX = FFDDh
@@ -7761,27 +8222,52 @@ INT 16 - PC Tools v5.1+ PCShell API - ???
 	???
 Return: ???
 ----------16FFDDBX0007-----------------------
-INT 16 - PC Tools v5.1+ PCShell API - ???
+INT 16 - PC Tools v5.1+ PCShell API - SET ??? FLAG
 	AX = FFDDh
 	BX = 0007h
-	???
-Return: ???
+Return: CF clear if successful
+SeeAlso: AX=FFDDh/BX=0008h
 ----------16FFDDBX0008-----------------------
-INT 16 - PC Tools v5.1+ PCShell API - ???
+INT 16 - PC Tools v5.1+ PCShell API - CLEAR ??? FLAG
 	AX = FFDDh
 	BX = 0008h
-	???
 Return: ???
+SeeAlso: AX=FFDDh/BX=0007h
 ----------16FFDDBX0009-----------------------
-INT 16 - PC Tools v6.0 PCShell API - GET ???
+INT 16 - PC Tools v6.0 PCShell API - GET PCRUN PARAMETERS
 	AX = FFDDh
 	BX = 0009h
-Return: DS:SI -> ???
+Return: CF clear if successful
+	    DS:SI -> list of pointers (see below)
+
+Format of returned pointer list:
+Offset	Size	Description
+ 00h	WORD	offset of WORD containing ???
+ 02h	WORD	offset of name of program to execute
+ 04h	WORD	offset of 80-byte buffer for ???
+ 06h	WORD	offset of buffer for ??? (length in WORD preceding buffer)
+ 08h	WORD	offset of buffer for ??? (length in WORD preceding buffer)
+----------16FFDDBX000A-----------------------
+INT 16 - PC Tools v6.0 PCRUN API - INSTALLATION CHECK
+	AX = FFDDh
+	BX = 000Ah
+Return: CX = 5555h if running
+	DX = 5555h
+Note:	also sets a flag
+----------16FFDDBX000B-----------------------
+INT 16 - PC Tools v6.0 PCRUN API - ???
+	AX = FFDDh
+	BX = 000Bh
+	???
+Return: CX = 5555h if PCRUN active
+	DX = 5555h
+Note:	also clears flag set by AX=FFDDh/BX=000Ah
 ----------16FFDE-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - DISPLAY POPUP MENU
 	AX = FFDEh
-	DS:DX -> ???
-Return: ???
+	DS:DX -> menu description (must be on a paragraph boundary)
+Return: AX = ???
+	    AL seems to be the number of the selected button
 Note:	available only when popped up
 ----------16FFDF-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - ???
@@ -7793,7 +8279,7 @@ INT 16 - PC Tools v5.1+ DESKTOP API - ???
 	AX = FFE0h
 	CX = ???
 	DX = ???
-Return: ???
+Note:	available only when popped up
 ----------16FFE1-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - BEEP
 	AX = FFE1h
@@ -7804,10 +8290,11 @@ INT 16 - PC Tools v5.1+ DESKTOP API - ???
 Return: ???
 Note:	available only when popped up
 ----------16FFE3-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - PRINT CHARACTER
 	AX = FFE3h
-	BL = ???
-Return: ???
+	BL = character to print to currently open printer or print file
+Return: CF set on error
+Note:	available only when popped up
 ----------16FFE4-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - ???
 	AX = FFE4h
@@ -7815,17 +8302,22 @@ INT 16 - PC Tools v5.1+ DESKTOP API - ???
 Return: ???
 Note:	available only when popped up
 ----------16FFE5-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - POP UP FILE SELECTION MENU
 	AX = FFE5h
-	DS:SI -> wildcard filename???
-	DX = ???
-Return: AX = ???
+	DS:SI -> ASCIZ wildcard filespec followed by ASCIZ menu title
+	DX = segment of window parameters???
+Return: AX = DOS file handle for file
+		DS:DX -> filename???
+	   = FFFFh if cancelled by user
 Note:	available only when popped up
+SeeAlso: AX=FFDAh
 ----------16FFE6-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - CHECK FOR AND GET KEYSTROKE
 	AX = FFE6h
-	DS:SI -> ???
-Return: AX = ???
+Return: AX = 0000h if no key available
+	     else  BIOS keycode
+Notes:	available only when popped up
+	invokes INT 28 idle interrupt before checking for key
 ----------16FFE7-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - ???
 	AX = FFE7h
@@ -7840,10 +8332,9 @@ INT 16 - PC Tools v5.1+ DESKTOP API - DISPLAY NUMBER
 	DS:SI -> destination for ASCII number
 Return: DS:SI buffer filled in with alternating characters and attributes
 ----------16FFE9-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - GET FILE LIST???
 	AX = FFE9h
-	???
-Return: ???
+Return: BX = segment of file/directory list (14 bytes per file, NUL-padded)
 Note:	available only when popped up
 ----------16FFEA-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - DISPLAY COUNTED STRING
@@ -7857,33 +8348,69 @@ INT 16 - PC Tools v5.1+ DESKTOP API - ???
 	???
 Return: ???
 ----------16FFEC-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - GET KEY
 	AX = FFECh
 	DS:SI -> FAR routine to ???
 	BX = ???
-Return: AX = ???
+	???
+Return: AX = keystroke
+	    FFFFh if F10 pressed to go to menu
+Notes:	available only when popped up
+	invokes INT 28 while waiting for keystroke
+	F10 is hotkey to Desktop menu
 ----------16FFED-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - GET ???
 	AX = FFEDh
 Return: AX = ???
-----------16FFEE-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
-	AX = FFEEh
-	SI = ???
-Return: ???
 Note:	available only when popped up
+----------16FFEE-----------------------------
+INT 16 - PC Tools v5.1+ DESKTOP API - DEFINE PULLDOWN MENUS
+	AX = FFEEh
+	DS:SI -> pulldown menu system description (see below)
+Return: AX destroyed
+Notes:	available only when popped up
+	if the accessory does not need any menu items of its own, it should
+	  call AX=FFFAh instead
+SeeAlso: AX=FFF7h,AX=FFFAh
+
+Format of pulldown menu system description:
+Offset	Size	Description
+ 00h	WORD	offset of menu bar contents (counted string)
+ 02h	WORD	number of items on menu bar
+ 04h 10 BYTEs	scan codes for hotkeying to each of up to ten menu items
+ 0Eh 10	BYTEs	which character to highlight in each menu item (01h=first)
+ 18h	WORD	offset of first menu definition (see below)
+ 1Ah	WORD	offset of second menu definition
+ 	...
+
+Format of menu definition:
+Offset	Size	Description
+ 00h	WORD	offset of menu contents (see below)
+ 02h	WORD	number of entries in menu
+ 04h	for each entry:
+ 		Offset	Size	Description
+		 00h	BYTE	scancode of Alt-key to invoke entry
+		 01h	BYTE	character to highlight (01h=first, etc)
+		 02h	WORD	offset of FAR routine to handle selection
+
+Format of menu contents:
+Offset	Size	Description
+ 00h	BYTE	number of lines in menu
+ 01h	BYTE	width of menu
+ 02h  N BYTEs	counted strings, one for each line in menu
 ----------16FFEFCX0000-----------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - INSTALLATION CHECK
 	AX = FFEFh
 	CX = 0000h
 Return: CX = ABCDh if PC Tools DESKTOP.EXE installed
 	    BX = segment of resident portion
-	    AX = ???
+	    AX = ??? (v5.1/5.5 only)
+SeeAlso: AX=FFC5h,AX=FFF3h
 ----------16FFF0-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - SET ???
 	AX = FFF0h
 	DX = ???
-Return: ???
+Return: AX destroyed
 Note:	available only when popped up
 ----------16FFF1-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - ALTERNATE INSTALLATION CHECK
@@ -7893,74 +8420,111 @@ INT 16 - PC Tools v5.1+ DESKTOP API - ALTERNATE INSTALLATION CHECK
 Return: CX = 5555h if installed
 	DX = 5555h
 ----------16FFF2-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - DISPLAY HELP LINE
 	AX = FFF2h
-	???
-Return: ???
-Note:	available only when popped up
+	DS:SI -> ASCIZ function key label string (each label preceded by '[')
+		or help text
+Return: AX destroyed
+Notes:	available only when popped up
+	if the specified string does not start with '[', it is displayed
+	  centered on the bottom line, else the function key labels are shown
 ----------16FFF3-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - PREPARE TO UNLOAD RESIDENT DESKTOP
 	AX = FFF3h
-	???
-Return: ???
+Note:	releases any EMS being used; restores video mode, page, and cursor
+	  shape; and restores interrupt vectors
+SeeAlso: AX=FFC5h,AX=FFEFh
 ----------16FFF4-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - ???
 	AX = FFF4h
 	???
 Return: ???
 Note:	available only when popped up
+SeeAlso: AX=FFF6h
 ----------16FFF5-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - GET SCREEN ATTRIBUTE ARRAY
 	AX = FFF5h
-Return: ES:BX -> array of screen attributes 
-		00h	BYTE  normal characters on desktop menu
-		01h	BYTE  highlighted characters on desktop menu
-		02h	BYTE 
-		03h	BYTE
-		etc.
+Return: ES:BX -> screen attributes data structure (see below)
+	AL = ??? (v6.0+)
+
+Format of attribute data structure:
+Offset	Size	Description
+ -1	BYTE	attribute for desktop background
+ 00h	BYTE	attribute for normal characters on desktop menu
+ 01h	BYTE  	attribute for highlighted characters on desktop menu
+ 02h  5	BYTEs	???
+ 07h	BYTE	attribute for dialog boxes
+ 08h 15 BYTEs	???
+ 17h	BYTE	attribute for message boxes
 ----------16FFF6-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - INVOKE NOTEPAD EDITOR
 	AX = FFF6h
-	DS = ???
+	DS = segment of editor buffer structure (see below)
 	BX = ???
-	DX = ???
+	DX = segment of window parameters structure (see AX=FFB5h)
 Return: ???
 Note:	available only when popped up
+SeeAlso: AX=FFF4h
+
+Format of editor buffer structure:
+Offset	Size	Description
+ 00h	WORD	offset of current cursor position in buffer segment
+ 02h  2 BYTEs	???
+ 04h	WORD	offset of beginning of file data in buffer segment
+ 06h 10 BYTEs	???
+ 10h  N BYTEs	ASCIZ name of file being edited
 ----------16FFF7-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
+INT 16 - PC Tools v5.1+ DESKTOP API - PROCESS MENU BAR ENTRY???
 	AX = FFF7h
-	SI = ???
-Return: ???
-----------16FFF8-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
-	AX = FFF8h
 	DS:SI -> ???
-	BX = ???
-Return: ???
-----------16FFF9-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
-	AX = FFF9h
-	ES:BX -> FAR routine to ???
-Return: ???
-Note:	available only when popped up
-----------16FFFA-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
-	AX = FFFAh
-Return: ???
-----------16FFFB-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
-	AX = FFFBh
-Return: ???
-----------16FFFC-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - GET ???
-	AX = FFFCh
-Return: ES:BX = ???
-	DS:DX = original INT 9 vector
-----------16FFFD-----------------------------
-INT 16 - PC Tools v5.1+ DESKTOP API - ???
-	AX = FFFDh
 	???
 Return: ???
+Notes:	available only when popped up
+	performs input processing on the menu bar set up with AX=FFEEh
+SeeAlso: AX=FFEEh,AX=FFFBh
+----------16FFF8-----------------------------
+INT 16 - PC Tools v5.1+ DESKTOP API - DRAW EMPTY WINDOW
+	AX = FFF8h
+	DS:0000h -> window parameters structure (see AX=FFB5h)
+	DS:BX -> DWORD to store address of ??? on screen
+Return: ???
+----------16FFF9-----------------------------
+INT 16 - PC Tools v5.1+ DESKTOP API - DEFINE SCREEN REFRESH ROUTINE
+	AX = FFF9h
+	ES:BX -> FAR routine to redisplay the utility's window
+Note:	available only when popped up
+----------16FFFA-----------------------------
+INT 16 - PC Tools v5.1+ DESKTOP API - DEFINE STANDARD PULLDOWN MENUS
+	AX = FFFAh
+Notes:	available only when popped up
+	adds the "Window" option to the "Desktop" option which is the only one
+	  available when no accessories are active.  Unlike AX=FFEEh, no
+	  additional menu items are added between "Desktop" and "Window"
+SeeAlso: AX=FFEEh,AX=FFFBh
+----------16FFFB-----------------------------
+INT 16 - PC Tools v5.1+ DESKTOP API - PROCESS STANDARD MENU BAR
+	AX = FFFBh
+Return: ???
+Notes:	available only when popped up
+	performs input processing on the standard menu bar set up with AX=FFFAh
+SeeAlso: AX=FFF7h
+----------16FFFC-----------------------------
+INT 16 - PC Tools v5.1+ DESKTOP API - GET HOTKEYS AND KEYBOARD VECTOR
+	AX = FFFCh
+Return: ES:BX -> hotkey table (see below)
+	DS:DX = original INT 9 vector
+
+Format of hotkey table:
+Offset	Size	Description
+ 00h  2 BYTEs	scancode/shift state for desktop hotkey
+ 02h  2 BYTEs	scancode/shift state for clipboard paste key
+ 04h  2 BYTEs	scancode/shift state for clipboard copy key
+ 06h  2 BYTEs	scancode/shift state for screen autodial key
+----------16FFFD-----------------------------
+INT 16 - PC Tools v5.1+ DESKTOP API - COPY ???
+	AX = FFFDh
+Return: AX destroyed
+Note:	copies 4000 bytes from ??? to ??? under certain circumstances
 ----------16FFFE-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - SHOW MOUSE CURSOR
 	AX = FFFEh
@@ -7992,29 +8556,31 @@ Return: AX = AAAAh
 	DX = F555h
 	ES = code segment of resident portion
 ----------1700-------------------------------
-INT 17 - PRINTER - OUTPUT CHARACTER
+INT 17 - PRINTER - WRITE CHARACTER
 	AH = 00h
-	AL = character
-	DX = printer port (0-3)
-Return: AH = status bits
-	    bit 0 time out
-		1 unused
-		2 unused
-		3 I/O error
-		4 selected
-		5 out of paper
-		6 acknowledge
-		7 not busy
+	AL = character to write
+	DX = printer number (00h-02h)
+Return: AH = printer status
+	    bit 7: not busy
+		6: acknowledge
+		5: out of paper
+		4: selected
+		3: I/O error
+		2: unused
+		1: unused
+		0: timeout
 ----------1701-------------------------------
-INT 17 - PRINTER - INITIALIZE
+INT 17 - PRINTER - INITIALIZE PORT
 	AH = 01h
-	DX = printer port (0-3)
-Return: AH = status (see AH=00h)
+	DX = printer number (00h-02h)
+Return: AH = printer status (see AH=00h)
+SeeAlso: AH=02h
 ----------1702-------------------------------
 INT 17 - PRINTER - GET STATUS
 	AH = 02h
-	DX = printer port (0-3)
-Return: AH = status (see AH=00h)
+	DX = printer number (00h-02h)
+Return: AH = printer status (see AH=00h)
+SeeAlso: AH=01h
 ----------1702--CX07C3-----------------------
 INT 17 - INSET - INSTALLATION CHECK
 	AH = 02h
@@ -8182,14 +8748,15 @@ Return:	AX = status
 Note:	buffer may be overwritten by subsequent calls
 SeeAlso: AX=CD0Bh
 ----------18---------------------------------
-INT 18 - TRANSFER TO ROM BASIC
-   causes transfer to ROM-based BASIC (IBM-PC)
-   often reboots a compatible; often has no effect at all
+INT 18 - START CASSETTE BASIC
+Note:	only PCs produced by IBM contain BASIC in ROM, so the action is
+	  unpredicatable on compatibles; this interrupt often reboots the
+	  system, and often has no effect at all
 ----------19---------------------------------
-INT 19 - DISK BOOT
-   causes reboot of disk system (no memory test performed, interrupt vectors
-   preserved).	Because interrupt vectors are preserved, this interrupt usually
-   causes a system hang if any TSRs have hooked vectors from 00h through 1Ch,
+INT 19 - SYSTEM - BOOTSTRAP LOADER
+   Reboot the system without clearing memory or restoring interrupt vectors.
+   Because interrupt vectors are preserved, this interrupt usually causes a
+   system hang if any TSRs have hooked vectors from 00h through 1Ch,
    particularly INT 08.
 
    Usually, the BIOS will try to read sector 1, head 0, track 0 from drive A:
@@ -8201,6 +8768,9 @@ INT 19 - DISK BOOT
    then load the operating system's bootstrap loader (contained in the first
    sector of the active partition) and give it control.
 
+   True IBM PCs issue an INT 18 if neither floppy nor hard disk have a valid
+   boot sector.
+
 Notes:	to accomplish a warm boot equivalent to Ctrl-Alt-Del, store 1234h in
 	  0040h:0072h and jump to FFFFh:0000h.	For a cold boot equivalent to
 	  a reset, store 0000h at 0040h:0072h before jumping.
@@ -8208,6 +8778,8 @@ Notes:	to accomplish a warm boot equivalent to Ctrl-Alt-Del, store 1234h in
 	  much extended memory has been used by VDISKs (the three bytes at
 	  offset 2Ch in the INT 19 handler's segment contain the linear address
 	  of the first free extended memory).
+	default handler is at F000h:E6F2h for 100% compatible BIOSes
+SeeAlso: INT 14/AH=17h,INT 18
 
 Format of hard disk master boot sector:
 Offset	Size	Description
@@ -8256,77 +8828,81 @@ Values for operating system indicator:
  E4h SpeedStor 16-bit FAT extended partition
  FFh BBT ???
 ----------1A00-------------------------------
-INT 1A - CLOCK - GET TIME OF DAY
+INT 1A - TIME - GET SYSTEM TIME
 	AH = 00h
-Return: CX:DX = clock count
-	AL = 00h if clock was read or written (via AH=0,1) since the previous
-		 midnight
-	     Otherwise, AL > 0
-Note:	IBM and many clone BIOSes set the flag for AL rather than incrementing
+Return: CX:DX = number of clock ticks since midnight
+	AL = midnight flag, nonzero if midnight passed since time last read
+Notes:	there are approximately 18.2 clock ticks per second, 1800B0h per 24 hrs
+	IBM and many clone BIOSes set the flag for AL rather than incrementing
 	  it, leading to loss of a day if two consecutive midnights pass
 	  without a request for the time (e.g. if the system is on but idle)
-SeeAlso: AH=02h,INT 21/AH=2Ch
+SeeAlso: AH=01h,AH=02h,INT 21/AH=2Ch
 ----------1A01-------------------------------
-INT 1A - CLOCK - SET TIME OF DAY
+INT 1A - TIME - SET SYSTEM TIME
 	AH = 01h
-	CX:DX = clock count
-Return: time of day set
-SeeAlso: AH=03h,INT 21/AH=2Dh
+	CX:DX = number of clock ticks since midnight
+SeeAlso: AH=00h,AH=03h,INT 21/AH=2Dh
 ----------1A02-------------------------------
-INT 1A - CLOCK - READ REAL TIME CLOCK (AT,XT286,CONV,PS)
+INT 1A - TIME - GET REAL-TIME CLOCK TIME (AT,XT286,PS)
 	AH = 02h
-Return: CH = hours in BCD
-	CL = minutes in BCD
-	DH = seconds in BCD
+Return: CF clear if successful
+	    CH = hour (BCD)
+	    CL = minutes (BCD)
+	    DH = seconds (BCD)	
+	    DL = daylight savings flag (00h standard time, 01h daylight time)
+	CF set on error (i.e. clock not running or in middle of update)
 SeeAlso: AH=00h
 ----------1A03-------------------------------
-INT 1A - CLOCK - SET REAL TIME CLOCK (AT,XT286,CONV,PS)
+INT 1A - TIME - SET REAL-TIME CLOCK TIME (AT,XT286,PS)
 	AH = 03h
-	CH = hours in BCD
-	CL = minutes in BCD
-	DH = seconds in BCD
-	DL = 01h if daylight savings, 00h if standard time
-Return: CMOS clock set
+	CH = hour (BCD)
+	CL = minutes (BCD)
+	DH = seconds (BCD)
+	DL = daylight savings flag (00h standard time, 01h daylight time)
 SeeAlso: AH=01h
 ----------1A04-------------------------------
-INT 1A - CLOCK - READ DATE FROM REAL TIME CLOCK (AT,XT286,CONV,PS)
+INT 1A - TIME - GET REAL-TIME CLOCK DATE (AT,XT286,PS)
 	AH = 04h
-Return: DL = day in BCD
-	DH = month in BCD
-	CL = year in BCD
-	CH = century (19h or 20h)
-SeeAlso: AH=05h,INT 21/AH=2Ah
+Return: CF clear if successful
+	    CH = century (BCD)
+	    CL = year (BCD)
+	    DH = month (BCD)
+	    DL = day (BCD)
+	CF set on error
+SeeAlso: AH=02h,AH=05h,INT 21/AH=2Ah
 ----------1A05-------------------------------
-INT 1A - CLOCK - SET DATE IN REAL TIME CLOCK (AT,XT286,CONV,PS)
+INT 1A - TIME - SET REAL-TIME CLOCK DATE (AT,XT286,PS)
 	AH = 05h
-	DL = day in BCD
-	DH = month in BCD
-	CL = year in BCD
-	CH = century (19h or 20h)
-Return: CMOS clock set
+	CH = century (BCD)
+	CL = year (BCD)
+	DH = month (BCD)
+	DL = day (BCD)
 SeeAlso: AH=04h,INT 21/AH=2Bh
 ----------1A06-------------------------------
-INT 1A - CLOCK - SET ALARM (AT,XT286,CONV,PS)
+INT 1A - TIME - SET ALARM (AT,XT286,PS)
 	AH = 06h
-	CH = hours in BCD
-	CL = minutes in BCD
-	DH = seconds in BCD
-Return: CF set if alarm already set or clock inoperable
-	INT 4Ah will be called when alarm goes off, every 24 hours until reset
+	CH = hour (BCD)
+	CL = minutes (BCD)
+	DH = seconds (BCD)
+Return: CF set on error (alarm already set or clock stopped for update)
+	CF clear if successful
+Note:	the alarm occurs every 24 hours until turned off, invoking INT 4A each
+	  time
 SeeAlso: AH=07h,INT 4A
 ----------1A07-------------------------------
-INT 1A - CLOCK - RESET ALARM (AT,XT286,CONV,PS)
+INT 1A - TIME - CANCEL ALARM (AT,XT286,PS)
 	AH = 07h
 Return: alarm disabled
-SeeAlso: AH=06h
+Note:	does not disable the real-time clock's IRQ
+SeeAlso: AH=06h,INT 70
 ----------1A08-------------------------------
-INT 1A - CLOCK - SET RTC ACTIVATED POWER ON MODE (CONVERTIBLE)
+INT 1A - TIME - SET RTC ACTIVATED POWER ON MODE (CONVERTIBLE)
 	AH = 08h
 	CH = hours in BCD
 	CL = minutes in BCD
 	DH = seconds in BCD
 ----------1A09-------------------------------
-INT 1A - CLOCK - READ RTC ALARM TIME AND STATUS (CONV,PS30)
+INT 1A - TIME - READ RTC ALARM TIME AND STATUS (CONV,PS30)
 	AH = 09h
 Return: CH = hours in BCD
 	CL = minutes in BCD
@@ -8336,18 +8912,19 @@ Return: CH = hours in BCD
 	    01h alarm enabled but will not power up system
 	    02h alarm will power up system
 ----------1A0A-------------------------------
-INT 1A - CLOCK - READ SYSTEM-TIMER DAY COUNTER (XT2,PS)
+INT 1A - TIME - READ SYSTEM-TIMER DAY COUNTER (XT2,PS)
 	AH = 0Ah
 Return: CF set on error
-	CX = count of days since Jan 1,1980
-SeeAlso: AH=0Bh
+	CF clear if successful
+	    CX = count of days since Jan 1,1980
+SeeAlso: AH=04h,AH=0Bh
 ----------1A0B-------------------------------
-INT 1A - CLOCK - SET SYSTEM-TIMER DAY COUNTER (XT2,PS)
+INT 1A - TIME - SET SYSTEM-TIMER DAY COUNTER (XT2,PS)
 	AH = 0Bh
 	CX = count of days since Jan 1,1980
 Return: CF set on error
 	CF clear if successful
-SeeAlso: AH=0Ah
+SeeAlso: AH=05h,AH=0Ah
 ----------1A3601-----------------------------
 INT 1A - WORD PERFECT 5.0 Third Party Interface - INSTALLATION CHECK
 	AX = 3601h
@@ -8373,7 +8950,7 @@ INT 1A - PCjr - SET UP SOUND MULTIPLEXOR
 	     02h source is I/O channel "Audio IN"
 	     03h source is sound generator chip
 ----------1AA0-------------------------------
-INT 1A - Disk Spool II - INSTALLATION CHECK
+INT 1A - Disk Spool II v??? - INSTALLATION CHECK
 	AH = A0h
 Return: AH = B0h
 	ES = code segment
@@ -8386,8 +8963,59 @@ Return: AH = B0h
 	DL = 00h despooler is currently active printing a file
 	   = 41h despooler is standing by
 SeeAlso: AH=D0h
+----------1AAB-------------------------------
+INT 1A - Disk Spool II v1.83 - INSTALLATION CHECK
+	AH = ABh
+Return: ES = code segment
+	BX -> name of current spool file
+	SI -> current despool file
+	CL = ???
+	CH = ???
+	DL = ???
+	DH = 00h ???
+	   = 41h ???
+	AL = ???
+	AH = BAh
+	DI = 0000h ???
+	     0001h ???
+SeeAlso: AH=ACh,AH=ADh
+----------1AAC-------------------------------
+INT 1A - Disk Spool II v1.83 - INSTALLATION CHECK
+	AH = ACh
+Return: (see AH=ABh)
+Note:	this function is identical to AH=ABh
+SeeAlso: AH=ABh,AH=ADh
+----------1AAD-------------------------------
+INT 1A - Disk Spool II v1.83 - FUNCTION CALLS
+	AH = ADh
+	AL = function code
+	    02h enable spooler only
+	    03h enable the despooler
+	    04h disable the despooler
+	    08h inhibit popup menu
+	    09h enable popup menu
+	    0Ah ???
+	    0Bh disable the spooler
+	    0Ch ???
+	    0Dh ???
+	    0Eh pop up the menu
+	    0Fh ???
+	    11h ???
+	    14h ???
+	    15h ???
+	    16h ???
+	    17h ???
+	    18h ???
+	    19h ???
+	    20h ???
+	    21h	???
+	    22h	???
+	    23h ???
+	    30h ???
+Return: AH = 00h if successful
+SeeAlso: AH=ABh
 ----------1AD0-------------------------------
-INT 1A - Disk Spool II - FUNCTION CALLS
+INT 1A - Disk Spool II v??? - FUNCTION CALLS
 	AH = D0h
 	AL = function code
 	    01h enable spooler and despooler
@@ -8402,7 +9030,7 @@ INT 1A - Disk Spool II - FUNCTION CALLS
 	    0Ch start despooler after last successfully printed document
 	    0Dh start despooler at the exact point where it last left off
 	    0Eh pop up the menu
-	    20h clear file pointed to be the despooler
+	    20h clear file pointed to by the despooler
 SeeAlso: AH=A0h
 ----------1AFE-------------------------------
 INT 1A - AT&T 6300 - READ TIME AND DATE
@@ -8424,55 +9052,59 @@ INT 1A - AT&T 6300 - SET TIME AND DATE
 Return: ???
 SeeAlso: AH=FEh,INT 21/AH=2Bh,2Dh
 ----------1B---------------------------------
-INT 1B - CTRL-BREAK KEY
-   This interrupt is called when the keyboard scanner of the IBM
-   machines detects CTRL and BREAK pressed at the same time. It
-   normally points to a short routine in DOS which sets the
-   Ctrl-C flag, thus invoking INT 23h the next time DOS checks
-   for Ctrl-C.
+INT 1B - KEYBOARD - CONTROL-BREAK HANDLER
+   called when INT 09 determines that Control-Break has been pressed
+Note:	normally points to a short routine in DOS which sets the Ctrl-C flag,
+	  thus invoking INT 23h the next time DOS checks for Ctrl-C.
 SeeAlso: INT 23
 ----------1C---------------------------------
-INT 1C - CLOCK TICK
-   This interrupt is called (in the IBM) at the end of each time-update
-   operation by the time-of-day routines.
-Notes:	points to an IRET by default
-	preferred interrupt to chain when a program needs to be invoked
+INT 1C - TIME - SYSTEM TIMER TICK
+   called on each clock tick by the INT 08 handler
+Note:	preferred interrupt to chain when a program needs to be invoked
 	  regularly
 SeeAlso: INT 08
 ----------1D---------------------------------
-INT 1D - (NOT a vector!) 6845 VIDEO INIT TABLES
+INT 1D - SYSTEM DATA - VIDEO PARAMETER TABLES
+Note:	default parameter table at F000h:F0A4h for 100% compatible BIOSes
+SeeAlso: INT 10/AH=00h
 
-Format of video init tables:
+Format of video parameters:
 Offset	Size	Description
- 00h 16 BYTEs	table for modes 0 and 1		\
- 10h 16 BYTEs	table for modes 2 and 3		 \  each table contains values
- 20h 16 BYTEs	table for modes 4, 5, and 6	 /  for first sixteen 6485 regs
- 30h 16 BYTEs	table for mode 7		/
- 40h	WORD	size of video RAM for modes 0 and 1
- 42h	WORD	size of video RAM for modes 2 and 3
- 44h	WORD	size of video RAM for modes 4 and 5
- 46h	WORD	size of video RAM for modes 6 and 7
- 48h  8 BYTEs	number of colums in each of modes 0 through 7
- 50h  8 BYTEs	video controller mode byte for each mode
+ 00h 16 BYTEs	6845 register values for modes 00h and 01h
+ 10h 16 BYTEs	6845 register values for modes 02h and 03h
+ 20h 16 BYTEs	6845 register values for modes 04h and 05h
+ 30h 16 BYTEs	6845 register values for modes 06h and 07h
+ 40h	WORD	bytes in video buffer for modes 00h and 01h
+ 42h	WORD	bytes in video buffer for modes 02h and 03h
+ 44h	WORD	bytes in video buffer for modes 04h and 05h
+ 46h	WORD	bytes in video buffer for modes 06h and 07h
+ 48h  8 BYTEs	columns on screen for each of modes 00h through 07h
+ 50h  8 BYTEs	CRT controller mode bytes for each of modes 00h through 07h
 ----------1E---------------------------------
-INT 1E - (NOT a vector!) DISKETTE PARAMS (BASE TABLE)
-	default parameters at F000h:EFC7h in PC and most compatibles
-SeeAlso: INT 41
+INT 1E - SYSTEM DATA - DISKETTE PARAMETERS
+Note:	default parameter table at F000h:EFC7h for 100% compatible BIOSes
+SeeAlso: INT 13/AH=0Fh,INT 41
 
-Format of diskette parameters:
+Format of diskette parameter table:
 Offset	Size	Description
- 00h	BYTE	4-bit step rate & 4-bit head unload times
- 01h	BYTE	7-bit head load time & 1-bit DMA flag
- 02h	BYTE	motor off time in clock ticks (36 to 38 typical)
- 03h	BYTE	sector size in bytes (0->128, 1->256, 2->512, 3->1024)
- 04h	BYTE	last sector number (8 or 9 typical)
- 05h	BYTE	inter-sector gap size on read/write (42 typical)
- 06h	BYTE	data transfer length (255 typical)
- 07h	BYTE	inter-sector gap size on format (80 typical)
- 08h	BYTE	sector fill on format (F6h typical)
- 09h	BYTE	head-settle time ms (typical 25, 1.10->0, 2.10->15, 3.10->1)
- 0Ah	BYTE	motor start-up time (1/8 secs) (typical 4, 2.10->2)
+ 00h	BYTE	first specify byte
+ 		bits 7-4: step rate
+		     3-0: head unload time (0Fh = 240 ms)
+ 01h	BYTE	second specify byte
+ 		bits 7-1: head load time (01h = 4 ms)
+		       0: non-DMA mode (always 0)
+ 02h	BYTE	delay until motor turned off (in clock ticks)
+ 03h	BYTE	bytes per sector (00h = 128, 01h = 256, 02h = 512, 03h = 1024)
+ 04h	BYTE	sectors per track
+ 05h	BYTE	length of gap between sectors (2Ah for 5.25", 1Bh for 3.5")
+ 06h	BYTE	data length (ignored if bytes-per-sector field nonzero)
+ 07h	BYTE	gap length when formatting (50h for 5.25", 6Ch for 3.5")
+ 08h	BYTE	format filler byte (default F6h)
+ 09h	BYTE	head settle time in milliseconds
+ 0Ah	BYTE	motor start time in 1/8 seconds
 ----------1F---------------------------------
-INT 1F - (NOT a vector!) GRAPHICS SET 2
-	pointer to bitmaps for high 128 chars (eight bytes per character)
+INT 1F - SYSTEM DATA - 8x8 GRAPHICS FONT
+   points at 1024 bytes of graphics data, 8 bytes for each character 80h-FFh
+Note:	graphics data for characters 00h-7Fh stored at F000h:FA6Eh in 100%
+	  compatible BIOSes
 ---------------------------------------------

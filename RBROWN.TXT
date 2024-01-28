@@ -4,7 +4,11 @@ The MSDOS Interrupt List
 	A comprehensive listing of functions available through interrupt
 	calls on IBM PCs and compatibles.  Includes both documented and
 	undocumented functions.
-	Current version: INTER191 (v91.1 1/5/91)
+	Current version: INTER191 (Release 24 [v91.1] 1/5/91)
+
+	Note: versions after INTER291 will be distributed in two parts
+	named INTERrrA and INTERrrB, where rr is the release number,
+	starting at 26.
 
 DVINT
 	An extract of the MSDOS Interrupt List containing the DESQview API
@@ -16,8 +20,9 @@ RBcomm
 	PCZ, or PUMA/MPt integration for file transfers; ANSI/VT102, VT52, 
  	and AVATAR emulation (including 132 columns); speeds to 57600 bps;
 	a powerful macro language; dialing directory; and more.  Runs in
-	65K with DSZ, 41K without.
-	Current version: RBCOMM32 (v3.21 7/29/90)
+	65K with DSZ, 45K without.  While it works under plain DOS, 
+	additional features are available under DESQview.
+	Current version: RBCOMM33 (v3.31 2/3/91)
 
 SPAWNO
 	A replacement for the Turbo C and Microsoft C spawn..() functions
@@ -65,17 +70,38 @@ On the ARPAnet, by standard anonymous FTP from CS.CMU.EDU [128.2.222.173].
 	the directory, try again later; a fileserver may have been down.
 
 On FIDOnet, from Soundingboard BBS 1:129/26 1-412-621-4604 14.4k HST, file req.
-	Also from Doctor's Inn BBS 1:129/53 1-412-881-7757 1200/2400/9600 HST
-	and NorthStar Pitt BBS 1:129/81 1-412-881-1749 1200/2400 (same
-	computer, different modems)  File Requests.
 
 Secondary Distribution Points (new releases will be available here within a
 day or so):
-ARPA:	on WSMR-SIMTEL20.ARMY.MIL [26.2.0.74] as file INTERnyy.ZIP in directory
-	PD1:<MSDOS.INFO>, where nyy stands for release n of year yy.  Note
-        that you must use mode "tenex" or "type L 8" to successfully FTP the
-	file.  
+ARPA:	on WSMR-SIMTEL20.ARMY.MIL [26.2.0.74] in directories PD1:<MSDOS.x>
+	where x is INFO for the Interrupt List, MODEM for RBcomm, C for SPAWNO,
+	DESQview for DV-GLUE/DVKPOLL, and SPRINT for SPTURBO.  Note that you
+	must use mode "tenex" or "type L 8" to successfully FTP the files.
+	SIMTEL20 also has a number of mirror sites which contain all of the
+	files but may be a few days behind in updates.	These include
+	wuarchive.wustl.edu [128.252.135.4] in directories /mirrors/msdos/x
+	and sol.deakin.oz.au [128.184.1.1] in directories /pub/PC/simtel-20/x.
 FIDO:	SyncPoint BBS 1:261/1008 1-301-529-2584 File Requests.
+
+Bitnet users may also retrieve items on SIMTEL20 via the following automated
+mail servers:
+	(in the US) LISTSERV@RPIECS (alias VM.ECS.RPI.EDU)
+		    LISTSERV@NDSUVM1 (alias VM1.NODAK.EDU)
+	(in Europe) TRICKLE@AWIWUW11 (Austria)
+		    TRICKLE@BANUFS11 (Belgium)
+		    TRICKLE@DKTC11   (Denmark)
+		    TRICKLE@FRMOP11  (France)
+		    TRICKLE@DB0FUB11 (Germany)
+		    TRICKLE@DTUZDV1  (Germany)
+		    TRICKLE@IMIPOLI  (Italy)
+		    TRICKLE@HEARN    (Netherlands)
+		    TRICKLE@EB0UB011 (Spain)
+		    TRICKLE@TREARN   (Turkey)
+	(elsewhere) TRICKLE@USACHVM1 (Chile)
+		    TRICKLE@TAUNIVM  (Israel)
+Send a mail message containing the line
+	/HELP
+in the body for instructions.
 
 DV-GLUE, DVKPOLL, DVINT, and RBcomm are also available on Fidonet BBSs
 belonging to DVNet (listed below).
@@ -158,24 +184,23 @@ Michael Henderson    8:930/201              9600 HST/DS/V.42
 
 
 -------------------------------
-DVnet member boards as of January 1991:
+DVnet member boards as of March 1991:
 
  *65'North, Fairbanks, AK         1:17/38    907-452-1460  9600HSTV32
   Carl's Corner, San Jose, CA     1:10/1     408-248-9704  9600HSTV32
   Carl's Corner, San Jose, CA     1:10/2     408-248-0198  2400
-  SF PCUG BBS, San Francisco CA   1:1/310    415-621-2609  9600HSTV32RE
   SeaHunt BBS, Burlingame, CA     1:125/20   415-344-4348  9600HST
-  Pacific Rim Info, San Diego CA  1:202/701  619-560-7713  9600HSTV32
+  Gandalf's, El Cajon CA          1:202/302  619-466-9505  9600HSTV32
   Opus 386, Davis, CA             1:203/910  916-753-6321  2400
   Stingray!, Clovis CA            1:205/12   209-298-9461  9600HST
   Bertha Board, Mantica CA        1:208/204  209-823-0093  9600HST
-  World Peace BBS 2, Denver CO    1:104/414  303-331-9244  9600H96V32
   World Peace BBS, Denver CO      1:104/415  303-320-4822  9600H96V32
   Treasure Island, Danbury, CT    1:141/730  203-791-8532  9600HSTV32
   Ascii Neighborhood,W Haven CT   1:141/333  203-934-9852  9600HST
-  Plainfield News, Plainfield CT  1:320/452  203-564-8579  9600HST
+  Plainfield News, Plainfield CT  1:327/452  203-564-8579  9600HST
   Southern Cross BBS, Miami FL    1:135/69   305-220-8752  9600HST
   Jos' Lounge, Bradenton FL       1:137/209  813-755-0575  9600HSTV32
+  Other World, Tallahassee FL     1:3605/56  904-668-1092  9600HST
   E.I.L.C., Palm Bay FL           1:3610/60  407-676-2998  2400
   Software Designer, Albany, GA   1:3617/1   912-432-2440  9600HSTV32
   Open Window, Laie HI            1:345/1    808-293-9547  2400
@@ -190,29 +215,27 @@ DVnet member boards as of January 1991:
   IBM Tech Fido, Pepperell, MA    1:322/1    508-433-8452  9600HSTV32
   Waystar BBS, Marlborough, MA    1:322/14   508-481-7147  9600HST
   The Business Card, Lawrence MA  1:324/121  508-682-5329  9600HSTV32
-  Addict's Attic,Germantown MD    1:109/423  301-428-8998  9600HST
+  Addict's Attic,Germantown MD    1:109/423  301-428-8998  9600V32
   AviTechnic ,Lutherville MD      1:261/662  301-252-0717  9600HSTV32
-  Ocean BBS, York, Beach ME       1:132/204  207-363-8774  9600HST
   SeaCoast Opus, Kittery Pt ME    1:326/200  207-439-9367  9600HST
-  Programmers' Attic, Will., MI   1:159/850  517-655-3347  2400
-  The Royal Joke, Royal Oak,MI    1:120/183  313-435-5766  9600,HST
+  Programmers' Attic, Will., MI   1:159/850  517-655-3347  9600HST
+  The Royal Joke, Royal Oak,MI    1:120/183  313-435-7566  9600HSTV32
+  Son of Royal Joke,Royal Oak,MI  1:120/283  313-435-5766  9600PEP
   ExchangeNet, Fridley MN         1:282/65   612-571-7774  2400
   Rampart General,Kansas City,MO  1:280/6    816-761-4039  9600HSTV32
   Psychotronic BBS, Durham NC     1:151/223  919-286-7738  9600HSTV32
   Dungeon Quest II, Havelock NC   1:3614/501 919-447-3321  9600HST
   The Toy Room BBS, Hudson NH     1:132/159  603-886-5722  9600HST
-  The Switch Room, Plainsboro NJ  1:107/436  609-799-9374  9600HST
-  The Switch Room, Plainsboro NJ  1:107/437  609-799-0628  2400
   Maple Shade Opus,Maple Shade NJ 1:266/12   609-482-8604  9600HSTV32
   Capital City , Burlington NJ    1:266/21   609-386-1989  9600HSTV32
   Atrium Way, Morris Plains NJ    1:269/583  201-984-5555  9600HSTV32
+  $in City Bit Pit, Las Vegas NV  1:209/711  702-647-4427  9600HSTV32
   LogyLink, Ronkonkoma NY         1:107/204  516-737-8217  9600HST
   Rivendell * TAP/1,Syracuse NY   1:260/340  315-458-8602  9600HSTV32
-  Andromeda Galaxy, Troy NY       1:267/167  518-273-8313  9600HST
-  $in City Bit Pit, Las Vegas NV  1:209/711  702-647-4427  9600HSTV32
-  The Mountain Top,Cincinnati OH  1:108/107  513-921-5568  2400,CM
+  The Mountain Top,Cincinnati OH  1:108/107  513-921-5568  9600HST
   NHampton Data,Cuyahoga Falls OH 1:157/533  216-928-8565  9600HST
   Corvette BBS,Pickerington OH    1:226/110  614-861-8377  9600HSTV32
+  Steel Valley BBS, Girard OH     1:237/500  216-545-2318  9600HSTV32
   Ascension, Norman OK            1:147/46   405-360-4261  9600HST
   P C Support, Portland, OR       1:105/66   503-297-9078  2400
   Atarian BBS, Portland, OR       1:105/10   503-245-9730  9600HSTV32
@@ -220,6 +243,7 @@ DVnet member boards as of January 1991:
   Busker's Boneyard, Portland,OR  1:105/41   503-775-7926  9600HSTV32
   Ecclesia Place, Monroeville, PA 1:129/75   412-373-8612  9600HST
   The Other BBS, Harrisburg PA    1:270/101  717-657-2223  9600HST
+  Walsh Microsys, Philadelphia PA 1:273/917  215-725-9134  9600HST
   Optical Illusion, Allentown PA  1:273/603  215-797-7409  9600HSTV32
   U.S.S. Intrepid,Spring House PA 1:273/703  215-641-0270  9600HST
   Island Sun, Caparra Heights PR  1:367/15   809-783-9542  9600HST
@@ -237,16 +261,16 @@ DVnet member boards as of January 1991:
   The Ozone Layer, Williston VT   1:325/118  802-879-4753  2400
   Pacifier BBS, Vancouver, WA     1:105/103  206-253-9770  9600HSTV32
   Puget Sound Gtwy., Puyallup, WA 1:138/3    206-566-8854  9600HST
+  Seattle/Everett Hub, Seattle WA 1:343/300  206-244-8860  9600HST
   SunDial BBS, Pasco WA           1:347/7    509-545-1789  9600HST
   County Line BBS, W Allis WI     1:154/100  414-476-8468  9600H96V32
   Oregon Trail XRoads, Casper WY  1:303/5    307-472-3615  9600H96V32
   Information Corner, Edmonton AB 1:342/20   403-483-1896  9600HST
+  The Exchange,Prince George BC   1:153/603  604-962-5971  9600HST
   Polar Bear Heaven Winnipeg MB   1:348/405  204-837-9704  9600HST
   Atlantic Access, St John W NB   1:255/2    506-635-1964  9600HST
   AFI Comm, Nepean ON             1:163/115  613-829-0282  9600HST
   Ned's Opus HST Ottawa,ON        1:163/211  613-523-8965  9600HST
-  Ned's Opus, Ottawa ON           1:163/210  613-731-8132  2400
-  Ned's Opus, Ottawa ON           1:163/205  613-731-7168  2400
   Tobacco Road,Hamilton ON        1:244/106  416-387-5507  9600HST
   Arcane BBS, Laval PQ            1:167/116  514-687-9586  9600HST
   The HEKOM Board (Netherlands)   2:286/303  31-3483-4072  9600V32
@@ -260,20 +284,20 @@ DVnet member boards as of January 1991:
   Blumenkistl, Vienna (Austria)   2:310/10  43-222-6040844 9600HST
   Andi's BBS, Haan FRG            2:241/4006 49-2129-4891  9600HST
   The 49er's, Wuppertal FRG       2:241/5601 49-202-305803 9600HST
+  Blues Project, Dusseldorf FRG   2:242/20  49-211-5961291 9600HSTV32
   M.U.G. Info Board,Essen FRG     2:245/1   49-201-483735  9600HST
-  File Fabrik, Werdohl FRG        2:245/2   49-2392-70149  9600HSTV32
   BitMaster BBS, Bielefeld, FRG   2:245/23  49-521-208152  9600HST
   E.I.S.2, Frankfurt FRG          2:247/14  49-69-6311235  9600HST
   MIDI-Mailbox,Meerbusch FRG      2:247/816 49-2159-2717   9600HST
   Data City, Moenchengladbach FRG 2:247/801 49-2166-24468  9600HST
-  AVALON BBS, Roethenbach FRG     2:507/432 49-911-5705983 9600PEPV32
-  MICS Lucerne BBS,Lucerne SUI    2:302/563 41-41-538607   9600HSTDS
+  AVALON BBS, Roethenbach FRG     2:241/8502 49-911-5705983 9600PEPV32
+  MICS Lucerne BBS,Lucerne SUI    2:302/602 41-41-538607   9600HSTV32
   Genova 2000, Genova Italy       2:332/201 39-10-3770080  9600V32
   Capital City BBS,Haninge Sweden 2:201/111 46-8-7411244   9600HST
+  Replicants Factory,Barcelona SP 2:343/105 34-3-219-3452  2400
   Marwick's MadHouse (Australia)  3:640/820  61-7-371-5864 9600PEPV32
   Sentry Lane Cove NSW(Australia) 3:711/401  61-2-428-4687 9600PEP
   Sentry's Shadow, Lane Cove NSW  3:711/501  61-2-418-6682 9600V32
-  FrontDoor Hdqrtrs,Melbourne Aust3:632/308  61-3-457-6554 9600HSTV32
   Central Source ICBS(Australia)  3:632/348  61-3-874-8927 9600PEP
   Southern Mail CBCS Vict Aust    3:633/320  61-3-725-1621 9600PEP
   COMPUlink, Perth WA             3:690/628  61-9-451-7288 2400

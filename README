@@ -1,0 +1,6 @@
+Due to the growing size of the list, I will be splitting the distribution
+archive beginning with the next release.  Along with this split, I will
+be changing the naming of the archives.  Instead of INTERnyy, they will
+be named INTERrrA and INTERrrB, where rr is the release number.  Thus,
+the next release will be INTER26A and INTER26B instead of INTER391.
+

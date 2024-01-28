@@ -1,3 +1,4 @@
+----------60---------------------------------
 INT 60 - reserved for user interrupt
 ----------60---------------------------------
 INT 60 - Zero Bug Virus
@@ -76,6 +77,72 @@ Notes:	Arbiter may use any interrupt from 60h to 66h (parameterized)
 	Arbiter makes a PC disk look like a slow disk over an SNA link to an
 	  IBM mainframe
 ----------60---------------------------------
+INT 60 - INTRSPY/CMDSPY API
+Notes:	INTRSPY will hook the first available interrupt in the range 60h-67h.
+	The installation check is to 
+	  a) determine that the handler is an IRET instruction
+	  b) the signature 0Dh "INTRSPY vN.NN" immediately precedes the handler
+	  If INTRSPY is installed, the DWORD immediately after the IRET stores
+	  its entry point.
+	INTRSPY is a script-driven debugger included with the book
+	  _Undocumented_DOS_.
+
+Call INTRSPY entry point with:
+	AH = function
+	    00h ???
+	    01h set current directory (for use in reporting)
+	    	ES:DI -> counted string containing directory name (max 79 char)
+	    02h set name of script file
+	    	ES:DI -> counted string containing file name (max 79 chars)
+	    03h set script arguments
+	    	ES:DI -> counted string containing arguments (max 79 chars)
+	    04h get directory set with function 01h
+	    	ES:DI -> 80-byte buffer for directory name
+	    05h get name of script file
+	    	ES:DI -> 80-byte buffer for script filename
+	    06h get script arguments
+	    	ES:DI -> 80-byte buffer for script arguments
+	    07h get ???
+	    	CL = 00h-15h specifies what to get
+		ES:DI -> WORD to be set with desired value on return
+	    08h get ???
+	    	ES:DI -> WORD to be set with returned value
+	    09h get ???
+	    	ES:DI -> WORD to be set with returned value
+	    0Bh store code for interrupt handler???
+	    	ES:DI -> data
+		CX = number of bytes
+	    0Ch ???
+	    	ES:DI -> ???
+	    0Dh get ???
+	    	ES:DI -> BYTE to be set with returned value
+	    0Eh set ??? flag
+	    0Fh clear ??? flag
+	    10h ???
+	    	Return: AL = 04h or 05h if failed
+	    11h ???
+	    	Return: AL = 05h if failed
+	    12h get ???
+	    	ES:DI -> buffer
+		Return: CX = number of bytes returned in buffer
+	    13h ???
+Return: AH = 00h
+	AL = status
+	    00h successful
+	    01h invalid function
+	    02h ???
+	    03h ???
+	    04h ???
+	    05h ???
+----------60---------------------------------
+INT 60 - PC/370 v4.2 - ???
+	???
+Return: ???
+Notes:	PC/370 is an IBM 370 emulator by Donald S. Higgins
+	this is the default interrupt, however the documentation includes
+	  instructions for patching the system for another interrupt
+SeeAlso: INT 2F/AX=7F24h,INT DC"PC/370"
+----------60---------------------------------
 INT 60 - FTP Packet Driver - PC/TCP Packet Driver Specification
    The handler for the interrupt will start with a 3-byte jump instruction, 
    followed by the ASCIZ string "PKT DRVR".  To find the interrupt being used
@@ -88,6 +155,60 @@ Return: AX = 0000h    profiling is off
 	    otherwise profiling is on
 Note:	SYS_PROF.EXE is the TSR portion of a profiler from Micro Cornucopia #47
 SeeAlso: AH=01h"SYS_PROF",02h"SYS_PROF"
+----------6000-------------------------------
+INT 60 - MDEBUG - GET STATUS
+	AH = 00h
+	DS:SI -> password or a null byte
+Return: AX = return code
+	    FFFEh password is invalid
+	    FFFDh display mode is invalid
+	   else successful
+		ES = value of the monitor register SE
+		DI = value of the monitor register OF
+		CH = monitor color
+		CL = debugger color
+		BH = monitor start line
+		BL = debugger start line
+		AH = makecode of the hotkey
+		AL = ASCII code of the hotkey
+		DL = status of special keys (only SHIFT, ALT, CTRL) for the
+			hotkey (coded as for the keyboard flag at 0040h:0017h)
+		DH = basic process number for the communication with drivers
+			process number for the display driver, DH+1 = process
+			number for the command driver(s)
+	DS:SI -> MDEBUG identification table
+Notes:	MDEBUG is a shareware memory-resident debugger by Bernd Schemmer
+	MDEBUG uses INT 60 by default, but may be directed to any of INT 60
+	  through INT 67; the interrupt is not chained
+	if DS:SI points at a null byte, MDEBUG will prompt for a password if
+	  passwords are active; enough stack space must be provided for an
+	  INT 10h call
+SeeAlso: AH=02h"MDEBUG"
+
+Format of MDEBUG identification table:
+Offset	Size	Description
+ -2	WORD	entry offset
+ 00h	WORD	CS of MDEBUG
+ 02h	DWORD	old INT 08h vector
+ 06h	DWORD	old INT 09h vector
+ 0Ah	DWORD	address INT 16h routine used by MDEBUG
+ 0Eh	BYTE	length of version string
+ 0Fh  N BYTEs	version string
+----------6001-------------------------------
+INT 60 - MDEBUG - GET ADDRESS OF THE HELP REGISTERS
+	AH = 01h
+	DS:SI -> password or a null byte
+Return: AX = return code
+	    FFFEh password is invalid
+	    FFFDh display mode is invalid
+	   else successful
+		ES:DI point to the help registers of MDEBUG
+	       ES:DI-02h  -> R0
+	       ES:DI	  -> R1
+	       ES:DI+02h  -> R2
+	       ES:DI+04h  -> R3
+	       ...
+	       ES:DI+0Eh  -> R8
 ----------6001FF-----------------------------
 INT 60 - FTP Packet Driver - BASIC FUNC - GET DRIVER INFO
 	AX = 01FFh
@@ -213,6 +334,36 @@ INT 60 - SYS_PROF.EXE - TURN PROFILING OFF
 Note:	SYS_PROF.EXE is the TSR portion of a profiler from Micro Cornucopia #47
 SeeAlso: AH=00h"SYS_PROF",02h"SYS_PROF"
 ----------6002-------------------------------
+INT 60 - MDEBUG - SET STATUS
+	AH = 02h
+	DS:SI -> password or a null byte
+	ES = new value for the register SE
+	DI = new value for the register OF
+---if ES,DI nonzero---
+	CH = new monitor color
+	CL = new debugger color
+	BH = new monitor start line
+	BL = new debugger start line
+	AL = new ASCII code for the hotkey ('A'..'Z', 'a'..'z')
+	DL = new status of the special keys (SHIFT, ALT, CTRL) for the hotkey
+	DH = new basic process number for the communication with the drivers
+	      multiplex number for the display driver, DH+1 = multiplex number
+	      for the command driver(s)
+Return: AX = return code
+	    FFFFh call not allowed
+	    FFFEh password is invalid
+	    FFFDh display mode is invalid
+	    0000h successful, status changed
+	   else AL = error code
+		    bit 0 invalid monitor start line
+			1 invalid debugger start line
+			2 invalid hotkey
+			3 invalid process number
+		      4-7 reserved
+Note:	the values of the registers SE and OF are always changed, the other
+	  values are only changed if they are valid
+SeeAlso: AH=00h"MDEBUG"
+----------6002-------------------------------
 INT 60 - FTP Packet Driver - BASIC FUNC - ACCESS TYPE
 	AH = 02h
 	AL = interface class
@@ -242,6 +393,18 @@ INT 60 - SYS_PROF.EXE - TURN PROFILING ON
 Note:	SYS_PROF.EXE is the TSR portion of a profiler from Micro Cornucopia #47
 SeeAlso: AH=00h"SYS_PROF",01h"SYS_PROF"
 ----------6003-------------------------------
+INT 60 - MDEBUG - POP UP
+	AH = 03h
+	DS:SI point to the password or a null byte
+	ES -> new value for the register SE
+	DI -> new value for the register OF
+Return: AX = return code
+	    FFFFh call not allowed
+	    FFFEh password is invalid
+	    FFFDh display mode is invalid
+	   else successful
+SeeAlso: AH=04h"MDEBUG"
+----------6003-------------------------------
 INT 60 - FTP Packet Driver - BASIC FUNC - RELEASE TYPE
 	AH = 03h
 	BX = handle
@@ -266,6 +429,16 @@ Return: CF set on error
 Note:	the buffer may be modified immediately upon return from this call
 SeeAlso: AH=0Bh
 ----------6004-------------------------------
+INT 60 - MDEBUG - POP UP
+	AH = 04h
+	DS:SI -> password or a null byte
+Return: AX = return code
+	    FFFFh call not allowed
+	    FFFEh password is invalid
+	    FFFDh display mode is invalid
+	   else successful
+SeeAlso: AH=03h"MDEBUG"
+----------6004-------------------------------
 INT 60 - SYS_PROF.EXE - CLEAR PROFILING TABLE
 	AH = 04h
 Note:	SYS_PROF.EXE is the TSR portion of a profiler from Micro Cornucopia #47
@@ -277,6 +450,20 @@ INT 60 - FTP Packet Driver - BASIC FUNC - TERMINATE DRIVER FOR HANDLE
 Return: CF set on error
 	   DH = error code (see AX=01FFh)
 	CF clear if successful
+----------6005-------------------------------
+INT 60 - MDEBUG - GET AND SET MDEBUG FLAGS
+	AH = 05h
+	DS:SI -> password or a null byte
+	BL = new value for the semaphor of MDEBUG
+	     00h  enable popup of MDEBUG
+	     else disable popup of MDEBUG
+Return: AX = return code
+	    FFFEh password is invalid
+	    FFFDh display mode is invalid
+	   else successful
+		BL = old value of the semapor of MDEBUG
+		BH = old value of the INT 08h semaphor
+		    (this semaphor is always reset after this function)
 ----------6006-------------------------------
 INT 60 - FTP Packet Driver - BASIC FUNC - GET ADDRESS
 	AH = 06h
@@ -288,6 +475,12 @@ Return: CF set on error
 	CF clear if successful
 	    CX = length	
 Note:	copies the local net address associated with the handle into the buffer
+----------6006-------------------------------
+INT 60 - MDEBUG - GET PASSWORD STATUS
+	AH = 06h
+Return: AL = status
+	    00h password inactive
+	    01h password active
 ----------6007-------------------------------
 INT 60 - FTP Packet Driver - BASIC FUNC - RESET INTERFACE
 	AH = 07h
@@ -449,6 +642,11 @@ Return: CF set on error
 	    CX = length
 ----------61---------------------------------
 INT 61 - reserved for user interrupt
+----------61---------------------------------
+INT 61 - FTP Software PC/TCP - TCP/IP TSR System Call interface
+	AH = system call number
+Return: AL = basic error
+	AH = suberror number
 ----------61---------------------------------
 INT 61 - Adaptec and OMTI controllers - DRIVE 0 DATA
 SeeAlso: INT 60"Adaptec"
@@ -1637,8 +1835,14 @@ INT 64 - Data General DG10 - MicroECLIPSE COPROCESSOR INTERFACE
 INT 64 - Extended Batch Language v3.14+
 	AH = function
 	    00h to 5Fh chained to previous handler
-	    60h to 6Dh reserved, return immediately
+	    60h to 6Ch reserved, return immediately
 	    80h to FFh chained to previous handler
+	    6Dh (v4.01+) insert tone in queue
+	    	AL = ???
+		CX = frequency in Hertz
+		DL = duration in clock ticks
+		Return: AL = 00h if note stored
+			   = 01h if no room to store
 	    6Eh clear ??? counter/flag
 	    6Fh return counter/flag that AH=6Eh clears
 	    70h ???
@@ -1648,8 +1852,12 @@ INT 64 - Extended Batch Language v3.14+
 	    72h ???
 	    73h insert byte at end of keyboard buffer
 		AL = byte to insert
+		Return: AL = 00h if byte inserted
+			   = 01h if no room to store
 	    74h insert byte at front of keyboard buffer
 		AL = byte to insert
+		Return: AL = 00h if byte inserted
+			   = 01h if no room to store
 	    75h ???
 	    76h get keyboard "stack" status
 		AL = 'K' if kbd read will read physical keyboard
@@ -1676,6 +1884,8 @@ Notes:	Extended Batch Language is a batch-file enhancer by Seaware
 	the chaining does not check whether the interrupt had been hooked
 	  before, so if you try to chain when the previous vector was 
 	  0000h:0000h, you'll be in trouble
+	functions 72h and 7Ah-7Dh appear to be interfaces to the optional
+	  floating-point and extended function packages
 ----------65---------------------------------
 INT 65 - reserved for user interrupt
 ----------65---------------------------------
@@ -1683,6 +1893,8 @@ INT 65 - Adaptec controllers - DRIVE 1 DATA
 SeeAlso: INT 64"Adaptec"
 ----------65---------------------------------
 INT 65 - Data General DG10 - MicroECLIPSE COPROCESSOR INTERFACE
+----------65---------------------------------
+INT 65 - FTP Software NDIS-Packet Driver adapter - POST PROCESSING INTERRUPT
 ----------65---------------------------------
 INT 65 - SD.COM v6.2
    The unregistered version of SD62.COM uses the low byte of this vector to
@@ -1769,14 +1981,31 @@ INT 66 - Adaptec controllers - DRIVE 1 DATA
 SeeAlso: INT 65"Adaptec"
 ----------66---------------------------------
 INT 66 - Data General DG10 - MicroECLIPSE COPROCESSOR INTERFACE
-----------66FFFE-----------------------------
-INT 66 - THESPLUS - UNINSTALL
+----------66FFFBBXFFFB-----------------------
+INT 66 - MicroHelp Stay-Res Plus - ???
+	AX = FFFBh
+	BX = FFFBh
+	???
+Return: ???
+SeeAlso: AX=FFFEh
+----------66FFFEBXFFFE-----------------------
+INT 66 - MicroHelp Stay-Res/Stay-Res Plus - UNINSTALL
 	AX = FFFEh
 	BX = FFFEh
 Return: only if unsuccessful
-Note:	installation check is for the interrupt handler to begin with the bytes
-	  FBh, 9Ch, and the string "THESPLUS" to appear at offset 0005h in the
-	  interrupt handler segment.
+Notes:	installation check is for the interrupt handler to begin with the bytes
+	  FBh 9Ch or 9Ch FAh, and the program name (not case-sensitive) to
+	  appear at offset 0005h (older versions) or the offset returned by
+	  AX=FFFFh/BX=FFF0h in the interrupt handler segment.
+	Programs which use Stay-Res include ThesPlus (program name "THESPLUS")
+	  and Personal Calendar (program name "CAL") by Paul Mun~oz-Colman.
+SeeAlso: AX=FFFBh,AX=FFFFh
+----------66FFFFBXFFF0-----------------------
+INT 66 - MicroHelp Stay-Res Plus - FIND PROGRAM NAME
+	AX = FFFFh
+	BX = FFF0h
+Return: DI = offset of program name in interrupt handler segment
+SeeAlso: AX=FFFBh,AX=FFFEh
 ----------660688-----------------------------
 INT 66 - John W. Ratcliff (The IBM Digitized Sound Package)
 	AX = 0688h
@@ -3896,50 +4125,61 @@ Return: CF set on error
 	CF clear if successful
 SeeAlso: AH=17h
 ----------70---------------------------------
-INT 70 - IRQ8 - AT/XT286/PS50+ - REAL-TIME CLOCK
-Note:	may be masked by setting bit 0 on I/O port A1h
-SeeAlso: INT 08,INT 1A/AH=02h,INT 58
+INT 70 - IRQ8 - CMOS REAL-TIME CLOCK
+Notes:	this interrupt is called when the real-time clock chip generates an
+	  alarm or periodic interrupt, among others.  The periodic interrupt
+	  occurs 1024 times per second, although many BIOSes turn it off in
+	  the INT 70h handler unless in an event wait (see INT 15/AH=83h or
+	  INT 15/AH=86h).
+	may be masked by setting bit 0 on I/O port A1h
+SeeAlso: INT 08,INT 15/AH=01h"Amstrad",INT 15/AH=83h,INT 15/AH=86h
+SeeAlso: INT 1A/AH=02h,INT 58
 ----------71---------------------------------
-INT 71 - IRQ9 - AT/XT286/PS50+ - LAN ADAPTER 1
+INT 71 - IRQ9 - REDIRECTED TO INT 0A BY BIOS
 Notes:	may be masked by setting bit 1 on I/O port A1h
-	rerouted to INT 0A by BIOS
+	the default BIOS handler invokes INT 0A for compatibility, since the
+	  pin for IRQ2 on the PC expansion bus became the pin for IRQ9 on the
+	  AT expansion bus.
 	under DESQview, only the INT 15h vector and BASIC segment address (the
 	  word at 0000h:0510h) may be assumed to be valid for the handler's
 	  process
 SeeAlso: INT 0A,INT 59
 ----------72---------------------------------
-INT 72 - IRQ10 - AT/XT286/PS50+ - RESERVED
+INT 72 - IRQ10 - RESERVED
 Note:	may be masked by setting bit 2 on I/O port A1h
 SeeAlso: INT 5A
 ----------73---------------------------------
-INT 73 - IRQ11 - AT/XT286/PS50+ - RESERVED
+INT 73 - IRQ11 - RESERVED
 Note:	may be masked by setting bit 3 on I/O port A1h
 SeeAlso: INT 5B
 ----------74---------------------------------
-INT 74 - IRQ12 - PS50+ - MOUSE INTERRUPT
+INT 74 - IRQ12 - POINTING DEVICE (PS)
 Notes:	may be masked by setting bit 4 on I/O port A1h
 	under DESQview, only the INT 15h vector and BASIC segment address (the
 	  word at 0000h:0510h) may be assumed to be valid for the handler's
 	  process
 SeeAlso: INT 33,INT 5C
 ----------75---------------------------------
-INT 75 - IRQ13 - AT/XT286/PS50+ - 80287 ERROR
+INT 75 - IRQ13 - MATH COPROCESSOR EXCEPTION (AT and up)
+   redirected to INT 02 by the BIOS, for compatibility with the PC
 Notes:	may be masked by setting bit 5 on I/O port A1h
-	rerouted to INT 02 by BIOS
+	not all clones wire the coprocessor to generate this IRQ; some systems
+	  generate an NMI (see INT 02) or assert the -ERROR pin on the CPU
+	  (see INT 10"COPROCESSOR")
 	under DESQview, only the INT 15h vector and BASIC segment address (the
 	  word at 0000h:0510h) may be assumed to be valid for the handler's
 	  process
 SeeAlso: INT 10"COPROCESSOR",INT 5D
 ----------76---------------------------------
-INT 76 - IRQ14 - AT/XT286/PS50+ - FIXED DISK
+INT 76 - IRQ14 - HARD DISK CONTROLLER (AT and later)
 Note:	may be masked by setting bit 6 on I/O port A1h
 SeeAlso: INT 0E"IRQ6",INT 5E
 ----------77---------------------------------
-INT 77 - IRQ15 - AT/XT286/PS50+ - RESERVED
+INT 77 - IRQ15 - RESERVED (AT,PS)
 Note:	may be masked by setting bit 7 on I/O port A1h
 SeeAlso: INT 5F
 ----------77---------------------------------
-INT 77 - IRQ15 - Compaq SLT/286 - POWER CONSERVATION
+INT 77 - IRQ15 - POWER CONSERVATION (Compaq SLT/286)
 Note:	may be masked by setting bit 7 on I/O port A1h
 SeeAlso: INT 15/AX=4600h,INT 5F
 ----------7800-------------------------------
@@ -4132,12 +4372,6 @@ Notes:	if a keystroke is available, it is removed from the keyboard buffer
 	  AVATAR command codes just as ANSI.SYS interprets ANSI commands
 SeeAlso: INT 29
 ----------7A---------------------------------
-INT 7A - Novell NetWare to v2.0a - LOW-LEVEL API
-	???
-Note:	this interrupt is used for IPX/SPX access in NetWare versions through
-	  2.0a only; later versions use INT 2F/AX=7A00h to get an entry point
-SeeAlso: INT 2F/AX=7A00h,INT 64"Novell"
-----------7A---------------------------------
 INT 7A - Topware Network Operating System - ???
 	AL = ???
 	???
@@ -4145,6 +4379,295 @@ Return: ???
 ----------7A---------------------------------
 INT 7A - AutoCAD Device Interface
 	???
+----------7A---------------------------------
+INT 7A - Novell NetWare - LOW-LEVEL API - Notes
+Note:	this interrupt is used for IPX/SPX access in NetWare versions through
+	  2.0a; in later versions, you should use INT 2F/AX=7A00h to get an
+	  entry point.	For both INT 7A and the FAR entry point, BX contains
+	  the function number; IPX is sometimes called internally with BX bit
+	  15 set.
+SeeAlso: INT 2F/AX=7A00h,INT 64"Novell"
+----------7A----BX0000-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - OPEN SOCKET
+	BX = 0000h
+	AL = mode
+	    00h open until close or terminate
+	    FFh open until close
+	DX = socket number (high byte in DL)
+	    0000h dynamic allocation
+	    else  socket to open
+Return: AL = return code
+	    00h success
+		DX = socket number
+	    FEh socket table full
+	    FFh socket already open
+SeeAlso: BX=0001h
+----------7A----BX0001-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - CLOSE SOCKET
+	BX = 0001h
+	DX = socket (high byte in DL)
+SeeAlso: BX=0000h
+----------7A----BX0002-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - GET LOCAL TARGET
+	BX = 0002h
+	ES:SI -> target internetwork address
+	ES:DI -> 6-byte buffer for local target
+Return: AL = return code
+	    00h success
+	       CX = expected one-way transfer time (clock ticks)
+	       ES:DI -> local target
+	    FAh unsuccessful
+Note:	The internetwork address consists of a 4-byte network address followed
+	  by a 6-byte node address.  The local target is only a 6-byte node
+	  address.  If the target is in the same network, the local target is
+	  just the node address of target; otherwise, the local target is the
+	  node address of the bridge that leads to the target.
+SeeAlso: BX=0009h
+----------7A----BX0003-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - SEND PACKET
+	BX = 0003h
+	ES:SI -> Event Control Block (see below)
+SeeAlso: BX=0004h,BX=000Fh
+
+Format of Event Control Block:
+Offset	Size	Description
+ 00h	DWORD	Link
+ 04h	DWORD	-> Event Service Routine (00000000h if none)
+ 08h	BYTE	in use flag
+ 09h	BYTE	completion code
+ 0Ah	WORD	socket (high byte first [big-endian])
+ 0Ch  4 BYTES	IPX workspace
+ 10h 12 BYTES	driver workspace
+ 1Ch  6 BYTES	immediate local node address
+ 22h	WORD	fragment count
+ 26h	var	fragment descriptors
+		Offset	Size	Description
+		 00h	DWORD	-> fragment data
+		 04h	WORD	size of fragment in bytes.
+Notes:	ESR is a far procedure that is called when the ECB has been handled.
+	  On call, the in use flag is zero if the ECB has been handled,
+	  non-zero otherwise. If the flag is zero, the completion code holds
+	  the result of the event:
+	    00h success
+	    F9h event should not be cancelled
+	    FCh cancelled
+	    FDh malformed packet
+	    FEh packet undeliverable
+	    FFh physical error
+	the first fragment should start with an IPX header
+	all fragments are concatenated and sent in one piece
+	node address FF FF FF FF FF FF broadcasts to all nodes
+
+Event Service Routine called with:
+	AL = caller's identity (00h = AES, FFh = IPX)
+	ES:SI -> event control block
+	interrupts disabled
+
+Format of IPX header:
+Offset	Size	Description
+ 00h	WORD	checksum (high byte first [big-endian])
+ 02h	WORD	length in bytes (high byte first) of total packet
+ 04h	BYTE	transport control
+ 05h	BYTE	packet type
+		00h unknown packet type
+		01h routing information packet
+		02h echo packet
+		03h error packet
+		04h packet exchange packet (always use this one)
+		05h SPX packet
+		11h (used internally)
+ 06h 10 BYTES	destination internetwork address
+ 10h	WORD	destination socket (high byte first)
+ 12h 10 BYTES	source internetwork address
+ 1Ch	WORD	source socket
+----------7A----BX0004-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - LISTEN FOR PACKET
+	BX = 0004h
+	ES:SI -> Event Control Block (see BX=0003h)
+SeeAlso: BX=0003h
+----------7A----BX0005-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - SCHEDULE IPX EVENT
+	BX = 0005h
+	AX = delay time
+	ES:SI -> Event Control Block (see BX=0003h)
+SeeAlso: BX=0006h,BX=0007h
+----------7A----BX0006-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - CANCEL EVENT
+	BX = 0006h
+	ES:SI -> Event Control Block (see BX=0003h)
+Return: AL = return code
+	    00h success
+	    F9h event in use
+	    FFh unsuccessful, event not in use
+SeeAlso: BX=0005h
+----------7A----BX0007-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - SCHEDULE SPECIAL EVENT
+	BX = 0007h
+	AX = delay time
+	ES:SI -> Event Control Block (see BX=0003h)
+SeeAlso: BX=0006h
+----------7A----BX0008-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - GET INTERVAL MARKER
+	BX = 0008h
+Return: AX = interval marker in clock ticks
+----------7A----BX0009-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - GET INTERNETWORK ADDRESS
+	BX = 0009h
+	ES:SI -> 10-byte buffer
+Return: ES:SI -> own internetwork address
+SeeAlso: BX=0002h,BX=000Bh
+----------7A----BX000A-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - RELINQUISH CONTROL
+	BX = 000Ah
+Note:	this call permits the IPX driver to do some work
+----------7A----BX000B-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - DISCONNECT FROM TARGET
+	BX = 000Bh
+	ES:SI -> internetwork address
+Note:	only use in point-to-point networks
+SeeAlso: BX=0002h,BX=0009h
+----------7A----BX000C-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - INTERNAL
+	BX = 000Ch
+	???
+Return: ???
+----------7A----BX000D-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - INTERNAL
+	BX = 000Dh
+	???
+Return: ???
+----------7A----BX000E-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - INTERNAL
+	BX = 000Eh
+	???
+Return: ???
+----------7A----BX000F-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - INTERNAL - SEND PACKET
+	BX = 000Fh
+	ES:SI -> Event Control Block (see BX=0003h)
+Note:	similar to function 0003h, but apparently does not allow multiple
+	  fragments
+SeeAlso: BX=0003h
+----------7A----BX0010-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - SPX INSTALLACTION CHECK
+	BX = 0010h
+	AL = 00h
+Return: AL = FFh if SPX loaded
+SeeAlso: BX=0015h
+----------7A----BX0011-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - ESTABLISH SPX CONNECTION
+	BX = 0011h
+	AL = retry count
+	AH = watchdog flag
+	ES:SI -> Event Control Block (see BX=0003h)
+Return: DX = assigned connection number
+Notes:	there should always be at least two SPX ECB's listening to a socket, so
+	  that NetWare can perform its internal packet exchanges
+	The first fragment should start with a SPX header.  Fill in all
+	  destination addresses.
+SeeAlso: BX=0000h,BX=0012h,BX=0013h,BX=0014h
+ 
+Format of SPX header:
+Offset	Size	Description
+ 00h	WORD	checksum (high byte first [big-endian])
+ 02h	WORD	length in bytes of total packet (high byte first)
+ 04h	BYTE	transport control
+ 05h	BYTE	packet type
+ 06h 10 BYTEs	destination internet address
+ 10h	WORD	destination socket (high byte first)
+ 12h 10 BYTEs	source internet address
+ 1Ch	WORD	source socket (high byte first)
+ 1Eh	BYTE	connection control
+ 1Fh	BYTE	datastreamtype
+ 20h	WORD	source connection ID
+ 22h	WORD	destination connection ID
+ 24h	WORD	sequence number
+ 26h	WORD	acknowledge number
+ 28h	WORD	allocation number
+----------7A----BX0012-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - LISTEN FOR SPX CONNECTION
+	BX = 0012h
+	AL = retry count
+	AH = watchdog flag
+	ES:SI -> Event Control Block (see BX=0003h)
+Notes:	there should always be at least two SPX ECB's listening to a socket, so
+	  that NetWare can perform its internal packet exchanges
+SeeAlso: BX=0011h,BX=0013h,BX=0014h
+----------7A----BX0013-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - TERMINATE SPX CONNECTION
+	BX = 0013h
+	DX = connection ID to terminate
+	ES:SI -> Event Control Block (see BX=0003h)
+SeeAlso: BX=0011h,BX=0012h,BX=0014h
+----------7A----BX0014-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - ABORT SPX CONNECTION
+	BX = 0014h
+	DX = connection ID to terminate
+Note:	this function does not tell the other side that the connection has been
+	  terminated
+SeeAlso: BX=0011h,BX=0013h
+----------7A----BX0015-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - GET SPX STATUS
+	BX = 0015h
+	DX = connection ID
+	ES:SI -> status buffer (see below)
+Return: AL = return code
+	    00h connection still valid
+		ES:SI -> status buffer filled
+SeeAlso: BX=0010h
+ 
+Format of status buffer:
+Offset	Size	Description
+ 00h	BYTE	status
+ 01h	BYTE	flag
+ 02h	WORD	source connection (high byte first [big-endian])
+ 04h	WORD	destination connection (high byte first)
+ 06h	WORD	sequence number (high byte first)
+ 08h	WORD	acknowledge number (high byte first)
+ 0Ah	WORD	allocation number (high byte first)
+ 0Ch	WORD	remote acknowledge number (high byte first)
+ 0Eh	WORD	remote allocation number (high byte first)
+ 10h	WORD	connection socket (high byte first)
+ 12h  6 BYTEs	immediate node address
+ 18h 10 BYTEs	destination internet address
+ 22h	WORD	retransmit count (high byte first)
+ 24h	WORD	estimated roundtrip delay
+ 26h	WORD	retransmitted packets
+ 28h	WORD	suppressed packets
+----------7A----BX0016-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - SEND SPX PACKET
+	BX = 0016h
+	DX = connection ID
+	ES:SI -> Event Control Block (see BX=0003h)
+Note:	CX may need to be 0001h ???
+SeeAlso: BX=0011h,BX=0017h
+----------7A----BX0017-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - LISTEN FOR SPX PACKET
+	BX = 0017h
+	DX = connection ID
+	ES:SI -> Event Control Block (see BX=0003h)
+Note:	CX may need to be 0001h ???
+SeeAlso: BX=0011h,BX=0016h
+----------7A----BX0018-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - INTERNAL
+	BX = 0018h
+	???
+Return: ???
+----------7A----BX0019-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - INTERNAL
+	BX = 0019h
+	???
+Return: ???
+----------7A----BX001A-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - INTERNAL
+	BX = 001Ah
+	???
+Return: ???
+----------7A----BX001B-----------------------
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - INTERNAL
+	BX = 001Bh
+	???
+Return: ???
 ----------7A04-------------------------------
 INT 7A - IBM 3270 Workstation Program API - CREATE A QUEUE
 	AH = 04h
@@ -4821,13 +5344,12 @@ Session Parameters for function 09h:
  NOXLATE	don't translate
  NEWRET		use HLLAPI v3.0 return code conventions
  OLDRET		use HLLAPI v2.0 return code conventions
-----------7F---------------------------------
+----------7F0105-----------------------------
 INT 7F - HDILOAD.EXE - 8514/A VIDEO CONTROLLER INTERFACE
-	AX = function
-	    0105h get entry points
-		Return: CF set on error
-			CF clear if successful
-			    CX:DX -> array of FAR pointers to entry points
+	AX = 0105h get 8514/A entry points
+Return: CF set on error
+	CF clear if successful
+	    CX:DX -> array of FAR pointers to entry points
 Note:	most functions are invoked by pushing the DWORD parameter block pointer
 	  and then performing a FAR call via the appropriate vector of the
 	  entry point array
@@ -4856,6 +5378,47 @@ Note:	the installation check consists of ensuring that the interrupt vector
 INT 80 - Q-PRO4 - ???
 ----------80---------------------------------
 INT 80 - reserved for BASIC
+----------8001-------------------------------
+INT 80 - QPC Software PKTINT.COM - INITIALIZE
+	AH = 01h
+Return: AX = 0000h
+	CX = FFFFh
+	DX = FFFFh
+Notes:	this interrupt is the WinQVTNet protected mode interface to Windows 3.0
+	all buffer pointers are reset back to 0
+----------8002-------------------------------
+INT 80 - QPC Software PKTINT.COM - GET SEGMENT ADDRESSES
+	AH = 02h
+	BX = extra bytes to allocate per packet
+Return: AX = segment address of 10K buffer (for receives???)
+	BX = segment address of 2K buffer (for sends???)
+SeeAlso: AH=05h
+----------8003-------------------------------
+INT 80 - QPC Software PKTINT.COM - GET ENTRY POINT
+	AH = 03h
+Return: CX:DX -> receive call address
+Note:	the returned address can be used in the packet driver calls since it
+	  will be a valid address in all DOS boxes
+SeeAlso: AH=06h
+----------8004-------------------------------
+INT 80 - QPC Software PKTINT.COM - ENABLE???
+	AH = 04h
+	BX = ???
+Return: ???
+----------8005-------------------------------
+INT 80 - QPC Software PKTINT.COM - GET STATISTICS
+	AH = 05h
+Return: AX = amount of buffer currently in use
+	BX = current offset in buffer
+	CX = number of times receive has been called
+SeeAlso: AH=02h
+----------8006-------------------------------
+INT 80 - QPC Software PKTINT.COM - REMOVE RECEIVED PACKET
+	AH = 06h
+Return: BX = next packet offset
+	CX = number of bytes still buffered
+	DX = size of packet released back into buffer pool
+SeeAlso: AH=03h
 ----------81---------------------------------
 INT 81 - reserved for BASIC
 ----------81---------------------------------
@@ -5418,6 +5981,9 @@ INT DB - used by BASIC while in interpreter
 ----------DB---------------------------------
 INT DB - STSC APL*PLUS/PC - MAY BE USED IN FUTURE RELEASES
 ----------DC---------------------------------
+INT DC - PC/370 v4.1- - API
+SeeAlso: INT 60"PC/370"
+----------DC---------------------------------
 INT DC - used by BASIC while in interpreter
 ----------DC---------------------------------
 INT DC - STSC APL*PLUS/PC - MAY BE USED IN FUTURE RELEASES
@@ -5474,6 +6040,17 @@ INT EA - used by BASIC while in interpreter
 INT EB - used by BASIC while in interpreter
 ----------EC---------------------------------
 INT EC - used by BASIC while in interpreter
+----------EC---------------------------------
+INT EC - Exact - RUNTIME INTERFACE MULTIPLEXOR
+	AX = function number (0000h to 0140h)
+	STACK:	DWORD address to return to
+		any arguments required by function
+Return: STACK:	return address popped, but otherwise unchanged
+Notes:	this is the interface from applications to the runtime system by Exact
+	  Automatisering B.V. of the Netherlands.  By using this interrupt,
+	  it can provide DLL-style capabilities under MSDOS.
+	the interrupt handler removes the return address and flags placed on
+	  the stack by the INT EC, then jumps to the appropriate function
 ----------ED---------------------------------
 INT ED - used by BASIC while in interpreter
 ----------EE---------------------------------
@@ -5502,33 +6079,63 @@ INT F2 - reserved for user interrupt
 INT F3 - reserved for user interrupt
 ----------F4---------------------------------
 INT F4 - reserved for user interrupt
+----------F4---------------------------------
+INT F4 - DoubleDOS - GIVE UP REST OF CURRENT CLOCK TICK AND ALL OF NEXT TICK
+SeeAlso: INT 21/AH=EEh"DoubleDOS",INT FE"DoubleDOS"
 ----------F5---------------------------------
 INT F5 - reserved for user interrupt
+----------F5---------------------------------
+INT F5 - DoubleDOS - ???
 ----------F6---------------------------------
 INT F6 - reserved for user interrupt
+----------F6---------------------------------
+INT F6 - DoubleDOS - ???
 ----------F7---------------------------------
 INT F7 - reserved for user interrupt
+----------F7---------------------------------
+INT F7 - DoubleDOS - ???
 ----------F8---------------------------------
 INT F8 - 10 ms INTERVAL TIMER (TANDY???)
+----------F8---------------------------------
+INT F8 - DoubleDOS - ???
 ----------F9---------------------------------
 INT F9 - reserved for user interrupt
+----------F9---------------------------------
+INT F9 - DoubleDOS - ???
 ----------FA---------------------------------
 INT FA - USART READY (RS-232C) (TANDY???)
+----------FA---------------------------------
+INT FA - DoubleDOS - TURN OFF TIMESHARING
+SeeAlso: INT 21/AH=EAh"DoubleDOS",INT FB"DoubleDOS"
 ----------FB---------------------------------
 INT FB - USART Rx READY (keyboard) (TANDY???)
+----------FB---------------------------------
+INT FB - DoubleDOS - TURN ON TIMESHARING
+SeeAlso: INT 21/AH=EBh"DoubleDOS",INT FA"DoubleDOS"
 ----------FC---------------------------------
 INT FC - reserved for user interrupt
+----------FC---------------------------------
+INT FC - DoubleDOS - GET CURRENT SCREEN BUFFER ADDRESS
+Return: ES = segment of display buffer
+Note:	the display buffer may be moved if multitasking is enabled
+SeeAlso: INT 21/AH=ECh"DoubleDOS",INT FB"DoubleDOS"
 ----------FD---------------------------------
 INT FD - reserved for user interrupt
+----------FD---------------------------------
+INT FD - DoubleDOS - ???
 ----------FE---------------------------------
 INT FE - AT/XT286/PS50+ - destroyed by return from protected mode
+----------FE---------------------------------
+INT FE - DoubleDOS - GIVE UP TIME
+	AL = number of 55ms time slices to give away
+SeeAlso: INT 21/AH=EEh"DoubleDOS",INT F4"DoubleDOS"
 ----------FF---------------------------------
 INT FF - AT/XT286/PS50+ - destroyed by return from protected mode
 ----------FF---------------------------------
 INT FF - Z100 - WARM BOOT
 ---------------------------------------------
 Please redistribute the following files unmodified as a group, in an archive
-named INTER191:
+named INTER291 (preferably the original authenticated PKZIP archive):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
 	INTERRUP.A	INT 00 through INT 1F
 	INTERRUP.B	INT 20 through INT 27

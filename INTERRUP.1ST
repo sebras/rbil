@@ -1,11 +1,11 @@
-Interrupt List		Release 91.1		Last change 1/5/91
+Interrupt List		Release 25 (v91.2)		Last change 3/24/91
 
-Please distribute all of the following files (unmodified) together in an
-archive called INTER191 (preferably the original authenticated PKZIP archive):
+Please distribute the following files unmodified as a group, in an archive
+called INTER291 (preferably the original authenticated PKZIP archive):
         INTERRUP.1ST	this file
         INTERRUP.A	INT 00 through INT 1F \
-	INTERRUP.B	INT 20 through INT 27  \ total 448 pages at 60 lines
-	INTERRUP.C	INT 28 through INT 5F  / per page, 483 with INTPRINT -p
+	INTERRUP.B	INT 20 through INT 27  \ total 496 pages at 60 lines
+	INTERRUP.C	INT 28 through INT 5F  / per page, 536 with INTPRINT -p
 	INTERRUP.D	INT 60 through INT FF / 
         INTERRUP.PRI	a brief primer on interrupts
 	INTPRINT.COM	a simple formatter that also generates the list summary
@@ -25,24 +25,60 @@ containing only data structure formats.  See INTPRINT.DOC for details.
 
 This compilation is (c) Copyright 1989, 1990, 1991 Ralf Brown
 Permission is granted to use and redistribute the files comprising the
-interrupt listing in any way (including conversion to another format), provided
-that my name and addresses and the names of all contributers are preserved, as
-well as the information on how to obtain new releases.
+interrupt listing in any way (including conversion to another format),
+provided that my name and addresses and the names of all contributers
+are preserved, as well as the information on how to obtain new releases.
 
-Please send corrections/additions to me rather than distributing a modified
-version of the list, so that all may benefit from your contribution.
+Except as noted below, individual entries are in the public domain; the
+above requirement to give credit is waived for excerpts totaling less
+than 2000 lines.
 
-This version of the list reverts to the public domain one year after the
-date of its release, with the sincere hope that the credits and availability
-information are retained.
+Please send corrections/additions to me rather than distributing a
+modified version of the list, so that all may benefit from your
+contribution.
+---------------------------------------------
+The entries for INT 0A"Tandy", INT 0D"Tandy", INT 10/AH=70h-73h, INT 2A/AH=00h,
+INT 2A/AH=03h-05h, INT 86"NETBIOS", INT F8"TANDY", INT FA"TANDY", and
+INT FB"TANDY" are
+
+(c) Copyright 1987 Daniel D. Lanciani.  All rights reserved.
+Redistribution and use are freely permitted provided that the above
+copyright notice and this paragraph are included in any copy or
+partial copy.  THIS INFORMATION IS PROVIDED ``AS IS'' AND WITHOUT
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE.
+-------
+All other information contained in the July 1987 version on which the above
+copyright is now (March 1991) claimed has been removed and replaced with
+independently-obtained new versions.  Any similarities between the July 1987
+entries and their replacements are due solely to the nature of the information
+or the use of identical reference materials.
+---------------------------------------------
+DISCLAIMER:  THIS MATERIAL IS PROVIDED "AS IS".  I verify the information
+contained in this list to the best of my ability, but I cannot be held
+responsible for any problems caused by use or misuse of the information,
+especially for those functions not officially documented.  If it is marked
+"internal", you should check it carefully to make sure it works the same
+way in your version of the software (and please let me know whether or not
+it works the same way).  Information marked with "???" is known to be
+incomplete or guesswork.
 ---------------------------------------------
 If the list is more than three months old by the time you get it, there is
-probably a newer release out already (v91.2 is planned for late March).
+probably a newer release out already (v91.3 is planned for late June).  Each
+release supercedes all previous versions, so there is no need to keep old
+versions.
+
+Due to the growing size of the list, I will be splitting the distribution
+archive beginning with the next release.  Along with this split, I will
+be changing the naming of the archives.  Instead of INTERnyy, they will
+be named INTERrrA and INTERrrB, where rr is the release number.  Thus,
+the next release will be INTER26A and INTER26B instead of INTER391.
 
 The newest release of this list is available in these places (please do not
 ask me to email it, it is just too large for that):
 
-On the ARPAnet, by standard anonymous FTP from CS.CMU.EDU [128.2.222.173].
+On the Internet, by standard anonymous FTP from CS.CMU.EDU [128.2.222.173].
 	Change directly to directory /afs/cs.cmu.edu/user/ralf/pub and get the
 	file interrup.zip which is a link to the current version.  You MUST
 	change directory first because of the way CMU's anonymous FTP works.
@@ -52,11 +88,9 @@ On the ARPAnet, by standard anonymous FTP from CS.CMU.EDU [128.2.222.173].
 	downtime.  If you get an "access denied" type error, try again in a
 	few hours.
 
-On FIDOnet, from Doctor's Inn BBS 1:129/53 1-412-881-7757 1200/2400/9600 HST
+On FIDOnet, from SoundingBoard BBS 1:129/26 1-412-621-4604 1200/2400/14.4 HST
 	as file INTERnyy.ZIP, where nyy stands for release 'n' of year 'yy',
 	in file area #4.  First-time callers may download.  File Requests.
-	2400 bps callers should try 1:129/81 1-412-881-1749 (same computer,
-	different modem) first.
 
 The list is also posted to USEnet in comp.binaries.ibm.pc about three times per
 year, concurrent with a new release of the list.  Since comp.binaries.ibm.pc is
@@ -65,10 +99,10 @@ archives.
 
 Secondary Distribution Points (the list will be available here within a day or
 so of release):
-ARPA:	on WSMR-SIMTEL20.ARMY.MIL [26.2.0.74] as file INTERnyy.ZIP in directory
-	PD1:<MSDOS.INFO>, where nyy stands for release n of year yy.  Note
-        that you must use mode "tenex" or "type L 8" to successfully FTP the
-	file.  
+Internet: on WSMR-SIMTEL20.ARMY.MIL [26.2.0.74] as file INTERnyy.ZIP in
+	directory PD1:<MSDOS.INFO>, where nyy stands for release n of year yy.
+	Note that you must use mode "tenex" or "type L 8" to successfully FTP
+	the file.  
 FIDO:	SyncPoint BBS 1:261/1008 1-301-529-2584 File Requests.
 
 Additional Distribution Points:
@@ -76,16 +110,21 @@ BITnet: you may retrieve the copy on WSMR-SIMTEL20.ARMY.MIL via the following
 	automated mail servers:
         (in the US) LISTSERV@RPIECS (alias VM.ECS.RPI.EDU)
 		    LISTSERV@NDSUVM1 (alias VM1.NODAK.EDU)
-        (in Europe) TRICKLE at TREARN (Turkey)
-		    TRICKLE at IMIPOLI (Italy)
-		    TRICKLE at DKTC11 (Denmark)
-		    TRICKLE at AWIWUW11 (Austria)
-		    TRICKLE at EB0UB011 (Spain)
-		    TRICKLE at BANUFS11 (Belgium)
-	(elsewhere) TRICKLE at TAUNIVM (Israel)
+	(in Europe) TRICKLE@AWIWUW11 (Austria)
+		    TRICKLE@BANUFS11 (Belgium)
+		    TRICKLE@DKTC11   (Denmark)
+		    TRICKLE@FRMOP11  (France)
+		    TRICKLE@DB0FUB11 (Germany)
+		    TRICKLE@DTUZDV1  (Germany)
+		    TRICKLE@IMIPOLI  (Italy)
+		    TRICKLE@HEARN    (Netherlands)
+		    TRICKLE@EB0UB011 (Spain)
+		    TRICKLE@TREARN   (Turkey)
+	(elsewhere) TRICKLE@USACHVM1 (Chile)
+		    TRICKLE@TAUNIVM  (Israel)
 FIDO:	boards belonging to the PDN (Programmer's Distribution Network) system
-CompuServe: in the IBM Programming Forum Library 6 as INTnyy.* or INTERn.* (the
-	sysops occasionally switch back and forth...)
+CompuServe: in the IBM Programming Forum, Library 6, as INTnyy.* or INTERn.*
+	(the sysops occasionally switch back and forth...)
 
 According to Mark Seiffert, the list is available
  >on MostAnyNet via mail from my archive server as file
@@ -96,21 +135,13 @@ According to Mark Seiffert, the list is available
  >internet:       archive%mgse@rex.cs.tulane.edu
  >
  >The message;
- >------------------------------------------------
+ >--------------------------------
  >SET UUENCODE
  >SEND other/dos/interrup.zip
- >------------------------------------------------
+ >--------------------------------
  >
  >The file will be uuencoded, chopped up and sent. Btoa may be used instead
  >of uuencode, use SET BTOA instead of SET UUENCODE.
----------------------------------------------
-DISCLAIMER:  I verify the information contained in this list to the best of my
-ability, but I cannot be held responsible for any problems caused by use or
-misuse of the information, especially for those functions not officially 
-documented.  If it is marked "internal", you should check it carefully to make
-sure it works the same way in your version of the software (and please let me
-know whether or not it works the same way).  Information marked with "???" is
-known to be incomplete or guesswork.
 ---------------------------------------------
 Key to system abbreviations
 (unless otherwise indicated, a function is available on all systems)
@@ -139,9 +170,9 @@ among them
  2/85 John Cooper
  2/85 Skip Gilbrech
       Bob Jack
- 4/85 Jim Kyle
- 8/85 John Ruschmeyer   ihnp4!vax135!petsd!moncol!john
- 8/85 Bill Frolik       ihnp4!hplabs!hp-pcd!bill
+ 4/85 Jim Kyle	       76703.762@compuserve.com
+ 8/85 John Ruschmeyer  ihnp4!vax135!petsd!moncol!john
+ 8/85 Bill Frolik      ihnp4!hplabs!hp-pcd!bill
  8/85 Ross M. Greenberg uunet!utoday!greenber
 
    87 Mike Morearty    ...!ucbvax!cory!morearty   \   early 1987
@@ -220,7 +251,8 @@ among them
  8/90 Robin Walker     rdhw@phoenix.cambridge.ac.uk   more DOS internals
  8/90 Michael A Shiels mshiels@masnet.uucp	      Quarterdeck INT 2F/AH=D2h
  8/90		       mjm@bmbcomp.uucp		      Logitech INT 33
- 9/90 Michael A Shiels mshiels@masnet.uucp	      IBM/Yale & 3com INT 14
+ 8/90 Cornel Kaufmann  coka@ethz.uucp		      Novell Netware shell 3.01
+ 9/90 Michael A Shiels mshiels@masnet.uucp            IBM/Yale & 3com INT 14
  9/90 Michael A Shiels mshiels@masnet.uucp	      INT 6B, Starlan INT 2A/5B
  9/90 Michael A Shiels mshiels@masnet.uucp	      DECnet INT 69/INT 6A
  9/90 Michael A Shiels mshiels@masnet.uucp	      Topware NOS, Win3 EGA.SYS
@@ -240,6 +272,14 @@ among them
 12/90 Michael A Shiels mshiels@masnet.uucp	      PCSpool,Disk Spool II
 12/90 Michael A Shiels mshiels@masnet.uucp	      OmniView, misc
 12/90 Michael A Shiels mshiels@masnet.uucp	      Cswitch, HIGHUMM.SYS,misc
+ 1/91 Michael A Shiels mshiels@masnet.uucp	      Back&Forth 1.62,DoubleDOS
+ 1/91 Bernd Schemmer   (Dortmund, Germany)	      MDEBUG API
+ 1/91 Michael A Shiels mshiels@masnet.uucp	      more AppleTalk, misc
+ 1/91 Michael A Shiels mshiels@masnet.uucp	      DPMI 1.0 func names
+ 2/91 Michael A Shiels mshiels@masnet.uucp	      miscellaneous
+ 3/91 Jan-Pascal van Best  best@rulcri.LeidenUniv.nl  NetWare IPX/SPX INT 7A
+ 3/91 Jeroen Pluimers  2:281/521		      TBSCANX
+ 3/91 Ralf Brown       ralf@cs.cmu.edu		      PC Tools API
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -273,7 +313,10 @@ Also contributing:
  William L. Peavy <70042.2310@compuserve.com>, Dmitry Stefankov (Moscow, USSR),
  Michael D. Lawler <mdlawler@bsu-cs.bsu.edu>, Norbert Juffa (Karlsruhe, FRG),
  Chris Blum <76625.1041@compuserve.com>, Klaus Hartnegg <HAKL@DFRRUF1.BITNET>,
- 72260.1601@compuserve.com
+ 72260.1601@compuserve.com, Andrea Omodeo (Cilavegna, Italy),
+ Norbert Sommer <NSOMMER@DD0RUD81.BITNET>, John.Brennen@VI.RI.CMU.EDU,
+ Paul van Keep <75170.1045@compuserve.COM>, Tamura Jones 2:512/36.7,
+ Ken Medellin via <76702,1071@compuserve.com>
 ---------------------------------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -471,6 +514,9 @@ Additional Packet Driver API calls extracted from version 1.09 of the "PC/TCP
 Packet Driver Specification" Sept 14, 1989, by FTP Software, Inc.,
 26 Princess St, Wakefield, MA 01880-3004.  Added by Ralf Brown, 8/29/90.
 
+Additional Netware 3.01 shell calls from "Professional Development Series
+Bullets" Volume 2, Number 5 (June 1990).  Added 9/90.
+
 Video FOSSIL INT 14 API extracted from Fidonet document FSC-0021 version 1.00
 by Rick Moore, dated May 23, 1988.  Added by Ralf Brown, 9/12/90.
 
@@ -503,6 +549,36 @@ PCSpool API derived from PC Magazine, Vol 10 Number 1 (Jan 15,1991).  Added
 STARLITE calls derived from _General_Software_Project_STARLITE_Architecture_
 _Specification_, Final Draft, October 1, 1990, provided by Stephen Jones
 of General Software.  Added by Ralf Brown, 1/5/91.
+
+Communicating Applications Specification v1.2 information extracted from
+"DCA/Intel Communicating Applications Specification Version 1.2" dated 9/27/90
+(Intel part number 301812-004) and available from the Intel BBS at
+(503)645-6275.  Added by Ralf Brown, 2/23/91.
+
+TBScanX v2.3 API extracted from the TBScanX documentation (Frans Veldman,
+ESaSS B.V., P.O. Box 1380, 6501 BJ Nijmegen, The Netherlands).  Added 3/12/91.
+
+Novell IPX/SPX calls in part from an article by J. Vanderaart in the Dutch
+_LAN-Magazine_, issue #1, titled "IPX, de kabel in de knel".  Added 3/16/91.
+
+Replacements for July 1987 info derived from
+	_80286_and_80287_Programmer's_Reference_Manual, Intel #210498-004
+	_IBM_ROM_BIOS_, Ray Duncan, "Programmer's Quick Reference Series"
+	_DOS_and_BIOS_Functions_Quick_Reference_, Que
+	_The_MS-DOS_Encyclopedia_, Microsoft Press
+	_Advanced_MSDOS_, Ray Duncan (first edition, 1986)
+	_System_BIOS_for_IBM_PC/XT/AT_Computers_and_Compatibles_, Phoenix
+		Technical Reference Series
+	_PC_Tech_Journal, December 1984, April 1986, May 1986, and August 1988
+	_Programmer's_Journal_, v8 #1
+	_Byte_, v12 #12 (1987 Extra Edition)
+Information added by Ralf Brown, 3/91.
+
+John J. Seal's BIOS Window Extension v1.1 API extracted from the May 1986 Dr.
+Dobbs' Journal.  Added by Ralf Brown, 3/23/91.
+
+Some additional NetWare data structures and flag values from _NetWare_System_
+_Interface_Technical_Overview_ by Novell.  Added by Ralf Brown, 3/24/91.
 ---------------------------------------------
 The following have provided API reference materials at no charge:
 
@@ -514,7 +590,7 @@ FAX:   (508) 898-3604
 
 General Software		(STARLITE architecture [OEM DOS, SMP DOS])
 P.O. Box 2571
-Redmond, WA 98703
+Redmond, WA 98073
 
 Intel Literature		(DOS Protected-Mode Interface)
 3065 Bowers Avenue
@@ -578,6 +654,10 @@ Eicon Technology Corporation
 2196 32nd Avenue
 Montreal, Quebec, Canada H8T 3H7
 Voice: (514) 631-2592
+
+Novell, Inc.			(NetWare)
+122 East 1700 South
+Provo, UT 84601
 ---------------------------------------------
 To keep the lawyers happy:
 
@@ -606,7 +686,7 @@ What they're saying about this list:
    IBM PC.  A great thing to have on your hard disk if you don't have
    a Ray Duncan or Peter Norton book handy."
       _Turbo_Technix_, July/August 1988, p. 157.
-[and that was about the 1/30/88 version, which is less than one-sixth the size
+[and that was about the 1/30/88 version, which is about one-seventh the size
  of the current version....]
 ---------------------------------------------
 If you know of any information not in the list, or which is stated incorrectly,
@@ -623,7 +703,7 @@ Address e-mail to:
 	ARPA: ralf@cs.cmu.edu
 	UUCP: {ucbvax,harvard}!cs.cmu.edu!ralf
 	BIT:  ralf%cs.cmu.edu@cmuccvma
-	FIDO: Ralf Brown 1:129/3.1
+	FIDO: Ralf Brown 1:129/26.1
 		or post a message to the DR_DEBUG echo
 	CompuServe:   >INTERNET:ralf@cs.cmu.edu
 
@@ -631,7 +711,7 @@ Snail mail:
 	Ralf Brown
 	School of Computer Science
 	Carnegie Mellon University
-	Pittsburgh, PA 15213
+	Pittsburgh, PA 15213-3890
 	   (Letters which enclose a Self-Addressed Stamped Envelope or e-mail
 	    address will be given priority.  An overseas air-mail letter costs
 	    two international return coupons.)
