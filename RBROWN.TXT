@@ -4,14 +4,14 @@ The MSDOS Interrupt List
 	A comprehensive listing of functions available through interrupt
 	calls on IBM PCs and compatibles.  Includes both documented and
 	undocumented functions.
-	Current version: INTER26A (release 26 [v91.3], 6/15/91)
-			 INTER26B
+	Current version: INTER28A (release 28 [v91.5], 11/17/91)
+			 INTER28B
 
 DVINT
-	An extract of the MSDOS Interrupt List containing the DESQview API
-	calls.	Updated whenever there have been significant additions to
-	the DESQview calls in the Interrupt List.
-	Current version: DVINT590 (10/14/90)
+	An extract of the MSDOS Interrupt List containing the DESQview
+	and QEMM API calls.  Updated whenever there have been significant
+ 	additions to the DESQview/QEMM calls in the Interrupt List.
+	Current version: DVINT28 (11/17/91)
 
 RBcomm
 	A DESQview-aware communications program which sports seamless DSZ,
@@ -24,9 +24,11 @@ RBcomm
 
 SPAWNO
 	A replacement for the Turbo C and Microsoft C spawn..() functions
-	which swaps the current program to disk, EMS, or XMS while the
-	spawned program executes, leaving less than 500 bytes in memory.
-	Current version: SPAWNO30 (v3.0 11/16/90)
+	which swaps the current program to disk, EMS, XMS, or raw extended
+	memory while the spawned program executes, leaving less than 300
+	bytes in memory.  Also includes a variant for Turbo Pascal v4.0 or
+	higher.
+	Current version: SPAWNO40 (v4.0 11/17/91)
 
 RBkeyswap
 	Exchange left control and CapsLock keys, as well as Esc and `/~.
@@ -64,7 +66,7 @@ SPTURBO
 	Knows which compiler to invoke based on the file's extension, and
 	can run MAKE for multi-file projects.
         Current version: SPTURBO (v2.3 Aug 1,1989)
-	Note: DO not expect any updates, as I no longer use Sprint as a
+	Note: Do not expect any updates, as I no longer use Sprint as a
 	      programming environment.
 
 PURGEMSG
@@ -76,7 +78,7 @@ Note: beginning 1/1/91, all packages are distributed in PKZIP archives with
       authenticity verification.  Please redistribute only the original
       archives to preserve the authenticity information.  If you receive
       an archive dated after 1/1/91 which fails the authenticity check,
-      you should treat it with suspicion.  If you receive an archive which
+      you should treat it with caution.  If you receive an archive which
       passes the PKZIP v1.1 check but displays an authenticity code other
       than NWS235, then the archive has been deliberately tampered with
       and should be deleted IMMEDIATELY.

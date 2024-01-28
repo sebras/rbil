@@ -687,7 +687,7 @@ INT 15 - DESQview (TopView???) - UNIMPLEMENTED IN DV 2.x
 	AL = 26h thru 2Ah
 Return: pops up "Programming error" window in DV 2.x
 ----------15102B-----------------------------
-INT 15 - DESQview 2.0 (TopView???) - "POSTTASK" - AWAKEN TASK
+INT 15 - DESQview 2.0+ (TopView???) - "POSTTASK" - AWAKEN TASK
 	AX = 102Bh
 	BX = segment of object handle for task
 Return: nothing
@@ -695,7 +695,7 @@ Note:	forces a task which is waiting on its objectq to continue by placing
 	  the handle for the task on the objectq
 SeeAlso: AX=101Dh,AX=101Eh
 ----------15102C-----------------------------
-INT 15 - DESQview 2.0 (TopView???) - START NEW APPLICATION IN NEW PROCESS
+INT 15 - DESQview 2.0+ (TopView???) - START NEW APPLICATION IN NEW PROCESS
 	AX = 102Ch
 	ES:DI -> contents of .PIF/.DVP file (see below)
 	BX = size of .PIF/.DVP info
@@ -704,7 +704,8 @@ Return: BX = segment of object handle for new task
 
 Format of .PIF/.DVP file:
 Offset	Size	Description
- 00h	WORD	reserved (0)
+ 00h	BYTE	reserved (0)
+ 01h	BYTE	checksum of bytes 02h through 170h
  02h 30 BYTEs	blank-padded program title
  20h	WORD	maximum memory to allocate to partition in K
  22h	WORD	minimum memory required in K
@@ -740,7 +741,8 @@ Offset	Size	Description
 		input in one clock tick (default 0 = never)
 177h	BYTE	nonzero = "uses own colors"
 178h	BYTE	nonzero if application swappable
-179h  3 BYTEs	reserved (0)
+179h  3 BYTEs	reserved (0) according to Quarterdeck documentation
+		in actual .DVP files, frequently 01h
 17Ch	BYTE	nonzero to automatically close on exit
 17Dh	BYTE	nonzero if copy-protect floppy is required
 ---information unique to DESQview 2.0+---
@@ -782,7 +784,7 @@ Offset	Size	Description
 18Ch	BYTE	protection level for 386 machines
 18Dh 19 BYTEs	reserved (0)
 ----------15102D-----------------------------
-INT 15 - DESQview 2.0 - "KMOUSE" - KEYBOARD MOUSE CONTROL
+INT 15 - DESQview 2.0+ - "KMOUSE" - KEYBOARD MOUSE CONTROL
 	AX = 102Dh
 	BL = subfunction
 	     00h determine whether using keyboard mouse
@@ -790,6 +792,14 @@ INT 15 - DESQview 2.0 - "KMOUSE" - KEYBOARD MOUSE CONTROL
 			     01h using keyboard mouse
 	     01h turn keyboard mouse on
 	     02h turn keyboard mouse off
+----------15102E-----------------------------
+INT 15 - DESQview 2.40 - ALLOCATE ??? MEMORY
+	AX = 102Eh
+	BX = number of bytes
+Return: AX = status
+	    0000h successful
+		ES = segment of allocated memory
+	    0001h failed	
 ----------1511-------------------------------
 INT 15 - TopView commands
 	AH = 11h
@@ -3358,7 +3368,11 @@ Offset	Size	Description
  00h	BYTE	length of name
  01h  N BYTEs	name
       2 BYTEs	keys to invoke program (second = 00h if only one key used)
-	WORD	??? seems always to be 0000h
+	WORD	program type
+		0000h normal program
+		0004h divider
+		0080h Delete a Program
+		0081h Change a Program
 	BYTE	end flag: 00h for all but last entry, which is FFh
 ----------15DE01-----------------------------
 INT 15 - DESQview - UPDATE "OPEN WINDOW" MENU
@@ -3660,9 +3674,22 @@ SeeAlso: AX=DE04h,AX=DE05h,AX=DE06h
 ----------15DE23-----------------------------
 INT 15 - DESQview 2.31+ - ???
 	AX = DE23h
-	BX = ???
-	CX = ???
+	BX = ??? IRQ number on first PIC?
+	CX = ??? IRQ number on second PIC?
 Return: ???
+----------15DE24-----------------------------
+INT 15 - DESQview 2.40 - ???
+	AX = DE24h
+Return: BX = ??? (0000h for v2.40)
+----------15DE25-----------------------------
+INT 15 - DESQview 2.40 - ???
+	AX = DE25h
+	???
+Return: nothing
+----------15DE26-----------------------------
+INT 15 - DESQview 2.40 - GET ???
+	AX = DE26h
+Return: BX = segment of handle for ??? (current window?)
 ----------15E00F-----------------------------
 INT 15 - Compaq Systempro - MULTIPROCESSOR DISPATCH
 	AX = E00Fh
@@ -3741,11 +3768,13 @@ INT 16 - KEYBOARD - STORE KEYSTROKE IN KEYBOARD BUFFER (AT/PS w enh keybd only)
 	CL = ASCII character
 Return: AL = 00h if successful
 	     01h if keyboard buffer full
-Note:	under DESQview, the following "keystrokes" invoke the following actions
-	  when they are read from the keyboard buffer:
-		38FCh	pop up DESQview main menu
-		38FEh	close the current window
-		38FFh	pop up DESQview learn menu
+Note:	under DESQview, the following "keystrokes" invoke the following
+	  actions when they are read from the keyboard buffer:
+	  	38FBh or FB00h	switch to next window (only if main menu
+				popped up)
+		38FCh or FC00h	pop up DESQview main menu
+		38FEh or FE00h	close the current window
+		38FFh or FF00h	pop up DESQview learn menu
 SeeAlso: AH=00h,AH=71h,AH=FFh,INT 15/AX=DE10h
 ----------1610-------------------------------
 INT 16 - KEYBOARD - GET ENHANCED KEYSTROKE (enhanced kbd support only)
@@ -4199,6 +4228,15 @@ Return: AL = status
 	    01h failure
 Note:	KBUF is a keyboard buffer expander by Mark Adler
 SeeAlso: AH=05h
+----------16FF-------------------------------
+INT 16 - OPTIMA 1024 VGA-Sync - QUERY ZOOM INTERRUPT
+	AH = FFh
+Return: AL = interrupt number to which BIOS keyboard handler has been relocated
+	AL+1 = Zoom interrupt number
+	BX = hotkey
+Note:	The default interrupts are 60h for keyboard and 61h for Zoom interrupt;
+	  the default hot key is F10
+SeeAlso: INT 60"OPTIMA"
 ----------16FF91-----------------------------
 INT 16 - PC Tools 7 DESKTOP - ???
 	AX = FF91h
@@ -5964,8 +6002,8 @@ Values for operating system indicator:
  07h QNX, OS/2 HPFS
  08h AIX bootable partition, SplitDrive
  09h AIX data partition
- 50h Disk Manager???
- 51h Disk Manager
+ 50h Disk Manager, read-only partition
+ 51h Disk Manager, read/write partition
  52h CP/M
  56h GoldenBow VFeature
  61h SpeedStor

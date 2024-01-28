@@ -15,9 +15,9 @@ INT 2F - Multiplex - NOTES
    registers on input and/or output for the installation check.
 Note:	Since the multiplex chain is growing so long, and beginning to
 	  experience multiplex number collisions, I am proposing an alternate
-	  multiplex interrupt on INT 7D.  If you decide to use the alternate
+	  multiplex interrupt on INT 2D.  If you decide to use the alternate
 	  multiplex, please let me know.
-SeeAlso: INT 7D
+SeeAlso: INT 2D
 ----------2F---------------------------------
 INT 2F - Multiplex - BMB Compuscience Canada Utilities Interface
 	AH = xx (dynamically assigned based upon a search for a multiplex
@@ -2819,6 +2819,12 @@ Perform a FAR call to the driver entry point with AH set to the function code
 	     Return: AX = 0001h success
 			= 0000h failure
 			   BL = error code (see below)
+	12h  Reallocate upper memory block (XMS v3.0)
+	     DX = segment address of UMB to resize
+	     BX = new size of block in paragraphs
+	     Return: AX = 0001h success
+	     		= 0000h failure
+			   BL = error code (see below)
 Note:	HIMEM.SYS requires at least 256 bytes free stack space
 
 Format of EMM structure:
@@ -2931,7 +2937,8 @@ SeeAlso: AX=4653h/CX=0004h
 ----------2F4680-----------------------------
 INT 2F - Multiplex - MS Windows 3 - INSTALLATION CHECK
 	AX = 4680h
-Return: AX = 0000h MS Windows 3.0 running in real (/R) or standard (/S) mode
+Return: AX = 0000h MS Windows 3.0 running in real (/R) or standard (/S) mode,
+		   or DOS 5 DOSSHELL active
 	   nonzero  no Windows, Windows prior to 3.0, or Windows3 in enhanced
 		    mode
 Note:	not officially documented, but Microsoft has indicated that they
@@ -3776,34 +3783,45 @@ SeeAlso: AX=AD82h
 INT 2F - Multiplex - DOS 3.3+ internal - INSTALLABLE COMMAND - INSTALL CHECK
 	AX = AE00h
 	DX = FFFFh
-	DS:BX -> command line
+	CH = FFh
+	CL = length of command line tail (4DOS v4.0)
+	DS:BX -> command line buffer (see below)
+	DS:SI -> command name buffer (see below)
+	DI = 0000h (4DOS v4.0)
 Return: AL = FFh if this command is a TSR extension to COMMAND.COM
 	AL = 00h if the command should be executed as usual
-Notes:	This call provides a mechanism for TSRs to install permanent extensions
-	  to the command repertoire of COMMAND.COM.  It appears that
-	  COMMAND.COM makes this call before executing the current command
-	  line,	and does not execute it itself if the return is FFh.
-	APPEND hooks this call, to allow subsequent APPEND commands to execute
-	  without re-running APPEND
-	CH appears to be set to FFh on the first call and 00h on the second
+Notes:	This call provides a mechanism for TSRs to install permanent
+	  extensions to the command repertoire of COMMAND.COM.  It appears
+	  that COMMAND.COM makes this call before executing the current
+	  command line, and does not execute it itself if the return is FFh.
+	APPEND hooks this call, to allow subsequent APPEND commands to
+	  execute without re-running APPEND
 
-Format of command line:
+Format of command line buffer:
 Offset	Size	Description
  00h	BYTE	max length of command line, as in INT 21/AH=0Ah
- 01h	BYTE	count of bytes to follow
+ 01h	BYTE	count of bytes to follow, excluding terminating 0Dh
       N BYTEs	command line text, terminated by 0Dh
+
+Format of command name buffer:
+Offset	Size	Description
+ 00h	BYTE	length of command name
+ 01h  N BYTEs	uppercased command name (blank-padded to 11 chars by 4DOS v4)
 ----------2FAE01DXFFFF-----------------------
 INT 2F - Multiplex - DOS 3.3+ internal - INSTALLABLE COMMAND - EXECUTE
 	AX = AE01h
 	DX = FFFFh
-	DS:SI -> buffer
-Return: buffer at DS:SI filled with a length byte followed by the uppercase
-	  internal command to execute (if length not 0)
+	CH = 00h
+	CL = length of command name (4DOS v4.0)
+	DS:SI -> command name buffer (see AX=AE00h)
+	DS:BX -> command line buffer (see AX=AE00h)
+Return: DS:SI buffer updated
+	  if length byte is nonzero, the following bytes contain the uppercase
+	  internal command to execute and the command line buffer contains the
+	  command's parameters (the first DS:[SI] bytes are ignored)
 Notes:	this call requests execution of the command which a previous call to
 	  AX=AE00h indicated was resident
 	APPEND hooks this call
-	if the buffer is filled with a nonempty string, COMMAND.COM will
-	  attempt to execute it as an internal command
 ----------2FB000-----------------------------
 INT 2F - Multiplex - DOS 3.3+ GRAFTABL.COM - INSTALLATION CHECK
 	AX = B000h
@@ -5328,16 +5346,16 @@ Notes:	QEMM/QRAM/VIDRAM/MANIFEST will search for a free AH value from D2h
 	  memory chain (see INT 21/AH=52h), except that XMS Upper Memory Blocks
 	  have the block header program name field set to "UMB"
 ----------2FD201BX5145-----------------------
-INT 2F - Multiplex - Quarterdeck QEMM/QRAM 5.0 - INSTALLATION CHECK???
+INT 2F - Multiplex - Quarterdeck QEMM 5.0+ - INSTALLATION CHECK
 	AX = D201h
 	BX = 5145h ("QE")
 	CX = 4D4Dh ("MM")
 	DX = 3432h ("42")
 Return: BX = 4F4Bh ("OK")
-	ES:DI -> entry point???
+	ES:DI -> QEMM API entry point (see INT 67/AH=3Fh)
 Note:	QEMM/QRAM/VIDRAM/MANIFEST will search for a free AH value from D2h
 	  through FFh, then C0h through D1h
-	QEMM and QRAM both responded the same
+SeeAlso: INT 67/AH=3Fh
 ----------2FD201BX5649-----------------------
 INT 2F - Multiplex - Quarterdeck VIDRAM 5.0 - INSTALLATION CHECK
 	AX = D201h
@@ -5423,9 +5441,13 @@ INT 2F - Multiplex - 4DOS.COM v2.1+
 			CX = PSP segment address for current invocation
 			DL = 4DOS shell number (0 for the first (root) shell,
 			     updated each time a new copy is loaded)
-	    01h (internal) terminate current copy of 4DOS
+	    01h (internal, v2.1-3.03) terminate current copy of 4DOS
+	    	Return: nothing
+	    	(internal, v4.0) ???
+		Return: ES:BX -> data area (see below)
 	    02h ???
 		DX = ???
+	---v2.1-3.03 only---
 	    03h EXEC program
 		CX:DX -> EXEC record
 	    FEh deallocate shell number (passed through to root shell)
@@ -5439,6 +5461,12 @@ Offset	Size	Description
  00h	WORD	offset of ASCIZ program name in same segment as EXEC record
  02h	WORD	offset of DOS commandline in same segment as EXEC record
  04h	WORD	segment of environment for child process (see INT 21/AH=26h)
+
+Format of 4DOS v4.0 data area:
+Offset	Size	Description
+ 00h  2 BYTEs	???
+ 06h	WORD	XMS handle for swapping
+ 	???
 ----------2FD44E-----------------------------
 INT 2F - Multiplex - 4DOS.COM v3.0+ - AWAITING USER INPUT
 	AX = D44Eh
@@ -5448,6 +5476,55 @@ INT 2F - Multiplex - 4DOS.COM v3.0+ - AWAITING USER INPUT
 Return: handler must preserve SI, DI, BP, SP, DS, ES, and SS
 Note:	v3.00 only makes the call corresponding to BX=0001h, does not set BX
 SeeAlso: AX=D44Dh
+----------2FD44FBX0000-----------------------
+INT 2F - Multiplex - 4DOS.COM v4.0+ - KSTACK.COM INSTALLATION CHECK
+	AX = D44Fh
+	BX = 0000h
+Return: AX = 44DDh if installed
+SeeAlso: AX=D44Fh/BX=0001h
+----------2FD44FBX0001-----------------------
+INT 2F - Multiplex - 4DOS.COM v4.0+ - PLACE KEYSTROKES INTO KEYSTACK
+	AX = D44Fh
+	BX = 0001h
+	CX = number of keystrokes (01h-FFh)
+	DS:DX -> keystroke list (one word per keystroke)
+Return: AX = status
+	    0000h successful
+	    nonzero failed
+	BX,CX,DX destroyed
+Notes:	the keystrokes are the exact values to return from subsequent calls to
+	  INT 16 with AH=00h,01h,10h, or 11h, with the following exceptions:
+		0000h causes subfunctions 01h and 11h to indicate an empty
+			keyboard buffer
+		FFFFh is followed by a word indicating the number of clock
+			ticks to delay before the next faked keystroke
+	v4.00 KSTACK overwrites any unread keystrokes from the previous
+	  invocation, and does not range-check CX; it will overwrite memory
+	  following the resident portion if CX is greater than 100h.
+SeeAlso: AX=D44Fh/BX=0000h,INT 16/AH=00h,INT 21/AX=4403h
+----------2FD600-----------------------------
+INT 2F - Multiplex - HEART.COM - INSTALLATION CHECK
+	AX = D600h
+Return: AX = 0303h (two hearts) if installed
+	    ES:DI -> buffer (see below)
+Note:	HEART.COM is a CPU lock-up/critical indicator utility by Mitch Davis.
+	Once the host program has identified the address of the data area, it
+	  can change this to indicate safe/critical, alternate colours, etc.
+	The entries for the color table are in char/attrib form.  Every two
+	  entries form a pair which is alternated between 68 times a minute.
+	  The first half of the table is for color videos, the second mono.
+	  Within each half, the first half is for the safe chars, and the
+	  second for the critical chars.
+
+Format of buffer:
+Offset	Size	Description
+ 00h  8 WORD	Table of colors/attributes (see notes).
+ 10h	BYTE	flags
+ 		bit 0: program is in critical section, so flash double
+			exclamation mark
+		bit 1: program is in safe code, so flash the heart character
+ 11h	WORD	position of heartbeat on screen, normally 009Eh (last column
+ 		of second line)
 ----------2FD701-----------------------------
 INT 2F - Multiplex - BANYAN VINES v4+ - GET BANV INTERRUPT NUMBER
 	AX = D701h
@@ -5497,7 +5574,7 @@ INT 2F - SoftCom programs - API
 	AL = FEh get info
 	    Return: ES:BX -> TSR info list (see below)
 	AL = program identifier
-	    BL = function
+	    BH = function
 		FDh get version
 		    Return: BX = version
 		FFh installation check
@@ -5562,7 +5639,7 @@ Return: AX = status
 	BX,CX,DX destroyed
 Notes:	the callback function is called with a simulated interrupt when the
 	  DESQview window containing it is closed; it should perform all
-	  necessary cleanup and them perform a FAR jump to the chaining address
+	  necessary cleanup and then perform a FAR jump to the chaining address
 	  or an IRET if the chaining address is 0000h:0000h
 	if the program wishes to remove itself before the window is closed, it
 	  should call the DVeop entry point with the previously returned
@@ -5900,6 +5977,11 @@ Return: AL = status
 		    bit 0: running under DPMI
 			1: running under Phar Lap VMM
 SeeAlso: AH=A1h,AX=F100h,AX=FBA1h
+----------2FEE00-----------------------------
+INT 2F - Multiplex - GRIDLOC.EXE
+	AX = EE00h
+Return: AL = FFh if installed
+Note:	GRIDLOC is a PC security program by Intelligent Security Systems, Inc.
 ----------2FF000-----------------------------
 INT 2F - 4MAP - INSTALLATION CHECK
 	AX = F000h
@@ -6020,39 +6102,41 @@ Offset	Size	Description
 		0001h failed (INT 2F hooked by another program
 		unchanged if successful
 ----------2FFE00DI4E55-----------------------
-INT 2F - NORTON UTILITIES 5.0 TSRs - INSTALLATION CHECK/STATUS REPORT
+INT 2F - NORTON UTILITIES 5.0+ TSRs - INSTALLATION CHECK/STATUS REPORT
 	AX = FE00h
 	DI = 4E55h ("NU")
 	SI = TSR identifier
-	    4346h ("CF") NCACHE-F
-	    4353h ("CS") NCACHE-S
+	    4346h ("CF") NCACHE-F (v5) / NCACHE (v6.0+)
+	    4353h ("CS") NCACHE-S (v5 only)
 	    4443h ("DC") DISKREET
 	    444Dh ("DM") DISKMON
-	    4653h ("FS") FILESAVE
+	    4653h ("FS") FILESAVE (v5) / EP (v6.0+)
 Return: SI = TSR reply
-	    lowercase version of SI on entry (i.e. SI or 2020h)
+	    lowercase version of SI on entry (i.e. SI OR 2020h)
 	AH = status
 	    00h installed but disabled internally
 	    01h installed and enabled
 	AL = status
 	    00h	NCACHE-x or DISKREET installed
-	    01h FILESAVE installed
-	    45h	DISKMON installed
-	BX = length of *.INI file (DISKMON and FILESAVE only) (see below)
+	    01h FILESAVE / EP / DISKMON v6 installed
+	    45h	DISKMON v5 installed
+	BX = length of *.INI file (DISKMON and FILESAVE/EP only) (see below)
 	CX = segment of resident portion
----FILESAVE---
+	    FFFFh if completely loaded high (NCACHE)
+---FILESAVE/EP---
 	DL = ??? (apparently always 00h)
 ---DISKMON---
-	DX = ??? (apparently always 1AE6h)
+	DX = ??? (apparently always 1AE6h [v5] / 1B86h [v6])
+Note:	the value returned in CX is incorrect for NCACHE 6.00
 SeeAlso: AX=FE01h,AX=FE02h,AX=FE03h,AX=FE04h,AX=FE05h
 
-Format of DISKMON.INI file (CX:0508h -> copy in installed TSR):
+Format of DISKMON.INI file:
 Offset	Size	Description
 -6Ch 108 BYTEs	(in memory copy only)
 		list of filenames which are always protected:
 		  IBMBIO.COM/IBMDOS.COM, IO.SYS/MSDOS.SYS, TBIOS.SYS/TDOS.SYS,
 		  MIO.SYS/IO.BIN, COMMAND.COM
- 00h	BYTE	01h always ???
+ 00h	BYTE	??? always 01h
  01h	BYTE	disk light (00h off, 01h on)
  02h	BYTE	disk protection (00h off, 01h on)
  03h	BYTE	protected areas
@@ -6065,8 +6149,10 @@ Offset	Size	Description
 		(lowercase, blank padded or = 000000h)
  20h 240 BYTEs	filename list (20 entries)
 		(lowercase, name and extension blank padded, with '.')
+Note:	CX:0508h -> copy in installed TSR (v5)
+	CX:052Fh -> copy in installed TSR (v6)
 
-Format of FILESAVE.INI file (CX:03D2h -> copy in installed TSR):
+Format of FILESAVE.INI / EP.INI file:
 Offset	Size	Description
  00h 26 BITs	drive list (bit set: file protection on, cleared: off):
  00h	BYTE	drives	A: - H:
@@ -6081,14 +6167,16 @@ Offset	Size	Description
  20h	BYTE	include files with archive bit clear (00h no, 01h yes)
  21h	WORD	number of days after which files are purged (0 = never)
  23h	WORD	max kilobytes of erased file space to hold (0 = all)
+Note:	CX:03D2h -> copy in installed TSR (v5.0)
+	CX:03F5h -> copy in installed TSR (v6.0)
 ----------2FFE01DI4E55-----------------------
-INT 2F - NORTON UTILITIES 5.0 TSRs - ENABLE
+INT 2F - NORTON UTILITIES 5.0+ TSRs - ENABLE
 	AX = FE01h
 	DI = 4E55h ("NU")
 	SI = TSR identifier (see AX=FE00h)
-Return: SI = TSR reply (lowercase version of entry SI, i.e. SI or 2020h)
+Return: SI = TSR reply (lowercase version of entry SI, i.e. SI OR 2020h)
 	AX = status
-	    0002h successful (DISKMON, FILESAVE)
+	    0002h successful (DISKMON, FILESAVE, EP)
 	    FE00h successful (NCACHE-x, DISKREET)
 Notes:	if the enable/disable calls are used on DISKMON or NCACHE-x, the status
 	  report generated by the programs still indicates the previous state,
@@ -6096,29 +6184,29 @@ Notes:	if the enable/disable calls are used on DISKMON or NCACHE-x, the status
 	apparently has no effect on DISKREET
 SeeAlso: AX=FE00h,AX=FE02h
 ----------2FFE02DI4E55-----------------------
-INT 2F - NORTON UTILITIES 5.0 TSRs - DISABLE
+INT 2F - NORTON UTILITIES 5.0+ TSRs - DISABLE
 	AX = FE02h
 	DI = 4E55h ("NU")
 	SI = TSR identifier (see AX=FE00h)
-Return: SI = TSR reply (lowercase version of entry SI, i.e. SI or 2020h)
+Return: SI = TSR reply (lowercase version of entry SI, i.e. SI OR 2020h)
 	AX = status
 	    0004h successful (DISKMON, FILESAVE)
 	    FE00h successful (NCACHE-x, DISKREET)
 Note:	(see AX=FE01h)
 SeeAlso: AX=FE00h,AX=FE01h
 ----------2FFE03DI4E55-----------------------
-INT 2F - NORTON UTILITIES 5.0 TSRs - internal - ???
+INT 2F - NORTON UTILITIES 5.0+ TSRs - internal - ???
 	AX = FE03h
 	DI = 4E55h ("NU")
 	SI = TSR identifier (see AX=FE00h)
-Return: SI = TSR reply (lowercase version of entry SI, i.e. SI or 2020h)
+Return: SI = TSR reply (lowercase version of entry SI, i.e. SI OR 2020h)
 	AX = status
 	    0006h successful???
 Notes:	only supported by DISKMON, FILESAVE, and NCACHE-x
 	reportedly dangerous
 SeeAlso: AX=FE00h
 ----------2FFE04DI4E55-----------------------
-INT 2F - NORTON UTILITIES 5.0 DISKMON, FILESAVE - internal - ???
+INT 2F - NORTON UTILITIES 5.0+ DISKMON, FILESAVE / EP - internal - ???
 	AX = FE04h
 	DI = 4E55h ("NU")
 	SI = TSR identifier (see AX=FE00h)
@@ -6127,7 +6215,7 @@ Return: SI = TSR reply (lowercase version of entry SI, i.e. SI or 2020h)
 	    0008h successful???
 SeeAlso: AX=FE00h
 ----------2FFE05DI4E55-----------------------
-INT 2F - NORTON UTILITIES 5.0 DISKMON, FILESAVE - internal - ???
+INT 2F - NORTON UTILITIES 5.0+ DISKMON, FILESAVE / EP - internal - ???
 	AX = FE05h
 	DI = 4E55h ("NU")
 	SI = TSR identifier (see AX=FE00h)
@@ -6223,11 +6311,23 @@ Notes:	the increment will be a power of two
 	not supported by MS Windows 3.0 in Standard mode
 SeeAlso: AX=0000h
 ----------310004-----------------------------
-INT 31 - DPMI 0.9+ - protected mode - RESERVED FOR HISTORICAL REASONS
+INT 31 - DPMI 0.9+ - protected mode - LOCK SELECTOR
 	AX = 0004h
+	BX = selector to lock (prevent paging)
+Return: ???
+Note:	although marked as reserved in versions 0.9 and 1.0 of the DPMI
+	  specification, this function is called by MS Windows TASKMAN,
+	  PROGMAN, and KERNEL
+SeeAlso: AX=0005h,AX=0600h
 ----------310005-----------------------------
-INT 31 - DPMI 0.9+ - protected mode - RESERVED FOR HISTORICAL REASONS
+INT 31 - DPMI 0.9+ - protected mode - UNLOCK SELECTOR
 	AX = 0005h
+	BX = selector to unlock (permit paging)
+Return: ???
+Note:	although marked as reserved in versions 0.9 and 1.0 of the DPMI
+	  specification, this function is called by MS Windows TASKMAN,
+	  PROGMAN, and KERNEL
+SeeAlso: AX=0004h,AX=0601h
 ----------310006-----------------------------
 INT 31 - DPMI 0.9+ - protected mode - GET SEGMENT BASE ADDRESS
 	AX = 0006h
@@ -6989,7 +7089,7 @@ Return: CF clear if successful
 Notes:	pages at beginning and end will be locked if the region overlaps them
 	may be called multiple times for a given page; the DPMI host keeps a
 	  lock count for each page
-SeeAlso: AX=0601h,INT 21/AX=251Ah,INT 21/AX=EB06h
+SeeAlso: AX=0004h,AX=0601h,INT 21/AX=251Ah,INT 21/AX=EB06h
 ----------310601-----------------------------
 INT 31 - DPMI 0.9+ - protected mode - UNLOCK LINEAR REGION
 	AX = 0601h
@@ -7001,7 +7101,7 @@ Return: CF clear if successful
 	    AX = error code (DPMI 1.0+) (8002h,8025h) (see AX=0000h)
 Notes:	pages at beginning and end will be unlocked if the region overlaps them
 	memory whose lock count has not reached zero remains locked
-SeeAlso: AX=0600h,INT 21/AX=251Bh,INT 21/AX=EB07h
+SeeAlso: AX=0005h,AX=0600h,INT 21/AX=251Bh,INT 21/AX=EB07h
 ----------310602-----------------------------
 INT 31 - DPMI 0.9+ - protected mode - MARK REAL MODE REGION AS PAGEABLE
 	AX = 0602h
@@ -7037,11 +7137,25 @@ Return: CF clear if successful
 	    AX = error code (DPMI 1.0+)
 		8001h unsupported, 16-bit host
 ----------310700-----------------------------
-INT 31 - DPMI 0.9+ - protected mode - RESERVED FOR HISTORICAL REASONS
+INT 31 - DPMI 0.9+ - protected mode - MARK PAGES AS PAGING CANDIDATES
 	AX = 0700h
+	BX:CX = starting linear page number
+	SI:DI = number of pages to mark as paging candidates
+Return: ???
+Note:	although marked as reserved in versions 0.9 and 1.0 of the DPMI
+	  specification, this function is called by MS Windows TASKMAN,
+	  PROGMAN, and KERNEL
+SeeAlso: AX=0701h,AX=0702h
 ----------310701-----------------------------
-INT 31 - DPMI 0.9+ - protected mode - RESERVED FOR HISTORICAL REASONS
+INT 31 - DPMI 0.9+ - protected mode - DISCARD PAGES
 	AX = 0701h
+	BX:CX = starting linear page number
+	SI:DI = number of pages to discard
+Return: ???
+Note:	although marked as reserved in versions 0.9 and 1.0 of the DPMI
+	  specification, this function is called by MS Windows TASKMAN,
+	  PROGMAN, and KERNEL
+SeeAlso: AX=0700h,AX=0703h
 ----------310702-----------------------------
 INT 31 - DPMI 0.9+ - protected mode - MARK PAGE AS DEMAND PAGING CANDIDATE
 	AX = 0702h
@@ -7052,7 +7166,7 @@ Return: CF clear if successful
 	    AX = error code (DPMI 1.0+) (8025h) (see AX=0000h)
 Notes:	this function is advisory, and does not force immediate paging
 	partial pages will not be discarded
-SeeAlso: AX=0703h
+SeeAlso: AX=0700h,AX=0703h
 ----------310703-----------------------------
 INT 31 - DPMI 0.9+ - protected mode - DISCARD PAGE CONTENTS
 	AX = 0703h
@@ -7063,7 +7177,7 @@ Return: CF clear if successful
 	    AX = error code (DPMI 1.0+) (8025h) (see AX=0000h)
 Notes:	this function is advisory, and may be ignored by DPMI implementations
 	partial pages will not be discarded
-SeeAlso: AX=0702h
+SeeAlso: AX=0701h,AX=0702h
 ----------310800-----------------------------
 INT 31 - DPMI 0.9+ - protected mode - PHYSICAL ADDRESS MAPPING
 	AX = 0800h
@@ -7662,6 +7776,7 @@ SeeAlso: AX=0015h,AX=0050h
 INT 33 - MS MOUSE, LOGITECH - RETURN POINTER TO COPYRIGHT STRING
 	AX = 004Dh
 Return: ES:DI -> copyright message "Copyright 1983 Microsoft ***"
+Note:	also supported by Kraft mouse driver
 SeeAlso: AX=0024h,AX=006Dh
 ----------330050-----------------------------
 INT 33 - PCMOUSE - SAVE MSMOUSE STATE
@@ -7677,10 +7792,17 @@ INT 33 - PCMOUSE - RESTORE MSMOUSE STATE
 	ES:DX -> buffer
 Return: AX = FFFFh if successful
 SeeAlso: AX=0050h
+----------330055-----------------------------
+INT 33 - Kraft Mouse - GET ???
+	AX = 0055h
+Return: CX = ???
+	DX = ???
+	ES = ???
 ----------33006D-----------------------------
 INT 33 - MS MOUSE, Logitech - GET VERSION STRING
 	AX = 006Dh
 Return: ES:DI -> Microsoft version number of resident driver
+Note:	also supported by Kraft mouse driver
 SeeAlso: AX=004Dh
 ----------331D6C-----------------------------
 INT 33 - LOGITECH - GET COMPASS PARAMETER
@@ -8357,6 +8479,11 @@ Return: CF clear if successful
 	CF set on error
 	    AL = error code (see AX=8102h)
 SeeAlso: AX=810Bh
+----------4B810D-----------------------------
+INT 4B - QEMM-386 - BUG
+	AX = 810Dh
+Note:	the code in QEMM v5.11 and 6.00 jumps to an invalid location on this
+	  call
 ----------4C---------------------------------
 INT 4C - Z100 - Slave 8259 - S100 vectored line 4
 SeeAlso: INT 4B"Z100",INT 4D"Z100"
@@ -8640,10 +8767,11 @@ Notes:	this is the default location; DV 2.26+ searches for unused ranges of
 	  interrupts and uses the lowest available range in its list for
 	  relocating these IRQs and the next lowest for relocating IRQ8-IRQ15
 	a range of eight interrupts starting at a multiple of 8 is considered
-	  available if all vectors are identical
-	the list of ranges for v2.26 is 50h,58h,68h,78h,F8h (if none of these
+	  available if all vectors are identical and it has not been excluded
+	  with an /XB:nn commandline switch
+	the list of ranges for v2.26 is 50h,58h,68h,78h,F8h (if < two of these
 	  are available, F8h and then 50h are used anyway)
-	the list of ranges for v2.31 is 68h,78h,88h-B8h,F8h (if none of these
+	the list of ranges for v2.31+ is 68h,78h,88h-B8h,F8h (if < two of these
 	  are available, F8h and then F0h are used anyway)
 SeeAlso: INT 58"DESQview"
 ----------50---------------------------------
@@ -8772,6 +8900,13 @@ Return: AL = status
 	    36h maximum applications exceeded (OS/2)
 	    37h no SAPs available for NetBIOS (OS/2)
 	    38h requested resources not available (OS/2)
+	    40h Lana System Error
+	    41h Lana Remote Hot Carrier
+	    42h Lana Local Hot Carrier
+	    43h Lana No Carrier Detected
+	    44h unusual network condition
+	    45h-4Fh hardware error
+	    50h adapter malfunction
 	    FFh NetBIOS busy (command pending)
 Note:	Sytek PCnet card uses DMA 3.
 SeeAlso: INT 2A/AH=01h,INT 2A/AH=04h,INT 5B

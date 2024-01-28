@@ -4,7 +4,7 @@ INT 60 - reserved for user interrupt
 INT 60 - Zero Bug Virus - INSTALLATION CHECK
    The "Zero Bug" virus hooks this vector.  It considers itself installed if
    offset 103h of the handler's segment contains the bytes "ZE"
-SeeAlso: INT 32
+SeeAlso: INT 32,INT 61"SEMTEX"
 ----------60---------------------------------
 INT 60 - Adaptec and OMTI controllers - DRIVE 0 DATA
 SeeAlso: INT 64"Adaptec"
@@ -152,14 +152,16 @@ Notes:	PC/370 is an IBM 370 emulator by Donald S. Higgins
 	  instructions for patching the system for another interrupt
 SeeAlso: INT 2F/AX=7F24h,INT DC"PC/370"
 ----------60---------------------------------
-INT 60 - JPI TopSPEED Modula-2 - PROCEDURE ENTRY TRAP
+INT 60 - JPI TopSPEED Modula-2 v1 - PROCEDURE ENTRY TRAP
 SeeAlso: INT 61"JPI"
 ----------60---------------------------------
 INT 60 - FTP Packet Driver - PC/TCP Packet Driver Specification
    The handler for the interrupt will start with a 3-byte jump instruction, 
    followed by the ASCIZ string "PKT DRVR".  To find the interrupt being used
    by the driver, an application should scan through interrupt vectors 60h to
-   80h until it finds one with the "PKT DRVR" string.
+   80h (20h through FFh for v1.10+ of the specification) until it finds one
+   with the "PKT DRVR" string.  AH values of 80h to FFh have been reserved
+   for user-defined additions.
 ----------6000-------------------------------
 INT 60 - SYS_PROF.EXE - PROFILER STATUS
 	AH = 00h
@@ -244,21 +246,21 @@ Note:	the handle in BX is optional for drivers written to v1.07 or later of
 	  the packet driver specification
 
 Values for error code:
-	01h invalid handle number
-	02h no interfaces of the specified class found
-	03h no interfaces of the specified type found
-	04h no interfaces of the specified number found
-	05h bad packet type
-	06h interface does not support multicast messages
-	07h this packet driver cannot terminate
-	08h invalid receiver mode
-	09h insufficient space
-	0Ah type accessed but never released
-	0Bh bad command
-	0Ch packet could not be sent
-	0Dh hardware address could not be changed
-	0Eh hardware address has a bad length or format
-	0Fh could not reset interface
+ 01h "BAD_HANDLE"	invalid handle number 
+ 02h "NO_CLASS"		no interfaces of the specified class found
+ 03h "NO_TYPE"		no interfaces of the specified type found
+ 04h "NO_NUMBER"	no interfaces of the specified number found
+ 05h "BAD_TYPE"		bad packet type
+ 06h "NO_MULTICAST"	interface does not support multicast messages
+ 07h "CANT_TERMINATE"	this packet driver cannot terminate
+ 08h "BAD_MODE"		invalid receiver mode
+ 09h "NO_SPACE"		insufficient space
+ 0Ah "TYPE_INUSE"	type accessed but never released
+ 0Bh "BAD_COMMAND"	bad command
+ 0Ch "CANT_SEND"	packet could not be sent
+ 0Dh "CANT_SET"		hardware address could not be changed
+ 0Eh "BAD_ADDRESS"	hardware address has a bad length or format
+ 0Fh "CANT_RESET"	could not reset interface
 
 Values for Network Interface classes/types:
     Class 01h  Ethernet/IEEE 802.3	 
@@ -311,6 +313,41 @@ Values for Network Interface classes/types:
 	30h AT&T Starlan-10 NAU
 	31h AT&T Ethernet NAU
 	32h Intel smart card
+	33h Xircom Packet Adapter
+	34h Aquila Ethernet
+	35h Novell NE1000
+	36h Novell NE2000
+	37h SMC PC-510
+	38h AT&T Fiber NAU
+	39h NDIS to Packet Driver adapter
+	3Ah Racal-InterLan ES3210
+	3Bh General Systems ISDN simulated Ethernet
+	3Ch Hewlett-Packard
+	3Dh IMC EtherNic-8
+	3Eh IMC EtherNic-16
+	3Fh IMC EtherNic-MCA
+	40h NetWorth EtherNext
+	41h Dataco Scanet
+	42h DEC DEPCA
+	43h C-Net
+	44h Gandalf LANLine
+	45h Apricot built-in
+	46h David Systems Ether-T
+	47h ODI to Packet Driver adapter
+	48h AMD Am21110-16
+	49h Intel ICD Network controller family
+	4Ah Intel ICD PCL2
+	4Bh Intel ICD PCL2A
+	4Ch AT&T LANPacer
+	4Dh AT&T LANPacer+
+	4Eh AT&T EVB
+	4Fh AT&T StarStation
+	50h SLIP simulated ethernet
+	51h Racal-Interlan NIA310
+	52h Racal-Interlan NISE
+	53h Racal-Interlan NISE30
+	54h Racal-Interlan NI6610
+	55h Ethernet over IP/UDP
     Class 02h  ProNET-10
 	01h Proteon p1300
 	02h Proteon p1800
@@ -321,8 +358,11 @@ Values for Network Interface classes/types:
 	04h Gateway PC-bus
 	05h Gateway AT-bus
 	06h Gateway MCA-bus
+	39h NDIS to Packet Driver adapter
+	47h ODI to Packet Driver adapter
     Class 04h  Omninet
     Class 05h  Appletalk
+	01h ATALK.SYS adapter
     Class 06h  Serial Line
 	01h Clarkson 8250-SLIP
 	02h Clarkson "Multiplexor"
@@ -330,16 +370,23 @@ Values for Network Interface classes/types:
     Class 08h  ARCnet
 	01h Datapoint RIM
     Class 09h  AX.25
+	01h Ottawa PI card
     Class 0Ah  KISS
     Class 0Bh  IEEE 802.3 with 802.2 headers
 	types same as for class 01h
     Class 0Ch  FDDI with 802.2 headers
+	01h Western Digital
+	02h Frontier Technology
     Class 0Dh  Internet X.25
 	01h Western Digital
 	02h Frontier Technology
     Class 0Eh  N.T. LANSTAR (encapsulating DIX Ethernet)
 	01h NT LANSTAR/8
 	02h NT LANSTAR/MC
+    Class 0Fh  SLFP (MIT serial specification)
+	01h MERIT
+    Class 10h  PPP (Point-to-Point Protocol)
+
 Note: class and type numbers are cleared through FTP Software
 ----------6001-------------------------------
 INT 60 - SYS_PROF.EXE - TURN PROFILING OFF
@@ -383,7 +430,7 @@ INT 60 - FTP Packet Driver - BASIC FUNC - ACCESS TYPE
 	BX = interface type
 	DL = interface number
 	DS:SI -> type
-	CX = length of type
+	CX = length of type (0000h for all packets)
 	ES:DI -> receiver
 Return: CF set on error
 	    DH = error code (see AX=01FFh)
@@ -391,12 +438,19 @@ Return: CF set on error
 	    AX = handle		
 SeeAlso: AH=03h"FTP"
 
-Receiver is called with
+Receiver is called with:
 	AX = subfunction
-	    00h application to return pointer to buffer in ES:DI
-		returned ES:DI = 0000h:0000h means throw away packet
+	    00h get packet buffer
+	    	DX = lookahead length (v1.10+)
+		DS:SI -> lookahead buffer if DX nonzero (v1.10+)
+		DI = error flags (class dependent) (v1.10+)
+		Return: ES:DI -> packet buffer
+				0000h:0000h means throw away packet
+			CX = size of buffer (v1.10+), may be smaller than
+				incoming data
 	    01h copy completed
 		DS:SI -> buffer
+		CX = bytes actually copied (v1.10+)
 	BX = handle
 	CX = buffer length
 when a packet is received
@@ -459,7 +513,7 @@ SeeAlso: AH=03h"SYS_PROF"
 ----------6005-------------------------------
 INT 60 - FTP Packet Driver - BASIC FUNC - TERMINATE DRIVER FOR HANDLE
 	AH = 05h
-	BX = handle
+	BX = handle (optional for v1.10+)
 Return: CF set on error
 	   DH = error code (see AX=01FFh)
 	CF clear if successful
@@ -480,7 +534,7 @@ Return: AX = return code
 ----------6006-------------------------------
 INT 60 - FTP Packet Driver - BASIC FUNC - GET ADDRESS
 	AH = 06h
-	BX = handle
+	BX = handle (optional for v1.10+)
 	ES:DI -> buffer
 	CX = length
 Return: CF set on error
@@ -497,7 +551,7 @@ Return: AL = status
 ----------6007-------------------------------
 INT 60 - FTP Packet Driver - BASIC FUNC - RESET INTERFACE
 	AH = 07h
-	BX = handle
+	BX = handle (optional for v1.10+)
 Return: CF set on error
 	    DH = error code (see AX=01FFh)
 	CF clear if successful
@@ -521,7 +575,7 @@ Offset	Size	Description
  0Ah	WORD	number of transmit buffers
  0Ch	WORD	interrupt number to hook for post-EOI processing, 00h=none
 ----------600B-------------------------------
-INT 60 - FTP Packet Driver 1.09+ - HIGH-PERF FUNC - ASYNCHRONOUS SEND PACKET
+INT 60 - FTP Packet Driver 1.09 - HIGH-PERF FUNC - ASYNCHRONOUS SEND PACKET
 	AH = 0Bh
 	DS:SI -> buffer
 	CX = length of buffer
@@ -529,10 +583,12 @@ INT 60 - FTP Packet Driver 1.09+ - HIGH-PERF FUNC - ASYNCHRONOUS SEND PACKET
 Return: CF set on error
 	    DH = error code (0Bh,0Ch) (see AX=01FFh)
 	CF clear if successful
-Note:	unlike function 04h, the buffer is not available for modification as
+Notes:	unlike function 04h, the buffer is not available for modification as
 	  soon as the call returns; the buffer may be queued by the driver and
 	  not processed until later
-SeeAlso: AH=04h"Packet Driver"
+	this function has been dropped from v1.10+ of the specification and
+	  replaced by function 0Ch
+SeeAlso: AH=04h"Packet Driver",AH=0Ch"Packet Driver"
 
 Completion function called with:
 	AX = result
@@ -540,12 +596,43 @@ Completion function called with:
 	    nonzero error
 	ES:DI -> buffer passed to INT 60/AH=0Bh call
 ----------600C-------------------------------
+INT 60 - FTP Packet Driver 1.10+ - HIGH-PERF FUNC - ASYNCHRONOUS SEND PACKET
+	AH = 0Ch
+	ES:DI -> pointer to IOCB
+Return: CF set on error
+	    DH = error code (see AX=01FFh)
+	CF clear if successful
+SeeAlso: AH=04h"Packet Driver",AH=09h"Packet Driver"
+
+Format of IOCB:
+Offset	Size	Description
+ 00h	DWORD	pointer to buffer
+ 04h	WORD	length of buffer
+ 06h	BYTE	flags
+ 		bit 0: packet driver is finished with IOCB
+		bit 1: application requests upcall when driver completes
+ 07h	DWORD	function address for upcall
+ 0Bh  4 BYTEs	future gather write
+ 0Fh	BYTE	???
+ 10h  8 BYTEs	private driver workspace
+
+Completion function called with:
+	ES:DI -> IOCB passed to INT 60/AH=0Ch
+----------600C-------------------------------
 INT 60 - Banyan VINES, 3com - GET STATION ADDRESS
 	AH = 0Ch
 Return: AL = status
 	    00h successful
 		ES:SI -> 6-byte station address
 	    02h semaphore service is unavailable
+----------600D-------------------------------
+INT 60 - FTP Packet Driver 1.10+ - HIGH-PERF FUNC - DROP PACKET FROM QUEUE
+	AH = 0Dh
+	ES:DI -> IOCB
+Return: CF set on error
+	    DH = error code (see AX=01FFh)
+	CF clear if successful
+SeeAlso: AH=0Ch"Packet Driver"
 ----------6011-------------------------------
 INT 60 - 3com, 10-NET, Banyan VINES - LOCK AND WAIT
 	AH = 11h
@@ -587,7 +674,7 @@ SeeAlso: AH=11h,AH=12h
 ----------6014-------------------------------
 INT 60 - FTP Packet Driver - EXTENDED FUNC - SET RECEIVE MODE
 	AH = 14h
-	BX = handle
+	BX = handle (optional for v1.10+)
 	CX = mode
 	    01h turn off receiver
 	    02h receive only packets sent to this interface
@@ -595,6 +682,7 @@ INT 60 - FTP Packet Driver - EXTENDED FUNC - SET RECEIVE MODE
 	    04h mode 3 plus limited multicast packets
 	    05h mode 3 plus all multicast packets
 	    06h all packets
+	    07h raw mode for serial line only (v1.10+)
 Return: CF set on error
 	   DH = error code (01h,08h) (see AX=01FFh)
 	CF clear if successful
@@ -602,7 +690,7 @@ SeeAlso: AH=15h
 ----------6015-------------------------------
 INT 60 - FTP Packet Driver - EXTENDED FUNC - GET RECEIVE MODE
 	AH = 15h
-	BX = handle
+	BX = handle (optional for v1.10+)
 Return: CF set on error
 	    DH = error code (01h) (see AX=01FFh)
 	CF clear if successful
@@ -629,7 +717,7 @@ SeeAlso: AH=16h
 ----------6018-------------------------------
 INT 60 - FTP Packet Driver - EXTENDED FUNC - GET STATISTICS
 	AH = 18h
-	BX = handle
+	BX = handle (optional for v1.10+)
 Return: CF set on error
 	    DH = error code (01h) (see AX=01FFh)
 	CF clear if successful
@@ -643,7 +731,7 @@ Offset	Size	Description
  0Ch	DWORD	bytes out
  10h	DWORD	errors in
  14h	DWORD	errors out
- 18h	DWORD	packets dropped	
+ 18h	DWORD	packets dropped
 ----------6019-------------------------------
 INT 60 - FTP Packet Driver - EXTENDED FUNC - SET NETWORK ADDRESS
 	AH = 19h
@@ -653,6 +741,33 @@ Return: CF set on error
 	    DH = error code (0Dh,0Eh) (see AX=01FFh)
 	CF clear if successful
 	    CX = length
+----------601A-------------------------------
+INT 60 - FTP Packet Driver v1.10+ - EXTENDED FUNC - SEND RAW BYTES
+	AH = 1Ah
+	DS:SI -> buffer
+	CX = length of buffer
+Return: CF set on error
+	    DH = error code (see AX=01FFh)
+	CF clear if successful
+SeeAlso: AH=1Ch
+----------601B-------------------------------
+INT 60 - FTP Packet Driver v1.10+ - EXTENDED FUNC - FLUSH RAW BYTES RECEIVED
+	AH = 1Bh
+Return: CF set on error
+	    DH = error code (see AX=01FFh)
+	CF clear if successful
+SeeAlso: AH=1Ch
+----------601C-------------------------------
+INT 60 - FTP Packet Driver v1.10+ - EXTENDED FUNC - FETCH RAW BYTES RECEIVED
+	AH = 1Ch
+	DS:SI -> buffer
+	CX = length of buffer
+	DX = timeout in clock ticks
+Return: CF set on error
+	    DH = error code (see AX=01FFh)
+	CF clear if successful
+	    CX = number of bytes transferred to buffer
+SeeAlso: AH=1Ah,AH=1Bh
 ----------61---------------------------------
 INT 61 - reserved for user interrupt
 ----------61---------------------------------
@@ -664,7 +779,7 @@ SeeAlso: INT 60"Atari"
 INT 61 - HP 95LX System Manager - LOAD DS
 SeeAlso: INT 60"HP 95LX"
 ----------61---------------------------------
-INT 61 - JPI TopSPEED Modula-2 - PROCEDURE EXIT TRAP
+INT 61 - JPI TopSPEED Modula-2 v1 - PROCEDURE EXIT TRAP
 SeeAlso: INT 61"JPI"
 ----------61---------------------------------
 INT 61 - FTP Software PC/TCP - TCP/IP TSR System Call interface
@@ -674,6 +789,19 @@ Return: AL = basic error
 ----------61---------------------------------
 INT 61 - Adaptec and OMTI controllers - DRIVE 0 DATA
 SeeAlso: INT 60"Adaptec"
+----------61---------------------------------
+INT 61 - "SEMTEX"/"Screen Trasher" virus - INT 21h SUBSTITUTE
+Note:	the virus copies the original INT 21h vector into INT 61h
+SeeAlso: INT 21h,INT 60h"virus",INT 6Bh"virus"
+----------610000-----------------------------
+INT 61 - OPTIMA 1024 VGA-Sync - ZOOM DISPLAY
+	AX = 0000h
+	BX = zoom factor (0-7)
+Notes:	zooms the display based on the given zoom factor
+	INT 61h is the default interrupt; the actual interrupt number can be
+	  obtained by calling INT 16/AH=FFh
+SeeAlso: INT 16/AH=FFh"OPTIMA",INT 61/AX=0001h"OPTIMA",INT 61/AX=0002h"OPTIMA"
+SeeAlso: INT 61/AX=0005h"OPTIMA"
 ----------610001-----------------------------
 INT 61 - Banyan VINES - "Sosock" - OPEN COMMUNICATIONS SOCKET
 	AX = 0001h
@@ -959,6 +1087,18 @@ Offset	Size	Description
  00h	WORD	pointer to user interrupt function	
  02h	WORD	pointer to user stack
  04h	WORD	initial timeout value in multiples of 200ms, FFFFh = infinite
+----------610001-----------------------------
+INT 61 - OPTIMA 1024 VGA-Sync - CENTER ZOOM WINDOW
+	AX = 0001h
+	BX = X coordinate to center
+	CX = Y coordinate to center
+Notes:	Positions the zoom window such that the specified window-relative
+	  coordinates appear as close as possible to the center of the
+	  display.  Useful for scrolling and panning.
+	INT 61h is the default interrupt; the actual interrupt number can be
+	  obtained by calling INT 16/AH=FFh
+SeeAlso: INT 16/AH=FFh"OPTIMA",INT 61/AX=0000h"OPTIMA",INT 61/AX=0002h"OPTIMA"
+SeeAlso: INT 61/AX=0005h"OPTIMA"
 ----------610002-----------------------------
 INT 61 - Banyan VINES - 3270 INTERFACE
 	AX = 0002h
@@ -1215,6 +1355,13 @@ Offset	Size	Description
  54h	WORD	secondary logical unit number
  56h	WORD	printer assignment
  58h 50 BYTEs	keyboard definitions filename
+----------610002-----------------------------
+INT 61 - OPTIMA 1024 VGA-Sync - END ZOOM
+	AX = 0002h
+Note:	switches off zoom and returns window to its original state
+	INT 61h is the default interrupt; the actual interrupt number can be
+	  obtained by calling INT 16/AH=FFh
+SeeAlso: INT 16/AH=FFh"OPTIMA",INT 61/AX=0000h"OPTIMA"
 ----------610003-----------------------------
 INT 61 - Banyan VINES - ASYNCHRONOUS TERMINAL EMULATION
 	AX = 0003h
@@ -1440,6 +1587,14 @@ Offset	Size	Description
 		0016h unable to make connection
 		0017h unable to make connection
  0Bh	WORD	secondary error code
+----------610003-----------------------------
+INT 61 - OPTIMA 1024 VGA-Sync - REPORT ZOOM FACTOR
+	AX = 0003h
+Return: AX = zoom factor
+Note:	returns the current zoom factor
+	INT 61h is the default interrupt; the actual interrupt number can be
+	  obtained by calling INT 16/AH=FFh
+SeeAlso: INT 16/AH=FFh"OPTIMA",INT 61/AX=0000h"OPTIMA",INT 61/AX=0005h"OPTIMA"
 ----------610004-----------------------------
 INT 61 - Banyan VINES - GET SERVER SERIAL NUMBER
 	AX = 0004h
@@ -1454,6 +1609,15 @@ Offset	Size	Description
  00h	WORD	0008h
  02h	WORD	drive number (0=default, 1=A, ...)
  04h  6 BYTEs	buffer for server ID
+----------610004-----------------------------
+INT 61 - OPTIMA 1024 VGA-Sync - ENTER SPECIFY MODE
+	AX = 0004h
+Note:	Specify Mode is enabled by hot key (seeAlso below), and allows
+	panning and zooming via the numeric keypad.
+	INT 61h is the default interrupt; the actual interrupt number can be
+	  obtained by calling INT 16/AH=FFh
+	The Zoom interrupt no. can be obtained with function INT 16h,AH=0FFh
+SeeAlso: INT 16/AH=FFh"OPTIMA",INT 61/AX=0000h"OPTIMA",INT 61/AX=0007h"OPTIMA"
 ----------610005-----------------------------
 INT 61 - Banyan VINES - PRINTER CONTROL
 	AX = 0005h
@@ -1470,6 +1634,53 @@ Offset	Size	Description
  02h	WORD	number of active port (1-3)
  04h	WORD	??? (0 for func 0201h, 3 for func 0205h)
  06h	WORD	0000h
+----------610005-----------------------------
+INT 61 - OPTIMA 1024 VGA-Sync - QUERY ZOOM WINDOW
+	AX = 0005h
+	BX:CX -> buffer for window parameters (see below)
+Note:	INT 61h is the default interrupt; the actual interrupt number can be
+	  obtained by calling INT 16/AH=FFh
+SeeAlso: INT 16/AH=FFh"OPTIMA",INT 61/AX=0000h"OPTIMA",INT 61/AX=0003h"OPTIMA"
+SeeAlso: INT 61/AX=0006h"OPTIMA"
+
+Format of window parameters:
+Offset	Size	Description
+ 00h	WORD	X start of zoom window
+ 02h	WORD	Y start of zoom window
+ 04h	WORD	X end of zoom window
+ 06h	WORD	Y end of zoom window
+ 08h	WORD	current zoom factor
+ 0Ah	WORD	zoom offset start X
+ 0Ch	WORD	zoom offset start Y
+----------610006-----------------------------
+INT 61 - OPTIMA 1024 VGA-Sync - SET ZOOM WINDOW
+	AX = 0006h
+	BX:CX -> zoom window description (see below)
+Notes:	width of zoom window must be a multiple of the pixel replication
+	  factor
+	INT 61h is the default interrupt; the actual interrupt number can be
+	  obtained by calling INT 16/AH=FFh
+SeeAlso: INT 16/AH=FFh"OPTIMA",INT 61/AX=0000h"OPTIMA",INT 61/AX=0001h"OPTIMA"
+SeeAlso: INT 61/AX=0005h"OPTIMA",INT 61/AX=0008h"OPTIMA"
+
+Format of zoom window description:
+Offset	Size	Description
+ 00h	WORD	X start of zoom window
+ 02h	WORD	Y start of zoom window
+ 04h	WORD	X end of zoom window
+ 06h	WORD	Y end of zoom window
+----------610007-----------------------------
+INT 61 - OPTIMA 1024 VGA-Sync - QUERY APPLICATION KEY
+	AX = 0007h
+Return: AX = 0000h/0001h
+Notes:	In specify mode, the END key has been reserved for applications.
+	Returns the current toggle state of that key. E.g. in the
+	  OPTIMA AutoCAD driver, 0 means, AutoCAD calls the subfunction 0001
+	  every time the cross cursor moves.
+	INT 61h is the default interrupt; the actual interrupt number can be
+	  obtained by calling INT 16/AH=FFh
+SeeAlso: INT 16/AH=FFh"OPTIMA",INT 61/AX=0000h"OPTIMA",INT 61/AX=0001h"OPTIMA"
+SeeAlso: INT 61/AX=0004h"OPTIMA"
 ----------610007BX0002-----------------------
 INT 61 - Banyan VINES - GET PORTS FOR A SERVICE
 	AX = 0007h
@@ -1622,6 +1833,15 @@ Values for common service categories:
  000Ah asynchronous terminal emulation service
  000Ch NETBIOS service
  000Dh PC-based service
+----------610008-----------------------------
+INT 61 - OPTIMA 1024 VGA-Sync - SET ZOOM OFFSET
+	AX = 0008h
+	BX = X start of zoom offset
+	CX = Y start of zoom offset
+Notes:	specifies the first byte of video memory to appear in the zoom window
+	INT 61h is the default interrupt; the actual interrupt number can be
+	  obtained by calling INT 16/AH=FFh
+SeeAlso: INT 16/AH=FFh"OPTIMA",INT 61/AX=0000h"OPTIMA",INT 61/AX=0006h"OPTIMA"
 ----------610008BX0002-----------------------
 INT 61 - Banyan VINES - POST MESSAGE ON LOCAL DISPLAY
 	AX = 0008h
@@ -2121,6 +2341,259 @@ INT 67 - PC-NET, Alloy NTNX - UNLOCK SEMAPHORE
 Return: AL = status (see AH=00h)
 	AH = semaphore owner if status=02h
 SeeAlso: AH=00h,AH=01h,INT 7Fh/AH=02h
+----------673F--CX5145-----------------------
+INT 67 - QEMM-386 v5.11+ - INSTALLATION CHECK
+	AH = 3Fh
+	CX = 5145h
+	DX = 4D4Dh
+Return: AH = 00h if installed
+	    ES:DI -> QEMM API entry point
+
+Call QEMM entry point with:
+	AH = 00h get Windows3 status
+		Return: CF clear
+			AL = ???
+			    bit 0 set if Windows3 support active
+	AH = 01h set Windows3 status
+		AL = ???
+		    bit 0 set: turn on Windows3 support
+		Return: CF clear if successful
+			CF set on error
+	AH = 02h ???
+		Return: CF clear
+			AX = ???
+	AH = 03h get QEMM version
+		Return: CF clear
+			AX = BX = version in BCD
+	AH = 04h ???
+	AH = 05h ???
+	AH = 06h set mapping context???
+		DX = page table number
+		Return: CF clear
+	AH = 07h get mapping context???
+		Return: CF clear
+			DX = page table number
+	AH = 08h ???
+		DX = linear page number
+		Return: CF clear
+	AH = 09h ???
+		CX = ???
+		Return: CF clear
+			DX = linear page number
+	AH = 0Ah ???
+		CX = ???
+		DX = linear page number
+		Return: CF clear
+	AH = 0Bh ???
+		CX = 0100h
+		DX = ???
+		Return: AH = 00h
+	AH = 0Ch get ???
+		Return: CF clear
+			BX = 0001h
+			CX = ???
+			DX = ???
+	AH = 0Dh ???
+		AL = zero/nonzero ???
+		Return: CF clear
+	AH = 0Eh ???
+		DX = ???
+		Return: CF clear
+	AH = 0Fh ???
+		CX = 0100h
+		DX = 0010h
+		???
+	AX = 1000h get ???
+		Return: CF clear
+			EAX = ???
+	AX = 1001h get CPU debug registers
+		??? -> buffer for debug registers (8 DWORDs)
+		Return: CF clear
+	AX = 1002h set CPU debug registers
+		??? -> buffer containing debug registers (8 DWORDs)
+		Return: CF clear
+	AX = 1003h get machine status word
+		Return: CF clear
+			EAX = contents of CR0
+	AX = 1004h ???
+		???
+		Return: CF clear if successful
+			    EDX = linear address of ???
+			CF set on error
+	AX = 1005h set ???
+		EDX = ???
+		Return: CF clear
+	AX = 1006h NOP
+		Return: CF set
+	AX = 1007h get ???
+		Return: CF clear
+			EDX = ???
+	AX = 1008h ???
+		CX = ???
+		???
+		Return: CF clear
+			EDX = linear address of ???
+	AX = 1009h ??? related to task switching???
+	AX = 100Ah ??? related to task switching???
+	AH = 11h get ???
+		Return: CF clear
+			BL = ???
+	AH = 12h get HIRAM chain
+		Return: CF clear
+			BX = segment of first MCB in high memory
+	AX = 1300h ???
+		BL = ???
+		Return: CF clear
+			???
+	AX = 1301h ???
+		CX = ???
+		DX = ???
+		DI = ???
+		Return: CF clear
+	AX = 1302h ???
+		???
+		Return: CF clear
+			???
+	AX = 1303h ??? EMS allocation
+		BX = number of pages of EMS to allocate
+		???
+		Return: CF clear
+			???
+	AX = 1304h EMS deallocation
+		DX = EMS handle
+		Return: CF clear
+	AX = 1305h ???
+		CX = ???
+		Return: CF clear
+	AX = 1306h ???
+		???
+		Return: CF clear
+			???
+	AX = 1307h ???
+		???
+		Return: CF clear
+	AX = 1308h ???
+		BL = ???
+		Return: CF clear
+	AX = 1309h set ??? address for QEMM real-mode stub to call
+		ES???:BX -> new address for ???
+		Return: CF clear
+	AX = 130Ah ???
+		CX:DX -> ???
+		Return: CF clear
+	AX = 130Bh ???
+		BL = ???
+		Return: CF clear
+			???
+	AX = 130Ch set ???
+		BX = ???
+		Return: CF clear
+	AX = 130Dh ???
+		???
+		Return: CF clear
+	AX = 130Eh ???
+		???
+		Return: CF clear
+	AX = 130Fh ???
+		???
+		Return: CF clear
+	AX = 1310h ???
+		???
+		Return: CF clear
+	AX = 1311h set ???
+		BL = ???
+		Return: CF clear
+	AH = 14h ???
+		AL = subfunction (00h-0Bh)
+		???
+	AH = 15h ???
+		???:BX -> ???
+		Return: CF set
+	AH = 16h ???
+		ES:DI -> ???
+		AL = zero/nonzero ???
+	AH = 17h get ???
+		ES:DI -> buffer for ??? (see below)
+		Return: CF clear
+	AH = 18h ???
+		ES???:BX -> ???
+		CX = ???
+		Return: CF clear
+			AL = ???
+	AH = 19h NOP
+		Return: CF set
+	AH = 1Ah I/O port access
+		AL = subfunction
+		    00h get byte from I/O port
+			Return: BL = port value
+		    01h send byte to I/O port
+		    	BL = value to send
+		    02h send byte to I/O port, get byte from following port
+		    	BH = value to send
+			Return: BL = value read
+		    03h send bytes to two consecutive I/O ports
+		    	BH = value for first I/O port (DX)
+			BL = value for second I/O port (DX+1)
+		DX = port number
+		Return: CF clear
+	AH = 1Bh ???
+		AL = subfunction (00h-07h) !!!
+	AH = 1Ch ???
+		AL = subfunction (00h-2Ah)
+	AH = 1Dh (v6.00)
+		AL = subfunction
+		    00h ???
+		    01h ???
+			Note: clears any pending IRQ7 at end of function
+		    else
+			Return: CF set
+	AH = 1Eh (v6.00)
+		AL = subfunction
+		    00h ???
+			Return: BL = ???
+				BH = ???
+				CL = ???
+				CH = ???
+				DX = ??? (0000h)
+				SI = ??? (0000h)
+				DI = ??? (0000h)
+		    01h get ???
+			Return: BX = ???
+				CF clear
+		    02h ???
+			Return: BX = ???
+				CF clear
+		    else
+		        Return: CF set
+	AH = 1Fh (v6.00)
+		AL = subfunction
+		    00h get ???
+		    	CX = ???
+			Return: EDX = ???
+				CF clear
+		    01h set ???
+		    	CX = ???
+			EDX = ???
+		    else
+			Return: CF set
+	AH = 20h (v6.00)
+		AL = subfunction
+		    00h ???
+			Return: BL = ???
+				CF clear
+		    01h ???
+		    	BL = ??? (bit 0 only)
+			Return: BL = ???
+				CF clear
+		    else
+			Return: CF set
+	AH = 21h (v6.00)
+		AL = subfunction
+		    00h ???
+			Return: ???
+				CF clear
+		    else
+			Return: CF set
 ----------6740-------------------------------
 INT 67 - LIM EMS - GET MANAGER STATUS
 	AH = 40h
@@ -2208,7 +2681,7 @@ Return: AH = status
 	    84h undefined function requested
 	    8Ch page-mapping hardware state save area is full
 	    8Dh save of mapping context failed
-SeeAlso: AH=47h
+SeeAlso: AH=48h
 ----------6748-------------------------------
 INT 67 - LIM EMS - RESTORE MAPPING CONTEXT
 	AH = 48h
@@ -3666,37 +4139,37 @@ INT 6B - Novell NASI/NACS, Ungermann-Bass Net One SERIAL I/O - GET STATUS
 Return: CH <> 00h if connection active
 Note:	also supported by NPC NCSI
 SeeAlso: AH=02h,AH=10h
----------------------------------------------
+----------6B10-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - GET STATUS
 	AH = 10h
 	???
 Return: ???
 SeeAlso: AX=0700h,AH=12h,AH=1Fh
----------------------------------------------
+----------6B11-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - ALLOCATE A VIRTUAL CIRCUIT
 	AH = 11h
 	???
 Return: ???
 SeeAlso: AH=12h,AH=15h,AH=16h,AH=17h,AH=18h
----------------------------------------------
+----------6B12-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - VIRTUAL CIRCUIT STATUS
 	AH = 12h
 	???
 Return: ???
 SeeAlso: AH=10h,AH=15h,AH=1Ah,AH=1Bh,AH=1Fh
----------------------------------------------
+----------6B13-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - SET/RETRIEVE REQUEST/REPLY SERVICE NAME
 	AH = 13h
 	???
 Return: ???
 SeeAlso: AH=14h,AH=15h
----------------------------------------------
+----------6B14-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - SET/RETRIEVE SERVICE ADDRESS
 	AH = 14h
 	???
 Return: ???
 SeeAlso: AH=13h,AH=15h,AH=21h
----------------------------------------------
+----------6B15-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - SET/RETRIEVE VIRTUAL CIRCUIT CONFIG
 	AH = 15h
 	???
@@ -3774,7 +4247,7 @@ INT 6B - Tandy SCHOOLMATE PLUS - API
 	AL = E0h to FFh
 ----------6B---------------------------------
 INT 6B - "Saddam" virus - ???
-SeeAlso: INT 21/AX=FFFFh,INT 60"virus",INT 70"virus"
+SeeAlso: INT 21/AX=FFFFh,INT 61"virus",INT 70"virus"
 ----------6C---------------------------------
 INT 6C - system resume vector (CONVERTIBLE)
 ----------6C---------------------------------
@@ -5313,33 +5786,17 @@ INT 7C - IBM REXX88PC command language
 	???
 ----------7D---------------------------------
 INT 7D - [proposed] - ALTERNATE MULTIPLEX INTERRUPT
-	AH = multiplex number
-	AL = function
-	    00h usage check
-	        Return: AL = FFh if multiplex number in use
-	    01h installation check
-	    	BX,CX,DX = 6-byte program identifier
-		Return: AL = FFh if specified program installed
-			ES:BX -> entry point (for bypassing interrupt chain),
-				0000h:0000h if all API calls via INT 7D
-			CX = version number (CH = major, CL = minor)
-	    other  application-dependent
-Notes:	programs should not use fixed multiplex numbers; rather, a program
-	  should scan all multiplex numbers from 00h to FFh, remembering the
-	  first unused multiplex in case the program is not yet installed.
-	  If not previously installed, it should use that first free multiplex
-	  number.
-	before invoking INT 7D, a program must make sure it is valid.  INT 7D
-	  is valid if either (1) it points at an IRET instruction or (2) the
-	  INT 7D handler is preceded by the ASCII signature "INT7D".  If
-	  neither case holds, the vector may be uninitialized and pointing
-	  at a random location; it should thus not be called, but may be
-	  hooked by the program (without chaining), using multiplex number 00h
-	Please let me know the program identifier you use if you choose to
-	  follow this proposal.
-SeeAlso: INT 2F
+Note:	this interface is looking for a new interrupt number, tentatively
+	  INT 2D
+SeeAlso: INT 2D, INT 2F
+----------7D---------------------------------
+INT 7D - YTERM 1.4 - CLOCK SUPPORT
+SeeAlso: INT 7E"YTERM"
 ----------7E---------------------------------
 INT 7E - RESERVED FOR DIP, Ltd. ROM LIBRARY
+----------7E---------------------------------
+INT 7E - YTERM 1.4 - ???
+SeeAlso: INT 7D"YTERM",INT 7F"YTERM"
 ----------7F---------------------------------
 INT 7F - IBM XGA - ???
 ----------7F---------------------------------
@@ -5601,6 +6058,18 @@ Values for return code:
  26h registration of host workstation failed - only one session may be
  	registered for dial-in
  FFh telebit acs api is busy - retry later
+----------7F---------------------------------
+INT 7F - Non-dedicated NetWare 2.x File Server - ENTER CONSOLE MODE
+Notes:	the installation check consists of checking for the signature "Lynn"
+	  in the four bytes preceding the interrupt handler; if present, the
+	  current program is running as a DOS task on a non-dedicated NetWare
+	  2.x file server.
+	Before placing the server into "console" mode, it is recommended that
+	  NetWare broadcast messages be disabled with INT 21/AX=DE00h.
+SeeAlso: INT 21/AX=DE00h
+----------7F---------------------------------
+INT 7F - YTERM - ???
+SeeAlso: INT 7E"YTERM"
 ----------7F00-------------------------------
 INT 7F - Alloy NTNX, MW386 - SEMAPHORE LOCK AND WAIT
 	AH = 00h
@@ -5622,7 +6091,7 @@ Return: AL = status (see AH=00h)
 	AH = semaphore owner if status=02h
 SeeAlso: AH=00h,AH=02h,AH=41h
 ----------7F0104BX0000-----------------------
-INT 7F - HLLAPI (IBM 3270 High-Level Language API)
+INT 7F - HLLAPI (IBM 3270 High-Level Language API)/LLAPI (Rabbit Low Level API)
 	AX = 0104h (HLLAPI gate ID)
 	BX = 0000h
 	DS:SI -> parameter control block (see below)
@@ -5635,11 +6104,13 @@ Offset	Size	Description
  04h	WORD	segment of control string
  06h	WORD	offset of control string
  08h	WORD	length of control string, unless explicit end-of-str char set
- 0Ah	BYTE	unused
+ 0Ah	BYTE	unused (IBM)
+ 		ControlString[0] (Rabbit)
  0Bh	WORD	return code
- 0Dh	WORD	maximum length of control string
+ 0Dh	WORD	maximum length of control string (IBM)
+ 		unused (Rabbit)
 
-Values for function number:
+Values for HLLAPI function number:
  00h	Query system (Attachmate implementation only)
  01h	Connect presentation space
  02h	Disconnect presentation space
@@ -5658,6 +6129,7 @@ Values for function number:
  0Fh	copy string of characters to the current presentation space
  10h	workstation control functions
  11h	storage manager functions, intended primarily for BASIC applications
+	(not implemented by Rabbit)
  12h	set delay period in half-second intervals
  14h	get info on level of workstation support used
  15h	reset session parameters to default values
@@ -5681,12 +6153,35 @@ Values for function number:
  35h	stop intercepting keystrokes
  5Ah	send file
  5Bh	receive file
- 5Ch	run a program
- 5Dh	execute DOS command
+ 5Ch	run a program (not implemented by Rabbit)
+ 5Dh	execute DOS command (not implemented by Rabbit)
  63h	change presentation space position to PC display row/col or vice versa
  FFh	Get info on DCA implementation
 
+Values for LLAPI function number:
+ 80h	initialize LLAPI (internal call)
+ 83h	set Session ID (one-character ID)
+ 84h	read Session ID (one-character ID)
+ 85h	lock 327x keyboard
+ 86h	unlock 327x keyboard
+ 87h	wait for Clear to Send
+ 88h	type ASCII character
+ 89h	type 327x key
+ 8Ah	read keyboard lock state
+ 8Fh	force screen update
+ 90h	view session
+ 91h	relinquish (suspend foreground until background becomes idle)
+ 92h	poke screen character
+ 93h	poke translated character
+ 94h	peek screen character
+ 95h	peek translated character
+ 96h	set cursor position
+ 97h	send scan code (Rabbit only)
+ 98h	synchronize (returns after keystroke queue empty)
+ 99h	type PC key (Rabbit only)
+
 Session Parameters for function 09h:
+ ASCII		??? (Rabbit only)
  ATTRIB		return attributes in hex
  NOATTRIB	return attributes as blanks
  CONPHYS	make physical connection
@@ -5696,13 +6191,19 @@ Session Parameters for function 09h:
  ESC=n		set escape character to "n" (default '@')
  EOT=n		set end of string character (default 00h)
  FPAUSE		full-duration pause
+ FTNOWAIT	return immediately from functions 5Ah and 5Bh (Rabbit only)
+ FTWAIT		wait for file transfer to complete (Rabbit only)
  IPAUSE		interruptible pause
+ RABESC		??? (Rabbit only)
+ NORABESC	??? (Rabbit only)
+ SCANCODE	??? (Rabbit only)
  STRLEN		use explicit string lengths
  STREOT		use terminated strings
  SRCHALL	search entire presentation space
  SRCHFROM	search from specified offset
  SRCHFRWD	search forward from position 1
  SRCHBKWD	search backward from last position in presentation space
+ TIMEOUT=n	??? (Rabbit only)
  TWAIT		wait specified time for keyboard ready
  LWAIT		wait until keyboard ready
  NWAIT		no wait
@@ -7814,7 +8315,16 @@ INT DD - used by IBM ROM BASIC while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------DD---------------------------------
-INT DD - STSC APL*PLUS/PC - MAY BE USED IN FUTURE RELEASES
+INT DD - STSC APL*PLUS/PC v9.0 - PLACE KEYSTROKE EVENTS IN INPUT BUFFER
+	BX = where to place keystrokes
+	    FFFFh insert before current buffer contents
+	    0000h replace current contents
+	    0001h insert after current contents
+	CX = number of keystroke events to insert
+	ES:SI -> data to be placed into buffer (list of WORD key codes)
+	    4000h + N = normal ASCII keystroke N (N = 00h to FFh)
+	    4100h + N = extended ASCII keystroke N (N = 03h to 84h)
+SeeAlso: INT 16/AH=05h
 ----------DE---------------------------------
 INT DE - used by IBM ROM BASIC while in interpreter
 Notes:	called by ROM BASIC
@@ -7841,6 +8351,7 @@ Notes:	called by ROM BASIC
 INT E0 - APL*PLUS/PC - RESTIME HIGH-RESOLUTION TIMER FOR QUAD MF FUNCTION
 ----------E0---------------------------------
 INT E0 - "Micro-128" virus - ???
+Note:	Micro-128 also overwrites the upper half of the interrupt table
 SeeAlso: INT 70"virus"
 ----------E1---------------------------------
 INT E1 - used by IBM ROM BASIC while in interpreter
@@ -7968,6 +8479,91 @@ INT F6 - DoubleDOS - ???
 INT F7 - reserved for user interrupt
 ----------F7---------------------------------
 INT F7 - DoubleDOS - ???
+----------F700-------------------------------
+INT F7 - FSBBS 2.0 - CONFIGURATION RECORD
+	AH = 00h
+	AL = function
+	    00h get configuration record
+		Return: DS:DX -> configuration record
+	    01h set configuration record
+	    02h get path for option
+		DS:DX -> option name
+		Return: DS:DX -> path
+	    03h determine whether configuration record set
+		Return: AX = status
+			    0000h set
+			    0001h not yet set
+	    04h get link state
+		Return: AX = state
+			    0000h unlinked
+			    0001h linked
+Notes:	this information is preliminary and still subject to change
+	all of the INT F7 calls for FSBBS are used for interprogram
+	  communication between the BBS kernel and the programs it spawns
+SeeAlso: AH=01h
+----------F701-------------------------------
+INT F7 - FSBBS 2.0 - USER RECORD
+	AH = 01h
+	AL = function
+	    00h get user record for user currently online
+		Return: DS:DX -> user record
+	    01h set user record
+		DS:DX -> user record
+SeeAlso: AH=00h,AH=02h
+----------F702-------------------------------
+INT F7 - FSBBS 2.0 - GET ACCOUNT NAME
+	AH = 02h
+Return: DS:DX -> 8-character blank-padded account name
+SeeAlso: AH=01h
+----------F703-------------------------------
+INT F7 - FSBBS 2.0 - TERMINAL NUMBER
+	AH = 03h
+	AL = function
+	    00h get terminal index number
+		Return: DX = index number
+	    01h set terminal index number
+		DX = terminal index
+----------F704-------------------------------
+INT F7 - FSBBS 2.0 - PASSDATA BUFFER
+	AH = 04h
+	AL = function
+	    00h get PassData buffer contents
+		DS:DX -> buffer for PassData contents
+	    01h set PassData contents
+		DS:DX -> buffer containing new PassData
+		CH = length of data in buffer
+----------F705-------------------------------
+INT F7 - FSBBS 2.0 - TIMER FUNCTIONS
+	AH = 05h
+	AL = function
+	    00h get time remaining
+		Return: DX = number of minutes remaining
+	    01h get current time
+		Return: DS:DX -> 8-character time string
+	    02h increment time
+		DX = number of additional minutes
+	    03h decrement time
+		DX = number of minutes
+SeeAlso: AH=06h
+----------F706-------------------------------
+INT F7 - FSBBS 2.0 - FUNCTION AVAILABILITY
+	AH = 06h
+	AL = function
+	    00h determine whether function is available
+		DX = index of function
+	    01h set function availability
+		DX = index of function
+		???
+SeeAlso: AH=05h,AH=07h
+----------F707-------------------------------
+INT F7 - FSBBS 2.0 - DUMP FUNCTIONS
+	AH = 07h
+	AL = function
+	    00h get current dump mode
+		Return: DL = mode
+	    01h set dump mode
+		DL = mode
+SeeAlso: AH=06h
 ----------F8---------------------------------
 INT F8 - 10 ms INTERVAL TIMER (TANDY???)
 ----------F8---------------------------------
@@ -8009,7 +8605,7 @@ INT FF - AT/XT286/PS50+ - destroyed by return from protected mode
 INT FF - Z100 - WARM BOOT
 ---------------------------------------------
 Please redistribute the following files unmodified as a group, in a pair of
-archives named INTER27A and INTER27B (preferably the original authenticated
+archives named INTER28A and INTER28B (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
 	INTERRUP.A	INT 00 through INT 14
@@ -8022,8 +8618,11 @@ PKZIP archives):
 	INTPRINT.DOC	instructions for INTPRINT
 	INTPRINT.C	source code for INTPRINT
 	MEMORY.LST	format of the BIOS data area
-	INT2QH.*	program to convert list into QuickHelp database
+The following files should be distributed in an archive called INTER28C:
+	INT2HLP.BAT	Perl script to convert list into QuickHelp database
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
+ 	INT2QH.*	program to convert list into QuickHelp database
+	INTHELP.*	convert list into TurboPower GUIDE database
 This compilation is Copyright (c) 1989, 1990, 1991 Ralf Brown
 ---------------------------------------------
 ARPA: ralf@cs.cmu.edu

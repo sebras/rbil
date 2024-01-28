@@ -1,13 +1,13 @@
-Interrupt List		Release 27 (v91.4)		Last change 9/1/91
+Interrupt List		Release 28 (v91.5)		Last change 11/17/91
 This compilation is Copyright (c) 1989, 1990, 1991 Ralf Brown
 ---------------------------------------------
 Please redistribute the following files unmodified as a group, in a pair of
-archives named INTER27A and INTER27B (preferably the original authenticated
+archives named INTER28A and INTER28B (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
 	INTERRUP.A	INT 00 through INT 14 \
-	INTERRUP.B	INT 15 through INT 1F  \ total 636 pages at 60 lines
-	INTERRUP.C	INT 20 through INT 2E  / per page, 687 with INTPRINT -p
+	INTERRUP.B	INT 15 through INT 1F  \ total 651 pages at 60 lines
+	INTERRUP.C	INT 20 through INT 2E  / per page, 702 with INTPRINT -p
 	INTERRUP.D	INT 2F through INT 5F /
 	INTERRUP.E	INT 60 through INT FF/
 	INTERRUP.PRI	a brief introduction to interrupts
@@ -15,8 +15,11 @@ PKZIP archives):
 	INTPRINT.DOC	instructions for INTPRINT
 	INTPRINT.C	source code for INTPRINT
 	MEMORY.LST	format of the BIOS data area
-	INT2QH.*	program to convert list into QuickHelp database
+The following files should be distributed in an archive called INTER28C:
+	INT2HLP.BAT	Perl script to convert list into QuickHelp database
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
+	INT2QH.*	program to convert list into QuickHelp database
+	INTHELP.*	convert list into TurboPower GUIDE database
 ---------------------------------------------
 If you notice any mistakes or omissions, please let me know!  It is only with
 YOUR help that the list can continue to grow at the current rate.  Please send
@@ -206,7 +209,7 @@ Notes:	generated when data is received from the keyboard.  This is normally a
 	  special keystrokes:
 	    Ctrl-Break	 invoke INT 1B, set flag at 0040h:0071h
 	    SysRq	 invoke INT 15/AH=85h
-	    Ctrl-Numlock place system in a tight wait loop
+	    Ctrl-Numlock place system in a tight wait loop until next INT 09
 	    Ctrl-Alt-Del jump to BIOS startup code (either F000h:FFF0h or the
 			   destination of the jump at that address)
 	    Shift-PrtSc	 invoke INT 05
@@ -511,17 +514,17 @@ Values for video mode:
      = G  100x37  8x16	800x600	  16		A000 Orchid
      = G		800x600	  16		A000 STB,Genoa,Sigma
      = G		800x600	  16		     Allstar Peacock (VGA)
-     = G  100x37  8x16	800x600	 16/256	   1	A000 Tseng ET4000 chipset
+     = G  100x37  8x16	800x600	 16/256	   1	A000 Tseng ET3000/4000 chipset
  2Ah = T  100x40				     Allstar Peacock (VGA)
      = T  100x40  8x16		  16		     Orchid Prodesigner VGA
      = T  100x40  8x15		16/256	   4	B800 Tseng ET4000 chipset
  2Dh = G		640x350	 256		     VEGA VGA
      = G		640x350 256/256k	A000 Orchid, Genoa, STB
-     = G   80x25  8x14	640x350 256/256k   1	A000 Tseng ET4000 chipset
+     = G   80x25  8x14	640x350 256/256k   1	A000 Tseng ET3000/4000 chipset
  2Eh = G		640x480	 256		     VEGA VGA
      = G   80x30  8x16	640x480 256/256k	A000 Orchid
      = G		640x480 256/256k	A000 STB,Genoa,Sigma
-     = G   80x30  8x16	640x480 256/256k   1	A000 Tseng ET4000 chipset
+     = G   80x30  8x16	640x480 256/256k   1	A000 Tseng ET3000/4000 chipset
  2Fh = G		720x512	 256		     VEGA VGA
      = G		720x512	 256		     Genoa
      = G   80x25  8x16	640x400 256/256k   1	A000 Tseng ET4000 chipset
@@ -532,19 +535,25 @@ Values for video mode:
      = G		720x350	   2		     3270 PC
      = G		800x600	 256		     Cardinal
      = G		???x???			B800 AT&T 6300
-     = G  100x37  8x16	800x600 256/256k   1	A000 Tseng ET4000 chipset
+     = G  100x37  8x16	800x600 256/256k   1	A000 Tseng ET3000/4000 chipset
  32h = T   80x34  8x10		  16	   4	B800 Ahead B (Wizard/3270)
  33h = T  132x44  8x8		  16		B800 ATI EGA Wonder,ATI VIP
      = T   80x34  8x8		  16	   4	B800 Ahead B (Wizard/3270)
  34h = T   80x66  8x8		  16	   4	B800 Ahead B (Wizard/3270)
  36h = G		960x720	  16		     VEGA VGA
      = G		960x720	  16		     STB
+     = G		960x720	  16		     Tseng ET3000
  37h = G	       1024x768	  16		     VEGA VGA
      = G  128x48  8x16 1024x768	  16		A000 Orchid
      = G	       1024x768	  16		A000 STB,Genoa,Sigma
+     = G	       1024x768	  16		     Definicon
+     = G	       1024x768	  16		     Tseng ET3000
      = T  132x44  8x8		 mono		B800 ATI EGA Wonder,ATI VIP
  38h = G	       1024x768	 256		     STB VGA/EM-16 Plus (1MB)
      = G  128x48  8x16 1024x768 256/256k   1	A000 Tseng ET4000 chipset
+     = G	       1024x768	 256		     Orchid ProDesigner II
+ 3Dh = G	       1280x1024  16		     Definicon
+ 3Eh = G	       1280x961	  16		     Definicon
  40h = G   80x25  8x16	640x400	   2	   1	B800 AT&T 6300, AT&T VDC600
      = G   80x25  8x16	640x400	   2	   1	B800 Compaq Portable
      = T   80x43				     VEGA VGA, Tecmar VGA/AD
@@ -607,10 +616,12 @@ Values for video mode:
      = T  132x44  9x8		   4	   2	B800 Ahead B
      = T  132x60		  16		     MORSE VGA
  53h = G  100x40  8x14	800x560	  16		     ATI EGA Wonder,ATI VIP
+     = G		640x480	 256		     Oak VGA
      = T  132x25  8x14		 16/256k	B800 Trident TVGA 8800/8900
      = T  132x43				     Lava Chrome II EGA
      = T   80x60		  16		     MORSE VGA
- 54h = G  100x42  8x14	800x600	  16		A000 ATI EGA Wonder, VGA Wondr
+ 54h = G  100x42  8x14	800x600	  16		A000 ATI EGA Wonder, VGA Wonder
+     = G		800x600	 256		     Oak VGA	
      = T  132x25				     Lava Chrome II EGA
      = T  132x30  8x16		 16/256k	B800 Trident TVGA 8800/8900
      = T  132x43  8x8				     Paradise EGA-480
@@ -631,12 +642,14 @@ Values for video mode:
      = T  132x43  8x11		 16/256k	B800 Trident TVGA 8800/8900
      = G   94x29  8x14	752x410			     Lava Chrome II EGA
      = G  128x48  8x16 1024x768	 16/256k	A000 ATI VGA Wonder v4+	 *!
+     = G	       1024x768	 16/256h	     ATI VGA Wonder Plus
  56h = T  132x43  8x8		   3???	   2	B000 NSI Smart EGA+
      = T  132x43  7x9		   4		B000 Paradise VGA
      = T  132x43  8x9		   4		B000 Paradise VGA on multisync
      = T  132x43		 mono		     Taxan 565 EGA
      = T  132x43  7x9		   2		     AT&T VDC600
      = T  132x60  8x8		 16/256k	B800 Trident TVGA 8800/8900
+     = G	       1024x768	  16		     Oak VGA
  57h = T  132x25  8x14		   3???	   4	B000 NSI Smart EGA+
      = T  132x25  7x16		   4		B000 Paradise VGA
      = T  132x25  8x16		   4		B000 Paradise VGA on multisync
@@ -664,12 +677,12 @@ Values for video mode:
      = G  100x75  8x8	800x600	 16/256k	A000 Trident TVGA 8800, 8900
  5Ch = G		640x400	 256		     Logix, ATI Prism Elite
      = G		640x400	 256		     Maxxon, SEFCO TVGA, Imtec
-     = G   80x25  8x16	640x400	 256/256k	A000 Zymos Poach
+     = G   80x25  8x16	640x400	 256/256k	A000 Zymos Poach, Hi Res 512
      = G   80x25  8x16	640x400	 256/256k	A000 Trident TVGA 8800/8900
      = G		640x480	 256		     Genoa 6400
  5Dh = G		640x480	 256		     Logix, ATI Prism Elite
      = G		640x480	 256		     Maxxon, SEFCO TVGA, Imtec
-     = G   80x30  8x16	640x480	 256/256k	A000 Zymos Poach
+     = G   80x30  8x16	640x480	 256/256k	A000 Zymos Poach, Hi Res 512
      = G   80x30  8x16	640x480	 256/256k	A000 Trident TVGA 8800 (512K)
  5Eh = G		640x400	 256		     Paradise VGA,VEGA VGA
      = G		640x400	 256		     AST VGA Plus
@@ -678,6 +691,7 @@ Values for video mode:
      = G		800x600	  16		     Logix, ATI Prism Elite
      = G		800x600	 256		     Genoa 6400
      = G  100x75  8x8	800x600	 256/256k	A000 Zymos Poach, Trident 8900
+     = G  100x75  8x8	800x600	 256/256k	A000 Hi Res 512
  5Fh = G		640x480	 256		     Paradise VGA
      = G		640x480	 256		     AST VGA Plus
      = G		640x480	 256		     Compaq VGA, Dell VGA
@@ -685,32 +699,32 @@ Values for video mode:
      = G   80x30  8x16	640x480	 256		     AT&T VDC600 (512K)
      = G	       1024x768	  16		     Logix, ATI Prism Elite
      = G	       1024x768	  16		     Maxxon, Genoa 6400, Imtec
-     = G  128x48  8x16 1024x768	  16/256k	A000 Zymos Poach
+     = G  128x48  8x16 1024x768	  16/256k	A000 Zymos Poach, Hi Res 512
      = G  128x48  8x16 1024x768	  16/256k	A000 Trident TVGA 88/8900 512K
  60h = G   80x???	???x400			     Corona/Cordata BIOS 4.10+
      = G		752x410			     VEGA VGA
      = G		752x410	  16		     Tatung VGA
      = G		752x410	  16		     Video7 V-RAM VGA
-     = G   80x25  8x16	640x400	 256	   1	A000 Ahead B
+     = G   80x25  8x16	640x400	 256	   1	A000 Ahead A, Ahead B
      = G  128x48  8x16 1024x768	   4/256k	A000 Trident TVGA 8900
      = T  132x25  8x14		  16/64	   8	B800 Quadram Ultra VGA
  61h = G		???x400			     Corona/Cordata BIOS 4.10+
      = G		720x540			     VEGA VGA
      = G		720x540	  16		     Tatung VGA
      = G		720x540	  16		     Video7 V-RAM VGA
-     = G   80x25  8x16	640x400	 256		A000 ATI VGA Wonder
-     = G   80x30  8x16	640x480	 256	   1	A000 Ahead B (512K)
+     = G   80x25  8x16	640x400	 256		A000 ATI VGA Wonder,VGA Wonder+
+     = G   80x30  8x16	640x480	 256	   1	A000 Ahead A, Ahead B (512K)
      = G   96x64  8x16	768x1024  16/256k	A000 Trident TVGA 88/8900 512K
      = T  132x29  8x12		  16/64	   8	B800 Quadram Ultra VGA
  62h = G		800x600			     VEGA VGA
      = G		800x600	  16		     Tatung VGA
      = G		800x600	  16		     Video7 V-RAM VGA
-     = G   80x30  8x16	640x480	 256		A000 ATI VGA Wonder
-     = G  100x75  8x8	800x600	 256	   1	A000 Ahead B (512K)
+     = G   80x30  8x16	640x480	 256		A000 ATI VGA Wonder,VGA Wonder+
+     = G  100x75  8x8	800x600	 256	   1	A000 Ahead A, Ahead B (512K)
      = G  128x48  8x16 1024x768	 256/256k	A000 Trident TVGA 8900, Zymos
      = T  132x32  8x11		  16/64	   6	B800 Quadram Ultra VGA
  63h = G	       1024x768	   2		     Video7 V-RAM VGA
-     = G  100x42  8x14	800x600	 256		A000 ATI VGA Wonder
+     = G  100x42  8x14	800x600	 256		A000 ATI VGA Wonder,VGA Wonder+
      = G  128x48  7x16 1024x768	 256	   1	A000 Ahead B (1MB)
      = T  132x44  8x8		  16/64	   5	B800 Quadram Ultra VGA
      = G		720x540	  16		     MORSE VGA
@@ -726,25 +740,26 @@ Values for video mode:
  69h = G		720x540	 256		     Video7 V-RAM VGA
  6Ah = G		800x600	  16		A000 VESA standard interface
      = G		800x600	  16		     Genoa 6400
+     = G  	  	800x600	  16	   	A000 Ahead A
      = G  100x75  8x8	800x600	  16	   1	A000 Ahead B (VESA) (see 71h)
-     = G		800x600	  16		     Zymos Poach
+     = G		800x600	  16		     Zymos Poach, Hi Res 512
      = G		800x600	  16		     Epson LT-386SX in CRT Mode
      = G		800x600	  16		     Compuadd 316SL in CRT Mode
      = G  100x42  8x14	800x600			A000 ATI VGA Wonder (undoc)
- 70h = G		800x600	  16		     Cardinal, C&T chipset
+ 70h = G		800x600	  16		     C&T chipset, Cardinal
      = G   90x28  8x14	720x392	  16	   1	A000 Ahead B
      = T   40x25  8x8		  16	   8	B800 Quadram (CGA double scan)
      =	 extended mode set (see AX=0070h)	     Everex Micro Enhancer EGA
  71h = G  100x35  8x16	800x600	 16of64		A000 NSI Smart EGA+
-     = G		960x720	  16		     Cardinal
+     = G		960x720	  16		     C&T chipset, Cardinal
      = G  100x75  8x8	800x600	  16	   1	A000 Ahead B (same as 6Ah)
      = T   80x25  8x8		  16	   8	B800 Quadram (CGA double scan)
- 72h = G	       1024x768	  16		     Cardinal, C&T chipset
+ 72h = G	       1024x768	  16		     C&T chipset, Cardinal
      = T   80x60  8x8		  16		B800 Quadram Ultra VGA
      = G		640x480 32768		A000 ATI
  73h = G   80x60  8x8	640x480	  16???		A000 Quadram Ultra VGA
  74h = G		640x400	   2		B800 Toshiba 3100 AT&T mode
-     = G  128x48  8x16 1024x768	  16	   1	A000 Ahead B (512K)
+     = G  128x48  8x16 1024x768	  16	   1	A000 Ahead A, Ahead B (512K)
      = T   80x66  8x8		  16		B800 Quadram Ultra VGA
  75h = G  128x48  8x16 1024x768	   4	   1	A000 Ahead B
      = G   80x66	640x528	  16???		A000 Quadram Ultra VGA
@@ -756,9 +771,9 @@ Values for video mode:
      = T  100x75  8x8		  16		B800 Quadram Ultra VGA
  79h = G		640x480	 256		     Cardinal, C&T chipset
      = G  100x75	800x600	  16???		A000 Quadram Ultra VGA
- 7Ah = G		720x540	 256		     Cardinal
+ 7Ah = G		720x540	 256		     C&T chipset, Cardinal
      = T  114x60  8x8		  16		B800 Quadram Ultra VGA
- 7Bh = G		800x600	 256		     Cardinal
+ 7Bh = G		800x600	 256		     C&T chipset, Cardinal
      = G  114x60	912x480	  16???		A000 Quadram Ultra VGA
  7Ch = G		512x512	  16		     Genoa
  7Dh = G		512x512	 256		     Genoa
@@ -811,15 +826,18 @@ Values for video mode:
  10h =	 reserved
  11h = G	       1280x350	   4				EGA only
  12h = G	       1280x600	   4				EGA only
- 13h = G		640x350	 256				EGA only
+ 13h = G		640x350	 256				EGA,EV673
  14h = G		640x400	 256
  15h = G		512x480	 256
  16h = T   80x30  8x16		 256				VGA only
  18h = T  100x27  8x16		  16				VGA only
  20h = G	       1024x768	  16				Everex 629,678
+ 								Everex EV-673
  21h = T  160x64  8x16 1280x1024  16				1MB VGA only
  30h = G		640x480	 256				Everex 629,678
+ 								Everex EV-673
  31h = G		800x600	 256				Everex 629,678
+ 								Everex EV-673
  32h = G  128x48  8x16 1024x768	 256				1MB VGA only
  40h = T  132x30  8x16		  16				VGA only
  50h = T  132x32  8x16		 mono				VGA only
@@ -1173,8 +1191,11 @@ INT 10 - VIDEO - TOGGLE INTENSITY/BLINKING BIT (Jr, PS, TANDY 1000, EGA, VGA)
 	BL = new state
 	    00h background intensity enabled
 	    01h blink enabled
-Note:	although there is no function to get the current status, bit 5 of
+	BH = 00h to avoid problems on some adapters
+Notes:	although there is no function to get the current status, bit 5 of
 	  0040h:0065h indicates the state
+	when configured for a monochrome display, the Boca Research Multi-EGA
+	  with ROM v M1.1 Type D has its screen disrupted if BH is not clear
 SeeAlso: AH=08h
 ----------101007-----------------------------
 INT 10 - VIDEO - GET INDIVIDUAL PALETTE REGISTER (VGA,UltraVision v2+)
@@ -1824,7 +1845,7 @@ INT 10 - VIDEO - SELECT DRAWING FUNCTION (Hercules GRAFIX)
 	    00h clear pixels
 	    01h set pixels
 	    02h invert pixels
-SeeAlso: AH=44h,AH=46h,AH=4Ch,AH=4Dh
+SeeAlso: AH=45h,AH=46h,AH=4Ch,AH=4Dh
 ----------1045-------------------------------
 INT 10 - VIDEO - SELECT PAGE TO DISPLAY (Hercules GRAFIX)
 	AH = 45h
@@ -2191,6 +2212,30 @@ INT 10 - DGIS - INQUIRE INT 10 OUTPUT DEVICE
 Return: ES:DI = 0000h:0000h  if current display is non-DGIS
 		else address of the current DGIS INT 10 display
 SeeAlso: AX=6A00h,AX=6A01h
+----------106E00------------------------------------
+INT 10 - Paradise VGA internal - GET ???
+	AX = 6E00h
+Return: AH = ??? (depends on serial number)
+	AL = ???
+	BX = ???
+	CL = ???
+	CH = ???
+	DX = ???
+SeeAlso: AX=6E04,AX=6E05
+----------106E04-------------------------------------
+INT 10 - Paradise VGA internal - GET SCREEN SIZE AND ???
+	AX = 6E04h
+Return: BX = screen width (columns)
+	CX = screen height (lines)
+	AH = ??? (05h or FFh)
+	AL = ??? (04h or video mode)
+SeeAlso: AX=6E00,AX=6E05
+----------106E05-------------------------------------
+INT 10 - Paradise VGA internal - SET MODE
+	AX = 6E05h
+	BL = mode
+Note:	like AH=0, AL=BL.
+SeeAlso: AH=00,AX=6E00,AX=6E04,AX=6F05h
 ----------106F00-----------------------------
 INT 10 - VIDEO - INSTALLATION CHECK (Video7 VGA,VEGA VGA)
 	AX = 6F00h
@@ -2239,16 +2284,21 @@ Values for video mode:
  45h = T  132x28  8x8				     Video7/VEGA VGA
  60h = G		752x410	  16		     Video7 VGA, VEGA VGA
  61h = G		720x540	  16		     Video7 VGA, VEGA VGA
-     = G		720x540	  16		     Northgate
+     = G		720x540	  16		     Northgate, Headland 1024i
  62h = G		800x600	  16		     Video7 VGA, VEGA Ext EGA
+     = G		800x600	  16		     Headland 1024i
  63h = G	       1024x768	   2		     Video7 VGA
  64h = G	       1024x768	   4		     Video7 VGA
  65h = G	       1024x768	  16		     Video7 VGA, VEGA Ext EGA
+     = G	       1024x768	  16		     Headland 1024i
  66h = G		640x400	 256		     Video7 VGA, VEGA Ext VGA
-     = G		640x400	 256		     Northgate
+     = G		640x400	 256		     Northgate, Headland 1024i
  67h = G		640x480	 256		     Video7 VGA, VEGA Ext VGA
+     = G		640x480	 256		     Headland 1024i
  68h = G		720x540	 256		     Video7 VGA, VEGA Ext VGA
+     = G		720x540	 256		     Headland 1024i
  69h = G		800x600	 256		     Video7 VGA, VEGA Ext VGA
+     = G		800x600	 256		     Headland 1024i
  70h = G		752x410	  16gray	     Video7 VGA, VEGA VGA
  71h = G		720x540	  16gray	     Video7 VGA, VEGA VGA
  72h = G		800x600	  16gray	     Video7 VGA

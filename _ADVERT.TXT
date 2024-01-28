@@ -1,16 +1,24 @@
-Warning: Blatant advertisement follows
+Warning: Blatant advertisements follow
+
+Tired of wearing out printer ribbons getting a hardcopy of the interrupt
+list?  Want the list split up by subject?  Try
 
      PC Interrupts:
-	 A Programmer's Reference to BIOS, DOS, and Third-Party Calls
+       A Programmer's Reference to BIOS, DOS, and Third-Party Calls
      Ralf Brown and Jim Kyle
+     1024 pages
+     Addison-Wesley
      ISBN 0-201-57797-6
-     ~1100 pages
-     Available October 1991
+     $32.95
+
+Corresponds to INTER26 with the most important new material from INTER27.
+
+[Apology: somewhere between our manuscript and the first printing, someone
+ at the publisher cut out the list of contributors without our knowledge.
+ On behalf of the publisher, I apologize for this mistake; the list will
+ be restored in the second printing.]
 
 -------
-
-Ever wanted the full scoop on undocumented MSDOS calls?  Run to your
-favorite bookstore and ask for
 
      Undocumented DOS:
        A Programmer's Guide to Reserved MS-DOS Functions and Data Structures
@@ -20,11 +28,10 @@ favorite bookstore and ask for
      694+xviii pages, 7-3/8" x 9-1/8"
      Addison-Wesley
      ISBN 0-201-57064-5
-     $39.95 (book and two 5.25" disks)
-     Available now
+     $39.95 (book and two 5.25" disks) [first through third printings]
+     $44.95 [fourth printing, with updates for MSDOS 5.0]
 
-Don't buy it for the Appendix derived from the Interrupt List, buy it for a
-full hypertext version of INTER490, a script-based interrupt monitoring
-utility, source for a sample network redirector, discussions of
-TSRs/multitasking/networks/installable file systems/debugging, lots of
-examples, etc.
+Includes a full hypertext version of INTER490 [INTER22], a script-based
+interrupt monitoring utility, source for a sample network redirector,
+discussions of TSRs/multitasking/networks/installable file systems/debugging,
+lots of examples, etc.

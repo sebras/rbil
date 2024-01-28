@@ -1,12 +1,12 @@
-Interrupt List		Release 27 (v91.4)		Last change 9/1/91
+Interrupt List		Release 28 (v91.5)		Last change 11/17/91
 
 Please redistribute the following files unmodified as a group, in a pair of
-archives named INTER27A and INTER27B (preferably the original authenticated
+archives named INTER28A and INTER28B (preferably the original authenticated
 PKZIP archives):
         INTERRUP.1ST	this file
 	INTERRUP.A	INT 00 through INT 14 \
-	INTERRUP.B	INT 15 through INT 1F  \ total 636 pages at 60 lines
-	INTERRUP.C	INT 20 through INT 2E  / per page, 687 with INTPRINT -p
+	INTERRUP.B	INT 15 through INT 1F  \ total 651 pages at 60 lines
+	INTERRUP.C	INT 20 through INT 2E  / per page, 702 with INTPRINT -p
 	INTERRUP.D	INT 2F through INT 5F /
 	INTERRUP.E	INT 60 through INT FF/
         INTERRUP.PRI	a brief primer on interrupts
@@ -14,8 +14,11 @@ PKZIP archives):
 	INTPRINT.DOC	instructions for INTPRINT
 	INTPRINT.C	source code for INTPRINT
 	MEMORY.LST	format of the BIOS data area
-	INT2QH.*	program to convert list into QuickHelp database
+The following files should be distributed in an archive called INTER28C:
+	INT2HLP.BAT	Perl script to convert list into QuickHelp database
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
+	INT2QH.*	program to convert list into QuickHelp database
+	INTHELP.*	convert list into TurboPower GUIDE database
 
 Concatenate INTERRUP.A, .B, .C, .D, and .E with
   COPY /B INTERRUP.A+INTERRUP.B+INTERRUP.C+INTERRUP.D+INTERRUP.E INTERRUP.LST
@@ -23,6 +26,15 @@ to create an interrupt list file identical to my master copy.
 
 Use INTPRINT to generate a one-line-per-call summary file and/or a file
 containing only data structure formats.  See INTPRINT.DOC for details.
+
+Note: in addition to the archives mentioned above, you may also find other
+archives named INTERrrx containing additional files generated from the
+original distribution for your convenience.  These other archives are
+maintained by other people, so please do not ask me any questions about them
+(all I'll do is refer you to one of the people listed below).  The two
+additional distributions I am aware of contain a ready-made Quick Help
+database (compiled by Brad Willcott <bxw@ccadfa.cc.adfa.oz.au>) and 'diff'
+files from the previous release.
 ---------------------------------------------
 	NOTICE		NOTICE		NOTICE		NOTICE
 
@@ -54,7 +66,7 @@ PARTICULAR PURPOSE.
 -------
 INT 0A"Tandy", INT 0D"Tandy", and INT 86"NetBIOS" have been completely
 rewritten.  All other information contained in the July 1987 version on which
-the above copyright is now (March 1991) claimed has been removed and replaced
+the above copyright was claimed in March 1991 has been removed and replaced
 with independently-obtained new versions.  Any similarities between the July
 1987 entries and their replacements are due solely to the nature of the
 information or the use of identical reference materials.
@@ -69,8 +81,8 @@ it works the same way).  Information marked with "???" is known to be
 incomplete or guesswork.
 ---------------------------------------------
 If the list is more than three months old by the time you get it, there
-is probably a newer release out already (R28 is planned for mid- to late
-November).  Each release supercedes all previous versions, so there is
+is probably a newer release out already (R29 is planned for early 
+February).  Each release supercedes all previous versions, so there is
 no need to keep old versions.
 
 The newest release of this list is available in these places (please do not
@@ -78,7 +90,7 @@ ask me to email it, it is just too large for that):
 
 On the Internet, by standard anonymous FTP from CS.CMU.EDU [128.2.222.173].
 	Change directly to directory /afs/cs.cmu.edu/user/ralf/pub and get the
-	files inter??a.zip and inter??b.zip.  You MUST change directory first
+	files inter??a.zip thru inter??c.zip.  You MUST change directory first
 	and in a single command because of the way CMU's anonymous FTP works.
 	Don't forget to set mode "binary" or "type L 8"!  ZIP unarchivers for
 	MSDOS and Unix are available in the "archivers" subdirectory.  Note
@@ -86,13 +98,13 @@ On the Internet, by standard anonymous FTP from CS.CMU.EDU [128.2.222.173].
 	downtime.  If you get an "access denied" type error, try again in a
 	few hours.
 
-On FIDOnet, from SoundingBoard BBS 1:129/26 1-412-621-4604 1200/2400/14.4 HST
-	as files INTERrrA.ZIP and INTERrrB.ZIP, where rr stands for the
-	release number, in file area #4.  First-time callers may download.
+On FIDOnet, from SoundingBoard BBS 1:129/26 1-412-621-4604 2400/9600/14.4 HST
+	as files INTERrrA.ZIP, INTERrrB.ZIP, and INTERrrC.ZIP (rr stands for
+	the release number), in file area #8.  First-time callers may download.
 	File Requests.
 
-The list is also posted to USEnet in comp.binaries.ibm.pc about three times per
-year, concurrent with a new release of the list.  Since comp.binaries.ibm.pc is
+The list is also posted to USEnet in comp.binaries.ibm.pc about twice a year,
+concurrently with a new release of the list.  Since comp.binaries.ibm.pc is
 archived, you will be able to find a fairly recent release in the various UUCP
 archives.
 
@@ -122,7 +134,7 @@ BITnet: you may retrieve the copy on WSMR-SIMTEL20.ARMY.MIL via the following
 	(elsewhere) TRICKLE@USACHVM1 (Chile)
 		    TRICKLE@TAUNIVM  (Israel)
 FIDO:	boards belonging to the PDN (Programmer's Distribution Network) system
-CompuServe: in the IBM Programming Forum (GO IBMPRO), Library 6, as INTrrA.*
+CompuServe: in the IBM Programming Forum (GO IBMPRO), Library 5, as INTrrA.*
 	and INTrrB.*
 ---------------------------------------------
 Key to system abbreviations
@@ -290,6 +302,12 @@ among them
  7/91 Rickard Faith    faith@cs.unc.edu		      Stacker
  7/91 Wolfgang Lierz   lierz@kmx.gmd.dbp.de	      Norton Utilities 5.0
  8/91 Michael A Shiels mshiels@masnet.uucp	      NPC NCSI, KBUF, Telebit
+ 9/91 Ralf Brown       ralf@cs.cmu.edu		      QEMM API
+ 9/91 Holger Veit      veit@du9ds3.uni-duisburg.de    Optima 1024 VGA zoom
+ 9/91 Gary E. Miller   GEM@cup.portal.com	      Rabbit LLAPI
+10/91 Michael A Shiels mshiels@masnet.uucp	      FTP Packet Driver 1.10
+11/91 Fridrik Skulason frisk@RHI.HI.IS		      more virus install checks
+11/91 Christopher J Ambler chris@nike.calpoly.edu     FSBBS 2.0
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -327,7 +345,7 @@ Also contributing:
  Norbert Sommer <NSOMMER@DD0RUD81.BITNET>, John.Brennen@VI.RI.CMU.EDU,
  Paul van Keep <75170.1045@compuserve.COM>,John B. Thiel <jbthiel@cse.ogi.edu>,
  Ken Medellin via <76702,1071@compuserve.com>, Bob Green <bob@inmos.co.uk>,
- A. Padgett Peterson <padgett%tccslr.dnet@uvs1.orl.mmc.com>,
+ A. Padgett Peterson <padgett%tccslr.dnet@uvs1.orl.mmc.com>,Bert Baker (Texas),
  Leonard Erickson <70465.203@CompuServe.COM>, Robert Chafer (Salford, England),
  Carl Schelin <tcs@mailer.jhuapl.edu>,Dave Kirsch <Dave_Kirsch@mindlink.bc.ca>,
  Michael S. Stratoti <tmstrato@king.mcs.drexel.edu>, Marc Scholtis 2:281/701.2,
@@ -335,9 +353,11 @@ Also contributing:
  Claude Marche <marche@lri.lri.fr>, Bent Lynggaard <lynggaard@risoe.dk>,
  Drake Koefoed (Eugene, OR), Michael L. Kaufman <kaufman@eecs.nwu.edu>,
  Mark T Garlanger <garlangr@ecn.purdue.edu>, J. B. Gill <JBG@arlan.byu.edu>,
- Frank Behrens (Dresden, FRG), Bruce Gingery 1:310/5.1, John Navas
+ Frank Behrens (Dresden, FRG), Bruce Gingery 1:310/5.1, John Navas,
  Johan Zwiekhorst 2:292/100, Klaus Fischer 2:243/64, Steve Grant (New Jersey),
- Jeff Pipkins <pipkins@cpqhou.se.hou.compaq.com>
+ Jeff Pipkins <pipkins@cpqhou.se.hou.compaq.com>, Wim Osterholt (Netherlands),
+ Brett Warthen <73270.405@compuserve.com>, Dan Bodoh <bodoh@xraylith.wisc.edu>,
+ Brian.McGuinness@nirvonics.com, Mitch Davis 3:634/384.6
 ---------------------------------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -652,6 +672,9 @@ Various and sundry references from Michael Shiels:
 	Enhanced Expanded Memory Specification (Enhanced EMS), version 2.0
 		(020022-001 A), July 1986; AST Research, Quadram Inc., Ashton-
 		Tate
+
+Additional video modes extracted from the VPIC v4.6 configuration files.
+Added by Ralf Brown, 9/14/91.
 ---------------------------------------------
 The following have provided API reference materials at no charge:
 
@@ -809,9 +832,13 @@ P.O. Drawer F
 Denton, TX 76202
 Voice: (817) 387-3339
 
-Innovative Data Concepts	(SWAP?? utilities)
-1657 The Fairways, Suite 101	[as of 9/89]
-Jenkintown, PA 19046
+Innovative Data Concepts, Inc.	(SWAP?? utilities, TesSeRact library)
+122 North York Road
+Suite 5
+Hatboro, PA 19040
+Voice:	(215) 443-9705
+Orders: (800) 926-4551
+FAX:	(215) 443-9753
 
 Inset Systems			(Inset)
 71 Commerce Drive		[may be outdated]
@@ -939,7 +966,7 @@ What they're saying about this list:
    IBM PC.  A great thing to have on your hard disk if you don't have
    a Ray Duncan or Peter Norton book handy."
       _Turbo_Technix_, July/August 1988, p. 157.
-[and that was about the 1/30/88 version, which is about one-ninth the size
+[and that was about the 1/30/88 version, which is about one-tenth the size
  of the current version....]
 ---------------------------------------------
 If you know of any information not in the list, or which is stated incorrectly,

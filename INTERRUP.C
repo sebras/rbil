@@ -1071,6 +1071,9 @@ Notes:	in DOS versions 3.0 and up, the limit on simultaneously open files may
 	  handles into a child PSP (including the one created on EXEC).
 	network redirectors based on the original MS-Net implementation use
 	  values of 80h-FEh in the open file table to indicate remote files
+	MSDOS 5.00 incorrectly fills the FCB fields when loading a program
+	  high; the first FCB is empty and the second contains the first
+	  parameter
 
 Format of environment block:
 Offset	Size	Description
@@ -1512,6 +1515,12 @@ INT 21 - Phar Lap 386/DOS-Extender - GET VERSION
 	AH = 30h
 	EBX = 50484152h ("PHAR")
 Return: ???
+----------2130--DXABCD-----------------------
+INT 21 - "Possessed" virus - INSTALLATION CHECK
+	AH = 30h
+	DX = ABCDh
+Return: DX = DCBAh if installed
+SeeAlso: AX=0B56h,AX=30F1h
 ----------213000BX1234-----------------------
 INT 21 - CTask 2.0+ - INSTALLATION CHECK
 	AX = 3000h
@@ -1527,7 +1536,7 @@ Notes:	if first eight bytes of returned data block equal eight bytes passed
 INT 21 - "Dutch-555" virus - INSTALLATION CHECK
 	AX = 30F1h
 Return: AL = 00h if resident
-SeeAlso: AX=0B56h,AX=33E0h
+SeeAlso: AH=30h/DX=ABCDh,AX=33E0h
 ----------2131-------------------------------
 INT 21 - DOS 2+ - TERMINATE AND STAY RESIDENT
 	AH = 31h
@@ -2798,11 +2807,12 @@ Return: CF clear if successful
 	CF set on error
 	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
 Notes:	format of data is driver-specific (see below for some specific cases)
-	if the file handle refers to "4DOSSTAK", the 4DOS KEYSTACK.SYS driver
-	  will push the specified characters on the keyboard stack; similarly
-	  for "NDOSSTAK", the NDOS KEYSTACK.SYS driver will push the characters
-	  onto the keyboard stack
+	if the file handle refers to "4DOSSTAK", the 4DOS (v2.x-3.03)
+	  KEYSTACK.SYS driver will push the specified characters on the
+	  keyboard stack; similarly for "NDOSSTAK", the NDOS KEYSTACK.SYS
+	  driver will push the characters onto the keyboard stack
 SeeAlso: AX=4400h,AX=4402h,AX=4405h,INT 2F/AX=122Bh,INT 2F/AX=D44Dh
+SeeAlso: INT 2F/AX=D44Fh
 ----------214403-----------------------------
 INT 21 - SMARTDRV.SYS - IOCTL - CACHE CONTROL
 	AX = 4403h
@@ -3732,7 +3742,7 @@ INT 21 - "MG" virus, "699" virus - INSTALLATION CHECK
 	AX = 4B04h
 Return: CF clear if "MG" resident
 	AX = 044Bh if "699" resident
-SeeAlso: AX=4243h,AX=4B40h
+SeeAlso: AX=4243h,AX=4B25h
 ----------214B05-----------------------------
 INT 21 - DOS 5.0 - SET EXECUTION STATE
 	AX = 4B05h
@@ -3758,43 +3768,73 @@ Offset	Size	Description
  08h	WORD	PSP segment of new program
  0Ah	DWORD	starting CS:IP of new program
  0Eh	DWORD	program size including PSP
+----------214B25-----------------------------
+INT 21 - "1063" virus - INSTALLATION CHECK
+	AX = 4B25h
+Return: DI = 1234h if installed
+SeeAlso: AX=4B04h,AX=4B40h
 ----------214B40-----------------------------
 INT 21 - "Plastique" virus - INSTALLATION CHECK
 	AX = 4B40h
 Return: AX = 5678h if resident
-SeeAlso: AX=4B04h,AX=4B41h,AX=4B4Dh
+SeeAlso: AX=4B25h,AX=4B41h,AX=4B4Ah
 ----------214B41-----------------------------
 INT 21 - "Plastique" virus - ???
 	AX = 4B41h
 	???
 Return: ???
 SeeAlso: AX=4B40h
+----------214B4A-----------------------------
+INT 21 - "Jabberwocky" virus - INSTALLATION CHECK
+	AX = 4B4Ah
+Return: AL = 57h if installed
+SeeAlso: AX=4B40h,AX=4B4Bh
+----------214B4B-----------------------------
+INT 21 - "Horse-2" virus - INSTALLATION CHECK
+	AX = 4B4Bh
+Return: CF clear if installed
+SeeAlso: AX=4B4Ah,AX=4B4Dh
 ----------214B4D-----------------------------
-INT 21 - "Murphy-2" virus - INSTALLATION CHECK
+INT 21 - "Murphy-2" virus, "Patricia" virus - INSTALLATION CHECK
 	AX = 4B4Dh
 Return: CF clear if resident
-SeeAlso: AX=4B40h,AX=4B50h
+SeeAlso: AX=4B4Ah,AX=4B50h
 ----------214B50-----------------------------
 INT 21 - "Plastique-2576" virus - INSTALLATION CHECK
 	AX = 4B50h
 Return: AX = 1234h if resident
-SeeAlso: AX=4B4Dh,AX=4B59h,AX=4B60h
+SeeAlso: AX=4B4Dh,AX=4B53h,AX=4B60h
+----------214B53-----------------------------
+INT 21 - "Horse" virus - INSTALLATION CHECK
+	AX = 4B53h
+Return: CF clear if installed
+SeeAlso: AX=4B50h,AX=4B55h
+----------214B55-----------------------------
+INT 21 - "Sparse" virus - INSTALLATION CHECK
+	AX = 4B55h
+Return: AX = 1231h if installed
+SeeAlso: AX=4B53h,AX=4B59h
 ----------214B59-----------------------------
-INT 21 - "Murphy-1" virus - INSTALLATION CHECK
+INT 21 - "Murphy-1", "Murphy-4" viruses - INSTALLATION CHECK
 	AX = 4B59h
 Return: CF clear if resident
-SeeAlso: AX=4B50h,AX=4BAAh
+SeeAlso: AX=4B50h,AX=4BA7h
 ----------214B60-----------------------------
 INT 21 - "Plastique-2576" virus - ???
 	AX = 4B60h
 	???
 Return: ???
 SeeAlso: AX=4B50h
+----------214BA7-----------------------------
+INT 21 - "1876" virus - INSTALLATION CHECK
+	AX = 4BA7h
+Return: AX = B459h if installed
+SeeAlso: AX=4B59h,AX=4BAAh
 ----------214BAA-----------------------------
 INT 21 - "Nomenklatura" virus - INSTALLATION CHECK
 	AX = 4BAAh
 Return: CF clear if resident
-SeeAlso: AX=4B59h,AX=4BAFh
+SeeAlso: AX=4BA7h,AX=4BAFh
 ----------214BAF-----------------------------
 INT 21 - "948" virus, "Magnitogorsk" virus - INSTALLATION CHECK
 	AX = 4BAFh
@@ -3805,7 +3845,7 @@ SeeAlso: AX=4BAAh,AX=4BDDh
 INT 21 - "Lozinsky" virus - INSTALLATION CHECK
 	AX = 4BDDh
 Return: AX = 1234h
-SeeAlso: AX=4BAFh,AX=4BFFh
+SeeAlso: AX=4BAFh,AX=4BFEh
 ----------214BEE-----------------------------
 INT 21 - F-DRIVER.SYS v1.14+ - GRAB INT 21
 	AX = 4BEEh
@@ -3817,19 +3857,26 @@ Notes:	F-DRIVER.SYS is part of the F-PROT virus/trojan protection package by
 	  code from its original location in the INT 21 chain to be the first
 	  thing called by INT 21.  This is the mechanism used by F-NET.
 SeeAlso: INT 2F/AX=4653h
+----------214BFE-----------------------------
+INT 21 - "1028" virus, "1193" virus - INSTALLATION CHECK
+	AX = 4BFEh
+Return: DI = 55BBh if "1028" resident
+	AX = ABCDh if "1193" resident
+SeeAlso: AX=4BDDh,AX=4BFFh
 ----------214BFF-----------------------------
-INT 21 - "707" virus, "Justice" virus - INSTALLATION CHECK
+INT 21 - "707", "Justice", "Europe 92" viruses - INSTALLATION CHECK
 	AX = 4BFFh
 Return: BL = FFh if "707" resident
 	DI = 55AAh if "Justice" resident
-SeeAlso: AX=4BDDh,AX=4BFFh"Cascade",AX=5252h
+	CF clear if "Europe 92" resident
+SeeAlso: AX=4BFEh,AX=4BFFh"Cascade",AX=5252h
 ----------214BFFSI0000-----------------------
 INT 21 - "Cascade" virus - INSTALLATION CHECK
 	AX = 4BFFh
 	SI = 0000h
 	DI = 0000h
 Return: DI = 55AAh if installed
-SeeAlso: AX=4BFFh"Justice"
+SeeAlso: AX=4BFFh"Justice",AX=5252h
 ----------214C-------------------------------
 INT 21 - DOS 2+ - "EXIT" - TERMINATE WITH RETURN CODE
 	AH = 4Ch
@@ -5108,7 +5155,7 @@ SeeAlso: AH=48h,AH=49h,AH=4Ah
 INT 21 - "1067" virus - INSTALLATION CHECK
 	AX = 58CCh
 Return: CF clear if resident
-SeeAlso: AX=5252h,AH=76h
+SeeAlso: AX=5252h,AX=6969h
 ----------2159--BX0000-----------------------
 INT 21 - DOS 3+ - GET EXTENDED ERROR INFORMATION
 	AH = 59h
@@ -6702,11 +6749,11 @@ Notes:	the input path need not actually exist
 	  X is the default or explicit drive letter.
 	functions which take pathnames require canonical paths if invoked via
 	  INT 21/AX=5D00h
-	this function is used to form the full pathname of an invoked program
-	  which is stored after the end of its environment
 	supported by OS/2 v1.1 compatibility box
 	NetWare 2.1x does not support characters with the high bit set; early
-	  versions of NetWare 386 support such characters except in this call
+	  versions of NetWare 386 support such characters except in this call.
+	  In addition, NetWare is reported to return error code 3 for the path
+	  "X:\"; one should use "X:\." instead.
 	for DOS 3.3, the input and output buffers may be the same, as the
 	  canonicalized name is built in an internal buffer and copied to the
 	  specified output buffer as the very last step
@@ -7002,6 +7049,11 @@ Offset	Size	Description
  02h	DWORD	disk serial number (binary)
  06h 11 BYTEs	volume label or "NO NAME    " if none present
  11h  8 BYTEs	(AL=00h only) filesystem type--string "FAT12   " or "FAT16   "
+----------216969-----------------------------
+INT 21 - "Rape-747" virus - INSTALLATION CHECK
+	AX = 6969h
+Return: AX = 0666h if resident
+SeeAlso: AX=58CCh,AH=76h"virus"
 ----------216A-------------------------------
 INT 21 - DOS 4+ internal - ???
 	AH = 6Ah
@@ -7076,7 +7128,17 @@ SeeAlso: AH=3Ch,AH=3Dh
 INT 21 - "Klaeren" virus - INSTALLATION CHECK
 	AH = 76h
 Return: AL = 48h if resident
-SeeAlso: AX=58CCh,AH=83h
+SeeAlso: AX=6969h,AX=7700h
+----------217700-----------------------------
+INT 21 - "Growing Block" virus - INSTALLATION CHECK
+	AX = 7700h
+Return: AX = 0920h if resident
+SeeAlso: AH=76h,AH=7Fh
+----------217F-------------------------------
+INT 21 - "Squeaker" virus - INSTALLATION CHECK
+	AH = 7Fh
+Return: AH = 80h if resident
+SeeAlso: AX=7700h,AH=83h"virus"
 ----------2180-------------------------------
 INT 21 - European MSDOS 4.0 - EXECUTE PROGRAM IN BACKGROUND
 	AH = 80h
@@ -7106,12 +7168,18 @@ Return: ???
 INT 21 - "SVC" virus - INSTALLATION CHECK
 	AH = 83h
 Return: DX = 1990h if resident
-SeeAlso: AH=76h,AH=89h"virus"
+SeeAlso: AH=76h,AH=84h"virus"
 ----------2184-------------------------------
 INT 21 - European MSDOS 4.0 - ???
 	AH = 84h
 	???
 Return: ???
+----------2184-------------------------------
+INT 21 - "SVC 5.0" or "SVC 6.0" virus - INSTALLATION CHECK
+	AH = 84h
+Return: DX = 1990h if resident
+	    BH = version number (major in high nybble, minor in low)
+SeeAlso: AH=83h"virus",AH=89h"virus"
 ----------2185-------------------------------
 INT 21 - European MSDOS 4.0 - ???
 	AH = 85h
@@ -7147,7 +7215,7 @@ Note:	reportedly called by Microsoft C 4.0 startup code
 INT 21 - "Vriest" virus - INSTALLATION CHECK
 	AH = 89h
 Return: AX = 0123h if resident
-SeeAlso: AH=83h,AH=90h
+SeeAlso: AH=84h"virus",AH=90h"virus"
 ----------218A-------------------------------
 INT 21 - European MSDOS 4.0 - ???
 	AH = 8Ah
@@ -7226,8 +7294,8 @@ Return: ???
 ----------219753-----------------------------
 INT 21 - "Nina" virus - INSTALLATION CHECK
 	AX = 9753h
-Return: never (executes original program)
-SeeAlso: AH=90h,AX=A1D5h
+Return: never (executes original program) if virus resident
+SeeAlso: AH=90h"virus",AX=A1D5h
 ----------2198-------------------------------
 INT 21 - European MSDOS 4.0 - ???
 	AH = 98h
@@ -7340,16 +7408,26 @@ SeeAlso: AH=A4h
 INT 21 - "Eddie-2" virus - INSTALLATION CHECK
 	AX = A55Ah
 Return: AX = 5AA5h if resident
-SeeAlso: AX=A1D5h,AH=ABh
+SeeAlso: AX=A1D5h,AX=AA00h
+----------21AA00-----------------------------
+INT 21 - "Blinker" virus - INSTALLATION CHECK
+	AX = AA00h
+Return: AX = 00AAh if resident
+SeeAlso: AX=A55Ah,AX=AA03h
+----------21AA03-----------------------------
+INT 21 - "Backtime" virus - INSTALLATION CHECK
+	AX = AA03h
+Return: AX = 03AAh if resident
+SeeAlso: AX=AA00h,AH=ABh
 ----------21AB-------------------------------
-INT 21 - "600" or "Voronezh" virus - INSTALLATION CHECK
+INT 21 - "600" or "Voronezh"-family virus - INSTALLATION CHECK
 	AH = ABh
-Return: AX = 5555h
-SeeAlso: AX=A55Ah,AH=BEh"virus"
+Return: AX = 5555h if resident
+SeeAlso: AX=AA03h,AX=BBBBh"virus"
 ----------21AF-------------------------------
 INT 21 - Attachmate Extra - GET TRANSLATE TABLE ADDRESS
 	AH = AFh
-Return: DS:BX -> translate tables
+Return: DS:BX -> translate tables (see below)
 
 Format of translate tables:
 Offset	Size	Description
@@ -7470,6 +7548,11 @@ INT 21 - Novell NetWare 4.0, Alloy NTNX - SET END OF JOB STATUS
 	    otherwise enable EOJs
 Return: AL = old EOJ flag
 SeeAlso: AH=D6h
+----------21BBBB-----------------------------
+INT 21 - "Hey You" virus - INSTALLATION CHECK
+	AX = BBBBh
+Return: AX = 6969h
+SeeAlso: AH=ABh"virus",AH=BEh"virus"
 ----------21BC-------------------------------
 INT 21 - Novell NetWare 4.6, Alloy NTNX - LOG/LOCK PHYSICAL RECORD
 	AH = BCh
@@ -7506,7 +7589,7 @@ SeeAlso: AH=BCh,AH=BDh,AH=C1h
 INT 21 - "Datalock" virus - INSTALLATION CHECK
 	AH = BEh
 Return: AX = 1234h if resident
-SeeAlso: AH=ABh,AX=BE00h
+SeeAlso: AX=BBBBh,AX=BE00h
 ----------21BE00-----------------------------
 INT 21 - "1049" virus - INSTALLATION CHECK
 	AX = BE00h
@@ -7615,7 +7698,7 @@ Return: AL = error code
 INT 21 - "Sverdlov" virus - INSTALLATION CHECK
 	AX = C500h
 Return: AX = 6731h if resident
-SeeAlso: AX=C301h,AX=C603h
+SeeAlso: AX=C301h,AH=C6h"virus"
 ----------21C6-------------------------------
 INT 21 - Novell NetWare 4.6, Alloy NTNX - GET OR SET LOCK MODE
 	AH = C6h
@@ -7624,12 +7707,17 @@ INT 21 - Novell NetWare 4.6, Alloy NTNX - GET OR SET LOCK MODE
 	    01h set new extended locks mode 
 	    02h get lock mode
 Return: AL = current lock mode
+----------21C6-------------------------------
+INT 21 - "Socha" virus - INSTALLATION CHECK
+	AH = C6h
+Return: AL = 55h if resident
+SeeAlso: AX=C500h,AX=C603h
 ----------21C603-----------------------------
 INT 21 - "Yankee" or "MLTI" virus - INSTALLATION CHECK
 	AX = C603h
 	CF set
 Return: CF clear if resident
-SeeAlso: AX=C500h,AH=CCh"virus"
+SeeAlso: AX=C500h,AX=CB02h"virus"
 ----------21C7-------------------------------
 INT 21 - Novell NetWare 4.0 - TRANSACTION TRACKING SYSTEM
 	AH = C7h
@@ -7704,6 +7792,11 @@ Return: AL = error code
 	    FFh failed
 Note:	attempts to lock all logged personal files
 SeeAlso: AH=CAh
+----------21CB02-----------------------------
+INT 21 - "Witcode" virus - INSTALLATION CHECK
+	AX = CB02h
+Return: AX = 02CBh if resident
+SeeAlso: AX=C603h,AH=CCh"virus"
 ----------21CC-------------------------------
 INT 21 - Novell NetWare 4.0, Alloy NTNX - RELEASE FILE (FCB)
 	AH = CCh
@@ -7715,7 +7808,7 @@ SeeAlso: AH=CAh,AH=CDh
 INT 21 - "Westwood" virus - INSTALLATION CHECK
 	AH = CCh
 Return: AX = 0700h if resident
-SeeAlso: AX=C603h,AH=CDh"virus",AX=D000h
+SeeAlso: AX=CB02h,AH=CDh"virus",AX=D000h
 ----------21CD-------------------------------
 INT 21 - Novell NetWare 4.0, Alloy NTNX - RELEASE FILE SET
 	AH = CDh
@@ -7809,18 +7902,24 @@ Return: AL = error code (see AH=D4h)
 Note:	unlocks and clears all semaphores associated with the semaphore set
 	  of the requesting PC
 SeeAlso: AH=D4h
+----------21D5-------------------------------
+INT 21 - "Jeru-carf" virus - ???
+	AH = D5h
+	???
+Return: ???
+SeeAlso: AX=D5AAh
 ----------21D5AA-----------------------------
 INT 21 - "Diamond-A", "Diamond-B" viruses - INSTALLATION CHECK
 	AX = D5AAh
 Return: AX = 2A55h if "Diamond-A" resident
-	AX = 2A03h if "Diamond-B" resident
+	AX = 2A03h if "Diamond-B"-family virus resident
 SeeAlso: AX=D000h,AX=D5AAh/BP=DEAAh
 ----------21D5AABPDEAA-----------------------
 INT 21 - "Dir" virus - INSTALLATION CHECK
 	AX = D5AAh
 	BP = DEAAh
 Return: SI = 4321h if resident
-SeeAlso: AX=D5AAh,AH=DEh"virus"
+SeeAlso: AX=D5AAh,AX=DADAh"virus"
 ----------21D6-------------------------------
 INT 21 - Novell NetWare 4.0, Alloy NTNX - END OF JOB
 	AH = D6h
@@ -7864,6 +7963,11 @@ Offset	Size	Description
  08h	WORD	unused directory entries
  0Ah 16 BYTEs	volume name, null padded
  1Ah	WORD	removable flag, 0000h = not removable
+----------21DADA-----------------------------
+INT 21 - "Gotcha" virus - INSTALLATION CHECK
+	AX = DADAh
+Return: AH = A5h
+SeeAlso: AX=D5AAh,AH,DDh"virus"
 ----------21DB-------------------------------
 INT 21 - Novell NetWare 4.0, Alloy NTNX - GET NUMBER OF LOCAL DRIVES
 	AH = DBh
@@ -7914,12 +8018,17 @@ Return: AL = old broadcast mode
 INT 21 - "Durban" virus - INSTALLATION CHECK
 	AH = DEh
 Return: AH = DFh if resident
-SeeAlso: AX=D5AAh,AH=E0h"virus"
+SeeAlso: AX=D5AAh,AH=DEDEh"virus"
 ----------21DE-------------------------------
 INT 21 - "April 1st EXE" virus - ???
 	AH = DEh
 	???
 Return: ???
+----------21DEDE-----------------------------
+INT 21 - "Brothers" virus - INSTALLATION CHECK
+	AX = DEDEh
+Return: AH = 41h if resident
+SeeAlso: AH=DEh"virus",AH=E0h"virus"
 ----------21DF-------------------------------
 INT 21 - Novell NetWare 4.0, Alloy NTNX - CAPTURE
 	AH = DFh
@@ -7971,7 +8080,7 @@ INT 21 - "Jerusalem", "Armagedon" viruses - INSTALLATION CHECK
 	AH = E0h
 Return: AX = 0300h if "Jerusalem" resident
 	AX = DADAh if "Armagedon" resident
-SeeAlso: AH=DDh"virus",AH=DEh"virus",AX=E00Fh
+SeeAlso: AH=DEh"virus",AX=DEDEh"virus",AX=E00Fh
 ----------21E00F-----------------------------
 INT 21 - "8-tunes" virus - INSTALLATION CHECK
 	AX = E00Fh
@@ -8635,7 +8744,7 @@ SeeAlso: AH=E0h"DoubleDOS"
 INT 21 - "Frere Jacques" virus - INSTALLATION CHECK
 	AH = F0h
 Return: AX = 0300h if resident
-SeeAlso: AH=EEh"virus",AH=F7h"virus"
+SeeAlso: AH=EEh"virus",AH=F1h"virus"
 ----------21F1-------------------------------
 INT 21 - Novell Advanced NetWare 1.0+ - FILE SERVER CONNECTION
 	AH = F1h
@@ -8650,6 +8759,12 @@ INT 21 - DoubleDOS - CLEAR KEYBOARD BUFFER FOR CURRENT JOB
 	AH = F1h
 SeeAlso: AH=E1h"DoubleDOS",AH=F2h"DoubleDOS",AH=F3h"DoubleDOS"
 SeeAlso: AH=F8h"DoubleDOS"
+----------21F1-------------------------------
+INT 21 - "337" virus - ???
+	AH = F1h
+	???
+Return: ???
+SeeAlso: AH=F0h"virus",AX=F2AAh
 ----------21F2-------------------------------
 INT 21 - Novell NetWare v3.01+ shell interface - MULTIPLEXOR
 	AH = F2h
@@ -8671,6 +8786,11 @@ Return: AL = 00h successful
 	     01h buffer full (128 characters)
 SeeAlso: AH=E2h"DoubleDOS",AH=F1h"DoubleDOS",AH=F3h"DoubleDOS"
 SeeAlso: AH=F8h"DoubleDOS"
+----------21F2AA-----------------------------
+INT 21 - "PcVrsDs" virus - INSTALLATION CHECK
+	AX = F2AAh
+Return: AH = AAh if resident
+SeeAlso: AH=F1h"virus",AH=F3h"virus"
 ----------21F3-------------------------------
 INT 21 - Novell Advanced NetWare 2.0+ - FILE SERVER FILE COPY
 	AH = F3h
@@ -8693,6 +8813,11 @@ Return: AL = 00h successful
 	     01h buffer full (128 characters)
 SeeAlso: AH=E3h"DoubleDOS",AH=F1h"DoubleDOS",AH=F2h"DoubleDOS"
 SeeAlso: AH=F8h"DoubleDOS"
+----------21F3-------------------------------
+INT 21 - "Carfield" virus - INSTALLATION CHECK
+	AH = F3h
+Return: AX = 0400h if resident
+SeeAlso: AX=F2AAh,AH=F7h"virus"
 ----------21F400-----------------------------
 INT 21 - DoubleDOS - INSTALLATION CHECK/PROGRAM STATUS
 	AX = F400h
@@ -8711,7 +8836,7 @@ SeeAlso: AH=E5h"DoubleDOS",AX=F400h"DoubleDOS"
 INT 21 - "GP1" virus - INSTALLATION CHECK
 	AH = F7h
 Return: AX = 0300h if resident
-SeeAlso: AH=F0h"virus",AX=FB0Ah
+SeeAlso: AH=F0h"virus",AH=FBh"virus"
 ----------21F8-------------------------------
 INT 21 - DOS v??? - SET OEM INT 21 HANDLER
 	AH = F8h
@@ -8793,11 +8918,16 @@ INT 21 - DoubleDOS - TURN ON TASK SWITCHING
 Return: task switching turned on
 SeeAlso: AH=EBh"DoubleDOS",AH=F9h"DoubleDOS",AH=FAh"DoubleDOS"
 SeeAlso: INT FB"DoubleDOS"
+----------21FB-------------------------------
+INT 21 - "Cinderella" virus - INSTALLATION CHECK
+	AH = FBh
+Return: AH = 00h if resident
+SeeAlso: AH=F7h"virus",AX=FB0Ah
 ----------21FB0A-----------------------------
 INT 21 - "dBASE" virus - INSTALLATION CHECK
 	AX = FB0Ah
 Return: AX = 0AFBh if resident
-SeeAlso: AH=F7h"virus",AX=FE01h
+SeeAlso: AH=F7h"virus",AH=FEh"virus"
 ----------21FC-------------------------------
 INT 21 - DOS v??? - OEM FUNCTION
 	AH = FCh
@@ -8820,11 +8950,16 @@ INT 21 - DoubleDOS - GIVE AWAY TIME TO OTHER TASKS
 	AL = number of 55ms time slices to give away
 Return: returns after giving away time slices
 SeeAlso: AH=EEh"DoubleDOS",INT FE"DoubleDOS"
+----------21FE-------------------------------
+INT 21 - "483" virus - INSTALLATION CHECK
+	AH = FEh
+Return: AH = 00h if resident
+SeeAlso: AX=FB0Ah,AX=FE01h
 ----------21FE01-----------------------------
 INT 21 - "Flip" virus - INSTALLATION CHECK
 	AX = FE01h
 Return: AX = 01FEh if resident
-SeeAlso: AX=FB0Ah,AX=FE02h
+SeeAlso: AH=FEh"virus",AX=FE02h
 ----------21FE02-----------------------------
 INT 21 - "2468" virus - INSTALLATION CHECK
 	AX = FE02h
@@ -8890,9 +9025,10 @@ INT 21 - Topware Network Operating System - ???
 	???
 Return: ???
 ----------21FF-------------------------------
-INT 21 - "Sunday" virus - INSTALLATION CHECK
+INT 21 - "Sunday", "Tumen 0.5", "Hero" viruses - INSTALLATION CHECK
 	AH = FFh
-Return: AX = 0400h if resident
+Return: AH = 00h if "Tumen 0.5" or "Hero" resident
+	AX = 0400h if "Sunday" resident
 SeeAlso: AX=FEDCh"virus",AX=FF0Fh
 ----------21FF0F-----------------------------
 INT 21 - FLU_SHOT+ v1.83 - INSTALLATION CHECK
@@ -8904,12 +9040,28 @@ Note:	FLU_SHOT+ is an antivirus/antitrojan program by Ross M. Greenberg and
 INT 21 - "PSQR/1720" virus - INSTALLATION CHECK
 	AX = FF0Fh
 Return: AX = 0101h if resident
-SeeAlso: AH=FFh"virus",AX=FFFFh
+SeeAlso: AH=FFh"virus",AX=FF10h
+----------21FF10-----------------------------
+INT 21 - "Twins" virus - INSTALLATION CHECK
+	AX = FF10h
+Return: AL = 07h if resident
+SeeAlso: AX=FF0Fh"virus",AX=FFFEh
+----------21FFFE-----------------------------
+INT 21 - "08/15" virus - INSTALLATION CHECK
+	AX = FFFEh
+Return: AX = 0815h if resident
+SeeAlso: AX=FF10h,AX=FFFFh
 ----------21FFFF-----------------------------
 INT 21 - "Ontario" virus - INSTALLATION CHECK
 	AX = FFFFh
 Return: AX = 0000h if resident
-SeeAlso: AX=FF0Fh,INT 6B"virus"
+SeeAlso: AX=FF0Fh,AX=FFFFh/CX=0000h,INT 6B"virus"
+----------21FFFFCX0000-----------------------
+INT 21 - "Revenge" virus - INSTALLATION CHECK
+	AX = FFFFh
+	CX = 0000h
+Return: CX = 0006h if resident
+SeeAlso: AX=FFFFh,INT 6B"virus"
 ----------22---------------------------------
 INT 22 - DOS 1+ - PROGRAM TERMINATION ADDRESS
    specifies the address of the routine which is to be given control after
@@ -9360,10 +9512,77 @@ Note:	STARLITE is an architecture by General Software for a series of MS-DOS
 ----------2D---------------------------------
 INT 2D - DOS 2+ - RESERVED
 Note:	this vector is not used in DOS versions <= 5.00, and points at an IRET
+----------2D---------------------------------
+INT 2D - [proposed (v3.1)] - ALTERNATE MULTIPLEX INTERRUPT
+	AH = multiplex number
+	AL = function
+	    00h installation check
+		Return: AL = FFh if multiplex number in use
+                            CX = version number (CH = major, CL = minor)
+			    DX:DI -> signature string (see below) identifying
+				    the program using the multiplex number
+			AL = 00h if free
+	    01h get entry point
+		Return: AL = FFh if entry point supported
+			    DX:BX -> entry point for bypassing interrupt chain
+			AL = 00h if all API calls via INT 2D
+	    02h uninstall
+		Return: AL = status
+			    00h not implemented
+			    01h unsuccessful
+			    FFh successful (if handler ever returns from call)
+            03h-0Fh reserved for future enhancements
+                Return: AL = 00h (not implemented)
+	    other  application-dependent
+Notes:	programs should not use fixed multiplex numbers; rather, a program
+	  should scan all multiplex numbers from 00h to FFh, remembering the
+	  first unused multiplex in case the program is not yet installed.
+	  For multiplex numbers which are in use, the program should compare
+	  the first 16 bytes of the signature string to determine whether it
+	  is already installed on that multiplex number.  If not previously
+	  installed, it should use the first free multiplex number.
+	functions other than 00h are not valid unless a program is installed
+	  on the selected multiplex number
+	the signature string and description may be used by memory mappers
+	  to display the installed programs
+	users of this proposal should adhere to the IBM interrupt sharing
+	  protocol (see below), which will permit removal of TSRs in
+	  arbitrary order and interrupt handler reordering.  All TSRs
+	  following this proposal should be removable, though they need not
+	  keep the code for removing themselves resident; it is acceptable
+	  for a separate program to perform the removal.
+	the interrupt number is tentative and may need to be changed before
+	  this proposal is finalized
+	Please let me know if you choose to follow this proposal.  A list of
+	  the private API calls you use would be appreciated, as well.
+SeeAlso: INT 2F
+
+Format of signature string:
+Offset	Size	Description
+ 00h  8 BYTEs	blank-padded manufacturer's name (possibly abbreviated)
+ 08h  8 BYTEs	blank-padded product name
+ 10h 64 BYTEs	ASCIZ product description (optional, may be a single 00h)
+
+Format of interrupt sharing protocol interrupt handler entry point:
+Offset	Size	Description
+ 00h  2 BYTEs	short jump to actual start of interrupt handler, immediately
+		following this data block
+ 02h	DWORD	address of next handler in chain
+ 06h	WORD	signature 424Bh
+ 08h	BYTE	EOI flag
+		00h software interrupt or secondary hardware interrupt handler
+		80h primary hardware interrupt handler (will issue EOI)
+ 09h  2 BYTEs	short jump to hardware reset routine
+		must point at a valid FAR procedure (may be just RETF)
+ 0Bh  7 BYTEs	reserved (0)
 ----------2E---------------------------------
 INT 2E - DOS 2+ - PASS COMMAND TO COMMAND INTERPRETER FOR EXECUTION
 	DS:SI -> commandline to execute (see below)
 Return: all registers except CS:IP destroyed
+	AX = status (4DOS v4.0)
+	   0000h successful
+	   FFFFh error before processing command (not enough memory, etc)
+	   other error number returned by command
 Notes:	this call allows execution of arbitrary commands (including COMMAND.COM
 	  internal commands) without loading another copy of COMMAND.COM
 	if COMMAND.COM is the user's command interpreter, the primary copy
@@ -9387,7 +9606,7 @@ Offset	Size	Description
  01h	var	command string
   N	BYTE	0Dh (CR)
 ----------2E----BXE22E-----------------------
-INT 2E - 4DOS SHELL2E.COM - UNINSTALL
+INT 2E - 4DOS v2.x-3.03 SHELL2E.COM - UNINSTALL
 	BX = E22Eh
 	DS:SI -> zero byte
 Return: if successful, SHELL2E terminates itself with INT 21/AH=4Ch
