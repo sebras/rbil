@@ -1,11 +1,11 @@
-SYSTEM-MANAGEMENT MODE		Release 58		Last change 28jun98
+SYSTEM-MANAGEMENT MODE		Release 59		Last change 30aug98
 Copyright (c) 1997,1998 Ralf Brown
 
 ---------------------------------------------
 SMM Am486
 
 Format of Am486 SMM State-Save Map:
-Offset	Size	Description	(Table S001)
+Offset	Size	Description	(Table S0001)
 FE00h		reserved
 FEE4h	DWORD	DR3
 FEE8h	DWORD	DR2
@@ -13,13 +13,13 @@ FEECh	DWORD	DR1
 FEF0h	DWORD	DR0
 FEF4h	DWORD	CR2
 FEF8h	DWORD	SMM state dump base address
-fEFCh	DWORD	SMM revision ID (see #S004)
+fEFCh	DWORD	SMM revision ID (see #S0004)
 FF00h	WORD	I/O restart
 		(set to 00FFh to re-execute trapped I/O)
 FF02h	WORD	halt auto restart
 		(bit 0 set on entry if SMI during HLT)
 		(set to 00FFh to restart from HLT)
-FF04h	DWORD	I/O trap word (see #S002)
+FF04h	DWORD	I/O trap word (see #S0002)
 FF08h	DWORD	reserved
 FF0Ch	DWORD	reserved
 FF10h	DWORD	previous EIP
@@ -84,26 +84,26 @@ FFF0h	DWORD	EIP
 FFF4h	DWORD	EFLAGS
 FFF8h	DWORD	CR3
 FFFCh	DWORD	CR0
-SeeAlso: #S003
+SeeAlso: #S0003
 
 Bitfields for AMD Am486 I/O trap word:
-Bit(s)	Description	(Table S002)
+Bit(s)	Description	(Table S0002)
  31-16	I/O address
  15-2	reserved
  1	valid I/O instruction
  0	direction
-SeeAlso: #S001
+SeeAlso: #S0001
 ---------------------------------------------
 SMM AMD-K5
 
 Format of AMD K5 SMM State-Save Area:
-Offset	Size	Description	(Table S003)
+Offset	Size	Description	(Table S0003)
 FE00h		reserved	
 FEF8h	DWORD	SMM base address
 		(may be set to any multiple of 32K; initially 00030000h)
-FEFCh	DWORD	SMM revision identifier (see #S004)
-FF00h	WORD	I/O trap restart slot (see #S007)
-FF02h	WORD	HLT restart slot (see #S005)
+FEFCh	DWORD	SMM revision identifier (see #S0004)
+FF00h	WORD	I/O trap restart slot (see #S0007)
+FF02h	WORD	HLT restart slot (see #S0005)
 FF04h	DWORD	I/O restart EDI
 FF08h	DWORD	I/O restart ECX
 FF0Ch	DWORD	I/O restart ESI
@@ -141,7 +141,7 @@ FF90h	DWORD	IDT base
 FF94h 2 DWORDs	reserved
 FF9Ch	DWORD	I/O trap EIP
 FFA0h	DWORD	reserved
-FFA4h	DWORD	I/O trap DWORD (see #S006)
+FFA4h	DWORD	I/O trap DWORD (see #S0006)
 FFA8h	WORD	ES
 FFAAh	WORD	unused???
 FFACh	WORD	CS
@@ -170,47 +170,47 @@ FFF0h	DWORD	EIP
 FFF4h	DWORD	EFLAGS
 FFF8h	DWORD	CR3
 FFFCh	DWORD	CR0
-SeeAlso: #S001
+SeeAlso: #S0001
 
 Bitfields for AMD K5 SMM Revision Identifier:
-Bit(s)	Description	(Table S004)
+Bit(s)	Description	(Table S0004)
  31-18	reserved (0)
  17	SMM base address relocation available (always 1 [enabled] on K5)
  16	I/O trap restart supported (always 1 on K5)
  15-0	SMM revision level (currently 0000h)
-SeeAlso: #S003
+SeeAlso: #S0003
 
 Bitfields for AMD K5 Halt Restart Slot:
-Bit(s)	Description	(Table S005)
+Bit(s)	Description	(Table S0005)
  15-1	undefined
  0	(on SMM entry) entered SMM from Halt state
 	(at RSM) return to Halt state instead of state in SMM state-save area
-SeeAlso: #S003
+SeeAlso: #S0003
 
 Bitfields for AMD K5 I/O Trap DWORD:
-Bit(s)	Description	(Table S006)
+Bit(s)	Description	(Table S0006)
  31-16	I/O port address
  15	I/O was string operation (INS,OUTS,etc.)
  14-2	reserved
  1	valid I/O instruction
  0	direction (0 = output, 1 = input)
-SeeAlso: #S003,#S007
+SeeAlso: #S0003,#S0007
 
 Bitfields for AMD K5 I/O Trap Restart Slot:
-Bit(s)	Description	(Table S007)
+Bit(s)	Description	(Table S0007)
  31-16	reserved
  15-0	I/O instruction restart on RSM
 	0000h resume at next instruction following trapped I/O instruction
 		(default on SMM entry)
 	00FFh re-execute the trapped I/O instruction
 Note:	before changing the restart value, check that the I/O instruction is
-	  actually valid (see #S006)
-SeeAlso: #S003,#S006
+	  actually valid (see #S0006)
+SeeAlso: #S0003,#S0006
 ---------------------------------------------
 SMM Pentium
 
 Format of Pentium State Dump record:
-Offset	Size	Description	(Table S008)
+Offset	Size	Description	(Table S0008)
 FE00h 248 BYTEs	officially reserved, actually unused
 FEF8h	DWORD	state dump base address (must be multiple of 32K)
 FEFCh	DWORD	SMM revision identifier
@@ -276,15 +276,15 @@ FFF0h	DWORD	EIP
 FFF4h	DWORD	EFLAGS
 FFF8h	DWORD	CR3
 FFFCh	DWORD	CR0
-SeeAlso: #S003
+SeeAlso: #S0003
 --------!---Admin----------------------------
-Highest Table Number = S008
+Highest Table Number = S0008
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER58A through INTER58D (preferably the original
+quartet of archives named INTER59A through INTER59D (preferably the original
 authenticated PKZIP archives), and the utility and hypertext conversion
-programs in three additional archives called INTER58E.ZIP to INTER58G.ZIP.
+programs in three additional archives called INTER59E.ZIP to INTER59G.ZIP.
 
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
 --------!---CONTACT_INFO---------------------

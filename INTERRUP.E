@@ -1,97 +1,5 @@
-Interrupt List, part 5 of 16
+Interrupt List, part 5 of 18
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
---------X-1AB000-----------------------------
-INT 1A U - HP 100LX/200LX - PCMCIA - ???
-	AX = B000h
-	ES:BX -> parameter block ???
-Return: CF clear if ???
-	CF set if ???
-Note:	called by HP 100LX/200LX PCMCIA client CIC100.EXE
---------d-1AB001CX4D52-----------------------
-INT 1A - Microsoft Real-Time Compression Interface (MRCI) - ROM-BASED SERVER
-	AX = B001h
-	CX = 4D52h ("MR")
-	DX = 4349h ("CI")
-Return: CX = 4943h ("IC") if installed
-	DX = 524Dh ("RM") if installed
-	    ES:DI -> MRCINFO structure (see #0699)
-Note:	this call is functionally identical to INT 2F/AX=4A12h, which should
-	  be called first, as this call is used for the first, ROM-based
-	  MRCI server, while the other call is used for RAM-based servers
-	  which may be partially or entirely replacing a prior server
-SeeAlso: INT 2F/AX=4A12h
-
-Format of MRCINFO structure:
-Offset	Size	Description	(Table 0699)
- 00h  4 BYTEs	vendor signature
-		"MSFT" Microsoft
- 04h	WORD	server version (high=major)
- 06h	WORD	MRCI specification version
- 08h	DWORD	address of server entry point (see #0701)
- 0Ch	WORD	bit flags: server capabilities (see #0700)
- 0Eh	WORD	bit flags: hardware assisted capabilities (see #0700)
- 10h	WORD	maximum block size supported by server (at least 8192 bytes)
-
-Bitfields for MRCI capabilities:
-Bit(s)	Description	(Table 0700)
- 0	standard compress
- 1	standard decompress
- 2	update compress
- 3	MaxCompress (not present in initial public release)
- 4	reserved
- 5	incremental decompress
- 6	MRCI 2.0 standard compress
- 7	MRCI 2.0 standard decompress
- 8-14	reserved
- 15	this structure is in ROM and can't be modified
-	(server capabilities only)
-
-(Table 0701)
-Call MRCI entry point with:
-	DS:SI -> MRCREQUEST structure (see #0702)
-	CX = type of client (0000h application, 0001h file system)
-	AX = operation
-	    0001h perform standard compression
-	    0002h perform standard decompression
-	    0004h perform update compression
-	    0008h perform MaxCompress
-	    0020h perform incremental decompression
-	    0040h perform MRCI 2.0 standard compression
-	    0080h perform MRCI 2.0 standard decompression
-	AX = FFFFh clear flags
-	    BX = bitmask of flags to clear (set bits in BX are flags to clear)
-Return: AX = status
-	    0000h successful
-	    0001h invalid function
-	    0002h server busy, try again
-	    0003h destination buffer too small
-	    0004h incompressible data
-	    0005h bad compressed data format
-	BP destroyed (MS-DOS 6.2)
-Note:	MRCI driver may chain to a previous driver
-
-Format of MRCREQUEST structure:
-Offset	Size	Description	(Table 0702)
- 00h	DWORD	pointer to source buffer
- 04h	WORD	size of source buffer (0000h = 64K)
- 06h	WORD	(UpdateCompress only)
-		(call) offset in source buffer of beginning of changed data
-		(ret) offset in destination buffer of beginning of changed
-			  compressed data
- 08h	DWORD	pointer to destination buffer
-		must contain original compressed data for UpdateCompress
- 0Ch	WORD	size of destination buffer (0000h = 64K)
-		any compression: size of buffer for compressed data
-		standard decompression: number of bytes to be decompressed
-		incremental decompression: number of byte to decompress now
-		(ret) actual size of resulting data
- 0Eh	WORD	client compressed data storage allocation size
- 10h	DWORD	incremental decompression state data
-		set to 00000000h before first incremental decompression call
-Notes:	the source and destination buffers may not overlap
-	the source and destination buffer sizes should normally be the same
-	application should not update the contents of the MRCREQUEST structure
-	  between incremental decompression calls
 --------X-1AB101-----------------------------
 INT 1A - PCI BIOS v2.0c+ - INSTALLATION CHECK
 	AX = B101h
@@ -99,8 +7,8 @@ INT 1A - PCI BIOS v2.0c+ - INSTALLATION CHECK
 Return: AH = 00h if installed
 	    CF clear
 	    EDX = 20494350h (' ICP')
-	    EDI = physical address of protected-mode entry point (see #0705)
-	    AL = PCI hardware characteristics (see #0704)
+	    EDI = physical address of protected-mode entry point (see #00710)
+	    AL = PCI hardware characteristics (see #00709)
 	    BH = PCI interface level major version (BCD)
 	    BL = PCI interface level minor version (BCD)
 	    CL = number of last PCI bus in system
@@ -113,7 +21,7 @@ Notes:	this function may require up to 1024 byte of stack; it will not enable
 	  calling this function
 SeeAlso: AX=B181h
 
-(Table 0703)
+(Table 00708)
 Values for PCI BIOS v2.0c+ status codes:
  00h	successful
  81h	unsupported function
@@ -122,7 +30,7 @@ Values for PCI BIOS v2.0c+ status codes:
  87h	bad PCI register number
 
 Bitfields for PCI hardware characteristics:
-Bit(s)	Description	(Table 0704)
+Bit(s)	Description	(Table 00709)
  0	configuration space access mechanism 1 supported
  1	configuration space access mechanism 2 supported
  2-3	reserved
@@ -130,7 +38,7 @@ Bit(s)	Description	(Table 0704)
  5	Special Cycle generation mechanism 2 supported
  6-7	reserved
 
-(Table 0705)
+(Table 00710)
 Call protected-mode entry point with:
 	registers as for real/V86-mode INT call
 	CS = ring 0 descriptor with access to full address space
@@ -138,12 +46,12 @@ Return: as for real/V86-mode call
 --------X-1AB102-----------------------------
 INT 1A - PCI BIOS v2.0c+ - FIND PCI DEVICE
 	AX = B102h
-	CX = device ID (see #0709,#0716,#0717,#0845,#0847)
-	DX = vendor ID (see #0706)
+	CX = device ID (see #00714,#00721,#00722,#00852,#00854)
+	DX = vendor ID (see #00711)
 	SI = device index (0-n)
 Return: CF clear if successful
 	CF set on error
-	AH = status (00h,83h,86h) (see #0703)
+	AH = status (00h,83h,86h) (see #00708)
 	    00h successful
 		BH = bus number
 		BL = device/function number (bits 7-3 device, bits 2-0 func)
@@ -158,29 +66,29 @@ Notes:	this function may require up to 1024 byte of stack; it will not enable
 	  by incrementing SI from 0 until error 86h is returned
 SeeAlso: AX=B182h
 
-(Table 0706)
+(Table 00711)
 Values for PCI vendor ID:
  001Ah	Ascend Communications, Inc.
  003Dh	Martin-Marietta Corporation
- 0E11h	Compaq (see #0707)
- 1000h	Symbios Logic Inc (formerly NCR) (see #0708)
- 1002h	ATI (see #0709)
- 1003h	ULSI Systems (see #0710)
- 1004h	VLSI Technologies (see #0711)
- 1005h	Avance Logics (ADL) (see #0712)
+ 0E11h	Compaq (see #00712)
+ 1000h	Symbios Logic Inc (formerly NCR) (see #00713)
+ 1002h	ATI (see #00714)
+ 1003h	ULSI Systems (see #00715)
+ 1004h	VLSI Technologies (see #00716)
+ 1005h	Avance Logics (ADL) (see #00717)
  1006h	Reply Group
  1007h	Netframe Systems Inc.
  1008h	Epson
  100Ah	Phoenix Technologies
- 100Bh	National Semiconductor (see #0713)
- 100Ch	Tseng Labs (see #0714) (also ID 10BEh)
+ 100Bh	National Semiconductor (see #00718)
+ 100Ch	Tseng Labs (see #00719) (also ID 10BEh)
  100Dh	AST Research
- 100Eh	Weitek (see #0715)
+ 100Eh	Weitek (see #00720)
  1010h	Video Logic Ltd
- 1011h	DEC (see #0716)
+ 1011h	DEC (see #00721)
  1012h	Micronics Computers
- 1013h	Cirrus Logic (see #0717,#0028)
- 1014h	IBM (see #0718)
+ 1013h	Cirrus Logic (see #00722,#00028)
+ 1014h	IBM (see #00723)
  1015h	LSI Logic Corp. of Canada
  1016h	ICL Personal Systems
  1017h	SPEA Software AG
@@ -188,79 +96,79 @@ Values for PCI vendor ID:
  1019h	EliteGroup Computer Sys
  101Ah	NCR/AT&T GIS
  101Bh	Vitesse Semiconductor
- 101Ch	Western Digital (see #0719)
- 101Eh	AMI (see #0720)
+ 101Ch	Western Digital (see #00724)
+ 101Eh	AMI (see #00725)
  101Fh	Picturetel
  1020h	Hitachi Computer Electronics
  1021h	Oki Electric Industry
- 1022h	Advanced Micro Devices (see #0721)
- 1023h	Trident Microsystems (see #0722)
+ 1022h	Advanced Micro Devices (see #00726)
+ 1023h	Trident Microsystems (see #00727)
  1024h	Zenith Data Systems
  1025h	Acer
  1028h	Dell Computer Corporation
  1029h	Siemens Nixdorf
- 102Ah	LSI Logic, Headland Division (see #0723)
- 102Bh	Matrox (see #0724)
- 102Ch	Chips & Technologies (see #0725)
+ 102Ah	LSI Logic, Headland Division (see #00728)
+ 102Bh	Matrox (see #00729)
+ 102Ch	Chips & Technologies (see #00730)
  102Dh	Wyse Technologies
  102Eh	Olivetti Advanced Technology
- 102Fh	Toshiba America (see #0726)
+ 102Fh	Toshiba America (see #00731)
  1030h	TMC Research
- 1031h	Miro Computer Products AG (see #0727)
+ 1031h	Miro Computer Products AG (see #00732)
  1032h	Compaq
- 1033h	NEC Corporation (see #0728)
+ 1033h	NEC Corporation (see #00733)
  1034h	Burndy Corporation
  1035h	Computers and Communications Research Lab
- 1036h	Future Domain (see #0729)
+ 1036h	Future Domain (see #00734)
  1037h	Hitachi Micro Systems
  1038h	AMP Incorporated
- 1039h	Silicon Integrated System (SIS) (see #0730)
+ 1039h	Silicon Integrated System (SIS) (see #00735)
  103Ah	Seiko Epson Corporation
  103Bh	Tatung Corp. of America
- 103Ch	Hewlett-Packard (see #0731)
+ 103Ch	Hewlett-Packard (see #00736)
  103Eh	Solliday
  103Fh	Logic Modeling
  1040h	Kubota Pacific
  1041h	Computrend
- 1042h	PC Technology (see #0732,#0900) (see also PORT 03F0h"PCTech")
+ 1042h	PC Technology (see #00737,#00907) (see also PORT 03F0h"PCTech")
  1043h	Asustek
- 1044h	Distributed Processing Technology (DPT) (see #0733)
- 1045h	OPTi (see #0734)
+ 1044h	Distributed Processing Technology (DPT) (see #00738)
+ 1045h	OPTi (see #00739)
  1046h	IPC Corporation, Ltd.
  1047h	Genoa Systems Corp.
  1048h	Elsa GmbH
  1049h	Fountain Technology
- 104Ah	SGS Thomson Microelectric (see #0735)
- 104Bh	BusLogic (see #0736)
- 104Ch	Texas Instruments (see #0737)
+ 104Ah	SGS Thomson Microelectric (see #00740)
+ 104Bh	BusLogic (see #00741)
+ 104Ch	Texas Instruments (see #00742)
  104Dh	Sony Corporation
- 104Eh	Oak Technology (see #0738)
+ 104Eh	Oak Technology (see #00743)
  104Fh	Co-Time Computer Ltd.
- 1050h	Winbond (see #0739)
+ 1050h	Winbond (see #00744)
  1051h	Anigma Corp.
  1052h	Young Micro Systems
- 1054h	Hitachi, Ltd. (see #0740)
- 1055h	EFAR Microsystems (see #0741)
+ 1054h	Hitachi, Ltd. (see #00745)
+ 1055h	EFAR Microsystems (see #00746)
  1056h	ICL
- 1057h	Motorola (see #0742)
+ 1057h	Motorola (see #00747)
  1058h	Electronics and Telecommunications Research
  1059h	Teknor Microsystems
- 105Ah	Promise Technology (see #0743)
+ 105Ah	Promise Technology (see #00748)
  105Bh	Foxconn International
  105Ch	Wipro Infotech Ltd.
- 105Dh	Number 9 Computer Company (see #0744)
+ 105Dh	Number 9 Computer Company (see #00749)
  105Eh	VTech Engineering Canada, Ltd.
  105Fh	Infotronic America, Inc.
- 1060h	United Microelectronics (UMC) (see #0745)
- 1061h	8x8 (X Tech) (see #0746)
+ 1060h	United Microelectronics (UMC) (see #00750)
+ 1061h	8x8 (X Tech) (see #00751)
  1062h	Maspar Computer Copr.
  1063h	Ocean Office Automation
  1064h	Alcatel Cit
  1065h	Texas Microsystems
- 1066h	PicoPower Technology (see #0747)
+ 1066h	PicoPower Technology (see #00752)
  1067h	Mitsubishi Electronics
  1068h	Diversified Technology
- 1069h	Mylex Corporation (see #0748)
+ 1069h	Mylex Corporation (see #00753)
  106Ah	Aten Research
  106Bh	Apple Computer
  106Ch	Hyundai Electronics America
@@ -270,49 +178,49 @@ Values for PCI vendor ID:
  1070h	Daewoo Telecom Ltd.
  1071h	Mitac
  1072h	GIT Co., Ltd.
- 1073h	Yamaha Corporation (see #0749)
- 1074h	NexGen Microsystems (see #0750)
+ 1073h	Yamaha Corporation (see #00754)
+ 1074h	NexGen Microsystems (see #00755)
  1075h	Advanced Integration Research
  1076h	Chaintech Computer Co. Ltd.
- 1077h	Q Logic (see #0751)
+ 1077h	Q Logic (see #00756)
  1078h	Cyrix Corporation
  1079h	I-Bus
  107Ah	Networth
  107Bh	Gateway 2000
  107Ch	Goldstar Co. Ltd.
- 107Dh	Leadtek Research (see #0752)
- 107Eh	Interphase Corporation (see #0753)
- 107Fh	Data Technology Corporation (DTC) (see #0754)
- 1080h	Contaq Microsystems (see #0755)
+ 107Dh	Leadtek Research (see #00757)
+ 107Eh	Interphase Corporation (see #00758)
+ 107Fh	Data Technology Corporation (DTC) (see #00759)
+ 1080h	Contaq Microsystems (see #00760)
  1081h	Supermac Technology
  1082h	EFA Corporation of America
- 1083h	Forex Computer Corporation (see #0756)
+ 1083h	Forex Computer Corporation (see #00761)
  1084h	Parador
  1085h	Tulip Computers Int'l BV
  1086h	J. Bond Computer Systems
  1087h	Cache Computer
  1088h	Microcomputer Systems (M) Son
  1089h	Data General Corporation
- 108Ah	Bit3 Computer (see #0757)
+ 108Ah	Bit3 Computer (see #00762)
  108Ch	Elonex PLC (Oakleigh Systems, Inc)
- 108Dh	Olicom (see #0758)
+ 108Dh	Olicom (see #00763)
  108Eh	Sun Microsystems
  108Fh	Systemsoft Corporation
  1090h	Encore Computer Corporation
- 1091h	Intergraph Corporation (see #0759)
+ 1091h	Intergraph Corporation (see #00764)
  1092h	Diamond Computer Systems
- 1093h	National Instruments (see #0760)
+ 1093h	National Instruments (see #00765)
  1094h	First International Computers (FIC)
- 1095h	CMD Technology, Inc. (see #0761)
+ 1095h	CMD Technology, Inc. (see #00766)
  1096h	Alacron
- 1097h	Appian Technology (see #0762)
- 1098h	Vision / Quantum Designs Ltd (see #0763)
+ 1097h	Appian Technology (see #00767)
+ 1098h	Vision / Quantum Designs Ltd (see #00768)
  1099h	Samsung Electronics Co. Ltd.
  109Ah	Packard Bell
  109Bh	Gemlight Computer Ltd.
  109Ch	Megachips Corporation
  109Dh	Zida Technologies
- 109Eh	Brooktree Corporation (see #0764)
+ 109Eh	Brooktree Corporation (see #00769)
  109Fh	Trigem Computer Inc.
  10A0h	Meidensha Corporation
  10A1h	Juko Electronics Inc. Ltd.
@@ -322,12 +230,12 @@ Values for PCI vendor ID:
  10A5h	Racal Interlan
  10A6h	Informtech Industrial Ltd.
  10A7h	Benchmarq Microelectronics
- 10A8h	Sierra Semiconductor (see #0765)
+ 10A8h	Sierra Semiconductor (see #00770)
  10A9h	Silicon Graphics
- 10AAh	ACC Microelectronics (see #0766)
+ 10AAh	ACC Microelectronics (see #00771)
  10ABh	Digicom
  10ACh	Honeywell IASD
- 10ADh	Symphony Labs (see #0767)
+ 10ADh	Symphony Labs (see #00772)
  10AEh	Cornerstone Technology
  10AFh	Microcomputer Systems
  10B0h	CardExpert Technology
@@ -335,16 +243,16 @@ Values for PCI vendor ID:
  10B2h	Raytheon Company
  10B3h	Databook Inc
  10B4h	STB Systems
- 10B5h	PLX Technology (see #0768)
- 10B6h	Madge Networks (see #0769)
- 10B7h	3com Corporation (see #0770)
- 10B8h	Standard Microsystems Corporation (SMC) (see #0771)
- 10B9h	Acer Labs Inc. (see #0772)
+ 10B5h	PLX Technology (see #00773)
+ 10B6h	Madge Networks (see #00774)
+ 10B7h	3com Corporation (see #00775)
+ 10B8h	Standard Microsystems Corporation (SMC) (see #00776)
+ 10B9h	Acer Labs Inc. (see #00777)
  10BAh	Mitsubishi Electronics Corp.
  10BBh	Dapha Electronics Corporation
  10BCh	Advanced Logic Research Inc. (ALR)
- 10BDh	Surecom Technology (see #0773)
- 10BEh	Tseng Labs International Corp. (see #0714)
+ 10BDh	Surecom Technology (see #00778)
+ 10BEh	Tseng Labs International Corp. (see #00719)
  10BFh	Most Inc.
  10C0h	Boca Research Inc.
  10C1h	ICM Corp. Ltd.
@@ -354,14 +262,14 @@ Values for PCI vendor ID:
  10C5h	Xerox Corporation
  10C6h	Rambus Inc.
  10C7h	Media Vision
- 10C8h	Neomagic Corporation (see #0774)
+ 10C8h	Neomagic Corporation (see #00779)
  10C9h	DataExpert Corporation
  10CAh	Fujitsu
  10CBh	Omron Corporation
  10CCh	Mentor Arc Inc.
- 10CDh	Advanced System Products (see #0775)
+ 10CDh	Advanced System Products (see #00780)
  10CEh	Radius Inc.
- 10CFh	Citicorp TTI (see #0776)
+ 10CFh	Citicorp TTI (see #00781)
  10D0h	Fujitsu Limited
  10D1h	Future+ Systems
  10D2h	Molex Incorporated
@@ -374,24 +282,24 @@ Values for PCI vendor ID:
  10D9h	Macronix International Co. Ltd
  10DAh	Thomas-Conrad Corporation
  10DBh	Rohm Research
- 10DCh	CERN/ECP/EDU (see #0777)
- 10DDh	Evans & Sutherland (see #0778)
+ 10DCh	CERN/ECP/EDU (see #00782)
+ 10DDh	Evans & Sutherland (see #00783)
  10DEh	NVIDIA Corporation
- 10DFh	Emulex Corporation (see #0779)
- 10E0h	Integrated Micro Solutions (IMS) (see #0780)
- 10E1h	TekRAM Technology Corporation Ltd. (see #0781)
+ 10DFh	Emulex Corporation (see #00784)
+ 10E0h	Integrated Micro Solutions (IMS) (see #00785)
+ 10E1h	TekRAM Technology Corporation Ltd. (see #00786)
  10E2h	Aptix Corporation
- 10E3h	Newbridge Microsystems (see #0782)
+ 10E3h	Newbridge Microsystems (see #00787)
  10E4h	Tandem Computers
  10E5h	Micro Industries
  10E6h	Gainbery Computer Products Inc.
  10E7h	Vadem
- 10E8h	Applied Micro Circuits Corp. (see #0783)
+ 10E8h	Applied Micro Circuits Corp. (see #00788)
  10E9h	Alps Electronic Corp. Ltd.
- 10EAh	Integraphics Systems (see #0784)
- 10EBh	Artist Graphics (see #0785)
- 10ECh	Realtek Semiconductor (see #0786)
- 10EDh	ASCII Corporation (see #0787)
+ 10EAh	Integraphics Systems (see #00789)
+ 10EBh	Artist Graphics (see #00790)
+ 10ECh	Realtek Semiconductor (see #00791)
+ 10EDh	ASCII Corporation (see #00792)
  10EEh	Xilinx Corporation
  10EFh	Racore Computer Products
  10F0h	Peritek Corporation
@@ -399,28 +307,28 @@ Values for PCI vendor ID:
  10F2h	Achme Computer Inc.
  10F3h	Alaris Inc.
  10F4h	S-MOS Systems
- 10F5h	NKK Corporation (see #0788)
+ 10F5h	NKK Corporation (see #00793)
  10F6h	Creative Electronic Systems SA
  10F7h	Matsushita Electric Industrial Corp. Ltd.
  10F8h	Altos India Ltd.
  10F9h	PC Direct
- 10FAh	Truevision (see #0789)
+ 10FAh	Truevision (see #00794)
  10FBh	Thesys Ges. fr Microelektronik mbH
  10FCh	I/O Data Device Inc.
  10FDh	Soyo Technology Corp. Ltd.
  10FEh	Fast Electronic GmbH
  10FFh	N-Cube
  1100h	Jazz Multimedia
- 1101h	Initio Corporation (see #0790)
+ 1101h	Initio Corporation (see #00795)
  1102h	Creative Labs
  1103h	Triones Technologies Inc.
  1104h	Rasterops
  1105h	Sigma Designs, Inc.
- 1106h	VIA Technologies (see #0791)
+ 1106h	VIA Technologies (see #00796)
  1107h	Stratus Computer
- 1108h	Proteon Inc. (see #0792)
- 1109h	Cogent Data Technologies (see #0793)
- 110Ah	Siemens AG / Siemens Nixdorf AG (see #0794)
+ 1108h	Proteon Inc. (see #00797)
+ 1109h	Cogent Data Technologies (see #00798)
+ 110Ah	Siemens AG / Siemens Nixdorf AG (see #00799)
  110Bh	Xenon Microsystems / Chromatic Research, Inc.
  110Ch	Mini-Max Technology Inc.
  110Dh	ZNyX Corporation
@@ -428,15 +336,15 @@ Values for PCI vendor ID:
  110Fh	Ross Technology
  1110h	Powerhouse Systems
  1111h	Santa Cruz Operation (SCO)
- 1112h	Rockwell / RNS division of Meret Communications Inc. (see #0795)
+ 1112h	Rockwell / RNS division of Meret Communications Inc. (see #00800)
  1113h	Accton Technology Corporation
  1114h	Atmel Corporation
  1115h	DuPont Pixel Systems
  1116h	Data Translation / Media 100, Inc.
- 1117h	Datacube Inc. (see #0796)
+ 1117h	Datacube Inc. (see #00801)
  1118h	Berg Electronics
- 1119h	Vortex Computersysteme GmbH (see #0797)
- 111Ah	Efficient Networks, Inc. (see #0798)
+ 1119h	Vortex Computersysteme GmbH (see #00802)
+ 111Ah	Efficient Networks, Inc. (see #00803)
  111Bh	Teledyne Electronic Systems
  111Ch	Tricord Systems, Inc.
  111Dh	Integrated Device Technology
@@ -449,45 +357,45 @@ Values for PCI vendor ID:
  1124h	Leutron Vision AG
  1125h	Eurocore
  1126h	Vigra
- 1127h	FORE Systems (see #0799)
+ 1127h	FORE Systems (see #00804)
  1128h	???
  1129h	Firmworks
  112Ah	Hermes Electronics Co.
  112Bh	Linotype - Hell AG
  112Dh	Ravicad
- 112Eh	Infomedia MicroElectronics Inc (see #0800)
- 112Fh	Imaging Technology (see #0801)
+ 112Eh	Infomedia MicroElectronics Inc (see #00805)
+ 112Fh	Imaging Technology (see #00806)
  1130h	Computervision
  1131h	Philips Semiconductors
  1132h	Mitel Corp
  1133h	Eicon Technology Corporation
- 1134h	Mercury Computer Systems Inc (see #0802)
- 1135h	Fuji Xerox Co Ltd (see #0803)
+ 1134h	Mercury Computer Systems Inc (see #00807)
+ 1135h	Fuji Xerox Co Ltd (see #00808)
  1136h	Momentum Data Systems
  1137h	Cisco Systems Inc
- 1138h	Ziatech Corporation (see #0804)
- 1139h	Dynamic Pictures Inc (see #0805)
+ 1138h	Ziatech Corporation (see #00809)
+ 1139h	Dynamic Pictures Inc (see #00810)
  113Ah	FWB Inc
- 113Ch	Cyclone Microsystems (PLX) (see #0806)
+ 113Ch	Cyclone Microsystems (PLX) (see #00811)
  113Dh	Leading Edge Products Inc
  113Eh	Sanyo Electric Co. - Computer Engineering Dept.
  113Fh	Equinox Systems
  1140h	Intervoice Inc
- 1141h	Crest Microsystem Inc (see #0807)
- 1142h	Alliance Semiconductor Corp (see #0808)
+ 1141h	Crest Microsystem Inc (see #00812)
+ 1142h	Alliance Semiconductor Corp (see #00813)
  1143h	Netpower, Inc.
- 1144h	Cincinnati Milacron / Vickers Inc. Electronic Systems (see #0809)
+ 1144h	Cincinnati Milacron / Vickers Inc. Electronic Systems (see #00814)
  1145h	Workbit Corp
  1146h	Force Computers
  1147h	Interface Corp.
- 1148h	Schneider & Koch Co. / Syskonnect (see #0810)
+ 1148h	Schneider & Koch Co. / Syskonnect (see #00815)
  1149h	Win System Corporation
- 114Ah	VMIC (see #0811)
+ 114Ah	VMIC (see #00816)
  114Bh	Canopus Co.
  114Ch	Annabooks
  114Dh	IC Corporation
  114Eh	Nikon Systems Inc
- 114Fh	Digi International / Stargate (see #0812)
+ 114Fh	Digi International / Stargate (see #00817)
  1150h	Thinking Machines Corp.
  1151h	JAE Electronics Inc.
  1152h	Megatek
@@ -496,8 +404,8 @@ Values for PCI vendor ID:
  1155h	Pine Technology Ltd.
  1156h	Periscope Engineering
  1157h	Avsys Corporation
- 1158h	Voarx R&D Inc. (see #0813)
- 1159h	MuTech (see #0814)
+ 1158h	Voarx R&D Inc. (see #00818)
+ 1159h	MuTech (see #00819)
  115Ah	Harleguin Ltd.
  115Bh	Parallax Graphics
  115Ch	Photron, Ltd.
@@ -505,11 +413,11 @@ Values for PCI vendor ID:
  115Eh	Peer Protocols Inc.
  115Fh	???
  1160h	Megasoft Inc.
- 1161h	PFU Ltd. (see #0815)
+ 1161h	PFU Ltd. (see #00820)
  1162h	OA Laboratory Co Ltd.
- 1163h	Creative Labs / Rendition (see #0816)
+ 1163h	Creative Labs / Rendition (see #00821)
  1164h	Advanced Peripherals Tech
- 1165h	Imagraph Corporation (see #0817)
+ 1165h	Imagraph Corporation (see #00822)
  1166h	Pequr Technology Inc. / Relience Computer
  1167h	Mutoh Industries, Inc.
  1168h	Thine Electronics Inc
@@ -528,7 +436,7 @@ Values for PCI vendor ID:
  1175h	Mitron Computer Inc.
  1176h	SBE
  1177h	Silicon Engineering
- 1178h	Alfa Inc (see #0818)
+ 1178h	Alfa Inc (see #00823)
  1179h	Toshiba America Info Systems
  117Ah	A-Trend Technology
  117Bh	LG Electronics Inc.
@@ -545,17 +453,17 @@ Values for PCI vendor ID:
  1186h	D-Link System Inc
  1187h	Advanced Technology Laboratories
  1188h	Shima Seiki Manufacturing Ltd.
- 1189h	Matsushita Electronics (see #0819)
+ 1189h	Matsushita Electronics (see #00824)
  118Ah	Hilevel Technology
  118Bh	???
- 118Ch	Corollary Inc (see #0820)
- 118Dh	BitFlow Inc (see #0821)
+ 118Ch	Corollary Inc (see #00825)
+ 118Dh	BitFlow Inc (see #00826)
  118Eh	Hermstedt GmbH
  118Fh	???
  1190h	???
- 1191h	Artop Electric / Acard Technology Corp. (see #0822)
+ 1191h	Artop Electric / Acard Technology Corp. (see #00827)
  1192h	Densan Co. Ltd
- 1193h	Zeitnet Inc. (see #0823)
+ 1193h	Zeitnet Inc. (see #00828)
  1194h	Toucan Technology
  1195h	Ratoc System Inc
  1196h	Hytec Electronics Ltd
@@ -576,14 +484,14 @@ Values for PCI vendor ID:
  11A5h	MicroUnity Systems Engineering, Inc.
  11A6h	Pure Data
  11A7h	Power Computing Corp.
- 11A9h	InnoSys Inc. (see #0824)
+ 11A9h	InnoSys Inc. (see #00829)
  11AAh	Actel
- 11ABh	Galileo Technology Ltd. (see #0825)
+ 11ABh	Galileo Technology Ltd. (see #00830)
  11ACh	Canon Information Systems
  11ADh	Lite-On Communications Inc
  11AEh	Scitex Corporation Ltd
  11AFh	Pro-Log Corporation / Avid Technology Corp.
- 11B0h	V3 Semiconductor Inc. (see #0826)
+ 11B0h	V3 Semiconductor Inc. (see #00831)
  11B1h	Apricot Computers
  11B2h	Eastman Kodak
  11B3h	Barr Systems Inc.
@@ -592,7 +500,7 @@ Values for PCI vendor ID:
  11B6h	United Video Corp
  11B7h	Motorola
  11B8h	Xpoint Technologies Inc
- 11B9h	Pathlight Technology Inc. (see #0827)
+ 11B9h	Pathlight Technology Inc. (see #00832)
  11BAh	Videotron Corp
  11BBh	Pyramid Technology
  11BCh	Network Peripherals Inc
@@ -604,10 +512,10 @@ Values for PCI vendor ID:
  11C5h	Shiva Corporatin
  11C6h	Dainippon Screen Mfg. Co., Ltd.
  11C7h	D.C.M. Data Systems
- 11C8h	Dolphin Interconnect Solutions (see #0828)
+ 11C8h	Dolphin Interconnect Solutions (see #00833)
  11C9h	MAGMA
  11CAh	LSI Systems Inc
- 11CBh	Specialix International, Ltd. (see #0829)
+ 11CBh	Specialix International, Ltd. (see #00834)
  11CCh	Michels & Kleberhoff Computer GmbH
  11CDh	HAL Computer Systems Inc.
  11CEh	Netaccess
@@ -643,22 +551,22 @@ Values for PCI vendor ID:
  11F4h	Kinetic Systems Corporation
  11F5h	Computing Devices International
  11F6h	Powermatic Data Systems Ltd.
- 11F6h	Compex USA, Inc. (see #0830)
+ 11F6h	Compex USA, Inc. (see #00835)
  11F7h	Scientific Atlanta
- 11F8h	PMC-Sierra Inc. (see #0831)
+ 11F8h	PMC-Sierra Inc. (see #00836)
  11F9h	I-Cube, Inc.
- 11FEh	RP ??? (see #0832)
+ 11FEh	RP ??? (see #00837)
  1201h	Vista Controls Corp.
  1203h	Bayer Corp., AGFA division
  1204h	Lattice	Semiconductor Corp.
  1205h	Array Corp.
  1206h	Amdahl Corp.
- 120Eh	Cyclades (see #0833)
+ 120Eh	Cyclades (see #00838)
  1216h	PURUP Eskofot A/S
  1217h	O2Micro, Inc.
  121Ah	3DFX Interactive, Inc.
  121Bh	Advanced Telecomm Modules
- 1220h	Ariel Corporation (see #0834)
+ 1220h	Ariel Corporation (see #00839)
  1221h	Contec Co., Ltd.
  1222h	Ancor Communications, Inc.
  1223h	Heurikon/Computer Products
@@ -722,7 +630,7 @@ Values for PCI vendor ID:
  125Dh	ESS Technology
  125Eh	SpecialVideo Engineering SRL
  125Fh	Concurrent Technologies, Inc.
- 1260h	Harris Semiconductor (see #0835)
+ 1260h	Harris Semiconductor (see #00840)
  1261h	Matsushita-Kotobuki Electronics Industries
  1262h	ES Computer Company, Ltd.
  1263h	Sonic Solutions
@@ -742,7 +650,7 @@ Values for PCI vendor ID:
  1271h	GW Instruments
  1272h	Telematics International
  1273h	Hughes Network Systems
- 1274h	Ensoniq
+ 1274h	Ensoniq (see #00841)
  1275h	Network Appliance Corporation
  1276h	Switched Network Tecnologies, Inc.
  1277h	Comstream
@@ -825,7 +733,7 @@ Values for PCI vendor ID:
  12C2h	Mentec Limited
  12C3h	Holtek Microelectronics Inc.
  12C4h	Connect Tech Inc.
- 12C5h	Picture Elements, Inc. (see #0836)
+ 12C5h	Picture Elements, Inc. (see #00842)
  12C6h	Mitani Corporation
  12C7h	Dialogic Corporation
  12C8h	G Force Co, Ltd.
@@ -1180,59 +1088,63 @@ Values for PCI vendor ID:
  1436h	CIS Technology, Inc.
  1668h	Action Tec Electronics, Inc.
  1B13h	Jaton Corp.
- 1C1Ch	Symphony (see #0837)
- 1DE1h	TekRAM (see #0838)
+ 1C1Ch	Symphony (see #00843)
+ 1DE1h	TekRAM (see #00844)
  21C3h	21st Century Computer Corp.
  270Bh	Xantel Corp.
  270Fh	Chaintech Computer Co., Ltd.
  3000h	Hansol Electronics Inc.
  3388h	Hint Corp.
- 3D3Dh	3DLabs (see #0839)
- 4005h	Avance Logic, Inc. (see #0840)
+ 3D3Dh	3DLabs (see #00845)
+ 4005h	Avance Logic, Inc. (see #00846)
  4444h	Internext Compression, Inc.
  4468h	BRIDGEPORT MACHINES
+ 4594h	Cogetec Informatique Inc.
  4680h	UMAX Computer Corp.
  4843h	Hercules Computer Technology, Inc.
+ 4942h	???
+ 4943h	Growth Networks
  4978h	Axil Computer, Inc.
- 4B10h	Buslogic Inc. (see #0841)
+ 4A14h	NetVin
+ 4B10h	Buslogic Inc. (see #00848)
  4DDCh	ILC data Device Corp.
  5053h	Voyetra Technologies
  5143h	Qualcomm, Inc.
- 5333h	S3 (see also #0842)
+ 5333h	S3 (see also #00849)
  5455h	Technische Universit„t Berlin
  5700h	Netpower
- 6374h	c't Magazin fuer Computertechnik (see #0843)
+ 6374h	c't Magazin fuer Computertechnik (see #00850)
  6666h	Decision Computer International Co.
- 8008h	Quancom Electronic GmbH (see #0844)
- 8086h	Intel (see also #0845)
- 8800h	Trigem Computer (see #0846)
+ 8008h	Quancom Electronic GmbH (see #00851)
+ 8086h	Intel (see also #00852)
+ 8800h	Trigem Computer (see #00853)
  8888h	Silicon Magic
  8E0Eh	Computone Corporation
- 9004h	Adaptec (see #0847)
- 907Fh	Atronics (see #0848)
- A200h	NEC Corp. (see #0728)
- A259h	Hewlett Packard (see #0731)
- A25Bh	Hewlett Packard GmbH PL24-MKT (see #0731)
+ 9004h	Adaptec (see #00854)
+ 907Fh	Atronics (see #00855)
+ A200h	NEC Corp. (see #00733)
+ A259h	Hewlett Packard (see #00736)
+ A25Bh	Hewlett Packard GmbH PL24-MKT (see #00736)
  A304h	Sony
- A727h	3com Corp. (see #0770)
+ A727h	3com Corp. (see #00775)
  AA42h	Scitex Digital Video
  B1B3h	Shiva Europe, Ltd.
  C001h	TSI Telsys
  C0A9h	Micron/Crucial Technology
- C0DEh	Motorola (see #0742)
+ C0DEh	Motorola (see #00747)
  C0FEh	Motion Engineering, Inc.
  CAFEh	Chrysalis-ITS
  D4D4h	DY4 Systems Inc.
  E159h	Tiger Jet Network Inc.
  ECC0h	Echo Corp.
- EDD8h	Ark Logic Inc (see #0849)
+ EDD8h	Ark Logic Inc (see #00856)
 Note:	this list, as well as the following per-vendor tables, tends to be
 	  rather out-of-date.  The current version of the listing can be found
 	  in PCICFG.DAT, part of the PCICFG program distributed in RBPCIxxx.ZIP
 	  (available at http://www.pobox.com/~ralf/files.html).
-SeeAlso: #0850
+SeeAlso: #00857
 
-(Table 0707)
+(Table 00712)
 Values for Compaq PCI device code:
  0001h	EISA Bridge
  0002h	ISA Bridge
@@ -1250,9 +1162,9 @@ Values for Compaq PCI device code:
  B011h	Dual-port Netelligent 10/100 TX
  F130h	ThunderLAN
  F150h	NetFlex 3/P with BNC
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0708)
+(Table 00713)
 Values for Symbios Logic (formerly NCR) PCI device code:
  0001h	PCI revision ID:
 	00-0Fh 53C810 (fast SCSI)
@@ -1269,23 +1181,23 @@ Values for Symbios Logic (formerly NCR) PCI device code:
 	10-1Fh 53C860LV (Ultra SCSI)
  000Fh	53C875 (Ultra wide SCSI)
  1000h	63c815 Fast-SCSI
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0709)
+(Table 00714)
 Values for ATI PCI device code:
  4158h	68800AX (Mach32)
  4354h	215CT222
  4358h	210888CX
  4758h	210888GX (Mach64)
  5654h	215VT222 Video Expression
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0710)
+(Table 00715)
 Values for ULSI Systems PCI device code:
  0201h	 US201 Graphics Controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0711)
+(Table 00716)
 Values for VLSI Technologies PCI device code:
  0005h	82C592 CPU Bridge
  0006h	82C593 ISA Bridge
@@ -1300,49 +1212,49 @@ Values for VLSI Technologies PCI device code:
  0105h	82C147
  0200h	82C975 RISC GUI Accelerator
  0280h	82C925 RISC GUI Accelerator
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0712)
+(Table 00717)
 Values for Avance Logic, Inc. (Avance Logics) PCI device code:
  2301h	ALG2301 GUI accelerator
  2302h	ALG2302 GUI accelerator
-SeeAlso: #0706,INT 10/AX=4F70h
+SeeAlso: #00711,INT 10/AX=4F70h
 
-(Table 0713)
+(Table 00718)
 Values for National Semiconductor PCI device code:
  0001h	DP83810 Ethernet
- 0002h	PC87415 IDE DMA-Master Mode controller (see #0894)
- D001h	NS87410 EIDE controller (see #0893)
-SeeAlso: #0706,#0747
+ 0002h	PC87415 IDE DMA-Master Mode controller (see #00901)
+ D001h	NS87410 EIDE controller (see #00900)
+SeeAlso: #00711,#00752
 
-(Table 0714)
+(Table 00719)
 Values for Tseng Labs PCI device code:
  3202h	ET4000/W32p-2
  3205h	ET4000/W32p-B
  3206h	ET4000/W32p-C
  3207h	ET4000/W32p-D
  3208h	ET6000
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0715)
+(Table 00720)
 Values for Weitek PCI device code:
  9000h	Power9000???
  9001h	Power9001
  9100h	Power9100
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0716)
+(Table 00721)
 Values for DEC PCI device code:
  0001h	DC21050	DEC BRD PCI-PCI bridge
  0002h	DC21040	Tulip
  0004h	DecChip 21030
- 0009h	DC21140	Tulip Fast (see #0895)
+ 0009h	DC21140	Tulip Fast (see #00902)
  000Ah	21230	Video Codec
  000Fh	DEFPA	FDDI
- 0014h	DC21041	Tulip Plus (see #0895)
+ 0014h	DC21041	Tulip Plus (see #00902)
  0016h	DGLPB	ATM
  0019h	DC21143 PCI/Cardbus Ethernet
- 0021h	21052	PCI-PCI Bridge (see #0896)
+ 0021h	21052	PCI-PCI Bridge (see #00903)
  0022h	21150	PCI-PCI Bridge
  0024h	21152	PCI-PCI Bridge
  0025h	21153	PCI-PCI Bridge
@@ -1350,9 +1262,9 @@ Values for DEC PCI device code:
  0045h	21553	PCI-PCI Bridge
  0046h	21554	PCI-PCI Bridge
  1050h??? 21340 Managed Port Switch
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0717)
+(Table 00722)
 Values for Cirrus Logic PCI device code:
  0038h	CL-GD7548 Video Controller
  004Ch	CL-GD7556 64-bit Video/Graphics LCD/CRT Ctrlr
@@ -1368,9 +1280,9 @@ Values for Cirrus Logic PCI device code:
  1202h	Cirrus 7543
  1204h	Cirrus 7541
  6001h	CS4610/4611 CrystalClear SoundFusion Audio Accelerator
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0718)
+(Table 00723)
 Values for IBM PCI device code:
  0002h	MCA Bridge
  0005h	Alta Lite CPU Bridge
@@ -1400,9 +1312,9 @@ Values for IBM PCI device code:
  0059h	???
  005Ah	???
  005Bh	???
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0719)
+(Table 00724)
 Values for Western Digital PCI device code:
  0193h	WD33C193A 8-bit SCSI
  0196h	SCSI Bridge
@@ -1413,9 +1325,9 @@ Values for Western Digital PCI device code:
  3296h	WD7197
  4296h	WD33C296 Wide Fast-20 Bridge
  C24Ah	90C?
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0720)
+(Table 00725)
 Values for AMI PCI device code:
  9010h	MegaRAID
  9030h	??? IDE Controller
@@ -1423,18 +1335,18 @@ Values for AMI PCI device code:
  9032h	??? IDE/SCSI Controller
  9033h	??? SCSI Controller
  9040h	??? Multimedia card
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0721)
+(Table 00726)
 Values for Advanced Micro Devices (AMD) PCI device code:
  2000h	Am79C970 (Lance)
 	Am79C970A (PCnet-PCI II, PCI revision ID is 1xh)
 	Am79C971 (PCnet-FAST, PCI revision ID is 2xh)
- 2020h	Am53c974 SCSI (see #0897)
+ 2020h	Am53c974 SCSI (see #00904)
  2040h	Am79C974 Ethernet/SCSI
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0722)
+(Table 00727)
 Values for Trident PCI device code:
  9320h	??? 32-bit GUI accelerator
  9350h	??? 32-bit GUI accelerator
@@ -1444,22 +1356,22 @@ Values for Trident PCI device code:
  9460h	Trident 9460
  9660h	Trident 9660
  9682h	??? Multimedia accelerator
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0723)
+(Table 00728)
 Values for LSI Logic PCI device code:
  0000h	Hydra (Pentium chipset)
  0010h	Aspen (486 chipset)
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0724)
+(Table 00729)
 Values for Matrox PCI device code:
  0518h	MGA-II (Ultima)
  0519h	Millenium (2064W)
  0D10h	MGA-I (Impression)
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0725)
+(Table 00730)
 Values for Chips & Technologies PCI device code:
  00B8h	64310 GUI Accelerator
  00D0h	65545 Flat Panel/CRT VGA
@@ -1469,20 +1381,20 @@ Values for Chips & Technologies PCI device code:
  00E4h	65554 display
  00E5h	65555 HiQVPro LCD/CRT GUI Controller
  00F4h	68554 HiQVision LCD/CRT GUI Controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0726)
+(Table 00731)
 Values for Toshiba America PCI device code:
  0009h	r4x00 Bridge
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0727)
+(Table 00732)
 Values for Miro Computer Products AG PCI device code:
  5601h	36050
  5607h	video in/out w/ MPEG
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0728)
+(Table 00733)
 Values for NEC Corporation PCI device code:
  0001h	PCI-to-486 Bridge
  0002h	PCI-to-VL98 Bridge
@@ -1493,14 +1405,14 @@ Values for NEC Corporation PCI device code:
  0007h	PCI-to-UXbus Bridge
  0008h	GUI Accelerator
  0009h	PC-98 Graphics Controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0729)
+(Table 00734)
 Values for Future Domain PCI device code:
  0000h	TMC-36C70 / TMC-18C30 (fast SCSI)
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0730)
+(Table 00735)
 Values for Silicon Integrated System (SIS) PCI device code:
  0001h	SiS6201
  0002h	SiS6202
@@ -1520,9 +1432,9 @@ Values for Silicon Integrated System (SIS) PCI device code:
  5596h	Pentium chipset
  6204h	video decoder/MPEG
  6205h	PCI VGA controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0731)
+(Table 00736)
 Values for Hewlett-Packard PCI device code:
  1030h	J2585A DeskDirect 10/100 PCI NIC
  1040h	J2973A DeskDirect 10BaseT PCI NIC
@@ -1530,47 +1442,49 @@ Values for Hewlett-Packard PCI device code:
  1042h	J2970A DeskDirect 10BaseT/2 PCI NIC
  2910h	E2910A PCI-bus exerciser
  2925h	E2925A PCI-bus exerciser
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0732)
+(Table 00737)
 Values for PC Technology PCI device code:
  1000h	RZ1000
  1001h	RZ1001
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0733)
+(Table 00738)
 Values for Distributed Processing Technology (DPT) PCI device code:
  A400h	2124A/9X EATA SmartCache/RAID SCSI
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0734)
+(Table 00739)
 Values for OPTi PCI device code:
  A0F8h	82C750 (Vendetta) USB controller
  C557h	82C557
  C558h	82C558
  C567h	82C750 (Vendetta, device 0)
  C568h	82C750 (Vendetta, device 1)
- C621h	82C621 IDE controller
+ C621h	82C621 IDE controller / 82C750 Vendetta IDE controller
  C822h	82C822
  C824h	82C824 FireFox PC-Card controller
  C825h	82C825 FireBridge II
- C861h	82C861/82C871 FireLink/FireBlast PCI-to-USB Bridge (see #0901)
-SeeAlso: #0706
+ C861h	82C861/82C871 FireLink/FireBlast PCI-to-USB Bridge (see #00944)
+ D568h	82C750 Vendetta IDE controller
+ D768h	82C750 Vendetta IDE controller (ultra DMA)
+SeeAlso: #00711
 
-(Table 0735)
+(Table 00740)
 Values for SGS Thomson Microelectronics PCI device code:
  0008h	SGS 2000
  0009h	SGS 1764
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0736)
+(Table 00741)
 Values for BusLogic PCI device code:
  0140h	MultiMaster NC
  1040h	MultiMaster
  8130h	FlashPoint
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0737)
+(Table 00742)
 Values for Texas Instruments PCI device code:
  0500h	100 Mbit LAN controller
  0508h	tms380c2x
@@ -1581,50 +1495,50 @@ Values for Texas Instruments PCI device code:
  AC10h	PCI1050	 PCCard controller
  AC11h	PCI1053	 PCCard controller
  AC12h	PCI1130	 PCCard controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0738)
+(Table 00743)
 Values for Oak Technology PCI device code:
  0107h	OTI-0107 (Spitfire)
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0739)
+(Table 00744)
 Values for Winbond PCI device code:
  0000h	??? Ethernet controller
  0001h	83769
  0105h	82C105
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0740)
+(Table 00745)
 Values for Hitachi Ltd. PCI device code:
  0001h	PCI Bridge
  0002h	PCI-bus controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0741)
+(Table 00746)
 Values for EFAR Microsystems PCI device code:
  0810h	486 Bridge
  0922h	Pentium/P54C Bridge
  0926h	ISA Bridge
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0742)
+(Table 00747)
 Values for Motorola PCI device code:
  0001h	MPC105 PowerPC chipset
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0743)
+(Table 00748)
 Values for Promise Technology PCI device code:
  5300h	Promise 5300
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0744)
+(Table 00749)
 Values for Number 9 Computer Company PCI device code:
  2309h	Imagine 128
  2339h	Imagine 128-2
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0745)
+(Table 00750)
 Values for United Microelectronics (UMC) PCI device code:
  0001h	UM82C881 (486 chipset)
  0002h	UM82C776 (ISA Bridge)
@@ -1643,84 +1557,84 @@ Values for United Microelectronics (UMC) PCI device code:
  E881h	UM8881 (486 chipset)
  E886h	UM8886N
  E891h	UM8891N
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0746)
+(Table 00751)
 Values for 8x8 (X Tech) PCI device code:
  0001h	AGX-016
  0002h	IIT3204/3501 MPEG decoder
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0747)
+(Table 00752)
 Values for PicoPower PCI device code:
  0000h	PT80C826 VL Bridge
  0001h	Vesuvius V1-LS System Controller (see PORT 0024h"V1-LS")
 	Revision ID field: 03h = Rev. AA, 04h = Rev. BB, 05h = Rev. CC
- 0002h	Vesuvius V3-LS ISA Bridge (see #0907,PORT 0024h"V3-LS")
+ 0002h	Vesuvius V3-LS ISA Bridge (see #00950,PORT 0024h"V3-LS")
  0005h	National Semiconductor PC87550 PCI System Controller
  8002h	Vesuvius V3-LS ISA Bridge (secondary; Rev. BB and higher only)
-SeeAlso: #0706,#0713
+SeeAlso: #00711,#00718
 
-(Table 0748)
+(Table 00753)
 Values for Mylex Corporation PCI device code:
  0001h	DAC960P Wide SCSI + RAID
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0749)
+(Table 00754)
 Values for Yamaha Corporation PCI device code:
  0001h	?? 3D graphics controller
  0002h	YGV615	RPA3 3D graphics controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0750)
+(Table 00755)
 Values for NexGen Microsystems PCI device code:
  4E78h	NexGen 82C501
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0751)
+(Table 00756)
 Values for Q Logic PCI device code:
  1020h	ISP1020 Fast-Wide SCSI
  1022h	ISP1022 Fast-Wide SCSI
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0752)
+(Table 00757)
 Values for Leadtek Research PCI device code:
  0000h	LeadTek 805
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0753)
+(Table 00758)
 Values for Interphase PCI device code:
  0001h	ATM interface
  0002h	100 vg amylan controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0754)
+(Table 00759)
 Values for Data Technology Corporation (DTC) PCI device code:
  0802h	SL82C105  EIDE Controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0755)
+(Table 00760)
 Values for Contaq Microsystems PCI device code:
  0600h	Contaq 82C599
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0756)
+(Table 00761)
 Values for Forex Computer Corporation PCI device code:
  0001h	FR710  EIDE Controller
  0613h	??? Host Bridge
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0757)
+(Table 00762)
 Values for Bit3 Computer PCI device code:
  0001h	Model 617  PCI-VME Bus Adapter
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0758)
+(Table 00763)
 Values for Olicom PCI device code:
  0001h	??? Ethernet Controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0759)
+(Table 00764)
 Values for Intergraph Corporation PCI device code:
  0020h	3D graphics processor
  0021h	3D graphics processor w/texture
@@ -1728,71 +1642,71 @@ Values for Intergraph Corporation PCI device code:
  0041h	3D graphics frame buffer
  0060h	proprietary bus bridge
  0720h	Motion JPEG codec
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0760)
+(Table 00765)
 Values for National Instruments PCI device code:
  C801h	PCI-GPIB
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0761)
+(Table 00766)
 Values for CMD Technology, Inc. PCI device code:
  0640h	CMD 640
  0642h	IDE controller with RAID-1
  0646h	CMD 646 EIDE
  0650h	PBC0650A Fast SCSI-II
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0762)
+(Table 00767)
 Values for Appian Technology:
  0038h	??? EIDE Controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0763)
+(Table 00768)
 Values for Vision / Quantum Designs Ltd. PCI device code:
  0001h	QD8500
  0002h	QD8580
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0764)
+(Table 00769)
 Values for Brooktree Corporation PCI device code:
  0350h	BT848  TV/PCI with DMA Push
  2115h	BtV 2115 Mediastream Controller
  2125h	BtV 2125 Mediastream Controller
- 8230h	Bt8230 ATM Segment/Reassembly Ctrlr (SRC) (see #0908)
-SeeAlso: #0706
+ 8230h	Bt8230 ATM Segment/Reassembly Ctrlr (SRC) (see #00960)
+SeeAlso: #00711
 
-(Table 0765)
+(Table 00770)
 Values for Sierra Semiconductor PCI device code:
  0000h	STB 64-bit GUI accelerator
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0766)
+(Table 00771)
 Values for ACC Microelectronics PCI device code:
  0000h	ACC 2056
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0767)
+(Table 00772)
 Values for Symphony Labs PCI device code:
  0001h	83769
  0103h	sl82c103 PCI-IDE Controller
  0105h	82C105 bus-master PCI-IDE controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0768)
+(Table 00773)
 Values for PLX Technology PCI device code:
  9036h	PCI9036 interface chip
  9060h	PCI9060xx interface chip
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0769)
+(Table 00774)
 Values for Madge Networks PCI device code:
  0001h	Smart 16/4 Ringnode
  1000h	Collage 25 ATM adapter
  1001h	Collage 155 ATM adapter
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0770)
+(Table 00775)
 Values for 3com Corporation PCI device code:
  5900h	3C590
  5950h	3C595TX
@@ -1802,15 +1716,15 @@ Values for 3com Corporation PCI device code:
  9000h	3C900-TPO Fast Etherlink
  9001h	3C900-COMBO Fast Etherlink
  9050h	3C905-TX Fast Etherlink 10/100
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0771)
+(Table 00776)
 Values for Standard Microsystems Corporation (SMC) PCI device code:
  1000h	37C665 floppy disk controller
  1001h	37C922 floppy disk controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0772)
+(Table 00777)
 Values for Acer Labs Inc. PCI device code:
  1435h	M1435 VL Bridge
  1445h	ALI M1445 VL bridge + EIDE
@@ -1831,102 +1745,102 @@ Values for Acer Labs Inc. PCI device code:
  5217h	m5217 I/O
  5219h	m5219 I/O
  5235h	m5225 I/O
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0773)
+(Table 00778)
 Values for Surecom Technology PCI device code:
  5240h	IDE Controller
  5241h	PCMCIA Bridge
  5242h	general-purpose controller
  5243h	Bus controller
  5244h	Floppy-disk controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0774)
+(Table 00779)
 Values for Neomagic Corporation:
  0000h	graphics controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0775)
+(Table 00780)
 Values for Advanced System Products PCI device code:
  1100h	ABP940 revision A??? SCSI
  1200h	ABP940 revision B??? Fast SCSI-2
  1300h	Fast-Wide SCSI controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0776)
+(Table 00781)
 Values for Citicorp TTI PCI device code:
  2001h	mb86605 Wide SCSI-2
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0777)
+(Table 00782)
 Values for CENR/ECP/EDU PCI device code:
  0001h	SPSB PMC
  0002h	SPSB PCI
  10DCh	ATT 2C15-3 FPGA
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0778)
+(Table 00783)
 Values for Evans & Sutherland PCI device code:
  0001h	3D graphics processor
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0779)
+(Table 00784)
 Values for Emulex Corporation PCI device code:
  1AE5h	Fibre Channel Host Adapter
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0780)
+(Table 00785)
 Values for Integrated Micro Solutions PCI device code:
  5026h	IMS5026/27/28 VL Bridge
  5028h	ISA Bridge
  8849h	IMS 8849
  8853h	ATM network card
  9128h	IMS9129 GUI accelerator
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0781)
+(Table 00786)
 Values for TekRAM Technology Corporation Ltd. PCI device code:
  690Ch	TekRAM 690c
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0782)
+(Table 00787)
 Values for Newbridge Microsystems PCI device code:
  0000h	CA91C042 VMEbus Bridge
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0783)
+(Table 00788)
 Values for Applied Micro Circuits Corp. PCI device code:
  4750h	S5933 PCI controller
  8043h	MyriNet
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0784)
+(Table 00789)
 Values for Integraphics Systems PCI device code:
  1680h	1680
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0785)
+(Table 00790)
 Values for Artist Graphics PCI device code:
  0101h	3GA 64-bit graphics processor
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0786)
+(Table 00791)
 Values for Realtek Semiconductor PCI device code:
  8029h	Realtek 8029
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0787)
+(Table 00792)
 Values for ASCII Corporation PCI device code:
  7310h	V7310 VGA Video Overlay
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0788)
+(Table 00793)
 Values for NKK Corporation PCI device code:
  A001h	NDR4000	  NR4600 Bridge
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0789)
+(Table 00794)
 Values for Truevision PCI device code:
  0000h	??? GUI Accelerator
  0001h	??? GUI Accelerator
@@ -1944,68 +1858,68 @@ Values for Truevision PCI device code:
  0013h	??? GUI Accelerator
  0014h	??? GUI Accelerator
  0015h	??? GUI Accelerator
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0790)
+(Table 00795)
 Values for Initio Corporation PCI device code:
  9100h	320P
  9400h	Fast-Wide SCSI
  9700h	Fast-Wide SCSI
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0791)
+(Table 00796)
 Values for VIA Technologies PCI device code:
  0505h	VIA 82C505
  0561h	VIA 82C561
- 0571h	AMD-645 Peripheral Bus Controller, function 1 (see #0961)
+ 0571h	AMD-645 Peripheral Bus Controller, function 1 (see #01013)
 	VT82C586A/B PCI Integrated Peripheral Controller, function 1
  0576h	VIA 82C576
- 0585h	VT82C585VPX Host Bus-PCI bridge (see #0909)
- 0586h	AMD-645 Peripheral Bus Controller, function 0 (see #0938)
+ 0585h	VT82C585VPX Host Bus-PCI bridge (see #00961)
+ 0586h	AMD-645 Peripheral Bus Controller, function 0 (see #00990)
 	VT82C586A/B PCI Integrated Peripheral Controller, function 0
- 0595h	AMD-640 System Controller (see #0910)
+ 0595h	AMD-640 System Controller (see #00962)
 	VT82C595
  0597h	VT82C597 / VT82C597AT
  1000h	82C570MV P54 Controller
  1106h	82C570MV ISA Bridge + IDE
  1571h	VIA 82C416
- 3038h	AMD-645 Peripheral Bus Controller, function 2 (see #0973)
+ 3038h	AMD-645 Peripheral Bus Controller, function 2 (see #01025)
 	VT82C586A/B PCI Integrated Peripheral Controller, function 2
- 3040h	AMD-645 Peripheral Bus Controller, function 3 (see #0976)
+ 3040h	AMD-645 Peripheral Bus Controller, function 3 (see #01028)
 	VT82C586B PCI Integrated Peripheral Controller, function 3
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0792)
+(Table 00797)
 Values for Proteon Inc. PCI device code:
  0100h	p1690plus-AA  Token Ring
  0101h	p1690plus-AB 2-port Token Ring
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0793)
+(Table 00798)
 Values for Cogent Data Technologies PCI device code:
  1400h	EM110TX PCI Fast Ethernet
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0794)
+(Table 00799)
 Values for Siemens Nixdorf PCI device code:
  6120h	SZB6120 Multimedia Adapter
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0795)
+(Table 00800)
 Values for Rockwell PCI device code:
  2200h	FDDI adapter
  2300h	Fast Ethernet adapter
  2340h	four-port Fast Ethernet
  2400h	ATM adapter
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0796)
+(Table 00801)
 Values for Datacube Inc. PCI device code:
  9500h	MAX-LC SuperVGA
  9501h	MAX-LC image processing
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0797)
+(Table 00802)
 Values for Vortex Computersysteme GmbH PCI device code:
  0000h	GDT60x0 SCSI RAID
  0001h	GDT6000B SCSI RAID
@@ -2021,66 +1935,66 @@ Values for Vortex Computersysteme GmbH PCI device code:
  000Bh	GDT6x25
  000Ch	GDT6535
  000Dh	GDT6555
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0798)
+(Table 00803)
 Values for Efficient Networks, Inc. PCI device code:
  0000h	155P-MF1 ATM FPGA
  0002h	ATM ASIC
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0799)
+(Table 00804)
 Values for FORE Systems PCI device code:
  0210h	PCA200PC
  0300h	PCA200E
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0800)
+(Table 00805)
 Values for Infomedia MicroElectronics PCI device code:
  0000h	EIDE/HD and IDE/CD-ROM controller
  000Bh	EIDE/HD and IDE/CD-ROM controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0801)
+(Table 00806)
 Values for Imaging Technology PCI device code:
  0000h	ICPCI
  0001h	video frame grabber/processor
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0802)
+(Table 00807)
 Values for Mercury Computer Systems PCI device code:
  0001h	Raceway Bridge
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0803)
+(Table 00808)
 Values for Fuji Xerox Co Ltd. PCI device code:
  0001h	Printer Controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0804)
+(Table 00809)
 Values for Ziatech Corporation PCI device code:
  8905h	8905 STD-32 Bridge
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0805)
+(Table 00810)
 Values for Dynamic Pictures Inc. PCI device code:
  0001h	VGA-compatible 3D graphics
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0806)
+(Table 00811)
 Values for Cyclone Microsystems (PLX Technology???) PCI device code:
  0001h	PLX 9060
  0911h	PCI 911	 i960Jx Intelligent I/O
  0912h	PCI 912	 i960Cx Intelligent I/O
  0913h	PCI 913	 i960Hx Intelligent I/O
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0807)
+(Table 00812)
 Values for Crest Microsystem PCI device code:
  0001h	EIDE/ATAPI super adapter
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0808)
+(Table 00813)
 Values for Alliance Semiconductor Corp. PCI device code:
  3210h	Pro Motion 3210
  6410h	GUI Accelerator
@@ -2089,75 +2003,75 @@ Values for Alliance Semiconductor Corp. PCI device code:
  6422h	Pro Video
  6424h	GUI Accelerator
  6426h	GUI Accelerator
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0809)
+(Table 00814)
 Values for Cincinnati Milacron PCI device code:
  0001h	Noservo Controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0810)
+(Table 00815)
 Values for Schneider & Koch Co. PCI device code:
  4000h	FDDI adapter
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0811)
+(Table 00816)
 Values for VMIC PCI device code:
  7587h	VME
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0812)
+(Table 00817)
 Values for Digi International / Stargate PCI device code:
  0003h	RightSwitch
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0813)
+(Table 00818)
 Values for Voarx R&D Inc. PCI device code:
  3011h	Tokenet/vg 1001/10m anylan
  9050h	Lanfleet/Truevalue
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0814)
+(Table 00819)
 Values for MuTech PCI device code:
  0001h	MV1000
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0815)
+(Table 00820)
 Values for PFU Ltd. PCI device code:
  0001h	Host Bridge
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0816)
+(Table 00821)
 Values for Creative Labs (vendor ID 1163h) PCI device code:
  0001h	3D Blaster
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0817)
+(Table 00822)
 Values for Imagraph Corporation PCI device code:
  0001h	Motion JPEG record/play w/ audio
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0818)
+(Table 00823)
 Values for Alfa Inc. PCI device code:
  AFA1h	Fast Ethernet
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0819)
+(Table 00824)
 Values for Matsushita Electronics PCI device code:
  1592h	???
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0820)
+(Table 00825)
 Values for Corollary Inc. PCI device code:
  0014h	PCIB  C-bus II to PCI bridge chip
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0821)
+(Table 00826)
 Values for BitFlow Inc. PCI device code:
  0001h	Raptor-PCI frame grabber
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0822)
+(Table 00827)
 Values for Artop Electric PCI device code:
  0001h	IDE controller
  0002h	IDE controller
@@ -2165,119 +2079,130 @@ Values for Artop Electric PCI device code:
  0004h	ATP8400 ASIC cache accelerator
  8001h	SCSI-2 cache controller
  8002h	SCSI-2 controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0823)
+(Table 00828)
 Values for Zeitnet Inc. PCI device code:
  0001h	Zeitnet 1221
  0002h	Zeitnet 1225
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0824)
+(Table 00829)
 Values for InnoSys Inc. PCI device code:
  4240h	AMCC S5933Q Intelligent Serial Card
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0825)
+(Table 00830)
 Values for Galileo Technology PCI device code:
  0146h	GT-64010 System Controller for R46xx CPU
  4801h	GT-48001 8-port switched Ethernet ctrlr
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0826)
+(Table 00831)
 Values for V3 Semiconductor Inc. PCI device code:
  0292h	V292PBC	 Am29030/40 Bridge
  0960h	V96xPBC	 i960 Bridge
  C960h	V96DPC	 i960 dual PCI Bridge
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0827)
+(Table 00832)
 Values for Pathlight Technology PCI device code:
  C0EDh	SSA Controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0828)
+(Table 00833)
 Values for Dolphin Interconnect Solutions PCI device code:
  0658h	PSB  PCI-SCI Bridge
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0829)
+(Table 00834)
 Values for Specialix Research Ltd. PCI device code:
  2000h	PCI-9050 Target Interface
  4000h	Specialix XIO (SUPI-1 Target Interface)
  8000h	Specialix RIO (T255 Bridge)
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0830)
+(Table 00835)
 Values for Compex USA, Inc. PCI device code:
  1401h	ReadyLINK RL2000 10MBit NIC
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0831)
+(Table 00836)
 Values for PMC-Sierra Inc. PCI device code:
  7375h	PM7375 LASAR-155 ATM SAR
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0832)
+(Table 00837)
 Values for RP PCI device code:
  0001h	RP8OCTA
  0002h	RP8INTF
  0003h	RP16INTF
  0004h	RP32INTF
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0833)
+(Table 00838)
 Values for Cyclades PCI device code:
  0100h	Cyclom Y Lo multiport serial card
  0101h	Cyclom Y Hi
  0200h	Cyclom Z Lo multiport serial card
  0201h	Cyclom Z Hi
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0834)
+(Table 00839)
 Values for Ariel Corporation PCI device code:
  1220h	AMCC 5933  TMS320C80 DSP/Imaging Board
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0835)
+(Table 00840)
 Values for Harris Semiconductor PCI device code:
  8130h	HMP8130 NTSC/PAL Video Decoder
  8131h	HMP8131 NTSC/PAL Video Decoder
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0836)
+(Table 00841)
+Values for Ensoniq PCI device code:
+ 1371h	AudioPCI-97 ES1371
+ 5000h	AudioPCI ES1370
+SeeAlso: #00711
+
+(Table 00842)
 Values for Picture Elements PCI device code:
  0081h	PCIVST	PCI Thresholding Engine
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0837)
+(Table 00843)
 Values for Symphony PCI device code:
  0001h	Symphony 82C101 IDE controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0838)
+(Table 00844)
 Values for TekRAM PCI device code:
  DC29h	DC290 / DC290M EIDE controller
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0839)
+(Table 00845)
 Values for 3DLabs PCI device code:
  0004h	3C0SX GUI Accelerator
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0840)
+(Table 00846)
 Values for Avance Logic, Inc. PCI device code:
  2301h	AVL2301 GUI Accelerator
  2303h	AVG2302 GUI Accelerator
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0841)
+(Table 00847)
+Values for 4942h PCI device code:
+ 4C4Ch	??? (Ensoniq AudioPCI ES1370 subsystem)
+SeeAlso: #00711
+
+(Table 00848)
 Values for BusLogic Inc. PCI device code:
  3080h	??? SCSI-ti
  4010h	??? Fast-Wide SCSI-2
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0842)
+(Table 00849)
 Values for S3 PCI device code:
  5631h	86C325 ViRGE 3D GUI Accelerator
  8800h	Vision 866
@@ -2308,26 +2233,26 @@ Values for S3 PCI device code:
  8A10h	???
  8C00h	???
  8C01h	???
-SeeAlso: #0706,#0845
+SeeAlso: #00711,#00852
 
-(Table 0843)
+(Table 00850)
 Values for c't Magazin fr Computer PCI device code:
  6773h	GPPCI  PCI interface
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0844)
+(Table 00851)
 Values for Quancom Electronic PCI device code:
  0010h	PCI-WDOG1 Watchdog
  0011h	PWDOG2 Watchdog2/PCI
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0845)
+(Table 00852)
 Values for Intel PCI device code:
- 0482h	82375EB/SB PCI-EISA Bridge (see #0981)
- 0483h	82424 Cache Controller (see #0990)
- 0484h	82378/82379 Bus Interface (Mercury/Saturn/Neptune chipsets) (see #0991)
+ 0482h	82375EB/SB PCI-EISA Bridge (see #01033)
+ 0483h	82424 Cache Controller (see #01042)
+ 0484h	82378/82379 Bus Interface (Mercury/Saturn/Neptune chipsets) (see #01043)
  0486h	82425EX/82430
- 04A3h	82434 LX (Mercury) / NX (Neptune) (see #0982)
+ 04A3h	82434 LX (Mercury) / NX (Neptune) (see #01034)
  0960h	i960 RP Microprocessor/Bridge
  1221h	82092AA PCMCIA Bridge
  1222h	82092AA IDE Controller
@@ -2335,42 +2260,47 @@ Values for Intel PCI device code:
  1226h	82596
  1227h	82865
  1228h	EtherExpress Pro/100 Smart
- 1229h	82557 Fast Ethernet (see #1094)
+ 1229h	82557 Fast Ethernet (see #01206)
  122Dh	82437FX (Triton)
  122Eh	82371FB ISA Bridge (Triton)
  1230h	82338 IDE controller / 82371FB IDE function (Triton)
- 1234h	82371MX (see #1080)
+ 1234h	82371MX (see #01147)
  1235h	82437MX
- 1237h	82441FX (see #1096)
+ 1237h	82441FX (see #01208)
  1239h	82371FB IDE Interface (Triton)
- 123Ch	82380AB Mobile PCI-to-ISA Bridge (see #1017)
- 124Bh	82380FB Mobile PCI-to-PCI Bridge (see #3916)
- 1250h	82439HX (430HX chipset) (see #1025)
+ 123Ch	82380AB Mobile PCI-to-ISA Bridge (see #01069)
+ 124Bh	82380FB Mobile PCI-to-PCI Bridge (see #04028)
+ 1250h	82439HX (430HX chipset) (see #01077)
  1960h	80960RP i960RP Microprocessor
- 7000h	82371SB ISA Bridge (see #1079)
- 7010h	82371SB IDE controller (see #1081)
- 7020h	82371SB (see #1082)
- 7030h	82437VX (430VX chipset) (see #1035)
- 7100h	82439TX (430TX chipset) (see #1026)
- 7110h	82371AB PIIX4 ISA Bridge (see #1027)
- 7111h	82371AB PIIX4 Ultra DMA IDE Controller (see #1030)
- 7112h	82371AB PIIX4 USB Controller (see #1031)
- 7113h	82371AB PIIX4 Power Management Controller (see #1032)
- 7180h	82443LX/EX 440LX/EX Host-PCI Bridge	!!!intel\29061601.pdf p.29
- 7181h	82443LX/EX 440LX/EX AGP device
- 7190h	82443BX 440BX PCI-Host Bridge (AGP Enabled) (see #1054)
- 7191h	82443BX 440BX PCI-PCI Bridge (see #1055)
- 7192h	82443BX 440BX PCI-Host Bridge (AGP Disabled) (see #1054)
- 84C4h	82450KX/GX PCI Bridge (Orion) (see #1107)
+ 7000h	82371SB ISA Bridge (see #01146)
+ 7010h	82371SB IDE controller (see #01193)
+ 7020h	82371SB (see #01194)
+ 7030h	82437VX (430VX chipset) (see #01087)
+ 7100h	82439TX (430TX chipset) (see #01078)
+ 7110h	82371AB PIIX4 ISA Bridge (see #01079)
+ 7111h	82371AB PIIX4 Ultra DMA IDE Controller (see #01082)
+ 7112h	82371AB PIIX4 USB Controller (see #01083)
+ 7113h	82371AB PIIX4 Power Management Controller (see #01084)
+ 7180h	82443LX/EX 440LX/EX Host-PCI Bridge (see #01108)
+ 7181h	82443LX/EX 440LX/EX AGP device (see #01109)
+ 7190h	82443BX 440BX PCI-Host Bridge (AGP Enabled) (see #01121)
+ 7191h	82443BX 440BX PCI-PCI Bridge (see #01122)
+ 7192h	82443BX 440BX PCI-Host Bridge (AGP Disabled) (see #01121)
+ 71A0h	82443GX Host Bridge/Controller (AGP enabled)
+ 71A1h	82443GX AGP Controller
+ 71A2h	82443GX Host Bridge/Controller (AGP disabled)
+ 84C4h	82450KX/GX PCI Bridge (Orion) (see #01219)
  84C5h	82450KX/GX Memory Ctrlr (Orion)
-SeeAlso: #0706,#0842
+ 84CAh	82451NX (450NX) Memory & I/O Controller (MIOC)
+ 84CBh	82454NX (450NX) PCI Expansion Bridge (PXB)
+SeeAlso: #00711,#00849
 
-(Table 0846)
+(Table 00853)
 Values for Trigem Computer PCI device code:
  2008h	video assistant
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0847)
+(Table 00854)
 Values for Adaptec PCI device code:
  1078h	AIC-7810C RAID Coprocessor
  5078h	x940 Fast-Wide SCSI-II Ctrlr
@@ -2394,23 +2324,23 @@ Values for Adaptec PCI device code:
  8278h	AHA-3940U/UW
  8378h	Adaptec 7883
  8478h	Adaptec 7884
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0848)
+(Table 00855)
 Values for Atronics PCI device code:
  2015h	Atronics 2015
-SeeAlso: #0706
+SeeAlso: #00711
 
-(Table 0849)
+(Table 00856)
 Values for Ark Logic Inc. PCI device code:
  A091h	ARK 1000PV ??? Stingray
  A099h	ARK 2000PV ??? Stingray
  A0A1h	ark2000mt 64-bit GUI Accel w/DCI
-SeeAlso: #0706
+SeeAlso: #00711
 --------X-1AB103-----------------------------
 INT 1A - PCI BIOS v2.0c+ - FIND PCI CLASS CODE
 	AX = B103h
-	ECX = class code (see also #F078,#0850)
+	ECX = class code (see also #F0078,#00857)
 	    bits 31-24 unused
 	    bits 23-16 class
 	    bits 15-8  subclass
@@ -2418,7 +2348,7 @@ INT 1A - PCI BIOS v2.0c+ - FIND PCI CLASS CODE
 	SI = device index (0-n)
 Return: CF clear if successful
 	CF set on error
-	AH = status (00h,86h) (see #0703)
+	AH = status (00h,86h) (see #00708)
 	    00h successful
 		BH = bus number
 		BL = device/function number (bits 7-3 device, bits 2-0 func)
@@ -2439,7 +2369,7 @@ INT 1A - PCI BIOS v2.0c+ - PCI BUS-SPECIFIC OPERATIONS
 	EDX = Special Cycle data
 Return: CF clear if successful
 	CF set on error
-	AH = status (00h,81h) (see #0703)
+	AH = status (00h,81h) (see #00708)
 	EAX, EBX, ECX, and EDX may be modified
 	all other flags (except IF) may be modified
 Note:	this function may require up to 1024 byte of stack; it will not enable
@@ -2448,67 +2378,73 @@ SeeAlso: AX=B186h,INT 2F/AX=1684h/BX=304Ch
 --------X-1AB108-----------------------------
 INT 1A - PCI BIOS v2.0c+ - READ CONFIGURATION BYTE
 	AX = B108h
-	BL = device/function number (bits 7-3 device, bits 2-0 function)
 	BH = bus number
-	DI = register number (0000h-00FFh) (see #0850)
+	BL = device/function number (bits 7-3 device, bits 2-0 function)
+	DI = register number (0000h-00FFh) (see #00857)
 Return: CF clear if successful
 	    CL = byte read
 	CF set on error
-	AH = status (00h,87h) (see #0703)
+	AH = status (00h,87h) (see #00708)
 	EAX, EBX, ECX, and EDX may be modified
 	all other flags (except IF) may be modified
 Notes:	this function may require up to 1024 byte of stack; it will not enable
 	  interrupts if they were disabled before making the call
 	the meanings of BL and BH on entry were exchanged between the initial
 	  drafts of the specification and final implementation
+BUG:	the Award BIOS 4.51PG (dated 05/24/96) incorrectly returns FFh for
+	  register 00h if the PCI function number is nonzero
 SeeAlso: AX=B109h,AX=B10Ah,AX=B188h,INT 2F/AX=1684h/BX=304Ch
 --------X-1AB109-----------------------------
 INT 1A - PCI BIOS v2.0c+ - READ CONFIGURATION WORD
 	AX = B109h
-	BL = device/function number (bits 7-3 device, bits 2-0 function)
 	BH = bus number
-	DI = register number (0000h-00FFh, must be multiple of 2) (see #0850)
+	BL = device/function number (bits 7-3 device, bits 2-0 function)
+	DI = register number (0000h-00FFh, must be multiple of 2) (see #00857)
 Return: CF clear if successful
 	    CX = word read
 	CF set on error
-	AH = status (00h,87h) (see #0703)
+	AH = status (00h,87h) (see #00708)
 	EAX, EBX, ECX, and EDX may be modified
 	all other flags (except IF) may be modified
 Notes:	this function may require up to 1024 byte of stack; it will not enable
 	  interrupts if they were disabled before making the call
 	the meanings of BL and BH on entry were exchanged between the initial
 	  drafts of the specification and final implementation
+BUG:	the Award BIOS 4.51PG (dated 05/24/96) incorrectly returns FFFFh for
+	  register 00h if the PCI function number is nonzero
 SeeAlso: AX=B108h,AX=B10Ah,AX=B189h,INT 2F/AX=1684h/BX=304Ch
 --------X-1AB10A-----------------------------
 INT 1A - PCI BIOS v2.0c+ - READ CONFIGURATION DWORD
 	AX = B10Ah
 	BH = bus number
 	BL = device/function number (bits 7-3 device, bits 2-0 function)
-	DI = register number (0000h-00FFh, must be multiple of 4) (see #0850)
+	DI = register number (0000h-00FFh, must be multiple of 4) (see #00857)
 Return: CF clear if successful
 	    ECX = dword read
 	CF set on error
-	AH = status (00h,87h) (see #0703)
+	AH = status (00h,87h) (see #00708)
 	EAX, EBX, ECX, and EDX may be modified
 	all other flags (except IF) may be modified
 Notes:	this function may require up to 1024 byte of stack; it will not enable
 	  interrupts if they were disabled before making the call
 	the meanings of BL and BH on entry were exchanged between the initial
 	  drafts of the specification and final implementation
+BUG:	the Award BIOS 4.51PG (dated 05/24/96) incorrectly returns FFFFFFFFh
+	  for register 00h if the PCI function number is nonzero
 SeeAlso: AX=B108h,AX=B109h,AX=B10Ah/SF=8086h,AX=B18Ah,INT 2F/AX=1684h/BX=304Ch
 
 Format of PCI Configuration Data:
-Offset	Size	Description	(Table 0850)
- 00h	WORD	vendor ID (read-only) (see #0706 at AX=B102h)
+Offset	Size	Description	(Table 00857)
+ 00h	WORD	vendor ID (read-only) (see #00711 at AX=B102h)
 		FFFFh returned if requested device non-existent
  02h	WORD	device ID (read-only)
- 04h	WORD	command register (see #0851)
- 06h	WORD	status register (see #0852)
+ 04h	WORD	command register (see #00858)
+ 06h	WORD	status register (see #00859)
  08h	BYTE	revision ID
  09h  3 BYTEs	class code
 		bits 7-0: programming interface
 		bits 15-8: sub-class
-		bits 23-16: class code (see also #F078)
+		bits 23-16: class code (see also #F0078)
  0Ch	BYTE	cache line size
  0Dh	BYTE	latency timer
  0Eh	BYTE	header type
@@ -2517,21 +2453,21 @@ Offset	Size	Description	(Table 0850)
 			01h PCI-to-PCI bridge
 			02h PCI-to-CardBus bridge
 		bit 7: multi-function device
- 0Fh	BYTE	Built-In Self-Test result (see #0853)
+ 0Fh	BYTE	Built-In Self-Test result (see #00860)
 ---header type 00h---
- 10h	DWORD	base address 0 (see #0854)
-		(OpenHCI) base address of host controller registers (see #0874)
+ 10h	DWORD	base address 0 (see #00861)
+		(OpenHCI) base address of host controller registers (see #00881)
  14h	DWORD	base address 1
  18h	DWORD	base address 2
  1Ch	DWORD	base address 3
  20h	DWORD	base address 4
  24h	DWORD	base address 5
- 28h	DWORD	CardBus CIS pointer (read-only) (see #0861)
+ 28h	DWORD	CardBus CIS pointer (read-only) (see #00868)
  2Ch	WORD	subsystem vendor ID or 0000h
  2Eh	WORD	subsystem ID or 0000h
- 30h	DWORD	expansion ROM base address (see #0855)
+ 30h	DWORD	expansion ROM base address (see #00862)
  34h	BYTE	offset of capabilities list within configuration space (R/O)
-		(only valid if status register bit 4 set) (see #0856)
+		(only valid if status register bit 4 set) (see #00863)
  35h  3 BYTEs	reserved
  38h	DWORD	reserved
  3Ch	BYTE	interrupt line
@@ -2541,18 +2477,18 @@ Offset	Size	Description	(Table 0850)
  3Eh	BYTE	minimum time bus master needs PCI bus ownership, in 250ns units
 		(read-only)
  3Fh	BYTE	maximum latency, in 250ns units (bus masters only) (read-only)
- 40h 48 DWORDs	varies by device (see #0891,#0892,#0982,#1010)
+ 40h 48 DWORDs	varies by device (see #00898,#00899,#01034,#01062)
 ---header type 01h---
- 10h	DWORD	base address 0 (see #0854)
+ 10h	DWORD	base address 0 (see #00861)
  14h	DWORD	base address 1
  18h	BYTE	primary bus number (for bus closer to host processor)
  19h	BYTE	secondary bus number (for bus further from host processor)
  1Ah	BYTE	subordinate bus number
  1Bh	BYTE	secondary latency timer
- 1Ch	BYTE	I/O base (see #0871)
- 1Dh	BYTE	I/O limit (see #0871)
+ 1Ch	BYTE	I/O base (see #00878)
+ 1Dh	BYTE	I/O limit (see #00878)
  1Eh	WORD	secondary status
- 20h	WORD	memory base (see #0872)
+ 20h	WORD	memory base (see #00879)
  22h	WORD	memory limit
  24h	WORD	prefetchable memory base
  26h	WORD	prefetchable memory limit
@@ -2564,15 +2500,15 @@ Offset	Size	Description	(Table 0850)
  38h	DWORD	expansion ROM base address
  3Ch	BYTE	interrupt line
  3Dh	BYTE	interrupt pin (read-only)
- 3Eh	WORD	bridge control (see #0873)
- 40h 48 DWORDs	varies by device (see #0891,#0892,#0982,#1010)
+ 3Eh	WORD	bridge control (see #00880)
+ 40h 48 DWORDs	varies by device (see #00898,#00899,#01034,#01062)
 ---header type 02h---
- 10h	DWORD	CardBus Socket/ExCa base address (see #0862)
+ 10h	DWORD	CardBus Socket/ExCa base address (see #00869)
 		bits 31-12: start address of socket interface register block
 			  in 4K blocks
 		bits 11-0: reserved (0)
  14h	BYTE	offset of capabilities list within configuration space (R/O)
-		(only valid if status register bit 4 set) (see #0856)
+		(only valid if status register bit 4 set) (see #00863)
  15h	BYTE	reserved
  16h	WORD	secondary status
  18h	BYTE	PCI bus number
@@ -2599,10 +2535,10 @@ Offset	Size	Description	(Table 0850)
  44h	DWORD	16-bit PC Card legacy mode base address (for accessing ExCa
 		  registers)
  48h 14 DWORDs	reserved
- 80h 32 DWORDs	varies by device (see #0891,#0892,#0982,#1010)
+ 80h 32 DWORDs	varies by device (see #00898,#00899,#01034,#01062)
 
 Bitfields for PCI Configuration Command Register:
-Bit(s)	Description	(Table 0851)
+Bit(s)	Description	(Table 00858)
  0	I/O access enabled
  1	memory access enabled
  2	bus master enable
@@ -2614,10 +2550,10 @@ Bit(s)	Description	(Table 0851)
  8	system error (SERR# line) enabled
  9	fast back-to-back transactions enabled
  15-10	reserved
-SeeAlso: #0850,#0852
+SeeAlso: #00857,#00859
 
 Format of PCI Configuration Status Register:
-Bit(s)	Description	(Table 0852)
+Bit(s)	Description	(Table 00859)
  3-0	reserved (0)
  4	new capabilities list is present (first entry pointed at by byte at
 	  34h or 14h)
@@ -2637,20 +2573,20 @@ Bit(s)	Description	(Table 0852)
  15	detected parity error (set even if parity error reporting is disabled)
 Note:	bits 12, 13 and 15 are cleared by writing a 1 into the corresponding
 	  bit
-SeeAlso: #0850,#0851
+SeeAlso: #00857,#00858
 
 Bitfields for PCI Configuration Built-In Self-Test register:
-Bit(s)	Description	(Table 0853)
+Bit(s)	Description	(Table 00860)
  3-0	completion code (0000 = successful)
  5-4	reserved
  6	start BIST (set to one to start, cleared automatically on completion)
  7	BIST-capable
 Notes:	this register is hardwired to 00h if no BIST capability
 	software should timeout the BIST after two seconds
-SeeAlso: #0850
+SeeAlso: #00857
 
 Bitfields for PCI Configuration Base Address:
-Bit(s)	Description	(Table 0854)
+Bit(s)	Description	(Table 00861)
  0	address type (0 = memory space, 1 = I/O space)
 ---memory address---
  2-1	address type
@@ -2665,32 +2601,32 @@ Bit(s)	Description	(Table 0854)
 ---I/O address---
  1	reserved
  31-2	bits 31-2 of base I/O port
-SeeAlso: #0850,#0874
+SeeAlso: #00857,#00881
 
 Bitfields for PCI Configuration Expansion ROM Address:
-Bit(s)	Description	(Table 0855)
+Bit(s)	Description	(Table 00862)
  0	address decode enable (ROM address is valid)
  10-1	reserved
  31-11	bits 31-11 of ROM's starting physical address
-SeeAlso: #0850
+SeeAlso: #00857
 
 Format of PCI Capabilities List:
-Offset	Size	Description	(Table 0856)
+Offset	Size	Description	(Table 00863)
  00h	BYTE	capability identifier
 		01h PCI Power Managment
  01h	BYTE	offset of next item (within configuration space) or 00h
       N	BYTEs	varies by capability type
 ---PCI Power Management---
- 02h	WORD	power managment capabilities (see #0857) (read-only)
- 04h	WORD	power managment capabilities status register (see #0858)
- 06h	BYTE	PMCSR bridge support extensions (see #0859)
- 07h	BYTE	(optional) read-only data register (see #0860)
+ 02h	WORD	power managment capabilities (see #00864) (read-only)
+ 04h	WORD	power managment capabilities status register (see #00865)
+ 06h	BYTE	PMCSR bridge support extensions (see #00866)
+ 07h	BYTE	(optional) read-only data register (see #00867)
 Note:	this information is from the v0.93 draft of the specification and is
 	  subject to change
-SeeAlso: #0850,#0852
+SeeAlso: #00857,#00859
 
 Bitfields for PCI Power Management Capabilities:
-Bit(s)	Description	(Table 0857)
+Bit(s)	Description	(Table 00864)
  15	reserved (0)
  14-12	PME# support
 	bit 12: PME# can be asserted from power state D0
@@ -2709,15 +2645,16 @@ Bit(s)	Description	(Table 0857)
 	10 reserved
 	11 secondary bus has independent clock, but dynamic clock not supported
  5	device-specific initialization is required
- 4-3	reserved (0)
+ 4	auxiliary power required for PME# generation
+ 3	PCI clock required for PME# generation
  2-0	specification version
 	001 = v1.0; four bytes of power management registers
 Note:	this information is from the v0.93 draft of the specification and is
 	  subject to change
-SeeAlso: #0856,#0858,#0859
+SeeAlso: #00863,#00865,#00866
 
 Bitfields for PCI Power Management Capabilities Status Register:
-Bit(s)	Description	(Table 0858)
+Bit(s)	Description	(Table 00865)
  15	PME status: if set, PME# is (or would be) asserted
 	writing a 1 to this bit clears it
  14-13	(read-only) scale factor to apply to contents of Data register
@@ -2725,7 +2662,7 @@ Bit(s)	Description	(Table 0858)
 	01 x0.1
 	10 x0.01
 	11 x0.001
- 12-9	(read-write) data select (see #0860)
+ 12-9	(read-write) data select (see #00867)
  8	(read-write) enable PME# assertion
  7-5	reserved (0)
  4	(read-write) enable dynamic data reporting
@@ -2738,10 +2675,10 @@ Bit(s)	Description	(Table 0858)
 	11 = D3
 Note:	this information is from the v0.93 draft of the specification and is
 	  subject to change
-SeeAlso: #0856,#0857,#0859
+SeeAlso: #00863,#00864,#00866
 
 Bitfields for PCI Power Management PMCSR bridge support extension:
-Bit(s)	Description	(Table 0859)
+Bit(s)	Description	(Table 00866)
  7	(read-only) Bus Power Control Enable
  6	(read-only) Bus Power State B3 supported
  5	(read-only) Bus Power State B2 supported
@@ -2749,9 +2686,9 @@ Bit(s)	Description	(Table 0859)
  3-0	reserved (0)
 Note:	this information is from the v0.93 draft of the specification and is
 	  subject to change
-SeeAlso: #0856,#0857,#0858
+SeeAlso: #00863,#00864,#00865
 
-(Table 0860)
+(Table 00867)
 Values for PCI Power Management Data Select:
  00h	D0-state power consumed in watts (+20%/-10%)
  01h	D1-state power consumed in watts (+20%/-10%)
@@ -2762,10 +2699,10 @@ Values for PCI Power Management Data Select:
  06h	D2-state power dissipated into chassis in watts
  07h	D3-state power dissipated into chassis in watts
  08h-0Fh reserved
-SeeAlso: #0858
+SeeAlso: #00865
 
 Bitfields for PCI Configuration CardBus CIS Pointer:
-Bit(s)	Description	(Table 0861)
+Bit(s)	Description	(Table 00868)
  2-0	address space
 	000 in device's device-specific configuration space
 	001 in memory pointed to by base address register 0
@@ -2774,25 +2711,25 @@ Bit(s)	Description	(Table 0861)
 	111 in device's expansion ROM
  27-3	offset within address space defined by bits 2-0
  31-28	ROM image number (when address space is expansion ROM)
-SeeAlso: #0850
+SeeAlso: #00857
 
 Format of CardBus Socket/ExCA socket interface register space:
-Offset	Size	Description	(Table 0862)
- 00h	DWORD	Socket Event Register (see #0864)
- 04h	DWORD	Socket Mask Register (see #0865)
- 08h	DWORD	Socket Present State Register (see #0866)
- 0Ch	DWORD	Socket Force Event Register (see #0867)
- 10h	DWORD	Socket Control Register (see #0868)
+Offset	Size	Description	(Table 00869)
+ 00h	DWORD	Socket Event Register (see #00871)
+ 04h	DWORD	Socket Mask Register (see #00872)
+ 08h	DWORD	Socket Present State Register (see #00873)
+ 0Ch	DWORD	Socket Force Event Register (see #00874)
+ 10h	DWORD	Socket Control Register (see #00875)
  14h  3 DWORDs	reserved
  20h	DWORD	Socket Power Management Register
  90h	BYTE	(TI PCI1130) Retry Status Register
- 91h	BYTE	(TI PCI1130) Card Control Register (see #0869)
- 92h	BYTE	(TI PCI1130) Device Control Register (see #0870)
+ 91h	BYTE	(TI PCI1130) Card Control Register (see #00876)
+ 92h	BYTE	(TI PCI1130) Device Control Register (see #00877)
  93h	BYTE	(TI PCI1130) Buffer Control Register
-800h 64+ BYTEs	ExCa Socket Interface Registers (see #0863)
+800h 64+ BYTEs	ExCa Socket Interface Registers (see #00870)
 
 Format of ExCa memory-mapped registers:
-Offset	Size	Description	(Table 0863)
+Offset	Size	Description	(Table 00870)
  00h	BYTE	identification and revision register
  01h	BYTE	interface status register
  02h	BYTE	power control register
@@ -2833,10 +2770,10 @@ Offset	Size	Description	(Table 0863)
  43h	BYTE	memory window 3 start address high byte
  44h	BYTE	memory window 4 start address high byte
  45h-7FFh	user-defined
-SeeAlso: #0862
+SeeAlso: #00869
 
 Bitfields for CardBus Socket Event Register:
-Bit(s)	Description	(Table 0864)
+Bit(s)	Description	(Table 00871)
  0	CSTSCHG pin asserted (status change)
  1	CCD1# (card detect 1) changed state
  2	CCD2# (card detect 2) changed state
@@ -2844,10 +2781,10 @@ Bit(s)	Description	(Table 0864)
 31-4	reserved (0)
 Note:	the bits in this register are set by the bridge, and cleared by writing
 	  a one into the bits one wishes to clear
-SeeAlso: #0862,#0865,#0867
+SeeAlso: #00869,#00872,#00874
 
 Bitfields for CardBus Socket Event Mask Register:
-Bit(s)	Description	(Table 0865)
+Bit(s)	Description	(Table 00872)
  0	write-protect (enable status-change interrupt on WriteProtect switch)
  1	ready mask (allow status-change interrupt on Ready line change)
  3-2	battery condition (allow status-change int on battery-condition change)
@@ -2859,10 +2796,10 @@ Bit(s)	Description	(Table 0865)
  14	Wakeup mask (enable wakeup events via status-change pin)
  15	enable card interrupts via CINT# pin and wakeup events
  31-16	reserved
-SeeAlso: #0862,#0864,#0866
+SeeAlso: #00869,#00871,#00873
 
 Bitfields for CardBus Socket Present State Register:
-Bit(s)	Description	(Table 0866)
+Bit(s)	Description	(Table 00873)
  0	CSTSCHG pin asserted (status change)
  1	CCD1# (card detect 1) changed state
  2	CCD2# (card detect 2) changed state
@@ -2883,10 +2820,10 @@ Bit(s)	Description	(Table 0866)
  30	socket can accept Vcc = X.X volts
  31	socket can accept Vcc = Y.Y volts
 Note:	bits 0-3 may be cleared by writing a 1 into the respective bits
-SeeAlso: #0862,#0864,#0865,#0868
+SeeAlso: #00869,#00871,#00872,#00875
 
 Bitfields for CardBus Socket Force Event Register:
-Bit(s)	Description	(Table 0867)
+Bit(s)	Description	(Table 00874)
  0	write-protect
  1	ready
  2	battery voltage detect 2
@@ -2899,10 +2836,10 @@ Note:	this register can simulate events by forcing the values of some of the
 	  bits in the Event Mask Register; any bit of this register which is
 	  set to 1 forces the corresponding bit in the Mask Register to 1,
 	  while bits set to 0 leave the corresponding bit unchanged
-SeeAlso: #0862,#0864,#0868
+SeeAlso: #00869,#00871,#00875
 
 Bitfields for CardBus Socket Control Register:
-Bit(s)	Description	(Table 0868)
+Bit(s)	Description	(Table 00875)
  2-0	Vpp control
 	000 power off
 	001 12.0 Volts
@@ -2915,10 +2852,10 @@ Bit(s)	Description	(Table 0868)
  3	reserved (0)
  6-4	Vcc control (as for Vpp, but 12.0V not supported)
  31-7	reserved (0)
-SeeAlso: #0862,#0865,#0867
+SeeAlso: #00869,#00872,#00874
 
 Bitfields for TI PCI1130 Card Control Register:
-Bit(s)	Description	(Table 0869)
+Bit(s)	Description	(Table 00876)
  0	interrupt pending
  1	speaker output enabled
  2	reserved
@@ -2928,10 +2865,10 @@ Bit(s)	Description	(Table 0869)
  5	PCI interrupts enabled
  6	ZOOM video mode enabled
  7	Ring Indicator enabled on IRQ15/RI_OUT pin
-SeeAlso: #0862,#0870
+SeeAlso: #00869,#00877
 
 Bitfields for TI PCI1130 Device Control Register:
-Bit(s)	Description	(Table 0870)
+Bit(s)	Description	(Table 00877)
  0	reserved (0)
  2-1	interrupt mode enable
 	00 no interrupt
@@ -2942,28 +2879,28 @@ Bit(s)	Description	(Table 0870)
  5	3volt Socket Capable force bit
  6	5volt Socket Capable force bit
  7	reserved
-SeeAlso: #0862,#0869
+SeeAlso: #00869,#00876
 
 Bitfields for PCI Configuration I/O base and limit:
-Bit(s)	Description	(Table 0871)
+Bit(s)	Description	(Table 00878)
  3-0	(read-only) address decoding type
 	0000 16-bit
 	0001 32-bit
 	other reserved
  7-4	bits 15-12 of I/O address range
-SeeAlso: #0850,#0872
+SeeAlso: #00857,#00879
 
 Bitfields for PCI Configuration memory base and limit:
-Bit(s)	Description	(Table 0872)
+Bit(s)	Description	(Table 00879)
  3-0	address decode type
 	0000 32-bit address decoder
 	0001 64-bit address decoder
 	other reserved
  15-4	bits 31-20 of memory address range
-SeeAlso: #0850,#0871
+SeeAlso: #00857,#00878
 
 Bitfields for PCI Configuration Bridge Control Register:
-Bit(s)	Description	(Table 0873)
+Bit(s)	Description	(Table 00880)
  7	enable fast back-to-back cycles on secondary bus
  6	reset secondary bus
  5	master abort mode on secondary bus
@@ -2973,47 +2910,47 @@ Bit(s)	Description	(Table 0873)
  2	ISA enable
  1	reserved
  0	enable parity error response
-SeeAlso: #0850
+SeeAlso: #00857,#01110
 
 Format of OpenHCI Host Controller memory-mapped registers:
-Offset	Size	Description	(Table 0874)
- 00h	DWORD	"HcRevision"		OpenHCI revision (see #0875)
- 04h	DWORD	"HcControl"		HC operating modes (see #0876)
- 08h	DWORD	"HcCommandStatus"	command/status (see #0877)
- 0Ch	DWORD	"HcInterruptStatus"	interrupt status (see #0878)
- 10h	DWORD	"HcInterruptEnable"	enable interrupts (see #0879)
- 14h	DWORD	"HcInterruptDisable"	disable interrupts (see #0879)
- 18h	DWORD	"HcHCCA"		HC Communications Area (see #0880)
- 1Ch	DWORD	"HcPeriodCurrentED"	Endpoint Descriptor addr (see #0881)
- 20h	DWORD	"HcControlHeadED"	Control Endpoint Descriptor (see #0882)
- 24h	DWORD	"HcControlCurrentED"	Control Endpoint Descriptor (see #0882)
- 28h	DWORD	"HcBulkHeadED"		Bulk Endpoint Descriptor (see #0883)
- 2Ch	DWORD	"HcBulkCurrentED"	Bulk Endpoint Descriptor (see #0883)
- 30h	DWORD	"HcDoneHead"		last completed Xfer Descr. (see #0884)
- 34h	DWORD	"HcFmInterval"		Frame bit-time interval (see #0885)
- 38h	DWORD	"HcFmRemaining"		bit time remaining in Frame (see #0886)
+Offset	Size	Description	(Table 00881)
+ 00h	DWORD	"HcRevision"		OpenHCI revision (see #00882)
+ 04h	DWORD	"HcControl"		HC operating modes (see #00883)
+ 08h	DWORD	"HcCommandStatus"	command/status (see #00884)
+ 0Ch	DWORD	"HcInterruptStatus"	interrupt status (see #00885)
+ 10h	DWORD	"HcInterruptEnable"	enable interrupts (see #00886)
+ 14h	DWORD	"HcInterruptDisable"	disable interrupts (see #00886)
+ 18h	DWORD	"HcHCCA"		HC Communications Area (see #00887)
+ 1Ch	DWORD	"HcPeriodCurrentED"	Endpoint Descriptor addr (see #00888)
+ 20h	DWORD	"HcControlHeadED"	Control Endpoint Descriptor (see #00889)
+ 24h	DWORD	"HcControlCurrentED"	Control Endpoint Descriptor (see #00889)
+ 28h	DWORD	"HcBulkHeadED"		Bulk Endpoint Descriptor (see #00890)
+ 2Ch	DWORD	"HcBulkCurrentED"	Bulk Endpoint Descriptor (see #00890)
+ 30h	DWORD	"HcDoneHead"		last completed Xfer Descr. (see #00891)
+ 34h	DWORD	"HcFmInterval"		Frame bit-time interval (see #00892)
+ 38h	DWORD	"HcFmRemaining"		bit time remaining in Frame (see #00893)
  3Ch	DWORD	"HcFmNumber"		Frame Number (bits 15-0)
  40h	DWORD	"HcPeriodicStart"	earliest time to start periodic list
 					(bits 13-0)
  44h	DWORD	"HcLSThreshold"		threshold for Low Speed transaction
 					(bits 11-0)
- 48h	DWORD	"HcRhDescriptorA"	Root Hub Descriptor A (see #0887)
- 4Ch	DWORD	"HcRhDescriptorB"	Root Hub Descriptor B (see #0888)
- 50h	DWORD	"HcRhStatus"		Root Hub status (see #0889)
- 54h  N DWORDs	"HCRhPortStatus[1-N]"	Root Hub port status N (see #0890)
+ 48h	DWORD	"HcRhDescriptorA"	Root Hub Descriptor A (see #00894)
+ 4Ch	DWORD	"HcRhDescriptorB"	Root Hub Descriptor B (see #00895)
+ 50h	DWORD	"HcRhStatus"		Root Hub status (see #00896)
+ 54h  N DWORDs	"HCRhPortStatus[1-N]"	Root Hub port status N (see #00897)
 Note:	OpenHCI reserves a full 4K page of the systems address space for its
 	  memory-mapped registers
-SeeAlso: #0850,#0854,#F078,#0902
+SeeAlso: #00857,#00861,#F0078,#00945
 
 Bitfields for OpenHCI "HcRevision" register:
-Bit(s)	Description	(Table 0875)
+Bit(s)	Description	(Table 00882)
  31-8	reserved
  7-0	BCD OpenHCI specification number (10h = 1.0, 11h = 1.1)
 Note:	this register is read-only
-SeeAlso: #0874,#0876
+SeeAlso: #00881,#00883
 
 Bitfields for OpenHCI "HcControl" register:
-Bit(s)	Description	(Table 0876)
+Bit(s)	Description	(Table 00883)
  31-11	reserved
  10	RWE	enable Remote Wakeup feature
  9	RWC	controller supports Remote Wakeup signalling
@@ -3034,10 +2971,10 @@ Bit(s)	Description	(Table 0876)
 		01  2:1
 		10  3:1
 		11  4:1
-SeeAlso: #0874,#0875,#0877
+SeeAlso: #00881,#00882,#00884
 
 Bitfields for OpenHCI "HcCommandStatus" register:
-Bit(s)	Description	(Table 0877)
+Bit(s)	Description	(Table 00884)
  31-18	reserved
  17-16	SOC	scheduling-overrun count
  15-4	reserved
@@ -3047,10 +2984,10 @@ Bit(s)	Description	(Table 0877)
  0	HCR	host controller software reset
 Note:	writing a 1 bit sets the corresponding bit, while a 0 bit leaves the
 	  corresponding bit unchanged
-SeeAlso: #0874,#0875,#0878
+SeeAlso: #00881,#00882,#00885
 
 Bitfields for OpenHCI "HcInterruptStatus" register:
-Bit(s)	Description	(Table 0878)
+Bit(s)	Description	(Table 00885)
  31	reserved (0)
  30	OC	ownership change
  29-7	reserved
@@ -3062,10 +2999,10 @@ Bit(s)	Description	(Table 0878)
  1	WDH	writeback done
  0	SO	scheduling overrun
 Note:	writing a 1 bit clears the corresponding bit of the register
-SeeAlso: #0874,#0875,#0877,#0879
+SeeAlso: #00881,#00882,#00884,#00886
 
 Bitfields for OpenHCI "HcInterruptEnable" and "HcInterruptDisable" registers:
-Bit(s)	Description	(Table 0879)
+Bit(s)	Description	(Table 00886)
  31	MIE	master interrupt enable
  30	OC	ownership change
  29-7	reserved
@@ -3080,65 +3017,65 @@ Note:	writing a 1 bit to HcInterruptEnable enables the corresponding
 	  interrupt, while writing a 1 bit to HcInterruptDisable disables it;
 	  zero bits are ignored.  On reading, both registers return the
 	  same value, which reflects the currently enabled interrupts
-SeeAlso: #0874
+SeeAlso: #00881
 
 Bitfields for OpenHCI "HcHCCA" register:
-Bit(s)	Description	(Table 0880)
+Bit(s)	Description	(Table 00887)
  31-8	physical address of Host Controller Communications Area (bits 31-8)
  7-0	reserved (0)
 Note:	the required alignment for the HCCA may be determined by writing
 	  FFFFFFFFh to this register and determining the number of low-order
 	  zero bits
-SeeAlso: #0874,#0881,#0882
+SeeAlso: #00881,#00888,#00889
 
 Bitfields for OpenHCI "HcPeriodCurrentED" register:
-Bit(s)	Description	(Table 0881)
+Bit(s)	Description	(Table 00888)
  31-4	physical address of current Isochronous/Interrupt Endpoint Descriptor
 	  (bits 31-4)
  3-0	reserved (0)
-SeeAlso: #0874,#0880,#0882
+SeeAlso: #00881,#00887,#00889
 
 Bitfields for OpenHCI "HcControlHeadED"/"HcControlCurrentED" register:
-Bit(s)	Description	(Table 0882)
+Bit(s)	Description	(Table 00889)
  31-4	physical address of first/current Endpoint Descriptor (bits 31-4)
  3-0	reserved (0)
 Note:	HcControlCurrentED is set to 0000000h to indicate the end of the
 	  Control list
-SeeAlso: #0874,#0880,#0881
+SeeAlso: #00881,#00887,#00888
 
 Bitfields for OpenHCI "HcBulkHeadED"/"HcBulkCurrentED" register:
-Bit(s)	Description	(Table 0883)
+Bit(s)	Description	(Table 00890)
  31-4	physical address of first/current Endpoint Descriptor in the Bulk
 	  list (bits 31-4)
  3-0	reserved (0)
 Note:	HcBulkCurrentED is set to 0000000h to indicate the end of the Bulk
 	  list
-SeeAlso: #0874,#0880,#0882
+SeeAlso: #00881,#00887,#00889
 
 Bitfields for OpenHCI "HcDoneHead" register:
-Bit(s)	Description	(Table 0884)
+Bit(s)	Description	(Table 00891)
  31-4	physical address of most-recently completed Transfer Descriptor added
 	  to the Done queue (bits 31-4)
  3-0	reserved (0)
-SeeAlso: #0874,#0881,#0883
+SeeAlso: #00881,#00888,#00890
 
 Bitfields for OpenHCI "HcFmInterval" register:
-Bit(s)	Description	(Table 0885)
+Bit(s)	Description	(Table 00892)
  31	"FIT"	toggled each time a new value is loaded into bits 13-0
  30-16	"FSMPS"	largest data packet in bits
  15-14	reserved
  13-0	"FI"	Frame Interval (between to consecutive SOFs)
-SeeAlso: #0874,#0886
+SeeAlso: #00881,#00893
 
 Bitfields for OpenHCI "HcFmRemaining" register:
-Bit(s)	Description	(Table 0886)
+Bit(s)	Description	(Table 00893)
  31	"FRT"	loaded from bit 31 of HcFmInterval whenever FR reaches 0
  30-14	reserved
  13-0	"FR"	FrameRemaining -- bits times left in current frame
-SeeAlso: #0874,#0885
+SeeAlso: #00881,#00892
 
 Bitfields for OpenHCI "HcRhDescriptorA" register:
-Bit(s)	Description	(Table 0887)
+Bit(s)	Description	(Table 00894)
  31-24	"POTPGT" power-on to power-good time in 2ms units
  23-13	reserved
  12	"NOCP"	no over-current protection supported
@@ -3147,17 +3084,17 @@ Bit(s)	Description	(Table 0887)
  9	"NPS"	NoPowerSwitching -- ports are always powered up
  8	"PSM"	power-switching mode -- if set, each port powered individually
  7-0	"NDP"	number of downstream ports
-SeeAlso: #0874,#0888,#0889
+SeeAlso: #00881,#00895,#00896
 
 Bitfields for OpenHCI "HcRhDescriptorB" register:
-Bit(s)	Description	(Table 0888)
+Bit(s)	Description	(Table 00895)
  31-16	"PPCM"	PortPowerControlMask -- bitmask of ports NOT affected by global
 		  power control (bit 16 [port #0] is reserved)
  15-0	"DR"	DeviceRemovable -- bitmap of removable devices
-SeeAlso: #0874,#0887,#0889
+SeeAlso: #00881,#00894,#00896
 
 Bitfields for OpenHCI "HcRhStatus" register:
-Bit(s)	Description	(Table 0889)
+Bit(s)	Description	(Table 00896)
  31	"CRWE"	Clear Remote Wakeup Enable
 		write 1 to disable remote wakeup (writes of 0 ignored)
  30-18	reserved
@@ -3173,10 +3110,10 @@ Bit(s)	Description	(Table 0889)
  0    R "LPS"	LocalPowerStatus (always 0 for Root Hub)
       W		write 1 to turn off power to all ports/ports with clear
 		  PortPowerControlMask bits
-SeeAlso: #0874,#0887,#0888,#0890
+SeeAlso: #00881,#00894,#00895,#00897
 
 Bitfields for OpenHCI "HcRhPortStatusN" register:
-Bit(s)	Description	(Table 0890)
+Bit(s)	Description	(Table 00897)
  31-21	reserved
  20	"PRSC"	Port Reset Status Change (write '1' to clear)
  19	"OCIC"	Port OverCurrent Indiactor Change (write '1' to clear)
@@ -3199,17 +3136,17 @@ Bit(s)	Description	(Table 0890)
       W		set port enable by writing '1'
  0    R "CCS"	current connect status
       W		clear port enable by writing '1'
-SeeAlso: #0874,#0887,#0888,#0889
+SeeAlso: #00881,#00894,#00895,#00896
 --------X-1AB10ASF1004-----------------------
 INT 1A - PCI BIOS v2.0c+ - READ CONFIGURATION DWORD (VLSI devices)
 	AX = B10Ah subfn 1004h
 	BH = bus number
 	BL = device/function number (bits 7-3 device, bits 2-0 function)
-	DI = register number (0000h-00FFh) (see #0850)
+	DI = register number (0000h-00FFh) (see #00857)
 Return: CF clear if successful
 	    ECX = dword read
 	CF set on error
-	AH = status (00h,87h) (see #0703)
+	AH = status (00h,87h) (see #00708)
 	EAX, EBX, ECX, and EDX may be modified
 	all other flags (except IF) may be modified
 Notes:	this function may require up to 1024 byte of stack; it will not enable
@@ -3219,8 +3156,8 @@ Notes:	this function may require up to 1024 byte of stack; it will not enable
 SeeAlso: AX=B10Ah,AX=B10Ah/SF=8086h
 
 Format of PCI Configuration Data for VLSI VL82C591 Host/PCI bridge:
-Offset	Size	Description	(Table 0891)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 00898)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 1004h, device ID 0005h)
  40h	BYTE	bus number
  41h	BYTE	subordinate bus number
@@ -3233,11 +3170,11 @@ Offset	Size	Description	(Table 0891)
  5Ch  5 BYTEs	device-specific configuration registers
 	...
  FFh	BYTE	device-specific configuration register
-SeeAlso: #0850,#0706,#0892
+SeeAlso: #00857,#00711,#00899
 
 Format of PCI Configuration data for VLSI VL82C593 PCI/ISA bridge:
-Offset	Size	Description	(Table 0892)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 00899)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 1004, device ID 0006h)
  40h  4 DWORDs	reserved
  50h 11 BYTEs	device-specific configuration registers
@@ -3245,17 +3182,17 @@ Offset	Size	Description	(Table 0892)
  5Ch 25 BYTEs	device-specific configuration registers
  75h 138 BYTEs	reserved
  FFh	BYTE	device-specific configuration register
-SeeAlso: #0850,#0891
+SeeAlso: #00857,#00898
 --------X-1AB10ASF100B-----------------------
 INT 1A - PCI BIOS v2.0c+ - READ CONFIGURATION DWORD (National Semicond. device)
 	AX = B10Ah subfn 100Bh
 	BH = bus number
 	BL = device/function number (bits 7-3 device, bits 2-0 function)
-	DI = register number (0000h-00FFh) (see #0850)
+	DI = register number (0000h-00FFh) (see #00857)
 Return: CF clear if successful
 	    ECX = dword read
 	CF set on error
-	AH = status (00h,87h) (see #0703)
+	AH = status (00h,87h) (see #00708)
 	EAX, EBX, ECX, and EDX may be modified
 	all other flags (except IF) may be modified
 Notes:	this function may require up to 1024 byte of stack; it will not enable
@@ -3265,8 +3202,8 @@ Notes:	this function may require up to 1024 byte of stack; it will not enable
 SeeAlso: AX=B10Ah,AX=B10Ah/SF=8086h
 
 Format of National Semiconductor PC87410 EIDE Controller configuration:
-Offset	Size	Description	(Table 0893)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 00900)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 100Bh, device ID D001h)
  10h	DWORD	I/O base address for channel 0 control ports (def: 01F0h)
  14h	DWORD	I/O base address for channel 0 status port (def: 03F6h)
@@ -3282,11 +3219,11 @@ Offset	Size	Description	(Table 0893)
  49h  7 BYTEs	unused
  50h 176 BYTEs	??? (unused?)
 !!!http://www.national.com/ds/PC/PC87410.pdf p.7
-SeeAlso: #0713,#0894
+SeeAlso: #00718,#00901
 
 Format of National Semiconductor PC87415 IDE DMA-Master configuration:
-Offset	Size	Description	(Table 0894)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 00901)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 100Bh, device ID 0002h)
  40h  3 BYTEs	control register
  43h	BYTE	write buffer status (read-only)
@@ -3301,17 +3238,17 @@ Offset	Size	Description	(Table 0894)
  54h	BYTE	command and control block timing
  55h	BYTE	sector size
 !!!http://www.national.com/ds/PC/PC87415.pdf p.8
-SeeAlso: #0713,#0893
+SeeAlso: #00718,#00900
 --------X-1AB10ASF1011-----------------------
 INT 1A - PCI BIOS v2.0c+ - READ CONFIGURATION DWORD (DEC device)
 	AX = B10Ah subfn 1011h
 	BH = bus number
 	BL = device/function number (bits 7-3 device, bits 2-0 function)
-	DI = register number (0000h-00FFh) (see #0850)
+	DI = register number (0000h-00FFh) (see #00857)
 Return: CF clear if successful
 	    ECX = dword read
 	CF set on error
-	AH = status (00h,87h) (see #0703)
+	AH = status (00h,87h) (see #00708)
 	EAX, EBX, ECX, and EDX may be modified
 	all other flags (except IF) may be modified
 Notes:	this function may require up to 1024 byte of stack; it will not enable
@@ -3321,8 +3258,8 @@ Notes:	this function may require up to 1024 byte of stack; it will not enable
 SeeAlso: AX=B10Ah,AX=B10Ah/SF=8086h
 
 Format of DEC DC21140/DC21040/DC21041 Tulip {Fast/Plus} Ethernet:
-Offset	Size	Description	(Table 0895)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 00902)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 1011h, device ID 0014h)
  10h	DWORD	base I/O port for access to control/status registers
  14h	DWORD	base memory address for access to control/status registers
@@ -3331,11 +3268,11 @@ Offset	Size	Description	(Table 0895)
 		bit 30: snooze mode  /
 		bits 15-8: device driver's use
 !!!digital\21041hm.pdf p.34   digital\21140ahm.pdf p.35
-SeeAlso: #0716
+SeeAlso: #00721
 
 Format of DEC 21052 PCI-PCI bridge PCI configuration data:
-Offset	Size	Description	(Table 0896)
- 00h 64 BYTEs	header, type 1 (see #0850)
+Offset	Size	Description	(Table 00903)
+ 00h 64 BYTEs	header, type 1 (see #00857)
 		(vendor ID 1011h, device ID 0021h)
  40h	BYTE	chip control
  41h	BYTE	diagnostic control
@@ -3348,17 +3285,17 @@ Offset	Size	Description	(Table 0896)
  4Ch	DWORD	count of primary write attempts
  50h 44 DWORDs	reserved
 !!!digital\21052ds.pdf p.117
-SeeAlso: #0716
+SeeAlso: #00721
 --------X-1AB10ASF1022-----------------------
 INT 1A - PCI BIOS v2.0c+ - READ CONFIGURATION DWORD (AMD devices)
 	AX = B10Ah subfn 1022h
 	BH = bus number
 	BL = device/function number (bits 7-3 device, bits 2-0 function)
-	DI = register number (0000h-00FFh) (see #0850)
+	DI = register number (0000h-00FFh) (see #00857)
 Return: CF clear if successful
 	    ECX = dword read
 	CF set on error
-	AH = status (00h,87h) (see #0703)
+	AH = status (00h,87h) (see #00708)
 	EAX, EBX, ECX, and EDX may be modified
 	all other flags (except IF) may be modified
 Notes:	this function may require up to 1024 byte of stack; it will not enable
@@ -3368,19 +3305,19 @@ Notes:	this function may require up to 1024 byte of stack; it will not enable
 SeeAlso: AX=B10Ah,AX=B10Ah/SF=1042h,AX=B10Ah/SF=8086h
 
 Format of AMD Am53C974A PC-SCSI PCI configuration data:
-Offset	Size	Description	(Table 0897)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 00904)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 1022h, device ID 2020h)
  10h	DWORD	I/O base address (see PORT xxxxh"Am53C974A")
  40h 16 BYTEs	scratch registers
 		(used by AMD's PC-SCSI drivers as follows:
-		    40h/41h  SCSI configuration register 0 (see #0898,#0899)
+		    40h/41h  SCSI configuration register 0 (see #00905,#00906)
 		    ...
 		    4Eh/4Fh  SCSI configuration register 7)
-SeeAlso: #0721
+SeeAlso: #00726
 
 Bitfields for AMD Am53C974A Target Device Configuration Register:
-Bit(s)	Description	(Table 0898)
+Bit(s)	Description	(Table 00905)
  15-14	reserved
  13	"FSCSI" Fast SCSI drive is present
  12-8	"SPD" synchronous period
@@ -3388,10 +3325,10 @@ Bit(s)	Description	(Table 0898)
  3-1	SCSI bus status
  0	target device is present and active
 	if 0, all other bits must be cleared to zero for target devices
-SeeAlso: #0897,#0899
+SeeAlso: #00904,#00906
 
 Bitfields for AMD Am53C974A Host Configuration Register:
-Bit(s)	Description	(Table 0899)
+Bit(s)	Description	(Table 00906)
  15-9	reserved
  8	SCSI bus has been reset
  7	starting BIOS number (bits 6-4) is valid
@@ -3401,17 +3338,17 @@ Bit(s)	Description	(Table 0899)
  1	real-mode driver initialized
  0	target device present
 	=0 indicates that this is a host if bit 3 is set
-SeeAlso: #0897,#0898
+SeeAlso: #00904,#00905
 --------X-1AB10ASF1042-----------------------
 INT 1A - PCI BIOS v2.0c+ - READ CONFIGURATION DWORD (PC Technology devices)
 	AX = B10Ah subfn 1042h
 	BH = bus number
 	BL = device/function number (bits 7-3 device, bits 2-0 function)
-	DI = register number (0000h-00FFh) (see #0850)
+	DI = register number (0000h-00FFh) (see #00857)
 Return: CF clear if successful
 	    ECX = dword read
 	CF set on error
-	AH = status (00h,87h) (see #0703)
+	AH = status (00h,87h) (see #00708)
 	EAX, EBX, ECX, and EDX may be modified
 	all other flags (except IF) may be modified
 Notes:	this function may require up to 1024 byte of stack; it will not enable
@@ -3421,8 +3358,8 @@ Notes:	this function may require up to 1024 byte of stack; it will not enable
 SeeAlso: AX=B10Ah,AX=B10Ah/SF=1022h,AX=B10Ah/SF=1045h,AX=B10Ah/SF=8086h
 
 Format of PCI Configuration data for PC Technology RZ-1000 EIDE controller:
-Offset	Size	Description	(Table 0900)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 00907)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 1042h, device ID 1000h)
  10h	DWORD	base address for controller I/O registers
 		(set to 01F1h for primary controller, 0171h for secondary)
@@ -3442,11 +3379,11 @@ INT 1A - PCI BIOS v2.0c+ - READ CONFIGURATION DWORD (OPTi devices)
 	AX = B10Ah subfn 1045h
 	BH = bus number
 	BL = device/function number (bits 7-3 device, bits 2-0 function)
-	DI = register number (0000h-00FFh) (see #0850)
+	DI = register number (0000h-00FFh) (see #00857)
 Return: CF clear if successful
 	    ECX = dword read
 	CF set on error
-	AH = status (00h,87h) (see #0703)
+	AH = status (00h,87h) (see #00708)
 	EAX, EBX, ECX, and EDX may be modified
 	all other flags (except IF) may be modified
 Notes:	this function may require up to 1024 byte of stack; it will not enable
@@ -3455,9 +3392,629 @@ Notes:	this function may require up to 1024 byte of stack; it will not enable
 	  drafts of the specification and final implementation
 SeeAlso: AX=B10Ah,AX=B10Ah/SF=1042h,AX=B10Ah/SF=1066h
 
+Format of PCI Configuration data for OPTi 82C750 Vendetta (device 0):
+Offset	Size	Description	(Table 00908)
+ 00h 64	BYTEs	header (see #00857)
+		(vendor ID 1045h, device ID C567h)
+ 40h	DWORD	memory control (see #00909)
+ 44h  6	BYTEs	data path control (see #00910)
+ 4Ah	WORD	reserved
+ 4Ch	BYTE	SDRAM SDRAS/SDCAS mux control (see #00911)
+ 4Dh	BYTE	SDRAM select (see #00912)
+ 4Eh	BYTE	ECC test / I2C control (see #00913)
+ 4Fh	BYTE	ECC test data
+ 50h	DWORD	ECC control (see #00914)
+ 54h	WORD	SDRAM select (see #00915)
+ 56h	BYTE	data path control / EDO X-2-2-2 writes (see #00916)
+ 57h	BYTE	reserved
+ 58h	DWORD	ECC reporting (see #00917)
+ 5Ch 164 BYTEs	reserved
+SeeAlso: #00857,#00918,#00944
+
+Bitfields for OPTi 82C750 Vendetta (device 0) memory control:
+Bit(s)	Description	(Table 00909)
+ 31-30	reserved
+ 29	reserved (1)
+ 28-18	reserved
+ 17	reserved (1)
+ 16	HA drive-back during CPU memory access enable
+ 15-6	PCI video frame buffer write posting hole
+ 5-4	reserved
+ 3	PCI bus write post disable
+ 2	video frame buffer write post (posting enabled if bit 2 = bit 3)
+ 1	video memory write post(posting enabled if bit 1 = bit 3)
+ 0	I/O cycle write post enable
+SeeAlso: #00908,#00910
+
+Bitfields for OPTi 82C750 Vendetta (device 0) data path control:
+Bit(s)	Description	(Table 00910)
+ 41-47	reserved
+ 40	DTY pin suspend enable
+ 39-38	reserved
+ 37	SDRAM refresh 0 sized bank RAS# disable
+ 36	SDRAM control signal stepping enable
+ 35	reserved
+ 34-32	SDRAM mode
+	000 = normal
+	001 = NOP enable
+	010 = precharge all banks
+	011 = mode register enable
+	100 = CBR cycle enable
+	101-111 = reserved
+ 31	SDRAM memory read access enable
+ 30	CPU-to-PCI FIFO clear enable
+ 29	PCI-to-DRAM FIFO clear enable
+ 28	CPU-to-DRAM FIFO clear enable
+ 27	82C750 register write disable
+ 26-15	reserved
+ 14	PCI master/ECC generate NMI disable
+ 13-12	reserved (1)
+ 11	memory parity checking enable
+ 10	reserved
+ 9	CPU DRAM write byte merge enable
+ 8	MD bus pull-up resistor disable
+ 7	PCI CPU write 6DW FIFO enable
+ 6	DRAM PCI read 24DW FIFO enable
+ 5	DRAM PCI write 24DW FIFO enable
+ 4	DRAM CPU write 8QW FIFO enable
+ 3	82C750 memory read access (0 = SDRAM, 1 = reserved)
+ 2-1	reserved
+ 0	82C750 memory read access (0 = FP mode, 1 = EDO/SDRAM)
+SeeAlso: #00908
+
+Bitfields for OPTi 82C750 Vendetta (device 0) SDRAM SDRAS/SDCAS mux control:
+Bit(s)	Description	(Table 00911)
+ 7	MCACHE enable
+ 6	GWE#/BWE# (1)
+ 5	reserved (read-only)
+ 4	reserved (1)
+ 3	BOFF# CPU status latch enable
+ 2	reserved (1) (SDRAS# & SDCAS#)
+ 1	reserved (1) (BA1 & BA0)
+ 0	pin mux
+	0 = RAS4# & RAS5#
+	1 = SDRAS# & SDCAS#
+SeeAlso: #00908
+
+Bitfields for OPTi 82C750 Vendetta (device 0) SDRAM select:
+Bit(s)	Description	(Table 00912)
+ 7-6	reserved
+ 5	bank 5 enable
+ 4	bank 4 enable
+ 3-0	reserved
+SeeAlso: #00908
+
+Bitfields for OPTi 82C750 Vendetta (device 0) ECC test / I2C control:
+Bit(s)	Description	(Table 00913)
+ 7	ECC test mode enable
+ 6	reserved
+ 5	reserved (1 if SDRAM enabled)
+ 4	I2C data output read-back (read-only)
+ 3	I2C clock output read-back (read-only)
+ 2	I2C data output (refer to file I2C.LST for more details)
+ 1	I2C clock output
+ 0	I2C control enable
+SeeAlso: #00908,I2C A0h,#00914
+
+Bitfields for OPTi 82C750 Vendetta (device 0) ECC control:
+Bit(s)	Description	(Table 00914)
+ 31-13	upper 19 bits of error address
+ 12-5	syndrome byte for reported error
+ 4	non-correctable error
+ 3	single-bit error
+ 2	nibble error
+ 1	ECC error report enable
+ 0	ECC data path enable
+SeeAlso: #00908,#00913
+
+Bitfields for OPTi 82C750 Vendetta (device 0) SDRAM select:
+Bit(s)	Description	(Table 00915)
+ 15	SDWE# stepping enable
+ 14	reserved (1) (SDRAM)
+ 13-12	reserved
+ 11-6	bank 5-0 SDRAM technology
+	0 = 16 Mb
+	1 = 64 Mb
+ 5-0	bank 5-0 SDRAM timing
+	0 = leadoff 7/6
+	1 = leadoff 8/7
+SeeAlso: #00908
+
+Bitfields for OPTi 82C750 Vendetta (device 0) data path control / EDO X-2-2-2:
+Bit(s)	Description	(Table 00916)
+ 7	CPU-to-DRAM FIFO enable
+ 6	1 CLK CAS enable
+ 5-0	RAS5#-RAS0# X-2-2-2 write enable
+	(CPU-to-DRAM FIFO, DRAM write post, and cache readaround write must
+	  be enabled)
+SeeAlso: #00908
+
+Bitfields for OPTi 82C750 Vendetta (device 0) ECC reporting:
+Bit(s)	Description	(Table 00917)
+ 31-26	reserved
+ 25-16	single-bit error counter
+ 15	reserved
+ 14	delayed write enable
+ 13-4	single-bit error limit
+ 3	correctable error reporting (0 = NMI, 1 = SMI)
+ 2	single-bit error counter enable (disabling resets counter)
+ 1	error reporting method (0 = NMI, 1 = SMI)
+ 0	NMI/SMI generate disable
+SeeAlso: #00908
+
+Format of PCI Configuration data for OPTi 82C750 Vendetta (device 1):
+Offset	Size	Description	(Table 00918)
+ 00h 64	BYTEs	header (see #00803)
+		(vendor ID 1045h, device ID C568h)
+ 40h	WORD	keyboard control (see #00919)
+ 42h	WORD	interrupt control (see #00920)
+ 44h	BYTE	pin functionality 1 (see #00921)
+ 45h	BYTE	reserved
+ 46h	WORD	cycle control (see #00922)
+ 48h	WORD	pin functionality 2 (see #00923)
+ 4Ah	WORD	ROMCS# range control (see #00924)
+ 4Ch	BYTE	miscellaneous control 1 (see #00925)
+ 4Dh	BYTE	reserved
+ 4Eh	BYTE	miscellaneous control 2 (see #00926)
+ 4Fh	BYTE	miscellaneous control 3 (see #00927)
+ 50h	WORD	interrupt trigger control (see #00928)
+ 52h	WORD	interrupt multiplexing control (see #00929)
+ 54h	WORD	PCI master control (see #00930)
+ 56h	WORD	serial interrupt source (see #00931)
+ 58h	BYTE	serial interrupt mode control (see #00932)
+ 59h	BYTE	pin functionality 3 (see #00933)
+ 5Ah	WORD	distributed DMA master base address
+ 5Ch	BYTE	distributed DMA control (see #00934)
+ 5Dh  3	BYTEs	reserved
+ 60h	BYTE	USB interrupt control register (see #00935)
+ 61h	BYTE	PCI reset control (see #00936)
+ 62h	BYTE	emulation control (see #00937)
+ 63h	BYTE	PCI retry control (see #00938)
+ 64h 153 BYTEs	reserved
+ FDh	BYTE	SMI control
+ FEh	BYTE	stop grant cycle control
+ FFh	BYTE	host memory parity error
+SeeAlso: #00857,#00908,#00944
+
+Bitfields for OPTi 82C750 Vendetta (device 1) keyboard control:
+Bit(s)	Description	(Table 00919)
+ 15	keyboard port read (read-only)
+ 14	keyboard port write (read-only)
+ 13	keyboard RESET CPUINIT
+	0 = generate immediately
+	1 = wait for halt
+ 12	keyboard emulation disable
+ 11-9	PIRQ3# IRQ generation
+	000 = use interrupt trigger control register (offset 50h)
+	001 = IRQ5
+	010-101 = IRQ9-IRQ12
+	110-111 = IRQ14-IRQ15
+ 8-6	PIRQ2# IRQ generation
+ 5-3	PIRQ1# IRQ generation
+ 2-0	PIRQ0# IRQ generation
+SeeAlso: #00918,#00920
+
+Bitfields for OPTi 82C750 Vendetta (device 1) interrupt control:
+Bit(s)	Description	(Table 00920)
+ 15	ISA IRQ14 blocking enable
+ 14	ISA IRQ15 blocking enable
+ 13	DMA/ISA master to preempt PCI master enable
+ 12	PCI priority is fixed instead of rotating
+ 11-10	back-to-back ISA I/O delay 
+	00 = 3 ATCLKs
+	01 = 12 ATCLKs
+	10 = no delay
+	11 = delay all by 12 ATCLKs
+ 9	PCI master ISA device access disable
+ 8	ISA bus control signals for memory access >16M and I/O access >64K
+	  disable
+ 7-6	IRQ15-IRQ14 triggering (0 = edge, 1 = level)
+ 5-2	IRQ12-IRQ9 triggering (0 = edge, 1 = level)
+ 1	IRQ 5 triggering (0 = edge, 1 = level)
+ 0	pin AE16 functionality
+	0 = DREQ6
+	1 = EPMI0#
+SeeAlso: #00918,#00919
+
+Bitfields for OPTi 82C750 Vendetta (device 1) pin functionality 1:
+Bit(s)	Description	(Table 00921)
+ 7-6	pin AC15 functionality
+	00-01 = controlled by bits 1-0
+	10 = DACK7#
+	11 = reserved
+ 5-4	pin AE15 functionality
+	00-01 = controlled by bits 1-0
+	10 = DACK6#
+	11 = reserved
+ 3-2	pin AF15 functionality
+	00-01 = controlled by bits 1-0
+	10 = DACK5#
+	11 = reserved
+ 1-0	DACK group-wise programmable pin functionalities
+	00 = DACK3#-DACK0#
+	01 = DACK7#-DACK5#, DACK3#, DACK1#, DACK0#
+	10 = reserved
+	11 = EDACK2#-EDACK0#, EDACKEN#, PIRQ3#, PIRQ2#
+SeeAlso: #00918
+
+Bitfields for OPTi 82C750 Vendetta (device 1) cycle control:
+Bit(s)	Description	(Table 00922)
+ 15	ISA bus ROM write enable
+ 14	hidden refresh enable
+ 13-12	ATCLK select
+	00 = LCLK/4
+	01 = LCLK/3
+	10 = LCLK/2
+	11 = LCLK
+ 11	CPU master to PCI slave write
+	0 = 1 LCLK
+	1 = 0 LCLK
+ 10-8	PCI master to PCI master preempt timer
+	000 = no preempt
+	001 = 260 LCLKs
+	010 = 132 LCLKs
+	011 = 68 LCLKs
+	100 = 36 LCLKs
+	101 = 20 LCLKs
+	110 = 12 LCLKs
+	111 = 5 LCLKs
+ 7	reserved
+ 6	XDIR achieve
+	0 = accessing ROM, keyboard controller, RTC
+	1 = accessing ROM, NVRAM
+ 5	PERR# to SERR# conversion enable
+ 4	address parity checking enable
+ 3	target abort SERR# generation enable
+ 2	fast back-to-back enable
+ 1	sample point decoding
+	0 = slow
+	1 = subtractive
+ 0	reserved
+SeeAlso: #00918
+
+Bitfields for OPTi 82C750 Vendetta (device 1) pin functionality 2:
+Bit(s)	Description	(Table 00923)
+ 15	pin AF18 functionality (0 = IRQ15, 1 = reserved)
+ 14-13	pin AE19 functionality (00-01 = IRQ12, 10-11 = reserved)
+ 12	pin AD20 functionality (0 = IRQ10, 1 = MIRQ10/12)
+ 11	pin AE21 functionality (0 = IRQ6, 1 = reserved)
+ 10	pin AD22 functionality (0 = IRQ4, 1 = MIRQ4/6)
+ 9-8	pin AD16 functionality (00 = DREQ7, 01 = EPMI3#, 1x = reserved)
+ 7-6	pin AD17 functionality
+	00 = DREQ3
+	01 = DREQ3/7
+	10 = DREQ7
+	11 = reserved
+ 5-4	pin AD18 functionality
+	00 = DREQ1
+	01 = DREQ1/6
+	10 = DREQ6
+	11 = reserved
+ 3-2	pin AE18 functionality
+	00 = DREQ0
+	01 = DREQ0/5
+	10 = DREQ5
+	11 = reserved
+ 1-0	pin T23 functionality (0x = PREQ1#, 1x = reserved)
+SeeAlso: #00918
+
+Bitfields for OPTi 82C750 Vendetta (device 1) ROMCS# range control:
+Bit(s)	Description	(Table 00924)
+ 15	FFFF8000h-FFFFFFFFh ROMCS# disable
+ 14	FFFF0000h-FFFF7FFFh ROMCS# disable
+ 13	FFFE8000h-FFFEFFFFh ROMCS# enable
+ 12	FFFE0000h-FFFE7FFFh ROMCS# enable
+ 11	FFFD8000h-FFFDFFFFh ROMCS# enable
+ 10	FFFD0000h-FFFD7FFFh ROMCS# enable
+ 9	FFFC8000h-FFFCFFFFh ROMCS# enable
+ 8	FFFC0000h-FFFC7FFFh ROMCS# enable
+ 7	F8000h-FFFFFh ROMCS# disable
+ 6	F0000h-F7FFFh ROMCS# disable
+ 5	E8000h-EFFFFh ROMCS# enable
+ 4	E0000h-E7FFFh ROMCS# enable
+ 3	D8000h-DFFFFh ROMCS# enable
+ 2	D0000h-D7FFFh ROMCS# enable
+ 1	C8000h-CFFFFh ROMCS# enable
+ 0	C0000h-C7FFFh ROMCS# enable
+SeeAlso: #00918
+
+Bitfields for OPTi 82C750 Vendetta (device 1) miscellaneous control 1:
+Bit(s)	Description	(Table 00925)
+ 7-5	reserved
+ 4	game port/MPU-401 enable
+ 3	PREQ4#/PGNT4# mux (0 = SDA2/GP3, 1 = PREQ4#/PGNT4#)
+ 2	DACK5# 1-to-0 transition enable
+ 1-0	reserved
+SeeAlso: #00918,#00926,#00927
+
+Bitfields for OPTi 82C750 Vendetta (device 1) miscellaneous control 2:
+Bit(s)	Description	(Table 00926)
+ 7-4	reserved
+ 3	pipeline byte merge enable
+ 2	EOP configuration (0 = output, 1 = input)
+ 1	byte merge enable
+ 0	ISA master data swap disable
+SeeAlso: #00918,#00925,#00927
+
+Bitfields for OPTi 82C750 Vendetta (device 1) miscellaneous control 3:
+Bit(s)	Description	(Table 00927)
+ 7	pin AB15 functionality
+	0 = DACK5#
+	1 = PPWRL+PPWRL2
+ 6	IDE functionality support enable
+ 5	reserved (read-only)
+ 4	ISA bus AT command 1 wait state extension disable
+ 3-2	reserved
+ 1	pin AE14 functionality
+	0 = controlled by offset 44h bits 1-0
+	1 = GPCS2#
+ 0	reserved
+SeeAlso: #00918,#00925,#00926
+
+Bitfields for OPTi 82C750 Vendetta (device 1) interrupt trigger control:
+Bit(s)	Description	(Table 00928)
+ 15	reserved (1)
+ 14	reserved
+ 13	pin AD15 functionality (0 = DACK2#, 1 = GPCS2#)
+ 12-11	reserved
+ 10	IRQ3 triggering (0 = edge, 1 = level)
+ 9	IRQ4 triggering (0 = edge, 1 = level)
+ 8	IRQ7 triggering (0 = edge, 1 = level)
+ 7-6	IRQ generation when PIRQ3# triggered
+	00 = disable
+	01 = IRQ3
+	10 = IRQ4
+	11 = IRQ7
+ 5-4	IRQ generation when PIRQ2# triggered
+	00 = disable
+	01 = IRQ3
+	10 = IRQ4
+	11 = IRQ7
+ 3-2	IRQ generation when PIRQ1# triggered
+	00 = disable
+	01 = IRQ3
+	10 = IRQ4
+	11 = IRQ7
+ 1-0	IRQ generation when PIRQ0# triggered
+	00 = disable
+	01 = IRQ3
+	10 = IRQ4
+	11 = IRQ7
+SeeAlso: #00918,#00929
+
+Bitfields for OPTi 82C750 Vendetta (device 1) interrupt multiplexing control:
+Bit(s)	Description	(Table 00929)
+ 15	pin functionality
+	0 = AE22:IRQ3, AF21:IRQ5, AE21:IRQ6, AD21:IRQ7, AE20:IRQ9, AF19:IRQ11
+	1 = AE22:MIRQ3/5, AF21:MIRQ7/9, AE21:MIRQ11/15, 
+	    AD21:EPMI1#, AE20:EPMI2#, AF19:GMIRQ
+ 14	pin R22 functionality (0 = PREQ2#, 1 = EPMI0#)
+ 13	IRQ1 latching enable
+ 12	IRQ12 latching enable
+ 11	DACKEN# status (0 = active low, 1 = active high)
+ 10	system bus owned by external device
+ 9	flash ROM locking enable
+ 8	reserved
+ 7	IRQ6 triggering (0 = edge, 1 = level)
+ 6-3	IRQ generation when GMIRQ triggered
+	0000 = disabled
+	0001-0010 = reserved
+	0011-0111 = IRQ3-IRQ7
+	1000 = reserved
+	1001-1100 = IRQ9-IRQ12
+	1101 = reserved
+	1110-1111 = IRQ14-IRQ15
+ 2	reserved (1)
+ 1	priority scheme enable
+ 0	concurrent refresh and IDE cycle enable
+SeeAlso: #00918,#00928
+
+Bitfields for OPTi 82C750 Vendetta (device 1) PCI master control:
+Bit(s)	Description	(Table 00930)
+ 15-12	reserved
+ 11	interrupt request register recover enable
+ 10	DMA address and counter (0 = current, 1 = base)
+ 9	CPU/PCI master access ISA cycle retry enable
+ 8	CPU-to-PCI cycle AHOLD signal use enable
+	(used only when bit 4 = 1)
+ 7	PCI master X-1-1-1 write enable
+ 6	PCI master X-1-1-1 read enable
+ 5	concurrent PCI master/IDE enable
+ 4	new AHOLD protocol enable
+ 3	PCI master non-contiguous byte enable
+ 2	reserved
+ 1	simultaneous hardware PMU and IDE function operation enable
+ 0	ISA refresh disable
+SeeAlso: #00918
+
+Bitfields for OPTi 82C750 Vendetta (device 1) serial interrupt source:
+Bit(s)	Description	(Table 00931)
+ 15-3	IRQ15-IRQ3 interrupt resource (0 = ISA, 1 = serial interrupt)
+ 2	SMI#, IOCHK#, PCIRQ3#-PCIRQ0# interrupt resource
+	0 = ISA
+	1 = serial interrupt
+ 1-0	IRQ1-IRQ0 interrupt resource (0 = ISA, 1 = serial interrupt)
+SeeAlso: #00918,#00932
+
+Bitfields for OPTi 82C750 Vendetta (device 1) serial interrupt mode control:
+Bit(s)	Description	(Table 00932)
+ 7-6	serial interrupt control mode
+	00 = continuous
+	01 = idle
+	1x = active
+ 5	reserved
+ 4	data frame slot support
+	0 = 17 slots (IRQ15-IRQ3, IRQ1-IRQ0, SMI#, IOCHK#)
+	1 = 21 slots (IRQ15-IRQ3, IRQ1-IRQ0, SMI#, IOCHK#, PCIRQ3#-PCIRQ0#)
+ 3-2	CPU access PCI priority
+	00 = lowest
+	01 = higher after 4 PCI master grants
+	10 = higher after 2 PCI master grants
+	11 = higher after 3 PCI master grants
+ 1-0	serial interrupt start frame pulse width in continuous/active mode
+	00 = 4/3 CLK
+	01 = 6/5 CLK
+	10 = 8/7 CLK
+	11 = reserved
+SeeAlso: #00918,#00931
+
+Bitfields for OPTi 82C750 Vendetta (device 1) pin functionality 3:
+Bit(s)	Description	(Table 00933)
+ 7	PCI arbitration time-out mode enable
+ 6	0 wait state for CPU I/O access enable
+ 5	SMI output disable
+ 4	CPU request for PCI bus (0 = enabled, 1 = reserved)
+ 3	reserved
+ 2	refresh preemption disable
+ 1-0	reserved
+SeeAlso: #00918
+
+Bitfields for OPTi 82C750 Vendetta (device 1) distributed DMA control:
+Bit(s)	Description	(Table 00934)
+ 7-5	channel 7-5 enable
+ 4-1	channel 3-0 enable
+ 0	DDMA enable
+SeeAlso: #00918
+
+Bitfields for OPTi 82C750 Vendetta (device 1) USB interrupt control register:
+Bit(s)	Description	(Table 00935)
+ 7	reserved
+ 6-5	buffered DMA control
+	00 = original DMA with old protocol
+	01 = reserved
+	10 = original DMA with PCI master capability
+	11 = buffered DMA enable
+ 4	reserved
+ 3-0	IRQ generation when USBIRQ triggered
+	0000 = disabled
+	0001-0010 = reserved
+	0011-0111 = IRQ3-IRQ7
+	1000 = reserved
+	1001-1100 = IRQ9-IRQ12
+	1101 = reserved
+	1110-1111 = IRQ14-IRQ15
+SeeAlso: #00918
+
+Bitfields for OPTi 82C750 Vendetta (device 1) PCI reset control:
+Bit(s)	Description	(Table 00936)
+ 7	PCI soft reset generate enable
+ 6	PCI slave demand mode buffered DMA retry fix enable
+ 5	IORDY# PCI master delay fix enable
+ 4	ISA command deassertion IOCHRDY delay
+	0 = <1 ATCLK
+	1 = >=1 ATCLK
+ 3-2	buffered DMA fix (00 = disable, 11 = enable)
+ 1	reserved
+ 0	ISA master synchronization (1)
+SeeAlso: #00918
+
+Bitfields for OPTi 82C750 Vendetta (device 1) emulation control:
+Bit(s)	Description	(Table 00937)
+ 7	PCIRST# disable
+ 6	SDA2 muxed with XDIR	(0 = XDIR, 1 = SDA2)
+ 5	SPKR muxed with MIDI1	(0 = MIDI1, 1 = SPKR)
+ 4	audio mux		(0 = MP7-MP0, DACK)
+ 3	audio module enable
+ 2	ATA-33 IDE pin mux scheme (0 = old, 1 = new)
+ 1	REFRESH priority	(0 = high, 1 = lowest)
+ 0	port 92h emulation disable
+SeeAlso: #00918,PORT 0092h
+
+Bitfields for OPTi 82C750 Vendetta (device 1) PCI retry control:
+Bit(s)	Description	(Table 00938)
+ 7-2	reserved
+ 1	reserved (1)
+ 0	ISA slave PCI master retry
+	0 = no change
+	1 = generate BOFF#
+SeeAlso: #00918
+
+Format of PCI Configuration data for OPTi 82C750 Vendetta (IDE controller):
+Offset	Size	Description	(Table 00939)
+ 00h 64	BYTEs	header (see #00803)
+		(vendor ID 1045h, device ID C621h)
+ 40h	BYTE	IDE initialization control (see #00940)
+ 41h	BYTE	reserved
+ 42h	BYTE	IDE enhanced feature (see #00941)
+ 43h	BYTE	IDE enhanced mode (see #00942)
+ 44h	WORD	ultra DMA mode select (see #00943)
+ 46h 186 BYTEs	reserved
+
+Bitfields for OPTi 82C750 Vendetta (IDE Controller) IDE initialization control:
+Bit(s)	Description	(Table 00940)
+ 7-6	bus master IDE PCI bus request when FIFO filled with
+	00 = 32 bytes (early request disabled)
+	01 = 30 bytes
+	10 = 28 bytes
+	11 = 26 bytes
+ 5	reserved (1)
+ 4	reserved
+ 3	secondary IDE disable
+ 2	I/O addresses relocatable
+ 1-0	IDE device default cycle time
+	00 = >=600ns (PIO mode 0)
+	01 = >=383ns (PIO mode 2)
+	10 = >=240ns (PIO mode 1)
+	11 = >=180ns (PIO mode 3)
+SeeAlso: #00939
+
+Bitfields for OPTi 82C750 Vendetta (IDE Controller) IDE enhanced feature:
+Bit(s)	Description	(Table 00941)
+ 7	reserved
+ 6	IDE write concurrency enable
+ 5	slave IDE FIFO to ISA bus preemption disable
+ 4	IDE arbiter PCI/IDE concurrency support enable
+ 3	PCI memory commands enable
+ 2	PCI master IDE and IDE cycle concurrency enable
+ 1	PCI master X-1-1-1 MIDE enable
+ 0	reserved
+SeeAlso: #00939,#00942
+
+Bitfields for OPTi 82C750 Vendetta (IDE Controller) IDE enhanced mode:
+Bit(s)	Description	(Table 00942)
+ 7-6	secondary IDE drive 1 enhanced mode
+	00 = disabled
+	01 = command recovery in 1 LCLK
+	10 = command recovery in 0 LCLK
+	11 = reserved
+ 5-4	secondary IDE drive 0 enhanced mode
+	00 = disabled
+	01 = command recovery in 1 LCLK
+	10 = command recovery in 0 LCLK
+	11 = reserved
+ 3-2	primary IDE drive 1 enhanced mode
+	00 = disabled
+	01 = command recovery in 1 LCLK
+	10 = command recovery in 0 LCLK
+	11 = reserved
+ 1-0	primary IDE drive 0 enhanced mode
+	00 = disabled
+	01 = command recovery in 1 LCLK
+	10 = command recovery in 0 LCLK
+	11 = reserved
+SeeAlso: #00939,#00942
+
+Bitfields for OPTi 82C750 Vendetta (IDE Controller) ultra DMA mode select:
+Bit(s)	Description	(Table 00943)
+ 15	primary IDE disable
+ 14-12	reserved
+ 11-10	secondary IDE drive 1 ultra DMA mode
+	00 = mode 0
+	01 = mode 1
+	10 = mode 2
+	11 = reserved
+ 9-8	secondary IDE drive 0 ultra DMA mode (same values as bits 11-10)
+ 7-6	primary IDE drive 1 ultra DMA mode (same values as bits 11-10)
+ 5-4	primary IDE drive 0 ultra DMA mode (same values as bits 11-10)
+ 3	secondary IDE drive 1 ultra DMA 33 enable
+ 2	secondary IDE drive 0 ultra DMA 33 enable
+ 1	primary IDE drive 1 ultra DMA 33 enable
+ 0	primary IDE drive 0 ultra DMA 33 enable
+SeeAlso: #00939
+
 Format of PCI Configuration data for OPTi 82C861/82C871 PCI-to-USB Bus Bridge:
-Offset	Size	Description	(Table 0901)
- 00h 64	BYTEs	header (see #0850)
+Offset	Size	Description	(Table 00944)
+ 00h 64	BYTEs	header (see #00857)
 		(vendor ID 1045h, device ID C861h)
  40h  4 BYTEs	reserved for testing
  44h 10 BYTEs	reserved
@@ -3491,19 +4048,19 @@ Offset	Size	Description	(Table 0901)
 		bits 1-0: reserved to 00 (read-only)
  58h 20 BYTEs	reserved
  6Ch	DWORD	reserved (test mode enable)
-SeeAlso: #0850
+SeeAlso: #00857,#00908,#00918
 
 Format of OPTi FireLink/FireBlast Host Controller memory-mapped registers:
-Offset	Size	Description	(Table 0902)
- 00h 256 BYTES	standard OpenHCI registers (see #0874)
-100h	DWORD	"HceControl"	emulation control (see #0903)
-104h	DWORD	"HceInput"	legacy Input Buffer (see #0904)
-108h	DWORD	"HceOutput"	legacy Output Buffer (see #0905)
-10Ch	DWORD	"HceStatus"	legacy Status (see #0906)
-SeeAlso: #0874,#0901
+Offset	Size	Description	(Table 00945)
+ 00h 256 BYTES	standard OpenHCI registers (see #00881)
+100h	DWORD	"HceControl"	emulation control (see #00946)
+104h	DWORD	"HceInput"	legacy Input Buffer (see #00947)
+108h	DWORD	"HceOutput"	legacy Output Buffer (see #00948)
+10Ch	DWORD	"HceStatus"	legacy Status (see #00949)
+SeeAlso: #00881,#00944
 
 Bitfields for OPTi FireLink/FireBlast "HceControl" register:
-Bit(s)	Description	(Table 0903)
+Bit(s)	Description	(Table 00946)
  31-9	reserved
  8	A20 gate state
  7	IRQ12 active (write 1 to clear)
@@ -3516,22 +4073,22 @@ Bit(s)	Description	(Table 0903)
  2	character pending emulation enable
  1	(read-only) emulation interrupt condition
  0	emulation enable
-SeeAlso: #0874,PORT 0064h
+SeeAlso: #00881,PORT 0064h
 
 Bitfields for OPTi FireLink/FireBlast "HceInput" register:
-Bit(s)	Description	(Table 0904)
+Bit(s)	Description	(Table 00947)
  31-8	reserved
  7-0	data written to port 60h or 64h
-SeeAlso: #0874,#0906,PORT 0060h,PORT 0064h
+SeeAlso: #00881,#00949,PORT 0060h,PORT 0064h
 
 Bitfields for OPTi FireLink/FireBlast "HceOutput" register:
-Bit(s)	Description	(Table 0905)
+Bit(s)	Description	(Table 00948)
  31-8	reserved
  7-0	data to be returned on read of port 60h
-SeeAlso: #0874,PORT 0060h
+SeeAlso: #00881,PORT 0060h
 
 Bitfields for OPTi FireLink/FireBlast "HceStatus" register:
-Bit(s)	Description	(Table 0906)
+Bit(s)	Description	(Table 00949)
  31-8	reserved
  7	parity error
  6	time-out
@@ -3545,17 +4102,17 @@ Bit(s)	Description	(Table 0906)
  2	warm/cold boot flag
  1	input full
  0	output full
-SeeAlso: #0874,PORT 0060h,PORT 0064h
+SeeAlso: #00881,PORT 0060h,PORT 0064h
 --------X-1AB10ASF1066-----------------------
 INT 1A - PCI BIOS v2.0c+ - READ CONFIGURATION DWORD (PicoPower devices)
 	AX = B10Ah subfn 1066h
 	BH = bus number
 	BL = device/function number (bits 7-3 device, bits 2-0 function)
-	DI = register number (0000h-00FFh) (see #0850)
+	DI = register number (0000h-00FFh) (see #00857)
 Return: CF clear if successful
 	    ECX = dword read
 	CF set on error
-	AH = status (00h,87h) (see #0703)
+	AH = status (00h,87h) (see #00708)
 	EAX, EBX, ECX, and EDX may be modified
 	all other flags (except IF) may be modified
 Notes:	this function may require up to 1024 byte of stack; it will not enable
@@ -3565,21 +4122,167 @@ Notes:	this function may require up to 1024 byte of stack; it will not enable
 SeeAlso: AX=B10Ah,AX=B10Ah/SF=8086h
 
 Format of PicoPower Vesuvius V3-LS ISA Bridge configuration:
-Offset	Size	Description	(Table 0907)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 00950)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 1066h, device ID 0002h or 8002h)
-!!!natsemi\pt86c521-vc-b.pdf p.346
-SeeAlso: #0747
+ 40h	WORD	distributed DMA control register (see #00951)
+ 42h	BYTE	distributed DMA status register (see #00952)
+ 44h	DWORD	slave DMAC CH0 base register (see #00953)
+ 48h	DWORD	slave DMAC CH1 base register (see #00953)
+ 4Ch	DWORD	slave DMAC CH2 base register (see #00953)
+ 50h	DWORD	slave DMAC CH3 base register (see #00953)
+ 54h	DWORD	slave DMAC CH5 base register (see #00953)
+ 58h	DWORD	slave DMAC CH6 base register (see #00953)
+ 5Ch	DWORD	slave DMAC CH7 base register (see #00953)
+ 90h	DWORD	PCI-to-ISA bridge configuration register (see #00954)
+ 94h	DWORD	ISA memory address positive decode (see #00955)
+ 98h	DWORD	I/O address positive decode (see #00956)
+ 9Ch	WORD	I/O configuration address register (see #00957)
+ A0h	DWORD	programmable ISA I/O address decoder (see #00958)
+ A4h  6 DWORD	programmable ISA range decoder registers 1-6 (see #00959)
+ C0h 64 BYTEs	reserved
+SeeAlso: #00752
+
+Bitfields for PicoPower Vesuvius V3-LS distributed DMA control register:
+Bit(s)	Description	(Table 00951)
+ 15-6	reserved
+ 5	(revision BB & later) secondary slave floppy disk distributed access
+	  enable (if bit 1 = 0)
+ 4	(revision BB & later) secondary slave hard disk distributed access
+	  enable (if bit 1 = 0)
+ 3	slave floppy drive port distributed access enable (if bit 1 = 0)
+ 2	slave hard drive port distributed access enable (if bit 1 = 0)
+ 1	distributed DMA mode
+	0 = master
+	1 = slave
+ 0	distributed DMA function enable
+SeeAlso: #00950
+
+Bitfields for PicoPower Vesuvius V3-LS distributed DMA status register:
+Bit(s)	Description	(Table 00952)
+ 7-1	reserved
+ 0	DDMA status (write 1 to clear)
+SeeAlso: #00950
+
+Bitfields for PicoPower Vesuvius V3-LS slave DMAC CH0-7 base register:
+Bit(s)	Description	(Table 00953)
+ 31-16	reserved (0)
+ 15-7	channel base address
+ 6-4	channel base address (hardwired to channel number)
+ 3	extended address (0)
+ 2-1	size (00 for channel 0-3, 01 for channel 5-7)
+ 0	channel enable
+SeeAlso: #00950
+
+Bitfields for PicoPower Vesuvius V3-LS PCI-to-ISA bridge configuration:
+Bit(s)	Description	(Table 00954)
+ 31-15	reserved
+ 14	AD/SD/SA bus staggering enable
+ 13	ISA bridge PCI positive decode enable
+ 12	ISA bridge PCI subtractive decode disable
+ 11-10	reserved
+ 9	retry enable
+ 8	lock input enable
+ 7	SERR#/NMI status flag (write 1 to clear)
+ 6	PERR#/NMI status flag (write 1 to clear)
+ 5	SERR# triggers NMI enable
+ 4	PERR# triggers NMI enable
+ 3	reserved
+ 2-0	(revision BB and later) system configuration setting
+SeeAlso: #00950
+
+Bitfields for PicoPower Vesuvius V3-LS ISA memory address positive decode:
+Bit(s)	Description	(Table 00955)
+ 31-9	reserved
+ 8	ISA memory A0000h-AFFFFh and FFA0000h-FFFAFFFFh decode enable
+ 7	ISA memory B0000h-BFFFFh and FFB0000h-FFFBFFFFh decode enable
+ 6	ISA memory C0000h-C7FFFh and FFC0000h-FFFC7FFFh decode enable
+ 5	ISA memory C8000h-CFFFFh and FFC8000h-FFFCFFFFh decode enable
+ 4	ISA memory D0000h-D7FFFh and FFD0000h-FFFD7FFFh decode enable
+ 3	ISA memory D8000h-DFFFFh and FFD8000h-FFFDFFFFh decode enable
+ 2	ISA memory E0000h-E7FFFh and FFE0000h-FFFE7FFFh decode enable
+ 1	ISA memory E8000h-EFFFFh and FFE8000h-FFFEFFFFh decode enable
+ 0	ISA memory F0000h-FFFFFh and FFF0000h-FFFFFFFFh decode enable
+SeeAlso: #00950
+
+Bitfields for PicoPower Vesuvius V3-LS I/O address positive decode:
+Bit(s)	Description	(Table 00956)
+ 31-24	reserved
+ 23	(revision BB and later) I/O read 377h decode enable
+ 22	(revision BB and later) I/O read 3F7h decode enable
+ 21	PC NET (360h-36Fh) decode enable
+ 20	audio 5 (388h-38Bh) decode enable
+ 19	audio 4 (250h-25Fh) decode enable
+ 18	audio 3 (240h-24Fh) decode enable
+ 17	audio 2 (230h-23Fh) decode enable
+ 16	audio 1 (220h-22Fh) decode enable
+ 15	audio 0 (201h) decode enable
+ 14	(revision BB and later) ISA secondary floppy (370h-375h, 377h write)
+	  decode enable
+ 13	(revision BB and later) ISA primary floppy (3F0h-3F5h, 3F7h write)
+	  decode enable
+ 12	(revision BB and later) ISA secondary IDE (170h-177h, 376h) decode
+	  enable
+ 11	(revision BB and later) ISA primary IDE (1F0h-1F7h, 3F6h) decode enable
+ 10	ISA LPT3 (3BCh-3BFh, 7BCh-7BEh) decode enable
+ 9	ISA LPT2 (278h-27Fh, 678h-67Ah) decode enable
+ 8	ISA LPT1 (378h-37Fh, 778h-77Ah) decode enable
+ 7	ISA COM4 (2E8h-2EFh) decode enable
+ 6	ISA COM3 (3E8h-3EFh) decode enable
+ 5	ISA COM2 (2F8h-2FFh) decode enable
+ 4	ISA COM1 (3F8h-3FFh) decode enable
+ 3	ISA system I/O (00h-FFh) decode enable
+ 2	configuration (24h/26h) decode enable
+ 1-0	reserved
+SeeAlso: #00950
+
+Bitfields for PicoPower Vesuvius V3-LS I/O configuration address register:
+Bit(s)	Description	(Table 00957)
+ 15-10	reserved
+ 9-1	configuration I/O address
+ 0	configuration address register enable
+SeeAlso: #00950
+
+Bitfields for PicoPower Vesuvius V3-LS programmable ISA I/O address decoder:
+Bit(s)	Description	(Table 00958)
+ 31-18	reserved
+ 17	ISA range decoder 6 read enable
+ 16	ISA range decoder 6 write enable
+ 15	ISA range decoder 6 type
+	0 = memory
+	1 = I/O
+ 14	ISA range decoder 5 read enable
+ 13	ISA range decoder 5 write enable
+ 12	ISA range decoder 5 type (same values as bit 15)
+ 11	ISA range decoder 4 read enable
+ 10	ISA range decoder 4 write enable
+ 9	ISA range decoder 4 type (same values as bit 15)
+ 8	ISA range decoder 3 read enable
+ 7	ISA range decoder 3 write enable
+ 6	ISA range decoder 3 type (same values as bit 15)
+ 5	ISA range decoder 2 read enable
+ 4	ISA range decoder 2 write enable
+ 3	ISA range decoder 2 type (same values as bit 15)
+ 2	ISA range decoder 1 read enable
+ 1	ISA range decoder 1 write enable
+ 0	ISA range decoder 1 type (same values as bit 15)
+SeeAlso: #00950
+
+Bitfields for PicoPower Vesuvius V3-LS programmable ISA range decoder 1:
+Bit(s)	Description	(Table 00959)
+ 31-16	ISA address compare
+ 15-0	ISA device address (memory address bits 23-8, I/O address bits 15-0)
+SeeAlso: #00950
 --------X-1AB10ASF1066-----------------------
 INT 1A - PCI BIOS v2.0c+ - READ CONFIGURATION DWORD (Brooktree devices)
 	AX = B10Ah subfn 1066h
 	BH = bus number
 	BL = device/function number (bits 7-3 device, bits 2-0 function)
-	DI = register number (0000h-00FFh) (see #0850)
+	DI = register number (0000h-00FFh) (see #00857)
 Return: CF clear if successful
 	    ECX = dword read
 	CF set on error
-	AH = status (00h,87h) (see #0703)
+	AH = status (00h,87h) (see #00708)
 	EAX, EBX, ECX, and EDX may be modified
 	all other flags (except IF) may be modified
 Notes:	this function may require up to 1024 byte of stack; it will not enable
@@ -3589,8 +4292,8 @@ Notes:	this function may require up to 1024 byte of stack; it will not enable
 SeeAlso: AX=B10Ah,AX=B10Ah/SF=8086h
 
 Format of Brooktree Bt8230 ATM controller configuration:
-Offset	Size	Description	(Table 0908)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 00960)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 109Eh, device ID 8230h)
  10h	DWORD	address at which to map external memory (multiple of 16M)
 		internal registers are mapped at offsets 0000h-01FFh; Bt8222
@@ -3611,17 +4314,17 @@ Offset	Size	Description	(Table 0908)
  44h	DWORD	current read target address for PCI bus master (read-only)
  48h	DWORD	current write target address for PCI bus master (read-only)
  4Ch 180 BYTEs	reserved
-SeeAlso: #0764
+SeeAlso: #00769
 --------X-1AB10ASF1106-----------------------
 INT 1A - PCI BIOS v2.0c+ - READ CONFIGURATION DWORD (VIA Technologies devices)
 	AX = B10Ah subfn 1106h
 	BH = bus number
 	BL = device/function number (bits 7-3 device, bits 2-0 function)
-	DI = register number (0000h-00FFh) (see #0850)
+	DI = register number (0000h-00FFh) (see #00857)
 Return: CF clear if successful
 	    ECX = dword read
 	CF set on error
-	AH = status (00h,87h) (see #0703)
+	AH = status (00h,87h) (see #00708)
 	EAX, EBX, ECX, and EDX may be modified
 	all other flags (except IF) may be modified
 Notes:	this function may require up to 1024 byte of stack; it will not enable
@@ -3632,8 +4335,8 @@ SeeAlso: AX=B10Ah,AX=B10Ah/SF=8086h
 
 
 Format of Via Technologies' VT82C580VPX CPU-PCI bridge configuration:
-Offset	Size	Description	(Table 0909)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 00961)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 1106h, device ID 0585h)
  40h 16 BYTEs	unused
  50h	BYTE	cache control 1
@@ -3652,9 +4355,9 @@ Offset	Size	Description	(Table 0909)
  62h	BYTE	shadow RAM control 2
  63h	BYTE	shadow RAM control 3
  64h	BYTE	DRAM reference timing
- 65h	BYTE	DRAM timing control 1 (see #0923)
- 66h	BYTE	DRAM timing control 2 (see #0924)
- 67h	BYTE	32-bit DRAM width (see #0925)
+ 65h	BYTE	DRAM timing control 1 (see #00975)
+ 66h	BYTE	DRAM timing control 2 (see #00976)
+ 67h	BYTE	32-bit DRAM width (see #00977)
  68h	BYTE
  69h	BYTE	reserved ("do not program")
  6Ah	BYTE	refresh counter
@@ -3672,56 +4375,56 @@ Offset	Size	Description	(Table 0909)
  77h	BYTE	reserved for chip test
  78h 136 BYTEs	reserved
 !!!via\580vpx.pdf
-SeeAlso: #0791
+SeeAlso: #00796
 
 Format of AMD-640 System Controller:
-Offset	Size	Description	(Table 0910)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 00962)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 1106h, device ID 0595h)
  0Dh	BYTE	latency timer (bits 7-3)
 		00h = 32*8 PCI clocks
 		01h = 1*8 PCI clocks
 		N = N*8 PCI clocks
  40h 16 BYTEs	unused???
- 50h	BYTE	cache control 1 (see #0911)
- 51h	BYTE	cache control 2 (see #0912)
- 52h	BYTE	non-cacheable control (see #0913)
- 53h	BYTE	system performance control (see #0914)
- 54h	WORD	non-cacheable region 1 (see #0915)
- 56h	WORD	non-cacheable region 2 (see #0915)
- 58h	BYTE	DRAM configuration register 1 (see #0916)
- 59h	BYTE	DRAM configuration register 2 (see #0917)
+ 50h	BYTE	cache control 1 (see #00963)
+ 51h	BYTE	cache control 2 (see #00964)
+ 52h	BYTE	non-cacheable control (see #00965)
+ 53h	BYTE	system performance control (see #00966)
+ 54h	WORD	non-cacheable region 1 (see #00967)
+ 56h	WORD	non-cacheable region 2 (see #00967)
+ 58h	BYTE	DRAM configuration register 1 (see #00968)
+ 59h	BYTE	DRAM configuration register 2 (see #00969)
  5Ah  6	BYTEs	end of DRAM banks 0-5
 		each register specifies bits 29-22 of the bank's ending address
- 60h	BYTE	DRAM type (see #0918)
- 61h	BYTE	shadow RAM control register 1 (see #0919)
- 62h	BYTE	shadow RAM control register 2 (see #0920)
- 63h	BYTE	shadow RAM control register 3 (see #0921)
- 64h	BYTE	DRAM timing (see #0922)
- 65h	BYTE	DRAM control register 1 (see #0923)
- 66h	BYTE	DRAM control register 2 (see #0924)
- 67h	BYTE	32-bit DRAM width control register (see #0925)
+ 60h	BYTE	DRAM type (see #00970)
+ 61h	BYTE	shadow RAM control register 1 (see #00971)
+ 62h	BYTE	shadow RAM control register 2 (see #00972)
+ 63h	BYTE	shadow RAM control register 3 (see #00973)
+ 64h	BYTE	DRAM timing (see #00974)
+ 65h	BYTE	DRAM control register 1 (see #00975)
+ 66h	BYTE	DRAM control register 2 (see #00976)
+ 67h	BYTE	32-bit DRAM width control register (see #00977)
  68h  2 BYTEs	reserved
  6Ah	BYTE	DRAM refresh counter (in units of 16 CPU clocks)
- 6Bh	BYTE	DRAM refresh control register (see #0926)
- 6Ch	BYTE	SDRAM control register (see #0927)
- 6Dh	BYTE	DRAM drive strength control register (see #0928)
- 6Eh	BYTE	ECC control register (see #0929)
- 6Fh	BYTE	ECC status register (see #0930)
- 70h	BYTE	PCI buffer control (see #0931)
- 71h	BYTE	CPU-to-PCI flow control 1 (see #0932)
- 72h	BYTE	CPU-to-PCI flow control 2 (see #0933)
- 73h	BYTE	PCI target control (see #0934)
- 74h	BYTE	PCI initiator control (see #0935)
- 75h	BYTE	PCI arbitration control 1 (see #0936)
- 76h	BYTE	PCI arbitration control 2 (see #0937)
+ 6Bh	BYTE	DRAM refresh control register (see #00978)
+ 6Ch	BYTE	SDRAM control register (see #00979)
+ 6Dh	BYTE	DRAM drive strength control register (see #00980)
+ 6Eh	BYTE	ECC control register (see #00981)
+ 6Fh	BYTE	ECC status register (see #00982)
+ 70h	BYTE	PCI buffer control (see #00983)
+ 71h	BYTE	CPU-to-PCI flow control 1 (see #00984)
+ 72h	BYTE	CPU-to-PCI flow control 2 (see #00985)
+ 73h	BYTE	PCI target control (see #00986)
+ 74h	BYTE	PCI initiator control (see #00987)
+ 75h	BYTE	PCI arbitration control 1 (see #00988)
+ 76h	BYTE	PCI arbitration control 2 (see #00989)
  77h 137 BYTEs	reserved
 Note:	the AMD-640 uses PCI configuration mechanism #1; bus/device/function
 	  are always 00h/00h/00h
-SeeAlso: #0791,#0938
+SeeAlso: #00796,#00990
 
 Bitfields for AMD-640 Cache Control Register 1:
-Bit(s)	Description	(Table 0911)
+Bit(s)	Description	(Table 00963)
  7-6	cache enable
 	00 disabled
 	01 initialization (BIOS fills L2 cache to known state)
@@ -3739,10 +4442,10 @@ Bit(s)	Description	(Table 0911)
 	01 reserved
 	10 burst SRAM
 	11 pipeline burst SRAM
-SeeAlso: #0910,#0912
+SeeAlso: #00962,#00964
 
 Bitfields for AMD-640 Cache Control Register 2:
-Bit(s)	Description	(Table 0912)
+Bit(s)	Description	(Table 00964)
  7-6	reserved (0)
  5	backoff processor until L2 cache filled
  4	reserved (0)
@@ -3753,10 +4456,10 @@ Bit(s)	Description	(Table 0912)
 	01 = 512K
 	10 = 1M
 	11 = 2M
-SeeAlso: #0910,#0911,#0913
+SeeAlso: #00962,#00963,#00965
 
 Bitfields for AMD-640 Non-Cacheable Control Register:
-Bit(s)	Description	(Table 0913)
+Bit(s)	Description	(Table 00965)
  7	segment C000h-C7FFh cacheable and write-protected
  6	D000h-DFFFh cacheable and write-protected
  5	E000h-EFFFh cacheable and write-protected
@@ -3765,10 +4468,10 @@ Bit(s)	Description	(Table 0913)
  2	force L2 cache fill
  1	reserved (1)
  0	L2 write mode (0 = writeback, 1 = write-through)
-SeeAlso: #0910,#0912,#0914
+SeeAlso: #00962,#00964,#00966
 
 Bitfields for AMD-640 System Performance Control Register:
-Bit(s)	Description	(Table 0914)
+Bit(s)	Description	(Table 00966)
  7	enable read-around-write
  6	enable cache read pipeline cycle
  5	enable cache write pipeline cycle
@@ -3776,10 +4479,10 @@ Bit(s)	Description	(Table 0914)
  3	enable PCI Peer Concurrence (PCI initiator can transfer to another
 	  PCI device without blocking memory or CPU bus)
  2-0	reserved (0)
-SeeAlso: #0910,#0913
+SeeAlso: #00962,#00965
 
 Bitfields for AMD-640 Non-Cacheable Region register:
-Bit(s)	Description	(Table 0915)
+Bit(s)	Description	(Table 00967)
  15-11	bits 20-16 of region's base address
  10-8	size of non-cacheable area
 	000 disabled
@@ -3789,10 +4492,10 @@ Bit(s)	Description	(Table 0915)
 	110 = 2M
 	111 = 4M
  7-0	bits 28-21 of region's base address
-SeeAlso: #0910,#0916
+SeeAlso: #00962,#00968
 
 Bitfields for AMD-640 DRAM Configuration Register 1:
-Bit(s)	Description	(Table 0916)
+Bit(s)	Description	(Table 00968)
  7-5	type of address mapping for memory banks 0 and 1
 	---EDO/FastPageMode---
 	000 eight-bit column address
@@ -3802,25 +4505,25 @@ Bit(s)	Description	(Table 0916)
 	100 twelve-bit column address
 	other reserved
 	---SDRAM---
-	0xx = 16-Mbit SDRAM (see #0918)
+	0xx = 16-Mbit SDRAM (see #00970)
 	1xx = 64-Mbit SDRAM
  4	reserved (0)
  3-1	type of address mapping ofr memory banks 2 and 3
  0	reserved (0)
-SeeAlso: #0910,#0917
+SeeAlso: #00962,#00969
 
 Bitfields for AMD-640 DRAM Configuration Register 2:
-Bit(s)	Description	(Table 0917)
- 7-5	type of address mapping for memory banks 4 and 5 (see #0916)
+Bit(s)	Description	(Table 00969)
+ 7-5	type of address mapping for memory banks 4 and 5 (see #00968)
  4-3	reserved (0)
  2-0	last populated memory bank
 	000 - 101 = Bank0 - Bank5
 	110,111 reserved
 Note:	banks 2-4 are non-cacheable if tag RAM is ten bits + modified bit
-SeeAlso: #0910,#0916
+SeeAlso: #00962,#00968
 
 Bitfields for AMD-640 DRAM Type register:
-Bit(s)	Description	(Table 0918)
+Bit(s)	Description	(Table 00970)
  7-6	reserved
  5-4	type of DRAM in banks 4 and 5
 	00 fast page mode (FPM)
@@ -3829,10 +4532,10 @@ Bit(s)	Description	(Table 0918)
 	11 synchronous DRAM (SDRAM)
  3-2	type of DRAM in banks 2 and 3
  1-0	type of DRAM in banks 0 and 1
-SeeAlso: #0910,#0916,#0917
+SeeAlso: #00962,#00968,#00969
 
 Bitfields for AMD-640 Shadow RAM Control Register 1:
-Bit(s)	Description	(Table 0919)
+Bit(s)	Description	(Table 00971)
  7-6	segment CC00h-CFFFh shadow RAM control
 	00 shadowing disabled
 	01 write enabled
@@ -3841,10 +4544,10 @@ Bit(s)	Description	(Table 0919)
  5-4	segment C800h-CBFFh shadow RAM control
  3-2	segment C400h-C7FFh shadow RAM control
  1-0	segment C000h-C3FFh shadow RAM control
-SeeAlso: #0910,#0920,#0921
+SeeAlso: #00962,#00972,#00973
 
 Bitfields for AMD-640 Shadow RAM Control Register 2:
-Bit(s)	Description	(Table 0920)
+Bit(s)	Description	(Table 00972)
  7-6	segment DC00h-DFFFh shadow RAM control
 	00 shadowing disabled
 	01 write enabled
@@ -3853,10 +4556,10 @@ Bit(s)	Description	(Table 0920)
  5-4	segment D800h-DBFFh shadow RAM control
  3-2	segment D400h-D7FFh shadow RAM control
  1-0	segment D000h-D3FFh shadow RAM control
-SeeAlso: #0910,#0919,#0921
+SeeAlso: #00962,#00971,#00973
 
 Bitfields for AMD-640 Shadow RAM Control Register 3:
-Bit(s)	Description	(Table 0921)
+Bit(s)	Description	(Table 00973)
  7-6	segment E000h-EFFFh shadow RAM control
 	00 shadowing disabled
 	01 write enabled
@@ -3872,10 +4575,10 @@ Bit(s)	Description	(Table 0921)
 	if set: 30000h-3FFFFh redirected to B0000h, 40000h-4FFFFh to A0000h
  0	redirect video RAM accesses (A0000h-BFFFFh) to system DRAM rather than
 	  PCI bus (used to initialize SMRAM at B0000h)
-SeeAlso: #0910,#0919,#0920
+SeeAlso: #00962,#00971,#00972
 
 Bitfields for AMD-640 DRAM Timing register:
-Bit(s)	Description	(Table 0922)
+Bit(s)	Description	(Table 00974)
  7-6	RAS# precharge time
 	00 = 2T (for 50ns DRAM) [T = HCLK period]
 	01 = 3T (60ns)
@@ -3891,10 +4594,10 @@ Bit(s)	Description	(Table 0922)
 	EDO: 00=4T, 01=1T, 10=2T, 11=3T
  1	write pulse width (0 = 1T, 1 = 2T)
  0	delay from column address to CAS# (0 = 1T, 1 = 2T)
-SeeAlso: #0910,#0921
+SeeAlso: #00962,#00973
 
 Bitfields for AMD-640 DRAM Control Register 1:
-Bit(s)	Description	(Table 0923)
+Bit(s)	Description	(Table 00975)
  7-6	page mode control
 	00 close page after access
 	01 reserved
@@ -3907,11 +4610,11 @@ Bit(s)	Description	(Table 0923)
 	(VT82C580VPX) Pin88 function (0 = DB32, 1 = TA9)
  1	reserved (0)
  0	delay DRAM read cycle by 1T whenever write buffer contains data
-	must be set if read-around-write is enabled (see #0914)
-SeeAlso: #0910,#0924,#0909
+	must be set if read-around-write is enabled (see #00966)
+SeeAlso: #00962,#00976,#00961
 
 Bitfields for AMD-640 DRAM Control Register 2:
-Bit(s)	Description	(Table 0924)
+Bit(s)	Description	(Table 00976)
  7	enable EDO test mode
 	when set, EDO RAM contents will read correctly, FPM not
  6	reserved (0)
@@ -3923,28 +4626,28 @@ Bit(s)	Description	(Table 0924)
  1	reduce RAS# precharge by 1T for SDRAM
  0	reduce RAS# to CAS# delay for SDRAM
 Note:	bits 1 and 0 have no effect unless SDRAM has been selected via the
-	  DRAM type register (see #0918)
-SeeAlso: #0910,#0923,#0909
+	  DRAM type register (see #00970)
+SeeAlso: #00962,#00975,#00961
 
 Bitfields for AMD-640 32-bit DRAM Width Control register:
-Bit(s)	Description	(Table 0925)
+Bit(s)	Description	(Table 00977)
  7	RAS# to Column Address delay (0 = 1T, 1 = 2T)
  6	delay NA# by 1T
  5-0	widths of banks 5 - 0
 	AMD-640 documentation clains that all bits should be cleared
 	for VT82C580VPX, settings are 0 = 64-bit, 1 = 32-bit (only applicable
 	  when two banks of PBSRAM are installed)
-SeeAlso: #0910,#0909,#0924,#0926
+SeeAlso: #00962,#00961,#00976,#00978
 
 Bitfields for AMD-640 DRAM Refresh Control register:
-Bit(s)	Description	(Table 0926)
+Bit(s)	Description	(Table 00978)
  7	enable CAS#-before-RAS# refresh
  6	enable burst refresh (four rows every 60 us, not one every 15 us)
  5-0	reserved (0)
-SeeAlso: #0910,#0925
+SeeAlso: #00962,#00977
 
 Bitfields for AMD-640 SDRAM Control Register:
-Bit(s)	Description	(Table 0927)
+Bit(s)	Description	(Table 00979)
  7	enable 4-bank interleave for 64-Mbit SDRAMs (when bit 5 set)
  6	enable SDRAM burst write
  5	enable SDRAM bank interleave
@@ -3958,10 +4661,10 @@ Bit(s)	Description	(Table 0927)
 	011 convert CPU-to-DRAM cycles into commands on MA[11:0]
 	100 enable CAS#-before-RAS# cycles
 	other reserved
-SeeAlso: #0910,#0926
+SeeAlso: #00962,#00978
 
 Bitfields for AMD-640 DRAM Drive Strength Control register:
-Bit(s)	Description	(Table 0928)
+Bit(s)	Description	(Table 00980)
  7	bank decoding test (1="for production test only. DO NOT SET.")
  6	strength of MA[1:0] drive (0 = 12ma, 1 = 24ma)
  5	function of N17 and M17 pins
@@ -3972,10 +4675,10 @@ Bit(s)	Description	(Table 0928)
  2	strength of MA[13:2] and WEx# drive (0 = 12ma, 1 = 24ma)
  1	strength of CAS# drive (0 = 12ma, 1 = 24ma)
  0	strength of RAS# drive (0 = 12ma, 1 = 24ma)
-SeeAlso: #0910,#0926
+SeeAlso: #00962,#00978
 
 Bitfields for AMD-640 ECC Control Register:
-Bit(s)	Description	(Table 0929)
+Bit(s)	Description	(Table 00981)
  7	ECC mode select (0 = parity, 1 = ECC)
  6	reserved (0)
  5	assert SERR# for ECC multibit errors
@@ -3984,18 +4687,18 @@ Bit(s)	Description	(Table 0929)
  2	enable ECC for banks 5 and 4
  1	enable ECC for banks 3 and 2
  0	enable ECC for banks 1 and 0
-SeeAlso: #0910,#0930
+SeeAlso: #00962,#00982
 
 Bitfields for AMD-640 ECC Status Register:
-Bit(s)	Description	(Table 0930)
+Bit(s)	Description	(Table 00982)
  7	multi-bit error detected (write-clear)
  6-4	number of DRAM bank containing multi-bit error (write-clear)
  3	single-bit error detected (write-clear)
  2-0	number of DRAM bank containing single-bit error (write-clear)
-SeeAlso: #0910,#0929
+SeeAlso: #00962,#00981
 
 Bitfields for AMD-640 PCI Buffer Control register:
-Bit(s)	Description	(Table 0931)
+Bit(s)	Description	(Table 00983)
  7	enable CPU-to-PCI posted writes
  6	enable PCI-to-DRAM posted writes
  5	enable PCI-to-DRAM prefetch
@@ -4004,10 +4707,10 @@ Bit(s)	Description	(Table 0931)
  0	CPU-to-PCI buffer flushing
 	0 flushing has priority over bus grants
 	1 bus-grant to another PCI initiator has priority over flushing
-SeeAlso: #0910
+SeeAlso: #00962
 
 Bitfields for AMD-640 CPU-to-PCI Flow Control 1 register:
-Bit(s)	Description	(Table 0932)
+Bit(s)	Description	(Table 00984)
  7,3	PCI burst control
 	00 no bursts, every write goes to write buffer
 	01 burst writes placed in write buffer, non-burst writes sent to PCI
@@ -4020,10 +4723,10 @@ Bit(s)	Description	(Table 0932)
  2	eanble fast back-to-back PCI writes
  1	enable quick frame generation (FRAME# asserted one clock early)
  0	add one wait state to IRDY#
-SeeAlso: #0910,#0933
+SeeAlso: #00962,#00985
 
 Bitfields for AMD-640 CPU-to-PCI Flow Control 2 register:
-Bit(s)	Description	(Table 0933)
+Bit(s)	Description	(Table 00985)
  7	unsuccessful retry (16 or 64 times) has occurred (write-clear)
  6	retry timeout action
 	0 retry continuously, recording status
@@ -4037,10 +4740,10 @@ Bit(s)	Description	(Table 0933)
  2	backoff processor if PCI read retry fails
  1	assert FRAME# one cycle earlier than indicated by offset 71h bit 1
  0	reduce TRDY#-to-BRDY# by one HCLK on processor reads of PCI target
-SeeAlso: #0910,#0932,#0934
+SeeAlso: #00962,#00984,#00986
 
 Bitfields for AMD-640 PCI Target Control register:
-Bit(s)	Description	(Table 0934)
+Bit(s)	Description	(Table 00986)
  7	slow memory decoding (must be set if fast back-to-back cycles enabled)
  6	add one wait state to TRDY# response on reads
  5	add one wait state to TRDY# response on writes
@@ -4050,18 +4753,18 @@ Bit(s)	Description	(Table 0934)
  1	enable sampling of PCI LOCK# pin
  0	force AMD-640 to initiate PCI arbitration if FRAM# not asserted within
 	  16 PCI clocks of last GNT#
-SeeAlso: #0910,#0933,#0935
+SeeAlso: #00962,#00985,#00987
 
 Bitfields for AMD-640 PCI Initiator Control register:
-Bit(s)	Description	(Table 0935)
+Bit(s)	Description	(Table 00987)
  7	enable enhanced PCI commands (Memory Read Line, Memory Read Multiple,
 	  and Memory Write and Invalidate)
  6	enable single-write byte merging
  5-0	reserved (0)
-SeeAlso: #0910,#0934,#0935
+SeeAlso: #00962,#00986,#00987
 
 Bitfields for AMD-640 PCI Arbitration Control 1 register:
-Bit(s)	Description	(Table 0936)
+Bit(s)	Description	(Table 00988)
  7	arbitration priority
 	0 = fixed (high-to-low is REQ1#, REQ2#, REQ3#, REQ4#, PREQ#, and CPU)
 	1 = fair (round-robin) arbitration
@@ -4072,12 +4775,12 @@ Bit(s)	Description	(Table 0936)
  5-4	reserved (0)
  3-0	number of idle time periods of 32 PCI clocks before arbitration is
 	  forced (0000 disables timeout)
-SeeAlso: #0910,#0935,#0937
+SeeAlso: #00962,#00987,#00989
 
 Bitfields for AMD-640 PCI Arbitration Control 2 register:
-Bit(s)	Description	(Table 0937)
+Bit(s)	Description	(Table 00989)
  7	enable initiator priority rotation
-	=0 use arbitration priority as set by offset 75h bit 7 (see #0936)
+	=0 use arbitration priority as set by offset 75h bit 7 (see #00988)
  6	reserved (0)
  5-4	initiator priority rotation control
 	00 disabled (use offset 75h bit 7 setting)
@@ -4085,52 +4788,52 @@ Bit(s)	Description	(Table 0937)
 	10 grant to processor after every other PCI initiator grant
 	11 grant to processor after every three PCI initiator grants
  3-0	reserved (0)
-SeeAlso: #0910,#0936
+SeeAlso: #00962,#00988
 
 Format of AMD-645 Peripheral Bus Controller, function 0 (PCI-ISA bridge) data:
-Offset	Size	Description	(Table 0938)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 00990)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 1106h, device ID 0586h)
- 40h	BYTE	ISA bus control (see #0939)
- 41h	BYTE	ISA Test Mode (see #0940)
- 42h	BYTE	ISA clock control (see #0941)
- 43h	BYTE	ROM Decode Control (see #0942)
- 44h	BYTE	keyboard controller control (see #0943)
- 45h	BYTE	Type F DMA control (see #0944)
- 46h	BYTE	Miscellaneous control 1 (see #0945)
- 47h	BYTE	Miscellaneous control 2 (see #0946)
- 48h	BYTE	Miscellaneous control 3 (see #0947)
+ 40h	BYTE	ISA bus control (see #00991)
+ 41h	BYTE	ISA Test Mode (see #00992)
+ 42h	BYTE	ISA clock control (see #00993)
+ 43h	BYTE	ROM Decode Control (see #00994)
+ 44h	BYTE	keyboard controller control (see #00995)
+ 45h	BYTE	Type F DMA control (see #00996)
+ 46h	BYTE	Miscellaneous control 1 (see #00997)
+ 47h	BYTE	Miscellaneous control 2 (see #00998)
+ 48h	BYTE	Miscellaneous control 3 (see #00999)
  49h	BYTE	reserved
- 4Ah	BYTE	IDE interrupt routing (see #0948)
+ 4Ah	BYTE	IDE interrupt routing (see #01000)
  4Bh	BYTE	reserved
  4Ch	BYTE	PCI memory hole bottom, bits 23-16
  4Dh	BYTE	PCI memory hole top, bits 23-16
 		(if top is <= bottom, hole is disabled)
- 4Eh	WORD	DMA/Master memory access control 3 (see #0949)
- 50h	BYTE	PnP DRQ Routing (see #0950)
+ 4Eh	WORD	DMA/Master memory access control 3 (see #01001)
+ 50h	BYTE	PnP DRQ Routing (see #01002)
  51h  3	BYTEs	reserved
- 54h	BYTE	PCI IRQ Edge/Level selection (see #0951)
- 55h	BYTE	PnP Routing for external MIRQ0/1 (see #0952)
- 56h	BYTE	PnP Routing for PCI INTB/INTA (see #0954)
- 57h	BYTE	PnP Routing for PCI INTD/INTC (see #0955)
- 58h	BYTE	PnP Routing for external MIRQ2 (see #0956)
- 59h	BYTE	MIRQ pin configuration (see #0957)
- 5Ah	BYTE	XD Power-On Strap Options (see #0958)
- 5Bh	BYTE	internal RTC test mode (see #0959)
+ 54h	BYTE	PCI IRQ Edge/Level selection (see #01003)
+ 55h	BYTE	PnP Routing for external MIRQ0/1 (see #01004)
+ 56h	BYTE	PnP Routing for PCI INTB/INTA (see #01006)
+ 57h	BYTE	PnP Routing for PCI INTD/INTC (see #01007)
+ 58h	BYTE	PnP Routing for external MIRQ2 (see #01008)
+ 59h	BYTE	MIRQ pin configuration (see #01009)
+ 5Ah	BYTE	XD Power-On Strap Options (see #01010)
+ 5Bh	BYTE	internal RTC test mode (see #01011)
  5Ch  4 BYTEs	reserved
- 60h	WORD	distributed DMA, channel 0 base address/enable (see #0960)
- 62h	WORD	distributed DMA, channel 1 base address/enable (see #0960)
- 64h	WORD	distributed DMA, channel 2 base address/enable (see #0960)
- 66h	WORD	distributed DMA, channel 3 base address/enable (see #0960)
+ 60h	WORD	distributed DMA, channel 0 base address/enable (see #01012)
+ 62h	WORD	distributed DMA, channel 1 base address/enable (see #01012)
+ 64h	WORD	distributed DMA, channel 2 base address/enable (see #01012)
+ 66h	WORD	distributed DMA, channel 3 base address/enable (see #01012)
  68h	WORD	reserved
- 6Ah	WORD	distributed DMA, channel 5 base address/enable (see #0960)
- 6Ch	WORD	distributed DMA, channel 6 base address/enable (see #0960)
- 6Eh	WORD	distributed DMA, channel 7 base address/enable (see #0960)
+ 6Ah	WORD	distributed DMA, channel 5 base address/enable (see #01012)
+ 6Ch	WORD	distributed DMA, channel 6 base address/enable (see #01012)
+ 6Eh	WORD	distributed DMA, channel 7 base address/enable (see #01012)
  70h 144 BYTEs	reserved
-SeeAlso: #0791,#0910,#0961,#0973
+SeeAlso: #00796,#00962,#01013,#01025
 
 Bitfields for AMD-645 ISA Bus Control register:
-Bit(s)	Description	(Table 0939)
+Bit(s)	Description	(Table 00991)
  7	extra delay on ISA commands (default is disabled)
  6	enable extended ISA bus ready (default is disabled)
  5	ISA slave wait states (0=4 wait states [default], 1=5 wait states)
@@ -4139,19 +4842,19 @@ Bit(s)	Description	(Table 0939)
  2	enable extended ALE
  1	no ROM wait states (default is clear, 1 wait state)
  0	enable ROM writes
-SeeAlso: #0938
+SeeAlso: #00990
 
 Bitfields for AMD-645 ISA Test Mode register:
-Bit(s)	Description	(Table 0940)
+Bit(s)	Description	(Table 00992)
  7-6	reserved (0)
  5	enable fast reset via PORT 0092h
  4	reserved (0)
  3	double DMA clock (=0 DMA at 1/2 ISA clock, =1 DMA at full ISA clock)
  2-0	reserved (0)
-SeeAlso: #0938,#0939,#0941
+SeeAlso: #00990,#00991,#00993
 
 Bitfields for AMD-645 ISA Clock Control register:
-Bit(s)	Description	(Table 0941)
+Bit(s)	Description	(Table 00993)
  7	disable "Latch IO16#"
  6-4	reserved (0)
  3	enable ISA Bus clock select via bits 2-0 (=0 use PCLK/4)
@@ -4166,10 +4869,10 @@ Bit(s)	Description	(Table 0941)
 	111 OSC/2
 Note:	in order to safely change the ISA clock, bit 3 must first be cleared,
 	  then bits 2-0 may be changed, and finally bit 3 can be set again
-SeeAlso: #0938,#0940
+SeeAlso: #00990,#00992
 
 Bitfields for AMD-645 ROM Decode Control register:
-Bit(s)	Description	(Table 0942)
+Bit(s)	Description	(Table 00994)
  7	enable 64K ROM at FFFE00000h-FFFEFFFFh
  6	enable 384K ROM at FFF80000h-FFFDFFFFh
  5	enable 32K ROM at E8000h-EFFFFh
@@ -4178,34 +4881,34 @@ Bit(s)	Description	(Table 0942)
  2	enable 32K ROM at D0000h-D7FFFh
  1	enable 32K ROM at C8000h-CFFFFh
  0	enable 32K ROM at C0000h-C7FFFh
-SeeAlso: #0938
+SeeAlso: #00990
 
 Bitfields for AMD-645 Keyboard Controller Control register:
-Bit(s)	Description	(Table 0943)
+Bit(s)	Description	(Table 00995)
  7-4	reserved (0)
  3	enable Mouse Lock
  2-0	reserved (0)
-SeeAlso: #0938
+SeeAlso: #00990
 
 Bitfields for AMD-645 Type-F DMA Control register:
-Bit(s)	Description	(Table 0944)
+Bit(s)	Description	(Table 00996)
  7	enable line buffer from ISA Master/DMA to PCI
  6-4	enable Type F timing on DMA Channels 7, 6, 5
  3-0	enable Type F timing on DMA Channels 3-0
-SeeAlso: #0938
+SeeAlso: #00990
 
 Bitfields for AMD-645 Miscellaneous Control 1 register:
-Bit(s)	Description	(Table 0945)
+Bit(s)	Description	(Table 00997)
  7-5	reserved (0)
  4	enable command register test mode
 	(when set, PCI offset 04h bits 0-1 become writable and bit 3 read-only)
  3-2	reserved (0)
  1	disallow interruptions of PCI burst reads
  0	enable posted memory writes
-SeeAlso: #0938,#0946,#0947
+SeeAlso: #00990,#00998,#00999
 
 Bitfields for AMD-645 Miscellaneous Control 2 register:
-Bit(s)	Description	(Table 0946)
+Bit(s)	Description	(Table 00998)
  7	use INIT as CPU reset signal instead of CPURST
  6	enable PCI transaction delay
  5	enable ports 04D0h-04D1h (per EISA spec)
@@ -4214,19 +4917,19 @@ Bit(s)	Description	(Table 0946)
  2	enable write delay transaction time-out timer
  1	enable read delay transaction time-out timer
  0	software PCI reset -- set to cause a PCI reset via PCIRST pin
-SeeAlso: #0938,#0945,#0947,PORT 04D0h
+SeeAlso: #00990,#00997,#00999,PORT 04D0h
 
 Bitfields for AMD-645 Miscellaneous Control 3 register:
-Bit(s)	Description	(Table 0947)
+Bit(s)	Description	(Table 00999)
  7-4	reserved (0)
  3	disable RTC PORT 0074h and PORT 0075h
  2	disable integrated USB controller
  1	disable integrated IDE controller
  0	add 512K to offset 4Eh bits 15-12 at top of PCI memory
-SeeAlso: #0938,#0945,#0946,PORT 0074h"AMD-645"
+SeeAlso: #00990,#00997,#00998,PORT 0074h"AMD-645"
 
 Bitfields for AMD-645 IDE Interrupt Routing register:
-Bit(s)	Description	(Table 0948)
+Bit(s)	Description	(Table 01000)
  7	wait for PGNT before Grant to ISA Master/DMA
  6	port 00xxh bus select (0=access via SD bus, 1=access via XD bus)
  5-4	reserved (0)
@@ -4236,10 +4939,10 @@ Bit(s)	Description	(Table 0948)
 	01 IRQ15 (default for secondary)
 	10 IRQ10
 	11 IRQ11
-SeeAlso: #0938
+SeeAlso: #00990
 
 Bitfields for AMD-645 DMA/Master Memory Access Control 3 register:
-Bit(s)	Description	(Table 0949)
+Bit(s)	Description	(Table 01001)
  15-12	top of PCI memory for ISA DMA/Master access, bits 23-20, less 1
  11	accesses to E0000h-EFFFFh forwarded to PCI
  10	accesses to A0000h-BFFFFh forwarded to PCI
@@ -4253,29 +4956,29 @@ Bit(s)	Description	(Table 0949)
  2	accesses to C8000h-CBFFFh forwarded to PCI
  1	accesses to C4000h-C7FFFh forwarded to PCI
  0	accesses to C0000h-C3FFFh forwarded to PCI
-SeeAlso: #0938
+SeeAlso: #00990
 
 Bitfields for AMD-645 PnP DRQ Routing register:
-Bit(s)	Description	(Table 0950)
+Bit(s)	Description	(Table 01002)
  7-0	reserved (always read 04h)
-SeeAlso: #0938,#0951
+SeeAlso: #00990,#01003
 
 Bitfields for AMD-645 PCI IRQ Edge/Level Select register:
-Bit(s)	Description	(Table 0951)
+Bit(s)	Description	(Table 01003)
  7-4	reserved
  3	PIRQA# is edge-sensitive rather than level-sensitive
  2	PIRQB# is edge-sensitive
  1	PIRQC# is edge-sensitive
  0	PIRQD# is edge-sensitive
-SeeAlso: #0938,#0950,#0952
+SeeAlso: #00990,#01002,#01004
 
 Bitfields for AMD-645 PnP IRQ Routing 1 register:
-Bit(s)	Description	(Table 0952)
- 7-4	routing for MIRQ1 (see #0953)
- 3-0	routing for MIRQ0 (see #0953)
-SeeAlso: #0938,#0951
+Bit(s)	Description	(Table 01004)
+ 7-4	routing for MIRQ1 (see #01005)
+ 3-0	routing for MIRQ0 (see #01005)
+SeeAlso: #00990,#01003
 
-(Table 0953)
+(Table 01005)
 Values for AMD-645 IRQ routing:
  0000	disabled
  0001	IRQ1
@@ -4290,36 +4993,36 @@ Values for AMD-645 IRQ routing:
  1101	reserved
  1110	IRQ14
  1111	IRQ15
-SeeAlso: #0952,#0954,#0955,#0956
+SeeAlso: #01004,#01006,#01007,#01008
 
 Bitfields for AMD-645 PnP IRQ Routing 2 register:
-Bit(s)	Description	(Table 0954)
- 7-4	routing for PIRQB# (see #0953)
- 3-0	routing for PIRQA# (see #0953)
-SeeAlso: #0952,#0955,#0956
+Bit(s)	Description	(Table 01006)
+ 7-4	routing for PIRQB# (see #01005)
+ 3-0	routing for PIRQA# (see #01005)
+SeeAlso: #01004,#01007,#01008
 
 Bitfields for AMD-645 PnP IRQ Routing 3 register:
-Bit(s)	Description	(Table 0955)
- 7-4	routing for PIRQD# (see #0953)
- 3-0	routing for PIRQC# (see #0953)
-SeeAlso: #0952,#0954,#0956
+Bit(s)	Description	(Table 01007)
+ 7-4	routing for PIRQD# (see #01005)
+ 3-0	routing for PIRQC# (see #01005)
+SeeAlso: #01004,#01006,#01008
 
 Bitfields for AMD-645 PnP IRQ Routing 4 register:
-Bit(s)	Description	(Table 0956)
+Bit(s)	Description	(Table 01008)
  7-4	reserved
- 3-0	routing for MIRQ2# (see #0953)
-SeeAlso: #0952,#0954,#0955
+ 3-0	routing for MIRQ2# (see #01005)
+SeeAlso: #01004,#01006,#01007
 
 Bitfields for AMD-645 MIRQ Pin Configuration register:
-Bit(s)	Description	(Table 0957)
+Bit(s)	Description	(Table 01009)
  7-3	reserved (0)
  2	select MASTER# instead of MIRQ2
  1	select KEYLOCK instead of MIRQ1
  0	select APICCS# instead of MIRQ0
-SeeAlso: #0938,#0956
+SeeAlso: #00990,#01008
 
 Bitfields for AMD-645 XD Power-Up Strap Options register:
-Bit(s)	Description	(Table 0958)
+Bit(s)	Description	(Table 01010)
  7-4	Keyboard RP16-RP13
  3	reserved (0)
  2	enable internal RTC
@@ -4327,26 +5030,26 @@ Bit(s)	Description	(Table 0958)
  0	enable internal keyboard controller
 Note:	the default value of this register is latched from external pins at
 	  power-up
-SeeAlso: #0938
+SeeAlso: #00990
 
 Bitfields for AMD-645 Internal RTC Test Mode register:
-Bit(s)	Description	(Table 0959)
+Bit(s)	Description	(Table 01011)
  7-2	reserved (0)
  1	enable access to internal RTC's RAM when RTC is disabled
 	  (see PORT 0074h"AMD-645")
  0	reserved (0)
-SeeAlso: #0938
+SeeAlso: #00990
 
 Bitfields for AMD-645 Distributed DMA Base/Enable register:
-Bit(s)	Description	(Table 0960)
+Bit(s)	Description	(Table 01012)
  15-4	base address bits 15-4 for Channel N
  3	enable DMA channel
  2-0	reserved (0)
-SeeAlso: #0938
+SeeAlso: #00990
 
 Format of AMD-645 Peripheral Bus Controller, function 1 (IDE Control) data:
-Offset	Size	Description	(Table 0961)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 01013)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 1106h [VIA Technologies], device ID 0571h)
  09h	BYTE	programming interface
 		bit 7: Master IDE capability
@@ -4360,52 +5063,52 @@ Offset	Size	Description	(Table 0961)
  18h	DWORD	secondary data/command base address
  1Ch	DWORD	secondary control/status base address
  20h	DWORD	bus master control base address (default 0000CC01h)
- 40h	BYTE	chip enable (see #0962)
- 41h	BYTE	IDE configuration (see #0963)
+ 40h	BYTE	chip enable (see #01014)
+ 41h	BYTE	IDE configuration (see #01015)
  42h	BYTE	reserved ("do not program")
- 43h	BYTE	FIFO configuration (see #0964)
- 44h	BYTE	miscellaneous control 1 (see #0965)
- 45h	BYTE	miscellaneous control 2 (see #0966)
- 46h	BYTE	miscellaneous control 3 (see #0967)
+ 43h	BYTE	FIFO configuration (see #01016)
+ 44h	BYTE	miscellaneous control 1 (see #01017)
+ 45h	BYTE	miscellaneous control 2 (see #01018)
+ 46h	BYTE	miscellaneous control 3 (see #01019)
  47h	BYTE	unused???
- 48h	DWORD	drive timing control (see #0968)
- 4Ch	BYTE	address setup time (see #0969)
+ 48h	DWORD	drive timing control (see #01020)
+ 4Ch	BYTE	address setup time (see #01021)
  4Dh	BYTE	reserved ("do not program")
- 4Eh	BYTE	secondary non-01F0h port access timing (see #0970)
- 4Fh	BYTE	primary non-01F0h port access timing (see #0970)
- 50h	BYTE	UltraDMA/33 extended timing control, Sec. Drive 1 (see #0971)
- 51h	BYTE	UltraDMA/33 extended timing control, Sec. Drive 0 (see #0971)
- 52h	BYTE	UltraDMA/33 extended timing control, Pri. Drive 1 (see #0971)
- 53h	BYTE	UltraDMA/33 extended timing control, Pri. Drive 0 (see #0971)
+ 4Eh	BYTE	secondary non-01F0h port access timing (see #01022)
+ 4Fh	BYTE	primary non-01F0h port access timing (see #01022)
+ 50h	BYTE	UltraDMA/33 extended timing control, Sec. Drive 1 (see #01023)
+ 51h	BYTE	UltraDMA/33 extended timing control, Sec. Drive 0 (see #01023)
+ 52h	BYTE	UltraDMA/33 extended timing control, Pri. Drive 1 (see #01023)
+ 53h	BYTE	UltraDMA/33 extended timing control, Pri. Drive 0 (see #01023)
  54h  4 BYTEs	reserved
  58h	DWORD	"reserved"
 		(appears to be an additional set of drive timing controls)
  5Ch  4 BYTEs	???
- 60h	WORD	primary sector size (see #0972)
+ 60h	WORD	primary sector size (see #01024)
  62h  6 BYTEs	reserved
- 68h	WORD	secondary sector size (see #0972)
+ 68h	WORD	secondary sector size (see #01024)
  6Ah 150 BYTEs	reserved
 Note:	the AMD-645 IDE controller is compatible with the SFF 8038i v1.0 spec
-SeeAlso: #0791,#0938,#0973
+SeeAlso: #00796,#00990,#01025
 
 Bitfields for AMD-645 IDE Chip Enable register:
-Bit(s)	Description	(Table 0962)
+Bit(s)	Description	(Table 01014)
  7-2	reserved (00001)
  1	enable primary IDE channel
  0	enable secondary IDE channel
-SeeAlso: #0961,#0963
+SeeAlso: #01013,#01015
 
 Bitfields for AMD-645 IDE Configuration register :
-Bit(s)	Description	(Table 0963)
+Bit(s)	Description	(Table 01015)
  7	enable primary IDE read-prefetch buffer
  6	enable primary IDE post write buffer
  5	enable secondary IDE read-prefetch buffer
  4	enable secondary IDE post write buffer
  3-0	reserved (0110)
-SeeAlso: #0961,#0962,3813
+SeeAlso: #01013,#01014,3813
 
 Bitfields for AMD-645 IDE FIFO Configuration register:
-Bit(s)	Description	(Table 0964)
+Bit(s)	Description	(Table 01016)
  7	reserved (0)
  6-5	FIFO configuration
 	00	primary channel = 16, secondary channel = 0
@@ -4418,27 +5121,27 @@ Bit(s)	Description	(Table 0964)
 	10 = 1/2 full
 	11 = 1/4 full
  1-0	secondary channel FIFO threshold (same settings as bits 3-2)
-SeeAlso: #0961,#0963
+SeeAlso: #01013,#01015
 
 Bitfields for AMD-645 IDE Miscellaneous Control 1 register:
-Bit(s)	Description	(Table 0965)
+Bit(s)	Description	(Table 01017)
  7	reserved (0)
  6	number of wait states on Master Read Cycle IRDY#
  5	number of wait states on Master Write Cycle IRDY#
  4	enable 1/2 clock advance on FIFO output
  3	enable bus-master IDE status register read retry
  2-0	reserved (0)
-SeeAlso: #0961,#0966,#0967
+SeeAlso: #01013,#01018,#01019
 
 Bitfields for AMD-645 IDE Miscellaneous Control 2 register:
-Bit(s)	Description	(Table 0966)
+Bit(s)	Description	(Table 01018)
  7	reserved (0)
  6	swap interrupts between the two IDE channels
  5-0	reserved (0)
-SeeAlso: #0961,#0965,#0967
+SeeAlso: #01013,#01017,#01019
 
 Bitfields for AMD-645 IDE Miscellaneous Control 3 register:
-Bit(s)	Description	(Table 0967)
+Bit(s)	Description	(Table 01019)
  7	enable FIFO flush for read DMA on primary channel interrupt
  6	enable FIFO flush for read DMA on secondary channel interrupt
  5	enable FIFO flush for each sector on primary channel
@@ -4449,10 +5152,10 @@ Bit(s)	Description	(Table 0967)
 	01 64 PCI clocks
 	10 128 PCI clocks
 	11 192 PCI clocks
-SeeAlso: #0961,#0965,#0966
+SeeAlso: #01013,#01017,#01018
 
 Bitfields for AMD-645 IDE Drive Timing Control register:
-Bit(s)	Description	(Table 0968)
+Bit(s)	Description	(Table 01020)
  31-28	primary drive 0 active DIOR#/DIOW# pulse width
  27-24	primary drive 0 DIOR#/DIOW# recovery time (PCI clocks, less 1)
  23-20	primary drive 1 active pulse width (PCI clocks, less 1)
@@ -4461,10 +5164,10 @@ Bit(s)	Description	(Table 0968)
  11-8	secondary drive 0 recovery time
  7-4	secondary drive 1 active pulse width
  3-0	secondary drive 1 recover time (PCI clocks, less 1)
-SeeAlso: #0961,#0969
+SeeAlso: #01013,#01021
 
 Bitfields for AMD-645 IDE Address Setup Time register:
-Bit(s)	Description	(Table 0969)
+Bit(s)	Description	(Table 01021)
  7-6	primary drive 0 address setup time
 	00 = 1T
 	01 = 2T
@@ -4473,16 +5176,16 @@ Bit(s)	Description	(Table 0969)
  5-4	primary drive 1 address setup time (same values as above)
  3-2	secondary drive 0 address setup time
  1-0	secondary drive 1 address setup time
-SeeAlso: #0961,#0968
+SeeAlso: #01013,#01020
 
 Bitfields for AMD-645 Non-01F0h Port Access Timing register:
-Bit(s)	Description	(Table 0970)
+Bit(s)	Description	(Table 01022)
  7-4	width of DIOR#/DIOW# active pulse in PCI clocks (less 1)
  3-0	DIOR#/DIOW# recovery time in PCI clocks (less 1)
-SeeAlso: #0938
+SeeAlso: #00990
 
 Bitfields for AMD-645 UltraDMA/33 Extended Timing Control register:
-Bit(s)	Description	(Table 0971)
+Bit(s)	Description	(Table 01023)
  7	method for enabling UltraDMA mode on drive
 	0 using "Set Feature" command
 	1 using bit 6 of this register
@@ -4495,21 +5198,21 @@ Bit(s)	Description	(Table 0971)
 	00 = 2T
 	...
 	11 = 5T
-SeeAlso: #0938
+SeeAlso: #00990
 
 Bitfields for AMD-645 Sector Size register:
-Bit(s)	Description	(Table 0972)
+Bit(s)	Description	(Table 01024)
  15-12	reserved
  11-0	sector size in bytes (default 200h)
-SeeAlso: #0938
+SeeAlso: #00990
 
 Format of AMD-645 Peripheral Bus Controller, function 2 (USB Controller) data:
-Offset	Size	Description	(Table 0973)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 01025)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 1106h, device ID 3038h)
  20h	DWORD	base address of USB I/O ports (see PORT xxxxh"AMD-645 - USB"
- 40h	BYTE	miscellaneous control 1 (see #0974)
- 41h	BYTE	miscellaneous control 2 (see #0975)
+ 40h	BYTE	miscellaneous control 1 (see #01026)
+ 41h	BYTE	miscellaneous control 2 (see #01027)
  42h  2 BYTEs	reserved
  44h  3 BYTEs	reserved ("do not program")
  47h	BYTE	reserved
@@ -4518,10 +5221,10 @@ Offset	Size	Description	(Table 0973)
  61h 95 BYTEs	reserved
  C0h	WORD	USB legacy support (read-only, 2000h)
  C2h 62 BYTEs	reserved
-SeeAlso: #0791,#0910,#0938,#0961,#0976
+SeeAlso: #00796,#00962,#00990,#01013,#01028
 
 Bitfields for AMD-645 USB Miscellaneous Control 1 register:
-Bit(s)	Description	(Table 0974)
+Bit(s)	Description	(Table 01026)
  7	PCI memory commands
 	0 support memory-read-line, memory-read-multiple, and
 	  memory-write-and-invalidate
@@ -4535,24 +5238,24 @@ Bit(s)	Description	(Table 0974)
  2	enable USB power management
  1	DMA limited to 8-DW burst instead of 16-DW
  0	insert one PCI wait state
-SeeAlso: #0973,#0975
+SeeAlso: #01025,#01027
 
 Bitfields for AMD-645 USB Miscellaneous Control 2 register:
-Bit(s)	Description	(Table 0975)
+Bit(s)	Description	(Table 01027)
  7-3	reserved (0)
  2	only trap port 60h/64h bits when trap-enable bits are set
  1	do not pass A20GATE command sequence (from UHCI) through I/O port 64h
  0	reserved (0)
-SeeAlso: #0973,#0974,PORT 0064h
+SeeAlso: #01025,#01026,PORT 0064h
 
 Format of AMD-645 Peripheral Bus Controller, function 3 (Power Mgmt) data:
-Offset	Size	Description	(Table 0976)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 01028)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 1106h, device ID 3040h)
  20h	DWORD	base address for I/O ports (see PORT xxxxh"AMD-645")
- 40h	BYTE	pin configuration (see #0977)
- 41h	BYTE	general configuration (see #0978)
- 42h	BYTE	SCI interrupt configuration (see #0979)
+ 40h	BYTE	pin configuration (see #01029)
+ 41h	BYTE	general configuration (see #01030)
+ 42h	BYTE	SCI interrupt configuration (see #01031)
  43h	BYTE	reserved
  44h	WORD	primary interrupt channel
 		bit 2 is reserved; setting any other bit N makes IRQN the
@@ -4561,7 +5264,7 @@ Offset	Size	Description	(Table 0976)
 		bit 2 is reserved; setting any other bit N makes IRQN the
 		  secondary interrupt channel
  48h  8 BYTEs	unused???
- 50h	DWORD	GP timer control (see #0980)
+ 50h	DWORD	GP timer control (see #01032)
  54h 13	BYTEs	reserved
  61h	BYTE	programming interface read value (value to be returned by
 		  configuration register 09h) (write-only)
@@ -4570,17 +5273,17 @@ Offset	Size	Description	(Table 0976)
  63h	BYTE	base class read value (value to be returned by configuration
 		  register 0Bh) (write-only)
  64h 156 BYTEs	reserved
-SeeAlso: #0791,#0910,#0938,#0961,#0973,#0976
+SeeAlso: #00796,#00962,#00990,#01013,#01025,#01028
 
 Bitfields for AMD-645 PM Pin Configuration register:
-Bit(s)	Description	(Table 0977)
+Bit(s)	Description	(Table 01029)
  7	GPIO4 configuration (0 = Pin136 is GPO_WE, 1 = Pin136 is GPIO4)
  6	GPIO3 configuration (0 = Pin92 is GPI_RE#, 1 = Pin92 is GPIO3)
  5-0	reserved (0)
-SeeAlso: #0976,#0978
+SeeAlso: #01028,#01030
 
 Bitfields for AMD-645 PM General Configuration register:
-Bit(s)	Description	(Table 0978)
+Bit(s)	Description	(Table 01030)
  7	enable debounce of PWRBTN# input
  6	enable ACPI timer reset
  5-4	reserved ("do not program")
@@ -4590,18 +5293,18 @@ Bit(s)	Description	(Table 0978)
 	0 = 32 usec clock, 512 usec cycle time (default)
 	1 = 1 msec clock 16 msec cycle time
  0	reserved ("do not program")
-SeeAlso: #0976,#0977,MEM xxxxh:xxx0h"ACPI"
+SeeAlso: #01028,#01029,MEM xxxxh:xxx0h"ACPI"
 
 Bitfields for AMD-645 PM SCI Interrupt Configuration register:
-Bit(s)	Description	(Table 0979)
+Bit(s)	Description	(Table 01031)
  7-4	reserved (0)
  3-0	interrupt assignment
 	0000 disabled
 	else IRQ number (except IRQ2 is reserved)
-SeeAlso: #0976
+SeeAlso: #01028
 
 Bitfields for AMD-645 PM GP Timer Control register:
-Bit(s)	Description	(Table 0980)
+Bit(s)	Description	(Table 01032)
  31-30	power-conservation mode timer
 	00 = 1/16 sec
 	01 = 1/8 sec
@@ -4632,17 +5335,17 @@ Bit(s)	Description	(Table 0980)
 	01 = 1/16 second
 	10 = 1 second
 	11 = 1 minute
-SeeAlso: #0976
+SeeAlso: #01028
 --------X-1AB10ASF8086-----------------------
 INT 1A - PCI BIOS v2.0c+ - READ CONFIGURATION DWORD (Intel devices)
 	AX = B10Ah subfn 8086h
 	BH = bus number
 	BL = device/function number (bits 7-3 device, bits 2-0 function)
-	DI = register number (0000h-00FFh) (see #0850)
+	DI = register number (0000h-00FFh) (see #00857)
 Return: CF clear if successful
 	    ECX = dword read
 	CF set on error
-	AH = status (00h,87h) (see #0703)
+	AH = status (00h,87h) (see #00708)
 	EAX, EBX, ECX, and EDX may be modified
 	all other flags (except IF) may be modified
 Notes:	this function may require up to 1024 byte of stack; it will not enable
@@ -4652,8 +5355,8 @@ Notes:	this function may require up to 1024 byte of stack; it will not enable
 SeeAlso: AX=B10Ah,AX=B10Ah/SF=1106h,AX=B10Dh
 
 Format of PCI Configuration data for Intel 82375 EISA Bridge:
-Offset	Size	Description	(Table 0981)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 01033)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 8086h, device ID 0482h)
 		(revision numbers: 03h = 82375EB, 04h = 82375SB)
  40h	BYTE	PCI Control
@@ -4687,18 +5390,18 @@ Offset	Size	Description	(Table 0981)
  85h  3 BYTEs	reserved
  88h	DWORD	PCEB Test Control Register ("DO NOT WRITE")
  8Ch 116 BYTEs	reserved
-SeeAlso: #0850,#0982
+SeeAlso: #00857,#01034
 
 Format of PCI Configuration data for Intel 82434LX/NX Cache/DRAM Controller:
-Offset	Size	Description	(Table 0982)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 01034)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 8086h, device ID 04A3h)
 		(revision numbers: 01h/03h are 82434LX, 1xh are 82434NX)
 		(command register only supports bits 8,6,2,1,0)
  40h 16 BYTEs	unused (hard-wired to 00h)
  44h	BYTE	??? (AMI BIOS writes 00h)
  45h	BYTE	??? (AMI BIOS writes 00h)
- 50h	BYTE	Host CPU Selection (see #0983)
+ 50h	BYTE	Host CPU Selection (see #01035)
  51h	BYTE	deturbo frequency control register
 		when deturbo mode is selected (see PORT 0CF9h), the chipset
 		  places a hold on the memory bus for a fraction of the
@@ -4707,21 +5410,21 @@ Offset	Size	Description	(Table 0982)
 		  at 1/8 the CPU clock speed
 		  (i.e. C0h = 1/4, 80h = 1/2, 40h = 3/4, 20h = 7/8, etc.)
 		  (only bits 7-6 writable, bits 5-0 hardwired to 0)
- 52h	BYTE	Secondary Cache Control (see #0984)
- 53h	BYTE	Host Read/Write Buffer Control (see #0985)
+ 52h	BYTE	Secondary Cache Control (see #01036)
+ 53h	BYTE	Host Read/Write Buffer Control (see #01037)
  54h	BYTE	PCI Read/Write Buffer Control
 		bits 7-3: reserved
 		bit 2: LBXs connected to TRDY#
 		bit 1: enable PCI burst writes
 		bit 0: enable PCI-to-memory posted writes
  55h  2 BYTEs	reserved
- 57h	BYTE	DRAM Control (see #0986)
- 58h	BYTE	DRAM Timing (see also #1044)
+ 57h	BYTE	DRAM Control (see #01038)
+ 58h	BYTE	DRAM Timing (see also #01096)
 		bits 7-2: reserved
 		bit 1: (NX only) RAS# Wait State
 		bit 0: CAS# Wait State (one extra wait state before CAS#
 			  within burst cycle)
- 59h  7	BYTEs	Programmable Attribute Map registers 0-6 (see #1045)
+ 59h  7	BYTEs	Programmable Attribute Map registers 0-6 (see #01097)
  60h  8	BYTEs	DRAM Row Boundary registers 0-7
 		(chip revisions numbered < 10h [LX] only support six rows of
 		  DRAM)
@@ -4737,9 +5440,9 @@ Offset	Size	Description	(Table 0982)
 		  Boundary register to form a 12-bit boundary value (of which
 		  only the low 10 bits are actually used)
  6Ch	DWORD	reserved (hardwired to 00000000h)
- 70h	BYTE	Error Command (see #0987)
- 71h	BYTE	Error Status (see #0988)
- 72h	BYTE	System Management RAM control (see also #1049)
+ 70h	BYTE	Error Command (see #01039)
+ 71h	BYTE	Error Status (see #01040)
+ 72h	BYTE	System Management RAM control (see also #01102)
 		bits 7-6: reserved
 		bit 5:	map SMM-mode memory (64K) into address space when bits
 			2-0 = 010 (default 3000h:0000h; can be changed by
@@ -4757,13 +5460,13 @@ Offset	Size	Description	(Table 0982)
 			  (must be multiple of gap size)
 		bits 3-0: reserved
  7Ah  2 BYTEs	reserved
- 7Ch	DWORD	Frame Buffer Range (see #0989)
+ 7Ch	DWORD	Frame Buffer Range (see #01041)
  80h 128 BYTEs	reserved
 Note:	the 82434NX is part of the Intel Neptune chipset
-SeeAlso: #0991,#1010
+SeeAlso: #01043,#01062
 
 Bitfields for Intel 82434LX/NX Host CPU Selection:
-Bit(s)	Description	(Table 0983)
+Bit(s)	Description	(Table 01035)
  7-5	host CPU type
 	LX: hardwired to 100 (Pentium)
 	NX: "reserved" (101 on RB's system)
@@ -4775,10 +5478,10 @@ Bit(s)	Description	(Table 0983)
 	10: 60 MHz
 	11: 66 MHz
 	(LX: bit 1 reserved, only 60/66 MHz supported)
-SeeAlso: #0982,#0984
+SeeAlso: #01034,#01036
 
 Bitfields for Intel 82434LX/NX Secondary Cache Control:
-Bit(s)	Description	(Table 0984)
+Bit(s)	Description	(Table 01036)
  7-6	secondary cache size
 	00 none
 	01 reserved
@@ -4803,20 +5506,20 @@ Bit(s)	Description	(Table 0984)
 	0 write-through
 	1 write-back (NX is always in write-back mode)
  0	Secondary Cache Enable
-SeeAlso: #0982,#0985
+SeeAlso: #01034,#01037
 
 Bitfields for Intel 82434LX/NX Host Read/Write Buffer Control:
-Bit(s)	Description	(Table 0985)
+Bit(s)	Description	(Table 01037)
  7-4	reserved
  3	enable read-around-write
  2	reserved
  1	enable CPU-to-PCI posted writes
  0	(LX only) enable CPU-to-memory posted writes
 	(NX always posts memory writes)
-SeeAlso: #0982,#0984
+SeeAlso: #01034,#01036
 
 Bitfields for Intel 82434LX/NX DRAM Control:
-Bit(s)	Description	(Table 0986)
+Bit(s)	Description	(Table 01038)
  7-6	(NX only) DRAM burst timing
 	00  X-4-4-4 read/write (default)
 	01  X-4-4-4 read, X-3-3-3 write
@@ -4830,10 +5533,10 @@ Bit(s)	Description	(Table 0986)
 	=0 RAS#-only
 	=1 CAS#-before-RAS#
  0	DRAM Refresh Enable
-SeeAlso: #0982
+SeeAlso: #01034
 
 Bitfields for Intel 82434LX/NX Error Command register:
-Bit(s)	Description	(Table 0987)
+Bit(s)	Description	(Table 01039)
  7	assert SERR# on receiving target abort
  6	assert SERR# on PCI data-write parity error
  5	(NX only) assert SERR# on PCI data-read parity error
@@ -4845,10 +5548,10 @@ Bit(s)	Description	(Table 0987)
 Notes:	PCI command register bit 6 is master enable for bit 3;
 	PCI cmd bits 6 and 8 are the master enable for bits 7-4 and 1
 	bits 1-0 = 10 is not permitted
-SeeAlso: #0982,#0988
+SeeAlso: #01034,#01040
 
 Bitfields for Intel 82434LX/NX Error Status register:
-Bit(s)	Description	(Table 0988)
+Bit(s)	Description	(Table 01040)
  7	reserved
  6	PCI-write detected parity error
  5	(NX only) PCI-read detected parity error
@@ -4858,10 +5561,10 @@ Bit(s)	Description	(Table 0988)
  1	reserved
  0	Shutdown cycle detected
 Note:	clear status bits by writing a 'one' bit to each bit to be cleared
-SeeAlso: #0987,#0982
+SeeAlso: #01039,#01034
 
 Bitfields for Intel 82434LX/NX Frame Buffer Range register:
-Bit(s)	Description	(Table 0989)
+Bit(s)	Description	(Table 01041)
  31-20	buffer offset (in 1MB increments; must be multiple of buffer set set
 	  by bits 3-0)
  19-14	reserved
@@ -4875,11 +5578,11 @@ Bit(s)	Description	(Table 0989)
  6-4	reserved
  3-0	buffer size in MB (less 1); must be power of 2
 Note:	if bits 31-20=0, the frame buffer feature is disabled
-SeeAlso: #0982
+SeeAlso: #01034
 
 Format of PCI Configuration data for Intel 82424 Cache Controller:
-Offset	Size	Description	(Table 0990)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 01042)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 8086h, device ID 0483h)
  40h	BYTE	bus number
  41h	BYTE	subordinate bus number
@@ -4897,7 +5600,7 @@ Offset	Size	Description	(Table 0990)
  56h	BYTE	System Exception Handling
  57h	BYTE	SMM Control Register
  58h	BYTE	reserved
- 59h  7	BYTEs	Programmable Attribute Map registers 0-6 (see also #1045)
+ 59h  7	BYTEs	Programmable Attribute Map registers 0-6 (see also #01097)
  60h  4 BYTEs	DRAM Row Boundary registers 0-3
 		each register N indicates amount of memory in rows 0-N (each
 		  row is 64 bits wide)
@@ -4908,81 +5611,81 @@ Offset	Size	Description	(Table 0990)
  6Ah	WORD	Memory Hole-1
 Note:	the above field names are those given by EduWARE's PCI Configuration
 	  Manager v1.2
-SeeAlso: #0982,#1010,#1035
+SeeAlso: #01034,#01062,#01087
 
 Format of PCI Configuration data for Intel 82378 and 82379 ISA Bridges:
-Offset	Size	Description	(Table 0991)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 01043)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 8086h, device ID 0484h)
 		(revision ID:
 		    bits 7-4: reserved
 		    bits 3-0: revision
 			0011 82378ZB A0-step
 			1000 82379AB A0-step)
- 40h	BYTE	PCI Control (see #0992)
- 41h	BYTE	PCI Arbiter Control (see #0993)
- 42h	BYTE	PCI Arbiter Priority Control (see #0994)
+ 40h	BYTE	PCI Control (see #01044)
+ 41h	BYTE	PCI Arbiter Control (see #01045)
+ 42h	BYTE	PCI Arbiter Priority Control (see #01046)
  43h	BYTE	(82378ZB) PCI Arbiter Priority Control Extension Register
-		bit 0: bank 3 fixed priority mode select (see also #0994)
+		bit 0: bank 3 fixed priority mode select (see also #01046)
 		    =0 REQ2# has higher priority
 		    =1 REQ3# has higher priority
- 44h	BYTE	MEMCS# Control (see #0995)
+ 44h	BYTE	MEMCS# Control (see #01047)
  45h	BYTE	MEMCS# Bottom of Hole (address bits 23-16)
  46h	BYTE	MEMCS# Top of Hole (address bits 23-16)
  47h	BYTE	MEMCS# Top of Memory
 		(address bits 28-21 == size in 2M increments, less 1)
- 48h	BYTE	ISA Address Decoder Control (see #0996)
- 49h	BYTE	ISA Address Decoder ROM Block Enable (see #0997)
+ 48h	BYTE	ISA Address Decoder Control (see #01048)
+ 49h	BYTE	ISA Address Decoder ROM Block Enable (see #01049)
  4Ah	BYTE	ISA Address Decoder Bottom of Hole (address bits 23-16)
  4Bh	BYTE	ISA Address Decoder Top of Hole (address bits 23-16)
- 4Ch	BYTE	ISA Controller Recovery Time (see #1014)
- 4Dh	BYTE	ISA Clock Divisor (see #0998)
- 4Eh	BYTE	Utility Bus Chip Select Enable A (see #0999)
- 4Fh	BYTE	Utility Bus Chip Select Enable B (see #1000)
+ 4Ch	BYTE	ISA Controller Recovery Time (see #01066)
+ 4Dh	BYTE	ISA Clock Divisor (see #01050)
+ 4Eh	BYTE	Utility Bus Chip Select Enable A (see #01051)
+ 4Fh	BYTE	Utility Bus Chip Select Enable B (see #01052)
  50h  4 BYTEs	reserved
- 54h	BYTE	MEMCS# Attribute Register #1 (see #1001)
+ 54h	BYTE	MEMCS# Attribute Register #1 (see #01053)
 		attributes for 16K blocks from C0000h-CFFFFh
- 55h	BYTE	MEMCS# Attribute Register #2 (see #1001)
+ 55h	BYTE	MEMCS# Attribute Register #2 (see #01053)
 		attributes for 16K blocks from D0000h-DFFFFh
- 56h	BYTE	MEMCS# Attribute Register #3 (see #1001)
+ 56h	BYTE	MEMCS# Attribute Register #3 (see #01053)
 		attributes for 16K blocks from E0000h-EFFFFh
- 57h	BYTE	(82378) Scatter/Gather Relocation Base Adress (see #1002)
+ 57h	BYTE	(82378) Scatter/Gather Relocation Base Adress (see #01054)
 		(82379AB) reserved
  58h  8 BYTEs	reserved
- 60h	BYTE	(82378ZB) IRQ0# Route Control (see #1003)
- 61h	BYTE	(82378ZB) IRQ1# Route Control (see #1003)
- 62h	BYTE	(82378ZB) IRQ2# Route Control (see #1003)
- 63h	BYTE	(82378ZB) IRQ3# Route Control (see #1003)
+ 60h	BYTE	(82378ZB) IRQ0# Route Control (see #01055)
+ 61h	BYTE	(82378ZB) IRQ1# Route Control (see #01055)
+ 62h	BYTE	(82378ZB) IRQ2# Route Control (see #01055)
+ 63h	BYTE	(82378ZB) IRQ3# Route Control (see #01055)
  64h 12 BYTEs	reserved
  70h	BYTE	(82378) reserved
 		(82379AB, write-only) PIC/APIC Configuration Control
-			  (see #1004)
+			  (see #01056)
  71h	BYTE	(82378) reserved
 		(82379AB, write-only) APIC Base Address Relocation
-		  (see #1005,MEM FEC00000h)
+		  (see #01057,MEM FEC00000h)
  72h 14 BYTEs	reserved
  80h	WORD	BIOS timer base address (see PORT 0078h)
 		bits 15-2 are bits 15-2 of BIOS timer port address
 		bit 1: reserved (0)
 		bit 0: timer enabled (if disabled, other bits ignored)
  82h 30 BYTEs	unused???
- A0h	BYTE	SMI Control (see #1006)
+ A0h	BYTE	SMI Control (see #01058)
  A1h	BYTE	reserved
- A2h	WORD	SMI Enable (see #1007)
- A4h	DWORD	System Event Enable (SEE) (see #1008)
+ A2h	WORD	SMI Enable (see #01059)
+ A4h	DWORD	System Event Enable (SEE) (see #01060)
  A8h	BYTE	Fast-Off Timer (in minutes)
  A9h	BYTE	reserved
- AAh	WORD	active SMI Requests (see #1009)
+ AAh	WORD	active SMI Requests (see #01061)
  ACh	BYTE	(82378ZB) Clock Throttle STPCLK# Low Timer
 		duration of STPCLK# low period in 32 microsecond units
  ADh	BYTE	reserved
  AEh	BYTE	(82378ZB) Clock Throttle STPCLK# High Timer
 		duration of STPCLK# high period in 32 microsecond units
  AFh 81 BYTEs	reserved
-SeeAlso: #0982,#1079,PORT 040Ah"82378ZB"
+SeeAlso: #01034,#01146,PORT 040Ah"82378ZB"
 
 Bitfields for Intel 82378/82379 PCI Control:
-Bit(s)	Description	(Table 0992)
+Bit(s)	Description	(Table 01044)
  7	reserved (0)
  6	DMA Reserved Page Register Aliasing Control
 	=0 alias PORT 80h-8Fh to PORT 90h-9Fh
@@ -5001,10 +5704,10 @@ Bit(s)	Description	(Table 0992)
  0	DMA Line Buffer Configuration
 	=0 single-transaction mode
 	=1 eight-byte mode
-SeeAlso: #0991,#0993
+SeeAlso: #01043,#01045
 
 Bitfields for Intel 82378/82379 PCI Arbiter Control:
-Bit(s)	Description	(Table 0993)
+Bit(s)	Description	(Table 01045)
  7-5	reserveed (0)
  4-3	Master Retry Timer
 	00 disabled (retries never masked)
@@ -5018,10 +5721,10 @@ Bit(s)	Description	(Table 0993)
 	=1 Bus lock
  0	Guaranteed Access Time
 	=1 ISA bus masters are guaranteed 2.5 microsecond CHRDY time-out
-SeeAlso: #0991,#0992
+SeeAlso: #01043,#01044
 
 Bitfields for Intel 82378/82379 PCI Arbiter Priority Control:
-Bit(s)	Description	(Table 0994)
+Bit(s)	Description	(Table 01046)
  7	bank 3 rotate control
  6	bank 2 rotate control
  5	bank 1 rotate control
@@ -5032,20 +5735,20 @@ Bit(s)	Description	(Table 0994)
  0	bank 0 fixed priority mode select
 Note:	if both 'rotate' and 'fixed' bits are set for a given bank,
 	  that bank will be in rotating-priority mode
-SeeAlso: #0991,#0993
+SeeAlso: #01043,#01045
 
 Bitfields for Intel 82378/82379 MEMCS# Control Register:
-Bit(s)	Description	(Table 0995)
+Bit(s)	Description	(Table 01047)
  7-5	reserved (0)
  4	MEMCS# Master Enable
  3	write enable for 0F0000h-0FFFFFh
  2	read enable for 0F0000h-0FFFFFh
  1	write enable for 080000h-09FFFFh
  0	read enable for 080000h-09FFFFh
-SeeAlso: #0991
+SeeAlso: #01043
 
 Bitfields for Intel 82378/82379 ISA Address Decoder Control Register:
-Bit(s)	Description	(Table 0996)
+Bit(s)	Description	(Table 01048)
  7-4	ISA memory cycle forwarding to PCI
 	0000-1111 = 1M-16M top of ISA memory; any accesses above programmed
 		  limit are forwarded to PCI bus
@@ -5054,10 +5757,10 @@ Bit(s)	Description	(Table 0996)
 	bit 2: 640K-768K (A000h-BFFFh)
 	bit 1: 512K-640K (8000h-9FFFh)
 	bit 0: 0K-512K	 (0000h-7FFFh)
-SeeAlso: #0991,#0997
+SeeAlso: #01043,#01049
 
 Bitfields for Intel 82378/82379 ISA Address Decoder ROM Block Enable:
-Bit(s)	Description	(Table 0997)
+Bit(s)	Description	(Table 01049)
  7	enable 880K-896K (EC00h-EFFFh)
  6	enable 864K-880K (E800h-EBFFh)
  5	enable 848K-864K (E400h-E7FFh)
@@ -5067,10 +5770,10 @@ Bit(s)	Description	(Table 0997)
  1	enable 784K-800K (D400h-D7FFh)
  0	enable 768K-784K (D000h-D3FFh)
 Note:	ISA accesses within any enabled ranges are forwarded to the PCI bus
-SeeAlso: #0991,#0996
+SeeAlso: #01043,#01048
 
 Bitfields for Intel 82378/82379 ISA Clock Divisor Register:
-Bit(s)	Description	(Table 0998)
+Bit(s)	Description	(Table 01050)
  7	reserved (0)
  6	enable positive decode of upper 64K BIOS at 000F0000h-000FFFFFh,
 	  FFEF0000h-FFEFFFFFh, and FFFF0000h-FFFFFFFFh
@@ -5086,10 +5789,10 @@ Bit(s)	Description	(Table 0998)
 	000	4
 	001	3
 	other	reserved
-SeeAlso: #0991,#0996
+SeeAlso: #01043,#01048
 
 Bitfields for Intel 82378/82379 Utility Bus Chip Select A Register:
-Bit(s)	Description	(Table 0999)
+Bit(s)	Description	(Table 01051)
  7	extended BIOS enable (decode accesses to FFF80000h-FFFDFFFFh)
  6	lower BIOS enable (decode accesses to E0000h-EFFFFh,
 	  FFEE0000h-FFEEFFFFh, and FFFE0000h-FFFEFFFFh)
@@ -5101,10 +5804,10 @@ Bit(s)	Description	(Table 0999)
 	enables I/O addresses 60h,62h,64h,66h (82378ZB) or 60h/64h (82379AB)
  0	RTC address location enabled
 	=1 enable decode of I/O ports 70h-77h
-SeeAlso: #0991,#1016,#1000
+SeeAlso: #01043,#01068,#01052
 
 Bitfields for Intel 82378ZB/82379 Utility Bus Chip Select B Register:
-Bit(s)	Description	(Table 1000)
+Bit(s)	Description	(Table 01052)
  7	configuration RAM decode enable
 	=1 permit write accesses to I/O port 0C00h and r/w to ports 08xxh
  6	enable PORT 0092h
@@ -5124,10 +5827,10 @@ Bit(s)	Description	(Table 1000)
 	10 reserved
 	11 port A disabled
 Note:	if both serial ports are set to the same address, port B is disabled
-SeeAlso: #0991,#0999,PORT 0092h
+SeeAlso: #01043,#01051,PORT 0092h
 
 Bitfields for Intel 82378/82379 MEMCS# Attribute Register 1/2/3:
-Bit(s)	Description	(Table 1001)
+Bit(s)	Description	(Table 01053)
  7	write-enable xC000h-xFFFFh expansion ROM
  6	read-enable xC000h-xFFFFh expansion ROM
  5	write-enable x8000h-xBFFFh expansion ROM
@@ -5137,24 +5840,24 @@ Bit(s)	Description	(Table 1001)
  1	write-enable x0000h-x3FFFh expansion ROM
  0	read-enable x0000h-x3FFFh expansion ROM
 Note:	x = C/D/E depending on the attribute register
-SeeAlso: #0991
+SeeAlso: #01043
 
 Bitfields for Intel 82378ZB Scatter Gather Relocation Base Address:
-Bit(s)	Description	(Table 1002)
+Bit(s)	Description	(Table 01054)
  7-0	bits 15-8 of base address for scatter/gather I/O ports
 	(default 04h; low 8 bits of address are always 10h-3Fh)
-SeeAlso: #0991,#1001,#1003,PORT 040Ah"82378ZB",#P039
+SeeAlso: #01043,#01053,#01055,PORT 040Ah"82378ZB",#P0039
 
 Bitfields for Intel 82371/82378/82379 PCI IRQ Route Control Register:
-Bit(s)	Description	(Table 1003)
+Bit(s)	Description	(Table 01055)
  7	disable IRQ routing
  6-4	reserved (0)
  3-0	ISA IRQ number to which to route the PCI IRQ
 Note:	IRQs 0-2, 8, and 13 are reserved
-SeeAlso: #0991,#1079,#1027
+SeeAlso: #01043,#01146,#01079
 
 Bitfields for Intel 82379AB PIC/APIC Configuration Control Register:
-Bit(s)	Description	(Table 1004)
+Bit(s)	Description	(Table 01056)
  7-2	reserved
  1	SMI Routing Control
 	=1 SMI via APIC
@@ -5162,20 +5865,20 @@ Bit(s)	Description	(Table 1004)
  0	INT Routing Control
 	=1 INT disabled (requires that APIC be enabled)
 	=0 INT enabled
-SeeAlso: #0991,#1005
+SeeAlso: #01043,#01057
 
 Bitfields for Intel 82379AB/82371 APIC Base Address Relocation:
-Bit(s)	Description	(Table 1005)
+Bit(s)	Description	(Table 01057)
  7	reserved
  6	(82379AB) reserved
  6	(82371) A12 mask
 	=1 ignore address bit 12 in APIC address
  5-0	bits 15-10 of APIC memory address (ORed with FEC00000h to form base
 	  address)
-SeeAlso: #0991,#1079,#1004,MEM FEC00000h
+SeeAlso: #01043,#01146,#01056,MEM FEC00000h
 
 Bitfields for Intel 82378/82379 SMI Control Register:
-Bit(s)	Description	(Table 1006)
+Bit(s)	Description	(Table 01058)
  7	reserved
  6	(82378) reserved
 	(82379) require Stop Grant bus cycle before asserting STPCLK#
@@ -5191,10 +5894,10 @@ Notes:	bit 1 is cleared either with an explicit write of 0 here, or by any
 	  write to PORT 00B2h
 	bit 0 does not affect the recording of SMI events, so a pending SMI
 	  will cause an immediate SMI# when the bit is set
-SeeAlso: #0991,#1007,#1008,#1089,PORT 00B2h
+SeeAlso: #01043,#01059,#01060,#01201,PORT 00B2h
 
 Bitfields for Intel 82371/82378/82379 SMI Enable Register:
-Bit(s)	Description	(Table 1007)
+Bit(s)	Description	(Table 01059)
  15-9	reserved
  8	(82371SB only) Legacy USB SMI enable
  7	APMC Write SMI enable
@@ -5206,10 +5909,10 @@ Bit(s)	Description	(Table 1007)
  2	IRQ4 (COM1/COM3) SMI enable
  1	IRQ3 (COM2/COM4) SMI enable
  0	IRQ1 (keyboard) SMI enable
-SeeAlso: #0991,#1006,#1008,#1079,PORT 00B2h
+SeeAlso: #01043,#01058,#01060,#01146,PORT 00B2h
 
 Bitfields for Intel 82371/82378/82379 System Event Enable Register:
-Bit(s)	Description	(Table 1008)
+Bit(s)	Description	(Table 01060)
  31	Fast-Off SMI enable (system and break events)
  30	(82379 only) Fast-Off Interrupt Enable (break events only)
  30	(82371 only) INTR enable (break events only)
@@ -5226,10 +5929,10 @@ Bit(s)	Description	(Table 1008)
 Note:	any enabled system event restarts the Fast-Off Timer, thus preventing
 	  a Fast-Off powerdown; any enabled break event awakens the system from
 	  powerdown
-SeeAlso: #0991,#1006,#1007,#1009,#1079
+SeeAlso: #01043,#01058,#01059,#01061,#01146
 
 Bitfields for Intel 82371/82378/82379 SMI Request Register:
-Bit(s)	Description	(Table 1009)
+Bit(s)	Description	(Table 01061)
  15-9	reserved
  8	(82371SB only) Legacy USB SMI status
  7	APM SMI Status (write to PORT 00B2h triggered SMI)
@@ -5241,22 +5944,22 @@ Bit(s)	Description	(Table 1009)
  1	IRQ3 triggered SMI
  0	IRQ1 triggered SMI
 Note:	software must explicitly reset the appropriate bits
-SeeAlso: #0991,#1008,#1079
+SeeAlso: #01043,#01060,#01146
 
 Format of PCI Configuration data for Intel 82425EX PSC:
-Offset	Size	Description	(Table 1010)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 01062)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 8086h, device ID 0486h)
- 40h	BYTE	PCI control register (see #1011)
+ 40h	BYTE	PCI control register (see #01063)
  41h  3 BYTEs	???
- 44h	BYTE	host device control register (see #1012)
+ 44h	BYTE	host device control register (see #01064)
  45h  3 BYTEs	???
- 48h	WORD	PCI local-bus IDE control register (see #1013)
+ 48h	WORD	PCI local-bus IDE control register (see #01065)
  4Ah  2 BYTEs	???
- 4Ch	BYTE	ISA I/O recovery timer register (see #1014)
- 4Dh	BYTE	part revision register (see #1015)
- 4Eh	BYTE	X-bus Chip Select A register (see #1016)
- 4Fh	BYTE	X-bus Chip Select B register??? (see also #1029)
+ 4Ch	BYTE	ISA I/O recovery timer register (see #01066)
+ 4Dh	BYTE	part revision register (see #01067)
+ 4Eh	BYTE	X-bus Chip Select A register (see #01068)
+ 4Fh	BYTE	X-bus Chip Select B register??? (see also #01081)
  50h	BYTE	host select register
  51h	BYTE	deturbo frequency control register
 		when deturbo mode is selected (see PORT 0CF9h), the chipset
@@ -5267,7 +5970,7 @@ Offset	Size	Description	(Table 1010)
  54h  2 BYTEs	???
  56h	WORD	DRAM control register
  58h	BYTE	???
- 59h  7 BYTEs	Programmable Attribute Map (PAM) registers 0-6 (see also #1045)
+ 59h  7 BYTEs	Programmable Attribute Map (PAM) registers 0-6 (see also #01097)
  60h  5 BYTEs	DRAM row boundary registers 0-4
 		each register N indicates amount of memory in rows 0-N (each
 		  row is 64 bits wide); the fifth row of memory (if
@@ -5295,10 +5998,10 @@ Offset	Size	Description	(Table 1010)
  AEh	BYTE	clock throttle STPCLK# high timer
  AFh	BYTE	???
  B0h 80 BYTEs	unused???
-SeeAlso: #0850,#0990,#0982,#1035,#1079
+SeeAlso: #00857,#01042,#01034,#01087,#01146
 
 Bitfields for Intel 82425EX PCI control register:
-Bit(s)	Description	(Table 1011)
+Bit(s)	Description	(Table 01063)
  0	CPU-to-PCI byte merging
  1	CPU-to-PCI bursting enable
  2	PCI posted-write buffer enable
@@ -5310,10 +6013,10 @@ Bit(s)	Description	(Table 1011)
  5	DRAM parity error enable
  6	target abort error enable
  7	reserved
-SeeAlso: #1010,#1012,#1013,#1014
+SeeAlso: #01062,#01064,#01065,#01066
 
 Bitfields for Intel 82425EX host device control register:
-Bit(s)	Description	(Table 1012)
+Bit(s)	Description	(Table 01064)
  0	HRDY# maximum signal sampling point
 	0 slow timing
 	1 fast timing
@@ -5322,10 +6025,10 @@ Bit(s)	Description	(Table 1012)
 	1 fast timing
  2	host device present
  7-3	reserved
-SeeAlso: #1010,#1011
+SeeAlso: #01062,#01063
 
 Bitfields for Intel 82425EX local-bus IDE control register:
-Bit(s)	Description	(Table 1013)
+Bit(s)	Description	(Table 01065)
  1-0	primary/secondary PCI IDE enable
 	00 IDE disabled
 	01 primary (ports 01F0h-01F7h,03F6,03F7h)
@@ -5345,32 +6048,32 @@ Bit(s)	Description	(Table 1013)
 	11 3 clocks
  12-10	recover time (000 = 8 PCI clocks, 001 = 7, ..., 101 = 3, 110/111 = 3)
  15-13	reserved
-SeeAlso: #1010,#1011
+SeeAlso: #01062,#01063
 
 Bitfields for Intel chipset ISA I/O recovery timer register:
-Bit(s)	Description	(Table 1014)
- 1-0	16-bit I/O recovery time
-	00 = 4 SYSCLKs
-	01-11 = 1-3 SYSCLKs
- 2	16-bit I/O recovery enable
- 5-3	8-bit I/O recovery time
-	000 = 8 SYSCLKs
-	001-110 = 1-7 SYSCLKs
- 6	8-bit I/O recovery enable
+Bit(s)	Description	(Table 01066)
  7	(82425EX/82371) DMA reserved page register aliasing disable
 	=0 ports 0090h-009Fh alias ports 0080h-008Fh
 	=1 ports 0090h-009Fh forwarded to ISA bus
-SeeAlso: #0991,#1010,#1011,#1079
+ 6	8-bit I/O recovery enable
+ 5-3	8-bit I/O recovery time
+	000 = 8 SYSCLKs
+	001-110 = 1-7 SYSCLKs
+ 2	16-bit I/O recovery enable
+ 1-0	16-bit I/O recovery time
+	00 = 4 SYSCLKs
+	01-11 = 1-3 SYSCLKs
+SeeAlso: #01043,#01062,#01063,#01146,#01149
 
 Bitfields for Intel 82425EX part revision register:
-Bit(s)	Description	(Table 1015)
+Bit(s)	Description	(Table 01067)
  7-5	fabrication house identifier (read-only)
  4	E0000h-EFFFFh ISA-to-main-memory forwarding enabled
  3-0	revision ID (read-only)
-SeeAlso: #1010,#1016
+SeeAlso: #01062,#01068
 
 Bitfields for Intel 82425EX/82371 X-bus Chip Select A register:
-Bit(s)	Description	(Table 1016)
+Bit(s)	Description	(Table 01068)
  7	extended BIOS enabled at FFF80000h-FFFDFFFFh
  6	lower (E000h) BIOS enabled
  5	trigger IRQ13 on FERR#
@@ -5380,20 +6083,20 @@ Bit(s)	Description	(Table 1016)
  2	BIOS memory write protect
  1	keyboard controller addresses (60h,62h,64h,66h) enabled
  0	RTC addresses (70h-77h) enabled
-SeeAlso: #1010,#1079,#1015,#1029
+SeeAlso: #01062,#01146,#01067,#01081
 
 Format of PCI Configuration Data for Intel 82380AB PCI-ISA Bridge:
-Offset	Size	Description	(Table 1017)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 01069)
+ 00h 64 BYTEs	header (see #00857)
 		(vender ID 8086h, device ID 123Ch)
- 40h	BYTE	I/O Recovery Register (see #1018)
+ 40h	BYTE	I/O Recovery Register (see #01070)
  41h	BYTE	reserved
- 42h	BYTE	MISA Error Status (see #1019)
+ 42h	BYTE	MISA Error Status (see #01071)
  43h 189 BYTEs	reserved
-SeeAlso: #0845,#1020
+SeeAlso: #00852,#01072
 
 Bitfields for Intel 82380AB I/O Recovery Register:
-Bit(s)	Description	(Table 1018)
+Bit(s)	Description	(Table 01070)
  7	SYSCLK select
 	0 SYSCLK = PCICLK/4
 	1 SYSCLK = PCICLK/3
@@ -5401,41 +6104,41 @@ Bit(s)	Description	(Table 1018)
  5-3	additional recovery time for 8-bit I/O cycles, in SYSCLKs
  2	enable 16-bit I/O recovery
  1-0	additional recovery time for 16-bit I/O cycles, in SYSCLKs
-SeeAlso: #1017
+SeeAlso: #01069
 
 Bitfields for Intel 82380AB MISA error status:
-Bit(s)	Description	(Table 1019)
+Bit(s)	Description	(Table 01071)
  7-3	reserved
  2	IOCHK# asserted
  1	reserved
  0	illegal byte lane combination for PCI I/O detected
-SeeAlso: #1017
+SeeAlso: #01069
 
 Format of PCI Configuration data for Intel 82380FB PCI-PCI Bridge (MPCI2):
-Offset	Size	Description	(Table 1020)
- 00h 64 BYTEs	header type 1 [bridge] (see #0850)
+Offset	Size	Description	(Table 01072)
+ 00h 64 BYTEs	header type 1 [bridge] (see #00857)
 		(vendor ID 8086h, device ID 124Bh)
- 40h	BYTE	Connector Control (see #1021)
- 41h	BYTE	Connector Event (see #1022)
+ 40h	BYTE	Connector Control (see #01073)
+ 41h	BYTE	Connector Event (see #01074)
  42h  2 BYTEs	reserved
- 44h	WORD	Serial Bus Interface/Burst Enable (see #1023)
- 46h	BYTE	MPCI2 Miscellaneous Status (see #1024)
+ 44h	WORD	Serial Bus Interface/Burst Enable (see #01075)
+ 46h	BYTE	MPCI2 Miscellaneous Status (see #01076)
  47h  5 BYTEs	reserved
  4Ch	WORD	Special Message Encode
 		encoded message portion of Special Cycle forwarded by MPCI2
  4Eh 178 BYTEs	reserved
-SeeAlso: #0845,#1017
+SeeAlso: #00852,#01069
 
 Bitfields for Intel 82380FB Connector Control register:
-Bit(s)	Description	(Table 1021)
+Bit(s)	Description	(Table 01073)
  7-4	reserved
  3	QEN2 output signal
  2	QEN1 output signal
  1-0	reserved
-SeeAlso: #1020
+SeeAlso: #01072
 
 Bitfields for Intel 82380FB Connector Event register:
-Bit(s)	Description	(Table 1022)
+Bit(s)	Description	(Table 01074)
  7	reserved (1)
  6	activate power-no suspend
  5	(read-only) inverted state of MISAEN pin
@@ -5447,10 +6150,10 @@ Bit(s)	Description	(Table 1022)
  2	reserved (1)
  1	system is docked
  0	open requested
-SeeAlso: #1020
+SeeAlso: #01072
 
 Bitfields for Intel 82380FB Serial Interface/Burst Enable register:
-Bit(s)	Description	(Table 1023)
+Bit(s)	Description	(Table 01075)
  15-13	reserved
  12	enable SERR# on discarding of posted write data
  11	reserved
@@ -5465,94 +6168,92 @@ Bit(s)	Description	(Table 1023)
  2	cascade/frame determination delay (0 = 20 P_CLKs, 1 = 10 P_CLKs)
  1	serial EEPROM chip select
  0	serial EEPROM clock
-SeeAlso: #1020
+SeeAlso: #01072
 
 Bitfields for Intel 82380FB MPCI2 Miscellaneous Status register:
-Bit(s)	Description	(Table 1024)
+Bit(s)	Description	(Table 01076)
  7-1	reserved
  0	(write-clear) P_SERR# was asserted due to invalidation of posted write
-SeeAlso: #1020
+SeeAlso: #01072
 
 Format of PCI Configuration Data for Intel 82439HX:
-Offset	Size	Description	(Table 1025)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 01077)
+ 00h 64 BYTEs	header (see #00857)
 		(vender ID 8086h, device ID 1250h)
 		(revision ID 00h = A0 stepping)
  40h 16 BYTEs	reserved
- 50h	BYTE	PCI Control (see #1037)
+ 50h	BYTE	PCI Control (see #01089)
  51h	BYTE	reserved
- 52h	BYTE	cache control (see #1039)
+ 52h	BYTE	cache control (see #01091)
  53h  3 BYTEs	reserved
- 56h	BYTE	DRAM extended control (see #1042)
- 57h	BYTE	DRAM control (see #1043)
- 58h	BYTE	DRAM timing (see #1044)
- 59h  7 BYTEs	Programmable Attribute Map registers 0-6 (see #1045)
+ 56h	BYTE	DRAM extended control (see #01094)
+ 57h	BYTE	DRAM control (see #01095)
+ 58h	BYTE	DRAM timing (see #01096)
+ 59h  7 BYTEs	Programmable Attribute Map registers 0-6 (see #01097)
  60h  8 BYTEs	DRAM Row Boundary registers 0-7
 		each register N indicates cumulative amount of memory in rows
 		  0-N (each 64 bits wide), in 4M units
- 68h	BYTE	DRAM Row Type (see #1046)
+ 68h	BYTE	DRAM Row Type (see #01098)
 		bits 0-7 indicate whether each row 0-7 contains EDO DRAM
 		  instead of page-mode DRAM
  69h	BYTE	???
  6Ah  8 BYTEs	reserved
- 72h	BYTE	System Management RAM control (see #1049)
+ 72h	BYTE	System Management RAM control (see #01102)
  73h 29 BYTEs	reserved
- 90h	BYTE	Error Command (see #1052)
- 91h	BYTE	Error Status (see #1053) (read-only)
+ 90h	BYTE	Error Command (see #01105)
+ 91h	BYTE	Error Status (see #01106) (read-only)
  92h	BYTE	Error Syndrome (read-only)
 		latest non-zero ECC error syndrome
  93h 109 BYTEs	reserved
-SeeAlso: #1035,#1096
+SeeAlso: #01087,#01208
 
-Format of PCI Configuration Data for Intel 82439TX:
-Offset	Size	Description	(Table 1026)
- 00h 64 BYTEs	header (see #0850)
-		(vender ID 8086h, device ID 7100h)
+Format of PCI Configuration Data for Intel 82439TX "MTXC":
+Offset	Size	Description	(Table 01078)
+ 00h 64 BYTEs	header (see #00857)
+		(vendor ID 8086h, device ID 7100h)
 		(revision ID 00h = A0 stepping)
-!!!intel\29055901.pdf pg. 23
  40h 15 BYTEs	reserved
- 4Fh	BYTE	arbitration control
- 50h	BYTE	PCI control
+ 4Fh	BYTE	Arbitration Control register (see #01088)
+ 50h	BYTE	PCI Control register (see #01089)
  51h	BYTE	reserved
- 52h	BYTE	cache control
- 53h	BYTE	extended cache control
- 54h	WORD	SDRAM control
- 56h	BYTE	DRAM extended control
- 57h	BYTE	DRAM control
- 58h	BYTE	DRAM timing
- 59h  7 BYTEs	Programmable Attribute Map registers 0-6 (see #1045)
+ 52h	BYTE	Cache Control register (see #01091)
+ 53h	BYTE	Extended Cache Control register (see #01092)
+ 54h	WORD	SDRAM Control Register (see #01093)
+ 56h	BYTE	DRAM Extended Control register (see #01094)
+ 57h	BYTE	DRAM Control register (see #01095)
+ 58h	BYTE	DRAM Timing register (see #01096)
+ 59h  7 BYTEs	Programmable Attribute Map registers 0-6 (see #01097)
  60h  6 BYTEs	DRAM Row Boundary registers 0-5
+		each register N indicates cumulative amount of memory in rows
+		  0-N (each 64 bits wide), in 4M units
  66h	BYTE	reserved
- 67h	BYTE	DRAM Row Type high
- 68h	BYTE	DRAM Row Type low
- 69h  2 BYTEs	undefined (read-only)
- 6Bh  5 BYTEs	reserved
- 70h	BYTE	Multi-Transaction Timer
- 71h	BYTE	Extended SMRAM control
- 72h	BYTE	System Management RAM control
- 73h	BYTE	reserved
- 74h	BYTE	undefined (read-only)
- 76h  3 BYTEs	reserved
- 78h	BYTE	undefined (read-only)
- 79h	BYTE	Miscellaneous Control register
- 7Ah 131 BYTEs	reserved
- FDh	BYTE	undefined (read-only)
- FEh  2 BYTEs	reserved
-SeeAlso: #0845
+ 67h	BYTE	DRAM Row Type High register (see #01192)
+ 68h	BYTE	DRAM Row Type Low register (see #01098)
+ 69h  7 BYTEs	reserved
+ 70h	BYTE	Multi-Transaction Timer register
+		number of PCLKs guaranteed to the current agent before the
+		  82439TX will grant the bus to another PCI agent on request
+ 71h	BYTE	Extended System Management RAM Control register (see #01128)
+ 72h	BYTE	System Management RAM Control register (see #01102)
+ 73h  6 BYTEs	reserved
+ 79h	BYTE	Miscellaneous Control register (see #01107)
+ 7Ah 134 BYTEs	reserved
+Note:	The Intel 82439TX chipset uses PCI configuration mechanism #1
+SeeAlso:  #00852,PORT 0CF8h
 
 Format of PCI Configuration Data for Intel 82371AB (PIIX4), ISA Bridge:
-Offset	Size	Description	(Table 1027)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 01079)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 8086h, device ID 7110h)
  40h 12 BYTEs	reserved
- 4Ch	BYTE	ISA I/O recovery timer (see #1028)
+ 4Ch	BYTE	ISA I/O recovery timer (see #01080)
  4Dh	BYTE	reserved
- 4Eh	WORD	X-Bus Chip Select (see #1016,#1029)
+ 4Eh	WORD	X-Bus Chip Select (see #01068,#01081)
  50h 16 BYTEs	reserved
- 60h	BYTE	PIRQA route control (see #1003)
- 61h	BYTE	PIRQB route control (see #1003)
- 62h	BYTE	PIRQC route control (see #1003)
- 63h	BYTE	PIRQD route control (see #1003)
+ 60h	BYTE	PIRQA route control (see #01055)
+ 61h	BYTE	PIRQB route control (see #01055)
+ 62h	BYTE	PIRQC route control (see #01055)
+ 63h	BYTE	PIRQD route control (see #01055)
 !!!intel\29056201.pdf p.59
  64h	BYTE	serial IRQ control
  65h  4 BYTEs	reserved???
@@ -5574,10 +6275,10 @@ Offset	Size	Description	(Table 1027)
  B4h 23 BYTEs	reserved???
  CBh	BYTE	real-time clock configuration
  CCh 52 BYTEs	reserved
-SeeAlso: #0845,#1030,#1031,#1032
+SeeAlso: #00852,#01082,#01083,#01084
 
 Bitfields for Intel PIIX4 ISA I/O recovery timer:
-Bit(s)	Description	(Table 1028)
+Bit(s)	Description	(Table 01080)
  7	disable aliasing PORTs 90h-9Fh into 80h-8Fh (except PORT 0092h)
  6	enable 8-bit I/O recover timer in bits 5-3
  5-3	additional 8-bit I/O recovery time (added to 3.5 SYSCLK minimum)
@@ -5588,21 +6289,21 @@ Bit(s)	Description	(Table 1028)
 	01 = 1 SYSCLK
 	10 = 2 SYSCLKs
 	11 = 4 SYSCLKs
-SeeAlso: #1027
+SeeAlso: #01079
 
 Bitfields for Intel 82371 X-Bus Chip Select Enable (high byte):
-Bit(s)	Description	(Table 1029)
+Bit(s)	Description	(Table 01081)
  7-3	reserved
  2	(82371AB) enable positive PCI decode for Micro Controller at PORTs 62h
 	  and 66h
  1	(82371AB) enable one-megabyte extended BIOS (FFF00000h-FFF7FFFFh are
 	  forwarded to ISA bus, aliased to top of 16M region)
  0	enable I/O APIC
-SeeAlso: #1016
+SeeAlso: #01068
 
 Format of PCI Configuration Data for Intel 82371AB (PIIX4), IDE Controller:
-Offset	Size	Description	(Table 1030)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 01082)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 8086h, device ID 7111h)
  20h	DWORD	I/O base address (for 16 contiguous PORTs)
 !!!intel\29056201.pdf p.89
@@ -5614,11 +6315,11 @@ Offset	Size	Description	(Table 1030)
  49h	BYTE	reserved???
  4Ah	WORD	Ultra DMA/33 timing
  4Ch 180 BYTEs	reserved
-SeeAlso: #0845,#1027,#1031,#1032
+SeeAlso: #00852,#01079,#01083,#01084
 
 Format of PCI Configuration Data for Intel 82371AB (PIIX4), USB Controller:
-Offset	Size	Description	(Table 1031)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 01083)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 8086h, device ID 7112h)
  20h	DWORD	I/O base address (for 32 contiguous PORTs)
 !!!intel\29056201.pdf p.102
@@ -5630,11 +6331,11 @@ Offset	Size	Description	(Table 1031)
  C0h	WORD	legacy support
  C2h 61 BYTEs	reserved
  FFh	BYTE	miscellaneous support
-SeeAlso: #0845,#1027,#1030,#1032
+SeeAlso: #00852,#01079,#01082,#01084
 
 Format of PCI Configuration Data for Intel 82371AB (PIIX4), Power Management:
-Offset	Size	Description	(Table 1032)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 01084)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 8086h, device ID 7113h)
  40h	DWORD	base address of power-management I/O ports
 		(same format as PCI base addresses; low bit hardwired to 1)
@@ -5666,69 +6367,69 @@ Offset	Size	Description	(Table 1032)
  D5h	BYTE	SMBus slave shadow port 2 address
  D6h	BYTE	SMBus revision
  D7h
-SeeAlso: #0845,#1027,#1030,#1031
+SeeAlso: #00852,#01079,#01082,#01083
 
 Format of PCI Configuration Data for Intel 82437MX:
-Offset	Size	Description	(Table 1033)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 01085)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 8086h, device ID 1235h)
  40h 16 BYTEs	reserved
- 50h	BYTE	PCI Control (see #1038)
+ 50h	BYTE	PCI Control (see #01090)
  51h	BYTE	reserved
- 52h	BYTE	cache control (see #1039)
+ 52h	BYTE	cache control (see #01091)
  53h  4 BYTEs	reserved
- 57h	BYTE	DRAM Control (see #1043)
- 58h	BYTE	DRAM timing (see #1044)
- 59h  7 BYTEs	Programmable Attribute Map registers 0-6 (see #1045)
+ 57h	BYTE	DRAM Control (see #01095)
+ 58h	BYTE	DRAM timing (see #01096)
+ 59h  7 BYTEs	Programmable Attribute Map registers 0-6 (see #01097)
  60h  4 BYTEs	DRAM Row Boundary Registers 0-3
 		each register N indicates cumulative amount of memory in rows
 		  0-N, in 4M units (each row is 64 bits wide)
  64h  4 BYTEs	reserved
- 68h	BYTE	DRAM Row Type (see #1047)
+ 68h	BYTE	DRAM Row Type (see #01100)
  69h  9 BYTEs	reserved
- 72h	BYTE	System Management RAM control (see #1049)
+ 72h	BYTE	System Management RAM control (see #01102)
  73h 141 BYTEs	reserved
-SeeAlso: #1035,#1034
+SeeAlso: #01087,#01086
 
 Format of PCI Configuration Data for Intel 82437FX:
-Offset	Size	Description	(Table 1034)
- 00h 64 BYTEs	header (see #0850)
-		(vendor ID 8086h, device ID 122Dh) (see #0845)
+Offset	Size	Description	(Table 01086)
+ 00h 64 BYTEs	header (see #00857)
+		(vendor ID 8086h, device ID 122Dh) (see #00852)
  40h 16 BYTEs	reserved
- 50h	BYTE	PCI Control (see #1038)
+ 50h	BYTE	PCI Control (see #01090)
  51h	BYTE	reserved
- 52h	BYTE	cache control (see #1039)
+ 52h	BYTE	cache control (see #01091)
  53h  4 BYTEs	reserved
- 57h	BYTE	DRAM Control (see #1043)
- 58h	BYTE	DRAM timing (see #1044)
- 59h  7 BYTEs	Programmable Attribute Map registers 0-6 (see #1045)
+ 57h	BYTE	DRAM Control (see #01095)
+ 58h	BYTE	DRAM timing (see #01096)
+ 59h  7 BYTEs	Programmable Attribute Map registers 0-6 (see #01097)
  60h  5 BYTEs	DRAM Row Boundary Registers 0-4
 		each register N indicates cumulative amount of memory in rows
 		  0-N, in 4M units (each row is 64 bits wide)
  65h  3 BYTEs	reserved
- 68h	BYTE	DRAM Row Type (see #1047)
+ 68h	BYTE	DRAM Row Type (see #01100)
  69h  9 BYTEs	reserved
- 72h	BYTE	System Management RAM control (see #1049)
+ 72h	BYTE	System Management RAM control (see #01102)
  73h 141 BYTEs	reserved
-SeeAlso: #1033,#1035
+SeeAlso: #01085,#01087
 
 Format of PCI Configuration Data for Intel 82437VX:
-Offset	Size	Description	(Table 1035)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 01087)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 8086h, device ID 7030h)
 		(revision ID 00h = A0 stepping)
  40h 15 BYTEs	reserved
- 4Fh	BYTE	arbitration control (see #1036)
- 50h	BYTE	PCI Control (see #1037)
+ 4Fh	BYTE	arbitration control (see #01088)
+ 50h	BYTE	PCI Control (see #01089)
  51h	BYTE	reserved
- 52h	BYTE	cache control (see #1039)
- 53h	BYTE	cache control extensions (see #1040)
- 54h	WORD	SDRAM control (see #1041)
+ 52h	BYTE	cache control (see #01091)
+ 53h	BYTE	cache control extensions (see #01092)
+ 54h	WORD	SDRAM control (see #01093)
  55h	BYTE	reserved
- 56h	BYTE	DRAM extended control (see #1042)
- 57h	BYTE	DRAM control (see #1043)
- 58h	BYTE	DRAM timing (see #1044)
- 59h  7 BYTEs	Programmable Attribute Map registers 0-6 (see #1045)
+ 56h	BYTE	DRAM extended control (see #01094)
+ 57h	BYTE	DRAM control (see #01095)
+ 58h	BYTE	DRAM timing (see #01096)
+ 59h  7 BYTEs	Programmable Attribute Map registers 0-6 (see #01097)
  60h  5 BYTEs	DRAM Row Boundary registers 0-4
 		each register N indicates amount of memory in rows 0-N in 4M
 		  units (each row is 64 bits wide); the fifth row of memory (if
@@ -5738,37 +6439,38 @@ Offset	Size	Description	(Table 1035)
 		  memory, which may not exceed 128M
  65h  2 BYTEs	reserved
  67h	BYTE	DRAM Row Type (high)
-		defines memory type in DRAM row 4 in bits 4,0 (see #1046)
- 68h	BYTE	DRAM Row Type (low) (see #1046)
- 69h	BYTE	PCI TRDY timer (see #1048)
+		defines memory type in DRAM row 4 in bits 4,0 (see #01098)
+ 68h	BYTE	DRAM Row Type (low) (see #01098)
+ 69h	BYTE	PCI TRDY timer (see #01101)
  6Ah  6 BYTEs	reserved
  70h	BYTE	Multi-Transaction Timer
 		number of PCLKs guaranteed to the current agent before the
 		  82437 will grant the bus to another PCI agent on request
  71h	BYTE	reserved
- 72h	BYTE	System Management RAM control (see #1049)
- 73h	BYTE	shared memory buffer control (see #1050)
+ 72h	BYTE	System Management RAM control (see #01102)
+ 73h	BYTE	shared memory buffer control (see #01103)
  74h	BYTE	shared memory buffer start address, in 0.5MB units
 		end address is top-of-memory at offset 64h or start of an
 		  enabled PCI memory hole when top-of-memory is 16M
  76h  2 BYTEs	reserved
- 78h	BYTE	graphics controller latency timers (see #1051)
+ 78h	BYTE	graphics controller latency timers (see #01104)
  79h 135 BYTEs	reserved
-SeeAlso: #0845,#0990,#1010,#1025,#1033
+SeeAlso: #00852,#01042,#01062,#01077,#01085
 
-Bitfields for Intel 82437VX arbitration control:
-Bit(s)	Description	(Table 1036)
+Bitfields for Intel 82437VX,82439TX Arbitration Control register:
+Bit(s)	Description	(Table 01088)
  7	extended CPU-to-PIIX PHLDA# signalling enabled
+ 6-0	(82439TX) reserved
  6-4	reserved
- 3	CPU priority enable
+ 3	(82437VX) CPU priority enable
 	=1 CPU gets PCI bus after two PCI slots
 	=0 CPU gets PCI bus after three PCI slots
  2-0	reserved
-SeeAlso: #1035,#1037
+SeeAlso: #01078,#01087,#01089
 
-Bitfields for Intel 82437VX/82439HX PCI Control register:
-Bit(s)	Description	(Table 1037)
- 7-4	reserved (82437VX)
+Bitfields for Intel 82437VX,82439HX/TX PCI Control register:
+Bit(s)	Description	(Table 01089)
+ 7-4	reserved (82437VX,82439TX)
  7	DRAM ECC/Parity Select (82439HX)
 	=1 ECC
 	=0 parity
@@ -5779,16 +6481,17 @@ Bit(s)	Description	(Table 1037)
  3	PCI Concurrency Enable
 	=1 CPU can access DRAM/L2 during non-PIIX PCI master cycles
 	=0 CPU kept off PCI bus during all PCI bus-master cycles
+ 2-0	reserved (82437VX,82439TX)
  2	SERR# Output Type (82439HX only)
 	=1 SERR# is actively driven high when negated
 	=0 SERR# is PCI-compatible open-drain output
  1	reserved
  0	Global TXC Enable (82439HX only)
 	=1 enable new 82439HX features
-SeeAlso: #1035,#1025,#1039,#1038
+SeeAlso: #01078,#01087,#01077,#01091,#01090
 
 Bitfields for Intel 82437FX/82437MX PCI Control register:
-Bit(s)	Description	(Table 1038)
+Bit(s)	Description	(Table 01090)
  7-5	CPU inactivity timer (in PCI Clocks less 1)
  4	reserved
  3	enable PCI Peer Concurrency
@@ -5797,10 +6500,10 @@ Bit(s)	Description	(Table 1038)
  2	disable PCI Bursting
  1	disable PCI Streaming
  0	disable Bus Concurrency
-SeeAlso: #1033,#1034,#1037
+SeeAlso: #01085,#01086,#01089
 
-Bitfields for Intel 82437/82439HX cache control register:
-Bit(s)	Description	(Table 1039)
+Bitfields for Intel 82437,82439HX/TX cache control register:
+Bit(s)	Description	(Table 01091)
  7-6	secondary cache size
 	00 none
 	01 256K
@@ -5809,11 +6512,11 @@ Bit(s)	Description	(Table 1039)
  5-4	L2 RAM type
 	00 pipelined burst SRAM/DRAM
 	01 reserved
-	10 asynchronous SRAM (82437FX/MX/VX only)
+	10 asynchronous SRAM (82437FX/MX/VX,82439TX only)
 	11 two banks of pipelined burst cache
  3	NA disable
 	=1 never assert NA# pin
- 2	reserved (82437FX/82437MX/82437VX)
+ 2	reserved (82437FX/MX/VX,82439TX)
  2	Extended Cacheability Enable (82439HX)
 	=1 cache up to 512M
 	=0 cache only first 64M
@@ -5821,18 +6524,18 @@ Bit(s)	Description	(Table 1039)
 	=1 force all memory accesses to bypass L2 cache
  0	First Level Cache Enable
 	=1 all memory accesses made non-cacheable by CPU L1 cache
-SeeAlso: #1035,#1025,#1037,#1040,#1041,#1033
+SeeAlso: #01078,#01087,#01077,#01089,#01092,#01093,#01085
 
-Bitfields for Intel 82437VX cache control extensions register:
-Bit(s)	Description	(Table 1040)
+Bitfields for Intel 82437VX,82439TX cache control extensions register:
+Bit(s)	Description	(Table 01092)
  7-6	reserved
  5	DRAM cache detected (read-only)
  4-0	DRAM cache refresh timer
-	number of HCLKs 82437VX remains idle during DRAM cache refresh
-SeeAlso: #1035,#1039
+	number of HCLKs 82437VX,82439TX remains idle during DRAM cache refresh
+SeeAlso: #01078,#01087,#01091
 
-Bitfields for Intel 82437VX SDRAM control register:
-Bit(s)	Description	(Table 1041)
+Bitfields for Intel 82437VX,82439TX SDRAM control register:
+Bit(s)	Description	(Table 01093)
  15-9	reserved
  8-6	Special SDRAM Mode Select
 	000 normal mode (default)
@@ -5842,63 +6545,74 @@ Bit(s)	Description	(Table 1041)
 	100 enable CBR Cycle
 	101 reserved
 	11x reserved
- 5	reserved
+ 5	(82437VX) reserved
+ 5	(82439TX) RAS# to CAS# Override
+	=1 and CAS# latency=0, RAS# to CAS# is delayed 2 HCLKs
+	=0 RAS# to CAS# delay determined solely by CAS# latency setting
  4	CAS# latency
 	=1 latency is 2 for all SDRAM cycles
 	=0 latency is 3
  3	RAS# precharge and refresh timing
 	=0 slower
 	=1 faster
- 2-0	reserved
-SeeAlso: #1035,#1039
+ 2	reserved
+ 1	(82437VX) reserved
+ 1	(82439TX) 64-Mbit Technology Enable
+	=1 supports 64M-bit SDRAM devices
+	=0 supports 64M-bit EDO/FPM devices only
+ 0	reserved
+SeeAlso: #01078,#01087,#01091
 
-Bitfields for Intel 82437VX/82439HX DRAM extended control register:
-Bit(s)	Description	(Table 1042)
+Bitfields for Intel 82437VX,82439HX/TX DRAM extended control register:
+Bit(s)	Description	(Table 01094)
  7	reserved
- 6	(82437VX) refresh RAS# assertion length (0=4 clocks, 1=5 clocks)
- 5	(82437VX) Fast EDO Path Select
+ 6	(VX/TX) refresh RAS# assertion length (0=4 clocks, 1=5 clocks)
+ 5	(VX/TX) Fast EDO Path Select
  4	Speculative Leadoff Disable
  3	(82439HX) Turn-Around Insertion Enable
 	=1 insert one extra clock of turnaround time after asserting MWE#
  2-1	Memory Address Drive Strength
-	82437VX:		82439HX:
-	    00 reserved		    00 8mA
-	    01 10mA (default)	    01 8mA/12mA (MAA/MWE#)
-	    10 16mA		    10 12mA/8mA (MAA/MWE#)
-	    11 reserved		    11 12mA
+	82437VX:	     82439HX:		       82439TX:
+	  00 reserved	       00 8mA			 00 10mA/10mA (MA/MWE#)
+	  01 10mA (default)    01 8mA/12mA (MAA/MWE#)	 01 10mA/16mA (MA/MWE#)
+	  10 16mA	       10 12mA/8mA (MAA/MWE#)	 10 16mA/10mA (MA/MWE#)
+	  11 reserved	       11 12mA			 11 16mA/16mA (MA/MWE#)
  0	(82437VX) DRAM Symmetry Detect Mode
 	(used to force some memory address lines to fixed value for detecting
 	  DRAM symmetry row-by-row)
  0	(82439HX) 64MBit Mode Enable
 	=1 enable support for 64M SIMMs
-SeeAlso: #1035,#1025,#1043
+ 0	(82439TX) reserved
+SeeAlso: #01078,#01087,#01077,#01095
 
-Bitfields for Intel 82437/82439HX DRAM control register:
-Bit(s)	Description	(Table 1043)
+Bitfields for Intel 82437,82439HX/TX DRAM control register:
+Bit(s)	Description	(Table 01095)
  7-6	DRAM Hole Enable
 	00 none
 	01 512K-640K
 	10 15M-16M (82437FX/MX/VX only)
-	11 14M-16M (82437VX only)
+	11 14M-16M (82437VX,82439TX only)
  5	reserved
  4	(82437MX only) refresh type during Suspend
 	=1 self-refreshing DRAMs in system
 	=0 CAS-before-RAS refresh
+	(82439TX only) Enhanced Paging disabled
  3	EDO Detect Mode enable
 	(used to detect whether memory is EDO bank-by-bank)
  2-0	DRAM refresh rate
-	     FX/VX/HX	MX
-	000 disabled	15.6 us
-	001 50 MHz	31.2 us
-	010 60 MHz	62.4 us
-	011 66 MHz	125 us
-	100 reserved	250 us
-	1xx reserved	reserved
-SeeAlso: #1035,#1025,#1042,#1033
+	     FX/VX/HX	 MX	     TX
+	000  disabled	 15.6 us     disabled
+	001  50 MHz	 31.2 us     15.6 us
+	010  60 MHz	 62.4 us     31.2 us
+	011  66 MHz	 125 us	     64.4 us
+	100  reserved	 250 us	     125 us
+	101  reserved	 reserved    256 us
+	1xx  reserved	 reserved    reserved
+SeeAlso: #01078,#01087,#01077,#01094,#01085
 
-Bitfields for Intel 82437FX/82437MX/82437VX/82439HX DRAM timing register:
-Bit(s)	Description	(Table 1044)
- 7	(82437FX) reserved
+Bitfields for Intel 82437FX/MX/VX,82439HX/TX DRAM timing register:
+Bit(s)	Description	(Table 01096)
+ 7	(82437FX,82439TX) reserved
  7	(82437MX) MA[11:2] buffer strength
 	=0 8mA
 	=1 12mA
@@ -5919,29 +6633,30 @@ Bit(s)	Description	(Table 1044)
 	01 x333
 	10 x222
 	11 reserved
+ 2	(82439TX) reserved
  2	RAS-to-CAS Delay
 	=1 two clocks
 	=0 three clocks
  1-0	DRAM Leadoff Timing
-	82437VX Read Leadoff  Write Leadoff  RAS# Precharge
-	    00		11	7		3
-	    01		10	6		3
-	    10		11	7		4
-	    11		10	6		4
-	82437FX/MX Read Lead  Write Leadoff  RAS# Precharge
-	    00		8	6		3
-	    01		7	5		3
-	    10		8	6		4
-	    11		7	5		4
-	82437VX Read Leadoff  Write Leadoff  RAS# Precharge
-	    00		7	6		3
-	    01		6	5		3
-	    10		7	6		4
-	    11		6	5		4
-SeeAlso: #1035,#1043,#1033,#1034
+	82437FX/MX  Read Leadoff  Write Leadoff	 RAS# Precharge
+	  00		8	    6		   3
+	  01		7	    5		   3
+	  10		8	    6		   4
+	  11		7	    5		   4
+	82437VX,82439TX	 Read  Write Leadoff  RAS# Precharge
+	  00	       11	    7		   3
+	  01	       10	    6		   3
+	  10	       11	    7		   4
+	  11	       10	    6		   4
+	82439HX	 Read Leadoff  Write Leadoff  RAS# Precharge
+	  00		7	    6		   3
+	  01		6	    5		   3
+	  10		7	    6		   4
+	  11		6	    5		   4
+SeeAlso: #01078,#01087,#01095,#01085,#01086
 
-Bitfields for Intel 82434/82437/82439/etc Programmable Attribute Map Register:
-Bit(s)	Description	(Table 1045)
+Bitfields for Intel 8243x/8244x Programmable Attribute Map Register:
+Bit(s)	Description	(Table 01097)
  7	reserved
  6	cache enable (region 1)
  5	write enable (region 1)
@@ -5952,10 +6667,10 @@ Bit(s)	Description	(Table 1045)
  0	read enable (region 0)
 Notes:	each programmable attribute map register controls two memory
 	  regions at the top of the first megabyte of memory
-	for the Intel 82441FX and 82443BX, bits 6 and 2 are reserved, as
-	  cacheability is set using the Pentium Pro's MTRR registers
+	for the Intel 82441FX and 82443BX/LX, bits 6 and 2 are reserved, as
+	  cacheability is set using the Pentium Pro/II/Celeron's MTRR registers
 	  (see MSR 000000FEh)
-	Intel 82434/82437FX/82437MX/82437VX/82439HX/82441FX PAM
+	Intel 82434,82437FX/MX/VX,82439HX,82441FX,82443EX/LX PAM
 	  registers/regions:
 		PAM0 low: reserved [*]
 		PAM0 hi:  segment F000-FFFF
@@ -5973,10 +6688,10 @@ Notes:	each programmable attribute map register controls two memory
 		PAM6 hi:  segment EC00-EFFF
 	[*] on the 82434 (and possibly other Intel chipsets), the low nybble of
 	  PAM0 controls segment 8000-9FFF
-SeeAlso: #0982,#1035,#1025,#1096,#1033,#1034,#1054
+SeeAlso: #01034,#01087,#01077,#01078,#01208,#01085,#01086,#01121,#01108
 
-Bitfields for Intel 82437VX DRAM Row Type register:
-Bit(s)	Description	(Table 1046)
+Bitfields for Intel 82437VX,82439TX DRAM Row Type register:
+Bit(s)	Description	(Table 01098)
  7,3	row 3 type
  6,2	row 2 type
  5,1	row 1 type
@@ -5985,16 +6700,31 @@ Bit(s)	Description	(Table 1046)
 	01 EDO DRAM
 	10 SDRAM
 	11 reserved
-SeeAlso: #1035,#1045
+SeeAlso: #01078,#01087,#01097,#01192
+
+Bitfields for Intel 82439TX DRAM Row Type high register:
+Bit(s)	Description	(Table 01192)
+ 7	Host Frequency detection
+	=1 66MHz Bus
+	=0 60MHz bus
+ 5,1	DRAM Row 5 type
+ 4,0	DRAM ROW 4 type
+	00 SPM
+	01 EDO
+	10 SDRAM
+	11 reserved
+ 6,3	reserved
+ 2	Memory Address select Enabled
+SeeAlso: #01078,#01098
 
 Bitfields for Intel 82437FX/82437MX DRAM Row Type register:
-Bit(s)	Description	(Table 1047)
+Bit(s)	Description	(Table 01100)
  7-4	reserved
  3-0	DRAM Row N is EDO instead of page-mode DRAM
-SeeAlso: #1033,#1034
+SeeAlso: #01085,#01086
 
 Bitfields for Intel 82437VX PCI TRDY timer:
-Bit(s)	Description	(Table 1048)
+Bit(s)	Description	(Table 01101)
  7-3	reserved
  2-0	TRDY timeout value
 	000 2 PCICLKs
@@ -6002,10 +6732,10 @@ Bit(s)	Description	(Table 1048)
 	010 6 PCICLKs
 	011 8 PCICLKs
 	1xx reserved
-SeeAlso: #1035,#1049
+SeeAlso: #01087,#01102
 
-Bitfields for Intel 82437/82439HX/82443 System Management RAM control register:
-Bit(s)	Description	(Table 1049)
+Bitfields for Intel 82437,82439HX/TX,82443BX/EX/LX SMRAM control register:
+Bit(s)	Description	(Table 01102)
  7	reserved
  6	SMM Space Open
 	=1 make SMM DRAM visible even when not in SMM if bit 4 =0
@@ -6017,28 +6747,28 @@ Bit(s)	Description	(Table 1049)
 	=1 128K DRAM are accessible for use at A000 while in SMM
  2-0	SMM Space Base Segment
 	010 segment A000-BFFF
-	100 segment C000-CFFF (82437MX only)
+	100 segment C000-CFFF (82437MX,82443EX only)
 	other reserved
 Note:	bits 5 and 6 must never both be set at the same time
-SeeAlso: #1035,#1025,#1050,#1033,#1034,#1054
+SeeAlso: #01078,#01087,#01077,#01103,#01085,#01086,#01121,#01108
 
 Bitfields for Intel 82437VX Shared Memory Buffer control register:
-Bit(s)	Description	(Table 1050)
+Bit(s)	Description	(Table 01103)
  7-2	reserved
  1	enable shared memory buffer
  0	redirect shared memory buffer access
 	=0 treat SMB area as a hole in system DRAM
-SeeAlso: #1035,#1049,#1051
+SeeAlso: #01087,#01102,#01104
 
 Bitfields for Intel 82437VX Graphics Controller Latency Timer:
-Bit(s)	Description	(Table 1051)
+Bit(s)	Description	(Table 01104)
  7-6	reserved
  5-3	GC latency for PCI reads (in 4 HCLK multiples) (default=100)
  2-0	GC latency for CPU and PCI writes (in 4 HCLK multiples) (default=011)
-SeeAlso: #1035,#1050
+SeeAlso: #01087,#01103
 
 Bitfields for Intel 82439HX Error Command register:
-Bit(s)	Description	(Table 1052)
+Bit(s)	Description	(Table 01105)
  7	SERR# duration
 	=0 one PCI clock
 	=1 until error flags are cleared
@@ -6046,91 +6776,337 @@ Bit(s)	Description	(Table 1052)
  2	force bad parity on multiple-bit uncorrectable error
  1	assert SERR# on multiple-bit uncorrectable error
  0	assert SERR# on single-bit correctable error
-SeeAlso: #1025,#1053
+SeeAlso: #01077,#01106
 
 Bitfields for Intel 82439HX Error Status register:
-Bit(s)	Description	(Table 1053)
+Bit(s)	Description	(Table 01106)
  7-5	DRAM row associated with multi-bit error
  4	multi-bit uncorrectable error occurred (write 1 bit to clear)
  3-1	DRAM row associated with single-bit correctable error
  0	single-bit correctable error occurred (write 1 bit to clear)
-SeeAlso: #1025,#1052
+SeeAlso: #01077,#01105
+
+Bitfields for Intel 82439TX miscellaneous control register:
+Bit(s)	Description	(Table 01107)
+ 7	reserved
+ 6	ACPI control register enable
+ 5	Suspend refresh type (EDO/FPM DRAM only)
+	=1 Self refresh (Always for SDRAM)
+	=0 CBR refresh
+ 4	Normal refresh enable
+	When set to 1, 82439TX switches from suspend refresh to normal refresh
+ 3	reserved
+ 2	Internal clock control disable
+	=1 disable
+	=0 enable  Disables 82439TX internal clocks during suspend, reducing
+	  power consumption.
+ 1-0	reserved
+SeeAlso: #01078
+
+Format of PCI configuration for Intel 82443EX/LX Device 0 (Host-PCI):
+Offset	Size	Description	(Table 01108)
+ 00h 64 BYTEs	header (see #00857)
+		(vendor ID 8086h, device ID 7180h)
+		chipset is 82443EX if revision >= 03h
+ 40h 16 BYTEs	reserved
+ 50h	WORD	PAC Configuration register (See #01110)
+ 52h	BYTE	reserved
+ 53h	BYTE	Data Buffer Control register (see #01111)
+ 54h	BYTE	reserved
+ 55h	WORD	DRAM Row Type register (see #01112)
+ 57h	BYTE	DRAM Control register (see #01113)
+ 58h	BYTE	DRAM Timing register (see #01114)
+ 59h  7 BYTEs	PAM Configuration registers 0-6 (See #01097)
+ 60h  8 BYTEs	DRAM Row Boundary registers 0-7
+		each register indicates top of memory for a particular row, in
+		  8MB units; DIMMs use two rows each, with single-sided DIMMs
+		  leaving the odd-numbered rows unpopulated
+ 68h	BYTE	Fixed DRAM Hole Control register (see #01126)
+ 69h	BYTE	reserved
+ 6Ah	WORD	DRAM Extended Mode Select register (see #01115)
+ 6Ch	DWORD	Memory Buffer Strength Control register (see #01116)
+ 70h	BYTE	Multi-Transaction Timer register (see #01119)
+ 71h	BYTE	reserved
+ 72h	BYTE	System Management RAM Control register (see #01102)
+ 73h 29 BYTEs	reserved
+ 90h	BYTE	Error Command register (see #01135)
+ 91h	BYTE	Error Status 0 register (see #01117)
+ 92h	BYTE	Error Status 1 register (see #01118)
+ 93h	BYTE	Reset Control Register (see #01218)
+ 94h 12 BYTEs	reserved
+ A0h	DWORD	AGP Capability register (see #01137)
+ A4h	DWORD	AGP Status register (see #01138)
+ A8h	DWORD	AGP Command register (see #01139)
+ ACh  4 BYTEs	reserved
+ B0h	DWORD	AGP Control register (see #01140)
+ B4h	BYTE	Arpeture Size Control register (see #01141)
+ B5h  3 BYTEs	reserved
+ B8h	DWORD	Arpeture Translation Table Base register (see #01142)
+ BCh	BYTE	AGP MTT Control register (see #01119)
+ BDh	BYTE	AGP Low Priority Transaction timer register (see #01120)
+ BCh 67 BYTEs	reserved
+Notes:	The 82443EX is virtually identical to the 82443LX, except that it does
+	  not support ECC type DRAM.
+	The Intel 82443EX/LX chipsets use PCI configuration mechanism #1
+SeeAlso: #01109,#01121,PORT 0CF8h
+
+Format of PCI configuration for Intel 82443EX/LX Device 1 (PCI-PCI):
+Offset	Size	Description	(Table 01109)
+ 00h 64 BYTEs	header, type 1 [bridge] (see #00857)
+		(vendor ID 8086h, device ID 7181h)
+		chipset is 82443EX if revision >= 03h
+ 40h 192 BYTEs	reserved
+Note:	The Intel 82443LX chipset uses PCI configuration mechanism #1
+SeeAlso: #01108,#01122,PORT 0CF8h
+
+Bitfields for Intel 82443EX/LX (Device 0) PAC Configuration register:
+Bit(s)	Description	(Table 01110)
+ 15	WSC# Handshake Disable
+ 14	(82443LX) Host Frequency (read-only)
+	=1 60MHz
+	=0 66MHz
+ 14	(82443EX) reserved
+ 13-12	reserved
+ 11	??? (Not documented by Intel!)
+ 10	PCI Agent to Arperture Access Disable
+ 9	Aperture Access Global Enable
+ 8-6	(82443EX) reserved
+ 8-7	(82443LX) DRAM Data Integrety Mode
+	00  Non-ECC (no check, no correct)
+	01  EC-only (do check, no correct)
+	10  reserved
+	11 ECC (do check, do correct)
+ 6	(82443LX) ECC-Test Diagnostic Mode Enabled
+ 5	MDA Present
+	Note:	Controls routing of Monochrome Display Adaptor I/O and memory
+		  range accesses. Works in conjunction with the VGA-bit in
+		  Bridge Control register of device 1 (see #00880):
+		    VGA MDA
+		    0	0	MDA and VGA routed to PCI bus
+		    0	1	reserved
+		    1	0	MDA and VGA routed to AGP bus
+		    1	1	VGA routed to AGP bus, MDA routed to PCI bus
+ 4-0	reserved
+SeeAlso: #00880,#01108
+
+Bitfields for Intel 82443EX/LX (Device 0) Data Buffer Control register:
+Bit(s)	Description	(Table 01111)
+ 7	reserved
+ 6	CPU-to-PCI posting enabled
+ 5	Write post during I/O Bridge access enabled
+ 4-0	reserved
+SeeAlso: #01108
+
+Bitfields for Intel 82443EX/LX (Device 0) DRAM Row Type register:
+Bit(s)	Description	(Table 01112)
+ 15-14	row 7 type
+	0 0  EDO	(Same values for each row)
+	0 1  reserved
+	1 0  SDRAM
+	1 1  empty row
+ 13-12	row 6 type
+ 11-10	row 5 type
+ 9-8	row 4 type
+ 7-6	row 3 type
+ 5-4	row 2 type
+ 3-2	row 1 type
+ 1-0	row 0 type
+SeeAlso: #01108,#01113
+
+Bitfields for Intel 82443EX/LX (Device 0) DRAM Control register:
+Bit(s)	Description	(Table 01113)
+ 7-6	reserved
+ 5	DRAM EDO Auto-Detect mode enabled
+ 4	SDRAM power management enabled
+ 3	reserved
+ 2-0	DRAM Refresh rate
+	000 = Refresh disabled
+	001 = Normal (Based on PAC Configuration bit 14)
+	010-111 = reserved
+SeeAlso: #01108,#01112,#01114
+
+Bitfields for Intel 82443EX/LX (Device 0) DRAM Timing register:
+Bit(s)	Description	(Table 01114)
+ 7	SDRAM RAS to CAS Delay	(1 = 2 clocks, 0 = 3 clocks)
+ 6	SDRAM CAS Latency	(1 = 2 clocks, 0 = 3 clocks)
+ 5	SDRAM RAS Precharge Time (1 = 2 clocks, 0 = 3 clocks)
+ 4	EDO DRAM Read Burst timing
+	=1 Read rate is x222
+	=0 Read rate is x333
+ 3	EDO DRAM Write Burst timing
+	=1 Write rate is x222
+	=0 write rate is x333
+ 2	EDO RAS Precharge Time	(1 = 3 clocks, 0 = 4 clocks)
+ 1	EDO RAS to CAS Delay	(1 = 2 clocks, 0 = 3 clocks)
+ 0	MA Wait State
+	=1 Fast (0 wait states for SDRAM, clocks run normally for EDO)
+	=0 Slow (1 wait state for SDRAM, add one clock to all EDO timings)
+SeeAlso: #01108,#01113
+
+Bitfields for Intel 82443EX/LX DRAM Extended Mode Select register:
+Bit(s)	Description	(Table 01115)
+ 15-8	reserved
+ 7-5	Operating Mode
+	000	Normal operating mode
+	001	NOP command enabled
+	010	All banks precharge enable
+	011	Mode register set command enable
+	100	CBR cycle enable
+	101-11x reserved
+ 4	reserved
+ 3-2	Page timeout select
+	00    16 clocks
+	01-11 reserved
+ 1-0	Close both banks control
+	00    close both banks on page misses
+	01-11 reserved
+SeeAlso: #01108
+
+Bitfields for Intel 82443EX/LX Memory Buffer Strength Control register:
+Bit(s)	Description	(Table 01116)
+ 31-30	MAA[1-0] buffer strength
+	00  48mA (same values for bits 25-12,5-0)
+	01  42mA
+	10  22mA
+	11  reserved
+ 29-28	(82443LX only) MECC[7-0] buffer strength
+	00  42mA (same values for bits 27-26,11-6)
+	01  38mA
+	10  33mA
+	11  reserved
+ 27-26	MD[63-0] buffer strength
+ 25-24	RCSA[0]# & RCSB[0]#/MAB[6] buffer strength
+ 23-22	(82443LX only) MAB[1-0] buffer strength
+ 21-20	MAA[13:2] buffer strength
+ 19-18	RCSA[1]# & RCSB[1]#/MAB[7] buffer strength
+ 17-16	RCSA[2]# & RCSB[2]#/MAB[8] buffer strength
+ 15-14	RCSA[3]# & RCSB[3]#/MAB[9] buffer strength
+ 13-12	(82443LX only) RCSA[4]# & RCSB[4]#/MAB[10] buffer strength
+ 11-10	(82443LX only) CQDB[5,1]# buffer strength
+ 9-8	CQDA[5,1]# buffer strength
+ 7-6	CQDA[7-6,4-2,0]# buffer strength
+---82443LX---
+ 5-4	RCSA[5]# & RCSB[5]#/MAB[11] buffer strength
+ 3-2	RCSA[6]#/MAB[2] & RCSB[6]#/MAB[12] buffer strength
+ 1-0	RCSA[7]#/MAB[3] & RCSB[7]#/MAB[13] buffer strength
+---82443EX---
+ 5-0	reserved
+SeeAlso: #01108
+
+Bitfields for Intel 82443EX/LX Error Status 0 register:
+Bit(s)	Description	(Table 01117)
+---82443LX---
+ 7-5	Multi-bit first error (read-only) Indicates which DRAM row had the
+	  multi-bit error
+ 4	Multiple-bit ECC Error occurred flag
+ 3-1	Single-bit first row error (read-only) Indicates which DRAM row had the
+	  single-bit error
+ 0	Single-bit ECC error occurred flag
+---82443EX---
+ 7-0	reserved
+Note:	Write a 1 to bits 4 & 0 to clear the flags
+SeeAlso: #01108,#01118
+
+Bitfields for Intel 82443EX/LX Error Status 1 register:
+Bit(s)	Description	(Table 01118)
+ 7-3	reserved
+ 2	AGP non-snoopable access outside of graphics arperture
+ 1	AGP non-snoopable access outside of main DRAM ranges and arperture
+ 0	access to invalid graphics arperture translation table entry
+Note:	Write a 1 to these bit(s) to clear
+SeeAlso: #01108,#01117
+
+Bitfields for Intel 82443EX/LX Multi-Transaction Timer register:
+Bit(s)	Description	(Table 01119)
+ 7-3	Multi-transaction timer count value
+ 2-0	reserved
+SeeAlso: #01108,#01120
+
+Bitfields for Intel 82443EX/LX Low Priority Transaction Timer register:
+Bit(s)	Description	(Table 01120)
+ 7-3	Low priority transaction timer count value
+ 2-0	reserved
+SeeAlso: #01108,#01119
 
 Format of PCI Configuration for Intel 82443BX Device 0 (Host-PCI):
-Offset	Size	Description	(Table 1054)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 01121)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 8086h, device ID 7190h/7192h)
  10h	DWORD	graphics aperture base address
  2Ch	WORD	subsystem vendor identification (write-once)
  2Eh	WORD	subsystem device identification (write-once)
  40h 16 BYTEs	reserved (0)
- 50h	DWORD	440BX Configuration (see #1056)
+ 50h	DWORD	440BX Configuration (see #01123)
  54h  3 BYTEs	reserved (0)
- 57h	BYTE	DRAM Control (see #1057)
- 58h	BYTE	DRAM Timing (see #1058)
- 59h  7 BYTEs	Programmable Attribute Map register 0-6 (see #1045)
+ 57h	BYTE	DRAM Control (see #01124)
+ 58h	BYTE	DRAM Timing (see #01125)
+ 59h  7 BYTEs	Programmable Attribute Map register 0-6 (see #01097)
  60h  8 BYTEs	DRAM Row Boundary registers 0-7
 		each register indicates top of memory for a particular row, in
 		  8MB units; DIMMs use two rows each, with single-sided DIMMs
 		  leaving the odd-numbered rows unpopulated
- 68h	BYTE	Fixed DRAM Hole Control (see #1059)
- 69h  6 BYTEs	Memory Buffer Strength Control (see #1060)
+ 68h	BYTE	Fixed DRAM Hole Control (see #01126)
+ 69h  6 BYTEs	Memory Buffer Strength Control (see #01127)
  6Fh  2 BYTEs	reserved (0)
  71h	BYTE	Intel Reserved (1Fh)
- 72h	BYTE	SMRAM Control (see #1049)
- 73h	BYTE	Extended SMRAM Control (see #1061)
- 74h	WORD	SDRAM Row Page Size (see #1062)
- 76h	WORD	SDRAM Control Register (see #1063)
- 78h	WORD	Paging Policy Register (see #1064)
- 7Ah	BYTE	Power Management Control (see #1065)
- 7Bh	WORD	Suspend CBR Refresh Rate Register (see #1066)
+ 72h	BYTE	SMRAM Control (see #01102)
+ 73h	BYTE	Extended SMRAM Control (see #01128)
+ 74h	WORD	SDRAM Row Page Size (see #01129)
+ 76h	WORD	SDRAM Control Register (see #01130)
+ 78h	WORD	Paging Policy Register (see #01131)
+ 7Ah	BYTE	Power Management Control (see #01132)
+ 7Bh	WORD	Suspend CBR Refresh Rate Register (see #01133)
  7Dh  3 BYTEs	reserved (0)
- 80h	DWORD	Error Address Pointer (see #1067)
+ 80h	DWORD	Error Address Pointer (see #01134)
  84h 12 BYTEs	reserved (0)
- 90h	BYTE	Error Command Register (see #1068)
- 91h	WORD	Error Status Register (see #1069)
+ 90h	BYTE	Error Command Register (see #01135)
+ 91h	WORD	Error Status Register (see #01136)
  93h	BYTE	reserved (0)
  94h	DWORD	Intel Reserved (00006104h)
  98h	WORD	Intel Reserved (0500h)
  9Ah	BYTE	Intel Reserved (0)
  9Bh  5 BYTEs	reserved (0)
- A0h	DWORD	AGP Capability Identifier (see #1070)
- A4h	DWORD	AGP Status Register (read-only) (see #1071)
- A8h	DWORD	AGP Command Register (see #1072)
+ A0h	DWORD	AGP Capability Identifier (see #01137)
+ A4h	DWORD	AGP Status Register (read-only) (see #01138)
+ A8h	DWORD	AGP Command Register (see #01139)
  ACh  4 BYTEs	reserved (0)
- B0h	DWORD	AGP Control Register (see #1073)
- B4h	BYTE	Aperture Size Control (see #1074)
+ B0h	DWORD	AGP Control Register (see #01140)
+ B4h	BYTE	Aperture Size Control (see #01141)
  B5h  3 BYTEs	reserved (0)
- B8h	DWORD	Aperture Translation Table (see #1075)
+ B8h	DWORD	Aperture Translation Table (see #01142)
  BCh  2 BYTEs	reserved
  BEh	WORD	reserved (0)
  C0h	DWORD	Intel Reserved (0)
  C4h	DWORD	Intel Reserved (0)
  C8h	BYTE	Intel Reserved (18h)
  C9h	BYTE	Intel Reserved (0Ch)
- CAh  3 BYTEs	Memory Buffer Frequency Select (see #1076)
+ CAh  3 BYTEs	Memory Buffer Frequency Select (see #01143)
  CDh  3 BYTEs	reserved (0)
  D0h  8 BYTEs	BIOS scratch pad (read-write, init to 0 on reset)
  D8h  8 BYTEs	Intel Reserved (0)
- E0h  2	DWORDs	DRAM Write Thermal Throttling Control (see #1077)
- E8h  8 BYTEs	DRAM Read Therman Throttling Control (see #1077)
- F0h	WORD	Buffer Control Register (see #1078)
- F2h  6 BYTEs	Intel Reserved (0000F800h)
+ E0h  2	DWORDs	DRAM Write Thermal Throttling Control (see #01144)
+ E8h  8 BYTEs	DRAM Read Therman Throttling Control (see #01144)
+ F0h	WORD	Buffer Control Register (see #01145)
+ F2h  2 BYTEs	Intel Reserved (0000h)
+ F4h	DWORD	Intel Reserved (0000F800h)
+		bits 30-29 are "Abort Disable Test Mode" configuration bits
+			and should always be set (according to Intel
+			Specification Update)
  F8h	DWORD	Intel Reserved (00000F20h)
  FCh	DWORD	Intel Reserved (0)
-SeeAlso: #0845,#1055,PORT 0022h"82443BX"
+SeeAlso: #00852,#01122,PORT 0022h"82443BX"
 !!!intel\29063301.pdf p.34
 
 Format of PCI Configuration for Intel 82443BX Device 1 (PCI-AGP):
-Offset	Size	Description	(Table 1055)
- 00h 64 BYTEs	header, type 1 [bridge] (see #0850)
+Offset	Size	Description	(Table 01122)
+ 00h 64 BYTEs	header, type 1 [bridge] (see #00857)
 		(vendor ID 8086h, device ID 7191h)
  40h 192 BYTEs	reserved
-SeeAlso: #0845,#1054
+SeeAlso: #00852,#01121,#01109
 !!!intel\29063301.pdf p.80
 
 Bitfields for Intel 82443BX (Device 0) NBX Configuration Register:
-Bit(s)	Description	(Table 1056)
+Bit(s)	Description	(Table 01123)
  31-24	SDRAM rows without ECC (each set bit indicates a row in the SDRAM array
 	  with does NOT have error correction (bit 24 = row 0; note that double-
 	  sided DIMMs use two rows, one for the front and one for the back)
@@ -6174,10 +7150,10 @@ Bit(s)	Description	(Table 1056)
 	=1 maximum (PPro supports up to 8, but 82443BX only supports depth 4)
 	=0 depth forced to 1 (no pipelining on processor bus)
  1:0	reserved
-SeeAlso: #1054
+SeeAlso: #01121
 
 Bitfields for 82443BX DRAM Control:
-Bit(s)	Description	(Table 1057)
+Bit(s)	Description	(Table 01124)
  7-6	reserved
  5	module mode configuration (read-only)
 	=0 self-refresh entry is staggered; if "SDRAMPWR" (offset 76h bit 4) is
@@ -6199,28 +7175,28 @@ Bit(s)	Description	(Table 1057)
 	100 124.8
 	101 249.6
 	else reserved
-SeeAlso: #1054
+SeeAlso: #01121
 
 Bitfields for Intel 82443BX DRAM Timing:
-Bit(s)	Description	(Table 1058)
+Bit(s)	Description	(Table 01125)
  7-2	reserved
  1	add one EDO RASx# wait state for row misses (two tASR instead of one)
  0	add one wait state to first EDO CASx# assertion for page hits
 	(2 Tasc instead of 1 Tasc)
-SeeAlso: #1054
+SeeAlso: #01121
 
-Bitfields for Intel 82443BX Fixed DRAM Hole Control:
-Bit(s)	Description	(Table 1059)
+Bitfields for Intel 82443BX/EX/LX Fixed DRAM Hole Control:
+Bit(s)	Description	(Table 01126)
  7-6	Hole Enable
 	00 none
 	01 512K-640K
 	10 15M-16M
 	11 reserved
  5-0	reserved (0)
-SeeAlso: #1054
+SeeAlso: #01121,#01108
 
 Bitfields for Intel 82443BX Memory Buffer Strength Control:
-Bit(s)	Description	(Table 1060)
+Bit(s)	Description	(Table 01127)
  47-40	reserved (0)
  39-38	strengths of MAA[13:0], WEA#, SRASA#, SCASA# (settings same as below)
  37-36	strengths of MAB[12:11,9:0], MAB[13,10], WEB#, SRASB#, SCASB#
@@ -6270,33 +7246,34 @@ Bit(s)	Description	(Table 1060)
  5-4	DQMA[7:6,4:2,0]/CASA[7:6,4:2,0]#  buffer strength (as for bits 37-36)
  3-2	CKE1/GCKE buffer strength (same values as bits 37-36)
  1-0	CKE0/FENA buffer strength (same values as bits 37-36)
-SeeAlso: #1054
+SeeAlso: #01121
 
-Bitfields for Intel 82443BX Extended SMRAM Control:
-Bit(s)	Description	(Table 1061)
+Bitfields for Intel 82439TX/82443BX Extended SMRAM Control register:
+Bit(s)	Description	(Table 01128)
  7	SMRAM location
 	=0 compatible SMRAM space at segment A000h
 	=1 high SMRAM space at addreses 100A0000h to 100FFFFFh (accessing
 	  physical DRAM addresses A0000h to FFFFFh)
  6	(write-clear) access to extended SMRAM memory range when SMRAM space
 	  is not open and not in SMM
- 5	enable caching of SMRAM (forced to 1 by 82443BX)
+ 5	enable write-through caching of SMRAM
+	(forced to 1 by 82443BX, to 0 by 82439TX)
  4	enable L1 caching of SMRAM (forced to 1 by 82443BX)
  3	enable L2 caching of SMRAM (forced to 1 by 82443BX)
- 2-1	TSEG size (read-only once SMRAM locked) (see #1049)
+ 2-1	TSEG size (read-only once SMRAM locked) (see #01102)
 	00 128K
 	01 256K
 	10 512K
 	11 1M
- 0	enable TSEG (read-only once SMRAM locked) (see #1049)
+ 0	enable TSEG (read-only once SMRAM locked) (see #01102)
 	when both SMRAM and TSEG are enabled, the top N kilobytes of physical
 	  DRAM are no longer claimed by the memory controller, and instead
 	  appear as extended SMRAM at an address 256M higher than the physical
 	  address
-SeeAlso: #1054,#1049
+SeeAlso: #01121,#01102,#01078
 
 Bitfields for Intel 82443BX SDRAM Row Page Size:
-Bit(s)	Description	(Table 1062)
+Bit(s)	Description	(Table 01129)
  15-14	page size for row 7 (back of DIMM4)
 	00 two KB
 	01 four KB
@@ -6306,10 +7283,10 @@ Bit(s)	Description	(Table 1062)
  ...
  3-2	page size for row 1 (back of DIMM1)
  1-0	page size for row 0 (front of DIMM1) 
-SeeAlso: #1054
+SeeAlso: #01121
 
 Bitfields for Intel 82443BX SDRAM Control Register:
-Bit(s)	Description	(Table 1063)
+Bit(s)	Description	(Table 01130)
  15-10	reserved (0)
  9-8	add one-clock delay to idle/pipeline DRAM leadoff when =01 (all other
 	  values are illegal)
@@ -6327,7 +7304,7 @@ Bit(s)	Description	(Table 1063)
 	100 issue CBR cycles on all CPU-to-SDRAM cycles
 	else reserved
  4	"SDRAMPWR" specifies how CKE signals are driven for various DRAM
-	  configurations; refer to #1057 bit 5
+	  configurations; refer to #01124 bit 5
  3	Leadoff Command Timing
 	=0 four CS# clocks (100 MHz or 66 MHz desktop if MAA/MAB load > 9)
 	=1 three CS# clocks (66 MHz mobile platforms, or desktop w/ load <= 9)
@@ -6340,10 +7317,10 @@ Bit(s)	Description	(Table 1063)
  0	SDRAM RAS# precharge
 	=0 three clocks
 	=1 two clocks
-SeeAlso: #1054
+SeeAlso: #01121
 
 Bitfields for Intel 82443BX Paging Policy Register:
-Bit(s)	Description	(Table 1064)
+Bit(s)	Description	(Table 01131)
  15-8	banks per row (bit 7 is row 0, bit 15 is row 7)
 	=0 two banks
 	=1 four banks
@@ -6360,10 +7337,10 @@ Bit(s)	Description	(Table 1064)
 	0110 16 clocks
 	0111 32 clocks
 	1xxx never (pages are not closed on idle)
-SeeAlso: #1054
+SeeAlso: #01121
 
 Bitfields for Intel 82443BX Power Management Control Register:
-Bit(s)	Description	(Table 1065)
+Bit(s)	Description	(Table 01132)
  7	enable SDRAM power-down for idle rows
  6	enable ACPI control register at PORT 0022h
  5	suspend refresh type
@@ -6375,43 +7352,49 @@ Bit(s)	Description	(Table 1065)
 	  idle state)
  1	AGP disabled (read-only)
  0	enable CPU reset without PCIRST enable
-SeeAlso: #1054
+SeeAlso: #01121
 
 Bitfields for Intel 82443BX Suspend CBR Refresh Rate:
-Bit(s)	Description	(Table 1066)
+Bit(s)	Description	(Table 01133)
  15-13	reserved (0)
  12	enable automatic Suspend CBR Refresh Rate adjustment (based on number
 	  of OSCCLKs in a given time); if clear, the below field must be
 	  programmed to guarantee minimum refresh rates in the worst case
  11-0	Suspend CBR Refresh Rate (number of OSCCLKs between refresh requests)
-SeeAlso: #1054
+SeeAlso: #01121
 
 Bitfields for Intel 82443BX Error Address Pointer:
-Bit(s)	Description	(Table 1067)
+Bit(s)	Description	(Table 01134)
  31-12	(read-only) bits 31-12 of address in which first parity/ECC error
 	  occurred
  11-2	reserved
  1	(write-clear) multi-bit error occurred
  0	(write-clear) single-bit error occurred
-SeeAlso: #1068,#1054
+SeeAlso: #01135,#01121
 
-Bitfields for Intel 82443BX Error Command Register:
-Bit(s)	Description	(Table 1068)
+Bitfields for Intel 82443BX/EX/LX Error Command Register:
+Bit(s)	Description	(Table 01135)
  7	enable SERR# on AGP non-snoopable access outside graphics aperture
- 6	enable SERR# on invalid AGP DRAM access
+ 6	enable SERR# on invalid AGP DRAM access (82443BX)
+	enable SERR# on AGP Non-snoopable access to location outside main DRAM
+	  and arpeture rangles (82443EX/LX)
  5	enable SERR# on access to invalid Graphics Aperture Translation Table
  4	enable SERR# on receiving Target Abort
- 3	enable SERR# when Thermal DRAM Throttling detected
+ 3	enable SERR# when Thermal DRAM Throttling detected (82443BX)
+	enable SERR# on PCI Parity Error (82443EX/LX)
+---82443BX---
  2	SERR# mode
 	=0 asserted for one PCI clock
 	=1 level mode signal (for systems that connect SERR# to EXTSMI#)
  1	enable SERR# on receiving multi-bit Parity/ECC error
  0	enable SERR# on receiving single-bit (corrected) ECC error
+---82443EX/LX---
+ 2-0	reserved
 Note:	bits 1 and 0 must be clear on systems not supporting ECC
-SeeAlso: #1067,#1069,#1054
+SeeAlso: #01134,#01136,#01121,#01108
 
 Bitfields for Intel 82443BX Error Status Register:
-Bit(s)	Description	(Table 1069)
+Bit(s)	Description	(Table 01136)
  15-13	reserved (0)
  12	(write-clear) DRAM Read thermal throttling condition occurred
  11	(write-clear) DRAM Write thermal throttling condition occurred
@@ -6422,19 +7405,19 @@ Bit(s)	Description	(Table 1069)
  4	(write-clear) multi-bit (uncorrectable) error occurred
  3-1	(read-only) number of DRAM row containing first single-bit error
  0	(write-clear) single-bit (correctable) error occurred
-SeeAlso: #1068,#1054
+SeeAlso: #01135,#01121
 
 Bitfields for Intel AGP Capability Identifier:
-Bit(s)	Description	(Table 1070)
+Bit(s)	Description	(Table 01137)
  31-24	reserved
  23-20	major version of supported AGP revision
  19-16	minor version of supported AGP revision
  15-8	offset of next capability (0 = none)
  7-0	PCI capability ID (2 = AGP, 0 = disabled)
-SeeAlso: #1054,#1071
+SeeAlso: #01121,#01138,#01108
 
-Bitfields for Intel 82443BX AGP Status Register:
-Bit(s)	Description	(Table 1071)
+Bitfields for Intel 82443BX/EX/LX AGP Status Register:
+Bit(s)	Description	(Table 01138)
  31-24	maximum AGP request queue depth (read-only)
  23-10	reserved
  9	AGP side band addressing is supported (read-only)
@@ -6443,10 +7426,10 @@ Bit(s)	Description	(Table 1071)
 	bit 0: 1x data transfer mode
 	bit 1: 2x data transfer mode
 Note:	bits 0 and 1 may not both be clear
-SeeAlso: #1072,#1054,#1070
+SeeAlso: #01139,#01121,#01137,#01108
 
-Bitfields for Intel 82443BX AGP Command Register:
-Bit(s)	Description	(Table 1072)
+Bitfields for Intel 82443BX/EX/LX AGP Command Register:
+Bit(s)	Description	(Table 01139)
  31-10	reserved
  9	enable AGP sideband addressing
  8	enable AGP
@@ -6456,21 +7439,28 @@ Bit(s)	Description	(Table 1072)
 	01 = 1x
 	10 = 2x
 	11 illegal
-SeeAlso: #1071,#1054,#1073
+SeeAlso: #01138,#01121,#01140,#01108
 
-Bitfields for Intel 82443BX AGP Control Register:
-Bit(s)	Description	(Table 1073)
+Bitfields for Intel 82443BX/EX/LX AGP Control Register:
+Bit(s)	Description	(Table 01140)
  31-16	reserved (0)
- 15	disable forced ordering of snoopable writes and AGP reads
+ 15	disable forced ordering of snoopable writes and AGP reads (82443BX)
+	(82443EX/LX) reserved
  14	reserved (0)
  13	enable Graphics Aperture Write-AGP Read synchronization
- 12-8	reserved (0)
+ 12-10	reserved (0)
+ 9-8	reserved (0) (82443BX)
+	expedite transaction throttle timer (82443EX/LX)
+	00 no throttling
+	01 reserved
+	10 192 clocks on, 64 clocks off
+	11 reserved
  7	enable Graphics Translation Lookaside Buffer (and GTLB Flush Control)
  6-0	reserved (0)
-SeeAlso: #1072,#1054
+SeeAlso: #01139,#01121,#01108
 
-Bitfields for Intel 82443BX Graphics Aperture Size Control:
-Bit(s)	Description	(Table 1074)
+Bitfields for Intel 82443BX/EX/LX Graphics Aperture Size Control:
+Bit(s)	Description	(Table 01141)
  7-6	reserved
  5-0	aperture size
 	000000 256M
@@ -6481,16 +7471,16 @@ Bit(s)	Description	(Table 1074)
 	111110 8M
 	111111 4M
 	other illegal
-SeeAlso: #1054,#1075
+SeeAlso: #01121,#01142,#01108
 
-Bitfields for Intel 82443BX Graphics Aperture Translation Table Base Register:
-Bit(s)	Description	(Table 1075)
+Bitfields for Intel 82443BX/EX/LX Graphics Aperture Trans. Table Base Register:
+Bit(s)	Description	(Table 01142)
  31-12	bits 31-12 of aperture translation table base address 
  11-0	reserved (0)
-SeeAlso: #1074,#1054
+SeeAlso: #01141,#01121,#01108
 
 Bitfields for Intel 82443BX Memory Buffer Frequency Select:
-Bit(s)	Description	(Table 1076)
+Bit(s)	Description	(Table 01143)
  23	reserved
  22	MAA[13:0], WEA#, SRASA#, SCASA# buffer select
 	=0 66 MHz buffers
@@ -6518,10 +7508,10 @@ Bit(s)	Description	(Table 1076)
  2	DQMA[7:6,4:2,0]/CASA[7:6,4:2,0]# buffer select
  1	CKE1/GCKE buffer select
  0	CKE0/FENA buffer select
-SeeAlso: #1054,#1078
+SeeAlso: #01121,#01145
 
 Bitfields for Intel 82443BX DRAM Read/Write Thermal Throttling Control:
-Bit(s)	Description	(Table 1077)
+Bit(s)	Description	(Table 01144)
  63	lock all read and write throttle control register bits (exists in Write
 	  Throttling control register only)
  62-46	reserved
@@ -6538,10 +7528,10 @@ Bit(s)	Description	(Table 1077)
  2-0	DRAM Throttle Mode
 	100 normal operation
 	else Intel Reserved
-SeeAlso: #1054
+SeeAlso: #01121
 
 Bitfields for Intel 82443BX Buffer Control Register:
-Bit(s)	Description	(Table 1078)
+Bit(s)	Description	(Table 01145)
  15-10	reserved
  9-6	AGP Jam Latch strength
 	bit 9: enable strong pull-up
@@ -6549,113 +7539,730 @@ Bit(s)	Description	(Table 1078)
 	bit 7: enable strong pull-down
 	bit 6: enable weak pull-down
  5-0	Intel Reserved
-SeeAlso: #1054,#1076
+SeeAlso: #01121,#01143
 
 Format of PCI Configuration for Intel 82371FB/82371SB Function 0 (ISA Bridge):
-Offset	Size	Description	(Table 1079)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 01146)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 8086h, device ID 122Eh/7000h)
 		(revision ID 00h = 82371SB step A-1)
 		(revision ID 01h = 82371SB step B-0)
  40h 12 BYTEs	reserved
- 4Ch	BYTE	ISA I/O Controller Recovery Timer (see #1014)
+ 4Ch	BYTE	ISA I/O Controller Recovery Timer (see #01066)
  4Dh	BYTE	reserved
- 4Eh	BYTE	X-Bus Chip Select Enable (see #1016)
- 4Fh	BYTE	(82371SB) X-Bus Chip Select Enable High (see #1029)
+ 4Eh	BYTE	X-Bus Chip Select Enable (see #01068)
+ 4Fh	BYTE	(82371SB) X-Bus Chip Select Enable High (see #01081)
 		bit 0: I/O APIC enabled
  4Fh	BYTE	(82371FB) reserved
  50h 16 BYTEs	reserved
- 60h  4 BYTEs	PCI IRQ Route Control (see #1003)
+ 60h  4 BYTEs	PCI IRQ Route Control (see #01055)
  64h  5 BYTEs	reserved
- 69h	BYTE	top of memory (see #1083)
- 6Ah	WORD	miscellaneous status (see #1084)
+ 69h	BYTE	top of memory (see #01195)
+ 6Ah	WORD	miscellaneous status (see #01196)
  6Ch  4 BYTEs	reserved
- 70h	BYTE	motherboard IRQ Route Control 0 (see #1085)
- 71h	BYTE	(82371FB) motherboard IRQ Route Control 1 (see #1085)
+ 70h	BYTE	motherboard IRQ Route Control 0 (see #01197)
+ 71h	BYTE	(82371FB) motherboard IRQ Route Control 1 (see #01197)
  72h  4 BYTEs	reserved
- 76h  2 BYTEs	motherboard DMA control (see #1086)
- 78h	WORD	programmable chip select control (see #1087)
+ 76h  2 BYTEs	motherboard DMA control (see #01198)
+ 78h	WORD	programmable chip select control (see #01199)
  7Ah  6 BYTEs	reserved
- 80h	BYTE	(82371SB) APIC Base Address Relocation (see #1005)
+ 80h	BYTE	(82371SB) APIC Base Address Relocation (see #01057)
  81h	BYTE	reserved
- 82h	BYTE	(82371SB) Deterministic Latency Control (see #1088)
+ 82h	BYTE	(82371SB) Deterministic Latency Control (see #01200)
  83h 29 BYTEs	reserved
- A0h	BYTE	SMI Control (see #1089)
+ A0h	BYTE	SMI Control (see #01201)
  A1h	BYTE	reserved
- A2h	WORD	SMI Enable (see #1007)
- A4h	DWORD	System Event Enable (SEE) (see #1008)
+ A2h	WORD	SMI Enable (see #01059)
+ A4h	DWORD	System Event Enable (SEE) (see #01060)
  A8h	BYTE	Fast-Off Timer (in minutes, PCICLKs, or milliseconds)
 		value is count less one; timer must be stopped before
 		  changing its value
  A9h	BYTE	reserved
- AAh	WORD	SMI Request (see #1009)
+ AAh	WORD	SMI Request (see #01061)
  ACh	BYTE	Clock Scale STPCLK# Low Timer
 		STPCLK# stays low for 1+1056*(value+1) PCICLKs
  ADh	BYTE	reserved
  AEh	BYTE	Clock Scale STPCLK# High Timer
 		STPCLK# stays high for 1+1056*(value+1) PCICLKs
  AFh 81 BYTEs	reserved
-SeeAlso: #0845,#1081,#1082,#0991,#1010,#1035,#1025
+SeeAlso: #00852,#01193,#01194,#01043,#01062,#01087,#01077
 
 Format of PCI configuration for Intel 82371MX MPIIX:
-Offset	Size	Description	(Table 1080)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 01147)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 8086h, device ID 1234h)
  40h  9 BYTEs	reserved
-	!!!intel\29052501.pdf p.23
- 49h	BYTE	serial and parallel port enable
+ 49h	BYTE	serial and parallel port enable (see #01148)
  4Ah  2 BYTEs	reserved
- 4Ch	BYTE	extended I/O Controller Recovery Timer
+ 4Ch	BYTE	Extended I/O Controller Recovery Timer (see #01149)
  4Dh	BYTE	reserved
- 4Eh	BYTE	BIOS enable
- 4Fh	BYTE	FDC enable
+ 4Eh	BYTE	BIOS enable (see #01150)
+ 4Fh	BYTE	FDC enable (see #01151)
  50h 16 BYTEs	reserved
- 60h	BYTE	PIRQA# Route Control
- 61h	BYTE	PIRQB# Route Control
+ 60h	BYTE	PIRQA# Route Control (see #01055)
+ 61h	BYTE	PIRQB# Route Control (see #01055)
  62h  8 BYTEs	reserved
- 6Ah	WORD	miscellaneous status
- 6Ch	WORD	IDE timing modes
+ 6Ah	WORD	Miscellaneous Status (see #01152)
+ 6Ch	WORD	IDE timing modes (see #01202)
  6Eh  2 BYTEs	reserved
- 70h	BYTE	motherboard IRQ Route Control
+ 70h	BYTE	Motherboard IRQ Route Control (see #01202)
  71h  5 BYTEs	reserved
- 76h  3 BYTEs	motherboard DMA Route Control
+ 76h  3 BYTEs	Motherboard DMA Route Control (see #01198)
  79h  5 BYTEs	reserved
- 7Eh	BYTE	audio enable
- 7Fh	BYTE	DMA channel 5-7 address size
- 80h	BYTE	PCI DMA enable
+ 7Eh	BYTE	Audio enable (see #01153)
+ 7Fh	BYTE	DMA channel 5-7 address size (see #01154)
+ 80h	BYTE	PCI DMA enable (see #01155)
  81h  7 BYTEs	reserved
- 88h	BYTE	PCI DMA/PCI DMA expansion A
- 89h	BYTE	PCI DMA/PCI DMA expansion B
- 8Ah  4 BYTEs	Programmable Memory Address Control
- 8Eh	WORD	Programmable Memory Address Mask
- 90h	BYTE	Programmable Address Range Enable
+ 88h	BYTE	PCI DMA/PCI DMA expansion A (see #01156)
+ 89h	BYTE	PCI DMA/PCI DMA expansion B (see #01156)
+ 8Ah	WORD	Programmable Memory Address Control 0 (see #01157)
+ 8Ch	WORD	Programmable Memory Address Control 1 (see #01157)
+ 8Eh	WORD	Programmable Memory Address Mask (see #01158)
+ 90h	BYTE	Programmable Address Range Enable (see #01159)
  91h	BYTE	reserved
- 92h	WORD	Programmable Chip Select Control
- 94h	WORD	Programmable Address Control 1
- 96h	WORD	Programmable Address Control 2
- 98h	WORD	Programmable Address Control 3
- 9Ah	BYTE	Programmable Address Mask A
- 9Bh	BYTE	Programmable Address Mask B
- 9Ch	WORD	I/O configuration address
+ 92h	WORD	Programmable Chip Select Control (see #01160)
+ 94h	WORD	Programmable Address Control 1 (see #01161)
+ 96h	WORD	Programmable Address Control 2 (see #01161)
+ 98h	WORD	Programmable Address Control 3 (see #01161)
+ 9Ah	BYTE	Programmable Address Mask A (see #01162)
+ 9Bh	BYTE	Programmable Address Mask B (see #01163)
+ 9Ch	WORD	I/O configuration address (see #01164)
  9Eh  2 BYTEs	reserved
- A0h	!!!
-SeeAlso: #0845
+ A0h	WORD	Programmable Address Control 4 (see #01161)
+ A2h	WORD	Programmable Address Control 5 (see #01161)
+ A4h	BYTE	Programmable Address Mask C (see #01165)
+ A5h	BYTE	Peripheral Access Detect Enable 0 (see #01166)
+ A6h	BYTE	Peripheral Access Detect Enable 1 (see #01167)
+ A7h	BYTE	Peripheral Access Detect Enable 2 (see #01168)
+ A8h	WORD	Local Trap Address for Device 3 (see #01169)
+ AAh	BYTE	Local Trap Mask for Device 3 (see #01170)
+ ABh	BYTE	Local Trap SMI Enable (see #01171)
+ ACh  2 BYTEs	reserved
+ AEh	BYTE	Local Trap SMI Status (see #01171)
+ AFh	BYTE	reserved
+ B0h	BYTE	Local Standby SMI Enable (see #01172)
+ B1h	BYTE	Local Standby Timer Reload Enable (see #01173)
+ B2h	BYTE	Local Standby SMI Status (see #01172)
+ B3h	BYTE	reserved
+ B4h	BYTE	Local Standby Timer IDE Idle (see #01174)
+ B5h	BYTE	Local Standby Timer Audio Idle	(see #01174)
+ B6h	BYTE	Local Standby Timer COM Idle (see #01174)
+ B7h	BYTE	reserved
+ B8h	BYTE	Local Standby Timer Device 1 Idle (see #01174)
+ B9h	BYTE	Local Standby Timer Device 2 Idle (see #01174)
+ BAh	BYTE	Local Standby Timer Device 3 Idle (see #01174)
+ BBh	BYTE	reserved
+ BCh	BYTE	Software/EXTSMI# SMI Delay Timer (see #01174)
+ BDh	BYTE	Suspend SMI Delay Timer (see #01174)
+ BEh	BYTE	Global Standby Timer (see #01174)
+ BFh	BYTE	Clock Throttle Standby Timer (see #01174)
+ C0h	BYTE	System Management Control (see #01175)
+ C1h	BYTE	System SMI Enable (see #01176)
+ C2h	BYTE	Miscellaneous SMI Enable (see #01177)
+ C3h	BYTE	Global SMI Enable (see #01179)
+ C4h  2 BYTEs	reserved
+ C6h	BYTE	System SMI Status (see #01176)
+ C7h	BYTE	Miscellaneous SMI Status (see #01178)
+ C8h	BYTE	Global SMI Status (see #01180)
+ C9h  3 BYTEs	reserved
+ CCh	BYTE	Suspend/Resume Control 1 (see #01181)
+ CDh	BYTE	Suspend/Resume Control 2 (see #01182)
+ CEh	BYTE	SMOUT Control (see #01183)
+ CFh	BYTE	reserved
+ D0h	BYTE	System Event Enable 0 (see #01186)
+ D1h	BYTE	System Event Enable 1 (see #01187)
+ D2h	BYTE	System Event Enable 2 (see #01188)
+ D3h	BYTE	Burst Count Timer (see #01174)
+ D4h	BYTE	Clock Control (see #01184)
+ D5h	BYTE	reserved
+ D6h	BYTE	STPCLK# Low Timer (see #01174)
+ D7h	BYTE	STPCLK# High Timer (see #01174)
+ D8h	BYTE	Stop Break Event Enable 0 (see #01186)
+ D9h	BYTE	Stop Break Event Enable 1 (see #01187)
+ DAh	BYTE	Stop Break Event Enable 2 (see #01188)
+ DBh  5 BYTEs	reserved
+ E0h	BYTE	Shadow Register (see #01185)
+ E1h  3 BYTEs	reserved
+ E4h	BYTE	Burst Clock Event Enable 0 (see #01186)
+ E5h	BYTE	Burst Clock Event Enable 1 (see #01187)
+ E6h	BYTE	Burst Clock Event Enable 2 (see #01188)
+ E7h	BYTE	Burst Clock Event Enable 3 (see #01189)
+ E8h	BYTE	Burst Clock Event Enable 4 (see #01190)
+ E9h	BYTE	Burst Clock Event Enable 5 (see #01191)
+ EAh	BYTE	Burst Clock Event Enable 6 (see #01192)
+ EBh	BYTE	reserved
+ ECH	BYTE	Clock Throttle Break Event Enable 0 (see #01186)
+ EDh	BYTE	Clock Throttle Break Event Enable 1 (see #01187)
+ EEh	BYTE	Clock Throttle Break Event Enable 2 (see #01188)
+ EFh	BYTE	Clock Throttle Break Event Enable 3 (see #01189)
+ F0h	BYTE	Clock Throttle Break Event Enable 4 (see #01190)
+ F1h	BYTE	Clock Throttle Break Event Enable 5 (see #01191)
+ F2h	BYTE	Clock Throttle Break Event Enable 6 (see #01192)
+ F3h 13 BYTES	reserved
+SeeAlso: #00852,#01055
+
+Bitfields for Intel 82371MX serial and parallel port enable register:
+Bit(s)	Description	(Table 01148)
+ 7	reserved
+ 6	LPT3 enabled
+ 5	LPT2 enabled
+ 4	LPT1 enabled
+ 3	COM4 enabled
+ 2	COM3 enabled
+ 1	COM2 enabled
+ 0	COM1 enabled
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Extended I/O Controller Recovery Timer register:
+Bit(s)	Description	(Table 01149)
+ 7	reserved
+ 6	8-Bit I/O Recovery Enable
+	=1 Enable value programmed into bits 5-3
+ 5-3	8-Bit I/O Recovery Times
+	000 = 8 SYSCLK
+	001 = 1 SYSCLK (default)
+	010 = 2 SYSCLK
+	011 = 3 SYSCLK
+	100 = 4 SYSCLK
+	101 = 5 SYSCLK
+	110 = 6 SYSCLK
+	111 = 7 SYSCLK
+ 2-0	Reserved (0)
+SeeAlso: #01147,#01066,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX BIOS enable register:
+Bit(s)	Description	(Table 01150)
+ 7	Extended BIOS Enable
+ 6	Lower BIOS Enable 1
+ 5	Lower BIOS Enable 0
+ 4	Lower BIOS CS# Enable 0
+ 3	F Segment BIOS Enable
+ 2	BIOSCS# Write Protect
+ 1-0	reserved
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX FDC Enable register:
+Bit(s)	Description	(Table 01151)
+ 7	Coprocessor Error fuction Enable
+ 6	IRQ12/M Mouse Function Enable
+ 5	System Management Output 5/Disk Output Enable
+ 4	System Management Output 4/RTCALE Enable
+ 3	Motherboad DMA 2 Disable
+ 2	reserved
+ 1	Floppy Secondary Addess Enable
+ 0	Floppy Primary Address Enable
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Miscellaneous Status register:
+Bit(s)	Description	(Table 01152)
+ 15-3	reserved
+ 2-1	reserved (0)
+ 0	ISA Clock Divisor Status
+	=1 Divisor=3 (PCICLK=25MHz) default
+	=0 Divisor=4 (PCICLK=33MHz)
+Note:	This is a read-only register that reports on chipset jumper settings.
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Audio enable register:
+Bit(s)	Description	(Table 01153)
+ 7	Audio enabled
+ 6-4	Reserved
+ 3-2	Audio I/O Address
+	00	0220h
+	01	0230h
+	10	0240h
+	11	0250h
+ 1-0	reserved
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX DMA channel 5-7 address size register:
+Bit(s)	Description	(Table 01154)
+ 7	Channel 7 16/8-Bit Count by Word/Byte
+	=1 16-bit, count by word
+	=0 8-bit, count by byte
+ 6	Channel 6 16/8-Bit Count by Word/Byte (same values as bit 7)
+ 5	Channel 5 16/8-Bit Count by Word/Byte (same values as bit 7)
+4-3	reserved (0)
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX PCI DMA Enable register:
+Bit(s)	Description	(Table 01155)
+ 7	DMA CH7 is on PCI Bus
+ 6	DMA CH6 is on PCI Bus
+ 5	DMA CH5 is on PCI Bus
+ 4	reserved
+ 3	DMA CH3 is on PCI Bus
+ 2	DMA CH2 is on PCI Bus
+ 1	DMA CH1 is on PCI Bus
+ 0	DMA CH0 is on PCI Bus
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX PCI DMA/PCI DMA expansion registers:
+Bit(s)	Description	(Table 01156)
+ 7-4	reserved
+ 3	Expansion enabled
+ 2-0	DMA channel
+Note:	The PCI DMA Expansion request lines (REQ[A,B]#/GNT[A,B]#) provide PCI
+	  DMA and PCI DMA expansion support.
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Programmable Memory Address Control registers:
+Bit(s)	Description	(Table 01157)
+ 15-0	Memory Access Control
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Programmable Memory Address Mask register:
+Bit(s)	Description	(Table 01158)
+ 7-0	Memory Address Mask
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Programmable Address Range Enable register:
+Bit(s)	Description	(Table 01159)
+ 7	PCS# Enabled for Programmable Address Range 2
+ 6	PCS# Enabled for Programmable Address Range 1
+ 5	Programmable Address range 5 Enabled
+ 4	Programmable Address range 4 Enabled
+ 3	Programmable Address range 5 Enabled
+ 2	Programmable Address range 3 Enabled
+ 1	Programmable Address range 1 Enabled
+ 5	PCS# Address range Enabled
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Programmable Chip Select Control register:
+Bit(s)	Description	(Table 01160)
+ 15-0	PCS# Address
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Programmable Address Control registers:
+Bit(s)	Description	(Table 01161)
+ 15-0	Programmable Address Control
+Note:	This register selects a 16-bit I/O address range to be forwarded to
+	  the Extended I/O Bus, if enabled in the Programmable Address Range
+	  register.
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Programmable Address Mask A register:
+Bit(s)	Description	(Table 01162)
+ 7-4	Programmable Address Control 1 Mask
+ 3-0	Programmable Chip Select Mask
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Programmable Address Mask B register:
+Bit(s)	Description	(Table 01163)
+ 7-4	Programmable Address Control 3 Mask
+ 3-0	Programmable Address Control 2 Mask
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX I/O configuration address register:
+Bit(s)	Description	(Table 01164)
+ 15-10	reserved
+ 9-1	I/O Configuration Address
+ 0	I/O Configuration Address Enabled
+Note:	This register provides an I/O address range to be forwarded to the
+	  Extended I/O Bus for accesses to the configuration space of an
+	  integrated I/O device. PCI address bits 9-1 are compared to bits
+	  9-1 of this register. Address bits 31-10 must be 0.
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Programmable Address Mask C register:
+Bit(s)	Description	(Table 01165)
+ 7-4	Programmable Address Control 5 Mask
+ 3-0	Programmable Address Control 4 Mask
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Peripheral Access Detect Enable 0 register:
+Bit(s)	Description	(Table 01166)
+ 7	Enable Audio-E
+ 6	Enable Audio-D
+ 5	Enable Audio-C
+ 4	Enable Audio-B
+ 3	Enable Audio-A
+ 2	Enable Parallel 3
+ 1	Enable Parallel 2
+ 0	Enable Parallel 1
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Peripheral Access Detect Enable 1 register:
+Bit(s)	Description	(Table 01167)
+ 7	Enable COM4
+ 6	Enable COM3
+ 5	Enable COM3
+ 4	Enable COM1
+ 3	Enable Secondary FDC
+ 2	Enable Primary FDC
+ 1	Enable Secondary IDE
+ 0	Enable Promary IDE
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Peripheral Access Detect Enable 2 register:
+Bit(s)	Description	(Table 01168)
+ 7	Enable PMAC1
+ 6	Enable PMAC0
+ 5	Enable PAC5
+ 4	Enable PAC4
+ 3	Enable PAC3
+ 2	Enable PAC2
+ 1	Enable PAC1
+ 0	Enable PCSC
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Local Trap Address for Device 3 register:
+Bit(s)	Description	(Table 01169)
+ 15-0	Local Trap Address base for Device 3
+Note:	Is compared with bits 15-0 of PCI I/O Addresses. Address bits 31-16
+	  must be 0.
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Local Trap Mask for Device 3 register:
+Bit(s)	Description	(Table 01170)
+ 7-4	Local Trap COM Port Select
+	=1000	COM4 02E8h-02EFh
+	=0100	COM3 03E8h-83EFh
+	=0010	COM2 02F8h-02FFh
+	=0001	COM1 03F8h-03FFh
+Note:	These bits when set cause an SMI# when access to the corresponding I/O
+	  port range is made.
+ 3-0	Local Trap Mask
+Note:	This field selects the range of trappable addresses (in bytes).
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Local Trap SMI Enable/Status registers:
+Bit(s)	Description	(Table 01171)
+ 7-6	reserved
+ 5	IDE
+ 4	Audio
+ 3	COM
+ 2	DEV3
+ 1	DEV2
+ 0	DEV1
+Note:	a set bit indicates in the Enable register turns generation of SMI# on
+	  I/O accesses to the address region used by the selected device;
+	  a set bit in the Status register indicates which trap caused an SMI#
+	  interrupt.
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Local Standby SMI Enable/Status registers:
+Bit(s)	Description	(Table 01172)
+ 7-6	reserved
+ 5	IDE
+ 4	Audio
+ 3	COM
+ 2	DEV3
+ 1	DEV2
+ 0	DEV1
+Note:	each bit in the Enable register turns on the associated SMI Timer; a
+	  set bit in the Status register indicates which local standby timer
+	  caused the SMI interrupt
+SeeAlso: #01147,#01173,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Local Standby Timer Reload Enable register:
+Bit(s)	Description	(Table 01173)
+ 7	IDE
+ 6	Audio
+ 5	COM
+ 4	DEV3
+ 3	DEV2
+ 2	DEV1
+ 1	Audio MDAK2
+ 0	Audio MDAK1
+Note:	This register enables local standby timer reloading. When the
+	  associated I/O address range is accessed, the standby timer is
+	  reloaded with it's default value. Also note the different bit-order
+	  for this register only.
+SeeAlso: #01147,#01172,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Count Value registers:
+Bit(s)	Description	(Table 01174)
+ 7-0	Count value
+Note:	This field contains the initial count value for various time-out
+	  events. 00 is an illegal programmed value. The programmed value is
+	  decremented by certain events or system clocks, and the event is
+	  triggered when the count reaches 0.
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX System Management Control register:
+Bit(s)	Description	(Table 01175)
+ 7-3	reserved
+ 2	Freeze (but not reset) all Power Management timers
+ 1	=0 disable all Power Management functions
+ 0	=0 disable SMI
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX System SMI Enable/Status registers:
+Bit(s)	Description	(Table 01176)
+ 7	reserved
+ 6	Write to APMC Port (software SMI)
+ 5	EXTSMI#
+ 4	IRQ12
+ 3	IRQ8
+ 2	IRQ4
+ 1	IRQ3
+ 0	IRQ1
+Note:	each set bit in the Enable register turns on SMI# generation for the
+	  associated hardware event; a set bit in the Status register indicates
+	  which event caused the SMI interrupt
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Miscellaneous SMI Enable register:
+Bit(s)	Description	(Table 01177)
+ 7-4	reserved
+ 3	Write to APMC Port
+ 2	SRBTN#
+ 1	BATLOW#
+ 0	reserved
+Note:	Enables SMI# generation for the above hardware events
+SeeAlso: #01147,#01178,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Miscellaneous SMI Status register:
+Bit(s)	Description	(Table 01178)
+ 7-4	reserved
+ 3	=1 indicates system is in global standby mode
+ 2	SRBTN# caused SMI
+ 1	BATLOW# caused SMI
+ 0	reserved
+SeeAlso: #01147,#01177,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Global SMI Enable register:
+Bit(s)	Description	(Table 01179)
+ 7	System Events Enabled
+ 6	Software SMI#'s (generated by bit 0 of this register) Enabled
+ 5	reserved
+ 4	Local Traps Enabled
+ 3	Local Standby Timers Enabled
+ 2	Global Standby Timer Enabled
+ 1	SRBTN# and BATLOW# Enabled
+Note:	Enables SMI# generation for the above hardware events
+SeeAlso: #01147,#01180,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Global SMI Status register:
+Bit(s)	Description	(Table 01180)
+ 7	One of the System Events caused SMI
+ 6	Software SMI or EXTSMI# caused SMI
+ 5	Write to APMC caused SMI
+ 4	Access to one of the Local Traps caused SMI
+ 3	One of the local Standby timers caused SMI
+ 2	Global Standby Timer caused SMI
+ 1	SRBTN# or BATLOW# caused SMI
+ 0	reserved
+SeeAlso: #01147,#01179,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Suspend/Resume Control 1 register:
+Bit(s)	Description	(Table 01181)
+ 7	BATLOW# bypasses Suspend delay timer and activates SMI# immediately
+ 6	IRQ8 will NOT cause a resume
+ 5	COM RI (Ring) will NOT cause a resume ("Wake on Ring" function)
+ 4	BATLOW# will not prevent a resume
+ 3	is set by power management software at the end of a suspend routine
+ 2	can be set by power management software at the end of a suspend routine
+ 1-0	Set suspend mode
+	00	Suspend Disabled
+	01	reserved
+	10	Suspend-to-DRAM
+	11	Suspend-to-Disk
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Suspend/Resume Control 2 register:
+Bit(s)	Description	(Table 01182)
+ 7-1	reserved
+ 0	EXTSMI# will NOT cause a resume event
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX SMOUT Control register:
+Bit(s)	Description	(Table 01183)
+ 7-6	reserved
+ 5-0	Writing to any bits sets the state of the 6 SMOUTx pins.
+	SMOUT5 is not effected if it is configured for DOE# function
+	SMOUT4 is not effected if it is configured for RTCALE function
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Clock Control register:
+Bit(s)	Description	(Table 01184)
+ 7	Clock Throttle standy by timer frequency
+	=1 32ms
+	=0 4ms
+Note:	Sets the granularity of the Clock Throttle Standby Timer
+ 6-5	reserved
+ 4	Enable Auto Clock Throttle
+ 3-2	STPCLK# Mode
+	00 Disable STPCLK# Function
+	01 Enable stop grant mode
+	10 Enable stop clock mode
+	11 reserved
+ 1	Enable clock throttling
+ 0	Enable "PCI Clock can be stopped"
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+(Table 01185)
+Values for Intel 82371MX Shadow Register
+Value	AT Port	Description
+ 00h	00h	Channel 0 Base Address Register (low byte)
+ 01h	00h	Channel 0 Base Address Register (high byte)
+ 02h	01h	Channel 0 Base Word Count Register (low byte)
+ 03h	01h	Channel 0 Base Word Count Register (high byte)
+ 04h	02h	Channel 1 Base Address Register (low byte)
+ 05h	02h	Channel 1 Base Address Register (high byte)
+ 06h	03h	Channel 1 Base Word Count Register (low byte)
+ 07h	03h	Channel 1 Base Word Count Register (high byte)
+ 08h	04h	Channel 2 Base Address Register (low byte)
+ 09h	04h	Channel 2 Base Address Register (high byte)
+ 0Ah	05h	Channel 2 Base Word Count Register (low byte)
+ 0Bh	05h	Channel 2 Base Word Count Register (high byte)
+ 0Ch	06h	Channel 3 Base Address Register (low byte)
+ 0Dh	06h	Channel 3 Base Address Register (high byte)
+ 0Eh	07h	Channel 3 Base Word Count Register (low byte)
+ 0Fh	07h	Channel 3 Base Word Count Register (high byte)
+ 10h	08h	DMA1 Command Register
+ 11h	0Bh	Channel 0 Mode Register
+ 12h	0Bh	Channel 1 Mode Register
+ 13h	0Bh	Channel 2 Mode Register
+ 14h	0Bh	Channel 3 Mode Register
+ 15h	0Fh	DMA1 Mask Register
+ 16h	C4h	Channel 5 Base Address Register (low byte)
+ 17h	C4h	Channel 5 Base Address Register (high byte)
+ 18h	C6h	Channel 5 Base Word Count Register (low byte)
+ 19h	C6h	Channel 5 Base Word Count Register (high byte)
+ 1Ah	C8h	Channel 6 Base Address Register (low byte)
+ 1Bh	C8h	Channel 6 Base Address Register (high byte)
+ 1Ch	CAh	Channel 6 Base Word Count Register (low byte)
+ 1Dh	CAh	Channel 6 Base Word Count Register (high byte)
+ 1Eh	CCh	Channel 7 Base Address Register (low byte)
+ 1Fh	CCh	Channel 7 Base Address Register (high byte)
+ 20h	CDh	Channel 7 Base Word Count Register (low byte)
+ 21h	CDh	Channel 7 Base Word Count Register (high byte)
+ 22h	D0h	DMA2 Command Register
+ 23h	D6h	Channel 5 Mode Register
+ 24h	D6h	Channel 6 Mode Register
+ 25h	D6h	Channel 7 Mode Register
+ 26h	DEh	DMA2 Mask Register
+ 27h	20h	PIC1 ICW1
+ 28h	21h	PIC1 ICW2
+ 29h	21h	PIC1 ICW3
+ 2Ah	21h	PIC1 ICW4
+ 2Bh	20h	PIC1 OCW2
+ 2Ch	A0h	PIC2 ICW1
+ 2Dh	A1h	PIC2 ICW2
+ 2Eh	A1h	PIC2 ICW3
+ 2Fh	A1h	PIC2 ICW4
+ 30h	A0h	PIC2 OCW2
+ 31h	70h	NMI mask / RTC address
+ 32h	03FAh	COM1 FIFO Enable Register (only bits 0,3,6 & 7 valid)
+ 33h	02FAh	COM2 FIFO Enable Register (only bits 0,3,6 & 7 valid)
+ 34h	03EAh	COM3 FIFO Enable Register (only bits 0,3,6 & 7 valid)
+ 35h	02EAh	COM4 FIFO Enable Register (only bits 0,3,6 & 7 valid)
+ 36h	40h	TIMER 0 Count Register (low byte)
+ 37h	40h	TIMER 0 Count Register (high byte)
+ 38h	20h	Master PIC OCW3 Register (bits 0,2 & 5 only valid)
+ 39h	A0h	Slave PIC OCW3 Register (bits 0,2 & 5 only valid)
+Desc:	This register is used to read the current programmed value of certain
+	  AT compatable I/O ports which are traditionally write-only.
+Note:	To read a given register, write the value from the table to the shadow
+	  register, then immediately re-read the shadow register. The returned
+	  value is the current value of the I/O port.
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Burst Clock/Clock Throttle Break Enable 0 register:
+Bit(s)	Description	(Table 01186)
+ 7	Enable IRQ7
+ 6	Enable IRQ6
+ 5	Enable IRQ7
+ 4	Enable IRQ4
+ 3	Enable IRQ3
+ 2	reserved
+ 1	Enable IRQ1
+ 0	Enable IRQ0
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Event Enable 1 register:
+Bit(s)	Description	(Table 01187)
+ 7	Enable IRQ15
+ 6	Enable IRQ14
+ 5	reserved
+ 4	Enable IRQ12
+ 3	Enable IRQ11
+ 2	Enable IRQ10
+ 1	Enable IRQ9
+ 0	Enable IRQ8
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Event Enable 2 register:
+Bit(s)	Description	(Table 01188)
+ 7	(Clock Throttle Break Event,Burst Clock Event)
+	  reserved
+	(System Event,Stop Break Event,Clock Throttle Break Event)
+	  Enable BATLOW# & SRBTN#
+ 6	Enable EXTSMI#
+ 5	Enable SMI#
+ 4	(System Event,Stop Break Event,Clock Throttle Break Event)
+	  Enable NMI
+	(Burst Clock Event)
+	  reserved
+ 3	(System Event,Stop Break Event,Clock Throttle Break Event)
+	  Enable INTR
+	(Burst Clock Event)
+	  reserved
+ 2	reserved
+ 1	Enable COMRI#
+ 0	Enable events of selected type
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Event Enable 3 register:
+Bit(s)	Description	(Table 01189)
+ 7-2	reserved
+ 1	Enable EXTEVNT#
+ 0	Enable PHLDA#
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Event Enable 4 register:
+Bit(s)	Description	(Table 01190)
+ 7	Enable PMAC1
+ 6	Enable PMAC0
+ 5	Enable PAC5
+ 4	Enable PAC4
+ 3	Enable PAC3
+ 2	Enable PAC2
+ 1	Enable PAC1
+ 0	Enable PCSC
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Event Enable 5 register:
+Bit(s)	Description	(Table 01191)
+ 7	Enable COM4
+ 6	Enable COM3
+ 5	Enable COM3
+ 4	Enable COM1
+ 3	Enable Secondary FDC
+ 2	Enable Primary FDC
+ 1	Enable Secondary IDE
+ 0	Enable Promary IDE
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
+
+Bitfields for Intel 82371MX Event Enable 6 register:
+Bit(s)	Description	(Table 01192)
+ 7	Enable Audio-E
+ 6	Enable Audio-D
+ 5	Enable Audio-C
+ 4	Enable Audio-B
+ 3	Enable Audio-A
+ 2	Enable Parallel 3
+ 1	Enable Parallel 2
+ 0	Enable Parallel 1
+SeeAlso: #01147,PORT xxxxh"Intel 82371"
 
 Format of PCI Configuration for Intel 82371FB/82371SB Function 1 (IDE):
-Offset	Size	Description	(Table 1081)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 01193)
+ 00h 64 BYTEs	header (see #00857)
 		(vender ID 8086h, device ID 1230h/7010h)
  20h	DWORD	Bus Master Interface Base Address
 		(see PORT xxxxh"Intel 82371SB")
- 40h	WORD	IDE timing modes, primary channel (see #1090)
- 42h	WORD	IDE timing modes, secondary channel (see #1090)
- 44h	BYTE	(82371SB) slave IDE timing register (see #1091)
+ 40h	WORD	IDE timing modes, primary channel (see #01202)
+ 42h	WORD	IDE timing modes, secondary channel (see #01202)
+ 44h	BYTE	(82371SB) slave IDE timing register (see #01203)
  45h 187 BYTEs	reserved
-SeeAlso: #1079,#1082,PORT xxxxh"Intel 82371SB"
+SeeAlso: #01146,#01194,PORT xxxxh"Intel 82371SB"
 
 Format of PCI Configuration data for Intel 82371SB Function 2 (USB):
-Offset	Size	Description	(Table 1082)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 01194)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 8086h, device ID 7020h)
  20h	DWORD	I/O space base address
 		(see PORT xxxxh"Intel 82371SB")
@@ -6664,23 +8271,23 @@ Offset	Size	Description	(Table 1082)
 		00h pre-release 1.0
 		10h Release 1.0
  61h  9 BYTEs	reserved
- 6Ah	WORD	miscellaneous status (see #1092)
+ 6Ah	WORD	miscellaneous status (see #01204)
  6Ch 84 BYTEs	reserved
- C0h	WORD	legacy support (see #1093)
+ C0h	WORD	legacy support (see #01205)
  C2h 62 BYTEs	reserved
-SeeAlso: #1079,#1081,PORT xxxxh"Intel 82371SB"
+SeeAlso: #01146,#01193,PORT xxxxh"Intel 82371SB"
 
 Bitfields for Intel 82371FB/82371SB top of memory register:
-Bit(s)	Description	(Table 1083)
+Bit(s)	Description	(Table 01195)
  7-4	top of ISA memory (in megabytes, less 1; i.e. 0001 = 2M)
  3	ISA/DMA lower BIOS forwarding enable
  2	(82371SB) enable A000/B000 segment forwarding to PCI bus
  1	enable forwarding ISA/DMA 512K-640K region to PCI bus
  0	reserved
-SeeAlso: #1079,#1084
+SeeAlso: #01146,#01196
 
 Bitfields for Intel 82371FB/82371SB miscellaneous status register:
-Bit(s)	Description	(Table 1084)
+Bit(s)	Description	(Table 01196)
  15	(82371SB) enable SERR# on delayed transaction
 	write 1 to clear this bit
  14-8	reserved
@@ -6700,49 +8307,53 @@ Bit(s)	Description	(Table 1084)
 	(82371SB) ISA Clock Divisor (read-write)
 	=1 SYSCLK clock divisor is 3
 	=0 SYSCLK clock divisor is 4
-SeeAlso: #1079,#1083
+SeeAlso: #01146,#01195
 
-Bitfields for Intel 82371FB/82371SB motherboard IRQ Route Control:
-Bit(s)	Description	(Table 1085)
+Bitfields for Intel 82371FB/82371SB/82371MX motherboard IRQ Route Control:
+Bit(s)	Description	(Table 01197)
  7	disable IRQ routing
  6	enable MIRQx/IRQx sharing
- 5	(82371SB) enable IRQ0 output
+ 5	(82371SB only) enable IRQ0 output
  4	reserved (0)
  3-0	ISA IRQ number to which to route the PCI IRQ
-Note:	IRQs 0-2, 8, and 13 are reserved
-SeeAlso: #1079,#1083,#1086
+Notes:	IRQs 0-2, 8, and 13 are reserved
+	interrupt sharing should only be enabled when the device connected to
+	  the MIRQ line and the device connected to the IRQ line both produce
+	  active high, level triggered interrupts.
+SeeAlso: #01146,#01147,#01195,#01198
 
-Bitfields for Intel 82371FB/82371SB motherboard DMA control:
-Bit(s)	Description	(Table 1086)
- 7	type F and DMA buffer enable
+Bitfields for Intel 82371FB/82371SB/82371MX motherboard DMA control:
+Bit(s)	Description	(Table 01198)
+ 7	type F DMA buffer enable
  6-4	reserved
- 3	(82371FB) disable motherboadr DMA channel
- 2-0	DMA channel number
+ 3	(82371FB only) disable motherboadr DMA channel
+	(SB/MX) reserved (0)
+ 2-0	DMA channel number (100 = disabled [default])
 	(82371FB) Type F and Motherboard DMA
-	(82371SB) Type F DMA
-SeeAlso: #1079,#1085
+	(82371SB/MX) Type F DMA
+SeeAlso: #01146,#01147,#01197
 
 Bitfields for Intel 82371FB/83271SB programmable chip select control register:
-Bit(s)	Description	(Table 1087)
+Bit(s)	Description	(Table 01199)
  15-2	I/O address which will assert PCS# signal
  1-0	PCS address mask
 	00 four bytes
 	01 eight contiguous bytes
 	10 disabled
 	11 sixteen contiguous bytes
-SeeAlso: #1079,#1086,#1088
+SeeAlso: #01146,#01198,#01200
 
 Bitfields for Intel 82371SB Deterministic Latency Control register:
-Bit(s)	Description	(Table 1088)
+Bit(s)	Description	(Table 01200)
  7-4	reserved
  3	enable SERR# on delayed transaction timeout
  2	enable USB passive release
  1	enable passive release
  0	enable delayed transactions
-SeeAlso: #1079,#1087
+SeeAlso: #01146,#01199
 
 Bitfields for Intel 82371FB/82371SB SMI Control Register:
-Bit(s)	Description	(Table 1089)
+Bit(s)	Description	(Table 01201)
  7-5	reserved
  4-3	Fast-Off Timer freeze/granularity selection
 	00 one minute granularity (assuming 33 MHz PCICLK)
@@ -6759,12 +8370,13 @@ Notes:	bit 1 is cleared either with an explicit write of 0 here, or by any
 	  write to PORT 00B2h
 	bit 0 does not affect the recording of SMI events, so a pending SMI
 	  will cause an immediate SMI# when the bit is set
-SeeAlso: #1079,#1006
+SeeAlso: #01146,#01058
 
-Bitfields for Intel 82371FB/82371SB IDE timing modes:
-Bit(s)	Description	(Table 1090)
+Bitfields for Intel 82371FB/82371SB/82371MX IDE timing modes:
+Bit(s)	Description	(Table 01202)
  15	IDE decode enable
- 14	(82371SB) slave IDE timing register enable (see #1091)
+ 14	(82371SB) slave IDE timing register enable (see #01203)
+	(82371MX) primary/secondary address decode (=0 primary, =1 secondary)
  13-12	IORDY# sample point
 	00 five clocks after DIOx# assertion
 	01 four clocks
@@ -6776,18 +8388,20 @@ Bit(s)	Description	(Table 1090)
 	01 three clocks
 	10 two clocks
 	11 one clock
- 7	DMA timing enable only, drive 1
+ 7	(FB/SB) DMA timing enable only, drive 1
+	(MX) reserved
  6	prefetch and posting enable, drive 1
  5	IORDY# sample point enable drive select 1
  4	fast timing bank drive select 1
- 3	DMA timing enable only, drive 0
+ 3	(FB/SB) DMA timing enable only, drive 0
+	(MX) reserved
  2	prefetch and posting enable, drive 0
  1	IORDY# sample point enable drive select 0
  0	fast timing bank drive select 0
-SeeAlso: #1081
+SeeAlso: #01193,#01147
 
 Bitfields for Intel 82371SB slave IDE timing register:
-Bit(s)	Description	(Table 1091)
+Bit(s)	Description	(Table 01203)
  7-6	secondary drive 1 IORDY# sample point
 	00 five clocks after DIOx# assertion
 	01 four clocks
@@ -6800,18 +8414,18 @@ Bit(s)	Description	(Table 1091)
 	11 one clock
  3-2	primary drive 1 IORDY# sample point
  1-0	primary drive 1 recovery time
-SeeAlso: #1090
+SeeAlso: #01202
 
 Bitfields for Intel 82371SB miscellaneous status:
-Bit(s)	Description	(Table 1092)
+Bit(s)	Description	(Table 01204)
  15-1	reserved
  0	USB clock selection
 	=1 48 MHz
 	=0 24 MHz
-SeeAlso: #1082,#1093
+SeeAlso: #01194,#01205
 
 Bitfields for Intel 82371SB legacy support register:
-Bit(s)	Description	(Table 1093)
+Bit(s)	Description	(Table 01205)
  15	A20GATE pass-through sequence ended
 	write 1 to clear this bit
  14	reserved
@@ -6834,21 +8448,21 @@ Bit(s)	Description	(Table 1093)
  2	enable trap/SMI on PORT 0064h read
  1	enable trap/SMI on PORT 0060h write
  0	enable trap/SMI on PORT 0060h read
-SeeAlso: #1082,#1092
+SeeAlso: #01194,#01204
 
 Format of PCI Configuration Data for Intel 82557:
-Offset	Size	Description	(Table 1094)
- 00h 64 BYTEs	header (see #0850)
-		(vendor ID 8086h, device ID 1229h) (see #0845)
+Offset	Size	Description	(Table 01206)
+ 00h 64 BYTEs	header (see #00857)
+		(vendor ID 8086h, device ID 1229h) (see #00852)
  10h	DWORD	base address of memory-mapped Control/Status Registers (4K)
-		(see #1095)
+		(see #01207)
  14h	DWORD	base address of I/O-mapped Control/Status Registers (32 ports)
  18h	DWORD	base address of Flash memory (1M)
  40h 192 BYTEs	unused
-SeeAlso: #1025
+SeeAlso: #01077
 
 Format of Intel 82557 Control/Status Registers:
-Offset	Size	Description	(Table 1095)
+Offset	Size	Description	(Table 01207)
  00h	WORD	SCB status word
  02h	WORD	SCB command word
  04h	DWORD	SCB general pointer
@@ -6859,25 +8473,25 @@ Offset	Size	Description	(Table 1095)
  14h	DWORD	Early RCV Interrupt Rx byte count (RXBC) register
 Note:	see www.intel.com/design/network/datashts/64434604.pdf for additional
 	  details
-SeeAlso: #1095
+SeeAlso: #01207
 
 Format of PCI Configuration Data for Intel 82441FX:
-Offset	Size	Description	(Table 1096)
- 00h 64 BYTEs	header (see #0850)
-		(vendor ID 8086h, device ID 1237h) (see #0845)
+Offset	Size	Description	(Table 01208)
+ 00h 64 BYTEs	header (see #00857)
+		(vendor ID 8086h, device ID 1237h) (see #00852)
  40h 16 BYTEs	reserved
- 50h	WORD	PMC Configuration (see #1097)
+ 50h	WORD	PMC Configuration (see #01209)
  52h	BYTE	deturbo counter control
 		when deturbo mode is selected (see PORT 0CF9h), the chipset
 		  places a hold on the memory bus for a fraction of the
 		  time inversely proportional to the value in this register
 		  (i.e. C0h = 1/4, 80h = 1/2, 40h = 3/4, 20h = 7/8, etc.)
- 53h	BYTE	DBX buffer control (see #1098)
- 54h	BYTE	auxiliary control (see #1099)
- 55h	WORD	DRAM Row Type (see #1100)
- 57h	BYTE	DRAM Control (see #1101)
- 58h	BYTE	DRAM Timing (see #1102)
- 59h  7 BYTEs	Programmable Attribute Map registers 0-6 (see #1045)
+ 53h	BYTE	DBX buffer control (see #01210)
+ 54h	BYTE	auxiliary control (see #01211)
+ 55h	WORD	DRAM Row Type (see #01212)
+ 57h	BYTE	DRAM Control (see #01213)
+ 58h	BYTE	DRAM Timing (see #01214)
+ 59h  7 BYTEs	Programmable Attribute Map registers 0-6 (see #01097)
  60h  8 BYTEs	DRAM Row Buondary registers 0-7
 		each register N indicates cumulative amount of memory in rows
 		  0-N (each 64 bits wide), in 8M units
@@ -6886,18 +8500,18 @@ Offset	Size	Description	(Table 1096)
  70h	BYTE	Multi-Transaction Timer
 		number of PCLKs guaranteed to the current agent before the
 		  82441 will grant the bus to another PCI agent on request
- 71h	BYTE	CPU Latency Timer (see #1103)
- 72h	BYTE	System Management RAM control (see #1049)
+ 71h	BYTE	CPU Latency Timer (see #01215)
+ 72h	BYTE	System Management RAM control (see #01102)
  73h 29 BYTEs	reserved
- 90h	BYTE	Error Command (see #1104)
- 91h	BYTE	Error Status (see #1105)
+ 90h	BYTE	Error Command (see #01216)
+ 91h	BYTE	Error Status (see #01217)
  92h	BYTE	reserved
- 93h	BYTE	Turbo Reset Control (see #1106)
+ 93h	BYTE	Turbo Reset Control (see #01218)
  94h 108 BYTEs	reserved
-SeeAlso: #1025,#1035
+SeeAlso: #01077,#01087
 
 Bitfields for Intel 82441FX PMC Configuration Register:
-Bit(s)	Description	(Table 1097)
+Bit(s)	Description	(Table 01209)
  15	WSC Protocol Enable
  14	Row Select/Extra Copy select (read-only)
 	=1 pins on PMC configured as two additional row selects (6/7)
@@ -6918,10 +8532,10 @@ Bit(s)	Description	(Table 1097)
  3	reserved
  2	In-Order Queue size (0=one, 1=four)
  1-0	reserved
-SeeAlso: #1096,#1098
+SeeAlso: #01208,#01210
 
 Bitfields for Intel 82441FX DBX buffer control register:
-Bit(s)	Description	(Table 1098)
+Bit(s)	Description	(Table 01210)
  7	enable delayed transactions
  6	enable CPU-to-PCI IDE posting
  5	enable USWC Write Post during I/O Bridge access
@@ -6930,20 +8544,20 @@ Bit(s)	Description	(Table 1098)
  2	enable PCI-to-DRAM pipeline
  1	enable PCI Burst Write Combining
  0	enable Read-Around-Write
-SeeAlso: #1096,#1097
+SeeAlso: #01208,#01209
 
 Bitfields for Intel 82441FX auxiliary control register:
-Bit(s)	Description	(Table 1099)
+Bit(s)	Description	(Table 01211)
  7	enable RAS precharge
  6-2	reserved
  1	Lower Memory Address Buffer Set A
 	=0 8mA
 	=1 12mA
  0	reserved
-SeeAlso: #1096
+SeeAlso: #01208
 
 Bitfields for Intel 82441FX DRAM Row Type register:
-Bit(s)	Description	(Table 1100)
+Bit(s)	Description	(Table 01212)
  15-14	row 7 DRAM type
  13-12	row 6 DRAM type
  11-10	row 5 DRAM type
@@ -6956,10 +8570,10 @@ Bit(s)	Description	(Table 1100)
 	01 EDO DRAM
 	10 BEDO DRAM
 	11 empty row
-SeeAlso: #1096,#1101
+SeeAlso: #01208,#01213
 
 Bitfields for Intel 82441FX DRAM Control register:
-Bit(s)	Description	(Table 1101)
+Bit(s)	Description	(Table 01213)
  7	reserved
  6	enable DRAM Refresh Queue
  5	enable DRAM EDO Auto-Detect Mode
@@ -6973,10 +8587,10 @@ Bit(s)	Description	(Table 1101)
 	01x reserved
 	1xx reserved
 	111 fast refresh (every 32 host clocks)
-SeeAlso: #1096,#1100,#1102
+SeeAlso: #01208,#01212,#01214
 
 Bitfields for Intel 82441FX DRAM Timing register:
-Bit(s)	Description	(Table 1102)
+Bit(s)	Description	(Table 01214)
  7	reserved
  6	enable WCBR Mode
  5-4	DRAM Read Burst Timing
@@ -6995,48 +8609,48 @@ Bit(s)	Description	(Table 1102)
 	=1 one clock
 	=0 zero clocks
  0	insert one MA Wait State
-SeeAlso: #1096,#1101
+SeeAlso: #01208,#01213
 
 Bitfields for Intel 82441FX CPU Latency Timer register:
-Bit(s)	Description	(Table 1103)
+Bit(s)	Description	(Table 01215)
  7-5	reserved
  4-0	snoop stall count value
-SeeAlso: #1096
+SeeAlso: #01208
 
 Bitfields for Intel 82441FX Error Command register:
-Bit(s)	Description	(Table 1104)
+Bit(s)	Description	(Table 01216)
  7-5	reserved
  4	enable SERR# on receiving Target Abort
  3	enable SERR# on PCI Parity Error (PERR#)
  2	reserved
  1	enable SERR# on receiving multiple-bit ECC/Parity error
  0	enable SERR# on receiving single-bit ECC error
-SeeAlso: #1096,#1105
+SeeAlso: #01208,#01217
 
 Bitfields for Intel 82441FX Error Status register:
-Bit(s)	Description	(Table 1105)
+Bit(s)	Description	(Table 01217)
  7-5	DRAM row causing first multi-bit error (read-only)
  4	multiple-bit uncorrectable error detected
 	write 1 to this bit to clear it
  3-1	DRAM row causing first single-bit error (read-only)
  0	single-bit correctable ECC error detected
 	write 1 to this bit to clear it
-SeeAlso: #1096,#1104
+SeeAlso: #01208,#01216
 
-Bitfields for Intel 82441FX Turbo Reset Control register:
-Bit(s)	Description	(Table 1106)
+Bitfields for Intel 82441FX,82443EX/LX Turbo Reset Control register:
+Bit(s)	Description	(Table 01218)
  7-4	reserved
  3	enable BIST on hard reset
  2	reset CPU
- 1	reset mode
-	0 soft reset
-	1 hard reset
- 0	deturbo mode
-SeeAlso: #1096,PORT 0CF9h
+ 1	reset mode (0 = soft reset, 1 = hard reset)
+ 0	deturbo mode (82441FX)
+	reserved (82443EX/LX)
+Note:	BIST should not be enabled during a soft reset
+SeeAlso: #01208,#01108,PORT 0CF9h
 
 Format of PCI Configuration data for Intel 82454KX/GX:
-Offset	Size	Description	(Table 1107)
- 00h 64 BYTEs	header (see #0850)
+Offset	Size	Description	(Table 01219)
+ 00h 64 BYTEs	header (see #00857)
 		(vendor ID 8086h, device ID 84C4h)
 !!!intel\29052301.pdf pg. 40
  40h	DWORD	top of system memory
@@ -7054,7 +8668,7 @@ Offset	Size	Description	(Table 1107)
  56h	BYTE	reserved
  57h	BYTE	SMM Enable
  58h	BYTE	video buffer area enable
- 59h  7 BYTEs	Programmable Attribute Map registers 0-6 (see #1045)
+ 59h  7 BYTEs	Programmable Attribute Map registers 0-6 (see #01097)
  60h 16 BYTEs	reserved
  70h	BYTE	Error Command
  71h	BYTE	Error Status
@@ -7083,7 +8697,7 @@ Offset	Size	Description	(Table 1107)
  C4h	DWORD	PB Extended Error Reporting Status
  C8h	DWORD	PB Retry Timers
  CCh 52 BYTEs	reserved
-SeeAlso: #0850
+SeeAlso: #00857
 --------X-1AB10B-----------------------------
 INT 1A - PCI BIOS v2.0c+ - WRITE CONFIGURATION BYTE
 	AX = B10Bh
@@ -7093,7 +8707,7 @@ INT 1A - PCI BIOS v2.0c+ - WRITE CONFIGURATION BYTE
 	CL = byte to write
 Return: CF clear if successful
 	CF set on error
-	AH = status (00h,87h) (see #0703)
+	AH = status (00h,87h) (see #00708)
 	EAX, EBX, ECX, and EDX may be modified
 	all other flags (except IF) may be modified
 Notes:	this function may require up to 1024 byte of stack; it will not enable
@@ -7110,7 +8724,7 @@ INT 1A - PCI BIOS v2.0c+ - WRITE CONFIGURATION WORD
 	CX = word to write
 Return: CF clear if successful
 	CF set on error
-	AH = status (00h,87h) (see #0703)
+	AH = status (00h,87h) (see #00708)
 	EAX, EBX, ECX, and EDX may be modified
 	all other flags (except IF) may be modified
 Notes:	this function may require up to 1024 byte of stack; it will not enable
@@ -7127,7 +8741,7 @@ INT 1A - PCI BIOS v2.0c+ - WRITE CONFIGURATION DWORD
 	ECX = dword to write
 Return: CF clear if successful
 	CF set on error
-	AH = status (00h,87h) (see #0703)
+	AH = status (00h,87h) (see #00708)
 	EAX, EBX, ECX, and EDX may be modified
 	all other flags (except IF) may be modified
 Notes:	this function may require up to 1024 byte of stack; it will not enable
@@ -7142,13 +8756,13 @@ INT 1A - PCI BIOS v2.1+ - GET IRQ ROUTING INFORMATION
 	DS = segment/selector for PCI BIOS data
 	    (real mode: F000h; 16-bit PM: physical 000F0000h; 32-bit PM: as
 	    specified by BIOS32 services directory)
-	ES:(E)DI -> IRQ routing table header (see #1124 at AX=B406h)
+	ES:(E)DI -> IRQ routing table header (see #01236 at AX=B406h)
 Return: CF clear if successful
 	    AH = 00h
 	    BX = bit map of IRQ channels permanently dedicated to PCI
 	    WORD ES:[DI] = size of returned data
 	CF set on error
-	    AH = error code (59h) (see #1108)
+	    AH = error code (59h) (see #01220)
 	    WORD ES:[DI] = required size of buffer
 SeeAlso: AX=B10Fh,AX=B406h,INT 2F/AX=1684h/BX=304Ch
 --------X-1AB10F-----------------------------
@@ -7164,7 +8778,7 @@ INT 1A - PCI BIOS v2.1+ - SET PCI IRQ
 Return: CF clear if successful
 	    AH = 00h
 	CF set on error
-	    AH = error code (59h) (see #1108)
+	    AH = error code (59h) (see #01220)
 Note:	assumes that the calling application has determined the IRQ routing
 	  topology (see AX=B10Eh), has ensured that the selected IRQ will not
 	  cause a conflict, and will update the interrupt line configuration
@@ -7178,8 +8792,8 @@ SeeAlso: AX=B101h
 --------X-1AB182-----------------------------
 INT 1A - PCI BIOS v2.0c+ - FIND PCI DEVICE (32-bit)
 	AX = B182h
-	CX = device ID (see #0709,#0716,#0717,#0845,#0847)
-	DX = vendor ID (see #0706 at AX=B102h)
+	CX = device ID (see #00714,#00721,#00722,#00852,#00854)
+	DX = vendor ID (see #00711 at AX=B102h)
 	SI = device index (0-n)
 Return: as for AX=B102h
 SeeAlso: AX=B102h
@@ -7269,13 +8883,13 @@ INT 1A - PCI BIOS v2.1+ - GET IRQ ROUTING INFORMATION (32-bit)
 	DS = segment/selector for PCI BIOS data
 	    (real mode: F000h; 16-bit PM: physical 000F0000h; 32-bit PM: as
 	    specified by BIOS32 services directory)
-	ES:(E)DI -> IRQ routing table header (see #1124 at AX=B406h)
+	ES:(E)DI -> IRQ routing table header (see #01236 at AX=B406h)
 Return: CF clear if successful
 	    AH = 00h
 	    BX = bit map of IRQ channels permanently dedicated to PCI
 	    WORD ES:[DI] = size of returned data
 	CF set on error
-	    AH = error code (59h) (see #1108)
+	    AH = error code (59h) (see #01220)
 	    WORD ES:[DI] = required size of buffer
 SeeAlso: AX=B10Fh,AX=B406h,INT 2F/AX=1684h/BX=304Ch
 --------X-1AB18F-----------------------------
@@ -7291,7 +8905,7 @@ INT 1A - PCI BIOS v2.1+ - SET PCI IRQ (32-bit)
 Return: CF clear if successful
 	    AH = 00h
 	CF set on error
-	    AH = error code (59h) (see #1108)
+	    AH = error code (59h) (see #01220)
 Note:	assumes that the calling application has determined the IRQ routing
 	  topology (see AX=B10Eh), has ensured that the selected IRQ will not
 	  cause a conflict, and will update the interrupt line configuration
@@ -7316,7 +8930,7 @@ Return: CF clear if installed
 SeeAlso: AX=B401h,AX=B402h,AX=B403h,AX=B404h,AX=B405h,AX=B406h,AX=B407h
 SeeAlso: @xxxxh:xxxxh"Plug-and-Play"
 
-(Table 1108)
+(Table 01220)
 Values for Intel Plug-and-Play AUTO-CONFIGURATION error codes:
  0000h	successful
  0001h	specified action could not be completed
@@ -7326,7 +8940,7 @@ Values for Intel Plug-and-Play AUTO-CONFIGURATION error codes:
  0059h	buffer too small
  0081h	unsupported function
  FFFFh	???
-SeeAlso: #F074
+SeeAlso: #F0074
 --------X-1AB401-----------------------------
 INT 1A - Intel Plug-and-Play AUTO-CONFIGURATION - GET DEFAULT CONFIG TABLE
 	AX = B401h
@@ -7335,13 +8949,13 @@ Return: CF clear if successful
 	    BX = maximum size of configuration table in bytes
 	    CX = required configuration buffer size
 		(includes scratch space used by ACFG code)
-	    EDI = linear/physical address of ESCD table (see #1109)
+	    EDI = linear/physical address of ESCD table (see #01221)
 	CF set on error
-	    AX = error code (see #1108)
+	    AX = error code (see #01220)
 SeeAlso: AX=B400h,AX=B402h,@xxxxh:xxxxh"Plug-and-Play"
 
 Format of Intel Plug-and-Play Extended System Configuration Data table:
-Offset	Size	Description	(Table 1109)
+Offset	Size	Description	(Table 01221)
  00h	WORD	total length of this table
  02h  4 BYTEs	signature "ACFG"
  06h	BYTE	minor version number
@@ -7355,20 +8969,20 @@ Notes:	this table contains information about the standard devices in the
 	  it includes at least the I/O port address (03F8h,02F8h,0378h,etc).
 	the sum of all words in the table, including the checksum field (with
 	  implied zero padding if the length is odd), must equal 0000h
-SeeAlso: #1110
+SeeAlso: #01222
 
 Format of Extended System Configuration Data Board Header:
-Offset	Size	Description	(Table 1110)
+Offset	Size	Description	(Table 01222)
  00h	WORD	length of this header in bytes
  02h	BYTE	slot number
 		00h motherboard
 		01h-0Fh ISA/EISA
 		10h-40h	PCI
  03h	BYTE	reserved (00h)
-SeeAlso: #1109,#1111
+SeeAlso: #01221,#01223
 
 Format of Extended System Configuration Data Freeform Board Header:
-Offset	Size	Description	(Table 1111)
+Offset	Size	Description	(Table 01223)
  00h  4 BYTEs	signature "ACFG"
  04h	BYTE	minor version number
  05h	BYTE	major version number (currently 02h)
@@ -7384,54 +8998,54 @@ Offset	Size	Description	(Table 1111)
  0Ah	WORD	configuration error functions
  0Ch	WORD	reconfigurable functions (bit N set = function N reconfig'able)
  0Eh  2 BYTEs	reserved (00h)
-SeeAlso: #1114,#1115
+SeeAlso: #01226,#01227
 
 Format of Extended System Configuration Data Freeform PCI Device Data:
-Offset	Size	Description	(Table 1112)
+Offset	Size	Description	(Table 01224)
  00h	BYTE	PCI bus number
  01h	BYTE	PCI device and function number
  02h	WORD	PCI device identifier
- 04h	WORD	PCI vendor ID (see #0706 at INT 1A/AX=B102h)
+ 04h	WORD	PCI vendor ID (see #00711 at INT 1A/AX=B102h)
  06h  2 BYTEs	reserved (00h)
-SeeAlso: #1112,#1115
+SeeAlso: #01224,#01227
 
 Format of Extended System Configuration Data Freeform PnP ISA Board ID:
-Offset	Size	Description	(Table 1113)
+Offset	Size	Description	(Table 01225)
  00h	DWORD	vendor ID (EISA device identifier)
  04h	DWORD	serial number
-SeeAlso: #1113,#1114
+SeeAlso: #01225,#01226
 
 Format of Extended System Configuration Data PnP ISA ECD Extension Function:
-Offset	Size	Description	(Table 1114)
+Offset	Size	Description	(Table 01226)
  00h	WORD	001Eh (length of this structure)
  02h	BYTE	01h (selection size)
  03h	BYTE	00h (selection data)
- 04h	BYTE	C0h (function information byte) (see #1117)
+ 04h	BYTE	C0h (function information byte) (see #01229)
  05h	BYTE	18h (size of following free-format data)
- 06h 16 BYTEs	freeform board header (see #1111)
- 16h  8 BYTEs	Plug-and-Play board ID (see #1113)
+ 06h 16 BYTEs	freeform board header (see #01223)
+ 16h  8 BYTEs	Plug-and-Play board ID (see #01225)
 Note:	ECD = Extended Configuration Data; this structure must be the last
 	  "function" for a particular ISA Plug-and-Play board
-SeeAlso: #1115
+SeeAlso: #01227
 
 Format of Extended System Configuration Data PCI ECD Extension Function:
-Offset	Size	Description	(Table 1115)
+Offset	Size	Description	(Table 01227)
  00h	WORD	length of this structure (at least 001Eh, up to 0056h)
  02h	BYTE	01h (selection size)
  03h	BYTE	00h (selection data)
- 04h	BYTE	C0h (function information byte) (see #1117)
+ 04h	BYTE	C0h (function information byte) (see #01229)
  05h	BYTE	size of following free-format data (at least 18h, max 50h)
- 06h 16 BYTEs	freeform board header (see #1111)
- 16h 8N BYTEs	PCI board ID (see #1112) for one to eight boards
+ 06h 16 BYTEs	freeform board header (see #01223)
+ 16h 8N BYTEs	PCI board ID (see #01224) for one to eight boards
 Notes:	ECD = Extended Configuration Data; this structure must be the last
 	  "function" for a particular PCI board
 	AMI BIOS v1.00.05.AX1 sets the length field to 001Ch for entries with
 	  a single board ID, apparently treating the field as the length of
 	  the remainder of the structure instead of the full structure's length
-SeeAlso: #1114
+SeeAlso: #01226
 
 Bitfields for EISA ID and Slot Information:
-Bit(s)	Description	(Table 1116)
+Bit(s)	Description	(Table 01228)
  3-0	selector among duplicate configuration file names (0000 if no dups)
  5-4	slot type
 	00 expansion slot
@@ -7446,29 +9060,29 @@ Bit(s)	Description	(Table 1116)
  13-11	reserved
  14	board does not have or need configuration file
  15	configuration not complete
-SeeAlso: #1117
+SeeAlso: #01229
 
 Bitfields for EISA Function Information:
-Bit(s)	Description	(Table 1117)
+Bit(s)	Description	(Table 01229)
  0	subtype data
- 1	memory information (see #1118)
- 2	IRQ information (see #1120)
- 3	DMA information (see #1121)
- 4	port range information (see #1122)
- 5	port initialization data (see #1123)
+ 1	memory information (see #01230)
+ 2	IRQ information (see #01232)
+ 3	DMA information (see #01233)
+ 4	port range information (see #01234)
+ 5	port initialization data (see #01235)
  6	free form data
  7	function disabled
-SeeAlso: #1114,#1115,#1116
+SeeAlso: #01226,#01227,#01228
 
 Format of EISA Memory Information:
-Offset	Size	Description	(Table 1118)
- 00h	WORD	memory information flags (see #1119)
+Offset	Size	Description	(Table 01230)
+ 00h	WORD	memory information flags (see #01231)
  02h  3 BYTEs	high 24 bits of memory start address (LSB first)
  05h	WORD	memory size in K (0000h = 65536K)
-SeeAlso: #1117
+SeeAlso: #01229
 
 Bitfields for EISA Memory Information Flags:
-Bit(s)	Description	(Table 1119)
+Bit(s)	Description	(Table 01231)
  0	writable (RAM rather than ROM)
  1	cached
  2	write-back cache rather than write-through
@@ -7491,20 +9105,20 @@ Bit(s)	Description	(Table 1119)
 	10 = 32
 	11 reserved
  15-12	reserved (0)
-SeeAlso: #1118
+SeeAlso: #01230
 
 Bitfields for EISA IRQ Information:
-Bit(s)	Description	(Table 1120)
+Bit(s)	Description	(Table 01232)
  3-0	IRQ number
  4	reserved (0)
  5	IRQ triggering (0 = edge, 1 = level)
  6	IRQ is shareable
  7	more entries follow
  15-8	reserved (0)
-SeeAlso: #1117
+SeeAlso: #01229
 
 Bitfields for EISA DMA Information:
-Bit(s)	Description	(Table 1121)
+Bit(s)	Description	(Table 01233)
  2-0	DMA channel number
  5-3	reserved (0)
  6	shareable
@@ -7521,20 +9135,20 @@ Bit(s)	Description	(Table 1121)
 	10 EISA type "B"
 	11 EISA type "C"/"F" (burst)
  15-14	reserved (0)
-SeeAlso: #1117
+SeeAlso: #01229
 
 Format of EISA Port Range Information:
-Offset	Size	Description	(Table 1122)
+Offset	Size	Description	(Table 01234)
  00h	BYTE	port description
 		bits 4-0: number of sequential ports
 		bit 5 reserved (0)
 		bit 6: shareable
 		bit 7: more entries follow
  01h	WORD	I/O port address
-SeeAlso: #1117,#1123
+SeeAlso: #01229,#01235
 
 Format of EISA Port Initialization Data:
-Offset	Size	Description	(Table 1123)
+Offset	Size	Description	(Table 01235)
  00h	BYTE	flags
 		bits 1-0: port size
 			00 byte
@@ -7545,27 +9159,27 @@ Offset	Size	Description	(Table 1123)
 		bits 6-3 reserved (0)
 		bit 7: more entries follow
  01h	???
-SeeAlso: #1117,#1122
+SeeAlso: #01229,#01234
 --------X-1AB402-----------------------------
 INT 1A - Intel Plug-and-Play AUTO-CONFIGURATION - COPY AND VERIFY CONFIG TABLE
 	AX = B402h
-	DS:SI -> configuration table (see #1109)
+	DS:SI -> configuration table (see #01221)
 	ES:DI -> buffer for copy of configuration table
 Return: CF clear if successful
 	    AX = 0000h
 	CF set on error
-	    AX = error code (0055h,0056h) (see #1108)
+	    AX = error code (0055h,0056h) (see #01220)
 Note:	the buffer pointed at by ES:DI must be at least as large as the
 	  maximum configuration table size reported by AX=B401h
 SeeAlso: AX=B400h,AX=B401h,AX=B403h
 --------X-1AB403-----------------------------
 INT 1A - Intel Plug-and-Play AUTO-CONFIGURATION - STORE ESCD TABLE IN NVRAM
 	AX = B403h
-	DS:SI -> configuration table (see #1109)
+	DS:SI -> configuration table (see #01221)
 Return: CF clear if successful
 	    AX = 0000h
 	CF set on error
-	    AX = error code (0055h) (see #1108)
+	    AX = error code (0055h) (see #01220)
 Note:	sets the configuration table's checksum field, then copies the table
 	  into nonvolatile storage (i.e. FlashROM)
 SeeAlso: AX=B400h,AX=B402h
@@ -7579,7 +9193,7 @@ Return: CF clear if successful
 	    CX = available for on-board I/O??? (not(BXin) & 40D8h)
 	    DX = available for PCI??? (either not(BXin) & 0E00h or 0000h)
 	CF set on error
-	    AX = error code (0051h) (see #1108)
+	    AX = error code (0051h) (see #01220)
 Note:	the various vector types have also been called "shareable",
 	  "unshareable", and "avoidable"
 SeeAlso: AX=B400h,INT 2F/AX=1684h/BX=304Ch
@@ -7591,22 +9205,22 @@ SeeAlso: AX=B400h
 --------X-1AB406-----------------------------
 INT 1A - Intel Plug-and-Play AUTO-CONFIGURATION - GET PCI IRQ ROUTING TABLE
 	AX = B406h
-	ES:DI -> IRQ routing table header (see #1124)
+	ES:DI -> IRQ routing table header (see #01236)
 Return: CF clear if successful
 	    AX = 0000h
 	    WORD ES:[DI] = size of returned data
 	CF set on error
-	    AX = error code (0059h) (see #1108)
+	    AX = error code (0059h) (see #01220)
 	    WORD ES:[DI] = required size of buffer
 SeeAlso: AX=B400h,AX=B404h,AX=B10Eh,INT 2F/AX=1684h/BX=304Ch
 
 Format of Intel Plug-and-Play AUTO-CONFIGURATION PCI IRQ routing header:
-Offset	Size	Description	(Table 1124)
+Offset	Size	Description	(Table 01236)
  00h	WORD	length of IRQ routing table buffer
- 02h	DWORD	-> IRQ routing table array buffer (see #1125)
+ 02h	DWORD	-> IRQ routing table array buffer (see #01237)
 
 Format of Intel Plug-and-Play ACFG PCI IRQ routing table entry [array]:
-Offset	Size	Description	(Table 1125)
+Offset	Size	Description	(Table 01237)
  00h	BYTE	PCI bus number
  01h	BYTE	PCI device number (bits 7-3)
  02h	BYTE	link value for INTA#
@@ -7624,7 +9238,7 @@ Offset	Size	Description	(Table 1125)
  0Fh	BYTE	reserved
 Note:	each item in the routing table corresponds to a motherboard PCI
 	  device or PCI slot
-SeeAlso: #1124,#M115
+SeeAlso: #01236,#M0115
 --------X-1AB407-----------------------------
 INT 1A - Intel Plug-and-Play AUTO-CONFIGURATION - ???
 	AX = B407h
@@ -7635,7 +9249,7 @@ Return: CF clear if successful
 	    EDX = ???
 	    EDI = ???
 	CF set on error
-	    AX = error code (FFFFh) (see #1108)
+	    AX = error code (FFFFh) (see #01220)
 Notes:	returns error if EDI < 000C0000h or EDI+EDX > 00100000h
 	seems to force EDI and EDX to align to 16K boundaries
 SeeAlso: AX=B400h
@@ -7757,13 +9371,13 @@ SeeAlso: AX=E11Dh
 --------U-1AE11D-----------------------------
 INT 1A - TheGrab v4.60 - INSTALLATION CHECK
 	AX = E11Dh
-Return: ES:DI -> signature block (see #1126) if installed
+Return: ES:DI -> signature block (see #01238) if installed
 	    CX = length of signature block (000Fh)
 Program: TheGrab is a resident ANSI screen grabber bundled with TheDraw
 SeeAlso: AX=E11Bh
 
 Format of TheGrab signature block:
-Offset	Size	Description	(Table 1126)
+Offset	Size	Description	(Table 01238)
  00h	BYTE	08h
  01h  8 BYTEs	ASCIZ "THEGRAB"
  09h  6 BYTEs	??? (zeros)
@@ -7788,7 +9402,7 @@ INT 1A - Disk Spool II v4.0x - GET SPOOL FILE STATUS
 	ES:BX -> ASCIZ filename (max 32 chars)
 Return: AH = status
 	    00h successful
-		ES:SI -> spool file status record (see #1127)
+		ES:SI -> spool file status record (see #01239)
 	    F0h not a spool file
 	    FFh failed
 Note:	this function is also supported by Vertisoft's Emulaser utility ELSPL,
@@ -7796,7 +9410,7 @@ Note:	this function is also supported by Vertisoft's Emulaser utility ELSPL,
 SeeAlso: AH=E0h,AX=E302h,AX=E401h
 
 Format of Disk Spool II spool file status record:
-Offset	Size	Description	(Table 1127)
+Offset	Size	Description	(Table 01239)
  00h	BYTE	hour of creation or last update
  01h	BYTE	minute of creation or last update
  02h	BYTE	year-1980 of creation or last update
@@ -7819,7 +9433,7 @@ Offset	Size	Description	(Table 1127)
 INT 1A - Disk Spool II v4.0x - UPDATE SPOOL FILE
 	AX = E302h
 	ES:BX -> ASCIZ filename (max 32 chars)
-	ES:SI -> spool file status record (see #1127)
+	ES:SI -> spool file status record (see #01239)
 Return: AH = status
 	    00h successful
 	    F0h not a spool file
@@ -7987,12 +9601,12 @@ Notes:	this is the preferred interrupt to chain when a program needs to be
 SeeAlso: INT 08,INT E2"PC Cluster"
 --------B-1D---------------------------------
 INT 1D - SYSTEM DATA - VIDEO PARAMETER TABLES
-Note:	the default parameter table (see #1128) is located at F000h:F0A4h for
+Note:	the default parameter table (see #01240) is located at F000h:F0A4h for
 	  100% compatible BIOSes
 SeeAlso: INT 10/AH=00h
 
 Format of video parameters:
-Offset	Size	Description	(Table 1128)
+Offset	Size	Description	(Table 01240)
  00h 16 BYTEs	6845 register values for modes 00h and 01h
  10h 16 BYTEs	6845 register values for modes 02h and 03h
  20h 16 BYTEs	6845 register values for modes 04h and 05h
@@ -8007,14 +9621,14 @@ Note:	QEMM v7.5 Stealth appears to copy only the first 40h bytes of this
 	  table into always-accessible memory
 --------B-1E---------------------------------
 INT 1E - SYSTEM DATA - DISKETTE PARAMETERS
-Notes:	the default parameter table (see #1129) is located at F000h:EFC7h for
+Notes:	the default parameter table (see #01241) is located at F000h:EFC7h for
 	  100% compatible BIOSes
 	if the table is changed, INT 13/AH=00h should be called to ensure that
 	  the floppy-disk controller is appropriately reprogrammed
 SeeAlso: INT 13/AH=0Fh,INT 41"HARD DISK 0",INT 4D/AH=0Ah
 
 Format of diskette parameter table:
-Offset	Size	Description	(Table 1129)
+Offset	Size	Description	(Table 01241)
  00h	BYTE	first specify byte
 		bits 7-4: step rate (Fh=2ms,Eh=4ms,Dh=6ms,etc.)
 		bits 3-0: head unload time (0Fh = 240 ms)
@@ -8034,7 +9648,7 @@ Offset	Size	Description	(Table 1129)
  0Bh	BYTE	maximum track number
  0Ch	BYTE	data transfer rate
  0Dh	BYTE	drive type in CMOS
-SeeAlso: #3078 at INT 4D/AH=09h
+SeeAlso: #03190 at INT 4D/AH=09h
 --------B-1F---------------------------------
 INT 1F - SYSTEM DATA - 8x8 GRAPHICS FONT
 Desc:	this vector points at 1024 bytes of graphics data, 8 bytes for each
@@ -8078,7 +9692,7 @@ Return: None
 --------J-1F90-------------------------------
 INT 1F - NEC PC-9801 - COPY EXTENDED MEMORY
 	AH = 90h
-	ES:BX -> global descriptor table (see #0473 at INT 15/AH=87h)
+	ES:BX -> global descriptor table (see #00478 at INT 15/AH=87h)
 	CX = number of bytes to copy
 	SI = 0000h
 	DI = 0000h
@@ -8226,3232 +9840,4 @@ INT 1F U - C&T "SuperState" BIOS - SET AUTO WAKE UP DATE
 	DL = date in BCD
 Return: CF set on error (incorrect date format or Auto Wake up is not enable)
 SeeAlso: AH=FDh/BL=03h"C&T",AH=FDh/BL=04h"C&T"
---------O-20---------------------------------
-INT 20 - Minix - SEND/RECEIVE MESSAGE
-	AX = process ID of other process
-	BX -> message
-	CX = operation (1 send, 2 receive, 3 send&receive)
-Program: Minix is a Version 7 Unix-compatible operating system by Andrew
-	  Tanenbaum
-Note:	the message contains the system call number (numbered as in V7
-	  Unix(tm)) and the call parameters
---------D-20---------------------------------
-INT 20 - DOS 1+ - TERMINATE PROGRAM
-	CS = PSP segment
-Return: never
-Notes:	(see INT 21/AH=00h)
-	this function sets the program's return code (ERRORLEVEL) to 00h
-SeeAlso: INT 21/AH=00h,INT 21/AH=4Ch
---------G-20---------------------------------
-INT 20 - COMTROL HOSTESS i/ISA DEBUGGER - INVOKE FIRMWARE DEBUGGER
-	???
-Return: ???
-SeeAlso: INT 21"COMTROL"
---------W-20----Vx0001-----------------------
-INT 20 P - Microsoft Windows - VMM - VxD SERVICES
-	VxD = 0001h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1130)
-Values for VMM (VxD ID 0001h) service number:
- 0000h	get version
- 0001h	get current VM handle
- 0002h	test current VM handle
- 0003h	get system VM handle
- 0004h	test system VM handle
- 0005h	validate VM handle
- 0006h	get VMM reenter count
- 0007h	begin reentrant execution
- 0008h	end reentrant execution
- 0009h	install V86 breakpoint
- 000Ah	remove V86 breakpoint
- 000Bh	allocate V86 callback
- 000Ch	allocation PM callback
- 000Dh	call when VM returns
- 000Eh	schedule global event
- 000Fh	schedule VM event
- 0010h	call global event
- 0011h	call VM event
- 0012h	cancel global event
- 0013h	cancel VM event
- 0014h	call priority VM event
- 0015h	cancel priority VM event
- 0016h	get NMI handler address
- 0017h	set NMI handler address
- 0018h	hook NMI event
- 0019h	call when VM interrupts enabled
- 001Ah	enable VM interrupts
- 001Bh	disable VM interrupts
- 001Ch	map flat
- 001Dh	map linear to VM address
- 001Eh	adjust execution priority
- 001Fh	begin critical section
- 0020h	end critical section
- 0021h	end critical section and suspend
- 0022h	claim critical section
- 0023h	release critical section
- 0024h	call when not critical
- 0025h	create semaphore
- 0026h	destroy semaphore
- 0027h	wait on semaphore
- 0028h	signal semaphore
- 0029h	get critical section status
- 002Ah	call when task switched
- 002Bh	suspend VM
- 002Ch	resume VM
- 002Dh	no-fail resume VM
- 002Eh	nuke VM
- 002Fh	crash current VM
- 0030h	get execution focus
- 0031h	set execution focus
- 0032h	get time slice priority
- 0033h	set time slice priority
- 0034h	get time slice granularity
- 0035h	set time slice granularity
- 0036h	get time slice information
- 0037h	adjust execution time
- 0038h	release time slice
- 0039h	wake up VM
- 003Ah	call when idle
- 003Bh	get next VM handle
- 003Ch	set global timeout
- 003Dh	set VM timeout
- 003Eh	cancel timeout
- 003Fh	get system time
-	Return: EAX = time in milliseconds that Windows has been running
- 0040h	get VM execution time
- 0041h	hook V86 interrupt chain
- 0042h	get V86 interrupt vector
- 0043h	set V86 interrupt vector
- 0044h	get PM interrupt vector
- 0045h	set PM interrupt vector
- 0046h	simulate interrupt
- 0047h	simulate IRET
- 0048h	simulate far call
- 0049h	simulate far jump
- 004Ah	simulate far RET
- 004Bh	simulate far RET N
- 004Ch	build interrupt stack frame
- 004Dh	simulate push
- 004Eh	simulate pop
- 004Fh	_HeapAllocate
- 0050h	_HeapReAllocate
- 0051h	_HeapFree
- 0052h	_HeapGetSize
- 0053h	_PageAllocate
- 0054h	_PageReAllocate
- 0055h	_PageFree
- 0056h	_PageLock
- 0057h	_PageUnLock
- 0058h	_PageGetSizeAddr
- 0059h	_PageGetAllocInfo
- 005Ah	_GetFreePageCount
- 005Bh	_GetSysPageCount
- 005Ch	_GetVMPgCount
- 005Dh	_MapIntoV86
- 005Eh	_PhysIntoV86
- 005Fh	_TestGlobalV86Mem
- 0060h	_ModifyPageBits
- 0061h	copy page table
- 0062h	map linear into V86
- 0063h	linear page lock
- 0064h	linear page unlock
- 0065h	_SetResetV86Pageabl
- 0066h	_GetV86PageableArray
- 0067h	_PageCheckLinRange
- 0068h	page out dirty pages
- 0069h	discard pages
- 006Ah	_GetNulPageHandle
- 006Bh	get first V86 page
- 006Ch	map physical address to linear address
- 006Dh	_GetAppFlatDSAlias
- 006Eh	_SelectorMapFlat
- 006Fh	_GetDemandPageInfo
- 0070h	_GetSetPageOutCount
- 0071h	hook V86 page
- 0072h	assign device V86 pages
- 0073h	deassign device V86 pages
- 0074h	get array of V86 pages for device
- 0075h	_SetNULPageAddr
- 0076h	allocate GDT selector
- 0077h	free GDT selector
- 0078h	allocate LDT selector
- 0079h	free LDT selector
- 007Ah	_BuildDescriptorDWORDs
- 007Bh	get descriptor
- 007Ch	set descriptor
- 007Dh	toggle HMA
- 007Eh	get fault hook addresses
- 007Fh	hook V86 fault
- 0080h	hook PM fault
- 0081h	hook VMM fault
- 0082h	begin nested V86 execution
- 0083h	begin nested execution
- 0084h	execute V86-mode interrupt
- 0085h	resume execution
- 0086h	end nested execution
- 0087h	allocate PM application callback area
- 0088h	get current PM application callback area
- 0089h	set V86 execution mode
- 008Ah	set PM execution mode
- 008Bh	begin using locked PM stack
- 008Ch	end using locked PM stack
- 008Dh	save client state
- 008Eh	restore client state
- 008Fh	execute VxD interrupt
-	STACK:	WORD	interrupt number
-		other registers as required by interrupt call
-	Return:	registers as returned by interrupt call
- 0090h	hook device service
-	EAX = service ID (high word = VxD ID, low = service number)
-	ESI -> new handler
- 0091h	hook device V86 API
- 0092h	hook device PM API
- 0093h	system control (see also #2521)
- 0094h	simulate I/O
- 0095h	install multiple I/O handlers
- 0096h	install I/O handler
-	DX = I/O port address
-	ESI -> handler to call when I/O access attempted???
- 0097h	enable global trapping
-	DX = I/O port address
- 0098h	enable local trapping
-	DX = I/O port address
- 0099h	disable global trapping
-	DX = I/O port address
- 009Ah	disable local trapping
-	DX = I/O port address
- 009Bh	create list
- 009Ch	destroy list
- 009Dh	allocate list
- 009Eh	attach list
- 009Fh	attach list tail
- 00A0h	insert into list
- 00A1h	remove from list
- 00A2h	deallocate list
- 00A3h	get first item in list
- 00A4h	get next item in list
- 00A5h	remove first item in list
- 00A6h	add instance item
- 00A7h	allocate device callback area
- 00A8h	allocate global V86 data area
- 00A9h	allocate temporary V86 data area
- 00AAh	free temporary V86 data area
- 00ABh	get decimal integer from profile
- 00ACh	convert decimal string to integer
- 00ADh	get fixed-point number from profile
- 00AEh	convert fixed-point string
- 00AFh	get hex integer from profile
- 00B0h	convert hex string to integer
- 00B1h	get boolean value from profile
- 00B2h	convert boolean string
- 00B3h	get string from profile
- 00B4h	get next string from profile
- 00B5h	get environment string
- 00B6h	get exec path
- 00B7h	get configuration directory
- 00B8h	open file
- 00B9h	get PSP segment
- 00BAh	get DOS vectors
- 00BBh	get machine information
- 00BCh	get/set HMA information
- 00BDh	set system exit code
- 00BEh	fatal error handler
- 00BFh	fatal memory error
- 00C0h	update system clock
- 00C1h	test if debugger installed
- 00C2h	output debugger string
- 00C3h	output debugger character
- 00C4h	input debugger character
- 00C5h	debugger convert hex to binary
- 00C6h	debugger convert hex to decimal
- 00C7h	debugger test if valid handle
- 00C8h	validate client pointer
- 00C9h	test reentry
- 00CAh	queue debugger string
- 00CBh	log procedure call
- 00CCh	debugger test current VM
- 00CDh	get PM interrupt type
- 00CEh	set PM interrupt type
- 00CFh	get last updated system time
- 00D0h	get last updated VM execution time
- 00D1h	test if double-byte character-set lead byte
- 00D2h	_AddFreePhysPage
- 00D3h	_PageResetHandlePAddr
- 00D4h	_SetLastV86Page
- 00D5h	_GetLastV86Page
- 00D6h	_MapFreePhysReg
- 00D7h	_UnmapFreePhysReg
- 00D8h	_XchgFreePhysReg
- 00D9h	_SetFreePhysRegCalBk
- 00DAh	get next arena (MCB)
- 00DBh	get name of ugly TSR
- 00DCh	get debug options
- 00DDh	set physical HMA alias
- 00DEh	_GetGlblRng0V86IntBase
- 00DFh	add global V86 data area
- 00E0h	get/set detailed VM error
- 00E1h	Is_Debug_Chr
- 00E2h	clear monochrome screen
- 00E3h	output character to mono screen
- 00E4h	output string to mono screen
- 00E5h	set current position on mono screen
- 00E6h	get current position on mono screen
- 00E7h	get character from mono screen
- 00E8h	locate byte in ROM
- 00E9h	hook invalid page fault
- 00EAh	unhook invalid page fault
- 00EBh	set delete on exit file
- 00ECh	close VM
- 00EDh	"Enable_Touch_1st_Meg"
- 00EEh	"Disable_Touch_1st_Meg"
- 00EFh	install exception handler
- 00F0h	remove exception handler
- 00F1h	"Get_Crit_Status_No_Block"
- 00F2h	"_Schedule_VM_RTI_Event"
- 00F3h	"_Trace_Out_Service"
- 00F4h	"_Debug_Out_Service"
- 00F5h	"_Debug_Flags_Service"
- 00F6h	VMM add import module name
- 00F7h	VMM Add DDB
- 00F8h	VMM Remove DDB
- 00F9h	get thread time slice priority
- 00FAh	set thread time slice priority
- 00FBh	schedule thread event
- 00FCh	cancel thread event
- 00FDh	set thread timeout
- 00FEh	set asynchronous timeout
- 00FFh	"_AllocatreThreadDataSlot"
- 0100h	"_FreeThreadDataSlot"
- 0101h	create Mutex
- 0102h	destroy Mutex
- 0103h	get Mutex owner
- 0104h	call when thread switched
- 0105h	create thread
- 0106h	start thread
- 0107h	terminate thread
- 0108h	get current thread handle
- 0109h	test current thread handle
- 010Ah	"Get_Sys_Thread_Handle"
- 010Bh	"Test_Sys_Thread_Handle"
- 010Ch	"Validate_Thread_Handle"
- 010Dh	"Get_Initial_Thread_Handle"
- 010Eh	"Test_Initial_Thread_Handle"
- 010Fh	"Debug_Test_Valid_Thread_Handle"
- 0110h	"Debug_Test_Cur_Thread"
- 0111h	"VMM_GetSystemInitState"
- 0112h	"Cancel_Call_When_Thread_Switched"
- 0113h	"Get_Next_Thread_Handle"
- 0114h	"Adjust_Thread_Exec_Priority"
- 0115h	"_Deallocate_Device_CB_Area"
- 0116h	"Remove_IO_Handler"
- 0117h	"Remove_Mult_IO_Handlers"
- 0118h	unhook V86 interrupt chain
- 0119h	unhook V86 fault handler
- 011Ah	unhook PM fault handler
- 011Bh	unhook VMM fault handler
- 011Ch	unhook device service
- 011Dh	"_PageReserve"
- 011Eh	"_PageCommit"
- 011Fh	"_PageDecommit"
- 0120h	"_PagerRegister"
- 0121h	"_PagerQuery"
- 0122h	"_PagerDeregister"
- 0123h	"_ContextCreate"
- 0124h	"_ContextDestroy"
- 0125h	"_PageAttach"
- 0126h	"_PageFlush"
- 0127h	"_SignalID"
- 0128h	"_PageCommitPhys"
- 0129h	"_Register_Win32_Services"
- 012Ah	"Cancel_Call_When_Not_Critical"
- 012Bh	"Cancel_Call_When_Idle"
- 012Ch	"Cancel_Call_When_Task_Switched"
- 012Dh	"_Debug_Printf_Service"
- 012Eh	enter Mutex
- 012Fh	leave Mutex
- 0130h	simulate VM I/O
- 0131h	"Signal_Semaphore_No_Switch"
- 0132h	"_MMSwitchContext"
- 0133h	"_MMModifyPermissions"
- 0134h	"_MMQuery"
- 0135h	"_EnterMustComplete"
- 0136h	"_LeaveMustComplete"
- 0137h	"_ResumeExecMustComplete"
- 0138h	get thread termination status
- 0139h	"_GetInstanceInfo"
- 013Ah	"_ExecIntMustComplete"
- 013Bh	"_ExecVxDIntMustComplete"
- 013Ch	begin V86 serialization
- 013Dh	unhook V86 page
- 013Eh	"VMM_GetVxDLocationList"
- 013Fh	"VMM_GetDDBList" get start of VxD chain
-	(see also #2521 at INT 2F/AX=1684h/BX=0017h)
- 0140h	unhook NMI event
- 0141h	"Get_Instanced_V86_Int_Vector"
- 0142h	get or set real DOS PSP
- 0143h	call priority thread event
- 0144h	"Get_System_Time_Address"
- 0145h	"Get_Crit_Status_Thread"
- 0146h	"Get_DDB"
- 0147h	"Directed_Sys_Control"
- 0148h	"_RegOpenKey"
- 0149h	"_RegCloseKey"
- 014Ah	"_RegCreateKey"
- 014Bh	"_RegDeleteKey"
- 014Ch	"_RegEnumKey"
- 014Dh	"_RegQueryValue"
- 014Eh	"_RegSetValue"
- 014Fh	"_RegDeleteValue"
- 0150h	"_RegEnumValue"
- 0151h	"_RegQueryValueEx"
- 0152h	"_RegSetValueEx"
- 0153h	"_CallRing3"
- 0154h	"Exec_PM_Int"
- 0155h	"_RegFlushKey"
- 0156h	"_PageCommitContig"
- 0157h	"_GetCurrentContext"
- 0158h	"_LocalizeSprintf"
- 0159h	"_LocalizeStackSprintf"
- 015Ah	"Call_Restricted_Event"
- 015Bh	"Cancel_Restricted_Event"
- 015Ch	"Register_PEF_Provider"
- 015Dh	"_GetPhysPageInfo"
- 015Eh	"_RegQueryInfoKey"
- 015Fh	"MemArb_Reserve_Pages"
- 0160h	"Time_Slice_Sys_VM_Idle"
- 0161h	"Time_Slice_Sleep"
- 0162h	"Boost_With_Decay"
- 0163h	"Set_Inversion_Pri"
- 0164h	"Reset_Inversion_Pri"
- 0165h	"Release_Inversion_Pri"
- 0166h	"Get_Thread_Win32_Pri"
- 0167h	"Set_Thread_Win32_Pri"
- 0168h	"Set_Thread_Static_Boost"
- 0169h	"Set_VM_Static_Boost"
- 016Ah	"Release_Inversion_Pri_ID"
- 016Bh	"Attach_Thread_To_Group"
- 016Ch	"Detach_Thread_From_Group"
- 016Dh	"Set_Group_Static_Boost"
- 016Eh	"_GetRegistryPath"
- 016Fh	"_GetRegistryKey"
- 0170h	"_CleanupNestedExec"
- 0171h	"_RegRemapPreDefKey"
- 0172h	"End_V86_Serialization"
- 0173h	"_Assert_Range"
- 0174h	"_Sprintf"
- 0175h	"_PageChangePager"
- 0176h	"_RegCreateDynKey"
- 0177h	"RegQMulti"
- 0178h	"Boost_Thread_With_VM"
- 0179h	"Get_Boot_Flags"
- 017Ah	"Set_Boot_Flags"
- 017Bh	"_lstrcpyn"
- 017Ch	"_lstrlen"
- 017Dh	"_lmemcpy"
- 017Eh	"_GetVxDName"
- 017Fh	"Force_Mutexes_Free"
- 0180h	"Restore_Forced_Mutexes"
- 0181h	"_AddReclaimableItem"
- 0182h	"_SetReclaimableItem"
- 0183h	"_EnumReclaimableItem"
- 0184h	"Time_Slice_Wake_Sys_VM"
- 0185h	"VMM_Replace_Global_Environment"
- 0186h	"Begin_Non_Serial_Nest_V86_Exec"
- 0187h	"Get_Nest_Exec_Status"
- 0188h	"Open_Boot_Log"
- 0189h	"Write_Boot_Log"
- 018Ah	"Close_Boot_Log"
- 018Bh	"EnableDisable_Boot_Log"
- 018Ch	"_Call_On_My_Stack"
- 018Dh	"Get_Inst_V86_Int_Vec_Base"
- 018Eh	"_lstrcmpi"
- 018Fh	"_strupr"
- 0190h	"Log_Fault_Call_Out"
- 0191h	"_AtEventTime"
- 0191h	...last service for Windows95 SP1
- 811Ch	unhook device service??? (called by KEYREMAP.VXD)
-	EAX = service ID (high word = VxD ID, low = service number)
-	ESI -> handler
-SeeAlso: #1131,#1132,INT 2F/AX=1684h/BX=0001h
---------W-20----Vx0002-----------------------
-INT 20 P - Microsoft Windows - DEBUG - VxD SERVICES
-	VxD = 0002h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1131,#1205
-
-(Table 1131)
-Values for DEBUG (VxD ID 0002h) service number:
- 0000h	get version
- 0001h	"DEBUG_Fault"
- 0002h	"DEBUG_CheckFault"
- 0003h	"_DEBUG_LoadSyms"
-SeeAlso: #1130,#1132
---------W-20----Vx0003-----------------------
-INT 20 P - Microsoft Windows - VPICD - VxD SERVICES
-	VxD = 0003h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1132,#1205
-
-(Table 1132)
-Values for VPICD (VxD ID 0003h) service number:
- 0000h	get version
- 0001h	virtualize IRQ
- 0002h	set interrupt request
- 0003h	clear interrupt request
- 0004h	physical EOI
- 0005h	get complete status
- 0006h	get status
- 0007h	test physical request
- 0008h	physically mask
- 0009h	physically unmask
- 000Ah	set automatic masking
- 000Bh	get IRQ complete status
- 000Ch	convert handle to IRQ
- 000Dh	convert IRQ to interrupt
- 000Eh	convert interrupt to IRQ
- 000Fh	call on hardware interrupt
- 0010h	force default owner
- 0011h	force default behavior
- 0012h	"VPICD_Auto_Mask_At_Inst_Swap"
- 0013h	"VPICD_Begin_Inst_Page_Swap"
- 0014h	"VPICD_End_Inst_Page_Swap"
- 0015h	"VPICD_Virtual_EOI"
- 0016h	"VPICD_Get_Virtualization_Count"
- 0017h	"VPICD_Post_Sys_Critical_Init"
- 0018h	"VPICD_VM_SlavePIC_Mask_Change"
-SeeAlso: #1130,#1133,INT 2F/AX=1684h/BX=0003h
---------W-20----Vx0004-----------------------
-INT 20 P - Microsoft Windows - VDMAD - VxD SERVICES
-	VxD = 0004h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1133)
-Values for VDMAD (VxD ID 0004h) service number:
- 0000h	get version
- 0001h	virtualize channel
- 0002h	get region information
- 0003h	set region information
- 0004h	get virtual state
- 0005h	set virtual state
- 0006h	set physical state
- 0007h	mask channel
- 0008h	unmask channel
- 0009h	lock DMA region
- 000Ah	unlock DMA region
- 000Bh	scatter lock
- 000Ch	scatter unlock
- 000Dh	reserve buffer space
- 000Eh	request buffer
- 000Fh	release buffer
- 0010h	copy to buffer
- 0011h	copy from buffer
- 0012h	default handler
- 0013h	disable translation
- 0014h	enable translation
- 0015h	get EISA address mode
- 0016h	set EISA address mode
- 0017h	unlock DMA region (ND)
- 0018h	"VDMAD_Phys_Mask_Channel"
- 0019h	"VDMAD_Phys_Unmask_Channel"
- 001Ah	"VDMAD_Unvirtualize_Channel"
- 001Bh	"VDMAD_Set_IO_Address"
- 001Ch	"VDMAD_Get_Phys_Count"
- 001Dh	"VDMAD_Get_Phys_Status"
- 001Eh	"VDMAD_Get_Max_Phys_Page"
- 001Fh	"VDMAD_Set_Channel_Callbacks"
- 0020h	"VDMAD_Get_Virt_Count"
- 0021h	"VDMAD_Set_Virt_Count"
- 0021h	...last service for Windows95 SP1
-SeeAlso: #1132,#2510,#2547 at INT 2F/AX=1684h/BX=0444h
---------W-20----Vx0005-----------------------
-INT 20 P - Microsoft Windows - VTD - VxD SERVICES
-	VxD = 0005h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1134)
-Values for VTD (VxD ID 0005h) service number:
- 0000h	get version
- 0001h	update system clock
- 0002h	get interrupt period
- 0003h	begin minimum interrupt period
- 0004h	end minimum interrupt period
- 0005h	disable trapping
- 0006h	enable trapping
- 0007h	get real time
-	Return: EDX:EAX = time in 840ns units since Windows was started
- 0008h	"VTD_Get_Date_And_Time"
- 0009h	"VTD_Adjust_VM_Count"
- 000Ah	"VTD_Delay"
-SeeAlso: #2510 at INT 2F/AX=1684h/BX=0005h
---------W-20----Vx0006-----------------------
-INT 20 P - Microsoft Windows - V86MMGR - VxD SERVICES
-	VxD = 0006h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1135)
-Values for V86MMGR (VxD ID 0006h) service number:
- 00h	get version
- 01h	allocate V86 pages
- 02h	set EMS and XMS limits
- 03h	get EMS and XMS limits
- 04h	set mapping information
- 05h	get mapping information
- 06h	Xlat API
- 07h	load client pointer
- 08h	allocate buffer
- 09h	free buffer
- 0Ah	get Xlat buffer state
- 0Bh	set Xlat buffer state
- 0Ch	get VM flat selector
- 0Dh	map pages
- 0Eh	free page map region
- 0Fh	_LocalGlobalReg
- 10h	get page status
- 11h	set local A20
- 12h	reset base pages
- 13h	set available mapped pages
- 14h	"V86MMGR_NoUMBInitCalls"
- 15h	"V86MMGR_Get_EMS_XMS_Avail"
- 16h	"V86MMGR_Toggle_HMA"
-	EAX = ???
- 17h	"V86MMGR_Dev_Init"
- 18h	"V86MMGR_Alloc_UM_Page"
-SeeAlso: #2510,#1136,INT 2F/AX=1684h"DEVICE API"
---------W-20----Vx0007-----------------------
-INT 20 P - Microsoft Windows - PageSwap - VxD SERVICES
-	VxD = 0007h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1136)
-Values for PageSwap (VxD ID 0007h) service number:
- 00h	get version
- 01h	test create
- 02h	create swap file
- 03h	destroy swap file
- 04h	in
- 05h	out
- 06h	test if I/O valid
- 07h	"Read_Or_Write"
- 08h	"Grow_File"
- 09h	"Init_File"
-SeeAlso: #1135,#1137,#1138,#2512
---------W-20----Vx0009-----------------------
-INT 20 P - Microsoft Windows - REBOOT - VxD SERVICES
-	VxD = 0009h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1137)
-Values for REBOOT (VxD ID 0009h) service number:
- 00h	get REBOOT version???
- 01h	???
- 02h	???
- 03h	...last service for Windows95 SP1
-SeeAlso: #1136,#1138,#2506
---------W-20----Vx000A-----------------------
-INT 20 P - Microsoft Windows - VDD - VxD SERVICES
-	VxD = 000Ah
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1138)
-Values for VDD (VxD ID 000Ah) service number:
- 00h	get version
- 01h	PIF state
- 02h	get GrabRtn
- 03h	hide cursor
- 04h	set VM type
- 05h	get ModTime
- 06h	set HCurTrk
- 07h	message clear screen
- 08h	message foreground color
- 09h	message background color
- 0Ah	message output text
- 0Bh	message set cursor position
- 0Ch	query access
- 0Dh	"VDD_Check_Update_Soon"
- 0Eh	"VDD_Get_Mini_Dispatch_Table"
- 0Fh	"VDD_Register_Virtual_Port"
-	DX = base I/O port number
-	CL = number of contiguous ports???
- 10h	"VDD_Get_VM_Info"
- 11h	"VDD_Get_Special_VM_IDs"
-	Return: ESI = ???
-		EDI = ???
- 12h	"VDD_Register_Extra_Screen_Selector"
- 13h	"VDD_Takeover_VGA_Port"
-	DX = VGA I/O port number (03C2h, etc.)
-	ECX -> routine to call on I/O access
-	Return: ECX -> previous handler (to be jumped to at end of new handler)
- 14h	???
- 15h	???
- 16h	...last service for Windows95 SP1
-SeeAlso: #1137,#1139,#2512
---------W-20----Vx000B-----------------------
-INT 20 P - Microsoft Windows - VSD - VxD SERVICES
-	VxD = 000Bh
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1139)
-Values for VSD (VxD ID 000Bh) service number:
- 00h	get version
- 01h	bell
- 02h	sound on
- 03h	"VSD_TakeSoundPort"
-SeeAlso: #1138,#1140
---------W-20----Vx000C-----------------------
-INT 20 P - Microsoft Windows - VMD / VMOUSE - VxD SERVICES
-	VxD = 000Ch
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1140)
-Values for VMD / VMOUSE (VxD ID 000Ch) service number:
- 0000h	get version
- 0001h	set mouse type
- 0002h	get mouse owner
- 0003h	"VMOUSE_Post_Pointer_Message"
- 0004h	"VMOUSE_Set_Cursor_Proc"
- 0005h	"VMOUSE_Call_Cursor_Proc"
- 0006h	"VMOUSE_Set_Mouse_Data~Get_Mouse_Data"
- 0007h	"VMOUSE_Manipulate_Pointer_Message"
- 0008h	"VMOUSE_Set_Middle_Button"
- 0009h	"VMD_Set_Middle_Button"
- 000Ah	"VMD_Enable_Disable_Mouse_Events"
- 000Bh	"VMD_Post_Absolute_Pointer_Message"
-	...last service for Windows95 SP1
-SeeAlso: #1139,#1141,INT 2F/AX=1684h/BX=000Ch
---------W-20----Vx000D-----------------------
-INT 20 P - Microsoft Windows - VKD - VxD SERVICES
-	VxD = 000Dh
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1141)
-Values for VKD (VxD ID 000Dh) service number:
- 0000h	get version
- 0001h	define hotkey
- 0002h	remove hotkey
- 0003h	locally enable hotkey
- 0004h	locally disable hotkey
- 0005h	reflect hotkey
- 0006h	cancel hotkey state
- 0007h	force keys
- 0008h	get keyboard owner
- 0009h	define paste mode
- 000Ah	start pasting
- 000Bh	cancel paste
- 000Ch	get message key
- 000Dh	peek message key
- 000Eh	flush message key queue
- 000Fh	"VKD_Enable_Keyboard"
- 0010h	"VKD_Disable_Keyboard"
- 0011h	"VKD_Get_Shift_State"
- 0012h	"VKD_Filter_Keyboard_Input"
- 0013h	"VKD_Put_Byte"
- 0014h	"VKD_Set_Shift_State"
-	...last service for Windows95 SP1
-SeeAlso: #1140,#1142
---------W-20----Vx000E-----------------------
-INT 20 P - Microsoft Windows - VCD - VxD SERVICES
-	VxD = 000Eh
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1142)
-Values for VCD (VxD ID 000Eh) service number:
- 0000h	get version
- 0001h	set port global
- 0002h	get focus
- 0003h	virtualize port
- 0004h	"VCD_Acquire_Port"
- 0005h	"VCD_Free_Port"
- 0006h	"VCD_Acquire_Port_Windows_Style"
- 0007h	"VCD_Free_Port_Windows_Style"
- 0008h	"VCD_Steal_Port_Windows_Style"
- 0009h	"VCD_Find_COM_Index"
- 000Ah	"VCD_Set_Port_Global_Special"
- 000Bh	"VCD_Virtualize_Port_Dynamic"
- 000Ch	"VCD_Unvirtualize_Port_Dynamic"
-	...last service for Windows95 SP1
-SeeAlso: #1141,#1143
---------W-20----Vx0010-----------------------
-INT 20 P - Microsoft Windows - BlockDev / IOS - VxD SERVICES
-	VxD = 0010h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1143)
-Values for BlockDev/IOS (VxD ID 0010h) service number:
- 0000h	get version
- 0001h	register device
- 0002h	find INT 13 drive
- 0003h	get device list
- 0004h	send command
- 0005h	command complete
- 0006h	synchronous command
- 0007h	"IOS_Register"
- 0008h	"IOS_Requestor_Service"
- 0009h	"IOS_Exclusive_Access"
- 000Ah	"IOS_Send_Next_Command"
- 000Bh	"IOS_Set_Async_Time_Out"
- 000Ch	"IOS_Signal_Semaphore_No_Switch"
- 000Dh	"IOSIdleStatus"
- 000Eh	"IOSMapIORSToI24"
- 000Fh	"IOSMapIORSToI21"
- 0010h	"PrintLog"
-SeeAlso: #1142,#1144
---------W-20----Vx0011-----------------------
-INT 20 P - Microsoft Windows - VMCPD - VxD SERVICES
-	VxD = 0011h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1144)
-Values for VMCPD (VxD ID 0011h) service number:
- 0000h	"VMCPD_Get_Version"
- 0001h	"VMCPD_Get_Virt_State"
- 0002h	"VMCPD_Set_Virt_State"
- 0003h	"VMCPD_Get_CR0_State"
- 0004h	"VMCPD_Set_CR0_State"
- 0005h	"VMCPD_Get_Thread_State"
- 0006h	"VMCPD_Set_Thread_State"
- 0007h	"_VMCPD_Get_FP_Instruction_Size"
- 0008h	"VMCPD_Set_Thread_Precision"
-SeeAlso: #1143,#1145,#2506
---------W-20----Vx0012-----------------------
-INT 20 P - Microsoft Windows - EBIOS - VxD SERVICES
-	VxD = 0012h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1145)
-Values for EBIOS (VxD ID 0012h) service number:
- 00h	get EBIOS version
- 01h	get unused memory
-SeeAlso: #1144,#1146
---------W-20----Vx0014-----------------------
-INT 20 P - Microsoft Windows - VNETBIOS - VxD SERVICES
-	VxD = 0014h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1146)
-Values for VNETBIOS (VxD ID 0014h) service number:
- 00h	get version
- 01h	register
- 02h	submit
- 03h	enum
- 04h	deregister
- 05h	register2
- 06h	map
- 07h	enum2
-SeeAlso: #1145,#1147
---------W-20----Vx0015-----------------------
-INT 20 P - Microsoft Windows - DOSMGR - VxD SERVICES
-	VxD = 0015h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1147)
-Values for DOSMGR (VxD ID 0015h) service number:
- 0000h	get version
- 0001h	set exec VM data
- 0002h	coyp VM drive state
- 0003h	execute VM
- 0004h	get InDOS pointer
- 0005h	add device
- 0006h	remove device
- 0007h	instance device
- 0008h	get DOS critical status
- 0009h	enable InDOS polling
- 000Ah	backfill allowed
- 000Bh	"LocalGlobalReg"
- 000Ch	"Init_UMB_Area"
- 000Dh	"Begin_V86_App"
- 000Eh	"End_V86_App"
- 000Fh	"Alloc_Local_Sys_VM_Mem"
-	EAX = number of paragraphs??? to allocate
- 0010h	"DOSMGR_Grow_CDSs"
- 0011h	"DOSMGR_Translate_Server_DOS_Call"
- 0012h	"DOSMGR_MMGR_PSP_Change_Notifier"
-SeeAlso: #1146,#2520 at INT 2F/AX=1684h/BX=0015h
---------W-20----Vx0017-----------------------
-INT 20 P - Microsoft Windows - SHELL - VxD SERVICES
-	VxD = 0017h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1148)
-Values for SHELL (VxD ID 0017h) service number:
- 0000h	get version
- 0001h	resolve contention
- 0002h	event
- 0003h	SYSMODAL message
- 0004h	message
- 0005h	get VM information
- 0006h	"_SHELL_PostMessage"
- 0007h	"_SHELL_WinExec"
- 0008h	"_SHELL_CallDll"
- 0009h	"SHELL_OpenClipboard"
- 000Ah	"SHELL_SetClipboardData"
- 000Bh	"SHELL_GetClipboardData"
- 000Ch	"SHELL_CloseClipboard"
- 000Dh	"_SHELL_Install_Taskman_Hooks"
- 000Eh	"SHELL_Hook_Properties"
- 000Fh	"SHELL_Unhook_Properties"
- 0010h	"SHELL_OEMKeyScan"
- 0011h	"SHELL_Update_User_Activity"
- 0012h	"_SHELL_UnhookSystemBroadcast"
- 0013h	"_SHELL_LocalAllocEx"
- 0014h	"_SHELL_LocalFree"
- 0015h	"_SHELL_LoadLibrary"
- 0016h	"_SHELL_FreeLibrary"
- 0017h	"_SHELL_GetProcAddress"
- 0018h	"_SHELL_CallDll"
- 0019h	"_SHELL_SuggestSingleMSDOSMode"
- 001Ah	"SHELL_CheckHotkeyAllowed"
- 001Bh	"_SHELL_GetDOSAppInfo"
-SeeAlso: #1147,#1149,#2521 at INT 2F/AX=1684h/BX=0017h
---------W-20----Vx0018-----------------------
-INT 20 P - Microsoft Windows - VMPoll - VxD SERVICES
-	VxD = 0018h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1149)
-Values for VMPoll (VxD ID 0018h) service number:
- 00h	get version
- 01h	enable/disable
- 02h	reset detection
- 03h	check idle
-SeeAlso: #1134,#2521 at INT 2F/AX=1684h/BX=0017h
---------W-20----Vx001A-----------------------
-INT 20 P - Microsoft Windows - DOSNET - VxD SERVICES
-	VxD = 001Ah
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1150)
-Values for DOSNET (VxD ID 001Ah) service number:
- 00h	get version
- 01h	send FILESYSCHANGE
- 02h	do PSP adjust
-SeeAlso: #1149,#1151
---------W-20----Vx001B-----------------------
-INT 20 P - Microsoft Windows - VFD - VxD SERVICES
-	VxD = 001Bh
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1151,#1205
-
-(Table 1151)
-Values for VFD (VxD ID 001Bh) service number:
- 0000h	get version
-SeeAlso: #1150,#1152
---------W-20----Vx001C-----------------------
-INT 20 P - Microsoft Windows - LoadHi - VxD SERVICES
-	VxD = 001Ch
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1152)
-Values for LoadHi (VxD ID 001Ch) service number:
- 00h	get version
-	Return:	CF clear
-		EAX = version (AH = major, AL = minor)
-		ESI -> ASCIZ signature "LoadHi"
-SeeAlso: #1151,#1153
---------W-20----Vx0020-----------------------
-INT 20 P - Microsoft Windows - Int13 - VxD SERVICES
-	VxD = 0020h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1153)
-Values for Int13 (VxD ID 0020h) service number:
- 00h	get version
- 01h	device registered
- 02h	translate VM interrupt
- 03h	hooking BIOS interrupt
- 04h	unhooking BIOS interrupt
-SeeAlso: #1152,#1154
---------W-20----Vx0021-----------------------
-INT 20 P - Microsoft Windows - PAGEFILE - VxD SERVICES
-	VxD = 0021h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1154)
-Values for PAGEFILE (VxD ID 0021h) service number:
- 00h	get version
- 01h	init file
- 02h	clean up
- 03h	grow file
- 04h	read or write
- 05h	cancel
- 06h	test I/O valid
- 07h	"Get_Size_Info"
- 08h	"Set_Async_Manager"
- 09h	"Call_Async_Manager"
-SeeAlso: #1153,#2525 at INT 2F/AX=1684h/BX=0021h
---------W-20----Vx0026-----------------------
-INT 20 P - Microsoft Windows - VPOWERD - VxD SERVICES
-	VxD = 0026h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1155)
-Values for VPOWERD (VxD ID 0026h) service number:
- 00h	get version
-	Return:	CF clear
-		EAX = version (AH = major, AL = minor)
- 01h	get APM BIOS version
-	Return: CF clear
-		EAX = APM BIOS version
- 02h	get current power management level
-	Return: CF clear
-		EAX = power management level
- 03h	enable/disable power management (see INT 15/AX=5308h)
-	Return: EAX = error code (see #2529) or 00000000h if successful
- 04h	set power state (see INT 15/AX=5307h)
-	???
-	Return: EAX = error code (see #2529) or 00000000h if successful
- 05h	set system power status
-	Return: EAX = error code (see #2529) or 00000000h if successful
- 06h	restore APM power-on defaults (see INT 15/AX=5309h)
-	Return: EAX = error code (see #2529) or 00000000h if successful
- 07h	get power status (see INT 15/AX=530Ah)
-	Return: ???
- 08h	get APM 1.1 power state (see INT 15/AX=530Ch)
-	Return: ???
- 09h	invoke OEM APM function
-	??? -> bufer containing parameters for INT 15/AX=5380h
-	Return: EAX = error code (see #2529) or 00000000h if successful
-		buffer updated if successful
- 0Ah	register power handler
-	???
-	Return: EAX = error code (see #2529) or 00000000h if successful
- 0Bh	deregister power handler
-	???
-	Return: EAX = error code (see #2529) or 00000000h if successful
- 0Ch	Win32 get system power status
- 0Dh	Win32 set system power status
-SeeAlso: #1154,#1156,INT 2F/AX=1684h/BX=0026h
---------W-20----Vx0027-----------------------
-INT 20 P - Microsoft Windows - VXDLDR - VxD SERVICES
-	VxD = 0027h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1156)
-Values for VXDLDR (VxD ID 0027h) service number:
- 0000h	"VXDLDR_Get_Version"
- 0001h	"VXDLDR_LoadDevice"
- 0002h	"VXDLDR_UnloadDevice"
- 0003h	"VXDLDR_DevInitSucceeded"
- 0004h	"VXDLDR_DevInitFailed"
- 0005h	"VXDLDR_GetDeviceList"
- 0006h	"VXDLDR_UnloadMe"
- 0007h	"PELDR_LoadModule"
- 0008h	"PELDR_GetModuleHandle"
- 0009h	"PELDR_GetModuleUsage"
- 000Ah	"PELDR_GetEntryPoint"
- 000Bh	"PELDR_GetProcAddress"
- 000Ch	"PELDR_AddExportTable"
- 000Dh	"PELDR_RemoveExportTable"
- 000Eh	"PELDR_FreeModule"
- 000Fh	"VXDLDR_Notify"
- 0010h	"_PELDR_InitCompleted"
- 0011h	"_PELDR_LoadModuleEx"
-SeeAlso: #1154,#1157
---------W-20----Vx0028-----------------------
-INT 20 P - Microsoft Windows - NDIS - VxD SERVICES
-	VxD = 0028h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1157)
-Values for NDIS (VxD ID 0028h) service number:
- 00h	"NdisGetVersion"
- 01h	"NdisAllocateSpinLock"
- 02h	"NdisFreeSpinLock"
- 03h	"NdisAcquireSpinLock"
- 04h	"NdisReleaseSpinLock"
- 05h	"NdisOpenConfiguration"
- 06h	"NdisReadConfiguration"
- 07h	"NdisCloseConfiguration"
- 08h	"NdisReadEisaSlotInformation"
- 09h	"NdisReadMcaPosInformation"
- 0Ah	"NdisAllocateMemory"
- 0Bh	"NdisFreeMemory"
- 0Ch	"NdisSetTimer"
- 0Dh	"NdisCancelTimer"
- 0Eh	"NdisStallExecution"
- 0Fh	"NdisInitializeInterrupt"
- 10h	"NdisRemoveInterrupt"
- 11h	"NdisSynchronizeWithInterrupt"
- 12h	"NdisOpenFile"
- 13h	"NdisMapFile"
- 14h	"NdisUnmapFile"
- 15h	"NdisCloseFile"
- 16h	"NdisAllocatePacketPool"
- 17h	"NdisFreePacketPool"
- 18h	"NdisAllocatePacket"
- 19h	"NdisReinitializePacket"
- 1Ah	"NdisFreePacket"
- 1Bh	"NdisQueryPacket"
- 1Ch	"NdisAllocateBufferPool"
- 1Dh	"NdisFreeBufferPool"
- 1Eh	"NdisAllocateBuffer"
- 1Fh	"NdisCopyBuffer"
- 20h	"NdisFreeBuffer"
- 21h	"NdisQueryBuffer"
- 22h	"NdisGetBufferPhysicalAddress"
- 23h	"NdisChainBufferAtFront"
- 24h	"NdisChainBufferAtBack"
- 25h	"NdisUnchainBufferAtFront"
- 26h	"NdisUnchainBufferAtBack"
- 27h	"NdisGetNextBuffer"
- 28h	"NdisCopyFromPacketToPacket"
- 29h	"NdisRegisterProtocol"
- 2Ah	"NdisDeregisterProtocol"
- 2Bh	"NdisOpenAdapter"
- 2Ch	"NdisCloseAdapter"
- 2Dh	"NdisSend"
- 2Eh	"NdisTransferData"
- 2Fh	"NdisReset"
- 30h	"NdisRequest"
- 31h	"NdisInitializeWrapper"
- 32h	"NdisTerminateWrapper"
- 33h	"NdisRegisterMac"
- 34h	"NdisDeregisterMac"
- 35h	"NdisRegisterAdapter"
- 36h	"NdisDeregisterAdapter"
- 37h	"NdisCompleteOpenAdapter"
- 38h	"NdisCompleteCloseAdapter"
- 39h	"NdisCompleteSend"
- 3Ah	"NdisCompleteTransferData"
- 3Bh	"NdisCompleteReset"
- 3Ch	"NdisCompleteRequest"
- 3Dh	"NdisIndicateReceive"
- 3Eh	"NdisIndicateReceiveComplete"
- 3Fh	"NdisIndicateStatus"
- 40h	"NdisIndicateStatusComplete"
- 41h	"NdisCompleteQueryStatistics"
- 42h	"NdisEqualString"
- 43h	"NdisNetAddressStringToBinary"
- 44h	"NdisReadNetworkAddress"
- 45h	"NdisWriteErrorLogEntry"
- 46h	"C_MapPhysToLinear"
- 47h	"C_HeapFree"
- 48h	"NdisAllocateSharedMemory"
- 49h	"NdisFreeSharedMemory"
- ...
- 5Fh	...last service for Windows95 SP1
-SeeAlso: #1156,#1158
---------W-20----Vx002A-----------------------
-INT 20 P - Microsoft Windows - VWIN32 - VxD SERVICES
-	VxD = 002Ah
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1158)
-Values for VWIN32 (VxD ID 002Ah) service number:
- 0000h	"VWin32_Get_Version"
- 0001h	"VWin32_Wake_For_Event"
- 0002h	"_VWIN32_QueueUserApc"
- 0003h	"_VWIN32_Get_Thread_Context"
- 0004h	"_VWIN32_Set_Thread_Context"
- 0005h	"_VWIN32_CopyMem"
- 0006h	"_VWIN32_BlockForTermination"
- 0007h	"_VWIN32_Emulate_Npx"
- 0008h	"_VWIN32_CheckDelayedNpxTrap"
- 0009h	"VWIN32_EnterCrstR0"
- 000Ah	"VWIN32_LeaveCrstR0"
- 000Bh	"_VWIN32_FaultPopup"
- 000Ch	"VWIN32_GetContextHandle"
- 000Dh	"VWIN32_GetCurrentProcessHandle"
- 000Eh	"_VWIN32_SetWin32Event"
- 000Fh	"_VWIN32_PulseWin32Event"
- 0010h	"_VWIN32_ResetWin32Event"
- 0011h	"_VWIN32_WaitSingleObject"
- 0012h	"_VWIN32_WaitMultipleObjects"
- 0013h	"_VWIN32_CreateRing0Thread"
- 0014h	"_VWIN32_CloseVxDHandle"
- 0015h	"VWIN32_ActiveTimeBiasSet"
- 0016h	"VWIN32_GetCurrentDirectory"
- 0017h	"VWIN32_BlueScreenPopup"
- 0018h	"VWIN32_TerminateApp"
- 0019h	"_VWIN32_QueueKernelAPC"
- 001Ah	"VWIN32_SysErrorBox"
- 001Bh	"_VWIN32_IsClientWin32"
- 001Ch	"VWIN32_IFSRIPWhenLev2Taken"
-SeeAlso: #1157,#1159
---------W-20----Vx002B-----------------------
-INT 20 P - Microsoft Windows - VCOMM - VxD SERVICES
-	VxD = 002Bh
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1159)
-Values for VCOMM (VxD ID 002Bh) service number:
- 0000h	"VCOMM_Get_Version"
- 0001h	"_VCOMM_Register_Port_Driver"
- 0002h	"_VCOMM_Acquire_Port"
- 0003h	"_VCOMM_Release_Port"
- 0004h	"_VCOMM_OpenComm"
- 0005h	"_VCOMM_SetCommState"
- 0006h	"_VCOMM_GetCommState"
- 0007h	"_VCOMM_SetupComm"
- 0008h	"_VCOMM_TransmitCommChar"
- 0009h	"_VCOMM_CloseComm"
- 000Ah	"_VCOMM_GetCommQueueStatus"
- 000Bh	"_VCOMM_ClearCommError"
- 000Ch	"_VCOMM_GetModemStatus"
- 000Dh	"_VCOMM_GetCommProperties"
- 000Eh	"_VCOMM_EscapeCommFunction"
- 000Fh	"_VCOMM_PurgeComm"
- 0010h	"_VCOMM_SetCommEventMask"
- 0011h	"_VCOMM_GetCommEventMask"
- 0012h	"_VCOMM_WriteComm"
- 0013h	"_VCOMM_ReadComm"
- 0014h	"_VCOMM_EnableCommNotification"
- 0015h	"_VCOMM_GetLastError"
- 0016h	"_VCOMM_Steal_Port"
- 0017h	"_VCOMM_SetReadCallBack"
- 0018h	"_VCOMM_SetWriteCallBack"
- 0019h	"_VCOMM_GetSetCommTimeouts"
- 001Ah	"_VCOMM_SetWriteRequest"
- 001Bh	"_VCOMM_SetReadRequest"
- 001Ch	"_VCOMM_Dequeue_Request"
- 001Dh	"_VCOMM_Dequeue_Request"
- 001Eh	"_VCOMM_Enumerate_DevNodes"
- 001Fh	"VCOMM_Map_Win32DCB_To_Ring0"
- 0020h	"VCOMM_Map_Ring0DCB_To_Win32"
- 0021h	"_VCOMM_Get_Contention_Handler"
- 0022h	"_VCOMM_Map_Name_To_Resource"
-SeeAlso: #1158,#1160
---------W-20----Vx002C-----------------------
-INT 20 P - Microsoft Windows - SPOOLER - VxD SERVICES
-	VxD = 002Ch
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1160)
-Values for SPOOLER (VxD ID 002Ch) service number:
- 0000h	get version???
- 0001h	???
- 0010h	...last service for Windows95 SP1
-SeeAlso: #1159,#1161
---------W-20----Vx0032-----------------------
-INT 20 P - Microsoft Windows - VSERVER - VxD SERVICES
-	VxD = 0032h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1161)
-Values for VSERVER (VxD ID 0032h) service number:
- 00h	get VSERVER version
-	Return: CF clear
-		EAX = version (AH = major, AL = minor)
-		EBX = ??? (00000000h)
- 01h	allocate ???
-	AX = ???
-	ESI = ???
-	Return: CF clear if successful
-		CF set on error (table full)
- 02h	NOP???
-	Return: EBX = 00000000h
- 03h	???
-	Return: ZF clear
-SeeAlso: #1160,#1162,INT 2F/AX=1684h/BX=0032h
---------W-20----Vx0033-----------------------
-INT 20 P - Microsoft Windows - CONFIGMG - VxD SERVICES
-	VxD = 0033h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1162)
-Values for CONFIGMG (VxD ID 0033h) service number:
- 0000h	"_CONFIGMG_Get_Version"
- 0001h	"_CONFIGMG_Initialize"
- 0002h	"_CONFIGMG_Locate_DevNode"
- 0003h	"_CONFIGMG_Get_Parent"
- 0004h	"_CONFIGMG_Get_Child"
- 0005h	"_CONFIGMG_Get_Sibling"
- 0006h	"_CONFIGMG_Get_Device_ID_Size"
- 0007h	"_CONFIGMG_Get_Device_ID"
- 0008h	"_CONFIGMG_Get_Depth"
- 0009h	"_CONFIGMG_Get_Private_DWord"
- 000Ah	"_CONFIGMG_Set_Private_DWord"
- 000Bh	"_CONFIGMG_Create_DevNode"
- 000Ch	"_CONFIGMG_Query_Remove_SubTree"
- 000Dh	"_CONFIGMG_Remove_SubTree"
- 000Eh	"_CONFIGMG_Register_Device_Driver"
- 000Fh	"_CONFIGMG_Register_Enumerator"
- 0010h	"_CONFIGMG_Register_Arbitrator"
- 0011h	"_CONFIGMG_Deregister_Arbitrator"
- 0012h	"_CONFIGMG_Query_Arbitrator_Free_Size"
- 0013h	"_CONFIGMG_Query_Arbitrator_Free_Data"
- 0014h	"_CONFIGMG_Sort_NodeList"
- 0015h	"_CONFIGMG_Yield"
- 0016h	"_CONFIGMG_Lock"
- 0017h	"_CONFIGMG_Unlock"
- 0018h	"_CONFIGMG_Add_Empty_Log_Conf"
- 0019h	"_CONFIGMG_Free_Log_Conf"
- 001Ah	"_CONFIGMG_Get_First_Log_Conf"
- 001Bh	"_CONFIGMG_Get_Next_Log_Conf"
- 001Ch	"_CONFIGMG_Add_Res_Des"
- 001Dh	"_CONFIGMG_Modify_Res_Des"
- 001Eh	"_CONFIGMG_Free_Res_Des"
- 001Fh	"_CONFIGMG_Get_Next_Res_Des"
- 0020h	"_CONFIGMG_Get_Performance_Info"
- 0021h	"_CONFIGMG_Get_Res_Des_Data_Size"
- 0022h	"_CONFIGMG_Get_Res_Des_Data"
- 0023h	"_CONFIGMG_Process_Events_Now"
- 0024h	"_CONFIGMG_Create_Range_List"
- 0025h	"_CONFIGMG_Add_Range"
- 0026h	"_CONFIGMG_Delete_Range"
- 0027h	"_CONFIGMG_Test_Range_Available"
- 0028h	"_CONFIGMG_Dup_Range_List"
- 0029h	"_CONFIGMG_Free_Range_List"
- 002Ah	"_CONFIGMG_Invert_Range_List"
- 002Bh	"_CONFIGMG_Intersect_Range_List"
- 002Ch	"_CONFIGMG_First_Range"
- 002Dh	"_CONFIGMG_Next_Range"
- 002Eh	"_CONFIGMG_Dump_Range_List"
- 002Fh	"_CONFIGMG_Load_DLVxDs"
- 0030h	"_CONFIGMG_Get_DDBs"
- 0031h	"_CONFIGMG_Get_CRC_CheckSum"
- 0032h	"_CONFIGMG_Register_DevLoader"
- 0033h	"_CONFIGMG_Reenumerate_DevNode"
- 0034h	"_CONFIGMG_Setup_DevNode"
- 0035h	"_CONFIGMG_Reset_Children_Marks"
- 0036h	"_CONFIGMG_Get_DevNode_Status"
- 0037h	"_CONFIGMG_Remove_Unmarked_Children"
- 0038h	"_CONFIGMG_ISAPNP_To_CM"
- 0039h	"_CONFIGMG_CallBack_Device_Driver"
- 003Ah	"_CONFIGMG_CallBack_Enumerator"
- 003Bh	"_CONFIGMG_Get_Alloc_Log_Conf"
- 003Ch	"_CONFIGMG_Get_DevNode_Key_Size"
- 003Dh	"_CONFIGMG_Get_DevNode_Key"
- 003Eh	"_CONFIGMG_Read_Registry_Value"
- 003Fh	"_CONFIGMG_Write_Registry_Value"
- 0040h	"_CONFIGMG_Disable_DevNode"
- 0041h	"_CONFIGMG_Enable_DevNode"
- 0042h	"_CONFIGMG_Move_DevNode"
- 0043h	"_CONFIGMG_Set_Bus_Info"
- 0044h	"_CONFIGMG_Get_Bus_Info"
- 0045h	"_CONFIGMG_Set_HW_Prof"
- 0046h	"_CONFIGMG_Recompute_HW_Prof"
- 0047h	"_CONFIGMG_Query_Change_HW_Prof"
- 0048h	"_CONFIGMG_Get_Device_Driver_Private_DWord"
- 0049h	"_CONFIGMG_Set_Device_Driver_Private_DWord"
- 004Ah	"_CONFIGMG_Get_HW_Prof_Flags"
- 004Bh	"_CONFIGMG_Set_HW_Prof_Flags"
- 004Ch	"_CONFIGMG_Read_Registry_Log_Confs"
- 004Dh	"_CONFIGMG_Run_Detection"
- 004Eh	"_CONFIGMG_Call_At_Appy_Time"
- 004Fh	"_CONFIGMG_Fail_Change_HW_Prof"
- 0050h	"_CONFIGMG_Set_Private_Problem"
- 0051h	"_CONFIGMG_Debug_DevNode"
- 0052h	"_CONFIGMG_Get_Hardware_Profile_Info"
- 0053h	"_CONFIGMG_Register_Enumerator_Function"
- 0054h	"_CONFIGMG_Call_Enumerator_Function"
- 0055h	"_CONFIGMG_Add_ID"
- 0056h	"_CONFIGMG_Find_Range"
- 0057h	"_CONFIGMG_Get_Global_State"
- 0058h	"_CONFIGMG_Broadcast_Device_Change_Message"
- 0059h	"_CONFIGMG_Call_DevNode_Handler"
- 005Ah	"_CONFIGMG_Remove_Reinsert_All"
-Note:	the VxD services appear to be identical to the PM/V86 APIs on
-	  INT 2F/AX=1684h
-SeeAlso: #1161,#1164,INT 2F/AX=1684h/BX=0033h
---------W-20----Vx0034-----------------------
-INT 20 P - Microsoft Windows - DWCFGMG.SYS - VxD SERVICES
-	VxD = 0034h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1163)
-Values for DWCFGMG.SYS (VxD ID 0034h) service number:
- 00h	"CM_GetVersion" get supported DDI version
-	Return: EAX = 00000000h if not installed
-		else
-		    AH = major version number
-		    AL = minor version number
-		    EBX = number of devices controlled by DWCFGMG.SYS
- 01h	"CM_GetConfig" get device configuration
-	EBX = device index
-	EDI -> buffer for configuration information (see #2539)
-	Return: EAX = status (0000h successful, 0001h index out of range)
- 02h	"CM_LockConfig" lock device configuration
-	EDI -> configuration information (see #2539)
-	Return: EAX = status
-		    0000h successful
-		    0001h resource conflict
-		    0002h invalid request
- 03h	"CM_UnlockConfig" unlock device configuration
-	EDI -> configuration information (see #2539)
-	Return: EAX = status (0000h successful, 0001h invalid request)
- 04h	"CME_QueryResources"
- 05h	"CME_AllocResources"
- 06h	"CME_DeallocResources"
-SeeAlso: INT 2F/AX=1684h/BX=0034h
---------W-20----Vx0036-----------------------
-INT 20 P - Microsoft Windows - VFBACKUP - VxD SERVICES
-	VxD = 0036h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1164)
-Values for VFBACKUP (VxD ID 0036h) service number:
- 0000h	get version
-	Return: CF clear
-		EAX = version (AH = major, AL = minor)
- 0001h	"VFBACKUP_Lock_NEC"
- 0002h	"VFBACKUP_UnLock_NEC"
- 0003h	"VFBACKUP_Register_NEC"
- 0004h	"VFBACKUP_Register_VFD"
- 0005h	"VFBACKUP_Lock_All_Ports"
-SeeAlso: #1162,#1165
---------W-20----Vx0037-----------------------
-INT 20 P - Microsoft Windows - VMINI / ENABLE - VxD SERVICES
-	VxD = 0037h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1165)
-Values for VMINI / ENABLE (VxD ID 0037h) service number:
- 0000h	get version
-	Return: CF clear
-		EAX = version (AH = major, AL = minor)
- 0001h	"VMINI_Update"
-	??? (performs VMMCall 1800Eh, then falls through to service 04h)
-	Return: EAX = system time???
- 0002h	"VMINI_Status"
-	get current ???
-	Return: EAX = ???
- 0003h	"VMINI_DisplayError" (schedules a global event via VMMCall 1800Eh)
-	Return: ???
- 0004h	"VMINI_SetTimeStamp" (performs VMMCall 100CFh)
-	Return: EAX = system time
- 0005h	"VMINI_Siren" (call ??? priority event)
-	Return: nothing
- 0006h	"VMINI_RegisterAccess" (set ??? / get ???)
-	EDI -> buffer containing data to copy into VxD and space for results
-	Return: EDI buffer updated
- 0007h	"VMINI_GetData"
-	EBX = ??? flags (bits 2,15,17,18 checked)
-	EDI -> ???
-	???
-	Return: ???
- 0008h	"VMINI_ShutDownItem" (schedules a global event via VMMCall 1800Eh)
-	Return: ???
- 0009h	"VMINI_RegisterSK" (get ??? data)
-	EDI -> buffer for data (see #1166)
-	Return:	EDI buffer updated if large enough
-SeeAlso: #1164,#1167,#2541 at INT 2F/AX=1684h/BX=0037h
-
-Format of ENABLE.VXD ??? data:
-Offset	Size	Description	(Table 1166)
- 00h	DWORD	(ret) length of data, including this word
-		(call) length of buffer
- 04h	DWORD	-> 24-byte (or larger) buffer
- 08h	DWORD	-> 20-byte buffer
- 0Ch	DWORD	-> 260-byte buffer
- 10h	DWORD	-> 260-byte buffer
-SeeAlso: #1165
---------W-20----Vx0038-----------------------
-INT 20 P - Microsoft Windows - VCOND - VxD SERVICES
-	VxD = 0038h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1167)
-Values for VCOND (VxD ID 0038h) service number:
- 0000h	get VCOND version
-	Return: CF clear
-		EAX = version (AH = major, AL = minor)
- 0001h	"VCOND_Launch_ConApp_Inherited"
-SeeAlso: #1168,#1165,#1169
-
-(Table 1168)
-Values for Windows95 VCOND (Vxd ID 0038h) Win32 service number:
- 00h	get VCOND version
-	Return: EAX = version (AH = major, AL = minor)
- ...
- 34h	...last Win32 service for Windows95 SP1
-SeeAlso: #1167
---------W-20----Vx003D-----------------------
-INT 20 P - Microsoft Windows - BIOS - VxD SERVICES
-	VxD = 003Dh
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1169)
-Values for BIOS (VxD ID 003Dh) service number:
- 00h	get version???
- 01h	???
- 02h	???
- 03h	???
-SeeAlso: #1167,#1170
---------W-20----Vx003E-----------------------
-INT 20 P - Microsoft Windows - WSOCK - VxD SERVICES
-	VxD = 003Eh
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1170)
-Values for WSOCK (VxD ID 003Eh) service number:
- 00h	get WSOCK version
-	Return: CF clear
-		AH = major version
-		AL = minor version
-		EAX high word = 0000h
- 01h	???
-	EAX = ??? or 00000000h
-	Return: CF clear if successful
-		    EAX = 00000000h
-		CF set on error
-		    EAX = ???
- 02h	???
-	EAX = ??? or 00000000h
-	Return: ???
- 03h	???
- 04h	...last service for Windows95 SP1
-SeeAlso: #1169,#1171
---------W-20----Vx0040-----------------------
-INT 20 P - Microsoft Windows - IFSMgr - VxD SERVICES
-	VxD = 0040h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1171)
-Values for IFSMGR (VxD ID 0040h) service number:
- 00h	get version
- 01h	"RegisterMount"
- 02h	"RegisterNet"
- 03h	"RegisterMailSlot"
- 04h	"Attach"
- 05h	"Detach"
- 06h	"Get_NetTime"
- 07h	"Get_DOSTime"
- 08h	"SetupConnection"
- 09h	"DerefConnection"
- 0Ah	"ServerDOSCall"
- 0Bh	"CompleteAsync"
- 0Ch	"RegisterHeap"
- 0Dh	"GetHeap"
- 0Eh	"RetHeap"
- 0Fh	"CheckHeap"
- 10h	"CheckHeapItem"
- 11h	"FillHeapSpare"
- 12h	"Block"
- 13h	"Wakeup"
- 14h	"Yield"
- 15h	"SchedEvent"
- 16h	"QueueEvent"
- 17h	"KillEvent"
- 18h	"FreeIOReg"
- 19h	"MakeMailSlot"
- 1Ah	"DeleteMailSlot"
- 1Bh	"WriteMailSlot"
- 1Ch	"PopUp"
- 1Dh	"printf"
- 1Eh	"AssertFailed"
- 1Fh	"LogEntry"
- 20h	"DebugMenu"
- 21h	"DebugVars"
- 22h	"GetDebugString"
- 23h	"GetDebugHexNum"
- 24h	"NetFunction"
- 25h	"DoDelAllUses"
- 26h	"SetErrString"
- 27h	"GetErrString"
- 28h	"SetReqHook"
- 29h	"SetPathHook"
- 2Ah	"UseAdd"
- 2Bh	"UseDel"
- 2Ch	"InitUseAdd"
- 2Dh	"ChangeDir"
- 2Eh	"DelAllUses"
- 2Fh	"CDROM_Attach"
- 30h	"CDROM_Detach"
- 31h	"Win32DupHandle"
- 32h	"Ring0_FileIO"
- 33h	"Toggle_Extended_File_Handle"
- 34h	"IFSMgr_GetDrive_Info"
- 35h	"IFSMgr_Ring0GetDriveInfo"
- 36h	"IFSMgr_BlockNoEvents"
- 37h	"IFSMgr_NetToDosTime"
- 38h	"IFSMgr_DosToNetTime"
- 39h	"IFSMgr_DosToWin32Time"
- 3Ah	"IFSMgr_Win32ToDosTime"
- 3Bh	"IFSMgr_NetToWin32Time"
- 3Ch	"IFSMgr_Win32ToNetTime"
- 3Dh	"IFSMgr_MetaMatch"
- 3Eh	"IFSMgr_TransMatch"
- 3Fh	"IFSMgr_CallProvider"
- 40h	"UniToBCS"
- 41h	"UniToBCSPath"
- 42h	"BCSToUni"
- 43h	"UniToUpper"
- 44h	"UniCharToOEM"
- 45h	"CreateBasis"
- 46h	"MatchBasisName"
- 47h	"AppendBasisTail"
- 48h	"FcbToShort"
- 49h	"ShortToFcb"
- 4Ah	"IFSMgr_ParsePath"
- 4Bh	"Query_PhysLock"
- 4Ch	"_VolFlush"
- 4Dh	"NotifyVolumeArrival"
- 4Eh	"NotifyVolumeRemoval"
- 4Fh	"QueryVolumeRemoval"
- 50h	"IFSMgr_FSDUnmountCFSD"
- 51h	"IFSMgr_GetConversionTablePtrs"
- 52h	"IFSMgr_CheckAccessConflict"
- 53h	"IFSMgr_LockFile"
- 54h	"IFSMgr_UnlockFile"
- 55h	"IFSMgr_RemoveLocks"
- 56h	"IFSMgr_CheckLocks"
- 57h	"IFSMgr_CountLocks"
- 58h	"IFSMgr_ReassignLockFileInst"
- 59h	"IFSMgr_UnassignLockList"
- 5Ah	"IFSMgr_MountChildVolume"
- 5Bh	"IFSMgr_UnmountChildVolume"
- 5Ch	"IFSMgr_SwapDrives"
- 5Dh	"IFSMgr_FSDMapFHtoIOREQ"
- 5Eh	"IFSMgr_FSDParsePath"
- 5Fh	"IFSMgr_FSDAttachSFT"
- 60h	"IFSMgr_GetTimeZoneBias"
- 61h	"IFSMgr_PNPEvent"
- 62h	"IFSMgr_RegisterCFSD"
- 63h	"IFSMgr_Win32MapExtendedHandleToSFT"
- 64h	"IFSMgr_DbgSetFileHandleLimit"
- 65h	"IFSMgr_Win32MapSFTToExtendedHandle"
- 66h	"IFSMgr_FSDGetCurrentDrive"
- 67h	"IFSMgr_InstallFileSystemApiHook"
- 68h	"IFSMgr_RemoveFileSystemApiHook"
- 69h	"IFSMgr_RunScheduledEvents"
- 6Ah	"IFSMgr_CheckDelResource"
- 6Bh	"IFSMgr_Win32GetVMCurdir"
- 6Ch	"IFSMgr_SetupFailedConnection"
- 6Dh	"_GetMappedErr"
- 6Eh	"ShortToLossyFcb"
- 6Fh	"IFSMgr_GetLockState"
- 70h	"BcsToBcs"
- 71h	"IFSMgr_SetLoopback"
- 72h	"IFSMgr_ClearLoopback"
- 73h	"IFSMgr_ParseOneElement"
- 74h	"BcsToBcsUpper"
-SeeAlso: #1170,#1172
---------W-20----Vx0041-----------------------
-INT 20 P - Microsoft Windows - VCDFSD - VxD SERVICES
-	VxD = 0041h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1172)
-Values for VCDFSD (VxD ID 0041h) service number:
- 00h	get VCDFSD version???
- 01h	???
- 02h	???
- 03h	???
-SeeAlso: #1171,#1173
---------W-20----Vx0048-----------------------
-INT 20 P - Microsoft Windows - PERF - VxD SERVICES
-	VxD = 0048h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1173)
-Values for PERF (VxD ID 0048h) service number:
- 00h	get version
-	Return: CF clear
-		EAX = version (AH = major, AL = minor)
- 01h	"PERF_Server_Register"
-	(creates/sets a registry key for the server)
- 02h	"PERF_Server_Deregister"
-	end performance monitoring (deletes registry key for server)
- 03h	"PERF_Server_Add_Stat"
-	start performance monitoring (creates/sets a registry key)
- 04h	"PERF_Server_Remove_Stat"
-	end performance monitoring (deletes registry key)
-SeeAlso: #1172,#1176,#1174
---------W-20----Vx004A-----------------------
-INT 20 P - Microsoft Windows - MTRR - VxD SERVICES
-	VxD = 004Ah
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1174)
-Values for MTRR (VxD ID 004Ah) service number:
- 00h	get version
- 01h	??? (highest service defined for Win95B)
-SeeAlso: #1173,#1175
---------W-20----Vx004B-----------------------
-INT 20 P - Microsoft Windows - NTKERN - VxD SERVICES
-	VxD = 004Bh
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1175)
-Values for NTKERN (VxD ID 004Bh) service number:
- 00h	get version???
- ...
- 08h	??? (highest service defined for Win95B)
-SeeAlso: #1174,#1176
---------W-20----Vx011F-----------------------
-INT 20 P - Microsoft Windows - VFLATD - VxD SERVICES
-	VxD = 011Fh
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1176)
-Values for VFLATD (VxD ID 011Fh) service number:
- 00h	get VFLATD version???
- 01h	???
-SeeAlso: #1173,#1177
---------W-20----Vx0449-----------------------
-INT 20 P - Microsoft Windows - vjoyd - VxD SERVICES
-	VxD = 0449h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1177)
-Values for vjoyd (VxD ID 0449h) service number:
- 00h	get vjoyd version???
- 01h	???
-SeeAlso: #1176,#1178
---------W-20----Vx044A-----------------------
-INT 20 P - Microsoft Windows - mmdevldr - VxD SERVICES
-	VxD = 044Ah
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1178)
-Values for mmdevldr (VxD ID 044Ah) service number:
- 00h	get mmdevldr version???
- 01h	???
- 02h	???
- 03h	???
- 04h	???
- 05h	???
-SeeAlso: #1177,#1179
---------W-20----Vx0480-----------------------
-INT 20 P - Microsoft Windows - VNetSup - VxD SERVICES
-	VxD = 0480h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1179)
-Values for VNetSup (VxD ID 0480h) service number:
- 00h	get VNetSup version???
- 01h	???
- 02h	???
- 03h	???
- 04h	???
- 05h	???
- 06h	???
-SeeAlso: #1178,#1180
---------W-20----Vx0481-----------------------
-INT 20 P - Microsoft Windows - VREDIR - VxD SERVICES
-	VxD = 0481h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1180)
-Values for VREDIR (VxD ID 0481h) service number:
- 0000h	"VRedir_Get_Version"
- 0001h	"VRedir_Register"
- 0002h	"VRedir_MakeMailSlot"
- 0003h	"VRedir_DeleteMailSlot"
- 0004h	"VRedir_ServerEnum"
- 0010h	...last service for Windows95 SP1
-SeeAlso: #1179,#1181
---------W-20----Vx0483-----------------------
-INT 20 P - Microsoft Windows - VSHARE - VxD SERVICES
-	VxD = 0483h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1181)
-Values for VSHARE (VxD ID 0483h) service number:
- 00h	get VSHARE version???
-SeeAlso: #1180,#1182
---------W-20----Vx0487-----------------------
-INT 20 P - Microsoft Windows - NWLINK - VxD SERVICES
-	VxD = 0487h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1182)
-Values for NWLINK (VxD ID 0487h) service number:
- 00h	get NWLINK version???
- 01h	???
- 06h	...last service for Windows95 SP1
-SeeAlso: #1181,#1183,#2506
---------W-20----Vx0488-----------------------
-INT 20 P - Microsoft Windows - VTDI - VxD SERVICES
-	VxD = 0488h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1183)
-Values for VTDI (VxD ID 0488h) service number:
- 00h	get VTDI version???
- 01h	???
- 08h	get ???
-	seen called with DWORD -> ASCIZ "MSTCP" on stack, returning EAX=???
- 0Dh	...last service for Windows95 SP1
-SeeAlso: #1182,#1184
---------W-20----Vx0489-----------------------
-INT 20 P - Microsoft Windows - VIP - VxD SERVICES
-	VxD = 0489h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1184)
-Values for VIP (VxD ID 0489h) service number:
- 00h	get VIP version???
- 01h	???
- 05h	???
- 06h	???
-	returns EAX=0/1
- 08h	...last service for Windows95 SP1
----Frontier Technologies' FTCVIP---
- 09h	???
-	returns EAX=1
-SeeAlso: #1183,#1185
---------W-20----Vx048A-----------------------
-INT 20 P - Microsoft Windows - MSTCP - VxD SERVICES
-	VxD = 048Ah
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1185)
-Values for MSTCP (VxD ID 048Ah) service number:
- 00h	get MSTCP version???
-SeeAlso: #1184,#1186
---------W-20----Vx048B-----------------------
-INT 20 P - Microsoft Windows - VCACHE - VxD SERVICES
-	VxD = 048Bh
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1186)
-Values for VCACHE (VxD ID 048Bh) service number:
- 0000h	"VCACHE_Get_Version"
- 0001h	"VCACHE_Register"
- 0002h	"VCACHE_GetSize"
- 0003h	"VCACHE_CheckAvail"
- 0004h	"VCACHE_FindBlock"
- 0005h	"VCACHE_FreeBlock"
- 0006h	"VCACHE_MakeMRU"
- 0007h	"VCACHE_Hold"
- 0008h	"VCACHE_Unhold"
- 0009h	"VCACHE_Enum"
- 000Ah	"VCACHE_TestHandle"
- 000Bh	"VCACHE_VerifySums"
- 000Ch	"VCACHE_RecalcSums"
- 000Dh	"VCACHE_TestHold"
- 000Eh	"VCACHE_GetStats"
- 000Fh	"VCache_Deregister"
- 0010h	"VCache_AdjustMinimum"
- 0011h	"VCache_SwapBuffers"
- 0012h	"VCache_RelinquishPage"
- 0013h	"VCache_UseThisPage"
- 0014h	"_VCache_CreateLookupCache"
- 0015h	"_VCache_CloseLookupCache"
- 0016h	"_VCache_DeleteLookupCache"
- 0017h	"_VCache_Lookup"
- 0018h	"_VCache_UpdateLookup"
-SeeAlso: #1185,#1187
---------W-20----Vx048E-----------------------
-INT 20 P - Microsoft Windows - NWREDIR - VxD SERVICES
-	VxD = 048Eh
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1187)
-Values for NWREDIR (VxD ID 048Eh) service number:
- 00h	get NWREDIR version???
- 01h	???
-SeeAlso: #1186,#1188
---------W-20----Vx0491-----------------------
-INT 20 P - Microsoft Windows - FILESEC - VxD SERVICES
-	VxD = 0491h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1188)
-Values for FILESEC (VxD ID 0491h) service number:
- 00h	get FILESEC version???
- 01h	???
- 10h	...last service for Windows95 SP1
-SeeAlso: #1187,#1189
---------W-20----Vx0492-----------------------
-INT 20 P - Microsoft Windows - NWSERVER - VxD SERVICES
-	VxD = 0492h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1189)
-Values for NWSERVER (VxD ID 0492h) service number:
- 00h	get NWSERVER version???
- 01h	???
- 02h	???
- 03h	???
-SeeAlso: #1188,#1190
---------W-20----Vx0493-----------------------
-INT 20 P - Microsoft Windows - MSSP / NWSP - VxD SERVICES
-	VxD = 0493h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1190)
-Values for MSSP/NWSP (VxD ID 0493h) service number:
- 00h	get NSSP / NWSP version???
- 01h	???
- 06h	...last service for Windows95 SP1
-SeeAlso: #1189,#1191
---------W-20----Vx0494-----------------------
-INT 20 P - Microsoft Windows - NSCL - VxD SERVICES
-	VxD = 0494h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1191)
-Values for NSCL (VxD ID 0494h)	service number:
- 00h	get NSCL version???
- 01h	???
- 02h	???
-SeeAlso: #1190,#1192
---------W-20----Vx0495-----------------------
-INT 20 P - Microsoft Windows - AFVXD - VxD SERVICES
-	VxD = 0495h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1192)
-Values for AFVXD (VxD ID 0495h) service number:
- 00h	get version
-	Return: CF clear
-		AX = version (AH = high, AL = low)
- 01h	???
-	EAX -> ???
-	EBX -> ???
-	ECX = ???
-	Return:	???
- 02h	???
-	EAX -> ???
-	Return: ???
-SeeAlso: #1191,#1193
---------W-20----Vx0496-----------------------
-INT 20 P - Microsoft Windows - NDIS2SUP - VxD SERVICES
-	VxD = 0496h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier (see #2506)
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1193)
-Values for NDIS2SUP (VxD ID 0496h) service number:
- 00h	get NDIS2SUP version???
- 01h	???
-SeeAlso: #1192,#1194
---------W-20----Vx0498-----------------------
-INT 20 P - Microsoft Windows - Splitter - VxD SERVICES
-	VxD = 0498h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier (see #2506)
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1194)
-Values for Splitter (VxD ID 0498h) service number:
- 00h	get Splitter version
-	Return:	CF clear
-		EAX = version (00000001h)
- 01h	???
- 02h	???
- 03h	hook/unhook VMM "hook device service" service
-	EAX = request (0 = unhook, nonzero = hook)
-	Return: if EAX nonzero on entry, Splitter's service 04h replaces VMM
-		  service 0090h; otherwise, default handler is restored
- 04h	Splitter "hook device service" handler
-SeeAlso: #1193,#1195
---------W-20----Vx0499-----------------------
-INT 20 P - Microsoft Windows - PPPMAC - VxD SERVICES
-	VxD = 0499h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier (see #2506)
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1195)
-Values for PPPMAC (VxD ID 0499h) service number:
- 00h	???
- 09h	...last service for Windows95 SP1
-SeeAlso: #1194,#1196,#2506
---------W-20----Vx049A-----------------------
-INT 20 P - Microsoft Windows - VDHCP - VxD SERVICES
-	VxD = 049Ah
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier (see #2506)
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1196)
-Values for VDHCP (VxD ID 049Ah) service number:
- 00h	get VDHCP version???
- 01h	???
- 02h	???
- 03h	???
-SeeAlso: #1195,#1197
---------W-20----Vx049B-----------------------
-INT 20 P - Microsoft Windows - VNBT - VxD SERVICES
-	VxD = 049Bh
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier (see #2506)
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1197)
-Values for VNBT (VxD ID 049Bh) service number:
- 00h	get VNBT version???
-SeeAlso: #1196,#1198
---------W-20----Vx049D-----------------------
-INT 20 P - Microsoft Windows - LOGGER - VxD SERVICES
-	VxD = 049Dh
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier (see #2506)
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1198)
-Values for LOGGER (VxD ID 049Dh) service number:
- 00h	get LOGGER version???
- 01h	???
- 02h	???
- 03h	???
- 04h	???
-SeeAlso: #1197,#1199
---------W-20----Vx097C-----------------------
-INT 20 P - Microsoft Windows - PCCARD - VxD SERVICES
-	VxD = 097Ch
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier (see #2506)
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1199,#1205
-
-(Table 1199)
-Values for PCCARD (VxD ID 097Ch) service number:
- 0000h	"PCCARD_Get_Version"
- 0001h	"PCCARD_Card_Services"
-SeeAlso: #1198,#1202
-----------20----Vx3048-----------------------
-INT 20 P - Frontier Technologies ??? - VxD SERVICES
-	VxD = 3048h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1200
-
-(Table 1200)
-Values for ??? (VxD ID 3048h) service number:
- 00h	get version???
- 03h	???
-	called with 5 DWORDs on stack, returns EAX=???, ECX nonzero on error
- 04h	???
-	called with DWORD on stack, returns EAX=???, ECX nonzero on error
- 06h	???
-	called with DWORD on stack, returns EAX=???, ECX nonzero on error
- 07h	???
-	called with 3 DWORDs on stack, returns EAX=???, ECX nonzero on error
- 0Bh	???
-	called with 2 DWORDs on stack, returns EAX=???, ECX nonzero on error
- 0Ch	???
-	called with 2 DWORDs on stack, returns EAX=???, ECX nonzero on error
- 0Dh	???
-	called with 6 DWORDs on stack, returns EAX=???, ECX nonzero on error
- 1Ah	???
-	called with 3 DWORDs on stack
-SeeAlso: #1201
-----------20----Vx3049-----------------------
-INT 20 P - Frontier Technologies ??? - VxD SERVICES
-	VxD = 3049h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1201
-
-(Table 1201)
-Values for ??? (VxD ID 3049h) service number:
- 00h	get version???
- 1Dh	???
-	called with 2 DWORDs on stack; returns EAX=???, ECX nonzero on error
- 1Eh	???
-	called with 6 DWORDs on stack; returns EAX=???, ECX nonzero on error
-SeeAlso: #1200
---------W-20----Vx3098-----------------------
-INT 20 P - QEMM - VstlthD - VxD SERVICES
-	VxD = 3098h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1202)
-Values for VStlthD (VxD ID 3098h) service number:
- 00h	get version
-	Return:	CF clear
-		EAX = version (AH = major, AL = BCD minor)
- 01h	???
- 02h	get current ???
-	Return: CF clear
-		EDX = current value of ???
- 03h	???
-SeeAlso: #1199,#1203
---------W-20----Vx30F6-----------------------
-INT 20 P - Microsoft Windows - WSVV - VxD SERVICES
-	VxD = 30F6h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1203)
-Values for WSVV (VxD ID 30F6h) service number:
- 00h	get WSVV version???
-SeeAlso: #1202,#1204
---------W-20----Vx33FC-----------------------
-INT 20 P - Microsoft Windows - APSIENUM - VxD SERVICES
-	VxD = 33FCh
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1204)
-Values for ASPIENUM (VxD ID 33FCh) service number:
- 00h	get ASPIENUM version???
- 01h	???
- 02h	???
- 03h	???
-SeeAlso: #1203,#1205
---------W-20----Vx357E-----------------------
-INT 20 P - Microsoft Windows - DSOUND - VxD SERVICES
-	VxD = 357Eh
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1205)
-Values for DSOUND (VxD ID 357Eh) service number:
- 00h	get DSOUND version???
- 01h	???
- 02h	???
-SeeAlso: #1204,#1206
---------W-20----Vx39E6-----------------------
-INT 20 P - Microsoft Windows - A3D - VxD SERVICES
-	VxD = 39E6h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-
-(Table 1206)
-Values for A3D (VxD ID 39E6h) service number:
- 00h	get version???
- 01h	???
- 02h	??? (highest service defined)
-SeeAlso: #1205,#1207
---------W-20----Vx3BFD-----------------------
-INT 20 P - Microsoft Windows - CWCPROXY - VxD SERVICES
-	VxD = 3BFDh
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1207)
-Values for CWCPROXY (VxD ID 3BFDh) service number:
- 00h	get version???
- ...
- 03h	??? (highest service defined)
-SeeAlso: #1206,#1208
---------W-20----Vx3C78-----------------------
-INT 20 P - Microsoft Windows - VGARTD - VxD SERVICES
-	VxD = 3C78h
-Note:	the desired VxD and service number are identified by the data
-	  immediately following the INT 20 instruction, as in:
-		INT	20h
-		DW	service number
-		DW	VxD identifier
-SeeAlso: INT 2F/AX=1684h"DEVICE API",INT 30"Windows",#1130,#1205
-
-(Table 1208)
-Values for VGARTD (VxD ID 3C78h) service number:
- 00h	get version???
- ...
- 05h	??? (highest service defined)
-SeeAlso: #1207,#2506
---------G-21---------------------------------
-INT 21 - COMTROL HOSTESS i/ISA DEBUGGER - GET SEGMENT FOR CONTROL PROGRAM USE
-	???
-Return: AX = first segment available for control program use
-SeeAlso: INT 20"COMTROL",INT 22"COMTROL"
---------D-2100-------------------------------
-INT 21 - DOS 1+ - TERMINATE PROGRAM
-	AH = 00h
-	CS = PSP segment
-Notes:	Microsoft recommends using INT 21/AH=4Ch for DOS 2+
-	this function sets the program's return code (ERRORLEVEL) to 00h
-	execution continues at the address stored in INT 22 after DOS performs
-	  whatever cleanup it needs to do (restoring the INT 22,INT 23,INT 24
-	  vectors from the PSP assumed to be located at offset 0000h in the
-	  segment indicated by the stack copy of CS, etc.)
-	if the PSP is its own parent, the process's memory is not freed; if
-	  INT 22 additionally points into the terminating program, the
-	  process is effectively NOT terminated
-	not supported by MS Windows 3.0 DOSX.EXE DOS extender
-SeeAlso: AH=26h,AH=31h,AH=4Ch,INT 20,INT 22
---------D-2101-------------------------------
-INT 21 - DOS 1+ - READ CHARACTER FROM STANDARD INPUT, WITH ECHO
-	AH = 01h
-Return: AL = character read
-Notes:	^C/^Break are checked, and INT 23 executed if read
-	^P toggles the DOS-internal echo-to-printer flag
-	^Z is not interpreted, thus not causing an EOF if input is redirected
-	character is echoed to standard output
-	standard input is always the keyboard and standard output the screen
-	  under DOS 1.x, but they may be redirected under DOS 2+
-SeeAlso: AH=06h,AH=07h,AH=08h,AH=0Ah
---------v-21010F-----------------------------
-INT 21 - VIRUS - "Susan" - INSTALLATION CHECK
-	AX = 010Fh
-Return: AX = 7553h ("Su") if resident
-SeeAlso: INT 16/AH=DDh"VIRUS",INT 21/AX=0B56h
---------D-2102-------------------------------
-INT 21 - DOS 1+ - WRITE CHARACTER TO STANDARD OUTPUT
-	AH = 02h
-	DL = character to write
-Return: AL = last character output (despite the official docs which state
-		nothing is returned) (at least DOS 2.1-7.0)
-Notes:	^C/^Break are checked, and INT 23 executed if pressed
-	standard output is always the screen under DOS 1.x, but may be
-	  redirected under DOS 2+
-	the last character output will be the character in DL unless DL=09h
-	  on entry, in which case AL=20h as tabs are expanded to blanks
-	if standard output is redirected to a file, no error checks (write-
-	  protected, full media, etc.) are performed
-SeeAlso: AH=06h,AH=09h
---------D-2103-------------------------------
-INT 21 - DOS 1+ - READ CHARACTER FROM STDAUX
-	AH = 03h
-Return: AL = character read
-Notes:	keyboard checked for ^C/^Break, and INT 23 executed if detected
-	STDAUX is usually the first serial port
-SeeAlso: AH=04h,INT 14/AH=02h,INT E0/CL=03h
---------D-2104-------------------------------
-INT 21 - DOS 1+ - WRITE CHARACTER TO STDAUX
-	AH = 04h
-	DL = character to write
-Notes:	keyboard checked for ^C/^Break, and INT 23 executed if detected
-	STDAUX is usually the first serial port
-	if STDAUX is busy, this function will wait until it becomes free
-SeeAlso: AH=03h,INT 14/AH=01h,INT E0/CL=04h
---------D-2105-------------------------------
-INT 21 - DOS 1+ - WRITE CHARACTER TO PRINTER
-	AH = 05h
-	DL = character to print
-Notes:	keyboard checked for ^C/^Break, and INT 23 executed if detected
-	STDPRN is usually the first parallel port, but may be redirected under
-	  DOS 2+
-	if the printer is busy, this function will wait
-SeeAlso: INT 17/AH=00h
---------D-2106-------------------------------
-INT 21 - DOS 1+ - DIRECT CONSOLE OUTPUT
-	AH = 06h
-	DL = character (except FFh)
-Return: AL = character output (despite official docs which state nothing is
-		returned) (at least DOS 2.1-7.0)
-Notes:	does not check ^C/^Break
-	writes to standard output, which is always the screen under DOS 1.x,
-	  but may be redirected under DOS 2+
-SeeAlso: AH=02h,AH=09h
---------D-2106--DLFF-------------------------
-INT 21 - DOS 1+ - DIRECT CONSOLE INPUT
-	AH = 06h
-	DL = FFh
-Return: ZF set if no character available
-	    AL = 00h
-	ZF clear if character available
-	    AL = character read
-Notes:	^C/^Break are NOT checked
-	if the returned character is 00h, the user pressed a key with an
-	  extended keycode, which will be returned by the next call of this
-	  function
-	this function reads from standard input, which is always the keyboard
-	  under DOS 1.x, but may be redirected under DOS 2+
-	although the return of AL=00h when no characters are available is not
-	  documented, some programs rely on this behavior
-SeeAlso: AH=0Bh
---------D-2107-------------------------------
-INT 21 - DOS 1+ - DIRECT CHARACTER INPUT, WITHOUT ECHO
-	AH = 07h
-Return: AL = character read from standard input
-Notes:	does not check ^C/^Break
-	standard input is always the keyboard under DOS 1.x, but may be
-	  redirected under DOS 2+
-	if the interim console flag is set (see AX=6301h), partially-formed
-	  double-byte characters may be returned
-SeeAlso: AH=01h,AH=06h,AH=08h,AH=0Ah
---------D-2108-------------------------------
-INT 21 - DOS 1+ - CHARACTER INPUT WITHOUT ECHO
-	AH = 08h
-Return: AL = character read from standard input
-Notes:	^C/^Break are checked, and INT 23 executed if detected
-	standard input is always the keyboard under DOS 1.x, but may be
-	  redirected under DOS 2+
-	if the interim console flag is set (see AX=6301h), partially-formed
-	  double-byte characters may be returned
-SeeAlso: AH=01h,AH=06h,AH=07h,AH=0Ah,AH=64h"DOS 3.2+"
---------D-2109-------------------------------
-INT 21 - DOS 1+ - WRITE STRING TO STANDARD OUTPUT
-	AH = 09h
-	DS:DX -> '$'-terminated string
-Return: AL = 24h (the '$' terminating the string, despite official docs which
-		state that nothing is returned) (at least DOS 2.1-7.0 and
-		NWDOS)
-Notes:	^C/^Break are checked, and INT 23 is called if either pressed
-	standard output is always the screen under DOS 1.x, but may be
-	  redirected under DOS 2+
-	under the FlashTek X-32 DOS extender, the pointer is in DS:EDX
-SeeAlso: AH=02h,AH=06h"OUTPUT"
---------D-210A-------------------------------
-INT 21 - DOS 1+ - BUFFERED INPUT
-	AH = 0Ah
-	DS:DX -> buffer (see #1209)
-Return: buffer filled with user input
-Notes:	^C/^Break are checked, and INT 23 is called if either detected
-	reads from standard input, which may be redirected under DOS 2+
-	if the maximum buffer size (see #1209) is set to 00h, this call returns
-	  immediately without reading any input
-SeeAlso: AH=0Ch,INT 2F/AX=4810h
-
-Format of DOS input buffer:
-Offset	Size	Description	(Table 1209)
- 00h	BYTE	maximum characters buffer can hold
- 01h	BYTE	(call) number of chars from last input which may be recalled
-		(ret) number of characters actually read, excluding CR
- 02h  N BYTEs	actual characters read, including the final carriage return
---------K-210A00-----------------------------
-INT 21 - WCED v1.6+ - INSTALLATION CHECK
-	AX = 0A00h
-	DS:DX -> 6-byte buffer whose first two bytes must be 00h
-Return: buffer offset 02h-05h filled with "Wced" if installed
-Program: WCED is a free command-line editor and history utility by Stuart
-	  Russell
-SeeAlso: AH=FFh"CED"
---------D-210B-------------------------------
-INT 21 - DOS 1+ - GET STDIN STATUS
-	AH = 0Bh
-Return: AL = status
-	    00h if no character available
-	    FFh if character is available
-Notes:	^C/^Break are checked, and INT 23 is called if either pressed
-	standard input is always the keyboard under DOS 1.x, but may be
-	  redirected under DOS 2+
-	if the interim console flag is set (see AX=6301h), this function
-	  returns AL=FFh if a partially-formed double-byte character is
-	  available
-SeeAlso: AH=06h"INPUT",AX=4406h
---------v-210B56-----------------------------
-INT 21 - VIRUS - "Perfume" - INSTALLATION CHECK
-	AX = 0B56h
-Return: AX = 4952h if resident
-SeeAlso: AX=0D20h,INT 12/AX=4350h/BX=4920h,INT 13/AH=F2h,INT 21/AX=010Fh
---------D-210C-------------------------------
-INT 21 - DOS 1+ - FLUSH BUFFER AND READ STANDARD INPUT
-	AH = 0Ch
-	AL = STDIN input function to execute after flushing buffer
-	other registers as appropriate for the input function
-Return: as appropriate for the specified input function
-Note:	if AL is not one of 01h,06h,07h,08h, or 0Ah, the buffer is flushed but
-	  no input is attempted
-SeeAlso: AH=01h,AH=06h"INPUT",AH=07h,AH=08h,AH=0Ah
---------D-210D-------------------------------
-INT 21 - DOS 1+ - DISK RESET
-	AH = 0Dh
-Return: (DOS 6 only) CF clear (earlier versions preserve CF)
-Notes:	This function writes all modified disk buffers to disk, but does not
-	  update the directory information (that is only done when files are
-	  closed or a SYNC call is issued)
-SeeAlso: AX=5D01h,AX=710Dh,INT 13/AH=00h,INT 2F/AX=1120h
---------v-210D20-----------------------------
-INT 21 - VIRUS - "Crazy Imp" - INSTALLATION CHECK
-	AX = 0D20h
-Return: AX = 1971h if resident
-SeeAlso: AX=0B56h,AX=1812h,AX=2C2Ch,AX=710Dh,AH=30h/DX=ABCDh
---------D-210E-------------------------------
-INT 21 - DOS 1+ - SELECT DEFAULT DRIVE
-	AH = 0Eh
-	DL = new default drive (00h = A:, 01h = B:, etc)
-Return: AL = number of potentially valid drive letters
-Notes:	under Novell NetWare, the return value is always 32, the number of
-	  drives that NetWare supports
-	under DOS 3.0+, the return value is the greatest of 5, the value of
-	  LASTDRIVE= in CONFIG.SYS, and the number of drives actually present
-	on a DOS 1.x/2.x single-floppy system, AL returns 2 since the floppy
-	  may be accessed as either A: or B:
-	otherwise, the return value is the highest drive actually present
-	DOS 1.x supports a maximum of 16 drives, 2.x a maximum of 63 drives,
-	  and 3+ a maximum of 26 drives
-	under Novell DOS 7, this function returns the correct LASTDRIVE value
-	  even when the undocumented LASTDRIVE=27..32 directive was used in
-	  CONFIG.SYS
-SeeAlso: AH=19h,AH=3Bh,AH=DBh
---------v-210E--DLAD-------------------------
-INT 21 U - Novell DOS 7 - SDRes v27.03 - INSTALLATION CHECK
-	AH = 0Eh
-	DL = ADh
-Return: AL = BAh if installed
-Program: SDRes is the resident portion of the Search&Destroy antiviral by
-	  Fifth Generation Systems, as bundled with Novell DOS 7
-Note:	SDRes will terminate programs which test for the presence of viruses
-	  using interrupt-based installation calls, saying that the program
-	  may be infected
-SeeAlso: AH=0Eh/DL=AEh,AH=0Eh/DL=AFh,AH=4Ah/BX=00B6h,INT 13/AX=A759h
---------v-210E--DLAE-------------------------
-INT 21 U - Novell DOS 7 - SDRes v27.03 - CLEAR ??? FLAG
-	AH = 0Eh
-	DL = AEh
-SeeAlso: AH=0Eh/DL=ADh,AH=0Eh/DL=AFh,INT 13/AX=A759h
---------v-210E--DLAF-------------------------
-INT 21 U - Novell DOS 7 - SDRes v27.03 - SET ??? FLAG
-	AH = 0Eh
-	DL = AFh
-SeeAlso: AH=0Eh/DL=ADh,AH=0Eh/DL=AEh,INT 13/AX=A759h
---------D-210F-------------------------------
-INT 21 - DOS 1+ - OPEN FILE USING FCB
-	AH = 0Fh
-	DS:DX -> unopened File Control Block (see #1210,#1211)
-Return: AL = status
-	    00h successful
-	    FFh file not found or access denied
-Notes:	(DOS 3.1+) file opened for read/write in compatibility mode
-	an unopened FCB has the drive, filename, and extension fields filled
-	  in and all other bytes cleared
-	not supported by MS Windows 3.0 DOSX.EXE DOS extender
-	DR DOS checks password attached with AX=4303h
-	(FAT32 drive) this function will only succeed for creating a volume
-	  label; FAT32 does not support FCBs for file I/O
-BUG:	APPEND for DOS 3.3+ corrupts DX if the file is not found
-SeeAlso: AH=10h,AH=16h,AH=3Dh,AX=4303h
-
-Format of File Control Block:
-Offset	Size	Description	(Table 1210)
- 00h	BYTE	drive number (0 = default, 1 = A, etc)
-		FFh is not allowed (signals extended FCB, see #1211)
- 01h  8 BYTEs	blank-padded file name
- 09h  3 BYTEs	blank-padded file extension
- 0Ch	WORD	current block number
- 0Eh	WORD	logical record size
- 10h	DWORD	file size
- 14h	WORD	date of last write (see #1531 at AX=5700h)
- 16h	WORD	time of last write (see #1530 at AX=5700h) (DOS 1.1+)
- 18h  8 BYTEs	reserved (see #1212,#1213,#1214,#1215,#1216)
- 20h	BYTE	record within current block
- 21h	DWORD	random access record number (if record size is > 64 bytes, high
-		  byte is omitted)
-SeeAlso: #1211
-
-Format of Extended File Control Block (XFCB):
-Offset	Size	Description	(Table 1211)
- 00h	BYTE	FFh signature for extended FCB
- 01h  5 BYTEs	reserved
- 06h	BYTE	file attribute if extended FCB
- 07h 36 BYTEs	standard FCB (all offsets are shifted by seven bytes)
-SeeAlso: #1111
-
-Format of FCB reserved field for DOS 1.0:
-Offset	Size	Description	(Table 1212)
- 16h	WORD	location in directory (if high byte = FFh, low byte is device
-		  ID)
- 18h	WORD	number of first cluster in file
- 1Ah	WORD	current absolute cluster number on disk
- 1Ch	WORD	current relative cluster number within file
-		(0 = first cluster of file, 1 = second cluster, etc.)
- 1Eh	BYTE	dirty flag (00h = not dirty)
- 1Fh	BYTE	unused
-
-Format of FCB reserved field for DOS 1.10-1.25:
-Offset	Size	Description	(Table 1213)
- 18h	BYTE	bit 7: set if logical device
-		bit 6: not dirty
-		bits 5-0: disk number or logical device ID
- 19h	WORD	starting cluster number on disk
- 1Bh	WORD	current absolute cluster number on disk
- 1Dh	WORD	current relative cluster number within file
- 1Fh	BYTE	unused
-
-Format of FCB reserved field for DOS 2.x:
-Offset	Size	Description	(Table 1214)
- 18h	BYTE	bit 7: set if logical device
-		bit 6: set if open???
-		bits 5-0: ???
- 19h	WORD	starting cluster number on disk
- 1Bh	WORD	???
- 1Dh	BYTE	???
- 1Eh	BYTE	???
- 1Fh	BYTE	???
-
-Format of FCB reserved field for DOS 3.x:
-Offset	Size	Description	(Table 1215)
- 18h	BYTE	number of system file table entry for file
- 19h	BYTE	attributes
-		bits 7,6: 00 = SHARE.EXE not loaded, disk file
-			  01 = SHARE.EXE not loaded, character device
-			  10 = SHARE.EXE loaded, remote file
-			  11 = SHARE.EXE loaded, local file or device
-		bits 5-0: low six bits of device attribute word
----SHARE.EXE loaded, local file---
- 1Ah	WORD	starting cluster of file on disk
- 1Ch	WORD	(DOS 3.x) offset within SHARE of sharing record
-		  (see #1502 at AH=52h)
- 1Eh	BYTE	file attribute
- 1Fh	BYTE	???
----SHARE.EXE loaded, remote file---
- 1Ah	WORD	number of sector containing directory entry (see #1217)
- 1Ch	WORD	relative cluster within file of last cluster accessed
- 1Eh	BYTE	absolute cluster number of last cluster accessed
- 1Fh	BYTE	???
----SHARE.EXE not loaded---
- 1Ah	BYTE	(low byte of device attribute word AND 0Ch) OR open mode
- 1Bh	WORD	starting cluster of file
- 1Dh	WORD	number of sector containing directory entry (see #1217)
- 1Fh	BYTE	number of directory entry within sector
-Note:	if FCB opened on character device, DWORD at 1Ah is set to the address
-	  of the device driver header, then the BYTE at 1Ah is overwritten.
-SeeAlso: #1511
-
-Format of FCB reserved field for DOS 5.0:
-Offset	Size	Description	(Table 1216)
- 18h	BYTE	number of system file table entry for file
- 19h	BYTE	attributes
-		bits 7,6: 00 = SHARE.EXE not loaded, disk file
-			  01 = SHARE.EXE not loaded, character device
-			  10 = SHARE.EXE loaded, remote file
-			  11 = SHARE.EXE loaded, local file or device
-		bits 5-0: low six bits of device attribute word
----SHARE.EXE loaded, local file---
- 1Ah	WORD	starting cluster of file on disk
- 1Ch	WORD	unique sequence number of sharing record
- 1Eh	BYTE	file attributes
- 1Fh	BYTE	unused???
----SHARE.EXE loaded, remote file---
- 1Ah	WORD	network handle
- 1Ch	DWORD	network ID
----SHARE not loaded, local device---
- 1Ah	DWORD	pointer to device driver header (see #1511)
- 1Eh  2 BYTEs	unused???
----SHARE not loaded, local file---
- 1Ah	BYTE	extra info
-		bit 7: read-only attribute from SFT
-		bit 6: archive attribute from SFT
-		bits 5-0: high bits of sector number
- 1Bh	WORD	starting cluster of file
- 1Dh	WORD	low word of sector number containing directory entry
-		(see #1217)
- 1Fh	BYTE	number of directory entry within sector
---------D-2110-------------------------------
-INT 21 - DOS 1+ - CLOSE FILE USING FCB
-	AH = 10h
-	DS:DX -> File Control Block (see #1210)
-Return: AL = status
-	    00h successful
-	    FFh failed
-Notes:	a successful close forces all disk buffers used by the file to be
-	  written and the directory entry to be updated
-	not supported by MS Windows 3.0 DOSX.EXE DOS extender
-SeeAlso: AH=0Fh,AH=16h,AH=3Eh
---------D-2111-------------------------------
-INT 21 - DOS 1+ - FIND FIRST MATCHING FILE USING FCB
-	AH = 11h
-	DS:DX -> unopened FCB (see #1210), may contain '?' wildcards
-Return: AL = status
-	    00h successful
-		[DTA] unopened FCB for first matching file
-	    FFh no matching filename, or bad FCB
-Notes:	the type of the returned FCB depends on whether the input FCB was a
-	  normal or an extended FCB
-	the data returned in the DTA (disk transfer area) is actually the
-	  drive number (or extended FCB header and drive number) followed by
-	  the file's directory entry (see #1217); this format happens to be
-	  compatible with an unopened FCB
-	for extended FCBs with search attribute 08h, the volume label (if any)
-	  will be returned even if the current directory is not the root dir.
-	DOS 3.0+ also allows the '*' wildcard
-	the search FCB must not be modified if AH=12h will be used to continue
-	  searching; DOS 3.3 has set the following parts of the FCB:
-		 0Ch	BYTE	???
-		 0Dh	WORD	directory entry number of matching file
-		 0Fh	WORD	cluster number of current directory
-		 11h  4 BYTEs	???
-		 15h	BYTE	drive number (1=A:)
-	this function is used by many copy protection schemes to obtain the
-	  starting cluster of a file
-SeeAlso: AH=12h,AH=1Ah,AH=4Eh,INT 2F/AX=111Bh
-
-Format of DOS directory entry:
-Offset	Size	Description	(Table 1217)
- 00h  8 BYTEs	blank-padded filename
-		first character is set to E5h for deleted files (05h for
-		  pending delete files under Novell DOS / OpenDOS)
- 08h  3 BYTEs	blank-padded file extension
- 0Bh	BYTE	attributes
- 0Ch 10 BYTEs	(MS-DOS 1.0-6.22) reserved
-		(DR DOS) used to store file password / owner (see #1219)
-			(see also INT 21/AX=4302h)
-		(Novell DOS 7) DELWATCH data (see #1219)
-		(MS-DOS 7/Windows95) additional file times (see #1218)
- 16h	WORD	time of creation or last update (see #1530 at AX=5700h)
- 18h	WORD	date of creation or last update (see #1531 at AX=5700h)
- 1Ah	WORD	starting cluster number (see also AX=440Dh/CX=0871h)
-		(not set for MSDOS 7.1 and FAT32-capable versions of Windows95)
- 1Ch	DWORD	file size
-SeeAlso: #1220,#2492,#2493
-
-Format of MS-DOS 7/Windows95 additional file times:
-Offset	Size	Description	(Table 1218)
- 00h	BYTE	reserved
- 01h	BYTE	10-millisecond units past creation time below
- 02h	WORD	file creation time
- 04h	WORD	file creation date
- 06h	WORD	last-access date
- 08h	WORD	(FAT32) high word of starting cluster number
-Note:	this data is stored beginning at offset 0Ch in a standard directory
-	  entry
-SeeAlso: #1217
-
-Format of DR DOS 6/Novell DOS 7 additional file information:
-Offset	Size	Description	(Table 1219)
- 0Ch	BYTE	reserved (00h)
- 0Dh	BYTE	first character of original filename for deleted file
- 0Eh	WORD	encrypted file/directory password
- 10h	WORD	reserved (00h)
-		(Novell DOS 7 DELWATCH) original file time
-		    cleared when file is undeleted or purged
- 12h	WORD	(DR DOS 6) file owner ID
-		(Novell DOS 7 DELWATCH) original file date
-		    cleared when file is undeleted or purged
- 14h	WORD	single/multiuser file/directory access rights (see AX=4302h)
----deleted files---
- 16h	WORD	(Novell DOS 7 DELWATCH) time of deletion
- 18h	WORD	(Novell DOS 7 DELWATCH) date of deletion
-Note:	offsets are within the full directory entry
-SeeAlso: #1217
-
-Format of MS-DOS 7/Windows95 long-filename directory entry:
-Offset	Size	Description	(Table 1220)
- 00h	BYTE	LFN record sequence and flags
-		bits 5-0: sequence number
-		bit 6: set if last long-filename record for file
-		bit 7: set if file deleted
- 01h 10 BYTEs	long filename, first part
- 0Bh	BYTE	0Fh (otherwise impossible file attribute, used as signature)
- 0Ch	BYTE	reserved??? (00h)
- 0Dh	BYTE	checksum for short filename
- 0Eh 12 BYTEs	long filename, second part
- 1Ah	WORD	first cluster number (always 0000h for LFN records)
- 1Ch  4 BYTEs	long filename, third part
-Notes:	long-filename entries are always stored in the directory just prior
-	  to the short-name entry for a file
-	multiple LFN records are used if the long filename does not fit into
-	  a single record
-	the short-filename checksum byte is computed by adding up the
-	  eleven bytes of the short filename, rotating the intermediate
-	  sum right one bit before adding the next character
-	the long filename is encoded as 16-bit Unicode characters; for most
-	  filenames, this appears in the directory as the ASCII character
-	  followed by 00h
-SeeAlso: #1217,INT 21/AX=5704h,INT 21/AH=71h
---------D-2112-------------------------------
-INT 21 - DOS 1+ - FIND NEXT MATCHING FILE USING FCB
-	AH = 12h
-	DS:DX -> unopened FCB (see #1210)
-Return: AL = status
-	    00h successful
-		Disk Transfer Area filled with unopened FCB
-	    FFh no more matching filenames
-Note:	(see AH=11h)
-	assumes that successful FindFirst executed on search FCB before call
-SeeAlso: AH=1Ah,AH=4Fh,INT 2F/AX=111Ch
---------D-2113-------------------------------
-INT 21 - DOS 1+ - DELETE FILE USING FCB
-	AH = 13h
-	DS:DX -> unopened FCB (see #1210), filename filled with template for
-		deletion ('?' wildcards allowed)
-Return: AL = status
-	    00h one or more files successfully deleted
-	    FFh no matching files or all were read-only or locked
-Notes:	DOS 1.25+ deletes everything in the current directory (including
-	  subdirectories) and sets the first byte of the name to 00h (entry
-	  never used) instead of E5h if called on an extended FCB with
-	  filename '???????????' and bits 0-4 of the attribute set (bits 1 and
-	  2 for DOS 1.x).  This may have originally been an optimization to
-	  minimize directory searching after a mass deletion (DOS 1.25+ stop
-	  the directory search upon encountering a never-used entry), but can
-	  corrupt the filesystem under DOS 2+ because subdirectories are
-	  removed without deleting the files they contain.
-	currently-open files should not be deleted
-	MS-DOS allows deletion of read-only files with an extended FCB, whereas
-	  Novell NetWare, DR DOS 6, and Novell DOS 7/OpenDOS 7.01 do not
-	this function generates a trap "D" under OS/2 v4.x (Warp4) when called
-	  on an HPFS partition with a wildcard in the filename; it operates
-	  correctly on FAT partitions and when called without wildcards
-SeeAlso: AH=41h,INT 2F/AX=1113h
---------D-2114-------------------------------
-INT 21 - DOS 1+ - SEQUENTIAL READ FROM FCB FILE
-	AH = 14h
-	DS:DX -> opened FCB (see #1210)
-Return: AL = status
-	    00h successful
-	    01h end of file (no data)
-	    02h segment wrap in DTA
-	    03h end of file, partial record read
-	Disk Tranfer Area filled with record read from file
-Notes:	reads a record of the size specified in the FCB beginning at the
-	  current file position, then updates the current block and current
-	  record fields in the FCB
-	if a partial record was read, it is zero-padded to the full size
-	not supported by MS Windows 3.0 DOSX.EXE DOS extender
-SeeAlso: AH=0Fh,AH=15h,AH=1Ah,AH=3Fh"DOS",INT 2F/AX=1108h
---------D-2115-------------------------------
-INT 21 - DOS 1+ - SEQUENTIAL WRITE TO FCB FILE
-	AH = 15h
-	DS:DX -> opened FCB (see #1210)
-	Disk Tranfer Area contains record to be written
-Return: AL = status
-	    00h successful
-	    01h disk full
-	    02h segment wrap in DTA
-Notes:	writes a record of the size specified in the FCB beginning at the
-	  current file position, then updates the current block and current
-	  record fields in the FCB
-	if less than a full sector is written, the data is placed in a DOS
-	  buffer to be written out at a later time
-	not supported by MS Windows 3.0 DOSX.EXE DOS extender
-SeeAlso: AH=0Fh,AH=14h,AH=1Ah,AH=40h,INT 2F/AX=1109h
---------D-2116-------------------------------
-INT 21 - DOS 1+ - CREATE OR TRUNCATE FILE USING FCB
-	AH = 16h
-	DS:DX -> unopened FCB (see #1210), wildcards not allowed
-Return: AL = status
-	    00h successful
-	    FFh directory full or file exists and is read-only or locked
-Notes:	if file already exists, it is truncated to zero length
-	if an extended FCB is used, the file is given the attribute in the
-	  FCB; this is how to create a volume label in the disk's root dir
-	not supported by MS Windows 3.0 DOSX.EXE DOS extender
-	(FAT32 drive) this function will only succeed for creating a volume
-	  label; FAT32 does not support FCBs for file I/O
-SeeAlso: AH=0Fh,AH=10h,AH=3Ch
---------D-2117-------------------------------
-INT 21 - DOS 1+ - RENAME FILE USING FCB
-	AH = 17h
-	DS:DX -> modified FCB (see also #1210)
-		the old filename ('?' wildcards OK) is in the standard location
-		while the new filename ('?' wildcards OK, no drive) is stored
-		in the 11 bytes beginning at offset 11h
-Return: AL = status
-	    00h successfully renamed
-	    FFh no matching files,file is read-only, or new name already exists
-Notes:	subdirectories may be renamed using an extended FCB with the
-	  appropriate attribute, as may volume labels
-	DR DOS checks password attached with AX=4303h before permitting rename
-SeeAlso: AH=0Fh,AH=13h,AX=4303h,AH=56h,INT 2F/AX=1111h
---------D-2118-------------------------------
-INT 21 - DOS 1+ - NULL FUNCTION FOR CP/M COMPATIBILITY
-	AH = 18h
-Return: AL = 00h
-Note:	corresponds to the CP/M BDOS function "get bit map of logged drives",
-	  which is meaningless under MS-DOS
-SeeAlso: AH=1Dh,AH=1Eh,AH=20h,AX=4459h,INT 60/DI=0513h
---------v-211812------------------------
-INT 21 - VIRUS - "Tasha Yar" - INSTALLATION CHECK
-	AX = 1812h
-Return: AL = 00h if resident
-	DX = 4310h if resident
-SeeAlso: INT 21/AX=0B56h"VIRUS",INT 21/AX=187Fh,INT 21/AX=2C2Ch"VIRUS"
---------v-21187FBX4453-----------------------
-INT 21 - VIRUS - "DS-3783" -INSTALLATION CHECK
-	AX = 187Fh
-	BX = 4453h
-Return: BX = 87A1h if resident
-SeeAlso: AX=1812h"VIRUS",AX=18FFh"VIRUS"
---------v-2118FF-----------------------------
-INT 21 - VIRUS - "Pathogen:SMEG" - INSTALLATION CHECK
-	AX = 18FFh
-Return: AX = E701h if resident
-SeeAlso: INT 21/AX=1812h"VIRUS",INT 21/AX=2080h"VIRUS"
---------D-2119-------------------------------
-INT 21 - DOS 1+ - GET CURRENT DEFAULT DRIVE
-	AH = 19h
-Return: AL = drive (00h = A:, 01h = B:, etc)
-Note:	Novell NetWare uses the fact that DOS 2.x COMMAND.COM issues this call
-	  from a particular location every time it starts a command to
-	  determine when to issue an automatic EOJ
-SeeAlso: AH=0Eh,AH=47h,AH=BBh
---------D-211A-------------------------------
-INT 21 - DOS 1+ - SET DISK TRANSFER AREA ADDRESS
-	AH = 1Ah
-	DS:DX -> Disk Transfer Area (DTA)
-Notes:	the DTA is set to PSP:0080h when a program is started
-	under the FlashTek X-32 DOS extender, the pointer is in DS:EDX
-SeeAlso: AH=11h,AH=12h,AH=2Fh,AH=4Eh,AH=4Fh
---------D-211B-------------------------------
-INT 21 - DOS 1+ - GET ALLOCATION INFORMATION FOR DEFAULT DRIVE
-	AH = 1Bh
-Return: AL = sectors per cluster (allocation unit)
-	CX = bytes per sector
-	DX = total number of clusters
-	DS:BX -> media ID byte (see #1221)
-Notes:	under DOS 1.x, DS:BX points at an actual copy of the FAT; later
-	  versions return a pointer to a copy of the FAT's ID byte
-	this function may not be properly supported on CD-ROMs and other
-	  installable file systems (use AX=4402h"CD-ROM" for CD-ROMs
-	  instead)
-SeeAlso: AH=1Ch,AH=36h
-
-(Table 1221)
-Values for media ID byte:
- FFh	floppy, double-sided, 8 sectors per track (320K)
- FEh	floppy, single-sided, 8 sectors per track (160K)
- FDh	floppy, double-sided, 9 sectors per track (360K)
- FCh	floppy, single-sided, 9 sectors per track (180K)
- FAh	HP 200LX D: ROM disk, 16 sectors per track (995K)
-	HP 200LX E: (Stacker host drive ???)
- F9h	floppy, double-sided, 15 sectors per track (1.2M)
-	floppy, double-sided, 9 sectors per track (720K,3.5")
- F8h	hard disk
- F0h	other media
-	(e.g. floppy, double-sized, 18 sectors per track -- 1.44M,3.5")
---------D-211C-------------------------------
-INT 21 - DOS 1+ - GET ALLOCATION INFORMATION FOR SPECIFIC DRIVE
-	AH = 1Ch
-	DL = drive (00h = default, 01h = A:, etc)
-Return: AL = sectors per cluster (allocation unit), or FFh if invalid drive
-	CX = bytes per sector
-	DX = total number of clusters
-	DS:BX -> media ID byte (see #1221)
-Notes:	under DOS 1.x, DS:BX points at an actual copy of the FAT; later
-	  versions return a pointer to a copy of the FAT's ID byte
-	on a DBLSPACE drive, the total number of clusters is based on the
-	  estimated compression ratio
-	this function may not be properly supported on CD-ROMs and other
-	  installable file systems (use AX=4402h"CD-ROM" for CD-ROMs
-	  instead)
-SeeAlso: AH=1Bh,AH=36h
---------D-211D-------------------------------
-INT 21 - DOS 1+ - NULL FUNCTION FOR CP/M COMPATIBILITY
-	AH = 1Dh
-Return: AL = 00h
-Note:	corresponds to the CP/M BDOS function "get bit map of read-only
-	  drives", which is meaningless under MS-DOS
-SeeAlso: AH=18h,AH=1Eh,AH=20h,AX=4459h
---------D-211E-------------------------------
-INT 21 - DOS 1+ - NULL FUNCTION FOR CP/M COMPATIBILITY
-	AH = 1Eh
-Return: AL = 00h
-Note:	corresponds to the CP/M BDOS function "set file attributes" which was
-	 meaningless under MS-DOS 1.x
-SeeAlso: AH=18h,AH=1Dh,AH=20h
---------D-211F-------------------------------
-INT 21 - DOS 1+ - GET DRIVE PARAMETER BLOCK FOR DEFAULT DRIVE
-	AH = 1Fh
-Return: AL = status
-	    00h successful
-		DS:BX -> Drive Parameter Block (DPB) (see #1222 for DOS 1.x,
-			AH=32h for DOS 2+)
-	    FFh invalid drive
-Note:	this call was undocumented prior to the release of DOS 5.0; however,
-	  only the DOS 4.0+ version of the DPB has been documented
-SeeAlso: AH=32h,AX=7302h
-
-Format of DOS 1.1 and MS-DOS 1.25 drive parameter block:
-Offset	Size	Description	(Table 1222)
- 00h	BYTE	sequential device ID
- 01h	BYTE	logical drive number (0=A:)
- 02h	WORD	bytes per sector
- 04h	BYTE	highest sector number within a cluster
- 05h	BYTE	shift count to convert clusters into sectors
- 06h	WORD	starting sector number of first FAT
- 08h	BYTE	number of copies of FAT
- 09h	WORD	number of directory entries
- 0Bh	WORD	number of first data sector
- 0Dh	WORD	highest cluster number (number of data clusters + 1)
- 0Fh	BYTE	sectors per FAT
- 10h	WORD	starting sector of directory
- 12h	WORD	address of allocation table
-Note:	the DOS 1.0 table is the same except that the first and last fields
-	  are missing; see INT 21/AH=32h for the DOS 2+ version
-SeeAlso: #1260,#3891
---------D-2120-------------------------------
-INT 21 - DOS 1+ - NULL FUNCTION FOR CP/M COMPATIBILITY
-	AH = 20h
-Return: AL = 00h
-Note:	corresponds to the CP/M BDOS function "get/set default user
-	  (sublibrary) number", which is meaningless under MS-DOS
-SeeAlso: AH=18h,AH=1Dh,AH=1Eh,AX=4459h
---------v-212080-----------------------------
-INT 21 - VIRUS - "New-Year" - INSTALLATION CHECK
-	AX = 2080h
-Return: AH = 00h if resident (normal DOS return would be AX = 2000h)
-SeeAlso: INT 21/AX=18FFh"VIRUS",INT 21/AX=2C2Ch"VIRUS"
---------D-2121-------------------------------
-INT 21 - DOS 1+ - READ RANDOM RECORD FROM FCB FILE
-	AH = 21h
-	DS:DX -> opened FCB (see #1210)
-Return: AL = status
-	    00h successful
-	    01h end of file, no data read
-	    02h segment wrap in DTA, no data read
-	    03h end of file, partial record read
-	Disk Tranfer Area filled with record read from file
-Notes:	the record is read from the current file position as specified by the
-	  random record and record size fields of the FCB
-	the file position is not updated after reading the record
-	if a partial record is read, it is zero-padded to the full size
-	not supported by MS Windows 3.0 DOSX.EXE DOS extender
-SeeAlso: AH=14h,AH=22h,AH=27h,AH=3Fh"DOS"
---------D-2122-------------------------------
-INT 21 - DOS 1+ - WRITE RANDOM RECORD TO FCB FILE
-	AH = 22h
-	DS:DX -> opened FCB (see #1210)
-	Disk Transfer Area contains record to be written
-Return: AL = status
-	    00h successful
-	    01h disk full
-	    02h segment wrap in DTA
-Notes:	the record is written to the current file position as specified by the
-	  random record and record size fields of the FCB
-	the file position is not updated after writing the record
-	if the record is located beyond the end of the file, the file is
-	  extended but the intervening data remains uninitialized
-	if the record only partially fills a disk sector, it is copied to a
-	  DOS disk buffer to be written out to disk at a later time
-	not supported by MS Windows 3.0 DOSX.EXE DOS extender
-SeeAlso: AH=15h,AH=21h,AH=28h,AH=40h
---------D-2123-------------------------------
-INT 21 - DOS 1+ - GET FILE SIZE FOR FCB
-	AH = 23h
-	DS:DX -> unopened FCB (see #1210), wildcards not allowed
-Return: AL = status
-	    00h successful (matching file found)
-		FCB random record field filled with size in records, rounded up
-		to next full record
-	    FFh failed (no matching file found)
-Notes:	not supported by MS Windows 3.0 DOSX.EXE DOS extender
-	MS-DOS returns nonsense if the FCB record number field is set to a very
-	  large positive number, and status FFh if negative; DR DOS returns the
-	  correct file size in both cases
-BUG:	APPEND for DOS 3.3+ corrupts DX if the file is not found
-SeeAlso: AH=42h
---------D-2124-------------------------------
-INT 21 - DOS 1+ - SET RANDOM RECORD NUMBER FOR FCB
-	AH = 24h
-	DS:DX -> opened FCB (see #1210)
-Notes:	computes the random record number corresponding to the current record
-	  number and record size, then stores the result in the FCB
-	normally used when switching from sequential to random access
-	not supported by MS Windows 3.0 DOSX.EXE DOS extender
-SeeAlso: AH=21h,AH=27h,AH=42h
 --------!---Section--------------------------

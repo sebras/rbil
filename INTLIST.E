@@ -2,7 +2,7 @@
 /*	EEL code file for editing the Interrupt List		*/
 /*								*/
 /*	Written by Ralf Brown					*/
-/*	LastEdit:  28 Jun 98					*/
+/*	LastEdit:  30 Aug 98					*/
 /*								*/
 /*  This EEL file adds the following keybindings:		*/
 /*    Shf-Alt-A add an Access: section to the current entry	*/
@@ -86,7 +86,9 @@ char indented_sections[] = "[\t ]*(Return|Notes*):" ;
 char table_headers[] = "INT |Format |Values |Bitfields |MEM |CMOS |MSR |CALL |PORT |Call |OPCODE |I2C " ;
 #endif /* Epsilon v7.0+ */
 
-char table_ID_letters[] = "0123456789CFIMPRS" ;
+/*char table_ID_letters[] = "0123456789CFIMPRS" ;*/
+char table_ID_letters[] = "09CFIMPRS" ;
+#define ID_LETTER_OFFSET 2
 
 char *(section_order[13]) ;
 char *(list_files[13]) ;
@@ -423,7 +425,7 @@ command separator_line() on intlist_tab[FKEY(11)]
 void insert_table_counter()
 {
    char counter[6] ;
-   save_var point = *table_counter + 3 ;
+   save_var point = *table_counter + 4 ;
 
    /* increment that table counter */
    while (curchar() >= '0')
@@ -442,7 +444,7 @@ void insert_table_counter()
    restore_vars() ;
    /* and now insert the incremented value at point */
    stuff("(Table ") ;
-   grab(*table_counter,*table_counter+4,counter) ;
+   grab(*table_counter,*table_counter+5,counter) ;
    stuff(counter) ;
    stuff(")") ;
 }
@@ -1226,8 +1228,8 @@ void fix_unnumbered_tables()
 /*=============================================================*/
 /*=============================================================*/
 
-short *gather_table_numbers(new_numbers)
-short *new_numbers ;
+int *gather_table_numbers(new_numbers)
+int *new_numbers ;
 {
    int tcount[9] ;
    char counter[6] ;
@@ -1244,15 +1246,17 @@ short *new_numbers ;
       {
       char *tbl ;
       int table_offset ;
-      grab(point,point+4,counter) ;
+      grab(point,point+5,counter) ;
       tbl = index(table_ID_letters,counter[0]) ;
       if (tbl)
 	 table_offset = (tbl-table_ID_letters) ;
       else
 	 table_offset = 0 ;
-      old_number = strtoi(counter+1,10) + 1000*table_offset ;
-      table_type = (table_offset > 9) ? (table_offset-9) : 0 ;
-      new_numbers[old_number] = (short)++(tcount[table_type]) ;
+      old_number = strtoi(counter+1,10) + 10000*table_offset ;
+      table_type = (table_offset >= ID_LETTER_OFFSET)
+		     ? (table_offset-ID_LETTER_OFFSET+1)
+		     : 0 ;
+      new_numbers[old_number] = ++(tcount[table_type]) ;
       }
    point = *start ;
    free_spot(start) ;
@@ -1263,7 +1267,7 @@ short *new_numbers ;
 /*=============================================================*/
 
 int adjust_table_numbers(new_numbers, dangling)
-short *new_numbers ;
+int *new_numbers ;
 int dangling ;
 {
    char counter[6] ;
@@ -1277,30 +1281,32 @@ int dangling ;
    point = 0 ;
    while (search(1,"(Table "))
       {
-      grab(point,point+4,counter) ;
+      grab(point,point+5,counter) ;
       tbl = index(table_ID_letters,counter[0]) ;
       if (tbl)
-	 table_offset = 1000*(tbl-table_ID_letters) ;
+	 {
+	 table_offset = 10000*(tbl-table_ID_letters) ;
+	 }
       else
 	 table_offset = 0 ;
       old_number = strtoi(counter+1,10) + table_offset ;
       old_type = (counter[0] >= '0' && counter[0] <= '9') ? 0 : counter[0] ;
       if (old_number > 0)
 	 {
-	 delete(point,point+4) ;
+	 delete(point,point+5) ;
 	 if (old_type)
-	    bprintf("%c%03d",old_type,new_numbers[old_number]%1000) ;
+	    bprintf("%c%04d",old_type,new_numbers[old_number]%10000) ;
 	 else
-	    bprintf("%04d",new_numbers[old_number]) ;
+	    bprintf("%05d",new_numbers[old_number]) ;
 	 }
       }
    point = 0 ;
-   while (re_search(1,"[, \t]%#[0-9CFIMPRS][0-9][0-9][0-9]"))
+   while (re_search(1,"[, \t]%#[0-9CFIMPRS][0-9][0-9][0-9][0-9]"))
       {
-      grab(point-4,point,counter) ;
+      grab(point-5,point,counter) ;
       tbl = index(table_ID_letters,counter[0]) ;
       if (tbl)
-	 table_offset = 1000*(tbl-table_ID_letters) ;
+	 table_offset = 10000*(tbl-table_ID_letters) ;
       else
 	 table_offset = 0 ;
       old_number = strtoi(counter+1,10) + table_offset ;
@@ -1309,18 +1315,18 @@ int dangling ;
 	 {
 	 if (new_numbers[old_number])
 	    {
-	    delete(point-4,point) ;
+	    delete(point-5,point) ;
 	    if (old_type)
-	       bprintf("%c%03d",old_type,new_numbers[old_number]) ;
+	       bprintf("%c%04d",old_type,new_numbers[old_number]) ;
 	    else
-	       bprintf("%04d",new_numbers[old_number]) ;
+	       bprintf("%05d",new_numbers[old_number]) ;
 	    }
 	 else /* dangling xref */
 	    {
 	    dangling++ ;
-	    point -= 4 ;
+	    point -= 5 ;
 	    stuff("?") ;
-	    point += 4 ;
+	    point += 5 ;
 	    }
 	 }
       }
@@ -1346,7 +1352,7 @@ char *list_file ;
 
 command renumber_tables()
 {
-   short *new_numbers ;
+   int *new_numbers ;
    int num_tables ;
    int dangling ;
    int i ;
@@ -1362,8 +1368,8 @@ command renumber_tables()
       else
 	 say("Renumber Pass 1: forced to skip %s") ;
       }
-   num_tables = 1000*strlen(table_ID_letters) ;
-   new_numbers = (short*)malloc(num_tables*sizeof(short)) ;
+   num_tables = 10000*strlen(table_ID_letters) ;
+   new_numbers = (int*)malloc(num_tables*sizeof(int)) ;
    if (!new_numbers)
       {
       say("Out of memory!") ;
@@ -1445,7 +1451,7 @@ command make_distribution()
 
 void find_table_counter()
 {
-   save_var point = (size() > 10000) ? size() - 10000 : 0 ;
+   save_var point = (size() > 8000) ? size() - 8000 : 0 ;
 
    search(1,"Highest Table Number = ") ;
    table_counter = alloc_spot(1) ;

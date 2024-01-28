@@ -28,14 +28,15 @@
 /*		     changed 'Bitmask of' to 'Bitfields for'		*/
 /*   v2.23   5/24/93 fix to allow INT/AL= to appear correctly in summary*/
 /*   v2.24   7/15/93 -k and infinite-length pages by Bent Lynggaard	*/
-/*   v3.00   6/4/94  -T, -V, and multi-file break section skipping	*/
+/*   v3.00  04jun94  -T, -V, and multi-file break section skipping	*/
 /*		     major speedups; checked for BC++3.1 compatibility	*/
-/*   v3.01   6/11/94 bugfix: crashed with -l0 -L1 on lines >=80 chars   */
-/*   v3.02   1/7/95  bugfix by Mark Shapiro: garbage with -B -PHP_PCL	*/
-/*   v3.03   1/14/95 changes for Borland C++ 4.x size minimization	*/
-/*   v3.04   3/25/95 malloc/sbrk and other bugfixes		        */
-/*   v3.10   2/11/96 category filters by Bent Lynggard			*/
-/*   v3.11  12/21/97 support formatting/summarizing other intlist files */
+/*   v3.01  11jun94  bugfix: crashed with -l0 -L1 on lines >=80 chars   */
+/*   v3.02  07jan95  bugfix by Mark Shapiro: garbage with -B -PHP_PCL	*/
+/*   v3.03  14jan95  changes for Borland C++ 4.x size minimization	*/
+/*   v3.04  25mar95  malloc/sbrk and other bugfixes		        */
+/*   v3.10  11feb96  category filters by Bent Lynggard			*/
+/*   v3.11  21dec97  support formatting/summarizing other intlist files */
+/*   v3.12  25jul98  support for five-char table numbers		*/
 /************************************************************************/
 /* Recompiling:								*/
 /*   Turbo C / Borland C++						*/
@@ -52,7 +53,7 @@
 #include <string.h>
 #include <sys/stat.h>		/* S_IREAD, S_IWRITE */
 
-#define VERSION "3.11"
+#define VERSION "3.12"
 
 /***********************************************/
 /*    portability definitions		       */
@@ -1543,6 +1544,7 @@ int i ;
    char *end ;
    int len ;
    int summary_width ;
+   int offset = 0 ;
    char found = FALSE ;
 
    prev_table++ ;
@@ -1551,21 +1553,32 @@ int i ;
       {
       if (i > 0 && buffer[i-1][0] == '(')
 	 {
-	 memcpy(num,buffer[i-1]+7,4) ;
-	 num[4] = '\0' ;
-	 len = 4 ;
+	 memcpy(num,buffer[i-1]+7,5) ;
+	 if (isdigit(num[4]))
+	    len = 5 ;
+	 else
+	    len = 4 ;
+	 num[len] = '\0' ;
 	 found = TRUE ;
+	 if (firstchar == 'V') offset = 11 ;
 	 }
       }
    else if (firstchar == 'B' || firstchar == 'F') /* Bitfields.. or Format..? */
       {
-      end = strrchr(buffer[i+1]+7,')') ;   /* rule out Bit(s) as only match */
+      end = strrchr(buffer[i+1]+7,'(') ;   /* rule out Bit(s) as only match */
       if (end)
 	 {
-	 memcpy(num,end-4,4) ;
-	 num[4] = '\0' ;
-	 len = 4 ;
+	 memcpy(num,end+7,5) ;
+	 if (isdigit(num[4]))
+	    len = 5 ;
+	 else
+	    len = 4 ;
+	 num[len] = '\0' ;
 	 found = TRUE ;
+	 if (firstchar == 'B')
+	    offset = 14 ;
+	 else
+	    offset = 10 ;
 	 }
       }
    if (!found)
@@ -1576,7 +1589,7 @@ int i ;
    indent_line(tables) ;
    if (show_offsets)
       show_offset(i,tables) ;
-   ip_write(" 0000",5-len,tables) ;
+   ip_write("  0000",6-len,tables) ;
    ip_write(num,len,tables);
    if (page_numbers)
       {
@@ -1588,11 +1601,11 @@ int i ;
    else
       summary_width = 10 ;
    ip_write(summary_line,summary_width,tables) ;
-   len = strlen(buffer[i])-1 ;
+   len = strlen(buffer[i]+offset)-1 ;
    if (len > page_width - summary_width - 5)
       len = page_width - summary_width - 5 ;
    if (len > 0)
-      ip_write(buffer[i],len,tables) ;
+      ip_write(buffer[i]+offset,len,tables) ;
    newline(tables) ;
 }
 
@@ -2030,7 +2043,7 @@ int show_offsets, show_table ;
    if (show_offsets)
       ip_putlit("Offset  ", fp) ;
    if (show_table)
-      ip_putlit("Tbl# ",fp) ;
+      ip_putlit("Table ",fp) ;
    ip_putlit("INT AH AL", fp) ;
    if (page_numbers)
       ip_putlit(" Page", fp) ;

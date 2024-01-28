@@ -1,9633 +1,9138 @@
-Interrupt List, part 10 of 16
+Interrupt List, part 10 of 18
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
---------N-2A00-------------------------------
-INT 2A - NETWORK - INSTALLATION CHECK
-	AH = 00h
-Return: AH <> 00h if installed
-	CF set if NetWare v2.15 NetBIOS emulator installed
-Note:	supported by PC LAN Program, LAN Manager, LANtastic, NetWare, 10NET,
-	  etc.
-SeeAlso: INT 5C"NetBIOS"
---------N-2A0000-----------------------------
-INT 2A - AT&T Starlan Extended NetBIOS (var length names) - INSTALLATION CHECK
-	AX = 0000h
-Return: AH = DDh
-SeeAlso: INT 5B"Extended NetBIOS"
---------N-2A01-------------------------------
-INT 2A - NETWORK (Microsoft,LANtastic) - EXECUTE NETBIOS REQUEST,NO ERROR RETRY
-	AH = 01h
-	ES:BX -> NCB (see #3101 at INT 5C"NetBIOS")
-Return: AL = NetBIOS error code
-	AH = status
-	    00h no error
-	    01h error occurred
-SeeAlso: AH=04h,AX=0500h,INT 5B"Extended NetBIOS",INT 5C"NetBIOS"
---------N-2A02-------------------------------
-INT 2A - NETWORK (Microsoft) - SET NET PRINTER MODE
-	AH = 02h
+--------N-21F2-------------------------------
+INT 21 u - Novell NetWare v3.01+ shell interface - MULTIPLEXOR
+	AH = F2h
+	AL = function (see #02071)
+	    (subfunction stored in various places in the request packet,
+	    depending on function number; see individual entries)
+	CX = length of request buffer
+	DX = length of reply buffer (0000h if no reply packet)
+	DS:SI -> request buffer
+	ES:DI -> reply buffer (ignored if DX=0000h)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled as appropriate for function
+Note:	this is a multiplexor providing a "raw" interface to the underlying
+	  NetWare Core Protocol.  Many functions which were accessed via a
+	  separate AH function in older versions can also be accessed here,
+	  but some NetWare 3.x calls appear to be available only here.
+SeeAlso: AX=F244h,AX=F268h/SF=3Dh,#02851
+
+(Table 02071)
+Values for NetWare Core Protocol functions:
+Fnc/Subfn	Description
+01h	File Set Lock
+02h	File Release Lock
+03h	Log File (old)					(see AX=F203h)
+04h	Lock File Set (old)				(see AX=F204h)
+05h	Release File				(see AH=CCh,AH=ECh"NetWare")
+06h	Release File Set				(see AH=CDh"NetWare")
+07h	Clear File					(see AH=CEh,AX=F207h)
+08h	Clear File Set					(see AX=F208h)
+09h	Log Logical Record (old)			(see AH=D0h"NetWare")
+0Ah	Lock Logical Record Set (old)			(see AX=F20Ah)
+0Bh	Clear Logical Record				(see AX=F20Bh)
+0Ch	Release Logical Record				(see AH=D2h"NetWare")
+0Dh	Release Logical Record Set			(see AH=D3h"NetWare")
+0Eh	Clear Logical Record Set			(see AX=F20Eh)
+0Fh	Allocate Resource				(see AH=D8h"NetWare")
+10h	Deallocate Resource				(see AH=D9h"NetWare")
+11h/xxh	print spooling					(see AH=E0h"NetWare")
+11h/06h Get Printer Status
+11h/0Ah	Get Printer Queue
+12h	Get Volume Info with Number			(see AH=DAh"NetWare")
+13h	Get Station Number				(see AH=DCh"NetWare")
+14h	Get File Server Date and Time (NW v2.2+)	(see AH=E7h"NetWare")
+15h/01h Get Broadcast Message (old)			(see AX=F215h/SF=01h)
+15h/02h Disable Broadcasts				(see AX=F215h/SF=02h)
+15h/03h Enable Broadcasts				(see AX=F215h/SF=03h)
+15h/08h Check Pipe Status		(see AH=E1h/SF=08h,AX=F215h/SF=08h)
+15h/09h Broadcast to Console		(see AH=E1h/SF=09h,AX=F215h/SF=09h)
+15h/0Bh Get Broadcast Message				(see AX=F215h/SF=0Bh)
+16h/00h Set Directory Handle				(see AX=F216h/SF=00h)
+16h/01h Get Directory Path				(see AX=F216h/SF=01h)
+16h/02h Scan Directory Information			(see AX=F216h/SF=02h)
+16h/03h	Get Effective Directory Rights (old)		(see AX=F216h/SF=03h)
+16h/04h Modify Maximum Rights Mask			(see AX=F216h/SF=04h)
+16h/05h Get Volume Number				(see AX=F216h/SF=05h)
+16h/06h Get Volume Name					(see AX=F216h/SF=06h)
+16h/0Ah Create Directory				(see AX=F216h/SF=0Ah)
+16h/0Bh Delete Directory				(see AX=F216h/SF=0Bh)
+16h/0Ch Scan Directory for Trustees			(see AX=F216h/SF=0Ch)
+16h/0Dh Add Trustee to Directory			(see AX=F216h/SF=0Dh)
+16h/0Eh Delete Trustee from Directory			(see AX=F216h/SF=0Eh)
+16h/0Fh	Rename Directory				(see AX=F216h/SF=0Fh)
+16h/10h Purge Erased Files (old)			(see AX=F216h/SF=10h)
+16h/11h Recover Erased File (old)			(see AX=F216h/SF=11h)
+16h/12h Alloc Permanent Directory Handle		(see AX=F216h/SF=12h)
+16h/13h Alloc Temporary Directory Handle		(see AX=F216h/SF=13h)
+16h/14h Deallocate Directory Handle			(see AX=F216h/SF=14h)
+16h/15h Get Volume Info with Handle			(see AX=F216h/SF=15h)
+16h/16h Alloc Special Temporary Directory Handle	(see AX=F216h/SF=16h)
+16h/19h Set Directory Information			(see AX=F216h/SF=19h)
+16h/1Ah Get Path Name of Volume-Directory Number Pair	(see AX=F216h/SF=1Ah)
+16h/1Bh	Scan Salvageable Files (old)			(see AX=F216h/SF=1Bh)
+16h/1Ch	Recover Salvageable File (old)			(see AX=F216h/SF=1Ch)
+16h/1Dh	Purge Salvageable File (old)			(see AX=F216h/SF=1Dh)
+16h/1Eh	Scan a Directory				(see AX=F216h/SF=1Eh)
+16h/1Fh	Get Directory Entry				(see AX=F216h/SF=1Fh)
+16h/20h	Scan Volume's User Disk Restrictions		(see AX=F216h/SF=20h)
+16h/21h	Add User Disk Space Restriction			(see AX=F216h/SF=21h)
+16h/22h	Remove User Disk Space Restrictions		(see AX=F216h/SF=22h)
+16h/23h	Scan Directory Space Restrictions		(see AX=F216h/SF=23h)
+16h/24h	Set Directory Disk Space Restriction		(see AX=F216h/SF=24h)
+16h/25h	Set Directory File Information			(see AX=F216h/SF=25h)
+16h/26h	Scan File or Directory For Extended Trustees	(see AX=F216h/SF=26h)
+16h/27h	Add Extended Trustee to Directory or File	(see AX=F216h/SF=27h)
+16h/28h	Scan Directory Disk Space			(see AX=F216h/SF=28h)
+16h/29h	Get Object Disk Usage and Restrictions		(see AX=F216h/SF=29h)
+16h/2Ah	Get Effective Rights				(see AX=F216h/SF=2Ah)
+16h/2Bh	Remove Extended Trustee from Dir or File	(see AX=F216h/SF=2Bh)
+16h/2Ch	Get Volume Usage				(see AX=F216h/SF=2Ch)
+16h/2Dh	Get Directory Information			(see AX=F216h/SF=2Dh)
+16h/2Eh	Rename or Move					(see AX=F216h/SF=2Eh)
+16h/2Fh	Get Name Space Information			(see AX=F216h/SF=2Fh)
+16h/30h	Get Name Space Directory Entry			(see AX=F216h/SF=30h)
+16h/31h	Open Data Stream				(see AX=F216h/SF=31h)
+16h/32h	Get Object Effective Rights			(see AX=F216h/SF=32h)
+16h/33h	Get Extended Volume Info			(see AX=F216h/SF=33h)
+17h/01h Change User Password (old)			(see AX=F217h/SF=01h)
+17h/02h Get User Connection List (old)			(see AX=F217h/SF=02h)
+17h/0Ch Verify Serialization				(see AX=F217h/SF=0Ch)
+17h/0Eh Get Disk Utilization				(see AX=F217h/SF=0Eh)
+17h/0Fh Scan File Information				(see AX=F217h/SF=0Fh)
+17h/10h Set File Information				(see AX=F217h/SF=10h)
+17h/11h Get File Server Information			(see AX=F217h/SF=11h)
+17h/12h Get Network Serial Number			(see AX=F217h/SF=12h)
+17h/13h Get Internet Address (old)			(see AX=F217h/SF=13h)
+17h/14h Login Object					(see AX=F217h/SF=14h)
+17h/15h Get Object Connection List (old)		(see AX=F217h/SF=15h)
+17h/16h	Get Connection Information (old)		(see AX=F217h/SF=1Ch)
+17h/17h	Get Encryption Key				(see AX=F217h/SF=17h)
+17h/18h	Login Object Encrypted				(see AX=F217h/SF=18h)
+17h/1Ah Get Internet Address				(see AX=F217h/SF=1Ah)
+17h/1Bh Get Object Connection List			(see AX=F217h/SF=1Bh)
+17h/1Ch	Get Connection Information			(see AX=F217h/SF=1Ch)
+17h/1Fh	Get Connection List from Object			(see AX=F217h/SF=1Fh)
+17h/32h Create Bindery Object				(see AX=F217h/SF=32h)
+17h/33h Delete Bindery Object				(see AX=F217h/SF=33h)
+17h/34h Rename Bindery Object				(see AX=F217h/SF=34h)
+17h/35h Get Bindery Object ID				(see AX=F217h/SF=35h)
+17h/36h Get Bindery Object Name				(see AX=F217h/SF=36h)
+17h/37h Scan Bindery Object				(see AX=F217h/SF=37h)
+17h/38h Change Bindery Object Security			(see AX=F217h/SF=38h)
+17h/39h Create Property					(see AX=F217h/SF=39h)
+17h/3Ah Delete Property					(see AX=F217h/SF=3Ah)
+17h/3Bh Change Property Security			(see AX=F217h/SF=3Bh)
+17h/3Ch Scan Property					(see AX=F217h/SF=3Ch)
+17h/3Dh Read Property Value				(see AX=F217h/SF=3Dh)
+17h/3Eh Write Property Value				(see AX=F217h/SF=3Eh)
+17h/3Fh Verify Bindery Object Password			(see AX=F217h/SF=3Fh)
+17h/40h Change Bindery Object Password			(see AX=F217h/SF=40h)
+17h/41h Add Bindery Object to Set			(see AX=F217h/SF=41h)
+17h/42h Delete Bindery Object from Set			(see AX=F217h/SF=42h)
+17h/43h Is Bindery Object in Set			(see AX=F217h/SF=43h)
+17h/44h Close Bindery					(see AX=F217h/SF=44h)
+17h/45h Open Bindery					(see AX=F217h/SF=45h)
+17h/46h Get Bindery Access Level			(see AX=F217h/SF=46h)
+17h/47h Scan Bindery Object Trustee Paths		(see AX=F217h/SF=47h)
+17h/48h	Get Bindery Object Access Level			(see AX=F217h/SF=48h)
+17h/49h	Is Station a Manager?				(see AX=F217h/SF=49h)
+17h/4Ah	Keyed Verify Bindery Object Password		(see AX=F217h/SF=4Ah)
+17h/4Bh	Keyed Change Bindery Object Password		(see AX=F217h/SF=4Bh)
+17h/4Ch	List Relations of an Object			(see AX=F217h/SF=4Ch)
+17h/64h Create Queue					(see AX=F217h/SF=64h)
+17h/65h Destroy Queue					(see AX=F217h/SF=65h)
+17h/66h Read Queue Current Status (old)			(see AX=F217h/SF=66h)
+17h/67h Set Queue Current Status (old)			(see AX=F217h/SF=67h)
+17h/68h Create Queue Job and File (old)			(see AX=F217h/SF=68h)
+17h/69h Close File and Start Queue Job (old)		(see AX=F217h/SF=69h)
+17h/6Ah Remove Job From Queue (old)			(see AX=F217h/SF=6Ah)
+17h/6Bh Get Queue Job List (old)			(see AX=F217h/SF=6Bh)
+17h/6Ch Read Queue Job Entry (old)			(see AX=F217h/SF=6Ch)
+17h/6Dh Change Queue Job Entry (old)			(see AX=F217h/SF=6Dh)
+17h/6Eh Change Queue Job Position			(see AX=F217h/SF=6Eh)
+17h/6Fh Attach Queue Server to Queue			(see AX=F217h/SF=6Fh)
+17h/70h Detach Queue Server from Queue			(see AX=F217h/SF=70h)
+17h/72h Finish Servicing Queue Job (old)		(see AX=F217h/SF=72h)
+17h/74h Change to Client Rights (old)			(see AX=F217h/SF=74h)
+17h/75h Restore Queue Server Rights			(see AX=F217h/SF=75h)
+17h/76h Read Queue Server Current Status (old)		(see AX=F217h/SF=76h)
+17h/77h Set Queue Server Current Status			(see AX=F217h/SF=77h)
+17h/78h Get Queue Job File Size (old)			(see AX=F217h/SF=78h)
+17h/79h Create Queue Job and File			(see AX=F217h/SF=79h)
+17h/7Ah Read Queue Job Entry				(see AX=F217h/SF=7Ah)
+17h/7Bh Change Queue Job Entry				(see AX=F217h/SF=7Bh)
+17h/7Dh Read Queue Current Status			(see AX=F217h/SF=7Dh)
+17h/7Eh Set Queue Current Status			(see AX=F217h/SF=7Eh)
+17h/7Fh Close File and Start Queue Job			(see AX=F217h/SF=7Fh)
+17h/80h Remove Job From Queue				(see AX=F217h/SF=80h)
+17h/81h Get Queue Job List				(see AX=F217h/SF=81h)
+17h/82h Change Job Priority				(see AX=F217h/SF=82h)
+17h/83h Finish Servicing Queue Job			(see AX=F217h/SF=83h)
+17h/85h Change to Client Rights				(see AX=F217h/SF=85h)
+17h/86h Read Queue Server Current Status		(see AX=F217h/SF=86h)
+17h/87h Get Queue Job File Size				(see AX=F217h/SF=87h)
+17h/96h Get Account Status				(see AX=F217h/SF=96h)
+17h/97h Submit Account Charge				(see AX=F217h/SF=97h)
+17h/98h Submit Account Hold				(see AX=F217h/SF=98h)
+17h/99h Submit Account Note				(see AX=F217h/SF=99h)
+17h/C8h Check Console Privileges			(see AX=F217h/SF=C8h)
+17h/C9h Get File Server Description Strings		(see AX=F217h/SF=C9h)
+17h/CAh Set File Server Date and Time			(see AX=F217h/SF=CAh)
+17h/CBh Disable File Server Login			(see AX=F217h/SF=CBh)
+17h/CCh Enable File Server Login			(see AX=F217h/SF=CCh)
+17h/CDh Get File Server Login Status			(see AX=F217h/SF=CDh)
+17h/CEh Purge All Erased Files				(see AX=F217h/SF=CEh)
+17h/CFh Disable Transaction Tracking			(see AX=F217h/SF=CFh)
+17h/D0h Enable Transaction Tracking			(see AX=F217h/SF=D0h)
+17h/D2h Clear Connection Number (Logout Station)	(see AX=F217h/SF=D2h)
+17h/D3h Down File Server				(see AX=F217h/SF=D3h)
+17h/D4h Get File System Statistics			(see AX=F217h/SF=D4h)
+17h/D5h Get Transaction Tracking Statistics		(see AX=F217h/SF=D5h)
+17h/D6h Get Disk Cache Statistics			(see AX=F217h/SF=D6h)
+17h/D7h Get Drive Mapping Table				(see AX=F217h/SF=D7h)
+17h/D8h Get Physical Disk Statistics			(see AX=F217h/SF=D8h)
+17h/D9h Get Disk Channel Statistics			(see AX=F217h/SF=D9h)
+17h/DAh Get Connection's Task Information (NW v2.2)	(see AX=F217h/SF=DAh)
+17h/DBh Get Connection's Open Files (old) (NW v2.2)	(see AX=F217h/SF=DBh)
+17h/DCh Get Connections Using a File (NW v2.2)		(see AX=F217h/SF=DCh)
+17h/DDh Get Physical Record Locks by Connection and File (old)
+17h/DEh	Get Physical Record Locks by File (old)		(see AX=F217h/SF=DEh)
+17h/DFh Get Logical Records by Connection (old)		(see AX=F217h/SF=DFh)
+17h/E0h Get Logical Record Information (old)		(see AX=F217h/SF=E0h)
+17h/E1h Get Connection's Semaphores (old)		(see AX=F217h/SF=E1h)
+17h/E2h Get Semaphore Information (old)			(see AX=F217h/SF=E2h)
+17h/E3h Get LAN Driver's Configuration Information	(see AX=F217h/SF=E3h)
+17h/E5h Get Connection's Usage Statistics (NW v2.2)	(see AX=F217h/SF=E5h)
+17h/E6h Get Object's Remaining Disk Space		(see AX=F217h/SF=E6h)
+17h/E7h Get File Server LAN I/O Statistics		(see AX=F217h/SF=E7h)
+17h/E8h Get File Server Misc Information		(see AX=F217h/SF=E8h)
+17h/E9h Get Volume Information				(see AX=F217h/SF=E9h)
+17h/EAh Get Connection's Task Information (NW v3.11+)	(see AX=F217h/SF=EAh)
+17h/EBh	Get Connection's Open Files (NW v3.11+)		(see AX=F217h/SF=EBh)
+17h/ECh	Get Connections Using a File (NW v3.11+)	(see AX=F217h/SF=ECh)
+17h/EDh Get Physical Record Locks by Connection and File (see AX=F217h/SF=EDh)
+17h/EEh	Get Physical Record Locks by File		(see AX=F217h/SF=EEh)
+17h/EFh Get Logical Records by Connection		(see AX=F217h/SF=EFh)
+17h/F0h Get Logical Record Information			(see AX=F217h/SF=F0h)
+17h/F1h Get Connection's Semaphores			(see AX=F217h/SF=F1h)
+17h/F2h Get Semaphore Information			(see AX=F217h/SF=F2h)
+17h/F3h Map Directory Number to Path			(see AX=F217h/SF=F3h)
+17h/F4h	Convert Path to Directory Entry			(see AX=F217h/SF=F4h)
+17h/F5h Get File Server Extended Misc Information	(see AX=F217h/SF=F5h)
+17h/F6h Get Volume Extended Information			(see AX=F217h/SF=F6h)
+17h/FEh Clear Connection Number Greater than 250	(see AX=F217h/SF=FEh)
+18h	End of Job					(see AH=D6h"NetWare")
+19h	Logout (old)					(see AH=D7h"NetWare")
+1Ah	Log Physical Record (old)			(see AH=BCh"NetWare")
+1Bh	Lock Physical Record Set (old)			(see AX=F21Bh)
+1Ch	Release Physical Record				(see AH=BDh"NetWare")
+1Dh	Release Physical Record Set			(see AH=C3h"NetWare")
+1Eh	Clear Physical Record				(see AX=F21Eh)
+1Fh	Clear Physical Record Set			(see AX=F21Fh)
+20h/xxh	semaphore services				(see AX=C501h"NetWare")
+20h/00h Open Semaphore (old)				(see AX=C500h"NetWare")
+20h/01h Examine Semaphore (old)				(see AX=C501h"NetWare")
+20h/02h Wait on Semaphore (old)				(see AX=C502h"NetWare")
+20h/03h Signal Semaphore (old)				(see AX=C503h"NetWare")
+20h/04h Close Semaphore (old)				(see AX=C504h"NetWare")
+21h	Negotiate Buffer Size
+22h/00h	TTS Is Available				(see AX=C702h"NetWare")
+22h/01h	TTS Begin Transaction				(see AX=C700h"NetWare")
+22h/02h	TTS End Transaction				(see AX=C701h"NetWare")
+22h/03h	TTS Abort Transaction				(see AX=C703h"NetWare")
+22h/04h	TTS Transaction Status				(see AX=C704h"NetWare")
+22h/05h	TTS Get Application Thresholds			(see AX=C705h"NetWare")
+22h/06h	TTS Set Application Thresholds			(see AX=C706h"NetWare")
+22h/07h	TTS Get Workstation Thresholds			(see AX=C707h"NetWare")
+22h/08h	TTS Set Workstation Thresholds			(see AX=C708h"NetWare")
+22h/09h	TTS Get Control Flags
+22h/0Ah	TTS Set Control Flags
+23h/01h	AFP Create Directory				(see AX=F223h/SF=01h)
+23h/02h	AFP Create File					(see AX=F223h/SF=02h)
+23h/03h	AFP Delete					(see AX=F223h/SF=03h)
+23h/04h	AFP Get Entry ID From Name			(see AX=F223h/SF=04h)
+23h/05h	AFP Get File Information			(see AX=F223h/SF=05h)
+23h/06h	AFP Get Entry ID From NetWare Handle		(see AX=F223h/SF=06h)
+23h/07h	AFP Rename					(see AX=F223h/SF=07h)
+23h/08h	AFP Open File Fork				(see AX=F223h/SF=08h)
+23h/09h	AFP Set File Information			(see AX=F223h/SF=09h)
+23h/0Ah	AFP Scan File Information			(see AX=F223h/SF=0Ah)
+23h/0Bh	AFP Alloc Temporary Dir Handle			(see AX=F223h/SF=0Bh)
+23h/0Ch	AFP Get Entry ID From Path Name			(see AX=F223h/SF=0Ch)
+23h/0Dh AFP 2.0 Create Directory			(see AX=F223h/SF=0Dh)
+23h/0Eh AFP 2.0 Create File				(see AX=F223h/SF=0Eh)
+23h/10h AFP 2.0 Set File Information			(see AX=F223h/SF=10h)
+23h/11h AFP 2.0 Scan File Information			(see AX=F223h/SF=11h)
+23h/12h AFP Get DOS Name from Entry ID			(see AX=F223h/SF=12h)
+23h/13h AFP Get Macintosh Info on Deleted File		(see AX=F223h/SF=13h)
+3Dh	Commit File
+3Eh	File Search Initialize (FindFirst)		(see AX=F23Eh)
+3Fh	File Search Continue (FindNext)			(see AX=F23Fh)
+40h	Search File
+42h	Close File					(see AX=F242h)
+43h	File Create					(see AX=F243h)
+44h	File Erase					(see AX=F244h)
+45h	File Rename
+46h	Set File Attributes
+47h	Get File Size					(see AX=F247h)
+48h	File Read
+49h	File Write
+4Ah	File Server Copy				(see AX=F24Ah)
+4Bh	Set File Time and Date
+4Ch	File Open
+4Dh	Create New File					(see AX=F24Dh)
+4Eh	Allow Task Access to File			(see AX=F24Eh)
+4Fh	Set Extended File Attributes			(see AH=B6h"NetWare")
+54h	Open Create File				(see also AX=6C00h)
+55h	Get Sparse File Data Block Bit Map
+56h/xx	extended attribute services (OS/2)
+56h/01h	Close Extended Attribute Handle			(see AX=F256h/SF=01h)
+56h/02h	Write Extended Attribute			(see AX=F256h/SF=02h)
+56h/03h	Read Extended Attribute				(see AX=F256h/SF=03h)
+56h/04h	Enumerate Extended Attributes			(see AX=F256h/SF=04h)
+56h/05h	Duplicate Extended Attributes			(see AX=F256h/SF=05h)
+57h/01h	Open/Create File or Subdirectory		(see AX=F257h/SF=01h)
+57h/02h	Initialize Search, continue with 57h/03h	(see AX=F257h/SF=02h)
+57h/03h	Scan NS Entry Info				(see AX=F257h/SF=03h)
+57h/04h	Rename or Move File or Subdirectory		(see AX=F257h/SF=04h)
+57h/05h	Scan File or Subdirectory for Trustees		(see AX=F257h/SF=05h)
+57h/06h	Obtain File or Subdirectory Information		(see AX=F257h/SF=06h)
+57h/07h	Modify File or Subdirectory DOS Information	(see AX=F257h/SF=07h)
+57h/08h	Delete File/Directory				(see AX=F257h/SF=08h)
+57h/09h	Set Short Directory Handle			(see AX=F257h/SF=09h)
+57h/0Ah	Add Trustee Set					(see AX=F257h/SF=0Ah)
+57h/0Bh	Delete Trustee					(see AX=F257h/SF=0Bh)
+57h/0Ch	Allocate Short Directory Handle			(see AX=F257h/SF=0Ch)
+57h/10h Scan Salvageable Files				(see AX=F257h/SF=10h)
+57h/11h Recover Salvageable File			(see AX=F257h/SF=11h)
+57h/12h Purge Salvageable File				(see AX=F257h/SF=12h)
+57h/13h	Get NS Information				(see AX=F257h/SF=13h)
+57h/15h	Get Path String from Short Directory Handle	(see AX=F257h/SF=15h)
+57h/16h	Generate Directory Base and Volume Number	(see AX=F257h/SF=16h)
+57h/17h	Get Name Space Info				(see AX=F257h/SF=17h)
+57h/18h Get Name Spaces Loaded				(see AX=F257h/SF=18h)
+57h/19h	Write Name Space Info				(see AX=F257h/SF=19h)
+57h/1Ah	Read Extended Name Space Info			(see AX=F257h/SF=1Ah)
+57h/1Bh	Write Extended Name Space Info			(see AX=F257h/SF=1Bh)
+57h/1Ch	Get NS Full Path String				(see AX=F257h/SF=1Ch)
+57h/1Dh	Get Effective Directory Rights			(see AX=F257h/SF=1Dh)
+58h/01h	Get Volume Audit Statistics			(see AX=F258h/SF=01h)
+58h/02h	Add Audit Property				(see AX=F258h/SF=02h)
+58h/03h	Login as Volume Auditor				(see AX=F258h/SF=03h)
+58h/04h Change Auditor Password				(see AX=F258h/SF=04h)
+58h/05h Check Audit Access				(see AX=F258h/SF=05h)
+58h/06h	Remove Audit Property				(see AX=F258h/SF=06h)
+58h/07h	Disable Auditing on Volume			(see AX=F258h/SF=07h)
+58h/08h	Enable Auditing on Volume			(see AX=F258h/SF=08h)
+58h/09h	Is User Audited?				(see AX=F258h/SF=09h)
+58h/0Ah	Read Auditing Bit Map				(see AX=F258h/SF=0Ah)
+58h/0Bh	Read Audit Config Header			(see AX=F258h/SF=0Bh)
+58h/0Dh	Logout as Volume Auditor			(see AX=F258h/SF=0Dh)
+58h/0Eh	Reset Auditing File				(see AX=F258h/SF=0Eh)
+58h/0Fh	Reset Audit History File			(see AX=F258h/SF=0Fh)
+58h/10h	Write Auditing Bit Map				(see AX=F258h/SF=10h)
+58h/11h	Write Audit Config Header			(see AX=F258h/SF=11h)
+58h/13h	Get Auditing Flags				(see AX=F258h/SF=13h)
+58h/14h	Close Old Auditing File				(see AX=F258h/SF=14h)
+58h/15h	Delete Old Auditing File			(see AX=F258h/SF=15h)
+58h/16h	Check Audit Level Two Access			(see AX=F258h/SF=16h)
+5Ah/01h	Get DM (Data Migration) Info			(see AX=F25Ah/SF=01h)
+5Ah/80h Move File Data to DM				(see AX=F25Ah/SF=80h)
+5Ah/81h DM File Information				(see AX=F25Ah/SF=81h)
+5Ah/82h Volume DM Status				(see AX=F25Ah/SF=82h)
+5Ah/83h Get Migration or Status Information		(see AX=F25Ah/SF=83h)
+5Ah/84h DM Support Module Information			(see AX=F25Ah/SF=84h)
+5Ah/85h Move File Data from DM				(see AX=F25Ah/SF=85h)
+5Ah/86h Get or Set Default Support Module		(see AX=F25Ah/SF=86h)
+61h	Negotiate LIP Buffer, packet signing, and IPX checksums
+65h	Packet Burst Connection
+68h/xxh NetWare 4.x directory services (subfn at DS:[SI+11h])
+68h/01h NDS resolve name				(see AX=F268h/SF=01h)
+68h/03h	NDS read property
+68h/04h NDS Get Bindery Context				(see AX=F268h/SF=04h)
+68h/05h NDS Monitor Connection				(see AX=F268h/SF=05h)
+68h/16h NDS List Partitions				(see AX=F268h/SF=16h)
+68h/35h NDS get server address				(see AX=F268h/SF=35h)
+68h/36h NDS set keys
+68h/39h NDS begin login
+68h/3Ah NDS finish login
+68h/3Bh NDS begin authenticate
+68h/3Ch NDS finish authenticate
+68h/3Dh NDS Logout					(see AX=F268h/SF=3Dh)
+68h/C8h Get DS Auditing Statistics			(see AX=F268h/SF=C8h)
+69h	Log File					(see AX=F269h)
+6Ah	Lock File Set					(see AX=F26Ah)
+6Bh	Log Logical Record	!!!APIREF09 line 1430
+6Ch	Lock Logical Record Set				(see AX=F26Ch)
+6Dh	Log Physical Record
+6Eh	Lock Physical Record Set			(see AX=F26Eh)
+6Fh/00h Open Semaphore					(see AX=F26Fh/SF=00h)
+6Fh/01h Close Semaphore					(see AX=F26Fh/SF=01h)
+6Fh/02h Wait on Semaphore				(see AX=F26Fh/SF=02h)
+6Fh/03h Signal Semaphore				(see AX=F26Fh/SF=03h)
+6Fh/04h Examine Semaphore				(see AX=F26Fh/SF=04h)
+72h	NetWare 4.x Time Services			(see AX=F272h)
+7Bh/01h	Get Cache Information				(see AX=F27Bh/SF=01h)
+7Bh/02h	Get File Server Information			(see AX=F27Bh/SF=02h)
+7Bh/03h	Get NetWare File Systems Information
+7Bh/04h	Get User Information				(see AX=F27Bh/SF=04h)
+7Bh/05h	Get Packet Burst Information
+7Bh/06h	Get IPX/SPX Information				(see AX=F27Bh/SF=06h)
+7Bh/07h	Get Garbage Collection Information
+7Bh/08h	Get CPU Information				(see AX=F27Bh/SF=08h)
+7Bh/09h	Get Volume Switch Information			(see AX=F27Bh/SF=09h)
+7Bh/0Ah	Get NLM Loaded List				(see AX=F27Bh/SF=0Ah)
+7Bh/0Bh	Get NLM Information				(see AX=F27Bh/SF=0Bh)
+7Bh/0Ch	Get Directory Cache Information
+7Bh/0Dh	Get OS Version Information			(see AX=F27Bh/SF=0Dh)
+7Bh/0Eh	Get Active Connection List by Type
+7Bh/0Fh	Get NLM's Resource Tag List
+7Bh/14h	Get Active LAN Board List			(see AX=F27Bh/SF=14h)
+7Bh/15h	Get LAN Configuration Information		(see AX=F27Bh/SF=15h)
+7Bh/16h	Get LAN Common Counters Information		(see AX=F27Bh/SF=16h)
+7Bh/17h	Get LAN Custom Counters Information
+7Bh/18h	Get LAN Config Strings
+7Bh/19h	Get LSL Information
+7Bh/1Ah	Get LSL Logical Board Statistics
+7Bh/1Eh	Get Media Manager Object Information
+7Bh/1Fh	Get Media Manager Object List
+7Bh/20h	Get Media Manager Object Children List
+7Bh/21h	Get Volume Segment List
+7Bh/28h	Get Active Protocol Stacks
+7Bh/29h	Get Protocol Stack Configuration Information	(see AX=F27Bh/SF=29h)
+7Bh/2Ah	Get Protocol Stack Statistics Information
+7Bh/2Bh	Get Protocol Stack Custom Information
+7Bh/2Ch	Get Protocol Stack Numbers By Media Number
+7Bh/2Dh	Get Protocol Stack Numbers By LAN Board Number
+7Bh/2Eh	Get Media Name by Media Number
+7Bh/2Fh	Get Loaded Media Number List
+7Bh/32h	Get General Router and SAP Information
+7Bh/33h	Get Network Router Information			(see AX=F27Bh/SF=33h)
+7Bh/34h	Get Network Routers Information
+7Bh/35h	Get Known Networks Information			(see AX=F27Bh/SF=35h)
+7Bh/36h	Get Server Information
+7Bh/38h	Get Known Servers Information			(see AX=F27Bh/SF=38h)
+7Bh/3Ch	Get Server Set Commands Information		(see AX=F27Bh/SF=3Ch)
+7Bh/3Dh	Get Server Set Categories			(see AX=F27Bh/SF=3Dh)
+Note:	the subfunction is stored at DS:SI for AL=56h,57h, DS:SI+2 for
+	  AL=15h-17h,23h
+--------T-21F2-------------------------------
+INT 21 - DoubleDOS - SEND CHARACTER TO KEYBOARD BUFFER OF OTHER JOB
+	AH = F2h
+	AL = character
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	    00h successful
+	    01h buffer full (128 characters)
+SeeAlso: AH=E2h"DoubleDOS",AH=F1h"DoubleDOS",AH=F3h"DoubleDOS"
+SeeAlso: AH=F8h"DoubleDOS"
+--------N-21F203-----------------------------
+INT 21 - Novell NetWare - LOG FILE (OLD)
+	AX = F203h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02453 at AX=F269h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F204h,AX=F269h,AH=EBh"NetWare"
+--------N-21F204-----------------------------
+INT 21 - Novell NetWare - LOCK FILE SET (OLD)
+	AX = F204h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02072)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F203h,AX=F26Ah,AH=CBh"NetWare"
+
+Format of NetWare "Lock File Set (old)" request packet:
+Offset	Size	Description	(Table 02072)
+ 00h	WORD	lock timeout in clock ticks (0000h = don't wait)
+--------N-21F207-----------------------------
+INT 21 - Novell NetWare - CLEAR FILE
+	AX = F207h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02073)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=CEh,AH=EDh"NetWare",AH=F2h"NetWare",AX=F208h
+
+Format of NetWare "Clear File" request packet:
+Offset	Size	Description	(Table 02073)
+ 00h	BYTE	directory handle
+ 01h	BYTE	length of filename
+ 02h  N BYTEs	filename
+SeeAlso: #02074
+--------N-21F208-----------------------------
+INT 21 - Novell NetWare - CLEAR FILE SET
+	AX = F208h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02074)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=CFh"NetWare",AH=F2h"NetWare",AX=F207h
+
+Format of NetWare "Clear File Set" request packet:
+Offset	Size	Description	(Table 02074)
+ 00h	BYTE	lock flag (nonzero to lock)
+SeeAlso: #02073
+--------N-21F20A-----------------------------
+INT 21 - Novell NetWare - LOCK LOGICAL RECORD SET (OLD)
+	AX = F20Ah
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02455 at AX=F26Ch)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F204h,AX=F26Ch,AH=D1h"NetWare"
+--------N-21F20B-----------------------------
+INT 21 - Novell NetWare - CLEAR LOGICAL RECORD
+	AX = F20Bh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02075)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=D4h"NetWare",AH=F2h"NetWare",AX=F207h,AX=F20Eh
+
+Format of NetWare "Clear Logical Record" request packet:
+Offset	Size	Description	(Table 02075)
+ 00h	BYTE	length of record name (max 128)
+ 01h  N BYTEs	logical record name
+SeeAlso: #02076
+--------N-21F20E-----------------------------
+INT 21 - Novell NetWare - CLEAR LOGICAL RECORD SET
+	AX = F20Eh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02076)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=D5h"NetWare",AH=F2h"NetWare",AX=F207h,AX=F20Bh
+
+Format of NetWare "Clear Logical Record Set" request packet:
+Offset	Size	Description	(Table 02076)
+ 00h	BYTE	lock flag
+SeeAlso: #02075
+--------N-21F211SF06-------------------------
+INT 21 - Novell NetWare - GET PRINTER STATUS
+	AX = F211h subfn 06h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02077)
+	ES:DI -> reply buffer (see #02078)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=E0h"NetWare",AH=F2h"Novell",AX=F211h/SF=0Ah
+
+Format of NetWare "Get Printer Status" request packet:
+Offset	Size	Description	(Table 02077)
+ 00h	WORD	length of following data
+ 02h	BYTE	06h (subfunction "Get Printer Status")
+ 03h	BYTE	target printer number (00h-04h)
+SeeAlso: #02078,#01790
+
+Format of NetWare "Get Printer Status" reply packet:
+Offset	Size	Description	(Table 02078)
+ 00h	BYTE	flag: printer halted if FFh
+ 01h	BYTE	flag: printer off-line if FFh
+ 02h	BYTE	current form type
+ 03h	BYTE	redirected printer number
+SeeAlso: #02077
+--------N-21F211SF0A-------------------------
+INT 21 - Novell NetWare - GET PRINTER QUEUE
+	AX = F211h subfn 0Ah
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02079)
+	ES:DI -> reply buffer
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F211h/SF=06h
+
+Format of NetWare "Get Printer Queue" request packet:
+Offset	Size	Description	(Table 02079)
+ 00h	WORD	length of following data
+ 02h	BYTE	0Ah (subfunction "Get Printer Queue")
 	???
-Return: ???
---------N-2A0300-----------------------------
-INT 2A - NETWORK - CHECK DIRECT I/O
-	AX = 0300h
-	DS:SI -> ASCIZ device name (may be full path or only drive specifier--
-		  must include the colon)
-Return: CF clear if direct physical addressing (INT 13,INT 25) permissible
-	CF set if access via files only
-Notes:	do not use direct disk accesses if this function returns CF set or the
-	  device is redirected (INT 21/AX=5F02h)
-	use AH=00h to determine whether the network is installed; if not,
-	  direct physical access is allowed
-	may take some time to execute, so programs which need to check
-	  frequently should save the result of the first call
-	this function is called by the DOS kernel on INT 25 and INT 26
-	supported by PC LAN Program, LAN Manage, LANtastic, NetWare, 10NET,
-	  etc.
-SeeAlso: INT 13/AH=02h,INT 13/AH=03h,INT 25,INT 26,INT 21/AX=5F02h
---------N-2A04-------------------------------
-INT 2A - NETWORK - EXECUTE NetBIOS REQUEST
-	AH = 04h
-	AL = error retry
-	    00h automatically retry request on errors 09h, 12h, and 21h
-		  (see #3100 at INT 5C"NetBIOS")
-	    01h no retry
-	    02h ???
-	ES:BX -> Network Control Block (see #3101 at INT 5C"NetBIOS")
-Return: AX = 0000h if successful
-	AH = 01h on error
-	    AL = error code
-Notes:	invokes either INT 5B or INT 5C as appropriate
-	supported by PC LAN Program, LANtastic, LAN Manager, NetWare, 10NET,
-	  etc.
-	NetWare 2.15 NetBIOS emulator returns CF clear if successful, CF set
-	  on error
-	PC LAN Program defines any non-zero return value in AH as an error
-	  indicator for subfunction 00h, and any non-zero return value in AX
-	  as an error indicator for subfunction 01h
-SeeAlso: AH=00h,AH=01h,AX=0500h,INT 5B"Extended NetBIOS",INT 5C"NetBIOS"
---------N-2A0500-----------------------------
-INT 2A - NETWORK - GET NETWORK RESOURCE AVAILABILITY
-	AX = 0500h
-Return: AX reserved
-	BX = number of network names available
-	CX = number of network control blocks available
-	DX = number of network sessions available
-Notes:	supported by PC LAN Program, LAN Manager, LANtastic, NetWare, 10NET,
-	  etc.
-	the application should call this function before using any network
-	  resources, and maintain its own count to avoid exceeding the
-	  network's resource limits
-SeeAlso: AH=00h,AH=01h,AH=04h,INT 5C"NetBIOS"
---------N-2A06-------------------------------
-INT 2A - NETBIOS, LANtastic - NETWORK PRINT-STREAM CONTROL
-	AH = 06h
-	AL = function
-	    01h set concatenation mode
-		all printer output put in one job until return to DOS prompt
-	    02h set truncation mode (default)
-		printer open/close or BIOS/DOS output switch starts new job
-	    03h flush printer output and start new print job
-Return: CF set on error
+--------N-21F212-----------------------------
+INT 21 - Novell NetWare - GET VOLUME INFO WITH NUMBER
+	AX = F212h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02080)
+	ES:DI -> reply buffer (see #02081)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=15h,AX=F217h/SF=E9h
+
+Format of NetWare "Get Volume Info with Number" request packet:
+Offset	Size	Description	(Table 02080)
+ 00h	BYTE	volume number
+SeeAlso: #02081
+
+Format of NetWare "Get Volume Info with Number" reply packet:
+Offset	Size	Description	(Table 02081)
+ 00h	WORD	sectors per cluster
+ 02h	WORD	total clusters in volume
+ 04h	WORD	free clusters
+ 06h	WORD	total directory entries for volume (FFFFh if not relevant)
+ 08h	WORD	available directory entries (FFFFh if not relevant)
+ 0Ah 16 BYTEs	volume name
+ 1Ah	WORD	removability
+		0000h fixed media
+		FFFFh removable
+SeeAlso: #02080
+--------N-21F214CX0000-----------------------
+INT 21 - Novell NetWare - GET FILE SERVER DATE AND TIME
+	AX = F214h
+	CX = 0000h (no request packet)
+	DX = length of reply packet in bytes
+	ES:DI -> buffer for reply packet (see #02082)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"NetWare",AH=E3h/SF=CAh,AH=E7h"NetWare"
+
+Format of NetWare "Get File Server Date and Time" reply packet:
+Offset	Size	Description	(Table 02082)
+ 00h	BYTE	year-1900 (80-179)
+ 01h	BYTE	month (1-12)
+ 02h	BYTE	day (1-31)
+ 03h	BYTE	hour
+ 04h	BYTE	minute
+ 05h	BYTE	second
+ 06h	BYTE	day of week
+SeeAlso: #01988 at AH=E3h/SF=CAh,#02063 at AH=E7h
+--------N-21F215SF01-------------------------
+INT 21 - Novell NetWare - GET BROADCAST MESSAGE (OLD)
+	AX = F215h subfn 01h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #01798 at AH=E1h/SF=01h)
+	ES:DI -> reply buffer (see #02083)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E1h/SF=01h,AX=F215h/SF=02h,AX=F215h/SF=0Bh
+
+Format of NetWare "Get Broadcast Message (Old)" reply packet:
+Offset	Size	Description	(Table 02083)
+ 00h	BYTE	length of message (00h-37h)
+		00h if no broadcast messages pending
+ 01h  N BYTEs	message (no control characters or characters > 7Eh)
+SeeAlso: #01797,#01798
+--------N-21F215SF02-------------------------
+INT 21 - Novell NetWare - DISABLE BROADCASTS
+	AX = F215h subfn 02h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01799 at AH=E1h/SF=02h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E1h/SF=02h,AX=F215h/SF=01h,AX=F215h/SF=03h
+--------N-21F215SF03-------------------------
+INT 21 - Novell NetWare - ENABLE BROADCASTS
+	AX = F215h subfn 03h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01800 at AH=E1h/SF=03h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E1h/SF=03h,AX=F215h/SF=01h,AX=F215h/SF=02h
+--------N-21F215SF08-------------------------
+INT 21 - Novell NetWare - CHECK PIPE STATUS
+	AX = F215h subfn 08h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #01811 at AH=E1h/SF=08h)
+	ES:DI -> reply buffer (see #02084)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E1h/SF=08h,AX=F215h/SF=09h
+
+Format of NetWare "Check Pipe Status" reply packet:
+Offset	Size	Description	(Table 02084)
+ 00h	BYTE	number of connections
+ 01h  N BYTEs	list of pipe statuses
+		00h open
+		FEh incomplete
+		FFh closed
+SeeAlso: #01811,#01812
+--------N-21F215SF09-------------------------
+INT 21 - Novell NetWare - BROADCAST TO CONSOLE
+	AX = F215h subfn 09h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01813 at AH=E1h/SF=09h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+Note:	requires Access Control rights to the target directory or its parent
+SeeAlso: AH=E1h/SF=09h,AH=F2h"NetWare",AX=F215h/SF=08h
+--------N-21F215SF0B-------------------------
+INT 21 - Novell NetWare - GET BROADCAST MESSAGE
+	AX = F215h subfn 0Bh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02085)
+	ES:DI -> reply buffer (see #02086)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E1h/SF=01h,AX=F215h/SF=01h
+
+Format of NetWare "Get Broadcast Message" request packet:
+Offset	Size	Description	(Table 02085)
+ 00h	WORD	length of following data
+ 02h	BYTE	0Bh (subfunction "Get Broadcast Message")
+SeeAlso: #02086,#01797
+
+Format of NetWare "Get Broadcast Message" reply packet:
+Offset	Size	Description	(Table 02086)
+ 00h	BYTE	length of message
+ 01h  N BYTEs	message
+SeeAlso: #02085,#01798
+--------N-21F216SF00-------------------------
+INT 21 - Novell NetWare - SET DIRECTORY HANDLE
+	AX = F216h subfn 00h
+	CX = length of request buffer in bytes
+	DX = 0000h (no reply buffer)
+	DS:SI -> request buffer (see #01816 at AH=E2h/SF=00h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E2h/SF=00h,AX=F216h/SF=01h
+--------N-21F216SF01-------------------------
+INT 21 - Novell NetWare - GET DIRECTORY PATH
+	AX = F216h subfn 01h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #01818 at AH=E2h/SF=01h)
+	ES:DI -> reply buffer (see #01819)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E2h/SF=01h,AX=F216h/SF=00h
+--------N-21F216SF02-------------------------
+INT 21 - Novell NetWare - SCAN DIRECTORY INFORMATION
+	AX = F216h subfn 02h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #01820 at AH=E2h/SF=02h)
+	ES:DI -> reply buffer (see #02087)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E2h/SF=02h,AX=F216h/SF=01h,AX=F216h/SF=03h
+
+Format of NetWare "Scan Directory Information" reply packet:
+Offset	Size	Description	(Table 02087)
+ 00h 16 BYTEs	subdirectory name
+ 10h	DWORD	(big-endian) date and time of creation (see #01822)
+ 14h	DWORD	(big-endian) object ID of owner
+ 18h	BYTE	maximum directory rights (see #01825)
+ 19h	BYTE	unused
+ 1Ah	WORD	(big-endian) subdirectory number
+SeeAlso: #01820,#01821 at AH=E2h/SF=02h
+--------N-21F216SF03-------------------------
+INT 21 - Novell NetWare - GET EFFECTIVE DIRECTORY RIGHTS (OLD)
+	AX = F216h subfn 03h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #01823 at AH=E2h/SF=03h)
+	ES:DI -> reply buffer (see #02088)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=E2h/SF=03h,AX=F216h/SF=02h,AX=F216h/SF=04h,AX=F257h/SF=1Dh
+
+Format of NetWare "Get Effective Directory Rights (old)" reply buffer:
+Offset	Size	Description	(Table 02088)
+ 00h	BYTE	effective directory rights (see #01825 at AH=E2h/SF=03h)
+SeeAlso: #01823,#01824 at AH=E2h/SF=03h
+--------N-21F216SF04-------------------------
+INT 21 - Novell NetWare - MODIFY MAXIMUM RIGHTS MASK
+	AX = F216h subfn 04h
+	CX = length of request buffer in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet	(see #01826 at AH=E2h/SF=04h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E2h/SF=04h,AX=F216h/SF=03h,AX=F216h/SF=05h
+--------N-21F216SF05-------------------------
+INT 21 - Novell NetWare - GET VOLUME NUMBER
+	AX = F216h subfn 05h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #01828 at AH=E2h/SF=05h)
+	ES:DI -> reply buffer (see #02089)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E2h/SF=05h,AX=F216h/SF=02h,AX=F216h/SF=06h
+
+Format of NetWare "Get Volume Number" reply packet:
+Offset	Size	Description	(Table 02089)
+ 00h	BYTE	volume number
+SeeAlso: #01828 at AH=E2h/SF=05h
+--------N-21F216SF06-------------------------
+INT 21 - Novell NetWare - GET VOLUME NAME
+	AX = F216h subfn 06h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #01830 at AH=E2h/SF=06h)
+	ES:DI -> reply buffer (see #02090)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E2h/SF=06h,AX=F216h/SF=05h,AX=F216h/SF=0Ah
+
+Format of NetWare "Get Volume Name" reply packet:
+Offset	Size	Description	(Table 02090)
+SeeAlso: #01830,#01831 at AH=E2h/SF=06h
+--------N-21F216SF0A-------------------------
+INT 21 - Novell NetWare - CREATE DIRECTORY
+	AX = F216h subfn 0Ah
+	CX = length of request buffer in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01832 at AH=E2h/SF=0Ah)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=39h,AH=F2h"Novell",AH=E2h/SF=0Ah,AX=F216h/SF=0Bh
+--------N-21F216SF0B-------------------------
+INT 21 - Novell NetWare - DELETE DIRECTORY
+	AX = F216h subfn 0Bh
+	CX = length of request buffer in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01834 at AH=E2h/SF=0Bh)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=3Ah,AH=F2h"Novell",AH=E2h/SF=0Bh,AX=F216h/SF=0Ah
+--------N-21F216SF0C-------------------------
+INT 21 - Novell NetWare - SCAN DIRECTORY FOR TRUSTEES
+	AX = F216h subfn 0Ch
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #01835 at AH=E2h/SF=0Ch)
+	ES:DI -> reply buffer (see #02091)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E2h/SF=0Ch,AX=F216h/SF=0Dh
+
+Format of NetWare "Scan Directory For Trustees" reply packet:
+Offset	Size	Description	(Table 02091)
+ 02h 16 BYTEs	directory name
+ 12h  4 BYTEs	date and time of creation
+ 16h	DWORD	(big-endian) object ID of owner
+ 1Ah  5 DWORDs	(big-endian) object IDs of Trustees 0 through 4
+		00000000h = end of group
+ 2Eh  5 BYTEs	directory rights for Trustees 0 through 4 (see #01825)
+SeeAlso: #01835 at AH=E2h/SF=0Ch
+--------N-21F216SF0D-------------------------
+INT 21 - Novell NetWare - ADD TRUSTEE TO DIRECTORY
+	AX = F216h subfn 0Dh
+	CX = length of request buffer in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet	(see #01837 at AH=E2h/SF=0Dh)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+Note:	requires Access Control rights to the target directory or its parent
+SeeAlso: AH=F2h"NetWare",AH=E2h/SF=0Dh,AX=F216h/SF=0Ch,AX=F216h/SF=0Eh
+--------N-21F216SF0E-------------------------
+INT 21 - Novell NetWare - DELETE TRUSTEE FROM DIRECTORY
+	AX = F216h subfn 0Eh
+	CX = length of request buffer in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet	(see #01838 at AH=E2h/SF=0Eh)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E2h/SF=0Eh,AX=F216h/SF=0Ch,AX=F216h/SF=0Dh
+--------N-21F216SF0F-------------------------
+INT 21 - Novell NetWare - RENAME DIRECTORY
+	AX = F216h subfn 0Fh
+	CX = length of request buffer in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01840 at AH=E2h/SF=0Fh)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E2h/SF=0Fh,AX=F216h/SF=0Ah
+--------N-21F216SF10-------------------------
+INT 21 - Novell NetWare - PURGE ERASED FILES (OLD)
+	AX = F216h subfn 10h
+	CX = length of request buffer in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01841 at AH=E2h/SF=10h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E2h/SF=10h,AX=F216h/SF=11h
+--------N-21F216SF11-------------------------
+INT 21 - Novell NetWare - RECOVER ERASED FILE (OLD)
+	AX = F216h subfn 11h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01843 at AH=E2h/SF=11h)
+	ES:DI -> reply buffer (see #02092)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E2h/SF=11h,AX=F216h/SF=10h
+
+Format of NetWare "Recover Erased File (Old)" reply packet:
+Offset	Size	Description	(Table 02092)
+ 02h 15 BYTEs	ASCIZ name of erased file
+ 11h 15 BYTEs	ASCIZ name under which file was restored
+SeeAlso: #01843,#01844 at AH=E2h/SF=11h
+--------N-21F216SF12-------------------------
+INT 21 - Novell NetWare - ALLOCATE PERMANENT DIRECTORY HANDLE
+	AX = F216h subfn 12h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01845 at AH=E2h/SF=12h)
+	ES:DI -> reply buffer (see #02094)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=16h,AH=E2h/SF=12h
+
+Format of NetWare IPX fragment list entry:
+Offset	Size	Description	(Table 02093)
+ 00h	DWORD	-> fragment data
+ 04h	WORD	size of fragment in bytes
+
+Format of NetWare "Allocate Permanent Directory Handle" reply packet:
+Offset	Size	Description	(Table 02094)
+ 00h	BYTE	new directory handle
+ 01h	BYTE	access rights
+SeeAlso: #01845,#01849,#02093
+--------N-21F216SF13-------------------------
+INT 21 - Novell NetWare - ALLOCATE TEMPORARY DIRECTORY HANDLE
+	AX = F216h subfn 13h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01847 at AH=E2h/SF=13h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=12h,AX=F216h/SF=16h,AH=E2h/SF=13h
+--------N-21F216SF14-------------------------
+INT 21 - Novell NetWare - DEALLOCATE DIRECTORY HANDLE
+	AX = F216h subfn 14h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet	(see #01848 at AH=E2h/SF=14h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E2h/SF=14h,AX=F216h/SF=13h,AX=F216h/SF=16h
+--------N-21F216SF15-------------------------
+INT 21 - Novell NetWare - GET VOLUME INFO WITH HANDLE
+	AX = F216h subfn 15h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01850 at AH=E2h/SF=15h)
+	ES:DI -> reply buffer (see #02095)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E2h/SF=15h,AX=F212h,AX=F216h/SF=13h
+
+Format of NetWare "Get Volume Info With Handle" reply packet:
+Offset	Size	Description	(Table 02095)
+ 00h	WORD	(big-endian) sectors per block
+ 02h	WORD	(big-endian) total blocks on volume
+ 04h	WORD	(big-endian) blocks available on volume
+ 06h	WORD	(big-endian) total directory slots
+ 08h	WORD	(big-endian) directory slots available
+ 0Ah 16 BYTEs	NUL-padded volume name
+ 1Ah	WORD	(big-endian) flag: volume removable if nonzero
+SeeAlso: #01850 at AH=E2h/SF=15h
+--------N-21F216SF16-------------------------
+INT 21 - Novell NetWare v2+ - ALLOCATE SPECIAL TEMPORARY DIRECTORY HANDLE
+	AX = F216h subfn 16h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01852 at AH=E2h/SF=16h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=12h,AX=F216h/SF=13h,AH=E2h/SF=16h
+--------N-21F216SF17-------------------------
+INT 21 - Novell NetWare - SAVE DIRECTORY HANDLE
+	AX = F216h subfn 17h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01853 at AH=E2h/SF=17h)
+	ES:DI -> reply buffer (see #02096)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E2h/SF=17h,AX=F216h/SF=18h
+
+Format of NetWare "Save Directory Handle" reply packet:
+Offset	Size	Description	(Table 02096)
+ 00h 16 BYTEs	save buffer
+SeeAlso: #01853,#01854,#02097
+--------N-21F216SF18-------------------------
+INT 21 - Novell NetWare - RESTORE DIRECTORY HANDLE
+	AX = F216h subfn 18h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01855 at AH=E2h/SF=18h)
+	ES:DI -> reply buffer (see #02097)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E2h/SF=18h,AX=F216h/SF=17h
+
+Format of NetWare "Restore Directory Handle" reply packet:
+Offset	Size	Description	(Table 02097)
+ 00h	BYTE	new directory handle
+ 01h	BYTE	effective rights (see #01825)
+SeeAlso: #01856,#02096
+--------N-21F216SF19-------------------------
+INT 21 - Novell NetWare - SET DIRECTORY INFORMATION
+	AX = F216h subfn 19h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet	(see #01857 at AH=E2h/SF=19h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E2h/SF=19h,AX=F216h/SF=17h
+--------N-21F216SF1A-------------------------
+INT 21 - Novell NetWare - GET PATH NAME OF VOLUME-DIRECTORY NUMBER PAIR
+	AX = F216h subfn 1Ah
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01859 at AH=E2h/SF=1Ah)
+	ES:DI -> reply buffer (see #02098)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E2h/SF=1Ah,AX=F216h/SF=0Eh
+
+Format of NetWare "Get Path Name Of Volume-Dir Number Pair" reply packet:
+Offset	Size	Description	(Table 02098)
+ 00h 256 BYTEs	path
+SeeAlso: #01859,#01860 at AH=E2h/SF=1Ah
+--------N-21F216SF1B-------------------------
+INT 21 - Novell NetWare - SCAN SALVAGEABLE FILES (OLD)
+	AX = F216h subfn 1Bh
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02099)
+	ES:DI -> reply buffer (see #02100)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=1Ch,AX=F216h/SF=1Dh,AX=F257h/SF=10h
+
+Format of NetWare "Scan Salvageable Files (Old)" request packet:
+Offset	Size	Description	(Table 02099)
+ 00h	WORD	length of following data
+ 02h	BYTE	1Bh (subfunction "Scan Salvageable Files (Old)")
+ 03h	BYTE	directory handle
+ 04h	DWORD	last sequence number (set to FFFFFFFFh before first call)
+SeeAlso: #02100,#02375
+
+Format of NetWare "Scan Salvageable Files (Old)" reply packet:
+Offset	Size	Description	(Table 02100)
+ 00h	DWORD	next sequence number
+ 04h	WORD	subdirectory
+ 06h	DWORD	attributes
+ 0Ah	BYTE	unique ID
+ 0Bh	BYTE	flags
+ 0Ch	BYTE	name space
+ 0Dh	BYTE	length of filename
+ 0Eh 14 BYTEs	filename
+ 1Ah	DWORD	creation date and time
+ 1Eh	DWORD	owner ID
+ 22h	DWORD	last-backup date and time
+ 26h	DWORD	last-backup ID
+ 2Ah	DWORD	last-modified date and time
+ 2Eh	WORD	???
+ 30h	DWORD	last-modified ID
+ 34h	DWORD	file size
+ 38h 44 BYTEs	reserved
+ 62h	WORD	inherited rights mask
+ 64h	WORD	last-access date
+ 66h	DWORD	deleted file's time
+ 6Ah	DWORD	deletion date and time
+ 6Eh	DWORD	ID of deletor
+ 72h 16 BYTEs	reserved
+SeeAlso: #02099,#02376
+--------N-21F216SF1C-------------------------
+INT 21 - Novell NetWare - RECOVER SALVAGEABLE FILE (OLD)
+	AX = F216h subfn 1Ch
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02101)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=1Bh,AX=F216h/SF=1Dh,AX=F257h/SF=11h
+
+Format of NetWare "Recover Salvageable File (Old)" request packet:
+Offset	Size	Description	(Table 02101)
+ 00h	WORD	length of following data
+ 02h	BYTE	1Ch (subfunction "Recover Salvageable File (Old)")
+ 03h	BYTE	directory handle
+ 04h	DWORD	sequence number (set to ? before first call)
+ 08h	BYTE	length of filename
+ 09h  N BYTEs	filename in DOS format
+	BYTE	length of new name for recovered file
+      N BYTEs	recovered filename in NetWare VOLUME:DIRECTORY/.../FILE format
+SeeAlso: #02377
+--------N-21F216SF1D-------------------------
+INT 21 - Novell NetWare - PURGE SALVAGEABLE FILE (OLD)
+	AX = F216h subfn 1Dh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02102)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=1Bh,AX=F216h/SF=1Ch,AX=F257h/SF=12h
+
+Format of NetWare "Purge Salvageable File (old)" request packet:
+Offset	Size	Description	(Table 02102)
+ 00h	WORD	length of following data
+ 02h	BYTE	1Dh (subfunction "Purge Salvageable File (Old)")
+ 03h	BYTE	directory handle
+ 04h	DWORD	directory entry
+ 08h	DWORD	sequence number from Scan Salvageable Files
+--------N-21F216SF1E-------------------------
+INT 21 - Novell NetWare - SCAN A DIRECTORY
+	AX = F216h subfn 1Eh
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02103)
+	ES:DI -> reply buffer (see #02104)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E2h/SF=02h,AX=F216h/SF=1Fh
+
+Format of NetWare "Scan A Directory" request packet:
+Offset	Size	Description	(Table 02103)
+ 00h	WORD	length of following data
+ 02h	BYTE	1Eh (subfunction "Scan A Directory")
+ 03h	BYTE	directory handle
+ 04h	BYTE	search attributes
+ 05h	DWORD	sequence number
+ 09h	BYTE	length of search filespec
+ 0Ah  N BYTEs	search filespec
+SeeAlso: #02104
+
+Format of NetWare "Scan A Directory" reply packet:
+Offset	Size	Description	(Table 02104)
+ 00h	DWORD	sequence number (copy into next request packet)
+ 04h	DWORD	subdirectory
+ 08h	DWORD	attributes
+ 0Ch	BYTE	unique ID
+ 0Dh	BYTE	flags
+ 0Eh	BYTE	name space
+ 0Fh	BYTE	length of filename
+---DOS file---
+ 10h 12 BYTEs	DOS filename
+ 1Ch	DWORD	creation date and time
+ 20h	DWORD	owner ID
+ 24h	DWORD	last-archived date and time
+ 28h	DWORD	last-archived ID
+ 2Ch	DWORD	last-updated date and time
+ 30h	DWORD	last-updated ID
+ 34h	DWORD	file size
+ 38h 44 BYTEs	reserved
+ 64h	WORD	inherited rights mask
+ 66h	WORD	last-accessed date
+ 68h 28 BYTEs	reserved
+---DOS subdirectory---
+ 10h 12 BYTEs	DOS directory name
+ 1Ch	DWORD	creation date and time
+ 20h	DWORD	owner ID
+ 24h	DWORD	last-archived date and time
+ 28h	DWORD	last-archived ID
+ 2Ch	DWORD	last-updated date and time
+ 30h	DWORD	next trustee entry
+ 34h 48 BYTEs	reserved
+ 64h	DWORD	maximum space
+ 68h	WORD	inherited rights mask
+ 6Ah 26 BYTEs	unused
+SeeAlso: #02103
+--------N-21F216SF1F-------------------------
+INT 21 - Novell NetWare - GET DIRECTORY ENTRY
+	AX = F216h subfn 1Fh
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02105)
+	ES:DI -> reply buffer
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=1Eh
+
+Format of NetWare "Get Directory Entry" request packet:
+Offset	Size	Description	(Table 02105)
+ 00h	WORD	length of following data
+ 02h	BYTE	1Fh (subfunction "Get Directory Entry")
+	???
+--------N-21F216SF20-------------------------
+INT 21 - Novell NetWare - SCAN VOLUME'S USER DISK RESTRICTIONS
+	AX = F216h subfn 20h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02106)
+	ES:DI -> reply buffer (see #02107)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=23h,AX=F216h/SF=29h
+
+Format of NetWare "Scan Volume's User Disk Restrictions" request packet:
+Offset	Size	Description	(Table 02106)
+ 00h	WORD	length of following data
+ 02h	BYTE	20h (subfunction "Scan Volume's User Disk Restrictions")
+ 03h	BYTE	volume number
+ 04h	DWORD	sequence number (set to 00000000h before first call)
+SeeAlso: #02107
+
+Format of NetWare "Scan Volume's User Disk Restrictions" reply packet:
+Offset	Size	Description	(Table 02107)
+ 00h	BYTE	number of entries returned (max 12)
+ 01h 2N DWORDs	restriction entries [array]
+		Offset	Size	Description
+		 00h	DWORD	object ID
+		 04h	DWORD	maximum usage allowed (in 4K blocks)
+SeeAlso: #02106
+--------N-21F216SF21-------------------------
+INT 21 - Novell NetWare v3+ - ADD USER DISK SPACE RESTRICTION
+	AX = F216h subfn 21h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02108)
+	ES:DI -> reply buffer (ignored)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AX=F216h/SF=20h,AX=F216h/SF=22h,AX=F216h/SF=24h
+
+Format of NetWare "Add User Disk Space Restriction" request buffer:
+Offset	Size	Description	(Table 02108)
+ 00h	WORD	000Ah (length of following data)
+ 02h	BYTE	21h (subfunction "Add User Disk Space Restriction")
+ 03h	BYTE	volume number
+ 04h	DWORD	(big-endian) object ID
+ 08h	DWORD	(big-endian) disk space limit in 4K blocks
+		00000000h to 40000000h
+--------N-21F216SF22-------------------------
+INT 21 - Novell NetWare - REMOVE USER DISK SPACE RESTRICTIONS
+	AX = F216h subfn 22h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02109)
+	ES:DI -> reply buffer
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=20h,AX=F216h/SF=21h,AX=F216h/SF=23h
+
+Format of NetWare "Remove User Disk Space Restrictions" request packet:
+Offset	Size	Description	(Table 02109)
+ 00h	WORD	length of following data
+ 02h	BYTE	22h (subfunction "Remove User Disk Space Restrictions")
+	???
+--------N-21F216SF23-------------------------
+INT 21 - Novell NetWare - SCAN DIRECTORY SPACE RESTRICTIONS
+	AX = F216h subfn 23h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02110)
+	ES:DI -> reply buffer (see #02111)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=20h,AX=F216h/SF=21h,AX=F216h/SF=22h
+
+Format of NetWare "Scan Directory Space Restrictions" request packet:
+Offset	Size	Description	(Table 02110)
+ 00h	WORD	length of following data
+ 02h	BYTE	23h (subfunction "Scan Directory Space Restrictions")
+ 03h	BYTE	directory handle
+SeeAlso: #02111
+
+Format of NetWare "Scan Directory Space Restrictions" reply packet:
+Offset	Size	Description	(Table 02111)
+ 00h	BYTE	number of entries returned
+ 01h 10N BYTEs	restrictions [array]
+		Offset	Size	Description
+		 00h	WORD	depth of directory from root
+		 02h	DWORD	maximum space allowed for files in directory
+		 04h	DWORD	current space used by files in directory
+SeeAlso: #02110
+--------N-21F216SF24-------------------------
+INT 21 - Novell NetWare v3+ - SET DIRECTORY DISK SPACE RESTRICTION
+	AX = F216h subfn 24h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02112)
+	ES:DI -> reply buffer (ignored)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AX=F216h/SF=21h,AX=F216h/SF=22h,AX=F216h/SF=23h,AX=F216h/SF=25h
+
+Format of NetWare "Set Directory Disk Space Restriction" request buffer:
+Offset	Size	Description	(Table 02112)
+ 00h	WORD	0006h (length of following data)
+ 02h	BYTE	24h (subfunction "Set Directory Disk Space Restriction")
+ 03h	BYTE	directory handle
+ 04h	DWORD	(big-endian) disk space limit in 4K blocks
+		00000000h to remove restriction, negative to set to 0 blocks
+--------N-21F216SF25-------------------------
+INT 21 - Novell NetWare - SET DIRECTORY/FILE INFORMATION
+	AX = F216h subfn 25h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02113)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=02h
+
+Format of NetWare "Set Directory/File Information" request packet:
+Offset	Size	Description	(Table 02113)
+ 00h	WORD	length of following data
+ 02h	BYTE	25h (subfunction "Set Directory/File Information")
+ 03h	BYTE	directory handle
+ 04h	BYTE	search attributes
+ 05h	DWORD	sequence number
+ 09h	DWORD	change bits
+ 0Dh	DWORD	directory number
+ 11h	DWORD	attributes
+ 15h	BYTE	unique ID
+ 16h	BYTE	flags
+ 17h	BYTE	name space (see #02363)
+ 18h	BYTE	length of directory/file name
+ 19h 12 BYTEs	directory/file name
+ 25h	DWORD	creation date and time
+ 29h	DWORD	(big-endian) owner ID
+ 2Dh	DWORD	last-backup date and time
+ 31h	DWORD	(big-endian) last-backup ID
+ 35h	DWORD	last-modification date and time
+ 39h	DWORD	(big-endian) last-modification ID
+ 3Dh	DWORD	file size
+ 41h	DWORD	data fork first FAT
+ 45h	DWORD	next trustee entry
+ 49h 36 BYTEs	reserved
+ 6Dh	WORD	inherited rights mask
+ 6Fh	WORD	last-access date
+ 71h 20 BYTEs	reserved
+ 85h	DWORD	primary entry
+ 89h	DWORD	name list
+--------N-21F216SF26-------------------------
+INT 21 - Novell NetWare v3+ - SCAN FILE OR DIRECTORY FOR EXTENDED TRUSTEES
+	AX = F216h subfn 26h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02114)
+	ES:DI -> reply buffer (see #02115)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+Desc:	get up to 20 extended trustee entries per call for a file or directory
+
+Format of NetWare "Scan File/Directory for Extended Trustees" request buffer:
+Offset	Size	Description	(Table 02114)
+ 00h	WORD	length of following data
+ 02h	BYTE	26h (subfunc "Scan File or Directory For Extended Trustees")
+ 03h	BYTE	directory handle
+ 04h	BYTE	sequence number
+		00h for first call, increment by number of returned entries
+ 05h	BYTE	length of path
+ 06h  N BYTEs	pathname
+SeeAlso: #02114
+
+Format of NetWare "Scan File/Directory for Extended Trustees" reply buffer:
+Offset	Size	Description	(Table 02115)
+ 00h	BYTE	number of entries returned (max 20)
+ 01h 20 DWORDs	(big-endian) list of object IDs
+ 51h 20 WORDs	list of associated trustee rights
+SeeAlso: #02115
+--------N-21F216SF27-------------------------
+INT 21 - Novell NetWare v3+ - ADD EXTENDED TRUSTEE TO DIRECTORY OR FILE
+	AX = F216h subfn 27h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02116)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+
+Format of NetWare "Add Extended Trustee to Directory or File" request buffer:
+Offset	Size	Description	(Table 02116)
+ 00h	WORD	length of following data
+ 02h	BYTE	27h (subfunction "Add Extended Trustee to Directory or File")
+ 03h	BYTE	directory handle
+ 04h	DWORD	(big-endian) object ID
+ 08h	WORD	trustee rights (see #02117)
+ 0Ah	BYTE	path length
+ 0Bh  N BYTEs	path name
+
+Bitfields for NetWare trustee rights:
+Bit(s)	Description	(Table 02117)
+ 0	read
+ 1	write
+ 3	create
+ 4	delete
+ 5	access
+ 6	file
+ 7	modify
+ 8	supervisor
+--------N-21F216SF28-------------------------
+INT 21 - Novell NetWare - SCAN DIRECTORY DISK SPACE
+	AX = F216h subfn 28h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02118)
+	ES:DI -> reply buffer (see #02119)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=02h,AX=F216h/SF=20h
+
+Format of NetWare "Scan Directory Disk Space" request packet:
+Offset	Size	Description	(Table 02118)
+ 00h	WORD	length of following data
+ 02h	BYTE	28h (subfunction "Scan Directory Disk Space")
+ 03h	BYTE	directory handle
+ 04h	BYTE	search attributes
+ 05h	DWORD	sequence number (set to FFFFFFFFh before first call)
+ 09h	BYTE	length of filespec
+ 0Ah  N BYTEs	search filespec
+SeeAlso: #02119
+
+Format of NetWare "Scan Directory Disk Space" reply packet:
+Offset	Size	Description	(Table 02119)
+ 00h	DWORD	next sequence number
+ 04h	DWORD	(big-endian) subdirectory number
+ 08h	DWORD	(big-endian) attributes
+ 0Ch	BYTE	unique ID
+ 0Dh	BYTE	flags
+ 0Eh	BYTE	name space (see #02363)
+ 0Fh	BYTE	length of name
+ 10h 12 BYTEs	name
+ 1Ch	DWORD	creation date and time
+ 20h	DWORD	owner ID
+ 24h	DWORD	date and time last backed up
+ 28h	DWORD	last-backup ID
+ 2Ch	DWORD	date and time last modified
+ 30h	DWORD	last-modification ID
+ 34h	DWORD	data fork size
+ 38h	DWORD	data fork first FAT
+ 3Ch	DWORD	next trustee entry
+ 40h 36 BYTEs	reserved
+ 64h	WORD	inherited rights mask
+ 66h	WORD	last-access date
+ 68h	DWORD	deleted file date and time
+ 6Ch	DWORD	date and time file was deleted
+ 70h	DWORD	deleted ID
+ 74h  8 BYTEs	undefined
+ 7Ch	DWORD	primary entry
+ 80h	DWORD	name list
+ 84h	DWORD	other file fork size
+SeeAlso: #02118
+--------N-21F216SF29-------------------------
+INT 21 - Novell NetWare v3+ - GET OBJECT DISK USAGE AND RESTRICTIONS
+	AX = F216h subfn 29h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02120)
+	ES:DI -> reply buffer (see #02121)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+Note:	this function returns successfully, showing no restriction, if an
+	  invalid object ID is specified
+SeeAlso: AX=F216h/SF=24h,AX=F216h/SF=33h
+
+Format of NetWare "Get Object Disk Restrictions" request buffer:
+Offset	Size	Description	(Table 02120)
+ 00h	WORD	0006h (length of following data)
+ 02h	BYTE	21h (subfunction "Get Object Disk Restrictions")
+ 03h	BYTE	volume number
+ 04h	DWORD	(big-endian) object ID
+SeeAlso: #02121
+
+Format of NetWare "Get Object Disk Restrictions" reply buffer:
+Offset	Size	Description	(Table 02121)
+ 00h	DWORD	disk space limit
+ 04h	DWORD	disk space currently in use by object
+SeeAlso: #02120
+--------N-21F216SF2A-------------------------
+INT 21 - Novell NetWare - GET EFFECTIVE RIGHTS
+	AX = F216h subfn 2Ah
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02122)
+	ES:DI -> reply buffer (see #02123)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=32h
+
+Format of NetWare "Get Effective Rights" request packet:
+Offset	Size	Description	(Table 02122)
+ 00h	WORD	length of following data
+ 02h	BYTE	2Ah (subfunction "Get Effective Rights")
+	???
+--------N-21F216SF2B-------------------------
+INT 21 - Novell NetWare - REMOVE EXTENDED TRUSTEE FROM DIR OR FILE
+	AX = F216h subfn 2Bh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02093,#02123)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=26h,AX=F216h/SF=27h
+
+Format of NetWare "Remove Extended Trustee From Dir Or File" request packet:
+Offset	Size	Description	(Table 02123)
+ 00h	WORD	length of following data
+ 02h	BYTE	2Bh (subfunction "Remove Extended Trustee From Dir Or File")
+ 03h	BYTE	directory handle
+ 04h	DWORD	trustee's object ID
+ 08h	BYTE	unused
+ 09h	BYTE	length of pathname
+ 0Ah  N BYTEs	directory path in form VOLUME:DIRECTORY/.../DIRECTORY
+--------N-21F216SF2C-------------------------
+INT 21 - Novell NetWare - GET VOLUME USAGE
+	AX = F216h subfn 2Ch
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02124)
+	ES:DI -> reply buffer (see #02125)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=20h,AX=F216h/SF=29h
+
+Format of NetWare "Get Volume Usage" request packet:
+Offset	Size	Description	(Table 02124)
+ 00h	WORD	length of following data
+ 02h	BYTE	2Ch (subfunction "Get Volume Usage")
+	???
+--------N-21F216SF2D-------------------------
+INT 21 - Novell NetWare - GET DIRECTORY INFORMATION
+	AX = F216h subfn 2Dh
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02125)
+	ES:DI -> reply buffer (see #02126)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=2Ch,AX=F216h/SF=2Eh
+
+Format of NetWare "Get Directory Information" request packet:
+Offset	Size	Description	(Table 02125)
+ 00h	WORD	length of following data
+ 02h	BYTE	2Dh (subfunction "Get Directory Information")
+ 03h	BYTE	directory handle
+SeeAlso: #02126
+
+Format of NetWare "Get Directory Information" reply packet:
+Offset	Size	Description	(Table 02126)
+ 00h	DWORD	total blocks
+ 04h	DWORD	available blocks
+ 08h	DWORD	total number of directory entries
+ 0Ch	DWORD	number of available directory entries
+ 10h  4 BYTEs	reserved
+ 14h	BYTE	sectors per block
+ 15h	BYTE	length of volume name
+ 16h  N BYTEs	volume name
+SeeAlso: #02125
+--------N-21F216SF2E-------------------------
+INT 21 - Novell NetWare - RENAME OR MOVE
+	AX = F216h subfn 2Eh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02127)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=34h,AX=F223h/SF=07h,AX=F244h
+
+Format of NetWare "Rename Or Move" request packet:
+Offset	Size	Description	(Table 02127)
+ 00h	WORD	length of following data
+ 02h	BYTE	2Eh (subfunction "Rename Or Move")
+ 03h	BYTE	source directory handle
+ 04h	BYTE	search attributes
+ 05h	BYTE	source path component count
+ 06h  N BYTEs	source path
+	BYTE	destination directory handle
+	BYTE	destination path component count
+      N BYTEs	destination path
+--------N-21F216SF2F-------------------------
+INT 21 - Novell NetWare - GET NAME SPACE INFORMATION
+	AX = F216h subfn 2Fh
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02128)
+	ES:DI -> reply buffer (see #02129)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=30h,AX=F257h/SF=18h
+
+Format of NetWare "Get Name Space Information" request packet:
+Offset	Size	Description	(Table 02128)
+ 00h	WORD	length of following data
+ 02h	BYTE	2Fh (subfunction "Get Name Space Information")
+ 03h	BYTE	volume number
+SeeAlso: #02129
+
+Format of NetWare "Get Name Space Information" request packet:
+Offset	Size	Description	(Table 02129)
+ 00h	BYTE	length of namespace name
+ 01h  N BYTEs	name of namespace
+	BYTE	number of data streams
+	var	data stream information [one entry per data stream]
+		Offset	Size	Description
+		 00h	BYTE	associated name space
+		 01h	BYTE	length of data stream name
+		 02h  N BYTEs	data stream name
+	BYTE	number of loaded name spaces
+	BYTE	bitmap of loaded name spaces
+      N BYTEs	list of name spaces being used
+	BYTE	index number
+SeeAlso: #02128
+--------N-21F216SF30-------------------------
+INT 21 - Novell NetWare - GET NAME SPACE DIRECTORY ENTRY
+	AX = F216h subfn 30h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02130)
+	ES:DI -> reply buffer (see #02131)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=2Fh
+
+Format of NetWare "Get Name Space Directory Entry" request packet:
+Offset	Size	Description	(Table 02130)
+ 00h	WORD	length of following data
+ 02h	BYTE	30h (subfunction "Get Name Space Directory Entry")
+ 03h	BYTE	volume number
+ 04h	DWORD	sequence number (set to 00000000h before first call)
+ 08h	BYTE	name space (see #02363)
+SeeAlso: #02131
+
+Format of NetWare "Get Name Space Directory Entry" request packet:
+Offset	Size	Description	(Table 02131)
+ 00h	DWORD	next sequence number
+ 04h	DWORD	subdirectory
+ 08h	DWORD	attributes
+ 0Ch	BYTE	unique ID
+ 0Dh	BYTE	flags
+ 0Eh	BYTE	name space (see #02363)
+ 0Fh	BYTE	length of name
+ 10h 12 BYTEs	filename
+ 1Ch	DWORD	creation date and time
+ 20h	DWORD	(big-endian) owner ID
+ 24h	DWORD	last-backup date and time
+ 28h	DWORD	(big-endian) last-backup ID
+ 2Ch	DWORD	last-modification date and time
+---DOS file---
+ 30h	DWORD	(big-endian) last-modification ID
+ 34h	DWORD	file size
+ 38h 44 BYTEs	reserved
+ 64h	WORD	inherited rights mask
+ 66h	WORD	last-access date
+ 68h 28 BYTEs	reserved
+---DOS subdirectory---
+ 30h	DWORD	next trustee entry
+ 34h 48 BYTEs	reserved
+ 64h	WORD	maximum space
+ 66h	WORD	inherited rights mask
+ 68h 26 BYTEs	reserved
+---Macintosh subdirectory---
+ 10h 32 BYTEs	Mac filename
+ 30h	DWORD	resource fork
+ 34h	DWORD	resource fork size
+ 38h 32 BYTEs	Finder information
+ 58h  6 BYTEs	ProDOS information
+ 5Eh 38 BYTEs	reserved
+SeeAlso: #02130
+--------N-21F216SF31-------------------------
+INT 21 - Novell NetWare - OPEN DATA STREAM
+	AX = F216h subfn 31h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02132)
+	ES:DI -> reply buffer (see #02133)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=30h
+
+Format of NetWare "Open Data Stream" request packet:
+Offset	Size	Description	(Table 02132)
+ 00h	WORD	length of following data
+ 02h	BYTE	31h (subfunction "Open Data Stream")
+ 03h	BYTE	data stream
+ 04h	BYTE	directory handle
+ 05h	BYTE	file attributes
+ 06h	BYTE	open rights
+ 07h	BYTE	length of filename
+ 08h  N BYTEs	filename (8.3)
+SeeAlso: #02133
+
+Format of NetWare "Open Data Stream" reply packet:
+Offset	Size	Description	(Table 02133)
+ 00h	DWORD	file handle
+SeeAlso: #02132
+--------N-21F216SF32-------------------------
+INT 21 - Novell NetWare v2.2+ - GET OBJECT EFFECTIVE RIGHTS
+	AX = F216h subfn 32h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02134)
+	ES:DI -> reply buffer (see #02135)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AX=F216h/SF=29h
+
+Format of NetWare "Get Object Effective Rights" request buffer:
+Offset	Size	Description	(Table 02134)
+ 00h	WORD	length of following data
+ 02h	BYTE	32h (subfunction "Get Object Effective Rights")
+ 03h	DWORD	object ID
+ 07h	BYTE	directory handle
+ 08h	var	counted path string
+SeeAlso: #02135
+
+Format of NetWare "Get Object Effective Rights" reply buffer:
+Offset	Size	Description	(Table 02135)
+ 00h	WORD	object's effective rights
+ 02h  6 BYTEs	reserved
+SeeAlso: #02134
+--------N-21F216SF33-------------------------
+INT 21 - Novell NetWare v2.2+ - GET EXTENDED VOLUME INFORMATION
+	AX = F216h subfn 33h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02136)
+	ES:DI -> reply buffer (see #02137)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AX=F216h/SF=29h
+
+Format of NetWare "Get Extended Volume Information" request buffer:
+Offset	Size	Description	(Table 02136)
+ 00h	WORD	length of following data
+ 02h	BYTE	33h (subfunction "Get Extended Volume Information")
+---v2.2---
+ 03h	BYTE	volume ID
+---v4.x---
+ 03h	DWORD	volume number
+SeeAlso: #02137
+
+Format of NetWare "Get Extended Volume Information" reply buffer:
+Offset	Size	Description	(Table 02137)
+ 00h	WORD	length of returned data
+ 02h	DWORD	volume type
+ 06h	DWORD	status flag bits
+		bit 0: suballocation
+		bit 1: compressoin
+		bit 2: migration
+		bit 3: auditing
+ 0Ah	DWORD	sector size
+ 0Eh	DWORD	sectors per cluster
+ 12h	DWORD	total clusters in volume
+ 16h	DWORD	free clusters
+ 1Ah	DWORD	freeable suballocated clusters
+ 1Eh	DWORD	freeable in-limbo sectors
+ 22h	DWORD	non-freeable in-limbo sectors
+ 26h	DWORD	non-freeable available suballocated sectors
+ 2Ah	DWORD	unuable suballocated sectors
+ 2Eh	DWORD	total suballocated clusters
+ 32h	DWORD	number of data streams
+ 36h	DWORD	number of in-limbo data streams
+ 3Ah	DWORD	age of oldest deleted file in clock ticks
+ 3Eh	DWORD	number of compressed data streams
+ 42h	DWORD	number of compressed in-limbo data streams
+ 46h	DWORD	number of uncompressable data streams
+ 4Ah	DWORD	number of precompressed sectors
+ 4Eh	DWORD	number of compressed sectors
+ 52h	DWORD	number of migrated files
+ 56h	DWORD	number of migrated sectors
+ 5Ah	DWORD	number of clusters used by FAT
+ 5Eh	DWORD	number of clusters used by directories
+ 62h	DWORD	number of clusters used by extended directories
+ 66h	DWORD	total number of directory entries
+ 6Ah	DWORD	number of unused directory entries
+ 6Eh	DWORD	total number of extended directory extants
+ 72h	DWORD	number of unused extended directory extants
+ 76h	DWORD	number of extended attributes defined (see AX=F256h/SF=04h)
+ 7Ah	DWORD	number of extended-attribute extants used
+ 7Eh	DWORD	object ID for Directory Services
+ 82h	DWORD	date and time volume last modified
+ 86h	var	counted volume name string
+SeeAlso: #02136
+--------N-21F217SF01-------------------------
+INT 21 - Novell NetWare - CHANGE USER PASSWORD (OLD)
+	AX = F217h subfn 01h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01867 at AH=E3h/SF=01h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+Note:	this function requires an object of type USER, unlike the newer
+	  password changing function AX=F217h/SF=40h
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=01h,AX=F217h/SF=02h,AX=F217h/SF=40h
+--------N-21F217SF02-------------------------
+INT 21 - Novell NetWare - GET USER CONNECTION LIST (OLD)
+	AX = F217h subfn 02h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01868 at AH=E3h/SF=02h)
+	ES:DI -> reply buffer (see #02138)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=02h,AX=F217h/SF=01h,AX=F217h/SF=0Ch
+
+Format of NetWare "Get User Connection List (old)" reply packet:
+Offset	Size	Description	(Table 02138)
+ 00h	BYTE	length of connection list
+ 01h	BYTE	number of bytes in connection list
+ 02h  N BYTEs	list of connection numbers in use by user
+SeeAlso: #01868
+--------N-21F217SF0C-------------------------
+INT 21 - Novell NetWare - VERIFY SERIALIZATION
+	AX = F217h subfn 0Ch
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01872 at AH=E3h/SF=0Ch)
+	ES:DI -> reply buffer (see #02139)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=0Ch,AX=F217h/SF=12h
+
+Format of NetWare "Verify Serialization" reply packet:
+Offset	Size	Description	(Table 02139)
+ 00h	WORD	server application number
+SeeAlso: #01872
+--------N-21F217SF0E-------------------------
+INT 21 - Novell NetWare - GET DISK UTILIZATION
+	AX = F217h subfn 0Eh
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01876 at AH=E3h/SF=0Eh)
+	ES:DI -> reply buffer (see #02140)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=0Eh,AX=F217h/SF=D6h
+
+Format of NetWare "Get Disk Utilization" reply packet:
+Offset	Size	Description	(Table 02140)
+ 00h	BYTE	volume number (00h-1Fh)
+ 01h	DWORD	(big-endian) object ID
+ 05h	WORD	(big-endian) directories used by object
+ 07h	WORD	(big-endian) files created by object
+ 09h	WORD	(big-endian) disk blocks used by object-created files
+SeeAlso: #01876 at AH=E3h/SF=0Eh
+--------N-21F217SF0F-------------------------
+INT 21 - Novell NetWare - SCAN FILE INFORMATION
+	AX = F217h subfn 0Fh
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01879 at AH=E3h/SF=0Fh)
+	ES:DI -> reply buffer (see #02141)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=0Fh,AX=F217h/SF=10h
+
+Format of NetWare "Scan File Information" reply packet:
+Offset	Size	Description	(Table 02141)
+ 00h	WORD	next sequence number (place in request buffer for next call)
+ 02h 14 BYTEs	ASCIZ filename
+ 10h	BYTE	file attributes (see #01397 at AX=4301h)
+ 11h	BYTE	extended file attributes (see #01780 at AH=B6h)
+ 12h	DWORD	(big-endian) file size in bytes
+ 16h	WORD	(big-endian) file's creation date (see #01643 at AX=5700h)
+ 18h	WORD	(big-endian) date of last access (see #01642 at AX=5700h)
+ 1Ah	DWORD	(big-endian) date and time of last update (see #01822)
+ 1Eh	DWORD	(big-endian) object ID of owner
+ 22h	DWORD	(big-endian) date and time last archived (see #01822)
+ 26h 55 BYTEs	reserved
+SeeAlso: #01879 at AH=E3h/SF=0Fh
+--------N-21F217SF10-------------------------
+INT 21 - Novell NetWare - SET FILE INFORMATION
+	AX = F217h subfn 10h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet	(see #01881 at AH=E3h/SF=10h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=10h,AX=F217h/SF=0Fh
+--------N-21F217SF11-------------------------
+INT 21 - Novell NetWare - GET FILE SERVER INFORMATION
+	AX = F217h subfn 11h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01883 at AH=E3h/SF=11h)
+	ES:DI -> reply buffer (see #02142)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=11h,AX=F217h/SF=F1h
+
+Format of NetWare "Get File Server Information" reply packet:
+Offset	Size	Description	(Table 02142)
+ 00h 48 BYTEs	server's name
+ 30h	BYTE	NetWare version
+ 31h	BYTE	NetWare subversion (0-99)
+ 32h	WORD	(big-endian) number of connections supported
+		NetWare 4.01 reportedly returns maximum simulataneously-used
+		  connections
+ 34h	WORD	(big-endian) number of connections in use
+ 36h	WORD	(big-endian) maximum connected volumes
+---Advanced NetWare 2.1+ ---
+ 38h	BYTE	operating system revision number
+ 39h	BYTE	fault tolerance (SFT) level
+ 3Ah	BYTE	TTS level
+ 3Bh	WORD	(big-endian) maximum simultaneously-used connections
+		NetWare 4.01 reportedly returns number of connections in use
+ 3Dh	BYTE	accounting version
+ 3Eh	BYTE	VAP version
+ 3Fh	BYTE	queueing version
+ 40h	BYTE	print server version
+ 41h	BYTE	virtual console version
+ 42h	BYTE	security restrictions level
+ 43h	BYTE	internetwork bridge version
+ 44h 60 BYTEs	reserved
+SeeAlso: #01883
+--------N-21F217SF12-------------------------
+INT 21 - Novell NetWare - GET NETWORK SERIAL NUMBER
+	AX = F217h subfn 12h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01885 at AH=E3h/SF=12h)
+	ES:DI -> reply buffer (see #02143)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=12h,AX=F217h/SF=0Ch
+
+Format of NetWare "Get Network Serial Number" reply packet:
+Offset	Size	Description	(Table 02143)
+ 00h   4 BYTEs	(big-endian) NetWare server serial number
+ 04h   2 BYTEs	(big-endian) NetWare application serial number
+SeeAlso: #01885 at AH=E3h/SF=12h
+--------N-21F217SF13-------------------------
+INT 21 - Novell NetWare - GET INTERNET ADDRESS (OLD)
+	AX = F217h subfn 13h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01887 at AH=E3h/SF=13h)
+	ES:DI -> reply buffer (see #02144)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=13h,AX=F217h/SF=1Ah
+
+Format of NetWare "Get Internet Address (old)" reply packet:
+Offset	Size	Description	(Table 02144)
+ 00h  4 BYTEs	network number
+ 04h  6 BYTEs	physical node address
+ 0Ah  2 BYTEs	socket number
+SeeAlso: #01887 at AH=E3h/SF=13h,#02150
+--------N-21F217SF14-------------------------
+INT 21 - Novell NetWare - LOGIN OBJECT
+	AX = F217h subfn 14h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet	(see #01889 at AH=E3h/SF=14h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=14h,AX=F216h/SF=18h,AX=F217h/SF=CCh
+SeeAlso: AX=F258h/SF=03h,AX=F268h/SF=3Dh
+--------N-21F217SF15-------------------------
+INT 21 - Novell NetWare - GET OBJECT CONNECTION LIST (OLD)
+	AX = F217h subfn 15h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01891 at AH=E3h/SF=15h)
+	ES:DI -> reply buffer (see #02145)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=15h,AX=F217h/SF=1Bh
+
+Format of NetWare "Get Object Connection List (old)" reply packet:
+Offset	Size	Description	(Table 02145)
+ 00h	BYTE	number of connections
+ 01h  N BYTEs	connection list
+SeeAlso: #01891
+--------N-21F217SF16-------------------------
+INT 21 - Novell NetWare - GET CONNECTION INFORMATION (OLD)
+	AX = F217h subfn 16h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02146)
+	ES:DI -> reply buffer (see #02147)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=1Ch,AX=F217h/SF=1Fh
+
+Format of NetWare "Get Connection Information (old)" request packet:
+Offset	Size	Description	(Table 02146)
+ 00h	WORD	0002h (length of following data)
+ 02h	BYTE	16h (subfunction "Get Connection Information (old)")
+ 03h	BYTE	target connection number
+Note:	connection numbers greater than the maximum supported by the server
+	  can cause ABENDs
+SeeAlso: #02147
+
+Format of NetWare "Get Connection Information (old)" reply packet:
+Offset	Size	Description	(Table 02147)
+ 00h	DWORD	(big-endian) unique user ID, 00000000h if no one logged in
+ 04h	WORD	(big-endian) user type
+ 06h 48 BYTEs	user name
+ 36h  7 BYTEs	login time (see #02063)
+ 3Dh	BYTE	reserved
+SeeAlso: #02146
+--------N-21F217SF17-------------------------
+INT 21 - Novell NetWare - GET ENCRYPTION KEY
+	AX = F217h subfn 17h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02148)
+	ES:DI -> reply buffer
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=18h,AX=F217h/SF=4Ah,AX=F217h/SF=4Bh
+
+Format of NetWare "Get Encryption Key" request packet:
+Offset	Size	Description	(Table 02148)
+ 00h	WORD	length of following data
+ 02h	BYTE	17h (subfunction "Get Encryption Key")
+	???
+--------N-21F217SF18-------------------------
+INT 21 - Novell NetWare - LOGIN OBJECT ENCRYPTED
+	AX = F217h subfn 18h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02149)
+	ES:DI -> reply buffer
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=14h,AX=F217h/SF=17h
+
+Format of NetWare "Login Object Encrypted" request packet:
+Offset	Size	Description	(Table 02149)
+ 00h	WORD	length of following data
+ 02h	BYTE	18h (subfunction "Login Object Encrypted")
+	???
+--------N-21F217SF1A-------------------------
+INT 21 - Novell NetWare - GET INTERNET ADDRESS
+	AX = F217h subfn 1Ah
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02150)
+	ES:DI -> reply buffer (see #02151)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=13h
+
+Format of NetWare "Get Internet Address" request packet:
+Offset	Size	Description	(Table 02150)
+ 00h	WORD	length of following data
+ 02h	BYTE	1Ah (subfunction "Get Internet Address")
+ 03h	DWORD	target connection ID
+SeeAlso: #02151
+
+Format of NetWare "Get Internet Address" reply packet:
+Offset	Size	Description	(Table 02151)
+ 00h  4 BYTEs	network number
+ 04h  6 BYTEs	physical node address
+ 0Ah  2 BYTEs	socket number
+ 0Ch	BYTE	connection type
+		00h not in use
+		02h NCP
+		03h AFP
+SeeAlso: #02150
+--------N-21F217SF1B-------------------------
+INT 21 - Novell NetWare - GET OBJECT CONNECTION LIST
+	AX = F217h subfn 1Bh
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02152)
+	ES:DI -> reply buffer (see #02153)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=15h
+
+Format of NetWare "Get Object Connection List" request packet:
+Offset	Size	Description	(Table 02152)
+ 00h	WORD	length of following data
+ 02h	BYTE	1Bh (subfunction "Get Object Connection List")
+ 03h	DWORD	search connection number
+		set to highest connection number returned by previous call, or
+		  00000000h before first call
+ 07h	WORD	object type
+ 09h	BYTE	length of object's name
+ 0Ah  N BYTEs	object name
+SeeAlso: #02153
+
+Format of NetWare "Get Object Connection List" reply packet:
+Offset	Size	Description	(Table 02153)
+ 00h	BYTE	length of connection number list
+ 01h  N WORDs	array of server connection numbers
+SeeAlso: #02152
+--------N-21F217SF1C-------------------------
+INT 21 - Novell NetWare v3+ - GET CONNECTION INFORMATION
+	AX = F217h subfn 1Ch
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02154)
+	ES:DI -> reply buffer (see #02155)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=16h,AX=F217h/SF=1Fh
+
+Format of NetWare "Get Connection Information" request packet:
+Offset	Size	Description	(Table 02154)
+ 00h	WORD	0005h (length of following data)
+ 02h	BYTE	1Ch (subfunction "Get Connection Information")
+ 03h	DWORD	target connection number
+Note:	connection numbers greater than the maximum supported by the server
+	  can cause ABENDs
+SeeAlso: #02155,#02146
+
+Format of NetWare "Get Connection Information" reply packet:
+Offset	Size	Description	(Table 02155)
+ 00h	DWORD	(big-endian) unique user ID, 00000000h if no one logged in
+ 04h	WORD	(big-endian) user type
+ 06h 48 BYTEs	user name
+ 36h  7 BYTEs	login time (see #02063)
+ 3Dh	BYTE	reserved
+SeeAlso: #02154,#02147
+--------N-21F217SF1D-------------------------
+INT 21 - Novell NetWare v4 - CHANGE CONNECTION STATE
+	AX = F217h subfn 1Dh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02156)
+	ES:DI -> reply buffer
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+
+Format of NetWare "Change Connection State" requst buffer:
+Offset	Size	Description	(Table 02156)
+ 00h	WORD	length of following data
+ 02h	BYTE	1Dh (subfunction "Change Connection State")
+ 03h	DWORD	new state
+--------N-21F217SF1E-------------------------
+INT 21 - Novell NetWare v4 - SET WATCHDOG DELAY INTERVAL
+	AX = F217h subfn 1Eh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02157)
+	ES:DI -> reply buffer
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+
+Format of NetWare "Set Watchdog Delay Interval" request buffer:
+Offset	Size	Description	(Table 02157)
+ 00h	WORD	length of following data
+ 02h	BYTE	1Eh (subfunction "Set Watchdog Delay Interval")
+ 03h	DWORD	interval in minutes
+--------N-21F217SF1F-------------------------
+INT 21 - Novell NetWare v4 - GET CONNECTION LIST
+	AX = F217h subfn 1Fh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02158)
+	ES:DI -> reply buffer (see #02159)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+
+Format of NetWare "Get Connection List" request buffer:
+Offset	Size	Description	(Table 02158)
+ 00h	WORD	length of following data
+ 02h	BYTE	1Fh (subfunction "Get Connection List")
+ 03h	DWORD	object ID
+ 07h	DWORD	??? (initialize to FFFFFFFFh before first call)
+SeeAlso: #02159
+
+Format of NetWare "Get Connection List" reply buffer:
+Offset	Size	Description	(Table 02159)
+ 00h	WORD	number of connections following (max 50)
+ 02h 50 DWORDs	connection numbers
+SeeAlso: #02158
+--------N-21F217SF32-------------------------
+INT 21 - Novell NetWare - CREATE BINDERY OBJECT
+	AX = F217h subfn 32h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet	(see #01897 at AH=E3h/SF=32h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=32h,AX=F217h/SF=33h,AX=F217h/SF=34h
+--------N-21F217SF33-------------------------
+INT 21 - Novell NetWare - DELETE BINDERY OBJECT
+	AX = F217h subfn 33h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet	(see #01899 at AH=E3h/SF=33h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=33h,AX=F217h/SF=32h,AX=F217h/SF=34h
+--------N-21F217SF34-------------------------
+INT 21 - Novell NetWare - RENAME BINDERY OBJECT
+	AX = F217h subfn 34h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet	(see #01900 at AH=E3h/SF=34h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=34h,AX=F217h/SF=32h,AX=F217h/SF=33h
+--------N-21F217SF35-------------------------
+INT 21 - Novell NetWare - GET BINDERY OBJECT ID
+	AX = F217h subfn 35h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01901 at AH=E3h/SF=35h)
+	ES:DI -> reply buffer (see #02160)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=35h,AX=F217h/SF=36h,AX=F217h/SF=45h
+
+Format of NetWare "Get Bindery Object ID" reply packet:
+Offset	Size	Description	(Table 02160)
+ 00h	DWORD	(big-endian) object ID
+ 04h	WORD	(big-endian) type of object
+ 06h 48 BYTEs	object name
+SeeAlso: #01901 at AH=E3h/SF=35h
+--------N-21F217SF36-------------------------
+INT 21 - Novell NetWare - GET BINDERY OBJECT NAME
+	AX = F217h subfn 36h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01904 at AH=E3h/SF=36h)
+	ES:DI -> reply buffer (see #02161)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=36h,AX=F217h/SF=35h,AX=F217h/SF=37h
+
+Format of NetWare "Get Bindery Object Name" reply packet:
+Offset	Size	Description	(Table 02161)
+ 00h	DWORD	(big-endian) object ID
+ 04h	WORD	(big-endian) type of object
+ 06h 48 BYTEs	object name
+SeeAlso: #01904 at AH=E3h/SF=36h
+--------N-21F217SF37-------------------------
+INT 21 - Novell NetWare - SCAN BINDERY OBJECT
+	AX = F217h subfn 37h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01906 at AH=E3h/SF=37h)
+	ES:DI -> reply buffer (see #02162)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=37h,AX=F217h/SF=3Ch
+
+Format of NetWare "Scan Bindery Object" reply packet:
+Offset	Size	Description	(Table 02162)
+ 00h
+SeeAlso: #01906
+--------N-21F217SF38-------------------------
+INT 21 - Novell NetWare - CHANGE BINDERY OBJECT SECURITY
+	AX = F217h subfn 38h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply buffer)
+	DS:SI -> request packet	(see #01908 at AH=E3h/SF=38h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=38h,AX=F217h/SF=32h
+--------N-21F217SF39-------------------------
+INT 21 - Novell NetWare - CREATE PROPERTY
+	AX = F217h subfn 39h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet	(see #01910 at AH=E3h/SF=39h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=39h,AX=F217h/SF=3Ah
+--------N-21F217SF3A-------------------------
+INT 21 - Novell NetWare - DELETE PROPERTY
+	AX = F217h subfn 3Ah
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet	(see #01912 at AH=E3h/SF=3Ah)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=3Ah,AX=F217h/SF=39h,AX=F217h/SF=3Bh
+--------N-21F217SF3B-------------------------
+INT 21 - Novell NetWare - CHANGE PROPERTY SECURITY
+	AX = F217h subfn 3Bh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply buffer)
+	DS:SI -> request packet	(see #01914 at AH=E3h/SF=3Bh)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=3Bh
+--------N-21F217SF3C-------------------------
+INT 21 - Novell NetWare - SCAN PROPERTY
+	AX = F217h subfn 3Ch
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01915 at AH=E3h/SF=3Ch)
+	ES:DI -> reply buffer (see #02163)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=3Ch,AX=F217h/SF=39h,AX=F217h/SF=3Dh
+
+Format of NetWare "Scan Property" reply packet:
+Offset	Size	Description	(Table 02163)
+ 00h
+SeeAlso: #01915
+--------N-21F217SF3D-------------------------
+INT 21 - Novell NetWare - READ PROPERTY VALUE
+	AX = F217h subfn 3Dh
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01918 at AH=E3h/SF=3Dh)
+	ES:DI -> reply buffer (see #02164)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=3Dh,AX=F217h/SF=39h,AX=F217h/SF=3Eh
+
+Format of NetWare "Read Property Value" request packet:
+Offset	Size	Description	(Table 02164)
+ 00h
+SeeAlso: #01918
+--------N-21F217SF3E-------------------------
+INT 21 - Novell NetWare - WRITE PROPERTY VALUE
+	AX = F217h subfn 3Eh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet	(see #01920 at AH=E3h/SF=3Eh)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=3Eh,AX=F217h/SF=39h,AX=F217h/SF=3Dh
+--------N-21F217SF3F-------------------------
+INT 21 - Novell NetWare - VERIFY BINDERY OBJECT PASSWORD
+	AX = F217h subfn 3Fh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet	(see #01923 at AH=E3h/SF=3Fh)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=3Fh,AX=F217h/SF=40h
+--------N-21F217SF40-------------------------
+INT 21 - Novell NetWare - CHANGE BINDERY OBJECT PASSWORD
+	AX = F217h subfn 40h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply buffer)
+	DS:SI -> request packet (see #01924 at AH=E3h/SF=40h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=40h,AX=F217h/SF=3Fh
+--------N-21F217SF41-------------------------
+INT 21 - Novell NetWare v2.2+ - ADD OBJECT TO SET
+	AX = F217h subfn 41h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet	(see #01927 at AH=E3h/SF=41h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+Desc:	add a member to an object's group property
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=41h,AX=F217h/SF=42h,AX=F217h/SF=43h
+--------N-21F217SF42-------------------------
+INT 21 - Novell NetWare - DELETE BINDERY OBJECT FROM SET
+	AX = F217h subfn 42h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet	(see #01928 at AH=E3h/SF=42h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=42h,AX=F217h/SF=41h,AX=F217h/SF=43h
+--------N-21F217SF43-------------------------
+INT 21 - Novell NetWare - IS BINDERY OBJECT IN SET?
+	AX = F217h subfn 43h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01930 at AH=E3h/SF=43h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=43h,AX=F217h/SF=41h,AX=F217h/SF=42h
+--------N-21F217SF44-------------------------
+INT 21 - Novell NetWare - CLOSE BINDERY
+	AX = F217h subfn 44h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet	(see #01931 at AH=E3h/SF=44h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=44h,AX=F217h/SF=45h
+--------N-21F217SF45-------------------------
+INT 21 - Novell NetWare - OPEN BINDERY
+	AX = F217h subfn 45h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet	(see #01932 at AH=E3h/SF=45h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=45h,AX=F217h/SF=44h
+--------N-21F217SF46-------------------------
+INT 21 - Novell NetWare - GET BINDERY ACCESS LEVEL
+	AX = F217h subfn 46h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01933 at AH=E3h/SF=46h)
+	ES:DI -> reply buffer (see #02165)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=46h,AX=F217h/SF=45h
+
+Format of NetWare "Get Bindery Access Level" reply packet:
+Offset	Size	Description	(Table 02165)
+ 00h	BYTE	security levels
+ 01h	DWORD	(big-endian) object ID
+SeeAlso: #01933,#01934 at AH=E3h/SF=46h
+--------N-21F217SF47-------------------------
+INT 21 - Novell NetWare - SCAN BINDERY OBJECT TRUSTEE PATHS
+	AX = F217h subfn 47h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01935 at AH=E3h/SF=47h)
+	ES:DI -> reply buffer (see #02166)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=47h,AX=F216h/SF=0Ch,AX=F217h/SF=48h
+
+Format of NetWare "Scan Bindery Object Trustee Paths" reply packet:
+Offset	Size	Description	(Table 02166)
+ 00h	WORD	(big-endian) next sequence number
+ 02h	DWORD	(big-endian) object ID
+ 06h	BYTE	trustee directory rights (see #01825 at AH=E2h/SF=03h)
+ 07h	BYTE	length of trustee path
+ 08h  N BYTEs	trustee path
+SeeAlso: #01935,#01936 at AH=E3h/SF=47h
+--------N-21F217SF48-------------------------
+INT 21 - Novell NetWare - GET BINDERY OBJECT ACCESS LEVEL
+	AX = F217h subfn 48h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02167)
+	ES:DI -> reply buffer (see #02168)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=45h,AX=F217h/SF=46h
+
+Format of NetWare "Get Bindery Object Access Level" request packet:
+Offset	Size	Description	(Table 02167)
+ 00h	WORD	length of following data (max ABh)
+ 02h	BYTE	48h (subfunction "Get Bindery Object Access Level")
+ 03h	DWORD	object ID
+SeeAlso: #02168
+
+Format of NetWare "Get Bindery Object Access Level" reply packet:
+Offset	Size	Description	(Table 02168)
+ 00h	BYTE	object access level
+SeeAlso: #02167
+--------N-21F217SF49-------------------------
+INT 21 - Novell NetWare - IS STATION A MANAGER?
+	AX = F217h subfn 49h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02169)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=43h
+
+Format of NetWare "Is Station A Manager?" request packet:
+Offset	Size	Description	(Table 02169)
+ 00h	WORD	length of following data
+ 02h	BYTE	49h (subfunction "Is Station A Manager?")
+ 03h	DWORD	object ID
+--------N-21F217SF4A-------------------------
+INT 21 - Novell NetWare - KEYED VERIFY BINDERY OBJECT PASSWORD
+	AX = F217h subfn 4Ah
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02170)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=4Bh
+
+Format of NetWare "Keyed Verify Bindery Object Password" request packet:
+Offset	Size	Description	(Table 02170)
+ 00h	WORD	length of following data
+ 02h	BYTE	4Ah (subfunction "Keyed Verify Bindery Object Password")
+ 03h  8 BYTEs	key
+ 0Bh	WORD	type
+ 0Dh	BYTE	length of object's name
+ 0Eh  N BYTEs	object name
+SeeAlso: #02171
+--------N-21F217SF4B-------------------------
+INT 21 - Novell NetWare - KEYED CHANGE BINDERY OBJECT PASSWORD
+	AX = F217h subfn 4Bh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02171)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=4Ah
+
+Format of NetWare "Keyed Change Bindery Object Password" request packet:
+Offset	Size	Description	(Table 02171)
+ 00h	WORD	length of following data
+ 02h	BYTE	4Bh (subfunction "Keyed Change Bindery Object Password")
+ 03h  8 BYTEs	key
+ 0Bh	WORD	type
+ 0Dh	BYTE	length of object name
+ 0Eh  N BYTEs	object name
+	BYTE	length of new password
+      N BYTEs	new password
+SeeAlso: #01924
+--------N-21F217SF4C-------------------------
+INT 21 - Novell NetWare - LIST RELATIONS OF AN OBJECT
+	AX = F217h subfn 4Ch
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02172)
+	ES:DI -> reply buffer (see #02173)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=39h
+
+Format of NetWare "List Relations Of An Object" request packet:
+Offset	Size	Description	(Table 02172)
+ 00h	WORD	length of following data
+ 02h	BYTE	4Ch (subfunction "List Relations Of An Object")
+ 03h	DWORD	last bindery ID seen (set to FFFFFFFFh on first call)
+ 07h	WORD	object type
+ 09h	BYTE	length of object's name
+ 0Ah  N BYTEs	object's name
+	BYTE	length of property name
+      N BYTEs	property name
+SeeAlso: #02173
+
+Format of NetWare "List Relations Of An Object" reply packet:
+Offset	Size	Description	(Table 02173)
+ 00h	WORD	number of relations returned
+ 02h	var	relations
+SeeAlso: #02172
+--------N-21F217SF64-------------------------
+INT 21 - Novell NetWare v2.1+ - CREATE QUEUE
+	AX = F217h subfn 64h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01938 at AH=E3h/SF=64h)
+	ES:DI -> reply buffer (see #02174)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=64h,AX=F217h/SF=65h,AX=F217h/SF=66h
+
+Format of NetWare "Create Queue" reply packet:
+Offset	Size	Description	(Table 02174)
+ 00h	DWORD	(big-endian) object ID of queue
+SeeAlso: #01938,#01939
+--------N-21F217SF65-------------------------
+INT 21 - Novell NetWare v2.1+ - DESTROY QUEUE
+	AX = F217h subfn 65h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01940 at AH=E3h/SF=65h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=65h,AX=F217h/SF=64h,AX=F217h/SF=66h
+--------N-21F217SF66-------------------------
+INT 21 - Novell NetWare v2.1+ - READ QUEUE CURRENT STATUS (OLD)
+	AX = F217h subfn 66h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01941 at AH=E3h/SF=64h)
+	ES:DI -> reply buffer (see #02175)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=66h,AX=F217h/SF=64h,AX=F217h/SF=67h
+
+Format of NetWare "Read Queue Current Status (Old)" reply packet:
+Offset	Size	Description	(Table 02175)
+ 00h	DWORD	(big-endian) object ID of queue
+ 04h	BYTE	status of queue (see #01943)
+ 05h	BYTE	number of jobs in queue (00h-FAh)
+ 06h	BYTE	number of servers attached to queue (00h-19h)
+ 07h 25 DWORDs	list of object IDs of attached servers
+ 6Bh 25 BYTEs	list of attached servers' stations
+ 84h	BYTE	(call) maximum number of servers to return
+SeeAlso: #01941,#01942 at AH=E3h/SF=66h
+--------N-21F217SF67-------------------------
+INT 21 - Novell NetWare v2.1+ - SET QUEUE CURRENT STATUS (OLD)
+	AX = F217h subfn 67h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01944 at AH=E3h/SF=67h)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=67h,AX=F217h/SF=66h,AX=F217h/SF=68h
+--------N-21F217SF68-------------------------
+INT 21 - Novell NetWare v2.1+ - CREATE QUEUE JOB AND FILE (OLD)
+	AX = F217h subfn 68h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01946 at AH=E3h/SF=68h)
+	ES:DI -> reply buffer (see #02176)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=68h,AX=F217h/SF=67h,AX=F217h/SF=69h
+
+Format of NetWare "Create Queue Job And File (Old)" reply packet:
+Offset	Size	Description	(Table 02176)
+ 00h	BYTE	client station
+ 01h	BYTE	client task number
+ 02h	DWORD	(big-endian) object ID of client
+ 06h	DWORD	(big-endian) object ID of target server
+ 0Ah  6 BYTEs	target execution time (year,month,day,hour,minute,second)
+ 10h  6 BYTEs	job entry time (year,month,day,hour,minute,second)
+ 16h	WORD	(big-endian) job number
+ 18h	WORD	(big-endian) job type
+ 1Ah	BYTE	job position
+ 1Bh	BYTE	job control flags (see #01956)
+ 1Ch 14 BYTEs	ASCIZ job file name
+ 2Ah  6 BYTEs	job file handle
+ 30h	BYTE	server station
+ 31h	BYTE	server task number
+ 32h	DWORD	(big-endian) object ID of server or 00000000h
+SeeAlso: #01946,#01948
+--------N-21F217SF69-------------------------
+INT 21 - Novell NetWare v2.1+ - CLOSE FILE AND START QUEUE JOB (OLD)
+	AX = F217h subfn 69h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01949 at AH=E3h/SF=69h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=69h,AX=F217h/SF=6Ah,AX=F217h/SF=7Fh
+--------N-21F217SF6A-------------------------
+INT 21 - Novell NetWare v2.1+ - REMOVE JOB FROM QUEUE (OLD)
+	AX = F217h subfn 6Ah
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01951 at AH=E3h/SF=6Ah)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=6Ah,AX=F217h/SF=68h,AX=F217h/SF=69h
+--------N-21F217SF6B-------------------------
+INT 21 - Novell NetWare v2.1+ - GET QUEUE JOB LIST (OLD)
+	AX = F217h subfn 6Bh
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01952 at AH=E3h/SF=6Bh)
+	ES:DI -> reply buffer (see #02177)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=6Bh,AX=F217h/SF=6Ah,AX=F217h/SF=6Ch
+SeeAlso: AX=F217h/SF=81h
+
+Format of NetWare "Get Queue Job List (old)" reply packet:
+Offset	Size	Description	(Table 02177)
+ 00h	WORD	(big-endian) job count
+ 02h  N WORDs	(big-endian) list of job numbers by position in queue
+SeeAlso: #01952,#01953 at AH=E3h/SF=6Bh
+--------N-21F217SF6C-------------------------
+INT 21 - Novell NetWare v2.1+ - READ QUEUE JOB ENTRY (OLD)
+	AX = F217h subfn 6Ch
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01954 at AH=E3h/SF=6Ch)
+	ES:DI -> reply buffer (see #02178)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=6Ch,AX=F217h/SF=6Bh,AX=F217h/SF=6Dh
+
+Format of NetWare "Read Queue Job Entry (old)" reply packet:
+Offset	Size	Description	(Table 02178)
+ 00h	BYTE	client station number
+ 01h	BYTE	client task number
+ 02h	DWORD	object ID of client
+ 06h	DWORD	(big-endian) object ID of target server
+		FFFFFFFFh if any server acceptable
+ 0Ah  6 BYTEs	target execution time (year,month,day,hour,minute,second)
+		FFFFFFFFFFFFh if serviced as soon as possible
+ 10h  6 BYTEs	job entry time (year,month,day,hour,minute,second)
+ 16h	WORD	(big-endian) job number
+ 18h	WORD	(big-endian) job type
+ 1Ah	BYTE	job position
+ 1Bh	BYTE	job control flags (see #01956)
+ 1Ch 14 BYTEs	ASCIZ job filename
+ 2Ah  6 BYTEs	job file handle
+ 30h	BYTE	server station
+ 31h	BYTE	server task number
+ 32h	DWORD	object ID of server
+ 36h 50 BYTEs	ASCIZ job description string
+ 68h 152 BYTEs	client record area
+SeeAlso: #01954,#01955
+--------N-21F217SF6D-------------------------
+INT 21 - Novell NetWare v2.1+ - CHANGE QUEUE JOB ENTRY (OLD)
+	AX = F217h subfn 6Dh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01957 at AH=E3h/SF=6Dh)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=7Bh,AH=E3h/SF=6Dh,AX=F217h/SF=6Ch
+--------N-21F217SF6E-------------------------
+INT 21 - Novell NetWare v2.1+ - CHANGE QUEUE JOB POSITION
+	AX = F217h subfn 6Eh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01958 at AH=E3h/SF=6Eh)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AX=F217h/SF=6Dh,AH=E3h/SF=6Eh
+--------N-21F217SF6F-------------------------
+INT 21 - Novell NetWare v2.1+ - ATTACH QUEUE SERVER TO QUEUE
+	AX = F217h subfn 6Fh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01960 at AH=E3h/SF=6Fh)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=6Fh,AX=F217h/SF=D2h
+--------N-21F217SF70-------------------------
+INT 21 - Novell NetWare v2.1+ - DETACH QUEUE SERVER FROM QUEUE
+	AX = F217h subfn 70h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01961 at AH=E3h/SF=70h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=70h,AX=F217h/SF=6Fh
+--------N-21F217SF71-------------------------
+INT 21 - Novell NetWare v2.1+ - SERVICE QUEUE JOB AND OPEN FILE
+	AX = F217h subfn 71h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01962 at AH=E3h/SF=71h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+Notes:	the caller must be on a workstation which is security-equivalent to a
+	  member of the queue's Q_USERS, Q_OPERATORS, or Q_SERVERS properties
+SeeAlso: AH=E3h/SF=71h,AX=F217h/SF=70h,AX=F217h/SF=72h
+--------N-21F217SF72-------------------------
+INT 21 - Novell NetWare v2.1+ - FINISH SERVICING QUEUE JOB (OLD)
+	AX = F217h subfn 72h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01963 at AH=E3h/SF=72h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=72h,AX=F217h/SF=71h,AX=F217h/SF=73h
+SeeAlso: AX=F217h/SF=83h
+--------N-21F217SF73-------------------------
+INT 21 - Novell NetWare v2.1+ - ABORT SERVICING QUEUE JOB (OLD)
+	AX = F217h subfn 73h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01964 at AH=E3h/SF=73h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=73h,AX=F217h/SF=72h,AX=F217h/SF=84h
+--------N-21F217SF74-------------------------
+INT 21 - Novell NetWare v2.1+ - CHANGE TO CLIENT RIGHTS (OLD)
+	AX = F217h subfn 74h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01966 at AH=E3h/SF=74h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+Desc:	temporarily assume the login identity of the client submitting the
+	  job being serviced
+SeeAlso: AH=F2h"NetWare",AH=E3h/SF=74h,AX=F217h/SF=85h
+--------N-21F217SF75-------------------------
+INT 21 - Novell NetWare v2.1+ - RESTORE QUEUE SERVER RIGHTS
+	AX = F217h subfn 75h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01967 at AH=E3h/SF=75h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=75h,AX=F217h/SF=74h
+--------N-21F217SF76-------------------------
+INT 21 - Novell NetWare - READ QUEUE SERVER CURRENT STATUS (OLD)
+	AX = F217h subfn 76h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01968 at AH=E3h/SF=76h)
+	ES:DI -> reply buffer (see #02179)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=76h,AX=F217h/SF=74h,AX=F217h/SF=77h
+
+Format of NetWare "Read Queue Server Current Status (old)" reply packet:
+Offset	Size	Description	(Table 02179)
+ 00h 64 BYTEs	server status record (format depends on server)
+		first four bytes should contain estimated "price" for an
+		  average job
+SeeAlso: #01968,#01969 at AH=E3h/SF=76h
+--------N-21F217SF77-------------------------
+INT 21 - Novell NetWare - SET QUEUE SERVER CURRENT STATUS
+	AX = F217h subfn 77h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01970 at AH=E3h/SF=77h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=77h,AX=F217h/SF=76h
+--------N-21F217SF78-------------------------
+INT 21 - Novell NetWare - GET QUEUE JOB FILE SIZE (OLD)
+	AX = F217h subfn 78h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #01972 at AH=E3h/SF=78h)
+	ES:DI -> reply buffer (see #02180)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=78h,AX=F217h/SF=71h,AX=F217h/SF=79h
+
+Format of NetWare "Get Queue Job File Size (old)" reply packet:
+Offset	Size	Description	(Table 02180)
+ 00h	DWORD	(big-endian) object ID of queue
+ 04h	WORD	(big-endian) job number
+ 06h	DWORD	(big-endian) size of job file in bytes
+SeeAlso: #01972,#01973 at AH=E3h/SF=78h
+--------N-21F217SF79-------------------------
+INT 21 - Novell NetWare - CREATE QUEUE JOB AND FILE
+	AX = F217h subfn 79h
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02181)
+	ES:DI -> reply buffer (see #02182)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=7Ah,AX=F217h/SF=7Bh
+
+Format of NetWare "Create Queue Job And File" request packet:
+Offset	Size	Description	(Table 02181)
+ 00h	WORD	length of following data
+ 02h	BYTE	79h (subfunction "Create Queue Job And File")
+ 03h	DWORD	queue ID
+ 07h 280 BYTEs	queue job structure (see #02186)
+SeeAlso: #02182,#02183,#02185
+
+Format of NetWare "Create Queue Job And File" reply packet:
+Offset	Size	Description	(Table 02182)
+ 00h 10 BYTEs	reserved for future use
+ 0Ah	DWORD	client station
+ 0Eh	DWORD	client task
+ 12h	DWORD	client ID
+ 16h	DWORD	target server ID
+ 1Ah  6 BYTEs	target execution time year,month,day,hour,minute,second
+		(FFFFFFFFFFFFh = first opportunity)
+ 20h  6 BYTEs	job entry time
+		(set by queue manager)
+ 26h	DWORD	job number (1-999) assigned by queue manager
+ 2Ah	WORD	job type
+ 2Ch	WORD	position of job in queue (0001h = first, etc.)
+ 2Eh	WORD	job control flags (see #01956 at AH=E3h/SF=6Ch)
+ 30h 14 BYTEs	ASCIZ job file name
+ 3Eh	DWORD	job file handle	(set by queue manager)
+ 42h	DWORD	server station (set by queue manager)
+ 46h	DWORD	server task number (set by queue manager)
+ 4Ah	DWORD	server object ID (set by queue manager)
+SeeAlso: #02181,#02186
+--------N-21F217SF7A-------------------------
+INT 21 - Novell NetWare - READ QUEUE JOB ENTRY
+	AX = F217h subfn 7Ah
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02183)
+	ES:DI -> reply buffer (see #02184)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=79h,AX=F217h/SF=7Bh
+
+Format of NetWare "Read Queue Job Entry" request packet:
+Offset	Size	Description	(Table 02183)
+ 00h	WORD	length of following data
+ 02h	BYTE	7Ah (subfunction "Read Queue Job Entry")
+ 03h	DWORD	queue ID
+ 07h	DWORD	job entry number
+SeeAlso: #02184,#02181,#02185
+
+Format of NetWare "Read Queue Job Entry" reply packet:
+Offset	Size	Description	(Table 02184)
+ 00h 280 BYTEs	job structure (see #02186)
+SeeAlso: #02183
+--------N-21F217SF7B-------------------------
+INT 21 - Novell NetWare v2.1+ - CHANGE QUEUE JOB ENTRY
+	AX = F217h subfn 7Bh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02185)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=6Dh,AX=F217h/SF=79h,AX=F217h/SF=7Dh
+
+Format of NetWare "Change Queue Job Entry" request packet:
+Offset	Size	Description	(Table 02185)
+ 00h	WORD	length of following data
+ 02h	BYTE	7Bh (subfunction "Change Queue Job Entry")
+ 03h	DWORD	queue ID
+ 07h 280 BYTEs	job structure (see #02186)
+SeeAlso: #02181,#02183
+
+Format of NetWare v3.11+ job structure:
+Offset	Size	Description	(Table 02186)
+ 00h	WORD	record-in-use flag
+ 02h	DWORD	-> previous record
+ 06h	DWORD	-> next record
+ 0Ah	DWORD	client station connection number
+ 0Eh	DWORD	client task number
+		(set by queue manager)
+ 12h	DWORD	client object ID
+ 16h	DWORD	target server object ID
+ 1Ah  6 BYTEs	target execution time year,month,day,hour,minute,second
+		(FFFFFFFFFFFFh = first opportunity)
+ 20h  6 BYTEs	job entry time
+		(set by queue manager)
+ 26h	DWORD	job number (1-999) assigned by queue manager
+ 2Ah	WORD	job type
+ 2Ch	WORD	position of job in queue (0001h = first, etc.)
+ 2Eh	WORD	job control flags (see #01956 at AH=E3h/SF=6Ch)
+ 30h 14 BYTEs	ASCIZ job file name
+ 3Eh	DWORD	job file handle	(set by queue manager)
+ 42h	DWORD	server station (set by queue manager)
+ 46h	DWORD	server task number (set by queue manager)
+ 4Ah	DWORD	server object ID (set by queue manager)
+ 4Eh 50 BYTEs	ASCIZ job description string
+ 80h 152 BYTEs	client record area
+SeeAlso: #02185,#01947
+--------N-21F217SF7D-------------------------
+INT 21 - Novell NetWare - READ QUEUE CURRENT STATUS
+	AX = F217h subfn 7Dh
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #02187)
+	ES:DI -> reply buffer (see #02188)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=66h,AX=F217h/SF=79h,AX=F217h/SF=7Bh
+SeeAlso: AX=F217h/SF=7Eh
+
+Format of NetWare "Read Queue Current Status" request packet:
+Offset	Size	Description	(Table 02187)
+ 00h	WORD	length of following data
+ 02h	BYTE	7Dh (subfunction "Read Queue Current Status")
+ 03h	DWORD	(big-endian) object ID of queue
+SeeAlso: #02188,#02189
+
+Format of NetWare "Read Queue Current Status" reply packet:
+Offset	Size	Description	(Table 02188)
+ 00h	DWORD	queue ID
+ 04h	DWORD	queue status
+		bit 0: no more jobs can be added
+		bit 1: no more queue servers can be attached
+		bit 2: attached queu servers can not service queue jobs
+ 08h	DWORD	current number of jobs in queue
+ 0Ch	DWORD	number of servers attached to queue
+ 10h  N DWORDs	attached server IDs
+SeeAlso: #02187,#01942 at AH=E3h/SF=66h
+--------N-21F217SF7E-------------------------
+INT 21 - Novell NetWare - SET QUEUE CURRENT STATUS
+	AX = F217h subfn 7Eh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02189)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=7Dh
+
+Format of NetWare "Set Queue Current Status" request packet:
+Offset	Size	Description	(Table 02189)
+ 00h	WORD	length of following data
+ 02h	BYTE	7Eh (subfunction "Set Queue Current Status")
+ 03h	DWORD	queue ID
+ 07h	DWORD	queue status
+		bit 0: no more jobs can be added
+		bit 1: no more queue servers can be attached
+		bit 2: attached queu servers can not service queue jobs
+SeeAlso: #02187
+--------N-21F217SF7F-------------------------
+INT 21 - Novell NetWare - CLOSE FILE AND START QUEUE JOB
+	AX = F217h subfn 7Fh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02190)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=69h,AX=F217h/SF=80h,AX=F217h/SF=81h
+
+Format of NetWare "Close File And Start Queue Job" request packet:
+Offset	Size	Description	(Table 02190)
+ 00h	WORD	length of following data
+ 02h	BYTE	7Fh (subfunction "Close File And Start Queue Job")
+ 03h	DWORD	queue ID
+ 07h	DWORD	job number
+--------N-21F217SF80-------------------------
+INT 21 - Novell NetWare - REMOVE JOB FROM QUEUE
+	AX = F217h subfn 80h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02191)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=6Ah,AX=F217h/SF=7Fh
+
+Format of NetWare "Remove Job From Queue" request packet:
+Offset	Size	Description	(Table 02191)
+ 00h	WORD	length of following data
+ 02h	BYTE	80h (subfunction "Remove Job From Queue")
+ 03h	DWORD	queue ID
+ 07h	DWORD	job number (returned when job was added to queue)
+--------N-21F217SF81-------------------------
+INT 21 - Novell NetWare - GET QUEUE JOB LIST
+	AX = F217h subfn 81h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02192)
+	ES:DI -> reply buffer (see #02193)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=6Bh
+
+Format of NetWare "Get Queue Job List" request packet:
+Offset	Size	Description	(Table 02192)
+ 00h	WORD	length of following data
+ 02h	BYTE	81h (subfunction "Get Queue Job List")
+ 03h	DWORD	queue ID
+ 07h	DWORD	address of next job in queue
+SeeAlso: #02193
+
+Format of NetWare "Get Queue Job List" reply packet:
+Offset	Size	Description	(Table 02193)
+ 00h	DWORD	total jobs in queue
+ 04h	DWORD	length of job number list (max 125)
+ 08h  N DWORDs	list of job numbers in queue
+SeeAlso: #02192
+--------N-21F217SF82-------------------------
+INT 21 - Novell NetWare v2.1+ - CHANGE JOB PRIORITY
+	AX = F217h subfn 82h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02194)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell"
+
+Format of NetWare "Change Job Priority" request packet:
+Offset	Size	Description	(Table 02194)
+ 00h	WORD	length of following data
+ 02h	BYTE	82h (subfunction "Change Job Priority")
+ 03h	DWORD	queue ID
+ 07h	DWORD	job number
+ 0Bh	DWORD	priority
+--------N-21F217SF83-------------------------
+INT 21 - Novell NetWare v3.1+ - FINISH SERVICING QUEUE JOB
+	AX = F217h subfn 83h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01974 at AH=E3h/SF=83h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=83h,AX=F217h/SF=72h,AX=F217h/SF=84h
+--------N-21F217SF84-------------------------
+INT 21 - Novell NetWare v3.1+ - ABORT SERVICING QUEUE JOB
+	AX = F217h subfn 84h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01976 at AH=E3h/SF=84h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+Desc:	inform the Queue Management System (QMS) that the queue server is
+	  unable to service a previously-accepted job
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=84h,AX=F217h/SF=73h,AX=F217h/SF=83h
+--------N-21F217SF85-------------------------
+INT 21 - Novell NetWare v3.1+ - CHANGE TO CLIENT RIGHTS
+	AX = F217h subfn 85h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02195)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+Desc:	temporarily assume the login identity of the client submitting the
+	  job being serviced
+SeeAlso: AH=F2h"NetWare",AH=E3h/SF=74h,AX=F217h/SF=74h
+
+Format of NetWare "Change to Client Rights" request packet:
+Offset	Size	Description	(Table 02195)
+ 00h	WORD	length of following data
+ 02h	BYTE	85h (subfunction "Change to Client Rights")
+ 03h	DWORD	queue object ID
+ 07h	DWORD	job number
+SeeAlso: #01966
+--------N-21F217SF86-------------------------
+INT 21 - Novell NetWare v3.1+ - READ QUEUE SERVER CURRENT STATUS
+	AX = F217h subfn 86h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02196)
+	ES:DI -> reply buffer (see #02197)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=76h,AX=F217h/SF=77h,AX=F217h/SF=7Dh
+
+Format of NetWare "Read Queue Server Current Status" request packet:
+Offset	Size	Description	(Table 02196)
+ 00h	WORD	length of following data
+ 02h	BYTE	86h (subfunction "Read Queue Server Current Status")
+ 03h	DWORD	queue ID
+ 07h	DWORD	server ID
+ 0Bh	DWORD	connection ID
+SeeAlso: #02197
+
+Format of NetWare "Read Queue Server Current Status" request packet:
+Offset	Size	Description	(Table 02197)
+ 00h 64 BYTEs	server status record
+SeeAlso: #02196
+--------N-21F217SF87-------------------------
+INT 21 - Novell NetWare v3.1+ - GET QUEUE JOB FILE SIZE
+	AX = F217h subfn 87h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02198)
+	ES:DI -> reply buffer (see #02199)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=78h
+
+Format of NetWare "Get Queue Job File Size" request packet:
+Offset	Size	Description	(Table 02198)
+ 00h	WORD	length of following data
+ 02h	BYTE	87h (subfunction "Get Queue Job File Size")
+	???
+SeeAlso: #02199
+
+Format of NetWare "Get Queue Job File Size" request packet:
+Offset	Size	Description	(Table 02199)
+ 00h	???
+SeeAlso: #02198
+--------N-21F217SF96-------------------------
+INT 21 - Novell NetWare - GET ACCOUNT STATUS
+	AX = F217h subfn 96h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #01979 at AH=E3h/SF=96h)
+	ES:DI -> reply buffer (see #02200)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=96h,AX=F217h/SF=97h,AX=F217h/SF=98h
+
+Format of NetWare "Get Account Status" reply packet:
+Offset	Size	Description	(Table 02200)
+ 00h	DWORD	(big-endian) account balance
+ 04h	DWORD	(big-endian) credit limit
+		signed number indicating lowest allowable account balance
+ 06h 120 BYTEs	reserved
+ 80h	DWORD	(big-endian) object ID, server 1
+ 84h	DWORD	(big-endian) hold amount, server 1
+	...
+ F6h	DWORD	(big-endian) object ID, server 16
+ FAh	DWORD	(big-endian) hold amount, server 16
+Note:	the reply buffer lists the servers which have placed holds on a portion
+	  of the account balance, and the amount reserved by each
+SeeAlso: #01979,#01980 at AH=E3h/SF=96h
+--------N-21F217SF97-------------------------
+INT 21 - Novell NetWare - SUBMIT ACCOUNT CHARGE
+	AX = F217h subfn 97h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01981 at AH=E3h/SF=97h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=97h,AX=F217h/SF=96h,AX=F217h/SF=98h
+--------N-21F217SF98-------------------------
+INT 21 - Novell NetWare - SUBMIT ACCOUNT HOLD
+	AX = F217h subfn 98h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01982 at AH=E3h/SF=98h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=98h,AX=F217h/SF=97h,AX=F217h/SF=99h
+--------N-21F217SF99-------------------------
+INT 21 - Novell NetWare - SUBMIT ACCOUNT NOTE
+	AX = F217h subfn 99h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01984 at AH=E3h/SF=99h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=99h,AX=F217h/SF=96h,AX=F217h/SF=98h
+--------N-21F217SFC8-------------------------
+INT 21 - Novell NetWare - CHECK CONSOLE PRIVILEGES
+	AX = F217h subfn C8h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01985 at AH=E3h/SF=C8h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=C8h,AX=F217h/SF=C9h,AX=F217h/SF=D1h
+--------N-21F217SFC9-------------------------
+INT 21 - Novell NetWare - GET FILE SERVER DESCRIPTION STRINGS
+	AX = F217h subfn C9h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #01986 at AH=E3h/SF=C9h)
+	ES:DI -> reply buffer (see #02201)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=C9h,AX=F217h/SF=C8h,AX=F217h/SF=CAh
+
+Format of NetWare "Get File Server Description Strings" reply packet:
+Offset	Size	Description	(Table 02201)
+ 00h	var	ASCIZ name of company distributing this copy of NetWare
+	var	ASCIZ version and revision
+      9 BYTEs	ASCIZ revision date (mm/dd/yy)
+	var	ASCIZ copyright notice
+SeeAlso: #01986,#01987 at AH=E3h/SF=C9h
+--------N-21F217SFCA-------------------------
+INT 21 - Novell NetWare - SET FILE SERVER DATE AND TIME
+	AX = F217h subfn CAh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01988 at AH=E3h/SF=CAh)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=CAh,AX=F217h/SF=C8h,AX=F217h/SF=CBh
+--------N-21F217SFCB-------------------------
+INT 21 - Novell NetWare - DISABLE FILE SERVER LOGIN
+	AX = F217h subfn CBh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01989 at AH=E3h/SF=CBh)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=CBh,AX=F217h/SF=C8h,AX=F217h/SF=CCh
+--------N-21F217SFCC-------------------------
+INT 21 - Novell NetWare - ENABLE FILE SERVER LOGIN
+	AX = F217h subfn CCh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01991 at AH=E3h/SF=CCh)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=CCh,AX=F217h/SF=C8h,AX=F217h/SF=CBh
+--------N-21F217SFCD-------------------------
+INT 21 - Novell NetWare - GET FILE SERVER LOGIN STATUS
+	AX = F217h subfn CDh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #01992 at AH=E3h/SF=CDh)
+	ES:DI -> reply buffer (see #02202)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=CDh,AX=F217h/SF=CBh,AX=F217h/SF=CCh
+
+Format of NetWare "Get File Server Login Status" reply packet:
+Offset	Size	Description	(Table 02202)
+ 00h	BYTE	login state (00h disabled, 01h enabled)
+SeeAlso: #01992,#01993 at AH=E3h/SF=CDh
+--------N-21F217SFCE-------------------------
+INT 21 - Novell NetWare - PURGE ALL ERASED FILES
+	AX = F217h subfn CEh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01994 at AH=E3h/SF=CEh)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=CEh,AX=F244h
+--------N-21F217SFCF-------------------------
+INT 21 - Novell NetWare - DISABLE TRANSACTION TRACKING
+	AX = F217h subfn CFh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01995 at AH=E3h/SF=CFh)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=CFh,AX=F217h/SF=D0h
+--------N-21F217SFD0-------------------------
+INT 21 - Novell NetWare - ENABLE TRANSACTION TRACKING
+	AX = F217h subfn D0h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01997 at AH=E3h/SF=D0h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=D0h,AX=F217h/SF=CFh
+--------N-21F217SFD1-------------------------
+INT 21 - Novell NetWare - SEND CONSOLE BROADCAST
+	AX = F217h subfn D1h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01998 at AH=E3h/SF=D1h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=D1h,AX=F217h/SF=D2h
+--------N-21F217SFD2-------------------------
+INT 21 - Novell NetWare v3+ - CLEAR CONNECTION NUMBER (LOGOUT STATION)
+	AX = F217h subfn D2h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #01999 at AH=E3h/SF=D2h)
+	ES:DI ignored
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=D2h,AX=F217h/SF=D1h,AX=F217h/SF=FEh
+--------N-21F217SFD3-------------------------
+INT 21 - Novell NetWare - DOWN FILE SERVER
+	AX = F217h subfn D3h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02002 at AH=E3h/SF=D3h)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=D3h,AX=F217h/SF=D2h
+--------N-21F217SFD4-------------------------
+INT 21 - Novell NetWare - GET FILE SYSTEM STATISTICS
+	AX = F217h subfn D4h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02003 at AH=E3h/SF=D4h)
+	ES:DI -> reply buffer (see #02203)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=D4h,AX=F217h/SF=D6h,AX=F217h/SF=D9h
+
+Format of NetWare "Get File System Statistics" reply packet:
+Offset	Size	Description	(Table 02203)
+ 00h	DWORD	clock ticks since system started
+ 04h	WORD	maximum open files set by configuration
+ 06h	WORD	maximum files open concurrently
+ 08h	WORD	current number of open files
+ 0Ah	DWORD	total files opened
+ 0Eh	DWORD	total file read requests
+ 12h	DWORD	total file write requests
+ 16h	WORD	current changed FATs
+ 18h	WORD	total changed FATs
+ 1Ah	WORD	number of FAT write errors
+ 1Ch	WORD	number of fatal FAT write errors
+ 1Eh	WORD	number of FAT scan errors
+ 20h	WORD	maximum concurrently-indexed files
+ 22h	WORD	current number of indexed files
+ 24h	WORD	number of attached indexed files
+ 26h	WORD	number of indexed files available
+Note:	all fields are big-endian
+SeeAlso: #02003,#02004 at AH=E3h/SF=D4h
+--------N-21F217SFD5-------------------------
+INT 21 - Novell NetWare - GET TRANSACTION TRACKING STATISTICS
+	AX = F217h subfn D5h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02005 at AH=E3h/SF=D5h)
+	ES:DI -> reply buffer (see #02204)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=D5h,AX=F217h/SF=D0h
+
+Format of NetWare "Get Transaction Tracking Statistics" reply packet:
+Offset	Size	Description	(Table 02204)
+ 00h	DWORD	(big-endian) clock ticks since system started
+ 04h	BYTE	transaction tracking supported if nonzero
+		(all following fields are invalid if zero)
+ 05h	BYTE	transaction tracking enabled
+ 06h	WORD	(big-endian) transaction volume number
+ 08h	WORD	(big-endian) maximum simultaneous transactions configured
+ 0Ah	WORD	(big-endian) maximum simultaneous transactions since startup
+ 0Ch	WORD	(big-endian) current transactions in progress
+ 0Eh	DWORD	(big-endian) total transactions performed
+ 12h	DWORD	(big-endian) total write transactions
+ 16h	DWORD	(big-endian) total transactions backed out
+ 1Ah	WORD	(big-endian) number of unfilled backout requests
+ 1Ch	WORD	(big-endian) disk blocks used for transaction tracking
+ 1Eh	DWORD	(big-endian) blocks allocated for tracked-file FATs
+ 22h	DWORD	(big-endian) number of file size changes during a transaction
+ 26h	DWORD	(big-endian) number of file truncations during a transaction
+ 2Ah	BYTE	number of records following
+ 2Bh	Active Transaction Records [array]
+	Offset	Size	Description
+	 00h	BYTE	logical connection number
+	 01h	BYTE	task number
+SeeAlso: #02005,#02006 at AH=E3h/SF=D5h
+--------N-21F217SFD6-------------------------
+INT 21 - Novell NetWare - GET DISK CACHE STATISTICS
+	AX = F217h subfn D6h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02007 at AH=E3h/SF=D6h)
+	ES:DI -> reply buffer (see #02205)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=D6h,AX=F217h/SF=D5h,AX=F217h/SF=D8h
+
+Format of NetWare "Get Disk Cache Statistics" reply packet:
+Offset	Size	Description	(Table 02205)
+ 00h	DWORD	clock ticks since system started
+ 04h	WORD	number of cache buffers
+ 06h	WORD	size of cache buffer in bytes
+ 08h	WORD	number of dirty cache buffers
+ 0Ah	DWORD	number of cache read requests
+ 0Eh	DWORD	number of cache write requests
+ 12h	DWORD	number of cache hits
+ 16h	DWORD	number of cache misses
+ 1Ah	DWORD	number of physical read requests
+ 1Eh	DWORD	number of physical write requests
+ 22h	WORD	number of physical read errors
+ 24h	WORD	number of physical write errors
+ 26h	DWORD	cache get requests
+ 2Ah	DWORD	cache full write requests
+ 2Eh	DWORD	cache partial write requests
+ 32h	DWORD	background dirty writes
+ 36h	DWORD	background aged writes
+ 3Ah	DWORD	total cache writes
+ 3Eh	DWORD	number of cache allocations
+ 42h	WORD	thrashing count
+ 44h	WORD	number of times LRU block was dirty
+ 46h	WORD	number of reads on cache blocks not yet filled by writes
+ 48h	WORD	number of times a fragmented write occurred
+ 4Ah	WORD	number of cache hits on unavailable block
+ 4Ch	WORD	number of times a cache block was scrapped
+Note:	all fields are big-endian
+SeeAlso: #02007,#02008 at AH=E3h/SF=D6h
+--------N-21F217SFD7-------------------------
+INT 21 - Novell NetWare - GET DRIVE MAPPING TABLE
+	AX = F217h subfn D7h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02009 at AH=E3h/SF=D7h)
+	ES:DI -> reply buffer (see #02206)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AX=EF00h,AX=EF01h,AX=EF02h,AH=F2h"Novell",AH=E3h/SF=D7h
+
+Format of NetWare "Get Drive Mapping Table" reply packet:
+Offset	Size	Description	(Table 02206)
+ 00h	DWORD	(big-endian) clock tick elapsed since system started
+ 04h	BYTE	fault tolerance (SFT) level
+ 05h	BYTE	number of logical drives attached to server
+ 06h	BYTE	number of physical drives attached to server
+ 07h  5 BYTEs	disk channel types (00h none, 01h XT, 02h AT, 03h SCSI,
+		  04h disk coprocessor drive, 32h-FFh value-added drive types)
+ 0Ch	WORD	(big-endian) number of outstanding controller commands
+ 0Eh 32 BYTEs	drive mapping table (FFh = no such drive)
+ 2Eh 32 BYTEs	drive mirror table (secondary physical drive, FFh = none)
+ 4Eh 32 BYTEs	dead mirror table (last drive mapped to, FFh if never mirrored)
+ 6Eh	BYTE	physical drive being remirrored (FFh = none)
+ 6Fh	BYTE	reserved
+ 70h	DWORD	(big-endian) remirrored block
+ 74h 60 BYTEs	SFT error table (internal error counters)
+SeeAlso: #02009,#02010 at AH=E3h/SF=D7h
+--------N-21F217SFD8-------------------------
+INT 21 - Novell NetWare - GET PHYSICAL DISK STATISTICS
+	AX = F217h subfn D8h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02011 at AH=E3h/SF=D8h)
+	ES:DI -> reply buffer (see #02207)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=D8h,AX=F217h/SF=D9h
+
+Format of NetWare "Get Physical Disk Statistics" request packet:
+Offset	Size	Description	(Table 02207)
+ 00h	DWORD	(big-endian) clock ticks since system started
+ 04h	BYTE	physical disk channel
+ 05h	BYTE	flag: drive removable if nonzero
+ 06h	BYTE	physical drive type
+ 07h	BYTE	drive number within controller
+ 08h	BYTE	controller number
+ 09h	BYTE	controller type
+ 0Ah	DWORD	(big-endian) size of drive in 4K disk blocks
+ 0Eh	WORD	(big-endian) number of cylinders on drive
+ 10h	BYTE	number of heads
+ 11h	BYTE	number of sectors per track
+ 12h 64 BYTEs	ASCIZ drive make and model
+ 52h	WORD	(big-endian) number of I/O errors
+ 56h	DWORD	(big-endian) start of Hot Fix table
+ 58h	WORD	(big-endian) size of Hot Fix table
+ 5Ah	WORD	(big-endian) number of Hot Fix blocks available
+ 5Ch	BYTE	flag: Hot Fix disabled if nonzero
+SeeAlso: #02011,#02012 at AH=E3h/SF=D8h
+--------N-21F217SFD9-------------------------
+INT 21 - Novell NetWare - GET DISK CHANNEL STATISTICS
+	AX = F217h subfn D9h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02013 at AH=E3h/SF=D9h)
+	ES:DI -> reply buffer (see #02208)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=D9h,AX=F217h/SF=D8h
+
+Format of NetWare "Get Disk Channel Statistics" reply packet:
+Offset	Size	Description	(Table 02208)
+ 00h	DWORD	(big-endian) clock ticks since system started
+ 04h	WORD	(big-endian) channel run state (see #02015)
+ 06h	WORD	(big-endian) channel synchronization state (see #02016)
+ 08h	BYTE	driver type
+ 09h	BYTE	major version of driver
+ 0Ah	BYTE	minor version of driver
+ 0Bh 65 BYTEs	ASCIZ driver description
+ 4Ch	WORD	(big-endian) first I/O address used
+ 4Eh	WORD	(big-endian) length of first I/O address
+ 50h	WORD	(big-endian) second I/O address used
+ 52h	WORD	(big-endian) length of second I/O address
+ 54h  3 BYTEs	first shared memory address
+ 57h  2 BYTEs	length of first shared memory address
+ 59h  3 BYTEs	second shared memory address
+ 5Ch  2 BYTEs	length of second shared memory address
+ 5Eh	BYTE	first interrupt number in-use flag
+ 5Fh	BYTE	first interrupt number used
+ 60h	BYTE	second interrupt number in-use flag
+ 61h	BYTE	second interrupt number used
+ 62h	BYTE	first DMA channel in-use flag
+ 63h	BYTE	first DMA channel used
+ 64h	BYTE	second DMA channel in-use flag
+ 65h	BYTE	second DMA channel used
+ 66h	BYTE	flags
+ 67h	BYTE	reserved
+ 68h 80 BYTEs	ASCIZ configuration description
+SeeAlso: #02013,#02014 at AH=E3h/SF=D9h
+--------N-21F217SFDA-------------------------
+INT 21 - Novell NetWare v2.2+ - GET CONNECTION'S TASK INFORMATION
+	AX = F217h subfn DAh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02017 at AH=E3h/SF=DAh)
+	ES:DI -> reply buffer (see #02209)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=DAh,AX=F217h/SF=EAh
+
+Format of NetWare "Get Connection's Task Information" reply packet:
+Offset	Size	Description	(Table 02209)
+ 00h	BYTE	lock status of connection (see #02019)
+ 01h	var	Lock Status Information (see #02020)
+ N	BYTE	number of records following
+ N+1	Active Task Information Records [array]
+	Offset	Size	Description
+	 00h	BYTE	task number (01h-FFh)
+	 01h	BYTE	task state
+			00h normal task
+			01h in TTS explicit transaction
+			02h in TTS implicit transaction
+			04h shared fileset lock active
+SeeAlso: #02224,#02017,#02018 at AH=E3h/SF=DAh
+--------N-21F217SFDB-------------------------
+INT 21 - Novell NetWare v2.2+ - GET CONNECTION'S OPEN FILES (OLD)
+	AX = F217h subfn DBh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02021 at AH=E3h/SF=DBh)
+	ES:DI -> reply buffer (see #02210)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=DBh,AX=F217h/SF=EBh
+
+Format of NetWare "Get Connection's Open Files (old)" reply packet:
+Offset	Size	Description	(Table 02210)
+ 00h	WORD	next request record (place in "last record" field on next call)
+		0000h if no more records
+ 02h	BYTE	number of records following
+ 03h	var	array of File Information Records (see #02023 at AH=E3h/SF=DBh)
+SeeAlso: #02021,#02022 at AH=E3h/SF=DBh
+--------N-21F217SFDC-------------------------
+INT 21 - Novell NetWare v2.2+ - GET CONNECTIONS USING A FILE (OLD)
+	AX = F217h subfn DCh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02026 at AH=E3h/SF=DCh)
+	ES:DI -> reply buffer (see #02211)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=DCh,AX=F217h/SF=ECh
+
+Format of NetWare "Get Connections Using A File (old)" reply packet:
+Offset	Size	Description	(Table 02211)
+ 00h	WORD	(big-endian) count of tasks which have opened or logged file
+ 02h	WORD	(big-endian) count of tasks which have opened file
+ 04h	WORD	(big-endian) count of opens for reading
+ 06h	WORD	(big-endian) count of opens for writing
+ 08h	WORD	(big-endian) deny read count
+ 0Ah	WORD	(big-endian) deny write count
+ 0Ch	WORD	next request record (place in "last record" field on next call)
+		0000h if no more records
+ 0Eh	BYTE	locked flag
+		00h not locked exclusively
+		else locked exclusively
+ 0Fh	BYTE	number of records following
+ 10h	var	array of File Usage Information Records
+		  (see #02028 at AH=E3h/SF=DCh)
+SeeAlso: #02026,#02027 at AH=E3h/SF=DCh
+--------N-21F217SFDD-------------------------
+INT 21 - Novell NetWare - GET PHYSICAL RECORD LOCKS BY CONNECTN AND FILE (OLD)
+	AX = F217h subfn DDh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02030 at AH=E3h/SF=DDh)
+	ES:DI -> reply buffer (see #02212)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=DDh,AX=F217h/SF=DEh,AX=F217h/SF=EDh
+
+Format of NetWare "Get Phys Record Locks By Conn & File (old)" reply packet:
+Offset	Size	Description	(Table 02212)
+ 00h	WORD	next request record (place in "last record" on next call)
+		0000h if no more records
+ 02h	BYTE	number of physical record locks
+ 03h	BYTE	number of records following
+ 04h	var	array of Physical Record Lock Info records
+		  (see #02032 at AH=E3h/SF=DDh)
+SeeAlso: #02030,#02031 at AH=E3h/SF=DDh
+--------N-21F217SFDE-------------------------
+INT 21 - Novell NetWare - GET PHYSICAL RECORD LOCKS BY FILE (OLD)
+	AX = F217h subfn DEh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02034 at AH=E3h/SF=DEh)
+	ES:DI -> reply buffer (see #02213)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=DEh,AX=F217h/SF=EEh
+
+Format of NetWare "Get Physical Record Locks By File (old)" reply packet:
+Offset	Size	Description	(Table 02213)
+ 00h	WORD	next request record (place in "last record" on next call)
+		0000h if no more records
+ 02h	BYTE	number of physical record locks
+ 03h	BYTE	number of records following
+ 04h	var	array of Physical Record Lock Info records (see #02036)
+SeeAlso: #02034,#02035 at AH=E3h/SF=DEh
+--------N-21F217SFDF-------------------------
+INT 21 - Novell NetWare - GET LOGICAL RECORDS BY CONNECTION (OLD)
+	AX = F217h subfn DFh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02037 at AH=E3h/SF=DFh)
+	ES:DI -> reply buffer (see #02214)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=DFh,AX=F217h/SF=EFh
+
+Format of NetWare "Get Logical Records By Connection (old)" reply packet:
+Offset	Size	Description	(Table 02214)
+ 00h	WORD	next request record (place in "last record" field on next call)
+		0000h if no more locked records
+ 02h	BYTE	number of records following
+ 03h	var	array of Logical Lock Information Records
+		  (see #02039 at AH=E3h/SF=DFh)
+SeeAlso: #02037,#02038 at AH=E3h/SF=DFh
+--------N-21F217SFE0-------------------------
+INT 21 - Novell NetWare - GET LOGICAL RECORD INFORMATION (OLD)
+	AX = F217h subfn E0h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02040 at AH=E3h/SF=E0h)
+	ES:DI -> reply buffer (see #02215)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=E0h,AX=F217h/SF=F0h
+
+Format of NetWare "Get Logical Record Information (Old)" reply packet:
+Offset	Size	Description	(Table 02215)
+ 00h	WORD	(big-endian) number of logical connections logging the record
+ 02h	WORD	(big-endian) number of logical connections with shareable lock
+ 04h	WORD	(big-endian) next request record (place in "last record" field
+		  on next call)
+ 06h	BYTE	locked exclusively if nonzero
+ 07h	BYTE	number of records following
+ 08h	var	array of Task Information Records (see #02042 at AH=E3h/SF=E0h)
+SeeAlso: #02040,#02041 at AH=E3h/SF=E0h
+--------N-21F217SFE1-------------------------
+INT 21 - Novell NetWare - GET CONNECTION'S SEMAPHORES (OLD)
+	AX = F217h subfn E1h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02043 at AH=E3h/SF=E1h)
+	ES:DI -> reply buffer (see #02216)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=E1h,AX=F217h/SF=F1h
+
+Format of NetWare "Get Connection's Semaphores (old)" reply packet:
+Offset	Size	Description	(Table 02216)
+ 00h	WORD	next request record (place in "last record" field on next call)
+ 02h	BYTE	number of records following
+ 03h	var	array of Semaphore Information Records
+		  (see #02045 at AH=E3h/SF=E1h)
+SeeAlso: #02043,#02044 at AH=E3h/SF=E1h
+--------N-21F217SFE2-------------------------
+INT 21 - Novell NetWare - GET SEMAPHORE INFORMATION (OLD)
+	AX = F217h subfn E2h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02046 at AH=E3h/SF=E2h)
+	ES:DI -> reply buffer (see #02217)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=E2h,AX=F217h/SF=F2h
+
+Format of NetWare "Get Semaphore Information (old)" reply packet:
+Offset	Size	Description	(Table 02217)
+ 00h	WORD	next request record (place in "last record" on next call)
+		0000h if no more
+ 02h	WORD	(big-endian) number of logical connections opening semaphore
+ 04h	BYTE	semaphore value (-127 to 128)
+ 05h	BYTE	number of records following
+ 06h	var	array of Semaphore Information records (see #02048)
+SeeAlso: #02046,#02047 at AH=E3h/SF=E2h
+--------N-21F217SFE3-------------------------
+INT 21 - Novell NetWare - GET LAN DRIVER'S CONFIGURATION INFORMATION
+	AX = F217h subfn E3h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02049 at AH=E3h/SF=E3h)
+	ES:DI -> reply buffer (see #02218)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=E3h,AX=F217h/SF=E7h,AX=F217h/SF=E8h
+
+Format of NetWare "Get Lan Driver's Configuration Information" reply packet:
+Offset	Size	Description	(Table 02218)
+ 00h  4 BYTEs	network number
+ 04h  6 BYTEs	node number
+ 0Ah	BYTE	LAN driver installed (00h no--remaining fields invalid)
+ 0Bh	BYTE	option number selected at configuration time
+ 0Ch 160 BYTEs	configuration text
+		ASCIZ hardware type
+		ASCIZ hardware settings
+SeeAlso: #02049,#02050 at AH=E3h/SF=E3h
+--------N-21F217SFE5-------------------------
+INT 21 - Novell NetWare - GET CONNECTION'S USAGE STATISTICS
+	AX = F217h subfn E5h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02051 at AH=E3h/SF=E5h)
+	ES:DI -> reply buffer (see #02219)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=E5h,AX=F217h/SF=EAh
+
+Format of NetWare "Get Connection's Usage Statistics" reply packet:
+Offset	Size	Description	(Table 02219)
+ 00h	DWORD	(big-endian) clock ticks since server started
+ 04h  6 BYTEs	bytes read
+ 0Ah  6 BYTEs	bytes written
+ 10h	DWORD	(big-endian) total request packets
+SeeAlso: #02051,#02052 at AH=E3h/SF=E5h
+--------N-21F217SFE6-------------------------
+INT 21 - Novell NetWare - GET OBJECT'S REMAINING DISK SPACE
+	AX = F217h subfn E6h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02053 at AH=E3h/SF=E6h)
+	ES:DI -> reply buffer (see #02220)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=E6h,AX=F216h/SF=20h,AX=F216h/SF=23h
+
+Format of NetWare "Get Object's Remaining Disk Space" reply packet:
+Offset	Size	Description	(Table 02220)
+ 00h	DWORD	(big-endian) clock ticks elapsed since server started
+ 04h	DWORD	(big-endian) object ID
+ 08h	DWORD	(big-endian) 4K disk blocks available to user
+ 0Ch	BYTE	restrictions (00h enforced, FFh not enforced)
+SeeAlso: #02053,#02054 at AH=E3h/SF=E6h
+--------N-21F217SFE7-------------------------
+INT 21 - Novell NetWare - GET FILE SERVER LAN I/O STATISTICS
+	AX = F217h subfn E7h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02055 at AH=E3h/SF=E7h)
+	ES:DI -> reply buffer (see #02221)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=E7h,AX=F217h/SF=11h,AX=F217h/SF=F5h
+
+Format of NetWare "Get File Server Lan I/O Statistics" reply packet:
+Offset	Size	Description	(Table 02221)
+ 00h	DWORD	clock ticks since system started
+ 04h	WORD	total routing buffers
+ 06h	WORD	maximum routing buffers used
+ 08h	WORD	current routing buffers used
+ 0Ah	DWORD	total file service packets
+ 0Eh	WORD	number of file service packets buffered
+ 10h	WORD	number of invalid connection packets
+ 12h	WORD	packets with bad logical connection numbers
+ 14h	WORD	number of packets received during processing
+ 16h	WORD	number of requests reprocessed
+ 18h	WORD	packets with bad sequence numbers
+ 1Ah	WORD	number of duplicate replies sent
+ 1Ch	WORD	number of acknowledgements sent
+ 1Eh	WORD	number of packets with bad request types
+ 20h	WORD	requests to attach to ws for which a request is being processed
+ 22h	WORD	requests to attach from ws which is already attaching
+ 24h	WORD	number of forged detach requests
+ 26h	WORD	detach requests with bad connection number
+ 28h	WORD	requests to detach from ws for which requests pending
+ 2Ah	WORD	number of cancelled replies
+ 2Ch	WORD	packets discarded due to excessive hop count
+ 2Eh	WORD	packets discarded due to unknown net
+ 30h	WORD	incoming packets discarded for lack of DGroup buffer
+ 32h	WORD	outgoing packets discarded due to lack of buffer
+ 34h	WORD	received packets destined for B,C, or D side drivers
+ 36h	DWORD	number of NetBIOS packets propagated through net
+ 3Ah	DWORD	total number of non-file-service packets
+ 3Eh	DWORD	total number of routed packets
+Note:	all fields are big-endian
+SeeAlso: #02055,#02056 at AH=E3h/SF=E7h
+--------N-21F217SFE8-------------------------
+INT 21 - Novell NetWare - GET FILE SERVER MISC INFORMATION
+	AX = F217h subfn E8h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02057 at AH=E3h/SF=E8h)
+	ES:DI -> reply buffer (see #02222)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=E8h,AX=F217h/SF=11h,AX=F217h/SF=F5h
+
+Format of NetWare "Get File Server Misc Information" reply packet:
+Offset	Size	Description	(Table 02222)
+ 00h	DWORD	(big-endian) clock ticks since system started
+ 04h	BYTE	CPU type
+		00h Motorola 68000
+		01h Intel 8086, 8088, or V20
+		02h Intel 80286+
+ 05h	BYTE	reserved
+ 06h	BYTE	number of service processes in server
+ 07h	BYTE	server utilization in percent
+ 08h	WORD	(big-endian) maximum bindery objects set by configuration
+		0000h = unlimited
+ 0Ah	WORD	(big-endian) maximum number of bindery objects used
+ 0Ch	WORD	(big-endian) current number of bindery objects in use
+ 0Eh	WORD	(big-endian) total server memory in KB
+ 10h	WORD	(big-endian) wasted server memory in KB
+		normally 0000h
+ 12h	WORD	number of records following (01h-03h)
+ 14h	var	array of Dynamic Memory Information records (see #02059)
+SeeAlso: #02057,#02058 at AH=E3h/SF=E8h
+--------N-21F217SFE9-------------------------
+INT 21 - Novell NetWare - GET VOLUME INFORMATION
+	AX = F217h subfn E9h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02060 at AH=E3h/SF=E9h)
+	ES:DI -> reply buffer (see #02223)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AH=E3h/SF=E9h,AX=F212h,AX=F216h/SF=15h
+
+Format of NetWare "Get Volume Information" reply packet:
+Offset	Size	Description	(Table 02223)
+ 00h	DWORD	(big-endian) elapsed system time
+ 04h	BYTE	volume number
+ 05h	BYTE	logical drive number
+ 06h	WORD	(big-endian) sectors per block
+ 08h	WORD	(big-endian) starting block
+ 0Ah	WORD	(big-endian) total blocks on volume
+ 0Ch	WORD	(big-endian) blocks available on volume
+ 0Eh	WORD	(big-endian) total directory slots
+ 10h	WORD	(big-endian) directory slots available
+ 12h	WORD	(big-endian) maximum directory entries actually used
+ 14h	BYTE	flag: volume hashed if nonzero
+ 15h	BYTE	flag: volume cached if nonzero
+ 16h	BYTE	flag: volume removable if nonzero
+ 17h	BYTE	flag: volume mounted if nonzero
+ 18h 16 BYTEs	NUL-padded volume name
+SeeAlso: #02060,#02061 at AH=E3h/SF=E9h
+--------N-21F217SFEA-------------------------
+INT 21 - Novell NetWare v3.11+ - GET CONNECTION'S TASK INFORMATION
+	AX = F217h subfn EAh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02224)
+	ES:DI -> reply buffer (see #02209)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=DAh
+
+Format of NetWare "Get Connection's Task Information" request packet:
+Offset	Size	Description	(Table 02224)
+ 00h	WORD	length of following data
+ 02h	BYTE	EAh (subfunction "Get Connection's Task Information")
+ 03h	WORD	connection number
+SeeAlso: #02209,#02017 at AH=E3h/SF=DAh
+--------N-21F217SFEB-------------------------
+INT 21 - Novell NetWare v3+ - GET CONNECTION'S OPEN FILES
+	AX = F217h subfn EBh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02225)
+	ES:DI -> reply buffer (see #02226)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=DBh
+
+Format of NetWare "Get Connection's Open Files" request buffer:
+Offset	Size	Description	(Table 02225)
+ 00h	WORD	0005h (length of following data)
+ 02h	BYTE	EBh (subfunction "Get Connection's Open Files")
+ 03h	WORD	target connection number
+ 05h	WORD	last record seen (set to 0000h for first call)
+Note:	connection numbers greater than the maximum supported by the server
+	  can cause ABENDs
+SeeAlso: #02226
+
+Format of NetWare "Get Connection's Open Files" reply buffer:
+Offset	Size	Description	(Table 02226)
+ 00h	WORD	next request record
+ 02h	WORD	number of records returned (max 28)
+ 04h 29N BYTEs	array of connection records (see #02227)
+SeeAlso: #02225
+
+Format of NetWare connection record:
+Offset	Size	Description	(Table 02227)
+ 00h	WORD	task number
+ 02h	BYTE	lock type
+ 03h	BYTE	access control
+ 04h	BYTE	lock flag
+ 05h	BYTE	volume number
+ 06h	DWORD	parent directory entry number
+ 0Ah	DWORD	directory entry number
+ 0Eh	BYTE	fork count
+ 0Fh	BYTE	data stream type / name space (see #02363)
+ 10h	BYTE	file name length
+ 11h 12 BYTEs	file name
+SeeAlso: #02226
+--------N-21F217SFEC-------------------------
+INT 21 - Novell NetWare v3+ - GET CONNECTIONS USING A FILE
+	AX = F217h subfn ECh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02228)
+	ES:DI -> reply buffer (see #02229)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=DCh
+
+Format of NetWare "Get Connections Using a File" request buffer:
+Offset	Size	Description	(Table 02228)
+ 00h	WORD	0009h (length of following data)
+ 02h	BYTE	ECh (subfunction "Get Connections Using a File")
+ 03h	BYTE	data stream type
+ 04h	BYTE	volume number
+ 05h	DWORD	directory entry number
+ 09h	WORD	last record seen (0000h for first call)
+SeeAlso: #02229
+
+Format of NetWare "Get Connections Using a File" reply buffer:
+Offset	Size	Description	(Table 02229)
+ 00h	WORD	next request record
+ 02h	WORD	use count
+ 04h	WORD	open count
+ 06h	WORD	number of times open for reading
+ 08h	WORD	number of times open for writing
+ 0Ah	WORD	Deny Read count
+ 0Ch	WORD	Deny Write count
+ 0Eh	BYTE	flag: locked
+ 0Fh	BYTE	fork count
+ 10h	WORD	number of records returned (max 70)
+ 12h 7N BYTEs	returned records (see #02230)
+SeeAlso: #02228
+
+Format of returned record:
+Offset	Size	Description	(Table 02230)
+ 00h	WORD	connection number
+ 02h	WORD	task number
+ 04h	BYTE	lock type
+ 05h	BYTE	access flag
+ 06h	BYTE	lock flag
+SeeAlso: #02229
+--------N-21F217SFED-------------------------
+INT 21 - Novell NetWare v3+ - GET PHYSICAL RECORD LOCKS BY CONNECTION AND FILE
+	AX = F217h subfn EDh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02231)
+	ES:DI -> reply buffer (see #02232)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=DDh,AX=F217h/SF=EEh
+
+Format of NetWare "Get Phys Record Locks By Conn And File" request packet:
+Offset	Size	Description	(Table 02231)
+ 00h	WORD	length of following data
+ 02h	BYTE	EDh (subfunction "Get Physical Record Locks By Connection
+		  And File")
+ 03h	WORD	target connection number
+ 05h	BYTE	last record seen (set to 00h before first call)
+ 06h	BYTE	volume number
+ 07h	DWORD	directory entry number
+ 0Bh  N BYTEs	filename
+SeeAlso: #02232
+
+Format of NetWare "Get Physical Record Locks By Connect And File" reply packet:
+Offset	Size	Description	(Table 02232)
+ 00h	WORD	next record (place in last-seen field on next call)
+ 02h	WORD	number of locks returned
+ 04h 11N BYTEs	lock records
+		Offset	Size	Description
+		 00h	WORD	(big-endian) task number
+		 02h	BYTE	lock status
+		 03h	DWORD	(big-endian) record start offset
+		 07h	DWORD	(big-endian) record end offset
+SeeAlso: #02231
+--------N-21F217SFEE-------------------------
+INT 21 - Novell NetWare v3+ - GET PHYSICAL RECORD LOCKS BY FILE
+	AX = F217h subfn EEh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02233)
+	ES:DI -> reply buffer (see #02234)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=DEh
+
+Format of NetWare "Get Physical Record Locks by File" request buffer:
+Offset	Size	Description	(Table 02233)
+ 00h	WORD	0009h (length of following data)
+ 02h	BYTE	EEh (subfunction "Get Physical Record Locks by File")
+ 03h	BYTE	data stream number
+ 04h	BYTE	volume number
+ 05h	DWORD	directory entry number
+ 09h	WORD	last record seen (0000h for first call)
+SeeAlso: #02234
+
+Format of NetWare "Get Physical Record Locks by File" reply buffer:
+Offset	Size	Description	(Table 02234)
+ 00h	WORD	next request record
+ 02h	WORD	number of locks
+ 04h 17N BYTEs	array of lock records, one per lock (see #02235)
+SeeAlso: #02233
+
+Format of NetWare lock record:
+Offset	Size	Description	(Table 02235)
+ 00h	WORD	logged count
+ 02h	WORD	number of shareable locks
+ 04h	DWORD	start offset of record
+ 08h	DWORD	end offset of record
+ 0Ch	WORD	logical connection number
+ 0Eh	WORD	task number
+ 10h	BYTE	lock type
+SeeAlso: #02234
+--------N-21F217SFEF-------------------------
+INT 21 - Novell NetWare v3+ - GET LOGICAL RECORDS BY CONNECTION
+	AX = F217h subfn EFh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02236)
+	ES:DI -> reply buffer (see #02237)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=DFh
+
+Format of NetWare "Get Logical Records By Connection" request packet:
+Offset	Size	Description	(Table 02236)
+ 00h	WORD	length of following data
+ 02h	BYTE	EFh (subfunction "Get Logical Records By Connection")
+ 03h	WORD	target connection number
+ 05h	WORD	last record seen (set to 0000h before first call)
+SeeAlso: #02237
+
+Format of NetWare "Get Logical Records By Connection" request packet:
+Offset	Size	Description	(Table 02237)
+ 00h	WORD	next record (place in last-seen field on next call)
+ 02h	WORD	number of records returned
+ 04h		Logical Lock Information records (see #02039 at AH=E3h/SF=DFh)
+SeeAlso: #02236
+--------N-21F217SFF0-------------------------
+INT 21 - Novell NetWare v3+ - GET LOGICAL RECORD INFORMATION
+	AX = F217h subfn F0h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02238)
+	ES:DI -> reply buffer (see #02239)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=E0h,AX=F217h/SF=EFh
+
+Format of NetWare "Get Logical Record Information" request packet:
+Offset	Size	Description	(Table 02238)
+ 00h	WORD	length of following data
+ 02h	BYTE	F0h (subfunction "Get Logical Record Information")
+ 03h	WORD	last record seen
+ 05h	BYTE	length of logical record name
+ 06h  N BYTEs	logical record name (case-sensitive)
+SeeAlso: #02239
+
+Format of NetWare "Get Logical Record Information" request packet:
+Offset	Size	Description	(Table 02239)
+ 00h	WORD	number of connections logging record
+ 02h	WORD	number of shareable locks
+ 04h	BYTE	flag: locked exclusively if nonzero
+ 05h	WORD	next request record (place in last-seen field on next call)
+ 07h	BYTE	number of records returned
+ 08h		logical record information records [array]
+		Offset	Size	Description
+		 00h	WORD	connection number
+		 02h	BYTE	task number
+		 03h	BYTE	lock status
+SeeAlso: #02238
+--------N-21F217SFF1-------------------------
+INT 21 - Novell NetWare v3+ - GET CONNECTION'S SEMAPHORES
+	AX = F217h subfn F1h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02240)
+	ES:DI -> reply buffer (see #02241)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=E1h
+
+Format of NetWare "Get Connection's Semaphores" request packet:
+Offset	Size	Description	(Table 02240)
+ 00h	WORD	length of following data
+ 02h	BYTE	F1h (subfunction "Get Connection's Semaphores")
+ 03h	WORD	connection number
+ 05h	WORD	last record seen (set to 0000h before first call)
+SeeAlso: #02241
+
+Format of NetWare "Get Connection's Semaphores" reply packet:
+Offset	Size	Description	(Table 02241)
+ 00h	WORD	next record (place in last-seen field on next call)
+ 02h	WORD	number of semaphores returned
+ 04h	BYTEs	semaphore information records [packed array] (see #02242)
+SeeAlso: #02240
+
+Format of NetWare semaphore information record:
+Offset	Size	Description	(Table 02242)
+ 00h	WORD	semaphore's current value
+ 02h	WORD	number of connections using semaphore
+ 04h	WORD	task number
+ 06h	BYTE	length of semaphore's name
+ 07h  N BYTEs	semaphore name
+SeeAlso: #02241
+--------N-21F217SFF2-------------------------
+INT 21 - Novell NetWare v3+ - GET SEMAPHORE INFORMATION
+	AX = F217h subfn F2h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02243)
+	ES:DI -> reply buffer (see #02244)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=E2h
+
+Format of NetWare "Get Semaphore Information" request buffer:
+Offset	Size	Description	(Table 02243)
+ 00h	WORD	length of following data (max 84h)
+ 02h	BYTE	F2h (subfunction "Get Semaphore Information")
+ 03h	WORD	last record seen (0000h on first call)
+ 05h	BYTE	length of semaphore name (max 128)
+ 06h  N BYTEs	semaphore name
+SeeAlso: #02244
+
+Format of NetWare "Get Semaphore Information" reply buffer:
+Offset	Size	Description	(Table 02244)
+ 00h	WORD	next request record
+ 02h	WORD	open count
+ 04h	BYTE	value of semaphore
+ 05h	WORD	number of records returned
+ 07h 2N WORDs	list of logical connection number/task number pairs
+SeeAlso: #02243
+--------N-21F217SFF3-------------------------
+INT 21 - Novell NetWare v3+ - MAP DIRECTORY NUMBER TO PATH
+	AX = F217h subfn F3h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02245)
+	ES:DI -> reply buffer (see #02246)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AX=F217h/SF=F4h
+
+Format of NetWare "Map Directory Number to Path" request buffer:
+Offset	Size	Description	(Table 02245)
+ 00h	WORD	0007h (length of following data)
+ 02h	BYTE	F3h (subfunction "Map Directory Number to Path")
+ 03h	BYTE	volume number
+ 04h	DWORD	directory entry number
+ 08h	BYTE	name space type
+SeeAlso: #02246
+
+Format of NetWare "Map Directory Number to Path" reply buffer:
+Offset	Size	Description	(Table 02246)
+ 00h	BYTE	directory path length
+ 01h  N BYTEs	directory path (NetWare style, separated by length descriptors
+		  rather than slashes or backslashes)
+SeeAlso: #02245
+--------N-21F217SFF4-------------------------
+INT 21 - Novell NetWare v3+ - CONVERT PATH TO DIRECTORY ENTRY
+	AX = F217h subfn F4h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02247)
+	ES:DI -> reply buffer (see #02248)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AX=F217h/SF=F3h
+
+Format of NetWare "Convert Path to Directory Entry" request packet:
+Offset	Size	Description	(Table 02247)
+ 00h	WORD	length of following data
+ 02h	BYTE	F4h (subfunction "Convert Path to Directory Entry")
+ 03h	BYTE	directory handle or 00h for none
+ 04h	BYTE	length of directory path
+ 05h  N BYTEs	directory path (must be fully qualified if no handle specified)
+SeeAlso: #02248
+
+Format of NetWare "Convert Path to Directory Entry" reply packet:
+Offset	Size	Description	(Table 02248)
+ 00h	BYTE	volume number
+ 01h	DWORD	directory entry number
+SeeAlso: #02247
+--------N-21F217SFF5-------------------------
+INT 21 - Novell NetWare - GET FILE SERVER EXTENDED MISC INFORMATION
+	AX = F217h subfn F5h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02249)
+	ES:DI -> reply buffer (see #02250)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=11h,AX=F217h/SF=C9h,AX=F217h/SF=E8h
+
+Format of NetWare "Get File Server Extended Misc Information" request packet:
+Offset	Size	Description	(Table 02249)
+ 00h	WORD	length of following data
+ 02h	BYTE	F5h (subfunction "Get File Server Extended Misc Information")
+ 03h	BYTE	length of reply buffer
+SeeAlso: #02250
+
+Format of NetWare "Get File Server Extended Misc Information" reply packet:
+Offset	Size	Description	(Table 02250)
+ 00h	DWORD	system interval marker
+		(up-time in clock ticks, wraps to 0 on reaching FFFFFFFFh)
+ 04h	BYTE	processor type
+		00h Motorola 680x0
+		01h Intel 8088/8086
+		02h 80286
+ 05h	BYTE	reserved for future use
+ 06h	BYTE	number of service processes
+ 07h	BYTE	server utilization percentage
+ 08h	WORD	maximum bindery objects set by configuration
+ 0Ah	WORD	actual maximum bindery objects
+ 0Ch	WORD	current number of bindery objects
+ 0Eh	WORD	(big-endian) total server memory
+ 10h	WORD	(big-endian) wasted server memory
+ 12h	WORD	(big-endian) number of dynamic memory areas
+ 14h	DWORD	(big-endian) total space in dynamic memory area
+ 18h	DWORD	maximum dynamic space used
+ 1Ch	DWORD	dynamic space currently used
+SeeAlso: #02249
+--------N-21F217SFF6-------------------------
+INT 21 - Novell NetWare - GET VOLUME EXTENDED INFORMATION
+	AX = F217h subfn F6h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02251)
+	ES:DI -> reply buffer (see #02252)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=E8h
+
+Format of NetWare "Get Volume Extended Information" request packet:
+Offset	Size	Description	(Table 02251)
+ 00h	WORD	length of following data
+ 02h	BYTE	F6h (subfunction "Get Volume Extended Information")
+ 03h	BYTE	volume number
+ 04h	BYTE	size of reply buffer
+SeeAlso: #02252
+
+Format of NetWare "Get Volume Extended Information" reply packet:
+Offset	Size	Description	(Table 02252)
+ 00h	DWORD	system interval
+		(up-time in clock ticks, wraps to 0 on reaching FFFFFFFFh)
+ 04h	BYTE	volume number
+ 05h	BYTE	logical drive number
+ 06h	WORD	number of 512-byte sectors per disk block
+ 08h	DWORD	starting block number of volume
+ 0Ch	WORD	total number of disk blocks
+ 0Eh	WORD	number of free disk blocks
+ 10h	WORD	total number of directory entries
+ 12h	WORD	number of available directory entries
+ 14h	WORD	maximum directory entries ever used
+ 16h	BYTE	flag: volume is hashed in memory if nonzero
+ 17h	BYTE	flag: volume is cached if nonzero
+ 18h	BYTE	flag: volume is removable if nonzero
+ 19h	BYTE	flag: volume is mounted if nonzero
+ 1Ah 16 BYTEs	volume name (null-padded)
+SeeAlso: #02251
+--------N-21F217SFFE-------------------------
+INT 21 - Novell NetWare v4 - CLEAR CONNECTION NUMBER GREATER THAN 250
+	AX = F217h subfn FEh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02253)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=E3h/SF=D2h,AX=F217h/SF=D2h
+
+Format of NetWare "Clear Connection Number" request buffer:
+Offset	Size	Description	(Table 02253)
+ 00h	WORD	length of following data
+ 02h	BYTE	FEh (subfunction "Clear Connection Number")
+ 03h	DWORD	connection number
+SeeAlso: #01999
+--------N-21F21B-----------------------------
+INT 21 - Novell NetWare - LOCK PHYSICAL RECORD SET (OLD)
+	AX = F21Bh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02456 at AX=F26Eh)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F26Eh,AH=C2h"NetWare"
+--------N-21F21E-----------------------------
+INT 21 - Novell NetWare - CLEAR PHYSICAL RECORD
+	AX = F21Eh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02254)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=5Ch,AH=BEh"NetWare",AH=F2h"Novell",AX=F20Bh,AX=F21Fh
+
+Format of NetWare "Clear Physical Record" request packet:
+Offset	Size	Description	(Table 02254)
+ 00h	BYTE	reserved for future use
+ 01h  6 BYTEs	NetWare file handle
+ 07h	DWORD	starting offset of locked region
+ 0Bh	DWORD	length of locked region
+SeeAlso: #02255
+--------N-21F21F-----------------------------
+INT 21 - Novell NetWare - CLEAR PHYSICAL RECORD SET
+	AX = F21Fh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02255)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=5Ch,AH=C4h"NetWare",AH=F2h"Novell",AX=F20Eh,AX=F21Eh
+
+Format of NetWare "Clear Physical Record Set" request packet:
+Offset	Size	Description	(Table 02255)
+ 00h	BYTE	lock flag (00h = not locked)
+SeeAlso: #02254
+--------N-21F220SF00-------------------------
+INT 21 - Novell NetWare - OPEN SEMAPHORE (OLD)
+	AX = F220h subfn 00h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02256)
+	ES:DI -> reply buffer (see #02257)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=C500h,AX=F220h/SF=01h,AX=F220h/SF=03h
+
+Format of NetWare "Open Semaphore (old)" request packet:
+Offset	Size	Description	(Table 02256)
+ 00h	BYTE	00h (subfunction "Open Semaphore (old)")
+ 01h	BYTE	initial value of semaphore ( >= 0)
+ 02h	BYTE	length of semaphore's name (max 512)
+ 03h  N BYTEs	semaphore name
+SeeAlso: #02257,#02258
+
+Format of NetWare "Open Semaphore (old)" reply packet:
+Offset	Size	Description	(Table 02257)
+ 00h	DWORD	semaphore handle
+ 04h	BYTE	number of processes using semaphore (including caller)
+SeeAlso: #02256,#02259
+--------N-21F220SF01-------------------------
+INT 21 - Novell NetWare - EXAMINE SEMAPHORE (OLD)
+	AX = F220h subfn 01h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02258)
+	ES:DI -> reply buffer (see #02259)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=C501h,AX=F220h/SF=00h,AX=F220h/SF=03h
+
+Format of NetWare "Close Semaphore (old)" request packet:
+Offset	Size	Description	(Table 02258)
+ 00h	BYTE	01h (subfunction "Examine Semaphore (old)")
+ 01h	DWORD	semaphore handle
+SeeAlso: #02259,#02256
+
+Format of NetWare "Close Semaphore (old)" request packet:
+Offset	Size	Description	(Table 02259)
+ 00h	BYTE	current semaphore value
+ 01h	BYTE	number of processes using semaphore (including caller)
+SeeAlso: #02258,#02257
+--------N-21F220SF02-------------------------
+INT 21 - Novell NetWare - WAIT ON SEMAPHORE (OLD)
+	AX = F220h subfn 02h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02260)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=C502h,AX=F220h/SF=00h,AX=F220h/SF=03h
+
+Format of NetWare "Wait on Semaphore (old)" request packet:
+Offset	Size	Description	(Table 02260)
+ 00h	BYTE	02h (subfunction "Wait on Semaphore (old)")
+ 01h	DWORD	semaphore handle
+ 05h	WORD	timeout in 1/18s (0000h = return immediately)
+SeeAlso: #02258,#02261
+--------N-21F220SF03-------------------------
+INT 21 - Novell NetWare - SIGNAL SEMAPHORE (OLD)
+	AX = F220h subfn 03h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02261)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=C503h,AX=F220h/SF=02h,AX=F220h/SF=04h
+
+Format of NetWare "Signal Semaphore (old)" request packet:
+Offset	Size	Description	(Table 02261)
+ 00h	BYTE	03h (subfunction "Signal Semaphore (old)")
+ 01h	DWORD	semaphore handle
+SeeAlso: #02260,#02262
+--------N-21F220SF04-------------------------
+INT 21 - Novell NetWare - CLOSE SEMAPHORE (OLD)
+	AX = F220h subfn 04h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02262)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=C504h,AX=F220h/SF=00h,AX=F220h/SF=01h
+SeeAlso: AX=F26Fh/SF=01h
+
+Format of NetWare "Close Semaphore (old)" request packet:
+Offset	Size	Description	(Table 02262)
+ 00h	BYTE	04h (subfunction "Close Semaphore (old)")
+ 01h	DWORD	semaphore handle
+SeeAlso: #02261,#02459
+--------N-21F222SF00-------------------------
+INT 21 - Novell NetWare - TTS IS AVAILABLE
+	AX = F222h subfn 00h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02263)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=C702h,AX=F222h/SF=01h,AX=F222h/SF=05h
+
+Format of NetWare "TTS Is Available" request packet:
+Offset	Size	Description	(Table 02263)
+ 00h	BYTE	00h (subfunction "TTS Is Available")
+--------N-21F222SF01-------------------------
+INT 21 - Novell NetWare - TTS BEGIN TRANSACTION
+	AX = F222h subfn 01h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02264)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=C700h,AX=F222h/SF=02h,AX=F222h/SF=03h
+
+Format of NetWare "TTS Begin Transaction" request packet:
+Offset	Size	Description	(Table 02264)
+ 00h	BYTE	01h (subfunction "TTS Begin Transaction")
+SeeAlso: #02265,#02267
+--------N-21F222SF02-------------------------
+INT 21 - Novell NetWare - TTS END TRANSACTION
+	AX = F222h subfn 02h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02265)
+	ES:DI -> reply buffer (see #02266)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=C701h,AX=F222h/SF=01h,AX=F222h/SF=04h
+
+Format of NetWare "TTS End Transaction" request packet:
+Offset	Size	Description	(Table 02265)
+ 00h	BYTE	02h (subfunction "TTS End Transaction")
+SeeAlso: #02266,#02264
+
+Format of NetWare "TTS End Transaction" reply packet:
+Offset	Size	Description	(Table 02266)
+ 00h	DWORD	transaction number
+SeeAlso: #02265,#02268
+--------N-21F222SF03-------------------------
+INT 21 - Novell NetWare - TTS ABORT TRANSACTION
+	AX = F222h subfn 03h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02267)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=C703h,AX=F222h/SF=01h,AX=F222h/SF=02h
+SeeAlso: AX=F220h/SF=04h
+
+Format of NetWare "TTS Abort Transaction" request packet:
+Offset	Size	Description	(Table 02267)
+ 00h	BYTE	03h (subfunction "TTS Abort Transaction")
+SeeAlso: #02264,#02265
+--------N-21F222SF04-------------------------
+INT 21 - Novell NetWare - TTS TRANSACTION STATUS
+	AX = F222h subfn 04h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02268)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=C704h,AX=F222h/SF=02h,AX=F222h/SF=03h
+
+Format of NetWare "TTS Transaction Status" request packet:
+Offset	Size	Description	(Table 02268)
+ 00h	BYTE	04h (subfunction "TTS Transaction Status")
+ 01h	DWORD	transaction number
+SeeAlso: #02265,#02266
+--------N-21F222SF05-------------------------
+INT 21 - Novell NetWare - TTS GET APPLICATION THRESHOLDS
+	AX = F222h subfn 05h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02269)
+	ES:DI -> reply buffer (see #02270)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=C705h,AX=F222h/SF=06h,AX=F222h/SF=07h
+
+Format of NetWare "TTS Get Application Thresholds" request packet:
+Offset	Size	Description	(Table 02269)
+ 00h	BYTE	05h (subfunction "TTS Get Application Thresholds")
+SeeAlso: #02270,#02271
+
+Format of NetWare "TTS Get Application Thresholds" request packet:
+Offset	Size	Description	(Table 02270)
+ 00h	BYTE	logical lock threshold
+ 01h	BYTE	physical lock threshold
+SeeAlso: #02269,#02271
+--------N-21F222SF06-------------------------
+INT 21 - Novell NetWare - TTS SET APPLICATION THRESHOLDS
+	AX = F222h subfn 06h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02271)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=C706h,AX=F222h/SF=05h,AX=F222h/SF=08h
+
+Format of NetWare "TTS Set Application Thresholds" request packet:
+Offset	Size	Description	(Table 02271)
+ 00h	BYTE	06h (subfunction "TTS Set Application Thresholds")
+ 01h	BYTE	logical lock threshold before implicit transaction started
+ 02h	BYTE	physical lock threshold before implicit transaction started
+SeeAlso: #02270,#02274
+--------N-21F222SF07-------------------------
+INT 21 - Novell NetWare - TTS GET WORKSTATION THRESHOLDS
+	AX = F222h subfn 07h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02272)
+	ES:DI -> reply buffer (see #02273)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=C707h,AX=F222h/SF=05h,AX=F222h/SF=08h
+
+Format of NetWare "TTS Get Workstation Thresholds" request packet:
+Offset	Size	Description	(Table 02272)
+ 00h	BYTE	07h (subfunction "TTS Get Workstation Thresholds")
+SeeAlso: #02273
+
+Format of NetWare "TTS Get Workstation Thresholds" reply packet:
+Offset	Size	Description	(Table 02273)
+ 00h	BYTE	logical lock threshold
+ 01h	BYTE	physical lock threshold
+SeeAlso: #02272
+--------N-21F222SF08-------------------------
+INT 21 - Novell NetWare - TTS SET WORKSTATION THRESHOLDS
+	AX = F222h subfn 08h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02274)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=C708h,AX=F222h/SF=06h,AX=F222h/SF=07h
+
+Format of NetWare "TTS Set Workstation Thresholds" request packet:
+Offset	Size	Description	(Table 02274)
+ 00h	BYTE	08h (subfunction "TTS Set Workstation Thresholds")
+ 01h	BYTE	logical lock threshold before implicit transaction started
+ 02h	BYTE	physical lock threshold before implicit transaction started
+SeeAlso: #02271
+--------N-21F222SF09-------------------------
+INT 21 - Novell NetWare - TTS GET CONTROL FLAGS
+	AX = F222h subfn 09h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02275)
+	ES:DI -> reply buffer (see #02276)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=C702h,AX=F222h/SF=07h,AX=F222h/SF=0Ah
+
+Format of NetWare "TTS Get Transaction Bits" request packet:
+Offset	Size	Description	(Table 02275)
+ 00h	BYTE	09h (subfunction "TTS Get Transaction Bits")
+SeeAlso: #02276
+
+Format of NetWare "TTS Get Transaction Bits" reply packet:
+Offset	Size	Description	(Table 02276)
+ 00h	BYTE	TTS control flags
+		bit 0: forced (automatic) record locking enabled
+		bits 1-7: reserved
+SeeAlso: #02275
+--------N-21F222SF0A-------------------------
+INT 21 - Novell NetWare - TTS SET CONTROL FLAGS
+	AX = F222h subfn 0Ah
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02277)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=C702h,AX=F222h/SF=08h,AX=F222h/SF=09h
+
+Format of NetWare "TTS Set Transaction Bits" request packet:
+Offset	Size	Description	(Table 02277)
+ 00h	BYTE	0Ah (subfunction "TTS Set Transaction Bits")
+ 01h	BYTE	TTS control flags
+		bit 0: forced (automatic) record locking enabled
+		bits 1-7: reserved
+--------N-21F223SF01-------------------------
+INT 21 - Novell NetWare v2+ - AFP CREATE DIRECTORY
+	AX = F223h subfn 01h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02278)
+	ES:DI -> reply buffer (see #02279)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F223h/SF=02h,AX=F223h/SF=0Dh
+
+Format of NetWare "AFP Create Directory" request packet:
+Offset	Size	Description	(Table 02278)
+ 00h	WORD	(big-endian) length of following data
+ 02h	BYTE	01h (subfunction "AFP Create Directory")
+ 03h	BYTE	volume number
+ 04h	DWORD	AFP entry ID
+ 08h	BYTE	reserved for future use
+ 09h 32 BYTEs	Finder information
+ 29h	BYTE	path length
+ 2Ah  N BYTEs	AFP-style directory pathname (relative to AFP entry ID)
+SeeAlso: #02279,#02280,#02306
+
+Format of NetWare "AFP Create Directory" reply packet:
+Offset	Size	Description	(Table 02279)
+ 00h	DWORD	new directory ID
+SeeAlso: #02278,#02307
+--------N-21F223SF02-------------------------
+INT 21 - Novell NetWare v2+ - AFP CREATE FILE
+	AX = F223h subfn 02h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02280)
+	ES:DI -> reply buffer (see #02281)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F223h/SF=02h,AX=F223h/SF=03h,AX=F223h/SF=0Dh
+
+Format of NetWare "AFP Create File" request packet:
+Offset	Size	Description	(Table 02280)
+ 00h	WORD	(big-endian) length of following data
+ 02h	BYTE	01h (subfunction "AFP Create Directory")
+ 03h	BYTE	volume number
+ 04h	DWORD	AFP entry ID
+ 08h	BYTE	flag: delete existing file? (00h no, 01h yes)
+ 09h 32 BYTEs	Finder information
+ 29h	BYTE	path length
+ 2Ah  N BYTEs	AFP-style directory pathname (relative to AFP entry ID)
+SeeAlso: #02278,#02281,#02282,#02308
+
+Format of NetWare "AFP Create File" reply packet:
+Offset	Size	Description	(Table 02281)
+ 00h	DWORD	new file's AFP entry ID
+SeeAlso: #02280,#02309
+--------N-21F223SF03-------------------------
+INT 21 - Novell NetWare v2+ - AFP DELETE FILE
+	AX = F223h subfn 03h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02282)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+Note:	directories may be deleted if they are empty
+SeeAlso: AH=F2h"Novell",AX=F223h/SF=02h,AX=F223h/SF=0Dh
+
+Format of NetWare "AFP Delete File" request packet:
+Offset	Size	Description	(Table 02282)
+ 00h	WORD	(big-endian) length of following data
+ 02h	BYTE	03h (subfunction "AFP Delete File")
+ 03h	BYTE	volume number
+ 04h	DWORD	AFP entry ID
+ 08h	BYTE	path length
+ 09h  N BYTEs	AFP-style pathname (relative to AFP entry ID)
+SeeAlso: #02280
+--------N-21F223SF04-------------------------
+INT 21 - Novell NetWare v2+ - AFP GET ENTRY ID FROM FILENAME
+	AX = F223h subfn 04h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02283)
+	ES:DI -> reply buffer (see #02284)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F223h/SF=06h,AX=F223h/SF=0Ch,AX=F223h/SF=12h
+
+Format of NetWare "AFP Get Entry ID from Name" request packet:
+Offset	Size	Description	(Table 02283)
+ 00h	WORD	(big-endian) length of following data
+ 02h	BYTE	04h (subfunction "AFP Get Entry ID from Name")
+ 03h	BYTE	volume number
+ 04h	DWORD	AFP entry ID
+ 08h	BYTE	path length
+ 09h  N BYTEs	AFP-style pathname (relative to AFP entry ID)
+SeeAlso: #02284,#02290
+
+Format of NetWare "AFP Get Entry ID from Name" reply packet:
+Offset	Size	Description	(Table 02284)
+ 00h	DWORD	AFP entry ID corresponding to specified file/directory
+SeeAlso: #02283,#02291
+--------N-21F223SF05-------------------------
+INT 21 - Novell NetWare v2+ - AFP GET FILE INFORMATION
+	AX = F223h subfn 05h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02285)
+	ES:DI -> reply buffer (see #02287)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F223h/SF=04h,AX=F223h/SF=09h,AX=F223h/SF=13h
+
+Format of NetWare "AFP Get File Information" request packet:
+Offset	Size	Description	(Table 02285)
+ 00h	WORD	(big-endian) length of following data
+ 02h	BYTE	05h (subfunction "AFP Get File Information")
+ 03h	BYTE	volume number
+ 04h	DWORD	AFP entry ID
+ 08h	WORD	request bitmap
+ 0Ah	BYTE	path length
+ 0Bh  N BYTEs	AFP-style pathname (relative to AFP entry ID)
+SeeAlso: #02287
+
+Bitfields for NetWare AFP request bitmap:
+Bit(s)	Description	(Table 02286)
+ 0	return AFP entry ID
+ 1	return data fork length
+ 2	return resource fork length
+ 3	return number of contained files/subdirectories
+ 4	return owner ID
+ 5	return short name
+ 6	return access rights
+ 7	??? (unused?)
+ 8	return attributes
+ 9	return parent directory ID
+ 10	return creation date
+ 11	return last-access date
+ 12	return last-modified date and time
+ 13	return last-backup date and time
+ 14	return Finder information
+ 15	return long name
+SeeAlso: #02285,#02312,#02313
+
+Format of NetWare "AFP Get File Information" reply packet:
+Offset	Size	Description	(Table 02287)
+ 00h	DWORD	AFP entry ID for specified file
+ 04h	DWORD	AFP entry ID for specified file's parent directory
+ 08h	WORD	directory/file attributes (see #02288)
+ 0Ah	DWORD	length of data fork
+ 0Eh	DWORD	length of resource fork
+ 12h	WORD	total files and subdirectories contained within entry
+		always 0000h if entry is a file
+ 14h	WORD	creation date in AFP format
+ 16h	WORD	last-access date in AFP format
+ 18h	WORD	last-modified date in AFP format
+ 1Ah	WORD	last-modified time in AFP format
+ 1Ch	WORD	last-backup date in AFP format
+ 1Eh	WORD	last-backup time in AFP format
+ 20h 32 BYTEs	Finder information
+ 40h 32 BYTEs	long filename
+ 60h	DWORD	NetWare object ID of owner
+ 64h 12 BYTEs	short filename (MS-DOS 8.3 format)
+ 70h	WORD	access privileges (see #02289)
+SeeAlso: #02285,#02314
+
+Bitfields for NetWare AFP file/directory attributes:
+Bit(s)	Description	(Table 02288)
+ 0	search mode
+ 1	search mode
+ 2	search mode
+ 3	(undefined)
+ 4	transaction
+ 5	index
+ 6	read audit
+ 7	write audit
+ 8	read-only
+ 9	hidden
+ 10	system
+ 11	execute-only
+ 12	subdirectory
+ 13	archive
+ 14	(undefined)
+ 15	shareable file
+SeeAlso: #02287,#02298,#02313
+
+Bitfields for NetWare AFP access privileges:
+Bit(s)	Description	(Table 02289)
+ 8	read (files)
+ 9	write (files)
+ 10	open (files)
+ 11	create (files)
+ 12	delete (files)
+ 13	parental (directories): create/delete/rename subdirectories
+ 14	search (directories)
+ 15	modify file status flags
+SeeAlso: #02287,#02313,#02303
+--------N-21F223SF06-------------------------
+INT 21 - Novell NetWare v2+ - AFP GET ENTRY ID FROM NETWARE HANDLE
+	AX = F223h subfn 06h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02290)
+	ES:DI -> reply buffer (see #02291)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F223h/SF=04h,AX=F223h/SF=0Ch,AX=F223h/SF=12h
+
+Format of NetWare "AFP Get Entry ID from NetWare Handle" request packet:
+Offset	Size	Description	(Table 02290)
+ 00h	WORD	(big-endian) length of following data
+ 02h	BYTE	06h (subfunction "AFP Get Entry ID from NetWare Handle")
+ 03h  6 BYTEs	NetWare file handle
+SeeAlso: #02291,#02283
+
+Format of NetWare "AFP Get Entry ID from NetWare Handle" reply packet:
+Offset	Size	Description	(Table 02291)
+ 00h	BYTE	volume number
+ 01h	DWORD	AFP entry ID corresponding to same file as NetWare handle
+ 05h	BYTE	fork indicator (00h data fork, 01h resource fork)
+SeeAlso: #02290,#02284
+--------N-21F223SF07-------------------------
+INT 21 - Novell NetWare v2+ - AFP RENAME
+	AX = F223h subfn 07h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02292)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F223h/SF=01h,AX=F223h/SF=03h,AX=F223h/SF=08h
+
+Format of NetWare "AFP Rename" request packet:
+Offset	Size	Description	(Table 02292)
+ 00h	WORD	(big-endian) length of following data
+ 02h	BYTE	07h (subfunction "AFP Rename")
+ 03h	BYTE	volume number
+ 04h	DWORD	source AFP entry ID
+ 08h	DWORD	destination AFP entry ID
+ 0Ch	BYTE	source path length
+ 0Dh  N BYTEs	AFP-style source path (relative to source AFP entry ID)
+	BYTE	destination path length
+      N BYTEs	AFP-style destination path (relative to destination entry ID)
+Note:	the file may be moved from one directory to another without being
+	  renamed by setting the destination path to the empty string
+--------N-21F223SF08-------------------------
+INT 21 - Novell NetWare v2+ - AFP OPEN FILE FORK
+	AX = F223h subfn 08h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02293)
+	ES:DI -> reply buffer (see #02294)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F223h/SF=01h,AX=F223h/SF=05h,AX=F223h/SF=09h
+
+Format of NetWare "AFP Open File Fork" request packet:
+Offset	Size	Description	(Table 02293)
+ 00h	WORD	(big-endian) length of following data
+ 02h	BYTE	08h (subfunction "AFP Open File Fork")
+ 03h	BYTE	volume number
+ 04h	DWORD	AFP entry ID
+ 08h	BYTE	fork indicator (00h = data fork, 01h = resource fork)
+ 09h	BYTE	access mode
+		bit 0: read
+		bit 1: write
+		bit 2: deny read access to others
+		bit 3: deny write access to others
+		bit 4: compatibility mode (should be set)
+ 0Ah	BYTE	path length
+ 0Bh  N BYTEs	AFP-style pathname (relative to AFP entry ID)
+SeeAlso: #02294
+
+Format of NetWare "AFP Open File Fork" reply packet:
+Offset	Size	Description	(Table 02294)
+ 00h	DWORD	AFP entry ID for newly-opened file fork
+ 04h	DWORD	length of opened fork
+ 08h  6 BYTEs	NetWare file handle
+SeeAlso: #02293
+--------N-21F223SF09-------------------------
+INT 21 - Novell NetWare v2+ - AFP SET FILE INFORMATION
+	AX = F223h subfn 09h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02295)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F223h/SF=05h,AX=F223h/SF=0Ah,AX=F223h/SF=13h
+
+Format of NetWare "AFP Set File Information" request packet:
+Offset	Size	Description	(Table 02295)
+ 00h	WORD	(big-endian) length of following data
+ 02h	BYTE	09h (subfunction "AFP Set File Information")
+ 03h	BYTE	volume number
+ 04h	DWORD	AFP entry ID
+ 08h	WORD	request bitmap (see #02296)
+ 0Ah	WORD	directory/file attributes (see #02311)
+ 0Ch	WORD	creation date in AFP format
+ 0Eh	WORD	last-access date in AFP format
+ 10h	WORD	last-modified date in AFP format
+ 12h	WORD	last-modified time in AFP format
+ 14h	WORD	last-backup date in AFP format
+ 16h	WORD	last-backup time in AFP format
+ 18h 32 BYTEs	Finder information
+ 38h	BYTE	path length
+ 39h  N BYTEs	AFP-style pathname (relative to AFP entry ID)
+SeeAlso: #02310
+
+Bitfields for NetWare AFP request bitmap:
+Bit(s)	Description	(Table 02296)
+ 8	set attributes
+ 10	set creation date
+ 11	set last-access date
+ 12	set last-modified date
+ 13	set last-backup date
+ 14	set Finder information
+SeeAlso: #02295,#02310
+--------N-21F223SF0A-------------------------
+INT 21 - Novell NetWare v2+ - AFP SCAN FILE INFORMATION
+	AX = F223h subfn 0Ah
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02297)
+	ES:DI -> reply buffer (see #02299)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F223h/SF=01h,AX=F223h/SF=03h,AX=F223h/SF=08h
+
+Format of NetWare "AFP Scan File Information" request packet:
+Offset	Size	Description	(Table 02297)
+ 00h	WORD	(big-endian) length of following data
+ 02h	BYTE	0Ah (subfunction "AFP Scan File Information")
+ 03h	BYTE	volume number
+ 04h	DWORD	AFP entry ID
+ 08h	DWORD	AFP last-seen ID (from previous call)
+		FFFFFFFFh on first call
+ 0Ch	WORD	number of entries to return (max. 4)
+ 0Eh	WORD	search bitmap (see #02298)
+ 10h	WORD	request bitmap (see #02286)
+ 12h	BYTE	path length
+ 13h  N BYTEs	AFS-style directory path (relative to AFP entry ID)
+SeeAlso: #02299,#02312
+
+Bitfields for NetWare AFP search bitmap:
+Bit(s)	Description	(Table 02298)
+ 8	hidden files and directories
+ 9	system files and directories
+ 10	subdirectories
+ 11	files
+SeeAlso: #02297,#02312,#02286,#02288
+
+Format of NetWare "AFP Scan File Information" reply packet:
+Offset	Size	Description	(Table 02299)
+ 00h	WORD	number of entries returned
+ 02h 120N BYTEs	file information records (see #02300)
+SeeAlso: #02297
+
+Format of NetWare AFP file information:
+Offset	Size	Description	(Table 02300)
+ 00h	DWORD	AFP entry ID
+ 04h	DWORD	parent directory's AFP entry ID
+ 08h	WORD	directory/file attributes (see #02288)
+ 0Ah	DWORD	length of data fork
+ 0Eh	DWORD	length of resource fork
+ 12h	WORD	total files and subdirectories contained within entry
+		always 0000h if entry is a file
+ 14h	WORD	creation date in AFP format
+ 16h	WORD	last-access date in AFP format
+ 18h	WORD	last-modified date in AFP format
+ 1Ah	WORD	last-modified time in AFP format
+ 1Ch	WORD	last-backup date in AFP format
+ 1Eh	WORD	last-backup time in AFP format
+ 20h 32 BYTEs	Finder information
+ 40h 32 BYTEs	long filename
+ 60h	DWORD	NetWare object ID of owner
+ 64h 12 BYTEs	short filename (MS-DOS 8.3 format)
+ 70h	WORD	access privileges (see #02289)
+SeeAlso: #02299
+--------N-21F223SF0B-------------------------
+INT 21 - Novell NetWare v2+ - AFP ALLOCATE TEMPORARY DIRECTORY HANDLE
+	AX = F223h subfn 0Bh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02301)
+	ES:DI -> reply buffer (see #02302)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F223h/SF=0Dh
+
+Format of NetWare "AFP Alloc Temporary Directory Handle" request packet:
+Offset	Size	Description	(Table 02301)
+ 00h	WORD	(big-endian) length of following data
+ 02h	BYTE	0Bh (subfunction "AFT Alloc Temporary Directory Handle")
+ 03h	BYTE	volume number
+ 04h	DWORD	AFP entry ID
+ 08h	BYTE	path length
+ 09h  N BYTEs	AFP-style pathname
+SeeAlso: #02302
+
+Format of NetWare "AFP Alloc Temporary Directory Handle" request packet:
+Offset	Size	Description	(Table 02302)
+ 00h	BYTE	directory handle
+ 01h	BYTE	NetWare access rights (see #02303)
+SeeAlso: #02301
+
+Bitfields for NetWare AFP access rights:
+Bit(s)	Description	(Table 02303)
+ 0	read
+ 1	write
+ 2	open
+ 3	create
+ 4	delete
+ 5	parental: create/delete/rename subdirectories
+ 6	search
+ 7	modify file status flags
+SeeAlso: #02302,#02289
+--------N-21F223SF0C-------------------------
+INT 21 - Novell NetWare v2+ - AFP GET ENTRY ID FROM PATHNAME
+	AX = F223h subfn 0Ch
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02304)
+	ES:DI -> reply buffer (see #02305)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F223h/SF=04h,AX=F223h/SF=06h,AX=F223h/SF=12h
+
+Format of NetWare "AFP Get Entry ID from Path Name" request packet:
+Offset	Size	Description	(Table 02304)
+ 00h	WORD	(big-endian) length of following data
+ 02h	BYTE	0Ch (subfunction "AFP Get Entry ID from Path Name")
+ 03h	BYTE	NetWare directory handle
+ 04h	BYTE	path length
+ 05h  N BYTEs	pathname
+SeeAlso: #02305
+
+Format of NetWare "AFP Get Entry ID from Path Name" reply packet:
+Offset	Size	Description	(Table 02305)
+ 00h	DWORD	AFP entry ID corresponding to specified file
+SeeAlso: #02304
+--------N-21F223SF0D-------------------------
+INT 21 - Novell NetWare v2+ - AFP 2.0 CREATE DIRECTORY
+	AX = F223h subfn 0Dh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02306)
+	ES:DI -> reply buffer (see #02307)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F223h/SF=01h,AX=F223h/SF=0Eh
+
+Format of NetWare "AFP 2.0 Create Directory" request buffer:
+Offset	Size	Description	(Table 02306)
+ 00h	WORD	(big-endian) length of following data
+ 02h	BYTE	0Dh (subfunction "AFP 2.0 Create Directory")
+ 03h	BYTE	volume number
+ 04h	DWORD	AFP entry ID
+ 08h	BYTE	reserved for future use
+ 09h 32	BYTEs	Finder information
+ 29h  6 BYTEs	ProDOS information
+ 2Fh	BYTE	path length
+ 30h	var	AFS-style directory path (relative to AFP entry)
+SeeAlso: #02307,#02278
+
+Format of NetWare "AFP 2.0 Create Directory" reply buffer:
+Offset	Size	Description	(Table 02307)
+ 00h	DWORD	new directory ID
+SeeAlso: #02306,#02279
+--------N-21F223SF0E-------------------------
+INT 21 - Novell NetWare v2+ - AFP 2.0 CREATE FILE
+	AX = F223h subfn 0Eh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02308)
+	ES:DI -> reply buffer (see #02309)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F223h/SF=0Dh
+
+Format of NetWare "AFP 2.0 Create File" request packet:
+Offset	Size	Description	(Table 02308)
+ 00h	WORD	(big-endian) length of following data
+ 02h	BYTE	0Eh (function "AFP 2.0 Create File")
+ 03h	BYTE	volume number
+ 04h	DWORD	AFP entry ID
+ 08h	BYTE	flag: delete existing file? (00h no, 01h yes)
+ 09h 32 BYTEs	Finder information
+ 29h  6 BYTEs	ProDOS information
+ 2Fh	BYTE	path length
+ 30h	var	AFP-style pathname (relative to AFP entry ID)
+SeeAlso: #02309,#02280
+
+Format of NetWare "AFP 2.0 Create File" reply packet:
+Offset	Size	Description	(Table 02309)
+ 00h	DWORD	new file ID
+SeeAlso: #02308,#02281
+--------N-21F223SF10-------------------------
+INT 21 - Novell NetWare v2+ - AFP 2.0 SET FILE INFORMATION
+	AX = F223h subfn 10h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02310)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F223h/SF=09h,AX=F223h/SF=11h
+
+Format of NetWare "AFP 2.0 Set File Information" request packet:
+Offset	Size	Description	(Table 02310)
+ 00h	WORD	(big-endian) length of following data
+ 02h	BYTE	10h (subfunction "AFS 2.0 Set File Information")
+ 03h	BYTE	volume number
+ 04h	DWORD	AFP entry ID
+ 08h	WORD	request bitmap (see #02296)
+ 0Ah	WORD	directory/file attributes (see #02311)
+ 0Ch	WORD	creation date in AFP format
+ 0Eh	WORD	last-access date in AFP format
+ 10h	WORD	last-modified date in AFP format
+ 12h	WORD	last-modified time in AFP format
+ 14h	WORD	last-backup date in AFP format
+ 16h	WORD	last-backup time in AFP format
+ 18h 32 BYTEs	Finder information
+ 38h  6 BYTEs	ProDOS information
+ 3Eh	BYTE	path length
+ 3Fh  N BYTEs	AFP-style pathname (relative to AFP entry ID)
+SeeAlso: #02295
+
+Bitfields for NetWare AFP directory/file attributes:
+Bit(s)	Description	(Table 02311)
+ 0	read-only
+ 1	hidden
+ 2	system
+ 3	execute-only
+ 4	subdirectory
+ 5	archive
+ 7	shareable file
+SeeAlso: #02310
+--------N-21F223SF11-------------------------
+INT 21 - Novell NetWare v2+ - AFP 2.0 SCAN FILE INFORMATION
+	AX = F223h subfn 11h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02312)
+	ES:DI -> reply buffer (see #02313)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F223h/SF=0Dh,AX=F223h/SF=10h
+
+Format of NetWare "AFP 2.0 Scan File Information" request packet:
+Offset	Size	Description	(Table 02312)
+ 00h	WORD	(big-endian) length of following data
+ 02h	BYTE	11h (subfunction "AFP 2.0 Scan File Information")
+ 03h	BYTE	volume number
+ 04h	DWORD	AFP entry ID
+ 08h	DWORD	AFP last-seen ID (from previous call)
+		FFFFFFFFh on first call
+ 0Ch	WORD	number of entries to return (max. 4)
+ 0Eh	WORD	search bitmap (see #02298)
+ 10h	WORD	request bitmap (see #02286)
+ 12h	BYTE	path length
+ 13h  N BYTEs	AFS-style directory path (relative to AFP entry ID)
+SeeAlso: #02313
+
+Format of NetWare "AFP 2.0 Scan File Information" reply packet:
+Offset	Size	Description	(Table 02313)
+ 00h	WORD	number of entries returned
+ 02h 120N BYTEs	file information records (see #02314)
+SeeAlso: #02312
+
+Format of NetWare AFP 2.0 file information:
+Offset	Size	Description	(Table 02314)
+ 00h	DWORD	AFP entry ID
+ 04h	DWORD	parent directory's AFP entry ID
+ 08h	WORD	directory/file attributes (see #02288)
+ 0Ah	DWORD	length of data fork
+ 0Eh	DWORD	length of resource fork
+ 12h	WORD	total files and subdirectories contained within entry
+		always 0000h if entry is a file
+ 14h	WORD	creation date in AFP format
+ 16h	WORD	last-access date in AFP format
+ 18h	WORD	last-modified date in AFP format
+ 1Ah	WORD	last-modified time in AFP format
+ 1Ch	WORD	last-backup date in AFP format
+ 1Eh	WORD	last-backup time in AFP format
+ 20h 32 BYTEs	Finder information
+ 40h 32 BYTEs	long filename
+ 60h	DWORD	NetWare object ID of owner
+ 64h 12 BYTEs	short filename (MS-DOS 8.3 format)
+ 70h	WORD	access privileges (see #02289)
+ 72h  6 BYTEs	ProDOS information
+SeeAlso: #02313,#02286,#02287
+--------N-21F223SF12-------------------------
+INT 21 - Novell NetWare v2+ - AFP GET DOS FILENAME FROM ENTRY ID
+	AX = F223h subfn 12h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02315)
+	ES:DI -> reply buffer (see #02316)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F223h/SF=04h,AX=F223h/SF=06h
+
+Format of NetWare "AFP Get DOS Name from Entry ID" request packet:
+Offset	Size	Description	(Table 02315)
+ 00h	WORD	(big-endian) length of following data
+ 02h	BYTE	12h (subfunction "AFP Get DOS Name From Entry ID")
+ 03h	BYTE	volume number
+ 04h	DWORD	AFP entry ID
+SeeAlso: #02316
+
+Format of NetWare "AFP Get DOS Name from Entry ID" reply packet:
+Offset	Size	Description	(Table 02316)
+ 00h	BYTE	length of DOS pathname
+ 01h  N BYTEs	pathname corresponding to AFP entry ID
+SeeAlso: #02315
+--------N-21F223SF13-------------------------
+INT 21 - Novell NetWare v2+ - AFP GET MACINTOSH INFORMATION ON DELETED FILE
+	AX = F223h subfn 13h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02317)
+	ES:DI -> reply buffer (see #02318)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F223h/SF=04h,AX=F223h/SF=05h,AX=F223h/SF=09h
+
+Format of NetWare "AFP Get Macintosh Info on Deleted File" request packet:
+Offset	Size	Description	(Table 02317)
+ 00h	WORD	(big-endian) length of following data
+ 02h	BYTE	13h (subfunction "AFP Get Macintosh Info on Deleted File")
+ 03h	BYTE	volume number
+ 04h	DWORD	server's DOS directory entry index
+SeeAlso: #02318
+
+Format of NetWare "AFP Get Macintosh Info on Deleted File" reply packet:
+Offset	Size	Description	(Table 02318)
+ 00h 32 BYTEs	Finder information
+ 20h  6 BYTEs	ProDOS information
+ 26h	DWORD	size of resource fork
+ 2Ah	BYTE	length of filename
+ 2Bh  N BYTEs	filename
+SeeAlso: #02317
+--------N-21F23D-----------------------------
+INT 21 - Novell NetWare - COMMIT FILE
+	AX = F23Dh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02323)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=3Eh,AH=F2h"Novell",AX=F23Eh,AX=F243h
+--------N-21F23E-----------------------------
+INT 21 - Novell NetWare - FILE SEARCH INITIALIZE (FindFirst)
+	AX = F23Eh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02319)
+	ES:DI -> reply buffer (see #02320)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=4Eh,AH=F2h"Novell",AX=F23Fh,AX=F242h
+
+Format of NetWare "File Search Initialize" request packet:
+Offset	Size	Description	(Table 02319)
+ 00h	BYTE	directory handle
+ 01h	BYTE	length of directory path
+ 02h  N BYTEs	path of directory to search, in VOLUME:DIRECTORY/... format
+SeeAlso: #02320,#02321
+
+Format of NetWare "File Search Initialize" reply packet:
+Offset	Size	Description	(Table 02320)
+ 00h	BYTE	volume number
+ 01h	WORD	directory ID
+ 03h	WORD	search sequence number
+ 05h	BYTE	directory access rights
+SeeAlso: #02319,#02322
+--------N-21F23F-----------------------------
+INT 21 - Novell NetWare - FILE SEARCH CONTINUE (FindNext)
+	AX = F23Fh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02321)
+	ES:DI -> reply buffer (see #02322)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=4Eh,AH=F2h"Novell",AX=F23Eh,AX=F242h
+
+Format of NetWare "File Search Continue" request packet:
+Offset	Size	Description	(Table 02321)
+ 00h	BYTE	volume number
+ 02h	WORD	directory ID from File Search Initialize
+ 04h	WORD	search sequence (set to FFFFh before first call)
+ 06h	BYTE	search attributes
+ 07h	BYTE	length of search directory path
+ 08h  N BYTEs	name of search directory in VOLUME:DIRECTORY/.../DIR format
+SeeAlso: #02322
+
+Format of NetWare "File Search Continue" reply packet:
+Offset	Size	Description	(Table 02322)
+ 00h	WORD	next search sequence
+ 02h	WORD	directory ID from File Search Initialize
+ 04h	WORD	reserved for future use
+ 06h 14 BYTEs	filename
+ 14h	BYTE	file attributes
+ 15h	BYTE	file mode
+ 16h	DWORD	file length
+ 2Ah	WORD	creation date
+ 2Ch	WORD	last-access date
+ 2Eh	WORD	last-modification date
+ 30h	WORD	last-modification time
+SeeAlso: #02321
+--------N-21F242-----------------------------
+INT 21 - Novell NetWare - CLOSE FILE
+	AX = F242h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02323)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=3Eh,AH=F2h"Novell",AX=F23Eh,AX=F243h,AX=F24Ah
+
+Format of NetWare "Commit/Close File" request packet:
+Offset	Size	Description	(Table 02323)
+ 00h	BYTE	reserved (0)
+ 01h  6 BYTEs	NetWare file handle
+--------N-21F243-----------------------------
+INT 21 - Novell NetWare - CREATE FILE
+	AX = F243h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02324)
+	ES:DI -> reply buffer (see #02325)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=3Ch,AH=F2h"Novell",AX=F23Eh,AX=F242h,AX=F24Ah,AX=F24Dh
+
+Format of NetWare "Create File" request packet:
+Offset	Size	Description	(Table 02324)
+ 00h	BYTE	directory handle
+ 01h	BYTE	file attributes
+ 02h	BYTE	length of filename
+ 03h  N BYTEs	filename in DOS format
+SeeAlso: #02325
+
+Format of NetWare "Create File" reply packet:
+Offset	Size	Description	(Table 02325)
+ 00h  6 BYTEs	NetWare file handle
+ 06h	WORD	reserved
+ 08h 14 BYTEs	DOS-format filename
+ 16h	BYTE	file attributes
+ 17h	BYTE	file execute type
+ 18h	DWORD	file length
+ 1Ch	WORD	creation date
+ 1Eh	WORD	last-access date
+ 20h	WORD	last-modification date
+ 22h	WORD	last-modification time
+SeeAlso: #02324
+--------N-21F244-----------------------------
+INT 21 - Novell NetWare - FILE SERVICES - ERASE FILE
+	AX = F244h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02327)
+	ES:DI ignored
+Return: AL = status (see #02326)
+Note:	this function only marks the file for deletion; use AH=E2h/SF=CEh to
+	  actually delete all marked files
+SeeAlso: AH=13h,AH=41h,AH=E2h/SF=0Bh,AH=E3h/SF=CEh
+
+(Table 02326)
+Values for NetWare function status:
+ 00h	successful
+ 98h	nonexistent volume
+ 9Bh	invaid directory handle
+ 9Ch	invalid path
+ FFh	no files found
+SeeAlso: #02070,#02836 at INT 2F/AX=7A20h/BX=0000h
+
+Format of NetWare "Erase Files" request packet:
+Offset	Size	Description	(Table 02327)
+ 00h	BYTE	directory handle
+ 01h	BYTE	search attributes (see #01397 at AX=4301h)
+ 02h	BYTE	length of filespec
+ 03h  N BYTEs	ASCIZ filespec (may include wildcards)
+--------N-21F247-----------------------------
+INT 21 - Novell NetWare - GET CURRENT FILE SIZE
+	AX = F247h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02328)
+	ES:DI -> reply buffer (see #02329)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=42h,AH=F2h"Novell",AX=F23Eh,AX=F242h,AX=F24Ah,AX=F24Dh
+
+Format of NetWare "Get Current Size of File" request packet:
+Offset	Size	Description	(Table 02328)
+ 00h	BYTE	reserved for future use
+ 01h  6 BYTEs	NetWare file handle
+SeeAlso: #02329
+
+Format of NetWare "Get Current Size of File" reply packet:
+Offset	Size	Description	(Table 02329)
+ 00h	DWORD	current size of file
+SeeAlso: #02328
+--------N-21F24A-----------------------------
+INT 21 - Novell NetWare - COPY FROM ONE FILE TO ANOTHER
+	AX = F24Ah
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02330)
+	ES:DI -> reply buffer (see #02331)
+Return: AX = status (see #02326)
+Note:	this function only marks the file for deletion; use AH=E2h/SF=CEh to
+	  actually delete all marked files
+SeeAlso: AH=F2h"Novell",AX=F243h,AX=F247h,AH=F3h"NetWare"
+
+Format of NetWare "Copy from One File to Another" request packet:
+Offset	Size	Description	(Table 02330)
+ 00h	BYTE	reserved for future use
+ 01h  6 BYTEs	source NetWare file handle
+ 07h  6 BYTEs	destination NetWare file handle
+ 0Dh	DWORD	source file offset
+ 11h	DWORD	destination file offset
+ 15h	DWORD	number of bytes to copy
+SeeAlso: #02331
+
+Format of NetWare "Copy from One File to Another" reply packet:
+Offset	Size	Description	(Table 02331)
+ 00h	DWORD	number of bytes actually copied
+SeeAlso: #02330
+--------N-21F24D-----------------------------
+INT 21 - Novell NetWare - CREATE NEW FILE
+	AX = F24Dh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02332)
+	ES:DI -> reply buffer (see #02333)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AX=6C00h,AH=F2h"Novell",AX=F23Eh,AX=F242h,AX=F243h
+
+Format of NetWare "Create New File" request packet:
+Offset	Size	Description	(Table 02332)
+ 00h	BYTE	directory handle
+ 01h	BYTE	file attributes
+ 02h	BYTE	length of filename
+ 03h  N BYTEs	filename in DOS format
+SeeAlso: #02333
+
+Format of NetWare "Create New File" reply packet:
+Offset	Size	Description	(Table 02333)
+ 00h  6 BYTEs	NetWare file handle
+ 06h	WORD	reserved
+ 08h 14 BYTEs	DOS-format filename
+ 16h	BYTE	file attributes
+ 17h	BYTE	file execute type
+ 18h	DWORD	file length
+ 1Ch	WORD	creation date
+ 1Eh	WORD	last-access date
+ 20h	WORD	last-modification date
+ 22h	WORD	last-modification time
+SeeAlso: #02332
+--------N-21F24E-----------------------------
+INT 21 - Novell NetWare v2+ - ALLOW TASK ACCESS TO FILE
+	AX = F24Eh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02334)
+	ES:DI -> reply buffer (see #02335)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+Desc:	allow calling task to gain access to an already-open file belonging
+	  to another task of the same client
+Note:	the caller receives the same access rights as the owning task, and
+	  must use the returned new handle to access the file
+SeeAlso: AH=F2h"NetWare",AX=F244h
+
+Format of NetWare "Allow Task Access to File" request packet:
+Offset	Size	Description	(Table 02334)
+ 00h	BYTE	reserved for future use
+ 01h  6 BYTEs	NetWare file handle
+SeeAlso: #02335
+
+Format of NetWare "Allow Task Access to File" reply packet:
+Offset	Size	Description	(Table 02335)
+ 00h  6 BYTEs	new file handle
+SeeAlso: #02334
+--------N-21F256SF01-------------------------
+INT 21 - Novell NetWare - CLOSE EXTENDED ATTRIBUTE HANDLE
+	AX = F256h subfn 01h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02336)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F256h/SF=02h,AX=F256h/SF=04h,AX=F256h/SF=05h
+
+Format of NetWare "Close Extended Attribute Handle" request packet:
+Offset	Size	Description	(Table 02336)
+ 00h	BYTE	01h (subfunction "Close Extended Attribute Handle")
+ 01h	WORD	reserved for future use
+ 03h	DWORD	extended attribute handle
+--------N-21F256SF02-------------------------
+INT 21 - Novell NetWare - WRITE EXTENDED ATTRIBUTE
+	AX = F256h subfn 02h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02337)
+	ES:DI -> reply buffer (see #02338)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F256h/SF=01h,AX=F256h/SF=03h,AX=F256h/SF=05h
+
+Format of NetWare "Write Extended Attribute" request packet:
+Offset	Size	Description	(Table 02337)
+ 00h	BYTE	02h (subfunction "Write Extended Attribute")
+ 01h	WORD	flags (see #02348)
+ 03h  8 BYTEs	extended attribute handle structure (see #02349)
+ 0Bh	DWORD	write size
+ 0Fh	DWORD	write position
+ 13h	DWORD	access flag
+ 17h	WORD	length of value
+ 19h	WORD	key length
+ 1Bh  N BYTEs	key
+      N BYTEs	value
+SeeAlso: #02337,#02339
+
+Format of NetWare "Write Extended Attribute" reply packet:
+Offset	Size	Description	(Table 02338)
+ 00h	DWORD	error code
+ 04h	DWORD	number of bytes written
+ 08h	DWORD	new extended attribute handle
+SeeAlso: #02337
+--------N-21F256SF03-------------------------
+INT 21 - Novell NetWare - READ EXTENDED ATTRIBUTE
+	AX = F256h subfn 03h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02339)
+	ES:DI -> reply buffer (see #02340)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F256h/SF=01h,AX=F256h/SF=04h,AX=F256h/SF=05h
+
+Format of NetWare "Read Extended Attribute" request packet:
+Offset	Size	Description	(Table 02339)
+ 00h	BYTE	03h (subfunction "Read Extended Attribute")
+ 01h	WORD	flags (see #02348)
+ 03h  8 BYTEs	extended attribute handle structure (see #02349)
+ 0Bh	DWORD	read position
+ 0Fh	DWORD	inspect size
+ 13h	WORD	key length
+ 15h  N BYTEs	key
+SeeAlso: #02340,#02337
+
+Format of NetWare "Read Extended Attribute" reply packet:
+Offset	Size	Description	(Table 02340)
+ 00h	DWORD	error code
+ 04h	DWORD	total extended attribute value length
+ 08h	DWORD	new extended attribute handle
+ 0Ch	DWORD	access flag
+ 10h	WORD	value length
+ 12h  N BYTEs	EA value
+SeeAlso: #02339
+--------N-21F256SF04-------------------------
+INT 21 - Novell NetWare - ENUMERATE EXTENDED ATTRIBUTES
+	AX = F256h subfn 04h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02341)
+	ES:DI -> reply buffer (see #02342)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F256h/SF=01h,AX=F256h/SF=02h,AX=F256h/SF=05h
+
+Format of NetWare "Enumerate Extended Attributes" request packet:
+Offset	Size	Description	(Table 02341)
+ 00h	BYTE	04h (subfunction "Enumerate Extended Attributes")
+ 01h	WORD	flags (see #02348)
+ 03h  8 BYTEs	extended attribute handle structure (see #02349)
+ 0Bh	DWORD	inspect size
+ 0Fh	WORD	enumeration sequence
+ 11h	WORD	key length
+ 13h  N BYTEs	key
+SeeAlso: #02342
+
+Format of NetWare "Enumerate Extended Attributes" reply packet:
+Offset	Size	Description	(Table 02342)
+ 00h	DWORD	error code
+ 04h	DWORD	total extended attributes
+ 08h	DWORD	total extended attribute data size
+ 0Ch	DWORD	total extended attribute key size
+ 10h	DWORD	new extended attribute handle
+---information level 0---
+ 14h  2 WORDs	reserved
+---information level 1---
+ 14h	WORD	number of enumerated extended attribute structures
+ 16h	var	EA structure level 1
+---information level 6---
+ 14h	WORD	reserved
+ 16h	var	EA structure level 6
+---information level 7---
+ 14h	WORD	number of enumerated extended attribute structures
+ 16h	var	EA structure level 7
+SeeAlso: #02341
+
+Format of NetWare Extended Attribute structure level 1:
+Offset	Size	Description	(Table 02343)
+ 00h	DWORD	length of EA value
+ 04h	WORD	length of EA key
+ 06h	DWORD	access flag
+ 0Ah  N BYTEs	key
+SeeAlso: #02342,#02344,#02345
+
+Format of NetWare Extended Attribute structure level 6:
+Offset	Size	Description	(Table 02344)
+ 00h	DWORD	length of EA value
+ 04h	WORD	length of EA key
+ 06h	DWORD	access flag
+ 0Ah	DWORD	key extents
+ 0Eh	DWORD	value extents
+ 12h  N BYTEs	key
+SeeAlso: #02342,#02343,#02345
+
+Format of NetWare Extended Attribute structure level 7:
+Offset	Size	Description	(Table 02345)
+ 00h	BYTE	key length
+ 01h  N BYTEs	key
+	BYTE	00h
+SeeAlso: #02342,#02343,#02344
+--------N-21F256SF05-------------------------
+INT 21 - Novell NetWare - DUPLICATE EXTENDED ATTRIBUTES
+	AX = F256h subfn 05h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02346)
+	ES:DI -> reply buffer (see #02347)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F256h/SF=01h,AX=F256h/SF=02h,AX=F256h/SF=04h
+
+Format of NetWare "Duplicate Extended Attributes" request packet:
+Offset	Size	Description	(Table 02346)
+ 00h	BYTE	05h (subfunction "Duplicate Extended Attributes")
+ 01h	WORD	source flags (see #02348)
+ 03h	WORD	destination flags (see #02348)
+ 05h  8 BYTEs	source extended attribute structure (see #02349)
+ 0Dh  8 BYTEs	destination extended attribute structure (see #02349)
+SeeAlso: #02347
+
+Format of NetWare "Duplicate Extended Attributes" reply packet:
+Offset	Size	Description	(Table 02347)
+ 00h	DWORD	number duplicated
+ 04h	DWORD	data size duplicated
+ 08h	DWORD	key size duplicated
+SeeAlso: #02346
+
+Bitfields for NetWare extended attribute flags:
+Bit(s)	Description	(Table 02348)
+ 1-0	extended attribute handle structure type
+	00 volume number and directory entry number
+	01 NetWare file handle
+	10 extended attribute handle
+	11 not used
+ 2	close handle on error
+ 6-4	information level (0,1,6,7)
+ 7	not used
+SeeAlso: #02346,#02349
+
+Format of NetWare extended attribute structure:
+Offset	Size	Description	(Table 02349)
+---type 0---
+ 00h	DWORD	volume number
+ 04h	DWORD	directory entry number
+---type 1---
+ 00h	DWORD	NetWare file handle
+ 04h  4 BYTEs	unused
+---type 2---
+ 00h	DWORD	extended attribute handle
+ 04h  4 BYTEs	unused
+SeeAlso: #02348
+--------N-21F257SF01-------------------------
+INT 21 - Novell NetWare - OPEN/CREATE FILE OR SUBDIRECTORY
+	AX = F257h subfn 01h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02350)
+	ES:DI -> reply buffer (see #02351)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=6C00h,AX=F257h/SF=02h,AX=F257h/SF=04h
+
+Format of NetWare "Open/Create File or Subdirectory" request packet:
+Offset	Size	Description	(Table 02350)
+ 00h	BYTE	01h (subfunction "Open/Create File or Subdirectory")
+ 01h	BYTE	name space (see #02363)
+ 02h	BYTE	open/create mode
+ 03h	WORD	search attributes
+ 05h	DWORD	return information mask
+ 09h	DWORD	create attributes
+ 0Dh	WORD	desired access rights (see #02353)
+ 0Fh		NetWare handle/path structure
+SeeAlso: #02351
+
+Format of NetWare "Open/Create File or Subdirectory" reply packet:
+Offset	Size	Description	(Table 02351)
+ 00h	DWORD	file handle
+ 04h	BYTE	open/create action
+		00h open
+		01h replace
+		03h create
+ 05h	BYTE	reserved
+SeeAlso: #02350
+
+Format of NetWare Handle/Path structure:
+Offset	Size	Description	(Table 02352)
+ 00h	BYTE	volume number
+ 01h	DWORD	directory base or short handle
+ 05h	BYTE	handle flag
+		00h short directory handle
+		01h directory base
+		FFh no handle
+ 06h	BYTE	path component count
+ 07h  N BYTEs	path component
+
+Bitfields for NetWare desired access rights:
+Bit(s)	Description	(Table 02353)
+ 0	read-only mode
+ 1	write-only
+ 2	deny read
+ 3	deny write
+ 4	compatibility mode
+ 6	write-through mode
+SeeAlso: #02350
+--------N-21F257SF02-------------------------
+INT 21 - Novell NetWare - INITIALIZE SEARCH
+	AX = F257h subfn 02h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02354)
+	ES:DI -> reply buffer (see #02355)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=4Eh,AH=F2h"Novell",AX=F257h/SF=01h,AX=F257h/SF=03h
+
+Format of NetWare "Initialize Search" request packet:
+Offset	Size	Description	(Table 02354)
+ 00h	BYTE	02h (subfunction "Initialize Search")
+ 01h	BYTE	name space (see #02363)
+ 02h	BYTE	reserved for future use
+ 03h		NetWare Handle/Path structure (see #02352)
+SeeAlso: #02355
+
+Format of NetWare "Initialize Search" reply packet:
+Offset	Size	Description	(Table 02355)
+ 00h  9 BYTEs	search sequence
+		BYTE	volume number
+		DWORD	directory number
+		DWORD	current directory number
+SeeAlso: #02354
+--------N-21F257SF03-------------------------
+INT 21 - Novell NetWare - SCAN NAMESPACE ENTRY INFO
+	AX = F257h subfn 03h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02356)
+	ES:DI -> reply buffer (see #02357)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F257h/SF=04h,AX=F257h/SF=05h
+
+Format of NetWare "Search for File or Subdirectory" request packet:
+Offset	Size	Description	(Table 02356)
+ 00h	BYTE	03h (subfunction "Search for File or Subdirectory")
+	???
+SeeAlso: #02357
+
+Format of NetWare "Search for File or Subdirectory" reply packet:
+Offset	Size	Description	(Table 02357)
+ 00h	???
+SeeAlso: #02356
+--------N-21F257SF04-------------------------
+INT 21 - Novell NetWare - RENAME OR MOVE FILE OR SUBDIRECTORY
+	AX = F257h subfn 04h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02358)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=56h,AH=F2h"Novell",AX=F257h/SF=02h,AX=F257h/SF=03h,AX=F257h/SF=05h
+
+Format of NetWare "Rename or Move File or Subdirectory" request packet:
+Offset	Size	Description	(Table 02358)
+ 00h	BYTE	04h (subfunction "Rename or Move File or Subdirectory")
+ 01h	BYTE	name space (see #02363)
+ 02h	BYTE	rename flags
+		bit 0: rename successful
+		bit 1: compatibility mode
+ 03h	WORD	search attributes
+ 05h		source NetWare Handle Path
+		destination NetWare Handle Path
+--------N-21F257SF05-------------------------
+INT 21 - Novell NetWare - SCAN FILE OR SUBDIRECTORY FOR TRUSTEES
+	AX = F257h subfn 05h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02359)
+	ES:DI -> reply buffer (see #02360)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F257h/SF=04h,AX=F257h/SF=06h
+
+Format of NetWare "Scan File or Subdirectory for Trustees" request packet:
+Offset	Size	Description	(Table 02359)
+ 00h	BYTE	05h (subfunction "Scan File or Subdirectory for Trustees")
+ 01h	BYTE	name space (see #02363)
+ 02h	BYTE	reserved for future use
+ 03h	DWORD	scan sequence (set to 00000000h before first call)
+ 07h		NetWare Handle/Path structure (see #02352)
+SeeAlso: #02360
+
+Format of NetWare "Scan File or Subdirectory for Trustees" reply packet:
+Offset	Size	Description	(Table 02360)
+ 00h	DWORD	next scan sequence or FFFFFFFFh if no more
+ 04h	WORD	number of trustee object IDs returned
+ 06h		trustee structure
+SeeAlso: #02359
+--------N-21F257SF06-------------------------
+INT 21 - Novell NetWare v3+ - GET INFORMATION ABOUT FILE OR DIRECTORY
+	AX = F257h subfn 06h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02361)
+	ES:DI -> reply buffer (see #02364)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AH=F2h"Novell",AX=F257h/SF=02h,AX=F257h/SF=05h,AX=F257h/SF=07h
+
+Format of NetWare "Get NS Entry Info" request buffer:
+Offset	Size	Description	(Table 02361)
+ 00h	BYTE	06h (subfunction "Get NS Entry Info")
+ 01h	BYTE	name space (see #02363)
+ 02h	BYTE	destination name space
+ 03h	WORD	search attributes
+ 05h	DWORD	return information mask (see #02362)
+ 09h	BYTE	volume number
+ 0Ah	DWORD	directory base
+ 0Eh	BYTE	handle flag
+		00h first byte of dir base is dir handle; ignore volume number
+		01h dir base = unique ID, volume number set
+		FFh volume number and dir base ignored, volume part of path
+ 0Fh	BYTE	number of path components
+ 10h  N BYTEs	list of path components (each a counted string)
+SeeAlso: #02364
+
+Bitfields for return information mask:
+Bit(s)	Description	(Table 02362)
+ 0	include filename
+ 1	data stream space allocated info
+ 2	attributes info
+ 3	data stream size info
+ 4	total space allocated for all data streams
+ 5	extended attributes info
+ 6	archive info
+ 7	modify info
+ 8	create info
+ 9	name space info
+ 10	directory info
+ 11	rights info
+
+(Table 02363)
+Values for NetWare name space:
+ 00h	DOS
+ 01h	Macintosh
+ 02h	NFS
+ 03h	FTAM
+ 04h	OS/2
+SeeAlso: #02361,#02369
+
+Format of NetWare "Get NS Entry Info" reply buffer:
+Offset	Size	Description	(Table 02364)
+ 00h 72 BYTEs	reserved
+ 48h	DWORD	creator's name space number
+ 4Ch 257 BYTEs	reserved
+SeeAlso: #02361
+--------N-21F257SF07-------------------------
+INT 21 - Novell NetWare - MODIFY FILE OR SUBDIRECTORY DOS INFORMATION
+	AX = F257h subfn 07h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02365)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F257h/SF=04h,AX=F257h/SF=08h
+
+Format of NetWare "Modify File or Subdirectory DOS Information" request packet:
+Offset	Size	Description	(Table 02365)
+ 00h	BYTE	07h (subfunction "Modify File or Subdirectory DOS Information")
+ 01h	BYTE	name space (see #02363)
+ 02h	BYTE	reserved for future use
+ 03h	WORD	search attributes
+ 05h	DWORD	modify DOS mask
+ 09h		Modify DOS information structure
+--------N-21F257SF08-------------------------
+INT 21 - Novell NetWare - DELETE FILE/DIRECTORY
+	AX = F257h subfn 08h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02366)
+	ES:DI -> reply buffer (see #02367)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F257h/SF=01h,AX=F257h/SF=07h
+
+Format of NetWare "Delete File/Directory" request packet:
+Offset	Size	Description	(Table 02366)
+ 00h	BYTE	08h (subfunction "Delete File/Directory")
+	???
+SeeAlso: #02367
+
+Format of NetWare "Delete File/Directory" reply packet:
+Offset	Size	Description	(Table 02367)
+ 00h	???
+SeeAlso: #02366
+--------N-21F257SF09-------------------------
+INT 21 - Novell NetWare - SET SHORT DIRECTORY HANDLE
+	AX = F257h subfn 09h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02368)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F257h/SF=0Ch
+
+Format of NetWare "Set Short Directory Handle" request packet:
+Offset	Size	Description	(Table 02368)
+ 00h	BYTE	09h (subfunction "Set Short Directory Handle")
+ 01h	BYTE	name space (see #02363)
+ 02h	BYTE	data stream
+ 03h	BYTE	destination directory handle
+ 04h	BYTE	reserved for future use
+ 05h		NetWare Handle/Path structure (see #02352)
+--------N-21F257SF0A-------------------------
+INT 21 - Novell NetWare v3+ - ADD TRUSTEE SET TO FILE OR SUBDIRECTORY
+	AX = F257h subfn 0Ah
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02369)
+	ES:DI ignored
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AX=F257h/SF=0Bh
+
+Format of NetWare "Add Trustee Set" request packet:
+Offset	Size	Description	(Table 02369)
+ 00h	BYTE	0Ah (subfunction "Add Trustee Set to File or Subdirectory")
+ 01h	BYTE	name space (see #02363)
+ 02h  2 BYTEs	reserved
+ 04h	WORD	trustee rights (see #02117)
+ 06h	WORD	object ID count
+ 08h		NetWare Handle/Path structure (see #02352)
+      6 BYTEs	trustee structure (see #02370)
+
+Format of NetWare trustee structure:
+Offset	Size	Description	(Table 02370)
+ 00h	DWORD	object ID
+ 04h	WORD	trustee rights
+SeeAlso: #02369
+--------N-21F257SF0B-------------------------
+INT 21 - Novell NetWare - DELETE TRUSTEE
+	AX = F257h subfn 0Bh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02371)
+	ES:DI -> reply buffer (see #02372)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F257h/SF=0Ah
+
+Format of NetWare "Delete Trustee" request packet:
+Offset	Size	Description	(Table 02371)
+ 00h	BYTE	0Bh (subfunction "Delete Trustee")
+	???
+SeeAlso: #02372
+
+Format of NetWare "Delete Trustee" reply packet:
+Offset	Size	Description	(Table 02372)
+ 00h	???
+SeeAlso: #02371
+--------N-21F257SF0C-------------------------
+INT 21 - Novell NetWare v2+ - ALLOCATE SHORT DIRECTORY HANDLE
+	AX = F257h subfn 0Ch
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02373)
+	ES:DI -> reply buffer (see #02374)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+Note:	unlike "Alloc Permanent Directory Handle", this function does not
+	  automatically map a drive
+SeeAlso: AH=F2h"Novell",AX=F223h/SF=04h,AX=F223h/SF=05h,AX=F223h/SF=09h
+
+Format of NetWare "Allocate Short Directory Handle" request packet:
+Offset	Size	Description	(Table 02373)
+ 00h	BYTE	0Ch (subfunction "Allocate Short Directory Handle")
+ 01h	BYTE	name space (see #02363)
+ 02h  2 BYTEs	reserved for future use
+ 04h	WORD	allocation mode
+		bits 1-0: 00 permanent handle
+			  01 temporary handle
+			  10 special temporary handle
+			  11 reserved
+ 06h		NetWare Handle/Path structure (see #02352)
+SeeAlso: #02374
+
+Format of NetWare "Allocate Short Directory Handle" reply packet:
+Offset	Size	Description	(Table 02374)
+ 00h	BYTE	new directory handle
+ 01h	BYTE	volume number
+ 02h	DWORD	reserved for future use
+SeeAlso: #02373
+--------N-21F257SF10-------------------------
+INT 21 - Novell NetWare - SCAN SALVAGEABLE FILES
+	AX = F257h subfn 10h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02375)
+	ES:DI -> reply buffer (see #02376)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=1Bh,AX=F257h/SF=11h,AX=F257h/SF=12h
+
+Format of NetWare "Scan Salvageable Files" request packet:
+Offset	Size	Description	(Table 02375)
+ 00h	BYTE	10h (subfunction "Scan Salvageable Files")
+ 01h	BYTE	name space
+ 02h	BYTE	data stream
+ 03h	DWORD	return information mask
+ 07h	DWORD	last sequence (set to FFFFFFFFh before first call)
+ 0Bh		NetWare Handle/Path structure (see #02352)
+SeeAlso: #02376,#02099
+
+Format of NetWare "Scan Salvageable Files" reply packet:
+Offset	Size	Description	(Table 02376)
+ 00h	DWORD	next sequence number
+ 04h	WORD	deletion time
+ 06h	WORD	deletion date
+ 08h	DWORD	ID of deletor
+ 0Ch	DWORD	volume number
+ 10h	DWORD	directory entry number
+ 14h		NetWare Information Structure
+SeeAlso: #02375,#02100
+--------N-21F257SF11-------------------------
+INT 21 - Novell NetWare - RECOVER SALVAGEABLE FILE
+	AX = F257h subfn 11h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02377)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=1Ch,AX=F257h/SF=10h,AX=F257h/SF=12h
+
+Format of NetWare "Recover Salvageable File" request packet:
+Offset	Size	Description	(Table 02377)
+ 00h	BYTE	11h (subfunction "Recover Salvageable File")
+ 01h	BYTE	name space
+ 02h	BYTE	reserved for future use
+ 03h	DWORD	sequence number
+ 07h	DWORD	volume number
+ 0Bh	DWORD	scan directory base
+ 0Fh	BYTE	new file name length
+ 10h  N BYTEs	new file name
+SeeAlso: #02378,#02101
+--------N-21F257SF12-------------------------
+INT 21 - Novell NetWare - PURGE SALVAGEABLE FILE
+	AX = F257h subfn 12h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02378)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F216h/SF=1Dh,AX=F257h/SF=10h,AX=F257h/SF=11h
+
+Format of NetWare "Purge Salvageable File" request packet:
+Offset	Size	Description	(Table 02378)
+ 00h	BYTE	12h (subfunction "Purge Salvageable File")
+ 01h	BYTE	name space
+ 02h	BYTE	reserved
+ 03h	DWORD	sequence number
+ 07h	DWORD	volume number
+ 0Bh	DWORD	directory entry number
+SeeAlso: #02377
+--------N-21F257SF13-------------------------
+INT 21 - Novell NetWare - GET NAMESPACE INFORMATION
+	AX = F257h subfn 13h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02379)
+	ES:DI -> reply buffer (see #02380)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F257h/SF=12h,AX=F257h/SF=15h
+
+Format of NetWare "Get Namespace Information" request packet:
+Offset	Size	Description	(Table 02379)
+ 00h	BYTE	13h (subfunction "Get Namespace Information")
+ 01h	BYTE	source name space (see #02363)
+ 02h	BYTE	destination name space
+ 03h	BYTE	reserved for future use
+ 04h	BYTE	volume number
+ 05h	DWORD	directory base
+ 09h	DWORD	namespace information mask
+SeeAlso: #02380
+
+Format of NetWare "Get Namespace Information" reply packet:
+Offset	Size	Description	(Table 02380)
+ 00h	var	namespace-specific information
+SeeAlso: #02379
+--------N-21F257SF15-------------------------
+INT 21 - Novell NetWare - GET PATH STRING FROM SHORT DIRECTORY HANDLE
+	AX = F257h subfn 15h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02381)
+	ES:DI -> reply buffer (see #02382)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F257h/SF=13h,AX=F257h/SF=16h
+
+Format of NetWare "Get Path String from Short Directory Handle" request packet:
+Offset	Size	Description	(Table 02381)
+ 00h	BYTE	15h (subfunction "Get Path String from Short Directory Handle")
+ 01h	BYTE	name space (see #02363)
+ 02h	BYTE	short directory handle
+SeeAlso: #02382
+
+Format of NetWare "Get Path String from Short Directory Handle" reply packet:
+Offset	Size	Description	(Table 02382)
+ 00h	BYTE	length of path
+ 01h  N BYTEs	full directory path
+SeeAlso: #02381
+--------N-21F257SF16-------------------------
+INT 21 - Novell NetWare - GENERATE DIRECTORY BASE AND VOLUME NUMBER
+	AX = F257h subfn 16h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02383)
+	ES:DI -> reply buffer (see #02384)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F257h/SF=15h,AX=F257h/SF=17h
+
+Format of NetWare "Generate Directory Base and Volume Number" request packet:
+Offset	Size	Description	(Table 02383)
+ 00h	BYTE	16h (subfunction "Generate Directory Base and Volume Number")
+ 01h	BYTE	name space (#02802)
+ 02h  3 BYTEs	reserved for future use
+ 05h		NetWare Handle/Path structure (see #02352)
+SeeAlso: #02384
+
+Format of NetWare "Generate Directory Base and Volume Number" reply packet:
+Offset	Size	Description	(Table 02384)
+ 00h	DWORD	namespace directory base
+ 04h	DWORD	DOS directory base
+ 08h	BYTE	volume number
+SeeAlso: #02383
+--------N-21F257SF17-------------------------
+INT 21 - Novell NetWare - GET NAME SPACE INFORMATION FORMAT
+	AX = F257h subfn 17h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02385)
+	ES:DI -> reply buffer (see #02386)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F257h/SF=18h,AX=F257h/SF=19h
+
+Format of NetWare "Get Name Space Information Format" request packet:
+Offset	Size	Description	(Table 02385)
+ 00h	BYTE	17h (subfunction "Get Name Space Information Format")
+ 01h	BYTE	name space (see #02363)
+ 02h	BYTE	volume number
+SeeAlso: #02386
+
+Format of NetWare "Get Name Space Information Format" reply packet:
+Offset	Size	Description	(Table 02386)
+ 00h	DWORD	fixed bitmask
+ 04h	DWORD	variable bitmask
+ 08h	DWORD	huge bitmask
+ 0Ch	WORD	fixed bits defined
+ 0Eh	WORD	variable bits defined
+ 10h	WORD	huge bits defined
+ 12h 128 BYTEs	field lengths
+SeeAlso: #02385
+--------N-21F257SF18-------------------------
+INT 21 - Novell NetWare - GET NAME SPACES LOADED
+	AX = F257h subfn 18h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02387)
+	ES:DI -> reply buffer (see #02388)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F257h/SF=17h,AX=F257h/SF=19h,AX=F257h/SF=1Ah
+SeeAlso: AX=F216h/SF=2Fh
+
+Format of NetWare "Get Name Spaces Loaded" request packet:
+Offset	Size	Description	(Table 02387)
+ 00h	BYTE	18h (subfunction "Get Name Spaces Loaded")
+ 01h  2 BYTEs	reserved for future use
+ 03h	BYTE	volume number
+SeeAlso: #02388
+
+Format of NetWare "Get Name Spaces Loaded" reply packet:
+Offset	Size	Description	(Table 02388)
+ 00h	WORD	number of namespace elements
+ 02h	WORD	number of namespace elements loaded
+ 04h  N BYTEs	loaded name spaces (each byte contains number of one loaded
+		  name space)
+SeeAlso: #02387
+--------N-21F257SF19-------------------------
+INT 21 - Novell NetWare - WRITE NAME SPACE INFO
+	AX = F257h subfn 19h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02389)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F257h/SF=17h,AX=F257h/SF=18h
+
+Format of NetWare "Write Name Space Info" request packet:
+Offset	Size	Description	(Table 02389)
+ 00h	BYTE	19h (subfunction "Write Name Space Info")
+ 01h	BYTE	source name space (see #02363)
+ 02h	BYTE	destination name space
+ 03h	BYTE	volume number
+ 04h	DWORD	directory entry number
+ 08h	DWORD	namespace information bitmask
+ 0Ch 512 BYTEs	namespace-specific informatin
+--------N-21F257SF1A-------------------------
+INT 21 - Novell NetWare - READ EXTENDED NAME SPACE INFO
+	AX = F257h subfn 1Ah
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02390)
+	ES:DI -> reply buffer (see #02391)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F257h/SF=18h,AX=F257h/SF=19h,AX=F257h/SF=1Bh
+
+Format of NetWare "Read Extended Name Space Info" request packet:
+Offset	Size	Description	(Table 02390)
+ 00h	BYTE	1Ah (subfunction "Read Extended Name Space Info")
+ 01h	BYTE	name space (see #02363)
+ 02h	BYTE	volume number
+ 03h	DWORD	directory base
+ 07h	DWORD	huge mask
+ 0Bh 16 BYTEs	huge state information
+SeeAlso: #02391
+
+Format of NetWare "Read Extended Name Space Info" reply packet:
+Offset	Size	Description	(Table 02391)
+ 00h 16 BYTEs	next huge state information
+ 10h	DWORD	huge data length
+ 14h  N BYTEs	huge data
+SeeAlso: #02390
+--------N-21F257SF1B-------------------------
+INT 21 - Novell NetWare - WRITE EXTENDED NAME SPACE INFO
+	AX = F257h subfn 1Bh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02392)
+	ES:DI -> reply buffer (see #02393)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F257h/SF=17h,AX=F257h/SF=18h,AX=F257h/SF=1Ah
+
+Format of NetWare "Write Extended Name Space Info" request packet:
+Offset	Size	Description	(Table 02392)
+ 00h	BYTE	1Bh (subfunction "Write Extended Name Space Info")
+ 01h	BYTE	name space (see #02363)
+ 02h	BYTE	volume number
+ 03h	DWORD	directory entry number
+ 07h	DWORD	huge mask
+ 0Bh 16 BYTEs	huge state information
+ 1Bh	DWORD	huge data length
+ 1Fh  N BYTEs	huge data
+SeeAlso: #02393
+
+Format of NetWare "Write Extended Name Space Info" request packet:
+Offset	Size	Description	(Table 02393)
+ 00h 16 BYTEs	next huge state information
+ 10h	DWORD	huge data used
+SeeAlso: #02392
+--------N-21F257SF1C-------------------------
+INT 21 - Novell NetWare - GET NS FULL PATH STRING
+	AX = F257h subfn 1Ch
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02394)
+	ES:DI -> reply buffer (see #02395)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+Note:	this call returns the path in reverse order (root directory last)
+SeeAlso: AH=F2h"Novell",AX=F257h/SF=03h,AX=F257h/SF=15h
+
+Format of NetWare "Get NS Full Path String" request packet:
+Offset	Size	Description	(Table 02394)
+ 00h	BYTE	1Ch (subfunction "Get NS Full Path String")
+ 01h	BYTE	source name space
+ 02h	BYTE	destination name space
+ 03h 10	BYTEs	path cookie (see #02396)
+ 04h		NetWare Handle/Path structure (see #02352)
+SeeAlso: #02395
+
+Format of NetWare "Get NS Full Path String" reply packet:
+Offset	Size	Description	(Table 02395)
+ 00h 10 BYTEs	next path cookie (see #02396)
+ 0Ah	WORD	size of path component(s) in packet
+ 0Ch	WORD	number of path components in packet
+ 0Eh		path components
+SeeAlso: #02394
+
+Format of NetWare path cookie:
+Offset	Size	Description	(Table 02396)
+ 00h	WORD	flags
+		bit 0: last component is a filename
+ 02h	DWORD	cookie1
+ 06h	DWORD	cookie2
+Note:	"cookie1" and "cookie2" are to be set to FFFFFFFFh initially; if
+	  "cookie2" is FFFFFFFFh on return, all path components have been
+	  transferred
+SeeAlso: #02394,#02395
+--------N-21F257SF1D-------------------------
+INT 21 - Novell NetWare - GET EFFECTIVE DIRECTORY RIGHTS
+	AX = F257h subfn 1Dh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02397)
+	ES:DI -> reply buffer (see #02398)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AX=F216h/SF=03h,AX=F257h/SF=06h,AX=F257h/SF=0Ch,AX=F257h/SF=15h
+
+Format of NetWare "Get Effective Directory Rights" request packet:
+Offset	Size	Description	(Table 02397)
+ 00h	BYTE	1Dh (subfunction "Get Effective Directory Rights")
+ 01h	BYTE	name space (see #02363)
+ 02h	BYTE	destination name space (see #02363)
+ 03h	WORD	search attributes
+ 05h	DWORD	return information mask
+ 09h		NetWare Handle/Path structure (see #02352)
+SeeAlso: #02398
+
+Format of NetWare "Get Effective Directory Rights" reply packet:
+Offset	Size	Description	(Table 02398)
+ 00h	WORD	caller's effective rights
+ 02h		NetWare Information Structure
+SeeAlso: #02397
+--------N-21F258SF01-------------------------
+INT 21 - Novell NetWare v4+ - GET VOLUME AUDITING STATISTICS
+	AX = F258h subfn 01h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02399)
+	ES:DI -> reply buffer (see #02400)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AX=F268h/SF=C8h
+
+Format of NetWare "Get Volume Auditing Statistics" request buffer:
+Offset	Size	Description	(Table 02399)
+ 00h	BYTE	01h (function "Get Volume Auditing Statistics")
+ 01h	DWORD	volume
+SeeAlso: #02400
+
+Format of NetWare "Get Volume Auditing Statistics" reply buffer:
+Offset	Size	Description	(Table 02400)
+ 00h	WORD	auditing version (date)
+ 02h	WORD	audit file version (date)
+ 04h	DWORD	auditing enabled flag
+ 08h	DWORD	audit file's size
+ 0Ch	DWORD	audit configuration file's size
+ 10h	DWORD	maximum audit file size
+ 14h	DWORD	audit file size threshold
+ 18h	DWORD	number of audit records
+ 1Ch	DWORD	number of history records
+SeeAlso: #02399,#02452
+--------N-21F258SF02-------------------------
+INT 21 - Novell NetWare - ADD AUDIT PROPERTY
+	AX = F258h subfn 02h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02401)
+	ES:DI -> reply buffer (see #02402)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F217h/SF=39h,AX=F258h/SF=06h,AX=F258h/SF=08h
+
+Format of NetWare "Add Audit Property" request packet:
+Offset	Size	Description	(Table 02401)
+ 00h	BYTE	02h (subfunction "Add Audit Property")
+	???
+SeeAlso: #02402
+
+Format of NetWare "Add Audit Property" reply packet:
+Offset	Size	Description	(Table 02402)
+ 00h	???
+SeeAlso: #02401
+--------N-21F258SF03-------------------------
+INT 21 - Novell NetWare - LOGIN AS VOLUME AUDITOR
+	AX = F258h subfn 03h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02403)
+	ES:DI -> reply buffer (see #02404)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F258h/SF=04h,AX=F258h/SF=0Dh
+
+Format of NetWare "Login As Volume Auditor" request packet:
+Offset	Size	Description	(Table 02403)
+ 00h	BYTE	03h (subfunction "Login As Volume Auditor")
+	???
+SeeAlso: #02404
+
+Format of NetWare "Login As Volume Auditor" reply packet:
+Offset	Size	Description	(Table 02404)
+ 00h	???
+SeeAlso: #02403
+--------N-21F258SF04-------------------------
+INT 21 - Novell NetWare - CHANGE AUDITOR PASSWORD
+	AX = F258h subfn 04h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02405)
+	ES:DI -> reply buffer
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F258h/SF=03h
+
+Format of NetWare "Change Auditor Password" request packet:
+Offset	Size	Description	(Table 02405)
+ 00h	BYTE	04h (subfunction "Change Auditor Password")
+	???
+--------N-21F258SF05-------------------------
+INT 21 - Novell NetWare - CHECK AUDIT ACCESS
+	AX = F258h subfn 05h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02406)
+	ES:DI -> reply buffer
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F258h/SF=02h,AX=F258h/SF=08h
+
+Format of NetWare "Check Audit Access" request packet:
+Offset	Size	Description	(Table 02406)
+ 00h	BYTE	05h (subfunction "Check Audit Access")
+	???
+--------N-21F258SF06-------------------------
+INT 21 - Novell NetWare - REMOVE AUDIT PROPERTY
+	AX = F258h subfn 06h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02407)
+	ES:DI -> reply buffer
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F258h/SF=02h,AX=F258h/SF=05h
+
+Format of NetWare "Remove Audit Property" request packet:
+Offset	Size	Description	(Table 02407)
+ 00h	BYTE	06h (subfunction "Remove Audit Property")
+	???
+--------N-21F258SF07-------------------------
+INT 21 - Novell NetWare - DISABLE AUDITING ON VOLUME
+	AX = F258h subfn 07h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02408)
+	ES:DI -> reply buffer
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F258h/SF=08h,AX=F258h/SF=09h
+
+Format of NetWare "Disable Auditing on Volume" request packet:
+Offset	Size	Description	(Table 02408)
+ 00h	BYTE	07h (subfunction "Disable Auditing on Volume")
+	???
+--------N-21F258SF08-------------------------
+INT 21 - Novell NetWare - ENABLE AUDITING ON VOLUME
+	AX = F258h subfn 08h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02409)
+	ES:DI -> reply buffer
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F258h/SF=07h,AX=F258h/SF=09h
+
+Format of NetWare "Enable Auditing on Volume" request packet:
+Offset	Size	Description	(Table 02409)
+ 00h	BYTE	08h (subfunction "Enable Auditing on Volume")
+	???
+--------N-21F258SF09-------------------------
+INT 21 - Novell NetWare - IS USER AUDITED?
+	AX = F258h subfn 09h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02410)
+	ES:DI -> reply buffer
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F258h/SF=07h,AX=F258h/SF=08h
+
+Format of NetWare "Is User Audited?" request packet:
+Offset	Size	Description	(Table 02410)
+ 00h	BYTE	09h (subfunction "Is User Audited?")
+	???
+--------N-21F258SF0A-------------------------
+INT 21 - Novell NetWare - READ AUDITING BITMAP
+	AX = F258h subfn 0Ah
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02411)
+	ES:DI -> reply buffer (see #02412)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F258h/SF=0Bh,AX=F258h/SF=10h
+
+Format of NetWare "Read Auditing Bitmap" request packet:
+Offset	Size	Description	(Table 02411)
+ 00h	BYTE	0Ah (subfunction "Read Auditing Bitmap")
+	???
+SeeAlso: #02412,#02413
+
+Format of NetWare "Read Auditing Bitmap" reply packet:
+Offset	Size	Description	(Table 02412)
+ 00h	???
+SeeAlso: #02411,#02414
+--------N-21F258SF0B-------------------------
+INT 21 - Novell NetWare - READ AUDIT CONFIG HEADER
+	AX = F258h subfn 0Bh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02413)
+	ES:DI -> reply buffer (see #02414)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F258h/SF=0Ah,AX=F258h/SF=11h
+
+Format of NetWare "Read Audit Configuration Header" request packet:
+Offset	Size	Description	(Table 02413)
+ 00h	BYTE	0Bh (subfunction "Read Audit Configuration Header")
+	???
+SeeAlso: #02414,#02411
+
+Format of NetWare "Read Audit Configuration Header" reply packet:
+Offset	Size	Description	(Table 02414)
+ 00h	???
+SeeAlso: #02413,#02412
+--------N-21F258SF0D-------------------------
+INT 21 - Novell NetWare - LOGOUT AS VOLUME AUDITOR
+	AX = F258h subfn 0Dh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02415)
+	ES:DI -> reply buffer
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F258h/SF=03h
+
+Format of NetWare "Logout as Volume Auditor" request packet:
+Offset	Size	Description	(Table 02415)
+ 00h	BYTE	0Dh (subfunction "Logout as Volume Auditor")
+	???
+--------N-21F258SF0E-------------------------
+INT 21 - Novell NetWare - RESET AUDITING FILE
+	AX = F258h subfn 0Eh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02416)
+	ES:DI -> reply buffer
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F258h/SF=0Ah,AX=F258h/SF=0Fh
+
+Format of NetWare "Reset Auditing File" request packet:
+Offset	Size	Description	(Table 02416)
+ 00h	BYTE	0Eh (subfunction "Reset Auditing File")
+	???
+--------N-21F258SF0F-------------------------
+INT 21 - Novell NetWare - RESET AUDIT HISTORY FILE
+	AX = F258h subfn 0Fh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02417)
+	ES:DI -> reply buffer
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F258h/SF=0Eh
+
+Format of NetWare "Reset Audit History File" request packet:
+Offset	Size	Description	(Table 02417)
+ 00h	BYTE	0Fh (subfunction "Reset Audit History File")
+	???
+--------N-21F258SF10-------------------------
+INT 21 - Novell NetWare - WRITE AUDITING BITMAP
+	AX = F258h subfn 10h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02418)
+	ES:DI -> reply buffer
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F258h/SF=0Ah,AX=F258h/SF=11h
+
+Format of NetWare "Write Auditing Bitmap" request packet:
+Offset	Size	Description	(Table 02418)
+ 00h	BYTE	10h (subfunction "Write Auditing Bitmap")
+	???
+SeeAlso: #02419
+--------N-21F258SF11-------------------------
+INT 21 - Novell NetWare - WRITE AUDIT CONFIG HEADER
+	AX = F258h subfn 11h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02419)
+	ES:DI -> reply buffer
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F258h/SF=0Bh,AX=F258h/SF=10h
+
+Format of NetWare "Write Audit Configuration Header" request packet:
+Offset	Size	Description	(Table 02419)
+ 00h	BYTE	11h (subfunction "Write Audit Configuration Header")
+	???
+SeeAlso: #02418
+--------N-21F258SF13-------------------------
+INT 21 - Novell NetWare - GET AUDITING FLAGS
+	AX = F258h subfn 13h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02420)
+	ES:DI -> reply buffer (see #02421)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F258h/SF=05h
+
+Format of NetWare "Get Auditing Flags" request packet:
+Offset	Size	Description	(Table 02420)
+ 00h	BYTE	13h (subfunction "Get Auditing Flags")
+	???
+SeeAlso: #02421
+
+Format of NetWare "Get Auditing Flags" reply packet:
+Offset	Size	Description	(Table 02421)
+ 00h	???
+SeeAlso: #02420
+--------N-21F258SF14-------------------------
+INT 21 - Novell NetWare - CLOSE OLD AUDITING FILE
+	AX = F258h subfn 14h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02422)
+	ES:DI -> reply buffer
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F258h/SF=15h
+
+Format of NetWare "Close Old Auditing File" request packet:
+Offset	Size	Description	(Table 02422)
+ 00h	BYTE	14h (subfunction "Close Old Auditing File")
+	???
+SeeAlso: #02423
+--------N-21F258SF15-------------------------
+INT 21 - Novell NetWare - DELETE OLD AUDITING FILE
+	AX = F258h subfn 15h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02423)
+	ES:DI -> reply buffer
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F258h/SF=14h
+
+Format of NetWare "Delete Old Auditing File" request packet:
+Offset	Size	Description	(Table 02423)
+ 00h	BYTE	15h (subfunction "Delete Old Auditing File")
+	???
+SeeAlso: #02422
+--------N-21F258SF16-------------------------
+INT 21 - Novell NetWare - CHECK AUDIT LEVEL TWO ACCESS
+	AX = F258h subfn 16h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02424)
+	ES:DI -> reply buffer
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F258h/SF=05h
+
+Format of NetWare "Check Audit Level Two Access" request packet:
+Offset	Size	Description	(Table 02424)
+ 00h	BYTE	16h (subfunction "Check Audit Level Two Access")
+	???
+--------N-21F25ASF01-------------------------
+INT 21 - Novell NetWare - GET DATA MIGRATION INFO
+	AX = F25Ah subfn 01h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02425)
+	ES:DI -> reply buffer (see #02426)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F25Ah/SF=80h,AX=F25Ah/SF=86h
+
+Format of NetWare "Get Data Migration Information" request packet:
+Offset	Size	Description	(Table 02425)
+ 00h	WORD	length of following data
+ 02h	BYTE	01h (subfunction "Get Data Migration Information")
+SeeAlso: #02426
+
+Format of NetWare "Get Data Migration Information" reply packet:
+Offset	Size	Description	(Table 02426)
+ 00h	???
+SeeAlso: #02425
+--------N-21F25ASF80-------------------------
+INT 21 - Novell NetWare - MOVE FILE DATA TO DATA MIGRATION
+	AX = F25Ah subfn 80h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02427)
+	ES:DI -> reply buffer (see #02428)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F25Ah/SF=82h,AX=F25Ah/SF=85h
+
+Format of NetWare "Move File Data to Data Migration" request packet:
+Offset	Size	Description	(Table 02427)
+ 00h	WORD	length of following data
+ 02h	BYTE	80h (subfunction "Move File Data to Data Migration")
+ 03h	DWORD	volume number
+ 07h	DWORD	directory entry number
+ 0Bh	DWORD	name space (see #02363)
+ 0Fh	DWORD	support module ID
+ 13h	DWORD	save key flag
+		00000010h to save key when file is demigrated
+SeeAlso: #02428
+
+Format of NetWare "Move File Data to Data Migration" reply packet:
+Offset	Size	Description	(Table 02428)
+ 00h	DWORD	volume-unique ID
+SeeAlso: #02427
+--------N-21F25ASF81-------------------------
+INT 21 - Novell NetWare - DATA MIGRATION FILE INFORMATION
+	AX = F25Ah subfn 81h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02429)
+	ES:DI -> reply buffer (see #02430)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F25Ah/SF=80h,AX=F25Ah/SF=82h,AX=F25Ah/SF=83h
+
+Format of NetWare "Data Migration File Information" request packet:
+Offset	Size	Description	(Table 02429)
+ 00h	WORD	length of following data
+ 02h	BYTE	81h (subfunction "Data Migration File Information")
+ 03h	DWORD	volume number
+ 07h	DWORD	directory entry number
+ 0Bh	DWORD	name space (see #02363)
+SeeAlso: #02430
+
+Format of NetWare "Data Migration File Information" reply packet:
+Offset	Size	Description	(Table 02430)
+ 00h	DWORD	support module ID
+ 04h	DWORD	estimate restoration time
+ 08h	DWORD	bitmask of supported data streams
+SeeAlso: #02429
+--------N-21F25ASF82-------------------------
+INT 21 - Novell NetWare - VOLUME DATA MIGRATION STATUS
+	AX = F25Ah subfn 82h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02431)
+	ES:DI -> reply buffer (see #02432)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F25Ah/SF=01h,AX=F25Ah/SF=83h,AX=F25Ah/SF=84h
+
+Format of NetWare "Volume Data Migration Status" request packet:
+Offset	Size	Description	(Table 02431)
+ 00h	WORD	length of following data
+ 02h	BYTE	82h (subfunction "Volume Data Migration Status")
+ 03h	DWORD	volume number
+ 07h	DWORD	support module ID
+SeeAlso: #02432
+
+Format of NetWare "Volume Data Migration Status" request packet:
+Offset	Size	Description	(Table 02432)
+ 00h	DWORD	number of migrated files
+ 04h	DWORD	total size required to restore all migrated files
+ 08h	DWORD	total space used on migration device
+ 0Ch	DWORD	limbo space (demigrated files with save-key flag set)
+ 10h	DWORD	total space including limbo space
+ 14h	DWORD	number of files in limbo
+SeeAlso: #02431
+--------N-21F25ASF83-------------------------
+INT 21 - Novell NetWare - GET MIGRATION OR STATUS INFORMATION
+	AX = F25Ah subfn 83h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02433)
+	ES:DI -> reply buffer (see #02434)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F25Ah/SF=82h,AX=F25Ah/SF=84h,AX=F25Ah/SF=85h
+
+Format of NetWare "Get Migration or Status Information" request packet:
+Offset	Size	Description	(Table 02433)
+ 00h	WORD	length of following data
+ 02h	BYTE	83h (subfunction "Get Migration or Status Information")
+SeeAlso: #02434
+
+Format of NetWare "Get Migration or Status Information" request packet:
+Offset	Size	Description	(Table 02434)
+ 00h	DWORD	presence flag
+		FFFFFFFFh if Data Migration NLM is loaded and running
+ 04h	DWORD	major version
+ 08h	DWORD	minor version
+ 0Ch	DWORD	flag: has support module registered with Data Migrator?
+SeeAlso: #02433
+--------N-21F25ASF84-------------------------
+INT 21 - Novell NetWare - DATA MIGRATION SUPPORT MODULE INFORMATION
+	AX = F25Ah subfn 84h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02435)
+	ES:DI -> reply buffer (see #02436)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F25Ah/SF=82h,AX=F25Ah/SF=83h,AX=F25Ah/SF=86h
+
+Format of NetWare "Data Migration Support Module Information" request packet:
+Offset	Size	Description	(Table 02435)
+ 00h	WORD	length of following data
+ 02h	BYTE	84h (subfunction "Data Migration Support Module Information")
+ 03h	DWORD	information level
+		0000h get data migration NLM info
+		0001h get loaded support modules
+		0002h get name of support module
+ 07h	DWORD	support module ID
+SeeAlso: #02436
+
+Format of NetWare "Data Migration Support Module Information" request packet:
+Offset	Size	Description	(Table 02436)
+---information level 0---
+ 00h	DWORD	read/write access status
+ 04h	DWORD	length of Specific Device Information block (max 384)
+ 08h	DWORD	space available on support module
+ 0Ch	DWORD	amount of space used
+ 10h	BYTE	length of support module's name
+ 11h 14 BYTEs	support module name
+ 1Fh 128 BYTEs	support module information
+---information level 1---
+ 00h	DWORD	number of support modules
+ 04h 32 BYTEs	support module IDs
+---information level 2---
+ 00h	BYTE	length of module name
+ 01h 32 BYTEs	support module name
+SeeAlso: #02435
+--------N-21F25ASF85-------------------------
+INT 21 - Novell NetWare - MOVE FILE DATA FROM DATA MIGRATION
+	AX = F25Ah subfn 85h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02437)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F25Ah/SF=80h,AX=F25Ah/SF=83h,AX=F25Ah/SF=86h
+
+Format of NetWare "Move File Data From Data Migration" request packet:
+Offset	Size	Description	(Table 02437)
+ 00h	WORD	length of following data
+ 02h	BYTE	85h (subfunction "Move File Data from Data Migration")
+ 03h	DWORD	volume number
+ 07h	DWORD	directory entry number
+ 0Bh	DWORD	name space (see #02363)
+SeeAlso: #02428
+--------N-21F25ASF86-------------------------
+INT 21 - Novell NetWare - GET OR SET DEFAULT SUPPORT MODULE
+	AX = F25Ah subfn 86h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02438)
+	ES:DI -> reply buffer (see #02439)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F25Ah/SF=01h,AX=F25Ah/SF=80h,AX=F25Ah/SF=84h
+
+Format of NetWare "Get or Set Default Support Module" request packet:
+Offset	Size	Description	(Table 02438)
+ 00h	WORD	length of following data
+ 02h	BYTE	86h (subfunction "Get or Set Default Support Module")
+ 03h	DWORD	direction
+		00h get default support module
+		01h set default support module
+ 07h	DWORD	new module ID if setting
+SeeAlso: #02439
+
+Format of NetWare "Get or Set Default Support Module" request packet:
+Offset	Size	Description	(Table 02439)
+ 00h	DWORD	support module ID
+SeeAlso: #02438
+--------N-21F268SF01-------------------------
+INT 21 - Novell NetWare v4+ - GET TREE NAME
+	AX = F268h subfn 01h
+	CX = length of request buffer in bytes (0001h)
+	DX = length of reply buffer in bytes (0064h)
+	DS:SI -> request buffer (see #02440)
+	ES:DI -> reply buffer (see #02441)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AX=F268h/SF=04h
+
+Format of NetWare "Get Tree Name" request buffer:
+Offset	Size	Description	(Table 02440)
+ 00h	BYTE	01h (subfunction "Get Tree Name")
+
+Format of NetWare "Get Tree Name" reply buffer:
+Offset	Size	Description	(Table 02441)
+ 00h	DWORD	Ping version
+ 04h	DWORD	length of tree name
+ 08h 32 BYTEs	tree name, padded with underscores ('_')
+ 28h 60 BYTEs	???
+--------N-21F268SF04-------------------------
+INT 21 - Novell NetWare v4+ - GET BINDERY CONTEXT
+	AX = F268h subfn 04h
+	CX = length of request buffer in bytes (0001h)
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02442)
+	ES:DI -> reply buffer (see #02443)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AX=F268h/SF=01h,AX=F268h/SF=C8h
+
+Format of NetWare "Get Bindery Context" request buffer:
+Offset	Size	Description	(Table 02442)
+ 00h	BYTE	04h (subfunction "Get Bindery Context")
+
+Format of NetWare "Get Bindery Context" reply buffer:
+Offset	Size	Description	(Table 02443)
+ 00h	DWORD	length (max 200)
+ 04h  N WORDs	Unicode bindery context string
+--------N-21F268SF05-------------------------
+INT 21 - Novell NetWare v4+ - MONITOR NDS CONNECTION
+	AX = F268h subfn 05h
+	CX = length of request buffer in bytes (0001h)
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02444)
+	ES:DI -> reply buffer (unused???)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+
+Format of NetWare "Monitor NDS Connection" request buffer:
+Offset	Size	Description	(Table 02444)
+ 00h	BYTE	05h (subfunction "Monitor NDS Connection"
+--------N-21F268SF16-------------------------
+INT 21 - Novell NetWare v4+ - NDS LIST PARTITIONS
+	AX = F268h subfn 16h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02445)
+	ES:DI -> reply buffer (see #02446)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+Note:	the length specified in CX must be exactly 13 bytes more than the
+	  length field at offset 09h in the request buffer for this function
+	  to be successful
+SeeAlso: AX=F268h/SF=35h
+
+Format of NetWare "NDS List Partitions" request buffer:
+Offset	Size	Description	(Table 02445)
+ 00h	BYTE	02h
+ 01h	DWORD	??? (FFFFFFFFh)
+ 05h	DWORD	??? (00000202h)
+ 09h	DWORD	length (00000018h)
+ 0Dh	DWORD	??? (00000000h)
+ 11h	DWORD	function (00000016h) (subfunction "NDS List Partitions")
+ 15h	DWORD	??? (00000400h)
+ 19h	DWORD	API version (00000000h)
+ 1Dh	DWORD	??? (00000000h)
+ 21h	DWORD	iteration (FFFFFFFFh)
+SeeAlso: #02446,#02447
+
+Format of NetWare "NDS List Partitions" reply buffer:
+Offset	Size	Description	(Table 02446)
+ 00h	DWORD	length
+ 04h	DWORD	???
+ 08h	DWORD	return code
+ 0Ch	DWORD	iteration
+ 10h 1000 BYTEs	returned data
+SeeAlso: #02445
+--------N-21F268SF35-------------------------
+INT 21 - Novell NetWare v4+ - NDS GET SERVER NAME AND ADDRESS
+	AX = F268h subfn 35h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02447)
+	ES:DI -> reply buffer (see #02448)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+Note:	the length specified in CX must be exactly 13 bytes more than the
+	  length field at offset 09h in the request buffer for this function
+	  to be successful
+SeeAlso: AX=F268h/SF=16h
+
+Format of NetWare "NDS Get Server Name and Address" request buffer:
+Offset	Size	Description	(Table 02447)
+ 00h	BYTE	02h
+ 01h	DWORD	??? (FFFFFFFFh)
+ 05h	DWORD	??? (00000202h)
+ 09h	DWORD	length (0000000Ch)
+ 0Dh	DWORD	??? (00000000h)
+ 11h	DWORD	function (00000035h) (subfunc "NDS Get Server Name and Addr")
+ 15h	DWORD	??? (00000400h)
+SeeAlso: #02445,#02448
+
+Format of NetWare "NDS Get Server Name and Address" reply buffer:
+Offset	Size	Description	(Table 02448)
+ 00h	DWORD	length
+ 04h	DWORD	???
+ 08h	DWORD	return code
+ 0Ch	DWORD	length of name
+ 10h  N WORDs	Unicode server name string
+	var	padding
+	DWORD	??? (00000001h)
+	DWORD	??? (00000000h)
+	DWORD	??? (0000000Ch)
+     12 BYTEs	server's IPX address
+SeeAlso: #02447
+--------N-21F268SF3D-------------------------
+INT 21 - Novell NetWare v4+ - NDS LOGOUT
+	AX = F268h subfn 3Dh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02449)
+	ES:DI -> reply buffer (see #02450)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AX=F217h/SF=14h
+
+Format of NetWare "NDS Logout" request buffer:
+Offset	Size	Description	(Table 02449)
+ 00h	BYTE	02h
+ 01h	DWORD	??? (FFFFFFFFh)
+ 05h	DWORD	??? (00000202h)
+ 09h	DWORD	length (0000000Ch)
+ 0Dh	DWORD	??? (00000000h)
+ 11h	DWORD	function (0000003Dh) (subfunction "NDS Logout")
+ 15h	DWORD	??? (00000000h)
+SeeAlso: #02450
+
+Format of NetWare "NDS Logout" reply buffer:
+Offset	Size	Description	(Table 02450)
+ 00h	DWORD	length
+ 04h	DWORD	???
+ 08h	DWORD	return code
+SeeAlso: #02449
+--------N-21F268SFC8-------------------------
+INT 21 - Novell NetWare v4+ - GET DS AUDITING STATISTICS
+	AX = F268h subfn C8h
+	CX = length of request buffer in bytes (0001h)
+	DX = length of reply buffer in bytes (0020h)
+	DS:SI -> request buffer (see #02451)
+	ES:DI -> reply buffer (see #02452)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AX=F258h/SF=01h,AX=F268h/SF=01h,AX=F268h/SF=04h
+
+Format of NetWare "Get DS Auditing Statistics" request buffer:
+Offset	Size	Description	(Table 02451)
+ 00h	BYTE	C8h (subfunction "Get DS Auditing Statistics")
+SeeAlso: #02452
+
+Format of NetWare "Get DS Auditing Statistics" reply buffer:
+Offset	Size	Description	(Table 02452)
+ 00h	WORD	auditing version (date)
+ 02h	WORD	audit file version (date)
+ 04h	DWORD	auditing enabled flag
+ 08h	DWORD	audit file's size
+ 0Ch	DWORD	audit configuration file's size
+ 10h	DWORD	maximum audit file size
+ 14h	DWORD	audit file size threshold
+ 18h	DWORD	number of audit records
+ 1Ch	DWORD	number of history records
+SeeAlso: #02400,#02451
+--------N-21F269-----------------------------
+INT 21 - Novell NetWare - LOG FILE
+	AX = F269h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02453)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F203h,AX=F26Ah,AH=EBh"NetWare"
+
+Format of NetWare "Log File" request packet:
+Offset	Size	Description	(Table 02453)
+ 00h	BYTE	directory handle
+ 01h	BYTE	lock flag
+		00h log only
+		01h log and lock
+ 02h	WORD	lock timeout in clock ticks (0000h = don't wait)
+ 04h	BYTE	length of filename
+ 05h  N BYTEs	filename
+--------N-21F26A-----------------------------
+INT 21 - Novell NetWare - LOCK FILE SET
+	AX = F26Ah
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02454)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F204h,AX=F269h,AH=CBh"NetWare"
+
+Format of NetWare "Lock File Set" request packet:
+Offset	Size	Description	(Table 02454)
+ 00h	WORD	lock timeout in clock ticks (0000h = don't wait)
+--------N-21F26C-----------------------------
+INT 21 - Novell NetWare - LOCK LOGICAL RECORD SET
+	AX = F26Ch
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02455)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F20Ah,AX=F26Ah,AH=CBh"NetWare"
+
+Format of NetWare "Lock Logical Record Set" request packet:
+Offset	Size	Description	(Table 02455)
+ 00h	BYTE	lock flag
+		00h shareable lock
+		01h exclusive lock
+ 01h	WORD	lock timeout in clock ticks (0000h = don't wait)
+--------N-21F26E-----------------------------
+INT 21 - Novell NetWare - LOCK PHYSICAL RECORD SET
+	AX = F26Eh
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02456)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F21Bh,AX=F26Ch,AH=C2h"NetWare"
+
+Format of NetWare "Lock Physical Record Set" request packet:
+Offset	Size	Description	(Table 02456)
+ 00h	BYTE	lock flag
+		00h exclusive lock
+		02h shareable lock
+ 01h	WORD	lock timeout in clock ticks (0000h = don't wait)
+--------N-21F26FSF00-------------------------
+INT 21 - Novell NetWare - OPEN SEMAPHORE
+	AX = F26Fh subfn 00h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02457)
+	ES:DI -> reply buffer (see #02458)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F26Fh/SF=01h,AX=F26Fh/SF=02h
+
+Format of NetWare "Open Semaphore" request packet:
+Offset	Size	Description	(Table 02457)
+ 00h	BYTE	00h (subfunction "Open Semaphore")
+ 01h	BYTE	initial semaphore value
+ 02h	BYTE	length of semaphore's name
+ 03h  N BYTEs	semaphore name
+SeeAlso: #02458
+
+Format of NetWare "Open Semaphore" request packet:
+Offset	Size	Description	(Table 02458)
+ 00h	DWORD	semaphore handle
+ 04h	BYTE	number of clients using semaphore (including caller)
+SeeAlso: #02457
+--------N-21F26FSF01-------------------------
+INT 21 - Novell NetWare - CLOSE SEMAPHORE
+	AX = F26Fh subfn 01h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02459)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F26Fh/SF=00h,AX=F26Fh/SF=03h,AX=F220h/SF=04h
+
+Format of NetWare "Close Semaphore" request packet:
+Offset	Size	Description	(Table 02459)
+ 00h	BYTE	01h (subfunction "Close Semaphore")
+ 01h	DWORD	semaphore handle
+SeeAlso: #02262
+--------N-21F26FSF02-------------------------
+INT 21 - Novell NetWare - WAIT ON SEMAPHORE
+	AX = F26Fh subfn 02h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02460)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F26Fh/SF=00h,AX=F26Fh/SF=04h
+
+Format of NetWare "Wait on Semaphore" request packet:
+Offset	Size	Description	(Table 02460)
+ 00h	BYTE	02h (subfunction "Wait on Semaphore")
+ 01h	DWORD	semaphore handle
+ 05h	WORD	timeout in clock ticks (0000h = no wait)
+--------N-21F26FSF03-------------------------
+INT 21 - Novell NetWare - SIGNAL SEMAPHORE
+	AX = F26Fh subfn 03h
+	CX = length of request packet in bytes
+	DX = 0000h (no reply packet)
+	DS:SI -> request packet (see #02461)
+	ES:DI ignored
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F26Fh/SF=02h,AX=F26Fh/SF=04h
+
+Format of NetWare "Signal Semaphore" request packet:
+Offset	Size	Description	(Table 02461)
+ 00h	BYTE	03h (subfunction "Signal Semaphore")
+ 01h	DWORD	semaphore handle
+--------N-21F26FSF04-------------------------
+INT 21 - Novell NetWare - EXAMINE SEMAPHORE
+	AX = F26Fh subfn 04h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02462)
+	ES:DI -> reply buffer (see #02463)
+Return: AX = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+SeeAlso: AH=F2h"Novell",AX=F26Fh/SF=02h,AX=F26Fh/SF=03h
+
+Format of NetWare "Examine Semaphore" request packet:
+Offset	Size	Description	(Table 02462)
+ 00h	BYTE	04h (subfunction "Examine Semaphore")
+ 01h	DWORD	semaphore handle
+SeeAlso: #02463
+
+Format of NetWare "Examine Semaphore" reply packet:
+Offset	Size	Description	(Table 02463)
+ 00h	BYTE	semaphore's current value
+ 01h	BYTE	number of clients using semaphore
+SeeAlso: #02462
+--------N-21F272-----------------------------
+INT 21 - Novell NetWare v4+ - GET FILE SERVER UTC TIME
+	AX = F272h
+	CX = length of request buffer in bytes (0003h)
+	DX = length of reply buffer in bytes (0064h)
+	DS:SI -> request buffer (see #02464)
+	ES:DI -> reply buffer (see #02465)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+
+Format of NetWare "Get File Server UTC Time" request buffer:
+Offset	Size	Description	(Table 02464)
+ 00h	BYTE	??? (00h)
+ 01h	BYTE	??? (01h)
+ 02h	BYTE	??? (01h)
+SeeAlso: #02465
+
+Format of NetWare "Get File Server UTC Time" reply buffer:
+Offset	Size	Description	(Table 02465)
+ 00h	DWORD	seconds
+ 04h	DWORD	???
+ 04h	DWORD	??? (00000204h)
+ 04h	DWORD	??? (00000000h)
+ 04h	DWORD	??? (00000000h)
+ 04h	DWORD	??? (FFFFFFFFh)
+ 04h	DWORD	??? (00000000h)
+SeeAlso: #02464
+--------N-21F27BSF01-------------------------
+INT 21 - Novell NetWare v4+ - GET CACHE INFORMATION
+	AX = F27Bh subfn 01h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02466)
+	ES:DI -> reply buffer (see #02467)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AX=F27Bh/SF=02h
+
+Format of NetWare "Get Cache Information" request buffer:
+Offset	Size	Description	(Table 02466)
+ 00h	WORD	0001h (length of following data)
+ 02h	BYTE	01h (subfunction "Get Cache Information")
+SeeAlso: #02467
+
+Format of NetWare "Get Cache Information" reply buffer:
+Offset	Size	Description	(Table 02467)
+ 00h	DWORD	current server time
+ 04h	BYTE	vconsole version
+ 05h	BYTE	vconsole revision
+ 06h	WORD	reserved
+ 08h	DWORD	"readExistingBlockCount"
+ 0Ch	DWORD	"readExistingWriteWaitCount"
+ 10h	DWORD	"readExistingPartialReadCount"
+ 14h	DWORD	"readExistingReadErrorCount"
+ 18h	DWORD	"writeBlockCount"
+ 1Ch	DWORD	"writeEntireBlockCount"
+ 20h	DWORD	"getDiskCount"
+ 24h	DWORD	"getDiskNeedToAllocCount"
+ 28h	DWORD	"getDiskSomeoneBeatMeCount"
+ 2Ch	DWORD	"getDiskPartialReadCount"
+ 30h	DWORD	"getDiskReadErrorCount"
+ 34h	DWORD	"getAsyncDiskCount"
+ 38h	DWORD	"getAsyncDiskNeedToAlloc"
+ 3Ch	DWORD	"getAsyncDiskSomeoneBeatMe"
+ 40h	DWORD	"errorDoingAsyncReadCount"
+ 44h	DWORD	"getDiskNoReadCount"
+ 48h	DWORD	"getDiskNoReadAllocCount"
+ 4Ch	DWORD	"getDiskNoReadSomeoneBeatMeCount"
+ 50h	DWORD	"diskWriteCount"
+ 54h	DWORD	"diskWriteAllocCount"
+ 58h	DWORD	"diskWriteSomeoneBeatMeCount"
+ 5Ch	DWORD	"writeErrorCount"
+ 60h	DWORD	"waitOnSemaphoreCount"
+ 64h	DWORD	"allocBlockWaitForSomeoneCount"
+ 68h	DWORD	"allocBlockCount"
+ 6Ch	DWORD	"allocBlockWaitCount"
+ 70h	DWORD	original number of cache buffers
+ 74h	DWORD	current number of cache buffers
+ 78h	DWORD	cache dirty-block threshold
+ 7Ch	DWORD	"waitNodeCount"
+ 80h	DWORD	"waitNodeAllocFailureCount"
+ 84h	DWORD	"moveCacheNodeCount"
+ 88h	DWORD	"moveCacheNodeFromAvailCount"
+ 8Ch	DWORD	"accelerateCacheNodeWriteCount"
+ 90h	DWORD	"removeCacheNodeCount"
+ 94h	DWORD	"removeCacheNodeFromAvailCount"
+ 98h	DWORD	number of cache checks
+ 9Ch	DWORD	number of cache hits
+ A0h	DWORD	number of dirty-cache checks
+ A4h	DWORD	number of dirty-cache hits
+ A8h	DWORD	"cacheUsedWhileChecking"
+ ACh	DWORD	"waitForDirtyBlocksDecreaseCount"
+ B0h	DWORD	"allocBlockFromAvailCount"
+ B4h	DWORD	"allocBlockFromLRUCount"
+ B8h	DWORD	"allocBlockAlreadyWaiting"
+ BCh	DWORD	"LRUSittingTime"
+ C0h	DWORD	maximum byte count
+ C4h	DWORD	minimum number of cache buffers
+ C8h	DWORD	minimum cache report threshold
+ D0h	DWORD	"allocWaitingCount"
+ D4h	DWORD	number of dirty cache blocks
+ D8h	DWORD	"cacheDirtyWaitTime"
+ DCh	DWORD	"maxDirtyTime"
+ E0h	DWORD	number of directory cache buffers
+ E4h	DWORD	"cacheByteToBlockShiftFactor"
+SeeAlso: #02466
+--------N-21F27BSF02-------------------------
+INT 21 - Novell NetWare v4+ - GET SERVER INFORMATION
+	AX = F27Bh subfn 02h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02468)
+	ES:DI -> reply buffer (see #02469)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AX=F27Bh/SF=01h
+
+Format of NetWare "Get Server Information" request buffer:
+Offset	Size	Description	(Table 02468)
+ 00h	WORD	0001h (length of following data)
+ 02h	BYTE	02h (subfunction "Get Server Information")
+SeeAlso: #02469
+
+Format of NetWare "Get Server Information" reply buffer:
+Offset	Size	Description	(Table 02469)
+ 00h	DWORD	current server time
+ 04h	BYTE	vconsole version
+ 05h	BYTE	vconsole revision
+ 06h	WORD	reserved
+ 08h	DWORD	current NCP stations in use
+ 0Ch	DWORD	peak NCP stations in use
+ 10h	DWORD	total NCP requests
+ 14h	DWORD	server utilization
+ 18h	DWORD	number of cancelled replies
+ 1Ch	DWORD	"writeHeldOffCount"
+ 20h	DWORD	"writeHeldOffWithDuplicateRequest"
+ 24h	DWORD	number of invalid request types
+ 28h	DWORD	"beingAbortedCount"
+ 2Ch	DWORD	"alreadyDoingReallocCount"
+ 30h	DWORD	"deAllocInvalidSlotCount"
+ 34h	DWORD	"deAllocBeingProcessedCount"
+ 38h	DWORD	"deAllocForgedPacketCount"
+ 3Ch	DWORD	"startStationErrorCount"
+ 40h	DWORD	number of invalid slot numbers
+ 44h	DWORD	"beingProcessedCount"
+ 48h	DWORD	number of forged packets
+ 4Ch	DWORD	number still transmitting
+ 50h	DWORD	"reExecuteRequestCount"
+ 54h	DWORD	number of invalid sequence numbers
+ 58h	DWORD	"duplicateIsBeingSentAlreadyCnt"
+ 5Ch	DWORD	number of positive acknowledgements sent
+ 60h	DWORD	number of duplicate replies sent
+ 64h	DWORD	number of times out of memory for station control
+ 68h	DWORD	number of times out of available connections
+ 6Ch	DWORD	"reallocSlotCount"
+ 70h	DWORD	"reallocSlotCameTooSoonCount"
+ 74h	WORD	number of times maximum hop count exceeded
+ 76h	WORD	number of unknown networks
+ 78h	WORD	"NoSpaceForService"
+ 7Ah	WORD	number of times out of receive buffers
+ 7Ch	WORD	"notMyNetwork"
+ 7Eh	DWORD	number of NetBIOS packets propagated
+ 82h	DWORD	total number of packets serviced
+ 86h	DWORD	total number of packets routed
+SeeAlso: #02468
+--------N-21F27BSF04-------------------------
+INT 21 - Novell NetWare v4+ - GET USER INFORMATION
+	AX = F27Bh subfn 04h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02470)
+	ES:DI -> reply buffer (see #02471)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+
+Format of NetWare "Get User Information" request buffer:
+Offset	Size	Description	(Table 02470)
+ 00h	WORD	0005h (length of following data)
+ 02h	BYTE	04h (subfunction "Get User Information")
+ 03h	DWORD	connection number
+SeeAlso: #02471
+
+Format of NetWare "Get User Information" reply buffer:
+Offset	Size	Description	(Table 02471)
+ 00h	DWORD	current server time
+ 04h	BYTE	vconsole version
+ 05h	BYTE	vconsole revision
+ 06h	WORD	reserved
+ 08h	DWORD	connection number
+ 0Ch	DWORD	use count
+ 10h	BYTE	connection service type
+ 11h  7 BYTEs	login time
+ 18h	DWORD	status
+ 1Ch	DWORD	expiration time
+ 20h	DWORD	object type
+ 24h	BYTE	transaction flag
+ 25h	BYTE	logical lock threshold
+ 26h	BYTE	record lock threshold
+ 27h	BYTE	file write flags
+ 28h	BYTE	file write state
+ 29h	BYTE	(filler)
+ 2Ah	WORD	file lock count
+ 2Ch	WORD	record lock count
+ 2Eh  6 BYTEs	total number of bytes read
+ 34h  6 BYTEs	total number of bytes written
+ 3Ah	DWORD	total requests
+ 3Eh	DWORD	held requests
+ 42h  6 BYTEs	held bytes read
+ 48h  6 BYTEs	held bytes written
+ 4Eh	BYTE	length of user name
+ 4Fh  N BYTEs	user name
+SeeAlso: #02470
+--------N-21F27BSF06-------------------------
+INT 21 - Novell NetWare v4+ - GET IPX/SPX Information
+	AX = F27Bh subfn 06h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02472)
+	ES:DI -> reply buffer (see #02473)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+
+Format of NetWare "Get IPX/SPX Information" request buffer:
+Offset	Size	Description	(Table 02472)
+ 00h	WORD	0001h (length of following data)
+ 02h	BYTE	06h (subfunction "Get IPX/SPX Information")
+SeeAlso: #02473
+
+Format of NetWare "Get IPX/SPX Information" reply buffer:
+Offset	Size	Description	(Table 02473)
+ 00h	DWORD	current server time
+ 04h	BYTE	vconsole version
+ 05h	BYTE	vconsole revision
+ 06h	WORD	reserved
+ 08h	DWORD	number of IPX packets sent
+ 0Ch	WORD	number of malformed IPX packets
+ 0Eh	DWORD	number of IPX Get-ECB requests
+ 12h	DWORD	number of failed IPX Get-ECB requests
+ 16h	DWORD	number of IPX AES events
+ 1Ah	WORD	number of postponed IPX AES events
+ 1Ch	WORD	maximum number of sockets (from configuration)
+ 1Eh	WORD	maximum number of open sockets
+ 20h	WORD	number of failed IPX socket opens
+ 22h	DWORD	number of IPX "listen" ECBs
+ 24h	WORD	number of failed IPX EBC cancels
+ 26h	WORD	number of failed IPX Get-Local-Target requests
+ 28h	WORD	maximum number of SPX connections (from configuration)
+ 2Ah	WORD	maximum number of SPX connections used
+ 2Ch	WORD	number of SPX Establish-Connection requests
+ 2Eh	WORD	number of failed SPX Establish-Connection requests
+ 30h	WORD	total number of SPX "listen-connect" requests
+ 32h	WORD	number of failed SPX "listen-connect" requests
+ 34h	DWORD	number of SPX sends
+ 38h	DWORD	number of SPX "window-choke"s
+ 3Ch	WORD	number of bad SPX sends
+ 3Eh	WORD	number of failed SPX sends
+ 40h	WORD	number of aborted SPX connections
+ 42h	DWORD	number of SPX packet listens
+ 46h	WORD	number of bad SPX packet listens
+ 48h	DWORD	number of incoming SPX packets
+ 4Ch	WORD	number of bad incoming SPX packets
+ 4Eh	WORD	number of supressed SPX packets
+ 50h	WORD	"SPXNoSesListenECBCount"
+ 52h	WORD	"SPXWatchDogDestSesCount"
+SeeAlso: #02472
+--------N-21F27BSF08-------------------------
+INT 21 - Novell NetWare v4+ - GET CPU INFORMATION
+	AX = F27Bh subfn 08h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02474)
+	ES:DI -> reply buffer (see #02475)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+
+Format of NetWare "Get CPU Information" request buffer:
+Offset	Size	Description	(Table 02474)
+ 00h	WORD	0005h (length of following data)
+ 02h	BYTE	08h (subfunction "Get CPU Information")
+ 03h	DWORD	CPU number
+SeeAlso: #02475
+
+Format of NetWare "Get CPU Information" reply buffer:
+Offset	Size	Description	(Table 02475)
+ 00h	DWORD	current server time
+ 04h	BYTE	vconsole version
+ 05h	BYTE	vconsole revision
+ 06h	WORD	reserved
+ 08h	DWORD	number of CPUs
+ 0Ch	DWORD	page table owner flag
+ 10h	DWORD	CPU type flag
+ 14h	DWORD	coprocessor flag
+ 18h	DWORD	bus type flag
+ 1Ch	DWORD	I/O engine flag
+ 20h	DWORD	filesystem engine flag
+ 24h	DWORD	non-dedicated flag
+ 28h 201 BYTEs	counted string: CPU string;number of coprocessors;bus string
+SeeAlso: #02474
+--------N-21F27BSF09-------------------------
+INT 21 - Novell NetWare v4+ - GET VOLUME SWITCH INFORMATION
+	AX = F27Bh subfn 09h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02476)
+	ES:DI -> reply buffer (see #02477)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+
+Format of NetWare "Get Volume Switch Information" request buffer:
+Offset	Size	Description	(Table 02476)
+ 00h	WORD	0005h (length of following data)
+ 02h	BYTE	09h (subfunction "Get Volume Switch Information")
+ 03h	DWORD	starting item number
+SeeAlso: #02477
+
+Format of NetWare "Get Volume Switch Information" reply buffer:
+Offset	Size	Description	(Table 02477)
+ 00h	DWORD	current server time
+ 04h	BYTE	vconsole version
+ 05h	BYTE	vconsole revision
+ 06h	WORD	reserved
+ 08h	DWORD	total LFS counters
+ 0Ch	DWORD	current LFS counters
+ 10h	DWORD	"readFile"
+ 14h	DWORD	"writeFile"
+ 18h	DWORD	"deleteFile"
+ 1Ch	DWORD	"renMove"
+ 20h	DWORD	"openFile"
+ 24h	DWORD	"createFile"
+ 28h	DWORD	"createAndOpenFile"
+ 2Ch	DWORD	"closeFile"
+ 30h	DWORD	"scanDeleteFile"
+ 34h	DWORD	"salvageFile"
+ 38h	DWORD	"purgeFile"
+ 3Ch	DWORD	"migrateFile"
+ 40h	DWORD	"deMigrateFile"
+ 44h	DWORD	"createDir"
+ 48h	DWORD	"deleteDir"
+ 4Ch	DWORD	"directoryScans"
+ 50h	DWORD	"mapPathToDirNum"
+ 54h	DWORD	"modifyDirEntry"
+ 58h	DWORD	"getAccessRights"
+ 5Ch	DWORD	"getAccessRightsFromIDs"
+ 60h	DWORD	"mapDirNumToPath"
+ 64h	DWORD	"getEntryFromPathStrBase"
+ 68h	DWORD	"getOtherNSEntry"
+ 6Ch	DWORD	"getExtDirInfo"
+ 70h	DWORD	"getParentDirNum"
+ 74h	DWORD	"addTrusteeR"
+ 78h	DWORD	"scanTrusteeR"
+ 7Ch	DWORD	"delTrusteeR"
+ 80h	DWORD	"purgeTrust"
+ 84h	DWORD	"findNextTrustRef"
+ 88h	DWORD	"scanUserRestNodes"
+ 8Ch	DWORD	"addUserRest"
+ 90h	DWORD	"deleteUserRest"
+ 94h	DWORD	"rtnDirSpaceRest"
+ 98h	DWORD	"getActualAvailDskSp"
+ 9Ch	DWORD	"cntOwnedFilesAndDirs"
+ A0h	DWORD	"migFileInfo"
+ A4h	DWORD	"volMigInfo"
+ A8h	DWORD	"readMigFileData"
+ ACh	DWORD	"getVolusageStats"
+ B0h	DWORD	"getActualVolUsageStats"
+ B4h	DWORD	"getDirUsageStats"
+ B8h	DWORD	"NMFileReadsCount"
+ BCh	DWORD	"NMFileWritesCount"
+ C0h	DWORD	"mapPathToDirNumOrPhantom"
+ C4h	DWORD	"stationsHasAccessRgtsGntedBelow"
+ C8h	DWORD	"gtDataSteamLensFromPathStrBase"
+ CCh	DWORD	"checkAndGetDirectoryEntry"
+ D0h	DWORD	"getDeletedEntry"
+ D4h	DWORD	"getOriginalNameSpace"
+ D8h	DWORD	"getActualFileSize"
+ DCh	DWORD	"verifyNameSpaceNumber"
+ E0h	DWORD	"verifyDataStreamNumber"
+ E4h	DWORD	"checkVolumeNumber"
+ E8h	DWORD	"commitFile"
+ ECh	DWORD	"VMGetDirectoryEntry"
+ F0h	DWORD	"createDMFileEntry"
+ F4h	DWORD	"renameNameSpaceEntry"
+ F8h	DWORD	"logFile"
+ FCh	DWORD	"releaseFile"
+100h	DWORD	"clearFile"
+104h	DWORD	"setVolumeFlag"
+108h	DWORD	"clearVolumeFlag"
+10Ch	DWORD	"getOriginalInfo"
+110h	DWORD	"createMigratedDir"
+114h	DWORD	"F3OpenCreate"
+118h	DWORD	"F3InitFileSearch"
+11Ch	DWORD	"F3ContinueFileSearch"
+120h	DWORD	"F3RenameFile"
+124h	DWORD	"F3ScanForTrustees"
+128h	DWORD	"F3ObtainFileInfo"
+12Ch	DWORD	"F3ModifyInfo"
+130h	DWORD	"F3EraseFile"
+134h	DWORD	"F3SetDirHandle"
+138h	DWORD	"F3AddTrustees"
+13Ch	DWORD	"F3DeleteTrustees"
+140h	DWORD	"F3AllocDirHandle"
+144h	DWORD	"F3ScanSalvagedFiles"
+148h	DWORD	"F3RecoverSalvagedFiles"
+14Ch	DWORD	"F3PurgeSalvageableFile"
+150h	DWORD	"F3GetNSSpecificInfo"
+154h	DWORD	"F3ModifyNSSpecificInfo"
+158h	DWORD	"F3SearchSet"
+15Ch	DWORD	"F3GetDirBase"
+160h	DWORD	"F3QueryNameSpaceInfo"
+164h	DWORD	"F3GetNameSpaceList"
+168h	DWORD	"F3GetHugeInfo"
+16Ch	DWORD	"F3SetHugeInfo"
+170h	DWORD	"F3GetFullPathString"
+174h	DWORD	"F3GetEffectiveDirectoryRights"
+SeeAlso: #02476
+--------N-21F27BSF0A-------------------------
+INT 21 - Novell NetWare v4+ - GET LOADED NLMs
+	AX = F27Bh subfn 0Ah
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02478)
+	ES:DI -> reply buffer (see #02479)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+
+Format of NetWare "Get NLMs Loaded" request buffer:
+Offset	Size	Description	(Table 02478)
+ 00h	WORD	0005h (length of following data)
+ 02h	BYTE	0Ah (subfunction "Get NLMs Loaded")
+ 03h	DWORD	first NLM number to report
+SeeAlso: #02479
+
+Format of NetWare "Get NLMs Loaded" reply buffer:
+Offset	Size	Description	(Table 02479)
+ 00h	DWORD	current server time
+ 04h	BYTE	vconsole version
+ 05h	BYTE	vconsole revision
+ 06h	WORD	reserved
+ 08h	DWORD	total number of NLMs
+ 0Ch	DWORD	number of NLM numbers following (max 50)
+ 10h 50 DWORDs	NLM numbers
+SeeAlso: #02478
+--------N-21F27BSF0B-------------------------
+INT 21 - Novell NetWare v4+ - GET NLM INFORMATION
+	AX = F27Bh subfn 0Bh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02480)
+	ES:DI -> reply buffer (see #02481)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+
+Format of NetWare "Get NLM Information" request buffer:
+Offset	Size	Description	(Table 02480)
+ 00h	WORD	0005h (length of following data)
+ 02h	BYTE	0Bh (subfunction "Get NLM Information")
+ 03h	DWORD	NLM number
+SeeAlso: #02481
+
+Format of NetWare "Get NLM Information" reply buffer:
+Offset	Size	Description	(Table 02481)
+ 00h	DWORD	current server time
+ 04h	BYTE	vconsole version
+ 05h	BYTE	vconsole revision
+ 06h	WORD	reserved
+ 08h	DWORD	identification number
+ 0Ch	DWORD	flags
+ 10h	DWORD	NLM type (see #02482)
+ 14h	DWORD	parent identifier
+ 18h	DWORD	major version
+ 1Ch	DWORD	minor version
+ 20h	DWORD	revision
+ 24h	DWORD	year
+ 28h	DWORD	month
+ 2Ch	DWORD	day
+ 30h	DWORD	bytes available for allocation
+ 34h	DWORD	"allocFreeCount"
+ 38h	DWORD	last garbage collection
+ 3Ch	DWORD	message language
+ 40h	DWORD	number of referenced public identifiers
+ 44h 200 BYTEs	NLM strings: filename, NLM name, copyright
+SeeAlso: #02480
+
+(Table 02482)
+Values for NetWare NLM type:
+ 0001h	LAN
+ 0002h	DSK
+ 0003h	NAM
+ 0004h	utility NLM
+ 0005h	MSL
+ 0006h	operating system NLM
+ 0007h	paged NLM
+ 0008h	HAM
+ 0009h	CDM
+ 000Ah	file system NLM
+ 000Bh	real mode NLM
+ 000Ch	hidden NLM
+SeeAlso: #02481
+--------N-21F27BSF0D-------------------------
+INT 21 - Novell NetWare v4+ - GET OS VERSION INFORMATION
+	AX = F27Bh subfn 0Dh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02483)
+	ES:DI -> reply buffer (see #02484)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+
+Format of NetWare "Get OS Version Information" request buffer:
+Offset	Size	Description	(Table 02483)
+ 00h	WORD	0001h (length of following data)
+ 02h	BYTE	0Dh (subfunction "Get OS Version Information")
+SeeAlso: #02484
+
+Format of NetWare "Get OS Version Information" reply buffer:
+Offset	Size	Description	(Table 02484)
+ 00h	DWORD	current server time
+ 04h	BYTE	vconsole version
+ 05h	BYTE	vconsole revision
+ 06h	WORD	reserved
+ 08h	BYTE	operating system major version
+ 09h	BYTE	operating system minor version
+ 0Ah	BYTE	operating system revision number
+ 0Bh	BYTE	accounting version
+ 0Ch	BYTE	VAP version
+ 0Dh	BYTE	queueing version
+ 0Eh	BYTE	security restrictions level
+ 0Fh	BYTE	bridging support
+ 10h	DWORD	maximum number of volumes
+ 14h	DWORD	number of connection slots
+ 18h	DWORD	maximum number of logged-in connections
+ 1Ch	DWORD	maximum number of name spaces
+ 20h	DWORD	maximum number of LANs
+ 24h	DWORD	maximum number of media types
+ 28h	DWORD	maximum number of protocols
+ 2Ch	DWORD	maximum subdirectory tree depth
+ 30h	DWORD	maximum number of data streams
+ 34h	DWORD	maximum number of spooled printers
+ 38h	DWORD	serial number
+ 3Ch	WORD	application number
+SeeAlso: #02483
+--------N-21F27BSF14-------------------------
+INT 21 - Novell NetWare v4+ - GET ACTIVE LAN BOARD LIST
+	AX = F27Bh subfn 14h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02485)
+	ES:DI -> reply buffer (see #02486)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+
+Format of NetWare "Get Active LAN Board List" request buffer:
+Offset	Size	Description	(Table 02485)
+ 00h	WORD	0005h (length of following data)
+ 02h	BYTE	14h (subfunction "Get Active LAN Board List")
+ 03h	DWORD	start number
+SeeAlso: #02486
+
+Format of NetWare "Get Active LAN Board List" reply buffer:
+Offset	Size	Description	(Table 02486)
+ 00h	DWORD	current server time
+ 04h	BYTE	vconsole version
+ 05h	BYTE	vconsole revision
+ 06h	WORD	reserved
+ 08h	DWORD	maximum number of LANs
+ 0Ch	DWORD	number of LAN board numbers returned
+ 10h 50 DWORDs	board numbers
+SeeAlso: #02485
+--------N-21F27BSF15-------------------------
+INT 21 - Novell NetWare v4+ - GET LAN CONFIGURATION
+	AX = F27Bh subfn 15h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02487)
+	ES:DI -> reply buffer (see #02488)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AX=F27Bh/SF=16h
+
+Format of NetWare "Get LAN Configuration" request buffer:
+Offset	Size	Description	(Table 02487)
+ 00h	WORD	0005h (length of following data)
+ 02h	BYTE	15h (subfunction "Get LAN Configuration")
+ 03h	DWORD	LAN board number
+SeeAlso: #02488
+
+Format of NetWare "Get LAN Configuration" reply buffer:
+Offset	Size	Description	(Table 02488)
+ 00h	DWORD	current server time
+ 04h	BYTE	vconsole version
+ 05h	BYTE	vconsole revision
+ 06h	WORD	reserved
+ 08h	BYTE	driver configuration major version
+ 09h	BYTE	driver configuration minor version
+ 0Ah  6 BYTEs	driver node address
+ 10h	WORD	driver mode flags
+ 12h	WORD	driver board number
+ 14h	WORD	driver board instance
+ 16h	DWORD	driver maximum size
+ 1Ah	DWORD	driver maximum receive size
+ 1Eh	DWORD	driver receive size
+ 22h  3 DWORDs	reserved
+ 2Eh	WORD	driver card ID
+ 30h	WORD	driver transport time
+ 32h	DWORD	driver source routing
+ 36h	WORD	driver line speed
+ 38h	WORD	driver reserved
+ 3Ah	BYTE	driver major version
+ 3Bh	BYTE	driver minor version
+ 3Ch	WORD	driver flags
+ 3Eh	WORD	driver send retries
+ 40h	DWORD	driver link
+ 44h	WORD	driver sharing flags
+ 46h	WORD	driver slot
+ 48h  4 WORDs	driver I/O port and lengths
+ 50h	DWORD	driver memory decode 0
+ 54h	WORD	driver length 0
+ 56h	DWORD	driver memory decode 1
+ 5Ah	WORD	driver length 1
+ 5Ch  2 BYTEs	driver's interrupts
+ 5Eh  2 BYTEs	driver's DMA usage
+ 60h 18 BYTEs	driver's logical name
+ 72h 14 BYTEs	driver I/O reserved
+ 80h 128 BYTEs	driver card name
+100h 40 BYTEs	driver media type
+128h 180 BYTEs	driver custom variables
+SeeAlso: #02487
+--------N-21F27BSF16-------------------------
+INT 21 - Novell NetWare v4+ - GET LAN COMMON COUNTERS
+	AX = F27Bh subfn 16h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02489)
+	ES:DI -> reply buffer (see #02490)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AX=F27Bh/SF=15h
+
+Format of NetWare "Get LAN Common Counters" request buffer:
+Offset	Size	Description	(Table 02489)
+ 00h	WORD	0009h (length of following data)
+ 02h	BYTE	16h (subfunction "Get LAN Common Counters")
+ 03h	DWORD	LAN board number
+ 07h	DWORD	starting block number (set to 00000000h for first call)
+SeeAlso: #02490
+
+Format of NetWare "Get LAN Common Counters" reply buffer:
+Offset	Size	Description	(Table 02490)
+ 00h	DWORD	current server time
+ 04h	BYTE	vconsole version
+ 05h	BYTE	vconsole revision
+ 06h	WORD	reserved
+ 08h	BYTE	statistics major version
+ 09h	BYTE	statistics minor version
+ 0Ah	DWORD	number of generic counters
+ 0Eh	DWORD	number of counter blocks
+ 12h	DWORD	number of custom variables
+ 16h	DWORD	next counter block number
+ 1Ah	DWORD	"notSupportedMask"
+ 1Eh	DWORD	total number of packets tranmitted
+ 22h	DWORD	total number of packets received
+ 26h	DWORD	number of times no ECBs were available
+ 2Ah	DWORD	number of transmitted packets which were too large
+ 2Eh	DWORD	number of transmitted packets which were too small
+ 32h	DWORD	number of packet receive overflows
+ 36h	DWORD	number of received packets which were too large
+ 3Ah	DWORD	number of received packets which were too small
+ 3Eh	DWORD	number of miscellaneous transmitted-packet errors
+ 42h	DWORD	number of miscellaneous received-packet errors
+ 46h	DWORD	number of times transmission retried
+ 4Ah	DWORD	number of checksum errors
+ 4Eh	DWORD	number of hardware receive mismatches
+ 52h 50 BYTEs	reserved
+SeeAlso: #02489
+--------N-21F27BSF29-------------------------
+INT 21 - Novell NetWare v4+ - GET PROTOCOL STACK BY BOARD
+	AX = F27Bh subfn 29h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02491)
+	ES:DI -> reply buffer (see #02492)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+
+Format of NetWare "Get Protocol Stack by Board" request buffer:
+Offset	Size	Description	(Table 02491)
+ 00h	WORD	0005h (length of following data)
+ 02h	BYTE	29h (subfunction "Get Protocol Stack by Board")
+ 03h	DWORD	LAN board number
+SeeAlso: #02492
+
+Format of NetWare "Get Protocol Stack by Board" reply buffer:
+Offset	Size	Description	(Table 02492)
+ 00h	DWORD	current server time
+ 04h	BYTE	vconsole version
+ 05h	BYTE	vconsole revision
+ 06h	WORD	reserved
+ 08h	WORD	number of stacks listed (max 50)
+ 0Ah 50 DWORDs	protocol identifiers
+SeeAlso: #02491
+--------N-21F27BSF33-------------------------
+INT 21 - Novell NetWare v4+ - GET ROUTER INFO
+	AX = F27Bh subfn 33h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02493)
+	ES:DI -> reply buffer (see #02494)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AX=F27Bh/SF=35h
+
+Format of NetWare "Get Router Info" request buffer:
+Offset	Size	Description	(Table 02493)
+ 00h	WORD	0005h (length of following data)
+ 02h	BYTE	33h (function "Get Router Info")
+ 03h	DWORD	network number
+SeeAlso: #02494
+
+Format of NetWare "Get Router Info" reply buffer:
+Offset	Size	Description	(Table 02494)
+ 00h	DWORD	current server time
+ 04h	BYTE	vconsole version
+ 05h	BYTE	vconsole revision
+ 06h	WORD	reserved
+ 08h	DWORD	network number
+ 0Ch	WORD	hops to net
+ 0Eh	WORD	network status
+ 10h	WORD	time to net
+SeeAlso: #02493,#02495
+--------N-21F27BSF35-------------------------
+INT 21 - Novell NetWare v4+ - GET KNOWN NETWORKS INFO
+	AX = F27Bh subfn 35h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02495)
+	ES:DI -> reply buffer (see #02496)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AX=F27Bh/SF=33h,AX=F27Bh/SF=38h
+
+Format of NetWare "Get Router Info" request buffer:
+Offset	Size	Description	(Table 02495)
+ 00h	WORD	0005h (length of following data)
+ 02h	BYTE	35h (function "Get Known Networks Info")
+ 03h	DWORD	start number (00000000h)
+SeeAlso: #02496
+
+Format of NetWare "Get Router Info" reply buffer:
+Offset	Size	Description	(Table 02496)
+ 00h	DWORD	current server time
+ 04h	BYTE	vconsole version
+ 05h	BYTE	vconsole revision
+ 06h	WORD	reserved
+ 08h	DWORD	number of records following (max 20)
+ 0Ch	var	array of network info records
+		Offset	Size	Description
+		 00h	WORD	network number
+		 04h	WORD	hops to net
+		 06h	WORD	network status
+		 08h	WORD	time to net
+SeeAlso: #02493,#02495
+--------N-21F27BSF38-------------------------
+INT 21 - Novell NetWare v4+ - GET KNOWN SERVERS INFO
+	AX = F27Bh subfn 38h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02497)
+	ES:DI -> reply buffer (see #02498)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+SeeAlso: AX=F27Bh/SF=35h
+
+Format of NetWare "Get Known Servers" request buffer:
+Offset	Size	Description	(Table 02497)
+ 00h	WORD	0009h (length of following data)
+ 02h	BYTE	38h (function "Get Known Servers")
+ 03h	DWORD	start number
+ 07h	DWORD	server type
+SeeAlso: #02498
+
+Format of NetWare "Get Known Servers" reply buffer:
+Offset	Size	Description	(Table 02498)
+ 00h	DWORD	current server time
+ 04h	BYTE	vconsole version
+ 05h	BYTE	vconsole revision
+ 06h	WORD	reserved
+ 08h	DWORD	number of records following (max 20)
+ 0Ch	var	server record(s)
+		Offset	Size	Description
+		 00h	DWORD	network number
+		 04h  6 BYTEs	node number
+		 0Ah	WORD	socket number
+		 0Ch	WORD	hops to server
+		 0Eh 48 BYTEs	object name
+SeeAlso: #02497
+--------N-21F27BSF3C-------------------------
+INT 21 - Novell NetWare v4+ - GET SERVER SET COMMANDS INFO
+	AX = F27Bh subfn 3Ch
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02499)
+	ES:DI -> reply buffer (see #02500)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+
+Format of NetWare "Get Server Set Commands Info" request packet:
+Offset	Size	Description	(Table 02499)
+ 00h	WORD	0005h (length of following data)
+ 02h	BYTE	3Ch (subfunction "Get Server Set Commands Info")
+ 03h	DWORD	start sequence number
+SeeAlso: #02500
+
+Format of NetWare "Get Server Set Commands Info" packet:
+Offset	Size	Description	(Table 02500)
+ 00h	DWORD	current server time
+ 04h	BYTE	vconsole version
+ 05h	BYTE	vconsole revision
+ 06h	WORD	reserved
+ 08h	DWORD	number of set commands
+ 0Ch	DWORD	next sequence number
+ 10h	DWORD	set command type
+ 14h	DWORD	set command category
+ 18h	DWORD	set command flags
+ 1Ch	BYTE	length of set command name
+ 1Dh  N BYTEs	set command name
+	BYTE	number of set command values
+      N BYTEs	set command values
+SeeAlso: #02499
+--------N-21F27BSF3D-------------------------
+INT 21 - Novell NetWare v4+ - GET SERVER SET CATEGORIES
+	AX = F27Bh subfn 3Dh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #02501)
+	ES:DI -> reply buffer (see #02502)
+Return: AL = status (see #02836 at INT 2F/AX=7A20h/BX=0000h)
+	reply buffer filled
+
+Format of NetWare "Get Server Set Categories" request packet:
+Offset	Size	Description	(Table 02501)
+ 00h	WORD	0005h (length of following data)
+ 02h	BYTE	3Dh (subfunction "Get Server Set Categories")
+ 03h	DWORD	start sequence number
+SeeAlso: #02502
+
+Format of NetWare "Get Server Set Categories" reply packet:
+Offset	Size	Description	(Table 02502)
+ 00h	DWORD	current server time
+ 04h	BYTE	vconsole version
+ 05h	BYTE	vconsole revision
+ 06h	WORD	reserved
+ 08h	DWORD	number of set categories
+ 0Ch	DWORD	next sequence number
+ 10h	BYTE	length of category name
+ 11h  N BYTEs	category name
+SeeAlso: #02501
+--------v-21F2AA-----------------------------
+INT 21 - VIRUS - "PcVrsDs" - INSTALLATION CHECK
+	AX = F2AAh
+Return: AH = AAh if resident
+SeeAlso: AH=F1h"VIRUS",AH=F3h"VIRUS"
+--------N-21F3-------------------------------
+INT 21 - Novell NetWare - FILE SERVICES - FILE SERVER FILE COPY
+	AH = F3h
+	ES:DI -> request buffer (see #02503)
+Return: AL = status/error code
+	CX:DX = number of bytes copied
+Notes:	this function is supported by Advanced NetWare 2.0+
+	both source and destination must be on the same file server
+SeeAlso: AH=3Ch,AH=3Fh"DOS"
+
+Format of NetWare "File Server File Copy" request buffer:
+Offset	Size	Description	(Table 02503)
+ 00h	WORD	source file handle (as returned by AH=3Ch or AH=3Dh)
+ 02h	WORD	destination file handle
+ 04h	DWORD	starting offset in source
+ 08h	DWORD	starting offset in destination
+ 0Ch	DWORD	number of bytes to copy
+--------T-21F3-------------------------------
+INT 21 - DoubleDOS - ADD CHARACTER TO KEYBOARD BUFFER OF CURRENT JOB
+	AH = F3h
+	AL = character
+Return: AL = 00h successful
+	     01h buffer full (128 characters)
+SeeAlso: AH=E3h"DoubleDOS",AH=F1h"DoubleDOS",AH=F2h"DoubleDOS"
+SeeAlso: AH=F8h"DoubleDOS"
+--------v-21F3-------------------------------
+INT 21 - VIRUS - "Carfield" - INSTALLATION CHECK
+	AH = F3h
+Return: AX = 0400h if resident
+SeeAlso: AH=D5h"Carfield",AX=F2AAh,AH=F7h"VIRUS"
+--------T-21F400-----------------------------
+INT 21 - DoubleDOS - INSTALLATION CHECK/PROGRAM STATUS
+	AX = F400h
+Return: AL = program status
+	    00h if DoubleDOS not present
+	    01h if running in visible DoubleDOS partition
+	    02h if running in the invisible DoubleDOS partition
+SeeAlso: AX=E400h,AH=F5h"DoubleDOS"
+--------T-21F5-------------------------------
+INT 21 - DoubleDOS - OTHER PROGRAM STATUS
+	AH = F5h
+Return: AL = program status
+	    00h no program in other partition
+	    01h program in other partition is running
+	    02h program in other partition is suspended
+SeeAlso: AH=E5h"DoubleDOS",AX=F400h"DoubleDOS"
+--------v-21F7-------------------------------
+INT 21 - VIRUS - "GP1" - INSTALLATION CHECK
+	AH = F7h
+Return: AX = 0300h if resident
+SeeAlso: AH=F0h"VIRUS",AH=F9h"VIRUS"
+--------D-21F8-------------------------------
+INT 21 - DOS v2.11-2.13 - SET OEM INT 21 HANDLER
+	AH = F8h
+	DS:DX -> OEM INT 21 handler for functions F9h to FFh
+		 FFFFh:FFFFh disables OEM handler
+Notes:	this function is known to be supported by Toshiba T1000 ROM MS-DOS
+	  v2.11, Sanyo MS-DOS v2.11, and TI Professional Computer DOS v2.13
+	calls to AH=F9h through AH=FFH will return AL=00h if no handler set
+	handler is called with all registers exactly as set by caller, and
+	  should exit with IRET
+SeeAlso: AH=F9h"OEM"
+--------T-21F8-------------------------------
+INT 21 - DoubleDOS - SET/RESET KEYBOARD CONTROL FLAGS
+	AH = F8h
+	AL = program for which to set flags
+	    00h this program
+	    01h other program
+	DX = keyboard control flags (see #02064 at AH=E8h"DoubleDOS")
+Return: DX = previous flags
+Notes:	disabling Ctrl-PrtSc will allow the program to intercept the keystroke;
+	  disabling any of the other keystrokes disables them completely
+	this function is identical to AH=E8h
+SeeAlso: AH=E8h"DoubleDOS",AH=F1h"DoubleDOS",AH=F2h"DoubleDOS"
+SeeAlso: AH=F3h"DoubleDOS"
+--------D-21F9-------------------------------
+INT 21 - DOS v2.11-2.13 - OEM FUNCTION
+	AH = F9h
+Return: AL = 00h if no OEM function handler installed (see AH=F8h"OEM")
+SeeAlso: AH=F8h"OEM",AH=FAh"OEM"
+--------T-21F9-------------------------------
+INT 21 - DoubleDOS - SET TIMESHARING PRIORITY
+	AH = F9h
+	AL = priority
+	    00h visible program gets 70%, invisible gets 30% (default)
+	    01h visible program gets 50%, invisible gets 50%
+	    02h visible program gets 30%, invisible gets 70%
+	    03h Top program gets 70%, bottom program gets 30%
+	    04h Top program gets 30%, bottom program gets 70%
+	    05h get current priority
+		Return: AL = priority setting
+Note:	identical to AH=E9h
+SeeAlso: AH=E9h"DoubleDOS",AH=FAh"DoubleDOS",AH=FBh"DoubleDOS"
+--------v-21F9-------------------------------
+INT 21 - VIRUS - "Satans-Bug" - INSTALLATION CHECK
+	AH = F9h
+Return: AX = AC0Ah if resident
+SeeAlso: AH=F7h"VIRUS",AH=FBh"VIRUS",AX=FEDCh"VIRUS"
+--------D-21FA-------------------------------
+INT 21 - DOS v2.11-2.13 - OEM FUNCTION
+	AH = FAh
+Return: AL = 00h if no OEM function handler installed (see AH=F8h"OEM")
+SeeAlso: AH=F8h"OEM",AH=F9h"OEM",AH=FBh"OEM"
+--------T-21FA-------------------------------
+INT 21 - DoubleDOS - TURN OFF TASK SWITCHING
+	AH = FAh
+Return: task switching turned off
+SeeAlso: AH=EAh"DoubleDOS",AH=F9h"DoubleDOS",AH=FBh"DoubleDOS"
+SeeAlso: INT FA"DoubleDOS"
+--------v-21FA-------------------------------
+INT 21 - VIRUS - "Cinderella 2" - INSTALLATION CHECK
+	AH = FAh
+Return: AH = F9h if resident
+SeeAlso: AH=F0h"VIRUS",AX=FBA0h"VIRUS"
+--------v-21FA--DX5945-----------------------
+INT 21 U - PC Tools v7+ VDEFEND, VSAFE, VWATCH - API
+	AH = FAh
+	DX = 5945h
+	AL = function (00h-02h for VDEFEND, 00h-07h for VSAFE and VWATCH)
+Return: varies by function
+Note:	this API is identical to the API on INT 13/AH=FAh and INT 16/AH=FAh,
+	  so it is listed in its entirety only under INT 16/AX=FA00h and
+	  following
+SeeAlso: INT 13/AX=FA00h,INT 16/AX=FA00h
+--------k-21FAFF-----------------------------
+INT 21 U - IBM PC-DOS - KEYBGK - SELECT KEYBOARD LAYOUT
+	AX = FAFFh
+	CL = keyboard layout
+	    31h keyboard 319
+	    32h keyboard 220
+	BX = code page (869 or 813 decimal)
+Return: AL = F1h if installed
+	DX destroyed
+--------D-21FB-------------------------------
+INT 21 - DOS v2.11-2.13 - OEM FUNCTION
+	AH = FBh
+Return: AL = 00h if no OEM function handler installed (see AH=F8h"OEM")
+SeeAlso: AH=F8h"OEM",AH=FAh"OEM",AH=FCh"OEM"
+--------T-21FB-------------------------------
+INT 21 - DoubleDOS - TURN ON TASK SWITCHING
+	AH = FBh
+Return: task switching turned on
+SeeAlso: AH=EBh"DoubleDOS",AH=F9h"DoubleDOS",AH=FAh"DoubleDOS"
+SeeAlso: INT FB"DoubleDOS"
+--------v-21FB-------------------------------
+INT 21 - VIRUS - "Cinderella" - INSTALLATION CHECK
+	AH = FBh
+Return: AH = 00h if resident
+SeeAlso: AH=F9h"VIRUS",AH=FAh"VIRUS",AX=FB0Ah
+--------v-21FB0A-----------------------------
+INT 21 - VIRUS - "dBASE" - INSTALLATION CHECK
+	AX = FB0Ah
+Return: AX = 0AFBh if resident
+SeeAlso: AH=FBh"VIRUS",AX=FBA0h"VIRUS",AH=FCh"VIRUS"
+--------v-21FBA0-----------------------------
+INT 21 - VIRUS - "Groove" - INSTALLATION CHECK
+	AX = FBA0h
+Return: AX = 0ABFh if resident
+SeeAlso: AX=FB0Ah"VIRUS",AX=FBFBh"VIRUS"
+--------v-21FBFB-----------------------------
+INT 21 - VIRUS - "Dir.1367" - INSTALLATION CHECK
+	AX = FBFBh
+Return: AX = BFBFh if resident
+SeeAlso: AX=FBA0h"VIRUS",AH=FCh"VIRUS"
+--------D-21FC-------------------------------
+INT 21 - DOS v2.11-2.13 - OEM FUNCTION
+	AH = FCh
+Return: AL = 00h if no OEM function handler installed (see AH=F8h"OEM")
+SeeAlso: AH=F8h"OEM",AH=FBh"OEM",AH=FDh"OEM"
+--------T-21FC-------------------------------
+INT 21 - DoubleDOS - GET VIRTUAL SCREEN ADDRESS
+	AH = FCh
+Return: ES = segment of virtual screen
+Desc:	Determine the address of the virtual screen to which the program
+	  should write instead of the actual video memory, so that the
+	  multitasked programs do not interfere with each other's output.
+Notes:	screen address can change if task-switching is on!
+	identical to AH=ECh
+SeeAlso: AH=ECh"DoubleDOS",INT FC"DoubleDOS"
+--------v-21FC-------------------------------
+INT 21 - VIRUS - "Troi" - INSTALLATION CHECK
+	AH = FCh
+Return: AL = A5h if resident
+SeeAlso: AX=FBA0h"VIRUS",AX=FC03h"VIRUS",AH=FDh"VIRUS"
+--------v-21FC03-----------------------------
+INT 21 - VIRUS - "Invisible" - INSTALLATION CHECK
+	AX = FC03h
+Return: AX = 03FCh if resident
+SeeAlso: AH=FCh"VIRUS",AH=FDh"VIRUS"
+--------D-21FD-------------------------------
+INT 21 - DOS v2.11-2.13 - OEM FUNCTION
+	AH = FDh
+Return: AL = 00h if no OEM function handler installed (see AH=F8h"OEM")
+SeeAlso: AH=F8h"OEM",AH=FCh"OEM",AH=FEh"OEM"
+--------v-21FD-------------------------------
+INT 21 - VIRUS - "Border" - INSTALLATION CHECK
+	AH = FDh
+Return: AH = 13h if resident
+SeeAlso: AH=FCh"VIRUS",AX=FDACh"VIRUS",AH=FEh"VIRUS"
+--------s-21FD12BX3457-----------------------
+INT 21 - Gravis UltraSound - MegaEm/MEGA_EM - INSTALLATION CHECK
+	AX = FD12h
+	BX = 3457h
+Return: AX = 5678h if installed
+	BX = 1235h if v1.x or v2.x installed
+	    CL = interrupt vector used by MegaEm (default 81h)
+	BX = 1237h if v3.x installed
+	    CL = interrupt vector used by MegaEm (default 81h)
+	    DX = version number
+Program: MegaEm is a protected-mode SoundBlaster, SoundCanvas, and MT-32
+	  emulator for the Gravis UltraSound
+SeeAlso: INT 2F/AX=CD00h/BX=464Fh,INT 7E/AX=00FEh"SBOS",INT 81/AX=0200h
+--------v-21FDAC-----------------------------
+INT 21 - VIRUS - "Delwin" - INSTALLATION CHECK
+	AX = FDACh
+Return: AX = 02E3h if resident
+SeeAlso: AH=FDh"VIRUS",AH=FEh"VIRUS"
+--------D-21FE-------------------------------
+INT 21 - DOS v2.11-2.13 - OEM FUNCTION
+	AH = FEh
+Return: AL = 00h if no OEM function handler installed (see AH=F8h"OEM")
+SeeAlso: AH=F8h"OEM",AH=FDh"OEM",AH=FFh"OEM"
+--------T-21FE-------------------------------
+INT 21 - DoubleDOS - GIVE AWAY TIME TO OTHER TASKS
+	AH = FEh
+	AL = number of 55ms time slices to give away
+Return: returns after giving away time slices
+SeeAlso: AH=EEh"DoubleDOS",INT FE"DoubleDOS"
+--------v-21FE-------------------------------
+INT 21 - VIRUS - "483" - INSTALLATION CHECK
+	AH = FEh
+Return: AH = 00h if resident
+SeeAlso: AX=FDACh"VIRUS",AX=FE01h
+--------v-21FE01-----------------------------
+INT 21 - VIRUS - "Flip" - INSTALLATION CHECK
+	AX = FE01h
+Return: AX = 01FEh if resident
+SeeAlso: AH=FEh"VIRUS",AX=FE02h
+--------v-21FE02-----------------------------
+INT 21 - VIRUS - "2468"/"Tequila" - INSTALLATION CHECK
+	AX = FE02h
+Return: AX = 01FDh if resident
+SeeAlso: AX=FE01h,AX=FE03h,AX=FEDCh"VIRUS"
+--------v-21FE03-----------------------------
+INT 21 - VIRUS - "2468"/"Tequila" - DISPLAY VIRUS MESSAGE
+	AX = FE03h
+SeeAlso: AX=FE02h,AX=FEADh
+--------v-21FEAD------------------------
+INT 21 - VIRUS - "Shifting Objective" - INSTALLATION CHECK
+	AX = FEADh
+Return: AX = D00Dh if resident
+SeeAlso: AX=FE03h,AX=FEDCh"VIRUS"
+--------d-21FEDC-----------------------------
+INT 21 - PCMag PCMANAGE/DCOMPRES - INSTALLATION CHECK
+	AX = FEDCh
+Return: AX = CDEFh if installed
+Program: the PCMANAGE/DCOMPRES combination from PC Magazine permits
+	  infrequently-used files to be compressed to save space and
+	  transparently expanded when accessed
+SeeAlso: AH=DCh,INT 2D/AL=10h"dLite"
+--------v-21FEDC-----------------------------
+INT 21 - VIRUS - "Black Monday" - INSTALLATION CHECK
+	AX = FEDCh
+Return: AL = DCh if resident
+SeeAlso: AX=FE02h,AX=FEFEh
+--------v-21FEFE-----------------------------
+INT 21 - VIRUS - "CIDER" - INSTALLATION CHECK
+	AX = FEFEh
+Return: SI = 1994h if resident
+SeeAlso: AX=FEDCh"VIRUS",AH=FFh"VIRUS"
+--------D-21FF-------------------------------
+INT 21 - DOS v2.11-2.13 - OEM FUNCTION
+	AH = FFh
+Return: AL = 00h if no OEM function handler installed (see AH=F8h"OEM")
+SeeAlso: AH=F8h"OEM",AH=FEh"OEM"
+--------K-21FF-------------------------------
+INT 21 - CED (Command EDitor) - INSTALLABLE COMMANDS
+	AH = FFh
+	AL = subfunction
+	    00h add installable command
+		BL = mode
+		    bit 0 = 1 callable from DOS prompt
+		    bit 1 = 1 callable from application
+		DS:SI -> CR-terminated command name
+		ES:DI -> FAR routine entry point
+	    01h remove installable command
+		DS:SI -> CR-terminated command name
+	    02h reserved, may be used to test for CED installation
+Return: CF clear if successful
+	CF set on error
 	    AX = error code
-	CF clear if successful
-Notes:	subfunction 03h is equivalent to Ctrl/Alt/keypad-*
-	supported by PC LAN Program, LANtastic, NetWare, 10NET, etc.
-	LANtastic v4.x no longer supports this call
-	this function sets the printer mode for all redirected printers
-SeeAlso: INT 21/AX=5D08h,INT 21/AX=5D09h,INT 2F/AX=1125h
---------N-2A07-------------------------------
-INT 2A U - PC Network v1.00 - RECEIVER.COM - ???
-	AH = 07h
-	???
-Return: ???
-Program: PC Network is an early networking package which was renamed the
-	  IBM PC Local Area Network Program (PC LAN Program) as of v1.10
-SeeAlso: AH=86h
---------N-2A2001-----------------------------
-INT 2A - MS Networks or NETBIOS - ???
-	AX = 2001h
-	???
-Return: ???
-Note:	intercepted by DESQview 2.x
---------N-2A2002-----------------------------
-INT 2A - NETWORK - ???
-	AX = 2002h
-	???
-Return: ???
-Note:	called by MS-DOS 3.30-6.00 APPEND
---------N-2A2003-----------------------------
-INT 2A - NETWORK - ???
-	AX = 2003h
-	???
-Return: ???
-Note:	called by MS-DOS 3.30-6.00 APPEND
---------N-2A4147DX0000-----------------------
-INT 2A U - NetSoft DOS-NET v1.20+ - INSTALLATION CHECK
-	AX = 4147h ('AG')
-	DX = 0000h
-Return: DX = 4147h if installed
-	    DS:SI -> configuration data (see #2418)
-Program: DOS-NET is a shareware networking package by Albert Graham
-Note:	this call is supported by CLIENT.COM, SERVER.COM, ROUTER.COM, and
-	  NETDOS.COM
-SeeAlso: INT 65/DX=4147h,INT 65/DX=4741h
-
-Format of DOS-NET v1.20 configuration data area:
-Offset	Size	Description	(Table 2418)
- 00h	BYTE	???
- 01h	BYTE	interrupt number used by DOS-NET APIs
- 02h	WORD	function number to place in AX for above interrupt
- 04h	BYTE	minor version as two BCD digits (e.g. 20h for v1.20)
- 05h	BYTE	major version number (01h for v1.20)
- 06h  2 BYTEs	???
- 08h	WORD	??? (used by ARCNET.COM)
-		bit 15: ??? (set by MACTEST.COM)
- 0Ah	WORD	??? (used by NDIS.COM and ODI.COM)
- 0Ch 22 BYTEs	???
- 24h	DWORD	-> ??? function (set by PROTECT.COM)
- 28h 12 BYTEs	???
- 34h	DWORD	-> ??? function (set by FASTVIEW.COM)
- 38h	DWORD	-> ??? function (set by FASTVIEW.COM)
- 58h	DWORD	-> ??? (offsets 04h and 1Ah from value are used by NETFILES)
-	???
- 7Ch	WORD	???
- 7Eh	WORD	??? (may be high half of a DWORD at 7Ch)
-	???
- A8h	DWORD	-> ??? (used by SM.COM)
-	???
-114h	WORD	???
-116h	WORD	??? (may be high half of a DWORD at 114h)
-	???
-1BDh	BYTE	??? flags
-		bit 0: ???
-		bit 6: ???
-	???
-1E1h	BYTE	???
-	???
-208h	WORD	??? (used by SM.COM, MACTEST)
-282h	WORD	???
-284h  2 BYTEs	???
-286h	WORD	??? flags
-		bit 0: ???
-	???
-31Eh	WORD	???
-320h	WORD	??? (used by NDIS.COM and ODI.COM)
-322h  8 BYTEs	???
-32Ah	WORD	??? (used by NDIS.COM and ODI.COM)
-	???
-33Eh  4 BYTEs	??? (used by ODI.COM)
-342h  N BYTEs	??? (used by NDIS.COM)
-	???
-3CFh	BYTE	??? flags
-		bit 2: ???
-3D2h	BYTE	installed-component flags
-		bit 0: PROTECT installed
-		bit 1: NETCACHE installed
-		bit 3: SM.COM installed
-		bit 7: NETDEBUG installed
-3D3h	BYTE	installed-component flags
-		bit 0: NETFILES installed
-		bit 6: FASTVIEW installed
-	???
-3FFh	BYTE	??? (used by NDIS.COM)
-400h	BYTE	???
-401h	BYTE	??? (used by SM.COM)
-402h	BYTE	??? (used by SM.COM)
-	???
-448h	BYTE	???
-449h	BYTE	??? (used by MACTEST)
-44Ah	BYTE	??? (used by PROTECT)
-44Bh	BYTE	???
-44Ch	BYTE	???
-44Dh	BYTE	??? (used by SM.COM)
-44Eh	BYTE	??? (used by SM.COM, MACTEST)
-	???
---------N-2A7802-----------------------------
-INT 2A - NETWORK - PC LAN PROG v1.31+ - GET LOGGED ON USER NAME
-	AX = 7802h
-	ES:DI -> 8-byte buffer to be filled
-Return: AL = 00h if no user logged on to Extended Services
-	AL <> 00h if user logged on to Extended Services
-	    buffer at ES:DI filled with name, padded to 8 chars with blanks.
---------D-2A80-------------------------------
-INT 2A CU - NETWORK - BEGIN DOS CRITICAL SECTION
-	AH = 80h
-	AL = critical section number (00h-0Fh) (see #2419)
-Notes:	normally hooked to avoid interrupting a critical section, rather than
-	  called
-	the handler should ensure that none of the critical sections are
-	  reentered, usually by suspending a task which attempts to reenter
-	  an active critical section
-	the DOS kernel does not invoke critical sections 01h and 02h unless it
-	  is patched.  DOS 3.1+ contains a zero-terminated list of words
-	  beginning at offset -11 from the Swappable Data Area
-	  (see #1552 at INT 21/AX=5D06h); each word contains the offset within
-	  the DOS data segment of a byte which must be changed from C3h (RET)
-	  to 50h (PUSH AX) under DOS 3.x or from 00h to a nonzero value under
-	  DOS 4.0+ to enable use of critical sections.	For DOS 4.0+, all
-	  words in this list point at the byte at offset 0D0Ch.
-	MS Windows patches the DOS kernel's calls to INT 2A/AH=80h-81h into
-	  far calls to its own handler, and does not reflect the calls back
-	  to INT 2A unless SYSTEM.INI contains ReflectDOSInt2A=1 or
-	  ModifyDOSInt2A=0 in the [386Enh] section
-	Novell NETX does not issue INT 2A/AH=80h and INT 2A/AH=81h calls when
-	  it intercepts INT 21 calls and processes them itself
-SeeAlso: AH=81h,AH=82h,AX=8700h,INT 21/AX=5D06h,INT 21/AX=5D0Bh
-
-(Table 2419)
-Values for DOS critical section number:
- 01h	DOS kernel, SHARE.EXE, DOSMGR
-	apparently for maintaining the integrity of DOS/SHARE/NET
-	  data structures
- 02h	DOS kernel, DOSMGR
-	ensures that no multitasking occurs while DOS is calling an
-	  installable device driver
- 05h	network redirector
- 06h	DOS 4.x only IFSFUNC
- 08h	ASSIGN.COM
- 0Ah	MSCDEX, CORELCDX
- 0Fh	IBM PC LAN server (while intercepting INT 10/AH=06h,07h,0Eh)
---------D-2A81-------------------------------
-INT 2A CU - NETWORK - END DOS CRITICAL SECTION
-	AH = 81h
-	AL = critical section number (00h-0Fh) (see #2419)
-Notes:	normally hooked rather than called
-	the handler should reawaken any tasks which were suspended due to an
-	  attempt to enter the specified critical section
-	MS Windows patches the DOS kernel's calls to INT 2A/AH=80h-81h into
-	  far calls to its own handler, and does not reflect the calls back
-	  to INT 2A unless SYSTEM.INI contains ReflectDOSInt2A=1 or
-	  ModifyDOSInt2A=0 in the [386Enh] section
-SeeAlso: AH=80h,AH=82h,AX=8700h
---------D-2A82-------------------------------
-INT 2A CU - NETWORK - END DOS CRITICAL SECTIONS 0 THROUGH 7
-	AH = 82h
-Notes:	called by the INT 21h function dispatcher for function 0 and functions
-	  greater than 0Ch except 59h, and on process termination
-	the handler should reawaken any tasks which were suspended due to an
-	  attempt to enter one of the critical sections 0 through 7
-SeeAlso: AH=81h
---------N-2A84-------------------------------
-INT 2A CU - NETWORK - KEYBOARD BUSY LOOP
-	AH = 84h
-Note:	similar to DOS's INT 28h, called from inside the DOS keyboard input
-	  loop (i.e. INT 21/AH=07h or INT 21/AH=08h) to allow the network
-	  software to process requests
-SeeAlso: INT 28
---------N-2A86-------------------------------
-INT 2A U - PC Network v1.00 - RECEIVER.COM - ???
-	AH = 86h
-	???
-Return: ???
-SeeAlso: AH=07h,AH=C4h
---------P-2A8700-----------------------------
-INT 2A CU - PRINT - BEGIN BACKGROUND PRINTING
-	AX = 8700h
-	CF clear
-Return: CF clear if OK to print in background now
-	CF set if background printing not allowed at this time
-Desc:	used to inform interested programs that PRINT is about to start its
-	  background processing, and allow those programs to postpone the
-	  processing if necessary
-Notes:	when PRINT gains control and wants to begin printing, it calls this
-	  function.  If CF is clear on return, PRINT begins its background
-	  processing, and calls AX=8701h when it is done.  If CF is set on
-	  return, PRINT will relinquish control immediately, and will not
-	  call AX=8701h
-	PCVENUS (an early network shell by IBM and CMU) hooks this call to
-	  prevent background printing while its own code is active
-SeeAlso: AH=80h,AH=81h,AX=8701h
---------P-2A8701-----------------------------
-INT 2A CU - PRINT - END BACKGROUND PRINTING
-	AX = 8701h
-Desc:	used to inform interested programs that PRINT has completed its
-	  background processing
-Note:	called by PRINT after it has performed some background printing; not
-	  called if AX=8700h returned with CF set.
-SeeAlso: AX=8700h
---------N-2A89-------------------------------
-INT 2A U - PC Network v1.00 - RECEIVER.COM - ???
-	AH = 89h
-	AL = ???  (ASSIGN uses 08h)
-	???
-Return: ???
---------I-2A90-------------------------------
-INT 2A U - IBM PC 3270 EMULATION PROGRAM - ???
-	AH = 90h
-	???
-Return: ???
-Note:	the LANtastic redirector and SERVER.EXE use this function with AL=01h,
-	  03h-07h,0Ch-11h
---------N-2AC2-------------------------------
-INT 2A U - Network - ???
-	AH = C2h
-	AL = subfunction
-	    07h ???
-	    08h ???
-	BX = 0001h
-	???
-Return: ???
-Note:	this function is called by the DOS 3.30-6.00 APPEND
---------N-2AC4-------------------------------
-INT 2A U - PC Network v1.00 - RECEIVER.COM - ???
-	AH = C4h
-	AL = subfunction
-	    07h ???
-	    08h ???
+		01h invalid function
+		02h command not found (subfunction 01h only)
+		08h insufficient memory (subfunction 00h only)
+		0Eh bad data (subfunction 00h only)
+	AH = FFh if CED not installed
+Program: CED is a shareware DOS command-line enhancer by Christopher J. Dunford
+SeeAlso: AX=0A00h
+--------E-21FF-------------------------------
+INT 21 - DJ GO32.EXE 80386+ DOS extender - DOS EXTENSIONS
+	AH = FFh
+	AL = function
+	    01h create file
+	    02h open file
+	    03h get file statistics
+	    04h get time of day
+	    05h set time of day
+	    06h stat
+	    07h system
+Program: GO32.EXE is a DOS extender included as part of the 80386 port of the
+	  GNU C/C++ compiler by DJ Delorie and distributed as DJGPP
+SeeAlso: INT 10/AH=FFh"GO32"
+--------K-21FF-------------------------------
+INT 21 - DOSED.COM - INSTALLATION CHECK
+	AH = FFh
+	DS:SI -> "DOSED"
+	ES = 0000h
+Return: ES:DI -> "DOSED" if installed
+Program: DOSED is a free DOS commandline editor/history buffer by Sverre H.
+	  Huseby
+--------v-21FF-------------------------------
+INT 21 - VIRUS - "Sunday", "Tumen 0.5", "Hero" - INSTALLATION CHECK
+	AH = FFh
+Return: AH = 00h if "Tumen 0.5" or "Hero" resident
+	AX = 0400h if "Sunday" resident
+SeeAlso: AX=FEDCh"VIRUS",AX=FF01h"VIRUS"
+--------E-21FF-------------------------------
+INT 21 UP - Rational Systems DOS/4GW - API
+	AH = FFh
+	DH = function (00h-17h) (also see separate entries below)
+	DL = subfunction or argument
+Return: CF clear if valid function number
+	    AX = status???
+	CF set if invalid function
+SeeAlso: INT 15/AX=BFDCh
+--------E-21FF--DH00-------------------------
+INT 21 UP - Rational Systems DOS/4GW - GET VERSION???
+	AH = FFh
+	DH = 00h
+	DL = ??? (78h seen)
+Return: CF clear
+	EAX = 4734FFFFh (high word is byte-swapped "4G") if DOS/4G installed
+Note:	Quarterdeck's DESQview/X X Toolkit library uses this call to determine
+	  whether the direct-mapped linear 4GB segment's selector is 34h or 38h
+SeeAlso: INT 21/AH=FFh/DH=00h"DOS/4GW"
+--------E-21FF--DH02-------------------------
+INT 21 UP - Rational Systems DOS/4GW - SET ???
+	AH = FFh
+	DH = 02h
+	DL = ???
+Return: CF clear
+--------E-21FF--DH05-------------------------
+INT 21 UP - Rational Systems DOS/4GW - ???
+	AH = FFh
+	DH = 05h
 	BX = ???
-	???
 Return: ???
-SeeAlso: AH=86h
---------N-2AD800-----------------------------
-INT 2A U - Novell NetWare Lite - SERVER - SET ???
-	AX = D800h
-Return: nothing
-Desc:	sets ??? flag, and sets ??? to initial value
-Note:	called by CLIENT
-SeeAlso: AX=D801h,AX=D850h
---------N-2AD801-----------------------------
-INT 2A U - Novell NetWare Lite - SERVER - RESET ???
-	AX = D801h
-Return: nothing
-Desc:	clears the ??? flag set by AX=D800h
-Note:	called by CLIENT
-SeeAlso: AX=D800h,AX=D850h
---------N-2AD850-----------------------------
-INT 2A U - Novell NetWare Lite - CLIENT - INCREMENT ???
-	AX = D850h
-Return: nothing
-Desc:	increments an internal byte-sized counter
-Note:	this function is intercepted by DV/X 1.10 PEERSERV.DVR and the
-	  Advanced NetWare 4.0 DOS Requester
-SeeAlso: AX=D851h
---------N-2AD851-----------------------------
-INT 2A U - Novell NetWare Lite - CLIENT - RESET ???
-	AX = D851h
-Return: nothing
-Desc:	resets an internal byte-sized counter to zero
-Note:	this function is intercepted by DV/X 1.10 PEERSERV.DVR and the
-	  Advanced NetWare 4.0 DOS Requester
-SeeAlso: AX=D850h
---------N-2AD852-----------------------------
-INT 2A U - Novell NetWare - DOS Requester v1.03 - ???
-	AX = D852h
-Return: ???
-Note:	calls the NetWare Lite SERVER installation check, and sets ??? pointer
-SeeAlso: AX=D853h,INT 2F/AX=D880h
---------N-2AD853-----------------------------
-INT 2A U - Novell NetWare - DOS Requester v1.03 - ???
-	AX = D853h
-Return: ???
-Note:	clears the pointer set by AX=D852h
-SeeAlso: AX=D852h
---------N-2AE0-------------------------------
-INT 2A U - PC Network 1.00 - ???
-	AH = E0h
-	AL = subfunction??? (01h,02h, maybe others)
-	???
-Return: ???
-Note:	called by PCNet 1.00 NET.COM, a shell program from which others are run
---------N-2AFF90-----------------------------
-INT 2A - PC/TCP PREDIR.EXE - ???
-	AX = FF90h
-Return: AX = ???
-Note:	PREDIR.EXE is the network printer redirector included as part of the
-	  PC/TCP system by FTP Software, Inc.
---------N-2AFF91-----------------------------
-INT 2A - PC/TCP PREDIR.EXE - ???
-	AX = FF91h
+--------E-21FF--DH06-------------------------
+INT 21 UP - Rational Systems DOS/4GW - ???
+	AH = FFh
+	DH = 06h
 	BX = ???
-Return: AX = status???
---------N-2AFF92-----------------------------
-INT 2A - PC/TCP PREDIR.EXE - INSTALLATION CHECK
-	AX = FF92h
-Return: AX = 0000h if installed
-	   BX = redirected printer port (FFFFh if no printers redirected)
-	   CX = version (CH = major, CL = minor)
-Note:	PREDIR.EXE is the network printer redirector included as part of the
-	  PC/TCP system by FTP Software, Inc.
---------N-2AFF93-----------------------------
-INT 2A - PC/TCP PREDIR.EXE - ???
-	AX = FF93h
-Return: AX = ???
---------N-2AFF94-----------------------------
-INT 2A - PC/TCP PREDIR.EXE - ???
-	AX = FF94h
+Return: ???
+--------E-21FF--DH07-------------------------
+INT 21 UP - Rational Systems DOS/4GW - ???
+	AH = FFh
+	DH = 07h
+	BX = ???
+Return: ???
+--------E-21FF--DH08-------------------------
+INT 21 UP - Rational Systems DOS/4GW - ???
+	AH = FFh
+	DH = 08h
 	BX = ???
 	CX = ???
-	DX = ???
-Return: AX = ???
-Note:	PREDIR.EXE is the network printer redirector included as part of the
-	  PC/TCP system by FTP Software, Inc.
---------N-2AFF95-----------------------------
-INT 2A - PC/TCP PREDIR.EXE - GET CONFIGURATION STRINGS
-	AX = FF95h
-	CX = what to get
-	    0000h ??? (returned pointer to "C:\COMMAND.COM")
-	    0001h spooling program
-	    0002h ???
-	    0003h spool file name
-	    0004h swap file name
-Return: AX = status
-	    0000h successful
-	BX:DX -> ASCIZ configuration string
---------N-2AFF96-----------------------------
-INT 2A - PC/TCP PREDIR.EXE - SET PRINT JOB TERMINATION CONFIGURATION
-	AX = FF96h
-	CX = what to set
-	    0000h ???
-	    0001h print-on-hotkey state
-	    0002h print-on-exit state
-	    0003h print job timeout in clock ticks
-	    0004h print-on-EOF state
-	BX = new value (0000h disabled, 0001h enabled except for timeout)
-Return: AX = ???
-SeeAlso: AX=FF97h
-Note:	PREDIR.EXE is the network printer redirector included as part of the
-	  PC/TCP system by FTP Software, Inc.
---------N-2AFF97-----------------------------
-INT 2A - PC/TCP PREDIR.EXE - GET PRINT JOB TERMINATION CONFIGURATION
-	AX = FF97h
-	CX = what to get
-	    0000h ???
-	    0001h print-on-hotkey state
-	    0002h print-on-exit state
-	    0003h print job timeout in clock ticks
-	    0004h print-on-EOF state
-Return: AX = status
-	    0000h successful
-	BX = old value (0000h disabled, 0001 enabled except for timeout)
-SeeAlso: AX=FF96h
---------D-2B---------------------------------
-INT 2B - DOS 2+ - RESERVED
-Note:	this vector is not used in MS-DOS versions <= 6.22, and points at an
-	  IRET instruction
---------D-2B---------------------------------
-INT 2B - IBM ROM-DOS v4.0 - ???
-	AH = function
-	    00h ??? (modifies data in IBMBIO.COM)
-	    01h internal operations
-	    02h ???
-		AL = index (00h-0Ch)
-		Return: AX = ??? or (CMOS 2Dh and CMOS 2Eh)
-	    03h get ??? data
-		Return: AX = (CMOS 2Dh and CMOS 2Eh)
-			BX = FFFFh
-	    other does nothing
-Note:	function 03h is called by ROMSHELL.COM; if BX != 0, then the ES:DI from
-	  INT 2F/AX=1982h points at valid data
-SeeAlso: INT 2F/AX=1982h
---------D-2C---------------------------------
-INT 2C - DOS 2+ - RESERVED
-Note:	this vector is not used in DOS versions <= 6.00, and points at an IRET
---------O-2C---------------------------------
-INT 2C - STARLITE architecture - KERNEL API
-Note:	STARLITE is an architecture by General Software for a series of MS-DOS
-	  compatible operating systems (OEM DOS, NETWORK DOS, and SMP DOS) to
-	  be released in 1991.	The interrupt number is subject to change
-	  before the actual release.
---------m-2C---------------------------------
-INT 2C R - Cloaking - CALL PROTECTED-MODE PASSALONG CHAIN
-Notes:	when this interrupt is invoked in V86 mode, RM386 will invoke the first
-	  in a chain of protected-mode handlers, and will only pass execution
-	  to the V86-mode INT 2C handler if none of the handlers in the
-	  passalong chain handle the call instead.  This is the method by which
-	  the real-mode stub of a cloaked application communicates with the
-	  protected-mode portion.
-	the cloaking host calls the passalong chain with EAX=58494E33h ('WIN3')
-	  when MS Windows starts up and with EAX=334E4958h ('3NIW') when
-	  Windows shuts down; between these two broadcasts, the additional
-	  Windows-only Cloaking services are available
-	this function was first introduced with RM386 (RAM-MAN/386) v6.00, the
-	  memory manager included in Helix Software's Netroom
-SeeAlso: INT 2C/AX=0009h,INT 2F/AX=4310h"Cloaking"
---------m-2C0000-----------------------------
-INT 2C P - Cloaking - ALLOCATE GDT SELECTOR
-	AX = 0000h
-	EBX = base address
-	CL = access mode byte
-	CH = extended access mode byte (omit limit field)
-	EDX = segment limit
-Return: CF clear if successful
-	    AX = selector
-	CF set on error
-	    AX = error code (see #2420)
-Notes:	this INT 2C interface is used by Netroom's DPMI.EXE v3.00
-	to access extended memory, set the base address to the desired
-	  physical address plus 400000h (4M)
-	this function was first introduced with RM386 (RAM-MAN/386) v6.00, the
-	  memory manager included in Helix Software's Netroom
-SeeAlso: AX=0001h,AX=0002h,AX=0003h,AX=0004h,AX=0005h,INT 31/AH=57h,#0475
-
-(Table 2420)
-Values for Cloaking error code:
- 0001h	no more selectors
- 0002h	not a GDT ring 0 selector
- 0003h	invalid selector (out of range, not user selector)
- 0004h	selector not allocated
---------m-2C0001-----------------------------
-INT 2C P - Cloaking - FREE GDT SELECTOR
-	AX = 0001h
-	SI = selector
-Return: CF clear if successful
-	CF set on error
-	    AX = error code (see #2420)
-Note:	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-SeeAlso: AX=0000h,INT 2F/AX=4310h"Cloaking"
---------m-2C0002-----------------------------
-INT 2C P - Cloaking - SET SEGMENT BASE ADDRESS
-	AX = 0002h
-	SI = selector
-	EBX = new physical base addres
-Return: CF clear if successful
-	CF set on error
-	    AX = error code (see #2420)
-Note:	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-SeeAlso: AX=0000h,AX=0003h,AX=0004h,INT 31/AX=0007h,#0475
---------m-2C0003-----------------------------
-INT 2C P - Cloaking - SET SEGMENT LIMIT
-	AX = 0003h
-	SI = selector
-	EBX = new limit
-Return: CF clear if successful
-	CF set on error
-	    AX = error code (see #2420)
-Note:	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-SeeAlso: AX=0000h,AX=0002h,AX=0004h,INT 31/AX=0008h
---------m-2C0004-----------------------------
-INT 2C P - Cloaking - SET SEGMENT ACCESS MODE
-	AX = 0004h
-	SI = selector
-	CL = new access mode byte (see #0476)
-Return: CF clear if successful
-	CF set on error
-	    AX = error code (see #2420)
-Note:	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-SeeAlso: AX=0000h,AX=0002h,AX=0003h,AX=0005h,INT 31/AX=0009h
---------m-2C0005-----------------------------
-INT 2C P - Cloaking - SET SEGMENT EXTENDED ACCESS MODE
-	AX = 0005h
-	SI = selector
-	CL = new extended access mode byte (limit field ignored) (see #2421)
-Return: CF clear if successful
-	CF set on error
-	    AX = error code (see #2420)
-Note:	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-SeeAlso: AX=0000h,AX=0002h,AX=0003h,AX=0004h,INT 31/AX=0009h
-
-Bitfields for extended access mode byte:
-Bit(s)	Description	(Table 2421)
- 7	4K granularity instead of byte granularity
- 6	32-bit code segment
- 5	reserved (0)
- 4	segment available to system
-SeeAlso: #0479
---------m-2C0006-----------------------------
-INT 2C P - Cloaking - GET PROTECTED-MODE INTERRUPT VECTOR
-	AX = 0006h
-	CL = vector (00h-7Fh)
-Return: CF clear
-	DX:EBX -> current interrupt handler
-Note:	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-SeeAlso: AX=0007h,INT 31/AX=0204h
---------m-2C0007-----------------------------
-INT 2C P - Cloaking - SET PROTECTED-MODE INTERRUPT VECTOR
-	AX = 0007h
-	CL = vector (00h-7Fh)
-	DX:EBX -> interrupt handler
-Return: CF clear
-Notes:	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-	the IDT entry's type remains unchanged
-SeeAlso: AX=0006h,INT 31/AX=0205h
---------m-2C0008-----------------------------
-INT 2C P - Cloaking - GET PASSALONG ADDRESS
-	AX = 0008h
-Return: CF clear
-	DX:EBX = current passalong address
-Note:	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-SeeAlso: AX=0009h,AX=002Ch,INT 2F/AX=4310h"Cloaking"
---------m-2C0009-----------------------------
-INT 2C P - Cloaking - SET PASSALONG ADDRESS
-	AX = 0009h
-	DX:EBX = new value for passalong address (see #2422)
-Return: CF clear
-Notes:	when an INT 2C instruction is executed in V86 mode, the Cloaking host
-	  calls the passalong address.	The handler should check whether the
-	  upcall is of interest to it, and if not it should jump to the old
-	  passalong address (retrieved with AX=0008h before the handler was
-	  installed).  The final handler should return with CF clear to cause
-	  the interrupt to be reflected back to V86 mode if none of the
-	  passalong handlers is triggered
-	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-SeeAlso: AX=0008h,AX=002Dh,INT 2C"PASSALONG CHAIN"
-
-(Table 2422)
-Values Cloaking passalong address is called with:
-	EAX = CS:IP of byte following INT 2C instruction invoking passalong
-	SS:EBX -> caller registers (see #2423)
-	CF clear
-	others undefined
-Return: CF clear: pass along to V86-mode INT 2C handler
-	CF set: return immediately to V86 mode
-
-Format of Cloaking caller registers:
-Offset	Size	Description	(Table 2423)
- 00h	DWORD	EDI
- 04h	DWORD	ESI
- 08h	DWORD	EBP
- 0Ch	DWORD	reserved (ESP from PUSHAD instruction)
- 10h	DWORD	EBX
- 14h	DWORD	EDX
- 18h	DWORD	ECX
- 1Ch	DWORD	EAX
- 20h	DWORD	error code
- 24h	DWORD	EIP
- 28h	WORD	CS
- 2Ah	WORD	padding
- 2Ch	DWORD	EFLAGS
- 30h	DWORD	ESP
- 34h	WORD	SS
- 36h	WORD	padding
---remainder not available if protected-mode ring3 trap---
- 38h	WORD	ES
- 3Ah	WORD	padding
- 3Ch	WORD	DS
- 3Eh	WORD	padding
- 40h	WORD	FS
- 42h	WORD	padding
- 44h	WORD	GS
- 46h	WORD	padding
---------m-2C000A-----------------------------
-INT 2C P - Cloaking - GET BASE ADDRESS OF GDT SELECTOR
-	AX = 000Ah
-	SI = selector
-Return: CF clear if successful
-	    EBX = segment base address
-	CF set on error
-	    AX = error code (see #2420)
-Note:	this function was first introduced with RM386 (RAM-MAN/386) v6.00, the
-	  memory manager included in Helix Software's Netroom
-SeeAlso: AX=0000h,AX=0002h,AX=000Bh
---------m-2C000B-----------------------------
-INT 2C P - Cloaking - GET SELECTOR LIMIT
-	AX = 000Bh
-	SI = selector
-Return: CF clear if successful
-	    EBX = segment base address
-	CF set on error
-	    AX = error code (see #2420)
-Note:	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-SeeAlso: AX=000Ah,INT 2F/AX=4310h"Cloaking"
---------m-2C---------------------------------
-INT 2C P - RM386 v6.00 - CLOAKING - RESERVED FOR CLOAKED BIOS USE UNDER WINDOWS
-	AX = function (000Ch-001Fh)
---------m-2C000F-----------------------------
-INT 2C P - Cloaking v1.01 - "Simulate_Shell_Event"
-	AX = 000Fh
-	ECX = event code (see #2424)
-	DX = subfunction for event
-	EDX high word = boost value (see #2425)
-	SI:EDI -> completion procedure
-Return: CF clear if successful (event scheduled)
-	CF set on error
-Note:	this function is only available while MS Windows is running
-SeeAlso: AX=0011h,AX=0012h,INT 2F/AX=1605h,INT 2F/AX=4310h"Cloaking"
-
-(Table 2424)
-Values for Cloaking shell event code:
- 0414h	Hot key event
-	subevent 0000h: Alt-Space
-	subevent 0001h: Alt-Enter
-	subevent 0002h: Dir-VM
- 0415h	Switch context
-	subevent 0000h for DOS VM context, nonzero for System VM context
- 0416h	Clipboard event
- 0417h	Termination event
-	subevent 0000h for normal termination, nonzero for error
- 0418h	Display message
-	subevent 0000h for normal message, nonzero for system model ASAP
- 0419h	Crash
- 041Ah	Paste complete
-	subevent 0000h: normal
-	subevent 0001h: cancelled by user
-	subevent 0002h: cancelled
- 041Bh	Contention event
- 041Ch	Screen switch
-	subevent 0000h: forward
-	subevent 0001h: back
- 041Dh	Filesystem change
- 041Eh	Check Focus
- 041Fh	Panic
-
-Bitfields for boost value:
-Bit(s)	Description	(Table 2425)
- 0	boost system VM until focus changes
- 1	boost system VM on Switcher screen
- 2	boost system VM until response
- 3	boost system VM during clipboard activity
- 4	boost system VM during print screen
- 5	boost system VM during update
---------m-2C0011-----------------------------
-INT 2C P - Cloaking v1.01 - "Switch_VMs_and_Call_back"
-	AX = 0011h
-	EBX = handle of VM to be made active
-	SI:EDI -> 32-bit FAR completion procedure
-Return: CF clear if successful (scheduled)
-	CF set on error
-Notes:	this function is only available while MS Windows is running
-	the completion procedure is called with CF clear if the specified
-	  VM has been made active, or with CF set on error
-SeeAlso: AX=000Fh,AX=0012h
---------m-2C0012-----------------------------
-INT 2C P - Cloaking v1.01 - "Query_Current_VM"
-	AX = 0012h
-Return: CF clear
-	EBX = handle of active VM
-	ESI = handle of system VM
-	ECX = VM status flags (see #2426)
-	EDX = shell flags (see #2427)
-Note:	this function is only available while MS Windows is running in enhanced
-	  mode
-SeeAlso: AX=000Fh,AX=0011h,AX=0013h
-
-Bitfields for VM status flags:
-Bit(s)	Description	(Table 2426)
- 0	in exclusive mode
- 1	runs in background
- 2	being created
- 3	suspended
- 4	not executable
- 5	executing in protected mode
- 6	contains PM application
- 7	32-bit PM application
- 8	called from VxD
- 9	high priority background
- 10	blocked on semaphore
- 11	awakening
- 12	has pageable V86
- 13	has locked V86
- 14	is scheduled
- 15	idle
- 16	closing
-
-Bitfields for shell flags:
-Bit(s)	Description	(Table 2427)
- 2	windowed
- 5	Alt-Tab reserved
- 6	Alt-Esc reserved
- 7	Alt-Space reserved
- 8	Alt-PrtSc reserved
- 9	Alt-Enter reserved
- 10	Alt-PrtSc reserved
- 11	PrtSc reserved
- 12	polling enabled
- 13	no HMA
- 14	has shortcut key
- 15	locked EMS handles
- 16	locked XMS handles
- 17	fast paste enabled
- 18	locked V86 memory
- 30	close-on-exit enabled
---------m-2C0013-----------------------------
-INT 2C P - Cloaking v1.01 - "Issue_System_Modal_Message"
-	AX = 0013h
-	EDX = message box flags (see #2428)
-	DS:ECX -> ASCIZ message text
-	DS:EDI -> ASCIZ caption
-Return: CF clear
-	EAX = response code
-Note:	this function is only available while MS Windows is running in enhanced
-	  mode
-SeeAlso: AX=000Fh,AX=0012h
-
-Bitfields for message box flags:
-Bit(s)	Description	(Table 2428)
- 3-0	response codes (see #2429)
- 7-4	icon codes
-	1 = Warning hand
-	2 = exclamation mark
-	4 = asterisk
- 9-8	default response (0 = first button, 1 = second, 2 = third)
- 12	message is system model
- 15	don't change focus
- 29	hang with interrupts enabled
- 30	do not window
- 31	execute ASAP
-
-(Table 2429)
-Values for response codes:
- 00h	OK
- 01h	OK, Cancel
- 02h	Abort, Retry, Ignore
- 03h	Yes, No, Cancel
- 04h	Yes, No
- 05h	Retry, Cancel
---------m-2C001D-----------------------------
-INT 2C P - Cloaking v1.01 - GET INT 2C API HANDLER ENTRY POINT
-	AX = 001Dh
-Return: CF clear
-	DX:EBX = selector:offset of Cloaking host INT 2C handler
-Desc:	get the Cloaking host's entry point to bypass any other programs
-	  which may have hooked INT 2C in protected mode
-Note:	the returned entry point must be called with a simulated INT, i.e.
-	  a PUSHD must precede the far call to the handler
-SeeAlso: INT 2F/AX=4310h"Cloaking"
---------m-2C001E-----------------------------
-INT 2C P - Cloaking v1.01 - CLEAR CRITICAL SECTION
-	AX = 001Eh
-Return: CF clear
-Desc:	allow MS Windows to switch to another VM after having prevented it
-	  by invoking a critical section
-SeeAlso: AX=001Fh,INT 15/AX=101Ch,INT 2F/AX=1682h
---------m-2C001F-----------------------------
-INT 2C P - Cloaking v1.01 - SET CRITICAL SECTION
-	AX = 001Fh
-Return: CF clear
-Desc:	prevent MS Windows from switching to another VM
-SeeAlso: AX=001Eh,INT 15/AX=101Bh,INT 2F/AX=1681h
---------m-2C0020-----------------------------
-INT 2C P - Cloaking - GET SIZE OF PROTECTED-MODE STATE
-	AX = 0020h
-Return: EAX = number of bytes required for storing state
-Note:	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-SeeAlso: AX=0021h,AX=0022h
---------m-2C0021-----------------------------
-INT 2C P - Cloaking - SAVE PROTECTED-MODE STATE
-	AX = 0021h
-	ES:EDI -> buffer for protected-mode state
-Return: CF clear
-	buffer filled
-Note:	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-SeeAlso: AX=0020h,AX=0022h
---------m-2C0022-----------------------------
-INT 2C P - Cloaking - RESTORE PROTECTED-MODE STATE
-	AX = 0022h
-	DS:ESI -> buffer containing previously-saved protected-mode state
-Return: CF clear if successful
-	    state restored
-	CF set on error (invalid buffer contents)
-Note:	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-SeeAlso: AX=0020h,AX=0021h
---------m-2C0023-----------------------------
-INT 2C P - Cloaking - ISSUE PROTECTED-MODE XMS CALL
-	AX = 0023h
-Notes:	not currently implemented--NOP in RM386 v6.00
-	this function was first introduced with RM386 (RAM-MAN/386) v6.00
---------m-2C0024-----------------------------
-INT 2C P - Cloaking - SET V86-MODE STACK
-	AX = 0024h
-	DX:EBX = new value for V86-mode SS:ESP
-Return: nothing
-Note:	this function was first introduced with RM386 (RAM-MAN/386) v6.00
---------m-2C0025-----------------------------
-INT 2C P - Cloaking - CALL V86-MODE PROCEDURE
-	AX = 0025h
-	DS:EBX -> client register structure (see #2423)
-Return: CF clear if successful
-	    client register structure updated
-	CF set if no more nested procedure call space available
-Notes:	this call uses the V86-mode stack supplied in the client structure, and
-	  calls the routine specified by CS:IP in the client structure
-	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-SeeAlso: AX=0026h,AX=0027h,INT 31/AX=0301h
---------m-2C0026-----------------------------
-INT 2C P - Cloaking - CALL V86-MODE INTERRUPT HANDLER
-	AX = 0026h
-	DS:EBX -> client register structure (see #2423)
-	CX = interrupt number
-Return: CF clear if successful
-	    client register structure updated
-	CF set if no more nested procedure call space available
-Notes:	this call uses the V86-mode stack supplied in the client structure
-	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-SeeAlso: AX=0025h,AX=0027h,INT 31/AX=0300h
---------m-2C0027-----------------------------
-INT 2C P - Cloaking - CHAIN TO V86-MODE INTERRUPT HANDLER
-	AX = 0027h
-	DS:EBX -> client register structure (see #2423)
-Return: CF clear if successful
-	    client register structure updated
-	CF set if no more nested procedure call space available
-Notes:	this call uses the V86-mode stack supplied in the client structure,
-	  and jumps to the address specified by CS:IP in the client structure
-	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-SeeAlso: AX=0025h,AX=0026h
---------m-2C0028-----------------------------
-INT 2C P - Cloaking - GET ESP0 FROM TSS
-	AX = 0028h
-Return: CF clear
-	EAX = TSS's ESP0
-Note:	this function was first introduced with RM386 (RAM-MAN/386) v6.00, the
-	  memory manager included in Helix Software's Netroom
---------m-2C0029-----------------------------
-INT 2C P - Cloaking - SET SECONDARY STACK
-	AX = 0029h
-	DX:EBX = new value for SS:ESP of ring 3 secondary stack
-Return: CF clear
-Desc:	inform RM386 of the ring 3 interrupt stack location
-Note:	this function was first introduced with RM386 (RAM-MAN/386) v6.00
---------m-2C002A-----------------------------
-INT 2C P - Cloaking - SET 8259 IRQ BASE VECTORS
-	AX = 002Ah
-	BL = base vector of master interrupt controller
-	CL = base vector of slave interrupt controller
-Notes:	this call merely informs RM386 that the caller has changed the
-	  interrupt mappings
-	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-SeeAlso: INT 67/AX=DE0Bh
---------m-2C002BCH81-------------------------
-INT 2C P - Cloaking - PROTECTED-MODE VIRTUAL DMA SERVICES
-	AX = 002Bh
-	CH = 81h
-	CL = subfunction (02h-0Ch)
-	other registers as appropriate for subfunction
-Return: varies by function
-	CF set on error
-Notes:	these functions are equivalent to the INT 4B/AX=81xxh subfunctions
-	  with the same numbers
-	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-SeeAlso: INT 4B/AX=8102h,INT 4B/AX=810Ch
---------m-2C002C-----------------------------
-INT 2C P - Cloaking - GET PORT-TRAPPING PASSALONG
-	AX = 002Ch
-Return: CF clear
-	DX:EBX = current I/O trapping passalong address
-Note:	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-SeeAlso: AX=0008h,AX=002Dh
---------m-2C002D-----------------------------
-INT 2C P - Cloaking - SET PORT-TRAPPING PASSALONG
-	AX = 002Dh
-	DX:EBX = new I/O trapping passalong address (see #2430)
-Return: CF clear
-Notes:	RM386 calls the passalong address whenever an access to a monitored
-	  I/O port is attempted; the handler should check whether it is a port
-	  that it is interested in, and if not call the previous passalong
-	  address (which was retrieved with AX=002Ch before installing the
-	  new handler)
-	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-SeeAlso: AX=0009h,AX=002Ch,INT 67/AX=5DEAh
-
-(Table 2430)
-Values Cloaking port-trapping passalong address is called with:
-	EAX = CS:IP of faulting instruction (unless executing in protected-mode
-		ring 3)
-	SS:EBX -> caller register structure (see #2423)
-		check EFLAGS V86-mode bit for type
-	CX = first two bytes of I/O instruction which was trapped
-	DX = port to which I/O is being performed
-	CF clear
-Return: CF clear if RM386 should perform I/O operation
-	CF set if I/O should be skipped
-Note:	RM386 skips the trapped I/O instruction, so the passalong handler
-	  should not modify the client CS:EIP
---------m-2C002E-----------------------------
-INT 2C P - Cloaking - TRAP I/O PORT
-	AX = 002Eh
-	DX = port number to trap
-Return: CF clear if successful
-	CF set on error (port out of range or reserved)
-Note:	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-SeeAlso: AX=002Fh,AX=0030h
---------m-2C002F-----------------------------
-INT 2C PU - Cloaking - UNTRAP I/O PORT
-	AX = 002Fh
-	DX = port number for which to cancel trapping
-Return: CF clear if successful
-	CF set on error (port out of range or reserved)
-Note:	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-SeeAlso: AX=002Eh,AX=0030h
---------m-2C0030-----------------------------
-INT 2C PU - Cloaking - GET TRAPPING STATE OF SPECIFIED PORT
-	AX = 0030h
-	DX = port number
-Return: CF clear if successful
-	   BX = current state (0000h not trapped, 0001h trapped)
-	CF set on error (port out of range or reserved)
-Note:	this function was first introduced with RM386 (RAM-MAN/386) v6.00
-SeeAlso: AX=002Eh,AX=002Fh
---------m-2C0031-----------------------------
-INT 2C PU - RM386 v6.00 - BUG
-	AX = 0031h
-Program: RM386 (RAM-MAN/386) is the memory manager included in Helix
-	  Software's Netroom
-Note:	due to a fencepost error, RM386 v6.00 will branch unpredictably if
-	  invoked with this function
---------m-2C0031-----------------------------
-INT 2C P - Cloaking v1.01 - ALLOCATE V86 CALLBACK
-	AX = 0031h
-	DX:EBX = CS:EIP of protected-mode routine to be invoked by callback
-Return: CF clear if successful
-	    EBX = CS:IP of V86-mode callback handler
-	CF set on error
-SeeAlso: AX=0032h
---------m-2C0032-----------------------------
-INT 2C P - Cloaking v1.01 - FREE V86 CALLBACK
-	AX = 0032h
-	EBX = CS:IP of V86-mode callback handler
-Return: CF clear if successful
-	CF set on error
-	    AX = error code
-		0005h invalid callback address
-		0006h callback already free
-SeeAlso: AX=0032h
---------m-2C0033-----------------------------
-INT 2C P - Cloaking v1.01 - REGISTER CLOAKING CLIENT
-	AX = 0033h
-	DS:EDX -> client registration structure (see #2431)
-Return: CF clear if successful
-	CF set on error (linked list corrupt)
-SeeAlso: AX=0034h,#2642 at INT 2F/AX=4310h"Cloaking"
-
-Format of client registration structure:
-Offset	Size	Description	(Table 2431)
- 00h	PWORD	link to next structure
- 06h	PWORD	link to previous structure
- 0Ch  2 BYTEs	client version (major, minor)
- 0Eh 20 BYTEs	client name
- 22h	DWORD	physical address of client start
- 26h	DWORD	client's total size in bytes
-Note:	the link area should not be modified once the structure has been
-	  used for the registration call
---------m-2C0034-----------------------------
-INT 2C P - Cloaking v1.01 - UNREGISTER CLOAKING CLIENT
-	AX = 0034h
-	DS:EDX -> client registration structure (see #2431)
-Return: CF clear if successful
-	CF set on error (linked list corrupt)
-Note:	the client must unregister before freeing the XMS block containing
-	  its registration structure(s)
-SeeAlso: AX=0033h,#2642 at INT 2F/AX=4310h"Cloaking"
---------D-2D---------------------------------
-INT 2D - DOS 2+ - RESERVED
-Note:	this vector is not used in DOS versions <= 6.00, and points at an IRET
-BUG:	RM386 v6.00-6.02 (as distributed with Helix's Netroom v3.x) contains
-	  a stack bug in its protected-mode INT 2D handler which causes a crash
-	  when INT 2D is invoked from V86 mode
---------t-2D---------------------------------
-INT 2D - ALTERNATE MULTIPLEX INTERRUPT SPECIFICATION (AMIS) [v3.6]
-	AH = multiplex number
-	AL = function
-	    00h installation check
-	    01h get private entry point
-	    02h uninstall
-	    03h request popup
-	    04h determine chained interrupts
-	    05h get hotkey list
-	    06h get device-driver information
-	    07h-0Fh reserved for future enhancements
-		Return: AL = 00h (not implemented)
-	    other  application-dependent
-	other registers vary by function (also see individual entries below)
-Return: varies by function
-Notes:	programs should not use fixed multiplex numbers; rather, a program
-	  should scan all multiplex numbers from 00h to FFh, remembering the
-	  first unused multiplex in case the program is not yet installed.
-	  For multiplex numbers which are in use, the program should compare
-	  the first 16 bytes of the signature string to determine whether it
-	  is already installed on that multiplex number.  If not previously
-	  installed, it should use the first free multiplex number.
-	functions other than 00h are not valid unless a program is installed
-	  on the selected multiplex number
-	to be considered fully compliant with version 3.6 of the specification,
-	  programs must implement at least functions 00h, 02h (no resident
-	  uninstall code required), and 04h (return value 04h).	 TSRs that
-	  provide hotkeys with which the user can activate them must also
-	  implement function 05h.  TSRs which provide DOS device drivers must
-	  also implement function 06h.	The absolute minimum fully-compliant
-	  implementation has an overhead of 64 bytes (80 bytes with function
-	  05h) plus 22 bytes per hooked interrupt (for the interrupt sharing
-	  protocol header and hook list entry).
-	the signature string and description may be used by memory mappers
-	  to display the installed programs
-	to be considered fully compliant, users of this specification must
-	  adhere to the IBM interrupt sharing protocol (see #2432), which will
-	  permit removal of TSRs in arbitrary order and interrupt handler
-	  reordering.  All TSRs following this specification should be
-	  removable unless they are loaded from CONFIG.SYS, though they need
-	  not keep the code for removing themselves resident; it is acceptable
-	  for a separate program to perform the interrupt unhooking and
-	  memory-freeing steps of removal.
-	A sample public-domain implementation including example TSRs and
-	  utility programs may be found in a separate package distributed as
-	  AMISLnnn.ZIP (AMISL092.ZIP as of this writing).
-	Please let me know if you choose to follow this proposal.  The
-	  signature and a list of the private API calls you use would be
-	  appreciated, as well.
-SeeAlso: INT 2D/AL=00h,INT 2D/AL=01h,INT 2D/AL=02h,INT 2D/AL=03h,INT 2D/AL=04h
-SeeAlso: INT 2D/AL=05h,INT 2D/AL=06h,INT 2F"NOTES"
-
-Format of interrupt sharing protocol interrupt handler entry point:
-Offset	Size	Description	(Table 2432)
- 00h  2 BYTEs	short jump to actual start of interrupt handler, immediately
-		  following this data block (EBh 10h)
- 02h	DWORD	address of next handler in chain
- 06h	WORD	signature 424Bh
- 08h	BYTE	EOI flag
-		00h software interrupt or secondary hardware interrupt handler
-		80h primary hardware interrupt handler (will issue EOI)
- 09h  2 BYTEs	short jump to hardware reset routine
-		must point at a valid FAR procedure (may be just RETF)
- 0Bh  7 BYTEs	reserved (0) by IBM for future expansion
-Note:	when chaining to the prior handler, the interrupt handler must perform
-	  an indirect jump/call using the address at offset 02h in the
-	  ISP header.  This permits another AMIS TSR to hook itself into
-	  the chain at a position other than as the first handler to receive
-	  an interrupt.
-SeeAlso: INT F1/AH=01h"Common ISDN API",INT F1/AH=06h"CAPI",#3915
---------t-2D--00-----------------------------
-INT 2D - AMIS v3.0+ - INSTALLATION CHECK
-	AL = 00h
-	AH = multiplex number for program
-Return: AL = 00h if free
-	AL = FFh if multiplex number in use
-	    CX = binary version number (CH = major, CL = minor)
-	    DX:DI -> signature string (see #2433) identifying the program
-		  using the multiplex number
-SeeAlso: INT 2D/AL=01h,INT 2D/AL=02h,INT 2D/AL=03h,INT 2D/AL=04h,INT 2D/AL=05h
-SeeAlso: INT 2D/AL=06h
-Index:	installation check;Alternate Multiplex Interrupt Specification
-Index:	installation check;AMIS|installation check;FASTMOUS
-Index:	installation check;SPELLER|installation check;Monitor
-Index:	installation check;NOLPT|installation check;NOTE
-Index:	installation check;RBkeyswp|installation check;SWITCHAR
-Index:	installation check;VGABLANK|installation check;EATMEM
-Index:	installation check;RECALL|installation check;XPTR2
-
-Format of AMIS signature string:
-Offset	Size	Description	(Table 2433)
- 00h  8 BYTEs	blank-padded manufacturer's name (possibly abbreviated)
- 08h  8 BYTEs	blank-padded product name
- 10h 64 BYTEs	ASCIZ product description (optional, may be a single 00h)
-Note:	it is not necessary to reserve a full 64 bytes for the description,
-	  just enough to store the actual ASCIZ string
-SeeAlso: #2434
-
-(Table 2434)
-Values for AMIS signatures known to be in use:
- 'Byrial J' 'EKLAVO  '	permits keyboard entry of Esperanto accented letters
- 'CoveSoft' 'Burnout+'	shareware screen saver Burnout Plus
- 'Crynwr  ' 'SPELLER '	TSR spelling-checker
- 'CPH1995 ' 'CDTSR   '	resident CD-Audio player
- 'CPH1996 ' 'DSAPI   '
- 'CSJewell' 'Modula3L'	Curtis Jewell's Modula-3 compiler (non-TSR)
- 'DAISYCHA' 'INDRIVER'	Advanced Parallel Port daisy chain driver (vendor name
-			  in product description field, if desired)
-			(see also INT 2D/AL=DCh)
- 'DTown SD' 'DTU     '	DTown Software Development's DTown Utilities
-			(see also INT 2D/AL=20h)
- 'ECLIPSE ' 'PLUMP   '	Eclipse Software's printer and plotter spooler
- 'GraySoft' 'GIPC    '	GraySoft's Inter-Process Communications driver
- 'heathh  ' 'Monitor '
- 'Helge O '		TSRs by Helge Olav Helgesen
- 'J. Berry' 'RATSR   '	RemoteAccess Network Manager workstation module
- 'JWB	  ' 'RAMLIGHT'	James Birdsall's on-screen RAMdisk activity indicator
- 'M Better' 'iHPFS   '	Marcus Better's HPFS filesystem driver for DOS
- 'M. Paul ' 'FREEVER '	DOS version-faking TSR by Matthias Paul
- 'Nildram ' 'ST	     '	Screen Thief graphics screen grabber
- 'Pino Nav' 'ALTMENU '	activate any program's menu bar by pressing Alt key
- 'Pino Nav' 'Keybit  '	Pino Navato's KEYBIT Lite Italian keyboard driver v4+
- 'PowrQuot' 'CAPRILOG'
- 'PowrQuot' 'CAPRITSR'
- 'PowrQuot' 'CAPRIWIN'
- 'R-Ware  ' 'dLite   '	run-time data decompression TSR
- 'Ralf B  ' 'disaXXYY'	RBdisabl -- disable key scancode XX w/ shift states YY
- 'Ralf B  ' 'DUALVGA '	dual-VGA support, screen blanker, and DPMS driver
- 'Ralf B  ' 'FASTMOUS'	example TSR included with sample AMIS library code
- 'Ralf B  ' 'NoBreak '	disable Ctrl-@, Ctrl-C, and Ctrl-Break keys
- 'Ralf B  ' 'NOLPT n '	example TSR -- turn LPTn into bit-bucket
- 'Ralf B  ' 'NOTE    '	example TSR -- popup note-taker
- 'Ralf B  ' 'RBclock '	RBclock -- on-screen real-time clock
- 'Ralf B  ' 'RBclockE'	RBclock -- on-screen elapsed-time clock
- 'Ralf B  ' 'RBdvorak'	Dvorak keyboard mapping w/ opt Esc/~, LCtrl/CapsLk swap
- 'Ralf B  ' 'RBkcount'	display count of keystrokes on screen
- 'Ralf B  ' 'RBkeyswp'	RBkeyswap v3.0+ -- swap Esc/~ and LCtrl/CapsLock keys
- 'Ralf B  ' 'RBnoboot'	disable Ctrl-Alt-Del key combination
- 'Ralf B  ' 'ShftCaps'	require Shift-CapsLock to turn on CapsLock
- 'Ralf B  ' 'ShftNumL'	require Shift-NumLock to turn off NumLock
- 'Ralf B  ' 'SWITCHAR'	example TSR -- add switchar() support removed from DOS5
- 'Ralf B  ' 'VGABLANK'	VGA-only screen blanker
- 'Ralf B  ' 'WINTAME '	yield CPU when program in Win95 DOS box is idle
- 'Sally IS' 'Mdisk   '	removeable, resizeable RAMdisk
- 'Sally IS' 'Scr2Tex '	screen dumper with output in (La)Tex format
- 'SRT	  ' 'STOPBOOT'	reboot preventer by Steve Talbot
- 'Thaco	  ' 'NEST    '	Eirik Pedersen's programmer's delimiter matcher
- 'TifaWARE' 'EATMEM  '	George A. Theall's public domain memory restrictor for
-			testing programs (v1.1+)
- 'TifaWARE' 'RECALL  '	public domain commandline editor and history (v1.2+)
- 'Todd	  ' 'XPTR2   '	PC-to-Transputer interface by Todd Radel
- 'WlkngOwl' 'NoiseSYS'	NOISE.SYS random-number generator
-SeeAlso: #2433
---------t-2D--01-----------------------------
-INT 2D - AMIS v3.0+ - GET PRIVATE ENTRY POINT
-	AL = 01h
-	AH = multiplex number for program
-Return: AL = 00h if all API calls via INT 2D
-	AL = FFh if entry point supported
-	    DX:BX -> entry point for bypassing interrupt chain
-Note:	this function is not valid unless a program is installed on the
-	  specified multiplex number; use INT 2D/AL=00h to check
-SeeAlso: INT 2D/AL=00h,INT 2D/AL=02h,INT 2D/AL=03h,INT 2D/AL=04h,INT 2D/AL=05h
-SeeAlso: INT 2D/AL=06h
-Index:	entry point;Alternate Multiplex Interrupt|entry point;AMIS
---------t-2D--02-----------------------------
-INT 2D - AMIS v3.0+ - UNINSTALL
-	AL = 02h
-	AH = multiplex number for program
-	DX:BX = return address for successful uninstall (may be	ignored by TSR)
-Return: AL = status
-	    00h not implemented (makes TSR non-compliant with specification)
-	    01h unsuccessful
-	    02h can not uninstall yet, will do so when able
-	    03h safe to remove, but no resident uninstaller
-		  (TSR still enabled)
-		BX = segment of memory block with resident code
-	    04h safe to remove, but no resident uninstaller
-		  (TSR now disabled)
-		BX = segment of memory block with resident code
-	    05h not safe to remove now, try again later
-	    06h disabled, but can not be removed from memory
-		  because loaded from CONFIG.SYS
-	    07h safe to remove, but no resident device-driver
-		  uninstaller.	Caller must unlink device
-		  drivers from DOS device chain as well as
-		  unhooking interrupts and freeing memory
-		BX = segment of memory block with resident code
-	    FFh successful
-	return at DX:BX with AX destroyed if successful and TSR honors
-	  specific return address
-Note:	this function is not valid unless a program is installed on the
-	  specified multiplex number; use INT 2D/AL=00h to check
-SeeAlso: INT 2D/AL=00h,INT 2D/AL=01h,INT 2D/AL=03h,INT 2D/AL=04h,INT 2D/AL=05h
-SeeAlso: INT 2D/AL=06h
-Index:	uninstall;Alternate Multiplex Interrupt Specification|uninstall;AMIS
---------t-2D--03-----------------------------
-INT 2D - AMIS v3.0+ - REQUEST POP-UP
-	AL = 03h
-	AH = multiplex number for program
-Return: AL = status
-	    00h not implemented or TSR is not a pop-up
-	    01h can not pop up at this time, try again later
-	    02h can not pop up yet, will do so when able
-	    03h already popped up
-	    04h unable to pop up, user intervention required
-		BX = standard reason code
-		    0000h unknown failure
-		    0001h interrupt chain passes through memory
-			  which must be swapped out to pop up
-		    0002h swap-in failed
-		CX = application's reason code if nonzero
-	    FFh TSR popped up and was exited by user
-		BX = return value
-		    0000h no return value
-		    0001h TSR unloaded
-		    0002h-00FFh reserved
-		    0100h-FFFFh application-dependent
-Note:	this function is not valid unless a program is installed on the
-	  specified multiplex number; use INT 2D/AL=00h to check
-SeeAlso: INT 2D/AL=00h,INT 2D/AL=01h,INT 2D/AL=02h,INT 2D/AL=04h,INT 2D/AL=05h
-SeeAlso: INT 2D/AL=06h
---------t-2D--04-----------------------------
-INT 2D - AMIS v3.0+ - DETERMINE CHAINED INTERRUPTS
-	AL = 04h
-	AH = multiplex number for program
-	BL = interrupt number (except 2Dh)
-Return: AL = status
-	    00h not implemented (makes TSR non-compliant with specification)
-	    01h (obsolete) unable to determine
-	    02h (obsolete) interrupt hooked
-	    03h (obsolete) interrupt hooked, address returned
-		DX:BX -> TSR's interrupt BL handler
-	    04h list of hooked interrupts returned
-		DX:BX -> interrupt hook list (see #2435)
-	    FFh interrupt not hooked
-Notes:	BL is ignored if the TSR returns AL=04h; in that case, the caller
-	  needs to scan the return list rather than making additional calls
-	  to this function.  If the return is not 00h or 04h, then the caller
-	  must cycle through the remaining interrupt numbers it wishes to
-	  check.
-	return values 01h through 03h may not be used by AMIS v3.6-compliant
-	  programs; they are included here solely for compatibility with
-	  version 3.3, though they were probably never used in any
-	  implementation
-	for return values 01h through 03h, since INT 2D is known to be hooked,
-	  the resident code need not test for BL=2Dh (to minimize its size),
-	  and the return value is therefore undefined in that case.
-	this function is not valid unless a program is installed on the
-	  specified multiplex number; use INT 2D/AL=00h to check
-SeeAlso: INT 2D/AL=00h,INT 2D/AL=01h,INT 2D/AL=02h,INT 2D/AL=03h,INT 2D/AL=05h
-SeeAlso: INT 2D/AL=06h
-
-Format of AMIS interrupt hook list [array]:
-Offset	Size	Description	(Table 2435)
- 00h	BYTE	interrupt number (last entry in array is 2Dh)
- 01h	WORD	offset within hook list's segment of the interrupt handler
-		this will point at the initial short jump of the interrupt
-		  sharing protocol header (see #2432)
-SeeAlso: #2436
---------t-2D--05-----------------------------
-INT 2D - AMIS v3.5+ - GET HOTKEYS
-	AL = 05h
-	AH = multiplex number for program
-Return: AL = status
-	    00h not implemented
-	    FFh supported
-		DX:BX -> hotkey list (see #2436)
-Notes:	this function is not valid unless a program is installed on the
-	  specified multiplex number; use INT 2D/AL=00h to check
-	programs which provide hotkeys are required to provide this function
-	  to be fully compliant with this specification
-SeeAlso: INT 2D/AL=00h,INT 2D/AL=01h,INT 2D/AL=02h,INT 2D/AL=03h,INT 2D/AL=04h
-SeeAlso: INT 2D/AL=06h
-
-Format of AMIS hotkey list:
-Offset	Size	Description	(Table 2436)
- 00h	BYTE	type of hotkey checking (see #2437)
- 01h	BYTE	number of hotkeys (may be zero if TSR can disable hotkeys)
- 02h 6N BYTEs	array of hotkey definitions
-		(one per hotkey, first should be primary hotkey)
-		Offset	Size	Description
-		 00h	BYTE	hotkey scan code (00h/80h if shift states only)
-				hotkey triggers on release if bit 7 set
-		 01h	WORD	required shift states (see #2438)
-		 03h	WORD	disallowed shift states (see #2438)
-		 05h	BYTE	hotkey flags (see #2439)
-Notes:	except for bit 7, the shift states correspond exactly to the return
-	  values from INT 16/AH=12h.  A set bit in the required states word
-	  indicates that the corresponding shift state must be active when the
-	  hotkey's scan code is received for the hotkey to be recognized; a
-	  clear bit means that the corresponding state may be ignored.	A set
-	  bit in the disallowed shift states word indicates that the
-	  corresponding shift state must be inactive.
-	for the disallowed-states word, if one of the "either" bits is set,
-	  then both the corresponding left bit and right bit must be set
-	examples:
-		Ctrl-Alt-Del monitoring: 53h 000Ch 0003h 06h
-		Alt-key tap (DESQview):	 B8h 0000h 0007h 08h
-		Shf-Shf-N (NOTE.COM):	 31h 0003h 000Ch 00h
-Index:	hotkeys;AMIS
-SeeAlso: #0005
-
-Bitfields for type of AMIS hotkey checking:
-Bit(s)	Description	(Table 2437)
- 0	checks before chaining INT 09
- 1	checks after chaining INT 09
- 2	checks before chaining INT 15/AH=4Fh
- 3	checks after chaining INT 15/AH=4Fh
- 4	checks on INT 16/AH=00h,01h,02h
- 5	checks on INT 16/AH=10h,11h,12h
- 6	checks on INT 16/AH=20h,21h,22h
- 7	reserved (0)
-SeeAlso: #2436
-
-Bitfields for AMIS shift states:
-Bit(s)	Description	(Table 2438)
- 0	right shift pressed
- 1	left shift pressed
- 2	either control key pressed
- 3	either Alt key pressed
- 4	ScrollLock active
- 5	NumLock active
- 6	CapsLock active
- 7	either shift key pressed
- 8	left control key pressed
- 9	left Alt key pressed
- 10	right control key pressed
- 11	right Alt key pressed
- 12	ScrollLock pressed
- 13	NumLock pressed
- 14	CapsLock pressed
- 15	SysReq key pressed
-Notes:	if bit 2 is set, either control key may be pressed for the hotkey; if
-	  bits 8 and 10 are both set, then both control keys must be pressed.
-	  Similarly for bits 3 and 9/11, as well as 7 and 0/1.
-	the SysReq key is often labeled SysRq
-SeeAlso: #2436,#2439
-
-Bitfields for AMIS hotkey flags:
-Bit(s)	Description	(Table 2439)
- 0	hotkey chained before processing
- 1	hotkey chained after processing
- 2	others should pass through this hotkey so that it can be monitored
- 3	hotkey will not activate if other keys pressed/released before hotkey
-	  press is completed
- 4	this key is remapped into some other key
- 5	this key is conditionally chained (sometimes passed on, sometimes
-	  swallowed)
- 6-7	reserved (0)
-SeeAlso: #2436,#2438
---------t-2D--06-----------------------------
-INT 2D - AMIS v3.6 - GET DEVICE-DRIVER INFORMATION
-	AL = 06h
-	AH = multiplex number for program
-Return: AL = number of device driver headers supplied by prog.
-	AH = device-driver flags (see #2440)
-	DX:BX -> first device driver header (see #1511)
-Program: AMIS is the Alternate Multiplex Interrupt Specification promulgated
-	  by Ralf Brown
-Notes:	if AL=00h, AH,BX,DX are meaningless and may be destroyed
-	this function is not valid unless a program is installed on the
-	  specified multiplex number; use INT 2D/AL=00h to check
-	programs which provide device drivers are required to support this
-	  function to be considered fully compliant with v3.6+ of the
-	  specification
-SeeAlso: INT 2D/AL=00h,INT 2D/AL=01h,INT 2D/AL=02h,INT 2D/AL=03h,INT 2D/AL=04h
-SeeAlso: INT 2D/AL=05h
-
-Bitfields for AMIS device-driver information flags:
-Bit(s)	Description	(Table 2440)
- 0	program loaded from CONFIG.SYS, and thus can not be removed from memory
-	(leave clear if unable to determine)
- 1	device driver headers have not been linked into DOS device chain
- 2	reentrant device driver(s)
---------N-2D--10-----------------------------
-INT 2D - RATSR 2.0+ - GET STATUS
-	AL = 10h
-	AH = AMIS multiplex number for RATSR
-Return: AL = status
-	    01h listening (no connection)
-	    02h receiving	      \
-	    03h sending		       > station being monitored
-	    04h initializing receive  /
-	AH = keyboard lock status (00h unlocked, 01h locked)
-Program: RATSR is a utility by James Berry provided with
-	  RemoteAccess/Professional, a commercial bulletin board system, that
-	  allows remote control of a station over a network
-SeeAlso: INT 2D"AMIS"
---------d-2D--10-----------------------------
-INT 2D - dLite 1.0+ - GET PARAMETER BLOCK ADDRESS
-	AL = 10h
-	AH = AMIS multiplex number for dLite
-Return: CF clear if successful
-	    ES:BX -> parameter block (see #2441)
-	CF set on error
-Program: dLite is a shareware TSR by Rainer Schuetze which transparently
-	  expands compressed files when they are read
-SeeAlso: AL=11h"dLite",AL=12h"dLite",INT 21/AX=FEDCh"PCMANAGE"
-
-Format of dLite parameter block:
-Offset	Size	Description	(Table 2441)
- 00h	BYTE	TSR flags (see #2442)
- 01h	WORD	maximum number of programs needing original filesize
- 03h	WORD	current number of programs needing original filesize
- 05h	WORD	maximum number of files that can be handled by dLite (should
-		  be the same as FILES= in CONFIG.SYS)
- 07h	WORD	offset (in the same segment as the parameter block) of the
-		  table of programs needing the original filesize (8 bytes
-		  each,	without path or extension, uppercase, and zero \
-		  terminated if	shorter than 8 bytes)
-
-Bitfields for dLite TSR flags:
-Bit(s)	Description	(Table 2442)
- 0	deny FCB access
- 1	dLite sleeping rather than activated
- 2	always indicate original filesize when reading directory entries,
-	  rather than only for specified programs
- 3-7	reserved
-SeeAlso: #2441
---------V-2D--10-----------------------------
-INT 2D - Burnout Plus v3.00 - GET STATE/CONTROL INFORMATION
-	AL = 10h
-	AH = AMIS multiplex number for Burnout Plus
-Return: AL = 01h
-	BX = Burnout Plus status (see #2443)
-	CX = record of features loaded (see #2444)
-	ES:DI -> Burnout Plus control structure (see #2445)
-Program: Burnout Plus is a DOS screen saver from Cove Software
-SeeAlso: INT 14/AX=AA01h,INT 2D"AMIS"
-Index:	screen saver;Burnout Plus
-
-Bitfields for Burnout Plus status:
-Bit(s)	Description	(Table 2443)
- 0	screen is blanked
- 1	MS Windows is active (Burnout Plus deactivated)
- 2-15	reserved
-
-Bitfields for Burnout Plus features loaded/features enabled:
-Bit(s)	Description	(Table 2444)
- 0	mouse activity monitor
- 1	passkey support
- 2	password support
- 3	continuous clear
- 4	software blanking
- 5	video activity monitor
- 6	disk activity monitor
- 7	activating keystroke suppression
-SeeAlso: #2445
-
-Format of Burnout Plus control structure:
-Offset	Size	Description	(Table 2445)
- 00h	BYTE	size of structure in bytes
- 01h	WORD	Burnout Plus version
- 03h	WORD	screen blanking reset count in clock ticks
- 05h	WORD	current countdown value in clock ticks
- 07h	BYTE	type of timeout specification
- 08h	BYTE	instant-blank hotkey
- 09h	WORD	extended status information (see #2446)
-		the bits for password, passkey, and software blanking are
-		  ignored and cannot be enabled or disabled externally
- 0Bh	WORD	features enabled (see #2444)
-Note:	all fields except the first two may be modified by external programs
-	  to affect the operation of Burnout Plus
-Index:	hotkeys;Burnout Plus
-
-Bitfields for extended Burnout Plus status information:
-Bit(s)	Description	(Table 2446)
- 0	Burnout Plus disabled
- 1	force screen to blank on next clock tick
- 2	restore screen if currently blanked
- 3-15	reserved
-Note:	1 and 2 are automatically cleared by Burnout Plus after blanking
-	  or restoring the screen
-SeeAlso: #2445
---------V-2D--10-----------------------------
-INT 2D U - Screen Thief v1.00 - FREE HIGH MEMORY BUFFERS
-	AL = 10h
-	AH = AMIS multiplex number for Screen Thief
-Return: nothing
-Program: Screen Thief is a graphics screen grabber
-Note:	releases any code and data stored in EMS, DOS UMBs, or XMS UMBs, but
-	  does not release the low-memory stub; this may be used to effect a
-	  partial uninstall if INT 2D/AL=02h fails
-SeeAlso: INT D8"Screen Thief"
---------i-2D--10-----------------------------
-INT 2D U - RAMLIGHT v1.0 - GET MONITORING INFORMATION
-	AL = 10h
-	AH = AMIS multiplex number for RAMLIGHT
-Return: ES:BX -> array of fake device driver headers used in monitoring
-	CX = number of drives being monitored???
---------U-2D--10-----------------------------
-INT 2D - DTown Utilities v1.40+ - EXTENDED API INSTALLATION CHECK
-	AL = 10h
-Return: AL = FFh
-	BL = extended API availability (00h no, 01h API is loaded)
-SeeAlso: INT 2D/AL=11h"DTown",INT 2D/AL=20h,INT 2D/AL=50h
---------s-2D--10-----------------------------
-INT 2D - CDTSR - GET INTERNAL VARIABLE TABLE
-	AL = 10h
-	AH = AMIS multiplex number for CDTSR
-Return: CX:DX -> CDTSR internal variable structure (see #2447)
-Program: CDTSR is a resident audio CD player by Colin Hill
-SeeAlso: INT 2D/AL=11h"CDTSR",INT 2D/AL=12h"CDTSR",INT 2D/AL=13h"CDTSR"
-
-Format of CDTSR internal variable structure:
-Offset	Size	Description	(Table 2447)
- 00h	BYTE	hotkey scan code (see #0005)
- 01h	BYTE	hotkey shift states
- 02h	BYTE	flag: repeat
- 03h	BYTE	flag: custom repeat
- 04h	BYTE	flag: background polling
- 05h	DWORD	(read-only) internal timing variable
- 09h	DWORD	current track play position, in frames
- 0Dh	DWORD	current disk play position, in frames
- 11h	BYTE	number of entries in track program
- 12h	BYTE	index into track program currently playing (FFh if not playing)
- 13h 100 BYTEs	track program (each byte contains one track number)
- 77h	BYTE	saved cursor end scan line
- 78h	BYTE	saved cursor start scan line
- 79h	BYTE	currently playing track
- 7Ah	BYTE	CD driver media-change flag
- 7Bh	WORD	video base segment during last popup
- 7Dh	WORD	video page offset during last popup
- 7Fh	BYTE	currently-selected track
- 80h	DWORD	begin of custom repeat, in frames
- 84h	DWORD	end of custom repeat, in frames
- 88h	WORD	track program index of top list item
---------K-2D--10-----------------------------
-INT 2D - KEYBIT Lite v5+ - GET POINTER TO STATUS BYTE
-	AL = 10h
-	AH = AMIS multiplex number for KEYBIT Lite
-Return: DX:BX -> status byte (see #2448)
-Program: KEYBIT Lite is an enhanced Italian keyboard driver by Pino Navato.
-SeeAlso: INT 2D"AMIS"
-
-Bitfields for KEYBIT Lite status byte:
-Bit(s)	Description	(Table 2448)
- 7	KEYBIT Lite active
- 6	E-mail support active
- 5-0	reserved
-Notes:	E-mail support is one of the original features of KEYBIT Lite.	It is
-	  the automatic conversion of the 8-bits ASCII chars produced by some
-	  keys available on Italian keyboards to couples of 7-bits chars.
-	Message editors should always enable e-mail support, they should also
-	  restore its original status before exiting.
-	The user can change both status bits by hotkeys.
---------K-2D--10-----------------------------
-INT 2D - ALTMENU - GET POINTER TO KEY CODE
-	AL = 10h
-	AH = AMIS multiplex number for signature 'Pino Nav' 'ALTMENU '
-Return: DX:BX -> WORD key code to insert in keyboard buffer on Alt-key tap
-Program: Pino Navato's freeware ALTMENU permits activating the menu bar of
-	  any program by pressing the Alt key alone.
-Notes:	The value in the key code word will be returned in AX by a call to
-	  INT 16/AH=00h after the Alt key is pressed by itself
-	ALTMENU may be disabled by setting the key code equal to 0000h
-SeeAlso: INT 16/AH=00h,INT 2D"AMIS"
---------d-2D--11-----------------------------
-INT 2D - dLite 1.0+ - CHECK FOR dPressed FILE AND GET ORIGINAL SIZE
-	AL = 11h
-	AH = AMIS multiplex number for dLite
-	BX = file handle
-Return: CF clear if successful
-	    DX:AX = size of uncompressed file
-	CF set on error (not dPressed file)
-SeeAlso: AL=10h"dLite",AL=12h"dLite"
---------U-2D--11-----------------------------
-INT 2D - DTown Utilities v1.40+ - UTILITY INSTALLATION CHECK
-	AL = 11h
-	BL = function
-	    00h get number of installed utilities
-		Return: BL = number of utilities
-	    01h get installed utilities
-		DX:DI -> buffer containing one byte for each utility
-		Return: DX:DI buffer filled with flags (0=no,1=yes) indicating
-			  whether the corresponding utility is loaded
-Return: AL = FFh if supported
-Note:	this function is only available if the extended API has been installed
-	  in the resident portion
-SeeAlso: INT 2D/AL=10h"DTown",INT 2D/AL=20h
---------s-2D--11-----------------------------
-INT 2D - CDTSR - REPROGRAM CDTSR
-	AL = 11h
-	AH = AMIS multiplex number for CDTSR
-Return: nothing
-Program: CDTSR is a resident audio CD player by Colin Hill
-Desc:	reprograms CDTSR based on the values in the internal variable
-	  structure (see #2447), which may have been changed by an application
-SeeAlso: INT 2D/AL=10h"CDTSR",INT 2D/AL=12h"CDTSR",INT 2D/AL=13h"CDTSR"
---------d-2D--12-----------------------------
-INT 2D - dLite 1.0+ - CHECK FOR dPressed FILE AND GET COMPRESSED SIZE
-	AL = 12h
-	AH = AMIS multiplex number for dLite
-	BX = file handle
-Return: CF clear if successful
-	    DX:AX = size of compressed file
-	CF set on error (not dPressed file)
-SeeAlso: AL=10h"dLite",AL=11h"dLite"
---------s-2D--12-----------------------------
-INT 2D - CDTSR - DISABLE POPUP
-	AL = 12h
-	AH = AMIS multiplex number for CDTSR
-Return: nothing
-SeeAlso: INT 2D/AL=10h"CDTSR",INT 2D/AL=11h"CDTSR",INT 2D/AL=13h"CDTSR"
---------U-2D--12-----------------------------
-INT 2D - FREEVER - GET ORIGINAL DOS VERSION INFO
-	AL = 12h
-	AH = AMIS multiplex number for FREEVER
-Return: AL = FFh if successful
-	    BH = major DOS version
-	    BL = minor DOS version
-	    CH = DOS version flag
-	    CL = OEM number
-	    DH = major DR DOS version number (FFh if unknown)
-	    DL = minor DR DOS version number (FFh if unknown)
-Program: FREEVER is an AMIS-conformant freeware DOS version-faking TSR similar
-	  to SETVER for any DOS-compatible OS, written by Matthias Paul
-SeeAlso: INT 2D/AL=13h"FREEVER",INT 2D/AL=14h"FREEVER",INT 2D/AL=17h"FREEVER"
---------s-2D--13-----------------------------
-INT 2D - CDTSR - ENABLE POPUP
-	AL = 13h
-	AH = AMIS multiplex number for CDTSR
-Return: nothing
-Program: CDTSR is a resident audio CD player by Colin Hill
-SeeAlso: INT 2D/AL=10h"CDTSR",INT 2D/AL=11h"CDTSR",INT 2D/AL=12h"CDTSR"
---------U-2D--13-----------------------------
-INT 2D - FREEVER - SET VERSION NUMBERS
-	AL = 13h
-	AH = AMIS multiplex number for FREEVER
-	BH = new major DOS version
-	BL = new minor DOS version
-	CH = new DOS version flag
-	CL = new DOS revision number
-	DH = new OEM number
-SeeAlso: INT 2D/AL=12h"FREEVER",INT 2D/AL=15h"FREEVER",INT 2D/AL=17h"FREEVER"
---------U-2D--14-----------------------------
-INT 2D - FREEVER - ENABLE TSR
-	AL = 14h
-	AH = AMIS multiplex number for FREEVER
-Return: AL = FFh if successful
-SeeAlso: INT 2D/AL=12h"FREEVER",INT 2D/AL=15h"FREEVER",INT 2D/AL=16h"FREEVER"
---------U-2D--15-----------------------------
-INT 2D - FREEVER - DISABLE TSR
-	AL = 15h
-	AH = AMIS multiplex number for FREEVER
-Return: AL = FFh if successful
-SeeAlso: INT 2D/AL=12h"FREEVER",INT 2D/AL=14h"FREEVER",INT 2D/AL=16h"FREEVER"
---------U-2D--16-----------------------------
-INT 2D - FREEVER - GET TSR STATUS
-	AL = 16h
-	AH = AMIS multiplex number for FREEVER
-Return: AL = FFh if successful
-	    BL = status
-		01h resident and active
-		02h resident and inactive
-SeeAlso: INT 2D/AL=12h"FREEVER",INT 2D/AL=15h"FREEVER",INT 2D/AL=17h"FREEVER"
---------U-2D--17-----------------------------
-INT 2D - FREEVER - GET TaskMAX STATUS AT INSTALLATION
-	AL = 17h
-	AH = AMIS multiplex number for FREEVER
-Return: AL = FFh if successful
-	    BL = status
-		00h if TaskMAX not loaded before SETDRVER
-		FFh if TaskMAX was loaded before SETDRVER
-Program: FREEVER is an AMIS-conformant freeware DOS version-faking TSR similar
-	  to SETVER for any DOS-compatible OS, written by Matthias Paul
-SeeAlso: INT 2D/AL=12h"FREEVER",INT 2D/AL=14h"FREEVER",INT 2D/AL=16h"FREEVER"
---------U-2D--20-----------------------------
-INT 2D - DTown Utilities v1.40+ - GET POP-UP HANDLER ADDRESS
-	AL = 20h
-Return: AL = FFh if available
-	    DX:DI -> DTU popup-handler
-Program: DTown Utilities is a freeware programmer's utility TSR by Jeroen van
-	  Disseldorp
-Note:	this function is only available if the extended API has been installed
-	  in the resident portion
-SeeAlso: INT 2D/AL=10h"DTown",INT 2D/AL=21h,INT 2D/AL=50h,INT 2D/AL=51h
-SeeAlso: INT 03"DTown"
---------U-2D--21-----------------------------
-INT 2D - DTown Utilities v1.40+ - POP UP
-	AL = 21h
-	BL = which utility to bring up
-	    00h active utility
-	    01h help screen
-	    0Ah ASCII table
-	    0Bh memory view
-	    0Ch CPU status
-	    0Dh calculator
-	    0Eh miscellaneous
-	    0Fh file viewer
-	    10h disassembler
-Return: AL = status
-	    00h already active
-	    FFh popped up successfully
-	BX = 0000h
-Note:	this function is only available if the extended API has been installed
-	  in the resident portion
-SeeAlso: INT 2D/AL=10h"DTown",INT 2D/AL=20h,INT 2D/AL=50h
---------U-2D--50-----------------------------
-INT 2D - DTown Utilities v1.40+ - MEMORY VIEW SET ADDRESS
-	AL = 50h
-	CX:DX = new address for start of memory view utility's display
-Note:	this function is only available if the extended API has been installed
-	  in the resident portion
-Return: AL = FFh if supported
-SeeAlso: INT 2D/AL=10h"DTown",INT 2D/AL=20h,INT 2D/AL=21h,INT 2D/AL=51h
---------U-2D--51-----------------------------
-INT 2D - DTown Utilities v1.40+ - MEMORY VIEW SET REFERENCE
-	AL = 51h
-	BL = reference ("bookmark") number
-	CX:DX = new address for reference
-Return: AL = status
-	    00h invalid index
-	    FFh reference set
-Note:	this function is only available if the extended API has been installed
-	  in the resident portion
-Program: DTown Utilities is a shareware programmer's utility TSR by Jeroen van
-	  Disseldorp
-SeeAlso: INT 2D/AL=10h"DTown",INT 2D/AL=20h,INT 2D/AL=50h
---------b-2D--DC-----------------------------
-INT 2D C - DAISY.SYS - BROADCAST: CHAIN RESCANNED
-	AL = DCh
-	AH = AMIS multiplex number for signature 'DAISYCHA' 'INDRIVER'
-	DL = LPT Port Rescanned
-Program: DAISY.SYS is a daisy chain manager for parallel port peripherals
-	  conforming to the IEEE 1284.3 Committee's daisy chain specification.
-Desc:	This Broadcast is sent whenever daisy chain IDs are reassigned to
-	  warn parallel port device drivers that their daisy chain ID may
-	  have been changed.
-Note:	This function is a callout from DAISY.SYS, NOT a call into DAISY.SYS
-SeeAlso: INT 17/AX=0200h"Enhanced Parallel Port",#0607,#2434
---------l-2E---------------------------------
-INT 2E U - DOS 2+ - PASS COMMAND TO COMMAND INTERPRETER FOR EXECUTION
-	DS:SI -> commandline to execute (see #2449)
-Return: all registers except CS:IP destroyed
-	AX = status (4DOS v4.0)
-	   0000h successful
-	   FFFFh error before processing command (not enough memory, etc)
-	   other error number returned by command
-Notes:	this call allows execution of arbitrary commands (including COMMAND.COM
-	  internal commands) without loading another copy of COMMAND.COM
-	if COMMAND.COM is the user's command interpreter, the primary copy
-	  executes the command; this allows the master environment to be
-	  modified by issuing a "SET" command, but changes in the master
-	  environment will not become effective until all programs descended
-	  from the primary COMMAND.COM terminate
-	since COMMAND.COM processes the string as if typed from the keyboard,
-	  the transient portion needs to be present, and the calling program
-	  must ensure that sufficient memory to load the transient portion can
-	  be allocated by DOS if necessary
-	results are unpredictable if invoked by a program run from a batch file
-	  because this call is not reentrant and COMMAND.COM uses the same
-	  internal variables when processing a batch file
-	hooked but ignored by 4DOS v3.0 COMMAND.COM replacement unless SHELL2E
-	  has been loaded
-	the MS-DOS 5 Programmer's Reference calls this "Reload Transient"
-
-Format of DOS commandline:
-Offset	Size	Description	(Table 2449)
- 00h	BYTE	length of command string, not counting trailing CR
- 01h	var	command string
-  N	BYTE	0Dh (CR)
---------O-2E---------------------------------
-INT 2E UP - Windows NT - NATIVE API
-	EAX = function number (see #2450)
-	EDX = address of parameter block
+	ES = ???
 Return: ???
-
-(Table 2450)
-Values for Windows NT NTOS function number:
- 000h	AcceptConnectPort	(24 bytes of parameters)
- 001h	AccessCheck		(32 bytes of parameters)
- 002h	AccessCheckAndAuditAlarm	(44 bytes of parameters)
- 003h	AddAtom			(8 bytes of parameters)
- 004h	AdjustGroupsToken	(24 bytes of parameters)
- 005h	AdjustPrivilegesToken	(24 bytes of parameters)
- 006h	AlertResumeThread	(8 bytes of parameters)
- 007h	AlertThread		(4 bytes of parameters)
- 008h	AllocateLocallyUniqueId	(4 bytes of parameters)
- 009h	AllocateUuids		(12 bytes of parameters)
- 00Ah	AllocateVirtualMemory	(24 bytes of parameters)
- 00Bh	CallbackReturn		(12 bytes of parameters)
- 00Ch	CancelIoFile		(8 bytes of parameters)
- 00Dh	CancelTimer		(8 bytes of parameters)
- 00Eh	ClearEvent		(4 bytes of parameters)
- 00Fh	Close			(4 bytes of parameters)
- 010h	CloseObjectAuditAlarm	(12 bytes of parameters)
- 011h	CompleteConnectPort	(4 bytes of parameters)
- 012h	ConnectPort		(32 bytes of parameters)
- 013h	Continue		(8 bytes of parameters)
- 014h	CreateDirectoryObject	(12 bytes of parameters)
- 015h	CreateEvent		(20 bytes of parameters)
- 016h	CreateEventPair		(12 bytes of parameters)
- 017h	CreateFile		(44 bytes of parameters)
- 018h	CreateIoCompletion	(16 bytes of parameters)
- 019h	CreateKey		(28 bytes of parameters)
- 01Ah	CreateMailslotFile	(32 bytes of parameters)
- 01Bh	CreateMutant		(16 bytes of parameters)
- 01Ch	CreateNamedPipeFile	(56 bytes of parameters)
- 01Dh	CreatePagingFile	(16 bytes of parameters)
- 01Eh	CreatePort		(20 bytes of parameters)
- 01Fh	CreateProcess		(32 bytes of parameters)
- 020h	CreateProfile		(36 bytes of parameters)
- 021h	CreateSection		(28 bytes of parameters)
- 022h	CreateSemaphore		(20 bytes of parameters)
- 023h	CreateSymbolicLinkObject	(16 bytes of parameters)
- 024h	CreateThread		(32 bytes of parameters)
- 025h	CreateTimer		(16 bytes of parameters)
- 026h	CreateToken		(52 bytes of parameters)
- 027h	DelayExecution		(8 bytes of parameters)
- 028h	DeleteAtom		(4 bytes of parameters)
- 029h	DeleteFile		(4 bytes of parameters)
- 02Ah	DeleteKey		(4 bytes of parameters)
- 02Bh	DeleteObjectAuditAlarm	(12 bytes of parameters)
- 02Ch	DeleteValueKey		(8 bytes of parameters)
- 02Dh	DeviceIoControlFile	(40 bytes of parameters)
- 02Eh	DisplayString		(4 bytes of parameters)
- 02Fh	DuplicateObject		(28 bytes of parameters)
- 030h	DuplicateToken		(24 bytes of parameters)
- 031h	EnumerateKey		(24 bytes of parameters)
- 032h	EnumerateValueKey	(24 bytes of parameters)
- 033h	ExtendSection		(8 bytes of parameters)
- 034h	FindAtom		(8 bytes of parameters)
- 035h	FlushBuffersFile	(8 bytes of parameters)
- 036h	FlushInstructionCache	(12 bytes of parameters)
- 037h	FlushKey		(4 bytes of parameters)
- 038h	FlushVirtualMemory	(16 bytes of parameters)
- 039h	FlushWriteBuffer	(no parameters)
- 03Ah	FreeVirtualMemory	(16 bytes of parameters)
- 03Bh	FsControlFile		(40 bytes of parameters)
- 03Ch	GetContextThread	(8 bytes of parameters)
- 03Dh	GetPlugPlayEvent	(16 bytes of parameters)
- 03Eh	GetTickCount		(no parameters)
- 03Fh	ImpersonateClientOfPort	(8 bytes of parameters)
- 040h	ImpersonateThread	(12 bytes of parameters)
- 041h	InitializeRegistry	(4 bytes of parameters)
- 042h	ListenPort		(8 bytes of parameters)
- 043h	LoadDriver		(4 bytes of parameters)
- 044h	LoadKey	(8 bytes of parameters)
- 045h	LoadKey2		(12 bytes of parameters)
- 046h	LockFile		(40 bytes of parameters)
- 047h	LockVirtualMemory	(16 bytes of parameters)
- 048h	MakeTemporaryObject	(4 bytes of parameters)
- 049h	MapViewOfSection	(40 bytes of parameters)
- 04Ah	NotifyChangeDirectoryFile	(36 bytes of parameters)
- 04Bh	NotifyChangeKey		(40 bytes of parameters)
- 04Ch	OpenDirectoryObject	(12 bytes of parameters)
- 04Dh	OpenEvent		(12 bytes of parameters)
- 04Eh	OpenEventPair		(12 bytes of parameters)
- 04Fh	OpenFile		(24 bytes of parameters)
- 050h	OpenIoCompletion	(12 bytes of parameters)
- 051h	OpenKey			(12 bytes of parameters)
- 052h	OpenMutant		(12 bytes of parameters)
- 053h	OpenObjectAuditAlarm	(48 bytes of parameters)
- 054h	OpenProcess		(16 bytes of parameters)
- 055h	OpenProcessToken	(12 bytes of parameters)
- 056h	OpenSection		(12 bytes of parameters)
- 057h	OpenSemaphore		(12 bytes of parameters)
- 058h	OpenSymbolicLinkObject	(12 bytes of parameters)
- 059h	OpenThread		(16 bytes of parameters)
- 05Ah	OpenThreadToken		(16 bytes of parameters)
- 05Bh	OpenTimer		(12 bytes of parameters)
- 05Ch	PlugPlayControl		(16 bytes of parameters)
- 05Dh	PrivilegeCheck		(12 bytes of parameters)
- 05Eh	PrivilegedServiceAuditAlarm	(20 bytes of parameters)
- 05Fh	PrivilegeObjectAuditAlarm	(24 bytes of parameters)
- 060h	ProtectVirtualMemory	(20 bytes of parameters)
- 061h	PulseEvent		(8 bytes of parameters)
- 062h	QueryInformationAtom	(20 bytes of parameters)
- 063h	QueryAttributesFile	(8 bytes of parameters)
- 064h	QueryDefaultLocale	(8 bytes of parameters)
- 065h	QueryDirectoryFile	(44 bytes of parameters)
- 066h	QueryDirectoryObject	(28 bytes of parameters)
- 067h	QueryEaFile		(36 bytes of parameters)
- 068h	QueryEvent		(20 bytes of parameters)
- 069h	QueryFullAttributesFile	(8 bytes of parameters)
- 06Ah	QueryInformationFile	(20 bytes of parameters)
- 06Bh	QueryIoCompletion	(20 bytes of parameters)
- 06Ch	QueryInformationPort	(20 bytes of parameters)
- 06Dh	QueryInformationProcess	(20 bytes of parameters)
- 06Eh	QueryInformationThread	(20 bytes of parameters)
- 06Fh	QueryInformationToken	(20 bytes of parameters)
- 070h	QueryIntervalProfile	(8 bytes of parameters)
- 071h	QueryKey		(20 bytes of parameters)
- 072h	QueryMultipleValueKey	(24 bytes of parameters)
- 073h	QueryMutant		(20 bytes of parameters)
- 074h	QueryObject		(20 bytes of parameters)
- 075h	QueryOleDirectoryFile	(44 bytes of parameters)
- 076h	QueryPerformanceCounter	(8 bytes of parameters)
- 077h	QuerySection		(20 bytes of parameters)
- 078h	QuerySecurityObject	(20 bytes of parameters)
- 079h	QuerySemaphore		(20 bytes of parameters)
- 07Ah	QuerySymbolicLinkObject	(12 bytes of parameters)
- 07Bh	QuerySystemEnvironmentValue	(16 bytes of parameters)
- 07Ch	QuerySystemInformation	(16 bytes of parameters)
- 07Dh	QuerySystemTime		(4 bytes of parameters)
- 07Eh	QueryTimer		(20 bytes of parameters)
- 07Fh	QueryTimerResolution	(12 bytes of parameters)
- 080h	QueryValueKey		(24 bytes of parameters)
- 081h	QueryVirtualMemory	(24 bytes of parameters)
- 082h	QueryVolumeInformationFile	(20 bytes of parameters)
- 083h	QueueApcThread		(20 bytes of parameters)
- 084h	RaiseException		(12 bytes of parameters)
- 085h	RaiseHardError		(24 bytes of parameters)
- 086h	ReadFile		(36 bytes of parameters)
- 087h	ReadFileScatter		(36 bytes of parameters)
- 088h	ReadRequestData		(24 bytes of parameters)
- 089h	ReadVirtualMemory	(20 bytes of parameters)
- 08Ah	RegisterThreadTerminatePort	(4 bytes of parameters)
- 08Bh	ReleaseMutant		(8 bytes of parameters)
- 08Ch	ReleaseSemaphore	(12 bytes of parameters)
- 08Dh	RemoveIoCompletion	(20 bytes of parameters)
- 08Eh	ReplaceKey		(12 bytes of parameters)
- 08Fh	ReplyPort		(8 bytes of parameters)
- 090h	ReplyWaitReceivePort	(16 bytes of parameters)
- 091h	ReplyWaitReplyPort	(8 bytes of parameters)
- 092h	RequestPort		(8 bytes of parameters)
- 093h	RequestWaitReplyPort	(12 bytes of parameters)
- 094h	ResetEvent		(8 bytes of parameters)
- 095h	RestoreKey		(12 bytes of parameters)
- 096h	ResumeThread		(8 bytes of parameters)
- 097h	SaveKey	(8 bytes of parameters)
- 098h	SetIoCompletion		(20 bytes of parameters)
- 099h	SetContextThread	(8 bytes of parameters)
- 09Ah	SetDefaultHardErrorPort	(4 bytes of parameters)
- 09Bh	SetDefaultLocale	(8 bytes of parameters)
- 09Ch	SetEaFile		(16 bytes of parameters)
- 09Dh	SetEvent		(8 bytes of parameters)
- 09Eh	SetHighEventPair	(4 bytes of parameters)
- 09Fh	SetHighWaitLowEventPair	(4 bytes of parameters)
- 0A0h	???			(??? bytes of parameters)
- 0A1h	SetInformationFile	(20 bytes of parameters)
- 0A2h	SetInformationKey	(16 bytes of parameters)
- 0A3h	SetInformationObject	(16 bytes of parameters)
- 0A4h	SetInformationProcess	(16 bytes of parameters)
- 0A5h	SetInformationThread	(16 bytes of parameters)
- 0A6h	SetInformationToken	(16 bytes of parameters)
- 0A7h	SetIntervalProfile	(8 bytes of parameters)
- 0A8h	SetLdtEntries		(24 bytes of parameters)
- 0A9h	SetLowEventPair		(4 bytes of parameters)
- 0AAh	SetLowWaitHighEventPair	(4 bytes of parameters)
- 0ABh	???			(??? bytes of parameters)
- 0ACh	SetSecurityObject	(12 bytes of parameters)
- 0ADh	SetSystemEnvironmentValue	(8 bytes of parameters)
- 0AEh	SetSystemInformation	(12 bytes of parameters)
- 0AFh	SetSystemPowerState	(12 bytes of parameters)
- 0B0h	SetSystemTime		(8 bytes of parameters)
- 0B1h	SetTimer		(28 bytes of parameters)
- 0B2h	SetTimerResolution	(12 bytes of parameters)
- 0B3h	SetValueKey		(24 bytes of parameters)
- 0B4h	SetVolumeInformationFile	(20 bytes of parameters)
- 0B5h	ShutdownSystem		(4 bytes of parameters)
- 0B6h	SignalAndWaitForSingleObject	(16 bytes of parameters)
- 0B7h	StartProfile		(4 bytes of parameters)
- 0B8h	StopProfile		(4 bytes of parameters)
- 0B9h	SuspendThread		(8 bytes of parameters)
- 0BAh	SystemDebugControl	(24 bytes of parameters)
- 0BBh	TerminateProcess	(8 bytes of parameters)
- 0BCh	TerminateThread		(8 bytes of parameters)
- 0BDh	TestAlert		(no parameters)
- 0BEh	UnloadDriver		(4 bytes of parameters)
- 0BFh	UnloadKey		(4 bytes of parameters)
- 0C0h	UnlockFile		(20 bytes of parameters)
- 0C1h	UnlockVirtualMemory	(16 bytes of parameters)
- 0C2h	UnmapViewOfSection	(8 bytes of parameters)
- 0C3h	VdmControl		(8 bytes of parameters)
- 0C4h	WaitForMultipleObjects	(20 bytes of parameters)
- 0C5h	WaitForSingleObject	(12 bytes of parameters)
- 0C6h	WaitHighEventPair	(4 bytes of parameters)
- 0C7h	WaitLowEventPair	(4 bytes of parameters)
- 0C8h	WriteFile		(36 bytes of parameters)
- 0C9h	WriteFileGather		(36 bytes of parameters)
- 0CAh	WriteRequestData	(24 bytes of parameters)
- 0CBh	WriteVirtualMemory	(20 bytes of parameters)
- 0CCh	W32Call			(20 bytes of parameters)
- 0CDh	CreateChannel		(8 bytes of parameters)
- 0CEh	ListenChannel		(8 bytes of parameters)
- 0CFh	OpenChannel		(8 bytes of parameters)
- 0D0h	ReplyWaitSendChannel	(12 bytes of parameters)
- 0D1h	SendWaitReplyChannel	(16 bytes of parameters)
- 0D2h	SetContextChannel	(4 bytes of parameters)
- 0D3h	YieldExecution		(no parameters)
---------l-2E----BXE22E-----------------------
-INT 2E - 4DOS v2.x-3.03 SHELL2E.COM - UNINSTALL
-	BX = E22Eh
-	DS:SI -> zero byte
-Return: if successful, SHELL2E terminates itself with INT 21/AH=4Ch
-----------2F---------------------------------
-INT 2F - Multiplex - NOTES
-	AH = identifier of program which is to handle the interrupt
-	   00h-7Fh reserved for DOS
-	   B8h-BFh reserved for networks
-	   C0h-FFh reserved for applications
-	AL is the function code
-   This is a general mechanism for verifying the presence of a TSR and
-   communicating with it.  When searching for a free identifier code for AH
-   using the installation check (AL=00h), the calling program should set
-   BX/CX/DX to 0000h and must not depend on any registers other than CS:IP
-   and SS:SP to be valid on return, since numerous programs now use additional
-   registers on input and/or output for the installation check.
-Notes:	Since the multiplex chain is growing so long, and beginning to
-	  experience multiplex number collisions, I have proposed an alternate
-	  multiplex interrupt on INT 2D.  If you decide to use the alternate
-	  multiplex, please let me know.
-	DOS and some other programs return values in the flags register, so
-	  any TSR which chains by calling the previous handler rather than
-	  jumping to it should ensure that the returned flags are preserved
-	  and passed back to the original caller
-SeeAlso: INT 2D"ALTERNATE MULTIPLEX"
---------t-2F---------------------------------
-INT 2F - BMB Compuscience Canada Utilities Interface - INSTALLATION CHECK
-	AH = xx (dynamically assigned based upon a search for a multiplex
-		 number which doesn't answer installed)
-	AL = 00h installation check
-	ES:DI = EBEBh:BEBEh
-Return: AL = 00h not installed
-	     01h not installed, not OK to install
-	     FFh installed; if ES:DI was EBEBh:BEBEh on entry, ES:DI will point
-		 to a string of the form 'MMMMPPPPPPPPvNNNN' where MMMM is a
-		 short form of the manufacturer's name, PPPPPPPP is a product
-		 name and NNNN is the product's version number
---------t-2F---------------------------------
-INT 2F - Ross Wentworth's Turbo Pascal POPUP LIBRARY
-	AH = programmer-selected multiplex number
-	AL = function
-	    00h installation check
-		Return: AL = FFh if installed
-	    01h get TSR interrupt vectors
-		Return: DX:AX -> vector table (see #2451)
-	    02h get TSR code segment
-		Return: AX = code segment for all interrupt handlers
-	    03h call user exit routine and release TSR's memory
-	    04h get signature string
-		Return: DX:AX -> counted string containing signature
-	    05h get TSR's INT 2F handler
-		Return: DX:AX -> INT 2F handler
-	    06h enable/disable TSR
-		BL = new state (00h disabled, 01h enabled)
-	    07h activate TSR (popup if not disabled)
-	    08h get hotkeys
-		BL = which hotkey (00h = hotkey 1, 01h = hotkey 2)
-		Return: AX = hotkey (AH = keyflags, AL = scancode)
-	    09h set hotkey
-		BL = which hotkey (00h = hotkey 1, 01h = hotkey 2)
-		CX = new hotkey (CH = keyflags, CL = scancode)
-	    0Ah-1Fh reserved
-Index:	installation check;Ross Wentworth POPUP library
-Index:	hotkeys;Ross Wentworth POPUP library
-
-Format of POPUP vector table entry:
-Offset	Size	Description	(Table 2451)
- 00h	BYTE	vector number (00h = end of table)
- 01h	DWORD	original vector
- 05h	WORD	offset of interrupt handler in TSR's code segment
---------t-2F---------------------------------
-INT 2F - CiriSOFT Spanish University of Valladolid TSR's Interface
-	AH = xx (dynamically assigned based upon a search for a multiplex
-		 number from C0h to FFh which doesn't answer installed)
-	AL = 00h installation check
-	ES:DI = 1492h:1992h
-Return: AL = 00h not installed
-	     01h not installed, not OK to install
-	     FFh installed; and if ES:DI was 1492h:1992h on entry, ES:DI will
-		   point to author_name_ver table (see #2452)
+--------E-21FF--DH09-------------------------
+INT 21 UP - Rational Systems DOS/4GW - GET ???
 	AH = FFh
-Note:	this interface permits advanced communication with TSRs: it is possible
-	  to make a generic uninstall utility, advanced TSR relocator programs
-	  in order to fit fragmented memory areas, etc.
-See also: INT 2D"AMIS",INT 2F"Compuscience"
-Index:	installation check;CiriSOFT TSR interface
-Index:	uninstall;CiriSOFT TSR interface
-
-Format of CiriSOFT author_name_ver table:
-Offset	Size	Description	(Table 2452)
- -16	WORD	segment of the start of the resident TSR code (CS in programs
-		  with PSP, XMS upper memory segment if installed as UMB...)
- -14	WORD	offset of the start of the resident TSR code (frequently 100h
-		  in *.COM programs and 0 in upper memory TSR's).
- -12	WORD	memory used by TSR (in paragraphs). Knowing the memory area
-		  used by TSR is possible to determine if hooked vectors are
-		  still pointing it (and if it is safe to uninstall).
- -10	BYTE	characteristics byte (see #2453)
- -9	BYTE	number of multiplex entry used (redefinition available). Note
-		  that the TSR must use THIS variable in it's INT 2Fh handler.
- -8	WORD	offset to vector_area table (see #2454)
- -6	WORD	offset to extra_area table (see #2455,#2453 [bit 7])
- -4   4 BYTEs	signature string "*##*"
- 00h	var	"AUTHOR:PROGRAM_NAME:VERSION",0	 (variable length, this area
-		  is used in order to determine if the TSR is already resident
-		  and it's version code; the ':' char is used as delimiter)
-
-Bitfields for CiriSOFT characteristics byte:
-Bit(s)	Description	(Table 2453)
- 0-2	type
-	000 normal program (with PSP)
-	001 upper XMS memory block (needed HIMEM.SYS function to free memory
-	      when uninstalling)
-	010 device driver (*.SYS)
-	011 device driver in EXE format
-	1xx others (reserved)
- 3-6	reserved
- 7	set if extra_table defined and supported (see #2455)
-SeeAlso: #2452
-
-Format of CiriSOFT vector_area table:
-Offset	Size	Description	(Table 2454)
- -1	BYTE	number of vectors intercepted by TSR
- 00h	BYTE	first vector number
- 01h	DWORD	first vector pointer before installing the TSR
- 05h	BYTE	second vector number
- 06h	DWORD	second vector pointer before installing the TSR
- 0Ah	...	(and so on)
-Note:	the TSR must use these variables to invoke the previous interrupt
-	  handler routines
-SeeAlso: #2452
-
-Format of extra_area table (needed only to improve relocation feature):
-Offset	Size	Description	(Table 2455)
- 00h	WORD	offset to external_ctrl table (see #2456)
-		0000h if not supported
- 02h	WORD	reserved for future use (0)
-SeeAlso: #2452
-
-Format of CiriSOFT external_ctrl table:
-Offset	Size	Description	(Table 2456)
- 00h	BYTE	bit 0: TSR is relocatable (no absolute segment references)
- 01h	WORD	offset to a variable which can activate/inhibit the TSR
- ---And if bit 0 in offset 00h is off:
- 03h	DWORD	pointer to ASCIZ pathname for executable file which supports
-		  /SR parameter (silent installation & inhibit)
- 07h	DWORD	pointer to first variable to initialize on the copy reloaded
-		  from the previous TSR still resident
- 0Bh	DWORD	pointer to last variable (all variables packed in one block)
---------c-2F00-------------------------------
-INT 2F U - DOS 2.x only PRINT.COM - SUBMIT FILE FOR PRINTING
-	AH = 00h
-	DS:DX -> opened FCB (see #1210 at INT 21/AX=0Fh)
-Return: AH = number of files currently in print queue
-	AL = status
-	    00h file successfully added
-	    01h queue is full
-	ES:BX -> print queue (10 FCBs; first byte of FFh indicates unused)
-	ES:DX -> currently-printing FCB (if DX=FFFFh, none printing)
-Notes:	DOS 2.x PRINT.COM does not chain to previous INT 2F handler
-	values in AH other than 00h or 01h cause PRINT to return the number of
-	  files in the queue in AH
-SeeAlso: AH=01h"PRINT",AX=0102h
---------P-2F00-------------------------------
-INT 2F U - PSPRINT - PRINT JOB CONTROL
-	AH = 00h
+	DH = 09h
+Return: ES:BX -> ???
+--------E-21FF--DH0A-------------------------
+INT 21 UP - Rational Systems DOS/4GW - ???
+	AH = FFh
+	DH = 0Ah
+	AL = ???
+	BX = ???
+	CX = ???
+Return: ES = ??? or 0000h
+--------E-21FF--DH0B-------------------------
+INT 21 UP - Rational Systems DOS/4GW - ???
+	AH = FFh
+	DH = 0Bh
+	AL = ???
+	BX = ???
+	CX = ???
+Return: ???
+--------E-21FF--DH0C-------------------------
+INT 21 UP - Rational Systems DOS/4GW - GET/SET ???
+	AH = FFh
+	DH = 0Ch
+	DL = ??? (00h or 01h)
+Return: CF clear if successful
+	    AL = previous value of ???
+	CF set on error (DL out of range)
+	    AX = FFFFh
+--------E-21FF--DH0D-------------------------
+INT 21 UP - Rational Systems DOS/4GW - ???
+	AH = FFh
+	DH = 0Dh
 	???
 Return: ???
---------c-2F0080-----------------------------
-INT 2F - DOS 3.1+ PRINT - GIVE PRINT A TIME SLICE
-	AX = 0080h
-Return: after PRINT executes
-Notes:	PRINT returns AL=01h if AH=00h but AL is not 80h on entry
-	this function is not supported by the Novell DOS 7 PRINT.COM
---------N-2F00D8-----------------------------
-INT 2F - Personal NetWare - VLM - ???
-	AX = 00D8h
+--------E-21FF--DH0E-------------------------
+INT 21 UP - Rational Systems DOS/4GW - ???
+	AH = FFh
+	DH = 0Eh
+Return: DX:AX -> XBRK structure (see #00487 at INT 15/AX=BF02h)
+	BX = ???
+	CX = ???
+SeeAlso: INT 15/AX=BF02h
+--------E-21FF--DH0F-------------------------
+INT 21 UP - Rational Systems DOS/4GW - ???
+	AH = FFh
+	DH = 0Fh
 	???
 Return: ???
-Note:	hooked by one of the .VLMs loaded by VLM.EXE v1.10, but apparently a
-	  NOP
---------c-2F01-------------------------------
-INT 2F U - DOS 2.x only PRINT.COM - REMOVE FILE FROM PRINT QUEUE
-	AH = 01h
-	DS:DX -> FCB (see #1210 at INT 21/AH=0Fh) for file to be canceled
-Return: AH = number of files currently in print queue
-	AL = 00h (successful)
-	ES:BX -> print queue (10 FCBs; first byte of FFh indicates unused)
-	ES:DX -> currently-printing FCB (if DX=FFFFh, none printing)
-Notes:	DOS 2.x PRINT.COM does not chain to previous INT 2F handler
-	values in AH other than 00h or 01h cause PRINT to return the number of
-	  files in the queue in AH
-SeeAlso: AH=00h"PRINT.COM",AX=0103h
---------c-2F0100-----------------------------
-INT 2F - DOS 3.0+ PRINT - INSTALLATION CHECK
-	AX = 0100h
+--------E-21FF--DH10-------------------------
+INT 21 UP - Rational Systems DOS/4GW - ???
+	AH = FFh
+	DH = 10h
+	AL = ???
+	BX = ???
+	CX = ???
+	DI = ???
+	SI = ???
+Return: ???
+Note:	among other things, frees two memory blocks via INT 21/AH=49h
+--------E-21FF--DH11-------------------------
+INT 21 UP - Rational Systems DOS/4GW - NOP
+	AH = FFh
+	DH = 11h
+--------E-21FF--DH12-------------------------
+INT 21 UP - Rational Systems DOS/4GW - EXCHANGE ??? POINTERS
+	AH = FFh
+	DH = 12h
+	DS:SI -> new ???
+	ES:DI -> new ???
+Return: DS:SI -> previous ???
+	ES:DI -> previous ???
+--------E-21FF--DH13-------------------------
+INT 21 UP - Rational Systems DOS/4GW - ???
+	AH = FFh
+	DH = 13h
+	AL = ???
+	ES = ???
+Return: ???
+--------E-21FF--DH14-------------------------
+INT 21 UP - Rational Systems DOS/4GW - ???
+	AH = FFh
+	DH = 14h
+	BX = ???
+	CX = ???
+Return: CF clear
+	    AX = ???
+	    DX = ???
+--------E-21FF--DH15-------------------------
+INT 21 UP - Rational Systems DOS/4GW - GET ??? FUNCTIONS
+	AH = FFh
+	DH = 15h
+Return: CF clear
+	    DX:AX -> FAR function for ???
+	    CX:BX -> FAR function for ???
+	    SI:DI -> FAR function for ???
+--------E-21FF--DH16-------------------------
+INT 21 UP - Rational Systems DOS/4GW - GET ???
+	AH = FFh
+	DH = 16h
+Return: AX = ???
+--------E-21FF--DH17-------------------------
+INT 21 UP - Rational Systems DOS/4GW - ???
+	AH = FFh
+	DH = 17h
+	AL = ???
+	DL = ???
+Return: ???
+--------N-21FF00-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET SYSTEM INFORMATION
+	AX = FF00h
+	CL = what to get
+	    00h user information (see #02504)
+	    01h drive mapping (see #02505)
+	    02h printer server(s)
+	    05h local DOS drive number
+Return: ES:BX -> desired information
+Program: TopWare Network Operating System is manufactured by Grand Computer
+	  Company
+Note:	this call is only supported on Workstations, not on the server
+SeeAlso: AX=FF04h,INT 2F/AX=FF00h
+
+Format of TopWare user information:
+Offset	Size	Description	(Table 02504)
+ 00h	BYTE	node ID
+ 01h 15 BYTEs	user name
+ 10h	WORD	user number
+ 12h	BYTE	group number
+
+Format of TopWare drive mapping [array]:
+Offset	Size	Description	(Table 02505)
+ 00h	BYTE	bits 6-0: drive number (1=A:, etc.)
+		bit 7: this is a server drive
+ 01h  3 BYTEs	mapping drive (for example, "C:\")
+ 04h 64 BYTEs	current directory
+--------E-21FF00DX0078-----------------------
+INT 21 - Rational Systems DOS/4G - INSTALLATION CHECK
+	AX = FF00h
+	DX = 0078h
+Return: AL <> 00h if installed
+	    GS = segment of kernel if nonzero
+SeeAlso: INT 15/AX=BF02h
+--------v-21FF01-----------------------------
+INT 21 - VIRUS - "Drop" - INSTALLATION CHECK
+	AX = FF01h
+Return: AX = 01FFh if resident
+SeeAlso: AH=FEh"VIRUS",AX=FF0Fh"FLU_SHOT"
+--------N-21FF04-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET/SET DEFAULT FILE PROTECTION ATTRIBS
+	AX = FF04h
+	CL = function
+	    00h get protections
+		Return: BH = read attribute
+			BL = write attribute
+	    01h set protections
+		BH = read attribute
+		BL = write attribute
+Note:	this function is supported only on Workstations, not on the server
+SeeAlso: AX=FF00h"TopWare"
+--------v-21FF0F-----------------------------
+INT 21 - FLU_SHOT+ v1.83 - INSTALLATION CHECK
+	AX = FF0Fh
+Return: AX = 0101h if resident
+Program: FLU_SHOT+ is an antivirus/antitrojan program by Ross M. Greenberg and
+	  Software Concepts Design
+Note:	the "PSQR/1720" virus calls this function to determine whether
+	  FLU_SHOT+ is present
+SeeAlso: AH=FFh"VIRUS",AX=FF10h"VIRUS"
+--------v-21FF10-----------------------------
+INT 21 - VIRUS - "Twins" - INSTALLATION CHECK
+	AX = FF10h
+Return: AL = 07h if resident
+SeeAlso: AX=FF0Fh,AX=FFFEh
+--------N-21FF80DHFF-------------------------
+INT 21 - TopWare Network OS v5.10+ - SEND MESSAGE
+	AX = FF80h
+	DH = FFh
+	DL = destination address (FFh for broadcast)
+	CX = message length (max 2000)
+	DS:SI -> message to be sent (see #02506)
+Return: nothing
+Program: TopWare Network Operating System is manufactured by Grand Computer
+	  Company
+Notes:	this function is supported on both Workstations and the server
+	there is no guarantee that the message will be received correctly, or
+	  at all, by the destination
+
+Format of TopWare message:
+Offset	Size	Description	(Table 02506)
+ 00h	BYTE	type code
+		07h TopSend
+		11h user application
+		other reserved for TopWare
+ 01h	var	data
+Note:	sending messages with a type code other than 11h will cause
+	  unpredictable results
+--------N-21FF82-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET STATION ADDRESS
+	AX = FF82h
+Return: AL = station address
+Note:	this function is supported on both Workstations and the server
+SeeAlso: AX=FF91h
+--------N-21FF8C-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET STATUS OF TopShow/Emulated FUNCTION
+	AX = FF8Ch
+	BL = subfunction
+	    00h get TopShow status
+	    FFh get Emulated status
 Return: AL = status
 	    00h not installed
-	    01h not installed, but not OK to install
-	    FFh installed
-		AH = 00h (Novell DOS 7)
-SeeAlso: AX=0101h
---------c-2F0100SI20D6-----------------------
-INT 2F U - PrintCache 3.1 PRINT.COM - INSTALLATION CHECK
-	AX = 0100h
-	SI = 20D6h
-	DI = 8761h
-Return: AX = 00FFh if installed
-	DI = 0001h if PrintCache's PRINT.COM installed and magic values match
-	    SI = resident code segment
-Program: PrintCache PRINT.COM is a DOS PRINT replacement included in
-	  LaserTools' PrintCache memory/disk-based print spooler package
-Note:	if either of SI or DI differ from the indicated magic values, only AX
-	  will be modified on return, for compatibility with DOS PRINT
-SeeAlso: AX=0101h/SI=20D6h,AX=C000h"PCACHE"
---------c-2F0101-----------------------------
-INT 2F - DOS 3.0+ PRINT - SUBMIT FILE FOR PRINTING
-	AX = 0101h
-	DS:DX -> submit packet (see #2457)
-Return: CF clear if successful
-	    AL = status
-		01h added to queue
-		9Eh now printing
-	CF set on error
-	    AX = error code (see #2458,#1545 at INT 21/AH=59h/BX=0000h)
-SeeAlso: AX=0102h
+	    01h already installed
+--------N-21FF8D-----------------------------
+INT 21 - TopWare Network OS v5.10+ - CALL TopShow FUNCTION
+	AX = FF8Dh
+	CH = monochrome flag (01h monochrome, 00h not monochrome)
+	CL = screen mode of station to be viewed (see #02507)
+	BL = graphic page number for monochrome
+Return: AL = status (00h successful, else failed)
+SeeAlso: AX=FF8Eh,AX=FFCFh
 
-Format of PRINT submit packet:
-Offset	Size	Description	(Table 2457)
- 00h	BYTE	level (must be 00h)
- 01h	DWORD	pointer to ASCIZ filename (no wildcards)
+(Table 02507)
+Values for TopWare screen mode:
+ 00h	text mode
+ 01h	720x348
+ 02h	640x408
+ 03h	720x352
+ 04h	640x390
+ 05h	reserved
+--------N-21FF8E-----------------------------
+INT 21 - TopWare Network OS v5.10+ - CANCEL TopShow FUNCTION
+	AX = FF8Eh
+Return: AL = 00h (successful, TopShow removed)
+SeeAlso: AX=FF8Dh
+--------N-21FF91-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET FILE SERVER STATION NUMBER
+	AX = FF91h
+Return: AL = station number of file server
+SeeAlso: AX=FF82h
+--------N-21FF97-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET MAXIMUM STATION NUMBER (server only)
+	AX = FF97h
+Return: AL = maximum station number
+SeeAlso: AX=FF98h
+--------N-21FF98-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET MAXIMUM FILE NUMBER (server only)
+	AX = FF98h
+Return: AL = maximum file
+SeeAlso: AX=FF97h
+--------N-21FF9A-----------------------------
+INT 21 - TopWare Network OS v5.10+ - RECEIVE OF USER-DEFINED PACKETS
+	AX = FF9Ah
+	ES:BX -> buffer for user-defined packet (see #02508)
+Return: nothing
 
-(Table 2458)
-Values for PRINT error code:
- 0001h	invalid function
- 0002h	file not found
- 0003h	path not found
- 0004h	out of file handles
- 0005h	access denied
- 0008h	print queue full
- 0009h	spooler busy
- 000Ch	name too long
- 000Fh	invalid drive
---------c-2F0101SI20D6-----------------------
-INT 2F U - PrintCache v3.1 PRINT.COM - SUBMIT FILE FOR PRINTING
-	AX = 0101h
-	SI = 20D6h
-	DI = 8761h
-	DS:DX -> submit packet (see #2457)
-	CL = print options
-	    bit 4: use default options
+Format of TopWare user-defined packet:
+Offset	Size	Description	(Table 02508)
+ 00h	BYTE	FFh
+ 01h	WORD	(call) length of data field plus 3
+		(ret) length of received message (0000h if none received)
+ 03h	BYTE	destination ID (FFh for broadcast message)
+ 04h	BYTE	sending station ID
+ 05h	BYTE	type code (11h; all other codes reserved for TopWare)
+ 06h  N BYTEs	received message
+--------N-21FF9F-----------------------------
+INT 21 - TopWare Network OS v5.10+ - ENABLE/DISABLE TopTerm SERVICE
+	AX = FF9Fh
+	CL = new state (00h disable [disregard TopTerm packets], 01h enable)
+Return: AL = status (00h successful, FFh failed)
+Note:	this function is only supported by Workstations, not the server
+--------N-21FFB0-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET SPOOLER PRINTING PRIORITY
+	AX = FFB0h
+Return: AL = priority status (see #02509)
+SeeAlso: AX=FFB1h
+
+Bitfields for TopWare printer priority status:
+Bit(s)	Description	(Table 02509)
+ 2	LPT3 has high priority
+ 1	LPT2 has high priority
+ 0	LPT1 has high priority
+--------N-21FFB1-----------------------------
+INT 21 - TopWare Network OS v5.10+ - SET SPOOLER PRINTING PRIORITY
+	AX = FFB1h
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+	CH = new priority (00h normal, 01h high)
+Return: nothing
+SeeAlso: AX=FFB0h
+--------N-21FFB3-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET DEFAULT START-OF-JOB FORMFEED STATUS
+	AX = FFB3h
+Return: AL = starting formfeed status (see #02510)
+SeeAlso: AX=FFB4h,AX=FFC0h
+
+Bitfields for TopWare printer start-of-job formfeed status:
+Bit(s)	Description	(Table 02510)
+ 2	LPT3 has formfeed enabled
+ 1	LPT2 has formfeed enabled
+ 0	LPT1 has formfeed enabled
+--------N-21FFB4-----------------------------
+INT 21 - TopWare Network OS v5.10+ - SET DEFAULT START-OF-JOB FORMFEED STATUS
+	AX = FFB4h
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+	CH = new formfeed status (00h off, 01h on)
+Return: nothing
+SeeAlso: AX=FFB3h,AX=FFC1h
+--------N-21FFBB-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET PRINTER SERVER STATION ADDRESS
+	AX = FFBBh
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+Return: AL = current mapping printer server station number
+	    00h if local
+SeeAlso: AX=FFBCh
+--------N-21FFBC-----------------------------
+INT 21 - TopWare Network OS v5.10+ - CANCEL TopShow FUNCTION
+	AX = FFBCh
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+	CL = printer server station address or 00h for local printer
+Return: AL = status (00h successful, else failed)
+SeeAlso: AX=FFBBh
+--------N-21FFBD-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET CURRENT AUTOPRINT TIME
+	AX = FFBDh
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+Return: AX = current AutoPrint timeout in clock ticks
+SeeAlso: AX=FFBEh
+--------N-21FFBE-----------------------------
+INT 21 - TopWare Network OS v5.10+ - SET AUTOPRINT TIME
+	AX = FFBEh
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+	BX = timeout in clock ticks
+SeeAlso: AX=FFBDh
+--------N-21FFBF-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET LOGON USER INFORMATION
+	AX = FFBFh
+	DX:BX -> buffer for logon information (see #02511)
+Return: AL = status (00h successful, else failed)
+	AH = number of logged-in stations
+
+Format of TopWare logon information:
+Offset	Size	Description	(Table 02511)
+ 00h	BYTE	station address
+ 01h 15 BYTEs	username
+--------N-21FFC0-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET DEFAULT END-OF-JOB FORMFEED STATUS
+	AX = FFC0h
+Return: AL = ending formfeed status (see #02512)
+SeeAlso: AX=FFB3h,AX=FFC1h
+
+Bitfields for TopWare printer end-of-job formfeed status:
+Bit(s)	Description	(Table 02512)
+ 2	LPT3 has formfeed enabled
+ 1	LPT2 has formfeed enabled
+ 0	LPT1 has formfeed enabled
+--------N-21FFC1-----------------------------
+INT 21 - TopWare Network OS v5.10+ - SET DEFAULT END-OF-JOB FORMFEED STATUS
+	AX = FFC1h
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+	CH = new formfeed status (00h off, 01h on)
+Return: nothing
+SeeAlso: AX=FFB4h,AX=FFC0h
+--------N-21FFC2-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET DEFAULT COPIES OF SPOOLING FILE
+	AX = FFC2h
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+Return: AL = default number of copies printed
+SeeAlso: AX=FFC7h
+--------N-21FFC3-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET SHARING STATUS OF PRINTER SERVER
+	AX = FFC3h
+Return: AL = sharing status of printers (see #02513)
+	    FFh if not a printer server
+
+Bitfields for TopWare printer sharing status:
+Bit(s)	Description	(Table 02513)
+ 2	LPT3 is shared
+ 1	LPT2 is shared
+ 0	LPT1 is shared
+--------N-21FFC4-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET/SET LPT PORT ON PRINT SERVER
+	AX = FFC4h
+	BL = subfunction
+	    00h get
+		Return: AL = mapped printer port on print server
+	    01h set
+		CL = network printer port (00h LPT1, 01h LPT2, 02h LPT3)
+	CH = local printer (00h LPT1, 01h LPT2, 02h LPT3)
+--------N-21FFC6-----------------------------
+INT 21 - TopWare Network OS v5.10+ - SET DEFAULT PRINT FILE HEADER
+	AX = FFC6h
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+	CL = header state (00h off, 01h on)
+SeeAlso: AX=FFC8h
+--------N-21FFC7-----------------------------
+INT 21 - TopWare Network OS v5.10+ - SET DEFAULT PRINT COPIES
+	AX = FFC7h
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+	CL = new default number of copies to print
+SeeAlso: AX=FFC2h
+--------N-21FFC8-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET DEFAULT PRINT FILE HEADER STATUS
+	AX = FFC8h
+Return: AL = header status for printers (see #02514)
+SeeAlso: AX=FFC6h
+
+Bitfields for TopWare print header status:
+Bit(s)	Description	(Table 02514)
+ 2	LPT3 has headers enabled
+ 1	LPT2 has headers enabled
+ 0	LPT1 has headers enabled
+--------N-21FFC9-----------------------------
+INT 21 - TopWare Network OS v5.10+ - SET PRINTER SHARING
+	AX = FFC9h
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+	CL = new sharing state (00h off, 01h on)
+Return: AL = status (00h successful, FFh not printer server)
+--------N-21FFCA-----------------------------
+INT 21 - TopWare Network OS v5.10+ - MOVE FILE FROM ONE PRINT SERVER TO ANOTHER
+	AX = FFCAh
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+	CL = original printer server station address
+	BL = target printer server station address
+	DS:DX -> filename (12 bytes)
+Return: AL = status (00h successful, else failed)
+SeeAlso: AX=FFCBh
+--------N-21FFCB-----------------------------
+INT 21 - TopWare Network OS v5.10+ - DELETE FILE FROM SPOOLING QUEUE
+	AX = FFCBh
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+	CL = printer server station address
+	DS:DX -> filename (12 bytes)
+Return: AL = status (00h successful, else failed)
+SeeAlso: AX=FFCAh
+--------N-21FFCC-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET PRINT SERVER'S SPOOLING QUEUE STATUS
+	AX = FFCCh
+	CL = printer server station address
+	BH = start item number of spooling file for print server
+	BL = number of the item to be retrieved
+	DS:DX -> buffer for queued file information (see #02515)
+Return: AL = status
+	    00h successful
+		AH = number of spool files
+		DS:DX buffer filled
+	    nonzero failed
+
+Format of TopWare queued file information buffer [16-item array, one element]:
+Offset	Size	Description	(Table 02515)
+ 00h 12 BYTEs	filename
+ 0Ch	DWORD	size
+ 10h	WORD	date
+ 12h	WORD	time
+ 14h 15 BYTEs	username
+ 23h	BYTE	count
+ 24h	BYTE	flag: header
+ 25h	BYTE	print number
+--------N-21FFCD-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET STATUS OF ALL PRINT SERVERS
+	AX = FFCDh
+	DS:DX -> buffer for server status (see #02516)
+Return: AL = status
+	    00h successful
+		AH = number of print servers
+	    nonzero failed
+
+Format of TopWare server status:
+Offset	Size	Description	(Table 02516)
+ 00h	BYTE	station address
+ 01h 15 BYTEs	username
+ 10h	BYTE	flag: 01h printer is shared, 00h sharing disabled
+ 11h	BYTE	number of files pending in queue
+--------N-21FFCF-----------------------------
+INT 21 - TopWare Network OS v5.10+ - CALL TopLook FUNCTION
+	AX = FFCFh
+	DH = page number (0-2, 2 is text mode)
+	DL = type
+	    00h look at specific screen
+	    01h AutoLook on
+	    FFh AutoLook off
+	BH = station number wishing to look
+	BL = station number to be looked at
+	CH = monochrome flag (01h monochrome, 00h not monochrome)
+	CL = screen mode (see #02507)
+Return: AL = status (00h successful, nonzero failed)
+SeeAlso: AX=FF8Dh
+--------N-21FFD6-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET KEYCARD SERIAL NUMBER AND MAX USERS
+	AX = FFD6h
+	ES:BX -> 12-byte buffer for keycard serial number
+Return: CX = maximum number of users
+	ES:BX buffer filled
+--------N-21FFD7-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET NETWORK PROTECTION ATTRIBUTES STATUS
+	AX = FFD7h
+Return: AL = status (00h disabled, 01h enabled)
+--------N-21FFE3DL00-------------------------
+INT 21 - TopWare Network OS v5.10+ - INITIATE ACCESS TO SPECIFIC PACKET TYPE
+	AX = FFE3h
+	DL = 00h
+	BX = packet type for Ethernet header (IP = 0800h, ARP = 0806h, etc.)
+	ES:DI -> receive routine (see #02518)
 Return: CF clear if successful
-	    AL = status
-		01h added to queue
-		9Eh now printing
+	    AX = handle number
 	CF set on error
-	    AX = error code (see #2458)
-Program: PrintCache PRINT.COM is a DOS PRINT replacement included in
-	  LaserTools' PrintCache memory/disk-based print spooler package
-Note:	if either SI or DI differs from the indicated magic values on entry,
-	  PrintCache will use the default print options for the file for
-	  compatibility with DOS PRINT
-SeeAlso: AX=0100h/SI=20D6h,AX=0101h,AH=00h"PRINT",AX=0107h"PrintCache"
---------c-2F0102-----------------------------
-INT 2F - DOS 3.0+ PRINT - REMOVE FILE FROM PRINT QUEUE
-	AX = 0102h
-	DS:DX -> ASCIZ filename (wildcards allowed)
+	    DH = error code (03h,05h,09h,0Ah,11h) (see #02517)
+SeeAlso: AX=FFE3h/DL=01h
+
+(Table 02517)
+Values for TopWare error code:
+ 01h	invalid handle
+ 03h	no interfaces of the specified type found
+ 05h	bad packet type
+ 09h	insufficient space
+ 0Ah	type already being accessed
+ 0Ch	unable to send packet (usually hardware error)
+ 11h	invalid function
+
+(Table 02518)
+Values TopWare receive routine is called with:
+	AX = function
+	    0000h request packet buffer
+		CX = packet size
+		Return: ES:DI -> buffer or 0000h:0000h to discard packet
+	    0001h packet copied
+		CX = packet size
+		DS:SI -> copied packet (same as returned ES:DI above)
+--------N-21FFE3DL01-------------------------
+INT 21 - TopWare Network OS v5.10+ - END ACCESS TO SPECIFIC PACKET TYPE
+	AX = FFE3h
+	DL = 01h
+	BX = handle returned by AX=FFE3h/DL=00h
 Return: CF clear if successful
 	CF set on error
-	    AX = error code (see #2458)
-SeeAlso: AX=0101h,AX=0103h,AH=01h"PRINT"
---------c-2F0103-----------------------------
-INT 2F - DOS 3.0+ PRINT - CANCEL ALL FILES IN PRINT QUEUE
-	AX = 0103h
+	    DH = error code (01h,11h) (see #02517)
+Note:	the specified access handle will no longer be valid after this call
+SeeAlso: AX=FFE3h/DL=00h
+--------N-21FFE3DL02-------------------------
+INT 21 - TopWare Network OS v5.10+ - SEND PACKET
+	AX = FFE3h
+	DL = 02h
+	CX = length of data buffer
+	DS:SI -> buffer containing data
 Return: CF clear if successful
 	CF set on error
-	    AX = error code (see #2458)
-SeeAlso: AX=0102h
---------c-2F0104-----------------------------
-INT 2F - DOS 3.0+ PRINT - FREEZE PRINT QUEUE TO READ JOB STATUS
-	AX = 0104h
-Return: CF clear if successful
-	    DX = error count since status last read
-	    DS:SI -> print queue
-	CF set on error
-	    AX = error code (see #2458)
-Desc:	get the list of print jobs, temporarily suspending PRINT's activities
-	  to avoid changing the list while it is being examined
-Notes:	the print queue is an array of 64-byte ASCIZ filenames terminated by
-	  an empty filename; the first name is the file currently being printed
-	printing is stopped until AX=0105h is called to prevent the queue
-	  from changing while the filenames are being read
-SeeAlso: AX=0101h,AX=0105h
---------c-2F0105-----------------------------
-INT 2F - DOS 3.0+ PRINT - RESTART PRINT QUEUE AFTER STATUS READ
-	AX = 0105h
-Return: CF clear if successful
-	CF set on error
-	    AX = error code (see #2458)
-Desc:	restart PRINT's activities once an application finishes examining the
-	  print queue
-SeeAlso: AX=0104h
---------c-2F0106-----------------------------
-INT 2F - DOS 3.3+ PRINT - GET PRINTER DEVICE
-	AX = 0106h
-Return: CF set if files in print queue
-	    AX = error code 0008h (queue full)
-	    DS:SI -> device driver header (see #1511)
-	CF clear if print queue empty
-	    AX = 0000h
-Desc:	determine which device, if any, PRINT is currently using for output
-Notes:	undocumented prior to the release of MS-DOS 5.0
-	this function can be used to allow a program to avoid printing to the
-	  printer on which PRINT is currently performing output
-SeeAlso: AX=0104h
---------c-2F0107-----------------------------
-INT 2F U - PrintCache v3.1 PRINT.COM - SET TRAILING FORM FEEDS
-	AX = 0107h
-	CL bit 0: output form feed between print jobs
-Return: AL destroyed
-SeeAlso: AX=0100h/SI=20D6h,AX=0101h/SI=20D6h
---------N-2F0200-----------------------------
-INT 2F U - PC LAN PROGRAM REDIR/REDIRIFS internal - INSTALLATION CHECK
-	AX = 0200h
-Return: AL = FFh if installed
-Desc:	determine whether the PC LAN Program redirector is installed
-SeeAlso: AX=0201h,AX=0203h
---------N-2F0201-----------------------------
-INT 2F U - PC LAN PROGRAM REDIR/REDIRIFS internal - ???
-	AX = 0201h
-Return: nothing???
-Notes:	this function is called by the DOS 3.3+ PRINT.COM
-	AX=0202h appears to be the opposite function
-	these functions are supposedly used to signal opening and closing of
-	  printers
-SeeAlso: AX=0202h
---------N-2F0202-----------------------------
-INT 2F U - PC LAN PROGRAM REDIR/REDIRIFS internal - ???
-	AX = 0202h
-	???
-Return: nothing???
-Notes:	this function is called by the DOS 3.3+ PRINT.COM
-	these functions are supposedly used to signal opening and closing of
-	  printers
-SeeAlso: AX=0201h
---------N-2F0203-----------------------------
-INT 2F U - PC LAN PROGRAM REDIR/REDIRIFS internal - ???
-	AX = 0203h
-Return: nothing???
-Notes:	this function is called by the DOS 3.3+ PRINT.COM
-	AX=0204h appears to be the opposite function
-	these functions are supposedly used to signal opening and closing of
-	  printers
-SeeAlso: AX=0200h,AX=0204h
---------N-2F0204-----------------------------
-INT 2F U - PC LAN PROGRAM REDIR/REDIRIFS internal - ???
-	AX = 0204h
-	???
-Return: nothing???
-Notes:	this function is called by the DOS 3.3+ PRINT.COM
-	AX=0203h appears to be the opposite function
-	these functions are supposedly used to signal opening and closing of
-	  printers
-SeeAlso: AX=0200h,AX=0203h
---------N-2F---------------------------------
-INT 2F U - PC LAN PROGRAM REDIR/REDIRIFS internal - ???
-	AX = 02xxh
-	???
+	    DH = error code (0Ch,11h) (see #02517)
+--------N-21FFE3DL03-------------------------
+INT 21 - TopWare Network OS v5.10+ - GET LOCAL NETWORK INTERFACE ADDRESS
+	AX = FFE3h
+	DL = 03h
+	ES:DI -> 6-byte buffer for address
+SeeAlso: AX=FFE3h/DL=00h
+--------v-21FFFE-----------------------------
+INT 21 - VIRUS - "08/15"/"Many Fingers" - INSTALLATION CHECK
+	AX = FFFEh
+Return: AX = 0815h if resident
+SeeAlso: AX=FF10h,AX=FFFEh/BX=0000h
+--------v-21FFFEBX0000-----------------------
+INT 21 - VIRUS - "Anti-Thunderbyte/LEMMING" - INSTALLATION CHECK
+	AX = FFFEh
+	BX = 0000h
+Return: BX = FFFFh if resident
+SeeAlso: AX=FFFEh,AX=FFFFh
+--------v-21FFFF-----------------------------
+INT 21 - VIRUS - "Ontario", "Year 1992"/"B1M92" - INSTALLATION CHECK
+	AX = FFFFh
+Return: AX = 0000h if "Ontario" resident
+	AX = 1992h if "Year 1992"/"B1M92" resident
+SeeAlso: AX=FF0Fh,AX=FFFFh/CX=0000h,INT 6B"VIRUS"
+--------v-21FFFFCX0000-----------------------
+INT 21 - VIRUS - "Revenge" - INSTALLATION CHECK
+	AX = FFFFh
+	CX = 0000h
+Return: CX = 0006h if resident
+SeeAlso: AX=FFFFh,INT 6B"VIRUS"
+--------D-22---------------------------------
+INT 22 - DOS 1+ - PROGRAM TERMINATION ADDRESS
+Desc:	this vector specifies the address of the routine which is to be given
+	  control after a program is terminated; it should never be called
+	  directly, since it does not point at an interrupt handler
+Notes:	this vector is restored from the DWORD at offset 0Ah in the PSP during
+	  termination, and then a FAR JMP is performed to the address in INT 22
+	normally points at the instruction immediately following INT 21/AH=4Bh
+	  call which loaded the current program
+SeeAlso: INT 20,INT 21/AH=00h,INT 21/AH=31h,INT 21/AH=4Ch
+--------G-22---------------------------------
+INT 22 - COMTROL HOSTESS i/ISA DEBUGGER - CHANGE FIRMWARE DEBUGGING PORT
+	AL = new firmware debugging port
 Return: ???
---------l-2F0500-----------------------------
-INT 2F U - DOS 3.0+ CRITICAL ERROR HANDLER - INSTALLATION CHECK
-	AX = 0500h
-Return: AL = status
-	    00h not installed, OK to install
-	    01h not installed, can't install
-	    FFh installed
-	BX destroyed (MSCDEX v2.21-2.25)
-	CF clear (MSCDEX v2.21-2.25)
-Desc:	determine whether a critical error message override is installed
-Note:	this set of functions allows a user program to partially or completely
-	  override the default critical error handler's message in COMMAND.COM
-SeeAlso: AH=05h,INT 24
---------l-2F05-------------------------------
-INT 2F CU - DOS 3.0+ CRITICAL ERROR HANDLER - EXPAND ERROR INTO STRING
-	AH = 05h
----DOS 3.x---
-	AL = extended error code (not zero)
----DOS 4.0+ ---
-	AL = error type
-	    01h DOS extended error code
-	    02h parameter error
-	BX = error code
-Return: CF clear if successful
-	    ES:DI -> ASCIZ error message (read-only)
-	    AL = completion state
-		00h message requires completion with device name, drive, etc.
-		01h message is complete as returned
-	CF set if error code can't be converted to string
-	    AX,DI,ES destroyed
-	other flags corrupted
-Notes:	called at start of COMMAND.COM's default critical error handler if
-	  installed by a user program, allowing partial or complete overriding
-	  of the default error messages
-	subfunction 02h is called by many DOS 4 external programs
-	DR DOS's COMMAND.COM appends additional info ("0 files copied") to the
-	  returned string
-SeeAlso: AX=0500h,AX=122Eh,INT 24
---------U-2F0600-----------------------------
-INT 2F - DOS 3.0+ ASSIGN - INSTALLATION CHECK
-	AX = 0600h
-Return: AL = status
-	    00h not installed
-	    01h not installed, but not OK to install
-	    FFh installed
-Notes:	ASSIGN is not a TSR in DR DOS 5.0; it is internally replaced by SUBST
-	  (see INT 21/AH=52h)
-	undocumented prior to the release of DOS 5.0
-SeeAlso: AX=0601h,INT 21/AH=52h
---------U-2F0601-----------------------------
-INT 2F U - DOS 3.0+ ASSIGN - GET DRIVE ASSIGNMENT TABLE
-	AX = 0601h
-Return: ES = segment of ASSIGN work area and assignment table
-Note:	the 26 bytes starting at ES:0103h specify which drive each of A: to Z:
-	  is mapped to.	 Initially set to 01h 02h 03h....
-SeeAlso: AX=0600h,AX=AF14h"WinDOS"
---------D-2F0800-----------------------------
-INT 2F U - DRIVER.SYS support - INSTALLATION CHECK
-	AX = 0800h
-Return: AL = status
-	    00h not installed, OK to install
-	    01h not installed, not OK to install
-	    FFh installed
-Desc:	determine whether the internal support code used by DRIVER.SYS is
-	  present; it is always present in DOS 3.2+
-Note:	supported by DR DOS 5.0 and Novell DOS 7
---------D-2F0801-----------------------------
-INT 2F U - DRIVER.SYS support - ADD NEW BLOCK DEVICE
-	AX = 0801h
-	DS:DI -> drive data table (see #2465,#2466,#2467)
-Return: AX,BX,SI,ES destroyed
-Notes:	moves down internal list of drive data tables, copying and modifying
-	  the drive description flags word for tables referencing same physical
-	  drive
-	the data table is appended to the chain of tables
-	supported by DR DOS 5.0 and Novell DOS 7
-SeeAlso: AX=0803h
---------D-2F0802-----------------------------
-INT 2F U - DRIVER.SYS support - EXECUTE DEVICE DRIVER REQUEST
-	AX = 0802h
-	ES:BX -> device driver request header (see #2461)
-Return: request header updated as per requested operation
-	STACK:	WORD	original flags from INT call (left by RETF in device
-			  driver, at least in DOS 5.0-6.22)
-Notes:	supported by DR DOS 5.0
-	DOS 3.2 executes this function on any AL value from 02h through F7h;
-	  DOS 4.0+ executes this function on AL=02h and AL=04h-F7h
-	the command codes (see #2459) and structures described below apply
-	  to all drivers which support the appropriate commands; this call is
-	  just one of a number of ways in which a device driver request may
-	  be invoked
-	supported by Novell DOS 7
-SeeAlso: AX=0800h,AX=0801h,AX=0803h,AX=1510h,INT 21/AH=52h,INT 21/AH=99h
-SeeAlso: INT 21/AH=9Ah
+SeeAlso: INT 21"COMTROL",INT 23"COMTROL"
+--------D-23---------------------------------
+INT 23 - DOS 1+ - CONTROL-C/CONTROL-BREAK HANDLER
+---DOS 1.x---
+Return: AH = 00h abort program
+	if all registers preserved, restart DOS call
+---DOS 2+---
+	CF clear
+Return: all registers preserved
+	return via RETF with CF set or (MS-DOS 1,DR DOS) RETF 2 with CF set
+	    DOS will abort program with errorlevel 0
+	else (RETF/RETF 2 with CF clear or IRET with CF ignored)
+	    interrupted DOS call is restarted
+Notes:	this interrupt is invoked whenever DOS detects a ^C or ^Break; it
+	  should never be called directly
+	MS-DOS 1.25 also invokes INT 23 on a divide overflow (INT 00)
+	MS-DOS remembers the stack pointer before calling INT 23, and if it is
+	  not the same on return, pops and discards the top word; this is what
+	  permits a return with RETF as well as IRET or RETF 2
+	MS-DOS 2.1+ ignores the returned CF if SP is the same on return as it
+	  was when DOS called INT 23, so RETF 2 will not terminate the program
+	Novell DOS 7 always pops a word if CF is set on return, so one should
+	  not return with RETF 2 and CF set or IRET with the stored flags' CF
+	  set
+	any DOS call may safely be made within the INT 23 handler, although
+	  the handler must check for a recursive invocation if it does
+	  call DOS
+SeeAlso: INT 1B
+--------G-23---------------------------------
+INT 23 - COMTROL HOSTESS i/ISA DEBUGGER - GET CONFIGURATION INFORMATION
+	AL = query type
+	    00h get old config map
+		Return: AX = old config map
+	    01h get dual-ported RAM map
+		Return: BX:AX = dual-ported RAM map
+	    02h get SCC port map
+		Return: BX:AX = SCC port map
+SeeAlso: INT 22"COMTROL",INT 26"COMTROL"
+--------D-24---------------------------------
+INT 24 C - DOS 1+ - CRITICAL ERROR HANDLER
+Notes:	invoked when a critical (usually hardware) error is encountered by DOS
+	  (see #02519); should never be called directly
+	when DOS terminates a program, it copies the previous value of the
+	  INT 24 vector out of the PSP (see #01355) and into the interrupt
+	  vector table
+SeeAlso: INT 21/AH=95h
 
-(Table 2459)
-Values for device driver command code:
- 00h (0)  INIT
- 01h (1)  MEDIA CHECK (block devices)
- 02h (2)  BUILD BPB (block devices)
- 03h (3)  IOCTL INPUT
- 04h (4)  INPUT
- 05h (5)  NONDESTRUCTIVE INPUT, NO WAIT (character devices)
- 06h (6)  INPUT STATUS (character devices)
- 07h (7)  INPUT FLUSH (character devices)
- 08h (8)  OUTPUT
- 09h (9)  OUTPUT WITH VERIFY
- 0Ah (10) OUTPUT STATUS (character devices)
- 0Bh (11) OUTPUT FLUSH (character devices)
- 0Ch (12) IOCTL OUTPUT
- 0Dh (13) (DOS 3.0+) DEVICE OPEN
- 0Eh (14) (DOS 3.0+) DEVICE CLOSE
- 0Fh (15) (DOS 3.0+) REMOVABLE MEDIA (block devices)
- 10h (16) (DOS 3.0+) OUTPUT UNTIL BUSY (character devices)
- 11h (17) (European MS-DOS 4.0) STOP OUTPUT (console screen drivers only)
- 12h (18) (European MS-DOS 4.0) RESTART OUTPUT (console screen drivers only)
- 13h (19) (DOS 3.2+) GENERIC IOCTL
- 14h (20) unused
- 15h (21) (European MS-DOS 4.0) RESET UNCERTAIN MEDIA FLAG
- 16h (22) unused
- 17h (23) (DOS 3.2+) GET LOGICAL DEVICE
- 18h (24) (DOS 3.2+) SET LOGICAL DEVICE
- 19h (25) (DOS 5.0+) CHECK GENERIC IOCTL SUPPORT
- 80h (128)(CD-ROM) READ LONG
- 81h (129)(CD-ROM) reserved
- 82h (130)(CD-ROM) READ LONG PREFETCH
- 83h (131)(CD-ROM) SEEK
- 84h (132)(CD-ROM) PLAY AUDIO
- 85h (133)(CD-ROM) STOP AUDIO
- 86h (134)(CD-ROM) WRITE LONG
- 87h (135)(CD-ROM) WRITE LONG VERIFY
- 88h (136)(CD-ROM) RESUME AUDIO
+(Table 02519)
+Values critical error handler is called with:
+	AH = type and processing flags (see #02520)
+	AL = drive number if AH bit 7 clear
+	BP:SI -> device driver header (see #01623 at INT 21/AH=52h)
+		(BP:[SI+4] bit 15 set if character device)
+	DI low byte contains error code if AH bit 7 set (see #02521)
+	STACK:	DWORD	return address for INT 24 call
+		WORD	flags pushed by INT 24
+		WORD	original AX on entry to INT 21
+		WORD	BX
+		WORD	CX
+		WORD	DX
+		WORD	SI
+		WORD	DI
+		WORD	BP
+		WORD	DS
+		WORD	ES
+		DWORD	return address for INT 21 call
+		WORD	flags pushed by INT 21
+Return: AL = action code (see #02522)
+	SS,SP,DS,ES,BX,CX,DX preserved
+Notes:	the only DOS calls the handler may make are INT 21/AH=01h-0Ch,30h,59h
+	if the handler returns to the application by popping the stack, DOS
+	  will be in an unstable state until the first call with AH > 0Ch
+	for DOS 3.1+, IGNORE (AL=00h) is turned into FAIL (AL=03h) on network
+	  critical errors
+	if IGNORE specified but not allowed, it is turned into FAIL
+	if RETRY specified but not allowed, it is turned into FAIL
+	if FAIL specified but not allowed, it is turned into ABORT
+	(DOS 3.0+) if a critical error occurs inside the critical error
+	  handler, the DOS call is automatically failed (AL set to 03h and
+	  the INT 24 call skipped)
 
-Bitfields for device request status:
-Bit(s)	Description	(Table 2460)
- 15	error
- 14-11	reserved
- 10	??? set by DOS kernel on entry to some driver calls
- 9	busy
- 8	done (may be clear on return under European MS-DOS 4.0)
- 7-0	error code if bit 15 set (see #2462)
+Bitfields for critical error type and processing flags:
+Bit(s)	Description	(Table 02520)
+ 7	clear = disk I/O error
+	set   = -- if block device, bad FAT image in memory
+		-- if char device, error code in DI
+ 6	unused
+ 5	Ignore allowed (DOS 3.0+)
+ 4	Retry allowed (DOS 3.0+)
+ 3	Fail allowed (DOS 3.0+)
+ 2-1	disk area of error
+	00 = DOS area	01 = FAT
+	10 = root dir	11 = data area
+ 0	set if write, clear if read
+SeeAlso: #02521,#02522
 
-Format of device driver request header:
-Offset	Size	Description	(Table 2461)
- 00h	BYTE	length of request header
- 01h	BYTE	subunit within device driver
- 02h	BYTE	command code (see #2459)
- 03h	WORD	status (filled in by device driver) (see #2460)
----DOS---
- 05h  4 BYTEs	reserved (unused in DOS 2.x and 3.x)
- 09h	DWORD	(European MS-DOS 4.0 only) pointer to next request header in
-			  device's request queue
-		(other versions) reserved (unused in DOS 2.x and 3.x)
----STARLITE architecture---
- 05h	DWORD	pointer to next request header
- 09h  4 BYTEs	reserved
----command code 00h---
- 0Dh	BYTE	(ret) number of units
- 0Eh	DWORD	(call) pointer to DOS device helper function (see #2463)
-			  (European MS-DOS 4.0 only)
-		(call) pointer past end of memory available to driver (DOS 5+)
-		(ret) address of first free byte following driver
- 12h	DWORD	(call) pointer to commandline arguments
-		(ret) pointer to BPB array (block drivers) or
-			  0000h:0000h (character drivers)
- 16h	BYTE	(DOS 3.0+) drive number for first unit of block driver (0=A)
-   ---European MS-DOS 4.0---
- 17h	DWORD	pointer to function to save registers on stack
-   ---DOS 5+ ---
- 17h	WORD	(ret) error-message flag
-		0001h MS-DOS should display error msg on init failure
----command code 01h---
- 0Dh	BYTE	media descriptor
- 0Eh	BYTE	(ret) media status
-		00h don't know
-		01h media has not changed
-		FFh media has been changed
- 0Fh	DWORD	(ret, DOS 3.0+) pointer to previous volume ID if the
-		  OPEN/CLOSE/RM bit in device header is set and disk changed
----command code 02h---
- 0Dh	BYTE	media descriptor
- 0Eh	DWORD	transfer address
-		-> scratch sector if NON-IBM FORMAT bit in device header set
-		-> first FAT sector otherwise
- 12h	DWORD	pointer to BPB (set by driver) (see #1528 at INT 21/AH=53h)
----command codes 03h,0Ch---
-		  (see also INT 21/AX=4402h"DOS 2+",INT 21/AX=4403h"DOS")
- 0Dh	BYTE	media descriptor (block devices only)
- 0Eh	DWORD	transfer address
- 12h	WORD	(call) number of bytes to read/write
-		(ret) actual number of bytes read or written
----command codes 04h,08h,09h (except Compaq DOS 3.31, DR DOS 6)---
- 0Dh	BYTE	media descriptor (block devices only)
- 0Eh	DWORD	transfer address
- 12h	WORD	byte count (character devices) or sector count (block devices)
- 14h	WORD	starting sector number (block devices only)
- 16h	DWORD	(DOS 3.0+) pointer to volume ID if error 0Fh returned
- 1Ah	DWORD	(DOS 4.0+) 32-bit starting sector number (block devices with
-		  device attribute word bit 1 set only) if starting sector
-		  number above is FFFFh (see INT 21/AH=52h)
----command codes 04h,08h,09h (Compaq DOS 3.31, DR DOS 6)---
- 0Dh	BYTE	media descriptor (block devices only)
- 0Eh	DWORD	transfer address
- 12h	WORD	byte count (character devices) or sector count (block devices)
- 14h	DWORD	32-bit starting sector number (block devices only)
-	Note:	to reliably determine which variant of the request block for
-		  functions 04h,08h,09h has been passed to the driver, check
-		  the length field as well as the word at offset 14h.  If the
-		  length is 1Eh and 14h=FFFFh, use the DWORD at 1Ah as the
-		  starting sector number; if the length is 18h, use the DWORD
-		  at 14h; otherwise, use the WORD at 14h.
----command code 05h---
- 0Dh	BYTE	byte read from device if BUSY bit clear on return
----command codes 06h,07h,0Ah,0Bh,0Dh,0Eh,0Fh---
- no further fields
----command code 10h---
- 0Dh	BYTE	unused
- 0Eh	DWORD	transfer address
- 12h	WORD	(call) number of bytes to write
-		(ret) actual number of bytes written
----command codes 11h,12h---
- 0Dh	BYTE	reserved
----command code 15h---
- no further fields
----command codes 13h,19h---
- 0Dh	BYTE	category code
-		00h unknown
-		01h COMn:
-		03h CON
-		05h LPTn:
-		07h mouse (European MS-DOS 4.0)
-		08h disk
-		9Eh (STARLITE) Media Access Control driver
- 0Eh	BYTE	function code
-		00h (STARLITE) MAC Bind request
- 0Fh	WORD	copy of DS at time of IOCTL call (apparently unused in DOS 3.3)
-		SI contents (European MS-DOS 4.0)
- 11h	WORD	offset of device driver header (see #1511)
-		DI contents (European MS-DOS 4.0)
- 13h	DWORD	pointer to parameter block from INT 21/AX=440Ch or AX=440Dh
----command codes 80h,82h---
- 0Dh	BYTE	addressing mode
-		00h HSG (default)
-		01h Phillips/Sony Red Book
- 0Eh	DWORD	transfer address (ignored for command 82h)
- 12h	WORD	number of sectors to read
-		(if 0 for command 82h, request is an advisory seek)
- 14h	DWORD	starting sector number
-		logical sector number in HSG mode
-		frame/second/minute/unused in Red Book mode
-		(HSG sector = minute * 4500 + second * 75 + frame - 150)
- 18h	BYTE	data read mode
-		00h cooked (2048 bytes per frame)
-		01h raw (2352 bytes per frame, including EDC/ECC)
- 19h	BYTE	interleave size (number of sectors stored consecutively)
- 1Ah	BYTE	interleave skip factor
-		(number of sectors between consecutive portions)
----command code 83h---
- 0Dh	BYTE	addressing mode
-		00h HSG (default)
-		01h Phillips/Sony Red Book
- 0Eh	DWORD	transfer address (ignored)
- 12h	WORD	number of sectors to read (ignored)
- 14h	DWORD	starting sector number (see also above)
----command code 84h---
- 0Dh	BYTE	addressing mode
-		00h HSG (default)
-		01h Phillips/Sony Red Book
- 0Eh	DWORD	starting sector number (see also above)
- 12h	DWORD	number of sectors to play
----command codes 85h,88h---
- no further fields
----command codes 86h,87h---
- 0Dh	BYTE	addressing mode
-		00h HSG (default)
-		01h Phillips/Sony Red Book
- 0Eh	DWORD	transfer address (ignored in write mode 0)
- 12h	WORD	number of sectors to write
- 14h	DWORD	starting sector number (also see above)
- 18h	BYTE	write mode
-		00h mode 0 (write all zeros)
-		01h mode 1 (default) (2048 bytes per sector)
-		02h mode 2 form 1 (2048 bytes per sector)
-		03h mode 2 form 2 (2336 bytes per sector)
- 19h	BYTE	interleave size (number of sectors stored consecutively)
- 1Ah	BYTE	interleave skip factor
-		(number of sectors between consecutive portions)
-
-(Table 2462)
-Values for device driver error code:
- 00h	write-protect violation
- 01h	unknown unit
+(Table 02521)
+Values for critical error code:
+ 00h	write-protection violation attempted
+ 01h	unknown unit for driver
  02h	drive not ready
- 03h	unknown command
- 04h	CRC error
- 05h	bad drive request structure length
+ 03h	unknown command given to driver
+ 04h	data error (bad CRC)
+ 05h	bad device driver request structure length
  06h	seek error
- 07h	unknown media
+ 07h	unknown media type
  08h	sector not found
  09h	printer out of paper
  0Ah	write fault
  0Bh	read fault
  0Ch	general failure
- 0Dh	reserved
- 0Eh	(CD-ROM) media unavailable
+ 0Dh	(DOS 3.0+) sharing violation
+ 0Eh	(DOS 3.0+) lock violation
  0Fh	invalid disk change
+ 10h	(DOS 3.0+) FCB unavailable
+ 11h	(DOS 3.0+) sharing buffer overflow
+ 12h	(DOS 4.0+) code page mismatch
+ 13h	(DOS 4.0+) out of input
+ 14h	(DOS 4.0+) insufficient disk space
+SeeAlso: #02520,#02522
 
-(Table 2463)
-Call European MS-DOS 4.0 device helper function with:
-	DL = function
-	    00h "SchedClock" called on each timer tick
-		AL = tick interval in milliseconds
-	    01h "DevDone" device I/O complete
-		ES:BX -> request header
-		Note:	must update status word first; may be called from
-			  an interrupt handler
-	    02h "PullRequest" pull next request from queue
-		DS:SI -> DWORD pointer to start of device's request queue
-		Return: ZF clear if pending request
-			    ES:BX -> request header
-			ZF set if no more requests
-	    03h "PullParticular" remove specific request from queue
-		DS:SI -> DWORD pointer to start of device's request queue
-		ES:BX -> request header
-		Return: ZF set if request header not found
-	    04h "PushRequest" push the request onto the queue
-		DS:SI -> DWORD pointer to start of device's request queue
-		ES:BX -> request header
-		interrupts disabled
-	    05h "ConsInputFilter" keyboard input check
-		AX = character (high byte 00h if PC ASCII character)
-		Return: ZF set if character should be discarded
-			ZF clear if character should be handled normally
-		Note:	called by keyboard interrupt handler so DOS can scan
-			  for special input characters
-	    06h "SortRequest" push request in sorted order by starting sector
-		DS:SI -> DWORD pointer to start of device's request queue
-		ES:BX -> request header
-		interrupts disabled
-	    07h "SigEvent" send signal on keyboard event
-		AH = event identifier
-		Return: AL,FLAGS destroyed
-	    09h "ProcBlock" block on event
-		AX:BX = event identifier (typically a pointer)
-		CX = timeout in ms or 0000h for never
-		DH = interruptable flag (nonzero if pause may be interrupted)
-		interrupts disabled
-		Return: after corresponding ProcRun call
-			CF clear if event wakeup, set if unusual wakeup
-			ZF set if timeout wakeup, clear if interrupted
-			AL = wakeup code, nonzero if unusual wakeup
-			interrupts enabled
-			BX,CX,DX destroyed
-		Note:	block process and schedules another to run
-	    0Ah "ProcRun" unblock process
-		AX:BX = event identifier (typically a pointer)
-		Return: AX = number of processes awakened
-			ZF set if no processes awakened
-			BX,CX,DX destroyed
-	    0Bh "QueueInit" initialize/clear character queue
-		DS:BX -> character queue structure (see #2464)
-		Note:	the queue size field must be set before calling
-	    0Dh "QueueWrite" put a character in the queue
-		DS:BX -> character queue (see #2464)
-		AL = character to append to end of queue
-		Return: ZF set if queue is full
-			ZF clear if character stored
-	    0Eh "QueueRead" get a character from the queue
-		DS:BX -> character queue (see #2464)
-		Return: ZF set if queue is empty
-			ZF clear if characters in queue
-			    AL = first character in queue
-	    10h "GetDOSVar" return pointer to DOS variable
-		AL = index of variable
-		    03h current process ID
-		BX = index into variable if AL specifies an array
-		CX = expected length of variable
-		Return: CF clear if successful
-			    DX:AX -> variable
-			CF set on error
-			    AX,DX destroyed
-			BX,CX destroyed
-		Note:	the variables may not be modified
-	    14h "Yield" yield CPU if higher-priority task ready to run
-		Return: FLAGS destroyed
-	    1Bh "CritEnter" begin system critical section
-		DS:BX -> semaphore (6 BYTEs, initialized to zero)
-		Return: AX,BX,CX,DX destroyed
-	    1Ch "CritLeave" end system critical section
-		DS:BX -> semaphore (6 BYTEs, initialized to zero)
-		Return: AX,BX,CX,DX destroyed
-		Note:	must be called in the context of the process which
-			  called CritEnter on the semaphore
-Note:	the DWORD pointing at the request queue must be allocated by the driver
-	  and initialized to 0000h:0000h.  It always points at the next request
-	  to be executed
-
-Format of European MS-DOS 4.0 character queue:
-Offset	Size	Description	(Table 2464)
- 00h	WORD	size of queue in bytes
- 02h	WORD	index of next character out
- 04h	WORD	count of characters in the queue
- 06h  N BYTEs	queue buffer
---------D-2F0803-----------------------------
-INT 2F U - DOS 4.0+ DRIVER.SYS support - GET DRIVE DATA TABLE LIST
-	AX = 0803h
-Return: DS:DI -> first drive data table in list (see #2465,#2466,#2467)
-Note:	not available under DR DOS 5.0, but supported by Novell DOS 7 (using
-	  the MS-DOS 4+ data table format)
-SeeAlso: AX=0801h
-
-Format of DOS 3.30 drive data table:
-Offset	Size	Description	(Table 2465)
- 00h	DWORD	pointer to next table (offset FFFFh if last table)
- 04h	BYTE	physical unit number (for INT 13)
- 05h	BYTE	logical drive number (0=A:)
- 06h 19 BYTEs	BIOS Parameter Block (see also INT 21/AH=53h)
-		Offset	Size	Description
-		 00h	WORD	bytes per sector
-		 02h	BYTE	sectors per cluster, FFh if unknown
-		 03h	WORD	number of reserved sectors
-		 05h	BYTE	number of FATs
-		 06h	WORD	number of root dir entries
-		 08h	WORD	total sectors
-		 0Ah	BYTE	media descriptor, 00h if unknown
-		 0Bh	WORD	sectors per FAT
-		 0Dh	WORD	sectors per track
-		 0Fh	WORD	number of heads
-		 11h	WORD	number of hidden sectors
- 19h	BYTE	flags
-		bit 6: 16-bit FAT instead of 12-bit FAT
- 1Ah	WORD	number of DEVICE OPEN calls without corresponding DEVICE CLOSE
- 1Ch 11 BYTEs	volume label or "NO NAME    " if none (always "NO NAME" for
-		  fixed media)
- 27h	BYTE	terminating null for volume label???
- 28h	BYTE	device type (see #1426 at INT 21/AX=440Dh"DOS 3.2+")
- 29h	WORD	bit flags describing drive (see #2468)
- 2Bh	WORD	number of cylinders
- 2Dh 19 BYTEs	BIOS Parameter Block for highest capacity supported
- 40h  3 BYTEs	???
- 43h  9 BYTEs	filesystem type???, default = "NO NAME	"
-		(apparently only MS-DOS 3.30 fixed media, nulls for removable
-		  media and PC-DOS 3.30)
- 4Ch	BYTE	least-significant byte of last-accessed cylinder number
----removable media---
- 4Dh	DWORD	time of last access in clock ticks (FFFFFFFFh if never)
----fixed media---
- 4Dh	WORD	partition (FFFFh = primary, 0001h = extended)
- 4Fh	WORD	absolute cylinder number of partition's start on physical
-		  drive (always FFFFh if primary partition)
-SeeAlso: #2466,#2467
-
-Format of COMPAQ DOS 3.31 drive data table:
-Offset	Size	Description	(Table 2466)
- 00h	DWORD	pointer to next table (offset FFFFh if last table)
- 04h	BYTE	physical unit number (for INT 13)
- 05h	BYTE	logical drive number (0=A:)
- 06h 25 BYTEs	BIOS Parameter Block (see #2467)
- 1Fh  6 BYTEs	reserved fields from BPB above???
- 25h	BYTE	flags
-		bit 6: 16-bit FAT instead of 12-bit FAT
-		bit 5: large volume???
- 26h	WORD	device-open count???
- 28h 11 BYTEs	volume label or "NO NAME    " if none (always "NO NAME" for
-		  fixed media)
- 33h	BYTE	terminating null for volume label
- 34h	BYTE	device type (see #1426 at INT 21/AX=440Dh"DOS 3.2+")
- 35h	WORD	bit flags describing drive (see #2468)
- 37h	WORD	number of cylinders
- 39h 25 BYTEs	BIOS parameter block for highest capacity drive supports
- 52h  6 BYTEs	??? apparently always zeros
- 58h	BYTE	least-significant byte of last-accessed cylinder number
----removable media---
- 59h	DWORD	time of last access in clock ticks (FFFFFFFFh if never)
----fixed media---
- 59h	WORD	partition (FFFFh = primary, 0001h = extended)
- 5Bh	WORD	absolute cylinder number of partition's start on physical
-		  drive (always FFFFh if primary partition)
-SeeAlso: #2465,#2467
-
-Format of DOS 4.0-7.0 drive data table:
-Offset	Size	Description	(Table 2467)
- 00h	DWORD	pointer to next table (offset FFFFh if last table)
- 04h	BYTE	physical unit number (for INT 13)
- 05h	BYTE	logical drive number (0=A:)
- 06h 25 BYTEs	BIOS Parameter Block (see also INT 21/AH=53h)
-		Offset	Size	Description
-		 00h	WORD	bytes per sector
-		 02h	BYTE	sectors per cluster, FFh if unknown
-		 03h	WORD	number of reserved sectors
-		 05h	BYTE	number of FATs
-		 06h	WORD	number of root dir entries
-		 08h	WORD	total sectors (refer to offset 15h if zero)
-		 0Ah	BYTE	media descriptor, 00h if unknown
-		 0Bh	WORD	sectors per FAT
-		 0Dh	WORD	sectors per track
-		 0Fh	WORD	number of heads
-		 11h	DWORD	number of hidden sectors
-		 15h	DWORD	total sectors if WORD at 08h is zero
- 1Fh	BYTE	flags
-		bit 6: 16-bit FAT instead of 12-bit
-		bit 7: unsupportable disk (all accesses will return Not Ready)
- 20h	WORD	device-open count
- 22h	BYTE	device type (see #1426 at INT 21/AX=440Dh"DOS 3.2+")
- 23h	WORD	bit flags describing drive (see #2468)
- 25h	WORD	number of cylinders (for partition only, if hard disk)
- 27h 25 BYTEs	BIOS Parameter Block for default (highest) capacity supported
- 40h  6 BYTEs	reserved (part of BPB above)
- 46h	BYTE	last track accessed
----removable media---
- 47h	DWORD	time of last access in clock ticks (FFFFFFFFh if never)
----fixed media---
- 47h	WORD	partition (FFFFh = primary, 0001h = extended)
-		always 0001h for DOS 5+
- 49h	WORD	absolute cylinder number of partition's start on physical drive
-		(FFFFh if primary partition in DOS 4.x)
-------
- 4Bh 11 BYTEs	volume label or "NO NAME    " if none (apparently taken from
-		  extended boot record rather than root directory)
- 56h	BYTE	terminating null for volume label
- 57h	DWORD	serial number
- 5Bh  8 BYTEs	filesystem type ("FAT12	  " or "FAT16	")
- 63h	BYTE	terminating null for filesystem type
-SeeAlso: #2465,#2466
-
-Bitfields for flags describing drive:
-Bit(s)	Description	(Table 2468)
- 0	fixed media
- 1	door lock ("changeline") supported
- 2	current BPB locked
- 3	all sectors in a track are the same size
- 4	physical drive has multiple logical units
- 5	current logical drive for shared physical drive
- 6	disk change detected
- 7	device parameters were changed (set DASD before formatting)
-	(see #1425 at INT 21/AX=440Dh"DOS 3.2+")
- 8	disk reformatted (BPB of current media was changed)
- 9	access flag (fixed media only, disables reads and writes)
-	(see #1431 at INT 21/AX=440Dh"DOS 3.2+")
---------f-2F1000-----------------------------
-INT 2F - SHARE - INSTALLATION CHECK
-	AX = 1000h
-Return: AL = status
-	    00h not installed, OK to install
-	    01h not installed, not OK to install
-	    FFh installed
-BUGS:	values of AL other than 00h put DOS 3.x SHARE into an infinite loop
-	  (08E9: OR  AL,AL
-	   08EB: JNZ 08EB) <- the buggy instruction (DOS 3.3)
-	values of AL other than described here put PC-DOS 4.00 into the same
-	  loop (the buggy instructions are the same)
-Notes:	supported by OS/2 v1.3+ compatibility box, which always returns AL=FFh
-	if DOS 4.01 SHARE was automatically loaded, file sharing is in an
-	  inactive state (due to the undocumented /NC flag used by the autoload
-	  code) until this call is made
-	DOS 5+ chains to the previous handler if AL <> 00h on entry
-	Windows Enhanced mode hooks this call and reports that SHARE is
-	  installed even when it is not
-SeeAlso: AX=1080h,INT 21/AH=52h,INT 21/AX=4457h/DX=FFFFh
---------d-2F1001-----------------------------
-INT 2F U - DR DOS 6.0 SHARE internal - SET ???
-	AX = 1001h
-	DX:BX -> ???function
-Notes:	this function is also supported by SuperStor, a disk-compression
-	  program by Addstor which is bundled with DR DOS 6.0, and the
-	  Novell DOS 7 DELWATCH.EXE
-	the default handler for the pointer set by this call under DELWATCH
-	  simply returns with CF set
-SeeAlso: AX=1000h,AX=F800h
---------f-2F1040-----------------------------
-INT 2F U - DOS 4 only SHARE internal - ???
-	AX = 1040h
-	???
-Return: AL = FFh???
-SeeAlso: AX=1000h
---------f-2F1080-----------------------------
-INT 2F U - DOS 4 only SHARE internal - TURN ON FILE SHARING CHECKS
-	AX = 1080h
-Return: AL = status
-	    F0h successful
-	    FFh checking was already on
-Note:	DOS 4.x SHARE has dual functions: FCB support for large (>32M) media
-	  and file sharing checks.  The undocumented commandline flag /NC can
-	  be used to disable the sharing code.
-SeeAlso: AX=1000h,AX=1081h
---------f-2F1081-----------------------------
-INT 2F U - DOS 4 only SHARE internal - TURN OFF FILE SHARING CHECKS
-	AX = 1081h
-Return: AL = status
-	    F0h successful
-	    FFh checking was already off
-Note:	(see AX=1080h)
-SeeAlso: AX=1000h,AX=1080h
---------O-2F10FE-----------------------------
-INT 2F U - Novell DOS 7 DELWATCH.EXE - INSTALLATION CHECK
-	AX = 10FEh
-Return: AX = 20FFh if installed and active
-	    DX:BX -> private entry point (see #2469)
-SeeAlso: #1217,INT 21/AX=4306h,INT 21/AX=5704h
-
-(Table 2469)
-Call DELWATCH private entry point with:
-	AH = function
-	    00h NOP???
-		Return: AX = 0000h
-			CX = 0004h (unsupported function)
-	    01h disable DELWATCH on drive
-		AL = drive number (00h = A:)
-		Return: AX = status (0000h if failed, FFFFh if successful)
-	    02h ???
-		AL = drive number (00h = A:)
-		???
-		Return: ???
-	    03h	???
-		AL = drive number (00h = A:)
-		CX = ??? (0000h/0001h)
-		???
-		Return: ???
-	    04h ???
-		AL = drive number (00h = A:)
-		???
-		Return: ???
-	    05h ???
-		AL = drive number (00h = A:)
-		???
-		Return: ???
-	    06h enable DELWATCH on drive
-		AL = drive number with bit 7 set (80h = A:, etc.)
-		BX = maximum files of same name in one directory to save
-		CX = maximum files to save on this disk
-		???
-		Return: AX = status
-			    0000h failed
-			    FFFFh successful
-			CX = error code on failure
-			    (0004h if AL < 80h on entry)
-	    07h ???
-	    08h set file extensions list
-		AL = sense (00h exclude named extensions, 01h only named ext.)
-		DS:BX -> 31-byte ASCIZ extension list (three blank-padded bytes
-			  per extension)
-		Return: AX = FFFFh (successful)
-	    09h	???
-		AL = drive number (00h = A:)
-		???
-		Return: ???
-	    0Ah ???
-		AL = drive number (00h = A:)
-		???
-		Return: ???
-	    0Bh reset ???
-		Return: AX = FFFFh (successful)
-		see also function 0Dh
-	    0Ch check if drive enabled
-		AL = drive number with bit 7 set (80h = A:, etc.)
-		Return: AX = state
-			    0000h disabled or error (check CX)
-			    0001h drive enabled
-			CX = error code (0004h invalid drive number)
-	    0Dh set ???
-		BX = ???
-		Return: AX = FFFFh (successful)
-		see also function 0Bh
-	    0Eh ???
-		AL = drive number (00h = A:)
-		???
-		Return: ???
-Return: AX = 0000h, CX = 0001h if DELWATCH busy
-	registers unchanged if AH >= 0Fh on entry
---------O-2F10FF-----------------------------
-INT 2F U - Multiplex - DR DOS 5.0 - ???
-	AX = 10FFh
-	ES:BX -> ???
-Note:	sets pointer in kernel
---------N-2F1100-----------------------------
-INT 2F C - NETWORK REDIRECTOR - INSTALLATION CHECK
-	AX = 1100h
-Return: AL = status
-	    00h not installed, OK to install
-	    01h not installed, not OK to install
-	    FFh installed
-		AH = product identifier (ad hoc by various manufacturers)
-		    00h if PC Tools v8 DRIVEMAP
-		    42h ('B') for Beame&Whiteside BWNFS v3.0a
-		    6Eh ('n') for NetWare Lite v1.1 CLIENT
-Notes:	this function is called by the DOS 3.1+ kernel
-	in DOS 4.x only, the 11xx calls are all in IFSFUNC.EXE, not in the
-	  PC LAN Program redirector; DOS 5+ moves the calls back into the
-	  redirector
-	the PC Network 1.00 redirector (renamed to PC LAN Program in 1.1-1.3)
-	  only supports AL=00h-27h
---------d-2F1100SFDADA-----------------------
-INT 2F - MSCDEX (MS CD-ROM Extensions) - INSTALLATION CHECK
-	AX = 1100h subfn DADAh
-	STACK: WORD DADAh
-Return: AL = status
-	    00h not installed, OK to install
-		STACK unchanged
-	    01h not installed, not OK to install
-		STACK unchanged
-	    FFh installed
-		STACK: WORD	ADADh if MSCDEX installed
-				DADBh if Lotus CD/Networker installed
-Note:	although MSCDEX sets the stack word to ADADh on return, any value other
-	  than DADAh is considered to mean that MSCDEX is already installed;
-	  Lotus CD/Networker v4+ uses this feature to fool MSCDEX into
-	  thinking it is already installed when it is in fact CD/Networker
-	  that is installed
-Index:	installation check;Lotus CD/Networker
-Index:	Lotus CD/Networker;installation check
---------N-2F1101-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - REMOVE REMOTE DIRECTORY
-	AX = 1101h
-	SS = DOS DS
-	SDA first filename pointer -> fully-qualified directory name
-	SDA CDS pointer -> current directory structure for drive with dir
-Return: CF set on error
-	    AX = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	CF clear if successful
-Note:	this function is called by the DOS 3.1+ kernel
-SeeAlso: AX=1103h,AX=1105h,INT 21/AH=3Ah,INT 21/AH=60h
---------N-2F1102-----------------------------
-INT 2F CU - IFSFUNC.EXE (DOS 4.x only) - REMOVE REMOTE DIRECTORY
-	AX = 1102h
-	SS = DOS DS
-	SDA first filename pointer -> fully-qualified directory name
-	SDA CDS pointer -> current directory structure for drive with dir
-Return: CF set on error
-	    AX = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	CF clear if successful
-Note:	appears to be identical to AX=1101h; MS internal documentation calls
-	  this function "SEQ_RMDIR"
-SeeAlso: AX=1101h
---------N-2F1103-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - MAKE REMOTE DIRECTORY
-	AX = 1103h
-	SS = DOS DS
-	SDA first filename pointer -> fully-qualified directory name
-	SDA CDS pointer -> current directory structure for drive with dir
-Return: CF set on error
-	    AX = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	CF clear if successful
-Note:	this function is called by the DOS 3.1+ kernel
-SeeAlso: AX=1101h,AX=1105h,INT 21/AH=39h,INT 21/AH=60h
---------N-2F1104-----------------------------
-INT 2F CU - IFSFUNC.EXE (DOS 4.x only) - MAKE REMOTE DIRECTORY
-	AX = 1104h
-	SS = DOS DS
-	SDA first filename pointer -> fully-qualified directory name
-	SDA CDS pointer -> current directory structure for drive with dir
-Return: CF set on error
-	    AX = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	CF clear if successful
-Note:	appears to be identical to AX=1103h
-SeeAlso: AX=1103h
---------N-2F1105-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - CHDIR
-	AX = 1105h
-	SS = DOS DS
-	SDA first filename pointer -> fully-qualified directory name
-	SDA CDS pointer -> current directory structure for drive with dir
-Return: CF set on error
-	    AX = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	CF clear if successful
-	    CDS updated with new path
-Notes:	this function is called by the DOS 3.1+ kernel
-	directory string in CDS should not have a terminating backslash unless
-	  the current directory is the root
-SeeAlso: AX=1101h,AX=1103h,INT 21/AH=3Bh,INT 21/AH=60h
---------N-2F1106-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - CLOSE REMOTE FILE
-	AX = 1106h
-	ES:DI -> filled-in SFT (assumed to point at SDA's current SFT field)
-Return: CF set on error
-	    AX = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	CF clear if successful
-	    SFT updated (redirector must decrement open count, which may be
-		  done with INT 2F/AX=1208h)
-	ES:DI must be preserved
-Note:	this function is called by the DOS 3.1+ kernel
-SeeAlso: AX=1116h,AX=1201h,AX=1208h,AX=1227h,INT 21/AH=3Eh
---------N-2F1107-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - COMMIT REMOTE FILE
-	AX = 1107h
-	ES:DI -> filled-in SFT (assumed to point at SDA's current SFT field)
-Return: CF set on error
-	    AX = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	CF clear if successful
-	    all buffers for file flushed
-	    directory entry updated
-	ES:DI must be preserved
-Desc:	perform all the buffer flushing, directory updates, etc. that would be
-	  performed on a file close, but do not decrement the SFT reference
-	  count
-Note:	this function is called by the DOS 3.1+ kernel
-SeeAlso: INT 21/AH=68h,INT 21/AX=5D01h
---------N-2F1108-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - READ FROM REMOTE FILE
-	AX = 1108h
-	ES:DI -> SFT
-	    SFT DPB field -> DPB of drive containing file
-	CX = number of bytes
-	SS = DOS DS
-	SDA DTA field -> user buffer
-Return: CF set on error
-	    AX = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	CF clear if successful
-	    CX = number of bytes read (0000h = end of file)
-	    SFT updated
-Note:	this function is called by the DOS 3.1+ kernel
-SeeAlso: AX=1109h,AX=1229h,INT 21/AH=3Fh"DOS",INT 21/AX=5D06h
---------N-2F1109-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - WRITE TO REMOTE FILE
-	AX = 1109h
-	ES:DI -> SFT
-	    SFT DPB field -> DPB of drive containing file
-	CX = number of bytes
-	SS = DOS DS
-	SDA DTA field -> user buffer
-Return: CF set on error
-	    AX = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	CF clear if successful
-	    CX = number of bytes written
-	    SFT updated
-Notes:	this function is called by the DOS 3.1+ kernel
-	PrintCache v3.1 PCACHE.EXE intercepts this function for SFTs where
-	  the Device Driver Header field points at PCACHE, but does not
-	  intercept any other network redirector functions
-SeeAlso: AX=1107h,AX=1108h,INT 21/AH=40h,INT 21/AX=5D06h
---------N-2F110A-----------------------------
-INT 2F CU - NETWORK REDIRECTOR (DOS 3.x only) - LOCK REGION OF FILE
-	AX = 110Ah
-	BX = file handle
-	CX:DX = starting offset
-	SI = high word of size
-	STACK: WORD low word of size
-	ES:DI -> SFT
-	    SFT DPB field -> DPB of drive containing file
-	SS = DOS DS
-Return: CF set on error
-	   AL = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	STACK unchanged
-Notes:	this function is called by the DOS 3.10-3.31 kernel
-	the redirector is expected to resolve lock conflicts
-SeeAlso: AX=110Bh,INT 21/AH=5Ch
---------N-2F110A-----------------------------
-INT 2F CU - NETWORK REDIRECTOR (DOS 4.0+) - LOCK/UNLOCK REGION OF FILE
-	AX = 110Ah
-	BL = function
-	    00h lock
-	    01h unlock
-	CX = number of lock/unlock parameters (0001h for DOS 4.0-6.1)
-	DS:DX -> parameter block (see #2470)
-	ES:DI -> SFT
-	    SFT DPB field -> DPB of drive containing file
-	SS = DOS DS
-Return: CF set on error
-	   AL = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-Notes:	this function is called by the DOS 4.0+ kernel
-	the redirector is expected to resolve lock conflicts
-SeeAlso: AX=110Bh,INT 21/AH=5Ch
-
-Format of parameter block entry [array, but currently limited to single entry]:
-Offset	Size	Description	(Table 2470)
- 00h	DWORD	start offset
- 04h	DWORD	size of region
---------N-2F110B-----------------------------
-INT 2F CU - NETWORK REDIRECTOR (DOS 3.x only) - UNLOCK REGION OF FILE
-	AX = 110Bh
-	BX = file handle
-	CX:DX = starting offset
-	SI = high word of size
-	STACK: WORD low word of size
-	ES:DI -> SFT for file
-	    SFT DPB field -> DPB of drive containing file
-Return: CF set on error
-	   AL = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	STACK unchanged
-Note:	this function is called by the DOS 3.1-3.31 kernel; DOS 4.0+ calls
-	  AX=110Ah instead
-SeeAlso: AX=110Ah,INT 21/AH=5Ch
---------N-2F110C-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - GET DISK INFORMATION
-	AX = 110Ch
-	ES:DI -> current directory structure for desired drive
-Return: CF clear if data valid
-	    AL = sectors per cluster
-	    AH = media ID byte
-	    BX = total clusters
-	    CX = bytes per sector
-	    DX = number of available clusters
-	CF set if data invalid
-Note:	this function is called by the DOS 3.1+ kernel
-SeeAlso: INT 21/AH=36h
---------N-2F110D-----------------------------
-INT 2F CU - IFSFUNC.EXE (DOS 4.x only) - SET REMOTE FILE'S ATTRIBUTES
-	AX = 110Dh
-	SDA first filename pointer -> name of file
-	???
-Return: ???
-Note:	similar to AX=110Eh
-SeeAlso: AX=110Eh
---------N-2F110E-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - SET REMOTE FILE'S ATTRIBUTES
-	AX = 110Eh
-	SS = DOS DS
-	SDA first filename pointer -> fully-qualified name of file
-	SDA CDS pointer -> current directory structure for drive with file
-	STACK: WORD new file attributes
-Return: CF set on error
-	    AX = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	CF clear if successful
-	STACK unchanged
-Note:	this function is called by the DOS 3.1+ kernel
-SeeAlso: AX=110Dh,AX=110Fh,INT 21/AX=4301h,INT 21/AH=60h
---------N-2F110F-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - GET REMOTE FILE'S ATTRIBUTES AND SIZE
-	AX = 110Fh
-	SS = DOS DS
-	SDA first filename pointer -> fully-qualified name of file
-	SDA CDS pointer -> current directory structure for drive with file
-		(offset = FFFFh if null CDS [net direct request])
-	SDA search attributes = mask of attributes which may be included in
-		  search for file
-Return: CF set on error
-	    AX = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	CF clear if successful
-	    AX = file attributes
-	    BX:DI = file size
-	    CX = time stamp of file
-	    DX = date stamp of file
-Notes:	this function is called by the DOS 3.1+ kernel
-	wildcards and device names are not permitted
-SeeAlso: AX=110Eh,INT 21/AX=4300h,INT 21/AH=60h
---------N-2F1110-----------------------------
-INT 2F CU - IFSFUNC.EXE (DOS 4.x only) - GET REMOTE FILE'S ATTRIBUTES AND SIZE
-	AX = 1110h
-	SDA first filename pointer -> name of file
-	???
-Return: ???
-Note:	appears to be similar to AX=110Fh
-SeeAlso: AX=110Eh
---------N-2F1111-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - RENAME REMOTE FILE
-	AX = 1111h
-	SS = DS = DOS DS
-	SDA first filename pointer = offset of fully-qualified old name
-	SDA second filename pointer = offset of fully-qualified new name
-	SDA CDS pointer -> current directory structure for drive with file
-Return: CF set on error
-	    AX = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	CF clear if successful
-Note:	this function is called by the DOS 3.1+ kernel
-SeeAlso: AX=1112h,INT 21/AH=56h,INT 21/AH=60h
---------N-2F1112-----------------------------
-INT 2F CU - IFSFUNC.EXE (DOS 4.x only) - RENAME REMOTE FILE
-	AX = 1112h
-	SS = DS = DOS DS
-	SDA first filename pointer -> name of file
-	???
-Return: ???
-Note:	similar to AX=1111h
-SeeAlso: AX=1111h
---------N-2F1113-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - DELETE REMOTE FILE
-	AX = 1113h
-	SS = DS = DOS DS
-	SDA first filename pointer -> fully-qualified filename in DOS DS
-	SDA CDS pointer -> current directory structure for drive with file
-Return: CF set on error
-	    AX = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	CF clear if successful
-Notes:	this function is called by the DOS 3.1+ kernel
-	the filespec may contain wildcards
-SeeAlso: AX=1114h,INT 21/AH=41h,INT 21/AH=60h
---------N-2F1114-----------------------------
-INT 2F CU - IFSFUNC.EXE (DOS 4.x only) - DELETE REMOTE FILE
-	AX = 1114h
-	SDA first filename pointer -> name of file
-	???
-Return: ???
-Note:	similar to AX=1113h
-SeeAlso: AX=1113h
---------N-2F1115-----------------------------
-INT 2F CU - IFSFUNC.EXE (DOS 4.x only) - OPEN REMOTE FILE
-	AX = 1115h
-	SS = DOS DS
-	ES:DI -> SFT ???
-	???
-Return: ???
-Note:	similar to AX=1116h
-SeeAlso: AX=1116h,AX=112Eh
---------N-2F1116-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - OPEN EXISTING REMOTE FILE
-	AX = 1116h
-	ES:DI -> uninitialized SFT
-	SS = DOS DS
-	SDA first filename pointer -> fully-qualified name of file to open
-	STACK: WORD file access and sharing modes (see #1267 at INT 21/AH=3Dh)
-Return: CF set on error
-	    AX = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	CF clear if successful
-	    SFT filled (except handle count, which DOS manages itself)
-	STACK unchanged
-Note:	this function is called by the DOS 3.1+ kernel
-SeeAlso: AX=1106h,AX=1115h,AX=1117h,AX=1118h,AX=112Eh,INT 21/AH=3Dh
-SeeAlso: INT 21/AH=60h
---------N-2F1117-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - CREATE/TRUNCATE REMOTE FILE
-	AX = 1117h
-	ES:DI -> uninitialized SFT
-	SS = DOS DS
-	SDA first filename pointer -> fully-qualified name of file to open
-	SDA CDS pointer -> current directory structure for drive with file
-	STACK: WORD file creation mode
-			low byte = file attributes (see #1266 at INT 21/AH=3Ch)
-			high byte = 00h normal create, 01h create new file
-Return: CF set on error
-	    AX = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	CF clear if successful
-	    SFT filled (except handle count, which DOS manages itself)
-	STACK unchanged
-Note:	this function is called by the DOS 3.1+ kernel
-SeeAlso: AX=1106h,AX=1116h,AX=1118h,AX=112Eh,INT 21/AH=3Ch,INT 21/AH=60h
---------N-2F1118-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - CREATE/TRUNCATE FILE WITHOUT CDS
-	AX = 1118h
-	ES:DI -> uninitialized SFT
-	SS = DOS DS
-	SDA first filename pointer -> fully-qualified name of file
-	STACK: WORD file creation mode
-			low byte = file attributes
-			high byte = 00h normal create, 01h create new file
-Return: ???
-	STACK unchanged
-Note:	this function is called by the DOS 3.1+ kernel when creating a file
-	  on a drive for which the SDA CDS pointer has offset FFFFh
-SeeAlso: AX=1106h,AX=1116h,AX=1117h,AX=112Eh,INT 21/AH=60h
---------N-2F1119-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - FIND FIRST FILE WITHOUT CDS
-	AX = 1119h
-	SS = DS = DOS DS
-	[DTA] = uninitialized 21-byte findfirst search data
-	      (see #1491 at INT 21/AH=4Eh)
-	SDA first filename pointer -> fully-qualified search template
-	SDA search attribute = attribute mask for search
-Return: CF set on error
-	    AX = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	CF clear if successful
-	    [DTA] = updated findfirst search data
-		    (bit 7 of first byte must be set)
-	    [DTA+15h] = standard directory entry for file (see #1217)
-Notes:	this function is called by the DOS 3.1+ kernel
-	DOS 4.x IFSFUNC returns CF set, AX=0003h
-SeeAlso: AX=111Ah,AX=111Bh,INT 21/AH=1Ah
---------N-2F111A-----------------------------
-INT 2F CU - IFSFUNC.EXE (DOS 4.x only) - FIND NEXT FILE WITHOUT CDS
-	AX = 111Ah
-	???
-Return: CF set
-	    AX = error code (03h for DOS 4.01 IFSFUNC)
-Note:	use AX=111Ch for DOS 5+
-SeeAlso: AX=1119h,AX=111Ch
---------N-2F111B-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - FINDFIRST
-	AX = 111Bh
-	SS = DS = DOS DS
-	[DTA] = uninitialized 21-byte findfirst search data
-	      (see #1491 at INT 21/AH=4Eh)
-	SDA first filename pointer -> fully-qualified search template
-	SDA CDS pointer -> current directory structure for drive with file
-	SDA search attribute = attribute mask for search
-Return: CF set on error
-	    AX = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	CF clear if successful
-	    [DTA] = updated findfirst search data
-		    (bit 7 of first byte must be set)
-	    [DTA+15h] = standard directory entry for file (see #1217)
-Note:	this function is called by the DOS 3.1+ kernel
-SeeAlso: AX=1119h,AX=111Ch,INT 21/AH=1Ah,INT 21/AH=4Eh,INT 21/AH=60h
---------N-2F111C-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - FINDNEXT
-	AX = 111Ch
-	SS = DS = DOS DS
-	ES:DI -> CDS
-	ES:DI -> DTA (MSDOS v5.0)
-	[DTA] = 21-byte findfirst search data
-	      (see #1491 at INT 21/AH=4Eh)
-Return: CF set on error
-	    AX = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	CF clear if successful
-	    [DTA] = updated findfirst search data
-		    (bit 7 of first byte must be set)
-	    [DTA+15h] = standard directory entry for file (see #1217)
-Note:	this function is called by the DOS 3.1+ kernel
-SeeAlso: AX=1119h,AX=111Bh,INT 21/AH=1Ah,INT 21/AH=4Fh
---------N-2F111D-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - CLOSE ALL REMOTE FILES FOR PROCESS (ABORT)
-	AX = 111Dh
-	SS = DOS DS
-	SDA PSP segment field = PSP of terminating process
-Return: nothing
-Notes:	used when a process is aborted; the process being terminated is
-	  indicated by the "sharing PSP" field in the SDA (offset 1Ah/1Ch)
-	this function is called by the DOS 3.1+ kernel
-	closes all FCBs opened by process
-SeeAlso: INT 21/AX=5D04h
---------N-2F111E-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - DO REDIRECTION
-	AX = 111Eh
-	SS = DOS DS
-	STACK: WORD function to execute
-		5F00h  get redirection mode
-			BL = type (03h printer, 04h disk)
-			Return: BH = state (00h off, 01h on)
-		5F01h  set redirection mode
-			BL = type (03h printer, 04h disk)
-			BH = state (00h off, 01h on)
-		5F02h  get redirection list entry
-			BX = redirection list index
-			DS:SI -> 16-byte local device name buffer
-			ES:DI -> 128-byte network name buffer
-			Return: must set user's BX to device type and CX to
-				stored parameter value, using AX=1218h to get
-				stack frame address
-		5F03h  redirect device
-			BL = device type (see INT 21/AX=5F03h)
-			CX = stored parameter value
-			DS:SI -> ASCIZ source device name
-			ES:DI -> destination ASCIZ network path + ASCIZ passwd
-		5F04h  cancel redirection
-			DS:SI -> ASCIZ device name or network path
-		5F05h  get redirection list extended entry
-			BX = redirection list index
-			DS:SI -> buffer for ASCIZ source device name
-			ES:DI -> buffer for destination ASCIZ network path
-			Return: BH = status flag
-				BL = type (03h printer, 04h disk)
-				CX = stored parameter value
-				BP = NETBIOS local session number
-		5F06h  similar to 5F05h???
-Return: CF set on error
-	    AX = error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	STACK unchanged
-Notes:	this function is called by the DOS 3.1+ kernel on INT 21/AH=5Fh
-	  (including LAN Manager calls)
-	the PC Network 1.00 redirector does not support function 5F06h
-SeeAlso: INT 21/AX=5F00h,INT 21/AX=5F01h,INT 21/AX=5F02h,INT 21/AX=5F03h
-SeeAlso: INT 21/AX=5F04h,INT 21/AX=5F05h,INT 21/AX=5F06h
---------N-2F111F-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - PRINTER SETUP
-	AX = 111Fh
-	STACK: WORD function
-		5E02h  set printer setup
-		5E03h  get printer setup
-		5E04h  set printer mode
-		5E05h  get printer mode
-Return: CF set on error
-	    AX = error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	STACK unchanged
-Note:	this function is called by the DOS 3.1+ kernel
-SeeAlso: INT 21/AX=5E02h,INT 21/AX=5E03h,INT 21/AX=5E04h,INT 21/AX=5E05h
---------N-2F1120-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - FLUSH ALL DISK BUFFERS
-	AX = 1120h
-	DS = DOS DS
-	???
-Return: CF clear (successful)
-Notes:	this function is called by the DOS 3.1+ kernel
-	uses CDS array pointer and LASTDRIVE= entries in DOS list of lists
-SeeAlso: INT 21/AH=0Dh,INT 21/AX=5D01h
---------N-2F1121-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - SEEK FROM END OF REMOTE FILE
-	AX = 1121h
-	CX:DX = offset (in bytes) from end
-	ES:DI -> SFT
-	    SFT DPB field -> DPB of drive with file
-	SS = DOS DS
-Return: CF set on error
-	    AL = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	CF clear if successful
-	    DX:AX = new file position
-Note:	this function is called by the DOS 3.1+ kernel, but only when seeking
-	  from the end of a file opened with sharing modes set in such a
-	  manner that another process is able to change the size of the file
-	  while it is already open
-SeeAlso: AX=1228h,INT 21/AH=42h
---------N-2F1122-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - PROCESS TERMINATION HOOK
-	AX = 1122h
-	SS = DOS DS
-	DS = PSP of process about to terminate
-Return: ???
-Notes:	this function is called by the DOS 3.1+ kernel
-	after calling this function, the kernel calls INT 2F/AX=111Dh
-SeeAlso: AX=111Dh,INT 21/AH=4Ch,INT 60/DI=0601h
---------N-2F1123-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - QUALIFY REMOTE FILENAME
-	AX = 1123h
-	DS:SI -> ASCIZ filename to canonicalize
-	ES:DI -> 128-byte buffer for qualified name
-Return: CF set if not resolved
-Notes:	called by MS-DOS 3.1+ kernel, but not called by DR DOS 5.0 unless the
-	  filename matches the name of a character device
-	called first when DOS attempts to resolve a filename (unless inside an
-	  AX=5D00h server call); if this fails, DOS resolves the name locally
-SeeAlso: AX=1221h,INT 21/AH=60h
---------N-2F1124-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - TURN OFF REMOTE PRINTER
-	AX = 1124h
-	ES:DI -> SFT
-	SS = DOS DS
-	???
-Return: CX = ???
-Note:	this function is called by the DOS 3.1+ kernel if AX=1126h
-	  returns CF set
-SeeAlso: AX=1126h
---------N-2F1125-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - REDIRECTED PRINTER MODE
-	AX = 1125h
-	STACK: WORD subfunction
-		5D07h get print stream state
-			Return: DL = current state
-		5D08h set print stream state
-			DL = new state
-		5D09h finish print job
-Return: CF set on error
-	    AX = error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	STACK unchanged
-Note:	this function is called by the DOS 3.1+ kernel
-SeeAlso: INT 21/AX=5D07h,INT 21/AX=5D08h,INT 21/AX=5D09h
---------N-2F1126-----------------------------
-INT 2F CU - NETWORK REDIRECTOR - REMOTE PRINTER ECHO ON/OFF
-	AX = 1126h
-	ES:DI -> SFT for file handle 4???
-	SS = DOS DS???
-	???
-Return: CF set on error
-Notes:	this function is called by the DOS 3.1+ kernel
-	called when print echoing (^P, ^PrtSc) changes state and STDPRN has
-	  bit 11 of the device information word in the SFT set
-SeeAlso: AX=1124h
---------N-2F1127-----------------------------
-INT 2F CU - IFSFUNC.EXE (DOS 4.x only) - UNUSED
-	AX = 1127h
-Return: CF set
-	    AX = 0001h (invalid function) (see #1545 at INT 21/AH=59h/BX=0000h)
---------N-2F1127BX4E57-----------------------
-INT 2F - NetWare 4.0 - REMOTE FILE COPY
-	AX = 1127h
-	BX = 4E57h ('NW') (signature identifying this as a NetWare call)
-	SI = source file handle
-	DI = destination file handle
-	DX:CX = number of bytes to copy, starting at current file position
+(Table 02522)
+Values for critical error handler action code:
+ 00h	ignore error and continue processing request
+ 01h	retry operation
+ 02h	terminate program as though INT 21/AH=4Ch called (INT 20h for DOS 1.x)
+ 03h	fail system call in progress (DOS 3+)
+SeeAlso: #02520,#02522
+--------D-25---------------------------------
+INT 25 - DOS 1+ - ABSOLUTE DISK READ (except partitions > 32M)
+	AL = drive number (00h = A:, 01h = B:, etc)
+	CX = number of sectors to read (not FFFFh)
+	DX = starting logical sector number (0000h - highest sector on drive)
+	DS:BX -> buffer for data
 Return: CF clear if successful
 	CF set on error
-	    AX = error code (05h,06h,0Bh,11h,3Bh) (see #1545)
-	DX:CX = number of bytes successfully copied (file position updated)
-Notes:	this is the only call which may be made directly to the NetWare
-	  redirector from an application
-	COMMAND.COM's COPY and DOS's XCOPY reportedly call INT 21/AX=1127h in
-	  order to speed up copies between files on the same network server;
-	  if error code 11h (not same device) is returned, the copy is
-	  performed in the usual manner.  However, no such calls appear to
-	  be present in MS-DOS 6.22.
---------N-2F1128-----------------------------
-INT 2F CU - IFSFUNC.EXE (DOS 4.x only) - UNUSED
-	AX = 1128h
-Return: CF set
-	    AX = 0001h (invalid function) (see #1545 at INT 21/AH=59h/BX=0000h)
---------N-2F1129-----------------------------
-INT 2F CU - IFSFUNC.EXE (DOS 4.x only) - UNUSED
-	AX = 1129h
-Return: CF set
-	    AX = 0001h (invalid function) (see #1545 at INT 21/AH=59h/BX=0000h)
---------N-2F112A-----------------------------
-INT 2F CU - IFSFUNC.EXE (DOS 4.x only) - CLOSE ALL FILES FOR PROCESS
-	AX = 112Ah
-	DS = DOS DS
-	???
-Return: ???
-Note:	does something to each IFS driver
---------N-2F112B-----------------------------
-INT 2F CU - IFSFUNC.EXE (DOS 4.x only) - GENERIC IOCTL
-	AX = 112Bh
-	SS = DOS DS
-	CX = function/category
-	DS:DX -> parameter block
-	STACK: WORD value of AX on entry to INT 21 (440Ch or 440Dh)
-	???
-Return: CF set on error
-	    AX = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	CF clear if successful
-Note:	this function is called by the DOS 4.0 kernel
---------N-2F112C-----------------------------
-INT 2F CU - NETWORK REDIRECTOR (DOS 4.0+) - "UPDATE_CB" - ???
-	AX = 112Ch
-	SS = DOS DS
-	SDA current SFT pointer -> SFT for file
-	???
-Return: CF set on error
-Note:	called by SHARE in DOS 5.0-6.0
---------N-2F112D-----------------------------
-INT 2F CU - IFSFUNC.EXE (DOS 4.x only) - EXTENDED ATTRIBUTES
-	AX = 112Dh
-	BL = subfunction (value of AL on INT 21)
-	    02h get extended attributes
-	    03h get extended attribute properties
-	    04h set extended attributes
-		Return: CF clear
-	    else ???
-		Return: CX = ??? (00h or 02h for DOS 4.01)
-	ES:DI -> SFT for file
-	SS = DOS DS
-Return: DS = DOS DS
-Note:	this function is called by the DOS 4.0 kernel on INT 21/AX=5702h,
-	  INT 21/AX=5703h, and INT 21/AX=5704h
-SeeAlso: INT 21/AX=5702h,INT 21/AX=5703h,INT 21/AX=5704h,INT 21/AH=6Eh
---------N-2F112E-----------------------------
-INT 2F CU - NETWORK REDIRECTOR (DOS 4.0+) - EXTENDED OPEN/CREATE FILE
-	AX = 112Eh
-	SS = DS = DOS DS
-	ES:DI -> uninitialized SFT for file
-	STACK: WORD file attribute for created/truncated file
-			low byte = file attributes
-			high byte = 00h normal create/open, 01h create new file
-	SDA first filename pointer -> fully-qualified filename
-	SDA extended file open action = action code
-	      (see #1635 at INT 21/AX=6C00h)
-	SDA extended file open mode = open mode for file (see INT 21/AX=6C00h)
-Return: CF set on error
-	    AX = error code
-	CF clear if successful
-	    CX = result code
-		01h file opened
-		02h file created
-		03h file replaced (truncated)
-	    SFT initialized (except handle count, which DOS manages itself)
-Note:	this function is called by the DOS 4.0+ kernel
-BUG:	this function is not called correctly under some DOS versions
-	  (at least 5.0 and 6.2):
-	    the file attribute on the stack is not correct if the action
-	      code is 11h,
-	    the result code in CX is not passed back to the application.
-SeeAlso: AX=1115h,AX=1116h,AX=1117h,INT 21/AX=6C00h
---------N-2F112F-----------------------------
-INT 2F CU - IFSFUNC.EXE (DOS 4.x only) - IFS IOCTL
-	AX = 112Fh
-	SS = DOS DS
-	STACK: WORD function in low byte
-		00h ???
-		    DS:SI -> Current Directory Structure???
-		    CL = drive (1=A:)
-		01h ???
-		    DS:SI -> ???
-		    CL = file handle???
-		02h ???
-		    DS:SI -> Current Directory Structure???
-		    DI = ???
-		    CX = drive (1=A:)
-	???
-Return: CF set on error
-	    AX = DOS error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	CF clear if successful
-Note:	this function is called by the DOS 4.0 kernel
-SeeAlso: INT 21/AH=6Bh
---------N-2F1130-----------------------------
-INT 2F CU - IFSFUNC.EXE (DOS 4.x only) - GET IFSFUNC SEGMENT
-	AX = 1130h
-Return: ES = CS of resident IFSFUNC
---------N-2F1180-----------------------------
-INT 2F - LAN Manager Enhanced DOS Services - ???
-	AX = 1180h
-	???
-Return: ???
-SeeAlso: AX=1100h,AX=1181h,AX=118Eh
---------N-2F1181-----------------------------
-INT 2F - LAN Manager Enhanced DOS Services - SET USER NAME???
-	AX = 1181h
-	???
-Return: ???
-SeeAlso: AX=1100h,AX=1180h
---------N-2F1182-----------------------------
-INT 2F - LAN Manager Enhanced DOS Services - INSTALL SERVICE
-	AX = 1182h
-	???
-Return: ???
-SeeAlso: AX=1100h,AX=1180h
---------N-2F1184-----------------------------
-INT 2F - LAN Manager Enhanced DOS - ???
-	AX = 1184h
-	???
-Return: ???
---------N-2F1186-----------------------------
-INT 2F - LAN Manager Enhanced DOS - DosReadAsynchNmPipe
-	AX = 1186h
-	DS:SI -> stack frame (see #2471)
+	    AH = status (see #02523)
+	    AL = error code (same as passed to INT 24 in DI)
+	    AX = 0207h if more than 64K sectors on drive -- use new-style call
+	may destroy all other registers except segment registers
+Notes:	original flags are left on stack, and must be popped by caller
+	this call bypasses the DOS filesystem
+	examination of CPWIN386.CPL indicates that if this call fails with
+	  error 0408h on an old-style (<32M) call, one should retry the
+	  call with the high bit of the drive number in AL set
+	Novell DOS 7 decides whether the old-style or new-style (>32M) version
+	  of INT 25 must be used solely on the basis of the partition's size,
+	  thus forcing use of the new-style call even for data in the first
+	  32M of the partition
+BUGS:	DOS 3.1 through 3.3 set the word at ES:[BP+1Eh] to FFFFh if AL is an
+	  invalid drive number
+	DR DOS 3.41 will return with a jump instead of RETF, leaving the
+	  wrong number of bytes on the stack; use the huge-partition version
+	  (INT 25/CX=FFFFh) for all partition sizes under DR DOS 3.41
+SeeAlso: INT 13/AH=02h,INT 25/CX=FFFFh,INT 26,INT 21/AX=7305h
+
+(Table 02523)
+Values for disk I/O status:
+ 80h	device failed to respond (timeout)
+ 40h	seek operation failed
+ 20h	controller failed
+ 10h	data error (bad CRC)
+ 08h	DMA failure
+ 04h	requested sector not found
+ 03h	write-protected disk (INT 26 only)
+ 02h	bad address mark
+ 01h	bad command
+--------D-25----CXFFFF-----------------------
+INT 25 - DOS 3.31+ - ABSOLUTE DISK READ (32M-2047M hard-disk partition)
+	CX = FFFFh
+	AL = drive number (0=A, 1=B, etc)
+	DS:BX -> disk read packet (see #02524)
 Return: CF clear if successful
-	CF set if error
-	    AX = error code
-Note:	LAN Manager enhance mode adds features beyond the standard redirector
-	  file/printer services
-SeeAlso: AX=118Fh,AX=1190h,AX=1191h,INT 21/AX=5F39h
+	CF set on error
+	    AH = status (see #02523)
+	    AL = error code (same as passed to INT 24 in DI)
+	may destroy all other registers except segment registers
+Notes:	partition is potentially >32M (and requires this form of the call) if
+	  bit 1 of the device attribute word in the device driver is set
+	original flags are left on stack, and must be removed by caller
+	this call bypasses the DOS filesystem
+	for FAT32 drives (which may be up to 2TB in size), use INT 21/AX=7305h
+SeeAlso: INT 13/AH=02h,INT 25,INT 26/CX=FFFFh,INT 21/AX=7305h
 
-Format of LAN Manager DosReadAsynchNmPipe stack frame:
-Offset	Size	Description	(Table 2471)
- 00h	DWORD	-> number of bytes read
- 04h	WORD	size of buffer
- 06h	DWORD	-> buffer
- 0Ah	DWORD	-> return code
- 0Eh	DWORD	function to call on completion as function( char far *buffer )
- 12h	WORD	handle
---------N-2F118A-----------------------------
-INT 2F - LAN Manager 2.0+ DOS Enhanced ENCRYPT.EXE - STREAM ENCRYPTION SERVICE
-	AX = 118Ah
-	BX = function (0000h or 0001h)
-Return: CF clear if successful
-	    AX = 1100h success
-	CF set if error
-	    AX = 0001h, etc.
-SeeAlso: AX=1186h,AH=41h,AH=42h,AH=4Bh
---------N-2F118B-----------------------------
-INT 2F - LAN Manager Enhanced DOS - ???
-	AX = 118Bh
-	???
-Return: ???
---------N-2F118C-----------------------------
-INT 2F - LAN Manager Enhanced DOS - ???
-	AX = 118Ch
-	???
-Return: ???
---------N-2F118E-----------------------------
-INT 2F - LAN Manager Enhanced DOS - ???
-	AX = 118Eh
-	???
-Return: ???
---------N-2F118F-----------------------------
-INT 2F - LAN Manager Enhanced DOS - DosWriteAsynchNmPipe
-	AX = 118Fh
-	DS:SI -> stack frame (see #2472)
-Return: CF clear if successful
-	CF set if error
-	    AX = error code
-SeeAlso: AX=1186h,AX=1191h,INT 21/AX=5F3Ah
-
-Format of LAN Manager DosReadAsynchNmPipe stack frame:
-Offset	Size	Description	(Table 2472)
- 00h	DWORD	-> number of bytes read
- 04h	WORD	Size of buffer
- 06h	DWORD	-> buffer
- 0Ah	DWORD	-> return code
- 0Eh	DWORD	function to call on completion as function( char far *buffer )
- 12h	WORD	handle
---------N-2F1190-----------------------------
-INT 2F - LAN Manager Enhanced DOS - DosReadAsynchNmPipe2
-	AX = 1190h
-	DS:SI -> stack frame (see #2473)
-Return: CF clear if successful
-	CF set if error
-	    AX = error code
-SeeAlso: AX=1186h,AX=1191h
-
-Format of LAN Manager DosReadAsynchNmPipe2 stack frame:
-Offset	Size	Description	(Table 2473)
- 00h	DWORD	-> number of bytes read
- 04h	WORD	size of buffer
- 06h	DWORD	-> buffer
- 0Ah	DWORD	-> return code
- 0Eh	DWORD	function to call on completion as function( char far *buffer )
- 12h	WORD	handle
- 14h	DWORD	???
---------N-2F1191-----------------------------
-INT 2F - LAN Manager Enhanced DOS - DosWriteAsynchNmPipe2
-	AX = 1191h
-	DS:SI -> stack frame (see #2474)
-Return: CF clear if successful
-	CF set if error
-	    AX = error code
-SeeAlso: AX=118Fh,AX=1190h,INT 21/AX=5F3Ah
-
-Format of LAN Manager DosReadAsynchNmPipe2 stack frame:
-Offset	Size	Description	(Table 2474)
- 00h	DWORD	-> number of bytes read
- 04h	WORD	size of buffer
- 06h	DWORD	-> buffer
- 0Ah	DWORD	-> return code
- 0Eh	DWORD	function to call on completion as function( char far *buffer )
- 12h	WORD	handle
- 14h	DWORD	???
---------D-2F1200-----------------------------
-INT 2F U - DOS 3.0+ internal - INSTALLATION CHECK
-	AX = 1200h
-Return: AL = FFh (for compatibility with other INT 2F functions)
---------D-2F1201-----------------------------
-INT 2F U - DOS 3.0+ internal - CLOSE CURRENT FILE
-	AX = 1201h
-	SS = DOS DS = DOS kernel data seg (must be using a DOS internal stack)
-	SDA current SFT pointer -> SFT of file to close
-Return: CF set on error
-	ES:DI -> SFT for file
-	CX undefined (new reference count of SFT in many versions)
-	BX destroyed
-SeeAlso: AX=1106h,AX=1227h,INT 21/AH=3Eh
---------D-2F1202-----------------------------
-INT 2F U - DOS 3.0+ internal - GET INTERRUPT ADDRESS
-	AX = 1202h
-	STACK: WORD vector number
-Return: ES:BX -> interrupt vector (DWORD containing handler's address)
-	STACK unchanged
---------D-2F1203-----------------------------
-INT 2F U - DOS 3.0+ internal - GET DOS DATA SEGMENT
-	AX = 1203h
-Return: DS = data segment of IBMDOS.COM/MSDOS.SYS
-Note:	for DOS prior to version 5.0, the data segment is the same as the code
-	  segment
---------D-2F1204-----------------------------
-INT 2F U - DOS 3.0+ internal - NORMALIZE PATH SEPARATOR
-	AX = 1204h
-	STACK: WORD character to normalize
-Return: AL = normalized character (forward slash turned to backslash, all
-		  others unchanged)
-	ZF set if path separator
-	STACK unchanged
---------D-2F1205-----------------------------
-INT 2F U - DOS 3.0+ internal - OUTPUT CHARACTER TO STANDARD OUTPUT
-	AX = 1205h
-	STACK: WORD character to output
-Return: STACK unchanged
-Note:	can be called only from within DOS
---------D-2F1206-----------------------------
-INT 2F U - DOS 3.0+ internal - INVOKE CRITICAL ERROR
-	AX = 1206h
-	DI = error code
-	BP:SI -> device driver header (see #1511)
-	SS = DOS DS (must be using a DOS internal stack)
-	STACK: WORD value to be passed to INT 24 in AX
-Return: AL = 0-3 for Abort, Retry, Ignore, Fail
-	STACK unchanged
-SeeAlso: INT 24
---------D-2F1207-----------------------------
-INT 2F U - DOS 3.0+ internal - MAKE DISK BUFFER MOST-RECENTLY USED
-	AX = 1207h
-	DS:DI -> disk buffer
-Return: nothing
-Desc:	move the indicated buffer to the end of the disk buffer chain (least-
-	  recently used is first); under DOS 3.3, the buffer is then moved to
-	  the start of the disk buffer chain if it was marked unused
-Notes:	can be called only from within DOS
-	this function is nearly the same as AX=120Fh
-SeeAlso: AX=120Fh
---------D-2F1208-----------------------------
-INT 2F U - DOS 3.0+ internal - DECREMENT SFT REFERENCE COUNT
-	AX = 1208h
-	ES:DI -> SFT
-Return: AX = original value of reference count
-Notes:	if the reference count was 1, it is set to FFFFh ("busy", since 0
-	  indicates that the SFT is not in use).  It is the caller's
-	  responsibility to set the reference count to zero after cleaning up.
-	used by network redirectors such as MSCDEX
-SeeAlso: AX=1106h
---------D-2F1209-----------------------------
-INT 2F U - DOS 3.0+ internal - FLUSH AND FREE DISK BUFFER
-	AX = 1209h
-	DS:DI -> disk buffer
-Return: disk buffer marked unused, contents written to disk if buffer dirty
-Note:	can be called only from within DOS
-SeeAlso: AX=120Eh,AX=1215h
---------D-2F120A-----------------------------
-INT 2F U - DOS 3.0+ internal - PERFORM CRITICAL ERROR INTERRUPT
-	AX = 120Ah
-	DS = SS = DOS DS (must be using a DOS internal stack)
-	STACK: WORD extended error code
-Return: AL = user response (0=ignore, 1=retry, 2=abort, 3=fail)
-	CF clear if retry, set otherwise
-	STACK unchanged
-Notes:	can only be called during a DOS function call, as it uses various
-	  fields in the SDA to set up the registers for the INT 24
-	reportedly sets current DPB's first root directory sector to 1
-SeeAlso: INT 24
---------D-2F120B-----------------------------
-INT 2F U - DOS 3.0+ internal - SIGNAL SHARING VIOLATION TO USER
-	AX = 120Bh
-	ES:DI -> system file table entry for previous open of file
-	STACK: WORD extended error code (should be 20h--sharing violation)
-Return: CF clear if operation should be retried
-	CF set if operation should not be retried
-	    AX = error code (20h) (see #1545 at INT 21/AH=59h/BX=0000h)
-	STACK unchanged
-Notes:	can only be called during a DOS function call
-	should only be called if an attempt was made to open an already-open
-	  file contrary to the sharing rules
-	invokes INT 24 if SFT file opened via FCB or in compatibility mode with
-	  inheritance allowed
---------D-2F120C-----------------------------
-INT 2F U - DOS 3.0+ internal - OPEN DEVICE AND SET SFT OWNER/MODE
-	AX = 120Ch
-	SDA current SFT pointer -> SFT for file
-	DS = DOS DS
-	SS = DOS DS (must be using a DOS internal stack)
-Return: ES, DI, AX destroyed
-Notes:	invokes "device open" call on device driver for SFT
-	changes owner of last-accessed SFT to calling process if it was opened
-	  via FCB
-	called by network redirectors such as MSCDEX
---------D-2F120D-----------------------------
-INT 2F U - DOS 3.0+ internal - GET DATE AND TIME
-	AX = 120Dh
-	SS = DOS DS (must be using a DOS internal stack)
-Return: AX = current date in packed format (see #1531 at INT 21/AX=5700h)
-	DX = current time in packed format (see #1530 at INT 21/AX=5700h)
-SeeAlso: INT 21/AH=2Ah,INT 21/AH=2Ch
---------D-2F120E-----------------------------
-INT 2F U - DOS 3.0+ internal - MARK ALL DISK BUFFERS UNREFERENCED
-	AX = 120Eh
-	SS = DOS DS (must be using a DOS internal stack)
-Return: DS:DI -> first disk buffer
-Notes:	clears "referenced" flag on all disk buffers
-	in DOS 5+, this has become essentially a NOP, invoking the same code
-	  used by AX=1224h (SHARING DELAY)
-SeeAlso: AX=1209h,AX=1210h,INT 21/AH=0Dh
---------D-2F120F-----------------------------
-INT 2F U - DOS 3.0+ internal - MAKE BUFFER MOST RECENTLY USED
-	AX = 120Fh
-	DS:DI -> disk buffer
-	SS = DOS DS (must be using a DOS internal stack)
-Return: DS:DI -> next buffer in buffer list
-Desc:	move the indicated buffer to the end of the disk buffer chain (least-
-	  recently used is first); under DOS 3.3, the buffer is then moved to
-	  the start of the disk buffer chain if it was marked unused
-Note:	this function is the same as AX=1207h except that it returns a
-	  pointer to the buffer following the specified buffer in the buffer
-	  chain
-SeeAlso: AX=1207h
---------D-2F1210-----------------------------
-INT 2F U - DOS 3.0+ internal - FIND UNREFERENCED DISK BUFFER
-	AX = 1210h
-	DS:DI -> first disk buffer to check
-Return: ZF clear if found
-	    DS:DI -> first unreferenced disk buffer
-	ZF set if not found
-Note:	in DOS 5+, this has become essentially a NOP, invoking the same code
-	  used by AX=1224h (SHARING DELAY)
-SeeAlso: AX=120Eh
---------D-2F1211-----------------------------
-INT 2F U - DOS 3.0+ internal - NORMALIZE ASCIZ FILENAME
-	AX = 1211h
-	DS:SI -> ASCIZ filename to normalize
-	ES:DI -> buffer for normalized filename
-Return: destination buffer filled with uppercase filename, with slashes turned
-	to backslashes
-SeeAlso: AX=121Eh,AX=1221h
---------D-2F1212-----------------------------
-INT 2F U - DOS 3.0+ internal - GET LENGTH OF ASCIZ STRING
-	AX = 1212h
-	ES:DI -> ASCIZ string
-Return: CX = length of string
-SeeAlso: AX=1225h
---------D-2F1213-----------------------------
-INT 2F U - DOS 3.0+ internal - UPPERCASE CHARACTER
-	AX = 1213h
-	STACK: WORD character to convert to uppercase
-Return: AL = uppercase character
-	STACK unchanged
---------D-2F1214-----------------------------
-INT 2F U - DOS 3.0+ internal - COMPARE FAR POINTERS
-	AX = 1214h
-	DS:SI = first pointer
-	ES:DI = second pointer
-Return: ZF set if pointers are equal, ZF clear if not equal
-	CF clear if pointers equal, CF set if not
---------D-2F1215-----------------------------
-INT 2F U - DOS 3.0+ internal - FLUSH BUFFER
-	AX = 1215h
-	DS:DI -> disk buffer
-	SS = DOS DS (must be using a DOS internal stack)
-	STACK: WORD drives for which to skip buffer
-		ignore buffer if drive same as high byte, or bytes differ and
-		  the buffer is for a drive OTHER than that given in low byte
-Return: STACK unchanged
-Note:	can be called only from within DOS
-SeeAlso: AX=1209h
---------D-2F1216-----------------------------
-INT 2F U - DOS 3.0+ internal - GET ADDRESS OF SYSTEM FILE TABLE ENTRY
-	AX = 1216h
-	BX = system file table entry number
-Return: CF clear if successful
-	    ES:DI -> system file table entry
-	    BX = relative entry number in system file table containing entry
-	    AX destroyed
-	CF set if BX greater than FILES=
-Note:	supported by DR DOS 5+
-SeeAlso: AX=1220h
---------D-2F1217-----------------------------
-INT 2F U - DOS 3.0+ internal - GET CURRENT DIRECTORY STRUCTURE FOR DRIVE
-	AX = 1217h
-	SS = DOS DS (must be using a DOS internal stack)
-	STACK: WORD drive (0 = A:, 1 = B:, etc)
-Return: CF set on error
-	    (drive > LASTDRIVE)
-	CF clear if successful
-	    DS:SI -> current directory structure for specified drive
-	STACK unchanged
-SeeAlso: AX=1219h
---------D-2F1218-----------------------------
-INT 2F U - DOS 3.0+ internal - GET CALLER'S REGISTERS
-	AX = 1218h
-Return: DS:SI -> saved caller's AX,BX,CX,DX,SI,DI,BP,DS,ES (on stack)
-Note:	only valid while within DOS
---------D-2F1219-----------------------------
-INT 2F U - DOS 3.0+ internal - SET DRIVE???
-	AX = 1219h
-	SS = DOS DS (must be using a DOS internal stack)
-	STACK: WORD drive (0 = default, 1 = A:, etc)
-Return: ???
-	STACK unchanged
-Notes:	calls AX=1217h
-	builds a current directory structure if inside server call
-	  (INT 21/AX=5D00h)
-SeeAlso: AX=1217h,AX=121Fh
---------D-2F121A-----------------------------
-INT 2F U - DOS 3.0+ internal - GET FILE'S DRIVE
-	AX = 121Ah
-	DS:SI -> filename
-Return: AL = drive (0 = default, 1 = A:, etc, FFh = invalid)
-	DS:SI -> filename without leading X: (if present)
-SeeAlso: INT 21/AH=19h,INT 21/AH=60h
---------D-2F121B-----------------------------
-INT 2F U - DOS 3.0+ internal - SET YEAR/LENGTH OF FEBRUARY
-	AX = 121Bh
-	CL = year - 1980
-Return: AL = number of days in February
-Note:	requires DS to be set to the DOS data segment
-SeeAlso: INT 21/AH=2Bh"DATE"
---------D-2F121C-----------------------------
-INT 2F U - DOS 3.0+ internal - CHECKSUM MEMORY
-	AX = 121Ch
-	DS:SI -> start of memory to checksum
-	CX = number of bytes
-	DX = initial checksum
-	SS = DOS DS (must be using a DOS internal stack)
-Return: AX, CX destroyed
-	DX = checksum
-	DS:SI -> first byte after checksummed range
-Notes:	used by DOS to determine day count since 1/1/80 given a date
-	supported by DR DOS 5.0+
-SeeAlso: AX=121Dh
---------D-2F121D-----------------------------
-INT 2F U - DOS 3.0+ internal - SUM MEMORY
-	AX = 121Dh
-	DS:SI -> memory to add up
-	CX = 0000h
-	DX = limit
-Return: AL = byte which exceeded limit
-	CX = number of bytes before limit exceeded
-	DX = remainder after adding first CX bytes
-	DS:SI -> byte beyond the one which exceeded the limit
-Notes:	used by DOS to determine year or month given day count since 1/1/80
-	supported by DR DOS 5.0+
-SeeAlso: AX=121Ch
---------D-2F121E-----------------------------
-INT 2F U - DOS 3.0+ internal - COMPARE FILENAMES
-	AX = 121Eh
-	DS:SI -> first ASCIZ filename
-	ES:DI -> second ASCIZ filename
-Return: ZF set if filenames equivalent, ZF clear if not
-Note:	supported by DR DOS 5.0+
-SeeAlso: AX=1211h,AX=1221h
---------D-2F121F-----------------------------
-INT 2F U - DOS 3.0+ internal - BUILD CURRENT DIRECTORY STRUCTURE
-	AX = 121Fh
-	SS = DOS DS (must be using a DOS internal stack)
-	STACK: WORD drive letter
-Return: ES:DI -> current directory structure (will be overwritten by next call)
-	STACK unchanged
---------D-2F1220-----------------------------
-INT 2F U - DOS 3.0+ internal - GET JOB FILE TABLE ENTRY
-	AX = 1220h
-	BX = file handle
-Return: CF set on error
-	    AL = 6 (invalid file handle)
-	CF clear if successful
-	    ES:DI -> JFT entry for file handle in current process
-Notes:	the byte pointed at by ES:DI contains the number of the SFT for the
-	  file handle, or FFh if the handle is not open
-	supported by DR DOS 5.0+
-SeeAlso: AX=1216h,AX=1229h
---------D-2F1221-----------------------------
-INT 2F U - DOS 3.0+ internal - CANONICALIZE FILE NAME
-	AX = 1221h
-	DS:SI -> file name to be fully qualified
-	ES:DI -> 128-byte buffer for resulting canonical file name
-	SS = DOS DS (must be using a DOS internal stack)
-Return: (see INT 21/AH=60h)
-Note:	identical to INT 21/AH=60h
-SeeAlso: AX=1123h,INT 21/AH=60h
---------D-2F1222-----------------------------
-INT 2F U - DOS 3.0+ internal - SET EXTENDED ERROR INFO
-	AX = 1222h
-	SS = DOS data segment
-	SS:SI -> 4-byte records
-		BYTE	error code, FFh = last record
-		BYTE	error class, FFh = don't change
-		BYTE	suggested action, FFh = don't change
-		BYTE	error locus, FFh = don't change
-	SDA error code set
-Return: SI destroyed
-	SDA error class, error locus, and suggested action fields set
-Note:	can be called only from within DOS
-SeeAlso: AX=122Dh,INT 21/AH=59h/BX=0000h,INT 21/AX=5D0Ah
---------D-2F1223-----------------------------
-INT 2F U - DOS 3.0+ internal - CHECK IF CHARACTER DEVICE
-	AX = 1223h
-	DS = DOS DS
-	SS = DOS DS (must be using a DOS internal stack)
-	SDA+218h (DOS 3.10-3.30) = eight-character blank-padded name
-	SDA+22Bh (DOS 4.0-6.0) = eight-character blank-padded name
-	SDA file attribute field set
-	direction flag clear (i.e. CLD)
-Return: CF set if no character device by that name found
-	CF clear if found
-	    BH bits 4-0 copied from low byte of device attribute word
-	    BH bit 5 set, bits 7-6 clear
-Notes:	can only be called from within DOS
-	the check is skipped (always says "not device") if the volume ID bit
-	  of the file attribute field is set on entry
-SeeAlso: INT 21/AX=5D06h,INT 21/AX=5D0Bh
---------D-2F1224-----------------------------
-INT 2F U - DOS 3.0+ internal - SHARING RETRY DELAY
-	AX = 1224h
-	SS = DOS DS (must be using a DOS internal stack)
-Return: after delay set by INT 21/AX=440Bh, unless in server call
-	  (INT 21/AX=5D00h)
-Note:	delay is dependent on the processor speed, and is skipped entirely if
-	  inside a server call
-SeeAlso: INT 21/AX=440Bh,INT 21/AH=52h,INT 62/AX=0097h
---------D-2F1225-----------------------------
-INT 2F U - DOS 3.0+ internal - GET LENGTH OF ASCIZ STRING
-	AX = 1225h
-	DS:SI -> ASCIZ string
-Return: CX = length of string
-Note:	supported by DR DOS 5.0+
-SeeAlso: AX=1212h
---------D-2F1226-----------------------------
-INT 2F U - DOS 3.3+ internal - OPEN FILE
-	AX = 1226h
-	CL = access mode
-	DS:DX -> ASCIZ filename
-	SS = DOS DS (must be using a DOS internal stack)
-Return: CF set on error
-	    AL = error code (see #1545 at INT 21/AH=59h/BX=0000h)
-	CF clear if successful
-	    AX = file handle
-Notes:	can only be called from within DOS
-	equivalent to INT 21/AH=3Dh
-	used by NLSFUNC to access COUNTRY.SYS when invoked by the DOS kernel
-SeeAlso: AX=1227h,INT 21/AH=3Dh
---------D-2F1227-----------------------------
-INT 2F U - DOS 3.3+ internal - CLOSE FILE
-	AX = 1227h
-	BX = file handle
-	SS = DOS DS (must be using a DOS internal stack)
-Return: CF set on error
-	    AL = 06h invalid file handle
-	CF clear if successful
-Notes:	can only be called from within DOS
-	equivalent to INT 21/AH=3Eh
-	used by NLSFUNC to access COUNTRY.SYS when invoked by the DOS kernel
-SeeAlso: AX=1106h,AX=1201h,AX=1226h,INT 21/AH=3Eh
---------D-2F1228BP4200-----------------------
-INT 2F U - DOS 3.3+ internal - MOVE FILE POINTER
-	AX = 1228h
-	BP = 4200h, 4201h, 4202h (see INT 21/AH=42h)
-	BX = file handle
-	CX:DX = offset in bytes
-	SS = DOS DS (must be using a DOS internal stack)
-Return: as for INT 21/AH=42h
-Notes:	equivalent to INT 21/AH=42h, but may only be called from inside a DOS
-	  function call
-	sets user stack frame pointer to dummy buffer, moves BP to AX, performs
-	  LSEEK, and restores frame pointer
-	used by NLSFUNC to access COUNTRY.SYS when invoked by the DOS kernel
-SeeAlso: INT 21/AH=42h
---------D-2F1229-----------------------------
-INT 2F U - DOS 3.3+ internal - READ FROM FILE
-	AX = 1229h
-	BX = file handle
-	CX = number of bytes to read
-	DS:DX -> buffer
-	SS = DOS DS (must be using a DOS internal stack)
-Return: as for INT 21/AH=3Fh"DOS"
-Notes:	equivalent to INT 21/AH=3Fh, but may only be called when already inside
-	  a DOS function call
-	used by NLSFUNC to access COUNTRY.SYS when invoked by the DOS kernel
-SeeAlso: AX=1226h,INT 21/AH=3Fh"DOS"
---------D-2F122A-----------------------------
-INT 2F U - DOS 3.3+ internal - SET FASTOPEN ENTRY POINT
-	AX = 122Ah
-	BX = entry point to set (0001h or 0002h)
-	DS:SI -> FASTOPEN entry point (see #2475,#2476)
-		(entry point not set if SI = FFFFh for DOS 4.0+)
-Return: CF set if specified entry point already set
-Notes:	entry point in BX is ignored under DOS 3.30
-	both entry points set to same handler by DOS 4.01
-	DOS 5.0 and 6.0 only set entry point 1
-
-(Table 2475)
-Values DOS 3.30+ FASTOPEN entry point is called with:
-	AL = 01h  Lookup
-	    CX = ??? seems to be offset
-	    DI = ??? seems to be offset
-	    SI = offset in DOS DS of filename
-	AL = 02h  insert file into FASTOPEN cache
-	AL = 03h  delete file from FASTOPEN cache
-	    SI = offset in DOS DS of filename
-	AL = 04h  purge FASTOPEN cache
-	    AH = subfunction (00h,01h,02h)
-	    ES:DI -> ???
-	    CX = ??? (subfunctions 01h and 02h only)
-Returns: CF set on error or not installed
-Note: function 03h calls function 01h first
-SeeAlso: #2476,#2477
-
-(Table 2476)
-Values PC-DOS 4.01 FASTOPEN is additionally called with:
-	AL = 04h ???
-	    AH = 03h
-	    ???
-	AL = 05h ???
-	AL = 0Bh ???
-	AL = 0Ch ???
-	AL = 0Dh ???
-	AL = 0Eh ???
-	AL = 0Fh ???
-	AL = 10h ???
-SeeAlso: #2475,#2477
-
-(Table 2477)
-Values MS-DOS 5.0-6.0 FASTOPEN is additionally called with:
-	AL = 04h  purge FASTOPEN cache
-	    AH = 03h
-	    ???
-	AL = 05h ???
-	    DL = drive (00h = A:)
-	    ???
-	AL = 06h ???
-	    ???
-SeeAlso: #2475,#2476
---------D-2F122B-----------------------------
-INT 2F U - DOS 3.3+ internal - IOCTL
-	AX = 122Bh
-	BP = 44xxh
-	SS = DOS DS (must be using a DOS internal stack)
-	additional registers as appropriate for INT 21/AX=44xxh
-Return: as for INT 21/AH=44h
-Notes:	equivalent to INT 21/AH=44h, but may only be called when already inside
-	  a DOS function call
-	sets user stack frame pointer to dummy buffer, moves BP to AX, performs
-	  IOCTL, and restores frame pointer
-	used by NLSFUNC in accessing COUNTRY.SYS when invoked by the DOS kernel
-SeeAlso: INT 21/AH=44h
---------D-2F122C-----------------------------
-INT 2F U - DOS 3.3+ internal - GET DEVICE CHAIN
-	AX = 122Ch
-Return: BX:AX -> header of second device driver (NUL is first) in driver chain
-Note:	although this function exists in DR DOS 5.0 and Novell DOS 7, it
-	  always returns 0000h:0000h prior to Novell DOS 7 Update 15
-SeeAlso: INT 21/AH=52h
---------D-2F122D-----------------------------
-INT 2F U - DOS 3.3+ internal - GET EXTENDED ERROR CODE
-	AX = 122Dh
-	SS = DOS DS
-Return: AX = current extended error code
-SeeAlso: AX=1222h,INT 21/AH=59h/BX=0000h
---------D-2F122E-----------------------------
-INT 2F U - DOS 4.0+ internal - GET OR SET ERROR TABLE ADDRESSES
-	AX = 122Eh
-	DL = subfunction
-	    00h get standard DOS error table (see #2478)
-		Return: ES:DI -> error table
-				 (DOS 4: errors 00h-12h,50h-5Bh)
-				 (DOS 5: errors 00h-26h,4Fh,51h-59h)
-	    01h set standard DOS error table
-		ES:DI -> error table
-	    02h get parameter error table (errors 00h-0Ah)
-		Return: ES:DI -> error table
-	    03h set parameter error table
-		ES:DI -> error table
-	    04h get critical/SHARE error table (errors 13h-2Bh)
-		Return: ES:DI -> error table
-	    05h set critical/SHARE error table
-		ES:DI -> error table
-	    06h get ??? error table
-		Return: ES:DI -> error table or 0000h:0000h
-	    07h set ??? error table
-		ES:DI -> error table
-	    08h get error message retriever (see #2479)
-		Return: ES:DI -> FAR procedure to fetch error message
-	    09h set ??? error table
-		ES:DI -> error table
-Notes:	if the returned segment on a "get" is 0001h, then the offset specifies
-	  the offset of the error message table within COMMAND.COM, and the
-	  procedure returned by DL=08h should be called
-	DOS 5+ COMMAND.COM does not allow setting any of the addresses (calls
-	  with DL odd are ignored); they are always returned with segment 0001h
-	for DOS 5.0, the standard and critical/SHARE error tables are combined
-	  into a single error table
-SeeAlso: AX=0500h,INT 21/AH=59h/BX=0000h
-
-Format of DOS 4.x error table:
-Offset	Size	Description	(Table 2478)
- 00h	BYTE	FFh
- 01h  2 BYTEs	04h,00h (DOS version???)
- 03h	BYTE	number of error headers following
- 04h 2N WORDs	table of all error headers for table
-		Offset	Size	Description
-		 00h	WORD	error message number
-		 02h	WORD	offset of error message from start of header
-				error messages are count byte followed by msg
-Note:	DOS 5 error tables consist of one word per error number; each word
-	  contains either the offset of a counted string or 0000h
-
-(Table 2479)
-Call error retrieval function with:
-	AX = error number (see #2480)
-	DI = offset of error table
-Return: ES:DI -> error message (counted string)
-Notes:	this function needs to access COMMAND.COM if the messages were not
-	  loaded into memory permanently with /MSG; the caller should assume
-	  that the returned message will be overwritten by the next call of
-	  the function
-	supported by DR DOS 5.0
-
-(Table 2480)
-Values for parameter errors:
- 01h	Too many parameters
- 02h	Required Parameter missing
- 03h	Invalid switch
- 04h	Invalid keyword
- 06h	Parameter value not in allowed range
- 07h	Parameter value not allowed
- 08h	Parameter value not allowed
- 09h	Parameter format not correct
- 0Ah	Invalid parameter
- 0Bh	Invalid parameter combination
---------D-2F122F-----------------------------
-INT 2F U - DOS 4.x internal - SET DOS VERSION NUMBER TO RETURN
-	AX = 122Fh
-	DX = DOS version number (0000h = return true DOS version)
-Notes:	not available under DR DOS 5.0 or 6.0, or Novell DOS 7
-	supported by FREEVER.COM, a freeware DOS version faking TSR by Matthias
-	  Paul
-SeeAlso: INT 21/AH=30h,INT 21/AX=3306h,INT 2F/AX=E000h"SETDRVER"
-----------2F1230-----------------------------
-INT 2F U - Windows95 - FIND SFT ENTRY IN INTERNAL FILE TABLES
-	AX = 1230h
-	ES:DI -> SFT entry
-Return: CF clear if SFT found in internal table
-	CF set if SFT not in any internal file table
-	    AX = 0000h
-	    SI:CX = 32-bit starting cluster number for directory
-	    DX = directory entry number
-	    BX = index into new file system table
-Note:	the new file system table from which the return values are taken is
-	  reported to be statically allocated with 20 entries, and used only
-	  for FCB calls
-BUG:	Win95-OSR2 is reported to have a bug that can potentially corrupt
-	  memory if SFT tables are "arranged poorly"
-SeeAlso: AX=1231h,AX=1200h
-----------2F1231-----------------------------
-INT 2F U - Windows95 - SET/CLEAR "REPORT WINDOWS TO DOS PROGRAMS" FLAG
-	AX = 1231h
-	DL = function
-	    00h clear "IsWIN386" bit 1
-	    01h set "IsWIN386" bit 1
-	    02h set byte after "IsWIN386" to 01h
-	    else
-		Return:	CF set
-			AX = 0001h
-Return: CF clear
-	AX = 0000h
-SeeAlso: AX=1230h,AX=1200h
---------O-2F12FFBL00-------------------------
-INT 2F - FreeDOS - FDAK-DDT - INSTALLATION CHECK / STATUS CHECK
-	AX = 12FFh
-	BL = 00h
-Return: AL = DDh if installed
-	    BH = state (00h disabled, nonzero enabled)
-	    BL = readonly flag (00h writable, nonzero read-only)
-Program: FDAK-DDT is the FreeDOS Alternative Kernel Device Drivers Testing
-	  release by Yury A. Semenov
-SeeAlso: AX=12FFh/BL=07h
---------O-2F12FFBL01-------------------------
-INT 2F - FreeDOS - FDAK-DDT - ENABLE FDAK DRIVERS
-	AX = 12FFh
-	BL = 01h
-SeeAlso: AX=12FFh/BL=00h,AX=12FFh/BL=02h
---------O-2F12FFBL02-------------------------
-INT 2F - FreeDOS - FDAK-DDT - DISABLE FDAK DRIVERS
-	AX = 12FFh
-	BL = 02h
-SeeAlso: AX=12FFh/BL=00h,AX=12FFh/BL=01h
---------O-2F12FFBL03-------------------------
-INT 2F - FreeDOS - FDAK-DDT - SWITCH BLOCK DEVICE TO READ-ONLY
-	AX = 12FFh
-	BL = 03h
-	???
-SeeAlso: AX=12FFh/BL=00h,AX=12FFh/BL=04h
---------O-2F12FFBL04-------------------------
-INT 2F - FreeDOS - FDAK-DDT - SWITCH BLOCK DEVICE TO READ-WRITE
-	AX = 12FFh
-	BL = 04h
-	???
-SeeAlso: AX=12FFh/BL=00h,AX=12FFh/BL=03h
---------O-2F12FFBL05-------------------------
-INT 2F - FreeDOS - FDAK-DDT - TURN ACTIVITY INDICATOR ON
-	AX = 12FFh
-	BL = 05h
-Note:	not yet implemented as of January 1996
-SeeAlso: AX=12FFh/BL=00h,AX=12FFh/BL=06h
---------O-2F12FFBL06-------------------------
-INT 2F - FreeDOS - FDAK-DDT - TURN ACTIVITY INDICATOR OFF
-	AX = 12FFh
-	BL = 06h
-Note:	not yet implemented as of January 1996
-SeeAlso: AX=12FFh/BL=00h,AX=12FFh/BL=05h
---------O-2F12FFBL07-------------------------
-INT 2F - FreeDOS - FDAK-DDT - UNINSTALL
-	AX = 12FFh
-	BL = 07h
-Return: ES = segment of FDAK memory block
-Note:	the caller must free the memory block returned in ES
-	  (via INT 21/AH=49h)
-SeeAlso: AX=12FFh/BL=00h
---------O-2F12FFBX0005-----------------------
-INT 2F U - Novell DOS 7 - GET/SET/QUERY MEMORY STATE???
-	AX = 12FFh
-	BX = 0005h
-	CX = 0000h
-	DX = function
-	    0000h ???
-	    0001h ???
-Note:	called at three separate points inside IBMBIO.COM
---------m-2F12FFBX0006-----------------------
-INT 2F U - DR DOS 6, Novell DOS 7 - EMM386.EXE - VIDEO MEMORY SPACE CONTROL
-	AX = 12FFh
-	BX = 0006h
+Format of disk read packet:
+Offset	Size	Description	(Table 02524)
+ 00h	DWORD	sector number
+ 04h	WORD	number of sectors to read
+ 06h	DWORD	transfer address
+SeeAlso: #02528
+--------k-25CDCD-----------------------------
+INT 25 - Stacker - GET DEVICE DRIVER ADDRESS
+	AX = CDCDh
+	DS:BX -> buffer for address (see #02525)
+	CX = 0001h
 	DX = 0000h
-	CX = function
-	    0000h get status of video memory space (MEMMAX /V)
-	    0001h map memory into video memory space (MEMMAX +V)
-	    0002h unmap memory from video memory space (MEMMAX -V)
-Return: CF clear if successful
-	    AX = 0000h (successful)
-	    BX = segment of reserved video RAM
-	    CX = segment of used video RAM
-	    DX = segment of first upper MCB
-Notes:	this functionality is provided by EMM386, and partially supported by
-	  HIDOS.SYS
-	BL specifies which program handles the call, BH is the function number
-BUG:	4DOS 5.51(a) often hangs the system (reported to be reproducable), if
-	  MEMMAX +V is issued from the 4DOS prompt.  To avoid this, one should
-	  temporary load COMMAND.COM followed by MEMMAX +v , starting the
-	  application, MEMMAX -v and EXIT.  4DOS 5.5c does not show this
-	  phenomena on the same systems where 5.51a hangs.
-SeeAlso: AX=D201h/BX=4849h
---------O-2F12FFBX0000-----------------------
-INT 2F U - Novell DOS 7 - GET ???
-	AX = 12FFh
-	BX = 0000h
-Return: AX = 0000h if supported
-	DX = ??? (internal data)
-SeeAlso: AX=12FFh/BX=0001h
---------O-2F12FFBX0001-----------------------
-INT 2F U - Novell DOS 7 - SET ???
-	AX = 12FFh
-	BX = 0001h
-	DX = new value for ???
-Return: AX = 0000h if supported
-SeeAlso: AX=12FFh/BX=0000h
---------O-2F12FFBX0002-----------------------
-INT 2F U - Novell DOS 7 - GET ??? SIZE
-	AX = 12FFh
-	BX = 0002h
-Return: AX = 0000h if supported
-	DX = size of/required-for ??? in paragraphs
-SeeAlso: AX=12FFh/BX=0003h
---------O-2F12FFBX0003-----------------------
-INT 2F U - Novell DOS 7 - SET ???
-	AX = 12FFh
-	BX = 0003h
-	DX = new value for ???
-Return: AX = 0000h if supported
-SeeAlso: AX=12FFh/BX=0002h
---------O-2F12FFBX0007-----------------------
-INT 2F U - Novell DOS 7 - SCRIPT.EXE - GET ???
-	AX = 12FFh
-	BX = 0007h
-	CX = 0000h
-Return: CF clear if installed
-	    AX = 0000h
-	    BX = ??? (4426h)
-	    CX = ??? (0068h)
-	    DX = PSP segment of resident code???
-	    SI = ??? (4AFAh)
-	    ES = resident code segment
---------O-2F12FFBX0009-----------------------
-INT 2F U - Novell DOS 7 - SET ???
-	AX = 12FFh
-	BX = 0009h
-	DX = new value for ???
-Return: ???
-Note:	the DX value is stored at offset 66h in SYSVARS and offset 18h in
-	  the Novell DOS 7 internal variable table
---------m-2F12FFBX0106-----------------------
-INT 2F U - Novell DOS 7 - EMM386.EXE - GET VERSION???
-	AX = 12FFh
-	BX = 0106h
-Return: CF clear if successful
-	    AX = 0000h (successful)
-	    BX = EDC0h (signature)
-	    CL = memory manager variant (02h,03h)
-		(02h when DPMI/VCPI disabled, 03h when DPMI/VCPI loaded)
-	    CH = ??? (00h)
-	    DX = version??? (0300h for v3.0)
-	    ES = segment of EMM386 low-memory stub
-Notes:	BL specifies which program handles the call, BH is the function number
-	if the word at ES:0012h is nonzero, if contains the offset within
-	  segment ES of the CEMM-compatible entry point (see #2481)
-	if no other program has hooked INT 67, an alternate installation
-	  check is to test for the string
-	  "NOVELL EXPANDED MEMORY MANAGER 386" at offset 14h in the INT 67
-	  handler's segment; the word immediately preceding this string
-	  contains the offset of the API entry point if it is nonzero
-Index:	entry point;Novell EMM386
-
-(Table 2481)
-Call Novell EMM386.EXE entry point with:
-	AH = 00h get memory manager's status???
-	    ???
-	AH = 01h set memory manager's status???
-	    ???
-	AH = 02h Weitek coprocessor support???
-	    AL = subfunction???
-	more functions???
-SeeAlso: #1378 at INT 21/AX=4402h/SF=02h,#3518 at INT 67/AX=FFA5h
---------m-2F12FFBL06-------------------------
-INT 2F U - Novell DOS 7 - EMM386.EXE - ???
-	AX = 12FFh
-	BL = 06h
-	BH = function (02h-09h)
-	???
-Return: ???
---------O-2F12FFBX0EDC-----------------------
-INT 2F U - Novell DOS 7 - EMM386.EXE - CHECK IF MULTITASKING SUPPORT LOADED???
-	AX = 12FFh
-	BX = 0EDCh ('EDC' = Novell European Development Center)
-Return: AX = 0000h if ??? loaded
-	    CF clear
-	    BX = 0000h
-Notes:	called by Novell DOS 7 TaskMgr
-	if this function returns with AX=0000h, then the code necessary to
-	  support the API on INT 2F/AX=2780h is loaded and that API becomes
-	  available for use
-	because the request is handled on the initial trap to the memory
-	  manager caused by INT instructions, this function must be invoked
-	  with an actual INT 2F instruction instead of some simulation such
-	  as a far call to the address in the interrupt vector table
-SeeAlso: AX=2780h/CL=01h,AX=2780h/CL=02h,AX=2780h/CL=03h,AX=2780h/CL=04h
---------D-2F13-------------------------------
-INT 2F U - DOS 3.2+ - SET DISK INTERRUPT HANDLER
-	AH = 13h
-	DS:DX -> interrupt handler disk driver calls on read/write
-	ES:BX = address to restore INT 13 to on system halt (exit from root
-		 shell) or warm boot (INT 19)
-Return: DS:DX set by previous invocation of this function
-	ES:BX set by previous invocation of this function
-Notes:	IO.SYS hooks INT 13 and inserts one or more filters ahead of the
-	  original INT 13 handler.  The first is for disk change detection
-	  on floppy drives, the second is for tracking formatting calls and
-	  correcting DMA boundary errors, the third is for working around
-	  problems in a particular version of IBM's ROM BIOS
-	before the first call, ES:BX points at the original BIOS INT 13; DS:DX
-	  also points there unless IO.SYS has installed a special filter for
-	  hard disk reads (on systems with model byte FCh and BIOS date
-	  "01/10/84" only), in which case it points at the special filter
-	most DOS 3.2+ disk access is via the vector in DS:DX, although a few
-	  functions are still invoked via an INT 13 instruction
-	this is a dangerous security loophole for any virus-monitoring software
-	  which does not trap this call ("INT13", "Nomenklatura", and many
-	  Bulgarian viruses are known to use it to get the original ROM entry
-	  point)
-SeeAlso: INT 13/AH=01h,INT 19,INT 9D"VIRUS"
---------N-2F13-------------------------------
-INT 2F U - MS-NET - ???
-	AH = 13h
-	???
-Return: ???
-Note:	supposedly used to move (or control the movement of) NCBs
---------U-2F1400-----------------------------
-INT 2F C - NLSFUNC.COM - INSTALLATION CHECK
-	AX = 1400h
-Return: AL = 00h not installed, OK to install
-	     01h not installed, not OK
-	     FFh installed
-Notes:	this function is called by the DOS v3.3+ kernel
-	supported by OS/2 v1.3+ compatibility box, which always returns AL=FFh
-	supported by DR DOS 5.0
-	documented for MS-DOS 5+, but undocumented in prior versions
-SeeAlso: AX=1401h"NLSFUNC",AX=1402h"NLSFUNC"
---------D-2F1400-----------------------------
-INT 2F - European MS-DOS 4.0 POPUP - "CheckPu" - INSTALLATION CHECK
-	AX = 1400h
-Return: AX = FFFFh if installed
-	    BX = maximum memory required to save screen and keyboard info
-	CF clear if successful
-	CF set on error
-	    AX = error code
-		0002h invalid function
-		0004h unknown error
-Note:	the POPUP interface is used by background programs (see INT 21/AH=80h)
-	  to communicate with the user
-SeeAlso: AX=1401h"POPUP",AX=1402h"POPUP",AX=1403h"POPUP"
---------U-2F1401-----------------------------
-INT 2F CU - NLSFUNC.COM - CHANGE CODE PAGE
-	AX = 1401h
-	DS:SI -> internal code page structure (see #2482)
-	BX = new code page (see #1622 at INT 21/AX=6602h)
-	DX = country code???
-Return: AL = status
-	     00h successful
-	     else DOS error code
-Note:	this function is called by the DOS v3.3+ kernel
-SeeAlso: AX=1400h"NLSFUNC",AX=1402h"NLSFUNC",INT 21/AH=66h
-
-Format of DOS 3.30 internal code page structure:
-Offset	Size	Description	(Table 2482)
- 00h  8 BYTEs	???
- 08h 64 BYTEs	name of country information file (see #2483)
- 48h	WORD	system code page (see #1622 at INT 21/AX=6602h)
- 4Ah	WORD	number of supported subfunctions
- 4Ch  5 BYTEs	data to return for INT 21/AX=6502h
- 51h  5 BYTEs	data to return for INT 21/AX=6504h
- 56h  5 BYTEs	data to return for INT 21/AX=6505h
- 5Bh  5 BYTEs	data to return for INT 21/AX=6506h
- 60h 41 BYTEs	data to return for INT 21/AX=6501h
-
-Format of MS-DOS/PC-DOS/OS2/WinNT/PTS-DOS COUNTRY.SYS file:
-Offset	Size	Description	(Table 2483)
- 00h	BYTE	ID tag (FFh)
- 01h  7 BYTEs	ASCII "COUNTRY"
- 08h  8 BYTEs	??? (00h)
- 10h	BYTE	??? (01h)
- 11h	BYTE	??? (00h)
- 12h	BYTE	??? (01h)
- 13h	DWORD	offset of first entry in file (see #2484)
-SeeAlso: #2487
-
-Format of MS-DOS/PC-DOS/OS2/WinNT/PTS-DOS COUNTRY.SYS entry:
-Offset	Size	Description	(Table 2484)
- 00h	WORD	number of country-codepage entries following
- 02h		N Country-Codepage entries:
-		Offset	Size	Description
-		 00h	WORD	length of entry, not counting this word (000Ch)
-		 02h	WORD	country ID
-		 04h	WORD	codepage ID
-		 06h	WORD	??? (0000h)
-		 08h	WORD	??? (0000h)
-		 0Ah	DWORD	offset of country-subfunction-header in file
-				  (see #2485)
-Notes:	multiple codepages for a country are stored consecutively
-	PTS/DOS places a copyright string immediately following this structure,
-	  though a copyright at the end of the file is preferable
-SeeAlso: #2483
-
-Format of MS-DOS/PC-DOS/OS2/WinNT/PTS-DOS COUNTRY.SYS country-subfunc header:
-Offset	Size	Description	(Table 2485)
- 00h	WORD	number of subfunction entries following
- 02h		N subfunction entries
-		Offset	Size	Description
-		 00h	WORD	length of subfunction entry, not counting this
-				  word (usually 06h)
-		 02h	WORD	subfunction ID
-				(value passed to INT 21/AH=65h in AL)
-		 04h	DWORD	offset within file of subfunction data entry
-				  (see #2486)
-SeeAlso: #2484
-
-Format of MS-DOS/PC-DOS/OS2/WinNT/PTS-DOS COUNTRY.SYS country-subfunc data::
-Offset	Size	Description	(Table 2486)
- 00h	BYTE	ID-tag (FFh)
- 01h  7 BYTEs	table-type signature (blank-padded)
-		"CTYINFO"	general country info (subfn 01h)
-		"UCASE	"	uppercase table (subfn 02h)
-		"LCASE	"	lowercase table (subfn 03h) (DOS 6.2_)
-		"FUCASE "	filename uppercase table (subfn 04h)
-		"FCHAR	"	filename terminator table (subfn 05h)
-		"COLLATE"	collating sequence (subfn 06h)
-		"DBCS	"	double-byte character table (subfn 07h)
- 08h	WORD	length of following table in bytes
-		(if 0000h for DBCS table, there will still be a word of 0000h)
----country info (01h)---
- 0Ah	WORD	country ID (see #1265 at AH=38h)
- 0Ch	WORD	code page (see #1622)
- 0Eh 34 BYTEs	country-dependent info (see #1264 at AH=38h)
----uppercase table (02h)---
- 0Ah 128 BYTEs	uppercase equivalents (if any) of chars 80h to FFh
----lowercase table (03h)---
- 0Ah 256 BYTEs	lowercase equivalents (if any) of chars 00h to FFh
----filename uppercase table (04h)---
- 0Ah 128 BYTEs	uppercase equivalents (if any) of chars 80h to FFh
----filename terminator table (05h)---
- 0Ah	BYTE	??? (01h for MS-DOS 3.30-6.00)
- 0Bh	BYTE	lowest permissible character value for filename
- 0Ch	BYTE	highest permissible character value for filename
- 0Dh	BYTE	??? (00h for MS-DOS 3.30-6.00)
- 0Eh	BYTE	first excluded character in range \ all characters in this
- 0Fh	BYTE	last excluded character in range  / range are illegal
- 10h	BYTE	??? (02h for MS-DOS 3.30-6.00)
- 11h	BYTE	number of illegal (terminator) characters
- 12h  N BYTEs	characters which terminate a filename:	."/\[]:|<>+=;,
----collating sequence (06h)---
- 0Ah 256 BYTEs	values used to sort characters 00h to FFh
----DBCS table (07h)---
- 0Ah 2N BYTEs	start/end for N lead byte ranges
-	WORD	0000h	(end of table)
-SeeAlso: #2485,#1615,#1616,#1618,#1619,#1620,#1621
-
-Format of DR DOS/Novell DOS/OpenDOS COUNTRY.SYS file:
-Offset	Size	Description	(Table 2487)
- 00h 126 BYTEs	copyright notice (terminated with Ctrl-Z; NUL-padded)
-		the copyright notice starts with the signature
-		"COUNTRY.SYS Rx.xx" where "x.xx" indicates the file format
-		revision, which is checked by the OS (revision is 2.00 for
-		DR DOS 3.41 and 2.01 for all newer versions of DR DOS,
-		Novell DOS, and OpenDOS)
- 7Eh	WORD	signature of file format revision
-		0EDCh = 2.00 (DR DOS 3.41)
-		EDC1h = 2.01 (all newer versions)
- 80h	var	country pointer records (see #2488)
-		(packed array of variable-size records)
-SeeAlso: #2483
-
-Format of DR DOS/Novell DOS/OpenDOS COUNTRY.SYS country pointer record::
-Offset	Size	Description	(Table 2488)
- 00h	WORD	country code (0000h if end of array)
- 02h	WORD	code page (see #1622)
- 04h	WORD	??? (0000h)
- 06h  7	WORDs	offsets in file for INT 21/AH=65h subfunctions 01h to 07h, or
-		  0000h if no table for that subfunction
- 14h	var	country information
-Notes:	the end-of-file marker is a country pointer record filled entirely with
-	  zeros
-	the data at which the pointers point is in the same format as the
-	  tables returned by INT 21/AH=65h, except that the general-info
-	  table for subfunction 01h does not contain the length word at the
-	  beginning
-SeeAlso: #2487
---------D-2F1401-----------------------------
-INT 2F - European MS-DOS 4.0 POPUP - "PostPu" - OPEN/CLOSE POPUP SCREEN
-	AX = 1401h
-	DL = function (00h open, 01h close)
-	DH = wait flag
-	    00h block until screen opens
-	    01h return error if screen is not available
-	    02h urgent--always open screen immediately
-Return: CF clear if successful
-	    BX = amount of memory needed to save screen and keyboard info,
-		0000h if default save location can be used (only if DH was 02h)
-	CF set on error
-Note:	the application using the screen is frozen until the popup screen is
-	  closed
-SeeAlso: AX=1400h"POPUP",AX=1402h"POPUP",AX=1403h"POPUP"
---------U-2F1402-----------------------------
-INT 2F CU - NLSFUNC.COM - GET EXTENDED COUNTRY INFO
-	AX = 1402h
-	BP = subfunction (same as AL for INT 21/AH=65h)
-	BX = code page (see #1622 at INT 21/AX=6602h)
-	DX = country code (see #1265 at INT 21/AH=38h)
-	DS:SI -> internal code page structure (see #2482)
-	ES:DI -> user buffer
-	CX = size of user buffer
-Return: AL = status
-	    00h successful
-	    else DOS error code
-Notes:	this function is called by the DOS v3.3+ kernel on INT 21/AH=65h
-	code page structure apparently only needed for COUNTRY.SYS pathname
-SeeAlso: AX=1401h"NLSFUNC",AX=1403h"NLSFUNC",AX=1404h,INT 21/AH=65h
---------D-2F1402-----------------------------
-INT 2F - European MS-DOS 4.0 POPUP - "SavePu" - SAVE POPUP SCREEN
-	AX = 1402h
-	ES:DI -> save buffer (0000h:0000h for default buffer in POPUP)
-Return: CF clear if successful
-	CF set on error
-	    AX = error code (see #2489)
-SeeAlso: AX=1400h"POPUP",AX=1401h"POPUP",AX=1403h"POPUP"
-
-(Table 2489)
-Values for POPUP error code:
- 0001h	process does not own screen
- 0004h	unknown error
- 0005h	invalid pointer
---------U-2F1403-----------------------------
-INT 2F CU - NLSFUNC.COM - SET CODE PAGE
-	AX = 1403h
-	DS:SI -> internal code page structure (see #2482)
-	BX = code page (see #1622 at INT 21/AX=6602h)
-	DX = country code (see #1265 at INT 21/AH=38h)
-Return: AL = status
-	     ???
-Note:	this function is called by the DOS v3.3+ kernel on INT 21/AH=38h
-SeeAlso: AX=1402h"NLSFUNC",AX=1404h,INT 21/AH=38h"SET"
---------D-2F1403-----------------------------
-INT 2F - European MS-DOS 4.0 POPUP - "RestorePu" - RESTORE SCREEN
-	AX = 1403h
-	ES:DI -> buffer containing saved screen
-		(0000h:0000h for default buffer in POPUP)
-Return: CF clear if successful
-	CF set on error
-	    AX = error code (see #2489)
-SeeAlso: AX=1400h"POPUP",AX=1401h"POPUP",AX=1402h"POPUP"
---------U-2F1404-----------------------------
-INT 2F CU - NLSFUNC.COM - GET COUNTRY INFO
-	AX = 1404h
-	BX = code page (see #1622 at INT 21/AX=6602h)
-	DX = country code (see #1265 at INT 21/AH=38h)
-	DS:SI -> internal code page structure (see #2482)
-	ES:DI -> user buffer
-Return: AL = status
-	     ???
-Notes:	this function is called by the DOS v3.3+ kernel on INT 21/AH=38h
-	code page structure apparently only needed for COUNTRY.SYS pathname
-SeeAlso: AX=1402h,AX=1403h,INT 21/AH=38h"GET"
---------U-2F14FE-----------------------------
-INT 2F U - DR DOS 5.0 NLSFUNC - GET EXTENDED COUNTRY INFORMATION
-	AX = 14FEh
-	BX = code page (FFFFh=global code page) (see #1622 at INT 21/AX=6602h)
-	DX = country ID (FFFFh=current country) (see #1265 at INT 21/AH=38h)
-	ES:DI -> country information buffer
-	CL = info ID
-	    01h get general internationalization info
-	    02h get pointer to uppercase table
-	    04h get pointer to filename uppercase table
-	    05h get pointer to filename terminator table
-	    06h get pointer to collating sequence table
-	    07h get pointer to Double-Byte Character Set table
-	CF set (used to return error if not installed)
-Return: CF clear if successful
-	    DS:SI -> requested information
-	CF set on error
-Notes:	DR DOS 5.0 NLSFUNC returns CF set and AX=0001h if AL was not 00h, FEh,
-	  or FFh on entry.
-	the DR DOS kernel calls this function on INT 21/AX=6501h
-	the value in CL is not range-checked by the DR DOS 5.0 NLSFUNC
-SeeAlso: #2490,AX=14FFh,INT 21/AH=65h
-
-Format of DR DOS COUNTRY.SYS file:
-Offset	Size	Description	(Table 2490)
- 00h 126 BYTEs	copyright notice (terminated with Ctrl-Z, padded with NULs)
- 7Eh	WORD	signature EDC1h
- 80h	var	country pointer records
-	Offset	Size	Description
-	 00h	WORD	country code (0000h if end of array)
-	 02h	WORD	code page (see #1622 at INT 21/AX=6602h)
-	 04h	WORD	??? (0000h)
-	 06h  7 WORDs	offsets in file for data tables for subfunctions
-			  01h-07h
- var	var	country information
---------U-2F14FF-----------------------------
-INT 2F U - DR DOS 5.0 NLSFUNC - PREPARE CODE PAGE
-	AX = 14FFh
-	BX = code page (see #1622 at INT 21/AX=6602h)
-Return: AX = ???
-	ZF set if AX=0000h
-Notes:	DR DOS 5.0 NLSFUNC returns CF set and AX=0001h if AL was not 00h, FEh,
-	  or FFh on entry.
-	passes codepage preparation request to each character device supporting
-	  the generic IOCTL call
-SeeAlso: AX=14FEh,INT 21/AX=440Ch,INT 21/AX=6602h
---------U-2F1500-----------------------------
-INT 2F - DOS 4.00 GRAPHICS.COM - INSTALLATION CHECK
-	AX = 1500h
-Return: AX = FFFFh
-	ES:DI -> ??? (graphics data?)
-Note:	this installation check conflicts with the CD-ROM Extensions
-	  installation check; moved to AX=AC00h in later versions
-SeeAlso: AX=AC00h
---------d-2F1500BX0000-----------------------
-INT 2F - CD-ROM - INSTALLATION CHECK
-	AX = 1500h
-	BX = 0000h
-Return: BX = number of CD-ROM drive letters used
-	CX = starting drive letter (0=A:)
-	AX = 15FFh (Novell DOS 7 NWCDEX only!)
-Notes:	this installation check DOES NOT follow the format used by other
-	  software
-	this installation check conflicts with the DOS 4.00 GRAPHICS.COM
-	  installation check
-BUG:	this function may return an incorrect starting drive letter when
-	  INTERLNK is installed
-SeeAlso: AX=150Ch,AX=15FFh,INT 2F/AX=D000h"Lotus"
---------c-2F1500CH90-------------------------
-INT 2F U - CDBLITZ v2.11 - INSTALLATION CHECK
-	AX = 1500h
-	CH = 90h (function number)
-	BX = 1234h (magic value for CDBLITZ)
-Return: CX = 1234h if installed
-	    CF clear
-	    DX = BCD version number (DH = major, DL = minor)
-Program: CDBLITZ is a CD-ROM cache by Blitz 'n' Software, Inc.
-SeeAlso: AX=1500h/CH=99h
---------c-2F1500CH91-------------------------
-INT 2F U - CDBLITZ v2.11 - GET STATISTICS
-	AX = 1500h
-	CH = 91h (function number)
-	BX = 1234h (magic value for CDBLITZ)
-Return: CF clear
-	ES:BX -> statistics record (see #2491)
-SeeAlso: AX=1500h/CH=90h,AX=1500h/CH=97h
-
-Format of CDBLITZ statistics record:
-Offset	Size	Description	(Table 2491)
- 00h	WORD	cache mode (see also AX=1500h/CH=94h)
-		0001h 'min', 0002h 'max'
- 02h	DWORD	number of read calls???
- 06h	DWORD	total number of sectors read
- 0Ah	DWORD	unused??? (zero)
- 0Eh	DWORD	number of cache hit sectors
- 12h	WORD	cache size in KB
- 14h	WORD	unused??? (zero)
- 16h	WORD	cache state (0000h disabled, 0001h enabled)
---------c-2F1500CH92-------------------------
-INT 2F U - CDBLITZ v2.11 - ENABLE CACHE
-	AX = 1500h
-	CH = 92h (function number)
-	BX = 1234h (magic value for CDBLITZ)
-Return: CF clear
-SeeAlso: AX=1500h/CH=90h,AX=1500h/CH=93h,AX=1500h/CH=94h
---------c-2F1500CH93-------------------------
-INT 2F U - CDBLITZ v2.11 - DISABLE CACHE
-	AX = 1500h
-	CH = 93h (function number)
-	BX = 1234h (magic value for CDBLITZ)
-Return: CF clear
-SeeAlso: AX=1500h/CH=90h,AX=1500h/CH=92h,AX=1500h/CH=95h
---------c-2F1500CH94-------------------------
-INT 2F U - CDBLITZ v2.11 - SET 'MAX' MODE (CACHE BOTH DIRECTORIES AND DATA)
-	AX = 1500h
-	CH = 94h (function number)
-	BX = 1234h (magic value for CDBLITZ)
-Return: CF clear
-SeeAlso: AX=1500h/CH=90h,AX=1500h/CH=92h,AX=1500h/CH=95h
---------c-2F1500CH95-------------------------
-INT 2F U - CDBLITZ v2.11 - SET 'MIN' MODE (CACHE ONLY DIRECTORY ENTRIES)
-	AX = 1500h
-	CH = 95h (function number)
-	BX = 1234h (magic value for CDBLITZ)
-Return: CF clear
-SeeAlso: AX=1500h/CH=90h,AX=1500h/CH=94h
---------c-2F1500CH96-------------------------
-INT 2F U - CDBLITZ v2.11 - FLUSH CACHE
-	AX = 1500h
-	CH = 96h (function number)
-	BX = 1234h (magic value for CDBLITZ)
-Return: CF clear
-Note:	this function resets the counts for number of sectors read and number
-	  of cache hits, but no other values in the statistics record
-	  (see #2491)
-SeeAlso: AX=1500h/CH=90h
---------c-2F1500CH97-------------------------
-INT 2F U - CDBLITZ v2.11 - GET CACHE STATISTICS
-	AX = 1500h
-	CH = 97h (function number)
-	BX = 1234h (magic value for CDBLITZ)
-Return: CF clear
-	AL = cache mode (01h 'min', 02h 'max') (see also AX=1500h/CH=94h)
-	AH = cache state (00h disabled, 01h enabled)
-	BX = cache size in KB
-	DX:CX = total number of reads
-	DI:SI = number of cache hits
-SeeAlso: AX=1500h/CH=90h,AX=1500h/CH=91h
---------c-2F1500CH99-------------------------
-INT 2F U - CDBLITZ v2.11 - UNINSTALL
-	AX = 1500h
-	CH = 99h (function number)
-	BX = 1234h (magic value for CDBLITZ)
-Return: CF clear
-	???
-Program: CDBLITZ is a CD-ROM cache by Blitz 'n' Software, Inc.
-SeeAlso: AX=1500h/CH=90h
---------d-2F1501-----------------------------
-INT 2F - CD-ROM - GET DRIVE DEVICE LIST
-	AX = 1501h
-	ES:BX -> buffer to hold drive letter list (5 bytes per drive letter)
-Return: buffer filled, for each drive letter
-	  BYTE	subunit number in driver
-	  DWORD address of device driver header (see #1511)
-Note:	reportedly returns AX=0000h and an invalid address under Windows95;
-	  other reports say it works fine
-SeeAlso: AX=1510h
---------d-2F1502-----------------------------
-INT 2F - CD-ROM - GET COPYRIGHT FILE NAME
-	AX = 1502h
-	ES:BX -> 38-byte buffer for name of copyright file
-	CX = drive number (0=A:)
-Return: CF set if drive is not a CD-ROM drive
-	    AX = 000Fh (invalid drive)
-	CF clear if successful
-SeeAlso: AX=1503h
---------d-2F1503-----------------------------
-INT 2F - CD-ROM - GET ABSTRACT FILE NAME
-	AX = 1503h
-	ES:BX -> 38-byte buffer for name of abstract file
-	CX = drive number (0=A:)
-Return: CF set if drive is not a CD-ROM drive
-	    AX = 000Fh (invalid drive)
-	CF clear if successful
-SeeAlso: AX=1502h,AX=1504h
---------d-2F1504-----------------------------
-INT 2F - CD-ROM - GET BIBLIOGRAPHIC DOC FILE NAME
-	AX = 1504h
-	ES:BX -> 38-byte buffer for name of bibliographic documentation file
-	CX = drive number (0=A:)
-Return: CF set if drive is not a CD-ROM drive
-	    AX = 000Fh (invalid drive)
-	CF clear if successful
-SeeAlso: AX=1502h,AX=1503h
---------d-2F1505-----------------------------
-INT 2F - CD-ROM - READ VTOC
-	AX = 1505h
-	ES:BX -> 2048-byte buffer
-	CX = drive number (0=A:)
-	DX = sector index (0=first volume descriptor,1=second,...)
-Return: CF set on error
-	    AX = error code (15=invalid drive,21=not ready)
-	CF clear if successful
-	    AX = volume descriptor type (1=standard,FFh=terminator,0=other)
-Note:	This function was not supported by Novell DOS 7 NWCDEX prior to the
-	  08/16/94 update
---------d-2F1506-----------------------------
-INT 2F - CD-ROM - TURN DEBUGGING ON
-	AX = 1506h
-	BX = debugging function to enable
-Note:	reserved for development
-SeeAlso: AX=1507h
---------d-2F1507-----------------------------
-INT 2F - CD-ROM - TURN DEBUGGING OFF
-	AX = 1507h
-	BX = debugging function to disable
-Note:	reserved for development
-SeeAlso: AX=1506h
---------d-2F1508-----------------------------
-INT 2F - CD-ROM - ABSOLUTE DISK READ
-	AX = 1508h
-	ES:BX -> buffer
-	CX = drive number (0=A:)
-	SI:DI = starting sector number
-	DX = number of sectors to read
-Return: CF set on error
-	    AL = error code (0Fh invalid drive,15h not ready)
-	CF clear if successful
-Note:	returns error 15h (not ready) under Windows95 if the starting sector
-	  number is less than 10h
-SeeAlso: AX=1509h
---------d-2F1509-----------------------------
-INT 2F - CD-ROM - ABSOLUTE DISK WRITE
-	AX = 1509h
-	ES:BX -> buffer
-	CX = drive number (0=A:)
-	SI:DI = starting sector number
-	DX = number of sectors to write
-Note:	corresponds to INT 26h and is currently reserved and nonfunctional,
-	  but could be implemented for CD-R and CD-RW drives
-SeeAlso: AX=1508h
---------d-2F150A-----------------------------
-INT 2F - CD-ROM - RESERVED
-	AX = 150Ah
---------d-2F150B-----------------------------
-INT 2F - CD-ROM v2.00+ - DRIVE CHECK
-	AX = 150Bh
-	CX = drive number (0=A:)
-Return: BX = ADADh if MSCDEX.EXE installed
-	    AX = support status
-		0000h if drive not supported
-		nonzero if supported
-SeeAlso: AX=150Dh
---------d-2F150CBX0000-----------------------
-INT 2F - CD-ROM v2.00+ - GET MSCDEX.EXE VERSION (GET VERSION)
-	AX = 150Ch
-	BX = 0000h
-Return: BH = major version
-	BL = minor version
-Notes:	MSCDEX.EXE versions prior to 2.00 leave BX unchanged, thus BX should
-	  be 0000h on entry
-	Corel's CORELCDX.COM v1.01d returns 2.20, v1.12a returns 2.21
-	Meridian Data's CDNETEX.EXE returns its own version number, e.g. 4.70
-	J.M.A. Hall's CDEMU2.COM returns 2.10 (it is an MSCDEX emulator for
-	  networked CD-ROM drives)
-	Windows95 returns v2.95
-	Novell DOS 7 NWCDEX.EXE returns the same version number reported in
-	  its startup message
-SeeAlso: AX=1500h"CD-ROM",AX=15FFh"CORELCDX"
---------d-2F150D-----------------------------
-INT 2F - CD-ROM v2.00+ - GET CD-ROM DRIVE LETTERS
-	AX = 150Dh
-	ES:BX -> buffer for drive letter list (1 byte per drive)
-Return: buffer filled with drive numbers (0=A:).  Each byte corresponds
-	to the drive in the same position for function 1501h
-SeeAlso: AX=150Bh
---------d-2F150E-----------------------------
-INT 2F - CD-ROM v2.00+ - GET/SET VOLUME DESCRIPTOR PREFERENCE
-	AX = 150Eh
-	BX = subfunction
-	    00h get preference
-		DX = 0000h
-		Return: DX = preference settings
-	    01h set preference
-		DH = volume descriptor preference
-		    01h = primary volume descriptor
-		    02h = supplementary volume descriptor
-		DL = supplementary volume descriptor preference
-		    01h = shift-Kanji
-	CX = drive number (0=A:)
-Return: CF set on error
-	    AX = error code (15=invalid drive,1=invalid function)
-	CF clear if successful
---------d-2F150F-----------------------------
-INT 2F - CD-ROM v2.00+ - GET DIRECTORY ENTRY
-	AX = 150Fh
-	CL = drive number (0=A:)
-	CH bit 0 = copy flag
-		clear if direct copy
-		set if copy to structure which removes ISO/High Sierra diffs
-	ES:BX -> ASCIZ path name
-	SI:DI -> buffer for directory entry (see #2492,#2493)
-		must be 255 bytes for direct copy, 285 bytes for canonical
-Return: CF set on error
-	    AX = error code
-	CF clear if successful
-	    AX = disk format (0=High Sierra,1=ISO 9660)
-Note:	this function was not supported by Novell DOS 7 NWCDEX prior to the
-	  08/16/94 update
-
-Format of CD-ROM directory entry (direct copy):
-Offset	Size	Description	(Table 2492)
- 00h	BYTE	length of directory entry
- 01h	BYTE	length of XAR in Logical Block Numbers
- 02h	DWORD	LBN of data, Intel (little-endian) format
- 06h	DWORD	LBN of data, Motorola (big-endian) format
- 0Ah	DWORD	length of file, Intel format
- 0Eh	DWORD	length of file, Motorola format
----High Sierra---
- 12h  6 BYTEs	date and time
- 18h	BYTE	bit flags
- 19h	BYTE	reserved
----ISO 9660---
- 12h  7 BYTEs	date and time
-		(seventh byte is offset from GMT in 15-minute increments)
- 19h	BYTE	bit flags
----both formats---
- 1Ah	BYTE	interleave size
- 1Bh	BYTE	interleave skip factor
- 1Ch	WORD	volume set sequence number, Intel format
- 1Eh	WORD	volume set sequence number, Motorola format
- 20h	BYTE	length of file name
- 21h  N BYTEs	file name
-	BYTE	(optional) padding if filename is odd length
-      N BYTEs	system data
-SeeAlso: #2493,#1217
-
-Format of CD-ROM directory entry (canonicalized):
-Offset	Size	Description	(Table 2493)
- 00h	BYTE	length of XAR in Logical Block Numbers
- 01h	DWORD	Logical Block Number of file start
- 05h	WORD	size of disk in logical blocks
- 07h	DWORD	file length in bytes
- 0Bh  7 BYTEs	date and time
- 12h	BYTE	bit flags
- 13h	BYTE	interleave size
- 14h	BYTE	interleave skip factor
- 15h	WORD	volume set sequence number
- 17h	BYTE	length of file name
- 18h 38 BYTEs	ASCIZ filename
- 3Eh	WORD	file version number
- 40h	BYTE	number of bytes of system use data
- 41h 220 BYTEs	system use data
-SeeAlso: #2492
---------d-2F1510-----------------------------
-INT 2F - CD-ROM v2.10+ - SEND DEVICE DRIVER REQUEST
-	AX = 1510h
-	CX = CD-ROM drive letter (0 = A, 1 = B, etc)
-	ES:BX -> CD-ROM device driver request header (see #2461 at AX=0802h)
-Return: CF clear if device driver has been called (check the request header's
-	      status word to determine whether an error has occurred)
-	    ES:BX request header updated
-	CF set if device driver has not been called
-	    AX = error code (000Fh = invalid drive, 0001h = invalid function)
-	    ES:BX request header unchanged
-Notes:	MSCDEX initializes the device driver request header's subunit field
-	  based on the drive number specified in CX
-	MSCDEX v2.21 through v2.25 (at least) return error code AX=0001h if
-	  nested calls are attempted
-BUGS:	Novell DOS 7 NWCDEX prior to the 12/13/94 update did not initialize
-	  the subunit field
-	Windows95 sets CF if CX isn't a CD-ROM drive but leaves CF unchanged
-	  if the drive is in fact a CD-ROM
-SeeAlso: AX=0802h
---------d-2F15FFBX0000-----------------------
-INT 2F - CD-ROM - CORELCDX - INSTALLATION CHECK
-	AX = 15FFh
-	BX = 0000h
-Return: BX = ABCDh if CORELCDX loaded
-Note:	Corel's CORELCDX.COM is a replacement for MSCDEX.EXE; it also supports
-	  the standard MSCDEX installation check calls AX=1500h and AX=150Ch
-SeeAlso: AX=1500h"CD-ROM",AX=150Ch
---------W-2F1600-----------------------------
-INT 2F - MS Windows - WINDOWS ENHANCED MODE INSTALLATION CHECK
-	AX = 1600h
-Return: AL = status
-	    00h neither Windows 3.x enhanced mode nor Windows/386 2.x running
-	    01h Windows/386 2.x running
-	    80h XMS version 1 driver installed (neither Windows 3.x enhanced
-		  mode nor Windows/386 2.x running) (obsolete--see note)
-	    FFh Windows/386 2.x running
-	AL = anything else
-	    AL = Windows major version number >= 3
-	    AH = Windows minor version number
-Notes:	INT 2F/AH=16h comprises an API for non-Windows programs (DOS device
-	  drivers, TSRs, and applications) to cooperate with multitasking
-	  Windows/386 2.x and Windows 3.x and higher enhanced mode.
-	certain calls are also supported in the Microsoft 80286 DOS extender in
-	  Windows standard mode
-	this function served as the installation check and AX=1610h served to
-	  get the driver entry point for XMS version 1, which is now obsolete.
-	  Use AX=4300h and AX=4310h instead
-SeeAlso: AX=160Ah,AX=1610h,AX=4300h,AX=4680h
-Index:	installation check;XMS version 1
---------W-2F1602-----------------------------
-INT 2F - MS Windows/386 2.x - GET API ENTRY POINT
-	AX = 1602h
-Return: ES:DI -> Windows/386 2.x API procedure entry point
-Notes:	this interface is supported in Windows 3.x and Windows95 only for 2.x
-	  compatibility
-	to get the current virtual machine (VM) ID in Windows/386 2.x:
-	    AX = 0000h
-	    ES:DI -> return address
-	    JUMP to address returned from INT 2F/AX=1602h
-	After JUMP, at return address:
-	    BX = current VM ID.
-SeeAlso: AX=C020h
---------W-2F1603-----------------------------
-INT 2F C - MS Windows/386 - GET INSTANCE DATA
-	AX = 1603h
-Return: AX = 5248h ('RH') if supported
-	    DS:SI -> Windows/386 instance data (see #2494)
-Notes:	reportedly supported by RM Nimbus MS-DOS 3.3 kernel
-	this function is called by DOSMGR when AX=1607h/BX=0015h is not
-	  supported, as is the case in DOS versions prior to 5.0
-	see Geoff Chappell's book _DOS_Internals_ for additional discussions of
-	  this function, DOSMGR's behavior, and instancing in general
-SeeAlso: AX=1607h/BX=0015h
-
-Format of Windows/386 instance data:
-Offset	Size	Description	(Table 2494)
- 00h	WORD	segment of IO.SYS (0000h = default 0070h)
- 02h	WORD	offset in IO.SYS of STACKS data structure (DOS 3.2x)
-		0000h if not applicable
- 04h	WORD	number of instance data entries (max 32)
- 06h	Array of instance data entries
-	Offset	Size	Description
-	 00h	WORD	segment (0002h = DOS kernel)
-	 02h	WORD	offset
-	 04h	WORD	size
---------W-2F1605-----------------------------
-INT 2F - MS Windows - WINDOWS ENHANCED MODE & 286 DOSX INIT BROADCAST
-	AX = 1605h
-	ES:BX = 0000h:0000h
-	DS:SI = 0000h:0000h
-	CX = 0000h
-	DX = flags
-	    bit 0 = 0 if Windows enhanced-mode initialization
-	    bit 0 = 1 if Microsoft 286 DOS extender initialization
-	    bits 1-15 reserved (undefined)
-	DI = version number (major in upper byte, minor in lower)
-Return: CX = 0000h if okay for Windows to load
-	CX = FFFFh (other registers unchanged) if Windows 3.0 in standard mode
-	CX <> 0 if Windows should not load
-	ES:BX -> startup info structure (see #2495)
-	DS:SI -> virtual86 mode enable/disable callback or 0000h:0000h
-	      (see #2498)
-Notes:	the Windows enhanced mode loader and Microsoft 286 DOS extender will
-	  broadcast an INT 2F/AX=1605h call when initializing.	Any DOS device
-	  driver or TSR can watch for this broadcast and return the appropriate
-	  values.  If the driver or TSR returns CX <> 0, it is also its
-	  responsibility to display an error message (however, Windows95 is
-	  reported to load regardless of the returned CX).
-	each handler must first chain to the prior INT 2F handler with
-	  registers unchanged before processing the call
-	if the handler requires local data on a per-VM basis, it must store the
-	  returned ES:BX in the "next" field of a startup info structure and
-	  return a pointer to that structure in ES:BX
-	a single TSR may set the V86 mode enable/disable callback; if DS:SI is
-	  already nonzero, the TSR must fail the initialization by setting CX
-	  nonzero
-	MSD checks for Windows 3.0 running in standard mode by testing whether
-	  CX=FFFFh and other registers are unchanged on return
-	Novell DOS v7.0 (Update 8 - Update 11) TASKMGR in multitasking mode
-	  uses this broadcast, even if TASKMGR.INI sets WinPresent= to OFF
-	Microsoft's EMM386.EXE for DOS 5+ when installed with the NOEMS option
-	  changes its driver name from EMMQXXX0 to EMMXXXX0 while Windows is
-	  active
-SeeAlso: AX=1606h,AX=1608h,AX=4B05h
-
-Format of Windows Startup Information Structure:
-Offset	Size	Description	(Table 2495)
- 00h  2 BYTEs	major, minor version of info structure
- 02h	DWORD	pointer to next startup info structure or 0000h:0000h
- 06h	DWORD	pointer to ASCIZ name of virtual device file or 0000h:0000h
- 0Ah	DWORD	virtual device reference data (see #2497)
-		(only used if above nonzero)
- 0Eh	DWORD	pointer to instance data records (see #2496) or 0000h:0000h
-
-Format of one Instance Item in array:
-Offset	Size	Description	(Table 2496)
- 00h	DWORD	address of instance data (end of array if 0000h:0000h)
- 04h	WORD	size of instance data
-
-Format of Virtual Device Reference Data:
-Offset	Size	Description	(Table 2497)
- 00h	DWORD	physical address of ??? or 00000000h
- 04h	DWORD	physical address of ??? table
- 08h	DWORD	"DEST_PAGE" address to which pages must be mapped
- 0Ch  N DWORDs	"SRC_PAGE" physical addresses of the pages
-		00000000h = end of table
-Note:	EMM386.EXE sets the first pointer to the start of the device driver
-	  chain, the second pointer to a field of 40h bytes followed by a
-	  16-bit offset to the end of the SRC_PAGE table, and DEST_PAGE to
-	  the start segment of the UMB area
-
-(Table 2498)
-Values Windows virtual mode enable/disable procedure is called with:
-	AX = 0000h disable V86 mode
-	AX = 0001h enable V86 mode
-	interrupts disabled
-Return: CF set on error
-	CF clear if successful
-	interrupts disabled
---------W-2F1606-----------------------------
-INT 2F - MS Windows - WINDOWS ENHANCED MODE & 286 DOSX EXIT BROADCAST
-	AX = 1606h
-	DX = flags
-	    bit 0 = 0 if Windows enhanced-mode exit
-	    bit 0 = 1 if Microsoft 286 DOS extender exit
-	    bits 1-15 reserved (undefined)
-Notes:	if the init broadcast fails (AX=1605h returned CX <> 0), then this
-	  broadcast will be issued immediately.
-	this call will be issued in real mode
-	Novell DOS v7.0 (Update 8 - Update 15) TASKMGR in multitasking mode
-	  uses this broadcast, even if TASKMGR.INI sets WinPresent= to OFF
-SeeAlso: AX=1605h,AX=1609h
---------W-2F1607-----------------------------
-INT 2F - MS Windows - VIRTUAL DEVICE CALL OUT API
-	AX = 1607h
-	BX = virtual device ID (see #2506)
-	CX = (usually) callout subfunction
-Return: (usually) AX,BX,CX,DX,ES contain results
-Notes:	more of a convention than an API, this call specifies a standard
-	  mechanism for Windows enhanced-mode virtual devices (VxD's) to talk
-	  to DOS device drivers and TSRs
-	see below for details on several virtual devices
-SeeAlso: AX=1605h,AX=1607h/BX=000Ch,AX=1607h/BX=0014h,AX=1607h/BX=0015h
-SeeAlso: AX=1607h/BX=0018h,AX=1684h"DEVICE API",AX=C020h
---------W-2F1607BX0006-----------------------
-INT 2F - MS Windows - "V86MMGR" VIRTUAL DEVICE API
-	AX = 1607h
-	BX = 0006h (VxD identifier of "V86MMGR")
-	CX = 0000h
-Return: AX = status
-	    0000h if local A20 state changed
-	    1607h if A20 unchanged
-	    other if global A20 state changed
-SeeAlso: AX=1607h"CALL OUT API"
---------W-2F1607BX000C-----------------------
-INT 2F - MS Windows - "VMD" VIRTUAL MOUSE DEVICE API
-	AX = 1607h
-	BX = 000Ch (VxD identifier of "VMD")
-Return: CX = nonzero if mouse driver already virtualized
-Note:	VMD (Virtual Mouse Driver) calls this and then checks whether CX is
-	  nonzero; if yes, it will not automatically virtualize the mouse
-	  driver.  This would be used if MOUSE.COM already virtualizes
-	  itself using the Windows API.
-SeeAlso: AX=1607h/BX=0014h,AX=1607h/BX=0015h
---------W-2F1607BX000D-----------------------
-INT 2F C - MS Windows95 - "VKD" VIRTUAL DEVICE - ??? CALLOUT
-	AX = 1607h
-	BX = 000Dh (VxD ID for VKD)
-	???
-Return: ???
-SeeAlso: AX=1607h"CALL OUT API",#2506
---------W-2F1607BX0010-----------------------
-INT 2F C - MS Windows 3.1 - "BLOCKDEV" VIRTUAL HARD DISK DEVICE API
-	AX = 1607h
-	BX = 0010h (VxD identifier of "BLOCKDEV")
-	CX = function
-	    0001h starting FastDisk compatibility tests
-	    0002h ending FastDisk compatibility tests
-	    0003h check if FastDisk installation allowed
-		Return: CX = 0000h if allowed
-Note:	this interface is called by the Windows FastDisk driver (such as
-	  WDCTRL) when it thinks that the INT 13h handler immediately below
-	  IO.SYS's INT 13h code is not in ROM; it should be supported by any
-	  program which hooks itself underneath IO.SYS's INT 13h code with
-	  INT 2F/AH=13h
-SeeAlso: AX=1607h/BX=0014h,INT 2F/AH=13h
---------W-2F1607BX0014-----------------------
-INT 2F - MS Windows - "VNETBIOS" VIRTUAL DEVICE API
-	AX = 1607h
-	BX = 0014h (VxD identifier of "VNETBIOS")
-Return: ES:DI -> 128-byte table specifying VNETBIOS actions for each NetBIOS
-		command code (see #2499)
-Note:	VNETBIOS (Virtual NetBIOS) calls this function to determine whether
-	  the NetBIOS has an extensions Windows should know about
-SeeAlso: AX=1607h/BX=000Ch,AX=1607h/BX=0010h,AX=1607h/BX=0015h
-
-(Table 2499)
-Values for VNETBIOS action code:
- 00h	"VN_Unknown" unknown command
- 04h	"VN_No_Map"  no memory mapping necessary
- 08h	"VN_Map_In"  input buffer is quickly used, so no global mapping needed
- 0Ch	"VN_Map_In"  output buffer is quickly used, so no global mapping needed
- 10h	"VN_Map_In_Out"	 buffer is quickly used, so no global mapping needed
- 14h	"VN_Chain_Send"	 the chain-send command
- 18h	"VN_Cancel"	special case for cancel command
- 1Ch	"VN_Buffer_In"	buffer is incoming
- 20h	"VN_Buffer_Out" buffer is outgoing
- 24h	"VN_Buffer_In_Out" buffer used for both incoming and outgoing data
---------D-2F1607BX0015-----------------------
-INT 2F C - MS Windows - "DOSMGR" VIRTUAL DEVICE API
-	AX = 1607h
-	BX = 0015h (VxD identifier of "DOSMGR")
-	CX = function
-	    0000h query instance processing
-		DX = 0000h
-		Return: CX = state
-			    0000h not instanced
-			    other instanced (DOS 5+ kernel returns 0001h)
-				DX = segment of DOS drivers or 0000h for
-					default of 0070h
-				ES:BX -> patch table (see #2501)
-	    0001h set patches in DOS
-		DX = bit mask of patch requests (see #2500)
-		Return: AX = B97Ch
-			BX = bit mask of patches applied (see #2500)
-			DX = A2ABh
-	    0002h remove patches in DOS (ignored by DOS 5.0 kernel)
-		DX = bit mask of patch requests (see #2500)
-		Return: CX = 0000h (DOS 5-6)
-		Note:	return values are ignored by DOSMGR in Windows 3.1
-	    0003h get size of DOS data structures
-		DX = bit mask of request (only one bit can be set)
-		    bit 0: Current Directory Structure size
-		Return: if supported request:
-			    AX = B97Ch
-			    CX = size in bytes of requested structure
-			    DX = A2ABh
-			else:
-			    CX = 0000h
-			    all other registers preserved
-	    0004h determine instanced data structures
-		Return: AX = B97Ch if supported
-			DX = A2ABh if supported (DOS 5+ kernel returns 0000h)
-			BX = bit mask of instanced items
-			    bit 0: CDS
-			    bit 1: SFT
-			    bit 2: device list
-			    bit 3: DOS swappable data area
-	    0005h get device driver size
-		ES = segment of device driver
-		Return: DX:AX = 0000h:0000h on error (not dev. driver segment)
-			DX:AX = A2ABh:B97Ch if successful
-			    BX:CX = size of device driver in bytes
-Notes:	DOSMGR (DOS Manager) will check whether the OEM DOS/BIOS data has
-	  been instanced via this API and will not perform its own default
-	  instancing of the normal DOS/BIOS data if so; if this API is not
-	  supported, DOSMGR will also try to access instancing data through
-	  INT 2F/AX=1603h
-	these functions are supported by the DOS 5+ kernel; DOSMGR contains
-	  tables of instancing information for earlier versions of DOS
-	see Geoff Chappell's book _DOS_Internals_ for additional discussions of
-	  DOSMGR's behavior and instancing in general
-SeeAlso: AX=1603h,AX=1605h,AX=1607h/BX=000Ch,AX=1607h/BX=0014h
-SeeAlso: AX=1684h"DEVICE API"
-
-Bitfields for DOSMGR patch requests:
-Bit(s)	Description	(Table 2500)
- 0	enable critical sections
- 1	NOP setting/checking user ID
- 2	turn INT 21/AH=3Fh on STDIN into polling loop
- 3	trap stack fault in "SYSINIT" to WIN386
- 4	BIOS patch to trap "Insert disk X:" to WIN386
-
-Format of DOSMGR patch table:
-Offset	Size	Description	(Table 2501)
- 00h  2 BYTEs	DOS version (major, minor)
- 02h	WORD	offset in DOS data segment of "SAVEDS"
- 04h	WORD	offset in DOS data segment of "SAVEBX"
- 06h	WORD	offset in DOS data segment of InDOS flag
- 08h	WORD	offset in DOS data segment of User ID word
- 0Ah	WORD	offset in DOS data segment of "CritPatch" table to enable
-		  critical section calls (see INT 2A/AH=80h)
- 0Ch	WORD	(DOS 5+ only) offset in DOS data segment of "UMB_HEAD",
-		  containing segment of last MCB in conventional memory
---------W-2F1607BX0018-----------------------
-INT 2F C - MS Windows - "VMPoll" VIRTUAL DEVICE - IDLE CALLOUT
-	AX = 1607h
-	BX = 0018h (VMPoll VxD ID) (see #2506)
-	CX = 0000h
-Return: AX = status
-	    0000h if timeslice used
-	    nonzero if timeslice not needed
-Note:	when VMPoll makes this callout, all virtual machines are idle, and any
-	  interested TSR can use the opportunity to perform background
-	  processing
-SeeAlso: AX=1607h"CALL OUT API",AX=1689h
---------W-2F1607BX0021--------------------------------------
-INT 2F C - MS Windows - "PageFile" VIRTUAL DEVICE - GET LOCK BYTE
-	AX = 1607h
-	BX = 0021h (PageFile VxD ID)
-	CX = 0000h
-Return: AX = status
-	    0000h success
-		ES:DI -> cache lock byte in disk cacher
-	    other no disk cache or unsupported
-Notes:	PageFile issues this call on real-mode initialization in order to allow
-	  disk caches to provide it with a byte which it can use to temporarily
-	  lock the disk cache; VMPOLL also issues this call, so it is made
-	  twice each time Windows starts up
-	if this call fails, PageFile falls back to other techniques for locking
-	  the disk cache
-SeeAlso: AX=1607h"CALL OUT API"
---------W-2F1607BX002D-----------------------
-INT 2F C - MS Windows - "W32S" VIRTUAL DEVICE - ??? CALLOUT
-	AX = 1607h
-	BX = 002Dh (VxD ID for W32S)
-	???
-Return: ???
-SeeAlso: AX=1607h"CALL OUT API",#2506
---------W-2F1607BX0040-----------------------
-INT 2F C - MS Windows - "IFSMgr" VIRTUAL DEVICE - ??? CALLOUT
-	AX = 1607h
-	BX = 0040h (VxD ID for IFSMgr)
-	???
-Return: ???
-SeeAlso: AX=1607h"CALL OUT API",#2506
---------W-2F1607BX0446-----------------------
-INT 2F C - MS Windows - "VADLIBD" VIRTUAL DEVICE - ??? CALLOUT
-	AX = 1607h
-	BX = 0446h (VxD ID for VADLIBD)
-	???
-Return: ???
-SeeAlso: AX=1607h"CALL OUT API",#2506
---------W-2F1607BX0484-----------------------
-INT 2F C - MS Windows - "IFSMgr" VIRTUAL DEVICE - ??? CALLOUT
-	AX = 1607h
-	BX = 0484h (VxD ID for IFSMgr)
-	???
-Return: ???
-SeeAlso: AX=1607h"CALL OUT API",#2506
---------W-2F1607BX0487-----------------------
-INT 2F C - MS Windows - "NWSUP" VIRTUAL DEVICE - ??? CALLOUT
-	AX = 1607h
-	BX = 0487h (VxD ID for NWSUP)
-	???
-Return: ???
-SeeAlso: AX=1607h"CALL OUT API",#2506
---------E-2F1607BX22C0-----------------------
-INT 2F C - Rational Systems DOS/4GW - ???
-	AX = 1607h
-	BX = 22C0h
-	???
-Return: ???
-SeeAlso: INT 15/AX=BF02h,INT 15/AX=BF04h,#2506
---------W-2F1607BX28A1-----------------------
-INT 2F C - MS Windows - "PharLap" VIRTUAL DEVICE - ??? CALLOUT
-	AX = 1607h
-	BX = 28A1h (VxD ID for PharLap)
-	???
-Return: ???
-SeeAlso: AX=1607h"CALL OUT API",#2506
---------W-2F1607BX7A5F-----------------------
-INT 2F C - MS Windows - "SIWVID" VIRTUAL DEVICE - ??? CALLOUT
-	AX = 1607h
-	BX = 7A5Fh (VxD ID for SIWVID)
-	???
-Return: ???
-SeeAlso: AX=1607h"CALL OUT API",#2506
---------W-2F1608-----------------------------
-INT 2F C - MS Windows - WINDOWS ENHANCED MODE INIT COMPLETE BROADCAST
-	AX = 1608h
-Notes:	called after all installable devices have been initialized
-	real-mode software may be called between the Windows enhanced-mode init
-	  call (AX=1605h) and this call; the software must detect this
-	  situation
-SeeAlso: AX=1605h,AX=1609h
---------W-2F1609-----------------------------
-INT 2F C - MS Windows - WINDOWS ENHANCED MODE BEGIN EXIT BROADCAST
-	AX = 1609h
-Note:	called at the beginning of a normal exit sequence; not made in the
-	  event of a fatal system crash
-SeeAlso: AX=1606h,AX=1608h
---------W-2F160A-----------------------------
-INT 2F - MS Windows 3.1 - IDENTIFY WINDOWS VERSION AND TYPE
-	AX = 160Ah
-Return: AX = 0000h if call supported
-	    BX = version (BH=major, BL=minor)
-	    CX = mode (0002h = standard, 0003h = enhanced)
-SeeAlso: AX=1600h,AX=4680h
---------W-2F160B-----------------------------
-INT 2F - MS Windows 3.1 - IDENTIFY TSRs
-	AX = 160Bh
-	ES:DI = 0000h:0000h
-Return: ES:DI -> TSR information structure (see #2502)
-Desc:	this call allows Windows-aware TSRs to make themselves known to
-	  Windows.
-Note:	the TSR should first chain to the previous INT 2F handler, then
-	  allocate a communication structure, place the returned ES:DI
-	  pointer in the first field, and return a pointer to the new
-	  structure
-SeeAlso: AX=1605h,AX=160Ch,AX=4B01h,AX=4B05h
-
-Format of TSR-to-Windows information structure:
-Offset	Size	Description	(Table 2502)
- 00h	DWORD	pointer to next structure
- 04h	WORD	PSP segment
- 06h	WORD	API version ID (0100h)
- 08h	WORD	EXEC flags (how to load command specified by "exec_cmd")
-		bit 0: "WINEXEC"
-		bit 1: "LOADLIBRARY"
-		bit 2: "OPENDRIVER"
- 0Ah	WORD	"exec_cmd_show" (see #2503)
- 0Ch	DWORD	"exec_cmd" pointer to command line to be executed
- 10h  4 BYTEs	reserved (0)
- 14h	DWORD	pointer to TSR ID block (see #2504)
- 18h	DWORD	pointer to TSR data block or 0000h:0000h
-
-(Table 2503)
-Values for TSR information structure "exec_cmd_show":
- 00h	HIDE
- 01h	SHOWNORMAL
- 02h	SHOWMINIMIZED
- 03h	SHOWMAXIMIZED
- 04h	SHOWNOACTIVE
- 05h	SHOW
- 06h	MINIMIZE
- 07h	SHOWMINNOACTIVE
- 08h	SHOWNA
- 09h	RESTORE
-Note:	this value is passed as the second parameter to the WinExec(),
-	  LoadLibrary(), or OpenDriver() call used to execute a requested
-	  command line
-SeeAlso: #2502
-
-Format of Norton Utilities 6.0 TSR ID block:
-Offset	Size	Description	(Table 2504)
- 00h	WORD	length of name string
- 02h  N BYTEs	name of TSR's executable
-SeeAlso: #2502
---------W-2F160C-----------------------------
-INT 2F - MS Windows 3.1 - DETECT ROMs
-	AX = 160Ch
-	???
-Return: ???
-Note:	used by ROM Windows; appears to be a NOP under standard Windows95
-SeeAlso: AX=160Bh,INT 21/AH=6Dh"ROM"
---------D-2F160E-----------------------------
-INT 2F U - MS-DOS 7 kernel - BOOT LOGO SUPPORT???
-	AX = 160Eh
-	BL = subfunction
-	    00h get ???
-		AX = state of flag manipulated by subfn 04h and 05h
-		    0000h clear
-		    FFFFh set
-		DX = ??? (0000h)
-	    01h link in INT 10h??? handlers
-	    02h unlink INT 10h??? handlers
-	    03h ???
-	    04h set ??? flag
-	    05h clear ??? flag
-Return: AX = 0000h if supported
-	    ???
-SeeAlso: AX=160Fh,AX=1611h,AX=1614h
---------D-2F160F-----------------------------
-INT 2F U - MS-DOS 7 kernel - GET/SET ??? HANDLER
-	AX = 160Fh
-	BL = subfunction
-	    00h get ??? handler
-		Return: AX = 0000h if supported
-			    CX:DX -> handler to which control is passed after
-				      ??? executes
-	    01h set ??? handler
-		CX:DX -> new handler for ???
-		Return: AX = 0000h if supported
-Notes:	this function is not supported if ??? in the IO.SYS drivers portion of
-	  the kernel is an IRET instruction (as is the case on my system)
-	  rather than a FAR JMP
-	the indicated handler seems to be related to INT 10 processing
-SeeAlso: AX=160Eh,AX=1611h,AX=1614h
---------m-2F1610-----------------------------
-INT 2F - XMS v1.x only - GET DRIVER ADDRESS
-	AX = 1610h
-	details unavailable
-Note:	this function and AX=1600h were only used in XMS version 1 and are now
-	  obsolete.  Use AX=4300h and AX=4310h instead
-SeeAlso: AX=1600h,AX=4310h
---------D-2F1611-----------------------------
-INT 2F U - MS-DOS 7 kernel - GET SHELL PARAMETERS
-	AX = 1611h
-Return: AX = 0000h if supported
-	    DS:DX -> primary shell's executable name
-	    DS:SI -> prinary shell command line (counted string)
-	    BH = ??? (00h)
-	    BL = ??? (00h)
-Desc:	return the program name and commandline from the CONFIG.SYS SHELL=
-	  statement
-SeeAlso: AX=160Eh,AX=160Fh,AX=1612h,AX=4A33h
---------D-2F1612-----------------------------
-INT 2F U - MS-DOS 7 kernel - GET ???
-	AX = 1612h
-Return: AX = 0000h if supported
-	    ES:BX -> ??? data (see #2505)
-Note:	called by VTD.VXD
-SeeAlso: AX=160Fh,AX=1611h,AX=1613h
-
-Format of DOS7 ??? kernel data:
-Offset	Size	Description	(Table 2505)
- 00h	WORD	??? (0001h)
- 02h	DWORD	-> ??? function (call with DS=high word of this field)
-		the indicated function vectors through the INT 13 hook at
-		  0070h:00B4h and then forces the A20 gate open
-	???
---------D-2F1613-----------------------------
-INT 2F - MS-DOS 7 kernel - GET SYSTEM.DAT (REGISTRY FILE) PATHNAME
-	AX = 1613h
-	ES:DI -> buffer for full ASCIZ pathname to Windows95 SYSTEM.DAT
-	CX = buffer size in bytes
-Return: AX = 0000h if supported
-	    ES:DI buffer filled
-	    CX = number of bytes copied into buffer
-SeeAlso: AX=160Eh,AX=1611h,AX=1612h,AX=1614h,AX=1690h
---------D-2F1614-----------------------------
-INT 2F U - MS-DOS 7 kernel - SET SYSTEM.DAT (REGISTRY FILE) PATHNAME
-	AX = 1614h
-	ES:DI -> ASCIZ pathname to Windows95 SYSTEM.DAT
-Return: AX = status
-	    0000h if successful
-	    1614h not supported
-	    other: maximum length of pathname (004Eh for v4.00.950)
-SeeAlso: AX=160Eh,AX=1611h,AX=1613h,AX=1690h
-----------2F1615-----------------------------
-INT 2F - Windows95 - SAVE32.COM - INSTALLATION CHECK
-	AX = 1615h
-Return: AX = 0000h if installed
-	    BX = segment of resident code
-Program: SAVE32.COM is a TSR included in the Windows95 distribution which
-	  preserves the contents of 32-bit registers across invocations of
-	  all of the hardware interrupt handlers (which, for some older BIOSes
-	  and TSRs, do not properly preserve the high words of the 32-bit
-	  registers)
---------W-2F1680-----------------------------
-INT 2F - MS Windows, DPMI, various - RELEASE CURRENT VIRTUAL MACHINE TIME-SLICE
-	AX = 1680h
-Return: AL = status
-	    00h if the call is supported
-	    80h (unchanged) if the call is not supported
-Notes:	programs can use this function in idle loops to enhance performance
-	  under multitaskers; this call is supported by MS Windows 3+, DOS 5+,
-	  DPMI 1.0+, and in OS/2 2.0+ for multitasking DOS applications
-	does not block the program; it just gives up the remainder of the time
-	  slice
-	should not be used by Windows-specific programs
-	when called very often without intermediate screen output under
-	  MS Windows 3.x, the VM will go into an idle-state and will not
-	  receive the next slice before 8 seconds have elapsed. This time can
-	  be changed in SYSTEM.INI through "IdleVMWakeUpTime=<seconds>".
-	  Setting it to zero results in a long wait.
-	this function has no effect under OS/2 2.10-4.0 if the DOS box has an
-	  "Idle Sensitivity" setting of 100
-SeeAlso: AX=1689h,INT 15/AX=1000h,INT 15/AX=5305h,INT 21/AH=89h,INT 7A/BX=000Ah
---------W-2F1681-----------------------------
-INT 2F - MS Windows 3+ - BEGIN CRITICAL SECTION
-	AX = 1681h
-Notes:	used to prevent a task switch from occurring
-	should be followed by an INT 2F/AX=1682h call as soon as possible
-	nested calls are allowed, and must be followed by an appropriate number
-	  of "end critical section" calls
-	not supported in Windows/386 2.x. Get INDOS flag with INT 21/AH=34h and
-	  increment by hand.
-SeeAlso: AX=1682h,INT 15/AX=101Bh,INT 21/AH=34h
---------W-2F1682-----------------------------
-INT 2F - MS Windows 3+ - END CRITICAL SECTION
-	AX = 1682h
-Notes:	not supported in Windows/386 2.x.  Get InDOS flag with INT 21/AH=34h
-	  and decrement by hand, taking care not to decrement InDOS flag
-	  through zero
-SeeAlso: AX=1681h,INT 15/AX=101Ch,INT 21/AH=34h
---------W-2F1683-----------------------------
-INT 2F - MS Windows 3+ - GET CURRENT VIRTUAL MACHINE ID
-	AX = 1683h
-Return: BX = current virtual machine (VM) ID
-Notes:	Windows itself currently runs in VM 1, but this can't be relied upon
-	VM IDs are reused when VMs are destroyed
-	an ID of 0 will never be returned
-SeeAlso: AX=1684h"DEVICE API",AX=1685h,AX=168Bh
---------W-2F1684-----------------------------
-INT 2F - MS Windows - GET DEVICE API ENTRY POINT
-	AX = 1684h
-	BX = virtual device (VxD) ID (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point, or 0:0 if the VxD does not support an API
-Note:	some Windows enhanced-mode virtual devices provide services that
-	  applications can access.  For example, the Virtual Display Device
-	  (VDD) provides an API used in turn by WINOLDAP.
-SeeAlso: AX=1684h/BX=0001h,AX=1684h/BX=0015h,AX=1683h,AX=4011h,INT 20"Windows"
-
-(Table 2506)
-Values for MS Windows VxD ID:
-Value	Name   CallOut V86 PM	Description
- 0000h	ACT200L			IrDA Infrared ActiSys framer VxD
- 0000h	ACT220L			IrDA Infrared ActiSys 220 framer VxD
- 0000h	ADAPTEC			IrDA Infrared Adaptec framer VxD
- 0000h	AM1500T		N  N	(Win95)
- 0000h	ATI		N  N	(Win95) ATI display driver
- 0000h	CDFS		N  N
- 0000h	CDTSD		N  N	(Win95) CD-ROM Type-Specific Driver
- 0000h	CE2NDIS3	N  N	(W4Wg)
- 0000h	CENDIS		N  N	(W4Wg)
- 0000h	CHIPS		N  N	(Win95) Chips&Tech display driver
- 0000h	CIRRUS		N  N	(Win95) Cirrus display driver
- 0000h	CTNDW		N  N	(W4Wg)
- 0000h	CTVSD		N  N	(Win95) CD-ROM Vendor-Specific Driver
- 0000h	CM2NDIS3	N  N	(W4Wg)
- 0000h	COMBUFF		N  N	(Win95)
- 0000h	COMPAQ		N  N	(Win95) Compaq display driver
- 0000h	CPQNDIS3	N  N	(W4Wg)
- 0000h	CRYSTAL			IrDA Infrared Crystal framer VxD
- 0000h	CWCENUM		N  N	(Win95SR2???)
- 0000h	CWCSPUD3	N  N	(Win95SR2???)
- 0000h	DBKVSSD		N  N	(Win95) Databook PCMCIA socket services???
- 0000h	DDOM95		N  N
- 0000h	DECLAN		N  N	(W4Wg)
- 0000h	DiskTSD		N  N	(Win95) hard-disk Type-Specific Driver
- 0000h	DiskVSD		N  N	(Win95) hard-disk Vendor-Specific Driver
- 0000h	DMICTVXD	N  N
- 0000h	DMMDVDX		N  N	Diamond MaximumDVD
- 0000h	DRVSPACX	N  N	(Win95)
- 0000h	E30N3		N  N	(W4Wg)
- 0000h	E31N3		N  N	(W4Wg)
- 0000h	EE16		N  N	(W4Wg)
- 0000h	EISA		N  N	(Win95)
- 0000h	EL59X		N  N	(Win95)
- 0000h	ELNK16		N  N	(W4Wg)
- 0000h	ELNK3		N  N	(Win95)
- 0000h	ELNKII		N  N	(W4Wg)
- 0000h	ELNKMC		N  N	(W4Wg)
- 0000h	ELPC3		N  N	(W4Wg)
- 0000h	ENABLE2		N  N	(Win95)
- 0000h	ENABLE4		N  N	(Win95)
- 0000h	EPRO		N  N	(Win95)
- 0000h	ES1488V		N  N	(Win95)
- 0000h	ES1688V		N  N	(Win95)
- 0000h	ES488V		N  N	(Win95)
- 0000h	ES688V		N  N	(Win95)
- 0000h	ESI			IrDA Infrared ESI framer VxD
- 0000h	FILEMON		N  N	DOS386 File Monitor
- 0000h	FLS1MTD		N  N	(Win95) flash-memory driver???
- 0000h	FLS2MTD		N  N	(Win95) flash-memory driver???
- 0000h	HPEISA		N  N	(W4Wg)
- 0000h	HPFEND		N  N	(W4Wg)
- 0000h	HPISA		N  N	(W4Wg)
- 0000h	HPMCA		N  N	(W4Wg)
- 0000h	HSFLOP		N  N
- 0000h	IBMTOK		N  N	(W4Wg)
- 0000h	IBMTOK4		N  N	(Win95)
- 0000h	IRCOMM			IrDA Infrared Virtual COM/LPT driver
- 0000h	IRLAMPEX		IrDA Infrared Protocol VxD
- 0000h	IRLAPFRM		IrDA Infrared Virtual COM/LPT frame driver
- 0000h	IRMATRAK	N  N	(W4Wg)
- 0000h	JAVASUP		N  N	Internet Explorer JAVA support
- 0000h	KEYREMAP	N  N	(Windows95 PowerToys) shift-key remapper
- 0000h	LPT	     N	N  N	(Win4Workgroups 3.11) DOS386 LPT Device
- 0000h	LPTENUM		N  N
- 0000h	MONVSD
- 0000h	MGA		N  N	(Win95) Matrox MGA display driver
- 0000h	MSMINI		N  N	(Win95)
- 0000h	MSODISUP     N	N  N	(Win4Workgroups 3.11) MS ODI Support
- 0000h	mvpas		N  N	(Win95) Pro Audio Spectrum driver
- 0000h	NECATAPI	N  N	(Win95)
- 0000h	NICE		N  N	(Win95)
- 0000h	NV3		N  N	(Win95SR2)
- 0000h	NWNBLINK     N	N  N	(Win4Workgroups 3.11) Netware NetBIOS
- 0000h	OAK		N  N	(Win95) Oak Tech display driver
- 0000h	OCTK32		N  N	(W4Wg)
- 0000h	OTCETH		N  N	(W4Wg)
- 0000h	PARALINK	N  N	(Win95)
- 0000h	PARALLAX		IrDA Infrared Parallax framer VxD
- 0000h	PCNTN3		N  N	(W4Wg)
- 0000h	PE3NDIS		N  N	(W4Wg)
- 0000h	PPM		N  N	(Win95)
- 0000h	PROTEON		N  N	(W4Wg)
- 0000h	QEMMFix		N  N
- 0000h	QIC117		N  N	(Win95) QIC-117 floppy-ctrl tape drive
- 0000h	QPI		N  N	QEMM Programming Interface (see INT 67/AH=3Fh)
- 0000h	RMM		N  N	Real-Mode Mapper for hw with real-mode drivers
- 0000h	S3		N  N	(Win95) S3 display driver
- 0000h	S3INFO		N  N
- 0000h	S3MINI		N  N	S3 display driver
- 0000h	SAGE		N  N	(Plus!) System Agent
- 0000h	scsi1hlp	N  N	(Win95)
- 0000h	SERENUM		N  N
- 0000h	SERIAL	     N	N  N	(Win4Workgroups 3.11) DOS386 Serial Device
- 0000h	SERWAVE		N  N
- 0000h	SETP3		N  N	(Win95) Silicon Ethernet Pocket Adapter
- 0000h	SMARTVSD	N  N	(EZ-SMART???)
- 0000h	SMC8000W	N  N	(W4Wg)
- 0000h	SMC80PC		N  N	(W4Wg)
- 0000h	SMC8100W	N  N	(W4Wg)
- 0000h	SMC8232W	N  N	(W4Wg)
- 0000h	SMC9000		N  N	(W4Wg)
- 0000h	SNIP		N  N	(W4Wg)
- 0000h	SOCKET		N  N	(W4Wg)
- 0000h	SOCKETSV	N  N	(Win95)
- 0000h	SPAP		Y  Y	(Win95)
- 0000h	SPENDIS		N  N	(Win95)
- 0000h	SRAMMTD		N  N	(Win95) flash-memory driver???
- 0000h	STLTH64		N  N	Diamond Stealth64 driver
- 0000h	STLTHMON	N  N
- 0000h	T20N3		N  N	(W4Wg)
- 0000h	T30N3		N  N	(W4Wg)
- 0000h	TCTOK		N  N	(W4Wg)
- 0000h	TSENG		N  N	(Win95) Tseng Labs display driver
- 0000h	UBNEI		N  N	(W4Wg)
- 0000h	UNIMODEM		(Win95) Universal Modem Driver
- 0000h	VDEF		N  N	(Win95)
- 0000h	VGATEWAY	N  Y	(Win95) dialin gateway
- 0000h	VIDEO7		N  N	(Win95) Video7 display driver
- 0000h	VRomD		N  N	(Win95)
- 0000h	VStDspcD		Quarterdeck Stealth D*Space
- 0000h	VXDMON
- 0000h	WD		N  N	(Win95)
- 0000h	WINTOP		N  N	(Windows95 Power Toys)
- 0000h	WSHTCP		N  N
- 0000h	XGA		N  N	(Win95) XGA display driver
- 0001h	VMM		N  N	Virtual Machine Manager
- 0001h	VMM		Y  Y	Windows95 Virtual Machine Manager
- 0002h	Debug
- 0003h	VPICD		Y  Y	Virtual Prog. Interrupt Controller (PIC) Device
- 0004h	VDMAD		N  N	Virtual Direct Memory Access (DMA) Device
- 0005h	VTD		Y  Y	Virtual Timer Device
- 0006h	V86MMGR	     Y	N  N	(Windows3.x) Virtual 8086 Mode Device
- 0006h	V86MMGR		N  Y	(Win95) Virtual 8068 Mode Device
- 0007h	PageSwap	N  N	Paging Device
- 0008h	Parity		N  N	Parity-check trapper
- 0009h	Reboot		N  Y	Ctrl-Alt-Del handler
- 000Ah	VDD		N  Y	Virtual Display Device (GRABBER)
- 000Bh	VSD		N  N	Virtual Sound Device
- 000Ch	VMD	     Y	Y  Y	Virtual Mouse Device
- 000Dh	VKD		N  Y	Virtual Keyboard Device
- 000Eh	VCD		N  Y	Virtual COMM Device
- 000Fh	VPD		N  Y	Virtual Printer Device
- 0010h	VHD			Virtual Hard Disk Device (Windows 3.0)
- 0010h	BLOCKDEV     Y	N  N	Virtual Hard Disk Device (Windows 3.1)
- 0010h	IOS	     N	N  N	(Win4Workgroups 3.11) DOS386 IOS Device
- 0010h	IOS		Y  Y	Windows95 I/O Supervisor
- 0011h	VMCPD		Y  Y	(Windows3.x) Virtual Math CoProcessor Device
- 0011h	VMCPD		N  Y	(Win95) Virtual Math CoProcessor Device
- 0012h	EBIOS		N  N	Reserve EBIOS page (e.g., on PS/2)
- 0013h	BIOSXLAT	N  N	Map ROM BIOS API between prot & V86 mode
- 0014h	VNETBIOS     Y	N  N	Virtual NetBIOS Device
- 0015h	DOSMGR	     Y	Y  N	DOS data instancing (see #2520)
- 0016h	WINLOAD
- 0017h	SHELL		N  Y	(Windows3)
- 0017h	SHELL		Y  Y	(Win95)
- 0018h	VMPOLL	     Y	N  N
- 0019h	VPROD
- 001Ah	DOSNET		N  N	assures network integrity across VMs
- 001Ah	VNETWARE	Y  Y	Novell NetWare DOSNET replacement
- 001Bh	VFD		N  N	Virtual Floppy Device
- 001Ch	VDD2			Secondary display adapter
- 001Ch	LoadHi		N  N	Netroom LoadHi Device (RMLODHI.VXD)
- 001Ch	LoadHi		N  N	386MAX LoadHi Device (386MAX.VXD)
- 001Ch	LoadHi		N  N	Win386 LoadHi Device (EMM386.EXE)
- 001Dh	WINDEBUG	N  Y
- 001Dh	TDDebug		N  Y
- 001Eh	TSRLoad			TSR instance utility
- 001Fh	BiosHook		BIOS interrupt hooker VxD
- 0020h	Int13	     N	N  N
- 0021h	PageFile     Y	N  Y	Paging File device
- 0022h	SCSI
- 0022h	APIX		N  Y	(Win95)
- 0023h	MCA_POS			Microchannel Programmable Option Select
- 0024h	SCSIFD			SCSI FastDisk device
- 0025h	VPEND			Pen device
- 0026h	APM			Advanced Power Management
- 0026h	VPOWERD		Y  Y	(Win95) power management
- 0027h	VXDLDR	     N	Y  Y	(Win4Wg 3.11/Win95) VXD Loader
- 0028h	NDIS	     N	Y  Y	(Win4Wg 3.11) Network Driver Interface Spec
- 0029h	???
- 002Ah	VWIN32		N  Y	(Win95)
- 002Bh	VCOMM	     N	Y  Y	(Win4Workgroups 3.11) DOS386 VCOMM Device
- 002Ch	SPOOLER		N  N	Windows95 print spooler
- 002Dh	W32S	     Y	N  Y	WIN32s 32-bit extension to Windows API
- 002Eh	???
- 002Fh	???
- 0030h	MACH32	     N	N  Y	ATI Mach32 video card
- 0031h	NETBEUI	     N	N  N	(Win4Workgroups 3.11) NETBEUI
- 0032h	SERVER	     N	Y  Y	(Win4Workgroups 3.11) Int21 File Server
- 0032h	VSERVER		N  Y	(Win95) Int21 File Server
- 0033h	CONFIGMG	Y  Y	(Win95)
- 0033h	EDOS		N  N	Windows DOS Box Enhancer by Mom's Software
- 0034h	DWCFGMG.SYS	Y	DOS Plug-and-Play configuration manager
- 0035h	SCSIPORT	N  N	(Win95) virtualized access to SCSI adapter
- 0036h	VFBACKUP	Y  Y	(Win95)
- 0037h	ENABLE		Y  Y	(Win95)
- 0038h	VCOND		Y  Y	(Win95)
- 0039h	???
- 003Ah	VPMTD	     N	N  Y	(Win4Workgroups 3.11) IFAX Scheduler Device
- 003Bh	DSVXD		Y  N	DoubleSpace VxD from MS-DOS v6.x
- 003Ch	ISAPNP		N  N	(Win95)
- 003Dh	BIOS		Y  Y	(Win95)
- 003Eh	WSOCK		Y  Y	(Win95) WinSock
- 003Fh	WSIPX		N  N	(Win95) IPX WinSock
- 0040h	IFSMGR		N  N	(Win95)
- 0041h	VCDFSD		N  N	(Win95) CD-ROM File System Driver (MSCDEX)
- 0042h	MRCI2		N  N	(Win95) DriveSpace3
- 0043h	PCI		N  N	(Win95)
- 0048h	PERF		N  N	(Win95)
- 004Ah	MTRR		N  N	(Win95SR2) PPro/P-II MTRR enumerator???
- 004Bh	NTKERN		N  Y	(Win95SR2)
- 0051h	ISAPNP		N  N	(Win95) ISA Plug-and-Play manager
- 008Dh	ESDI_506	N  N	(Win95) MFM/RLL/ESDI disk driver
- 0090h	voltrack	N  N	(Win95) Volume Tracker
- 00FDh	FAKEIDE		N  N	(Chicago)
- 0102h	CV1		N  N	Microsoft C/C++ 7.00+ CodeView for Windows
- 011Fh	VFLATD		N  Y	(Win95)
- 0200h	VIPX		Y  Y	NetWare Virtual IPX Driver
- 0200h	VTEMPD			dummy template driver by Ray Patch
- 0201h	VNWLSERV	N  N	NetWare Lite 1.1 Server (SERVER.EXE)
- 0202h	WINICE		Y  Y	SoftICE/W
- 0202h	SICE		Y  Y
- 0203h	VCLIENT		N  Y	NetWare Lite 1.1+ Client
- 0205h	VCAFT		N  N	Novell Virtual CAFT Driver (LANalyzer for Win)
- 0205h	BCW		Y  Y	Nu-Mega Bounds Checker for Windows
- 0206h	VTXRX		N  N	Novell Virtual TXRX Driver (LANalyzer for Win)
- 0207h	DPMS	     N	Y  N	Novell DOS Protected Mode Services
- 0234h	VCOMMUTE	Y  Y	PC Tools Commute
- 0442h	VTDAPI		N  Y	MMSys Win386 VTAPI Device
- 0443h	???
- 0444h	VADMAD			Autoinitialize DMA (Windows 3.0)
- 0445h	VSBD		Y  Y	WinResKit: Sound Blaster Device
- 0446h	VADLIBD	     Y	Y  Y	MMSys Win386 AdLib Device (v3.x)
- 0447h	???
- 0448h	SETULTRA		Gravis UltraSound setup
- 0449h	vjoyd		N  Y	(Win95) joystick
- 044Ah	mmdevldr	Y  Y	(Win95)
- 044Bh	???
- 044Ch	msmpu401	N  N	(Win95) MPU-401 MIDI driver
- 044Ch	cwdmidi		Y  Y	(Crystal???) MIDI driver
- 044Dh	msopl		N  N	(Win95) OPL-3 (SoundBlaster FM) driver
- 044Eh	mssblst		N  N	(Win95) SoundBlaster MIDI driver
- 045Dh	VflatD		N  Y	dva.386, part of WIN32s
- 045Eh	???
- 045Fh	mssndsys		Microsoft Sound System audio driver
- 045Fh	azt16		Y  Y	Aztech Sound Galaxy 16 audio driver
- 0460h	UNIMODEM	N  Y	Universal Modem driver
- 0480h	VNetSup	     N	Y  Y	(Win4Workgrps 3.11) Virtual Network Support
- 0481h	VRedir	     N	N  N	(Win4Workgroups 3.11) Redirector File System
- 0481h	VREDIR		N  N	(Win95) Redirector File System driver
- 0482h	VBrowse		Y  Y	Win386 Virtual Browser
- 0482h	SNAPVXD		Y  Y	(Win95)
- 0483h	VSHARE		N  N	(Win4Workgroups) Virtual SHARE
- 0483h	VSHARE		Y  Y	(Win95) Virtual SHARE
- 0484h	IFSMgr	     Y	N  Y	(Win4Wg 3.11) Installable File System Manager
- 0485h	???			???
- 0486h	VFAT	     N	Y  Y	(Win4Workgroups 3.11) Win386 HPFS Driver
- 0487h	NWLINK		Y  Y	Win386 Virtual Packet Exchange Protocol
- 0487h	NWSUP	     Y	N  N	NetWare Vnetbios shim
- 0488h	VTDI		N  N	(Win95)
- 0489h	VIP		Y  N	(Win95)
- 0489h	FTCVIP		Y  Y	Frontier Technologies' VIP
- 048Ah	VTCP		Y
- 048Ah	MSTCP		Y  N	(Win95) TCP stack
- 048Ah	FTCTDI		Y  Y	Future Technologies' TCP stack
- 048Bh	VCache	     N	Y  Y	(Win4Workgroups 3.11) Virtual File Cache
- 048Bh	VCACHE		Y  Y	(Win95) disk cache
- 048Ch	???			???
- 048Dh	RASMAC		Y  Y	enhanced mode Win4Workgroups RASMAC device
- 048Eh	NWREDIR		Y  Y	(Win95)
- 048Fh	???			???
- 0490h	???			???
- 0491h	FILESEC			(Win95) File Access Control Manager
- 0492h	NWSERVER		(Win95)
- 0493h	SECPROV			(Win95) Security Provider
- 0494h	NSCL		Y  Y	(Win95)
- 0495h	AFVXD		N  N	(Win95)
- 0496h	NDIS2SUP		(W4Wg???)
- 0497h	MSODISUP	N  N	(W4Wg???)
- 0498h	Splitter	N  N	(Win95)
- 0499h	PPPMAC		Y  Y	(Win95)
- 049Ah	VDHCP		Y  Y	(Win95)
- 049Bh	VNBT		Y  Y	(Win95) NetBIOS-over-TCP/IP driver
- 049Ch	???
- 049Dh	LOGGER			(Win95)
- 04A2h	IRLAMP			IrDA Infrared Enumerator VxD
- 097Ch	PCCARD		N  Y	(Win95) (see INT 20/VxD=097Ch)
- 1020h	VCV			Microsoft C/C++ 7.00 CodeView
- 1021h	VMB		Y  Y	Microsoft C/C++ 7.00 WXSRVR
- 1022h	Vpfd		Y  Y	Microsoft C/C++ 7.00
- 1025h	MMD		Y  Y	Microsoft C/C++ 8.00, Visual C/C++ 1.00
- 2020h	PIPE		Y  Y	by Thomas W. Olson, in Windows/DOS DevJrn 5/92
- 21EAh	VADLIBWD	N  Y	Adlib Waveform Driver by John Ridges
- 2200h	VFINTD		Y  Y	Norton VFINTD (Norton Desktop)
- 22C0h	???	     Y		Rational Systems DOS/4GW ???
- 2402h	ZMAX		N  N	Qualitas 386MAX v7 DOSMAX handler
- 24A0h	VNSS		N  Y	Norton Screen Saver (Norton Desktop)
- 24A1h	VNDWD		Y  Y	Norton VNDWD Device (Norton Desktop)
- 24A2h	SYMEvent	Y  Y	Norton Utilities v8
- 2540h	VILD		Y  N	INTERLNK client from MS-DOS v6.x
- 2640h	VASBID		N  Y	WinResKit: Artisoft Sounding Board Device
- 2860h	COMMTASK     N	N  Y	Windows 386-mode preemptive tasker by James
-				  A. Kenemuth of Interabang Computing
- 28A0h	PHARLAPX	Y	PharLap inter-VM communications DLL
- 28A1h	PharLap	     Y	Y  Y	PharLap 386|DOS-Extender DOSXNT.386
- 28C0h	VXD	     N	Y  Y	Generic VxD for real and protected mode by
-				  Andrew Schulman in MSJ February 1993
- 28C1h	PUSHKEYS		VKD_Force_Keys device
- 28C2h	VCR3D			Virtual CR3, by A.Schulman in MSJ October 1992
- 2925h	EDOS		Y  Y	Enhanced DOS by Firefly Software
- 292Dh	VSBPD		Y  Y	Sound Blaster Pro
- 295Ah	GRVSULTR	Y  Y	Gravis UltraSound / UltraSound ACE
- 3048h	FTCTCPIP	N  Y	Frontier Technologies' TCP/IP stack
- 3049h	???			(called by FNFSC32.VXD, FrontierTech's VNFSD)
- 304Ch	DWCFGMG.SYS	Y	Plug-and-Play configuration access
- 3098h	VstlthD	     N	N  N	for QEMM Stealth ROM mode
- 3099h	VVidramD	Y  N	for QEMM VIDRAM support
- 30F6h	WSVV		N  Y	(Win95) WinSock for Voice-View Modems???
- 310Eh	WPS		N  Y	MS DevNet CD-ROM: Windows Process Status
- 3110h	VGSSD		Y  Y	VSGLX16.386 for Aztech Sound Galaxy 16
- 313Bh	PMC			Power Management Coordinator
- 318Ah	LMOUSE		Y  Y	(Win95) Logitech mouse???
- 31CFh	STAT.386		Ton Plooy's processor statistics VxD
- 3202h	VdspD		N  N	(Win95)
- 3203h	vpasd		N  N	(Win95) Pro Audio Spectrum driver
- 32A4h	SBAWE		Y  Y	(Win95) SoundBlaster AWE driver
- 32A5h	VSB16		N  N	(Win95) SoundBlaster 16 driver
- 32CBh	VFRAD		Y  Y	Dr.Franz - Simultan's diagnotics VFRAD.386
- 32DCh	NV3RM		N  Y	(Win95SR2)
- 3354h	Discover	N  Y	(Nuts&Bolts) Discover
- 33AAh	DECCORE		Y  Y	(Win95) DEC Pathworks core VxD
- 33B4h	DECLICL		N  N	(Win95)
- 33F0h	VIWD		Y  Y	Gravis UltraSound Plug-n-Play Interwave v1.x
- 33FCh	ASPIENUM	N  N	(Win95)
- 34DCh	MAGNARAM	N  Y	Quarterdeck MagnaRAM (MAGNA31.VXD/MAGNA95.VXD)
- 357Eh	DSOUND		Y  Y	(Win95) DirectSound
- 3584h	VSNDSYS		Y  Y	(Win95SR2)
- 35C5h	LUGEPS		Y  Y	Lugaru's Epsilon editor
- 36AEh	AIB-PC.386	Y  Y	Sunset Laboratory interface hardware driver
- 377Bh	MX1501HAD		Cherry keyboard chipcard reader
- 38BEh	Vheapx		N  Y	(Nuts&Bolts) Virtual Heap Expander
- 38C0h	Bombshel	N  Y	(Nuts&Bolts) Bombshelter
- 38DAh	VIWD		Y  Y	UltraSond PnP InterWave driver v2.0beta
- 39E6h	A3D		N  N	(Win95SR2)
- 3BFCh	CWCSPUD		N  N	(Win95SR2)
- 3BFDh	CWCPROXY	N  N	(Win95SR2)
- 3BFEh	CWCMMSYS	N  Y	(Win95SR2)
- 3BFFh	CWCDSND		N  N	(Win95SR2)
- 3C78h	VGARTD		N  N	(Win95SR2)
- 4321h	POSTMSG		Y  Y	(see #2576)
- 4321h	VPCD		N  N	PCache
- 4321h	avvxp500	N  N	(Win95) VxP500 driver
- 6001h	REGVXD		Y  Y	Windows95 Registry Monitor helper
- 7A5Fh	SIWVID	     Y	Y  Y	Soft-ICE for Windows video driver
- 7FE0h	VSWITCHD	Y  N	by Jeff Prosise
- 7FE0h	VWFD	     N	Y  Y	reports windowed/fullscreen state; by Neil
-				  Sandlin of Microsoft, shipped with ANSIPLUS
- 7FE1h	VWATCHD	     N	Y  Y	basic driver w/ no functionality except tracing
-				  by Keith Jin of Microsoft PSS
- 7FE5h	VFINTD	     N	Y  Y	Virtual Floppy Interrupt trapper by Neil
-				  Sandlin of Microsoft
- 7FE7h	VMPAGES	     N	Y  Y	demonstration of exporting VxD services, by
-				  Neil Sandlin of Microsoft
- 7FE8h	VPOSTD		Y  Y	PostMessage() demo by Curtis J. Palmer of MS
- 7FE9h	VIdleD	     N	N  N	demonstration of Call_When_Idle function, by
-				  Bernie McIlroy of Microsoft
- 7FEBh	VMIOD	     N	N  N	Virtual Monitor I/O Traffic Device, by Neil
-				  Sandlin of Microsoft
- 7FEDh	VMIRQD	     N	N  N	Virtual Monitor IRQ Traffic Device, by Neil
-				  Sandlin of Microsoft
- 8888h	VbillD			Bill Potvin II's for reversing Compaq LTE video
- EEEEh	VEPSD		N  N	Virtual Extended Paging Services for
-				  Borland C++ v4.0
-Notes:	The high bit of the VxD ID is reserved for future use. Originally,
-	  the next 10 bits were the OEM number which was assigned by Microsoft,
-	  and the low 5 bits were the device number.  Currently, Microsoft
-	  assigns VxD IDs individually for each driver; send blank email to
-	  vxdid@microsoft.com for more information.
-	"CallOut"=Y indicates that the VxD uses the INT 2F/AX=1607h/BX=VxDID
-	  device callout interface; "PM" and "V86" indicate whether the VxD
-	  provides an API entry point in protected mode and Virtual-86 mode
-	  (e.g. DOS boxes)
---------W-2F1684BX0001-----------------------
-INT 2F - MS Windows95 - VMM - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0001h (virtual device ID for VMM) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2507)
-		  0000h:0000h if the VxD does not support an API
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2507)
-Call Windows VMM 16-bit entry point with:
-	AX = function number
-	    ---registry functions---
-	    0100h "RegOpenKey"
-		STACK:	DWORD	-> DWORD for returned key handle
-			DWORD	-> ASCIZ registry key name
-			DWORD	HKEY (see #2508)
-	    0101h "RegCreateKey"
-		STACK:	DWORD	-> DWORD for returned key handle
-			DWORD	-> ASCIZ registry key name
-			DWORD	HKEY (see #2508)
-	    0102h "RegCloseKey"
-		STACK:	DWORD	key handle from RegOpenKey or RegCreateKey
-	    0103h "RegDeleteKey"
-		STACK:	DWORD	-> ASCIZ registry key name
-			DWORD	HKEY (see #2508)
-	    0104h "RegSetValue"
-		STACK:	DWORD	???
-			DWORD	-> ???
-			DWORD	???
-			DWORD	-> ???
-			DWORD	HKEY (see #2508)
-	    0105h "RegQueryValue"
-		STACK:	DWORD	-> DWORD for ???
-			DWORD	-> ASCIZ ???
-			DWORD	-> ASCIZ ???
-			DWORD	HKEY (see #2508)
-	    0106h "RegEnumKey"
-		STACK:	DWORD	???
-			DWORD	-> ASCIZ ???
-			DWORD	???
-			DWORD	HKEY (see #2508)
-	    0107h "RegDeleteValue"
-	    0108h "RegEnumValue"
-		STACK:	DWORD	-> DWORD for ???
-			DWORD	-> BYTE ???
-			DWORD	-> DWORD for ???
-			DWORD	-> DWORD for ???
-			DWORD	-> DWORD for ???
-			DWORD	-> ASCIZ ???
-			DWORD	???
-			DWORD	HKEY (see #2508)
-	    0109h "RegQueryValueEx"
-	    010Ah "RegSetValueEx"
-	    010Bh "RegFlushKey"
-	    010Ch "RegLoadKey"
-	    010Dh "RegUnLoadKey"
-	    010Eh "RegSaveKey"
-	    010Fh "RegRestore"
-	    0110h "RegRemapPreDefKey"
-Return: parameters popped from stack
-	DX:AX = return value
-
-(Table 2508)
-Values for Windows95 VMM predefined HKEY values:
- 80000000h	HKEY_CLASSES_ROOT
- 80000001h	HKEY_CURRENT_USER
- 80000002h	HKEY_LOCAL_MACHINE
- 80000003h	HKEY_USERS
- 80000004h	HKEY_PERFORMANCE_DATA
- 80000005h	HKEY_CURRENT_CONFIG
- 80000006h	HKEY_DYN_DATA
-SeeAlso: #2507
---------W-2F1684BX0003-----------------------
-INT 2F - MS Windows - VPICD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0003h (virtual device ID for VPICD device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2509)
-		  0000h:0000h if the VxD does not support an API
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2509)
-Call VPICD API entry point with:
-	EAX = function number
-	    0000h get version
-		Return: AX = binary version (AH=major, AL=minor)
-	    0001h virtualize timer???
-	    0002h unvirtualize timer???
---------W-2F1684BX0005-----------------------
-INT 2F - MS Windows - VTD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0005h (virtual device ID for VTD device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2510)
-		  0000h:0000h if the VxD does not support an API
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2510)
-Call VTD.386/VTD.VXD entry point with:
-	AX = function number
-	    0000h get VTD version number
-		Return: CF clear
-			AH = major version
-			AL = minor version
-	    0100h get current clock tick time
-		Return: EDX:EAX = clock tick time in 840ns units since Windows
-				  was started
-	    0101h get current system time in milliseconds
-		Return: EAX = time in milliseconds that Windows has been
-				  running
-	    0102h get current virtual machine time
-		Return: EAX = cumulative amount of time the virtual machine has
-				  been active, in milliseconds
-Note:	this entry point should only be called directly when TOOLHELP.DLL
-	  TimerCount() cannot be called
-SeeAlso: #1133,#1135,#1134 at INT 20"Windows"
---------W-2F1684BX0006-----------------------
-INT 2F P - MS Windows95 - V86MMGR - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0006h (virtual device ID for V86MMGR device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2511)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2511)
-Call V86MMGR entry point with:
-	EAX = function number
-	    0000h get V86MMGR version
-		Return: CF clear
-			AH = major version
-			AL = minor version
-	    0001h get ???
-		Return: CF clear
-			EAX = status bits
-				bit 0: ???
-				bit 1: ???
-				bit 2: ???
-				bit 3: ???
-				bit 4: ???
-	    else
-		Return: CF set
---------W-2F1684BX0009-----------------------
-INT 2F P - MS Windows - REBOOT - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0009h (virtual device ID for REBOOT device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2512)
-		  0000h:0000h if the VxD does not support an API
-SeeAlso: INT 14/AH=17h"FOSSIL",INT 16/AX=E0FFh
-
-(Table 2512)
-Call REBOOT protected-mode entry point with:
-	AX = function
-	    0100h warm boot
-		Return: never
-		Note:	broadcasts "Reboot_Processor" message, which is caught
-			  by the VKD device
-	    0201h set KERNEL Ctrl-Alt-Del handler
-		ES:DI -> new Ctrl-Alt-Del handler
-		DS:SI -> KERNEL reboot sanity check byte
-		Return: CF clear
-		Notes:	if an application installs its own handler and then
-			  chains to Windows' handler, Windows will no longer
-			  be able to detect hung applications, and will always
-			  produce an "Application not responding" dialog
-			DS must contain a writable, fixed selector because
-			  the provided address is converted to a linear address
-			  before being stored
-			when Ctrl-Alt-Del is pressed in the system VM, Reboot
-			  sets the sanity check byte to zero, schedules a
-			  750ms wait, and then tests whether the check byte is
-			  still zero; if not, it displays a message that there
-			  is no hung application and then exits
-	    0202h get KERNEL Ctrl-Alt-Del handler
-		Return: CF clear
-			ES:DI -> current Ctrl-Alt-Del handler
-		Note:	the default handler is located in KERNEL
-	    0203h display "Application not responding" dialog box
-		ES:DI -> ASCIZ name of hung application
-		Return: never if user pressed Ctrl-Alt-Del a second time
-			CF clear
-			AX = result
-			    0000h user pressed Esc
-			    0001h user pressed Enter
-		Note:	this function is used by the default Windows
-			  Ctrl-Alt-Del handler
-	    0204h set/reset protected-mode INT 01 handler
-		CX:EDX -> new protected-mode INT 01 handler
-		CX = 0000h restore protected-mode INT 01 handler
-		Return: CF clear
-		Notes:	if CX is nonzero, the current handler address is saved
-			  internally before the new handler is set; this saved
-			  address is then used when CX is zero on entry
-			used by Windows' default Ctrl-Alt-Del handler; actual
-			  fatal exit to DOS will be done on next INT 01
-		Warning: opened files are not closed and remain open as
-			  orphaned files in DOS
-Note:	functions 0201h and 0203h are not useful outside the system VM
-SeeAlso: #1136,#1138
---------W-2F1684BX000A-----------------------
-INT 2F P - MS Windows - VDD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 000Ah (virtual device ID for VDD device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2513)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2513)
-Call VDD entry point with:
-	EAX = function
-	    0000h get VDD version
-		Return: CF clear
-			AH = major version
-			AL = minor version
-		Note:	also performs an internal initialization
-	    0001h ???
-		Return: ECX = ???
-			???
-	    0002h
-	    0003h
-	    0004h
-	    0005h
-	    0006h
-	    0007h
-	    0008h
-	    0009h
-	    0080h
-	    0081h
-	    0082h
-	    0083h
-	    0084h
-	    0085h
-	    0086h
-	    0087h
-	    0088h
-	    0089h
-	    else
-		Return: nothing
---------W-2F1684BX000C-----------------------
-INT 2F - MS Windows - VMD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 000Ch (virtual device ID for VMD device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2514)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2514)
-Call VMOUSE entry point with:
-	EAX = function number
-	    0000h get VMOUSE version
-		Return: CF clear
-			AH = major version
-			AL = minor version
-	    0001h
-		EBX = ???
-		ECX = ???
-		Return: CF clear if successful
-			CF set on error (e.g. fn 0003h not yet called)
-	    0002h ??? (calls "test system VM handle")
-		Return: CF clear if successful (in system VM)
-			CF set on error
-	    0003h ???
-		ECX = ???
-		DX = ???
-		Return: CF clear
-	    0004h ???
-		Note: invokes Call_Priority_VM_Event
-	    0005h get mouse port data
-		Return: CF clear
-			AL = ??? (04h)
-			AH = mouse IRQ interrupt number (IRQ4=0Ch,etc.)
-			CX = mouse I/O port address (e.g. 03F8h)
-			DX = COM port number??? (0001h for mouse on COM1)
-	    0100h NOP???
-		Return: CF clear
-	    0101h init???
-		Return: CF clear
-		Note:	appears to be the same as fn 0005h, but returns no data
-	    0102h unimplemented
-		Return: CF set
-	    0103h check ???
-		Return: AX = status (0000h/0001h)
-		Note:	checks flag set by fn 0003h
-	    else
-		Return: CF set
-SeeAlso: #2513,#2515
---------W-2F1684BX000D-----------------------
-INT 2F P - MS Windows - VKD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 000Dh (virtual device ID for VKD device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2515)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2515)
-Call VKD entry point with:
-	EAX = function
-	    0000h get VKD version
-		Return: CF clear
-			AH = major version
-			AL = minor version
-	    0001h ???
-		EBX = VM handle or 00000000h to use ??? VM handle
-		CH = ???
-		CL = ???
-		EDX = ??? or FFFFFFFFh
-		Return: CF clear if successful
-			CF set on error
-	    else
-		Return: CF set
-SeeAlso: #2514,#2516
---------W-2F1684BX000E-----------------------
-INT 2F P - MS Windows - VCD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 000Eh (virtual device ID for VCD device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2516)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2516)
-Call VCD entry point with:
-	EDX = function number
-	    0000h get VCD version
-		Return: CF clear
-			AH = major version
-			AL = minor version
-	    0001h get ???
-		Return: CF clear
-			AX = bit mask of ???
-	    0002h get ???
-		CX = COM port number
-		Return: CF clear
-			DX:AX -> ???
-	    0003h set ???
-		CX = COM port number
-		DX:AX -> new ???
-		Return: CF clear
-	    0004h acquire COM port
-		AX = ???
-		CX = COM port number
-		Return: CF clear
-			AX = ???
-			EBX = ???
-			DX = ???
-	    0005h release COM port
-		CX = COM port number
-		Return: CF clear
-	    0006h ???
-		Return: CF set
-			AL = 00h
-	    else
-		Return: CF set
-			EAX = FFFFFFFFh
-Note:	these functions are apparently only available from the system VM,
-	  returning CF set and EAX=FFFFFFFFh otherwise
-SeeAlso: #2515,#2517
---------W-2F1684BX000F-----------------------
-INT 2F P - MS Windows - VPD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 000Fh (virtual device ID for VPD device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2517)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2517)
-Call VPD entry point with:
-	EDX = function number
-	    0000h get VPD version
-		Return: CF clear
-			AH = major version
-			AL = minor version
-			DX = ??? (CB01h)
-	    0001h get valid??? printers
-		Return: CF clear
-			AX = bitmask of ??? printers (bits 0-2)
-	    0002h get ??? for printer
-		CX = printer port (0-2)
-		Return: CF clear if successful
-			    BX:AX = ???
-			CF set on error (invalid port number)
-	    0003h set ??? for printer
-		CX = printer port (0-2)
-		BX:AX = ???
-		Return:	CF clear if successful
-			CF set on error (invalid port number)
-	    0004h ???
-		CX = printer port (0-2)
-		EAX = VM handle
-		Return:	CF clear if successful
-			CF set on error (invalid port number)
-	    0005h ???
-		CX = printer port (0-2)
-		EAX = VM handle
-		Return:	CF clear if successful
-			CF set on error (invalid port number or ???)
-	    0006h-000Eh unused
-		Return: CF set
-	    000Fh ???
-		CX = printer port (0-2)
-		AX = ???
-		Return:	CF clear if successful
-			CF set on error (e.g. invalid port number)
-	    0010h ???
-		CX = printer port (0-2)
-		Return:	CF clear if successful
-			CF set on error (e.g. invalid port number)
-	    0011h ???
-		CX = printer port (0-2)
-		Return:	CF clear if successful
-			CF set on error (e.g. invalid port number)
-	    0012h get port status
-		CX = printer port (0-2)
-		Return:	CF clear if successful
-			    AX = port status (see #P406 at PORT 03BCh"LPT")
-			CF set on error (e.g. invalid port number)
-	    else
-		Return: CF set
-Note:	these functions are apparently only available from the system VM,
-	  returning CF set
-SeeAlso: #2516,#2518
---------W-2F1684BX0010-----------------------
-INT 2F - MS Windows - IOS - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0010h (virtual device ID for IOS device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2518)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2518)
-Call IOS entry point with:
-	EAX = function number
-	    0000h ???
-		Return: CF clear if successful
-			    AX = 0000h
-			CF set on error
-			    AX = FFFFh
-	    0001h check if ???
-		Return: CF clear if successful
-			    AX = 0000h
-			CF set on error
-			    AX = FFFFh
-	    0002h requestor services???
-		DL = service number???
-		Return: CF clear if successful
-			    AX = 0000h
-			    DX = ???
-			CF set on error
-			    AX = FFFFh
-		Note:	calls "IOS_Requestor_Service" (see INT 20"Windows")
-	    0003h ??? (copies five bytes of data internally)
-		Return: CF clear if successful
-			    AX = 0000h
-			    EDX = ???
-			CF set on error
-			    AX = FFFFh
-	    else
-		Return: CF set
-			AX = FFFFh
-SeeAlso: #2517,#2519
---------W-2F1684BX0011-----------------------
-INT 2F - MS Windows - VMCPD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0011h (virtual device ID for VMCPD device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2519)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2519)
-Call Windows95 VMCPD protected-mode entry point with:
-	EAX = function number
-	    0000h get VMCPD version
-		Return: CF clear
-			AH = major version
-			AL = minor version
-	    0001h get ??? flags
-		Return: CF clear
-			AX = ??? flags
-			    bit 0: ???
-			    bit 1: ???
-			    bit 2: ???
-			    bit 3: ???
-	    else
-		Return: CF set
-SeeAlso: #2518,#2520
---------W-2F1684BX0015-----------------------
-INT 2F - MS Windows - DOSMGR - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0015h (virtual device ID for DOSMGR device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2520,#1147)
-		  0000h:0000h if the VxD does not support an API
-SeeAlso: #1147 at INT 20"Windows"
-
-(Table 2520)
-Call DOSMGR entry point with:
-	AX = 0000h get DOSMGR version
-	    Return: CF clear
-		    AX = version (AH = major, AL = minor)
-	AX = 0001h set critical focus
-	    Return: CF clear
-	AX = 0002h crash current virtual machine
-	    Return: never
-	    Note:   displays message box stating that "application has been
-		      stopped by the DOSMGR device"
-	AX = 0003h enter critical section
-	    Note:   this function assumes that the code for INT 2A/AX=8001h
-		      and INT 2A/AX=8002h have been modified for Windows
-	AX = 0004h get VM ID byte
-	    Return: CF clear if successful
-			ES:DI -> VM ID byte
-		    CF set on error
-	    Note:   this function fails if the INT 2A modifications have not
-		      yet been applied
-	AX = 0005h inform Windows of possible media change
-	    BL = drive number (00h=A:)
-	    Return: CF clear if successful
-		    CF set on error
-SeeAlso: #1147 at INT 20"Windows",#2519,#2521
---------W-2F1684BX0017-----------------------
-INT 2F U - MS Windows - SHELL - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0017h (virtual device ID for SHELL device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2521)
-		  0000h:0000h if the VxD does not support an API
-SeeAlso: AX=1684h/BX=0021h,#1148 at INT 20"Windows"
-
-(Table 2521)
-Call SHELL entry point with:
-	EDX = function number (0000h-0027h,0100h-0108h, mostly unknown)
-	    0000h get version number
-		Return: AX = version number
-			EBX = system VM handle
-	    0001h "SHELL_Get_SYSVM_Info" get system VM information
-		Return: CF clear
-			AX bit 0 set if system VM executing exclusively
-			BX = background time slice priority
-			CX = foreground time slice priority
-			SI = minimum time slice in milliseconds
-	    0002h "SHELL_Set_SYSVM_Info" set system VM information
-		AX bit 0 set if system VM should execute exclusively (ignored?)
-		BX = background time slice priority (1-10000)
-		CX = foreground time slice priority (1-10000)
-		SI = minimum time slice in milliseconds (1-10000)
-		Return: CF clear if successful
-	    0003h "SHELL_Crt_VM" create a virtual machine
-		ES:EDI -> SEB structure (see #2522)
-		Return: CF clear if successful
-			   EAX = VM handle
-			CF set on error
-			   EDX,EAX = result from GetSetDetailedVMError()
-	    0004h "SHELL_Destroy_VM" destroy a virtual machine
-		EBX = VM handle (not system VM)
-		Return: nothing
-	    0005h "SHELL_Set_Focus"
-		EBX = VM handle
-		ECX = ???
-		Return: nothing
-	    0006h "SHELL_Get_VM_State"
-		EBX = VM handle (not system VM)
-		ES:EDI -> ??? structure
-		Return: CF clear if successful
-	    0007h "SHELL_Set_VM_State"
-		EBX = VM handle (not system VM)
-		ES:EDI -> ??? structure
-	    0008h "SHELL_Debug_Out"
-		???
-		Return: ???
-		Note:	dummy function in retail version of MS Windows
-	    0009h "SHELL_VMDA_Init"
-		???
-		Return: ???
-	    000Ah "SHELL_VMDA_Exit"
-		???
-		Return: ???
-	    000Bh "SHELL_Get_Message_Txt"
-		???
-		Return: ???
-	    000Ch "SHELL_Event_Complete"
-		???
-		Return: ???
-	    000Dh "SHELL_Get_Contention_Info"
-		???
-		Return: ???
-	    000Eh "SHELL_Get_Clip_Info"
-		???
-		Return: ???
-	    000Fh "SHELL_Set_Paste"
-		???
-		Return: ???
-	    0010h "SHELL_Switcher_Assist"
-		???
-		Return: ???
-	    0011h "SHELL_Get_FileSysChng"
-		???
-		Return: ???
-	    0012h "SHELL_Query_Destroy"
-		???
-		Return: ???
-	    0013h "SHELL_SetFocus_Cur_VM" set input focus to current VM
-		???
-		Return: ???
-	    0014h "SHELL_User_Busy_API"
-		???
-		Return: ???
-	    0015h "SHELL_Chng_Hot_Key"
-		???
-		Return: ???
-	    0016h "SHELL_Get_TermInfo"
-		???
-		Return: ???
-	    ---Windows95---
-	    0017h ???
-	    0018h ???
-	    0019h ???
-	    001Ah ???
-	    001Bh ???
-	    001Ch ???
-	    001Dh ???
-	    001Eh ???
-	    001Fh ???
-	    0020h ???
-	    0021h ???
-	    0022h ???
-	    0023h ???
-	    0024h ???
-	    0025h ???
-	    0026h ???
-		Note:	makes VxDCALL 00178002h (see INT 20"Windows")
-	    0027h ???
-	    0100h get ??? version
-		Return: AX = version??? (0400h for Windows95)
-	    0101h not implemented
-		Return: CF set
-			EAX = FFFFFFFFh
-	    0102h not implemented
-		Return: CF set
-			EAX = FFFFFFFFh
-	    0103h not implemented
-		Return: CF set
-			EAX = FFFFFFFFh
-	    0104h ???
-	    0105h ???
-	    0106h ???
-		???
-		Return: CF clear if successful
-			CF set on error
-	    0107h get SDK version for VxD
-		AX = VxD identifier
-		Return: EAX = VxD ID (high word) and SDK version (low)
-			    00000000h if no such VxD loaded
-		Note:	makes a VMMCALL 0001013Fh (see INT 20"Windows")
-			  followed by ???
-	    0108h ???
-Return: CF set if called from VM other than system VM
-	    EAX = FFFFFFFFh
-Note:	except for functions 0013h,0026h,and 010xh, this API may only be
-	  called from the system VM
-SeeAlso: #1148 at INT 20"Windows"
-
-Format of Shell Execution Block (SEB):
-Offset	Size	Description	(Table 2522)
- 00h	DWORD	PIF flags (see #2523)
- 04h	DWORD	display flags (see #2524)
- 08h	PWORD	-> pathname of .EXE to run
- 0Eh	PWORD	-> argument list
- 14h	PWORD	-> working drive/directory
- 1Ah	WORD	desired number of V86 pages for virtual machine
- 1Ch	WORD	minimum number of V86 pages for VM
- 1Eh	WORD	foreground priority
- 20h	WORD	background priority
- 22h	WORD	maximum KB of EMS
- 24h	WORD	minimum KB of EMS
- 26h	WORD	maximum KB of XMS
- 28h	WORD	minimum KB of XMS
- 2Ah	WORD	maximum KB of DPMI???
- 2Ch	WORD	minimum KB of DPMI???
- 2Eh 128 BYTEs	title
-Note:	the PWORDs at offsets 08h,0Eh, and 14h consist of a DWORD offset
-	  followed by a WORD selector
-
-Bitfields for 386 Enhanced Mode PIF flags:
-Bit(s)	Description	(Table 2523)
- 0	exclusive use of processor when VM is fullscreen
- 1	VM runs in background
- 2	VM runs in window
- 3-4	???
- 5	Alt-Tab reserved
- 6	Alt-Esc reserved
- 7	Alt-Space reserved
- 8	Alt-Enter reserved
- 9	Alt-PrtSc reserved
- 10	PrtSc reserved
- 11	Ctrl-Esc reserved
- 12	VM will release idle time slice
- 13	VM not allowed to use high memory
- 14	???
- 15	VM expanded memory not pageable
- 16	VM extended memory not pageable
- 17	Fast paste from clipboard enabled
- 18	VM application memory not pageable
- 30	Close VM when application exits
-SeeAlso: #2522,#2524
-
-Bitfields for SHELL display options:
-Bit(s)	Description	(Table 2524)
- 0	emulate text mode
- 1	monitor text port
- 2	monitor low graphics port
- 3	monitor high graphics port
- 7	Retain video memory
-SeeAlso: #2522,#2523
---------W-2F1684BX001A-----------------------
-INT 2F - MS Windows - VNETWARE - GET API ENTRY POINT
-	AX = 1684h
-	BX = 001Ah (virtual device ID for VNETWARE device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX001D-----------------------
-INT 2F P - MS Windows - WINDEBUG - GET API ENTRY POINT
-	AX = 1684h
-	BX = 001Dh (virtual device ID for WINDEBUG device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX0021-----------------------
-INT 2F PU - MS Windows - PAGEFILE - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0021h (virtual device ID for PAGEFILE device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2525)
-		  0000h:0000h if the VxD does not support an API
-SeeAlso: AX=1684h/BX=0017h,#1154 at INT 20"Windows"
-
-(Table 2525)
-Call PAGEFILE entry point with:
-	AX = function
-	    0000h get version
-		Return: CF clear
-			AX = version (AH = major, AL = minor)
-	    0001h get swap file info
-		DS:SI -> 128-byte buffer for swap file full pathname
-		DS:DI -> 128-byte buffer for SPART.PAR full pathname
-		Return: CF clear
-			AL = pager type (see #2526)
-			AH = flags
-			    bit 7: swap file corrupted
-			ECX = maximum size of swap file
-			DS:SI buffer filled if paging enabled
-			DS:DI buffer filled if permanent swap file
-	    0002h delete permanent swap file on exit
-		Return: CF clear
-	    0003h get current temporary swap file size
-		Return: CF clear
-			DX:AX = current swap file size in bytes
-				0000h:0000h if permanent swap file
-Note:	this API is only available in protected mode, and may only be called
-	  from the system VM
-SeeAlso: #1154 at INT 20"Windows",#2527
-
-(Table 2526)
-Values for MS Windows PAGEFILE pager type:
- 00h	paging disabled
- 01h	MSDOS
- 02h	BIOS
- 03h	32-bit disk access
-SeeAlso: #2525
---------W-2F1684BX0022-----------------------
-INT 2F P - MS Windows - APIX - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0022h (virtual device ID for APIX device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2527)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2527)
-Call APIX protected-mode entry point with:
-	AH = function number
-	    00h get APIX version
-		Return: CF clear
-			AH = major version
-			AL = minor version
-	    01h ???
-		Return: CF clear
-			AX = number of ???
-	    02h NOP
-		Return: CF clear
-	    03h ???
-		Return: CF clear
-			AX = 0000h/FFFFh
-	    else
-		Return: CF clear (bug?)
-SeeAlso: #2525,#2530
---------W-2F1684BX0026-----------------------
-INT 2F P - MS Windows - VPOWERD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0026h (virtual device ID for VPOWERD device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2528)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2528)
-Call VPOWERD.VXD entry point with:
-	AX = function number
-	    0000h get VPOWERD version
-		Return: DX = 0000h
-			AX = version (AH = major, AL = minor)
-	    0001h get APM BIOS version
-		Return: DX:AX = APM BIOS version
-	    0002h get current power management level
-		Return: DX:AX = power management level
-	    0003h enable/disable power management (see INT 15/AX=5308h)
-		??? = new state of power management
-		Return: DX:AX = 0000h:0000h if successful
-			   else error code (see #2529)
-	    0004h set power state (see INT 15/AX=5307h)
-		Return: DX:AX = 0000h:0000h if successful
-			   else error code (see #2529)
-	    0005h set system power status
-		Return: DX:AX = 0000h:0000h if successful
-			   else error code (see #2529)
-	    0006h restore APM power-on defaults (see INT 15/AX=5309h)
-		Return: DX:AX = 0000h:0000h if successful
-			   else error code (see #2529)
-	    0007h get power status (see INT 15/AX=530Ah)
-		Return: ???
-	    0008h get APM 1.1 power state (see INT 15/AX=530Ch)
-		Return: ???
-	    0009h invoke OEM APM function
-		??? -> buffer containing parameters for INT 15/AX=5380h
-		Return: DX:AX = 0000h:0000h or error code (see #2529)
-			buffer updated if successful
-	    000Ah register power handler
-		???
-		Return: DX:AX = 0000h:0000h or error code
-	    000Bh deregister power handler
-		???
-		Return: DX:AX = 0000h:0000h or error code (see #2529)
-	    000Ch Win32 get system power status
-	    000Dh Win32 set system power status
-	    else
-		Return: DX = 0000h
-			AX = 00FFh
-SeeAlso: #2527,#2530
-
-(Table 2529)
-Values for VPOWERD.VXD error code:
- 000000xxh	APM error code
- 000000FFh	function number out of range
- 80000001h	??? (service 05h)
- 80000002h	??? (service 0Dh)
- 80000003h	specified NULL buffer pointer (service 07h,08h,09h)
- 80000005h	??? (service 03h)
- 80000006h	??? (service 04h)
- 80000007h	??? (service 05h)
- 80000008h	??? (service 05h)
- 80000009h	out of memory (service 0Ah)
- 8000000Ah	??? (service 0Ah)
- 8000000Bh	invalid power handler (service 0Bh)
- 8000000Ch	unsupported/disabled??? function
-SeeAlso: #2528,#1155
---------W-2F1684BX0027-----------------------
-INT 2F - MS Windows95 - VXDLDR - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0027h (virtual device ID for VXDLDR device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2530)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2530)
-Call VXDLDR entry point with:
-	EAX = function number
-	    0000h get VXDLDR version
-		Return: CF clear
-			AX = 0000h (successful)
-			DH = major version
-			DL = minor version
-	    0001h load device
-		BX = ASCIZ 8.3 filename of dynamically-loadable VxD (must
-		      reside in Windows system directory)
-		Return: CF clear if successful
-			    AX = 0000h
-			    ES:DI -> VxD API entry point
-			CF set on error
-			    AX = error code (see #2531)
-	    0002h unload device
-		BX = ASCIZ 8.3 filename of dynamically-loadable VxD (must
-		      reside in Windows system directory)
-		Return: CF clear if successful
-			    AX = 0000h
-			CF set on error
-			    AX = error code (see #2531)
-	    else
-		Return: CF set
-			AX = 000Bh
-SeeAlso: #2528,#2532
-
-(Table 2531)
-Values for VXDLDR error code:
- 0000h	successful
- 000Bh	invalid function number
-SeeAlso: #2530
---------W-2F1684BX0028-----------------------
-INT 2F - MS Windows - NDIS - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0028h (virtual device ID for NDIS device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2532)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2532)
-Call NDIS.VXD entry point with:
-	??? = function number
-	    0000h set ??? to ???
-		??? = new ???
-		Return: DX:AX = 0000h:0001h
-	    0002h ???
-		???
-		Return: DX:AX -> ???
-	    0003h reset ??? to default
-		Return: DX:AX = 0000h:0001h
-	    else
-		Return: DX:AX = 0000h:0000h
-SeeAlso: #2530,#2533
---------W-2F1684BX002A-----------------------
-INT 2F P - MS Windows - VWIN32 - GET API ENTRY POINT
-	AX = 1684h
-	BX = 002Ah (virtual device ID for VWIN32 device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2533)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2533)
-Call VWIN32.VXD entry point with:
-	AH = function number
-	    00h get VWIN32 version and ???
-		Return: CF clear
-			AH = major version
-			AL = minor version
-			EDX = ???
-	    01h ???
-		EBX = ???
-		ECX = ???
-		Return: CF clear
-			EAX = ???
-	    02h ???
-		Return: CF clear
-			AX = ??? or 0000h
-	    03h address allocation
-		DS:??? -> buffer containing/for page data
-		ECX = length of buffer
-		AL = subfunction
-		    00h reserve page(s)
-		    01h commit page(s)
-		    02h decommit page(s)
-		    03h free page(s)
-		Return: CF clear if successful
-			CF set on error
-		Note:	this function uses ECX bytes of stack
-	    04h get ???
-		Return: CF clear
-			EAX = ???
-	    05h ???
-		EBX = ???
-		Return: CF clear
-			EAX = ???
-	    06h ???
-		EBX = ???
-		Return: CF clear
-			EAX = ???
-	    07h ???
-		EBX = ???
-		Return: CF clear
-			EAX = ???
-	    08h get ???
-		Return: CF clear
-			AX = ???
-	    09h ???
-		EBX = ???
-		ECX = ???
-		Return: CF clear
-	    0Ah ???
-		EBX = ???
-		Return: CF clear
-	    0Bh ???
-		EBX = ???
-		Return: CF clear
-	    0Ch ???
-		EBX = ???
-		ECX = ???
-		EDX = ???
-		???
-		Return: CF clear if successful
-			    EAX = ???
-			CF set on error
-	    0Dh clear ???
-		Return: CF clear
-	    0Eh ???
-		EBX = ???
-		ECX = ???
-		Return: CF clear
-	    0Fh ???
-		EBX = ???
-		ECX = ???
-		Return: CF clear
-	    10h ???
-		Return: CF clear
-		Note:	invokes VMMcall 00010184h
-	    11h ???
-		Return: CF clear
-		Note:	invokes VMMcall 00010160h
-	    12h ???
-		???
-	    13h pop up system error dialogue
-		Return: CF clear
-			AX = ??? or 0000h
-	    14h "IFSMgr_GetConversionTablePtrs"
-		Return:	CF clear
-			DX:AX -> ???
-		Note:	invokes VxDcall 00400051h
-	    15h "Boost_With_Decay"
-		EBX = ???
-		ECX = ???
-		EDX = ???
-		Return: CF clear
-	    else
-		Return: CF set
-SeeAlso: #2532,#2534
---------W-2F1684BX002B-----------------------
-INT 2F - MS Windows - VCOMM - GET API ENTRY POINT
-	AX = 1684h
-	BX = 002Bh (virtual device ID for VCOMM device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2534)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2534)
-Call VCOMM.VXD entry point with:
-	AX = function number
-	    0000h open COM/LPT port
-		BX = port number (00h-7Fh = COMx, 80h-FFh = LPTx)
-		Return: DX:AX = handle???
-	    0001h set comm state
-		???
-		Return: AX = ???
-	    0002h setup comm port
-		???
-		Return: AX = status (0000h failed, FFFFh success)
-	    0003h transmit character
-		EBX = handle???
-		CL = character to transmit
-		Return: AX = status???
-	    0004h close comm port
-		EBX = handle???
-		Return: ???
-	    0005h clear comm error
-		EBX = handle???
-		EAX = ???
-		Return: AX = status???
-	    0006h "EscapeCommFunction"
-		EBX = handle???
-		CX = ???
-		EAX = ???
-		Return: DX:AX = ???
-	    0007h purge buffers
-		EBX = handle???
-		CX = ???
-		Return: AX = status???
-	    0008h set comm event mask
-		EBX = handle???
-		CX = new event mask
-		Return: AX = status???
-	    0009h get comm event mask
-		EBX = handle???
-		Return: AX = current event mask
-	    000Ah ???
-		EBX = handle???
-		Return: ???
-	    000Bh "WriteComm"
-		EBX = handle???
-		CX = number of characters to write
-		ES???:BX -> buffer (if CX > 1)
-		SI??? low byte contains character if CX=1
-		Return: AX = status
-			EAX high word may be destroyed
-	    000Ch "ReadComm"
-		EBX = handle???
-		CX = number of bytes to read
-		ES???:DI -> buffer
-		Return: AX = status ???
-			ZF = ???
-	    000Dh set ??? callback
-		EBX = handle???
-		CX = ???
-		DX = ???
-		Return: AX = status???
-	    else
-		Return: AX = 0000h
-SeeAlso: #2533,#2535
---------W-2F1684BX002D-----------------------
-INT 2F P - MS Windows - W32S - GET API ENTRY POINT
-	AX = 1684h
-	BX = 002Dh (virtual device ID for W32S device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX0030-----------------------
-INT 2F P - MS Windows - MACH32 - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0030h (virtual device ID for MACH32 device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX0032-----------------------
-INT 2F - MS Windows - SERVER / VSERVER - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0032h (virtual device ID for SERVER device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2535)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",#1161 at INT 20"Windows"
-
-(Table 2535)
-Call Windows95 VSERVER.VXD protected-mode entry point with:
-	AX = function number
-	    0003h NOP
-		Return: AX = 0000h
-	    0004h NOP
-		Return: AX = 0000h
-	    0007h NOP
-		Return: AX = 0000h
-	    0008h NOP
-		Return: nothing
-	    000Fh ???
-		Return: AX = status
-			    0000h successful
-			    0842h on error
-	    0010h ???
-		Return: AX = status
-			    0000h successful
-			    0842h on error
-	    else
-		Return: AX = 0032h
-SeeAlso: #2534,#2536
---------W-2F1684BX0033-----------------------
-INT 2F - MS Windows - CONFIGMG - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0033h (virtual device ID for CONFIGMG device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2536)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2536)
-Call CONFIGMG.VXD entry point with:
-	AX = function number
-	    0000h get CONFIGMG version
-		Return: CF clear
-			AH = major version
-			AL = minor version
-	    ...
-	    005Ah
-	    else
-		Return: CF set
-			AX = 0020h
-SeeAlso: #1162 at INT 20"Windows",#2535,#2537
---------x-2F1684BX0034-----------------------
-INT 2F - Intel Plug-and-Play - CONFIGURATION MANAGER - GET ENTRY POINT
-	AX = 1684h
-	BX = 0034h (ID for Configuration Manager) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> API entry point (see #2537)
-		  0000h:0000h if Configuration Manager not loaded
-Note:	this API is often provided by a DOS device driver, in which case it
-	  is available whether or not MSWindows is running
-Index:	installation check;Plug-and-Play Configuration Manager
-SeeAlso: AX=1684h/BX=304Ch
-
-(Table 2537)
-Call Configuration Manager entry point with:
-	AX = function
-	    0000h "CM_GetVersion" get supported DDI version
-		Return: AH = BCD major version
-			AL = BCD minor version
-			BX = number of devices identified by configuration
-		Note:	returns AX = 0000h if no config manager installed
-	    0001h "CM_GetConfig" get device configuration
-		BX = device index
-		ES:DI -> buffer for configuration information (see #2539)
-		Return: AX = status
-			    0000h successful
-				ES:DI buffer filled
-			    other error code (0001h = index out of range)
-	    0002h "CM_LockConfig" lock device configuration
-		ES:DI -> configuration information (see #2539)
-		Return: AX = status
-			    0000h successful
-				ES:DI buffer filled with assigned config
-			    0001h resources conflict
-			    0002h invalid request or configuration info
-	    0003h "CM_UnlockConfig" unlock device configuration
-		ES:DI -> configuration information (see #2539)
-		Return: AX = status
-			    0000h successful
-				ES:DI buffer filled with assigned config
-			    0001h invalid request or configuration info
-	    0004h "CME_QueryResources" get hot-swappable resources
-		ES:DI -> configuration information (see #2539)
-		Return: AX = status (see #2538)
-	    0005h "CME_AllocResources" remove resources from available pool
-		ES:DI -> configuration information (see #2539)
-		Return: AX = status (see #2538)
-	    0006h "CME_DeallocResources" return resources to available pool
-		ES:DI -> configuration information (see #2539)
-		Return: AX = status (see #2538)
-SeeAlso: #1163 at INT 20"Windows",#2536,#2540
-
-(Table 2538)
-Values for Configuration Manager status:
- 00h	successful
- 01h	device not found, configuration error
- 02h	I/O port unavailable
- 04h	IRQ unavailable
- 08h	DMA channel unavailable
- 10h	memory range unavailable
-SeeAlso: #2537
-
-Format of Configuration Information Structure:
-Offset	Size	Description	(Table 2539)
- 00h	DWORD	bus ID
- 04h	DWORD	device ID
- 08h	DWORD	serial number
- 0Ch	DWORD	logical ID
- 10h	DWORD	flags
----ISA bus---
- 14h	BYTE	Card Select Number
- 15h	BYTE	logical device number
- 16h	WORD	Read Data port
-------
- 18h	WORD	number of memory windows
- 1Ah  9 DWORDs	physical base addresses of memory windows
- 3Eh  9 DWORDs	length of memory windows
- 62h  9 WORDs	memory window attributes
- 74h	WORD	number of I/O ports
- 76h 20 WORDs	I/O port base addresses
- B6h 20 WORDs	lengths of I/O port ranges
- F6h	WORD	number of IRQs
- F8h  7 BYTEs	IRQ registers
- FFh  7 BYTEs	IRQ attributes
-106h	WORD	number of DMA channels
-108h  7 BYTEs	DMA channels used
-10Fh  7 WORDs	DMA channel attributes
-11Dh  3 BYTEs	reserved
-SeeAlso: #2537
---------W-2F1684BX0036-----------------------
-INT 2F - MS Windows - VFBACKUP - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0036h (virtual device ID for VFBACKUP device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2540)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2540)
-Call VFBACKUP.VXD entry point with:
-	nothing -- this API is a NOP for the default Windows95 VFBACKUP
-SeeAlso: #2537,#1052
---------W-2F1684BX0037-----------------------
-INT 2F - MS Windows - ENABLE.VXD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0037h (virtual device ID for ENABLE device) (see #2541)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2540)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2541)
-Call Windows95 ENABLE.VXD entry point with:
-	AX = function number
-	    0000h get ENABLE version
-		Return:	CF clear
-			AX = version (AH = major, AL = minor)
-	    0001h
-		EBX = ???
-		Return: ???
-	    0002h get ???
-		Return: CF clear
-			DX:AX = ???
-	    0003h get ???
-		Return: CF clear
-			DX:AX = ???
-	    0004h ???
-		EBX = ???
-		ECX = ???
-		EDX = ???
-		Return: CF clear if successful
-			CF set on error
-	    else
-		Return: CF set
-SeeAlso: #2540,#2542
---------W-2F1684BX0038-----------------------
-INT 2F - MS Windows - VCOND - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0038h (virtual device ID for VCOND device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2542)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2542)
-Call VCOND.VXD virtual-86 entry point with:
-	AX = function number
-	    0202h
-	    0203h
-	    0204h
-	    0205h
-	    0206h
-	    0207h
-	    0208h
-	    0209h
-	    020Ah
-	    020Bh
-	    020Dh
-	    020Eh
-	    020Fh
-	    0210h
-	    0401h
-	    0402h
-	    0403h
-	    0404h
-	    0405h
-	    else
-		NOP
-SeeAlso: #2543,#2541
-
-(Table 2543)
-Call VCOND.VXD protected-mode entry point with:
-	AX = function number
-	    0301h
-	    0302h
-	    0303h
-	    0304h
-	    0305h
-	    0306h
-	    0307h
-	    0308h
-	    else
-		NOP
-SeeAlso: #2542,#2540
---------W-2F1684BX003B-----------------------
-INT 2F - MS Windows - DSVXD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 003Bh (virtual device ID for DSVXD device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX003D-----------------------
-INT 2F - MS Windows - BIOS VxD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 003Dh (virtual device ID for BIOS device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2544)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2544)
-Call BIOS.VXD entry point with:
-	AX = function number
-	    0000h get BIOS.VXD version
-		Return: CF clear
-			AH = major version
-			AL = minor version
-	    0100h ???
-		Return: AX = 0000h
-		Note:	calls CONFIGMG services 804Eh/804Fh
-	    0200h ???
-		Return: CF clear if successful
-			    AX = ???
-			CF set on error
-			    AX = error code???
-		Note:	invokes VxDcall 00290002h
-	    0300h ???
-		Return: CF clear if successful
-			    AX = ???
-			CF set on error
-			    AX = error code???
-	    else
-		Return: CF set
-SeeAlso: #2543,#2545
---------W-2F1684BX003E-----------------------
-INT 2F - MS Windows - WSOCK - GET API ENTRY POINT
-	AX = 1684h
-	BX = 003Eh (virtual device ID for WSOCK device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX011F-----------------------
-INT 2F P - MS Windows - VFLATD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 011Fh (virtual device ID for VFLATD device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2545)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",AX=1684/BX=045Dh,INT 20"Windows"
-
-(Table 2545)
-Call VFLATD.VXD entry point with:
-	DL = function number
-	    00h get VFLATD version and ???
-		Return: CF clear
-			EAX = version (AH = major, AL = minor)
-			EBX = ???
-			ECX = ???
-			EDX = ??? or 00000000h
-	    01h ???
-		AX = ???
-		CX = ???
-		Return: EAX = ???
-			EDX = ???
-	    02h ???
-		???
-	    03h ???
-		EAX = ???
-		EBX = ???
-		ESI = ???
-		CX = ???
-		DH = ???
-		Return: EAX = ???
-			EDX = ???
-			CF clear
-	    04h ???
-		DH = ???
-		EAX = ???
-		ECX = ???
-		Return: CF clear
-			EAX = ???
-			EDX = ???
-	    05h ???
-		???
-		Note:	locks some linear memory and calls fn 02h
-	    06h ???
-		???
-		Return: CF clear if successful
-			CF set on error
-		Note:	calls fn 02h and unlocks some linear memory
-	    else
-		Return: CF set
-SeeAlso: #2544
---------W-2F1684BX0200-----------------------
-INT 2F - MS Windows - VIPX - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0200h (virtual device ID for VIPX device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX0202-----------------------
-INT 2F - MS Windows - WINICE - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0202h (virtual device ID for WINICE device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX0203-----------------------
-INT 2F P - MS Windows - VCLIENT - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0203h (virtual device ID for VCLIENT device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX0205-----------------------
-INT 2F - MS Windows - BCW - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0205h (virtual device ID for BCW device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX0207-----------------------
-INT 2F R - MS Windows - DPMS VxD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0207h (virtual device ID for DPMS device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX0234-----------------------
-INT 2F - MS Windows - VCOMMUTE - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0234h (virtual device ID for VCOMMUTE device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX0442-----------------------
-INT 2F P - MS Windows - VTDAPI - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0442h (virtual device ID for VTDAPI device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2546)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2546)
-Call VTDAPI.VXD entry point with:
-	EAX = function number
-	    0000h
-	    0001h
-	    0002h
-	    0003h
-	    0004h
-	    0005h
-	    0006h
-	    0007h
-	    0008h
-	    0009h
-	    000Ah
-	    000Bh
-	    else
-		Return: nothing???
-SeeAlso: #2546
---------W-2F1684BX0444-----------------------
-INT 2F - MS Windows - VADMAD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0444h (virtual device ID for VADMAD device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2547)
-		  0000h:0000h if the VxD does not support an API
-
-(Table 2547)
-Call VADMAD entry point with:
-	DX = operation
-	    0000h set VADMAD mode
-		AX = desired mode
-	    0001h set VADMAD channel
-		AX = desired channel
-Note:	after setting mode/channel, start the DMA operation with an OUT to
-	  I/O port 0Bh (channels 0-3) or D6h (channels 4-7)
-SeeAlso: #1133 at INT 20"Windows"
---------W-2F1684BX0445-----------------------
-INT 2F - MS Windows - VSBD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0445h (virtual device ID for VSBD device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX0446-----------------------
-INT 2F - MS Windows - VADLIBD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0446h (virtual device ID for VADLIBD device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX0449-----------------------
-INT 2F P - MS Windows - vjoyd - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0449h (virtual device ID for "vjoyd" device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2548)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2548)
-Call VJOYD.VXD entry point with:
-	AX = function number
-	    0000h get VJOYD version
-		Return: AH = major version
-			AL = minor version
-	    0001h ???
-		DX = ???
-		Return: DX:AX = ???
-	    0002h ???
-		DX = ???
-		Return: DX:AX = ???
-	    0003h ???
-		Retrun: AX = 0001h
-	    0004h ???
-		DX = ???
-		Return: DX:AX = ???
-	    0005h ???
-		Return: ???
-	    else
-		Return: EAX = 00000000h
-SeeAlso: #2546,#2549
---------W-2F1684BX044A-----------------------
-INT 2F - MS Windows - mmdevldr - GET API ENTRY POINT
-	AX = 1684h
-	BX = 044Ah (virtual device ID for "mmdevldr" device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2549)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2549)
-Call MMDEVLDR.VXD entry point with:
-	DX = function number
-	    0000h ???
-		Return: CF clear if successful
-			    AX = 0000h
-			CF set on error
-			    AX = error code (000Bh)
-		Note:	invokes VxDCall 17000Eh ("CallAtAppyTime")
-	    0001h ???
-		Return: CF clear if successful
-			    AX = 0000h
-			CF set on error
-			    AX = error code (000Bh)
-		Note:	invokes VxDCall 17000Eh ("CallAtAppyTime")
-	    0002h ???
-		EDX = ???
-		Return: CF clear if successful
-			    AX = 0000h
-			    EDX = ???
-			CF set on error
-			    AX = error code
-	    0003h ???
-		Return: CF clear if successful
-			    AX = 0000h
-			CF set on error
-			    AX = error code
-		Note:	invokes VxDcall 2A0002h ("VWIN32_QueueUserApc")
-	    0004h set Win32 event
-		Return: CF clear if successful
-			    AX = 0000h
-			CF set on error
-			    AX = error code
-		Note:	invokes VxDcall 2A000Eh ("VWIN32_SetWin32Event")
-	    0005h ??? (allocates some memory)
-		Return: CF clear
-			AX = 0000h
-	    0006h ??? (frees memory)
-		Return: CF clear if successful
-			    AX = 0000h
-			CF set on error
-			    AX = error code
-	    else
-		Return: CF set
-			AX = 000Bh (invalid function)
-SeeAlso: #2548,#2550
---------W-2F1684BX045D-----------------------
-INT 2F P - MS Windows - VflatD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 045Dh (virtual device ID for VflatD device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",AX=1684h/BX=011Fh,INT 20"Windows"
---------W-2F1684BX045F-----------------------
-INT 2F - MS Windows - azt16 - GET API ENTRY POINT
-	AX = 1684h
-	BX = 045Fh (virtual device ID for "azt16" device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2550)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h/BX=3110h,AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2550)
-Call azt16.VXD entry point with:
-	DX = function number
-	    0000h get azt16 version
-		Return: CF clear
-			AX = version (AH=major, AL=minor)
-	    0001h ???
-		AX = subfunction
-		    0000h ???
-			Return:
-		    0001h ???
-			ECX = ???
-		    else error
-		Return: CF clear if successful
-			    ???
-			CF set on error
-			    AX = error code
-	    0002h ???
-		AX = ???
-		BX = ???
-		Return: ???
-	    0003h ???
-		AX = ???
-		BX = ???
-		Return: ???
-	    0004h ???
-		BX = ???
-		CX = ???
-		Return: CF clear if successful
-			     AX = 0001h
-			CF set on error
-			     AX = 0000h
-	    0005h ???
-		BX = ???
-		CX = ???
-		Return: CF clear if successful
-			     AX = 0001h
-			CF set on error
-			     AX = 0000h
-	    0006h ???
-		BX = ???
-		ECX = ???
-		Return: CF clear if succesful
-			    AX = ???
-			CF set on error
-			    AX = FFFFh
-	    0100h get azt16 version
-		Return: CF clear
-			AX = version (AH=major, AL=minor)
-	    0101h
-		AX = ???
-		ECX = ???
-		Return: CF clear if successful
-			    AX = 0001h
-			CF set on error
-			    AX = 0000h
-	    0102h ???
-		AX = ???
-		Return: CF clear if successful
-			CF set on error
-			    AX = reason??? (0/1/2)
-	    0103h ???
-		AX = ???
-		Return: CF clear if successful
-			    AX = 0000h
-			CF set on error
-			    AX = reason??? (1/3)
-	    0200h ???
-		EDX = ???
-		???
-		Return: CF clear if successful
-			    DX:AX = ???
-			CF set on error
-			    DX:AX = 0000h:0000h
-	    0201h ???
-		???
-		Return: CF clear
-			AX= 0000h
-	    else
-		Return: CF set
-SeeAlso: #2549,#2569
---------W-2F1684BX0460-----------------------
-INT 2F P - MS Windows - UNIMODEM - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0460h (virtual device ID for UNIMODEM device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2551)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2551)
-Call UNIMODEM.VXD protected-mode entry point with:
-	AX = function number
-	    0000h
-		Return: AX = ???
-	    0001h
-		Return: AX = ???
-	    0002h
-		Return: AX = ???
-	    0003h
-		Return: AX = ???
-	    0004h
-		Return: AX = ???
-	    0005h
-		Return: AX = ???
-	    0006h
-		Return: AX = ???
-	    0007h
-		Return: AX = ???
-	    else
-		Return: AX = 0002h
-SeeAlso: #2550,#2552
---------W-2F1684BX0480-----------------------
-INT 2F - MS Windows - VNetSup - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0480h (virtual device ID for VNetSup device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2552)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2552)
-Call VNetSup.VXD entry point with:
-	AX = function number
-	    0000h
-		Return: AX = ???
-	    0001h
-		Return: AX = ???
-	    0002h
-		Return: AX = ???
-	    else
-		Return: CF set
-			AX = 0001h
-SeeAlso: #2551,#2553
---------W-2F1684BX0482-----------------------
-INT 2F - MS Windows - VBrowse - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0482h (virtual device ID for VBrowse device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX0483-----------------------
-INT 2F - MS Windows - VSHARE - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0483h (virtual device ID for VSHARE device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2553)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2553)
-Call Windows95 VSHARE.VXD entry point with:
-	AX = function number
-	    0000h get VSHARE version
-		Return: AH = major version
-			AL = (BCD?) minor version
-	    else
-		NOP
-SeeAlso: #2552
---------W-2F1684BX0484-----------------------
-INT 2F P - MS Windows - IFSMgr - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0484h (virtual device ID for IFSMgr device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX0486-----------------------
-INT 2F - MS Windows - VFAT - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0486h (virtual device ID for VFAT device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX0487-----------------------
-INT 2F - MS Windows - NWLINK - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0487h (virtual device ID for NWLINK device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX0489-----------------------
-INT 2F R - MS Windows - VIP - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0489h (virtual device ID for VIP device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX048A-----------------------
-INT 2F - MS Windows 3.11 - VXDLDR - GET API ENTRY POINT
-	AX = 1684h
-	BX = 048Ah (virtual device ID for VTCP device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX048A-----------------------
-INT 2F - MS Windows - VCACHE - GET API ENTRY POINT
-	AX = 1684h
-	BX = 048Ah (virtual device ID for VCACHE device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2555)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2554)
-Call Windows95 VCACHE.VXD entry point with:
-	Return:	CF set
-SeeAlso: #2553,#2555
---------W-2F1684BX048D-----------------------
-INT 2F - MS Windows - RASMAC - GET API ENTRY POINT
-	AX = 1684h
-	BX = 048Dh (virtual device ID for RASMAC device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX048E-----------------------
-INT 2F - MS Windows - NWREDIR - GET API ENTRY POINT
-	AX = 1684h
-	BX = 048Eh (virtual device ID for NWREDIR device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2555)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2555)
-Call Windows95 NWREDIR.VXD entry point with:
-	Return:	CF set
-		EAX = FFFFFFFFh
-SeeAlso: #2554
---------W-2F1684BX0494-----------------------
-INT 2F - MS Windows - NSCL - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0494h (virtual device ID for NSCL device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2556,#2557)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2556)
-Call Windows95 NSCL.VXD virtual-86 entry point with:
-	AL = function number
-	    00h
-	    01h
-	    02h
-	    03h
-	    04h
-	    05h
-	    06h
-	    07h
-	    08h
-	    09h
-	    0Ah
-	    else
-		Return: AX = FFFFh
-SeeAlso: #2555,#2556
-
-(Table 2557)
-Call Windows95 NSCL.VXD protected-mode entry point with:
-	AL = function number
-	    00h
-	    01h
-	    02h
-	    03h
-	    else
-		Return: AX = FFFFh
-SeeAlso: #2556
---------W-2F1684BX0499-----------------------
-INT 2F - MS Windows - PPPMAC - GET API ENTRY POINT
-	AX = 1684h
-	BX = 0499h (virtual device ID for PPPMAC device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX049A-----------------------
-INT 2F - MS Windows - VDHCP - GET API ENTRY POINT
-	AX = 1684h
-	BX = 049Ah (virtual device ID for VDHCP device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX049B-----------------------
-INT 2F - MS Windows - VNBT - GET API ENTRY POINT
-	AX = 1684h
-	BX = 049Bh (virtual device ID for VNBT device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX1021-----------------------
-INT 2F - MS Windows - VMB - GET API ENTRY POINT
-	AX = 1684h
-	BX = 1021h (virtual device ID for VMB device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX28A0-----------------------
-INT 2F - MS Windows - PHARLAPX - GET API ENTRY POINT
-	AX = 1684h
-	BX = 28A0h (virtual device ID for PHARLAPX device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2558)
-		  0000h:0000h if the VxD does not support an API
-
-(Table 2558)
-Call PHARLAPX VxD entry point with:
-	AX = function
-	    0001h get PHARLAP.386 version
-		Return: AX = version number (AH = major, AL = minor)
-	---queue functions---
-	    0101h allocate a new message queue
-		CX = size of queue data buffer in bytes
-		Return: DX:AX = handle for new queue, or 0000h:0000h on error
-	    0102h allocate a new key queue
-		CX = size of queue data buffer in bytes
-		EDX = VM handle into which keys will be pasted
-		Return: DX:AX = handle for new queue, or 0000h:0000h on error
-	    0103h free message queue
-		EDX = queue handle
-		Return: AX = status (0000h,0003h,0007h) (see #2559)
-	    0104h free key queue
-		EDX = queue handle
-		Return: AX = status (0000h,0003h,0005h) (see #2559)
-	    0105h add message to communications queue
-		EDX = queue handle
-		BX = length of message data in bytes
-		CX = length of message header in bytes
-		ES:(E)SI -> message header
-		GS:(E)DI -> message data
-		Return: AX = status (0000h-0003h,0007h) (see #2559)
-	    0106h remove message from queue
-		EDX = queue handle
-		CX = length of buffer in bytes
-		ES:(E)SI -> buffer for message
-		Return: AX = status (0000h,0003h,0006h,0007h,0008h) (see #2559)
-			CX = length of returned message (if AX=0000h or 0008h)
-	    0107h flush queue (remove all data)
-		EDX = queue handle
-		Return: AX = status (0000h,0003h) (see #2559)
-	    0108h add PasteKey structure(s) to key queue
-		EDX = queue handle
-		CX = number of PasteKey structures in buffer
-		ES:(E)SI -> PasteKey array (see #2560)
-		Return: AX = status (0000h-0003h) (see #2559)
-	    0109h register enqueueing callback function
-		EDX = queue handle
-		ECX = function argument
-		ES:(E)SI -> callback function
-		Return: AX = status (0000h,0003h,0009h) (see #2559)
-	    010Ah register dequeueing callback function
-		EDX = queue handle
-		ECX = function argument
-		ES:(E)SI -> callback function
-		Return: AX = status (0000h,0003h,0009h) (see #2559)
-	    010Bh unregister enqueueing callback function
-		EDX = queue handle
-		Return: AX = status (0000h,0003h,0009h) (see #2559)
-	    010Ch unregister dequeueing callback function
-		EDX = queue handle
-		Return: AX = status (0000h,0003h,0009h) (see #2559)
-	    010Dh get message queue status
-		EDX = queue handle
-		Return: AX = status (0000h,0003h) (see #2559)
-			CX = number of pending messages
-	    010Eh peek at message in queue
-		EDX = queue handle
-		BX = number of message in queue (0000h = first)
-		CX = size of buffer in bytes
-		ES:(E)SI -> buffer for message
-		Return: AX = status (0000h,0003h,0006h,0008h) (see #2559)
-			CX = length of returned message (if AX=0000h or 0008h)
-	    010Fh peek at last message in queue
-		EDX = queue handle
-		CX = size of buffer in bytes
-		ES:(E)SI -> buffer for message
-		Return: AX = status (0000h,0003h,0006h,0008h) (see #2559)
-			CX = length of returned message (if AX=0000h or 0008h)
-	    0110h replace last message in queue
-		EDX = queue handle
-		CX = length of message header in bytes
-		BX = length of message data in bytes
-		ES:(E)SI -> message header
-		GS:(E)DI -> message data
-		Return: AX = status (0000h,0002h,0003h) (see #2559)
-	    0111h set permitted message count for queue
-		EDX = queue handle
-		CX = maximum number of messages to enqueue (FFFFh = unlimited)
-		Return: AX = status (0000h,0003h) (see #2559)
-	---generalized VxD services---
-	    0202h call VxD function
-		ES:(E)BX -> in/out register-set buffer
-		Return: buffer updated
-	    0203h map flat
-		???
-	--system register functions---
-	    0301h read system registers into buffer
-		ES:(E)SI -> 512-byte buffer
-		Return: AX = 0000h
-			buffer filled (mostly zeros)
-	    0302h copy linear memory into buffer
-		EDX = linear address
-		CX = number of bytes to copy
-		ES:(E)SI -> buffer
-		Return: AX = 0000h
-	    0303h copy data into linear memory
-		EDX = linear address
-		CX = number of bytes to copy
-		ES:(E)SI -> buffer
-		Return: AX = 0000h
-	    0304h freeze VM
-		???
-	    0305h unfreeze VM
-		???
-	---name registration functions---
-	    0401h register name
-		EDX = magic number to associate with name
-		ES:(E)SI -> name to register
-		Return: AX = status (0000h,0009h) (see #2559)
-	    0402h unregister name
-		ES:(E)SI -> name to be unregistered
-		Return: AX = status (0000h,0009h) (see #2559)
-	    0403h look up name
-		ES:(E)SI -> name to look up
-		Return: DX:AX = magic number or 0000h:0000h if not registered
-	    0404h get name list handle
-		Return: DX:AX = name list handle
-				0000h:0000h if not initialized
-	---special DOS server routines (undocumented)---
-	    0501h register
-	    0502h unregister
-	    0503h validate VM
-	    0504h get INT9 count
-	    0505h get screen line
-	    0506h get shift status
-	    0507h get server PB pointer
-	    0508h initialize DOS shell
-	    0509h get last VM handle
-
-(Table 2559)
-Values for PHARLAPX function status:
- 00h	successful
- 01h	data is too large to fit in queue
- 02h	queue is full
- 03h	invalid queue handle
- 04h	invalid VM handle for queue
- 05h	error starting a paste operation
- 06h	queue is empty
- 07h	a VM is blocked waiting on the queue
- 08h	message was too long (truncated)
- 09h	unable to register or unregister specified callback
-SeeAlso: #2558
-
-Format of PHARLAPX PasteKey structure:
-Offset	Size	Description	(Table 2560)
- 00h	BYTE	ASCII code
- 01h	BYTE	scan code (see #0005)
- 02h	WORD	shift states
-SeeAlso: #2558
-
-Format of PHARLAPX VxD-call register structure:
-Offset	Size	Description	(Table 2561)
- 00h	DWORD	call number
- 04h	WORD	input register map (see #2562)
- 06h	WORD	output register map (see #2562)
- 08h  7 DWORDs	values for EAX, EBX, ECX, EDX, EBP, ESI, EDI on call
- 24h  4	WORDs	values for DS, ES, FG, GS on call
- 2Ch	DWORD	EFLAGS on call
- 30h  7 DWORDs	returned values of EAX, EBX, ECX, EDX, EBP, ESI, EDI
- 4Ch  4 WORDs	returned values of DS, ES, FS, GS
- 54h	DWORD	returned EFLAGS
-SeeAlso: #2558
-
-Bitfields for PHARLAPX VxD-call register map:
-Bit(s)	Description	(Table 2562)
- 0	value in EAX field is valid
- 1	value in EBX field is valid
- 2	value in ECX field is valid
- 3	value in EDX field is valid
- 4	value in EBP field is valid
- 5	value in ESI field is valid
- 6	value in EDI field is valid
- 7	value in DS field is valid
- 8	value in ES field is valid
- 9	value in FS field is valid
- 10	value in GS field is valid
- 11	value in EFLAGS field is valid
-SeeAlso: #2561
---------W-2F1684BX28A1-----------------------
-INT 2F - MS Windows - PharLap VxD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 28A1h (virtual device ID for PharLap device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",AX=1684h/BX=28A0h,INT 20"Windows"
---------W-2F1684BX2925-----------------------
-INT 2F - MS Windows - EDOS - GET API ENTRY POINT
-	AX = 1684h
-	BX = 2925h (virtual device ID for EDOS device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2563)
-		  0000h:0000h if the VxD does not support an API
-
-(Table 2563)
-Call EDOS entry point with:
-	AX = 0000h get EDOS version number
-	    Return: AH = major version
-		    AL = minor version
-	AX = 0001h display message
-	    CX = 0
-	    DX:BX -> ASCIZ Message
-	AX = 0002h get EDOS error coded
-	    Return: EAX = time in milliseconds that Windows has been running
-	AX = 0003h execute windows program
-	    Return: EAX = cumulative amount of time the virtual machine has
-			been active, in milliseconds
-	AX = 0008h get/set priority
-	    BX = 0000h??? foreground
-		 0001h background
-	    DI = 0000h get
-		 0001h set
-	    DX = priority setting
-	    Return: CX = foreground priority
-		    DX = background priority
-		    BX:AX = flags
-			00000001h exclusive ON
-			00000010h background ON
-		    SI = CPU percentage
---------W-2F1684BX292D-----------------------
-INT 2F - MS Windows - VSBPD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 292Dh (virtual device ID for VSBPD device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------W-2F1684BX295A-----------------------
-INT 2F - MS Windows - GRVSULTR - GET API ENTRY POINT
-	AX = 1684h
-	BX = 295Ah (virtual device ID for GRVSULTR device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
---------x-2F1684BX304C-----------------------
-INT 2F - Intel Plug-and-Play - CONFIGURATION ACCESS - GET ENTRY POINT
-	AX = 1684h
-	BX = 304Ch (ID for Configuration Access) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> API entry point (see #2564)
-		  0000h:0000h if Configuration Access not loaded
-Note:	this API is often provided by a DOS device driver, in which case it
-	  is available whether or not MSWindows is running
-Index:	installation check;Plug-and-Play Configuration Access
-SeeAlso: AX=1684h/BX=0034h
-
-(Table 2564)
-Call Plug-and-Play Configuration Access entry point with:
-	AX = function
-	    0000h "CA_GetVersion"
-		Return: AX = BCD version (AH = major, AL = minor)
-	    0001h "CA_PCI_Read_Config_Byte" (see also INT 1A/AX=B108h)
-	!!!
-	    0002h "CA_PCI_Read_Config_Word" (see also INT 1A/AX=B109h)
-	    0003h "CA_PCI_Read_Config_DWord" (see also INT 1A/AX=B10Ah)
-	    0004h "CA_PCI_Write_Config_Byte" (see also INT 1A/AX=B10Bh)
-	    0005h "CA_PCI_Write_Config_Word" (see also INT 1A/AX=B10Ch)
-	    0006h "CA_PCI_Write_Config_DWord" (see also INT 1A/AX=B10Dh)
-	    0007h "CA_PCI_Generate_Special_Cycle" (see also INT 1A/AX=B106h)
-	    0008h "CA_PCI_Get_Routing_Options" (see also INT 1A/AX=B10Eh)
-	    0009h invalid function
-	    000Ah invalid function
-	    000Bh "CA_PnPISA_Get_Info"
-	    000Ch "CA_PnPISA_Read_Config_Byte"
-	    000Dh "CA_PnPISA_Write_Config_Byte"
-	    000Eh "CA_PnPISA_Get_Resource_Data"
-	    000Fh invalid function
-	    0010h "CA_EISA_Get_Board_ID"
-	    0011h "CA_EISA_Get_Slot_Config"
-	    0012h "CA_EISA_Get_SlotFunc_Config"
-	    0013h "CA_EISA_Clear_NVRAM_Config"
-	    0014h "CA_EISA_Write_Config"
-	    0015h invalid function
-	    0016h "CA_ESCD_Get_Info"
-	    0017h "CA_ESCD_Read_Config"
-	    0018h "CA_ESCD_Write_Config"
-	    0019h invalid function
-	    001Ah "CA_Acfg_PCI_Manage_IRQs"
-		DL = IRQ???
-		ES:DI -> ???
-		Return: AX = status
-	    001Bh "CA_Acfg_PCI_Get_Routing_Options"
-		ES:DI -> IRQ routing table header
-			  (see #1124 at INT 1A/AX=B406h)
-		Return: AX = status
-	    001Ch-001Fh invalid functions
-	    0020h "CA_PnPB_Get_Num_Sys_Dev_Nodes"
-	    0021h "CA_PnPB_Get_Sys_Dev_Node"
-	    0022h "CA_PnPB_Set_Sys_Dev_Node"
-	    0023h "CA_PnPB_Get_Stat_Res_Info"
-	    0024h "CA_PnPB_Set_Stat_Res_Info"
-Return: AX = FFFFh if unsupported function
-SeeAlso: #2565
---------W-2F1684BX3099-----------------------
-INT 2F - MS Windows - VVidramD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 3099h (virtual device ID for VVidramD device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2565)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2565)
-Call VVidramD (VIDRAM.VXD) virtual-86 entry point with:
-	AX = function number
-	    0000h map page???
-		BX = page number???
-		Return: CF clear if successful
-			CF set on error
-	    0001h ???
-		Return: CF clear if successful
-			CF set on error
-	    else
-		Return: CF set
-SeeAlso: #2564,#2566
---------W-2F1684BX30F6-----------------------
-INT 2F P - MS Windows - WSVV - GET API ENTRY POINT
-	AX = 1684h
-	BX = 30F6h (virtual device ID for WSVV device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2566)
-Call WSVV.VXD protected-mode entry point with:
-	AX = function number
-	    ????
-	Return: ???
-SeeAlso: #2565,#2567
---------W-2F1684BX310E-----------------------
-INT 2F - MS Windows - WPS - GET API ENTRY POINT
-	AX = 1684h
-	BX = 310Eh (virtual device ID for WPS device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2567)
-		  0000h:0000h if the VxD does not support an API
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2567)
-Call WPS protected-mode entry point with:
-	DX = function
-	    0000h get WPS.386 version
-		Return: CF clear
-			AX = version (AH = major, AL = minor)
-	    0001h get number of installed VxDs
-		Return: CF clear
-			AX = number of installed VxDs
-	    0002h get VxD characteristics
-		AX = number of VxD
-		ES:BX -> buffer for VxD characteristics structure (see #2568)
-		Return: CF clear
-			ES:BX buffer filled
-SeeAlso: #2566,#2570
-
-Format of WPS.386 VxD characteristics structure:
-Offset	Size	Description	(Table 2568)
- 00h	WORD	VxD ID number
- 02h	BYTE	VxD minor version
- 03h	BYTE	VxD major version
- 04h	BYTE	DDK minor version
- 05h	BYTE	DDK major version
- 06h	WORD	flags
-		bit 0: V86 API supported
-		bit 1: PM API supported
-		bit 2: services supported
- 08h	DWORD	start order
- 0Ch  9 BYTEs	ASCIZ VxD name
-SeeAlso: #2567
---------W-2F1684BX3110-----------------------
-INT 2F - MS Windows - VSGLX16.386 - GET API ENTRY POINT
-	AX = 1684h
-	BX = 3110h (virtual device ID for VSGLX16.386) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2569)
-		  0000h:0000h if the VxD does not support an API
-SeeAlso: AX=1684h/BX=045Fh,AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2569)
-Call VSGLX16.386 entry point with:
-	DX = function number
-	    0000h get azt16 version
-		Return: CF clear
-			AX = version returned by "azt16" device
-	    0001h get ???
-		AX = ??? (always fails if nonzero)
-		ES:BX -> buffer for ???
-			first DWORD of buffer must be set to length of buffer
-			  (in bytes, 1 <= size <= 92) before calling
-		Return: CF clear if successful
-			    AX = 0001h
-			CF set on error (invalid pointer, bad buffer size)
-			    AX = 0000h
-	    0002h
-		AX = ???
-		BX = ???
-		Return: CF clear if successful
-			    AX = ???
-			CF set on error
-			    AX = error code
-	    0003h
-		AX = ???
-		BX = ???
-		Return: CF clear if successful
-			CF set on error
-	    0004h set ???
-		ES:DI -> buffer containing ???
-		BX = ???
-		CX = number of bytes to copy
-		Return: CF clear if successful
-			    AX = 0001h
-			CF set on error
-			    AX = 0000h
-	    0005h get ???
-		ES:DI -> buffer for ???
-		BX = ???
-		CX = number of bytes to copy
-		Return: CF clear if successful
-			    AX = 0001h
-			CF set on error
-			    AX = 0000h
-	    else
-		Return: CF set
-SeeAlso: #2550
---------W-2F1684BX31CF-----------------------
-INT 2F - MS Windows - STAT.386 - GET API ENTRY POINT
-	AX = 1684h
-	BX = 31CFh (virtual device ID for STAT.386) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2570)
-		  0000h:0000h if the VxD does not support an API
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2570)
-Call STAT.386 entry point with:
-	AX = function
-	    0000h get version
-		Return: AX = STAT.386 version (AH = major, AL = minor)
-	    0001h execute RDMSR/WRMSR/RDTSC
-		BH = 00h
-		BL = second opcode byte (30h=WRMSR,31h=RDTSC,32h=RDMSR)
-		EDX:EDI = value to be written (for BL=30h)
-		ECX = MSR number for RDMSR/WRMSR
-		Return: EDX:EAX = value read (RDTSR/RDMSR only)
-SeeAlso: #2567,#2571
---------W-2F1684BX34DC-----------------------
-INT 2F - QEMM v8.01 - MAGNARAM VxD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 34DCh (virtual device ID for MAGNARAM) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2571)
-		  0000h:0000h if the VxD does not support an API
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2571)
-Call MAGNARAM MAGNA95.VXD protected-mode entry point with:
-	AX = function number
-	    0000h get version and ???
-		Return: AX = version (AH = major, AL = minor)
-			CX = ???
-			    bit 0: ???
-			    bit 1: ???
-	    0001h get ???
-		Return: CF clear
-			DX:AX = ??? SHL 2
-	    0002h
-		Return: CF clear if successful
-			    AX = ???
-			    DX = ???
-			CF set on error
-	    0003h get ???
-		Return: CF clear
-			DX:AX = ??? SHL 2
-	    0004h ???
-		Return: CF clear
-			DX:AX = ???
-	    0005h ???
-		Return: CF clear
-			DX:AX = ???
-	    0006h ???
-		Return: CF clear
-			DX:AX = ???
-	    0007h ???
-		Return: CF clear
-			DX:AX = ???
-	    0008h ???
-		Return: CF clear
-			DX:AX = ???
-	    0009h ???
-		Return: CF clear
-			DX:AX = ???
-	    000Ah ???
-		Return: CF clear
-			DX:AX = ???
-	    000Bh get ???
-		Return: CF clear
-			DX:AX = ??? SHL 2
-	    000Ch get ???
-		Return: CF clear
-			DX:AX = ??? SHL 2
-	    000Dh get ???
-		Return: CF clear
-			DX:AX = ??? SHL 2
-	    000Eh get ???
-		Return: CF clear
-			AX = ???
-			DX = ???
-	    000Fh get ???
-		Return: CF clear
-			DX:AX = ???
-	    0010h get ???
-		Return: CF clear
-			DX:AX = ???
-	    0011h get ???
-		Return: CF clear
-			DX:AX = ???
-	    0012h get ???
-		Return: CF clear
-			DX:AX = ???
-	    0013h get ???
-		Return: CF clear
-			DX:AX = ???
-	    0014h get ???
-		Return: CF clear
-			DX:AX = ???
-	    0015h get ???
-		Return: CF clear
-			DX:AX = ???
-	    else
-		Return: CF set
-SeeAlso: #2570,#2572
---------W-2F1684BX357E-----------------------
-INT 2F - MS Windows - DSOUND - GET API ENTRY POINT
-	AX = 1684h
-	BX = 357Eh (virtual device ID for DSOUND device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-----------2F1684BX377B-----------------------
-INT 2F - MS Windows - MX1501HAD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 377Bh (virtual device ID for MX1501HAD device)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2572)
-		  0000h:0000h if the VxD does not support an API
-Note:	The drivers VCMD95C.VXD and VCMD.386 are part of the driver disks
-	  provided with the chip-card-reader/keyboard combination MX 1501 HAD,
-	  produced by Cherry
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2572)
-Call CHERRY VCMD95C.VXD entry point with:
-	AX = function
-	    0001h get version
-		Return: AX = version number (0100h) (AH = major, AL = minor)
-	    0002h hook INT 09 (and 8???)
-	    0003h unhook INT 09 (and 8???)
-	    0004h get number of bytes in FIFO
-		Return: AX = bytes in FIFO
-	    0005h get next FIFO-data
-		Return: AX = data
-			BL = port number
-			BH = direction (1=in, 0=out)
-			DX:CX = timestamp
-	    0006h clear FIFO
-	    0007h output byte
-		DX = port number
-		BL = keyboard command
-		Return: data in FIFO (see #2574)
-		       (value, port, in/out, timestamp)
-	    0008h input byte
-		DX = port number
-		Return: data in FIFO (see #2574)
-			(value, port, in/out, timestamp)
-	    0009h input byte immediately
-		DX = port number
-		Return: AX = data
-	    000Ah read next FIFO data (nondestructive)
-		Return: AX = data
-			BL = port number
-			BH = direction (1=in, 0=out)
-			DX:CX = timestamp
-	    000Bh get timestamp
-		Return: DX:CX = timestamp (in ms)
-	    000Ch enable IRQ 1
-	    000Dh disable IRQ 1
-	    000Eh enable data retrieval
-		Note:	Sets a flag in the internal mode-byte which
-			  tells the driver to recognize the data
-	    000Fh disable data retrieval
-		Note:	resets a flag in the internal mode-byte
-	    0010h get retrieval mode
-		Return: AX = current retrieval mode
-	    0011h set retrieval mode
-		BX = new retrieval mode (see #2573)
-		Return: AX = old retrieval mode
-	    0012h get command value
-		Return: AX = command value
-	    0013h set command value
-		BX = command value
-SeeAlso: #2570,#2575
-
-Bitfields for retrieval mode:
-Bit(s)	Description	(Table 2573)
- 0	enable data retrieval
- 1	0 = interrupt-driven
-	1 = polling mode
- 2	0 = read port 60h everytime
-	1 = read port 60h only when OBF of port 64h is set
- 3	0 = don't call old INT 9
-	1 = call INT 9 before our INT-handler
- 4-7	reserved
-SeeAlso: #2572,#2574
-
-Format of FIFO entry (1024 entries in FIFO):
-Offset	Size	Description	(Table 2574)
- 00h	BYTE	data byte
- 01h	BYTE	I/O port
- 02h	BYTE	direction (1=in, 0=out)
- 03h	BYTE	reserved
- 04h	DWORD	timestamp
-SeeAlso: #2572,#2573
---------W-2F1684BX38DA-----------------------
-INT 2F - MS Windows - VIWD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 38DAh (virtual device ID for VIWD device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2575)
-		  0000h:0000h if the VxD does not support API in current mode
-SeeAlso: AX=1684h"DEVICE API",INT 20"Windows"
-
-(Table 2575)
-Call VIWD.VXD entry point with:
-	DX = function number
-	    0000h ???
-		Return: CF clear
-			AX = ???
-	    0004h ???
-		Return: CF clear
-			DX = 0000h
-	    0006h
-		Return: CF clear
-	    000Ah
-		AX = ???
-		Return: CF clear if successful
-			CF set on error
-	    000Ch
-	    000Dh
-	    000Eh
-		Return: CF clear
-	    000Fh
-		Return: CF clear
-	    0010h
-	    0011h
-	    0015h
-		Return: CF clear if successful
-			    AX = ???
-			CF set on error
-			    AX = ???
-			DX = 0000h
-	    0016h
-	    0017h
-		Return: CF clear if successful
-			    AX = ???
-			CF set on error
-			    AX = ???
-			DX = 0000h
-	    0018h ???
-		CX = ???
-		Return: CF clear if successful
-			    AX = 0000h
-			CF set on error
-	    else
-		Return: CF set
-SeeAlso: #2572,#2576
---------W-2F1684BX4321-----------------------
-INT 2F - MS Windows - POSTMSG - GET API ENTRY POINT
-	AX = 1684h
-	BX = 4321h (virtual device ID for POSTMSG device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2576,#2578)
-		  0000h:0000h if the VxD does not support an API
-
-(Table 2576)
-Call POSTMSG protected-mode entry point with:
-	AX = window handle
-	CX:BX -> callback procedure (see #2577)
-Return: nothing
-Note:	this call registers a WinApp with the VxD; the callback must be in a
-	  fixed, non-discardable code segment
-SeeAlso: #2578,#2579
-
-(Table 2577)
-Values POSTMSG callback routine is called with:
-	STACK:	DWORD	"lParam" parameter from DOSApp
-		WORD	"wParam" parameter from DOSApp
-		WORD	Windows message number (WM_USER + 100h)
-		WORD	registered HWND
-
-(Table 2578)
-Call POSTMSG V86-mode entry point with:
-	BX = wParam value to pass to protected-mode callback
-	DX:AX = lParam value to pass to protected-mode callback
-Return: CF clear if successful
-	CF set on error (no WinApp registered)
-SeeAlso: #2576
---------W-2F1684BX7FE0-----------------------
-INT 2F - MS Windows - VSWITCHD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 7FE0h (virtual device ID for VSWITCHD device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2579)
-		  0000h:0000h if the VxD does not support an API
-
-(Table 2579)
-Call VSWITCHD entry point with:
-	AX = function
-	    0000h toggle windowed mode (simulate Alt-Enter keypress)
-		Return: nothing
-	    0001h get windowed mode
-		Return: CF clear if VM is windowed
-			CF set if VM is full-screen
-SeeAlso: #2576,#2580
---------W-2F1684BX8888-----------------------
-INT 2F - MS Windows - VbillD - GET API ENTRY POINT
-	AX = 1684h
-	BX = 8888h (virtual device ID for VbillD device) (see #2506)
-	ES:DI = 0000h:0000h
-Return: ES:DI -> VxD API entry point (see #2580)
-		  0000h:0000h if the VxD does not support an API
-
-(Table 2580)
-Call VbillD entry point with:
-	AX = function
-	    0001h set reverse video
-	    0002h set normal video
-Return: ???
-SeeAlso: #2579
---------W-2F1685-----------------------------
-INT 2F - MS Windows - SWITCH VMs AND CALLBACK
-	AX = 1685h
-	BX = VM ID of virtual machine to switch to
-	CX = flags (see #2581)
-	DX:SI = priority boost (refer to VMM.INC)
-	ES:DI -> FAR procedure to callback
-Return: CF set on error
-	    AX = error code
-		01h invalid VM ID
-		02h invalid priority boost
-		03h invalid flags
-	CF clear if successful
-	    event will be or has been called
-Notes:	some DOS devices, such as networks, need to call functions in a
-	  specific VM. This call forces the appropriate VM to be installed.
-	the callback procedure must preserve all registers and return with IRET
-SeeAlso: AX=1683h,INT 15/AX=1117h,AX=DB06h"WINGO"
-
-Bitfields for VM switching flags:
-Bit(s)	Description	(Table 2581)
- 0	wait until interrupts enabled
- 1	wait until critical section unowned
- 2-15	reserved (zero)
---------E-2F1686-----------------------------
-INT 2F - DOS Protected-Mode Interface - DETECT MODE
-	AX = 1686h
-Return: AX = 0000h if operating in protected mode under DPMI (INT 31 available)
-	AX nonzero if in real/V86 mode or no DPMI (INT 31 not available)
-SeeAlso: AX=1687h
---------E-2F1687-----------------------------
-INT 2F - DOS Protected-Mode Interface - INSTALLATION CHECK
-	AX = 1687h
-Return: AX = 0000h if installed
-	    BX = flags
-		bit 0: 32-bit programs supported
-	    CL = processor type (02h=80286, 03h=80386, 04h=80486)
-	    DH = DPMI major version
-	    DL = two-digit DPMI minor version (binary)
-	    SI = number of paragraphs of DOS extender private data
-	    ES:DI -> DPMI mode-switch entry point (see #2582)
-	AX nonzero if not installed
-SeeAlso: AX=1686h,AX=43E0h,AX=DE01h/BX=4450h,AX=FB42h/BX=0001h
-SeeAlso: INT 31/AX=0400h,INT 31/AX=5702h,INT D4/AH=10h
-
-(Table 2582)
-Call DPMI mode switch entry point with:
-	AX = flags
-	    bit 0: set if 32-bit program
-	ES = real mode segment of buffer for DPMI private data (ignored if
-		SI was zero)
-Return: CF set on error
-	    program still in real mode
-	    AX = error code (DPMI 1.0+)
-	       8011h unable to allocate all necessary descriptors
-	       8021h 32-bit program specified, but 16-bit DPMI host
-	CF clear if successful
-	    CS = 16-bit selector corresponding to real-mode CS
-	    SS = selector corresponding to real-mode SS (64K limit)
-	    DS = selector corresponding to real-mode DS (64K limit)
-	    ES = selector to program's PSP (100h byte limit)
-	    FS = GS = 0
-	    high word of ESP = 0 if 32-bit program
-	    program now in protected mode
-Note:	this entry point is only called for the initial switch to protected
-	  mode
---------W-2F1688BX0BAD-----------------------
-INT 2F U - MS Windows 3.0, 386MAX v6.01 - GET ALIAS SELECTOR TO LDT
-	AX = 1688h
-	BX = 0BADh
-Return: AX = 0000h if supported
-	    BX = alias selector for LDT
-Note:	use the LSL instruction or GetSelectorLimit() to find LDT size
-	this call should be considered obsolete for Windows 3.1+, as the
-	  alias selector can be retrieved via the API entry point for
-	  "MS-DOS" retrieved from INT 2F/AX=168Ah (see #2584)
-SeeAlso: AX=1687h,#2584
---------W-2F1689-----------------------------
-INT 2F U - MS Windows 3.0+ - KERNEL IDLE CALL
-	AX = 1689h
-	???
-Return: ???
-Desc:	the Windows KERNEL idle loop calls this function, which VMM uses as an
-	  indication that the system is idle, which in turn generates INT 28
-	  and INT 2F/AX=1607h/BX=0018h callouts
-SeeAlso: AX=1680h,AX=1607h/BX=0018h,INT 15/AX=1000h,INT 28
---------E-2F168A-----------------------------
-INT 2F - DPMI 0.9+ - GET VENDOR-SPECIFIC API ENTRY POINT
-	AX = 168Ah
-	DS:(E)SI = selector:offset of ASCIZ vendor name (see #2583)
-Return: AL = status
-	    00h successful
-	       ES:(E)DI -> extended API entry point
-	    8Ah unsuccessful
-Notes:	the vendor name is used to determine which entry point to return; it is
-	  case-sensitive
-	available in protected mode only
-	32-bit applications use ESI and EDI, 16-bit applications use SI and DI
-	this call is present but not documented for DPMI 0.9
-	the Borland C++ 3.1 DPMILOAD does not handle requests for entry points
-	  other than the MS-DOS one gracefully, producing an unhandled
-	  exception report; this has been fixed in the Borland Pascal 7 version
-SeeAlso: AX=1687h,INT 31/AX=0A00h,INT 31/AH=57h
-
-(Table 2583)
-Values for DPMI vendor-specific API names:
- "MS-DOS"	MS Windows and 386MAX v6.00+ (see #2584)
- "386MAX"	386MAX v6.00+
- "HELIX_DPMI"	Helix Netroom's DPMI server
- "Phar Lap"	Phar Lap 286|DOS-Extender RUN286 (see #2585)
- "RATIONAL DOS/4G"  DOS/4G, DOS/4GW
- "VIRTUAL SUPPORT"  Borland 32RTM
-
-(Table 2584)
-Call Windows-support ("MS-DOS") entry point with:
-	AX = 0100h get LDT alias selector
-Return: CF clear if successful
-	    AX = alias selector
-	CF set on error
-SeeAlso: #2583,AX=1688h/BX=0BADh
-
-(Table 2585)
-Call Phar Lap RUN286 entry point with:
-	AX = 0000h (function "load MSW")
-	BX = new value for MSW register (low word of CR0)
-Return: ???
-SeeAlso: #2583
---------W-2F168B-----------------------------
-INT 2F - MS Windows 3.1 - SET FOCUS TO SPECIFIED VIRTUAL MACHINE
-	AX = 168Bh
-	BX = virtual machine ID (see AX=1683h), 0000h for current DOS box
-Return: AL = 00h if focus set to specified VM
-Notes:	documented on the Microsoft Developer's Network CD-ROM
-	if the VM is a windowed DOS box, it will be set to full screen
-SeeAlso: AX=1683h
---------W-2F168C-----------------------------
-INT 2F - MS Windows 3.1 - RESTART COMMAND
-	AX = 168Ch
-	???
-Return: ???
-Note:	WIN.COM executes specified application
---------W-2F168EDX0000-----------------------
-INT 2F - Windows95 - TITLE - SET APPLICATION TITLE
-	AX = 168Eh
-	DX = 0000h
-	ES:DI -> ASCIZ application title (max 79 chars+NUL)
-Return: AX = status
-	    0000h failed
-	    0001h successful
-Note:	if ES:DI is 0000h:0000h or points at an empty string, the current
-	  title is removed
-BUG:	this function can return a successful status even though the title was
-	  not changed; reportedly, waiting for two clock ticks after program
-	  startup solves this problem
-SeeAlso: AX=168Eh/DX=0001h,AX=168Eh/DX=0002h
---------W-2F168EDX0001-----------------------
-INT 2F - Windows95 - TITLE - SET VIRTUAL MACHINE TITLE
-	AX = 168Eh
-	DX = 0001h
-	ES:DI -> ASCIZ virtual machine title (max 29 chars+NUL)
-Return: AX = status
-	    0000h failed
-	    0001h successful
-Notes:	if ES:DI is 0000h:0000h or points at an empty string, the current
-	  title is removed
-	the VM title should only be changed on explicit instruction from the
-	  user
-BUG:	this function can return a successful status even though the title was
-	  not changed; reportedly, waiting for two clock ticks after program
-	  startup solves this problem
-SeeAlso: AX=168Eh/DX=0000h,AX=168Eh/DX=0003h
---------W-2F168EDX0002-----------------------
-INT 2F - Windows95 - TITLE - GET APPLICATION TITLE
-	AX = 168Eh
-	DX = 0002h
-	ES:DI -> buffer for ASCIZ application title
-	CX = size of buffer in bytes
-Return: AX = status
-	    0000h failed
-	    0001h successful
-Desc:	copy as much of the application's window title as possible to the given
-	  buffer, appending a terminating NUL to the buffer
-SeeAlso: AX=168Eh/DX=0000h,AX=168Eh/DX=0003h
---------W-2F168EDX0003-----------------------
-INT 2F - Windows95 - TITLE - GET VIRTUAL MACHINE TITLE
-	AX = 168Eh
-	DX = 0003h
-	ES:DI -> buffer for ASCIZ virtual-machine title
-	CX = size of buffer in bytes
-Return: AX = status
-	    0000h failed
-	    0001h successful
-Desc:	copy as much of the virtual machine's title as possible to the given
-	  buffer, appending a terminating NUL to the buffer
-SeeAlso: AX=168Eh/DX=0001h,AX=168Eh/DX=0002h
---------W-2F168FDH00-------------------------
-INT 2F - Windows95 - CLOSE-AWARENESS - ENABLE/DISABLE CLOSE COMMAND
-	AX = 168Fh
-	DH = 00h
-	DL = new state
-	    00h disabled
-	    01h enabled
-Return: AX = status
-	    0000h successful
-	    else failed
-Desc:	enable or disable the system menu Close command for an application
-SeeAlso: AX=168Fh/DH=01h,AX=168Fh/DH=02h
---------W-2F168FDH01-------------------------
-INT 2F - Windows95 - CLOSE-AWARENESS - QUERY CLOSE
-	AX = 168Fh
-	DH = 01h
-	DL = 00h (reserved)
-Return: AX = status
-	    0000h Close command selected but not yet acknowledged
-	    0001h Close command issued and acknowledged
-	    168Fh Close command not selected -- application should continue
-Desc:	determine whether the user has requested that the application be closed
-	  by selecting the system menu's Close option
-SeeAlso: AX=168Fh/DH=00h,AX=168Fh/DH=02h
---------W-2F168FDH02-------------------------
-INT 2F - Windows95 - CLOSE-AWARENESS - ACKNOWLEDGE CLOSE
-	AX = 168Fh
-	DH = 02h
-	DL = 00h (reserved)
-Return: AX = status
-	    0000h successful
-	    else failed
-Note:	once a Close command has been issued, no further keyboard input is
-	  available to the application until it calls this function to
-	  acknowledge the Close request
-SeeAlso: AX=168Fh/DH=00h,AX=168Fh/DH=03h
---------W-2F168FDH03-------------------------
-INT 2F - Windows95 - CLOSE-AWARENESS - CANCEL CLOSE
-	AX = 168Fh
-	DH = 03h
-	DL = 00h (reserved)
-Return: AX = status
-	    0000h successful
-	    else failed
-Desc:	cancels a close request which has already been acknowledged if the
-	  application determines that it will not exit at this time
-SeeAlso: AX=168Fh/DH=00h,AX=168Fh/DH=03h
---------D-2F1690-----------------------------
-INT 2F U - MS-DOS 7 kernel - GET/SET ???
-	AX = 1690h
-	ES:BX -> ???
-Return: ES:BX -> ??? data (see #2586)
-SeeAlso: AX=1611h,AX=1614h
-
-Format of MS-DOS 7 kernel ??? data:
-Offset	Size	Description	(Table 2586)
- 00h	DWORD	-> ??? data (appears to list the installed drivers)
- 04h	DWORD	-> ??? (value passed in via ES:BX is stored here)
---------W-2F1700-----------------------------
-INT 2F - MS Windows "WINOLDAP" - IDENTIFY WinOldAp VERSION
-	AX = 1700h
-Return: AX = 1700h if this version of WINOLDAP doesn't support clipboard
-	AX <> 1700h
-	    AL = WINOLDAP major version
-	    AH = WINOLDAP minor version
-Program: WinOldAp (WINOLDAP.MOD) is a Microsoft Windows extension supporting
-	  "old" (character-mode) application access to Dynamic Data Exchange,
-	  menus, and the Windows clipboard.
-Note:	this installation check DOES NOT follow the format used by other
-	  software of returning AL=FFh
-SeeAlso: AX=1701h,AX=4601h
-Index:	installation check;WINOLDAP
---------W-2F1701-----------------------------
-INT 2F - MS Windows "WINOLDAP" - OPEN CLIPBOARD
-	AX = 1701h
-Return: AX = status
-	    nonzero success
-	    0000h   clipboard is already open
-SeeAlso: AX=1700h,AX=1702h,AX=1703h,AX=1704h,INT 16/AX=CB00h
---------W-2F1702-----------------------------
-INT 2F - MS Windows "WINOLDAP" - EMPTY CLIPBOARD
-	AX = 1702h
-Return: AX = status
-	    nonzero clipboard has been emptied
-	    0000h   failure
-SeeAlso: AX=1700h,AX=1701h,AX=1703h,AX=1704h,INT 16/AX=CB05h
---------W-2F1703-----------------------------
-INT 2F - MS Windows "WINOLDAP" - SET CLIPBOARD DATA
-	AX = 1703h
-	DX = clipboard format supported by WinOldAp (see #2587)
-	ES:BX -> data (see #2588,#2589)
-	SI:CX = size of data
-Return: AX = status
-	    nonzero data copied into the Clipboard
-	    0000h   failure
-SeeAlso: AX=1701h,AX=1705h,INT 16/AX=CB04h
-
-(Table 2587)
-Values for WinOldAp clipboard format:
- 01h	text
- 02h	bitmap
- 03h	metafile picture
- 04h	SYLK
- 05h	DIF
- 06h	TIFF
- 07h	OEM text
- 08h	DIB bitmap
- 80h	special format (used by Windows WRITE, maybe other Windows applets???)
- 81h	DSP text
- 82h	DSP bitmap
-
-Format of Windows Clipboard bitmap:
-Offset	Size	Description	(Table 2588)
- 00h	WORD	type (0000h)
- 02h	WORD	width of bitmap in pixels
- 04h	WORD	height of bitmap in pixels
- 06h	WORD	bytes per line
- 08h	BYTE	number of color planes
- 09h	BYTE	number of adjacent color bits in pixel
- 0Ah	DWORD	pointer to start of data
- 0Eh	WORD	width in 0.1mm units
- 10h	WORD	height in 0.1mm units
- 12h  N BYTEs	bitmap data
-
-Format of Windows metafile picture:
-Offset	Size	Description	(Table 2589)
- 00h	WORD	mapping mode
- 02h	WORD	X extent
- 04h	WORD	Y extent
- 06h	WORD	picture data
---------W-2F1704-----------------------------
-INT 2F - MS Windows "WINOLDAP" - GET CLIPBOARD DATA SIZE
-	AX = 1704h
-	DX = clipboard format supported by WinOldAp (see #2587)
-Return: DX:AX = size of data in bytes, including any headers
-		0000h:0000h if no data in this format in the Clipboard
-Note:	Windows reportedly rounds up the size of the data to a multiple of 32
-	  bytes
-SeeAlso: AX=1700h,AX=1703h,AX=1705h
---------W-2F1705-----------------------------
-INT 2F - MS Windows "WINOLDAP" - GET CLIPBOARD DATA
-	AX = 1705h
-	DX = clipboard format supported by WinOldAp (see #2587)
-	ES:BX -> buffer
-Return: AX = status
-	    nonzero success
-	    0000h   error, or no data in this format in Clipboard
-SeeAlso: AX=1700h,AX=1704h,INT 16/AX=CB03h
---------W-2F1708-----------------------------
-INT 2F - MS Windows "WINOLDAP" - CloseClipboard
-	AX = 1708h
-Return: AX = status
-	    0000h failure
-	    nonzero success
---------W-2F1709-----------------------------
-INT 2F - MS Windows "WINOLDAP" - COMPACT CLIPBOARD
-	AX = 1709h
-	SI:CX = desired size in bytes
-Return: DX:AX = number of bytes in largest block of free memory
-Note:	WinOldAp is responsible for including the size of any headers
---------W-2F170A-----------------------------
-INT 2F - MS Windows "WINOLDAP" - GET DEVICE CAPABILITIES
-	AX = 170Ah
-	DX = GDI information index (see #2590)
-Return: AX = integer value of the desired item
-	      (see #2591,#2592,#2593,#2594,#2595,#2596,#2597)
-Note:	This function returns the device-capability bits for the given display
-
-(Table 2590)
-Values for GDI information index:
- 00h	device driver version
- 02h	device classification
- 04h	width in mm
- 06h	height in mm
- 08h	width in pixels
- 0Ah	height in pixels
- 0Ch	bits per pixel
- 0Eh	number of bit planes
- 10h	number of brushes supported by device
- 12h	number of pens supported by device
- 14h	number of markers supported by device
- 16h	number of fonts supported by device
- 18h	number of colors
- 1Ah	size required for device descriptor
- 1Ch	curve capabilities
- 1Eh	line capabilities
- 20h	polygon capabilities
- 22h	text capabilities
- 24h	clipping capabilities
- 26h	bitblt capabilities
- 28h	X aspect
- 2Ah	Y aspect
- 2Ch	length of hypotenuse of aspect
- 58h	logical pixels per inch of width
- 5Ah	logical pixels per inch of height
-SeeAlso: #2591,#2592,#2593,#2594,#2595,#2596,#2597
-
-(Table 2591)
-Values for device classification:
- 00h	vector plotter
- 01h	raster display
- 02h	raster printer
- 03h	raster camera
- 04h	character-stream, PLP
- 05h	Metafile, VDM
- 06h	display-file
-SeeAlso: #2590,#2592,#2593,#2594,#2595,#2596,#2597
-
-Bitfields for curve capabilities:
-Bit(s)	Description	(Table 2592)
- 0	circles
- 1	pie wedges
- 2	chord arcs
- 3	ellipses
- 4	wide lines
- 5	styled lines
- 6	wide styled lines
- 7	interiors
-SeeAlso: #2590,#2591,#2593,#2594,#2595,#2596,#2597
-
-Bitfields for line capabilities:
-Bit(s)	Description	(Table 2593)
- 1	polylines
- 2	markers
- 3	polymarkers
- 4	wide lines
- 5	styled lines
- 6	wide styled lines
- 7	interiors
-SeeAlso: #2590,#2591,#2592,#2594,#2595,#2596,#2597
-
-Bitfields for polygon capabilities:
-Bit(s)	Description	(Table 2594)
- 0	polygons
- 1	rectangles
- 2	trapezoids
- 3	scanlines
- 4	wide borders
- 5	styled borders
- 6	wide styled borders
- 7	interiors
-SeeAlso: #2590,#2591,#2592,#2593,#2595,#2596,#2597
-
-Bitfields for text capabilities:
-Bit(s)	Description	(Table 2595)
- 0	output precision character
- 1	output precision stroke
- 2	clippping precision stroke
- 3	90-degree character rotation
- 4	arbitrary character rotation
- 5	independent X and Y scaling
- 6	double-size
- 7	integer scaling
- 8	continuous scaling
- 9	bold
- 10	italic
- 11	underline
- 12	strikeout
- 13	raster fonts
- 14	vector fonts
- 15	reserved
-SeeAlso: #2590,#2591,#2592,#2593,#2594,#2596,#2597
-
-(Table 2596)
-Values for clipping capabilities:
- 00h	none
- 01h	clipping to rectangles
-SeeAlso: #2590,#2591,#2592,#2593,#2594,#2595,#2597
-
-Bitfields for raster capabilities:
-Bit(s)	Description	(Table 2597)
- 0	simple bitBLT
- 1	device requires banding support
- 2	device requires scaling support
- 3	supports >64K bitmap
-SeeAlso: #2590,#2591,#2592,#2593,#2594,#2595,#2596
-----------2F18-------------------------------
-INT 2F U - MS-Manager
-	AH = 18h
-	???
-Return: ???
---------l-2F1900-----------------------------
-INT 2F U - DOS 4.x only SHELLB.COM - INSTALLATION CHECK
-	AX = 1900h
-Return: AL = status
-	    00h not installed
-	    FFh installed
---------l-2F1901-----------------------------
-INT 2F U - DOS 4.x only SHELLB.COM - SHELLC.EXE INTERFACE
-	AX = 1901h
-	BL = SHELLC type
-	    00h transient
-	    01h resident
-	DS:DX -> far call entry point for resident SHELLC.EXE
-Return: ES:DI -> SHELLC.EXE workspace within SHELLB.COM
-Note:	SHELLB.COM and SHELLC.EXE are parts of the DOS 4.x shell
---------l-2F1902-----------------------------
-INT 2F U - DOS 4.x only SHELLB.COM - COMMAND.COM INTERFACE
-	AX = 1902h
-	ES:DI -> ASCIZ full filename of current batch file, with at least the
-		  final filename element uppercased
-	DS:DX -> buffer for results
-Return: AL = 00h  failed, either
-		(a) final filename element quoted at ES:DI does not match
-		      identity of shell batch file quoted as parameter of most
-		      recent call of SHELLB command, or
-		(b) no more Program Start Commands available.
-	AL= FFh	 success, then:
-		memory at DS:[DX+1] onwards filled as:
-		DX+1:	BYTE	count of bytes of PSC
-		DX+2: N BYTEs	Program Start Command text
-			BYTE	0Dh terminator
-Desc:	COMMAND.COM executes the result of this call in preference to
-	  reading a command from a batch file.	Thus the batch file does not
-	  advance in execution for so long as SHELLB provides PSCs from its
-	  workspace.
-Note:	The PSCs are planted in SHELLB workspace by SHELLC, the user
-	  menu interface.  The final PSC of a sequence is finished with a
-	  GOTO COMMON, which causes a loop back in the batch file which called
-	  SHELLC so as to execute SHELLC again.	 The check on batch file name
-	  permits PSCs to CALL nested batch files while PSCs are still stacked
-	  up for subsequent execution.
---------l-2F1903-----------------------------
-INT 2F U - DOS 4.x only SHELLB.COM - COMMAND.COM interface
-	AX = 1903h
-	ES:DI -> ASCIZ batch file name as for AX=1902h
-Return: AL = status
-	    FFh quoted batch file name matches last SHELLB parameter
-	    00h it does not
---------l-2F1904-----------------------------
-INT 2F U - DOS 4.x only SHELLB.COM - SHELLB transient to TSR intrface
-	AX = 1904h
-Return: ES:DI -> name of current shell batch file:
-		WORD	number of bytes of name following
-		BYTEs	(8 max) uppercase name of shell batch file
-----------2F1980-----------------------------
-INT 2F U - IBM ROM-DOS v4.0 - INSTALLATION CHECK
-	AX = 1980h
-Return: AL = FFh if ??? installed/supported
-Note:	called at the very beginning of SHELLSTB.COM, which exits if AL is not
-	  FFh on return
-SeeAlso: AX=1981h,AX=1982h
-----------2F1981-----------------------------
-INT 2F U - IBM ROM-DOS v4.0 - GET ??? STRING
-	AX = 1981h
-	DS:DX -> buffer for ???
-Return: AL = status
-	    FFh if successful
-		DS:DX buffer filled (refer to note below)
-	    81h on error
-Note:	the first byte of the buffer is unchanged; depending on a byte in
-	  IBMBIO.COM, the remainder of the buffer is filled with either
-	  "C:\ROMSHELL.COM",0Dh or xxh,xxh,0Fh,"C:\ROMSHELL.COM",0Dh
-SeeAlso: AX=1980h,AX=1982h
-----------2F1982-----------------------------
-INT 2F U - IBM ROM-DOS v4.0 - GET ??? TABLE
-	AX = 1982h
-Return: AL = FFh if supported
-	    ES:DI -> ??? table (see #2598)
-Note:	called by ROMSHELL.COM
-SeeAlso: AX=1980h,AX=1981h
-
-Format of ROM-DOS v4.0 ??? table:
-Offset	Size	Description	(Table 2598)
- 00h	BYTE	??? (00h)
- 01h	BYTE	??? (41h) (ROMSHELL.COM checks if =00h)
- 02h	BYTE	??? (00h) (ROMSHELL.COM checks if =01h)
- 03h	WORD	??? (0001h) (ROMSHELL.COM checks if =0001h)
- 05h	BYTE	??? (00h)
- 06h	WORD	??? (04D5h)
+Return: AX = CDCDh if Stacker installed
+	    DS:BX buffer filled
+Note:	not supported by Stacker Anywhere; to obtain the Stacker device
+	  driver address and to detect drives controlled by all versions
+	  of Stacker, INT 21/AX=4404h"Stacker" or lookup via the CDS and DPB
+	  should be preferred (see INT 21/AH=52h)
+	Stacker Anywhere does not link its built-in device driver into
+	  the standard device driver chain, but it can be found via CDS/DPB
+SeeAlso: INT 21/AX=4404h"Stacker"
+
+Format of Stacker v2+ driver address buffer:
+Offset	Size	Description	(Table 02525)
+ 00h	WORD	signature CDCDh
+ 02h	WORD	??? 0001h
+ 04h	DWORD	pointer to Stacker signature at device driver offset 1Ah
+		  (see #02526)
+
+Format of Stacker v2+ device driver:
+Offset	Size	Description	(Table 02526)
+ 00h	DWORD	pointer to next driver, offset=FFFFh if last driver
+		FFFFh:FFFFh for Stacker Anywhere
+ 04h	WORD	device attributes (see #01624,#01625)
+ 06h	WORD	device strategy entry point
+ 08h	WORD	device interrupt entry point
+ 0Ah	BYTE	number of subunits (drives) supported by driver
+		0 for Stacker Anywhere
+ 0Bh  7 BYTEs	signature "STAC-CD" for Stacker and Stacker Anywhere
+ 12h  7 BYTEs	???
+ 19h	BYTE	always = 01h ?? (Stacker Anywhere points here)
+ 1Ah	WORD	signature A55Ah (all other Stacker versions point here)
+ 1Ch	WORD	Stacker version * 64h
+		0C8h = 200, 012Ch = 300, 0190h = 400 (also Stacker Anywhere)
+ 1Eh	WORD	offset of volume-specific information offset table
+		(list of WORDs, one per drive, containing offsets to various
+		  information)
+ 20h 56 BYTEs	n/a
+ 58h	BYTE	volume number, set after INT 21/AX=4404h, INT 21/AX=4408h
+		(use to index into volume-specific info offset table,
+		should be set to FFh before and tested for change after)
+ 59h 19 BYTEs	n/a
+ 6Ch  4 BYTEs	ASCII string "SWAP"
+ 70h 26 BYTEs	drive mapping table (one byte for each drive A: through Z:)
+		(only used for drives swapped by SSWAP.COM; other drives
+		compressed by Stacker can be found with the standard device
+		driver header signature (see INT 21/AH=52h)
+---Stacker 4, Stacker Anywhere---
+ 8Ah 40	BYTEs	???
+ B2h  4 BYTEs	ASCII string "SWP2"
+ B6h 26 BYTEs	drive table ???
+ D0h 150 BYTEs	???
+166h 60 BYTEs	LZSINFO structure (see #02784 at INT 2F/AX=4A12h)
+SeeAlso: #02527,#01623 at INT 21/AH=52h
+
+Format of Stacker boot record:
+Offset	Size	Description	(Table 02527)
+1F0h  8 BYTEs	Stacker signature (first byte is CDh)
+1F8h	DWORD	pointer to start of Stacker device driver
+1FCh	WORD	Stacker volume number
+1FEh	WORD	???
+SeeAlso: #02526
+--------c-25--FFSI4358-----------------------
+INT 25 - PC-CACHE.SYS - INSTALLATION CHECK
+	AL = FFh
+	SI = 4358h
+Return: SI = 6378h if installed
+	    CX = segment of device driver PC-CACHE.SYS
+	    DX = version (major in DH, minor in DL)
+Program: PC-CACHE.SYS is a small device driver used by PC-Cache v5.x to obtain
+	  access to certain disk drivers for devices such as Bernoulli drives
+SeeAlso: INT 13/AH=A0h
 --------!---Section--------------------------

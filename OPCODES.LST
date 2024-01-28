@@ -1,4 +1,4 @@
-OPCODE LIST			Release 58		Last change 28jun98
+OPCODE LIST			Release 59		Last change 30aug98
 
 ------------------  OPCODE.LST	----------------------------
 This is DOC 'bout undocument command and document command
@@ -7,12 +7,18 @@ Chips specific stuffs.
  -----------------------------------------------------------
  (C) (P) Potemkin's Hackers Group 1994...1998
  -----------------------------------------------------------
-Revision 3.80	PRELIMINARY			 1 Jul 1998
+Revision 3.81	PRELIMINARY			 20 Jul 1998
  -----------------------------------------------------------
 All Your messages send to ->
 E-mail: phg@dialup.ptt.ru
 	So, usually I change E-mails like socks, but this
 	one is stable and working
+-------------------------------------------------------------
+[New In revision 3.81]
+  o  Update steppings
+  o  Add Vendor-specified instruction times
+  o  Add some new info in appendix G.
+  o  Some bugfixes
 -------------------------------------------------------------
 [New In revision 3.80]
   o  Cyrix EMMX instructions
@@ -56,7 +62,6 @@ Description:
 	}
 	AL <- AL and 0Fh
 
-
 Note: This istruction incorrectly documented in Intel's materials.
       See description field.
 
@@ -66,7 +71,6 @@ Flags Affected:	AF,CF	    (modified)
 Faults:
 	RM	PM	V86	VME
 	None
-
 
 CPU mode: RM,PM,VM,SMM
 
@@ -240,7 +244,6 @@ Faults:
 						outside of 0..FFFFh
 		#AC	#AC			if CPL=3 and enable AC.
 
-
 Note:	 (186s&NECs) saved CS:IP BOUND interrupt as pointer to following
       instruction that self.
 	 (286+) saved as pointer to BOUND instruction.
@@ -277,7 +280,6 @@ Description:
 	Perform a High-Speed Software Interrupt with contex-switch to
 	register bank indicated by the lower 3-bits of 'bank'.
 
-
 Info:	NEC V25/V35/V25 Plus/V35 Plus Bank System
 
 	This Chips have	 8 32bytes register banks, which placed in
@@ -291,7 +293,6 @@ Info:	NEC V25/V35/V25 Plus/V35 Plus Bank System
 	Where xx is Value of IDB register.
 	IBD is Byte Register contained Internal data area base
 	IBD addresses is FFFFFh and xxFFFh where xx is data in IBD.
-
 
 	Format of Bank:
 	+0	Reserved
@@ -358,7 +359,6 @@ Description:
 		MOV	CS,0:[intnum*4+2]
 		MOV	IP,0:[intnum*4]
 		MD <- 0;	// Enable 8080 emulation
-
 
 Note:	BRKEM instruction do software interrupt and then New CS,IP loaded
 	it switch to 8080 mode i.e. CPU will execute 8080 code.
@@ -543,8 +543,6 @@ Clocks: Cyrix Cx486SLC : 4
 	UMC   U5S      : 2
 	IBM 486BL3X    : 9
 
-
-
 ----------O-BTCLR----------------------------------
 OPCODE BTCLR   -  Bit Test, If it True Clear and Branch
 
@@ -613,8 +611,6 @@ Description:
 
 		BIT  bitnumb OF dest <- 0;
 
-
-
 Flags Affected: None
 
 CPU mode: RM
@@ -648,7 +644,6 @@ Description:
 	      IF condition(cc) is true THEN dest <- sorc;
 
 Flags Affected:	None
-
 
 CPU mode: RM,PM,VM,SMM
 
@@ -686,7 +681,6 @@ Description:
 
 	  SetFlaGS( BCD STRING (ADDRESS=ES:DI,LENGTH=CL) -
 		    BCD STRING (ADDRESS=DS:SI,LENGTH=CL) );
-
 
 Note:	si,di, other registers not changed
 
@@ -1016,7 +1010,6 @@ Description:
 	     }
 	END.
 
-
 Refer to:  Appendix B for more informations about CPU codes.
 
 Note:	On IDT C6 CPU we may set any Identification string and family/model/
@@ -1310,7 +1303,6 @@ Description:
 			   LENGTH =  len
 			 ];
 
-
 Note:	si and start automatically UPDATE
 
 Flags Affected: None
@@ -1370,7 +1362,6 @@ Clocks:	   IIT 2c87    : 242
 	   IIT 3c87    : 242
 	   IIT 3c87SX  : 242
 
-
 ----------O-FCMOVcc--------------------------------
 OPCODE FCMOVcc	 -  Floating Point Conditional Move
 
@@ -1396,8 +1387,6 @@ BE	Below Equal	(CF=1 .OR. ZF=1)	<=
 NBE	Not BelowEqual	(CF=0 .AND. ZF=0)	>
 U	Unordered	PF=1
 NU	Not Unordered	PF!=1
-
-
 
 CPU mode: RM,PM,VM,SMM
 
@@ -1506,6 +1495,50 @@ COP (Code of Operation)	 : 0Fh 92h
 
 Clocks: 2
 
+----------O-FNDISI---------------------------------
+OPCODE FNDISI - Disable NPX Interrupt
+
+FPU:  i8087 only
+Type of Instruction: FPU instruction
+
+Instruction: FNDISI
+
+Description:
+
+	CW.IEM <- 1;	// Enable NPX interrupt
+
+Note:  IEM is 7 of FPU.CW
+
+FPU Flags Affected: None
+
+CPU mode: 8087 support just real mode
+
+Physical Form:		 FNDISI
+COP (Code of Operation): DBH E1H
+Clocks:	      i8087	 5
+
+----------O-FNENI----------------------------------
+OPCODE FNENI - Enable NPX Interrupt
+
+FPU:  i8087 only
+Type of Instruction: FPU instruction
+
+Instruction: FNENI
+
+Description:
+
+	CW.IEM <- 0;	// Enable NPX interrupt
+
+Note:  IEM is 7 of FPU.CW
+
+FPU Flags Affected: None
+
+CPU mode: 8087 support just real mode
+
+Physical Form:		 FNENI
+COP (Code of Operation): DBH E0H
+Clocks:	      i8087	 5
+
 ----------O-FNSTDW---------------------------------
 OPCODE FNSTDW - FPU Not wait Store Device Word register
 
@@ -1528,7 +1561,6 @@ Format of Device word:
 	9-15	Reserved
 
 Note: Device word register valid only after FNINIT
-
 
 FPU Flags Affected: None
 
@@ -1567,9 +1599,7 @@ Note:
 
 Note: This FPU is out of life
 
-
 Note: Signature word register valid only after FNINIT
-
 
 FPU Flags Affected: None
 
@@ -1590,7 +1620,6 @@ Instruction:  FPO2  fp_op,mem
 Description:
 	      This instruction was building for sending FP commands to
 	      NEC NPX which never be realized
-
 
 Flags Affected: None
 
@@ -1767,7 +1796,6 @@ Description:
 
 	;   After initialization FPU select bank # 0.
 
-
 FPU Flags Affected:  None
 
 FPU mode: Any
@@ -1777,7 +1805,6 @@ COP (Code of Operation): DBH E8H
 Clocks:	   IIT 2c87    : 6
 	   IIT 3c87    : 6
 	   IIT 3c87SX  : 6
-
 
 ----------O-FSBP1----------------------------------
 OPCODE FSBP1 - FPU: Set Bank pointer to Bank # 1
@@ -1797,7 +1824,6 @@ Description:
 
 	;   After initialization FPU select bank # 0.
 
-
 FPU Flags Affected:  None
 
 FPU mode: Any
@@ -1807,7 +1833,6 @@ COP (Code of Operation): DBH EBH
 Clocks:	   IIT 2c87    : 6
 	   IIT 3c87    : 6
 	   IIT 3c87SX  : 6
-
 
 ----------O-FSBP2----------------------------------
 OPCODE FSBP2 - FPU: Set Bank pointer to Bank # 2
@@ -1827,7 +1852,6 @@ Description:
 
 	;   After initialization FPU select bank # 0.
 
-
 FPU Flags Affected:  None
 
 FPU mode: Any
@@ -1838,6 +1862,26 @@ Clocks:	   IIT 2c87    : 6
 	   IIT 3c87    : 6
 	   IIT 3c87SX  : 6
 
+----------O-FSETPM---------------------------------
+OPCODE FSETPM - FPU Set Protected Mode Adressing
+
+FPU:  80287, i287XL i287XLT
+Type of Instruction: FPU instruction
+
+Instruction: FRSTPM
+
+Description:
+
+	Setup Coprocessor for addressing in Protected mode
+
+FPU Flags Affected: None
+
+CPU mode:Any ???
+
+Physical Form:		 FSETPM
+COP (Code of Operation): DBH E4H
+Clocks:	      i287XL   : 12
+	      i287XLT  : 12
 
 ----------O-FXRSTOR--------------------------------
 OPCODE FXRSTOR	-  Fast Restore F.P. Context
@@ -1884,9 +1928,8 @@ Description:
 Note:	Check CPUID, EAX=1, bit 24 for knew CPU support this feature.
 	And then look at CR4.bit9.
 
-
 Format of F.P./MMX Save Area:
-	Offset
+	Offset	(Table )
 	 (dec)	Size	Description
 	+00	WORD	FCW	(Control word)
 	+02	WORD	FSW	(Status	 word)
@@ -2143,7 +2186,6 @@ Description:
 			   LENGTH =  len
 			 ]   <-	 AX [ bits= (len-1)..0]
 
-
 Note:	di and start automatically UPDATE
 Note:	Alternative Name of this instruction is NECINS
 
@@ -2172,7 +2214,6 @@ Description:
    ( It means that all lines of internal caches sets as
     invalid )
 	 SIGNAL EXTERNAL CACHE TO FLUSH
-
 
 Notes: This instruction not work in Real Mode and  in
 Protected mode work only in ring 0 ;
@@ -2323,7 +2364,6 @@ Format of LOADALL Table:
 		120H	4	Temporary Register B
 		124H	4	Temporary Register A
 
-
 Format	of Attrib field:
 
 	       Byte	Description
@@ -2350,7 +2390,6 @@ Note: This operation used 102 data transfer cycles on 32bit bus
 	      i386SX: ~350
 	      i386DX: ~290
 	      i486XX: ~220
-
 
 ----------O-LOADALL--------------------------------
 OPCODE LOADALL	- Load All Registers From Table
@@ -2572,8 +2611,6 @@ Description:
 
 		(BIT bitnumb OF dest) <-  NOT (BIT bitnumb OF dest);
 
-
-
 Flags Affected: None
 
 CPU mode: RM
@@ -2659,7 +2696,6 @@ Description:
 	dest[47..32]	<-	SaturateSignedDWordToSignedWord src[31..0]
 	dest[63..46]	<-	SaturateSignedDWordToSignedWord src[63..32]
 
-
 Note: This instruction packs and saturates signed data from src and dest to
       dest.
       If signed value of word larger or smaller that the range of signed byte
@@ -2707,7 +2743,6 @@ Description:
 	dest[55..48]	<-	SaturateSignedWordToSignedByte src[47..32]
 	dest[63..56]	<-	SaturateSignedWordToSignedByte src[63..48]
 
-
 Note: This instruction packs and saturates signed data from src and dest to
       dest
 
@@ -2752,7 +2787,6 @@ Description:
 	dest[47..40]	<-	SaturateSignedWordToUnSignedByte src[31..16]
 	dest[55..48]	<-	SaturateSignedWordToUnSignedByte src[47..32]
 	dest[63..56]	<-	SaturateSignedWordToUnSignedByte src[63..48]
-
 
 Note:  If signed value of word larger or smaller that the range of unsigned
        byte, value is saturated (if overflow to FFh, if underflow to 0h).
@@ -2799,7 +2833,6 @@ Description:
 	dest[55..48]	<-	dest[55..48] + src[55..48]
 	dest[63..56]	<-	dest[63..56] + src[63..56]
 
-
 Note:	  This instruction adds the bytes of the source to the bytes of the
 	destination and writes the results to the MMX register.
 	When the result is too large to be represented in a packed byte
@@ -2842,7 +2875,6 @@ Description:
 
 	dest[31..0]	<-	dest[31..0]  + src[31..0]
 	dest[63..32]	<-	dest[63..32] + src[63..32]
-
 
 Note:	  This instruction adds the dwords of the source to the dwords of the
 	destination and writes the results to the MMX register.
@@ -2892,7 +2924,6 @@ Description:
 	dest[47..40]	<-	SaturateToSignedByte(dest[47..40] + src[47..40])
 	dest[55..48]	<-	SaturateToSignedByte(dest[55..48] + src[55..48])
 	dest[63..56]	<-	SaturateToSignedByte(dest[63..56] + src[63..56])
-
 
 Note:	  This instruction adds the signed bytes of the source to the bytes of
 	the destination and writes the results to the MMX register.
@@ -2982,7 +3013,6 @@ Description:
 	dest[47..32]	<-	SaturateToSignedWord(dest[47..32] + src[47..32])
 	dest[63..48]	<-	SaturateToSignedWord(dest[63..48] + src[63..48])
 
-
 Note:	  This instruction adds the signed words of the source to the words of
 	the destination and writes the results to the MMX register.
 	  If the result is larger or smaller than the range of a signed word,
@@ -3032,7 +3062,6 @@ Description:
 	dest[55..48]	<-   SaturateToUnsignedByte(dest[55..48] + src[55..48])
 	dest[63..56]	<-   SaturateToUnsignedByte(dest[63..56] + src[63..56])
 
-
 Note:	  This instruction adds the unsigned bytes of the source to the
 	unsigned bytes of the destination operand and writes the results to the
 	MMX register.
@@ -3080,7 +3109,6 @@ Description:
 	dest[47..32]	<-   SaturateToUnsignedWord(dest[47..32] + src[47..32])
 	dest[63..48]	<-   SaturateToUnsignedWord(dest[63..48] + src[63..48])
 
-
 Note:	  This instruction adds the unsigned words of the source to the
 	unsigned words of the destination operand and writes the results to the
 	MMX register.
@@ -3127,7 +3155,6 @@ Description:
 	dest[31..16]	<-	dest[31..16] + src[31..16]
 	dest[47..32]	<-	dest[47..32] + src[47..32]
 	dest[63..48]	<-	dest[63..48] + src[63..48]
-
 
 Note:	  This instruction adds the words of the source to the words of the
 	destination and writes the results to the MMX register.
@@ -3298,7 +3325,6 @@ Description:
 	dest[47..40] <- (dest[47..40] + src[47..40]) / 2;
 	dest[55..48] <- (dest[55..48] + src[55..48]) / 2;
 	dest[63..56] <- (dest[63..56] + src[63..56]) / 2;
-
 
 Note: so, saturation rounding:
 	(FFH + FFH) / 2	 =>  FFh
@@ -3885,7 +3911,6 @@ Description:
 	if src[31..0]  > dest[31..0]  then dest[31..0]	<- src[31..0];
 	if src[63..32] > dest[63..32] then dest[63..32] <- src[63..32];
 
-
 Note:
 
 Flags Affected:	None
@@ -3907,7 +3932,6 @@ Description:
 
 	if src[31..0]  < dest[31..0]  then dest[31..0]	<- src[31..0];
 	if src[63..32] < dest[63..32] then dest[63..32] <- src[63..32];
-
 
 Note:
 
@@ -3965,7 +3989,6 @@ Note:
 	X1  = RFRCPIT1(b,X0);
 	X2  = RFRCPIT2(X1,X0);
 	q   = PFMUL(a,X2);
-
 
 	Square Root
 	--------------
@@ -4041,8 +4064,6 @@ Description:
 
 	dest[31..0]   <- First_Step_Reciprocal_Square_Root(src[31..0]);
 	dest[63..32]  <- First_Step_Reciprocal_Square_Root(src[63..32]);
-
-
 
 Note:	see RFRCP for more info
 
@@ -4365,7 +4386,6 @@ Description:
 	dest[31..16]   <-  dest[31..16] * src[31..16];
 	dest[47..32]   <-  dest[47..32] * src[47..32];
 	dest[63..48]   <-  dest[63..48] * src[63..48];
-
 
 Note:	Saturation arithmetic.
 	This is not F.P. instruction
@@ -5019,7 +5039,6 @@ Description:
 	dest[55..48]	<-	dest[55..48] - src[55..48]
 	dest[63..56]	<-	dest[63..56] - src[63..56]
 
-
 Note:	  This instruction subtract packed byte in MMXregister/memory from
 	packed byte in MMX register.
 
@@ -5059,7 +5078,6 @@ Description:
 
 	dest[31..0]	<-	dest[31..0]  - src[31..0]
 	dest[63..32]	<-	dest[63..48] - src[63..32]
-
 
 Note:	  This instruction subtract packed dword in MMXregister/memory from
 	packed dword in MMX register.
@@ -5145,7 +5163,6 @@ Type of Instruction: User
 Instruction:	PSUBSIW	dest, src
 
 Description:
-
 
 	mmi[15..0] <- SaturateToSignedWord(dest[15..0] - src[15..0]);
 	mmi[31..16] <- SaturateToSignedWord(dest[31..16] - src[31..16]);
@@ -5313,7 +5330,6 @@ Description:
 	dest[31..16]	<-	dest[31..16] - src[31..16]
 	dest[47..32]	<-	dest[47..32] - src[47..32]
 	dest[63..48]	<-	dest[63..48] - src[63..48]
-
 
 Note:	  This instruction subtract packed word in MMXregister/memory from
 	packed word in MMX register.
@@ -5697,7 +5713,6 @@ Description:
 		  }
 	END
 
-
 Refer to Appendix W for more info.
 
 Flags Affected: None
@@ -5810,9 +5825,6 @@ Note:	SMHR pointed to phisical address SMM space area,
 	-2Ch	32	ESI or EDI
 		total size of SMM header = 30h
 
-
-
-
 Flags Affected: None
 
 CPU mode: SMM
@@ -5842,7 +5854,6 @@ Description:
 		  General Protection Fault  INT 0DH (0)
 		  }
 	END
-
 
 Note: TSC is one of MSR and after global hardware reset (not SRESET , but
 RESET ) it clear to 0000000000000000H.
@@ -6267,28 +6278,25 @@ Description:
 	; Note: This instruction load segment register
 	;	include shadow descriptor
 
-
 Format or Register and Descriptor Structure:
-	+00	Limit (15-0)
+	+00	Limit (15-0)	(Table )
 	+02	Base  (15-0)
 	+04	Base  (23-16)
 	+05	AR byte
 	+06	AR2/Limit (19-16)
 	+07	Base  (31-24)
 	+08	Selector
-	Length of structure is 10h
+	Length of structure is 0Ah
 
 Flags Affected: None
 
 CPU mode: (1) and (2) and (3) and [(4A) or (4B)]
-
 
 	   1) CPL=0
 	   2) CCR1.bit1=1  ; SMI enable
 	   3) SMAR size > 0
 	   4A) in SMM
 	   4B) CCR1.bit2=1 ; SMAC is on
-
 
 ++++++++++++++++
 
@@ -6322,28 +6330,25 @@ Description:
 
 	; sorc is register and descriptor structure (see below)
 
-
 Format or Register and Descriptor Structure:
-	+00	Limit (15-0)
+	+00	Limit (15-0)	(Table )
 	+02	Base  (15-0)
 	+04	Base  (23-16)
 	+05	AR byte
 	+06	AR2/Limit (19-16)
 	+07	Base  (31-24)
 	+08	Selector
-	Length of structure is 10h
+	Length of structure is 0Ah
 
 Flags Affected: None
 
 CPU mode: (1) and (2) and (3) and [(4A) or (4B)]
-
 
 	   1) CPL=0
 	   2) CCR1.bit1=1  ; SMI enable
 	   3) SMAR size > 0
 	   4A) in SMM
 	   4B) CCR1.bit2=1 ; SMAC is on
-
 
 ++++++++++++++++
 
@@ -6441,7 +6446,6 @@ Format of Execution State in SMRAM:
 		  SMBASE+[8000h+7FFFh]
 	7E00h	Reserved
 
-
 Note: In fields marked Reserved saved and restores next registers:
       CR1,CR2,CR3, hidden descriptors for CS,DS,ES,FS,SS,GS.
       Never saved registers: DR5-DR0,TR7-TR3,all FPU registers.
@@ -6521,7 +6525,6 @@ Format of SMM Header:
 			for restart INSx/OUTSx instruction
 			[ Not avaliable in Cx486S/S2/D/D2]
 
-
 Flags Affected: All
 
 CPU mode: SMM
@@ -6550,28 +6553,25 @@ Description:
 
 	; sorc is register and descriptor structure (see below)
 
-
 Format or Register and Descriptor Structure:
-	+00	Limit (15-0)
+	+00	Limit (15-0)	(Table )
 	+02	Base  (15-0)
 	+04	Base  (23-16)
 	+05	AR byte
 	+06	AR2/Limit (19-16)
 	+07	Base  (31-24)
 	+08	Selector
-	Length of structure is 10h
+	Length of structure is 0Ah
 
 Flags Affected: None
 
 CPU mode: (1) and (2) and (3) and [(4A) or (4B)]
-
 
 	   1) CPL=0
 	   2) CCR1.bit1=1  ; SMI enable
 	   3) SMAR size > 0
 	   4A) in SMM
 	   4B) CCR1.bit2=1 ; SMAC is on
-
 
 ++++++++++++++++
 
@@ -6591,8 +6591,6 @@ Instruction:  SET1 dest,bitnumb
 Description:
 
 		BIT  bitnumb OF dest <- 1;
-
-
 
 Flags Affected: None
 
@@ -6704,7 +6702,6 @@ Flags Affected: None
 
 CPU mode: CPL=0, CCR1.bit1=1, SMAR size >= 30h.
 
-
 ++++++++++++++++
 
 Physical Form: SMINT
@@ -6783,28 +6780,25 @@ Description:
 
 	; dest is register and descriptor structure (see below)
 
-
 Format or Register and Descriptor Structure:
-	+00	Limit (15-0)
+	+00	Limit (15-0)	(Table )
 	+02	Base  (15-0)
 	+04	Base  (23-16)
 	+05	AR byte
 	+06	AR2/Limit (19-16)
 	+07	Base  (31-24)
 	+08	Selector
-	Length of structure is 10h
+	Length of structure is 0Ah
 
 Flags Affected: None
 
 CPU mode: (1) and (2) and (3) and [(4A) or (4B)]
-
 
 	   1) CPL=0
 	   2) CCR1.bit1=1  ; SMI enable
 	   3) SMAR size > 0
 	   4A) in SMM
 	   4B) CCR1.bit2=1 ; SMAC is on
-
 
 ++++++++++++++++
 
@@ -6838,28 +6832,25 @@ Description:
 
 	; dest is register and descriptor structure (see below)
 
-
 Format or Register and Descriptor Structure:
-	+00	Limit (15-0)
+	+00	Limit (15-0)	(Table )
 	+02	Base  (15-0)
 	+04	Base  (23-16)
 	+05	AR byte
 	+06	AR2/Limit (19-16)
 	+07	Base  (31-24)
 	+08	Selector
-	Length of structure is 10h
+	Length of structure is 0Ah
 
 Flags Affected: None
 
 CPU mode: (1) and (2) and (3) and [(4A) or (4B)]
-
 
 	   1) CPL=0
 	   2) CCR1.bit1=1  ; SMI enable
 	   3) SMAR size > 0
 	   4A) in SMM
 	   4B) CCR1.bit2=1 ; SMAC is on
-
 
 ++++++++++++++++
 
@@ -6886,28 +6877,25 @@ Description:
 
 	; dest is register and descriptor structure (see below)
 
-
 Format or Register and Descriptor Structure:
-	+00	Limit (15-0)
+	+00	Limit (15-0)	(Table )
 	+02	Base  (15-0)
 	+04	Base  (23-16)
 	+05	AR byte
 	+06	AR2/Limit (19-16)
 	+07	Base  (31-24)
 	+08	Selector
-	Length of structure is 10h
+	Length of structure is 0Ah
 
 Flags Affected: None
 
 CPU mode: (1) and (2) and (3) and [(4A) or (4B)]
-
 
 	   1) CPL=0
 	   2) CCR1.bit1=1  ; SMI enable
 	   3) SMAR size > 0
 	   4A) in SMM
 	   4B) CCR1.bit2=1 ; SMAC is on
-
 
 ++++++++++++++++
 
@@ -6941,9 +6929,6 @@ Description:
 		SS.attr	     <- R/W, Expand-Up
 		CPL <- 0
 	} else	#UD;
-
-
-
 
 Note:  Passing control to fixed entry point for faster OS calls.
        see RDMSR for description of STAR (SYSCALL Target Address register)
@@ -7055,7 +7040,6 @@ Description:
 	ESP		<- SYSENTER_ESP_MSR;
 	EIP		<- SYSENTER_EIP_MSR;
 
-
 Note: See SYSENTER for more Info.
 
 ++++++++++++++++++++++++++++++++++++++
@@ -7087,7 +7071,6 @@ Description:
 			SS  <- (STAR[47..32]) + 16) OR 3H
 		} else #GP(0);
 	} else #UD;
-
 
 Note:  Passing control from  OS	 entry point back to ring 3 client.
        see RDMSR for description of STAR (SYSCALL Target Address register)
@@ -7354,7 +7337,7 @@ Clocks: Cyrix Cx486SLC : 4
 	      Pentium  : 2000+
 
 ----------O-WRMSR----------------------------------
-OPCODE WRMSR  - Write to From Model Specified Register
+OPCODE WRMSR  - Write to Model Specified Register
 
 CPU:  Pentium (tm), IBM 486SLC2
 Type of Instruction: System
@@ -7372,7 +7355,6 @@ Description:
 		  General Protection Fault  INT 0DH (0)
 		  }
 	END
-
 
 Flags Affected: None
 
@@ -7420,7 +7402,6 @@ Description:
 
 	Dest [IA-64 register] <-  Src [IA-32 F.P. register]
 
-
 Flags Affected: None
 
 CPU mode: IA-64
@@ -7441,7 +7422,6 @@ Instruction: X86FMT   src,dest
 Description:
 
 	Dest [IA-32 F.P. register] <-  Src [IA-64 register]
-
 
 Flags Affected: None
 
@@ -7476,8 +7456,6 @@ Note:	[Rel17 Form]
 		reg32[31:0]  contain 32-bit offset
 		(If EFLAGS.VM = 1 then CS_base calculated as in VM,
 			      = 0, then access LDT/GDT for get CS_base)
-
-
 
 Flags Affected: None
 
@@ -7547,7 +7525,6 @@ Description:
 
 	Dest [IA-64 register] <-  Src [IA-32 segment register]
 
-
 Flags Affected: None
 
 CPU mode: IA-64
@@ -7568,7 +7545,6 @@ Instruction: X86SMT   src,dest
 Description:
 
 	Dest [IA-32 segment register] <-  Src [IA-64 register]
-
 
 Flags Affected: None
 
@@ -7592,7 +7568,6 @@ Description:
 	  Temporary <- dest;
 	  dest	    <- dest + sorc;
 	  sorc	    <- Temporary;
-
 
 Flags Affected:	 ZF,OF,SF,AF,PF,CF ( like ADD instruction ) ( see description)
 
@@ -7776,7 +7751,7 @@ NCRi	0	1	2
 NCR1	C4H	C5H	C6H
 NCR2	C7H	C8H	C9H
 NCR3	CAH	CBH	CCH
-NCR4	CDH	CDH	CEH
+NCR4	CDH	CEH	CFH
 
 ---------------------------------------------------
 APPENDIX	A1
@@ -7858,8 +7833,10 @@ Bit	Name	Description
 1	WBAK	(Enable WB Cache Interface pins)
 		If =1 then enable INVAL,WM_RST and HITM# pins
 		=0 float it
-0		Reserved
-
+0	COP??	Reserved
+		(Award BIOS used this bit during coprocessor Test,
+		in Cx486S, Cx486S2 only)
+		(may be turn coprocessor on :)))
 
 CCR3:
 Note: Cyrix Cx486S/D never have CCR3 register.
@@ -8249,7 +8226,6 @@ Bit	Name	Description
 		=0 float it
 0		Reserved
 
-
 CCR3:
 Note: Cyrix Cx486S/D never have CCR3 register.
 Bit	Name	Description
@@ -8364,7 +8340,6 @@ Bit	Name	Description
 1	BTB_EN	If set, enables the Branch Target Buffer for branch prediction
 0	RSTK_EN If se, enables call return stack
 
-
 CCR1:
 Bit	Name	Description
 7..4		Reserved
@@ -8403,7 +8378,6 @@ Bit	Name	Description
 		If =1 then enable INVAL,WM_RST and HITM# pins
 		=0 float it
 0		Reserved
-
 
 CCR3:
 Bit	Name	Description
@@ -8631,7 +8605,6 @@ Bit	Name	Description
 		If =1 Prohibits changing the state of NW bit in CR0
 1..0		Reserved
 
-
 CCR3:
 Bit	Name	Description
 7..4	MAPEN(3-0) (Register Mapping Enable)
@@ -8722,14 +8695,15 @@ Bit	Name	Description
 2..0	IORT[2..0]
 		Specify minimum number of bus clocks between two I/O
 		accesses (I/O recovery time)
-		000	-	No Delay
+		(base modeL)			(some later models)
+		000	-	No Delay	  000  -  fast
 		001	-	2 clk
 		010	-	4 clk
-		011	-	8 clk
+		011	-	8 clk		  .......
 		100	-	16 clk
 		101	-	32 clk	(Default Value)
 		110	-	64 clk
-		111	-	128 clk
+		111	-	128 clk		  111  - no delay
 
 CCR5:
 Bit	Name	Description
@@ -8785,7 +8759,6 @@ Bit	Name	Description
 		20h,21h - Samplers
 		22h - v4.0 (no SLOP support)
 
-
 Note: Register with Index FCh contains CPU family.
       Initialized by 05h, but may be changed by USER, look CPUID instruction
       for more info.
@@ -8819,9 +8792,6 @@ Registers in BTB control space:
 		2	Return Stack Enable
 		3	???? (used)
 		4..31	?????
-
-
-
 
 ---------------------------------------------------
 APPENDIX	A6
@@ -8918,7 +8888,6 @@ Bit	Name	Description
 		If =1 CPU insert an idle cyce following the BRDY# and idle
 		cycle prior to asserting ADS#
 0		Reserved
-
 
 CCR3:
 Bit	Name	Description
@@ -9320,6 +9289,8 @@ Pentium II	    C0	      06h	33h
 		    C1	      06h	34h
 (P6L,Klamath)	    dA0	      06h	50h
 		    dA1	      06h	51h
+		   mdB0	      06h	52h
+		  mmdB0			52h
   ------------------------------------------------------------
 OverDrive for		      16h	3xh
 Socket 8  (P6T)
@@ -9448,7 +9419,6 @@ AMD Am6k86-200		520		427
 Pentium II-233		632		468
 Pentium II-266		721		536
 Pentium II-300		813		603
-
 
 ------------------------------------------------
 APPENDIX D0
@@ -10059,7 +10029,7 @@ Note:
 99	CWD
 66 99	CDQ		;386+
 9A	CALL	FAR	seg:offs
-9B	WAIT
+9B	WAIT/FWAIT
 9C	PUSHF
 66 9C	PUSHFD		; 386+
 9D	POPF
@@ -10909,7 +10879,6 @@ MMM \	010	100	101	110	111
 110			FLDZ	FDECSTP	FSIN'
 111				FINCSTP	FCOS'
 
-
 ' means 387+  (include 287XL/XLT, 187!!!)
 
 ESC 2  (First byte = DAh)
@@ -10932,7 +10901,6 @@ DA C0+i	 FCMOVB	 ST0,STi
 DA C8+i	 FCMOVE	 ST0,STi
 DA D0+i	 FCMOVBE ST0,STi
 DA D8+i	 FCMOVU	 ST0,STi
-
 
 ESC 3  (First byte = DBh)
 	==========================
@@ -11042,8 +11010,6 @@ FRINEAR		DFh FCh	  (Cyrix)
 FUCOMIP ST0,STi DFH E8H+i (P6)
 FCOMIP	ST0,STi DFH F0H+i (P6)
 
-
-
 ------------------------------------------
 APPENDIX G
 
@@ -11078,7 +11044,6 @@ memory_location	DW	?
 	jz	i486SX
 	jmp	i486DX/DX2etc/i487SX
 
-
 3) How to separate Cyrix's CPUs and other
        Be sure that Your CPU no Pentium before
        UMOV executed on Intel and other in
@@ -11101,12 +11066,13 @@ Mem_Loc	DW  1
 	and	ax,0fffh	; Clear bits 15..12
 	push	ax
 	popf
+	pushf
+	pop	ax
 	and	ax,0f000h	; Is bits 15..12=0 ?
 	jz	286_CPU
 	and	ax,8000h	; Is bit 15=0
 	jz	386_and_Higher
 	jmp	86_88and186_186etc
-
 
 5) How separate 86/88, 186/188 and NECs
 
@@ -11125,20 +11091,119 @@ Mem_Loc	DW  1
 7) Then Invalid Opcode NEC/Sony V40/V50 do INT 6
 		       NEC/Sony V20/V30 don't.
 
-8) Remember POP CS on 8086/8088.
+8) Remember POP CS instruction on non-CMOS 8086/8088.
 
 9) PUSH SP
    286 placed in stack new value of SP
    86/88 old.
 
 10) Best way to Reset 286+ in Real Mode:
-    xor	  sp,sp
+    mov	  sp,1		(LOW BOUND)
     push  smth
+
+    note:
+	 mov sp,ffffh	(HIGH BOUND)
+	 pop smth
+	caused non Stack Fault, but GPF.
 
 11) Maximal Length of Instructian
     86: N/R
     286:  10 byte
     386+: 15 byte
+
+12) UMC Chips Detection (UMC U486SX, for other use CPUID)
+    db	64h,0dbh	; look like "SETALC FS:", but it none
+    cmp eax,0ab6b1b07h
+    je	u486SX
+    jne Other
+
+13) MSW on 386/486
+    On 386 MSR reserved bits = 1, so Real Mode 386  usually MSW = FFF0
+				     Real Mode 486+ usually MSW = 0010
+    smsw ax
+    and	 ah,ah
+    jnz	 cpu_386
+    jz	 cpu_486_and_more
+
+14) Selectors PUSH
+    486 write 2 bytes to stack and ADD ESP,4
+    Pentium Write all 4 bytes (and two of it are zero)
+    (The same situation, then pushing 16-bit error code on exception)
+
+15)  TSS I/O Map Addressing
+     Then I/O Map Base Address in TSS contain for example FFFFh,
+     (don't forget TSS Limit)
+     i486 wrap around segment and access invalid address near start of TSS.
+     Pentium caused GPF.
+
+16)  Prefetcher
+     up to 486 and 486 then instruction fetched to prefetcher and we write
+     into memory area, where this instruction placed, will be execute
+     already-prefetched command, but non-new.
+     Pentium flush prefetcher, when detect modify of fetched cache line,
+     so, for avoid this flush use different linear addresses for modify.
+
+      CPU	Size_of_prefetch_queue		Number_of_empty_bytes_in
+		    (bytes)			queue_needed_for_initiate
+						prefetch_cycle
+    8086/186/V20	6			     2
+    8088/188/V30	4			     1
+    286			6			     2
+    386SX		16			     2
+    386DX		16			     4
+
+17)   DR4/DR5 :))
+      on 486 then accessing DR4/DR5  CPU accessed DR6/DR7.
+      on Pentium if CR4.DE=0 the same situation as on 486,
+      but if CR4.DE=1 then MOV from/to DR4/DR5 caused GPF.
+
+18)   NexGen Nx586
+      On Pentium and 486 we cannot set ET flag in CR0.
+      We may set ET flag in CR0.
+      (On 386 we may set this flag too).
+
+19)   IDIV
+      if result of IDIV will be 80h (byte IDIV) or 8000h (word IDIV)
+      86/88 caused INT 0 - Division by zero,
+      on 286+ 80h/8000h keeps as result and no exception
+
+20)   Division by zero
+      On 86/88 pointer in stack then caused Division by zero
+      pointed to DIV/IDIV instruction,
+      on 286+ pointed to next instruction.
+
+21)   FPU Exception
+      So, then FPU command with prefixes caused exception
+      on 86/88 pointer to failed instruction on stack pointed to ESC command,
+      on 386+ pointed to one of prefixes before ESC.
+
+22)   String commands
+      if while 86/88 execute string instruction interrupt caused,
+      CPU end execute instruction and goto next instruction,
+      CX,SI and DI have values after last complete iteration
+      To avoid it, use:
+	pushf
+	cli
+	rep STRING
+	popf
+
+23)   How to separate C&T 386 CPU form other (AMD,Intel)
+	(C&T none have POPAD bug, but Intel and AMD have)
+	mov	esi,32
+	mov	eax,12345678h
+loop:
+	mov	ebx,eax
+	mov	edx,0
+	mov	esi,0
+	pushad
+	popad
+	mov	ecx,[edx+edi]
+	cmp	eax,ebx
+	jnz	AMD_Intel
+	rol	eax,1
+	dec	esi
+	jnz	loop
+	jmp	C_T_CPUs
 
 ------------------------------------------------
 APPENDIX H
@@ -11240,7 +11305,6 @@ APPENDIX  I	FORMAT	OF DEBUG CONTROL REGISTERS (DR6/DR7)
 	0000000000000000 B B B B 00000000 B B B B
 			 T S D K	  3 2 1 0
 	----------------------------------------
-
 
 	[AMD Am486SXLV/Am386DXLV/Am386SXLV]
 	3322222222221111 1 1 1 1 11
@@ -11415,7 +11479,6 @@ MOV from/to DR, thay are aliasing to DR6,DR7.
 	--------------------------------
 	  BREAKPOINT_1_LINEAR_ADDRESS
 	--------------------------------
-
 
    +---------+
    |   DR0   |
@@ -11819,7 +11882,6 @@ LADDR - Linear Address
 		110 - Read from L1 TLB Y-port
 		111 - Read from L2 TLB Y-port
 
-
  +-------+
  |  TR7	 |
  +-------+
@@ -11908,7 +11970,6 @@ APPENDIX  N   EFLAGS register format
 		   I	 A V R	 N IO O D I T S Z   A	P   C
 	0000000000 D 0 0 C M F 0 T PL F F F F F F 0 F 0 F 1 F
 	-----------------------------------------------------
-
 
 	[i486 SX,DX,DX2] [OverDrive] [M5,M6,M7] [AMD Am486DX/DXL/DX2/DXL2 ] etc
 	[IBM BL486DX/DX2] [Cx486SLC/DLC/SLC2/DLC2] [NexGen Nx586]
@@ -12431,7 +12492,6 @@ APPENDIX  S   FLOATING POINT REGISTERS FORMATS
  DM  - Denormalized operand mask
  IM  - Invalid Operation Mask
 
-
 All other F.P registers: ST(i), TAGS, SW have same format on all FPUs.
 Present some different in FPU environment, but now is no time for describe
 it here.
@@ -12451,7 +12511,6 @@ CR0.PG	CR4.PAE	CR4.PSE	 page_desc.PS	Page Size  Address Space Paging Mode
   1	   0	   1	      1		    4M		32bit	     A
   1	   1	   x	      0		    4K		36bit	     B
   1	   1	   x	      1		    2M		36bit	     C
-
 
 +----------------------------------------------------------------------------+
 |	----------------     Paging Mode A	-----------		     |
@@ -12589,9 +12648,8 @@ Format of Linear Address:
 	29..21	index in PDT (Page Directory Table)
 	20..0	offset within Page
 
-
 Format of CR3 register:
-  --------------------
+  --------------------	(Table )
 	bit	description
 	31..5	PDPT base address (38..12) (PDBR)
 	4	PCD
@@ -12626,7 +12684,6 @@ Format of CR3 register:
 
 Format of Page Directory Pointer Table Entry (4 entry/PDPT):
 	----------------------------------	(Table )
-
 
 	6     3 3	1 1
 	3 ... 6 5 ..... 2 1 ... 9 8..5 4 3 2..0
@@ -12677,7 +12734,6 @@ APPENDIX U     FORMAT  OF  DESCRIPTORS
 +-------------------------------+
 | Format of Generic Descriptor: |
 +-------------------------------+
-
 
 	+00	WORD	Segment Limit (Low)	(15..0)
 	+02	WORD	Segment Base  (Low)	(15..0)
@@ -12771,7 +12827,6 @@ TYPE - (Type of System descriptor)
 |  AR2	 |
 +--------+
 
-
 	+----+----+----+----+
 	| G  | D  | 0  | X  |
 	+----+----+----+----+
@@ -12787,7 +12842,6 @@ D - (Dimensions)
 	      segments are different.
 
 X - Available for Operating System
-
 
 +---------------------------------------------------------------------------+
 | ------------------------ System Descriptors  -----------------------------|
@@ -13008,7 +13062,6 @@ TSS_LAST is last byte of TSS.
 			    I/O permission bitmap valid.
 			    (recommended to set up this byte to FF)
 
-
 		TSS
 
 	+----------------+
@@ -13172,8 +13225,6 @@ Note:	if Actual size < fiels size, then all upper that actual size bits are
 -2C	4	I/O Write Data
 -30	4	ESI or EDI
 
-
-
 +-------------------+
 | Old-style AMD SMM |
 +-------------------+
@@ -13257,7 +13308,6 @@ Note:	See LOADALL for More Information
 
 	Format of SMRAM:
 
-
 Offset	Bytes	Description
 60000	4	CR0
 60004	4	EFLAGS
@@ -13334,7 +13384,3883 @@ Offset	Bytes	Description
 
 Note:	See ICEBP/ICERET for More Information
 
+----------------------------------------------------------
+APPENDIX Y0  -	Vendor Instruction Time for Intel 8088 CPU
 
+AAA					4
+AAD					60
+AAM					83
+AAS					4
+ADC	AL,imm8				    4
+ADC	AX,imm16			    4
+ADC	r/m8,imm8			    4/17+EA
+ADC	r/m16,imm8			    4/25+EA
+ADC	r/m16,imm16			    4/25+EA
+ADC	r/m8,r8				    3/16+EA
+ADC	r/m16,r16			    3/24+EA
+ADC	r8,r/m8				    3/9+EA
+ADC	r16,r/m16			    3/13+EA
+ADD	AL,imm8				    4
+ADD	AX,imm16			    4
+ADD	r/m8,imm8			    4/17+EA
+ADD	r/m16,imm8			    4/25+EA
+ADD	r/m16,imm16			    4/25+EA
+ADD	r/m8,r8				    3/16+EA
+ADD	r/m16,r16			    3/24+EA
+ADD	r8,r/m8				    3/9+EA
+ADD	r16,r/m16			    3/13+EA
+AND	AL,imm8				    4
+AND	AX,imm16			    4
+AND	r/m8,imm8			    4/16+EA
+AND	r/m16,imm16			    4/25+EA
+AND	r/m8,r8				    3/16+EA
+AND	r/m16,r16			    3/24+EA
+AND	r8,r/m8				    3/9+EA
+AND	r16,r/m16			    3/13+EA
+CALL	rel16				   19(23)
+CALL	r/m16				   16(24)/21(29)+EA
+CALL	ptr16:16			   28(36)
+CALL	m16:16				   37(57)+EA
+CBW					2
+CLC					2
+CLD					2
+CLI					2
+CMC					2
+CMP	AL,imm8				    4
+CMP	AX,imm16			    4
+CMP	r/m8,imm8			    4/10+EA
+CMP	r/m16,imm8			    4/-
+CMP	r/m16,imm16			    4/14+EA
+CMP	r/m8,r8				    3/9+EA
+CMP	r/m16,r16			    3/13+EA
+CMP	r8,r/m8				    3/9+EA
+CMP	r16,r/m16			    3/13+EA
+CMPSB					22
+CMPSW					30
+CWD					5
+DAA					4
+DAS					4
+DEC	r/m8				    3/15+EA
+DEC	r/m16				    2/23+EA
+DEC	r16				    2
+DIV	r/m8				    80-90/(86-96)+EA
+DIV	r/m16				    144-162/(154-172)+EA
+HLT					2
+IDIV	r/m8				   101-112/(107-118)+EA
+IDIV	r/m16				   165-184/(175-194)+EA
+IMUL	r/m8				   80-98/(86-104)+EA
+IMUL	r/m16				   128-154/(138-164)+EA
+IN	AL,imm8				     10
+IN	AX,imm8				     14
+IN	AL,DX				     8
+IN	AX,DX				     12
+INC	r/m8				    3/15+EA
+INC	r/m16				    2/23+EA
+INC	r16				    2
+INT	3				    53(72)
+INT	imm8				    51(71)
+INTO					53(73) or 4
+IRET					32(44)
+Jcc	rel8				    4 or 16
+JCXZ	rel8				   6 or 18
+JMP	rel8				    15
+JMP	rel16				    15
+JMP	r/m16				    11/18+EA
+JMP	ptr16:16			    15
+JMP	m16:16				    24+EA
+LAHF					4
+LDS	r16,m16:16			    24+EA
+LES	r16,m16:16			    24+EA
+LEA	r16,m				    2+EA
+LODSB					12
+LODSW					16
+LOOP	rel8				   5 or 17
+LOOPE	rel8				  6 or 18
+LOOPNE	rel8				 5 or 19
+MOV	r/m8,r8				    2/9+EA
+MOV	r/m16,r16			    2/13+EA
+MOV	r8,r/m8				    2/8+EA
+MOV	r16,r/m16			    2/12+EA
+MOV	r/m16,sreg			    2/9(13)+EA
+MOV	sreg,r/m16			    2/8(12)+EA
+MOV	AL,moffs8			    10
+MOV	AX,moffs16			    14
+MOV	moffs8,AL			    10
+MOV	moffs16,AX			    14
+MOV	r8,imm8				    4
+MOV	r16,imm16			    4
+MOV	r/m8,imm8			    4/10+EA
+MOV	r/m16,imm16			    4/14+EA
+MOVSB					18
+MOVSW					26
+MUL	r/m8				    70-77/(76-83)+EA
+MUL	r/m16				    118-133/(128-143)+EA
+NEG	r/m8				    3/16+EA
+NEG	r/m16				    3/24+EA
+NOP					3
+NOT	r/m8				    3/16+EA
+NOT	r/m16				    3/24+EA
+OR	AL,imm8				     4
+OR	AX,imm16			     4
+OR	r/m8,imm8			     4/17+EA
+OR	r/m16,imm16			     4/25+EA
+OR	r/m8,r8				     3/16+EA
+OR	r/m16,r16			     3/24+EA
+OR	r8,r/m8				     3/9+EA
+OR	r16,r/m16			     3/13+EA
+OUT	imm8,AL				    10
+OUT	imm8,AX				    14
+OUT	DX,AL				    8
+OUT	DX,AX				    12
+POP	m16				    25+EA
+POP	r16				    12
+POP	sreg				    12
+POPF					12
+PUSH	r/m16				   15/24+EA
+PUSH	r16				   15
+PUSH	sreg				   14
+PUSHF					14
+RCL	r/m8,1				    2/15+EA
+RCL	r/m16,1				    2/23+EA
+RCL	r/m8,CL				    8+4*bit/20+EA+4*bit
+RCL	r/m16,CL			    8+4*bit/28+EA+4*bit
+RCR	r/m8,1				    2/15+EA
+RCR	r/m16,1				    2/23+EA
+RCR	r/m8,CL				    8+4*bit/20+EA+4*bit
+RCR	r/m16,CL			    8+4*bit/28+EA+4*bit
+ROL	r/m8,1				    2/15+EA
+ROL	r/m16,1				    2/23+EA
+ROL	r/m8,CL				    8+4*bit/20+EA+4*bit
+ROL	r/m16,CL			    8+4*bit/28+EA+4*bit
+ROR	r/m8,1				    2/15+EA
+ROR	r/m16,1				    2/23+EA
+ROR	r/m8,CL				    8+4*bit/20+EA+4*bit
+ROR	r/m16,CL			    8+4*bit/28+EA+4*bit
+REP	MOVSB				    9+17*reps
+REP	MOVSW				    9+25*reps
+REP	LODSB				    n/a
+REP	LODSW				    n/a
+REP	STOSB				    9+10*reps
+REP	STOSW				    9+14*reps
+REPE	CMPSB				   9+17*reps
+REPE	CMPSW				   9+25*reps
+REPE	SCASB				   9+15*reps
+REPE	SCASW				   9+19*reps
+REPNE	CMPSB				  9+17*reps
+REPNE	CMPSW				  9+25*reps
+REPNE	SCASB				  9+15*reps
+REPNE	SCASW				  9+19*reps
+RET	(near)				    20
+RET	imm16	(near)			      24
+RET	(far)				    32
+RET	imm16	(far)			      31
+SAHF					4
+SAL	r/m8,1				    2/15+EA
+SAL	r/m16,1				    2/23+EA
+SAL	r/m8,CL				    8+4*bit/20+EA+4*bit
+SAL	r/m16,CL			    8+4*bit/28+EA+4*bit
+SAR	r/m8,1				    2/15+EA
+SAR	r/m16,1				    2/23+EA
+SAR	r/m8,CL				    8+4*bit/20+EA+4*bit
+SAR	r/m16,CL			    8+4*bit/28+EA+4*bit
+SHL	r/m8,1				    2/15+EA
+SHL	r/m16,1				    2/23+EA
+SHL	r/m8,CL				    8+4*bit/20+EA+4*bit
+SHL	r/m16,CL			    8+4*bit/28+EA+4*bit
+SHR	r/m8,1				    2/15+EA
+SHR	r/m16,1				    2/23+EA
+SHR	r/m8,CL				    8+4*bit/20+EA+4*bit
+SHR	r/m16,CL			    8+4*bit/28+EA+4*bit
+SBB	AL,imm8				    4
+SBB	AX,imm16			    4
+SBB	r/m8,imm8			    4/17+EA
+SBB	r/m16,imm8			    4/25+EA
+SBB	r/m16,imm16			    4/25+EA
+SBB	r/m8,r8				    3/16+EA
+SBB	r/m16,r16			    3/24+EA
+SBB	r8,r/m8				    3/9+EA
+SBB	r16,r/m16			    3/16+EA
+SCASB					15
+SCASW					19
+SETALC					n/a
+STC					2
+STD					2
+STI					2
+STOSB					11
+STOSW					15
+SUB	AL,imm8				    4
+SUB	AX,imm16			    4
+SUB	r/m8,imm8			    4/17+EA
+SUB	r/m16,imm8			    4/25+EA
+SUB	r/m16,imm16			    4/25+EA
+SUB	r/m8,r8				    3/16+EA
+SUB	r/m16,r16			    3/24+EA
+SUB	r8,r/m8				    3/9+EA
+SUB	r16,r/m16			    3/13+EA
+TEST	AL,imm8				   4
+TEST	AX,imm16			   4
+TEST	r/m8,imm8			   5/11+EA
+TEST	r/m16,imm16			   5/11+EA
+TEST	r/m8,r8				   3/9+EA
+TEST	r/m16,r16			   3/13+EA
+WAIT					3+5*number_of_wait_cycles
+XCHG	AX,r16				   3
+XCHG	r/m8,r8				   4/17+EA
+XCHG	r/m16,r16			   4/25+EA
+XLAT					11
+XOR	AL,imm8				    4
+XOR	AX,imm16			    4
+XOR	r/m8,imm8			    4/17+EA
+XOR	r/m16,imm16			    4/25+EA
+XOR	r/m8,r8				    3/16+EA
+XOR	r/m16,r16			    3/24+EA
+XOR	r8,r/m8				    3/9+EA
+XOR	r16,r/m16			    3/13+EA
+(END)
+
+----------------------------------------------------------
+APPENDIX Y1  -	Vendor Instruction Time for Intel i80186 CPU
+
+AAA					8
+AAD					15
+AAD	imm8				    15 ?? (n/a)
+AAM					19
+AAM	imm8				    19 ?? (n/a)
+AAS					7
+ADC	AL,imm8				    3
+ADC	AX,imm16			    4
+ADC	r/m8,imm8			    4/16
+ADC	r/m16,imm16			    4/16
+ADC	r/m8,r8				    3/15
+ADC	r/m16,r16			    3/15
+ADC	r8,r/m8				    3/10
+ADC	r16,r/m16			    3/10
+ADD	AL,imm8				    3
+ADD	AX,imm16			    4
+ADD	r/m8,imm8			    4/16
+ADD	r/m32,imm8			    4/16
+ADD	r/m8,r8				    3/15
+ADD	r/m16,r16			    3/15
+ADD	r8,r/m8				    3/10
+ADD	r16,r/m16			    3/10
+AND	AL,imm8				    3
+AND	AX,imm16			    4
+AND	r/m8,imm8			    4/16
+AND	r/m16,imm16			    4/16
+AND	r/m8,r8				    3/15
+AND	r/m16,r16			    3/15
+AND	r8,r/m8				    3/10
+AND	r16,r/m16			    3/10
+BOUND	r16,m16&16			  33-35
+CALL	rel16				   15
+CALL	r/m16				   13/19
+CALL	ptr16:16			   23
+CALL	m16:16				   38
+CBW					2
+CLC					2
+CLD					2
+CLI					2
+CMC					2
+CMP	AL,imm8				    3
+CMP	AX,imm16			    4
+CMP	r/m8,imm8			    3/10
+CMP	r/m16,imm16			    3/10
+CMP	r/m8,r8				    3/10
+CMP	r/m16,r16			    3/10
+CMP	r8,r/m8				    3/10
+CMP	r16,r/m16			    3/10
+CMPSB					22
+CMPSW					22
+CWD					4
+DAA					4
+DAS					4
+DEC	r/m8				    3/15
+DEC	r/m16				    3/15
+DEC	r16				    3
+DIV	r/m8				    29/35
+DIV	r/m16				    38/44
+ESC	imm4,r/m			    n/a
+ENTER	imm16,0				  15
+ENTER	imm16,1				  25
+ENTER	imm16,imm8			  22+16*(level-1)
+HLT					2
+IDIV	r/m8				   44-52/50-58
+IDIV	r/m16				   53-61/59-67
+IMUL	r/m8				   25-28/31-34
+IMUL	r/m16				   34-47/40-43
+IMUL	r16,imm8			   22-25/29-32 (~)
+IMUL	r16,imm16			   22-25/29-32 (~)
+IMUL	r16,r/m16,imm8			   22-25/29-32 (~)
+IMUL	r16,r/m16,imm16			   22-25/29-32 (~)
+IN	AL,imm8				     10
+IN	AX,imm8				     10
+IN	AL,DX				     8
+IN	AX,DX				     8
+INC	r/m8				    3/15
+INC	r/m16				    3/15
+INC	r16				    3
+INSB					14
+INSW					14
+INT	3				    45
+INT	imm8				    47
+INTO					4 or 48
+IRET					28
+Jcc	rel8				    4 or 13
+JCXZ	rel8				   5 or 15
+JMP	rel8				    14
+JMP	rel16				    14
+JMP	r/m16				    11/17
+JMP	ptr16:16			    14
+JMP	m16:16				    26
+LAHF					2
+LDS	r16,m16:16			    18
+LES	r16,m16:16			    18
+LEA	r16,m				    6
+LEAVE					8
+LODSB					12
+LODSW					12
+LOOP	rel8				   6 or 16
+LOOPE	rel8				  6 or 16
+LOOPNE	rel8				 6 or 16
+MOV	r/m8,r8				    2/12
+MOV	r/m16,r16			    2/12
+MOV	r8,r/m8				    2/9
+MOV	r16,r/m16			    2/9
+MOV	r/m16,sreg			    2/11
+MOV	sreg,r/m16			    2/9
+MOV	AL,moffs8			    8
+MOV	AX,moffs16			    8
+MOV	moffs8,AL			    9
+MOV	moffs16,AX			    9
+MOV	r8,imm8				    3
+MOV	r16,imm16			    4
+MOV	r/m8,imm8			    3/12
+MOV	r/m16,imm16			    4/13
+MOVSB					14
+MOVSW					14
+MUL	r/m8				    26-28/32-34
+MUL	r/m16				    35-37/41-43
+NEG	r/m8				    3/10
+NEG	r/m16				    3/10
+NOP					3
+NOT	r/m8				    3/10
+NOT	r/m16				    3/10
+OR	AL,imm8				     3
+OR	AX,imm16			     4
+OR	r/m8,imm8			     4/16
+OR	r/m16,imm16			     4/16
+OR	r/m8,r8				     3/15
+OR	r/m16,r16			     3/15
+OR	r8,r/m8				     3/10
+OR	r16,r/m16			     3/10
+OUT	imm8,AL				    9
+OUT	imm8,AX				    9
+OUT	DX,AL				    7
+OUT	DX,AX				    7
+OUTSB					14
+OUTSW					14
+POP	m16				    20
+POP	r16				    10
+POP	sreg				    8
+POPA					51
+POPF					8
+PUSH	r/m16				   10/16
+PUSH	r16				   10
+PUSH	imm8				   10
+PUSH	imm16				   10
+PUSH	sreg				   9
+PUSHA					36
+PUSHF					9
+RCL	r/m8,1				    2/15
+RCL	r/m16,1				    2/15
+RCL	r/m8,CL				    5+n/17+n
+RCL	r/m16,CL			    5+n/17+n
+RCL	r/m8,imm8			    5+n/17+n
+RCL	r/m16,imm8			    5+n/17+n
+RCR	r/m8,1				    2/15
+RCR	r/m16,1				    2/15
+RCR	r/m8,CL				    5+n/17+n
+RCR	r/m16,CL			    5+n/17+n
+RCR	r/m8,imm8			    5+n/17+n
+RCR	r/m16,imm8			    5+n/17+n
+ROL	r/m8,1				    2/15
+ROL	r/m16,1				    2/15
+ROL	r/m8,CL				    5+n/17+n
+ROL	r/m16,CL			    5+n/17+n
+ROL	r/m8,imm8			    5+n/17+n
+ROL	r/m16,imm8			    5+n/17+n
+ROR	r/m8,1				    2/15
+ROR	r/m16,1				    2/15
+ROR	r/m8,CL				    5+n/17+n
+ROR	r/m16,CL			    5+n/17+n
+ROR	r/m8,imm8			    5+n/17+n
+ROR	r/m16,imm8			    5+n/17+n
+RET	(near)				    16
+RET	(far)				    22
+RET	imm16	(near)			      18
+RET	imm16	(far)			      25
+SAHF					3
+SAL	r/m8,1				    2/15
+SAL	r/m16,1				    2/15
+SAL	r/m8,CL				    5+n/17+n
+SAL	r/m16,CL			    5+n/17+n
+SAL	r/m8,imm8			    5+n/17+n
+SAL	r/m16,imm8			    5+n/17+n
+SAR	r/m8,1				    2/15
+SAR	r/m16,1				    2/15
+SAR	r/m8,CL				    5+n/17+n
+SAR	r/m16,CL			    5+n/17+n
+SAR	r/m8,imm8			    5+n/17+n
+SAR	r/m16,imm8			    5+n/17+n
+SHL	r/m8,1				    2/15
+SHL	r/m16,1				    2/15
+SHL	r/m8,CL				    5+n/17+n
+SHL	r/m16,CL			    5+n/17+n
+SHL	r/m8,imm8			    5+n/17+n
+SHL	r/m16,imm8			    5+n/17+n
+SHR	r/m8,1				    2/15
+SHR	r/m16,1				    2/15
+SHR	r/m8,CL				    5+n/17+n
+SHR	r/m16,CL			    5+n/17+n
+SHR	r/m8,imm8			    5+n/17+n
+SHR	r/m16,imm8			    5+n/17+n
+SBB	AL,imm8				    3
+SBB	AX,imm16			    4
+SBB	r/m8,imm8			    4/16
+SBB	r/m16,imm16			    4/16
+SBB	r/m8,r8				    3/15
+SBB	r/m16,r16			    3/15
+SBB	r8,r/m8				    3/10
+SBB	r16,r/m16			    3/10
+SCASB					15
+SCASW					15
+SETALC					n/a
+STC					2
+STD					2
+STI					2
+STOSB					10
+STOSW					10
+SUB	AL,imm8				    3
+SUB	AX,imm16			    4
+SUB	r/m8,imm8			    4/16
+SUB	r/m16,imm16			    4/16
+SUB	r/m8,r8				    3/15
+SUB	r/m16,r16			    3/15
+SUB	r8,r/m8				    3/10
+SUB	r16,r/m16			    3/10
+TEST	AL,imm8				   3
+TEST	AX,imm16			   4
+TEST	r/m8,imm8			   4/10
+TEST	r/m16,imm16			   4/10
+TEST	r/m8,r8				   3/10
+TEST	r/m16,r16			   3/10
+WAIT					6 (min)
+XCHG	AX,r16				   3
+XCHG	r/m8,r8				   4/17
+XCHG	r/m16,r16			   4/17
+XLAT					11
+XOR	AL,imm8				    3
+XOR	AX,imm16			    4
+XOR	r/m8,imm8			    4/16
+XOR	r/m16,imm16			    4/16
+XOR	r/m8,r8				    3/15
+XOR	r/m16,r16			    3/15
+XOR	r8,r/m8				    3/10
+XOR	r16,r/m16			    3/10
+(END)
+
+----------------------------------------------------------
+APPENDIX Y2  -	Vendor Instruction Time for NEC V20 CPU
+
+AAA					3
+AAD					7
+AAD	imm8				    7
+AAM					15
+AAM	imm8				    15
+AAS					3
+ADC	AL,imm8				    4
+ADC	AX,imm16			    4
+ADC	r/m8,imm8			    4/18
+ADC	r/m16,imm16			    4/26
+ADC	r/m8,r8				    2/15
+ADC	r/m16,r16			    2/24
+ADC	r8,r/m8				    2/11
+ADC	r16,r/m16			    2/15
+ADD	AL,imm8				    4
+ADD	AX,imm16			    4
+ADD	r/m8,imm8			    4/18
+ADD	r/m16,imm16			    4/26
+ADD	r/m8,r8				    2/15
+ADD	r/m16,r16			    2/24
+ADD	r8,r/m8				    2/11
+ADD	r16,r/m16			    2/15
+AND	AL,imm8				    4
+AND	AX,imm16			    4
+AND	r/m8,imm8			    4/18
+AND	r/m16,imm16			    4/26
+AND	r/m8,r8				    2/15
+AND	r/m16,r16			    2/24
+AND	r8,r/m8				    2/11
+AND	r16,r/m16			    2/15
+BOUND	r16,m16&16			  18-23/73-76
+CALL	rel16				   16-20
+CALL	r/m16				   14-18/23-31
+CALL	ptr16:16			   21-29
+CALL	m16:16				   31-47
+CBW					2
+CLC					2
+CLD					2
+CLI					2
+CMC					2
+CMP	AL,imm8				    4
+CMP	AX,imm16			    4
+CMP	r/m8,imm8			    4/13
+CMP	r/m16,imm16			    4/17
+CMP	r/m8,r8				    2/11
+CMP	r/m16,r16			    2/15
+CMP	r8,r/m8				    2/11
+CMP	r16,r/m16			    2/15
+CMPSB					7+14n !!
+CMPSW					7+14n !!
+CWD					4-5
+DAA					3
+DAS					7
+DEC	r/m8				    2/16
+DEC	r/m16				    2/24
+DEC	r16				    2
+DIV	r/m8				    19/25
+DIV	r/m16				    25/35
+ESC	imm4,r/m			    n/a
+ENTER	imm16,0				  16
+ENTER	imm16,1				  23 ??
+ENTER	imm16,imm8			  23+16*(level-1)
+HLT					2
+IDIV	r/m8				   29/35
+IDIV	r/m16				   43/53
+IMUL	r/m8				   33/39
+IMUL	r/m16				   47/57
+IMUL	r16,r/m16,imm8			   28-34/34-44
+IMUL	r16,r/m16,imm16			   36-42/46-52
+IN	AL,imm8				     9
+IN	AX,imm8				     13
+IN	AL,DX				     8
+IN	AX,DX				     12
+INC	r/m8				    2/16
+INC	r/m16				    2/24
+INC	r16				    2
+INSB					9+8n !!
+INSW					9+8n !!
+INT	3				    38-50
+INT	imm8				    38-50
+INTO					3 or 52
+IRET					27-39
+Jcc	rel8				    4 or 14
+JCXZ	rel8				   5 or 13
+JMP	rel8				    12
+JMP	rel16				    13
+JMP	r/m16				    11/20-24
+JMP	ptr16:16			    15
+JMP	m16:16				    27-35
+LAHF					2
+LDS	r16,m16:16			    18-26
+LES	r16,m16:16			    18-26
+LEA	r16,m				    4
+LEAVE					6/10
+LODSB					7+9n !!
+LODSW					7+9n !!
+LOOP	rel8				   5 or 13
+LOOPE	rel8				  5 or 14
+LOOPNE	rel8				 5 or 14
+MOV	r/m8,r8				    2/9
+MOV	r/m16,r16			    2/13
+MOV	r8,r/m8				    2/11
+MOV	r16,r/m16			    2/15
+MOV	r/m16,sreg			    2/10-14
+MOV	sreg,r/m16			    2/11-15
+MOV	AL,moffs8			    10
+MOV	AX,moffs16			    14
+MOV	moffs8,AL			    9
+MOV	moffs16,AX			    13
+MOV	r8,imm8				    4
+MOV	r16,imm16			    4
+MOV	r/m8,imm8			    4/11
+MOV	r/m16,imm16			    4/15
+MOVSB					11+8n !!
+MOVSW					11+8n !!
+MUL	r/m8				    21/27
+MUL	r/m16				    30/36
+NEG	r/m8				    2/16
+NEG	r/m16				    2/24
+NOP					3
+NOT	r/m8				    2/16
+NOT	r/m16				    2/24
+OR	AL,imm8				     4
+OR	AX,imm16			     4
+OR	r/m8,imm8			     4/18
+OR	r/m16,imm16			     4/26
+OR	r/m8,r8				     2/15
+OR	r/m16,r16			     2/24
+OR	r8,r/m8				     2/11
+OR	r16,r/m16			     2/15
+OUT	imm8,AL				    8
+OUT	imm8,AX				    12
+OUT	DX,AL				    8
+OUT	DX,AX				    12
+OUTSB					9+8n !!
+OUTSW					9+8n !!
+POP	m16				    17-25
+POP	r16				    8-12
+POP	sreg				    8-12
+POPA					43-75
+POPF					8-12
+PUSH	r/m16				   8-12/18-26
+PUSH	r16				   8-12
+PUSH	imm8				   7
+PUSH	imm16				   12
+PUSH	sreg				   8-12
+PUSHA					35-67
+PUSHF					8-12
+RCL	r/m8,1				    2/2-4
+RCL	r/m16,1				    2/2-4
+RCL	r/m8,CL				    7+n/19+n
+RCL	r/m16,CL			    7+n/27+n
+RCL	r/m8,imm8			    7+n/19+n
+RCL	r/m16,imm8			    7+n/27+n
+RCR	r/m8,1				    2/16
+RCR	r/m16,1				    2/24
+RCR	r/m8,CL				    7+n/19+n
+RCR	r/m16,CL			    7+n/27+n
+RCR	r/m8,imm8			    7+n/19+n
+RCR	r/m16,imm8			    7+n/27+n
+ROL	r/m8,1				    2/16
+ROL	r/m16,1				    2/24
+ROL	r/m8,CL				    7+n/19+n
+ROL	r/m16,CL			    7+n/27+n
+ROL	r/m8,imm8			    7+n/19+n
+ROL	r/m16,imm8			    7+n/27+n
+ROR	r/m8,1				    2/16
+ROR	r/m16,1				    2/24
+ROR	r/m8,CL				    7+n/19+n
+ROR	r/m16,CL			    7+n/27+n
+ROR	r/m8,imm8			    2/16
+ROR	r/m16,imm8			    2/24
+RET	(near)				    15-19
+RET	(far)				    21-29
+RET	imm16	(near)			      20-24
+RET	imm16	(far)			      24-32
+SAHF					3
+SAL	r/m8,1				    2/16
+SAL	r/m16,1				    2/24
+SAL	r/m8,CL				    7+n/19+n
+SAL	r/m16,CL			    7+n/27+n
+SAL	r/m8,imm8			    7+n/19+n
+SAL	r/m16,imm8			    7+n/27+n
+SAR	r/m8,1				    2/16
+SAR	r/m16,1				    2/24
+SAR	r/m8,CL				    7+n/19+n
+SAR	r/m16,CL			    7+n/27+n
+SAR	r/m8,imm8			    7+n/19+n
+SAR	r/m16,imm8			    7+n/27+n
+SHL	r/m8,1				    2/16
+SHL	r/m16,1				    2/24
+SHL	r/m8,CL				    7+n/19+n
+SHL	r/m16,CL			    7+n/27+n
+SHL	r/m8,imm8			    7+n/19+n
+SHL	r/m16,imm8			    7+n/27+n
+SHR	r/m8,1				    2/16
+SHR	r/m16,1				    2/24
+SHR	r/m8,CL				    7+n/19+n
+SHR	r/m16,CL			    7+n/27+n
+SHR	r/m8,imm8			    7+n/19+n
+SHR	r/m16,imm8			    7+n/27+n
+SBB	AL,imm8				    4
+SBB	AX,imm16			    4
+SBB	r/m8,imm8			    4/18
+SBB	r/m16,imm16			    4/26
+SBB	r/m8,r8				    2/15
+SBB	r/m16,r16			    2/24
+SBB	r8,r/m8				    2/11
+SBB	r16,r/m16			    2/15
+SCASB					7+10n !!
+SCASW					7+10n!!
+SETALC					n/a
+STC					2
+STD					2
+STI					2
+STOSB					7+4n !!
+STOSW					7+4n !!
+SUB	AL,imm8				    4
+SUB	AX,imm16			    4
+SUB	r/m8,imm8			    4/18
+SUB	r/m16,imm16			    4/26
+SUB	r/m8,r8				    2/15
+SUB	r/m16,r16			    2/24
+SUB	r8,r/m8				    2/11
+SUB	r16,r/m16			    2/15
+TEST	AL,imm8				   4
+TEST	AX,imm16			   4
+TEST	r/m8,imm8			   4/11
+TEST	r/m16,imm16			   4/15
+TEST	r/m8,r8				   2/10
+TEST	r/m16,r16			   2/14
+WAIT					2+5n (n = number of times POLL pin sampled)
+XCHG	AX,r16				   2
+XCHG	r/m8,r8				   3/16
+XCHG	r/m16,r16			   3/24
+XLAT					9
+XOR	AL,imm8				    4
+XOR	AX,imm16			    4
+XOR	r/m8,imm8			    4/18
+XOR	r/m16,imm16			    4/26
+XOR	r/m8,r8				    2/15
+XOR	r/m16,r16			    2/24
+XOR	r8,r/m8				    2/11
+XOR	r16,r/m16			    2/15
+(END)
+
+----------------------------------------------------------
+APPENDIX Y3  -	Vendor Instruction Time for Intel i286 CPU
+
+AAA					3
+AAD					14
+AAD	imm8				    n/a
+AAM					16
+AAM	imm8				    n/a
+AAS					3
+ADC	AL,imm8				    3
+ADC	AX,imm16			    3
+ADC	r/m8,imm8			    3/7+EA
+ADC	r/m16,imm16			    3/7+EA
+ADC	r/m8,r8				    2/7+EA
+ADC	r/m16,r16			    2/7+EA
+ADC	r8,r/m8				    2/7+EA
+ADC	r16,r/m16			    2/7+EA
+ADD	AL,imm8				    3
+ADD	AX,imm16			    3
+ADD	r/m8,imm8			    3/7+EA
+ADD	r/m16,imm16			    3/7+EA
+ADD	r/m8,r8				    2/7+EA
+ADD	r/m16,r16			    2/7+EA
+ADD	r8,r/m8				    2/7+EA
+ADD	r16,r/m16			    2/7+EA
+AND	AL,imm8				    3
+AND	AX,imm16			    3
+AND	r/m8,imm8			    3/7+EA
+AND	r/m16,imm16			    3/7+EA
+AND	r/m8,r8				    2/7+EA
+AND	r/m16,r16			    2/7+EA
+AND	r8,r/m8				    2/7+EA
+AND	r16,r/m16			    2/7+EA
+ARPL	r/m16,r16			   10/11+EA
+BOUND	r16,m16&16			  13+EA
+CALL	rel16				   7+m
+CALL	r/m16				   7+m/11+m
+CALL	ptr16:16			   13+m
+CALL	ptr16:16	(PM, direct segment)	  26+m
+CALL	ptr16:16	(PM, via call gate, same p41+m
+CALL	ptr16:16	(PM, via call gate, more p82+m
+CALL	ptr16:16	(PM, via call gate, more p86+4*param+m
+CALL	m16:16				   16+m
+CALL	m16:16	(PM, direct segment)	    29+m
+CALL	m16:16	(PM, via gate, same priveleg44+m
+CALL	m16:16	(PM, via gate, more priveleg83+m
+CALL	m16:16	(PM, via gate, more priveleg90+4*param+m
+CBW					2
+CLC					2
+CLD					2
+CLI					3
+CLTS					2
+CMC					2
+CMP	AL,imm8				    3
+CMP	AX,imm16			    3
+CMP	r/m8,imm8			    3/6+
+CMP	r/m16,imm8			    3/6+EA
+CMP	r/m16,imm16			    3/6+EA
+CMP	r/m8,r8				    2/7+EA
+CMP	r/m16,r16			    2/7+EA
+CMP	r8,r/m8				    2/6+EA
+CMP	r16,r/m16			    2/6+EA
+CMPSB					f
+CMPSW					f
+CWD					2
+DAA					3
+DAS					3
+DEC	r/m8				    2/7+EA
+DEC	r/m16				    2/7+EA
+DEC	r16				    2
+DIV	r/m8				    14/17+EA
+DIV	r/m16				    22/25+EA
+ESC	imm4,r/m			    (9-20)+EA
+ENTER	imm16,0				  11
+ENTER	imm16,1				  15
+ENTER	imm16,imm8			  16+4*(n-1)
+HLT					2
+IDIV	r/m8				   17/20+EA
+IDIV	r/m16				   25/28+EA
+IMUL	r/m8				   13/16+EA
+IMUL	r/m16				   21/24+EA
+IMUL	r16,r/m16			   21/24+EA
+IMUL	r16,imm8			   ??
+IMUL	r16,imm16			   ??
+IMUL	r16,r/m16,imm8			   21/24+EA
+IMUL	r16,r/m16,imm16			   21/24+EA
+IN	AL,imm8				     5
+IN	AL,imm8	(PM, CPL <= IOPL)	     5
+IN	AX,imm8				     5
+IN	AX,imm8	(PM, CPL <= IOPL)		   5
+IN	AL,DX				     5
+IN	AL,DX	(PM, CPL <= IOPL)	       5
+IN	AX,DX				     5
+IN	AX,DX	(PM, CPL <= IOPL)	       5
+INC	r/m8				    2/7+EA
+INC	r/m16				    2/7+EA
+INC	r16				    2
+INSB					f
+INSW					f
+INT	3				    23+m
+INT	3	(PM, same privilege)		  40+m
+INT	3	(PM, more privelege)		  78+m
+INT	imm8				    23+m
+INT	imm8	(PM, same privilege)	       40+m
+INT	imm8	(PM, more privelege)	       78+m
+INTO					24+m or 3
+INTO	(PM, same privilege)		   40+m or 3
+INTO	(PM, more privelege)		   78+m or 3
+IRET					17
+IRET	(PM, to same privilege)		   31+m
+IRET	(PM, to lesser privilege)	   55+m
+Jcc	rel8				    7+m or 3
+JCXZ	rel8				   8+m or 4
+JMP	rel8				    7+m
+JMP	rel16				    7+m
+JMP	r/m16				    7/11+m
+JMP	ptr16:16			    11/23+m
+JMP	ptr16:16	(PM, direct segment)	   f
+JMP	ptr16:16	(PM, via call gate, same pr38+m
+JMP	m16:16				    15/26+m
+JMP	m16:16	(PM, direct segment)	     f
+JMP	m16:16	(PM, via call gate, same priv41+m
+LAHF					2
+LAR	r16,r/m16			    14/16+
+LDS	r16,m16:16			    7+/21+
+LDS	r16,m16:16	(PM)			 f
+LDS	r32,m16:32	(PM)			 f
+LES	r16,m16:16			    7+/21+
+LES	r16,m16:16	(PM)			 f
+LES	r32,m16:32	(PM)			 f
+LEA	r16,m				    3+
+LEAVE					5
+LGDT	m16&32				   11+
+LIDT	m16&32				   12+
+LLDT	r/m16				   17/19+
+LMSW	r/m16				   3/6+
+LOADALL					f
+LODSB					5+4*n
+LODSW					5+4*n
+LOOP	rel8				   8/4
+LOOPE	rel8				  8/4
+LOOPNE	rel8				 8/4
+LSL	r16,r/m16			    14/16
+LTR	r/m16				    17/19+
+MOV	r/m8,r8				    2/3+
+MOV	r/m16,r16			    2/3+
+MOV	r8,r/m8				    2/5+
+MOV	r16,r/m16			    2/5+
+MOV	r/m16,sreg			    2/3+
+MOV	sreg,r/m16			    2/5+
+MOV	sreg,r/m16	(PM)			 17/19+
+MOV	AL,moffs8			    5
+MOV	AX,moffs16			    5
+MOV	moffs8,AL			    3
+MOV	moffs16,AX			    3
+MOV	r8,imm8				    2
+MOV	r16,imm16			    2
+MOV	r/m8,imm8			    2/3+
+MOV	r/m16,imm16			    2/3+
+MOVSB					5+4*n
+MOVSW					5
+MUL	r/m8				    13/16+
+MUL	r/m16				    21/24+
+NEG	r/m8				    2/7
+NEG	r/m16				    2/7
+NOP					3
+NOT	r/m8				    2/7
+NOT	r/m16				    2/7
+OR	AL,imm8				     3
+OR	AX,imm16			     3
+OR	r/m8,imm8			     3/7
+OR	r/m16,imm16			     3/7
+OR	r/m8,r8				     2/7
+OR	r/m16,r16			     2/7
+OR	r8,r/m8				     2/7
+OR	r16,r/m16			     2/7
+OUT	imm8,AL				    3
+OUT	imm8,AL	(PM, CPL <= IOPL)	    3
+OUT	imm8,AX				    3
+OUT	imm8,AX	(PM, CPL <= IOPL)	    3
+OUT	DX,AL				    3
+OUT	DX,AL	(PM, CPL <= IOPL)	      3
+OUT	DX,AX				    3
+OUT	DX,AX	(PM, CPL <= IOPL)	      3
+OUTSB					5+4*n
+OUTSW					5
+POP	m16				    5+
+POP	r16				    5
+POP	sreg				    5/20
+POP	sreg	(PM)			       20
+POPA					19
+POPF					5
+POPF	(PM)				   5
+PUSH	r/m16				   5+
+PUSH	r16				   3
+PUSH	imm8				   3
+PUSH	imm16				   3
+PUSH	sreg				   3
+PUSHA					17+
+PUSHF					3
+PUSHF	(PM)				  3
+RCL	r/m8,1				    2/7
+RCL	r/m16,1				    2/7
+RCL	r/m8,CL				    5/8+n
+RCL	r/m16,CL			    5/8+n
+RCL	r/m8,imm8			    5/8+n
+RCL	r/m16,imm8			    5/8+n
+RCR	r/m8,1				    2/7
+RCR	r/m16,1				    2/7
+RCR	r/m8,CL				    5/8+n
+RCR	r/m16,CL			    5/8+n
+RCR	r/m8,imm8			    5/8+n
+RCR	r/m16,imm8			    5/8+n
+ROL	r/m8,1				    2/7
+ROL	r/m16,1				    2/7
+ROL	r/m8,CL				    5/8+n
+ROL	r/m16,CL			    5/8+n
+ROL	r/m8,imm8			    5/8+n
+ROL	r/m16,imm8			    5/8+n
+ROR	r/m8,1				    2/7
+ROR	r/m16,1				    2/7
+ROR	r/m8,CL				    5/8+n
+ROR	r/m16,CL			    5/8+n
+ROR	r/m8,imm8			    5/8+n
+ROR	r/m16,imm8			    5/8+n
+RDTSC					f
+RET	(near)				    11+m
+RET	(far)				    15+m
+RET	(PM, far, same PL)		    25+m
+RET	(PM, far, different PL)		    55+m
+RET	imm16	(near)			      11+m
+RET	imm16	(far)			      15+m
+RET	imm16	(PM, far, same PL)	      25+m
+RET	imm16	(PM, far, different PL)	      55+m
+SAHF					2
+SAL	r/m8,1				    2/7
+SAL	r/m16,1				    2/7
+SAL	r/m8,CL				    5/8+n
+SAL	r/m16,CL			    5/8+n
+SAL	r/m8,imm8			    5/8+n
+SAL	r/m16,imm8			    5/8+n
+SAR	r/m8,1				    2/7
+SAR	r/m16,1				    2/7
+SAR	r/m8,CL				    5/8+n
+SAR	r/m16,CL			    5/8+n
+SAR	r/m8,imm8			    5/8+n
+SAR	r/m16,imm8			    5/8+n
+SHL	r/m8,1				    2/7
+SHL	r/m16,1				    2/7
+SHL	r/m8,CL				    5/8+n
+SHL	r/m16,CL			    5/8+n
+SHL	r/m8,imm8			    5/8+n
+SHL	r/m16,imm8			    5/8+n
+SHR	r/m8,1				    2/7
+SHR	r/m16,1				    2/7
+SHR	r/m8,CL				    5/8+n
+SHR	r/m16,CL			    5/8+n
+SHR	r/m8,imm8			    5/8+n
+SHR	r/m16,imm8			    5/8+n
+SBB	AL,imm8				    3
+SBB	AX,imm16			    3
+SBB	r/m8,imm8			    3/7
+SBB	r/m16,imm16			    3/7
+SBB	r/m8,r8				    2/7
+SBB	r/m16,r16			    2/7
+SBB	r8,r/m8				    2/7
+SBB	r16,r/m16			    2/7
+SCASB					5+8*n
+SCASW					5+8*n
+SETALC					f
+SGDT	m16&32				   11+
+SIDT	m16&32				   12+
+SLDT	r/m16				   2/3+
+SMINT					f
+SMSW	r/m16				   2/3+
+STC					2
+STD					2
+STI					2
+STOSB					4+3*n
+STOSW					4+3*n
+STR	r/m16				    2/3
+SUB	AL,imm8				    3
+SUB	AX,imm16			    3
+SUB	r/m8,imm8			    2/7
+SUB	r/m16,imm16			    2/7
+SUB	r/m8,r8				    2/6
+SUB	r/m16,r16			    2/6
+SUB	r8,r/m8				    2/6
+SUB	r16,r/m16			    2/6
+TEST	AL,imm8				   3
+TEST	AX,imm16			   3
+TEST	r/m8,imm8			   3/6
+TEST	r/m16,imm16			   3/6
+TEST	r/m8,r8				   2/6
+TEST	r/m16,r16			   2/6
+VERR	r/m16				   14/16+
+VERW	r/m16				   14/16+
+WAIT					3
+XCHG	AX,r16				   3
+XCHG	r/m8,r8				   3/5+
+XCHG	r/m16,r16			   3/5+
+XLAT					5
+XOR	AL,imm8				    3
+XOR	AX,imm16			    3
+XOR	r/m8,imm8			    2/7+
+XOR	r/m16,imm16			    2/7+
+XOR	r/m8,r8				    2/6
+XOR	r/m16,r16			    2/6
+XOR	r8,r/m8				    2/6
+XOR	r16,r/m16			    2/6
+(END)
+
+----------------------------------------------------------
+APPENDIX Y4  -	Vendor Instruction Time for Intel i386DX CPU
+
+AAA					4
+AAD					19
+AAD	imm8				    n/a
+AAM					17
+AAM	imm8				    m/a
+AAS					4
+ADC	AL,imm8				    2
+ADC	AX,imm16			    2
+ADC	EAX,imm32			    2
+ADC	r/m8,imm8			    2/7
+ADC	r/m16,imm8			    2/7
+ADC	r/m32,imm8			    2/7
+ADC	r/m16,imm16			    2/7
+ADC	r/m32,imm32			    2/7
+ADC	r/m8,r8				    2/7
+ADC	r/m16,r16			    2/7
+ADC	r/m32,r32			    2/7
+ADC	r8,r/m8				    2/6
+ADC	r16,r/m16			    2/6
+ADC	r32,r/m32			    2/6
+ADD	AL,imm8				    2
+ADD	AX,imm16			    2
+ADD	EAX,imm32			    2
+ADD	r/m8,imm8			    2/7
+ADD	r/m16,imm8			    2/7
+ADD	r/m32,imm8			    2/7
+ADD	r/m16,imm16			    2/7
+ADD	r/m32,imm32			    2/7
+ADD	r/m8,r8				    2/7
+ADD	r/m16,r16			    2/7
+ADD	r/m32,r32			    2/7
+ADD	r8,r/m8				    2/6
+ADD	r16,r/m16			    2/6
+ADD	r32,r/m32			    2/6
+AND	AL,imm8				    2
+AND	AX,imm16			    2
+AND	EAX,imm32			    2
+AND	r/m8,imm8			    2/7
+AND	r/m16,imm8			    2/7
+AND	r/m32,imm8			    2/7
+AND	r/m16,imm16			    2/7
+AND	r/m32,imm32			    2/7
+AND	r/m8,r8				    2/7
+AND	r/m16,r16			    2/7
+AND	r/m32,r32			    2/7
+AND	r8,r/m8				    2/6
+AND	r16,r/m16			    2/6
+AND	r32,r/m32			    2/6
+ARPL	r/m16,r16			   20/21
+BOUND	r16,m16&16			  10 or 44
+BOUND	r32,m32&32			  10 or 44
+BSF	r16,r/m16			    11+3*n
+BSF	r32,r/m32			    11+3*n
+BSR	r16,r/m16			    9+3*n
+BSR	r32,r/m32			    9+3*n
+BT	r/m16,r16			     3/12
+BT	r/m32,r32			     3/12
+BT	r/m16,imm8			     3/6
+BT	r/m16,imm8			     3/6
+BTC	r/m16,r16			    6/13
+BTC	r/m32,r32			    6/13
+BTC	r/m16,imm8			    6/8
+BTC	r/m16,imm8			    6/8
+BTR	r/m16,r16			    6/13
+BTR	r/m32,r32			    6/13
+BTR	r/m16,imm8			    6/8
+BTR	r/m16,imm8			    6/8
+BTS	r/m16,r16			    6/13
+BTS	r/m32,r32			    6/13
+BTS	r/m16,imm8			    6/8
+BTS	r/m16,imm8			    6/8
+CALL	rel16				   7+m
+CALL	r/m16				   7+m/10+m
+CALL	ptr16:16			   17+m
+CALL	ptr16:16	(PM, direct segment)	  34+m
+CALL	ptr16:16	(PM, via call gate, same p52+m
+CALL	ptr16:16	(PM, via call gate, more p86+m
+CALL	ptr16:16	(PM, via call gate, more p94+m+4*x
+CALL	m16:16				   22+m
+CALL	m16:16	(PM, direct segment)	    38+m
+CALL	m16:16	(PM, via gate, same priveleg56+m
+CALL	m16:16	(PM, via gate, more priveleg90+m
+CALL	m16:16	(PM, via gate, more priveleg98+m+4*x
+CALL	rel32				   7+m
+CALL	r/m32				   7+m/10+m
+CALL	ptr16:32			   17+m
+CALL	ptr16:32	(PM, direct segment)	  34+m
+CALL	ptr16:32	(PM, via gate, same privel52+m
+CALL	ptr16:32	(PM, via gate, more privel86+m
+CALL	ptr16:32	(PM, via gate, more privel94+m+4*x
+CALL	m16:32				   22+m
+CALL	m16:32	(PM, direct segment)	    38+m
+CALL	m16:32	(PM, via gate, same priveleg56+m
+CALL	m16:32	(PM, via gate, more priveleg90+m
+CALL	m16:32	(PM, via gate, more priveleg98+m+4*x
+CBW					3
+CWDE					2
+CLC					2
+CLD					2
+CLI					3
+CLTS					5
+CMC					2
+CMP	AL,imm8				    2
+CMP	AX,imm16			    2
+CMP	EAX,imm32			    2
+CMP	r/m8,imm8			    2/5
+CMP	r/m16,imm8			    2/5
+CMP	r/m32,imm8			    2/5
+CMP	r/m16,imm16			    2/5
+CMP	r/m32,imm32			    2/5
+CMP	r/m8,r8				    2/5
+CMP	r/m16,r16			    2/5
+CMP	r/m32,r32			    2/5
+CMP	r8,r/m8				    2/6
+CMP	r16,r/m16			    2/6
+CMP	r32,r/m32			    2/6
+CMPSB					10
+CMPSW					10
+CMPSD					10
+CWD					2
+CDQ					2
+DAA					4
+DAS					4
+DEC	r/m8				    2/6
+DEC	r/m16				    2/6
+DEC	r/m32				    2/6
+DEC	r16				    2
+DEC	r32				    2
+DIV	r/m8				    14/17
+DIV	r/m16				    22/25
+DIV	r/m32				    38/41
+ESC	imm4,r/m			    f
+ENTER	imm16,0				  10
+ENTER	imm16,1				  12
+ENTER	imm16,imm8			  15+4*(n-1)
+HLT					5
+IBTS	r/m16,AX,CL,r16			   12/19
+IBTS	r/m32,EAX,CL,r32		   12/19
+IDIV	r/m8				   19/22
+IDIV	r/m16				   27/30
+IDIV	r/m32				   43/46
+IMUL	r/m8				   12-17/15-20
+IMUL	r/m16				   12-25/15-28
+IMUL	r/m32				   12-41/15-44
+IMUL	r16,r/m16			   12-17/15-20
+IMUL	r32,r/m32			   12-41/15-44
+IMUL	r16,imm8			   12-26/14-27
+IMUL	r32,imm8			   13-42/14-43
+IMUL	r16,imm16			   9/22-12/25
+IMUL	r32,imm32			   9/38-12/41
+IMUL	r16,r/m16,imm8			   9-14/12-17
+IMUL	r32,r/m32,imm8			   9-14/12-17
+IMUL	r16,r/m16,imm16			   9-22/12-25
+IMUL	r32,r/m32,imm32			   9-38/12-41
+IN	AL,imm8				     12
+IN	AL,imm8	(PM, CPL <= IOPL)	     6/26
+IN	AL,imm8 (VM)			     26
+IN	AX,imm8				     12
+IN	AX,imm8	(PM, CPL <= IOPL)		   6/26
+IN	AX,imm8	(VM)			     26
+IN	EAX,imm8			     12
+IN	EAX,imm8	(PM, CPL <= IOPL)		  6/26
+IN	EAX,imm8	(VM)			    26
+IN	AL,DX				     13
+IN	AL,DX	(PM, CPL <= IOPL)	       7/27
+IN	AL,DX	(VM)			       27
+IN	AX,DX				     13
+IN	AX,DX	(PM, CPL <= IOPL)	       7/27
+IN	AX,DX	(VM)			       27
+IN	EAX,DX				     13
+IN	EAX,DX	(PM, CPL <= IOPL)	      7/27
+IN	EAX,DX	(VM)			      27
+INC	r/m8				    2/6
+INC	r/m16				    2/6
+INC	r/m32				    2/6
+INC	r16				    2
+INC	r32				    2
+INSB					15
+INSW					15
+INSD					15
+INT	3				    33
+INT	3	(PM, same privilege)		  59
+INT	3	(PM, more privelege)		  99
+INT	imm8				    37
+INT	imm8	(PM, same privilege)	       59
+INT	imm8	(PM, more privelege)	       99
+INTO					3/35
+INTO	(PM, same privilege)		   3/59
+INTO	(PM, more privelege)		   3/99
+IRET					22/38
+IRET	(PM, to same privilege)		   22/38
+IRET	(PM, to lesser privilege)	   82
+IRETD					22/38
+IRETD	(PM, to same privilege)		  22/38
+IRETD	(PM, to lesser privilege)	  82
+Jcc	rel8				    7+m/3
+Jcc	rel16				    7+m/3
+Jcc	rel32				    7+m/3
+JCXZ	rel8				   9+m/5
+JECXZ	rel8				  9+m/5
+JMP	rel8				    7+m
+JMP	rel16				    7+m
+JMP	r/m16				    7+m/10+m
+JMP	ptr16:16			    12/27+m
+JMP	ptr16:16	(PM, direct segment)	   12/27+m
+JMP	ptr16:16	(PM, via call gate, same pr45+m
+JMP	m16:16				    43/31+m
+JMP	m16:16	(PM, direct segment)	     43/31+m
+JMP	m16:16	(PM, via call gate, same priv49+m
+JMP	rel32				    7+m
+JMP	r/m32				    (7/10)+m
+JMP	ptr16:32			    12/27+m
+JMP	ptr16:32	(PM, direct segment)	   12/27+m
+JMP	ptr16:32	(PM, via call gate, same pr45+m
+JMP	m16:32				    43/31+m
+JMP	m16:32	(PM, direct segment)	     43/31+m
+JMP	m16:32	(PM, via call gate, same priv49+m
+LAHF					2
+LAR	r16,r/m16			    15/16
+LAR	r32,r/m32			    15/16
+LDS	r16,m16:16			    7/22
+LDS	r32,m16:32			    7/22
+LDS	r16,m16:16	(PM)			 7/22
+LDS	r32,m16:32	(PM)			 f
+LSS	r16,m16:16			    7/22
+LSS	r32,m16:32			    7/22
+LSS	r16,m16:16	(PM)			 7/22
+LSS	r32,m16:32	(PM)			    f
+LES	r16,m16:16			    7/22
+LES	r32,m16:32			    7/22
+LES	r16,m16:16	(PM)			 7/22
+LES	r32,m16:32	(PM)			 f
+LFS	r16,m16:16			    7/25
+LFS	r32,m16:32			    7/25
+LFS	r16,m16:16	(PM)			 7/22
+LFS	r32,m16:32	(PM)			 f
+LGS	r16,m16:16			    7/25
+LGS	r32,m16:32			    7/25
+LGS	r16,m16:16	(PM)			 7/22
+LGS	r32,m16:32	(PM)			 f
+LEA	r16,m				    2
+LEA	r32,m				    2
+LEAVE					4
+LGDT	m16&32				   11
+LIDT	m16&32				   11
+LLDT	r/m16				   20
+LMSW	r/m16				   10/13
+LOADALL					f
+LODSB					5
+LODSW					5
+LODSD					5
+LOOP	rel8				   11+m
+LOOPE	rel8				  11+m
+LOOPNE	rel8				 11+m
+LSL	r16,r/m16			    20/21
+LSL	r32,r/m32			    20/21
+LTR	r/m16				    23/27
+MOV	r/m8,r8				    2/2
+MOV	r/m16,r16			    2/2
+MOV	r/m32,r32			    2/2
+MOV	r8,r/m8				    2/4
+MOV	r16,r/m16			    2/4
+MOV	r32,r/m32			    2/4
+MOV	r/m16,sreg			    2/2
+MOV	sreg,r/m16			    2/5 18/19
+MOV	sreg,r/m16	(PM)			 f
+MOV	AL,moffs8			    4
+MOV	AX,moffs16			    4
+MOV	EAX,moffs32			    4
+MOV	moffs8,AL			    2
+MOV	moffs16,AX			    2
+MOV	moffs32,EAX			    2
+MOV	r8,imm8				    2
+MOV	r16,imm16			    2
+MOV	r32,imm32			    2
+MOV	r/m8,imm8			    2/2
+MOV	r/m16,imm16			    2/2
+MOV	r/m32,imm32			    2/2
+MOV	CR0,r32				    10
+MOV	CR2,r32				    4/5
+MOV	CR3,r32				    4/5
+MOV	CR4,r32				    f
+MOV	r32,CRi				    6
+MOV	r32,DR0-DR3			    22
+MOV	r32,DR4-DR5			    f
+MOV	r32,DR6-DR7			    14
+MOV	DR0-DR3,r32			    22
+MOV	DR4-DR5,r32			    f
+MOV	DR6-DR7,r32			    16
+MOV	r32,TR4-TR7			    12
+MOV	TR4-TR7,r32			    12
+MOVSB					7
+MOVSW					7
+MOVSD					7
+MOVSX	r16,r/m8			  3/6
+MOVSX	r32,r/m8			  3/6
+MOVSX	r32,r/m16			  3/6
+MOVZX	r16,r/m8			  3/6
+MOVZX	r32,r/m8			  3/6
+MOVZX	r32,r/m16			  3/6
+MUL	r/m8				    9/14-12/17
+MUL	r/m16				    9/22-12/25
+MUL	r/m32				    9/38-12/41
+NEG	r/m8				    2/6
+NEG	r/m16				    2/6
+NEG	r/m32				    2/6
+NOP					3
+NOT	r/m8				    2/6
+NOT	r/m16				    2/6
+NOT	r/m32				    2/6
+OR	AL,imm8				     2
+OR	AX,imm16			     2
+OR	EAX,imm32			     2
+OR	r/m8,imm8			     2/7
+OR	r/m16,imm8			     2/7
+OR	r/m32,imm8			     2/7
+OR	r/m16,imm16			     2/7
+OR	r/m32,imm32			     2/7
+OR	r/m8,r8				     2/7
+OR	r/m16,r16			     2/7
+OR	r/m32,r32			     2/7
+OR	r8,r/m8				     2/6
+OR	r16,r/m16			     2/6
+OR	r32,r/m32			     2/6
+OUT	imm8,AL				    10
+OUT	imm8,AL	(PM, CPL <= IOPL)	    4/24
+OUT	imm8,AL	(VM)			    4/24
+OUT	imm8,AX				    10
+OUT	imm8,AX	(PM, CPL <= IOPL)	    4/24
+OUT	imm8,AX	(VM)			    4/24
+OUT	imm8,EAX			    10
+OUT	imm8,EAX	(PM, CPL <= IOPL)	   4/24
+OUT	imm8,EAX	(VM)			   4/24
+OUT	DX,AL				    11
+OUT	DX,AL	(PM, CPL <= IOPL)	      5/25
+OUT	DX,AL	(VM)			      5/25
+OUT	DX,AX				    11
+OUT	DX,AX	(PM, CPL <= IOPL)	      5/25
+OUT	DX,AX	(VM)			      5/25
+OUT	DX,EAX				    11
+OUT	DX,EAX	(PM, CPL <= IOPL)	     5/25
+OUT	DX,EAX	(VM)			     5/25
+OUTSB					14
+OUTSW					14
+OUTSD					14
+POP	m16				    5
+POP	m32				    5
+POP	r16				    4
+POP	r32				    4
+POP	sreg				    7/21
+POP	sreg	(PM)			       7/21
+POPA					24
+POPAD					24
+POPF					5
+POPF	(PM)				   5
+POPF	(VM)				   ??
+POPFD					5
+POPFD	(PM)				  5
+POPFD	(VM)				  ??
+PUSH	r/m16				   5
+PUSH	r/m32				   5
+PUSH	r16				   2
+PUSH	r32				   2
+PUSH	imm8				   2
+PUSH	imm16				   2
+PUSH	imm32				   2
+PUSH	sreg				   2
+PUSHA					18
+PUSHAD					18
+PUSHF					4
+PUSHF	(PM)				  4
+PUSHF	(VM)				  4 ??
+PUSHFD					4
+PUSHFD	(PM)				 4
+PUSHFD	(VM)				 4 ??
+RCL	r/m8,1				    9/10
+RCL	r/m16,1				    9/10
+RCL	r/m32,1				    9/10
+RCL	r/m8,CL				    9/10
+RCL	r/m16,CL			    9/10
+RCL	r/m32,CL			    9/10
+RCL	r/m8,imm8			    9/10
+RCL	r/m16,imm8			    9/10
+RCL	r/m32,imm8			    9/10
+RCR	r/m8,1				    9/10
+RCR	r/m16,1				    9/10
+RCR	r/m32,1				    9/10
+RCR	r/m8,CL				    9/10
+RCR	r/m16,CL			    9/10
+RCR	r/m32,CL			    9/10
+RCR	r/m8,imm8			    9/10
+RCR	r/m16,imm8			    9/10
+RCR	r/m32,imm8			    9/10
+ROL	r/m8,1				    3/7
+ROL	r/m16,1				    3/7
+ROL	r/m32,1				    3/7
+ROL	r/m8,CL				    3/7
+ROL	r/m16,CL			    3/7
+ROL	r/m32,CL			    3/7
+ROL	r/m8,imm8			    3/7
+ROL	r/m16,imm8			    3/7
+ROL	r/m32,imm8			    3/7
+ROR	r/m8,1				    3/7
+ROR	r/m16,1				    3/7
+ROR	r/m32,1				    3/7
+ROR	r/m8,CL				    3/7
+ROR	r/m16,CL			    3/7
+ROR	r/m32,CL			    3/7
+ROR	r/m8,imm8			    3/7
+ROR	r/m16,imm8			    3/7
+ROR	r/m32,imm8			    3/7
+RDTSC					f
+RET	(near)				    10+m
+RET	(far)				    18+m
+RET	(PM, far, same PL)		    32+m
+RET	(PM, far, different PL)		    68
+RET	imm16	(near)			      10+m
+RET	imm16	(far)			      18+m
+RET	imm16	(PM, far, same PL)	      32+m
+RET	imm16	(PM, far, different PL)	      68
+SAHF					3
+SAL	r/m8,1				    3/7
+SAL	r/m16,1				    3/7
+SAL	r/m32,1				    3/7
+SAL	r/m8,CL				    3/7
+SAL	r/m16,CL			    3/7
+SAL	r/m32,CL			    3/7
+SAL	r/m8,imm8			    3/7
+SAL	r/m16,imm8			    3/7
+SAL	r/m32,imm8			    3/7
+SAR	r/m8,1				    3/7
+SAR	r/m16,1				    3/7
+SAR	r/m32,1				    3/7
+SAR	r/m8,CL				    3/7
+SAR	r/m16,CL			    3/7
+SAR	r/m32,CL			    3/7
+SAR	r/m8,imm8			    3/7
+SAR	r/m16,imm8			    3/7
+SAR	r/m32,imm8			    3/7
+SHL	r/m8,1				    3/7
+SHL	r/m16,1				    3/7
+SHL	r/m32,1				    3/7
+SHL	r/m8,CL				    3/7
+SHL	r/m16,CL			    3/7
+SHL	r/m32,CL			    3/7
+SHL	r/m8,imm8			    3/7
+SHL	r/m16,imm8			    3/7
+SHL	r/m32,imm8			    3/7
+SHR	r/m8,1				    3/7
+SHR	r/m16,1				    3/7
+SHR	r/m32,1				    3/7
+SHR	r/m8,CL				    3/7
+SHR	r/m16,CL			    3/7
+SHR	r/m32,CL			    3/7
+SHR	r/m8,imm8			    3/7
+SHR	r/m16,imm8			    37/
+SHR	r/m32,imm8			    3/7
+SBB	AL,imm8				    2
+SBB	AX,imm16			    2
+SBB	EAX,imm32			    2
+SBB	r/m8,imm8			    2/7
+SBB	r/m16,imm8			    2/7
+SBB	r/m32,imm8			    2/7
+SBB	r/m16,imm16			    2/7
+SBB	r/m32,imm32			    2/7
+SBB	r/m8,r8				    2/7
+SBB	r/m16,r16			    2/7
+SBB	r/m32,r32			    2/7
+SBB	r8,r/m8				    2/6
+SBB	r16,r/m16			    2/6
+SBB	r32,r/m32			    2/6
+SCASB					7
+SCASW					7
+SCASD					7
+SETALC					f
+SETcc	r/m8				  4/5
+SGDT	m16&32				   9
+SIDT	m16&32				   9
+SHLD	r/m16,r16,imm8			   3/7
+SHLD	r/m32,r32,imm8			   3/7
+SHLD	r/m16,r16,CL			   3/7
+SHLD	r/m32,r32,CL			   3/7
+SHRD	r/m16,r16,imm8			   3/7
+SHRD	r/m32,r32,imm8			   3/7
+SHRD	r/m16,r16,CL			   3/7
+SHRD	r/m32,r32,CL			   3/7
+SLDT	r/m16				   2/2
+SLDT	r/m32				   f
+SMINT					f
+SMSW	r/m16				   2/3 2/2
+STC					2
+STD					2
+STI					2
+STOSB					4
+STOSW					4
+STOSD					4
+STR	r/m16				    23/27
+SUB	AL,imm8				    2/8
+SUB	AX,imm16			    2/7
+SUB	EAX,imm32			    2/7
+SUB	r/m8,imm8			    2/7
+SUB	r/m16,imm8			    2/7
+SUB	r/m32,imm8			    2/7
+SUB	r/m16,imm16			    2/7
+SUB	r/m32,imm32			    2/7
+SUB	r/m8,r8				    2/7
+SUB	r/m16,r16			    2/7
+SUB	r/m32,r32			    2/7
+SUB	r8,r/m8				    2/6
+SUB	r16,r/m16			    2/6
+SUB	r32,r/m32			    2/6
+TEST	AL,imm8				   2
+TEST	AX,imm16			   2
+TEST	EAX,imm32			   2
+TEST	r/m8,imm8			   2/5
+TEST	r/m16,imm16			   2/5
+TEST	r/m32,imm32			   2/5
+TEST	r/m8,r8				   2/5
+TEST	r/m16,r16			   2/5
+TEST	r/m32,r32			   2/5
+UMOV	r8,r/m8				   f
+UMOV	r16,r/m16			   f
+UMOV	r32,r/m32			   f
+UMOV	r/m8,r8				   f
+UMOV	r/m16,r16			   f
+UMOV	r/m32,r32			   f
+VERR	r/m16				   10/11
+VERW	r/m16				   15/16
+WAIT					6min
+XBTS	r16,r/m16,AX,CL			   6/13
+XBTS	r32,r/m32,EAX,CL		   6/13
+XCHG	AX,r16				   3
+XCHG	EAX,r32				   3
+XCHG	r/m8,r8				   3/5
+XCHG	r/m16,r16			   3/5
+XCHG	r/m32,r32			   3/5
+XLAT					5
+XOR	AL,imm8				    2
+XOR	AX,imm16			    2
+XOR	EAX,imm32			    2
+XOR	r/m8,imm8			    2
+XOR	r/m16,imm8			    2/7
+XOR	r/m32,imm8			    2/7
+XOR	r/m16,imm16			    2/7
+XOR	r/m32,imm32			    2/7
+XOR	r/m8,r8				    2/7
+XOR	r/m16,r16			    2/7
+XOR	r/m32,r32			    2/7
+XOR	r8,r/m8				    2/6
+XOR	r16,r/m16			    2/6
+XOR	r32,r/m32			    2/6
+(END)
+
+----------------------------------------------------------
+APPENDIX Y5  -	Vendor Instruction Time for Intel i486DX CPU
+
+AAA					3
+AAD					14
+AAD	imm8				    n/a
+AAM					15
+AAM	imm8				    n/a
+AAS					3
+ADC	AL,imm8				    1
+ADC	AX,imm16			    1
+ADC	EAX,imm32			    1
+ADC	r/m8,imm8			    1/3
+ADC	r/m16,imm8			    1/3
+ADC	r/m32,imm8			    1/3
+ADC	r/m16,imm16			    1/3
+ADC	r/m32,imm32			    f
+ADC	r/m8,r8				    1/3
+ADC	r/m16,r16			    1/3
+ADC	r/m32,r32			    f
+ADC	r8,r/m8				    1/2
+ADC	r16,r/m16			    1/2
+ADC	r32,r/m32			    1/2
+ADD	AL,imm8				    1
+ADD	AX,imm16			    1
+ADD	EAX,imm32			    1
+ADD	r/m8,imm8			    1/3
+ADD	r/m16,imm8			    1/3
+ADD	r/m32,imm8			    1/3
+ADD	r/m16,imm16			    1/3
+ADD	r/m32,imm32			    1/3
+ADD	r/m8,r8				    1/3
+ADD	r/m16,r16			    1/3
+ADD	r/m32,r32			    1/3
+ADD	r8,r/m8				    1/2
+ADD	r16,r/m16			    1/2
+ADD	r32,r/m32			    1/2
+AND	AL,imm8				    1
+AND	AX,imm16			    1
+AND	EAX,imm32			    1
+AND	r/m8,imm8			    1/3
+AND	r/m16,imm8			    1/3
+AND	r/m32,imm8			    1/3
+AND	r/m16,imm16			    1/3
+AND	r/m32,imm32			    1/3
+AND	r/m8,r8				    1/3
+AND	r/m16,r16			    1/3
+AND	r/m32,r32			    1/3
+AND	r8,r/m8				    1/2
+AND	r16,r/m16			    1/2
+AND	r32,r/m32			    1/2
+ARPL	r/m16,r16			   9/9
+BOUND	r16,m16&16			  7
+BOUND	r32,m32&32			  7
+BSF	r16,r/m16			    6-42/7-43
+BSF	r32,r/m32			    6-42/7-43
+BSR	r16,r/m16			    6-103/7-104
+BSR	r32,r/m32			    6-103/7-104
+BSWAP	r32				  1
+BT	r/m16,r16			     3/8
+BT	r/m32,r32			     3/8
+BT	r/m16,imm8			     3/3
+BT	r/m16,imm8			     3/3
+BTC	r/m16,r16			    6/13
+BTC	r/m32,r32			    6/13
+BTC	r/m16,imm8			    6/8
+BTC	r/m16,imm8			    6/8
+BTR	r/m16,r16			    6/13
+BTR	r/m32,r32			    6/13
+BTR	r/m16,imm8			    6/8
+BTR	r/m16,imm8			    6/8
+BTS	r/m16,r16			    6/13
+BTS	r/m32,r32			    6/13
+BTS	r/m16,imm8			    6/8
+BTS	r/m16,imm8			    6/8
+CALL	rel16				   3
+CALL	r/m16				   5/5
+CALL	ptr16:16			   18
+CALL	ptr16:16	(PM, direct segment)	  20
+CALL	ptr16:16	(PM, via call gate, same p35
+CALL	ptr16:16	(PM, via call gate, more p69
+CALL	ptr16:16	(PM, via call gate, more p77+4*p
+CALL	m16:16				   17
+CALL	m16:16	(PM, direct segment)	    20
+CALL	m16:16	(PM, via gate, same priveleg35
+CALL	m16:16	(PM, via gate, more priveleg69
+CALL	m16:16	(PM, via gate, more priveleg77+4*p
+CALL	rel32				   3
+CALL	r/m32				   5/5
+CALL	ptr16:32			   18
+CALL	ptr16:32	(PM, direct segment)	  20
+CALL	ptr16:32	(PM, via gate, same privel35
+CALL	ptr16:32	(PM, via gate, more privel69
+CALL	ptr16:32	(PM, via gate, more privel77+4*p
+CALL	m16:32				   17
+CALL	m16:32	(PM, direct segment)	    20
+CALL	m16:32	(PM, via gate, same priveleg35
+CALL	m16:32	(PM, via gate, more priveleg69
+CALL	m16:32	(PM, via gate, more priveleg77+4*p
+CBW					3
+CWDE					3
+CLC					2
+CLD					2
+CLI					5
+CLTS					7
+CMC					2
+CMOVcc	r16,r/m16			 f
+CMOVcc	r32,r/m32			 f
+CMP	AL,imm8				    1
+CMP	AX,imm16			    1
+CMP	EAX,imm32			    1
+CMP	r/m8,imm8			    1/2
+CMP	r/m16,imm8			    1/2
+CMP	r/m32,imm8			    1/2
+CMP	r/m16,imm16			    1/2
+CMP	r/m32,imm32			    1/2
+CMP	r/m8,r8				    1/2
+CMP	r/m16,r16			    1/2
+CMP	r/m32,r32			    1/2
+CMP	r8,r/m8				    1/3
+CMP	r16,r/m16			    1/3
+CMP	r32,r/m32			    1/3
+CMPSB					8
+CMPSW					8
+CMPSD					8
+CMPXCHG	r/m8,r8				6/7 6/10
+CMPXCHG	r/m16,r16			6/7 6/10
+CMPXCHG r/m32,r32			6/7 6/10
+CPUID					(SL Enhanced only)
+CWD					3
+CDQ					3
+DAA					2
+DAS					2
+DEC	r/m8				    1/3
+DEC	r/m16				    1/3
+DEC	r/m32				    1/3
+DEC	r16				    1
+DEC	r32				    1
+DIV	r/m8				    16/16
+DIV	r/m16				    24/24
+DIV	r/m32				    40/40
+ESC	imm4,r/m			    f
+ENTER	imm16,0				  14
+ENTER	imm16,1				  17
+ENTER	imm16,imm8			  17+3*n
+HLT					4
+IDIV	r/m8				   19/20
+IDIV	r/m16				   27/28
+IDIV	r/m32				   43/44
+IMUL	r/m8				   13-18/13-18
+IMUL	r/m16				   13-26/13-26
+IMUL	r/m32				   12-42/13-42
+IMUL	r16,r/m16			   13-26/13-26
+IMUL	r32,r/m32			   13-42/13-42
+IMUL	r16,imm8			   13-26
+IMUL	r32,imm8			   13-26
+IMUL	r16,imm16			   13-26/13-26
+IMUL	r32,imm32			   13-42/13-42
+IMUL	r16,r/m16,imm8			   13-26/13-26
+IMUL	r32,r/m32,imm8			   13-42/13-42
+IMUL	r16,r/m16,imm16			   13-26/13-26
+IMUL	r32,r/m32,imm32			   13-42/13-42
+IN	AL,imm8				     14
+IN	AL,imm8	(PM, CPL <= IOPL)	     8/28
+IN	AL,imm8 (VM)			     27
+IN	AX,imm8				     14
+IN	AX,imm8	(PM, CPL <= IOPL)		   8/28
+IN	AX,imm8	(VM)			     27
+IN	EAX,imm8			     14
+IN	EAX,imm8	(PM, CPL <= IOPL)		  8/28
+IN	EAX,imm8	(VM)			    27
+IN	AL,DX				     14
+IN	AL,DX	(PM, CPL <= IOPL)	       8/28
+IN	AL,DX	(VM)			       27
+IN	AX,DX				     14
+IN	AX,DX	(PM, CPL <= IOPL)	       8/28
+IN	AX,DX	(VM)			       2
+IN	EAX,DX				     14
+IN	EAX,DX	(PM, CPL <= IOPL)	      8/28
+IN	EAX,DX	(VM)			      27
+INC	r/m8				    1/3
+INC	r/m16				    1/3
+INC	r/m32				    1/3
+INC	r16				    1
+INC	r32				    1
+INSB					17
+INSW					17
+INSD					17
+INT	3				    26
+INT	3	(PM, same privilege)		  44
+INT	3	(PM, more privelege)		  71
+INT	imm8				    30
+INT	imm8	(PM, same privilege)	       44
+INT	imm8	(PM, more privelege)	       71
+INTO					3/28
+INTO	(PM, same privilege)		   3/46
+INTO	(PM, more privelege)		   3/73
+INVD					4
+INVLPG	m				 12
+IRET					15
+IRET	(PM, to same privilege)		   15
+IRET	(PM, to lesser privilege)	   36
+IRETD					15
+IRETD	(PM, to same privilege)		  15
+IRETD	(PM, to lesser privilege)	  36
+Jcc	rel8				    3/1
+Jcc	rel16				    3/1
+Jcc	rel32				    3/1
+JCXZ	rel8				   8/5
+JECXZ	rel8				  8/5
+JMP	rel8				    3
+JMP	rel16				    3
+JMP	r/m16				    5/5
+JMP	ptr16:16			    17/19
+JMP	ptr16:16	(PM, direct segment)	   17/19
+JMP	ptr16:16	(PM, via call gate, same pr32
+JMP	m16:16				    13/18
+JMP	m16:16	(PM, direct segment)	     13/18
+JMP	m16:16	(PM, via call gate, same priv31
+JMP	rel32				    3
+JMP	r/m32				    5/5
+JMP	ptr16:32			    13/18
+JMP	ptr16:32	(PM, direct segment)	   13/18
+JMP	ptr16:32	(PM, via call gate, same pr31
+JMP	m16:32				    13/18
+JMP	m16:32	(PM, direct segment)	     13/18
+JMP	m16:32	(PM, via call gate, same priv31
+LAHF					3
+LAR	r16,r/m16			    11/11
+LAR	r32,r/m32			    11/11
+LDS	r16,m16:16			    6/12p
+LDS	r32,m16:32			    6/12p
+LDS	r16,m16:16	(PM)			 f
+LDS	r32,m16:32	(PM)			 f
+LSS	r16,m16:16			    7/22p
+LSS	r32,m16:32			    7/22p
+LSS	r16,m16:16	(PM)			 f
+LSS	r32,m16:32	(PM)			    f
+LES	r16,m16:16			    7/22p
+LES	r32,m16:32			    7/22p
+LES	r16,m16:16	(PM)			 f
+LES	r32,m16:32	(PM)			 f
+LFS	r16,m16:16			    6/12p
+LFS	r32,m16:32			    6/12p
+LFS	r16,m16:16	(PM)			 f
+LFS	r32,m16:32	(PM)			 f
+LGS	r16,m16:16			    6/12p
+LGS	r32,m16:32			    6/12p
+LGS	r16,m16:16	(PM)			 f
+LGS	r32,m16:32	(PM)			 f
+LEA	r16,m				    1
+LEA	r32,m				    1
+LEAVE					5
+LGDT	m16&32				   11
+LIDT	m16&32				   11
+LLDT	r/m16				   11/11
+LMSW	r/m16				   13/13
+LOADALL					f
+LODSB					5
+LODSW					5
+LODSD					5
+LOOP	rel8				   2,6
+LOOPE	rel8				  9,6
+LOOPNE	rel8				 9,6
+LSL	r16,r/m16			    10/10
+LSL	r32,r/m32			    10/10
+LTR	r/m16				    20/20
+MOV	r/m8,r8				    1
+MOV	r/m16,r16			    1
+MOV	r/m32,r32			    1
+MOV	r8,r/m8				    1
+MOV	r16,r/m16			    1
+MOV	r32,r/m32			    1
+MOV	r/m16,sreg			    3/3
+MOV	sreg,r/m16			    3/9
+MOV	sreg,r/m16	(PM)			 f
+MOV	AL,moffs8			    1
+MOV	AX,moffs16			    1
+MOV	EAX,moffs32			    1
+MOV	moffs8,AL			    1
+MOV	moffs16,AX			    1
+MOV	moffs32,EAX			    1
+MOV	r8,imm8				    1
+MOV	r16,imm16			    1
+MOV	r32,imm32			    1
+MOV	r/m8,imm8			    1
+MOV	r/m16,imm16			    1
+MOV	r/m32,imm32			    1
+MOV	CR0,r32				    16
+MOV	CR2,r32				    4
+MOV	CR3,r32				    4
+MOV	CR4,r32				    (SL Enhanced only)
+MOV	r32,CRi				    4
+MOV	r32,DR0-DR3			    10
+MOV	r32,DR4-DR5			    9 (alias to DR6-DR7)
+MOV	r32,DR6-DR7			    10
+MOV	DR0-DR3,r32			    11
+MOV	DR4-DR5,r32			    10 (alias to DR6-DR7)
+MOV	DR6-DR7,r32			    11
+MOV	r32,TR4-TR7			    4
+MOV	r32,TR3				    4
+MOV	TR3,r32				    6
+MOV	TR4-TR7,r32			    f
+MOVSB					7
+MOVSW					7
+MOVSD					7
+MOVSX	r16,r/m8			  3/3
+MOVSX	r32,r/m8			  3/3
+MOVSX	r32,r/m16			  3/3
+MOVZX	r16,r/m8			  3/3
+MOVZX	r32,r/m8			  3/3
+MOVZX	r32,r/m16			  3/3
+MUL	r/m8				    13-18/
+MUL	r/m16				    13-26/
+MUL	r/m32				    13-42/
+NEG	r/m8				    1/3
+NEG	r/m16				    1/3
+NEG	r/m32				    1/3
+NOP					1
+NOT	r/m8				    1/3
+NOT	r/m16				    1/3
+NOT	r/m32				    1/3
+OR	AL,imm8				     1
+OR	AX,imm16			     1
+OR	EAX,imm32			     1
+OR	r/m8,imm8			     1/3
+OR	r/m16,imm8			     1/3
+OR	r/m32,imm8			     1/3
+OR	r/m16,imm16			     1/3
+OR	r/m32,imm32			     1/3
+OR	r/m8,r8				     1/3
+OR	r/m16,r16			     1/3
+OR	r/m32,r32			     1/3
+OR	r8,r/m8				     1/2
+OR	r16,r/m16			     1/2
+OR	r32,r/m32			     1/2
+OUT	imm8,AL				    16
+OUT	imm8,AL	(PM, CPL <= IOPL)	    11/31
+OUT	imm8,AL	(VM)			    25
+OUT	imm8,AX				    16
+OUT	imm8,AX	(PM, CPL <= IOPL)	    11/31
+OUT	imm8,AX	(VM)			    25
+OUT	imm8,EAX			    16
+OUT	imm8,EAX	(PM, CPL <= IOPL)	   11/31
+OUT	imm8,EAX	(VM)			   25
+OUT	DX,AL				    16
+OUT	DX,AL	(PM, CPL <= IOPL)	      11/31
+OUT	DX,AL	(VM)			      25
+OUT	DX,AX				    16
+OUT	DX,AX	(PM, CPL <= IOPL)	      11/31
+OUT	DX,AX	(VM)			      25
+OUT	DX,EAX				    16
+OUT	DX,EAX	(PM, CPL <= IOPL)	     11/31
+OUT	DX,EAX	(VM)			     25
+OUTSB					17
+OUTSW					10/32
+OUTSD					30
+POP	m16				    6
+POP	m32				    6
+POP	r16				    4
+POP	r32				    4
+POP	sreg				    3
+POP	sreg	(PM)			       f
+POPA					9
+POPAD					9
+POPF					9/6p
+POPF	(PM)				   6
+POPF	(VM)				   9
+POPFD					9/6p
+POPFD	(PM)				  6
+POPFD	(VM)				  9
+PUSH	r/m16				   4
+PUSH	r/m32				   4
+PUSH	r16				   1
+PUSH	r32				   1
+PUSH	imm8				   1
+PUSH	imm16				   1
+PUSH	imm32				   1
+PUSH	sreg				   3
+PUSHA					11
+PUSHAD					11
+PUSHF					4/3p
+PUSHF	(PM)				  3
+PUSHF	(VM)				  4
+PUSHFD					4/3p
+PUSHFD	(PM)				 3
+PUSHFD	(VM)				 4
+RCL	r/m8,1				    3/4
+RCL	r/m16,1				    3/4
+RCL	r/m32,1				    3/4
+RCL	r/m8,CL				    8-30/9-31
+RCL	r/m16,CL			    8-30/9-31
+RCL	r/m32,CL			    8-30/9-31
+RCL	r/m8,imm8			    8-30/9-31
+RCL	r/m16,imm8			    8-30/9-31
+RCL	r/m32,imm8			    8-30/9-31
+RCR	r/m8,1				    3/4
+RCR	r/m16,1				    3/4
+RCR	r/m32,1				    3/4
+RCR	r/m8,CL				    8-30/9-31
+RCR	r/m16,CL			    8-30/9-31
+RCR	r/m32,CL			    8-30/9-31
+RCR	r/m8,imm8			    8-30/9-31
+RCR	r/m16,imm8			    8-30/9-31
+RCR	r/m32,imm8			    8-30/9-31
+ROL	r/m8,1				    3/4
+ROL	r/m16,1				    3/4
+ROL	r/m32,1				    3/4
+ROL	r/m8,CL				    3/4
+ROL	r/m16,CL			    3/4
+ROL	r/m32,CL			    3/4
+ROL	r/m8,imm8			    2/4
+ROL	r/m16,imm8			    2/4
+ROL	r/m32,imm8			    2/4
+ROR	r/m8,1				    3/4
+ROR	r/m16,1				    3/4
+ROR	r/m32,1				    3/4
+ROR	r/m8,CL				    3/4
+ROR	r/m16,CL			    3/4
+ROR	r/m32,CL			    3/4
+ROR	r/m8,imm8			    2/4
+ROR	r/m16,imm8			    2/4
+ROR	r/m32,imm8			    2/4
+RET	(near)				    5
+RET	(far)				    13
+RET	(PM, far, same PL)		    18
+RET	(PM, far, different PL)		    33
+RET	imm16	(near)			      5
+RET	imm16	(far)			      14
+RET	imm16	(PM, far, same PL)	      f
+RET	imm16	(PM, far, different PL)	      f
+SAHF					2
+SAL	r/m8,1				    3/4
+SAL	r/m16,1				    3/4
+SAL	r/m32,1				    3/4
+SAL	r/m8,CL				    3/4
+SAL	r/m16,CL			    3/4
+SAL	r/m32,CL			    3/4
+SAL	r/m8,imm8			    2/4
+SAL	r/m16,imm8			    2/4
+SAL	r/m32,imm8			    2/4
+SAR	r/m8,1				    3/4
+SAR	r/m16,1				    3/4
+SAR	r/m32,1				    3/4
+SAR	r/m8,CL				    3/4
+SAR	r/m16,CL			    3/4
+SAR	r/m32,CL			    3/4
+SAR	r/m8,imm8			    2/4
+SAR	r/m16,imm8			    2/4
+SAR	r/m32,imm8			    2/4
+SHL	r/m8,1				    3/4
+SHL	r/m16,1				    3/4
+SHL	r/m32,1				    3/4
+SHL	r/m8,CL				    3/4
+SHL	r/m16,CL			    3/4
+SHL	r/m32,CL			    3/4
+SHL	r/m8,imm8			    2/4
+SHL	r/m16,imm8			    2/4
+SHL	r/m32,imm8			    2/4
+SHR	r/m8,1				    3/4
+SHR	r/m16,1				    3/4
+SHR	r/m32,1				    3/4
+SHR	r/m8,CL				    3/4
+SHR	r/m16,CL			    3/4
+SHR	r/m32,CL			    3/4
+SHR	r/m8,imm8			    2/4
+SHR	r/m16,imm8			    2/4
+SHR	r/m32,imm8			    2/4
+SBB	AL,imm8				    1
+SBB	AX,imm16			    1
+SBB	EAX,imm32			    1
+SBB	r/m8,imm8			    1/3
+SBB	r/m16,imm8			    1/3
+SBB	r/m32,imm8			    1/3
+SBB	r/m16,imm16			    1/3
+SBB	r/m32,imm32			    1/3
+SBB	r/m8,r8				    1/3
+SBB	r/m16,r16			    1/3
+SBB	r/m32,r32			    1/3
+SBB	r8,r/m8				    1/2
+SBB	r16,r/m16			    1/2
+SBB	r32,r/m32			    1/2
+SCASB					6
+SCASW					6
+SCASD					6
+SETALC					f
+SETcc	r/m8				  4/3
+SGDT	m16&32				   10
+SIDT	m16&32				   10
+SHLD	r/m16,r16,imm8			   2/3
+SHLD	r/m32,r32,imm8			   2/3
+SHLD	r/m16,r16,CL			   3/4
+SHLD	r/m32,r32,CL			   3/4
+SHRD	r/m16,r16,imm8			   2/3
+SHRD	r/m32,r32,imm8			   2/3
+SHRD	r/m16,r16,CL			   3/4
+SHRD	r/m32,r32,CL			   3/4
+SLDT	r/m16				   2/3
+SLDT	r/m32				   2/3
+SMINT					f
+SMSW	r/m16				   2/3
+STC					2
+STD					2
+STI					5
+STOSB					5
+STOSW					5
+STOSD					5
+STR	r/m16				    2/3
+SUB	AL,imm8				    1
+SUB	AX,imm16			    1
+SUB	EAX,imm32			    1
+SUB	r/m8,imm8			    1/3
+SUB	r/m16,imm8			    1/3
+SUB	r/m32,imm8			    1/3
+SUB	r/m16,imm16			    1/3
+SUB	r/m32,imm32			    1/3
+SUB	r/m8,r8				    1/3
+SUB	r/m16,r16			    1/3
+SUB	r/m32,r32			    1/3
+SUB	r8,r/m8				    1/2
+SUB	r16,r/m16			    1/2
+SUB	r32,r/m32			    1/2
+TEST	AL,imm8				   1
+TEST	AX,imm16			   1
+TEST	EAX,imm32			   1
+TEST	r/m8,imm8			   1/2
+TEST	r/m16,imm16			   1/2
+TEST	r/m32,imm32			   1/2
+TEST	r/m8,r8				   1/2
+TEST	r/m16,r16			   1/2
+TEST	r/m32,r32			   1/2
+UMOV	r8,r/m8				   ??
+UMOV	r16,r/m16			   ??
+UMOV	r32,r/m32			   ??
+UMOV	r/m8,r8				   ??
+UMOV	r/m16,r16			   ??
+UMOV	r/m32,r32			   ??
+VERR	r/m16				   11/11
+VERW	r/m16				   11/11
+WAIT					1-3
+WBINVD					5
+XADD	r/m8,r8				   3/4
+XADD	r/m16,r16			   3/4
+XADD	r/m32,r32			   3/4
+XCHG	AX,r16				   3
+XCHG	EAX,r32				   3
+XCHG	r/m8,r8				   3/5
+XCHG	r/m16,r16			   3/5
+XCHG	r/m32,r32			   3/5
+XLAT					4
+XOR	AL,imm8				    1
+XOR	AX,imm16			    1
+XOR	EAX,imm32			    1
+XOR	r/m8,imm8			    1/3
+XOR	r/m16,imm8			    1/3
+XOR	r/m32,imm8			    1/3
+XOR	r/m16,imm16			    1/3
+XOR	r/m32,imm32			    1/3
+XOR	r/m8,r8				    1/3
+XOR	r/m16,r16			    1/3
+XOR	r/m32,r32			    1/3
+XOR	r8,r/m8				    1/2
+XOR	r16,r/m16			    1/2
+XOR	r32,r/m32			    1/2
+(END)
+
+----------------------------------------------------------
+APPENDIX Y6  -	Vendor Instruction Time for Cyrix Cx486DX CPU
+
+AAA					4
+AAD					4
+AAD	imm8				    4
+AAM					16
+AAM	imm8				    16
+AAS					4
+ADC	AL,imm8				    1
+ADC	AX,imm16			    1
+ADC	EAX,imm32			    1
+ADC	r/m8,imm8			    1/3
+ADC	r/m16,imm8			    1/3
+ADC	r/m32,imm8			    1/3
+ADC	r/m16,imm16			    1/3
+ADC	r/m32,imm32			    1/3
+ADC	r/m8,r8				    1/3
+ADC	r/m16,r16			    1/3
+ADC	r/m32,r32			    1/3
+ADC	r8,r/m8				    1/3
+ADC	r16,r/m16			    1/3
+ADC	r32,r/m32			    1/3
+ADD	AL,imm8				    1
+ADD	AX,imm16			    1
+ADD	EAX,imm32			    1
+ADD	r/m8,imm8			    1/3
+ADD	r/m16,imm8			    1/3
+ADD	r/m32,imm8			    1/3
+ADD	r/m16,imm16			    1/3
+ADD	r/m32,imm32			    1/3
+ADD	r/m8,r8				    1/3
+ADD	r/m16,r16			    1/3
+ADD	r/m32,r32			    1/3
+ADD	r8,r/m8				    1/3
+ADD	r16,r/m16			    1/3
+ADD	r32,r/m32			    1/3
+AND	AL,imm8				    1
+AND	AX,imm16			    1
+AND	EAX,imm32			    1
+AND	r/m8,imm8			    1/3
+AND	r/m16,imm8			    1/3
+AND	r/m32,imm8			    1/3
+AND	r/m16,imm16			    1/3
+AND	r/m32,imm32			    1/3
+AND	r/m8,r8				    1/3
+AND	r/m16,r16			    1/3
+AND	r/m32,r32			    1/3
+AND	r8,r/m8				    1/3
+AND	r16,r/m16			    1/3
+AND	r32,r/m32			    1/3
+ARPL	r/m16,r16			   6/10
+BOUND	r16,m16&16			  11 or 11+int
+BOUND	r32,m32&32			  11 or 11+int
+BSF	r16,r/m16			    5+n/7+n
+BSF	r32,r/m32			    5+n/7+n
+BSR	r16,r/m16			    5+n/7+n
+BSR	r32,r/m32			    5+n/7+n
+BSWAP	r32				  4
+BT	r/m16,r16			     3/6
+BT	r/m32,r32			     3/6
+BT	r/m16,imm8			     3/4
+BT	r/m16,imm8			     3/4
+BTC	r/m16,r16			    5/8
+BTC	r/m32,r32			    5/8
+BTC	r/m16,imm8			    4/5
+BTC	r/m16,imm8			    4/5
+BTR	r/m16,r16			    5/8
+BTR	r/m32,r32			    5/8
+BTR	r/m16,imm8			    4/5
+BTR	r/m16,imm8			    4/5
+BTS	r/m16,r16			    4/7
+BTS	r/m32,r32			    4/7
+BTS	r/m16,imm8			    3/5
+BTS	r/m16,imm8			    3/5
+CALL	rel16				   7
+CALL	r/m16				   8/9
+CALL	ptr16:16			   12
+CALL	ptr16:16	(PM, direct segment)	  30
+CALL	ptr16:16	(PM, via call gate, same p41
+CALL	ptr16:16	(PM, via call gate, more p83
+CALL	ptr16:16	(PM, via call gate, more p81+4*param
+CALL	m16:16				   14
+CALL	m16:16	(PM, direct segment)	    14
+CALL	m16:16	(PM, via gate, same priveleg43
+CALL	m16:16	(PM, via gate, more priveleg85
+CALL	m16:16	(PM, via gate, more priveleg86+4*param
+CALL	rel32				   7
+CALL	r/m32				   8/9
+CALL	ptr16:32			   12
+CALL	ptr16:32	(PM, direct segment)	  30
+CALL	ptr16:32	(PM, via gate, same privel41
+CALL	ptr16:32	(PM, via gate, more privel83
+CALL	ptr16:32	(PM, via gate, more privel81+4*param
+CALL	m16:32				   14
+CALL	m16:32	(PM, direct segment)	    14
+CALL	m16:32	(PM, via gate, same priveleg43
+CALL	m16:32	(PM, via gate, more priveleg85
+CALL	m16:32	(PM, via gate, more priveleg86+4*param
+CBW					3
+CWDE					3
+CLC					1
+CLD					1
+CLI					7
+CLTS					5
+CMC					1
+CMP	AL,imm8				    1
+CMP	AX,imm16			    1
+CMP	EAX,imm32			    1
+CMP	r/m8,imm8			    1/3
+CMP	r/m16,imm8			    1/3
+CMP	r/m32,imm8			    1/3
+CMP	r/m16,imm16			    1/3
+CMP	r/m32,imm32			    1/3
+CMP	r/m8,r8				    1/3
+CMP	r/m16,r16			    1/3
+CMP	r/m32,r32			    1/3
+CMP	r8,r/m8				    1/3
+CMP	r16,r/m16			    1/3
+CMP	r32,r/m32			    1/3
+CMPSB					7
+CMPSW					7
+CMPSD					7
+CMPXCHG	r/m8,r8				5/7
+CMPXCHG	r/m16,r16			5/7
+CMPXCHG r/m32,r32			5/7
+CWD					1
+CDQ					1
+DAA					4
+DAS					4
+DEC	r/m8				    1/3
+DEC	r/m16				    1/3
+DEC	r/m32				    1/3
+DEC	r16				    1
+DEC	r32				    1
+DIV	r/m8				    14/15
+DIV	r/m16				    22/23
+DIV	r/m32				    38/39
+ESC	imm4,r/m			    n/a
+ENTER	imm16,0				  7
+ENTER	imm16,1				  10
+ENTER	imm16,imm8			  6+4*level
+HLT					3
+IDIV	r/m8				   19/20
+IDIV	r/m16				   27/28
+IDIV	r/m32				   43/44
+IMUL	r/m8				   3/5
+IMUL	r/m16				   3/5
+IMUL	r/m32				   7/9
+IMUL	r16,r/m16			   3/5
+IMUL	r32,r/m32			   7/9
+IMUL	r16,imm8			   3/5
+IMUL	r32,imm8			   7/9
+IMUL	r16,imm16			   3/5
+IMUL	r32,imm32			   7/9
+IMUL	r16,r/m16,imm8			   3/5
+IMUL	r32,r/m32,imm8			   7/9
+IMUL	r16,r/m16,imm16			   3/5
+IMUL	r32,r/m32,imm32			   7/9
+IN	AL,imm8				     16
+IN	AL,imm8	(PM, CPL <= IOPL)	     6
+IN	AL,imm8 (VM)			     19
+IN	AX,imm8				     16
+IN	AX,imm8	(PM, CPL <= IOPL)		   6
+IN	AX,imm8	(VM)			     19
+IN	EAX,imm8			     16
+IN	EAX,imm8	(PM, CPL <= IOPL)		  6
+IN	EAX,imm8	(VM)			    19
+IN	AL,DX				     16
+IN	AL,DX	(PM, CPL <= IOPL)	       6
+IN	AL,DX	(VM)			       19
+IN	AX,DX				     16
+IN	AX,DX	(PM, CPL <= IOPL)	       6
+IN	AX,DX	(VM)			       19
+IN	EAX,DX				     16
+IN	EAX,DX	(PM, CPL <= IOPL)	      6
+IN	EAX,DX	(VM)			      19
+INC	r/m8				    1/3
+INC	r/m16				    1/3
+INC	r/m32				    1/3
+INC	r16				    1
+INC	r32				    1
+INSB					20
+INSW					20
+INSD					20
+INT	3				    14
+INT	3	(PM, same privilege)		  49
+INT	3	(PM, more privelege)		  77
+INT	imm8				    14
+INT	imm8	(PM, same privilege)	       49
+INT	imm8	(PM, more privelege)	       77
+INTO					1 or 15
+INTO	(PM, same privilege)		   1 or 49
+INTO	(PM, more privelege)		   1 or 77
+INVD					4
+INVLPG	m				 4
+IRET					14
+IRET	(PM, to same privilege)		   31
+IRET	(PM, to lesser privilege)	   66
+IRETD					14
+IRETD	(PM, to same privilege)		  31
+IRETD	(PM, to lesser privilege)	  66
+Jcc	rel8				    1 or 4
+Jcc	rel16				    1 or 4
+Jcc	rel32				    1 or 4
+JCXZ	rel8				   3 or 7
+JECXZ	rel8				  3 or 7
+JMP	rel8				    4
+JMP	rel16				    4
+JMP	r/m16				    6/8
+JMP	ptr16:16			    9
+JMP	ptr16:16	(PM, direct segment)	   26
+JMP	ptr16:16	(PM, via call gate, same pr37
+JMP	m16:16				    11
+JMP	m16:16	(PM, direct segment)	     30
+JMP	m16:16	(PM, via call gate, same priv39
+JMP	rel32				    4
+JMP	r/m32				    6/8
+JMP	ptr16:32			    9
+JMP	ptr16:32	(PM, direct segment)	   26
+JMP	ptr16:32	(PM, via call gate, same pr37
+JMP	m16:32				    11
+JMP	m16:32	(PM, direct segment)	     30
+JMP	m16:32	(PM, via call gate, same priv39
+LAHF					2
+LAR	r16,r/m16			    11/12
+LAR	r32,r/m32			    11/12
+LDS	r16,m16:16			    6
+LDS	r32,m16:32			    6
+LDS	r16,m16:16	(PM)			 19
+LDS	r32,m16:32	(PM)			 19
+LSS	r16,m16:16			    6
+LSS	r32,m16:32			    6
+LSS	r16,m16:16	(PM)			 19
+LSS	r32,m16:32	(PM)			    19
+LES	r16,m16:16			    6
+LES	r32,m16:32			    6
+LES	r16,m16:16	(PM)			 19
+LES	r32,m16:32	(PM)			 19
+LFS	r16,m16:16			    6
+LFS	r32,m16:32			    6
+LFS	r16,m16:16	(PM)			 19
+LFS	r32,m16:32	(PM)			 19
+LGS	r16,m16:16			    6
+LGS	r32,m16:32			    6
+LGS	r16,m16:16	(PM)			 19
+LGS	r32,m16:32	(PM)			 19
+LEA	r16,m				    2 (w/o index)/3(with index)
+LEA	r32,m				    2 (w/o index)/3(with index)
+LEAVE					3
+LGDT	m16&32				   9
+LIDT	m16&32				   9
+LLDT	r/m16				   16/17
+LMSW	r/m16				   5
+LODSB					4
+LODSW					4
+LODSD					4
+LOOP	rel8				   3 or 7
+LOOPE	rel8				  3 or 7
+LOOPNE	rel8				 3 or 7
+LSL	r16,r/m16			    14/15
+LSL	r32,r/m32			    14/15
+LTR	r/m16				    16/17
+MOV	r/m8,r8				    1/2
+MOV	r/m16,r16			    1/2
+MOV	r/m32,r32			    1/2
+MOV	r8,r/m8				    1/2
+MOV	r16,r/m16			    1/2
+MOV	r32,r/m32			    1/2
+MOV	r/m16,sreg			    1/2
+MOV	sreg,r/m16			    2/3
+MOV	sreg,r/m16	(PM)			 15/16
+MOV	AL,moffs8			    2
+MOV	AX,moffs16			    2
+MOV	EAX,moffs32			    2
+MOV	moffs8,AL			    1/2
+MOV	moffs16,AX			    1/2
+MOV	moffs32,EAX			    1/2
+MOV	r8,imm8				    1
+MOV	r16,imm16			    1
+MOV	r32,imm32			    1
+MOV	r/m8,imm8			    1/2
+MOV	r/m16,imm16			    1/2
+MOV	r/m32,imm32			    1/2
+MOV	CR0,r32				    11
+MOV	CR2,r32				    3
+MOV	CR3,r32				    3
+MOV	r32,CRi				    1 (if CR0)/3 (if CR2,CR3)
+MOV	r32,DR0-DR3			    3
+MOV	r32,DR4-DR5			    3
+MOV	r32,DR6-DR7			    3
+MOV	DR0-DR3,r32			    1
+MOV	DR4-DR5,r32			    1
+MOV	DR6-DR7,r32			    1
+MOV	r32,TR4-TR7			    3
+MOV	r32,TR3				    5
+MOV	TR3,r32				    5
+MOV	TR4-TR7,r32			    1
+MOVSB					5
+MOVSW					5
+MOVSD					5
+MOVSX	r16,r/m8			  1/3
+MOVSX	r32,r/m8			  1/3
+MOVSX	r32,r/m16			  1/3
+MOVZX	r16,r/m8			  2/3
+MOVZX	r32,r/m8			  2/3
+MOVZX	r32,r/m16			  2/3
+MUL	r/m8				    3/5
+MUL	r/m16				    3/5
+MUL	r/m32				    7/9
+NEG	r/m8				    1/3
+NEG	r/m16				    1/3
+NEG	r/m32				    1/3
+NOP					1
+NOT	r/m8				    1/3
+NOT	r/m16				    1/3
+NOT	r/m32				    1/3
+OR	AL,imm8				     1
+OR	AX,imm16			     1
+OR	EAX,imm32			     1
+OR	r/m8,imm8			     1/3
+OR	r/m16,imm8			     1/3
+OR	r/m32,imm8			     1/3
+OR	r/m16,imm16			     1/3
+OR	r/m32,imm32			     1/3
+OR	r/m8,r8				     1/3
+OR	r/m16,r16			     1/3
+OR	r/m32,r32			     1/3
+OR	r8,r/m8				     1/3
+OR	r16,r/m16			     1/3
+OR	r32,r/m32			     1/3
+OUT	imm8,AL				    18
+OUT	imm8,AL	(PM, CPL <= IOPL)	    4
+OUT	imm8,AL	(VM)			    17
+OUT	imm8,AX				    18
+OUT	imm8,AX	(PM, CPL <= IOPL)	    4
+OUT	imm8,AX	(VM)			    17
+OUT	imm8,EAX			    18
+OUT	imm8,EAX	(PM, CPL <= IOPL)	   4
+OUT	imm8,EAX	(VM)			   17
+OUT	DX,AL				    18
+OUT	DX,AL	(PM, CPL <= IOPL)	      4
+OUT	DX,AL	(VM)			      17
+OUT	DX,AX				    18
+OUT	DX,AX	(PM, CPL <= IOPL)	      4
+OUT	DX,AX	(VM)			      17
+OUT	DX,EAX				    18
+OUT	DX,EAX	(PM, CPL <= IOPL)	     4
+OUT	DX,EAX	(VM)			     17
+OUTSB					20
+OUTSW					20
+OUTSD					20
+POP	m16				    5
+POP	m32				    5
+POP	r16				    3
+POP	r32				    3
+POP	sreg				    4
+POP	sreg	(PM)			       18
+POPA					18
+POPAD					18
+POPF					4
+POPF	(PM)				   4
+POPF	(VM)				   4
+POPFD						4
+POPFD	(PM)				  4
+POPFD	(VM)				  4
+PUSH	r/m16				   2/4
+PUSH	r/m32				   2/4
+PUSH	r16				   2
+PUSH	r32				   2
+PUSH	imm8				   2
+PUSH	imm16				   2
+PUSH	imm32				   2
+PUSH	sreg				   2
+PUSHA					17
+PUSHAD					17
+PUSHF					2
+PUSHF	(PM)				  2
+PUSHF	(VM)				  2
+PUSHFD					2
+PUSHFD	(PM)				 2
+PUSHFD	(VM)				 2
+RCL	r/m8,1				    9/9
+RCL	r/m16,1				    9/9
+RCL	r/m32,1				    9/9
+RCL	r/m8,CL				    9/9
+RCL	r/m16,CL			    9/9
+RCL	r/m32,CL			    9/9
+RCL	r/m8,imm8			    9/9
+RCL	r/m16,imm8			    9/9
+RCL	r/m32,imm8			    9/9
+RCR	r/m8,1				    9/9
+RCR	r/m16,1				    9/9
+RCR	r/m32,1				    9/9
+RCR	r/m8,CL				    9/9
+RCR	r/m16,CL			    9/9
+RCR	r/m32,CL			    9/9
+RCR	r/m8,imm8			    9/9
+RCR	r/m16,imm8			    9/9
+RCR	r/m32,imm8			    9/9
+ROL	r/m8,1				    2/4
+ROL	r/m16,1				    2/4
+ROL	r/m32,1				    2/4
+ROL	r/m8,CL				    3/5
+ROL	r/m16,CL			    3/5
+ROL	r/m32,CL			    3/5
+ROL	r/m8,imm8			    2/4
+ROL	r/m16,imm8			    2/4
+ROL	r/m32,imm8			    2/4
+ROR	r/m8,1				    2/4
+ROR	r/m16,1				    2/4
+ROR	r/m32,1				    2/4
+ROR	r/m8,CL				    3/5
+ROR	r/m16,CL			    3/5
+ROR	r/m32,CL			    3/5
+ROR	r/m8,imm8			    2/4
+ROR	r/m16,imm8			    2/4
+ROR	r/m32,imm8			    2/4
+RET	(near)				    10
+RET	(far)				    13
+RET	(PM, far, same PL)		    26
+RET	(PM, far, different PL)		    61
+RET	imm16	(near)			      10
+RET	imm16	(far)			      13
+RET	imm16	(PM, far, same PL)	      26
+RET	imm16	(PM, far, different PL)	      61
+RSDC	m80,sreg			   10
+RSLDT	m80				  10
+RSM					76
+RSTS	m80				   10
+SAHF					2
+SAL	r/m8,1				    2/4
+SAL	r/m16,1				    2/4
+SAL	r/m32,1				    2/4
+SAL	r/m8,CL				    3/5
+SAL	r/m16,CL			    3/5
+SAL	r/m32,CL			    3/5
+SAL	r/m8,imm8			    2/4
+SAL	r/m16,imm8			    2/4
+SAL	r/m32,imm8			    2/4
+SAR	r/m8,1				    2/4
+SAR	r/m16,1				    2/4
+SAR	r/m32,1				    2/4
+SAR	r/m8,CL				    3/5
+SAR	r/m16,CL			    3/5
+SAR	r/m32,CL			    3/5
+SAR	r/m8,imm8			    2/4
+SAR	r/m16,imm8			    2/4
+SAR	r/m32,imm8			    2/4
+SHL	r/m8,1				    1/3
+SHL	r/m16,1				    1/3
+SHL	r/m32,1				    1/3
+SHL	r/m8,CL				    2/4
+SHL	r/m16,CL			    2/4
+SHL	r/m32,CL			    2/4
+SHL	r/m8,imm8			    1/3
+SHL	r/m16,imm8			    1/3
+SHL	r/m32,imm8			    1/3
+SHR	r/m8,1				    1/3
+SHR	r/m16,1				    1/3
+SHR	r/m32,1				    1/3
+SHR	r/m8,CL				    2/4
+SHR	r/m16,CL			    2/4
+SHR	r/m32,CL			    2/4
+SHR	r/m8,imm8			    1/3
+SHR	r/m16,imm8			    1/3
+SHR	r/m32,imm8			    1/3
+SBB	AL,imm8				    1
+SBB	AX,imm16			    1
+SBB	EAX,imm32			    1
+SBB	r/m8,imm8			    1/3
+SBB	r/m16,imm8			    1/3
+SBB	r/m32,imm8			    1/3
+SBB	r/m16,imm16			    1/3
+SBB	r/m32,imm32			    1/3
+SBB	r/m8,r8				    1/3
+SBB	r/m16,r16			    1/3
+SBB	r/m32,r32			    1/3
+SBB	r8,r/m8				    1/3
+SBB	r16,r/m16			    1/3
+SBB	r32,r/m32			    1/3
+SCASB					5
+SCASW					5
+SCASD					5
+SETALC					n/a
+SETcc	r/m8				  2/2
+SGDT	m16&32				   6
+SIDT	m16&32				   6
+SHLD	r/m16,r16,imm8			   1/3
+SHLD	r/m32,r32,imm8			   1/3
+SHLD	r/m16,r16,CL			   3/5
+SHLD	r/m32,r32,CL			   3/5
+SHRD	r/m16,r16,imm8			   1/3
+SHRD	r/m32,r32,imm8			   1/3
+SHRD	r/m16,r16,CL			   3/5
+SHRD	r/m32,r32,CL			   3/5
+SLDT	r/m16				   1/2
+SLDT	r/m32				   1/2
+SMINT					24
+SMSW	r/m16				   1/2
+STC					1
+STD					1
+STI					7
+STOSB					3
+STOSW					3
+STOSD					3
+STR	r/m16				    1/2
+SUB	AL,imm8				    1
+SUB	AX,imm16			    1
+SUB	EAX,imm32			    1
+SUB	r/m8,imm8			    1/3
+SUB	r/m16,imm8			    1/3
+SUB	r/m32,imm8			    1/3
+SUB	r/m16,imm16			    1/3
+SUB	r/m32,imm32			    1/3
+SUB	r/m8,r8				    1/3
+SUB	r/m16,r16			    1/3
+SUB	r/m32,r32			    1/3
+SUB	r8,r/m8				    1/3
+SUB	r16,r/m16			    1/3
+SUB	r32,r/m32			    1/3
+SVDC	sreg,m80			   18
+SVLDT	m80				  18
+SVTS	m80				   18
+TEST	AL,imm8				   1
+TEST	AX,imm16			   1
+TEST	EAX,imm32			   1
+TEST	r/m8,imm8			   1/3
+TEST	r/m16,imm16			   1/3
+TEST	r/m32,imm32			   1/3
+TEST	r/m8,r8				   1/3
+TEST	r/m16,r16			   1/3
+TEST	r/m32,r32			   1/3
+UMOV	r8,r/m8				   n/a
+UMOV	r16,r/m16			   n/a
+UMOV	r32,r/m32			   n/a
+UMOV	r/m8,r8				   n/a
+UMOV	r/m16,r16			   n/a
+UMOV	r/m32,r32			   n/a
+VERR	r/m16				   9/10
+VERW	r/m16				   9/10
+WAIT					5
+WBINVD					4
+XADD	r/m8,r8				   3/6
+XADD	r/m16,r16			   3/6
+XADD	r/m32,r32			   3/6
+XCHG	AX,r16				   3
+XCHG	EAX,r32				   3
+XCHG	r/m8,r8				   3/4
+XCHG	r/m16,r16			   3/4
+XCHG	r/m32,r32			   3/4
+XLAT					3
+XOR	AL,imm8				    1
+XOR	AX,imm16			    1
+XOR	EAX,imm32			    1
+XOR	r/m8,imm8			    1/3
+XOR	r/m16,imm8			    1/3
+XOR	r/m32,imm8			    1/3
+XOR	r/m16,imm16			    1/3
+XOR	r/m32,imm32			    1/3
+XOR	r/m8,r8				    1/3
+XOR	r/m16,r16			    1/3
+XOR	r/m32,r32			    1/3
+XOR	r8,r/m8				    1/3
+XOR	r16,r/m16			    1/3
+XOR	r32,r/m32			    1/3
+(END)
+
+----------------------------------------------------------
+APPENDIX Y7  -	Vendor Instruction Time for Intel Pentium Processor
+
+AAA					3
+AAD					10
+AAD	imm8				    n/a
+AAM					18
+AAM	imm8				    n/a
+AAS					3
+ADC	AL,imm8				    1
+ADC	AX,imm16			    1
+ADC	EAX,imm32			    1
+ADC	r/m8,imm8			    1/3
+ADC	r/m16,imm8			    1/3
+ADC	r/m32,imm8			    1/3
+ADC	r/m16,imm16			    1/3
+ADC	r/m32,imm32			    1/3
+ADC	r/m8,r8				    1/3
+ADC	r/m16,r16			    1/3
+ADC	r/m32,r32			    1/3
+ADC	r8,r/m8				    1/2
+ADC	r16,r/m16			    1/2
+ADC	r32,r/m32			    1/2
+ADD	AL,imm8				    1
+ADD	AX,imm16			    1
+ADD	EAX,imm32			    1
+ADD	r/m8,imm8			    1/3
+ADD	r/m16,imm8			    1/3
+ADD	r/m32,imm8			    1/3
+ADD	r/m16,imm16			    1/3
+ADD	r/m32,imm32			    1/3
+ADD	r/m8,r8				    1/3
+ADD	r/m16,r16			    1/3
+ADD	r/m32,r32			    1/3
+ADD	r8,r/m8				    1/2
+ADD	r16,r/m16			    1/2
+ADD	r32,r/m32			    1/2
+AND	AL,imm8				    1
+AND	AX,imm16			    1
+AND	EAX,imm32			    1
+AND	r/m8,imm8			    1/3
+AND	r/m16,imm8			    1/3
+AND	r/m32,imm8			    1/3
+AND	r/m16,imm16			    1/3
+AND	r/m32,imm32			    1/3
+AND	r/m8,r8				    1/3
+AND	r/m16,r16			    1/3
+AND	r/m32,r32			    1/3
+AND	r8,r/m8				    1/2
+AND	r16,r/m16			    1/2
+AND	r32,r/m32			    1/2
+ARPL	r/m16,r16			   f
+BOUND	r16,m16&16			  8/int+32
+BOUND	r32,m32&32			  f
+BSF	r16,r/m16			    6-34/6-35
+BSF	r32,r/m32			    6-42/6-43
+BSR	r16,r/m16			    7-39/7-40
+BSR	r32,r/m32			    7-71/7-72
+BSWAP	r32				  1
+BT	r/m16,r16			     4/9
+BT	r/m32,r32			     4/9
+BT	r/m16,imm8			     4
+BT	r/m16,imm8			     4
+BTC	r/m16,r16			    7/13
+BTC	r/m32,r32			    7/13
+BTC	r/m16,imm8			    7/8
+BTC	r/m16,imm8			    7/8
+BTR	r/m16,r16			    7/13
+BTR	r/m32,r32			    7/13
+BTR	r/m16,imm8			    7/8
+BTR	r/m16,imm8			    7/8
+BTS	r/m16,r16			    7/13
+BTS	r/m32,r32			    7/13
+BTS	r/m16,imm8			    7/8
+BTS	r/m16,imm8			    7/8
+CALL	rel16				   1
+CALL	r/m16				   2
+CALL	ptr16:16			   4
+CALL	ptr16:16	(PM, direct segment)	  f
+CALL	ptr16:16	(PM, via call gate, same p22
+CALL	ptr16:16	(PM, via call gate, more p44
+CALL	ptr16:16	(PM, via call gate, more p45+2*x
+CALL	m16:16				   5
+CALL	m16:16	(PM, direct segment)	    f
+CALL	m16:16	(PM, via gate, same priveleg22
+CALL	m16:16	(PM, via gate, more priveleg44
+CALL	m16:16	(PM, via gate, more priveleg45+2*x
+CALL	rel32				   1
+CALL	r/m32				   2
+CALL	ptr16:32			   4
+CALL	ptr16:32	(PM, direct segment)	  f
+CALL	ptr16:32	(PM, via gate, same privel22
+CALL	ptr16:32	(PM, via gate, more privel44
+CALL	ptr16:32	(PM, via gate, more privel45+2*x
+CALL	m16:32				   5
+CALL	m16:32	(PM, direct segment)	    f
+CALL	m16:32	(PM, via gate, same priveleg22
+CALL	m16:32	(PM, via gate, more priveleg44
+CALL	m16:32	(PM, via gate, more priveleg45+2*x
+CBW					3
+CWDE					3
+CLC					2
+CLD					2
+CLI					7
+CLTS					10
+CMC					2
+CMOVcc	r16,r/m16			 f
+CMOVcc	r32,r/m32			 f
+CMP	AL,imm8				    1
+CMP	AX,imm16			    1
+CMP	EAX,imm32			    1
+CMP	r/m8,imm8			    1/2
+CMP	r/m16,imm8			    1/2
+CMP	r/m32,imm8			    1/2
+CMP	r/m16,imm16			    1/2
+CMP	r/m32,imm32			    1/2
+CMP	r/m8,r8				    1/2
+CMP	r/m16,r16			    1/2
+CMP	r/m32,r32			    1/2
+CMP	r8,r/m8				    1/2
+CMP	r16,r/m16			    1/2
+CMP	r32,r/m32			    1/2
+CMPSB					5
+CMPSW					5
+CMPSD					5
+CMPXCHG	r/m8,r8				6
+CMPXCHG	r/m16,r16			6
+CMPXCHG r/m32,r32			6
+CMPXCHG8B	r/m32			      10
+CPUID					14
+CWD					2
+CDQ					2
+DAA					3
+DAS					3
+DEC	r/m8				    1/3
+DEC	r/m16				    1/3
+DEC	r/m32				    1/3
+DEC	r16				    1
+DEC	r32				    1
+DIV	r/m8				    17
+DIV	r/m16				    25
+DIV	r/m32				    41
+ESC	imm4,r/m			    f
+ENTER	imm16,0				  11
+ENTER	imm16,1				  15
+ENTER	imm16,imm8			  15+2*n
+HLT					imfinity
+IBTS	r/m16,AX,CL,r16			   None
+IBTS	r/m32,EAX,CL,r32		   f
+IDIV	r/m8				   22
+IDIV	r/m16				   30
+IDIV	r/m32				   46
+IMUL	r/m8				   11
+IMUL	r/m16				   11
+IMUL	r/m32				   10
+IMUL	r16,r/m16			   10
+IMUL	r32,r/m32			   10
+IMUL	r16,imm8			   10
+IMUL	r32,imm8			   10
+IMUL	r16,imm16			   10
+IMUL	r32,imm32			   10
+IMUL	r16,r/m16,imm8			   10
+IMUL	r32,r/m32,imm8			   10
+IMUL	r16,r/m16,imm16			   10
+IMUL	r32,r/m32,imm32			   10
+IN	AL,imm8				     7
+IN	AL,imm8	(PM, CPL <= IOPL)	     4/21
+IN	AL,imm8 (VM)			     19
+IN	AX,imm8				     7
+IN	AX,imm8	(PM, CPL <= IOPL)		   4/21
+IN	AX,imm8	(VM)			     19
+IN	EAX,imm8			     7
+IN	EAX,imm8	(PM, CPL <= IOPL)		  4/21
+IN	EAX,imm8	(VM)			    19
+IN	AL,DX				     7
+IN	AL,DX	(PM, CPL <= IOPL)	       4/21
+IN	AL,DX	(VM)			       19
+IN	AX,DX				     7
+IN	AX,DX	(PM, CPL <= IOPL)	       4/21
+IN	AX,DX	(VM)			       19
+IN	EAX,DX				     7
+IN	EAX,DX	(PM, CPL <= IOPL)	      4/21
+IN	EAX,DX	(VM)			      19
+INC	r/m8				    1/3
+INC	r/m16				    1/3
+INC	r/m32				    1/3
+INC	r16				    1
+INC	r32				    1
+INSB					9
+INSW					9
+INSD					9
+INT	3				    13
+INT	3	(PM, same privilege)		  27
+INT	3	(PM, more privelege)		  44
+INT	imm8				    16
+INT	imm8	(PM, same privilege)	       31
+INT	imm8	(PM, more privelege)	       48
+INTO					4/13
+INTO	(PM, same privilege)		   4/27
+INTO	(PM, more privelege)		   4/44
+INVD					15
+INVLPG	m				 25
+IRET					10
+IRET	(PM, to same privilege)		   10
+IRET	(PM, to lesser privilege)	   27
+IRETD					10
+IRETD	(PM, to same privilege)		  10
+IRETD	(PM, to lesser privilege)	  27
+Jcc	rel8				    1
+Jcc	rel16				    1
+Jcc	rel32				    1
+JCXZ	rel8				   6,5
+JECXZ	rel8				  6,5
+JMP	rel8				    1
+JMP	rel16				    1
+JMP	r/m16				    2
+JMP	ptr16:16			    3
+JMP	ptr16:16	(PM, direct segment)	   3
+JMP	ptr16:16	(PM, via call gate, same pr18
+JMP	m16:16				    4
+JMP	m16:16	(PM, direct segment)	     4
+JMP	m16:16	(PM, via call gate, same priv18
+JMP	rel32				    1
+JMP	r/m32				    2
+JMP	ptr16:32			    3
+JMP	ptr16:32	(PM, direct segment)	   3
+JMP	ptr16:32	(PM, via call gate, same pr18
+JMP	m16:32				    4
+JMP	m16:32	(PM, direct segment)	     4
+JMP	m16:32	(PM, via call gate, same priv18
+LAHF					2
+LAR	r16,r/m16			    8
+LAR	r32,r/m32			    8
+LDS	r16,m16:16			    4
+LDS	r32,m16:32			    4
+LDS	r16,m16:16	(PM)			 f
+LDS	r32,m16:32	(PM)			 f
+LSS	r16,m16:16			    4
+LSS	r32,m16:32			    4
+LSS	r16,m16:16	(PM)			 8
+LSS	r32,m16:32	(PM)			    8
+LES	r16,m16:16			    4
+LES	r32,m16:32			    4
+LES	r16,m16:16	(PM)			 f
+LES	r32,m16:32	(PM)			 f
+LFS	r16,m16:16			    4
+LFS	r32,m16:32			    4
+LFS	r16,m16:16	(PM)			 f
+LFS	r32,m16:32	(PM)			 f
+LGS	r16,m16:16			    4
+LGS	r32,m16:32			    4
+LGS	r16,m16:16	(PM)			 f
+LGS	r32,m16:32	(PM)			 f
+LEA	r16,m				    1
+LEA	r32,m				    1
+LEAVE					3
+LGDT	m16&32				   6
+LIDT	m16&32				   6
+LLDT	r/m16				   9
+LMSW	r/m16				   8
+LOADALL					f
+LODSB					2
+LODSW					2
+LODSD					2
+LOOP	rel8				   5/6
+LOOPE	rel8				  7/8
+LOOPNE	rel8				 7/8
+LSL	r16,r/m16			    8
+LSL	r32,r/m32			    8
+LTR	r/m16				    10
+MOV	r/m8,r8				    1
+MOV	r/m16,r16			    1
+MOV	r/m32,r32			    1
+MOV	r8,r/m8				    1
+MOV	r16,r/m16			    1
+MOV	r32,r/m32			    1
+MOV	r/m16,sreg			    1
+MOV	sreg,r/m16			    2/3
+MOV	sreg,r/m16	(PM)			 f
+MOV	AL,moffs8			    1
+MOV	AX,moffs16			    1
+MOV	EAX,moffs32			    1
+MOV	moffs8,AL			    1
+MOV	moffs16,AX			    1
+MOV	moffs32,EAX			    1
+MOV	r8,imm8				    1
+MOV	r16,imm16			    1
+MOV	r32,imm32			    1
+MOV	r/m8,imm8			    1
+MOV	r/m16,imm16			    1
+MOV	r/m32,imm32			    1
+MOV	CR0,r32				    22
+MOV	CR2,r32				    12/21,46
+MOV	CR3,r32				    12/21,46
+MOV	CR4,r32				    14
+MOV	r32,CRi				    4
+MOV	r32,DR0-DR3			    11
+MOV	r32,DR4-DR5			    11
+MOV	r32,DR6-DR7			    11
+MOV	DR0-DR3,r32			    11
+MOV	DR4-DR5,r32			    12
+MOV	DR6-DR7,r32			    11
+MOV	r32,TR4-TR7			    None
+MOV	r32,TR3				    None
+MOV	TR3,r32				    None
+MOV	TR4-TR7,r32			    None
+MOVSB					4
+MOVSW					4
+MOVSD					4
+MOVSX	r16,r/m8			  3
+MOVSX	r32,r/m8			  3
+MOVSX	r32,r/m16			  3
+MOVZX	r16,r/m8			  3
+MOVZX	r32,r/m8			  3
+MOVZX	r32,r/m16			  3
+MUL	r/m8				    11
+MUL	r/m16				    11
+MUL	r/m32				    10
+NEG	r/m8				    1/3
+NEG	r/m16				    1/3
+NEG	r/m32				    1/3
+NOP					1
+NOT	r/m8				    1/3
+NOT	r/m16				    1/3
+NOT	r/m32				    1/3
+OR	AL,imm8				     1
+OR	AX,imm16			     1
+OR	EAX,imm32			     1
+OR	r/m8,imm8			     1/3
+OR	r/m16,imm8			     1/3
+OR	r/m32,imm8			     1/3
+OR	r/m16,imm16			     1/3
+OR	r/m32,imm32			     1/3
+OR	r/m8,r8				     1/3
+OR	r/m16,r16			     1/3
+OR	r/m32,r32			     1/3
+OR	r8,r/m8				     1/2
+OR	r16,r/m16			     1/2
+OR	r32,r/m32			     1/2
+OUT	imm8,AL				    12
+OUT	imm8,AL	(PM, CPL <= IOPL)	    9/25
+OUT	imm8,AL	(VM)			    24
+OUT	imm8,AX				    12
+OUT	imm8,AX	(PM, CPL <= IOPL)	    9/25
+OUT	imm8,AX	(VM)			    24
+OUT	imm8,EAX			    12
+OUT	imm8,EAX	(PM, CPL <= IOPL)	   9/25
+OUT	imm8,EAX	(VM)			   24
+OUT	DX,AL				    12
+OUT	DX,AL	(PM, CPL <= IOPL)	      9/25
+OUT	DX,AL	(VM)			      24
+OUT	DX,AX				    12
+OUT	DX,AX	(PM, CPL <= IOPL)	      9/25
+OUT	DX,AX	(VM)			      24
+OUT	DX,EAX				    12
+OUT	DX,EAX	(PM, CPL <= IOPL)	     9/25
+OUT	DX,EAX	(VM)			     24
+OUTSB					13
+OUTSW					13
+OUTSD					13
+POP	m16				    3
+POP	m32				    3
+POP	r16				    1
+POP	r32				    1
+POP	sreg				    3
+POP	sreg	(PM)			       f
+POPA					5
+POPAD					5
+POPF					f
+POPF	(PM)				   4
+POPF	(VM)				   6
+POPFD					f
+POPFD	(PM)				  4
+POPFD	(VM)				  6
+PUSH	r/m16				   2
+PUSH	r/m32				   2
+PUSH	r16				   1
+PUSH	r32				   1
+PUSH	imm8				   1
+PUSH	imm16				   1
+PUSH	imm32				   1
+PUSH	sreg				   1
+PUSHA					5
+PUSHAD					5
+PUSHF					f
+PUSHF	(PM)				  3
+PUSHF	(VM)				  4
+PUSHFD					f
+PUSHFD	(PM)				 3
+PUSHFD	(VM)				 4
+RCL	r/m8,1				    1/3
+RCL	r/m16,1				    1/3
+RCL	r/m32,1				    1/3
+RCL	r/m8,CL				    7-24/9-26
+RCL	r/m16,CL			    7-24/9-26
+RCL	r/m32,CL			    7-24/9-26
+RCL	r/m8,imm8			    8-25/10-27
+RCL	r/m16,imm8			    8-25/10-27
+RCL	r/m32,imm8			    8-25/10-27
+RCR	r/m8,1				    1/3
+RCR	r/m16,1				    1/3
+RCR	r/m32,1				    1/3
+RCR	r/m8,CL				    7-24/9-26
+RCR	r/m16,CL			    7-24/9-26
+RCR	r/m32,CL			    7-24/9-26
+RCR	r/m8,imm8			    8-25/10-27
+RCR	r/m16,imm8			    8-25/10-27
+RCR	r/m32,imm8			    8-25/10-27
+ROL	r/m8,1				    1/3
+ROL	r/m16,1				    1/3
+ROL	r/m32,1				    1/3
+ROL	r/m8,CL				    4
+ROL	r/m16,CL			    4
+ROL	r/m32,CL			    4
+ROL	r/m8,imm8			    1/3
+ROL	r/m16,imm8			    1/3
+ROL	r/m32,imm8			    1/3
+ROR	r/m8,1				    1/3
+ROR	r/m16,1				    1/3
+ROR	r/m32,1				    1/3
+ROR	r/m8,CL				    4
+ROR	r/m16,CL			    4
+ROR	r/m32,CL			    4
+ROR	r/m8,imm8			    1/3
+ROR	r/m16,imm8			    1/3
+ROR	r/m32,imm8			    1/3
+RDMSR					20-24
+RDTSC					f
+RET	(near)				    3
+RET	(far)				    4
+RET	(PM, far, same PL)		    4
+RET	(PM, far, different PL)		    23
+RET	imm16	(near)			      4
+RET	imm16	(far)			      4
+RET	imm16	(PM, far, same PL)	      4
+RET	imm16	(PM, far, different PL)	      23
+RSDC	m80,sreg			   f
+RSLDT	m80				  f
+RSM					83
+RSTS	m80				   f
+SAHF					2
+SAL	r/m8,1				    1/3
+SAL	r/m16,1				    1/3
+SAL	r/m32,1				    1/3
+SAL	r/m8,CL				    4
+SAL	r/m16,CL			    4
+SAL	r/m32,CL			    4
+SAL	r/m8,imm8			    1/3
+SAL	r/m16,imm8			    1/3
+SAL	r/m32,imm8			    1/3
+SAR	r/m8,1				    1/3
+SAR	r/m16,1				    1/3
+SAR	r/m32,1				    1/3
+SAR	r/m8,CL				    4
+SAR	r/m16,CL			    4
+SAR	r/m32,CL			    4
+SAR	r/m8,imm8			    1/3
+SAR	r/m16,imm8			    1/3
+SAR	r/m32,imm8			    1/3
+SHL	r/m8,1				    1/3
+SHL	r/m16,1				    1/3
+SHL	r/m32,1				    1/3
+SHL	r/m8,CL				    4
+SHL	r/m16,CL			    4
+SHL	r/m32,CL			    4
+SHL	r/m8,imm8			    1/3
+SHL	r/m16,imm8			    1/3
+SHL	r/m32,imm8			    1/3
+SHR	r/m8,1				    1/3
+SHR	r/m16,1				    1/3
+SHR	r/m32,1				    1/3
+SHR	r/m8,CL				    4
+SHR	r/m16,CL			    4
+SHR	r/m32,CL			    4
+SHR	r/m8,imm8			    1/3
+SHR	r/m16,imm8			    1/3
+SHR	r/m32,imm8			    1/3
+SBB	AL,imm8				    1
+SBB	AX,imm16			    1
+SBB	EAX,imm32			    1
+SBB	r/m8,imm8			    1/3
+SBB	r/m16,imm8			    1/3
+SBB	r/m32,imm8			    1/3
+SBB	r/m16,imm16			    1/3
+SBB	r/m32,imm32			    1/3
+SBB	r/m8,r8				    1/3
+SBB	r/m16,r16			    1/3
+SBB	r/m32,r32			    1/3
+SBB	r8,r/m8				    1/2
+SBB	r16,r/m16			    1/2
+SBB	r32,r/m32			    1/2
+SCASB					4
+SCASW					4
+SCASD					4
+SETALC					f
+SETcc	r/m8				  1/2
+SGDT	m16&32				   4
+SIDT	m16&32				   4
+SHLD	r/m16,r16,imm8			   4
+SHLD	r/m32,r32,imm8			   4
+SHLD	r/m16,r16,CL			   4/5
+SHLD	r/m32,r32,CL			   4/5
+SHRD	r/m16,r16,imm8			   4
+SHRD	r/m32,r32,imm8			   4
+SHRD	r/m16,r16,CL			   4/5
+SHRD	r/m32,r32,CL			   4/5
+SLDT	r/m16				   2
+SLDT	r/m32				   f
+SMINT					f
+SMSW	r/m16				   4
+STC					2
+STD					2
+STI					7
+STOSB					3
+STOSW					3
+STOSD					3
+STR	r/m16				    2
+SUB	AL,imm8				    1
+SUB	AX,imm16			    1
+SUB	EAX,imm32			    1
+SUB	r/m8,imm8			    1/3
+SUB	r/m16,imm8			    1/3
+SUB	r/m32,imm8			    1/3
+SUB	r/m16,imm16			    1/3
+SUB	r/m32,imm32			    1/3
+SUB	r/m8,r8				    1/3
+SUB	r/m16,r16			    1/3
+SUB	r/m32,r32			    1/3
+SUB	r8,r/m8				    1/2
+SUB	r16,r/m16			    1/2
+SUB	r32,r/m32			    1/2
+SVDC	sreg,m80			   f
+SVLDT	m80				  f
+SVTS	m80				   f
+TEST	AL,imm8				   1
+TEST	AX,imm16			   1
+TEST	EAX,imm32			   1
+TEST	r/m8,imm8			   1/2
+TEST	r/m16,imm16			   1/2
+TEST	r/m32,imm32			   1/2
+TEST	r/m8,r8				   1/2
+TEST	r/m16,r16			   1/2
+TEST	r/m32,r32			   1/2
+UMOV	r8,r/m8				   f
+UMOV	r16,r/m16			   f
+UMOV	r32,r/m32			   f
+UMOV	r/m8,r8				   f
+UMOV	r/m16,r16			   f
+UMOV	r/m32,r32			   f
+VERR	r/m16				   7
+VERW	r/m16				   7
+WAIT					1
+WBINVD					2000+
+WRMSR					30-45
+XADD	r/m8,r8				   3/4
+XADD	r/m16,r16			   3/4
+XADD	r/m32,r32			   3/4
+XCHG	AX,r16				   2
+XCHG	EAX,r32				   2
+XCHG	r/m8,r8				   3
+XCHG	r/m16,r16			   3
+XCHG	r/m32,r32			   3
+XLAT					4
+XOR	AL,imm8				    1
+XOR	AX,imm16			    1
+XOR	EAX,imm32			    1
+XOR	r/m8,imm8			    1/3
+XOR	r/m16,imm8			    1/3
+XOR	r/m32,imm8			    1/3
+XOR	r/m16,imm16			    1/3
+XOR	r/m32,imm32			    1/3
+XOR	r/m8,r8				    1/3
+XOR	r/m16,r16			    1/3
+XOR	r/m32,r32			    1/3
+XOR	r8,r/m8				    1/2
+XOR	r16,r/m16			    1/2
+XOR	r32,r/m32			    1/2
+(END)
+
+----------------------------------------------------------
+APPENDIX Y8  -	Vendor Instruction Time for Cyrix Cx6x86 (M1) CPU
+
+AAA					7
+AAD					7
+AAD	imm8				    7
+AAM					13-21
+AAM	imm8				    13-21??
+AAS					7
+ADC	AL,imm8				    1
+ADC	AX,imm16			    1
+ADC	EAX,imm32			    1
+ADC	r/m8,imm8			    1
+ADC	r/m16,imm8			    1
+ADC	r/m32,imm8			    1
+ADC	r/m16,imm16			    1
+ADC	r/m32,imm32			    1
+ADC	r/m8,r8				    1
+ADC	r/m16,r16			    1
+ADC	r/m32,r32			    1
+ADC	r8,r/m8				    1
+ADC	r16,r/m16			    1
+ADC	r32,r/m32			    1
+ADD	AL,imm8				    1
+ADD	AX,imm16			    1
+ADD	EAX,imm32			    1
+ADD	r/m8,imm8			    1
+ADD	r/m16,imm8			    1
+ADD	r/m32,imm8			    1
+ADD	r/m16,imm16			    1
+ADD	r/m32,imm32			    1
+ADD	r/m8,r8				    1
+ADD	r/m16,r16			    1
+ADD	r/m32,r32			    1
+ADD	r8,r/m8				    1
+ADD	r16,r/m16			    1
+ADD	r32,r/m32			    1
+AND	AL,imm8				    1
+AND	AX,imm16			    1
+AND	EAX,imm32			    1
+AND	r/m8,imm8			    1
+AND	r/m16,imm8			    1
+AND	r/m32,imm8			    1
+AND	r/m16,imm16			    1
+AND	r/m32,imm32			    1
+AND	r/m8,r8				    1
+AND	r/m16,r16			    1
+AND	r/m32,r32			    1
+AND	r8,r/m8				    1
+AND	r16,r/m16			    1
+AND	r32,r/m32			    1
+ARPL	r/m16,r16			   9
+BOUND	r16,m16&16			  11 or 20
+BOUND	r32,m32&32			  11 or 20
+BSF	r16,r/m16			    3
+BSF	r32,r/m32			    3
+BSR	r16,r/m16			    3
+BSR	r32,r/m32			    3
+BSWAP	r32				  4
+BT	r/m16,r16			     5/6
+BT	r/m32,r32			     5/6
+BT	r/m16,imm8			     2
+BT	r/m16,imm8			     2
+BTC	r/m16,r16			    5/6
+BTC	r/m32,r32			    5/6
+BTC	r/m16,imm8			    3
+BTC	r/m16,imm8			    3
+BTR	r/m16,r16			    5/6
+BTR	r/m32,r32			    5/6
+BTR	r/m16,imm8			    3
+BTR	r/m16,imm8			    3
+BTS	r/m16,r16			    5/6
+BTS	r/m32,r32			    5/6
+BTS	r/m16,imm8			    3
+BTS	r/m16,imm8			    3
+CALL	rel16				   1
+CALL	r/m16				   1/3
+CALL	ptr16:16			   3
+CALL	ptr16:16	(PM, direct segment)	  4
+CALL	ptr16:16	(PM, via call gate, same p15
+CALL	ptr16:16	(PM, via call gate, more p26
+CALL	ptr16:16	(PM, via call gate, more p35+2*param
+CALL	m16:16				   5
+CALL	m16:16	(PM, direct segment)	    8
+CALL	m16:16	(PM, via gate, same priveleg20
+CALL	m16:16	(PM, via gate, more priveleg31
+CALL	m16:16	(PM, via gate, more priveleg40+2*param
+CALL	rel32				   1
+CALL	r/m32				   1/3
+CALL	ptr16:32			   3
+CALL	ptr16:32	(PM, direct segment)	  4
+CALL	ptr16:32	(PM, via gate, same privel15
+CALL	ptr16:32	(PM, via gate, more privel26
+CALL	ptr16:32	(PM, via gate, more privel35+2*param
+CALL	m16:32				   5
+CALL	m16:32	(PM, direct segment)	    8
+CALL	m16:32	(PM, via gate, same priveleg20
+CALL	m16:32	(PM, via gate, more priveleg31
+CALL	m16:32	(PM, via gate, more priveleg40+2*param
+CBW					3
+CWDE					2
+CLC					1
+CLD					7
+CLI					7
+CLTS					10
+CMC					2
+CMP	AL,imm8				    1
+CMP	AX,imm16			    1
+CMP	EAX,imm32			    1
+CMP	r/m8,imm8			    1
+CMP	r/m16,imm8			    1
+CMP	r/m32,imm8			    1
+CMP	r/m16,imm16			    1
+CMP	r/m32,imm32			    1
+CMP	r/m8,r8				    1
+CMP	r/m16,r16			    1
+CMP	r/m32,r32			    1
+CMP	r8,r/m8				    1
+CMP	r16,r/m16			    1
+CMP	r32,r/m32			    1
+CMPSB					5
+CMPSW					5
+CMPSD					5
+CMPXCHG	r/m8,r8				11
+CMPXCHG	r/m16,r16			11
+CMPXCHG r/m32,r32			11
+CPUID					12
+CWD					2
+CDQ					2
+DAA					9
+DAS					9
+DEC	r/m8				    1
+DEC	r/m16				    1
+DEC	r/m32				    1
+DEC	r16				    1
+DEC	r32				    1
+DIV	r/m8				    13-17
+DIV	r/m16				    13-25
+DIV	r/m32				    13-41
+ENTER	imm16,0				  10
+ENTER	imm16,1				  13
+ENTER	imm16,imm8			  10+level*3
+HLT					5
+IDIV	r/m8				   16-20
+IDIV	r/m16				   16-28
+IDIV	r/m32				   17-45
+IMUL	r/m8				   4
+IMUL	r/m16				   4
+IMUL	r/m32				   10
+IMUL	r16,r/m16			   4
+IMUL	r32,r/m32			   10
+IMUL	r16,imm8			   ??
+IMUL	r32,imm8			   ??
+IMUL	r16,imm16			   ??
+IMUL	r32,imm32			   ??
+IMUL	r16,r/m16,imm8			   5
+IMUL	r32,r/m32,imm8			   11
+IMUL	r16,r/m16,imm16			   5
+IMUL	r32,r/m32,imm32			   11
+IN	AL,imm8				     14
+IN	AL,imm8	(PM, CPL <= IOPL)	     14
+IN	AL,imm8 (VM)			     28
+IN	AX,imm8				     14
+IN	AX,imm8	(PM, CPL <= IOPL)		   14
+IN	AX,imm8	(VM)			     28
+IN	EAX,imm8			     14
+IN	EAX,imm8	(PM, CPL <= IOPL)		  14
+IN	EAX,imm8	(VM)			    28
+IN	AL,DX				     14
+IN	AL,DX	(PM, CPL <= IOPL)	       14
+IN	AL,DX	(VM)			       28
+IN	AX,DX				     14
+IN	AX,DX	(PM, CPL <= IOPL)	       14
+IN	AX,DX	(VM)			       28
+IN	EAX,DX				     14
+IN	EAX,DX	(PM, CPL <= IOPL)	      14
+IN	EAX,DX	(VM)			      28
+INC	r/m8				    1
+INC	r/m16				    1
+INC	r/m32				    1
+INC	r16				    1
+INC	r32				    1
+INSB					14
+INSW					14
+INSD					14
+INT	3				    9
+INT	3	(PM, same privilege)		  21
+INT	3	(PM, more privelege)		  32
+INT	imm8				    9
+INT	imm8	(PM, same privilege)	       21
+INT	imm8	(PM, more privelege)	       32
+INTO					6 or ??
+INTO	(PM, same privilege)		   6 or 15+21
+INTO	(PM, more privelege)		   6 or 15+32
+INVD					12
+INVLPG	m				 13
+IRET					7
+IRET	(PM, to same privilege)		   10
+IRET	(PM, to lesser privilege)	   26
+IRETD					7
+IRETD	(PM, to same privilege)		  10
+IRETD	(PM, to lesser privilege)	  26
+Jcc	rel8				    1 or 1
+Jcc	rel16				    1 or 1
+Jcc	rel32				    1 or 1
+JCXZ	rel8				   1 or 1
+JECXZ	rel8				  1 or 1
+JMP	rel8				    1
+JMP	rel16				    1
+JMP	r/m16				    1/3
+JMP	ptr16:16			    1
+JMP	ptr16:16	(PM, direct segment)	   4
+JMP	ptr16:16	(PM, via call gate, same pr14
+JMP	m16:16				    5
+JMP	m16:16	(PM, direct segment)	     7
+JMP	m16:16	(PM, via call gate, same priv17
+JMP	rel32				    1
+JMP	r/m32				    1/3
+JMP	ptr16:32			    1
+JMP	ptr16:32	(PM, direct segment)	   4
+JMP	ptr16:32	(PM, via call gate, same pr14
+JMP	m16:32				    5
+JMP	m16:32	(PM, direct segment)	     7
+JMP	m16:32	(PM, via call gate, same priv17
+LAHF					2
+LAR	r16,r/m16			    8
+LAR	r32,r/m32			    8
+LDS	r16,m16:16			    2
+LDS	r32,m16:32			    2
+LDS	r16,m16:16	(PM)			 4
+LDS	r32,m16:32	(PM)			 4
+LSS	r16,m16:16			    2
+LSS	r32,m16:32			    2
+LSS	r16,m16:16	(PM)			 4
+LSS	r32,m16:32	(PM)			    4
+LES	r16,m16:16			    2
+LES	r32,m16:32			    2
+LES	r16,m16:16	(PM)			 4
+LES	r32,m16:32	(PM)			 4
+LFS	r16,m16:16			    2
+LFS	r32,m16:32			    2
+LFS	r16,m16:16	(PM)			 4
+LFS	r32,m16:32	(PM)			 4
+LGS	r16,m16:16			    2
+LGS	r32,m16:32			    2
+LGS	r16,m16:16	(PM)			 4
+LGS	r32,m16:32	(PM)			 4
+LEA	r16,m				    1
+LEA	r32,m				    1
+LEAVE					4
+LGDT	m16&32				   8
+LIDT	m16&32				   8
+LLDT	r/m16				   5
+LMSW	r/m16				   13
+LOADALL					None
+LODSB					3
+LODSW					3
+LODSD					3
+LOOP	rel8				   1
+LOOPE	rel8				  1
+LOOPNE	rel8				 1
+LSL	r16,r/m16			    8
+LSL	r32,r/m32			    8
+LTR	r/m16				    7
+MOV	r/m8,r8				    1
+MOV	r/m16,r16			    1
+MOV	r/m32,r32			    1
+MOV	r8,r/m8				    1
+MOV	r16,r/m16			    1
+MOV	r32,r/m32			    1
+MOV	r/m16,sreg			    1
+MOV	sreg,r/m16			    1
+MOV	sreg,r/m16	(PM)			 1/3
+MOV	AL,moffs8			    1
+MOV	AX,moffs16			    1
+MOV	EAX,moffs32			    1
+MOV	moffs8,AL			    1
+MOV	moffs16,AX			    1
+MOV	moffs32,EAX			    1
+MOV	r8,imm8				    1
+MOV	r16,imm16			    1
+MOV	r32,imm32			    1
+MOV	r/m8,imm8			    1
+MOV	r/m16,imm16			    1
+MOV	r/m32,imm32			    1
+MOV	CR0,r32				    20
+MOV	CR2,r32				    5
+MOV	CR3,r32				    5
+MOV	r32,CRi				    6
+MOV	r32,DR0-DR3			    14
+MOV	r32,DR4-DR5			    14
+MOV	r32,DR6-DR7			    14
+MOV	DR0-DR3,r32			    16
+MOV	DR4-DR5,r32			    16
+MOV	DR6-DR7,r32			    16
+MOV	r32,TR4-TR7			    6
+MOV	r32,TR3				    5
+MOV	TR3,r32				    10
+MOV	TR4-TR7,r32			    10
+MOVSB					4
+MOVSW					4
+MOVSD					4
+MOVSX	r16,r/m8			  1
+MOVSX	r32,r/m8			  1
+MOVSX	r32,r/m16			  1
+MOVZX	r16,r/m8			  1
+MOVZX	r32,r/m8			  1
+MOVZX	r32,r/m16			  1
+MUL	r/m8				    4
+MUL	r/m16				    4
+MUL	r/m32				    10
+NEG	r/m8				    1
+NEG	r/m16				    1
+NEG	r/m32				    1
+NOP					1
+NOT	r/m8				    1
+NOT	r/m16				    1
+NOT	r/m32				    1
+OR	AL,imm8				     1
+OR	AX,imm16			     1
+OR	EAX,imm32			     1
+OR	r/m8,imm8			     1
+OR	r/m16,imm8			     1
+OR	r/m32,imm8			     1
+OR	r/m16,imm16			     1
+OR	r/m32,imm32			     1
+OR	r/m8,r8				     1
+OR	r/m16,r16			     1
+OR	r/m32,r32			     1
+OR	r8,r/m8				     1
+OR	r16,r/m16			     1
+OR	r32,r/m32			     1
+OUT	imm8,AL				    14
+OUT	imm8,AL	(PM, CPL <= IOPL)	    14
+OUT	imm8,AL	(VM)			    28
+OUT	imm8,AX				    14
+OUT	imm8,AX	(PM, CPL <= IOPL)	    14
+OUT	imm8,AX	(VM)			    28
+OUT	imm8,EAX			    14
+OUT	imm8,EAX	(PM, CPL <= IOPL)	   14
+OUT	imm8,EAX	(VM)			   28
+OUT	DX,AL				    14
+OUT	DX,AL	(PM, CPL <= IOPL)	      14
+OUT	DX,AL	(VM)			      28
+OUT	DX,AX				    14
+OUT	DX,AX	(PM, CPL <= IOPL)	      14
+OUT	DX,AX	(VM)			      28
+OUT	DX,EAX				    14
+OUT	DX,EAX	(PM, CPL <= IOPL)	     14
+OUT	DX,EAX	(VM)			     28
+OUTSB					14
+OUTSW					14
+OUTSD					14
+POP	m16				    1
+POP	m32				    1
+POP	r16				    1
+POP	r32				    1
+POP	sreg				    1
+POP	sreg	(PM)			       3
+POPA					6
+POPAD					6
+POPF					9
+POPF	(PM)				   9
+POPF	(VM)				   9
+POPFD					9
+POPFD	(PM)				  9
+POPFD	(VM)				  9
+PUSH	r/m16				   1
+PUSH	r/m32				   1
+PUSH	r16				   1
+PUSH	r32				   1
+PUSH	imm8				   1
+PUSH	imm16				   1
+PUSH	imm32				   1
+PUSH	sreg				   1
+PUSHA					6
+PUSHAD					6
+PUSHF					2
+PUSHF	(PM)				  2
+PUSHF	(VM)				  2
+PUSHFD					2
+PUSHFD	(PM)				 2
+PUSHFD	(VM)				 2
+RCL	r/m8,1				    3
+RCL	r/m16,1				    3
+RCL	r/m32,1				    3
+RCL	r/m8,CL				    8
+RCL	r/m16,CL			    8
+RCL	r/m32,CL			    8
+RCL	r/m8,imm8			    8
+RCL	r/m16,imm8			    8
+RCL	r/m32,imm8			    8
+RCR	r/m8,1				    4
+RCR	r/m16,1				    4
+RCR	r/m32,1				    4
+RCR	r/m8,CL				    9
+RCR	r/m16,CL			    9
+RCR	r/m32,CL			    9
+RCR	r/m8,imm8			    9
+RCR	r/m16,imm8			    9
+RCR	r/m32,imm8			    9
+ROL	r/m8,1				    1
+ROL	r/m16,1				    1
+ROL	r/m32,1				    1
+ROL	r/m8,CL				    2
+ROL	r/m16,CL			    2
+ROL	r/m32,CL			    2
+ROL	r/m8,imm8			    1
+ROL	r/m16,imm8			    1
+ROL	r/m32,imm8			    1
+ROR	r/m8,1				    1
+ROR	r/m16,1				    1
+ROR	r/m32,1				    1
+ROR	r/m8,CL				    2
+ROR	r/m16,CL			    2
+ROR	r/m32,CL			    2
+ROR	r/m8,imm8			    1
+ROR	r/m16,imm8			    1
+ROR	r/m32,imm8			    1
+RET	(near)				    3
+RET	(far)				    4
+RET	(PM, far, same PL)		    7
+RET	(PM, far, different PL)		    23
+RET	imm16	(near)			      4
+RET	imm16	(far)			      4
+RET	imm16	(PM, far, same PL)	      7
+RET	imm16	(PM, far, different PL)	      23
+RSDC	m80,sreg			   6
+RSLDT	m80				  6
+RSM					40
+RSTS	m80				   6
+SAHF					1
+SAL	r/m8,1				    1
+SAL	r/m16,1				    1
+SAL	r/m32,1				    1
+SAL	r/m8,CL				    2
+SAL	r/m16,CL			    2
+SAL	r/m32,CL			    2
+SAL	r/m8,imm8			    1
+SAL	r/m16,imm8			    1
+SAL	r/m32,imm8			    1
+SAR	r/m8,1				    1
+SAR	r/m16,1				    1
+SAR	r/m32,1				    1
+SAR	r/m8,CL				    2
+SAR	r/m16,CL			    2
+SAR	r/m32,CL			    2
+SAR	r/m8,imm8			    1
+SAR	r/m16,imm8			    1
+SAR	r/m32,imm8			    1
+SHL	r/m8,1				    1
+SHL	r/m16,1				    1
+SHL	r/m32,1				    1
+SHL	r/m8,CL				    2
+SHL	r/m16,CL			    2
+SHL	r/m32,CL			    2
+SHL	r/m8,imm8			    1
+SHL	r/m16,imm8			    1
+SHL	r/m32,imm8			    1
+SHR	r/m8,1				    1
+SHR	r/m16,1				    1
+SHR	r/m32,1				    1
+SHR	r/m8,CL				    2
+SHR	r/m16,CL			    2
+SHR	r/m32,CL			    2
+SHR	r/m8,imm8			    1
+SHR	r/m16,imm8			    1
+SHR	r/m32,imm8			    1
+SBB	AL,imm8				    1
+SBB	AX,imm16			    1
+SBB	EAX,imm32			    1
+SBB	r/m8,imm8			    1
+SBB	r/m16,imm8			    1
+SBB	r/m32,imm8			    1
+SBB	r/m16,imm16			    1
+SBB	r/m32,imm32			    1
+SBB	r/m8,r8				    1
+SBB	r/m16,r16			    1
+SBB	r/m32,r32			    1
+SBB	r8,r/m8				    1
+SBB	r16,r/m16			    1
+SBB	r32,r/m32			    1
+SCASB					2
+SCASW					2
+SCASD					2
+SETALC					n/a
+SETcc	r/m8				  1
+SGDT	m16&32				   4
+SIDT	m16&32				   4
+SHLD	r/m16,r16,imm8			   4
+SHLD	r/m32,r32,imm8			   4
+SHLD	r/m16,r16,CL			   5
+SHLD	r/m32,r32,CL			   5
+SHRD	r/m16,r16,imm8			   4
+SHRD	r/m32,r32,imm8			   4
+SHRD	r/m16,r16,CL			   5
+SHRD	r/m32,r32,CL			   5
+SLDT	r/m16				   1
+SLDT	r/m32				   1
+SMINT					55
+SMSW	r/m16				   6
+STC					1
+STD					7
+STI					7
+STOSB					2
+STOSW					2
+STOSD					2
+STR	r/m16				    4
+SUB	AL,imm8				    1
+SUB	AX,imm16			    1
+SUB	EAX,imm32			    1
+SUB	r/m8,imm8			    1
+SUB	r/m16,imm8			    1
+SUB	r/m32,imm8			    1
+SUB	r/m16,imm16			    1
+SUB	r/m32,imm32			    1
+SUB	r/m8,r8				    1
+SUB	r/m16,r16			    1
+SUB	r/m32,r32			    1
+SUB	r8,r/m8				    1
+SUB	r16,r/m16			    1
+SUB	r32,r/m32			    1
+SVDC	sreg,m80			   12
+SVLDT	m80				  12
+SVTS	m80				   14
+TEST	AL,imm8				   1
+TEST	AX,imm16			   1
+TEST	EAX,imm32			   1
+TEST	r/m8,imm8			   1
+TEST	r/m16,imm16			   1
+TEST	r/m32,imm32			   1
+TEST	r/m8,r8				   1
+TEST	r/m16,r16			   1
+TEST	r/m32,r32			   1
+VERR	r/m16				   7
+VERW	r/m16				   7
+WAIT					5
+WBINVD					15
+XADD	r/m8,r8				   2
+XADD	r/m16,r16			   2
+XADD	r/m32,r32			   2
+XCHG	AX,r16				   2
+XCHG	EAX,r32				   2
+XCHG	r/m8,r8				   2
+XCHG	r/m16,r16			   2
+XCHG	r/m32,r32			   2
+XLAT					4
+XOR	AL,imm8				    1
+XOR	AX,imm16			    1
+XOR	EAX,imm32			    1
+XOR	r/m8,imm8			    1
+XOR	r/m16,imm8			    1
+XOR	r/m32,imm8			    1
+XOR	r/m16,imm16			    1
+XOR	r/m32,imm32			    1
+XOR	r/m8,r8				    1
+XOR	r/m16,r16			    1
+XOR	r/m32,r32			    1
+XOR	r8,r/m8				    1
+XOR	r16,r/m16			    1
+XOR	r32,r/m32			    1
+(END)
 
 ---------------------------------------------------------
 ---------------------------------------------------------
@@ -13352,6 +17278,8 @@ Note:	See ICEBP/ICERET for More Information
 4) THANX to all people from Intel, AMD, TI, Cyrix, UMC,
    who helped with information and CPU samples.
 5) THANX to all, who send notes, testing CPUs with PHG tools
+6) Great Special thanx for Jakub Bogusz for spell checking
+   and some rightfull notes :)
 ----------------------------------------------------------
 Q&A:
 
@@ -13360,7 +17288,7 @@ A. - You may find it within  Ralf's INTERxx.ZIP.
 
 Q. - Did PHG have WWW page, where placed OPCODE.LST ?
 A. - Unfortunetly, No.
-     But it will be released at mid-March 1998.
+     But it will be released somewhen. :))
 -----------------------------------------------------------
 [2 All]
 If You found some errors or incorrections in this text
@@ -13374,4 +17302,3 @@ Thanx for  Urri, Stas, Afo, Kernel.3,Den96
 Special Thanks for  AX (MISA).
 ------------------------------------------------------------
 Sorry, But EOF
-

@@ -15,16 +15,32 @@ beginning with archive D.
 UPCOMING CHANGES
 ================
 
-Because PORTS.LST will be running out of table numbers in the
-not-too-distant future, I will be increasing all table numbers from
-four to five characters as of INTER59.
+None planned at this time.
 
 
 WHAT'S NEW
 ==========
 
-INTER58
+INTER59
+-------
+format changes:
+	all table numbers are now five characters in length, and just in time,
+	too: PORTS.LST now has 1014 tables....
 
+updated files:
+	OPCODES.LST
+
+new info:
+	chipsets: Intel 440BX/EX/LX, Intel 82371MX, OPTi "Vendetta", OPTi
+	  82C493/82C382, Via VT82C496G "486SXWB", Via VT82C570M "Apollo Master"
+	  PicoPower Vesuvius
+	other hardware: C&T 82C9001A, C&T 64200/64310, Ensoniq ES1370/1371,
+	  Cirrus CL-PD6710/6722, Cirrus CL-PD6729
+	Award-BIOS password algorithm, more PCI vendor IDs
+
+
+INTER58
+-------
 updated files:
 	OPCODES.LST
 
@@ -35,7 +51,7 @@ new info:
 
 
 INTER57
-
+-------
 updated files:
 	NEEDHELP.TXT
 
@@ -49,7 +65,7 @@ new info:
 
 
 INTER56
-
+-------
 new files:
 	I2C.LST
 	NEEDHELP.TXT
@@ -67,24 +83,3 @@ new info:
 	more KEYB.COM internals
 	more REAL/32 calls and structures
 
-
-INTER55
-
-new files:
-	SMM.LST (not finished yet)
-
-updated files:
-	OPCODES.LST
-	PCICFG09.ZIP (updated data files; now includes source code)
-	INTLIST.E (added filter-region command)
-
-new info:
-	many more PCI vendor and device IDs
-	code pages and COUNTRY.SYS formats
-	"Neptune" chipset info
-	Micro Focus COBOL
-	OPTi 82C206/82C281,282,283/82C291,295 chipset info
-	PentiumMMX updates
-	Am486 SMM
-	FBOOT
-	CD-ROM API updates

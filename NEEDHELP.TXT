@@ -1,11 +1,11 @@
 VOLUNTEERS NEEDED
 -----------------
 
-22mar98:
+30aug98:
 
 If you've always wanted to show your appreciation of the interrupt
 list, but never had anything to contribute before, here's your chance!
-I still need about ten volunteers to transcribe and condense the
+I continue to have a need for volunteers to transcribe and condense the
 information in various on-line documents into a suitable form for
 inclusion in the list.  A good job of transcription can save me 90% of
 the effort it would otherwise take me, which means that I can get far
@@ -26,4 +26,3 @@ run PCICFG on your system, and report any identifiers which are not yet
 in the interrupt list (at INT 1A/BX=B102h, as well as in PCICFG.DAT) or
 are unknown to PCICFG.  If you'd like to contribute a detailed device
 description file for PCICFG, so much the better!
-

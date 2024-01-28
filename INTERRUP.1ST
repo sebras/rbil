@@ -1,26 +1,28 @@
-Interrupt List			Release 58		Last change 28jun98
+Interrupt List			Release 59		Last change 30aug98
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
 --------!---FILELIST-------------------------
 Please redistribute the following files unmodified as a group, in a quartet of
-archives named INTER58A through INTER58D (preferably the original authenticated
+archives named INTER59A through INTER59D (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	this file
-	INTERRUP.A	INT 00 through INT 10/FD  \
-	INTERRUP.B	INT 10/FE through INT 15/11\
+	INTERRUP.A	INT 00 through INT 10/CF  \
+	INTERRUP.B	INT 10/D0 through INT 15/11\
 	INTERRUP.C	INT 15/12 through INT 16/6E \
-	INTERRUP.D	INT 16/6F through INT 1A/AF  \
-	INTERRUP.E	INT 1A/B0 through INT 21/24   \	  total 2407 pages at
-	INTERRUP.F	INT 21/25 through INT 21/51    \  60 lines per page,
-	INTERRUP.G	INT 21/52 through INT 21/E0	\ 2564 with INTPRINT -p
-	INTERRUP.H	INT 21/E1 through INT 21/F1	 >(8605 entries)
-	INTERRUP.I	INT 21/F2 through INT 29	/ (3928 tables)
-	INTERRUP.J	INT 2A through INT 2F/19       /
-	INTERRUP.K	INT 2F/1A through INT 2F/AE   /
-	INTERRUP.L	INT 2F/AF through INT 31/FE  /
-	INTERRUP.M	INT 31/FF through INT 60    /
-	INTERRUP.N	INT 61 through INT 66	   /
-	INTERRUP.O	INT 67 through INT 7D	  /
-	INTERRUP.P	INT 7E through INT FF	 /
+	INTERRUP.D	INT 16/6F through INT 1A/B0  \
+	INTERRUP.E	INT 1A/B1 through INT 1F      \	  total 2440 pages at
+	INTERRUP.F	INT 20 through INT 21/43       \  60 lines per page,
+	INTERRUP.G	INT 21/44 through INT 21/5E	\ 2599 with INTPRINT -p
+	INTERRUP.H	INT 21/5F through INT 21/E2	 >(8611 entries)
+	INTERRUP.I	INT 21/E3 through INT 21/F1	/ (4040 tables)
+	INTERRUP.J	INT 21/F2 through INT 25       /
+	INTERRUP.K	INT 26 through INT 2F/16      /
+	INTERRUP.L	INT 2F/17 through INT 2F/AC  /
+	INTERRUP.M	INT 2F/AD through INT 30    /
+	INTERRUP.N	INT 31 through INT 5F	   /
+	INTERRUP.O	INT 60 through INT 61	  /
+	INTERRUP.P	INT 62 through INT 6A	 /
+	INTERRUP.Q	INT 6B through INT 91   /
+	INTERRUP.R	INT 92 through INT FF  /
 	INTERRUP.PRI	a brief primer on interrupts
 	INTPRINT.COM	a simple formatter that also generates a list summary
 	INTPRINT.DOC	instructions for INTPRINT
@@ -37,7 +39,7 @@ PKZIP archives):
 	CATEGORY.KEY	descriptions of divider-line category letters
 	COMBINE.COM	combine the pieces of the list into a single file
 	COMBINE.DOC	documentation for COMBINE
-The following files should be distributed in an archive called INTER58E:
+The following files should be distributed in an archive called INTER59E:
 	86BUGSnn.ZIP	programs to test for CPU bugs
 	COMBINE.ASM	source code for COMBINE.COM
 	INT.*		invoke interrupts from commandline
@@ -47,12 +49,12 @@ The following files should be distributed in an archive called INTER58E:
 	INTSUM??.ZIP	interrupt list browser (Interrupt Summary)
 	IVIEW.ZIP	another interrupt list browser
 	VIEWINTL.ZIP	list viewer by Sly Golovanov
-The following should be distributed in an archive called INTER58F:
+The following should be distributed in an archive called INTER59F:
 	INT2RTF.ZIP	Slava Gostrenko's Windows Help converter
 	INT2WHLP.ZIP	convert list into Windows Help database
 	HINTSRCH.ZIP	WinHelp DLL for full-text searches of interrupt list
 	WH_ED*.ZIP	WinHelp-file editor
-Finally, the following should be distributed in an archive called INTER58G:
+Finally, the following should be distributed in an archive called INTER59G:
 	IL2ME???.ZIP	convert list into Multi-Edit help database
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
 	INT2HLP.ZIP	convert list into QuickHelp database
@@ -634,6 +636,10 @@ This list is the result of the time and effort of a large number of people:
  3/98 George L. Fulk   fulkgl@ibm.net		      more DOS int., FAT32 SDA
  5/98 Teppo Lehtonen   lehto@sci.fi  		      transcription
  6/98 Serguei Shtyliov serge@coudert.msk.ru	      PCI vendor IDs
+ 6/98 Jens Rehsack     rehsack@informatik.uni-halle.de	Award-BIOS password
+ 7/98 Teppo Lehtonen   lehto@sci.fi  		      transcription
+ 7/98 Craig Hart       chart@hyperlink.net.au	      transcription
+ 8/98 Teppo Lehtonen   lehto@sci.fi		      transcription
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -796,7 +802,7 @@ Also contributing:
  Guy Gordon <gordon@atlanta.com>, Keith Mackay <alma@interlog.com>,
  J. Paulo Santos <j.paulo.santos@mail.telepac.pt>, Andrew Belov 2:5020/181.2,
  Thomas Voss <voss@or.uni-bonn.de>, Hafthor Stefansson <hafthor@usa.net>,
- Veit Kannegieser <kannegv@leyla.rzpool.tu-cottbus.de>, Todor <tod@bitex.com>,
+ Veit Kannegieser <kannegv@TU-Cottbus.de>, Todor <tod@bitex.com>,
  Chris Wilson <chrisperrywilson@hotmail.com>, Mark Ament <ament@xs4all.nl>,
  Richard Jonsson <richard_jonsson@hotmail.com>, Gary A <garya@nitco.com>,
  Maik Nijhuis <mnijhuis@sloep85.cs.vu.nl>, Bjorn Hultman <bjorn@btbits.se>,
@@ -805,7 +811,10 @@ Also contributing:
  Phil Brutsche <brutsche@ne.uswest.net>, Andreas Mohr <100.30936@germany.net>,
  Derek Soeder <dereks@sulphur-springs.isd.tenet.edu>,
  Kostya Zalyan <Kostya.Zalyan@p17.f15.n5001.z2.fidonet.org>,
- Anthony Appleyard <MCLSSAA2@fs2.mt.umist.ac.uk>
+ Anthony Appleyard <MCLSSAA2@fs2.mt.umist.ac.uk>,
+ Mark Chater <mark@microcosm.co.uk>, Martin Malik <malik@svf.stuba.sk>,
+ Marc Schoolderman <squell@chaos.concepts.nl>,Robert Pouliot <krynos@clic.net>,
+ Andreas Mohr <100.30936@germany.net>,Denis M. Yarkovoy <gunky9@geocities.com>,
 --------!---ADDRESSES------------------------
 The following have provided API reference and other materials at no charge:
 

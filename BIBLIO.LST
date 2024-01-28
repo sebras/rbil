@@ -1,4 +1,4 @@
-Bibliography			Release 58		Last change 28jun98
+Bibliography			Release 59		Last change 30aug98
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
 --------!---BIBLIOGRAPHY---------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
@@ -245,7 +245,7 @@ Novell IPX/SPX calls in part from an article by J. Vanderaart in the Dutch
 _LAN-Magazine_, issue #1, titled "IPX, de kabel in de knel".  Added 3/16/91.
 
 Replacements for July 1987 info derived from
-	_80286_and_80287_Programmer's_Reference_Manual, Intel #274798-004
+	_80286_and_80287_Programmer's_Reference_Manual, Intel number 274798-004
 	_IBM_ROM_BIOS_, Ray Duncan, "Programmer's Quick Reference Series"
 	_DOS_and_BIOS_Functions_Quick_Reference_, Que
 	_The_MS-DOS_Encyclopedia_, Microsoft Press
@@ -891,21 +891,71 @@ PCI-to-USB Bus Bridges: Preliminary Data Book"; available as
 ftp://ftp.opti.com/pub/chipsets/system/861/pd022_20.pdf.
 Transcribed by Teppo Lehtonen <lehto@sci.fi>, added 28jun98.
 
+Intel 82371MX info from "Intel 430MX PCIset: 82371MX Mobile PCI I/O IDE 
+Xcelerator (MPIIX)", http://www.intel.com/design/pcisets/datashts/290525.htm.
+Transcribed by Craig Hart <chart@hyperlink.net.au>, added 25jul98.
+
+Chips&Technologies PC Video (82C9001A) info from "82C9001A PC Video: Video
+Windowing Controller", ftp://ftp.chips.com/pub/pdf/cs82c9001a.pdf.
+Transcribed by Teppo Lehtonen <lehto@sci.fi>, added 27jul98.
+
+OPTi "Vendetta" (82C750) data from "Vendetta Single-Chip MultiMedia PC
+Solution: Preliminary Data Book"; available as
+ftp://ftp.opti.com/pub/chipsets/system/vendetta/pd020_20.pdf.
+Transcribed by Teppo Lehtonen <lehto@sci.fi>, added jul98.
+
+OPTi 82C493/82C392 data from "OPTi-486SXWB PC/AT Chipset", Version 1.1,
+16aug91; ftp://ftp.opti.com/pub/chipsets/archive/493/82c493_392.pdf.
+Transcribed by Tom Creamer <tom_creamer@manorcare.com>, added 28jul98.
+
+Via Technologies' VT82C496G info from "VT82C496G/VT82C406MV Green PC 80486
+PCI/VL/ISA System Data Sheet", http://www.via.com.tw/496pluto.pdf.
+Transcribed by Teppo Lehtonen, added 31jul98.
+
+Via's VT82C570M info from "VT82C570M Apollo Master",
+http://www.via.com.tw/570m.pdf.	 Transcribed by Teppo Lehtonen, added 31jul98.
+
+Intel 82443LX (440LX) info from
+http://www.intel.com/design/pcisets/datashts/290564.htm.
+Transcribed by Craig Hart, added 04aug98.
+
+C&T 64310 info from "Wingine DGX - PCI DRAM Graphics Accelerator Data Sheet",
+Revision 1.0, dated December 1994.
+ftp://ftp.chips.com/pub/pdf/64310_ds.pdf.
+Transcribed by Teppo Lehtonen, added 23aug98.
+
+PicoPower Vesuvius info from "PicoPower VESUVIUS-LS Preliminary Data Book",
+http://www.national.com/ds/VS/PT/PT86C521-VC-B.pdf.
+Transcribed by Teppo Lehtonen, added 23aug98.
+
+Ensoniq AudioPCI ES1370 info from file es1370.doc, available at
+http://www.ensoniq.com/multimedia/semi_html/html/es1370.zip.
+Transcribed by Teppo Lehtonen, added 23aug98.
+
+Ensoniq AudioPCI-97 ES1371 info from file es1371.doc, available at
+http://www.ensoniq.com/multimedia/semi_html/html/es1370.zip.
+Transcribed by Teppo Lehtonen, added 23aug98.
+
+Intel 440EX chipset info from "Intel 440EX AGPset: 82443EX PCI AGP Controller
+(PAC) Datasheet", http://www.intel.com/design/pcisets/datashts/290616.htm.
+Transcribed by Craig Hart, added 28aug98.
+
+CL-PD6710/6722 info from "CL-PD6710/'22 ISA-to-PC-Card Host Adapters",
+http://www.cirrus.com/ftp/pubs/pd6710db.pdf.
+Transcribed by Teppo Lehtonen, added 28aug98.
+
+CL-PD6729 info from "CL-PD6729 PCI-to-PCMCIA Host Adapter",
+http://www.cirrus.com/ftp/pubs/pd6729db.pdf.
+Transcribed by Teppo Lehtonen, added 28aug98.
+
 C&T 64200 info from "64200 (Wingine) High Performance Windows Engine",
 ftp://ftp.chips.com/pub/pdf/64200.pdf.	(to be added)
 
 Intel 82374EB/SB info from "82374EB/82374SB EISA System Component (ESC)",
 http://www.intel.com/design/pcisets/datashts/290476.htm.  (to be added)
 
-Intel 82371MX info from "Intel 430MX PCIset: 82371MX Mobile PCI I/O IDE 
-Xcelerator (MPIIX)", http://www.intel.com/design/pcisets/datashts/290525.htm.
-(to be added) [p.23-86]
-
 Intel 82439TX (430TX) info from "Intel 430TX PCIset: 82439TX System Controller
 (MTXC)", http://www.intel.com/design/pcisets/datashts/290559.htm.  (to be added)
-
-Intel 82443LX (440LX) info from "",
-http://www.intel.com/design/pcisets/datashts/290564.htm. [p.28-72](to be added)
 
 Intel 82371AB (PIIX4) info from "",
 http://www.intel.com/design/pcisets/datashts/290562.htm.  (to be added)
@@ -934,14 +984,6 @@ available as ftp://ftp.opti.com/pub/chipsets/archive/491/Db491_11.pdf.
 
 OPTi 82C465MV/MVA/MVB data from "";
 ftp://ftp.opti.com/pub/chipsets/system/465/db016_20.pdf. (to be added)
-
-OPTi 82C493/82C392 data from "OPTi-486SXWB PC/AT Chipset", Version 1.1,
-16aug91; ftp://ftp.opti.com/pub/chipsets/archive/493/82c493_392.pdf.
-(to be added)
-
-OPTi "Vendetta" (82C750) data from "Vendetta Single-Chip MultiMedia PC
-Solution: Preliminary Data Book"; available as
-ftp://ftp.opti.com/pub/chipsets/system/vendetta/pd020_20.pdf. (to be added)
 
 OPTi "FireFox" (82C824) data from "FireFox 82C824 32-bit PC Card Controller:
 Preliminary Data Book", Revision 3.0, 26aug96; available as
@@ -1009,13 +1051,6 @@ TI 16C750 UART info from "TL16C750 Asynchronous Communications Element with
 64-Byte FIFOs and Autoflow Control", file slls191b.pdf at www.ti.com.
 (to be added)
 
-Via Technologies' VT82C496G info from "VT82C496G/VT82C406MV Green PC 80486
-PCI/VL/ISA System Data Sheet", http://www.via.com.tw/496pluto.pdf.
-(to be added)
-
-Via's VT82C570M info from "VT82C570M Apollo Master",
-http://www.via.com.tw/570m.pdf.	 (to be added)
-
 Via's VT82C586A info from "VT82C586A PCI Integrated Peripheral Controller",
 http://www.via.com.tw/586a.pdf.	 (to be added)
 
@@ -1025,12 +1060,6 @@ SLAS155.PDF, available from www.ti.com.	 (to be added)
 Harris HMP8130/8131 info from "HMP8130, HMP8131 NTSC/PAL Video Decoders with
 PCI Interface", file fn4354.pdf, available at
 http://www.semi.harris.com/families/mmedia.htm.	 (to be added)
-
-Ensoniq AudioPCI ES1370 info from file es1370.doc, available from
-www.ensoniq.com.  (to be added)
-
-Ensoniq AudioPCI-97 ES1371 info from file es1371.doc, available from
-www.ensoniq.com.  (to be added)
 
 SMBIOS v2.1 info from http://www.ptltd.com/techs/smbios/htframe.html.
 (to be added)
@@ -1043,12 +1072,6 @@ Manual", http://www.cirrus.com/ftp.pubs/gd542xtrm.pdf.	(to be added)
 
 CD-GD5446 info from "CL-GD5446 Technical Reference Manual",
 http://www.cirrus.com/ftp.pubs/gd5446trm.pdf.  (to be added)
-
-CL-PD6710/6722 info from "CL-PD6710/'22 ISA-to-PC-Card Host Adapters",
-http://www.cirrus.com/ftp/pubs/pd6710db.pdf.  (to be added)
-
-CL-PD6729 info from "CL-PD6729 PCI-to-PCMCIA Host Adapter",
-http://www.cirrus.com/ftp/pubs/pd6729db.pdf.  (to be added)
 
 CL-GD7541/7543 info from "CL-GD7541/GD7543 Preliminary Data Book",
 http://www.cirrus.com/ftp/pubs/gd7543db.pdf.  (to be added)
@@ -1065,9 +1088,6 @@ TV processors", http://www.semiconductors.philips.com/acrobat/2191.pdf.
 
 Philips TDA8443A info from "TDA8443A I2C-bus controlled YUV/RGB switch",
 http://www.semiconductors.philips.com/acrobat/2101.pdf.	 (to be added)
-
-PicoPower Vesuvius info from "PicoPower VESUVIUS-LS Preliminary Data Book",
-http://www.national.com/ds/VS/PT/PT86C521-VC-B.pdf.  (to be added)
 
 ATAPI info from "ATA Packet Interface for CD-ROMs (SFF-8020i)", Revision 2.6,
 ftp://fission.dt.wdc.com/pub/standards/SFF/specs/8020_26p.pdf; and
@@ -1087,10 +1107,6 @@ http://204.251.120.179/brok01_assets/product_images/L8230E.pdf.
 
 C&T 64300/64301 info from "", ftp://ftp.chips.com/pub/pdf/64300_01.pdf.
 (to be added)
-
-C&T 64310 info from "Wingine DGX - PCI DRAM Graphics Accelerator Data Sheet",
-Revision 1.0, dated December 1994.
-ftp://ftp.chips.com/pub/pdf/64310_ds.pdf.  (to be added)
 
 C&T 82C311/82C315/82C316 info from "",
 ftp://ftp.chips.com/pub/pdf/cs8233.pdf.	 (to be added)
@@ -1171,10 +1187,6 @@ ITT MSP 3400C info from "MSP 3400C Multistandard Sound Processor -
 Preliminary Data Sheet", http://www.itt-sc.de/pdf/msp3400c.pdf.
 (to be added) p.16-42
 
-Intel 440EX chipset info from "Intel 440EX AGPset: 82443EX PCI AGP Controller
-(PAC) Datasheet", http://www.intel.com/design/pcisets/datashts/290616.htm.
-(to be added) p.29-66
-
 Intel 440BX chipset info from "Intel 440BX AGPset: 82443BX Host
 Bridge/Controller - Datasheet",
 http://www.intel.com/design/pcisets/datashts/290633.htm.
@@ -1182,13 +1194,58 @@ http://www.intel.com/design/pcisets/datashts/290633.htm.
 
 ITT VPC 32xx info from "", http://www.itt-sc.de/pdf/vpc3200a.pdf
 (to be added) p.18-30
+
+Cirrus Crystal CS5396/5397 info from http://www.cirrus.com/ftp/pubs/5396.pdf
+[p.19,25-30] (to be added)
+
+Crystal CS7615 CCD Imager Analog Processor info from
+http://www.cirrus.com/ftp/pubs/7615.pdf (to be added)
+
+Crystal CS7665 Digital Color Space Processor info from
+http://www.cirrus.com/ftp/pubs/7665.pdf (to be added)
+
+Crystal CS8425 Audio LAN Transceiver info from
+http://www.cirrus.com/ftp/pubs/8425.pdf (to be added)
+
+Crystal CS4226 info from
+http://www.cirrus.com/ftp/pubs/4226.pdf (to be added)
+
+Crystal CS4222 info from
+http://www.cirrus.com/ftp/pubs/4222.pdf (to be added)
+
+Crystal CS4225 info from
+http://www.cirrus.com/ftp/pubs/4225.pdf (to be added)
+
+Crystal CS4227 info from
+http://www.cirrus.com/ftp/pubs/4227.pdf (to be added)
+
+Crystal CS4922 info from
+http://www.cirrus.com/ftp/pubs/4922.pdf (to be added)
+
+Crystal CS4923 info from
+http://www.cirrus.com/ftp/pubs/4923.pdf (to be added)
+
+Crystal CS4610 info from
+http://www.cirrus.com/ftp/pubs/4610.pdf (to be added)
+
+Crystal CS4614 info from
+http://www.cirrus.com/ftp/pubs/4614.pdf (to be added)
+
+Crystal CS4622 info from
+http://www.cirrus.com/ftp/pubs/4622.pdf (to be added)
+
+Crystal CS4280 info from
+http://www.cirrus.com/ftp/pubs/4280.pdf (to be added)
+
+Crystal CS4952 info from
+http://www.cirrus.com/ftp/pubs/4952.pdf (to be added)
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER58A through INTER58D (preferably the original
+quartet of archives named INTER59A through INTER59D (preferably the original
 authenticated PKZIP archives), the utility programs in a fifth archive
-called INTER58E.ZIP, and the hypertext conversion programs in two additional
-archives named INTER58F.ZIP and INTER58G.ZIP.
+called INTER59E.ZIP, and the hypertext conversion programs in two additional
+archives named INTER59F.ZIP and INTER59G.ZIP.
 
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
 --------!---CONTACT_INFO---------------------

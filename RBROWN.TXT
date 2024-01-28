@@ -8,13 +8,13 @@ The x86/MSDOS Interrupt List
 	documented and undocumented functions, plus lists of I/O port, CMOS,
 	and memory locations, far-call entry points, model-specific
 	registers, and system-management mode state save areas.
-	Current version: INTER58A (release 58, 28jun98)
-			 INTER58B
-			 INTER58C
-			 INTER58D
-			 INTER58E (utility programs)
-			 INTER58F (WinHelp-related programs)
-			 INTER58G (other hypertext conversion programs)
+	Current version: INTER59A (release 59, 30aug98)
+			 INTER59B
+			 INTER59C
+			 INTER59D
+			 INTER59E (utility programs)
+			 INTER59F (WinHelp-related programs)
+			 INTER59G (other hypertext conversion programs)
 
 DVINT
 	An extract of the MSDOS Interrupt List containing the DESQview
@@ -48,7 +48,7 @@ RBpci
 	(updates for new chips which are sent to the author will be
 	included in the following release).  Includes full source code
 	for the program.
-	Current version: RBPCI115 (v1.15, 27jun98)
+	Current version: RBPCI117 (v1.17, 18aug98)
 
 SPAWNO
 	A replacement for the Turbo C and Microsoft C spawn..() functions
