@@ -1,4 +1,4 @@
-MEMORY MAP			Release 51		Last change 7/28/96
+MEMORY MAP			Release 52		Last change 20oct96
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 
 --------H-M00000000--------------------------
@@ -296,7 +296,7 @@ Range:	00h-7Fh
 --------K-M00400017--------------------------
 MEM 0040h:0017h - KEYBOARD - STATUS FLAGS 1
 Size:	BYTE
-SeeAlso: MEM 0040h:0018h,INT 16/AH=01h
+SeeAlso: MEM 0040h:0018h,INT 16/AH=02h,MEM 0040h:0096h
 
 Bitfields for keyboard status flags 1:
 Bit(s)	Description	(Table M009)
@@ -308,11 +308,11 @@ Bit(s)	Description	(Table M009)
  2	either Ctrl pressed
  1	Left Shift pressed
  0	Right Shift pressed
-SeeAlso: #M010
+SeeAlso: #M010,#0486
 --------K-M00400018--------------------------
 MEM 0040h:0018h - KEYBOARD - STATUS FLAGS 2
 Size:	BYTE
-SeeAlso: MEM 0040h:0017h,INT 16/AH=01h
+SeeAlso: MEM 0040h:0017h,INT 16/AH=12h
 
 Bitfields for keyboard status flags 2 :
 Bit(s)	Description	(Table M010)
@@ -324,7 +324,7 @@ Bit(s)	Description	(Table M010)
  2	Sys Req pressed
  1	Left Alt pressed
  0	Left Ctrl pressed
-SeeAlso: #M009
+SeeAlso: #M009,#0487
 --------K-M00400019--------------------------
 MEM 0040h:0019h - KEYBOARD - ALT-nnn KEYPAD WORKSPACE
 Size:	BYTE
@@ -937,7 +937,7 @@ Bit(s)	Description	(Table M032)
  2	=1 Right Ctrl pressed
  1	=1 last code read was E0h
  0	=1 last code read was E1h
-SeeAlso: #M033
+SeeAlso: #M033,#M009
 ----------M00400097--------------------------
 MEM 0040h:0097h - KEYBOARD STATUS BYTE 2
 Size:	BYTE
@@ -952,7 +952,7 @@ Bit(s)	Description	(Table M033)
  2	Caps Lock LED
  1	Num Lock LED
  0	Scroll Lock LED
-SeeAlso: #M032
+SeeAlso: #M032,#M009
 ----------M00400098--------------------------
 MEM 0040h:0098h - TIMER2 (AT, PS exc Mod 30) - PTR TO USER WAIT-COMPLETE FLAG
 Size:	DWORD
@@ -1195,6 +1195,12 @@ Size:	3 BYTEs
 ----------M004000B9--------------------------
 MEM 0040h:00B9h - ???
 Size:	7 BYTEs
+----------M004000BC--------------------------
+MEM 0040h:00BCh - 1993 Phoenix 486 BIOS 1.03 PCI - CPU TYPE/MASK REVISION
+Size:	WORD
+Desc:	the high byte contains the CPU type, the low byte the mask revision
+	  (stepping level), as reported to the BIOS in DX by the CPU at startup
+SeeAlso: INT 15/AH=C9h
 ----------M004000C0--------------------------
 MEM 0040h:00C0h	- 1988 Phoenix 386 BIOS 1.10 03 - PARAMS FOR TYPE 49 HARD DISK
 Size:	16 BYTEs
@@ -1330,13 +1336,14 @@ SeeAlso: MEM 0040h:00DBh"Digiboard"
 MEM 0040h:00DCh	- AMI BIOS v1.00.12.AX1T - EPP - PARALLEL PORT 0 MODE
 Size:	BYTE
 SeeAlso: MEM 0040h:00D2h"AMI",MEM 0040h:00D5h"AMI",MEM 0040h:00DDh"AMI"
+SeeAlso: INT 17/AX=0200h/BX=5050h
 
 (Table M051)
 Values for AMI Enhanced Parallel Port mode:
  01h	compatibility mode
  02h	bi-directional mode
  04h	EPP mode
-SeeAlso: #0530
+SeeAlso: #0534
 ----------M004000DC--------------------------
 MEM 0040h:00DCh - EHD floppy - DRIVE 1 NEEDS RECALIBARATION
 Size:	BYTE
@@ -1363,7 +1370,7 @@ SeeAlso: MEM 0040h:00D2h"AMI",MEM 0040h:00DCh"AMI"
 MEM 0040h:00E0h	- AMI BIOS v1.00.12.AX1T - EPP - REAL-TIME DEVICE COUNT
 Size:	BYTE
 Desc:	contains the number of advertised real-time devices as set by EPP
-	  function 12h (see #0525)
+	  function 12h (see #0529)
 SeeAlso: MEM 0040h:00D2h"AMI",MEM 0040h:00DFh"AMI"
 ----------M004000E0--------------------------
 MEM 0040h:00E0h - Phoenix 386 BIOS - DRIVE PARAMETER TABLE FOR FIRST HARD DISK
@@ -1890,7 +1897,10 @@ Notes:	the Advanced Programmable Interrupt Controller built into
 	  cycles
 	the APIC's registers are only visible when the APIC is enabled (which
 	  occurs at CPU reset when external data lines contain proper signals)
+	the PentiumPro (P6) permits the address at which the local APIC
+	  appears to be changed with Model-Specific Register 0000001Bh
 SeeAlso: MEM FEC00000h,MEM FEE00020h,MEM xxxxh:xxx0h"Multiprocessor"
+SeeAlso: MSR 0000001Bh
 ----------mFEE00020--------------------------
 MEM FEE00020h - Pentium - LOCAL APIC - LOCAL APIC ID REGISTER
 SeeAlso: MEM FEE00030h
@@ -2110,8 +2120,6 @@ SeeAlso: #M075
 ----------MFFFF0010--------------------------
 MEM FFFFh:0010h - HIGH MEMORY AREA
 Size:	65520 BYTEs
----------------------------------------------
-
 --------!---CONTRIBUTORS---------------------
 Robin Walker	<rdhw@cus.cam.ac.uk> ORIGINAL FILE
 Wim Osterholt	<wim@djo.wtm.tudelft.nl> or Wim Osterholt 2:512/56
@@ -2124,9 +2132,9 @@ Highest Table Number = M077
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER50A through INTER50D (preferably the original
+quartet of archives named INTER52A through INTER52D (preferably the original
 authenticated PKZIP archives), and the utility programs in a two additional
-archives called INTER50E.ZIP and INTER50F.ZIP
+archives called INTER52E.ZIP and INTER52F.ZIP
 
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
 --------!---CONTACT_INFO---------------------

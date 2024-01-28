@@ -1,24 +1,24 @@
-Interrupt List		Release 51			Last change 7/28/96
+Interrupt List			Release 52		Last change 20oct96
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------!---FILELIST-------------------------
 Please redistribute the following files unmodified as a group, in a quartet of
-archives named INTER51A through INTER51D (preferably the original authenticated
+archives named INTER52A through INTER52D (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	this file
-	INTERRUP.A	INT 00 through INT 13/0F  \
-	INTERRUP.B	INT 13/10 through INT 15/12\
-	INTERRUP.C	INT 15/13 through INT 16/FF \  
+	INTERRUP.A	INT 00 through INT 13/17  \
+	INTERRUP.B	INT 13/18 through INT 15/12\
+	INTERRUP.C	INT 15/13 through INT 16/FF \
 	INTERRUP.D	INT 17 through INT 21/3E     \
-	INTERRUP.E	INT 21/3F through INT 21/5E   \	  total 2072 pages at
+	INTERRUP.E	INT 21/3F through INT 21/5E   \	  total 2120 pages at
 	INTERRUP.F	INT 21/5F through INT 21/E2    \  60 lines per page,
-	INTERRUP.G	INT 21/E3 through INT 21/F1	\ 2205 with INTPRINT -p
-	INTERRUP.H	INT 21/F2 through INT 21/FE	 >(8015 entries)
-	INTERRUP.I	INT 21/FF through INT 2F/42	/ (3225 tables)
-	INTERRUP.J	INT 2F/43 through INT 2F/CA    /
-	INTERRUP.K	INT 2F/CB through INT 4A      /
-	INTERRUP.L	INT 4B through INT 61	     /
-	INTERRUP.M	INT 62 through INT 6E	    /
-	INTERRUP.N	INT 6F through INT 7F	   /
+	INTERRUP.G	INT 21/E3 through INT 21/F1	\ 2261 with INTPRINT -p
+	INTERRUP.H	INT 21/F2 through INT 21/FE	 >(8158 entries)
+	INTERRUP.I	INT 21/FF through INT 2F/40	/ (3294 tables)
+	INTERRUP.J	INT 2F/41 through INT 2F/C9    /
+	INTERRUP.K	INT 2F/CA through INT 48      /
+	INTERRUP.L	INT 49 through INT 61	     /
+	INTERRUP.M	INT 62 through INT 6C	    /
+	INTERRUP.N	INT 6D through INT 7F	   /
 	INTERRUP.O	INT 80 through INT FF	  /
 	INTERRUP.PRI	a brief primer on interrupts
 	INTPRINT.COM	a simple formatter that also generates a list summary
@@ -30,30 +30,36 @@ PKZIP archives):
 	FARCALL.LST	APIs available through FAR CALLs
 	GLOSSARY.LST	a glossary of terms, abbreviations, and acronyms
 	MEMORY.LST	format of the BIOS data area and other memory regions
+	MSR.LST		a listing of Model-Specific Registers
 	OPCODES.LST	a listing of recent and undocumented CPU instructions
 	PORTS.LST	a listing of I/O ports
 	CATEGORY.KEY	descriptions of divider-line category letters
 	COMBINE.COM	combine the pieces of the list into a single file
 	COMBINE.DOC	documentation for COMBINE
-The following files should be distributed in an archive called INTER51E:
+The following files should be distributed in an archive called INTER52E:
 	86BUGSnn.ZIP	programs to test for CPU bugs
+	COMBINE.ASM	source code for COMBINE.COM
 	INT.*		invoke interrupts from commandline
-	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
-	INT2HLP.ZIP	convert list into QuickHelp database
-	INT2QH.*	convert list into QuickHelp database
-	INTHELP.*	convert list into TurboPower GUIDE database
 	INTHLP??.ZIP	Interrupt Helper viewer for the interrupt list
 	INTLIST.E	Epsilon extension for handling list
 	INTPRINT.C	source code for INTPRINT
 	INTSUM??.ZIP	interrupt list browser (Interrupt Summary)
 	IVIEW.ZIP	another interrupt list browser
-	RB2NG???.ZIP	convert list into Norton Guides database
-Finally, the following files should be distributed in an archive INTER51F:
+The following should be distributed in an archive called INTER52F:
+	INT2RTF.ZIP	Slava Gostrenko's Windows Help converter
 	INT2WHLP.ZIP	convert list into Windows Help database
 	HINTSRCH.ZIP	WinHelp DLL for full-text searches of interrupt list
 	WH_ED*.ZIP	WinHelp-file editor
+Finally, the following should be distributed in an archive called INTER52G:
+	IL2ME???.ZIP	convert list into Multi-Edit help database
+	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
+	INT2HLP.ZIP	convert list into QuickHelp database
+	INT2QH.*	program to convert list into QuickHelp database
+	INT2TPH.ZIP	convert to Turbo/Borland Pascal help file (.TPH)
+	INTHELP.*	convert list into TurboPower GUIDE database
+	RB2NG???.ZIP	convert list into Norton Guides database
 
-Concatenate INTERRUP.A, .B, ..., .N with COMBINE.COM to create an interrupt
+Concatenate INTERRUP.A, .B, ...  with COMBINE.COM to create an interrupt
 list file identical to my master copy.
 
 Use INTPRINT to generate a one-line-per-call summary file and/or a file
@@ -102,8 +108,8 @@ whether or not it works the same way).	Information marked with "???" is
 known to be incomplete or guesswork.
 --------!---AVAILABILITY---------------------
 If the list is three or more months old by the time you get it, there
-is probably a newer release out already (R52 is planned for early October 1996,
-R53 for early December).  Each release supersedes all previous versions, so
+is probably a newer release out already (R53 is planned for mid-December 1996,
+R54 for February 1997).  Each release supersedes all previous versions, so
 there is no need to keep old versions.
 
 The newest release of this list is available in these places (please do not
@@ -120,18 +126,18 @@ If connected to AFS, you can simply perform standard Unix/VMS/whatever
 
 On the World-Wide Web, from http://www.pobox.com/~ralf/files.html
 
-On FIDOnet, from SoundingBoard BBS 1:129/26 1-412-621-4604 9600/14.4k HST/V32
-	as files INTERrrA.ZIP to INTERrrD.ZIP (rr stands for the release
+On FIDOnet, from SoundingBoard BBS 1:129/26 1-412-621-4604 HST/V.32/V.34
+	as files INTERrrA.ZIP to INTERrrF.ZIP (rr stands for the release
 	number), in file area #8.  First-time callers may download.
 	File Requests.
 
 Alternate Distribution Points (the list will typically be available here
 within 24 hours of release):
-Internet: on the SimTel Software Repository mirrors as files interRRa.zip to
-	interRRd.ZIP in directory /pub/msdos/info, where RR stands for the
+Internet: on the SimTel.Net mirrors as files interRRa.zip to
+	interRRf.ZIP in directory /pub/msdos/info, where RR stands for the
 	release number. Note that you must use a binary transfer mode
-	("tenex" or "type L 8" for most people) to successfully FTP the
-	files.	The SimTel mirrors include oak.oakland.edu [141.210.10.117],
+	("tenex" or "type L 8" for most people) to successfully FTP the files.
+	The SimTel.Net mirrors include oak.oakland.edu [141.210.10.117],
 	wuarchive.wustl.edu [128.252.135.4], ftp.uu.net [137.39.1.9],
 	nic.funet.fi [128.214.6.100], src.doc.ic.ac.uk [146.169.3.7], and
 	archie.au [139.130.4.6].
@@ -159,12 +165,7 @@ FIDO:	boards belonging to the PDN (Programmer's Distribution Network) system
 	  28800 V.FC/V.34.  File requests from all nodes, including unlisted
 	  points (magic filename INTER for newest release).
 CompuServe: in the IBM Programming Forum (GO IBMPRO), Library 6, as INTrrA.*,
-	INTrrB.*, INTrrC.*, and INTrrD.*.
-
-The list is also posted to USEnet in comp.binaries.ibm.pc about twice a year,
-concurrently with a new release of the list.  Since comp.binaries.ibm.pc is
-archived, you will be able to find a fairly recent release in the various UUCP
-archives.
+	INTrrB.*, INTrrC.*, INTrrD.*, INTrrE.*, and INTrrF.*.
 --------!---ABBREVIATIONS--------------------
 Key to system abbreviations
 (unless otherwise indicated, a function is available on all systems)
@@ -599,7 +600,11 @@ This list is the result of the time and effort of a large number of people:
  5/96 Christophe Vallat                               virus checks, Iomega
  5/96 Solar Designer   solar@sun1.ideal.ru	      Player's Tool, ShowGFX
  6/96 George Fulk      fulkgl@austin.ibm.com	      OS/2, misc
- 7/96 Jens Rehsack				      PCMCIA v2
+ 7/96 Jens Rehsack     asterix@inf.fh-anhalt.de	      PCMCIA v2
+ 8/96 Mark Junker      mjs@hannover.sgh-net.de	      Cherry keyboard chipcard
+ 8/96 Dmitry B. Jemerov dmitry@jemerov.spb.ru	      KeyRus, Volkov Cmdr, etc.
+ 9/96 Kevin Tseng      s8203143@andy.pu.edu.tw	      XPACK
+ 9/96 Norman L. DeForest af380@cfn.cs.dal.ca	      more TI Professional PC
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -727,14 +732,17 @@ Also contributing:
  David Cary <cary@agora.rdrop.com>, Nir Sofer <nir@netvision.net.il>,
  Keith Hamilton <100654.2000@compuserve.com>, Colin Hill <chill@rmi.net>,
  <Marcus.Wirth@frankfurt.netsurf.de>, David Cary <cary@agora.rdrop.com>,
- Peter Rindfuss <RINDFUSS-S@medea.wz-berlin.de>,
+ Peter Rindfuss <RINDFUSS-S@medea.wz-berlin.de>, <Frederic.Vicher@wanadoo.fr>,
  Pierre Duhem <100256.1731@compuserve.com>,Robert Dixon <r.dixon@dem.csiro.au>,
  Bob Jackman <Bob@salford-software.com>, Erich Stefan Boleyn <erich@uruk.org>,
  Jan Slater <slater@platinum.nb.net>, Alfredo Raul Pena <apena@VNET.IBM.COM>,
  Tom Shinnick <tshinnic@io.com>, Gil Megidish <gmegidis@ort.org.il>,
- Kim Bastin <muskb@lure.latrobe.edu.au>,
+ Kim Bastin <muskb@lure.latrobe.edu.au>,Dmitry Jemerov <dmitry@jemerov.spb.ru>,
  Marc Ferran <100702.1215@CompuServe.COM>, Hale Landis <landis@sugs.tware.com>,
- Volker Schmidt <100.78304@germanynet.de>
+ Volker Schmidt <100.78304@germanynet.de>, Kevin Scott <tallex@nwlink.com>,
+ Luca Di Rocco <i058574@spv05.ing.uniroma1.it>, Revenger Tels <elstner@bsi.de>,
+ Mike Marcelais <michmarc@microsoft.com>,Mark J. Restifo <mrestifo@wizvax.net>,
+ guest@rnibncw.demon.co.uk, Bill Currie <billc@blackmagic.tait.co.nz>,
 --------!---ADDRESSES------------------------
 The following have provided API reference and other materials at no charge:
 
@@ -1479,11 +1487,10 @@ Snail mail:
 	   (Letters which enclose a Self-Addressed Stamped Envelope [or self-
 	    addressed envelope and international return coupon] or e-mail
 	    address will be given priority.  This address will remain valid
-	    until at least November 1, 1996.)
+	    until at least November 1, 1997.)
 
 Visit my home page!	http://www.pobox.com/~ralf
 
 I reply to all e-mail submissions and inquiries.  If you do not receive a reply
 within a reasonable time, send your message again, giving a better return path
-(on UUCP, a bang path starting at harvard or uunet; elsewhere, a path starting
-from the Internet).
+(a surprising number of mailers do not insert a correct From: address!)

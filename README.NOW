@@ -1,20 +1,32 @@
+Three new programs which convert the interrupt list into hypertext
+files for Borland THELP, ASMEdit, and WinHelp have been contributed
+since the last release, prompting the addition of another archive to
+the interrupt list distribution, and a slight rearrangement of the
+utilities.  All hypertext conversion programs except those for WinHelp
+(which were already in INTERrrF) are now in archive G.
+
+A new text file has also been added to the distribution: MSR.LST, which
+lists the Model-Specific Registers available on various recent
+processors.  As this file was created just days prior to this release,
+the help-file conversion programs don't take advantage of it yet :-)
+
+
 Due to the limited time available for working on the list, I have again
 released a new version while there was still a significant amount left
-in my queue of submissions.  I've you've sent in any contributions
-which don't appear in this release but which I've acknowledged, they
-are still on my queue and will appear in the next release.  I expect to
-finally start overtaking submissions in October....
+in my queue of submissions; however, I am finally starting to catch up.
+If you've sent in any contributions which don't appear in this release
+but which I've acknowledged, they are still on my queue and will appear
+in the next release.  I hope to have nearly eliminated the backlog by
+INTER53....
 
 
 
 UPCOMING CHANGES
 ================
 
-Given the average growth rates over the past few years, the interrupt
-list will require seven archives beginning with either INTER52 or INTER53
-later this year.  Therefore, unless I get feedback to the contrary, I
-will switch to 720K per archive from the current 360K when an additional
-archive would become necessary.
+As the interrupt list proper grows beyond the size that can be
+accomodated by four 360K archives, I will allow the first four archives
+to grow to 720K each from the current 360K per archive.
 
 The individual sections of the list will be kept at 360K until the list
 requires more than 26 sections (which will take several more years), at

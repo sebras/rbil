@@ -1,4 +1,4 @@
-FAR CALL Interface List		Release 51		Last change 7/28/96
+FAR CALL Interface List		Release 52		Last change 20oct96
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 
 =============================================
@@ -18,12 +18,12 @@ Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 > 00h	...	...
 =============================================
 
-----------@00600000--------------------------
+--------D-@00600000--------------------------
 CALL 0060h:0000h - Eagle MS-DOS v1.25 IO.SYS - INITIALIZE
 InstallCheck:	MS-DOS v1.25 must be installed
 Note:	this function should only be called by MSDOS.SYS
 SeeAlso: @0060h:0003h,@0060h:0039h
-----------@00600003--------------------------
+--------D-@00600003--------------------------
 CALL 0060h:0003h - Eagle MS-DOS v1.25 IO.SYS - CHECK FOR KEYSTROKE
 InstallCheck:	MS-DOS v1.25 must be installed
 Note:	does not return extended keystrokes
@@ -35,7 +35,7 @@ Call Eagle MS-DOS entry point 0003h with:
 Return: ZF set if no key
 	ZF clear if keystroke available
 	    AL = keystroke
-----------@00600006--------------------------
+--------D-@00600006--------------------------
 CALL 0060h:0006h - Eagle MS-DOS v1.25 IO.SYS - WAIT FOR KEYSTROKE
 InstallCheck:	MS-DOS v1.25 must be installed
 Notes:	if an extended keystroke is available, only the low byte is returned,
@@ -49,7 +49,7 @@ Call Eagle MS-DOS entry point 0006h with:
 	nothing
 Return: AL = keystroke
 	flags modified
-----------@00600009--------------------------
+--------D-@00600009--------------------------
 CALL 0060h:0009h - Eagle MS-DOS v1.25 IO.SYS - OUTPUT CHARACTER TO SCREEN
 InstallCheck:	MS-DOS v1.25 must be installed
 Note:	this entry point supports most of the ANSI.SYS control sequences,
@@ -60,7 +60,7 @@ SeeAlso: @0060h:0000h,@0060h:0003h,@0060h:000Ch
 Call Eagle MS-DOS entry point 0009h with:
 	AL = character to output
 Return: flags modified
-----------@0060000C--------------------------
+--------D-@0060000C--------------------------
 CALL 0060h:000Ch - Eagle MS-DOS v1.25 IO.SYS - OUTPUT CHARACTER TO PRINTER
 InstallCheck:	MS-DOS v1.25 must be installed
 Note:	this entry point is able, if set by configuration (see @0060h:0039h),
@@ -71,7 +71,7 @@ SeeAlso: @0060h:0000h,@0060h:0009h
 Call Eagle MS-DOS entry point 000Ch with:
 	AL = character to be printed
 Return: flags modified
-----------@0060000F--------------------------
+--------D-@0060000F--------------------------
 CALL 0060h:000Fh - Eagle MS-DOS v1.25 IO.SYS - INPUT CHAR FROM AUX: DEVICE
 InstallCheck:	MS-DOS v1.25 must be installed
 Note:	if the configured AUX: device is a parallel port, this call always
@@ -84,7 +84,7 @@ SeeAlso: @0060h:0000h
 Call Eagle MS-DOS entry point 000Fh with:
 	nothing
 Return: AL = received character
-----------@00600012--------------------------
+--------D-@00600012--------------------------
 CALL 0060h:0012h - Eagle MS-DOS v1.25 IO.SYS - OUTPUT CHAR TO AUX: DEVICE
 InstallCheck:	MS-DOS v1.25 must be installed
 Note:	if the port is busy, this function waits until the port becomes
@@ -95,7 +95,7 @@ SeeAlso: @0060h:0000h
 Call Eagle MS-DOS entry point 0012h with:
 	AL = character to output
 Return: flags modified
-----------@00600015--------------------------
+--------D-@00600015--------------------------
 CALL 0060h:0015h - Eagle MS-DOS v1.25 IO.SYS - READ ABSOLUTE SECTOR(S)
 InstallCheck:	MS-DOS v1.25 must be installed
 SeeAlso: @0060h:0000h,@0060h:0018h,@0060h:001Bh
@@ -115,7 +115,7 @@ Note:	the drive number in AL is *not* the logical DOS drive number, but
 	  the number of an internal data table; multiple data tables, each
 	  describing a distinct disk format, may be shared by one logical
 	  drive
-----------@00600018--------------------------
+--------D-@00600018--------------------------
 CALL 0060h:0018h - Eagle MS-DOS v1.25 IO.SYS - WRITE ABSOLUTE SECTOR(S)
 InstallCheck:	MS-DOS v1.25 must be installed
 SeeAlso: @0060h:0000h,@0060h:0015h,@0060h:001Bh
@@ -135,7 +135,7 @@ Note:	the drive number in AL is *not* the logical DOS drive number, but
 	  the number of an internal data table; multiple data tables, each
 	  describing a distinct disk format, may be shared by one logical
 	  drive
-----------@0060001B--------------------------
+--------D-@0060001B--------------------------
 CALL 0060h:001Bh - Eagle MS-DOS v1.25 IO.SYS - DETERMINE DISK FORMAT
 InstallCheck:	MS-DOS v1.25 must be installed
 SeeAlso: @0060h:0000h,@0060h:0015h,@0060h:002Ah
@@ -152,7 +152,7 @@ Return: CF clear if successful
 	    AL = error code
 		02h ???
 		0Ch unrecognized format
-----------@0060001E--------------------------
+--------D-@0060001E--------------------------
 CALL 0060h:001Eh - Eagle MS-DOS v1.25 IO.SYS - SET DAY COUNT
 InstallCheck:	MS-DOS v1.25 must be installed
 SeeAlso: @0060h:0000h,@0060h:0021h,@0060h:0024h
@@ -161,7 +161,7 @@ SeeAlso: @0060h:0000h,@0060h:0021h,@0060h:0024h
 Call Eagle MS-DOS entry point 001Eh with:
 	AX = day count
 Return: nothing
-----------@00600021--------------------------
+--------D-@00600021--------------------------
 CALL 0060h:0021h - Eagle MS-DOS v1.25 IO.SYS - SET SYSTEM TIME
 InstallCheck:	MS-DOS v1.25 must be installed
 SeeAlso: @0060h:0000h,@0060h:001Eh,@0060h:0024h
@@ -173,7 +173,7 @@ Call Eagle MS-DOS entry point 0021h with:
 	DH = seconds
 	DL = hundredths
 Return: flags modified
-----------@00600024--------------------------
+--------D-@00600024--------------------------
 CALL 0060h:0024h - Eagle MS-DOS v1.25 IO.SYS - READ SYSTEM TIME
 InstallCheck:	MS-DOS v1.25 must be installed
 SeeAlso: @0060h:0000h,@0060h:001Eh,@0060h:0021h
@@ -186,7 +186,7 @@ Return: AX = day count
 	CL = minutes
 	DH = seconds
 	DL = hundredths
-----------@00600027--------------------------
+--------D-@00600027--------------------------
 CALL 0060h:0027h - Eagle MS-DOS v1.25 IO.SYS - CLEAR KEYBOARD BUFFER
 InstallCheck:	MS-DOS v1.25 must be installed
 SeeAlso: @0060h:0000h,@0060h:0003h,@0060h:0006h
@@ -195,7 +195,7 @@ SeeAlso: @0060h:0000h,@0060h:0003h,@0060h:0006h
 Call Eagle MS-DOS entry point 0027h with:
 	nothing
 Return: ZF set
-----------@0060002A--------------------------
+--------D-@0060002A--------------------------
 CALL 0060h:002Ah - Eagle MS-DOS v1.25 IO.SYS - SEARCH FOR NEXT DISK FORMAT
 InstallCheck:	MS-DOS v1.25 must be installed
 SeeAlso: @0060h:0000h,@0060h:001Bh
@@ -205,18 +205,18 @@ Call Eagle MS-DOS entry point 002Ah with:
 	AL = drive table number
 Return: AL = next drive table number with matching disk sector size and media
 	      ID byte
-----------@00600039--------------------------
+--------D-@00600039--------------------------
 CALL 0060h:0039h - Eagle MS-DOS v1.25 IO.SYS - CONFIGURE FROM SYSINFO.SYS
 InstallCheck:	MS-DOS v1.25 must be installed
 Note:	reads the first 144 bytes of SYSINFO.SYS from the current drive into
 	  an internal configuration buffer
 SeeAlso: @0060h:0000h
-----------@C0000003--------------------------
+--------V-@C0000003--------------------------
 CALL C000h:0003h - VIDEO BIOS INITIALIZATION
 InstallCheck:	C000h:0000h must contain the word AA55h and the 
 		  512*BYTE[C000h:0002h] bytes must sum to 00h (mod 256)
 Note:	is normally called only by the System ROM BIOS initialization code
-----------@C0000064--------------------------
+--------V-@C0000064--------------------------
 CALL C000h:0064h U - ATI Mach32 VIDEO BIOS - ???
 InstallCheck: ATI Mach32 video board must be installed
 SeeAlso: @C000h:0068h"Mach32",@C000h:006Ch,@C000h:0070h
@@ -232,11 +232,11 @@ Call ATI Mach32 entry point with:
 	    81h,82h ???
 Return: CF clear if successful
 	CF set on error
-----------@C0000064--------------------------
+--------V-@C0000064--------------------------
 CALL C000h:0064h U - ATI Mach64 VIDEO BIOS - ALTERNATE INT 10/AH=A0h (IRET)
 InstallCheck: ATI Mach64 video board must be installed
 SeeAlso: @C000h:0068h"Mach64",INT 10/AH=A0h"Mach64"
-----------@C0000068--------------------------
+--------V-@C0000068--------------------------
 CALL C000h:0068h U - ATI Mach32 VIDEO BIOS - ???
 InstallCheck: ATI Mach32 video board must be installed
 SeeAlso: @C000h:0064h"Mach32",@C000h:006Ch,@C000h:0070h
@@ -246,11 +246,11 @@ Call ATI Mach32 entry point with:
 	AL = ??? (00h-02h)
 	???
 Return: ???
-----------@C0000068--------------------------
+--------V-@C0000068--------------------------
 CALL C000h:0068h U - ATI Mach64 VIDEO BIOS - ALTERNATE INT 10/AH=A0h (RETF)
 InstallCheck: ATI Mach64 video board must be installed
 SeeAlso: @C000h:0064h"Mach64",INT 10/AH=A0h"Mach64"
-----------@C000006C--------------------------
+--------V-@C000006C--------------------------
 CALL C000h:006Ch - ATI Mach32 VIDEO BIOS - 
 InstallCheck: ATI Mach32 video board must be installed
 SeeAlso: @C000h:0064h,@C000h:0068h,@C000h:0070h
@@ -309,7 +309,7 @@ Offset	Size	Description	(Table F019)
  02h	WORD	vertical resolution in pixels
  04h 30 BYTEs	???
 SeeAlso: #F018
-----------@C0000070--------------------------
+--------V-@C0000070--------------------------
 CALL C000h:0070h U - ATI Mach32 VIDEO BIOS - ???
 InstallCheck: ATI Mach32 video board must be installed
 SeeAlso: @C000h:0064h,@C000h:0068h,@C000h:006Ch
@@ -327,47 +327,47 @@ Call ATI Mach32 entry point with:
 		AL = ??? (00h/nonzero)
 Return: CF clear if successful
 	CF set on error
-----------@F000E739--------------------------
+--------B-@F000E739--------------------------
 CALL F000h:E739h - ROM BIOS INT 14 HANDLER
 InstallCheck:	present if BIOS is 100% compatible with original IBM PC
-----------@F000E82E--------------------------
+--------B-@F000E82E--------------------------
 CALL F000h:E82Eh - ROM BIOS INT 16 HANDLER
 InstallCheck:	present if BIOS is 100% compatible with original IBM PC
-----------@F000EC59--------------------------
+--------B-@F000EC59--------------------------
 CALL F000h:EC59h - ROM BIOS INT 13 HANDLER
 InstallCheck:	present if BIOS is 100% compatible with original IBM PC
-----------@F000EFD2--------------------------
+--------B-@F000EFD2--------------------------
 CALL F000h:EFD2h - ROM BIOS INT 17 HANDLER
 InstallCheck:	present if BIOS is 100% compatible with original IBM PC
-----------@F000F065--------------------------
+--------B-@F000F065--------------------------
 CALL F000h:F065h - ROM BIOS INT 10 HANDLER
 InstallCheck:	present if BIOS is 100% compatible with original IBM PC
-----------@F000F841--------------------------
+--------B-@F000F841--------------------------
 CALL F000h:F841h - ROM BIOS INT 12 HANDLER
 InstallCheck:	present if BIOS is 100% compatible with original IBM PC
-----------@F000F84D--------------------------
+--------B-@F000F84D--------------------------
 CALL F000h:F84Dh - ROM BIOS INT 11 HANDLER
 InstallCheck:	present if BIOS is 100% compatible with original IBM PC
-----------@F000F859--------------------------
+--------B-@F000F859--------------------------
 CALL F000h:F859h - ROM BIOS INT 15 HANDLER
 InstallCheck:	present if BIOS is 100% compatible with original IBM PC
-----------@F000FE6E--------------------------
+--------B-@F000FE6E--------------------------
 CALL F000h:FE6Eh - ROM BIOS INT 1A HANDLER
 InstallCheck:	present if BIOS is 100% compatible with original IBM PC
-----------@F000FFF0--------------------------
+--------H-@F000FFF0--------------------------
 CALL F000h:FFF0h - COLD-BOOT ADDRESS
 InstallCheck:	always present
 SeeAlso: @FFFFh:0000h
-----------@FFFF0000--------------------------
+--------H-@FFFF0000--------------------------
 CALL FFFFh:0000h - COLD-BOOT ADDRESS
 InstallCheck:	always present
 Note:	this address is another way of expressing F000h:FFF0h
 SeeAlso: @F000h:FFF0h
-----------@xxxxxxxx--------------------------
+--------m-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - 10NET - 10MEMMGR.SYS
 InstallCheck:	see INT 21/AX=4402h"10MEMMGR"
 SeeAlso: INT 21/AX=4402h"10MEMMGR"
-----------@xxxxxxxx--------------------------
+--------t-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Alternate Multiplex Interrupt Specification TSRs
 InstallCheck:	see INT 2D"AMIS"
 SeeAlso: INT 2D"AMIS"
@@ -423,7 +423,7 @@ Notes:	the BSD handler assumes that it is running in a 32-bit code segment
 	  register; for maximum compatibility, the upper 24 bits of EBX should
 	  be cleared when calling the entry point
 SeeAlso: #F021
-----------@xxxxxxxx--------------------------
+--------E-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Borland TKERNEL
 InstallCheck:	see INT 2F/AX=FBA1h/BX=0082h
 SeeAlso: INT 2F/AX=FBA1h/BX=0082h
@@ -431,15 +431,15 @@ SeeAlso: INT 2F/AX=FBA1h/BX=0082h
 CALL xxxxh:xxxxh - Buffit v3.0
 InstallCheck:	see INT 60"Buffit"
 SeeAlso: INT 60"Buffit"
-----------@xxxxxxxx--------------------------
+--------m-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - CEMM v5.10+ Private API
 InstallCheck:	see INT 21/AX=4402h/SF=00h
 SeeAlso: INT 21/AX=4402h/SF=00h
-----------@xxxxxxxx--------------------------
+--------m-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Cloaking - PROTECTED-MODE API
 InstallCheck:	see INT 2C/AX=001Dh
 SeeAlso: INT 2C/AX=001Dh
-----------@xxxxxxxx--------------------------
+--------m-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Cloaking - REAL-MODE API
 InstallCheck:	see INT 2F/AX=4310h"Cloaking"
 SeeAlso: INT 2F/AX=4310h"Cloaking"
@@ -449,39 +449,39 @@ InstallCheck:	see INT 21/AX=4402h"CTMMSYS"
 Program: CTMMSYS.SYS is the Creative DOS Multimedia Architecture Integration
 	  driver
 SeeAlso: INT 21/AX=4402h"CTMMSYS"
-----------@xxxxxxxx--------------------------
+--------Q-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - DESQview XDI - Driver API
 InstallCheck:	see INT 2F/AX=DE01h
 SeeAlso: INT 2F/AX=DE01h
-----------@xxxxxxxx--------------------------
+--------D-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - DOS Device Drivers
 InstallCheck:	see INT 21/AH=52h
 SeeAlso: INT 21/AH=52h
-----------@xxxxxxxx--------------------------
+--------E-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - DOS Protected-Mode Interface - MODE SWITCH
 InstallCheck:	see INT 2F/AX=1687h
 SeeAlso: INT 2F/AX=1687h
-----------@xxxxxxxx--------------------------
+--------E-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - DOS Protected-Mode Interface - Phar Lap RUN286
 InstallCheck:	see INT 2F/AX=168Ah
 SeeAlso: INT 2F/AX=168Ah
-----------@xxxxxxxx--------------------------
+--------E-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - DOS Protected-Mode Interface - Vendor-Specific APIs
 InstallCheck:	see INT 31/AX=0A00h
 SeeAlso: INT 31/AX=0A00h
-----------@xxxxxxxx--------------------------
+--------E-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - DOS Protected-Mode Interface - Windows Support
 InstallCheck:	see INT 2F/AX=168Ah
 SeeAlso: INT 2F/AX=168Ah
-----------@xxxxxxxx--------------------------
+--------E-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - DOS Protected-Mode Services
 InstallCheck:	see INT 2F/AX=43E0h
 SeeAlso: INT 2F/AX=43E1h
-----------@xxxxxxxx--------------------------
+--------T-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - DOS Task Switcher - Callout
 InstallCheck:	see INT 2F/AX=4B01h
 SeeAlso: INT 2F/AX=4B01h
-----------@xxxxxxxx--------------------------
+--------T-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - DOS Task Switcher
 InstallCheck:	see INT 2F/AX=4B02h
 SeeAlso: INT 2F/AX=4B02h
@@ -489,15 +489,15 @@ SeeAlso: INT 2F/AX=4B02h
 CALL xxxxh:xxxxh - Enhanced Parallel Port (EPP) BIOS
 InstallCheck:	see INT 17/AX=0200h/BX=5050h
 SeeAlso: INT 17/AX=0200h/BX=5050h
-----------@xxxxxxxx--------------------------
+--------m-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Extended Memory Specification (XMS)
 InstallCheck:	see INT 2F/AX=4300h
 SeeAlso: INT 2F/AX=4310h
-----------@xxxxxxxx--------------------------
+--------c-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - FASTOPEN
 InstallCheck:	see INT 2F/AX=122Ah
 SeeAlso: INT 2F/AX=122Ah
-----------@xxxxxxxx--------------------------
+--------m-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - HIGHUMM.SYS
 InstallCheck:	see INT 21/AX=4402h"HIGHUMM"
 SeeAlso: INT 21/AX=4402h"HIGHUMM"
@@ -505,7 +505,7 @@ SeeAlso: INT 21/AX=4402h"HIGHUMM"
 CALL xxxxh:xxxxh - HugeRealMode Driver
 InstallCheck:	see INT 78/AX=0000h,INT 78/AX=0001h
 SeeAlso: INT 78/AX=0001h
-----------@xxxxxxxx--------------------------
+--------V-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - IBM 8514/A Adapter Interface (HDILOAD)
 InstallCheck:	see INT 7F/AX=0105h
 SeeAlso: INT 7F/AX=0105h
@@ -513,19 +513,19 @@ SeeAlso: INT 7F/AX=0105h
 CALL xxxxh:xxxxh - IBM 8516 Touch Screen Device Driver
 InstallCheck:	see INT 7F/AX=ABCDh
 SeeAlso: INT 7F/AX=ABCDh
-----------@xxxxxxxx--------------------------
+--------u-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - IBM System 36/38 Workstation Emulation
 InstallCheck:	see INT 0C"SYSTEM 36/38"
 SeeAlso: INT 0C"SYSTEM 36/38"
-----------@xxxxxxxx--------------------------
+--------D-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - IFS Drivers
 InstallCheck:	see INT 21/AH=52h
 SeeAlso: INT 21/AH=52h
-----------@xxxxxxxx--------------------------
+--------W-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - IFSHLP.SYS
 InstallCheck:	see INT 21/AH=3Fh"IFSHLP"
 SeeAlso: INT 21/AH=3Fh"IFSHLP"
-----------@xxxxxxxx--------------------------
+--------b-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Intel BIOS Upgrade
 InstallCheck:	scan paragraph boundaries from 0F0000h to 0FFFFFh for signature
 	  string "$IBU" (see #F023)
@@ -553,147 +553,155 @@ Notes:	calls from 32-bit protected mode may be made to the 16-bit entry
 CALL xxxxh:xxxxh - Interrupt Sharing Protocol
 InstallCheck:	see INT 2D"AMIS"
 SeeAlso: INT 2D"AMIS"
-----------@xxxxxxxx--------------------------
+--------X-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Intel System Management Bus BIOS
 InstallCheck:	see INT 15/AX=53B0h/BH=01h,INT 15/AX=53B0h/BH=02h
 SeeAlso: INT 15/AX=53B0h/BH=01h,INT 15/AX=53B0h/BH=05h
-----------@xxxxxxxx--------------------------
+--------G-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - INTRSPY v1.0 only
 InstallCheck:	see INT 60"INTRSPY"
 SeeAlso: INT 60"INTRSPY"
-----------@xxxxxxxx--------------------------
+--------m-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Memory Managers
 InstallCheck:	see INT 21/AX=4402h/SF=00h
 SeeAlso: INT 21/AX=4402h/SF=00h
-----------@xxxxxxxx--------------------------
+--------m-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Microsoft EMM386.EXE
 InstallCheck:	see INT 67/AX=FFA5h
 SeeAlso: INT 67/AX=FFA5h
-----------@xxxxxxxx--------------------------
+--------M-@xxxxxxxx--------------------------
+CALL xxxxh:xxxxh - Microsoft Mouse Driver - Alternate Entry Point
+InstallCheck:	INT 33 must be non-NULL, and must not point at an IRET
+	  instruction; the alternate entry point is located two bytes past
+	  the INT 33 handler
+Note:	this alternate entry point accepts the same arguments as the
+	  INT 33 interface, but is invoked with a FAR CALL instead of INT 33.
+SeeAlso: INT 33/AX=0000h
+--------k-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Microsoft Real-Time Compression Interface (MRCI)
 InstallCheck:	see INT 1A/AX=B001h
 SeeAlso: INT 1A/AX=B001h
-----------@xxxxxxxx--------------------------
+--------N-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Microsoft Workgroup Connection - WORKGRP.SYS
 InstallCheck:	see INT 21/AH=3Fh"WORKGRP.SYS"
 SeeAlso: INT 21/AX=4402h"WORKGRP.SYS"
-----------@xxxxxxxx--------------------------
+--------W-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - MS Windows - DOSMGR Device
 InstallCheck:	see INT 2F/AX=1684h/BX=0015h
 SeeAlso: INT 2F/AX=1684h/BX=0015h
-----------@xxxxxxxx--------------------------
+--------W-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - MS Windows - EDOS Device
 InstallCheck:	see INT 2F/AX=1684h/BX=2925h
 SeeAlso: INT 2F/AX=1684h/BX=2925h
-----------@xxxxxxxx--------------------------
+--------W-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - MS Windows - POSTMSG Device
 InstallCheck:	see INT 2F/AX=1684h/BX=8888h
 SeeAlso: INT 2F/AX=1684h/BX=8888h
-----------@xxxxxxxx--------------------------
+--------W-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - MS Windows - REBOOT Device
 InstallCheck:	see INT 2F/AX=1684h/BX=0009h
 SeeAlso: INT 2F/AX=1684h/BX=0009h
-----------@xxxxxxxx--------------------------
+--------W-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - MS Windows - SHELL Device
 InstallCheck:	see INT 2F/AX=1684h/BX=0017h
 SeeAlso: INT 2F/AX=1684h/BX=0017h
-----------@xxxxxxxx--------------------------
+--------W-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - MS Windows - VADMAD Device
 InstallCheck:	see INT 2F/AX=1684h/BX=0444h
 SeeAlso: INT 2F/AX=1684h/BX=0444h
-----------@xxxxxxxx--------------------------
+--------W-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - MS Windows - VbillD Device
 InstallCheck:	see INT 2F/AX=1684h/BX=8888h
 SeeAlso: INT 2F/AX=1684h/BX=8888h
-----------@xxxxxxxx--------------------------
+--------W-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - MS Windows - VSWITCHD Device
 InstallCheck:	see INT 2F/AX=1684h/BX=0750h
 SeeAlso: INT 2F/AX=1684h/BX=0750h
-----------@xxxxxxxx--------------------------
+--------W-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - MS Windows - VTD Device
 InstallCheck:	see INT 2F/AX=1684h/BX=0005h
 SeeAlso: INT 2F/AX=1684h/BX=0005h
-----------@xxxxxxxx--------------------------
+--------W-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - MS Windows - WPS Device
 InstallCheck:	see INT 2F/AX=1684h/BX=310Eh
 SeeAlso: INT 2F/AX=1684h/BX=310Eh
-----------@xxxxxxxx--------------------------
+--------m-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Netroom RM386 v6.00
 InstallCheck:	see INT 2F/AX=4310h
 SeeAlso: INT 2F/AX=4310h
-----------@xxxxxxxx--------------------------
+--------N-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Novell - ODI Link Support Layer
 InstallCheck:	see INT 2F/AX=C000h"LSL.COM"
 SeeAlso: INT 2F/AX=C000h"LSL.COM"
-----------@xxxxxxxx--------------------------
+--------O-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Novell DOS 7 DELWATCH.EXE
 InstallCheck:	see INT 2F/AX=10FEh
 SeeAlso: INT 2F/AX=10FEh
-----------@xxxxxxxx--------------------------
+--------m-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Novell DOS 7 EMM386.EXE
 InstallCheck:	see INT 2F/AX=12FFh/BX=0106h
 SeeAlso: INT 2F/AX=12FFh/BX=0106h
-----------@xxxxxxxx--------------------------
+--------N-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Novell NetWare - Access Server Driver
 InstallCheck:	see INT 2F/AX=7AF1h
 SeeAlso: INT 2F/AX=7AF1h
-----------@xxxxxxxx--------------------------
+--------N-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Novell NetWare - DOS Requester
 InstallCheck:	see INT 2F/AX=7A20h/BX=0000h
 SeeAlso: INT 2F/AX=7A20h/BX=0000h
-----------@xxxxxxxx--------------------------
+--------N-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Novell Netware - Event Service Layer
 InstallCheck:	see INT 2F/AX=C000h"NESL"
 SeeAlso: INT 2F/AX=C000h"NESL"
-----------@xxxxxxxx--------------------------
+--------N-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Novell NetWare - IPX
 InstallCheck:	see INT 2F/AX=7A00h
 SeeAlso: INT 2F/AX=7A00h
-----------@xxxxxxxx--------------------------
+--------N-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Novell NetWare - IPXODI
 InstallCheck:	see INT 2F/AX=7A2Fh
 SeeAlso: INT 2F/AX=7A2Fh
-----------@xxxxxxxx--------------------------
+--------N-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Novell NetWare - TCP/IP Protocol Stack
 InstallCheck:	see INT 2F/AX=7A40h
 SeeAlso: INT 2F/AX=7A40h
-----------@xxxxxxxx--------------------------
+--------N-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Novell NetWare - VLM
 InstallCheck:	see INT 2F/AX=7A20h/BX=0000h
 SeeAlso: INT 2F/AX=7A20h/BX=0000h
-----------@xxxxxxxx--------------------------
+--------N-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Novell NetWare - VLM CallA
 InstallCheck:	see INT 2F/AX=7A20h/BX=0001h
 SeeAlso: INT 2F/AX=7A20h/BX=0001h
-----------@xxxxxxxx--------------------------
+--------N-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Novell NetWare - VLM Multicast
 InstallCheck:	see INT 2F/AX=7A20h/BX=0004h
 SeeAlso: INT 2F/AX=7A20h/BX=0004h
-----------@xxxxxxxx--------------------------
+--------N-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Novell NetWare - VLM Multiplex
 InstallCheck:	see INT 2F/AX=7A20h/BX=0002h
 SeeAlso: INT 2F/AX=7A20h/BX=0002h
-----------@xxxxxxxx--------------------------
+--------N-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Novell NetWare - VLM Parse API
 InstallCheck:	see INT 2F/AX=7A20h/BX=0003h
 SeeAlso: INT 2F/AX=7A20h/BX=0003h
-----------@xxxxxxxx--------------------------
+--------N-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Novell NetWare Lite - CLIENT
 InstallCheck:	see INT 2F/AX=D800h
 SeeAlso: INT 2F/AX=D800h
-----------@xxxxxxxx--------------------------
+--------N-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Novell NetWare Lite - NLCACHE/NWCACHE
 InstallCheck:	see INT 2F/AX=D8C0h
 SeeAlso: INT 2F/AX=D8C0h
-----------@xxxxxxxx--------------------------
+--------N-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Novell NetWare Lite - SERVER
 InstallCheck:	see INT 2F/AX=D880h
 SeeAlso: INT 2F/AX=D880h
-----------@xxxxxxxx--------------------------
+--------R-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - pcANYWHERE IV/LAN
 InstallCheck:	see INT 21/AX=2B44h/BX=4D41h
 SeeAlso: INT 21/AX=2B44h/BX=4D41h
-----------@xxxxxxxx--------------------------
+--------X-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - PCI BIOS v2.0c Protected-Mode API
 InstallCheck:	see INT 1A/AX=B101h
 SeeAlso: INT 1A/AX=B101h
@@ -701,11 +709,11 @@ SeeAlso: INT 1A/AX=B101h
 CALL xxxxh:xxxxh - PenDOS PENDEV.SYS
 InstallCheck:	see INT 21/AX=4402h"PENDEV"
 SeeAlso: INT 21/AX=4402h"PENDEV"
-----------@xxxxxxxx--------------------------
+--------E-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Phar Lap 386/DOS-Extender v4.1
 InstallCheck:	see INT 2F/AX=ED03h
 SeeAlso: INT 2F/AX=ED03h
-----------@xxxxxxxx--------------------------
+--------X-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Plug-and-Play BIOS v1.0A
 InstallCheck:	scan paragraph boundaries F000h to FFFFh for signature string
 	  "$PnP" followed by a valid Plug-and-Play header structure
@@ -1141,7 +1149,7 @@ Values for Plug-and-Play function status code:
  008Dh	must use ESCD support for specified device
  008Eh	message not supported
  008Fh	hardware error
-SeeAlso: #0619
+SeeAlso: #0650
 
 Format of Option ROM header:
 Offset	Size	Description	(Table F054)
@@ -1339,40 +1347,40 @@ Offset	Size	Description	(Table F062)
  0Ch	var	allocated resource configuration descriptors
 	var	possible resource configuration descriptors
 	var	compatible device identifiers
-----------@xxxxxxxx--------------------------
+--------b-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - BIOS Boot Specification (BBS)
 InstallCheck:	perform Plug-and-Play installation check, then call PnP
 	  function 60h
 SeeAlso: @xxxxh:xxxxh"Plug-and-Play"
-----------@xxxxxxxx--------------------------
+--------m-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - QEMM Programming Interface (QPI)
 InstallCheck:	see INT 67/AH=3Fh
 SeeAlso: INT 67/AH=3Fh
-----------@xxxxxxxx--------------------------
+--------m-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - QEXT.SYS Private API
 InstallCheck:	see INT 15/AX=11DEh
 SeeAlso: INT 15/AX=11DEh
-----------@xxxxxxxx--------------------------
+--------m-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Quarterdeck VIDRAM
 InstallCheck:	see INT 2F/AX=D201h/BX=5649h
 SeeAlso: INT 2F/AX=D201h/BX=5649h
-----------@xxxxxxxx--------------------------
+--------s-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - SoundBlaster Speech Driver
 InstallCheck:	see INT 2F/AX=FBFBh
 SeeAlso: INT 2F/AX=FBFBh
-----------@xxxxxxxx--------------------------
+--------k-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Stacker
 InstallCheck:	see INT 2F/AX=4A12h/CX=5354h
 SeeAlso: INT 2F/AX=4A12h/CX=5354h
-----------@xxxxxxxx--------------------------
+--------s-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - VESA Audio Interface Driver
 InstallCheck:	see INT 10/AX=4F13h/BX=0002h
 SeeAlso: INT 10/AX=4F13h/BX=0002h
-----------@xxxxxxxx--------------------------
+--------m-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - Virtual Control Program Interface (VCPI) - Protected-Mode
 InstallCheck:	see INT 67/AX=DE01h
 SeeAlso: INT 67/AX=DE01h
-----------@xxxxxxxx--------------------------
+--------N-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - WEB v4.02 - MODULE APIs
 InstallCheck:	see INT 2F/AH=EEh
 SeeAlso: INT 2F/AH=EEh
@@ -1390,9 +1398,9 @@ Highest Table Number = F062
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER50A through INTER50D (preferably the original
-authenticated PKZIP archives), and the utility programs in a two additional
-archives called INTER50E.ZIP and INTER50F.ZIP
+quartet of archives named INTER52A through INTER52D (preferably the original
+authenticated PKZIP archives), and the utility and hypertext conversion
+programs in three additional archives called INTER52E.ZIP to INTER50G.ZIP
 
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------!---CONTACT_INFO---------------------

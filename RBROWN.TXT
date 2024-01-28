@@ -7,12 +7,13 @@ The MSDOS Interrupt List
 	interrupt calls on IBM PCs and compatibles.  Includes both
 	documented and undocumented functions, plus lists of I/O port, CMOS,
 	and memory locations, and far-call entry points.
-	Current version: INTER51A (release 51, 7/28/96)
-			 INTER51B
-			 INTER51C
-			 INTER51D
-			 INTER51E (conversion and utility programs)
-			 INTER51F (WinHelp-related programs)
+	Current version: INTER52A (release 52, 10/20/96)
+			 INTER52B
+			 INTER52C
+			 INTER52D
+			 INTER52E (utility programs)
+			 INTER52F (WinHelp-related programs)
+			 INTER52G (other hypertext conversion programs)
 
 DVINT
 	An extract of the MSDOS Interrupt List containing the DESQview
@@ -183,6 +184,10 @@ Fidonet BBSs belonging to DVNet (listed below).
 The Interrupt List and SPAWNO are also available on Fidonet BBSs belonging
 to the Programmer's Distribution Network.  Selected PDN member boards as of
 January 1, 1993:
+
+Skokie, IL		1:115/500  USRobotics BBS	
+502-245-8117		1:2320/38  PDN HQ Node 1	ISDN
+502-245-1146		1:2320/100 PDN HQ Node 2	V.Everything
 
 Tustin, CA		1:103/208  Homer		14400 HST/V32bis
 La Palma, CA		1:103/234  The General Store	2400
@@ -436,29 +441,30 @@ HK TAIC Maximus Kowloon              6:700/1    85-2-789-1267  PEPV32
 
 ======================================================================
 
-URLs: (still under construction)
+URLs:
 
 Home page:  http://www.pobox.com/~ralf
 
 Files in my FTP area:
+	http://www.pobox.com/~ralf/files.html
 	ftp://ftp.cs.cmu.edu/afs/cs.cmu.edu/user/ralf/pub/
 
 Files on SimTel and mirrors:
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter51a.zip
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter51b.zip
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter51c.zip
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter51d.zip
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter51e.zip
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter51f.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter52a.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter52b.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter52c.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter52d.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter52e.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter52f.zip
 	ftp://ftp.simtel.net/pub/simtelnet/msdos/c/spwno413.zip
 	ftp://ftp.simtel.net/pub/simtelnet/msdos/desqview/dvint43.zip
 	ftp://ftp.simtel.net/pub/simtelnet/msdos/desqview/dvglu172.zip
 	ftp://ftp.simtel.net/pub/simtelnet/msdos/modem/rbcom346.zip
 
 Files at Garbo:
-	ftp://garbo.uwasa.fi/pc/programming/inter51a.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter51b.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter51c.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter51d.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter51e.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter51f.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter52a.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter52b.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter52c.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter52d.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter52e.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter52f.zip

@@ -1,4 +1,4 @@
-GLOSSARY			Release 51		Last change 7/28/96
+GLOSSARY			Release 52		Last change 20oct96
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 
 A20
@@ -15,7 +15,7 @@ High Memory Area, Real Mode.
 
 ABIOS
 	(Advanced BIOS) The IBM XT/286 and PS/2 models with 80286 or
-higher processors contain two separate BIOSes.  The ABIOS is a
+higher processors contain two separate BIOSes.	The ABIOS is a
 protected-mode BIOS which is used by OS/2.  For machines without an
 ABIOS, such as the IBM AT, OS/2 loads the equivalent of the ABIOS from
 disk.  see also CBIOS
@@ -36,7 +36,7 @@ requiring a special display, versions are now available which use
 keywords in place of the special symbols.
 
 ASCIZ
-	A NUL-terminated ASCII string.  The ASCIZ string "ABC" consists
+	A NUL-terminated ASCII string.	The ASCIZ string "ABC" consists
 of the four bytes 41h, 42h, 43h, and 00h.  Unless otherwise specified,
 maximum lengths given in the interrupt list do not include the
 terminating NUL.
@@ -45,7 +45,7 @@ AVATAR
 	(Advanced Video Attribute Terminal Assembler and Recreator) A
 set of control codes which may be used to affect the output of
 characters to the screen on systems equipped with an appropriate
-driver.  Similar in intent to ANSI sequences, AVATAR has shorter
+driver.	 Similar in intent to ANSI sequences, AVATAR has shorter
 command sequences and provides additional PC-specific functionality.
 AVATAR is primarily used by the Opus and Maximus bulletin board systems
 (it was designed by one of the developers of the Opus system).
@@ -55,7 +55,7 @@ BASIC
 programming language originally designed as a means of teaching
 FORTRAN.  There are many variations of BASIC with differing
 capabilities; the majority are interpreted but compiled BASIC is
-becoming more popular.  All genuine IBM personal computers (including
+becoming more popular.	All genuine IBM personal computers (including
 the latest PS/2 models) come equipped with a cassette-based BASIC
 interpreter in ROM.
 
@@ -70,7 +70,7 @@ Big-Endian
 	One of the two major ways of organizing multi-byte numeric
 values in memory.  A big-endian layout places the most significant byte
 of the value in the lowest (first) memory location, i.e. 12345678h is
-stored as 12h 34h 56h 78h.  Motorola processors are big-endian.  Compare
+stored as 12h 34h 56h 78h.  Motorola processors are big-endian.	 Compare
 Little-Endian.
 
 BIOS
@@ -82,7 +82,7 @@ hardware directly.
 
 BIOS Parameter Block
 	The BIOS Parameter Block stores the low-level layout of a
-drive.  See also INT 21h Function 53h.
+drive.	See also INT 21h Function 53h.
 
 Boot
 	To start up the computer or operating system. The term "boot"
@@ -136,7 +136,7 @@ CBIOS
 	(Compatibility BIOS) The IBM XT/286 and PS/2 models with 80286
 or higher processors contain two separate BIOSes.  The CBIOS is a
 real-mode BIOS which is compatible with the earlier products in the IBM
-PC family and PS/2 models with 8086 processors.  See also ABIOS.
+PC family and PS/2 models with 8086 processors.	 See also ABIOS.
 
 CDS
 	see Current Directory Structure
@@ -205,7 +205,7 @@ video board.
 
 Delayed Write
 	A form of caching in which control is returned before the data is
-actually written to the storage media.  See also Cache, Write-Through.
+actually written to the storage media.	See also Cache, Write-Through.
 
 Device Driver
 	An interface module between the device-independent portions of
@@ -288,7 +288,7 @@ DTA
 	see Disk Transfer Address
 
 DWORD
-	Doubleword; four bytes.  Commonly used to hold a 32-bit
+	Doubleword; four bytes.	 Commonly used to hold a 32-bit
 segment:offset or selector:offset address.
 
 Dynamic Link Library
@@ -321,10 +321,10 @@ by the interrupt controller.
 
 ESDI
 	(Enhanced Small Device Interface) A disk drive interface type
-which was briefly popular before IDE took over.  An ESDI drive can
+which was briefly popular before IDE took over.	 An ESDI drive can
 transfer data between the drive and controller at 10, 15, or 20
 megabits per second, which is faster than an MFM or RLL controller but
-slower than what is possible with an IDE or SCSI drive.  See also IDE.
+slower than what is possible with an IDE or SCSI drive.	 See also IDE.
 
 Exception
 	A signal by the CPU that some error condition has been encountered
@@ -362,7 +362,7 @@ memory above 640K.  See also Upper Memory Block.
 External Device Interface
 	A series of calls made by the DESQview multitasker on various
 "interesting" events, which may be intercepted by programs which wish to
-keep track of the current system state.  See also Callout.
+keep track of the current system state.	 See also Callout.
 
 FAT
 	see File Allocation Table
@@ -378,7 +378,7 @@ DOS to find the contents of the file.
 
 File Control Block
 	A data record in the calling program's address space which is
-used by DOS 1.x functions to record the state of an open file.  See
+used by DOS 1.x functions to record the state of an open file.	See
 also INT 21h Function 13h.
 
 File Handle
@@ -390,7 +390,7 @@ Flush
 buffers to its final destination.
 
 FM
-	(Frequency Modulation)  A method of encoding data as a series of
+	(Frequency Modulation)	A method of encoding data as a series of
 magnetic flux reversals on disk or tape, commonly known as single-density
 recording.  In frequency modulation, a series of clock pulses are written
 at regular intervals, with one data bit for each clock pulse.  See also
@@ -398,10 +398,10 @@ MFM, RLL.
 
 Formatting
 	Preparing a storage medium (usually magnetic media such as a
-disk or tape) for storing data.  Low-level or physical formatting
+disk or tape) for storing data.	 Low-level or physical formatting
 writes all necessary housekeeping data to enable the storage device
 to read the media and may also initialize the storage units on the
-media to a known state.  High-level or logical formatting writes data
+media to a known state.	 High-level or logical formatting writes data
 used by the operating system, such as allocation information and
 directories onto media which has already been physically formatted.
 Formatting programs often perform both a low-level and a high-level
@@ -424,12 +424,12 @@ Handle
 	A short identifier, usually a small integer or a pointer, for
 some other object which is maintained or controlled by the operating
 system or environment; a particular handle may be valid system-wide or
-may have meaning only for a particular process.  See also File Handle.
+may have meaning only for a particular process.	 See also File Handle.
 
 HGC
 	(Hercules Graphics Card) A monochrome video adapter capable
-of 720x352 monochrome graphics.  The HGC was the first non-IBM video
-adapter for the IBM PC.  See also CGA, MDA.
+of 720x352 monochrome graphics.	 The HGC was the first non-IBM video
+adapter for the IBM PC.	 See also CGA, MDA.
 
 High Memory Area
 	The first 65520 bytes (64K less 16 bytes) of extended memory.
@@ -444,16 +444,16 @@ HMA
 Horizontal Retrace
 	When a monitor has finished displaying a single scan line, it must
 move it electron beam(s) back to the left edge of the CRT, during which time
-it turns off the beam.  On the original CGA (and some early clones), the
+it turns off the beam.	On the original CGA (and some early clones), the
 only time one could access the display memory without causing "snow" was
 during the horizontal or vertical retrace periods, as the display adapter
-was not itself accessing the display memory during those times.  See also
+was not itself accessing the display memory during those times.	 See also
 Vertical Retrace.
 
 IDE
 	(Integrated Drive Electronics) A type of disk drive interface
 which essentially extends the PC's expansion bus all the way to the
-drive and places the drive controller on the disk drive itself.  See
+drive and places the drive controller on the disk drive itself.	 See
 also ESDI.
 
 IFS
@@ -461,13 +461,13 @@ IFS
 
 Installable File System
 	An Installable File System which allows non-DOS format media to
-be used by DOS.  In most ways, an IFS is very similar to a networked
+be used by DOS.	 In most ways, an IFS is very similar to a networked
 drive, although an IFS would typically be local rather than remote.
 See also INT 21h Function 52h.
 
 IP
 	(Internet Protocol) The lower level (transport layer) of the
-TCP/IP protocol suite.  See also TCP, TCP/IP.
+TCP/IP protocol suite.	See also TCP, TCP/IP.
 
 IPC
 	(Inter-Process Communication) Any one of numerous methods for
@@ -551,7 +551,7 @@ MSR
 	(Model-Specific Register) Additional, indirectly-accessible,
 registers containing control or status information about various
 aspects of the processor such as caches, performance counters, and the
-like.   These registers, accessible via the RDMSR and WRMSR
+like.	These registers, accessible via the RDMSR and WRMSR
 instructions, were added with the Pentium and later-model 486
 processors.
 
@@ -660,7 +660,7 @@ color displayed for a particular color number.
 
 Park
 	To move a hard disk's read/write heads to a position in which
-it is safe to turn off the power and transport the disk drive.  Many
+it is safe to turn off the power and transport the disk drive.	Many
 drives also lock the heads into position when they are parked,
 providing additional protection from sudden movement.
 
@@ -752,7 +752,7 @@ densities than MFM recording because it encodes the data such that
 family of encoding methods, specified with two numbers indicating the
 minimum and maximum distances between one bits (flux transitions).  The
 variant normally called RLL is RLL-2,7; RLL-1,7 and RLL-3,9 are also in
-use.  MFM is in effect RLL-1,3.  See also FM, MFM.
+use.  MFM is in effect RLL-1,3.	 See also FM, MFM.
 
 ROM
 	(Read-Only Memory) A memory for program storage which may not be
@@ -763,7 +763,7 @@ RTC
 
 Scan Code
 	The actual key number sent by the keyboard, which differs from the
-key codes seen by application programs.  The enhanced (101/102-key) keyboard
+key codes seen by application programs.	 The enhanced (101/102-key) keyboard
 actually sends different scan codes than the original (83/84-key) IBM
 keyboard, but these are normally translated by the keyboard controller into
 the scan codes used by the original keyboard before they become visible to
@@ -781,7 +781,7 @@ Scatter-Read
 SCSI
 	(Small Computer Systems Interface) A system-independent
 expansion bus typically used to connect hard disks, tape drives, and
-CD-ROMs to a computer.  A host adapter connects the SCSI bus to the
+CD-ROMs to a computer.	A host adapter connects the SCSI bus to the
 computer's own bus.  See also ESDI, IDE.
 
 SDA
@@ -851,7 +851,7 @@ remain in memory after termination.
 
 Track
 	One of multiple concentric circular rings of data on a single
-data-bearing surface of a disk.  Tracks at the same location on
+data-bearing surface of a disk.	 Tracks at the same location on
 different surfaces form a cylinder.
 
 UMB
@@ -937,7 +937,7 @@ Machine.
 
 virus
 	A program which attaches itself to other programs for the purpose
-of duplicating itself.  Viruses often (but not always) contain harmful
+of duplicating itself.	Viruses often (but not always) contain harmful
 code which is triggered by some event, after a certain number of
 reproductions, or on a specific date.  See also worm.
 
@@ -945,17 +945,17 @@ VM
 	see Virtual Machine
 
 VxD
-	A virtual device driver for Windows 3.0 or 3.1.  See also
+	A virtual device driver for Windows 3.0 or 3.1.	 See also
 device driver.
 
 WORM
-	(Write Once, Read Many)  A storage medium which may be written
+	(Write Once, Read Many)	 A storage medium which may be written
 exactly once, but may not be altered once data is stored.
 
 worm
 	A program which duplicates itself, typically across networks.
 In contrast to a virus, a worm does not attach itself to other programs,
-but can reproduce itself independently.  See also virus.
+but can reproduce itself independently.	 See also virus.
 
 Write-Through
 	One of two main types of caches, the write-through cache immediately

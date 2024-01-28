@@ -17,7 +17,7 @@ SeeAlso: INT 61"TI Professional PC",INT 63"TI Professional"
 SeeAlso: INT 66"TI Professional PC"
 --------b-62---------------------------------
 INT 62 - HP 95LX - USED BY CALCULATOR
-SeeAlso: INT 60"HP 95LX"
+SeeAlso: INT 60/DI=0104h"HP 95LX"
 ----------62---------------------------------
 INT 62 - MS SQL Server/Sybase DBLIBRARY interface - ???
 	AH = function (00h to 07h)
@@ -46,7 +46,7 @@ Range:	INT 61 to INT 66, selected by scanning for two consecutive free
 Note:	the installation check for this vector is the same as that for the
 	  packet driver specification: scan for the signature string "PKT DRVR"
 	  three bytes past the interrupt handler
-SeeAlso: INT 60"Packet Driver",INT 61"XFS"
+SeeAlso: INT 60"Packet Driver Specification",INT 61"XFS"
 ----------62---------------------------------
 INT 62 - PC-DRAFT - PRIMARY DISPLAY DRIVER
 	???
@@ -64,16 +64,16 @@ Note:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  consecutive interrupt (64h by default) if it is loaded
 SeeAlso: AH=01h"ETHDEV",AH=04h"ETHDEV",AH=09h"ETHDEV",AH=0Eh"ETHDEV"
 SeeAlso: AH=14h"ETHDEV",AH=18h"ETHDEV",AH=FEh,INT 21/AH=3Fh"BW-TCP"
-SeeAlso: INT 63"BW-TCP",INT 64"BW-NFS"
+SeeAlso: INT 63/AH=03h"BW-TCP",INT 63/AH=24h"BW-TCP",INT 64"BW-NFS"
 --------V-620000-----------------------------
 INT 62 u - FGDRIVER v3.03+ - "FG_ALLOCATE" - CREATE VIRTUAL VIDEO PAGE
 	AX = 0000h
 	BX = page number (0000h-003Fh)
-Return: AX = status (0000h,0001h,0007h,0008h) (see #2647)
+Return: AX = status (0000h,0001h,0007h,0008h) (see #2722)
 Program: FGDRIVER is the external video driver for the shareware
 	  Fastgraph/Light by Ted Gruber Software
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	The amount of memory required by the virtual video page depends on the
 	  current video mode
 	The installation check consists of testing for the signature "FG" ten
@@ -81,7 +81,7 @@ Notes:	the FGDRIVER functions are rearranged with each major release, but
 SeeAlso: AX=0001h,AX=0002h,AX=0003h,AX=0038h
 Index:	installation check;Fastgraph/Light
 
-(Table 2647)
+(Table 2722)
 Values for FGDRIVER status:
  0000h	successful
  0001h	specified page is a physical or logical page
@@ -92,9 +92,9 @@ Values for FGDRIVER status:
  FFFDh	page already created, or exists as physical or virtual page
  FFFEh	invalid page number
  FFFFh	memory manager not initialized
-SeeAlso: #2648
+SeeAlso: #2723
 
-(Table 2648)
+(Table 2723)
 Values for FGDRIVER functions (by driver version):
 Name		v1.10	v3.03	v4.02
  FG_ALLOCATE	0042h	0000h	0000h
@@ -328,14 +328,14 @@ Name		v1.10	v3.03	v4.02
  FG_YALPHA	000Dh	00B2h	00E4h
  FG_YCONVERT	000Fh	00B3h	00E5h
  FG_YVIEW	 --	 --	00E6h
-SeeAlso: #2647
+SeeAlso: #2722
 --------V-620001-----------------------------
 INT 62 u - FGDRIVER v3.03+ - "FG_ALLOCCMS" - CREATE LOGICAL VIDEO PAGE (CONV)
 	AX = 0001h
 	BX = page number (0001h-003Fh)
-Return: AX = status (0000h,FFFCh,FFFDh,FFFEh) (see #2647)
+Return: AX = status (0000h,FFFCh,FFFDh,FFFEh) (see #2722)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	The only operation which is allowed on logical pages is "FG_COPYPAGE"
 	  (see AX=0014h)
 SeeAlso: AX=0000h,AX=0002h,AX=0003h,AX=0014h,AX=0038h
@@ -343,9 +343,9 @@ SeeAlso: AX=0000h,AX=0002h,AX=0003h,AX=0014h,AX=0038h
 INT 62 u - FGDRIVER v3.03+ - "FG_ALLOCEMS" - CREATE LOGICAL VIDEO PAGE (EMS)
 	AX = 0002h
 	BX = page number (0001h-003Fh)
-Return: AX = status (0000h,FFFCh,FFFDh,FFFEh) (see #2647)
+Return: AX = status (0000h,FFFCh,FFFDh,FFFEh) (see #2722)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	You must first call "FG_INITEMS" (see AX=005Dh) before using this
 	  function
 	The only operation which is allowed on logical pages is "FG_COPYPAGE"
@@ -355,9 +355,9 @@ SeeAlso: AX=0000h,AX=0001h,AX=0003h,AX=0014h,AX=0038h,AX=005Dh
 INT 62 u - FGDRIVER v3.03+ - "FG_ALLOCXMS" - CREATE LOGICAL VIDEO PAGE (XMS)
 	AX = 0003h
 	BX = page number (0001h-003Fh)
-Return: AX = status (0000h,FFFCh,FFFDh,FFFEh) (see #2647)
+Return: AX = status (0000h,FFFCh,FFFDh,FFFEh) (see #2722)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	You must first call "FG_INITXMS" (see AX=0060h) before using this
 	  function
 	The only operation which is allowed on logical pages is "FG_COPYPAGE"
@@ -366,11 +366,11 @@ SeeAlso: AX=0000h,AX=0001h,AX=0002h,AX=0014h,AX=0038h,AX=0060h
 --------V-620004-----------------------------
 INT 62 u - FGDRIVER 1.10,3.03+ - "FG_AUTOMODE" - GET VIDEO MODE W/MOST FEATURES
 	AX = 0004h
-Return: AX = proposed video mode number (see #2674 at AX=00B0h)
+Return: AX = proposed video mode number (see #2749 at AX=00B0h)
 Program: FGDRIVER is the external video driver for the shareware
 	  Fastgraph/Light by Ted Gruber Software
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 SeeAlso: AX=0005h,AX=004Bh,AX=00B0h,AX=00C1h,AX=00C7h
 --------V-620005-----------------------------
 INT 62 u - FGDRIVER v3.03+ - "FG_BESTMODE" - GET BEST VIDEO MODE GIVEN RESOLUTN
@@ -380,7 +380,7 @@ INT 62 u - FGDRIVER v3.03+ - "FG_BESTMODE" - GET BEST VIDEO MODE GIVEN RESOLUTN
 	DX = number of video pages required (both physical and virtual)
 Return: AX = proposed video mode number or FFFFh if no matching video mode
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	You must first call "FG_SVGAINIT" (see AX=00C1h) to get SVGA video
 	  modes
 SeeAlso: AX=0004h,AX=004Bh,AX=00B0h,AX=00C1h,AX=00C7h
@@ -392,7 +392,7 @@ INT 62 u - FGDRIVER v3.03+ - "FG_BOX" - DRAW UNFILLED RECTANGLE
 	DX = top row
 	SI = bottom row
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	The rectangle is drawn in screen space, respecting the clipping region,
 	  with edges of the width specified with "FG_BOXDEPTH" (see AX=0007h)
 	  (default = 1 is set by "FG_SETMODE")
@@ -405,7 +405,7 @@ INT 62 u - FGDRIVER v3.03+ - "FG_BOXDEPTH" - SET RECTANGLE BORDER WIDTH
 	BX = width of left and right edges in pixels (> 0)
 	CX = width of top and bottom edges in pixels (> 0)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 SeeAlso: AX=0006h,AX=0008h,AX=0051h,AX=0055h
 --------V-620008-----------------------------
 INT 62 u - FGDRIVER v3.03+ - "FG_BOXX" - XOR HOLLOW RECTANGLE
@@ -415,7 +415,7 @@ INT 62 u - FGDRIVER v3.03+ - "FG_BOXX" - XOR HOLLOW RECTANGLE
 	DX = top row
 	SI = bottom row
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	The rectangle is XORed into screen space, respecting the clipping
 	  region, with edges of the width specified with "FG_BOXDEPTH"
 	  (see AX=0007h) (default = 1 is set by "FG_SETMODE")
@@ -429,21 +429,21 @@ Return: AX = button states
 	    bit 0: top button pressed
 	    bit 1: bottom button pressed
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 SeeAlso: AX=0052h,AX=0056h,AX=005Eh,AX=0062h,AX=0077h
 --------V-62000A-----------------------------
 INT 62 u - FGDRIVER v3.03+ - "FG_CAPSLOCK" - GET STATE OF CAPSLOCK KEY
 	AX = 000Ah
 Return: AX = CapsLock state (0000h off, 0001h on)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 SeeAlso: AX=0082h,AX=00A4h,AX=00A8h,AX=00B1h
 --------V-62000B-----------------------------
 INT 62 u - FGDRIVER v3.03+ - "FG_CHGATTR" - APPLY CURRENT TEXT ATTRIB TO CHARS
 	AX = 000Bh
 	BX = number of characters to recolor
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	This call is ignored in graphics modes
 	Starting at the current text cursor position, the specified number of
 	  characters have their attributes to the current text attribute
@@ -455,7 +455,7 @@ INT 62 u - FGDRIVER v3.03+ - "FG_CHGTEXT" - DISPLAY STRING AT CURSOR POSITION
 	ES:BX -> string to be displayed
 Return: text cursor updated
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	This call is ignored in graphics modes
 SeeAlso: AX=000Bh,AX=0096h
 --------V-62000D-----------------------------
@@ -463,7 +463,7 @@ INT 62 u - FGDRIVER v3.03+ - "FG_CIRCLE" - DRAW UNFILLED CIRCLE
 	AX = 000Dh
 	BX = radius in horizontal screen space units (> 0)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	The circle is drawn in screen space, centered at the current graphics
 	  cursor position
 	This call is ignored in text modes
@@ -473,7 +473,7 @@ INT 62 u - FGDRIVER v3.03+ - "FG_CIRCLEF" - DRAW FILLED CIRCLE
 	AX = 000Eh
 	BX = radius in horizontal screen space units (> 0)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 SeeAlso: AX=0008h,AX=000Dh,AX=0027h,AX=0092h
 --------V-62000F-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_CLIPMAP" - DISPLAY CLIPPED IMAGE (MODE-INDEP)
@@ -484,7 +484,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_CLIPMAP" - DISPLAY CLIPPED IMAGE (MODE-INDEP)
 Desc:	display a mode-independent bitmap, showing only the portion within
 	  the current clipping limits
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	This call is ignored in text modes and in native EGA and VGA graphics
 	  modes
 	The image is drawn with its lower left corner at the current graphics
@@ -493,11 +493,11 @@ SeeAlso: AX=0011h,AX=001Fh,AX=0034h,AX=0086h,AX=00A9h,AX=00C5h
 --------V-620010-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_CLIPMASK" - DISPLAY CLIPPED IMAGE (MASKING MAP)
 	AX = 0010h
-	ES:BX -> array containing image stored as a masking map (see #2649)
+	ES:BX -> array containing image stored as a masking map (see #2724)
 	CX = number of pixel runs in masking map
 	DX = width of masking map in pixels
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	This call is ignored in text modes and in native EGA and VGA graphics
 	  modes
 	The image is drawn with its lower left corner at the current graphics
@@ -510,7 +510,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_CLPIMAGE" - DISPLAY CLIPPED IMAGE (BITMAP)
 	CX = width of bit map in bytes
 	DX = height of bit map in pixel rows
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	This call is ignored in text modes
 	The image is drawn with its lower left corner at the current graphics
 	  cursor position
@@ -524,7 +524,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_CLPRECT" - DRAW FILLED RECTANGLE IN SCREEN SPCE
 	DX = screen space row of top edge
 	SI = screen space row of bottom edge
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	This call is ignored in text modes
 SeeAlso: AX=0006h,AX=0010h,AX=0011h,AX=0023h,AX=009Bh,AX=00A9h
 --------V-620013-----------------------------
@@ -532,14 +532,14 @@ INT 62 u - FGDRIVER v4.02 - "FG_COLORS" - GET SIMULTANEOUSLY-AVAILABLE COLORS
 	AX = 0013h
 Return: AX = number of colors available at one time
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 --------V-620014-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_COPYPAGE" - TRANSFER VIDEO PAGE CONTENTS
 	AX = 0014h
 	BX = source page number (0000h-003Fh)
 	CX = destination page number (0000h-003Fh)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	If both source and destination pages are logical pages, they must both
 	  be located in the same type (conventional, EMS, XMS) of memory
 SeeAlso: AX=009Eh,AX=00A2h,AX=00C6h,AX=00CAh
@@ -548,7 +548,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_CURSOR" - SPECIFY WHETHER TEXT CURSR IS VISIBLE
 	AX = 0015h
 	BX = new state (0000h invisible, 0001h visible)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	This call is ignored in text modes
 SeeAlso: AX=000Ch,AX=0054h,AX=0058h,AX=006Bh,AX=0075h,AX=0079h,AX=007Eh
 SeeAlso: AX=00E0h
@@ -559,7 +559,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_DASH" - DRAW DASHED LINE TO ABSOLUTE POSITION
 	CX = endpoint row
 	DX = dash pattern (set bits cause drawn pixels)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	This call is ignored in text modes
 	The starting point is the current graphics cursor position; the cursor
 	  position is updated
@@ -571,7 +571,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_DASHREL" - DRAW DASHED LINE TO RELATVE POSITION
 	CX = endpoint row offset
 	DX = dash pattern (set bits cause drawn pixels)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	This call is ignored in text modes
 	The starting point is the current graphics cursor position; the cursor
 	  position is updated
@@ -582,7 +582,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_DEFCOLOR" - ASSIGN COLOR VALUE TO COLOR INDEX
 	BX = color index (0000h-00FFh)
 	CX = new color value (0 to maximum color value for current video mode)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	This call is ignored in text modes and 256-color graphics modes
 SeeAlso: AX=0040h,AX=0045h,AX=00AAh
 --------V-620019-----------------------------
@@ -593,7 +593,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_DEFPAGES" - DEF SRC/DEST PAGES FOR BLOCK XFERS
 Desc:	specify the source and destination SVGA banks for block transfers on
 	  extended video pages
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	This function is ignored if the video controller does not support
 	  extended pages or the current video mode does not allow them
 SeeAlso: AX=0014h,AX=00CAh
@@ -606,7 +606,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_DISPFILE" - DISPLAY STORED IMAGE
 	    0000h Fastgraph standard pixel run format
 	    0001h packed pixel run format
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	This call is ignored in text modes
 	The image is displayed with its lower left corner at the current
 	  graphics cursor position
@@ -618,7 +618,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_DISPLAY" - DISPLAY IMAGE (STD PIXEL RUN FORMAT)
 	CX = number of pixel runs to display
 	DX = width of image in pixels (> 0)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	This call is ignored in text modes
 	The image is displayed with its lower left corner at the current
 	  graphics cursor position
@@ -632,7 +632,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_DISPLAYP" - DISPLAY IMAGE (PACKED PIXEL RUNS)
 	CX = number of pixel runs to display
 	DX = width of image in pixels (> 0)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	This call is ignored in text modes
 	The image is displayed with its lower left corner at the current
 	  graphics cursor position
@@ -643,7 +643,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_DRAW" - DRAW SOLID LINE TO ABSOLUTE POSITION
 	BX = endpoint column
 	CX = endpoint row
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	This call is ignored in text modes
 	The starting point is the current graphics cursor position; the cursor
 	  position is updated
@@ -655,16 +655,16 @@ INT 62 u - FGDRIVER v4.02 - "FG_DRAWMAP" - DISPLAY MODE-INDEPENDENT BIT MAP
 	CX = width of bitmap in bytes
 	DX = height of bitmap in pixel rows
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 SeeAlso: AX=0011h,AX=0024h,AX=0036h,AX=0044h,AX=0099h,AX=00A0h
 --------V-62001F-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_DRAWMASK" - DISPLAY IMAGE (MASKING MAP)
 	AX = 001Fh
-	ES:BX -> array containing image stored as a masking map (see #2649)
+	ES:BX -> array containing image stored as a masking map (see #2724)
 	CX = number of pixel runs in masking map
 	DX = width of masking map in pixels
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	This call is ignored in text modes and in native EGA and VGA graphics
 	  modes
 	The image is drawn with its lower left corner at the current graphics
@@ -672,7 +672,7 @@ Notes:	the FGDRIVER functions are rearranged with each major release, but
 SeeAlso: AX=0010h,AX=001Fh,AX=00A1h,AX=00A9h
 
 Format of FGDRIVER masking map:
-Offset	Size	Description	(Table 2649)
+Offset	Size	Description	(Table 2724)
  00h	BYTE	length of first "protect" run (pixels remain unchanged)
  01h	BYTE	length of first "zero" run (pixels set to background color)
  02h	BYTE	length of second "protect" run
@@ -684,7 +684,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_DRAWREL" - DRAW SOLID LINE TO RELATIVE POSITION
 	BX = endpoint column offset
 	CX = endpoint row offset
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in text modes
 	The starting point is the current graphics cursor position; the cursor
 	  position is updated
@@ -696,7 +696,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_DRAWRELX" - XOR SOLID LINE TO RELATIVE POSITION
 	CX = endpoint row offset
 Desc:	draw a solid line, XORing each pixel onto the screen
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in text modes
 	The starting point is the current graphics cursor position; the cursor
 	  position is updated
@@ -708,7 +708,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_DRAWX" - XOR SOLID LINE TO ABSOLUTE POSITION
 	CX = endpoint row
 Desc:	draw a solid line, XORing each pixel onto the screen
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in text modes
 	The starting point is the current graphics cursor position; the cursor
 	  position is updated
@@ -722,7 +722,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_DRECT" - DRAW DITHERED RECTANGLE IN SCRN SPACE
 	SI = screen space row of bottom edge
 	ES:DI -> dithering matrix (video-mode dependent)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in text modes
 SeeAlso: AX=0006h,AX=0008h,AX=0013h,AX=003Ch,AX=0089h,AX=009Bh
 --------V-620024-----------------------------
@@ -732,7 +732,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_DRWIMAGE" - DISPLAY BITMAPPED IMAGE
 	CX = width of bitmap in bytes
 	DX = height of bitmap in pixel rows
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The image will be drawn with its lower left corner at the current
 	  cursor position (either text or graphics)
 SeeAlso: AX=0011h,AX=0036h,AX=0044h,AX=0099h,AX=00A0h
@@ -742,7 +742,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_EGACHECK" - GET INFO ABOUT ACTIVE EGA DISPLAY
 Return: AX = number of 64K banks of video memory, or 0000h if no EGA or EGA
 	      without an Enhanced Color Display
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=00C2h
 --------V-620026-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_ELLIPSE" - DRAW UNFILLED ELLIPSE IN SCRN SPACE
@@ -750,7 +750,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_ELLIPSE" - DRAW UNFILLED ELLIPSE IN SCRN SPACE
 	BX = horizontal semi-axis length in screen space units
 	CX = vertical semi-axis length in screen space units
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in text modes
 	The ellipse is centered at the current graphics cursor position
 SeeAlso: AX=0006h,AX=000Dh,AX=0027h,AX=008Fh,AX=0093h
@@ -760,7 +760,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_ELLIPSEF" - DRAW FILLED ELLIPSE IN SCREEN SPACE
 	BX = horizontal semi-axis length in screen space units
 	CX = vertical semi-axis length in screen space units
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in text modes
 	The ellipse is centered at the current graphics cursor position
 SeeAlso: AX=0006h,AX=000Eh,AX=0026h,AX=008Fh,AX=0092h
@@ -768,7 +768,7 @@ SeeAlso: AX=0006h,AX=000Eh,AX=0026h,AX=008Fh,AX=0092h
 INT 62 u - FGDRIVER v4.02 - "FG_ERASE" - CLEAR THE ACTIVE VIDEO PAGE
 	AX = 0028h
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This function sets each pixel to 0 in graphics modes, each character
 	  cell to a blank with a gray foreground attribute in text modes
 SeeAlso: AX=0029h,AX=002Bh,AX=0035h
@@ -777,7 +777,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_FADEIN" - FADE IN HIDDEN PAGE
 	AX = 0029h
 	BX = delay (0000h = fastest possible fade-in)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The current hidden page is copied to the current visible page in small
 	  random sections to produce a fade-in effect
 	This call is ignored in text modes
@@ -787,7 +787,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_FADEOUT" - FADE OUT TO CURRENT COLOR
 	AX = 002Ah
 	BX = delay (0000h = fastest possible fade-out)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The current visible page is filled with pixels of the current color in
 	  small random sections to give a fade-out effect
 	This call is ignored in text modes
@@ -799,14 +799,14 @@ Desc:	fill the active video page with pixels of the current color (graphics
 	  modes) or the block character DBh with the current character
 	  attributes (text modes)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0028h,AX=0029h,AX=002Ah
 --------V-62002C-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_FINDPAGE" - FIND AVAILABLE VIRTUAL/LOGICAL PAGE
 	AX = 002Ch
 Return: AX = first available page number (virtual or logical page)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0028h
 --------V-62002D-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_FLICDONE" - CLOSE FLIC FILE
@@ -814,25 +814,25 @@ INT 62 u - FGDRIVER v4.02 - "FG_FLICDONE" - CLOSE FLIC FILE
 	ES:BX -> context descriptor (see AX=0030h)
 Return: nothing
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=002Eh,AX=0030h
 --------V-62002E-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_FLICHEAD" - READ FLI/FLC FILE HEADER
 	AX = 002Eh
-	ES:BX -> FLICHEAD variable pointer record (see #2651)
-Return: AX = status (see #2650)
+	ES:BX -> FLICHEAD variable pointer record (see #2726)
+Return: AX = status (see #2725)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=002Dh,AX=002Fh,AX=0030h,AX=0032h
 
-(Table 2650)
+(Table 2725)
 Values for FGDRIVER FLIC processing status:
  0000h	successful
  FFFEh	not an FLI or FLC file
  FFFFh	file not found
 
 Format of FGDRIVER FLICHEAD variable pointer record:
-Offset	Size	Description	(Table 2651)
+Offset	Size	Description	(Table 2726)
  00h	WORD	segment of ASCIZ FLI/FLC file name
  02h	WORD	offset of ASCIZ FLI/FLC file name
  04h	WORD	segment of buffer for 128-byte file header
@@ -844,19 +844,19 @@ INT 62 u - FGDRIVER v4.02 - "FG_FLICMODE" - GET OPTIMAL VIDEO MODE FOR FLI/FLC
 Return: AX = optimal 256-color graphics mode number
 	    FFFFh if invalid file header
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=002Eh,AX=0030h
 --------V-620030-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_FLICOPEN" - OPEN FLI/FLC FILE
 	AX = 0030h
-	ES:BX -> FLICOPEN variable pointer record (see #2652)
-Return: AX = status (see #2650)
+	ES:BX -> FLICOPEN variable pointer record (see #2727)
+Return: AX = status (see #2725)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=002Dh,AX=002Eh,AX=002Fh,AX=0030h,AX=0031h,AX=0032h
 
 Format of FGDRIVER FLICOPEN variable pointer record:
-Offset	Size	Description	(Table 2652)
+Offset	Size	Description	(Table 2727)
  00h	WORD	segment of ASCIZ FLI/FLC file name
  02h	WORD	offset of ASCIZ FLI/FLC file name
  04h	WORD	segment of buffer for 16-byte file context descriptor
@@ -866,28 +866,28 @@ INT 62 u - FGDRIVER v4.02 - "FG_FLICPLAY" - DISPLAY NEXT FRAME(S) IN FLI/FLC
 	AX = 0031h
 	ES:BX -> context descriptor (see AX=0030h)
 	CX = number of frames to display starting at current frame
-	DX = control flags (see #2653)
+	DX = control flags (see #2728)
 Return: AX = number of frames displayed
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0030h,AX=0033h,AX=00B8h
 
 Bitfields for FGDRIVER FLI/FLC control flags:
-Bit(s)	Description	(Table 2653)
+Bit(s)	Description	(Table 2728)
  0	skip inter-frame delay specified in FLI/FLC header
  1	display relative to current graphics position
  2	dipslay image from the FG_IMAGEBUF buffer instead of file
 --------V-620032-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_FLICSIZE" - GET IMAGE SIZE
 	AX = 0032h
-	ES:BX -> FLICSIZE variable pointer record (see #2654)
+	ES:BX -> FLICSIZE variable pointer record (see #2729)
 Return: image height/width buffers updated; height is set to FFFFh on error
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=002Eh,AX=0030h
 
 Format of FGDRIVER FLICSIZE variable pointer record:
-Offset	Size	Description	(Table 2654)
+Offset	Size	Description	(Table 2729)
  00h	WORD	segment of buffer for 128-byte FLI/FLC file header
  02h	WORD	offset of buffer for 128-byte FLI/FLC file header
  04h	WORD	segment of WORD buffer for image width in pixels
@@ -903,16 +903,16 @@ INT 62 u - FGDRIVER v4.02 - "FG_FLICSKIP" - SKIP FRAME(S) IN FLI/FLC FILE
 Return: AX = number of frames skipped (may be less than requested if EOF)
 	    0000h if resetting to first frame
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0030h,AX=0031h
 --------V-620034-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_FLIPMASK" - DISPLAY INV CLIPPED IMAGE (MASKMAP)
 	AX = 0034h
-	ES:BX -> array containing image stored as a masking map (see #2649)
+	ES:BX -> array containing image stored as a masking map (see #2724)
 	CX = number of pixel runs in masking map
 	DX = width of masking map in pixels
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in text modes and in native EGA and VGA graphics
 	  modes
 	The image is drawn with its lower left corner at the current graphics
@@ -926,7 +926,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_FLOOD" - FLOOD FILL ARBITRARY CLOSED REGION
 Desc:	fill the bounded region around the specified point (respecting clipping
 	  region) with the currrent color
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This function is ignored in text modes
 SeeAlso: AX=0028h,AX=0085h
 --------V-620036-----------------------------
@@ -936,7 +936,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_FLPIMAGE" - DISPLAY INV CLIPPED IMAGE (BITMAP)
 	CX = width of bit map in bytes
 	DX = height of bit map in pixel rows
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in text modes
 	The image is drawn with its lower left corner at the current graphics
 	  cursor position
@@ -947,7 +947,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_FONTSIZE" - SPECIFY FONT SIZE FOR TEXT OUTPUT
 	AX = 0037h
 	BX = desired character height in scan lines (8, 14, 16)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored if the current mode is not a VGA or SVGA graphics
 	  mode, or the specified character height is not 8, 14, or 16
 SeeAlso: AX=0096h
@@ -955,16 +955,16 @@ SeeAlso: AX=0096h
 INT 62 u - FGDRIVER v4.02 - "FG_FREEPAGE" - FREE VIRTUAL OR LOGICAL VIDEO PAGE
 	AX = 0038h
 	BX = page number (0000h-003Fh)
-Return: AX = status (0000h,0001h,0007h,0009h) (see #2647)
+Return: AX = status (0000h,0001h,0007h,0009h) (see #2722)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0000h,AX=0001h,AX=0002h,AX=0003h
 --------V-620039-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETADDR" - GET SEGMENT OF ACTIVE VIDEO PAGE
 	AX = 0039h
 Return: AX = segment of active video page
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0042h,AX=00ACh
 --------V-62003A-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETATTR" - GET CHARACTER ATTRIB FOR POSITION
@@ -973,20 +973,20 @@ INT 62 u - FGDRIVER v4.02 - "FG_GETATTR" - GET CHARACTER ATTRIB FOR POSITION
 	CX = column
 Return: AX = character attribute at specified location on active video page
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in graphics modes
 SeeAlso: AX=000Bh,AX=003Dh,AX=0040h,AX=00A6h
 --------V-62003B-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETBANKS" - GET SVGA READ AND WRITE BANKS
 	AX = 003Bh
-	ES:BX -> GETBANKS variable pointer record (see #2655)
+	ES:BX -> GETBANKS variable pointer record (see #2730)
 Return: nothing
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=00A7h
 
 Format of FGDRIVER GETBANKS variable pointer record:
-Offset	Size	Description	(Table 2655)
+Offset	Size	Description	(Table 2730)
  00h	WORD	segment of WORD buffer for read bank number
  02h	WORD	offset of WORD buffer for read bank number
  04h	WORD	segment of WORD buffer for write bank number
@@ -1000,7 +1000,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_GETBLOCK" - GRAB RECTANGLE OF DISPLAY
 	SI = top row
 	DI = bottom row
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	In text modes, coordinates are character positions; in graphics modes,
 	  they are defined in screen space, and the left and right edges are
 	  adjusted to a byte boundary if necessary
@@ -1013,20 +1013,20 @@ INT 62 u - FGDRIVER v4.02 - "FG_GETCHAR" - GET CHARACTER FOR SCREEN POSITION
 	CX = column
 Return: AX = character at specified location on active video page
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in graphics modes
 SeeAlso: AX=000Bh,AX=003Ah,AX=0096h,AX=00A6h,AX=00C8h
 --------V-62003E-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETCLIP" - GET CLIPPING REGION IN SCREEN SPACE
 	AX = 003Eh
-	ES:BX -> GETCLIP variable pointer record (see #2656)
+	ES:BX -> GETCLIP variable pointer record (see #2731)
 Return: variables specifed by GETCLIP structure updated
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=00CAh
 
 Format of FGDRIVER GETCLIP variable pointer record:
-Offset	Size	Description	(Table 2656)
+Offset	Size	Description	(Table 2731)
  00h	WORD	segment of WORD buffer for minimum X coordinate (left edge)
  02h	WORD	offset of WORD buffer for minimum X coordinate (left edge)
  04h	WORD	segment of WORD buffer for maximum X coordinate (right edge)
@@ -1040,14 +1040,14 @@ INT 62 u - FGDRIVER v4.02 - "FG_GETCLOCK" - GET CLOCK TICKS SINCE MIDNIGHT
 	AX = 003Fh
 Return: DX:AX = number of clock ticks since midnight
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: INT 1A/AH=00h
 --------V-620040-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETCOLOR" - GET CURRENT TEXT ATTRIBUTE
 	AX = 0040h
 Return: AX = current text attribute or color index (graphics modes)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=000Bh,AX=003Ah,AX=00A6h
 --------V-620041-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETDACS" - GET VIDEO DAC CONTENTS
@@ -1056,29 +1056,29 @@ INT 62 u - FGDRIVER v4.02 - "FG_GETDACS" - GET VIDEO DAC CONTENTS
 	DX = starting DAC register number (0000h to 00FFh)
 	ES:BX -> buffer for DAC red/green/blue triples
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The register number wraps back to zero after FFh
 SeeAlso: AX=004Eh,AX=0086h,AX=00ABh
 --------V-620042-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETENTRY" - GET PAGE TYPE AND ADDRESS
 	AX = 0042h
-	ES:BX -> variable pointer record (see #2657)
+	ES:BX -> variable pointer record (see #2732)
 	CX = page number (00h-3Fh)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	Page addresses are segments for pages stored in conventional memory
 	  (including physical and virtual pages), and EMS or XMS handles for
 	  pages stored in EMS or XMS
 SeeAlso: AX=0000h,AX=00ACh
 
 Format of FGDRIVER GETENTRY variable pointer record:
-Offset	Size	Description	(Table 2657)
+Offset	Size	Description	(Table 2732)
  00h	WORD	segment of WORD buffer for page address
  02h	WORD	offset of WORD buffer for page address
- 04h	WORD	segment of WORD buffer for page type (se #2658)
+ 04h	WORD	segment of WORD buffer for page type (se #2733)
  06h	WORD	offset of WORD buffer for page type
 
-(Table 2658)
+(Table 2733)
 Values for FGDRIVER page type:
  0000h	unallocated
  0001h	physical
@@ -1091,7 +1091,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_GETHPAGE" - GET CURRENT HIDDEN VIDEO PAGE NUM
 	AX = 0043h
 Return: AX = current hidden video page number (0000h-003Fh)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=004Ch,AX=0050h,AX=00AEh
 --------V-620044-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETIMAGE" - STORE IMAGE AS BITMAP
@@ -1100,7 +1100,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_GETIMAGE" - STORE IMAGE AS BITMAP
 	CX = width of bitmap in bytes
 	DX = height of bitmap in pixel rows
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0011h,AX=0024h,AX=0036h,AX=0099h,AX=00A0h
 --------V-620045-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETINDEX" - GET COLOR VALUE FOR COLOR INDEX
@@ -1108,21 +1108,21 @@ INT 62 u - FGDRIVER v4.02 - "FG_GETINDEX" - GET COLOR VALUE FOR COLOR INDEX
 	BX = color index (0000h to 00FFh)
 Return: AX = color value for specified color index
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call returns the value passed to it in text and 256-color
 	  graphics modes
 SeeAlso: AX=0018h,AX=0040h
 --------V-620046-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETKEY" - GET NEXT KEYSTROKE
 	AX = 0046h
-	ES:BX -> variable pointer record (see #2659)
+	ES:BX -> variable pointer record (see #2734)
 Return: (after next keystroke if no typeahead) variables updated
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=000Ah,AX=0063h,AX=0069h,AX=00DEh,INT 16/AH=00h
 
 Format of FGDRIVER GETKEY variable pointer record:
-Offset	Size	Description	(Table 2659)
+Offset	Size	Description	(Table 2734)
  00h	WORD	segment of BYTE buffer for ASCII keycode
  02h	WORD	offset of BYTE buffer for ASCII keycode
  04h	WORD	segment of BYTE buffer for extended keycode
@@ -1132,7 +1132,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_GETLINES" - GET TEXT ROWS FOR CURR VIDEO MODE
 	AX = 0047h
 Return: AX = number of text rows on screen in current video mode
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=00AFh,AX=00C2h
 --------V-620048-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETMAP" - STORE IMAGE AS MODE-INDEPENDNT BITMAP
@@ -1143,7 +1143,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_GETMAP" - STORE IMAGE AS MODE-INDEPENDNT BITMAP
 Return: each bit in bitmap is set if corresponding pixel is of the current
 	  color, cleared otherwise
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in text modes
 SeeAlso: AX=0011h,AX=001Eh,AX=0024h
 --------V-620049-----------------------------
@@ -1152,7 +1152,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_GETMAXX" - GET MAXIMUM COLUMN IN SCREEN SPACE
 Return: AX = maximum X coordinate in screen space
 	    (or character space if in text mode)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=004Ah,AX=00C1h
 --------V-62004A-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETMAXY" - GET MAXIMUM ROW IN SCREEN SPACE
@@ -1160,7 +1160,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_GETMAXY" - GET MAXIMUM ROW IN SCREEN SPACE
 Return: AX = maximum Y coordinate in screen space
 		(or character space if in text mode)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0049h,AX=00C1h
 --------V-62004B-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETMODE" - GET CURRENT VIDEO MODE NUMBER
@@ -1168,14 +1168,14 @@ INT 62 u - FGDRIVER v4.02 - "FG_GETMODE" - GET CURRENT VIDEO MODE NUMBER
 	ES:BX -> WORD ???
 Return: AX = current video mode number
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=00B0h
 --------V-62004C-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETPAGE" - GET ACTIVE VIDEO PAGE NUMBER
 	AX = 004Ch
 Return: AX = active video page (0000h-003Fh)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0039h,AX=0042h,AX=0043h,AX=0050h,AX=00B2h
 --------V-62004D-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETPIXEL" - GET COLOR OF SPECIFIED PIXEL
@@ -1185,22 +1185,22 @@ INT 62 u - FGDRIVER v4.02 - "FG_GETPIXEL" - GET COLOR OF SPECIFIED PIXEL
 Return: AX = color value of pixel (0 to num_colors-1)
 	    0000h in text modes
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=003Ah,AX=003Dh,AX=008Fh,AX=0090h
 --------V-62004E-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETRGB" - GET VIDEO DAC REGISTER CONTENTS
 	AX = 004Eh
-	ES:BX -> variable pointer record (see #2660)
+	ES:BX -> variable pointer record (see #2735)
 	CX = DAC register number
 Return: variables updated
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in text modes and CGA/EGA video modes (since
 	  they do not use DAC registers)
-SeeAlso: AX=00441h,AX=0086h,AX=00ABh
+SeeAlso: AX=0041h,AX=0086h,AX=00ABh
 
 Format of FGDRIVER GETRGB variable pointer record:
-Offset	Size	Description	(Table 2660)
+Offset	Size	Description	(Table 2735)
  00h	WORD	segment of WORD buffer for red component of DAC register
  02h	WORD	offset of WORD buffer for red component
  04h	WORD	segment of WORD buffer for green component of DAC register
@@ -1210,14 +1210,14 @@ Offset	Size	Description	(Table 2660)
 --------V-62004F-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETVIEW" - GET VIEWPORT EXTREME LIMITS
 	AX = 004Fh
-	ES:BX -> variable pointer record (see #2661)
+	ES:BX -> variable pointer record (see #2736)
 Return: indicated variables updated
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=00B5h
 
 Format of FGDRIVER GETVIEW variable pointer record:
-Offset	Size	Description	(Table 2661)
+Offset	Size	Description	(Table 2736)
  00h	WORD	segment of WORD buffer for viewport left edge (viewport units)
  02h	WORD	offset of WORD buffer for viewport left edge (viewport units)
  04h	WORD	segment of WORD buffer for viewport right edge (viewport units)
@@ -1239,14 +1239,14 @@ INT 62 u - FGDRIVER v4.02 - "FG_GETVPAGE" - GET VISIBLE VIDEO PAGE NUMBER
 	AX = 0050h
 Return: AX = visible video page (0000h-003Fh)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0043h,AX=004Ch,AX=00B6h
 --------V-620051-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETXBOX" - GET WIDTH OF VERTICAL BOX LINES
 	AX = 0051h
 Return: AX = width (in pixels) of left and right edges of rectangles
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0006h,AX=0007h,AX=0008h,AX=006Bh
 --------V-620052-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETXJOY" - GET HORIZONTAL POSITION OF JOYSTICK
@@ -1255,7 +1255,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_GETXJOY" - GET HORIZONTAL POSITION OF JOYSTICK
 Return: AX = horizontal position of joystick
 	    FFFFh if joystick uninitialized or not present
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The actual coordinates are processor- and joystick-dependent
 	You must call "FG_INITJOY" (AX=005Eh) before using this function
 SeeAlso: AX=0009h,AX=0056h,AX=005Eh,AX=0062h,AX=0077h
@@ -1267,21 +1267,21 @@ Return: AX = string justification
 	    0001h strings are right-justified at current graphics X position
 	    FFFFh strings are left-justified at current graphics X position
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=006Ch,AX=007Bh
 --------V-620054-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETXPOS" - GET GRAPHICS CURSOR COLUMN
 	AX = 0054h
 Return: AX = screen space X coordinate of graphics cursor position
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0058h,AX=007Eh,AX=007Fh
 --------V-620055-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETYBOX" - GET WIDTH OF HORIZONTAL BOX LINES
 	AX = 0055h
 Return: AX = width (in pixels) of top and bottom edges of rectangles
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0006h,AX=0007h,AX=0008h,AX=0063h
 --------V-620056-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETYJOY" - GET VERTICAL POSITION OF JOYSTICK
@@ -1290,7 +1290,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_GETYJOY" - GET VERTICAL POSITION OF JOYSTICK
 Return: AX = vertical position of joystick
 	    FFFFh if joystick uninitialized or not present
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The actual coordinates are processor- and joystick-dependent
 	You must call "FG_INITJOY" (AX=005Eh) before using this function
 SeeAlso: AX=0009h,AX=0052h,AX=005Eh,AX=0062h,AX=0077h
@@ -1302,20 +1302,20 @@ Return: AX = string justification
 	    0001h strings have top edge at current graphics Y position
 	    FFFFh strings have bottom edge at current graphics Y position
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0053h,AX=0065h
 --------V-620058-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_GETYPOS" - GET GRAPHICS CURSOR ROW
 	AX = 0058h
 Return: AX = screen space Y coordinate of graphics cursor position
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0054h,AX=007Eh,AX=007Fh
 --------V-620059-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_HUSH" - STOP ASYNCHRONOUS SOUND IMMEDIATELY
 	AX = 0059h
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This function immediately stops any sounds started with "FG_MUSICB",
 	  "FG_SOUNDS", or "FG_VOICES"; it is ignored if no asynchronous sound
 	  is playing
@@ -1326,7 +1326,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_HUSHNEXT" - STOP ASYNCHRONOUS SOUND
 Program: FGDRIVER is the external video driver for the shareware
 	  Fastgraph/Light by Ted Gruber Software
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This function stops any sounds started with "FG_MUSICB", "FG_SOUNDS",
 	  or "FG_VOICES" after the current repetition completes; it is ignored
 	  unless asynchronous sound is continuous
@@ -1338,7 +1338,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_IMAGEBUF" - SPECIFY TEMPORARY IMAGE BUFFER
 		  images
 	CX = size of buffer in bytes or 0000h to use internal buffer
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	Fastgraph's internal buffer is 4096 bytes; this function allows the
 	  application to define a larger buffer which will typically speed
 	  processing
@@ -1349,7 +1349,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_IMAGESIZ" - DETERMINE IMAGE STORAGE REQUIREMENT
 	BX = image width in pixels
 	CX = image height in pixels
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 Return: DX:AX = size in bytes of mode-specific bitmap for current video mode
 SeeAlso: AX=003Ch,AX=0098h
 --------V-62005D-----------------------------
@@ -1359,7 +1359,7 @@ Return: AX = status
 	    0000h successful
 	    FFFFh expanded memory manager inaccessible or not installed
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0002h,AX=0060h"v4.02"
 --------V-62005E-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_INITJOY" - INITIALIZE JOYSTICK USE
@@ -1369,7 +1369,7 @@ Return: AX = status
 	    0000h successful
 	    FFFFh joystick not connected or no game port
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	Fastgraph assumes that the requested joystick is centered at the time
 	  this function is called
 SeeAlso: AX=0009h,AX=0052h,AX=0056h,AX=0062h,AX=0077h
@@ -1379,7 +1379,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_INITPM"??? - (NOT IMPLEMENTED)
 	???
 Return: ???
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 --------V-620060-----------------------------
 INT 62 u - FGDRIVER v1.10 only - "FG_DISPPCX" - DISPLAY PCX FILE
 	AX = 0060h
@@ -1392,7 +1392,7 @@ Return: AX = status
 	    0001h file not found
 	    0002h file is not a valid PCX file
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in text modes and Hercules low-resolution graphics
 	The image is displayed with its upper left corner at the current
 	  graphics cursor position
@@ -1404,10 +1404,10 @@ Return: AX = status
 	    0000h successful
 	    FFFFh extended memory manager inaccessible or not installed
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0003h,AX=005Dh
 --------V-620061-----------------------------
-INT 62 u - FDGRIVER v4.02 - "FG_INSIDE" - CHECK IF POINT INSIDE CONVEX POLYGON
+INT 62 u - FGDRIVER v4.02 - "FG_INSIDE" - CHECK IF POINT INSIDE CONVEX POLYGON
 	AX = 0061h
 	ES:BX -> vertex array
 	CX = number of vertices
@@ -1418,15 +1418,15 @@ Return: AX = result
 	    0001h point is inside polygon
 	    undefined if not a convex polygon
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0092h,AX=0093h,AX=0094h
 --------V-620062-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_INTJOY" - GET KEYCODES CORRESP TO JOYSTICK POS
 	AX = 0062h
 	CX = joystick number (0001h or 0002h)
-	ES:BX -> variable pointer record (see #2662)
+	ES:BX -> variable pointer record (see #2737)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	If the indicated joystick has not been initialized with AX=008Eh, both
 	  the button code and joystick position will be set to 00h
 	If either button is pressed, a button code of 0Dh is returned;
@@ -1434,7 +1434,7 @@ Notes:	the FGDRIVER functions are rearranged with each major release, but
 SeeAlso: AX=0009h,AX=0052h,AX=0046h,AX=005Eh,AX=0077h
 
 Format of FGDRIVER INTJOY variable pointer record:
-Offset	Size	Description	(Table 2662)
+Offset	Size	Description	(Table 2737)
  00h	WORD	segment of BYTE buffer for button code
  02h	WORD	offset of BYTE buffer for button code
  04h	WORD	segment of BYTE buffer for joystick position
@@ -1442,16 +1442,16 @@ Offset	Size	Description	(Table 2662)
 --------V-620063-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_INTKEY" - GET KEYSTROKE, NO WAIT
 	AX = 0063h
-	ES:BX -> variable pointer record (see #2663)
+	ES:BX -> variable pointer record (see #2738)
 Return: variables updated
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	If the keyboard buffer is empty, both the ASCII and extended keycodes
 	  are set to 00h
 SeeAlso: AX=000Ah,AX=0046h,AX=0069h,AX=00DEh,INT 16/AH=01h
 
 Format of FGDRIVER INTKEY variable pointer record:
-Offset	Size	Description	(Table 2663)
+Offset	Size	Description	(Table 2738)
  00h	WORD	segment of BYTE buffer for ASCII keycode
  02h	WORD	offset of BYTE buffer for ASCII keycode
  04h	WORD	segment of BYTE buffer for extended keycode
@@ -1464,7 +1464,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_INVERT" - INVERT ORIENTATION OF BITMAP
 	DX = height of bitmap in pixel rows
 Return: nothing
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 --------V-620065-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_JUSTIFY" - SET TEXT OUTPUT JUSTIFICATION
 	AX = 0065h
@@ -1473,14 +1473,14 @@ INT 62 u - FGDRIVER v4.02 - "FG_JUSTIFY" - SET TEXT OUTPUT JUSTIFICATION
 	CX = vertical justification
 	      (00h centered, 01h top of characters, FFh bottom of chars)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=000Ch,AX=0037h,AX=0053h,AX=0057h,AX=0096h
 --------V-620066-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_KBINIT" - ENABLE/DISABLE LOW-LEVEL KBD HANDLER
 	AX = 0066h
 	BX = new state (0000h disabled, 0001h enabled)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	When the low-level handler is enabled, "FG_GETKEY", "FG_INTKEY",
 	  "FG_WAITKEY", and all other functions calling DOS or BIOS keyboard
 	  services become unavailable
@@ -1491,13 +1491,13 @@ INT 62 u - FGDRIVER v4.02 - "FG_KBLAST" - GET MOST RECENT SCANCODE PROCESSED
 Return: AX = scancode for keypress most recently processed by FastGraph's
 	      low-level keyboard handler, or 0000h if no keys since FG_KBINIT
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0066h,AX=0068h,AX=0069h
 --------V-620068-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_KBRESET" - RESET LOW-LEVEL KEYBOARD HANDLER
 	AX = 0068h
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0066h,AX=0067h,AX=0069h
 --------V-620069-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_KBTEST" - CHECK WHETHER SPECIFIED KEY PRESSED
@@ -1507,7 +1507,7 @@ Return: AX = state
 	    0000h key is not pressed
 	    0001h key is currently pressed
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The low-level keyboard handler must have been enabled with AX=0066h
 SeeAlso: AX=0066h,AX=0067h,INT 16/AH=01h
 --------V-62006A-----------------------------
@@ -1523,7 +1523,7 @@ Return: AX = status
 	    0001h file not found
 	    0002h not a .PCX file
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=006Ch,AX=00B9h,AX=00D5h
 --------V-62006B-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_LOCATE" - SET TEXT-MODE CURSOR POSITION
@@ -1531,7 +1531,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_LOCATE" - SET TEXT-MODE CURSOR POSITION
 	BX = row
 	CX = column
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	There are only eight text cursors shared by successive groups of
 	  eight video pages (pages 0, 8, 16, ... share one cursor, 1, 9, ...
 	  share the second, etc)
@@ -1548,7 +1548,7 @@ Return: AX = status
 	    0000h successful
 	    0001h file not created
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The PCX file is created from the specified region of the active video
 	  page; the left and right edges are adjusted to a byte boundary if
 	  necessary
@@ -1567,7 +1567,7 @@ Return: AX = status
 	    0000h successful
 	    0001h file not created
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The PPR file is created from the specified region of the active video
 	  page; the left and right edges are adjusted to byte boundaries if
 	  necessary
@@ -1586,7 +1586,7 @@ Return: AX = status
 	    0000h successful
 	    0001h file not created
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The SPR file is created from the specified region of the active video
 	  page; the left and right edges are adjusted to byte boundaries if
 	  necessary
@@ -1601,7 +1601,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_MAPRGB" - MAP COLOR COMPONENTS INTO PALETTE VAL
 	DX = blue component
 Return: AX = mode-specific palette value corresponding to specified components
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This function is only meaningful in 16-color graphics modes
 SeeAlso: AX=004Eh,AX=00B3h
 --------V-620070-----------------------------
@@ -1609,7 +1609,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_MEASURE" - GET DELAY UNITS PER CLOCK TICK
 	AX = 0070h
 Return: AX = delay units per clock tick (processor-dependent)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	These delay units are used by "FG_STALL" (see AX=00BFh)
 SeeAlso: AX=00BFh
 --------V-620071-----------------------------
@@ -1617,14 +1617,14 @@ INT 62 u - FGDRIVER v4.02 - "FG_MEMAVAIL" - QUERY AMOUNT OF FREE MEMORY
 	AX = 0071h
 Return: DX:AX = number of bytes of conventional memory available
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=005Dh,AX=0072h
 --------V-620072-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_MEMORY" - GET SIZE OF VIDEO MEMORY
 	AX = 0072h
 Return: AX = size of video memory in KB
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	You must first call "FG_SVGAINIT" (see AX=00C1h) before using this
 	  function
 SeeAlso: AX=0071h
@@ -1636,7 +1636,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_MOUSE256" - DEFINE 256-COLOR MOUSE CURSOR
 	DX = Y offset of hot-spot within mouse cursor
 Return: nothing
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	the cursor definition array consists of 256 bytes defining the 16x16
 	  screen mask, followed by another 256 bytes definining the 16x16
 	  cursor mask
@@ -1646,17 +1646,17 @@ INT 62 u - FGDRIVER v4.02 - "FG_MOUSEBUT" - GET MOUSE BUTTON PRESS/RELEASE CNTS
 	AX = 0074h
 	CX = mouse button (1 = left press, 2 = right press, 3 = middle press,
 		  -1=left release, -2=right release, -3=middle release)
-	ES:BX -> variable pointer record (see #2664)
+	ES:BX -> variable pointer record (see #2739)
 Return: variables updated
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This function returns the count of presses or releases since the last
 	  call to this function; if the count is zero, row and column will
 	  also be zero
 SeeAlso: AX=0075h,AX=0077h,AX=007Ah
 
 Format of FGDRIVER MOUSEBUT variable pointer record:
-Offset	Size	Description	(Table 2664)
+Offset	Size	Description	(Table 2739)
  00h	WORD	segment of WORD buffer for press/release count
  02h	WORD	offset of WORD buffer for press/release count
  04h	WORD	segment of WORD buffer for screen space col of last press/rls
@@ -1669,14 +1669,14 @@ INT 62 u - FGDRIVER v4.02 - "FG_MOUSECUR" - SPECIFY TEXT-MODE MOUSE CURSOR
 	BX = screen mask
 	CX = cursor mask
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in graphics modes
 SeeAlso: AX=007Bh,AX=007Dh
 --------V-620076-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_MOUSEFIN" - UNHOOK FASTGRAPH MOUSE HANDLER
 	AX = 0076h
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This function should be called before switching back to text mode if
 	  "FG_MOUSEINI" was called while in an SVGA graphics mode
 SeeAlso: AX=0077h
@@ -1688,7 +1688,7 @@ Return: AX = status
 	    0003h three-button mouse
 	    FFFFh initialization failed
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	After this call, the mouse cursor is invisible
 SeeAlso: AX=0076h,AX=0078h,AX=007Ch
 --------V-620078-----------------------------
@@ -1699,7 +1699,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_MOUSELIM" - SPECIFY MOUSE CURSOR LIMITS
 	DX = top-most position allowed
 	SI = bottom-most position allowed
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0077h,AX=0079h,INT 33/AX=0007h,INT 33/AX=0008h
 --------V-620079-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_MOUSEMOV" - SET MOUSE CURSOR POSITION
@@ -1707,20 +1707,20 @@ INT 62 u - FGDRIVER v4.02 - "FG_MOUSEMOV" - SET MOUSE CURSOR POSITION
 	BX = new column
 	CX = new row
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This function will not move the mouse cursor outside the bounding box
 	  specified with AX=009Bh
 SeeAlso: AX=0078h,AX=007Ah,INT 33/AX=0004h
 --------V-62007A-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_MOUSEPOS" - GET CURRENT MOUSE POSITION
 	AX = 007Ah
-	ES:BX -> variable pointer record (see #2665)
+	ES:BX -> variable pointer record (see #2740)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0079h
 
 Format of FGDRIVER MOUSEPOS variable pointer record:
-Offset	Size	Description	(Table 2665)
+Offset	Size	Description	(Table 2740)
  00h	WORD	segment of WORD buffer for mouse column
  02h	WORD	offset of WORD buffer for mouse column
  04h	WORD	segment of WORD buffer for mouse row
@@ -1735,7 +1735,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_MOUSEPTR" - SPECIFY GRAPH-MODE MOUSE CURSOR
 	CX = X offset of hot spot from upper left corner
 	DX = Y offset of hot spot from upper left corner
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in text modes
 SeeAlso: AX=0073h,AX=0075h,INT 33/AX=0009h
 --------V-62007C-----------------------------
@@ -1744,14 +1744,14 @@ INT 62 u - FGDRIVER v4.02 - "FG_MOUSESPD" - SET MOUSE CURSOR SPEED
 	BX = horizontal mickeys per eight pixels of movement (default 16)
 	CX = vertical mickeys per eight pixels of movement (default 16)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: INT 33/AX=000Fh,INT 33/AX=001Ah
 --------V-62007D-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_MOUSEVIS" - SET MOUSE CURSOR VISIBILITY
 	AX = 007Dh
 	BX = new state (0000h invisible, 0001h visible)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0077h,INT 33/AX=0001h,INT 33/AX=0002h
 --------V-62007E-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_MOVE" - SET GRAPHICS CURSOR POSITION
@@ -1759,7 +1759,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_MOVE" - SET GRAPHICS CURSOR POSITION
 	BX = new column
 	CX = new row
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in text modes
 SeeAlso: AX=0054h,AX=0058h,AX=006Bh,AX=0079h,AX=007Fh,AX=00E0h
 --------V-62007F-----------------------------
@@ -1768,7 +1768,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_MOVEREL" - ADJUST GRAPHICS CURSOR POSITION
 	BX = column offset
 	CX = row offset
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in text modes
 SeeAlso: AX=0054h,AX=0058h,AX=007Eh
 --------V-620080-----------------------------
@@ -1777,7 +1777,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_MUSIC" - PLAY SERIES OF NOTES
 	ES:BX -> '$'-terminated music string in BASIC PLAY format
 Return: after music completed
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored if asynchronous sound (AX=00A5h,AX=00A8h,
 	  AX=00AAh) is already in progress
 SeeAlso: AX=0081h,AX=00BCh,AX=00DBh
@@ -1787,7 +1787,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_MUSICB" - PLAY SERIES OF NOTES IN BACKGROUND
 	CX = number of repetitions (negative = continuous play)
 	ES:BX -> '$'-terminated music string in BASIC PLAY format
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored if asynchronous sound (AX=00A5h,AX=00A8h,
 	  AX=00AAh) is already in progress
 SeeAlso: AX=0059h,AX=0081h,AX=00BDh,AX=00DCh
@@ -1796,19 +1796,19 @@ INT 62 u - FGDRIVER v4.02 - "FG_NUMLOCK" - GET STATE OF NUMLOCK KEY
 	AX = 0082h
 Return: AX = NumLock state (0000h off, 0001h on)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=000Ah,AX=00A4h,AX=00A8h,AX=00B1h
 --------V-620083-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PACK" - CONVERT PIXEL-PER-BYTE TO PACKED BITMAP
 	AX = 0083h
-	ES:BX -> variable pointer record (see #2666)
+	ES:BX -> variable pointer record (see #2741)
 	CX = width of bitmap in pixels
 	DX = height of bitmap in pixels
 Return: result bitmap buffer updated
 SeeAlso: AX=00CBh
 
 Format of FGDRIVER PACK variable pointer record:
-Offset	Size	Description	(Table 2666)
+Offset	Size	Description	(Table 2741)
  00h	WORD	segment of source (mode-independent) bitmap
  02h	WORD	offset of source (mode-independent) bitmap
  04h	WORD	segment of buffer for result (mode-specific) bitmap
@@ -1818,7 +1818,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_PAGESIZE" - GET VIDEO PAGE SIZE FOR CURR MODE
 	AX = 0084h
 Return: DX:AX = page size in bytes
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0072h
 --------V-620085-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PAINT" - FLOOD CLOSED REGION WITH COLOR
@@ -1826,7 +1826,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_PAINT" - FLOOD CLOSED REGION WITH COLOR
 	BX = column
 	CX = row
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This function fills an arbitrary closed region around the specified
 	  point with the current color; the screen edges are not considered
 	  region boundaries
@@ -1848,7 +1848,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_PALETTE" - SET PALETTE / SET VIDEO DAC REGISTER
 	BX = DAC register number
 	CX =  DAC value
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This function is ignored in text modes and Hercules graphics modes
 	Few EGA/VGA adapters correctly set the foreground color in CGA mode 6
 SeeAlso: AX=0041h,AX=004Eh,AX=0087h,AX=00ABh
@@ -1858,7 +1858,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_PALETTES" - SET ALL PALETTE REGISTERS
 	ES:BX -> array of 16 WORDs containing values for palette registers
 		  (or first 16 DAC registers in 256-color modes)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This function is ignored in text modes, CGA and Hercules graphics modes
 SeeAlso: AX=0041h,AX=004Eh,AX=0086h,AX=00ABh
 --------V-620088-----------------------------
@@ -1867,7 +1867,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_PAN" - SET SCREEN ORIGIN
 	BX = new column for screen origin
 	CX = new row for screen origin
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=00B2h
 --------V-620089-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PATTERN" - SPECIFY DISPLAY PATTERN FOR COLOR
@@ -1875,7 +1875,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_PATTERN" - SPECIFY DISPLAY PATTERN FOR COLOR
 	BX = index of pattern to define
 	CX = number of predefined display pattern
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	When displaying a pixel run map, Fastgraph uses the pattern associated
 	  with each color index rather than displaying the actual color
 	This call has no effect in text and 256-color graphics modes
@@ -1883,17 +1883,17 @@ SeeAlso: AX=0023h,AX=0045h
 --------V-62008A-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PCXHEAD" - GET PCX FILE HEADER
 	AX = 008Ah
-	ES:BX -> variable pointer record (see #2667)
+	ES:BX -> variable pointer record (see #2742)
 Return: AX = status
 	    0000h successful
 	    FFFEh not a PCX file
 	    FFFFh file does not exist
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=008Bh,AX=00B9h
 
 Format of FGDRIVER PCXHEAD variable pointer record:
-Offset	Size	Description	(Table 2667)
+Offset	Size	Description	(Table 2742)
  00h	WORD	segment of ASCIZ filename
  02h	WORD	offset of ASCIZ filename
  04h	WORD	segment of 128-byte buffer for PCX header
@@ -1906,40 +1906,40 @@ Return: AX = optimal video mode for PCX file
 	    FFFEh not a valid PCX header
 	    FFFFh unable to determine compatible video mode
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=008Ah,AX=00B9h
 --------V-62008C-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PCXPAL" - GET PALETTE STORED IN PCX FILE
 	AX = 008Ch
-	ES:BX -> variable pointer record (see #2668)
+	ES:BX -> variable pointer record (see #2743)
 Return: AX = number of colors in palette (16 or 256) or
 	    FFFEh not a valid PCX file
 	    FFFFh file not found
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=008Dh
 
 Format of FGDRIVER PCXPAL variable pointer record:
-Offset	Size	Description	(Table 2668)
+Offset	Size	Description	(Table 2743)
  00h	WORD	segment of ASCIZ .PCX filename
  02h	WORD	offset of ASCIZ .PCX filename
  04h	WORD	segment of buffer for .PCX palette RGB triples
  06h	WORD	offset of buffer for .PCX palette RGB triples
 Note:	the buffer for the palette must hold at least three times as many bytes
 	  as there are colors in the palette
-SeeAlso: #2669
+SeeAlso: #2744
 --------V-62008D-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PCXRANGE" - GET EXTENT OF PCX IMAGE
 	AX = 008Dh
-	ES:BX -> variable pointer record (see #2669)
+	ES:BX -> variable pointer record (see #2744)
 Return: indicated variables updated; if the indicated header is not valid,
 	  all of the coordinate variables are set to FFFFh
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=008Ch
 
 Format of FGDRIVER PCXRANGE variable pointer record:
-Offset	Size	Description	(Table 2669)
+Offset	Size	Description	(Table 2744)
  00h	WORD	segment of 128-byte PCX file header
  02h	WORD	offset of 128-byte PCX file header
  04h	WORD	segment of WORD buffer for X coordinate of image's left edge
@@ -1950,13 +1950,13 @@ Offset	Size	Description	(Table 2669)
  0Eh	WORD	offset of WORD buffer for Y coordinate of image's top edge
  10h	WORD	segment of WORD buffer for X coordinate of image's bottom edge
  12h	WORD	offset of WORD buffer for X coordinate of image's bottom edge
-SeeAlso: #2668
+SeeAlso: #2743
 --------V-62008E-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PLAYING" - DETERMINE WHETHER ASYNC SOUND ACTIVE
 	AX = 008Eh
 Return: AX = sound state (0 = no asynchronous sound, 1 = async sound playing)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0059h,AX=0081h,AX=00BDh,AX=00DCh
 --------V-62008F-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_POINT" - DISPLAY A PIXEL
@@ -1964,7 +1964,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_POINT" - DISPLAY A PIXEL
 	BX = column
 	CX = row
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in text modes
 SeeAlso: AX=0006h,AX=001Dh,AX=004Dh,AX=0090h
 --------V-620090-----------------------------
@@ -1973,7 +1973,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_POINTX" - DISPLAY A PIXEL IN XOR MODE
 	BX = column
 	CX = row
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in text modes
 SeeAlso: AX=004Dh,AX=008Fh
 --------V-620091-----------------------------
@@ -1988,9 +1988,9 @@ SeeAlso: AX=0092h
 INT 62 u - FGDRIVER v4.02 - "FG_POLYFILL" - DRAW A FILLED CONVEX POLYGON
 	AX = 0092h
 	CX = number of vertices
-	ES:BX -> variable pointer record (see #2670)
+	ES:BX -> variable pointer record (see #2745)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The vertex array consists of pairs of words specifying the X and Y
 	  coordinates of each vertex; the work array is used internally and
 	  must contain at least four times as many bytes as the polygon is
@@ -2000,46 +2000,46 @@ Notes:	the FGDRIVER functions are rearranged with each major release, but
 SeeAlso: AX=000Eh,AX=0027h,AX=0091h,AX=0093h,AX=0094h,AX=0095h
 
 Format of FGDRIVER POLYFILL variable pointer record:
-Offset	Size	Description	(Table 2670)
- 00h	WORD	segment of vertex array (see #2672)
+Offset	Size	Description	(Table 2745)
+ 00h	WORD	segment of vertex array (see #2747)
  02h	WORD	offset of vertex array
  04h	WORD	segment of work array
  06h	WORD	offset of work array
-SeeAlso: #2671
+SeeAlso: #2746
 --------V-620093-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_POLYGON" - DRAW AN UNFILLED POLYGON
 	AX = 0093h
 	CX = number of vertices in polygon
-	ES:BX -> variable pointer record (see #2671)
+	ES:BX -> variable pointer record (see #2746)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in text modes
 SeeAlso: AX=0091h,AX=0092h,AX=0094h,AX=0095h
 
 Format of FGDRIVER POLYGON variable pointer record:
-Offset	Size	Description	(Table 2671)
+Offset	Size	Description	(Table 2746)
  00h	WORD	segment of WORD array containing vertex columns
  02h	WORD	offset of WORD array containing vertex columns
  04h	WORD	segment of WORD array containing vertex rows
  06h	WORD	offset of WORD array containing vertex rows
-SeeAlso: #2670
+SeeAlso: #2745
 --------V-620094-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_POLYLINE" - DRAW AN UNFILLED POLYGON
 	AX = 0094h
 	CX = number of vertices in polygon
-	ES:BX -> vertex array (see #2672)
+	ES:BX -> vertex array (see #2747)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This function is equivalent to "FG_POLYGON", but uses only a single
 	  array to define the vertices
 	This call is ignored in text modes
 SeeAlso: AX=008Fh,AX=0092h,AX=0093h,AX=0095h
 
 Format of FGDRIVER POLYFILL/POLYLINE vertex array element:
-Offset	Size	Description	(Table 2672)
+Offset	Size	Description	(Table 2747)
  00h	WORD	column
  02h	WORD	row
-SeeAlso: #2671
+SeeAlso: #2746
 --------V-620095-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_POLYOFF" - DEFINE POLYGON DRAWING OFFSET
 	AX = 0095h
@@ -2048,7 +2048,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_POLYOFF" - DEFINE POLYGON DRAWING OFFSET
 Desc:	define the offsets applied to all vertices of polygons drawn with
 	  "FG_POLYFILL" or "FG_POLYLINE"
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0092h,AX=0094h
 --------V-620096-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_PRINT" - DISPLAY STRING OF HARDWARE CHARACTERS
@@ -2056,7 +2056,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_PRINT" - DISPLAY STRING OF HARDWARE CHARACTERS
 	CX = length of string
 	ES:BX -> string to display
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The string is displayed in the current color, and the graphics cursor
 	  is updated to be just to the right of the last displayed character
 	This function is ignored in text modes
@@ -2067,7 +2067,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_PRINTC" - DISPLAY STRING OF HW CHARS (CLIPPED)
 	CX = length of string
 	ES:BX -> string to display
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The string is displayed in the current color, and the graphics cursor
 	  is updated to be just to the right of the last displayed character;
 	  only the portion of the string that lies within the current clipping
@@ -2083,7 +2083,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_PUTBLOCK" - RESTORE RECTANGLE OF DISPLAY
 	SI = top edge
 	DI = bottom edge
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	In text modes, coordinates are character positions; in graphics modes,
 	  they are defined in screen space, and the left and right edges are
 	  adjusted to a byte boundary if necessary
@@ -2095,7 +2095,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_PUTIMAGE" - DISPLAY MODE-SPECIFIC BITMAP IMAGE
 	CX = width in bytes
 	DX = height in pixel rows
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The bitmap is displayed with its lower left corner at the graphics
 	  cursor position; color 0 is NOT treated as transparent
 SeeAlso: AX=0011h,AX=0024h,AX=0036h,AX=0044h,AX=0098h
@@ -2103,7 +2103,7 @@ SeeAlso: AX=0011h,AX=0024h,AX=0036h,AX=0044h,AX=0098h
 INT 62 u - FGDRIVER v4.02 - "FG_QUIET" - STOP CONTINUOUS SYNCHRONOUS SOUND
 	AX = 009Ah
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call has no effect if there is no continuous sound playing
 SeeAlso: AX=0059h,AX=0080h,AX=00BDh,AX=00DCh
 --------V-62009B-----------------------------
@@ -2114,13 +2114,13 @@ INT 62 u - FGDRIVER v4.02 - "FG_RECT" - DRAW UNFILLED RECTANGLE IN SCREEN SPACE
 	DX = top edge row
 	SI = bottom edge row
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0006h,AX=0012h,AX=0023h,AX=003Ch
 --------V-62009C-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_RESET" - ERASE SCREEN AND RESTORE SCREEN ATTR
 	AX = 009Ch
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in graphics modes
 	The screen attributes are only restored if ANSI.SYS is loaded
 SeeAlso: AX=0028h,AX=00B0h
@@ -2130,7 +2130,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_RESIZE" - SET GRAPHICS MODE VIDEO PAGE SIZE
 	BX = new page width in pixels
 	CX = new page height in pixels
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The visible page must be set to 0000h before making this call
 	The mouse, joysticks, expanded memory, and extended memory must be
 	  reinitialized after this call
@@ -2143,14 +2143,14 @@ INT 62 u - FGDRIVER v4.02 - "FG_RESTORE" - COPY REGION FROM HIDDEN TO VIS PAGE
 	DX = top edge row
 	SI = bottom edge row
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The left and right edges are adjusted to byte boundaries if necessary
 SeeAlso: AX=00A2h,AX=00C6h
 --------V-62009F-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_RESUME" - RESTART ASYNCHRONOUS SOUND
 	AX = 009Fh
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=00BDh,AX=00C0h
 --------V-6200A0-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_REVIMAGE" - DISPLAY REVERSED IMAGE (BITMAP)
@@ -2159,7 +2159,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_REVIMAGE" - DISPLAY REVERSED IMAGE (BITMAP)
 	CX = width of bitmap in bytes
 	DX = height of bitmap in pixel rows
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in text modes
 	The image is drawn with its lower left corner at the current graphics
 	  cursor position
@@ -2167,11 +2167,11 @@ SeeAlso: AX=0011h,AX=0024h,AX=0036h,AX=0044h,AX=00A1h,AX=00A9h,AX=00B9h
 --------V-6200A1-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_REVMASK" - DISPLAY REVERSED IMAGE (MASKING MAP)
 	AX = 00A1h
-	ES:BX -> array containing image stored as a masking map (see #2649)
+	ES:BX -> array containing image stored as a masking map (see #2724)
 	CX = number of pixel runs in masking map
 	DX = width of masking map in pixels
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in text modes and in native EGA and VGA graphics
 	  modes
 	The image is drawn with its lower left corner at the current graphics
@@ -2185,13 +2185,13 @@ INT 62 u - FGDRIVER v4.02 - "FG_SAVE" - COPY REGION FROM VISIBLE TO HIDDEN PAGE
 	DX = top edge row
 	SI = bottom edge row
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The left and right edges are adjusted to byte boundaries if necessary
 SeeAlso: AX=009Eh,AX=00C6h
 --------V-6200A3-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SCALE" - SCALE BITMAP
 	AX = 00A3h
-	ES:BX -> variable pointer record (see #2673)
+	ES:BX -> variable pointer record (see #2748)
 	CX = width of source bitmap in pixels (0 < width <= 1024)
 	DX = height of source bitmap in pixels (0 < height <= 1024)
 	SI = desired width of scaled bitmap (0 < width <= 1024)
@@ -2200,7 +2200,7 @@ Return: nothing
 SeeAlso: AX=00B7h
 
 Format of FGDRIVER SCALE variable pointer record:
-Offset	Size	Description	(Table 2673)
+Offset	Size	Description	(Table 2748)
  00h	WORD	segment of source bitmap (one pixel per byte)
  02h	WORD	offset of source bitmap
  04h	WORD	segment of buffer for resulting scaled bitmap
@@ -2212,7 +2212,7 @@ Return: AX = ScrollLock state (0000h off, 0001h on)
 Program: FGDRIVER is the external video driver for the shareware
 	  Fastgraph/Light by Ted Gruber Software
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=000Ah,AX=0082h,AX=00A8h,AX=00B1h
 --------V-6200A5-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SCROLL" - VERTICALLY SCROLL SCREEN REGION
@@ -2227,7 +2227,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_SCROLL" - VERTICALLY SCROLL SCREEN REGION
 	    0000h circular (rows scrolled off are copied to vacated rows)
 	    else vacated rows are filled with the current color
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	In graphics modes, the left and right edges are adjusted to byte
 	  boundaries if necessary
 	Circular scrolling uses part of the hidden page as a workspace
@@ -2239,7 +2239,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_SETATTR" - SET TEXT-MODE CHARACTER ATTRIBUTE
 	CX = background
 	DX = blink (0000h nonblinking, 0001h blink)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in graphics modes
 SeeAlso: AX=000Bh,AX=003Ah,AX=0048h
 --------V-6200A7-----------------------------
@@ -2248,14 +2248,14 @@ INT 62 u - FGDRIVER v4.02 - "FG_SETBANKS" - SET SVGA READ AND WRITE BANKS
 	BX = memory bank from which to read (FFFFh leave unchanged)
 	CX = memory bank to which to write (FFFFh leave unchanged)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=003Bh
 --------V-6200A8-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SETCAPS" - SET STATE OF CAPSLOCK KEY
 	AX = 00A8h
 	BX = new state (0000h off, 0001h on)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=000Ah,AX=0082h,AX=00A4h,AX=00B1h
 --------V-6200A9-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SETCLIP" - SET CLIPPING REGION
@@ -2265,14 +2265,14 @@ INT 62 u - FGDRIVER v4.02 - "FG_SETCLIP" - SET CLIPPING REGION
 	DX = top edge of clipping region
 	SI = bottom edge of clipping region
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0010h,AX=001Fh,AX=0034h,AX=003Eh,AX=00A1h,AX=00C5h
 --------V-6200AA-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SETCOLOR" - SET CURRENT COLOR
 	AX = 00AAh
 	BX = new color index (or text attribute in text modes)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0018h,AX=0040h,AX=0045h
 --------V-6200AB-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SETDACS" - SET VIDEO DAC CONTENTS
@@ -2281,7 +2281,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_SETDACS" - SET VIDEO DAC CONTENTS
 	DX = starting DAC register number (0000h to 00FFh)
 	ES:BX -> buffer containing DAC red/green/blue triples
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The register number wraps back to zero after reaching FFh
 	This call has no effect in text modes or graphics modes below 11h
 SeeAlso: AX=0041h,AX=004Eh,AX=0086h,INT 10/AX=1012h
@@ -2290,9 +2290,9 @@ INT 62 u - FGDRIVER v4.02 - "FG_SETENTRY" - SET TYPE AND ADDRESS OF VIDEO PAGE
 	AX = 00ACh
 	BX = page number (00h-3Fh)
 	CX = page address
-	DX = page type (see #2658 at AX=0042h)
+	DX = page type (see #2733 at AX=0042h)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0038h,AX=0042h,AX=00B0h
 --------V-6200AD-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SETFUNC" - SET LOGICAL OPERATION FOR VIDEO OPS
@@ -2303,7 +2303,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_SETFUNC" - SET LOGICAL OPERATION FOR VIDEO OPS
 	    0002h OR
 	    0003h XOR
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This function is only available in native EGA/VGA graphics modes
 	  (0Dh to 12h)
 SeeAlso: AX=001Eh,AX=008Fh
@@ -2312,7 +2312,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_SETHPAGE" - SET HIDDEN VIDEO PAGE
 	AX = 00AEh
 	BX = new hidden page (0000h to 003Fh)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The specified page must be a physical page or a virtual page
 SeeAlso: AX=0043h,AX=00B2h,AX=00B6h
 --------V-6200AF-----------------------------
@@ -2320,20 +2320,22 @@ INT 62 u - FGDRIVER v4.02 - "FG_SETLINES" - SET TEXT ROWS ON SCREEN
 	AX = 00AFh
 	BX = new screen size (25, 43, 50)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0047h
 --------V-6200B0-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SETMODE" - SELECT VIDEO MODE AND INITIALIZE
 	AX = 00B0h
-	BX = new video mode or FFFFh for current mode (see #2674)
-	ES:DX -> WORD ???
+	BX = new video mode or FFFFh for current mode (see #2749)
+	ES:DX -> WORD shareware splash screen flag
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call resets the active video page to page 0000h, the clipping
 	  region to the entire screen, text rows to 25, etc.
+	in the shareware version, FGDRIVER sets the word pointed at by ES:DX
+	  to 9090h after it shows the shareware announcement to the user
 SeeAlso: AX=004Bh,INT 10/AH=00h
 
-(Table 2674)
+(Table 2749)
 Values for FGDRIVER video mode:
  00h-07h standard BIOS modes
  09h	PCjr/Tandy1000 320x200x16
@@ -2355,14 +2357,14 @@ INT 62 u - FGDRIVER v4.02 - "FG_SETNUM" - SET STATE OF NUMLOCK KEY
 	AX = 00B1h
 	BX = new state (0000h off, 0001h on)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=000Ah,AX=0082h,AX=00A4h,AX=00A8h
 --------V-6200B2-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SETPAGE" - SET ACTIVE VIDEO PAGE
 	AX = 00B2h
 	BX = new video page (0000h to 003Fh)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The specified page must be a physical or virtual page
 SeeAlso: AX=0039h,AX=0042h,AX=0043h,AX=0050h,AX=0088h
 --------V-6200B3-----------------------------
@@ -2373,7 +2375,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_SETRGB" - SET VIDEO DAC REGISTER CONTENTS
 	DX = green component
 	SI = blue component
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The register number may be negative for Tandy, PCjr, and 200-line
 	  EGA graphics modes to specify an intense color
 	This call has no effect in text, CGA graphics, and Hercules graphics
@@ -2384,20 +2386,20 @@ INT 62 u - FGDRIVER v4.02 - UNUSED
 	AX = 00B4h
 Return: AX = 0000h
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 --------V-6200B5-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SETVIEW" - DEFINE VIEWPORT
 	AX = 00B5h
-	ES:BX -> variable record (see #2675)
+	ES:BX -> variable record (see #2750)
 	CX = viewport's top edge in screen space
 	DX = viewport's bottom edge in screen space
 Return: nothing
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 SeeAlso: AX=004Fh
 
 Format of FGDRIVER SETVIEW variable record:
-Offset	Size	Description	(Table 2675)
+Offset	Size	Description	(Table 2750)
  00h	WORD	viewport's left edge in viewport units
  02h	WORD	viewport's right edge in viewport units
  04h	WORD	viewport's top edge in viewport units
@@ -2409,13 +2411,13 @@ INT 62 u - FGDRIVER v4.02 - "FG_SETVPAGE" - SET VISIBLE VIDEO PAGE
 	AX = 00B6h
 	BX = new video page (0000h to 003Fh)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The specified page must be a physical or virtual page
 SeeAlso: AX=0043h,AX=00AEh,AX=00B2h
 --------V-6200B7-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SHEAR" - SHEAR UNPACKED BITMAP
 	AX = 00B7h
-	ES:BX -> variable pointer record (see #2676)
+	ES:BX -> variable pointer record (see #2751)
 	CX = bitmap width (0 < width <= 1024)
 	DX = bitmap height (0 < height <= 1024)
 	SI = size of resulting image (width for horiz. shear, height for vert.)
@@ -2426,11 +2428,11 @@ INT 62 u - FGDRIVER v4.02 - "FG_SHEAR" - SHEAR UNPACKED BITMAP
 	    0003h vertical shear to right (right edge stretched up)
 Return: nothing
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 SeeAlso: AX=00A3h
 
 Format of FGDRIVER SHEAR variable pointer record:
-Offset	Size	Description	(Table 2676)
+Offset	Size	Description	(Table 2751)
  00h	WORD	segment of source bitmap
  02h	WORD	offset of source bitmap
  04h	WORD	segment of buffer for resulting bitmap
@@ -2440,32 +2442,32 @@ INT 62 u - FGDRIVER v4.02 - "FG_SHOWFLIC" - DISPLAY IMAGE FROM FLI/FLC FILE
 	AX = 00B8h
 	ES:BX -> ASCIZ filename for FLI/FLC file
 	CX = number of times to display image file (0000h = continuously)
-	DX = control flags (see #2653 at AX=0031h)
+	DX = control flags (see #2728 at AX=0031h)
 Return: AX = status
 	    0000h successful
 	    0001h file not found
 	    0002h not a valid FLI/FLC file
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	the FLI/FLC display may be stopped by the user by pressing Esc
 SeeAlso: AX=0030h,AX=0031h,AX=00B9h
 --------V-6200B9-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SHOWPCX" - DISPLAY IMAGE FROM PCX FILE
 	AX = 00B9h
 	ES:BX -> ASCIZ filename of PCX image
-	CX = flags (see #2677)
+	CX = flags (see #2752)
 Return: AX = status
 	    0000h success
 	    0001h file not found
 	    0002h not a PCX file
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This function is ignored in text modes and Hercules low-res graphics
 SeeAlso: AX=005Bh,AX=0060h"1.10",AX=006Ch,AX=006Dh,AX=006Eh,AX=00B8h,AX=00BAh
 SeeAlso: AX=00BBh
 
 Bitfields for FGDRIVER flags:
-Bit(s)	Description	(Table 2677)
+Bit(s)	Description	(Table 2752)
  0	use current palette rather than PCX file's palette
  1	display image at cursor position instead of position in PCX header
  2-15	reserved
@@ -2478,7 +2480,7 @@ Return: AX = status
 	    0000h successful
 	    0001h file not found
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The image is displayed with its lower left corner at the current
 	  graphics cursor position
 	This function is ignored in text modes and 256-color graphics modes
@@ -2492,7 +2494,7 @@ Return: AX = status
 	    0000h successful
 	    0001h file not found
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The image is displayed with its lower left corner at the current
 	  graphics cursor position
 	This function is ignored in text modes
@@ -2503,7 +2505,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_SOUND" - MAKE SOUND FOR SPECIFIED DURATION
 	BX = frequency in Hertz (18-32767)
 	CX = duration in clock ticks (0000h or negative for continuous sound)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored if asynchronous sound (AX=00A5h,AX=00A8h,
 	  AX=00AAh) is already in progress
 SeeAlso: AX=0059h,AX=0080h,AX=00BDh,AX=00C0h,AX=00DBh
@@ -2511,15 +2513,15 @@ SeeAlso: AX=0059h,AX=0080h,AX=00BDh,AX=00C0h,AX=00DBh
 INT 62 u - FGDRIVER v4.02 - "FG_SOUNDS" - PLAY SOUNDS IN BACKGROUND
 	AX = 00BDh
 	CX = number of times to cycle through sound list
-	ES:BX -> sounds array (see #2678)
+	ES:BX -> sounds array (see #2753)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored if asynchronous sound (AX=00A5h,AX=00A8h,
 	  AX=00AAh) is already in progress
 SeeAlso: AX=0059h,AX=0081h,AX=00BCh,AX=00C0h,AX=00DCh
 
 Format of FGDRIVER sounds array element:
-Offset	Size	Description	(Table 2678)
+Offset	Size	Description	(Table 2753)
  00h	WORD	frequency of sound in Hertz (0000h ends array)
  02h	WORD	duration of sound in clock ticks
 --------V-6200BE-----------------------------
@@ -2527,39 +2529,39 @@ INT 62 u - FGDRIVER v4.02 - "FG_SPLIT" - ENABLE/DISABLE SPLIT SCREEN ENVIRONMNT
 	AX = 00BEh
 	BX = beginning row for bottom half of split-screen
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 --------V-6200BF-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_STALL" - PAUSE FOR SPECIFIED DURATION
 	AX = 00BFh
 	BX = duration in processor-dependent delay units (see AX=0070h)
 Return: after delay elapses
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0070h,INT 2F/AX=1224h
 --------V-6200C0-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SUSPEND" - TEMPORARILY STOP ASYNCHRONOUS SOUND
 	AX = 00C0h
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call has no effect if there is no asynchronous sound in progress
 	The program must not exit while sound is suspended
 SeeAlso: AX=0059h,AX=0080h,AX=00BDh,AX=00C0h,AX=00DBh
 --------V-6200C1-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SVGAINIT" - INITIALIZE FASTGRAPH SVGA KERNEL
 	AX = 00C1h
-	BX = method (see #2679)
+	BX = method (see #2754)
 Return: AX = status
 	    0000h no VESA BIOS or supported SVGA chipset
 	    0001h using VESA BIOS
 	    0002h-0016h specific chipset being used (same as "method" below)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This function must be called before attempting to set SVGA graphics
 	  modes (18h to 1Dh) or using "FG_BESTMODE", "FG_TESTMODE", or
 	  "FG_MEMORY"
 SeeAlso: AX=0025h,AX=00C2h,AX=00C3h
 
-(Table 2679)
+(Table 2754)
 Values for FGDRIVER SVGA method:
  0000h	autodetect, give chipset-specific code priority over VESA
  0001h	autodetect, give VESA priority over chipset-specific code
@@ -2587,13 +2589,13 @@ Values for FGDRIVER SVGA method:
 --------V-6200C2-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SVGASTAT" - GET SVGA CHIPSET INFORMATION
 	AX = 00C2h
-Return: AX = chipset information (see #2680)
+Return: AX = chipset information (see #2755)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0025h,AX=00C1h,AX=00C3h
 
 Bitfields for FGDRIVER chipset information:
-Bit(s)	Description	(Table 2680)
+Bit(s)	Description	(Table 2755)
  0	SVGA kernel initialized
  1	VESA support enabled
  2	extended video pages available in modes 13-23
@@ -2602,13 +2604,13 @@ Bit(s)	Description	(Table 2680)
 --------V-6200C3-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_SVGAVER" - GET FASTGRAPH SVGA KERNEL VERSION
 	AX = 00C3h
-	ES:BX -> variable pointer record (see #2681)
+	ES:BX -> variable pointer record (see #2756)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=00C1h,AX=00C2h
 
 Format of FGDRIVER variable pointer record:
-Offset	Size	Description	(Table 2681)
+Offset	Size	Description	(Table 2756)
  00h	WORD	segment of WORD buffer for major version
  02h	WORD	offset of WORD buffer for major version
  04h	WORD	segment of WORD buffer for minor version (hundredths)
@@ -2619,7 +2621,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_TCDEFINE" - DEFINE TRANSPARENCY OF COLOR INDEX
 	BX = color index
 	CX = transparency (00h opaque, other transparent)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This function is ignored in text modes
 SeeAlso: AX=00C5h,AX=00C6h
 --------V-6200C5-----------------------------
@@ -2627,7 +2629,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_TCMASK" - SET TRANSPARENT COLORS
 	AX = 00C5h
 	BX = colors to consider transparent (bit 0 = color 0, etc)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This call is ignored in text modes
 	The specified colors are considered transparent by "FG_TCXFER"
 SeeAlso: AX=00C4h,AX=00C6h
@@ -2636,9 +2638,9 @@ INT 62 u - FGDRIVER v4.02 - "FG_TCXFER" - COPY REGION EXCLUDING TRANSPARENT
 	AX = 00C6h
 	CX = source video page
 	DX = destination video page
-	ES:BX -> copy record (see #2682)
+	ES:BX -> copy record (see #2757)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	Pixels which are in any of the colors defined as transparent with
 	  "FG_TCMASK" (see AX=00C5h) are left unchanged in the destination
 	  region
@@ -2655,7 +2657,7 @@ Return: AX = status
 	    0000h mode not available with requested number of pages
 	    0001h mode is available
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0005h,AX=00B0h
 --------V-6200C8-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_TEXT" - DISPLAY STRING OF CHARACTERS
@@ -2663,7 +2665,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_TEXT" - DISPLAY STRING OF CHARACTERS
 	CX = length of string
 	ES:BX -> string
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The string is displayed starting at the text cursor position using the
 	  current text attribute (text modes) or color index (graphics modes)
 	The text cursor position is updated after this call
@@ -2674,7 +2676,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_TEXTC" - DISPLAY STRING OF CHARACTERS (CLIPPED)
 	CX = length of string
 	ES:BX -> string
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	The string is displayed starting at the text cursor position using the
 	  current text attribute (text modes) or color index (graphics modes),
 	  showing only the portion within the current clipping window
@@ -2685,15 +2687,15 @@ INT 62 u - FGDRIVER v4.02 - "FG_TRANSFER" - COPY REGION
 	AX = 00CAh
 	CX = source video page
 	DX = destination video page
-	ES:BX -> copy record (see #2682)
+	ES:BX -> copy record (see #2757)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	The source and destination regions must not overlap if they are located
 	  on the same page
 SeeAlso: AX=009Eh,AX=00A2h,AX=00A5h,AX=00C6h
 
 Format of FGDRIVER copy record:
-Offset	Size	Description	(Table 2682)
+Offset	Size	Description	(Table 2757)
  00h	WORD	left edge column of source region
  02h	WORD	right edge column of source region
  04h	WORD	top edge row of source region
@@ -2703,15 +2705,15 @@ Offset	Size	Description	(Table 2682)
 --------V-6200CB-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_UNPACK" - EXPAND MODE-SPECIFIC BITMAP
 	AX = 00CBh
-	ES:BX -> variable pointer record (see #2683)
+	ES:BX -> variable pointer record (see #2758)
 	CX = size of source bitmap in bytes
 Return: result buffer filled
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 SeeAlso: AX=0083h
 
 Format of FGDRIVER UNPACK variable pointer record:
-Offset	Size	Description	(Table 2683)
+Offset	Size	Description	(Table 2758)
  00h	WORD	segment of source bitmap
  02h	WORD	offset of source bitmap
  04h	WORD	segment of buffer for resulting bitmap
@@ -2722,7 +2724,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_VBADDR" - GET ADDRESS OF VIRTUAL BUFFER
 	BX = virtual buffer handle (0000h-001Fh)
 Return: DX:AX -> virtual buffer
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 SeeAlso: AX=00CDh,AX=00CEh,AX=00CFh,AX=00D3h
 --------V-6200CD-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_VBALLOC" - CREATE VIRTUAL BUFFER
@@ -2733,7 +2735,7 @@ Return: AX = handle for virtual buffer, or
 	    FFFEh out of memory
 	    FFFFh virtual buffer table full
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 SeeAlso: AX=00CCh,AX=00CEh,AX=00D0h,AX=00D1h,AX=00D2h,AX=00D4h
 --------V-6200CE-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_VBCLOSE" - CLOSE ACTIVE VIRTUAL BUFFER
@@ -2741,22 +2743,22 @@ INT 62 u - FGDRIVER v4.02 - "FG_VBCLOSE" - CLOSE ACTIVE VIRTUAL BUFFER
 Desc:	close the active virtual buffer and direct further graphics to the
 	  active video page
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 SeeAlso: AX=00CCh,AX=00D1h,AX=00D4h,AX=00D5h,AX=00D9h
 --------V-6200CF-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_VBCOPY" - COPY RECT BETWEEN VIRTUAL BUFFERS
 	AX = 00CFh
-	ES:BX -> variable record (see #2684)
+	ES:BX -> variable record (see #2759)
 	CX = handle for source virtual buffer
 	DX = handle for destination virtual buffer
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	if the destination buffer is the same as the source buffer, the regions
 	  must not overlap
 SeeAlso: AX=00D0h,AX=00D1h,AX=00D4h,AX=00D6h,AX=00D7h
 
 Format of FGDRIVER VBCOPY variable record:
-Offset	Size	Description	(Table 2684)
+Offset	Size	Description	(Table 2759)
  00h	WORD	source region's left edge
  02h	WORD	source region's right edge
  04h	WORD	source region's top edge
@@ -2775,7 +2777,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_VBCUT" - COPY RECT FROM VIDEO TO VIRTUAL BUFFER
 Desc:	copy a rectangle from the active video page to the active virtual
 	  buffer
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 SeeAlso: AX=00CDh,AX=00CFh,AX=00D4h,AX=00D6h
 --------V-6200D1-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_VBDEFINE" - CREATE VIRTUAL BUFFER
@@ -2786,7 +2788,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_VBDEFINE" - CREATE VIRTUAL BUFFER
 Return: AX = virtual buffer handle
 	    FFFFh on error
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	the application-provided buffer must be large enough to hold CX*DX
 	  bytes
 SeeAlso: AX=00CCh,AX=00CDh,AX=00CEh,AX=00D2h,AX=00D4h,AX=00D5h
@@ -2795,7 +2797,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_VBFREE" - RELEASE VIRTUAL BUFFER
 	AX = 00D2h
 	BX = virtual buffer handle
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	this function should be used only for buffers created with FG_VBALLOC
 SeeAlso: AX=00CDh,AX=00D4h,AX=00D5h
 --------V-6200D3-----------------------------
@@ -2803,14 +2805,14 @@ INT 62 u - FGDRIVER v4.02 - "FG_VBHANDLE" - GET ACTIVE VIRTUAL BUFFER'S HANDLE
 	AX = 00D3h
 Return: AX = handle for active virtual buffer
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 SeeAlso: AX=00CCh,AX=00D4h
 --------V-6200D4-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_VBINIT" - INITIALIZE VIRTUAL BUFFER ENVIRONMENT
 	AX = 00D4h
 Return: nothing
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	this function must be called before any other virtual buffer functions
 	  are used
 SeeAlso: AX=00CDh,AX=00D5h
@@ -2823,7 +2825,7 @@ Return: AX = status
 	    FFFEh no buffer defined for specified handle
 	    FFFFh invalid buffer handle
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 SeeAlso: AX=00CDh,AX=00CEh,AX=00D1h,AX=00D4h,AX=00D9h
 --------V-6200D6-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_VBPASTE" - COPY RECT FROM VIRTUAL BUF TO VIDEO
@@ -2837,24 +2839,24 @@ INT 62 u - FGDRIVER v4.02 - "FG_VBPASTE" - COPY RECT FROM VIRTUAL BUF TO VIDEO
 Desc:	copy a rectangle from the active virtual buffer to the active video
 	  page
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 SeeAlso: AX=00CFh,AX=00D0h,AX=00D4h,AX=00D7h
 --------V-6200D7-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_VBTCCOPY" - COPY RECTANGLE BETWEEN VIRTUAL BUFS
 	AX = 00D7h
-	ES:BX -> variable record (see #2685)
+	ES:BX -> variable record (see #2760)
 	CX = source virtual buffer's handle
 	DX = destination virtual buffer's handle
 Desc:	copy rectangle from one virtual buffer to another with transparent
 	  colors
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	if the destination buffer is the same as the source buffer, the regions
 	  must not overlap
 SeeAlso: AX=00CFh,AX=00D0h,AX=00D6h,AX=00D8h
 
 Format of FGDRIVER VBTCCOPY variable record:
-Offset	Size	Description	(Table 2685)
+Offset	Size	Description	(Table 2760)
  00h	WORD	source region's left edge
  02h	WORD	source region's right edge
  04h	WORD	source region's top edge
@@ -2873,14 +2875,14 @@ INT 62 u - FGDRIVER v4.02 - "FG_VBTCXFER" - COPY RECTANGLE TO ACTIVE VIDEO PAGE
 Desc:	copy a rectangle from the active virtual buffer to the active video
 	  page, with transparent colors
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 SeeAlso: AX=00D6h,AX=00D7h
 --------V-6200D9-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_VBUNDEF" - RELEASE HANDLE FOR VIRTUAL BUFFER
 	AX = 00D9h
 	BX = virtual buffer handle
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	the specified handle must not reference the currently-active virtual
 	  buffer
 SeeAlso: AX=00D1h,AX=00D5h
@@ -2889,7 +2891,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_VGASTATE" - SAVE/RESTORE VGA CONTROLLER STATE
 	AX = 00DAh
 	BX = direction (0000h save, else restore)
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648)
+	  their parameters do not change (see #2723)
 	this function is only meaningful in modes 0Dh and above
 --------V-6200DB-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_VOICE" - START SOUND
@@ -2904,21 +2906,21 @@ INT 62 u - FGDRIVER v4.02 - "FG_VOICE" - START SOUND
 Program: FGDRIVER is the external video driver for the shareware
 	  Fastgraph/Light by Ted Gruber Software
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This function is only available on the PCjr and Tandy 1000 machines
 SeeAlso: AX=0080h,AX=00BCh,AX=00DCh
 --------V-6200DC-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_VOICES" - PLAY SOUNDS IN BACKGROUND
 	AX = 00DCh
-	ES:BX -> tone array (see #2686)
+	ES:BX -> tone array (see #2761)
 	CX = number of times to repeat tone array
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	This function is only available on the PCjr and Tandy 1000 machines
 SeeAlso: AX=0059h,AX=0081h,AX=00BDh,AX=00DBh
 
 Format of FGDRIVER tone array element:
-Offset	Size	Description	(Table 2686)
+Offset	Size	Description	(Table 2761)
  00h	WORD	channel number (0000h terminates array)
  02h	WORD	frequency
  04h	WORD	volume
@@ -2929,33 +2931,33 @@ INT 62 u - FGDRIVER v4.02 - "FG_WAITFOR" - DELAY FOR SPECIFIED DURATION
 	BX = duration in clock ticks
 Return: after delay elapses
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=00BFh,INT 1A/AX=FF01h
 --------V-6200DE-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_WAITKEY" - FLUSH KEYBOARD BUFFER AND AWAIT KEY
 	AX = 00DEh
 Return: after next key pressed
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=000Ah,AX=0046h,AX=0063h,AX=0069h,INT 16/AH=00h
 --------V-6200DF-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_WAITVR" - ENABLE/DISABLE VERTICAL RETRACE WAIT
 	AX = 00DFh
 	BX = new state (0000h disabled, 0001h enabled)
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 --------V-6200E0-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_WHERE" - GET CURRENT CURSOR POSITION
 	AX = 00E0h
-	ES:BX -> variable pointers (see #2687)
+	ES:BX -> variable pointers (see #2762)
 Return: indicated variables filled with cursor row and column for active
 	  display
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=0054h,AX=0058h,AX=006Bh,AX=007Eh
 
 Format of FGDRIVER variable pointers:
-Offset	Size	Description	(Table 2687)
+Offset	Size	Description	(Table 2762)
  00h	WORD	segment of WORD buffer for cursor row
  02h	WORD	offset of WORD buffer for cursor row
  04h	WORD	segment WORD buffer for cursor column
@@ -2966,7 +2968,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_XALPHA" - CONVERT SCREEN COLUMN TO CHAR COLUMN
 	BX = screen space column
 Return: AX = character space column containing specified coordinate
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=00E2h,AX=00E4h
 --------V-6200E2-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_XCONVERT" - CONVERT CHAR COLUMN TO SCREEN COL
@@ -2974,7 +2976,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_XCONVERT" - CONVERT CHAR COLUMN TO SCREEN COL
 	BX = character space column
 Return: AX = screen space column of leftmost pixel in specified character col
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=00E2h,AX=00E5h
 --------V-6200E3-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_XVIEW" - CONVERT VIEWPORT COORDINATE
@@ -2982,7 +2984,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_XVIEW" - CONVERT VIEWPORT COORDINATE
 	BX = horizontal viewport coordinate
 Return: AX = screen space X coordinate corresponding to supplied coordinate
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	if no viewport has been defined, the returned coordinate will be the
 	  same as the viewport coordinate
 SeeAlso: AX=00E2h,AX=00E6h
@@ -2992,7 +2994,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_YALPHA" - CONVERT SCREEN ROW TO CHARACTER ROW
 	BX = screen space row
 Return: AX = character space row containing specified coordinate
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=00E1h,AX=00E5h
 --------V-6200E5-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_YCONVERT" - CONVERT CHARACTER ROW TO SCREEN ROW
@@ -3000,7 +3002,7 @@ INT 62 u - FGDRIVER v4.02 - "FG_YCONVERT" - CONVERT CHARACTER ROW TO SCREEN ROW
 	BX = character space row
 Return: AX = screen space row of topmost pixel in specified character row
 Note:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 SeeAlso: AX=00E2h,AX=00E4h,AX=00E6h
 --------V-6200E6-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_YVIEW" - TRANSLATE VERTICAL VIEWPORT COORDINATE
@@ -3010,7 +3012,7 @@ Return: AX = screen space row for viewport coordinate
 Program: FGDRIVER is the external video driver for the shareware
 	  Fastgraph/Light by Ted Gruber Software
 Notes:	the FGDRIVER functions are rearranged with each major release, but
-	  their parameters do not change (see #2648 at AX=0000h)
+	  their parameters do not change (see #2723 at AX=0000h)
 	if no viewport has been defined, the returned coordinate will be the
 	  same as the viewport coordinate
 SeeAlso: AX=00E3h,AX=00E5h
@@ -3026,7 +3028,7 @@ Return: CF clear if successful
 	CF set on error
 	    AL = error code
 Range:	INT 4C to INT FB, selected by configuration
-SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63"BW-TCP",INT 64"BW-NFS"
+SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63/AH=24h"BW-TCP",INT 64"BW-NFS"
 --------T-6202-------------------------------
 INT 62 - Cswitch - WAIT FOR SEMAPHORE
 	AH = 02h
@@ -3041,7 +3043,7 @@ Return: CF clear if successful
 	CF set on error
 	    AL = error code
 SeeAlso: AH=00h"ETHDEV",AH=03h"ETHDEV",AH=FEh,INT 21/AH=3Fh"BW-TCP"
-SeeAlso: INT 63"BW-TCP",INT 64"BW-NFS"
+SeeAlso: INT 63/AH=03h"BW-TCP",INT 63/AH=24h"BW-TCP",INT 64"BW-NFS"
 --------T-6203-------------------------------
 INT 62 - Cswitch - CHECK SEMAPHORE
 	AH = 03h
@@ -3061,7 +3063,7 @@ Range:	INT 4C to INT FB, selected by configuration
 Note:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
-SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63"BW-TCP",INT 64"BW-NFS"
+SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63/AH=24h"BW-TCP",INT 64"BW-NFS"
 --------T-6204-------------------------------
 INT 62 - Cswitch - TRIGGER SEMAPHORE
 	AH = 04h
@@ -3078,7 +3080,7 @@ INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - SET ???
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
-SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63"BW-TCP",INT 64"BW-NFS"
+SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63/AH=24h"BW-TCP",INT 64"BW-NFS"
 --------T-6205-------------------------------
 INT 62 - Cswitch - SLEEP
 	AH = 05h
@@ -3091,7 +3093,7 @@ INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - ???
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
-SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63"BW-TCP",INT 64"BW-NFS"
+SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63/AH=24h"BW-TCP",INT 64"BW-NFS"
 --------T-6206-------------------------------
 INT 62 - Cswitch - SUSPEND
 	AH = 06h
@@ -3107,7 +3109,7 @@ Range:	INT 4C to INT FB, selected by configuration
 Note:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
-SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63"BW-TCP",INT 64"BW-NFS"
+SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63/AH=24h"BW-TCP",INT 64"BW-NFS"
 --------T-6207-------------------------------
 INT 62 - Cswitch - SPAWN
 	AH = 07h
@@ -3126,7 +3128,7 @@ INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - ???
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
-SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63"BW-TCP",INT 64"BW-NFS"
+SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63/AH=24h"BW-TCP",INT 64"BW-NFS"
 --------T-6208-------------------------------
 INT 62 - Cswitch - WAKE UP TASK
 	AH = 08h
@@ -3136,15 +3138,15 @@ SeeAlso: AH=05h,AH=06h
 INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - ???
 	AH = 08h
 	CX = ???
-	ES:SI -> ??? buffer (see #2688)
+	ES:SI -> ??? buffer (see #2763)
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
 Range:	INT 4C to INT FB, selected by configuration
-SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63"BW-TCP",INT 64"BW-NFS"
+SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63/AH=24h"BW-TCP",INT 64"BW-NFS"
 
 Format of BW-TCP ??? buffer:
-Offset	Size	Description	(Table 2688)
+Offset	Size	Description	(Table 2763)
  00h  6 BYTEs	hardware address???
  06h  6 BYTEs	???
  0Ch	WORD	???
@@ -3174,7 +3176,7 @@ Range:	INT 4C to INT FB, selected by configuration
 Note:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
-SeeAlso: AH=0Ah"ETHDEV",AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63"BW-TCP"
+SeeAlso: AH=0Ah"ETHDEV",AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63/AH=24h"BW-TCP"
 SeeAlso: INT 64"BW-NFS"
 --------T-620A-------------------------------
 INT 62 - Cswitch - TEST MESSAGE QUEUE
@@ -3192,7 +3194,7 @@ INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - UNHOOK TIMER INTERRUPT
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
-SeeAlso: AH=09h"ETHDEV",AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63"BW-TCP"
+SeeAlso: AH=09h"ETHDEV",AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63/AH=24h"BW-TCP"
 SeeAlso: INT 64"BW-NFS"
 --------T-620B-------------------------------
 INT 62 - Cswitch - SEND MESSAGE
@@ -3216,7 +3218,7 @@ INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - ADD ???
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
-SeeAlso: AH=0Ch"ETHDEV",AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63"BW-TCP"
+SeeAlso: AH=0Ch"ETHDEV",AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63/AH=24h"BW-TCP"
 SeeAlso: INT 64"BW-NFS"
 --------T-620C-------------------------------
 INT 62 - Cswitch - READ MESSAGE
@@ -3240,7 +3242,7 @@ Range:	INT 4C to INT FB, selected by configuration
 Note:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
-SeeAlso: AH=0Bh"ETHDEV",AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63"BW-TCP"
+SeeAlso: AH=0Bh"ETHDEV",AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63/AH=24h"BW-TCP"
 SeeAlso: INT 64"BW-NFS"
 --------T-620D-------------------------------
 INT 62 - Cswitch - DON'T ALLOW TASK TO BE SWAPPED OUT
@@ -3252,7 +3254,7 @@ INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - NOP for ETHDEV.ODI
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
-SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63"BW-TCP",INT 64"BW-NFS"
+SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63/AH=24h"BW-TCP",INT 64"BW-NFS"
 --------T-620E-------------------------------
 INT 62 - Cswitch - ALLOW TASK TO BE SWAPPED OUT
 	AH = 0Eh
@@ -3264,7 +3266,7 @@ Return: CF clear if successful
 	CF set on error
 	    AL = error code
 SeeAlso: AH=0Fh"ETHDEV",AH=10h"ETHDEV",AH=FEh,INT 21/AH=3Fh"BW-TCP"
-SeeAlso: INT 63"BW-TCP",INT 64"BW-NFS"
+SeeAlso: INT 63/AH=03h"BW-TCP",INT 63/AH=24h"BW-TCP",INT 64"BW-NFS"
 --------T-620F-------------------------------
 INT 62 - Cswitch - LOAD AND RUN PROGRAM FROM DISK
 	AH = 0Fh
@@ -3286,7 +3288,7 @@ Note:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
 SeeAlso: AH=0Eh"ETHDEV",AH=10h"ETHDEV",AH=FEh,INT 21/AH=3Fh"BW-TCP"
-SeeAlso: INT 63"BW-TCP",INT 64"BW-NFS"
+SeeAlso: INT 63/AH=03h"BW-TCP",INT 63/AH=24h"BW-TCP",INT 64"BW-NFS"
 --------T-6210-------------------------------
 INT 62 - Cswitch - TERMINATE SPAWNED PROGRAM
 	AH = 10h
@@ -3297,7 +3299,7 @@ INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - QUERY CRITICAL SECTION
 Return: CF clear if no critical section active
 	CF set if in critical section
 SeeAlso: AH=0Eh"ETHDEV",AH=0Fh"ETHDEV",AH=FEh,INT 21/AH=3Fh"BW-TCP"
-SeeAlso: INT 63"BW-TCP",INT 64"BW-NFS"
+SeeAlso: INT 63/AH=03h"BW-TCP",INT 63/AH=24h"BW-TCP",INT 64"BW-NFS"
 --------T-6211-------------------------------
 INT 62 - Cswitch - GET TCB INFORMATION
 	AH = 11h
@@ -3309,7 +3311,7 @@ INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - SET ???
 	AH = 11h
 	ES:SI -> ???
 Return: CF clear
-SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63"BW-TCP",INT 64"BW-NFS"
+SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63/AH=24h"BW-TCP",INT 64"BW-NFS"
 --------T-6212-------------------------------
 INT 62 - Cswitch - GET TCB ADDRESS
 	AH = 12h
@@ -3327,7 +3329,7 @@ Range:	INT 4C to INT FB, selected by configuration
 Note:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
-SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63"BW-TCP",INT 64"BW-NFS"
+SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63/AH=24h"BW-TCP",INT 64"BW-NFS"
 --------T-6213-------------------------------
 INT 62 - Cswitch - CHECK STATUS OF PREVIOUS LOAD_TASK
 	AH = 13h
@@ -3347,7 +3349,7 @@ Return: CF clear if successful
 	    AL = 00h
 	CF set on error
 	    AL = error code
-SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63"BW-TCP",INT 64"BW-NFS"
+SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63/AH=24h"BW-TCP",INT 64"BW-NFS"
 --------N-6214-------------------------------
 INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - ???
 	AH = 14h
@@ -3356,7 +3358,7 @@ Return: CF clear if successful
 	    AL = 00h
 	CF set on error
 	    AL = error code
-SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63"BW-TCP",INT 64"BW-NFS"
+SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63/AH=24h"BW-TCP",INT 64"BW-NFS"
 --------N-6215-------------------------------
 INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - GET ???
 	AH = 15h
@@ -3369,7 +3371,7 @@ Notes:	call this function after reading the "ETHDEV27" device
 	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
-SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63"BW-TCP",INT 64"BW-NFS"
+SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63/AH=24h"BW-TCP",INT 64"BW-NFS"
 --------N-6216-------------------------------
 INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - ???
 	AH = 16h
@@ -3377,13 +3379,13 @@ INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - ???
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
-SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63"BW-TCP",INT 64"BW-NFS"
+SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63/AH=24h"BW-TCP",INT 64"BW-NFS"
 --------N-6217-------------------------------
 INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - ???
 	AH = 17h
 	DX = segment of ???
 Return: CF clear
-SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63"BW-TCP",INT 64"BW-NFS"
+SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63/AH=24h"BW-TCP",INT 64"BW-NFS"
 --------N-6218-------------------------------
 INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - ALLOCATE AND MAP EMS FOR DRIVER
 	AH = 18h
@@ -3395,7 +3397,8 @@ Notes:	calls function 17h after EMS allocated and mapped
 	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
-SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63"BW-TCP",INT 64"BW-NFS"
+SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63/AH=03h"BW-TCP",INT 63/AH=24h
+SeeAlso: INT 64"BW-NFS"
 --------R-6247-------------------------------
 INT 62 - PC Tools v7 COMMUTE - ???
 	AH = 47h
@@ -3478,7 +3481,7 @@ Notes:	this function is supported by at least the SLIP and ODI versions of
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
 SeeAlso: INT 21/AH=3Fh"BW-TCP",INT 62/AH=00h"ETHDEV",INT 62/AH=18h"ETHDEV"
-SeeAlso: INT 63"BW-TCP",INT 64/AH=FEh
+SeeAlso: INT 63/AH=03h"BW-TCP",INT 63/AH=24h,INT 64/AH=FEh
 --------*-63---------------------------------
 INT 63 - reserved for user interrupt
 --------d-63---------------------------------
@@ -3505,16 +3508,16 @@ INT 63 - Kofax KF9X00 image manipulation card interface
 --------Q-63---------------------------------
 INT 63 - DESQview/X - SOCKET API
 Notes:	parameters are passed by patching (!) data field immediately following
-	  the entry point, as detailed below (see #2689); the preferred
+	  the entry point, as detailed below (see #2764); the preferred
 	  method for calling the socket API is via INT 15/AX=DE2Eh
 	the installation check consists of testing for the string "dvxunix"
 	  (yes, lowercase) at offset 9 from the interrupt handler start
-	  (see #2689)
+	  (see #2764)
 SeeAlso: INT 15/AX=DE2Eh,INT BE"DESQview"
 Index:	installation check;DESQview/X socket interface
 
 Format of DESQview/X socket interrupt handler entry:
-Offset	Size	Description	(Table 2689)
+Offset	Size	Description	(Table 2764)
  00h  3 BYTEs	near jump or short jump + NOP to actual interrupt handler
  03h	WORD	offset from following pointer for initial top of local stack
  05h	DWORD	pointer to argument/stack block (see INT 15/AX=DE2Eh)
@@ -3667,7 +3670,7 @@ INT 63 - BW-TCP - TCPIP.SYS - LISTEN FOR INCOMING CONNECTIONS
 	DS:SI -> ???
 	ES:BP -> ???
 Return: ???
-SeeAlso: INT 61/AH=23h
+SeeAlso: AH=14h,INT 61/AH=23h
 --------N-6313-------------------------------
 INT 63 - BW-TCP - TCPIP.SYS - NOP
 	AH = 13h
@@ -3680,7 +3683,7 @@ INT 63 - BW-TCP - TCPIP.SYS - OPEN NETWORK CONNECTION
 	DS:SI -> ???
 	ES:BP -> ???
 Return: ???
-SeeAlso: INT 61/AH=13h"PC/TCP",INT 62/AH=13h"ETHDEV"
+SeeAlso: AH=12h,AH=16h,AH=19h,INT 61/AH=13h"PC/TCP",INT 62/AH=13h"ETHDEV"
 --------N-6315-------------------------------
 INT 63 - BW-TCP - TCPIP.SYS - ???
 	AH = 15h
@@ -3720,7 +3723,7 @@ Return: BX = number of bytes NOT written
 	???
 Range:	INT 4D to INT FC, selected by configuration
 Note:	calls AH=17h with interrupts disabled and ??? set to 01h
-SeeAlso: AH=1Ah,AH=1Bh,INT 61/AH=1Ah"PC/TCP"
+SeeAlso: AH=14h,AH=1Ah,AH=1Bh,INT 61/AH=1Ah"PC/TCP"
 --------N-631A-------------------------------
 INT 63 - BW-TCP - TCPIP.SYS - READ FROM THE NETWORK
 	AH = 1Ah
@@ -3729,7 +3732,7 @@ INT 63 - BW-TCP - TCPIP.SYS - READ FROM THE NETWORK
 	???
 Return: CX = number of bytes actually read
 	???
-SeeAlso: AH=19h,INT 61/AH=1Bh"PC/TCP"
+SeeAlso: AH=12h,AH=14h,AH=19h,INT 61/AH=1Bh"PC/TCP"
 --------N-631B-------------------------------
 INT 63 - BW-TCP - TCPIP.SYS - ???
 	AH = 1Bh
@@ -3804,12 +3807,12 @@ Range:	INT 4D to INT FC, selected by configuration
 Note:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
-SeeAlso: INT 62/AH=12h"ETHDEV",INT 64"BW-NFS"
+SeeAlso: AH=12h,AH=14h,INT 62/AH=12h"ETHDEV",INT 64"BW-NFS"
 --------N-6325-------------------------------
 INT 63 - BW-TCP - TCPIP.SYS - GET INTERNET ADDRESS
 	AH = 25h
 Return: CL:CH:DL:DH = caller's Internet address
-SeeAlso: AH=26h,INT 61/AH=05h"PC/TCP"
+SeeAlso: AH=03h,AH=26h,INT 61/AH=05h"PC/TCP"
 --------N-6326-------------------------------
 INT 63 - BW-TCP - TCPIP.SYS - SET INTERNET ADDRESS???
 	AH = 26h
@@ -3817,7 +3820,7 @@ INT 63 - BW-TCP - TCPIP.SYS - SET INTERNET ADDRESS???
 Return: nothing
 Range:	INT 4D to INT FC, selected by configuration
 Note:	this function sets a different variable than AH=25h returns
-SeeAlso: AH=25h
+SeeAlso: AH=03h,AH=25h
 --------N-6327-------------------------------
 INT 63 - BW-TCP - TCPIP.SYS - SET ???
 	AH = 27h
@@ -3864,7 +3867,7 @@ INT 64 - Novell NetWare to v2.0a - LOW-LEVEL API
 Note:	equivalent to INT 7A for NetWare versions through 2.0a only; later
 	  versions do not use this interrupt for IPX/SPX access, instead
 	  getting an entry point from INT 2F/AX=7A00h
-SeeAlso: INT 2F/AX=7A00h,INT 7A"Novell"
+SeeAlso: INT 2F/AX=7A00h,INT 7A"LOW-LEVEL API"
 --------h-64---------------------------------
 INT 64 - Data General DG10 - MicroECLIPSE COPROCESSOR INTERFACE
 SeeAlso: INT 65"DG10",INT 66"DG10"
@@ -3954,7 +3957,7 @@ Notes:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  vector assigned to it (two more than the value returned by reading
 	  the ETHDEV27 device), and testing whether the word immediately
 	  preceding the interrupt handler is 4257h ('BW')
-SeeAlso: INT 62/AH=00h"ETHDEV",INT 63"BW-TCP"
+SeeAlso: INT 62/AH=00h"ETHDEV",INT 63/AH=03h"BW-TCP",INT 63/AH=24h
 Index:	installation checks;BWRPC
 --------N-6402-------------------------------
 INT 64 U - BW-NFS - BWRPC - ???
@@ -4023,14 +4026,15 @@ Return: CF clear if successful
 	    AL = error code
 Range:	INT 4E to INT FD, selected by configuration
 Note:	this call is passed through directly to ETHDEV.SYS (see INT 62/AH=FEh)
-SeeAlso: INT 21/AH=3Fh"BW-TCP",INT 62/AH=FEh,INT 63"BW-TCP"
+SeeAlso: INT 21/AH=3Fh"BW-TCP",INT 62/AH=FEh,INT 63/AH=03h"BW-TCP"
+SeeAlso: INT 63/AH=24h
 --------*-65---------------------------------
 INT 65 - reserved for user interrupt
 --------d-65---------------------------------
 INT 65 - Adaptec controllers - DRIVE 1 DATA
 Desc:	this vector stores the second four bytes of the parameter table for
 	  hard disk 1
-SeeAlso: INT 64"Adaptec",INT 66"Adaptec",INT 67"Adaptec",#0598
+SeeAlso: INT 64"Adaptec",INT 66"Adaptec",INT 67"Adaptec",#0629
 --------b-65---------------------------------
 INT 65 - TI Professional PC - OPTION ROM DATA AREA POINTER (NOT A VECTOR!)
 Desc:	the low word of this vector contains the segment of the RAM data area
@@ -4060,7 +4064,7 @@ Program: PC-DRAFT is a powerful CAD environment by rhv.
 SeeAlso: INT 62"PC-DRAFT",INT 64"PC-DRAFT",INT 66"PC-DRAFT",INT 67"PC-DRAFT"
 --------s-65---------------------------------
 INT 65 - Ad Lib SOUND.COM - INTERFACE
-	SI = function number (see also entries below)
+	SI = function number (also see separate entries below)
 	    0000h Init
 	    0002h RelTimeStart
 	    0003h SetState
@@ -4086,17 +4090,213 @@ INT 65 - Ad Lib SOUND.COM - INTERFACE
 	    0017h WaveForm
 	ES:BX -> arguments
 Note:	the installation check consists of checking for the signature block
-	  immediately preceding the interrupt handler (see #2690)
+	  immediately preceding the interrupt handler (see #2765)
 SeeAlso: SI=8000h
 Index:	installation check;Ad Lib SOUND.COM
 
 Format of AdLib signature block:
-Offset	Size	Description	(Table 2690)
+Offset	Size	Description	(Table 2765)
  00h	WORD	version number
  02h 19 BYTEs	"SOUND-DRIVER-AD-LIB"
  15h	BYTE	01h
  16h	BYTE	01h
  17h	BYTE	00h
+--------N-65----DX4147-----------------------
+INT 65 U - NetSoft DOS-NET v1.20+ - ??? API
+	DX = 4147h
+	BH = 01h
+	BL = function number (00h-2Ah)
+	???
+Return: CF clear if successful
+	    AX = ???
+	CF set on error
+	    AX = error code (0001h=invalid function/subfunction)
+Range:	INT ?? to INT ??, selected by configuration option; actual interrupt
+	  number and function number may be retrieved via INT 2A/AX=4147h
+Note:	this API is supported by CLIENT.COM, SERVER.COM, DOSNET.COM, and
+	  ROUTER.COM
+SeeAlso: DX=4147h/BH=80h,INT 2A/AX=4147h
+--------N-65----DX4147-----------------------
+INT 65 U - NetSoft DOS-NET v1.20+ - ??? API
+	DX = 4147h
+	BH = 02h
+	BL = function number (00h-05h)
+	???
+Return: CF clear if successful
+	    AX = ???
+	CF set on error
+	    AX = error code (0001h=invalid function/subfunction)
+Range:	INT ?? to INT ??, selected by configuration option; actual interrupt
+	  number and function number may be retrieved via INT 2A/AX=4147h
+Note:	this API is supported by CLIENT.COM, SERVER.COM, DOSNET.COM, and
+	  ROUTER.COM
+SeeAlso: DX=4147h/BH=80h,INT 2A/AX=4147h
+--------N-65----DX4147-----------------------
+INT 65 U - NetSoft DOS-NET v1.20+ - ??? API
+	DX = 4147h
+	BH = 03h
+	BL = function number (00h-03h) (00h-04h for ROUTER.COM)
+	???
+Return: CF clear if successful
+	    AX = ???
+	CF set on error
+	    AX = error code
+Range:	INT ?? to INT ??, selected by configuration option; actual interrupt
+	  number and function number may be retrieved via INT 2A/AX=4147h
+Note:	this API is supported by CLIENT.COM, SERVER.COM, DOSNET.COM, and
+	  ROUTER.COM
+SeeAlso: DX=4147h/BH=80h,INT 2A/AX=4147h
+--------N-65----DX4147-----------------------
+INT 65 U - NetSoft DOS-NET v1.20+ - ??? API
+	DX = 4147h
+	BH = 04h
+	BL = function number (00h-07h)
+	???
+Return: CF clear if successful
+	    AX = ???
+	CF set on error
+	    AX = error code
+Range:	INT ?? to INT ??, selected by configuration option; actual interrupt
+	  number and function number may be retrieved via INT 2A/AX=4147h
+Note:	this API is supported by CLIENT.COM, SERVER.COM, and DOSNET.COM
+SeeAlso: DX=4147h/BH=80h,INT 2A/AX=4147h
+--------N-65----DX4147-----------------------
+INT 65 U - NetSoft DOS-NET v1.20+ - ??? API
+	DX = 4147h
+	BH = 07h
+	BL = function number (00h-08h)
+	???
+Return: CF clear if successful
+	    AX = ???
+	CF set on error
+	    AX = error code (0001h=invalid function/subfunction)
+Range:	INT ?? to INT ??, selected by configuration option; actual interrupt
+	  number and function number may be retrieved via INT 2A/AX=4147h
+Note:	this API is supported by CLIENT.COM, SERVER.COM, and DOSNET.COM
+SeeAlso: DX=4147h/BH=80h,INT 2A/AX=4147h
+--------N-65----DX4147-----------------------
+INT 65 U - NetSoft DOS-NET v1.20+ - INSTALLATION CHECK???
+	DX = 4147h
+	BH = 80h
+Return: CF set
+	AX = 0001h
+Range:	INT ?? to INT ??, selected by configuration option; actual interrupt
+	  number and function number may be retrieved via INT 2A/AX=4147h
+Note:	this call is supported by CLIENT.COM, SERVER.COM, and ROUTER.COM
+SeeAlso: DX=4147h/BH=01h,INT 2A/AX=4147h
+--------N-65----DX4741-----------------------
+INT 65 U - NetSoft DOS-NET v1.20+ - SPOOLER - ???
+	DX = 4741h
+	BH = 01h
+	AL = 02h
+	BL = function number (0Eh,0Fh)
+	AH = subfunction number
+	???
+Return: ???
+Range:	INT ?? to INT ??, selected by configuration option; actual interrupt
+	  number may be retrieved via INT 2A/AX=4147h
+SeeAlso: DX=4147h/BH=80h,INT 2A/AX=4147h
+--------N-65----DX4741-----------------------
+INT 65 U - NetSoft DOS-NET v1.20+ - PRNREDIR - ???
+	DX = 4741h
+	BH = 01h
+	AL = 03h
+	BL = function number (0Eh,0Fh)
+	AH = subfunction number
+	???
+Return: ???
+Range:	INT ?? to INT ??, selected by configuration option; actual interrupt
+	  number may be retrieved via INT 2A/AX=4147h
+SeeAlso: DX=4147h/BH=80h,INT 2A/AX=4147h
+--------N-65----DX4741-----------------------
+INT 65 U - NetSoft DOS-NET v1.20+ - PRNREDIR - ???
+	DX = 4741h
+	BH = 01h
+	AL = 04h
+	BL = function number (0Eh,0Fh)
+	AH = subfunction number
+	???
+Return: ???
+Range:	INT ?? to INT ??, selected by configuration option; actual interrupt
+	  number may be retrieved via INT 2A/AX=4147h
+SeeAlso: DX=4147h/BH=80h,INT 2A/AX=4147h
+--------N-65----DX4741-----------------------
+INT 65 U - NetSoft DOS-NET v1.20+ - NETBIOS - ???
+	DX = 4741h
+	BH = 01h
+	AL = 07h
+	BL = function number (0Eh,0Fh)
+	AH = subfunction number
+	???
+Return: ???
+Range:	INT ?? to INT ??, selected by configuration option; actual interrupt
+	  number may be retrieved via INT 2A/AX=4147h
+SeeAlso: DX=4147h/BH=80h,INT 2A/AX=4147h
+--------N-65----DX4741-----------------------
+INT 65 U - NetSoft DOS-NET v1.20+ - MACTEST - ???
+	DX = 4741h
+	BH = 01h
+	AL = 08h
+	BL = function number (0Eh,0Fh)
+	AH = subfunction number
+	???
+Return: ???
+Range:	INT ?? to INT ??, selected by configuration option; actual interrupt
+	  number may be retrieved via INT 2A/AX=4147h
+SeeAlso: DX=4147h/BH=80h,INT 2A/AX=4147h
+--------N-65----DX4741-----------------------
+INT 65 U - NetSoft DOS-NET v1.20+ - Physical Layer - ???
+	DX = 4741h
+	BH = 02h
+	BL = function number (01h-04h)
+	???
+Return: ???
+	---function 02h---
+	DS:SI -> ??? data area
+Range:	INT ?? to INT ??, selected by configuration option; actual interrupt
+	  number may be retrieved via INT 2A/AX=4147h
+Note:	this API is supported by PARALLEL.COM, SERIAL.COM, ARCNET.COM,
+	  ETHERNET.COM, NDIS.COM, ODI.COM, SMC.COM, and FTP.COM
+SeeAlso: DX=4147h/BH=80h,INT 2A/AX=4147h
+--------N-65----DX4741-----------------------
+INT 65 U - NetSoft DOS-NET v1.20+ - SPOOLER.COM - ???
+	DX = 4741h
+	BH = 05h
+	BL = function number (00h,01h)
+Return: CF clear
+	AL = status code (00h=successful)
+Range:	INT ?? to INT ??, selected by configuration option; actual interrupt
+	  number may be retrieved via INT 2A/AX=4147h
+SeeAlso: DX=4147h/BH=80h,INT 2A/AX=4147h
+--------N-65----DX4741-----------------------
+INT 65 U - NetSoft DOS-NET v1.20+ - PRNREDIR.COM - ???
+	DX = 4741h
+	BH = 06h
+	BL = function number (00h-04h)
+	???
+Return: ???
+Range:	INT ?? to INT ??, selected by configuration option; actual interrupt
+	  number may be retrieved via INT 2A/AX=4147h
+SeeAlso: DX=4147h/BH=80h,INT 2A/AX=4147h
+--------N-65----DX4741-----------------------
+INT 65 U - NetSoft DOS-NET v1.20+ - COMREDIR.COM - ???
+	DX = 4741h
+	BH = 08h
+	BL = function number (00h-01h)
+	???
+Return: ???
+Range:	INT ?? to INT ??, selected by configuration option; actual interrupt
+	  number may be retrieved via INT 2A/AX=4147h
+SeeAlso: DX=4147h/BH=80h,INT 2A/AX=4147h
+--------N-65----DX4741-----------------------
+INT 65 U - NetSoft DOS-NET v1.20+ - FTP.COM - ???
+	DX = 4741h
+	BX = 8010h
+	AL = instance number???
+Return: AX = 0008h if AL matches internal variable (call chained otherwise)
+Range:	INT ?? to INT ??, selected by configuration option; actual interrupt
+	  number may be retrieved via INT 2A/AX=4147h
+SeeAlso: DX=4147h/BH=80h,INT 2A/AX=4147h
 --------s-65----SI0000-----------------------
 INT 65 - Ad Lib SOUND.COM - INITIALIZE (RESET)
 	SI = 0000h
@@ -4199,11 +4399,11 @@ INT 66 - TI Professional PC - SYSTEM INFORMATION (NOT A VECTOR!)
 Desc:	the low word of this vector contains the system memory size in
 	  paragraphs; the third byte contains the number of outstanding
 	  interrupt requests, and the fourth byte contains a description
-	  of the installed drive types (see #2691)
+	  of the installed drive types (see #2766)
 SeeAlso: INT 60"TI Professional PC",INT 67"TI Professional"
 
 Bitfields for TI Professional drive type information:
-Bit(s)	Description	(Table 2691)
+Bit(s)	Description	(Table 2766)
  7	floppy drive D: has 80 tracks
  6	floppy drive D: is double-sided
  5	floppy drive C: has 80 tracks
@@ -4280,13 +4480,13 @@ SeeAlso: AH=06h,AX=3345h,INT 2F/AX=8000h"FaxBIOS"
 --------F-6605-------------------------------
 INT 66 - BitFax Scheduler - CONVERT FILE AND SEND FAX
 	AH = 05h
-	BX:CX -> command block (see #2692)
+	BX:CX -> command block (see #2767)
 	???
 Return: ???
 SeeAlso: AH=03h
 
 Format of BitFax command block:
-Offset	Size	Description	(Table 2692)
+Offset	Size	Description	(Table 2767)
  00h 18 BYTEs	configuration bytes???
  12h	BYTEs	ASCIZ temporary file name to place converted fax
  52h	BYTEs	ASCIZ directory containing BitFax executables
@@ -4310,7 +4510,7 @@ SeeAlso: AH=04h
 --------s-660688-----------------------------
 INT 66 - IBMSND driver, DIGPAK - PLAY 8-BIT DIGITIZED SOUND
 	AX = 0688h
-	DS:SI -> SNDSTRUC (see #2693)
+	DS:SI -> SNDSTRUC (see #2768)
 Return: ???
 Program: The IBMSND driver is part of John W. Ratcliff's
 	   The IBM Digitized Sound Package
@@ -4323,7 +4523,7 @@ Note:	the installation check consists of looking for a valid signature
 SeeAlso: AX=068Bh,AX=068Fh,AX=0701h
 
 Format of IBMSND driver SNDSTRUC:
-Offset	Size	Description	(Table 2693)
+Offset	Size	Description	(Table 2768)
  00h	DWORD	-> audio data
  04h	WORD	length of audio data in bytes
  06h	DWORD	-> playback status flag
@@ -4344,26 +4544,26 @@ Index:	version check;DIGPAK
 --------s-66068A-----------------------------
 INT 66 - IBMSND driver, DIGPAK - PREFORMAT SOUND
 	AX = 068Ah
-	DS:SI -> SNDSTRUC (see #2693)
+	DS:SI -> SNDSTRUC (see #2768)
 Desc:	convert audio data into output hardware format
 SeeAlso: AX=068Bh
 --------s-66068B-----------------------------
 INT 66 - IBMSND driver, DIGPAK - PLAY PREFORMATTED SOUND
 	AX = 068Bh
-	DS:SI -> SNDSTRUC (see #2693)
+	DS:SI -> SNDSTRUC (see #2768)
 Return: AX = ???
 SeeAlso: AX=0688h,AX=068Ah,AX=068Fh
 --------s-66068C-----------------------------
 INT 66 - IBMSND driver, DIGPAK - REPORT AUDIO DRIVER CAPABILITIES
 	AX = 068Ch
-Return: AX = capabilities (see #2694)
+Return: AX = capabilities (see #2769)
 	DX = playback rate if fixed-frequency playback
 	---DIGPAK---
 	BX:CX -> ASCIZ ID string
 SeeAlso: AX=0689h,AX=068Dh
 
 Bitfields for IBMSND driver capabilities:
-Bit(s)	Description	(Table 2694)
+Bit(s)	Description	(Table 2769)
  0	can play audio in background
  1	data is massaged for output device
  2	driver plays at fixed frequency, resampling input data to fit
@@ -4427,7 +4627,7 @@ Program: DIGPAK is a set of digitized sound drivers written by
 --------s-660694-----------------------------
 INT 66 - DIGPAK - PLAY PREFORMATTED DATA
 	AX = 0694h
-	DS:SI -> Sound Data structure (see #2693)
+	DS:SI -> Sound Data structure (see #2768)
 Return: AX = status???
 --------s-660695-----------------------------
 INT 66 - DIGPAK - POST AUDIO PENDING
@@ -4606,7 +4806,7 @@ SeeAlso: AX=0704h,AX=0710h
 --------s-66070E-----------------------------
 INT 66 - MIDPAK - GET RELATIVE VOLUME
 	AX = 070Eh
-Return:	AX = current volume
+Return: AX = current volume
 SeeAlso: AX=070Fh
 --------s-66070F-----------------------------
 INT 66 - MIDPAK - SET RELATIVE VOLUME
@@ -4670,7 +4870,7 @@ Return: CF clear
 --------n-6612-------------------------------
 INT 66 - PenDOS - TDMOUSE.EXE - INITIALIZE
 	AH = 12h
-Return:	CF clear
+Return: CF clear
 	AX = 0000h
 Note:	this function calls the old mouse handler with functions 0000h, 0002h,
 	  0007h, 0008h, 000Fh, 0004h, and 000Ch (in that order)
@@ -4911,11 +5111,11 @@ SeeAlso: INT 64"Adaptec",INT 65"Adaptec",INT 66"Adaptec"
 --------b-67---------------------------------
 INT 67 - TI Professional PC - SYSTEM DATA (NOT A VECTOR!)
 Desc:	this vector contains the TI Pro's system configuration words
-	  (see #2695)
+	  (see #2770)
 SeeAlso: INT 66"TI Professional PC"
 
 Bitfields for TI Professional PC System Configuration doubleword:
-Bit(s)	Description	(Table 2695)
+Bit(s)	Description	(Table 2770)
  0	8087 present
  31-1	reserved (0)
 --------d-67---------------------------------
@@ -4941,11 +5141,11 @@ SeeAlso: INT 62"PC-DRAFT",INT 64"PC-DRAFT",INT 65"PC-DRAFT",INT 66"PC-DRAFT"
 INT 67 - PC-NET, Alloy NTNX - LOCK SEMAPHORE AND WAIT
 	AH = 00h
 	DS:DX -> ASCIZ semaphore name (max 64 bytes)
-Return: AL = status (see #2696)
+Return: AL = status (see #2771)
 	AH = semaphore owner if status=02h
 SeeAlso: AH=01h,AH=02h"PC-NET",INT 7F/AH=00h
 
-(Table 2696)
+(Table 2771)
 Values for PC-NET semaphore function status:
  00h	successful
  01h	invalid function
@@ -4956,14 +5156,14 @@ Values for PC-NET semaphore function status:
 INT 67 - PC-NET, Alloy NTNX - LOCK SEMAPHORE
 	AH = 01h
 	DS:DX -> ASCIZ semaphore name (max 64 bytes)
-Return: AL = status (see #2696)
+Return: AL = status (see #2771)
 	AH = semaphore owner if status=02h
 SeeAlso: AH=00h,AH=02h"PC-NET",INT 7F/AH=01h"Alloy"
 --------N-6702-------------------------------
 INT 67 - PC-NET, Alloy NTNX - UNLOCK SEMAPHORE
 	AH = 02h
 	DS:DX -> ASCIZ semaphore name (max 64 bytes)
-Return: AL = status (see #2696)
+Return: AL = status (see #2771)
 	AH = semaphore owner if status=02h
 SeeAlso: AH=00h,AH=01h"PC-NET",INT 7F/AH=02h
 --------m-671E-------------------------------
@@ -4976,19 +5176,19 @@ SeeAlso: AH=1Fh,INT 21/AX=4402h"386MAX"
 --------m-671F-------------------------------
 INT 67 U - Qualitas 386MAX v7.00 - MEMLIMIT - API
 	AH = 1Fh
-	DS:SI -> request packet (see #2697)
+	DS:SI -> request packet (see #2772)
 Return: AH = status (00h successful, 84h invalid function code, etc.)
 SeeAlso: AH=1Eh
 
 Format of 386MAX MEMLIMIT request packet:
-Offset	Size	Description	(Table 2697)
+Offset	Size	Description	(Table 2772)
  00h	WORD	function code (00h-0Fh)
- 02h	WORD	return code (see #2698)
+ 02h	WORD	return code (see #2773)
  04h  4 BYTEs	???
  08h	WORD	???
 	???
 
-(Table 2698)
+(Table 2773)
 Values for 386MAX MEMLIMIT return code:
  00h	unknown request
  01h	invalid parameter for VCPI limit
@@ -5025,7 +5225,7 @@ INT 67 U - QEMM-386 v4.23+ - INSTALLATION CHECK
 	CX = 5145h ("QE")
 	DX = 4D4Dh ("MM")
 Return: AH = 00h if installed
-	    ES:DI -> QEMM API entry point (see #2699,#2702,#2814)
+	    ES:DI -> QEMM API entry point (see #2774,#2777,#2889)
 Notes:	if no other program has hooked INT 67, an alternate installation
 	  check is to test for the string
 	  "QUARTERDECK EXPANDED MEMORY MANAGER 386" at offset 14h in the INT 67
@@ -5049,7 +5249,7 @@ Notes:	if no other program has hooked INT 67, an alternate installation
 SeeAlso: AX=5BF0h,AH=DDh,AX=FFA5h,INT 15/AX=11DEh,INT 21/AX=4402h/SF=01h
 SeeAlso: INT 21/AX=4402h"QEMM",INT 21/AX=4402h"386MAX",INT 2F/AX=D201h/BX=5145h
 
-(Table 2699)
+(Table 2774)
 Values for calling QEMM "QPI_GetStatus" function:
 	AH = 00h get QEMM state
 Return: CF clear
@@ -5057,9 +5257,9 @@ Return: CF clear
 	    bit 0 set if QEMM turned OFF
 	    bit 1 set if in "Auto" mode
 Note:	this function is officially documented
-SeeAlso: #2700,#2701,#2702,#2814
+SeeAlso: #2775,#2776,#2777,#2889
 
-(Table 2700)
+(Table 2775)
 Values for calling QEMM "QPI_SetStatus" function:
 	AH = 01h set QEMM state
 	AL = new state
@@ -5067,9 +5267,9 @@ Values for calling QEMM "QPI_SetStatus" function:
 Return: CF clear if successful
 	CF set on error
 Note:	this function is officially documented
-SeeAlso: #2699
+SeeAlso: #2774
 
-(Table 2701)
+(Table 2776)
 Values for calling QEMM QPI function 02h:
 	AH = 02h get ???
 Return: CF clear
@@ -5078,9 +5278,9 @@ Return: CF clear
 	Offset	Size	Description
 	 00h	DWORD	page table entry for ???
 		???
-SeeAlso: #2702
+SeeAlso: #2777
 
-(Table 2702)
+(Table 2777)
 Values for calling QEMM "QPI_GetVersion" function:
 	AH = 03h get QEMM version
 Return: CF clear
@@ -5089,65 +5289,65 @@ Notes:	this function is officially documented.	 The most recent official docs
 	  state that the version is returned in both AX and BX; older
 	  documentation only mentions BX
 	MICEMM returns AX=0001h, BX unchanged
-SeeAlso: #2699,#2703
+SeeAlso: #2774,#2778
 
-(Table 2703)
+(Table 2778)
 Values for calling QEMM QPI function 04h:
 	AH = 04h allocate 4K page and set AUTO/ON mode
 Return: CF clear if successful
 	    DX = page number of a 4K page
 	CF set if unable to allocate page
 Note:	QEMM mode unchanged if not AUTO/OFF
-SeeAlso: #2704
+SeeAlso: #2779
 
-(Table 2704)
+(Table 2779)
 Values for calling QEMM QPI function 05h:
 	AH = 05h free 4K page and turn QEMM off
 	DX = page number returned by function 04h
 Return: CF clear
 Note:	QEMM mode unchanged if not AUTO/ON
-SeeAlso: #2703,#2705
+SeeAlso: #2778,#2780
 
-(Table 2705)
+(Table 2780)
 Values for calling QEMM QPI function 06h:
 	AH = 06h make new mapping context???
 	DX = page number of 4K page to hold page table
 Return: CF clear
 Note:	copies page table into given page and then sets ??? page table entry
 	  to point at copy
-SeeAlso: #2706,#2707
+SeeAlso: #2781,#2782
 
-(Table 2706)
+(Table 2781)
 Values for calling QEMM QPI function 07h:
 	AH = 07h get mapping context
 Return: CF clear
 	DX = page number of page table for current mapping context
-SeeAlso: #2702,#2705,#2707
+SeeAlso: #2777,#2780,#2782
 
-(Table 2707)
+(Table 2782)
 Values for calling QEMM QPI function 08h:
 	AH = 08h set mapping context???
 	DX = linear page number of page table
 Return: CF clear
-SeeAlso: #2702,#2705,#2706,#2708,#2710
+SeeAlso: #2777,#2780,#2781,#2783,#2785
 
-(Table 2708)
+(Table 2783)
 Values for calling QEMM QPI function 09h:
 	AH = 09h get linear page number for page table entry
 	CX = page table index
 Return: CF clear
 	DX = linear page number
-SeeAlso: #2709
+SeeAlso: #2784
 
-(Table 2709)
+(Table 2784)
 Values for calling QEMM QPI function 0Ah:
 	AH = 0Ah set linear page number for page table entry
 	CX = page table index
 	DX = linear page number
 Return: CF clear
-SeeAlso: #2708
+SeeAlso: #2783
 
-(Table 2710)
+(Table 2785)
 Values for calling QEMM QPI function 0Bh:
 	AH = 0Bh map 4K pages
 	BX = number of pages
@@ -5156,18 +5356,18 @@ Values for calling QEMM QPI function 0Bh:
 	      into the address space beginning with the first page
 	      allocated to the handle)
 Return: AH = 00h
-SeeAlso: #2707,#2711
+SeeAlso: #2782,#2786
 
-(Table 2711)
+(Table 2786)
 Values for calling QEMM QPI function 0Ch:
 	AH = 0Ch get available memory
 Return: CF clear
 	BX = 0001h
 	CX = total 4K pages???
 	DX = number of 4K pages free
-SeeAlso: #2710,#2712
+SeeAlso: #2785,#2787
 
-(Table 2712)
+(Table 2787)
 Values for calling QEMM QPI function 0Dh:
 	AH = 0Dh CRT controller I/O port trapping
 	AL = mode
@@ -5177,7 +5377,7 @@ Values for calling QEMM QPI function 0Dh:
 	    02h only trap on I/O ports 03C6h, 03C8h, and 03C9h
 Return: CF clear
 
-(Table 2713)
+(Table 2788)
 Values for calling QEMM QPI function 0Eh:
 	AH = 0Eh set cursor virtualization callbacks
 	DS:BX -> FAR routine for getting hardware cursor address
@@ -5190,7 +5390,7 @@ Note:	both callbacks are invoked with CL indicating which
 	  ES:DX is called with BL or BH (depending on CL)
 	  set to the appropriate half of the cursor's address
 
-(Table 2714)
+(Table 2789)
 Values for calling QEMM QPI function 0Fh:
 	AH = 0Fh unmap 4K pages
 	CX = first page number
@@ -5200,7 +5400,7 @@ Return: CF clear
 Note:	if CX=0100h and DX=0010h, the HMA is remapped to
 	  simulate a disabled A20
 
-(Table 2715)
+(Table 2790)
 Values for calling QEMM QPI function 1000h:
 	AX = 1000h get protected-mode interface
 	DS:SI -> 16-byte buffer for two GDT entries
@@ -5213,15 +5413,15 @@ Return: CF clear
 	DI points to first unused page table entry
 SeeAlso: INT 67/AX=DE01h
 
-(Table 2716)
+(Table 2791)
 Values for calling QEMM QPI function 1001h:
 	AX = 1001h get CPU debug registers
 	ES:DI -> buffer for debug registers (8 DWORDs)
 Return: CF clear
-	BL = INT01 handling (see function 1002h)
+	BL = INT01 handling (see #2792)
 	ES:DI buffer filled
 
-(Table 2717)
+(Table 2792)
 Values for calling QEMM QPI function 1002h:
 	AX = 1002h set CPU debug registers
 	BL = INT01 handling
@@ -5233,15 +5433,16 @@ Return: CF clear
 Notes:	identical to INT 67/AX=DE09h if BL=01h
 	the INT01 handling flag is set to 01h by the general-protection
 	  violation handler for certain privileged instructions
+SeeAlso: #2791
 
-(Table 2718)
+(Table 2793)
 Values for calling QEMM QPI function 1003h:
 	AX = 1003h get machine status word CR0
 Return: CF clear
 	EAX = contents of CR0
 SeeAlso: INT 67/AX=DE07h
 
-(Table 2719)
+(Table 2794)
 Values for calling QEMM QPI function 1004h:
 	AX = 1004h allocate a 4K page
 Return: CF clear if successful
@@ -5249,34 +5450,34 @@ Return: CF clear if successful
 	CF set on error
 SeeAlso: INT 67/AX=DE04h
 
-(Table 2720)
+(Table 2795)
 Values for calling QEMM QPI function 1005h:
 	AX = 1005h free 4K page
 	EDX = linear address of page to free
 Return: CF clear
 SeeAlso: INT 67/AX=DE05h
 
-(Table 2721)
+(Table 2796)
 Values for calling QEMM QPI function 1006h:
 	AX = 1006h NOP
 Return: CF set
 
-(Table 2722)
+(Table 2797)
 Values for calling QEMM QPI function 1007h:
 	AX = 1007h get maximum physical memory address
 Return: CF clear
 	EDX = physical address of highest 4K memory page
 SeeAlso: INT 67/AX=DE02h
 
-(Table 2723)
+(Table 2798)
 Values for calling QEMM QPI function 1008h:
 	AX = 1008h get physical address of page in first megabyte
 	CX = page number (linear address shifted right 12 bits)
 Return: CF clear
 	EDX = linear address of page
-SeeAlso: function 1F00h
+SeeAlso: #2797,#2873,#2874
 
-(Table 2724)
+(Table 2799)
 Values for calling QEMM QPI function 1009h:
 	AX = 1009h switch to protected mode
 	ESI = linear address in first megabyte of system reg values
@@ -5289,7 +5490,7 @@ Return: interrupts disabled
 	      before enabling interrupts
 	EAX, ESI, DS, ES, FS, GS destroyed
 
-(Table 2725)
+(Table 2800)
 Values for calling QEMM QPI function 100Ah:
 	AX = 100Ah switch back to virtual-86 mode
 	DS = selector for data segment from function 1000h
@@ -5308,7 +5509,7 @@ Values for calling QEMM QPI function 100Ah:
 	will switch to virtual86 mode with interrupts disabled, all
 	  segment registers loaded, and EAX destroyed.
 
-(Table 2726)
+(Table 2801)
 Values for calling QEMM QPI function 11h:
 	AH = 11h get memory type map
 	AL = zero/nonzero ??? (set by QEMM.COM but apparently ignored
@@ -5324,14 +5525,14 @@ Note:	each byte of the buffer corresponds to a 4K page, and
 	  08h = split ROM, 09h = page frame, 0Ah = RAMmable,
 	  0Bh = conventional, 83h = high RAM under MS Windows
 
-(Table 2727)
+(Table 2802)
 Values for calling QEMM QPI function 12h:
 	AH = 12h get HIRAM chain
 Return: CF clear
 	BX = segment of first MCB in high memory
 	    0000h if no high memory
 
-(Table 2728)
+(Table 2803)
 Values for calling QEMM QPI function 1300h:
 	AX = 1300h VIDRAMEGA???
 	BL = 00h copy ???
@@ -5341,7 +5542,7 @@ Return: CF clear
 	    00h if all pages clean
 	    01h if any page dirty
 
-(Table 2729)
+(Table 2804)
 Values for calling QEMM QPI function 1301h:
 	AX = 1301h check if pages modified
 	DX:DI = start address of range to check
@@ -5353,7 +5554,7 @@ Return: CF clear
 	    1000h one or more pages is dirty
 		DI = low word of first dirty page's linear addr
 
-(Table 2730)
+(Table 2805)
 Values for calling QEMM QPI function 1302h:
 	AX = 1302h ???
 	BL = ???
@@ -5368,7 +5569,7 @@ Note:	disables certain interrupts at the two 8259 PICs during
 	  execution; also modifies CRT controller during
 	  execution under certain circumstances
 
-(Table 2731)
+(Table 2806)
 Values for calling QEMM QPI function 1303h:
 	AX = 1303h initialize EGA graphics virtualization
 	BX = number of pages (less 1) of EMS to allocate
@@ -5376,23 +5577,23 @@ Return: CF clear if successful
 	    DX = EMS handle
 	CF set on error
 
-(Table 2732)
+(Table 2807)
 Values for calling QEMM QPI function 1304h:
 	AX = 1304h shutdown EGA graphics virtualization
 	DX = EMS handle being used for virtualization
 Return: CF clear
 
-(Table 2733)
+(Table 2808)
 Values for calling QEMM QPI function 1305h:
 	AX = 1305h select portion of EGA graphics to virtualize???
 	(related to graphics virtualization, changes memory mappings)
 	CX = start offset within A000h segment of virtualized mem???
 Return: CF clear
 Note:	disables certain interrupts at the two 8259 PICs during
-	  execution (see func 130Ch) and runs inside a QEMM
+	  execution (see #2815) and runs inside a QEMM
 	  critical section
 
-(Table 2734)
+(Table 2809)
 Values for calling QEMM QPI function 1306h:
 	AX = 1306h set DESQview critical section counter address
 	ES:BX -> WORD DESQview critical section counter or 0000h:0000h
@@ -5400,15 +5601,15 @@ Return: CF clear
 Note:	also sets a pointer in the low-memory part of QEMM to
 	  the current value of INT 15 if ES:BX not 0000h:0000h
 
-(Table 2735)
+(Table 2810)
 Values for calling QEMM QPI function 1307h:
 	AX = 1307h ??? (changes memory mappings for entire A000h segment)
 Return: CF clear
 Note:	disables certain interrupts at the two 8259 PICs during
-	  execution (see func 130Ch) and runs inside a QEMM
+	  execution (see #2815) and runs inside a QEMM
 	  critical section
 
-(Table 2736)
+(Table 2811)
 Values for calling QEMM QPI function 1308h:
 	AX = 1308h start/reset CRT controller I/O trapping
 	BL = subfunction
@@ -5418,7 +5619,7 @@ Return: CF clear
 Note:	if called more than once in a row with BL nonzero, the
 	  original state of the I/O port trapping will be lost
 
-(Table 2737)
+(Table 2812)
 Values for calling QEMM QPI function 1309h:
 	AX = 1309h Hercules mode-change support
 	ES:BX -> new address for Hercules mode-change callback
@@ -5426,14 +5627,14 @@ Return: CF clear
 Note:	the callback function is called whenever the CRTC mode
 	  register is written, with AL set to the value written
 
-(Table 2738)
+(Table 2813)
 Values for calling QEMM QPI function 130Ah:
 	AX = 130Ah virtualize EGA/VGA DAC registers (I/O ports 03C8h/03C9h)
-	CX:DX -> DAC register virtualization buffer (see #2821)
+	CX:DX -> DAC register virtualization buffer (see #2896)
 		or 0000h:0000h to disable
 Return: CF clear
 
-(Table 2739)
+(Table 2814)
 Values for calling QEMM QPI function 130Bh:
 	AX = 130Bh ???
 	BL = ??? (??? or 00h)
@@ -5441,43 +5642,43 @@ Return: CF clear
 	???
 Note:	calls AX=130Eh in some cases
 
-(Table 2740)
+(Table 2815)
 Values for calling QEMM QPI function 130Ch:
 	AX = 130Ch set interrupts to mask
 	BX = interrupts to mask out during AX=1302h,AX=1307h,AX=1308h,
 	      AX=130Dh,AX=1310h (BL = master PIC, BH = slave PIC)
 Return: CF clear
 
-(Table 2741)
+(Table 2816)
 Values for calling QEMM QPI function 130Dh:
 	AX = 130Dh map EGA memory at A0000h
 	???
 Return: CF clear
 Note:	disables certain interrupts at the two 8259 PICs during execution
-	  (see #2740) and runs inside a QEMM critical section
-	calls AX=1307h (see #2735)
+	  (see #2815) and runs inside a QEMM critical section
+	calls AX=1307h (see #2810)
 
-(Table 2742)
+(Table 2817)
 Values for calling QEMM QPI function 130Eh:
 	AX = 130Eh ??? (modifies CRT controller setup)
 	???
 Return: CF clear
 
-(Table 2743)
+(Table 2818)
 Values for calling QEMM QPI function 130Fh:
 	AX = 130Fh reset ???
 Return: CF clear
 
-(Table 2744)
+(Table 2819)
 Values for calling QEMM QPI function 1310h:
 	AX = 1310h copy modified pages to physical video RAM???
 	???
 Return: CF clear
 Note:	disables certain interrupts at the two 8259 PICs during execution
-	  (see #2740) and runs inside a QEMM critical section
-	also calls AX=130Dh (see #2741)
+	  (see #2815) and runs inside a QEMM critical section
+	also calls AX=130Dh (see #2816)
 
-(Table 2745)
+(Table 2820)
 Values for calling QEMM QPI function 1311h:
 	AX = 1311h set ???
 	BL = zero/nonzero???
@@ -5486,23 +5687,23 @@ Note:	certain operations will be performed with interrupts
 	  (as set by AX=130Ch) enabled rather than disabled if
 	  called with BL nonzero
 
-(Table 2746)
+(Table 2821)
 Values for calling QEMM QPI function 1312h:
 	AX = 1312h (v6.02) NOP???
 Note:	called by DV 2.42, but appears to be a NOP in QEMM 6.02
 
-(Table 2747)
+(Table 2822)
 Values for calling QEMM QPI function 1400h:
 	AX = 1400h initialize DESQview "protection level" support
 	ES:DI -> protection level configuration (at least 24 bytes)
-		(see #2815)
+		(see #2890)
 	BL = highest ??? to return (one less than number of words)
 Return: CF clear
 	AX = ??? (4204h for v6.00)
 Note:	QEMM also sets the protected mode INT 02 and INT 06
 	  vectors to alternate handlers in certain cases
 
-(Table 2748)
+(Table 2823)
 Values for calling QEMM QPI function 1401h:
 	AX = 1401h turn off DESQview protection level support
 		Return: CF clear
@@ -5513,7 +5714,7 @@ Values for calling QEMM QPI function 1401h:
 			  vectors to the default handlers if they had been
 			  revectored by function 1400h
 
-(Table 2749)
+(Table 2824)
 Values for calling QEMM QPI function 1402h:
 	AX = 1402h set protection level???
 		BL = protection level???
@@ -5532,7 +5733,7 @@ Values for calling QEMM QPI function 1402h:
 		 06h  3 WORDs	??? (copied to X:0000h)
 		 0Ch	WORD	???
 
-(Table 2750)
+(Table 2825)
 Values for calling QEMM QPI function 1403h:
 	AX = 1403h add ??? to end of list and ??? (execute func 1406h)
 		ES:DI -> ??? structure added to end of ??? list
@@ -5541,18 +5742,18 @@ Values for calling QEMM QPI function 1403h:
 			 seems to be a key or index)
 		Return: CF clear
 
-(Table 2751)
+(Table 2826)
 Values for calling QEMM QPI function 1404h:
 	AX = 1404h NOP
 		Return: CF clear
 
-(Table 2752)
+(Table 2827)
 Values for calling QEMM QPI function 1405h:
 	AX = 1405h remove ??? from ??? list
 		BX = key???
 		Return: CF clear
 
-(Table 2753)
+(Table 2828)
 Values for calling QEMM QPI function 1406h:
 	AX = 1406h ???
 		???
@@ -5563,7 +5764,7 @@ Values for calling QEMM QPI function 1406h:
 			when not a NOP, one of the actions is to write-protect
 			  certain memory pages
 
-(Table 2754)
+(Table 2829)
 Values for calling QEMM QPI function 1407h:
 	AX = 1407h ???
 		???
@@ -5572,21 +5773,21 @@ Values for calling QEMM QPI function 1407h:
 		Note:	same as function 1406h, but only does anything if
 			  protection level 2 is active
 
-(Table 2755)
+(Table 2830)
 Values for calling QEMM QPI function 1408h:
 	AX = 1408h unprotect???
 		???
 		Return: CF clear
 			???
 
-(Table 2756)
+(Table 2831)
 Values for calling QEMM QPI function 1409h:
 	AX = 1409h abort program causing protection violation???
 		???
 		Return: CF clear
 			???
 
-(Table 2757)
+(Table 2832)
 Values for calling QEMM QPI function 140Ah:
 	AX = 140Ah set ???
 		BX = index of ???
@@ -5595,7 +5796,7 @@ Values for calling QEMM QPI function 140Ah:
 		Notes:	no range checking is performed on BX
 			this function is a NOP unless protection level 3 active
 
-(Table 2758)
+(Table 2833)
 Values for calling QEMM QPI function 140Bh:
 	AX = 140Bh get ???
 		BX = index of ???
@@ -5605,14 +5806,14 @@ Values for calling QEMM QPI function 140Bh:
 		Notes:	no range checking is performed on BX
 			this function is a NOP unless protection level 3 active
 
-(Table 2759)
+(Table 2834)
 Values for calling QEMM QPI function 15h:
 	AH = 15h set timer channel 0 virtualization buffer
 		ES:BX -> WORD buffer for timer channel 0 divisor
 			0000h:0000h to disable virtualization
 		Return: CF clear
 
-(Table 2760)
+(Table 2835)
 Values for calling QEMM v5.00+ QPI function 1600h:
 	AX = 1600h get memory access status
 		ES:DI -> 256-byte buffer
@@ -5620,18 +5821,18 @@ Values for calling QEMM v5.00+ QPI function 1600h:
 		Note:	each byte of the buffer indicates the status of a 4K
 			  page (bit 0 set if read, bit 1 set if written)
 
-(Table 2761)
+(Table 2836)
 Values for calling QEMM v5.00+ QPI function 1601h:
 	AX = 1601h set memory access status
-		ES:DI -> 256-byte buffer containing access statuses (see #2760)
+		ES:DI -> 256-byte buffer containing access statuses (see #2835)
 
-(Table 2762)
+(Table 2837)
 Values for calling QEMM v5.00+ QPI function 17h:
 	AH = 17h get memory usage statistics
-		ES:DI -> 81-byte buffer for memory statistics (see #2819)
+		ES:DI -> 81-byte buffer for memory statistics (see #2894)
 		Return: CF clear
 
-(Table 2763)
+(Table 2838)
 Values for calling QEMM v5.11+ QPI function 18h:
 	AH = 18h check whether conventional memory mapped into address range
 		ES:BX = starting address
@@ -5641,12 +5842,12 @@ Values for calling QEMM v5.11+ QPI function 18h:
 			     01h all pages in range are conventional memory
 				(physical address == virtual address)
 
-(Table 2764)
+(Table 2839)
 Values for calling QEMM v5.11+ QPI function 19h:
 	AH = 19h NOP
 		Return: CF set
 
-(Table 2765)
+(Table 2840)
 Values for calling QEMM v5.11+ "QPI_UntrappedIORead" function:
 	AX = 1A00h get byte from I/O port
 	DX = port number
@@ -5654,7 +5855,7 @@ Return: CF clear
 	BL = port value
 Note:	this function was officially documented with the release of QEMM 7.50
 
-(Table 2766)
+(Table 2841)
 Values for calling QEMM v5.11+ "QPI_UntrappedIOWrite" function:
 	AX = 1A01h send byte to I/O port
 	BL = value to send
@@ -5662,7 +5863,7 @@ Values for calling QEMM v5.11+ "QPI_UntrappedIOWrite" function:
 Return: CF clear
 Note:	this function was officially documented with the release of QEMM 7.50
 
-(Table 2767)
+(Table 2842)
 Values for calling QEMM v5.11+ "QPI_UntrappedIOReadIndexed" function:
 	AX = 1A02h
 	BH = index value to send
@@ -5671,7 +5872,7 @@ Return: CF clear
 	BL = value read from I/O port (DX+1)
 Note:	this function was officially documented with the release of QEMM 7.50
 
-(Table 2768)
+(Table 2843)
 Values for calling QEMM v5.11+ "QPI_UntrappedIOWriteIndexed" function:
 	AX = 1A03h send bytes to two consecutive I/O ports
 	BH = value for first I/O port (DX)
@@ -5680,7 +5881,7 @@ Values for calling QEMM v5.11+ "QPI_UntrappedIOWriteIndexed" function:
 Return: CF clear
 Note:	this function was officially documented with the release of QEMM 7.50
 
-(Table 2769)
+(Table 2844)
 Values for calling QEMM v7.03+ "QPI_UntrappedIO" function:
 	AX = 1A04h
 	BX = value to write to port
@@ -5692,27 +5893,27 @@ Return: CF clear
 	BX = value read (if CX indicates read)
 Note:	this function was officially documented with the release of QEMM 7.50
 
-(Table 2770)
+(Table 2845)
 Values for calling QEMM v7.03+ function 1A05h
 	AX = 1A05h
 	???
 Return: ???
 
-(Table 2771)
+(Table 2846)
 Values for calling QEMM v7.03+ "QPI_GetIOCallback" function:
 	AX = 1A06h
 Return: CF clear
 	ES:DI -> current I/O callback function
 Note:	this function was officially documented with the release of QEMM 7.50
 
-(Table 2772)
+(Table 2847)
 Values for calling QEMM v7.03+ "QPI_SetIOCallback" function:
 	AX = 1A07h
-	ES:DI -> new I/O callback function (see #2773)
+	ES:DI -> new I/O callback function (see #2848)
 Return: CF clear
 Note:	this function was officially documented with the release of QEMM 7.50
 
-(Table 2773)
+(Table 2848)
 Values QEMM v7.03+ I/O callback function is called with:
 	AL/AX = data to/from trapped port
 	CL = I/O direction (00h = IN instruction, else OUT instruction)
@@ -5722,9 +5923,9 @@ Return: CF clear if port handled by callback function
 	all other registers returned to application executing the IN or OUT
 	  instruction (allowing arbitrary changes to port address, data value,
 	  etc.)
-SeeAlso: #2772
+SeeAlso: #2847
 
-(Table 2774)
+(Table 2849)
 Values for calling QEMM v7.03+ "QPI_GetPortTrap" function:
 	AX = 1A08h
 	DX = I/O port number
@@ -5732,29 +5933,29 @@ Return: CF clear
 	BL = trapping state (00h not being trapped, 01h trap installed)
 Note:	this function was officially documented with the release of QEMM 7.50
 
-(Table 2775)
+(Table 2850)
 Values for calling QEMM v7.03+ "QPI_SetPortTrap" function:
 	AX = 1A09h
 	DX = I/O port number
 Return: CF clear
 Note:	this function was officially documented with the release of QEMM 7.50
 
-(Table 2776)
+(Table 2851)
 Values for calling QEMM v7.03+ "QPI_ClearPortTrap" function:
 	AX = 1A0Ah
 	DX = I/O port number
 Return: CF clear
 Note:	this function was officially documented with the release of QEMM 7.50
 
-(Table 2777)
+(Table 2852)
 Values for calling QEMM v5.11+ QPI function 1B00h:
 	AX = 1B00h get EMM Import Structure address
-	ES:DI -> buffer for EMM import data structure (see #2817)
+	ES:DI -> buffer for EMM import data structure (see #2892)
 Return: CF set on error
 	CF clear if successful
 SeeAlso: INT 21/AX=4402h/SF=01h
 
-(Table 2778)
+(Table 2853)
 Values for calling QEMM v5.11+ QPI function 1B01h:
 	AX = 1B01h disable V86 mode
 Return: CF set on error
@@ -5763,7 +5964,7 @@ Return: CF set on error
 Note:	shuts down EMS and initializes Global EMM Import record; this function
 	  is invoked from the callback supplied by INT 2F/AX=1605h
 
-(Table 2779)
+(Table 2854)
 Values for calling QEMM v5.11+ QPI function 1B02h:
 	AX = 1B02h enable V86 mode
 Return: CF set on error
@@ -5771,7 +5972,7 @@ Return: CF set on error
 Note:	restarts EMS and frees Global EMM Import record; this function is
 	  invoked from the callback supplied by INT 2F/AX=1605h
 
-(Table 2780)
+(Table 2855)
 Values for calling QEMM v5.11+ QPI function 1B03h:
 	AX = 1B03h MS Windows initializing
 	CX = segment from which Windows init broadcast made???
@@ -5779,17 +5980,17 @@ Values for calling QEMM v5.11+ QPI function 1B03h:
 	DI = Windows version number (major in upper byte)
 Return: CF clear if successful
 	    DS:SI -> V86 mode enable/disable callback
-		  (see #1915 at INT 2F/AX=1605h)
-	    ES:BX -> startup info structure (see #1912 at INT 2F/AX=1605h)
+		  (see #1962 at INT 2F/AX=1605h)
+	    ES:BX -> startup info structure (see #1959 at INT 2F/AX=1605h)
 	CF set on error (unable to start Windows)
 SeeAlso: INT 2F/AX=1605h
 
-(Table 2781)
+(Table 2856)
 Values for calling QEMM v5.11+ QPI function 1B04h:
 	AX = 1B04h MS Windows terminating
 Return: CF clear
 
-(Table 2782)
+(Table 2857)
 Values for calling QEMM v5.11+ QPI function 1B05h:
 	AX = 1B05h determine whether program is driver
 	DS:DX -> ASCIZ filename
@@ -5801,7 +6002,7 @@ Return: CF clear
 Note:	when MS Windows 3.0 standard mode starts, QEMM patches all drivers
 	  until GDI.EXE is loaded
 
-(Table 2783)
+(Table 2858)
 Values for calling QEMM v5.11+ QPI function 1B06h:
 	AX = 1B06h patch protected-mode check in Windows driver
 	CX = length of data pointed at by DS:DX
@@ -5812,33 +6013,33 @@ Note:	patches all SMSW x/TEST x,1 instruction sequences into MOV x,CS/VERW x
 	  only indicate protected mode in native protected mode and not in V86
 	  mode
 
-(Table 2784)
+(Table 2859)
 Values for calling QEMM v5.11+ QPI function 1B07h:
 	AX = 1B07h
 BUG: QEMM 6.00-7.01 accept this and branch randomly
 
-(Table 2785)
+(Table 2860)
 Values for calling QEMM v5.11+ QPI function 1Bxxh:
 	AX = 1B08h to 1BFFh
 Return: CF set
 
-(Table 2786)
+(Table 2861)
 Values for calling QEMM v5.11+ QPI function 1C00h:
 	AX = 1C00h disable IRQ0-7 calldowns
 Return: CF clear
 
-(Table 2787)
+(Table 2862)
 Values for calling QEMM v5.11+ QPI function 1C01h:
 	AX = 1C01h set V86-mode IRQ0-7 handlers
 	ES:DI -> 8 DWORDs containing V86-mode handler addresses
 Return: CF clear
 
-(Table 2788)
+(Table 2863)
 Values for calling QEMM v5.11+ QPI function 1C02h:
 	AX = 1C02h disable IRQ8-15 handlers
 Return: CF clear
 
-(Table 2789)
+(Table 2864)
 Values for calling QEMM v5.11+ QPI function 1C03h:
 	AX = 1C03h set V86-mode IRQ8-15 handlers
 	ES:DI -> 8 DWORDs containing V86-mode handler addresses
@@ -5850,7 +6051,7 @@ Note:	when enabled, the appropriate IRQs are reflected back to the specified
 	  handlers in virtual-86 mode after the CPU automatically invokes the
 	  protected-mode handler inside QEMM
 
-(Table 2790)
+(Table 2865)
 Values for calling QEMM v7.03+ "QPI_SimulateHWInt" function:
 	AX = 1C04h
 	BX = number of interrupt to simulate
@@ -5861,7 +6062,7 @@ Notes:	this function will allow proper simulation of a hardware interrupt
 	  space
 	this function was officially documented with the release of QEMM v7.50
 
-(Table 2791)
+(Table 2866)
 Values for calling QEMM v6.0x only QPI function 1D00h:
 	AX = 1D00h switch to pre-Stealth interrupt vector table
 Return: CF clear if supported (QEMM v6.x)
@@ -5873,7 +6074,7 @@ Notes:	also switches VGA Save table pointer (0040h:00A8h) and overwrites the
 	functions 1Dxxh are not supported by QEMM v7.01, and always return CF
 	  set
 
-(Table 2792)
+(Table 2867)
 Values for calling QEMM v6.0x only QPI function 1D01h:
 	AX = 1D01h restore user interrupt vector table
 Return: CF clear if supported (QEMM v6.x)
@@ -5885,16 +6086,16 @@ Notes:	interrupts should be disabled around the AX=1D00h and AX=1D01h calls
 	functions 1Dxxh are not supported by QEMM v7.01, and always return CF
 	  set
 
-(Table 2793)
+(Table 2868)
 Values for calling QEMM v6.00+ QPI function 1Dxxh:
 	AX = 1D02h to 1DFFh
 Return: CF set
 
-(Table 2794)
+(Table 2869)
 Values for calling QEMM v6.00+ "QEMM_GET_INFO"/"QPI_GetInfo" function:
 	AX = 1E00h get Stealth configuration
-Return:	CF clear
-	BL = memory configuration flags (documented as "reserved") (see #2818)
+Return: CF clear
+	BL = memory configuration flags (documented as "reserved") (see #2893)
 	BH = (v7.00+) disk buffer flags
 	    bit 0: DISKBUFFRAME buffer instead of DISKBUF buffer
 	    bit 1: buffer has already been used
@@ -5906,51 +6107,51 @@ Return:	CF clear
 	DI = reserved (always 0000h for v6.00)
 Note:	this function is officially documented
 
-(Table 2795)
+(Table 2870)
 Values for calling QEMM v6.00+ "QPI_GetStealthCount" function:
 	AX = 1E01h get number of Stealth'ed ROMs
 Return: CF clear
 	BX = number of Stealth'ed ROMs
 Note:	this function is officially documented
 
-(Table 2796)
+(Table 2871)
 Values for calling QEMM v6.00+ "QPI_GetStealthList" function:
 	AX = 1E02h
-	ES:DI -> buffer for Stealth ROM info (see #2820)
+	ES:DI -> buffer for Stealth ROM info (see #2895)
 Return: CF clear
 	BX = number of Stealth'ed ROMs
 	ES:DI buffer filled
 Note:	this function is officially documented
 
-(Table 2797)
+(Table 2872)
 Values for unimplemented Stealth information functions:
 	AX = 1E03h to 1EFFh
 Return: CF set
 
 
-(Table 2798)
+(Table 2873)
 Values for calling QEMM v6.00+ "QEMM_GET_PTE"/"QPI_GetPTE" function:
 	AX = 1F00h get page table entry
 	CX = page number (0000h-010Fh)
-Return:	CF clear
+Return: CF clear
 	EDX = page table entry
 Note:	this function is officially documented
 
-(Table 2799)
+(Table 2874)
 Values for calling QEMM v6.00+ "QEMM_SET_PTE"/"QPI_SetPTE" function:
 	AX = 1F01h set page table entry
 	CX = page number (0000h-010Fh)
 	EDX = new page table entry
 Return: CF clear
 Note:	this function is officially documented
-SeeAlso: function 1008h
+SeeAlso: #2798
 
-(Table 2800)
+(Table 2875)
 Values for calling QEMM v6.00+ QPI function 1Fxxh:
 	AX = 1F02h to 1FFFh
 Return: CF set
 
-(Table 2801)
+(Table 2876)
 Values for calling QEMM v6.00+ "QEMM_GET_VHI_INFO"/"QPI_GetVHIInfo" function:
 	AX = 2000h "QEMM_GET_VHI_INFO" get VirtualHDIRQ information
 Return: CF clear
@@ -5961,23 +6162,23 @@ Return: CF clear
 	    bit 0: VirtualHDIRQ currently enabled
 		(INT 15/AH=90h suppressed when enabled)
 Note:	this function is officially documented
-SeeAlso: #2802
+SeeAlso: #2877
 
-(Table 2802)
+(Table 2877)
 Values for calling QEMM v6.00+ "QEMM_SET_VHI_INFO"/"QPI_SetVHIInfo" function:
 	AX = 2001h set VirtualHDIRQ state
 	BL bit 0 = new VirtualHDIRQ state
 Return: CF clear
-	BL = old VHI setting (bits 0 and 7, see #2801)
+	BL = old VHI setting (bits 0 and 7, see #2876)
 Note:	this function is officially documented
-SeeAlso: #2801
+SeeAlso: #2876
 
-(Table 2803)
+(Table 2878)
 Values for calling QEMM v6.00+ QPI function 20xxh:
 	AX = 2002h to 20FFh
 Return: CF set
 
-(Table 2804)
+(Table 2879)
 Values for calling QEMM v6.00+ "QEMM_COPY_STEALTH_ROMS"/"QPI_CopyStealthRoms":
 	AX = 2100h copy data from Stealthed address space
 	DS:SI -> start address of hidden memory to copy
@@ -5987,25 +6188,25 @@ Return: CF clear if successful
 	CF set on error (no Stealth or DS:SI < C000h:0000h or DS:SI + ECX > 1M)
 Note:	this function was officially documented with the release of QEMM 7.50
 
-(Table 2805)
+(Table 2880)
 Values for calling QEMM v6.00+ QPI function 21xxh:
 	AX = 2101h to 21FFh
 Return: CF set
 
-(Table 2806)
+(Table 2881)
 Values for calling QEMM v6.03+ QPI function 2200h:
 	AX = 2200h DESQview/X support -- get ???
 Return: CF clear
 	ES:DI -> ???
 
-(Table 2807)
+(Table 2882)
 Values for calling QEMM v6.03+ QPI function 2201h:
 	AX = 2201h DESQview/X support -- set ???
 	ES:DI -> ??? or 0000h:0000h
 Return: CF clear if successful
 	CF set on error
 
-(Table 2808)
+(Table 2883)
 Values for calling QEMM v6.04+ QPI function 2300h:
 	AX = 2300h get ???
 	BX = which ??? to get (must be 0000h for v6.04)
@@ -6013,7 +6214,7 @@ Return: CF clear if successful
 	    ES:DI -> ???
 	CF set on error
 
-(Table 2809)
+(Table 2884)
 Values for calling QEMM v6.04+ QPI function 2301h:
 	AX = 2301h set ???
 	BX = which ??? to set (must be 0000h for v6.04)
@@ -6021,25 +6222,25 @@ Values for calling QEMM v6.04+ QPI function 2301h:
 Return: CF clear if successful
 	CF set on error
 
-(Table 2810)
+(Table 2885)
 Values for calling QEMM v6.04+ QPI function 2302h:
 	AX = 2302h clear specified ???
 	BX = which ??? to clear (must be 0000h for v6.04)
 Return: CF clear if successful
 	CF set on error
 
-(Table 2811)
+(Table 2886)
 Values for calling QEMM v6.04+ QPI function 23FFh:
 	AX = 23FFh clear all ???
 Return: CF clear if successful
 	CF set on error
 
-(Table 2812)
+(Table 2887)
 Values for calling QEMM v6.04+ QPI function 23xxh:
 	AX = 2303h to 23FEh
 Return: CF set
 
-(Table 2813)
+(Table 2888)
 Values for calling QEMM v7.01+ QPI function 24h:
 	AH = 24h ST-DBL support
 	AL = subfunction
@@ -6049,13 +6250,13 @@ Values for calling QEMM v7.01+ QPI function 24h:
 Return: CF clear if successful
 	CF set on error
 
-(Table 2814)
+(Table 2889)
 Values for calling QEMM unimplemented QPI functions:
 	AH = 25h to FFh
 Return: CF set
 
 Format of QEMM protection level configuration:
-Offset	Size	Description	(Table 2815)
+Offset	Size	Description	(Table 2890)
  00h	WORD	segment of 128 breakpoint (INT 3) instructions for use in
 		  DESQview protection level 3 interrupt vector checking, or
 		  0000h to disable; in pl3, INTs 00-7F are pointed at these
@@ -6063,7 +6264,7 @@ Offset	Size	Description	(Table 2815)
  02h	DWORD	-> array of actual interrupt handler addresses for INT 00-7F
 		  when interrupt vectors are pointed at protection level 3
 		  breakpoints
- 06h	DWORD	far pointer to ??? region list (see #2816)
+ 06h	DWORD	far pointer to ??? region list (see #2891)
  0Ah	DWORD	far pointer to buffer for returned ???
  0Eh	DWORD	seg:ofs of function to call on protection violation???
  12h	WORD	segment of ???
@@ -6072,20 +6273,20 @@ Offset	Size	Description	(Table 2815)
 	???
 
 Format of protection level Region List:
-Offset	Size	Description	(Table 2816)
+Offset	Size	Description	(Table 2891)
  00h	WORD	number of PAIRS of pointers to follow
  02h 2N DWORDs	start/end seg:ofs addresses of ??? regions
 Note:	QEMM converts the segmented addresses into linear addresses in place
 
 Format of EMM Import structure:
-Offset	Size	Description	(Table 2817)
+Offset	Size	Description	(Table 2892)
  00h	DWORD	physical address of EMM import struct
  04h	BYTE	major version (v6.00 sets to 01h)
  05h	BYTE	minor version (v6.00 sets to 00h/0Bh)
 SeeAlso: INT 21/AX=4402h/SF=01h
 
 Bitfields for memory configuration flags:
-Bit(s)	Description	(Table 2818)
+Bit(s)	Description	(Table 2893)
  0	conventional memory sorted
  1	conventional memory filled
  2	???
@@ -6094,7 +6295,7 @@ Bit(s)	Description	(Table 2818)
  5	???
 
 Format of QEMM 6.0 memory statistics:
-Offset	Size	Description	(Table 2819)
+Offset	Size	Description	(Table 2894)
  00h	BYTE	01h if Shadow RAM found, 00h otherwise
  01h	DWORD	initial conventional memory in bytes
  05h	DWORD	initial extended memory in bytes
@@ -6121,24 +6322,24 @@ Offset	Size	Description	(Table 2819)
 		(set to 0 by QEMM.COM prior to call)
 
 Format of Stealth ROM info [array]:
-Offset	Size	Description	(Table 2820)
+Offset	Size	Description	(Table 2895)
  00h	WORD	starting segment of ROM
  02h	WORD	length of ROM in paragraphs
 
 Format of QEMM EGA/VGA DAC register virtualization buffer:
-Offset	Size	Description	(Table 2821)
+Offset	Size	Description	(Table 2896)
  00h	BYTE	(temp) current color register number
  01h	BYTE	(temp) number of bytes written so far for current color reg
  02h 768 BYTEs	three bytes per color register
 --------m-6740-------------------------------
 INT 67 - LIM EMS - GET MANAGER STATUS
 	AH = 40h
-Return: AH = status (00h,80h,81h,84h) (see #2822)
+Return: AH = status (00h,80h,81h,84h) (see #2897)
 Note:	this call can be used only after establishing that the EMS driver is in
 	  fact present
 SeeAlso: AH=3Fh,AX=FFA5h
 
-(Table 2822)
+(Table 2897)
 Values for EMS function status:
  00h	successful
  80h	internal error
@@ -6199,7 +6400,7 @@ SeeAlso: INT 2F/AX=2702h
 INT 67 - LIM EMS - GET HANDLE AND ALLOCATE MEMORY
 	AH = 43h
 	BX = number of logical pages to allocate
-Return: AH = status (00h,80h,81h,84h,85h,87h,88h,89h) (see #2822)
+Return: AH = status (00h,80h,81h,84h,85h,87h,88h,89h) (see #2897)
 	DX = handle if AH=00h
 SeeAlso: AH=45h
 --------u-674321-----------------------------
@@ -6221,30 +6422,30 @@ INT 67 - LIM EMS - MAP MEMORY
 	BX = logical page number
 	    or FFFFh to unmap (QEMM)
 	DX = handle
-Return: AH = status (00h,80h,81h,83h,84h,8Ah,8Bh) (see #2822)
+Return: AH = status (00h,80h,81h,83h,84h,8Ah,8Bh) (see #2897)
 SeeAlso: AH=69h
 --------m-6745-------------------------------
 INT 67 - LIM EMS - RELEASE HANDLE AND MEMORY
 	AH = 45h
 	DX = EMM handle
-Return: AH = status (00h,80h,81h,83h,84h,86h) (see #2822)
+Return: AH = status (00h,80h,81h,83h,84h,86h) (see #2897)
 SeeAlso: AH=43h
 --------m-6746-------------------------------
 INT 67 - LIM EMS - GET EMM VERSION
 	AH = 46h
-Return: AH = status (00h,80h,81h,84h) (see #2822)
+Return: AH = status (00h,80h,81h,84h) (see #2897)
 	AL = EMM version number if AH=00h
 --------m-6747-------------------------------
 INT 67 - LIM EMS - SAVE MAPPING CONTEXT
 	AH = 47h
 	DX = handle
-Return: AH = status (00h,80h,81h,83h,84h,8Ch-8Eh) (see #2822)
+Return: AH = status (00h,80h,81h,83h,84h,8Ch-8Eh) (see #2897)
 SeeAlso: AH=48h
 --------m-6748-------------------------------
 INT 67 - LIM EMS - RESTORE MAPPING CONTEXT
 	AH = 48h
 	DX = handle
-Return: AH = status (00h,80h,81h,83h,84h,8Eh) (see #2822)
+Return: AH = status (00h,80h,81h,83h,84h,8Eh) (see #2897)
 SeeAlso: AH=47h
 --------m-6749-------------------------------
 INT 67 - LIM EMS - reserved - GET I/O PORT ADDRESSES
@@ -6257,20 +6458,20 @@ Note:	defined in EMS 3.0, but undocumented in EMS 3.2
 --------m-674B-------------------------------
 INT 67 - LIM EMS - GET NUMBER OF EMM HANDLES
 	AH = 4Bh
-Return: AH = status (00h,80h,81h,83h,84h) (see #2822)
+Return: AH = status (00h,80h,81h,83h,84h) (see #2897)
 	BX = number of EMM handles if AH=00h
 --------m-674C-------------------------------
 INT 67 - LIM EMS - GET PAGES OWNED BY HANDLE
 	AH = 4Ch
 	DX = EMM handle
-Return: AH = status (see #2014)
+Return: AH = status (see #2065)
 	BX = number of logical pages if AH=00h
 SeeAlso: AH=4Dh
 --------m-674D-------------------------------
 INT 67 - LIM EMS - GET PAGES FOR ALL HANDLES
 	AH = 4Dh
 	ES:DI -> array to receive information
-Return: AH = status (00h,80h,81h,84h) (see #2822)
+Return: AH = status (00h,80h,81h,84h) (see #2897)
 	---if AH=00h---
 	BX = number of active EMM handles
 	array filled with 2-word entries, consisting of a handle and the
@@ -6320,12 +6521,12 @@ INT 67 - LIM EMS 4.0 - MAP/UNMAP MULTIPLE HANDLE PAGES
 	    01h use segment addresses
 	DX = handle
 	CX = number of entries in array
-	DS:SI -> mapping array (see #2823)
-Return: AH = status (00h,80h,81h,83h,84h,8Ah,8Bh,8Fh) (see #2822)
+	DS:SI -> mapping array (see #2898)
+Return: AH = status (00h,80h,81h,83h,84h,8Ah,8Bh,8Fh) (see #2897)
 SeeAlso: AH=40h
 
 Format of EMS mapping array entry:
-Offset	Size	Description	(Table 2823)
+Offset	Size	Description	(Table 2898)
  00h	WORD	logical page number or FFFFh to unmap physical page
  02h	WORD	physical page number or segment address
 --------m-6751-------------------------------
@@ -6333,10 +6534,10 @@ INT 67 - LIM EMS 4.0 - REALLOCATE PAGES
 	AH = 51h
 	DX = handle
 	BX = number of pages to be allocated to handle
-Return:	AH = status (00h,80h,81h,83h,84h,87h,88h) (see #2824)
+Return: AH = status (00h,80h,81h,83h,84h,87h,88h) (see #2899)
 	BX = actual number of pages allocated to handle
 
-(Table 2824)
+(Table 2899)
 Values for EMS function status:
  00h	successful
  80h	internal error
@@ -6361,13 +6562,15 @@ INT 67 - LIM EMS 4.0 - GET/SET HANDLE ATTRIBUTES
 			    00h handle is volatile
 			    01h handle is nonvolatile
 	    01h set handle attributes
-		BL = new attribute (see returned AL)
+		BL = new attribute
+		   00h handle is volatile
+		   01h handle is nonvolatile
 	    02h get attribute capability
 		Return: AL = attribute capability
 			    00h only volatile handles supported
 			    01h both volatile and non-volatile supported
 	DX = handle
-Return: AH = status (00h,80h,81h,83h,84h,8Fh-91h) (see #2822)
+Return: AH = status (00h,80h,81h,83h,84h,8Fh-91h) (see #2897)
 SeeAlso: AH=53h
 --------m-6753-------------------------------
 INT 67 - LIM EMS 4.0 - GET/SET HANDLE NAME
@@ -6378,25 +6581,25 @@ INT 67 - LIM EMS 4.0 - GET/SET HANDLE NAME
 	    01h set handle name
 	       DS:SI -> 8-byte handle name
 	DX = handle
-Return: AH = status (00h,80h,81h,83h,84h,8Fh,A1h) (see #2822)
+Return: AH = status (00h,80h,81h,83h,84h,8Fh,A1h) (see #2897)
 SeeAlso: AH=52h
 --------m-6754-------------------------------
 INT 67 - LIM EMS 4.0 - GET HANDLE DIRECTORY
 	AH = 54h
 	AL = subfunction
 	    00h get handle directory
-	       ES:DI -> buffer for handle directory (see #2825)
+	       ES:DI -> buffer for handle directory (see #2900)
 	    01h search for named handle
 	       DS:SI -> 8-byte name
 	    02h get total number of handles
 Return: AL = number of entries in handle directory (subfunction 00h)
 	DX = value of named handle (subfunction 01h)
 	BX = total number of handles (subfunction 02h)
-	AH = status (00h,80h,81h,84h,8Fh,A0h,A1h) (see also #2824)
+	AH = status (00h,80h,81h,84h,8Fh,A0h,A1h) (see also #2899)
 	    A1h a handle found had no name
 
 Format of EMS handle directory entry:
-Offset	Size	Description	(Table 2825)
+Offset	Size	Description	(Table 2900)
  00h	WORD	handle
  02h  8 BYTEs	handle's name
 --------m-6755-------------------------------
@@ -6408,7 +6611,7 @@ INT 67 - LIM EMS 4.0 - ALTER PAGE MAP AND JUMP
 	DX = handle
 	DS:SI -> structure containing map and jump address
 Return: (at target address unless error)
-	AH = status (00h,80h,81h,83h,84h,8Ah,8Bh,8Fh) (see #2822)
+	AH = status (00h,80h,81h,83h,84h,8Ah,8Bh,8Fh) (see #2897)
 SeeAlso: AH=56h
 --------m-6756-------------------------------
 INT 67 - LIM EMS 4.0 - ALTER PAGE MAP AND CALL
@@ -6422,9 +6625,9 @@ INT 67 - LIM EMS 4.0 - ALTER PAGE MAP AND CALL
 		DS:SI -> structure containing page map and call address
 	    02h get page map stack space required
 		Return: BX = stack space required
-Return: (if successful, the target address is called.  Use a RETF to return and
-	 restore mapping context)
-	AH = status (00h,80h,81h,83h,84h,8Ah,8Bh,8Fh) (see #2822)
+Return: (if successful, the target address is called.  Use a RETF to return
+	 and restore mapping context)
+	AH = status (00h,80h,81h,83h,84h,8Ah,8Bh,8Fh) (see #2897)
 SeeAlso: AH=55h
 --------m-6756FF-----------------------------
 INT 67 - RM386 v6.00 - ???
@@ -6438,13 +6641,13 @@ INT 67 - LIM EMS 4.0 - MOVE/EXCHANGE MEMORY REGION
 	AL = subfunction
 	    00h move memory region
 	    01h exchange memory region
-	DS:SI -> structure describing source and destination (see #2827)
-Return: AH = status (see #2826)
+	DS:SI -> structure describing source and destination (see #2902)
+Return: AH = status (see #2901)
 Note:	source and destination may overlap for a move, in which case the copy
 	  direction is chosen such that the destination receives an intact copy
 	  of the source region
 
-(Table 2826)
+(Table 2901)
 Values for EMS function status:
  00h	successful
  80h	internal error
@@ -6464,7 +6667,7 @@ Values for EMS function status:
  A2h	attempted to wrap around 1M conventional address space
 
 Format of EMS copy data:
-Offset	Size	Description	(Table 2827)
+Offset	Size	Description	(Table 2902)
  00h	DWORD	region length in bytes
  04h	BYTE	source memory type
 		00h conventional
@@ -6483,15 +6686,15 @@ INT 67 - LIM EMS 4.0 - GET MAPPABLE PHYSICAL ADDRESS ARRAY
 	AH = 58h
 	AL = subfunction
 	    00h get mappable physical address array
-		ES:DI -> buffer to be filled with array (see #2828)
+		ES:DI -> buffer to be filled with array (see #2903)
 	    01h get number of entries in m.p.a. array
 Return: CX = number of entries in array
-	AH = status (00h,80h,81h,84h,8Fh) (see #2826)
+	AH = status (00h,80h,81h,84h,8Fh) (see #2901)
 Note:	the returned array for subfunction 00h is filled in physical segment
 	  address order
 
 Format of EMS mappable physical address entry:
-Offset	Size	Description	(Table 2828)
+Offset	Size	Description	(Table 2903)
  00h	WORD	physical page segment
  02h	WORD	physical page number
 --------m-675857-----------------------------
@@ -6509,7 +6712,7 @@ INT 67 - LIM EMS 4.0 - GET EXPANDED MEMORY HARDWARE INFORMATION
 	AH = 59h
 	AL = subfunction
 	    00h get hardware configuration array
-		ES:DI -> buffer to be filled with array (see #2829)
+		ES:DI -> buffer to be filled with array (see #2904)
 	    01h get unallocated raw page count
 		Return: BX = unallocated raw pages
 			DX = total raw pages
@@ -6519,7 +6722,7 @@ Note:	subfunction 00h is for use by operating systems only, and can be
 	  enabled or disabled at any time by the operating system
 
 Format of EMS hardware configuration array:
-Offset	Size	Description	(Table 2829)
+Offset	Size	Description	(Table 2904)
  00h	WORD	size of raw EMM pages in paragraphs
  02h	WORD	number of alternate register sets
  04h	WORD	size of mapping-context save area in bytes
@@ -6535,7 +6738,7 @@ INT 67 - LIM EMS 4.0 - ALLOCATE STANDARD/RAW PAGES
 	    01h allocate raw pages
 	BX = number of pages to allocate
 Return: DX = handle
-	AH = status (00h,80h,81h,84h,85h,87h,88h,8Fh) (see #2822)
+	AH = status (00h,80h,81h,84h,85h,87h,88h,8Fh) (see #2897)
 --------m-675B-------------------------------
 INT 67 - LIM EMS 4.0 - ALTERNATE MAP REGISTER SET
 	AH = 5Bh
@@ -6552,11 +6755,11 @@ INT 67 - LIM EMS 4.0 - ALTERNATE MAP REGISTER SET
 		Return: BL = number of map register set; 00h = not supported
 	    04h deallocate alternate map register set
 		BL = number of alternate map register set
-Return: AH = status (00h,80h,81h,84h,8Fh,9Ah-9Dh,A3h,A4h) (see #2830)
+Return: AH = status (00h,80h,81h,84h,8Fh,9Ah-9Dh,A3h,A4h) (see #2905)
 Note:	this function is for use by operating systems only, and can be
 	  enabled or disabled at any time by the operating system
 
-(Table 2830)
+(Table 2905)
 Values for EMS function status:
  00h	successful
  80h	internal error
@@ -6584,7 +6787,7 @@ INT 67 - LIM EMS 4.0 - ALTERNATE MAP REGISTER SET - DMA REGISTERS
 	       BL = DMA register set number
 	    08h deallocate DMA register set
 	       BL = DMA register set number
-Return: AH = status (00h,80h,81h,84h,8Fh,9Ah-9Fh,A3h,A4h) (see #2830)
+Return: AH = status (00h,80h,81h,84h,8Fh,9Ah-9Fh,A3h,A4h) (see #2905)
 Note:	this function is for use by operating systems only, and can be
 	  enabled or disabled at any time by the operating system
 --------m-675BE0-----------------------------
@@ -6609,12 +6812,12 @@ SeeAlso: AX=5BE0h,AX=5BE2h
 --------m-675BE2-----------------------------
 INT 67 - RM386 v6.00+ - GET INTERRUPT VECTORS
 	AX = 5BE2h
-Return: DS:SI -> V86-mode table (see #2831)
+Return: DS:SI -> V86-mode table (see #2906)
 	ES:BX -> ??? (undoc, middle of device driver interrupt routine!)
 SeeAlso: AX=5BE0h,AX=5BE1h
 
 Format of RM386 V86-mode table:
-Offset	Size	Description	(Table 2831)
+Offset	Size	Description	(Table 2906)
  00h	DWORD	original INT 13 vector
  04h	DWORD	original INT 15 vector
  08h	DWORD	original INT 19 vector
@@ -6634,11 +6837,11 @@ INT 67 - MICEMM v4D, RM386 - GET ADDRESS MAP
 	AX = 5BF1h
 	ES:BX -> 256-byte (MICEMM) or 512-byte (RM386) buffer for memory types
 Return: AH = 00h
-	ES:BX buffer filled (see #2832)
+	ES:BX buffer filled (see #2907)
 Note:	each byte in the buffer specifies the type of a 4K page of memory
 SeeAlso: AX=5BE0h,AX=5BF0h
 
-(Table 2832)
+(Table 2907)
 Values for MICEMM/RM386 memory type:
  00h	unused (MICEMM), RAM/available (RM386)
  02h	DOS extension (XMS UMB)
@@ -6667,14 +6870,14 @@ SeeAlso: AX=5BF0h,AX=5DE0h
 INT 67 - RM386 v6.00 - GET RM386 GLOBAL FLAGS
 	AX = 5BF4h
 Return: AH = 00h
-	BX = global flags 1 (see #2833)
-	CX = global flags 2 (see #2834)
-	DX = global flags 3 (see #2835)
-	SI = global flags 4 (see #2836)
+	BX = global flags 1 (see #2908)
+	CX = global flags 2 (see #2909)
+	DX = global flags 3 (see #2910)
+	SI = global flags 4 (see #2911)
 SeeAlso: AX=5BF0h
 
 Bitfields for RM386 global flags 1:
-Bit(s)	Description	(Table 2833)
+Bit(s)	Description	(Table 2908)
  0-3	reserved
  4	V86 mode
  5	reserved
@@ -6688,7 +6891,7 @@ Bit(s)	Description	(Table 2833)
  15	PS/2-style A20 control
 
 Bitfields for RM386 global flags 2:
-Bit(s)	Description	(Table 2834)
+Bit(s)	Description	(Table 2909)
  0	HMA in use
  1	XMS present
  2	using XMS driver memory
@@ -6701,7 +6904,7 @@ Bit(s)	Description	(Table 2834)
  12-15	reserved
 
 Bitfields for RM386 global flags 3:
-Bit(s)	Description	(Table 2835)
+Bit(s)	Description	(Table 2910)
  0	NOTEST
  1	NOEBDA
  2	Windows3 support
@@ -6720,7 +6923,7 @@ Bit(s)	Description	(Table 2835)
  15	NOHMA set
 
 Bitfields for RM386 global flags 4:
-Bit(s)	Description	(Table 2836)
+Bit(s)	Description	(Table 2911)
  0	"NOV8259" don't virtualize interrupt controller
  1	NOSCSI
  2	NOSCAN
@@ -6747,13 +6950,13 @@ SeeAlso: AX=5BF0h
 --------m-675C-------------------------------
 INT 67 - LIM EMS 4.0 - PREPARE EXPANDED MEMORY HARDWARE FOR WARM BOOT
 	AH = 5Ch
-Return: AH = status (see #2837)
+Return: AH = status (see #2912)
 Note:	when MS-DOS v6.xx EMM386 is loaded and the keyboard driver supports
 	  INT 15/AH=4Fh (keyboard intercept) calls, the system may hang
 	  instead of booting if this function is called just prior to a jump
 	  to F000h:FFF0h
 
-(Table 2837)
+(Table 2912)
 Values for EMS function status:
  00h	successful
  80h	internal error
@@ -6777,15 +6980,15 @@ INT 67 u - Nanosoft MD386 - INTERNAL INITIALIZATION
 	AX = 5D03h
 	???
 Return: ???
-Program: MD386 is a subset EMS memory manager by Nanosoft specifically designed
-	  for use with the MultiDOS Plus multitasker
+Program: MD386 is a subset EMS memory manager by Nanosoft specifically
+	  designed for use with the MultiDOS Plus multitasker
 SeeAlso: AX=5D04h,AX=5E00h
 --------m-675D04-----------------------------
 INT 67 - Nanosoft MD386 - GET ALTERNATE MAP STRUCTURE
 	AX = 5D04h
 	BX = alternate register set number
 	ES:DI -> 1024-byte buffer for map structure
-Return: AH = status (see #2822)
+Return: AH = status (see #2897)
 	buffer filled if AH=00h
 Note:	used for debugging purposes
 SeeAlso: AX=5D05h
@@ -6794,7 +6997,7 @@ INT 67 - Nanosoft MD386 - GET INTERNAL HANDLE TABLE
 	AX = 5D05h
 	BX = handle number
 	ES:DI -> 1024-byte buffer for handle table
-Return: AH = status (see #2822)
+Return: AH = status (see #2897)
 	buffer filled if AH=00h
 Note:	used for debugging purposes
 SeeAlso: AX=5D04h
@@ -7082,7 +7285,7 @@ INT 67 - EEMS - PAGE MAPPING
 	    06h deallocate pages mapped to frames in conventional memory
 		CH = first page frame
 		CL = number of frames
-Return: AH = status (see #2822)
+Return: AH = status (see #2897)
 Note:	similar to EMS function 4Eh, except that a subrange of pages can be
 	  specified
 SeeAlso: AH=69h
@@ -7120,14 +7323,14 @@ INT 67 - Virtual Control Program Interface - GET PROTECTED MODE INTERFACE
 		  main control program
 Return: AH = 00h successful
 	    DI -> first unused page table entry in buffer
-	    EBX -> protected mode entry point in code segment (see #2838)
+	    EBX -> protected mode entry point in code segment (see #2913)
 	AH = nonzero  failed
 Note:	protected mode entry point may be called with AX=DE00h-DE05h and
 	  AX=DE0Ch (in each case, all other registers as appropriate for
 	  the function)
 SeeAlso: INT 2F/AX=1687h,INT 67/AH=3Fh
 
-(Table 2838)
+(Table 2913)
 Call QEMM v6.03 protected mode entry point additionally with:
 	AX = DF00h ???
 		???
@@ -7150,7 +7353,7 @@ Return: AH = 00h  successful
 	AH nonzero: failed
 Notes:	returns total number of pages available to ALL tasks in system
 	also available in protected mode by calling the protected-mode VCPI
-	  entry point (see AX=DE01h,#2838)
+	  entry point (see AX=DE01h,#2913)
 SeeAlso: AX=DE04h
 --------E-67DE04-----------------------------
 INT 67 - Virtual Control Program Interface - ALLOCATE A 4K PAGE
@@ -7161,7 +7364,7 @@ Return: AH = 00h successful
 Notes:	the client program is responsible for freeing all memory allocated
 	  with this call before terminating
 	also available in protected mode by calling the protected-mode VCPI
-	  entry point (see AX=DE01h,#2838)
+	  entry point (see AX=DE01h,#2913)
 SeeAlso: AH=3Fh,AX=DE03h,AX=DE05h
 --------E-67DE05-----------------------------
 INT 67 - Virtual Control Program Interface - FREE 4K PAGE
@@ -7171,7 +7374,7 @@ Return: AH = status
 	    00h successful
 	    nonzero failed
 Note:	also available in protected mode by calling the protected-mode VCPI
-	  entry point (see AX=DE01h,#2838)
+	  entry point (see AX=DE01h,#2913)
 SeeAlso: AH=3Fh,AX=DE04h
 --------E-67DE06-----------------------------
 INT 67 - Virtual Control Program Interface - GET PHYS ADDR OF PAGE IN FIRST MB
@@ -7228,7 +7431,7 @@ SeeAlso: AX=DE0Ah,INT 2C/AX=002Ah
 INT 67 - Virtual Control Program Interface - SWITCH TO PROTECTED MODE
 	AX = DE0Ch
 	ESI = linear address in first megabyte of values for system
-	      registers (see #2839)
+	      registers (see #2914)
 	interrupts disabled
 Return: interrupts disabled
 	GDTR, IDTR, LDTR, TR loaded
@@ -7253,10 +7456,10 @@ Note:	in protected mode, calling the protected-mode VCPI entry point with
 	  and interrupts disabled, will switch to virtual86 mode with
 	    interrupts disabled, all segment registers loaded, and EAX
 	    destroyed.
-SeeAlso: AH=3Fh,INT 15/AH=89h,INT 38/AH=10h
+SeeAlso: AH=3Fh,INT 15/AH=89h,INT D4/AH=10h
 
 Format of system register values for switch to protected mode:
-Offset	Size	Description	(Table 2839)
+Offset	Size	Description	(Table 2914)
  00h	DWORD	value for CR3
  04h	DWORD	linear address in first megabyte of value for GDTR
  08h	DWORD	linear address in first megabyte of value for IDTR
@@ -7282,7 +7485,7 @@ SeeAlso: AX=5DFFh"RM386",INT 2F/AX=4310h
 INT 67 - Microsoft EMM386.EXE v4.20+ - INSTALLATION CHECK
 	AX = FFA5h
 Return: AX = 845Ah/84A5h if loaded
-	    BX:CX -> API entry point (see #2840)
+	    BX:CX -> API entry point (see #2915)
 Notes:	this call is available even if EMM386 is not providing EMS
 	the returned AX is 845Ah inside of MSWindows, 84A5h under bare DOS
 	if no other program has hooked INT 67, an alternate installation
@@ -7292,7 +7495,7 @@ Notes:	this call is available even if EMM386 is not providing EMS
 	  contains the offset of the API entry point
 SeeAlso: AH=3Fh,AX=FFA5h/BX=4345h,INT 21/AX=4402h"EMM386.EXE"
 
-(Table 2840)
+(Table 2915)
 Call EMM386.EXE API entry point with:
 	AH = 00h get memory manager's status
 	    Return: AH = status
@@ -7315,7 +7518,7 @@ Call EMM386.EXE API entry point with:
 		 (using INT 21/AH=09h)
 	AH = 05h print available report
 		 (the one shown when running EMM386 from the DOS prompt)
-SeeAlso: #0821 at INT 21/AX=4402h/SF=02h,#1904 at INT 2F/AX=12FFh/BX=0106h
+SeeAlso: #0855 at INT 21/AX=4402h/SF=02h,#1951 at INT 2F/AX=12FFh/BX=0106h
 --------m-67FFA5BX4345-----------------------
 INT 67 U - Compaq CEMM v5.10+ - PRIVATE API
 	AX = FFA5h
@@ -7334,7 +7537,7 @@ Return: AH = 84h
 	AL = status (84h = error, FFh = success)
 Note:	if BX <> 4345h or DX > 0004h on entry, CEMM behaves identically to
 	  Microsoft's EMM386 (see AX=FFA5h"EMM386")
-SeeAlso: AX=FFA5h"EMM386",#0821 at INT 21/AX=4402h/SF=02h,#2840
+SeeAlso: AX=FFA5h"EMM386",#0855 at INT 21/AX=4402h/SF=02h,#2915
 --------I-68---------------------------------
 INT 68 - Sangoma CCPOP 3270 resident module
 SeeAlso: INT 67"Sangoma",INT 92"Sangoma"
@@ -7345,20 +7548,20 @@ Note:	the installation check consists of testing for the signature string
 SeeAlso: AH=01h/SF=1B00h,AH=FAh
 --------h-68---------------------------------
 INT 68 C - HP Vectra AT - IRQ16 - 8041 SERVICE REQUEST
-SeeAlso: INT 08"IRQ0",INT 69"HP Vectra",INT 6F"HP Vectra"
+SeeAlso: INT 08"IRQ0",INT 69"HP Vectra",INT 6F/AH=00h"HP"
 --------N-6801--SF1B00-----------------------
 INT 68 - APPC/PC - NETWORK DEVICE CONTROL - DISPLAY
 	AH = 01h subfn 1B00h
-	DS:DX -> control block (see #2841)
+	DS:DX -> control block (see #2916)
 Return: control block updated
 SeeAlso: AH=01h/SF=2000h,AH=01h/SF=2B00h,INT 68"Novell"
 
 Format of APPC/PC "DISPLAY" control block:
-Offset	Size	Description	(Table 2841)
+Offset	Size	Description	(Table 2916)
  00h 12 BYTEs	reserved
  0Ch	WORD	1B00h (verb "DISPLAY")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #2842)
+ 14h	DWORD	(big-endian) return code (see #2917)
  18h	WORD	00h
  1Ah  8 BYTEs	(big-endian) logical unit ID
  22h  8 BYTEs	(big-endian) partner logical unit name
@@ -7376,7 +7579,7 @@ Offset	Size	Description	(Table 2841)
  3Ch	BYTE	bit 7: SESSION_TERMINATION_TARGET_DRAIN
 		bit 6: SESSION_TERMINATION_SOURCE_DRAIN
 
-(Table 2842)
+(Table 2917)
 Values for APPC/PC return code:
  0000h	successful
  0001h	BAD_TP_ID
@@ -7418,16 +7621,16 @@ Values for APPC/PC return code:
 --------N-6801--SF2000-----------------------
 INT 68 - APPC/PC - NETWORK DEVICE CONTROL - ATTACH PHYSICAL UNIT
 	AH = 01h subfn 2000h
-	DS:DX -> control block (see #2843)
+	DS:DX -> control block (see #2918)
 Return: control block updated
 SeeAlso: AH=01h/SF=2100h,AH=01h/SF=2B00h
 
 Format of APPC/PC "Attach Physical Unit" control block:
-Offset	Size	Description	(Table 2843)
+Offset	Size	Description	(Table 2918)
  00h 12 BYTEs	reserved
  0Ch	WORD	2000h (verb "Attach Physical Unit")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #2842)
+ 14h	DWORD	(big-endian) return code (see #2917)
  18h	WORD	00h
  1Ah	BYTE	version
  1Bh	BYTE	release
@@ -7442,16 +7645,16 @@ Offset	Size	Description	(Table 2843)
 --------N-6801--SF2100-----------------------
 INT 68 - APPC/PC - NETWORK DEVICE CONTROL - ATTACH LOGICAL UNIT
 	AH = 01h subfn 2100h
-	DS:DX -> control block (see #2844)
+	DS:DX -> control block (see #2919)
 Return: control block updated
-SeeAlso: #2847,#2848,#2850,AH=01h/SF=2000h,AH=01h/SF=2200h,AH=01h/SF=2B00h
+SeeAlso: #2922,#2923,#2925,AH=01h/SF=2000h,AH=01h/SF=2200h,AH=01h/SF=2B00h
 
 Format of APPC/PC "Attach Logical Unit" control block:
-Offset	Size	Description	(Table 2844)
+Offset	Size	Description	(Table 2919)
  00h 12 BYTEs	reserved
  0Ch	WORD	2100h (verb "Attach Logical Unit")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #2842)
+ 14h	DWORD	(big-endian) return code (see #2917)
  18h	WORD	70  offset to partner logical unit record
  1Ah  8 BYTEs	(big-endian) logical unit name
  22h  8 BYTEs	(big-endian) logical unit ID
@@ -7468,11 +7671,11 @@ Offset	Size	Description	(Table 2844)
  3Eh	DWORD	pointer to LU_LU_PASSWORD_EXIT routine, FFFFFFFFh=no pswd exit
  42h	DWORD	00h
  46h	WORD	total length of partner records
- 48h	var	array of partner logical unit records (see #2845)
-SeeAlso: #2847,#2848,#2850
+ 48h	var	array of partner logical unit records (see #2920)
+SeeAlso: #2922,#2923,#2925
 
 Format of APPC/PC partner logical unit record:
-Offset	Size	Description	(Table 2845)
+Offset	Size	Description	(Table 2920)
  00h	WORD	length of this partner logical unit record
  02h	WORD	42  offset to mode records
  04h  8 BYTEs	(big-endian) partner logical unit name
@@ -7486,10 +7689,10 @@ Offset	Size	Description	(Table 2845)
  18h	BYTE	partner logical unit adapter number
  19h 17 BYTEs	(counted string) partner logical unit adapter address
  2Ah	WORD	total length of mode records
- 2Ch 16N BYTEs	array of mode records (see #2846)
+ 2Ch 16N BYTEs	array of mode records (see #2921)
 
 Format of mode record:
-Offset	Size	Description	(Table 2846)
+Offset	Size	Description	(Table 2921)
  00h	WORD	16  length of this mode record
  02h  8 BYTEs	(big-endian) mode name
  0Ah	WORD	RU_SIZE high bound
@@ -7502,7 +7705,7 @@ pointers are called by pushing the DWORD pointer to the verb on the stack and
 then performing a FAR call.
 
 Format of ACCESS_LU_LU_PW verb:
-Offset	Size	Description	(Table 2847)
+Offset	Size	Description	(Table 2922)
  00h 12 BYTEs	reserved
  0Ch	WORD	1900h (verb "ACCESS_LU_LU_PW")
  0Eh  8 BYTEs	(big-endian) logical unit ID
@@ -7511,14 +7714,14 @@ Offset	Size	Description	(Table 2847)
  26h 17 BYTEs	(counted string) partner fully qualified logical unit name
  37h	BYTE	password available (0=no, 1=yes)
  38h  8 BYTEs	password
-SeeAlso: #2844,#2848,#2850
+SeeAlso: #2919,#2923,#2925
 
 Format of CREATE_TP verb:
-Offset	Size	Description	(Table 2848)
+Offset	Size	Description	(Table 2923)
  00h 12 BYTEs	reserved
  0Ch	WORD	2300h (verb "CREATE_TP")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) sense code (see #2849)
+ 14h	DWORD	(big-endian) sense code (see #2924)
  18h  8 BYTEs	(big-endian) TP ID
  20h  8 BYTEs	(big-endian) logical unit ID
  28h	DWORD	(big-endian) conversation ID
@@ -7537,9 +7740,9 @@ Offset	Size	Description	(Table 2848)
  B5h 11 BYTEs	(counted string) user ID
  C0h	BYTE	0 verification should be performed
 		1 already verified
-SeeAlso: #2847,#2850
+SeeAlso: #2922,#2925
 
-(Table 2849)
+(Table 2924)
 Values for APPC/PC sense code:
  00000000h	Ok
  080F6051h	SECURITY_NOT_VALID
@@ -7550,7 +7753,7 @@ Values for APPC/PC sense code:
  10086041h	SYNC_LEVEL_NOT_SUPPORTED
 
 Format of SYSLOG verb:
-Offset	Size	Description	(Table 2850)
+Offset	Size	Description	(Table 2925)
  00h 12 BYTEs	reserved
  0Ch	WORD	2600h (verb "SYSLOG")
  0Eh 10 BYTEs	00h
@@ -7563,68 +7766,68 @@ Offset	Size	Description	(Table 2850)
  36h	WORD	length of data
  38h	DWORD	pointer to data
  3Ch	BYTE	00h
-SeeAlso: #2847,#2848
+SeeAlso: #2922,#2923
 --------N-6801--SF2200-----------------------
 INT 68 - APPC/PC - NETWORK DEVICE CONTROL - DETACH LOGICAL UNIT
 	AH = 01h subfn 2200h
-	DS:DX -> control block (see #2851)
+	DS:DX -> control block (see #2926)
 Return: control block updated
 SeeAlso: AH=01h/SF=2000h,AH=01h/SF=2100h,AH=01h/SF=2700h
 
 Format of APPC/PC "Detach Logical Unit" control block:
-Offset	Size	Description	(Table 2851)
+Offset	Size	Description	(Table 2926)
  00h 12 BYTEs	reserved
  0Ch	WORD	2200h (verb "Detach Logical Unit")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #2842)
+ 14h	DWORD	(big-endian) return code (see #2917)
  18h  8 BYTEs	(big-endian) logical unit ID
  20h	BYTE	00h
 --------N-6801--SF2700-----------------------
 INT 68 - APPC/PC - NETWORK DEVICE CONTROL - DETACH PHYSICAL UNIT
 	AH = 01h subfn 2700h
-	DS:DX -> control block (see #2852)
+	DS:DX -> control block (see #2927)
 Return: control block updated
 SeeAlso: AH=01h/SF=2000h,AH=01h/SF=2100h,AH=01h/SF=2200h
 
 Format of APPC/PC "Detach Physical Unit" control block:
-Offset	Size	Description	(Table 2852)
+Offset	Size	Description	(Table 2927)
  00h 12 BYTEs	reserved
  0Ch	WORD	2700h (verb "Detach Physical Unit")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #2842)
+ 14h	DWORD	(big-endian) return code (see #2917)
  18h	BYTE	00h  type: hard
 		01h  type: soft
 --------N-6801--SF2B00-----------------------
 INT 68 - APPC/PC - NETWORK DEVICE CONTROL - ACTIVATE DLC
 	AH = 01h subfn 2B00h
-	DS:DX -> control block (see #2853)
+	DS:DX -> control block (see #2928)
 Return: control block updated
 SeeAlso: AH=01h/SF=1B00h,AH=01h/SF=2000h
 
 Format of APPC/PC "Activate DLC" control block:
-Offset	Size	Description	(Table 2853)
+Offset	Size	Description	(Table 2928)
  00h 12 BYTEs	reserved
  0Ch	WORD	2B00h (verb "Activate DLC")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #2842)
+ 14h	DWORD	(big-endian) return code (see #2917)
  18h  8 BYTEs	(big-endian) DLC name
  20h	BYTE	adapter number
 --------N-6802--SF0100-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - ALLOCATE
 	AH = 02h subfn 0100h
-	DS:DX -> control block (see #2854)
+	DS:DX -> control block (see #2929)
 Return: control block updated
 SeeAlso: AH=02h/SF=0500h
 
 Format of APPC/PC "Allocate" control block:
-Offset	Size	Description	(Table 2854)
+Offset	Size	Description	(Table 2929)
  00h 12 BYTEs	reserved
  0Ch	WORD	0100h (verb "Allocate" or "MC_Allocate")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2855)
- 16h	DWORD	(big-endian) error code (see #2856)
+ 14h	WORD	(big-endian) primary return code (see #2930)
+ 16h	DWORD	(big-endian) error code (see #2931)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	(MC_Allocate only) conversation type
@@ -7647,7 +7850,7 @@ Offset	Size	Description	(Table 2854)
  A6h	WORD	PIP_DATA length
  A8h	DWORD	pointer to PIP_DATA
 
-(Table 2855)
+(Table 2930)
 Values for APPC/PC primary return code:
  0000h	successful
  0001h	parameter check
@@ -7676,7 +7879,7 @@ Values for APPC/PC primary return code:
  F003h	APPC abended
  F004h	incomplete
 
-(Table 2856)
+(Table 2931)
 Values for APPC/PC error code:
  0001h	bad TP ID
  0002h	bad conversation ID
@@ -7723,56 +7926,56 @@ Values for APPC/PC error code:
 --------N-6802--SF0300-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - CONFIRM
 	AH = 02h subfn 0300h
-	DS:DX -> control block (see #2857)
+	DS:DX -> control block (see #2932)
 Return: control block updated
 SeeAlso: AH=02h/SF=0400h
 
 Format of APPC/PC "Confirm" control block:
-Offset	Size	Description	(Table 2857)
+Offset	Size	Description	(Table 2932)
  00h 12 BYTEs	reserved
  0Ch	WORD	0300h (verb "Confirm" or "MC_Confirm")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2855)
- 16h	DWORD	(big-endian) error code (see #2856)
+ 14h	WORD	(big-endian) primary return code (see #2930)
+ 16h	DWORD	(big-endian) error code (see #2931)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	request to send received (0=no, 1=yes)
 --------N-6802--SF0400-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - CONFIRMED
 	AH = 02h subfn 0400h
-	DS:DX -> control block (see #2858)
+	DS:DX -> control block (see #2933)
 Return: control block updated
 SeeAlso: AH=02h/SF=0300h
 
 Format of APPC/PC "Confirmed" control block:
-Offset	Size	Description	(Table 2858)
+Offset	Size	Description	(Table 2933)
  00h 12 BYTEs	reserved
  0Ch	WORD	0400h (verb "Confirmed" or "MC_Confirmed")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2855)
- 16h	DWORD	(big-endian) error code (see #2856)
+ 14h	WORD	(big-endian) primary return code (see #2930)
+ 16h	DWORD	(big-endian) error code (see #2931)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
 --------N-6802--SF0500-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - DEALLOCATE
 	AH = 02h subfn 0500h
-	DS:DX -> control block (see #2859)
+	DS:DX -> control block (see #2934)
 Return: control block updated
 SeeAlso: AH=02h/SF=0100h,AH=02h/SF=0300h
 
 Format of APPC/PC "Deallocate" control block:
-Offset	Size	Description	(Table 2859)
+Offset	Size	Description	(Table 2934)
  00h 12 BYTEs	reserved
  0Ch	WORD	0500h (verb "Deallocate" or "MC_Deallocate")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2855)
- 16h	DWORD	(big-endian) error code (see #2856)
+ 14h	WORD	(big-endian) primary return code (see #2930)
+ 16h	DWORD	(big-endian) error code (see #2931)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	00h
@@ -7788,37 +7991,37 @@ Offset	Size	Description	(Table 2859)
 --------N-6802--SF0600-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - FLUSH
 	AH = 02h subfn 0600h
-	DS:DX -> control block (see #2860)
+	DS:DX -> control block (see #2935)
 Return: control block updated
 SeeAlso: AH=02h/SF=0300h
 
 Format of APPC/PC "Flush" control block:
-Offset	Size	Description	(Table 2860)
+Offset	Size	Description	(Table 2935)
  00h 12 BYTEs	reserved
  0Ch	WORD	0600h (verb "Flush" or "MC_Flush")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2855)
- 16h	DWORD	(big-endian) error code (see #2856)
+ 14h	WORD	(big-endian) primary return code (see #2930)
+ 16h	DWORD	(big-endian) error code (see #2931)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
 --------N-6802--SF0700-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - GET ATTRIBUTES
 	AH = 02h subfn 0700h
-	DS:DX -> control block (see #2861)
+	DS:DX -> control block (see #2936)
 Return: control block updated
 SeeAlso: AH=02h/SF=0300h
 
 Format of APPC/PC "Get_Attributes" control block:
-Offset	Size	Description	(Table 2861)
+Offset	Size	Description	(Table 2936)
  00h 12 BYTEs	reserved
  0Ch	WORD	0700h (verb "Get_Attributes" or "MC_Get_Attributes")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2855)
- 16h	DWORD	(big-endian) error code (see #2856)
+ 14h	WORD	(big-endian) primary return code (see #2930)
+ 16h	DWORD	(big-endian) error code (see #2931)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h  8 BYTEs	(big-endian) logical unit ID
@@ -7834,38 +8037,38 @@ Offset	Size	Description	(Table 2861)
 --------N-6802--SF0800-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - GET CONVERSATION TYPE
 	AH = 02h subfn 0800h
-	DS:DX -> control block (see #2862)
+	DS:DX -> control block (see #2937)
 Return: control block updated
 SeeAlso: AH=02h/SF=0300h
 
 Format of APPC/PC "Get_Type" control block:
-Offset	Size	Description	(Table 2862)
+Offset	Size	Description	(Table 2937)
  00h 12 BYTEs	reserved
  0Ch	WORD	0800h (verb "Get_Type")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2855)
- 16h	DWORD	(big-endian) error code (see #2856)
+ 14h	WORD	(big-endian) primary return code (see #2930)
+ 16h	DWORD	(big-endian) error code (see #2931)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	(ret) type (0=basic conversation, 1=mapped conversation)
 --------N-6802--SF0900-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - POST ON RECEIPT
 	AH = 02h subfn 0900h
-	DS:DX -> control block (see #2863)
+	DS:DX -> control block (see #2938)
 Return: control block updated
 SeeAlso: AH=02h/SF=0A00h
 
 Format of APPC/PC "Post_on_Receipt" control block:
-Offset	Size	Description	(Table 2863)
+Offset	Size	Description	(Table 2938)
  00h 12 BYTEs	reserved
  0Ch	WORD	0900h (verb "Post_on_Receipt")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2855)
- 16h	DWORD	(big-endian) error code (see #2856)
+ 14h	WORD	(big-endian) primary return code (see #2930)
+ 16h	DWORD	(big-endian) error code (see #2931)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	WORD	maximum length
@@ -7873,19 +8076,19 @@ Offset	Size	Description	(Table 2863)
 --------N-6802--SF0A00-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - PREPARE TO RECEIVE
 	AH = 02h subfn 0A00h
-	DS:DX -> control block (see #2864)
+	DS:DX -> control block (see #2939)
 Return: control block updated
 SeeAlso: AH=02h/SF=0900h,AH=02h/SF=0B00h
 
 Format of APPC/PC "Prepare_to_Receive" control block:
-Offset	Size	Description	(Table 2864)
+Offset	Size	Description	(Table 2939)
  00h 12 BYTEs	reserved
  0Ch	WORD	0A00h (verb "Prepare_to_Receive" or "MC_Prepare_to_Receive")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2855)
- 16h	DWORD	(big-endian) error code (see #2856)
+ 14h	WORD	(big-endian) primary return code (see #2930)
+ 16h	DWORD	(big-endian) error code (see #2931)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	type (0=SYNC_LEVEL, 1=FLUSH)
@@ -7893,29 +8096,29 @@ Offset	Size	Description	(Table 2864)
 --------N-6802--SF0B00-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - RECEIVE AND WAIT
 	AH = 02h subfn 0B00h
-	DS:DX -> control block (see #2865)
+	DS:DX -> control block (see #2940)
 Return: control block updated
 SeeAlso: AH=02h/SF=0C00h,AH=02h/SF=0F00h
 
 Format of APPC/PC "Receive_and_Wait" control block:
-Offset	Size	Description	(Table 2865)
+Offset	Size	Description	(Table 2940)
  00h 12 BYTEs	reserved
  0Ch	WORD	0B00h (verb "Receive_and_Wait" or "MC_Receive_and_Wait")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2855)
- 16h	DWORD	(big-endian) error code (see #2856)
+ 14h	WORD	(big-endian) primary return code (see #2930)
+ 16h	DWORD	(big-endian) error code (see #2931)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
- 26h	BYTE	type of information received (see #2866)
+ 26h	BYTE	type of information received (see #2941)
  27h	BYTE	(MC_Receive_and_Wait only) fill (0=buffer, 1=LL)
  28h	BYTE	Request_to_Send_Received (0=no, 1=yes)
  29h	WORD	maximum length
  2Bh	WORD	data length
  2Dh	DWORD	pointer to data
 
-(Table 2866)
+(Table 2941)
 Values for type of information received:
  00h	data
  01h	data complete
@@ -7927,22 +8130,22 @@ Values for type of information received:
 --------N-6802--SF0C00-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - RECEIVE IMMEDIATE
 	AH = 02h subfn 0C00h
-	DS:DX -> control block (see #2867)
+	DS:DX -> control block (see #2942)
 Return: control block updated
 SeeAlso: AH=02h/SF=0B00h,AH=02h/SF=0F00h
 
 Format of APPC/PC "Receive_Immediate" control block:
-Offset	Size	Description	(Table 2867)
+Offset	Size	Description	(Table 2942)
  00h 12 BYTEs	reserved
  0Ch	WORD	0C00h (verb "Receive_Immediate" or "MC_Receive_Immediate")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2855)
- 16h	DWORD	(big-endian) error code (see #2856)
+ 14h	WORD	(big-endian) primary return code (see #2930)
+ 16h	DWORD	(big-endian) error code (see #2931)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
- 26h	BYTE	type of information received (see #2866)
+ 26h	BYTE	type of information received (see #2941)
  27h	BYTE	(MC_Receive_Immediate only) fill (0=buffer, 1=LL)
  28h	BYTE	Request_to_Send_Received (0=no, 1=yes)
  29h	WORD	maximum length
@@ -7951,37 +8154,37 @@ Offset	Size	Description	(Table 2867)
 --------N-6802--SF0E00-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - REQUEST TO SEND
 	AH = 02h subfn 0E00h
-	DS:DX -> control block (see #2868)
+	DS:DX -> control block (see #2943)
 Return: control block updated
 SeeAlso: AH=02h/SF=0F00h,AH=02h/SF=1000h
 
 Format of APPC/PC "Request_to_Send" control block:
-Offset	Size	Description	(Table 2868)
+Offset	Size	Description	(Table 2943)
  00h 12 BYTEs	reserved
  0Ch	WORD	0E00h (verb "Request_to_Send" or "MC_Request_to_Send")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2855)
- 16h	DWORD	(big-endian) error code (see #2856)
+ 14h	WORD	(big-endian) primary return code (see #2930)
+ 16h	DWORD	(big-endian) error code (see #2931)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
 --------N-6802--SF0F00-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - SEND DATA
 	AH = 02h subfn 0F00h
-	DS:DX -> control block (see #2869)
+	DS:DX -> control block (see #2944)
 Return: control block updated
 SeeAlso: AH=02h/SF=0E00h,AH=02h/SF=1000h
 
 Format of APPC/PC "Send_Data" control block:
-Offset	Size	Description	(Table 2869)
+Offset	Size	Description	(Table 2944)
  00h 12 BYTEs	reserved
  0Ch	WORD	0F00h (verb "Send_Data" or "MC_Send_Data")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2855)
- 16h	DWORD	(big-endian) error code (see #2856)
+ 14h	WORD	(big-endian) primary return code (see #2930)
+ 16h	DWORD	(big-endian) error code (see #2931)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	request to send received (0=no, 1=yes)
@@ -7991,19 +8194,19 @@ Offset	Size	Description	(Table 2869)
 --------N-6802--SF1000-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - SEND ERROR
 	AH = 02h subfn 1000h
-	DS:DX -> control block (see #2870)
+	DS:DX -> control block (see #2945)
 Return: control block updated
 SeeAlso: AH=02h/SF=0F00h
 
 Format of APPC/PC "Send_Error" control block:
-Offset	Size	Description	(Table 2870)
+Offset	Size	Description	(Table 2945)
  00h 12 BYTEs	reserved
  0Ch	WORD	1000h (verb "Send_Error" or "MC_Send_Error")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2855)
- 16h	DWORD	(big-endian) error code (see #2856)
+ 14h	WORD	(big-endian) primary return code (see #2930)
+ 16h	DWORD	(big-endian) error code (see #2931)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	request to send received (0=no, 1=yes)
@@ -8014,19 +8217,19 @@ Offset	Size	Description	(Table 2870)
 --------N-6802--SF1200-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - TEST
 	AH = 02h subfn 1200h
-	DS:DX -> control block (see #2871)
+	DS:DX -> control block (see #2946)
 Return: control block updated
 SeeAlso: AH=02h/SF=1300h
 
 Format of APPC/PC "Test" control block:
-Offset	Size	Description	(Table 2871)
+Offset	Size	Description	(Table 2946)
  00h 12 BYTEs	reserved
  0Ch	WORD	1200h (verb "Test" or "MC_Test")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2855)
- 16h	DWORD	(big-endian) error code (see #2856)
+ 14h	WORD	(big-endian) primary return code (see #2930)
+ 16h	DWORD	(big-endian) error code (see #2931)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	(MC_Test only) test (0=posted, 1=request_to_send received)
@@ -8037,19 +8240,19 @@ Note:	error code has different interpretations for:
 --------N-6802--SF1300-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - WAIT
 	AH = 02h subfn 1300h
-	DS:DX -> control block (see #2872)
+	DS:DX -> control block (see #2947)
 Return: control block updated
 SeeAlso: AH=02h/SF=1200h
 
 Format of APPC/PC "Wait" control block:
-Offset	Size	Description	(Table 2872)
+Offset	Size	Description	(Table 2947)
  00h 12 BYTEs	reserved
  0Ch	WORD	1300h (verb "Wait")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2855)
- 16h	DWORD	(big-endian) error code (see #2856,#2871)
+ 14h	WORD	(big-endian) primary return code (see #2930)
+ 16h	DWORD	(big-endian) error code (see #2931,#2946)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	number of conversations to wait on
@@ -8057,30 +8260,30 @@ Offset	Size	Description	(Table 2872)
 --------N-6803--SF2400-----------------------
 INT 68 - APPC/PC - TP STARTED
 	AH = 03h subfn 2400h
-	DS:DX -> control block (see #2873)
+	DS:DX -> control block (see #2948)
 Return: control block updated
 
 Format of APPC/PC "TP Started" control block:
-Offset	Size	Description	(Table 2873)
+Offset	Size	Description	(Table 2948)
  00h 12 BYTEs	reserved
  0Ch	WORD	2400h (verb "TP Started")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #2842)
+ 14h	DWORD	(big-endian) return code (see #2917)
  18h	WORD	00h
  1Ah  8 BYTEs	(big-endian) logical unit ID
  22h  8 BYTEs	(big-endian) TP ID
 --------N-6803--SF2800-----------------------
 INT 68 - APPC/PC - GET ALLOCATE
 	AH = 03h subfn 2800h
-	DS:DX -> control block (see #2874)
+	DS:DX -> control block (see #2949)
 Return: control block updated
 
 Format of APPC/PC "Get ALLOCATE" control block:
-Offset	Size	Description	(Table 2874)
+Offset	Size	Description	(Table 2949)
  00h 12 BYTEs	reserved
  0Ch	WORD	2800h (verb "Get ALLOCATE")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #2842)
+ 14h	DWORD	(big-endian) return code (see #2917)
  18h	WORD	00h
  1Ah  8 BYTEs	(big-endian) logical unit ID
  22h	BYTE	type (00h dequeue, 01h test)
@@ -8088,15 +8291,15 @@ Offset	Size	Description	(Table 2874)
 --------N-6803--SF2A00-----------------------
 INT 68 - APPC/PC - CHANGE LOGICAL UNIT
 	AH = 03h subfn 2A00h
-	DS:DX -> control block (see #2875)
+	DS:DX -> control block (see #2950)
 Return: control block updated
 
 Format of APPC/PC "Change Logical Unit" control block:
-Offset	Size	Description	(Table 2875)
+Offset	Size	Description	(Table 2950)
  00h 12 BYTEs	reserved
  0Ch	WORD	2A00h (verb "Change Logical Unit")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #2842)
+ 14h	DWORD	(big-endian) return code (see #2917)
  18h	WORD	00h
  1Ah  8 BYTEs	(big-endian) logical unit ID
  22h	DWORD	pointer to CREATE_TP_EXIT routine
@@ -8113,28 +8316,28 @@ Offset	Size	Description	(Table 2875)
 --------N-6804-------------------------------
 INT 68 - APPC/PC - TRANSACTION PROCESSING
 	AH = 04h
-	DS:DX -> control block (see #2876)
+	DS:DX -> control block (see #2951)
 Return: control block updated
 
 Format of APPC/PC control block:
-Offset	Size	Description	(Table 2876)
+Offset	Size	Description	(Table 2951)
  00h 12 BYTEs	reserved
  0Ch	WORD	verb (action)
 		2500h TP_ENDED
 		2900h TP_VALID
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #2842)
+ 14h	DWORD	(big-endian) return code (see #2917)
  18h	WORD	00h
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	-> CREATE_TP record (only if verb = 2900h)
 --------N-6805-------------------------------
 INT 68 - APPC/PC - TRANSFER MESSAGE DATA
 	AH = 05h
-	DS:DX -> control block (see #2877)
+	DS:DX -> control block (see #2952)
 Return: control block updated
 
 Format of APPC/PC "Transfer Message Data" control block:
-Offset	Size	Description	(Table 2877)
+Offset	Size	Description	(Table 2952)
  00h 12 BYTEs	reserved
  0Ch	WORD	1C00h (verb "Transfer Message Data")
  0Eh	BYTE	data type
@@ -8143,33 +8346,33 @@ Offset	Size	Description	(Table 2877)
 		02h alert subvectors
 		03h PDSTATS subvectors
  0Fh  5 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #2842)
+ 14h	DWORD	(big-endian) return code (see #2917)
  18h 12 BYTEs	00h
- 24h	BYTE	flags (see #2878)
+ 24h	BYTE	flags (see #2953)
  25h	BYTE	00h
  26h	WORD	length of data
  28h  N BYTEs	data
 
 Bitfields for APPC/PC message transfer flags:
-Bit(s)	Description	(Table 2878)
+Bit(s)	Description	(Table 2953)
  0	don't add correlation subvector
  1	don't add product set ID subvector
  2	don't do SYSLOG
  3	don't send SSCP_PU_SESSION
-SeeAlso: #2877
+SeeAlso: #2952
 --------N-6806-------------------------------
 INT 68 - APPC/PC - CHANGE NUMBER OF SESSIONS
 	AH = 06h
-	DS:DX -> control block (see #2879)
+	DS:DX -> control block (see #2954)
 Return: control block updated
 
 Format of APPC/PC "Change Number of Sessions" control block:
-Offset	Size	Description	(Table 2879)
+Offset	Size	Description	(Table 2954)
  00h 12 BYTEs	reserved
  0Ch	WORD	1500h (verb "Change Number of Sessions")
  0Eh  6 BYTEs	00h
- 14h	WORD	(big-endian) primary return code (see #2855)
- 16h	DWORD	(big-endian) secondary return code (see #2842,#2880)
+ 14h	WORD	(big-endian) primary return code (see #2930)
+ 16h	DWORD	(big-endian) secondary return code (see #2917,#2955)
  1Ah  8 BYTEs	(big-endian) logical unit ID
  22h  8 BYTEs	blanks
  2Ah  8 BYTEs	(big-endian) partner logical unit name
@@ -8186,7 +8389,7 @@ Offset	Size	Description	(Table 2879)
 		bit 6: drain source
 		bit 5: target responsible, not source
 
-(Table 2880)
+(Table 2955)
 Values for secondary return code (see also AH=01h/SF=1B00h):
  0000h	accepted
  0001h	negotiated
@@ -8247,11 +8450,11 @@ SeeAlso: AH=FDh,INT 68"Novell"
 --------N-68FB-------------------------------
 INT 68 - APPC/PC - CONVERT
 	AH = FBh
-	DS:DX -> control block (see #2881)
+	DS:DX -> control block (see #2956)
 Return: control block updated
 
 Format of APPC/PC "CONVERT" control block:
-Offset	Size	Description	(Table 2881)
+Offset	Size	Description	(Table 2956)
  00h 12 BYTEs	reserved
  0Ch	WORD	1A00h (verb "CONVERT")
  0Eh  6 BYTEs	00h
@@ -8282,19 +8485,19 @@ SeeAlso: AH=FAh,AH=FCh,AH=FEh
 --------N-68FE-------------------------------
 INT 68 - APPC/PC - SET TRACE DESTINATION
 	AH = FEh
-	AL = trace destinations (see #2882)
-	DS:DX -> trace stats record if AL bit 0 set (see #2883)
+	AL = trace destinations (see #2957)
+	DS:DX -> trace stats record if AL bit 0 set (see #2958)
 SeeAlso: AH=FCh,AH=FDh
 
 Bitfields for trace destinations:
-Bit(s)	Description	(Table 2882)
+Bit(s)	Description	(Table 2957)
  0	storage (DS:DX -> trace stats record)
  1	display
  2	file (trace written to file OUTPUT.PC)
  3	printer
 
 Format of APPC/PC Trace Statistics Record:
-Offset	Size	Description	(Table 2883)
+Offset	Size	Description	(Table 2958)
  00h	DWORD	pointer to storage trace buffer
  04h	WORD	max number of 80-byte records in trace
  06h	WORD	(high-order byte first!) current record number (must init to 0)
@@ -8336,18 +8539,18 @@ SeeAlso: AX=0101h
 INT 69 - DECnet DOS CTERM - STATUS
 	AX = 0103h
 	DX = session handle
-Return: AH status flags (see #2884)
-	AL = reason code if DECnet error (see #2885)
+Return: AH status flags (see #2959)
+	AL = reason code if DECnet error (see #2960)
 SeeAlso: AX=0104h
 
 Bitfields for DECnet DOS CTERM status flags:
-Bit(s)	Description	(Table 2884)
+Bit(s)	Description	(Table 2959)
  7	session has been aborted
  6	DECnet error
  1	trace data available
  0	receive data available
 
-(Table 2885)
+(Table 2960)
 Values for reason code:
  00h	normal disconnect
  01h	unknown message from host
@@ -8369,14 +8572,14 @@ Index:	error codes;DECnet DOS CTERM|DECnet DOS CTERM;error codes
 INT 69 - DECnet DOS CTERM - DECnet STATUS
 	AX = 0104h
 	DX = session handle
-Return: AX = reason code (see #2885)
+Return: AX = reason code (see #2960)
 Note:	use this call when AX=0103h returns a DECnet error
 SeeAlso: AX=0103h
 --------N-690105-----------------------------
 INT 69 - DECnet DOS CTERM - OPEN SESSION
 	AX = 0105h
 	DS:BX -> ASCIZ node name
-	ES:DX -> buffer for session control block (see #2901 at INT 6A/AH=D0h)
+	ES:DX -> buffer for session control block (see #2976 at INT 6A/AH=D0h)
 Return: AX <= 0 on error
 	AX > 0 session handle
 SeeAlso: AX=0103h,AX=0106h,AX=010Ah
@@ -8386,7 +8589,7 @@ INT 69 - DECnet DOS CTERM - CLOSE SESSION
 	DX = session handle
 Return: AH = status
 	    00h good close
-	    other error code (see #2885)
+	    other error code (see #2960)
 SeeAlso: AX=0103h,AX=0105h
 --------N-69010A-----------------------------
 INT 69 - DECnet DOS CTERM - GET SESSION CONTROL BLOCK SIZE
@@ -8404,19 +8607,19 @@ INT 69 - DECnet DOS CTERM - DEINSTALL CTERM
 	AX = 010Fh
 Return: AH = status
 	    00h successful uninstall
-	    other error code (see #2885)
+	    other error code (see #2960)
 Note:	CTERM must have been the last TSR loaded in order to deinstall it
 SeeAlso: AX=0100h
 Index:	uninstall;DECnet DOS CTERM
 --------N-690A-------------------------------
 INT 69 - DECnet DOS 2.1+ - DATA LINK LAYER
 	AH = 0Ah
-	AL = function number (see #2886)
-	ES:BX -> Datalink Communication Block (see #2888)
-Return: AX = status (see #2887)
+	AL = function number (see #2961)
+	ES:BX -> Datalink Communication Block (see #2963)
+Return: AX = status (see #2962)
 SeeAlso: INT 6D"DECnet"
 
-(Table 2886)
+(Table 2961)
 Values for DECnet DOS Data Link Layer function:
  00h	initialize
  01h	open portal
@@ -8439,7 +8642,7 @@ Values for DECnet DOS Data Link Layer function:
  12h	set DECPARM
  13h	external loopback
 
-(Table 2887)
+(Table 2962)
 Values for DECnet DOS Data Link Layer status:
  00h	successful
  01h	hardware failed to initialize
@@ -8466,7 +8669,7 @@ Values for DECnet DOS Data Link Layer status:
 Index:	error codes;DECnet DOS|DECnet DOS;error codes
 
 Format of Datalink Communication Block:
-Offset	Size	Description	(Table 2888)
+Offset	Size	Description	(Table 2963)
  00h	WORD	portal ID
  02h  6 BYTEs	source address
  08h  6 BYTEs	destination address
@@ -8580,18 +8783,18 @@ Range:	INT 60h to INT 7Fh, selected by configuration
 --------N-6A---------------------------------
 INT 6A - DECnet DOS - LOCAL AREA TRANSPORT PROGRAM
 Note:	the installation check consists of testing for a signature area
-	  immediately preceding the interrupt handler (see #2889)
+	  immediately preceding the interrupt handler (see #2964)
 SeeAlso: AH=01h/DH=FFh,INT 6B"DECnet",INT 6D"DECnet"
 Index:	installation check;DECnet DOS Local Area Transport
 
 Format of DECnet DOS signature area:
-Offset	Size	Description	(Table 2889)
+Offset	Size	Description	(Table 2964)
  -5	BYTE	major version number
  -4	BYTE	minor version number
  -3   3 BYTEs	signature (ASCII "LAT")
 --------h-6A---------------------------------
 INT 6A C - HP Vectra AT - IRQ18 - RESERVED HARDWARE INTERRUPT
-SeeAlso: INT 0A"IRQ0",INT 69"HP Vectra",INT 6B"HP Vectra"
+SeeAlso: INT 0A"IRQ2",INT 69"HP Vectra",INT 6B"HP Vectra"
 --------N-6A0000-----------------------------
 INT 6A U - Super-TCP DOS TSR Kernel v3.57 - INSTALLATION CHECK
 	AX = 0000h
@@ -8600,69 +8803,69 @@ Program: Super-TCP is a TCP/IP protocol stack by Frontier Technologies Corp.
 Note:	an alternate installation check is to test for the ASCIZ signature
 	  "FTC Super-TCP" three bytes past the interrupt handler
 SeeAlso: AX=0001h,AX=0002h,AX=000Fh,AX=0010h,INT 21/AH=3Fh"BW-TCP"
-SeeAlso: INT 61"PCTCP",INT 62/AH=00h"ETHDEV"
+SeeAlso: INT 61"FTP Software",INT 62/AH=00h"ETHDEV"
 --------N-6A0001-----------------------------
 INT 6A U - Super-TCP DOS TSR Kernel v3.57 - ???
 	AX = 0001h
 	BH = function number
 	    01h ???
-		DS:SI -> ??? 24-byte record1 (see #2891)
+		DS:SI -> ??? 24-byte record1 (see #2966)
 		ES:DI -> buffer containing ???
 	    02h ???
-		DS:SI -> ??? 18-byte record2 (see #2892)
+		DS:SI -> ??? 18-byte record2 (see #2967)
 		ES:DI -> buffer containing ???
 	    04h ???
 		BL = subfunction
 		    01h
-			DS:SI -> ??? 28-byte record3 (see #2893)
+			DS:SI -> ??? 28-byte record3 (see #2968)
 			ES:DI -> buffer containing ???
 		    02h
-			DS:SI -> ??? 28-byte record3 (see #2893)
+			DS:SI -> ??? 28-byte record3 (see #2968)
 			ES:DI -> buffer containing ???
 		    03h
-			DS:SI -> ??? 28-byte record3 (see #2893)
+			DS:SI -> ??? 28-byte record3 (see #2968)
 		    else Return: AX = 0005h
 	    05h ???
-		DS:SI -> ??? 20-byte record4 (see #2894)
+		DS:SI -> ??? 20-byte record4 (see #2969)
 		ES:DI -> buffer containing ???
 	    06h ???
 		BL = subfunction
 		    01h
-			DS:SI -> ??? 40-byte record5 (see #2895)
+			DS:SI -> ??? 40-byte record5 (see #2970)
 		    02h
-			DS:SI -> ??? 20-byte record6 (see #2896)
+			DS:SI -> ??? 20-byte record6 (see #2971)
 			ES:DI -> ???
 		    03h
-			DS:SI -> ??? 20-byte record6 (see #2896)
+			DS:SI -> ??? 20-byte record6 (see #2971)
 		    04h
-			DS:SI -> ??? 46-byte record7 (see #2897)
+			DS:SI -> ??? 46-byte record7 (see #2972)
 		    else Return: AX = 0005h
 	    11h ???
-		DS:SI -> ??? 28-byte record8 (see #2898)
+		DS:SI -> ??? 28-byte record8 (see #2973)
 		ES:DI -> ???
-Return: AX = function status (see #2890)
+Return: AX = function status (see #2965)
 SeeAlso: AX=0000h
 
-(Table 2890)
+(Table 2965)
 Values for Super-TCP function status:
  0000h	successful
  0005h	unsupported function
  000Ah	out of memory
 
 Format of record1:
-Offset	Size	Description	(Table 2891)
+Offset	Size	Description	(Table 2966)
  00h  4 BYTEs	???
  04h	WORD	size of ES:DI buffer
  06h 18 BYTEs	???
 
 Format of record2:
-Offset	Size	Description	(Table 2892)
+Offset	Size	Description	(Table 2967)
  00h  4 BYTEs	???
  04h	WORD	size of ES:DI buffer
  06h 12 BYTEs	???
 
 Format of record3:
-Offset	Size	Description	(Table 2893)
+Offset	Size	Description	(Table 2968)
  00h  2 BYTEs	???
  02h	WORD	???
  04h	WORD	size of ES:DI buffer
@@ -8673,13 +8876,13 @@ Offset	Size	Description	(Table 2893)
  10h 12 BYTEs	???
 
 Format of record4:
-Offset	Size	Description	(Table 2894)
+Offset	Size	Description	(Table 2969)
  00h  4 BYTEs	???
  04h	WORD	size of ES:DI buffer
  06h 14 BYTEs	???
 
 Format of record5:
-Offset	Size	Description	(Table 2895)
+Offset	Size	Description	(Table 2970)
  00h	BYTE	operation??? (00h-07h)
  01h	BYTE	???
  02h	WORD	(ret) ???
@@ -8691,20 +8894,20 @@ Offset	Size	Description	(Table 2895)
  24h  4 BYTEs	???
 
 Format of record6:
-Offset	Size	Description	(Table 2896)
+Offset	Size	Description	(Table 2971)
  00h  4 BYTEs	???
  04h	WORD	size of ES:DI buffer
  06h 14 BYTEs	???
 
 Format of record7:
-Offset	Size	Description	(Table 2897)
+Offset	Size	Description	(Table 2972)
  00h	WORD	???
  02h	WORD	???
  04h	WORD	???
  06h 40 BYTEs	???
 
 Format of record8:
-Offset	Size	Description	(Table 2898)
+Offset	Size	Description	(Table 2973)
  00h  4 BYTEs	???
  04h	WORD	size of ES:DI buffer
  06h  6 BYTEs	???
@@ -8726,10 +8929,10 @@ Return: AX = 0000h (successful) ???
 --------N-6A0003-----------------------------
 INT 6A U - Super-TCP DOS TSR Kernel v3.57 - GET ??? DATA AREA
 	AX = 0003h
-Return: CX:DX -> data area (see #2899)
+Return: CX:DX -> data area (see #2974)
 
 Format of Super-TCP data area:
-Offset	Size	Description	(Table 2899)
+Offset	Size	Description	(Table 2974)
  00h  2 BYTEs	???
  02h	DWORD	original INT 6A vector
  06h  2 BYTEs	???
@@ -8787,10 +8990,10 @@ INT 6A - DECnet DOS LOCAL AREA TRANSPORT - STATUS
 	AH = 03h
 	DH = FFh
 	DL = handle
-Return: AH = status flags (see #2900)
+Return: AH = status flags (see #2975)
 
 Bitfields for DECnet DOS LAT status flags:
-Bit(s)	Description	(Table 2900)
+Bit(s)	Description	(Table 2975)
  5	transmit buffer empty
  3	session in start state
  2	session not active
@@ -8803,14 +9006,14 @@ INT 6A - DECnet DOS LOCAL AREA TRANSPORT - OPEN SESSION
 	AL = password flag
 	    FFh no password
 	    0Fh password at ES:DI
-	ES:BX -> LAT session control block (see #2901)
+	ES:BX -> LAT session control block (see #2976)
 	ES:DI -> 16-byte blank-padded password (optional)
 Return: AH = 00h success
 	    DL = handle
 SeeAlso: AX=D000h
 
 Format of LAT Session Control Block:
-Offset	Size	Description	(Table 2901)
+Offset	Size	Description	(Table 2976)
  00h 18 BYTEs	service name
  12h 18 BYTEs	node name (future use)
  24h 18 BYTEs	port name (future use)
@@ -8864,10 +9067,10 @@ INT 6A - DECnet DOS LOCAL AREA TRANSPORT - CLOSE SESSION
 	AX = D000h
 	DH = FFh
 	DL = handle
-Return: AX = status (see #2902)
+Return: AX = status (see #2977)
 SeeAlso: AH=D0h
 
-(Table 2902)
+(Table 2977)
 Values for DECnet DOS LAT function status:
  0000h	successful
  0001h	no such session
@@ -8917,12 +9120,12 @@ SeeAlso: AX=D500h
 --------N-6B---------------------------------
 INT 6B - DECnet DOS - PORT DRIVER
 Note:	the installation check consists of testing for a signature area
-	  (see #2903) immediately preceding the interrupt handler
+	  (see #2978) immediately preceding the interrupt handler
 SeeAlso: INT 6A"DECnet",INT 6C"DECnet"
 Index:	installation check;DECnet DOS Port Driver
 
 Format of DECnet DOS signature area:
-Offset	Size	Description	(Table 2903)
+Offset	Size	Description	(Table 2978)
  -5	BYTE	major version number
  -4	BYTE	minor version number
  -3   3 BYTEs	signature (ASCII "PDV")
@@ -8931,7 +9134,7 @@ INT 6B - VIRUS - "Saddam" - ORIGINAL INT 21h VECTOR
 SeeAlso: INT 21/AX=FFFFh,INT 61"VIRUS",INT 70"VIRUS"
 --------h-6B---------------------------------
 INT 6B C - HP Vectra AT - IRQ19 - RESERVED HARDWARE INTERRUPT
-SeeAlso: INT 0B"IRQ0",INT 6A"HP Vectra",INT 6C"HP Vectra"
+SeeAlso: INT 0B"IRQ3",INT 6A"HP Vectra",INT 6C"HP Vectra"
 --------S-6B0000-----------------------------
 INT 6B - Novell NASI/NACS, Ungermann-Bass Net One SERIAL I/O - BUFFERED WRITE
 	AX = 0000h
@@ -9002,6 +9205,7 @@ INT 6B - NPC NCSI EXTENDED SERIAL I/O - GET STATUS
 	AH = 10h
 	AL = connection ID (Novell TELAPI.EXE)
 	CX = ???
+	ES:BX -> buffer for status (see #2979)
 Return: CF clear if successful
 	    CL = ???
 	    CH = ???
@@ -9012,6 +9216,17 @@ Notes:	this function is also supported by TelAPI
 	  whose status indicates that it is connected is the currently active
 	  circuit
 SeeAlso: AX=0700h,AH=12h,AH=1Fh
+
+Format of NASI status:
+Offset	Size	Description	(Table 2979)
+ 00h	BYTE	number of allocated virtual circuits
+ 01h	BYTE	reserved
+ 02h  9 BYTEs	states of emulated circuits 0-8
+		00h idle
+		01h attached Telnet session, in command state
+		02h attached Telnet session, connected with host
+		03h-06h ??? (not returned by TelAPI)
+Note:	this description is derived from the Novell TelAPI emulation of NASI
 --------S-6B11--DX0001-----------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - ALLOCATE A VIRTUAL CIRCUIT
 	AH = 11h
@@ -9029,10 +9244,18 @@ SeeAlso: AH=12h,AH=15h,AH=16h,AH=17h,AH=18h
 --------S-6B12-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - VIRTUAL CIRCUIT STATUS
 	AH = 12h
-	AL = virtual circuit number
-	CL = ???
-	ES:BX -> ???
-Return: ???
+	AL = virtual circuit number (0-8)
+Return: CF clear if successful
+	    AL = virtual circuit number
+	    CL = virtual circuit's state
+		00h idle
+		01h Telnet session, in command state
+		02h Telnet session, connected to host
+		03h-06h ??? (not returned by TelAPI)
+	CF set on error
+	    AL = error code
+		E2h invalid virtual circuit number
+		E4h specified virtual circuit not allocated
 Note:	this function is also supported by TelAPI
 SeeAlso: AH=10h,AH=15h,AH=1Ah,AH=1Bh,AH=1Fh
 --------S-6B13-------------------------------
@@ -9058,13 +9281,13 @@ INT 6B - NPC NCSI EXTENDED SERIAL I/O - SET/RETRIEVE VIRTUAL CIRCUIT CONFIG
 	AH = 15h
 	AL = virtual circuit number
 	CL = direction (00h get, nonzero set)
-	ES:BX -> buffer for/containing virtual circuit config (see #2904)
+	ES:BX -> buffer for/containing virtual circuit config (see #2980)
 Return: ES:BX buffer filled
 Note:	this function is also supported by TelAPI
 SeeAlso: AH=13h"NCSI",AH=14h"NCSI"
 
 Format of virtual circuit configuration:
-Offset	Size	Description	(Table 2904)
+Offset	Size	Description	(Table 2980)
  00h	WORD	buffer length
  02h	WORD	port ID
  04h	WORD	receive rate
@@ -9170,7 +9393,7 @@ INT 6B - NPC NCSI EXTENDED SERIAL I/O - QUERY NAME SERVICE
 	AH = 21h
 	AL = virtual circuit number
 	CL = ??? (00h or 01h)
-	ES:BX -> buffer for service name structure (see #2905)
+	ES:BX -> buffer for service name structure (see #2981)
 Return: CF clear if successful
 	    ES:BX buffer filled
 	CF set on error
@@ -9182,7 +9405,7 @@ Notes:	a program should call this function after allocating a virtual circuit
 SeeAlso: AH=14h"NCSI"
 
 Format of NCSI service name structure:
-Offset	Size	Description	(Table 2905)
+Offset	Size	Description	(Table 2981)
  00h	WORD	buffer length
  02h  8 BYTEs	service name
  0Ah  8 BYTEs	general name
@@ -9207,62 +9430,17 @@ INT 6C - DOS 3.2 Realtime Clock update
 --------N-6C---------------------------------
 INT 6C - DECnet DOS network scheduler
 Notes:	the installation check consists of testing for a signature area
-	  immediately preceding the interrupt handler (see #2906)
+	  immediately preceding the interrupt handler (see #2982)
 	also supported by DEC Pathworks for DOS
 SeeAlso: INT 6B"DECnet",INT 6D"DECnet",INT 6E"DECnet"
 Index:	installation check;DECnet DOS scheduler
 
 Format of DECnet DOS signature area:
-Offset	Size	Description	(Table 2906)
+Offset	Size	Description	(Table 2982)
  -5	BYTE	major version number
  -4	BYTE	minor version number
  -3   3 BYTEs	signature (ASCII "SCH")
 --------h-6C---------------------------------
 INT 6C C - HP Vectra AT - IRQ20 - HP-HIL CONTROLLER INTERRUPT
-SeeAlso: INT 0C"IRQ0",INT 6B"HP Vectra",INT 6D"HP Vectra"
---------V-6D---------------------------------
-INT 6D - VIDEO - many VGA - VIDEO BIOS ENTRY POINT
-Desc:	points at the original INT 10 entry point set up by the VGA BIOS
-Notes:	used by IBM, ATI VGA Wonder, Paradise, Video7, and NCR, and many others
-	the Diamond Stealth64 BIOS uses this vector to store the INT 42 vector
-	   of the inactive video (see INT 10/AH=12h/BL=35h)
-SeeAlso: INT 10
---------V-6D---------------------------------
-INT 6D - Trident SVGA - VIDEO BIOS HANDLER
-Note:	the BIOS INT 10 handler on various Trident VGA cards consists merely
-	  of a call to INT 6D followed by an IRET.
---------N-6D---------------------------------
-INT 6D - DECnet DOS (before 2.1) - DATA LINK LAYER PROGRAM
-	AH = function
-	???
-Return: ???
-Note:	the installation check consists of testing for a signature area
-	  immediately preceding the interrupt handler (see #2907)
-SeeAlso: INT 69/AH=0Ah,INT 6C"DECnet",INT 6E"DECnet"
-Index:	installation check;DECnet DOS Data Link Layer
-
-Format of DECnet DOS signature area:
-Offset	Size	Description	(Table 2907)
- -5	BYTE	major version number
- -4	BYTE	minor version number
- -3   3 BYTEs	signature (ASCII "DLL")
---------h-6D---------------------------------
-INT 6D C - HP Vectra AT - IRQ21 - RESERVED HARDWARE INTERRUPT
-SeeAlso: INT 0D"IRQ0",INT 6C"HP Vectra",INT 6E"HP Vectra"
---------N-6E---------------------------------
-INT 6E - DECnet DOS - DECnet NETWORK PROCESS API
-Notes:	this is the main DECnet DOS access, and is described in Digital manual
-	  AA-EB46B-TV ("DECnet-DOS Programmer's Reference Manual")
-	there is a signature/data area immediately prior to the interrupt
-	  handler which may be used as an installation check (see #2908)
-Index:	installation check;DECnet DOS
-
-Format of DECnet DOS signature area:
-Offset	Size	Description	(Table 2908)
- -5	BYTE	major version number
- -4	BYTE	minor version number
- -3   3 BYTEs	signature (ASCII "DNP")
---------h-6E---------------------------------
-INT 6E C - HP Vectra AT - IRQ22 - RESERVED HARDWARE INTERRUPT
-SeeAlso: INT 0E"IRQ0",INT 6D"HP Vectra",INT 6F/AH=00h"HP Vectra"
+SeeAlso: INT 0C"IRQ4",INT 6B"HP Vectra",INT 6D"HP Vectra"
 --------!---Section--------------------------

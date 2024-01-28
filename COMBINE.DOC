@@ -1,6 +1,6 @@
-			   COMBINE.COM v1.99
+			   COMBINE.COM v2.00
 			     by Ralf Brown
-			      27 July 1996
+			      19 October 1996
 
 COMBINE.COM will concatenate all of the files in the interrupt list
 distribution archives into a single master file, which is required by
@@ -24,7 +24,9 @@ it is added to the combined file:
 COMBINE will skip any missing sections of the interrupt list; if at
 least one section other than INTERRUP.A is present, it will stop as
 soon as the last section has been processed (otherwise, it will
-continue trying all names through INTERRUP.Z).
+continue trying all names through INTERRUP.Z).  On completion, it sets
+the combined file's timestamp to be the same as that of the last of
+the individual sections.
 
 System Requirements:
 	DOS 2.0+ or a DOS compatibility box

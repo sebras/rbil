@@ -1,4 +1,4 @@
-Bibliography		Release 51			Last change 7/28/96
+Bibliography			Release 52		Last change 20oct96
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------!---BIBLIOGRAPHY---------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
@@ -245,7 +245,7 @@ Novell IPX/SPX calls in part from an article by J. Vanderaart in the Dutch
 _LAN-Magazine_, issue #1, titled "IPX, de kabel in de knel".  Added 3/16/91.
 
 Replacements for July 1987 info derived from
-	_80286_and_80287_Programmer's_Reference_Manual, Intel #210498-004
+	_80286_and_80287_Programmer's_Reference_Manual, Intel #216298-004
 	_IBM_ROM_BIOS_, Ray Duncan, "Programmer's Quick Reference Series"
 	_DOS_and_BIOS_Functions_Quick_Reference_, Que
 	_The_MS-DOS_Encyclopedia_, Microsoft Press
@@ -647,13 +647,21 @@ Catalog No. 26-5403, Copyright 1983.  Added by Ralf Brown, 4/96.
 
 More Windows95 calls from _Win95_SDK:_Programmer's_Guide_to_Win95,_MS-DOS_
 _Extensions_.  Added 5/11/96.
+
+Pentium Pro Model-Specific Registers from Pentium Pro Family User's Guide,
+Volume 3, Appendix C (available on the March 1996 Intel Architecture Labs
+CD).  Added by Ralf Brown, 10/16/96.
+
+APM v1.2 calls and enhancements from _Advanced_Power_Management_(APM)_BIOS_
+_Interface_Specification_, Revision 1.2 (February 1996, available on the
+March 1996 Intel Architecture Labs CD).	 Added by Ralf Brown, 10/17/96.
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER50A through INTER50D (preferably the original
+quartet of archives named INTER52A through INTER52D (preferably the original
 authenticated PKZIP archives), the utility programs in a fifth archive
-called INTER50E.ZIP, and the WinHelp-related programs in a sixth archive
-named INTER50F.ZIP.
+called INTER50E.ZIP, and the hypertext conversion programs in two additional
+archives named INTER52F.ZIP and INTER52G.ZIP
 
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------!---CONTACT_INFO---------------------

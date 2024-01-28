@@ -1,6 +1,6 @@
 ; COMBINE.ASM	Interrupt List combiner
 ;		by Ralf Brown
-;		last edit: 7/27/96
+;		last edit: 19oct96
 
 		NAME	COMBINE
 		TITLE	Combine Interrupt List sections
@@ -36,7 +36,7 @@ CODE	SEGMENT 'CODE'
 combine:
 	jmp	near ptr main
 
-banner		db	13,"COMBINE v1.99",9,"Ralf Brown 1996",13,10,"$",26
+banner		db	13,"COMBINE v2.00",9,"Ralf Brown 1996",13,10,"$",26
 usage_msg	db	"Usage:",9,"COMBINE [options] dest-dir",13,10
 		db	9,"where {dest-dir} is the directory in which to place",13,10
 		db	9,"  the combined list ('.' for the current directory)",13,10
@@ -44,25 +44,24 @@ usage_msg	db	"Usage:",9,"COMBINE [options] dest-dir",13,10
 		db	9,"options:",13,10
 		db	9,9,"-d",9,"delete sections after copying",13,10
 		db	10
-		db	"You should have extracted all sections of the interrupt",13,10
-		db	"list into the current directory before running COMBINE."
+		db	"All sections of the interrupt list must be in the current directory."
 		db	"$"
 
 bad_dos_msg	db	"Need DOS 2.0+$"
-bad_drive_msg	db	"Invalid drive for destination$"
+bad_drive_msg	db	"Invalid destination drive$"
 no_mem_msg	db	"Insufficient memory$"
 no_files_msg	db	"No section files found!$"
 readerr_msg	db	"Read Error$"
 writeerr_msg	db	"Write Error$"
 diskfull_msg	db	"Disk full? while writing$"
-no_disk_msg	db	"Insufficient free space on destination drive",13,10,"$"
-retry_msg	db	"Try again with -d option to delete while copying$"
+no_disk_msg	db	"Out of space on destination drive",13,10,"$"
+retry_msg	db	"Try again with -d to delete while copying$"
 
 cant_create_msg db	"Check directory name -- unable to create "
 combined_file	db	"INTERRUP.LST",0,"$"
 section_file	db	"INTERRUP.A",0,"$"
 section_letter equ section_file+9
-missing_msg	db	"not available (skipped)"
+missing_msg	db	"unavailable (skipped)"
 crlf		db	13,10,"$"
 section_heading db	"Interrupt List, part "
 section_hdr_len equ $-section_heading
@@ -79,8 +78,11 @@ del_after_copy	db	0
 filehandle	equ	di		; output file's handle
 numsections	db	26
 dest_drive	db	0
-curr_drive	db	0
-filesize	dd	0
+nondefault_dest	db	0
+ftime		dw	0
+fdate		dw	0
+filesize_lo	dw	0
+filesize_hi	equ	bp
 
 ; (since we don't use disk_buffer until after FindFirst is no longer needed,
 ; save memory by overlaying the two)
@@ -104,27 +106,7 @@ skip_whitespace:
 	dec	si			; unget the last character
 	; set ZF to indicate whether we got to end of cmdline
 	cmp	al,0Dh
-not_a_switch:
 	ret
-
-;;------------------------------------------------------------------------
-
-get_cmdline_switches:
-	call	skip_whitespace
-	jz	not_a_switch
-	cmp	al,'-'			; is it a switch?
-	jne	not_a_switch
-	lodsb				; get the switch character
-	lodsb				; get the switch itself
-	and	al,0DFh			; force to uppercase
-	mov	bx,offset del_after_copy
-	cmp	al,'D'
-	je	got_switch
-	jmp	near ptr display_usage
-
-got_switch:
-	mov	byte ptr [bx],1
-	jmp	get_cmdline_switches
 
 ;;------------------------------------------------------------------------
 
@@ -140,6 +122,7 @@ get_dest_file_loop:
 	jne	get_dest_file_loop
 got_dest_end:
 	dec	si			; unget last character
+	mov	di,si
 	mov	al,[si-1]		; check end of path -- is it terminated
 	cmp	al,'\'			;   by a slash or backslash?
 	je	dest_has_slash
@@ -147,10 +130,9 @@ got_dest_end:
 	je	dest_has_slash
 	cmp	al,':'
 	je	dest_has_slash
-	mov	byte ptr [si],'\'
-	inc	si
+	mov	al,'\'
+	stosb
 dest_has_slash:
-	mov	di,si
 	mov	si,offset combined_file
 dest_copy_loop:
 	lodsb
@@ -165,7 +147,10 @@ dest_copy_loop:
 	and	al,0DFh			; force to uppercase
 	sub	al,'A'
 	jb	got_dest_drive
+	cmp	al,dest_drive
+	je	got_dest_drive
 	mov	dest_drive,al
+	mov	nondefault_dest,al
 got_dest_drive:
 	mov	ah,3Ch			; create the output file
 	xor	cx,cx			; no special file attributes
@@ -187,38 +172,44 @@ check_total_size:
 check_size_loop:
 	inc	byte ptr section_letter
 	cmp	byte ptr section_letter,'Z'
-	ja	get_free_space
+	ja	short get_free_space
 	mov	ah,4Eh			; find first
 	mov	cx,001Fh		; ...regardless of attribute
 	mov	dx,offset section_file
 	int	21h
 	jc	check_size_loop
 	inc	si			; another section found
+	mov	ax,FindFirst.ff_ftime
+	mov	ftime,ax
+	mov	ax,FindFirst.ff_fdate
+	mov	fdate,ax
 	mov	ax,word ptr FindFirst.ff_fsize
 	mov	dx,word ptr FindFirst.ff_fsize+2
 	cmp	del_after_copy,0
 	je	count_full_size
-	mov	bl,curr_drive
-	cmp	bl,dest_drive
-	jne	count_full_size
-	cmp	dx,word ptr filesize+2
+	cmp	nondefault_dest,0
+	jnz	count_full_size
+	cmp	dx,filesize_hi
 	jb	check_size_loop
 	ja	check_size_bigger
-	cmp	ax,word ptr filesize
+	cmp	ax,filesize_lo
 	jbe	check_size_loop
 check_size_bigger:
-	mov	word ptr filesize,ax
-	mov	word ptr filesize+2,dx
+	mov	filesize_lo,ax
+	mov	filesize_hi,dx
 	jmp	check_size_loop
 
 count_full_size:
-	add	word ptr filesize,ax
-	adc	word ptr filesize+2,dx
+	add	filesize_lo,ax
+	adc	filesize_hi,dx
 	jmp	check_size_loop
 
 get_free_space:
+	test	si,si			; check number of sections found
+	mov	dx,offset no_files_msg
+	jz	short exit_with_err_2
 	mov	dl,dest_drive
-	inc	dl
+	inc	dx
 	mov	ah,36h			; get free disk space
 	int	21h
 	cmp	ax,0FFFFh
@@ -237,15 +228,14 @@ got_free_space:
 	add	bx,cx
 	adc	dx,0			; DX:BX:AX = AX*BX*CX = free space
 	jnz	plenty_free_space	; >4G free?
-	sub	ax,word ptr filesize
-	sbb	bx,word ptr filesize+2
+	sub	ax,filesize_lo
+	sbb	bx,filesize_hi
 	jnb	plenty_free_space
 not_enough_space:
 	mov	dx,offset no_disk_msg
 	call	write_string
-	mov	al,curr_drive
-	cmp	al,dest_drive
-	jne	size_check_failed
+	cmp	nondefault_dest,0
+	jnz	size_check_failed
 	cmp	del_after_copy,0
 	jne	size_check_failed
 	mov	dx,offset retry_msg
@@ -254,9 +244,6 @@ size_check_failed:
 	mov	al,2
 	jmp	exit
 plenty_free_space:
-	test	si,si			; check number of sections found
-	mov	dx,offset no_files_msg
-	jz	exit_with_err_2
 	ret
 
 ;;------------------------------------------------------------------------
@@ -305,8 +292,8 @@ copy_section:
 	xor	cx,cx
 	xor	dx,dx
 	int	21h			; get current file position (== size)
-	mov	word ptr filesize,ax
-	mov	word ptr filesize+2,dx
+	mov	filesize_lo,ax
+	mov	filesize_hi,dx
 copy_section_loop:
 	mov	ah,3Fh
 	mov	bx,si
@@ -317,7 +304,7 @@ copy_section_loop:
 	mov	cx,ax			; write same number of bytes read
 	mov	ah,40h
 	mov	bx,filehandle
-;	mov	dx,offset DGROUP:disk_buffer
+;;	mov	dx,offset DGROUP:disk_buffer
 	int	21h
 	mov	dx,offset writeerr_msg
 	jc	copy_error
@@ -340,19 +327,17 @@ copy_error:
 	push	dx			; store error message
 	mov	ax,4200h
 	mov	bx,filehandle
-	mov	cx,word ptr filesize+2
-	mov	dx,word ptr filesize
+	mov	cx,filesize_hi
+	mov	dx,filesize_lo
 	int	21h
 	mov	ah,40h
 	xor	cx,cx			; write zero bytes to truncate
 	int	21h
 	pop	dx			; get back error message
-	jmp	short exit_with_errmsg
+	;; fall through to exit_with_errmsg ;;
 
 ;;------------------------------------------------------------------------
 
-display_usage:
-	mov	dx,offset usage_msg
 exit_with_errmsg:
 	call	write_string
 	; exit with errorlevel 1
@@ -377,11 +362,24 @@ main:
 	mov	byte ptr [bx+si],0Dh	; ensure cmdline properly terminated
 	cld
 	call	skip_whitespace
-	jz	display_usage
-	call	get_cmdline_switches
+	mov	dx,offset usage_msg
+	jz	exit_with_errmsg
+get_cmdline_switches:
+	call	skip_whitespace
+	jz	not_a_switch
+	cmp	al,'-'			; is it a switch?
+	jne	not_a_switch
+	lodsb				; get the switch character
+	lodsb				; get the switch itself
+	and	al,0DFh			; force to uppercase
+	cmp	al,'D'
+;;	mov	dx,offset usage_msg
+	jne	exit_with_errmsg
+	mov	del_after_copy,1
+	jmp	get_cmdline_switches
+not_a_switch:
 	mov	ah,19h			; get default drive
 	int	21h
-	mov	curr_drive,al
 	mov	dest_drive,al
 	mov	ah,30h
 	int	21h
@@ -389,6 +387,7 @@ main:
 	mov	dx,offset bad_dos_msg
 	jb	exit_with_errmsg
 	call	get_destination_file
+	xor	filesize_hi,filesize_hi
 	call	check_total_size
 	;
 	; OK, all the preliminaries are done now, so go concatenate the
@@ -396,7 +395,7 @@ main:
 	;
 	mov	al,'A'-1
 concat_loop:
-	inc	al
+	inc	ax
 	mov	section_letter,al
 	sub	al,'A'-1
 	cmp	al,numsections
@@ -432,8 +431,12 @@ exit:
 	push	ax
 	mov	dx,offset crlf
 	call	write_string
+	mov	bx,filehandle		; set timestamp of combined file to
+	mov	cx,ftime		;   be that of the last of the sections
+	mov	dx,fdate
+	mov	ax,5701h		; (set file time & date)
+	int	21h
 	mov	ah,3Eh			; close the destination file
-	mov	bx,filehandle
 	int	21h
 	pop	ax
 	mov	ah,4Ch
