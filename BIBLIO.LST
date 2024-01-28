@@ -1,5 +1,5 @@
-Bibliography			Release 56		Last change 21dec97
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
+Bibliography			Release 57		Last change 22mar98
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
 --------!---BIBLIOGRAPHY---------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -669,38 +669,38 @@ _Programmer's_Guide_, Revision 2, 1996.	 Added by Ralf Brown, 12/7/96.
 
 PCI Power Management info from _PCI_Bus_Power_Management_Interface_
 _Specification_, _Preliminary_Review_Draft_Revision_0.93_, November 22, 1996.
-Added by Ralf Brown, 12/15/96.
+Added by Ralf Brown, 15dec96.
 
 Intel 82378ZB and 82379AB PCI configuration data and I/O ports from _82378ZB_
 _System_I/O_(SIO)_and_82379AB_System_I/O_APIC_(SIO.A)_, available from
-www.intel.com as file 29057101.PDF.  Added by Ralf Brown, 12/29/96.
+www.intel.com as file 29057101.PDF.  Added by Ralf Brown, 29dec96.
 
 Intel 82437VX PCI configuration data from _Intel 430VX_PCIset_82437VX_
 _System_Controller_(TVX)_and_82438VX_Data_Path_Unit_(TDX)_, available at
-www.intel.com as file 29055301.PDF.  Added by Ralf Brown, 12/30/96.
+www.intel.com as file 29055301.PDF.  Added by Ralf Brown, 30dec96.
 
 Intel 82439HX PCI configuration data from _Intel_430HX_PCIset_82439HX_
 _System_Controller_(TXC)_, available on www.intel.com as file 29055101.PDF.
-Added by Ralf Brown, 12/30/96.
+Added by Ralf Brown, 30dec96.
 
 Intel 82371FB/82371SB PCI configuration data and I/O ports from
 _82371FB_(PIIX)_and_82371SB_(PIIX3)_PCI_ISA_IDE_Xcelerator_, available
-on www.intel.com as file 29055001.PDF.	Added by Ralf Brown, 12/30/96.
+on www.intel.com as file 29055001.PDF.	Added by Ralf Brown, 30dec96.
 
 Intel 82441FX PCI configuration data from _Intel_440FX_PCIset_82441FX_PCI_
 _and_Memory_Controller_(PMC)_and_82442FX_Data_Bus_Accelerator_(DBX)_,
 available on www.intel.com as file 29054901.PDF.
-Added by Ralf Brown, 12/30/96.
+Added by Ralf Brown, 30dec96.
 
 Intel 82437MX PCI configuration data from _Intel_430MX_PCIset_82437MX_
 _Mobile_System_Controller_(MTSC)_and_82438MX_Mobile_Data_Path_(MTDP)_,
 available on www.intel.com as file 29052401.PDF.
-Added by Ralf Brown, 12/30/96.
+Added by Ralf Brown, 30dec96.
 
 Intel 82437FX PCI configuration data from _Intel_82430FX_PCIset_Datasheet_
 _82437FX_System_Controller_(TSC)_and_82438FX_Data_Path_Unit_(TDP)_,
 available on www.intel.com as file 29051801.PDF.
-Added by Ralf Brown, 12/30/96.
+Added by Ralf Brown, 30dec96.
 
 ATAPI Removable Media Device information from _ATAPI_Removable_Media_
 _Device_BIOS_Specification_, version 0.8, September 16, 1996; Compaq Computer
@@ -734,21 +734,438 @@ Intel 82434LX/NX (Mercury/Neptune) chipset info from "82434LX/82434NX PCI,
 Cache, and Memory Controller (PCMC)", (online as file 29047904.pdf).
 Added by Ralf Brown, 24aug97.
 
+S.M.A.R.T. commands from "Self-Monitoring, Analysis, and Reporting Technology
+(S.M.A.R.T.), SFF-8035i", Revision 2.0, dated April 1, 1996.
+Added by Ralf Brown.
+
+AWARD Plug-and-Play POST codes from
+http://www.asus.com.tw/Products/TECHREF/BIOS/pnp-post.html  Added 24aug97.
+
 PentiumMMX updates from "Pentium Processor Family Developer's Manual (1997)",
 Intel document number 241428 (online as file 24142805.pdf).
 Added by Ralf Brown, 02sep97.
 
 Am486 SMM state-save map from "AMD BIOS Development Guide", file 19720C.PDF.
 Added by Ralf Brown, 03sep97.
+
+OPTi 82C206 configuration register from
+ftp://ftp.opti.com/pub/chipsets/archive/206/Db026_01.pdf.
+Added by Ralf Brown, 05sep97.
+
+OPTi 82C281/2 data from "OPTI Cache Sx/AT: 82C281 Data Book", Revision 1.1,
+22aug91.  Available as ftp://ftp.opti.com/pub/chipsets/archive/206/82c281.pdf.
+Added by Ralf Brown, 05sep97.
+
+OPTi 82C283 data from "82C283: 386SX System Controller", available as
+ftp://ftp.opti.com/pub/chipsets/archive/283/Db012_10.pdf.
+Added by Ralf Brown, 05sep97.
+
+(I2C) JEDEC manufacturer ID from http://www.eia.org/jedec/download/jep-106.pdf.
+Added by Ralf Brown, oct97.
+
+(I2C) Documented VPX32xx info from file VPX3220.PDF, available from
+www.itt-sc.de.  Added by Ralf Brown, oct97.  (Undocumented info from my own
+poking around)
+
+(I2C) VDP 3108 info from file VDP3108.PDF, available from www.itt-sc.de.
+Added by Ralf Brown, nov97.
+
+(I2C) VDP 31xxB info from file VDP31xxB.PDF, available from www.itt-sc.de.
+Added by Ralf Brown, nov97.
+
+(I2C) SDRAM Serial Presence Detection from file SPDSD_12.PDF, "SDRAM Serial
+Presence Detect (SPD) Data Structure (168- and SO-144 DIMM)", Revision 1.2,
+November 1997, available from www.intel.com.  Added by Ralf Brown, 20dec97.
+
+(I2C) X24C01A info from document x24c01a.pdf, available from www.xicor.com.
+Added by Ralf Brown, 03jan98.
+
+(I2C) Raytheon TMC2361 info from document tmc2361.pdf, availble from
+www.raytheon.com.  Added by Ralf Brown, 03jan98.
+
+(I2C) Crystal Semiconductor CS4920/CS4920A/CS4921 info from file 4920A.PDF,
+available from www.crystal.com/ftp/pubs/.  CS4922 info from file 4922.PDF.
+CS4952/53 info from file CS4952.PDF.  Added by Ralf Brown, jan98.
+
+S3 Trio32/Trio64 info from S3's "Trio32/Trio64 Graphics Accelerators", dated
+March 1995.  Added by Ralf Brown, jan98.
+
+AMD-640 info from "AMD-640 System Controller Data Sheet", file 21090C.PDF,
+dated June 1997.  Added by Ralf Brown, 18jan98.
+
+AMD-645 info from "AMD-645 Peripheral Bus Controller Data Sheet", file
+21095B.PDF, dated June 1997.  Added by Ralf Brown, 18jan98.
+
+(I2C) Philips SAA5252 info from "SAA5252 Line Twenty-One Acquisition and
+Display", http://www.semiconductors.philips.com/acrobat/2005.pdf.
+Added by Ralf Brown, 20jan98.
+
+Philips TSA5523M info from "TSA5523M 1.4 GHz I2C-bus Controlled Multimedia
+Synthesizer", http://www.semiconductors.philips.com/acrobat/2295.pdf.
+Added by Ralf Brown, 23jan98.
+
+Philips TSA5055T info from "TSA5055T 2.5 GHz bi-directional I2C-bus Controlled
+Synthesizer", http://www.semiconductors.philips.com/acrobat/2471.pdf.
+Added by Ralf Brown, 23jan98.
+
+Philips TSA5512 info from "TSA5512 1.3 GHz Bidirectional I2C-bus Controlled
+Synthesizer", http://www.semiconductors.philips.com/acrobat/2472.pdf.
+Added by Ralf Brown, 23jan98.
+
+Philips TSA5515T info from "TSA5515T 1.3 GHz bi-directional I2C-bus Controlled
+Synthesizer", http://www.semiconductors.philips.com/acrobat/2474.pdf.
+Added by Ralf Brown, 23jan98.
+
+C&T 82C450 BIOS info from "VGA BIOS OEM Reference Guide, January 1992",
+ftp://ftp.chips.com/pub/pdf/oc82c450.pdf.  Added by Ralf Brown, 27jan98.
+
+C&T 82C100 BIOS POST codes from "SXT BIOS OEM Reference Guide, July 1991",
+ftp://ftp.chips.com/pub/pdf/oc82c100.pdf.  Added by Ralf Brown, 27jan98.
+
+C&T 82C235 BIOS POST codes from "SCAT BIOS OEM Reference Guide, March 1992",
+ftp://ftp.chips.com/pub/pdf/oc82c235.pdf.  Added by Ralf Brown, 27jan98.
+
+C&T 64300 "Wingine DGX" BIOS calls from "Wingine DGX BIOS OEM Reference Guide",
+dated October 1994.  ftp://ftp.chips.com/pub/pdf/oc64300.pdf.
+Added by Ralf Brown, 28jan98.
+
+C&T 65530 BIOS calls from "OC65530 VGA BIOS OEM Reference Guide",
+dated June 1993.  ftp://ftp.chips.com/pub/pdf/oc65530.pdf.
+Added by Ralf Brown, 28jan98.
+
+C&T F87000 info from "F87000 Multi-Mode Peripheral Chip - Data Sheet, November
+1993", ftp://ftp.chips.com/pub/pdf/f87000.pdf.  Added by Ralf Brown, 28jan98.
+
+C&T N93N8042/A keyboard controller info from "N93N8042/A AT Keyboard Controller
+Data Sheet, September 1991", ftp://ftp.chips.com/pub/pdf/n93n8042.pdf.
+Added by Ralf Brown, 28jan98.
+
+OPTi 82C391/82C392 data from "OPTi-386WB PC/AT Chipset: 82C391/82C392 Data
+Book", Version 1.1, 19dec90, available as
+ftp://ftp.opti.com/pub/chipsets/archive/391/82c391.pdf.
+Transcribed by Roger Scudder, added 29jan98.
+
+OPTi 82C291 data from "82C291: SXWB PC/AT Chipset", available as
+ftp://ftp.opti.com/pub/chipsets/archive/291/Db011_10.pdf.
+Added by Ralf Brown, 05sep97 and David Brioso, 29jan98.
+
+OPTi "Viper" (82C556/557/558) chipset data from "Viper-DP Desktop Chipset for
+the 3.3V Pentium Processor, M1 and K5 Processors: Data Book", Revision 1.0,
+1/95; ftp://ftp.opti.com/pub/chipsets/archive/viper/Db023_10.pdf.
+Transcribed by David Brioso, added 29jan98.
+
+OPTi 82C463MV data from "Mixed Voltage Single Chip Notebook: 82C463MV Data
+Book", Version 1.0b, 30sep93, available as
+ftp://ftp.opti.com/pub/chipsets/archive/463/Db463mv.pdf.
+Transcribed by Pino Navato, added 29jan98.
+
+OPTi 82C381/82C382 data from "HiD/386 AT Chipset", available as
+ftp://ftp.opti.com/pub/chipsets/archive/381/82c381.pdf.
+Transcribed by Roger Scudder, added 29jan98.
+
+Philips TDA8366 info from "TDA8366 I2C-bus controlled PAL/NTSC TV processor",
+http://www.semiconductors.philips.com/acrobat/2086.pdf.
+Added by Ralf Brown, 31jan98.
+
+WindowsNT NTOS function numbers from a Usenet posting by Peter-Michael Hayer
+<Hager@dortmund.net>.  Added 02feb98.
+
+Intel 82091AA info from "82091AA Advanced Integrated Peripheral (AIP)",
+http://www.intel.com/design/periphrl/datashts/290486.htm.
+Added by Ralf Brown, 15feb98.
+
+Intel 82380AB info from "Intel 380FB PCIset: 82380AB Mobile PCI-to-ISA Bridge
+(MISA)", http://www.intel.com/design/pcisets/datashts/290563.htm.
+Added by Ralf Brown, 15feb98.
+
+Intel 82380FB info from "Intel 380FB PCIset: 82380FB Mobile PCI-to-PCI Bridge
+(MPCI2)", http://www.intel.com/design/pcisets/datashts/290567.htm.
+Added by Ralf Brown, 15feb98.
+
+C&T 64200 info from "64200 (Wingine) High Performance Windows Engine",
+ftp://ftp.chips.com/pub/pdf/64200.pdf.  (to be added)
+
+Intel 82374EB/SB info from "82374EB/82374SB EISA System Component (ESC)",
+http://www.intel.com/design/pcisets/datashts/290476.htm.  (to be added)
+
+Intel 82371MX info from "Intel 430MX PCIset: 82371MX Mobile PCI I/O IDE 
+Xcelerator (MPIIX)", http://www.intel.com/design/pcisets/datashts/290525.htm.
+(to be added) [p.23-86]
+
+Intel 82439TX (430TX) info from "Intel 430TX PCIset: 82439TX System Controller
+(MTXC)", http://www.intel.com/design/pcisets/datashts/290559.htm.  (to be added)
+
+Intel 82443LX (440LX) info from "",
+http://www.intel.com/design/pcisets/datashts/290564.htm. [p.28-72](to be added)
+
+Intel 82371AB (PIIX4) info from "",
+http://www.intel.com/design/pcisets/datashts/290562.htm.  (to be added)
+
+Intel 82595FX info from "82595FX ISA Bus High-Integration Ethernet Controller",
+http://www.intel.com/design/network/datashts/281732.htm.  (to be added)
+[p.14-30]
+
+Intel 82595TX info from "82595TX ISA/PCMCIA High-Integration Ethernet
+Controller", http://www.intel.com/design/network/datashts/281630.htm. [p.16-34]
+(to be added)
+
+OPTi 82C295 data from "82C295: SLCWB PC/AT Chipset", available as
+ftp://ftp.opti.com/pub/chipsets/archive/295/Db010_10.pdf.  (to be added)
+
+Crystal Semiconductors CS4239 info from "CS4239 Advanced Product Databook",
+available as 4239.PDF from www.cirrus.com.  (to be added)
+
+Crystal Semicondutors CS4610/4611 info from "CS4610/11 CrystalClear(tm)
+SoundFusion(tm) PCI Audio Accelerator", available as 4610.pdf from
+www.cirrus.com.  (to be added)
+
+OPTi 82C491/82C392 data from "OPTi-486WB PC/AT Chipset", Version 1.1, 26apr91,
+available as ftp://ftp.opti.com/pub/chipsets/archive/491/Db491_11.pdf.
+(to be added)
+
+OPTi 82C465MV/MVA/MVB data from "";
+ftp://ftp.opti.com/pub/chipsets/system/465/db016_20.pdf. (to be added)
+
+OPTi 82C493/82C392 data from "OPTi-486SXWB PC/AT Chipset", Version 1.1,
+16aug91; ftp://ftp.opti.com/pub/chipsets/archive/493/82c493_392.pdf.
+(to be added)
+
+OPTi "Vendetta" (82C750) data from "Vendetta Single-Chip MultiMedia PC
+Solution: Preliminary Data Book"; available as
+ftp://ftp.opti.com/pub/chipsets/system/vendetta/pd020_20.pdf. (to be added)
+
+OPTi "FireLink" (82C861) data from "FireLink / FireBlast 82C861/82C871
+PCI-to-USB Bus Bridges: Preliminary Data Book"; available as
+ftp://ftp.opti.com/pub/chipsets/system/861/pd022_20.pdf. (to be added)
+
+OPTi "FireFox" (82C824) data from "FireFox 82C824 32-bit PC Card Controller:
+Preliminary Data Book", Revision 3.0, 26aug96; available as
+ftp://ftp.opti.com/pub/chipsets/system/824/pd013_30.pdf. (to be added)
+
+OPTi "FireBridge 2" (82C825) data from "FireBridge II 82C825 Docking Station
+Controller Data Book", Revision 1.0, 27jun97; available as
+ftp://ftp.opti.com/pub/chipsets/system/825/db046_10.pdf. (to be added)
+
+OPTi "FireFly" (82C852) data from "FireFly 82C852 16-bit PC Card Controller:
+Preliminary Data Book", Revision 1.0, 6jun96; available as
+ftp://ftp.opti.com/pub/chipsets/system/852/pd018_10.pdf. (to be added)
+
+Philips SAA7110/7110A info from "SAA7110/SAA7110A One Chip Front-end 1 (OCF1)",
+http://www.semiconductors.philips.com/acrobat/2007.pdf.  Transcription by
+Roger Scudder.  (to be added)
+
+Philips SAA7111 info from "SAA7111 Video Input Processor (VIP)",
+http://www.semiconductors.philips.com/acrobat/2211.pdf.
+(to be added)
+
+Philips SAA7111A info from "SAA7111A Enhanced Video Input Processor (EVIP)",
+http://www.semiconductors.philips.com/acrobat/2278.pdf.
+(to be added)
+
+Philips TDA9850 info from "TDA9850 I2C-bus Controlled BTSC stereo/SAP decoder",
+http://www.semiconductors.philips.com/acrobat/2144.pdf.
+(to be added)
+
+Brooktree Bt819A/817A/815A info from document l819a_c.pdf, available from
+www.brooktree.com.  (to be added)
+
+Harris HMP8115 info from "HMP8115 NTSC/PAL Video Decoder", file fn4283.pdf,
+available at http://www.semi.harris.com/families/mmedia.htm.  (to be added)
+
+Harris HMP8154/8156A info from "HMP8154, HMP8156A NTSC/PAL Encoders",
+file fn4343.pdf, available at http://www.semi.harris.com/families/mmedia.htm.
+(to be added)
+
+Harris HMP8156 info from "HMP8156 NTSC/PAL Encoder", file fn4269.pdf,
+available at http://www.semi.harris.com/families/mmedia.htm.  (to be added)
+
+Harris HMP817x info from "HMP8170, HMP8171, HMP8172, HMP8173 NTSC/PAL
+Video Encoder", available at http://www.semi.harris.com/families/mmedia.htm.
+(to be added)
+
+National Semiconductor PC87306 SuperI/O info from "PC87306 SuperI/O(tm)
+Enhanced Sidewinder Lite", http://www.national.com/ds/PC/PC87306.pdf.
+(to be added)
+
+National Semiconductor PC87311A SuperI/O II info from "PC87311A/PC87312
+(SuperI/O II/III)", http://www.national.com/ds/PC/PC87311A.pdf. (to be added)
+
+National Semiconductor PC87323VUL SuperI/O info from "PC87323VUL SuperI/O (tm)
+Sidewinder", http://www.national.com/ds/PC/PC87323V.pdf. (to be added)
+
+National Semiconductor PC87332VLJ SuperI/O info from "PC87332VLJ and
+PC87332VLJ-5 (SuperI/O(tm) III Premium Green)",
+http://www.national.com/ds/PC/PC87332VLJ.pdf. (to be added)
+
+National Semiconductor PC87550 info from "PC87550 PCI System Controller",
+http://www.national.com/ds/PC/PC87550.pdf. (to be added)
+
+TI 16C750 UART info from "TL16C750 Asynchronous Communications Element with
+64-Byte FIFOs and Autoflow Control", file slls191b.pdf at www.ti.com.
+(to be added)
+
+Via Technologies' VT82C496G info from "VT82C496G/VT82C406MV Green PC 80486
+PCI/VL/ISA System Data Sheet", http://www.via.com.tw/496pluto.pdf.
+(to be added)
+
+Via's VT82C570M info from "VT82C570M Apollo Master",
+http://www.via.com.tw/570m.pdf.  (to be added)
+
+Via's VT82C586A info from "VT82C586A PCI Integrated Peripheral Controller",
+http://www.via.com.tw/586a.pdf.  (to be added)
+
+TVP4010 info from "TVP4010 Data Manual: 3D Graphics Processor", file
+SLAS155.PDF, available from www.ti.com.  (to be added)
+
+Harris HMP8130/8131 info from "HMP8130, HMP8131 NTSC/PAL Video Decoders with
+PCI Interface", file fn4354.pdf, available at
+http://www.semi.harris.com/families/mmedia.htm.  (to be added)
+
+Ensoniq AudioPCI ES1370 info from file es1370.doc, available from
+www.ensoniq.com.  (to be added)
+
+Ensoniq AudioPCI-97 ES1371 info from file es1371.doc, available from
+www.ensoniq.com.  (to be added)
+
+SMBIOS v2.1 info from http://www.ptltd.com/techs/smbios/htframe.html.
+(to be added)
+
+CL-GD1052/1053 info from "CL-GD1052/GD1053 Digital NTSC/PAL Encoder with
+Flicker Reduction", http://www.cirrus.com/ftp/pubs/gd1052db.pdf.  (to be added)
+
+CD-GD542x info from "True Color VGA Family CL-GD542X Technical Reference
+Manual", http://www.cirrus.com/ftp.pubs/gd542xtrm.pdf.  (to be added)
+
+CD-GD5446 info from "CL-GD5446 Technical Reference Manual",
+http://www.cirrus.com/ftp.pubs/gd5446trm.pdf.  (to be added)
+
+CL-PD6710/6722 info from "CL-PD6710/'22 ISA-to-PC-Card Host Adapters",
+http://www.cirrus.com/ftp/pubs/pd6710db.pdf.  (to be added)
+
+CL-PD6729 info from "CL-PD6729 PCI-to-PCMCIA Host Adapter",
+http://www.cirrus.com/ftp/pubs/pd6729db.pdf.  (to be added)
+
+CL-GD7541/7543 info from "CL-GD7541/GD7543 Preliminary Data Book",
+http://www.cirrus.com/ftp/pubs/gd7543db.pdf.  (to be added)
+
+CL-GD7548 info from "CL-GD7548 Advance Hardware Reference Manual",
+http://www.cirrus.com/ftp/pubs/gd7548hrm.pdf.  (to be added)
+
+CL-GD7556 info from "CL-GD7556 Advance Hardware Reference Manual",
+http://www.cirrus.com/ftp/pubs/gd7556hrm.pdf.  (to be added)
+
+Philips TDA837x info from "TDA837x I2C-bus controlled economy PAL/NTSC and NTSC
+TV processors", http://www.semiconductors.philips.com/acrobat/2191.pdf.
+(to be added)
+
+Philips TDA8443A info from "TDA8443A I2C-bus controlled YUV/RGB switch",
+http://www.semiconductors.philips.com/acrobat/2101.pdf.  (to be added)
+
+PicoPower Vesuvius info from "PicoPower VESUVIUS-LS Preliminary Data Book",
+http://www.national.com/ds/VS/PT/PT86C521-VC-B.pdf.  (to be added)
+
+ATAPI info from "ATA Packet Interface for CD-ROMs (SFF-8020i)", Revision 2.6,
+ftp://fission.dt.wdc.com/pub/standards/SFF/specs/8020_26p.pdf; and
+"Errata for ATAPI for CD-ROMs (SFF-8028)", .../8028.pdf.  (to be added)
+
+ATAPI extensions for DVD from "Mt. Fuji Commands for CD and DVD Devices",
+Version 2 Revision 0.9,
+ftp://fission.dt.wdc.com/pub/standards/SFF/specs/8099v2r9.pdf.  (to be added)
+
+Bus Master IDE API from "Information Specification for Bus Master Programming
+Interface for IDE ATA Controllers, Rev. 1.0", dated May 16, 1994.
+ftp://fission.dt.wdc.com/pub/standards/SFF/specs/8038_r1.pdf. (to be added)
+
+Bt8230 info from "Bt8230 ATM Segmentation and Reassembly Controller - SRC",
+http://204.251.120.179/brok01_assets/product_images/L8230E.pdf.
+(to be added)
+
+C&T 64300/64301 info from "", ftp://ftp.chips.com/pub/pdf/64300_01.pdf.
+(to be added)
+
+C&T 64310 info from "Wingine DGX - PCI DRAM Graphics Accelerator Data Sheet",
+Revision 1.0, dated December 1994.
+ftp://ftp.chips.com/pub/pdf/64310_ds.pdf.  (to be added)
+
+C&T 82C311/82C315/82C316 info from "",
+ftp://ftp.chips.com/pub/pdf/cs8233.pdf.  (to be added)
+
+C&T CS82310 from "CS82310 CHIPSet PEAK/DM Data Book", dated February 1991.
+ftp://ftp.chips.com/pub/pdf/cs82310.pdf.  (to be added)
+
+C&T CS4021 info from "ISA/486: The 4021 CHIPSet Databook", Revision 1.0.
+ftp://ftp.chips.com/pub/pdf/cs4021.pdf.  (to be added)
+
+DEC DC21041 Ethernet info from "Digital Semiconductor 21041 PCI Ethernet LAN
+Controller Hardware Reference Manual", Order Number EC-QAWXB-TE,
+http://ftp.digital.com/pub/Digital/info/semiconductor/literature/21041hm.pdf.
+(to be added)
+
+DEC DC21140 Fast Ethernet info from "Digital Semiconductor 21140A PCI Fast
+Ethernet LAN Controller Hardware Reference Manual", Order Number EC-QN7NE-TE,
+http://ftp.digital.com/pub/Digital/info/semiconductor/literature/21140ahm.pdf.
+(to be added) p.35
+
+DEC 21143 Ethernet info from "DIGITAL Semiconductor 21143 PCI/CardBus
+10/100-Mb/s Ethernet LAN Controller Hardware Reference Manual",
+Order Number EC-QWC4F-TE,
+http://ftp.digital.com/pub/Digital/info/semiconductor/literature/21143hrm.pdf.
+(to be added) p.62
+
+DEC 21052 PCI-PCI bridge info from "Digital Semiconductor 21052 PCI-to-PCI
+Bridge Data Sheet", Order Number EC-QHURB-TE,
+http://ftp.digital.com/pub/Digital/info/semiconductor/literature/21052ds.pdf.
+(to be added)
+
+DEC 21150 info from "",
+http://ftp.digital.com/pub/Digital/info/semiconductor/literature/21150ds.pdf.
+(to be added) p.148
+
+DEC 21152 info from "",
+http://ftp.digital.com/pub/Digital/info/semiconductor/literature/21152ds.pdf.
+(to be added) p.137
+
+DEC 21153 info from "",
+http://ftp.digital.com/pub/Digital/info/semiconductor/literature/21153ds.pdf.
+(to be added) p.158
+
+DEC 21154 info from "",
+http://ftp.digital.com/pub/Digital/info/semiconductor/literature/21154ds.pdf.
+(to be added) p.158
+
+DEC 21230 info from "Digital Semiconductor 21230 Video Codec Technical
+Reference Manual", Order Number: EC-QJG5D-TE,
+http://ftp.digital.com/pub/Digital/info/semiconductor/literature/21230tm.pdf.
+(to be added) p.74-114
+
+DEC 21230/231 info from "Digital Semiconductor 21230 Video Codec/21231 Video
+Output Logic Technical Reference Manual", Order Number: EC-R30TA-TE,
+http://ftp.digital.com/pub/Digital/info/semiconductor/literature/230_31rm.pdf.
+(to be added)
+
+DEC 21340 info from "DIGITAL Semiconductor 21340 10/100-Mb/s Managed Buffered
+Port Switch Data Sheet", Order Number: EC-R0UEB-TE,
+http://ftp.digital.com/pub/Digital/info/semiconductor/literature/21340ds.pdf.
+(to be added) p.110-214
+
+DEC 21440 info from "DIGITAL Semiconductor 21440 Multiport 10/100Mbps Ethernet
+Controller Data Sheet", Order Number: EC-R471A-TE,
+http://ftp.digital.com/pub/Digital/info/semiconductor/literature/21440ds.pdf.
+(to be added) p.28-65
+
+DEC 21553/21554 info from "DIGITAL Semiconductor 2155x PCI-to-PCI Bridge for
+Embedded Applications - Hardware Reference Manual", Order Number: EC-R8WGA-TE,
+http://ftp.digital.com/pub/Digital/info/semiconductor/literature/55xhrm.pdf.
+(to be added) p.90-177
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER55A through INTER55D (preferably the original
+quartet of archives named INTER57A through INTER57D (preferably the original
 authenticated PKZIP archives), the utility programs in a fifth archive
-called INTER55E.ZIP, and the hypertext conversion programs in two additional
-archives named INTER55F.ZIP and INTER55G.ZIP.
+called INTER57E.ZIP, and the hypertext conversion programs in two additional
+archives named INTER57F.ZIP and INTER57G.ZIP.
 
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
 --------!---CONTACT_INFO---------------------
 Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
 FIDO: Ralf Brown 1:129/26.1

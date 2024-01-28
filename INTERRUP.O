@@ -1,5 +1,5 @@
 Interrupt List, part 15 of 16
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
 --------d-67---------------------------------
 INT 67 - Adaptec controllers - DRIVE 1 DATA
 Desc:	this vector stores the last four bytes of the parameter table for
@@ -2505,8 +2505,8 @@ INT 68 - Sangoma CCPOP 3270 resident module
 SeeAlso: INT 67"Sangoma",INT 92"Sangoma"
 --------N-68---------------------------------
 INT 68 - Novell NetWare LU6.2
-Note:	the installation check consists of testing for the signature string
-	  "APPC/PC" nine bytes before the interrupt handler
+InstallCheck:	test for the signature string "APPC/PC" nine bytes before the
+	  interrupt handler
 SeeAlso: AH=01h/SF=1B00h,AH=FAh
 --------h-68---------------------------------
 INT 68 C - HP Vectra AT - IRQ16 - 8041 SERVICE REQUEST
@@ -3657,9 +3657,9 @@ INT 69 - 10NET v5.0 - SYSSVC.COM - ???
 Return: CF clear
 	AX = 0000h
 	ES:SI -> ???
+InstallCheck:	test for the signature "SYSV" immediately before the interrupt
+	  handler
 Range:	INT 60 to INT 7F, selected by configuration
-Note:	the signature "SYSV" immediately before the interrupt handler serves
-	  as the installation check
 SeeAlso: AX=4002h
 Index:	installation check;10NET SYSSVC
 --------N-694002-----------------------------
@@ -3667,9 +3667,9 @@ INT 69 - 10NET v5.0 - SYSSVC.COM - ???
 	AX = 4002h
 	???
 Return: ???
+InstallCheck:	test for the signature "SYSV" immediately before the interrupt
+	  handler
 Range:	INT 60 to INT 7F, selected by configuration
-Note:	the signature "SYSV" immediately before the interrupt handler serves
-	  as the installation check
 --------N-694101-----------------------------
 INT 69 - 10NET v5.0 - SYSSVC.COM - ???
 	AX = 4101h
@@ -3733,9 +3733,9 @@ INT 69 - 10NET v5.0 - SYSSVC.COM - SIGNAL SYSTEM ERROR
 	AH = FFh
 Return: never???
 Desc:	displays "System Error" message and register dump, then halts system
+InstallCheck:	test for the signature "SYSV" immediately before the interrupt
+	  handler
 Range:	INT 60 to INT 7F, selected by configuration
-Notes:	the signature "SYSV" immediately before the interrupt handler serves
-	  as the installation check
 SeeAlso: AX=4001h,AH=49h
 --------U-6A---------------------------------
 INT 6A - OPTHELP.COM
@@ -3744,8 +3744,8 @@ Program: OPTHELP is an optionally-resident help system for SLR Systems's OPTASM
 Range:	INT 60h to INT 7Fh, selected by configuration
 --------N-6A---------------------------------
 INT 6A - DECnet DOS - LOCAL AREA TRANSPORT PROGRAM - INSTALLATION CHECK
-Note:	the installation check consists of testing for a signature area
-	  immediately preceding the interrupt handler (see #3386)
+InstallCheck:	test for a signature area immediately preceding the interrupt
+	  handler (see #3386)
 SeeAlso: AH=01h/DH=FFh,INT 6B"DECnet",INT 6D"DECnet"
 Index:	installation check;DECnet DOS Local Area Transport
 
@@ -4081,8 +4081,8 @@ Return: AX = number of service table entries
 SeeAlso: AX=D500h
 --------N-6B---------------------------------
 INT 6B - DECnet DOS - PORT DRIVER
-Note:	the installation check consists of testing for a signature area
-	  (see #3400) immediately preceding the interrupt handler
+InstallCheck:	test for a signature area (see #3400) immediately preceding
+	  the interrupt handler
 SeeAlso: INT 6A"DECnet",INT 6C"DECnet"
 Index:	installation check;DECnet DOS Port Driver
 
@@ -4107,11 +4107,11 @@ Program: NASI is Novell's NetWare Asynchronous Services Interface (purchased
 	  from Network Products Corp, who call it NCSI) which runs on
 	  workstations; NACS is the NetWare Asynchronous Communications
 	  Services module which runs on servers
-Notes:	the installation check consists of testing for the signature string
-	  "NCSI" three bytes past the interrupt handler; see also AH=02h.
-	  As of version 3.0, Novell's NASI can be distinguished from NPC's
+InstallCheck:	test for the signature string "NCSI" three bytes past the
+	  interrupt handler; see also AH=02h.
+	As of version 3.0, Novell's NASI can be distinguished from NPC's
 	  NCSI by the presence of an 'A' immediately following the signature
-	this function is also supported by TelAPI, NPC NCSI, and Connection
+Notes:	this function is also supported by TelAPI, NPC NCSI, and Connection
 	  Manager CLIENT.EXE; for TelAPI, nonzero values in AL specify a
 	  connection ID
 	Connection Manager returns CF set/AL=FFh if called while an INT 6B
@@ -4391,9 +4391,9 @@ INT 6C - system resume vector (CONVERTIBLE)
 INT 6C - DOS 3.2 Realtime Clock update
 --------N-6C---------------------------------
 INT 6C - DECnet DOS network scheduler
-Notes:	the installation check consists of testing for a signature area
-	  immediately preceding the interrupt handler (see #3404)
-	also supported by DEC Pathworks for DOS
+InstallCheck:	test for a signature area immediately preceding the interrupt
+	  handler (see #3404)
+Note:	this function is also supported by DEC Pathworks for DOS
 SeeAlso: INT 6B"DECnet",INT 6D"DECnet",INT 6E"DECnet"
 Index:	installation check;DECnet DOS scheduler
 
@@ -4421,8 +4421,8 @@ INT 6D - DECnet DOS (before 2.1) - DATA LINK LAYER PROGRAM
 	AH = function
 	???
 Return: ???
-Note:	the installation check consists of testing for a signature area
-	  immediately preceding the interrupt handler (see #3405)
+InstallCheck:	test for a signature area immediately preceding the interrupt
+	  handler (see #3405)
 SeeAlso: INT 69/AH=0Ah,INT 6C"DECnet",INT 6E"DECnet"
 Index:	installation check;DECnet DOS Data Link Layer
 
@@ -4505,10 +4505,10 @@ Note:	this function revectors INT 6D without checking that it points at the
 SeeAlso: AX=BD60h,AX=BD61h,AX=BD6Fh
 --------N-6E---------------------------------
 INT 6E - DECnet DOS - DECnet NETWORK PROCESS API
-Notes:	this is the main DECnet DOS access, and is described in Digital manual
+InstallCheck:	test for the signature/data area (see #3408) immediately prior
+	  to the interrupt handler
+Note:	this is the main DECnet DOS access, and is described in Digital manual
 	  AA-EB46B-TV ("DECnet-DOS Programmer's Reference Manual")
-	there is a signature/data area immediately prior to the interrupt
-	  handler which may be used as an installation check (see #3408)
 Index:	installation check;DECnet DOS
 
 Format of DECnet DOS signature area:
@@ -7124,6 +7124,10 @@ INT 77 C - IRQ15 - RESERVED (AT,PS)
 Note:	may be masked by setting bit 7 on I/O port A1h
 SeeAlso: INT 5F"IRQ15",MEM 0040h:006Bh
 --------H-77---------------------------------
+INT 77 C - IRQ15 - SECONDARY IDE CONTROLLER - OPERATION COMPLETE
+Note:	may be masked by setting bit 7 on I/O port A1h
+SeeAlso: INT 5F"IRQ15",MEM 0040h:006Bh
+--------H-77---------------------------------
 INT 77 C - IRQ15 - POWER CONSERVATION (Compaq SLT/286)
 Note:	may be masked by setting bit 7 on I/O port A1h
 SeeAlso: INT 15/AX=4600h,INT 5F"IRQ15"
@@ -7276,9 +7280,9 @@ INT 78 - ULTRAMID - API
 	    001Fh ???
 Program: UltraMid is a TSR from Advanced Gravis to play MIDI and digital data
 	   through the Gravis UltraSound (GUS)
+InstallCheck:	test for the signature "ULTRAMID" at offset 0103h in the
+	  interrupt handler's segment
 Range:	INT 78 to INT 7F
-Notes:	the installation check is testing for the signature "ULTRAMID" at
-	  offset 0103h in the interrupt handler's segment
 SeeAlso: INT 2F/AX=CD00h"ULTRAMID",INT 7E/AH=00h"SBOS",INT 7E/AX=00FEh"SBOS"
 Index:	uninstall;UltraMID
 --------d-7800-------------------------------
@@ -7287,11 +7291,10 @@ INT 78 - TARGA.DEV - CMC International SCSI device driver - SET I/O PORT
 	DX = interface board I/O port
 Return: CF set on error
 	    AL = error code (see #3457)
+InstallCheck:	(used by TARGA.DEV) test for the string "SCSI" at offset 03h
+	  into the interrupt handler
 Note:	if this routine is not called, the port is the driver's default
 	  (usually 0280h or 0300h)
-	an installation check is performed by TARGA.DEV upon initialization
-	  by checking for the string "SCSI" at offset 03h into the interrupt
-	  handler
 SeeAlso: AH=01h,AH=02h
 Index:	installation check;TARGA.DEV
 
@@ -9217,10 +9220,9 @@ Return: AX = status
 	    (documented as "nonzero = error")
 Program: PRINDIR is a shareware printer-redirection program by J.M. Allen
 	  Creations
-Notes:	the installation check consists of testing for the ASCIZ signature
-	  "PRINDIR N.NN" (where N.NN is the version number) two bytes beyond
-	  the start of the interrupt handler
-	prior versions of PRINDIR used INT 7A instead of INT 7C
+InstallCheck:	test for the ASCIZ signature "PRINDIR N.NN" (where N.NN is the
+	  version number) two bytes beyond the start of the interrupt handler
+Note:	prior versions of PRINDIR used INT 7A instead of INT 7C
 SeeAlso: INT 7A"PRINDIR",INT 2F/AX=7F00h"PRINDIR"
 Index:	hotkeys;PRINDIR
 --------A-7C---------------------------------
@@ -9234,9 +9236,9 @@ Program: SK-UPPS is the Schneider & Koch Universal Portable Protocol Stack,
 	  which provides an API on top of it Data Link Interface, allowing the
 	  use of any of several network transport layers; this product is
 	  called SK-PASSPORT in the USA.
-Notes:	The installation check consists of testing for the ASCII signature
-	  string "UPPS_DLI" immediately preceding the interrupt handler.
-	To find the service interrupt being used by the driver, an application
+InstallCheck:	test for the ASCII signature string "UPPS_DLI" immediately
+	  preceding the interrupt handler
+Notes:	To find the service interrupt being used by the driver, an application
 	  should scan through the interrupt table until it finds an interrupt
 	  vector with the "UPPS_DLI" string.
 	There may be more than one DLI loaded, each having its own service
@@ -9792,8 +9794,8 @@ Program: SCSILink is a TSR by Cross Products Ltd which allows its PC-hosted
 	  cross assemblers and similar products to communicate with Cross
 	  Products hardware debuggers
 Desc:	reset all devices on the SCSI bus
-Note:	the installation check is the signature "SCSILINK" immediately prior
-	  to the interrupt handler
+InstallCheck:	test for the signature "SCSILINK" immediately prior to the
+	  interrupt handler
 Index:	installation check;SCSILink
 --------G-7D01-------------------------------
 INT 7D - SCSILink - CONNECT TO TARGET

@@ -1,5 +1,431 @@
 Interrupt List, part 11 of 16
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
+--------V-2F1A00-----------------------------
+INT 2F - DOS 4.0+ ANSI.SYS - INSTALLATION CHECK
+	AX = 1A00h
+Return: AL = FFh if installed
+Notes:	AVATAR.SYS also responds to this call
+	documented for DOS 5+, but undocumented for DOS 4.x
+--------V-2F1A00BX414E-----------------------
+INT 2F - ANSIPLUS.SYS v2.00+ - INSTALLATION CHECK
+	AX = 1A00h
+	BX = 414Eh ('AN')
+	CX = 5349h ('SI')
+	DX = 2B2Bh ('++')
+Return: AL = FFh if installed
+	    CF clear
+	    ES:BX -> INT 29 entry point
+	    CX = ANSIPLUS BCD version number (v3.10+, CH=major, CL=minor)
+	    DL = capabilities (v4.00+)
+		00h full capability driver
+		01h reduced capability driver
+		2Bh full capability driver (before v4.00)
+Program: ANSIPLUS.SYS is a CON device driver by Kristofer Sweger which
+	  replaces the normal ANSI.SYS with a more powerful version having
+	  many additional features
+Notes:	ANSIPLUS also identifies itself as ANSI.SYS if BX,CX, or DX differ
+	  from the magic values above
+	an additional installation check is to test for the signature
+	  "ANSIPLUS" 12 bytes before the INT 29 entry point; the version
+	  number is also available as a four-character ASCII string (e.g.
+	  "4.00") four bytes before the entry point
+SeeAlso: AX=1AA5h,AX=1AA6h,AX=1AA7h,AX=1AA8h,AX=1AA9h,AX=1AAAh,AX=D44Fh
+--------V-2F1A00BX4156-----------------------
+INT 2F - AVATAR.SYS - INSTALLATION CHECK
+	AX = 1A00h
+	BX = 4156h ('AV')
+	CX = 4154h ('AT')
+	DX = 4152h ('AR')
+Return: AL = FFh if installed
+	    CF clear
+	    BX = AVATAR protocol level supported
+	    CX = driver type
+		0000h AVATAR.SYS
+		4456h DVAVATAR.COM inside DESQview window
+	    DX = 0016h
+Program: AVATAR.SYS is a CON replacement by George Adam Stanislav which
+	  interprets AVATAR command codes in the same way that ANSI interprets
+	  ANSI command codes
+Notes:	AVATAR also identifies itself as ANSI.SYS if BX, CX, or DX differ from
+	  the magic values
+SeeAlso: AX=1A21h,AX=1A3Ch,AX=1A3Fh,AX=1A52h,AX=1A72h,AX=1A7Dh,AX=1AADh"AVATAR"
+--------V-2F1A01-----------------------------
+INT 2F U - DOS 4.0+ ANSI.SYS internal - GET/SET DISPLAY INFORMATION
+	AX = 1A01h
+	CL = function
+	    7Fh for GET
+	    5Fh for SET
+	DS:DX -> parm block as for INT 21,AX=440Ch,CX=037Fh/035Fh respectively
+Return: CF clear if successful
+	    AX destroyed
+	CF set on error
+	    AX = error code (many non-standard)
+Note:	presumably this is the DOS IOCTL interface to ANSI.SYS
+SeeAlso: AX=1A02h,INT 21/AX=440Ch
+--------V-2F1A02-----------------------------
+INT 2F U - DOS 4.0+ ANSI.SYS internal - MISCELLANEOUS REQUESTS
+	AX = 1A02h
+	DS:DX -> parameter block (see #2422)
+Return: CF clear if successful
+	CF set on error
+	    AX = error code
+Note:	DOS 5+ chains to previous handler if AL > 02h on call
+SeeAlso: AX=1A01h
+
+Format of ANSI.SYS parameter block:
+Offset	Size	Description	(Table 2422)
+ 00h	BYTE	subfunction
+		00h set/reset interlock
+		01h get /L flag
+ 01h	BYTE	interlock state
+		00h=reset, 01h=set
+		  This interlock prevents some of the ANSI.SYS post-processing
+		  in its hook onto INT 10, AH=00h mode set
+ 02h	BYTE	(returned)
+		00h if /L not in effect
+		01h if /L in effect
+--------V-2F1A21-----------------------------
+INT 2F - AVATAR.SYS - SET DRIVER STATE
+	AX = 1A21h (AL='!')
+	DS:SI -> command string with one or more state characters (see #2423)
+	CX = length of command string
+Return: CF set on error (invalid subfunction)
+	CF clear if successful
+Note:	the characters in the state string are interpreted left to right, and
+	  need not be in any particular order
+SeeAlso: AX=1A00h/BX=4156h,AX=1A3Fh
+
+(Table 2423)
+Values for AVATAR.SYS state characters:
+ 'a'	activate driver
+ 'd'	disable driver
+ 'f'	use fast screen output
+ 'g'	always convert gray keys (+ and -) to function keys
+ 'G'	never convert gray keys
+ 'l'	convert gray keys only when ScrollLock active
+ 's'	use slow screen output
+ 't'	Tandy 1000 keyboard (not yet implemented)
+--------V-2F1A3C-----------------------------
+INT 2F U - AVATAR.SYS v0.11 - ???
+	AX = 1A3Ch
+	???
+Return: CX = 0000h
+SeeAlso: AX=1A00h/BX=4156h,AX=1A21h,AX=1A3Eh
+--------V-2F1A3E-----------------------------
+INT 2F U - AVATAR.SYS v0.11 - ???
+	AX = 1A3Eh
+	CL = ???
+	CH = ???
+	DL = ???
+	DH = ???
+Return: CL = ???
+	CH = ???
+	DL = ???
+	DH = ???
+SeeAlso: AX=1A3Ch,AX=1A3Fh
+--------V-2F1A3F-----------------------------
+INT 2F - AVATAR.SYS - QUERY DRIVER STATE
+	AX = 1A3Fh (AL='?')
+	ES:DI -> buffer
+	CX = length of buffer in bytes
+Return: CF clear
+	CX = actual size of returned info
+Note:	the returned information consists of multiple letters whose meanings
+	  are described under AX=1A21h
+SeeAlso: AX=1A00h/BX=4156h,AX=1A21h,AX=1A44h
+--------S-2F1A42BX4156-----------------------
+INT 2F - AVATAR Serial Dispatcher - INSTALL IRQ3 HANDLER
+	AX = 1A42h
+	BX = 4156h ('AV')
+	ES:DI -> FAR handler for serial port using IRQ3
+	DS = data segment needed by handler
+Return: AX = status/return value
+	    0000h if no more room
+	    1A42h if ASD not installed
+	    else handle to use when uninstalling
+Notes:	the handler need not save/restore registers or signal EOI to the
+	  interrupt controller
+	the handler should return AX=0000h if the interrupt was meant for it,
+	  and either leave AX unchanged or return a non-zero value otherwise
+	the most recently installed handler will be called first, continuing
+	  to earlier handlers until one returns AX=0000h
+SeeAlso: AX=1A43h,AX=1A62h
+--------S-2F1A43BX4156-----------------------
+INT 2F - AVATAR Serial Dispatcher - INSTALL IRQ4 HANDLER
+	AX = 1A43h
+	BX = 4156h ('AV')
+	ES:DI -> FAR handler for serial port using IRQ4
+	DS = data segment needed by handler
+Return: AX = status/return value
+	    0000h if no more room
+	    1A43h if ASD not installed
+	    else handle to use when uninstalling
+Notes:	(see AX=1A42h)
+SeeAlso: AX=1A42h,AX=1A63h
+--------V-2F1A44BX4156-----------------------
+INT 2F - AVATAR.SYS v0.11+ - GET DATA SEGMENT
+	AX = 1A44h
+	BX = 4156h ('AV')
+Return: AX = 0000h
+	DS = data segment
+	CX = size of data segment
+Note:	AVATAR.SYS calls this function whenever it is invoked.	If each
+	  process under a multitasker hooks this function and provides a
+	  separate data segment, AVATAR.SYS becomes fully reentrant.
+SeeAlso: AX=1A21h,AX=1A3Fh,AX=1A52h
+--------V-2F1A52-----------------------------
+INT 2F U - AVATAR.SYS v0.11 - GET ???
+	AX = 1A52h
+	CX = size of buffer
+	ES:DI -> buffer
+Return: ??? copied into user buffer
+Note:	the maximum size of the data which may be copied is returned by
+	  AX=1A72h
+SeeAlso: AX=1A53h,AX=1A72h
+--------V-2F1A53-----------------------------
+INT 2F U - AVATAR.SYS v0.11 - ???
+	AX = 1A53h
+	CL = ??? (00h-05h)
+	???
+Return: ???
+SeeAlso: AX=1A00h/BX=4156h,AX=1A52h,AX=1A72h
+--------S-2F1A62BX4156-----------------------
+INT 2F - AVATAR Serial Dispatcher - UNINSTALL IRQ3 HANDLER
+	AX = 1A62h
+	BX = 4156h ('AV')
+	CX = handle for IRQ routine returned by AX=1A42h
+SeeAlso: AX=1A42h,AX=1A63h
+--------S-2F1A63BX4156-----------------------
+INT 2F - AVATAR Serial Dispatcher - UNINSTALL IRQ4 HANDLER
+	AX = 1A63h
+	BX = 4156h ('AV')
+	CX = handle for IRQ routine returned by AX=1A43h
+SeeAlso: AX=1A43h,AX=1A62h
+--------V-2F1A72-----------------------------
+INT 2F U - AVATAR.SYS v0.11 - GET ??? SIZE
+	AX = 1A72h
+Return: CX = maximum size of ???
+SeeAlso: AX=1A00h/BX=4156h,AX=1A52h,AX=1A7Bh,AX=1AADh"AVATAR"
+--------V-2F1A7B-----------------------------
+INT 2F U - AVATAR.SYS v0.11 - ???
+	AX = 1A7Bh
+Return: AX = 0000h
+	CX = 0000h
+SeeAlso: AX=1A00h/BX=4156h,AX=1A72h,AX=1A7Dh
+--------V-2F1A7D-----------------------------
+INT 2F U - AVATAR.SYS v0.11 - ???
+	AX = 1A7Dh
+Return: AX = ???
+SeeAlso: AX=1A00h/BX=4156h,AX=1A7Bh
+--------V-2F1AA3-----------------------------
+INT 2F - ANSIPLUS v4.03+ - GET/SET ANSIPLUS INTERNAL VARIABLES
+	AX = 1AA3h
+	BH = function
+	    00h get current/default colors
+		Return: CH = default colors
+			CL = current colors
+	    01h set current/default colors
+		CH = default colors (00h = leave unchanged)
+		CL = current colors
+	    02h get current subscreen region
+		Return: BH,BL = true screen rows,columns
+			CH,CL = top left row,column of region
+			DH,DL = bottom right row,column of region
+	    03h set subscreen region
+		CH,CL = top left row,column of region
+		DH,DL = bottom right row,column of region
+	    04h get driver features (bits 0-31)
+		Return: DX:CX = current feature bits
+	    05h set driver features (bits 0-31)
+		DX:CX = feature bits
+	    06h get driver features (bits 32-63)
+		Return: DX:CX = current feature bits
+	    07h set driver features (bits 32-63)
+		DX:CX = feature bits
+	    other: reserved for future use
+SeeAlso: AX=1AA4h,AX=1AA5h
+--------V-2F1AA4-----------------------------
+INT 2F - ANSIPLUS v4.02+ - GET/SET ANSIPLUS SMOOTH SCROLLING RATE
+	AX = 1AA4h
+	BL = function
+	    00h get scrolling rate
+	    01h set scrolling rate
+		BH = new minimum scrolling rate in scan lines per retrace
+Return: BH = smooth scrolling rate
+SeeAlso: AX=1AA3h,AX=1AA5h
+--------V-2F1AA5-----------------------------
+INT 2F - ANSIPLUS v4.00+ - GET/SET ANSIPLUS CLIPBOARD
+	AX = 1AA5h
+	DH = subfunction
+	    00h get clipboard information
+	    01h get clipboard text
+	    02h set clipboard text
+	    03h append text to clipboard
+	    04h clear clipboard
+	    05h paste clipboard to keyboard
+	ES:BX -> data area for subfunctions 01h, 02h, and 03h
+	CX = size of data area (maximum size for subfunction 01h, actual size
+	    to add to clipboard for subfunctions 02h and 03h)
+Return: AL = status
+	    00h successful
+	    01h unsupported subfunction (reduced capability driver)
+	    02h insufficient space
+	    A5h unsupported function (ANSIPLUS before v4.00)
+	ES:BX -> ANSIPLUS local clipboard data
+	CX = number of bytes currently in local clipboard
+	DX = maximum size of local clipboard
+SeeAlso: AX=1A00h/BX=414Eh,AX=1AA4h,AX=1AA6h
+--------V-2F1AA6-----------------------------
+INT 2F - ANSIPLUS v4.00+ - ENABLE/DISABLE ANSIPLUS DRIVER
+	AX = 1AA6h
+	BH = function
+	    00h get hooked interrupts
+	    01h set hooked interrupts mask
+		BL = new interrupts mask (see #2424)
+Return: BL = previous interrupts mask (see #2424)
+SeeAlso: AX=1A00h/BX=414Eh,AX=1AA7h
+
+Desc:	used to temporarily disable any prior copies of ANSIPLUS when a new
+	  copy is installed, such as in a multitasking system like DESQview
+Note:	only the most-recently loaded copy of ANSIPLUS on the current INT 2F
+	  chain responds to this call
+
+Bitfields for ANSIPLUS hooked interrupts mask:
+Bit(s)	Description	(Table 2424)
+ 0	INT 09 hook disabled
+ 1	INT 10 hook disabled
+ 2	INT 15 hook disabled
+ 3	INT 16 hook disabled
+ 4	INT 1C hook disabled
+ 5	reset all bits when INT 29 called
+ 6	INT 29 hook disabled
+ 7	INT 33, INT 74, or other mouse event hook disabled
+--------V-2F1AA7-----------------------------
+INT 2F - ANSIPLUS v4.00+ - ENABLE/DISABLE ANSIPLUS FEATURES
+	AX = 1AA7h
+	BL = function
+	    00h prevent scroll-back saves
+	    01h enable scroll-back saves
+	    02h disable key reprogramming and lock changes by escape sequences
+	    03h enable key reprogramming by escape sequences
+	    04h	disable and lock key stacking changes by escape sequences
+	    05h allow key stacking by escape sequences
+Return: nothing
+SeeAlso: AX=1AA6h
+--------V-2F1AA8-----------------------------
+INT 2F - ANSIPLUS v3.10+ - GET NEXT ANSIPLUS SCROLLBACK LINE
+	AX = 1AA8h
+Return: AL = status
+	    00h successful
+		ES:BX -> screen line (character and attribute pairs)
+		CX = length of line in bytes, 0000h if no more lines or
+		      unsupported video mode
+	    01h unsupported video mode active
+	    02h screen currently scrolled back
+	    03h reduced capability driver
+	    A8h unsupported function (driver before v3.10)
+SeeAlso: AX=1A00h/BX=414Eh,AX=1AA9h
+--------V-2F1AA9-----------------------------
+INT 2F - ANSIPLUS v3.10+ - GET ANSIPLUS SCROLLBACK INFORMATION
+	AX = 1AA9h
+Return: AL = status
+	    00h successful
+		BX = current number of lines in scrollback buffer
+		CX = number of bytes in one line
+	    01h unsupported video mode active
+	    02h screen currently scrolled back
+	    03h reduced capability driver
+	    A9h unsupported function (driver before v3.10)
+Desc:	determine how much data is in the scrollback buffer and initialize
+	  scrollback retrieval to return the first line on the next call to
+	  AX=1AA8h
+SeeAlso: AX=1A00h/BX=414Eh,AX=1AA8h
+--------V-2F1AAA-----------------------------
+INT 2F - ANSIPLUS v3.01+ - GET/SET ANSIPLUS SCREEN SAVER BLANKING TIME
+	AX = 1AAAh
+	BX = function
+	    FFFFh to get current blanking time
+	    other to set time
+		CX = blanking time in clock ticks (0000h-7FFFh)
+Return: BX = current blanking time
+	CX = blanking time when last set
+SeeAlso: AX=1A00h/BX=414Eh,AX=1AABh
+--------V-2F1AAB-----------------------------
+INT 2F - ANSIPLUS v3.01+ - SET ANSIPLUS KEY REPEAT RATE
+	AX = 1AABh
+	BX = repeat rate in characters per second
+	    0000h use BIOS repeat rate
+Return: nothing
+SeeAlso: AX=1A00h/BX=414Eh,AX=1AAAh,AX=1AACh
+--------V-2F1AAC-----------------------------
+INT 2F - ANSIPLUS v3.00+ - LOAD CHARACTER GENERATOR
+	AX = 1AACh
+	BH = number of bytes per character pattern
+	BL = VGA/EGA character table to be loaded
+	CX = number of characters to load
+	DX = starting character code (offset into Map2 block)
+	ES:BP -> user character table to be loaded
+Return: AX = 1100h
+Desc:	load the EGA/VGA character generator without the BIOS function's
+	  side effects of resetting the video mode and color palette
+SeeAlso: AX=1A00h/BX=414Eh,AX=1AABh,AX=1AADh"ANSIPLUS",INT 10/AX=1100h
+--------V-2F1AAD-----------------------------
+INT 2F - ANSIPLUS v2.00+ - ANSIPLUS DEVICE STATUS REPORT
+	AX = 1AADh
+	BL = report request code (81h-96h for v4.00)
+	CX = color selector or key code, if required by request
+Return: AX = first reported result
+	BX = second result
+	CX = third result, if applicable (unchanged otherwise)
+	DX = fourth result, if applicable (unchanged otherwise)
+Desc:	get device status reports equivalent to those for Esc [#n sequences
+	  while bypassing any device redirection and avoiding the need to
+	  parse the returned result
+Note:	the report request code in BL is identical to the number in the
+	  corresponding Esc [#n sequence
+SeeAlso: AX=1A00h/BX=414Eh,AX=1AACh
+--------V-2F1AADDX0000-----------------------
+INT 2F U - AVATAR.SYS v0.11 - ???
+	AX = 1AADh
+	DX = 0000h
+	CX = subfunction (00h-0Ch)
+	???
+Return: AX = 0000h if DX was nonzero
+	???
+SeeAlso: AX=1A00h/BX=4156h,AX=1A72h
+--------m-2F1B00-----------------------------
+INT 2F U - DOS 4+ XMA2EMS.SYS extension internal - INSTALLATION CHECK
+	AX = 1B00h
+Return: AL = FFh if installed
+Note:	XMA2EMS.SYS extension is only installed if DOS has page frames to hide.
+	This extension hooks onto INT 67/AH=58h and returns from that call data
+	  which excludes the physical pages being used by DOS.
+SeeAlso: AH=1Bh"FRAME INFO"
+--------m-2F1B-------------------------------
+INT 2F U - DOS 4+ XMA2EMS.SYS extension internal - GET HIDDEN FRAME INFORMATION
+	AH = 1Bh
+	AL <> 00h
+	DI = hidden physical page number
+Return: AX = FFFFh if failed (no such hidden page)
+	AX = 0000h if OK, then
+	    ES = segment of page frame
+	    DI = physical page number
+Notes:	this corresponds to the data edited out of the INT 67/AH=58h call
+	FASTOPEN makes this call with AL = FFh
+SeeAlso: AX=1B00h
+--------V-2F2300-----------------------------
+INT 2F - DR DOS 5.0 GRAFTABL - INSTALLATION CHECK
+	AX = 2300h
+Return: AH = FFh
+Note:	this installation check does not follow the usual format
+SeeAlso: AH=23h,AX=2E00h
+--------V-2F23-------------------------------
+INT 2F - DR DOS 5.0 GRAFTABL - GET GRAPHICS DATA
+	AH = 23h
+	AL nonzero
+Return: AH = FFh
+	ES:BX -> graphics data (8 bytes for each character from 80h to FFh)
+SeeAlso: AX=2300h,AX=2E00h
 --------T-2F2700-----------------------------
 INT 2F - DR DOS 6.0 TaskMAX - INSTALLATION CHECK
 	AX = 2700h
@@ -8181,6 +8607,7 @@ SeeAlso: AX=9901h,AX=9902h,AX=9903h,AX=9904h,AX=9905h,AX=9906h
 (Table 3759)
 Values for DOS Navigator II version code:
  2100h	version 1.35
+ 2138h	version 1.38
  2141h	version 1.41
  2150h	version 1.50
 --------l-2F9901-----------------------------
@@ -9202,403 +9629,4 @@ BUG:	Novell DOS 7.0's COMMAND.COM (prior to Update 12) will attempt to run
 	  the original command's length, which will also work with MS-DOS 6.
 	  (from padgett@tccslr.dnet.mmc.com)
 SeeAlso: AX=AE00h
---------O-2FAF00-----------------------------
-INT 2F - WinDOS v2.11 - INSTALLATION CHECK
-	AX = AF00h
-Return: AL = FFh if installed
-Program: WinDOS is a DOS clone (claimed to be mostly MS-DOS 5.0 API compatible)
-	  written by Heiko Goemann
-SeeAlso: AX=AF01h"WinDOS",INT 21/AH=30h
-----------2FAF00-----------------------------
-INT 2F U - ???
-	AX = AF00h
-	???
-Return: AX = 0000h if interface supported
-SeeAlso: AX=AF02h,AX=AF03h,AX=AF04h,AX=AF13h,AX=AF30h
---------O-2FAF01-----------------------------
-INT 2F - WinDOS v2.11 - TURN ON ONLINE MODE
-	AX = AF01h
-Return: nothing
-Desc:	indicate that the user will not exchange floppy disks, allowing WinDOS
-	  to cache disk sectors in memory and avoid writing modified sectors
-	  back out to the floppy disk
-SeeAlso: AX=AF00h"WinDOS",AX=AF02h"WinDOS"
---------O-2FAF02-----------------------------
-INT 2F - WinDOS v2.11 - TURN OFF ONLINE MODE
-	AX = AF02h
-Return: nothing
-Desc:	indicate that the floppy disk may be removed, and that WinDOS should
-	  write all buffered sectors out to the floppy disk
-SeeAlso: AX=AF00h"WinDOS",AX=AF01h"WinDOS"
-----------2FAF02-----------------------------
-INT 2F U - ???
-	AX = AF02h
-	???
-Return: ES = ???
-SeeAlso: AX=AF00h
---------O-2FAF03-----------------------------
-INT 2F - WinDOS v2.11 - TURN VIDMEM ON
-	AX = AF03h
-Return: AX = status
-	    0000h successful
-	    0001h CPU not in mode set by DOS386=On
-	    0002h video adapter in graphics mode
-	    0003h memory chain corrupted
-SeeAlso: AX=AF00h"WinDOS",AX=AF04h"WinDOS",AX=AF05h"WinDOS"
-----------2FAF03-----------------------------
-INT 2F U - ???
-	AX = AF03h
-	???
-Return: DX = ???
-SeeAlso: AX=AF00h
---------O-2FAF04-----------------------------
-INT 2F - WinDOS v2.11 - TURN VIDMEM OFF
-	AX = AF04h
-Return: AX = status
-	    0000h successful
-	    0001h video memory is in use
-SeeAlso: AX=AF00h"WinDOS",AX=AF03h"WinDOS",AX=AF05h"WinDOS"
-----------2FAF04-----------------------------
-INT 2F U - ???
-	AX = AF04h
-	???
-Return: ???
-SeeAlso: AX=AF00h
---------O-2FAF05-----------------------------
-INT 2F - WinDOS v2.11 - GET VIDMEM STATE
-	AX = AF05h
-Return: AX = status (0000h off, 0001h on)
-SeeAlso: AX=AF00h"WinDOS",AX=AF03h"WinDOS",AX=AF04h"WinDOS"
-----------2FAF05-----------------------------
-INT 2F U - ???
-	AX = AF05h
-	???
-Return: ???
-SeeAlso: AX=AF00h
---------O-2FAF06-----------------------------
-INT 2F - WinDOS v2.11 - MAKE PROGRAM UNBREAKABLE
-	AX = AF06h
-	DS:DX -> break handler
-	DI:BX = stack to use for break handler
-Return: nothing
-Desc:	set a handler which should be invoked when Ctrl-C is pressed instead of
-	  aborting the program
-SeeAlso: AX=AF00h"WinDOS",AX=AF0Ah"WinDOS",AX=AF0Ch"WinDOS"
---------O-2FAF07-----------------------------
-INT 2F - WinDOS v2.11 - SIGNAL FATAL OVERLAY FAULT
-	AX = AF07h
-Return: never -- system reset
-Desc:	pop up a window indicating that the system overlay file can not be
-	  loaded
-SeeAlso: AX=AF00h"WinDOS",AX=AF08h"WinDOS"
---------O-2FAF08-----------------------------
-INT 2F - WinDOS v2.11 - SIGNAL RECOVERABLE OVERLAY FAULT
-	AX = AF08h
-Return: nothing
-Desc:	pop up a window requesting that a disk containing SH.OVL be inserted
-SeeAlso: AX=AF00h"WinDOS",AX=AF07h"WinDOS",AX=AF0Bh
---------O-2FAF09-----------------------------
-INT 2F - WinDOS v2.11 - GET TERMINATED PSP
-	AX = AF09h
-Return: DS = PSP segment of most recently ended TSR
-SeeAlso: AX=AF00h"WinDOS",AX=AF0Ah
---------O-2FAF0A-----------------------------
-INT 2F - WinDOS v2.11 - GET MAIN SHELL PSP
-	AX = AF0Ah
-Return: AX = shell's PSP (same as DS on last call to AX=AF06h)
-Desc:	get the PSP address of the last program to call AX=AF06h (normally
-	  the main command interpreter)
-SeeAlso: AX=AF00h"WinDOS",AX=AF06h"WinDOS",AX=AF09h
---------O-2FAF0B-----------------------------
-INT 2F - WinDOS v2.11 - SIGNAL FATAL ERROR
-	AX = AF0Bh
-Return: never -- system reset
-Desc:	pop up a window indicating a terminal system error
-SeeAlso: AX=AF00h"WinDOS",AX=AF07h,AX=AF08h,AX=AF15h"WinDOS"
---------O-2FAF0C-----------------------------
-INT 2F - WinDOS v2.11 - GET OTHER MAIN SHELL PARAMETERS
-	AX = AF0Ch
-Return: DI:AX = stack
-	SI = offset of break handler
-Desc:	retrieve the parameters last set by AX=AF06h (normally by the main
-	  command interpreter)
-SeeAlso: AX=AF00h"WinDOS",AX=AF06h"WinDOS"
---------O-2FAF0D-----------------------------
-INT 2F - WinDOS v2.11 - GET CURRENT PARAMETER
-	AX = AF0Dh
-	BX = offset of desired parameter in global data area
-Return: AX = current value of parameter (AH undefined if byte value)
-SeeAlso: AX=AF00h"WinDOS",AX=AF0Eh
---------O-2FAF0E-----------------------------
-INT 2F - WinDOS v2.11 - SET CURRENT PARAMETER BYTE VALUE
-	AX = AF0Eh
-	BX = offset of desired parameter in global data area
-	DL = new value of parameter
-Return: nothing
-SeeAlso: AX=AF00h"WinDOS",AX=AF0Dh
---------O-2FAF0F-----------------------------
-INT 2F - WinDOS v2.11 - GET HISTORY SEGMENT
-	AX = AF0Fh
-Return: AX = segment of buffer for input history, or 0000h if none
-SeeAlso: AX=AF00h"WinDOS",AX=AF10h"WinDOS"
---------O-2FAF10-----------------------------
-INT 2F - WinDOS v2.11 - SET HISTORY SEGMENT
-	AX = AF10h
-	BX = segment of new buffer for input history
-Return: nothing
-Note:	the buffer must have been allocated with INT 21/AH=48h
-SeeAlso: AX=AF00h"WinDOS",AX=AF0Fh"WinDOS"
---------O-2FAF11-----------------------------
-INT 2F - WinDOS v2.11 - FREE XMS BLOCKS
-	AX = AF11h
-Return: nothing
-Desc:	free all XMS blocks whose XMS identification value (see AX=AF12h)
-	  equals the current PSP
-SeeAlso: AX=AF00h"WinDOS",AX=AF12h"WinDOS",INT 21/AH=50h
---------O-2FAF12-----------------------------
-INT 2F - WinDOS v2.11 - SET XMS IDENTIFICATION VALUE
-	AX = AF12h
-	DS = new XMS identification value (normally caller's PSP segment)
-Return: nothing
-SeeAlso: AX=AF00h"WinDOS",AX=AF11h"WinDOS"
-----------2FAF12-----------------------------
-INT 2F U - ???
-	AX = AF12h
-	???
-Return: ES = ???
-SeeAlso: AX=AF00h
---------O-2FAF13-----------------------------
-INT 2F - WinDOS v2.11 - SET ASSIGN VALUE
-	AX = AF13h
-	BL = number of drive to remap (00h = A:)
-	DL = number of drive to be accessed via drive number BL
-Return: nothing
-Desc:	remap a drive letter
-Note:	the remapping can be canceled by specifying DL=BL
-SeeAlso: AX=AF00h"WinDOS",AX=AF14h"WinDOS",AX=0601h
-----------2FAF13-----------------------------
-INT 2F U - ???
-	AX = AF13h
-	???
-Return: ???
-SeeAlso: AX=AF00h
---------O-2FAF14-----------------------------
-INT 2F - WinDOS v2.11 - GET ASSIGN VALUE
-	AX = AF14h
-	BL = drive number (00h = A:)
-Return: DL = drive number which is actually accessed by drive number BL
-Desc:	determine the current mapping for a drive
-SeeAlso: AX=AF00h"WinDOS",AX=AF13h"WinDOS",AX=0601h
---------O-2FAF15-----------------------------
-INT 2F - WinDOS v2.11 - SIGNAL STACK ERROR
-	AX = AF15h
-Return: never -- system reset
-Desc:	pop up a window indicating a stack overflow
-SeeAlso: AX=AF00h"WinDOS",AX=AF0Bh"WinDOS"
---------O-2FAF16-----------------------------
-INT 2F - WinDOS v2.11 - GET SIMPLE TRUENAME
-	AX = AF16h
-	DS:SI -> path to be canonicalized
-	ES:DI -> buffer for canonicalized filename/pathname
-Return: CF clear if successful
-	    AX = 0000h
-	CF set on error
-	    AX = DOS error code (see #1366 at INT 21/AH=59h/BX=0000h)
-Desc:	partially canonicalize a path, omitting SUBST, JOIN, ASSIGN, and
-	  network redirections
-SeeAlso: AX=AF00h"WinDOS",INT 21/AH=60h
---------O-2FAF17-----------------------------
-INT 2F - WinDOS v2.11 - QUERY FOR NEW CURRENT DRIVE
-	AX = AF17h
-Return: nothing
-Desc:	pop up a dialog allowing the user to select a new default drive
-SeeAlso: AX=AF00h"WinDOS"
---------O-2FAF18-----------------------------
-INT 2F - WinDOS v2.11 - SET CTRL-C/CTRL-BREAK DISABLE FLAG
-	AX = AF18h
-	DL = new break-checking state (00h enabled, 01h disabled)
-Return: nothing
-SeeAlso: AX=AF00h"WinDOS"
---------O-2FAF19-----------------------------
-INT 2F - WinDOS v2.11 - SET HEAD SETTLE FLAG
-	AX = AF19h
-	DL = new state
-	    00h diskette head settling time reset to 15ms before each access
-	    01h no additional head settling time used between accesses
-Return: nothing
-SeeAlso: AX=AF00h"WinDOS"
---------O-2FAF1A-----------------------------
-INT 2F - WinDOS v2.11 - SEARCH FOR NON-FRAGMENTED DISK AREA
-	AX = AF1Ah
-	BL = drive (00h = current, 01h = A:, etc.)
-	CX = number of clusters desired
-Return: CF clear if successful
-	    DI = first free cluster on logical drive
-	    BP = first cluster of contiguous free area
-	    AX destroyed
-	CF set on error
-	    AX = DOS error code (see #1366 at INT 21/AH=59h/BX=0000h)
-Desc:	attempt to find an area of the disk containing the specified number
-	  of contiguous unallocated clusters
-SeeAlso: AX=AF00h"WinDOS"
-----------2FAF30-----------------------------
-INT 2F U - ???
-	AX = AF30h
-	???
-Return: ???
-SeeAlso: AX=AF00h
---------d-2FAFDE-----------------------------
-INT 2F - Disk-Emu - INSTALLATION CHECK / GET VERSION
-	AX = AFDEh
-	ES:DI -> 14-byte buffer for data (see #2663)
-Return: AX = CFDEh (Carlos Fernandez Disk-Emu) if installed
-	    BX = version (BH = major, BL = minor)
-
-Format of Disk-Emu information data:
-Offset	Size	Description	(Table 2663)
- 00h	BYTE	number of tracks
- 01h	BYTE	sectors per track
- 02h	WORD	bytes per sector
- 04h	BYTE	number of heads
- 05h	BYTE	flag: 00h inactive, 01h active
- 06h	BYTE	write protection (00h none, 01h full, 02h pseudo)
- 07h	BYTE	saved (00h some unsaved data, 01h all data saved)
- 08h	BYTE	disk in memory (00h no, 01h yes)
- 09h	WORD	EMS handle
- 0Bh	WORD	XMS handle
- 0Dh	BYTE	memory type used for disk (00h XMS, 01h EMS)
---------V-2FB000-----------------------------
-INT 2F - DOS 3.3+ GRAFTABL.COM - INSTALLATION CHECK
-	AX = B000h
-Return: AL = status
-	    00h not installed, OK to install
-	    01h not installed, not OK to install
-	    FFh installed
-Notes:	called by DISPLAY.SYS
-	documented for DOS 5.0, but undocumented in prior versions
-SeeAlso: AX=2300h,AX=2E00h,AX=B001h
---------V-2FB001-----------------------------
-INT 2F - DOS 3.3+ GRAFTABL.COM - GET GRAPHICS FONT TABLE
-	AX = B001h
-	DS:BX -> DWORD buffer for address of 8x8 font table
-Return: buffer filled
-	AL = FFh
-Note:	PC-DOS 3.30/4.01 and MS-DOS 6.0 set the font table offset to 0130h,
-	  MS-DOS 3.30 sets it to 0030h
-SeeAlso: AH=2Eh"GRAFTABL",AX=B000h
---------I-2FB400-----------------------------
-INT 2F - IBM PC3270 EMULATION PROG v3 - INSTALLATION CHECK
-	AX = B400h
-Return: AL = FFh if installed
---------I-2FB401-----------------------------
-INT 2F - IBM PC3270 EMULATION PROG v3 - GET HOST BUFFER ADDRESS
-	AX = B401h
-Return: ES -> host screen buffer (PC ASCII format)
-	ES unchanged if communications not started
---------I-2FB402-----------------------------
-INT 2F - IBM PC3270 EMULATION PROG v3 - ???
-	AX = B402h
-	BX = ???
-Return: ???
---------I-2FB403-----------------------------
-INT 2F - IBM PC3270 EMULATION PROG v3 - ???
-	AX = B403h
-	???
-Return: ???
---------I-2FB404-----------------------------
-INT 2F - IBM PC3270 EMULATION PROG v3 - ???
-	AX = B404h
-	???
-Return: ???
---------I-2FB405-----------------------------
-INT 2F - IBM PC3270 EMULATION PROG v3 - ???
-	AX = B405h
-	???
-Return: ???
---------f-2FB700-----------------------------
-INT 2F - APPEND - INSTALLATION CHECK
-	AX = B700h
-Return: AL = status
-	    00h not installed
-	    FFh installed
-Note:	MS-DOS 3.30 APPEND refuses to install itself when run inside TopView or
-	  a TopView-compatible environment
-SeeAlso: AX=B702h
---------f-2FB701-----------------------------
-INT 2F U - APPEND v3.21 only - GET APPEND PATH
-	AX = B701h
-Return: ES:DI -> active APPEND path
-Notes:	the only version of APPEND known to support this call is the APPEND
-	  shipped with Microtek MS-DOS 3.21; MS-DOS 3.30-6.00 APPEND displays
-	  "Incorrect APPEND Version" and aborts the caller
-	use AX=B704h first, and only call this function if that one is not
-	  supported
-SeeAlso: AX=B700h,AX=B704h
---------f-2FB702-----------------------------
-INT 2F - APPEND - GET VERSION
-	AX = B702h
-Return: AX = FFFFh if not DOS 4.0 APPEND (also if DOS 5.0 APPEND)
-	AL = major version number
-	AH = minor version number, otherwise
-SeeAlso: AX=B700h,AX=B710h
---------f-2FB703-----------------------------
-INT 2F U - DOS 3.3, DOS 5.0 APPEND - HOOK INT 21
-	AX = B703h
-	ES:DI -> INT 21 handler APPEND should chain to
-Return: ES:DI -> APPEND's INT 21 handler
-Note:	each invocation of this function toggles a flag which APPEND uses to
-	  determine whether to chain to the user handler or the original
-	  INT 21
-SeeAlso: AX=B700h,AX=B706h
---------f-2FB704-----------------------------
-INT 2F - DOS 3.3+ APPEND - GET APPEND PATH
-	AX = B704h
-Return: ES:DI -> active APPEND path (128 bytes max)
-Note:	some versions of append do not support this call, and return ES
-	  unchanged; in this case, you should call AX=B701h to get the APPEND
-	  path
-SeeAlso: AX=B701h
---------f-2FB706-----------------------------
-INT 2F - DOS 4.0+ APPEND - GET APPEND FUNCTION STATE
-	AX = B706h
-Return: BX = APPEND state (see #2664)
-SeeAlso: AX=B700h,AX=B707h
-
-Bitfields for APPEND state:
-Bit(s)	Description	(Table 2664)
- 0	set if APPEND enabled
- 1-11	reserved
- 12	(DOS 5.0) set if APPEND applies directory search even if a drive has
-	  been specified
- 13	set if /PATH flag active
- 14	set if /E flag active (environment var APPEND exists)
- 15	set if /X flag active
---------f-2FB707-----------------------------
-INT 2F - DOS 4.0+ APPEND - SET APPEND FUNCTION STATE
-	AX = B707h
-	BX = APPEND state bits (see #2664)
-SeeAlso: AX=B700h,AX=B706h
---------f-2FB710-----------------------------
-INT 2F U - DOS 3.3+ APPEND - GET VERSION INFO
-	AX = B710h
-Return: AX = current APPEND state (see #2664)
-	BX = ??? (0000h in MS-DOS 3.30 and 5.00)
-	CX = ??? (0000h in MS-DOS 3.30 and 5.00)
-	DL = major version
-	DH = minor version
-SeeAlso: AX=B700h,AX=B702h
---------f-2FB711-----------------------------
-INT 2F - DOS 4.0+ APPEND - SET RETURN FOUND NAME STATE
-	AX = B711h
-Note:	if the next INT 21h call (and ONLY the next) is function 3Dh, 43h, or
-	  6Ch (also 4B03h and 4Eh if /X active), the fully qualified filename
-	  is written over top of the filename passed to the INT 21h call.  The
-	  application must provide a sufficiently large buffer.	 This state is
-	  reset after the next INT 21h call processed by APPEND.
-	APPEND uses the byte at offset 3Dh in the PSP
-	  (see #1066 at INT 21/AH=26h) to store the flag telling it to
-	  overwrite the filename
-BUG:	DOS 4.0 APPEND reportedly overwrites DS:DX instead of DS:SI for
-	  INT 21/AH=6Ch
-SeeAlso: INT 21/AH=26h,INT 21/AH=4Eh
 --------!---Section--------------------------

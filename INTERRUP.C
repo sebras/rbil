@@ -1,5 +1,5 @@
 Interrupt List, part 3 of 16
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
 --------T-1512-------------------------------
 INT 15 - VMiX - "sys_sleep" - PUT PROCESS TO SLEEP
 	AH = 12h
@@ -3508,6 +3508,7 @@ Return: CF clear if installed
 	    AH = Error code 0Ah, 86h (see #0410)
 Note:	this function is only supported in INT 15h mode
 SeeAlso: AX=53B0h/BH=02h,AX=53B0h/BH=03h,AX=53B0h/BH=04h,AX=53B0h/BH=06h
+SeeAlso: #3865 at INT 1A/AX=B10Ah/SF=8086h
 
 (Table 0410)
 Values for Intel System Management Bus error codes:
@@ -3639,6 +3640,7 @@ Desc:	retrieves already assigned SMBus device addresses
 Notes:	this function is supported in INT 15h mode only
 	bit 0 of the device address indicates read/write, so a device may
 	  be listed at both xxxxxxx0b and xxxxxxx1b
+SeeAlso: I2C A0h [and I2C.LST in general]
 
 (Table 0412)
 Values for System Management Bus predefined device addresses:
@@ -3926,6 +3928,33 @@ INT 15 C - Omniview Multitasker - EXIT NOTIFICATION
 Note:	called by OmniView to notify programs loaded before OmniView of state
 	  changes inside OmniView
 SeeAlso: AX=5400h,INT 2F/AX=DE03h
+--------V-155F31-----------------------------
+INT 15 C - Chips & Technologies '65530' BIOS - POST INITIALIZATION NOTIFICATION
+	AX = 5F31h
+Return:	nothing
+Desc:	this function is called after the video BIOS completes power-up
+	  initialization and just prior to displaying the sign-on message
+SeeAlso: AX=5F33h,AX=5F35h,INT 10/AX=5F50h
+--------V-155F33-----------------------------
+INT 15 C - Chips & Technologies '65530' BIOS - MODE SET HOOK
+	AX = 5F33h
+	BL = current width in characters
+	BH = curent video mode
+	CH = active display page
+Return:	nothing
+Desc:	this function is called at the end of a video mode set
+Note:	the OEM has the option of enabling or disabling this callout, as well
+	  as specifying whether the callout occurs on INT 15h or INT 42h
+SeeAlso: AX=5F31h,AX=5F35h,INT 10/AX=5F50h,INT 42/AX=5F33h
+--------V-155F35-----------------------------
+INT 15 C - Chips & Technologies '65530' BIOS - MONITOR SENSING HOOK
+	AX = 5F35h
+Return:	DL = boot display
+	    00h CRT
+	    01h flat panel (LCD)
+	    02h both simultaneously
+	    leave unchanged to boot according to BIOS settings
+SeeAlso: AX=5F31h,AX=5F33h,INT 10/AX=5F50h
 --------b-1560------------------------------------
 INT 15 - HUNTER 16 - SET SYSTEM CLOCK SPEED
 	AH = 60h
@@ -8451,6 +8480,7 @@ Notes:	on extended keyboards, this function discards any extended keystrokes,
 	  translate prefix E0h to 00h. This allows old programs to use extended
 	  keystrokes and should not cause compatibility problems
 SeeAlso: AH=01h,AH=05h,AH=10h,AH=20h,AX=AF4Dh"K3PLUS",INT 18/AH=00h
+SeeAlso: INT 09,INT 15/AH=4Fh
 --------B-1601-------------------------------
 INT 16 - KEYBOARD - CHECK FOR KEYSTROKE
 	AH = 01h
@@ -8468,7 +8498,7 @@ Note:	if a keystroke is present, it is not removed from the keyboard buffer;
 	  keystrokes (same as with functions 10h and 20h), but will always
 	  translate prefix E0h to 00h. This allows old programs to use extended
 	  keystrokes and should not cause compatibility problems
-SeeAlso: AH=00h,AH=11h,AH=21h,INT 18/AH=01h
+SeeAlso: AH=00h,AH=11h,AH=21h,INT 18/AH=01h,INT 09,INT 15/AH=4Fh
 --------B-1602-------------------------------
 INT 16 - KEYBOARD - GET SHIFT FLAGS
 	AH = 02h
@@ -8655,7 +8685,7 @@ Notes:	if a keystroke is available, it is not removed from the keyboard buffer
 	  that CF is returned instead of ZF
 	INT 16/AH=09h can be used to determine whether this function is
 	  supported, but only on later model PS/2s
-SeeAlso: AH=01h,AH=09h,AH=10h,AH=21h
+SeeAlso: AH=01h,AH=09h,AH=10h,AH=21h,INT 09,INT 15/AH=4Fh
 --------B-1612-------------------------------
 INT 16 - KEYBOARD - GET EXTENDED SHIFT STATES (enh kbd support only)
 	AH = 12h
@@ -9265,8 +9295,8 @@ INT 16 U - Netroom PRENET - GET OLD INTERRUPT VECTORS
 	BX = 5858h
 Return: CF clear
 	DX:BX -> saved copy of interrupt vector table
-Note:	the installation check consists of calling this function and comparing
-	  BX against 5858h on return; if it has changed, PRENET is installed
+InstallCheck:	call this function and compare BX against 5858h on return; if
+	  it has changed, PRENET is installed
 SeeAlso: AX=5758h/BX=5859h
 Index:	installation check;Netroom PRENET
 --------m-165758BX5859-----------------------
@@ -9275,8 +9305,8 @@ INT 16 U - Netroom POSTNET - GET OLD INTERRUPT VECTORS
 	BX = 5859h
 Return: CF clear
 	DX:BX -> saved copy of interrupt vector table
-Note:	the installation check consists of calling this function and comparing
-	  BX against 5859h on return; if it has changed, POSTNET is installed
+InstallCheck:	call this function and compare BX against 5859h on return; if
+	  it has changed, POSTNET is installed
 SeeAlso: AX=5758h/BX=5858h
 Index:	installation check;Netroom POSTNET
 ----------166701-----------------------------

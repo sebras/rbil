@@ -2,7 +2,7 @@
 /*	EEL code file for editing the Interrupt List		*/
 /*								*/
 /*	Written by Ralf Brown					*/
-/*	LastEdit:  30 Oct 97					*/
+/*	LastEdit:  22 Mar 98					*/
 /*								*/
 /*  This EEL file adds the following keybindings:		*/
 /*    Shf-Alt-A add an Access: section to the current entry	*/
@@ -70,9 +70,9 @@ char str_bitfields_for[] = "Bitfields for " ;
 char size_section[] = "Size:\t" ;
 char access_section[] = "Access:\t" ;
 char return_section[] = "Return: " ;
-char install_section[] = "InstallCheck:\t" ;
 char program_section[] = "Program: " ;
 char desc_section[] = "Desc:\t" ;
+char install_section[] = "InstallCheck:" ;
 char range_section[] = "Range:\t" ;
 char notes_section[] = "Notes*:\t" ;
 char bugs_section[] = "BUGS*:\t" ;
@@ -103,9 +103,9 @@ when_loading()
    section_order[0] = size_section ;
    section_order[1] = access_section ;
    section_order[2] = return_section ;
-   section_order[3] = install_section ;
-   section_order[4] = program_section ;
-   section_order[5] = desc_section ;
+   section_order[3] = program_section ;
+   section_order[4] = desc_section ;
+   section_order[5] = install_section ;
    section_order[6] = range_section ;
    section_order[7] = notes_section ;
    section_order[8] = bugs_section ;

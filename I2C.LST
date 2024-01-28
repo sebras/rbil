@@ -1,5 +1,5 @@
-I2C-BUS DEVICES			Release 56		Last Change 21dec97
-Copyright (c) 1997 Ralf Brown
+I2C-BUS DEVICES			Release 57		Last Change 22mar98
+Copyright (c) 1997,1998 Ralf Brown
 
 --------!---Note-----------------------------
 Notes:	An I2C device uses two consecutive subaddresses; the low bit indicates
@@ -8,6 +8,8 @@ Notes:	An I2C device uses two consecutive subaddresses; the low bit indicates
 	  (the "slave address" in official terminology) and the register number
 	  within the device; for certain indexed registers, the index value is
 	  given as the third value in the entry header
+	SMBus, ACCESS.bus, and the DDC2B data link to the monitor are all
+	  variants of the I2C bus, and are thus listed here as well.
 	unless otherwise noted, all device registers are eight bits in size,
 	  and may be both read and written
 	the access method for communicating with an I2C device is
@@ -16,12 +18,167 @@ Notes:	An I2C device uses two consecutive subaddresses; the low bit indicates
 	  bit-banging of memory-mapped I/O register FF20h
 	  (see MEM A000h:FF00h"S3").  On the Zoran ZR36057 used by the
 	  Miro DC-30, the I2C bus is accessed by bit-banging memory-mapped
-	  register 17 (at offset 0x44).
+	  register 17 (at offset 0x44).  On the Cirrus Logic GD7556, extended
+	  sequencer register 8 is used (see #P647).
 	maximum data rates on the I2C bus are also device-dependent; typical
 	  maximum rates are 80 kHz (DIMMs), 100 kHz (VPX3220A), and 400 kHz.
-----------I2800------------------------------
+	in DDC (Dislay Data Channel) 2B, the monitor's EDID info appears to be
+	  stored in an EEPROM at the standard bus address of A0h; access to
+	  the DDC clock/data lines is, however, chipset-specific.  On S3's
+	  Trio64V+, the DDC lines share a port with the LPB's I2C bus: when the
+	  feature connector is disabled, they are connected to the monitor;
+	  when enabled, the lines are connected to the Local Peripheral Bus	  
+	I2C FAQ: http://www.paranoia.com/%7Efilipg/HTML/LINK/ELE/F_I2C.html
+----------I00--------------------------------
+I2C 00h - General Call (Broadcast) Address 
+Note:	writes to this address can be received by multiple devices (all which
+	  listen for broadcast commands)
+SeeAlso: I2C 00h/02h,I2C 00h/04h,I2C 00h/06h
+----------I0000------------------------------
+I2C 00h/00h - General Call - Prohibited Value
+Note:	writes to this address can be received by multiple devices (all which
+	  listen for broadcast commands)
+----------I0002------------------------------
+I2C 00h/02h - General Call - RESET
+Note:	writes to this address can be received by multiple devices (all which
+	  listen for broadcast commands)
+SeeAlso: I2C 00h/04h,I2C 00h/06h,I2C 00h/x1h
+----------I0004------------------------------
+I2C 00h/04h - General Call - RELOAD DEVICE ADDRESS FROM HARDWARE
+Note:	writes to this address can be received by multiple devices (all which
+	  listen for broadcast commands)
+SeeAlso: I2C 00h/02h,I2C 00h/06h,I2C 00h/x1h
+----------I0006------------------------------
+I2C 00h/06h - General Call - RESET AND RELOAD DEVICE ADDRESS
+Note:	writes to this address can be received by multiple devices (all which
+	  listen for broadcast commands)
+SeeAlso: I2C 00h/02h,I2C 00h/04h,I2C 00h/x1h
+----------I00x1------------------------------
+I2C 00h/x1h - General Call - Hardware Generated (Interrupt)
+Note:	if the second byte of the General Call telegram has its
+	  least-significant bit set, then the upper seven bits indicate the
+	  address of the device generating the call; this can be used to tell
+	  the master CPU in the system that a device needs attention
+SeeAlso: I2C 00h/02h,I2C 00h/04h,I2C 00h/06h
+----------I01--------------------------------
+I2C 01h - Reserved - Start Byte
+----------I02--------------------------------
+I2C 02h - Reserved - CBUS Address - Write
+SeeAlso: I2C 03h
+----------I03--------------------------------
+I2C 03h - Reserved - CBUS Address - Read
+SeeAlso: I2C 02h
+----------I04--------------------------------
+I2C 04h - Reserved for different bus format
+----------I05--------------------------------
+I2C 05h - Reserved for different bus format
+----------I06--------------------------------
+I2C 06h - Reserved by Philips for future definition
+----------I07--------------------------------
+I2C 07h - Reserved by Philips for future definition
+----------I08--------------------------------
+I2C 08h - Reserved by Philips for future definition
+----------I09--------------------------------
+I2C 09h - Reserved by Philips for future definition
+----------I0A--------------------------------
+I2C 0Ah - Reserved by Philips for future definition
+----------I0B--------------------------------
+I2C 0Bh - Reserved by Philips for future definition
+----------I0C--------------------------------
+I2C 0Ch - Reserved by Philips for future definition
+----------I0D--------------------------------
+I2C 0Dh - Reserved by Philips for future definition
+----------I0E--------------------------------
+I2C 0Eh - Reserved by Philips for future definition
+----------I0F--------------------------------
+I2C 0Fh - Reserved by Philips for future definition
+--------p-I16--------------------------------
+I2C 16h - Benchmarq BQ2090 Battery-Charge Monitor
+!!!harris\bq2090.pdf
+--------V-I18--------------------------------
+I2C 18h/00h - Raytheon TMC2361 - FILTER AND TEST PATTERN REGISTER
+Access:	Read/Write
+Desc:	the TMC2361 is a VGA-to-Television encoder
+Range:	I2C addresses 18h, 1Ah, 1Ch, or 1Eh may be selected by external pins
+Note:	the second byte of a 'write' telegram sets the register to be accessed;
+	  this pointer auto-increments on each transfer until the highest
+	  register is reached (it will not wrap back to register 0)
+SeeAlso: I2C 18h/01h,I2C 18h/02h,I2C 18h/05h,I2C 18h/06h
+
+Bitfields for Raytheon TMC2361 Filter and Test Pattern Register:
+Bit(s)	Description	(Table I063)
+ 7-5	test pattern foreground color select
+	bit 7: red
+	bit 6: green
+	bit 5: blue
+ 4-3	video source
+	00 normal video from VGA
+	01 color bars
+	10 '+' symbols on complementary color
+	11 flat field of color selected by bits 7-5
+ 2-1	filter mode
+	00 three-line filter
+	01 pass-through
+	10 two-line filter
+	11 three-line filter
+ 0	reserved
+SeeAlso: #I062,#I061
+--------V-I1801------------------------------
+I2C 18h/01h - Raytheon TMC2361 - ENCODER CONTROL REGISTER
+Access:	Read/Write
+Range:	I2C addresses 18h, 1Ah, 1Ch, or 1Eh may be selected by external pins
+SeeAlso: I2C 18h/00h,I2C 18h/02h,I2C 18h/05h,I2C 18h/06h
+
+Bitfields for Raytheon TMC2361 Encoder Control Register:
+Bit(s)	Description	(Table I062)
+ 7	"HQSZ"
+ 6	reserved (0)
+ 5-4	television standard
+	00 PAL M (60 Hz)
+	01 PAL
+	10 NTSC-EIA
+	11 NTSC
+ 3	powerdown mode
+ 2	DPMS mode
+	=0 output blue video if either hsync or vsync missing
+	=1 suspend chip if either hsync/vsync missing; sleep if both missing
+ 1	disable S-Video output
+ 0	disable composite video output
+SeeAlso: #I063,#I061
+--------V-I1802------------------------------
+I2C 18h/02h - Raytheon TMC2361 - RESET CONTROL REGISTER
+Access:	Read/Write
+Range:	I2C addresses 18h, 1Ah, 1Ch, or 1Eh may be selected by external pins
+SeeAlso: I2C 18h/00h,I2C 18h/01h,I2C 18h/05h,I2C 18h/06h
+
+Bitfields for Raytheon TMC2361 Reset Control Register:
+Bit(s)	Description	(Table I061)
+ 7-4	reserved (0)
+ 3	clock out select
+	=0 use PXCK
+	=1 use ADCK
+ 2-0	reserved (0)
+SeeAlso: #I062
+--------V-I1805------------------------------
+I2C 18h/05h - Raytheon TMC2361 - PART IDENTIFICATION REGISTER
+Access:	Read-Only
+Desc:	this register identifies the device as a TMC2361 by returning 61h
+Range:	I2C addresses 18h, 1Ah, 1Ch, or 1Eh may be selected by external pins
+SeeAlso: I2C 18h/00h,I2C 18h/01h,I2C 18h/02h,I2C 18h/06h
+--------V-I1806------------------------------
+I2C 18h/06h - Raytheon TMC2361 - REVISION IDENTIFICATION REGISTER
+Access:	Read-Only
+Desc:	this register identifies the device's revision level (1Bh or greater)
+Range:	I2C addresses 18h, 1Ah, 1Ch, or 1Eh may be selected by external pins
+SeeAlso: I2C 18h/00h,I2C 18h/01h,I2C 18h/02h,I2C 18h/05h
+--------V-I2800------------------------------
 I2C 28h/00h - Philips SAA5252 - VIDEO SIGNAL SETUP
+Access:	Write-Only
 Desc:	the SAA5252 is a closed-captioning text decoder
+Note:	on writes, the register index auto-increments until it reaches 4; this
+	  permits all of the write-only registers to be updated in a single I2C
+	  telegram
+SeeAlso: I2C 28h/01h,I2C 28h/02h,I2C 28h/80h
 
 Bitfields for Philips SAA5252 video signal setup:
 Bit(s)	Description	(Table I010)
@@ -31,9 +188,11 @@ Bit(s)	Description	(Table I010)
  6	video output is negative-going instead of positive
  7	read Closed-Captioning data from second field instead of first
 SeeAlso: #I011
-----------I2801------------------------------
+--------V-I2801------------------------------
 I2C 28h/01h - Philips SAA5252 - CAPTION MODE
+Access:	Write-Only
 Desc:	the SAA5252 is a closed-captioning text decoder
+SeeAlso: I2C 28h/00h,I2C 28h/04h,I2C 28h/80h
 
 Bitfields for Philips SAA5252 caption mode:
 Bit(s)	Description	(Table I011)
@@ -52,22 +211,100 @@ Bit(s)	Description	(Table I011)
  6	user channel selection (0=Ch2, 1=Ch1)
  7	clear page memory
 SeeAlso: #I010
-----------I2802------------------------------
-I2C 28h/02h - Philips SAA5252 -
-----------I2803------------------------------
-I2C 28h/03h - Philips SAA5252 -
-----------I2804------------------------------
-I2C 28h/04h - Philips SAA5252 -
-----------I2880------------------------------
-I2C 28h/80h - Philips SAA5252 -
+--------V-I2802------------------------------
+I2C 28h/02h - Philips SAA5252 - ON-SCREEN DISPLAY ROW
+Access:	Write-Only
+Size:	4 bits
+Desc:	specify the row (0-15) on which to show the on-screen display
+SeeAlso: I2C 28h/00h,I2C 28h/03h
+--------V-I2803------------------------------
+I2C 28h/03h - Philips SAA5252 - ON-SCREEN DISPLAY COLUMN
+Access:	Write-Only
+Size:	5 bits
+Desc:	specify the column (0-31) at which to start the on-screen display
+Note:	writes to register 4 increment this register; on overflow, register 2
+	  is incremented.  This allows text to be displayed without constantly
+	  updating registers 2 and 3
+SeeAlso: I2C 28h/00h,I2C 28h/02h
+--------V-I2804------------------------------
+I2C 28h/04h - Philips SAA5252 - ON-SCREEN DISPLAY DATA
+Access:	Write-Only
+Size:	7 bits
+Desc:	write the specified character at the current on-screen display position
+	  as specified by registers 2 and 3, updating them so that the next
+	  write will use the next screen position
+SeeAlso: I2C 28h/00h,I2C 28h/02h,I2C 28h/03h,I2C 28h/81h
+--------V-I2880------------------------------
+I2C 28h/80h - Philips SAA5252 - STATUS
+Access:	Read-Only
 Desc:	the SAA5252 is a closed-captioning text decoder
-----------I2881------------------------------
-I2C 28h/81h - Philips SAA5252 -
-----------I2882------------------------------
-I2C 28h/82h - Philips SAA5252 -
-----------I2883------------------------------
-I2C 28h/83h - Philips SAA5252 -
-Desc:	the SAA5252 is a closed-captioning text decoder
+Note:	on reads, the register index autoincrements until it reaches 82h,
+	  allowing all read registers to be retrieved with a single I2C
+	  telegram
+SeeAlso: I2C 28h/81h,I2C 28h/00h,I2C 28h/04h
+
+Bitfields for SAA5252 status flags:
+Bit(s)	Description	(Table I067)
+ 7	power-on reset has occurred (all write registers cleared to 00h)
+ 6-4	reserved (0)
+ 3	data bytes are from Field 2
+ 2	following data bytes are extended data service bytes
+ 1	5252 shutdown due to parity error
+ 0	data ready (see I2C 28h/81h)
+SeeAlso: #I011,#I068
+--------V-I2881------------------------------
+I2C 28h/81h - Philips SAA5252 - DATA BYTE 1
+Access:	Read-Only
+Desc:	get the first data byte from the most recently received line of closed-
+	  captioning data
+SeeAlso: I2C 28h/00h,I2C 28h/80h,I2C 28h/82h
+
+Bitfields for SAA5252 data byte:
+Bit(s)	Description	(Table I068)
+ 6-0	decoded closed-captioning character
+ 7	parity error
+SeeAlso: #I067
+--------V-I2882------------------------------
+I2C 28h/82h - Philips SAA5252 - DATA BYTE 2
+Access:	Read-Only
+Desc:	get the second data byte from the most recently received line of
+	  closed-captioning data
+SeeAlso: I2C 28h/00h,I2C 28h/80h,I2C 28h/81h,#I067
+--------V-I40--------------------------------
+I2C 40h - Harris HMP8154/8156/8156A
+Desc:	the HMP8154 and HMP8156(A) are NTSC/PAL video encoders
+Range:	I2C addresses 40h or 42h, depending on the state of an external pin
+Note:	on the Harris parts, register 00h is the product ID register; it
+	  contains 54h to identify the device as an 8154 or 8156A, 56h to
+	  identify the devices as an 8156
+--------V-I40--------------------------------
+I2C 40h - Harris HMP8170/8171/8172/8173
+Desc:	the HMP817x are NTSC/PAL video encoders
+Range:	I2C addresses 40h or 42h, depending on the state of an external pin
+--------V-I42--------------------------------
+I2C 42h - Harris HMP8154/8156/8156A
+Desc:	the HMP8154 and HMP8156(A) are NTSC/PAL video encoders
+Range:	I2C addresses 40h or 42h, depending on the state of an external pin
+Note:	on the Harris parts, register 00h is the product ID register; it
+	  contains 54h to identify the device as an 8154 or 8156A, 56h to
+	  identify the devices as an 8156
+--------V-I42--------------------------------
+I2C 42h - Harris HMP8170/8171/8172/8173
+Desc:	the HMP817x are NTSC/PAL video encoders
+Range:	I2C addresses 40h or 42h, depending on the state of an external pin
+--------V-I4800------------------------------
+I2C 48h/00h - Philips SAA7111 - CHIP VERSION
+Range:	I2C 48h or I2C 4Ah, selected by external pin
+SeeAlso: I2C 4Ah
+--------V-I481F------------------------------
+I2C 48h/1Fh - Philips SAA7111 - STATUS
+Access:	Read-Only
+Range:	I2C 48h or I2C 4Ah, selected by external pin
+SeeAlso: I2C 4Ah
+--------V-I4A--------------------------------
+I2C 4Ah - Philips SAA7111
+Range:	I2C 48h or I2C 4Ah, selected by external pin
+SeeAlso: I2C 48h/00h
 ----------I8600------------------------------
 I2C 86h/00h - ITT VPX 32xx/322xD - JEDEC MANUFACTURER ID
 Access:	Read-Only
@@ -377,10 +614,10 @@ Values for ITT VPX 32xx FPRAM index:
  41h	measured sync amplitude				(see I2C 86h/28h/41h)
  42h	??? status (signed)
  43h	??? position of hsync color attenuation? (signed)
- 44h	???
- 45h	??? status
+ 44h	??? (032h)
+ 45h	??? status (000h/004h)
  46h	??? status
- 47h	??? adj for hsync rate
+ 47h	??? adj for hsync rate (507h for 525/60 standards, 510h for 625/50)
  48h	??? status
  49h	??? status
  4Ah	??? status
@@ -604,7 +841,7 @@ SeeAlso: I2C 86h/28h,I2C 86h/29h
 Bitfields for VPX 32xx/VDP 31xxB Automatic Standard Recognition status:
 Bit(s)	Description	(Table I033)
  0	vertical sync detected
- 1	horizontally ocked
+ 1	horizontally locked
  2	reserved
  3	color amplitude killer active
  4	(VDP31xxB) disable color amplitude killer
@@ -965,7 +1202,7 @@ Bit(s)	Description	(Table I041)
  1	recognition routine is running
  4-2	detected TV standard (see #I039)
  5	'no video' flag
- 9-6	high score from recognition routing
+ 9-6	high score from recognition routine
 	1111 'perfect' (maximum score)
 	0000 'no video' (minimum score)
  10	line standard
@@ -1371,20 +1608,402 @@ I2C 86h/FAh - ITT VPX 32xx - Unimplemented
 Note:	all of the VPX 32xx registers which are not listed above appear to
 	  be unimplemented; they always return FFh on reads and have no
 	  apparent effect on writes
+--------V-I88--------------------------------
+I2C 88h - Harris HMP8112 / HMP8112A / HMP8115
+Desc:	the HMP8112 and 8115 are NTSC/PAL video decoders
+!!!harris\fn4221.pdf, harris\fn4283.pdf, harris\fn4407.pdf
+--------V-I88--------------------------------
+I2C 88h - Philips TDA4885
+Desc:	the TDA4885 is the "150 MHz video controller with I2C bus"
+!!!philips\2505.pdf p.30
+--------V-I8800------------------------------
+I2C 88h/00h - Brooktree Bt819A - DEVICE STATUS
+Desc:	the Bt819A, Bt817A, and Bt815A are video decoders
+Range:	I2C addresses 88h or 8Ah
+SeeAlso: I2C 88h/00h
+--------V-I8801------------------------------
+I2C 88h/01h - Brooktree Bt819A - INPUT FORMAT
+Desc:	the Bt819A, Bt817A, and Bt815A are video decoders
+SeeAlso: I2C 88h/00h
+--------V-I8802------------------------------
+I2C 88h/02h - Brooktree Bt819A - TEMPORAL DECIMATION
+Desc:	the Bt819A, Bt817A, and Bt815A are video decoders
+SeeAlso: I2C 88h/00h
+--------V-I8803------------------------------
+I2C 88h/03h - Brooktree Bt819A - MSB Cropping
+Range:	I2C addresses 88h or 8Ah
+SeeAlso: I2C 88h/00h
+--------V-I8804------------------------------
+I2C 88h/04h - Brooktree Bt819A - VERTICAL DELAY (LOW BYTE)
+SeeAlso: I2C 88h/00h
+--------V-I8805------------------------------
+I2C 88h/05h - Brooktree Bt819A - VERTICAL ACTIVE (LOW BYTE)
+SeeAlso: I2C 88h/00h
+--------V-I8806------------------------------
+I2C 88h/06h - Brooktree Bt819A - HORIZONTAL DELAY (LOW BYTE)
+Desc:	the Bt819A, Bt817A, and Bt815A are video decoders
+SeeAlso: I2C 88h/00h
+--------V-I8807------------------------------
+I2C 88h/07h - Brooktree Bt819A - HORIZONTAL ACTIVE (LOW BYTE)
+Range:	I2C addresses 88h or 8Ah
+SeeAlso: I2C 88h/00h
+--------V-I8808------------------------------
+I2C 88h/08h - Brooktree Bt819A - HORIZONTAL SCALING (HIGH BYTE)
+Desc:	the Bt819A, Bt817A, and Bt815A are video decoders
+SeeAlso: I2C 88h/00h
+--------V-I8809------------------------------
+I2C 88h/09h - Brooktree Bt819A - HORIZONTAL SCALING (LOW BYTE)
+SeeAlso: I2C 88h/00h
+--------V-I880A------------------------------
+I2C 88h/0Ah - Brooktree Bt819A - BRIGHTNESS CONTROL
+Range:	I2C addresses 88h or 8Ah
+SeeAlso: I2C 88h/00h
+--------V-I880B------------------------------
+I2C 88h/0Bh - Brooktree Bt819A - MISCELLANEOUS CONTROL
+Desc:	the Bt819A, Bt817A, and Bt815A are video decoders
+SeeAlso: I2C 88h/00h
+--------V-I880C------------------------------
+I2C 88h/0Ch - Brooktree Bt819A - LUMA GAIN (CONTRAST), LOW BYTE
+SeeAlso: I2C 88h/00h
+--------V-I880D------------------------------
+I2C 88h/0Dh - Brooktree Bt819A - CHROMA U GAIN (SATURATION), LOW BYTE
+Range:	I2C addresses 88h or 8Ah
+SeeAlso: I2C 88h/00h
+--------V-I880E------------------------------
+I2C 88h/0Eh - Brooktree Bt819A - CHROMA V GAIN (SATURATION), HIGH BYTE
+Desc:	the Bt819A, Bt817A, and Bt815A are video decoders
+SeeAlso: I2C 88h/00h
+--------V-I880F------------------------------
+I2C 88h/0Fh - Brooktree Bt819A - HUE CONTROL
+SeeAlso: I2C 88h/00h
+--------V-I8812------------------------------
+I2C 88h/12h - Brooktree Bt819A - OUTPUT FORMAT
+Range:	I2C addresses 88h or 8Ah
+SeeAlso: I2C 88h/00h
+--------V-I8813------------------------------
+I2C 88h/13h - Brooktree Bt819A - VERTICAL SCALING, HIGH BYTE
+Desc:	the Bt819A, Bt817A, and Bt815A are video decoders
+SeeAlso: I2C 88h/00h
+--------V-I8814------------------------------
+I2C 88h/14h - Brooktree Bt819A - VERTICAL SCALING, LOW BYTE
+SeeAlso: I2C 88h/00h
+--------V-I8815------------------------------
+I2C 88h/15h - Brooktree Bt819A - TEST CONTROL
+Range:	I2C addresses 88h or 8Ah
+SeeAlso: I2C 88h/00h
+--------V-I8816------------------------------
+I2C 88h/16h - Brooktree Bt819A - VIDEO TIMING POLARITY REGISTER
+SeeAlso: I2C 88h/00h
+--------V-I8817------------------------------
+I2C 88h/17h - Brooktree Bt819A - ID CODE
+Desc:	the Bt819A, Bt817A, and Bt815A are video decoders
+SeeAlso: I2C 88h/00h
+--------V-I8818------------------------------
+I2C 88h/18h - Brooktree Bt819A - AGC DELAY
+Range:	I2C addresses 88h or 8Ah
+SeeAlso: I2C 88h/00h
+--------V-I8819------------------------------
+I2C 88h/19h - Brooktree Bt819A - BURST GATE DELAY
+SeeAlso: I2C 88h/00h
+--------V-I881A------------------------------
+I2C 88h/1Ah - Brooktree Bt819A - ADC INTERFACE
+Desc:	the Bt819A, Bt817A, and Bt815A are video decoders
+SeeAlso: I2C 88h/00h
+--------V-I881F------------------------------
+I2C 88h/1Fh - Brooktree Bt819A - SOFTWARE RESET
+Desc:	any write to this register will reset the state back to power-on
+	  defaults
+Range:	I2C addresses 88h or 8Ah
+SeeAlso: I2C 88h/00h
+--------V-I8A--------------------------------
+I2C 8Ah - Philips TDA837x - economy PAL/NTSC TV Processors
+Note:	!!!philips\2191.pdf p.17
 --------V-I8A00------------------------------
 I2C 8Ah/00h - ITT VDP 3108 - Color Lookup Table (array)
 Size:	16 entries of 12 bits each (at subaddresses 00h-0Fh)
 Desc:	the ITT VDP 3108 is a video display processor containing all necessary
 	  circuitry to process a video signal and control a CRT (e.g. a TV
 	  on a chip)
+--------V-I8A00------------------------------
+I2C 8Ah/00h - Philips TDA8366 - SOURCE SELECT / STATUS 1
+Desc:	the TDA8366 is an I2C-bus controlled PAL/NTSC TV Processor
+Note:	subaddresses auto-increment, allowing any or all of registers 00h to
+	  13h to be written in a single I2C telegram
+SeeAlso: I2C 8Ah/01h"TDA8366",I2C 8Ah/03h"TDA8366"
+
+Bitfields for TDA8366 Source Select (write-only):
+Bit(s)	Description	(Table I069)
+ 7-6	source select 1: decoder and text
+	00 CVBS(int)
+	01 CVBS(ext)
+	10 S-VHS
+	11 S-VHS (CVBSext)
+ 5-4	source select 2: picture-in-picture
+	(same values as bits 7-6)
+ 3-2	phase 1 time constant
+	00 normal
+	01 slow
+	1x fast
+ 1-0	crystal
+	00 two 3.58 MHz
+	01 one 3.58 MHz (on Pin32)
+	10 one 3.58 MHz (on Pin33)
+	11 3.58 MHz on Pin32 and 4.4 MHz on Pin33
+SeeAlso: #I070,#I85
+
+Bitfields for TDA8366 Status 1 (read-only):
+Bit(s)	Description	(Table I085)
+ 7	"POR" power-on reset flag
+ 6	"FSI" field frequency (0 = 50 Hz, 1 = 60 Hz)
+ 5	"STS" S-VHS input signal present
+ 4	"SL" Phase 1 is locked
+ 3	"XPR" X-ray protection: overvoltage detected
+ 2-0	color decoder mode (see #I087)
+SeeAlso: #I069,#I086
+
+(Table I087)
+Values for TDA8366 color decoder mode:
+ 000b	automatic detection (write) / none identified (read)
+ 001b	force NTSC 3.58 MHz
+ 010b	force PAL 4.4 MHz
+ 011b	force SECAM
+ 100b	force NTSC 4.4 MHz
+ 101b	force PAL 3.58 MHz (crystal on Pin32) 
+ 110b	force PAL 3.58 MHz (crystal on Pin33) 
+ 111b	reserved
+SeeAlso: #I085,#I070
+--------V-I8A01------------------------------
+I2C 8Ah/01h - Philips TDA8366 - DECODER MODE / STATUS 2
+SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/02h"TDA8366"
+
+Bitfields for TDA8366 Decoder Mode (write-only):
+Bit(s)	Description	(Table I070)
+ 7-6	field frequency
+	00 auto-detect, 60 Hz when not synchronized
+	01 60 Hz
+	10 50 Hz
+	11 auto-detect, 50 Hz when not synchronized
+ 5	de-interlace
+ 4	standby status
+	0 standby
+	1 normal
+ 3	disable synchronization mode
+ 2-0	color decoder mode (see #I087)
+Note:	when bits 7-6 are changed, a new frequency is only set when not
+	  currently synchronized
+SeeAlso: #I069,#I071,#I086
+
+Bitfields for TDA8366 Status 2 (read-only):
+Bit(s)	Description	(Table I086)
+ 7	"NDF" vertical output stage has failed
+ 6	"IN1" RGB insertion (Pin24) is active
+ 5	reserved
+ 4	"IFI" video signal identified
+ 3-2	AFC output
+	00 too low
+	01 too high
+	10 in window but below reference
+	11 in window but above reference
+ 1-0	reserved
+SeeAlso: #I085,#I070
+Note:	!!!philips\2086.pdf p.14
+--------V-I8A02------------------------------
+I2C 8Ah/02h - Philips TDA8366 - HUE (COLOR) CONTROL
+Desc:	the TDA8366 is an I2C-bus controlled PAL/NTSC TV Processor
+Access:	Write-Only
+SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/01h"TDA8366",I2C 8Ah/03h"TDA8366"
+
+Bitfields for TDA8366 Hue Control:
+Bit(s)	Description	(Table I071)
+ 7-6	reserved
+ 5-0	hue
+SeeAlso: #I070,#I072
+--------V-I8A03------------------------------
+I2C 8Ah/03h - Philips TDA8366 - HORIZONTAL SHIFT
+Access:	Write-Only
+SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/02h"TDA8366",I2C 8Ah/0Bh"TDA8366"
+
+Bitfields for TDA8366 Horizontal Shift:
+Bit(s)	Description	(Table I072)
+ 7-6	reserved
+ 5-0	horizontal shift value
+SeeAlso: #I071,#I073
+--------V-I8A04------------------------------
+I2C 8Ah/04h - Philips TDA8366 - EAST-WEST WIDTH
+Size:	6 bits
+Access:	Write-Only
+SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/03h"TDA8366",I2C 8Ah/05h"TDA8366"
+SeeAlso: I2C 8Ah/06h"TDA8366",I2C 8Ah/07h"TDA8366",I2C 8Ah/08h"TDA8366"
+--------V-I8A05------------------------------
+I2C 8Ah/05h - Philips TDA8366 - EAST-WEST PARABOLA/WIDTH
+Size:	6 bits
+Access:	Write-Only
+SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/04h"TDA8366",I2C 8Ah/06h"TDA8366"
+--------V-I8A06------------------------------
+I2C 8Ah/06h - Philips TDA8366 - EAST-WEST CORNER PARABOLA
+Size:	6 bits
+Access:	Write-Only
+SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/05h"TDA8366",I2C 8Ah/07h"TDA8366"
+--------V-I8A07------------------------------
+I2C 8Ah/07h - Philips TDA8366 - EAST-WEST TRAPEZIUM
+Size:	6 bits
+Access:	Write-Only
+SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/06h"TDA8366",I2C 8Ah/08h"TDA8366"
+--------V-I8A08------------------------------
+I2C 8Ah/08h - Philips TDA8366 - VERTICAL SLOPE
+Access:	Write-Only
+SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/07h"TDA8366",I2C 8Ah/09h"TDA8366"
+
+Bitfields for TDA8366 Vertical Slope Control:
+Bit(s)	Description	(Table I073)
+ 7	"NCIN" vertical divider mode
+	=1 switched to search window
+ 6	reserved
+ 5-0	vertical slope
+SeeAlso: #I072,#I074
+--------V-I8A09------------------------------
+I2C 8Ah/09h - Philips TDA8366 - VERTICAL AMPLITUDE
+Access:	Write-Only
+SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/08h"TDA8366",I2C 8Ah/0Ah"TDA8366"
+
+Bitfields for TDA8366 Vertical Amplitude Control:
+Bit(s)	Description	(Table I074)
+ 7	"VID" disable video identification mode
+ 6	"LBM" force long blanking mode to 50 Hz standard
+	=0 adapt to either 50 or 60 Hz
+ 5-0	vertical amplitude
+SeeAlso: #I073,#I075
+--------V-I8A0A------------------------------
+I2C 8Ah/0Ah - Philips TDA8366 - S-CORRECTION
+Access:	Write-Only
+SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/09h"TDA8366",I2C 8Ah/0Bh"TDA8366"
+
+Bitfields for TDA8366 S-Correction:
+Bit(s)	Description	(Table I075)
+ 7	"HCO" enable EHT tracking on East-West as well as vertical
+ 6	"EVG" enable vertical guard (RGB blanking)
+ 5-0	S-correction value
+SeeAlso: #I074,#I076
+--------V-I8A0B------------------------------
+I2C 8Ah/0Bh - Philips TDA8366 - VERTICAL SHIFT
+Access:	Write-Only
+SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/03h"TDA8366",I2C 8Ah/0Ch"TDA8366"
+
+Bitfields for TDA8366 Vertical Shift:
+Bit(s)	Description	(Table I076)
+ 7	"SBL" enable service blanking mode
+ 6	"PRD" trigger overvoltage protection mode
+ 5-0	vertical shift value
+SeeAlso: #I075,#I077
+--------V-I8A0C------------------------------
+I2C 8Ah/0Ch - Philips TDA8366 - WHITE POINT (RED)
+Desc:	the TDA8366 is an I2C-bus controlled PAL/NTSC TV Processor
+Access:	Write-Only
+SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/02h"TDA8366",I2C 8Ah/0Dh"TDA8366"
+
+Bitfields for TDA8366 White Point (Red):
+Bit(s)	Description	(Table I077)
+ 7-6	vertical deflection mode
+	00 normal
+	01 compress
+	10 expand
+	11 expand and lift
+ 5-0	white point (red) value
+SeeAlso: #I076,#I078
+--------V-I8A0D------------------------------
+I2C 8Ah/0Dh - Philips TDA8366 - WHITE POINT (GREEN)
+Access:	Write-Only
+SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/0Ch"TDA8366",I2C 8Ah/0Eh"TDA8366"
+
+Bitfields for TDA8366 White Point (Green):
+Bit(s)	Description	(Table I078)
+ 7	"SFM" start-up horizontal frequency
+	=0 maximum
+	=1 nominal
+ 6	"CVS" Y-input mode
+	=0 Y/C
+	=1 CVBS
+ 5-0	white point (green) value
+SeeAlso: #I077,#I079
+--------V-I8A0E------------------------------
+I2C 8Ah/0Eh - Philips TDA8366 - WHITE POINT (BLUE)
+Access:	Write-Only
+SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/0Ch"TDA8366",I2C 8Ah/0Dh"TDA8366"
+
+Bitfields for TDA8366 White Point (Blue):
+Bit(s)	Description	(Table I079)
+ 7	"MAT" force PAL matrix, instead of adapting to video standard
+ 6	"PHL" allow color crystal PLL to free-run
+ 5-0	whilte point (blue) value
+SeeAlso: #I078,#I080
+--------V-I8A0F------------------------------
+I2C 8Ah/0Fh - Philips TDA8366 - PEAKING
+Access:	Write-Only
+SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/0Eh"TDA8366",I2C 8Ah/10h"TDA8366"
+
+Bitfields for TDA8366 Peaking:
+Bit(s)	Description	(Table I080)
+ 7-4	Y-delay adjustment (bits 7-5 * 40 ns + bit 4 * 40ns) [*]
+	(normally set to 1000)
+ 3-0	peaking value
+Note:	[*] the weights given for bits 7-4 are as in the official
+	  documentation; bit 4 may actually be 20ns
+SeeAlso: #I079,#I081
 --------V-I8A10------------------------------
 I2C 8Ah/10h - ITT VDP 31xxB - Output Pin Configuration
+--------V-I8A10------------------------------
+I2C 8Ah/10h - Philips TDA8366 - BRIGHTNESS
+Access:	Write-Only
+SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/11h"TDA8366",I2C 8Ah/12h"TDA8366"
+
+Bitfields for TDA8366 Brightness Control:
+Bit(s)	Description	(Table I081)
+ 7	"RBL" RGB blanking is active
+ 6	"COR" enable noise coring (peaking)
+ 5-0	brightness value
+SeeAlso: #I080,#I082,#I083
 --------V-I8A11------------------------------
 I2C 8Ah/11h - ITT VDP 31xxB - Picture Frame Color
+--------V-I8A11------------------------------
+I2C 8Ah/11h - Philips TDA8366 - SATURATION
+Access:	Write-Only
+SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/10h"TDA8366",I2C 8Ah/12h"TDA8366"
+
+Bitfields for TDA8366 Saturation Control:
+Bit(s)	Description	(Table I082)
+ 7	"IE1" enable fast blanking
+ 6	reserved
+ 5-0	saturation value
+SeeAlso: #I081,#I083,#I084
 --------V-I8A12------------------------------
 I2C 8Ah/12h - ITT VDP 3108 - ???
+--------V-I8A12------------------------------
+I2C 8Ah/12h - Philips TDA8366 - CONTRAST
+Access:	Write-Only
+SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/10h"TDA8366",I2C 8Ah/11h"TDA8366"
+
+Bitfields for TDA8366 Contrast Control:
+Bit(s)	Description	(Table I083)
+ 7	"AFW" enlarge AFC window to 240 kHz
+ 6	"IFS" reduce IF sensitivity
+ 5-0	contrast value
+SeeAlso: #I082,#I084
 --------V-I8A13------------------------------
 I2C 8Ah/13h - ITT VDP 3108 - White Drive Measurement Control
+--------V-I8A13------------------------------
+I2C 8Ah/13h - Philips TDA8366 - AGC TAKE-OVER
+Desc:	the TDA8366 is an I2C-bus controlled PAL/NTSC TV Processor
+Access:	Write-Only
+SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/10h"TDA8366",I2C 8Ah/FEh"TDA8366"
+
+Bitfields for TDA8366 AGC Take-Over Control:
+Bit(s)	Description	(Table I084)
+ 7	"MOD" modulation standard
+	=0 negative (i.e. SECAM)
+	=1 positive
+ 6	"VSW" switch off IF-video signal
+ 5-0	AGC take-over value
+SeeAlso: #I-83
 --------V-I8A14------------------------------
 I2C 8Ah/14h - ITT VDP 3108 - Luma/Chroma Matching Delay
 --------V-I8A15------------------------------
@@ -1716,6 +2335,10 @@ I2C 8Ah/7Dh - ITT VDP 3108 - Enable Black Level Expander
 I2C 8Ah/7Eh - ITT VDP 3108 - Delay from Flyback to Main Sync
 --------V-I8A7F------------------------------
 I2C 8Ah/7Fh - ITT VDP 3108 - Tube Measurement Line
+--------V-I8AFE------------------------------
+I2C 8Ah/FEh - Philips TDA8366 - TEST REGISTER
+Desc:	the TDA8366 is an I2C-bus controlled PAL/NTSC TV Processor
+SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/13h"TDA8366"
 --------V-I8E12------------------------------
 I2C 8Eh/12h - ITT VDP 31xxB - Black Line Detector
 --------V-I8E1F------------------------------
@@ -1764,11 +2387,59 @@ Values for ITT VDP 31xxB Fast Processor register:
  F7h	crystal oscillator line-locked mode
  F8h	crystal oscillator center adjust
  F9h	crystal oscillator center adjust (line-locked mode)
+--------V-I9C00------------------------------
+I2C 9Ch/00h - Philips SAA7110(A) ONE-CHIP FRONT-END - INCREMENT DELAY
+Range:	I2C addresses 9Ch or 9Eh, determined by external pin
+SeeAlso: I2C 9Eh
+--------V-I9C01------------------------------
+I2C 9Ch/01h - Philips SAA7110(A) ONE-CHIP FRONT-END - HSY BEGIN 50 Hz
+SeeAlso: I2C 9Eh
+--------V-I9C02------------------------------
+I2C 9Ch/02h - Philips SAA7110(A) ONE-CHIP FRONT-END - HSY STOP 50 Hz
+SeeAlso: I2C 9Eh
+--------V-I9E--------------------------------
+I2C 9Eh - Philips SAA7110(A) ONE-CHIP FRONT-END
+Range:	I2C addresses 9Ch or 9Eh, determined by external pin
+SeeAlso: I2C 9Ch/00h
+--------m-IA0--------------------------------
+I2C A0h - EEPROM (Xicor X24C01A, etc.)
+Access:	Read/Write
+Range:	I2C addresses A0h,A2h,A4h,...,AEh, depending on external pin inputs
+Notes:	the I2C specification defines bus addresses Axh for use by memory
+	  devices (EEPROMs, etc.)
+	in general, any byte of an EEPROM may be written by sending a three-
+	  byte I2C telegram consisting of the bus address, the byte address
+	  within the device, and the new value for that memory location
+	for the X24C01A and other devices, an entire page may be written with
+	  a single telegram by writing the bus address, start address of the
+	  page, and one page's worth of data bytes
+	in general, EEPROMs maintain a current-location pointer, so that
+	  any reads start at that location within the device and increment
+	  the pointer for each byte read; random reads are possible by writing
+	  the desired new address to the EEPROM (i.e. perform a write as though
+	  setting a memory location, but either terminate the telegram or send
+	  a repeated start condition after the address byte)
+	after a write, the X24C01A and most other EEPROMs will no longer ACK
+	  telegrams directed at the device until the internal write cycle is
+	  completed, which may take several milliseconds
+--------m-IA0--------------------------------
+I2C A0h - VESA DDC monitor's EDID EEPROM
+Note:	access to the DDC clock/data lines is chipset-specific.  On S3's
+	  Trio64V+, the DDC lines share a port with the LPB's I2C bus: when the
+	  feature connector is disabled, they are connected to the monitor
+	  as well to the Local Peripheral Bus' serial port lines
+SeeAlso: INT 10/AX=4F15h/BL=01h
 --------m-IA0--------------------------------
 I2C A0h - SDRAM - Serial Presence Detect
 Access:	Read/Write
 Size:	256 BYTEs
 Range:	I2C addresses A0h,A2h,A4h,...,AEh, depending on the DIMM slot.
+Notes:	the I2C specification defines bus addresses Axh for use by memory
+	  devices (EEPROMs, etc.)
+	the clues I have been able to gather so far are that at least the Intel
+	  430TX and 440LX chipsets use the SMBus software interface to I2C to
+	  access the SPD (can anyone verify this?)
+SeeAlso: INT 15/AX=53B0h/BH=01h
 
 Format of SDRAM Serial Presence Detect Data:
 Offset	Size	Description	(Table I047)
@@ -1974,56 +2645,247 @@ Bit(s)	Description	(Table I060)
 Note:	bits 2-1 are for backwards compatibility with existing BIOSes; for
 	  full CL=2 support at 100 MHz, check bytes 12h, 17h, and 18h
 SeeAlso: #I047
-----------IC2--------------------------------
-I2C C2h - ??? Tuner - SET TUNER FREQUENCY
+--------s-IB4--------------------------------
+I2C B4h - TDA9850 BTSC Stereo/SAP Decoder
+Range:	I2C addresses B4h and B6h, selectable by external pin
+--------s-IB6--------------------------------
+I2C B6h - TDA9850 BTSC Stereo/SAP Decoder
+Range:	I2C addresses B4h and B6h, selectable by external pin
+----------IC0--------------------------------
+I2C C0h - Philips TSA5522/TSA5523M Frequency Synthesizer - SET TUNER FREQUENCY
 Access:	Write
 Size:	4 BYTEs
-Desc:	the tuner is programmed by writing four bytes: high byte of Freq*16,
-	  low byte of Freq*16, high byte of band, and low byte of band
-Note:	Freq is the desired frequency in MHz
+Range:	I2C addresses C0h, C2h, C4h, or C6h, selectable by external pin
+Desc:	the tuner is programmed by writing four bytes: high byte of Freq
+	  (bit 7 must be 0), low byte of Freq, high byte of band (bit 7 must
+	  be 1), and low byte of band.
+Notes:	Freq is the 16 * (desired frequency in MHz + IF frequency), assuming
+	  a reference divisor of 512; multiply by 20 or 32 for divisors 640
+	  and 1024.  (IF = 47 [2Fh] typically)
+	the FI1236MK2 is software-compatible with the TSA5523M
+	the TSA5055T is also software-compatible, with the exception that the
+	  step size is fixed at 125 kHz (for a 4MHz external crystal) in order
+	  to provide a top frequency of 2.5 GHz
+	the TSA5512 and TSA5515T are also software-compatible, with a step size
+	  fixed at 62.5 kHz (with a 4MHz external crystal); on the 5515T, only
+	  output ports P1, P2, and P7 are available
+	because the high bits of the first and third data bytes distinguish
+	  between frequency and control bytes, either half may be programmed
+	  independently; when switching bands and the new frequency is less
+	  than the current frequency, Philips recommends sending the control
+	  bytes first to avoid unnecessary charge pump action which can push
+	  the tuner into extreme states
+Index:	TSA5505T;TSA5512;TSA5515T;FI1236MK2
 
-Bitfields for ??? Tuner band:
+Bitfields for Philips TSA5523M Tuner band:
 Bit(s)	Description	(Table I009)
- 2-0	TV standard???
-	001 NTSC channels 14-62, 65+
-	010 NTSC channels 1-6, cable 95-99
-	100 PAL, NTSC channels 7-13, 63, 64
-	110 SECAM
- 7-3	apparently ignored
- 15-8	??? (only 1xx0x110 seems to work; other values may cause the tuner to
-	  approximately tune to one of three or four different channels,
-	  depending on the original frequence and band)
+ 7-0	open-collector control bits
+	each bit turns on one NPN transistor
+ 2-0	(TSA5522) band-switch
+	001 Band C (430-810 MHz)
+	010 Band A (50-180 MHz)
+	100 Band B (160-470 MHz)
+ 3	(TSA5522) don't care -- no external connection
+ 7,5,4	(TSA5523M) band-switch
+	011 put 0.8V on Pin BS (Philips Mixer/Oscillator Band C)
+	101 put 0.4V on Pin BS (Philips M/O Band B)
+	110 put 0.25V on Pin BS (Philips M/O Band A)
+	111 put Vcc on Pin BS (Philips Mixer/Oscillator Band C)
+	other: same as 111
+ 8	tuning amplifier control
+	=0 normal operation (on)
+	=1 disable charge pump (off)
+ 10-9	reference divider ratio select
+	x0 = 640 (yields 50 kHz step size)
+	01 = 1024 (yields 31.25 kHz step size)
+	11 = 512 (yields 62.5 kHz step size)
+	(TSA5055T) these bits are officially supposed to be 11
+	(TSA5512) these bits are officially supposed to be 11
+ 13-11	test bits
+	001 normal operation
+	01x charge pump off
+	100 f_ref is available on P6 output (5523M) or LOCK output (5522)
+	101 f_div2 is available on P6 output (5523M) or LOCK output (5522)
+	110 charge pump is sinking current
+	111 charge pump is sourcing current
+ 14	charge-pump current (0 = 50 microamperes, 1 = 250 uA)
+	=1 gives faster tuning, =0 better residual FM
+ 15	must be set (indicates control byte for partial programming)
+Note:	on the Stealth64 Video 2001TV, bits 7-3 appear to be ignored
+SeeAlso: #I064
+----------IC0--------------------------------
+I2C C0h - Philips TSA5523M Frequency Synthesizer - STATUS
+Range:	I2C addresses C0h, C2h, C4h, or C6h, selectable by external pin
+
+Bitfields for TSA5523M status:
+Bit(s)	Description	(Table I064)
+ 7	Power-On Reset flag (cleared after first read)
+ 6	PLL is phase-locked
+ 5	digital level of P2 (requires that open-collector control bit 2 = 0)
+ 4	digital level of P1 (requires that open-collector control bit 1 = 0)
+ 3	digital level of P0 (requires that open-collector control bit 0 = 0)
+ 2-0	voltage applied to P6 (+- 0.03V)
+	000 = 0.00-0.15V
+	001 = 0.15-0.30V
+	010 = 0.30-0.45V
+	011 = 0.45-0.60V
+	100 = 0.60V - Vcc
+SeeAlso: #I009
+----------IC2--------------------------------
+I2C C2h - Philips FI1236MK2 Tuner - SET TUNER FREQUENCY
+Range:	I2C addresses C0h, C2h, C4h, or C6h, selectable by external pin
+Note:	this is the address used by the Stealth64 Video 2001TV video board
+SeeAlso: I2C C0h,#I009
 ----------IC200------------------------------
-I2C C2h/00h - ??? Tuner - TUNER STATUS
+I2C C2h/00h - Philips FI1236MK2 Tuner - TUNER STATUS
 Access:	Read
 
 Bitfields for ??? Tuner status:
 Bit(s)	Description	(Table I008)
  1	tuner is locked onto TV signal
+--------V-IE0--------------------------------
+I2C E0h - TDA8443A - I2C-bus controlled YUV/RGB switch
+Range:	I2C addresses E0h, E2h, E4h, ... EEh, selectable by external pins
+Note:	!!!philips\2101.pdf p.11
+----------IF8--------------------------------
+I2C F8h - 10-bit addressing - Device addresses 0xxh
+Desc:	in the new I2C standard, devices may have 10-bit addresses instead of
+	  7-bit addresses.  Use of 10-bit addressing is indicated by generating
+	  a bus address with the five high bits set; bits 2 and 1 then contain
+	  the high two bits of the actual address and bit 0 is the read/write
+	  bit as before.  The low 8 bits of the device address are then sent
+	  in a second byte.
+SeeAlso: I2C FAh,I2C FCh,I2C FEh
+----------IFA--------------------------------
+I2C FAh - 10-bit addressing - Device addresses 1xxh
+SeeAlso: I2C F8h,I2C FCh,I2C FEh
+----------IFC--------------------------------
+I2C FCh - 10-bit addressing - Device addresses 2xxh
+SeeAlso: I2C F8h,I2C FAh,I2C FEh
+----------IFE--------------------------------
+I2C FEh - 10-bit addressing - Device addresses 3xxh
+SeeAlso: I2C F8h,I2C FAh,I2C FCh
+--------s-Ixx--------------------------------
+I2C xxh - Crystal Semiconductor CS4920/CS4920A/CS4921/CS4922
+Desc:	the CS4920A and CS4922 are MPEG audio decoders
+Note:	the address to which the CS4922 responds must be programmed via the
+	  I2C bus; initially, the chip responds to any address
+	after a reset, the 4922's DSP boot ROM expects to have the RAM loaded
+	  with a microprogram by sending data over I2C (see #I065)
+
+Format of Crystal Semiconductor microprogram data:
+Offset	Size	Description	(Table I065)
+ 00h	WORD	starting address in RAM
+		high three bits ignored; bit 12 indicates program/data memory
+		the CS4920A contains 4K words of program RAM, 2K words data
+		  RAM (of which the high 32 words are used by the debug prog.)
+		the CS4922 contains 5K words of program RAM, 3K words data RAM
+ 02h	WORD	length of block of data
+ 04h 3N BYTEs	sequence of 24-bit words of code or data
+	...	(above may be repeated arbitrarily often)
+	WORD	FFFFh end marker
+      3 BYTEs	24-bit checksum (sum of all previous bytes)
+--------V-Ixx0F------------------------------
+I2C xxh/00h - CS4952/53 - "CONTROL_0"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+SeeAlso: I2C xxh/01h"CS4952",I2C xxh/02h"CS4952"
+
+!!!details to follow   -- 4952.pdf p. 29
+--------V-Ixx0F------------------------------
+I2C xxh/01h - CS4952/53 - "CONTROL_1"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+SeeAlso: I2C xxh/00h"CS4952",I2C xxh/02h"CS4952"
+--------V-Ixx0F------------------------------
+I2C xxh/02h - CS4952/53 - "CONTROL_2"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+SeeAlso: I2C xxh/00h"CS4952",I2C xxh/01h"CS4952"
+--------V-Ixx0F------------------------------
+I2C xxh/04h - CS4952/53 - "DAC"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+--------V-Ixx0F------------------------------
+I2C xxh/07h - CS4952/53 - "STATUS"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+--------V-Ixx0F------------------------------
+I2C xxh/08h - CS4952/53 - "BKG_COLOR"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+--------V-Ixx0F------------------------------
+I2C xxh/09h - CS4952/53 - "GPIO_CTRL_REG"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+--------V-Ixx0F------------------------------
+I2C xxh/0Ah - CS4952/53 - "GPIO_DATA_REG"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+--------V-Ixx0F------------------------------
+I2C xxh/0Dh - CS4952/53 - "C_AMP"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+--------V-Ixx0F------------------------------
+I2C xxh/0Eh - CS4952/53 - "Y_AMP"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+--------V-Ixx0F------------------------------
+I2C xxh/0Fh - CS4952/53 - "I2C_ADR" I2C ADDRESS
+Desc:	specify the I2C bus address to which the CS4952 responds (see #I066)
+	the CS4952 and CS4953 are NTSC/PAL video encoders
+Note:	the power-up default is 00h
+
+Bitfields for CS4952/CS4953 I2C bus address:
+Bit(s)	Description	(Table I066)
+ 7	unused???
+ 6-0	high seven bits of I2C address to which the chip should respond
+--------V-Ixx0F------------------------------
+I2C xxh/10h - CS4952/53 - "SC_AMP"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+--------V-Ixx0F------------------------------
+I2C xxh/11h - CS4952/53 - "SC_SYNTH0"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+--------V-Ixx0F------------------------------
+I2C xxh/12h - CS4952/53 - "SC_SYNTH1"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+--------V-Ixx0F------------------------------
+I2C xxh/13h - CS4952/53 - "SC_SYNTH2"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+--------V-Ixx0F------------------------------
+I2C xxh/14h - CS4952/53 - "SC_SYNTH3"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+--------V-Ixx0F------------------------------
+I2C xxh/15h - CS4952/53 - "HUE_LSB"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+--------V-Ixx0F------------------------------
+I2C xxh/16h - CS4952/53 - "HUE_MSB"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+--------V-Ixx0F------------------------------
+I2C xxh/18h - CS4952/53 - "CC_EN"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+--------V-Ixx0F------------------------------
+I2C xxh/19h - CS4952/53 - "CC_21_1"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+--------V-Ixx0F------------------------------
+I2C xxh/1Ah - CS4952/53 - "CC_21_2"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+--------V-Ixx0F------------------------------
+I2C xxh/1Bh - CS4952/53 - "CC_284_1"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+--------V-Ixx0F------------------------------
+I2C xxh/1Ch - CS4952/53 - "CC_284_2"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+--------V-Ixx0F------------------------------
+I2C xxh/3Bh - CS4952/53 - "INT_EN"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+--------V-Ixx0F------------------------------
+I2C xxh/3Ch - CS4952/53 - "INT_CLR"
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
+--------V-Ixx0F------------------------------
+I2C xxh/3Dh - CS4952/53 - "ID_REG"
+Access:	Read-Only
+Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
 --------!---BIBLIOGRAPHY---------------------
-JEDEC manufacturer ID from http://www.eia.org/jedec/download/jep-106.pdf.
-Added by Ralf Brown, 10/97.
-
-Documented VPX32xx info from file VPX3220.PDF, available from www.itt-sc.de.
-Added by Ralf Brown, 10/97.  (Undocumented info from my own poking around)
-
-VDP 3108 info from file VDP3108.PDF, available from www.itt-sc.de.
-Added by Ralf Brown, 11/97.
-
-VDP 31xxB info from file VDP31xxB.PDF, available from www.itt-sc.de.
-Added by Ralf Brown, 11/97.
-
-SDRAM Serial Presence Detection from file SPDSD_12.PDF, "SDRAM Serial Presence
-Detect (SPD) Data Structure (168- and SO-144 DIMM)", Revision 1.2, November
-1997, available from www.intel.com.  Added by Ralf Brown, 12/20/97.
+[see BIBLIO.LST]
 --------!---Admin----------------------------
-Highest Table Number = I060
+Highest Table Number = I087
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER56A through INTER56D (preferably the original
+quartet of archives named INTER57A through INTER57D (preferably the original
 authenticated PKZIP archives), and the utility and hypertext programs in a trio
-of additional archives called INTER56E.ZIP to INTER56G.ZIP.
+of additional archives called INTER57E.ZIP to INTER57G.ZIP.
 
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
 --------!---CONTACT_INFO---------------------

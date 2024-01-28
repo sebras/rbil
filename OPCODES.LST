@@ -1,17 +1,28 @@
-OPCODES LIST			Release 55		Last change 28sep97
+OPCODES LIST			Release 57		Last change 22mar98
 
 ------------------  OPCODE.LST	----------------------------
 This is DOC 'bout undocument command and document command
 of any last processors. And 'bout some registers and
-Chips specific stuffs. 
-------------------------------------------------------------
- (C) (P) Potemkin's Hackers Group 1994,1995,1996,1997		     
-------------------------------------------------------------
-Revision 3.01				    1 Oct 1997
-------------------------------------------------------------
+Chips specific stuffs.
+ -----------------------------------------------------------
+ (C) (P) Potemkin's Hackers Group 1994...1998
+ -----------------------------------------------------------
+Revision 3.23				    1 Feb 1998
+ -----------------------------------------------------------
 All Your messages send to ->
-E-mail: avp@dvm.msk.ru
-	[This is new mail entry, old is never exist now]
+E-mail: avp@stelth.dvm.msk.ru
+	[This is new mail entry, all older is never exist now]
+-------------------------------------------------------------
+[New In revision 3.22]
+  o  Add Pentium II Perfomance Monitoring Events.
+  o  Add Pentium w/MMX MSRs
+  o  Add more Pentium Pro/Pentium II MSRs.
+-------------------------------------------------------------
+[New In revision 3.03]
+  o  SYSENTER/SYSEXIT instructions
+  o  B and C paging modes (36-bit address support)
+  o  New Identification Info
+  o  PM structures Tables
 -------------------------------------------------------------
 [New In revision 3.01]
   o  Some Bugfixed
@@ -32,10 +43,9 @@ E-mail: avp@dvm.msk.ru
   o  Undefined Instruction  (UD,UD2)
   o  Story About Undocument Flags
   o  AMD Am5k86 MSRs
-  o  News in CPUID for AMD K5/Intel Pentium Pro	
+  o  News in CPUID for AMD K5/Intel Pentium Pro
   o  CR4 Update					... and more
 --------------------------------------------------------------
-
 ----------O-AAA------------------------------------
 OPCODE AAA   -	ASCII adjust AX after addition
 
@@ -58,7 +68,6 @@ Description:
 	}
 	AL <- AL and 0Fh
 
-
 Note: This istruction incorrectly documented in Intel's materials.
       See description field.
 
@@ -68,7 +77,6 @@ Flags Affected:	AF,CF	    (modified)
 Faults:
 	RM	PM	V86	VME
 	None
-
 
 CPU mode: RM,PM,VM,SMM
 
@@ -187,6 +195,7 @@ Type of Instruction: User
 Instruction:  ADD4S
 
 Description:
+
 	BCD STRING (ADDRESS=ES:DI,LENGTH=CL) <-
 	  BCD STRING (ADDRESS=DS:SI,LENGTH=CL) +
 	  BCD STRING (ADDRESS=ES:DI,LENGTH=CL);
@@ -236,7 +245,6 @@ Faults:
 						outside of 0..FFFFh
 		#AC	#AC			if CPL=3 and enable AC.
 
-
 Note:	 (186s&NECs) saved CS:IP BOUND interrupt as pointer to following
       instruction that self.
 	 (286+) saved as pointer to BOUND instruction.
@@ -268,9 +276,9 @@ Type of Instruction: System
 Instruction:  BRKCS  bank
 
 Description:
+
 	Perform a High-Speed Software Interrupt with contex-switch to
 	register bank indicated by the lower 3-bits of 'bank'.
-
 
 Info:	NEC V25/V35/V25 Plus/V35 Plus Bank System
 
@@ -285,7 +293,6 @@ Info:	NEC V25/V35/V25 Plus/V35 Plus Bank System
 	Where xx is Value of IDB register.
 	IBD is Byte Register contained Internal data area base
 	IBD addresses is FFFFFh and xxFFFh where xx is data in IBD.
-
 
 	Format of Bank:
 	+0	Reserved
@@ -344,13 +351,13 @@ Type of Instruction: System
 Instruction:  BRKEM  intnum
 
 Description:
+
 		PUSH	FLAGS
 		PUSH	CS
 		PUSH	IP
 		MOV	CS,0:[intnum*4+2]
 		MOV	IP,0:[intnum*4]
 		MD <- 0;	// Enable 8080 emulation
-
 
 Note:	BRKEM instruction do software interrupt and then New CS,IP loaded
 	it switch to 8080 mode i.e. CPU will execute 8080 code.
@@ -595,8 +602,6 @@ Instruction:  CLEAR1 dest,bitnumb
 Description:
 		BIT  bitnumb OF dest <- 0;
 
-
-
 Flags Affected: None
 
 CPU mode: RM
@@ -630,7 +635,6 @@ Description:
 
 Flags Affected:	None
 
-
 CPU mode: RM,PM,VM,SMM
 
 +++++++++++++++++++++++
@@ -663,9 +667,9 @@ Type of Instruction: User
 Instruction:  CMP4S
 
 Description:
+
 	  SetFlaGS( BCD STRING (ADDRESS=ES:DI,LENGTH=CL) -
 		    BCD STRING (ADDRESS=DS:SI,LENGTH=CL) );
-
 
 Note:	si,di, other registers not changed
 
@@ -812,13 +816,14 @@ Description:
 
 	      ;; for UMC   this string is 'UMC UMC UMC '
 
-		   EBX <- 32434D55H i.e. 'UMC '
-		   EDX <- 32434D55H i.e. 'UMC '
-		   ECX <- 32434D55H i.e. 'UMC '
+		   EBX <- 20434D55H i.e. 'UMC '
+		   EDX <- 20434D55H i.e. 'UMC '
+		   ECX <- 20434D55H i.e. 'UMC '
 
-	      ;; for Cyrix this string is 'CyrixInstead'  (Cx6x86,Cx5x86 steps B+)
-	      ;; for AMD   this string is 'AuthenticAMD'  (K6,K5,486 Enhanced CPUs)
-	      ;; for last NexGen       is 'NexGenDriven'  (Nx5x86 latest models)
+	      ;; for Cyrix this string	is 'CyrixInstead'  (Cx6x86,Cx5x86 steps B+)
+	      ;; for AMD   this string	is 'AuthenticAMD'  (K6,K5,486 Enhanced CPUs)
+	      ;; for last NexGen	is 'NexGenDriven'  (Nx5x86 latest models)
+	      ;; for Centaur Technology	is 'CentaurHauls'  (IDT)
 
 	      }
 
@@ -870,7 +875,8 @@ Description:
 		 EDX[15]<- CMOV: CPU support CMOV instruction
 		 EDX[22..16] <- Reserved
 		 EDX[23] <- MMX: CPU support IA MMX
-		 EDX[31:24] <- Reserved and set to 0s now
+		 EDX[24] <- MMX2: CPU supports fast floating-point save/restore
+		 EDX[31:25] <- Reserved and set to 0s now
 
 	      }
 
@@ -978,7 +984,6 @@ Description:
 	     EAX,EBX,ECX,EDX <- Undefined
 	     }
 	END.
-
 
 Global Note:
 	   This file contain open i.e nonconfiderential information about
@@ -1192,6 +1197,7 @@ Type of Instruction: User
 Instruction: EMMS
 
 Description:
+
 	FloatPointTagWord  <-  FFFFh
 
 Note:	  The EMMS instruction sets the values of the floating-point (FP) tag
@@ -1272,7 +1278,6 @@ Description:
 			   LENGTH =  len
 			 ];
 
-
 Note:	si and start automatically UPDATE
 
 Flags Affected: None
@@ -1329,6 +1334,7 @@ COP (Code of Operation): DBH F1H
 Clocks:	   IIT 2c87    : 242
 	   IIT 3c87    : 242
 	   IIT 3c87SX  : 242
+
 ----------O-FCMOVcc--------------------------------
 OPCODE FCMOVcc	 -  Floating Point Conditional Move
 
@@ -1355,8 +1361,6 @@ NBE	Not BelowEqual	(CF=0 .AND. ZF=0)	>
 U	Unordered	PF=1
 NU	Not Unordered	PF!=1
 
-
-
 CPU mode: RM,PM,VM,SMM
 
 +++++++++++++++++++++++
@@ -1381,6 +1385,7 @@ Type of Instruction:  User
 Instruction:  FuCOMIp  ST0,STi
 
 Description:
+
 	     CASE ( result (compare(ST0,STi) ) OF
 		{	      ;	ZF PF CF
 		Not Comparable: 1  1  1
@@ -1448,10 +1453,11 @@ Type of Instruction: FPU instruction
 Instruction: FNSTDW dest
 
 Description:
+
 	dest <- Device Word
 
 Format of Device word:
-	bit(s)	Description	(Table )
+	bit(s)	Description
 	0-7	Reserved
 	 8	S - Status bit:
 		    if S=1 then FP device is a static design and OS
@@ -1460,7 +1466,6 @@ Format of Device word:
 	9-15	Reserved
 
 Note: Device word register valid only after FNINIT
-
 
 FPU Flags Affected: None
 
@@ -1478,10 +1483,11 @@ Type of Instruction: FPU instruction
 Instruction: FNSTSG dest
 
 Description:
+
 	dest <- Signature Word
 
 Format of Signature word:
-	bit(s)	Description	(Table )
+	bit(s)	Description
 	 3-0	Revision
 	 7-4	Steppin
 	11-8	Family
@@ -1497,9 +1503,7 @@ Note:
 
 Note: This FPU is out of life
 
-
 Note: Signature word register valid only after FNINIT
-
 
 FPU Flags Affected: None
 
@@ -1519,7 +1523,6 @@ Instruction:  FPO2  fp_op,mem
 Description:
 	      This instruction was building for sending FP commands to
 	      NEC NPX which never be realized
-
 
 Flags Affected: None
 
@@ -1544,6 +1547,7 @@ Type of Instruction: FPU instruction
 Instruction: FRICHOP
 
 Description:
+
 	ST <- ROUND ( ST,CHOP )
 
 Note:
@@ -1578,6 +1582,7 @@ Type of Instruction: FPU instruction
 Instruction: FRINEAR
 
 Description:
+
 	ST <- ROUND ( ST,NEAREST )
 
 Note:
@@ -1612,6 +1617,7 @@ Type of Instruction: FPU instruction
 Instruction: FRINT2
 
 Description:
+
 	IF ( exact half ) THEN
 		{
 		ST <- SIGN(ST) * ROUND(ABS(ST)+0.5,NEAREST)
@@ -1686,7 +1692,6 @@ Description:
 
 	;   After initialization FPU select bank # 0.
 
-
 FPU Flags Affected:  None
 
 FPU mode: Any
@@ -1696,6 +1701,7 @@ COP (Code of Operation): DBH E8H
 Clocks:	   IIT 2c87    : 6
 	   IIT 3c87    : 6
 	   IIT 3c87SX  : 6
+
 ----------O-FSBP1----------------------------------
 OPCODE FSBP1 - FPU: Set Bank pointer to Bank # 1
 
@@ -1713,7 +1719,6 @@ Description:
 
 	;   After initialization FPU select bank # 0.
 
-
 FPU Flags Affected:  None
 
 FPU mode: Any
@@ -1723,6 +1728,7 @@ COP (Code of Operation): DBH EBH
 Clocks:	   IIT 2c87    : 6
 	   IIT 3c87    : 6
 	   IIT 3c87SX  : 6
+
 ----------O-FSBP2----------------------------------
 OPCODE FSBP2 - FPU: Set Bank pointer to Bank # 2
 
@@ -1740,7 +1746,6 @@ Description:
 
 	;   After initialization FPU select bank # 0.
 
-
 FPU Flags Affected:  None
 
 FPU mode: Any
@@ -1750,6 +1755,7 @@ COP (Code of Operation): DBH EAH
 Clocks:	   IIT 2c87    : 6
 	   IIT 3c87    : 6
 	   IIT 3c87SX  : 6
+
 ----------O-IBTS-----------------------------------
 OPCODE IBTS    -  Insert Bits String
 
@@ -1862,7 +1868,7 @@ Description:
 	      mode.
 
 Format of ICERET Table:
-	(Table )
+
 	       Offset  Len  Description
 		0H	4	CR0
 		4H	4	EFLAGS
@@ -1963,7 +1969,6 @@ Description:
 			   LENGTH =  len
 			 ]   <-	 AX [ bits= (len-1)..0]
 
-
 Note:	di and start automatically UPDATE
 Note:	Alternative Name of this instruction is NECINS
 
@@ -1991,7 +1996,6 @@ Description:
     invalid )
 	 SIGNAL EXTERNAL CACHE TO FLUSH
 
-
 Notes: This instruction not work in Real Mode and  in
 Protected mode work only in ring 0 ;
 
@@ -2013,6 +2017,7 @@ Type of Instruction: System
 Instruction: INVLPG mem
 
 Description:
+
 	IF found in data or code (if both) (or common if single)
 	   TLB entry with linear address (page part) same as
 	   memory operand <mem> then mark this entry as Invalid;
@@ -2044,7 +2049,7 @@ Description:
 	      Which Begin on  place pointed ES:EDI
 
 Format of LOADALL Table:
-	(Table )
+
 	       Offset  Len  Description
 		0H	4	CR0
 		4H	4	EFLAGS
@@ -2110,7 +2115,6 @@ Format of LOADALL Table:
 		120H	4	Temporary Register B
 		124H	4	Temporary Register A
 
-
 Format	of Attrib field:
 
 	       Byte	Description
@@ -2137,6 +2141,7 @@ Note: This operation used 102 data transfer cycles on 32bit bus
 	      i386SX: ~350
 	      i386DX: ~290
 	      i486XX: ~220
+
 ----------O-LOADALL--------------------------------
 OPCODE LOADALL	- Load All Registers From Table
 
@@ -2152,7 +2157,7 @@ Description:
 	      66H
 
 Format of LOADALL Table:
-	(Table )
+
 	       Address	Len  Description
 		800H	6	None
 		806H	2	MSW
@@ -2217,6 +2222,7 @@ Type of Instruction: User
 Instruction: MOVD  dest,src
 
 Description:
+
 	IF dest is MMi register THEN
 	{
 		dest[63..32] <- 0
@@ -2260,6 +2266,7 @@ Type of Instruction: User
 Instruction: MOVQ  dest,src
 
 Description:
+
 	dest <- src
 
 Note: This instruction moved QWORDs to/from MMX registers
@@ -2349,8 +2356,6 @@ Instruction:  NOT1 dest,bitnumb
 Description:
 		(BIT bitnumb OF dest) <-  NOT (BIT bitnumb OF dest);
 
-
-
 Flags Affected: None
 
 CPU mode: RM
@@ -2428,11 +2433,11 @@ Type of Instruction: User
 Instruction: PACKSSDW  dest,src
 
 Description:
+
 	dest[15..0]	<-	SaturateSignedDWordToSignedWord dest[31..0]
 	dest[31..16]	<-	SaturateSignedDWordToSignedWord dest[63..32]
 	dest[47..32]	<-	SaturateSignedDWordToSignedWord src[31..0]
 	dest[63..46]	<-	SaturateSignedDWordToSignedWord src[63..32]
-
 
 Note: This instruction packs and saturates signed data from src and dest to
       dest.
@@ -2470,6 +2475,7 @@ Type of Instruction: User
 Instruction: PACKSSWB  dest,src
 
 Description:
+
 	dest[7..0]	<-	SaturateSignedWordToSignedByte dest[15..0]
 	dest[15..8]	<-	SaturateSignedWordToSignedByte dest[31..16]
 	dest[23..16]	<-	SaturateSignedWordToSignedByte dest[47..32]
@@ -2478,7 +2484,6 @@ Description:
 	dest[47..40]	<-	SaturateSignedWordToSignedByte src[31..16]
 	dest[55..48]	<-	SaturateSignedWordToSignedByte src[47..32]
 	dest[63..56]	<-	SaturateSignedWordToSignedByte src[63..48]
-
 
 Note: This instruction packs and saturates signed data from src and dest to
       dest
@@ -2514,6 +2519,7 @@ Type of Instruction: User
 Instruction: PACKUSWB  dest,src
 
 Description:
+
 	dest[7..0]	<-	SaturateSignedWordToUnSignedByte dest[15..0]
 	dest[15..8]	<-	SaturateSignedWordToUnSignedByte dest[31..16]
 	dest[23..16]	<-	SaturateSignedWordToUnSignedByte dest[47..32]
@@ -2522,7 +2528,6 @@ Description:
 	dest[47..40]	<-	SaturateSignedWordToUnSignedByte src[31..16]
 	dest[55..48]	<-	SaturateSignedWordToUnSignedByte src[47..32]
 	dest[63..56]	<-	SaturateSignedWordToUnSignedByte src[63..48]
-
 
 Note:  If signed value of word larger or smaller that the range of unsigned
        byte, value is saturated (if overflow to FFh, if underflow to 0h).
@@ -2558,6 +2563,7 @@ Type of Instruction: User
 Instruction: PADDB  dest,src
 
 Description:
+
 	dest[7..0]	<-	dest[7..0]   + src[7..0]
 	dest[15..8]	<-	dest[15..8]  + src[15..8]
 	dest[23..16]	<-	dest[23..16] + src[23..16]
@@ -2566,7 +2572,6 @@ Description:
 	dest[47..40]	<-	dest[47..40] + src[47..40]
 	dest[55..48]	<-	dest[55..48] + src[55..48]
 	dest[63..56]	<-	dest[63..56] + src[63..56]
-
 
 Note:	  This instruction adds the bytes of the source to the bytes of the
 	destination and writes the results to the MMX register.
@@ -2606,9 +2611,9 @@ Type of Instruction: User
 Instruction: PADDD  dest,src
 
 Description:
+
 	dest[31..0]	<-	dest[31..0]  + src[31..0]
 	dest[63..32]	<-	dest[63..32] + src[63..32]
-
 
 Note:	  This instruction adds the dwords of the source to the dwords of the
 	destination and writes the results to the MMX register.
@@ -2648,6 +2653,7 @@ Type of Instruction: User
 Instruction: PADDSB  dest,src
 
 Description:
+
 	dest[7..0]	<-	SaturateToSignedByte(dest[7..0]	  + src[7..0])
 	dest[15..8]	<-	SaturateToSignedByte(dest[15..8]  + src[15..8])
 	dest[23..16]	<-	SaturateToSignedByte(dest[23..16] + src[23..16])
@@ -2656,7 +2662,6 @@ Description:
 	dest[47..40]	<-	SaturateToSignedByte(dest[47..40] + src[47..40])
 	dest[55..48]	<-	SaturateToSignedByte(dest[55..48] + src[55..48])
 	dest[63..56]	<-	SaturateToSignedByte(dest[63..56] + src[63..56])
-
 
 Note:	  This instruction adds the signed bytes of the source to the bytes of
 	the destination and writes the results to the MMX register.
@@ -2696,11 +2701,11 @@ Type of Instruction: User
 Instruction: PADDSW  dest,src
 
 Description:
+
 	dest[15..0]	<-	SaturateToSignedWord(dest[15..0]  + src[15..0])
 	dest[31..16]	<-	SaturateToSignedWord(dest[31..16] + src[31..16])
 	dest[47..32]	<-	SaturateToSignedWord(dest[47..32] + src[47..32])
 	dest[63..48]	<-	SaturateToSignedWord(dest[63..48] + src[63..48])
-
 
 Note:	  This instruction adds the signed words of the source to the words of
 	the destination and writes the results to the MMX register.
@@ -2740,6 +2745,7 @@ Type of Instruction: User
 Instruction: PADDUSB  dest,src
 
 Description:
+
 	dest[7..0]	<-   SaturateToUnsignedByte(dest[7..0]	 + src[7..0])
 	dest[15..8]	<-   SaturateToUnsignedByte(dest[15..8]	 + src[15..8])
 	dest[23..16]	<-   SaturateToUnsignedByte(dest[23..16] + src[23..16])
@@ -2748,7 +2754,6 @@ Description:
 	dest[47..40]	<-   SaturateToUnsignedByte(dest[47..40] + src[47..40])
 	dest[55..48]	<-   SaturateToUnsignedByte(dest[55..48] + src[55..48])
 	dest[63..56]	<-   SaturateToUnsignedByte(dest[63..56] + src[63..56])
-
 
 Note:	  This instruction adds the unsigned bytes of the source to the
 	unsigned bytes of the destination operand and writes the results to the
@@ -2790,11 +2795,11 @@ Type of Instruction: User
 Instruction: PADDUSW  dest,src
 
 Description:
+
 	dest[15..0]	<-   SaturateToUnsignedWord(dest[15..0]	 + src[15..0])
 	dest[31..16]	<-   SaturateToUnsignedWord(dest[31..16] + src[31..16])
 	dest[47..32]	<-   SaturateToUnsignedWord(dest[47..32] + src[47..32])
 	dest[63..48]	<-   SaturateToUnsignedWord(dest[63..48] + src[63..48])
-
 
 Note:	  This instruction adds the unsigned words of the source to the
 	unsigned words of the destination operand and writes the results to the
@@ -2836,11 +2841,11 @@ Type of Instruction: User
 Instruction: PADDW  dest,src
 
 Description:
+
 	dest[15..0]	<-	dest[15..0]  + src[15..0]
 	dest[31..16]	<-	dest[31..16] + src[31..16]
 	dest[47..32]	<-	dest[47..32] + src[47..32]
 	dest[63..48]	<-	dest[63..48] + src[63..48]
-
 
 Note:	  This instruction adds the words of the source to the words of the
 	destination and writes the results to the MMX register.
@@ -2880,6 +2885,7 @@ Type of Instruction: User
 Instruction: PAND  dest,src
 
 Description:
+
 	dest	<-   dest AND src
 
 Note:	  AND 64 bits from MMXregister/memory to MMX register.
@@ -2916,6 +2922,7 @@ Type of Instruction: User
 Instruction: PANDN  dest,src
 
 Description:
+
 	dest	<-   (NOT dest) AND src
 
 Note:	  Invert the 64 bits in MMX register, AND inverted MMX register with
@@ -2953,6 +2960,7 @@ Type of Instruction: User
 Instruction: PCMPEQB  dest,src
 
 Description:
+
 	IF dest[7..0] = src[7..0]
 		THEN
 		dest[7..0] <- FFH
@@ -3029,6 +3037,7 @@ Type of Instruction: User
 Instruction: PCMPEQD dest,src
 
 Description:
+
 	IF dest[31..0] = src[31..0]
 		THEN
 		dest[31..0] <- FFFFFFFFH
@@ -3075,6 +3084,7 @@ Type of Instruction: User
 Instruction: PCMPEQW dest,src
 
 Description:
+
 	IF dest[15..0] = src[15..0]
 		THEN
 		dest[15..0] <- FFFFH
@@ -3131,6 +3141,7 @@ Type of Instruction: User
 Instruction: PCMPGTB  dest,src
 
 Description:
+
 	IF dest[7..0] > src[7..0]
 		THEN
 		dest[7..0] <- FFH
@@ -3207,6 +3218,7 @@ Type of Instruction: User
 Instruction: PCMPGTD dest,src
 
 Description:
+
 	IF dest[31..0] > src[31..0]
 		THEN
 		dest[31..0] <- FFFFFFFFH
@@ -3253,6 +3265,7 @@ Type of Instruction: User
 Instruction: PCMPGTW dest,src
 
 Description:
+
 	IF dest[15..0] > src[15..0]
 		THEN
 		dest[15..0] <- FFFFH
@@ -3309,6 +3322,7 @@ Type of Instruction: User
 Instruction: PMADDWD  dest,src
 
 Description:
+
 	dest[31..0]  <- dest[15..0] * src[15..0] + dest[31..16] * src[31..16]
 	dest[63..32] <- dest[47..32] * src[47..32] + dest[63..48] * src[63..48]
 
@@ -3350,6 +3364,7 @@ Type of Instruction: User
 Instruction: PMULHW  dest,src
 
 Description:
+
 	dest[15..0]  <- (dest[15..0] * src[15..0]) (31..16)
 	dest[31..16] <- (dest[31..16] * src[31..16]) (31..16)
 	dest[47..32]  <- (dest[47..32] * src[47..32]) (31..16)
@@ -3391,6 +3406,7 @@ Type of Instruction: User
 Instruction: PMULLW  dest,src
 
 Description:
+
 	dest[15..0]  <- (dest[15..0] * src[15..0]) (15..0)
 	dest[31..16] <- (dest[31..16] * src[31..16]) (15..0)
 	dest[47..32]  <- (dest[47..32] * src[47..32]) (15..0)
@@ -3432,6 +3448,7 @@ Type of Instruction: User
 Instruction: POR  dest,src
 
 Description:
+
 	dest	<-   dest OR src
 
 Note:	  OR 64 bits from MMXregister/memory with MMX register.
@@ -3468,6 +3485,7 @@ Type of Instruction: User
 Instruction: PSLLD  dest,src
 
 Description:
+
 	temp  <-  src
 	dest[31..0]   <-  dest[31..0] << temp
 	dest[63..32]  <-  dest[63..32] << temp
@@ -3508,6 +3526,7 @@ Type of Instruction: User
 Instruction: PSLLQ  dest,src
 
 Description:
+
 	temp  <-  src
 	dest  <-  dest << temp
 
@@ -3547,6 +3566,7 @@ Type of Instruction: User
 Instruction: PSLLW  dest,src
 
 Description:
+
 	temp  <-  src
 	dest[15..0]   <-  dest[15..0] << temp
 	dest[31..16]  <-  dest[31..16] << temp
@@ -3589,6 +3609,7 @@ Type of Instruction: User
 Instruction: PSRAD  dest,src
 
 Description:
+
 	temp  <-  src
 	dest[31..0]   <-  SignExtend(dest[31..0]) >> temp
 	dest[63..32]  <-  SignExtend(dest[63..32]) >> temp
@@ -3629,6 +3650,7 @@ Type of Instruction: User
 Instruction: PSRAW  dest,src
 
 Description:
+
 	temp  <-  src
 	dest[15..0]   <-  SignExtend(dest[15..0]) >> temp
 	dest[31..16]  <-  SignExtend(dest[31..16]) >> temp
@@ -3671,6 +3693,7 @@ Type of Instruction: User
 Instruction: PSRLD  dest,src
 
 Description:
+
 	temp  <-  src
 	dest[31..0]   <-  dest[31..0] >> temp
 	dest[63..32]  <-  dest[63..32] >> temp
@@ -3711,6 +3734,7 @@ Type of Instruction: User
 Instruction: PSRLQ  dest,src
 
 Description:
+
 	temp  <-  src
 	dest  <-  dest >> temp
 
@@ -3750,6 +3774,7 @@ Type of Instruction: User
 Instruction: PSRLW  dest,src
 
 Description:
+
 	temp  <-  src
 	dest[15..0]   <-  dest[15..0] >> temp
 	dest[31..16]  <-  dest[31..16] >> temp
@@ -3792,6 +3817,7 @@ Type of Instruction: User
 Instruction: PSUBB  dest,src
 
 Description:
+
 	dest[7..0]	<-	dest[7..0]   - src[7..0]
 	dest[15..8]	<-	dest[15..8]  - src[15..8]
 	dest[23..16]	<-	dest[23..16] - src[23..16]
@@ -3800,7 +3826,6 @@ Description:
 	dest[47..40]	<-	dest[47..40] - src[47..40]
 	dest[55..48]	<-	dest[55..48] - src[55..48]
 	dest[63..56]	<-	dest[63..56] - src[63..56]
-
 
 Note:	  This instruction subtract packed byte in MMXregister/memory from
 	packed byte in MMX register.
@@ -3837,9 +3862,9 @@ Type of Instruction: User
 Instruction: PSUBD  dest,src
 
 Description:
+
 	dest[31..0]	<-	dest[31..0]  - src[31..0]
 	dest[63..32]	<-	dest[63..48] - src[63..32]
-
 
 Note:	  This instruction subtract packed dword in MMXregister/memory from
 	packed dword in MMX register.
@@ -3876,6 +3901,7 @@ Type of Instruction: User
 Instruction: PSUBSB  dest,src
 
 Description:
+
 	dest[7..0]    <-   SaturateToSignedByte(dest[7..0]   - src[7..0])
 	dest[15..8]   <-   SaturateToSignedByte(dest[15..8]  - src[15..8])
 	dest[23..16]  <-   SaturateToSignedByte(dest[23..16] - src[23..16])
@@ -3923,6 +3949,7 @@ Type of Instruction: User
 Instruction: PSUBSW  dest,src
 
 Description:
+
 	dest[15..0]   <-   SaturateToSignedWord(dest[15..0]  - src[15..0])
 	dest[31..16]  <-   SaturateToSignedWord(dest[31..16] - src[31..16])
 	dest[47..32]  <-   SaturateToSignedWord(dest[47..32] - src[47..32])
@@ -3966,6 +3993,7 @@ Type of Instruction: User
 Instruction: PSUBUSB  dest,src
 
 Description:
+
 	dest[7..0]    <-   SaturateToUnsignedByte(dest[7..0]   - src[7..0])
 	dest[15..8]   <-   SaturateToUnsignedByte(dest[15..8]  - src[15..8])
 	dest[23..16]  <-   SaturateToUnsignedByte(dest[23..16] - src[23..16])
@@ -4012,6 +4040,7 @@ Type of Instruction: User
 Instruction: PSUBUSW  dest,src
 
 Description:
+
 	dest[15..0]   <-   SaturateToUnsignedWord(dest[15..0]  - src[15..0])
 	dest[31..16]  <-   SaturateToUnsignedWord(dest[31..16] - src[31..16])
 	dest[47..32]  <-   SaturateToUnsignedWord(dest[47..32] - src[47..32])
@@ -4054,11 +4083,11 @@ Type of Instruction: User
 Instruction: PSUBW  dest,src
 
 Description:
+
 	dest[15..0]	<-	dest[15..0]  - src[15..0]
 	dest[31..16]	<-	dest[31..16] - src[31..16]
 	dest[47..32]	<-	dest[47..32] - src[47..32]
 	dest[63..48]	<-	dest[63..48] - src[63..48]
-
 
 Note:	  This instruction subtract packed word in MMXregister/memory from
 	packed word in MMX register.
@@ -4095,6 +4124,7 @@ Type of Instruction: User
 Instruction: PUNPCKHBW	dest,src
 
 Description:
+
 	dest[63..56]   <-   src[63..56]
 	dest[55..48]   <-   dest[63..56]
 	dest[47..40]   <-   src[55..48]
@@ -4146,6 +4176,7 @@ Type of Instruction: User
 Instruction: PUNPCKHDQ	dest,src
 
 Description:
+
 	dest[63..32]   <-   src[63..32]
 	dest[31..0]    <-   dest[63..32]
 
@@ -4189,6 +4220,7 @@ Type of Instruction: User
 Instruction: PUNPCKHWD	dest,src
 
 Description:
+
 	dest[63..56]   <-   src[63..48]
 	dest[47..32]   <-   dest[63..48]
 	dest[31..16]   <-   src[47..32]
@@ -4236,6 +4268,7 @@ Type of Instruction: User
 Instruction: PUNPCKLBW	dest,src
 
 Description:
+
 	dest[63..56]   <-   src[31..24]
 	dest[55..48]   <-   dest[31..24]
 	dest[47..40]   <-   src[23..16]
@@ -4289,6 +4322,7 @@ Type of Instruction: User
 Instruction: PUNPCKLDQ	dest,src
 
 Description:
+
 	dest[63..32]   <-   src[31..0]
 	dest[31..0]    <-   dest[31..0]
 
@@ -4333,6 +4367,7 @@ Type of Instruction: User
 Instruction: PUNPCKLWD	dest,src
 
 Description:
+
 	dest[63..48]   <-   src[31..16]
 	dest[47..32]   <-   dest[31..16]
 	dest[31..16]   <-   src[15..0]
@@ -4381,6 +4416,7 @@ Type of Instruction: User
 Instruction: PXOR  dest,src
 
 Description:
+
 	dest	<-   dest XOR src
 
 Note:	  XOR 64 bits from MMXregister/memory to MMX register.
@@ -4426,12 +4462,7 @@ Description:
 		  }
 	END
 
-
-Valid number Of MSR is:
-	Pentium:  0-2,4-0Eh,10h-13h
-    IBM 486SLC2:  1000H-1002H
-    IBM 386SLC:	  1000H-1001H
-    IBM 486SLC:	  1000H-1001H
+Refer to Appendix V for more info.
 
 Flags Affected: None
 
@@ -4440,866 +4471,6 @@ CPU mode: RM,PM0,SMM
 Physical Form:		 RDMSR
 COP (Code of Operation): 0FH 32H
 Clocks:	     Pentium   : 20-24
-
-Note: The MSR # 3,0fh and >13h are reserved on Pentium.
-      Do not execute RDMSR/WRMSR with this values.
-
-      Register	Description
-
-      MSR 0  is Machine check Exception Address register (Read only)
-		(Pentium,Am5k86,Pentium Pro,Am5k86)
-		bits	Description
-		63..32	Reserved
-		31..0	Machine Check Phisical Address
-		Note: Am6k86 (K6) not support machine check, it support
-		only read/write in this register as in GPRs, and set this
-		MSR after RESET to 0.
-
-
-      MSR 1  is Machine Check Type register (Read Only)
-		(Pentium,Am5k86,Pentium Pro,Am6k86)
-		bits	Description
-		63..5	Reserved
-		5	FERI   (Fun Error Indicator)
-			(Pentium OverDrive Only)
-			initialazed after RESET as 0. If temperature
-			of CHIP > ~75'C then set this bit to 1 and this
-			bit still will 1 before Next RESET.
-			This bit used FANMONIT.EXE utility shipped with
-			PODP5V.
-		4	LOCK
-			=1 if bus cycle called Machine Check was Locked
-			=0 if --//-- not locked (normal)
-		3	M/IO# \
-		2	D/C#	 State of output pins in bus cycle called
-		1	W/R#  /	 Machine check
-		0	CHK  (Check)
-			=1 after last read MSR 1 was Machine Check
-			Note: This bit Clearing on reading
-		Note: Am6k86 (K6) not support machine check, it support
-		only read/write in this register as in GPRs, and set this
-		MSR after RESET to 0.
-
-		Note: Pentium OverDrive difference
-		5	FERI   (Fun Error Indicator)
-			initialazed after RESET as 0. If temperature
-			of CHIP > ~75'C then set this bit to 1 and this
-			bit still will 1 before Next RESET.
-			This bit used FANMONIT.EXE utility shipped with
-			PODP5V.
-
-      MSR 2h  is Test Register 1  (Read/Write)
-		(Pentium)
-		Parity Reversal Register (PRR)
-		bits	Description
-		63..14	Reserved  (should be zero)
-		13	MC   (Microcode Parity Error)
-		12	DTD  (data TLB data error)
-		11	DTT  (data TLB tag error)
-		10	DD   (data cache data)
-		9	DT   (data cache tag)
-		8	ITD  (instruction TLB data error)
-		7	ITT  (instruction TLB tag error)
-		6	ID3  (data cache odd bits (255, ..., 129) error)
-		5	ID2  (data cache even bits (254,..., 128) error)
-		4	ID1  (data cache odd bits (127, ..., 1) error)
-		3	ID0  (data cache even bits (126, ..., 0) error)
-		2	IT   (instruction cache TAG)
-		1	NS   (No shutdown)
-			     If = 0 On parity errors set PRR.PES, assert IERR#
-			     and shutdown.
-			     If =1 On parity error set PRR.PES and assert
-			     IERR#
-		0	PES  (Parity Error Summary)
-			     If =1 Parity Error
-			     If =0 Never Parity error
-
-		Note: bits 13..2, if bit=1 it means that error joined with
-		      this bit present.
-
-      MSR 3h  is  Reserved  (Do not Accessed it)
-
-      MSR 4h  is Test Register 2 (TR 2) (Read/Write)
-		(Pentium)
-		(Instruction Cache End bits TR)
-		bits	Description
-		63..4	Reserved  (should be zero)
-		3..0	End Bits
-		Note: each bit of End bit correspond to one byte of
-		      instruction in TR3 during code testability access.
-		      I.c. line size = 32 bytes, 8 accesses are needed for
-		      read/write the end bits of cache line.
-		      Each of this bits indicated an instruction boundarues
-		      If given byte is last byte of instruction then bit
-		      joined with this byte =1.
-		      Then new line writting into cache all ends bits =1,
-		      when line decoding setting bits to 0, except last byte
-		      of instruction.
-
-
-      MSR 5h  is Test Register 3 (TR 3) (Read/Write)
-		(Pentium)
-		(Cache test Data)
-		bits	Description
-		63..32	Reserved  (should be zero)
-		31..0	Data Reading/Writing from/to {code/data} cache
-
-      MSR 6h  is Test Register 4 (TR 4) (Read/Write)
-		(Pentium)
-		(Cache Test Tag)
-		bits	Description
-		63..32	Reserved  (should be zero)
-		31..8	Cache Tag [35:12]
-		7..3	Reserved  (should be zero)
-		2	LRU (Last Resently Used)
-			Contain way joined with readed/writed cache line
-		1..0	VALID
-			Contain Valid Status Information
-			[Code Cache (TR5.CD=0)]:
-			VALID[1] VALID[0]   Description
-			  x	   0	   Code cache line is invalid
-			  x	   1	   Code cache line is valid
-			[Data Cache (TR5.CD=1)]:
-			VALID[1] VALID[0]   Description
-			  0	   0	   Data cache line is invalid
-			  0	   1	   Data cache line is shared
-			  1	   0	   Data cache line is exclusive
-			  1	   1	   Data cache line is modified
-
-      MSR 7h  is Test Register 5 (TR 5) (Read/Write)
-		(Pentium)
-		(Cache Test Control)
-		bits	Description
-		63..15	Reserved  (should be zero)
-		14	WB (Write-back)
-			If = 0	Write-throught
-			If = 1	Write-back
-			see also TR5.CNTRL
-		13	CD (Code/Data)
-			Select Code/Data cache for test operation
-			If = 0 Code cache select
-			If = 1 Data cache select
-		12	ENTRY
-			Specify cache Way
-		11..5	SET
-			Cache Set Number (for Write/then read)
-		4..2	BUFFER SELECT
-			Select one of 8 (4byte) part of cache line
-		1..0	CNTRL (Control)
-			CNTRL[1] CNTRL[0] Description
-			  0	   0	  Normal Operation Mode
-			  0	   1	  Testability Write
-			  1	   0	  Testability Read
-			  1	   1	  Flush
-			Note: Flush actions depends on TR7.WB:
-			TR7.CD	TR7.WB	Description
-			  0	   x	  Invalidate code cache line
-			  1	   0	  Invalidate data cache line, no WB,
-					  if modified
-			  1	   1	  Invalidate data cache line, WB,
-					  if modified
-
-      MSR 8h  is Test Register 6 (TR 6) (Read/Write)
-		(Pentium)
-		(TLB Command Test Register)
-		bits	Description
-		63..32	Reserved  (should be zero)
-		31..12	LINEAR ADDRESS
-		11	V (Valid)
-			If = 1 valid TLB entry
-			If = 0 invalid TLB entry
-		10	D (Dirty)
-			If = 1 page was write-accessed
-			If = 0 page never was write-accessed
-		9	U (User Mode)
-			If = 0 page may accessed at PL=0,1,2,3
-			If = 1 PL=0 access allowed
-		8	W (Writable)
-			If = 0	Read only page
-			If = 1	Read/Write page
-		7..3	Reserved (should be zero)
-		2	PS (Page Size)
-			If = 0 4KB page
-			If = 1 4MB page
-		1	CD (Code/Data TLB)
-			If = 0 Code TLB
-			If = 1 Data TLB
-		0	OP (Operation)
-			If = 0 TLB Write
-			If = 1 TLB Read
-
-      MSR 9h  is Test Register 7 (TR 7) (Read/Write)
-		(Pentium)
-		(TLB Test Physical Address)
-		bits	Description
-		63..32	Reserved  (should be zero)
-		31..12	PHYSICAL ADDRESS
-		11	PCD   (Page Cache Disable)
-		10	PWT   (Page Write-Throught)
-		9..7	LRU   (TLB LRU)
-		6..5	Reserved (should be zero)
-		4	H  (Hit Indicator)
-			If we want write into TLB, set this bit to 1.
-			If read, then if linear address found in TLB
-			this bit set to 1, otherwize to 0.
-		3..2	ENTRY
-			One of 4 TLB ways where to write, or where found
-			linear address if read.
-		1..0	Reserved (should be zero)
-
-      MSR Ah  is  Reserved (Do not Accessed it)
-
-      MSR Bh  is Test Register 9 (TR 9) (Read/Write)
-		(Pentium)
-		(BTB Test Tag Register)
-		bits	Description
-		63..32	Reserved  (should be zero)
-		31..8	TAG ADDRESS
-		7..2	Reserved  (should be zero)
-		1..0	HISTORY
-			History is state of current branch
-
-      MSR Ch  is Test Register 10 (TR 10) (Read/Write)
-		(Pentium)
-		(BTB Test Target Register)
-		bits	Description
-		63..32	Reserved  (should be zero)
-		31..0	TARGET ADDRESS
-
-      MSR Dh  is Test Register 11 (TR 11) (Read/Write)
-		(Pentium)
-		bits	Description
-		63..12	Reserved  (should be zero)
-		11..8	BTB SET
-			Select one of 64 set to access
-		7..4	Reserved  (should be zero)
-		3..2	ENTRY
-			select BTB way
-		1..0	CNTL
-			Command to Test BTB
-			CNTL[1]	 CNTL[0]  Description
-			  0	   0	 Normal Operating Mode
-			  0	   1	 Testability Write
-			  1	   0	 Testability Read
-			  1	   1	 Flush
-
-
-      MSR Eh  is Test Register 12 (TR 12) (Read/Write)
-		(Pentium,Am6k86)
-		(New Feature Control)
-		bits	Description
-		63..3	Reserved  (should be zero)
-		3	CI (Cache Inhibit)
-			if =0 chip operated normally
-			   =1 then all cache line fill are inhibited,
-			      and bus cycles due to cache misses are
-			      run as single-transfer cycles
-		2	SE (Single-Pipe Execution)
-			If =0 instruction executed in U and V pipes.
-			   =1 instruction executed only in U pipe
-		1	TR (Tracing Control)
-			After reset clear to zero.
-			This bit enable/disable special branch trace
-			message cycle which generating when BTB hit.
-			=0 disable
-			=1 enable
-		0	NBP  (No Branch prediction)
-			If = 1 Disable Allocated entryes in BTB
-			If = 0 Enable
-		Note: Am6k86 support only CI bit.
-
-      MSR Fh is Reserved (Not use it)
-
-      MSR 10h is Time Stamp Counter  (TSC) (Read/Write)
-		(Pentium,Am5k86,Pentium Pro,Cx6x86MX,Am6k86)
-		Time Stamp Counter (as all other MSRs) is clearing to 0 when
-		RESET pin shutdown and unchanged when INIT pin shutdown.
-		TSC is incremented every CPU core clock cycle.
-
-      MSR 11h is Control/Event Select Register (CESR) (Read/Write)
-		(Pentium)
-		Init value after reset = 00000000000000000h
-		bits	Description
-		63..26	Reserved
-		25	PC1  (Pin Control, counter #1)
-			If =0 counter # 1 has incremented
-			If =1 counter # 1 has overflowed
-		24..22	CC1  (Counter #1 Control)
-			CC[2] CC[1] CC[0]  Description
-			  0	0     0	   Counting nothing
-			  0	0     1	   Counting events while in PL=0,1,2
-			  0	1     0	   Counting events while in PL =3
-			  0	1     1	   Counting events in any PL
-			  1	0     0	   Counting nothing
-			  1	0     1	   Counting clocks (like TSC) in PL=0..2
-			  1	1     0	   Counting clocks in PL=3
-			  1	1     1	   Counting clocks at any PL
-		21..16	ES1  (Event Select, counter # 1)
-			(see below)
-		15..10	 Reserved
-		9	PC0 (see PC1 for description)
-		8..6	CC0 (see CC1 for description
-		5..0	ES0 (Event select, counter # 0)
-			Event Type for ES
-			Value	Event Type
-			00h	Data Read
-			01h	Data Write
-			02h	Data TLB miss
-			03h	Data Read Miss
-			04h	Data Write miss
-			05h	Write hit to Modified or Exclusive Cacheline
-			06h	Data cache lines written back
-			07h	Data cache snoops
-			08h	Data cache snoops hit
-			09h	Memory access in both pipes
-			0Ah	Data bank access conflict
-			0Bh	Misaligned data memory references
-			0Ch	Code read
-			0Dh	Code TLB miss
-			0Eh	Code cache miss
-			0Fh	Any segment register load
-			10h	Segment descriptor cache accessed
-			11h	Segment descriptor cache hit
-			12h	Branches
-			13h	BTB hit
-			14h	Taken branch or BTB hit
-			15h	Pipeline flushes
-			16h	Instructions executed
-			17h	Instruction executed in V pipes
-			18h	Bus utilization
-			19h	Pipeline stalled by write backups
-			1Ah	Pipeline stalled by data memory read
-			1Bh	Pipeline stalled by write to M or E line
-			1Ch	Locked bus cycle
-			1Dh	I/O cycle
-			1Eh	Noncachable memory references
-			1Fh	Pipeline stalled by AGI
-			20h-21h	Reserved
-			22h	FP operations
-			23h	Breakpoint 0 match
-			24h	Breakpoint 1 match
-			25h	Breakpoint 2 match
-			26h	Breakpoint 3 match
-			27h	Hardware interrupt
-			28h	Data read or data write
-			29h	Data read/write miss
-			2Ah-3Fh Reserved
-
-      MSR 11h is Counter/Event Select
-		(Cyrix Cx6x86MX)
-		bits	Description
-		63..27	Reserved
-		26	TC1  (Event Type 1, high bit)
-		25	PC1  (Pin Control, counter #1)
-			If =0 counter # 1 has incremented
-			If =1 counter # 1 has overflowed
-		24..22	CC1  (Counter #1 Control)
-			CC[2] CC[1] CC[0]  Description
-			  0	0     0	   Counting nothing
-			  0	0     1	   Counting events while in PL=0,1,2
-			  0	1     0	   Counting events while in PL =3
-			  0	1     1	   Counting events in any PL
-			  1	0     0	   Counting nothing
-			  1	0     1	   Counting clocks (like TSC) in PL=0..2
-			  1	1     0	   Counting clocks in PL=3
-			  1	1     1	   Counting clocks at any PL
-		21..16	TC1  (Event Select, counter # 1)
-			(see below)
-		15..11	 Reserved
-		10	TC0  (Type of Event, high bit)
-		9	PC0 (see PC1 for description)
-		8..6	CC0 (see CC1 for description
-		5..0	TC0 (Event select, counter # 0)
-			Event Type for ES
-			Value	Event Type
-			00h	Data Read
-			01h	Data Write
-			02h	Data TLB miss
-			03h	Data Read : Cache Miss
-			04h	Data Write: Cache miss
-			05h	Write hit to Modified or Exclusive Cacheline
-			06h	Data cache lines written back
-			07h	External Inquires
-			08h	External Inquires what hit
-			09h	Memory access in both pipes
-			0Ah	Cache bank access conflict
-			0Bh	Misaligned data memory references
-			0Ch	Instruction Fetch Requests
-			0Dh	L2 Code TLB miss
-			0Eh	Cache miss: instruction fetch
-			0Fh	Any segment register load
-			10h	reserved
-			11h	reserved
-			12h	Any Branch
-			13h	BTB hit
-			14h	Taken branch or BTB hit
-			15h	Pipeline flushes
-			16h	Instructions executed in both pipes
-			17h	Instruction executed in Y pipes
-			18h	Clocks while bus cycles are in progress
-			19h	Pipeline stalled by full write buffers
-			1Ah	Pipeline stalled by data memory read
-			1Bh	Pipeline stalled by write to !M or !E line
-			1Ch	Locked bus cycle
-			1Dh	I/O cycle
-			1Eh	Noncachable memory references
-			1Fh	Pipeline stalled by AGI
-			20h-21h	Reserved
-			22h	FP operations
-			23h	Breakpoint 0 match
-			24h	Breakpoint 1 match
-			25h	Breakpoint 2 match
-			26h	Breakpoint 3 match
-			27h	Hardware interrupt
-			28h	Data read or data write
-			29h	Data read/write miss
-			2Bh	MMX instruction executed in X pipe (counter 0)
-			2Bh	MMX instruction executed in Y pipe (counter 1)
-			2Dh	EMMS instruction executed (counter 0)
-			2Dh	transition between EMMS and FP instruction
-							(counter 1)
-			2Fh	saturating MMX instruction Executed (counter 0)
-			2Fh	saturation performed	(counter 1)
-			31h	MMX instruction data reads (counter 0)
-			32h	Taken Branchs (counter 1)
-			37h	Returns predict incorrectly (counter 0)
-			37h	Returns predicted (corr+incorr) (counter 1)
-			38h	MMX instruction Multiply Unit Interlock (cnt 0)
-			38h	MOVD/MOVQ stall due to previous operation (cnt 1)
-			39h	Returns (cnt 0)
-			39h	RSB Overflows (cnt 1)
-			3Ah	BTB false entries (cnt 0)
-			3Ah	BTB miss prediction on a not-taken block (cnt 1)
-			3Bh	Clks stalled due to Full Write Buffers While
-				executing (cnt 0)
-			3Bh	Stall on MMX instructions Write to E or M line
-								(cnt 1)
-			40h	L2 TLB Misses (Code or Data)
-			41h	L1 TLB Data Misses
-			42h	L1 TLB Code Misses
-			43h	L1 TLB Miss (Code or Data)
-			44h	TLB Flushes
-			45h	TLB Page Invalidates
-			46h	TLB page invalidates that hit
-			48h	Instruction Decoded
-
-
-      MSR 12h is Counter #0 (Read/Write)
-		(Pentium,Cx6x86MX)
-		bits	Description
-		63..40	Reserved
-		39..0	Current counter value
-
-      MSR 13h is Counter #1 (Read/Write)
-		(Pentium,Cx6x86MX)
-		bits	Description
-		63..40	Reserved
-		39..0	Current counter value
-
-      MSR 1Bh is APIC Base
-		(Pentium Pro)
-		bits	Description
-		8	BSP (Boot Strap Processor Indicator Bit)
-		11	APIC (APIC Global Enable Bit - permanent till reset
-			Enabled = 1, Disabled = 0.
-
-      MSR 2Ah  is EBL_CR_POWERON
-		(Pentium Pro)
-		bits	Description
-		0	Data Bus error code policy
-			1 = ECC
-			0 = Parity
-		1	Data Error Checking Enable
-			0 = Disabled
-			1 = Enabled
-		2	Response Error Checking Enable
-			1 = Disabled
-			0 = Enabled
-		3	AERR# Drive Enable
-			1 = Disabled
-			0 = Enabled
-		4	BEER# Enable for Initiator bus requests
-			1 = Disable
-			0 = Enabled
-		6	BEER# Enable for initiator internal errors
-			1 = Disabled
-			0 = Enable
-		7	BINIT# Driver Enable
-			1 = Disabled
-			0 = Enabled
-		8	Output Tri-state enabled	R
-		9	Execute BIST			R
-		10	AEER# Observation enable	R
-		12	BINIT# Observation enable	R
-		13	IN Order Queue Depth		R
-		14	1M Power on Reset Vector	R
-		15	FRC Mode Enabled		R
-		17:16	APIC Cluster ID			R
-		21..20	Symmetric Arbitration ID	R
-		24..22	Clock Frequency Ratio		R
-		26	Low Power Enable		R
-
-      MSR 79h  is BIOS_UPDT_TRIG	(BIOS Update Trigger register)
-		(Pentium Pro)
-
-      MSR 82h  is Array Access Register (AAR)
-		(Am5k86)
-		63..32	Array pointer:
-			31..8  Pointer within array
-			7..0   Array will be accessed
-				Array	 Description
-				E0h	 Data cache: data
-				E1h	 Data cache: Linear Tag
-				E4h	 Code cache: Instruction
-				E5h	Code Cache: Linear Tag
-				E6h	 Code Cache: Valid Bits
-				E7h	 Code cache: Branch-prediction bits
-				E8h	 4K TLB: Page
-				E9h	 4K TLB: Linear Tag
-				EAh	 4M TLB: Page
-				EBh	 4M TLB: Linear Tag
-				ECh	 Data cache: Physical tag
-				EDh	 Code cache: Physical Tag
-		31..0	Array Data
-			If array = E0h	(Data cache: data)
-				31..0	 Data
-			If array = E1h	(Data cache: Linear Tag)
-				31..26	Reserved (0s)
-				25	Dirty Bit
-				24	User/Supervisor
-				23	R/W
-				22	0
-				21	Linear Valid bit
-				20..0	Tag
-			If array = E4h	(Code cache: Instruction)
-				31..26	Reserved (0s)
-				25	Pfix1: Start bit
-				24	Pfix1: End bit
-				23	Pfix1: Opcode bit
-				22..21	Pfix1: Map (ROPs/MROM)
-				20..13	Byte1
-				12	Pfix0: Start bit
-				11	Pfix0: End bit
-				10	Pfix0: Opcode bit
-				9..8	Pfix0: Map (ROPs/MROM)
-				7..0	Byte0
-			If array = E5h	(Code Cache: Linear Tag)
-				31..20	Reserved(0s)
-				19..0	linear address 31..12
-			If array = E6h	(Code Cache: Valid Bits)
-				31..18	Reserved (0s)
-				17	Linear Tag Valid bit
-				16	User/Supervisor
-				15..0	Byte-Valid bits
-			If array = E7h	(Code cache: Branch-prediction bits)
-				31..19	Reserved (0s)
-				18	Predicted taken
-				17..14	Byte offset within block of last byte
-					of predicted branch instruction
-				13..12	Column of predicted target
-				11..4	Index of Predicted Target
-				3..0	Target Byte
-			If array = E8h	(4K TLB: Page)
-				31..22	Reserved (0s)
-				21	PCD bit
-				20	PWT bit
-				19..0	Page frame address
-			If array = E9h	(4K TLB: Linear Tag)
-				31..20	Reserved (0s)
-				19	Global Valid Bit
-				18	Dirty
-				17	U/S
-				16	R/W
-				15	Valid
-				14..0	Tag (virtual address 31..17)
-			If array = EAh	(4M TLB: Page)
-				31..12	Reserved (0s)
-				11	PCD bit
-				10	PWT bit
-				9..0	Page frame Address
-			If array = EBh	(4M TLB: Linear Tag)
-				31..15	reserved (0s)
-				14	Global Valid Bit
-				13	Dirty Bit
-				12	U/S
-				11	R/W
-				10	Valid bit
-				9..0	Tag
-			If array = ECh	(Data cache: Physical tag)
-				31..23	Reserved (0s)
-				22..21	MESI status
-					00 = invalid
-					01 = shared
-					10 = modified
-					11 = exclusive
-				20..0	Tag (Physical Address 31..11)
-			If array = EDh	(Code cache: Physical Tag)
-				31..21 Reserved(0s)
-				20	Valid Bit
-				19..0	Tag (Physical Address 31..12)
-		Note:
-		     READ DATA:
-			mov ecx,82h
-			mov	edx,Array Pointer
-			rdmsr
-			; in EAX - 32bit data
-		     WRITE DATA:
-			mov ecx,82h
-			mov	edx,Array Pointer
-			mov	eax,data
-			wrmsr
-
-      MSR 83h  is Hardware Configuration register (HWCR)
-		(Am5k86)
-		bits	Description
-		63..8	Reserved
-		7	DDC (Disable Data Cache)
-		6	DIC (Disable Instruction Cache)
-		5	DBP (Disable Branch Prediction)
-		4	Reserved
-		3..1	Debug Control
-			000 Off
-			001 Enable branch trace
-			100 Enable Probe mode on debug trap
-		0	DSPC (Disable Stopping Processor Clock)
-
-      MSR 85h is Write Allocate Top-of-Memory and Control Register (WATMCR)
-		(Am5k86 model 1,2,3 with stepping >= 4)
-      MSR 86h is Write Allocate Programmable Memory Range Register (WAPMRR)
-		(Am5k86 model 1,2,3 with stepping >= 4)
-	Note: For more information about MSRs 85h and 86h refer to
-	"Implementation of Write Allocate in the K86(tm) Processors",
-	application note, order# 21326, http://www.amd.com
-
-
-      MSR 8Bh  is BIOS_SIGN	(BIOS Update Signature Register)
-		(Pentium Pro)
-
-      MSR C1h  is PERFCTR0	(Perfomance Counter # 0)
-		(Pentium Pro)
-		(see MSRs 186h,187h)
-
-      MSR C2h  is PERFCTR1	(Perfomance Counter # 1)
-		(Pentium Pro)
-		(see MSRs 186h,187h)
-
-      MSR FEh  is MTRRcap
-		(Pentium Pro)
-
-      MSR 179h	is MCG_CAP
-		(Pentium Pro)
-
-      MSR 17Ah	is MCG_STATUS
-		(Pentium Pro)
-
-      MSR 17Bh	is MCG_CTL
-		(Pentium Pro)
-
-      MSR 186h	is EVNTSEL0	(Event Select # 0)
-		(Pentium Pro)
-		bits	Description
-		7..0	Event number
-			Value	Description
-			02h	SB_FORWARDS   Number of store buffers forwards
-			03h	LD_BLOCKS     Number of store buffers blocks
-			05h	MISALIGN_MEM_REF
-			06h	SEGMENT_REG_LOADS
-					      number of segment registers loads
-			28h	L2_IFETCH	(L2 cache instruction fetch)
-			29h	L2_LD		(L2 load request)
-			2Ah	L2_ST		(L2 store request)
-			24h	L2_LINES_IN	(number of lines, allocated
-						 in L2	and removes)
-			2Eh	L2_RQSTS	(L2 all requests)
-			43h	DATA_MEM_REFERENCE (cached and non-cached)
-			40h	DCU_LD		(L1 Data Cache unit load req.)
-			41h	DCU_ST		(L1 DCU store request)
-			42h	DCU_LOCKS	(L1 DCU locked requests)
-			43h	DCU_RQSTS	(all L1 request)
-			49h	DTLB_MISS	(L1 data TLB misses)
-			61h	BUS_BNR_DRV	(number of bus clocks that this
-						 CPU is driving correspodent
-						 fields).
-			79h	CPU_CLK_UNHALTED (number of cycles for which
-						  processor is not halted)
-			7Ah	BUS_HIT_DRV	----------- // --------------
-						(incl. cycles of snoop stall)
-			7Bh	BUS_HITM_DRV	----------- // --------------
-			7Eh	BUS_SNOOP_STALL	(bus clk. for which bus is snoop
-						 stalled).
-
-			87h	ILD_STALL	(number of cycles instruction
-						 length decoder stalled)
-			85h	ITLB_MISS	(Number of L1 Instruction TLB
-						misses)
-
-			C0h	INST_RETIRED	Number of instruction retired
-			C1h	FLOPS
-			C2h	UOPS_RETIRED	Number of Uops retired
-			C4h	BR_INST_RETIRED Number of branch instr. retired
-			C5h	BR_MISS_PRED_RETIRED
-						Number of Mispredicted branch
-						instruction retired.
-			C8h	HW_INT_RX	Hardware interrupts received
-			D2h	PARTIAL_PAT_STALLS
-						Partial stalls
-			E6h	BACLEARS	Number of time BACLEAR asserted
-		15..8	UMASK (Unit Mask)
-			  Contain event specific qualificator.
-		16	USR  (User)
-			  if = 1 Count events in ring 1,2,3.
-		17	OS (Operation system mode)
-			  if =1 Count events in ring 0.
-		18	E (Edge Detect)
-			Select Occurrence/Duration mode
-			  if = 0 Duration mode
-			  if = 1 Duration mode
-		19	PC (Pin Control)
-			  Enables signaling counters overflows via PMi pins.
-		20	INT (APIC Interrupt Enable)
-			  if =1 processor generated exception via local APIC,
-			  when counter overflow.
-		21	Reserved
-		22	EN (Enable Counters Flag)
-			  if =1 enable counting perfomance events in both
-			  counters, if = 0 disable in both.
-		23	INV (Invert Flag)
-			  if =1 reverse result of comparasion with
-			  counter mask.
-		31..24	Counter mask fields
-			   if <> 0 then CPU compares this value with count of
-			   event, if this count >= mask, counter incremented.
-			   (Need for calculate, for ex: two or more instruction
-			   retired.)
-			   if =0, counter incremented each event
-
-
-
-
-
-      MSR 187h	is EVNTSEL1	(Event Select # 1)
-		(Pentium Pro)
-		(see description in MSR 187h)
-		bits	Description
-		7..0	Event number
-		15..8	UMASK (Unit Mask)
-		16	USR  (User)
-		17	OS (Operation system mode)
-		18	E (Edge Detect)
-		19	PC (Pin Control)
-		20	INT (APIC Interrupt Enable)
-		21..22	Reserved   (bit 22 reseved !!!!)
-		23	INV (Invert Flag)
-		31..24	Counter mask fields
-
-      MSR 1D9h	is DEBUGCTLMSR (Debbuging Control MSR)
-		0	Enable/Disable Last Branch Record
-		1	Branch Trap Flag
-		5..2	Perfomance Monitoring/Break Point Pins
-		(Pentium Pro)
-		6	Enable/Disable Execution Trace Messages
-		15..14	Enable/Disable Execution Trace Messages
-
-      MSR 1DBh is LASTBRANCHFROMIP (Last Branch From IP)
-      MSR 1DCh is LASTBRANCHTOIP   (Last Branch To   IP)
-      MSR 1DDh is LASTINTFROMIP	   (Last INT	From IP)
-      MSR 1DEh is LASTINTTOIP	   (Last INT	To   IP)
-
-      MSR 1E0h is ROB_CR_BKUPTMPDR6
-		2	Fast String Enable Bit
-			If Enable REP MOVS move 64bit on 1 clk.
-
-
-Note: Pentium Pro contains also MSRs 200h..20Fh,400h..413h,
-      250h,258h,259h,268h..26Fh,2FFh.
-
-
-Note: Updating of this section in progress now.
-      So full info will be in next version.
-
-Here ended Pentium MSRs and Starting IBM MSRs.
-
-      MSR 1000H is Processor Operation Register (IBM only)
-		(486SLC/486SLC2/386SLC)
-		bits	Description
-		63..19	Reserved
-		18	LWPLA (Low Power PLA) (reserved on IBM 386SLC)
-		17	BUSRD (Bus Read)      (reserved on IBM 386SLC)
-		16	CPGE  (Cache Parity Generate Error)
-			(reserved on IBM 386SLC)
-		15	ECNPX (Enable cachebility of NPX operands)
-		14	EPWIA (Enable PWI ADS)
-		13	ELPWH (Enable Low Power Halt Mode)
-		12	XTOUT (Extend Out Instruction)
-		11	CRLD  (Cache reload bit)
-		10	EIKEN (Enable internal KEN#)
-		9	DSCL  (Disable cache Lock Mode)
-		8	Reserved
-		7	CE     (Cache enable)
-		6	EDBS   (Enable DBCS)
-		5	EPWI   (Enable Power Interrupt)
-		4	EFSP   (Enable Flush Snooping)
-		3	ENSP   (Enable Snoop Input)
-		2	A20M   (Address line 20 Mask)
-		1	CPCE   (Cache Parity Checking Enable)
-		0	CPE    (Cache Parity Error)
-
-      MSR 1001H is Cache Region Control Register  (IBM only)
-		( IBM 386SLC/486SLC/486SLC2)
-		bits	description
-		63..40	Reserved
-		39..32	Cache Memory Limit (CMLR)
-		31..16	1st MB Read Only (LMROR)
-		15..0	1st MB Cachable (LMCR)
-
-      MSR 1002H is processor operation register (IBM only)
-		(IBM 486SLC2 only)
-		bits	description
-		63..30	Reserved
-		29	EEDFS (Enable External Dynamic Frequency Shift)
-		28	DFSRY (Dynamic Frequency Shift Ready)
-		27	DFSMD (Dynamic Frequency Shift Mode)
-		26..24	CLKMD (Clock Mode)
-			=000	x2
-			=011	x1
-		23..0	Reserved
-
-      MSR C0000080h is EFER (Extended Feature Enable Register)
-	(Am6k86)
-	Bits	Description
-	63..1	Reserved
-	0	SCE (System Call Extension)
-		if = 1 System call extension enable
-		(see SYSCALL and SYSRET instructions for more informations
-		about system call).
-
-      MSR C0000081h is STAR (SYSCALL Target Address Register)
-	(Am6k86)
-	Bits	Description
-	63..48	Reserved
-	47..32	CS selector and SS selector base
-	31..0	Target IP address
-
-      MSR C0000082h is WHCR (Write Handling Control Register)
-	(Am6k86)
-	Bits	Description
-	63..9	Reserved
-	8	WCDE (Write Cachebility Detection Enable)
-		Note: Triton does not support this hardware mechanism,
-		so clear this bit to 0.
-	7..1	WAELIM (Write Allocate Enable Limit)
-		This field multiplied on 4MB defines upper
-		memory limit. All memory upper this limit will
-		be acessed w/o write allocate.
-	0	WAE15M (Write Allocate Enable 15-to-16 Mbyte)
-		if = 1 enable write allocation on region 15MB-16MB.
-	for more info refer to "AMD-K6(tm) MMX(tm) Enhanced Processor Data
-	Sheet", order# 20695, http://www.amd.com
-
-
-
-Note: IBM MSRs documented in "486SLC2 (tm) Microprocessor Data Sheet"
-(IBM Corp. 1993,Order number: VT05452)
 ----------O-RDPMC----------------------------------
 OPCODE RDPMC  - Read Perfomance Monitoring Counters
 
@@ -5399,9 +4570,6 @@ Note:	SMHR pointed to phisical address SMM space area,
 	-2Ch	32	ESI or EDI
 		total size of SMM header = 30h
 
-
-
-
 Flags Affected: None
 
 CPU mode: SMM
@@ -5429,7 +4597,6 @@ Description:
 		  General Protection Fault  INT 0DH (0)
 		  }
 	END
-
 
 Note: TSC is one of MSR and after global hardware reset (not SRESET , but
 RESET ) it clear to 0000000000000000H.
@@ -5511,7 +4678,7 @@ Note:
 	      in main memory.
 
 Format of RES3 Table:
-	(Table )
+
 	       Offset  Len  Description
 		0H	4	CR0
 		4H	4	EFLAGS
@@ -5617,7 +4784,7 @@ Note:
 	      in main memory.
 
 Format of RES3 Table:
-	(Table )
+
 	       Offset  Len  Description
 		0H	4	CR0
 		4H	4	EFLAGS
@@ -5714,6 +4881,7 @@ Type of Instruction: System
 Instruction:  RETRBI
 
 Description:
+
 	PC  <- Save PC;
 	PSW <- Save PSW;
 
@@ -5837,7 +5005,6 @@ Description:
 	; Note: This instruction load segment register
 	;	include shadow descriptor
 
-
 Format or Register and Descriptor Structure:
 	+00	Limit (15-0)
 	+02	Base  (15-0)
@@ -5852,13 +5019,11 @@ Flags Affected: None
 
 CPU mode: (1) and (2) and (3) and [(4A) or (4B)]
 
-
 	   1) CPL=0
 	   2) CCR1.bit1=1  ; SMI enable
 	   3) SMAR size > 0
 	   4A) in SMM
 	   4B) CCR1.bit2=1 ; SMAC is on
-
 
 ++++++++++++++++
 
@@ -5890,7 +5055,6 @@ Description:
 
 	; sorc is register and descriptor structure (see below)
 
-
 Format or Register and Descriptor Structure:
 	+00	Limit (15-0)
 	+02	Base  (15-0)
@@ -5905,13 +5069,11 @@ Flags Affected: None
 
 CPU mode: (1) and (2) and (3) and [(4A) or (4B)]
 
-
 	   1) CPL=0
 	   2) CCR1.bit1=1  ; SMI enable
 	   3) SMAR size > 0
 	   4A) in SMM
 	   4B) CCR1.bit2=1 ; SMAC is on
-
 
 ++++++++++++++++
 
@@ -5948,7 +5110,7 @@ Note: CPU state restored from dump created entrance to SMM.
 	   ** (NW=1 and CD=0)
 
 Format of Execution State in SMRAM:
-	Offset	Register	(Table )
+	Offset	Register
 	7FFCh	CR0
 	7FF8h	CR3
 	7FF4h	EFLAGS
@@ -6007,7 +5169,6 @@ Format of Execution State in SMRAM:
 		  SMBASE+[8000h+7FFFh]
 	7E00h	Reserved
 
-
 Note: In fields marked Reserved saved and restores next registers:
       CR1,CR2,CR3, hidden descriptors for CS,DS,ES,FS,SS,GS.
       Never saved registers: DR5-DR0,TR7-TR3,all FPU registers.
@@ -6039,7 +5200,7 @@ Description:
 	EXIT SMM;
 
 Format of SMM Header:
-	Offset	Length	Description	(Table )
+	Offset	Length	Description
 	-00h	-	Nothing (Top of SMM space) (Not accessable)
 	-04h	32	DR7
 	-08h	32	EFLAGS
@@ -6085,7 +5246,6 @@ Format of SMM Header:
 			for restart INSx/OUTSx instruction
 			[ Not avaliable in Cx486S/S2/D/D2]
 
-
 Flags Affected: All
 
 CPU mode: SMM
@@ -6112,7 +5272,6 @@ Description:
 
 	; sorc is register and descriptor structure (see below)
 
-
 Format or Register and Descriptor Structure:
 	+00	Limit (15-0)
 	+02	Base  (15-0)
@@ -6127,13 +5286,11 @@ Flags Affected: None
 
 CPU mode: (1) and (2) and (3) and [(4A) or (4B)]
 
-
 	   1) CPL=0
 	   2) CCR1.bit1=1  ; SMI enable
 	   3) SMAR size > 0
 	   4A) in SMM
 	   4B) CCR1.bit2=1 ; SMAC is on
-
 
 ++++++++++++++++
 
@@ -6151,8 +5308,6 @@ Instruction:  SET1 dest,bitnumb
 
 Description:
 		BIT  bitnumb OF dest <- 1;
-
-
 
 Flags Affected: None
 
@@ -6254,11 +5409,10 @@ Description:
 	ENTER SMM MODE;
 
 Format of SMM Header: Refer to Cyrix/IBM SMI Instruction
-	(Table )
+
 Flags Affected: None
 
 CPU mode: CPL=0, CCR1.bit1=1, SMAR size >= 30h.
-
 
 ++++++++++++++++
 
@@ -6295,6 +5449,7 @@ Type of Instruction: User
 Instruction:  SUB4S
 
 Description:
+
 	  BCD STRING (ADDRESS=ES:DI,LENGTH=CL) <-
 	  BCD STRING (ADDRESS=DS:SI,LENGTH=CL) -
 	  BCD STRING (ADDRESS=ES:DI,LENGTH=CL);
@@ -6333,7 +5488,6 @@ Description:
 
 	; dest is register and descriptor structure (see below)
 
-
 Format or Register and Descriptor Structure:
 	+00	Limit (15-0)
 	+02	Base  (15-0)
@@ -6348,13 +5502,11 @@ Flags Affected: None
 
 CPU mode: (1) and (2) and (3) and [(4A) or (4B)]
 
-
 	   1) CPL=0
 	   2) CCR1.bit1=1  ; SMI enable
 	   3) SMAR size > 0
 	   4A) in SMM
 	   4B) CCR1.bit2=1 ; SMAC is on
-
 
 ++++++++++++++++
 
@@ -6386,7 +5538,6 @@ Description:
 
 	; dest is register and descriptor structure (see below)
 
-
 Format or Register and Descriptor Structure:
 	+00	Limit (15-0)
 	+02	Base  (15-0)
@@ -6401,13 +5552,11 @@ Flags Affected: None
 
 CPU mode: (1) and (2) and (3) and [(4A) or (4B)]
 
-
 	   1) CPL=0
 	   2) CCR1.bit1=1  ; SMI enable
 	   3) SMAR size > 0
 	   4A) in SMM
 	   4B) CCR1.bit2=1 ; SMAC is on
-
 
 ++++++++++++++++
 
@@ -6432,7 +5581,6 @@ Description:
 
 	; dest is register and descriptor structure (see below)
 
-
 Format or Register and Descriptor Structure:
 	+00	Limit (15-0)
 	+02	Base  (15-0)
@@ -6447,13 +5595,11 @@ Flags Affected: None
 
 CPU mode: (1) and (2) and (3) and [(4A) or (4B)]
 
-
 	   1) CPL=0
 	   2) CCR1.bit1=1  ; SMI enable
 	   3) SMAR size > 0
 	   4A) in SMM
 	   4B) CCR1.bit2=1 ; SMAC is on
-
 
 ++++++++++++++++
 
@@ -6486,9 +5632,6 @@ Description:
 		CPL <- 0
 	} else	#UD;
 
-
-
-
 Note:  Passing control to fixed entry point for faster OS calls.
        see RDMSR for description of STAR (SYSCALL Target Address register)
 
@@ -6499,6 +5642,76 @@ COP & Times:
 
    SYSCALL	0FH 05H
     Am6k86:	 n/a
+----------O-SYSENTER-------------------------------
+OPCODE SYSENTER	 - Call Operating System
+
+CPU:  Intel Pentium Pro, Pentium II
+Type of Instruction: System
+
+Instruction: SYSCALL
+
+Description:
+	if EFER.SCE = 1 then
+	{	ECX <- EIP
+		EIP <- STAR[31..0]
+		IF  <- 0
+		VM  <- 0
+		CS.selector  <- STAR[47..32]
+		SS.selector  <- (STAR[47..32]) + 8
+		CS.base	     <- 0
+		SS.base	     <- 0
+		CS.limit     <- 4G
+		SS.limit     <- 4G
+		CS.attr	     <- ReadOnly
+		SS.attr	     <- R/W, Expand-Up
+		CPL <- 0
+	} else	#UD;
+
+Note:  Passing control to fixed entry point for faster OS calls.
+       see RDMSR for description of STAR (SYSCALL Target Address register)
+       K6 mnemonic SYSCALL means the same command.
+
+Note:  Command opcode equal to 286 LOADALL undocument instruction.
+
+++++++++++++++++++++++++++++++++++++++
+COP & Times:
+
+   SYSENTER	0FH 05H
+    P6:	     n/a
+----------O-SYSEXIT--------------------------------
+OPCODE SYSEXIT	- Return from Operation System
+
+CPU: Pentium Pro, Pentium II
+Type of Instruction: Privelege (CPL =0)
+
+Instruction: SYSRET
+
+Description:
+	if EFER.SCE == 1
+	{
+		if CPL == 0
+		{
+			EIP <-	ECX
+			IF  <-	1
+			CS.selector   <- STAR[47..32] OR 3H
+			CS.base	      <- 0
+			CS.limit      <- 4GB
+			CS.attr	      <- ReadOnly
+			SS  <- (STAR[47..32]) + 16) OR 3H
+		} else #GP(0);
+	} else #UD;
+
+Note:  Passing control from  OS	 entry point back to ring 3 client.
+       see RDMSR for description of STAR (SYSCALL Target Address register)
+       K6 mnemonic SYSRET is the same.
+
+Note:  Command opcode equal to 386/486 LOADALL undocument instruction.
+
+++++++++++++++++++++++++++++++++++++++
+COP & Times:
+
+   SYSEXIT	0FH 07H
+    P6:		 n/a
 ----------O-SYSRET---------------------------------
 OPCODE SYSRET  - Return from Operation System
 
@@ -6522,7 +5735,6 @@ Description:
 		} else #GP(0);
 	} else #UD;
 
-
 Note:  Passing control from  OS	 entry point back to ring 3 client.
        see RDMSR for description of STAR (SYSCALL Target Address register)
 
@@ -6531,7 +5743,7 @@ Note:  Command opcode equal to 386/486 LOADALL undocument instruction.
 ++++++++++++++++++++++++++++++++++++++
 COP & Times:
 
-   SYSCALL	0FH 07H
+   SYSRET	0FH 07H
     Am6k86:	 n/a
 ----------O-TEST1----------------------------------
 OPCODE TEST1  -	 Test a Specified bit
@@ -6798,7 +6010,6 @@ Description:
 		  }
 	END
 
-
 Flags Affected: None
 
 Note: Refer to RDMSR for more Info.
@@ -6842,7 +6053,6 @@ Description:
 	  Temporary <- dest;
 	  dest	    <- dest + sorc;
 	  sorc	    <- Temporary;
-
 
 Flags Affected:	 ZF,OF,SF,AF,PF,CF ( like ADD instruction ) ( see description)
 
@@ -7106,7 +6316,6 @@ Bit	Name	Description
 		If =1 then enable INVAL,WM_RST and HITM# pins
 		=0 float it
 0		Reserved
-
 
 CCR3:
 Note: Cyrix Cx486S/D never have CCR3 register.
@@ -7483,7 +6692,6 @@ Bit	Name	Description
 		=0 float it
 0		Reserved
 
-
 CCR3:
 Note: Cyrix Cx486S/D never have CCR3 register.
 Bit	Name	Description
@@ -7597,7 +6805,6 @@ Bit	Name	Description
 1	BTB_EN	If set, enables the Branch Target Buffer for branch prediction
 0	RSTK_EN If se, enables call return stack
 
-
 CCR1:
 Bit	Name	Description
 7..4		Reserved
@@ -7636,7 +6843,6 @@ Bit	Name	Description
 		If =1 then enable INVAL,WM_RST and HITM# pins
 		=0 float it
 0		Reserved
-
 
 CCR3:
 Bit	Name	Description
@@ -7863,7 +7069,6 @@ Bit	Name	Description
 		If =1 Prohibits changing the state of NW bit in CR0
 1..0		Reserved
 
-
 CCR3:
 Bit	Name	Description
 7..4	MAPEN(3-0) (Register Mapping Enable)
@@ -8017,7 +7222,6 @@ Bit	Name	Description
 		20h,21h - Samplers
 		22h - v4.0 (no SLOP support)
 
-
 Note: Register with Index FCh contains CPU family.
       Initialized by 05h, but may be changed by USER, look CPUID instruction
       for more info.
@@ -8026,7 +7230,7 @@ see Appendix A1 for more info about identification
 		-----------------------------
 
 Format of TR1,TR2 registers:
-	(Table )
+
 Note: Need to Enable MOV to/from TR1/2 using DBR0 register in processor
       control space.
 
@@ -8051,7 +7255,6 @@ Registers in BTB control space:
 		2	Return Stack Enable
 		3	???? (used)
 		4..31	?????
-
 
 ---------------------------------------------------
 APPENDIX	A6
@@ -8148,7 +7351,6 @@ Bit	Name	Description
 		If =1 CPU insert an idle cyce following the BRDY# and idle
 		cycle prior to asserting ADS#
 0		Reserved
-
 
 CCR3:
 Bit	Name	Description
@@ -8453,9 +7655,11 @@ Am5k86 (SSA/5)	all	      05h	0xh
   ------------------------------------------------------------
 Am5k86 (K5)	all	      05h	1xh	: (x1.5)
 			      05h	2xh	: (x1.75)
+					24h
 			      05h	3xh	: (x2)
   ------------------------------------------------------------
 Am6k86 (K6)	all	      05h	6xh
+					61h	; PR2
 					7xh
 					8xh
 					9xh
@@ -8513,7 +7717,9 @@ Pentium w/MMX	     A1	      05h	41h
 Pentium MMX	     oxA3     15h	44h
 OverDrive (P55CTP)
   ------------------------------------------------------------
-CxGx86			      05h	4xh
+Cx MediaGX		      05h	4xh
+  ------------------------------------------------------------
+IDT Winchip C6		      05h	40h
   ------------------------------------------------------------
 Cx6x86MX		      06h	51h	: core/bus = 2/1
 (M2)			      06h	53h	: core/bus = 3/1
@@ -8536,7 +7742,7 @@ Pentium	 Pro (P6)	      06h	0xh ; Engineering Sample 133MHz 0.6mkm
 		    sB1	      06h	19h ;	166,180,200 MHz
   ------------------------------------------------------------
 Pentium II	    C0	      06h	33h
-(P6L,Klamath)
+(P6L,Klamath)	    dA0	      06h	50h
   ------------------------------------------------------------
 OverDrive for		      16h	3xh
 Socket 8  (P6T)
@@ -8588,9 +7794,14 @@ Pentium-133		111
 Pentium-150		114
 Pentium-166		127
 Pentium-200		142
+Pentium w/MMX-166	160
 Pentium Pro-150		168
+Pentium w/MMX-200	182
 Pentium Pro-180		197
+Pentium w/MMX-233	203
 Pentium Pro-200		220
+Pentium II-233		267
+Pentium II-266		303
 ----------------------------------------------
 APPENDIX C1
 Cyrix Microprocessors Relative Perfomance
@@ -8654,6 +7865,7 @@ AMD Am6k86-200		520		427
 Pentium II-233		632		468
 Pentium II-266		721		536
 Pentium II-300		813		603
+
 ------------------------------------------------
 APPENDIX D0
 Pentium P54C+ Build-in APIC
@@ -8729,7 +7941,7 @@ SFS DISABLE	       F9h		N/A		CPU		8
 SFS ENABLE	       FBh		N/A		CPU		8
 
 Format of CPUPWRMODE register (i386SL):
-Bits	Name	Description	(Table )
+Bits	Name	Description
 15	DT	If Unlock Status {  // See bit 0 of this register
 			if bit=0 then access to 82360SL
 			if bit=1 then access to CPUPWRMODE register
@@ -8784,7 +7996,7 @@ Bits	Name	Description	(Table )
 		If =1 Disable
 
 Format of EMSCNTLREG:
-Bits	Description	(Table )
+Bits	Description
 7	(Global Enable)
 	If =1 EMS enable
 6	Valid bit
@@ -8793,14 +8005,14 @@ Bits	Description	(Table )
 1..0	Active EMS Set (0-3)
 
 Format of EMSINDEXREG:
-Bits	Description	(Table )
+Bits	Description
 15..10	Reserved
 9..8	EMS set (0-3)
 7..6	Reserved
 5..0	EMS Page Register Index (0-64)
 
 Format of EMSDPREG:
-Bits	Description	(Table )
+Bits	Description
 15	This EMS Page Enable (i.e. page indexed by EMSINDEXREG)
 14	EMS Valid bit
 13..11	reserved
@@ -8837,7 +8049,7 @@ SFS DISABLE	       F9h		N/A		CPU		8
 SFS ENABLE	       FBh		N/A		CPU		8
 
 Format of CPUPWRMODE register (i486SL):
-Bits	Name	Description	(Table )
+Bits	Name	Description
 15	DT	If Unlock Status {  // See bit 0 of this register
 			if bit=0 then access to 82360SL
 			if bit=1 then access to CPUPWRMODE register
@@ -9001,7 +8213,7 @@ Base Format of opcodes:
 <Basecode> <Postbyte> <offset> <immediate_operands>
 
 Format of Postbyte:
-	(Table )
+
   MM RRR MMM
 
 MM  - Memory addresing mode
@@ -9374,13 +8586,13 @@ Note: First Byte of Operation is 0Fh
 03	LSL	reg,mem					; 286+
 04	LOADALL		 ; Alternative 286		; 286 only
 05	LOADALL		 ; 286				; 286 only
-05	SYSCALL						; Am6k86
+05	SYSCALL/SYSENTER				; Am6k86,Pentium Pro
 06	CLTS						; 286+
 07	LOADALL		 ; i386,486			; 386-486, Never Pentium
 	RES3		 ; AMD Am386zXLV
 	RES4		 ; AMD Am486DXLV
 	ICERET		 ; IBM 386SLC,486SLC,486SLC2
-	SYSRET		 ; Am6k86
+	SYSRET/SYSEXIT	 ; Am6k86, Pentium Pro, Pentium II
 08	INVD						; 486+
 09	WBINVD						; 486+
 0A	Reserved, INT 6
@@ -9950,7 +9162,6 @@ MMM \	010	100	101	110	111
 110			FLDZ	FDECSTP	FSIN'
 111				FINCSTP	FCOS'
 
-
 ' means 387+  (include 287XL/XLT, 187!!!)
 
 ESC 2  (First byte = DAh)
@@ -9973,7 +9184,6 @@ DA C0+i	 FCMOVB	 ST0,STi
 DA C8+i	 FCMOVE	 ST0,STi
 DA D0+i	 FCMOVBE ST0,STi
 DA D8+i	 FCMOVU	 ST0,STi
-
 
 ESC 3  (First byte = DBh)
 	==========================
@@ -10117,7 +9327,6 @@ memory_location	DW	?
 	jz	i486SX
 	jmp	i486DX/DX2etc/i487SX
 
-
 3) How to separate Cyrix's CPUs and other
        Be sure that Your CPU no Pentium before
        UMOV executed on Intel and other in
@@ -10145,7 +9354,6 @@ Mem_Loc	DW  1
 	and	ax,8000h	; Is bit 15=0
 	jz	386_and_Higher
 	jmp	86_88and186_186etc
-
 
 5) How separate 86/88, 186/188 and NECs
 
@@ -10208,7 +9416,7 @@ P54CSQ	3xCLK Pentiums P120 etc.
 P54CSLM P54CS with Low Power.
 P6L	Pentium II "Klamath" (w/o L2 build-in cache, with IA MMX)
 	"Katmai"  (IA MMX2, 100MHz system bus)
-	"Deschutes"  (High-tech "Klamath")
+	"Deschutes"  (High-tech "Klamath" for Mobile computers)
 P68	"Willamette" (High-tech "Pentium Pro")
 
 (Cyrix)
@@ -10219,9 +9427,10 @@ M7	Cx486DX/Cx486DX2
 M8	Cx486DX4
 M1	Cx6x86
 M1SC	Cx5x86
-M1R	Future M1 with reduced due size.
+M1R	Cx6x86L	 (0.35 mkm, reduced due size)
 M2	Cx6x86MX
 M3
+	MediaGX
 
 (AMD)
 SSA/5	Am5k86 early series (K5 with big due size and with reduced some
@@ -10274,7 +9483,6 @@ APPENDIX  I	FORMAT	OF DEBUG CONTROL REGISTERS (DR6/DR7)
 	0000000000000000 B B B B 00000000 B B B B
 			 T S D K	  3 2 1 0
 	----------------------------------------
-
 
 	[AMD Am486SXLV/Am386DXLV/Am386SXLV]
 	3322222222221111 1 1 1 1 11
@@ -10448,7 +9656,6 @@ MOV from/to DR, thay are aliasing to DR6,DR7.
 	--------------------------------
 	  BREAKPOINT_1_LINEAR_ADDRESS
 	--------------------------------
-
 
    +---------+
    |   DR0   |
@@ -10849,7 +10056,6 @@ LADDR - Linear Address
 		110 - Read from L1 TLB Y-port
 		111 - Read from L2 TLB Y-port
 
-
  +-------+
  |  TR7	 |
  +-------+
@@ -10937,7 +10143,6 @@ APPENDIX  N   EFLAGS register format
 		   I	 A V R	 N IO O D I T S Z   A	P   C
 	0000000000 D 0 0 C M F 0 T PL F F F F F F 0 F 0 F 1 F
 	-----------------------------------------------------
-
 
 	[i486 SX,DX,DX2] [OverDrive] [M5,M6,M7] [AMD Am486DX/DXL/DX2/DXL2 ] etc
 	[IBM BL486DX/DX2] [Cx486SLC/DLC/SLC2/DLC2] [NexGen Nx586]
@@ -11145,6 +10350,8 @@ CR1 register not exist on x86 architecture. Usually aliased CR0.
 	RRRRRRRRRRRRRRRRRRRR
 	------------------------------------
 
+	see APPENDIX
+
 PDBR  - Page Directory Base Register
  PCD  - Page Cache Disable
  PWT  - Page Write Whrought
@@ -11214,37 +10421,39 @@ APPENDIX Q     TYPE OF INTEL'S SOCKETS
 
 Socket #  Pins	Vcc	CPU		OverDrive
    ----------------------------------------------
-1	  169	5V	i486SX		IntelSX2 ODP
+1	  169	5	i486SX		IntelSX2 ODP
 			i486DX		IntelDX2 ODP
    ----------------------------------------------
-2	  238	5V	i486SX		IntelSX2 ODP
+2	  238	5	i486SX		IntelSX2 ODP
 			i486DX		IntelDX2 ODP
 			i486DX2		IntelDX4 ODP
 					Pentium	 ODP (P24T)
    ----------------------------------------------
-3	  237	3/5V	i486SX		IntelSX2 ODP
+3	  237	3/5	i486SX		IntelSX2 ODP
 			i486DX		IntelDX2 ODP
 			i486DX2		IntelDX4 ODP
 			i486SX2		Pentium	 ODP (P24T)
 			IntelDX4
    ----------------------------------------------
-4	  273	5V	Pentium (P5)	Pentium ODP (P5T)
+4	  273	5	Pentium (P5)	Pentium ODP (P5T)
    ----------------------------------------------
-5	  320	3V	Pentium (P54C)	Pentium ODP (P54T)
+5	  320	3.3	Pentium (P54C)	Pentium ODP (P54T)
    ----------------------------------------------
-6	  235	3V	IntelDX4	Pentium ODP (P24T)
+6	  235	3.3	IntelDX4	Pentium ODP (P24T)
    ----------------------------------------------
-7	  321	3V	Pentium (P54C)	Pentium ODP (P54T)
+7	  321	2.9-3.3	Pentium (P54C)	Pentium ODP (P54T)
 			Pentium (P55C)
    ----------------------------------------------
-8	  387	12,5,3	Pentium Pro(P6) Pentium Pro ODP (P6T)
-   ----------------------------------------------
+8	  387	2.9-3.3	Pentium Pro(P6) Pentium Pro ODP (P6T)
    ----------------------------------------------
 
 Slot #	 Pins	Vcc	CPU		Overdrive
    ----------------------------------------------
- 1			Pentium II
+ 1	 242	2.9-3.3	Pentium II
    ----------------------------------------------
+ 2	 ???	2.4?	"Deschutes"
+   -----------------------------------------------
+Note: The main Pentium II chip have 528 pins.
 ------------------------------------------------------
 APPENDIX R    UNDEFINED FLAGS
 
@@ -11252,7 +10461,6 @@ See CPUUTIL.ZIP for UFLAGS.COM !!
 
 Hey, Guys!  Do You really think about set of 80x86 CPU cores and
 "That's mean UNDEFINED FLAGS?".
-
 
    ---	     Where black Wizardry trying to hide?    ----
 
@@ -11444,16 +10652,601 @@ APPENDIX  S   FLOATING POINT REGISTERS FORMATS
  DM  - Denormalized operand mask
  IM  - Invalid Operation Mask
 
-
 All other F.P registers: ST(i), TAGS, SW have same format on all FPUs.
 Present some different in FPU environment, but now is no time for describe
 it here.
----------------------------------------------------------
+-------------------------------------------------
+APPENDIX  T    FORMAT  OF  PAGE TABLES ENTRYES
+
+ In X86 Architecture there are 3 modes of Paging:
+	Mode A - i386..Pentium Compatible
+
+  The selection of paging mode:
+
+CR0.PG	CR4.PAE	CR4.PSE	 page_desc.PS	Page Size  Address Space Paging Mode
+  0	   x	   x	      x		   ----- Paging Disable -----
+  1	   0	   0	      x		    4K		32bit	     A
+  1	   0	   1	      0		    4K		32bit	     A
+  1	   0	   1	      1		    4M		32bit	     A
+  1	   1	   x	      0		    4K		36bit	     B
+  1	   1	   x	      1		    2M		36bit	     C
+
++----------------------------------------------------------------------------+
+|	----------------     Paging Mode A	-----------		     |
++----------------------------------------------------------------------------+
+
+Format of Linear Address:
+
+     [32 bit address, 4K pages]
+	bit	description
+	31..22	index in PDT (Page Directory Table)
+	21..12	index in PT  (Page Table)
+	11..0	offset within Page
+
+     [32 bit address, 4M pages]
+	bit	description
+	31..22	index in PDT (Page Directory Table)
+	21..0	offset within Page
+
+Format of CR3 register:
+   -----------------
+	bit	description
+	31..12	PDT base address (31..12) (PDBR)
+	11..5	Reserved
+	4	PCD
+	3	PWT
+	2..0	Reserved (0)
+
+ +----------+
+ | CR3.PDBR |
+ +----------+
+	|	PDT (Pages
+	|	Directory Table)
+	\---->+----------------+
+	      |	   ....	       |
+	      +----------------+	 PT (Pages Table)
+	      |	   PT desc.    |------>+-------------------+
+	      +----------------+       |      ......	   |
+	      |	   ....	       |       +-------------------+
+	      +----------------+       |    Page desc.	   | ---> +-----------+
+	      |		       |       +-------------------+	  | Page in   |
+	      |		       |       |       .....	   |	  | memory 4K |
+	      |		       |       +-------------------+	  +-----------+
+	      +----------------+
+	      | 4M page desc.  |-----> +----------+
+	      +----------------+       | Page in  |
+	      |		       |       | memory	  |
+	      +----------------+       |   4Mb	  |
+				       +----------+
+
+ +------------------------------+
+ | Format of Pages Descriptors	|
+ +------------------------------+
+
+	[Pentium Pro,Pentium II,AMD K5,K6]
+	(only page directory entrys support 4MB pages)
+	33222222222211111111 11
+	10987654321098765432 109 8 7 6 5 4 3 2 1 0
+	------------------------------------------
+	PPPPPPPPPPPPPPPPPPPP AAA G P D A P P U R P
+	FFFFFFFFFFFFFFFFFFFF VVV   S	 C W / /
+	AAAAAAAAAAAAAAAAAAAA LLL	 D T S W
+	------------------------------------------
+
+	[Pentium,Cyrix Cx6x86MX]
+	(only page directory entrys support 4MB pages)
+	33222222222211111111 11
+	10987654321098765432 109 8 7 6 5 4 3 2 1 0
+	------------------------------------------
+	PPPPPPPPPPPPPPPPPPPP AAA 0 P D A P P U R P
+	FFFFFFFFFFFFFFFFFFFF VVV   S	 C W / /
+	AAAAAAAAAAAAAAAAAAAA LLL	 D T S W
+	------------------------------------------
+
+	[i486 and clones]
+	33222222222211111111 11
+	10987654321098765432 109 8 7 6 5 4 3 2 1 0
+	------------------------------------------
+	PPPPPPPPPPPPPPPPPPPP AAA 0 0 D A P P U R P
+	FFFFFFFFFFFFFFFFFFFF VVV	 C W / /
+	AAAAAAAAAAAAAAAAAAAA LLL	 D T S W
+	------------------------------------------
+
+	[Cx486SLC/DLC,TI486SLC/DLC/e,TI486SXL and clones]
+	33222222222211111111 11
+	10987654321098765432 109 8 7 6 5 4 3 2 1 0
+	------------------------------------------
+	PPPPPPPPPPPPPPPPPPPP AAA 0 0 D A P 0 U R P
+	FFFFFFFFFFFFFFFFFFFF VVV	 C   / /
+	AAAAAAAAAAAAAAAAAAAA LLL	 D   S W
+	------------------------------------------
+
+	[i386 and all clones]
+	33222222222211111111 11
+	10987654321098765432 109 8 7 6 5 43 2 1 0
+	------------------------------------------
+	PPPPPPPPPPPPPPPPPPPP AAA 0 0 D A 00 U R P
+	FFFFFFFFFFFFFFFFFFFF VVV	    / /
+	AAAAAAAAAAAAAAAAAAAA LLL	    S W
+	------------------------------------------
+
+PFA - Physical Frame address
+AVL - Available for Operating System
+G   - Global Page (valid if PGE bit in CR4 set
+PS  - Page Size
+	=0 Directory entry (if in PDT)
+	   4K page	   (if in page table)
+	=1 4M boundary (descriptor must be in PDT only))
+D   - Dirty		   (ignored in PDT)
+A   - Accessed
+PCD - Page Cache disable
+PWT - Page Write throught
+U/S - User/Supervisor
+R/W - Read/Write
+P   - Present
+
++----------------------------------------------------------------------------+
+|	----------------     Paging Modes B & C	 -----------		     |
++----------------------------------------------------------------------------+
+
+Schemes, which used in paging modes B and C support address extension
+up to 64bit, but now can be used only 36 bits of it.
+
+Format of Linear Address:
+
+     [36 bit address, 4K pages]		(mode B)
+	bit	description
+	31..30	index in PDPT (Page Directory Pointers Table)
+	29..21	index in PDT (Page Directory Table)
+	20..12	index in PT  (Page Table)
+	11..0	offset within Page
+
+     [36 bit address, 2M pages]		(mode C)
+	bit	description
+	31..30	index in PDPT (Page Directory Pointers Table)
+	29..21	index in PDT (Page Directory Table)
+	20..0	offset within Page
+
+Format of CR3 register:
+  --------------------
+	bit	description
+	31..5	PDPT base address (38..12) (PDBR)
+	4	PCD
+	3	PWT
+	2..0	Reserved (0)
+
+  PDPT (Page Directory
+  Pointer Table)		   +----------+
+ +----------+ <--------------------| CR3.PDBR |
+ |   ...    |			   +----------+
+ +----------+
+ | PDT desc |
+ +----------+
+	|	PDT (Pages
+	|	Directory Table)
+	\---->+----------------+
+	      |	   ....	       |
+	      +----------------+	 PT (Pages Table)
+	      |	   PT desc.    |------>+-------------------+
+	      +----------------+       |      ......	   |
+	      |	   ....	       |       +-------------------+
+	      +----------------+       |    Page desc.	   | ---> +-----------+
+	      |		       |       +-------------------+	  | Page in   |
+	      |		       |       |       .....	   |	  | memory 4K |
+	      |		       |       +-------------------+	  +-----------+
+	      +----------------+
+	      | 2M page desc.  |-----> +----------+
+	      +----------------+       | Page in  |
+	      |		       |       | memory	  |
+	      +----------------+       |   2M	  |
+				       +----------+
+
+Format of Page Directory Pointer Table Entry (4 entry/PDPT):
+	----------------------------------
+
+	6     3 3	1 1
+	3 ... 6 5 ..... 2 1 ... 9 8..5 4 3 2..0
+	-------+---------+-------+----+-+-+----
+	%%%%%%%| PDT Base|	 | %% |P|P| %%%
+	%%%%%%%| Address | AVAIL | %% |C|W| %%%
+	%%%%%%%|(35..12) |	 | %% |D|T| %%%
+	-------+---------+-------+----+-+-+----
+
+Format of Page Directory Table Entry (512 entry/PDT)
+	   ----------------------------
+
+	[4K pages DT]: (Mode B)
+	6     3 3	1 1
+	3 ... 6 5 ..... 2 1 ... 9 8..6 5 4 3 2 1 0
+	-------+---------+-------+----+-+-+-+-+-+-
+	%%%%%%%| PT Base |	 | %% | |P|P|U|R|
+	%%%%%%%| Address | AVAIL | %% |A|C|W|/|/|P
+	%%%%%%%|(35..12) |	 | %% | |D|T|S|W|
+	-------+---------+-------+----+-+-+-+-+-+-
+
+	[2M page]: (Mode C)
+	6     3 3	2 2  1 1
+	3 ... 6 5 ..... 1 0..2 1 ... 9 8 7 6 5 4 3 2 1 0
+	-------+---------+----+-------+-+-+-+-+-+-+-+-+-
+	%%%%%%%|Page Base| %% |	      | | | | |P|P|U|R|
+	%%%%%%%| Address | %% | AVAIL |G|1|D|A|C|W|/|/|P
+	%%%%%%%|(35..21) | %% |	      | | | | |D|T|S|W|
+	-------+---------+----+-------+-+-+-+-+-+-+-+-+-
+
+Format of Page Table Entry (512 entry/PT):
+       -------------------------
+
+	[2K page]: (Mode B)
+	6     3 3	1 1
+	3 ... 6 5 ..... 2 1 ... 9 8 7 6 5 4 3 2 1 0
+	-------+---------+-------+-+-+-+-+-+-+-+-+-
+	%%%%%%%|Page Base|	 | | | | |P|P|U|R|
+	%%%%%%%| Address | AVAIL |G|0|D|A|C|W|/|/|P
+	%%%%%%%|(35..21) |	 | | | | |D|T|S|W|
+	-------+---------+-------+-+-+-+-+-+-+-+-+-
+
+The means of bits same as in Paging Mode A.
+-------------------------------------------------
+APPENDIX U     FORMAT  OF  DESCRIPTORS
+
++-------------------------------+
+| Format of Generic Descriptor: |
++-------------------------------+
+
+	+00	WORD	Segment Limit (Low)	(15..0)
+	+02	WORD	Segment Base  (Low)	(15..0)
+	+04	BYTE	Segment Base  (Mid)	(23..16)
+	+05	BYTE	Access Rights Byte (AR)
+	+06	BYTE	Segment Limit (High) (19..16)/AR2
+	+07	BYTE	Segment Base (High)	(31..24)
+
+   This format have data and code segment descriptors.
+
++----------+
+|    AR	   |	Access Rights Byte
++----------+
+
+	+----+----+----+----+----+----+----+----+
+	| P  |	 DPL   | S  |	 |    |	   |	|	[General AR]
+	+----+----+----+----+----+----+----+----+
+
+P   - (Present segment)
+	=0 segment not present
+	=1 segment present in memory
+
+DPL - (Descriptor Privelege Level)
+	00 - Highest
+	11 - Lowest
+
+S   - (System)
+	=0 descriptor is system
+	=1 descriptor is segment
+
+	+----+----+----+----+----+----+----+----+
+	| P  |	 DPL   | 1  | E	 |    |	   |	|	[segment AR]
+	+----+----+----+----+----+----+----+----+
+
+E   - (Extended Type of Segment Descriptor)
+	=0 data segment
+	=1 code segment
+
+	+----+----+----+----+----+----+----+----+
+	| P  |	 DPL   | 1  | 1	 | C  | R  | A	|	[Code segment AR]
+	+----+----+----+----+----+----+----+----+
+
+C   - (Control Bit)
+	=0  Working rules of calling segment wia gates, using PL.
+	=1  Segment may be immediate called using CALL FAR from
+	    same or more privelege segment
+
+R   - (Readable segment)
+	=0  Reading disable (only execution enable)
+	=1  Enable reading
+
+A   - (Accessable)
+	=0  None  accesses into segment was
+	=1  Some accesses was
+
+	+----+----+----+----+----+----+----+----+
+	| P  |	 DPL   | 1  | 0	 | ED | W  | A	|	[Data segment AR]
+	+----+----+----+----+----+----+----+----+
+
+ED  - (Expand Down)
+	=0 Expand Up
+	=1 Expand down
+
+W   - (Writable)
+	=0 Write disable
+	=1 Write enable
+
+	+----+----+----+----+----+----+----+----+
+	| P  |	 DPL   | 0  |	 T Y P E	|	[System descriptor AR]
+	+----+----+----+----+----+----+----+----+
+
+TYPE - (Type of System descriptor)
+	0000 - Not Used
+	0001 - Available TSS (286 style)
+	0010 - LDT
+	0011 - Busy TSS (286 style)
+	0100 - Call Gate (286 style)
+	0101 - Task Gate (286 style)
+	0110 - Interrupt Gate (286 style)
+	0111 - Trap Gate (286 style)
+	1000 - Not Used
+	1001 - Available TSS (386 style)
+	1010 - Reserved
+	1011 - Busy TSS (386 style)
+	1100 - Call Gate (386 style)
+	1101 - Reserved
+	1110 - Interrupt Gate (386 style)
+	1111 - Trap Gate (386 style)
+
++--------+
+|  AR2	 |
++--------+
+
+	+----+----+----+----+
+	| G  | D  | 0  | X  |
+	+----+----+----+----+
+
+G - (Granularity)
+	=0 Segment limit calculated in Bytes (up to 2^20 bytes)
+	=1 Segment limit calculated in Pages of 4K (up to 2^32 bytes)
+
+D - (Dimensions)
+	=0 16 bit segment
+	=1 32 bit segment
+	Note: need for code segments, 'cos opcodes in 16-bit and 32-bit
+	      segments are different.
+
+X - Available for Operating System
+
++---------------------------------------------------------------------------+
+| ------------------------ System Descriptors  -----------------------------|
++---------------------------------------------------------------------------+
+
++-----+
+| LDT |
++-----+
+
+	+00	WORD	LDT Limit (Low) 15..0
+	+02	WORD	LDT Base (15..0)  (Low)
+	+04	BYTE	LDT Base (23..16) (Mid)
+	+05	BYTE	AR
+	+06	BYTE	AR2
+	+07	BYTE	LDT Base (31..24) (High)
+
+	+----+----+----+----+----+----+----+----+
+	| P  |	 DPL   | 0  |  0 |  0 |	 1 |  0 |	[AR]
+	+----+----+----+----+----+----+----+----+
+
++---------------+
+| 286 Call Gate |
++---------------+
+
+	+00	WORD	Offset 15..0
+	+02	WORD	Selector
+	+04	BYTE	Word Count (5 bit)
+	+05	BYTE	AR
+	+06	WORD	0
+
+	+----+----+----+----+----+----+----+----+
+	| P  |	 DPL   | 0  |  0 |  1 |	 0 |  0 |	[AR]
+	+----+----+----+----+----+----+----+----+
+
++---------------+
+| 386 Call Gate |
++---------------+
+
+	+00	WORD	Offset 15..0  (Low)
+	+02	WORD	Selector
+	+04	BYTE	Dword Count (5 bit)
+	+05	BYTE	AR
+	+06	WORD	Offset 31..16
+
+	+----+----+----+----+----+----+----+----+
+	| P  |	 DPL   | 0  |  1 |  1 |	 0 |  0 |	[AR]
+	+----+----+----+----+----+----+----+----+
+
++---------+
+| 286 TSS |
++---------+
+
+	+00	WORD	TSS Limit  (15..0)
+	+02	WORD	TSS Base   (15..0) (Low)
+	+04	BYTE	TSS Base   (23..16) (Mid)
+	+05	BYTE	AR
+	+06	WORD	0
+
+	+----+----+----+----+----+----+----+----+
+	| P  |	 DPL   | 0  |  0 |  0 |	 B |  1 |	[AR]
+	+----+----+----+----+----+----+----+----+
+
+B    - (Busy)
+	=0 TSS is available
+	=1 TSS is busy (active,current)
+
++---------+
+| 386 TSS |
++---------+
+
+	+00	WORD	TSS Limit (15..0) (Low)
+	+02	WORD	TSS Base  (15..0) (Low)
+	+04	BYTE	TSS Base  (23..16)(Mid)
+	+05	BYTE	AR
+	+06	BYTE	AR2/TSS Limit High (19..16)
+	+07	BYTE	TSS Base (31..24) (High)
+
+	+----+----+----+----+----+----+----+----+
+	| P  |	 DPL   | 0  |  1 |  0 |	 B |  1 |	[AR]
+	+----+----+----+----+----+----+----+----+
+
++-------------------------+
+| Interrupt/Trap Gate 286 |
++-------------------------+
+
+	+00	WORD	Offset 15..0
+	+02	WORD	Selector
+	+04	BYTE	0
+	+05	BYTE	AR
+	+06	WORD	0
+
+	+----+----+----+----+----+----+----+----+
+	| P  |	 DPL   | 0  |  0 |  1 |	 1 |  T |	[AR]
+	+----+----+----+----+----+----+----+----+
+
+T -  (Trap Flag)
+	=0 Interrupt Gate
+	=1 Trap Gate
+
++-------------------------+
+| Interrupt/Trap Gate 386 |
++-------------------------+
+
+	+00	WORD	Offset 15..0  (Low)
+	+02	WORD	Selector
+	+04	BYTE	0
+	+05	BYTE	AR
+	+06	WORD	Offset 31..16 (High)
+
+	+----+----+----+----+----+----+----+----+
+	| P  |	 DPL   | 0  |  1 |  1 |	 1 |  T |	[AR]
+	+----+----+----+----+----+----+----+----+
+
++-----------+
+| Task Gate |
++-----------+
+
+	+00	WORD	0
+	+02	WORD	TSS Selector
+	+04	BYTE	0
+	+05	BYTE	AR
+	+06	WORD	0
+
+	+----+----+----+----+----+----+----+----+
+	| P  |	 DPL   | 0  |  0 |  1 |	 0 |  1 |	[AR]
+	+----+----+----+----+----+----+----+----+
+
++----------------------------------+
+| Possible Tables for Descriptors  |
++----------------------------------+
+    ---------------+-----------------------+---------------------------
+     Lowest 5 bits |			   |	    Valid in
+	of  AR	   |	      Type	   |   GDT     LDT     IDT
+    ---------------+-----------------------+---------------------------
+	00010		LDT			+	-	-
+	0*0*1		286 TSS			+	-	-
+	0*100		Call Gate		+	+	-
+	0*101		Task Gate		+	+	+
+	0*110		Interrupt Gate		-	-	+
+	0*111		Trap Gate		-	-	+
+	10***		Data segment		+	+	-
+	11***		Code segment		+	+	-
+-------------------------------------------------
+APPENDIX  V    FORMAT  OF  TSS
+
++--------------------+
+| Format of 286 TSS  |
++--------------------+
+
+	+00	WORD	Previous TSS Selector (Back Link)
+	+02	WORD	Offset of stack	 ring 0
+	+04	WORD	Selector of stack ring 0
+	+06	WORD	Offset of stack	 ring 1
+	+08	WORD	Selector of stack ring 1
+	+0A	WORD	Offset of stack	 ring 2
+	+0C	WORD	Selector of stack ring 2
+	+0E	WORD	IP
+	+10	WORD	FLG
+	+12	WORD	AX
+	+14	WORD	CX
+	+16	WORD	DX
+	+18	WORD	BX
+	+1A	WORD	SP
+	+1C	WORD	BP
+	+1E	WORD	SI
+	+20	WORD	DI
+	+22	WORD	ES
+	+24	WORD	CS
+	+26	WORD	SS
+	+28	WORD	DS
+	+2A	WORD	LDT
+Note: Len of 286 TSS is 2Ch bytes (44d)
+
++--------------------+
+| Format of 386 TSS  |
++--------------------+
+
+			High word/Low word
+	+00	DWORD	0/Previous TSS selector (Back Link)
+	+04	DWORD	Stack pointer for ring 0
+	+08	DWORD	0/Stack Selector for ring 0
+	+0C	DWORD	Stack pointer for ring 1
+	+10	DWORD	0/Stack Selector for ring 1
+	+14	DWORD	Stack pointer for ring 2
+	+18	DWORD	0/Stack Selector for ring 2
+	+1C	DWORD	CR3
+	+20	DWORD	EIP
+	+24	DWORD	EFLAGS
+	+28	DWORD	EAX
+	+2C	DWORD	ECX
+	+30	DWORD	EDX
+	+34	DWORD	EBX
+	+38	DWORD	ESP
+	+3C	DWORD	EBP
+	+40	DWORD	ESI
+	+44	DWORD	EDI
+	+48	DWORD	0/ES
+	+4C	DWORD	0/CS
+	+50	DWORD	0/SS
+	+54	DWORD	0/DS
+	+58	DWORD	0/FS
+	+5C	DWORD	0/GS
+	+60	DWORD	0/LDT
+	+64	WORD	Trap Bits
+	+66	WORD	Offset within TSS to I/O Permission Map
+Minimal Length of TSS is 68 bytes.
+
+IPM	 is IO Permition Map Base address
+TSS_LAST is last byte of TSS.
+
+	+IPM-20h  20h BYTEs Software Interrupt Redirection Bitmap (VME)
+			    1 bit/int
+	+IPM	  xxh BYTEs I/O Permition Bitmap
+			    1 bit/port
+	+TSS_LAST BYTE	    I/O PAD Byte
+			    PAD byte show which bits in last byte of
+			    I/O permission bitmap valid.
+			    (recommended to set up this byte to FF)
+
+		TSS
+
+	+----------------+
+	|		 |
+	|      .....	 |
+	|		 |
+	+----------------+
+	| offset to IPM	 |----------------+
+	+----------------+		  |
+	|      ....	 |		  |
+	|      ....	 |		  |
+	+----------------+		  |
+	|Int Redir Bitmap|		  |
+	+----------------+ <--------------+
+	|     IPM	 |
+	+----------------+
+	|  PAD BYTE	 |
+	+----------------+  <------ TSS Limit
+---------------------------------------------------
+APPENDIX V  - Model Specific Registers List
+
+[See MSR.LST]
+
 ---------------------------------------------------------
 [Credits]:
 1) THANX specially for/to Martin Malik and RealSoft.
    (malik@elf.stuba.sk)
-   Cyrix's CPUs type data.
+   Cyrix's CPUs type data. Many good info :)
    Some Vendors strings for CPUID.
    P54M ID code
    Part of This Kind of Info (C) RealSoft.
@@ -11465,12 +11258,6 @@ it here.
    who helped with information and CPU samples.
 5) THANX to all, who send notes, testing CPUs with PHG tools
 ----------------------------------------------------------
-[2 person]:
--> Craig Hart and Australian Hackers. Did You found IAL yet?
--> Raul Mate Galan (Spain): What's about cachemeter?
--> Martin Malik: What's they implemented in next CPUID EAX ?!!?
-		 (with AMD).!!!
------------------------------------------------------------
 Q&A:
 
 Q. - How to find latest version of OPCODE.LST ?
@@ -11478,7 +11265,7 @@ A. - You may find it within  Ralf's INTERxx.ZIP.
 
 Q. - Did PHG have WWW page, where placed OPCODE.LST ?
 A. - Unfortunetly, No.
-     But may be You want to create this page? Mail us.
+     But it will be released at mid-March 1998.
 -----------------------------------------------------------
 [2 All]
 If You found some errors or incorrections in this text
@@ -11492,3 +11279,4 @@ Thanx for  Urri, Stas, Afo, Kernel.3,Den96
 Special Thanks for  AX (MISA).
 ------------------------------------------------------------
 Sorry, But EOF
+

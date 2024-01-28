@@ -1,5 +1,1371 @@
 Interrupt List, part 6 of 16
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
+--------D-2125-------------------------------
+INT 21 - DOS 1+ - SET INTERRUPT VECTOR
+	AH = 25h
+	AL = interrupt number
+	DS:DX -> new interrupt handler
+Notes:	this function is preferred over direct modification of the interrupt
+	  vector table
+	some DOS extenders place an API on this function, as it is not
+	  directly meaningful in protected mode
+	under DR DOS 5.0+, this function does not use any of the DOS-internal
+	  stacks and may thus be called at any time
+	Novell NetWare (except the new DOS Requester) monitors the offset of
+	  any INT 24 set, and if equal to the value at startup, substitutes
+	  its own handler to allow handling of network errors; this introduces
+	  the potential bug that any program whose INT 24 handler offset
+	  happens to be the same as COMMAND.COM's will not have its INT 24
+	  handler installed
+SeeAlso: AX=2501h,AH=35h
+--------E-212501-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - RESET DOS EXTENDER DATA STRUCTURES
+	AX = 2501h
+	SS = application's original SS or DS (FlashTek X-32VM)
+Return: CF clear if successful
+	CF set on error
+	    caller is operating on X-32 stack (FlashTek X-32VM)
+Notes:	Phar Lap uses INT 21/AH=25h as the entry point for all 386/DOS-Extender
+	  system calls.	 Only available when directly using 386/DOS-Extender or
+	  a compatible DOS extender, or when using a product that was created
+	  using 386-DOS/Extender or a compatible
+	this function is also supported by FlashTek X-32VM
+SeeAlso: AH=30h"Phar Lap"
+--------E-212502-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - GET PROTECTED-MODE INTERRUPT VECTOR
+	AX = 2502h
+	CL = interrupt number
+Return: CF clear
+	ES:EBX = CS:EIP of protected-mode interrupt handler
+Note:	this function is also supported by FlashTek X-32VM
+SeeAlso: AX=2503h,AX=2504h,INT 31/AX=0204h
+--------E-212503-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - GET REAL-MODE INTERRUPT VECTOR
+	AX = 2503h
+	CL = interrupt number
+Return: CF clear
+	EBX = CS:IP of real-mode interrupt handler
+Note:	this function is also supported by FlashTek X-32VM
+SeeAlso: AX=2502h,AX=2504h,AH=35h,INT 31/AX=0200h
+--------E-212504-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - SET PROTECTED-MODE INTERRUPT VECTOR
+	AX = 2504h
+	CL = interrupt number
+	DS:EDX = CS:EIP of protected-mode interrupt handler
+Return: CF clear
+Note:	this function is also supported by FlashTek X-32VM
+SeeAlso: AX=2502h,AX=2505h,INT 31/AX=0205h
+--------E-212505-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - SET REAL-MODE INTERRUPT VECTOR
+	AX = 2505h
+	CL = interrupt number
+	EBX = CS:IP of real-mode interrupt handler
+Return: CF clear
+Note:	this function is also supported by FlashTek X-32VM
+SeeAlso: AX=2503h,AX=2504h,INT 31/AX=0201h
+--------E-212506-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - SET INT TO ALWAYS GAIN CNTRL IN PR. MODE
+	AX = 2506h
+	CL = interrupt number
+	DS:EDX = CS:EIP of protected-mode interrupt handler
+Return: CF clear
+Notes:	this function modifies both the real-mode low-memory interrupt
+	  vector table and the protected-mode Interrupt Descriptor Table (IDT)
+	interrupts occurring in real mode are resignaled in protected mode
+	this function is also supported by FlashTek X-32VM
+--------E-212507-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - SET REAL- & PROTECTED-MODE INT VECTORS
+	AX = 2507h
+	CL = interrupt number
+	DS:EDX = CS:EIP of protected-mode interrupt handler
+	EBX = CS:IP of real-mode interrupt handler
+Return: CF clear
+Notes:	interrupts are disabled until both vectors have been modified
+	this function is also supported by FlashTek X-32VM
+SeeAlso: AX=2504h,AX=2505h
+--------E-212508-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - GET SEGMENT LINEAR BASE ADDRESS
+	AX = 2508h
+	BX = segment selector
+Return: CF clear if successful
+	    ECX = linear base address of segment
+	CF set if invalid segment selector
+Note:	this function is also supported by FlashTek X-32VM
+SeeAlso: AX=2509h
+--------E-212509-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - CONVERT LINEAR TO PHYSICAL ADDRESS
+	AX = 2509h
+	EBX = linear address to convert
+Return: CF clear if successful
+	    ECX = physical address (carry flag clear)
+	CF set if linear address not mapped in page tables
+SeeAlso: AX=2508h
+--------E-212509-----------------------------
+INT 21 P - FlashTek X-32VM - GET SYSTEM SEGMENTS AND SELECTORS
+	AX = 2509h
+Return: CF clear
+	EAX high word = default DS
+	AX = alias for 16-bit data segment
+	BX = real mode code segment
+	EDX high word = selector covering full 4GB address space
+	DX = default SS
+	ESI high word = PSP selector
+	SI = environment selector
+--------E-21250A-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - MAP PHYSICAL MEMORY AT END OF SEGMENT
+	AX = 250Ah
+	ES = segment selector in the Local Descriptor Table (LDT) of segment
+	     to modify
+	EBX = physical base address of memory to map (multiple of 4K)
+	ECX = number of physical 4K pages to map
+Return: CF clear if successful
+	    EAX = 32-bit offset in segment of mapped memory
+	CF set on error
+	    EAX = error code
+		08h insufficient memory to create page tables
+		09h invalid segment selector
+SeeAlso: INT 31/AX=0800h
+--------E-21250C-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - GET HARDWARE INTERRUPT VECTORS
+	AX = 250Ch
+Return: CF clear
+	AL = base interrupt vector for IRQ0-IRQ7
+	AH = base interrupt vector for IRQ8-IRQ15
+	BL = interrupt vector for BIOS print screen function (Phar Lap only)
+Note:	this function is also supported by FlashTek X-32VM
+SeeAlso: INT 31/AX=0400h,INT 67/AX=DE0Ah
+--------E-21250D-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - GET REAL-MODE LINK INFORMATION
+	AX = 250Dh
+Return: CF clear
+	EAX = CS:IP of real-mode callback procedure (see #1046) that will
+		  call through from real mode to a protected-mode routine
+	EBX = 32-bit real-mode address of intermode call data buffer
+	ECX = size in bytes of intermode call data buffer
+	ES:EDX = protected-mode address of intermode call data buffer
+Notes:	this function is also supported by FlashTek X-32VM
+	X-32VM guarantees the intermode buffer to be at least 4 KB
+SeeAlso: AX=250Eh
+
+(Table 1046)
+Call Phar Lap real-mode callback with:
+	STACK:	DWORD	offset to protected-mode code
+		WORD	placeholder for protected-mode CS
+		DWORD	pointer to selector structure (see #1047)
+			or 0000h:0000h for defaults
+		var	parameters for protected-mode procedure
+Return: via FAR return
+
+Format of Phar Lap selector structure:
+Offset	Size	Description	(Table 1047)
+ 00h	WORD	protected-mode GS selector
+ 02h	WORD	protected-mode FS selector
+ 04h	WORD	protected-mode ES selector
+ 06h	WORD	protected-mode DS selector
+--------E-21250E-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - CALL REAL-MODE PROCEDURE
+	AX = 250Eh
+	EBX = CS:IP of real-mode procedure to call
+	ECX = number of two-byte words to copy from protected-mode stack
+	      to real-mode stack
+Return: CF clear if successful
+	    all segment registers unchanged
+	    all general registers contain values set by real-mode procedure
+	    all other flags set as they were left by real-mode procedure
+	    stack unchanged
+	CF set on error
+	    EAX = error code
+		01h not enough real-mode stack space
+Note:	this function is also supported by FlashTek X-32VM; under X-32VM, the
+	  call will fail if ECX > 0000003Fh
+SeeAlso: AX=250Dh,AX=2510h,AH=E1h"OS/286",INT 31/AX=0301h
+--------E-21250F-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - CONVERT PROTECTED-MODE ADDRESS TO MS-DOS
+	AX = 250Fh
+	ES:EBX = 48-bit protected-mode address to convert
+	ECX = 00000000h or length of data in bytes
+Return: CF clear if successful (address < 1MB and contiguous)
+	    ECX = 32-bit real-mode MS-DOS address
+	CF set on error (address >= 1MB or not contiguous)
+	    ECX = linear address
+Note:	this function is also supported by FlashTek X-32VM
+SeeAlso: AX=2510h
+--------E-212510-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - CALL REAL-MODE PROCEDURE, REGISTERS
+	AX = 2510h
+	EBX = CS:IP of real-mode procedure to call
+	ECX = number of two-byte words to copy to protected-mode stack to
+	      real-mode stack
+	DS:EDX -> pointer to parameter block (see #1048)
+Return: CF clear if successful
+	    all segment registers unchanged,
+	    EDX unchanged
+	    all other general registers contain values set by real-mode proc
+	    all other flags are set as they were left by real-mode procedure
+	    real-mode register values are returned in the parameter block
+	CF set on error
+	    EAX = error code
+		01h not enough real-mode stack space
+Note:	unlike most of the preceding 25xxh functions, this one is not
+	  supported by FlashTek X-32VM
+SeeAlso: AX=250Eh,AX=250Fh
+
+Format of Phar Lap real-mode call parameter block:
+Offset	Size	Description	(Table 1048)
+ 00h	WORD	real-mode DS value
+ 02h	WORD	real-mode ES value
+ 04h	WORD	real-mode FS value
+ 06h	WORD	real-mode GS value
+ 08h	DWORD	real-mode EAX value
+ 0Ch	DWORD	real-mode EBX value
+ 10h	DWORD	real-mode ECX value
+ 14h	DWORD	real-mode EDX value
+--------E-212511-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - ISSUE REAL-MODE INTERRUPT
+	AX = 2511h
+	DS:EDX -> parameter block (see #1049)
+Return: all segment registers unchanged
+	EDX unchanged
+	all other registers contain values set by the real-mode int handler
+	the flags are set as they were left by the real-mode interrupt handler
+	real-mode register values are returned in the parameter block
+Note:	this function is also supported by FlashTek X-32VM
+SeeAlso: AX=2503h,AX=2505h,AX=250Eh,AH=E3h"OS/286",INT 31/AX=0300h
+
+Format of Phar Lap real-mode interrupt parameter block:
+Offset	Size	Description	(Table 1049)
+ 00h	WORD	interrupt number
+ 02h	WORD	real-mode DS value
+ 04h	WORD	real-mode ES value
+ 06h	WORD	real-mode FS value
+ 08h	WORD	real-mode GS value
+ 0Ah	DWORD	real-mode EAX value
+ 0Eh	DWORD	real-mode EDX value
+Note: all other real-mode values set from protected-mode registers
+--------E-212512-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - LOAD PROGRAM FOR DEBUGGING
+	AX = 2512h
+	DS:EDX -> pointer to ASCIZ program name
+	ES:EBX -> pointer to parameter block (see #1051)
+	ECX = size in bytes of LDT buffer
+Return: CF clear if successful
+	    EAX = number of segment descriptors in LDT
+	CF set on error
+	    EAX = error code (see #1050)
+SeeAlso: AX=2517h
+
+(Table 1050)
+Values for Phar Lap error code:
+ 02h	file not found or path invalid
+ 05h	access denied
+ 08h	insufficient memory
+ 0Ah	environment invalid
+ 0Bh	invalid file format
+ 80h	LDT too small
+
+Format of Phar Lap program load parameter block:
+Offset	Size	Description	(Table 1051)
+Input:
+ 00h	DWORD	32-bit offset of environment string
+ 04h	WORD	segment of environment string
+ 06h	DWORD	32-bit offset of command-tail string
+ 0Ah	WORD	segment of command-tail string
+ 0Ch	DWORD	32-bit offset of LDT buffer (size in ECX)
+ 10h	WORD	segment of LDT buffer
+Output:
+ 12h	WORD	real-mode paragraph address of PSP (see also AH=26h)
+ 14h	WORD	real/protected mode flag
+		0000h  real mode
+		0001h  protected mode
+ 16h	DWORD	initial EIP value
+ 1Ah	WORD	initial CS value
+ 1Ch	DWORD	initial ESP value
+ 20h	WORD	initial SS value
+ 22h	WORD	initial DS value
+ 24h	WORD	initial ES value
+ 26h	WORD	initial FS value
+ 28h	WORD	initial GS value
+--------E-212513-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - ALIAS SEGMENT DESCRIPTOR
+	AX = 2513h
+	BX = segment selector of descriptor in GDT or LDT
+	CL = access-rights byte for alias descriptor
+	CH = use-type bit (USE16 or USE32) for alias descriptor
+Return: CF clear if successful
+	    AX = segment selector for created alias
+	CF set on error
+	    EAX = error code
+		08h insufficient memory (can't grow LDT)
+		09h invalid segment selector in BX
+--------E-212514-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - CHANGE SEGMENT ATTRIBUTES
+	AX = 2514h
+	BX = segment selector of descriptor in GDT or LDT
+	CL = new access-rights byte
+	CH = new use-type bit (USE16 or USE32)
+Return: CF clear if successful
+	CF set on error
+	    EAX = error code
+		09h invalid selector in BX
+SeeAlso: AX=2515h,INT 31/AX=0009h
+--------E-212515-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - GET SEGMENT ATTRIBUTES
+	AX = 2515h
+	BX = segment selector of descriptor in GDT or LDT
+Return: CF clear if successful
+	    CL = access-rights byte for segment
+	    CH = use-type bit (USE16 or USE32)
+	ECX<16-31> destroyed
+	CF set on error
+	    EAX = error code
+		09h invalid segment selector in BX
+SeeAlso: AX=2514h
+--------E-212516-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender v2.2+ - FREE ALL MEMORY OWNED BY LDT
+	AX = 2516h
+Return: CF clear
+Note:	this function must be called from Ring 0 or the CS descriptor is freed
+--------E-212517-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender v2.1c+ - GET INFO ON DOS DATA BUFFER
+	AX = 2517h
+Return: CF clear
+	ES:EBX -> data buffer (protected mode address)
+	ECX -> data buffer (real mode address)
+	EDX = size of data buffer in bytes
+Note:	the data buffer's address changes after calls to AX=2512h and AX=252Ah
+SeeAlso: AX=2512h,AX=252Ah,AX=2530h
+--------E-212518-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender 2.1c+ - SPECIFY HANDLER FOR MOVED SEGMENTS
+	AX = 2518h
+	ES:EBX -> function to call when a segment is moved
+Return: CF clear
+	ES:EBX -> previous handler
+--------E-212519-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM - GET ADDITIONAL MEMORY ERROR INFO
+	AX = 2519h
+Return: CF clear
+	EAX = error code
+	    0000h  no error
+	    0001h  out of physical memory
+	    0002h  out of swap space (unable to grow swap file)
+	    0003h  out of LDT entries and unable to grow LDT
+	    0004h  unable to change extended memory allocation mark
+	    FFFFFFFFh	paging disabled
+Note:	VMM is the Virtual Memory Manager option
+--------E-21251A-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM - LOCK PAGES IN MEMORY
+	AX = 251Ah
+	EDX = number of 4k pages to lock
+	if BL = 00h
+	    ECX = linear address of first page to lock
+	if BL = 01h
+	    ES:ECX -> pointer to first page to lock
+Return: CF clear if successful
+	CF set on error
+	    EAX = error code
+		08h insufficient memory
+		09h invalid address range
+SeeAlso: AX=251Bh,AX=EB06h,INT 31/AX=0600h
+--------E-21251B-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM - UNLOCK PAGES
+	AX = 251Bh
+	EDX = number of pages to unlock
+	if BL = 00h
+	    ECX = linear address of first page to unlock
+	if BL = 01h
+	    ES:ECX -> pointer to first page to unlock
+Return: CF clear if successful
+	CF set on error
+	    EAX = error code
+		09h invalid address range
+SeeAlso: AX=251Ah,AX=EB07h,INT 31/AX=0601h
+--------E-21251C-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM v2.1c+ - FREE PHYSICAL MEMORY PAGES
+	AX = 251Ch
+	BH = preservation flag (00h preserve contents, 01h discard contents)
+	EDX = number of pages to free
+	BL = address type
+	    00h linear address
+		ECX = linear address of first page to be freed
+	    01h pointer
+		ES:ECX -> first page to be freed
+Return: CF clear if successful
+	CF set on error
+	    EAX = error code
+		08h memory error, swap space full, no VMM or DPMI
+		09h invalid address
+--------E-21251D-----------------------------
+INT 21 OP - Phar Lap 386/DOS-Extender VMM v2.1c - READ PAGE-TABLE ENTRY
+	AX = 251Dh
+	BL = address type
+	    00h linear address
+		ECX = linear address of page table entry to read
+	    01h pointer
+		ES:ECX -> page table entry to read
+Return: CF clear if successful
+	    EAX = contents of page table entry
+	CF set on error
+	    EAX = error code
+		09h invalid address or NOPAGE option set
+		78h invalid under DPMI
+Note:	this function is obsolete; use AX=252Bh/BH=09h instead
+SeeAlso: AX=251Eh,AX=252Bh/BH=09h,AX=EB00h,INT 31/AX=0506h
+--------E-21251E-----------------------------
+INT 21 OP - Phar Lap 386/DOS-Extender VMM v2.1c - WRITE PAGE-TABLE ENTRY
+	AX = 251Eh
+	BL = address type
+	    00h linear address
+		ECX = linear address of page table entry to read
+	    01h pointer
+		ES:ECX -> page table entry to read
+	EDX = new value for page table entry
+Return: CF clear if successful
+	CF set on error
+	    EAX = error code
+		09h invalid address or NOPAGE option set
+		82h not compatible with DPMI
+Note:	this call is obsolete; use AX=252Bh/BH=0Ah instead
+SeeAlso: AX=251Dh,AX=252Bh/BH=0Ah,INT 31/AX=0507h
+--------E-21251F-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM - EXHANGE TWO PAGE-TABLE ENTRIES
+	AX = 251Fh
+	BL = address type
+	    00h linear address
+		ECX = linear address of first page table entry
+		EDX = linear address of second page table entry
+	    01h pointer
+		ES:ECX -> first page table entry
+		ES:EDX -> second page table entry
+Return: CF clear if successful
+	CF set on error
+	    EAX = error code
+		09h invalid address or NOPAGE option set
+		82h not compatible with DPMI
+SeeAlso: AX=251Dh,AX=251Eh
+--------E-212520-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM - GET MEMORY STATISTICS
+	AX = 2520h
+	DS:EDX -> pointer to buffer at least 100 bytes in size (see #1052)
+	BL = 0 (don't reset VM stats), 1 (reset VM stats)
+Return: carry flag clear
+
+Format of Phar Lap VM statistics buffer:
+Offset	Size	Description	(Table 1052)
+ 00h	DWORD	VM status
+		0001h VM subsystem is present
+		0000h VM not present
+ 04h	DWORD	"nconvpg" number of conventional memory pages available
+ 08h	DWORD	"nbimpg" number of Compaq built-in memory pages available
+ 0Ch	DWORD	"nextpg" total number of extended memory pages
+ 10h	DWORD	"extlim" extender memory pages limit
+ 14h	DWORD	"aphyspg" number of physical memory pages allocated to appl
+ 18h	DWORD	"alockpg" number of locked pages owned by application
+ 1Ch	DWORD	"sysphyspg" number physical memory pages allocated to system
+ 20h	DWORD	"nfreepg" number of free physical pages; approx if EMS VCPI
+ 24h	DWORD	linear address of beginning of application address space
+ 28h	DWORD	linear address of end of application address space
+ 2Ch	DWORD	number of seconds since last time VM stats were reset
+ 30h	DWORD	number of page faults since last time
+ 34h	DWORD	number of pages written to swap file since last time
+ 38h	DWORD	number of reclaimed pages (page faults on swapped pages)
+ 3Ch	DWORD	number of virtual pages allocated to the application
+ 40h	DWORD	size in pages of swap file
+ 44h	DWORD	number of system pages allocated with EMS calls
+ 48h	DWORD	minimum number of conventional memory pages
+ 4Ch	DWORD	maximum size in pages to which swap file can be increased
+ 50h	DWORD	"vmflags"
+		bit 0 = 1 if page fault in progress
+---v4.0+ ---
+ 54h	DWORD	number of physical pages guaranteed to be free
+ 58h	DWORD	number of free physical pages currently available
+ 5Ch	DWORD	size in pages of largest free block of memory (including disk
+		  swap space)
+ 60h	DWORD	reserved
+--------E-212521-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM - LIMIT PROGRAM'S EXTENDED MEM USAGE
+	AX = 2521h
+	EBX = max 4k pages of physical extended memory which program may use
+Return: CF clear if successful
+	   EBX = maximum limit in pages
+	   ECX = minimum limit in pages
+	CF set on error
+	    EAX = error code
+		08h insufficient memory or -nopage switch used
+SeeAlso: AX=2522h
+--------E-212522-----------------------------
+INT 21 P - Phar Lap 386/DOS-Ext VMM v2.2+ - SPECIFY ALTERNATE PAGE-FAULT HANDLR
+	AX = 2522h
+	ES:EBX -> alternate handler for page faults
+Return: CF clear
+	ES:EBX -> previous page-fault handler
+SeeAlso: AX=2523h
+--------E-212523-----------------------------
+INT 21 P - Phar Lap 386/DOS-Ext VMM v2.2+ - SPECIFY OUT-OF-SWAP-SPACE HANDLER
+	AX = 2523h
+	???
+Return: ???
+Note:	this function takes a DWORD pointer and a DWORD pointer to a DWORD
+	  pointer as arguments
+SeeAlso: AX=2522h
+--------E-212524-----------------------------
+INT 21 P - Phar Lap 386/DOS-Ext VMM v2.2+ - INSTALL PAGE-REPLACEMENT HANDLERS
+	AX = 2524h
+	???
+Return: ???
+Note:	this function takes three DWORD pointers and three DWORD pointers to
+	  DWORD pointers as arguments
+--------E-212525-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM - LIMIT PROGRAM'S CONVENT'L MEM USAGE
+	AX = 2525h
+	EBX = limit in 4k pages of physical conventional memory which program
+	      may use
+Return: CF clear if successful
+	    EBX = maximum limit in pages
+	    ECX = minimum limit in pages
+	CF set on error
+	    EAX = error code
+		08h insufficient memory or -nopage switch used
+SeeAlso: AX=2521h
+--------E-212526-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - GET CONFIGURATION INFORMATION
+	AX = 2526h
+	???
+Return: ???
+Notes:	details are not yet available
+	this function takes a pointer to the configuration buffer (see #1053)
+	  and a poitner to a BYTE as arguments
+
+Format of Phar Lap configuration buffer:
+Offset	Size	Description	(Table 1053)
+ 00h	DWORD	flags 1 (see #1054)
+ 04h	DWORD	flags 2 (unused through v5.0)
+ 08h	DWORD	flags 3 (unused through v5.0)
+ 0Ch	DWORD	386|DOS-Extender major version
+ 10h	DWORD	386|DOS-Extender minor version
+ 14h	DWORD	first letter of text after minor version number in version str
+ 18h	DWORD	beta flag (00h normal release, 01h beta release)
+ 1Ch	DWORD	processor (3 = 386, 4 = 486)
+ 20h	DWORD	coprocessor (4 = none, 6 = 287, 7 = 387/486)
+ 24h	DWORD	Weitek coprocessor flag (0 = none, 1 = present)
+ 28h	DWORD	machine type (0 = IBM PC compatible, 1 = NEC 9800 series)
+ 2Ch	DWORD	machine class
+		IBM: bus type (0=ISA, 1=MCA, 2=XT, 3=EISA)
+		NEC: 0=normal mode, 1=high-res mode
+ 30h	DWORD	VCPI flag (0 = none, 1 = present)
+ 34h	DWORD	-WEITEK/-1167 switch (0 = AUTO, 1 = ON, 2 = OFF)
+ 38h	DWORD	-MINREAL setting
+ 3Ch	DWORD	-MAXREAL setting
+ 40h	DWORD	-MINIBUF setting
+ 44h	DWORD	-MAXIBUF setting
+ 48h	DWORD	size in bytes of DOS call data buffer
+ 4Ch	DWORD	number of interrupt stacks (-NISTACK)
+ 50h	DWORD	interrupt stack size (-ISTKSIZE)
+ 54h	DWORD	-REALBREAK setting
+ 58h	DWORD	-CALLBUFS
+ 5Ch	DWORD	-HWIVEC
+ 60h	DWORD	-PRIVEC
+ 64h	DWORD	-INTMAP
+ 68h	DWORD	-PRIMAP
+ 6Ch	DWORD	VCPI: master 8259 interrupt vector base (IRQ0 mapping)
+ 70h	DWORD	VCPI: slave 8259 interrupt vector base (IRQ8 mapping)
+ 74h	DWORD	BIOS print screen interrupt vector (0 if NEC)
+ 78h	DWORD	-EXTLOW setting
+ 7Ch	DWORD	-EXTHIGH setting
+ 80h	DWORD	lowest physical extended-memory address allocatable
+ 84h	DWORD	highest physical extended-memory address allocatable + 1
+ 88h	DWORD	special memory's physical base address (00000000h if none)
+ 8Ch	DWORD	special memory size in bytes (00000000h if none)
+ 90h	DWORD	-MAXVCPIMEM setting
+ 94h	DWORD	-VSCAN
+ 98h	DWORD	-SWAPCHK (0 = OFF, 1 = ON, 2 = FORCE, 3 = MAX)
+ 9Ch	DWORD	-CODESIZE setting
+ A0h	DWORD	minimum swap file size (-MINSWFSIZE)
+ A4h	DWORD	maximum swap fiel size (-MAXSWFSIZE)
+ A8h	DWORD	page replacement policy (0 = LFU, 1 = NUR)
+ ACh	DWORD	number of GDT entries (-NGDTENT)
+ B0h	DWORD	number of LDT entries (-NLDTENT)
+ B4h	DWORD	program's privilege level (0-3)
+---386|DOS-Extender v3.0+ ---
+ B8h	DWORD	-LOCKSTACK setting
+ BCh	DWORD	-MAXEXTMEM
+ C0h	DWORD	-MAXXMSMEM
+ C4h	DWORD	-MAXPGMMEM
+ C8h	DWORD	-DATATHRESHOLD
+ CCh	DWORD	virtual memory manager flag (0 = not present, 1 = present)
+ D0h	DWORD	Cyrix coprocessor flag (0 = no Cyrix EMC387, 1 = present)
+ D4h	DWORD	-CYRIX setting (0 = AUTO, 1 = ON, 2 = OFF)
+ D8h	DWORD	DPMI flag (0 = not present, 1 = present)
+ DCh	DWORD	DPMI major version
+ E0h	DWORD	DPMI minor version
+ E4h	DWORD	DPMI capabilities flags (see #1055)
+ E8h	DWORD	VCPI major version
+ ECh	DWORD	VCPI minor version
+ F0h	WORD	VCPI: IRQ0-7 physical base interrupt vector
+ F2h	WORD	VCPI: IRQ8-15 physical base interrupt vector
+ F4h	DWORD	XMS flag (0 = none, 1 = present)
+ F8h	DWORD	XMS major version
+ FCh	DWORD	XMS minor version
+100h	WORD	application's CS selector
+102h	WORD	application's DS selector
+104h	WORD	application's PSP selector
+106h	WORD	application's environment selector
+108h	WORD	selector mapping entire first megabyte
+10Ah	WORD	selector mapping text video memory
+10Ch	WORD	selector mapping video memory (text for IBM, graphics for NEC)
+10Eh	WORD	selector mapping Weitek address space, 0000h if not present
+110h	WORD	selector mapping Cyrix EMC387 address space, 0000h if none
+112h	WORD	reserved (0)
+114h	DWORD	real-mode FAR entry point to call to switch to protected mode
+		  with no saved context
+118h	DWORD	size of LDT in bytes
+---386|DOS-Extender v5.0+ ---
+11Ch	DWORD	Windows flag (0 = not present, 1 = Windows present)
+120h	DWORD	Windows major version
+124h	DWORD	Windows minor version
+128h	DWORD	Windows mode (0 = real/standard, 1 = enhanced)
+12Ch	DWORD	OS/2 flag (0 = not present, 1 = OS/2 present)
+130h	DWORD	OS/2 major version
+134h	DWORD	OS/2 minor version
+138h 50 DWORDs	reserved (0)
+
+Bitfields for flags 1:
+Bit(s)	Description	(Table 1054)
+ 0	-NOPAGE specified
+ 1	-A20 specified
+ 2	-VDISK specified
+ 3	-XT specified
+ 4	-AT specified
+ 5	-MCA specified
+ 6	-EISA specified
+ 7	-NORMRES specified (NEC only)
+ 8	-HIGHRES specified (NEC only)
+ 9	set if -SWFGROW1ST, clear if -NOSWFGROW1ST
+ 10	-NOVM specified
+ 11	-SAVEREGS specified
+ 12	unused (clear)
+ 13	-NOVCPI specified
+ 14	-NOMUL specified
+ 15	-NOBMCHK specified
+ 16	-NOSPCLMEM or -NOBIM
+ 17	-NOPGEXP specified
+ 18	-SWAPDEFDISK specified
+---v3.0+ ---
+ 19	-SAVEINTS specified
+ 20	-NOLOAD specified
+ 21	-PAGELOG specified
+ 22	-OPENDENY specified
+ 23	-ERRATA17 specified
+---v4.1+ ---
+ 24	-NESTDPMI specified
+ 25	-NONESTDPMI specified
+ 26	-NODPMI specified
+ 27	-NOPCDWEITEK specified
+---v4.2+ ---
+ 28	-WININT21 specified
+
+Bitfields for DPMI capabilities flags:
+Bit(s)	Description	(Table 1055)
+ 0	paging supported
+ 1	physical device mapping
+ 2	conventional memory mapping
+ 3	exceptions restartable
+--------E-212527-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM - EN/DISABLE STATE SAVE ON INTERRUPTS
+	AX = 2527h
+	EBX = new status (00h disabled, 01h enabled)
+Return: CF clear
+	EBX = previous state save flag
+SeeAlso: AX=2528h
+--------E-212528-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM - READ REGISTERS AFTER CTRL-C INT
+	AX = 2528h
+	DS:EBX -> buffer for registers (see #1056)
+Return: CF clear if successful
+	    DS:EBX buffer filled
+	CF set on error
+	    EAX = error code
+		83h interrupt state save not enabled
+		84h no active interrupt
+SeeAlso: AX=2527h
+
+Format of Phar Lap buffer for registers:
+Offset	Size	Description	(Table 1056)
+ 00h  8 BYTEs	unused
+ 08h  4	DWORDs	EAX,EBX,ECX,EDX
+ 18h  4 DWORDs	ESI,EDI,EBP,ESP
+ 28h  6 WORDs	CS,DS,SS,ES,FS,GS
+ 34h	DWORD	EIP
+ 38h	DWORD	EFLAGS
+--------E-212529-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - LOAD FLAT MODEL .EXP or .REX FILE
+	AX = 2529h
+	???
+Return: ES:EBX -> parameter block (see #1057)
+	???
+Note:	details not available at this time
+SeeAlso: AX=252Ah
+
+Format of Phar Lap program load parameter block:
+Offset	Size	Description	(Table 1057)
+ 00h	DWORD	initial EIP
+ 04h	WORD	initial CS
+ 06h	DWORD	initial ESP
+ 0Ah	WORD	initial SS
+ 0Ch  4 WORDs	initial DS, ES, FS, GS
+ 14h	DWORD	minimum size in bytes of program segment
+ 18h	DWORD	bytes of additional memory allocated
+ 1Ch	DWORD	flags
+		bit 0: child linked with -UNPRIVILEGED
+		---v6.0+ ---
+		bit 1: child is PE file instead of .EXP
+		bit 2: loaded file is a DLL
+		bits 3-31 reserved
+---v6.0+ ---
+ 20h	DWORD	module handles (PE files only)
+ 24h  7 DWORDs	reserved (0)
+--------E-21252A-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM - NEW LOAD PROGRAM FOR DEBUG
+	AX = 252Ah
+	DS:EDX -> ASCIZ program name
+	ES:EBX -> parameter block (see #1051)
+	ECX = size of LDT buffer in bytes
+	ESI = bit flags
+	    bit 0: allow demand paging rather than loading entire program
+	    bit 1: demand page from swap file rather than from .EXP
+Return: CF clear if successful
+	    EAX = VMM handle or FFFFFFFFh if none
+	    ECX = number of descriptors in LDT buffer
+	CF set on error
+	    EAX = error code
+		02h file error
+		    EBX = file error code (see #1058)
+		    ECX = DOS error code if EBX=1,2,3, or 8
+		08h insufficient memory
+		    EBX = memory error code (see #1059)
+		80h LDT buffer too small
+		87h called twice without intervening call to AX=2531h
+SeeAlso: AX=2512h,AX=2517h,AX=2529h,AX=2531h
+
+(Table 1058)
+Values for Phar Lap file error code:
+ 01h	DOS open error
+ 02h	DOS seek error
+ 03h	DOS read error
+ 04h	not an .EXP or .REX file
+ 05h	invalid file format
+ 06h	-OFFSET is not a multiple of 64K
+ 07h	-NOPAGE incompatible with -REALBREAK/-OFFSET
+ 08h	DOS error loading .EXE file
+
+(Table 1059)
+Values for Phar Lap memory error code:
+ 01h	out of physical memory
+ 02h	out of swap space
+ 04h	unable to change extended memory allocation
+ 05h	-MAXPGMMEM exceeded
+ 06h	insufficient low memory to REALBREAK value
+ 07h	insufficient low memory for PSP and environment
+--------E-21252BBH00-------------------------
+INT 21 Pu - Phar Lap 386/DOS-Extender - CREATE UNMAPPED PAGES
+	AX = 252Bh
+	BH = 00h
+	???
+Return: ???
+--------E-21252BBH01-------------------------
+INT 21 Pu - Phar Lap 386/DOS-Extender - CREATE ALLOCATED PAGES
+	AX = 252Bh
+	BH = 01h
+	???
+Return: ???
+--------E-21252BBH02-------------------------
+INT 21 Pu - Phar Lap 386/DOS-Extender - CREATE PHYSICAL DEVICE PAGES
+	AX = 252Bh
+	BH = 02h
+	???
+Return: ???
+--------E-21252BBH03-------------------------
+INT 21 Pu - Phar Lap 386/DOS-Extender - MAP DATA FILE
+	AX = 252Bh
+	BH = 03h
+	???
+Return: ???
+SeeAlso: AX=252Bh/BH=0Bh
+--------E-21252BBH04-------------------------
+INT 21 Pu - Phar Lap 386/DOS-Extender - GET PAGE TYPES
+	AX = 252Bh
+	BH = 04h
+	???
+Return: ???
+Note:	returns one word per page
+SeeAlso: #1060
+
+Bitfields for Phar Lap page information:
+Bit(s)	Description	(Table 1060)
+ 7	mapped to read/write data file
+ 6	mapped to read-only data file
+ 5	swapped to disk
+ 4	locked
+ 3-0	page type
+	0 unmapped
+	1 allocated
+	2 physical device page
+--------E-21252B-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - VIRTUAL MEMORY MANAGEMENT - PAGE LOCKING
+	AX = 252Bh
+	BH = function
+	    05h lock pages
+	    06h unlock pages
+	BL = address type
+	    00h linear address
+		ECX = linear start address of memory region
+	    01h segmented address
+		ES:ECX -> start of memory region
+	EDX = size of memory region in bytes
+Return: CF clear if successful
+	CF set on error
+Note:	this function is also supported by FlashTek X-32VM; if X-32 is not
+	  using virtual memory, this function always succeeds
+--------E-21252B-----------------------------
+INT 21 Pu - Phar Lap 386/DOS-Extender - FREE PHYSICAL PAGES
+	AX = 252Bh
+	BH = function (07h,08h)
+	???
+Return: ???
+--------E-21252BBH09-------------------------
+INT 21 P - Phar Lap 386/DOS-Extender v4.1 - GET PAGETABLE ENTRY/PAGE TABLE INFO
+	AX = 252Bh
+	BH = 09h
+	BL = subfunction
+	    00h get page table entry by linear address
+		ECX = linear address for which to get page table entry
+	    01h get page table entry by logical address
+		ES:ECX = address for which to get page table entry
+Return: CF clear if successful
+	    EAX = page table entry
+	    EBX = additional page table information
+	CF set on error
+	    EAX = error code
+		0009h invalid address
+		0082h running under DPMI
+SeeAlso: AX=251Dh,AX=252Bh/BH=0Ah
+--------E-21252BBH0A-------------------------
+INT 21 P - Phar Lap 386/DOS-Extender v4.1 - SET PAGETABLE ENTRY/PAGE TABLE INFO
+	AX = 252Bh
+	BH = 0Ah
+	BL = subfunction
+	    00h set page table entry for linear address
+		ECX = linear address for which to get page table entry
+	    01h set page table entry for logical address
+		ES:ECX = address for which to get page table entry
+	ESI = page table entry
+	EDI = additional page table information
+Return: CF clear if successful
+	CF set on error
+	    EAX = error code
+		0009h invalid address
+		0082h running under DPMI
+SeeAlso: AX=252Bh/BH=09h
+--------E-21252BBH0B-------------------------
+INT 21 P - Phar Lap 386/DOS-Extender v4.1+ - MAP DATA FILE AT FILE OFFSET
+	AX = 252Bh
+	BH = 0Bh
+	BL = subfunction
+	    00h by linear address
+		ECX = linear address at which to map data file
+	    01h by logical address
+		ES:ECX = logical address at which to map data file
+	EDX = number of bytes to map
+	DS:ESI -> mapping structure (see #1061)
+	DS:EDI -> ASCIZ filename
+Return: CF clear if successful
+	CF set on error
+	    EAX = error code
+		0002h file error
+		    ECX = phase (01h opening file, 02h seeking, 03h reading)
+		    EDX = error code returned by DOS
+		0009h invalid address
+		0081h invalid parameters or 386|VMM not present
+		0086h all 386|VMM file handles already in use
+SeeAlso: AX=252Bh/BH=03h,AX=252Bh/BH=09h
+
+Format of Phar Lap mapping structure:
+Offset	Size	Description	(Table 1061)
+ 00h	DWORD	starting file offset to be mapped
+ 04h	DWORD	DOS file access and sharing modes (see #1091 at INT 21/AH=3Dh)
+--------E-21252C-----------------------------
+INT 21 P - Phar Lap 386/DOS-Ext VMM v3.0 - ADD UNMAPPED PAGES AT END OF SEGMENT
+	AX = 252Ch
+	BX = segment selector
+	ECX = number of 4K pages to add
+Return: CF clear if successful
+	    EAX = offset in segment of beginning of unmapped pages
+	CF set on error
+	    EAX = error code
+		08h insufficent memory
+		09h invalid selector
+		82h not supported by current DPMI
+--------E-21252D-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM v2.3+ - CLOSE VMM FILE HANDLE
+	AX = 252Dh
+	EBX = VMM file handle
+Return: CF clear if successful
+	CF set on error
+	    EAX = error code (81h invalid VMM handle)
+--------E-21252E-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM v2.3+ - GET/SET VMM PARAMETERS
+	AX = 252Eh
+	CL = direction (00h get parameters, 01h set parameters)
+	DS:EBX -> parameter buffer (see #1062)
+Return: CF clear if successful
+	CF set on error
+	    EAX = error code (81h bad parameter value)
+
+Format of Phar Lap VMM parameter buffer:
+Offset	Size	Description	(Table 1062)
+ 00h	DWORD	flags
+		bit 0: page fault logging enabled
+		---v5.0+ ---
+		bit 1: swap extender to disk during DOS EXEC call
+		bit 2: don't zero allocated memory
+ 04h	DWORD	scan period for page aging, in milliseconds
+ 08h	DWORD	maximum size (in bytes) to check on each page scan
+ 0Ch 52 BYTEs	unused
+--------E-21252F-----------------------------
+INT 21 P - Phar Lap 386/DOS-Ext VMM v3.0 - WRITE RECORD TO VMM PAGE LOG FILE
+	AX = 252Fh
+	DS:EBX -> data to be written
+	CX = size of data in bytes
+Return: CF clear if successful
+	CF set on error
+	    EAX = error code (85h no page log file or not 386/VMM)
+--------E-212530-----------------------------
+INT 21 P - Phar Lap 386/DOS-Ext VMM v2.3+ - SET SIZE OF BUFFER FOR DOS CALLS
+	AX = 2530h
+	ECX = size of data buffer in bytes (1024 to 65536)
+Return: CF clear if successful
+	CF set on error
+	    EAX = error code
+		08h insufficient low memory
+		81h invalid size
+SeeAlso: AX=2517h
+--------E-212531-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM v3.0 - READ/WRITE LDT DESCRIPTOR
+	AX = 2531h
+	BX = segment selector
+	ECX = direction (00h read, 01h write)
+	DS:EDX -> 8-byte buffer for descriptor contents
+Return: CF clear if successful
+	CF set on error
+	    EAX = error code
+		81h invalid selector
+		82h DPMI running, or not a code or data segment
+--------E-212532-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - GET EXCEPTION HANDLER VECTOR
+	AX = 2532h
+	CL = exception number (00h-0Fh)
+Return: CF clear if successful
+	    ES:EBX = CS:EIP of current exception handler
+	CF set on error (CL > 0Fh)
+Notes:	this call is also supported by the FlashTek X-32VM extender
+	this function is incompatible with 386|VMM; use AX=2522h instead
+SeeAlso: AX=2522h,AX=2533h
+--------E-212533-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - SET EXCEPTION HANDLER VECTOR
+	AX = 2533h
+	CL = exception number (00h-0Fh)
+	DS:EDX = CS:EIP of new exception handler
+Return: CF clear if successful
+	CF set on error (CL > 0Fh)
+Notes:	this call is also supported by the FlashTek X-32VM extender
+	this function is incompatible with 386|VMM; use AX=2522h instead
+SeeAlso: AX=2522h,AX=2532h
+--------E-212534-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender v3.0+ - GET INTERRUPT FLAG
+	AX = 2534h
+Return: CF clear
+	EAX = interrupt state (00h disabled, 01h enabled)
+--------E-212535-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender v3.0+ - READ/WRITE SYSTEM REGISTERS
+	AX = 2535h
+	EBX = direction (00h read registers, 01h write)
+	DS:EDX -> system register record (see #1063)
+Return: CF clear
+Note:	this call is only available under MS Windows if PHARLAP.386 VDD is
+	  installed
+
+Format of Phar Lap system register record:
+Offset	Size	Description	(Table 1063)
+ 00h	DWORD	CR0
+ 04h  4 DWORDs	DR0,DR1,DR2,DR3
+ 14h  2 DWORDs	reserved
+ 1Ch  2 DWORDs	DR6,DR7
+ 24h  3 DWORDs	reserved
+--------E-212536----------------------------
+INT 21 P - Phar Lap 386/DOS-Ext VMM v3.0+ - MIN/MAX EXTENDED/CONV MEMORY USAGE
+	AX = 2536h
+	EBX = bit flags
+	    bit 0: modifying conventional memory rather than extended memory
+	    bit 1: setting maximum memory usage rather than minimum
+	ECX = new limit in 4K pages
+Return: CF clear if successful
+	    EAX = new limit
+	CF set on error
+	    EAX = error code (08h memory error or -NOPAGE set)
+	    EBX = maximum limit in pages
+	    ECX = minimum limit in pages
+--------E-212537----------------------------
+INT 21 P - Phar Lap 386/DOS-Ext VMM v3.0 - ALLOCATE DOS MEMORY ABOVE DOS BUFFER
+	AX = 2537h
+	BX = number of paragraphs to allocate
+Return: CF clear if successful
+	    AX = real-mode segment of allocated block
+	CF set on error
+	    AX = error code
+		07h MS-DOS memory chain corrupted
+		08h insufficient low memory
+	    BX = size in paragraphs of largest free block
+SeeAlso: AH=48h
+--------E-212538----------------------------
+INT 21 P - Phar Lap 386/DOS-Ext VMM v3.0 - READ PROTMODE REGS AFTER SFTWARE INT
+	AX = 2538h
+	DS:EBX -> buffer for registers (see #1056)
+	ECX = register record to retrieve
+	    00h first interrupt state
+	    01h next interrupt state
+		EDX = handle for current interrupt state
+Return: CF clear if successful
+	    DS:EBX buffer filled
+	    EDX = handle of current interrupt state
+	    ESI = number of interrupt which occurred
+	CF set on error
+	    EAX = error code
+		81h invalid handle in EDX
+		83h register saving not enabled
+		84h no more interrupt states
+SeeAlso: AX=2527h,AX=2528h
+--------E-212539----------------------------
+INT 21 P - Phar Lap 386/DOS-Ext VMM v3.0 - GET OFFSET OF .EXP FILE HEADER
+	AX = 2539h
+	BX = MS-DOS file handle for open file
+Return: CF clear if successful
+	    EAX = offset of .EXP header in file
+	CF set on error
+	    EAX = error code (02h file error)
+	    EBX = file error code
+		02h DOS error seeking
+		03h DOS error reading
+		04h invalid file type
+		05h invalid file format
+	    ECX = DOS error code if EBX=02h or 03h
+	current file position in file modified
+--------E-21253A----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender v3.0+ - INSTALL MOD. SEG FAILURE HANDLER
+	AX = 253Ah
+	ES:EBX -> function to be called when INT 21/AH=4Ah is about to return
+		an error
+Return: CF clear
+	ES:EBX -> previous handler
+SeeAlso: AH=4Ah
+--------E-21253B----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender v3.0+ - JUMP TO REAL MODE CODE, NO CONTEXT
+	AX = 253Bh
+	DS:EBX -> buffer containing register contents (see #1056)
+Return: never returns
+SeeAlso: AX=2528h
+--------E-21253C-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM v3.0+ - SHRINK 386|VMM SWAP FILE
+	AX = 253Ch
+Return: CF clear
+	EAX = old size of swap file in bytes
+	EBX = new size of swap file in bytes
+--------E-21253D-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender v4.0+ - READ/WRITE IDT DESCRIPTOR
+	AX = 253Dh
+	BL = interrupt number
+	ECX = direction (0 = read, 1 = write)
+	DS:EDX -> 8-byte buffer for descriptor
+Return: CF clear if successful
+	    DS:EDX filled if reading
+	CF set on error
+	    EAX = error code (0082h if running under DPMI)
+Desc:	access hardware-level IDT rather than the internal 386/DOS-Extender
+	  shadow IDT
+Notes:	this call will always fail under DPMI because it is not possible to
+	  access the IDT
+	the descriptor is not checked when writing
+	this call can normally be used only by programs running in ring 0
+	  because the processor does not allow an interrupt to be vectored to
+	  a less privileged ring
+--------E-21253F-----------------------------
+INT 21 Pu - Phar Lap 386/DOS-Extender v6.0+ - ALLOCATE LDT DESCRIPTOR
+	AX = 253Fh
+	BX = LDT descriptor to allocate (0000h for any)
+	???
+Return: ???
+--------E-212540-----------------------------
+INT 21 Pu - Phar Lap 386/DOS-Extender v6.0+ - FORCE ALIAS OF SEGMENT
+	AX = 2540h
+	???
+Return: ???
+--------E-212544-----------------------------
+INT 21 Pu - Phar Lap 386/DOS-Extender v6.0+ - FREE DLL
+	AX = 2544h
+	???
+Return: ???
+--------E-212545-----------------------------
+INT 21 Pu - Phar Lap 386/DOS-Extender v6.0+ - GET/SET PROCEDURE ADDRESS
+	AX = 2545h
+	ECX = direction (00h get, 01h set)
+	???
+Return: ???
+--------E-212546-----------------------------
+INT 21 Pu - Phar Lap 386/DOS-Extender v6.0+ - GET MODULE HANDLE
+	AX = 2546h
+	???
+Return: ???
+--------E-2125C0-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - ALLOCATE MS-DOS MEMORY BLOCK
+	AX = 25C0h
+	BX = number of 16-byte paragraphs of MS-DOS memory requested
+Return: CF clear if successful
+	    AX = real-mode paragraph address of memory
+	CF set on error
+	    AX = error code
+		07h MS-DOS memory control blocks destroyed
+		08h insufficient memory
+	    BX = size in paragraphs of largest available memory block
+SeeAlso: AX=25C1h,AX=25C2h
+--------E-2125C1-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - RELEASE MS-DOS MEMORY BLOCK
+	AX = 25C1h
+	CX = real-mode paragraph address of memory block to free
+Return: CF clear if successful
+	    EAX destroyed
+	CF set on error
+	    AX = error code
+		07h MS-DOS memory control blocks destroyed
+		09h invalid memory block address in CX
+SeeAlso: AX=25C0h,AX=25C2h
+--------E-2125C2-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - MODIFY MS-DOS MEMORY BLOCK
+	AX = 25C2h
+	BX = new requested block size in paragraphs
+	CX = real-mode paragraph address of memory block to modify
+Return: CF clear if successful
+	    EAX destroyed
+	CF set on error
+	    AX = error code
+		07h MS-DOS memory control blocks destroyed
+		08h insufficient memory
+		09h invalid memory block address in CX
+	    BX = size in paragraphs of largest available memory block
+SeeAlso: AX=25C0h,AX=25C1h
+--------E-2125C3-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - EXECUTE PROGRAM
+	AX = 25C3h
+	ES:EBX -> pointer to parameter block (see #1065)
+	DS:EDX -> pointer to ASCIZ program filename
+Return: CF clear if successful
+	    all registers unchanged
+	CF set on error
+	    EAX = error code (see #1064)
+
+(Table 1064)
+Values for Phar Lap error code:
+ 01h	function code in AL is invalid ???
+ 02h	file not found or path invalid
+ 05h	access denied
+ 08h	insufficient memory to load program
+ 0Ah	environment invalid
+ 0Bh	invalid file format
+
+Format of parameter block:
+Offset	Size	Description	(Table 1065)
+ 00h	DWORD	32-bit offset of environment string
+ 04h	WORD	segment selector of environment string
+ 06h	DWORD	32-bit offset of command-tail string
+ 0Ah	WORD	segment selector of command-tail string
+--------D-2126-------------------------------
+INT 21 - DOS 1+ - CREATE NEW PROGRAM SEGMENT PREFIX
+	AH = 26h
+	DX = segment at which to create PSP (see #1066)
+Return: AL destroyed
+Notes:	new PSP is updated with memory size information; INTs 22h, 23h, 24h
+	  taken from interrupt vector table; the parent PSP field is set to 0
+	(DOS 2+) DOS assumes that the caller's CS is the segment of the PSP to
+	  copy
+SeeAlso: AH=4Bh,AH=50h,AH=51h,AH=55h,AH=62h,AH=67h
+
+Format of Program Segment Prefix (PSP):
+Offset	Size	Description	(Table 1066)
+ 00h  2 BYTEs	INT 20 instruction for CP/M CALL 0 program termination
+		the CDh 20h here is often used as a signature for a valid PSP
+ 02h	WORD	segment of first byte beyond memory allocated to program
+ 04h	BYTE	(DOS) unused filler
+		(OS/2) count of fake DOS version returns
+ 05h	BYTE	CP/M CALL 5 service request (FAR CALL to absolute 000C0h)
+		BUG: (DOS 2+ DEBUG) PSPs created by DEBUG point at 000BEh
+ 06h	WORD	CP/M compatibility--size of first segment for .COM files
+ 08h  2 BYTEs	remainder of FAR JMP at 05h
+ 0Ah	DWORD	stored INT 22 termination address
+ 0Eh	DWORD	stored INT 23 control-Break handler address
+ 12h	DWORD	DOS 1.1+ stored INT 24 critical error handler address
+ 16h	WORD	segment of parent PSP
+ 18h 20 BYTEs	DOS 2+ Job File Table, one byte per file handle, FFh = closed
+ 2Ch	WORD	DOS 2+ segment of environment for process (see #1067)
+ 2Eh	DWORD	DOS 2+ process's SS:SP on entry to last INT 21 call
+ 32h	WORD	DOS 3+ number of entries in JFT (default 20)
+ 34h	DWORD	DOS 3+ pointer to JFT (default PSP:0018h)
+ 38h	DWORD	DOS 3+ pointer to previous PSP (default FFFFFFFFh in 3.x)
+		used by SHARE in DOS 3.3
+ 3Ch	BYTE	DOS 4+ (DBCS) interim console flag (see AX=6301h)
+		Novell DOS 7 DBCS interim flag as set with AX=6301h
+		(possibly also used by Far East MS-DOS 3.2-3.3)
+ 3Dh	BYTE	(APPEND) TrueName flag (see INT 2F/AX=B711h)
+ 3Eh	BYTE	(Novell NetWare) flag: next byte initialized if CEh
+		(OS/2) capabilities flag
+ 3Fh	BYTE	(Novell NetWare) Novell task number if previous byte is CEh
+ 40h  2 BYTEs	DOS 5+ version to return on INT 21/AH=30h
+ 42h	WORD	(MSWindows3) selector of next PSP (PDB) in linked list
+		Windows keeps a linked list of Windows programs only
+ 44h	WORD	(MSWindows3) "PDB_Partition"
+ 46h	WORD	(MSWindows3) "PDB_NextPDB"
+ 48h	BYTE	(MSWindows3) bit 0 set if non-Windows application (WINOLDAP)
+ 49h	BYTE	unused by DOS versions <= 6.00
+ 4Ch	WORD	(MSWindows3) "PDB_EntryStack"
+ 4Eh  2 BYTEs	unused by DOS versions <= 6.00
+ 50h  3 BYTEs	DOS 2+ service request (INT 21/RETF instructions)
+ 53h  2 BYTEs	unused in DOS versions <= 6.00
+ 55h  7 BYTEs	unused in DOS versions <= 6.00; can be used to make first FCB
+		  into an extended FCB
+ 5Ch 16 BYTEs	first default FCB, filled in from first commandline argument
+		overwrites second FCB if opened
+ 6Ch 16 BYTEs	second default FCB, filled in from second commandline argument
+		  overwrites beginning of commandline if opened
+ 7Ch  4 BYTEs	unused
+ 80h 128 BYTEs	commandline / default DTA
+		command tail is BYTE for length of tail, N BYTEs for the tail,
+		  followed by a BYTE containing 0Dh
+Notes:	in DOS v3+, the limit on simultaneously open files may be increased by
+	  allocating memory for a new open file table, filling it with FFh,
+	  copying the first 20 bytes from the default table, and adjusting the
+	  pointer and count at 34h and 32h.  However, DOS will only copy the
+	  first 20 file handles into a child PSP (including the one created on
+	  EXEC).
+	in an OS/2 DOS box, values of D0h-FEh in the open file table indicate
+	  device drivers
+	network redirectors based on the original MS-Net implementation use
+	  values of 80h-FEh in the open file table to indicate remote files;
+	  Novell NetWare also uses values from FEh down to 80h or one more than
+	  FILES= (whichever is greater) to indicate remote files (except on
+	  OS/2, where is uses CFh down to 80h)
+	MS-DOS 5.00 incorrectly fills the FCB fields when loading a program
+	  high; the first FCB is empty and the second contains the first
+	  parameter
+	some DOS extenders place protected-mode values in various PSP fields
+	  such as the "parent" field, which can confuse PSP walkers.  Always
+	  check either for the CDh 20h signature or that the suspected PSP is
+	  at the beginning of a memory block which owns itself (the preceding
+	  paragraph should be a valid MCB with "owner" the same as the
+	  suspected PSP).
+	Novell NetWare updates the fields at offsets 3Eh and 3Fh without
+	  checking that a legal PSP segment is current; see AH=50h for further
+	  discussion
+	for 4DOS and Windows95, the command tail may be more than 126
+	  characters; in that case, the length byte will be set to 7Fh (with
+	  an 0Dh in the	 127th position at offset FFh), and the first 126
+	  characters will be stored in the PSP, with the entire command line
+	  in the environment variable CMDLINE; under at least some versions
+	  of 4DOS, the byte at offset FFh is *not* set to 0Dh, so there is no
+	  terminating carriage return in the PSP's command tail.
+
+Format of environment block:
+Offset	Size	Description	(Table 1067)
+ 00h  N BYTEs	first environment variable, ASCIZ string of form "var=value"
+      N BYTEs	second environment variable, ASCIZ string
+	...
+      N BYTEs	last environment variable, ASCIZ string of form "var=value"
+	BYTE	00h
+---DOS 3.0+ ---
+	WORD	number of strings following environment (normally 1)
+      N BYTEs	ASCIZ full pathname of program owning this environment
+		other strings may follow
+--------D-2127-------------------------------
+INT 21 - DOS 1+ - RANDOM BLOCK READ FROM FCB FILE
+	AH = 27h
+	CX = number of records to read
+	DS:DX -> opened FCB (see #1034)
+Return: AL = status
+	    00h successful, all records read
+	    01h end of file, no data read
+	    02h segment wrap in DTA, no data read
+	    03h end of file, partial read
+	Disk Transfer Area filled with records read from file
+	CX = number of records read (return AL = 00h or 03h)
+Notes:	read begins at current file position as specified in FCB; the file
+	  position is updated after reading
+	not supported by MS Windows 3.0 DOSX.EXE DOS extender
+SeeAlso: AH=21h,AH=28h,AH=3Fh"DOS"
+--------D-2128-------------------------------
+INT 21 - DOS 1+ - RANDOM BLOCK WRITE TO FCB FILE
+	AH = 28h
+	CX = number of records to write
+	DS:DX -> opened FCB (see #1034)
+	Disk Transfer Area contains records to be written
+Return: AL = status
+	    00h successful
+	    01h disk full or file read-only
+	    02h segment wrap in DTA
+	CX = number of records written
+Notes:	write begins at current file position as specified in FCB; the file
+	  position is updated after writing
+	if CX = 0000h on entry, no data is written; instead the file size is
+	  adjusted to be the same as the file position specified by the random
+	  record and record size fields of the FCB
+	if the data to be written is less than a disk sector, it is copied into
+	  a DOS disk buffer, to be written out to disk at a later time
+	not supported by MS Windows 3.0 DOSX.EXE DOS extender
+SeeAlso: AH=22h,AH=27h,AH=40h,AH=59h/BX=0000h
+--------D-2129-------------------------------
+INT 21 - DOS 1+ - PARSE FILENAME INTO FCB
+	AH = 29h
+	AL = parsing options (see #1068)
+	DS:SI -> filename string (both '*' and '?' wildcards OK)
+	ES:DI -> buffer for unopened FCB
+Return: AL = result code
+	    00h successful parse, no wildcards encountered
+	    01h successful parse, wildcards present
+	    FFh failed (invalid drive specifier)
+	DS:SI -> first unparsed character
+	ES:DI buffer filled with unopened FCB (see #1034)
+Notes:	asterisks expanded to question marks in the FCB
+	all processing stops when a filename terminator is encountered
+	cannot be used with filespecs which include a path (DOS 2+)
+	Novell NetWare monitors the result code since an 'invalid drive' may
+	  signal an attempt to reconnect a network drive; if there are no
+	  connections to the specified drive, NetWare attempts to build a
+	  connection and map the drive to the SYS:LOGIN directory
+SeeAlso: AH=0Fh,AH=16h,AH=26h
+
+Bitfields for parsing options:
+Bit(s)	Description	(Table 1068)
+ 0	skip leading separators
+ 1	use existing drive number in FCB if no drive is specified, instead of
+	  setting field to zero
+ 2	use existing filename in FCB if no base name is specified, instead of
+	  filling field with blanks
+ 3	use existing extension in FCB if no extension is specified, instead of
+	  filling field with blanks
+ 4-7	reserved (0)
+--------D-212A-------------------------------
+INT 21 - DOS 1+ - GET SYSTEM DATE
+	AH = 2Ah
+Return: CX = year (1980-2099)
+	DH = month
+	DL = day
+---DOS 1.10+---
+	AL = day of week (00h=Sunday)
+SeeAlso: AH=2Bh"DOS",AH=2Ch,AH=E7h"Novell",INT 1A/AH=04h,INT 2F/AX=120Dh
 --------D-212B-------------------------------
 INT 21 - DOS 1+ - SET SYSTEM DATE
 	AH = 2Bh
@@ -854,6 +2220,13 @@ Return: AX = 3306h
 	BH = ??? (usually 00h or FFh)
 Note:	unknown function, is in conflict with DOS 5+ version call
 SeeAlso: AX=3306h"DOS"
+--------D-213307-----------------------------
+INT 21 - Windows95 - SET/CLEAR DOS_FLAG
+	AX = 3307h
+	DL = subfunction
+	    00h clear bit 5 of "DOS_FLAG"
+	    01h set bit 5 of "DOS_FLAG"
+Return: ???
 --------v-21330F-----------------------------
 INT 21 - VIRUS - "Burghofer" - INSTALLATION CHECK
 	AX = 330Fh
@@ -871,7 +2244,17 @@ INT 21 - VIRUS - "CoffeeShop" - INSTALLATION CHECK
 	AX = 33DAh
 Return: AH = A5h if resident
 	    AL = virus version
-SeeAlso: AX=330Fh,AX=33E0h,AX=5643h"VIRUS"
+SeeAlso: AX=33DB,AX=33DCh,AX=330Fh,AX=33E0h,AX=5643h"VIRUS"
+--------v-2133DB------------------------
+INT 21 - VIRUS - "CoffeeShop" - GENERATE RANDOM NUMBER
+	AX = 33DBh
+Return:	???
+SeeAlso: AX=33DAh,AX=33DCh
+--------v-2133DC------------------------
+INT 21 - VIRUS - "CoffeeShop" - DISPLAY "LEGALIZE CANNABIS" GRAPHIC
+	AX = 33DCh
+Return:	???
+SeeAlso: AX=33DAh,AX=33DBh
 --------v-2133E0-----------------------------
 INT 21 - VIRUS - "Oropax" - INSTALLATION CHECK
 	AX = 33E0h
@@ -1693,28 +3076,28 @@ Values for DOS 7.x file sharing behavior:
 	  |R W RW A  R W RW A  R W RW A	 R W RW A  R W RW A
  - - - - -| - - - - - - - - - - - - - - - - - - - - - - - -
  Compat R |Y Y Y Y   N N N N   Y N N Y	 N N N Y   Y N N Y
-	W |Y Y Y C   N N N N   N N N N	 N N N Y   Y N N Y  
-	RW|Y Y Y C   N N N N   N N N N	 N N N Y   Y N N Y  
+	W |Y Y Y C   N N N N   N N N N	 N N N Y   Y N N Y
+	RW|Y Y Y C   N N N N   N N N N	 N N N Y   Y N N Y
 	NA|Y C C Y   N N N N   Y N N Y	 N N N Y   Y N N Y
- - - - - -|	
+ - - - - -|
  Deny	R |C C C C   N N N N   N N N N	 N N N N   N N N N
  All	W |C C C C   N N N N   N N N N	 N N N N   N N N N
-	RW|C C C C   N N N N   N N N N	 N N N N   N N N N  
-	NA|C C C C   N N N N   N N N N	 N N N N   N N N N  
- - - - - -|	
+	RW|C C C C   N N N N   N N N N	 N N N N   N N N N
+	NA|C C C C   N N N N   N N N N	 N N N N   N N N N
+ - - - - -|
  Deny	R |Y C C Y   N N N N   Y N N Y	 N N N Y   Y N N Y
  Write	W |C C C C   N N N N   N N N N	 Y N N Y   Y N N Y
-	RW|C C C C   N N N N   N N N N	 N N N Y   Y N N Y  
-	NA|Y C C Y   N N N N   Y N N Y	 N N N Y   Y N N Y  
- - - - - -|	
+	RW|C C C C   N N N N   N N N N	 N N N Y   Y N N Y
+	NA|Y C C Y   N N N N   Y N N Y	 N N N Y   Y N N Y
+ - - - - -|
  Deny	R |C C C C   N N N N   N Y N N	 N N N N   N Y N N
  Read	W |C C C C   N N N N   N N N N	 N Y N N   N Y N N
-	RW|C C C C   N N N N   N N N N	 N N N N   N Y N N  
-	NA|Y Y Y Y   N N N N   Y Y Y Y	 N N N Y   Y Y Y Y  
- - - - - -|	
+	RW|C C C C   N N N N   N N N N	 N N N N   N Y N N
+	NA|Y Y Y Y   N N N N   Y Y Y Y	 N N N Y   Y Y Y Y
+ - - - - -|
  Deny	R |Y Y Y Y   N N N N   Y Y Y Y	 N N N Y   Y Y Y Y
  None	W |C C C C   N N N N   N N N N	 Y Y Y Y   Y Y Y Y
-	RW|C C C C   N N N N   N N N N	 N N N Y   Y Y Y Y  
+	RW|C C C C   N N N N   N N N N	 N N N Y   Y Y Y Y
 	NA|Y Y Y Y   N N N N   Y Y Y Y	 N N N Y   Y Y Y Y
 Legend: R -> reading, W -> writing, RW -> both reading & writing,
 	A/NA -> reading without access time update
@@ -1939,11 +3322,11 @@ Return: CF clear if successful
 	CF set on error
 	    AX = error code (05h,06h) (see #1366 at AH=59h/BX=0000h)
 Program: BW-TCP is a TCP/IP protocol stack by Beame & Whiteside Software
-Notes:	the B&W socket library performs an INT 21/AX=4401h with DX=0060h before
+InstallCheck:	for the TCP/IP stack, test for the existence of the character
+	  device UDP-IP10
+Note:	the B&W socket library performs an INT 21/AX=4401h with DX=0060h before
 	  making this call to retrieve the driver information; one should also
 	  call the private API interrupt with AH=15h
-	the installation check for the TCP/IP stack is to test for the
-	  existence of the character device UDP-IP10
 SeeAlso: INT 14/AH=56h,INT 62/AH=00h"ETHDEV",INT 63/AH=03h,INT 64/AH=01h
 Index:	installation check;BW-TCP hardware driver
 Index:	installation check;BW-TCP TCPIP.SYS
@@ -4687,7 +6070,7 @@ Offset	Size	Description	(Table 1201)
  00h	DWORD	physical address of EMM import structure (see #1202)
  04h	BYTE	EMM import structure major version
  05h	BYTE	EMM import structure minor version
-Note:	version 1.00 contains only EMS information (Windows 3.0+)
+Note:	vession 1.00 contains only EMS information (Windows 3.0+)
 	version 1.10 contains UMB/XMS/HMA/EMS information (Windows 3.1)
 	version 1.11 is version 1.10 plus memory manager maker/product name
 SeeAlso: #3314
@@ -5261,9 +6644,8 @@ Return: CF clear if successful
 	    AX = error code (01h,05h,06h,0Dh) (see #1366 at AH=59h/BX=0000h)
 Program: DUBLDISK.SYS is the device driver portion of DoubleDisk, a disk
 	  expander by Vertisoft Systems, Inc.
-Note:	the installation check for v2.6 consists of scanning memory for the
-	  signature "FAT 2.6  byte:", which is immediately followed by a data
-	  table (see #1218)
+InstallCheck:	for v2.6, scan memory for the signature "FAT 2.6  byte:",
+	  which is immediately followed by a data table (see #1218)
 BUG:	VOPT (a disk optimizer by Golden Bow Software) assumes that any driver
 	  which returns the "correct" number of bytes when the first word of
 	  the buffer for the data record contains the signature value 4444h is
@@ -5382,9 +6764,8 @@ Return: CF clear if successful
 	    AX = error code (01h,05h,06h,0Dh) (see #1366 at AH=59h/BX=0000h)
 Program: COMBI-disk is a shareware combination cache and RAMdisk sharing a
 	  single pool of memory by Vadim V. Vlasov
-Note:	the installation check consists of scanning the valid drives for one
-	  which returns a correctly-sized data packet with the proper
-	  signature in the first field
+InstallCheck:	scan the valid drives for one which returns a correctly-sized
+	  data packet with the proper signature in the first field
 SeeAlso: AX=4405h"COMBI"
 Index:	installation check;COMBI-disk
 
@@ -6536,6 +7917,7 @@ Values for Digital Research operating system version ID:
  62h	Concurrent DOS/XM 6.2 or Concurrent DOS/386 3.0
  66h	DR Multiuser DOS 5.1
  67h	Concurrent DOS 5.1
+SeeAlso: #3761,#3694
 --------O-214452-----------------------------
 INT 21 - DR DOS 3.41+ - DETERMINE DOS TYPE/GET DR DOS VERSION
 	AX = 4452h ("DR")
@@ -6572,7 +7954,7 @@ Values for Digital Research operating system version ID:
  71h	DR DOS 6.0 March 1993 "business update"
  72h	Novell DOS 7.0
  73h	OpenDOS 7.02
-SeeAlso: #3761
+SeeAlso: #1266,#3761,#3694
 
 Bitfields for CP/M type indicator:
 Bit(s)	Description	(Table 3761)
@@ -7068,8 +8450,10 @@ Offset	Size	Description	(Table 1280)
  1Ch	var	optional information
 ---
   N   N DWORDs	relocation items
-Notes:	if word at offset 02h is 4, it should be treated as 00h, since pre-1.10
-	  versions of the MS linker set it that way
+		each is the segment:offset from start of load image at which
+		  to add the actual load segment to the indicated WORD
+Notes:	if the word at offset 02h is 4, it should be treated as 00h, since
+	  pre-1.10 versions of the MS linker set it that way
 	if both minimum and maximum allocation (offset 0Ah/0Ch) are zero, the
 	  program is loaded as high in memory as possible (DOS only checks
 	  the maximum allocation, however)
@@ -7078,6 +8462,9 @@ Notes:	if word at offset 02h is 4, it should be treated as 00h, since pre-1.10
 	  load image described by the .EXE header; this data may be overlays,
 	  the actual executable for newer-format executables, or debugging
 	  information (see #1286,#1310)
+	relocations entries need not be in any particular order, although they
+	  are typically stored in order from beginning to end of the load
+	  image
 SeeAlso: #1282
 
 Format of ROM Module Header:
@@ -7739,8 +9126,7 @@ INT 21 U - FBOOT v2.13 - PERFORM FAST BOOTSTRAP
 Return: never if FastBoot installed
 Program: CyberWare FastBoot allows fast warm boots by skipping CMOS
 	  checking, ROM scan, RAM & peripheral components test
-Note:	the only installation check is a search for a character device
-	  driver called FBOOT$$$
+InstallCheck:	search for a character device driver called "FBOOT$$$"
 --------v-214B20-----------------------------
 INT 21 - VIRUS - "Holocaust"/"Telefonica" - ???
 	AX = 4B20h
@@ -8099,1324 +9485,4 @@ Notes:	DOS uses the current PSP address to determine which processes own files
 	identical to the documented AH=62h
 	this call was undocumented prior to the release of DOS 5.0
 SeeAlso: AH=26h,AH=50h,AH=62h
---------D-2152-------------------------------
-INT 21 U - DOS 2+ internal - "SYSVARS" - GET LIST OF LISTS
-	AH = 52h
-Return: ES:BX -> DOS list of lists (see #1313)
-Notes:	partially supported by OS/2 v1.1 compatibility box (however, most
-	  pointers are FFFFh:FFFFh, LASTDRIVE is FFh, and the NUL header "next"
-	  pointer is FFFFh:FFFFh).
-	partially supported by the Windows NT DOS box; contains only a
-	  rudimentary Current Directory Structure (see #1331)
-	on return, ES points at the DOS data segment (see also INT 2F/AX=1203h)
-	Quarterdeck's suggested check for the use of its DOSDATA.SYS or
-	  DOS-UP.SYS is to test whether the list-of-lists segment is greater
-	  than the segment of the first memory block; a better check for
-	  DOS-UP.SYS is INT 21/AX=2B01h/CX=444Dh
-	because not all DOS workalikes support all fields in the List of Lists,
-	  applications should ensure that pointers are neither 0000h:0000h
-	  nor FFFFh:FFFFh before using them
-	Windows for Workgroups 3.11 network and Windows95 set the path to
-	  the local drive and directory even for network drives; in that
-	  case the UNC form \\SERVER\SHARE can be obtained with
-	  INT 21/AX=5F02h or INT 21/AX=5F46h. LapLink RemoteAccess does the
-	  same even for INT 21/AX=5F02h
-	Windows95 GUI no longer returns the true path for a SUBSTed drive,
-	  but MS-DOS 7.00 does; use INT 21/AH=60h to obtain the true name
-SeeAlso: INT 2F/AX=1203h
-
-Format of List of Lists:
-Offset	Size	Description	(Table 1313)
- -24	WORD	(DOS 3.1+) contents of CX from INT 21/AX=5E01h
- -22	WORD	(DOS ???+) LRU counter for FCB caching
- -20	WORD	(DOS ???+) LRU counter for FCB opens
- -18	DWORD	(DOS ???+) address of OEM function handler (see INT 21/AH=F8h)
-			FFFFh:FFFFh if not installed or not available
- -14	WORD	(DOS ???+) offset in DOS CS of code to return from INT 21 call
- -12	WORD	(DOS 3.1+) sharing retry count (see AX=440Bh)
- -10	WORD	(DOS 3.1+) sharing retry delay (see AX=440Bh)
- -8	DWORD	(DOS 3.0+) pointer to current disk buffer
- -4	WORD	(DOS 3.0+) pointer in DOS data segment of unread CON input
-		when CON is read via a handle, DOS reads an entire line,
-		  and returns the requested portion, buffering the rest
-		  for the next read.  0000h indicates no unread input
- -2	WORD	segment of first memory control block (see #1314)
- 00h	DWORD	pointer to first Drive Parameter Block (see #1083 at AH=32h)
- 04h	DWORD	-> first System File Table (see #1325,#1326,#1327,#1328)
- 08h	DWORD	pointer to active CLOCK$ device's header (most recently loaded
-		  driver with CLOCK bit set)
- 0Ch	DWORD	pointer to active CON device's header (most recently loaded
-		  driver with STDIN bit set)
----DOS 2.x---
- 10h	BYTE	number of logical drives in system
- 11h	WORD	maximum bytes/block of any block device
- 13h	DWORD	pointer to first disk buffer (see #1335,#1336)
- 17h 18 BYTEs	actual NUL device driver header (not a pointer!)
-		NUL is always the first device on DOS's linked list of device
-		  drivers. (see #1332)
----DOS 3.0---
- 10h	BYTE	number of block devices
- 11h	WORD	maximum bytes/block of any block device
- 13h	DWORD	pointer to first disk buffer (see #1336,#1338)
- 17h	DWORD	pointer to array of current directory structures (see #1329)
- 1Bh	BYTE	value of LASTDRIVE command in CONFIG.SYS (default 5)
- 1Ch	DWORD	pointer to STRING= workspace area
- 20h	WORD	size of STRING area (the x in STRING=x from CONFIG.SYS)
- 22h	DWORD	pointer to FCB table
- 26h	WORD	the y in FCBS=x,y from CONFIG.SYS
- 28h 18 BYTEs	actual NUL device driver header (not a pointer!)
-		NUL is always the first device on DOS's linked list of device
-		  drivers. (see #1332)
----DOS 3.1-3.3---
- 10h	WORD	maximum bytes per sector of any block device
- 12h	DWORD	pointer to first disk buffer in buffer chain (see #1336)
- 16h	DWORD	pointer to array of current directory structures (see #1329)
- 1Ah	DWORD	pointer to system FCB tables (see #1326,#1327,#1328)
- 1Eh	WORD	number of protected FCBs (the y in the CONFIG.SYS FCBS=x,y)
- 20h	BYTE	number of block devices installed
- 21h	BYTE	number of available drive letters (largest of 5, installed
-		  block devices, and CONFIG.SYS LASTDRIVE=).  Also size of
-		  current directory structure array.
- 22h 18 BYTEs	actual NUL device driver header (not a pointer!)
-		NUL is always the first device on DOS's linked list of device
-		  drivers. (see #1332)
- 34h	BYTE	number of JOIN'ed drives
----DOS 4.x---
- 10h	WORD	maximum bytes per sector of any block device
- 12h	DWORD	pointer to disk buffer info record (see #1338,#1339)
-		Note: although the initialization code in IO.SYS uses this
-		  pointer, MSDOS.SYS does not, instead using the hardcoded
-		  address of the info record
- 16h	DWORD	pointer to array of current directory structures
-		(see #1329,#1330)
- 1Ah	DWORD	pointer to system FCB tables (see #1326,#1327,#1328)
- 1Eh	WORD	number of protected FCBs (the y in the CONFIG.SYS FCBS=x,y)
-		(always 00h for DOS 5.0)
- 20h	BYTE	number of block devices installed
- 21h	BYTE	number of available drive letters (largest of 5, installed
-		  block devices, and CONFIG.SYS LASTDRIVE=).  Also size of
-		  current directory structure array.
- 22h 18 BYTEs	actual NUL device driver header (not a pointer!)
-		NUL is always the first device on DOS's linked list of device
-		  drivers. (see #1332)
- 34h	BYTE	number of JOIN'ed drives
- 35h	WORD	pointer within IBMDOS code segment to list of special program
-		  names (see #1348)
-		(always 0000h for DOS 5.0)
- 37h	DWORD	pointer to FAR routine for resident IFS utility functions
-		(see #1344)
-		may be called by any IFS driver which does not wish to
-		  service functions 20h or 24h-28h itself
- 3Bh	DWORD	pointer to chain of IFS (installable file system) drivers
- 3Fh	WORD	the x in BUFFERS x,y (rounded up to multiple of 30 if in EMS)
- 41h	WORD	number of lookahead buffers (the y in BUFFERS x,y)
- 43h	BYTE	boot drive (1=A:)
- 44h	BYTE	flag: 01h to use DWORD moves (80386+), 00h otherwise
- 45h	WORD	extended memory size in KB
----DOS 5.0-6.0---
- 10h 39 BYTEs	as for DOS 4.x (above)
- 37h	DWORD	pointer to SETVER program list or 0000h:0000h
- 3Bh	WORD	(DOS=HIGH) offset in DOS CS of function to fix A20 control
-		  when executing special .COM format
- 3Dh	WORD	PSP of most-recently EXECed program if DOS in HMA, 0000h if low
-		used for maintaining count of INT 21 calls which disable A20
-		  on return
- 3Fh  8 BYTEs	as for DOS 4.x (above)
----Windows NT DOS Box---
- 10h  6 BYTEs	???
- 16h	DWORD	pointer to array of current directory structures (see #1331)
- 1Ah  6 BYTEs	???
- 20h	BYTE	number of block devices installed
- 21h	BYTE	number of local drive letters (= installed block devices)
-		Also size of current directory structure array.
- 22h 18 BYTEs	actual NUL device driver header (not a pointer!)
-		NUL is always the first device on DOS's linked list of device
-		  drivers. (see #1332)
-
-Format of DOS memory control block:
-Offset	Size	Description	(Table 1314)
- 00h	BYTE	block type: 5Ah if last block in chain, otherwise 4Dh
- 01h	WORD	PSP segment of owner or special flag value (see #1315)
- 03h	WORD	size of memory block in paragraphs
- 05h  3 BYTEs	unused by MS-DOS
-		(386MAX) if locked-out block, region start/prev region end
----DOS 2.x,3.x---
- 08h  8 BYTEs	unused
----DOS 4.0+ ---
- 08h  8 BYTEs	ASCII program name if PSP memory block or DR DOS UMB,
-		  else garbage
-		null-terminated if less than 8 characters
-Notes:	the next MCB is at segment (current + size + 1)
-	under DOS 3.1+, the first memory block is the DOS data segment,
-	  containing installable drivers, buffers, etc.	 Under DOS 4.0+ it is
-	  divided into subsegments, each with its own memory control block
-	  (see #1319), the first of which is at offset 0000h.
-	for DOS 5+, blocks owned by DOS may have either "SC" or "SD" in bytes
-	  08h and 09h.	"SC" is system code or locked-out inter-UMB memory,
-	  "SD" is system data, device drivers, etc.
-	Some versions of DR DOS use only seven characters of the program name,
-	  placing a NUL in the eighth byte.
-SeeAlso: #1316,#1318,#1319
-
-(Table 1315)
-Values for special flag PSP segments:
- 0000h	free
- 0006h	DR DOS XMS UMB
- 0007h	DR DOS excluded upper memory ("hole")
- 0008h	belongs to DOS
- FFF7h	386MAX v6.01+ ???
- FFFAh	386MAX UMB control block (see #1164 at AX=4402h"386MAX")
- FFFDh	386MAX locked-out memory
- FFFEh	386MAX UMB (normally immediately follows its control block)
- FFFFh	386MAX v6.01+ device driver
-
-Format of MS-DOS 5+ UMB control block:
-Offset	Size	Description	(Table 1316)
- 00h	BYTE	type: 5Ah if last block in chain, 4Dh otherwise
- 01h	WORD	first available paragraph in UMB if control block at start
-		  of UMB, 000Ah if control block at end of UMB
- 03h	WORD	length in paragraphs of following UMB or locked-out region
- 05h  3 BYTEs	unused
- 08h  8 BYTEs	block type name: "UMB" if start block, "SM" if end block in UMB
-SeeAlso: #1314,#1317
-
-Format of MS-DOS 7.0 HMA memory control block:
-Offset	Size	Description	(Table 1317)
- 00h	WORD	signature "MS" (4Dh 53h)
- 02h	WORD	usage flag???
-		0000h free
-		else ???
- 04h	WORD	size of memory block in bytes (not counting MCB)
- 06h	WORD	offset of next memory block in HMA or 0000h
- 08h  8 BYTEs	unused (0)
-SeeAlso: #1314,#1316,#1318
-
-Format of STARLITE (General Software's Embedded DOS) memory control block:
-Offset	Size	Description	(Table 1318)
- 00h	BYTE	block type: 5Ah if last block in chain, otherwise 4Dh
- 01h	WORD	PSP segment of owner, 0000h if free, 0008h if belongs to DOS
- 03h	WORD	size of memory block in paragraphs
- 05h	BYTE	unused
- 06h	WORD	segment address of next memory control block (0000h if last)
- 08h	WORD	segment address of previous memory control block or 0000h
- 0Ah  6 BYTEs	reserved
-
-Format of DOS 4.0+ data segment subsegment control blocks:
-Offset	Size	Description	(Table 1319)
- 00h	BYTE	subsegment type (blocks typically appear in this order)
-		"D"  device driver
-		"E"  device driver appendage
-		"I"  IFS (Installable File System) driver
-		     (MS-DOS 7) high-loaded drive data table array (see #2290)
-		"F"  FILES=  control block storage area (for FILES>5)
-		"X"  FCBS=   control block storage area, if present
-		"C"  BUFFERS EMS workspace area (if BUFFERS /X option used)
-		"B"  BUFFERS=  storage area
-		"L"  LASTDRIVE=	 current directory structure array storage area
-		"S"  STACKS=  code and data area, if present (see #1320,#1321)
-		"T"  INSTALL= transient code
- 01h	WORD	paragraph of subsegment start (usually the next paragraph)
- 03h	WORD	size of subsegment in paragraphs
- 05h  3 BYTEs	unused
- 08h  8 BYTEs	for types "D" and "I", base name of file from which the driver
-		  was loaded (unused for other types)
-
-Format of data at start of STACKS code segment (if present):
-Offset	Size	Description	(Table 1320)
- 00h	WORD	???
- 02h	WORD	number of stacks (the x in STACKS=x,y)
- 04h	WORD	size of stack control block array (should be 8*x)
- 06h	WORD	size of each stack (the y in STACKS=x,y)
- 08h	DWORD	pointer to STACKS data segment
- 0Ch	WORD	offset in STACKS data segment of stack control block array
- 0Eh	WORD	offset in STACKS data segment of last element of that array
- 10h	WORD	offset in STACKS data segment of the entry in that array for
-		  the next stack to be allocated (initially same as value in
-		  0Eh and works its way down in steps of 8 to the value in
-		  0Ch as hardware interrupts pre-empt each other)
-Note:	the STACKS code segment data may, if present, be located as follows:
-    DOS 3.2:	The code segment data is at a paragraph boundary fairly early
-		  in the IBMBIO segment (seen at 0070:0190h)
-    DOS 3.3:	The code segment is at a paragraph boundary in the DOS data
-		  segment, which may be determined by inspecting the segment
-		  pointers of the vectors for those of interrupts 02h, 08h-0Eh,
-		  70h, 72-77h which have not been redirected by device drivers
-		  or TSRs.
-    DOS 4.0+	Identified by sub-segment control block type "S" within the DOS
-		  data segment.
-SeeAlso: #1322,INT B4"STACKMAN"
-
-Format of array elements in STACKS data segment:
-Offset	Size	Description	(Table 1321)
- 00h	BYTE	status: 00h=free, 01h=in use, 03h=corrupted by overflow of
-		  higher stack.
- 01h	BYTE	not used
- 02h	WORD	previous SP
- 04h	WORD	previous SS
- 06h	WORD	ptr to word at top of stack (new value for SP). The word at the
-		  top of the stack is preset to point back to this control
-		  block.
-
-Format of SHARE.EXE hooks (DOS 3.1-6.00):
-Offset	Size	Description	(Table 1322)
-(offsets from first system file table--pointed at by ListOfLists+04h)
--3Ch	DWORD	pointer to FAR routine for ???
-		Note: not called by MS-DOS 3.3, set to 0000h:0000h by
-			SHARE 3.3+
--38h	DWORD	pointer to FAR routine called on opening file
-		on call, internal DOS location points at filename
-		  (see #1373 at AX=5D06h)
-		Return: CF clear if successful
-			CF set on error
-			    AX = DOS error code (24h)
-				  (see #1366 at AH=59h/BX=0000h)
-		Note: SHARE directly accesses DOS-internal data to get name of
-			file just opened
--34h	DWORD	pointer to FAR routine called on closing file
-		ES:DI -> system file table
-		Note: does something to every Record Lock Record for file
--30h	DWORD	pointer to FAR routine to close all files for given computer
-		(called by AX=5D03h)
--2Ch	DWORD	pointer to FAR routine to close all files for given process
-		(called by AX=5D04h)
--28h	DWORD	pointer to FAR routine to close file by name
-		(called by AX=5D02h)
-		DS:SI -> DOS parameter list (see #1372 at AX=5D00h)
-		   DPL's DS:DX -> name of file to close
-		Return: CF clear if successful
-			CF set on error
-			    AX = DOS error code (03h)
-				  (see #1366 at AH=59h/BX=0000h)
--24h	DWORD	pointer to FAR routine to lock region of file
-		call with BX = file handle
-			  ---DOS 3.x---
-			  CX:DX = starting offset
-			  SI:AX = size
-			  ---DOS 4.0+ ---
-			  DS:DX -> lock range
-					DWORD start offset
-					DWORD size in bytes
-		Return: CF set on error
-			    AL = DOS error code (21h) (see #1366 at AH=59h)
-		Note: not called if file is marked as remote
--20h	DWORD	pointer to FAR routine to unlock region of file
-		call with BX = file handle
-			  ---DOS 3.x---
-			  CX:DX = starting offset
-			  SI:AX = size
-			  ---DOS 4.0+ ---
-			  DS:DX -> lock range
-					DWORD start offset
-					DWORD size in bytes
-		Return: CF set on error
-			    AL = DOS error code (21h) (see #1366 at AH=59h)
-		Note: not called if file is marked as remote
--1Ch	DWORD	pointer to FAR routine to check if file region is locked
-		call with ES:DI -> system file table entry for file
-			CX = length of region from current position in file
-		Return: CF set if any portion of region locked
-			    AX = 0021h
--18h	DWORD	pointer to FAR routine to get open file list entry
-		(called by AX=5D05h)
-		call with DS:SI -> DOS parameter list (see #1372 at AX=5D00h)
-			DPL's BX = index of sharing record
-			DPL's CX = index of SFT in SFT chain of sharing rec
-		Return: CF set on error or not loaded
-			    AX = DOS error code (12h) (see #1366 at AH=59h)
-			CF clear if successful
-			    ES:DI -> filename
-			    CX = number of locks owned by specified SFT
-			    BX = network machine number
-			    DX destroyed
--14h	DWORD	pointer to FAR routine for updating FCB from SFT???
-		call with DS:SI -> unopened FCB
-			  ES:DI -> system file table entry
-		Return: BL = C0h???
-		Note: copies following fields from SFT to FCB:
-		   starting cluster of file	  0Bh	 1Ah
-		   sharing record offset	  33h	 1Ch
-		   file attribute		  04h	 1Eh
--10h	DWORD	pointer to FAR routine to get first cluster of FCB file ???
-		call with ES:DI -> system file table entry
-			  DS:SI -> FCB
-		Return: CF set if SFT closed or sharing record offsets
-				mismatched
-			CF clear if successful
-			    BX = starting cluster number from FCB
--0Ch	DWORD	pointer to FAR routine to close file if duplicate for process
-		DS:SI -> system file table
-		Return: AX = number of handle in JFT which already uses SFT
-		Note: called during open/create of a file
-		Note: if SFT was opened with inheritance enabled and sharing
-			mode 111, does something to all other SFTs owned by
-			same process which have the same file open mode and
-			sharing record
--08h	DWORD	pointer to FAR routine for closing file
-		Note: closes various handles referring to file most-recently
-			opened
--04h	DWORD	pointer to FAR routine to update directory info in related SFT
-		  entries
-		call with ES:DI -> system file table entry for file (see #1327)
-			  AX = subfunction (apply to each related SFT)
-				00h: update time stamp (offset 0Dh) and date
-				     stamp (offset 0Fh)
-				01h: update file size (offset 11h) and starting
-				     cluster (offset 0Bh).  Sets last-accessed
-				     cluster fields to start of file if file
-				     never accessed
-				02h: as function 01h, but last-accessed fields
-				     always changed
-				03h: do both functions 00h and 02h
-		Note: follows ptr at offset 2Bh in system file table entries
-		Note: NOP if opened with no-inherit or via FCB
-Notes:	most of the above hooks (except -04h, -14h, -18h, and -3Ch) assume
-	  either that SS=DOS DS or SS=DS=DOS DS and directly access
-	  DOS-internal data
-	sharing hooks are not supported by DR DOS 5-6; they appear to be
-	  supported by Novell DOS 7, with a segment of 0000h indicating the
-	  DOS data segment
-SeeAlso: #1323,#1324
-
-Format of sharing record:
-Offset	Size	Description	(Table 1323)
- 00h	BYTE	flag
-		00h free block
-		01h allocated block
-		FFh end marker
- 01h	WORD	size of block
- 03h	BYTE	checksum of pathname (including NUL)
-		if sum of ASCII values is N, checksum is (N/256 + N%256)
- 04h	WORD	offset in SHARE's DS of first Record Lock Record (see #1324)
- 06h	DWORD	pointer to start of system file table chain for file
- 0Ah	WORD	unique sequence number
- 0Ch	var	ASCIZ full pathname
-Note:	not supported by DR DOS SHARE 1.1 and 2.0; will reportedly be
-	  supported by Novell DOS 7
-SeeAlso: #1322,#1324
-
-Format of SHARE.EXE Record Lock Record:
-Offset	Size	Description	(Table 1324)
- 00h	WORD	offset in SHARE's DS of next lock table in list or 0000h
- 02h	DWORD	offset in file of start of locked region
- 06h	DWORD	offset in file of end of locked region
- 0Ah	DWORD	pointer to System File Table entry for this file
- 0Eh	WORD	PSP segment of lock's owner
----DOS 5+ ---
- 10h	WORD	lock type: (00h lock all, 01h lock writes only)
-SeeAlso: #1322,#1323,#1325,#1328
-
-Format of DOS 2.x system file tables:
-Offset	Size	Description	(Table 1325)
- 00h	DWORD	pointer to next file table (offset FFFFh if last)
- 04h	WORD	number of files in this table
- 06h  28h bytes per file
-	Offset	Size	Description
-	 00h	BYTE	number of file handles referring to this file
-	 01h	BYTE	file open mode (see #1090 at AH=3Dh)
-	 02h	BYTE	file attribute
-	 03h	BYTE	drive (0 = character device, 1 = A, 2 = B, etc)
-	 04h 11 BYTEs	filename in FCB format (no path,no period,blank-padded)
-	 0Fh	WORD	???
-	 11h	WORD	???
-	 13h	DWORD	file size???
-	 17h	WORD	file date in packed format (see #1352 at AX=5700h)
-	 19h	WORD	file time in packed format (see #1351 at AX=5700h)
-	 1Bh	BYTE	device attribute (see #1110 at AX=4400h)
-	---character device---
-	 1Ch	DWORD	pointer to device driver
-	---block device---
-	 1Ch	WORD	starting cluster of file
-	 1Eh	WORD	relative cluster in file of last cluster accessed
-	------
-	 20h	WORD	absolute cluster number of current cluster
-	 22h	WORD	???
-	 24h	DWORD	current file position???
-SeeAlso: #1326,#1327,#1328
-
-Format of DOS 3.0 system file tables and FCB tables:
-Offset	Size	Description	(Table 1326)
- 00h	DWORD	pointer to next file table (offset FFFFh if last)
- 04h	WORD	number of files in this table
- 06h  38h bytes per file
-	Offset	Size	Description
-	 00h-1Eh as for DOS 3.1+ (see #1327)
-	 1Fh	WORD	byte offset of directory entry within sector
-	 21h 11 BYTEs	filename in FCB format (no path/period, blank-padded)
-	 2Ch	DWORD	(SHARE.EXE) pointer to previous SFT sharing same file
-	 30h	WORD	(SHARE.EXE) network machine number which opened file
-			(Windows Enhanced mode DOSMGR uses the virtual machine
-			  ID as the machine number; see INT 2F/AX=1683h)
-	 32h	WORD	PSP segment of file's owner (first three entries for
-			  AUX/CON/PRN contain segment of IO.SYS startup code)
-	 34h	WORD	(SHARE.EXE) offset in SHARE code seg of share record
-	 36h	WORD	??? apparently always 0000h
-SeeAlso: #1325,#1327,#1328
-
-Format of DOS 3.1-3.3x, DR DOS 5.0-6.0 system file tables and FCB tables:
-Offset	Size	Description	(Table 1327)
- 00h	DWORD	pointer to next file table (offset FFFFh if last)
- 04h	WORD	number of files in this table
- 06h  35h bytes per file
-	Offset	Size	Description
-	 00h	WORD	number of file handles referring to this file
-	 02h	WORD	file open mode (see AX=6C00h, #1090 at AH=3Dh)
-			bit 15 set if this file opened via FCB
-	 04h	BYTE	file attribute (see #1107 at AX=4301h)
-	 05h	WORD	device info word (see #1110 at AX=4400h)
-			bit 15 set if remote file
-			bit 14 set means do not set file date/time on closing
-			bit 12 set means don't inherit on EXEC
-			bits 5-0 drive number for disk files
-	 07h	DWORD	pointer to device driver header if character device
-			else pointer to DOS Drive Parameter Block
-			  (see #1083 at AH=32h)
-	 0Bh	WORD	starting cluster of file
-	 0Dh	WORD	file time in packed format (see #1351 at AX=5700h)
-			not used for character devices in DR DOS
-	 0Fh	WORD	file date in packed format (see #1352 at AX=5700h)
-			not used for character devices in DR DOS
-	 11h	DWORD	file size
-	---system file table---
-	 15h	DWORD	current offset in file (may be larger than size of
-			  file; INT 21/AH=42h does not check new position)
-	---FCB table---
-	 15h	WORD	counter for last I/O to FCB
-	 17h	WORD	counter for last open of FCB
-			(these are separate to determine the times of the
-			  latest I/O and open)
-	---
-	 19h	WORD	relative cluster within file of last cluster accessed
-	 1Bh	WORD	absolute cluster number of last cluster accessed
-			0000h if file never read or written???
-	 1Dh	WORD	number of sector containing directory entry
-			(see #1041)
-	 1Fh	BYTE	number of dir entry within sector (byte offset/32)
-	 20h 11 BYTEs	filename in FCB format (no path/period, blank-padded)
-	 2Bh	DWORD	(SHARE.EXE) pointer to previous SFT sharing same file
-	 2Fh	WORD	(SHARE.EXE) network machine number which opened file
-			(Windows Enhanced mode DOSMGR uses the virtual machine
-			  ID as the machine number; see INT 2F/AX=1683h)
-	 31h	WORD	PSP segment of file's owner (see #1066 at AH=26h)
-			  (first three entries for AUX/CON/PRN contain segment
-			  of IO.SYS startup code)
-	 33h	WORD	offset within SHARE.EXE code segment of
-			  sharing record (see #1323) 0000h = none
-SeeAlso: #1325,#1326,#1328
-
-Format of DOS 4.0-6.0 system file tables and FCB tables:
-Offset	Size	Description	(Table 1328)
- 00h	DWORD	pointer to next file table (offset FFFFh if last)
- 04h	WORD	number of files in this table
- 06h  3Bh bytes per file
-	Offset	Size	Description
-	 00h	WORD	number of file handles referring to this file
-			FFFFh if in use but not referenced
-	 02h	WORD	file open mode (see AX=6C00h,#1090 at AH=3Dh)
-			bit 15 set if this file opened via FCB
-	 04h	BYTE	file attribute (see #1107 at AX=4301h)
-	 05h	WORD	device info word (see also #1110 at AX=4400h)
-			bit 15 set if remote file
-			bit 14 set means do not set file date/time on closing
-			bit 13 set if named pipe
-			bit 12 set if no inherit
-			bit 11 set if network spooler
-			bit 7  set if device, clear if file (only if local)
-			bits 6-0 as for AX=4400h
-	 07h	DWORD	pointer to device driver header if character device
-			else pointer to DOS Drive Parameter Block
-			  (see #1083 at AH=32h) or REDIR data
-	 0Bh	WORD	starting cluster of file (local files only)
-	 0Dh	WORD	file time in packed format (see #1351)
-	 0Fh	WORD	file date in packed format (see #1352)
-	 11h	DWORD	file size
-	 15h	DWORD	current offset in file (SFT)
-			LRU counters (FCB table, two WORDs)
-	---local file---
-	 19h	WORD	relative cluster within file of last cluster accessed
-	 1Bh	DWORD	number of sector containing directory entry
-	 1Fh	BYTE	number of dir entry within sector (byte offset/32)
-	---network redirector---
-	 19h	DWORD	pointer to REDIRIFS record
-	 1Dh  3 BYTEs	???
-	------
-	 20h 11 BYTEs	filename in FCB format (no path/period, blank-padded)
-	 2Bh	DWORD	(SHARE.EXE) pointer to previous SFT sharing same file
-	 2Fh	WORD	(SHARE.EXE) network machine number which opened file
-			(Windows Enhanced mode DOSMGR uses the virtual machine
-			  ID as the machine number; see INT 2F/AX=1683h)
-	 31h	WORD	PSP segment of file's owner (see #1066 at AH=26h)
-			  (first three entries for AUX/CON/PRN contain segment
-			  of IO.SYS startup code)
-	 33h	WORD	offset within SHARE.EXE code segment of
-			sharing record (see #1281)  0000h = none
-	 35h	WORD	(local) absolute cluster number of last clustr accessed
-			(redirector) ???
-	 37h	DWORD	pointer to IFS driver for file, 0000000h if native DOS
-Note:	the OS/2 2.0 DOS Boot Session does not properly fill in the filename
-	  field due to incomplete support for SFTs; the OS/2 2.0 DOS Window
-	  does not appear to support SFTs at all
-SeeAlso: #1325,#1326,#1327
-
-Format of current directory structure (CDS) (array, LASTDRIVE entries):
-Offset	Size	Description	(Table 1329)
- 00h 67 BYTEs	ASCIZ path in form X:\PATH (local) or UNC form
-		  \\SERVER\PATH (network, see notes below)
- 43h	WORD	drive attributes (also see note below) (see also AX=5F07h)
-		bit 15: uses network redirector	 \ invalid if 00, installable
-		bit 14: physical drive		 / file system if 11
-		bit 13: JOIN'ed	  \ path above is true path that would be
-		bit 12: SUBST'ed  / needed if not under SUBST or JOIN
-		bit  7: remote drive hidden from redirector's assign-list and
-			  exempt from network connection make/break commands;
-			  set for CD-ROM drives by MSCDEX (not supported by
-			  CORELCDX)
- 45h	DWORD	pointer to Drive Parameter Block for drive
-		  (see #1083 at AH=32h)
----local drives---
- 49h	WORD	starting cluster of current directory
-		0000h = root, FFFFh = never accessed
- 4Bh	WORD	??? seems to be FFFFh always
- 4Dh	WORD	??? seems to be FFFFh always
----network drives---
- 49h	DWORD	pointer to redirector or REDIRIFS record, or FFFFh:FFFFh
-		(DOS 4 only) available for use by IFS driver
- 4Dh	WORD	stored user data from INT 21/AX=5F03h
-------
- 4Fh	WORD	offset in current directory path of backslash corresponding to
-		  root directory for drive
-		this value specifies how many characters to hide from the
-		  "CHDIR" and "GETDIR" calls; normally set to 2 to hide the
-		  drive letter and colon, SUBST, JOIN, and networks change it
-		  so that only the appropriate portion of the true path is
-		  visible to the user
----DOS 4.0+ ---
- 51h	BYTE	(DOS 4 only, remote drives) device type
-		04h network drive
- 52h	DWORD	pointer to IFS driver (DOS 4) or redirector block (DOS 5+) for
-		  this drive, 00000000h if native DOS
- 56h	WORD	available for use by IFS driver
-Notes:	the path for invalid drives is normally set to X:\, but may be empty
-	  after JOIN x: /D in DR DOS 5.0 or NET USE x: /D in older LAN versions
-	normally, only one of bits 13&12 may be set together with bit 14, but
-	  DR DOS 5.0 uses other combinations for bits 15-12: 0111 JOIN,
-	  0001 SUBST, 0101 ASSIGN (see #1330)
-	Windows for Workgroups 3.11 network sets the path to the local
-	  drive and directory even for network drives; in that case the
-	  UNC form \\SERVER\SHARE can be obtained with INT 21/AX=5F02h
-	  or INT 21/AX=5F46h. LapLink RemoteAccess does the same even for
-	  INT 21/AX=5F02h
-	SoftWindows on the Macintosh PowerPC sets \\E for the host drive
-SeeAlso: #1330,INT 21/AX=71AAh/BL=00h
-
-Format of DR DOS 5.0-6.0 current directory structure entry (array):
-Offset	Size	Description	(Table 1330)
- 00h 67 BYTEs	ASCIZ pathname of actual root directory for this logical drive
- 43h	WORD	drive attributes
-		1000h SUBSTed drive
-		3000h??? JOINed drive
-		4000h physical drive
-		5000h ASSIGNed drive
-		7000h JOINed drive
-		8000h network drive
- 45h	BYTE	physical drive number (0=A:) if this logical drive is valid
- 46h	BYTE	??? apparently flags for JOIN and ASSIGN
- 47h	WORD	cluster number of start of parent directory (0000h = root)
- 49h	WORD	entry number of current directory in parent directory
- 4Bh	WORD	cluster number of start of current directory
- 4Dh	WORD	used for media change detection (details not available)
- 4Fh	WORD	cluster number of SUBST/JOIN "root" directory
-		0000h if physical root directory
-SeeAlso: #1329
-
-Format of Windows NT Current Directory Structure (CDS) (array):
-Offset	Size	Description	(Table 1331)
- 00h 67 BYTEs	ASCIZ path in form X:\ (does not show either current directory
-		  or network path)
- 43h  4 BYTEs	???
-Note:	the WinNT CDS contains only as many entries as there are local drives,
-	  not LASTDRIVE entries.
-
-Format of DOS device driver header:
-Offset	Size	Description	(Table 1332)
- 00h	DWORD	pointer to next driver, offset=FFFFh if last driver
- 04h	WORD	device attributes (see #1333,#1334)
- 06h	WORD	device strategy entry point
-		call with ES:BX -> request header
-		  (see #2284 at INT 2F/AX=0802h)
- 08h	WORD	device interrupt entry point
----character device---
- 0Ah  8 BYTEs	blank-padded character device name
----block device---
- 0Ah	BYTE	number of subunits (drives) supported by driver
- 0Bh  7 BYTEs	normally unused; sometimes contains signature to indicate
-		  specific drivers:
-		"$PCMATA"   PCMCIA driver PCMATA.SYS (see AX=440Dh"DOS 3.2+")
-		"AHADDVR"   Adaptec SCSI disk driver ASPIDISK.SYS
-		"DBLSPAC"   MS DoubleSpace or DriveSpace
-		"DSKREET"   NortonUtils v5+ Diskreet (see INT 2F/AX=FE00h)
-		"GFS	"   LapLink III device driver DD.BIN
-		"SIDExxx"   PCMCIA driver ATADRV.EXE (see AX=440Dh"DOS 3.2+")
-		"STAC-CD"   Stacker/Stacker Anywhere (see AX=4404h"Stacker")
----DoubleSpace/DriveSpace---
- 12h  2 BYTEs	signature ",." (2Ch 2Eh)
- 14h	var	preloading API entry point
----CD-ROM---
- 12h	WORD	reserved, must be 0000h
-		appears to be another device chain
- 14h	BYTE	drive letter, 01h=A:, etc. (must initially be 00h; this byte
-		  is set by MSCDEX when it loads)
- 15h	BYTE	number of units
- 16h  6 BYTEs	signature 'MSCDnn' where 'nn' is version (currently '00')
-		(this field does not exist in most drivers)
-SeeAlso: #2238 at INT 25/AX=CDCDh,#2531 at INT 2F/AX=5600h
-
-Bitfields for device attributes (character device):
-Bit(s)	Description	(Table 1333)
- 15	set (indicates character device)
- 14	IOCTL supported (see AH=44h)
- 13	(DOS 3.0+) output until busy supported
- 12	reserved
- 11	(DOS 3.0+) OPEN/CLOSE/RemMedia calls supported
- 10-8	reserved
- 7	(DOS 5.0+) Generic IOCTL check call supported (driver command 19h)
-	(see AX=4410h,AX=4411h)
- 6	(DOS 3.2+) Generic IOCTL call supported (driver command 13h)
-	(see AX=440Ch,AX=440Dh"DOS 3.2+")
- 5	reserved
- 4	device is special (use INT 29 "fast console output")
- 3	device is CLOCK$ (all reads/writes use transfer record described
-	  below)
- 2	device is NUL
- 1	device is standard output
- 0	device is standard input
-Note:	for European MS-DOS 4.0, bit 11 also indicates that bits 8-6 contain a
-	  version code (000 = DOS 3.0,3.1; 001 = DOS 3.2;
-	  010 = European DOS 4.0)
-SeeAlso: #1334,#1332
-
-Bitfields for device attributes (block device):
-Bit(s)	Description	(Table 1334)
- 15	clear (indicates block device)
- 14	IOCTL supported
- 13	non-IBM format
- 12	network device (device is remote)
- 11	(DOS 3.0+) OPEN/CLOSE/RemMedia calls supported
- 10	reserved
- 9	direct I/O not allowed??? (set by DOS 3.3 DRIVER.SYS for "new" drives)
- 8	??? set by DOS 3.3 DRIVER.SYS for "new" drives
- 7	(DOS 5.0+) Generic IOCTL check call supported (driver command 19h)
-	(see AX=4410h,AX=4411h)
- 6	(DOS 3.2+) Generic IOCTL call supported (driver command 13h)
-	implies support for commands 17h and 18h
-	  (see AX=440Ch,AX=440Dh"DOS 3.2+",AX=440Eh,AX=440Fh)
- 5-2	reserved
- 1	driver supports 32-bit sector addressing (DOS 3.31+)
- 0	 reserved
-Note:	for European MS-DOS 4.0, bit 11 also indicates that bits 8-6 contain a
-	  version code (000 = DOS 3.0,3.1; 001 = DOS 3.2;
-	  010 = European DOS 4.0)
-SeeAlso: #1333,#1332
-
-Format of DOS 2.x disk buffer:
-Offset	Size	Description	(Table 1335)
- 00h	DWORD	pointer to next disk buffer, offset = FFFFh if last
-		least-recently used buffer is first in chain
- 04h	BYTE	drive (0=A, 1=B, etc), FFh if not in use
- 05h  3 BYTEs	unused??? (seems always to be 00h 00h 01h)
- 08h	WORD	logical sector number
- 0Ah	BYTE	number of copies to write (1 for non-FAT sectors)
- 0Bh	BYTE	sector offset between copies if multiple copies to be written
- 0Ch	DWORD	pointer to DOS Drive Parameter Block (see #1083 at AH=32h)
- 10h		buffered data
-SeeAlso: #1336,#1338,#1339,#1341
-
-Format of DOS 3.x disk buffer:
-Offset	Size	Description	(Table 1336)
- 00h	DWORD	pointer to next disk buffer, offset = FFFFh if last
-		least-recently used buffer is first in chain
- 04h	BYTE	drive (0=A,1=B, etc), FFh if not in use
- 05h	BYTE	buffer flags (see #1337)
- 06h	WORD	logical sector number
- 08h	BYTE	number of copies to write (1 for non-FAT sectors)
- 09h	BYTE	sector offset between copies if multiple copies to be written
- 0Ah	DWORD	pointer to DOS Drive Parameter Block (see #1083 at AH=32h)
- 0Eh	WORD	unused??? (almost always 0)
- 10h		buffered data
-SeeAlso: #1335,#1338,#1339,#1341
-
-Bitfields for DOS 3.x disk buffer flags:
-Bit(s)	Description	(Table 1337)
- 7	???
- 6	buffer dirty
- 5	buffer has been referenced
- 4	???
- 3	sector in data area
- 2	sector in a directory, either root or subdirectory
- 1	sector in FAT
- 0	boot sector??? (guess)
-SeeAlso: #1342
-
-Format of DOS 4.00 (pre UR 25066) disk buffer info:
-Offset	Size	Description	(Table 1338)
- 00h	DWORD	pointer to array of disk buffer hash chain heads (see #1340)
- 04h	WORD	number of disk buffer hash chains (referred to as NDBCH below)
- 06h	DWORD	pointer to lookahead buffer, zero if not present
- 0Ah	WORD	number of lookahead sectors, else zero (the y in BUFFERS=x,y)
- 0Ch	BYTE	00h if buffers in EMS (/X), FFh if not
- 0Dh	WORD	EMS handle for buffers, zero if not in EMS
- 0Fh	WORD	EMS physical page number used for buffers (usually 255)
- 11h	WORD	??? seems always to be 0001h
- 13h	WORD	segment of EMS physical page frame
- 15h	WORD	??? seems always to be zero
- 17h  4 WORDs	EMS partial page mapping information???
-SeeAlso: #1335,#1336,#1339,#1343
-
-Format of DOS 4.01 (from UR 25066 Corrctive Services Disk on) disk buffer info:
-Offset	Size	Description	(Table 1339)
- 00h	DWORD	pointer to array of disk buffer hash chain heads (see #1340)
- 04h	WORD	number of disk buffer hash chains (referred to as NDBCH below)
- 06h	DWORD	pointer to lookahead buffer, zero if not present
- 0Ah	WORD	number of lookahead sectors, else zero (the y in BUFFERS=x,y)
- 0Ch	BYTE	01h, possibly to distinguish from pre-UR 25066 format
- 0Dh	WORD	??? EMS segment for BUFFERS (only with /XD)
- 0Fh	WORD	??? EMS physical page number of EMS seg above (only with /XD)
- 11h	WORD	??? EMS segment for ??? (only with /XD)
- 13h	WORD	??? EMS physical page number of above (only with /XD)
- 15h	BYTE	??? number of EMS page frames present (only with /XD)
- 16h	WORD	segment of one-sector workspace buffer allocated in main memory
-		  if BUFFERS/XS or /XD options in effect, possibly to avoid DMA
-		  into EMS
- 18h	WORD	EMS handle for buffers, zero if not in EMS
- 1Ah	WORD	EMS physical page number used for buffers (usually 255)
- 1Ch	WORD	??? appears always to be 0001h
- 1Eh	WORD	segment of EMS physical page frame
- 20h	WORD	??? appears always to be zero
- 22h	BYTE	00h if /XS, 01h if /XD, FFh if BUFFERS not in EMS
-SeeAlso: #1335,#1336,#1338,#1343
-
-Format of DOS 4.x disk buffer hash chain head (array, one entry per chain):
-Offset	Size	Description	(Table 1340)
- 00h	WORD	EMS logical page number in which chain is resident, -1 if not
-		  in EMS
- 02h	DWORD	pointer to least recently used buffer header.  All buffers on
-		  this chain are in the same segment.
- 06h	BYTE	number of dirty buffers on this chain
- 07h	BYTE	reserved (00h)
-Notes:	buffered disk sectors are assigned to chain N where N is the sector's
-	  address modulo NDBCH,	 0 <= N <= NDBCH-1
-	each chain resides completely within one EMS page
-	this structure is in main memory even if buffers are in EMS
-
-Format of DOS 4.0-6.0 disk buffer:
-Offset	Size	Description	(Table 1341)
- 00h	WORD	forward ptr, offset only, to next least recently used buffer
- 02h	WORD	backward pointer, offset only
- 04h	BYTE	drive (0=A,1=B, etc) if bit 7 clear
-		SFT index if bit 7 set
-		FFh if not in use
- 05h	BYTE	buffer flags (see #1342)
- 06h	DWORD	logical sector number (local buffers only)
- 0Ah	BYTE	number of copies to write
-		for FAT sectors, same as number of FATs
-		for data and directory sectors, usually 1
- 0Bh	WORD	offset in sectors between copies to write for FAT sectors
- 0Dh	DWORD	pointer to DOS Drive Parameter Block (see #1083 at AH=32h)
- 11h	WORD	size of data in buffer if remote buffer (see also #1342)
- 13h	BYTE	reserved (padding)
- 14h		buffered data
-Note:	for DOS 4.x, all buffered sectors which have the same hash value
-	  (computed as the sum of high and low words of the logical sector
-	  number divided by the number of disk buffer chains) are on the same
-	  doubly-linked circular chain; for DOS 5+, only a single circular
-	  chain exists.
-	the links consist of offset addresses only, the segment being the same
-	  for all buffers in the chain.
-SeeAlso: #1335,#1336,#1338
-
-Bitfields for DOS 4.0-6.0 disk buffer flags:
-Bit(s)	Description	(Table 1342)
- 7	remote buffer
- 6	buffer dirty
- 5	buffer has been referenced (reserved in DOS 5+)
- 4	search data buffer (only valid if remote buffer)
- 3	sector in data area
- 2	sector in a directory, either root or subdirectory
- 1	sector in FAT
- 0	reserved
-SeeAlso: #1337
-
-Format of DOS 5.0-6.0 disk buffer info:
-Offset	Size	Description	(Table 1343)
- 00h	DWORD	pointer to least-recently-used buffer header (may be in HMA)
-		(see #1341)
- 04h	WORD	number of dirty disk buffers
- 06h	DWORD	pointer to lookahead buffer, zero if not present
- 0Ah	WORD	number of lookahead sectors, else zero (the y in BUFFERS=x,y)
- 0Ch	BYTE	buffer location
-		00h base memory, no workspace buffer
-		01h HMA, workspace buffer in base memory
- 0Dh	DWORD	pointer to one-segment workspace buffer in base memory
- 11h  3 BYTEs	unused
- 14h	WORD	???
- 16h	BYTE	flag: INT 24 fail while making an I/O status call
- 17h	BYTE	temp storage for user memory allocation strategy during EXEC
- 18h	BYTE	counter: number of INT 21 calls for which A20 is off
- 19h	BYTE	bit flags
-		bit 0: ???
-		bit 1: SWITCHES=/W specified in CONFIG.SYS (don't load
-			WINA20.SYS when MS Windows 3.0 starts)
-		bit 2: in EXEC state (INT 21/AX=4B05h)
- 1Ah	WORD	offset of unpack code start (used only during INT 21/AX=4B05h)
- 1Ch	BYTE	bit 0 set iff UMB MCB chain linked to normal MCB chain
- 1Dh	WORD	minimum paragraphs of memory required by program being EXECed
- 1Fh	WORD	segment of first MCB in upper memory blocks or FFFFh if DOS
-		  memory chain in base 640K only (first UMB MCB usually at
-		  9FFFh, locking out video memory with a DOS-owned memory
-		  block)
-		the MCB this word points at contains a valid link into high
-		  memory even if it is marked with a 'Z' indicating the last
-		  memory block
- 21h	WORD	paragraph from which to start scanning during memory allocation
-SeeAlso: #1338,#1339
-
-(Table 1344)
-Call IFS utility function entry point with:
-	AH = 20h miscellaneous functions
-	    AL = 00h get date
-		Return: CX = year
-			DH = month
-			DL = day
-	    AL = 01h get process ID and computer ID
-		Return: BX = current PSP segment
-			DX = active network machine number
-	    AL = 05h get file system info
-		ES:DI -> 16-byte info buffer
-		Return: buffer filled
-			Offset	Size	Description
-			 00h  2 BYTEs	unused
-			 02h	WORD	number of SFTs (actually counts only
-					the first two file table arrays)
-			 04h	WORD	number of FCB table entries
-			 06h	WORD	number of proctected FCBs
-			 08h  6 BYTEs	unused
-			 0Eh	WORD	largest sector size supported
-	    AL = 06h get machine name
-		ES:DI -> 18-byte buffer for name
-		Return: buffer filled with name starting at offset 02h
-	    AL = 08h get sharing retry count
-		Return: BX = sharing retry count
-	    AL = other
-		Return: CF set
-	AH = 21h get redirection state
-		BH = type (03h disk, 04h printer)
-		Return: BH = state (00h off, 01h on)
-	AH = 22h ??? some sort of time calculation
-		AL = 00h ???
-		    nonzero ???
-	AH = 23h ??? some sort of time calculation
-	AH = 24h compare filenames
-	    DS:SI -> first ASCIZ filename
-	    ES:DI -> second ASCIZ filename
-	    Return: ZF set if files are same ignoring case and / vs \
-	AH = 25h normalize filename
-	    DS:SI -> ASCIZ filename
-	    ES:DI -> buffer for result
-	    Return: filename uppercased, forward slashes changed to backslashes
-	AH = 26h get DOS stack
-	    Return: DS:SI -> top of stack
-		    CX = size of stack in bytes
-	AH = 27h increment InDOS flag
-	AH = 28h decrement InDOS flag
-Note:	IFS drivers which do not wish to implement functions 20h or 24h-28h may
-	  pass them on to the default handler pointed at by [LoL+37h]
-SeeAlso: #1345,#1346
-
-Format of IFS driver list:
-Offset	Size	Description	(Table 1345)
- 00h	DWORD	pointer to next driver header
- 04h  8 BYTEs	IFS driver name (blank padded), as used by FILESYS command
- 0Ch  4 BYTEs	???
- 10h	DWORD	pointer to IFS utility function entry point (see #1344)
-		call with ES:BX -> IFS request (see #1346)
- 14h	WORD	offset in header's segment of driver entry point
-	???
-SeeAlso: #1344,#1346
-
-Format of IFS request block:
-Offset	Size	Description	(Table 1346)
- 00h	WORD	total size in bytes of request
- 02h	BYTE	class of request
-		02h ???
-		03h redirection
-		04h ???
-		05h file access
-		06h convert error code to string
-		07h ???
- 03h	WORD	returned DOS error code
- 05h	BYTE	IFS driver exit status
-		00h success
-		01h ???
-		02h ???
-		03h ???
-		04h ???
-		FFh internal failure
- 06h 16 BYTEs	???
----request class 02h---
- 16h	BYTE	function code
-		04h ???
- 17h	BYTE	unused???
- 18h	DWORD	pointer to ???
- 1Ch	DWORD	pointer to ???
- 20h  2 BYTEs	???
----request class 03h---
- 16h	BYTE	function code
- 17h	BYTE	???
- 18h	DWORD	pointer to ???
- 1Ch	DWORD	pointer to ???
- 22h	WORD	returned ???
- 24h	WORD	returned ???
- 26h	WORD	returned ???
- 28h	BYTE	returned ???
- 29h	BYTE	unused???
----request class 04h---
- 16h	DWORD	pointer to ???
- 1Ah	DWORD	pointer to ???
----request class 05h---
- 16h	BYTE	function code
-		01h flush disk buffers
-		02h get disk space
-		03h MKDIR
-		04h RMDIR
-		05h CHDIR
-		06h delete file
-		07h rename file
-		08h search directory
-		09h file open/create
-		0Ah LSEEK
-		0Bh read from file
-		0Ch write to file
-		0Dh lock region of file
-		0Eh commit/close file
-		0Fh get/set file attributes
-		10h printer control
-		11h ???
-		12h process termination
-		13h ???
-	---class 05h function 01h---
-	 17h  7 BYTEs	???
-	 1Eh	DWORD	pointer to ???
-	 22h  4 BYTEs	???
-	 26h	BYTE	???
-	 27h	BYTE	???
-	---class 05h function 02h---
-	 17h  7 BYTEs	???
-	 1Eh	DWORD	pointer to ???
-	 22h  4 BYTEs	???
-	 26h	WORD	returned total clusters
-	 28h	WORD	returned sectors per cluster
-	 2Ah	WORD	returned bytes per sector
-	 2Ch	WORD	returned available clusters
-	 2Eh	BYTE	returned ???
-	 2Fh	BYTE	???
-	---class 05h functions 03h,04h,05h---
-	 17h  7 BYTEs	???
-	 1Eh	DWORD	pointer to ???
-	 22h  4 BYTEs	???
-	 26h	DWORD	pointer to directory name
-	---class 05h function 06h---
-	 17h  7 BYTEs	???
-	 1Eh	DWORD	pointer to ???
-	 22h  4 BYTEs	???
-	 26h	WORD	attribute mask
-	 28h	DWORD	pointer to filename
-	---class 05h function 07h---
-	 17h  7 BYTEs	???
-	 1Eh	DWORD	pointer to ???
-	 22h  4 BYTEs	???
-	 26h	WORD	attribute mask
-	 28h	DWORD	pointer to source filespec
-	 2Ch	DWORD	pointer to destination filespec
-	---class 05h function 08h---
-	 17h  7 BYTEs	???
-	 1Eh	DWORD	pointer to ???
-	 22h  4 BYTEs	???
-	 26h	BYTE	00h FINDFIRST
-			01h FINDNEXT
-	 28h	DWORD	pointer to FindFirst search data + 01h if FINDNEXT
-	 2Ch	WORD	search attribute if FINDFIRST
-	 2Eh	DWORD	pointer to filespec if FINDFIRST
-	---class 05h function 09h---
-	 17h  7 BYTEs	???
-	 1Eh	DWORD	pointer to ???
-	 22h	DWORD	pointer to IFS open file structure (see #1347)
-	 26h	WORD	???  \ together, specify open vs. create, whether or
-	 28h	WORD	???  / not to truncate
-	 2Ah  4 BYTEs	???
-	 2Eh	DWORD	pointer to filename
-	 32h  4 BYTEs	???
-	 36h	WORD	file attributes on call
-			returned ???
-	 38h	WORD	returned ???
-	---class 05h function 0Ah---
-	 17h  7 BYTEs	???
-	 1Eh	DWORD	pointer to ???
-	 22h	DWORD	pointer to IFS open file structure (see #1347)
-	 26h	BYTE	seek type (02h = from end)
-	 28h	DWORD	offset on call
-			returned new absolute position
-	---class 05h functions 0Bh,0Ch---
-	 17h  7 BYTEs	???
-	 1Eh	DWORD	pointer to ???
-	 22h	DWORD	pointer to IFS open file structure (see #1347)
-	 28h	WORD	number of bytes to transfer
-			returned bytes actually transferred
-	 2Ah	DWORD	transfer address
-	---class 05h function 0Dh---
-	 17h  7 BYTEs	???
-	 1Eh	DWORD	pointer to ???
-	 22h	DWORD	pointer to IFS open file structure (see #1347)
-	 26h	BYTE	file handle???
-	 27h	BYTE	unused???
-	 28h	WORD	???
-	 2Ah	WORD	???
-	 2Ch	WORD	???
-	 2Eh	WORD	???
-	---class 05h function 0Eh---
-	 17h  7 BYTEs	???
-	 1Eh	DWORD	pointer to ???
-	 22h	DWORD	pointer to IFS open file structure (see #1347)
-	 26h	BYTE	00h commit file
-			01h close file
-	 27h	BYTE	unused???
-	---class 05h function 0Fh---
-	 17h  7 BYTEs	???
-	 1Eh	DWORD	pointer to ???
-	 22h  4 BYTEs	???
-	 26h	BYTE	02h GET attributes
-			03h PUT attributes
-	 27h	BYTE	unused???
-	 28h 12 BYTEs	???
-	 34h	WORD	search attributes???
-	 36h	DWORD	pointer to filename
-	 3Ah	WORD	(GET) returned ???
-	 3Ch	WORD	(GET) returned ???
-	 3Eh	WORD	(GET) returned ???
-	 40h	WORD	(GET) returned ???
-	 42h	WORD	(PUT) new attributes
-			(GET) returned attributes
-	---class 05h function 10h---
-	 17h  7 BYTEs	???
-	 1Eh	DWORD	pointer to ???
-	 22h	DWORD	pointer to IFS open file structure (see #1347)
-	 26h	WORD	???
-	 28h	DWORD	pointer to ???
-	 2Ch	WORD	???
-	 2Eh	BYTE	???
-	 2Fh	BYTE	subfunction
-			01h get printer setup
-			03h ???
-			04h ???
-			05h ???
-			06h ???
-			07h ???
-			21h set printer setup
-	---class 05h function 11h---
-	 17h  7 BYTEs	???
-	 1Eh	DWORD	pointer to ???
-	 22h	DWORD	pointer to IFS open file structure (see #1347)
-	 26h	BYTE	subfunction
-	 27h	BYTE	unused???
-	 28h	WORD	???
-	 2Ah	WORD	???
-	 2Ch	WORD	???
-	 2Eh	BYTE	???
-	 2Fh	BYTE	???
-	---class 05h function 12h---
-	 17h 15 BYTEs	unused???
-	 26h	WORD	PSP segment
-	 28h	BYTE	type of process termination
-	 29h	BYTE	unused???
-	---class 05h function 13h---
-	 17h 15 BYTEs	unused???
-	 26h	WORD	PSP segment
----request class 06h---
- 16h	DWORD	returned pointer to string corresponding to error code at 03h
- 1Ah	BYTE	returned ???
- 1Bh	BYTE	unused
----request class 07h---
- 16h	DWORD	pointer to IFS open file structure (see #1347)
- 1Ah	BYTE	???
- 1Bh	BYTE	unused???
-SeeAlso: #1345,#1344,#1347
-
-Format of IFS open file structure:
-Offset	Size	Description	(Table 1347)
- 00h	WORD	???
- 02h	WORD	device info word
- 04h	WORD	file open mode
- 06h	WORD	???
- 08h	WORD	file attributes
- 0Ah	WORD	owner's network machine number
- 0Ch	WORD	owner's PSP segment
- 0Eh	DWORD	file size
- 12h	DWORD	current offset in file
- 16h	WORD	file time
- 18h	WORD	file date
- 1Ah 11 BYTEs	filename in FCB format
- 25h	WORD	???
- 27h	WORD	hash value of SFT address
-		(low word of linear address + segment&F000h)
- 29h  3 WORDs	network info from SFT
- 2Fh	WORD	???
-
-Format of one item in DOS 4.0+ list of special program names:
-Offset	Size	Description	(Table 1348)
- 00h	BYTE	length of name (00h = end of list)
- 01h  N BYTEs	name in format name.ext
- N    2 BYTEs	DOS version to return for program (major,minor)
-		(see AH=30h,INT 2F/AX=122Fh)
----DOS 4 only---
- N+2	BYTE	number of times to return fake version number (FFh = always)
-Note:	if the name of the executable for the program making the DOS "get
-	  version" call matches one of the names in this list, DOS returns the
-	  specified version rather than the true version number
---------v-215252-----------------------------
-INT 21 - VIRUS - "516"/"Leapfrog" - INSTALLATION CHECK
-	AX = 5252h
-Return: BX = FFEEh if resident
-SeeAlso: AX=4BFFh"Cascade",AX=58CCh
---------D-2153-------------------------------
-INT 21 - DOS 2+ internal - TRANSLATE BIOS PARAMETER BLOCK TO DRIVE PARAM BLOCK
-	AH = 53h
-	DS:SI -> BIOS Parameter Block (see #1349)
-	ES:BP -> buffer for Drive Parameter Block (see #1083 at AH=32h)
-Return: ES:BP buffer filled
-Notes:	for DOS 3.0+, the cluster at which to start searching is set to 0000h
-	  and the number of free clusters is set to FFFFh (unknown)
-	if the number of sectors per cluster is set to zero, MS-DOS will hang
-	  at startup because it computes the internally-used shift count by
-	  shifting this value right until the carry flag is set; since this
-	  will never happen when the field is zero, MS-DOS hangs
-	not supported by Windows NT 3.1
-
-Format of BIOS Parameter Block:
-Offset	Size	Description	(Table 1349)
- 00h	WORD	number of bytes per sector
- 02h	BYTE	number of sectors per cluster
- 03h	WORD	number of reserved sectors at start of disk
- 05h	BYTE	number of FATs
- 06h	WORD	number of entries in root directory
- 08h	WORD	total number of sectors
-		for DOS 4.0+, set to zero if partition >32M, then set DWORD at
-		  15h to actual number of sectors
- 0Ah	BYTE	media ID byte (see #1044)
- 0Bh	WORD	number of sectors per FAT
----DOS 2.13---
- 0Dh	WORD	number of sectors per track
- 0Fh	WORD	number of heads
- 11h	WORD	number of hidden sectors
----DOS 3.0+ ---
- 0Dh	WORD	number of sectors per track
- 0Fh	WORD	number of heads
- 11h	DWORD	number of hidden sectors
- 15h 11 BYTEs	reserved
----DOS 4.0+ ---
- 15h	DWORD	total number of sectors if word at 08h contains zero
- 19h  6 BYTEs	???
- 1Fh	WORD	number of cylinders
- 21h	BYTE	device type
- 22h	WORD	device attributes (removable or not, etc)
----DR DOS 5+ ---
- 15h	DWORD	total number of sectors if word at 08h contains zero
- 19h  6 BYTEs	reserved
----European MS-DOS 4.00---
- 15h	DWORD	total number of sectors if word at 08h contains zero
-		(however, this DOS does not actually implement >32M partitions)
-SeeAlso: #1083,#1350
-
-Format of Extended BIOS Parameter Block:
-Offset	Size	Description	(Table 1350)
- 00h 25 BYTEs	same as standard DOS 4-6 BPB (see #1349)
- 19h	DWORD	sectors per FAT if WORD at 0Bh is 0000h
- 1Dh	WORD	extended flags
-		bits 3-0: the 0-based FAT number of the active FAT
-		bits 6-4: reserved (0)
-		bit 7: do not mirror active FAT to inactive FATs
- 1Fh	WORD	file system version (high byte=major, low byte=minor)
- 21h	DWORD	starting cluster number of root directory
- 25h	WORD	file system information sector number (see also #1476)
- 29h  6 WORDs	reserved
-SeeAlso: #1247
---------D-2154-------------------------------
-INT 21 - DOS 2+ - GET VERIFY FLAG
-	AH = 54h
-Return: AL = verify flag
-	    00h off
-	    01h on (all disk writes verified after writing)
-SeeAlso: AH=2Eh
---------v-2154--BX4475-----------------------
-INT 21 - VIRUS - "Dual_GtM"/"Ganeu" - INSTALLATION CHECK
-	AH = 54h
-	BX = 4475h ("Du")
-	CX = 616Ch ("al")
-Return: BX = 4774h ("Gt") and CX = 4D21h ("M!") if resident
-SeeAlso: AX=50FDh"VIRUS",AX=5454h"VIRUS"
---------v-215454-----------------------------
-INT 21 - VIRUS - "Dudley" - INSTALLATION CHECK
-	AX = 5454h
-Return: AX = 0000h if resident
-SeeAlso: AX=50FDh"VIRUS",AH=54h/BX=4475h"VIRUS",AX=7BCEh"VIRUS"
---------D-2155-------------------------------
-INT 21 - DOS 2+ internal - CREATE CHILD PSP
-	AH = 55h
-	DX = segment at which to create new PSP
-	SI = (DOS 3.0+) value to place in memory size field at DX:[0002h]
-Return: AL destroyed
-Notes:	creates a "child" PSP rather than making an exact copy of the current
-	  PSP; the new PSP's parent pointer is set to the current PSP and the
-	  reference count for each inherited file is incremented
-	(DOS 2.0+) sets current PSP to DX
-	(DOS 3.0+) marks "no inherit" file handles as closed in child PSP
-	this function is implemented using the same code as AH=26h, so unlike
-	  other DOS 2+ functions, it does not return status in CF, instead
-	  returning status in AL as DOS 1.x functions do (but it never puts an
-	  explicit return value in AL)
-SeeAlso: AH=26h,AH=50h
---------D-2156-------------------------------
-INT 21 - DOS 2+ - "RENAME" - RENAME FILE
-	AH = 56h
-	DS:DX -> ASCIZ filename of existing file (no wildcards, but see below)
-	ES:DI -> ASCIZ new filename (no wildcards)
-	CL = attribute mask (server call only, see below)
-Return: CF clear if successful
-	CF set on error
-	    AX = error code (02h,03h,05h,11h) (see #1366)
-Notes:	allows move between directories on same logical volume
-	this function does not set the archive attribute
-	  (see #1107 at AX=4301h), which results in incremental backups not
-	  backing up the file under its new name
-	open files should not be renamed
-	(DOS 2.x only) this function renames file by creating a new directory
-	  entry with the new name, then marking the old entry deleted
-	(DOS 3.0+) allows renaming of directories
-	(DOS 3.1+) wildcards are allowed if invoked via AX=5D00h, in which case
-	  error 12h (no more files) is returned on success, and both source and
-	  destination specs must be canonical (as returned by AH=60h).
-	  Wildcards in the destination are replaced by the corresponding char
-	  of each source file being renamed.  Under DOS 3.x, the call will fail
-	  if the destination wildcard is *.* or equivalent; under DR DOS 5.0,
-	  the call will fail with error code 03h if any wildcards are used.
-	  When invoked via AX=5D00h, only those files matching the attribute
-	  mask in CL are renamed.
-	under the FlashTek X-32 DOS extender, the old-name pointer is in DS:EDX
-	  and the new-name pointer is in ES:EDI (DS must equal ES)
-BUG:	(DR DOS 3.41) when invoked via AX=5D00h, this function will generate
-	  a new directory entry with the new name (including any wildcards)
-	  which can only be removed with a sector editor
-SeeAlso: AH=17h,AX=4301h,AX=5D00h,AH=60h,AH=71h,AX=F257h/SF=04h
---------v-215643------------------------
-INT 21 - VIRUS - "PS-MPC.Gold" - INSTALLATION CHECK
-	AX = 5643h  ('VC')
-Return: AX = 5053h  ('PS') if resident
-SeeAlso: AX=33E0h"VIRUS",AX=5741h"VIRUS",AX=6303h"VIRUS"
 --------!---Section--------------------------

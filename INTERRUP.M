@@ -1,5 +1,701 @@
 Interrupt List, part 13 of 16
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
+--------E-31FF00-----------------------------
+INT 31 P - CauseWay - "Info" - GET SYSTEM SELECTORS/FLAGS
+	AX = FF00h
+Return: AX = selector for flag address space (base 00000000h, limit 4GB)
+	BX = selector for current PSP segment (limit 0100h)
+	(E)CX = size of DOS transfer buffer (max 64K)
+	DX = real-mode segment address of DOS transfer buffer
+	ES:(E)SI = protected-mode address of DOS transfer buffer
+	EDI = system flags (see #2833)
+Program: CauseWay is a 386 DOS extender by Michael Devore and John Wildsmith
+	  for use with Watcom C++ or assembly language programs
+Notes:	the entire transfer buffer can be addressed with a 16-bit offset in
+	  protected mode
+	CauseWay always maps selector 0040h to the BIOS data segment at
+	  real-mode segment 0040h; when not running under a DPMI host, CauseWay
+	  also provides selectors A000h, B000h, and B800h mapped to video
+	  memory
+SeeAlso: AX=FF25h
+
+Bitfields for CauseWay system flags:
+Bit(s)	Description	(Table 2833)
+ 0	32-bit code
+ 1	virtual memory manage enabled
+ 3-2	mode: 00 raw extended memory, 01 VCPI, 10 DPMI
+ 4	DPMI available
+ 5	VCPI available
+ 6	no memory managers
+ 7	application descriptor table type: 0 = GDT, 1 = LDT
+ 14-8	reserved
+ 15	debugging engine present
+--------E-31FF01-----------------------------
+INT 31 P - CauseWay - "IntXX" - SIMULATE REAL-MODE INTERRUPT
+	AX = FF01h
+	BL = interrupt number
+	ES:(E)DI -> real-mode register list (see #2819 at AX=0300h)
+Return: register list updated
+Note:	CauseWay fills in the values for SS, SP, and FLAGS itself, and ignores
+	  the values specified for CS and IP
+SeeAlso: AX=0300h,AX=FF02h
+--------E-31FF02-----------------------------
+INT 31 P - CauseWay - "FarCallReal" - SIMULATE REAL-MODE FAR CALL
+	AX = FF02h
+	ES:(E)DI -> real-mode register list (see #2819 at AX=0300h)
+Return: register list updated
+SeeAlso: AX=0301h,AX=FF01h
+--------E-31FF03-----------------------------
+INT 31 P - CauseWay - "GetSel" - ALLOCATE NEW SELECTOR
+	AX = FF03h
+Return: CF clear if successful
+	    BX = new selector
+	CF set on error
+Note:	the new selector is initialized with a base address of 000000h, a limit
+	  of 0000h, and attributes read/write expand-up data
+SeeAlso: AX=FF04h,AX=FF05h,AX=FF06h
+--------E-31FF04-----------------------------
+INT 31 P - CauseWay - "RelSel" - RELEASE A SELECTOR
+	AX = FF04h
+	BX = selector
+Return: CF clear if successful
+	CF set on error
+SeeAlso: AX=FF03h,AX=FF06h
+--------E-31FF05-----------------------------
+INT 31 P - CauseWay - "CodeSel" - CONVERT SELECTOR TO EXECUTABLE CODE SELECTOR
+	AX = FF05h
+	BX = selector
+	CL = default operation size (00h = 16-bit, 01h = 32-bit)
+Return: CF clear if successful
+	CF set on error
+SeeAlso: AX=FF03h
+--------E-31FF06-----------------------------
+INT 31 P - CauseWay - "AliasSel" - CREATE READ/WRITE DATA ALIAS SELECTOR
+	AX = FF06h
+	BX = original selector
+Return: CF clear if successful
+	    AX = new data selector aliasing original selector
+	CF set on error
+SeeAlso: AX=FF03h,AX=FF04h
+--------E-31FF07-----------------------------
+INT 31 P - CauseWay - "GetSelDet" - GET SELECTOR BASE AND LIMIT
+	AX = FF07h
+	BX = selector
+Return: CF clear if successful
+	    CX:DX = base address
+	    SI:DI = limit (bytes)
+	CF set on error
+SeeAlso: AX=FF08h,AX=FF09h
+--------E-31FF08-----------------------------
+INT 31 P - CauseWay - "GetSelDet32" - GET SELECTOR BASE AND LIMIT (32-bit)
+	AX = FF08h
+Return: CF clear if successful
+	    EDX = base address
+	    ECX = limit (bytes)
+	CF set on error
+SeeAlso: AX=FF07h,AX=FF0Ah
+--------E-31FF09-----------------------------
+INT 31 P - CauseWay - "SetSelDet" - SET SELECTOR BASE AND LIMIT
+	AX = FF09h
+	BX = selector
+	CX:DX = new base address
+	SI:DI = new byte-granular limit
+Return: CF clear if successful
+	CF set on error
+SeeAlso: AX=FF07h,AX=FF0Ah
+--------E-31FF0A-----------------------------
+INT 31 P - CauseWay - "SetSelDet32" - SET SELECTOR BASE AND LIMIT (32-bit)
+	AX = FF0Ah
+	BX = selector
+	EDX = new base address
+	ECX = new byte-granular limit
+Return: CF clear if successful
+	CF set on error
+SeeAlso: AX=FF08h,AX=FF09h
+--------E-31FF0B-----------------------------
+INT 31 P - CauseWay - "GetMem" - ALLOCATE BLOCK OF MEMORY
+	AX = FF0Bh
+	CX:DX = size in bytes (FFFFh:FFFFh to get size of largest available)
+Return: CF clear if successful
+	    BX = selector for accessing block if requested size not FFFFh:FFFFh
+	    CX:DX = size of largest available block if requested FFFFh:FFFFh
+	CF set on error
+SeeAlso: AX=FF0Ch,AX=FF0Dh,AX=FF0Fh,AX=FF10h,AX=FF2Ch
+--------E-31FF0C-----------------------------
+INT 31 P - CauseWay - "GetMem32" - ALLOCATE BLOCK OF MEMORY (32-bit)
+	AX = FF0Ch
+	ECX = size in bytes (FFFFFFFFh to get size of largest available block)
+Return: CF clear if successful
+	    BX = selector for accessing block if requested size not FFFFh:FFFFh
+	    ECX = size of largest available block if requested FFFFh:FFFFh
+	CF set on error
+SeeAlso: AX=FF0Bh,AX=FF0Eh,AX=FF0Fh,AX=FF11h
+--------E-31FF0D-----------------------------
+INT 31 P - CauseWay - "ResMem" - RESIZE MEMORY BLOCK
+	AX = FF0Dh
+	BX = selector for block to be resized
+	CX:DX = new size in bytes
+Return: CF clear if successful
+	CF set on error
+Note:	the memory block may have to be copied to another location in order
+	  to satisfy the requested new size, in which case the base address
+	  of the selector is updated
+SeeAlso: AX=FF0Bh,AX=FF0Eh,AX=FF12h
+--------E-31FF0E-----------------------------
+INT 31 P - CauseWay - "ResMem32" - RESIZE MEMORY BLOCK (32-bit)
+	AX = FF0Eh
+	BX = selector for block to be resized
+	ECX = new size in bytes
+Return: CF clear if successful
+	CF set on error
+Note:	the memory block may have to be copied to another location in order
+	  to satisfy the requested new size, in which case the base address
+	  of the selector is updated
+SeeAlso: AX=FF0Ch,AX=FF0Dh,AX=FF13h
+--------E-31FF0F-----------------------------
+INT 31 P - CauseWay - "RelMem" - RELEASE PREVIOUSLY ALLOCATED MEMORY
+	AX = FF0Fh
+	BX = selector for block to be released
+Return: CF clear if successful
+	CF set on error
+SeeAlso: AX=FF0Bh,AX=FF0Ch,AX=FF14h
+--------E-31FF10-----------------------------
+INT 31 P - CauseWay - "GetMemLinear" - ALLOCATE MEMORY WITHOUT SELECTOR
+	AX = FF10h
+	CX:DX = size of block in bytes
+Return: CF clear if successful
+	    SI:DI = linear address of allocated block
+	CF set on error
+Note:	this function may return addresses above 16M
+SeeAlso: AX=FF0Bh,AX=FF11h,AX=FF12h,AX=FF14h
+--------E-31FF11-----------------------------
+INT 31 P - CauseWay - "GetMemLinear32" - ALLOCATE MEMORY WITHOUT SELECTOR
+	AX = FF11h
+	ECX = size of block in bytes
+Return: CF clear if successful
+	    ESI = linear address of allocated block
+	CF set on error
+Note:	this function may return addresses above 16M
+SeeAlso: AX=FF0Ch,AX=FF10h,AX=FF13h,AX=FF14h
+--------E-31FF12-----------------------------
+INT 31 P - CauseWay - "ResMemLinear" - RESIZE LINEAR MEMORY BLOCK
+	AX = FF12h
+	CX:DX = new size in bytes
+	SI:DI = linear address of block to be resized
+Return: CF clear if successful
+	   SI:DI = new linear address of block
+	CF set on error
+SeeAlso: AX=FF0Dh,AX=FF10h,AX=FF13h
+--------E-31FF13-----------------------------
+INT 31 P - CauseWay - "ResMemLinear32" - RESIZE LINEAR MEMORY BLOCK (32-bit)
+	AX = FF13h
+	ECX = new size in bytes
+	ESI = linear address of block to be resized
+Return: CF clear if successful
+	   ESI = new linear address of block
+	CF set on error
+SeeAlso: AX=FF0Eh,AX=FF11h,AX=FF12h
+--------E-31FF14-----------------------------
+INT 31 P - CauseWay - "RelMemLinear" - RELEASE LINEAR MEMORY BLOCK
+	AX = FF14h
+	SI:DI = linear address of block to be released
+Return: CF clear if successful
+	CF set on error
+SeeAlso: AX=FF0Fh,AX=FF10h,AX=FF15h
+--------E-31FF15-----------------------------
+INT 31 P - CauseWay - "RelMemLinear32" - RELEASE LINEAR MEMORY BLOCK (32-bit)
+	AX = FF15h
+	ESI = linear address of block to be released
+Return: CF clear if successful
+	CF set on error
+SeeAlso: AX=FF0Fh,AX=FF11h,AX=FF15h
+--------E-31FF16-----------------------------
+INT 31 P - CauseWay - "GetMemNear" - ALLOCATE APPLICATION-RELATIVE MEMORY
+	AX = FF16h
+	EBX = size in bytes of block to allocate
+Return: CF clear if successful
+	   ESI = application-relative linear address of allocated block
+	CF set on error
+SeeAlso: AX=FF17h,AX=FF18h,AX=FF19h
+--------E-31FF17-----------------------------
+INT 31 P - CauseWay - "ResMemNear" - RESIZE APPLICATION-RELATIVE MEMORY BLOCK
+	AX = FF17h
+	EBX = size in bytes of block to allocate
+	ESI = application-relative linear address of block
+Return: CF clear if successful
+	    ESI = new application-relative linear address of block
+	CF set on error
+SeeAlso: AX=FF16h,AX=FF18h,AX=FF19h
+--------E-31FF18-----------------------------
+INT 31 P - CauseWay - "RelMemNear" - RELEASE APPLICATION-RELATIVE MEMORY BLOCK
+	AX = FF18h
+	ESI = application-relative linear address of block
+Return: CF clear if successful
+	CF set on error
+SeeAlso: AX=FF16h,AX=FF17h,AX=FF19h
+--------E-31FF19-----------------------------
+INT 31 P - CauseWay - "Linear2Near" - CONVERT LINEAR TO APP-RELATIVE ADDRESS
+	AX = FF19h
+	ESI = linear address
+Return: ESI = application-relative linear address
+SeeAlso: AX=FF1Ah
+--------E-31FF1A-----------------------------
+INT 31 P - CauseWay - "Near2Linear" - CONVERT APP-RELATIVE TO LINEAR ADDRESS
+	AX = FF1Ah
+	ESI = application-relative linear address
+Return: ESI = linear address
+SeeAlso: AX=FF19h
+--------E-31FF1B-----------------------------
+INT 31 P - CauseWay - "LockMem" - LOCK REGION OF MEMORY
+	AX = FF1Bh
+	BX:CX = starting linear address
+	SI:DI = size of region in bytes
+Return: CF clear if successful
+	CF set on error
+Desc:	prevent memory from being swapped out by the virtual memory manager
+Note:	locks are applied on 4K page boundaries, so memory above and below
+	  the specified region may be locked as well
+SeeAlso: AX=FF1Ch,AX=FF1Dh
+--------E-31FF1C-----------------------------
+INT 31 P - CauseWay - "LockMem32" - LOCK REGION OF MEMORY (32-bit)
+	AX = FF1Ch
+	ESI = starting linear address
+	ECX = size of region in bytes
+Return: CF clear if successful
+	CF set on error
+Desc:	prevent memory from being swapped out by the virtual memory manager
+Note:	locks are applied on 4K page boundaries, so memory above and below
+	  the specified region may be locked as well
+SeeAlso: AX=FF1Bh,AX=FF1Eh,AX=FF1Fh
+--------E-31FF1D-----------------------------
+INT 31 P - CauseWay - "UnLockMem" - UNLOCK REGION OF MEMORY
+	AX = FF1Dh
+	BX:CX = starting linear address
+	SI:DI = size of region in bytes
+Return: CF clear if successful
+	CF set on error
+Desc:	allow memory to be swapped out by the virtual memory manager
+Note:	locks are applied on 4K page boundaries, so memory above and below
+	  the specified region may be unlocked as well
+SeeAlso: AX=FF1Bh,AX=FF1Eh
+--------E-31FF1E-----------------------------
+INT 31 P - CauseWay - "UnLockMem32" - UNLOCK REGION OF MEMORY (32-bit)
+	AX = FF1Eh
+	ESI = starting linear address
+	ECX = size of region in bytes
+Return: CF clear if successful
+	CF set on error
+Desc:	allow memory to be swapped out by the virtual memory manager
+Note:	locks are applied on 4K page boundaries, so memory above and below
+	  the specified region may be unlocked as well
+SeeAlso: AX=FF1Ch,AX=FF1Dh,AX=FF20h
+--------E-31FF1F-----------------------------
+INT 31 P - CauseWay - "LockMemNear" - LOCK APPLICATION-RELATIVE MEMORY REGION
+	AX = FF1Fh
+	ESI = starting application-relative linear address
+	EBX = size of region in bytes
+Return: CF clear if successful
+	CF set on error
+Desc:	prevent memory from being swapped out by the virtual memory manager
+Note:	locks are applied on 4K page boundaries, so memory above and below
+	  the specified region may be locked as well
+SeeAlso: AX=FF1Ch,AX=FF20h
+--------E-31FF20-----------------------------
+INT 31 P - CauseWay - "UnLockMemNear" - UNLOCK APP-RELATIVE MEMORY REGION
+	AX = FF20h
+	ESI = starting application-relative linear address
+	ECX = size of region in bytes
+Return: CF clear if successful
+	CF set on error
+Desc:	allow memory to be swapped out by the virtual memory manager
+Note:	locks are applied on 4K page boundaries, so memory above and below
+	  the specified region may be unlocked as well
+SeeAlso: AX=FF1Eh,AX=FF1Fh
+--------E-31FF21-----------------------------
+INT 31 P - CauseWay - "GetMemDOS" - ALLOCATE CONVENTIONAL MEMORY
+	AX = FF21h
+	BX = number of paragraphs to allocate
+Return: CF clear if successful
+	    AX = real-mode segment of allocated block
+	    DX = initial selector for block
+	CF set on error
+	    AX = DOS error code (see #1366 at INT 21/AH=59h/BX=0000h)
+	    BX = size of largest available block
+Note:	if the requested size is greater than 64K, contiguous selectors will
+	  be allocated, one for each 64K; for 32-bit applications, the first
+	  selector's limit will be set to the size of the entire block, while
+	  that selector will have a limit of 64K for 16-bit applications.  All
+	  selectors after the first one have a limit of 64K except the final
+	  one
+SeeAlso: AX=FF22h,AX=FF23h,INT 21/AH=48h
+--------E-31FF22-----------------------------
+INT 31 P - CauseWay - "ResMemDOS" - RESIZE CONVENTIONAL MEMORY BLOCK
+	AX = FF22h
+	BX = new size in paragraphs
+	DX = initial selector for block
+Return: CF clear if successful
+	CF set on error
+	    AX = DOS error code (see #1366 at INT 21/AH=59h/BX=0000h)
+	    BX = maximum number of paragraphs available
+Note:	this function will also fail if the block is expanded past a 64K
+	  boundary and the next selector is already in use
+SeeAlso: AX=FF21h,AX=FF23h,INT 21/AH=49h
+--------E-31FF23-----------------------------
+INT 31 P - CauseWay - "RelMemDOS" - RELEASE CONVENTIONAL MEMORY BLOCK
+	AX = FF23h
+	DX = initial selector for block
+Return: CF clear if successful
+	CF set on error
+	    AX = DOS error code (see #1366 at INT 21/AH=59h/BX=0000h)
+Note:	all descriptors allocated for the block are freed
+SeeAlso: AX=FF21h,AX=FF22h,INT 21/AH=4Ah
+--------E-31FF24-----------------------------
+INT 31 P - CauseWay - "ExecOverlay" - LOAD AND OPTIONALLY EXECUTE APP CODE
+	AX = FF24h
+	EBX = flags
+	    bit 0: don't execute (overlay only)
+	    bit 1: don't preserve relocation information
+	ES:EDX -> filename (see also #2834)
+	FS:ESI -> commandline (ESI = 00000000h if no commandline)
+	GS:EDI -> name (CW's /o option)
+Return: CF clear if successful
+	    ---EBX bit 0 set---
+	    CX:EDX = program entry point (CS:EIP)
+	    SI = segment of PSP
+	    ---EBX bit 1 set---
+	    BX:EAX = initial SS:ESP
+	    EDI high word = base segment
+	    EDI low word = number of segments
+	    EBP = start of segment definitions
+	CF set on error
+	    AX = error code
+		0001h DOS file access error
+		0002h not a CuaseWay 3P file
+		0003h not enough memory
+SeeAlso: AX=FF2Ah,INT 21/AH=4Bh
+
+Format of CauseWay executable:
+Offset	Size	Description	(Table 2834)
+ 00h  2 BYTEs	signature "3P"
+ 02h	DWORD	size of header data in bytes
+ 06h	DWORD	size of EXE image data in bytes
+ 0Ah	DWORD	number of bytes of program memory required
+ 0Eh	WORD	number of segment definitions (see #2836)
+ 10h	DWORD	number of relocation table entries
+ 14h	DWORD	offset of program entry point
+ 18h	WORD	segment list entry number for entry point's CS
+ 1Ah	DWORD	initial ESP
+ 1Eh	WORD	segment list entry number for initial SS
+ 20h	DWORD	control flags (see #2835)
+ 24h	DWORD	automatic stack size in bytes if ESP entry = 00000000h
+ 28h	BYTE	length of name (name follows program image)
+ 29h 23 BYTEs	reserved
+SeeAlso: #1280,#1295 at INT 21/AH=4Bh
+
+Bitfields for CauseWay executable control flags:
+Bit(s)	Description	(Table 2835)
+ 0	16-bit interrupt stack frame
+ 7	descriptor table type (0 = GDT, 1 = LDT)
+ 14	16-bit default data size
+ 31	compressed EXE image
+Note:	bits 0 and 14 should always be equal
+SeeAlso: #2834
+
+Format of CauseWay segment definition [array]:
+Offset	Size	Description	(Table 2836)
+ 00h	DWORD	start offset within program image
+ 04h	DWORD	length and type
+		bits 0-19: length
+		bit 20:	   granularity (if set, length is in 4K pages)
+		bits 21-24: type
+			0000 code
+			0001 read/write data
+			0010 stack
+			0011 read-only data
+		bit 25: force segment descriptor's D bit to 0
+		bit 26: force segmetn descriptor's D bit to 1
+SeeAlso: #2834
+--------E-31FF25-----------------------------
+INT 31 P - CauseWay - "GetDOSTrans" - GET DOS TRANSFER BUFFER
+	AX = FF25h
+Return: BX = real-mode segment of transfer buffer
+	ECX = transfer buffer size
+	DX = protected-mode selector for transfer buffer
+Note:	the default buffer size of 8K is sufficient for most applications,
+	  but an application performing large amounts of file I/O may benefit
+	  from allocating its own, larger buffer
+SeeAlso: AX=FF00h,AX=FF26h
+--------E-31FF26-----------------------------
+INT 31 P - CauseWay - "SetDOSTrans" - SET DOS TRANSFER BUFFER
+	AX = FF26h
+	BX = real-mode segment of new transfer buffer
+	ECX = new transfer buffer size
+	DX = protected-mode selector for new transfer buffer
+Return: nothing
+Note:	the specific buffer must be located in conventional memory; only the
+	  first 64K will be used
+SeeAlso: AX=FF25h
+--------E-31FF27-----------------------------
+INT 31 P - CauseWay v1.3 - "GetMCBSize" - GET CURRENT MCB ALLOCATION BLOCK SIZE
+	AX = FF27h
+Return: ECX = current threshold
+Desc:	determine the memory allocation size below which CauseWay will use
+	  internal MCB chains rather than allocating full 4K pages via DPMI
+SeeAlso: AX=FF00h,AX=FF28h
+--------E-31FF28-----------------------------
+INT 31 P - CauseWay v1.3 - "SetMCBSize" - SET MCB MEMORY ALLOCATION BLOCK SIZE
+	AX = FF28h
+	ECX = new threshold (0000000h to disable MCB memory allocation system)
+Return: CF clear if successful
+	    threshold unchanged (default 16K)
+	CF set on error (threshold > 64K)
+Desc:	specify the memory allocation size below which CauseWay will use
+	  internal MCB chains rather than allocating full 4K pages via DPMI
+Note:	the specified threshold will be rounded up to the next higher multiple
+	  of 4K
+SeeAlso: AX=FF00h,AX=FF27h
+--------E-31FF29-----------------------------
+INT 31 P - CauseWay v1.3 - "GetSels" - ALLOCATE MULTIPLE SELECTORS
+	AX = FF29h
+	CX = number of selectors to allocate
+Return: BX = base selector
+Desc:	allocate multiple contiguous selectors, initializing each to have a
+	  base address and limit of zero
+SeeAlso: AX=FF00h,AX=FF04h
+--------E-31FF2A-----------------------------
+INT 31 P - CauseWay v1.3 - "cwLoad" - LOAD ANOTHER CAUSEWAY PROGRAM AS OVERLAY
+	AX = FF2Ah
+	DS:EDX -> filename
+Return: CF clear if successful
+	    CX:EDX = CS:EIP of entry point
+	    BX:EAX = initial SS:ESP for program
+	    SI = PSP for overlay program
+	CF set on error
+	    AX = error code (01h file error, 02h not a 3P file, 03h no memory)
+Note:	the returned PSP can be given to "RelMem" (AX=FF0Fh) to release the
+	  overlay's memory and selectors; only selectors and memory allocated
+	  during loading will be freed by RelMem unless one switches PSPs with
+	  INT 21/AH=50h
+SeeAlso: AX=FF00h,AX=FF24h
+--------E-31FF2B-----------------------------
+INT 31 P - CauseWay v1.3 - "cwcInfo" - VALIDATE AND GET SIZE OF CWC FILE
+	AX = FF2Bh
+	BX = file handle for CWC-compressed file
+Return: CF clear if successful
+	    ECX = expanded file size
+	CF set on error (not a CWC-compressed file)
+SeeAlso: AX=FF00h,AX=FFFBh
+--------E-31FF2C-----------------------------
+INT 31 P - CauseWay v1.3 - "GetMemSO" - ALLOCATE MEMORY AND RETURN SEL:OFFSET
+	AX = FF2Ch
+	CX:DX = block size in bytes
+Return: CF clear if successful
+	   SI:DI = selector:offset of allocated memory
+	CF set on error
+Note:	unlike "GetMem" (AX=FF0Bh), this function will reuse selectors until a
+	  segment is full, rather than allocating a new selector for each
+	  memory block
+SeeAlso: AX=FF00h,AX=FF2Dh,AX=FF2Eh
+--------E-31FF2D-----------------------------
+INT 31 P - CauseWay v1.3 - "ResMemSO" - RESIZE SELECTOR:OFFSET MEMORY BLOCK
+	AX = FF2Dh
+	SI:DI = selector:offset for memory block
+	CX:DX = new size of block
+Return: CF clear if successful
+	   SI:DI = new selector:offset for memory block
+	CF set on error
+SeeAlso: AX=FF00h,AX=FF2Ch,AX=FF2Eh
+--------E-31FF2E-----------------------------
+INT 31 P - CauseWay v1.3 - "RelMemSO" - RELEASE SELECTOR:OFFSET MEMORY BLOCK
+	AX = FF2Eh
+	SI:DI = selector:offset for memory block
+SeeAlso: AX=FF00h
+--------E-31FFFB-----------------------------
+INT 31 P - Causeway v1.3 - "cwcLoad" - LOAD/EXPAND CWC-COMPRESSED FILE
+	AX = FFFBh
+	BX = source file handle
+	ES:EDI -> memory buffer into which to expand file
+Return: CF clear if successful
+	    ECX = expanded data length
+	CF set on error
+	    EAX = error code (01h file error, 02h bad data, 03h not CWC file)
+Note:	the provided file may consist of the concatenation of several CWC
+	  files; the one beginning at the current file position will be
+	  expanded
+SeeAlso: AX=FF2Bh
+--------v-32---------------------------------
+INT 32 - VIRUS - "Tiny" Viruses - ORIGINAL INT 21h VECTOR
+SeeAlso: INT 21/AX=FFFFh"VIRUS",INT 31"VIRUS",INT 44"VIRUS"
+--------v-32---------------------------------
+INT 32 - VIRUS - "Plovdiv 1.3"/"Damage 1.3" - ORIGINAL INT 21h VECTOR
+SeeAlso: INT 31"VIRUS",INT 9E"VIRUS"
+--------y-326E-------------------------------
+INT 32 - NOISE.SYS 0.53 - API
+	AH = 6Eh (function ID)
+	AL = subfunction (see INT 32/AX=6E00h)
+Return: CF set on error
+	    AL = error code (see #2837)
+	CF clear if successful
+Notes:	INT 32 is only a proposed interface for NOISE.SYS. Use the IOCTL READ
+	  from the RANDOM device to determine the interrupt and function ID
+	  used by the driver, since future versions may use the Alternate
+	  Multiplex Interrupt (AMIS) at INT 2Dh.
+	the beta v0.51 had a substantially different API on INT 32/AH=6Eh
+
+(Table 2837)
+Values for NOISE.SYS error codes:
+ 00h	subfunction not supported
+ FBh	random pool is empty
+ FCh	quality of sample is too low
+ FDh	too many processes using the API or driver
+ FEh	subfunction is disabled in the current build
+ FFh	successful
+--------y-326E00-----------------------------
+INT 32 - NOISE.SYS v0.53+ - INSTALLATION CHECK
+	AX = 6E00h
+Return: AL = installation status
+	    00h not installed
+	    FFh installed
+		CX = version (ie, 0123h = Version 1.2.3)
+		DX:DI -> signature string
+--------y-326E01-----------------------------
+INT 32 - NOISE.SYS v0.53+ - GET ENTRY POINT
+	AX = 6E01h
+Return: AL = FFh
+	DX:DI -> far call hook
+----------326E04-----------------------------
+INT 32 - NOISE.SYS v0.55+ - GET INTERRUPT HOOK LIST
+	AX = 6E04h
+Return: AL = status
+	    00h = unimplemented
+	    04h = DX:BX -> interrupt hook list
+	    FEh = subfunction disabled
+Note:	the hook list array ends with API interrupt (usually 32h, although
+	  it will differ if the API is installed at another interrupt)
+----------326E06-----------------------------
+INT 32 - NOISE.SYS v0.55+ - GET DEVICE DRIVER HEADER
+	AX = 6E06h
+Return: AL = number of device drivers in NOISE.SYS chain
+	    02h = default (for RANDOM and URANDOM devices)
+	AH = AMIS device driver flags (set to 00h for now)
+	DX:BX -> first device in chain (see #1332)
+SeeAlso: INT 2D/AL=06h
+--------y-326E10-----------------------------
+INT 32 - NOISE.SYS v0.53+ - STATUS CHECK
+	AX = 6E10h
+Return: CF set on error
+	    AL = error code (FDh) (see #2837)
+	CF clear if successful
+	    AL = status
+		FFh successful
+	    BH = number of processes using the API
+	    CX = number of random bytes waiting
+	    DX = maximum possible bytes waiting
+		(if CX=DX, the pool is full)
+Note:	this subfunction is a convenient way to check the driver if any
+	  fresh bytes are waiting in the output pool.
+SeeAlso: INT 32/AH=6Eh,AX=6E00h,AX=6E11h
+--------y-326E11-----------------------------
+INT 32 - NOISE.SYS v0.53+ - GET ENTROPY ESTIMATE
+	AX = 6E11h
+Return: CF set on error
+	    AL = error code (00h,FDh,FEh) (see #2837)
+	CF clear if successful
+	    EBX = estimated bit count (refer to note below)
+	    CL = FRACBITS (number of fractional bits)
+	    EDX = low 32-bits of total number of samples added
+Note:  the estimated number of fresh random bits is equal to
+	  (EAX >> FRACBITS) + ((EAX & ((1 << FRACBITS)-1) / (1 << FRACBITS))
+SeeAlso: AH=6Eh,AX=6E00h
+--------y-326E12-----------------------------
+INT 32 - NOISE.SYS v0.53+ - ADD SAMPLE FROM FAST TIMER
+	AX = 6E12h
+Return: CF set on error
+	    AL = error code (FCh,FDh,FEh) (see #2837)
+	CF clear if successful
+	    CX = number of random bytes waiting
+Note:	subfunctions 12h and 13h are meant for applications or devices
+	  which are able to gather entropy from other sources which are
+	  not polled by NOISE.SYS (for example, a communications driver
+	  could use this call to sample packet arrival times).
+SeeAlso: AX=6E00h,AX=6E10h,AX=6E13h
+--------y-326E13-----------------------------
+INT 32 - NOISE.SYS v0.53+ - ADD 16-BIT SAMPLE TO RANDOM POOL
+	AX = 6E13h
+	DX = sample
+Return: CF set on error
+	    AL = error code (FCh,FEh) (see #2837)
+	CF clear if successful
+	    CX = number of random bytes waiting
+SeeAlso: AX=6E00h,AX=6E11h
+--------y-326E14-----------------------------
+INT 32 - NOISE.SYS v0.53+ - GET FLAGS
+	AX = 6E14h
+Return: BX = flags (see #2838)
+	CX = mask of settable flags in BX
+SeeAlso: AX=6E00h,AX=6E15h
+
+Bitfields for NOISE.SYS flags:
+Bit(s)	Description	(Table 2838)
+ 0	MS Windows active
+ 1-5	reserved
+ 6	clock drift sampling
+ 7	video retrace drift sampling
+ 8	network access sampling (not implemented yet in 0.53)
+ 9	CD-ROM access sampling (not implemented yet in 0.53)
+ 10	DOS spinner
+ 11	DOS process start/end and miscellaneous process activity sampling
+ 12	mouse movement/button sampling
+ 13	disk sampling (INT 13)
+ 14	keystroke timings
+ 15	reserved for hardware RNG
+--------y-326E15-----------------------------
+INT 32 - NOISE.SYS v0.53+ - SET FLAGS
+	AX = 6E15h
+	BX = flags (see #2838)
+Return: BX = new flags
+Note:	flags which AX=6E14h indicates are not settable should be masked off
+	  by ANDing with the CX returned by AX=6E14h
+SeeAlso: AX=6E00h,AX=6E14h
+--------y-326E16-----------------------------
+INT 32 - NOISE.SYS v0.53+ - READ URANDOM BYTES
+	AX = 6E16h
+	CX = number of bytes
+	ES:DI -> buffer
+Return: CF set on error
+	    AL = error code (FDh,FEh) (see #2837)
+	CF clear if successful
+	    CX = number of random bytes read
+SeeAlso: AX=6E00h,AX=6E12h,AX=6E17h
+--------y-326E17-----------------------------
+INT 32 - NOISE.SYS v0.53+ - READ RANDOM BYTES
+	AX = 6E17h
+	CX = number of bytes
+	ES:DI -> buffer
+Return: CF set on error
+	    AL = error code (FBh,FDh,FEh) (see #2837)
+	CF clear if successful
+	    CX = number of random bytes read
+SeeAlso: AX=6E00h,AX=6E16h
+----------326E18-----------------------------
+INT 32 - NOISE.SYS v0.6+ - READ CONTROL RECORD
+	AX = 6E18h
+	CX = buffer size
+	ES:DI -> buffer
+Return: AL = status
+	    00h unimplemented (before v0.6)
+	    FEh subfunction is disabled
+	    FFh successful
+		CX = number of bytes read
+Note:	the control record corresponds to the IOCTL Read record for the RANDOM
+	  device
+----------326E-------------------------------
+INT 32 - NOISE.SYS - RESERVED FOR FUTURE USE
+	AH = 6Eh
+	AL = 19h to 3Fh
+Return: AL = 00h
+Note:	these functions are reserved for future use; user additions to the
+	  the driver should use subfunctions 40h to FFh.
 --------M-330000-----------------------------
 INT 33 - MS MOUSE - RESET DRIVER AND READ STATUS
 	AX = 0000h
@@ -1834,6 +2530,17 @@ INT 42 - Acorn BBC Master 512 - "OSBPUT" - WRITE SINGLE BYTE TO FILE
 	BH = file handle
 Return: flags destroyed
 SeeAlso: INT 40"Acorn",INT 41"Acorn",INT 43"Acorn",INT 47"Acorn",INT 49"Acorn"
+--------V-425F33-----------------------------
+INT 42 C - Chips & Technologies '65530' BIOS - MODE SET HOOK
+	AX = 5F33h
+	BL = current width in characters
+	BH = curent video mode
+	CH = active display page
+Return:	nothing
+Desc:	this function is called at the end of a video mode set
+Note:	the OEM has the option of enabling or disabling this callout, as well
+	  as specifying whether the callout occurs on INT 15h or INT 42h
+SeeAlso: INT 15/AX=5F31h,INT 15/AX=5F35h,INT 10/AX=5F50h,INT 15/AX=5F33h
 --------V-427500-----------------------------
 INT 42 U - Toshiba laptops - ???
 	AX = 7500h
@@ -2873,11 +3580,11 @@ SeeAlso: INT 4A"Z100",INT 4C"Z100"
 --------d-4B---------------------------------
 INT 4B - Common Access Method SCSI interface (draft revision 1.9)
 	ES:DI -> CAM Control Block (see #2900 at INT 4F/AX=8100h)
+InstallCheck:	test for the string "SCSI_CAM" eight bytes past the INT 4Bh
+	  handler
 Notes:	the CAM committee moved the interface to INT 4F after revision 1.9
 	  to avoid conflicting with the IBM SCSI interface and the Virtual
 	  DMA specification
-	the installation check for the driver is the string "SCSI_CAM" eight
-	  bytes past the INT 4Bh handler
 	the only driver to date reported to use the CAM interface on INT 4B
 	  instead of INT 4F is from Future Domain (which has drivers for CAM
 	  on either interrupt)
@@ -4211,9 +4918,9 @@ INT 53 - WEB??? - API
 		DX = ???
 	    0017h
 Return: ???
-Notes:	the installation check consists of looking for the signature "WEBCO"
-	  immediately prior to the interrupt handler
-	the above calls are made by Show Partner F/X v3.6 (see INT 10/AH=53h)
+InstallCheck:	check for the signature "WEBCO" immediately prior to the
+	  interrupt handler
+Note:	the above calls are made by Show Partner F/X v3.6 (see INT 10/AH=53h)
 Index:	installation check;unknown|installation check;WEBCO
 --------H-54---------------------------------
 INT 54 - IRQ4 relocated by DESQview
@@ -4776,9 +5483,9 @@ Note:	TOPS card uses DMA 1, 3 or none.
 INT 5C - ATALK.SYS - AppleTalk INTERFACE
 	DX:BX -> control block (see #2927)
 Return: none
+InstallCheck:	test for the signature "AppleTalk" 16 bytes prior to the
+	  interrupt handler
 Range:	INT 5Ch to INT 70h
-Notes:	the signature 'AppleTalk' appears 16 bytes prior to the interrupt
-	  handler; this serves as the installation check
 Index:	installation check;ATALK.SYS|installation check;AppleTalk interface
 
 (Table 2926)
@@ -5349,9 +6056,9 @@ Note:	the Nabbit installation check consists of testing whether the
 --------V-60---------------------------------
 INT 60 - ATI M64VBE.COM - INSTALLATION SIGNATURE
 Program: M64VBE is a VESA VBE 2.0 driver TSR for ATI's Mach64 video chip
+InstallCheck:	scan for an interrupt with the ASCIZ signature "M64VBE" three
+	  bytes past the interrupt handler
 Range:	INT 60 to INT 66, selected by searching for first free vector
-Note:	the installation check is to scan for an interrupt with the ASCIZ
-	  signature "M64VBE" three bytes past the interrupt handler
 SeeAlso: INT 10/AX=4FDDh"M64VBE",INT 10/AX=4FFFh/BX=364Dh"M64VBE"
 --------V-60---------------------------------
 INT 60 U - Buffit v3.0 - (NOT A VECTOR!) - INSTALLATION CHECK
@@ -5455,10 +6162,10 @@ Notes:	identified by string "@ARB_API" immediately following a short jump at
 INT 60 - Excelan LAN Workplace for DOS 3.5 - API
 	ES:BX -> request packet (see #2943)
 Return: request packet updated
-Notes:	this interrupt is also supported by Beame&Whiteside's BWLWP35 shim,
+InstallCheck:	test for the WORD 4142h ('AB') immediately preceding the
+	  interrupt handler
+Note:	this interrupt is also supported by Beame&Whiteside's BWLWP35 shim,
 	  which was used in creating this description
-	the installation check consists of testing for the WORD 4142h ('AB')
-	  immediately preceding the interrupt handler
 BUG:	because BWLWP35 range-checks only the low byte of the function number,
 	  and has a fencepost error even in that test, functions 000Bh and
 	  XX01h-XX0Bh (XX nonzero) branch to random locations
@@ -5563,10 +6270,9 @@ Index:	installation check;TCPDRV
 INT 60 U - INTRSPY/CMDSPY v1.0 only - API
 Program: INTRSPY is a script-driven debugger included with the book
 	  _Undocumented_DOS_.
-Notes:	INTRSPY will hook the first available interrupt in the range 60h-67h.
-	The installation check is to
-	  a) determine that the handler is an IRET instruction
+InstallCheck:	determine that a) the handler is an IRET instruction, and
 	  b) the signature 0Dh "INTRSPY vN.NN" immediately precedes the handler
+Notes:	INTRSPY will hook the first available interrupt in the range 60h-67h.
 	If INTRSPY is installed, the DWORD immediately after the IRET stores
 	  its entry point (see #2946)
 	INTRSPY v2.0 (included with the second edition of the book) no longer
@@ -7718,9 +8424,9 @@ INT 60 - RIFS - CLIENT - INSTALLATION CHECK
 Return: AX = 1234h if installed
 	CF clear
 Program: RIFS is the Remote Installable File System by "kyle"
+InstallCheck:	test for the signature "RIFS" immediately preceding the
+	  interrupt handler
 Range:	INT 60 to INT 66 and INT 18,selected by scanning for 0000h:0000h vector
-Note:	the installation check consists of testing for the signature "RIFS"
-	  immediately preceding the interrupt handler
 SeeAlso: AX=0001h,AX=0005h,AX=0007h,AX=0008h,INT 2F/AX=5600h
 --------N-600001-----------------------------
 INT 60 - RIFS - CLIENT - UNINSTALL
@@ -7775,9 +8481,9 @@ INT 60 - RIFS - SERVER - INSTALLATION CHECK
 	AX = 0008h
 Return: CF clear if successful
 	CF set on error
+InstallCheck:	test for the signature "RIFS" immediately preceding the
+	  interrupt handler
 Range:	INT 60 to INT 66 and INT 18,selected by scanning for 0000h:0000h vector
-Note:	the installation check consists of testing for the signature "RIFS"
-	  immediately preceding the interrupt handler
 SeeAlso: AX=0000h,AX=0009h,AX=000Ah,AX=000Bh
 --------N-600009-----------------------------
 INT 60 - RIFS - SERVER - UNINSTALL
@@ -8426,10 +9132,10 @@ Program: AccessDOS is a public domain TSR developed at The Trace Research and
 	  Development Center which provides extensions for keyboard, mouse,
 	  and sound access by the visually, hearing, or motor-control
 	  impaired.
+InstallCheck:	test for the signature "ACCESSv1.00" beginning three bytes
+	  past the start of the interrupt handler (this same signature is also
+	  present in v1.10)
 Range:	INT 60 to INT 66, selected by scanning for 0000h:0000h vector
-Note:	the installation check is to test for the signature "ACCESSv1.00"
-	  beginning three bytes past the start of the interrupt handler (this
-	  same signature is also present in v1.10)
 --------N-60E9-------------------------------
 INT 60 - FTP Packet Driver - Crynwr Software - AUTOSELECT TRANSCEIVER
 	AH = E9h

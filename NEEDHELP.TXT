@@ -1,11 +1,11 @@
 VOLUNTEERS NEEDED
 -----------------
 
-21dec97:
+22mar98:
 
 If you've always wanted to show your appreciation of the interrupt
 list, but never had anything to contribute before, here's your chance!
-I need a dozen or so volunteers to transcribe and condense the
+I still need about ten volunteers to transcribe and condense the
 information in various on-line documents into a suitable form for
 inclusion in the list.  A good job of transcription can save me 90% of
 the effort it would otherwise take me, which means that I can get far
@@ -14,7 +14,10 @@ more information into the list -- and that helps everyone.
 If you're interested in transcribing one or more documents, send me
 mail and I'll provide you with the URL and a brief style guide.  Let me
 know whether you're willing to work on a large document or only a
-small(ish) one.
+small(ish) one.  As an added incentive, those who contribute at least
+120K of additions (roughly equivalent to the info from four motherboard
+chipsets; figure around 50 hours of effort) get a free autographed
+copy of one of my books.
 
 
 

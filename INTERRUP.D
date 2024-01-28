@@ -1,5 +1,5 @@
 Interrupt List, part 4 of 16
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
 --------b-166F00-----------------------------
 INT 16 - HP Vectra EX-BIOS - "F16_INQUIRE" - Extended BIOS INSTALLATION CHECK
 	AX = 6F00h
@@ -4336,10 +4336,15 @@ Values for operating system indicator:
  14h	OS/2 Boot Manager hidden sub-32M 16-bit FAT partition
  16h	OS/2 Boot Manager hidden over-32M 16-bit FAT partition
  17h	OS/2 Boot Manager hidden HPFS partition
+ 17h	hidden NTFS partition
  18h	AST special Windows swap file ("Zero-Volt Suspend" partition)
  19h	Willowtech Photon coS
+ 1Bh	hidden Windows95 FAT32 partition
+ 1Ch	hidden Windows95 FAT32 partition (using LBA-mode INT 13 extensions)
+ 1Eh	hidden LBA VFAT partition
  20h	Willowsoft Overture File System (OFS1)
  21h	officially listed as reserved
+ 21h	FSo2
  23h	officially listed as reserved
  24h	NEC MS-DOS 3.x
  26h	officially listed as reserved
@@ -4375,6 +4380,7 @@ Values for operating system indicator:
  74h	officially listed as reserved
  75h	PC/IX
  76h	officially listed as reserved
+ 7Eh	F.I.X.
  80h	Minix v1.1 - 1.4a
  81h	Minix v1.4b+
  81h	Linux
@@ -4393,7 +4399,8 @@ Values for operating system indicator:
  A3h	officially listed as reserved
  A4h	officially listed as reserved
  A5h	FreeBSD, BSD/386
- A6h	officially listed as reserved
+ A6h	OpenBSD
+ A9h	NetBSD (http://www.netbsd.org/)
  B1h	officially listed as reserved
  B3h	officially listed as reserved
  B4h	officially listed as reserved

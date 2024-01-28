@@ -1,5 +1,5 @@
 Interrupt List, part 14 of 16
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
 --------*-61---------------------------------
 INT 61 - reserved for user interrupt
 --------b-61---------------------------------
@@ -166,9 +166,9 @@ Return: CF clear if successful
 	CF set on error
 	    AL = basic error (see #2990)
 	    AH = suberror number (see #2991,#2992)
+InstallCheck:	test for the signature "TCPTSR" three bytes beyond the start
+	  of the interrupt handler
 Range:	INT 20h to INT E0h, selected by configuration
-Notes:	the installation check consists of testing for the signature "TCPTSR"
-	  three bytes beyond the start of the interrupt handler
 BUG:	the SLIP kernel for v2.05 bounds-checks the wrong register, so values
 	  greater than 54h in AH may crash the system.	Other kernels may have
 	  this bug as well.
@@ -2637,9 +2637,9 @@ Return: CF clear if successful
 	    DX:AX = Internet address of ND
 	CF set on error
 	    AX = error code (see #2990 at INT 61"FTP Software")
+InstallCheck:	test for the signature "TCPTSR" three bytes beyond the start
+	  of the interrupt handler
 Range:	INT 20 to INT E0, selected by configuration
-Notes:	the installation check consists of testing for the signature "TCPTSR"
-	  three bytes beyond the start of the interrupt handler
 SeeAlso: INT 61"FTP Software",INT 61/AH=00h"PC/TCP",INT 61/AH=16h"PC/TCP"
 SeeAlso: INT 63/AH=25h"BW-TCP"
 --------N-6105-------------------------------
@@ -2986,14 +2986,14 @@ INT 61 - PC/TCP kernel v2.05+ - "net_select" - DETECT READINESS OF NETWORK
 	DS:DX -> 32-bit (max) array of bit flags for read readiness
 	ES:DI -> 32-bit (max) array of bit flags for write readiness
 Return: CF clear
+InstallCheck:	test for the signature "TCPTSR" three bytes beyond the start
+	  of the interrupt handler
 Range:	INT 20 to INT E0, selected by configuration
 Notes:	bits in the DS:DX buffer are set if the corresponding network
 	  descriptor may be read without blocking; bits in the ES:DI buffer
 	  are set if the corresponding network descriptor may be written
 	  without blocking.  This implies that the network descriptor has
 	  opened correctly and the protocol initialized.
-	the installation check consists of testing for the signature "TCPTSR"
-	  three bytes beyond the start of the interrupt handler
 SeeAlso: INT 61"FTP Software",INT 61/AH=00h"PC/TCP"
 --------b-610E-------------------------------
 INT 61 - Atari Portfolio - GET/SET SCREEN MODE
@@ -3268,9 +3268,9 @@ Return: CF clear if successful
 	    DX = ???
 	CF set on error
 	    AX = error code (see #2990 at INT 61"FTP Software")
+InstallCheck:	test for the signature "TCPTSR" three bytes beyond the start
+	  of the interrupt handler
 Range:	INT 20h to INT E0h, selected by configuration
-Notes:	the installation check consists of testing for the signature "TCPTSR"
-	  three bytes beyond the start of the interrupt handler
 SeeAlso: INT 61"FTP Software",INT 61/AH=00h"PC/TCP",INT 61/AH=1Bh,INT 61/AH=1Ch
 SeeAlso: INT 63/AH=19h"BW-TCP",INT 63/AH=1Bh"BW-TCP"
 
@@ -3933,8 +3933,8 @@ INT 62 - MS SQL Server/Sybase DBLIBRARY interface - ???
 	DX = FFFFh
 	???
 Return: ???
-Note:	the installation check consists of testing for the string "DBLIBRARY"
-	  2 bytes past the interrupt handler
+InstallCheck:	test for the string "DBLIBRARY" two bytes past the interrupt
+	  handler
 SeeAlso: AH=08h"SQL"
 Index:	installation check;MS SQL Server|installation check;Sybase DBLIBRARY
 ----------62---------------------------------
@@ -3949,11 +3949,11 @@ Desc:	XFS requires a packet driver to operate.  Since it does redirections,
 	  etc., it provides its own packet driver entry point, changing the
 	  signature string of the original packet driver to "XKT DRVR" so that
 	  it will no longer be found by the packet driver installation check
+InstallCheck:	scan for the signature string "PKT DRVR" three bytes past the
+	  interrupt handler (the same as that for the packet driver
+	  specification)
 Range:	INT 61 to INT 66, selected by scanning for two consecutive free
 	  vectors and hooking the second
-Note:	the installation check for this vector is the same as that for the
-	  packet driver specification: scan for the signature string "PKT DRVR"
-	  three bytes past the interrupt handler
 SeeAlso: INT 60"Packet Driver Specification",INT 61"XFS"
 ----------62---------------------------------
 INT 62 - PC-DRAFT - PRIMARY DISPLAY DRIVER
@@ -3980,12 +3980,12 @@ INT 62 u - FGDRIVER v3.03+ - "FG_ALLOCATE" - CREATE VIRTUAL VIDEO PAGE
 Return: AX = status (0000h,0001h,0007h,0008h) (see #3144)
 Program: FGDRIVER is the external video driver for the shareware
 	  Fastgraph/Light by Ted Gruber Software
+InstallCheck:	test for the signature "FG" ten bytes beyond the start of the
+	  interrupt handler
 Notes:	the FGDRIVER functions are rearranged with each major release, but
 	  their parameters do not change (see #3145)
 	The amount of memory required by the virtual video page depends on the
 	  current video mode
-	The installation check consists of testing for the signature "FG" ten
-	  bytes beyond the start of the interrupt handler
 SeeAlso: AX=0001h,AX=0002h,AX=0003h,AX=0038h
 Index:	installation check;Fastgraph/Light
 
@@ -7430,12 +7430,11 @@ Desc:	the "4+Power" quad floppy controller BIOS hooks INT 13 (or INT 40 if
 INT 63 - Kofax KF9X00 image manipulation card interface
 --------Q-63---------------------------------
 INT 63 - DESQview/X - SOCKET API
+InstallCheck:	test for the string "dvxunix" (yes, lowercase) at offset 9
+	  from the interrupt handler start (see #3186)
 Notes:	parameters are passed by patching (!) data field immediately following
 	  the entry point, as detailed below (see #3186); the preferred
 	  method for calling the socket API is via INT 15/AX=DE2Eh
-	the installation check consists of testing for the string "dvxunix"
-	  (yes, lowercase) at offset 9 from the interrupt handler start
-	  (see #3186)
 SeeAlso: INT 15/AX=DE2Eh,INT BE"DESQview"
 Index:	installation check;DESQview/X socket interface
 
@@ -8012,8 +8011,8 @@ INT 65 - Ad Lib SOUND.COM - INTERFACE
 	    0016h SetPitchBend
 	    0017h WaveForm
 	ES:BX -> arguments
-Note:	the installation check consists of checking for the signature block
-	  immediately preceding the interrupt handler (see #3187)
+InstallCheck:	test for the signature block immediately preceding the
+	  interrupt handler (see #3187)
 SeeAlso: SI=8000h
 Index:	installation check;Ad Lib SOUND.COM
 
@@ -8356,9 +8355,9 @@ Note:	This Windows 3.x Virtual Device Driver implements a virtual timer
 INT 66 - Newkey v5.4 - INSTALLATION VECTOR
 Return: immediately (IRET)
 Program: Newkey is a shareware keyboard macro program by Frank A. Bell
+InstallCheck:	test for the signature bytes FDh FCh FFh FEh at offset 03h in
+	  the interrupt handlers segment
 Range:	INT 60h to INT 67h, selected by scanning for highest unused vector
-Note:	the installation check consists of testing for the signature bytes
-	  FDh FCh FFh FEh at offset 03h in the interrupt handlers segment
 BUG:	the code obviously intends to use INT F0-FE, INT 70-77, and INT 68-6F
 	  before falling back to INT 60-67, but only uses the last of these
 	  ranges in v5.4
@@ -8439,10 +8438,10 @@ Program: The IBMSND driver is part of John W. Ratcliff's
 	   The IBM Digitized Sound Package
 	DIGPAK is a set of digitized sound drivers written by
 	  John W. Ratcliff, The Audio Solution, Inc.
-Note:	the installation check consists of looking for a valid signature
-	  string six bytes prior to the interrupt handler; this string may
-	  be either "KERN" or "MIDI" (in the latter case, call AX=0701h to
-	  determine whether IBMSND is installed)
+InstallCheck:	test for a valid signature string six bytes prior to the
+	  interrupt handler; this string may be either "KERN" or "MIDI" (in
+	  the latter case, call AX=0701h to determine whether IBMSND is
+	  installed)
 SeeAlso: AX=068Bh,AX=068Fh,AX=0701h
 
 Format of IBMSND driver SNDSTRUC:
@@ -8654,9 +8653,9 @@ INT 66 - IBM Digitized Sound Package MIDI driver - GET DIGITIZED SOUND CAPABIL
 	AX = 0701h
 Return: AX = digitized sound capabilities
 	    0000h if digitized sound driver (functions 06xxh) not available
-Notes:	the installation check for the MIDI driver is to test for the signature
-	  "MIDI" six bytes before the interrupt handler
-	also supported by MIDPAK, the successor to the Digitized Sound
+InstallCheck:	test for the signature "MIDI" six bytes before the interrupt
+	  handler
+Note:	also supported by MIDPAK, the successor to the Digitized Sound
 	  Package's MIDI driver
 SeeAlso: AX=0688h
 --------s-660702-----------------------------
@@ -8915,8 +8914,8 @@ Note:	this function sets ??? flag or counter to FFFFh and hooks INT 1Ch
 INT 66 - BitFax Scheduler - REMOVE TSR FROM MEMORY
 	AX = 3345h
 Return: AX = FFFFh error removing TSR
-Note:	the installation check consists of checking for the signature
-	  "BitFax Scheduler" beginning two bytes past the interrupt handler
+InstallCheck:	test for the signature "BitFax Scheduler" beginning two bytes
+	  past the interrupt handler
 SeeAlso: AH=04h,INT 2F/AH=2Ah,INT 2F/AX=CB00h
 Index:	installation check;BitFax Scheduler
 --------n-6640-------------------------------
@@ -9011,11 +9010,11 @@ INT 66 - MicroHelp Stay-Res/Stay-Res Plus - UNINSTALL
 	AX = FFFEh
 	BX = FFFEh
 Return: only if unsuccessful
-Notes:	installation check is for the interrupt handler to begin with the bytes
-	  FBh 9Ch or 9Ch FAh, and the program name (not case-sensitive) to
-	  appear at offset 0005h (older versions) or the offset returned by
-	  AX=FFFFh/BX=FFF0h in the interrupt handler segment.
-	Programs which use Stay-Res include ThesPlus (program name "THESPLUS")
+InstallCheck:	test whether the interrupt handler begins with the bytes
+	  FBh 9Ch or 9Ch FAh, and the program name (not case-sensitive) appears
+	  at offset 0005h (older versions) or the offset returned by
+	  AX=FFFFh/BX=FFF0h in the interrupt handler segment
+Note:	Programs which use Stay-Res include ThesPlus (program name "THESPLUS")
 	  and Personal Calendar (program name "CAL") by Paul Mun~oz-Colman.
 SeeAlso: AX=FFFBh,AX=FFFFh,INT 2D"AMIS"
 Index:	installation check;MicroHelp Stay-Res|installation check;ThesPlus

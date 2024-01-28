@@ -1,5 +1,5 @@
 Interrupt List, part 16 of 16
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
 --------*-7E---------------------------------
 INT 7E - RESERVED FOR DIP, Ltd. ROM LIBRARY
 --------S-7E---------------------------------
@@ -84,11 +84,11 @@ Return: AX = status
 	    00FDh unable to unhook INT 09
 	    00FEh unable to release memory
 Program: SBOS is a SoundBlaster emulator for the Gravis UltraSound
+InstallCheck:	test for the ASCII signature "SBOS" at offset 0Ah in the
+	  interrupt handler's segment (similar to one of the possible EMS
+	  installation checks)
 Range:	SBOS may use INT 78-INT 7F
-Notes:	the installation check for SBOS is to test for the ASCII signature
-	  "SBOS" at offset 0Ah in the interrupt handler's segment (similar
-	  to one of the possible EMS installation checks)
-	this function may not be called if any SBOS vectors have been hooked
+Note:	this function may not be called if any SBOS vectors have been hooked
 SeeAlso: INT 21/AX=FD12h,INT 78"UltraMID"
 --------s-7E00FF-----------------------------
 INT 7E - SBOS v3.82 - SET INTERRUPT FOR ???
@@ -381,8 +381,8 @@ INT 7F - Telebit ACS SERIAL I/O
 	ES:SI-> parameter block (see #3538)
 Return: CF set on error
 	CF clear on success
-Notes:	the signature "PDGATEWRKSTNIF" appears just prior to the interrupt
-	  handler; this serves as the installation check
+InstallCheck:	test for the signature "PDGATEWRKSTNIF" just prior to the
+	  interrupt handler
 Index:	installation check;Telebit ACS Serial I/O
 
 Format of Telebit ACS parameter block:
@@ -441,11 +441,10 @@ Values for Telebit ACS return code:
  FFh	Telebit ACS API is busy - retry later
 --------N-7F---------------------------------
 INT 7F - Non-dedicated NetWare 2.x File Server - ENTER CONSOLE MODE
-Notes:	the installation check consists of checking for the signature "Lynn"
-	  in the four bytes preceding the interrupt handler; if present, the
-	  current program is running as a DOS task on a non-dedicated NetWare
-	  2.x file server.
-	Before placing the server into "console" mode, it is recommended that
+InstallCheck:	test for the signature "Lynn" in the four bytes preceding the
+	  interrupt handler; if present, the current program is running as a
+	  DOS task on a non-dedicated NetWare 2.x file server.
+Note:	Before placing the server into "console" mode, it is recommended that
 	  NetWare broadcast messages be disabled with INT 21/AH=DEh/DL=00h.
 SeeAlso: INT 21/AH=DEh/DL=04h
 Index:	installation check;non-dedicated NetWare server
@@ -520,10 +519,10 @@ Return: AL = status
 	    00h successful
 	    01h resource not available
 	    02h user error
-Notes:	the installation check consists of ensuring that the interrupt vector
-	  is not pointing at segment 0000h, then checking whether the byte
-	  at offset 0000h in the interrupt handler's segment is E9h
-	function will not return until the resource is available if AL is
+InstallCheck:	ensure that the interrupt vector is not pointing at segment
+	  0000h, then test whether the byte at offset 0000h in the interrupt
+	  handler's segment is E9h
+Notes:	function will not return until the resource is available if AL is
 	  nonzero on entry
 	a maximum of 100 resources may be enqueued at once
 SeeAlso: AH=01h"MultiLink"
@@ -582,9 +581,8 @@ INT 7F - HLLAPI (IBM 3270 High-Level Language API)/LLAPI (Rabbit Low Level API)
 	BX = 0000h
 	DS:SI -> parameter control block (see #3543)
 Return: parameter control block updated
-Note:	the installation check for the Novell HLLAPI TSR is the signature
-	  string "CXI" (for the company Novell bought) immediately prior to
-	  the interrupt handler
+InstallCheck:	for the Novell HLLAPI TSR, test for the signature "CXI" (for
+	  the company Novell bought) immediately prior to the interrupt handler
 SeeAlso: AX=0105h,AX=ABCDh
 
 Format of HLLAPI parameter control block:
@@ -1714,9 +1712,10 @@ Bit(s)	Description	(Table 3619)
 INT 7F - MultiLink Advanced v1.0+ - SET TASK PRIORITY
 	AH = 09h
 	AL = priority (0-7)
-Note:	the installation check consists of ensuring that the interrupt vector
-	  is not pointing at segment 0000h, then checking whether the byte
-	  at offset 0000h in the interrupt handler's segment is E9h
+Return: nothing
+InstallCheck:	ensure that the interrupt vector is not pointing at segment
+	  0000h, then test whether the byte at offset 0000h in the interrupt
+	  handler's segment is E9h
 Index:	installation check;MultiLink Advanced
 SeeAlso: AH=00h"MultiLink",AH=0Ah"MultiLink"
 --------N-7F09-------------------------------
@@ -4166,9 +4165,9 @@ INT 94 u - PCM driver - INITIALIZE SOUND
 Return: ???
 Program: PCM.COM is a sound driver for Media Vision's Pro Audio Spectrum
 	  sound boards
-Note:	the installation check consists of testing for the signature string
-	  "PCMDRIVER" immediately preceding the interrupt handler; the word
-	  preceding the signature gives the PCM driver's version
+InstallCheck:	test for the signature string "PCMDRIVER" immediately preceding
+	  the interrupt handler; the word preceding the signature gives the PCM
+	  driver's version
 SeeAlso: SI=0001h,SI=0002h,SI=0003h,SI=0004h,SI=0005h,SI=000Ah
 Index:	installation check;PCM driver|PCM.COM;installation check
 Index:	PCM driver;installation check
@@ -4274,9 +4273,8 @@ INT 94 u - Media Vision PCM.COM - GET INTERNAL DMA BUFFER ADDRESS
 Return: DX:AX -> DMA buffer
 Program: PCM.COM is a superset of the standard PCM driver which provides
 	  additional functions for fine control of the driver
-Note:	the installation check for the Media Vision PCM.COM "shark" functions
-	  consists of testing for the signature "PCM-SHARK" at offset 107h in
-	  the INT 94 handler's segment
+InstallCheck:	for the Media Vision PCM.COM "shark" functions, test for the
+	  signature "PCM-SHARK" at offset 107h in the INT 94 handler's segment
 SeeAlso: SI=8001h,SI=8004h
 Index:	installation check;Media Vision PCM.COM|PCM.COM;installation check
 Index:	Media Vision PCM.COM;"shark" functions
@@ -4785,8 +4783,8 @@ Return: SS:SP -> new stack
 Program: StackMan is a freeware stack manager by Franz Veldman of ESaSS B.V.
 	  which functions as a replacement for the DOS STACK= command as well
 	  as permitting multiple TSRs to share a pool of stack space
-Note:	the installation check consists of testing for the string "STACKXXX" at
-	  offset 0Ah from the interrupt handler
+InstallCheck:	test for the string "STACKXXX" at offset 0Ah from the
+	  interrupt handler
 SeeAlso: INT 2F/AX=C9FFh,INT B5"STACKMAN"
 Index:	installation check;STACKMAN
 --------r-B5---------------------------------
@@ -6265,6 +6263,7 @@ Values for REAL/32 BDOS version:
  1468h	- IMS REAL/32 Version 7.50, 7.51
  1469h	- IMS REAL/32 Version 7.52, 7.53
  14??h	- IMS REAL/32 Version 7.6
+SeeAlso: #1266,#1267,#3761
 --------O-E0----CL2F-------------------------
 INT E0 - REAL/32 - "P_CHAIN" - CHAIN PROCESS
 	CL = 2Fh
@@ -6675,7 +6674,7 @@ Offset	Size	Description	(Table 3764)
 ---function 0Eh---
  02h	WORD	number of additional matches to store in DTA
 		(normally set to 0, but if DTA is at least 47 bytes, can be
-		  set to (DTAsize-21)/26 to return multiple matches) 
+		  set to (DTAsize-21)/26 to return multiple matches)
 ---function 0Fh---
  02h	DWORD	-> ASCIZ filename
  06h	DWORD	-> ASCIZ new name
@@ -6846,9 +6845,11 @@ Offset	Size	Description	(Table 3699)
  02h	WORD	queue ID (set by INT E0/CL=87h)
  04h	WORD	internal use, initialize to zero
  06h	WORD	offset of queue message buffer
+		(REAL/32) if FFFFh, then full address of buffer is stored at
+		  offest 10h
  08h  8 BYTEs	queue name
----REAL/32 only (real mode)---
- 10h	WORD	FFFFh (indicates real-mode version of structure)
+---REAL/32 only----
+ 10h	DWORD	segment:offset of queue message buffer
 SeeAlso: #3784
 
 Format of protected-mode REAL/32 Queue Parameter Block (QPB):
@@ -6898,11 +6899,6 @@ Return: AX = status (0000h success, FFFFh failure)
 	CX = error code (see #3692)
 Note:	also supported by REAL/32
 SeeAlso: INT E0/CL=8Ah,INT E0/CL=8Bh
---------O-E0----CL8D-------------------------
-INT E0 - REAL/32 - "P_DELAY" - SUSPEND FOR SPECIFIED TIME
-	CL = 8Dh
-	DX = number of system ticks to delay (typically 16.6 ms/tick)
-Return: AX = status???
 --------O-E0----CL8E-------------------------
 INT E0 - ConcCP/M,DR Multiuser DOS - "P_DISPATCH" - CALL DISPATCHER
 	CL = 8Eh
@@ -7380,7 +7376,7 @@ Format of REAL/32 Memory Physical Parameter Block:
 Offset	Size	Description	(Table 3783)
  00h	WORD	4K page number in first megabyte to be mapped
  02h	WORD	number of page to map into above page, or 0000h to unmap
- 04h	WORD	window number (0000h, as only one window currently supported) 
+ 04h	WORD	window number (0000h, as only one window currently supported)
  06h	WORD	reserved
 Note:	all users of the system share the window, so applications should not
 	  use it for arguments to system calls, attempt to read/write to/from
@@ -7443,8 +7439,9 @@ SeeAlso: INT E0/CL=B9h
 --------O-E0----CLBD-------------------------
 INT E0 - DR Multiuser DOS - "P_DELAY" - DELAY EXECUTION
 	CL = BDh
-	DX = delay in system ticks
+	DX = delay in system ticks (typically 16.6 ms/tick)
 Return: after the delay elapses
+	no results
 Notes:	the length of a system tick is installation-dependent (typically
 	  1/50 or 1/60 second); the length may be determined by reading the
 	  TICKSPERSEC value from the system data segment
@@ -8692,11 +8689,11 @@ INT FD - TFPCX - INSTALLATION CHECK
 	AH = function (also see separate entries below)
 Program: TFPCX is an interface between modem and terminal program for packet-
 	  radio communications
-Notes:	the installation check consists of testing for the string "N5NX" three
-	  bytes beyond the interrupt handler; INT FD is the default, but may
-	  be changed, so the full installation check consists of scanning
-	  for the signature
-	TFPCX returns AX=FFFFh on any unsupported function call
+InstallCheck:	test for the string "N5NX" three bytes beyond the interrupt
+	  handler
+Range:	INT FD is the default, but may be changed, so the full installation
+	 check consists of scanning for the signature
+Note:	TFPCX returns AX=FFFFh on any unsupported function call
 SeeAlso: AH=01h,AH=03h,AH=FEh
 --------S-FD01-------------------------------
 INT FD - TFPCX - TEST FOR CHARACTER WAITING
@@ -8818,21 +8815,19 @@ Return:	AX,BX,CX,DX,ES,DI may be destroyed
 Note:	these functions all display an error message if the graphics routines
 	  are not resident
 --------!---Admin----------------------------
-Highest Table Number = 3788
+Highest Table Number = 3886
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER56A through INTER56D (preferably the original
+quartet of archives named INTER57A through INTER57D (preferably the original
 authenticated PKZIP archives), the utility programs in a fifth archive
-called INTER56E.ZIP, the WinHelp-related programs in a sixth archive
-named INTER56F.ZIP, and the non-WinHelp hypertext programs in a seventh archive
-names INTER56G.ZIP.
+called INTER57E.ZIP, the WinHelp-related programs in a sixth archive
+named INTER57F.ZIP, and the non-WinHelp hypertext programs in a seventh archive
+names INTER57G.ZIP.
 
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
 --------!---CONTACT_INFO---------------------
 Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
-UUCP: {uunet,harvard}!pobox.com!ralf
 FIDO: Ralf Brown 1:129/26.1
 	or post a message to me in the DR_DEBUG echo (I probably won't see it
 	unless you address it to me)
-CIS:  >INTERNET:ralf@pobox.com

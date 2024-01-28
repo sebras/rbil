@@ -1,11 +1,11 @@
-FAR CALL Interface List		Release 56		Last change 21dec97
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
+FAR CALL Interface List		Release 57		Last change 22mar98
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
 
 =============================================
 >CALL 0000h:0000h - Sample Entry
+>Program: description of the program(s) providing the API
 >InstallCheck:	how to determine CALL address if variable, whether it is
 >	  available if address is fixed
->Program: description of the program(s) providing the API
 >Note:	any notes related to the API
 >SeeAlso: related APIs, and interrupt entries for this API in INTERRUP.*
 >
@@ -445,9 +445,9 @@ InstallCheck:	see INT 2F/AX=4310h"Cloaking"
 SeeAlso: INT 2F/AX=4310h"Cloaking"
 ----------@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - CTMMSYS.SYS - API
-InstallCheck:	see INT 21/AX=4402h"CTMMSYS"
 Program: CTMMSYS.SYS is the Creative DOS Multimedia Architecture Integration
 	  driver
+InstallCheck:	see INT 21/AX=4402h"CTMMSYS"
 SeeAlso: INT 21/AX=4402h"CTMMSYS"
 --------Q-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - DESQview XDI - Driver API
@@ -769,9 +769,17 @@ Call Plug-and-Play BIOS entry point with:
 			      (see #F044)
 			0043h Write Extended SYstem Configuration Data
 			      (see #F045)
-			---Desktop Management Interface v2.0---
+			---Desktop Management Interface v2.0+---
 			0050h Get DMI Information (see #F046)
 			0051h Get DMI structure (see #F047)
+			---SMBIOS v2.1+ (formerly Desktop Management I'face---
+			0052h Set DMI structure
+			0053h Get DMI structure-change information
+			0054h DMI control
+			0055h Get GP Non-Volatile Storage information
+			0056h Read GP Non-Volatile Storage data
+			0057h Write GP Non-Volatile Storage data
+			0058h-005Fh reserved for future use
 			---BIOS Boot Specification---
 			0060h Get Version and Installation Check (see #F048)
 			0061h Get IPL Device Count (see #F049)
@@ -1171,17 +1179,23 @@ Values for Plug-and-Play function status code:
  0083h	invalid device node (or DMI structure) number/handle
  0084h	bad parameter
  0085h	failure setting device node
-	invalid DMI subfunction
+	invalid DMI/SMBIOS subfunction
  0086h	no pending events
  0087h	system not docked
+	(SMBIOS) out of space to add data
  0088h	no ISA Plug-and-Play cards installed
  0089h	unable to determine docking station's capabilities
  008Ah	undocking sequence failed because system unit does not have a battery
  008Bh	resource conflict with a primary boot device
  008Ch	buffer provided by user was too small
  008Dh	must use ESCD support for specified device
+	(SMBIOS) "set" request failed (one or more fields read-only)
  008Eh	message not supported
  008Fh	hardware error
+---SMBIOS v2.1+ ---
+ 0090h	locking not supported for the GPNV handle
+ 0091h	GPNV already locked
+ 0092h	invalid GPNV lock value
 SeeAlso: #0939
 
 Format of Option ROM header:
@@ -1252,6 +1266,8 @@ Type	Subtype		Description
 	80h	  other
  03h	---	display controller
 	00h	  VGA
+			programming interface 00h = VGA registers
+			programming interface 01h = 8514/A-compatible registers
 	01h	  SuperVGA
 	02h	  XGA
 	80h	  other
@@ -1298,12 +1314,15 @@ Type	Subtype		Description
 	03h	  Pentium-Pro (P6)
 	10h	  DEC Alpha
 	40h	  coprocessor
+	80h	  other
  0Ch	---	Serial Bus controller
 	00h	  Firewire (IEEE 1394)
 	01h	  ACCESS.bus
 	02h	  SSA
 	03h	  Universal Serial Bus (USB)
 			programming interface 10h = OpenHCI Host Controller
+	04h	  Fiber Channel
+	80h	  other
 SeeAlso: #F058,#F060,#0798
 
 (Table F060)
@@ -1584,15 +1603,13 @@ Highest Table Number = F069
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER55A through INTER55D (preferably the original
+quartet of archives named INTER57A through INTER57D (preferably the original
 authenticated PKZIP archives), and the utility and hypertext conversion
-programs in three additional archives called INTER55E.ZIP to INTER55G.ZIP
+programs in three additional archives called INTER57E.ZIP to INTER57G.ZIP
 
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1997 Ralf Brown
 --------!---CONTACT_INFO---------------------
 Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
-UUCP: {uunet,harvard}!pobox.com!ralf
 FIDO: Ralf Brown 1:129/26.1
 	or post a message to me in the DR_DEBUG echo (I probably won't see it
 	unless you address it to me)
-CIS:  >INTERNET:ralf@pobox.com

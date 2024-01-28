@@ -1,5 +1,5 @@
-GLOSSARY			Release 56		Last change 21dec97
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
+GLOSSARY			Release 57		Last change 22mar98
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
 
 A20
 	(Address line 20) The 80286 and higher CPUs allow addresses in
@@ -19,6 +19,13 @@ higher processors contain two separate BIOSes.	The ABIOS is a
 protected-mode BIOS which is used by OS/2.  For machines without an
 ABIOS, such as the IBM AT, OS/2 loads the equivalent of the ABIOS from
 disk.  see also CBIOS
+
+ACCESS.bus
+	A further development of the I2C bus which forms the physical layer
+of the Universal Serial Bus.  Because ACCESS.bus is used for communication with
+external devices, it includes power and ground wires in addition to I2C's clock
+and data lines, and permits twice the current draw (6ma) on the clock and data
+lines.  see also I2C, SMBus.
 
 API
 	(Application Program[ming] Interface) The defined set of calls
@@ -159,7 +166,7 @@ rate at which the IBM PC's system clock is updated, derived by dividing
 highest divisor possible on the 8253/8254 timer chip).
 
 CMOS
-	(Complementary Metal-Oxide-Silicon) A type of integrated
+	(Complementary Metal-Oxide-Semiconductor) A type of integrated
 circuit design known for its low power consumption.
 
 CMOS RAM
@@ -458,13 +465,15 @@ was not itself accessing the display memory during those times.	 See also
 Vertical Retrace.
 
 I2C
-	(also IIC; the "2" is superscripted) A moderate-speed serial
-communications bus originally invented by Philips for consumer-electronics
-applications, such as inter-chip communication in a television set or
-high-end stereo.  The I2C bus has recently appeared on PCs in video capture
-boards and similar devices, as well as (surprisingly) SDRAM DIMMs (for the
-on-board serial EEPROM).  The ACCESS.bus is a derivative of the I2C bus
-which forms the physical layer of the Universal Serial Bus.
+	(also IIC; the "2" is superscripted) Inter-Integrated Circuit
+Bus -- A moderate-speed serial communications bus originally invented
+by Philips in the early 1980s for consumer-electronics applications,
+such as inter-chip communication in a television set or high-end
+stereo.  The I2C bus has recently appeared on PCs in video capture
+boards and similar devices, as well as (surprisingly) SDRAM DIMMs (for
+the on-board serial EEPROM).  The ACCESS.bus is a derivative of the I2C
+bus which forms the physical layer of the Universal Serial Bus.  Similary,
+the SMBus (System Management Bus) also uses I2C as its physical layer.
 
 IDE
 	(Integrated Drive Electronics) A type of disk drive interface
@@ -834,6 +843,15 @@ this is normally 512 bytes.  See also Track.
 
 SFT
 	see System File Table
+
+SMBus
+	(System Management Bus) A derivative of the I2C bus used for
+communication between various components of a computer, such as smart
+batteries and their chargers.  In contrast to I2C, SMBus specifies
+fixed voltage levels (instead of relative to the power supply voltage)
+and a 10 KHz minimum clock rate (I2C minimum is 0).  SMBus also
+specifies several timings which are not required by I2C.  See also I2C,
+ACCESS.bus.
 
 SMM
 	(System Management Mode) A special CPU mode typically invoked

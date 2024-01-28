@@ -1,5 +1,653 @@
 Interrupt List, part 8 of 16
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
+--------E-21E2-------------------------------
+INT 21 - OS/286, OS/386 - SET REAL PROCEDURE SIGNAL HANDLER
+	AH = E2h
+	???
+Return: ???
+SeeAlso: AH=E0h"OS/286",AH=E1h"OS/286",AH=E6h"OS/286"
+--------N-21E2-------------------------------
+INT 21 - DoubleDOS - SEND CHARACTER TO KEYBOARD BUFFER OF OTHER JOB
+	AH = E2h
+	AL = character
+Return: AL = 00h successful
+	     01h buffer full (128 characters)
+SeeAlso: AH=E1h"DoubleDOS",AH=E3h"DoubleDOS",AH=E8h"DoubleDOS"
+SeeAlso: AH=F2h"DoubleDOS"
+--------N-21E2--SF00-------------------------
+INT 21 - Novell NetWare - DIRECTORY SERVICES - SET DIRECTORY HANDLE
+	AH = E2h subfn 00h
+	DS:SI -> request buffer (see #1528)
+	ES:DI -> reply buffer (see #1529)
+Return: AL = status (00h,98h,9Bh,9Ch) (see #1527)
+Desc:	set the target handle to reference the directory specified by the
+	  source handle and the source path; both handles must refer to the
+	  same file server
+Notes:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
+	  Alloy NTNX
+	the target handle is not changed if this function fails
+SeeAlso: AH=E2h/SF=01h,AH=E2h/SF=12h,AH=E2h/SF=13h,AX=F216h/SF=00h
+
+(Table 1527)
+Values for NetWare function status:
+ 00h	successful
+ 84h	not permitted to create
+ 8Ah	not permitted to delete
+ 8Bh	not permitted to rename
+ 8Ch	not permitted to modify
+ 98h	nonexistent volume
+ 9Bh	invalid directory handle
+ 9Ch	invalid path
+ 9Eh	invalid filename
+ 9Fh	directory currently in use
+ A0h	directory not empty
+ C6h	no console rights
+ FCh	no such bindery object
+SeeAlso: #1522,#1554
+
+Format of NetWare "Set Directory Handle" request buffer:
+Offset	Size	Description	(Table 1528)
+ 00h	WORD	length of following data (max 103h)
+ 02h	BYTE	00h (subfunction "Set Directory Handle")
+ 03h	BYTE	directory handle of target
+ 04h	BYTE	directory handle of source
+ 05h	BYTE	length of source directory path (01h-FFh)
+ 06h  N BYTEs	source directory path
+SeeAlso: #1529
+
+Format of NetWare reply buffer:
+Offset	Size	Description	(Table 1529)
+ 00h	WORD	(call) 0000h (no results returned)
+SeeAlso: #1528
+--------N-21E2--SF01-------------------------
+INT 21 - Novell NetWare - DIRECTORY SERVICES - GET DIRECTORY PATH
+	AH = E2h subfn 01h
+	DS:SI -> request buffer (see #1530)
+	ES:DI -> reply buffer (see #1531)
+Return: AL = status (00h,9Bh) (see #1527)
+Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
+	  Alloy NTNX
+SeeAlso: AH=E2h/SF=02h,AH=E2h/SF=03h,AH=E2h/SF=1Ah,AH=E9h,AX=F216h/SF=01h
+
+Format of NetWare "Get Directory Path" request buffer:
+Offset	Size	Description	(Table 1530)
+ 00h	WORD	0002h (length of following data)
+ 02h	BYTE	01h (subfunction "Get Directory Path")
+ 03h	BYTE	directory handle
+SeeAlso: #1531,#1532
+
+Format of NetWare "Get Directory Path" reply buffer:
+Offset	Size	Description	(Table 1531)
+ 00h	WORD	(call) length of following data buffer
+ 02h	BYTE	length of directory path (01h-FFh)
+ 03h  N BYTEs	full directory path including volume
+SeeAlso: #1530,#1533
+--------N-21E2--SF02-------------------------
+INT 21 - Novell NetWare - DIRECTORY SERVICES - SCAN DIRECTORY INFORMATION
+	AH = E2h subfn 02h
+	DS:SI -> request buffer (see #1532)
+	ES:DI -> reply buffer (see #1533)
+Return: AL = status (00h,98h,9Bh,9Ch) (see #1527)
+Desc:	get information about the first or next subdirectory of the specified
+	  directory
+Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
+	  Alloy NTNX
+SeeAlso: AH=E2h/SF=01h,AH=E2h/SF=03h,AH=E2h/SF=19h,AX=F216h/SF=02h
+
+Format of NetWare "Scan Directory Information" request buffer:
+Offset	Size	Description	(Table 1532)
+ 00h	WORD	length of following data (max 104h)
+ 02h	BYTE	02h (subfunction "Scan Directory Information")
+ 03h	BYTE	directory handle
+ 04h	WORD	(big-endian) subdirectory number
+		0000h for first call, returned subdir number + 1 on next call
+ 06h	BYTE	length of directory path
+ 07h  N BYTEs	directory path
+SeeAlso: #1530,#1533
+
+Format of NetWare "Scan Directory Information" reply buffer:
+Offset	Size	Description	(Table 1533)
+ 00h	WORD	(call) 001Ch (length of following data buffer)
+ 02h 16 BYTEs	subdirectory name
+ 12h	DWORD	(big-endian) date and time of creation (see #1534)
+ 16h	DWORD	(big-endian) object ID of owner
+ 1Ah	BYTE	maximum directory rights (see #1537)
+ 1Bh	BYTE	unused
+ 1Ch	WORD	(big-endian) subdirectory number
+SeeAlso: #1531,#1532,#1799 at AX=F216h/SF=02h
+
+Bitfields for NetWare date and time:
+Bit(s)	Description	(Table 1534)
+ 31-25	year-1980
+ 24-21	month
+ 20-16	day
+ 15-11	hour
+ 10-5	minute
+ 4-0	second
+--------N-21E2--SF03-------------------------
+INT 21 - Novell NetWare - DIRECTORY SERVICES - GET EFFECTIVE DIRECTORY RIGHTS
+	AH = E2h subfn 03h
+	DS:SI -> request buffer (see #1535)
+	ES:DI -> reply buffer (see #1536)
+Return: AL = status (00h,98h,9Bh) (see #1527)
+Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
+	  Alloy NTNX
+SeeAlso: AH=E2h/SF=01h,AH=E2h/SF=02h,AX=F216h/SF=03h
+
+Format of NetWare "Get Effective Directory Rights (old)" request buffer:
+Offset	Size	Description	(Table 1535)
+ 00h	WORD	length of following data (max 102h)
+ 02h	BYTE	03h (subfunction "Get Effective Directory Rights (old)")
+ 03h	BYTE	directory handle
+ 04h	BYTE	length of directory path (00h-FFh)
+ 05h  N BYTEs	directory path
+SeeAlso: #1536,#1538
+
+Format of NetWare "Get Effective Directory Rights" reply buffer:
+Offset	Size	Description	(Table 1536)
+ 00h	WORD	(call) 0001h (length of following data buffer)
+ 02h	BYTE	effective directory rights (see #1537)
+SeeAlso: #1535
+
+Bitfields for NetWare directory rights:
+Bit(s)	Description	(Table 1537)
+ 0	reading allowed
+ 1	writing allowed
+ 2	opens allowed
+ 3	file creation allowed
+ 4	deletion allowed
+ 5	"parental" may create/delete subdirectories and grant/revoke trustee
+	  rights
+ 6	directory search allowed
+ 7	file attributes may be changed
+SeeAlso: #1536,#1538
+--------N-21E2--SF04-------------------------
+INT 21 - Novell NetWare - DIRECTORY SERVICES - MODIFY MAXIMUM RIGHTS MASK
+	AH = E2h subfn 04h
+	DS:SI -> request buffer (see #1538)
+	ES:DI -> reply buffer (see #1539)
+Return: AL = status (00h,8Ch,98h,9Ch) (see #1527)
+Notes:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
+	  Alloy NTNX
+SeeAlso: AH=E2h/SF=03h,AH=E2h/SF=0Ah,AH=E2h/SF=0Dh,AX=F216h/SF=04h
+
+Format of NetWare "Modify Maximum Rights Mask" request buffer:
+Offset	Size	Description	(Table 1538)
+ 00h	WORD	length of following data (max 104h)
+ 02h	BYTE	04h (subfunction "Modify Maximum Rights Mask")
+ 03h	BYTE	directory handle
+ 04h	BYTE	rights to grant (see #1537)
+ 05h	BYTE	rights to revoke (see #1537)
+ 06h	BYTE	length of directory path (00h-FFh)
+ 07h  N BYTEs	directory path
+Note:	the rights specified at offset 05h are revoked first, and then the
+	  rights specified at offset 04h are added to the resulting rights
+	  mask
+SeeAlso: #1535,#1539
+
+Format of NetWare reply buffer:
+Offset	Size	Description	(Table 1539)
+ 00h	WORD	(call) 0000h (no results returned)
+SeeAlso: #1538
+--------N-21E2--SF05-------------------------
+INT 21 - Novell NetWare - DIRECTORY SERVICES - GET VOLUME NUMBER
+	AH = E2h subfn 05h
+	DS:SI -> request buffer (see #1540)
+	ES:DI -> reply buffer (see #1541)
+Return: AL = status (00h,98h) (see #1527)
+Notes:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
+	  Alloy NTNX
+SeeAlso: AH=DAh,AH=E2h/SF=02h,AH=E2h/SF=05h,AH=E2h/SF=15h,AH=E3h/SF=E9h
+SeeAlso: AX=F216h/SF=05h
+
+Format of NetWare "Get Volume Number" request buffer:
+Offset	Size	Description	(Table 1540)
+ 00h	WORD	length of following data (max 12h)
+ 02h	BYTE	05h (subfunction "Get Volume Number")
+ 03h	BYTE	length of volume name (01h-10h)
+ 04h  N BYTEs	volume name
+SeeAlso: #1541,#1801 at AX=F216h/SF=05h
+
+Format of NetWare "Get Volume Number" reply buffer:
+Offset	Size	Description	(Table 1541)
+ 00h	WORD	(call) 0001h (length of following results buffer)
+ 02h	BYTE	volume number
+SeeAlso: #1540,#1801 at AX=F216h/SF=05h
+--------N-21E2--SF06-------------------------
+INT 21 - Novell NetWare - DIRECTORY SERVICES - GET VOLUME NAME
+	AH = E2h subfn 06h
+	DS:SI -> request buffer (see #1542)
+	ES:DI -> reply buffer (see #1543)
+Return: AL = status (00h,98h) (see #1527)
+Notes:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
+	  Alloy NTNX
+SeeAlso: AH=DAh,AH=E2h/SF=02h,AH=E2h/SF=05h,AH=E2h/SF=15h,AH=E2h/SF=1Ah
+SeeAlso: AH=E3h/SF=E9h,AX=F216h/SF=06h
+
+Format of NetWare "Get Volume Name" request buffer:
+Offset	Size	Description	(Table 1542)
+ 00h	WORD	0002h (length of following data)
+ 02h	BYTE	06h (subfunction "Get Volume Name")
+ 03h	BYTE	volume number
+SeeAlso: #1543,#1802 at AX=F216h/SF=06h
+
+Format of NetWare "Get Volume Name" reply buffer:
+Offset	Size	Description	(Table 1543)
+ 00h	WORD	(call) 0011h (length of following results buffer)
+ 02h	BYTE	length of volume name
+ 03h 16 BYTEs	NUL-padded volume name
+SeeAlso: #1542,#1802 at AX=F216h/SF=06h
+--------N-21E2--SF0A-------------------------
+INT 21 - Novell NetWare - DIRECTORY SERVICES - CREATE DIRECTORY
+	AH = E2h subfn 0Ah
+	DS:SI -> request buffer (see #1544)
+	ES:DI -> reply buffer (see #1545)
+Return: AL = status (00h,84h,98h,FCh) (see #1527)
+Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
+	  Alloy NTNX
+SeeAlso: AH=39h,AH=E2h/SF=0Bh,AH=E2h/SF=0Fh,AX=F216h/SF=0Ah
+
+Format of NetWare "Create Directory" request buffer:
+Offset	Size	Description	(Table 1544)
+ 00h	WORD	length of following data (max 103h)
+ 02h	BYTE	0Ah (subfunction "Create Directory")
+ 03h	BYTE	directory handle
+ 04h	BYTE	maximum directory rights (see #1537)
+ 05h	BYTE	length of directory path (00h-FFh)
+ 06h  N BYTEs	directory path
+SeeAlso: #1545,#1546
+
+Format of NetWare reply buffer:
+Offset	Size	Description	(Table 1545)
+ 00h	WORD	(call) 0000h (no data returned)
+SeeAlso: #1544,#1546
+--------N-21E2--SF0B-------------------------
+INT 21 - Novell NetWare - DIRECTORY SERVICES - DELETE DIRECTORY
+	AH = E2h subfn 0Bh
+	DS:SI -> request buffer (see #1546)
+	ES:DI -> reply buffer (see #1545)
+Return: AL = status (00h,8Ah,98h,9Bh,9Ch,9Fh,A0h) (see #1527)
+Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
+	  Alloy NTNX
+SeeAlso: AH=3Ah,AH=E2h/SF=0Ah,AH=E2h/SF=0Fh,AX=F216h/SF=0Bh
+
+Format of NetWare "Delete Directory" request buffer:
+Offset	Size	Description	(Table 1546)
+ 00h	WORD	length of following data (max 103h)
+ 02h	BYTE	0Bh (subfunction "Delete Directory")
+ 03h	BYTE	directory handle
+ 04h	BYTE	unused
+ 05h	BYTE	length of directory path (00h-FFh)
+ 06h  N BYTEs	directory path
+SeeAlso: #1544,#1545
+--------N-21E2--SF0C-------------------------
+INT 21 - Novell NetWare - DIRECTORY SERVICES - SCAN DIRECTORY FOR TRUSTEES
+	AH = E2h subfn 0Ch
+	DS:SI -> request buffer (see #1547)
+	ES:DI -> reply buffer (see #1548)
+Return: AL = status (00h,9Ch) (see also #1527)
+	    9Ch no more trustees
+Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
+SeeAlso: AH=E2h/SF=0Dh,AH=E2h/SF=0Eh,AH=E3h/SF=47h,AX=F216h/SF=0Ch
+
+Format of NetWare "Scan Directory For Trustees" request buffer:
+Offset	Size	Description	(Table 1547)
+ 00h	WORD	length of following data (max 103h)
+ 02h	BYTE	0Ch (subfunction "Scan Directory For Trustees")
+ 03h	BYTE	directory handle
+ 04h	BYTE	sequence number
+		00h on first call, increment for each subsequent call
+ 05h	BYTE	length of directory path (00h-FFh)
+ 06h  N BYTEs	directory path
+SeeAlso: #1548,#1549,#1803 at AX=F216h/SF=0Ch
+
+Format of NetWare "Scan Directory For Trustees" reply buffer:
+Offset	Size	Description	(Table 1548)
+ 00h	WORD	(call) 0031h (length of following results buffer)
+ 02h 16 BYTEs	directory name
+ 12h  4 BYTEs	date and time of creation
+ 16h	DWORD	(big-endian) object ID of owner
+ 1Ah  5 DWORDs	(big-endian) object IDs of Trustees 0 through 4
+		00000000h = end of group
+ 2Eh  5 BYTEs	directory rights for Trustees 0 through 4 (see #1537)
+SeeAlso: #1547,#1551,#1803 at AX=F216h/SF=0Ch
+--------N-21E2--SF0D-------------------------
+INT 21 - Novell NetWare - DIRECTORY SERVICES - ADD TRUSTEE TO DIRECTORY
+	AH = E2h subfn 0Dh
+	DS:SI -> request buffer (see #1549)
+	ES:DI -> reply buffer (see #1551)
+Return: AL = status (00h,8Ch,FCh) (see #1527)
+Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
+	  Alloy NTNX
+SeeAlso: AH=E2h/SF=0Ch,AH=E2h/SF=0Eh,AH=E3h/SF=47h,AX=F216h/SF=0Dh
+
+Format of NetWare "Add Trustee To Directory" request buffer:
+Offset	Size	Description	(Table 1549)
+ 00h	WORD	length of following data (max 107h)
+ 02h	BYTE	0Dh (subfunction "Add Trustee To Directory")
+ 03h	BYTE	directory handle
+ 04h	DWORD	(big-endian) object ID of trustee
+ 08h	BYTE	trustee directory rights (see #1537)
+ 09h	BYTE	length of directory path (00h-FFh)
+ 0Ah  N BYTEs	directory path
+SeeAlso: #1551
+--------N-21E2--SF0E-------------------------
+INT 21 - Novell NetWare - DIRECTORY SERVICES - DELETE TRUSTEE FROM DIRECTORY
+	AH = E2h subfn 0Eh
+	DS:SI -> request buffer (see #1550)
+	ES:DI -> reply buffer (see #1551)
+Return: AL = status (00h,98h,9Bh,9Ch) (see #1527)
+Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
+	  Alloy NTNX
+SeeAlso: AH=E2h/SF=0Ch,AH=E2h/SF=0Dh,AX=F216h/SF=0Eh
+
+Format of NetWare "Delete Trustee From Directory" request buffer:
+Offset	Size	Description	(Table 1550)
+ 00h	WORD	length of following data (max 107h)
+ 02h	BYTE	0Eh (subfunction "Delete Trustee From Directory")
+ 03h	BYTE	directory handle
+ 04h	DWORD	(big-endian) object ID of trustee
+ 08h	BYTE	unused
+ 09h	BYTE	length of directory path (00h-FFh)
+ 0Ah  N BYTEs	directory path
+SeeAlso: #1551
+
+Format of NetWare reply buffer:
+Offset	Size	Description	(Table 1551)
+ 00h	WORD	(call) 0000h (no data returned)
+SeeAlso: #1550,#1552,#1553
+--------N-21E2--SF0F-------------------------
+INT 21 - Novell NetWare - DIRECTORY SERVICES - RENAME DIRECTORY
+	AH = E2h subfn 0Fh
+	DS:SI -> request buffer (see #1552)
+	ES:DI -> reply buffer (see #1551)
+Return: AL = status (00h,8Bh,9Bh,9Ch,9Eh) (see #1527)
+Notes:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
+	  Alloy NTNX
+	directories SYS:LOGIN, SYS:MAIL, and SYS:PUBLIC must not be renamed
+SeeAlso: AH=56h,AH=E2h/SF=0Ah,AH=E2h/SF=0Bh,AX=F216h/SF=0Fh
+
+Format of NetWare "Rename Directory" request buffer:
+Offset	Size	Description	(Table 1552)
+ 00h	WORD	length of following data (max 111h)
+ 02h	BYTE	0Fh (subfunction "Rename Directory")
+ 03h	BYTE	directory handle
+ 04h	BYTE	length of directory path (00h-FFh)
+ 05h  N BYTEs	directory path
+	BYTE	length of new directory name (01h-0Eh)
+      N BYTEs	new directory name
+SeeAlso: #1551
+--------N-21E2--SF10-------------------------
+INT 21 - Novell NetWare - FILE SERVICES - PURGE ERASED FILES (OLD)
+	AH = E2h subfn 10h
+	DS:SI -> request buffer (see #1553)
+	ES:DI -> reply buffer (see #1551)
+Return: AL = status (00h,C6h) (see #1554)
+Desc:	purges files marked for deletion on the file server by the calling
+	  workstation
+Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
+	  Alloy NTNX
+SeeAlso: AH=13h,AH=41h,AH=E2h/SF=11h,AH=E3h/SF=CEh,AX=F244h,AX=F216h/SF=10h
+
+Format of NetWare "Purge Erased Files" request buffer:
+Offset	Size	Description	(Table 1553)
+ 00h	WORD	0001h (length of following data)
+ 02h	BYTE	10h (subfunction "Purge Erased Files")
+SeeAlso: #1551
+--------N-21E2--SF11-------------------------
+INT 21 - Novell NetWare - FILE SERVICES - RESTORE ERASED FILE (OLD)
+	AH = E2h subfn 11h
+	DS:SI -> request buffer (see #1555)
+	ES:DI -> reply buffer (see #1556)
+Return: AL = status (00h,98h,FFh) (see #1554)
+Desc:	restores one file marked for deletion which has not yet been purged
+Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
+	  Alloy NTNX
+SeeAlso: AH=13h,AH=41h,AH=E2h/SF=10h,AH=E3h/SF=CEh,AX=F244h
+
+(Table 1554)
+Values for NetWare function status:
+ 00h	successful
+ 98h	nonexistent volume
+ 9Ch	invalid path
+ C6h	no console rights
+ FFh	no more erased files
+SeeAlso: #1527,#1587
+
+Format of NetWare "Restore Erased File" request buffer:
+Offset	Size	Description	(Table 1555)
+ 00h	WORD	length of following data (max 13h)
+ 02h	BYTE	11h (subfunction "Restore Erased File")
+ 03h	BYTE	directory handle or 00h
+ 04h	BYTE	length of volume name
+ 05h  N BYTEs	volume name (including colon)
+Note:	if both a directory handle and a volume name are specified, the volume
+	  name overrides the handle
+SeeAlso: #1556,#1804
+
+Format of NetWare "Restore Erased File" reply buffer:
+Offset	Size	Description	(Table 1556)
+ 00h	WORD	(call) 001Eh (size of following results buffer)
+ 02h 15 BYTEs	ASCIZ name of erased file
+ 11h 15 BYTEs	ASCIZ name under which file was restored
+SeeAlso: #1555,#1804
+--------N-21E2--SF12-------------------------
+INT 21 - Novell NetWare - DIRECTORY SERVICES - ALLOC PERMANENT DIRECTORY HANDLE
+	AH = E2h subfn 12h
+	DS:SI -> request buffer (see #1557)
+	ES:DI -> reply buffer (see #1558)
+Return: AL = status (00h,98h,9Ch) (see #1554)
+Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
+	  Alloy NTNX
+SeeAlso: AH=E2h/SF=00h,AH=E2h/SF=13h,AH=E2h/SF=14h,AX=F216h/SF=12h
+
+Format of NetWare "Allocate Permanent Directory Handle" request buffer:
+Offset	Size	Description	(Table 1557)
+ 00h	WORD	length of following data (max 103h)
+ 02h	BYTE	12h (subfunction "Allocate Permanent Directory Handle")
+ 03h	BYTE	directory handle
+ 04h	BYTE	drive ('A'-'Z')
+ 05h	BYTE	length of directory path
+ 06h  N BYTEs	directory path
+SeeAlso: #1558,#1559,#1806
+
+Format of NetWare reply buffer:
+Offset	Size	Description	(Table 1558)
+ 00h	WORD	(call) 0002h (size of following results buffer)
+ 02h	BYTE	new directory handle
+ 03h	BYTE	effective directory rights (see #1537)
+SeeAlso: #1557,#1806
+--------N-21E2--SF13-------------------------
+INT 21 - Novell NetWare - DIRECTORY SERVICES - ALLOC TEMPORARY DIRECTORY HANDLE
+	AH = E2h subfn 13h
+	DS:SI -> request buffer (see #1559)
+	ES:DI -> reply buffer (see #1558)
+Return: AL = status (00h,98h,9Ch) (see #1554)
+Notes:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
+	  Alloy NTNX
+	this call is the same as AH=E2h/SF=12h except that the directory handle
+	  will be automatically deallocated when the calling application
+	  executes an End of Job call (AH=D6h) or terminates
+SeeAlso: AH=D6h,AH=E2h/SF=00h,AH=E2h/SF=12h,AH=E2h/SF=14h,AH=E2h/SF=16h
+SeeAlso: AX=F216h/SF=13h
+
+Format of NetWare "Allocate Temporary Directory Handle" request buffer:
+Offset	Size	Description	(Table 1559)
+ 00h	WORD	length of following data (max 103h)
+ 02h	BYTE	13h (subfunction "Allocate Temporary Directory Handle")
+ 03h	BYTE	directory handle
+ 04h	BYTE	drive ('A'-'Z')
+ 05h	BYTE	length of directory path
+ 06h  N BYTEs	directory path
+SeeAlso: #1557,#1560
+--------N-21E2--SF14-------------------------
+INT 21 - Novell NetWare - DIRECTORY SERVICES - DEALLOCATE DIRECTORY HANDLE
+	AH = E2h subfn 14h
+	DS:SI -> request buffer (see #1560)
+	ES:DI -> reply buffer (see #1561)
+Return: AL = status (00h,9Bh) (see #1527)
+Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
+	  Alloy NTNX
+SeeAlso: AH=E2h/SF=12h,AH=E2h/SF=13h,AX=F216h/SF=14h
+
+Format of NetWare "Deallocate Directory Handle" request buffer:
+Offset	Size	Description	(Table 1560)
+ 00h	WORD	0002h (length of following data)
+ 02h	BYTE	14h (subfunction "Deallocate Directory Handle")
+ 03h	BYTE	directory handle
+SeeAlso: #1561
+
+Format of NetWare reply buffer:
+Offset	Size	Description	(Table 1561)
+ 00h	WORD	(call) 0000h (no returned data)
+SeeAlso: #1560
+--------N-21E2--SF15-------------------------
+INT 21 - Novell NetWare - DIRECTORY SERVICES - GET VOLUME INFO WITH HANDLE
+	AH = E2h subfn 15h
+	DS:SI -> request buffer (see #1562)
+	ES:DI -> reply buffer (see #1563)
+Return: AL = status
+	    00h successful
+Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
+	  Alloy NTNX
+SeeAlso: AH=DAh,AH=E2h/SF=02h,AH=E2h/SF=06h,AH=E2h/SF=19h,AH=E3h/SF=E9h
+SeeAlso: AX=F216h/SF=15h
+
+Format of NetWare "Get Volume Info with Handle" request buffer:
+Offset	Size	Description	(Table 1562)
+ 00h	WORD	0002h (length of following data)
+ 02h	BYTE	15h (subfunction "Get Volume Info With Handle")
+ 03h	BYTE	directory handle
+SeeAlso: #1563,#1807
+
+Format of NetWare "Get Volume Info with Handle" reply buffer:
+Offset	Size	Description	(Table 1563)
+ 00h	WORD	(call) 001Ch (length of following results buffer)
+ 02h	WORD	(big-endian) sectors per block
+ 04h	WORD	(big-endian) total blocks on volume
+ 06h	WORD	(big-endian) blocks available on volume
+ 08h	WORD	(big-endian) total directory slots
+ 0Ah	WORD	(big-endian) directory slots available
+ 0Ch 16 BYTEs	NUL-padded volume name
+ 1Ch	WORD	(big-endian) flag: volume removable if nonzero
+SeeAlso: #1562,#1807
+--------N-21E2--SF16-------------------------
+INT 21 u - Novell NetWare - DIRECTORY SERVICES - ALLOC SPECIAL TEMP DIR HANDLE
+	AH = E2h subfn 16h
+	DS:SI -> request buffer (see #1564)
+	ES:DI -> reply buffer (see #1561)
+Return: AL = status
+Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX,
+	  but is not described in _NetWare_System_Calls--DOS_
+SeeAlso: AH=E2h/SF=13h,AH=E2h/SF=14h,AX=F216h/SF=16h
+
+Format of NetWare "Alloc Special Temporary Directory Handle" request buffer:
+Offset	Size	Description	(Table 1564)
+ 00h	WORD	length of following data
+ 02h	BYTE	16h (subfunction "Allocate Special Temporary Directory Handle")
+ 03h	BYTE	source directory handle
+ 04h	BYTE	drive name ('A'-'Z')
+ 05h	BYTE	path length
+ 06h  N BYTEs	directory path
+SeeAlso: #1561
+--------N-21E2--SF17-------------------------
+INT 21 - Novell NetWare - DIRECTORY SERVICES - SAVE DIRECTORY HANDLE
+	AH = E2h subfn 17h
+	DS:SI -> request buffer (see #1565)
+	ES:DI -> reply buffer (see #1566)
+Return: AL = status
+	    00h successful
+	    else network error code
+Note:	this function is supported by Advanced NetWare 2.0+ and Alloy NTNX
+SeeAlso: AH=E2h/SF=12h,AH=E2h/SF=17h,AX=F216h/SF=17h
+
+Format of NetWare "Save Directory Handle" request buffer:
+Offset	Size	Description	(Table 1565)
+ 00h	WORD	0002h (length of following data)
+ 02h	BYTE	17h (subfunction "Save Directory Handle")
+ 03h	BYTE	directory handle
+SeeAlso: #1566,#1567
+
+Format of NetWare "Save Directory Handle" reply buffer:
+Offset	Size	Description	(Table 1566)
+ 00h	WORD	(call) 0010h (length of following results buffer)
+ 02h 16 BYTEs	save buffer
+SeeAlso: #1565,#1568
+--------N-21E2--SF18-------------------------
+INT 21 - Novell NetWare - DIRECTORY SERVICES - RESTORE DIRECTORY HANDLE
+	AH = E2h subfn 18h
+	DS:SI -> request buffer (see #1567)
+	ES:DI -> reply buffer (see #1568)
+Return: AL = status
+	    00h successful
+	    else network error code
+Desc:	restore a previously saved directory handle to reproduce an executing
+	  environment, possibly on a different execution site
+Note:	this function is supported by Advanced NetWare 2.0+ and Alloy NTNX
+SeeAlso: AH=E2h/SF=12h,AH=E2h/SF=17h,AX=F216h/SF=18h
+
+Format of NetWare "Restore Directory Handle" request buffer:
+Offset	Size	Description	(Table 1567)
+ 00h	WORD	0011h (length of following data)
+ 02h	BYTE	18h (subfunction "Restore Directory Handle")
+ 03h 16 BYTEs	save buffer
+SeeAlso: #1565,#1568
+
+Format of NetWare "Restore Directory Handle" reply buffer:
+Offset	Size	Description	(Table 1568)
+ 00h	WORD	(call) 0002h (length of following results buffer)
+ 02h	BYTE	new directory handle
+ 03h	BYTE	effective rights (see #1537)
+SeeAlso: #1567
+--------N-21E2--SF19-------------------------
+INT 21 - Novell NetWare - DIRECTORY SERVICES - SET DIRECTORY INFORMATION
+	AH = E2h subfn 19h
+	DS:SI -> request buffer (see #1569)
+	ES:DI -> reply buffer (see #1570)
+Return: AL = status (00h,9Bh,9Ch) (see #1527)
+Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
+SeeAlso: AH=E2h/SF=02h,AH=E2h/SF=0Fh,AX=F216h/SF=19h
+
+Format of NetWare "Set Directory Information" request buffer:
+Offset	Size	Description	(Table 1569)
+ 00h	WORD	length of following data (max 10Bh)
+ 02h	BYTE	19h (subfunction "Set Directory Information")
+ 03h	BYTE	directory handle
+ 04h	DWORD	(big-endian) date and time of creation
+ 08h	DWORD	(big-endian) object ID of owner
+ 0Ch	BYTE	maximum directory rights (see #1537)
+ 0Dh	BYTE	length of directory path
+ 0Eh  N BYTEs	directory path
+SeeAlso: #1570
+
+Format of NetWare reply buffer:
+Offset	Size	Description	(Table 1570)
+ 00h	WORD	(call) 0000h (no results returned)
+SeeAlso: #1569
+--------N-21E2--SF1A-------------------------
+INT 21 - Novell NetWare - FILE SERVER - GET PATH FROM DIRECTORY ENTRY
+	AH = E2h subfn 1Ah
+	DS:SI -> request buffer (see #1571)
+	ES:DI -> reply buffer (see #1572)
+Return: AL = status
+	    00h successful
+Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
+	  Alloy NTNX
+SeeAlso: AH=E2h/SF=01h,AH=E2h/SF=06h,AH=E3h/SF=D7h,AX=F216h/SF=1Ah
+
+Format of NetWare "Get Path from Directory Entry" request buffer:
+Offset	Size	Description	(Table 1571)
+ 00h	WORD	0004h (length of following data)
+ 02h	BYTE	1Ah (subfunction "Get Path From Directory Entry")
+ 03h	BYTE	volume number (00h-1Fh)
+ 04h	WORD	(big-endian) directory entry number
+SeeAlso: #1572,#1810
+
+Format of NetWare "Get Path from Directory Entry" reply buffer:
+Offset	Size	Description	(Table 1572)
+ 00h	WORD	(call) size of following results record (max 200h)
+ 02h 256 BYTEs	path
+SeeAlso: #1571,#1810
 --------E-21E3-------------------------------
 INT 21 - OS/286, OS/386 - ISSUE REAL INTERRUPT
 	AH = E3h

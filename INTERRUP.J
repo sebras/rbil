@@ -1,5 +1,5 @@
 Interrupt List, part 10 of 16
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
 --------N-2A00-------------------------------
 INT 2A - NETWORK - INSTALLATION CHECK
 	AH = 00h
@@ -1829,9 +1829,224 @@ Offset	Size	Description	(Table 2273)
   N	BYTE	0Dh (CR)
 --------O-2E---------------------------------
 INT 2E UP - Windows NT - NATIVE API
-	EAX = function number
+	EAX = function number (see #3871)
 	EDX = address of parameter block
 Return: ???
+
+(Table 3871)
+Values for Windows NT NTOS function number:
+ 000h	AcceptConnectPort	(24 bytes of parameters)
+ 001h	AccessCheck		(32 bytes of parameters)
+ 002h	AccessCheckAndAuditAlarm	(44 bytes of parameters)
+ 003h	AddAtom			(8 bytes of parameters)
+ 004h	AdjustGroupsToken	(24 bytes of parameters)
+ 005h	AdjustPrivilegesToken	(24 bytes of parameters)
+ 006h	AlertResumeThread	(8 bytes of parameters)
+ 007h	AlertThread		(4 bytes of parameters)
+ 008h	AllocateLocallyUniqueId	(4 bytes of parameters)
+ 009h	AllocateUuids		(12 bytes of parameters)
+ 00Ah	AllocateVirtualMemory	(24 bytes of parameters)
+ 00Bh	CallbackReturn		(12 bytes of parameters)
+ 00Ch	CancelIoFile		(8 bytes of parameters)
+ 00Dh	CancelTimer		(8 bytes of parameters)
+ 00Eh	ClearEvent		(4 bytes of parameters)
+ 00Fh	Close			(4 bytes of parameters)
+ 010h	CloseObjectAuditAlarm	(12 bytes of parameters)
+ 011h	CompleteConnectPort	(4 bytes of parameters)
+ 012h	ConnectPort		(32 bytes of parameters)
+ 013h	Continue		(8 bytes of parameters)
+ 014h	CreateDirectoryObject	(12 bytes of parameters)
+ 015h	CreateEvent		(20 bytes of parameters)
+ 016h	CreateEventPair		(12 bytes of parameters)
+ 017h	CreateFile		(44 bytes of parameters)
+ 018h	CreateIoCompletion	(16 bytes of parameters)
+ 019h	CreateKey		(28 bytes of parameters)
+ 01Ah	CreateMailslotFile	(32 bytes of parameters)
+ 01Bh	CreateMutant		(16 bytes of parameters)
+ 01Ch	CreateNamedPipeFile	(56 bytes of parameters)
+ 01Dh	CreatePagingFile	(16 bytes of parameters)
+ 01Eh	CreatePort		(20 bytes of parameters)
+ 01Fh	CreateProcess		(32 bytes of parameters)
+ 020h	CreateProfile		(36 bytes of parameters)
+ 021h	CreateSection		(28 bytes of parameters)
+ 022h	CreateSemaphore		(20 bytes of parameters)
+ 023h	CreateSymbolicLinkObject	(16 bytes of parameters)
+ 024h	CreateThread		(32 bytes of parameters)
+ 025h	CreateTimer		(16 bytes of parameters)
+ 026h	CreateToken		(52 bytes of parameters)
+ 027h	DelayExecution		(8 bytes of parameters)
+ 028h	DeleteAtom		(4 bytes of parameters)
+ 029h	DeleteFile		(4 bytes of parameters)
+ 02Ah	DeleteKey		(4 bytes of parameters)
+ 02Bh	DeleteObjectAuditAlarm	(12 bytes of parameters)
+ 02Ch	DeleteValueKey		(8 bytes of parameters)
+ 02Dh	DeviceIoControlFile	(40 bytes of parameters)
+ 02Eh	DisplayString		(4 bytes of parameters)
+ 02Fh	DuplicateObject		(28 bytes of parameters)
+ 030h	DuplicateToken		(24 bytes of parameters)
+ 031h	EnumerateKey		(24 bytes of parameters)
+ 032h	EnumerateValueKey	(24 bytes of parameters)
+ 033h	ExtendSection		(8 bytes of parameters)
+ 034h	FindAtom		(8 bytes of parameters)
+ 035h	FlushBuffersFile	(8 bytes of parameters)
+ 036h	FlushInstructionCache	(12 bytes of parameters)
+ 037h	FlushKey		(4 bytes of parameters)
+ 038h	FlushVirtualMemory	(16 bytes of parameters)
+ 039h	FlushWriteBuffer	(no parameters)
+ 03Ah	FreeVirtualMemory	(16 bytes of parameters)
+ 03Bh	FsControlFile		(40 bytes of parameters)
+ 03Ch	GetContextThread	(8 bytes of parameters)
+ 03Dh	GetPlugPlayEvent	(16 bytes of parameters)
+ 03Eh	GetTickCount		(no parameters)
+ 03Fh	ImpersonateClientOfPort	(8 bytes of parameters)
+ 040h	ImpersonateThread	(12 bytes of parameters)
+ 041h	InitializeRegistry	(4 bytes of parameters)
+ 042h	ListenPort		(8 bytes of parameters)
+ 043h	LoadDriver		(4 bytes of parameters)
+ 044h	LoadKey	(8 bytes of parameters)
+ 045h	LoadKey2		(12 bytes of parameters)
+ 046h	LockFile		(40 bytes of parameters)
+ 047h	LockVirtualMemory	(16 bytes of parameters)
+ 048h	MakeTemporaryObject	(4 bytes of parameters)
+ 049h	MapViewOfSection	(40 bytes of parameters)
+ 04Ah	NotifyChangeDirectoryFile	(36 bytes of parameters)
+ 04Bh	NotifyChangeKey		(40 bytes of parameters)
+ 04Ch	OpenDirectoryObject	(12 bytes of parameters)
+ 04Dh	OpenEvent		(12 bytes of parameters)
+ 04Eh	OpenEventPair		(12 bytes of parameters)
+ 04Fh	OpenFile		(24 bytes of parameters)
+ 050h	OpenIoCompletion	(12 bytes of parameters)
+ 051h	OpenKey			(12 bytes of parameters)
+ 052h	OpenMutant		(12 bytes of parameters)
+ 053h	OpenObjectAuditAlarm	(48 bytes of parameters)
+ 054h	OpenProcess		(16 bytes of parameters)
+ 055h	OpenProcessToken	(12 bytes of parameters)
+ 056h	OpenSection		(12 bytes of parameters)
+ 057h	OpenSemaphore		(12 bytes of parameters)
+ 058h	OpenSymbolicLinkObject	(12 bytes of parameters)
+ 059h	OpenThread		(16 bytes of parameters)
+ 05Ah	OpenThreadToken		(16 bytes of parameters)
+ 05Bh	OpenTimer		(12 bytes of parameters)
+ 05Ch	PlugPlayControl		(16 bytes of parameters)
+ 05Dh	PrivilegeCheck		(12 bytes of parameters)
+ 05Eh	PrivilegedServiceAuditAlarm	(20 bytes of parameters)
+ 05Fh	PrivilegeObjectAuditAlarm	(24 bytes of parameters)
+ 060h	ProtectVirtualMemory	(20 bytes of parameters)
+ 061h	PulseEvent		(8 bytes of parameters)
+ 062h	QueryInformationAtom	(20 bytes of parameters)
+ 063h	QueryAttributesFile	(8 bytes of parameters)
+ 064h	QueryDefaultLocale	(8 bytes of parameters)
+ 065h	QueryDirectoryFile	(44 bytes of parameters)
+ 066h	QueryDirectoryObject	(28 bytes of parameters)
+ 067h	QueryEaFile		(36 bytes of parameters)
+ 068h	QueryEvent		(20 bytes of parameters)
+ 069h	QueryFullAttributesFile	(8 bytes of parameters)
+ 06Ah	QueryInformationFile	(20 bytes of parameters)
+ 06Bh	QueryIoCompletion	(20 bytes of parameters)
+ 06Ch	QueryInformationPort	(20 bytes of parameters)
+ 06Dh	QueryInformationProcess	(20 bytes of parameters)
+ 06Eh	QueryInformationThread	(20 bytes of parameters)
+ 06Fh	QueryInformationToken	(20 bytes of parameters)
+ 070h	QueryIntervalProfile	(8 bytes of parameters)
+ 071h	QueryKey		(20 bytes of parameters)
+ 072h	QueryMultipleValueKey	(24 bytes of parameters)
+ 073h	QueryMutant		(20 bytes of parameters)
+ 074h	QueryObject		(20 bytes of parameters)
+ 075h	QueryOleDirectoryFile	(44 bytes of parameters)
+ 076h	QueryPerformanceCounter	(8 bytes of parameters)
+ 077h	QuerySection		(20 bytes of parameters)
+ 078h	QuerySecurityObject	(20 bytes of parameters)
+ 079h	QuerySemaphore		(20 bytes of parameters)
+ 07Ah	QuerySymbolicLinkObject	(12 bytes of parameters)
+ 07Bh	QuerySystemEnvironmentValue	(16 bytes of parameters)
+ 07Ch	QuerySystemInformation	(16 bytes of parameters)
+ 07Dh	QuerySystemTime		(4 bytes of parameters)
+ 07Eh	QueryTimer		(20 bytes of parameters)
+ 07Fh	QueryTimerResolution	(12 bytes of parameters)
+ 080h	QueryValueKey		(24 bytes of parameters)
+ 081h	QueryVirtualMemory	(24 bytes of parameters)
+ 082h	QueryVolumeInformationFile	(20 bytes of parameters)
+ 083h	QueueApcThread		(20 bytes of parameters)
+ 084h	RaiseException		(12 bytes of parameters)
+ 085h	RaiseHardError		(24 bytes of parameters)
+ 086h	ReadFile		(36 bytes of parameters)
+ 087h	ReadFileScatter		(36 bytes of parameters)
+ 088h	ReadRequestData		(24 bytes of parameters)
+ 089h	ReadVirtualMemory	(20 bytes of parameters)
+ 08Ah	RegisterThreadTerminatePort	(4 bytes of parameters)
+ 08Bh	ReleaseMutant		(8 bytes of parameters)
+ 08Ch	ReleaseSemaphore	(12 bytes of parameters)
+ 08Dh	RemoveIoCompletion	(20 bytes of parameters)
+ 08Eh	ReplaceKey		(12 bytes of parameters)
+ 08Fh	ReplyPort		(8 bytes of parameters)
+ 090h	ReplyWaitReceivePort	(16 bytes of parameters)
+ 091h	ReplyWaitReplyPort	(8 bytes of parameters)
+ 092h	RequestPort		(8 bytes of parameters)
+ 093h	RequestWaitReplyPort	(12 bytes of parameters)
+ 094h	ResetEvent		(8 bytes of parameters)
+ 095h	RestoreKey		(12 bytes of parameters)
+ 096h	ResumeThread		(8 bytes of parameters)
+ 097h	SaveKey	(8 bytes of parameters)
+ 098h	SetIoCompletion		(20 bytes of parameters)
+ 099h	SetContextThread	(8 bytes of parameters)
+ 09Ah	SetDefaultHardErrorPort	(4 bytes of parameters)
+ 09Bh	SetDefaultLocale	(8 bytes of parameters)
+ 09Ch	SetEaFile		(16 bytes of parameters)
+ 09Dh	SetEvent		(8 bytes of parameters)
+ 09Eh	SetHighEventPair	(4 bytes of parameters)
+ 09Fh	SetHighWaitLowEventPair	(4 bytes of parameters)
+ 0A0h	???			(??? bytes of parameters)
+ 0A1h	SetInformationFile	(20 bytes of parameters)
+ 0A2h	SetInformationKey	(16 bytes of parameters)
+ 0A3h	SetInformationObject	(16 bytes of parameters)
+ 0A4h	SetInformationProcess	(16 bytes of parameters)
+ 0A5h	SetInformationThread	(16 bytes of parameters)
+ 0A6h	SetInformationToken	(16 bytes of parameters)
+ 0A7h	SetIntervalProfile	(8 bytes of parameters)
+ 0A8h	SetLdtEntries		(24 bytes of parameters)
+ 0A9h	SetLowEventPair		(4 bytes of parameters)
+ 0AAh	SetLowWaitHighEventPair	(4 bytes of parameters)
+ 0ABh	???			(??? bytes of parameters)
+ 0ACh	SetSecurityObject	(12 bytes of parameters)
+ 0ADh	SetSystemEnvironmentValue	(8 bytes of parameters)
+ 0AEh	SetSystemInformation	(12 bytes of parameters)
+ 0AFh	SetSystemPowerState	(12 bytes of parameters)
+ 0B0h	SetSystemTime		(8 bytes of parameters)
+ 0B1h	SetTimer		(28 bytes of parameters)
+ 0B2h	SetTimerResolution	(12 bytes of parameters)
+ 0B3h	SetValueKey		(24 bytes of parameters)
+ 0B4h	SetVolumeInformationFile	(20 bytes of parameters)
+ 0B5h	ShutdownSystem		(4 bytes of parameters)
+ 0B6h	SignalAndWaitForSingleObject	(16 bytes of parameters)
+ 0B7h	StartProfile		(4 bytes of parameters)
+ 0B8h	StopProfile		(4 bytes of parameters)
+ 0B9h	SuspendThread		(8 bytes of parameters)
+ 0BAh	SystemDebugControl	(24 bytes of parameters)
+ 0BBh	TerminateProcess	(8 bytes of parameters)
+ 0BCh	TerminateThread		(8 bytes of parameters)
+ 0BDh	TestAlert		(no parameters)
+ 0BEh	UnloadDriver		(4 bytes of parameters)
+ 0BFh	UnloadKey		(4 bytes of parameters)
+ 0C0h	UnlockFile		(20 bytes of parameters)
+ 0C1h	UnlockVirtualMemory	(16 bytes of parameters)
+ 0C2h	UnmapViewOfSection	(8 bytes of parameters)
+ 0C3h	VdmControl		(8 bytes of parameters)
+ 0C4h	WaitForMultipleObjects	(20 bytes of parameters)
+ 0C5h	WaitForSingleObject	(12 bytes of parameters)
+ 0C6h	WaitHighEventPair	(4 bytes of parameters)
+ 0C7h	WaitLowEventPair	(4 bytes of parameters)
+ 0C8h	WriteFile		(36 bytes of parameters)
+ 0C9h	WriteFileGather		(36 bytes of parameters)
+ 0CAh	WriteRequestData	(24 bytes of parameters)
+ 0CBh	WriteVirtualMemory	(20 bytes of parameters)
+ 0CCh	W32Call			(20 bytes of parameters)
+ 0CDh	CreateChannel		(8 bytes of parameters)
+ 0CEh	ListenChannel		(8 bytes of parameters)
+ 0CFh	OpenChannel		(8 bytes of parameters)
+ 0D0h	ReplyWaitSendChannel	(12 bytes of parameters)
+ 0D1h	SendWaitReplyChannel	(16 bytes of parameters)
+ 0D2h	SetContextChannel	(4 bytes of parameters)
+ 0D3h	YieldExecution		(no parameters)
 --------l-2E----BXE22E-----------------------
 INT 2E - 4DOS v2.x-3.03 SHELL2E.COM - UNINSTALL
 	BX = E22Eh
@@ -3691,12 +3906,12 @@ Return: AL = FFh (for compatibility with other INT 2F functions)
 --------D-2F1201-----------------------------
 INT 2F U - DOS 3.0+ internal - CLOSE CURRENT FILE
 	AX = 1201h
-	SS = DOS DS (must be using a DOS internal stack)
+	SS = DOS DS = DOS kernel data seg (must be using a DOS internal stack)
 	SDA current SFT pointer -> SFT of file to close
 Return: CF set on error
-	BX???
-	CX new reference count of SFT
 	ES:DI -> SFT for file
+	CX undefined (new reference count of SFT in many versions)
+	BX destroyed
 SeeAlso: AX=1106h,AX=1227h,INT 21/AH=3Eh
 --------D-2F1202-----------------------------
 INT 2F U - DOS 3.0+ internal - GET INTERRUPT ADDRESS
@@ -3750,9 +3965,9 @@ INT 2F U - DOS 3.0+ internal - DECREMENT SFT REFERENCE COUNT
 	AX = 1208h
 	ES:DI -> SFT
 Return: AX = original value of reference count
-Notes:	if the reference count was 1, it is set to FFFFh (since 0 indicates
-	  that the SFT is not in use).	It is the caller's responsibility to
-	  set the reference count to zero after cleaning up.
+Notes:	if the reference count was 1, it is set to FFFFh ("busy", since 0
+	  indicates that the SFT is not in use).  It is the caller's
+	  responsibility to set the reference count to zero after cleaning up.
 	used by network redirectors such as MSCDEX
 SeeAlso: AX=1106h
 --------D-2F1209-----------------------------
@@ -4242,6 +4457,35 @@ Notes:	not available under DR DOS 5.0 or 6.0, or Novell DOS 7
 	supported by FREEVER.COM, a freeware DOS version faking TSR by Matthias
 	  Paul
 SeeAlso: INT 21/AH=30h,INT 21/AX=3306h,INT 2F/AX=E000h"SETDRVER"
+----------2F1230-----------------------------
+INT 2F U - Windows95 - FIND SFT ENTRY IN INTERNAL FILE TABLES
+	AX = 1230h
+	ES:DI -> SFT entry
+Return: CF clear if SFT found in internal table
+	CF set if SFT not in any internal file table
+	    AX = 0000h
+	    SI:CX = 32-bit starting cluster number for directory
+	    DX = directory entry number
+	    BX = index into new file system table
+Note:	the new file system table from which the return values are taken is
+	  reported to be statically allocated with 20 entries, and used only
+	  for FCB calls
+BUG:	Win95-OSR2 is reported to have a bug that can potentially corrupt
+	  memory if SFT tables are "arranged poorly"
+SeeAlso: AX=1231h,AX=1200h
+----------2F1231-----------------------------
+INT 2F U - Windows95 - SET/CLEAR "REPORT WINDOWS TO DOS PROGRAMS" FLAG
+	AX = 1231h
+	DL = function
+	    00h clear "IsWIN386" bit 1
+	    01h set "IsWIN386" bit 1
+	    02h set byte after "IsWIN386" to 01h
+	    else
+	        Return:	CF set
+			AX = 0001h
+Return: CF clear
+	AX = 0000h
+SeeAlso: AX=1230h,AX=1200h
 --------O-2F12FFBL00-------------------------
 INT 2F - FreeDOS - FDAK-DDT - INSTALLATION CHECK / STATUS CHECK
 	AX = 12FFh
@@ -5940,8 +6184,10 @@ Value	Name   CallOut V86 PM	Description
  0487h	NWSUP	     Y	N  N	NetWare Vnetbios shim
  0488h	VTDI		N  N	(Win95)
  0489h	VIP		Y  N	(Win95)
+ 0489h	FTCVIP		Y  Y	Frontier Technologies' VIP
  048Ah	VTCP		Y
  048Ah	MSTCP		Y  N	(Win95) TCP stack
+ 048Ah	FTCTDI		Y  Y	Future Technologies' TCP stack
  048Bh	VCache	     N	Y  Y	(Win4Workgroups 3.11) Virtual File Cache
  048Bh	VCACHE		Y  Y	(Win95) disk cache
  048Ch	???			???
@@ -5989,6 +6235,8 @@ Value	Name   CallOut V86 PM	Description
  2925h	EDOS		Y  Y	Enhanced DOS by Firefly Software
  292Dh	VSBPD		Y  Y	Sound Blaster Pro
  295Ah	GRVSULTR	Y  Y	Gravis UltraSound / UltraSound ACE
+ 3048h	FTCTCPIP	N  Y	Frontier Technologies' TCP/IP stack
+ 3049h	???			(called by FNFSC32.VXD, FrontierTech's VNFSD)
  304Ch	DWCFGMG.SYS	Y	Plug-and-Play configuration access
  3098h	VstlthD	     N	N  N	for QEMM Stealth ROM mode
  3099h	VVidramD	Y  N	for QEMM VIDRAM support
@@ -6009,6 +6257,7 @@ Value	Name   CallOut V86 PM	Description
  33FCh	ASPIENUM	N  N	(Win95)
  34DCh	MAGNARAM	N  Y	Quarterdeck MagnaRAM (MAGNA31.VXD/MAGNA95.VXD)
  357Eh	DSOUND		Y  Y	(Win95) DirectSound
+ 35C5h	LUGEPS		Y  Y	Lugaru's Epsilon editor
  36AEh	AIB-PC.386	Y  Y	Sunset Laboratory interface hardware driver
  377Bh	MX1501HAD		Cherry keyboard chipcard reader
  38DAh	VIWD		Y  Y	UltraSond PnP InterWave driver v2.0beta
@@ -9349,430 +9598,4 @@ Offset	Size	Description	(Table 2421)
  03h	WORD	??? (0001h) (ROMSHELL.COM checks if =0001h)
  05h	BYTE	??? (00h)
  06h	WORD	??? (04D5h)
---------V-2F1A00-----------------------------
-INT 2F - DOS 4.0+ ANSI.SYS - INSTALLATION CHECK
-	AX = 1A00h
-Return: AL = FFh if installed
-Notes:	AVATAR.SYS also responds to this call
-	documented for DOS 5+, but undocumented for DOS 4.x
---------V-2F1A00BX414E-----------------------
-INT 2F - ANSIPLUS.SYS v2.00+ - INSTALLATION CHECK
-	AX = 1A00h
-	BX = 414Eh ('AN')
-	CX = 5349h ('SI')
-	DX = 2B2Bh ('++')
-Return: AL = FFh if installed
-	    CF clear
-	    ES:BX -> INT 29 entry point
-	    CX = ANSIPLUS BCD version number (v3.10+, CH=major, CL=minor)
-	    DL = capabilities (v4.00+)
-		00h full capability driver
-		01h reduced capability driver
-		2Bh full capability driver (before v4.00)
-Program: ANSIPLUS.SYS is a CON device driver by Kristofer Sweger which
-	  replaces the normal ANSI.SYS with a more powerful version having
-	  many additional features
-Notes:	ANSIPLUS also identifies itself as ANSI.SYS if BX,CX, or DX differ
-	  from the magic values above
-	an additional installation check is to test for the signature
-	  "ANSIPLUS" 12 bytes before the INT 29 entry point; the version
-	  number is also available as a four-character ASCII string (e.g.
-	  "4.00") four bytes before the entry point
-SeeAlso: AX=1AA5h,AX=1AA6h,AX=1AA7h,AX=1AA8h,AX=1AA9h,AX=1AAAh,AX=D44Fh
---------V-2F1A00BX4156-----------------------
-INT 2F - AVATAR.SYS - INSTALLATION CHECK
-	AX = 1A00h
-	BX = 4156h ('AV')
-	CX = 4154h ('AT')
-	DX = 4152h ('AR')
-Return: AL = FFh if installed
-	    CF clear
-	    BX = AVATAR protocol level supported
-	    CX = driver type
-		0000h AVATAR.SYS
-		4456h DVAVATAR.COM inside DESQview window
-	    DX = 0016h
-Program: AVATAR.SYS is a CON replacement by George Adam Stanislav which
-	  interprets AVATAR command codes in the same way that ANSI interprets
-	  ANSI command codes
-Notes:	AVATAR also identifies itself as ANSI.SYS if BX, CX, or DX differ from
-	  the magic values
-SeeAlso: AX=1A21h,AX=1A3Ch,AX=1A3Fh,AX=1A52h,AX=1A72h,AX=1A7Dh,AX=1AADh"AVATAR"
---------V-2F1A01-----------------------------
-INT 2F U - DOS 4.0+ ANSI.SYS internal - GET/SET DISPLAY INFORMATION
-	AX = 1A01h
-	CL = function
-	    7Fh for GET
-	    5Fh for SET
-	DS:DX -> parm block as for INT 21,AX=440Ch,CX=037Fh/035Fh respectively
-Return: CF clear if successful
-	    AX destroyed
-	CF set on error
-	    AX = error code (many non-standard)
-Note:	presumably this is the DOS IOCTL interface to ANSI.SYS
-SeeAlso: AX=1A02h,INT 21/AX=440Ch
---------V-2F1A02-----------------------------
-INT 2F U - DOS 4.0+ ANSI.SYS internal - MISCELLANEOUS REQUESTS
-	AX = 1A02h
-	DS:DX -> parameter block (see #2422)
-Return: CF clear if successful
-	CF set on error
-	    AX = error code
-Note:	DOS 5+ chains to previous handler if AL > 02h on call
-SeeAlso: AX=1A01h
-
-Format of ANSI.SYS parameter block:
-Offset	Size	Description	(Table 2422)
- 00h	BYTE	subfunction
-		00h set/reset interlock
-		01h get /L flag
- 01h	BYTE	interlock state
-		00h=reset, 01h=set
-		  This interlock prevents some of the ANSI.SYS post-processing
-		  in its hook onto INT 10, AH=00h mode set
- 02h	BYTE	(returned)
-		00h if /L not in effect
-		01h if /L in effect
---------V-2F1A21-----------------------------
-INT 2F - AVATAR.SYS - SET DRIVER STATE
-	AX = 1A21h (AL='!')
-	DS:SI -> command string with one or more state characters (see #2423)
-	CX = length of command string
-Return: CF set on error (invalid subfunction)
-	CF clear if successful
-Note:	the characters in the state string are interpreted left to right, and
-	  need not be in any particular order
-SeeAlso: AX=1A00h/BX=4156h,AX=1A3Fh
-
-(Table 2423)
-Values for AVATAR.SYS state characters:
- 'a'	activate driver
- 'd'	disable driver
- 'f'	use fast screen output
- 'g'	always convert gray keys (+ and -) to function keys
- 'G'	never convert gray keys
- 'l'	convert gray keys only when ScrollLock active
- 's'	use slow screen output
- 't'	Tandy 1000 keyboard (not yet implemented)
---------V-2F1A3C-----------------------------
-INT 2F U - AVATAR.SYS v0.11 - ???
-	AX = 1A3Ch
-	???
-Return: CX = 0000h
-SeeAlso: AX=1A00h/BX=4156h,AX=1A21h,AX=1A3Eh
---------V-2F1A3E-----------------------------
-INT 2F U - AVATAR.SYS v0.11 - ???
-	AX = 1A3Eh
-	CL = ???
-	CH = ???
-	DL = ???
-	DH = ???
-Return: CL = ???
-	CH = ???
-	DL = ???
-	DH = ???
-SeeAlso: AX=1A3Ch,AX=1A3Fh
---------V-2F1A3F-----------------------------
-INT 2F - AVATAR.SYS - QUERY DRIVER STATE
-	AX = 1A3Fh (AL='?')
-	ES:DI -> buffer
-	CX = length of buffer in bytes
-Return: CF clear
-	CX = actual size of returned info
-Note:	the returned information consists of multiple letters whose meanings
-	  are described under AX=1A21h
-SeeAlso: AX=1A00h/BX=4156h,AX=1A21h,AX=1A44h
---------S-2F1A42BX4156-----------------------
-INT 2F - AVATAR Serial Dispatcher - INSTALL IRQ3 HANDLER
-	AX = 1A42h
-	BX = 4156h ('AV')
-	ES:DI -> FAR handler for serial port using IRQ3
-	DS = data segment needed by handler
-Return: AX = status/return value
-	    0000h if no more room
-	    1A42h if ASD not installed
-	    else handle to use when uninstalling
-Notes:	the handler need not save/restore registers or signal EOI to the
-	  interrupt controller
-	the handler should return AX=0000h if the interrupt was meant for it,
-	  and either leave AX unchanged or return a non-zero value otherwise
-	the most recently installed handler will be called first, continuing
-	  to earlier handlers until one returns AX=0000h
-SeeAlso: AX=1A43h,AX=1A62h
---------S-2F1A43BX4156-----------------------
-INT 2F - AVATAR Serial Dispatcher - INSTALL IRQ4 HANDLER
-	AX = 1A43h
-	BX = 4156h ('AV')
-	ES:DI -> FAR handler for serial port using IRQ4
-	DS = data segment needed by handler
-Return: AX = status/return value
-	    0000h if no more room
-	    1A43h if ASD not installed
-	    else handle to use when uninstalling
-Notes:	(see AX=1A42h)
-SeeAlso: AX=1A42h,AX=1A63h
---------V-2F1A44BX4156-----------------------
-INT 2F - AVATAR.SYS v0.11+ - GET DATA SEGMENT
-	AX = 1A44h
-	BX = 4156h ('AV')
-Return: AX = 0000h
-	DS = data segment
-	CX = size of data segment
-Note:	AVATAR.SYS calls this function whenever it is invoked.	If each
-	  process under a multitasker hooks this function and provides a
-	  separate data segment, AVATAR.SYS becomes fully reentrant.
-SeeAlso: AX=1A21h,AX=1A3Fh,AX=1A52h
---------V-2F1A52-----------------------------
-INT 2F U - AVATAR.SYS v0.11 - GET ???
-	AX = 1A52h
-	CX = size of buffer
-	ES:DI -> buffer
-Return: ??? copied into user buffer
-Note:	the maximum size of the data which may be copied is returned by
-	  AX=1A72h
-SeeAlso: AX=1A53h,AX=1A72h
---------V-2F1A53-----------------------------
-INT 2F U - AVATAR.SYS v0.11 - ???
-	AX = 1A53h
-	CL = ??? (00h-05h)
-	???
-Return: ???
-SeeAlso: AX=1A00h/BX=4156h,AX=1A52h,AX=1A72h
---------S-2F1A62BX4156-----------------------
-INT 2F - AVATAR Serial Dispatcher - UNINSTALL IRQ3 HANDLER
-	AX = 1A62h
-	BX = 4156h ('AV')
-	CX = handle for IRQ routine returned by AX=1A42h
-SeeAlso: AX=1A42h,AX=1A63h
---------S-2F1A63BX4156-----------------------
-INT 2F - AVATAR Serial Dispatcher - UNINSTALL IRQ4 HANDLER
-	AX = 1A63h
-	BX = 4156h ('AV')
-	CX = handle for IRQ routine returned by AX=1A43h
-SeeAlso: AX=1A43h,AX=1A62h
---------V-2F1A72-----------------------------
-INT 2F U - AVATAR.SYS v0.11 - GET ??? SIZE
-	AX = 1A72h
-Return: CX = maximum size of ???
-SeeAlso: AX=1A00h/BX=4156h,AX=1A52h,AX=1A7Bh,AX=1AADh"AVATAR"
---------V-2F1A7B-----------------------------
-INT 2F U - AVATAR.SYS v0.11 - ???
-	AX = 1A7Bh
-Return: AX = 0000h
-	CX = 0000h
-SeeAlso: AX=1A00h/BX=4156h,AX=1A72h,AX=1A7Dh
---------V-2F1A7D-----------------------------
-INT 2F U - AVATAR.SYS v0.11 - ???
-	AX = 1A7Dh
-Return: AX = ???
-SeeAlso: AX=1A00h/BX=4156h,AX=1A7Bh
---------V-2F1AA3-----------------------------
-INT 2F - ANSIPLUS v4.03+ - GET/SET ANSIPLUS INTERNAL VARIABLES
-	AX = 1AA3h
-	BH = function
-	    00h get current/default colors
-		Return: CH = default colors
-			CL = current colors
-	    01h set current/default colors
-		CH = default colors (00h = leave unchanged)
-		CL = current colors
-	    02h get current subscreen region
-		Return: BH,BL = true screen rows,columns
-			CH,CL = top left row,column of region
-			DH,DL = bottom right row,column of region
-	    03h set subscreen region
-		CH,CL = top left row,column of region
-		DH,DL = bottom right row,column of region
-	    04h get driver features (bits 0-31)
-		Return: DX:CX = current feature bits
-	    05h set driver features (bits 0-31)
-		DX:CX = feature bits
-	    06h get driver features (bits 32-63)
-		Return: DX:CX = current feature bits
-	    07h set driver features (bits 32-63)
-		DX:CX = feature bits
-	    other: reserved for future use
-SeeAlso: AX=1AA4h,AX=1AA5h
---------V-2F1AA4-----------------------------
-INT 2F - ANSIPLUS v4.02+ - GET/SET ANSIPLUS SMOOTH SCROLLING RATE
-	AX = 1AA4h
-	BL = function
-	    00h get scrolling rate
-	    01h set scrolling rate
-		BH = new minimum scrolling rate in scan lines per retrace
-Return: BH = smooth scrolling rate
-SeeAlso: AX=1AA3h,AX=1AA5h
---------V-2F1AA5-----------------------------
-INT 2F - ANSIPLUS v4.00+ - GET/SET ANSIPLUS CLIPBOARD
-	AX = 1AA5h
-	DH = subfunction
-	    00h get clipboard information
-	    01h get clipboard text
-	    02h set clipboard text
-	    03h append text to clipboard
-	    04h clear clipboard
-	    05h paste clipboard to keyboard
-	ES:BX -> data area for subfunctions 01h, 02h, and 03h
-	CX = size of data area (maximum size for subfunction 01h, actual size
-	    to add to clipboard for subfunctions 02h and 03h)
-Return: AL = status
-	    00h successful
-	    01h unsupported subfunction (reduced capability driver)
-	    02h insufficient space
-	    A5h unsupported function (ANSIPLUS before v4.00)
-	ES:BX -> ANSIPLUS local clipboard data
-	CX = number of bytes currently in local clipboard
-	DX = maximum size of local clipboard
-SeeAlso: AX=1A00h/BX=414Eh,AX=1AA4h,AX=1AA6h
---------V-2F1AA6-----------------------------
-INT 2F - ANSIPLUS v4.00+ - ENABLE/DISABLE ANSIPLUS DRIVER
-	AX = 1AA6h
-	BH = function
-	    00h get hooked interrupts
-	    01h set hooked interrupts mask
-		BL = new interrupts mask (see #2424)
-Return: BL = previous interrupts mask (see #2424)
-SeeAlso: AX=1A00h/BX=414Eh,AX=1AA7h
-
-Desc:	used to temporarily disable any prior copies of ANSIPLUS when a new
-	  copy is installed, such as in a multitasking system like DESQview
-Note:	only the most-recently loaded copy of ANSIPLUS on the current INT 2F
-	  chain responds to this call
-
-Bitfields for ANSIPLUS hooked interrupts mask:
-Bit(s)	Description	(Table 2424)
- 0	INT 09 hook disabled
- 1	INT 10 hook disabled
- 2	INT 15 hook disabled
- 3	INT 16 hook disabled
- 4	INT 1C hook disabled
- 5	reset all bits when INT 29 called
- 6	INT 29 hook disabled
- 7	INT 33, INT 74, or other mouse event hook disabled
---------V-2F1AA7-----------------------------
-INT 2F - ANSIPLUS v4.00+ - ENABLE/DISABLE ANSIPLUS FEATURES
-	AX = 1AA7h
-	BL = function
-	    00h prevent scroll-back saves
-	    01h enable scroll-back saves
-	    02h disable key reprogramming and lock changes by escape sequences
-	    03h enable key reprogramming by escape sequences
-	    04h	disable and lock key stacking changes by escape sequences
-	    05h allow key stacking by escape sequences
-Return: nothing
-SeeAlso: AX=1AA6h
---------V-2F1AA8-----------------------------
-INT 2F - ANSIPLUS v3.10+ - GET NEXT ANSIPLUS SCROLLBACK LINE
-	AX = 1AA8h
-Return: AL = status
-	    00h successful
-		ES:BX -> screen line (character and attribute pairs)
-		CX = length of line in bytes, 0000h if no more lines or
-		      unsupported video mode
-	    01h unsupported video mode active
-	    02h screen currently scrolled back
-	    03h reduced capability driver
-	    A8h unsupported function (driver before v3.10)
-SeeAlso: AX=1A00h/BX=414Eh,AX=1AA9h
---------V-2F1AA9-----------------------------
-INT 2F - ANSIPLUS v3.10+ - GET ANSIPLUS SCROLLBACK INFORMATION
-	AX = 1AA9h
-Return: AL = status
-	    00h successful
-		BX = current number of lines in scrollback buffer
-		CX = number of bytes in one line
-	    01h unsupported video mode active
-	    02h screen currently scrolled back
-	    03h reduced capability driver
-	    A9h unsupported function (driver before v3.10)
-Desc:	determine how much data is in the scrollback buffer and initialize
-	  scrollback retrieval to return the first line on the next call to
-	  AX=1AA8h
-SeeAlso: AX=1A00h/BX=414Eh,AX=1AA8h
---------V-2F1AAA-----------------------------
-INT 2F - ANSIPLUS v3.01+ - GET/SET ANSIPLUS SCREEN SAVER BLANKING TIME
-	AX = 1AAAh
-	BX = function
-	    FFFFh to get current blanking time
-	    other to set time
-		CX = blanking time in clock ticks (0000h-7FFFh)
-Return: BX = current blanking time
-	CX = blanking time when last set
-SeeAlso: AX=1A00h/BX=414Eh,AX=1AABh
---------V-2F1AAB-----------------------------
-INT 2F - ANSIPLUS v3.01+ - SET ANSIPLUS KEY REPEAT RATE
-	AX = 1AABh
-	BX = repeat rate in characters per second
-	    0000h use BIOS repeat rate
-Return: nothing
-SeeAlso: AX=1A00h/BX=414Eh,AX=1AAAh,AX=1AACh
---------V-2F1AAC-----------------------------
-INT 2F - ANSIPLUS v3.00+ - LOAD CHARACTER GENERATOR
-	AX = 1AACh
-	BH = number of bytes per character pattern
-	BL = VGA/EGA character table to be loaded
-	CX = number of characters to load
-	DX = starting character code (offset into Map2 block)
-	ES:BP -> user character table to be loaded
-Return: AX = 1100h
-Desc:	load the EGA/VGA character generator without the BIOS function's
-	  side effects of resetting the video mode and color palette
-SeeAlso: AX=1A00h/BX=414Eh,AX=1AABh,AX=1AADh"ANSIPLUS",INT 10/AX=1100h
---------V-2F1AAD-----------------------------
-INT 2F - ANSIPLUS v2.00+ - ANSIPLUS DEVICE STATUS REPORT
-	AX = 1AADh
-	BL = report request code (81h-96h for v4.00)
-	CX = color selector or key code, if required by request
-Return: AX = first reported result
-	BX = second result
-	CX = third result, if applicable (unchanged otherwise)
-	DX = fourth result, if applicable (unchanged otherwise)
-Desc:	get device status reports equivalent to those for Esc [#n sequences
-	  while bypassing any device redirection and avoiding the need to
-	  parse the returned result
-Note:	the report request code in BL is identical to the number in the
-	  corresponding Esc [#n sequence
-SeeAlso: AX=1A00h/BX=414Eh,AX=1AACh
---------V-2F1AADDX0000-----------------------
-INT 2F U - AVATAR.SYS v0.11 - ???
-	AX = 1AADh
-	DX = 0000h
-	CX = subfunction (00h-0Ch)
-	???
-Return: AX = 0000h if DX was nonzero
-	???
-SeeAlso: AX=1A00h/BX=4156h,AX=1A72h
---------m-2F1B00-----------------------------
-INT 2F U - DOS 4+ XMA2EMS.SYS extension internal - INSTALLATION CHECK
-	AX = 1B00h
-Return: AL = FFh if installed
-Note:	XMA2EMS.SYS extension is only installed if DOS has page frames to hide.
-	This extension hooks onto INT 67/AH=58h and returns from that call data
-	  which excludes the physical pages being used by DOS.
-SeeAlso: AH=1Bh"FRAME INFO"
---------m-2F1B-------------------------------
-INT 2F U - DOS 4+ XMA2EMS.SYS extension internal - GET HIDDEN FRAME INFORMATION
-	AH = 1Bh
-	AL <> 00h
-	DI = hidden physical page number
-Return: AX = FFFFh if failed (no such hidden page)
-	AX = 0000h if OK, then
-	    ES = segment of page frame
-	    DI = physical page number
-Notes:	this corresponds to the data edited out of the INT 67/AH=58h call
-	FASTOPEN makes this call with AL = FFh
-SeeAlso: AX=1B00h
---------V-2F2300-----------------------------
-INT 2F - DR DOS 5.0 GRAFTABL - INSTALLATION CHECK
-	AX = 2300h
-Return: AH = FFh
-Note:	this installation check does not follow the usual format
-SeeAlso: AH=23h,AX=2E00h
---------V-2F23-------------------------------
-INT 2F - DR DOS 5.0 GRAFTABL - GET GRAPHICS DATA
-	AH = 23h
-	AL nonzero
-Return: AH = FFh
-	ES:BX -> graphics data (8 bytes for each character from 80h to FFh)
-SeeAlso: AX=2300h,AX=2E00h
 --------!---Section--------------------------

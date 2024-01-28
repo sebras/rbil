@@ -1,7 +1,11 @@
-My queue of submissions still isn't empty -- if you've sent in any
+My queue of submissions has grown again -- if you've sent in any
 contributions which don't appear in this release but which I've
 acknowledged, they are still on my queue and will appear in the
 future.
+
+Still on the queue: the final bits of the documented REAL/32 API, more
+OpenDOS info, the rest of the TI Professional info, lots of chipset
+info (see NEEDHELP.TXT), ....
 
 Since the interrupt list proper has now grown beyond the size that can
 be accomodated by four 360K archives, I am allowing the first four
@@ -11,14 +15,27 @@ beginning with archive D.
 UPCOMING CHANGES
 ================
 
-None planned at this time.
-Still on the queue: the final bits of the documented REAL/32 API, more
-OpenDOS info, the rest of the TI Professional info, lots of chipset
-info (see NEEDHELP.TXT), ....
+Since PORTS.LST will be running out of table numbers in the not-too-distant
+future, I expect to increase all table numbers from four to five characters
+by INTER59 (and possibly even for INTER58).
 
 
 WHAT'S NEW
 ==========
+
+INTER57
+
+updated files:
+	NEEDHELP.TXT
+
+new info:
+	lots of chipsets: AMD-640, AMD-645, 82C291, 82C391, Intel 380FB, etc.
+	lots of I2C-bus devices: Philips SAA5252/TSA5512, Xicor X24C01A, etc.
+	S3 Trio32/Trio64/Trio64V+ programming info
+	Chips&Technologies POST codes, VGA BIOS, keyboard controller, etc.
+	WindowsNT NTOS function numbers
+	more Win95 updates
+
 
 INTER56
 
@@ -91,23 +108,3 @@ new info:
 	S3VBE/Core, S3 SpeedUp
 	MPU-401 MIDI UART
 	Desktop Management Interface extension to PnP BIOS
-
-
-INTER53
-
-new info:
-	ACPI (Advanced Configuration and Power Interface)
-	Universal Serial Bus OpenHCI
-        PCI configuration registers for various Intel chipsets
-	SCSI Command Data Block and ASPI updates
-        Novell TCP/IP API, Banyan VINES printing
-	additional virus installation checks
-	MODRES
-	Toshiba model IDs
-	lots of MS-DOS7/Win95 info, including various VxD APIs
-	FAT32
-	CardBus
-	InterWave Game API
-	PCI Power Management
-	ATAPI Removable Media Device BIOS Specification
-	updated OPCODES.LST now includes MMX instructions

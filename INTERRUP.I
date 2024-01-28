@@ -1,5 +1,5 @@
 Interrupt List, part 9 of 16
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
 --------N-21F2-------------------------------
 INT 21 u - Novell NetWare v3.01+ shell interface - MULTIPLEXOR
 	AH = F2h
@@ -8053,7 +8053,12 @@ SeeAlso: AH=FBh"VIRUS",AX=FBA0h"VIRUS",AH=FCh"VIRUS"
 INT 21 - VIRUS - "Groove" - INSTALLATION CHECK
 	AX = FBA0h
 Return: AX = 0ABFh if resident
-SeeAlso: AX=FB0Ah"VIRUS",AH=FCh"VIRUS"
+SeeAlso: AX=FB0Ah"VIRUS",AX=FBFBh"VIRUS"
+--------v-21FBFB-----------------------------
+INT 21 - VIRUS - "Dir.1367" - INSTALLATION CHECK
+	AX = FBFBh
+Return: AX = BFBFh if resident
+SeeAlso: AX=FBA0h"VIRUS",AH=FCh"VIRUS"
 --------D-21FC-------------------------------
 INT 21 - DOS v2.11-2.13 - OEM FUNCTION
 	AH = FCh

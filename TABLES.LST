@@ -1,6 +1,13 @@
-SELECTED TABLES			Release 56		Last change 21dec97
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
+SELECTED TABLES			Release 57		Last change 22mar98
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
 --------!------------------------------------
+
+Buses
+	EISA (see INT 15/AX=D800h)
+	I2C / IIC bus (see I2C 00h)
+	PCI bus -- see below
+	System Management Bus (see INT 15/AX=53B0h/BH=01h)
+	Universal Serial Bus OpenHCI (see #0827 at INT 1A/AX=B10Ah)
 
 Country-Specific Information:
 	country codes (see #1088 at INT 21/AH=38h)
@@ -78,7 +85,7 @@ DOS-internal data (see INT 21/AH=52h)
 	System File Table (SFT) (see #1325,#1326,#1327,#1328)
 
 Error Codes (Other)
-	AMI BIOS diagnostics (POST) codes (see #P118)
+	AMI/Award/C&T/etc. BIOS diagnostics (POST) codes (see #P118,#P120)
 	Advanced Power Management [APM] (see #0399 at INT 15/AX=5300h)
 	EMS (see #3319 at INT 67/AH=40h)
 	PRINT.EXE (see #2281 at INT 2F/AX=0101h)
@@ -99,6 +106,7 @@ Keyboard
 	shift states (see #0511,#0512 at INT 16/AH=12h)
 
 Memory
+	memory size (see INT 12,INT 15/AH=88h,INT 15/AX=E820h)
 	SDRAM/DIMM configuration data (see #I047 at I2C A0h)
 
 NetWare
@@ -160,7 +168,7 @@ Video
 Windows
 	Global EMM Import record (see #1202 at INT 21/AX=4402h)
 	Startup Information Structure (see #2318 at INT 2F/AX=1605h)
-	WMMCALL (see INT 20"Windows")
+	VMMCALL (see INT 20"Windows")
 	VxD identifiers (see #2329 at INT 2F/AX=1684h)
 
 Other Tables
@@ -171,8 +179,6 @@ Other Tables
 	Multiprocessor Specification - Floating Pointer Structure (see #M080)
 	Option ROM header (see #F056)
 	ROM configuration table (see #0433 at INT 15/AH=C0h)
-	Universal Serial Bus OpenHCI (see #0827 at INT 1A/AX=B10Ah)
-
 --------!---CONTACT_INFO---------------------
 Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
 UUCP: {uunet,harvard}!pobox.com!ralf

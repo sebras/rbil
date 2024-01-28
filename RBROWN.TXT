@@ -6,15 +6,15 @@ The x86/MSDOS Interrupt List
 	A comprehensive listing of more than 8500 functions available through
 	interrupt calls on IBM PCs and compatibles.  Includes both
 	documented and undocumented functions, plus lists of I/O port, CMOS,
-	and memory locations, far-call entry points, and model-specific
-	registers.
-	Current version: INTER56A (release 56, 21dec97)
-			 INTER56B
-			 INTER56C
-			 INTER56D
-			 INTER56E (utility programs)
-			 INTER56F (WinHelp-related programs)
-			 INTER56G (other hypertext conversion programs)
+	and memory locations, far-call entry points, model-specific
+	registers, and system-management mode state save areas.
+	Current version: INTER57A (release 57, 22mar98)
+			 INTER57B
+			 INTER57C
+			 INTER57D
+			 INTER57E (utility programs)
+			 INTER57F (WinHelp-related programs)
+			 INTER57G (other hypertext conversion programs)
 
 DVINT
 	An extract of the MSDOS Interrupt List containing the DESQview
@@ -31,15 +31,6 @@ RBcomm
 	plain DOS, additional features are available under DESQview.
 	Current version: RBCOM346 (v3.46 29jan95)
 
-SPAWNO
-	A replacement for the Turbo C and Microsoft C spawn..() functions
-	which swaps the current program to disk, EMS, XMS, or raw extended
-	memory while the spawned program executes, leaving less than 300
-	bytes in memory.  Also includes a variant for Turbo Pascal v4.0 or
-	higher.
-	Current version: SPWNO413 (v4.13 12dec92)
-	Price: libraries free, full source code $100.
-
 RBdualVGA
 	Use two color displays on one PC.
 	Current version: RBDUAL09 (v0.9 02jun96)
@@ -49,6 +40,24 @@ RBkeyswap
 	Loads itself high, using just 64 bytes; needs only 128 bytes low
 	if no high memory is available.
 	Current version: RBKEYSWP (v2.0 22jun91; v3.0 included in AMISLIB)
+
+RBpci
+	Print out more than you ever wanted to know about the devices
+	on the PCI bus inside your computer.  All device-specific data
+	files are plain text, to let you update/customize them yourself
+	(updates for new chips which are sent to the author will be
+	included in the following release).  Includes full source code
+	for the program.
+	Current version: RBPCI110 (v1.10, 04jan98)
+
+SPAWNO
+	A replacement for the Turbo C and Microsoft C spawn..() functions
+	which swaps the current program to disk, EMS, XMS, or raw extended
+	memory while the spawned program executes, leaving less than 300
+	bytes in memory.  Also includes a variant for Turbo Pascal v4.0 or
+	higher.
+	Current version: SPWNO413 (v4.13 12dec92)
+	Price: libraries free, full source code $100.
 
 AMISLIB
 	Public Domain library (with full source code and five sample TSRs)
@@ -98,8 +107,7 @@ SPTURBO
 	Knows which compiler to invoke based on the file's extension, and
 	can run MAKE for multi-file projects.
         Current version: SPTURBO (v2.3 Aug 1,1989)
-	Note: Do not expect any updates, as I no longer use Sprint as a
-	      programming environment.
+	Note: There will be no further updates of this package.
 
 PURGEMSG
 	Delete or copy *.MSG files such that you only see those messages
@@ -183,29 +191,79 @@ Fidonet BBSs belonging to DVNet (listed below).
 
 The Interrupt List and SPAWNO are also available on Fidonet BBSs belonging
 to the Programmer's Distribution Network.  Selected PDN member boards as of
-October, 1996:
+March, 1998:
 
-Skokie, IL		1:115/500  USRobotics BBS	
-502-245-8117		1:2320/38  PDN HQ Node 1	ISDN
-502-245-1146		1:2320/100 PDN HQ Node 2	V.Everything
-		        1:270/101  George Peace         Harrisburg, PA    
-PageSat Satellite Systems                           
-paonline.com (Internet)                             
-FidoNet FileBone
-                                                         
-                         1:3615/50  Planet Connect Satellite Systems
-			 1:154/280  EXEC-PC BBS         Elm Grove, WI     
-			 1:124/7009 Lee Laird           Garland, TX  
-			 1:167/234  Patrick Dufresne    Quebec, Canada
-			 1:115/251  Tony Tang           Wilmette, IL
-			 1:272/44   Ted Delamare        Middletown NY
-
-			 2:251/25   Graham Print        Fareham, England
-			 3:50/99    Steven Lutrov       Essendon, Victoria
-			 4:823/1    Adolfo Justiniano   Bolivia, South America
-			 5:7104/2   Henk Wolsink   Port Elizabeth, South Africa
-			 6:731/16   Bill English        Tokyo, Japan
-
+ 1:232/16   Martin Belcke   Peoria, IL (http://www.filegate.org) 1-309-672-4430
+ 1:270/101  George Peace    Harrisburg, PA      -paonline.com (Internet)
+ 1:3615/50  Planet Connect Satellite Systems
+ 1:154/280  EXEC-PC BBS     Elm Grove, WI
+ 1:124/3210 Glenn O'Gorman  Garland, TX
+ 1:167/132  Roland Larocque Canada
+ 1:115/10   Tom Huber       Crystal Lake, IL
+ 1:2320/38  Janis Kracht    Louisville, KY (PDN,MISSING,UTIL,PAS,PCB,HAM,STN)
+            (http://jkracht.aye.net)  BBS: 1-502-245-6778
+ 1:272/125  Thomas Gabrinowiz   Montgomery, NY
+ 1:140/53   Frank Cox           Melville Sask. Canada
+ 1:285/85   Richard Rasmussen   Omaha, Nebraska
+ 1:153/9117 Darrell Harder      Whiterock, BC  
+ 1:321/212  Vern Pero           Dalton MA    
+ 1:342/52   Vincent Danen       Edmonton_AB   
+ 1:2605/638 Douglas Vogt        Bridewater NJ
+ 1:3803/7   Ben Ritchey         Lafayette, LA
+ 2:20/11    Peter Bygden        Stockholm, Sweden 
+ 2:341/68   Juan Enrique Gomez  Madrid, Spain 
+ 2:5032/5   Dmitry Maevsky      Novgorod, Russia
+ 3:774/605  Barry Blackford     Hamilton, NZ 
+ 1:133/2    Chuck Robinson      Lawrenceville, GA  (ftp://ftp.ftbbs.com/fdn)
+ 2:25/75    Graham Print        (RAR, T-MAIL, FSFAN)
+ 2:254/61   Dave Carter		Croydon, Surrey
+ 2:254/211  Bill Hayles		Foots Cray, Kent
+ 2:254/212  Bill Hayles		Foots Cray, Kent
+ 2:254/233  Peter Friedlos	London
+ 2:254/620  Michael Mehmet	London
+ 2:251/21   Mike Forbes		Southsea
+ 2:251/50   Jim Reeves		Gosport, Hampshire
+ 2:251/101  Roy Arnold		Bournemouth
+ 2:251/203  Robert Leach	Fareham, Hampshire
+ 2:252/7    Andrew Eaves	Princes Risborough, Buckinghamshire
+ 2:252/314  Dwayne Heaton	Binfield, Hants
+ 2:252/555  Andrew Chant	Farnborough
+ 2:255/1    John Burden		Exeter. MNL
+ 2:257/71   Darren Parker	Hitchin, Herts
+ 2:443/13   Colin Turner	Bangor, Co. Down, N.Ireland
+ 2:481/56   Rafel Slimakowski	Poland
+ 2:281/506  Ron Huiskes         (SDC,LUX,NOVL,PAS)
+ 2:245/5530 Michael Bauer	Mainz, Germany   
+ 2:205/498  Bo Jakobsen		Alta, Sweeden    
+ 2:235/200  Brian Vinberg	Copenhagen, Denmark
+ 2:236/64   Richard Hansen	Glumsoe, Denmark 
+ 2:236/1111 JÅrgen llgrd	Slangerup, Denmark
+ 2:244/1530 Edgar Schaettle	Schwalbach, Germany 
+ 2:291/709  Pierre-Claude Demanet  Brussels, Belgium      
+ 2:292/826  Gerry Van Steerteghem  Zoersel, Belgium        
+ 2:301/714  Rolf Taschler	Zuerich, Switzerland
+ 2:310/700  Sascha Vogt		Vienna, Austria
+ 2:333/304  Enzo Gasparini	Padova, Italy 
+ 2:403/138  Nemrod Kedem	Rishon le Zion, Israel
+ 2:2480/220 Uwe Schirm		Muenchen, Germany
+ 3:633/2    Malcolm Miles	Melbourne Victoria Australia
+ 4:823/1    Adolfo Justiniano	Bolivia, South America
+ 4:806/7    Brazil		Marcio Gordiano
+ 4:901/148  Argentina		Fernando Bertuccelli
+ 4:840/1    Peru		Daniel Pizarro
+ 4:851/1    Uruguay		Alejandro Hernandez
+ 5:7104/2   Henk Wolsink	Port Elizabeth, Rep. of South Africa
+ 6:751/321  Terry Roati		Makati City, Philippines
+ 6:750/213  Manila		(Albert Godinez)
+ 6:750/401  Kalookan City	(Albert Uy)
+ 6:751/15   San Fernando	(Jun Martin)
+ 6:751/2    Quezon City		(William Villanueva)
+ 6:751/20   Olongapo City	(Rudy Ordiz)
+ 6:751/101  Pasig		(Victor Reyes)
+ 6:751/222  Greenhills		(Stewart Buckingham)
+ 6:751/417  Paranaque		(Marco Antonio Cabrazal)
+ 6:754/10   Cebu City		(Jojo Sybico)
+ 6:754/201  Bacolod City	(Eduardo M Joven)
 
 ------------------------------------------------------------------------
 
@@ -414,23 +472,17 @@ Files in my FTP area:
 	ftp://ftp.cs.cmu.edu/afs/cs.cmu.edu/user/ralf/pub/
 
 Files on SimTel and mirrors:
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter54a.zip
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter54b.zip
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter54c.zip
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter54d.zip
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter54e.zip
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter54f.zip
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter54g.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/  [look for inter???.zip]
 	ftp://ftp.simtel.net/pub/simtelnet/msdos/c/spwno413.zip
 	ftp://ftp.simtel.net/pub/simtelnet/msdos/desqview/dvint43.zip
 	ftp://ftp.simtel.net/pub/simtelnet/msdos/desqview/dvglu172.zip
 	ftp://ftp.simtel.net/pub/simtelnet/msdos/modem/rbcom346.zip
 
 Files at Garbo:
-	ftp://garbo.uwasa.fi/pc/programming/inter54a.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter54b.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter54c.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter54d.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter54e.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter54f.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter54g.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter57a.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter57b.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter57c.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter57d.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter57e.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter57f.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter57g.zip

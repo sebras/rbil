@@ -1,6 +1,6 @@
 ; COMBINE.ASM	Interrupt List combiner
 ;		by Ralf Brown
-;		last edit: 19oct96
+;		last edit: 22mar98
 
 		NAME	COMBINE
 		TITLE	Combine Interrupt List sections
@@ -36,15 +36,16 @@ CODE	SEGMENT 'CODE'
 combine:
 	jmp	near ptr main
 
-banner		db	13,"COMBINE v2.00",9,"Ralf Brown 1996",13,10,"$",26
+banner		db	13,"COMBINE v2.10",9,"Ralf Brown 1996,1998",13,10,"$",26
 usage_msg	db	"Usage:",9,"COMBINE [options] dest-dir",13,10
 		db	9,"where {dest-dir} is the directory in which to place",13,10
 		db	9,"  the combined list ('.' for the current directory)",13,10
 		db	10
 		db	9,"options:",13,10
 		db	9,9,"-d",9,"delete sections after copying",13,10
+		db	9,9,"-p",9,"combine PORTS.LST instead of INTERRUP.LST",13,10
 		db	10
-		db	"All sections of the interrupt list must be in the current directory."
+		db	"All sections of the interrupt/ports list must be in the current directory."
 		db	"$"
 
 bad_dos_msg	db	"Need DOS 2.0+$"
@@ -59,18 +60,28 @@ retry_msg	db	"Try again with -d to delete while copying$"
 
 cant_create_msg db	"Check directory name -- unable to create "
 combined_file	db	"INTERRUP.LST",0,"$"
-section_file	db	"INTERRUP.A",0,"$"
-section_letter equ section_file+9
+combined_file2	db	"PORTS.LST",0
+combined_file2_len equ $-combined_file2
+section_file1	db	"INTERRUP.A",0,"$"
+section_letter equ section_file1+9
+section_file2	db	"   PORTS"
+section_file2_len equ $-section_file2
+section_file2_ofs equ 3
 missing_msg	db	"unavailable (skipped)"
 crlf		db	13,10,"$"
-section_heading db	"Interrupt List, part "
-section_hdr_len equ $-section_heading
+section_heading1 db	"Interrupt List, part "
+section_hdr_len1 equ $-section_heading1
+section_heading2 db	"Ports List, part "
+section_hdr_len2 equ $-section_heading2
 complete_msg	db	"Done.$"
 
 ;
 ; flags affecting operation
 ;
 del_after_copy	db	0
+section_file	dw	offset section_file1
+section_heading dw	offset section_heading1
+section_hdr_len	dw	section_hdr_len1
 
 ;
 ; data needed while processing
@@ -175,7 +186,7 @@ check_size_loop:
 	ja	short get_free_space
 	mov	ah,4Eh			; find first
 	mov	cx,001Fh		; ...regardless of attribute
-	mov	dx,offset section_file
+	mov	dx,section_file
 	int	21h
 	jc	check_size_loop
 	inc	si			; another section found
@@ -252,7 +263,7 @@ check_section_header:
 	push	si
 	push	di
 	mov	si,offset DGROUP:disk_buffer
-	mov	di,offset section_heading
+	mov	di,section_heading
 	mov	cx,section_hdr_len
 	or	cx,cx
 	rep	cmpsb
@@ -288,10 +299,10 @@ not_section_heading:
 ; in:	SI = file handle for current section
 copy_section:
 	mov	ax,4201h
-	mov	bx,filehandle
 	xor	cx,cx
 	xor	dx,dx
-	int	21h			; get current file position (== size)
+	mov	bx,filehandle
+	int	21h
 	mov	filesize_lo,ax
 	mov	filesize_hi,dx
 copy_section_loop:
@@ -303,8 +314,8 @@ copy_section_loop:
 	jc	copy_read_error
 	mov	cx,ax			; write same number of bytes read
 	mov	ah,40h
-	mov	bx,filehandle
 ;;	mov	dx,offset DGROUP:disk_buffer
+	mov	bx,filehandle
 	int	21h
 	mov	dx,offset writeerr_msg
 	jc	copy_error
@@ -326,9 +337,9 @@ copy_error:
 	; truncate output to size before section was started
 	push	dx			; store error message
 	mov	ax,4200h
-	mov	bx,filehandle
 	mov	cx,filesize_hi
 	mov	dx,filesize_lo
+	mov	bx,filehandle
 	int	21h
 	mov	ah,40h
 	xor	cx,cx			; write zero bytes to truncate
@@ -372,11 +383,15 @@ get_cmdline_switches:
 	lodsb				; get the switch character
 	lodsb				; get the switch itself
 	and	al,0DFh			; force to uppercase
+	cmp	al,'P'
+	je	want_ports
 	cmp	al,'D'
 ;;	mov	dx,offset usage_msg
 	jne	exit_with_errmsg
 	mov	del_after_copy,1
 	jmp	get_cmdline_switches
+want_ports:
+	jmp	config_for_ports
 not_a_switch:
 	mov	ah,19h			; get default drive
 	int	21h
@@ -400,7 +415,7 @@ concat_loop:
 	sub	al,'A'-1
 	cmp	al,numsections
 	ja	concat_done
-	mov	dx,offset section_file
+	mov	dx,section_file
 	call	write_string
 	mov	ax,3D00h
 	int	21h
@@ -408,13 +423,13 @@ concat_loop:
 	jc	concat_loop_end
 	mov	si,ax
 	call	copy_section
-	mov	ah,3Eh
 	mov	bx,si			; BX <- section file's handle
-	int	21h			; close the file
+	mov	ah,3Eh			; DOS function: close file handle
+	int	21h
 	cmp	del_after_copy,0
 	je	concat_no_del
-	mov	ah,41h
-	mov	dx,offset section_file
+	mov	ah,41h			; DOS function: delete file
+	mov	dx,section_file
 	int	21h
 concat_no_del:
 	mov	dx,offset crlf
@@ -431,16 +446,38 @@ exit:
 	push	ax
 	mov	dx,offset crlf
 	call	write_string
-	mov	bx,filehandle		; set timestamp of combined file to
-	mov	cx,ftime		;   be that of the last of the sections
-	mov	dx,fdate
 	mov	ax,5701h		; (set file time & date)
+	mov	bx,filehandle
+	mov	cx,ftime		; set timestamp of combined file to
+	mov	dx,fdate		;   be that of the last of the sections
 	int	21h
-	mov	ah,3Eh			; close the destination file
+	mov	ah,3Eh			; DOS function: close file handle
 	int	21h
 	pop	ax
 	mov	ah,4Ch
 	int	21h
+
+config_for_ports:
+	mov	section_heading,offset section_heading2
+	mov	section_hdr_len,section_hdr_len2
+	push	di
+	push	si
+	push	cx
+	;; copy combined_file2 over combined_file
+	mov	cx,combined_file2_len
+	mov	si,offset combined_file2
+	mov	di,offset combined_file
+	rep	movsb
+	;; copy section_file2 over section_file1
+	mov	cx,section_file2_len
+	mov	si,offset section_file2
+	mov	di,offset section_file1
+	rep	movsb
+	pop	cx
+	pop	si
+	pop	di
+	add	section_file,section_file2_ofs
+	jmp	get_cmdline_switches
 
 CODE ENDS
 
