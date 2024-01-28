@@ -1,5 +1,326 @@
 Interrupt List, part 8 of 18
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+Copyright (c) 1989-1999,2000 Ralf Brown
+--------D-215E00-----------------------------
+INT 21 - DOS 3.1+ network - GET MACHINE NAME
+	AX = 5E00h
+	DS:DX -> 16-byte buffer for ASCII machine name
+Return: CF clear if successful
+	    CH = validity
+		00h name invalid
+		nonzero valid
+		    CL = NetBIOS number for machine name
+		    DS:DX buffer filled with blank-paded name
+	CF set on error
+	    AX = error code (01h) (see #01680 at AH=59h)
+Note:	supported by OS/2 v1.3+ compatibility box, PC-NFS
+SeeAlso: AX=5E01h
+--------N-215E00-----------------------------
+INT 21 - 10NET v5.0 - GET MACHINE NAME
+	AX = 5E00h
+Return: CL = redirector's NetBIOS name number
+	ES:DI -> network node ID
+SeeAlso: AX=5E01h"10NET"
+--------D-215E01CH00-------------------------
+INT 21 - DOS 3.1+ network - SET MACHINE NAME
+	AX = 5E01h
+	CH = 00h undefine name (make it invalid)
+	   <> 0	 define name
+	CL = name number
+	DS:DX -> 15-character blank-padded ASCIZ name
+SeeAlso: AX=5E00h
+--------N-215E01-----------------------------
+INT 21 - 10NET v5.0 - GET LOCAL 10NET CONFIGURATION TABLE
+	AX = 5E01h
+	CX = length of buffer
+	DS:DX -> buffer for 10Net configuration table (see #01691)
+Return: DS:DX buffer filled
+SeeAlso: AX=5E00h"10NET",INT 6F/AH=02h,INT 6F/AH=03h
+
+Format of 10Net Configuration Table:
+Offset	Size	Description	(Table 01691)
+ 00h  8 BYTEs	user name
+ 08h 15 BYTEs	node ID
+ 17h  3 BYTEs	unique portion of Ethernet address
+ 1Ah	BYTE	Who group number
+ 1Bh	WORD	services mask (see #01693)
+ 1Dh	DWORD	serial number
+ 21h	BYTE	maximum concurrent users with same serial number allowed on net
+ 22h	BYTE	chat mask (see #01694)
+ 23h	BYTE	internal system bits (see #01695)
+ 24h  9 BYTEs	version number in format MM.mm.xxx
+ 2Dh	BYTE	flag: 01h if machine is a PS/2
+ 2Eh	BYTE	flag: 03h if 80386
+ 2Fh	BYTE	spool termination mode: 01h concatenate, 02h truncate
+		(see AX=5D09h)
+ 30h	WORD	autospool timeout in clock ticks
+ 32h	WORD	monitor timeout in clock ticks
+ 34h	WORD	unused
+ 36h	WORD	chat timeout in clock ticks
+ 38h	WORD	netBIOS session timeout in half-seconds
+ 3Ah	WORD	datagram send timeout in seconds
+ 3Ch	WORD	keyboard value for initiating chat mode
+ 3Eh	WORD	Who timeout in clock ticks
+ 40h	BYTE	flag: 01h if server should process rom NetBIOS Post return
+ 41h	BYTE	flag: 01h if FCBs should be recycled
+ 42h  3 BYTEs	signature "DBG"
+ 45h	BYTE	last interrupt (21h or 6Fh)
+ 46h	BYTE	last INT 21 AH value
+ 47h	BYTE	last INT 6F AH value
+ 48h	WORD	last item posted
+ 4Ah	WORD	last item free-posted
+ 4Ch	WORD	last item handled by server
+ 4Eh	WORD	last redirector send NCB
+ 50h	WORD	last redirector receive NCB
+ 52h  4 BYTEs	signature "TABL"
+ 56h	WORD	offset of datagram buffer table header (see #01692)
+ 58h	WORD	offset of chat buffer table header (see #01692)
+ 5Ah	WORD	offset of Raw buffer table header (see #01692)
+ 5Ch	WORD	offset of Workstation buffer table header (see #01692)
+ 5Eh	WORD	offset of server receive-any table header (see #01692)
+ 60h	WORD	offset of Tiny buffer table header (see #01692)
+ 62h	WORD	offset of zero-length buffer table (NCBs) (see #01692)
+ 64h	WORD	offset of Rdr (Redirector Mount) table header (see #01692)
+ 66h	WORD	offset of Ntab (Redirector Session) table header (see #01692)
+ 68h	WORD	offset of FCB table header (see #01692)
+ 6Ah	WORD	offset of user file handle table header (see #01692)
+ 6Ch	WORD	offset of workstation printer RDR extension table header
+ 6Eh	WORD	offset of server shared device table header (see #01692)
+ 70h	WORD	offset of server connection table header (see #01692)
+ 72h	WORD	offset of server login table header (see #01692)
+ 74h	WORD	offset of server file table header (see #01692)
+ 76h	WORD	offset of server shared file table header (see #01692)
+ 78h	WORD	offset of server record lock table header (see #01692)
+ 7Ah	WORD	offset of remote printer claim table header (see #01692)
+ 7Ch	WORD	offset of remote printer device table header (see #01692)
+ 7Eh	WORD	offset of print server mount table header (see #01692)
+ 80h	WORD	offset of print server sessions table header (see #01692)
+ 82h	WORD	offset of print server print job structure table header
+ 84h	WORD	offset of print server pooled device table header (see #01692)
+ 86h	WORD	size of workstation buffer
+ 88h	WORD	size of server receive-any buffer
+ 8Ah	WORD	size of server raw I/O buffer
+ 8Ch  6 BYTEs	reserved
+ 92h	DWORD	pointer to profile pathname
+ 96h	BYTE	datagram retry count
+ 97h	BYTE	NetBIOS LAN adapter number
+ 98h  6 BYTEs	physical Ethernet address
+ 9Eh	BYTE	NetBIOS server name number
+ 9Fh	BYTE	NetBIOS redirector name number
+ A0h	BYTE	10Net interrupt number
+ A1h	BYTE	flag: chat is loaded
+ A2h	BYTE	flag: INT 6F APIs permanently loaded
+ A3h	BYTE	flag: file security present
+ A4h	WORD	reserved
+ A6h	BYTE	fixed mount bitmask for drives A:-H:
+ A7h	BYTE	reserved
+ A8h	WORD	10Net system flags (see #01696)
+ AAh	BYTE	monitor flags (see #01697)
+ ABh  5 BYTEs	reserved
+ B0h	WORD	offset of monitor timer block
+ B2h	WORD	offset of server timer block
+ B4h	WORD	offset of chat timer block
+ B6h	WORD	timer chain
+ B8h  4 BYTEs	signature "TALS"
+ BCh	WORD	number of 10Net sends
+ BEh	WORD	number of 10Net receives
+ C0h	WORD	number of no-buffer conditions
+ C2h	WORD	number of dropped posted messages
+ C4h	WORD	number of server NCB errors
+ C6h	WORD	number of redirector NCB errors
+ C8h	WORD	number of datagram send/receive errors
+ CAh	WORD	number of dropped Whos
+ CCh	WORD	number of dropped submits
+ CEh	WORD	number of session aborts
+ D0h	BYTE	number of NetBIOS interface-busy errors
+ D1h	BYTE	last NetBIOS bad post command
+ D2h	BYTE	last NetBIOS bad redirector command
+ D3h	BYTE	do send datagram send/receive error command
+ D4h	DWORD	-> DOS system parameter table
+ D8h	WORD	number of DOS physical drives
+ DAh	WORD	offset of DOS PSP field in DOS data segment
+ DCh	WORD	offset of in-DOS flag in DOS data segment
+ DEh	WORD	DOS data segment
+ E0h	WORD	offset of DOS SFT in DOS data segment
+ E2h	WORD	offset of number-of-physical-units field in DOS data segment
+ E4h	WORD	10Net code segment
+ E6h	WORD	10Net data segment
+ E8h	WORD	10Net common server segment
+ EAh	WORD	10Net file server segment
+ ECh	WORD	10Net print server segment
+ EEh	WORD	10Net remote printer segment
+Note:	documentation lists field at offset D0h as a WORD, but all following
+	  offsets are as though it were a BYTE; if it is indeed a WORD, all
+	  offsets after D0h must be increased by one byte
+
+Format of 10Net Table Header:
+Offset	Size	Description	(Table 01692)
+ -16  4 BYTEs	table identifier
+ -12	WORD	peak number of tables allocated
+ -10	WORD	number of tables currently in use
+ -8	WORD	total number of tables
+ -6	WORD	size of each table
+ -4	WORD	offset of first allocated table
+ -2	WORD	offset of first free table
+
+Bitfields for 10NET services mask:
+Bit(s)	Description	(Table 01693)
+ 0	workstation
+ 1	file server
+ 2	print queue server
+ 3	de-spool server
+
+Bitfields for 10NET chat mask:
+Bit(s)	Description	(Table 01694)
+ 0	chat permitted
+ 1	bell enabled
+ 2	chat keyboard initiated
+ 3	in INT 16 handler
+ 4	in Get Input
+ 5	display has timed out
+ 6	chat is idle
+
+Bitfields for 10NET internal system bits:
+Bit(s)	Description	(Table 01695)
+ 0	submit permitted
+ 1	submit initiated
+ 2	submit executing
+ 3	internal client call/chat/spool/autospool
+ 4	in spool termination
+ 5	print permitted
+ 6	waiting for keyboard input
+
+Bitfields for 10NET System Flags:
+Bit(s)	Description	(Table 01696)
+ 0	in NetBIOS
+ 1	processing INT 28
+ 2	is server
+ 3	in net user-DOS function
+ 4	in DOS user-DOS function
+ 5	in net for user non-DOS function
+ 6	in server DOS function
+ 7	in server non-DOS function
+ 8	in terminate
+ 10	in user on server request
+ 13	in DOS for user on server
+ 14	disable critical error handler
+
+Bitfields for Monitor Flags:
+Bit(s)	Description	(Table 01697)
+ 0	waiting for monitor response
+ 4	in monitor get-input routine
+ 5	monitor display timeout
+ 6	sensing for escape key
+--------D-215E02-----------------------------
+INT 21 - DOS 3.1+ network - SET NETWORK PRINTER SETUP STRING
+	AX = 5E02h
+	BX = redirection list index (see AX=5F02h)
+	CX = length of setup string
+	DS:SI -> setup string
+Return: CF clear if successful
+	CF set on error
+	    AX = error code (01h) (see #01680 at AH=59h/BX=0000h)
+Note:	also supported by 10NET v5.0
+SeeAlso: AX=5E03h,INT 2F/AX=111Fh
+--------D-215E03-----------------------------
+INT 21 - DOS 3.1+ network - GET NETWORK PRINTER SETUP STRING
+	AX = 5E03h
+	BX = redirection list index (see AX=5F02h)
+	ES:DI -> 64-byte buffer for setup string
+Return: CF clear if successful
+	    CX = length of setup string
+	    ES:DI buffer filled
+	CF set on error
+	    AX = error code (01h) (see #01680 at AH=59h/BX=0000h)
+Note:	also supported by 10NET v5.0, but 10NET is documented as using DS:SI
+	  instead of ES:DI
+SeeAlso: AX=5E02h,INT 2F/AX=111Fh
+--------D-215E04-----------------------------
+INT 21 - DOS 3.1+ network - SET PRINTER MODE
+	AX = 5E04h
+	BX = redirection list index (see AX=5F02h)
+	DX = mode
+	    bit 0: set if binary, clear if text (tabs expanded to blanks)
+Return: CF set on error
+	    AX = error code (see #01680 at AH=59h/BX=0000h)
+	CF clear if successful
+Notes:	calls INT 2F/AX=111Fh with 5E04h on stack
+	supported by DR DOS 3.41+
+SeeAlso: AX=5E05h"DOS",INT 2F/AX=111Fh
+--------N-215E04-----------------------------
+INT 21 - 10NET v5.0 - INITIATE PRINT JOB
+	AX = 5E04h
+	BX = zero-based redirection list index (see AX=5F02h)
+	DS:DX -> extended workstation printer setup structure (see #01698)
+Return: CF clear if successful
+	CF set on error
+	    AX = error code (see #01680 at AH=59h/BX=0000h)
+SeeAlso: AX=5E05h"10NET",AX=5E06h"10NET"
+
+Format of 10NET extended workstation printer setup structure:
+Offset	Size	Description	(Table 01698)
+ 00h	BYTE	notification flags (see #01699)
+ 01h	BYTE	job control mask (see #01700)
+ 02h	WORD	days to retain file
+ 04h	WORD	test print length
+ 06h	BYTE	number of copies to print
+ 07h	BYTE	compression algorithm
+ 08h	BYTE	tab width (00h = don't expand)
+ 09h	BYTE	initiation type (00h normal, 01h non-spooled)
+ 0Ah 38 BYTEs	job start operation notification instructions
+ 30h 32 BYTEs	comment for job
+ 50h 64 BYTEs	output filename or non-spooled file
+
+Bitfields for 10NET notification flags:
+Bit(s)	Description	(Table 01699)
+ 0	user at print start
+ 1	operator at start, with reply
+ 2	user at print completion
+ 3	operator at completion, with reply
+ 4	user on queue switch
+ 5	operator on queue switch, with reply
+ 6	user on print error
+
+Bitfields for 10NET job control mask:
+Bit(s)	Description	(Table 01700)
+ 0	print banner page
+ 1	eject page at end of job
+ 2	mark as "held" (queue but don't print)
+ 3	rush job (queue at top)
+ 4	overwrite file with zeros before deletion
+ 5	hyperspool if possible
+--------D-215E05-----------------------------
+INT 21 - DOS 3.1+ network - GET PRINTER MODE
+	AX = 5E05h
+	BX = redirection list index (see AX=5F02h)
+Return: CF set on error
+	    AX = error code (see #01680 at AH=59h/BX=0000h)
+	CF clear if successful
+	    DX = printer mode (see AX=5E04h)
+Notes:	calls INT 2F/AX=111Fh with 5E05h on stack
+	supported by DR DOS 3.41+
+SeeAlso: AX=5E04h"DOS",INT 2F/AX=111Fh
+--------N-215E05-----------------------------
+INT 21 - 10NET v5.0 - TERMINATE PRINT JOB
+	AX = 5E05h
+	BX = zero-based redirection list index (see AX=5F02h)
+Return: CF clear if successful
+	CF set on error
+	    AX = error code (see #01680 at AH=59h/BX=0000h)
+Note:	this call resets the spool termination mode to "truncate"
+	  (see AX=5D08h)
+SeeAlso: AX=5E04h"10NET",AX=5E06h
+--------N-215E06-----------------------------
+INT 21 - 10NET v5.0 - GET/SET 10NET WORKSTATION PRINTER SETUP STRUCTURE
+	AX = 5E06h
+	BX = zero-based redirection list index (see AX=5F02h)
+	CX = operation (06h set, 07h get)
+	DS:DX -> buffer for setup structure (same as first nine bytes of
+		  workstation printer setup) (see #01698)
+Return: CF clear if successful
+	    DS:DX buffer updated on get
+	CF set on error
+	    AX = error code (see #01680 at AH=59h/BX=0000h)
+SeeAlso: AX=5E04h"10NET",AX=5E05h"10NET"
 --------D-215F00-----------------------------
 INT 21 - DOS 3.1+ network - GET REDIRECTION MODE
 	AX = 5F00h
@@ -1768,8 +2089,8 @@ INT 21 - ENVLOCK - INSTALLATION CHECK
 Return: AX = 1994h if installed
 	    ES = ENVLOCK's resident segment
 Notes:	to deactivate ENVLOCK, zero out the byte at ES:[0102h]
-Program: ENVLOCK is a TSR by Alexander Yanovsky (aka PC Hawk) that forces
-	  other TSRs to deallocate their environment when they stay resident
+Program: ENVLOCK is a TSR by Alexander Yanovsky that forces other TSRs to
+	  deallocate their environment when they stay resident
 --------D-216300-----------------------------
 INT 21 - DOS 2.25 only - GET LEAD BYTE TABLE ADDRESS
 	AX = 6300h
@@ -2230,10 +2551,11 @@ INT 21 U - DOS 4.0+ internal - COUNTRY-DEPENDENT FILENAME CAPITALIZATION
 Return: CF set on error
 	    AX = error code (see #01680 at AH=59h/BX=0000h)
 	CF clear if successful
-Note:	nonfunctional in MS-DOS 4.00 through 6.00 due to a bug (the code sets a
-	  pointer depending on the high bit of AL, but doesn't clear the
-	  bit before branching by function number).  Supported and
-	  functional(!) in Novell DOS 7 (Update 15)
+Note:	nonfunctional in MS-DOS 4.00 through 7.10 (Win98) due to a bug (the
+	  code sets a pointer depending on the high bit of AL, but doesn't
+	  clear the bit before branching by function number).  Supported and
+	  functional(!) in Novell DOS 7 (Update 15), as well as PC-DOS 7 and
+	  OS/2 MVDM
 --------D-216601-----------------------------
 INT 21 - DOS 3.3+ - GET GLOBAL CODE PAGE TABLE
 	AX = 6601h
@@ -2934,7 +3256,7 @@ Offset	Size	Description	(Table 01775)
  03h	WORD	country ID (see #01400 at AH=38h)
  05h	WORD	code page (see #01757)
  07h	WORD	date format
- 09h  5 BYTEs	ASCIZ current symbol string
+ 09h  5 BYTEs	ASCIZ currency symbol string
  07h  2 BYTEs	ASCIZ thousands separator
  09h  2 BYTEs	ASCIZ decimal separator
  0Bh  2 BYTEs	ASCIZ date separator
@@ -3046,6 +3368,26 @@ Notes:	if error 7100h is returned, the old-style function should be called
 	  the search
 	for compatibility with DOS versions prior to v7.00, the carry flag
 	  should be set on call to ensure that it is set on exit
+	Caldera's DPMS-enabled LONGNAME.EXE BETA 1 extension for DR-DOS 7
+	  supports the following sub-set of LFN functions: 39h, 3Ah, 3Bh, 41h,
+	  43h (BL = 0, 1 only), 47h, 4Eh, 4Fh, 56h, 60h (CL = 0, 1, 2), 6Ch,
+	  A0h, A1h, A8h. BETA 2 fixes LFN directory entry checksums, which
+	  were causing wrong LFNs to be attached to a file. The 8.3 short
+	  names for filenames with exactly 8 chars are no longer abbreviated
+	  (e.g. LONGNAME.TXT -> LONGNAME.TXT, not LONGNA~1.TXT). BETA 3 has
+	  A7h (BL=0, 1) functions added, and 4Eh/4Fh can return file times
+	  in both DOS and 64 bit formats, BETA 4 has support added for
+	  Caldera's DRFAT32 redirector extension (see INT 2F/AX=15xxh).
+	Caldera's DR-OpenDOS 7.02+ COMMAND.COM utilizes the LFN API as soon
+	  as it detects it (mind, that LONGNAME.EXE can be dynamically loaded
+	  and unloaded at runtime). This COMMAND.COM shell also works under
+	  MS-DOS/PC DOS and in DOS boxes of Windows9x, NT, 2000, and OS/2.
+	For 4DOS 6.02+ to work with 3rd party LFN providers, the Win95LFN=Yes
+	  directive should be inserted into the 4DOS.INI file.
+	Mike Podanoffsky's RxDOS 7.2 provides most of this API natively,
+	  including functions 39h, 3Ah, 3Bh, 41h, 43h (BL = ???), 47h, 4Bh,
+	  4Eh, 4Fh, 56h, 60h (CL = 0, 1, 2, no CH), 6Ch, A0h, A1h and A7h.
+	  However, not all sub-functions seem to be supported yet.
 SeeAlso: AH=39h,AH=3Ah,AH=3Bh,AH=41h,AX=4300h,AX=4301h,AX=4304h,AX=4306h
 SeeAlso: AX=4307h,AH=47h,AH=4Eh,AH=4Fh,AH=56h,AH=6Ch,AX=714Eh,AX=714Fh
 --------v-2171-------------------------------
@@ -3612,18 +3954,18 @@ Note:	this function was present in beta versions of Windows95, but is
 	  probably not present in the release version
 SeeAlso: AX=71A1h
 --------D-2173-------------------------------
-INT 21 - MS-DOS 7 - DRIVE LOCKING ???
+INT 21 - MS-DOS 7 - DRIVE LOCKING AND FLUSHING
 	AH = 73h
 	DL = drive (0=current, 1=A:, etc.)
 	CL = which flag to get or set
 	    00h drive flag???
-	    01h ???
+	    01h drive's dirty-buffers flag
 	AL = subfunction
-	    00h get ???
+	    00h get indicated flag
 	    01h set ???
-		CH = new values for ??? flags
+		CH = new value for indicated flag
 		    bit 1: ??? (CL=00h only)
-		    bit 3: ??? (CL=01h only)
+		    bit 3: dirty buffers exist for selected drive (CL=01h only)
 Return: CF clear if successful
 	    for AL=00h:
 		AL = value of CL on entry
@@ -3701,13 +4043,18 @@ Return: CF clear if successful
 	    ES:DI buffer filled
 	CF set on error
 	    AX = error code
-Notes:	this function reportedly returns a maximum of 2GB free space even on
-	  an FAT32 partition larger than 2GB under some versions of Win95,
-	  apparently by limiting the number of reported free clusters to no
-	  more than 64K
-	on DOS versions which do not support the FAT32 calls, this function
+Notes:	on DOS versions which do not support the FAT32 calls, this function
 	  returns CF clear/AL=00h (which is the DOS v1+ method for reporting
 	  unimplemented functions)
+	under DOS 7.x (i.e. "MSDOS Mode" under Windows95), the ASCIZ string
+	  pointed at by DS:DX *must* include the drive letter, or this function
+	  will return CF set/AX=0015h (invalid drive).	In a DOS box, omitting
+	  the drive letter (DS:DX -> "\") results in the free space for the
+	  current default drive, as expected
+BUG:	this function returns a maximum of 2GB free space even on an FAT32
+	  partition larger than 2GB under some versions of Win95 and Win98,
+	  apparently by limiting the number of reported free clusters to no
+	  more than 64K -- but only in a DOS window if a TSR has hooked INT 21h
 SeeAlso: AX=7302h,AX=7304h,AX=7305h,AH=36h
 
 Format of extended free space structure:
@@ -3731,11 +4078,12 @@ Offset	Size	Description	(Table 01789)
 INT 21 - Windows95 - FAT32 - Set DPB TO USE FOR FORMATTING
 	AX = 7304h
 	DL = drive number (00h=default, 01h=A:, etc.)
+	CX = size of buffer (must be at least 18h)
 	ES:DI -> buffer for Set_DPBforFormat structure (see #01790)
 Return: CF clear if successful
 	    ES:DI buffer updated
 	CF set on error
-	    AX = error code
+	    AX = error code (18h = bad length in CX)
 SeeAlso: AX=7302h,AX=7303h,AX=7305h
 
 Format of Set_DPBforFormat structure:
@@ -4177,6 +4525,31 @@ INT 21 U - European MS-DOS 4.0 - ???
 	???
 Return: ???
 SeeAlso: AH=87h
+----------2190--CXFFFF-----------------------
+INT 21 U - PTS-DOS 6.51 & S/DOS 1.0 - DIRECT DISK READ
+	AH = 90h
+	CX = FFFFh (for partitions > 32 Mb)
+	    DS:BX -> request block (see #04094)
+	CX = sector count (for partitions < 32 Mb)
+	    DX = starting sector number
+	    DS:BX -> buffer
+Return: CF set on error
+	    AX error code
+	CF clear on success
+Notes:	This function is supported by Paragon Technology Systems S/DOS 1.0
+	  (and most probably by PTS-DOS 6.51, maybe even earlier).
+	To access big partitions (> 32 Mb), the CX != FFFFh is not allowed and
+	  the buffer must always be used. Otherwise, the system will return
+	  error code 0207h.
+	It is currently unknown if this function is also supported by
+	  PhysTechSoft PTS-DOS 6.60, 6.70, or 2000.
+SeeAlso: INT 21/AH=91h"PTS",INT 25h,INT 26h
+
+Format of PTS-DOS & S/DOS disk read/write request block:
+Offset	Size	Description	(Table 04094)
+ 00h	DWORD	sector number
+04h	WORD	counter
+06h	DWORD	pointer to buffer
 --------v-2190-------------------------------
 INT 21 - VIRUS - "Carioca" - INSTALLATION CHECK
 	AH = 90h
@@ -4188,12 +4561,40 @@ INT 21 U - European MS-DOS 4.0 - ???
 	???
 Return: ???
 SeeAlso: AH=87h
+----------2191--CXFFFF-----------------------
+INT 21 U - PTS-DOS 6.51 & S/DOS 1.0 - DIRECT DISK WRITE
+	AH = 91h
+	CX = FFFFh (for partitions > 32 Mb)
+	    DS:BX -> request block (see #04094)
+	CX = sector count (for partitions < 32 Mb)
+	    DX = starting sector number
+	    DS:BX -> buffer
+Return: CF set on error
+	    AX error code
+	CF clear on success
+Note:	This function is supported by Paragon Technology Systems S/DOS 1.0
+	  (and most probably by PTS-DOS 6.51, maybe even earlier).
+	To access big partitions (> 32 Mb), CX != FFFFh is not allowed and
+	  the buffer must always be used. Otherwise, the system will return
+	  error code 0207h.
+	It is currently unknown if this function is also supported by
+	  PhysTechSoft PTS-DOS 6.60, 6.70, or 2000.
+SeeAlso: INT 21/Ah=90h"PTS",INT 25h,INT 26h
 --------D-2192-------------------------------
 INT 21 U - European MS-DOS 4.0 - ???
 	AH = 92h
 	???
 Return: ???
 SeeAlso: AH=87h
+--------O-2192-------------------------------
+INT 21 U - PTS-DOS 6.51 & S/DOS 1.0 - ABORT CURRENT PROCESS VIA INT 23
+	AH = 92h
+Desc:	This function is provided by Paragon Technology Systems S/DOS 1.0+
+	  (and most probably also by PTS-DOS 6.51+, maybe even earlier).
+	  It allows terminating programs via the CTRL+BREAK method.
+Note:	It is currently unknown if this function is also supported by
+	  PhysTechSoft PTS-DOS 6.60, 6.70, or 2000.
+SeeAlso: INT 23,INT 24
 --------D-2193-------------------------------
 INT 21 - European MS-DOS 4.0 - "PIPE" - CREATE A NEW PIPE
 	AH = 93h
@@ -4221,7 +4622,7 @@ INT 21 - European MS-DOS 4.0 - HARD ERROR PROCESSING
 Return: AX = previous setting
 Desc:	specify whether hard (critical) errors should automatically fail the
 	  system call or invoke an INT 24
-SeeAlso: INT 24
+SeeAlso: INT 24,INT 21/AH=59h/BX=0001h
 --------D-2196-------------------------------
 INT 21 U - European MS-DOS 4.0 - ???
 	AH = 96h
@@ -5505,7 +5906,15 @@ Notes:	this function is supported by NetWare 4.0+, Banyan VINES, and Alloy
 	  NTNX
 	station number only unique for those PCs connected to same semaphore
 	  service
-SeeAlso: AH=F2h"NetWare"
+	this function is called with AX=DC00h on entry by the DR DOS (up to
+	  including 7.03) command processor to retrieve the connection number.
+	  Old releases used this call only when INT 21/AX=EF03h failed.
+	  Current versions (probably since one of the Novell DOS 7 updates)
+	  attempt to retrieve the connection number from VLM (INT 2F/AX=7A20h
+	  via GENERAL: 0043h/0006h/0001h and CONN: 0010h/0007h/000Dh) first.
+	  The connection number is only trusted, however, when CF is clear on
+	  return.
+SeeAlso: AH=F2h"NetWare",INT 21/AX=EF03h
 --------d-21DC-------------------------------
 INT 21 - PCMag PCMANAGE/DCOMPRES - TURN ON/OFF
 	AH = DCh

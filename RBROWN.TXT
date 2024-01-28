@@ -8,13 +8,12 @@ The x86/MSDOS Interrupt List
 	documented and undocumented functions, plus lists of I/O port, CMOS,
 	and memory locations, far-call entry points, model-specific
 	registers, and system-management mode state save areas.
-	Current version: INTER60A (release 60, 03jan99)
-			 INTER60B
-			 INTER60C
-			 INTER60D
-			 INTER60E (utility programs)
-			 INTER60F (WinHelp-related programs)
-			 INTER60G (other hypertext conversion programs)
+	Current version: INTER61A (release 61, 16jul00)
+			 INTER61B
+			 INTER61C
+			 INTER61D
+			 INTER61E (utility programs)
+			 INTER61F (hypertext conversion programs)
 
 DVINT
 	An extract of the MSDOS Interrupt List containing the DESQview
@@ -34,6 +33,7 @@ RBcomm
 RBdualVGA
 	Use two color displays on one PC.
 	Current version: RBDUAL09 (v0.9 02jun96)
+			 DUAL093S (v0.93 source code, 11sep98)
 
 RBkeyswap
 	Exchange left control and CapsLock keys, as well as Esc and `/~.
@@ -48,7 +48,7 @@ RBpci
 	(updates for new chips which are sent to the author will be
 	included in the following release).  Includes full source code
 	for the program.
-	Current version: RBPCI118 (v1.18, 03jan99)
+	Current version: RBPCI119 (v1.19, 10jan99)
 
 SPAWNO
 	A replacement for the Turbo C and Microsoft C spawn..() functions
@@ -479,10 +479,9 @@ Files on SimTel and mirrors:
 	ftp://ftp.simtel.net/pub/simtelnet/msdos/modem/rbcom346.zip
 
 Files at Garbo:
-	ftp://garbo.uwasa.fi/pc/programming/inter60a.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter60b.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter60c.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter60d.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter60e.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter60f.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter60g.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter61a.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter61b.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter61c.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter61d.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter61e.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter61f.zip

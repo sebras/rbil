@@ -1,5 +1,5 @@
 Interrupt List, part 2 of 18
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+Copyright (c) 1989-1999,2000 Ralf Brown
 --------V-10BF--CX0000-----------------------
 INT 10 - Athena Digital HGCIBM.COM - INSTALLATION CHECK
 	AH = BFh
@@ -87,7 +87,7 @@ INT 10 - VIDEO - Compaq Extensions - SET MODE SWITCH DELAY
 	AX = BF04h
 	BH = new state of delay (00h enabled, 01h disabled)
 Return: nothing
-Note:	the 04/08/93 sytem ROM appears to use BL instead of BH; a future
+Note:	the 1993/04/08 sytem ROM appears to use BL instead of BH; a future
 	  version of the list will provide more definite information
 SeeAlso: AX=BF05h
 --------b-10BF05-----------------------------
@@ -97,7 +97,7 @@ INT 10 - VIDEO - Compaq Extensions - ENABLE/DISABLE DISPLAY
 	    00h off
 	    01h on
 Return: nothing
-Note:	the 04/08/93 sytem ROM appears to use BL instead of BH; a future
+Note:	the 1993/04/08 sytem ROM appears to use BL instead of BH; a future
 	  version of the list will provide more definite information
 SeeAlso: AH=12h/BL=36h,AX=BF04h
 --------b-10BF06-----------------------------
@@ -573,6 +573,14 @@ Return: CL = hardware underline status (see #00221)
 	BH = foreground color for bright text
 Note:	only CL is valid on monochrome EGA systems
 SeeAlso: AX=CD07h
+--------V-10CD0F-----------------------------
+INT 10 - VIDEO - UltraVision - GET POINTER TO ??? (EGA,VGA)
+	AX = CD0Fh
+Return: DS:DI -> pointer to ???
+Note:	This gets called by DR DOS "Panther" SECURITY.	SECURITY also issues a
+	  number of calls to the other UltraVision functions in the AH=CCh and
+	  AH=CDh range, and carefully checks signatures.
+SeeAlso: AX=1100h,AX=1103h
 --------V-10CD10-----------------------------
 INT 10 - VIDEO - UltraVision - LOAD USER FONT (EGA,VGA)
 	AX = CD10h
@@ -1074,7 +1082,29 @@ Bit(s)	Description	(Table 00226)
 	01 DMA channel 0 ???
 	10 reserved
 	11 DMA channel 3
-BUG:	Award BIOS v4.50G and v4.51PG erroneously set bit 0 even if there are
+Notes:	Some implementations of Remote (Initial) Program Loader (RPL/RIPL)
+	  don't set bit 0 to indicate a "virtual" floppy drive, although the
+	  RPL requires access to its memory image through a faked drive A:.
+	  This may have caused problems with releases of DOS 3.3x and earlier,
+	  which assumed A: and B: to be invalid drives then and would discard
+	  any attempts to access these drives.	Implementations of RPL should
+	  set bit 0 to indicate a "virtual" floppy.
+	The IBM PC DOS 3.3x-2000 IBMBIO.COM contains two occurences of code
+	  sequences like:
+	    INT 11h
+	    JMP SHORT skip
+	    DB 52h,50h,53h; "RPS"
+	    skip: OR AX,1
+	    TEST AX,1
+	  While at the first glance this seems to be a bug since it just
+	  wastes memory and the condition is always true, this could well be
+	  a signature for an applyable patch to stop it from forcing AX bit 0
+	  to be always on. MS-DOS IO.SYS does not contain these signatures,
+	  however.
+BUGs:	Some old BIOSes didn't properly report the count of floppy drives
+	  installed to the system.  In newer systems INT 13h/AH=15h can be
+	  used to retrieve the number of floppy drives installed.
+	Award BIOS v4.50G and v4.51PG erroneously set bit 0 even if there are
 	  no floppy drives installed; use two calls to INT 13/AH=15h to
 	  determine whether any floppies are actually installed
 SeeAlso: INT 12"BIOS",#03215 at INT 4B"Tandy 2000"
@@ -1390,13 +1420,15 @@ Note:	this call returns the contents of the word at 0040h:0013h; in PC and
 	  XT, this value is set from the switches on the motherboard
 SeeAlso: INT 11"BIOS",INT 2F/AX=4A06h,INT 4C"Tandy 2000",MEM 0040h:0013h
 --------C-12---------------------------------
-INT 12 - CPU-generated (Pentium) - MACHINE CHECK EXCEPTION
-Notes:	Intel documents this interrupt as CPU model-dependent; for current
-	  Pentium processors, the reason for the machine check exception may
-	  be read from model-specific registers 00h and 01h (described, for
-	  example, in Christian Ludloff's 4P package)
+INT 12 - CPU-generated (Pentium +) - MACHINE CHECK EXCEPTION
+Notes:	Intel documents this interrupt as CPU model-dependent
+	for current Pentium processors, the reason for the machine check
+	  exception may be read from model-specific registers 00h and 01h
+	  (described, for example, in Christian Ludloff's 4P package)
+	for Pentium Pro/II processors,	the reason may be read from the
+	  MCG_STATUS MSR (see MSR 0000017Ah)
 	this exception is enabled by bit 6 of CR4
-SeeAlso: INT 11"CPU",MSR 00000000h,MSR 00000001h
+SeeAlso: INT 11"CPU",MSR 00000000h,MSR 00000001h,MSR 0000017Ah
 --------K-12----CX1806-----------------------
 INT 12 - KEYBUI v2.0+ - INSTALLATION CHECK
 	CX = 1806h
@@ -1534,7 +1566,7 @@ SeeAlso: #00231,#00233
 
 Format of Back&Forth Professional BF_TASK record:
 Offset	Size	Description	(Table 00233)
- 00h	DWORD	Unix-style task start time (seconds since 1/1/1970)
+ 00h	DWORD	Unix-style task start time (seconds since 1970/1/1)
  04h 21 BYTEs	task description
  19h	DWORD	elapsed time in task (seconds)
  1Dh	WORD	task ID
@@ -1600,6 +1632,7 @@ Values for disk operation status:
  B3h	volume in use (INT 13 extensions)
  B4h	lock count exceeded (INT 13 extensions)
  B5h	valid eject request failed (INT 13 extensions)
+ B6h	volume present but read protected (INT 13 extensions)
  BBh	undefined error (hard disk)
  CCh	write fault (hard disk)
  E0h	status register error (hard disk)
@@ -1640,9 +1673,27 @@ Notes:	errors on a floppy may be due to the motor failing to spin up quickly
 	  into bits 6 and 7 of DH
 	under Windows95, a volume must be locked (see INT 21/AX=440Dh/CX=084Bh)
 	  in order to perform direct accesses such as INT 13h reads and writes
-	all versions of MS-DOS (including v7 [Win95]) have a bug which prevents
-	  booting on hard disks with 256 heads, so many modern BIOSes provide
-	  mappings with at most 255 heads
+	all versions of MS-DOS (including MS-DOS 7 [Windows 95]) have a bug
+	  which prevents booting on hard disks with 256 heads (FFh), so many
+	  modern BIOSes provide mappings with at most 255 (FEh) heads
+	some cache drivers flush their buffers when detecting that DOS is
+	  bypassed by directly issuing INT 13h from applications.  A dummy
+	  read can be used as one of several methods to force cache
+	  flushing for unknown caches (e.g. before rebooting).
+BUGS:	When reading from floppies, some AMI BIOSes (around 1990-1991) trash
+	  the byte following the data buffer, if it is not arranged to an even
+	  memory boundary.  A workaround is to either make the buffer word
+	  aligned (which may also help to speed up things), or to add a dummy
+	  byte after the buffer.
+	MS-DOS may leave interrupts disabled on return from this function.
+	Apparently some BIOSes or intercepting resident software have bugs
+	  that may destroy DX on return or not properly set the Carry flag.
+	  At least some Microsoft software frames calls to this function with
+	  PUSH DX, STC, INT 13h, STI, POP DX.
+	on the original IBM AT BIOS (1984/01/10) this function does not disable
+	  interrupts for harddisks (DL >= 80h).	 On these machines the MS-DOS/
+	  PC DOS IO.SYS/IBMBIO.COM installs a special filter to bypass the
+	  buggy code in the ROM (see CALL F000h:211Eh)
 SeeAlso: AH=03h,AH=0Ah,AH=06h"V10DISK.SYS",AH=21h"PS/1",AH=42h"IBM"
 SeeAlso: INT 21/AX=440Dh/CX=084Bh,INT 4D/AH=02h
 --------B-1303-------------------------------
@@ -1690,14 +1741,16 @@ INT 13 - DISK - VERIFY DISK SECTOR(S)
 	     high two bits of cylinder (bits 6-7, hard disk only)
 	DH = head number
 	DL = drive number (bit 7 set for hard disk)
-	ES:BX -> data buffer (PC,XT,AT with BIOS prior to 11/15/85)
+	ES:BX -> data buffer (PC,XT,AT with BIOS prior to 1985/11/15)
 Return: CF set on error
 	CF clear if successful
 	AH = status (see #00234)
 	AL = number of sectors verified
 Notes:	errors on a floppy may be due to the motor failing to spin up quickly
-	  enough; the write should be retried at least three times, resetting
-	  the disk with AH=00h between attempts
+	  enough (timeout error 80h); the write should be retried at least
+	  three times, resetting the disk with AH=00h between attempts
+	on floppys, the operation should also be retried on media change
+	  (06h) detection.
 	this function does not compare the disk with memory, it merely
 	  checks whether the sector's stored CRC matches the data's actual CRC
 	the IBM AT BIOS and many other BIOSes use only the low four bits of
@@ -1707,6 +1760,9 @@ Notes:	errors on a floppy may be due to the motor failing to spin up quickly
 	AWARD AT BIOS and AMI 386sx BIOS have been extended to handle more
 	  than 1024 cylinders by placing bits 10 and 11 of the cylinder number
 	  into bits 6 and 7 of DH
+BUG:	some Epson ROM BIOSes sometimes have problems properly handling this
+	  function. The workaround is to reset the disk (INT 13/AH=00h) before
+	  the call.
 SeeAlso: AH=02h,AH=44h,INT 4D/AH=04h,INT 4D/AH=06h
 --------B-1305-------------------------------
 INT 13 - FLOPPY - FORMAT TRACK
@@ -1722,6 +1778,10 @@ Return: CF set on error
 Notes:	on AT or higher, call AH=17h first
 	the number of sectors per track is read from the diskette parameter
 	  table pointed at by INT 1E
+BUG:	some old Compaq BIOSes have a bug when attempting to call this function
+	  from Windows Standard Mode with EMM386 loaded.  A possible workaround
+	  is to call this function from Real Mode e.g. through DPMI function
+	  "Call Real Mode function with FAR return" (see INT 31/AX=0301h).
 SeeAlso: AH=05h"FIXED",AH=17h,AH=18h,INT 1E
 
 Format of floppy format address field buffer entry (one per sector in track):
@@ -1801,7 +1861,7 @@ INT 13 - 2M - FORMAT TRACK
 Return: CF set on error
 	CF clear if successful
 	AH = status (see #00234)
-Program: 2M is a TSR developed by Ciriaco Garcia de Celis to support
+Program: 2M is a TSR developed by Ciriaco Garc¡a de Celis to support
 	  non standard diskettes with 820-902/1476-1558K (5.25 DD/HD)
 	  and 984-1066/1804-1886K/3608-3772K (3.5 DD/HD/ED)
 InstallCheck: must search for a "CiriSOFT:2M:1.3" or "CiriSOFT:2MX:3.0" or
@@ -1963,6 +2023,7 @@ SeeAlso: AH=03h,AH=06h"V10DISK.SYS"
 INT 13 - DISK - GET DRIVE PARAMETERS (PC,XT286,CONV,PS,ESDI,SCSI)
 	AH = 08h
 	DL = drive (bit 7 set for hard disk)
+	ES:DI = 0000h:0000h to guard against BIOS bugs
 Return: CF set on error
 	    AH = status (07h) (see #00234)
 	CF clear if successful
@@ -1981,22 +2042,65 @@ Notes:	may return successful even though specified drive is greater than the
 	for systems predating the IBM AT, this call is only valid for hard
 	  disks, as it is implemented by the hard disk BIOS rather than the
 	  ROM BIOS
+	the IBM ROM-BIOS returns the total number of hard disks attached
+	  to the system regardless of whether DL >= 80h on entry.
 	Toshiba laptops with HardRAM return DL=02h when called with DL=80h,
 	  but fail on DL=81h.  The BIOS data at 40h:75h correctly reports 01h.
 	may indicate only two drives present even if more are attached; to
 	  ensure a correct count, one can use AH=15h to scan through possible
 	  drives
+	Reportedly some Compaq BIOSes with more than one hard disk controller
+	  return only the number of drives DL attached to the corresponding
+	  controller as specified by the DL value on entry.  However, on
+	  Compaq machines with "COMPAQ" signature at F000h:FFEAh,
+	  MS-DOS/PC DOS IO.SYS/IBMBIO.COM call INT 15/AX=E400h and 
+	  INT 15/AX=E480h to enable Compaq "mode 2" before retrieving the count
+	  of hard disks installed in the system (DL) from this function.
+	the maximum cylinder number reported in CX is usually two less than
+	  the total cylinder count reported in the fixed disk parameter table
+	  (see INT 41h,INT 46h) because early hard disks used the last cylinder
+	  for testing purposes; however, on some Zenith machines, the maximum
+	  cylinder number reportedly is three less than the count in the fixed
+	  disk parameter table.
 	for BIOSes which reserve the last cylinder for testing purposes, the
 	  cylinder count is automatically decremented
 	on PS/1s with IBM ROM DOS 4, nonexistent drives return CF clear,
 	  BX=CX=0000h, and ES:DI = 0000h:0000h
+	machines with lost CMOS memory may return invalid data for floppy
+	  drives. In this situation CF is cleared, but AX,BX,CX,DX,DH,DI,
+	  and ES contain only 0.  At least under some circumstances, MS-DOS/
+	  PC DOS IO.SYS/IBMBIO.COM just assumes a 360 KB floppy if it sees
+	  CH to be zero for a floppy.
 	the PC-Tools PCFORMAT program requires that AL=00h before it will
 	  proceed with the formatting
-BUG:	several different Compaq BIOSes incorrectly report high-numbered
+	if this function fails, an alternative way to retrieve the number
+	  of floppy drives installed in the system is to call INT 11h.
+	In fact, the MS-DOS/PC-DOS IO.SYS/IBMBIO.COM attempts to get the
+	  number of floppy drives installed from INT 13/AH=08h, when INT 11h
+	  AX bit 0 indicates there are no floppy drives installed. In addition
+	  to testing the CF flag, it only trusts the result when the number of
+	  sectors (CL preset to zero) is non-zero after the call.
+BUGS:	several different Compaq BIOSes incorrectly report high-numbered
 	  drives (such as 90h, B0h, D0h, and F0h) as present, giving them the
 	  same geometry as drive 80h; as a workaround, scan through disk
 	  numbers, stopping as soon as the number of valid drives encountered
 	  equals the value in 0040h:0075h
+	a bug in Leading Edge 8088 BIOS 3.10 causes the DI,SI,BP,DS, and ES
+	  registers to be destroyed
+	some Toshiba BIOSes (at least before 1995, maybe some laptops???
+	  with 1.44 MB floppies) have a bug where they do not set the ES:DI
+	  vector even for floppy drives. Hence these registers should be
+	  preset with zero before the call and checked to be non-zero on
+	  return before using them.  Also it seems these BIOSes can return
+	  wrong info in BL and CX, as S/DOS 1.0 can be configured to preset
+	  these registers as for an 1.44 MB floppy.
+	the PS/2 Model 30 fails to reset the bus after INT 13/AH=08h and
+	  INT 13/AH=15h. A workaround is to monitor for these functions
+	  and perform a transparent INT 13/AH=01h status read afterwards.
+	  This will reset the bus. The MS-DOS 6.0 IO.SYS takes care of
+	  this by installing a special INT 13h interceptor for this purpose.
+	AD-DOS may leave interrupts disabled on return from this function.
+	Some Microsoft software explicitly sets STI after return.
 SeeAlso: AH=06h"Adaptec",AH=13h"SyQuest",AH=48h,AH=15h,INT 1E
 SeeAlso: INT 41"HARD DISK 0"
 
@@ -2065,6 +2169,10 @@ Notes:	this function reads in four to seven bytes of error-correcting code
 	  after the first sector with an ECC error
 	used for diagnostics only on PS/2 systems; IBM officially classifies
 	  this function as optional
+BUG:	on the original IBM AT BIOS (1984/01/10) this function does not disable
+	  interrupts for harddisks (DL >= 80h). On these machines the MS-DOS/
+	  PC DOS IO.SYS/IBMBIO.COM installs a special filter to bypass the
+	  buggy code in the ROM (see CALL F000h:211Eh)
 SeeAlso: AH=02h,AH=0Bh,MEM 0040h:0074h
 --------B-130B-------------------------------
 INT 13 - HARD DISK - WRITE LONG SECTOR(S) (AT and later)
@@ -2230,12 +2338,15 @@ Return: CF set on error
 	AL = 00h
 SeeAlso: AH=12h,AH=13h
 --------B-1315-------------------------------
-INT 13 - DISK - GET DISK TYPE (XT 1/10/86 or later,XT286,AT,PS)
+INT 13 - DISK - GET DISK TYPE (XT 1986/1/10 or later,XT286,AT,PS)
 	AH = 15h
 	DL = drive number (bit 7 set for hard disk)
+	(AL = FFh, CX = FFFFh, see Note)
 Return: CF clear if successful
 	    AH = type code
 		00h no such drive
+		    (SpeedStor) AL = 03h hard disk
+				    CX:DX = number of 512-byte sectors
 		01h floppy without change-line support
 		02h floppy (or other removable drive) with change-line support
 		03h hard disk
@@ -2247,16 +2358,29 @@ Note:	SyQuest can report type 01h or 02h for 'hard disks', since its media
 BUGS:	many versions of the Award 486 BIOS do not return the sector count
 	  because the BIOS exit code restores CX and DX to their original
 	  values after the function had already set them to correct values
+	Some releases of PC Tools REBUILD preset CX=FFFFh and only trust the
+	  results if CH <= 2 on return (which would cut off drives > 16 Gb).
 	several different Compaq BIOSes incorrectly report high-numbered
 	  drives (such as 90h, B0h, D0h, and F0h) as present, giving them the
 	  same geometry as drive 80h; as a workaround, scan through disk
 	  numbers, stopping as soon as the number of valid drives encountered
 	  equals the value in 0040h:0075h
+	the PS/2 Model 30 fails to reset the bus after INT 13/AH=08h and
+	  INT 13/AH=15h.  A workaround is to monitor for these functions
+	  and perform a transparent INT 13/AH=01h status read afterwards.
+	  This will reset the bus. The MS-DOS 6.0 IO.SYS takes care of
+	  this by installing a special INT 13h interceptor for this purpose.
+	Some releases of SpeedStor have a bug where it reports AX=0003h instead
+	  of correctly reporting AH=03h for hard disks. A possible workaround
+	  when testing for hard disks is to check for AH=03h and AX=0003h.
+	  In this case this function should be invoked with a bogus fixed
+	  value in AL, e.g. AL=FFh.
 SeeAlso: AH=08h,AH=16h,AH=17h,AH=19h"SCSI",MEM 0040h:0075h
 --------B-1316-------------------------------
-INT 13 - FLOPPY DISK - DETECT DISK CHANGE (XT 1/10/86 or later,XT286,AT,PS)
+INT 13 - FLOPPY DISK - DETECT DISK CHANGE (XT 1986/1/10 or later,XT286,AT,PS)
 	AH = 16h
 	DL = drive number (00h-7Fh)
+	SI = 0000h (to avoid crash on AT&T 6300)
 Return: CF clear if change line inactive
 	    AH = 00h (disk not changed)
 	CF set if change line active
@@ -2268,8 +2392,25 @@ Notes:	call AH=15h first to determine whether the drive supports a change
 	  line
 	this call also clears the media-change status, so that a disk change
 	  is only reported once
-BUG:	some versions of Award 386 Modular BIOS and AMI BIOS fail to clear
+BUGS:	some versions of Award 386 Modular BIOS and AMI BIOS fail to clear
 	  the media-change status
+	AT&T 6300 WGS systems crash if SI <> 0 on entry.
+	some pre 1986/08/04 Compaq ROM BIOS have a serious bug where this
+	  function may re-configure a hard disk depending on what is located
+	  at ES:[BX] and data indexed to by it. MS-DOS/PC DOS IO.SYS/IBMBIO.COM
+	  install a special filter when they detect Compaq ROM BIOSes with
+	  earlier dates.
+	some Compaq 286 systems have a bug in all INT 13h functions >= 16h,
+	  which causes the byte at DS:0074h to be destroyed when called for
+	  hard disks (DL >= 80h). MS-DOS/PC DOS IO.SYS/IBMBIO.COM performs a
+	  test on this bug using this sub-function, and if found installs a
+	  special filter which points DS into ROM, so that it cannot cause
+	  any harm.
+	some drives (or controllers???) forget the change line status
+	  if another drive is accessed afterwards. The DOS BIOS takes care
+	  of this by not relying on the reported change line status when
+	  the change line is not active and a different drive is accessed,
+	  instead it reports "don't know" to the DOS kernel.
 SeeAlso: AH=15h,AH=49h
 --------B-1317-------------------------------
 INT 13 - FLOPPY DISK - SET DISK TYPE FOR FORMAT (AT,PS)
@@ -2912,11 +3053,16 @@ Return: CF clear if successful
 		01h invalid request
 		30h drive does not support media sense
 		31h no such drive / media not present
-		32h non-default media / drive does not supporte media type
-Notes:	this function is supported by the 3/8/93 ROM BIOS, but only partially
-	  (AL is always 00h when successful) by the 8/3/93 version
+		32h non-default media / drive does not support media type
+Notes:	this function is supported by the 1993/3/8 Compaq ROM BIOS, but only
+	  partially (AL is always 00h when successful) by the 1993/8/3 version
 	this function is also supported by some recent versions of the Phoenix
 	  486 BIOS
+	this function does not seem to be supported by some Toshiba BIOSes
+	  (at least before 1995, maybe some laptops??? with 1.44 MB floppies),
+	  because S/DOS 1.0 contains code to bypass a call to this function,
+	  always assuming the drive would not support media sense.
+SeeAlso: AH=15h
 
 (Table 00265)
 Values for Compaq/ATAPI diskette media type:
@@ -2965,6 +3111,10 @@ INT 13 u - QUICKCACHE II v4.20 - FLUSH CACHE
 	AH = 21h
 Return: AX = status (0000h successful)
 Desc:	immediately write all dirty sectors back to disk
+Note:	this is one out of several cache flush calls issued by the PTS-DOS 6.51
+	  and S/DOS 1.0 kernel before rebooting. It is called with DL=80h and
+	  conflicts with the PS/2 function of the same function number, because
+	  the kernel does not perform Quickcache's installation check first.
 SeeAlso: AH=25h"QUICKCACHE",AH=2Eh,AH=2Fh
 --------d-1322-------------------------------
 INT 13 - HARD DISK - PS/1 and newer PS/2 - WRITE MULTIPLE DISK SECTORS
@@ -3451,7 +3601,7 @@ SeeAlso: AH=02h,AH=41h"INT 13 Ext",AH=43h"INT 13 Ext"
 
 Format of disk address packet:
 Offset	Size	Description	(Table 00272)
- 00h	BYTE	10h (size of packet)
+ 00h	BYTE	size of packet (10h or 18h)
  01h	BYTE	reserved (0)
  02h	WORD	number of blocks to transfer (max 007Fh for Phoenix EDD)
  04h	DWORD	-> transfer buffer
@@ -3459,6 +3609,8 @@ Offset	Size	Description	(Table 00272)
 		(for non-LBA devices, compute as
 		  (Cylinder*NumHeads + SelectedHead) * SectorPerTrack +
 		  SelectedSector - 1
+ 10h	QWORD	(EDD-3.0, optional) 64-bit flat address of transfer buffer;
+		  used if DWORD at 04h is FFFFh:FFFFh
 --------N-134257DX1234-----------------------
 INT 13 U - Beame&Whiteside BWLPD - INSTALLATION CHECK
 	AX = 4257h ("BW")
@@ -3514,6 +3666,7 @@ Return: CF clear if successful
 	    AH = error code (see #00234)
 Notes:	this function is required to be supported for any removable drives
 	  numbered 80h or higher
+	a device may be locked even if no media is present in the drive
 	up to 255 locks may be placed on a drive, and the media will not
 	  be physically unlocked until all locks have been removed
 SeeAlso: AH=41h"INT 13 Ext",AH=46h,AH=49h,INT 15/AH=52h"INT 13 Extensions"
@@ -3536,6 +3689,8 @@ Return: CF clear if successful
 	    AH = 00h
 	CF set on error
 	    AH = error code (see #00234)
+Note:	this function initiates the seek, and may return before the seek
+	  actually completes
 SeeAlso: AH=0Ch,AH=42h"INT 13 Ext"
 --------d-1348-------------------------------
 INT 13 - IBM/MS INT 13 Extensions - GET DRIVE PARAMETERS
@@ -3547,11 +3702,14 @@ Return: CF clear if successful
 	    DS:SI buffer filled
 	CF set on error
 	    AH = error code (see #00234)
-BUG:	several different Compaq BIOSes incorrectly report high-numbered
+BUGS:	several different Compaq BIOSes incorrectly report high-numbered
 	  drives (such as 90h, B0h, D0h, and F0h) as present, giving them the
 	  same geometry as drive 80h; as a workaround, scan through disk
 	  numbers, stopping as soon as the number of valid drives encountered
 	  equals the value in 0040h:0075h
+	Dell machines using PhoenixBIOS 4.0 Release 6.0 fail to correctly
+	  handle this function if the flag word at DS:[SI+2] is not 0000h
+	  on entry
 SeeAlso: AH=08h,AH=41h,AH=49h,MEM 0040h:0075h
 
 Format of IBM/MS INT 13 Extensions drive parameters:
@@ -3600,6 +3758,7 @@ Bit(s)	Description	(Table 00274)
  5	drive can be locked (required if drive >= 80h is removable)
  6	CHS information set to maximum supported values, not current media
  15-7	reserved (0)
+Note:	bits 4-6 are only valid if bit 2 is set
 SeeAlso: #00273
 
 Format of EDD v3.0 Interface Path:
@@ -3675,6 +3834,8 @@ Offset	Size	Description	(Table 00278)
 		(currently 10h for v1.0 and 11h for v1.1-3.0)
  0Fh	BYTE	2's complement checksum of bytes 00h-0Eh
 		8-bit sum of all bytes 00h-0Fh should equal 00h
+Note:	this structure is also called the Device Paramter Table Extension
+	  (DPTE)
 SeeAlso: #00277
 
 Bitfields for Phoenix Enhanced Disk Drive Spec drive flags:
@@ -3706,7 +3867,7 @@ Bit(s)	Description	(Table 00280)
 	11 proprietary translation
 ---v3.0---
  11	Ultra DMA access enabled
- 15-12	reserved
+ 15-12	reserved (0)
 SeeAlso: #00278,#00279
 --------d-1349-------------------------------
 INT 13 - IBM/MS INT 13 Extensions - EXTENDED MEDIA CHANGE
@@ -3812,7 +3973,7 @@ Offset	Size	Description	(Table 00283)
  06h	WORD	first sector in boot catalog to transfer
 SeeAlso: #00281
 --------d-134E-------------------------------
-INT 13 - IBM/MS INT 13 Extensions v2.1 - SET HARDWARE CONFIGURATION
+INT 13 - IBM/MS INT 13 Extensions v2.1+ - SET HARDWARE CONFIGURATION
 	AH = 4Eh
 	AL = function
 	    00h enable prefetch
@@ -3820,8 +3981,8 @@ INT 13 - IBM/MS INT 13 Extensions v2.1 - SET HARDWARE CONFIGURATION
 	    02h set maximum PIO transfer mode
 	    03h set PIO mode 0
 	    04h set default PIO transfer mode
-	    05h enable INT 13 DMA maximum mode
-	    06h disable INT 13 DMA
+	    05h enable INT 13h DMA maximum mode
+	    06h disable INT 13h DMA
 	DL = drive number
 Return: CF clear if successful
 	    AH = 00h
@@ -4470,9 +4631,11 @@ INT 13 - Super PC-Kwik v3.20+ - FLUSH CACHE
 	SI = 4358h
 Return: CF clear
 	AH = 00h (v5.10)
-Note:	PC Tools PC-Cache 5.x and Qualitas Qcache 4.00 are OEM versions of
+Notes:	PC Tools PC-Cache 5.x and Qualitas Qcache 4.00 are OEM versions of
 	  Super PC-Kwik, and thus support this call (note that PC-Cache v5.1
 	  corresponds to PC-Kwik v3.20)
+	this function is one out of several cache flush calls issued by the
+	  PTS-DOS 6.51 and S/DOS 1.0 kernel before rebooting.
 SeeAlso: INT 16/AX=FFA5h/CX=FFFFh
 Index:	PC-Cache|Qualitas Qcache
 --------c-13A2--SI4358-----------------------
@@ -4603,6 +4766,15 @@ Return: ???
 Note:	PC Tools PC-Cache 5.x is an OEM version of Super PC-Kwik, and thus
 	  supports this call; Qualitas Qcache does not support it
 Index:	PC-Cache
+----------13BF00-----------------------------
+INT 13 - Mylex/Adaptec??? - ???
+	AX = BF00h
+	BX = PCI address???
+	DI = 0000h ???
+	DL = drive number (80h = C:)
+Return: ???
+Note:	some poorly-commented code using this function notes that there had
+	  been a workaround for some Mylex BIOS bug by setting DL to 8Fh
 --------d-13E000-----------------------------
 INT 13 - XBIOS - COMMAND
 	AX = E000h
@@ -4639,7 +4811,7 @@ SeeAlso: #00297,#00299
 
 Format of Ontrackr_VxD_Data structure:
 Offset	Size	Description	(Table 00299)
- 00h	BYTE	INT13 drive number
+ 00h	BYTE	INT 13h drive number
  01h	DWORD	Delta skew value
  05h	BYTE	Physical  heads (Word 3 of Identify Data)
  06h	BYTE	Physical sectors per track (Word 6 of Identify Data)
@@ -4790,7 +4962,10 @@ Notes:	default handler is at F000h:E739h in IBM PC and 100% compatible BIOSes
 	  bps will result in 4800 bps
 	various network and serial-port drivers support the standard BIOS
 	  functions with interrupt-driven I/O instead of the BIOS's polled I/O
-	the 04/08/93 Compaq system ROM uses only the low two bits of DX
+	the 1993/04/08 Compaq system ROM uses only the low two bits of DX
+	the default setting used by DOS (MS-DOS 6, DR-DOS 7.03, PTS-DOS) when
+	  (re-)initializing the serial devices is AL=A3h (2400 bps, no parity,
+	  1 stop bit, 8 data bits).
 SeeAlso: AH=04h"SERIAL",AH=04h"MultiDOS",AH=05h"SERIAL",AH=57h
 SeeAlso: AX=8000h"ARTICOM",AH=81h"COMM-DRV",AH=82h"COURIERS",AH=8Ch
 SeeAlso: MEM 0040h:0000h,PORT 03F8h"Serial"
@@ -4894,7 +5069,7 @@ Return: AH bit 7 clear if successful
 	AH bits 6-0 = port status (see #00304)
 Notes:	various network and serial-port drivers support the standard BIOS
 	  functions with interrupt-driven I/O instead of the BIOS's polled I/O
-	the 04/08/93 Compaq system ROM uses only the low two bits of DX
+	the 1993/04/08 Compaq system ROM uses only the low two bits of DX
 SeeAlso: AH=02h,AH=0Bh"FOSSIL",AX=8000h"ARTICOM",AH=89h,MEM 0040h:007Ch
 --------N-1401--DXFFFF-----------------------
 INT 14 - Connection Manager - SEND CHARACTER
@@ -4919,7 +5094,7 @@ Notes:	will timeout if DSR is not asserted, even if function 03h returns
 	  data ready
 	various network and serial-port drivers support the standard BIOS
 	  functions with interrupt-driven I/O instead of the BIOS's polled I/O
-	the 04/08/93 Compaq system ROM uses only the low two bits of DX
+	the 1993/04/08 Compaq system ROM uses only the low two bits of DX
 SeeAlso: AH=01h,AH=02h"FOSSIL",AH=84h,AH=FCh
 --------S-1402-------------------------------
 INT 14 - FOSSIL - RECEIVE CHARACTER WITH WAIT
@@ -4950,7 +5125,7 @@ INT 14 - SERIAL - GET PORT STATUS
 Return: AH = line status (see #00304)
 	AL = modem status (see #00305)
 	AX = 9E00h if disconnected (ArtiCom)
-Note:	the 04/08/93 Compaq system ROM uses only the low two bits of DX
+Note:	the 1993/04/08 Compaq system ROM uses only the low two bits of DX
 SeeAlso: AH=00h,AH=07h"MultiDOS",AX=8000h"ARTICOM",AH=81h"COURIERS",AX=FD02h
 
 Bitfields for serial line status:
@@ -5463,6 +5638,69 @@ Bit(s)	Description	(Table 00336)
  1	transmit XON/XOFF
  2	DTR/DSR
  3	RTS/CTS
+----------1405-------------------------------
+INT 14 - PhysTechSoft PTS ROM-DOS - SET PACKET
+	AH = 05h
+	CX = packet length
+	DX = port number
+	DS:SI -> packet
+Return: AH = error code (0 = no error, -1 = error)
+Notes:	The embedded PC can send messages at any time. The managing PC may
+	  force the embedded PC to receive messages only after causing a reset
+	  on the remote embedded PC.
+    !!!from Matthias Paul:
+    Description of the high-level control packets:
+	After the reset the embedded PC will send a 4-byte packet "LOAD"
+	  to the managing PC to indicate it is now able to receive commands.
+	The managing PC can send commands using 6-byte sized packets starting
+	  with "COMM" followed by a 2-byte command code:
+	    "01" demand setup information
+	    "02" demand sending of diagnostic information
+	If diagnostic information is requested, the embedded PC will send back
+	  a header packet starting with 4-byte "DIAG" followed by 2 bytes
+	  indicating the count of diagnostic data packets following. Each
+	  diagnostic data packet is sized 134 bytes, starting with the 4-byte
+	  "DIAG", a 2-byte number packet, followed by 128 bytes of data.
+	If setup information is requested, the embedded PC will send back
+	  8 bytes length packets starting with "SETP" and 2 byte of setup
+	  information of the LOADER and BIOS. The contents varies.
+	If the embedded PC requests the managing PC to send a BIOS it will
+	  send a 4 byte packet "BIOS".
+	The managing PC will then send back a 6-byte sized BIOS header packet
+	  starting with "BIOS" and a 2-byte indicator of the BIOS image size
+	  in packets.
+	The embedded PC will answer by sending a 6 byte packet starting with
+	  "BIOS" followed by the running number of the demanded packet.
+	The managing PC will then send the requested part of the BIOS image
+	  in a 134 byte sized packet, starting with "BIOS", the 2 byte running
+	  number of the packet and 128 bytes of the actual BIOS info.
+	The embedded PC acknowledges that it received the BIOS with a 6-byte
+	  packet "BIOS", followed by 2-bytes of 0.
+	If the embedded PCs requests the managing PC to send the operating
+	  system, it will follow the same proceduce as for requesting the
+	  BIOS. The only difference is that instead of "BIOS", the string
+	  "PTOS" will be used in the communication.
+	Debug information packets have a length of 32 bytes starting with
+	  the 4-byte "DEBU" signature, and followed by the contents of the
+	  PCU registers in the following order: SP, SS, ES, DS, BP, DI, SI,
+	  DX, CX, BX, AX, IP, CS, Flags. Debug information is send after
+	  reaching the corresponding breakpoint.
+     Description of the low-level packet protocol:
+	Before sending a packet the sending side sends a byte 52h and for a
+	  certain time (ca. 1 second for the embedded PC) waits for
+	  confirmation (41h) from the receiving side. If no acknowledge is
+	  received this	procedure is repeated 4 more times before an error is
+	  returned.
+	If acknowledge was received the following information is sent:
+	 2 BYTEs  synchronization (50h, 50h)
+	   BYTE	  data packet size - 1
+	 2 BYTEs  CRC of the data
+	 var.	  data
+	 2 BYTEs  synchronization (F0h, F0h)
+	The receiving side must acknowledge this by sending back two bytes
+	  59h, 59h. If the sender does not receive the confirmation, it
+	  tries 4 more times before returning an error.
+SeeAlso: INT 14h/AH=06h, INT 15h/AX=E908h, INT 15h/E909h
 --------N-1405--DXFFFF-----------------------
 INT 14 - Connection Manager - CLOSE COMMUNICATION
 	AH = 05h
@@ -5522,6 +5760,15 @@ INT 14 - TelAPI - WRITE BLOCK
 Return: AX = number of characters actually sent (negative on error)
 	CX = ???
 SeeAlso: AH=07h"TelAPI",AH=E0h"TelAPI",AH=E3h"TelAPI"
+----------1406-------------------------------
+INT 14 - PhysTechSoft PTS ROM-DOS - GET PACKET
+	AH = 06h
+	CX = buffer size for packet
+	DX = port number
+	DS:SI -> buffer for packet
+Return: AH = error code (00h = no error, FFh = error)
+	CX = packet size
+SeeAlso: AH=05h"PTS ROM-DOS",INT 15/AX=E908h,INT 15/AX=E909h
 --------N-1406--DXFFFF-----------------------
 INT 14 - Connection Manager - SEND CHARACTER BLOCK
 	AH = 06h

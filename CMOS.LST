@@ -1,7 +1,8 @@
-CMOS-Memory Map			Release 60		Last change 03jan99
+CMOS-Memory Map			Release 61		Last change 16jul00
+Copyright (c) 1989-1999,2000 Ralf Brown
 
-Compiled from multiple sources by Padgett Peterson
-Corrections/additions/comments to: padgett@tccslr.dnet.mmc.com
+Originally compiled from multiple sources by Padgett Peterson
+<padgett@tccslr.dnet.mmc.com>.
 
 No guarantees of any kind.
 
@@ -80,10 +81,69 @@ Note: where not otherwise noted, all data points are expressed as BYTES
 Note: the entries for AMI WinBIOS also apply to AMIBIOS with core dates of 
 	12/15/95 or later
 
+
+Newer BIOSes have two checksums in the CMOS RAM, the second one covering
+bytes 40h through 7Ch (or 7Eh).  Unfortunately, the second checksum is at
+a different location in different BIOSes.  The following code from 
+Agapov Vasiliy Pavlovich <arhfond@online.ru> (28 Aug 1996) is designed to
+find the location of the second checksum byte on *any* BIOS (successfully
+tested on various versions of AMI and AWARD BIOSes).
+
+Agapov's instructions for use:
+> Before starting this code make sure to load the 128 bytes of CMOS data
+> to the buffer at CMOS_DATA and assume DS as data area segment register.
+
+START:	CALL	WHAT_CMOS
+	JC	NO_SECOND_CHS
+
+; Checksum location is in word at  CHECKS_ADDRESS
+
+NO_SECOND_CHS:
+
+; There's no second checksum in this CMOS
+
+END:
+
+;******************************* SUBS **********************************
+
+WHAT_CMOS:	MOV	SI,OFFSET CMOS_DATA+40H
+		MOV	DI,OFFSET CMOS_DATA+7EH
+		CALL	FIND_CMOS_CHS
+		JNC	END_WCMOS
+		MOV	SI,OFFSET CMOS_DATA+41H
+		MOV	DI,OFFSET CMOS_DATA+7EH
+		CALL	FIND_CMOS_CHS
+END_WCMOS:	RET
+
+
+FIND_CMOS_CHS:	XOR	DX,DX
+		MOV	AX,DX
+FIND_CMOS_C1:	LODSB			; GET BYTE
+		ADD	DX,AX
+		CMP	SI,OFFSET CMOS_DATA+7CH	; ADDRESS OF CHECKSUM ?
+		JB	FIND_CMOS_C1
+		XCHG	DH,DL
+		CMP	DX,[SI]		; CHECKSUM FOUND ?
+		JZ	END_FCMOS
+		XCHG	DH,DL
+		CMP	SI,DI
+		JB	FIND_CMOS_C1
+		STC
+		RET
+END_FCMOS:	MOV	[CHECKS_ADDRESS],SI	; SAVE CHECKSUM POSITION
+		CLC
+		RET
+
+******************************** DATA *******************************
+
+CHECKS_ADDRESS	DW	0
+
+CMOS_DATA	DB   128 DUP (?)
+
 --------!---Note-----------------------------
 		Organization of CMOS Memory - Clock
 
-00h-0Eh is defined by the clock hardware and all must follow it. Other 
+00h-0Eh is defined by the clock hardware and all must follow it.  Other 
 manufacturers generally follow the same format as specified for the
 region 10h - 2Fh. Some also follow the IBM format for 30h-33h but not all 
 (Zenith in particular is different).
@@ -158,6 +218,13 @@ Bit(s)	Description	(Table C0001)
 	0011 122 microseconds (minimum)
 	1111 500 milliseconds	
 	0110 976.562 microseconds (default 1024 Hz)
+Notes:	some operating systems seem to change the CMOS clock rate to slower
+	  values for unknown purposes. Since on older ATs the clock rate does
+	  not get restored after a cold boot, this may slow down disk
+	  operations for example under PC DOS which depends on the clock rate.
+	If IBMBIO.COM finds a model byte FCh (sub-models 00h, 01h, 02h, 03h,
+	  or 06h) during init, it resets the clock rate to the default value
+	  (00100110b).
 SeeAlso: #C0002,#C0003,#C0004
 ----------R0B--------------------------------
 CMOS 0Bh - RTC - STATUS REGISTER B (read/write) 
@@ -173,6 +240,13 @@ Bit(s)	Description	(Table C0002)
  1	24/12 hour selection - 1 enables 24 hour mode
  0	Daylight Savings Enable
 	=1 enables automatic switching to/from DST in April and October
+Notes:	some operating systems seem to change the CMOS clock rate to slower
+	  values for unknown purposes. Since on older ATs the clock rate does
+	  not get restored after a cold boot, this may slow down disk
+	  operations for example under PC DOS which depends on the clock rate.
+	If IBMBIO.COM finds a model byte FCh (sub-models 00h, 01h, 02h, 03h,
+	  or 06h) during init, it resets the clock rate to the default value
+	  (00100110b).
 SeeAlso: #C0001,#C0003,#C0004
 ----------R0C--------------------------------
 CMOS 0Ch - RTC - STATUS REGISTER C (Read only)
@@ -192,7 +266,7 @@ CMOS 0Dh - RTC - STATUS REGISTER D (read only)
 
 Bitfields for Real-Time Clock status register D:
 Bit(s)	Description	(Table C0004)
- 7	Valid RAM - 1 indicates batery power good, 0 if dead or disconnected.
+ 7	Valid RAM - 1 indicates battery power good, 0 if dead or disconnected.
  6-0	unused (0)
 --------!---Note-----------------------------
 		Organization of CMOS Memory - non-Clock
@@ -205,14 +279,16 @@ CMOS 0Eh  - IBM PS/2 - DIAGNOSTIC STATUS BYTE
 Bitfields for IBM PS/2 diagnostic status byte:
 Bit(s)	Description	(Table C0005)
  7	indicates clock has lost power
- 6	incorrect checksum>
+ 6	incorrect checksum
  5	equipment configuration is incorrect
-	  (power-on check requires that atleast one floppy be installed)
+	  (power-on check requires that at least one floppy be installed)
  4	error in memory size
  3	controller or disk drive failed initialization
  2	time is invalid
  1	installed adaptors do not match configuration
  0	time-out while reading adaptor ID
+Note:	Compaq machines with dual hard disk controllers support at least bits
+	  7 and 6
 ----------R0E13------------------------------
 CMOS 0Eh-13h - AMSTRAD - TIME AND DATE MACHINE LAST USED
 ----------R0F--------------------------------
@@ -574,6 +650,9 @@ CMOS 1Ah - MCA - SLOT 0 ADAPTER CARD ID
 CMOS 1Bh - MCA - SLOT 1 ADAPTER CARD ID
 ----------R1B--------------------------------
 CMOS 1Bh - AMI - First Hard Disk (type 47) user defined: # of Cylinders, LSB
+Note:	this byte is also supported by Compaq machines with dual hard disk
+	  controllers
+SeeAlso: MEM F000h:FFE8h
 ----------R1B1C------------------------------
 CMOS 1Bh-1Ch - AMSTRAD - Joystick fire button 2 scancode/ASCII code
 Size:	WORD
@@ -780,6 +859,13 @@ CMOS 25h - AWARD - 2nd Hard Disk user defined (type 48): Sectors per Track
 ----------R25--------------------------------
 CMOS 25h - Quadtel HT 12 BIOS - second user def. drive: WPC-low
 Desc:	Write Precompensation Cylinder, low byte
+----------R25--------------------------------
+CMOS 25h - COMPAQ 386 - MACHINE CONFIGURATION
+SeeAlso: MEM F000h:FFE0h
+
+Bitfields for Compaq machine configuration:
+Bit(s)	Description	(Table C0099)
+ 3	soft drive???
 ----------R26--------------------------------
 CMOS 26h - AMI - Second Hard Disk user defined: Number of Heads
 ----------R26--------------------------------
@@ -1144,8 +1230,8 @@ CMOS 3Bh - AWARD - CONFIGURATION BITS
 Bitfields for AWARD configuration bits:
 Bit(s)	Description	(Table C0045)
  4-7	Screen Colors Used in Setup (see #C0046)
- 3	??? Default = 0
- 2	??? Default = 0
+ 3-2	translation used for first disk
+	00 normal, 01 LBA, 10 Large, 11 Auto
  1	??? Default = 1
  0	Enable External Cache
 
@@ -1179,7 +1265,8 @@ Bit(s)	Description	(Table C0047)
  7	disable virus warning on boot
  6,5	???
  4	Quick POST Enabled
- 3,2	???
+ 3,2	translation used for second disk
+	00 normal, 01 LBA, 10 Large, 11 Auto
  1	Enable Turbo Switch Input
  0	0 = Boot from A, then C
 	1 = Boot from C, then A
@@ -1848,8 +1935,10 @@ Bit(s)	Description	(Table C0097)
 CMOS 66h - AMI 1990 Hyundai super-NB368S notebook - DOZE MODE TIMEOUT
 Note:	doze mode timeout 00-0F, from table (0,12 -14 sec)
 ----------R6679------------------------------
-CMOS 66h-79h - AWARD - ??? unused ???
-Note:	Defaults to all FFh's.
+CMOS 66h - AWARD - ??? unused ???
+Note:	Defaults to FFh
+----------R6679------------------------------
+CMOS 67h - AWARD - TYPE OF FIRST DRIVE ON SECOND IDE PORT
 ----------R67--------------------------------
 CMOS 67h - AMI 1990 Hyundai super-NB368S notebook - SLEEP MODE TIMEOUT
 Desc:	sleep mode timeout 00-0F, units of 1 second
@@ -1863,10 +1952,21 @@ CMOS 69h - AMI 1990 Hyundai super-NB368S notebook - LCD MODE TIMEOUT
 Desc:	LCD mode timeout 01-0F, units of 1 minute
 ----------R6A--------------------------------
 CMOS 6Ah - AMI 1990 Hyundai super-NB368S notebook - ???
-----------R7077------------------------------
-CMOS 70h-77h - AWARD - IDE hard disk params for second drive on second IDE port
+----------R70--------------------------------
+CMOS 70h - AWARD - TYPE OF SECOND DRIVE ON SECOND IDE PORT
+----------R7178------------------------------
+CMOS 71h-78h - AWARD - IDE hard disk params for second drive on second IDE port
 ----------R787D------------------------------
 CMOS 78h-7Dh - AMI WinBIOS - used by BIOS as scratch RAM
+----------R79--------------------------------
+CMOS 79h - AWARD - SECONDARY IDE DRIVE TRANSLATION
+
+Bitfields for AWARD Secondary IDE drive translation:
+Bit(s)	Description	(Table C0098)
+ 7-4    ??? Default = 1111
+ 3-2    translation used for secondary master
+	00 normal, 01 LBA, 10 Large, 11 Autio
+ 1-0    translation used for secondary slave (as for bits 3-2)
 ----------R7A--------------------------------
 CMOS 7Ah - AWARD - EXTENDED CMOS CHECKSUM (high byte)
 Note:	Award's extended checksum is the arithmetic sum of all the bytes
@@ -1893,81 +1993,8 @@ CMOS 7Eh-7Fh - AMI WinBIOS - used as scratch RAM by power management code
 CMOS 7Fh - AMD-645 Clock - CENTURY
 SeeAlso: CMOS 32h
 ---------------------------------------------
-
-From arhfond@online.ru Thu Sep	5 21:17:13 1996
-Date: Wed, 28 Aug 1996 22:35:17 +0400
-From: Agapov Vasiliy Pavlovich <arhfond@online.ru>
-To: ralf@telerama.lm.com
-Subject: Re: Ralf Brown's Interrupt List Release 42.
-
-The problem with CMOS checksum layout for the new motherboards (1995-1996)
-with AWARD, AMIBIOS (also AMIBIOS on Pentium motherboards produced beyond
-1992) and several others is the following: they have added the second checksum
-for the CMOS area from 40h to 7Ch. Any changes in the area concerned, always
-result in "CMOS checksum failure. Defaults loaded...".
-
-The problem is that every model of BIOS has its own location of the second
-checksum and its own way of determining it. When you need to change some bytes
-in the area from 40h to 7Ch you ought to determine checksum location. Here's
-the Assembly code that finds out the location of the second CMOS checksum on
-ANY motherboard. I've tested it on more than 10 different motherboards with
-AMIBIOS and AWARD BIOS and it never failed.
-
-	Before starting this code make sure to load the 128 bytes of CMOS
-data to the buffer at CMOS_DATA and assume DS as data area segment register.
-
-START:	CALL	WHAT_CMOS
-	JC	NO_SECOND_CHS
-
-; Checksum location is in word at  CHECKS_ADDRESS
-
-NO_SECOND_CHS:
-
-; There's no second checksum in this CMOS
-
-END:
-
-;******************************* SUBS **********************************
-
-WHAT_CMOS:	MOV	SI,OFFSET CMOS_DATA+40H
-		MOV	DI,OFFSET CMOS_DATA+7EH
-		CALL	FIND_CMOS_CHS
-		JNC	END_WCMOS
-		MOV	SI,OFFSET CMOS_DATA+41H
-		MOV	DI,OFFSET CMOS_DATA+7EH
-		CALL	FIND_CMOS_CHS
-END_WCMOS:	RET
-
-
-FIND_CMOS_CHS:	XOR	DX,DX
-		MOV	AX,DX
-FIND_CMOS_C1:	LODSB			; GET BYTE
-		ADD	DX,AX
-		CMP	SI,OFFSET CMOS_DATA+7CH	; ADDRESS OF CHECKSUM ?
-		JB	FIND_CMOS_C1
-		XCHG	DH,DL
-		CMP	DX,[SI]		; CHECKSUM FOUND ?
-		JZ	END_FCMOS
-		XCHG	DH,DL
-		CMP	SI,DI
-		JB	FIND_CMOS_C1
-		STC
-		RET
-END_FCMOS:	MOV	[CHECKS_ADDRESS],SI	; SAVE CHECKSUM POSITION
-		CLC
-		RET
-
-******************************** DATA *******************************
-
-CHECKS_ADDRESS	DW	0
-
-CMOS_DATA	DB   128 DUP (?)
-									    
-	  Regards,
-	    Alexey Podrezov
-	    28.08.1996
 --------!---Admin----------------------------
-Highest Table Number = C0097
+Highest Table Number = C0099
 --------!---History--------------------------
 Revision History
 

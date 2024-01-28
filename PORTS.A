@@ -1,5 +1,5 @@
-PORTS LIST			Release 60		Last change 03jan99
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+PORTS LIST			Release 61		Last change 16jul00
+Copyright (c) 1989-1999,2000 Ralf Brown
 [This file originally by Wim Osterholt <wim@djo.wtm.tudelft.nl>,
  though it has grown considerably since.]
 
@@ -6975,6 +6975,17 @@ SeeAlso: PORT 0040h,PORT 0044h
 0049  ??  EISA 8254 timer 2, not used (counter 4)
 004A  RW  EISA PIT2 counter 5 (CPU speed control)
 004B  -W  EISA PIT2 control word
+----------P00500052--------------------------
+PORT 0050-0052 - Olivetti M24 - 8530 SIO CHIP
+SeeAlso: PORT 0065h"Olivetti"
+
+0050  RW  8530 serial communications chip
+Note:	At least MS-DOS 6 bypasses the initialization of serial devices if
+	  it finds an Olivetti M24 machine with an 8630 SIO port present at
+	  this address.
+	An Olivetti-approved presence detection is to write 0Fh to port 50h
+	  and check if bit 0 is still cleared when reading port 50h again.
+SeeAlso: PORT 0066h, INT 14h/00h,INT 15h/C0h INTER 60 table 0515
 --------K-P0060006F--------------------------
 PORT 0060-006F - KEYBOARD CONTROLLER 804x (8041, 8042) (or PPI (8255) on PC,XT)
 Note:	XT uses ports 60h-63h, AT uses ports 60h-64h
@@ -7006,6 +7017,8 @@ Note:	XT uses ports 60h-63h, AT uses ports 60h-64h
 	  compatibility
 
 0065  R-  communications port (Olivetti M24)
+0066  R?  configuration port (Olivetti M24 with model byte 0)
+		bit 5 set if 8530 SIO present (see also PORT 0065h"Olivetti")
 
 Bitfields for AT keyboard controller input port:
 Bit(s)	Description	(Table P0381)
@@ -7082,6 +7095,7 @@ Value	Count	Description
 		01h scancode set 1 (PCs and PS/2 mod 30, except Type 2 ctrlr)
 		02h scancode set 2 (ATs, PS/2, default)
 		03h scancode set 3
+ F1h	???	select menu command
  F2h	sngl	read keyboard ID (read two ID bytes)
 		AT keyboards returns FA (ACK)
 		MF2 returns AB 41 (translation) or
@@ -7183,6 +7197,7 @@ Values for keyboard special codes:
  AAh	BAT completion code (sent after errorfree Basic Assurance Test)
  ABh	first byte of general MF2 keyboard ID
  EEh	Echo command return
+ F0h	keyboard break code
  FAh	Acknowledge (all general commands except Resend and Echo)
  FAh	(mouse) Acknowledge (all commands except commands ECh,F2h,FFh)
  FCh	(MF2) BAT Failure Code (error in second half of the power on self test)
@@ -7325,6 +7340,8 @@ Bit(s)	Description	(Table P0398)
  6	receive timeout
  5	transmit timeout
  4	keyboard interface inhibited by keyboard lock
+	or by password server mode (IBM PS/2-286 [model bytes FCh/09h],
+	  "Tortuga" [model F8h/19h]) (see #00515 at INT 15/AH=C0h)
  3	=1 data written to input register is command (PORT 0064h)
 	=0 data written to input register is data (PORT 0060h)
  2	system flag status: 0=power up or reset	 1=selftest OK
@@ -7610,6 +7627,18 @@ PORT 0065 - ???
 
 0065  RW  ???
 		bit 2: A20 gate control (set = A20 enabled, clear = disabled)
+----------P00650066--------------------------
+PORT 0065-0066 - Olivetti M24
+SeeAlso: PORT 0050h"Olivetti"
+
+0065  R-  communications port
+0066  R?  configuration port
+		Olivetti M24 at least with model byte 0 (see MEM F000h:FFFEh)
+		bit 5 set if 8530 SIO installed at PORT 0050h
+Note:	At least MS-DOS 6 bypasses the initialization of serial devices if
+	  it finds an Olivetti M24 machine with an 8530 SIO present at ports
+	  50h-52h.
+!SeeAlso: PORT 0050h"Olivetti",INT 14/AH=00h,#00515 at INT 15/AH=C0h
 ----------P00660067--------------------------
 PORT 0066-0067 - AT&T 6300+ - SYSTEM CONFIGURATION SWITCHES
 ----------P0066------------------------------
@@ -8055,7 +8084,7 @@ Values for Chips&Technologies 82C100/82C235 POST code:
  94h	POD bootstrap
  95h	reset ICs
  96h	setup cache controller
-SeeAlso: #P0410,#P0411,#P0412
+SeeAlso: #P0410,#P0411,#P0412,#P0414,#P1017
 
 (Table P0414)
 Values for Intel SE440BX ("Seattle") motherboard POST codes:
@@ -8218,6 +8247,62 @@ Values for Intel SE440BX ("Seattle") motherboard POST codes:
  F5h	clear huge segment
  F6h	boot to mini-DOS
  F7h	boot to full DOS
+SeeAlso: #P0413,#P1017
+
+(Table P1017)
+Values for Microid Research MR-BIOS POST codes:
+ 00h	starting cold boot
+ 01h	OEM-specific hook #0 (typically chipset reset)
+ 02h	disable critical I/O devices (6845, 8327s, floppy, and parity latches)
+ 03h	BIOS checksum test (beep code LH-LLL; L=low tone, H=high tone)
+ 04h	test page registers (PORT 0081h-008Fh) (beep code LH-HLL)
+ 05h	keyboard controller self-test (beep code LH-LHL)
+ 06h	gang port initialization (both 8237s, both 7254s, RTC registers
+	  0Fh/0Ah, and both 8259s)
+ 07h	OEM-specific hook #1 (typically cache and shadow RAM disable)
+ 08h	test refresh toggle (beep code LH-HHL)
+ 09h	pattern test both 8237s (beep code LH-LLH)	
+ 0Ah	test first 64K RAM (beep code LH-LLLL or LH-HLLL)
+ 0Bh	pattern test both 8259s mask registers
+	(beep code LH-HHHL [master] or LH-LLLH [slave])
+ 0Ch	test 8259 IRQs and purge powerup interrupts
+ 0Dh	test and init 8254 channel 0
+ 0Eh	test 8254 channel 2 and speaker circuitry
+ 0Fh	test and init RTC
+ 10h	initialize video
+ 11h	text CMOS checksum
+ 12h	display signon message, accept keyboard selftest result, attempt
+	  to initialize keyboard
+ 13h	OEM-specific hook #2 (typically 8MHz-bus select)
+ 14h	size and test base memory
+ 15h	second attempt to initialize keyboard, if necessary
+ 16h	OEM-specific hook #3 (typically cache sizing/test)
+ 17h	test A20 gate
+ 18h	size and test extended memory
+ 19h	OEM-specific hook #4 (size/test "special" OEM memory)
+ 1Ah	test RTC update-in-progress flag and validate time
+ 1Bh	determine serial ports
+ 1Ch	determine parallel ports
+ 1Dh	determine/initialize coprocessor
+ 1Eh	floppy controller test/determination and CMOS validation
+ 1Fh	determine/test fixed disk controller, validate CMOS settings
+ 20h	rigorous CMOS parameter validation
+ 21h	check frnot-panel lock, wait for user acknowledgement of errors
+ 22h	set NumLock, password-security trap, dispatch to setup utility
+ 23h	OEM-specific hook #5
+ 24h	set keyboard typematic rate
+ 25h	initialize floppy subsystem
+ 26h	initialize fixed-disk subsystem
+ 27h	ACK errors, set primary adapter's video mode
+ 28h	OEM-specific hook #6 (typically enable shaow RAM, cache, turbo mode)
+ 29h	disable A20, set low stack, init ROMs at C800-E000
+ 2Ah	ACK errors, set video mode, set DOS time from RTC
+ 2Bh	enable parity checking and NMI
+ 2Ch	init ROM at E000
+ 2Dh	ACK errors
+ 2Eh	OEM-specific hook #7 (typically init built-in EMS)
+ 2Fh	passing control to INT 19h
+SeeAlso: #0410,#0414
 ----------P0080008F--------------------------
 PORT 0080-008F - DMA PAGE REGISTERS (74612)
 
@@ -8277,6 +8362,11 @@ Bit(s)	Description	(Table P0415)
 Notes:	once set, bit 3 may only be cleared by a power-on reset
 	on at least the C&T 82C235, bit 0 remains set through a CPU reset to
 	  allow the BIOS to determine the reset method
+	on the PS/2 30-286 & "Tortuga" the INT 15h/87h memory copy does
+	  not use this port for A20 control, but instead uses the keyboard
+	  controller (8042). Reportedly this may cause the system to crash
+	  when access to the 8042 is disabled in password server mode
+	  (see #P0398).
 SeeAlso: #P0416,#P0417,MSR 00001000h
 
 Bitfields for PS/2 system board enable/setup register:

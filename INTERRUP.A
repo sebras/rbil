@@ -1,25 +1,25 @@
-Interrupt List			Release 60		Last change 03jan99
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+Interrupt List			Release 61		Last change 16jul00
+Copyright (c) 1989-1999,2000 Ralf Brown
 --------!---FILELIST-------------------------
 Please redistribute the following files unmodified as a group, in a quartet of
-archives named INTER60A through INTER60D (preferably the original authenticated
+archives named INTER61A through INTER61D (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
-	INTERRUP.A	INT 00 through INT 10/CF  \
+	INTERRUP.A	INT 00 through INT 10/BE  \
 	INTERRUP.B	INT 10/BF through INT 15/0F\
 	INTERRUP.C	INT 15/10 through INT 15/E7 \
 	INTERRUP.D	INT 15/E8 through INT 1A/B0  \
-	INTERRUP.E	INT 1A/B1 through INT 1F      \	  total 2459 pages at
+	INTERRUP.E	INT 1A/B1 through INT 1F      \	  total 2520 pages at
 	INTERRUP.F	INT 20 through INT 21/43       \  60 lines per page,
-	INTERRUP.G	INT 21/44 through INT 21/5E	\ 2615 with INTPRINT -p
-	INTERRUP.H	INT 21/5F through INT 21/E2	 >(8653 entries)
-	INTERRUP.I	INT 21/E3 through INT 21/F1	/ (4081 tables)
+	INTERRUP.G	INT 21/44 through INT 21/5E	\ 2684 with INTPRINT -p
+	INTERRUP.H	INT 21/5F through INT 21/E2	 >(8754 entries)
+	INTERRUP.I	INT 21/E3 through INT 21/F1	/ (4135 tables)
 	INTERRUP.J	INT 21/F2 through INT 25       /
-	INTERRUP.K	INT 26 through INT 2F/16      /
-	INTERRUP.L	INT 2F/17 through INT 2F/AC  /
-	INTERRUP.M	INT 2F/AD through INT 30    /
-	INTERRUP.N	INT 31 through INT 5F	   /
-	INTERRUP.O	INT 60 through INT 61	  /
+	INTERRUP.K	INT 26 through INT 2F/15      /
+	INTERRUP.L	INT 2F/16 through INT 2F/79  /
+	INTERRUP.M	INT 2F/7A through INT 2F/D9 /
+	INTERRUP.N	INT 2F/DA through INT 50   /
+	INTERRUP.O	INT 51 through INT 61	  /
 	INTERRUP.P	INT 62 through INT 6A	 /
 	INTERRUP.Q	INT 6B through INT 91	/
 	INTERRUP.R	INT 92 through INT FF  /
@@ -34,11 +34,13 @@ PKZIP archives):
 	GLOSSARY.LST	a glossary of terms, abbreviations, and acronyms
 	MEMORY.LST	format of the BIOS data area
 	OPCODES.LST	a listing of recent and undocumented CPU instructions
-	PORTS.LST	a listing of I/O ports
+	PORTS.A		a listing of I/O ports 0000h-013Fh
+	PORTS.B		a listing of I/O ports 0140h-0AD5h
+	PORTS.C		a listing of I/O ports 0AD6h-FFFFh
 	CATEGORY.KEY	descriptions of divider-line category letters
 	COMBINE.COM	combine the pieces of the list into a single file
 	COMBINE.DOC	documentation for COMBINE
-The following files should be distributed in an archive called INTER60E:
+The following files should be distributed in an archive called INTER61E:
 	86BUGSnn.ZIP	programs to test for CPU bugs
 	COMBINE.ASM	source code for COMBINE.COM
 	INT.*		invoke interrupts from commandline
@@ -47,13 +49,11 @@ The following files should be distributed in an archive called INTER60E:
 	INTPRINT.C	source code for INTPRINT
 	INTSUM??.ZIP	interrupt list browser (Interrupt Summary)
 	IVIEW*.ZIP	another interrupt list browser
-The following should be distributed in an archive called INTER60F:
+Finally, the following should be distributed in an archive called INTER61F:
 	INT2RTF.ZIP	Slava Gostrenko's Windows Help converter
 	INT2WHLP.ZIP	convert list into Windows Help database
 	INTERRUP.ICO	icon for interrupt list
 	HINTSRCH.ZIP	WinHelp DLL for full-text searches of interrupt list
-	WH_ED*.ZIP	WinHelp-file editor
-Finally, the following should be distributed in an archive called INTER60G:
 	IL2ME???.ZIP	convert list into Multi-Edit help database
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
 	INT2HLP.ZIP	convert list into QuickHelp database
@@ -62,6 +62,7 @@ Finally, the following should be distributed in an archive called INTER60G:
 	INT2TPH.ZIP	convert to Turbo/Borland Pascal help file (.TPH)
 	INTHELP.*	convert list into TurboPower GUIDE database
 	RB2NG???.ZIP	convert list into Norton Guides database
+	WH_ED*.ZIP	WinHelp-file editor
 --------!---CONTACT_INFO---------------------
 If you notice any mistakes or omissions, please let me know!  It is only with
 YOUR help that the list can continue to grow at the current rate.  Please send
@@ -553,7 +554,7 @@ Program: PSPS is shareware PostScript PrintScreen utility by A.N.D.
 	  Technologies
 SeeAlso: AX=454Ah,AX=4E57h,INT 17/AH=62h
 --------C-06---------------------------------
-INT 06 C - CPU-generated (80286+) - INVALID OPCODE
+INT 06 C - CPU-generated (80186+) - INVALID OPCODE
 Desc:	this interrupt is generated when the CPU attempts to execute an
 	  invalid opcode (most protected-mode instructions are considered
 	  invalid in real mode) or a BOUND, LDS, LES, or LIDT instruction
@@ -765,7 +766,9 @@ SeeAlso: INT 09"CPU",INT 0D
 --------H-0A---------------------------------
 INT 0A C - IRQ2 - LPT2 (PC), VERTICAL RETRACE INTERRUPT (EGA,VGA)
 Notes:	the TOPS and PCnet adapters use this interrupt request line by default
-	DOS 3.2 revectors IRQ2 to a stack-switching routine
+	DOS 3.2 revectors IRQ2 to a stack-switching routine; DOS 3.3+ does so
+	  unless STACKS=0 has been set in CONFIG.SYS.  MS/PC-DOS 3.3+ use the
+	  IBM Interrupt Sharing Protocol (see #02568) when hooking this IRQ
 	on ATs and above, the physical data line for IRQ2 is labeled IRQ9 and
 	  connects to the slave 8259.  The BIOS redirects the interrupt for
 	  IRQ9 back here.
@@ -818,6 +821,9 @@ Notes:	the TOPS and PCnet adapters use this interrupt request line as an
 	on PS/2s, COM2 through COM8 share this interrupt; on many PC's, COM4
 	  shares this interrupt
 	may be masked by setting bit 3 on I/O port 21h
+	DOS 3.3+ revectors IRQ3 to a stack-switching routine unless STACKS=0
+	  has been set in CONFIG.SYS.  MS/PC-DOS use the IBM Interrupt Sharing
+	  Protocol (see #02568) when hooking this IRQ
 SeeAlso: INT 0C"COM1",INT 53"DESQview",INT 5B"DoubleDOS",INT 7B"GO32"
 --------C-0B---------------------------------
 INT 0B CP - CPU-generated (80286+) - SEGMENT NOT PRESENT
@@ -842,6 +848,9 @@ BUG:	this vector is modified but not restored by Direct Access v4.0, and
 	  of compiled BASIC
 Notes:	on many PC's, COM3 shares this interrupt
 	may be masked by setting bit 4 on I/O port 21h
+	DOS 3.3+ revectors IRQ4 to a stack-switching routine unless STACKS=0
+	  has been set in CONFIG.SYS.  MS/PC-DOS use the IBM Interrupt Sharing
+	  Protocol (see #02568) when hooking this IRQ
 SeeAlso: INT 0B"COM2",INT 54"DESQview",INT 5C"DoubleDOS",INT 7C"GO32"
 --------C-0C---------------------------------
 INT 0C C - CPU-generated (80286+) - STACK FAULT
@@ -899,6 +908,9 @@ INT 0D C - IRQ5 - FIXED DISK (PC,XT), LPT2 (AT), reserved (PS/2)
 Notes:	under DESQview, only the INT 15h vector and BASIC segment address (the
 	  word at 0000h:0510h) may be assumed to be valid for the handler's
 	  process
+	DOS 3.3+ revectors IRQ5 to a stack-switching routine unless STACKS=0
+	  has been set in CONFIG.SYS.  MS/PC-DOS use the IBM Interrupt Sharing
+	  Protocol (see #02568) when hooking this IRQ
 	the Tandy 1000, 1000A, and 1000HD use IRQ2 for the hard disk; the
 	  1000EX, HX, RLX, RLX-HD, RLX-B, RLX-HD-B use IRQ5 instead; the
 	  1000RL, RL-HD, SL, SL/2, TL, TL/2, and TL/3 are jumper-selectable
@@ -950,6 +962,9 @@ Desc:	this interrupt is generated by the floppy disk controller on
 	  completion of an operation
 Notes:	default handler is at F000h:EF57h in IBM PC and 100%-compatible BIOSes
 	may be masked by setting bit 6 on I/O port 21h
+	DOS 3.3+ revectors IRQ6 to a stack-switching routine unless STACKS=0
+	  has been set in CONFIG.SYS.  MS/PC-DOS use the IBM Interrupt Sharing
+	  Protocol (see #02568) when hooking this IRQ
 SeeAlso: INT 0D"IRQ5",INT 56"DESQview",INT 5E"DoubleDOS",INT 7E"GO32"
 --------C-0E---------------------------------
 INT 0E C - CPU-generated (80386+ native mode) - PAGE FAULT
@@ -985,6 +1000,14 @@ Desc:	this interrupt is generated by the CPU when the -ERROR pin is asserted
 Note:	AT's and clones usually wire the coprocessor to use IRQ13, but not all
 	  get it right
 SeeAlso: INT 09"hardware",INT 75
+--------V-10---------------------------------
+INT 10h - LIRVGA19 - CHAR HEIGHT HOOK
+Desc:	LIRVGA19.COM fixes display problems on some notebooks by hooking
+	   INT 10h and resetting the BIOS character height (MEM 0040h:0085h)
+	   to 10h on return, if it happens to be greater than 10h.
+Program: LIRVGA19.COM is part of the Lithuanian LIR codepage support package
+	  developed by LABAS u.a.b.
+SeeAlso: INT 10/AX=5555h/BX=BBBBh,MEM 0040h:0085h
 --------V-1000-------------------------------
 INT 10 - VIDEO - SET VIDEO MODE
 	AH = 00h
@@ -1031,6 +1054,7 @@ Notes:	IBM standard modes do not clear the screen if the high bit of AL is set
 	the Tseng ET4000 chipset is used by the Orchid Prodesigner II, Diamond
 	  SpeedSTAR VGA, Groundhog Graphics Shadow VGA, Boca Super X VGA,
 	  Everex EV-673, etc.
+	intercepted by GRAFTABL from Novell DOS 7 and Caldera OpenDOS 7.01.
 SeeAlso: AX=0070h,AX=007Eh,AX=10E0h,AX=10F0h,AH=40h,AX=6F05h,AH=FFh"GO32"
 SeeAlso: INT 33/AX=0028h,INT 5F/AH=00h,INT 62/AX=0001h,MEM 0040h:0049h
 Index:	installation check;Tseng ET4000|installation check;Ahead video cards
@@ -1800,9 +1824,9 @@ Notes:
       support all "Oak" modes listed here
 [9] this card uses the full 128K A000h-BFFFh range for the video buffer,
       precluding the use of a monochrome adapter in the same system
-[10] mode 17h supported by Tseng ET4000 BIOS 8.01X dated 09/14/90, but not
-      v8.01X dated 02/28/92; mode 21h supported by 02/28/92 version but not
-      09/14/90 version
+[10] mode 17h supported by Tseng ET4000 BIOS 8.01X dated 1990/09/14, but not
+      v8.01X dated 1992/02/28; mode 21h supported by 1992/02/28 version but not
+      1990/09/14 version
 [11] HERKULES simulates a 90x45 text mode in Hercules graphics mode; the
       installation check for HERKULES.COM is the signature "Herkules" two
       bytes beyond the INT 10 handler
@@ -1986,7 +2010,7 @@ INT 10 - VIDEO - Paradise VGA, AT&T VDC600 - EXTENDED DATA REGISTER ACCESS
 		(port 03CEh indices 0Ah,0Bh,0Ch,0Dh,0Eh,0Fh)
 		Return: BL = value of the paradise register
 			BH = 7Fh if successful
-	    29h-2Fh ??? (Paradise VGA for Dell, 7/24/91)
+	    29h-2Fh ??? (Paradise VGA for Dell, 1991/07/24)
 Return: AL = 7Fh if successful (AT&T VDC600)
 	BH = status (Paradise/Dell)
 	    00h invalid function
@@ -2000,7 +2024,7 @@ INT 10 - Paradise VGA - ???
 	???
 Return: BH = status (00h failed or not supported, 7Fh successful)
 	???
-Note:	this function is supported by the 5/14/93 ROM for the Dell 486D
+Note:	this function is supported by the 1993/5/14 ROM for the Dell 486D
 SeeAlso: AX=007Fh/BH=61h
 --------V-10007FBH61-------------------------
 INT 10 - Paradise VGA - ???
@@ -2009,7 +2033,7 @@ INT 10 - Paradise VGA - ???
 	ES:DI -> buffer for list of ??? (see #00012)
 Return: BH = status (00h failed or not supported, 7Fh successful)
 	???
-Note:	this function is supported by the 5/14/93 ROM for the Dell 486D
+Note:	this function is supported by the 1993/5/14 ROM for the Dell 486D
 SeeAlso: AX=007Fh/BH=60h
 
 Format of Paradise VGA list entry:
@@ -2026,7 +2050,7 @@ INT 10 - Paradise VGA - ???
 	???
 Return: BH = status (00h failed or not supported, 7Fh successful)
 	???
-Note:	this function is supported by the 5/14/93 ROM for the Dell 486D
+Note:	this function is supported by the 1993/5/14 ROM for the Dell 486D
 SeeAlso: AX=007Fh/BH=A6h
 --------V-10007FBHA5-------------------------
 INT 10 - Paradise VGA - ???
@@ -2038,7 +2062,7 @@ INT 10 - Paradise VGA - ???
 	???
 Return: BH = status (00h failed or not supported, 7Fh successful)
 	???
-Note:	this function is supported by the 5/14/93 ROM for the Dell 486D
+Note:	this function is supported by the 1993/5/14 ROM for the Dell 486D
 --------V-10007FBHA6-------------------------
 INT 10 - Paradise VGA - ???
 	AX = 007Fh
@@ -2046,7 +2070,7 @@ INT 10 - Paradise VGA - ???
 	???
 Return: BH = status (00h failed or not supported, 7Fh successful)
 	???
-Note:	this function is supported by the 5/14/93 ROM for the Dell 486D
+Note:	this function is supported by the 1993/5/14 ROM for the Dell 486D
 SeeAlso: AX=007Fh/BH=A5h
 --------V-1001-------------------------------
 INT 10 - VIDEO - SET TEXT-MODE CURSOR SHAPE
@@ -2104,6 +2128,7 @@ Return: AX = 0000h (Phoenix BIOS)
 Notes:	a separate cursor is maintained for each of up to 8 display pages
 	many ROM BIOSes incorrectly return the default size for a color display
 	  (start 06h, end 07h) when a monochrome display is attached
+	With PhysTechSoft's PTS ROM-DOS the BH value is ignored on entry.
 SeeAlso: AH=01h,AH=02h,AH=12h/BL=34h,MEM 0040h:0050h,MEM 0040h:0060h
 --------V-1004-------------------------------
 INT 10 - VIDEO - READ LIGHT PEN POSITION (except VGA)
@@ -2193,7 +2218,7 @@ Return: nothing
 Note:	affects only the currently active page (see AH=05h)
 BUGS:	some implementations (including the original IBM PC) have a bug which
 	  destroys BP
-	the Trident TVGA8900CL (BIOS dated 9/8/92) clears DS to 0000h when
+	the Trident TVGA8900CL (BIOS dated 1992/9/8) clears DS to 0000h when
 	  scrolling in an SVGA mode (800x600 or higher)
 SeeAlso: AH=07h,AH=12h"Tandy 2000",AH=72h,AH=73h,AX=7F07h,INT 50/AX=0014h
 --------V-1007-------------------------------
@@ -2207,7 +2232,7 @@ Return: nothing
 Note:	affects only the currently active page (see AH=05h)
 BUGS:	some implementations (including the original IBM PC) have a bug which
 	  destroys BP
-	the Trident TVGA8900CL (BIOS dated 9/8/92) clears DS to 0000h when
+	the Trident TVGA8900CL (BIOS dated 1992/9/8) clears DS to 0000h when
 	  scrolling in an SVGA mode (800x600 or higher)
 SeeAlso: AH=06h,AH=12h"Tandy 2000",AH=72h,AH=73h,INT 50/AX=0014h
 --------V-1008-------------------------------
@@ -2229,6 +2254,10 @@ Notes:	for monochrome displays, a foreground of 1 with background 0 is
 	  are matched by the pattern-comparison routine
 	on the Tandy 2000, BH=FFh specifies that the current page should be
 	  used
+	because of the IBM BIOS specifications, there may exist some clone
+	  BIOSes which do not preserve SI or DI; the Novell DOS kernel
+	  preserves SI, DI, and BP before many INT 10h calls to avoid problems
+	  due to those registers not being preserved by the BIOS.
 BUG:	some IBM PC ROM BIOSes destroy BP when in graphics modes
 SeeAlso: AH=09h,AX=1003h,AX=1103h,AH=12h/BL=37h,AX=5001h
 
@@ -2266,6 +2295,8 @@ Notes:	all characters are displayed, including CR, LF, and BS
 	replication count in CX may produce an unpredictable result in graphics
 	  modes if it is greater than the number of positions remaining in the
 	  current row
+	With PhysTechSoft's PTS ROM-DOS the BH, BL, and CX values are ignored
+	  on entry.
 SeeAlso: AH=08h,AH=0Ah,AH=4Bh"GRAFIX",INT 17/AH=60h,INT 1F"SYSTEM DATA"
 SeeAlso: INT 43"VIDEO DATA",INT 44"VIDEO DATA"
 --------V-100A-------------------------------
@@ -2283,6 +2314,8 @@ Notes:	all characters are displayed, including CR, LF, and BS
 	replication count in CX may produce an unpredictable result in graphics
 	  modes if it is greater than the number of positions remaining in the
 	  current row
+	With PhysTechSoft's PTS ROM-DOS the BH and CX values are ignored
+	  on entry.
 SeeAlso: AH=08h,AH=09h,AH=11h"Tandy 2000",AH=4Bh,INT 17/AH=60h
 SeeAlso: INT 1F"SYSTEM DATA",INT 43"VIDEO DATA",INT 44"VIDEO DATA"
 --------V-100B--BH00-------------------------
@@ -2347,8 +2380,8 @@ Desc:	display a character on the screen, advancing the cursor and scrolling
 	  the screen as necessary
 Notes:	characters 07h (BEL), 08h (BS), 0Ah (LF), and 0Dh (CR) are interpreted
 	  and do the expected things
-	IBM PC ROMs dated 4/24/81 and 10/19/81 require that BH be the same as
-	  the current active page
+	IBM PC ROMs dated 1981/4/24 and 1981/10/19 require that BH be the same
+	  as the current active page
 BUG:	if the write causes the screen to scroll, BP is destroyed by BIOSes
 	  for which AH=06h destroys BP
 SeeAlso: AH=02h,AH=06h,AH=0Ah
@@ -3226,7 +3259,7 @@ Note:	when display refresh is disabled, the entire screen displays the color
 	  specified by the DAC color register 00h; thus to actually blank the
 	  screen, the application must first ensure that that register has been
 	  set to black
-BUG:	GEM/VIEWMAX ET3000 and ET4000 drivers dated 6/23/88 do not correctly
+BUG:	GEM/VIEWMAX ET3000 and ET4000 drivers dated 1988/6/23 do not correctly
 	  reenable refresh after the screen has been blanked due to inactivity,
 	  resulting in a total loss of video synchronization
 SeeAlso: AX=BF05h
@@ -3264,13 +3297,13 @@ INT 10 - IBM SurePath BIOS - Officially "Private" Function
 	BL = 3Ah
 SeeAlso: AX=1118h,AH=12h/BL=39h
 --------V-1012--BL53-------------------------
-INT 10 - Tseng ET-4000 BIOS v8.00 (06/07/91) - BUG
+INT 10 - Tseng ET-4000 BIOS v8.00 (1991/06/07) - BUG
 	AH = 12h
 	BL = 53h
 Note:	due to an omitted end-of-list marker, this version of the BIOS will
 	  crash the system on this function
 --------V-1012--BL57-------------------------
-INT 10 - Tseng ET-4000 BIOS v8.00 (06/07/91) - BUG
+INT 10 - Tseng ET-4000 BIOS v8.00 (1991/06/07) - BUG
 	AH = 12h
 	BL = 57h
 Note:	due to an omitted end-of-list marker, this version of the BIOS will
@@ -3752,6 +3785,8 @@ Notes:	recognizes CR, LF, BS, and bell; for the ET4000 BIOS, scrolling,
 	also available PC or XT with EGA or higher
 	HP 95LX only supports write mode 00h
 	IBM documents AL=10h,11h,20h,21h as "private" rather than "reserved"
+	with PhysTechSoft's PTS ROM-DOS the AL,BH,BL,DH, and DL values are
+	  ignored on entry.
 BUG:	on the IBM VGA Adapter, any scrolling which may occur is performed on
 	  the active page rather than the requested page
 SeeAlso: AH=09h,AH=0Ah,AH=13h"DOS/V"
@@ -3920,7 +3955,7 @@ INT 10 - VIDEO - FUNCTIONALITY/STATE INFORMATION (PS,VGA/MCGA)
 	ES:DI -> 64-byte buffer for state information (see #00040)
 Return: AL = 1Bh if function supported
 	    ES:DI buffer filled with state information
-BUG:	Trident 8900 (BIOS D3.0 11/12/91) and Trident 9000 (C3.0 10/25/91)
+BUG:	Trident 8900 (BIOS D3.0 1991/11/12) and Trident 9000 (C3.0 1991/10/25)
 	  do not correctly set the fields at offsets 27h and 29h of the
 	  state information
 SeeAlso: AH=15h,AX=1A00h,AX=1F01h
@@ -4595,8 +4630,13 @@ Note:	this function was a NOP in TTDEMO.EXE, but may be implemented in other
 INT 10 - VIDEO - Hercules GRAFIX - "GMODE" - SET GRAPHICS MODE
 	AH = 40h
 Return: nothing
-Desc:	switch the Hercules Graphics Card into graphics mode (720x348)
-SeeAlso: AH=00h,AH=41h
+Program: Hercules GRAFIX (or GRAPH X, as it is called in some documentation)
+	  provides text output in graphics mode and some graphics primitives
+	  on the Hercules Graphics Card
+Desc:	switch the Hercules Graphics Card into graphics mode (720x348) without
+	  clearing the screen; make Page 0 the default for both writing and
+	  display, and set LEVEL (see AH=44h) to 01h
+SeeAlso: AH=00h,AH=41h,AH=42h
 Index:	video modes;Hercules
 --------V-1041-------------------------------
 INT 10 - VIDEO - Hercules GRAFIX - "TMODE" - SET TEXT MODE
@@ -4627,7 +4667,7 @@ INT 10 - VIDEO - Hercules GRAFIX - "LEVEL" - SELECT DRAWING FUNCTION
 	    02h invert pixels
 Return: nothing
 Desc:	specify how graphics output will change the display
-SeeAlso: AH=45h,AH=46h,AH=4Ch,AH=4Dh
+SeeAlso: AH=40h,AH=45h,AH=46h,AH=4Bh,AH=4Ch,AH=4Dh
 --------V-1045-------------------------------
 INT 10 - VIDEO - Hercules GRAFIX - "DISP" - SELECT PAGE TO DISPLAY
 	AH = 45h
@@ -4642,7 +4682,7 @@ INT 10 - VIDEO - Hercules GRAFIX - "PLOT" - DRAW ONE PIXEL
 	BP = y (0-347)
 Return: nothing
 Notes:	function 44h determines operation and function 43h which page to use
-	if the indicated coordinate is valid, this function does nothing
+	if the indicated coordinate is invalid, this function does nothing
 SeeAlso: AH=0Ch,AH=47h,AH=49h,AH=4Ch,AH=4Dh
 --------V-1047-------------------------------
 INT 10 - VIDEO - Hercules GRAFIX - "GETPT" - FIND PIXEL VALUE
@@ -4691,7 +4731,7 @@ Notes:	unlike the other BIOS character functions character position is
 	  specified in pixels rather than rows and columns
 	the character is writting using the drawing function last specified by
 	  AH=44h
-SeeAlso: AH=09h,AH=0Ah
+SeeAlso: AH=09h,AH=0Ah,AH=44h
 --------P-104B-------------------------------
 INT 10 - FRIEZE - API
 	AH = 4Bh
@@ -5033,6 +5073,10 @@ Notes:	the list of supported video modes is stored in the reserved portion of
 	  the SuperVGA information record by some implementations, and it may
 	  thus be necessary to either copy the mode list or use a different
 	  buffer for all subsequent VESA calls
+	not all of the video modes in the list of mode numbers may be
+	  supported, e.g. if they require more memory than currently installed
+	  or are not supported by the attached monitor.	 Check any mode you
+	  intend to use through AX=4F01h first.
 	the 1.1 VESA document specifies 242 reserved bytes at the end, so the
 	  buffer should be 262 bytes to ensure that it is not overrun; for
 	  v2.0, the buffer should be 512 bytes
@@ -5048,19 +5092,21 @@ Bit(s)	Description	(Table 00078)
  0	DAC can be switched into 8-bit mode
  1	non-VGA controller
  2	programmed DAC with blank bit (i.e. only during blanking interval)
+ 3	(VBE v3.0) controller supports hardware stereoscopic signalling
  3	controller supports VBE/AF v1.0P extensions
- 4	(VBE/AF) must call EnableDirectAccess to access framebuffer
- 5	(VBE/AF) controller supports hardware mouse cursor
- 6	(VBE/AF) controller supports hardware clipping
- 7	(VBE/AF) controller supports transparent BitBLT
+ 4	(VBE v3.0) if bit 3 set:
+	    =0 stereo signalling via external VESA stereo connector
+	    =1 stereo signalling via VESA EVC connector
+ 4	(VBE/AF v1.0P) must call EnableDirectAccess to access framebuffer
+ 5	(VBE/AF v1.0P) controller supports hardware mouse cursor
+ 6	(VBE/AF v1.0P) controller supports hardware clipping
+ 7	(VBE/AF v1.0P) controller supports transparent BitBLT
  8-31	reserved (0)
 SeeAlso: #00077,AX=4F09h
 --------V-104F01-----------------------------
 INT 10 - VESA SuperVGA BIOS - GET SuperVGA MODE INFORMATION
 	AX = 4F01h
-	CX = SuperVGA video mode
-	    bit 14 set means enable linear framebuffer mode (VBE v2.0+)
-	    bit 13 set means VBE/AF v1.0P initializes accelerator hardware
+	CX = SuperVGA video mode (see #04082 for bitfields)
 	ES:DI -> 256-byte buffer for mode information (see #00079)
 Return: AL = 4Fh if function supported
 	AH = status
@@ -5070,6 +5116,16 @@ Return: AL = 4Fh if function supported
 Desc:	determine the attributes of the specified video mode
 SeeAlso: AX=4F00h,AX=4F02h
 
+Bitfields for VESA/VBE video mode number:
+Bit(s)	Description	(Table 04082)
+ 15	preserve display memory on mode change
+ 14	(VBE v2.0+) use linear (flat) frame buffer
+ 13	(VBE/AF 1.0P) VBE/AF initializes accelerator hardware
+ 12	reserved for VBE/AF
+ 11	(VBE v3.0) user user-specified CRTC refresh rate values
+ 10-9	reserved for future expansion
+ 8-0	video mode number (0xxh are non-VESA modes, 1xxh are VESA-defined)
+
 Format of VESA SuperVGA mode information:
 Offset	Size	Description	(Table 00079)
  00h	WORD	mode attributes (see #00080)
@@ -5077,8 +5133,8 @@ Offset	Size	Description	(Table 00079)
  03h	BYTE	window attributes, window B (see #00081)
  04h	WORD	window granularity in KB
  06h	WORD	window size in KB
- 08h	WORD	start segment of window A
- 0Ah	WORD	start segment of window B
+ 08h	WORD	start segment of window A (0000h if not supported)
+ 0Ah	WORD	start segment of window B (0000h if not supported)
  0Ch	DWORD	-> FAR window positioning function (equivalent to AX=4F05h)
  10h	WORD	bytes per scan line
 ---remainder is optional for VESA modes in v1.0/1.1, needed for OEM modes---
@@ -5091,9 +5147,9 @@ Offset	Size	Description	(Table 00079)
  1Ah	BYTE	number of banks
  1Bh	BYTE	memory model type (see #00082)
  1Ch	BYTE	size of bank in KB
- 1Dh	BYTE	number of image pages
- 1Eh	BYTE	reserved (0)
----VBE v1.2+---
+ 1Dh	BYTE	number of image pages (less one) that will fit in video RAM
+ 1Eh	BYTE	reserved (00h for VBE 1.0-2.0, 01h for VBE 3.0)
+---VBE v1.2+ ---
  1Fh	BYTE	red mask size
  20h	BYTE	red field position
  21h	BYTE	green mask size
@@ -5105,26 +5161,49 @@ Offset	Size	Description	(Table 00079)
  27h	BYTE	direct color mode info
 		bit 0: color ramp is programmable
 		bit 1: bytes in reserved field may be used by application
----VBE v2.0 ---
+---VBE v2.0+ ---
  28h	DWORD	physical address of linear video buffer
  2Ch	DWORD	pointer to start of offscreen memory
  30h	WORD	KB of offscreen memory
- 32h 206 BYTEs	reserved (0)
+---VBE v3.0 ---
+ 32h	WORD	bytes per scan line in linear modes
+ 34h	BYTE	number of images (less one) for banked video modes
+ 35h	BYTE	number of images (less one) for linear video modes
+ 36h	BYTE	linear modes: size of direct color red mask (in bits)
+ 37h	BYTE	linear modes: bit position of red mask LSB (e.g. shift count)
+ 38h	BYTE	linear modes: size of direct color green mask (in bits)
+ 39h	BYTE	linear modes: bit position of green mask LSB (e.g. shift count)
+ 3Ah	BYTE	linear modes: size of direct color blue mask (in bits)
+ 3Bh	BYTE	linear modes: bit position of blue mask LSB (e.g. shift count)
+ 3Ch	BYTE	linear modes: size of direct color reserved mask (in bits)
+ 3Dh	BYTE	linear modes: bit position of reserved mask LSB
+ 3Eh	DWORD	maximum pixel clock for graphics video mode, in Hz
+ 42h 190 BYTEs	reserved (0)
+Note:	while VBE 1.1 and higher will zero out all unused bytes of the buffer,
+	  v1.0 did not, so applications that want to be backward compatible
+	  should clear the buffer before calling
 
 Bitfields for VESA SuperVGA mode attributes:
 Bit(s)	Description	(Table 00080)
- 0	mode supported
- 1	optional information available
+ 0	mode supported by present hardware configuration
+ 1	optional information available (must be =1 for VBE v1.2+)
  2	BIOS output supported
  3	set if color, clear if monochrome
  4	set if graphics mode, clear if text mode
----VBE v2.0 ---
+---VBE v2.0+ ---
  5	mode is not VGA-compatible
  6	bank-switched mode not supported
  7	linear framebuffer mode supported
- 8	???
- 9	(VBE/AF v1.0P) application must call EnableDirectAccess before calling
-	  bank-switching functions
+ 8	double-scan mode available (e.g. 320x200 and 320x240)
+---VBE v3.0 ---
+ 9	interlaced mode available
+ 10	hardware supports triple buffering
+ 11	hardware supports stereoscopic display
+ 12	dual display start address support
+ 13-15	reserved
+---VBE/AF v1.0P---
+ 9	application must call EnableDirectAccess before calling bank-switching
+	  functions
 SeeAlso: #00079
 
 Bitfields for VESA SuperVGA window attributes:
@@ -5151,10 +5230,9 @@ SeeAlso: #00079
 --------V-104F02-----------------------------
 INT 10 - VESA SuperVGA BIOS - SET SuperVGA VIDEO MODE
 	AX = 4F02h
-	BX = mode (see #00083,#00084)
-	    bit 15 set means don't clear video memory
-	    bit 14 set means enable linear framebuffer mode (VBE v2.0+)
-	    bit 13 set means VBE/AF v1.0P initializes accelerator hardware
+	BX = new video mode (see #04082,#00083,#00084)
+	ES:DI -> (VBE 3.0+) CRTC information block, bit mode bit 11 set
+		  (see #04083)
 Return: AL = 4Fh if function supported
 	AH = status
 	    00h successful
@@ -5181,7 +5259,7 @@ Values for VESA video mode:
  10Ah	132x43 text
  10Bh	132x50 text
  10Ch	132x60 text
----VBE v1.2---
+---VBE v1.2+ ---
  10Dh	320x200x32K
  10Eh	320x200x64K
  10Fh	320x200x16M
@@ -5194,17 +5272,21 @@ Values for VESA video mode:
  116h	1024x768x32K
  117h	1024x768x64K
  118h	1024x768x16M
- 119h	1280x1024x32K
- 11Ah	1280x1024x64K
+ 119h	1280x1024x32K (1:5:5:5)
+ 11Ah	1280x1024x64K (5:6:5)
  11Bh	1280x1024x16M
----VBE 2.0---
+---VBE 2.0+ ---
  120h	1600x1200x256
  121h	1600x1200x32K
  122h	1600x1200x64K
 81FFh	special full-memory access mode
-Note:	the special mode 81FFh preserves the contents of the video memory and
+Notes:	the special mode 81FFh preserves the contents of the video memory and
 	  gives access to all of the memory; VESA recommends that the special
-	  mode be a packed-pixel mode
+	  mode be a packed-pixel mode.	For VBE 2.0+, it is required that the
+	  VBE implement the mode, but not place it in the list of available
+	  modes (mode information for this mode can be queried directly,
+	  however).
+	as of VBE 2.0, VESA will no longer define video mode numbers
 SeeAlso: #00010,#00011,#00084,#00191
 Index:	video modes;VESA
 
@@ -5228,6 +5310,30 @@ Values for S3 OEM video mode:
 Note:	these modes are only available on video cards using S3's VESA driver
 SeeAlso: #00083,#00191,#00732 at INT 1A/AX=B102h
 Index:	video modes;S3
+
+Format of VESA VBE CRTC Information Block:
+Offset	Size	Description	(Table 04083)
+ 00h	WORD	total number of pixels horizontally
+ 02h	WORD	horizontal sync start (in pixels)
+ 04h	WORD	horizontal sync end (in pixels)
+ 06h	WORD	total number of scan lines
+ 08h	WORD	vertical sync start (in scan lines)
+ 0Ah	WORD	vertical sync end (in scan lines)
+ 0Ch	BYTE	flags (see #04084)
+ 0Dh	DWORD	pixel clock, in Hz
+ 11h	WORD	refresh rate, in 0.01 Hz units
+		this field MUST be set to pixel_clock / (HTotal * VTotal),
+		  even though it may not actually be used by the VBE
+		  implementation
+ 13h 40 BYTEs	reserved
+
+Bitfields for VESA VBE CRTC Information Block flags:
+Bit(s)	Description	(Table 04084)
+ 0	enable double scanning
+ 1	enable interlacing
+ 2	horizontal sync polarity (0 positive, 1 negative)
+ 3	vertical sync polarity (0 positive, 1 negative)
+SeeAlso: #04083
 --------V-104F03-----------------------------
 INT 10 - VESA SuperVGA BIOS - GET CURRENT VIDEO MODE
 	AX = 4F03h
@@ -5262,7 +5368,7 @@ Bit(s)	Description	(Table 00085)
  0	video hardware state
  1	video BIOS data state
  2	video DAC state
- 3	SuperVGA state
+ 3	SuperVGA register state
 SeeAlso: #00048,#00186
 --------V-104F05-----------------------------
 INT 10 - VESA SuperVGA BIOS - CPU VIDEO MEMORY CONTROL
@@ -5275,6 +5381,8 @@ INT 10 - VESA SuperVGA BIOS - CPU VIDEO MEMORY CONTROL
 	BL = window number
 	    00h window A
 	    01h window B
+	ES = selector for memory-mapped registers (VBE 2.0+, when called from
+	      32-bit protected mode)
 Return: AL = 4Fh if function supported
 	AH = status
 	    00h successful
@@ -5357,6 +5465,37 @@ Notes:	this function is valid in text modes, provided that values are
 	subfunction 80h waits until vertical retrace before changing the
 	  display start address (VBE v2.0+)
 SeeAlso: AX=4F01h,AX=4F05h,AX=4F06h
+--------V-104F07-----------------------------
+INT 10 - VESA SuperVGA BIOS v3.0+ - SCHEDULED DISPLAY START
+	AX = 4F07h
+	BL = subfunction
+	    02h,82h (VBE v3.0) schedule display start at next vertical retrace
+		ECX = display start address in bytes
+	    03h,83h schedule stereoscopic display start
+		ECX = left image start address (in bytes)
+		EDX = right image start address (in bytes)
+	    04h	get scheduled display start status
+		Return:	CX = start status
+			    (00h no display flip, else display has flipped)
+Return: AL = 4Fh if function supported
+	AH = status
+	    00h successful
+	    01h failed
+SeeAlso: AX=4F07h"DISPLAY START",AX=4F07h"STEREOSCOPIC"
+--------V-104F07-----------------------------
+INT 10 - VESA SuperVGA BIOS v3.0+ - ENABLE/DISABLE STEREOSCOPIC MODE
+	AX = 4F07h
+	BL = subfunction
+	    05h enable stereoscopic mode
+	    06h	disable stereoscopic mode
+Return: AL = 4Fh if function supported
+	AH = status
+	    00h successful
+	    01h failed
+Note:	when stereoscopic mode is enabled, the display start address will
+	  automatically alternate between the left and right images on every
+	  vertical retrace
+SeeAlso: AX=4F07h"DISPLAY START",AX=4F07h"SCHEDULED"
 --------V-104F08-----------------------------
 INT 10 - VESA SuperVGA BIOS v1.2+ - GET/SET DAC PALETTE CONTROL
 	AX = 4F08h
@@ -5367,8 +5506,8 @@ INT 10 - VESA SuperVGA BIOS v1.2+ - GET/SET DAC PALETTE CONTROL
 Return: AL = 4Fh if function supported
 	AH = status
 	    00h successful
+		BH = current number of bits per primary (06h = standard VGA)
 	    01h failed
-	BH = current number of bits per primary (06h = standard VGA)
 --------V-104F09-----------------------------
 INT 10 - VESA SuperVGA BIOS v2.0+ - GET/SET PALETTE ENTRIES
 	AX = 4F09h
@@ -5380,7 +5519,7 @@ INT 10 - VESA SuperVGA BIOS v2.0+ - GET/SET PALETTE ENTRIES
 	    80h set palette during vertical retrace
 	CX = number of entries to change
 	DX = starting palette index
-	ES:DI -> palette buffer (see #00086)
+	ES:DI -> palette buffer, array of DAC entries (see #00086)
 Return: AL = 4Fh if function supported
 	AH = status
 	    00h successful
@@ -5414,8 +5553,21 @@ Offset	Size	Description	(Table 00087)
 		  Palette)
  06h	WORD	offset (within table) of list of I/O ports and memory locations
 		  for which I/O privilege may be required in protected mode
-		  (0000h if no list)
+		  (0000h if no list) (see #04085)
  08h	var	code and optional port/memory list
+
+Format of VESA VBE 2.0+ protected-mode port/memory list:
+Offset	Size	Description	(Table 04085)
+ 00h	WORD	I/O port number
+	...
+	WORD	FFFFh marking end of I/O port list
+	DWORD	memory region base address
+	WORD	memory region limit (one less than length)
+	WORD	FFFFh marking end of memory region list
+Note:	the memory region is optional; if not present, there will be a word
+	  of FFFFh immediately following the FFFFh marking the end of the I/O
+	  port list
+SeeAlso: #00087
 --------V-104F0A-----------------------------
 INT 10 O - VESA SuperVGA BIOS v2.0 beta - GET PROTECTED-MODE CODE
 	AX = 4F0Ah
@@ -5433,8 +5585,19 @@ Values for VESA VBE protected-mode function identifiers:
  0001h	set bank (see AX=4F05h)
  0002h	set display start (see AX=4F07h)
  0003h	set palette (see AX=4F09h)
+--------V-104F0BBL00-------------------------
+INT 10 - VESA SuperVGA BIOS v3.0 - GET NEAREST PIXEL CLOCK
+	AX = 4F0Bh
+	BL = 00h get closest pixel clock
+	ECX = requested clock frequency in Hz
+	DX = video mode number
+Return: AL = 4Fh if function supported
+	AH = status
+	    00h successful
+		ECX = nearest clock rate
+	    01h failed
 --------V-104F0B-----------------------------
-INT 10 - VESA SuperVBA BIOS - GET VBE/AF v1.0P DEVICE CONTEXT BUFFER
+INT 10 - VESA SuperVGA BIOS - GET VBE/AF v1.0P DEVICE CONTEXT BUFFER
 	AX = 4F0Bh
 	BL = subfunction
 	    00h get length of device context buffer
@@ -6425,31 +6588,38 @@ SeeAlso: #00132
 
 (Table 00136)
 Values for manufacturer ID:
+ "ACT"	Targa
+ "ADI"	ADI Corporation	  http://www.adi.com.tw
  "AOC"	AOC International (USA) Ltd. (see #00137)
- "API"	Acer (see #00138)
+ "API"	Acer America Corp. (see #00138)
  "APP"	Apple Computer, Inc. (see #00139)
+ "ART"	ArtMedia
  "AST"	AST Research (see #00140)
- "CPL"	ALFA (see #00141)
- "CPQ"	COMPAQ (see #00142)
- "CTX"	CTX - Chuntex Electronic (see #00143)
+ "CPL"	Compal Electronics, Inc. / ALFA (see #00141)
+ "CPQ"	COMPAQ Computer Corp. (see #00142)
+ "CTX"	CTX - Chuntex Electronic Co. (see #00143)
  "DEC"	Digital Equipment Corporation (see #00144)
  "DEL"	Dell Computer Corp. (see #00145)
  "DPC"	Delta Electronics, Inc. (see #00146)
- "DWE"	Daewoo (see #00147)
+ "DWE"	Daewoo Telecom Ltd (see #00147)
  "ECS"	ELITEGROUP Computer Systems (see #00148)
  "EIZ"	EIZO (see #00149)
- "GSM"	LG Electronics Inc. (see #00158)
+ "FCM"	Funai Electric Company of Taiwan
+ "GSM"	LG Electronics Inc. (GoldStar Technology, Inc.) (see #00158)
+ "GWY"	Gateway 2000
  "HEI"	Hyundai Electronics Industries Co., Ltd. (see #00150)
  "HIT"	Hitachi (see #00151)
  "HSL"	Hansol Electronics (see #00152)
- "HTC"	Hitachi Ltd. (see #00153)
+ "HTC"	Hitachi Ltd. / Nissei Sangyo America Ltd. (see #00153)
  "HWP"	Hewlett Packard (see #00154)
  "IBM"	IBM PC Company (see #00155)
  "ICL"	Fujitsu ICL  (see #00156)
  "IVM"	Idek Iiyama North America, Inc. (see #00157)
- "LKM"	AZALEA
+ "KFC"	KFC Computek
+ "LKM"	ADLAS / AZALEA
  "LNK"	LINK Technologies, Inc.
- "MAG"	MAG Technology Co., Ltd. (see #00159)
+ "LTN"	Lite-On
+ "MAG"	MAG InnoVision (see #00159)
  "MAX"	Maxdata Computer GmbH
  "MEI"	Panasonic Comm. & Systems Co. (see #00168)
  "MEL"	Mitsubishi Electronics (see #00160)
@@ -6459,17 +6629,25 @@ Values for manufacturer ID:
  "NEC"	NEC Technologies, Inc. (see #00163)
  "NOK"	Nokia (see #00164)
  "OQI"	OPTIQUEST (see #00165)
+ "PBN"	Packard Bell
  "PGS"	Princeton Graphic Systems (see #00166)
  "PHL"	Philips Consumer Electronics Co. (see #00167)
  "REL"	Relisys
  "SAM"	Samsung (see #00169)
  "SDI"	Samtron (see #00170)
+ "SMI"	Smile
  "SNI"	Siemens Nixdorf
  "SNY"	Sony Corporation
+ "SPT"	Sceptre
+ "SRC"	Shamrock Technology
+ "STP"	Sceptre
  "TAT"	Tatung Co. of America, Inc. (see #00171)
  "TRL"	Royal Information Company (see #00172)
+ "TSB"	Toshiba, Inc.
  "UNM"	Unisys Corporation
  "VSC"	ViewSonic Corporation (see #00173)
+ "WTC"	Wen Technology
+ "ZCM"	Zenith Data Systems
  "___"	Targa
 SeeAlso: #00127
 
@@ -7166,6 +7344,7 @@ Values for ViewSonic monitor EDID:
  4439h	ViewSonic 15GS-2
  444Ah	ViewSonic 17GA-2
  4637h	ViewSonic 1769DC
+ 4745h	ViewSonic G653 (VCDTS21444-2E)
 SeeAlso: #00136,#00172
 --------V-104F15BL02-------------------------
 INT 10 - VESA VBE/DC (Display Data Channel) - READ VDIF
@@ -7289,6 +7468,8 @@ Return: AL = status
 	    00h successful
 	    01h bad country code
 	    02h other error
+Note:	This function is called with BX=0051h by Japanese versions of
+	  MS-DOS/PC DOS/DR DOS IO.SYS/IBMBIO.COM at initialization time.
 SeeAlso: AX=5001h,INT 16/AX=5000h
 --------J-105001-----------------------------
 INT 10 - VIDEO - AX PC - GET SCREEN COUNTRY CODE
@@ -7388,6 +7569,75 @@ Offset	Size	Description	(Table 00175)
  08h	DWORD	original INT 1C vector
  0Ch	WORD	screen saver state, 0=off, 1=on
  0Eh	WORD	blanking interval in clock ticks
+----------105555BXAAAA-----------------------
+INT 10 - LIR - SET CONFIGURATION
+	AX = 5555h
+	BX = AAAAh
+	CL = new configuration flags (see #04118)
+	CH > 0 new video adapter configuration (see #04121)
+	   = 0 do not update video adapter configuration
+	DL = new keyboard layout flags (see #04119)
+	DH = new alphabet flags (see #04120)
+Return: AX = A55Ah if installed
+Program: LIR is a DOS/Windows 3.xx codepage support package develoved by
+	  LABAS u.a.b. It supports several screen and printer codepages as
+	  well as various keyboard layouts used in Lithuania.
+	  Download at: ftp://ftp.labas.com/pub/drivers/language/lir422.zip
+SeeAlso: AX=5555h/BX=BBBBh,INT 17/AX=5555h/BX=AAAAh
+
+Bitfields for LIR configuration flags:
+Bit(s)	Description	(Table 04118)
+ 7	program is active
+ 6	???
+ 5-3	code page
+ 2	Lithuanian???
+ 1	Russian???
+ 0	enable beeps
+SeeAlso: #04119
+
+Bitfields for LIR keyboard layout flags:
+Bit(s)	Description	(Table 04119)
+ 7-5	keyboard layout
+	100 QWERTY
+	010 Lithuanian AZERTY
+	001 Lithuanian ergonomic FZVPUJ
+ 4-3	reserved (0)
+ 2	Lithuanian keyboard???
+ 1	Russian keyboard???
+ 0	???
+SeeAlso: #04118,#04120
+
+Bitfields for LIR Alphabet flags:
+Bit(s)	Description	(Table 04120)
+ 7-3	reserved (0)
+ 2	Lithuanian alphabetic symbol table???
+ 1	Russian alphabetic symbol table???
+ 0	reserved (0)
+SeeAlso: #04118,#04119,#04121
+
+Bitfields for LIR video adapter configuration:
+Bit(s)	Description	(Table 04121)
+ 7	Hercules Graphics Card (HGC)
+ 6-5	reserved (0)
+ 4	VGA
+ 3	MCGA
+ 2	EGA
+ 1	CGA
+ 0	reserved (0)
+Note:	multiple bits may be set if more than one video adapter is installed
+SeeAlso: #04118
+----------105555BXBBBB-----------------------
+INT 10 - LIR - GET CONFIGURATION
+	AX = 5555h
+	BX = BBBBh
+Return: AX = magic signature A55Ah
+	BX = version number (BH = major version, BL = minor version),
+	      e.g. BX = 0410h for LIR v4.10, or BX = 0422h for LIR v4.22)
+	CL = configuration flags (see #04118)
+	CH = video adapter configuration (see #04121)
+	DL = keyboard layout flags(see #04119)
+	DH = alphabet flags (see #04120)
+SeeAlso: AX=5555h/BX=AAAAh,INT 17/AX=5555h/BX=BBBBh
 --------V-105F00-----------------------------
 INT 10 - Chips & Technologies Extended BIOS - RETURN CHIP INFORMATION
 	AX = 5F00h
@@ -8905,13 +9155,15 @@ Program: CU Writer is a public-domain Thai-English word processor from
 	  Chulalongkorn University, Bangkok
 SeeAlso: AH=80h"CU Writer",AH=B0h
 --------p-10A000-----------------------------
-INT 10 - ATI Mach64 BIOS - ???
+INT 10 - ATI BIOS Extensions - ???
 	AX = A000h
 	CL = ??? (bits 2-0 may not be 000)
 	CH = ??? (81h or ???)
 	DX = segment of ??? (if CH=81h)
 	???
 Return: AX = ???
+Program: the ATI BIOS extensions are supported by ATI graphics cards containing
+	  the Mach64 or newer graphics chips (Rage Pro, Rage 128, etc.)
 SeeAlso: AX=4F10h/BL=00h,AX=A001h
 ----------10A001-----------------------------
 INT 10 - ATI Mach64 BIOS - ???
@@ -9052,6 +9304,22 @@ Return: AH = 00h (successful)
 	    02h suspend
 	    03h off
 SeeAlso: AX=A00Ch,AX=4F10h/BL=02h
+SeeAlso: AX=A00Ch,AX=A00Dh"Rage128"AX=4F10h/BL=02h
+--------V-10A00D-----------------------------
+INT 10 - ATI Rage128 BIOS - GET ???
+	AX = A00Dh
+	BL = subfunction
+	   00h ???
+	   01h ???
+	   02h ???
+	   03h ???
+	DX:DI -> buffer for results
+	???
+Return: AH = status
+	    00h successful
+	    01h failed
+	???
+SeeAlso: AX=A000h,AX=A00Dh"Mach64",AX=A015h
 ----------10A00E-----------------------------
 INT 10 - ATI Mach64 BIOS - SET ???
 	AX = A00Eh
@@ -9059,13 +9327,15 @@ INT 10 - ATI Mach64 BIOS - SET ???
 Return: AH = status
 	    00h successful
 	    01h failed
-Note:	CL zero/nonzero are treated differently
+Notes:	CL zero/nonzero are treated differently
+	NOP in All-in-Wonder 128 BIOS
 SeeAlso: AX=A000h,AX=A00Fh
 ----------10A00F-----------------------------
 INT 10 - ATI Mach64 BIOS - GET ???
 	AX = A00Fh
 Return: AH = 00h (successful)
 	CL = ??? (00h-03h, read from PORT 42ECh)
+Note:	NOP in All-in-Wonder 128 BIOS
 SeeAlso: AX=A000h,AX=A00Eh
 ----------10A010-----------------------------
 INT 10 - ATI Mach64 BIOS - ???
@@ -9076,6 +9346,7 @@ Return: AH = status
 	    00h successful
 	    01h failed
 	???
+Note:	NOP in All-in-Wonder 128 BIOS
 SeeAlso: AX=A000h,AX=A002h
 ----------10A011-----------------------------
 INT 10 - ATI Mach64 BIOS - GET ???
@@ -9086,8 +9357,9 @@ Return: AH = 00h (successful)
 	CL = ??? (00h)
 	CH = ??? (0Fh)
 	DX = ??? (00FFh)
+Note:	NOP in All-in-Wonder 128 BIOS
 SeeAlso: AX=A000h,AX=A010h
-----------10A012-----------------------------
+--------V-10A012-----------------------------
 INT 10 - ATI Mach64 BIOS - GET ???
 	AX = A012h
 Return: AH = 00h (successful)
@@ -9095,8 +9367,9 @@ Return: AH = 00h (successful)
 	BX = ??? (0000h)
 	CX = ??? (0000h)
 	DX = ??? (02ECh)
+Note:	NOP in All-in-Wonder 128 BIOS
 SeeAlso: AX=A000h,AX=A002h
-----------10A013-----------------------------
+--------V-10A013-----------------------------
 INT 10 - ATI Mach64 BIOS - ???
 	AX = A013h
 	???
@@ -9104,8 +9377,46 @@ Return: AH = status
 	    00h successful
 	    01h failed
 	???
-Note:	not implemented in examined BIOS, always returns AH=01h
+Note:	not implemented in examined Mach64 BIOS, always returns AH=01h; NOP in
+	  examined All-in-Wonder 128 BIOS
 SeeAlso: AX=A000h,AX=A002h
+--------V-10A014-----------------------------
+INT 10 - ATI Rage128 BIOS - ???
+	AX = A014h
+	CH = ??? (bits 0,1,4)
+	???
+Return: AH = status
+	    00h successful
+	    01h failed
+	???
+SeeAlso: AX=A000h,AX=A015h
+--------V-10A015-----------------------------
+INT 10 - ATI Rage128 BIOS - GET/SET ???
+	AX = A015h
+	CH = subfunction
+	    00h get ???	
+	    01h set ???
+	       CL = ??? (only bits 0,1 used on All-in-Wonder 128)
+	    other NOP
+Return: AH = status
+	    00h successful
+	    01h failed
+	???
+SeeAlso: AX=A014h,AX=A017h
+--------V-10A016-----------------------------
+INT 10 - ATI Rage128 BIOS - NOP
+	AX = A016h
+Return: nothing
+SeeAlso: AX=A000h,AX=A017h
+--------V-10A017-----------------------------
+INT 10 - ATI Rage128 BIOS - ???
+	AX = A017h
+	???
+Return: AH = status
+	    00h successful
+	    01h failed
+	???
+SeeAlso: AX=A014h,AX=A015h
 --------V-10A01B-----------------------------
 INT 10 - PhoenixVIEW/LC - CRT MONITOR DETECTION
 	AX = A01Bh

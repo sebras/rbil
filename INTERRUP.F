@@ -1,5 +1,5 @@
 Interrupt List, part 6 of 18
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+Copyright (c) 1989-1999,2000 Ralf Brown
 --------O-20---------------------------------
 INT 20 - Minix - SEND/RECEIVE MESSAGE
 	AX = process ID of other process
@@ -2375,7 +2375,7 @@ Values for WSVV (VxD ID 30F6h) service number:
  00h	get WSVV version???
 SeeAlso: #01337,#01339
 --------W-20----Vx33FC-----------------------
-INT 20 P - Microsoft Windows - APSIENUM - VxD SERVICES
+INT 20 P - Microsoft Windows - ASPIENUM - VxD SERVICES
 	VxD = 33FCh
 Note:	the desired VxD and service number are identified by the data
 	  immediately following the INT 20 instruction, as in:
@@ -2904,6 +2904,8 @@ SeeAlso: #01352
 Format of DR DOS 6/Novell DOS 7 additional file information:
 Offset	Size	Description	(Table 01354)
  0Ch	BYTE	reserved (00h)
+		(DOSPLUS v1.2) user-defined attributes for CP/M compatibility
+		  (bit 7 = F1,...,bit 4 = F4, bits 3-0 reserved (0))
  0Dh	BYTE	first character of original filename for deleted file
  0Eh	WORD	encrypted file/directory password
  10h	WORD	reserved (00h)
@@ -3045,6 +3047,21 @@ Return: AL = 00h
 Note:	corresponds to the CP/M BDOS function "get bit map of logged drives",
 	  which is meaningless under MS-DOS
 SeeAlso: AH=1Dh,AH=1Eh,AH=20h,AX=4459h,INT 60/DI=0513h
+--------O-2118-------------------------------
+INT 21 - U - PTS-DOS 6.51 & S/DOS 1.0 - EXTENDED RENAME FILE USING FCB
+	AH = 18h
+	DS:DX -> modified FCB (see also #01345)
+Return: AL = status
+	     00h successfully renamed
+	     FFh no matching files,file is read-only, or new name already exists
+Notes:	This function is provided by Paragon Technology Systems S/DOS 1.0
+	  (and most probably also PTS-DOS 6.51, maybe even earlier). It uses
+	  the same code as for function INT 21/AH=17h, but additionally sets
+	  an internal "SERVER" flag on entry. Apparently this results in
+	  different usage of attributes and wildcards.
+	It is currently unknown if this function is also supported by
+	  PhysTechSoft's PTS-DOS 6.60, 6.70, or 2000.
+SeeAlso: AH=17h,AH=0Fh,AH=13h,AX=4303h,AH=56h,INT 2F/AX=1111h,INT21/AH=5Dh
 --------v-211812------------------------
 INT 21 - VIRUS - "Tasha Yar" - INSTALLATION CHECK
 	AX = 1812h
@@ -3179,6 +3196,27 @@ Return: AL = 00h
 Note:	corresponds to the CP/M BDOS function "get/set default user
 	  (sublibrary) number", which is meaningless under MS-DOS
 SeeAlso: AH=18h,AH=1Dh,AH=1Eh,AX=4459h
+--------O-2120-------------------------------
+INT 21 - S/DOS 1.0+ & PTS-DOS 6.51+ - GET OEM REVISION
+	AH = 20h
+	AL = which OEM code to retrieve
+	    00h get PTS OEM code
+		Return: CF cleared
+			AL = OEM code (currently always 00h)
+	    01h get PTS OEM revision code
+		Return: CF cleared
+			AL = revision code (default is 00h, but may vary)
+Desc:	S/DOS is a reduced and modified PTS-DOS 6.51 release with source code
+	  on CD
+Note:	This function is provided by S/DOS 1.0 (and is most probably also
+	  supported with PTS-DOS 6.51+, maybe even earlier).  It clears the
+	  CF flag for all other AL arguments, too. However, AL = 00h and 01h
+	  are handled separately. The revision code can be individually defined
+	  in the MAKEFILE at compilation time.
+	The PTS OEM code does not correlate with the DOS OEM code returned
+	  by INT 21/AH=30h, likewise the PTS OEM revision does not correlate
+	  with the DOS revision returned by INT 21/AX=3306h.
+SeeAlso: INT 21/AH=30h,INT 21/AX=3306h
 --------v-212080-----------------------------
 INT 21 - VIRUS - "New-Year" - INSTALLATION CHECK
 	AX = 2080h
@@ -3251,8 +3289,14 @@ Notes:	this function is preferred over direct modification of the interrupt
 	  vector table
 	some DOS extenders place an API on this function, as it is not
 	  directly meaningful in protected mode
-	under DR DOS 5.0+, this function does not use any of the DOS-internal
-	  stacks and may thus be called at any time
+	under DR DOS 5.0-6.0, this function does not use any of the
+	  DOS-internal stacks and may thus be called at any time; however,
+	  under Novell DOS 7.0 - DR-DOS 7.02, this function was not reentrant.
+	  Since 1998/05/29, DR-DOS 7.03 no longer uses any internal stacks and
+	  tests for this function much earlier, to allow a minimal stack usage
+	  of just two words in addition to the IRET frame, allowing it to be
+	  called from INT 21h functions, specificially device drivers.  This
+	  fixes the MCS SMB client
 	Novell NetWare (except the new DOS Requester) monitors the offset of
 	  any INT 24 set, and if equal to the value at startup, substitutes
 	  its own handler to allow handling of network errors; this introduces
@@ -4436,6 +4480,11 @@ Notes:	new PSP is updated with memory size information; INTs 22h, 23h, 24h
 	  taken from interrupt vector table; the parent PSP field is set to 0
 	(DOS 2+) DOS assumes that the caller's CS is the segment of the PSP to
 	  copy
+BUG:	DR DOS 6.0 original releases 05/1991 & 08/1991 had a problem where the
+	  segment from which the PSP was copied was incorrect so that the PSP
+	  was not filled correctly and did not contain the command tail.  The
+	  DR DOS 6.0 BDOS patch "PAT312" English (1992/01/07, XDIR /C: A0C6h)
+	  and later "full" rebuilds fix this problem (see INT 21/AX=4452h).
 SeeAlso: AH=4Bh,AH=50h,AH=51h,AH=55h,AH=62h,AH=67h
 
 Format of Program Segment Prefix (PSP):
@@ -4520,6 +4569,11 @@ Notes:	in DOS v3+, the limit on simultaneously open files may be increased by
 	  in the environment variable CMDLINE; under at least some versions
 	  of 4DOS, the byte at offset FFh is *not* set to 0Dh, so there is no
 	  terminating carriage return in the PSP's command tail.
+BUG:	When shelling out from the Borland Pascal 7.00 IDE, overly-long
+	  command lines will not be delimited by a 0Dh character, and the
+	  length byte is set to 80h!  A workaround is to always patch in a
+	  0Dh at the last position of the command line buffer before scanning
+	  the command line.
 
 Format of environment block:
 Offset	Size	Description	(Table 01379)
@@ -4580,7 +4634,7 @@ Return: AL = result code
 	    FFh failed (invalid drive specifier)
 	DS:SI -> first unparsed character
 	ES:DI buffer filled with unopened FCB (see #01345)
-Notes:	asterisks expanded to question marks in the FCB
+Notes:	asterisks in the name are expanded to question marks in the FCB
 	all processing stops when a filename terminator is encountered
 	cannot be used with filespecs which include a path (DOS 2+)
 	Novell NetWare monitors the result code since an 'invalid drive' may
@@ -5145,7 +5199,7 @@ INT 21 - DOS 2+ - GET DOS VERSION
 	AH = 30h
 ---DOS 5+ ---
 	AL = what to return in BH
-	    00h OEM number (as for DOS 2.0-4.0x)
+	    00h OEM number (see #01394)
 	    01h version flag
 Return: AL = major version number (00h if DOS 1.x)
 	AH = minor version number
@@ -5160,18 +5214,20 @@ Notes:	the OS/2 v1.x Compatibility Box returns major version 0Ah (10)
 	the OS/2 v2.x Compatibility Box returns major version 14h (20)
 	OS/2 Warp 3.0 Virtual DOS Machines report v20.30; Warp 4 VDMs report
 	  v20.40.
-	the WindowsNT DOS box returns version 5.00, subject to SETVER
+	the Windows NT DOS box returns version 5.00, subject to SETVER
 	DOS 4.01 and 4.02 identify themselves as version 4.00; use
 	  INT 21/AH=87h to distinguish between the original European MS-DOS 4.0
 	  and the later PC-DOS 4.0x and MS-DOS 4.0x
 	IBM DOS 6.1 reports its version as 6.00; use the OEM number to
 	  distinguish between MS-DOS 6.00 and IBM DOS 6.1 (there was never an
 	  IBM DOS 6.0)
+	IBM's PC DOS 7 and Y2K updates report themselves as IBM 7.0 to be
+	  distinguished from the MS-DOS 7.0 portion of Windows 95.
 	MS-DOS 6.21 reports its version as 6.20; version 6.22 returns the
 	  correct value
 	Windows95 returns version 7.00 (the underlying MS-DOS), as did the
 	  "Chicago" beta (reported in _Microsoft_Systems_Journal_,August 1994);
-	  Windows95 OSR2 returns version 7.10
+	  Windows95 OSR2 and OSR2.5 (OPK3) return MS version 7.10
 	DR DOS 5.0 and 6.0 report version 3.31; Novell DOS 7 reports IBM v6.00,
 	  which some software displays as IBM DOS v6.10 (because of the version
 	  mismatch in true IBM DOS, as mentioned above).  The Novell DOS 7
@@ -5179,6 +5235,50 @@ Notes:	the OS/2 v1.x Compatibility Box returns major version 0Ah (10)
 	  DOS version returned by this function for all executables not given
 	  a specific version number in SETVER to major version x and minor
 	  version y.
+	Heiko Goeman's Advanced WinDOS 2.10/2.11/2.21 returns "IBM" DOS 5.00
+	  (subject to SETVER) and serial number 0.
+	All versions of CCI Multiuser DOS up to "CCI Multiuser DOS 7.22 Gold"
+	  as of 1997-02-10 report DOS 3.31.
+	DR DOS 3.31, 3.32, 3.33, 3.34, 3.35, 3.40, 3.41, 5.0, 6.0 and
+	  DR PalmDOS/NetWare PalmDOS 1.0 report version 3.31;
+	  DR DOS "Panther" BETA 1 and "StarTrek" report as 5.0.
+	  Novell DOS 7, OpenDOS 7.01, DR-OpenDOS 7.02, DR-DOS 7.02, DR-DOS 7.03
+	  all report themselves as IBM 6.00, which some software displays as
+	  IBM DOS 6.10 (because of the version mismatch in true IBM DOS,
+	  as mentioned above). Use INT 21/AX=4452h to distinguish the DR-DOS
+	  family from PC DOS.
+	The Novell DOS 7 and OpenDOS 7.01 SETVER.EXE has an undocumented
+	  option /G x.y which sets the "global" DOS version returned by this
+	  function for all executables not given a specific version number in
+	  SETVER to major version x >= 5 and minor version y = 0..254,
+	  y = 255 is used to disable the BDOS version check at INT 21/AX=4452h.
+	A slightly modified option has been documented for DR-OpenDOS 7.02+:
+	  in /X mode it now allows for x >= 1, while y >= 100 requires /X mode,
+	  and y >= 128 is used to control advanced version control means now
+	  (see below).
+	DR-DOS 7.02+ IBMDOS.COM (since 1998-01-10) now recognizes optional
+	  paths to filenames stored in the SETVER list. Previously such entries
+	  were never found. This allows for a three staged model for SETVERed
+	  versions:
+	  highest priority = entry with path is matching.
+	  middle priority = entry without path is matching.
+	  lowest priority = use global version (SETVER /G).
+	The DR-DOS 7.02+ SETVER 1.01+ (1998-01-12) has also been enhanced to
+	  allow DOS *and* BDOS version faking (see INT 21/AX=4452h): In /X mode,
+	  setting a sub-version of y = 128..255 will be reported as 0..127 DOS
+	  sub-version, sub-versions of y = 100..127 will instead be used to
+	  report this value as BDOS version (64h..7Fh) via INT 21/AX=4452h, and
+	  the DOS revision stored in PCM_HEADER in the IBMDOS.COM file will
+	  be used to report the DOS sub-version (usually this holds 0, but it
+	  can be patched to other values, see INT 21/AX=4452h !!!).
+	  Note, that DR-DOS SHARE 2.05+ (1998-01-05) has relaxed version
+	  checking, and will install on any DOS revision 0..127, as long as
+	  run on a DR-DOS 72h+ kernel (formerly it was bound to a revision
+	  byte of 0 only).
+	Under Novell DOS 7+, the SETVERing also affects the version number
+	  WORD stored at offset +40h in each program's PSP (see #01378).
+	  This holds true even for special sub-versions of 100..255
+	  (see INT 21/AX=4452h).
 	generic MS-DOS 3.30, Compaq MS-DOS 3.31, and others identify themselves
 	  as PC-DOS by returning OEM number 00h
 	the version returned under DOS 4.0x may be modified by entries in
@@ -5186,33 +5286,74 @@ Notes:	the OS/2 v1.x Compatibility Box returns major version 0Ah (10)
 	  under DOS 5+ may be modified by SETVER--use AX=3306h to get the true
 	  version number
 SeeAlso: AX=3000h/BX=3000h,AX=3306h,AX=4452h,AH=87h,INT 15/AX=4900h
-SeeAlso: INT 2F/AX=122Fh,INT 2F/AX=4010h,INT 2F/AX=4A33h,INT 2F/AX=E002h
+SeeAlso: AH=20h"S/DOS",INT 2F/AX=122Fh,INT 2F/AX=4010h,INT 2F/AX=4A33h
+SeeAlso: INT 2F/AX=E002h
 
 (Table 01394)
 Values for DOS OEM number:
- 00h	IBM
- 01h	Compaq
- 02h	MS Packaged Product
- 04h	AT&T
- 05h	ZDS (Zenith Electronics)
- 06h	Hewlett-Packard
- 07h	ZDS (Groupe Bull)
- 0Dh	Packard-Bell
- 16h	DEC
- 23h	Olivetti
- 28h	Texas Instruments
- 29h	Toshiba
- 33h	Novell (Windows/386 device IDs only)
- 34h	MS Multimedia Systems (Windows/386 device IDs only)
- 35h	MS Multimedia Systems (Windows/386 device IDs only)
- 4Dh	Hewlett-Packard
- 5Eh	RxDOS
- 66h	PhysTechSoft (PTS-DOS)
- 99h	General Software's Embedded DOS
+ 00h *	IBM
+     -	(Novell DOS, Caldera OpenDOS, DR-OpenDOS, and DR-DOS 7.02+ report IBM
+	  as their OEM)
+ 01h *	Compaq
+ 02h *	MS Packaged Product
+ 04h *	AT&T
+ 05h *	ZDS (Zenith Electronics, Zenith Electronics)
+	Note:	Zenith DOS 3.30 supports >32MB hard disks; this OEM ID can be
+		  used to detect that support
+ 06h *	Hewlett-Packard
+ 07h *	Zenith Data Systems (ZDS, Groupe Bull), for DOS 5.0+
+ 08h *	Tandon
+ 09h *	AST (AST Europe Ltd.)
+ 0Ah *	Asem
+ 0Bh *	Hantarex
+ 0Ch *	SystemsLine
+ 0Dh *	Packard-Bell
+ 0Eh *	Intercomp
+ 0Fh *	Unibit
+ 10h *	Unidata
+ 16h *	DEC
+ 17h *	Olivetti DOS
+ 23h *	Olivetti (may have been a typo, since 23 = 17h)
+ 28h *	Texas Instruments
+ 29h *	Toshiba
+ 33h -	Novell (Windows/386 device IDs only)
+ 34h *	MS Multimedia Systems (Windows/386 device IDs only)
+ 35h *	MS Multimedia Systems (Windows/386 device IDs only)
+ 4Dh *	Hewlett-Packard (HP)
+ 5Eh -	RxDOS (Api Software & Mike Podanoffsky)	 http://www.freedos.org/
+ 66h -	PhysTechSoft (PTS-DOS)	http://www.phystechsoft.com/
+	probably Paragon Technology Systems Corporation PTS-DOS as well
+ 99h -	General Software's Embedded DOS
+ CDh -	Paragon Technology Systems Corporation ("Source DOS" S/DOS 1.0+)
+	(see also INT 21/AH=20h"S/DOS")
+ EDh -	reserved for future OpenDOS/DR-DOS based projects  http://www.drdos.org
  EEh	DR DOS
  EFh	Novell DOS
- FDh	FreeDOS
- FFh	Microsoft, Phoenix
+	Note:	released versions of Novell DOS 7 use OEM ID 00h instead
+ FDh	FreeDOS	 http://www.freedos.org/
+ FFh *	Microsoft, Phoenix (listed as "undefined" by Microsoft)
+Notes:	'*' indicates an OEM release of MS-DOS, while '-' indicates an OEM
+	  number used by a non-Microsoft DOS
+	known OEM releases of MS-DOS:
+	    AT&T DOS 3.10 (uses DOS 2.x cluster sizes and FAT structures)
+	    Commodore DOS 3
+	    Compaq DOS 3.31 (>32MB partitions similar to MS-DOS 4+)
+	    Computerland DOS 3.10 (mix of DOS 2.x and 3.x disk mechanisms)
+	    Eagle MS-DOS 1.25 (DOS 1.x with some hard disk support and built-in
+		  ANSI.SYS functionality)
+	    Epson Equity III DOS 3.10 (different clustering)
+	    Leading Edge
+	    NEC DOS 3.3
+	    Olivetti DOS 2.11
+	    Phoenix DOS 3.3, 4.01
+	    Sanyo DOS 3.2
+	    Tandy
+	    Toshiba DOS
+	    Unisys
+	    Wyse MS-DOS 3
+	    Zenith DOS 2.x (uses Zenith disk mechanism, extra drives at G:)
+	    Zenith DOS 3.x (can be configured for Zenith or MS-DOS mechanism)
+	    Zenith DOS 3.3 PLUS (>32MB partitions similar to MS-DOS 4+)
 --------E-2130-------------------------------
 INT 21 - Phar Lap 386/DOS-Extender, Intel Code Builder - INSTALLATION CHECK
 	AH = 30h
@@ -5401,30 +5542,49 @@ Notes:	this function does not use any of the DOS-internal stacks and may thus
 	  newly-supported by Novell DOS 7
 SeeAlso: AH=33h
 --------D-213303-----------------------------
-INT 21 - DOS 4.0+ - UNUSED
+INT 21 - DOS 3.4/4.0 - GET CURRENT CPSW STATE
 	AX = 3303h
-Return: nothing
-Note:	this function and AX=3304h were intended to support a proposed
-	  code-page switching flag (using two of the ten reserved bytes in
-	  the DOS directory entry for codepage information); however, this
-	  function has always been a NOP in public releases of DOS and OS/2.
-	  See _DOS_Internals_ Chapter 2 for more information
+Return: DL = current CPSW
+Notes:	this function and AX=3304h were intended to support a proposed
+	  code-page switching flag (using the WORD at offset 0Ch in the DOS
+	  directory entry for codepage information); however, this function
+	  has always been a NOP in public releases of DOS and OS/2.
+	  See _DOS_Internals_ Chapter 2 for more information.
+	the released MS-DOS 4.00 IO.SYS has an undocumented CONFIG.SYS
+	  directive named CPSW= and that beside others the MS-DOS 4.00 ATTRIB
+	  supported a number of undocumented special parameters for
+	  "predefined" Extended Attributes (EAs) e.g.
+	  ATTRIB filename [(CODEPAGE|CP)[=new_value]].
+	this function does not use any of the DOS-internal stacks and may
+	   thus be called at any time. It is directly dispatched from
+	   the INT 21h entry point with interrupts disabled.
 SeeAlso: AX=3304h
 --------D-213304-----------------------------
-INT 21 - DOS 4.0+ - UNUSED
+INT 21 - DOS 3.4/4.0 - SET CPSW STATE
 	AX = 3304h
+	DL = new CPSW state
 Return: nothing
-Note:	this function and AX=3303h were intended to support a proposed
-	  code-page switching flag (using two of the ten reserved bytes in
-	  the DOS directory entry for codepage information); however, this
-	  function has always been a NOP in public releases of DOS and OS/2.
-	  See _DOS_Internals_ Chapter 2 for more information
-SeeAlso: AX=3303h
+Notes:	this function and AX=3303h were intended to support a proposed
+	  code-page switching flag (using the WORD at offset 0Ch in the DOS
+	  directory entry for codepage information); however, this function
+	  has always been a NOP in public releases of DOS and OS/2.
+	  See _DOS_Internals_ Chapter 2 for more information.
+	the released MS-DOS 4.00 IO.SYS has an undocumented CONFIG.SYS
+	  directive named CPSW= and that beside others the MS-DOS 4.00 ATTRIB
+	  supported a number of undocumented special parameters for
+	  "predefined" Extended Attributes (EAs) e.g.
+	  ATTRIB filename [(CODEPAGE|CP)[=new_value]].
+	this function does not use any of the DOS-internal stacks and may
+	   thus be called at any time. It is directly dispatched from
+	   the INT 21h entry point with interrupts disabled.
+SeeAlso: AX=3303h,AH=11h,AX=5702h
 --------D-213305-----------------------------
 INT 21 - DOS 4.0+ - GET BOOT DRIVE
 	AX = 3305h
 Return: DL = boot drive (1=A:,...)
-Notes:	fully reentrant
+Notes:	This function does not use any of the DOS-internal stacks and may
+	   thus be called at any time.  It is directly dispatched from
+	   the INT 21h entry point with interrupts disabled.
 	NEC 9800-series PCs always call the boot drive A: and assign the other
 	  drive letters sequentially to the other drives in the system
 	this call is supported by OS/2 Warp 3.0, but not earlier versions of
@@ -5446,8 +5606,11 @@ Notes:	this function always returns the true version number, unlike AH=30h,
 	  and BL is at least 5 before accepting the returned BX as the true
 	  version number; however, even this is not entirely reliable when
 	  that redirector is loaded
-	fully reentrant
+	Under MS-DOS/PC DOS, DR DOS, PTS-DOS, S/DOS this function does not
+	  use any of the DOS internal stacks and thus is fully reentrant
 	OS/2 v2.1 will return BX=0A14h (version 20.10)
+	Windows 95 and Windows 95 SP1 return version 7.00; Windows 95 OSR2
+	  and OPK3 (OSR2.5) return version MS 7.10.
 	the Windows NT DOS box returns BX=3205h (version 5.50)
 	Novell DOS 7 returns IBM v6.00, which some software displays as
 	  IBM DOS v6.10 (because of the version mismatch in true IBM DOS
@@ -5455,6 +5618,49 @@ Notes:	this function always returns the true version number, unlike AH=30h,
 	  return revision code 00h
 	Windows95 and Windows95 SP1 return version 7.00; Windows95 OSR2 returns
 	  version 7.10
+	Heiko Goeman's Advanced WinDOS 2.10/2.11/2.21 returns DOS 5.00, 
+	  revision 0.
+	Novell DOS 7, OpenDOS 7.01, DR-OpenDOS 7.02, DR-DOS 7.02, DR-DOS 7.03
+	  all return IBM 6.00, which some software displays as IBM DOS 6.10
+	  (because of the version mismatch in true IBM DOS mentioned for
+	  INT 21/AH=30h); versions through Novell DOS 7 Update 15.2 (01/1996)
+	  all return revision code 00h. The DOS revision is stored in bits 7-0
+	  of the "patch_version" field in the PCM_HEADER structure in the
+	  IBMDOS.COM file (see also INT 21/AX=4452h !!!). The version
+	  flags (DH) are stored in bits 15-8 of "patch_version", but is updated
+	  at runtime to reflect the actual status. "patch_version" is also
+	  reported as DX in INT 21/AX=4452h.
+	Unlike MS-DOS, under Novell DOS 7+ IBMDOS.COM will also allow to
+	  SETVER the returned "true" DOS version same as with INT 21/AX=3000h
+	  and INT 21/AX=3001h.
+	DR-DOS 7.02+ IBMDOS.COM (since 1998-01-10) now recognizes optional
+	  paths to filenames stored in the SETVER list. Previously such
+	  entries were never found. This enables a three staged model of
+	  SETVERed versions:
+	  highest priority = entry with path is matching.
+	  middle priority = entry without path is matching.
+	  lowest priority = use global version (SETVER /G).
+	The DR-DOS 7.02+ SETVER 1.01+ (1998-01-12) has also been enhanced to
+	  allow BDOS and DOS version faking (see INT 21/AX=4452h). In /X mode,
+	  a set sub-version of y = 128..255 will be reported as 0..127 DOS
+	  sub-version, sub-versions of y = 100..127 will be used to report this
+	  value as BDOS version (64h..7Fh) with INT 21/AX=4452h instead while
+	  bits 6-0 of the DOS revision stored in PCM_HEADER in the IBMDOS.COM
+	  file will be used to report the BH DOS sub-version 0..127 (usually
+	  this holds 0, but it can be patched to other values).
+	DR-DOS SHARE 2.05 (1998-01-05) has relaxed version checking now, and
+	  will install on any DOS revision 0..127 (formerly it was bound to
+	  DOS revision 0 only), as long as run on a DR-DOS 72h or 73h BDOS
+	  kernel.  Hence, if there will be changes in the SHARE implementation
+	  without changing the BDOS version, DR-DOS SHARE 2.05 can still be
+	  stopped from installing by changing the DOS revision in PCM_HEADER
+	  to something in the range 128..255.
+	Under Novell DOS 7+, the version SETVERing also affects the version
+	  number WORD stored at offset +40h in each program's PSP (see
+	  Table xxxx at INT 21/AH=26h). This holds true even for special
+	  sub-versions of 100..255 (see INT 21/AX=4452h).
+	S/DOS 1.0 (1995) returns a DOS revision of 9, while its own PTS OEM
+	  revision still defaults to 0 (see also INT 21/AH=20h"S/DOS").
 BUG:	DR DOS 5.0 and 6.0 return CF set/AX=0001h for INT 21/AH=33h
 	  subfunctions other than 00h-02h and 05h, while MS-DOS returns AL=FFh
 	  for invalid subfunctions
@@ -5905,7 +6111,7 @@ Note:	this function is not supported by the Borland DPMI host, but no error
 	  is returned; as a workaround, one should allocate a buffer in
 	  conventional memory with INT 31/AX=0100h and simulate an INT 21 with
 	  INT 31/AX=0300h
-SeeAlso: AH=65h,INT 10/AX=5001h,INT 2F/AX=110Ch,INT 2F/AX=1404h
+SeeAlso: AH=65h,INT 10/AX=5001h,INT 2F/AX=1404h
 
 Format of DOS 2.00-2.10 country info:
 Offset	Size	Description	(Table 01398)
@@ -5984,7 +6190,7 @@ Values for country code:
  03Fh (63)	Philippines
  040h (64)	New Zealand
  041h (65)	Singapore
- 042h (66)	Taiwan???
+ 042h (66)	Thailand (or Taiwan???)
  051h (81)	Japan (DR DOS 5.0, MS-DOS 5.0+)
  052h (82)	South Korea (DR DOS 5.0)
  054h (84)	Vietnam
@@ -5997,8 +6203,10 @@ Values for country code:
  05Eh (94)	Sri Lanka
  062h (98)	Iran
  063h (99)	Asia (English)
+ 066h (102)	??? (Hebrew MS-DOS 5.0)
  070h (112)	Belarus
- 0C8h (200)	Thailand
+ 0C8h (200)	Thailand (PC DOS 6.1+)
+		(reported as 01h due to a bug in PC DOS COUNTRY.SYS)
  0D4h (212)	Morocco
  0D5h (213)	Algeria
  0D8h (216)	Tunisia
@@ -6067,19 +6275,23 @@ Values for country code:
  165h (357)	Cyprus
  166h (358)	Finland
  167h (359)	Bulgaria
- 172h (370)	Lithuania
- 173h (371)	Latvia
+ 172h (370)	Lithuania (reported as 372 due to a bug in MS-DOS COUNTRY.SYS)
+ 173h (371)	Latvia (reported as 372 due to a bug in MS-DOS COUNTRY.SYS)
  174h (372)	Estonia
  175h (373)	Moldova
+ 177h (375)	??? (MS-DOS 7.10 / Windows98)
+ 17Ch (380)	Ukraine
  17Dh (381)	Serbia / Montenegro
- 180h (384)	Croatia???
- 181h (385)	Croatia
+ 180h (384)	Croatia
+ 181h (385)	Croatia (PC DOS 7+)
  182h (386)	Slovenia
  183h (387)	Bosnia-Herzegovina (Latin)
- 184h (388)	Bosnia-Herzegovina (Cyrillic)
+ 184h (388)	Bosnia-Herzegovina (Cyrillic) (PC DOS 7+)
+		(reported as 381 due to a bug in PC DOS COUNTRY.SYS)
  185h (389)	FYR Macedonia
- 1A5h (421)	Czech Republic
+ 1A5h (421)	Czech Republic / Tjekia (PC DOS 7+)
  1A6h (422)	Slovakia
+		(reported as 421 due to a bug in COUNTRY.SYS)
  1F4h (500)	Falkland Islands
  1F5h (501)	Belize
  1F6h (502)	Guatemala
@@ -6100,6 +6312,9 @@ Values for country code:
  255h (597)	Suriname
  256h (598)	Uruguay
  257h (599)	Netherland Antilles
+ 29Ah (666)	Russia??? (PTS-DOS 6.51 KEYB)
+ 29Bh (667)	Poland??? (PTS-DOS 6.51 KEYB)
+ 29Ch (668)	Poland??? (Slavic???) (PTS-DOS 6.51 KEYB)
  29Eh (670)	Saipan / N. Mariana Island
  29Fh (671)	Guam
  2A0h (672)	Norfolk Island (Australia) / Christmas Island/Cocos Islands / Antartica
@@ -6123,7 +6338,7 @@ Values for country code:
  2B2h (690)	Tokealu
  2B3h (691)	Micronesia
  2B4h (692)	Marshall Islands
- 2C7h (711)	??? (currency = EA$)
+ 2C7h (711)	??? (currency = EA$, code pages 437,737,850,852,855,857)
  311h (785)	Arabic (Middle East/Saudi Arabia/etc.)
  324h (804)	Ukraine
  329h (809)	Antigua and Barbuda / Anguilla / Bahamas / Barbados / Bermuda
@@ -6137,16 +6352,17 @@ Values for country code:
  357h (855)	Cambodia
  358h (856)	Laos
  370h (880)	Bangladesh
- 376h (886)	Taiwan (DOS 6.22+)
+ 376h (886)	Taiwan (MS-DOS 6.22+)
  3C0h (960)	Maldives
  3C1h (961)	Lebanon
  3C2h (962)	Jordan
- 3C3h (963)	Syrian Arab Republic
- 3C4h (964)	Ireq
+ 3C3h (963)	Syria / Syrian Arab Republic
+ 3C4h (964)	Iraq
  3C5h (965)	Kuwait
  3C6h (966)	Saudi Arabia
  3C7h (967)	Yemen
  3C8h (968)	Oman
+ 3C9h (969)	Yemen??? (Arabic MS-DOS 5.0)
  3CBh (971)	United Arab Emirates
  3CCh (972)	Israel (Hebrew) (DR DOS 5.0,MS-DOS 5.0+)
  3CDh (973)	Bahrain
@@ -6155,6 +6371,17 @@ Values for country code:
  3D0h (976)	Mongolia
  3D1h (977)	Nepal
  3E3h (995)	Myanmar (Burma)
+      (10xxx)	reserved for ISO 28601/ISO 8601 or derivative national stds
+      (11xxx)	reserved for Euro currency support
+      (12xxx)	reserved for ISO 28601 + Euro currency
+      (1xxxx)	not yet defined
+      (20xxx)	reserved for ISO 28601/ISO 8601 or derivative national stds
+      (21xxx)	reserved for Euro currency support
+      (22xxx)	reserved for ISO 28601 + Euro currency
+      (2xxxx)	not yet defined
+      (30xxx)	reserved for user-definable country codes
+      (31xxx)	reserved for OEM-defined country codes
+      (32000+)	reserved for future expansion
 Note:	not all country codes are supported by all versions of DOS
 --------D-2138--DXFFFF-----------------------
 INT 21 - DOS 3.0+ - SET COUNTRY CODE
@@ -7213,6 +7440,14 @@ INT 21 - Novell DOS 7 - PURGE PENDING DELETE FILE
 	???
 Return: ???
 SeeAlso: AH=41h,AX=4380h
+--------O-214382-----------------------------
+INT 21 - DR-DOS >7.03 - RESERVED
+	AX = 4382h-438Fh
+Notes:	These previously unused functions are reserved for future versions of
+	  DR-DOS (post 7.03).
+	AX=4382h will be identical to the previous AX=4302h, which is now also
+	  used by MS-DOS 7+ for a different purpose.
+SeeAlso: INT 21h/4302h
 --------D-2143FFBP5053-----------------------
 INT 21 - MS-DOS 7.20 (Win98) - EXTENDED-LENGTH FILENAME OPERATIONS
 	AX = 43FFh

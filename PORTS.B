@@ -1,5 +1,5 @@
 Ports List, part 2 of 3
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+Copyright (c) 1989-1999,2000 Ralf Brown
 ----------P0140014F--------------------------
 PORT 0140-014F - SCSI (alternate Small Computer System Interface) adapter
 Note:	first adapter is at 0340-034F
@@ -1120,8 +1120,8 @@ Bit(s)	Description	(Table P0542)
 PORT 0200-02FF - Sunshine uPW48, programmer for EPROM version CPU's 8748/8749
 Range:	4 bit DIP switch installable in the range 20x-2Fx
 
-0200-0203	adresses of the 8255 on the uPW48
-0208-020B	adresses of ??? on the uPW48 (all showing zeros)
+0200-0203	addresses of the 8255 on the uPW48
+0208-020B	addresses of ??? on the uPW48 (all showing zeros)
 ----------P02080209--------------------------
 PORT 0208-0209 - Intel 82C212B "Neat" chipset - EMS emulation control
 Range:	may be set to 0208, 0218, 0258, 0268, 02A8, 02B8, 02E8
@@ -1563,7 +1563,7 @@ Range:	PORT 0280h, PORT 0284h, PORT 0288h, PORT 028Ch, PORT 384h,
 ----------P02A002A7--------------------------
 PORT 02A0-02A7 - Sunshine EW-901BN, EW-904BN
 		EPROM writer card (release 1986) for EPROMs up to 27512
-02A0-02A3	adresses of the 8255 on the EW-90xBN
+02A0-02A3	addresses of the 8255 on the EW-90xBN
 ----------P02A202A3--------------------------
 PORT 02A2-02A3 - MSM58321RS clock
 ----------P02A802A9--------------------------
@@ -2265,7 +2265,10 @@ Notes:	Adaptec AHA-154x adapters use ISA bus-mastering mechanism, and so
 	  commands received from the initiators without CPU intervention; the
 	  CPU is required to provide information only for the SEND/RECEIVE
 	  commands; other commands are treated by the host adapter as invalid
-	AHA-154xCF supports Fast SCSI data transfer
+	AHA-154xCF supports Fast SCSI data transfer; AHA-154xCP additionally
+	  supports SCSI Configured AutoMagically (SCAM) protocol
+	AHA-174x EISA SCSI adapters in "standard" mode "look like" AHA-154x
+	there was also an AHA-1640, an MCA version of the AHA-154x
 	BusLogic BT-545S and DTC 3290 seem to be "almost" compatible with
 	  the Adaptec AHA-154x
 
@@ -2274,6 +2277,8 @@ Notes:	Adaptec AHA-154x adapters use ISA bus-mastering mechanism, and so
 0331  R-  data in register
 0331  -W  command / data out register (see #P0580)
 0332  R-  interrupt status register (see #P0579)
+0333  R-  (AHA-154xC+) diagnostic register
+	  cycles thru bytes 41h,44h,41h,50h when read ("ADAP")
 
 Bitfields for AHA-154x status register:
 Bit(s)	Description	(Table P0577)
@@ -2367,7 +2372,7 @@ Command	Description		   Parameters		Results
  04h	adapter inquiry		   -			BID,SOID,FWR0,FWR1
  05h	enable mailbox out	   E/D			-
 	  interrupt
- 06h	set selection time-out	   E/D,TO0,TO1		-
+ 06h	set selection time-out	   E/D,00h,TO0,TO1	-
  07h	set bus on time		   BON			-
  08h	set bus off time	   BOFF			-
  09h	set AT bus transfer speed  ATBS			-
@@ -2378,6 +2383,11 @@ Command	Description		   Parameters		Results
  0Dh	return setup data	   DIL			SPS,ATBS,BON,BOFF,
 							MBC,MBA0..MBA2,
 							STA0..STA7,DS
+							(see #P9001)
+ 10h	intialize SCSI subsystem   ???			???
+	  (AHA-174x in std mode)
+ 11h	return formware checksum   -			CS0,CS1
+	  (AHA-174x in std mode)
  1Ah	write adapter channel 2	   BA0..BA2		-
 	  buffer
  1Bh	read  adapter channel 2	   BA0..BA2		-
@@ -2386,75 +2396,47 @@ Command	Description		   Parameters		Results
  1Dh	read  adapter FIFO buffer  BA0..BA2		-
  1Fh	echo command data	   EV			EV
  20h	run adapter diagnostics	   -			-
+	  (AHA-1542B+)
  21h	set adapter options	   ESG,DS		-
- 22h	program EEPROM		   35 bytes		-
-	  (AHA-1542C)
- 23h	return EEPROM data	   ???,NED,EA		EEPROM data bytes
-	  (AHA-1542C)
- 24h	set shadow RAM parameters  1 byte		-
-	  (AHA-1542C?)
+ 21h	set adapter options	   NOB, adapter opts	-
+	  (AHA-1542B+)			(see #P9005)
+ 22h	program EEPROM		   00h,NED,SEA,
+	  (AHA-1542C+)		   EEPROM data		-
+				   (see #P9002)
+ 23h	return EEPROM data	   D/C,NED,EA		EEPROM data bytes
+	  (AHA-1542C+)					(see #P9002)
+ 24h	set shadow RAM parameters  SRP			-
+	  (AHA-1542C+)
  25h	BIOS mailbox initializa-   MBC,MBA0..MBA2	-
 	  tion (since AHA-1540B
 	  rev. 1.4?)
  26h	set BIOS bank 1		   -			-
-	  (AHA-1542C?)
+	  (AHA-1542C+)
  27h	set BIOS bank 2		   -			-
-	  (AHA-1542C?)
+	  (AHA-1542C+)
  28h	return extended BIOS	   -			F,MBLT
 	  information (since
 	  AHA-1540B rev. 1.4?)
  29h	enable mailbox interface   MBU,MBLT		-
 	  (since AHA-1540B
 	  rev. 1.4?)
+ 2Ah	??? (AHA-154xC)		   -			-
+ 2Ch	detect termination
+	  setting??? (AHA-1542CP)  -			TS
+ 2Dh	detect SCAM devices???	   -			IDA,???
+	  (AHA-1542CP)
+ 34h	set SCSI ID configuration  SID,IDC		-
+	  (AHA-154xCF+)
  41h	AMI inquiry (AMI-4448)	   SL			C0..C3,M0..M5,
 							S0..S5,V0..V5
+							(see #P9003)
  82h	start BIOS SCSI command	   -			-
 	  (since AHA-1540B
 	  rev. 1.4?)
- 8Dh	exteded setup information  DIL?			?
+ 8Dh	exteded setup information  DIL?			???
 	  (since AHA-1540B
 	  rev. 1.4?)
-Note:	MBC	   mailboxes count (>0)
-	MBA0..MBA2 MSB..LSB of the physical address of the mailbox area
-		     (see #P0581)
-	BFN	   BIOS function number
-	TRG	   bits 7-5: target ID
-		   bits 4-0: reserved
-	CH	   bits 7-4: reserved
-		   bits 3-0: bits 9-6 of cylinder number
-	CLHH	   bits 7-2: bits 5-0 of cylinder number
-		   bits 1-0: bits 5-4 of head number
-	HL	   bits 7-4: reserved
-		   bits 3-0: bits 3-0 of head number
-	SN	   sector number - 1
-	SC	   sector count
-	BA0..BA2   MSB..LSB of the physical address of the data buffer
-	BID	   board ID
-		   00h AHA-1540 (16-head BIOS)
-		   20h BusLogic BT-545S
-		   30h AHA-1540 (64-head BIOS)
-		   31h AHA-1540
-		   41h AHA-154xA/154xB (64-head BIOS)
-		   42h AHA-1640 (64-head BIOS)
-		   43h AHA-1542C
-		   44h AHA-1542CF
-		   45h AHA-1542CF (BIOS v2.01)
-	SOID	   special options ID
-		   30h ???
-		   41h standard model
-	FWR0,FWR1  firmware revision (alphanumeric)
-	E/D	   enable/diable parameter
-		   00h disable
-		   01h enable
-	TO0,TO1	   MSB, LSB of the time-out value (in ms)
-		   default 250 ms
-	BON	   bus on time (in mcs)
-		   time the adapter stays on the AT bus when transferring data
-		     2..15 mcs, default 11 mcs
-	BOFF	   bus off time (in mcs)
-		   time the adapter stays off the AT bus when transferring data
-		     1..64 mcs, default 4 mcs
-	ATBS	   AT bus transfer speed
+Note:	ATBS	   AT bus transfer speed (see #P9004)
 		   00h,AAh 5.0	MB/s
 		   01h,99h 6.7	Mb/s
 		   02h	   8.0	Mb/s
@@ -2465,14 +2447,63 @@ Note:	MBC	   mailboxes count (>0)
 		   DDh	   2.9	Mb/s?
 		   EEh	   2.5	Mb/s?
 		   FFh	   2.2	Mb/s?
-	TC0..TC7   target 0..7 configuration
-		   bit M in byte N is set if SCSI ID N LUN M is installed
-	DAO	   DRQ arbitration priority
+	BA0..BA2   MSB..LSB of the physical address of the data buffer
+	BFN	   BIOS function number (00h-04h,08h,09h,0Ch-11h,14h,15h)
+	BID	   board ID
+		   00h AHA-1540 (16-head BIOS)
+		   20h BusLogic BT-545S
+		   30h AHA-1540 (64-head BIOS)
+		   31h AHA-1540
+		   41h AHA-154xA/154xB (64-head BIOS)
+		   42h AHA-1640 (64-head BIOS)
+		   43h AHA-174x
+		   44h AHA-1542C
+		   45h AHA-1542CF
+	BOFF	   bus off time (in microseconds)
+		   time the adapter stays off the AT bus when transferring data
+		     1..64 mcs, default 4 mcs
+	BON	   bus on time (in microseconds)
+		   time the adapter stays on the AT bus when transferring data
+		     2..15 mcs, default 11 mcs
+	CH	   bits 7-4: reserved
+		   bits 3-0: bits 9-6 of cylinder number
+	CLHH	   bits 7-2: bits 5-0 of cylinder number
+		   bits 1-0: bits 5-4 of head number
+	CS0,CS1	   checksum of the standard mode microcode
+	D/C	   default/current EEPROM data (00h default, 01h current)
+	DAP	   DRQ arbitration priority
 		   bit 7: channel 7
 		   bit 6: channel 6
 		   bit 5: channel 5
 		   bits 4-1: reserved (0)
 		   bit 0: channel 0
+	DIL	   data in length
+		   number of bytes to return (0 means 256 bytes)
+	DS	   (AHA-154xB+?) disconnect status
+		   bit N is set if target ID N is unable to disconnect?
+	E/D	   enable/diable parameter
+		   00h disable
+		   01h enable
+	EA	   EEPROM address to read data from
+	ESG	   01h: enable scatter/gather
+	EV	   echo value (to be echoed back)
+	F	   flags
+		   bits 7-4: reserved??? (0)
+		   bit 3: extended BIOS translation (255 heads / 63 sectors)
+		   bits 2-0: reserved??? (0)
+	FWR0,FWR1  firmware revision (alphanumeric)
+	GS	   global setting byte
+		   bits 7-6: reserved (0)
+		   bit 5: enable parity check
+		   bit 4: reserved (0)
+		   bit 3: enable synchronous transfer
+		   bit 2: enable disconnection
+		   bits 1-0: reserved (0)
+	HL	   bits 7-4: reserved
+		   bits 3-0: bits 3-0 of head number
+	IDA	   SCAM IDs assigned
+		   bit N is set if a target ID N was assigned to a SCAM device
+	IDC	   SCSI ID configuration (see #P9006)
 	IRQ	   interrupt channel
 		   bit 7: reserved (0)
 		   bit 6: IRQ15
@@ -2482,39 +2513,45 @@ Note:	MBC	   mailboxes count (>0)
 		   bit 2: IRQ11
 		   bit 1: IRQ10
 		   bit 0: IRQ9
+	LUM	   logical unit mask
+		   bit N is set if LUN N is to respond in target mode
+	MBA0..MBA2 MSB..LSB of the physical address of the mailbox area
+		     (see #P0581)
+	MBC	   mailboxes count (nonzero), max. 1 for BIOS mailboxes
+	MBLT	   mailbox lock type
+		   01h translation  lock (for extended BIOS)
+		   02h dynamic scan lock
+		   others reserved
+	MBU	   00h: mailbox unlock
+	NED	   number of EEPROM data bytes to read/write
+	NOB	   number of adapter option bytes
+	SC	   sector count
+	SEA	   starting EEPROM address
 	SID	   SCSI ID
 		   bits 7-3: reserved (0)
 		   bits 2-0: binary value of SCSI ID
-	LUM	   logical unit mask
-		   bit N is set if LUN N is to respond in target mode
-	DIL	   data in length
-		   number of bytes to return (0 means 256 bytes)
+	SL	   string length
+	SN	   sector number - 1
+	SOID	   special options ID
+		   30h ???
+		   41h standard model
 	SPS	   SDT and parity status
 		   bits 7-2: reserved (0)
 		   bit 1: SCSI parity check enabled
 		   bit 0: synchronous negotiation initiated
+	SRP	   shadow RAM parameters
 	STA0..STA7 synchronous transfer agreements for target ID 0..7
 		   bit 7: synchronous transfer negotiated
 		   bits 6-4: value defining synchronous transfer period
 			     period in ns can be calculated as 200+50*value
 		   bits 3-0: negotiated offset value
-	DS	   (AHA-154xB+?) disconnect status
-		   bit N is set if target ID N is unable to disconnect?
-	EV	   echo value (it is be echoed back)
-	ESG	   01h: enable scatter/gather
-	NED	   number of EEPROM data bytes to return
-	EA	   EEPROM address to read data from
-	F	   flags
-		   bit 3: extended BIOS translation (255 heads / 63 sectors)
-	MBLT	   mailbox lock type
-		   01h translation  lock (for extended BIOS)
-		   02h dynamic scan lock
-	MBU	   00h: mailbox unlock
-	SL	   string length
-	C0..C3	   ASCIZ company string ("AMI")
-	M0..M5	   ASCIZ model string
-	S0..S5	   ASCIZ series string ("48")
-	V0..V5	   ASCIZ version string ("1.00")
+	TC0..TC7   target 0..7 configuration
+		   bit M in byte N is set if SCSI ID N LUN M is installed
+	TO0,TO1	   MSB, LSB of the time-out value (in ms)
+		   default 250 ms
+	TRG	   bits 7-5: target ID
+		   bits 4-0: reserved
+	TS	   termination setting (see #P9004)
 Notes:	all commands except 02h, 05h, 82h should only be issued if the host
 	  adapter is idle (bit 4 in the status register set)
 	command 02h can be issued even if the command / data out register is
@@ -2529,11 +2566,150 @@ Notes:	all commands except 02h, 05h, 82h should only be issued if the host
 	  issuing the TEST UNIT READY command to each target/LUN combination
 	return setup data command (0Dh) returns the number of bytes requested
 	  with DIL parameter
+	for read/write channel 2 buffer commands (1Bh/1Ah) data buffer must be
+	  64 bytes long; for read/write FIFO buffer commands (1Dh/1Ch) it must
+	  be 54 bytes long
+	set adapter options command (21h) takes the number of option bytes
+	  specified with NOB parameter
 	BusLogic BT-545S gets the adapter inquiry command (04h) wrong returning
 	  only one byte instead of four; DTC 3290 gets this command wrong too
 	AMI inquiry command (41h) returns the number of bytes requested
 	  with SL parameter
 SeeAlso: #P0577,#P0579
+
+(Table P9000)
+Values for AHA-154x AT bus transfer speed:
+ 00h	5.0 MB/s
+ 01h	6.7 MB/s
+ 02h	8.0 MB/s
+ 03h	10.0 MB/s
+ 04h	5.7 MB/s
+ 88h	10.0 MB/s
+ 99h	6.7 MB/s
+ AAh	5.0 MB/s
+ BBh	4.0 MB/s???
+ CCh	3.3 MB/s???
+ DDh	2.9 MB/s???
+ EEh	2.5 MB/s???
+ FFh	2.2 or 3.3 MB/s???
+SeeAlso: #P0580
+
+Format of AHA-154x setup data:
+Offset	Size	Description	(Table P9001)
+ 00h	BYTE	SDT and parity status
+		bits 7-2: reserved (0)
+		bit 1: SCSI parity check enabled
+		bit 0: synchronous negotiation initiated
+ 01h	BYTE	AT bus transfer speed (see #P9000)
+ 02h	BYTE	bus on	time (in mcs)
+ 03h	BYTE	bus off time (in mcs)
+ 04h	BYTE	number of mailboxes (00h = the mailbox initialization command
+		  has not yet been successfully completed)
+ 05h  3 BYTEs	big-endian physical address of the mailbox area (see #P0581)
+ 08h  8 BYTEs	synchronous transfer agreements for target ID 0-7
+		bit 7: synchronous transfer negotiated
+		bits 6-4: value defining synchronous transfer period
+			    period (in ns) can be calculated as 200+50*value
+		bits 3-0: negotiated offset value
+ 10h	BYTE	(AHA-154xB+?) disconnect status
+		bit N is set if target ID N is unable to disconnect?
+ 11h 20 BYTEs	reserved (0)
+ 25h	BYTE	???
+ 26h	BYTE	???
+ 27h	WORD	??? (big-endian)
+ 29h 3 BYTEs	big-endian physical address of the BIOS mailbox (see #P0581)
+SeeAlso: #P9002,#P9005,#P0580
+
+Format of AHA-154xC+ EEPROM data:
+Offset	Size	Description	(Table P9002)
+ 00h	BYTE	bit 7: (AHA-154xCF) floppy controller I/O port
+			 (0 = 3F0h, 1 = 370h)
+		bit 6: ???
+		bit 5: EDD support enabled
+		bit 4: ???
+		bit 3: ???
+		bits 2-0: host adapter SCSI ID
+ 01h	BYTE	bit 7: ???
+		bits 6-4: DMA priority (0 and 5-7 are valid)
+		bit 3: ???
+		bits 2-0: interrupt channel (IRQ) (IRQ - 9; 7/4 invalid)
+			  000 IRQ9
+			  001 IRQ10
+			  010 IRQ11
+			  011 IRQ12
+			  100 reserved
+			  101 IRQ14
+			  110 IRQ15
+			  111 reserved
+ 02h	BYTE	BIOS features
+		bit 7: extended BIOS translation for drives >1G enabled
+		bit 6: ???
+		bit 5: immediate return on seek command enabled
+		bit 4: BIOS support for more than 2 drives enabled
+		bit 3: dynamically scan SCSI bus for BIOS devices
+		bit 2: system boot (INT 19h) controlled by host adapter BIOS
+		bit 1: host adapter BIOS (configuration utility reserved BIOS
+			 space) enabled
+		bit 0: support removable disks under BIOS as fixed disks
+ 03h	BYTE	DMA transfer rate (see #9001)
+ 04h	BYTE	bit 7: BIOS support for the floptical drives enabled
+		bit 6: don't display <Ctrl-A> message during BIOS initialization
+		bits 5-4: ???
+		bits 3-0: bus on  time
+ 05h	BYTE	bit 7: ???
+		bits 6-0: bus off time
+ 06h	BYTE	bit 7: (AHA-154xCP) somehow related to SCSI termination???
+		bit 6: (AHA-154xCP) somehow related to SCAM???
+		bit 5: ???
+		bits 4-3: reserved??? (0)
+		bit 2: reset SCSI bus at power-on
+		bit 1: host adapter SCSI termination enabled
+		bit 0: SCSI parity checking enabled
+ 07h  7 BYTEs	???
+ 0Eh  8 BYTEs	SCSI ID 0-7 configuration (see #P9006)
+ 16h  8 BYTEs	reserved??? (0)
+ 1Eh	BYTE	??? (41h)
+ 1Fh	BYTE	??? (06h)
+SeeAlso: #P9001,#P0580
+
+Format of AHA-154xC+ SCSI ID configuration:
+Offset	Size	Description	(Table P9006)
+ 7-5:	???
+ 4	ignore	in BIOS scan
+ 3	send START UNIT command
+ 2	enable Fast SCSI
+ 1	enable disconnection
+ 0	enable synchronous negotation
+SeeAlso: #P9002
+
+Format of AMI ID string:
+Offset	Size	Description	(Table P9003)
+ 00h  4 BYTEs	ASCIZ company string ("AMI")
+ 04h  6 BYTEs	ASCIZ model string
+ 0Ah  6 BYTEs	ASCIZ series string ("48")
+ 10h  6 BYTEs	ASCIZ version string ("1.00")
+SeeAlso: #P0580
+
+Format of AHA-154xCP termination setting byte:
+Offset	Size	Description	(Table P9004)
+ 7-6	detection result
+	00 fewer than 2 terminators
+	01 2 terminators
+	10 unable to detect
+	11 more than 2 terminators
+ 5-4	???
+ 3-0	???
+Note:	if bits 7-6 are zero and bits 5-4 are not, ASPI4DOS.SYS complains that
+	  fewer than 2 terminators detected
+SeeAlso: #P0580
+
+Format of AHA-154xB+ adapter options:
+Offset	Size	Description	(Table P9005)
+ 00h	BYTE	disconnect status
+		bit N is set if target ID N is unable to disconnect?
+ 01h	BYTE	(AHA-154xC) ???
+Note:	byte at offset 01h is the same as at offset 25h in the setup data
+SeeAlso: #P9004
 
 Format of AHA-154x mailbox array:
 Offset	Size	Description	(Table P0581)
@@ -3453,6 +3629,10 @@ Range:	The I/O address range is dipswitch selectable from:
 	   0250-025F and 0350-035F
 	   0260-026F and 0360-036F
 	   0270-027F and 0370-037F
+----------P0352------------------------------
+PORT 0352 - PC104 - WATCHDOG TIMER RESET
+Desc:	any write to this port resets the watchdog timer; if the timer is not
+	  periodically re-armed, it generates a system reset
 ----------P035A035B--------------------------
 PORT 035A-035B - Adaptec AH1520 jumper settings
 
@@ -4018,7 +4198,7 @@ Range:	PORT 0280h, PORT 0284h, PORT 0288h, PORT 028Ch, PORT 384h,
 ----------P03900397--------------------------
 PORT 0390-0397 - Sunshine EW-901B, EW-904B
 		EPROM writer card for EPROMs up to 27512
-0390-0393  ??  adresses of the 8255 on the EW-90xB
+0390-0393  ??  addresses of the 8255 on the EW-90xB
 ----------P0390039F--------------------------
 PORT 0390-039F - Cluster adapter (AT)
 
@@ -4596,7 +4776,7 @@ SeeAlso: #P0662
 PORT 03C0-03C7 - Sunshine EW-901, EW-901A, EW-904, EW-904A
 Desc:	EPROM writer card for EPROMs up to 27512
 
-03C0-03C3	adresses of the 8255 on the EW-90x
+03C0-03C3	addresses of the 8255 on the EW-90x
 --------V-P03C203CF--------------------------
 PORT 03C2-03CF - EGA/VGA - MISCELLANEOUS REGISTERS
 Range:	PORT 03C2h or PORT 02C2h (alternate EGA)
@@ -5499,6 +5679,12 @@ Values for EGA/VGA+ CRT Controller register index:
 	       bit4   : HR/VR width adjust flag for double scan mode
 	       bit3-1 : 1=test, 0=normal
 	       bit0   : double scan enable
+ 1Dh	Elsa Victory Erazor only: video page select for writing
+		bits 7-1 = offset into video memory in 64K units
+		bit 0: ???
+ 1Eh	Elsa Victory Erazor only: video page select for reading
+		bits 7-1 = offset into video memory in 64K units
+		bit 0: ???
  22h	(VGA) "CR22" CPU Latch Data Register (read-only)
  24h	(VGA) "CR24" Attribute Controller Toggle register (R-O) (see #P0709)
  3xh	(VGA)  !!!chips\64200.pdf p.57
@@ -7193,10 +7379,15 @@ PORT 03D8-03DF - COLOR VIDEO - CRT MODE AND STATUS REGISTERS
 	(default is 00h, in mode 13h: 04h)
 	bit7 =1: DAC active, cannot be read
 	     =0: DAC not active, read allowed
-	bit6-3 : reserved
+	bit6-5 : reserved
+	bit4   : AST_PLANTRONICS
+	bit3   : reserved
 	bit2 =1: videomode 13h with 256 colors active
 	bit1	: reserved
 	bit0 =0: reserved
+     	Note:	Apparently on the AST "ColorGraphPlus", its Enhanced mode can
+		  be activated with 90h and reset with 00h; on this card the
+		  Plantronics mode can be enabled with 10h.
 03DE  --  (MCGA) reserved
 03DE  -W  (AT&T & color ET4000 in AT&T compatibility mode & C&T 82C426)
 	  AT&T mode control register (see #P0821)
@@ -8484,7 +8675,7 @@ Notes:	bits 0-3 are reset when the CPU reads the MSR
 	bit 7 is the Modem Control Register OUT2 during loopback test
 SeeAlso: #P0880,#P0881,#P0882
 --------!---Note-----------------------------
-Note:	Adresses above 03FF generally apply to EISA and PCI machines only !
+Note:	Addresses above 03FF generally apply to EISA and PCI machines only !
 	EISA port assignments:
 	    1000-1FFF	slot 1 EISA
 	    2000-2FFF	slot 2 EISA
@@ -9090,6 +9281,9 @@ Bit(s)	Description	(Table P0913)
 	00000-11111 = 0dB to -93dB in 3dB steps
  0	reserved
 SeeAlso: #P0902,#P0913
+----------P05FB------------------------------
+PORT 05FB - QUAD EMS+ - "QEMS_RESET" - RESET EMS???
+SeeAlso: PORT 07FBh"QUAD",PORT 2315h
 ----------P0601------------------------------
 PORT 0601 - Headland HL21, Acer M5105 chipsets - SYSTEM CONTROL
 
@@ -9330,6 +9524,9 @@ SeeAlso: PORT 03BCh,PORT 0678h,PORT 0778h
 07BC  RW  (when ECR bits 7-5=111) ECP configuration A (see #P0921)
 07BD  RW  (when ECR bits 7-5=111) ECP configuration B (see #P0922)
 07BE  RW  extended control register (ECR) (see #P0923)
+----------P07FB------------------------------
+PORT 07FB - QUAD EMS+ - "QEMS_INCR" - ???
+SeeAlso: PORT 05FBh"QUAD",PORT 2315h
 ----------P080008FF--------------------------
 PORT 0800-08FF - I/O port access registers for extended CMOS RAM or SRAM
 		(256 bytes at a time)

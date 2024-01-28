@@ -1,5 +1,5 @@
-Bibliography			Release 60		Last change 03jan99
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+Bibliography			Release 61		Last change 16jul00
+Copyright (c) 1989-1999,2000 Ralf Brown
 --------!---BIBLIOGRAPHY---------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -959,6 +959,10 @@ Philips SAA7110/7110A info from "SAA7110/SAA7110A One Chip Front-end 1 (OCF1)",
 http://www.semiconductors.philips.com/acrobat/2007.pdf.	 Transcription by
 Roger Scudder, 10/98.  Added 01jan98.
 
+ATASPI info from "ATA Software Programming Interface (ATASPI) Specification
+for DOS and Windows Operating Systems", Version 0.72, December 20, 1994.
+ftp://ftp.adaptec.com/pub/BBS/FutureDomain/atap072.exe.  Added 15jul00.
+
 C&T 64200 info from "64200 (Wingine) High Performance Windows Engine",
 ftp://ftp.chips.com/pub/pdf/64200.pdf.	(to be added)
 
@@ -1245,12 +1249,11 @@ http://www.cirrus.com/ftp/pubs/4952.pdf (to be added)
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER60A through INTER60D (preferably the original
+quartet of archives named INTER61A through INTER61D (preferably the original
 authenticated PKZIP archives), the utility programs in a fifth archive
-called INTER60E.ZIP, and the hypertext conversion programs in two additional
-archives named INTER60F.ZIP and INTER60G.ZIP.
+called INTER61E.ZIP, and the hypertext conversion programs in a final archive
+named INTER61F.ZIP.
 
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+Copyright (c) 1989-1999,2000 Ralf Brown
 --------!---CONTACT_INFO---------------------
 Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
-FIDO: Ralf Brown 1:129/26.1

@@ -1,6 +1,13 @@
 VOLUNTEERS NEEDED
 -----------------
 
+15jul00:
+
+I haven't been managing any transcriptions for a while due to lack of
+time, but I hope to restart the process this fall.  Once I'm ready to
+go, I'll contact everyone who has volunteered in the past.
+
+
 30aug98:
 
 If you've always wanted to show your appreciation of the interrupt
@@ -21,8 +28,3 @@ copy of one of my books.
 
 
 
-I'm also collecting PCI device IDs.  If you would like to contribute,
-run PCICFG on your system, and report any identifiers which are not yet
-in the interrupt list (at INT 1A/BX=B102h, as well as in PCICFG.DAT) or
-are unknown to PCICFG.  If you'd like to contribute a detailed device
-description file for PCICFG, so much the better!

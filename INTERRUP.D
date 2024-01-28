@@ -1,5 +1,5 @@
 Interrupt List, part 4 of 18
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+Copyright (c) 1989-1999,2000 Ralf Brown
 --------b-15E800-----------------------------
 INT 15 - Compaq Contura - GET ???
 	AX = E800h
@@ -51,6 +51,9 @@ Notes:	supported by the A03 level (6/14/94) and later XPS P90 BIOSes, as well
 	  and DX instead of AX and BX
 	this interface is used by Windows NT 3.1, OS/2 v2.11/2.20, and is
 	  used as a fall-back by newer versions if AX=E820h is not supported
+	this function is not used by MS-DOS 6.0 HIMEM.SYS when an EISA machine
+	  (for example with parameter /EISA) (see also MEM F000h:FFD9h), or no
+	  Compaq machine was detected, or parameter /NOABOVE16 was given.
 SeeAlso: AH=8Ah"Phoenix",AX=E802h,AX=E820h,AX=E881h"Phoenix"
 --------b-15E802-----------------------------
 INT 15 - Compaq Contura - GET ???
@@ -125,6 +128,141 @@ Notes:	supported by AMI BIOSes dated 8/23/94 or later
 	this interface is used by Windows NT 3.1, OS/2 v2.11/2.20, and is
 	  used as a fall-back by newer versions if AX=E820h is not supported
 SeeAlso: AX=E801h"Phoenix",AX=E820h"Phoenix"
+----------15E900-----------------------------
+INT 15 - PhysTechSoft PTS ROM-DOS - RESET WATCHDOG TIMER
+	AX = E900h
+Return: nothing
+----------15E901-----------------------------
+INT 15 - PhysTechSoft PTS ROM-DOS - WRITE DIAGNOSTIC CONTROL POINT CODE
+	AX = E901h
+	CX = control point code (codes 000h-1FFh system backup)
+Return: nothing
+Note:	Provided by PhysTechSoft's PTS ROM-DOS and displayed by SETUP.COM.
+SeeAlso: AX=E902h,INT 14/AH=05h"PTS ROM-DOS",INT 14/AH=06h"PTS ROM-DOS"
+
+(Table 04093)
+Values for PhysTechSoft PTS ROM-DOS control point code:
+ ???	LOADER: Stack loaded
+	LOADER: IVT initialized
+	LOADER: Channel initialized
+	LOADER: Local loading
+	LOADER: Flash tested
+	LOADER: Load from ROM
+	LOADER: Load ROM comp.
+	LOADER: Load from Flash
+	LOADER: Load Flash co.
+	BIOS: Chipset initialized
+	BIOS: CPU tested
+	BIOS: Stack tested
+	BIOS: CRC tested
+	BIOS: IVT initialized
+	BIOS: Vars initialized
+	BIOS: Resident init
+	BIOS: Channel initialized
+	BIOS: Memory tested
+	BIOS: SRAM tested
+	BIOS: EMS tested
+	BIOS: PIC initialized
+	BIOS: PPI initialized
+	BIOS: DMA initialized
+	BIOS: Timer initialized
+	BIOS: Disks initialized
+	BIOS: Boot loaded
+	BIOS: Failed boot
+	DOS: Job point: (up to 25???)
+SeeAlso: #04091
+----------15E902-----------------------------
+INT 15 - PhysTechSoft PTS ROM-DOS - SET DIAGNOSTIC DOS ERROR FLAG
+	AX = E902h
+	CX = diagnostic flag mask (see #04091,#04092)
+Return: nothing
+Note:	Provided by PhysTechSoft's PTS ROM-DOS and displayed by SETUP.COM.
+	  DOS error flags can be assigned by application software.
+SeeAlso: AX=E901h,INT 14/AH=05h"PTS ROM-DOS", INT 14/AH=06h"PTS ROM-DOS"
+
+Bitfields for PhysTechSoft PTS ROM-DOS BIOS error flags:
+Bit(s)	Description	(Table 04091)
+ ???	Processor test failed.
+	Stack test failed.
+	BIOS code damaged.
+	Conventional memory test failed.
+	SRAM test failed.
+	EMS test failed.
+	Boot-sector damaged.
+	Boot-sector read error.
+	Loader setup damaged.
+	BIOS setup damaged.
+SeeAlso: #04092,#04093
+
+Bitfields for PhysTechSoft PTS ROM-DOS LOADER error flags::
+Bit(s)	Description	(Table 04092)
+ ???	Processor test failed.
+	Loader code damaged.
+	Loader code in RAM damaged.
+	Loader setup in flash-memory damaged.
+	BIOS setup in flash-memory damaged.
+	BIOS offset in flash-memory field damaged.
+	BIOS size in flash-memory field damaged.
+	BIOS in flash-memory damaged.
+	BIOS in ROM damaged.
+	Last operation field damaged.
+	Channel error.
+	Setup in flash-memory damaged.
+	Loading BIOS from control channel failed.
+	Loading DOS from control channel failed.
+SeeAlso: #04091
+----------15E903-----------------------------
+INT 15 - PhysTechSoft PTS ROM-DOS - WRITE-ENABLE FLASH-DISK
+	AX = E903h
+Return: nothing
+Note:	Enabling writing on Flash disk can lead to corruption of EMS disk info.
+SeeAlso: AX=E904h,AX=E905h
+----------15E904-----------------------------
+INT 15 - PhysTechSoft PTS ROM-DOS - WRITE-PROTECT FLASH-DISK
+	AX = E904h
+Return: nothing
+SeeAlso: AX=E903h,AX=E905h
+----------15E905-----------------------------
+INT 15 - PhysTechSoft PTS ROM-DOS - WRITE IMAGE OF BIOS TO FLASH-MEMORY
+	AX = E905h
+	DS:SI -> buffer
+Return: nothing
+SeeAlso: AX=E903h,INT 14/AH=05h"PTS ROM-DOS",INT 14/AH=06h"PTS ROM-DOS"
+----------15E906-----------------------------
+INT 15 - PhysTechSoft PTS ROM-DOS - READ SETUP INFORMATION FROM FLASH-DISK
+	AX = E906h
+	DS:SI -> buffer
+Return:	AL = error code (00h = no error, 01h = setup information not found)
+SeeAlso: AX=E907h,INT 14/AH=05h"PTS ROM-DOS",INT 14/AH=06h"PTS ROM-DOS"
+----------15E907-----------------------------
+INT 15 - PhysTechSoft PTS ROM-DOS - WRITE SETUP INFORMATION ON FLASH-DISK
+	AX = E907h
+	DS:SI -> buffer
+Return:	nothing
+SeeAlso: AX=E906h
+----------15E908-----------------------------
+INT 15 - PhysTechSoft PTS ROM-DOS - SET BREAKPOINT
+	AX = E908h
+	CL = flags
+	    bit 1: =0 operate in one-fold mode
+		   =1 operate in many-fold mode
+	    bit 0: =0 send debug information to control channel
+		   =1 activate handler
+	ES:SI = breakpoint address
+	DX:DI = handler address
+Return: AH = error code
+	    00h no error
+	    01h incorrect parameter
+	    02h no room in breakpoint table
+SeeAlso: AX=E909h,INT 14/AH=05h"PTS ROM-DOS",INT 14/AH=06h"PTS ROM-DOS"
+----------15E909-----------------------------
+INT 15 - PhysTechSoft PTS ROM-DOS - REMOVE BREAKPOINT
+	AX = E909h
+	ES:SI = breakpoint address
+Return:	AH = error code
+	    00h no error
+	    01h incorrect parameter
+SeeAlso: AX=E908h,INT 14/AH=05h"PTS ROM-DOS",INT 14/AH=06h"PTS ROM-DOS"
 --------m-15F200CX454D-----------------------
 INT 15 - Tandon memory mapper - Tandon MAPPER HARDWARE INITIALIZATION CHECK ???
 	AX = F200h
@@ -366,6 +504,7 @@ Values for keyboard ID:
  83ABh	Japanese "G" keyboard (pass-through mode)
 	MF2 Keyboard (pass-through mode)
  84ABh	Japanese "P" keyboard (pass-through mode)
+ 86ABh	122-key keyboard
  90ABh	old Japanese "G" keyboard
  91ABh	old Japanese "P" keyboard
  92ABh	old Japanese "A" keyboard
@@ -887,7 +1026,9 @@ Return: AL = status
 	    00h successful
 	    01h bad country code
 	    02h other error
-Notes:	the K3PLUS v6.00+ INT 16 BIOS replacement will switch between the
+Notes:	This function is called with BX=0051h by Japanese versions of
+	  MS-DOS/PC DOS/DR DOS IO.SYS/IBMBIO.COM at initialization time.
+	the K3PLUS v6.00+ INT 16 BIOS replacement will switch between the
 	  supported country specific layout (e.g. BX=0031h Germany, BX=001Fh
 	  Netherlands, BX=0020h Belgium, BX=0022h Spain) (as with <Ctrl>+
 	  <Alt>+<F2>) and K3PLUS' transparent mode (as with <Ctrl>+<Alt>+<F1>).
@@ -3615,6 +3756,11 @@ INT 17 - PRINTER - WRITE CHARACTER
 	AL = character to write
 	DX = printer number (00h-02h)
 Return: AH = printer status (see #00631)
+Note:	Under PhysTechSoft's PTS ROM-DOS the parallel port can also be
+	  accessed as COM5.
+BUGS:	Some print spoolers trash the BX register on return.
+	Some original IBM BIOSes set more than one printer status bits at
+	  a time, while only one of them is correct.
 SeeAlso: AH=02h,AH=84h"AX",AX=6F02h,AH=F1h,INT 16/AX=FFE3h,INT 1A/AH=11h"NEC"
 SeeAlso: INT 4B/AH=00h,PORT 0278h"PRINTER",MEM 0040h:0008h,MEM 0040h:0078h
 
@@ -3627,7 +3773,9 @@ Bit(s)	Description	(Table 00631)
  3	I/O error
  2-1	unused
  0	timeout
-Note:	for Tandy 2000, bit 7 indicates printer-busy when set rather than clear
+Notes:	If both, bit 5 "out of paper" and 4 "selected" are set, the MS-DOS/
+	  PC DOS kernel assumes that no printer is attached.
+	for Tandy 2000, bit 7 indicates printer-busy when set rather than clear
 --------B-1701-------------------------------
 INT 17 - PRINTER - INITIALIZE PORT
 	AH = 01h
@@ -4370,6 +4518,38 @@ Note:	one of AH=51h and AH=52h converts from JIS (Japanese Industry Standard)
 	  characters to Shift-JIS characters, and the other performs the
 	  opposite conversion
 SeeAlso: AH=51h
+--------P-175555BXAAAA-----------------------
+INT 17 - LR - SET CONFIGURATION
+	AX = 5555h
+	BX = AAAAh
+	CL = configuration flags (see #04117)
+	DX = LPT number
+Return: AX = A55Ah
+	BX = BBBBh
+Program: LR_xxxx.COM files are a set of printer-hardware dependent printer
+	  drivers found in the LIR DOS/Windows 3.xx codepage support package
+	  develoved by LABAS u.a.b.  LIR supports several different screen and
+	  printer codepages and various keyboard layouts used in Lithuania.
+	  Download at: ftp://ftp.labas.com/pub/drivers/language/lir422.zip
+SeeAlso: AX=5555h/BX=BBBBh,INT 10/AX=5555h/BX=AAAAh
+
+Bitfields for LR_xxxx.COM configuration flags:
+Bit(s)	Description	(Table 04117)
+ 7	ESC sequence???
+ 6	ESC sequence???
+ 5-3	printer code page
+ 2	Lithuanian alphabet???
+ 1	Russian alphabet???
+ 0	???
+--------P-175555BXBBBB-----------------------
+INT 17 - LR - GET CONFIGURATION
+	AX = 5555h
+	BX = BBBBh
+	DX = LPT number
+Return: AX = A55Ah
+	BX = CCCCh
+	CL = configuration flags (see #04117)
+SeeAlso: AX=5555h/BX=AAAAh,INT 10/AX=5555h/BX=BBBBh
 --------V-1760-------------------------------
 INT 17 - FLASHUP.COM - INSTALLATION CHECK
 	AH = 60h
@@ -5106,13 +5286,21 @@ SeeAlso: AH=01h,AH=03h"PC-MOS"
 --------B-18---------------------------------
 INT 18 - DISKLESS BOOT HOOK (START CASSETTE BASIC)
 Desc:	called when there is no bootable disk available to the system
-Notes:	only PCs produced by IBM contain BASIC in ROM, so the action is
-	  unpredictable on compatibles; this interrupt often reboots the
-	  system, and often has no effect at all
+Notes:	very few PCs other than those produced by IBM contain BASIC in ROM, so
+	  the action is unpredictable on compatibles; this interrupt often
+	  reboots the system, and often has no effect at all
+	some PC and XT clones had an optional IBM CASSETTE BASIC stored
+	  in the ROM, too.
+	most BIOSes will display an error message similar to "NO BASIC", and
+	  either reboot or return to the caller.
+	PS/2 machines usually pop up a graphical box to the effect that
+	  the user should enter a floppy and press F1.
+	Some clones display the message "No boot device available,
+	  strike F1 to retry, F2 for setup utility"
 	network cards with their own BIOS can hook this interrupt to allow
 	  a diskless boot off the network (even when a hard disk is present
 	  if none of the partitions is marked as the boot partition)
-SeeAlso: INT 2F/AX=4A06h,INT 86"NetBIOS"
+SeeAlso: INT 2F/AX=4A06h,INT 86"NetBIOS",INT 2F/AX=4A06h,INT 2F/AX=4A07h
 --------J-1800-------------------------------
 INT 18 - NEC PC-9800 series - KEYBOARD - GET KEYSTROKE
 	AH = 00h
@@ -5510,6 +5698,7 @@ Values for operating system indicator:
  87h	NTFS volume/stripe set
  93h	Amoeba file system
  94h	Amoeba bad block table
+ 98h	Datalight ROM-DOS SuperBoot
  99h	Mylex EISA SCSI
  A0h	Phoenix NoteBIOS Power Management "Save-to-Disk" partition
  A1h	officially listed as reserved
@@ -5522,20 +5711,24 @@ Values for operating system indicator:
  B3h	officially listed as reserved
  B4h	officially listed as reserved
  B6h	officially listed as reserved
+ B6h	Windows NT mirror set (master), FAT16 file system
  B7h	BSDI file system (secondarily swap)
+ B7h	Windows NT mirror set (master), NTFS file system
  B8h	BSDI swap partition (secondarily file system)
  BEh	Solaris boot partition
- C0h	DR-DOS/Novell DOS secured partition
+ C0h	DR DOS/DR-DOS/Novell DOS secured partition
  C0h	CTOS
  C1h	DR DOS 6.0 LOGIN.EXE-secured 12-bit FAT partition
  C4h	DR DOS 6.0 LOGIN.EXE-secured 16-bit FAT partition
  C6h	DR DOS 6.0 LOGIN.EXE-secured Huge partition
  C6h	corrupted FAT16 volume/stripe set (Windows NT)
+ C6h	Windows NT mirror set (slave), FAT16 file system
  C7h	Syrinx Boot
  C7h	corrupted NTFS volume/stripe set
- CBh	Reserved for DR-DOS secured FAT32
- CCh	Reserved for DR-DOS secured FAT32 (LBA)
- CEh	Reserved for DR-DOS secured FAT16 (LBA)
+ C7h	Windows NT mirror set (slave), NTFS file system
+ CBh	Reserved for DR DOS/DR-DOS/OpenDOS secured FAT32
+ CCh	Reserved for DR DOS/DR-DOS secured FAT32 (LBA)
+ CEh	Reserved for DR DOS/DR-DOS secured FAT16 (LBA)
  D0h	Multiuser DOS secured FAT12
  D1h	Old Multiuser DOS secured FAT12
  D4h	Old Multiuser DOS secured FAT16 (<= 32M)
@@ -5588,6 +5781,12 @@ Notes:	there are approximately 18.2 clock ticks per second, 1800B0h per 24 hrs
 	since the midnight flag is cleared, if an application calls this
 	  function after midnight before DOS does, DOS will not receive the
 	  midnight flag and will fail to advance the date
+	Modern releases of MS-DOS/PC DOS (5.0+???) assume that AL is a day
+	  rollover counter rather than a flag, as expected by older releases.
+	  DOS 5 - 7.10 (Windows 98 SE) provide an undocumented CONFIG.SYS
+	  SWITCHES=/T option to force the old behaviour of the day advancing
+	  code, that is using a flag instead of a counter.
+	DR DOS 3.31 - DR-DOS 7.03 handle AL as a flag.
 SeeAlso: AH=01h,AH=02h,INT 21/AH=2Ch,INT 55"Tandy 2000",INT 4E/AH=02h"TI"
 SeeAlso: INT 62/AX=0099h,MEM 0040h:006Ch,MEM 0040h:0070h
 --------B-1A01-------------------------------
@@ -5602,15 +5801,22 @@ SeeAlso: AH=00h,AH=03h,INT 21/AH=2Dh
 --------B-1A02-------------------------------
 INT 1A - TIME - GET REAL-TIME CLOCK TIME (AT,XT286,PS)
 	AH = 02h
+	CF clear to avoid bug (see below)
 Return: CF clear if successful
 	    CH = hour (BCD)
 	    CL = minutes (BCD)
 	    DH = seconds (BCD)
 	    DL = daylight savings flag (00h standard time, 01h daylight time)
 	CF set on error (i.e. clock not running or in middle of update)
-Note:	this function is also supported by the Sperry PC, which predates the
+Notes:	this function is also supported by the Sperry PC, which predates the
 	  IBM AT; the data is returned in binary rather than BCD on the Sperry,
 	  and DL is always 00h
+	MS-DOS/PC DOS IO.SYS/IBMBIO.COM use this function to detect if a RTC
+	  is preset by checking if the returned values are non-zero. If they
+	  are, this function is called one more time, before it is assumed
+	  that no RTC is present.
+BUG:	some BIOSes leave CF unchanged if successful, so CF should be cleared
+	  before calling this function
 SeeAlso: AH=00h,AH=03h,AH=04h,INT 21/AH=2Ch
 --------b-1A02-------------------------------
 INT 1A - Tandy 2000 - TIME - GET DATE AND TIME
@@ -5646,12 +5852,38 @@ SeeAlso: AH=02h"Tandy 2000",INT 55"Tandy 2000"
 --------B-1A04-------------------------------
 INT 1A - TIME - GET REAL-TIME CLOCK DATE (AT,XT286,PS)
 	AH = 04h
+	CF clear to avoid bug (see below)
 Return: CF clear if successful
 	    CH = century (BCD)
 	    CL = year (BCD)
 	    DH = month (BCD)
 	    DL = day (BCD)
 	CF set on error
+Notes:	DR-DOS 7.02 (after 1998-06-06) and 7.03 hook this function and correct
+	  the century to 20xx if the reported year is 1900..1980 to auto-fix
+	  ROM-BIOSes which are not Year 2000 compliant. On a running system,
+	  it would also correct the rollover bug from 1999/12/31 to 2000/01/01.
+	  The latter can be turned off using the new CONFIG.SYS YEAR2000=ON|OFF
+	  command, as hooking INT 1Ah can sometimes cause compatibility
+	  problems with 3rd party software, e.g. NCR/Symbios/LSI Logic-based
+	  SDMS PCI SCSI drivers (including all OEM drivers like from Asus,
+	  Noma, etc.), some Flash-BIOS software like Asus PFLASH, Quarterdeck's
+	  QEMM Stealth and Quick-Boot features.
+	Using EXCLUDESTEALTHINT=1A, though, will allow QEMM's Stealth features
+	  to coexist with the DR-DOS Year 2000 rollover support.
+	Actually, the Y2K-fix is provided since OpenDOS 7.02 BETA 2+
+	  (1997-08-13), but although these older releases corrected the
+	  ROM-BIOS, they didn't pass all Y2K-test suites and had some obscure
+	  and inexplicable PCI problems due to the fact that the original
+	  INT 1Ah was called via indirect means.  Newer releases, however, use
+	  a dynamically fixed-up direct jump to avoid these problems.
+	PC DOS 7 plus Y2K fixes and PC DOS 2000 provide similar, though not
+	  identical means, which cannot be switched off.
+	MS-DOS and older issues of PC DOS do not provide any such means, and
+	  thus requires extra Y2K-TSRs to be loaded when run on buggy BIOSes.
+BUG:	some BIOSes, such as the 1998/07/25 system ROM in the Compaq Deskpro
+	  EP/SB, leave CF unchanged if successful, so CF should be cleared
+	  before calling this function
 SeeAlso: AH=02h,AH=04h"Sperry",AH=05h,INT 21/AH=2Ah,INT 4B/AH=02h"TI"
 --------b-1A04-------------------------------
 INT 1A - Sperry PC - GET REAL-TIME CLOCK DATE
@@ -5662,6 +5894,16 @@ Return: CF clear if successful
 	    DL = day (binary) (01h-1Fh)
 	CF set on error
 SeeAlso: AH=02h,AH=04h,AH=05h"Sperry",INT 21/AH=2Ah,INT 4B/AH=02h"TI"
+----------1A04--CX4555-----------------------
+INT 1A - CheckIt Year 2000 Fix v2.06 - INSTALLATION CHECK
+	AH = 04h
+	CX = 4555h ('EU')
+	DX = 524Fh ('RO')
+	BX = 0000h
+Return: BX <> 0000h if installed
+	    BX = major/minor/sub version (2068h = version 2.06.8)
+Program: CheckIt is a TSR by Eurosoft (UK) Ltd. which corrects some Y2K-related
+	  RTC bugs
 --------B-1A05-------------------------------
 INT 1A - TIME - SET REAL-TIME CLOCK DATE (AT,XT286,PS)
 	AH = 05h

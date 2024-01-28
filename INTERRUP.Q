@@ -1,5 +1,5 @@
 Interrupt List, part 17 of 18
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+Copyright (c) 1989-1999,2000 Ralf Brown
 --------N-6B---------------------------------
 INT 6B - DECnet DOS - PORT DRIVER
 InstallCheck:	test for a signature area (see #03729) immediately preceding
@@ -2982,8 +2982,8 @@ Return: CF clear if successful
 --------H-70---------------------------------
 INT 70 C - IRQ8 - CMOS REAL-TIME CLOCK
 Desc:	this interrupt is called when the real-time clock chip generates an
-	  alarm or periodic interrupt, among others.  The periodic interrupt
-	  occurs 1024 times per second.
+	  alarm or periodic interrupt, among others (see CMOS 0Bh).  The
+	  periodic interrupt by default occurs 1024 times per second.
 Notes:	many BIOSes turn off the periodic interrupt in the INT 70h handler
 	  unless in an event wait (see INT 15/AH=83h,INT 15/AH=86h).
 	may be masked by setting bit 0 on I/O port A1h
@@ -3009,15 +3009,24 @@ Notes:	may be masked by setting bit 1 on I/O port A1h
 SeeAlso: INT 0A"IRQ2",INT 59"IRQ9",MEM 0040h:006Bh
 --------H-72---------------------------------
 INT 72 C - IRQ10 - RESERVED
-Note:	may be masked by setting bit 2 on I/O port A1h
+Notes:	may be masked by setting bit 2 on I/O port A1h
+	DOS 3.3+ revectors IRQ10 to a stack-switching routine unless STACKS=0
+	  has been set in CONFIG.SYS.  MS/PC-DOS use the IBM Interrupt Sharing
+	  Protocol (see #02568) when hooking this IRQ
 SeeAlso: INT 5A"IRQ10",MEM 0040h:006Bh
 --------H-73---------------------------------
 INT 73 C - IRQ11 - RESERVED
-Note:	may be masked by setting bit 3 on I/O port A1h
+Notes:	may be masked by setting bit 3 on I/O port A1h
+	DOS 3.3+ revectors IRQ11 to a stack-switching routine unless STACKS=0
+	  has been set in CONFIG.SYS.  MS/PC-DOS use the IBM Interrupt Sharing
+	  Protocol (see #02568) when hooking this IRQ
 SeeAlso: INT 5B"IRQ11",MEM 0040h:006Bh
 --------H-74---------------------------------
 INT 74 C - IRQ12 - POINTING DEVICE (PS)
 Notes:	may be masked by setting bit 4 on I/O port A1h
+	DOS 3.3+ revectors IRQ12 to a stack-switching routine unless STACKS=0
+	  has been set in CONFIG.SYS.  MS/PC-DOS use the IBM Interrupt Sharing
+	  Protocol (see #02568) when hooking this IRQ
 	under DESQview, only the INT 15h vector and BASIC segment address (the
 	  word at 0000h:0510h) may be assumed to be valid for the handler's
 	  process
@@ -3036,17 +3045,26 @@ SeeAlso: INT 10"COPROCESSOR",INT 5D"IRQ13",MEM 0040h:006Bh
 --------H-76---------------------------------
 INT 76 C - IRQ14 - HARD DISK CONTROLLER OPERATION COMPLETE (AT and later)
 Notes:	may be masked by setting bit 6 on I/O port A1h
+	DOS 3.3+ revectors IRQ14 to a stack-switching routine unless STACKS=0
+	  has been set in CONFIG.SYS.  MS/PC-DOS use the IBM Interrupt Sharing
+	  Protocol (see #02568) when hooking this IRQ
 	on the PS/2, this interrupt is designed to be shared with other
 	  devices that produce an operation-complete interrupt, though
 	  the only current user is the hard disk
 SeeAlso: INT 0E"IRQ6",INT 15/AH=91h,INT 5E"IRQ14",MEM 0040h:006Bh
 --------H-77---------------------------------
 INT 77 C - IRQ15 - RESERVED (AT,PS)
-Note:	may be masked by setting bit 7 on I/O port A1h
+Notes:	may be masked by setting bit 7 on I/O port A1h
+	DOS 3.3+ revectors IRQ15 to a stack-switching routine unless STACKS=0
+	  has been set in CONFIG.SYS.  MS/PC-DOS use the IBM Interrupt Sharing
+	  Protocol (see #02568) when hooking this IRQ
 SeeAlso: INT 5F"IRQ15",MEM 0040h:006Bh
 --------H-77---------------------------------
 INT 77 C - IRQ15 - SECONDARY IDE CONTROLLER - OPERATION COMPLETE
-Note:	may be masked by setting bit 7 on I/O port A1h
+Notes:	may be masked by setting bit 7 on I/O port A1h
+	DOS 3.3+ revectors IRQ15 to a stack-switching routine unless STACKS=0
+	  has been set in CONFIG.SYS.  MS/PC-DOS use the IBM Interrupt Sharing
+	  Protocol (see #02568) when hooking this IRQ
 SeeAlso: INT 5F"IRQ15",MEM 0040h:006Bh
 --------H-77---------------------------------
 INT 77 C - IRQ15 - POWER CONSERVATION (Compaq SLT/286)
@@ -3685,19 +3703,29 @@ SeeAlso: INT 7A/BX=0001h,INT 7A/BX=0004h,INT 7A/BX=0023h
 (Table 03809)
 Values for IPX socket number:
  0451h	File Service (NetWare Core Protocol)
- 0452h	Service Advertising Protocol (see #03817)
+ 0452h	Service Advertising Protocol (SAP) (see #03817)
  0453h	Routing Information Packet (see #03820)
  0455h	NetBIOS Packet
  0456h	diagnostics
  0457h	server serial numbers (labeled "Copy Protection" by Lanalyzer)
  2222h	NetWare Core Protocol
  4000h-7FFFh used for dynamic allocation
+ 4000h \ seem to be used by IPX internally
+ 4001h /
  4444h	Brightwork Development's SiteLock server
  5555h	Brightwork Development's SiteLock client (workstation)
  8000h-FFFFh assigned by Novell
  869Ch	ID Software's DOOM
-Note:	SiteLock is an application metering product using IPX to communicate
+ 901Fh	Lancheck
+ 9023h	Server info (NetWare "Slurpee", NetWare Lite, Personal NetWare)
+ 9024h	Client info (NetWare "Slurpee", NetWare Lite, Personal NetWare)
+ 9025h	Serial socket (NetWare "Slurpee", NetWare Lite, Personal NetWare)
+ 9026h	Extension info (NetWare Lite, Personal NetWare???)
+Notes:	SiteLock is an application metering product using IPX to communicate
 	  between the application and the license server
+	IPX socket numbers should be registered with the Novell Development
+	  Products Division
+SeeAlso: INT 7A/BX=0001h
 --------N-7A----BX0001-----------------------
 INT 7A - Novell NetWare - IPX Driver - CLOSE SOCKET
 	BX = 0001h
@@ -3705,6 +3733,10 @@ INT 7A - Novell NetWare - IPX Driver - CLOSE SOCKET
 Notes:	also cancels events set by any Event Control Blocks for the socket
 	the program must close all open sockets before terminating
 	this function is supported by Advanced NetWare 1.02+
+	When the NetWare-specific release of the DR DOS command processor does
+	  a NetWare shutdown sequence on exit, it will close all user sockets
+	  except for socket numbers 4000 and 4001, which seem to be used by IPX
+	  internally.
 SeeAlso: BX=0000h
 --------N-7A----BX0002-----------------------
 INT 7A - Novell NetWare - IPX Driver - GET LOCAL TARGET
@@ -8719,6 +8751,170 @@ Note:	the factory-default location for the eight bytes of scratchpad RAM
 	  needed by the SCSI adapter is 0000h:0200h, which is interrupt
 	  vectors 80h and 81h
 SeeAlso: INT 81"BusLogic"
+--------O-80---------------------------------
+INT 80 - Linux - SYSTEM CALLS
+	parameters in registers
+
+(Table 04086)
+Values for system call number:
+ 00h	???
+ 01h	exit
+ 02h	fork
+ 03h	read
+ 04h	write
+ 05h	open
+ 06h	close
+ 07h	waitpid
+ 08h	creat
+ 09h	link
+ 0Ah	unlink
+ 0Bh	execve
+ 0Ch	chdir
+ 0Dh	time
+ 0Eh	mknod
+ 0Fh	chmod
+ 10h	lchown
+ 11h	break
+ 12h	oldstat (obsolete)
+ 13h	lseek
+ 14h	getpid
+ 15h	mount
+ 16h	umount
+ 17h	setuid
+ 18h	getuid
+ 19h	stime
+ 1Ah	ptrace
+ 1Bh	alarm
+ 1Ch	oldfstat
+ 1Dh	pause
+ 1Eh	utime
+ 1Fh	stty
+ 20h	gtty
+ 21h	access
+ 22h	nice
+ 23h	ftime
+ 24h	sync
+ 25h	kill
+ 26h	rename
+ 27h	mkdir
+ 28h	rmdir
+ 29h	dup
+ 2Ah	pipe
+ 2Bh	times
+ 2Ch	prof
+ 2Dh	brk
+ 2Eh	setgid
+ 2Fh	getgid
+ 30h	signal
+ 31h	geteuid
+ 32h	getegid
+ 33h	acct
+ 34h	umount2
+ 35h	lock
+ 36h	ioctl
+ 37h	fcntl
+ 38h	mpx
+ 39h	setpgid
+ 3Ah	ulimit
+ 3Bh	oldolduname (obsolete)
+ 3Ch	umask
+ 3Dh	chroot
+ 3Eh	ustat
+ 3Fh	dup2
+ 40h	getppid
+ 41h	getpgrp
+ 42h	setsid
+ 43h	sigaction
+ 44h	sgetmask
+ 45h	ssetmask
+ 46h	setreuid
+ 47h	setregid
+ 48h	sigsuspend
+ 49h	sigpending
+ 4Ah	sethostname
+ 4Bh	setrlimit
+ 4Ch	getrlimit
+ 4Dh	getrusage
+ 4Eh	gettimeofday
+ 4Fh	settimeofday
+ 50h	getgroups
+ 51h	setgroups
+ 52h	select
+ 53h	symlink
+ 54h	oldlstat (obsolete)
+ 55h	readlink
+ 56h	uselib
+ 57h	swapon
+ 58h	reboot
+ 59h	readdir
+ 5Ah	mmap
+ 5Bh	munmap
+ 5Ch	truncate
+ 5Dh	ftruncate
+ 5Eh	fchmod
+ 5Fh	fchown
+ 60h	getpriority
+ 61h	setpriority
+ 62h	profil
+ 63h	statfs
+ 64h	fstatfs
+ 65h	ioperm
+ 66h	socketcall
+ 67h	syslog
+ 68h	setitimer
+ 69h	getitimer
+ 6Ah	stat
+ 6Bh	lstat
+ 6Ch	fstat
+ 6Dh	olduname (obsolete)
+ 6Eh	iopl
+ 6Fh	vhangup
+ 70h	idle
+ 71h	vm86old
+ 72h	wait4
+ 73h	swapoff
+ 74h	sysinfo
+ 75h	ipc
+ 76h	fsunc
+ 77h	sigreturn
+ 78h	clone
+ 79h	setdomainname
+ 7Ah	uname
+ 7Bh	modify_ldt
+ 7Ch	adjtimex
+ 7Dh	mprotect
+ 7Eh	sigprocmask
+ 7Fh	create_module
+ 80h	init_module
+ 81h	delete_module
+ 82h	get_kernel_syms
+ 83h	quotactl
+ 84h	getpgid
+ 85h	fchdir
+ 86h	bdflush
+ 87h	sysfs
+ 88h	personality
+ 89h	afs_syscall
+ 8Ah	setfsuid
+ 8Bh	setfsgid
+ 8Ch	llseek
+ 8Dh	getdents
+ 8Eh	newselect
+ 8Fh	flock
+ 90h	msync
+ 91h	readv
+ 92h	writev
+ 93h	getsid
+ 94h	fdatasync
+ 95h	sysctl
+ 96h	mlock
+ 97h	munlock
+ 98h	mlockall
+ 99h	munlockall
+!!! http://home.snafu.de/phpr/lhpsysc0.html
+--------O-80---------------------------------
+INT 80 - FreeBSD - SYSTEM CALLS
+	parameters on stack
 --------b-80---------------------------------
 INT 80 U - AMI BIOS v1.00.12.AX1T - internal - BIOS SUBSYSTEM SELECTION
 	AH = function
@@ -9439,6 +9635,40 @@ INT 88 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 SeeAlso: INT 87"BASIC",INT 89"BASIC"
+----------88---------------------------------
+INT 88h - WANG PC - GET CONFIGURATION
+	 AL = get info type
+	     01h Get System Console
+		Return: ES:BX -> Configuration structure (see #04089)
+	     else: ???
+SeeAlso: PORT 1010h"Wang",MEM F000h:0000h,MEM FC00h:3FC2h,INT 21/AX=4402h
+
+Format of Wang PC System Console configuration structure:
+Offset	Size	Description	(Table 04089)
+ 00h	WORD	version
+ 02h	WORD	memory size
+ 04h  2 WORDs	reserved
+ 08h	WORD	number of screens (1..4)
+ 0Ah  4 WORDs	offset of console screen info structure 1..4 within
+		  configuration structure's segment (ES) (see #04090)
+
+Format of Wang PC Screen Info structure:
+Offset	Size	Description	(Table 04090)
+ 00h	BYTE	state
+		(bit 7 set appears to indicate the active console that is
+		  currently attached to the screen)
+ 01h	BYTE	scanoff
+ 02h	WORD	buffer segment
+ 04h	BYTE	colors
+ 05h	BYTE	row
+ 06h	BYTE	column
+ 07h	BYTE	attribute
+		00h = ???
+		02h = ???
+		0Fh = white on black
+ 08h	BYTE	auxiliary mode
+ 09h	BYTE	auxiliary mode 2
+SeeAlso: #04089
 --------r-88--00-----------------------------
 INT 88 - APL*PLUS/PC - CREATE OBJECT OF ARBITRARY RANK OR SHAPE
 	AL = 00h
@@ -9596,6 +9826,7 @@ SeeAlso: INT 70"VIRUS",INT 87"VIRUS",INT 9C"VIRUS"
 INT 8C - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
+SeeAlso: INT 8B"BASIC",INT 8D
 --------r-8C---------------------------------
 INT 8C - APL*PLUS/PC - CLEAR SCREEN MEMORY
 	AX = flag
@@ -9606,24 +9837,29 @@ SeeAlso: INT CC"APL"
 INT 8D - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
+SeeAlso: INT 8C,INT 8E
 --------r-8E---------------------------------
 INT 8E - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
+SeeAlso: INT 8D,INT 8F
 --------r-8F---------------------------------
 INT 8F - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
+SeeAlso: INT 8E,INT 90
 --------r-90---------------------------------
 INT 90 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
+SeeAlso: INT 8F,INT 91
 --------r-90---------------------------------
 INT 90 - APL*PLUS/PC - USED BY PORT 10 PRINTER DRIVER
 --------r-91---------------------------------
 INT 91 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
+SeeAlso: INT 90,INT 92
 --------N-91---------------------------------
 INT 91 - IBM TOKEN RING ADAPTER - ???
 SeeAlso: INT 81"TOKEN RING",INT 82"TOKEN RING",INT 93"TOKEN RING"

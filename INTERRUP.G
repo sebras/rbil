@@ -1,5 +1,5 @@
 Interrupt List, part 7 of 18
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+Copyright (c) 1989-1999,2000 Ralf Brown
 --------D-214400-----------------------------
 INT 21 - DOS 2+ - IOCTL - GET DEVICE INFORMATION
 	AX = 4400h
@@ -13,7 +13,7 @@ Notes:	value in DH corresponds to high byte of device driver's attribute word
 	  if handle refers to a character device
 	Novell NetWare reportedly does not return a drive number in bits 5-0
 	  for a disk file
-	this function was not supported by Digital Research's DOS-Plus
+	this function was not supported by Digital Research's DOS Plus
 SeeAlso: AX=4401h,INT 2F/AX=122Bh
 
 Bitfields for device information word:
@@ -50,7 +50,7 @@ INT 21 - DOS 2+ - IOCTL - SET DEVICE INFORMATION
 Return: CF clear if successful
 	CF set on error
 	    AX = error code (01h,05h,06h,0Dh) (see #01680 at AH=59h/BX=0000h)
-Note:	this function was not supported by Digital Research's DOS-Plus
+Note:	this function was not supported by Digital Research's DOS Plus
 SeeAlso: AX=4400h,INT 2F/AX=122Bh
 --------D-214402-----------------------------
 INT 21 - DOS 2+ - IOCTL - READ FROM CHARACTER DEVICE CONTROL CHANNEL
@@ -64,7 +64,7 @@ Return: CF clear if successful
 	    AX = error code (01h,05h,06h,0Dh) (see #01680 at AH=59h/BX=0000h)
 Notes:	format of data is driver-specific
 	  (also see separate entries below for some specific cases)
-	this function was not supported by Digital Research's DOS-Plus
+	this function was not supported by Digital Research's DOS Plus
 SeeAlso: AX=4400h,AX=4403h"DOS",AX=4404h"DOS",INT 2F/AX=122Bh
 --------N-214402-----------------------------
 INT 21 - Network Driver Interface Specification (NDIS) 2.0.1 - PROTOCOL MANAGER
@@ -762,6 +762,10 @@ Values for ASPI request number:
  04h	"RESET_DEV"	reset SCSI device
  05h	"SET_HAPRMS"	set host adapter parameters
  06h	get disk drive information
+ 7Fh	(Adaptec) get ASPI manager info?
+Note:	request 7Fh is supported by all the Adaptec's DOS ASPI managers:
+	  ASPI2DOS.SYS (for AHA-152x), ASPI4DOS.SYS (for AHA-154x/164x),
+	  ASPI7DOS.SYS (for AIC-77xx), and ASPI8DOS.SYS (for AIC-78xx)
 
 Format of SCSI Request Block (64 bytes):
 Offset	Size	Description	(Table 01454)
@@ -775,7 +779,7 @@ Offset	Size	Description	(Table 01454)
  09h	BYTE	(ret) target adapter ID
  0Ah 16 BYTEs	(ret) SCSI manager ID
  1Ah 16 BYTEs	(ret) host adapter ID
- 2Ah 16 BYTEs	(ret) host adapter-unique parameters
+ 2Ah 16 BYTEs	(ret) host adapter-unique parameters (see #90010,#90011)
 ---extended request 00h---
  04h  2 BYTEs	(call) extended request signature 55h AAh
 		(ret) if extended request supported, reply AAh 55h
@@ -832,6 +836,27 @@ Offset	Size	Description	(Table 01454)
  0Ch	BYTE	preferred head number translation
  0Dh	BYTE	preferred sector size translation
  0Eh 10 BYTEs	reserved
+---request 7Fh---
+ 08h	WORD	base I/O port address
+ 0Ah	BYTE	number of I/O ports used
+ 0Bh	BYTE	??? (01h returned for AHA-152x)
+ 0Ch	BYTE	interrupt level
+ 0Dh	BYTE	DMA channel
+ 0Eh	BYTE	(ASPI7DOS.SYS) EISA slot  number
+		(ASPI8DOS.SYS) PCI device number
+ 0Fh	BYTE	bits 7-1: reserved (0)
+		bit 0: (AHA-152x) ???
+ 10h	DWORD	ASPI entry point address
+ 14h	DWORD	previous ASPI entry point address
+ 18h	WORD	offset to "ASPI request dispatcher" procedure
+ 1Ah	WORD	offset to "interrupt handler" procedure
+ 1Ch	WORD	offset to some procedure
+ 1Eh	WORD	offset to some procedure
+ 20h	WORD	offset to host adapter data
+ 22h	BYTE	??? (apparently always 02h)
+ 23h	BYTE	reserved??? (0)
+ 24h	BYTE	(ASPI8DOS.SYS) PCI bus number?
+ 25h  11 BYTEs	reserved??? (0)
 SeeAlso: #01462
 
 (Table 01455)
@@ -972,13 +997,29 @@ Values for sense key:
  0Bh	target aborted command
 
 (Table 01466)
-Values APSI post function is called with:
+Values ASPI post function is called with:
 	STACK:	DWORD -> SRB (see #01454) which completed
 	interrupts disabled
 Return: EBP, EBX, ESI, EDI must be preserved
 	interrupts disabled
-Note:	the post function may issue any APSI function except an abort; it
+Note:	the post function may issue any ASPI function except an abort; it
 	  should complete as quickly as possible
+
+Format of ASPI2DOS.SYS v3.65 host adapter unique parameters:
+Offset	Size	Description	(Table 90010)
+ 00h	WORD	reserved? (0)
+ 02h	WORD	reserved? (0)
+ 04h	WORD	base I/O port address
+ 06h	BYTE	interrupt level
+ 07h  9 BYTEs	reserved  (0)
+SeeAlso: #90011,#01454
+
+Format of ASPI4DOS.SYS v3.35 host adapter unique parameters:
+Offset	Size	Description	(Table 90011)
+ 00h	WORD	offset to "ASPI request dispatcher" procedure
+ 02h	WORD	offset to "interrupt handler" procedure
+ 04h 12 BYTEs	reserved  (0)
+SeeAlso: #90010,#01454
 --------m-214402-----------------------------
 INT 21 U - Qualitas 386MAX v6.00+ - IOCTL INPUT - GET STATE
 	AX = 4402h
@@ -2009,20 +2050,28 @@ Return: DX:AX = ??? or error code
 		0000h:000Fh API call already in progress
 SeeAlso: #01509
 --------m-214402-----------------------------
-INT 21 U - Novell DOS 7 EMM386.EXE - GET STATE RECORD???
+INT 21 U - Novell DOS 7+ EMM386.EXE - GET STATE RECORD
 	AX = 4402h
-	BX = file handle for device "EMMXXXX0"
+	BX = file handle for device "EMMXXXX0" or "EMMQXXX0"
 	CX = 003Eh (size of state record)
 	DS:DX -> buffer for state record (see #01511)
 Return: CF clear if successful
 	    buffer filled (see #03603 at INT 67/AH=3Fh)
 	CF set on error
 	    AX = error code (01h,05h,06h,0Dh) (see #01680 at AH=59h/BX=0000h)
+Note:	This function is called by the Novell DOS 7+ MEM utility.
 
-Format of Novell DOS 7 EMM386.EXE state record:
+Format of Novell DOS 7 - DR-DOS 7.03 EMM386.EXE state record:
 Offset	Size	Description	(Table 01511)
  00h	WORD	signature EDC0h
- 02h 60 BYTEs	???
+ 02h 12 BYTEs	(ret) bitmap for include range
+ 0Eh 12 BYTEs	(ret) bitmap for auto range
+ 1Ah 12 BYTEs	(ret) bitmap for BIOS range
+ 26h 12 BYTEs	(ret) bitmap for ROM range
+ 32h 12 BYTEs	(ret) bitmap for map range
+Note:	each bitmap covers the upper-memory address range A000h-FFFFh, where
+	  offset X bit B within the bitmap indicates the state of the 4K page
+	  starting at segment A000h + (8X + B) * 100h
 --------m-214402SF00-------------------------
 INT 21 U - Memory Managers - GET API ENTRY POINT
 	AX = 4402h subfn 00h
@@ -2250,6 +2299,301 @@ Return: CF clear if successful
 	CF set on error
 	    AX = error code (01h,05h,06h,0Dh) (see #01680 at AH=59h/BX=0000h)
 SeeAlso: AH=3Fh"IFSHLP"
+--------d-214402-----------------------------
+INT 21 - ATA Software Programming Interface (ATASPI) - INTERFACE
+	AX = 4402h
+	BX = file handle for device "$ATAMGR$"
+	CX = 0004h (size of buffer in bytes)
+	DS:DX -> buffer for result (see #90000), set to zeros before call
+Return: CF clear if successful
+	    AX = 0004h
+	CF set on error
+	    AX = error code (01h,05h,06h,0Dh) (see #01680 at AH=59h/BX=0000h)
+Notes:	ATASPI is an API to control IDE, EIDE, and ATAPI devices, proposed by
+	  Future Domain; there's at least one driver in existence which
+	  conforms to this specification: ATASPI16.SYS by Future Domain
+	(see #90002) on the stack and the caller must clean up the stack
+	Future Domain ATASPI16.SYS v2.2 performs ATASPI calls using INT 4Fh
+	  interface instead of this INT 21/4402h interface and itself supports
+	  both interfaces
+SeeAlso: AX=4402h"ASPI",INT 4F/AX=0081h,INT 4F/AX=0082h,PORT 01F0h-01F7h"HDC1"
+
+Format of ATASPI IOCTL result:
+Offset	Size	Description	(Table 90000)
+ 00h	DWORD	ATASPI entry point address
+
+(Table 90001)
+Call ATASPI entry point with:
+	STACK:	DWORD -> ATA Request Block (ARB) (see #90003)
+Notes:	caller must clean up the stack
+	the large-model C declaration is
+	  void (*entry)(ARB_Struct *);
+SeeAlso: #90000
+
+(Table 90002)
+Values for ATASPI command code:
+ 00h	ATA controller inquiry
+ 01h	get ATA device type
+ 02h	execute ATA I/O
+ 03h	abort ATA request
+ 04h	reset ATA device
+ 05h	set ATA controller parameter
+ 06h	get ATA disk drive information
+SeeAlso: #90003
+
+Format of ATA Request Block (ARB):
+Offset	Size	Description	(Table 90003)
+ 00h	BYTE	command code (see #90002)
+ 01h	BYTE	(ret) status (see #90004)
+ 02h	BYTE	ATA controller number
+ 03h	BYTE	request flags (see #90005)
+ 04h	DWORD	reserved (0)
+---request 00h---
+ 08h	BYTE	(ret) total number of ATA controllers
+		valid only if ATA controller number = 0FFh
+ 09h	BYTE	reserved (0)
+ 0Ah 16 BYTEs	(ret) ATA manager ID
+ 1Ah 16 BYTEs	(ret) ATA controller ID
+ 2Ah 16 BYTEs	(ret) controller unique parameters (see #90010)
+---request 01h---
+ 08h	BYTE	device ID (00h = master, 01h = slave)
+ 09h	BYTE	reserved (0)
+ 0Ah	BYTE	(ret) peripheral device type (see #90007)
+---request 02h---
+ 08h	BYTE	device ID
+ 09h	BYTE	reserved (0)
+ 0Ah	DWORD	data  transfer length
+		(ret) residual byte length
+ 0Eh	BYTE	sense allocation length (N)
+ 0Fh	DWORD	data  buffer pointer
+ 13h	DWORD	reserved (0)
+ 17h	BYTE	ACB length (M)
+		for Task File requests must be set to 07h, for ATAPI Packet
+		  requests must match the number of bytes in the packet
+ 18h	BYTE	(ret) ATA controller status (see #90006)
+ 19h	BYTE	(ret) device status
+		value of the error register, 00h if no error (see #P0512)
+ 1Ah	DWORD	post routine  address (see #90009)
+ 1Eh	WORD	data transfer block size (in bytes)
+		number of data bytes to transfer per hardware interrupt for Task
+		  File requests; number of data bytes host prefers to transfer
+		  per hardware interrupt for ATAPI Packet commands
+ 20h 32 BYTEs	reserved for ATASPI workspace
+ 40h  M BYTEs	ATA/ATAPI command block (ACB)
+		contains AT Task File Structure (see #90008) if bit 2 of the
+		  request flags is set, ATAPI packet (see #03236,#03237,#03238)
+		  if bit 2 is cleared
+40h+M N BYTEs	sense allocation area
+---request 03h---
+ 08h	DWORD	address of ARB to be aborted
+---request 04h---
+ 08h	BYTE	device ID
+ 09h 15 BYTEs	reserved (0)
+ 18h	BYTE	(ret) ATA controller status (see #90006)
+ 19h	BYTE	(ret) device status
+ 1Ah	DWORD	post routine address (see #90009)
+ 1Eh 34 BYTEs	reserved for ATASPI workspace
+---request 05h---
+ 08h 16 BYTEs	controller unique parameters (vendor unique)
+---request 06h---
+ 08h	BYTE	device ID
+ 09h	BYTE	reserved (0)
+ 0Ah	BYTE	(ret) drive flags (see #01461)
+ 0Bh	BYTE	(ret) INT 13h drive
+ 0Ch	BYTE	(ret) preferred head   translation
+ 0Dh	BYTE	(ret) preferred sector translation
+ 0Eh 10 BYTEs	reserved (0)
+
+(Table 90004)
+Values for ATASPI request status:
+ 00h	request in progress
+ 01h	request completed without error
+ 02h	request aborted by host
+ 04h	request completed with error
+ 80h	invalid	request
+ 81h	invalid ATA controller number
+ 82h	ATA device not installed
+ 83h	ATA controller/device busy
+Note:	if ATASPI ever returns 83h as the status, it is the responsibility of
+	  the driver/applications to re-send the request at a later time
+SeeAlso: #90003
+
+Bitfields for request flags:
+Bit(s)	Description	(Table 90005)
+ 7	reserved (0)
+ 6	"ByteXfer"
+	=0 use word transfer mode
+	=1 use byte transfer mode
+ 5	(ATAPI device) DSC unavailable action (DUA)
+	=0 queue the request and service it when DSC bit is set
+	=1 return with status 83h
+ 4-3	direction
+	00 direction determined by device
+	01 data in
+	10 data out
+	11 no data transfer
+ 2	request type
+	=0 ATAPI Packet Command
+	=1 AT Task File Structure
+ 1	reserved (0)
+ 0	"Post"
+	=0 disable posting
+	=1 enable  posting
+SeeAlso: #90003
+
+(Table 90006)
+Values for ATA controller status:
+ 00h	no error
+ 11h	device not present
+ 12h	data overrun/underrun
+SeeAlso: #90003
+
+(Table 90007)
+Values for peripheral device type:
+ 00h	direct-access device (e.g. magnetic disk)
+ 01h	tape device (QIC-121 SCSI Architectural Model)
+ 02h-04h reserved
+ 05h	CD-ROM device
+ 06h	reserved
+ 07h	optical memory device (e.g. some optical disks)
+ 08h-0Bh reserved
+ 0Ch	tape device (Cost Sensitive Architectural Model)
+ 0Dh-1Eh reserved
+ 1Fh	unknown or no device type
+ 80h	non-ATAPI device
+SeeAlso: #90003
+
+Format of AT Task File Structure:
+Offset	Size	Description	(Table 90008)
+ 00h	features register
+ 01h	sector count register
+ 02h	cylinder LSB register
+ 04h	cylinder MSB register
+ 05h	device/head  register (see #P0513)
+ 06h	command register (see #P0515)
+SeeAlso: #90005
+
+(Table 90009)
+Values ATASPI post function is called with:
+	STACK:	DWORD -> ARB (see #90003) which completed
+	interrupts disabled
+Return: EBP, EBX, ESI, EDI must be preserved
+	interrupts disabled
+Notes:	the post function may issue any ATASPI function except an abort; it
+	  should complete as quickly as possible
+	the large-model C declaration is
+	  void (*post)(ARB_Struct *);
+SeeAlso: #90003
+
+Format of Future Domain controller unique parameters:
+Offset	Size	Description	(Table 90010)
+ 00h	WORD	controller features
+ 02h	WORD	controller main I/O port
+ 04h	WORD	controller alternate I/O port
+ 06h	BYTE	controller IRQ
+ 07h	BYTE	??? (00h or 01h)
+ 08h	BYTE	??? (00h or 01h)
+ 09h  7 BYTEs	reserved (0)
+SeeAlso: #90003
+----------214402-----------------------------
+INT 21 - DRFAT32.SYS device driver - IOCTL INPUT
+	AX = 4402h
+	BX = file handle referencing character device for DRFAT32.SYS driver
+	    (e.g. "FAT32XXX" in the default configuration)
+	CX = number of bytes to read
+	DS:DX -> control block (see #04108)
+Return: CF clear if successful
+	    AX = number of bytes actually read
+	CF set on error
+	    AX = error code (01h,05h,06h,0Dh) (see #01680 at AH=59h/BX=0000h)
+Notes:	 the data returned depends on the first byte of the control block
+	   the remainder of the control block is filled by the driver
+	 one DRFAT32.SYS device driver supports up to 8 subunits (that is up
+	   to 8 FAT32 partitions). By default, DRFAT32.SYS logs in all FAT32
+	   partitions it finds, however, by using command line options /C (CHS),
+	   /L (LBA), /H (Hidden) and /P:1..4 (Primary), /E:1..255 (Logical
+	   Drive), and /U:min[,max] (Unit 128..255) it can be directed to
+	   attach only to one or a specific range of partitions. Multiple
+	   DRFAT32.SYS drivers can be loaded in a system when using the
+	   /D:name option. To assign them to the redirector, the /D:name option
+	   must be repeated for each of the DRFAT32.SYS drivers in the
+	   DRFAT32.EXE command line.
+SeeAlso: AX=4402h"CD-ROM",INT 2F/AX=0802h
+
+Format of DRFAT32 control block:
+Offset	Size	Description	(Table 04108)
+ 00h	BYTE	data being requested
+		00h device driver header address
+		09h media change status
+		48h address of DRFAT32 geometry table
+		else error
+---function 00h---
+ 01h	DWORD	device driver header address (see also AH=52h,#01646)
+---function 09h---
+ 01h	BYTE	media change status
+		00h don't know
+		01h media unchanged
+		FFh media has been changed
+---DRFAT32 function 48h---
+ 01h	DWORD	address of DRFAT32 geometry table (see #04109)
+
+Format of DRFAT32 Geometry Table:
+Offset	Size	Description	(Table 04109)
+ 00h 8*59 BYTEs	eight DRFAT32 partition data tables (see #04110)
+ 1D8h	BYTE	DRFAT32 access flags (see #04111)
+ 1D9h	BYTE	DRFAT32 status flags (see #04112)
+Note:	This is the table layout used by DRFAT32.SYS 1.00 which supports up
+	  to 8 sub-units. The layout of this table and its records may change,
+	  so the version indicator in the device driver's signature ("FAT320")
+	  and the size of the public data structure should be checked first.
+SeeAlso: #04108
+
+Format of DRFAT32 partition data table:
+Offset	Size	Description	(Table 04110)
+ 00h	BYTE	size of following public data structure (9)
+	--- public data (needed by the DRFAT32.EXE redirector) ---
+ 01h	WORD	bytes per sector
+ 03h	BYTE	sectors per cluster
+ 04h	WORD	reserved sectors
+ 06h	DWORD	root directory start cluster
+	--- private data ---
+ 0Ah	DWORD	sectors per track
+ 0Eh	DWORD	root directory sector
+ 12h	DWORD	partition start sector
+ 16h	DWORD	highest partition sector allowed
+		(only if range checking enabled)
+ 1Ah	DWORD	absolute cluster start sector
+		(cluster start sector+partition start sector)
+ 1Eh	DWORD	total sectors per track (number of heads * sectors per track)
+ 22h	BYTE	drive unit (default 80h)
+ 23h	BYTE	temp buffer: CHS sectors to write (if verify enabled)
+ 24h	BYTE	INT 13h extension version
+	--- CHS data ---
+ 25h	WORD	cylinder
+ 27h	WORD	head
+ 29h	WORD	sector
+	--- LBA data ---
+ 2Bh 16 BYTEs disk address packet (see #00272 at INT 13/AH=42h)
+SeeAlso: #04109
+
+Bitfields for DRFAT32 access flags:
+Bit(s)	Description	(Table 04111)
+ 7	using LBA addressing instead of CHS
+ 6	using INT 13h extensions (see also INT 13/AH=48h)
+ 5	multi-sector access allowed
+ 4	force media change indication on removable drives
+ 3	force verify after every write (/W)
+ 2	more than 1024 cylinders, less than 64 heads (/A)
+ 1	client-side asynchronous buffering allowed (/B), normally =0
+ 0	read-only access (/R)
+SeeAlso: #04109,#04112
+
+Bitfields for DRFAT32 status flags:
+Bit(s)	Description	(Table 04112)
+ 7-2	reserved (0)
+ 1	Save Guard enabled (blocks any further writes after a fault)
+ 0	volume may have dirty sectors (set after write operations)
+SeeAlso: #04109,#04111
 --------D-214403-----------------------------
 INT 21 - DOS 2+ - IOCTL - WRITE TO CHARACTER DEVICE CONTROL CHANNEL
 	AX = 4403h
@@ -2266,7 +2610,7 @@ Notes:	format of data is driver-specific
 	  KEYSTACK.SYS driver will push the specified characters on the
 	  keyboard stack; similarly for "NDOSSTAK", the NDOS KEYSTACK.SYS
 	  driver will push the characters onto the keyboard stack
-	this function was not supported by Digital Research's DOS-Plus
+	this function was not supported by Digital Research's DOS Plus
 SeeAlso: AX=4400h,AX=4402h"DOS 2+",AX=4405h"DOS",INT 2F/AX=122Bh
 SeeAlso: INT 2F/AX=D44Dh,INT 2F/AX=D44Fh
 --------c-214403-----------------------------
@@ -2620,6 +2964,24 @@ Program: A limited version of PenDOS by Communication Intelligence Corporation,
 Note:	this call sets the WORD at offset 1Ah into the device driver request
 	  header used to call the driver to 0000h.
 SeeAlso: AX=4402h"PENDEV.SYS"
+----------214403-----------------------------
+INT 21 - DR DOS $IDLE$ - IOCTL - DYNAMIC IDLE DETECTION CONTROL
+	AX = 4403h
+	BX = file handle referencing character device $IDLE$
+	CX = number of bytes to write (0004h)
+	DS:DX -> $IDLE$ IOCTL structure (see #04113)
+Return: CF clear if successful
+	    AX = number of bytes actually written
+	CF set on error
+	    AX = error code (01h,05h,06h,0Dh) (see #01680 at AH=59h/BX=0000h)
+Notes:	When the DR DOS IBMBIO.COM detects the presence of the $IDLE$ device
+	  during startup, it will retrieve the address of the idle state
+	  data area via INT 21/AX=4458h and pass it along to the $IDLE$ device
+	  driver by calling this function.
+
+Format of DR DOS $IDLE$ IOCTL structure:
+Offset	Size	Description	(Table 04113)
+ 00h	DWORD	-> idle state data area (see Table !!! at INT 21/AX=4458h)
 --------D-214404-----------------------------
 INT 21 - DOS 2+ - IOCTL - READ FROM BLOCK DEVICE CONTROL CHANNEL
 	AX = 4404h
@@ -2631,7 +2993,7 @@ Return: CF clear if successful
 	CF set on error
 	    AX = error code (01h,05h,06h,0Dh) (see #01680 at AH=59h/BX=0000h)
 Notes:	format of data is driver-specific
-	this function was not supported by Digital Research's DOS-Plus
+	this function was not supported by Digital Research's DOS Plus
 SeeAlso: AX=4402h"DOS 2+",AX=4405h"DOS",INT 2F/AX=122Bh
 --------k-214404-----------------------------
 INT 21 - Stacker - GET DEVICE DRIVER ADDRESS AND SET VOLUME NUMBER
@@ -2876,7 +3238,7 @@ Return: CF clear if successful
 	CF set on error
 	    AX = error code (01h,05h,06h,0Dh) (see #01680 at AH=59h/BX=0000h)
 Notes:	format of data is driver-specific
-	this function was not supported by Digital Research's DOS-Plus
+	this function was not supported by Digital Research's DOS Plus
 SeeAlso: AX=4403h"DOS",AX=4404h"DOS",INT 2F/AX=122Bh
 --------d-214405-----------------------------
 INT 21 - Brian Antoine Seagate ST-01 SCSI.SYS - IOCTL - EXECUTE COMMANDS
@@ -2986,7 +3348,7 @@ Offset	Size	Description	(Table 01541)
  05h	BYTE	bitmask of dirty sectors in block
  06h	BYTE	last error returned by BIOS
  07h	BYTE	number of errors
---------D-214405-----------------------------
+--------d-214405-----------------------------
 INT 21 - SFS v1.00 - DRIVER CONTROL
 	AX = 4405h
 	BL = drive number (00h = default, 01h = A:, etc)
@@ -3066,6 +3428,97 @@ Bit(s)	Description	(Table 01544)
  11-8	SCSI host number
  7-4	SCSI target ID
  3-0	SCSI logical unit number
+----------214405-----------------------------
+INT 21 U - SUPERSTOR - IOCTL - INSTALL CHECK
+	AX = 4405h
+	BL = drive number (00h = default, 01h = A:, etc)
+	(BH = 0???)
+	CX = 000Ch (size of SuperStor packet structure)
+	DS:DX -> SuperStor packet structure (see #04114)
+Return: CF clear if IOCTL successful -- check SuperStor packet for actual
+	      status
+	    AX = number of bytes actually transferred???
+	CF set on error
+	    AX = error code (01h,05h,06h,0Dh) (see #01680 at AH=59h/BX=0000h)
+Note:	This function is called with CX = 0008h for command 06h by NWCACHE
+	  although the Request Packet can be larger.  WINSWAP.SYS calls it
+	  with 000Ch - also for command 06h.
+
+Format of SuperStor packet:
+Offset	Size	Description	(Table 04114)
+ 00h	WORD	(call) product signature AA55h
+		(ret) result code, 0000h if successful
+ 02h	BYTE	(call) SuperStor product ID (01h)
+ 03h	BYTE	(call) SuperStor command parameter:
+		06h = get compressed drive structure / drive parameters
+		07h = return the compressed length of a file
+		08h = return real drive ID for swapped drive
+		09h = validate the contents of the cluster
+		0Bh = checks whether deleted cluster is free
+		0Ch = reallocate previously deleted cluster
+		0Dh = read absolute sector from the drive
+		0Eh = write absolute sector to the drive
+		0Fh = instruct the driver to rebuild tables
+		10h = flush any cached Replacement Block Table (RBT) sectors
+		      to the drive
+---command 06h---
+ 04h	DWORD	(ret) pointer to SuperStor CVF's compressed unit structure
+		      (see #04115)
+ 08h	DWORD	(ret) pointer to internal status structure
+---command 07h---
+ 04h	DWORD	(ret) size of file in bytes
+ 08h	WORD	(ret) first cluster number
+---command 08h---
+ 04h	BYTE	(ret) swapped drive (0-based)
+---commands 09h,0Bh,0Ch---
+ 04h	WORD	(call) cluster
+---commands 0Dh,0Eh---
+ 04h	DWORD	(call) first logical sector to transfer
+ 08h	WORD	(call) number of logical sectors to transfer
+ 0Ah	DWORD	(call) pointer to buffer
+---command 0Fh---
+ 04h	WORD	(call) temporary buffer area
+---command 10h---
+ no additional parameters
+
+Format of SuperStor CVF compressed unit structure:
+Offset	Size	Description	(Table 04115)
+ 00h 31 BYTEs	BIOS parameter block for compressed drive (see #01663)
+ 1Fh  5 BYTEs	reserved for future expansion of the BPB
+ 24h 33 BYTEs   DOS 4-6 style drive parameter block for compressed drive
+		  (see #01395)
+ 45h  2 BYTEs	reserved for future expansion of the DPB
+ 47h	WORD	first sector of relocation table (RBT)
+ 49h	WORD	first sector of file allocation table
+ 4Bh	WORD	first sector of the data area
+ 4Dh	BYTE	sec2byteshift
+ 4Eh  2 BYTEs	???
+		Note:	Reportedly these two bytes did not exist in ADDSTOR's
+			  specification, so the whole structure would have
+			  been documented differently.
+ 50h	WORD	sectors per cluster
+ 52h	BYTE	sector shift
+ 53h	WORD	compression ratio
+ 55h	DWORD	number of physical sectors in the host file
+ 59h	WORD	OS version
+ 5Bh	BYTE	SuperStor level
+ 5Ch	BYTE	unknown???
+ 5Dh	BYTE	flags
+		bits 7-1: ???
+		bit 0: drive is mounted
+ 5Eh	BYTE	unknown???
+ 5Fh	DWORD	pointer to CVF's underlaying host DCB
+		this should be the physical DPB for this unit
+		    ->  +00h BYTE host unit DOS unit number
+		        +01h BYTE CVF's driver host subunit number
+Note:	As this SuperStor compressed unit structure's structure is located
+	  within the segment the SuperStor driver has occupied, the segment
+	  value of its address can be used as an installation check, since it
+	  contains the signature "ADDSTOR" at offset 20h in the SuperStor
+	  driver.  This is used by Novell DOS 7 WINSWAP.SYS to check for the
+	  presence of SuperStor.
+SeeAlso: #04114
+Index:	installation check;SuperStor
 --------D-214406-----------------------------
 INT 21 - DOS 2+ - IOCTL - GET INPUT STATUS
 	AX = 4406h
@@ -3081,7 +3534,7 @@ Notes:	files may not register as being at EOF if positioned there by AH=42h
 	under DOS 5.0, on a successful return, AH contains either the next
 	  character which will be read or 1Ah if at EOF; under a Windows95
 	  DOS box, AH seems to be either unchanged or 00h
-	this function was not supported by Digital Research's DOS-Plus
+	this function was not supported by Digital Research's DOS Plus
 BUG:	the CLOCK$ device under DR DOS 3.41 always indicates 'Ready'; this was
 	  corrected in v5.0
 SeeAlso: AX=4407h,INT 2F/AX=122Bh
@@ -3097,7 +3550,7 @@ Return: CF clear if successful
 	    AX = error code (01h,05h,06h,0Dh) (see #01680 at AH=59h/BX=0000h)
 Notes:	for DOS 2+, files are always ready for output, even if the disk is
 	  full or no media is in the drive
-	this function was not supported by Digital Research's DOS-Plus
+	this function was not supported by Digital Research's DOS Plus
 SeeAlso: AX=4406h,INT 2F/AX=122Bh
 --------D-214408-----------------------------
 INT 21 - DOS 3.0+ - IOCTL - CHECK IF BLOCK DEVICE REMOVABLE
@@ -3112,7 +3565,7 @@ Notes:	in addition to the normal operation, if Stacker is installed, this
 	  device driver (except under DR DOS 3.41-5.0, which do not pass
 	  through this call to the driver; use AX=440Eh instead)
 	  (see AX=4404h"Stacker",AX=440Eh,INT 25/AX=CDCDh)
-	this function was not supported by Digital Research's DOS-Plus
+	this function was not supported by Digital Research's DOS Plus
 SeeAlso: AX=4400h,AX=4404h"Stacker",AX=4409h,INT 2F/AX=122Bh
 --------D-214409-----------------------------
 INT 21 - DOS 3.1+ - IOCTL - CHECK IF BLOCK DEVICE REMOTE
@@ -3141,7 +3594,7 @@ Notes:	on local drives, DX bits not listed above are the attribute word from
 	  AX=0015h (drive not ready) instead of AX=000Fh (invalid drive) on
 	  the first call; a subsequent call will return the correct error
 	  code
-	this function was not supported by Digital Research's DOS-Plus
+	this function was not supported by Digital Research's DOS Plus
 SeeAlso: AX=4400h,AX=4408h,AX=440Ah,INT 2F/AX=122Bh
 --------D-21440A-----------------------------
 INT 21 - DOS 3.1+ - IOCTL - CHECK IF HANDLE IS REMOTE
@@ -3157,7 +3610,7 @@ Notes:	if file is remote, Novell Advanced NetWare 2.0 returns the number of
 	  the file server on which the handle is located in CX
 	DR DOS 3.41 and 5.0 clear all bits of DX except bit 15; Novell DOS 7
 	  fully supports this function
-	this function was not supported by Digital Research's DOS-Plus
+	this function was not supported by Digital Research's DOS Plus
 SeeAlso: AX=4400h,AX=4409h,AH=52h,INT 2F/AX=122Bh
 --------D-21440B-----------------------------
 INT 21 - DOS 3.1+ - IOCTL - SET SHARING RETRY COUNT
@@ -3170,7 +3623,7 @@ Return: CF clear if successful
 Notes:	delay is dependent on processor speed (value in CX specifies number of
 	  64K-iteration empty loops to execute)
 	if DX=0000h on entry, the retry count is left unchanged
-	this function was not supported by Digital Research's DOS-Plus
+	this function was not supported by Digital Research's DOS Plus
 SeeAlso: AH=52h,INT 2F/AX=1224h,INT 2F/AX=122Bh
 --------D-21440C-----------------------------
 INT 21 - DOS 3.2+ - IOCTL - GENERIC CHARACTER DEVICE REQUEST
@@ -3196,28 +3649,38 @@ SeeAlso: INT 2F/AX=1A01h
 Values for IOCTL category code:
  00h	unknown (DOS 3.3+)
  01h	COMn: (DOS 3.3+)
+ 02h	reserved for terminal control
  03h	CON (DOS 3.3+)
+ 04h	reserved for keyboard control
  05h	LPTn:
+ 07h	mouse control (European MS-DOS 4.0)
+ 08h	reserved for disk control -- same as for block devices
+	(see INT 21/AX=440Dh)
  9Eh	Media Access Control driver (STARLITE)
  00h-7Fh reserved for Microsoft
  80h-FFh reserved for OEM/user-defined
+SeeAlso: #01558
 
 (Table 01546)
 Values for generic character IOCTL function:
  00h	MAC driver Bind (STARLITE) (see #01547)
+ 40h	DOS 3??? only: was reserved for set screen mode (see #04116)
  45h	set iteration (retry) count (see #01548)
  4Ah	select code page (see #01549)
  4Ch	start code-page preparation (see #01550)
  4Dh	end code-page preparation (see #01551)
  5Fh	set display information (DOS 4.0+) (see #01552)
+ 60h	DOS 3??? only: was reserved for get screen mode (see #04116)
  65h	get iteration (retry) count
  6Ah	query selected code page (see #01549)
- 6Bh	query prepare list (see #01553)
+ 6Bh	query codepage prepare list (DOS 4.0+) (see #01553)
  7Fh	get display information (DOS 4.0+) (see #01552)
 Note:	bit assignments for function code:
 	    bit 7: set to ignore if unsupported, clear to return error
 	    bit 6: set if passed to driver, clear if intercepted by DOS
 	    bit 5: set if queries data from device, clear if sends command
+		(by convention, if a function both queries and sends data,
+		  bit 5 should be clear)
 	    bits 4-0: subfunction
 
 Format of parameter block for function 00h:
@@ -3243,6 +3706,16 @@ Offset	Size	Description	(Table 01547)
  1Ch	DWORD	RegisterEventHandler entry point (filled in by MAC driver)
  20h	DWORD	SetPacketFilter entry point (filled in by MAC driver)
  24h	DWORD	UnBind entry point (filled in by MAC driver)
+
+Format of parameter block for DOS 3??? screen mode functions 40h and 60h:
+Offset	Size	Description	(Table 04116)
+ 00h	WORD	length of folowing data (0009h)
+ 02h	BYTE	mode type
+ 03h	WORD	number of colors
+ 05h	WORD	width
+ 07h	WORD	height
+Note:	these functions appear never to have been released to the public
+SeeAlso: #01546
 
 Format of parameter block for function 45h:
 Offset	Size	Description	(Table 01548)
@@ -3488,16 +3961,17 @@ Offset	Size	Description	(Table 01560)
 
 (Table 01561)
 Values for device type:
- 00h	320K/360K disk
- 01h	1.2M disk
- 02h	720K disk
+ 00h	320K/360K 5.25-inch floppy disk
+ 01h	1.2M 5.25-inch floppy disk
+ 02h	720K floppy disk
  03h	single-density 8-inch disk
  04h	double-density 8-inch disk
  05h	fixed disk
  06h	tape drive
  07h	(DOS 3.3+) other type of block device, normally 1.44M floppy
  08h	read/write optical disk
- 09h	(DOS 5+) 2.88M floppy
+ 09h	(DOS 5+) 2.88M 3.5-inch floppy
+ FFh	(some DOS 5 betas) 2.88M 3.5-inch floppy
 
 Format of parameter block for functions 41h, 61h:
 Offset	Size	Description	(Table 01562)
@@ -3667,7 +4141,8 @@ SeeAlso: #01573
 --------D-21440DCX084A-----------------------
 INT 21 - MS-DOS 7.0+ - GENERIC IOCTL - LOCK LOGICAL VOLUME
 	AX = 440Dh
-	CX = 084Ah (category code 08h, minor code 4Ah)
+	CX = 084Ah / 484Ah
+	    (category code 08h for FAT12/16, 48h for FAT32; minor code 4Ah)
 	BL = drive number (01h=A:,02h=B:,etc)
 	BH = lock level (00h-04h)
 	DX = drive permissions (see #01575) for Level 1 lock or second
@@ -3694,9 +4169,10 @@ Bit(s)	Description	(Table 01575)
 --------D-21440DCX084B-----------------------
 INT 21 - MS-DOS 7.0+ - GENERIC IOCTL - LOCK PHYSICAL VOLUME
 	AX = 440Dh
-	CX = 084Bh (category code 08h, minor code 4Bh)
-	BL = logical drive number (00h = default, 01h = A:, etc.)
-	BH = lock level (00h-03h)
+	CX = 084Bh / 484Bh
+	    (category code 08h for FAT12/16, 48h for FAT32; minor code 4Bh)
+	BH = logical drive number (00h = default, 01h = A:, etc.)
+	BL = lock level (00h-03h)
 	DX = drive permissions (see #01575) for Level 1 lock or second
 	    Level 0 lock when formatting
 Return: CF set on error
@@ -3711,7 +4187,8 @@ SeeAlso: AX=440Dh/CX=086Ch
 --------D-21440DCX086A-----------------------
 INT 21 - MS-DOS 7.0+ - GENERIC IOCTL - UNLOCK LOGICAL VOLUME
 	AX = 440Dh
-	CX = 086Ah (category code 08h, minor code 6Ah)
+	CX = 086Ah / 486Ah
+	    (category code 08h for FAT12/16, 48h for FAT32; minor code 6Ah)
 	BL = drive number (00h=default,01h=A:,etc)
 Return: CF set on error
 	    AX = error code (01h,02h,etc.) (see #01680 at AH=59h/BX=0000h)
@@ -3726,8 +4203,9 @@ SeeAlso: AX=440Dh"DOS 3.2+",AX=440Dh/CX=084Ah,AX=440Dh/CX=086Bh
 --------D-21440DCX086B-----------------------
 INT 21 - MS-DOS 7.0+ - GENERIC IOCTL - UNLOCK PHYSICAL VOLUME
 	AX = 440Dh
-	CX = 086Bh (category code 08h, minor code 6Bh)
-	BL = logical drive number (00h = default, 01h = A:, etc.)
+	CX = 086Bh / 486Bh
+	    (category code 08h for FAT12/16, 48h for FAT32; minor code 6Bh)
+	BH = logical drive number (00h = default, 01h = A:, etc.)
 Return: CF set on error
 	    AX = error code (01h,02h,etc.) (see #01680 at AH=59h/BX=0000h)
 	CF clear if successful
@@ -3737,7 +4215,8 @@ SeeAlso: AX=440Dh"DOS 3.2+",AX=440Dh/CX=084Bh,AX=440Dh/CX=086Ah
 --------D-21440DCX086C-----------------------
 INT 21 - MS-DOS 7.0+ - GENERIC IOCTL - GET LOCK FLAG STATE
 	AX = 440Dh
-	CX = 086Ch (category code 08h, minor code 6Ch)
+	CX = 086Ch / 486Ch
+	    (category code 08h for FAT12/16, 48h for FAT32; minor code 6Ch)
 	BL = drive number (00h=default,01h=A:,etc)
 Return: CF set on error
 	    AX = error code (01h,02h,etc.) (see #01680 at AH=59h/BX=0000h)
@@ -3755,7 +4234,8 @@ Note:	function 6Ch resets the access flag every time it is called
 --------D-21440DCX086D-----------------------
 INT 21 - MS-DOS 7.0+ - GENERIC IOCTL - ENUMERATE OPEN FILES
 	AX = 440Dh
-	CX = 086Dh (category code 08h, minor code 6Dh)
+	CX = 086Dh / 486Dh
+	    (category code 08h for FAT12/16, 48h for FAT32; minor code 6Dh)
 	BL = drive number (00h=default,01h=A:,etc)
 	DS:DX -> buffer for ASCIZ pathname
 	SI = file index (0000h to number of open files-1)
@@ -3778,7 +4258,8 @@ Values for file type:
 --------D-21440DCX086E-----------------------
 INT 21 - MS-DOS 7.0+ - GENERIC IOCTL - FIND SWAP FILE
 	AX = 440Dh
-	CX = 086Eh (category code 08h, minor code 6Eh)
+	CX = 086Eh / 486Eh
+	    (category code 08h for FAT12/16, 48h for FAT32; minor code 6Eh)
 	BL = drive number (00h=default,01h=A:,etc)
 	DS:DX -> buffer for ASCIZ pathname
 	SI = file index
@@ -3795,7 +4276,8 @@ SeeAlso: AX=440Dh"DOS 3.2+",AX=440Dh/CX=086Dh
 --------D-21440DCX0870-----------------------
 INT 21 - MS-DOS 7.0+ - GENERIC IOCTL - GET CURRENT LOCK STATE
 	AX = 440Dh
-	CX = 0870h (category code 08h, minor code 70h)
+	CX = 0870h / 4870h
+	    (category code 08h for FAT12/16, 48h for FAT32; minor code 70h)
 	BL = drive number (00h=default,01h=A:,etc)
 Return: CF set on error
 	    AX = error code (01h,02h,etc.) (see #01680 at AH=59h/BX=0000h)
@@ -3806,7 +4288,8 @@ SeeAlso: AX=440Dh"DOS 3.2+",AX=440Dh/CX=086Ch
 --------D-21440DCX0871-----------------------
 INT 21 - MS-DOS 7.0+ - GENERIC IOCTL - GET FIRST CLUSTER
 	AX = 440Dh
-	CX = 0871h (category code 08h, minor code 71h)
+	CX = 0871h / 4871h
+	    (category code 08h for FAT12/16, 48h for FAT32; minor code 71h)
 	BX = filename character set (see #01578)
 	DS:DX -> ASCIZ pathname for file or directory
 Return: CF set on error
@@ -3822,6 +4305,21 @@ Values for character set:
  00h	Windows ANSI
  01h	current OEM character set
  02h	Unicode
+--------y-21440DCXEDC1-----------------------
+INT 21 - DR PalmDOS - GENERIC IOCTL - LOGIN SECURITY
+	AX = 440Dh
+	CX = EDC1h (category code EDh, minor code C1h)
+	BL = boot drive number (01h=A:,02h=B:,etc)
+Return: AL = 0 if already logged in
+	AL <> 0 if system is still secured (not logged in)
+	ES:DI -> ???
+Notes:	This function is called by DR PalmDOS IBMBIO.COM after CONFIG.SYS
+	  processing has finished and it has launched the LOGIN.SYS utility
+	  (if this is not in the root of the boot drive, the undocumented
+	  CONFIG.SYS LOGIN directive can be used to change the path and the
+	  moment when the login prompt will be displayed).
+	If security is active and the user has still not logged in,
+	  IBMBIO.COM will display an error message and halt the system.
 --------D-21440E-----------------------------
 INT 21 - DOS 3.2+ - IOCTL - GET LOGICAL DRIVE MAP
 	AX = 440Eh
@@ -3953,10 +4451,14 @@ Return: CF set if not Concurrent DOS
 		14h multiuser
 		    AL = operating system version ID (see #01579)
 Notes:	as of Concurrent DOS/XM 5.0 (possibly earlier), the version is stored
-	  in the environment variable VER
+	  in the environment variable VER and the OS type in variable OS
 	use this function if you are looking for multiuser capabilities,
 	  AX=4452h for single-user
-	this function should never return the single-user values
+	this function should never return the single-user values; however, an
+	  application should be prepared to accept single-user values, i.e. it
+	  should check the returned AH and AL separately
+	CCI Multiuser DOS 7.22 returns AX=DX=1466h.
+	DR DOS 3.31+ error returns with AX=0001h
 SeeAlso: AX=4452h,AX=4459h
 
 (Table 01579)
@@ -3966,7 +4468,7 @@ Values for Digital Research operating system version ID:
  50h	Concurrent DOS/XM 5.0 or Concurrent DOS/386 1.1
  60h	Concurrent DOS/XM 6.0 or Concurrent DOS/386 2.0
  62h	Concurrent DOS/XM 6.2 or Concurrent DOS/386 3.0
- 66h	DR Multiuser DOS 5.1
+ 66h	DR Multiuser DOS 5.1, CCT Multiuser DOS 7.x
  67h	Concurrent DOS 5.1
 SeeAlso: #01581,#04023
 --------O-214452-----------------------------
@@ -3991,6 +4493,77 @@ Notes:	the DR DOS version is stored in the environment variable VER
 	  (reportedly, DH=00h when booting NWDOS7 from installation disks)
 	Novell DOS 7 returns error code 0001h if SETVER x.255 is in effect for
 	  the calling program, or SETVER /G x.255 is in effect
+	although based on DR DOS, CCI Multiuser DOS 7.xx,
+	  IMS Multiuser DOS 7.x, and IMS REAL/32 7.50+ do not support this call
+	With OpenDOS 7.02 BETA 2 and DR-OpenDOS 7.02+, the install check
+	  in most tools has been changed to run with both, AH=10h and AH=14h
+	  to support possible future "client side" multiuser releases of
+	  DR-DOS which may return 14h instead of 10h. Tools should also strip
+	  off the CP/Net bit before checking the kernel version.
+	  Often used version checks like >= 1070h are invalid, therefore,
+	  hence the AH and AL must be checked seperately.
+	In DR DOS 3.31-6.0, and DR PalmDOS, DX=AX on return.
+	For Novell DOS 7 - DR DOS 7.03 the DX value returned by this function
+	  is the same as the DX value returned by INT 21/AX=3306h, and
+	  represents the DOS revision (bits 7-0, currently always DL=00h) and
+	  the version flags (bits 15-8, with bit 12 = DOS in HMA, bit 11 = DOS
+	  in ROM) of the "patch_version" field in the PCM_HEADER structure in
+	  the IBMDOS.COM file. The version flags, however, are updated at
+	  runtime to reflect the actual system status, resulting, for example,
+	  in DH=10h for DOS in HMA, and DH=0 when booting Novell DOS 7 from
+	  installation disks.
+	The operating system version ID represents the BDOS (Basic Disk
+	  Operating System) kernel version (of the DRBDOS.SYS aka IBMDOS.COM
+	  file), and the two nibbles can actually be read as CP/M version
+	  and sub-version, that is DR-DOS 7.03 (version code 1073h) is
+	  actually CP/M-86 version 7.3.
+	Due to lost original patch sources from the backups, Caldera OpenDOS
+	  7.01 merely represented Novell DOS 7 Update 10 with minor changes.
+	For Caldera DR-OpenDOS 7.02, all the Novell DOS 7 patches up to
+	  including Update 15.2 have been re-incorporated into the system
+	  from other sources, while the missing patches for IBMBIO.COM were
+	  independently re-implemented by Matthias Paul in 07/1997-10/1997.
+	Novell DOS 7 (since 1993-11-08), OpenDOS 7.01 and OpenDOS 7.02 BETA
+	  IBMDOS.COM return error code 0001h if SETVER x.255 is in effect
+	  for the calling program, or SETVER /G x.255 is in effect.
+	Since Caldera DR-OpenDOS 7.02 the SHARE 2.05+ (1998-01-05) driver
+	  uses INT 21/AX=65A2h as an *additional* BDOS version check: If the
+	  "FUCASE char" function is functional on a DR-DOS BDOS kernel 72h+,
+	  SHARE assumes it is running on an OpenDOS 7.02 BETA 1 (73h) kernel
+	  (or later) even if the BDOS version returned by INT 21/AX=4452h would
+	  indicate an earlier issue of the kernel. Some 3rd party drivers
+	  (like HPFS_DOS.EXE) were hardwired to detect Novell DOS 7 only,
+	  and so the kernel version had to be patched back on such systems
+	  to allow such drivers to work properly. The BDOS version and DOS
+	  revision are stored in PCM_HEADER of the IBMDOS.COM file, see
+	  table XXXX below.
+	However, this is no longer necessary with the introduction of the
+	  DR-DOS 7.02+ IBMDOS.COM (since 1998-01-10) and SETVER 1.01+
+	  (since 1998-01-12) because they allow to fake BDOS versions as well
+	  as faking DOS versions. In /X mode, a set sub-version of y = 100..127
+	  will be used as BDOS version instead (64h..7Fh), while the DOS
+	  revision will be used to report the DOS sub-version instead. For
+	  example, given a DOS revision of 0, SETVER 6.114 would be the proper
+	  value to fake Novell DOS 7 (114=72h) on a DR-DOS 7.02+ system,
+	  reporting a DOS version of "IBM" 6.00. Sub-versions 128..255 will
+	  completely disable this BDOS version check, and report a DOS sub-
+	  version of 0..127. This is to work around problems with possibly
+	  hostile programs, that try to detect DR-DOS to not run on this OS.
+	Additional version check for 1072h kernels: At API level, there
+	  is no known way to distinguish Novell DOS 7 from OpenDOS 7.01,
+	  however, an IBMBIO.COM/IBMDOS.COM file date since 1997 and the
+	  existance of an environment variable %OS%=OPENDOS usually indicates
+	  an OpenDOS system (but not the other way around; some OpenDOS
+	  BETAs still used %OS%=NWDOS!).
+	Additional version checks for 1073h kernels: A functional test of
+	  INT 21/AX=65A2h (see above for SHARE) can be used to distinguish
+	  OpenDOS 7.02 BETA 1 from the later (OpenDOS 7.02 BETA 2+ and)
+	  DR-OpenDOS 7.02 and DR-DOS 7.02 releases, which are both the
+	  same, except for the name change and minor bug fixes. Testing
+	  for the INT 21/AX=6601h/BX=0000h bug can be used to differentiate the
+	  original release of DR-DOS 7.02 from later 7.02 updates and
+	  DR-DOS 7.03.
+	The DR DOS version is stored in the environment variable VER.
 SeeAlso: AX=4412h,AX=4451h,AX=4459h
 
 (Table 01580)
@@ -4005,7 +4578,214 @@ Values for Digital Research operating system version ID:
  71h	DR DOS 6.0 March 1993 "business update"
  72h	Novell DOS 7.0
  73h	OpenDOS 7.02
-SeeAlso: #01579,#01581,#04023
+SeeAlso: #01579,#01581,#04088,#04023
+
+(Table 04088)
+Values for Digital Research operating system ID codes (full AX return value):
+ ??41h	- DOS Plus 1.2
+ 1060h	- DOS Plus 2.0 or 2.1 (1988-03-09???)
+	  (this was basically a Concurrent CP/M-86 with built-in DOS emulation
+	   developed between 1983-1986)
+ 1060h	- DR DOS 3.31 (OEM) (1988-04-27???, 06/1988)
+	- DR DOS 3.32 (OEM) (1988-08-17)
+	- DR DOS 3.33 (OEM) (1988-09-01)
+	- DR DOS 3.34 (OEM)
+	- DR DOS 3.35 (OEM) (1988-10-21)
+	  for example: at least an issue for "Prism System 232" (10/1988)
+	  and a French issue existed.
+ 106?h	- DR DOS 3.40 BETA 1 (1988-11-11)
+	- DR DOS 3.40
+	  (This is the first issue for sure known to be ROMmable, although
+	  DR DOS should have been ROMmable right from the start (1987).)
+ 1063h	- DR DOS 3.41 various OEM and retail releases (06/1989-07/1989)
+	- DR DOS 3.41T
+ 1064h	- DR DOS 3.42
+	  (It is not clear, if this issue was actually released, since Lineo
+	  recently (fall 1999) released some historical kernels, and one of
+	  them is sailing under the name DR DOS 5.0 "Leopard" BETA 1 and has
+	  copyright strings from 1990, while it still identifies itself as
+	  being DR DOS 3.41... Unfortunately the uploaded archive is broken,
+	  hence it is not possible to find out easily. Maybe DR DOS 3.42 was
+	  nothing more than this early "Leopard" BETA???)
+ 1065h	- DR DOS ??? (1990-02-01)
+	- DR DOS 5.0 "Leopard" BETA 2 (1990-03-16),
+	- DR DOS 5.0 "Leopard" BETA 2B
+	  (This was the first issue to use the new IBMBIO.COM/IBMDOS.COM
+	  names instead of DRBIOS.SYS/DRBDOS.SYS.)
+	- DR DOS 5.0 "Leopard" BETA 3
+	  (This issue still uses separate boot sectors for floppies and
+	  harddisks. The boot sector OEM label is still "DIGITAL".)
+	- DR DOS 5.0 release (06/1990, 08/1990)
+	  (This issue has a combined boot sector for both, floppies and
+	  harddisks. The boot sector OEM label has changed to "IBM  3.3".
+	  DR DOS 5.0 was the first DOS to introduce high-load capabilities.)
+ 1066h	- DR DOS ??? (1990-08-09)
+	- DR DOS 6.0 "Buxton" ALPHA (02/1991-03/1991)
+ 1067h	- DR DOS ??? (1991-03-15)
+ 106?h	- DR DOS 6.0 "Buxton" BETA 2 (??/1991)
+ 106?h	- DR DOS 6.0 "Buxton" BETA 3 (05/1991, 1991-06-27, 1991-06-28)
+ 1067h	- DR DOS 6.0 release (05/1991, 08/1991)
+	- DR DOS 6.0 BDOS patch "PAT304" English (1991-11-29, XDIR /C: 9D8Ch)
+	  fix for "\\" in cmdline by Quick Basic 4.5/MS PDS 7.1 on Lantastic 4.0
+	- DR DOS 6.0 BDOS patch "PAT303" English (1991-12-03, XDIR /C: 66B0h)
+	  This patch makes INT 21/AH=4Eh (Search First) compatible with MS-DOS
+	  when the Volume Label attribute is set. Previously under DR DOS the
+	  volume label was only searched for if bit 3 was the only bit set in
+	  the attribute whereas MS-DOS searches for the volume label if bit 3
+	  is set, irrespective of any other bits in the attribute.
+	- DR DOS 6.0 BDOS patch "PAT306" English (1991-12-11, XDIR /C: 8DE5h)
+	  This patch fixes a problem with OPTASM which would give error 8
+	  if there were not enough handles available. This patch forces the
+	  system to check for available handles before it opens a file.
+	- DR DOS 6.0 BDOS patch "PAT312" English (1992-01-07, XDIR /C: A0C6h)
+	  This patch fixes a problem with INT 21/AH=26h (create PSP) the
+	  segment from which the PSP was copied was incorrect so the the PSP
+	  was not filled correctly and did not contain the command tail.
+	- DR DOS 6.0 BDOS patch "PAT314" English (1992-01-10, XDIR /C: C964h)
+	  This patch modifies INT 21/AX=33xxh, the Ctrl Break handler to
+	  support undocumented MS-DOS function INT 21/AX=3302h.
+	- DR DOS 6.0 BIOS patch "PAT315" English (1992-01-10, XDIR /C: DBAAh)
+	  This patch fixes a problem where, when booting from a Bernoulli
+	  drive, any DEVICE= statement in CONFIG.SYS failed if it was placed
+	  after the device driver RCD.SYS v7.x and DOSOAD.SYS v1.x
+	- DR DOS 6.0 BDOS patch "PAT317" English (1992-01-27, XDIR /C: B701h)
+	  This patch fixes a problem where attempting to close a changed file
+	  on a write protected disk seems to work after the first retry.
+	  This was caused because when the retry is attempted the file has been
+	  marked as not changed, so the attempt to write to disk is not made.
+	- DR DOS 6.0 BDOS patch "PAT321" English (1992-02-19, XDIR /C: 947Bh)
+	  This patch fixes a problem where the error codes returned from
+	  INT 25h and INT 26h for "drive not ready" and "write protect"
+	  errors were incorrect.
+	- DR DOS 6.0 BDOS patch "PAT323" English (1992-02-20, XDIR /C: E1B0h)
+	  This patch fixes a problem where, if the first command entered after
+	  booting the machine is a single character, any use of the command
+	  line recall keys will only recall the first command.
+	- DR DOS 6.0 ??? German (1992-02-21)
+	- DR DOS 6.0 update (02/1992)
+	- DR DOS 6.0 BDOS patch "PAT326" English (1992-03-05, XDIR /C: 8EF2h)
+	  This is an optional patch to prevent DRDOS from padding the
+	  environment of EXEPACKed applications or utilities.
+	- DR DOS 6.0 ??? German (1992-03-27)
+	- DR DOS 6.0 BDOS patch "PAT334" English (1992-03-27, XDIR /C: 2AFEh)
+	  This patch fixes a problem where selecting (R)etry after hitting ^P
+	  while the printer is offline caused the system to hang.
+	- DR DOS 6.0 "Windows 3.1 update, April 1992" "dr6win" (03/1992,
+	  1992-04-07). This public update only includes patches addressing
+	  full Windows 3.1 compatiblity. There should have been a full
+	  "business update" for registered users, shipping a little bit later.
+	- DR DOS 6.0 ??? English (1992-04-07)
+	- DR DOS 6.0 BDOS patch "pat354" English (1992-07-28, XDIR /C: 3398h)
+	  This patch for Beame and Whiteside Networks: On opening a duplicate
+	  file handle which describes a device, a device open call is made to
+	  inform the device driver that a new file handle has been opened.
+	  This patch is current and up to date as of 1992-11-10.
+	- DR DOS 6.0 update (07/1992)
+	- DR DOS 6.0 BDOS patch "PAT301" English (1992-10-28, XDIR /C: 959Bh)
+	  This patch fixes a problem with apps that opens a file, with Share
+	  loaded, but then cannot delete the file until the file is closed.
+	  This causes "Money Manager" to fail.
+	- DR DOS 6.0 update (11/1992)
+	Note: There is no known method to distinguish these different kernels
+	       at runtime, except for - maybe - checksumming the IBMBIO.COM/
+	       IBMDOS.COM files.
+	      The listed patches only address a single problem, while the
+	       listed updates are full rebuilds, also including all previous
+	       fixes.
+ 1070h	- multitasking "Vladivar" kernel architecture and introduction of
+	  DOS-like structures (1991-07-26, 08/1991)
+	- DR DOS ??? (1991-09-26)
+	- DR PalmDOS "Merlin" BETA 1-2
+	- DR PalmDOS "Merlin" BETA 3 (1992-06-23)
+	- DR PalmDOS "Merlin" Evaluation Release (1992-08-25)
+	- DR PalmDOS Release Candidates 1-2 (1992-08-26)
+	- DR PalmDOS/NetWare PalmDOS 1.0 (06/1992-11/1992)
+	  (DR PalmDOS was the first DR DOS re-incarnation that supported
+	  a genuine CDS, but still pretended to be DOS 3.31. Much of the
+	  former CP/M stuff was stripped out to reduce the code size to meet
+	  early Palmtop PC requirements. It introduced the patented dynamic
+	  idle detection method (by Roger Gross), a special issue of the
+	  TASKMAX program switcher (MINIMAX) to support Personal Information
+	  Modules (PIM) plug-in executables, supported Flash/ROM disk,
+	  XIP "Execute in Place" applications, and came with PCMCIA Card
+	  Services and Service Stack (SS) partially written by Ian Cullimore
+	  (ex-Poquet Computer Corporation founder).
+	- DR DOS "Panther" BETA 1 (1992-10-16)
+	  (This issue already supported DPMS, had the "Vladivar" pre-emptive
+	  multitasker, DPMS-SuperStor disk compression, Multiuser-security
+	  (World/Group/Owner), and much improved multi-windowing ViewMAX/3 GUI
+	  which looked alot more like Windows than GEM. It pretended to be
+	  PC DOS 5. However, this issue was never released and later partially
+	  merged into the Novell DOS 7 project (without Multiuser-security and
+	  ViewMAX/3). In 1999, Caldera Thin Clients released ViewMAX/3 under
+	  GPL, see http://www.gemworld.com.)
+ 1070h??? - DR DOS "StarTrek" (STDOS) (07/1992-05/1993)
+	  (A never released, though reportedly fully functional result of
+	  a Novell and Apple team-up utilizing the DR DOS "Vladivar" multi-
+	  tasker to run Apple's Intel-port of MacOS 7.1 on an issue of DR DOS
+	  "Panther", even emulating HFS and Mac resources on DOS FAT file-
+	  systems.)
+ 1071h	- DR DOS ??? (1992-11-26)
+	- DR DOS 6.0 "business update" "DRDOS493" English for
+	  Windows for Workgroups 3.1 (1993-03-19)
+	- DR DOS 6.0 patch "PATDR6" English (1993-03-19) for NetWare
+	- DR DOS 6.0 patch "PAT394" English (1993-09-17)
+	- Apparently also some issues of DR DOS "Panther"???
+ 1072h	- Novell DOS 7/PNW "Smirnoff" BETA 1 (??/1993, probably 1993-04-26)
+	- Novell DOS 7 "Panther" BETA 2 (08/1993)
+	  (This "Panther" issue is much different from the early 10/1992
+	  "Panther" BETA 1.)
+	- Novell DOS 7 "Panther/Smirnoff" BETA 2 (08/1993)
+	- Novell DOS 7 "Panther/Smirnoff" BETA 3 (09/1993)
+	  (This issue does not have workarounds for Windows 3.1 "AARD" code)
+	- Novell DOS 7 "Panther/Smirnoff" BETA 4 (10/1993)
+	- Novell DOS 7 code freeze 1993-12-03???)
+	- Novell DOS 7 release (12/1993-04/1994)
+	  (also known as NWDOS or ND7, sometimes erroneously called NDOS)
+	- Novell DOS 7 German release (1994-02-22)
+	  (This issue is known to have workarounds for Windows 3.1 "AARD" code)
+	- Novell DOS 7 updates 1-3 (???/1994)
+	- Novell DOS 7 update 4 (1994-05-31)
+	- Novell DOS 7 updates 5-9 (???/1994)
+	- Novell DOS 7 update 10 (12/1994)
+	- Novell DOS 7 update 11 (01/1995)
+	- Novell DOS 7 update 12 (04/1995)
+	- Novell DOS 7 update 13 (05/1995)
+	- Novell DOS 7 update 14 (08-09/1995)
+	- Novell DOS 7 update 15 (12/1995)
+	- Novell DOS 7 update 15.2 (01/1996)
+	  Note: The Novell DOS 7 updates 4-15.2 are full rebuilds, not patched
+	   binaries.
+	- Caldera OpenDOS 7.01 BETA (02/1997)
+	  (basically representing Novell DOS 7 update 10 with minor
+	  changes here and there)
+	- Caldera OpenDOS 7.01 (02-03/1997)
+	- Caldera OpenDOS 7.01 M.R.S. (05/1997)
+	  (release of the kernel source code)
+	- Matthias Paul's enhanced OpenDOS 7.02 ALPHA 1-4 kernels (07-11/1997)
+ 1073h	- Caldera OpenDOS 7.02 BETA 1 (09/1997)
+	  (incorporating most the Novell DOS 7 update 15.2 changes,
+	  except for IBMBIO.COM changes, plus a few other enhancements)
+	- Caldera OpenDOS 7.02 BETA 2 (11/1997)
+	  (now also incorporating Matthias Paul's ALPHA 4 enhancements,
+	  the Novell DOS update 15.2 IBMBIO.COM patches have been
+	  re-implemented)
+	- Caldera OpenDOS 7.02 BETA 2A (12/1997)
+	  (now incorporating all Novell DOS 7 update 15.2 changes)
+	- Caldera DR-OpenDOS 7.02 (1997-12-2x)
+	  (now for the first time the product name is written with a hyphen!!!)
+	- Caldera DR-DOS 7.02 internal build (02/1998)
+	- Caldera DR-DOS 7.02 release (03/1998)
+	- Caldera DR-DOS 7.02A release (06/1998)
+	- DR-DOS 7.02 Update 1 (08/1998)
+	- DR-DOS 7.02 Update 2 (09/1998)
+	- Caldera (Thin Clients) DR-DOS 7.03 BETA (1998-12-03),
+	  sometimes referred to as "DR-DOS 7.03 BETA 3"
+	- Caldera (Thin Clients) DR-DOS 7.03 release (1998-12-24, 1999-01-06)
+	- Lineo DR-DOS 7.03 release (1999-06-07, 1999-09-09)
+	  (this issue has no functional changes compared to the 1999-01-06
+	  issue of DR-DOS 7.03)
+SeeAlso: #01580,#01579,#01581,#04023
 
 Bitfields for CP/M type indicator:
 Bit(s)	Description	(Table 01581)
@@ -4017,6 +4797,14 @@ Bit(s)	Description	(Table 01581)
 	0001 = MP/M
 	0002 = CP/Net
 	0004 = multiuser
+Notes:	Usually 10h (single-user) or 14h (multi-user).
+	While earlier releases of the system utilities performed a test for
+	  a version code of (>)= (10)xxh, this was changed with
+	  DR-OpenDOS 7.02+ (now taking a possible multi-user version into
+	  account): Most utilities now test for AH being either 10h or 14h,
+	  and a BDOS version >=xxh to allow them to properly run on possible
+	  future multi-user releases of DR-DOS. Before doing this test, some
+	  of them strip off the CP/Net bit.
 SeeAlso: #01580
 --------O-214454-----------------------------
 INT 21 U - DR DOS 3.41+ - SET GLOBAL PASSWORD
@@ -4176,6 +4964,22 @@ INT 21 - DR Multiuser DOS 5.0 - API
 Notes:	DR DOS 5.0 and Novell DOS 7 return CF set and AX=0001h
 	this API is also available on INT E0
 SeeAlso: AX=4452h,INT E0"CP/M-86"
+--------O-21445A-----------------------------
+INT 21 U - Concurrent DOS etc. - USER GROUP SUPPORT
+	AX = 445Ah
+	CX = operation type
+	    00h get default file access rights
+	    01h set default file access rights
+	    02h get user/group
+	    03h get security version
+	    04h set security key (needs key)
+	    05h set user/group (needs key)
+	DX = data for operation if set
+	BX = key (if required)
+Return: AX = result
+Note:	This function was introduced on 1990/06/04 for CDOS.  It has been
+	  supported by DR PalmDOS and DR DOS "Panther" (BDOS 1070h),
+	  but it is not supported by Novell DOS 7 - DR-DOS 7.03.
 --------v-2144A0-----------------------------
 INT 21 - VIRUS - "Horns" - INSTALLATION CHECK
 	AX = 44A0h
@@ -4418,6 +5222,8 @@ SeeAlso: #01590,#01591
 (Table 01593)
 Values for the executable types understood by various environments:
  MZ	old-style DOS executable (see #01594)
+ ZM	used by some very early DOS linkers, and still supported as an
+	  alternate to the MZ signature by MS-DOS, PC DOS, PTS-DOS, and S/DOS
  NE	Windows or OS/2 1.x segmented ("new") executable (see #01596)
  LE	Windows virtual device driver (VxD) linear executable (see #01609)
  LX	variant of LE used in OS/2 2.x (see #01609)
@@ -5258,13 +6064,13 @@ INT 21 - VIRUS - "Plastique-2576"/"AntiCad-2576" - ???
 Return: ???
 SeeAlso: AX=4B50h
 --------O-214B80-----------------------------
-INT 21 - DR DOS v3.41 - RUN ALREADY-LOADED KERNEL FILE
+INT 21 - DR DOS v3.31+ - RUN ALREADY-LOADED KERNEL FILE
 	AX = 4B80h
 	DS:DX -> ASCIZ name of program to EXEC
 	ES = segment of PSP for kernel file
 Return: only if call failed
 Note:	DR DOS uses this call after an AX=4B01h to load the kernel file into
-	  memory and patching the program's parent-PSP field to point at itself
+	  memory and patch the program's parent-PSP field to point at itself
 SeeAlso: AH=4Bh"EXEC"
 --------v-214B87-----------------------------
 INT 21 - VIRUS - "Shirley" - INSTALLATION CHECK
@@ -7325,10 +8131,11 @@ Notes:	functions available under DOS 2.x map the true DOS 3.0+ error code into
 	  FCB or DOS 2.x call returns an error
 	under DR DOS 5.0, this function does not use any of the DOS-internal
 	  stacks and may thus be called at any time
-SeeAlso: AH=59h/BX=0001h,AX=5D0Ah,INT 2F/AX=122Dh
+SeeAlso: AH=59h/BX=0001h,AX=5D0Ah,INT 2F/AX=122Dh,INT 24
 
 (Table 01680)
 Values for DOS extended error code:
+---DOS 2.0+ ---
  00h (0)   no error
  01h (1)   function number invalid
  02h (2)   file not found
@@ -7344,11 +8151,12 @@ Values for DOS extended error code:
  0Ch (12)  access code invalid
  0Dh (13)  data invalid
  0Eh (14)  reserved
+ 0Eh (14)  (PTS-DOS 6.51+, S/DOS 1.0+) fixup overflow
  0Fh (15)  invalid drive
  10h (16)  attempted to remove current directory
  11h (17)  not same device
  12h (18)  no more files
----DOS 3.0+ ---
+---DOS 3.0+ (INT 24 errors)---
  13h (19)  disk write-protected
  14h (20)  unknown unit
  15h (21)  drive not ready
@@ -7366,11 +8174,13 @@ Values for DOS extended error code:
  21h (33)  lock violation
  22h (34)  disk change invalid (ES:DI -> media ID structure)(see #01681)
  23h (35)  FCB unavailable
+ 23h (35)  (PTS-DOS 6.51+, S/DOS 1.0+) bad FAT
  24h (36)  sharing buffer overflow
  25h (37)  (DOS 4.0+) code page mismatch
- 26h (38)  (DOS 4.0+) cannot complete file operation (out of input)
+ 26h (38)  (DOS 4.0+) cannot complete file operation (EOF / out of input)
  27h (39)  (DOS 4.0+) insufficient disk space
  28h-31h   reserved
+---OEM network errors (INT 24)---
  32h (50)  network request not supported
  33h (51)  remote computer not listening
  34h (52)  duplicate name on network
@@ -7387,6 +8197,8 @@ Values for DOS extended error code:
  3Fh (63)  not enough space to print file
  40h (64)  network name was deleted
  41h (65)  network: Access denied
+	  (DOS 3.0+ [maybe 3.3+???]) codepage switching not possible
+	    (see also INT 21/AX=6602h,INT 2F/AX=AD42h)
  42h (66)  network device type incorrect
  43h (67)  network name not found
  44h (68)  network name limit exceeded
@@ -7403,90 +8215,99 @@ Values for DOS extended error code:
  4Dh (77)  (LANtastic v3+) disk limit exceeded on network node
  4Eh (78)  (LANtastic v3+) not logged in to network node
  4Fh (79)  reserved
+---end of errors reportable via INT 24---
  50h (80)  file exists
- 51h (81)  reserved
+ 51h (81)  (undoc) duplicated FCB
  52h (82)  cannot make directory
  53h (83)  fail on INT 24h
- 54h (84)  (DOS 3.3+) too many redirections
- 55h (85)  (DOS 3.3+) duplicate redirection
+---network-related errors (non-INT 24)---
+ 54h (84)  (DOS 3.3+) too many redirections / out of structures
+ 55h (85)  (DOS 3.3+) duplicate redirection / already assigned
  56h (86)  (DOS 3.3+) invalid password
  57h (87)  (DOS 3.3+) invalid parameter
  58h (88)  (DOS 3.3+) network write fault
- 59h (89)  (DOS 4.0+) function not supported on network
- 5Ah (90)  (DOS 4.0+) required system component not installed
- 5Bh (91)  (NetWare4) timer server table overflowed
- 5Ch (92)  (NetWare4) duplicate in timer service table
- 5Dh (93)  (NetWare4) no items to work on
- 5Fh (95)  (NetWare4) invalid interrupt
+ 59h (89)  (DOS 4.0+) function not supported on network / no process slots
+	      available
+ 5Ah (90)  (DOS 4.0+) required system component not installed / not frozen
+ 5Bh (91)  (DOS 4.0+,NetWare4) timer server table overflowed
+ 5Ch (92)  (DOS 4.0+,NetWare4) duplicate in timer service table
+ 5Dh (93)  (DOS 4.0+,NetWare4) no items to work on
+ 5Fh (95)  (DOS 4.0+,NetWare4) interrupted / invalid system call
  64h (100) (MSCDEX) unknown error
- 64h (100) (NetWare4) open semaphore limit exceeded
+ 64h (100) (DOS 4.0+,NetWare4) open semaphore limit exceeded
  65h (101) (MSCDEX) not ready
- 65h (101) (NetWare4) exclusive semaphore is already owned
+ 65h (101) (DOS 4.0+,NetWare4) exclusive semaphore is already owned
  66h (102) (MSCDEX) EMS memory no longer valid
- 66h (102) (NetWare4) semaphore was set when close attempted
+ 66h (102) (DOS 4.0+,NetWare4) semaphore was set when close attempted
  67h (103) (MSCDEX) not High Sierra or ISO-9660 format
- 67h (103) (NetWare4) too many exclusive semaphore requests
+ 67h (103) (DOS 4.0+,NetWare4) too many exclusive semaphore requests
  68h (104) (MSCDEX) door open
- 68h (104) (NetWare4) operation invalid from interrupt handler
- 69h (105) (NetWare4) semaphore owner died
- 6Ah (106) (NetWare4) semaphore limit exceeded
- 6Bh (107) (NetWare4) insert drive B: disk into drive A:
- 6Ch (108) (NetWare4) drive locked by another process
- 6Dh (109) (NetWare4) broken pipe
- 6Eh (110) (NetWare4) pipe open/create failed
- 6Fh (111) (NetWare4) pipe buffer overflowed
- 70h (112) (NetWare4) disk full
- 71h (113) (NetWare4) no more search handles
- 72h (114) (NetWare4) invalid target handle for dup2
- 73h (115) (NetWare4) bad user virtual address
+ 68h (104) (DOS 4.0+,NetWare4) operation invalid from interrupt handler
+ 69h (105) (DOS 4.0+,NetWare4) semaphore owner died
+ 6Ah (106) (DOS 4.0+,NetWare4) semaphore limit exceeded
+ 6Bh (107) (DOS 4.0+,NetWare4) insert drive B: disk into A: / disk changed
+ 6Ch (108) (DOS 4.0+,NetWare4) drive locked by another process
+ 6Dh (109) (DOS 4.0+,NetWare4) broken pipe
+ 6Eh (110) (DOS 5.0+,NetWare4) pipe open/create failed
+ 6Fh (111) (DOS 5.0+,NetWare4) pipe buffer overflowed
+ 70h (112) (DOS 5.0+,NetWare4) disk full
+ 71h (113) (DOS 5.0+,NetWare4) no more search handles
+ 72h (114) (DOS 5.0+,NetWare4) invalid target handle for dup2
+ 73h (115) (DOS 5.0+,NetWare4) bad user virtual address / protection violation
+ 74h (116) (DOS 5.0+) VIOKBD request
  74h (116) (NetWare4) error on console I/O
- 75h (117) (NetWare4) unknown category code for IOCTL
- 76h (118) (NetWare4) invalid value for verify flag
- 77h (119) (NetWare4) level four driver not found
- 78h (120) (NetWare4) invalid function number
- 79h (121) (NetWare4) semaphore timeout
- 7Ah (122) (NetWare4) buffer too small
- 7Bh (123) (NetWare4) invalid character or bad file-system name
- 7Ch (124) (NetWare4) unimplemented information level
- 7Dh (125) (NetWare4) no volume label found
- 7Eh (126) (NetWare4) module handle not found
- 7Fh (127) (NetWare4) procedure address not found
- 80h (128) (NetWare4) CWait found no children
- 81h (129) (NetWare4) CWait children still running
- 82h (130) (NetWare4) invalid operation for direct disk-access handle
- 83h (131) (NetWare4) attempted seek to negative offset
- 84h (132) (NetWare4) attempted to seek on device or pipe
- 85h (133) (NetWare4) drive already has JOINed drives
- 86h (134) (NetWare4) drive is already JOINed
- 87h (135) (NetWare4) drive is already SUBSTed
- 88h (136) (NetWare4) can not delete drive which is not JOINed
- 89h (137) (NetWare4) can not delete drive which is not SUBSTed
- 8Ah (138) (NetWare4) can not JOIN to a JOINed drive
- 8Bh (139) (NetWare4) can not SUBST to a SUBSTed drive
- 8Ch (140) (NetWare4) can not JOIN to a SUBSTed drive
- 8Dh (141) (NetWare4) can not SUBST to a JOINed drive
- 8Eh (142) (NetWare4) drive is busy
- 8Fh (143) (NetWare4) can not JOIN/SUBST to same drive
- 90h (144) (NetWare4) directory must not be root directory
- 91h (145) (NetWare4) can only JOIN to empty directory
- 92h (146) (NetWare4) path is already in use for SUBST
- 93h (147) (NetWare4) path is already in use for JOIN
- 94h (148) (NetWare4) path is in use by another process
- 95h (149) (NetWare4) directory previously SUBSTituted
- 96h (150) (NetWare4) system trace error
- 97h (151) (NetWare4) invalid event count for DosMuxSemWait
- 98h (152) (NetWare4) too many waiting on mutex
- 99h (153) (NetWare4) invalid list format
- 9Ah (154) (NetWare4) volume label too large
- 9Bh (155) (NetWare4) unable to create another TCB
- 9Ch (156) (NetWare4) signal refused
- 9Dh (157) (NetWare4) segment discarded
- 9Eh (158) (NetWare4) segment not locked
- 9Fh (159) (NetWare4) invalid thread-ID address
+ 75h (117) (DOS 5.0+,NetWare4) unknown category code for IOCTL
+ 76h (118) (DOS 5.0+,NetWare4) invalid value for verify flag
+ 77h (119) (DOS 5.0+,NetWare4) level four driver not found by DOS IOCTL
+ 78h (120) (DOS 5.0+,NetWare4) invalid / unimplemented function number
+ 79h (121) (DOS 5.0+,NetWare4) semaphore timeout
+ 7Ah (122) (DOS 5.0+,NetWare4) buffer too small to hold return data
+ 7Bh (123) (DOS 5.0+,NetWare4) invalid character or bad file-system name
+ 7Ch (124) (DOS 5.0+,NetWare4) unimplemented information level
+ 7Dh (125) (DOS 5.0+,NetWare4) no volume label found
+ 7Eh (126) (DOS 5.0+,NetWare4) module handle not found
+ 7Fh (127) (DOS 5.0+,NetWare4) procedure address not found
+ 80h (128) (DOS 5.0+,NetWare4) CWait found no children
+ 81h (129) (DOS 5.0+,NetWare4) CWait children still running
+ 82h (130) (DOS 5.0+,NetWare4) invalid operation for direct disk-access handle
+ 83h (131) (DOS 5.0+,NetWare4) attempted seek to negative offset
+ 84h (132) (DOS 5.0+,NetWare4) attempted to seek on device or pipe
+---JOIN/SUBST errors---
+ 85h (133) (DOS 5.0+,NetWare4) drive already has JOINed drives
+ 86h (134) (DOS 5.0+,NetWare4) drive is already JOINed
+ 87h (135) (DOS 5.0+,NetWare4) drive is already SUBSTed
+ 88h (136) (DOS 5.0+,NetWare4) can not delete drive which is not JOINed
+ 89h (137) (DOS 5.0+,NetWare4) can not delete drive which is not SUBSTed
+ 8Ah (138) (DOS 5.0+,NetWare4) can not JOIN to a JOINed drive
+ 8Bh (139) (DOS 5.0+,NetWare4) can not SUBST to a SUBSTed drive
+ 8Ch (140) (DOS 5.0+,NetWare4) can not JOIN to a SUBSTed drive
+ 8Dh (141) (DOS 5.0+,NetWare4) can not SUBST to a JOINed drive
+ 8Eh (142) (DOS 5.0+,NetWare4) drive is busy
+ 8Fh (143) (DOS 5.0+,NetWare4) can not JOIN/SUBST to same drive
+ 90h (144) (DOS 5.0+,NetWare4) directory must not be root directory
+ 91h (145) (DOS 5.0+,NetWare4) can only JOIN to empty directory
+ 92h (146) (DOS 5.0+,NetWare4) path is already in use for SUBST
+ 93h (147) (DOS 5.0+,NetWare4) path is already in use for JOIN
+ 94h (148) (DOS 5.0+,NetWare4) path is in use by another process
+ 95h (149) (DOS 5.0+,NetWare4) directory previously SUBSTituted
+ 96h (150) (DOS 5.0+,NetWare4) system trace error
+ 97h (151) (DOS 5.0+,NetWare4) invalid event count for DosMuxSemWait
+ 98h (152) (DOS 5.0+,NetWare4) too many waiting on mutex
+ 99h (153) (DOS 5.0+,NetWare4) invalid list format
+ 9Ah (154) (DOS 5.0+,NetWare4) volume label too large
+ 9Bh (155) (DOS 5.0+,NetWare4) unable to create another TCB
+ 9Ch (156) (DOS 5.0+,NetWare4) signal refused
+ 9Dh (157) (DOS 5.0+,NetWare4) segment discarded
+ 9Eh (158) (DOS 5.0+,NetWare4) segment not locked
+ 9Fh (159) (DOS 5.0+,NetWare4) invalid thread-ID address
+-----
+ A0h (160) (DOS 5.0+) bad arguments
  A0h (160) (NetWare4) bad environment pointer
- A1h (161) (NetWare4) invalid name passed to EXEC
- A2h (162) (NetWare4) signal already pending
+ A1h (161) (DOS 5.0+,NetWare4) invalid pathname passed to EXEC
+ A2h (162) (DOS 5.0+,NetWare4) signal already pending
+ A3h (163) (DOS 5.0+) uncertain media
  A3h (163) (NetWare4) ERROR_124 mapping
+ A4h (164) (DOS 5.0+) maximum number of threads reached
  A4h (164) (NetWare4) no more process slots
  A5h (165) (NetWare4) ERROR_124 mapping
  B0h (176) (MS-DOS 7.0) volume is not locked
@@ -7495,28 +8316,29 @@ Values for DOS extended error code:
  B4h (180) (MS-DOS 7.0) lock count has been exceeded
  B4h (180) (NetWare4) invalid segment number
  B5h (181) (MS-DOS 7.0) a valid eject request failed
- B5h (181) (NetWare4) invalid call gate
- B6h (182) (NetWare4) invalid ordinal
- B7h (183) (NetWare4) shared segment already exists
- B8h (184) (NetWare4) no child process to wait for
- B9h (185) (NetWare4) NoWait specified and child still running
- BAh (186) (NetWare4) invalid flag number
- BBh (187) (NetWare4) semaphore does not exist
- BCh (188) (NetWare4) invalid starting code segment
- BDh (189) (NetWare4) invalid stack segment
- BEh (190) (NetWare4) invalid module type (DLL can not be used as application)
- BFh (191) (NetWare4) invalid EXE signature
- C0h (192) (NetWare4) EXE marked invalid
- C1h (193) (NetWare4) bad EXE format (e.g. DOS-mode program)
- C2h (194) (NetWare4) iterated data exceeds 64K
- C3h (195) (NetWare4) invalid minimum allocation size
- C4h (196) (NetWare4) dynamic link from invalid Ring
- C5h (197) (NetWare4) IOPL not enabled
- C6h (198) (NetWare4) invalid segment descriptor privilege level
- C7h (199) (NetWare4) automatic data segment exceeds 64K
- C8h (200) (NetWare4) Ring2 segment must be moveable
- C9h (201) (NetWare4) relocation chain exceeds segment limit
- CAh (202) (NetWare4) infinite loop in relocation chain
+ B5h (181) (DOS 5.0-6.0,NetWare4) invalid call gate
+ B6h (182) (DOS 5.0+,NetWare4) invalid ordinal
+ B7h (183) (DOS 5.0+,NetWare4) shared segment already exists
+ B8h (184) (DOS 5.0+,NetWare4) no child process to wait for
+ B9h (185) (DOS 5.0+,NetWare4) NoWait specified and child still running
+ BAh (186) (DOS 5.0+,NetWare4) invalid flag number
+ BBh (187) (DOS 5.0+,NetWare4) semaphore does not exist
+ BCh (188) (DOS 5.0+,NetWare4) invalid starting code segment
+ BDh (189) (DOS 5.0+,NetWare4) invalid stack segment
+ BEh (190) (DOS 5.0+,NetWare4) invalid module type (DLL can not be used as
+	      application)
+ BFh (191) (DOS 5.0+,NetWare4) invalid EXE signature
+ C0h (192) (DOS 5.0+,NetWare4) EXE marked invalid
+ C1h (193) (DOS 5.0+,NetWare4) bad EXE format (e.g. DOS-mode program)
+ C2h (194) (DOS 5.0+,NetWare4) iterated data exceeds 64K
+ C3h (195) (DOS 5.0+,NetWare4) invalid minimum allocation size
+ C4h (196) (DOS 5.0+,NetWare4) dynamic link from invalid Ring
+ C5h (197) (DOS 5.0+,NetWare4) IOPL not enabled
+ C6h (198) (DOS 5.0+,NetWare4) invalid segment descriptor privilege level
+ C7h (199) (DOS 5.0+,NetWare4) automatic data segment exceeds 64K
+ C8h (200) (DOS 5.0+,NetWare4) Ring2 segment must be moveable
+ C9h (201) (DOS 5.0+,NetWare4) relocation chain exceeds segment limit
+ CAh (202) (DOS 5.0+,NetWare4) infinite loop in relocation chain
  CBh (203) (NetWare4) environment variable not found
  CCh (204) (NetWare4) not current country
  CDh (205) (NetWare4) no signal sent
@@ -7536,19 +8358,24 @@ Values for DOS extended error code:
  E9h (233) (NetWare4) pipe disconnected by server
  EAh (234) (NetWare4) more data available
  FFh (255) (NetWare4) invalid drive
+Note:	there is a report that some Microsoft documentation shifts all DOS
+	  error codes in the range BCh (188) through CAh (202) up by one
+	  compared to what is listed here; that is probably a documentation
+	  error
 SeeAlso: #01682,#01683,#01684,#01961
 
 Format of media ID structure:
 Offset	Size	Description	(Table 01681)
  00h 12 BYTEs	ASCIZ volume label of required disk
  0Ch	DWORD	serial number (DOS 4.0+)
+SeeAlso: #01680
 
 (Table 01682)
 Values for DOS Error Class:
  01h (1)  out of resource (storage space or I/O channels)
  02h (2)  temporary situation (file or record lock)
- 03h (3)  authorization (denied access)
- 04h (4)  internal (system software bug)
+ 03h (3)  authorization / permission problem (denied access)
+ 04h (4)  internal system error (system software bug)
  05h (5)  hardware failure
  06h (6)  system failure (configuration file missing or incorrect)
  07h (7)  application program error
@@ -7556,17 +8383,19 @@ Values for DOS Error Class:
  09h (9)  bad format
  0Ah (10) locked
  0Bh (11) media error
- 0Ch (12) already exists
- 0Dh (13) unknown
+ 0Ch (12) already exists / collision with existing item
+ 0Dh (13) unknown / other
+ 0Eh (14) (undoc) cannot
+ 0Fh (15) (undoc) time
 SeeAlso: #01680,#01683,#01684
 
 (Table 01683)
 Values for DOS Suggested Action:
  01h	retry
- 02h	delayed retry
+ 02h	delayed retry (after pause)
  03h	prompt user to reenter input
  04h	abort after cleanup
- 05h	immediate abort
+ 05h	immediate abort ("panic")
  06h	ignore
  07h	retry after user intervention
 SeeAlso: #01680,#01682,#01684
@@ -7577,6 +8406,7 @@ Values for DOS Error Locus:
  02h	block device (disk error)
  03h	network related
  04h	serial device (timeout)
+ 04h	(PTS-DOS 6.51+ & S/DOS 1.0+) character device
  05h	memory related
 SeeAlso: #01680,#01682,#01683
 --------D-2159--BX0001-----------------------
@@ -8279,325 +9109,4 @@ Note:	the above data is not actually part of the SDA, and is much more likely
 Note:	the only fields which remain valid BETWEEN calls to INT 21h are those
 	  in the initial "swap-always" portion of the SDA
 SeeAlso: #01687,#01689
---------D-215E00-----------------------------
-INT 21 - DOS 3.1+ network - GET MACHINE NAME
-	AX = 5E00h
-	DS:DX -> 16-byte buffer for ASCII machine name
-Return: CF clear if successful
-	    CH = validity
-		00h name invalid
-		nonzero valid
-		    CL = NetBIOS number for machine name
-		    DS:DX buffer filled with blank-paded name
-	CF set on error
-	    AX = error code (01h) (see #01680 at AH=59h)
-Note:	supported by OS/2 v1.3+ compatibility box, PC-NFS
-SeeAlso: AX=5E01h
---------N-215E00-----------------------------
-INT 21 - 10NET v5.0 - GET MACHINE NAME
-	AX = 5E00h
-Return: CL = redirector's NetBIOS name number
-	ES:DI -> network node ID
-SeeAlso: AX=5E01h"10NET"
---------D-215E01CH00-------------------------
-INT 21 - DOS 3.1+ network - SET MACHINE NAME
-	AX = 5E01h
-	CH = 00h undefine name (make it invalid)
-	   <> 0	 define name
-	CL = name number
-	DS:DX -> 15-character blank-padded ASCIZ name
-SeeAlso: AX=5E00h
---------N-215E01-----------------------------
-INT 21 - 10NET v5.0 - GET LOCAL 10NET CONFIGURATION TABLE
-	AX = 5E01h
-	CX = length of buffer
-	DS:DX -> buffer for 10Net configuration table (see #01691)
-Return: DS:DX buffer filled
-SeeAlso: AX=5E00h"10NET",INT 6F/AH=02h,INT 6F/AH=03h
-
-Format of 10Net Configuration Table:
-Offset	Size	Description	(Table 01691)
- 00h  8 BYTEs	user name
- 08h 15 BYTEs	node ID
- 17h  3 BYTEs	unique portion of Ethernet address
- 1Ah	BYTE	Who group number
- 1Bh	WORD	services mask (see #01693)
- 1Dh	DWORD	serial number
- 21h	BYTE	maximum concurrent users with same serial number allowed on net
- 22h	BYTE	chat mask (see #01694)
- 23h	BYTE	internal system bits (see #01695)
- 24h  9 BYTEs	version number in format MM.mm.xxx
- 2Dh	BYTE	flag: 01h if machine is a PS/2
- 2Eh	BYTE	flag: 03h if 80386
- 2Fh	BYTE	spool termination mode: 01h concatenate, 02h truncate
-		(see AX=5D09h)
- 30h	WORD	autospool timeout in clock ticks
- 32h	WORD	monitor timeout in clock ticks
- 34h	WORD	unused
- 36h	WORD	chat timeout in clock ticks
- 38h	WORD	netBIOS session timeout in half-seconds
- 3Ah	WORD	datagram send timeout in seconds
- 3Ch	WORD	keyboard value for initiating chat mode
- 3Eh	WORD	Who timeout in clock ticks
- 40h	BYTE	flag: 01h if server should process rom NetBIOS Post return
- 41h	BYTE	flag: 01h if FCBs should be recycled
- 42h  3 BYTEs	signature "DBG"
- 45h	BYTE	last interrupt (21h or 6Fh)
- 46h	BYTE	last INT 21 AH value
- 47h	BYTE	last INT 6F AH value
- 48h	WORD	last item posted
- 4Ah	WORD	last item free-posted
- 4Ch	WORD	last item handled by server
- 4Eh	WORD	last redirector send NCB
- 50h	WORD	last redirector receive NCB
- 52h  4 BYTEs	signature "TABL"
- 56h	WORD	offset of datagram buffer table header (see #01692)
- 58h	WORD	offset of chat buffer table header (see #01692)
- 5Ah	WORD	offset of Raw buffer table header (see #01692)
- 5Ch	WORD	offset of Workstation buffer table header (see #01692)
- 5Eh	WORD	offset of server receive-any table header (see #01692)
- 60h	WORD	offset of Tiny buffer table header (see #01692)
- 62h	WORD	offset of zero-length buffer table (NCBs) (see #01692)
- 64h	WORD	offset of Rdr (Redirector Mount) table header (see #01692)
- 66h	WORD	offset of Ntab (Redirector Session) table header (see #01692)
- 68h	WORD	offset of FCB table header (see #01692)
- 6Ah	WORD	offset of user file handle table header (see #01692)
- 6Ch	WORD	offset of workstation printer RDR extension table header
- 6Eh	WORD	offset of server shared device table header (see #01692)
- 70h	WORD	offset of server connection table header (see #01692)
- 72h	WORD	offset of server login table header (see #01692)
- 74h	WORD	offset of server file table header (see #01692)
- 76h	WORD	offset of server shared file table header (see #01692)
- 78h	WORD	offset of server record lock table header (see #01692)
- 7Ah	WORD	offset of remote printer claim table header (see #01692)
- 7Ch	WORD	offset of remote printer device table header (see #01692)
- 7Eh	WORD	offset of print server mount table header (see #01692)
- 80h	WORD	offset of print server sessions table header (see #01692)
- 82h	WORD	offset of print server print job structure table header
- 84h	WORD	offset of print server pooled device table header (see #01692)
- 86h	WORD	size of workstation buffer
- 88h	WORD	size of server receive-any buffer
- 8Ah	WORD	size of server raw I/O buffer
- 8Ch  6 BYTEs	reserved
- 92h	DWORD	pointer to profile pathname
- 96h	BYTE	datagram retry count
- 97h	BYTE	NetBIOS LAN adapter number
- 98h  6 BYTEs	physical Ethernet address
- 9Eh	BYTE	NetBIOS server name number
- 9Fh	BYTE	NetBIOS redirector name number
- A0h	BYTE	10Net interrupt number
- A1h	BYTE	flag: chat is loaded
- A2h	BYTE	flag: INT 6F APIs permanently loaded
- A3h	BYTE	flag: file security present
- A4h	WORD	reserved
- A6h	BYTE	fixed mount bitmask for drives A:-H:
- A7h	BYTE	reserved
- A8h	WORD	10Net system flags (see #01696)
- AAh	BYTE	monitor flags (see #01697)
- ABh  5 BYTEs	reserved
- B0h	WORD	offset of monitor timer block
- B2h	WORD	offset of server timer block
- B4h	WORD	offset of chat timer block
- B6h	WORD	timer chain
- B8h  4 BYTEs	signature "TALS"
- BCh	WORD	number of 10Net sends
- BEh	WORD	number of 10Net receives
- C0h	WORD	number of no-buffer conditions
- C2h	WORD	number of dropped posted messages
- C4h	WORD	number of server NCB errors
- C6h	WORD	number of redirector NCB errors
- C8h	WORD	number of datagram send/receive errors
- CAh	WORD	number of dropped Whos
- CCh	WORD	number of dropped submits
- CEh	WORD	number of session aborts
- D0h	BYTE	number of NetBIOS interface-busy errors
- D1h	BYTE	last NetBIOS bad post command
- D2h	BYTE	last NetBIOS bad redirector command
- D3h	BYTE	do send datagram send/receive error command
- D4h	DWORD	-> DOS system parameter table
- D8h	WORD	number of DOS physical drives
- DAh	WORD	offset of DOS PSP field in DOS data segment
- DCh	WORD	offset of in-DOS flag in DOS data segment
- DEh	WORD	DOS data segment
- E0h	WORD	offset of DOS SFT in DOS data segment
- E2h	WORD	offset of number-of-physical-units field in DOS data segment
- E4h	WORD	10Net code segment
- E6h	WORD	10Net data segment
- E8h	WORD	10Net common server segment
- EAh	WORD	10Net file server segment
- ECh	WORD	10Net print server segment
- EEh	WORD	10Net remote printer segment
-Note:	documentation lists field at offset D0h as a WORD, but all following
-	  offsets are as though it were a BYTE; if it is indeed a WORD, all
-	  offsets after D0h must be increased by one byte
-
-Format of 10Net Table Header:
-Offset	Size	Description	(Table 01692)
- -16  4 BYTEs	table identifier
- -12	WORD	peak number of tables allocated
- -10	WORD	number of tables currently in use
- -8	WORD	total number of tables
- -6	WORD	size of each table
- -4	WORD	offset of first allocated table
- -2	WORD	offset of first free table
-
-Bitfields for 10NET services mask:
-Bit(s)	Description	(Table 01693)
- 0	workstation
- 1	file server
- 2	print queue server
- 3	de-spool server
-
-Bitfields for 10NET chat mask:
-Bit(s)	Description	(Table 01694)
- 0	chat permitted
- 1	bell enabled
- 2	chat keyboard initiated
- 3	in INT 16 handler
- 4	in Get Input
- 5	display has timed out
- 6	chat is idle
-
-Bitfields for 10NET internal system bits:
-Bit(s)	Description	(Table 01695)
- 0	submit permitted
- 1	submit initiated
- 2	submit executing
- 3	internal client call/chat/spool/autospool
- 4	in spool termination
- 5	print permitted
- 6	waiting for keyboard input
-
-Bitfields for 10NET System Flags:
-Bit(s)	Description	(Table 01696)
- 0	in NetBIOS
- 1	processing INT 28
- 2	is server
- 3	in net user-DOS function
- 4	in DOS user-DOS function
- 5	in net for user non-DOS function
- 6	in server DOS function
- 7	in server non-DOS function
- 8	in terminate
- 10	in user on server request
- 13	in DOS for user on server
- 14	disable critical error handler
-
-Bitfields for Monitor Flags:
-Bit(s)	Description	(Table 01697)
- 0	waiting for monitor response
- 4	in monitor get-input routine
- 5	monitor display timeout
- 6	sensing for escape key
---------D-215E02-----------------------------
-INT 21 - DOS 3.1+ network - SET NETWORK PRINTER SETUP STRING
-	AX = 5E02h
-	BX = redirection list index (see AX=5F02h)
-	CX = length of setup string
-	DS:SI -> setup string
-Return: CF clear if successful
-	CF set on error
-	    AX = error code (01h) (see #01680 at AH=59h/BX=0000h)
-Note:	also supported by 10NET v5.0
-SeeAlso: AX=5E03h,INT 2F/AX=111Fh
---------D-215E03-----------------------------
-INT 21 - DOS 3.1+ network - GET NETWORK PRINTER SETUP STRING
-	AX = 5E03h
-	BX = redirection list index (see AX=5F02h)
-	ES:DI -> 64-byte buffer for setup string
-Return: CF clear if successful
-	    CX = length of setup string
-	    ES:DI buffer filled
-	CF set on error
-	    AX = error code (01h) (see #01680 at AH=59h/BX=0000h)
-Note:	also supported by 10NET v5.0, but 10NET is documented as using DS:SI
-	  instead of ES:DI
-SeeAlso: AX=5E02h,INT 2F/AX=111Fh
---------D-215E04-----------------------------
-INT 21 - DOS 3.1+ network - SET PRINTER MODE
-	AX = 5E04h
-	BX = redirection list index (see AX=5F02h)
-	DX = mode
-	    bit 0: set if binary, clear if text (tabs expanded to blanks)
-Return: CF set on error
-	    AX = error code (see #01680 at AH=59h/BX=0000h)
-	CF clear if successful
-Notes:	calls INT 2F/AX=111Fh with 5E04h on stack
-	supported by DR DOS 3.41+
-SeeAlso: AX=5E05h"DOS",INT 2F/AX=111Fh
---------N-215E04-----------------------------
-INT 21 - 10NET v5.0 - INITIATE PRINT JOB
-	AX = 5E04h
-	BX = zero-based redirection list index (see AX=5F02h)
-	DS:DX -> extended workstation printer setup structure (see #01698)
-Return: CF clear if successful
-	CF set on error
-	    AX = error code (see #01680 at AH=59h/BX=0000h)
-SeeAlso: AX=5E05h"10NET",AX=5E06h"10NET"
-
-Format of 10NET extended workstation printer setup structure:
-Offset	Size	Description	(Table 01698)
- 00h	BYTE	notification flags (see #01699)
- 01h	BYTE	job control mask (see #01700)
- 02h	WORD	days to retain file
- 04h	WORD	test print length
- 06h	BYTE	number of copies to print
- 07h	BYTE	compression algorithm
- 08h	BYTE	tab width (00h = don't expand)
- 09h	BYTE	initiation type (00h normal, 01h non-spooled)
- 0Ah 38 BYTEs	job start operation notification instructions
- 30h 32 BYTEs	comment for job
- 50h 64 BYTEs	output filename or non-spooled file
-
-Bitfields for 10NET notification flags:
-Bit(s)	Description	(Table 01699)
- 0	user at print start
- 1	operator at start, with reply
- 2	user at print completion
- 3	operator at completion, with reply
- 4	user on queue switch
- 5	operator on queue switch, with reply
- 6	user on print error
-
-Bitfields for 10NET job control mask:
-Bit(s)	Description	(Table 01700)
- 0	print banner page
- 1	eject page at end of job
- 2	mark as "held" (queue but don't print)
- 3	rush job (queue at top)
- 4	overwrite file with zeros before deletion
- 5	hyperspool if possible
---------D-215E05-----------------------------
-INT 21 - DOS 3.1+ network - GET PRINTER MODE
-	AX = 5E05h
-	BX = redirection list index (see AX=5F02h)
-Return: CF set on error
-	    AX = error code (see #01680 at AH=59h/BX=0000h)
-	CF clear if successful
-	    DX = printer mode (see AX=5E04h)
-Notes:	calls INT 2F/AX=111Fh with 5E05h on stack
-	supported by DR DOS 3.41+
-SeeAlso: AX=5E04h"DOS",INT 2F/AX=111Fh
---------N-215E05-----------------------------
-INT 21 - 10NET v5.0 - TERMINATE PRINT JOB
-	AX = 5E05h
-	BX = zero-based redirection list index (see AX=5F02h)
-Return: CF clear if successful
-	CF set on error
-	    AX = error code (see #01680 at AH=59h/BX=0000h)
-Note:	this call resets the spool termination mode to "truncate"
-	  (see AX=5D08h)
-SeeAlso: AX=5E04h"10NET",AX=5E06h
---------N-215E06-----------------------------
-INT 21 - 10NET v5.0 - GET/SET 10NET WORKSTATION PRINTER SETUP STRUCTURE
-	AX = 5E06h
-	BX = zero-based redirection list index (see AX=5F02h)
-	CX = operation (06h set, 07h get)
-	DS:DX -> buffer for setup structure (same as first nine bytes of
-		  workstation printer setup) (see #01698)
-Return: CF clear if successful
-	    DS:DX buffer updated on get
-	CF set on error
-	    AX = error code (see #01680 at AH=59h/BX=0000h)
-SeeAlso: AX=5E04h"10NET",AX=5E05h"10NET"
 --------!---Section--------------------------

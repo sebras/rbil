@@ -1,5 +1,5 @@
 Interrupt List, part 10 of 18
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+Copyright (c) 1989-1999,2000 Ralf Brown
 --------N-21F2-------------------------------
 INT 21 u - Novell NetWare v3.01+ shell interface - MULTIPLEXOR
 	AH = F2h
@@ -7962,9 +7962,12 @@ INT 21 - DOS v2.11-2.13 - SET OEM INT 21 HANDLER
 		 FFFFh:FFFFh disables OEM handler
 Notes:	this function is known to be supported by Toshiba T1000 ROM MS-DOS
 	  v2.11, Sanyo MS-DOS v2.11, and TI Professional Computer DOS v2.13
+	at least potentially this is still available with (OEM versions??? of)
+	  MS-DOS 6.0.
 	calls to AH=F9h through AH=FFH will return AL=00h if no handler set
-	handler is called with all registers exactly as set by caller, and
-	  should exit with IRET
+	the user handler is called immediately on entry to the main DOS INT 21h
+	  function dispatcher with interrupts disabled and all registers and
+	  stack exactly as set by caller; it should exit with IRET
 SeeAlso: AH=F9h"OEM"
 --------T-21F8-------------------------------
 INT 21 - DoubleDOS - SET/RESET KEYBOARD CONTROL FLAGS
@@ -8896,7 +8899,7 @@ Notes:	this interrupt is invoked whenever DOS detects a ^C or ^Break; it
 	any DOS call may safely be made within the INT 23 handler, although
 	  the handler must check for a recursive invocation if it does
 	  call DOS
-SeeAlso: INT 1B
+SeeAlso: INT 1B,INT 21/AH=92h"PTS-DOS"
 --------G-23---------------------------------
 INT 23 - COMTROL HOSTESS i/ISA DEBUGGER - GET CONFIGURATION INFORMATION
 	AL = query type
@@ -8914,7 +8917,7 @@ Notes:	invoked when a critical (usually hardware) error is encountered by DOS
 	when DOS terminates a program, it copies the previous value of the
 	  INT 24 vector out of the PSP (see #01378) and into the interrupt
 	  vector table
-SeeAlso: INT 21/AH=95h
+SeeAlso: INT 21/AH=95h,INT 21/AH=59h/BX=0000h,INT 21/AH=92h"PTS-DOS"
 
 (Table 02543)
 Values critical error handler is called with:
@@ -8949,12 +8952,29 @@ Notes:	the only DOS calls the handler may make are INT 21/AH=01h-0Ch,30h,59h
 	(DOS 3.0+) if a critical error occurs inside the critical error
 	  handler, the DOS call is automatically failed (AL set to 03h and
 	  the INT 24 call skipped)
+	The initial critical error handler is located in the kernel and
+	  always results in FAIL. However, by default it is replaced by
+	  the critical error handler in the command interpreter when it
+	  loads. This can be suppressed (e.g. for BBS systems) by loading
+	  the primary DOS 3.00+ COMMAND.COM shell with the undocumented
+	  option /F 'Fail'. This syntax is also supported with PTS/DOS 6.51+,
+	  S/DOS 1.0+, and DR-OpenDOS 7.02+ (1997-11-13) COMMAND.COM, as well
+	  as 4DOS.COM/NDOS.COM.	 OpenDOS 7.01+ COMMAND.COM (1997-03-21)
+	  introduced this under /N, which is still supported by newer releases
+	  (although it has a slightly different meaning now).
+BUG:	DR DOS COMMAND.COM before 1998-05-07 caused incorrect error messages
+	  to occur if the error code had a non-zero MSB (e.g. NWCDEX's
+	  "IO error reading from device" instead of the correct
+	  "not ready error").  This was fixed with the DR-OpenDOS 7.03
+	  COMMAND.COM now passing the full error code to any critical error
+	  handlers.
 
 Bitfields for critical error type and processing flags:
 Bit(s)	Description	(Table 02544)
- 7	clear = disk I/O error
-	set   = -- if block device, bad FAT image in memory
-		-- if char device, error code in DI
+ 7	class
+	=0  disk I/O error
+	=1  -- if block device, bad FAT image in memory
+	    -- if char device, error code in DI
  6	unused
  5	Ignore allowed (DOS 3.0+)
  4	Retry allowed (DOS 3.0+)
@@ -8963,32 +8983,46 @@ Bit(s)	Description	(Table 02544)
 	00 = DOS area	01 = FAT
 	10 = root dir	11 = data area
  0	set if write, clear if read
+Note:	Abort is always allowed
 SeeAlso: #02545,#02546
 
 (Table 02545)
 Values for critical error code:
- 00h	write-protection violation attempted
- 01h	unknown unit for driver
- 02h	drive not ready
- 03h	unknown command given to driver
- 04h	data error (bad CRC)
- 05h	bad device driver request structure length
- 06h	seek error
- 07h	unknown media type
- 08h	sector not found
- 09h	printer out of paper
- 0Ah	write fault
- 0Bh	read fault
- 0Ch	general failure
- 0Dh	(DOS 3.0+) sharing violation
- 0Eh	(DOS 3.0+) lock violation
- 0Fh	invalid disk change
- 10h	(DOS 3.0+) FCB unavailable
- 11h	(DOS 3.0+) sharing buffer overflow
- 12h	(DOS 4.0+) code page mismatch
- 13h	(DOS 4.0+) out of input
- 14h	(DOS 4.0+) insufficient disk space
-SeeAlso: #02544,#02546
+ 00h   (0)  write-protection violation attempted
+ 01h   (1)  unknown unit for driver
+ 02h   (2)  drive not ready
+ 03h   (3)  unknown command given to driver
+ 04h   (4)  data error (bad CRC)
+ 05h   (5)  bad device driver request structure length
+ 06h   (6)  seek error
+ 07h   (7)  unknown media type (non-DOS disk)
+ 08h   (8)  sector not found
+ 09h   (9)  printer out of paper
+ 0Ah  (10)  write fault
+ 0Bh  (11)  read fault
+ 0Ch  (12)  general failure
+ 0Dh  (13)  (DOS 3.0+, "multitasking" DOS, PTS-DOS & S/DOS) sharing violation
+ 0Eh  (14)  (DOS 3.0+) lock violation
+ 0Fh  (15)  invalid disk change / wrong disk
+ 10h  (16)  (DOS 3.0+) FCB unavailable
+ 10h  (16)  uncertain media
+ 11h  (17)  (DOS 3.0+) sharing buffer overflow
+ 11h  (17)  character call interrupted
+ 12h  (18)  (DOS 4.0+) code page mismatch
+ 13h  (19)  (DOS 4.0+) out of input
+ 14h  (20)  (DOS 4.0+) insufficient disk space
+Note:	Critical error codes 00h..0Ch are the traditional codes reported
+	  through INT 24.  These code assignments are mapped to error codes
+	  13h..1Fh reported by INT21/AH=59h (see #01680).  Similarly, the
+	  DOS 3.x critical error codes 0Dh..11h are mapped to INT21/AH=59h
+	  error codes 20h..24h, however, the DOS 4.0+ critical error codes are
+	  not mapped.
+BUG:	Paragon Technology Systems' S/DOS 1.0 sources (a stripped down issue
+	  of PTS-DOS 6.51 with sources on CD) erroneously list DOS INT 24
+	  error	codes 12h..14h as 11h..13h, however, since the sources do not
+	  make use of these defines, this seems to be only a documentation
+	  error.
+SeeAlso: #02544,#02546,#01680
 
 (Table 02546)
 Values for critical error handler action code:
@@ -9018,12 +9052,39 @@ Notes:	original flags are left on stack, and must be popped by caller
 	  of INT 25 must be used solely on the basis of the partition's size,
 	  thus forcing use of the new-style call even for data in the first
 	  32M of the partition
+	PC Tools MIRROR as shipped with MS-DOS 5.0+ checks several signatures
+	  at the beginning of INT 25h and INT 26h before it starts to patch
+	  these vectors. The signatures it looks for are 83h, F9h, FFh, 74h
+	  (CMP CX,-01; JZ ????) at offset +1 from the INT 25h/26h entry points
+	  and 2Eh, FFh, 2Eh (JMP DWORD PTR CS:[????]) at the location pointed
+	  to by the JZ ????. If it finds these signatures it will use the
+	  target address of the far jump for its sub-sequent checks, otherwise
+	  it will just take the previous interrupt entry points when scanning
+	  for FAh, 2Eh, 8Ch, 16h (CLI; MOV CS:????,SS) or FAh, 2Eh, 89h, 26h
+	  (CLI; MOV CS:????,SP) right at the beginning. Hence, it seems the
+	  first two checks are to trace through a specific INT 25h/26h
+	  filter. However, the purpose of the whole patch is unknown.
+	A method to detect the actual assignments of logical drive numbers
+	 to physical BIOS drive units (for example to detect the boot drive),
+	 is to temporarily mount an INT 13h handler recording the used DL
+	 drive unit for any INT 13/AH=02h read operations and discarding any
+	 attempts to access actual floppy drives.  Then call INT 25h for
+	 all the appropriate DOS drives and watch the results recorded by
+	 the INT 13h interceptor.
+	Although all registers except segment registers may be destroyed
+	 some software depends on some of the registers being preserved.
+	 For example some Flash disk drivers requires that DX is not trashed.
+	 DR-DOS 7.03 takes care of this.
 BUGS:	DOS 3.1 through 3.3 set the word at ES:[BP+1Eh] to FFFFh if AL is an
 	  invalid drive number
 	DR DOS 3.41 will return with a jump instead of RETF, leaving the
 	  wrong number of bytes on the stack; use the huge-partition version
 	  (INT 25/CX=FFFFh) for all partition sizes under DR DOS 3.41
-SeeAlso: INT 13/AH=02h,INT 25/CX=FFFFh,INT 26,INT 21/AX=7305h
+	DR DOS 6.0 original issues 05/1991 & 08/1991 reported wrong error
+	  codes for "drive not ready" and "write protect". This was fixed
+	  with the DR DOS BDOS patch "PAT321" (1992/02/19, XDIR /C: 947Bh),
+	  and later "full" rebuilds (see INT 21/AX=4452h for details).
+SeeAlso: INT 13/AH=02h,INT 25/CX=FFFFh,INT 26,INT 21/AX=7305h,INT 21/AH=90h"PTS"
 
 (Table 02547)
 Values for disk I/O status:

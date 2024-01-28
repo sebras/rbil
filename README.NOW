@@ -10,11 +10,37 @@ info, lots of chipset info (see NEEDHELP.TXT), ....
 UPCOMING CHANGES
 ================
 
-None planned at this time.
+The individual sections of the list will be larger in future releases
+so that there are fewer parts.  I'm planning on 720K per section unless
+there are strong objections.
 
 
 WHAT'S NEW
 ==========
+
+INTER61
+-------
+New files:
+	FAQ.LST		start of an FAQ -- submissions welcome!
+
+updated files:
+	OPCODES.LST
+
+new info:
+	over 400k of additions, including: AHA-154x commands, ATASPI,
+	more MSRs (including AMD Athlon), lots of DR-DOS/OpenDOS/PTS-DOS/S-DOS
+	info (with more still to be added), AMIGATSR, MULTIJOY, USB4DOS,
+	VXDLDR, etc.
+
+Other changes:
+	INTERxxF and INTERxxG have been merged.
+
+Note:	I have deliberately omitted the usual renumbering of tables because
+	I still have lots of pending updates referencing tables using the
+	numbering from INTER60 (and there are no doubt some dangling
+	cross-references due to incomplete updating).  As a result, many
+	table numbers will be out of order.
+
 
 INTER60
 -------
@@ -47,29 +73,4 @@ new info:
 	other hardware: C&T 82C9001A, C&T 64200/64310, Ensoniq ES1370/1371,
 	  Cirrus CL-PD6710/6722, Cirrus CL-PD6729
 	Award-BIOS password algorithm, more PCI vendor IDs
-
-
-INTER58
--------
-updated files:
-	OPCODES.LST
-
-new info:
-	more undocumented MS-DOS 7.x calls
-	Intel 440BX chipset
-	SMBIOS v2.2
-
-
-INTER57
--------
-updated files:
-	NEEDHELP.TXT
-
-new info:
-	lots of chipsets: AMD-640, AMD-645, 82C291, 82C391, Intel 380FB, etc.
-	lots of I2C-bus devices: Philips SAA5252/TSA5512, Xicor X24C01A, etc.
-	S3 Trio32/Trio64/Trio64V+ programming info
-	Chips&Technologies POST codes, VGA BIOS, keyboard controller, etc.
-	WindowsNT NTOS function numbers
-	more Win95 updates
 

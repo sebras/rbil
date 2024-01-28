@@ -1,5 +1,5 @@
-I2C-BUS DEVICES			Release 60		Last Change 03jan99
-Copyright (c) 1997,1998,1999 Ralf Brown
+I2C-BUS DEVICES			Release 61		Last Change 16jul00
+Copyright (c) 1997,1998,1999,2000 Ralf Brown
 
 --------!---Note-----------------------------
 Notes:	An I2C device uses two consecutive subaddresses; the low bit indicates
@@ -95,6 +95,12 @@ I2C 0Fh - Reserved by Philips for future definition
 --------p-I16--------------------------------
 I2C 16h - Benchmarq BQ2090 Battery-Charge Monitor
 !!!harris\bq2090.pdf
+----------I18--------------------------------
+I2C 18h - SMBus - Alert Response Address
+Access:	Read-Only
+Desc:	used to query the SMBus for the address of the device sending an
+	  alert; one byte is returned, containing the device's address in
+	  the upper seven bits (bit 0 is undefined)
 --------V-I1800------------------------------
 I2C 18h/00h - Raytheon TMC2361 - FILTER AND TEST PATTERN REGISTER
 Access:	Read/Write
@@ -270,6 +276,12 @@ Access:	Read-Only
 Desc:	get the second data byte from the most recently received line of
 	  closed-captioning data
 SeeAlso: I2C 28h/00h,I2C 28h/80h,I2C 28h/81h,#I0067
+----------I30--------------------------------
+I2C 30h - Pentium II/III - THERMAL SENSOR
+Range:	addresses 30h, 34h, 50h, 54h, 90h, 94h, depending on processor pins
+----------I34--------------------------------
+I2C 34h - Pentium II/III - THERMAL SENSOR
+Range:	addresses 30h, 34h, 50h, 54h, 90h, 94h, depending on processor pins
 --------s-I3A68------------------------------
 I2C 3Ah/68h - ITT MAS 3507D MPEG Audio Decoder - DATA REGISTER (WRITE)
 Access:	Write-Only
@@ -320,6 +332,12 @@ SeeAlso: I2C 4Ah
 I2C 4Ah - Philips SAA7111
 Range:	I2C 48h or I2C 4Ah, selected by external pin
 SeeAlso: I2C 48h/00h
+----------I30--------------------------------
+I2C 50h - Pentium II/III - THERMAL SENSOR
+Range:	addresses 30h, 34h, 50h, 54h, 90h, 94h, depending on processor pins
+----------I30--------------------------------
+I2C 54h - Pentium II/III - THERMAL SENSOR
+Range:	addresses 30h, 34h, 50h, 54h, 90h, 94h, depending on processor pins
 --------s-I80--------------------------------
 I2C 80h - ITT MSP 3400C Multistandard Sound Processor
 Note:	http://www.itt-sc.de/pdf/msp3400c.pdf, p.16-42
@@ -2409,6 +2427,12 @@ Values for ITT VDP 31xxB Fast Processor register:
  F7h	crystal oscillator line-locked mode
  F8h	crystal oscillator center adjust
  F9h	crystal oscillator center adjust (line-locked mode)
+----------I30--------------------------------
+I2C 90h - Pentium II/III - THERMAL SENSOR
+Range:	addresses 30h, 34h, 50h, 54h, 90h, 94h, depending on processor pins
+----------I30--------------------------------
+I2C 94h - Pentium II/III - THERMAL SENSOR
+Range:	addresses 30h, 34h, 50h, 54h, 90h, 94h, depending on processor pins
 --------V-I9C00------------------------------
 I2C 9Ch/00h - Philips SAA7110(A) ONE-CHIP FRONT-END - INCREMENT DELAY
 Access:	Write-Only
@@ -3218,6 +3242,70 @@ Bit(s)	Description	(Table I0117)
 Note:	bits 2-1 are for backwards compatibility with existing BIOSes; for
 	  full CL=2 support at 100 MHz, check bytes 12h, 17h, and 18h
 SeeAlso: #I0047
+----------IA0--------------------------------
+I2C A0h - Pentium Pro/II/III - Scratch EEPROM
+Range:	Addresses A0h, A4h, A8h, or ACh, depending on processor ID
+----------IA2--------------------------------
+I2C A2h - Pentium Pro/II/III - Processor Information ROM
+Range:	Addresses A2h, A6h, AAh, or AEh, depending on processor ID
+
+Format of Pentium II Processor Information ROM (PIROM):
+Offset	Size	Description	(Table I0105)
+ 00h	BYTE	data format revision (high/low nybble)
+ 01h	WORD	size of EEPROM in bytes (big-endian)
+ 03h	BYTE	offset of processor data, or 00h (0Eh for P-II Xeon)
+ 04h	BYTE	offset of processor core data, or 00h
+ 05h	BYTE	offset of L2 cache data, or 00h
+ 06h	BYTE	offset of SEC cartridge data, or 00h
+ 07h	BYTE	offset of part number data, or 00h
+ 08h	BYTE	offset of thermal reference data, or 00h
+ 09h	BYTE	offset of feature data, or 00h
+ 0Ah	BYTE	offset of other data, or 00h
+ 0Bh	WORD	reserved for future use
+ 0Dh	BYTE	8-bit checksum of bytes 00h-0Ch
+---Pentium II Xeon---
+ 0Eh  6 BYTEs	ASCII S-spec/QDF number
+ 14h	BYTE
+ 15h	BYTE	8-bit checksum of bytes 0Eh-14h (processor data)
+ 16h	!!!intel\24377002.pdf
+ 23h	BYTE	reserved for future use
+ 24h	BYTE	8-bit checksum of bytes 16h-23h (processor core data)
+ 25h	DWORD	reserved for future use
+ 29h	WORD	cache size in KB
+ 2Bh	BYTE
+ 2Ch	WORD	L2 cache voltage in mV
+ 2Eh	BYTE	high byte of L2 cache voltage tolerance in mV
+ 2Fh	BYTE	low byte of L2 cache voltage tolerance in mV
+ 30h	BYTE
+ 31h	BYTE	8-bit checksum of bytes 25h-30h (L2 data)
+ 32h  4 BYTEs	ASCII cartridge revision
+ 36h	BYTE
+ 37h	BYTE	8-bit checksum of bytes 32h-36h (cartridge data)
+ 38h  7 BYTEs	ASCII processor part number
+ 3Fh 14 BYTEs	ASCII processor BOM ID
+ 4Dh	QWORD	processor serial number
+ 55h 26 BYTEs	reserved
+ 6Fh	BYTE	8-bit checksum of bytes 38h-6Eh (part number data)
+ 70h	BYTE	thermal reference
+ 71h  2 BYTEs	reserved for future use
+ 73h	BYTE	8-bit checksum of bytes 70h-72h (thermal reference data)
+ 74h	DWORD	processor core feature flags (see OPCODE "CPUID")
+ 78h	DWORD	cartridge feature flags (see #I0106)
+ 7Ch	BYTE	bits 3-0: number of devices in TAP chain
+		bits 7-4: reserved
+ 7Dh	BYTE	8-bit checksum of bytes 74h-7Ch (feature data)
+ 7Eh  2 BYTEs	reserved for future use
+
+Bitfields for Pentium II Xeon cartridge feature flags:
+Bit(s)	Description	(Table I0106)
+ 6	serial signature
+ 5	electronic signature (processor serial number) is present
+ 4	thermal sensing device is present
+ 3	thermal reference byte is present
+ 2	OEM EEPROM is present
+ 1	core VID is present
+ 0	L2 cache VID is present
+SeeAlso: #I0105
 --------s-IB4--------------------------------
 I2C B4h - TDA9850 BTSC Stereo/SAP Decoder
 Range:	I2C addresses B4h and B6h, selectable by external pin
@@ -3462,15 +3550,14 @@ Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
 --------!---BIBLIOGRAPHY---------------------
 [see BIBLIO.LST]
 --------!---Admin----------------------------
-Highest Table Number = I0104
+Highest Table Number = I0106
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER60A through INTER60D (preferably the original
-authenticated PKZIP archives), and the utility and hypertext programs in a trio
-of additional archives called INTER60E.ZIP to INTER60G.ZIP.
+quartet of archives named INTER61A through INTER61D (preferably the original
+authenticated PKZIP archives), and the utility and hypertext programs in a pair
+of additional archives called INTER61E.ZIP and INTER61F.ZIP.
 
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+Copyright (c) 1989-1999,2000 Ralf Brown
 --------!---CONTACT_INFO---------------------
-Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
-FIDO: Ralf Brown 1:129/26.1
+E-mail: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)

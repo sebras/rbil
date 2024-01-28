@@ -1,5 +1,5 @@
 Interrupt List, part 5 of 18
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+Copyright (c) 1989-1999,2000 Ralf Brown
 --------X-1AB101-----------------------------
 INT 1A - PCI BIOS v2.0c+ - INSTALLATION CHECK
 	AX = B101h
@@ -7198,7 +7198,7 @@ SeeAlso: #00873,#01142,#01130
 
 Bitfields for Intel 82443BX (Device 0) NBX Configuration Register:
 Bit(s)	Description	(Table 01144)
- 31-24	SDRAM rows without ECC (each set bit indicates a row in the SDRAM array
+ 31-24	SDRAM rows without ECC; each set bit indicates a row in the SDRAM array
 	  with does NOT have error correction (bit 24 = row 0; note that double-
 	  sided DIMMs use two rows, one for the front and one for the back)
  23-19	reserved
@@ -9733,8 +9733,9 @@ Notes:	this is the preferred interrupt to chain when a program needs to be
 SeeAlso: INT 08,INT E2"PC Cluster"
 --------B-1D---------------------------------
 INT 1D - SYSTEM DATA - VIDEO PARAMETER TABLES
-Note:	the default parameter table (see #01263) is located at F000h:F0A4h for
+Notes:	the default parameter table (see #01263) is located at F000h:F0A4h for
 	  100% compatible BIOSes
+	Under PhysTechSoft's PTS ROM-DOS this table is fictitious.
 SeeAlso: INT 10/AH=00h
 
 Format of video parameters:
@@ -9757,6 +9758,27 @@ Notes:	the default parameter table (see #01264) is located at F000h:EFC7h for
 	  100% compatible BIOSes
 	if the table is changed, INT 13/AH=00h should be called to ensure that
 	  the floppy-disk controller is appropriately reprogrammed
+	before rebooting the machine, this pointer should be restored to point
+	  to the original position of the floppy parameters in the ROM BIOS.
+	  The DOS boot sector takes care of this and in the case of a bootstrap
+	  error, resets the vector. It also passes the original pointer to the
+	  IO.SYS/IBMDOS.COM file for possible later restoration.
+	under PhysTechSoft's PTS ROM-DOS this table is fictitious.
+	the DR-DOS multi-OS LOADER (at least 1.04 up to including DR-DOS 7.03)
+	  does not alter the INT 1Eh vector when launching IBMBIO.COM files
+	  via its boot methods "S" or "D".  Although this allows booting
+	  (uncompressed) IBMBIO.COM files bigger than 29 KB, it may
+	  occasionally cause the floppy parameters to get trashed due to a 
+	  bug in the DR-DOS 7.03 IBMBIO.COM startup code.
+BUG:	The 2nd level decompressor of the DR-DOS 7.03 IBMBIO.COM (1998/08/11 to
+	  1999/07) start-up code erroneously assumes that the floppy parameters
+	  reside at 0000h:7C00h (normally set up there by the boot sector)
+	  instead of relying on the INT 1Eh vector to point at their location.
+	  Since the "assumed" floppy parameters get moved around and INT 1Eh
+	  gets updated to point to their new location, this may cause the
+	  contents of the floppy params to get trashed, if they weren't
+	  actually copied to 0000h:7C00h by the bootstrap loader (that is the
+	  boot sector or the LOADER utility).
 SeeAlso: INT 13/AH=0Fh,INT 41"HARD DISK 0",INT 4D/AH=0Ah
 
 Format of diskette parameter table:
@@ -9767,9 +9789,11 @@ Offset	Size	Description	(Table 01264)
  01h	BYTE	second specify byte
 		bits 7-1: head load time (01h = 4 ms)
 		bit    0: non-DMA mode (always 0)
+		Note:	The DOS boot sector sets the head load time to 15ms,
+			  however, one should retry the operation on failure
  02h	BYTE	delay until motor turned off (in clock ticks)
  03h	BYTE	bytes per sector (00h = 128, 01h = 256, 02h = 512, 03h = 1024)
- 04h	BYTE	sectors per track
+ 04h	BYTE	sectors per track (maximum if different for different tracks)
  05h	BYTE	length of gap between sectors (2Ah for 5.25", 1Bh for 3.5")
  06h	BYTE	data length (ignored if bytes-per-sector field nonzero)
  07h	BYTE	gap length when formatting (50h for 5.25", 6Ch for 3.5")
@@ -9785,8 +9809,9 @@ SeeAlso: #03226 at INT 4D/AH=09h
 INT 1F - SYSTEM DATA - 8x8 GRAPHICS FONT
 Desc:	this vector points at 1024 bytes of graphics data, 8 bytes for each
 	  character 80h-FFh
-Note:	graphics data for characters 00h-7Fh stored at F000h:FA6Eh in 100%
+Notes:	graphics data for characters 00h-7Fh stored at F000h:FA6Eh in 100%
 	  compatible BIOSes
+	Under PhysTechSoft's PTS ROM-DOS this table is fictitious.
 SeeAlso: INT 10/AX=5000h,INT 43
 --------b-1F12-------------------------------
 INT 1F U - C&T "SuperState" BIOS - POWER OFF

@@ -1,5 +1,5 @@
-MEMORY MAP			Release 60		Last change 03jan99
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+MEMORY MAP			Release 61		Last change 16jul00
+Copyright (c) 1989-1999,2000 Ralf Brown
 
 --------H-M00000000--------------------------
 MEM 0000h:0000h R - INTERRUPT VECTOR TABLE
@@ -35,27 +35,45 @@ Notes:	the BIOS sets this word to zero if is unable to find any serial ports
 	  at the addresses it is programmed to check at boot
 	DOS and BIOS serial device numbers may be redefined by re-assigning
 	  these values of the base I/O addresses stored here
+	Under DR-OpenDOS 7.02+ this setting can be changed with the
+	  undocumented CONFIG.SYS COM1=[port_address|logical_no][,[timeout]]
+	  directive, whereby port_address = 200h..3F8h, logical_no = 0 or 1..4,
+	  timeout=0..255 (default 1).
 SeeAlso: MEM 0040h:0002h,MEM 0040h:0004h,MEM 0040h:0006h,MEM 0040h:0008h
 SeeAlso: MEM 0040h:007Ch,INT 14/AH=00h,PORT 03F8h"SERIAL"
 --------S-M00400002--------------------------
 MEM 0040h:0002h - BASE I/O ADDRESS OF SECOND SERIAL I/O PORT
 Size:	WORD
-Note:	the BIOS sets this word to zero if is unable to find more than one
+Notes:	the BIOS sets this word to zero if is unable to find more than one
 	  serial port at the addresses it is programmed to check at boot
+	DOS and BIOS serial device numbers may be redefined by re-assigning
+	  these values of the base I/O addresses stored here
+	Under DR-OpenDOS 7.02+ this setting can be changed with the
+	  undocumented CONFIG.SYS COM2=[port_address|logical_no][,[timeout]]
+	  directive, whereby port_address = 200h..3F8h, logical_no = 0 or 1..4,
+	  timeout=0..255 (default 1).
 SeeAlso: MEM 0040h:0000h,MEM 0040h:0004h,MEM 0040h:0006h,MEM 0040h:000Ah
 SeeAlso: MEM 0040h:007Dh,INT 14/AH=00h,PORT 02F8h"SERIAL"
 --------S-M00400004--------------------------
 MEM 0040h:0004h - BASE I/O ADDRESS OF THIRD SERIAL I/O PORT
 Size:	WORD
-Note:	the BIOS sets this word to zero if is unable to find more than two
+Notes:	the BIOS sets this word to zero if is unable to find more than two
 	  serial ports at the addresses it is programmed to check at boot
+	Under DR-OpenDOS 7.02+ this setting can be changed with the
+	  undocumented CONFIG.SYS COM3=[port_address|logical_no][,[timeout]]
+	  directive, whereby port_address = 200h..3F8h, logical_no = 0 or 1..4,
+	  timeout=0..255 (default 1).
 SeeAlso: MEM 0040h:0000h,MEM 0040h:0002h,MEM 0040h:0006h,MEM 0040h:000Ch
 SeeAlso: MEM 0040h:007Eh,PORT 03E8h"SERIAL"
 --------S-M00400006--------------------------
 MEM 0040h:0006h - BASE I/O ADDRESS OF FOURTH SERIAL I/O PORT
 Size:	WORD
-Note:	the BIOS sets this word to zero if is unable to find more than three
+Notes:	the BIOS sets this word to zero if is unable to find more than three
 	  serial ports at the addresses it is programmed to check at boot
+	Under DR-OpenDOS 7.02+ this setting can be changed with the
+	  undocumented CONFIG.SYS COM4=[port_address|logical_no][,[timeout]]
+	  directive, whereby port_address = 200h..3F8h, logical_no = 0 or 1..4,
+	  timeout=0..255 (default 1).
 SeeAlso: MEM 0040h:0000h,MEM 0040h:0002h,MEM 0040h:0004h,MEM 0040h:0008h
 SeeAlso: MEM 0040h:007Fh,PORT 02E8h"SERIAL"
 --------P-M00400008--------------------------
@@ -66,24 +84,42 @@ Notes:	the BIOS POST routine fills in the parallel port address fields in
 	  for which a valid parallel port was found are set to zero.
 	the BIOS INT 17 handler uses these fields to address the parallel
 	  ports
+	Under DR-OpenDOS 7.02+ this setting can be changed with the
+	  undocumented CONFIG.SYS LPT1=[port_address|logical_no][,[timeout]]
+	  directive, whereby port_address = 200h..3FCh, logical_no = 0 or 1..3,
+	  timeout=0..255 (default 20).
 SeeAlso: MEM 0040h:0000h,MEM 0040h:000Ah,MEM 0040h:000Ch,INT 17/AH=00h
 SeeAlso: PORT 0278h"PRINTER",PORT 03BCh"PRINTER"
 --------P-M0040000A--------------------------
 MEM 0040h:000Ah - BASE I/O ADDRESS OF SECOND PARALLEL I/O PORT
 Size:	WORD
-Note:	zero if fewer than two parallel ports installed
+Notes:	zero if fewer than two parallel ports installed
+	Under DR-OpenDOS 7.02+ this setting can be changed with the
+	  undocumented CONFIG.SYS LPT2=[port_address|logical_no][,[timeout]]
+	  directive, whereby port_address = 200h..3FCh, logical_no = 0 or 1..3,
+	  timeout=0..255 (default 20).
 SeeAlso: MEM 0040h:0002h,MEM 0040h:0008h,MEM 0040h:000Ch,PORT 0278h"PRINTER"
 SeeAlso: PORT 0378h"PRINTER",INT 17/AH=00h
 --------P-M0040000C--------------------------
 MEM 0040h:000Ch - BASE I/O ADDRESS OF THIRD PARALLEL I/O PORT
 Size:	WORD
-Note:	zero if fewer than three parallel ports installed
+Notes:	zero if fewer than three parallel ports installed
+	Under DR-OpenDOS 7.02+ this setting can be changed with the
+	  undocumented CONFIG.SYS LPT3=[port_address|logical_no][,[timeout]]
+	  directive, whereby port_address = 200h..3FCh, logical_no = 0 or 1..3,
+	  timeout=0..255 (default 20).
 SeeAlso: MEM 0040h:0004h,MEM 0040h:0008h,MEM 0040h:000Ah,MEM 0040h:000Eh
 SeeAlso: PORT 0378h"PRINTER",INT 17/AH=00h
 --------P-M0040000E--------------------------
 MEM 0040h:000Eh - BASE I/O ADDRESS OF FOURTH PARALLEL I/O PORT (pre-PS/2)
 Size:	WORD
-Note:	zero if fewer than four parallel ports installed
+Notes:	zero if fewer than four parallel ports installed
+	Under DR-OpenDOS 7.02+ this setting can be changed with the
+	  undocumented CONFIG.SYS LPT4=(port_address|logical_no)[,[timeout]]
+	  directive, where port_address = 200h..3FCh, logical_no = 0 or 1..3,
+	  timeout=0..255 (default 20).  To avoid any interference with the PS/2
+	  and later interpretation, this will be rejected if this entry does
+	  not hold 0, which would indicate it is used for different purposes.
 SeeAlso: MEM 0040h:0008h,MEM 0040h:000Ah,MEM 0040h:000Eh"BIOS DATA"
 SeeAlso: PORT 0378h"PRINTER",INT 17/AH=00h
 --------B-M0040000E--------------------------
@@ -442,8 +478,14 @@ SeeAlso: MEM 0040h:0041h
 		AT: high bits of track number
     47h BYTE	XT: controlbyte from HD parameters (step rate,...)
 		AT: 101DHHHH, D=drive number, HHHH=head number
+		    bit 7 = ECC mode (1)
+		    bit 6 = unknown (0)
+		    bit 5 = 512 byte sectors (1)
+		    bit 4 = drive number
+		    bit 3-0 head number
     48h BYTE	XT: INT 13h subfunction number
-		AT: comand byte to hard disk controller
+		AT: command byte to hard disk controller
+SeeAlso: CALL F000h:211Eh
 --------B-M00400042--------------------------
 MEM 0040h:0042h - DISK CONTROLLER STATUS REGISTER 0
 Size:	BYTE
@@ -709,18 +751,36 @@ SeeAlso: MEM 0040h:0076h"SuperBIOS"
 --------B-M00400078--------------------------
 MEM 0040h:0078h - PARALLEL DEVICE 1 TIME-OUT COUNTER
 Size:	BYTE
+Note:	Under DR-OpenDOS 7.02+ this setting can be changed with the
+	  undocumented CONFIG.SYS LPT1=[port_address|logical_no][,[timeout]]
+	  directive, whereby port_address = 200h..3FCh, logical_no = 0 or 1..3,
+	  timeout=0..255 (default 20).
 SeeAlso: MEM 0040h:0079h,MEM 0040h:007Ah,INT 17/AH=00h
 --------B-M00400079--------------------------
 MEM 0040h:0079h - PARALLEL DEVICE 2 TIME-OUT COUNTER
 Size:	BYTE
+Note:	Under DR-OpenDOS 7.02+ this setting can be changed with the
+	  undocumented CONFIG.SYS LPT2=[port_address|logical_no][,[timeout]]
+	  directive, whereby port_address = 200h..3FCh, logical_no = 0 or 1..3,
+	  timeout=0..255 (default 20).
 SeeAlso: MEM 0040h:0078h,MEM 0040h:007Ah,INT 17/AH=00h
 --------B-M0040007A--------------------------
 MEM 0040h:007Ah - PARALLEL DEVICE 3 TIME-OUT COUNTER
 Size:	BYTE
+Note:	Under DR-OpenDOS 7.02+ this setting can be changed with the
+	  undocumented CONFIG.SYS LPT3=[port_address|logical_no][,[timeout]]
+	  directive, whereby port_address = 200h..3FCh, logical_no = 0 or 1..3,
+	  timeout=0..255 (default 20).
 SeeAlso: MEM 0040h:0078h,MEM 0040h:0079h,MEM 0040h:007Bh"PARALLEL"
 --------B-M0040007B--------------------------
 MEM 0040h:007Bh - PARALLEL DEVICE 4 TIME-OUT COUNTER (pre-PS, PS Models 25,30)
 Size:	BYTE
+Note:	Under DR-OpenDOS 7.02+ this setting can be changed with the
+	  undocumented CONFIG.SYS LPT4=(port_address|logical_no)[,[timeout]]
+	  directive, where port_address = 200h..3FCh, logical_no = 0 or 1..3,
+	  timeout=0..255 (default 20).  To avoid any interference with the PS/2
+	  and later interpretation, this will be rejected if this entry does
+	  not hold 0, which would indicate it is used for different purposes.
 SeeAlso: MEM 0040h:0078h,MEM 0040h:007Ah,MEM 0040h:007Bh"INT 4Bh"
 --------m-M0040007B--------------------------
 MEM 0040h:007Bh - INT 4Bh FLAGS (PS2 and newer)
@@ -739,21 +799,37 @@ Bit(s)	Description	(Table M0023)
 --------B-M0040007C--------------------------
 MEM 0040h:007Ch - SERIAL DEVICE 1 TIMEOUT COUNTER
 Size:	BYTE
+Note:	Under DR-OpenDOS 7.02+ this setting can be changed with the
+	  undocumented CONFIG.SYS COM1=[port_address|logical_no][,[timeout]]
+	  directive, whereby port_address = 200h..3F8h, logical_no = 0 or 1..4,
+	  timeout=0..255 (default 1).
 SeeAlso: MEM 0040h:0000h,MEM 0040h:007Dh,MEM 0040h:007Eh,MEM 0040h:007Fh
 SeeAlso: INT 14/AH=01h
 --------B-M0040007D--------------------------
 MEM 0040h:007Dh - SERIAL DEVICE 2 TIMEOUT COUNTER
 Size:	BYTE
+Note:	Under DR-OpenDOS 7.02+ this setting can be changed with the
+	  undocumented CONFIG.SYS COM2=[port_address|logical_no][,[timeout]]
+	  directive, whereby port_address = 200h..3F8h, logical_no = 0 or 1..4,
+	  timeout=0..255 (default 1).
 SeeAlso: MEM 0040h:0002h,MEM 0040h:007Ch,MEM 0040h:007Eh,MEM 0040h:007Fh
 SeeAlso: INT 14/AH=01h
 --------B-M0040007E--------------------------
 MEM 0040h:007Eh - SERIAL DEVICE 3 TIMEOUT COUNTER
 Size:	BYTE
+Note:	Under DR-OpenDOS 7.02+ this setting can be changed with the
+	  undocumented CONFIG.SYS COM3=[port_address|logical_no][,[timeout]]
+	  directive, whereby port_address = 200h..3F8h, logical_no = 0 or 1..4,
+	  timeout=0..255 (default 1).
 SeeAlso: MEM 0040h:0004h,MEM 0040h:007Ch,MEM 0040h:007Dh,MEM 0040h:007Fh
 SeeAlso: INT 14/AH=01h
 --------B-M0040007F--------------------------
 MEM 0040h:007Fh - SERIAL DEVICE 4 TIMEOUT COUNTER
 Size:	BYTE
+Note:	Under DR-OpenDOS 7.02+ this setting can be changed with the
+	  undocumented CONFIG.SYS COM4=[port_address|logical_no][,[timeout]]
+	  directive, whereby port_address = 200h..3F8h, logical_no = 0 or 1..4,
+	  timeout=0..255 (default 1).
 SeeAlso: MEM 0040h:0006h,MEM 0040h:007Ch,MEM 0040h:007Dh,MEM 0040h:007Eh
 SeeAlso: INT 14/AH=01h
 --------K-M00400080--------------------------
@@ -772,7 +848,8 @@ SeeAlso: MEM 0040h:0085h,INT 10/AX=1100h
 --------V-M00400085--------------------------
 MEM 0040h:0085h - VIDEO (EGA/MCGA/VGA) - CHARACTER HEIGHT IN SCAN-LINES
 Size:	WORD
-SeeAlso: MEM 0040h:0084h
+SeeAlso: MEM 0040h:0084h,INT 10"LIRVGA19"
+!!!
 --------V-M00400087--------------------------
 MEM 0040h:0087h - VIDEO (EGA/VGA) CONTROL: [MCGA: =00h]
 Size:	BYTE
@@ -818,6 +895,20 @@ Values for EGA/VGA configuration switches:
  0Ah Pri EGA mono display,		Sec CGA 40 x 25
  0Bh Pri EGA mono display,		Sec CGA 80 x 25
 SeeAlso: #M0025
+--------b-M00400088--------------------------
+MEM 0040h:0088h - Olivetti EGA capabilities???
+Size:	BYTE???
+
+Bitfields for Olivetti EGA capabilities flags:
+Bit(s)	 Description	(Table M0130)
+ 7	 640x400 mode related???
+ 6	 unknown
+ 5	 640x400 mode related???
+ 4-0	 unknown
+Note:	To decide if the 640x400 mode is supported by an Olivetti EGA card
+	  (only the Olivetti EGA card 2 supports it), also check that bit 7
+	  and 5 are set.
+SeeAlso: C000h:0000h"Olivetti"
 --------V-M00400089--------------------------
 MEM 0040h:0089h U - VIDEO (MCGA/VGA) - MODE-SET OPTION CONTROL
 Size:	BYTE
@@ -1249,6 +1340,34 @@ Bit(s)	Description	(Table M0050)
  2	??? (related to disk drives)
  5	page tables set to allow Weitek addressing in real mode
  6	Weitek math coprocessor present
+--------b-M004000B5--------------------------
+MEM 0040h:00B5h - Tandy BIOS DATA FLAGS
+Size:	 BYTE
+SeeAlso: MEM F000h:C000h
+
+Bitfields for Tandy BIOS data flags:
+Bit(s)	 Description	(Table M0131)
+ 0	 set if drive A: is 720 Kb
+ 1	 set if drive B: is 720 Kb
+ 2-7	 unknown
+Note:	Before checking these bits, the Tandy ROM BIOS ID byte at F000h:C000h
+	  should be verified to be equal to 21h.
+---------------------------------------------
+MEM 0040h:00E5h - Gigabyte AWARD v4.51PG - ASSOC DRIVE NUMS TO PHYS INTERFACES
+Size:	BYTE
+SeeAlso: MEM 0040h:00E5h"AWARD"
+
+Bitfields for drive number/interface mapping:
+Bit(s)	Description	(Table M0129)
+ 7-6	interface for drive 83h (F:)
+	00 primary master
+	01 primary slave
+	10 secondary master
+	11 secondary slave
+ 5-4	interface for drive 82h (as for bits 7-6)
+ 3-2	interface for drive 81h (as for bits 7-6)
+ 1-0	interface for drive 80h (C:) (as for bits 7-6)
+SeeAlso: #M0128
 ----------M004000B6--------------------------
 MEM 0040h:00B6h	- RESERVED FOR POST???
 Size:	3 BYTEs
@@ -1469,6 +1588,22 @@ SeeAlso: MEM 0040h:00E3h,MEM 0040h:00E5h"EHD",MEM 0040h:00E6h"EHD"
 MEM 0040h:00E5h - EHD floppy - DRIVE 2 DISKETTE TYPE (from jumpers)
 Size:	BYTE
 SeeAlso: MEM 0040h:00E3h,MEM 0040h:00E4h"EHD",MEM 0040h:00E6h"EHD"
+---------------------------------------------
+MEM 0040h:00E5h - AWARD v4.51PG - ASSOC DRIVE NUMBERS TO PHYSICAL INTERFACES
+Size:	BYTE
+SeeAlso: MEM 0040h:00B5h"Gigabyte"
+
+Bitfields for drive number/interface mapping:
+Bit(s)	Description	(Table M0128)
+ 7-6	interface for drive 83h (F:)
+	00 primary master
+	01 primary slave
+	10 secondary master
+	11 secondary slave
+ 5-4	interface for drive 82h (as for bits 7-6)
+ 3-2	interface for drive 81h (as for bits 7-6)
+ 1-0	interface for drive 80h (C:) (as for bits 7-6)
+SeeAlso: #M0129
 --------d-M004000E6--------------------------
 MEM 0040h:00E6h - EHD floppy - DRIVE 3 DISKETTE TYPE (from jumpers)
 Size:	BYTE
@@ -1530,6 +1665,35 @@ Note:	each value is stored as a BYTE for the interrupt number followed by
 	  DR/Novell/PC/MS-DOS (MS-DOS 3.x used this area to support HIMEM.SYS)
 	not supported by OS/2 MDOS
 SeeAlso: MEM 0080h:0000h,INT 2F/AH=13
+--------d-M0070016C--------------------------
+MEM 0070h:016Ch - DR-DOS 7.02-7.03 - "DEVNO" AUX/PRN PORT ASSIGNMENTS
+Size:	2 BYTEs
+
+016Ch	BYTE  PRN: assignment (0..2 for LPT1:..LPT3: (3 for LPT4:); default: 1)
+016Dh	BYTE  AUX: assignment (0..3 for COM1:..COM4:; default: 1)
+
+Notes:	As long as the built-in AUX: or PRN: drivers are in effect, these
+	  settings can be transparently reassigned at the DR-OpenDOS 7.02 /
+	  DR-DOS 7.03 DOS BIOS device driver level (that is below DOS
+	  redirection etc., but above ROM BIOS) using the undocumented
+	  CONFIG.SYS AUX=0|1..4 and PRN=0|1..3|4 directive, where 1..4 
+	  specifies COM1:..COM4: or LPT1:..LPT4: and the high speed bypass 0
+	  selects the previous hardwired equivalence of AUX: with COM1: and
+	  PRN: with LPT1: at this level, saving a few clock cycles. The system
+	  defaults to AUX=1 and PRN=1 (that is 0 in the internal variables).
+	If the high speed bypass was not enabled, the assigment can be changed
+	  anytime later by updating these bytes, e.g. by a future issue of the
+	  MODE utility. If the highspeed bypass has been enabled, changes have
+	  no effect.
+	The LPT4 setting (or corresponding value 3) is valid for
+	  DR-OpenDOS 7.02 and DR-DOS 7.02, but due to a bug introduced with the
+	  partial removal of the LPT4: device, it must not be used under
+	  DR-DOS 7.03.
+	The address 0070h:016Ch is only valid for DR-OpenDOS 7.02 up to
+	  DR-DOS 7.03 (BDOS 73h), and will most probably change with future
+	  releases of DR-DOS!
+	These bytes are local for each task running.
+SeeAlso: INT 21h/03h, INT 21h/04h, INT 21h/05h, MEM 0040h:0000h etc.
 --------H-M00800000--------------------------
 MEM 0080h:0000h - 80286 CPU - LOADALL WORKSPACE
 Size:	102 BYTEs
@@ -1571,6 +1735,32 @@ Bit(s)	Description	(Table M0056)
  0	=0  Relocate 128-Kbyte block at FE0000 to address 0E0000
 	=1  128-Kbyte RAM is addressed only at FE0000.
 SeeAlso: #M0055
+----------m80C00000--------------------------
+MEM 80C00000h - COMPAQ DIAGNOSTICS REGISTER
+Size: WORD
+Note:	Writing to F000h:FFE0h seems to involve unlocking the memory by writing
+	  FEFEh to this address first. The write-protection can be
+	  reestablished by writing FCFCh to this address???  This was seen done
+	  by MS HIMEM.SYS.
+SeeAlso: F000h:FFE0h
+
+Bitfields for Compaq Diagnostics Register:
+Bit(s)	Description	(Table M0132)
+ 15-10	unknown purpose (should remain set???)
+ 9	=1 memory is read-write???
+	=0 memory is read-only???
+ 8	=1 to disable ROM replacement???
+	=0 normal???
+ 7-2	unknown purpose (should remain set???)
+ 1	=1 memory is read-write
+	=0 memory is read-only
+ 0	=1 to disable ROM replacement???
+	=0 normal
+Note:	Writing to F000h:FFE0h seems to involve unlocking the memory by writing
+	  FEFEh to this address first. The write-protection can be
+	  reestablished by writing FCFCh to this address??? 
+	  Microsoft HIMEM.SYS was seen to do this.
+SeeAlso: F000h:FFE0h
 --------V-MA0000000--------------------------
 MEM A000h:0000h - EGA+ GRAPHICS BUFFER
 Size:	65536 BYTEs
@@ -2381,6 +2571,55 @@ SeeAlso: #M0080
 --------V-MC0000000--------------------------
 MEM C000h:0000h - VIDEO BIOS (EGA and newer)
 Size:	varies (usually 16K-24K for EGA, 24K-32K for VGA)
+--------b-MC0000000--------------------------
+MEM C000h:0000h  OLIVETTI 640x400 GRAPHICS CARDS
+Size: 62 BYTEs
+SeeAlso: MEM 0040h:0088h"Olivetti"
+
+Format of Olivetti 640x480 ROM signatures:
+Offset	Size	Description	(Table M0133)
+ 00h	WORD	55AAh adapter ROM signature (check this!)
+	...
+ 10h  2 BYTEs	"OL" if Olivetti EGA or VGA card
+	...
+ 22h  2 BYTEs	(Olivetti EGA/VGA)
+		"VG" for Olivetti VGA (supports 640x400 mode)
+		"EG" for Olivetti EGA including Olivetti EGA card 2
+	...
+ 3Ch  2 BYTEs	"PA" if Paradise card (supports 640x400 mode)
+Note:	These signatures can aid in the presence detection of an EGA or VGA
+	  adapter supporting the 640x400 mode.
+	Olivetti PC models M15 and M19 do not support the 640x400 mode
+	  (see INT 15h/C0h).
+	To decide if the 640x400 mode is supported by an Olivetti EGA card
+	  (only the Olivetti EGA card 2 supports it), also check that bit 7
+	  and 5 are set at 0040h:0088h.
+--------V-MC000xxxx--------------------------
+MEM C000h:xxxxh - VESA VBE v3.0 PROTECTED MODE INFORMATION BLOCK
+Size:	20 BYTEs
+Range:	starting at any byte within the first 32K of segment C000h
+
+Format of VESA VBE 3.0 Protected Mode Information Block:
+Offset	Size	Description	(Table M0127)
+ 00h  4 BYTEs	signature "PMID"
+ 04h	WORD	offset of protected-mode entry point within BIOS
+ 06h	WORD	offset of protected-mode initialization entry point
+ 08h	WORD	selector for BIOS data area emulation block
+		(default 0000h, must be set by protected-mode OS to 16-bit
+		  read/write data selector with limit of at least 0600h)
+ 0Ah	WORD	selector to access physical memory at A0000h
+		(default A000h, must be set by protected-mode OS to 16-bit
+		  read/write data selector with 64K limit)
+ 0Ch	WORD	selector to access physical memory at B0000h
+		(default B000h, must be set by protected-mode OS to 16-bit
+		  read/write data selector with 64K limit)
+ 0Eh	WORD	selector to access physical memory at B8000h
+		(default B800h, must be set by protected-mode OS to 16-bit
+		  read/write data selector with 32K limit)
+ 10h	BYTE	protected-mode execution (default 00h; set to 01h by OS when
+		  BIOS image is running in protected mode)
+ 11h	BYTE	checksum byte for entire structure (this byte forces 8-bit
+		  sum of all bytes to 00h)
 --------h-mC0000000--------------------------
 MEM C0000000h -	Weitek "Abacus" math coprocessor
 Size:	4096 BYTEs
@@ -2415,12 +2654,92 @@ SeeAlso: MEM C000h:7FF8h,MEM C000h:7FFCh
 MEM C000h:7FFCh - Matrox MGA Video Adapters - OFFSET OF PINS DATA STRUCTURE
 Size:	WORD
 SeeAlso: INT 10/AX=4F14h"Matrox",#00126,MEM C000h:7FF8h
+-------b-MF0000000--------------------------
+MEM F000h:0000h - WANG PC MEMORY MAPPED SCREEN BUFFER
+Size:	???
+Note:	This is used by Peter Reilley's portable binary editor and viewer BEAV
+	  to directly write into the Wang PC's video screen buffer (instead
+	  of using INT 10/AH=02h,09h) after it has been mapped in by writing
+	  BYTE 01h to the screen port (PORT 1010h for the 1st screen, 1020h
+	  for the 2nd, 1030h for the 3rd, 1040h for the 4th).  It will be
+	  unmapped afterwards by writing BYTE 00h to the screen port.
+	  Note, that this is only necessary when the INT 21/AX=4402h detection
+	  method resulted in non-IBM PC characteristic (return values other
+	  than 11h).
+SeeAlso: MEM FC00h:3FC2h, INT 88h/AL=01h, INT 21h/4402h
+--------B-MF0002DC5-------------------------
+MEM F000h:2DC5h - IBM AT SIGNATURE
+Size:	??? signature
+Note:	Original IBM ATs with a multi-sector hard disk ROM-BIOS bug can be
+	  identified by checking a (currently unknown) signature at this
+	  location.  This is known to be done by the Concurrent CP/M-86 family.
+	  Presumably the OS will then prohibit timer ISR dispatches within
+	  a code window of F000h:2D95h..F000h:2DD4h.
 --------A-MF0006000--------------------------
 MEM F000h:6000h - IBM PC ROM BASIC
 Size:	32768 BYTEs
+--------b-MF000800C-------------------------
+MEM F000h:800Ch ZENITH
+Size:	8 BYTEs signature "ZDS CORP"
+Note:	Zenith machines may have 256 Kb extra memory at 0FA0000h linear.
+----------MF000C000--------------------------
+MEM F000h:C000h - Tandy ROM BIOS ID BYTE
+Size:	BYTE
+Note:	If the BYTE at this location is equal to 21h, some Microsoft software
+	  assumes this is a Tandy machine, and for example trusts the bits 1-0
+	  at 0040h:00B5h.
+SeeAlso: MEM 0040h:00B5h"Tandy",INT 15/AH=C0h
+--------b-MFC000050--------------------------
+MEM FC00h:0050h - OLIVETTI Mxxx PC SIGNATURE
+Size:	4 BYTEs (or more) "OLIV"
+Note:	used by several Olivetti PCs, including M15, M19
+SeeAlso: INT 15/AH=C0h
+--------b-MFC003FC2--------------------------
+MEM FC00h:3FC2h - WANG PC SIGNATURE
+Size:	4 BYTEs containing the signature "WANG"
+Note:	This is used by Peter Reilley's portable binary editor and viewer
+	  BEAV to detect a Wang PC.
+SeeAlso: INT 88/AL=01h,INT 21/AX=4402h,INT 15/AH=C0h
 --------B-MF000E000--------------------------
 MEM F000h:E000h - ORIGINAL IBM PC ROM BIOS
 Size:	8192 BYTEs
+-------b-MF000FFD9-------------------------
+MEM F000h:FFD9h - EISA MACHINE ID
+Size:	4 BYTEs signature "EISA"
+SeeAlso: INT 15/AH=E801h
+--------b-MF000FFE0-------------------------
+MEM F000h:FFE0h - COMPAQ 386 MACHINES
+Size: 16 BYTEs
+SeeAlso: MEM 80C00000h
+
+Format of Compaq 386 Memory Configuration Data:
+Offset	Size	Description	(Table M0134)
+ 00h	WORD	Compaq 32-bit extra built-in memory available (FFFFh if not)
+ 02h	WORD	Total size of Compaq extra memory
+ 04h	WORD	Count of available paragraphs of Compaq extra memory
+ 06h	WORD	Paragraph address of last paragraph in use as Compaq extra
+		  memory
+ 08h  2 BYTEs	product class signature "03"
+ 0Ah  6 BYTEs	signature "03COMPAQ"
+Notes:	The full "03COMPAQ" signature can be found in (at least) Compaq 386
+	  machines which have dual harddisk controller. (see also CMOS 70h)
+	However, the 6-byte "COMPAQ" signature also seems to be available
+	  in other Compaq machines with dual hard disk controllers, at least
+	  the MS-DOS/PC DOS IO.SYS/IBMBIO.COM checks for if before it calls
+	  INT 15/AX=E400h and INT 15/AX=E480h.
+	Compaq's extra memory is mappable memory starting at FE00h:0000h
+	  growing downwards. It can be made available for example with
+	  Novell DOS 7+ EMM386.EXE /COMPAQ=ON.
+	Although this structure resides at a ROM-address it is actually write-
+	  protected RAM. To write to the structure to map in Compaq extra
+	  memory the write-protection must be temporarily disabled by setting
+	  bit 1 at WORD 80C00000h.
+----------MF000FFE8--------------------------
+MEM F000h:FFE8h - Compaq - MACHINE SIGNATURE STRING
+Size:	8 BYTEs
+Desc:	if this area contains the ASCII string "03COMPAQ", then this is a
+	  Compaq machine
+SeeAlso: CMOS 1Bh"AMI"
 --------H-MF000FFF0--------------------------
 MEM F000h:FFF0h - RESET JUMP
 Size:	5 BYTEs
@@ -3082,27 +3401,33 @@ Size:	DWORD
 	bits 27-0: read-only
 	bits 31-28: read-write
 --------H-mFEE000F0--------------------------
-MEM FEE000F0h - Pentium - LOCAL APIC - SPURIOUS INTERRUPT VECTOR REGISTER
+MEM FEE000F0h - Pentium + - LOCAL APIC - SPURIOUS INTERRUPT VECTOR REGISTER
 Size:	DWORD
-	bits 3-0, read-only
-	bits 9-4, read/write
+
+Bitfields for Local APIC Spurious Interrupt Vector register:
+Bit(s)	Description	(Table M0126)
+ 63-10	reserved
+ 9	disable focus processor checking during lowest-priority delivery
+ 8	APIC enabled by software
+ 7-4	spurious vector number
+ 3-0	reserved (1)
 --------H-mFEE00100--------------------------
-MEM FEE00100h - Pentium - LOCAL APIC - IN-SERVICE REGISTER (ISR)
+MEM FEE00100h - Pentium + - LOCAL APIC - IN-SERVICE REGISTER (ISR)
 Size:	128 BYTEs
 Note:	read-only
 SeeAlso: MEM FEE00200h
 --------H-mFEE00180--------------------------
-MEM FEE00180h - Pentium - LOCAL APIC - TRIGGER MODE REGISTER (TMR)
+MEM FEE00180h - Pentium + - LOCAL APIC - TRIGGER MODE REGISTER (TMR)
 Size:	128 BYTEs
 Note:	read-only
 SeeAlso: MEM FEE00000h
 --------H-mFEE00200--------------------------
-MEM FEE00200h - Pentium - LOCAL APIC - INTERRUPT REQUEST REGISTER (IRR)
+MEM FEE00200h - Pentium + - LOCAL APIC - INTERRUPT REQUEST REGISTER (IRR)
 Size:	128 BYTEs
 Note:	read-only
 SeeAlso: MEM FEE00100h
 --------H-mFEE00280--------------------------
-MEM FEE00280h - Pentium - LOCAL APIC - ERROR STATUS REGISTER
+MEM FEE00280h - Pentium + - LOCAL APIC - ERROR STATUS REGISTER
 Size:	DWORD
 Note:	read-only
 
@@ -3118,7 +3443,7 @@ Bit(s)	Description	(Table M0120)
  7	illegal register address
  31-8	reserved
 --------H-mFEE00300--------------------------
-MEM FEE00300h - Pentium - LOCAL APIC - INTERRUPT COMMAND REGISTER (ICR)
+MEM FEE00300h - Pentium + - LOCAL APIC - INTERRUPT COMMAND REGISTER (ICR)
 Size:	DWORD
 Note:	this is the low half of the 64-bit ICR
 SeeAlso: MEM FEE00310h,#M0121
@@ -3155,12 +3480,12 @@ Values for Pentium APIC delivery mode:
  111b	reserved
 SeeAlso: #M0121
 --------H-mFEE00310--------------------------
-MEM FEE00310h - Pentium - LOCAL APIC - INTERRUPT COMMAND REGISTER (ICR)
+MEM FEE00310h - Pentium + - LOCAL APIC - INTERRUPT COMMAND REGISTER (ICR)
 Size:	DWORD
 Note:	this is the high half of the 64-bit ICR
 SeeAlso: MEM FEE00300h,#M0121
 --------H-mFEE00320--------------------------
-MEM FEE00320h - Pentium - LOCAL APIC - LOCAL VECTOR TABLE ENTRY 0 (TIMER)
+MEM FEE00320h - Pentium + - LOCAL APIC - LOCAL VECTOR TABLE ENTRY 0 (TIMER)
 Size:	DWORD
 SeeAlso: MEM FEE00350h,MEM FEE00370h,MEM FEE003E0h,INT 70h
 
@@ -3176,13 +3501,13 @@ Bit(s)	Description	(Table M0123)
  31-18	reserved
 SeeAlso: #M0125,#M0124
 --------H-mFEE00330--------------------------
-MEM FEE00330h - Pentium - LOCAL APIC - RESERVED
+MEM FEE00330h - Pentium + - LOCAL APIC - RESERVED
 SeeAlso: MEM FEE00000h
 --------H-mFEE00340--------------------------
-MEM FEE00340h - Pentium - LOCAL APIC - RESERVED
+MEM FEE00340h - Pentium + - LOCAL APIC - RESERVED
 SeeAlso: MEM FEE00000h
 --------H-mFEE00350--------------------------
-MEM FEE00350h - Pentium - LOCAL APIC - LOCAL VECTOR TABLE ENTRY 1 (LINT0)
+MEM FEE00350h - Pentium + - LOCAL APIC - LOCAL VECTOR TABLE ENTRY 1 (LINT0)
 Size:	DWORD
 SeeAlso: MEM FEE00320h,MEM FEE00360h
 
@@ -3205,22 +3530,22 @@ Bit(s)	Description	(Table M0124)
  31-17	reserved
 SeeAlso: #M0123
 --------H-mFEE00360--------------------------
-MEM FEE00360h - Pentium - LOCAL APIC - LOCAL VECTOR TABLE ENTRY 2 (LINT1)
+MEM FEE00360h - Pentium + - LOCAL APIC - LOCAL VECTOR TABLE ENTRY 2 (LINT1)
 Size:	DWORD
 SeeAlso: MEM FEE00350h,MEM FEE00370h,#M0124
 --------H-mFEE00370--------------------------
-MEM FEE00370h - Pentium - LOCAL APIC - LOCAL VECTOR TABLE ENTRY 3 (Error)
+MEM FEE00370h - Pentium + - LOCAL APIC - LOCAL VECTOR TABLE ENTRY 3 (Error)
 Size:	DWORD
 SeeAlso: MEM FEE00320h,MEM FEE00370h
 --------H-mFEE00380--------------------------
-MEM FEE00380h - Pentium - LOCAL APIC - INITIAL COUNT REGISTER (ICR) TIMER
+MEM FEE00380h - Pentium + - LOCAL APIC - INITIAL COUNT REGISTER (ICR) TIMER
 Size:	DWORD
 Desc:	timer start value, which together with the Divide Configuration
 	  Register also determines its period when periodic mode has been
 	  selected
 SeeAlso: MEM FEE00000h,MEM FEE00390h
 --------H-mFEE00390--------------------------
-MEM FEE00390h - Pentium - LOCAL APIC - CURRENT COUNT REGISTER (CCR) TIMER
+MEM FEE00390h - Pentium + - LOCAL APIC - CURRENT COUNT REGISTER (CCR) TIMER
 Size:	DWORD
 Desc:	current timer count; when this value reaches zero, an interrupt is
 	  generated
@@ -3239,12 +3564,13 @@ SeeAlso: MEM FEE00000h
 MEM FEE003D0h - Pentium - LOCAL APIC - RESERVED
 SeeAlso: MEM FEE00000h
 --------H-mFEE003E0--------------------------
-MEM FEE003E0h - Pentium - LOCAL APIC - TIMER DIVIDE CONFIGURATION REGISTER
+MEM FEE003E0h - Pentium + - LOCAL APIC - TIMER DIVIDE CONFIGURATION REGISTER
 Size:	DWORD
 SeeAlso: MEM FEE00000h,MEM FEE00320h
 
-Bitfields for Pentium APIC timer divide configuration:
+Bitfields for Pentium (and later) APIC timer divide configuration:
 Bit(s)	Description	(Table M0125)
+ 31-4	reserved
  3,1,0	divisor
 	000 divide by 2
 	001 by 4
@@ -3253,7 +3579,6 @@ Bit(s)	Description	(Table M0125)
 	110 by 128
 	111 by 1
  2	zero (0)
- 31-4	reserved
 Note:	the divisor determines the timer's time base relative to the processor
 	  clock
 SeeAlso: #M0123
@@ -3266,17 +3591,16 @@ Wim Osterholt	<wim@djo.wtm.tudelft.nl> or Wim Osterholt 2:512/56
 	EHD floppy = 'KEGAN 4.0M Floppy Drive Controller.',
 		     'ACME FX4-K7tb2 v:2.5 11/5/91'
 Stanley Appel	<appel@stack.urc.tue.nl>
-Matthias Paul	<mpaul@ibh.rwth-aachen.de>
+Matthias Paul	<Matthias.Paul@post.rwth-aachen.de>
 --------!---Admin----------------------------
-Highest Table Number = M0125
+Highest Table Number = M0134
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER60A through INTER60D (preferably the original
-authenticated PKZIP archives), and the utility and hypertext programs in
-three additional archives called INTER60E.ZIP to INTER60G.ZIP.
+quartet of archives named INTER61A through INTER61D (preferably the original
+authenticated PKZIP archives), and the utility and hypertext programs in a
+pair of additional archives called INTER61E.ZIP and INTER61F.ZIP.
 
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+Copyright (c) 1989-1999,2000 Ralf Brown
 --------!---CONTACT_INFO---------------------
-Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
-FIDO: Ralf Brown 1:129/26.1
+E-mail: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)

@@ -1,5 +1,5 @@
 Interrupt List, part 3 of 18
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+Copyright (c) 1989-1999,2000 Ralf Brown
 --------O-1510-------------------------------
 INT 15 - VMiX - "sys_virtual" - EXECUTE CONFORMING FUNCTION IN PROTECTED MODE
 	AH = 10h
@@ -3531,22 +3531,22 @@ Return: CF clear if successful
 		02h no modem present
 SeeAlso: AX=4600h,INT 77
 --------b-154604-----------------------------
-INT 15 - Compaq Contura 486 and "Alladin" 08/05/93 ROMs - GET ???
+INT 15 - Compaq Contura 486 and "Alladin" 1993/08/05 ROMs - GET ???
 	AX = 4604h
 Return: CF clear if successful
 	    AL = byte read from I/O port 03F8h
 	CF set on error (not supported)
 	    AH = 86h (unsupported function)
-Note:	also supported by 7/26/93 LTE Lite 386 ROM
+Note:	also supported by 1993/7/26 LTE Lite 386 ROM
 --------b-154605-----------------------------
-INT 15 - Compaq Contura 486 and "Alladin" 08/05/93 ROMs - ???
+INT 15 - Compaq Contura 486 and "Alladin" 1993/08/05 ROMs - ???
 	AX = 4605h
 Return: CF clear if successful
 	CF set on error (not supported)
 	    AH = 86h (unsupported function)
-Note:	this function is a NOP (other than clearing CF) in the 08/05/93 version
-	  of the Contura 486/486c/486cx and "Aladdin" ROM, and the 7/26/93
-	  LTE Lite 386 ROM
+Note:	this function is a NOP (other than clearing CF) in the 1993/08/05
+	  version of the Contura 486/486c/486cx and "Aladdin" ROM, and the
+	  1993/7/26 LTE Lite 386 ROM
 --------b-1547-------------------------------
 INT 15 U - HP 100LX/200LX - GET/SET DISPLAY CONTRAST
 	AH = 47h
@@ -5053,6 +5053,48 @@ INT 15 - HUNTER 16 - CONTROL STOP MODE
 Return: AH = status
 Desc:	select the power save mode to use when waiting for input
 SeeAlso: AH=69h
+----------156700BXFFFF-----------------------
+INT 15h - Arabic/Hebrew MS-DOS 5.0???+ - INSTALLATION CHECK
+	AX = 6700h
+	BX = FFFFh
+Return: BX = FFFFh (Arabic/Hebrew MS-DOS not installed)
+	BX = version (e.g. 0101h for Arabic/Hebrew MS-DOS 5.0)
+Note:	This call is made by the SK_HGC.COM TSR for HGC and HGC/RAMFont
+	  graphics adapters to ensure it runs on the correct version of
+	  Arabic or Hebrew MS-DOS.
+	The function is probably implemented in the ARABIC.COM/HEBREW.COM
+	  driver.
+	Arabic/Hebrew versions of MS-DOS 3.3 existed, but no details are
+	  available.
+SeeAlso: AX=67C3h,INT 2F/AX=AD41h
+----------1567C3CX1Bh
+-----------------------
+INT 15h - Arabic/Hebrew MS-DOS 5.0???+ - HGC & HGC/RAMFont support???
+	AX = 67C3h
+	CX = 1Bh
+	CS|DS???:SI -> buffer
+Return: ES:DI -> ???
+	AX = ???
+Program: The SK_HGC.COM TSR is used to support operation of ARABIC.COM/
+	  HEBREW.COM with the Hercules Graphic Card series of video adapters.
+	  It is provided for compatibility with ADOS 3.30/HDOS 3.30 only.
+	  This file must be loaded immediately after ARABIC.COM/HEBREW.COM
+	  to insure correct operation with these devices.
+Notes:	This call is made by the SK_HGC.COM TSR for HGC and HGC/RAMFont
+	  graphics adapters when it has successfully detected an Arabic/Hebrew
+	  issue of MS-DOS via INT15h/6700h/BX=FFFFh to ensure it runs on the
+	  correct version of Arabic or Hebrew MS-DOS.
+	At some unknown offset in the buffer it contains a flag indicating
+	  if a HGC or HGC/RAMFont adapter is present or not.
+	ARABIC/HEBREW does not operate with Monochrome Display Adapters (MDA)
+	  and the Hercules Graphic Card Plus (HGC+). ARABIC/HEBREW does operate
+	  with Hercules Graphic Card (HGC) with a burnt-in ROM/EPROM font (many
+	  HGC cards, even the highly integrated ones, allow for this kind of
+	  user customization), though this is not officially supported.
+	In some pre-1987 IBM XT/AT and compatibles, the Hercules Graphic
+	  Card Plus operates like a MDA card. This hardware limitation
+	  prevents ARABIC/HEBREW from running on this combination of hardware.
+SeeAlso: AX=6700h
 --------b-1568------------------------------------
 INT 15 - HUNTER 16 - REQUEST POWER DOWN
 	AH = 68h
@@ -5397,7 +5439,7 @@ Return: CF set on error or function already busy
 Notes:	the resolution of the wait period is 977 microseconds on many systems
 	  because many BIOSes use the 1/1024 second fast interrupt from the AT
 	  real-time clock chip which is available on INT 70
-	IBM AT 1/10/84 BIOS ignores AL and always performs subfunction 00h
+	IBM AT 1984/1/10 BIOS ignores AL and always performs subfunction 00h
 SeeAlso: AH=41h,AH=86h,INT 70,MEM 0040h:0098h,MEM 0040h:009Ch
 --------b-1583------------------------------------
 INT 15 - HUNTER 16 - CONTROL SCREEN SYNCHRONISATION
@@ -5406,7 +5448,7 @@ INT 15 - HUNTER 16 - CONTROL SCREEN SYNCHRONISATION
 Desc:	Enable/disable the facility where the displayed window tracks the
 	  cursor output to keep the focus visible
 --------B-1584-------------------------------
-INT 15 - BIOS - JOYSTICK SUPPORT (XT after 11/8/82,AT,XT286,PS)
+INT 15 - BIOS - JOYSTICK SUPPORT (XT after 1982/11/8,AT,XT286,PS)
 	AH = 84h
 	DX = subfunction
 	    0000h read joystick switches
@@ -5440,6 +5482,60 @@ Return: CF set on error
 Program: V20-XT-BIOS is a ROM BIOS replacement with extensions by Peter
 	   Koehlmann / c't magazine
 SeeAlso: AH=84h"PS",INT 10/AH=0Eh/CX=ABCDh
+----------1584--DX0002-----------------------
+INT 15 - AMIGATSR - INSTALLATION CHECK
+	AH = 84h
+	DX = 0002h
+Return: AX = 1234h if installed
+Program: AMIGATSR is a serial-port driver for using an Amiga gamepad on a PC
+SeeAlso: AH=84h/DX=0002h"MULTIJOY"
+----------1584--DX0002-----------------------
+INT 15 - MULTIJOY - INSTALLATION CHECK
+	AH = 84h
+	DX = 0002h
+Return: AX = 4321h if installed
+SeeAlso: AH=84h/DX=0002h"AMIGATSR",AH=84h/DX=0003h"MULTIJOY"
+----------1584--DX0003-----------------------
+INT 15 - MULTIJOY - GET ACTIVE JOYSTICK
+	AH = 84h
+	DX = 0003h
+Return: AX = number of the currently-active joystick device
+	BX = device classification (see #04098)
+SeeAlso: AH=84h/DX=0002h"MULTIJOY"
+ !!! more info to follow
+
+Bitfields for MULTIJOY device classification:
+Bit(s)	Description	(Table 04098)
+ 15	device connected and ready
+ 14	no buttons (overrides bits 12-9)
+ 13	no axes (overrides bits 8-5)
+ 12-9	number of buttons, less one
+ 8-5	number of axes, less one
+ 4	digital device rather than analog
+ 3-0	device type
+	0000 keyboard emulating joystick
+	0001 gamepad
+	0010 joystick
+	0011 steering wheel
+	0100 flight yoke
+	0101 mouse emulating joystick
+	0110 trackball emulating joystick
+	0111 GlidePoint (touchpad) emulating joystick
+	1000 touchscreen emulating joystick
+	1001 steering wheel
+	1010 light pen emulating joystick
+	1011 speech recognition emulating joystick
+	1100 TV remote emulating joystick
+	1101 network/Internet remote control
+	1110 PC software-controlled (demo mode, etc.)
+	1111 other device
+----------1584--DX0004-----------------------
+INT 15 - MULTIJOY - SELECT JOYSTICK
+	AH = 84h
+	DX = 0004h
+	BX = number of the joystick device to make active
+Return: ???
+SeeAlso: AH=84h/DX=0003h"MULTIJOY"
 --------b-158400----------------------------------
 INT 15 - HUNTER 16 - GET DISKETTE PORT
 	AX = 8400h
@@ -5513,6 +5609,10 @@ Return: CF set on error
 Notes:	copy is done in protected mode with interrupts disabled by the default
 	  BIOS handler; many 386 memory managers perform the copy with
 	  interrupts enabled
+	on the PS/2 30-286 & "Tortuga" this function does not use the port 92h
+	  for A20 control, but instead uses the keyboard controller (8042).
+	  Reportedly this may cause the system to crash when access to the
+	  8042 is disabled in password server mode (see also PORT 0064h,#P0398)
 	this function is incompatible with the OS/2 compatibility box
 SeeAlso: AH=88h,AH=89h,INT 1F/AH=90h
 
@@ -5565,6 +5665,10 @@ Notes:	TSRs which wish to allocate extended memory to themselves often hook
 	not all BIOSes correctly return the carry flag, making this call
 	  unreliable unless one first checks whether it is supported through
 	  a mechanism other than calling the function and testing CF
+	Due to applications not dealing with more than 24-bit descriptors
+	  (286), Windows 3.0 has problems when this function reports more
+	  than 15 MB. Some releases of HIMEM.SYS are therefore limited to use
+	  only 15 MB, even when this function reports more.
 SeeAlso: AH=87h,AH=8Ah"Phoenix",AH=C7h,AX=DA88h,AX=E801h,AX=E820h
 --------b-1588------------------------------------
 INT 15 - HUNTER 16 - GET POWER UP KEYS
@@ -5832,12 +5936,14 @@ INT 15 - IBM SurePath BIOS - Officially "Private" Function
 	AH = ABh
 SeeAlso: AH=07h"IBM",AH=3Eh"IBM"
 ----------15B001CX5354-----------------------
-INT 15 - Stac ??? - INSTALLATION CHECK
+INT 15 - Stac STACKER - INSTALLATION CHECK
 	AX = B001h
 	CX = 5354h ('ST')
 	DX = 4143h ('AC')
 Return: AX = 4F4Bh ('OK') if installed
-Note:	this function is called by Novell DOS 7 NWCACHE v1.01
+Note:	this function is encapsulated in Stac's STACKER.LIB C library; it is
+	  called by Novell DOS 7+ NWCACHE v1.01, which makes use of this
+	  library
 --------n-15BA10-----------------------------
 INT 15 - HP OmniShare - Pen Driver - REPORT PEN CONTROL AREA EVENT
 	AX = BA10h
@@ -6253,15 +6359,22 @@ INT 15 - DESQview/X 1.02+ - DVDOS4GX.DVR - NOP
 	BX = FFFFh
 SeeAlso: AX=BFDEh/BX=0000h
 --------B-15C0-------------------------------
-INT 15 - SYSTEM - GET CONFIGURATION (XT after 1/10/86,AT mdl 3x9,CONV,XT286,PS)
+INT 15 - SYSTEM - GET CONFIGURATION (XT >1986/1/10,AT mdl 3x9,CONV,XT286,PS)
 	AH = C0h
 Return: CF set if BIOS doesn't support call
 	CF clear on success
 	    ES:BX -> ROM table (see #00509)
 	AH = status
 	    00h successful
+		The PC XT (since 1986/01/10), PC AT (since 1985/06/10), the
+		  PC XT Model 286, the PC Convertible and most PS/2 machines
+		  will clear the CF flag and return the table in ES:BX.
+	    80h unsupported function
+		The PC and PCjr return AH=80h/CF set
 	    86h unsupported function
-Notes:	the 1/10/86 XT BIOS returns an incorrect value for the feature byte
+		The PC XT (1982/11/08), PC Portable, PC AT (1984/01/10),
+		or PS/2 prior to Model 30 return AH=86h/CF set
+Notes:	the 1986/1/10 XT BIOS returns an incorrect value for the feature byte
 	the configuration table is at F000h:E6F5h in 100% compatible BIOSes
 	Dell machines contain the signature "DELL" or "Dell" at absolute FE076h
 	  and a model byte at absolute address FE845h (see #00516)
@@ -6273,6 +6386,11 @@ Notes:	the 1/10/86 XT BIOS returns an incorrect value for the feature byte
 	  the byte at FFFFh:000Eh; Tandy 1000SL/TL machines only provide the
 	  first three data bytes (model/submodel/revision) in the returned
 	  table
+	the ID at F000h:C000h is used by some Microsoft software before
+	  trusting the floppy flags bits 1 and 0 at 0040h:00B5h.
+	the Wang PC contains the signature "WANG" at FC00h:0000h. This is used
+	  by Peter Reilley's portable binary editor and viewer BEAV to detect
+	  a Wang PC.
 	Toshiba laptops contain the signature "TOSHIBA" at FE010h as part of
 	  a laptop information record at F000h:E000h (see #00520)
 	some AST machines contain the string "COPYRIGHT AST RESEARCH" one byte
@@ -6303,13 +6421,19 @@ Offset	Size	Description	(Table 00509)
  0Bh	BYTE	major version
  0Ch	BYTE	minor version (BCD)
  0Dh  4 BYTEs	ASCIZ string "PTL" (Phoenix Technologies Ltd)
+		also on Phoenix Cascade BIOS
 ---Quadram Quad386---
  0Ah 17 BYTEs	ASCII signature string "Quadram Quad386XT"
+---Toshiba (Satellite Pro 435CDS at least)---
+ 0Ah  7 BYTEs	signature "TOSHIBA"
+ 11h	BYTE	??? (8h)
+ 12h	BYTE	??? (E7h) product ID??? (guess)
+ 13h  3 BYTEs	"JPN"
 
 Bitfields for feature byte 1:
 Bit(s)	Description	(Table 00510)
  7	DMA channel 3 used by hard disk BIOS
- 6	2nd 8259 installed
+ 6	2nd interrupt controller (8259) installed
  5	Real-Time Clock installed
  4	INT 15/AH=4Fh called upon INT 09h
  3	wait for external event (INT 15/AH=41h) supported
@@ -6375,6 +6499,7 @@ Model  Submdl  Rev	BIOS date	System
  FEh	*	*	11/08/82	PC XT and Portable
  FEh	*	*	../..x..	Toshiba laptops up to ~1987
 					("x"=product ID) (see #00521)
+ FEh	00h	*** *	  ???		Olivetti M19
  FEh	43h	***	  ???		Olivetti M240
  FEh	A6h	???	  ???		Quadram Quad386
  FDh	*	*	06/01/83	PCjr
@@ -6778,6 +6903,11 @@ Return: CF set on error
 Notes:	after successful completion of this call, the pointing device is set
 	  as follows: disabled, sample rate 100 Hz, resolution 4 counts/mm,
 	  scaling 1:1, unchanged data package size
+	this function should be called before rebooting the system (see
+	  INT 15/AH=4Fh), since otherwise the mouse may behave erratically on
+	  some systems after the boot.	Before calling this function, the 
+	  caller should check that the INT 15h vector is in fact initialized
+	  (on some very old machines the IVT may contain 0000h:0000h).
 	IBM classifies this function as required
 SeeAlso: INT 33/AX=0000h,AX=C200h,AX=C207h
 --------M-15C202-----------------------------
@@ -7535,6 +7665,10 @@ Return: CF clear if successful
 	    AH = error code (80h-83h,86h,87h) (see #00539)
 	BX destroyed
 Note:	call with AL=81h if using 32-bit CS addressing mode instead of 16-bit
+	this function is also supported by the Compaq SystemPro 486, but it
+	  uses more than 1297 bytes of stack.
+BUG:	some implementations appear to destroy the DF direction flag;
+	  the Novell DOS 7+ memory managers explicitly clear it afterwards.
 --------X-15D802-----------------------------
 INT 15 - EISA SYSTEM ROM - CLEAR NONVOLATILE MEMORY (EISA CMOS)
 	AX = D802h
@@ -9279,17 +9413,28 @@ Note:	the section of code in 386MAX which calls these functions also checks
 	  support this function, however, returning the usual CF set/AH=86h for
 	  "unsupported function".
 --------b-15E4-------------------------------
-INT 15 - Compaq ROM BIOS 03/08/93 and newer - ???
+INT 15 - Compaq ROM BIOS 1993/08/03 and newer - ???
 	AH = E4h
 	AL = subfunction
-	    00h get ???
+	    00h get advanced system info
 		Return: CF clear
 			AH = 00h
 			CX = 0000h
-			BX = ??? (read from [XBDA:0094h])
+			BX = advanced system info flags (read from [XBDA:0094h])
+			     bit 4: "mode 2" (dual harddisk controller) enabled
 	    01h,02h unsupported by this ROM version
 		Return: CF set, AH = 86h
-	    80h,90h,A0h,B0h,C0h,D0h,E0h,F0h set ???
+	    80h set advanced system info
+		BX = advanced system info flags
+		     bit 4: enable "mode 2" (dual harddisk controller)
+		???
+		Return: ???
+		Note:	On Compaq machines with "COMPAQ" signature at
+			  F000h:FFEAh (see also MEM F000h:FFE0h), MS-DOS/PC DOS
+			  IO.SYS/IBMBIO.COM use	this function to set bit 4
+			  before calling INT 13h/AH=08h to retrieve the number
+			  of hard disks installed (DL).
+	    90h,A0h,B0h,C0h,D0h,E0h,F0h set ???
 		Return: CF clear
 			AH = 00h
 			CX = 0000h

@@ -1,5 +1,5 @@
-FAR CALL Interface List		Release 60		Last change 03jan99
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+FAR CALL Interface List		Release 61		Last change 16jul00
+Copyright (c) 1989-1999,2000 Ralf Brown
 
 =============================================
 >CALL 0000h:0000h - Sample Entry
@@ -354,15 +354,19 @@ InstallCheck:	present if BIOS is 100% compatible with original IBM PC
 --------B-@F000FE6E--------------------------
 CALL F000h:FE6Eh - ROM BIOS INT 1A HANDLER
 InstallCheck:	present if BIOS is 100% compatible with original IBM PC
+----------@F000FF82--------------------------
+CALL F000h:FF82h - PHOENIX CASCADE BIOS A20 CONTROL ENTRY
+InstallCheck: ??? (see INT 15h/C0h)
+Note:	This is an entry point for A20 control and is used by MS-DOS HIMEM.SYS
 --------H-@F000FFF0--------------------------
 CALL F000h:FFF0h - COLD-BOOT ADDRESS
 InstallCheck:	always present
-SeeAlso: @FFFFh:0000h
+SeeAlso: @FFFFh:0000h,INT 19
 --------H-@FFFF0000--------------------------
 CALL FFFFh:0000h - COLD-BOOT ADDRESS
 InstallCheck:	always present
 Note:	this address is another way of expressing F000h:FFF0h
-SeeAlso: @F000h:FFF0h
+SeeAlso: @F000h:FFF0h,INT 19
 --------m-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - 10NET - 10MEMMGR.SYS
 InstallCheck:	see INT 21/AX=4402h"10MEMMGR"
@@ -2165,11 +2169,10 @@ Highest Table Number = F0096
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER60A through INTER60D (preferably the original
+quartet of archives named INTER61A through INTER61D (preferably the original
 authenticated PKZIP archives), and the utility and hypertext conversion
-programs in three additional archives called INTER60E.ZIP to INTER60G.ZIP
+programs in two additional archives called INTER61E.ZIP and INTER61F.ZIP
 
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+Copyright (c) 1989-1999,2000 Ralf Brown
 --------!---CONTACT_INFO---------------------
-Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
-FIDO: Ralf Brown 1:129/26.1
+E-mail: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)

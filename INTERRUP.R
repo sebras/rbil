@@ -1,5 +1,5 @@
 Interrupt List, part 18 of 18
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+Copyright (c) 1989-1999,2000 Ralf Brown
 --------r-92---------------------------------
 INT 92 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
@@ -2315,7 +2315,12 @@ Return: AX = error code
 Program: REAL/32 is the descendant of IMS Multiuser DOS, which in turn is
 	  derived from DR Multiuser DOS and its predecessors (Concurrent DOS,
 	  etc.)
-Note:	sets the exit code (ERRORLEVEL) to 00h
+Notes:	sets the exit code (ERRORLEVEL) to 00h
+	INT E0h is officially reserved for Digital Research by Intel.
+	Apparently some Borland products also used this interrupt, which forced
+	  Digital Research to indirect calls through other interrupt entry
+	  points.
+	This is also supported by IMS Multiuser DOS and IMS REAL/32.
 SeeAlso: INT 21/AH=00h
 --------O-E0----CL01-------------------------
 INT E0 - REAL/32 - "C_READ" - FETCH CHARACTER FROM THE DEFAULT CONSOLE
@@ -2537,7 +2542,7 @@ Offset	Size	Description	(Table 04026)
  05h	BYTE	priority
  06h	WORD	runtime flags (see #04028)
  08h  8 BYTEs	process name
- 10h	WORD	segment of User Data Area (256 or 352 bytes)
+ 10h	WORD	segment of User Data Area (UDA) (256 or 352 bytes)
  12h	BYTE	current default disk drive
  13h	BYTE	drive from which process was loaded
  14h	WORD	reserved (0)
@@ -2554,6 +2559,9 @@ Offset	Size	Description	(Table 04026)
  28h 12 BYTEs	reserved
  34h	WORD	offset of memory page allocation root
  36h 22 BYTEs	reserved
+Note:	At least offset 10h (UDA) is also supported by MDOS 5.00, 5.01, 5.10,
+	  as the DR DOS MEM utility retrieves this UDA segment through
+	  INT E0/CL=9Ah when INT 21/AX=4451h returns 1463h, 1465h, or 1466h.
 SeeAlso: #04025
 
 (Table 04027)
@@ -3280,7 +3288,7 @@ Offset	Size	Description	(Table 04048)
  78h	WORD	segment of version string
  7Ah	WORD	BDOS version number
  7Ch	WORD	OS version number
- 7Eh	WORD	number of days since 01jan1978
+ 7Eh	WORD	number of days since 1978/01/01
  80h	BYTE	current time: hour
  81h	BYTE	current time: minute
  82h	BYTE	current time: second
@@ -3343,6 +3351,9 @@ INT E0 - REAL/32 - "P_PDADR" - GET ADDRESS OF PROCESS DESCRIPTOR
 	CL = 9Ch
 Return: ES:AX -> caller's process descriptor (see #04026)
 	may destroy SI,DI
+Note:	This function is also called by the DR DOS MEM utility when
+	  INT 21/AX=4451h returns either 1463h (MDOS 5.00), 1465h (MDOS 5.01),
+	  or 1466h (MDOS 5.10).
 SeeAlso: INT E0/CL=8Fh,INT E0/CL=90h
 --------O-E0----CL9D-------------------------
 INT E0 - REAL/32 - "P_ABORT" - ABORT PROCESS BY NAME OR DESCRIPTOR
@@ -3992,6 +4003,8 @@ Return: as appropriate for function
 Desc:	used by some applications which alter CP/M functions while running a
 	  child program, to store the original INT E0 vector before
 	  intercepting INT E0
+Notes:	This is the debugger entry to the operating system.
+	This function is also supported by IMS Multiuser DOS and IMS REAL/32.
 SeeAlso: #04019 at INT E0"CP/M"
 ----------E1---------------------------------
 INT E1 - DeskMate (Tandy) - TASK DATA SEGMENTS (NOT A VECTOR!)
@@ -4030,16 +4043,26 @@ SeeAlso: AX=0005h
 INT E4 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
+----------E4---------------------------------
+INT E4 - DIGITAL RESEARCH - FLAG INTERRUPT
+Note:	This interrupt corresponds with Concurrent CP/M-86 and is to get
+	  an unused flag.
+SeeAlso: INT E5"DIGITAL RESEARCH"
 --------r-E5---------------------------------
 INT E5 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
+----------E5---------------------------------
+INT E5 - DIGITAL RESEARCH - FIDDS INTERRUPT
+Note:	This interrupt corresponds with Concurrent CP/M-86 and is for
+	  "attachamatic" drives
+SeeAlso: INT E4"DIGITAL RESEARCH",INT E6"CP/M"
 --------r-E6---------------------------------
 INT E6 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 --------O-E6---------------------------------
-INT E6 C - CP/M-86 v1.1 - UNKNOWN DISK DRIVE
+INT E6 C - CP/M-86 v1.1 - XIOS INTERRUPT / UNKNOWN DISK DRIVE
 	AX = function which accessed drive
 	    0000h SELDSK
 	    0001h READ
@@ -4049,6 +4072,8 @@ INT E6 C - CP/M-86 v1.1 - UNKNOWN DISK DRIVE
 Return:	AX = return value
 Desc:	called by CP/M-86 kernel when an unknown disk drive is used, which
 	  permits an application to provide access services
+Note:	This was labelled "XIOS interrupt" in later Digital Research
+	  documentation (CCP/M-86) and "for the version 1.0 back door".
 
 Format of CP/M-86 unknown-drive paramter block:
 Offset	Size	Description	(Table 04063)
@@ -5132,17 +5157,15 @@ Return:	AX,BX,CX,DX,ES,DI may be destroyed
 Note:	these functions all display an error message if the graphics routines
 	  are not resident
 --------!---Admin----------------------------
-Highest Table Number = 04081
+Highest Table Number = 04122
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER60A through INTER60D (preferably the original
+quartet of archives named INTER61A through INTER61D (preferably the original
 authenticated PKZIP archives), the utility programs in a fifth archive
-called INTER60E.ZIP, the WinHelp-related programs in a sixth archive
-named INTER60F.ZIP, and the non-WinHelp hypertext programs in a seventh archive
-names INTER60G.ZIP.
+called INTER61E.ZIP and the hypertext conversion programs in a sixth archive
+named INTER61F.ZIP.
 
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+Copyright (c) 1989-1999,2000 Ralf Brown
 --------!---CONTACT_INFO---------------------
-Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
-FIDO: Ralf Brown 1:129/26.1
+E-mail: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)

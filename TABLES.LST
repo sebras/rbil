@@ -1,5 +1,5 @@
-SELECTED TABLES			Release 60		Last change 03jan99
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+SELECTED TABLES 		Release 61		 Last change 16jul00
+Copyright (c) 1989-1999,2000 Ralf Brown
 --------!------------------------------------
 
 Buses
@@ -44,7 +44,7 @@ Disks
 	hard disk partition record (see #00651 at INT 19)
 	IDE controller commands (see #P0515 at PORT 01F0h)
 	Partition Types (see #00652 at INT 19)
-	serial number (see #01766 at INT 21/AH=69h)
+	serial number (see #01565 at INT 21/AX=440Dh,#01766 at INT 21/AH=69h)
 
 DOS (general)
 	DOS commandline (see #02585 at INT 2E)
@@ -181,5 +181,4 @@ Other Tables
 	Option ROM header (see #F0082)
 	ROM configuration table (see #00509 at INT 15/AH=C0h)
 --------!---CONTACT_INFO---------------------
-Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
-FIDO: Ralf Brown 1:129/26.1
+E-mail: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)

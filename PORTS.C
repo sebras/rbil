@@ -1,5 +1,5 @@
 Ports List, part 3 of 3
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+Copyright (c) 1989-1999,2000 Ralf Brown
 ----------P0AD60AD7--------------------------
 PORT 0AD6-0AD7 - Chips & Technologies PC Video (82C9001A) - CONTROL REGISTERS
 Range:	Address determined by status of CS# input at RESET. If CS# input is
@@ -884,6 +884,30 @@ Bit(s)	Description	(Table P0977)
  0	EESK
 --------X-P100010FF--------------------------
 PORT 1000-10FF - available for EISA slot 1
+----------P1010------------------------------
+PORT 1010 - Wang PC - SCREEN 1 CONFIGURATION PORT
+SeeAlso: PORT 1020h,PORT 1030h,PORT 1040h,MEM F000h:0000h"Wang"
+
+1010  ?W  write 01h to map screen buffer 1 into memory at F000h:0000h
+	  write 00h to unmap the screen buffer
+----------P1020------------------------------
+PORT 1020 - Wang PC - SCREEN 2 CONFIGURATION PORT
+SeeAlso: PORT 1010h,PORT 1030h,PORT 1040h,MEM F000h:0000h"Wang"
+
+1020  ?W  write 01h to map screen buffer 2 into memory at F000h:0000h
+	  write 00h to unmap the screen buffer
+----------P1030------------------------------
+PORT 1030 - Wang PC - SCREEN 3 CONFIGURATION PORT
+SeeAlso: PORT 1010h,PORT 1020h,PORT 1040h,MEM F000h:0000h"Wang"
+
+1030  ?W  write 01h to map screen buffer 3 into memory at F000h:0000h
+	  write 00h to unmap the screen buffer
+----------P1040------------------------------
+PORT 1040 - Wang PC - SCREEN 4 CONFIGURATION PORT
+SeeAlso: PORT 1010h,PORT 1020h,PORT 1030h,MEM F000h:0000h"Wang"
+
+1040  ?W  write 01h to map screen buffer 4 into memory at F000h:0000h
+	  write 00h to unmap the screen buffer
 ----------P12E812EF--------------------------
 PORT 12E8-12EF - 8514/A and compatible (e.g. ATI Graphics Ultra) - VERT TOTAL
 
@@ -894,7 +918,7 @@ SeeAlso: PORT 16EEh"Mach32",PORT 42EEh"Mach32",PORT 52EEh"Mach32"
 ----------P13901393--------------------------
 PORT 1390-1393 - cluster (adapter 3)
 ----------P13C6------------------------------
-PORT 13C6 - Compaq - ???
+PORT 13C6 - Compaq - VIDEO STATUS???
 Note:	this port is read by the Compaq MS-DOS 4.0/5.0 CHARSET utility
 
 13C6  R?  Compaq video status??? (see #P0978)
@@ -905,6 +929,7 @@ Bit(s)	Description	(Table P0978)
  6	flag
  5-3	???
  2-0	status of display???
+	(in the context of video mode detection on mono/color systems)
 --------X-P140014FF--------------------------
 PORT 1400-14FF - available for EISA slot 1
 ----------P16E816EF--------------------------
@@ -1919,6 +1944,15 @@ Values for ET4000/W32(i) CRTC-B/Sprite data register index:
 PORT 22E8-22EF - 8514/A and compatible (e.g. ATI Graphics Ultra) - DISPLAY CTRL
 
 22E8w -W  CRT control: display control
+----------P2315------------------------------
+PORT 2315 - QUAD EMS+ - "QEMS_BOARD1" - ???
+SeeAlso: PORT 05FBh"QUAD",PORT 2316h,PORT 2717h
+----------P2316------------------------------
+PORT 2316 - QUAD EMS+ - "QEMS_BOARD2" - ???
+SeeAlso: PORT 05FBh"QUAD",PORT 2315h,PORT 2317h,PORT 2717h
+----------P2317------------------------------
+PORT 2317 - QUAD EMS+ - "QEMS_BOARD3" - ???
+SeeAlso: PORT 05FBh"QUAD",PORT 2316h,PORT 2714h,PORT 2717h
 ----------P23902393--------------------------
 PORT 2390-2393 - cluster (adapter 4)
 --------V-P23C023CF--------------------------
@@ -1931,6 +1965,18 @@ SeeAlso: PORT 1C65h"Compaq",PORT 2065h"Compaq"
 
 2465  R-  current battery power level
 		(166 fully-charged, 130 = LowBat1)
+----------P2714------------------------------
+PORT 2714 - QUAD EMS+ - "QEMS_BOARD4" - ???
+SeeAlso: PORT 05FBh"QUAD",PORT 2315h,PORT 2715h
+----------P2715------------------------------
+PORT 2715 - QUAD EMS+ - "QEMS_BOARD5" - ???
+SeeAlso: PORT 05FBh"QUAD",PORT 2315h,PORT 2714h,PORT 2716h
+----------P2716------------------------------
+PORT 2716 - QUAD EMS+ - "QEMS_BOARD6" - ???
+SeeAlso: PORT 05FBh"QUAD",PORT 2315h,PORT 2715h,PORT 2717h
+----------P2717------------------------------
+PORT 2717 - QUAD EMS+ - "QEMS_BOARD7" - ???
+SeeAlso: PORT 05FBh"QUAD",PORT 2315h,PORT 2716h
 ----------P27C6------------------------------
 PORT 27C6 - Compaq LTE Lite - LCD TIMEOUT
 
@@ -3261,6 +3307,21 @@ Desc:	define the position of the top-left corner of an 8x8 pixel pattern
 
 EAE8w RW  pattern Y coordinate (bits 11-0)
 EAEAw RW  pattern X coordinate (bits 11-0)
+----------PEDC0EDC1--------------------------
+PORT EDC0-EDC1 - DR DOS BATTERYMAX - DYNAMIC IDLE DETECTION
+Note:	These ports are emulated by the IDLE386 dynamic idle detection of the
+	  DR DOS BatteryMAX component. The actual definition of the bits is up
+	  to the OEMs
+
+EDC0  R-  emulated I/O address for video/serial activity status check
+	  bit 6: screen RAM updated since last query
+	  bit 1: COM2??? activity detected since last query
+	  bit 0: COM1??? activity detected since last query
+	  Note: Reading resets the IDLE386 video/serial internal setting
+EDC1  -W  emulated I/O address for idle port
+	  sets wakeup alarm on specified hardware event
+	  bit 1: keyboard INT 09h
+	  bit 0: timer INT 08h
 --------V-PFAEE------------------------------
 PORT FAEE - ATI Mach32 - CHIP IDENTIFICATION REGISTER
 SeeAlso: PORT 56EEh"Mach32",PORT 5EEEh"Mach32"
@@ -4425,7 +4486,7 @@ SeeAlso: #P1095
 Wim Osterholt		<wim@djo.wtm.tudelft.nl>		Original File
 Chuck Proctor		<71534.2302@CompuServe.COM>
 Richard W. Watson	<73042.1420@CompuServe.COM>
-Matthias Paul		<mpaul@ibh.rwth-aachen.de>
+Matthias Paul		<matthias.paul@post.rwth-aachen.de>	lots....
 Serguei Shtyliov	<serge.fido@coudert.msk.ru>		Xirlink XL-22x
 Serguei Shtyliov	<serge.fido@coudert.msk.ru>		TMC-16x0 SCSI
 Serguei Shtyliov	<serge.fido@coudert.msk.ru>		AHA-154x SCSI
@@ -4482,15 +4543,14 @@ edition.
 
 [many more sources listed in BIBLIO.LST]
 --------!---Admin----------------------------
-Highest Table Number = P1016
+Highest Table Number = P1017
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER60A through INTER60D (preferably the original
-authenticated PKZIP archives), and the utility and hypertext programs in a trio
-of additional archives called INTER60E.ZIP to INTER60G.ZIP.
+quartet of archives named INTER61A through INTER61D (preferably the original
+authenticated PKZIP archives), and the utility and hypertext programs in a pair
+of additional archives called INTER61E.ZIP and INTER61F.ZIP.
 
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+Copyright (c) 1989-1999,2000 Ralf Brown
 --------!---CONTACT_INFO---------------------
-Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
-FIDO: Ralf Brown 1:129/26.1
+E-mail: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)

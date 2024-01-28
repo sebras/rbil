@@ -1,5 +1,5 @@
-SYSTEM-MANAGEMENT MODE		Release 60		Last change 03jan99
-Copyright (c) 1997,1998,1999 Ralf Brown
+SYSTEM-MANAGEMENT MODE		Release 61		Last change 16jul00
+Copyright (c) 1997,1998,1999,2000 Ralf Brown
 
 ---------------------------------------------
 SMM Am486
@@ -282,11 +282,10 @@ Highest Table Number = S0008
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER60A through INTER60D (preferably the original
+quartet of archives named INTER61A through INTER61D (preferably the original
 authenticated PKZIP archives), and the utility and hypertext conversion
-programs in three additional archives called INTER60E.ZIP to INTER60G.ZIP.
+programs in two additional archives called INTER61E.ZIP and INTER61F.ZIP.
 
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
+Copyright (c) 1989-1999,2000 Ralf Brown
 --------!---CONTACT_INFO---------------------
-Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
-FIDO: Ralf Brown 1:129/26.1
+E-mail: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
