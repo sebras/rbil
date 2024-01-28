@@ -1,5 +1,5 @@
-Bibliography			Release 52		Last change 20oct96
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
+Bibliography			Release 53		Last change 12jan97
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
 --------!---BIBLIOGRAPHY---------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -655,15 +655,78 @@ CD).  Added by Ralf Brown, 10/16/96.
 APM v1.2 calls and enhancements from _Advanced_Power_Management_(APM)_BIOS_
 _Interface_Specification_, Revision 1.2 (February 1996, available on the
 March 1996 Intel Architecture Labs CD).	 Added by Ralf Brown, 10/17/96.
+
+Information on FAT32 calls from FAT32API.HLP.  Added 10/22/96.
+
+SCSI Command Data Block format, ASPI info, etc. from _The_Book_of_SCSI_ by
+Peter M. Ridge.  Added by Ralf Brown, 11/3/96.
+
+CardBus info from _CardBus_System_Architecture_ by Mindshare, Inc.
+ISBN 0-201-40997-6.  Added by Ralf Brown, 11/3/96.
+
+InterWave Game API and InterWave ports from _InterWave(tm)_IC_Am78C201/202_
+_Programmer's_Guide_, Revision 2, 1996.  Added by Ralf Brown, 12/7/96.
+
+PCI Power Management info from _PCI_Bus_Power_Management_Interface_
+_Specification_, _Preliminary_Review_Draft_Revision_0.93_, November 22, 1996.
+Added by Ralf Brown, 12/15/96.
+
+Intel 82378ZB and 82379AB PCI configuration data and I/O ports from _82378ZB_
+_System_I/O_(SIO)_and_82379AB_System_I/O_APIC_(SIO.A)_, available from
+www.intel.com as file 29057101.PDF.  Added by Ralf Brown, 12/29/96.
+
+Intel 82437VX PCI configuration data from _Intel 430VX_PCIset_82437VX_
+_System_Controller_(TVX)_and_82438VX_Data_Path_Unit_(TDX)_, available at
+www.intel.com as file 29055301.PDF.  Added by Ralf Brown, 12/30/96.
+
+Intel 82439HX PCI configuration data from _Intel_430HX_PCIset_82439HX_
+_System_Controller_(TXC)_, available on www.intel.com as file 29055101.PDF.
+Added by Ralf Brown, 12/30/96.
+
+Intel 82371FB/82371SB PCI configuration data and I/O ports from
+_82371FB_(PIIX)_and_82371SB_(PIIX3)_PCI_ISA_IDE_Xcelerator_, available
+on www.intel.com as file 29055001.PDF.  Added by Ralf Brown, 12/30/96.
+
+Intel 82441FX PCI configuration data from _Intel_440FX_PCIset_82441FX_PCI_
+_and_Memory_Controller_(PMC)_and_82442FX_Data_Bus_Accelerator_(DBX)_,
+available on www.intel.com as file 29054901.PDF.
+Added by Ralf Brown, 12/30/96.
+
+Intel 82437MX PCI configuration data from _Intel_430MX_PCIset_82437MX_
+_Mobile_System_Controller_(MTSC)_and_82438MX_Mobile_Data_Path_(MTDP)_,
+available on www.intel.com as file 29052401.PDF.
+Added by Ralf Brown, 12/30/96.
+
+Intel 82437FX PCI configuration data from _Intel_82430FX_PCIset_Datasheet_
+_82437FX_System_Controller_(TSC)_and_82438FX_Data_Path_Unit_(TDP)_,
+available on www.intel.com as file 29051801.PDF.
+Added by Ralf Brown, 12/30/96.
+
+ATAPI Removable Media Device information from _ATAPI_Removable_Media_
+_Device_BIOS_Specification_, version 0.8, September 16, 1996; Compaq Computer
+Corporation and Phoenix Technologies.  Added by Ralf Brown, 01/02/97.
+
+NetWare TCP/IP API info from "The RCB Interface to the LAN WorkPlace TCP/IP
+Protocol Stack", available from occam.sjf.novell.com.
+Added by Ralf Brown, 01/04/97.
+
+Intel 82347/82351/82359 I/O ports from _The_Undocumented_PC_, second edition.
+Added by Ralf Brown, 01/09/97.
+
+OpenHCI info from _Open_Host_Controller_Interface_Specification_for_USB_,
+10/16/96 preliminary release 1.0a.  Added by Ralf Brown, 01/11/97.
+
+ACPI info from _Advanced_Configuration_and_Power_Interface_Specification_,
+draft revision 0.9, October 14, 1996.  Added by Ralf Brown, 1/11/97.
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER52A through INTER52D (preferably the original
+quartet of archives named INTER53A through INTER53D (preferably the original
 authenticated PKZIP archives), the utility programs in a fifth archive
-called INTER50E.ZIP, and the hypertext conversion programs in two additional
-archives named INTER52F.ZIP and INTER52G.ZIP
+called INTER53E.ZIP, and the hypertext conversion programs in two additional
+archives named INTER53F.ZIP and INTER53G.ZIP
 
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
 --------!---CONTACT_INFO---------------------
 Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
 UUCP: {uunet,harvard}!pobox.com!ralf

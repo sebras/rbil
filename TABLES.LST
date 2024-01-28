@@ -1,5 +1,5 @@
-SELECTED TABLES			Release 52		Last change 20oct96
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
+SELECTED TABLES			Release 53		Last change 12jan97
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
 --------!------------------------------------
 
 Country-Specific Information:
@@ -77,6 +77,13 @@ DOS-internal data (see INT 21/AH=52h)
 	Swappable Data Area (SDA) (see #1027,#1030 at INT 21/AX=5D0Bh)
 	System File Table (SFT) (see #0980,#0981,#0982,#0983)
 
+Error Codes (Other)
+	AMI BIOS diagnostics codes (see #P074)
+	Advanced Power Management [APM] (see #0377 at INT 15/AX=5300h)
+	EMS (see #2897 at INT 67/AH=40h)
+	PRINT.EXE (see #1928 at INT 2F/AX=0101h)
+	XMS (see #2055 at INT 2F/AX=4310h)
+
 Files and Directories
 	Directory Entry (see #0700)
 	file attributes (see #0748 at INT 21/AH=3Ch)
@@ -108,7 +115,14 @@ PCI Bus
 Plug-and-Play
 	Plug-and-Play Installation Structure (see #F024)
 	Plug-and-Play error codes (see #F053)
+	Plug-and-Play device type codes (see #F057)
 	Extended System Configuration Data (ESCD)(see #0651 at INT 1A/AX=B401h)
+	generic device IDs (see #F058)
+
+Power Management
+	Advanced Power Management [APM] (see INT 15/AX=5300h)
+	Advanced Configuration and Power Interface [ACPI] 
+		(see #M079 at MEM xxxxh:xxx0h"ACPI")
 
 Real-Time Clock (see also CMOS.LST)
 	status registers (see #0310,#0311,#0312 at INT 15/AH=01h"Amstrad")
@@ -117,6 +131,15 @@ Serial Port
 	serial port parameters (see #0204 at INT 14/AH=00h)
 	serial line status (see #0208 at INT 14/AH=03h)
 	modem status (see #0209 at INT 14/AH=03h)
+
+Sound
+	Adlib/SoundBlaster registers (see #P128 at PORT 0388h"AdLib")
+	Gravis UltraSound
+		registers (see #P102 at PORT 0340h"Gravis")
+		board version (see PORT 0746h"Gravis")
+		MegaEm (see INT 21/AX=FD12h,#3224 at INT 81/AX=0200h)
+	SoundBlaster SBSIM (see #3221 at INT 80"SBSIM")
+	Windows Sound System (see #P217 at PORT 0530h"Windows Sound")
 
 Video
 	character attributes (see #0013 at INT 10/AH=08h)
@@ -132,14 +155,8 @@ Video
 Windows
 	Global EMM Import record (see #0857 at INT 21/AX=4402h)
 	Startup Information Structure (see #1959 at INT 2F/AX=1605h)
+	WMMCALL (see INT 20"Windows")
 	VxD identifiers (see #1968 at INT 2F/AX=1684h)
-
-Other Error Codes
-	AMI BIOS diagnostics codes (see #P074)
-	Advanced Power Management [APM] (see #0377 at INT 15/AX=5300h)
-	EMS (see #2897 at INT 67/AH=40h)
-	PRINT.EXE (see #1928 at INT 2F/AX=0101h)
-	XMS (see #2055 at INT 2F/AX=4310h)
 
 Other Tables
 	AMIS signatures (see #1904,#1905 at INT 2D/AH=00h)
@@ -149,6 +166,7 @@ Other Tables
 	Multiprocessor Specification - Floating Pointer Structure (see #M067)
 	Option ROM header (see #F054)
 	ROM configuration table (see #0411 at INT 15/AH=C0h)
+	Universal Serial Bus OpenHCI (see #3330 at INT 1A/AX=B10Ah)
 
 --------!---CONTACT_INFO---------------------
 Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)

@@ -2,24 +2,24 @@ Public Domain/Freeware/Shareware by Ralf Brown:
 
 (URLs for use with your favorite WWW browser are at the end of this file)
 
-The MSDOS Interrupt List
-	A comprehensive listing of more than 8000 functions available through
+The x86/MSDOS Interrupt List
+	A comprehensive listing of more than 8300 functions available through
 	interrupt calls on IBM PCs and compatibles.  Includes both
 	documented and undocumented functions, plus lists of I/O port, CMOS,
 	and memory locations, and far-call entry points.
-	Current version: INTER52A (release 52, 10/20/96)
-			 INTER52B
-			 INTER52C
-			 INTER52D
-			 INTER52E (utility programs)
-			 INTER52F (WinHelp-related programs)
-			 INTER52G (other hypertext conversion programs)
+	Current version: INTER53A (release 53, 12jan97)
+			 INTER53B
+			 INTER53C
+			 INTER53D
+			 INTER53E (utility programs)
+			 INTER53F (WinHelp-related programs)
+			 INTER53G (other hypertext conversion programs)
 
 DVINT
 	An extract of the MSDOS Interrupt List containing the DESQview
 	and QEMM API calls.  Updated whenever there have been significant
  	additions to the DESQview/QEMM calls in the Interrupt List.
-	Current version: DVINT43 (11/6/94)
+	Current version: DVINT43 (06jun94)
 
 RBcomm
 	A DESQview-aware communications program which sports seamless DSZ,
@@ -28,7 +28,7 @@ RBcomm
 	a powerful macro language; dialing directory; ANSI music; and
 	more.  Runs in 65K with DSZ, 47K without.  While it works under
 	plain DOS, additional features are available under DESQview.
-	Current version: RBCOM346 (v3.46 1/29/95)
+	Current version: RBCOM346 (v3.46 29jan95)
 
 SPAWNO
 	A replacement for the Turbo C and Microsoft C spawn..() functions
@@ -36,18 +36,18 @@ SPAWNO
 	memory while the spawned program executes, leaving less than 300
 	bytes in memory.  Also includes a variant for Turbo Pascal v4.0 or
 	higher.
-	Current version: SPWNO413 (v4.13 12/12/92)
+	Current version: SPWNO413 (v4.13 12dec92)
 	Price: libraries free, full source code $100.
 
 RBdualVGA
 	Use two color displays on one PC.
-	Current version: RBDUAL09 (v0.9 6/2/96)
+	Current version: RBDUAL09 (v0.9 02jun96)
 
 RBkeyswap
 	Exchange left control and CapsLock keys, as well as Esc and `/~.
 	Loads itself high, using just 64 bytes; needs only 128 bytes low
 	if no high memory is available.
-	Current version: RBKEYSWP (v2.0 6/22/91; v3.0 included in AMISLIB)
+	Current version: RBKEYSWP (v2.0 22jun91; v3.0 included in AMISLIB)
 
 AMISLIB
 	Public Domain library (with full source code and five sample TSRs)
@@ -56,30 +56,30 @@ AMISLIB
 	simultaneously, and TSRs can be as small as 128 bytes resident,
 	1.4K on disk.  One of the sample TSRs is a popup which accesses
 	DOS.
-	Current version: AMISL092 (v0.92 9/24/95)
+	Current version: AMISL092 (v0.92 24sep95)
 
 DV-GLUE
 	DESQview API bindings for Turbo/Borland C (also mostly compatible
 	with MS C).
-	Current version: DVGLU172 (source & compiled) (v1.72 10/1/95)
+	Current version: DVGLU172 (source & compiled) (v1.72 01oct95)
 
 DVKPOLL
 	"Poor man's version" of TAME.  Makes programs give up CPU time when
 	they are in an idle loop polling the keyboard for keystrokes.
-	Current version: DVKPOLL2 (6/18/88)
+	Current version: DVKPOLL2 (18jun88)
 	Note: This program has been superseded by DVPTAME.
 
 DVPTAME
 	"Not-so-poor man's version" of TAME.  Tells DESQview to give the
 	remainder of a time slice away if the program is in an idle loop
 	polling the keyboard for keystrokes.  Uses 0 bytes of memory.
-	Current version: DVPTAME (6/4/91)
+	Current version: DVPTAME (04jun91)
 
 DVdevload
 	Load device drivers only in those DESQview windows which need the
 	services of the driver, reducing the pre-DESQview overhead and thus
 	permitting larger DESQview windows.
-	Current version: DVDEVL12 (v1.20 1/3/93)
+	Current version: DVDEVL12 (v1.20 03jan93)
 	Note: as of DESQview 2.40, Quarterdeck's DEVICE.COM is able to install
 	  drivers into the device chain in the same manner as DVdevload;
 	  however, DEVICE uses eight times as much memory as DVdevload and
@@ -89,7 +89,7 @@ DVdevload
 RBspeed
 	Switch the CPU speed of an Intel Pentium motherboard using the
 	"Neptune" chipset.  Public Domain.
-	Current version: RBSPEED1 (v1.00 9/8/94)
+	Current version: RBSPEED1 (v1.00 08sep94)
 
 SPTURBO
 	An integrated environment for Borland's Sprint word processor and
@@ -103,7 +103,7 @@ SPTURBO
 PURGEMSG
 	Delete or copy *.MSG files such that you only see those messages
 	from a Fidonet echomail area which interest you.
-	Current version: PURGEMSG (v1.00, 8/4/91)
+	Current version: PURGEMSG (v1.00, 04aug91)
 
 --------------
 Authentication
@@ -156,7 +156,6 @@ Internet:  SimTel Software Repository mirrors in directories /SimTel/msdos/X.
 	ftp.uu.net [137.39.1.9], nic.funet.fi [128.214.6.100],
 	src.doc.ic.ac.uk [146.169.3.7] and archie.au [139.130.4.6].
      Some packages are also on GARBO.UWASA.FI in /pc/programming.
-FIDO: SyncPoint BBS 1:261/1008 1-410-529-2584 File Requests.
 
 Bitnet users may also retrieve items on SimTel via the following automated
 mail servers:
@@ -450,21 +449,21 @@ Files in my FTP area:
 	ftp://ftp.cs.cmu.edu/afs/cs.cmu.edu/user/ralf/pub/
 
 Files on SimTel and mirrors:
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter52a.zip
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter52b.zip
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter52c.zip
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter52d.zip
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter52e.zip
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter52f.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter53a.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter53b.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter53c.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter53d.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter53e.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter53f.zip
 	ftp://ftp.simtel.net/pub/simtelnet/msdos/c/spwno413.zip
 	ftp://ftp.simtel.net/pub/simtelnet/msdos/desqview/dvint43.zip
 	ftp://ftp.simtel.net/pub/simtelnet/msdos/desqview/dvglu172.zip
 	ftp://ftp.simtel.net/pub/simtelnet/msdos/modem/rbcom346.zip
 
 Files at Garbo:
-	ftp://garbo.uwasa.fi/pc/programming/inter52a.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter52b.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter52c.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter52d.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter52e.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter52f.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter53a.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter53b.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter53c.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter53d.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter53e.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter53f.zip

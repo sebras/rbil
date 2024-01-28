@@ -1,5 +1,5 @@
-FAR CALL Interface List		Release 52		Last change 20oct96
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
+FAR CALL Interface List		Release 53		Last change 12jan97
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
 
 =============================================
 >CALL 0000h:0000h - Sample Entry
@@ -1262,36 +1262,112 @@ Type	Subtype		Description
 	00h	  386-based
 	01h	  486-based
 	02h	  Pentium-based
+	03h	  Pentium-Pro (P6)
 	10h	  DEC Alpha
 	40h	  coprocessor
  0Ch	---	Serial Bus controller
 	00h	  Firewire (IEEE 1394)
 	01h	  ACCESS.bus
 	02h	  SSA
-SeeAlso: #F056,#F058
+	03h	  Universal Serial Bus (USB)
+			programming interface 10h = OpenHCI Host Controller
+SeeAlso: #F056,#F058,#0628
 
 (Table F058)
 Values for Plug-and-Play generic EISA device ID:
  PNP0xxx	system devices
  PNP00xx	  interrupt controller
+ PNP0000		AT interrupt controller
+ PNP0001		EISA interrupt controller
+ PNP0002		MCA interrupt controller
+ PNP0003		APIC
+ PNP0004		Cyrix SLiC MP interrupt controller
  PNP01xx	  timer
+ PNP0100		AT timer
+ PNP0101		EISA timer
+ PNP0102		MCA timer
  PNP02xx	  DMA controller
+ PNP0200		AT DMA controller
+ PNP0201		EISA DMA controller
+ PNP0202		MCA DMA controller
  PNP03xx	  keyboard
+ PNP0300		PC/XT keyboard controller (83-key)
+ PNP0301		PC/AT keyboard controller (84-key)
+ PNP0302		PC/XT keyboard controller (84-key)
+ PNP0303		IBM enhanced keyboard (101/102-key, PS/2 mouse)
+ PNP0304		Olivetti keyboard (83-key)
+ PNP0305		Olivetti keyboard (102-key)
+ PNP0306		Olivetti keyboard (86-key)
+ PNP0307		enhanced keyboard with Windows keys
+ PNP0308		General Input Device Emulation Interface (GIDEI) legacy
+ PNP0309		Olivetti keyboard (A101/102-key)
+ PNP030A		AT&T 302 keyboard
  PNP04xx	  parallel port
+ PNP0400		standard printer port
+ PNP0401		ECP printer port
  PNP05xx	  serial port
+ PNP0500		standard 8250/16450 UART
+ PNP0501		16550A-compatible UART
  PNP06xx	  disk controller
- PNP0700	  floppy controller
+ PNP0600		generic ESDI/IDE/ATA controller
+ PNP0601		Plus Hardcard II
+ PNP0602		Plus Hardcard IIXL/EX
+ PNP0700	  standard floppy controller
  PNP0800	  PC speaker
  PNP09xx	  display adapter
+ PNP0900		VGA-compatible
  PNP0Axx	  periperal bus
- PNP0B00	  real-time clock
+ PNP0A00		ISA
+ PNP0A01		EISA
+ PNP0A02		MCA
+ PNP0A03		PCI
+ PNP0A04		VESA/VL bus
+ PNP0A05		generic ACPI bus
+ PNP0A06		extended IO bus
+ PNP0A07		SMB bus
+ PNP0A08		ACPI three-wire device bus
+ PNP0A09		ACPI two-wire device bus
+ PNP0B00	  AT-style real-time clock
  PNP0Cxx	  BIOS/system board
+ PNP0C00		Plug-and-Play BIOS
+ PNP0C01		system board
+ PNP0C02		(PnP-reserved resources)
+ PNP0C03		Plug-and-Play event notification interrupt
+ PNP0C04		math coprocessor
+ PNP0C08		ACPI driver/BIOS
+ PNP0C09		embedded controller device
+ PNP0C0A		control method battery
+ PNP0C0B		fan
+ PNP0C0C		power button
+ PNP0C0D		lid
  PNP0Exx	  PCMCIA controller chipset
+ PNP0E00		Intel 82365-compatible
  PNP0Fxx	  mouse
  PNP8xxx	network adapter
  PNP9xxx	modem
  PNPAxxx	SCSI controller/proprietary CD-ROM controller
+ PNPA000		Adaptec 154x-compatible
+ PNPA001		Adaptec 174x-compatible
+ PNPA002		Future Domain 16-700-compatible
  PNPBxxx	sound/video/multimedia
+ PNPB000		Sound Blaster 1.5
+ PNPB001		Sound Blaster 2.0
+ PNPB002		Sound Blaster Pro
+ PNPB004		Thunderboard
+ PNPB005		Adlib-compatible FM synthesis
+ PNPB006		MPU-401
+ PNPB007		Microsoft Windows Sound System
+ PNPB008		Compaq Waveform
+ PNPB010		Motion Video device (MCI)
+ PNPB011		MIDI Sequencer (MCI)
+ PNPB012		Wave Audio (MCI)
+ PNPB013		VISCA VCR (MCI)
+ PNPB014		Pioneer Laserdisk (MCI)	
+ PNPB015		CD Audio (MCI)
+ PNPB020		Yamaha OPL3-compatible FM synthesis
+ PNPB02F		joystick/game port
+ ACPI0001	three-wire serial memory device
+ ACPI0002	two-wire serial memory device
 SeeAlso: #F057,#F059
 
 (Table F059)
@@ -1398,11 +1474,11 @@ Highest Table Number = F062
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER52A through INTER52D (preferably the original
+quartet of archives named INTER53A through INTER53D (preferably the original
 authenticated PKZIP archives), and the utility and hypertext conversion
-programs in three additional archives called INTER52E.ZIP to INTER50G.ZIP
+programs in three additional archives called INTER53E.ZIP to INTER53G.ZIP
 
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
 --------!---CONTACT_INFO---------------------
 Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
 UUCP: {uunet,harvard}!pobox.com!ralf

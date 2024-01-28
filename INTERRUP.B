@@ -1,5 +1,5 @@
-Interrupt List, part 2 of 15
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
+Interrupt List, part 2 of 16
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
 --------B-1318-------------------------------
 INT 13 - DISK - SET MEDIA TYPE FOR FORMAT (AT model 3x9,XT2,XT286,PS)
 	AH = 18h
@@ -47,6 +47,15 @@ Values for Future Domain SCSI controller family code:
  040Ah	TMC-820/830/840/850/860/870/875/880/885 (ROM <= 6.0A)
  050Dh	TMC-840/841/880/881 (ROM 5.2D)
  0700h	TMC-830/850/860/875/885 (ROM 7.0)
+--------d-1318--CX5055-----------------------
+INT 13 - PU_1700.COM - INSTALLATION CHECK
+	AH = 18h
+	CX = 5055h ('PU')
+	DL = 00h
+Return: AX = 7570h ('up') if PU_1700 is installed
+Program: PU_1700 is a BIOS enhancer from PU Service Systems which permits
+	  formatting diskettes at higher capacity (1.78M instead of 1.44M)
+SeeAlso: AX=057Fh/SI=324Dh"2M"
 --------d-1318--CXD2C9-----------------------
 INT 13 - XDF.COM - API
 	AH = 18h
@@ -196,7 +205,7 @@ Offset	Size	Description	(Table 0162)
  08h	BYTE	00h
  09h	BYTE	00h or extended sense code byte 02h (sense key)
  0Ah	BYTE	00h
- 0Bh 10 BYTEs	copy of Command Descriptor Block (CDB)
+ 0Bh 10 BYTEs	copy of Command Descriptor Block (CDB) (see #3303,#3304)
  15h	DWORD	translated number of sectors on device
 
 Bitfields for Future Domain SCSI device physical information:
@@ -230,6 +239,7 @@ INT 13 U - ESDI FIXED DISK - ???
 	???
 Return: ???
 Note:	these functions perform a controller command 0612h without DMA
+SeeAlso: AX=1C08h,PORT 3510h"ESDI"
 --------d-131C08-----------------------------
 INT 13 U - ESDI FIXED DISK - GET COMMAND COMPLETION STATUS
 	AX = 1C08h
@@ -238,7 +248,7 @@ INT 13 U - ESDI FIXED DISK - GET COMMAND COMPLETION STATUS
 Return: CF set on error
 	CF clear if successful
 	AH = status (see #0144 at AH=01h)
-SeeAlso: AX=1C09h,AX=1C0Ah
+SeeAlso: AX=1C09h,AX=1C0Ah,PORT 3510h"ESDI"
 
 Format of ESDI Command Complete Status Block:
 Offset	Size	Description	(Table 0164)
@@ -344,7 +354,7 @@ INT 13 U - ESDI FIXED DISK - GET DEVICE STATUS
 Return: CF set on error
 	CF clear if successful
 	AH = status (see #0144 at AH=01h)
-SeeAlso: AX=1C08h,AX=1C0Ah
+SeeAlso: AX=1C08h,AX=1C0Ah,PORT 3510h"ESDI"
 
 Format of ESDI Device Status Block:
 Offset	Size	Description	(Table 0169)
@@ -421,7 +431,7 @@ INT 13 U - ESDI FIXED DISK - ???
 	???
 Return: ???
 Note:	invokes controller command 0614h without DMA
-SeeAlso: AH=1Ch"ESDI",AX=1C0Fh
+SeeAlso: AH=1Ch"ESDI",AX=1C0Fh,PORT 3510h"ESDI"
 --------d-131C0E-----------------------------
 INT 13 U - ESDI FIXED DISK - TRANSLATE RBA TO ABA
 	AX = 1C0Eh
@@ -435,6 +445,7 @@ Return: CF set on error
 	AH = status (see #0144 at AH=01h)
 Note:	ABA (absolute block address) format can be found in IBM ESDI Adapter
 	  Technical Reference by using its Device Configuration Status Block
+SeeAlso: AX=1C08h,AX=1C0Fh,PORT 3510h"ESDI"
 --------d-131C0F-----------------------------
 INT 13 U - ESDI FIXED DISK - ???
 	AX = 1C0Fh
@@ -442,7 +453,7 @@ INT 13 U - ESDI FIXED DISK - ???
 	???
 Return: ???
 Note:	invokes controller command 0614h without DMA
-SeeAlso: AH=1Ch"ESDI",AX=1C0Dh,AX=1C12h
+SeeAlso: AH=1Ch"ESDI",AX=1C0Dh,AX=1C12h,PORT 3510h"ESDI"
 --------d-131C12-----------------------------
 INT 13 U - ESDI FIXED DISK - ???
 	AX = 1C12h
@@ -450,7 +461,7 @@ INT 13 U - ESDI FIXED DISK - ???
 	???
 Return: ???
 Note:	invokes controller command 0612h without DMA
-SeeAlso: AH=1Ch"ESDI",AX=1C0Fh
+SeeAlso: AH=1Ch"ESDI",AX=1C0Fh,PORT 3510h"ESDI"
 --------c-131D-------------------------------
 INT 13 - IBMCACHE.SYS - CACHE STATUS
 	AH = 1Dh
@@ -512,30 +523,32 @@ Notes:	returns some kind of status related to whether the drive contains its
 	  default media type
 	QEMM v6.00 calls INT 13/AX=2000h/DL=81h in some cases
 --------b-1320-------------------------------
-INT 13 U - Compaq DESKPRO/i - GET CURRENT MEDIA FORMAT
+INT 13 U - Compaq, ATAPI Removable Media Device - GET CURRENT MEDIA FORMAT
 	AH = 20h
 	DL = drive number (00h,01h)
 Return: CF clear if successful
 	    AL = media type (see #0175)
+	    AH = 00h
 	CF set on error
 	    AH = error code
 		30h (Phoenix) ???
-		31h no such drive
-		32h incorrect drive type stored in CMOS
+		31h no such drive / media not present
+		32h non-default media
 Notes:	this function is supported by the 3/8/93 ROM BIOS, but only partially
 	  (AL is always 00h when successful) by the 8/3/93 version
 	this function is also supported by some recent versions of the Phoenix
 	  486 BIOS
 
 (Table 0175)
-Values for Compaq diskette media type:
+Values for Compaq/ATAPI diskette media type:
  03h	720K
  04h	1.44M
  06h	2.88M
  0Ch	360K
  0Dh	1.2M
- 0Eh	???
- 0Fh	??? (1024-byte sectors)
+ 0Eh	Toshiba 3mode
+ 0Fh	NEC 3mode (1024-byte sectors)
+ 10h	ATAPI Removable Media Device
 --------c-1320-------------------------------
 INT 13 u - QUICKCACHE II v4.20 - DISMOUNT
 	AH = 20h
@@ -631,6 +644,7 @@ Values for PS/1 hard disk feature number:
  BBh	set ECC length for read long/write long to four bytes
  CCh	enable reverting to power-on defaults
  DDh	Write Same, entire disk
+SeeAlso: #P281
 --------c-1323-------------------------------
 INT 13 U - QUICKCACHE II v4.20 - GET ??? ADDRESS
 	AH = 23h
@@ -720,6 +734,7 @@ Offset	Size	Description	(Table 0177)
 100h 64 BYTEs	vendor unique
 140h 96 BYTEs	reserved
 Note:	the above description is as in the ATA (AT Attachment) Specification.
+SeeAlso: #P087
 
 Bitfields for general drive configuration:
 Bit(s)	Description	(Table 0178)
@@ -1156,13 +1171,13 @@ Offset	Size	Description	(Table 0183)
  00h	WORD	(call) size of buffer (001Ah for v1.x, 001Eh for v2.x)
 		(ret) size of returned data
  02h	WORD	information flags (see #0184)
- 04h	DWORD	number of cylinders on drive
- 08h	DWORD	number of heads on drive
- 0Ch	DWORD	number of sectors per track
+ 04h	DWORD	number of physical cylinders on drive
+ 08h	DWORD	number of physical heads on drive
+ 0Ch	DWORD	number of physical sectors per track
  10h	QWORD	total number of sectors on drive
  18h	WORD	bytes per sector
 ---v2.0+ ---
- 1Ah	DWORD	-> configuration parameters (see #0186)
+ 1Ah	DWORD	-> EDD configuration parameters (see #0186)
 		FFFFh:FFFFh if not available
 Note:	if the size is less than 30 on call, the final DWORD will not be
 	  returned by a v2.x implementation
@@ -1332,14 +1347,13 @@ INT 13 - Bootable CD-ROM - INITIATE DISK EMULATION AND BOOT
 	AH = 4Ch
 	AL = 00h
 	DS:SI -> specification packet (see #0189)
-Return: never if successful
+Return: never, if successful
 	CF set (error while attempting to boot)
 	AX = error codes
 SeeAlso: AH=48h,AH=4Ah,AX=4B00h,AH=4Dh
---------d-134D-------------------------------
+--------d-134D00-----------------------------
 INT 13 - Bootable CD-ROM - RETURN BOOT CATALOG
-	AH = 4Dh
-	AL = 00h
+	AX = 4D00h
 	DS:SI -> command packet (see #0191)
 Return: CF clear if successful
 	CF set on error
@@ -1513,7 +1527,7 @@ Offset	Size	Description	(Table 0193)
  07h	BYTE	command data block length
  08h	DWORD	request data length
  0Ch	DWORD	result data length (actual length of data transferred)
- 10h	DWORD	-> CDB
+ 10h	DWORD	-> CDB (see #3303,#3304,#3305)
  14h	DWORD	-> data buffer
 Note:	The handler does not perform a 'Request Sense' command if there was an
 	  error
@@ -2147,7 +2161,7 @@ Notes:	the flag is cleared by all INT 13 calls except AH=EEh and AH=EFh
 	  1024 cylinders
 	for software which supports that call, this function is equivalent to
 	  calling AH=EFh with CX=0400h
-SeeAlso: AH=F9h,AH=FEh,INT 16/AX=FFA5h/CX=1111h,INT 2F/AH=DFh
+SeeAlso: AH=F9h,AH=FEh,INT 16/AX=FFA5h/CX=1111h,INT 2F/AX=DF00h
 Index:	PC-Cache;huge disks|Disk Manager
 --------c-13EF-------------------------------
 INT 13 - Ontrack Drive Rocket - SET CYLINDER OFFSET
@@ -3491,7 +3505,7 @@ Return: AL = status
 	    00h successful
 	    01h IRQ for port is shared
 	    02h IRQ was reserved
-SeeAlso: AH=04h,AH=05h,AH=12h"PC-MOS"
+SeeAlso: AH=04h"SERIAL",AH=05h"SERIAL",AH=12h"PC-MOS"
 --------S-1412-------------------------------
 INT 14 - FOSSIL - READ CURRENT CURSOR LOCATION
 	AH = 12h
@@ -4352,8 +4366,9 @@ Return: AX = 4353h ('CS') if installed
 Program: The ComShare System is a modem-sharing program for NetBIOS and
 	  NetWare-based networks by NashaKala Corporation
 Note:	ComShare supports the standard BIOS INT 14h calls with a slight
-	  change in the interpretation of speed values (see #0213 at AH=04h)
-SeeAlso: AH=00h,AH=04h,AX=F4FFh
+	  change in the interpretation of speed values
+	  (see #0213 at AH=04h"SERIAL")
+SeeAlso: AH=00h"SERIAL",AH=04h"SERIAL",AX=F4FFh
 --------t-144000-----------------------------
 INT 14 - I1541 - INSTALLATION CHECK
 	AX = 4000h
@@ -4667,7 +4682,8 @@ Program: ArtiCom is an asynchronous communications driver by Artisoft which
 	  programs using INT 14 for serial I/O.
 Note:	ArtiCom supports 32 simultaneous COM ports using multiport cards and
 	  drivers
-SeeAlso: AH=00h,AH=01h,AH=02h,AH=03h,AH=04h,AH=05h,AX=8001h,AX=8002h
+SeeAlso: AH=00h"SERIAL",AH=01h,AH=02h,AH=03h,AH=04h"SERIAL",AH=05h"SERIAL"
+SeeAlso: AX=8001h,AX=8002h
 --------S-148000-----------------------------
 INT 14 - COMM-DRV v14.0 - READ PORT METRICS - GET ERROR CODE AND BUFFER STATUS
 	AX = 8000h
@@ -5434,7 +5450,7 @@ SeeAlso: AX=8000h"COMM-DRV",AH=88h"COMM-DRV",AH=89h"COMM-DRV"
 --------S-1488-------------------------------
 INT 14 - COURIERS.COM - ABORT OUTPUT
 	AH = 88h
-SeeAlso: AH=09h,AH=85h"COURIERS"
+SeeAlso: AH=09h"FOSSIL",AH=85h"COURIERS"
 --------S-1488-------------------------------
 INT 14 - COMM-DRV v14.0 - TURN OFF DTR
 	AH = 88h
@@ -6236,7 +6252,7 @@ SeeAlso: AH=07h"MBBIOS",AH=1Ah,AH=8Ah
 --------S-14FB-------------------------------
 INT 14 - IBM/Yale EBIOS SERIAL I/O - SET OUTGOING MODEM SIGNALS
 	AH = FBh
-	AL = modem control register (see #0238 at AH=05h)
+	AL = modem control register (see #0238 at AH=05h"SERIAL")
 	DX = port (00h-03h)
 Return: nothing
 SeeAlso: AH=05h"SERIAL"
@@ -6551,7 +6567,7 @@ INT 15 - VMiX - "sys_memreq" - MEMORY OBJECT MANAGER
 			"newmcb" make new DOS memory control block
 			"owner" get process ID of MCB or PSP owner
 			"umb" allocate upper memory block
-			"video" toggle system use of vidoe memory and get stat
+			"video" toggle system use of video memory and get stat
 		---if "assign"---
 		 WORD	number of objects
 		 WORD	size in bytes (multiple of 512 bytes)
@@ -7907,7 +7923,7 @@ Note:	a private entry point (see #0338) may be found by searching the
 	  prior to the signature contains the QEXT version number in BCD,
 	  and the word prior to that contains the offset within the QEXT
 	  code segment of the private entry point
-SeeAlso: INT 2F/AX=4310h,INT 67/AH=3Fh
+SeeAlso: INT 2F/AX=4310h"XMS",INT 67/AH=3Fh
 
 (Table 0338)
 Call QEXT.SYS private entry point with:

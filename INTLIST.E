@@ -2,7 +2,7 @@
 /*	EEL code file for editing the Interrupt List		*/
 /*								*/
 /*	Written by Ralf Brown					*/
-/*	LastEdit:  18 Oct 96					*/
+/*	LastEdit:  12 Jan 97					*/
 /*								*/
 /*  This EEL file adds the following keybindings:		*/
 /*    Shf-Alt-A add an Access: section to the current entry	*/
@@ -73,7 +73,7 @@ char seealso_section[] = "SeeAlso: " ;
 char index_section[] = "Index:\t" ;
 
 #if EELVERSION >= 70
-char all_sections[] = "Size:|Access:|Return:|InstallCheck:|Program:|Desc:|Range:|Notes*:|BUGS*:|Example:|SeeAlso:|Index:" ;
+char all_sections[] = "Return:|SeeAlso:|Program:|Desc:|Range:|Notes*:|BUGS*:|Example:|Index:|Access:|InstallCheck:|Size:" ;
 char indented_sections[] = "[\t ]*(Return|Notes*):" ;
 char table_headers[] = "INT |MEM |CMOS |MSR |CALL |PORT |Format |Values |Bitfields |Call " ;
 #endif /* Epsilon v7.0+ */
@@ -571,13 +571,15 @@ char *func_num ;
 	 }
       nl_forward() ;			/* skip to third line of entry */
       }
-   if (parse_string(1,"[ \t]*[BCDES][HILPSX] = [0-9A-F][0-9A-F]+h",NULL))
+   if (parse_string(1,"[ \t]*([BCDES][HILPSX]|VXD) = [0-9A-F][0-9A-F]+h",NULL))
       {
       re_search(1,"[ \t]*") ;
       func_num[6] = curchar() ;
       point++ ;
       func_num[7] = c = curchar() ;
       point += 4 ;			/* skip curchar and " = " */
+      if (func_num[6] == 'V')		/* VxD has three letters not two... */
+	 point++ ;
       if (c == 'H' || c == 'L')
 	 {
 	 grab(point,point+2,func_num+8) ;
@@ -1381,8 +1383,8 @@ int from, to ;
 {
    if (from >= to)
       return to ;
-   save_var point, matchstart, matchend ;
    set_character_color(from,to,-1) ;
+   save_var point, matchstart, matchend ;
    point = from ;
    if (to > size())
       to = size() ;
@@ -1390,7 +1392,7 @@ int from, to ;
       {
       int start = point ;
       int len ;
-      if (curchar() >= 'A' && curchar() <= 'Z')
+      if (curchar() >= 'A' && curchar() <= 'V')
 	 {
 	 if (parse_string(1,table_headers,NULL) != 0)
 	    {
@@ -1421,10 +1423,11 @@ int from, to ;
 int int_recolor_from_here(safe)
 int safe ;
 {
-   if (safe == 0 || character(safe) == '\n')
-      return safe ;
-   nl_reverse() ;			/* start of a line is always 'safe' */
-   to_begin_line() ;
+   save_var point ;
+   if (safe != point)
+      {
+      to_begin_line() ;			/* start of line is always 'safe' */
+      }
    return point ;
 }
 #endif /* Epsilon v7.0+ */
@@ -1442,7 +1445,7 @@ command intlist_mode()
    auto_indent = 0 ;
    margin_right = 79 ;
    want_backups = 1 ;
-   undo_size = 100000 ;     /* less than default 500,000 since list is so big */
+   undo_size = 200000 ;     /* less than default 500,000 since list is so big */
    find_table_counter() ;
 #if EELVERSION >= 70
    recolor_range = int_recolor_range ;
@@ -1467,6 +1470,8 @@ when_loading()
       curbuf = bufname ;
       bufname = "interrup.1st" ;
       intlist_mode() ;
+      want_code_coloring = 0 ;
+      when_setting_want_code_coloring() ;
       bufname = curbuf ;
       }
    for (i = 0 ; list_files[i] ; i++)

@@ -1,25 +1,26 @@
-Interrupt List			Release 52		Last change 20oct96
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
+Interrupt List			Release 53		Last change 12jan97
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
 --------!---FILELIST-------------------------
 Please redistribute the following files unmodified as a group, in a quartet of
-archives named INTER52A through INTER52D (preferably the original authenticated
+archives named INTER53A through INTER53D (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
 	INTERRUP.A	INT 00 through INT 13/17  \
 	INTERRUP.B	INT 13/18 through INT 15/12\
-	INTERRUP.C	INT 15/13 through INT 16/FF \
-	INTERRUP.D	INT 17 through INT 21/3E     \
-	INTERRUP.E	INT 21/3F through INT 21/5E   \	  total 2120 pages at
-	INTERRUP.F	INT 21/5F through INT 21/E2    \  60 lines per page,
-	INTERRUP.G	INT 21/E3 through INT 21/F1	\ 2261 with INTPRINT -p
-	INTERRUP.H	INT 21/F2 through INT 21/FE	 >(8158 entries)
-	INTERRUP.I	INT 21/FF through INT 2F/40	/ (3294 tables)
-	INTERRUP.J	INT 2F/41 through INT 2F/C9    /
-	INTERRUP.K	INT 2F/CA through INT 48      /
-	INTERRUP.L	INT 49 through INT 61	     /
-	INTERRUP.M	INT 62 through INT 6C	    /
-	INTERRUP.N	INT 6D through INT 7F	   /
-	INTERRUP.O	INT 80 through INT FF	  /
+	INTERRUP.C	INT 15/13 through INT 16/FE \
+	INTERRUP.D	INT 16/FF through INT 21/0F  \
+	INTERRUP.E	INT 21/10 through INT 21/4B   \	  total 2234 pages at
+	INTERRUP.F	INT 21/4C through INT 21/E1    \  60 lines per page,
+	INTERRUP.G	INT 21/E2 through INT 21/F1	\ 2381 with INTPRINT -p
+	INTERRUP.H	INT 21/F2 through INT 21/FF	 >(8327 entries)
+	INTERRUP.I	INT 22 through INT 2F/16	/ (3519 tables)
+	INTERRUP.J	INT 2F/17 through INT 2F/B7    /
+	INTERRUP.K	INT 2F/B8 through INT 32      /
+	INTERRUP.L	INT 33 through INT 60	     /
+	INTERRUP.M	INT 61 through INT 62	    /
+	INTERRUP.N	INT 63 through INT 78	   /
+	INTERRUP.O	INT 79 through INT 7F	  /
+	INTERRUP.P	INT 80 through INT FF	 /
 	INTERRUP.PRI	a brief introduction to interrupts
 	INTPRINT.COM	a simple formatter that also generates a list summary
 	INTPRINT.DOC	instructions for INTPRINT
@@ -35,7 +36,7 @@ PKZIP archives):
 	CATEGORY.KEY	descriptions of divider-line category letters
 	COMBINE.COM	combine the pieces of the list into a single file
 	COMBINE.DOC	documentation for COMBINE
-The following files should be distributed in an archive called INTER52E:
+The following files should be distributed in an archive called INTER53E:
 	86BUGSnn.ZIP	programs to test for CPU bugs
 	COMBINE.ASM	source code for COMBINE.COM
 	INT.*		invoke interrupts from commandline
@@ -44,12 +45,13 @@ The following files should be distributed in an archive called INTER52E:
 	INTPRINT.C	source code for INTPRINT
 	INTSUM??.ZIP	interrupt list browser (Interrupt Summary)
 	IVIEW.ZIP	another interrupt list browser
-The following should be distributed in an archive called INTER52F:
+The following should be distributed in an archive called INTER53F:
 	INT2RTF.ZIP	Slava Gostrenko's Windows Help converter
 	INT2WHLP.ZIP	convert list into Windows Help database
+	INTERRUP.ICO	icon for interrupt list
 	HINTSRCH.ZIP	WinHelp DLL for full-text searches of interrupt list
 	WH_ED*.ZIP	WinHelp-file editor
-Finally, the following should be distributed in an archive called INTER52G:
+Finally, the following should be distributed in an archive called INTER53G:
 	IL2ME???.ZIP	convert list into Multi-Edit help database
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
 	INT2HLP.ZIP	convert list into QuickHelp database
@@ -475,6 +477,11 @@ Notes:	this IRQ may be masked by setting bit 1 on I/O port 21h
 	    Ctrl-Alt-Minus (HP Vectra) reduce keyclick volume
 	    Ctrl-Alt-Minus (many clones) set clock speed to low
 	    Ctrl-Alt-SysReq (HP Vectra) generate hard reset
+	    Ctrl-Alt-S	(many clones) run BIOS setup program
+	    Ctrl-Alt-Esc (many clones) run BIOS setup program
+	    Ctrl-Alt-Ins (many clones) run BIOS setup program
+	    Ctrl-Alt-LeftShift-GrayMinus (some clones) turn off system cache
+	    Ctrl-Alt-LeftShift-GrayPlus (some clones) turn on system cache
 	DR DOS hooks this interrupt to control the cursor shape (underscore/
 	  half block) for overwrite/insert mode
 	DR Multiuser DOS hooks this interrupt for cursor shape control and to
@@ -818,7 +825,7 @@ Notes:	IBM standard modes do not clear the screen if the high bit of AL is set
 	  (EGA or higher only)
 	the Tseng ET4000 chipset is used by the Orchid Prodesigner II, Diamond
 	  SpeedSTAR VGA, Groundhog Graphics Shadow VGA, Boca Super X VGA,
-	  Everex EV-673
+	  Everex EV-673, etc.
 	the installation check for Ahead adapters is the signature "AHEAD" at
 	  C000h:0025h
 	the installation check for Paradise adapters is the signature "VGA=" at
@@ -1293,7 +1300,7 @@ Values for video mode:
      = G 100x75	 8x8   800x600	 16/256K  .   A000 Paradise VGA
      = G 100x75	 8x8   800x600	 16	  .	.  AT&T VDC600
      = G 100x75	 8x8   800x600	 16	  .   A000 NCR 77C22 [9]
-     = G 100x75	 8x8   800x600	 16	  .	.  Diamond Speedstar 24X
+     = G 100x75	 8x8   800x600	 16	  .   A000 Diamond Speedstar 24X
      = G 100x75	 8x8   800x600	 16/256K  .   A000 Paradise VGA, WD90C
      = G    .	  .    800x600	 16	  .	.  AST VGA Plus, Compaq VGA
      = G    .	  .    800x600	 16	  .	.  Dell VGA
@@ -1341,7 +1348,7 @@ Values for video mode:
      = G  80x30	 8x16  640x480	256/256K  .   A000 Trident TVGA 8800 (512K)
      = G 128x48	 8x16 1024x768	 16	  .   A000 NCR 77C22 [9]
      = G 128x48	 8x16 1024x768	 16/256K  .   A000 WD90C
-     = G 128x48	 8x16 1024x768	 16	  .	.  Diamond Speedstar 24X
+     = G 128x48	 8x16 1024x768	 16	  .   A000 Diamond Speedstar 24X
      = G 128x48	 8x16 1024x768	 16/256K  .   A000 Cirrus CL-GD5420/5422/5426
  5Eh = G    .	  .    640x400	256	  .	.  Paradise VGA,VEGA VGA
      = G    .	  .    640x400	256	  .	.  AST VGA Plus, NCR 77C22
@@ -1453,10 +1460,10 @@ Values for video mode:
  69h = T 132x50	 8x8  1056x400	 16/256K  .   B800 WD90C
      = T 132x50	 8x8	  .	 16	  .   B800 Diamond Speedstar 24X
      = G  80x30	 8x16  640x480	  .	  .   A000 Diamond Stealth64 Video 2xx1
-     = G    .	  .    720x540	256	  .	.  Video7 V-RAM VGA
+     = G    .	  .    720x540	256	  .   A000 Video7 V-RAM VGA
  6Ah = G    .	  .    800x600	 16	  .   A000 VESA standard interface
-     = G 100x75	 8x8   800x600	 16	  .	.  Genoa 6400
-     = G 100x75	 8x8   800x600	 16	  .	.  Diamond Speedstar 24X
+     = G 100x75	 8x8   800x600	 16	  .   A000 Genoa 6400
+     = G 100x75	 8x8   800x600	 16	  .   A000 Diamond Speedstar 24X
      = G    .	  .    800x600	 16	  .   A000 Ahead A
      = G 100x75	 8x8   800x600	 16	  1   A000 Ahead B (VESA) [see 71h]
      = G    .	  .    800x600	 16	  .	.  Zymos Poach, Hi Res 512
@@ -1465,7 +1472,7 @@ Values for video mode:
      = G 100x37	 8x16  800x600	 16/256K  .   A000 Cirrus CL-GD5420/5422/5426
      = G 100x37	 8x16  800x600	 16	  .   A000 Diamond Stealth64 Video 2xx1
      = G 100x42	 8x14  800x600	  .	  .   A000 ATI VGA Wonder (undoc)
-     = G    .	  .    800x600	 16	  .	.  Chips&Technologies chipset
+     = G    .	  .    800x600	 16	  .   A000 Chips&Technologies chipset
      = G 160x64	 8x16 1280x1024 256	  .   A000 NCR 77C22 [1,9]
  6Bh = T 100x37	 8x16	  .	 16	  .	.  Genoa 6400
      = T 100x37	 8x16	  .	  .	  .	.  NEL Electronics BIOS
@@ -1476,7 +1483,7 @@ Values for video mode:
      = G 160x60	 8x16 1280x960	 16/256K  .   A000 WD90C [1]
      = G 160x60	 8x16 1280x960	 16/256K  .   A000 Diamond Speedstar 24X [1]
      = G 160x64	 8x16 1280x1024	 16/256K  .   A000 Cirrus CL-GD 5422/5426 [1]
- 6Dh = G  80x25	 8x14  640x350	 64K	  .	.  STB Lightspeed ET4000/W32P
+ 6Dh = G  80x25	 8x14  640x350	 64K	  .   A000 STB Lightspeed ET4000/W32P
      = G 128x48	 8x16 1024x768	  .	  .   A000 Diamond Stealth64 Video 2xx1
      = G 160x64	 8x16 1280x1024 256/256K  .   A000 Cirrus CL-GD 5422/5426 [1]
  6Eh = G  40x25	 8x8   320x200	 64K	  .   A000 Cirrus CL-GD 5422/5426
@@ -1490,7 +1497,7 @@ Values for video mode:
      = G  90x28	 8x14  720x392	 16	  1   A000 Ahead B
      = G  80x30	 8x16  640x480	  .	  .   A000 Diamond Stealth64 Video 2xx1
      = G    .	  .    800x600	 16	  .	.  C&T chipset, Cardinal
-     = G    .	  .   1024x480	256	  .	.  Trident 8900C BIOS C3.0
+     = G    .	  .   1024x480	256	  .   A000 Trident 8900C BIOS C3.0
  71h = T  80x25	 8x8	  .	 16	  8   B800 Quadram (CGA double scan)
      = T  80x25	 8x8   (CGA dblscan)	  .	.  Genoa SuperEGA BIOS 3.0+
      = G    .	  .    528x400	256	  .	.  Cirrus 510/520 chipset
@@ -1499,7 +1506,7 @@ Values for video mode:
      = G 100x35	 8x16  800x600	 16/64	  .   A000 NSI Smart EGA+
      = G 100x75	 8x8   800x600	 16	  1   A000 Ahead B (same as 6Ah)
      = G    .	  .    960x720	 16	  .	.  C&T chipset, Cardinal
-     = G    .	  .   1024x480	256	  .	.  Trident 8900C BIOS C3.0
+     = G    .	  .   1024x480	256	  .   A000 Trident 8900C BIOS C3.0
  72h = T  80x60	 8x8	  .	 16	  .   B800 Quadram Ultra VGA
      = T  80x60	 8x8	  .	 16	  .   B800 Genoa 6400
      = T  80x60	 8x8	  .	 16	  .   B800 Genoa SuperEGA BIOS 3.0+
@@ -1561,7 +1568,7 @@ Values for video mode:
      = G  80x25	 8x16  640x400	256	  .	.  Genoa 6400
      = G    .	  .   1024x768	256	  .	.  C&T 82C453 chipset
      = G  90x43	  .	  .	mono	  .   B000 HERCULES.COM on HGC [14]
- 7Fh =	special function set (see AX=007Fh)	.  Paradise VGA, AT&T VDC600
+ 7Fh =	special function set (see AX=007Fh/BH=00h) Paradise VGA, AT&T VDC600
      = G 128x48	 8x16 1024x768	  4	  .	.  Genoa 6400
      = G  90x29	  .	  .	mono	  .   B000 HERCULES.COM on HGC [14]
  82h = T  80x25	  .	  .	B&W	  .	.  AT&T VDC overlay mode [6]
@@ -1934,13 +1941,33 @@ Desc:	specify which of possibly multiple display pages will be visible
 Note:	to determine whether the requested page actually exists, use AH=0Fh
 	  to query the current page after making this call
 SeeAlso: AH=0Fh,AH=43h,AH=45h,MEM 0040h:0062h
+--------V-100500-----------------------------
+INT 10 - VIDEO - Corona/Cordata BIOS v4.10+ - SET GRAPHICS BITMAP BUFFER
+	AX = 0500h
+	BX = segment of buffer
+Return: nothing
+Desc:	set the address of graphics bitmap buffer for video modes 60h and 61h
+SeeAlso: AX=050Fh"Corona"
+--------V-10050F-----------------------------
+INT 10 - VIDEO - Corona/Cordata BIOS v4.10+ - GET GRAPHICS BITMAP BUFFER
+	AX = 050Fh
+Return: DX = segment of graphics bitmap buffer
+Desc:	get the address of graphics bitmap buffer for video modes 60h and 61h
+SeeAlso: AX=0500h"Corona"
+--------V-100580-----------------------------
+INT 10 - VIDEO - PCjr, Tandy 1000 - GET CRT/CPU PAGE REGISTERS
+	AX = 0580h
+Return: BH = CRT page register
+	BL = CPU page register
+Notes:	the CPU page determines which 16K block of the first 128K of physical
+	  memory will be mapped at B800h by the hardware
+	the CRT page determines the start address of the memory used by the
+	  video controller
+SeeAlso: AH=05h"SET CRT/CPU"
 --------V-1005-------------------------------
-INT 10 - VIDEO - PCjr, Tandy 1000 - MANIPULATE CRT/CPU PAGE REGISTERS
+INT 10 - VIDEO - PCjr, Tandy 1000 - SET CRT/CPU PAGE REGISTERS
 	AH = 05h
 	AL = subfunction
-	    80h read CRT and CPU page registers
-		Return: BH = CRT page register
-			BL = CPU page register
 	    81h set CPU page register
 		BL = CPU page
 	    82h set CRT page register
@@ -1948,18 +1975,12 @@ INT 10 - VIDEO - PCjr, Tandy 1000 - MANIPULATE CRT/CPU PAGE REGISTERS
 	    83h set both CPU and CRT page registers
 		BL = CPU page
 		BH = CRT page
+Return: nothing
 Notes:	the CPU page determines which 16K block of the first 128K of physical
 	  memory will be mapped at B800h by the hardware
 	the CRT page determines the start address of the memory used by the
 	  video controller
---------V-1005-------------------------------
-INT 10 - VIDEO - Corona/Cordata BIOS v4.10+ - GRAPHICS BITMAP BUFFER
-	AH = 05h
-	AL = function
-	    00h set address of graphics bitmap buffer (video modes 60h,61h)
-		BX = segment of buffer
-	    0Fh get address of graphics bitmap buffer (video modes 60h,61h)
-		Return: DX = segment of graphics bitmap buffer
+SeeAlso: AX=0580h
 --------V-1006-------------------------------
 INT 10 - VIDEO - SCROLL UP WINDOW
 	AH = 06h
@@ -2044,7 +2065,7 @@ Notes:	all characters are displayed, including CR, LF, and BS
 	  modes if it is greater than the number of positions remaining in the
 	  current row
 SeeAlso: AH=08h,AH=0Ah,AH=4Bh"GRAFIX",INT 17/AH=60h,INT 1F"SYSTEM DATA"
-SeeAlso: INT 43"VIDEO DATA",INT 44
+SeeAlso: INT 43"VIDEO DATA",INT 44"VIDEO DATA"
 --------V-100A-------------------------------
 INT 10 - VIDEO - WRITE CHARACTER ONLY AT CURSOR POSITION
 	AH = 0Ah
@@ -2061,7 +2082,7 @@ Notes:	all characters are displayed, including CR, LF, and BS
 	  modes if it is greater than the number of positions remaining in the
 	  current row
 SeeAlso: AH=08h,AH=09h,AH=11h"Tandy 2000",AH=4Bh,INT 17/AH=60h
-SeeAlso: INT 1F"SYSTEM DATA",INT 43"VIDEO DATA",INT 44
+SeeAlso: INT 1F"SYSTEM DATA",INT 43"VIDEO DATA",INT 44"VIDEO DATA"
 --------V-100B--BH00-------------------------
 INT 10 - VIDEO - SET BACKGROUND/BORDER COLOR
 	AH = 0Bh
@@ -2485,11 +2506,11 @@ INT 10 u - VIDEO - Tseng ET-4000 BIOS - CHECK IF HiColor MODE/SET HiColor MODE
 	    01h set 15-bit HiColor mode
 	    02h set 16-bit HiColor mode
 Return: AX = 0010h if supported
-	BL = video mode type
-	    00h not in HiColor mode
-	    01h 15-bit RGB mode
-	    02h 16-bit RGB mode
-	    03h 24-bit RGB mode
+	    BL = video mode type
+		00h not in HiColor mode
+		01h 15-bit RGB mode
+		02h 16-bit RGB mode
+		03h 24-bit RGB mode
 Desc:	determine whether the display is in a graphics mode with 15 or more
 	  bits per pixel color resolution
 Note:	set (BL=01h/02h) only works if already in a HiColor mode
@@ -3133,7 +3154,7 @@ Values for Cirrus Logic video controller type:
  0020h	6205/15/25
  0030h	5432
  0031h	5434
-SeeAlso: #0629
+SeeAlso: #0629,#3440
 --------V-1012--BL81-------------------------
 INT 10 - Cirrus Logic BIOS - GET BIOS VERSION NUMBER
 	AH = 12h
@@ -3452,7 +3473,7 @@ SeeAlso: AX=1100h,AX=1102h,AX=1400h
 --------V-101402-----------------------------
 INT 10 - VIDEO - SET MAPPING OF LCD HIGH INTENSITY ATTRIBUTES (CONV,CP386)
 	AX = 1402h
-	BL = function
+	BL = subfunction
 	    00h ignore high intensity attribute
 	    01h map high intensity to reverse video
 	    02h map high intensity to underscore
@@ -3496,7 +3517,7 @@ Return: nothing
 --------J-1018-------------------------------
 INT 10 - VIDEO - DOS/V - GET/SET FONT PATTERN
 	AH = 18h
-	AL = function
+	AL = subfunction
 	    00h get font pattern
 	    01h set font pattern
 	BX = 0000h
@@ -4592,7 +4613,7 @@ SeeAlso: AX=4F01h,AX=4F06h,AX=4F07h,AX=7000h/BX=0004h
 --------V-104F06-----------------------------
 INT 10 - VESA SuperVGA BIOS v1.1+ - GET/SET LOGICAL SCAN LINE LENGTH (PIXELS)
 	AX = 4F06h
-	BL = function
+	BL = subfunction
 	    00h set scan line length
 		CX = desired width in pixels
 	    01h get scan line length
@@ -4643,7 +4664,7 @@ SeeAlso: AX=4F01h,AX=4F05h,AX=4F06h,AX=4F06h/BL=02h,AX=4F07h
 --------V-104F07-----------------------------
 INT 10 - VESA SuperVGA BIOS v1.1+ - GET/SET DISPLAY START
 	AX = 4F07h
-	BL = function
+	BL = subfunction
 	    00h,80h set display start
 		CX = leftmost displayed pixel in scan line
 		DX = first displayed scan line
@@ -4664,7 +4685,7 @@ SeeAlso: AX=4F01h,AX=4F05h,AX=4F06h
 --------V-104F08-----------------------------
 INT 10 - VESA SuperVGA BIOS v1.2+ - GET/SET DAC PALETTE CONTROL
 	AX = 4F08h
-	BL = function
+	BL = subfunction
 	    00h set DAC palette width
 		BH = desired number of bits per primary color
 	    01h get DAC palette width
@@ -4676,7 +4697,7 @@ Return: AL = 4Fh if function supported
 --------V-104F09-----------------------------
 INT 10 - VESA SuperVGA BIOS v2.0+ - GET/SET PALETTE ENTRIES
 	AX = 4F09h
-	BL = function
+	BL = subfunction
 	    00h set palette
 	    01h get palette
 	    02h set secondary palette data
@@ -4767,7 +4788,7 @@ Return: AL = 4Fh if function supported
 	    00h successful
 	       BH = current power state (see #0075)
 	    else failed
-SeeAlso: AX=4F10h/BL=00h,AX=4F10h/BL=01h
+SeeAlso: AX=4F10h/BL=00h,AX=4F10h/BL=01h,AX=A00Dh
 --------V-104F11-----------------------------
 INT 10 - VESA VBE/FP (Flat Panel Interface) - API
 	AX = 4F11h
@@ -5236,6 +5257,12 @@ Return: AL = 4Fh if supported
 Desc:	allow the VESA BIOS Extensions to cooperate with a pointing-device
 	  (typically mouse) driver
 SeeAlso: AX=4F12h
+--------V-104FDD-----------------------------
+INT 10 - ATI M64VBE.COM - GET RESIDENT SEGMENT
+	AX = 4FDDh
+Return: AX = CS of resident code
+Program: M64VBE is a VESA VBE 2.0 driver TSR for ATI's Mach64 video chip
+SeeAlso: AX=4FFFh/BX=364Dh"M64VBE",INT 60"M64VBE"
 --------V-104FFF-----------------------------
 INT 10 - VESA SuperVGA BIOS - Everex - TURN VESA ON/OFF
 	AX = 4FFFh
@@ -5250,6 +5277,14 @@ INT 10 - Diamond Stealth 24 - SET/RESET DUAL DISPLAY MODE
 	    02h set dual display, 64KB VGA test
 Return: AX = 4F00h if successful
 	    BX = number of scanlines off screen for test mode
+--------V-104FFFBX364D-----------------------
+INT 10 - ATI M64VBE.COM - UNINSTALL
+	AX = 4FFFh
+	BX = 364Dh ('6M')
+	CX = 5634h ('V4')
+Return: AX,DX,DS,ES destroyed
+Program: M64VBE is a VESA VBE 2.0 driver TSR for ATI's Mach64 video chip
+SeeAlso: AX=4FDDh"M64VBE",INT 60"M64VBE"
 --------U-1050-------------------------------
 INT 10 - SCROLOCK.COM - INSTALLATION CHECK
 	AH = 50h
@@ -5654,6 +5689,15 @@ INT 10 - DGIS - INQUIRE INT 10 OUTPUT DEVICE
 Return: ES:DI = 0000h:0000h  if current display is non-DGIS
 		else address of the current DGIS INT 10 display
 SeeAlso: AX=6A00h,AX=6A01h
+--------V-106D74-----------------------------
+INT 10 - MTRFONTS - INSTALLATION CHECK
+	AX = 6D74h ('mt')
+	DS:0104h = signature "MtRfOnTs"
+Return: AX = 4D54h ('MT') if installed
+	    ES = PSP segment of resident code
+Program: MTRFONTS is a shareware TSR (part of the MTR package) by Mechon Mamre
+	  which provides Hebrew screen fonts
+SeeAlso: INT 16/AX=6D74h"MTRTSR"
 --------V-106E00-----------------------------
 INT 10 - Paradise VGA internal - GET ???
 	AX = 6E00h
@@ -6548,16 +6592,46 @@ Return: ???
 Program: CU Writer is a public-domain Thai-English word processor from
 	  Chulalongkorn University, Bangkok
 SeeAlso: AH=80h"CU Writer",AH=B0h
---------p-10A0-------------------------------
-INT 10 - ATI Mach64 BIOS - Display Power Management Signalling API???
-	AH = A0h
-	AL = function (00h-13h)
+--------p-10A000-----------------------------
+INT 10 - ATI Mach64 BIOS - ???
+	AX = A000h
+	CL = ??? (bits 2-0 may not be 000)
+	CH = ??? (81h or ???)
+	DX = segment of ??? (if CH=81h)
+	???
+Return: AX = ???
+SeeAlso: AX=4F10h/BL=00h,AX=A001h
+----------10A001-----------------------------
+INT 10 - ATI Mach64 BIOS - ???
+	AX = A001h
+	CL = ??? flags
 	???
 Return: AH = status
 	    00h successful
 	    01h failed
 	???
-SeeAlso: AX=4F10h/BL=00h
+SeeAlso: AX=A000h,AX=A002h
+----------10A002-----------------------------
+INT 10 - ATI Mach64 BIOS - ???
+	AX = A002h
+	CL = ??? (bits 2-0 may not be 000)
+	CH = ??? (81h or ???)
+	DX = segment of ??? (if CH=81h)
+	???
+Return: AH = status
+	    00h successful
+	    01h failed
+	???
+Note:	executes AX=A000h, then AX=A001h if A000h was successful
+SeeAlso: AX=A000h,AX=A001h
+----------10A003-----------------------------
+INT 10 - ATI Mach64 BIOS - ???
+	AX = A003h
+	BX = ???
+	???
+Return: AH = status (00h successful)
+	???
+SeeAlso: AX=A000h,AX=A002h
 --------V-10A004-----------------------------
 INT 10 - PhoenixVIEW/LC - VIDEO DISPLAY TYPE
 	AX = A004h
@@ -6565,17 +6639,161 @@ INT 10 - PhoenixVIEW/LC - VIDEO DISPLAY TYPE
 Return: ???
 Desc:	configure display parameters
 SeeAlso: AX=A01Bh"PhoenixVIEW/LC"
+----------10A004-----------------------------
+INT 10 - ATI Mach64 BIOS - ???
+	AX = A004h
+	BX = video mode??? (0000-00FFh)
+	DX = ??? (sent to some port [66ECh???] one bit at a time, high to low)
+	???
+Return: AH = status
+	    00h successful
+	    01h failed
+	???
+SeeAlso: AX=A000h,AX=A002h
+----------10A001-----------------------------
+INT 10 - ATI Mach64 BIOS - ???
+	AX = A005h
+	CL = ??? flags (bits 0,2, others?)
+	???
+Return: AH = status
+	    00h successful
+	    01h failed
+	???
+SeeAlso: AX=A000h,AX=A002h
+----------10A001-----------------------------
+INT 10 - ATI Mach64 BIOS - ???
+	AX = A006h
+	???
+Return: AH = status
+	    00h successful
+	    01h failed
+	???
+SeeAlso: AX=A000h,AX=A002h
+----------10A007-----------------------------
+INT 10 - ATI Mach64 BIOS - GET ???
+	AX = A007h
+Return: AH = 00h (successful)
+	AL = ??? (00h)
+	BX = ??? (15A0h in examined BIOS)
+	DX = segment of BIOS
+SeeAlso: AX=A000h,AX=A002h
+----------10A008-----------------------------
+INT 10 - ATI Mach64 BIOS - GET ??? SIZE
+	AX = A008h
+	CL = ??? flags
+	???
+Return: AH = 00h (successful)
+	BX = size of ??? (0046h if CL bit 0 clear on entry)
+SeeAlso: AX=A000h,AX=A009h
+----------10A009-----------------------------
+INT 10 - ATI Mach64 BIOS - GET ???
+	AX = A009h
+	DX:BX -> buffer for ???
+	CL = ??? flags
+	???
+Return: AH = status
+	    00h successful
+		DX:BX buffer filled
+	    01h failed
+	???
+SeeAlso: AX=A000h,AX=A008h
+----------10A00A-----------------------------
+INT 10 - ATI Mach64 BIOS - GET ???
+	AX = A00Ah
+Return: AH = 00h (successful)
+	AL = ??? (01h)
+	BX = ??? (5938h)
+	CX = ??? (595Eh)
+	DX = segment of BIOS
+SeeAlso: AX=A000h,AX=A002h
+----------10A001-----------------------------
+INT 10 - ATI Mach64 BIOS - ???
+	AX = A00Bh
+	BX = ???
+	CL = ??? flags
+	???
+Return: AH = status
+	    00h successful
+	    01h failed
+	???
+SeeAlso: AX=A000h,AX=A002h
 --------p-10A00C-----------------------------
 INT 10 - ATI Mach64 BIOS - SET SLEEP MODE
 	AX = A00Ch
 	CL = new state
+	    00h normal operation
 	    01h standby
 	    02h suspend
 	    03h off
 Return: AH = status
 	    00h successful
 	    01h failed
-SeeAlso: AX=4F00h,AX=4F10h/BL=01h
+Note:	CL bit 2 affects values written to video card's ports
+SeeAlso: AX=A000h,AX=A00Dh,AX=4F00h,AX=4F10h/BL=01h
+----------10A00D-----------------------------
+INT 10 - ATI Mach64 BIOS - GET SLEEP MODE
+	AX = A00Dh
+Return: AH = 00h (successful)
+	CL = current power mode
+	    00h normal operation
+	    01h standby
+	    02h suspend
+	    03h off
+SeeAlso: AX=A00Ch,AX=4F10h/BL=02h
+----------10A00E-----------------------------
+INT 10 - ATI Mach64 BIOS - SET ???
+	AX = A00Eh
+	CL = ??? (00h-03h)
+Return: AH = status
+	    00h successful
+	    01h failed
+Note:	CL zero/nonzero are treated differently
+SeeAlso: AX=A000h,AX=A00Fh
+----------10A00F-----------------------------
+INT 10 - ATI Mach64 BIOS - GET ???
+	AX = A00Fh
+Return: AH = 00h (successful)
+	CL = ??? (00h-03h, read from PORT 42ECh)
+SeeAlso: AX=A000h,AX=A00Eh
+----------10A010-----------------------------
+INT 10 - ATI Mach64 BIOS - ???
+	AX = A010h
+	CL = ???  (80h/other)
+	???
+Return: AH = status
+	    00h successful
+	    01h failed
+	???
+SeeAlso: AX=A000h,AX=A002h
+----------10A011-----------------------------
+INT 10 - ATI Mach64 BIOS - GET ???
+	AX = A011h
+Return: AH = 00h (successful)
+	BL = ??? (1Fh)
+	BH = ??? (0Fh)
+	CL = ??? (00h)
+	CH = ??? (0Fh)
+	DX = ??? (00FFh)
+SeeAlso: AX=A000h,AX=A010h
+----------10A012-----------------------------
+INT 10 - ATI Mach64 BIOS - GET ???
+	AX = A012h
+Return: AH = 00h (successful)
+	AL = ??? (00h)
+	BX = ??? (0000h)
+	CX = ??? (0000h)
+	DX = ??? (02ECh)
+SeeAlso: AX=A000h,AX=A002h
+----------10A013-----------------------------
+INT 10 - ATI Mach64 BIOS - ???
+	AX = A013h
+	???
+Return: AH = status
+	    00h successful
+	    01h failed
+	???
+Note:	not implemented in examined BIOS, always returns AH=01h
+SeeAlso: AX=A000h,AX=A002h
 --------V-10A01B-----------------------------
 INT 10 - PhoenixVIEW/LC - CRT MONITOR DETECTION
 	AX = A01Bh
@@ -7630,7 +7848,7 @@ Bit(s)	Description	(Table 0136)
 	01 DMA channel 0 ???
 	10 reserved
 	11 DMA channel 3
-SeeAlso: INT 12,#2470 at INT 4B"Tandy 2000"
+SeeAlso: INT 12"BIOS",#2470 at INT 4B"Tandy 2000"
 --------d-11----SI6A6A-----------------------
 INT 11 - Columbia Data Products Standard Device Level Protocol (SDLP) 1.6
 	SI = 6A6Ah
@@ -7722,7 +7940,7 @@ INT 11 - Blank-It Screen Blanker - GET BLANKING TIMEOUT
 	AX = 0225h
 	BX = 6904h
 Return: CF clear if successful
-	    BX = timeout (see AX=0255h/BX=6901h)
+	    BX = timeout (see AX=0225h/BX=6901h)
 	CF set on error
 	    AL = error code
 SeeAlso: AX=0225h/BX=6900h,AX=0225h/BX=6901h
@@ -8157,6 +8375,7 @@ Values for disk operation status:
  CCh	write fault (hard disk)
  E0h	status register error (hard disk)
  FFh	sense operation failed (hard disk)
+SeeAlso: #M021
 --------B-1302-------------------------------
 INT 13 - DISK - READ SECTOR(S) INTO MEMORY
 	AH = 02h
@@ -8228,7 +8447,7 @@ Notes:	errors on a floppy may be due to the motor failing to spin up quickly
 	  the drive via INT 21/AX=440Dh before it can successfully write to
 	  the disk with this function
 SeeAlso: AH=02h,AH=0Bh,AH=07h"V10DISK.SYS",AH=22h"PS/1",AH=43h"IBM"
-SeeAlso: INT 21/AX=440Dh"DOS",INT 4D/AH=03h
+SeeAlso: INT 21/AX=440Dh"DOS 3.2+",INT 4D/AH=03h
 --------B-1304-------------------------------
 INT 13 - DISK - VERIFY DISK SECTOR(S)
 	AH = 04h
@@ -8373,7 +8592,7 @@ Notes:	it is not necessary to call AH=17h or AH=18h first (will be ignored)
 	  side 0) to complete the format and skip future CRC errors on read; in
 	  track 0 side 1 the head used must be 81h instead 1. Diskcopy programs
 	  may do a format-write-verify sequential phases to improve performance
-SeeAlso: AH=05h"FLOPPY",INT 2F"CiriSOFT"
+SeeAlso: AH=05h"FLOPPY",AH=18h/CX=5055h,INT 2F"CiriSOFT"
 --------B-1306-------------------------------
 INT 13 - FIXED DISK - FORMAT TRACK AND SET BAD SECTOR FLAGS (XT,PORT)
 	AH = 06h
@@ -8549,6 +8768,7 @@ Values for diskette drive type:
  05h	??? (reportedly an obscure drive type shipped on some IBM machines)
 	2.88M on some machines (at least AMI 486 BIOS)
  06h	2.88M
+ 10h	ATAPI Removable Media Device
 --------d-1308-------------------------------
 INT 13 - V10DISK.SYS - SET FORMAT
 	AH = 08h
@@ -8773,7 +8993,7 @@ Return: CF clear if successful
 	    AH = type code
 		00h no such drive
 		01h floppy without change-line support
-		02h floppy with change-line support
+		02h floppy (or other removable drive) with change-line support
 		03h hard disk
 		    CX:DX = number of 512-byte sectors
 	CF set on error

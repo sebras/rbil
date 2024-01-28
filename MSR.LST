@@ -1,8 +1,8 @@
-MODEL-SPECIFIC REGISTERS	Release 52		Last change 20oct96
-Copyright (c) 1996 Ralf Brown
+MODEL-SPECIFIC REGISTERS	Release 53		Last change 12jan97
+Copyright (c) 1996,1997 Ralf Brown
 
 ----------S00000000--------------------------
-MSR 00000000h - Pentium - MACHINE CHECK EXCEPTION ADDRESS
+MSR 00000000h - Pentium, Pentium Pro - MACHINE CHECK EXCEPTION ADDRESS
 Size:	32-36 bits
 Access:	Read
 Desc:	on any Machine Check exception (INT 12), this MSR contains the physical
@@ -10,7 +10,7 @@ Desc:	on any Machine Check exception (INT 12), this MSR contains the physical
 Note:	also supported by AMD Am5k86 and PentiumPro (P6)
 SeeAlso: MSR 00000001h,MSR 80000000h,INT 12"MACHINE CHECK"
 ----------S00000001--------------------------
-MSR 00000001h - Pentium - MACHINE CHECK EXCEPTION TYPE
+MSR 00000001h - Pentium, Pentium Pro - MACHINE CHECK EXCEPTION TYPE
 Size:	6 bits
 Access:	Read
 Desc:	when a Machine Check exception occurs, this register contains the
@@ -241,15 +241,17 @@ MSR 0000000Fh - Pentium - INVALID
 Note:	attempted accesses to this MSR cause an exception
 SeeAlso: MSR 8000000Fh,MSR 00000003h
 ----------S00000010--------------------------
-MSR 00000010h - Pentium - TIME STAMP REGISTER
+MSR 00000010h - Pentium, Pentium Pro - TIME STAMP COUNTER REGISTER
 Size:	64 bits
 Access:	Read/Write
+Note:	on a Pentium Pro, only the low 32 bits may be written; on writes, the
+	  high 32 bits are cleared to 00000000h
 SeeAlso: MSR 80000010h
 ----------S00000011--------------------------
 MSR 00000011h - Pentium - EVENT COUNTER SELECTION AND CONTROL
 Size:	26 bits
 Access:	Read/Write
-SeeAlso: MSR 00000012h,MSR 00000013h,MSR 80000011h
+SeeAlso: MSR 00000012h,MSR 00000013h,MSR 00000186h,MSR 80000011h
 
 Bitfields for Pentium Event Counter Control:
 Bit(s)	Description	(Table R014)
@@ -316,12 +318,12 @@ SeeAlso: #R014
 MSR 00000012h - Pentium - EVENT COUNTER #0
 Size:	40 bits
 Access:	Read/Write
-SeeAlso: MSR 00000011h,MSR 00000013h,MSR 80000012h
+SeeAlso: MSR 00000011h,MSR 00000013h,MSR 80000012h,MSR 000000C1h
 ----------S00000013--------------------------
 MSR 00000013h - Pentium - EVENT COUNTER #1
 Size:	40 bits
 Access:	Read/Write
-SeeAlso: MSR 00000011h,MSR 00000012h,MSR 80000013h
+SeeAlso: MSR 00000011h,MSR 00000012h,MSR 80000013h,MSR 000000C2h
 ----------S00000014--------------------------
 MSR 00000014h - Pentium P54C - ???
 ----------S0000001B--------------------------
@@ -363,6 +365,24 @@ Bit(s)	Description	(Table R017)
  25	reserved
  26	(read-only) Low Power enable
  31-27	reserved
+----------S00000032--------------------------
+MSR 00000032h - Pentium Pro - ???
+----------S00000033--------------------------
+MSR 00000033h - Pentium Pro - ???
+----------S00000034--------------------------
+MSR 00000034h - Pentium Pro - ???
+----------S0000003A--------------------------
+MSR 0000003Ah - Pentium Pro - ???
+----------S00000050--------------------------
+MSR 00000050h - Pentium Pro - ???
+----------S00000051--------------------------
+MSR 00000051h - Pentium Pro - ???
+----------S00000052--------------------------
+MSR 00000052h - Pentium Pro - ???
+----------S00000053--------------------------
+MSR 00000053h - Pentium Pro - ???
+----------S00000054--------------------------
+MSR 00000054h - Pentium Pro - ???
 ----------S00000079--------------------------
 MSR 00000079h - Pentium Pro - BIOS UPDATE TRIGGER
 Size:	32 bits
@@ -377,25 +397,132 @@ SeeAlso: MSR 00000083h
 
 Bitfields for AMD Am5k86 Array Access Register:
 Bit(s)	Description	(Table R018)
- 63-32	array pointer (see #R019)
+ 63-40	pointer within array specified below
+ 39-32	array identifier (see #R019)
  31-0	array data
 SeeAlso: #R020
 
 (Table R019)
 Values for AMD Am5k86 Array Pointer:
  E0h	data cache (data)
- E1h	data cache (linear tag)
- E4h	code cache (instruction)
- E5h	code cache (linear tag)
- E6h	code cache (valid bits)
- E7h	code cache (branch-prediction bits)
- E8h	4K TLB (page)
- E9h	4K TLB (linear tag)
- EAh	4M TLB (page)
- EBh	4M TLB (linear tag)
- ECh	data cache (physical tag)
- EDh	code cache (physical tag)
+ E1h	data cache (linear tag) (see #R031)
+ E4h	code cache (instruction) (see #R032)
+ E5h	code cache (linear tag) (see #R033)
+ E6h	code cache (valid bits) (see #R034)
+ E7h	code cache (branch-prediction bits) (see #R035)
+ E8h	4K TLB (page) (see #R036)
+ E9h	4K TLB (linear tag) (see #R037)
+ EAh	4M TLB (page) (see #R038)
+ EBh	4M TLB (linear tag) (see #R039)
+ ECh	data cache (physical tag) (see #R040)
+ EDh	code cache (physical tag) (see #R041)
 SeeAlso: #R018
+
+Bitfields for AMD AmK586 data cache linear tag:
+Bit(s)	Description	(Table R031)
+ 31-26	reserved (0)
+ 25	cache line is dirty
+ 24	user/supervisor
+ 23	read/write
+ 22	0
+ 21	linear address valid
+ 20-0	tag
+SeeAlso: #R019
+
+Bitfields for AMD Am5k86 code cache instruction:
+Bit(s)	Description	(Table R032)
+ 31-26	reserved (0)
+ 25	start bit 1
+ 24	end bit 1
+ 23	opcode bit 1
+ 22-21	map (ROPs/MROM) 1
+ 20-13	byte 1
+ 12	start bit 0
+ 11	end bit 0
+ 10	opcode bit 0
+ 9-8	map (ROPs/MROM) 0
+ 7-0	byte 0
+SeeAlso: #R019
+
+Bitfields for Am5k86 code cache linear tag:
+Bit(s)	Description	(Table R033)
+ 31-20	reserved (0)
+ 19-0	bits 31-12 of linear address
+SeeAlso: #R019
+
+Bitfields for Am5k86 code cache valid bits:
+Bit(s)	Description	(Table R034)
+ 31-18	reserved (0)
+ 17	linear tag is valid
+ 16	user/supervisor
+ 15-0	bitmask of valid bytes
+SeeAlso: #R019
+
+Bitfields for Am5k86 code cache branch prediction bits:
+Bit(s)	Description	(Table R035)
+ 31-19	reserved (0)
+ 18	predicted branch taken
+ 17-14	offset of last byte of predicted branch instruction within block
+ 13-12	predicted target column
+ 11-4	predicted target index
+ 3-0	target byte
+SeeAlso: #R019
+
+Bitfields for Am5k86 4K TLB page:
+Bit(s)	Description	(Table R036)
+ 31-22	reserved (0)
+ 21	page cache disable
+ 20	page write-through
+ 19-0	page frame address
+SeeAlso: #R019,#R037,#R038
+
+Bitfields for Am5k86 4K TLB linear tag:
+Bit(s)	Description	(Table R037)
+ 31-20	reserved (0)
+ 19	global valid bit
+ 18	TLB entry is dirty
+ 17	user/supervisor
+ 16	read/write
+ 15	entry is valid
+ 14-0	tag (bits 31-17 of address)
+SeeAlso: #R019,#R036,#R039
+
+Bitfields for Am5k86 4M TLB page:
+Bit(s)	Description	(Table R038)
+ 31-12	reserved (0)
+ 11	page cache disable
+ 10	page write-through
+ 9-0	page frame address
+SeeAlso: #R019,#R036,#R039
+
+Bitfields for Am5k86 4M TLB linear tag:
+Bit(s)	Description	(Table R039)
+ 31-15	reserved (0)
+ 14	global valid bit
+ 13	TLB entry is dirty
+ 12	user/supervisor
+ 11	read/write
+ 10	entry is valid
+ 9-0	tag (bits 31-22 of address)
+SeeAlso: #R019,#R037,#R038
+
+Bitfields for Am5k86 data cache physical tag:
+Bit(s)	Description	(Table R040)
+ 31-23	reserved (0)
+ 22-21	MESI status
+	00 invalid
+	01 shared
+	10 modified
+	11 exclusive
+ 20-0	tag (bits 31-11 of physical address)
+SeeAlso: #R019,#R041
+
+Bitfields for Am5k86 code cache physical tag:
+Bit(s)	Description	(Table R041)
+ 31-21	reserved (0)
+ 20	valid
+ 19-0	tag (bits 31-12 of physical address)
+SeeAlso: #R019,#R040
 ----------S00000083--------------------------
 MSR 00000083h - AMD Am5k86 - HARDWARE CONFIGURATION REGISTER
 Size:	8 bits
@@ -414,6 +541,12 @@ Bit(s)	Description	(Table R020)
 	100 enable Probe Mode on debug trap
  0	disable Stopping Processor Clock
 SeeAlso: #R018
+----------S00000088--------------------------
+MSR 00000088h - Pentium Pro - ???
+----------S00000089--------------------------
+MSR 00000089h - Pentium Pro - ???
+----------S0000008A--------------------------
+MSR 0000008Ah - Pentium Pro - ???
 ----------S0000008B--------------------------
 MSR 0000008Bh - Pentium Pro - "BIOS_SIGN" BIOS UPDATE SIGNATURE
 Size:	64 bits
@@ -429,17 +562,49 @@ Notes:	whenever a microcode update is loaded, the PentiumPro modifies the
 	  standard model/stepping information, while the high 32 bits contain
 	  the microcode update ID
 SeeAlso: MSR 00000079h
+----------S000000AE--------------------------
+MSR 000000AEh - Pentium Pro - ???
 ----------S000000C1--------------------------
-MSR 000000C1h - Pentium Pro - "PERFCTR0"
-SeeAlso: MSR 000000C2h
+MSR 000000C1h - Pentium Pro - "PERFCTR0" PERFORMANCE COUNTER REGISTER 0
+SeeAlso: MSR 000000C2h,MSR 00000012h
 ----------S000000C2--------------------------
-MSR 000000C2h - Pentium Pro - "PERFCTR1"
-SeeAlso: MSR 000000C1h
+MSR 000000C2h - Pentium Pro - "PERFCTR1" PERFORMANCE COUNTER REGISTER 1
+SeeAlso: MSR 000000C1h,MSR 00000013h
 ----------S000000FE--------------------------
-MSR 000000FEh - Pentium Pro - "MTRRcap"
+MSR 000000FEh - Pentium Pro - "MTRRcap" MEMORY TYPE RANGE REGISTER CAPABILITIES
 Desc:	determine how many and what type of Memory Type Range Registers are
 	  implemented
 SeeAlso: MSR 00000200h,MSR 00000250h,MSR 000002FFh
+----------S00000116--------------------------
+MSR 00000116h - Pentium Pro - ???
+----------S00000118--------------------------
+MSR 00000118h - Pentium Pro - ???
+----------S00000119--------------------------
+MSR 00000119h - Pentium Pro - ???
+----------S0000011B--------------------------
+MSR 0000011Bh - Pentium Pro - ???
+----------S00000131--------------------------
+MSR 00000131h - Pentium Pro - ???
+----------S0000014E--------------------------
+MSR 0000014Eh - Pentium Pro - ???
+----------S0000014F--------------------------
+MSR 0000014Fh - Pentium Pro - ???
+----------S00000150--------------------------
+MSR 00000150h - Pentium Pro - ???
+----------S00000151--------------------------
+MSR 00000151h - Pentium Pro - ???
+----------S00000154--------------------------
+MSR 00000154h - Pentium Pro - ???
+----------S0000015B--------------------------
+MSR 0000015Bh - Pentium Pro - ???
+----------S0000015F--------------------------
+MSR 0000015Fh - Pentium Pro - ???
+----------S00000174--------------------------
+MSR 00000174h - Pentium Pro - ???
+----------S00000175--------------------------
+MSR 00000175h - Pentium Pro - ???
+----------S00000176--------------------------
+MSR 00000176h - Pentium Pro - ???
 ----------S00000179--------------------------
 MSR 00000179h - Pentium Pro - "MCG_CAP"
 SeeAlso: MSR 0000017Ah,MSR 0000017Bh
@@ -450,10 +615,10 @@ SeeAlso: MSR 00000179h,MSR 0000017Bh
 MSR 0000017Bh - Pentium Pro - "MCG_CTL"
 SeeAlso: MSR 00000179h,MSR 0000017Ah
 ----------S00000186--------------------------
-MSR 00000186h - Pentium Pro - "EVNTSEL0"
+MSR 00000186h - Pentium Pro - "EVNTSEL0" EVENT SELECTION 0
 Size:	32 bits
 Access:	Read/Write
-SeeAlso: MSR 00000187h,MSR 00000011h,MSR 00000012h
+SeeAlso: MSR 000000C1h,MSR 00000187h,MSR 00000011h,MSR 00000012h
 
 Bitfields for Pentium Pro Event Selection MSR:
 Bit(s)	Description	(Table R021)
@@ -468,12 +633,14 @@ Bit(s)	Description	(Table R021)
  23	invert result of CMASK condition
  31-24	CMASK (counter mask)
 ----------S00000187--------------------------
-MSR 00000187h - Pentium Pro - "EVNTSEL1"
+MSR 00000187h - Pentium Pro - "EVNTSEL1" EVENT SELECTION 1
 Size:	32 bits
 Access:	Read/Write
-SeeAlso: MSR 00000186h,#R021,MSR 00000011h,MSR 00000013h
+SeeAlso: MSR 000000C2h,MSR 00000186h,#R021,MSR 00000011h,MSR 00000013h
+----------S000001D3--------------------------
+MSR 000001D3h - Pentium Pro - ???
 ----------S000001D9--------------------------
-MSR 000001D9h - Pentium Pro - "DEBUGCTLMSR"
+MSR 000001D9h - Pentium Pro - "DEBUGCTLMSR" DEBUGGING CONTROL
 
 Bitfields for Pentium Pro Debugging Control MSR:
 Bit(s)	Description	(Table R022)
@@ -489,15 +656,19 @@ Bit(s)	Description	(Table R022)
  15	enable execution trace messages
 ----------S000001DB--------------------------
 MSR 000001DBh - Pentium Pro - "LASTBRANCHFROMIP"
+Desc:	stores the address from which a branch was last taken
 SeeAlso: MSR 000001DCh,MSR 000001DDh
 ----------S000001DC--------------------------
 MSR 000001DCh - Pentium Pro - "LASTBRANCHTOIP"
+Desc:	stores the destination address of the last taken branch instruction
 SeeAlso: MSR 000001DBh,MSR 000001DEh
 ----------S000001DD--------------------------
 MSR 000001DDh - Pentium Pro - "LASTINTFROMIP"
+Desc:	stores the address at which an interrupt last occurred
 SeeAlso: MSR 000001DBh,MSR 000001DEh
 ----------S000001DE--------------------------
 MSR 000001DEh - Pentium Pro - "LASTINTTOIP"
+Desc:	stores the address to which the last interrupt caused a branch
 SeeAlso: MSR 000001DCh,MSR 000001DDh
 ----------S000001E0--------------------------
 MSR 000001E0h - Pentium Pro - "ROB_CR_BKUPTMPDR6"
@@ -508,6 +679,7 @@ Bit(s)	Description	(Table R023)
  63-3	???
  2	Fast String Enable (default is enabled)
  1-0	reserved
+Note:	if bit 2 is set, REP MOVS moves 64 bits each clock cycle
 ----------S00000200--------------------------
 MSR 00000200h - Pentium Pro - "MTRRphysBase0"
 SeeAlso: MSR 000000FEh,MSR 00000201h,MSR 00000202h
@@ -630,6 +802,8 @@ Bit(s)	Description	(Table R025)
  1	enable cache parity checking
  0	Cache Parity Error occurred
 SeeAlso: #R026,#R027
+----------S00001000--------------------------
+MSR 00001000h - Pentium Pro - DEBUG REGISTER 0 
 ----------S00001001--------------------------
 MSR 00001001h - IBM 386/486 SLC - CACHE REGION CONTROL REGISTER
 Size:	48 bits
@@ -643,6 +817,8 @@ Bit(s)	Description	(Table R026)
  31-16	first megabyte read-only flags (each bit represents 64K)
  15-0	first megabyte cacheable flags (each bit represents 64K)
 SeeAlso: #R025,#R027
+----------S00001000--------------------------
+MSR 00001001h - Pentium Pro - DEBUG REGISTER 1
 ----------S00001002--------------------------
 MSR 00001002h - IBM 386/486 SLC - PROCESSOR OPERATION REGISTER
 Size:	30 bits
@@ -660,6 +836,10 @@ Bit(s)	Description	(Table R027)
 	100 clock tripler
  23-0	reserved
 SeeAlso: #R025,#R026
+----------S00001002--------------------------
+MSR 00001002h - Pentium Pro - DEBUG REGISTER 2
+----------S00001003--------------------------
+MSR 00001003h - Pentium Pro - DEBUG REGISTER 3
 ----------S00001004--------------------------
 MSR 00001004h - IBM 486BL3 - PROCESSOR CONTROL REGISTER
 Size:	24 bits
@@ -687,6 +867,22 @@ Bit(s)	Description	(Table R028)
 	(reserved on DD1B, DD1C)
  0	reserved
 SeeAlso: MSR 00001000h
+----------S00001004--------------------------
+MSR 00001004h - Pentium Pro - DEBUG REGISTER 4 
+----------S00001005--------------------------
+MSR 00001005h - Pentium Pro - DEBUG REGISTER 5 
+----------S00001006--------------------------
+MSR 00001006h - Pentium Pro - DEBUG REGISTER 6 
+----------S00001007--------------------------
+MSR 00001007h - Pentium Pro - DEBUG REGISTER 7 
+----------S00002000--------------------------
+MSR 00002000h - Pentium Pro - CONTROL REGISTER 0
+----------S00002002--------------------------
+MSR 00002002h - Pentium Pro - CONTROL REGISTER 2
+----------S00002003--------------------------
+MSR 00002003h - Pentium Pro - CONTROL REGISTER 3
+----------S00002004--------------------------
+MSR 00002004h - Pentium Pro - CONTROL REGISTER 4
 ----------S80000000--------------------------
 MSR 80000000h - Pentium - MACHINE CHECK EXCEPTION ADDRESS
 Size:	64 bits
@@ -856,15 +1052,15 @@ Christian Ludloff's 80x86.CPU
 Alex V. Potemkin's Opcodes List (OPCODES.LST)
 Intel Pentium Pro Family User's Guide, Volume 3, Appendix C
 --------!---Admin----------------------------
-Highest Table Number = R030
+Highest Table Number = R041
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER52A through INTER52D (preferably the original
+quartet of archives named INTER53A through INTER53D (preferably the original
 authenticated PKZIP archives), and the utility and hypertext conversion
-programs in three additional archives called INTER52E.ZIP to INTER52G.ZIP.
+programs in three additional archives called INTER53E.ZIP to INTER53G.ZIP.
 
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
 --------!---CONTACT_INFO---------------------
 Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
 UUCP: {uunet,harvard}!pobox.com!ralf

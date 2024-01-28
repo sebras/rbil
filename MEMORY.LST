@@ -1,5 +1,5 @@
-MEMORY MAP			Release 52		Last change 20oct96
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
+MEMORY MAP			Release 53		Last change 12jan97
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
 
 --------H-M00000000--------------------------
 MEM 0000h:0000h R - INTERRUPT VECTOR TABLE
@@ -566,7 +566,7 @@ MEM 0040h:006Bh - POST LAST UNEXPECTED INTERRUPT (XT and later)
 Size:	BYTE
 Desc:	this is a bitmask of IRQs which have occurred while the corresponding
 	  interrupt vector points at the default system BIOS handler
-	  (bit 0 = IRQ0 to bit 7 = IRQ7)
+	  (bit 0 = IRQ0 to bit 7 = IRQ7; bit 2 = IRQ8-15 on AT and later)
 ----------M0040006C--------------------------
 MEM 0040h:006Ch - TIMER TICKS SINCE MIDNIGHT
 Size:	DWORD
@@ -631,10 +631,17 @@ Values for fixed disk last operation status:
  40h	seek failed
  80h	time out
  AAh	drive not ready
+ B0h	volume not locked in drive (INT 13 extensions)
+ B1h	volume locked in drive (INT 13 extensions)
+ B2h	volume not removable (INT 13 extensions)
+ B3h	volume in use (INT 13 extensions)
+ B4h	lock count exceeded (INT 13 extensions)
+ B5h	valid eject request failed (INT 13 extensions)
  BBh	undefined error
  CCh	write fault on selected drive
  E0h	status error/error register is zero
  FFh	sense failed
+SeeAlso: #0144
 ----------M00400074--------------------------
 MEM 0040h:0074h - WD1002-27X SuperBIOS - TOTAL DRIVES, FIRST CONTROLLER ONLY
 Size:	BYTE
@@ -648,8 +655,10 @@ MEM 0040h:0075h - WD1002-27X SuperBIOS - TOTAL FIXED DRIVES, BOTH CONTROLLERS
 Size:	BYTE
 SeeAlso: MEM 0040h:0074h"SuperBIOS",MEM 0040h:0076h"SuperBIOS"
 ----------M00400076--------------------------
-MEM 0040h:0076h - FIXED DISK - CONTROL BYTE    {IBM document only for XT}
+MEM 0040h:0076h - FIXED DISK - CONTROL BYTE    {IBM documented only for XT}
 Size:	BYTE
+Desc:	loaded from the disk parameter table control byte (offset 8) during
+	  various hard disk operations
 SeeAlso: MEM 0040h:0075h"FIXED DISK",MEM 0040h:0077h"FIXED DISK"
 ----------M00400076--------------------------
 MEM 0040h:0076h - XT: hard disk controller's I/O address (Western Digital)
@@ -660,7 +669,7 @@ Size:	BYTE
 SeeAlso: MEM 0040h:0074h"SuperBIOS",MEM 0040h:0075h"SuperBIOS"
 SeeAlso: MEM 0040h:0077h"SuperBIOS"
 ----------M00400077--------------------------
-MEM 0040h:0077h	- FIXED DISK - I/O port offset {IBM document only for XT}
+MEM 0040h:0077h	- FIXED DISK - I/O port offset {IBM documented only for XT}
 Size:	BYTE
 SeeAlso: MEM 0040h:0075h"FIXED DISK",MEM 0040h:0076h"FIXED DISK"
 ----------M00400077--------------------------
@@ -1724,6 +1733,170 @@ Offset	Size	Description	(Table M066)
  16h	WORD	size of code pointed at by previous field (<= 0400h)
  18h	DWORD	-> position-independent code to disable shadowing
  1Ch	WORD	size of code pointed at by previous field (<= 0400h)
+--------p-Mxxxxxxx0--------------------------
+MEM xxxxh:xxx0h - Advanced Configuration and Power Interface Spec (ACPI) v0.9
+Range: any paragraph boundary in the first kilobyte of the XBDA, the last
+	kilobyte of conventional memory, or from E000h:0000h to F000h:FFE0h
+Note:	scan paragraph boundaries for the signature string "RSD PTR ", followed
+	  by a valid Root System Description Pointer structure (see #M079)
+SeeAlso: INT 15/AX=E820h
+
+Format of ACPI Root System Description Pointer structure:
+Offset	Size	Description	(Table M079)
+ 00h  8 BYTEs	signature "RSD PTR "
+ 08h	BYTE	checksum (entire structure, including this byte, must
+		  add up to zero)
+ 09h  6 BYTEs	OEM identifier
+ 0Fh	BYTE	reserved
+ 10h	DWORD	physical address of Root System Description Table (see #M080)
+SeeAlso: #M080
+
+Format of ACPI System Description Table header:
+Offset	Size	Description	(Table M081)
+ 00h  4 BYTEs	signature
+ 04h	DWORD	length of table in bytes, including this header
+ 08h	BYTE	minor version of specification corresponding to signature
+ 09h	BYTE	major version of specification corresponding to signature
+ 0Ah  6 BYTEs	OEM identification
+ 10h  8 BYTEs	OEM table identifier
+ 18h  4 BYTEs	OEM revision number
+SeeAlso: #M079,#M080,#M082,#M083,#M084,#M085,#M086
+
+Format of ACPI Root System Description Table:
+Offset	Size	Description	(Table M080)
+ 00h 28 BYTEs	System Description Table Header (see #M081)
+		signature "RSDT"
+ 1Ch  N DWORDs	physical addresses of other description tables
+		(see #M082,#M083,#M084,#M085,#M086,#M087)
+Note:	the number of table pointers is implied by the table length
+	 field in the header (at offset 04h)
+SeeAlso: #M079
+
+Format of ACPI Fixed ACPI Description Table:
+Offset	Size	Description	(Table M083)
+ 00h 28 BYTEs	System Description Table Header (see #M081)
+		signature "FACP"
+ 1Ch	DWORD	physical address of the Firmware ACPI Control Structure
+		  (see #M085)
+ 20h	DWORD	physical address of the Differentiated System Description Table
+		  (see #M082)
+ 24h	BYTE	interrupt mode
+		00h dual PIC (industry-standard AT-type)
+		01h multiple APIC (see #M084)
+ 25h	BYTE	reserved
+ 26h	WORD	system vector of SCI interrupt
+ 28h	DWORD	I/O port address of SMI command port
+ 2Ch	BYTE	value to write to SMI comamnd port to disable SMI ownership
+		  of ACPI hardware registers
+ 2Dh	BYTE	value to write to SMI comamnd port to re-enable SMI ownership
+		  of ACPI hardware registers
+ 2Eh  2 BYTEs	reserved
+ 30h	DWORD	I/O port address of Power Management 1a Event Register Block
+ 34h	DWORD	I/O port address of Power Management 1b Event Register Block
+		(optional, 00000000h if not supported)
+ 38h	DWORD	I/O port address of Power Management 1a Control Register Block
+ 3Ch	DWORD	I/O port address of Power Management 1b Control Register Block
+		(optional, 00000000h if not supported)
+ 40h	DWORD	I/O port address of Power Management 2 Control Register Block
+		(optional, 00000000h if not supported)
+ 44h	DWORD	I/O port address of Power Management Timer Control Reg. Block
+ 48h	DWORD	I/O port address of Generic Purpose Event 0 Register Block
+		(optional, 00000000h if not supported)
+ 4Ch	DWORD	I/O port address of Generic Purpose Event 1 Register Block
+		(optional, 00000000h if not supported)
+ 50h	BYTE	size of Power Management 1a/1b Event Register Block (>= 4)
+ 51h	BYTE	size of Power Management 1a/1b Control Register Block (>= 1)
+ 52h	BYTE	size of Power Management 2 Control Register Block (>= 1)
+ 53h	BYTE	size of Power Management Timer Control Register Block (>= 1)
+ 54h	BYTE	size of Generic Purpose Event 0 Register Block (multiple of 2)
+ 55h	BYTE	size of Generic Purpose Event 1 Register Block (multiple of 2)
+ 56h	BYTE	offset within General Purpose Event model for GPE1-based events
+ 57h	BYTE	reserved
+ 58h	WORD	worst-case hardware latency (microseconds) for entering/leaving
+		  state C2; >100 if C2 not supported
+ 5Ah	WORD	worst-case hardware latency (microseconds) for entering/leaving
+		  state C3; >100 if C3 not supported
+ 5Ch	WORD	size of contiguous cacheable memory which must be read to flush
+		  all dirty lines from a processor's memory cache; use if
+		  fixed feature flag WBINVD (see #M088) is clear
+		0000h if flushing not supported
+ 5Eh	WORD	memory stride size (in bytes) to flush processor's memory cache
+ 60h	BYTE	index of processor's duty cycle setting within
+		  processor's P_CNT register
+ 61h	BYTE	size of processor's duty cycle setting in bits
+ 62h	BYTE	index within RTC CMOS RAM of the day-of-month alarm value
+		00h = not supported
+ 63h	BYTE	index within RTC CMOS RAM of the month-of-year alarm value
+		00h = not supported
+ 64h	BYTE	index within RTC CMOS RAM of the century alarm value
+		00h = not supported
+ 65h	BYTE	reserved
+ 66h	DWORD	fixed feature flags (see #M088)
+SeeAlso: #M079
+
+Bitfields for ACPI Fixed Feature Flags:
+Bit(s)	Description	(Table M088)
+ 0	WBINVD instruction is currectly supported by processor
+ 1	WBINVD instruction flushes all caches and maintains coherency, but
+	  does not guarantee invalidation of all caches
+ 2	all processors support C1 sleep state
+ 3	C2 sleep state is configured to work on multiprocessor system
+ 4	power button is handled as a generic feature
+ 5	RTC wake-up state is not supported in fixed register space
+ 6	TMR_VAL size
+	=0 24 bits
+	=1 32 bits
+ 7-31	reserved
+SeeAlso: #M083
+
+Format of ACPI Differentiated System Description Table:
+Offset	Size	Description	(Table M082)
+ 00h 28 BYTEs	System Description Table Header (see #M081)
+		signature "DSDT"
+ 1Ch	!!! details to follow
+SeeAlso: #M079
+
+Format of ACPI Multiple APIC Description Table:
+Offset	Size	Description	(Table M084)
+ 00h 28 BYTEs	System Description Table Header (see #M081)
+		signature "APIC"
+ 1Ch	!!! details to follow
+SeeAlso: #M079
+
+Format of ACPI Firmware ACPI Control Structure:
+Offset	Size	Description	(Table M085)
+ 00h  4 BYTEs	signature "FACS"
+ 04h	DWORD	length of entire structure in bytes (>= 40h)
+ 08h	DWORD	value of system's hardware signature at last boot
+ 0Ch	DWORD	real-mode ACPI OS waking vector
+		if nonzero, control is transferred to this address on next BIOS
+		  POST
+ 10h	DWORD	global lock (see #M089)
+ 14h 44 BYTEs	reserved (0)
+Note:	this structure is located on a 64-byte boundary anywhere in the
+	  first 4GB of memory
+SeeAlso: #M079
+
+Bitfields for ACPI Embedded Controller Arbitration Structure:
+Bit(s)	Description	(Table M089)
+ 0	request for Global Lock ownership is pending
+ 1	Global Lock is currently owned
+ 2-31	reserved
+SeeAlso: #M085
+
+Format of ACPI Persistent System Description Table:
+Offset	Size	Description	(Table M086)
+ 00h 28 BYTEs	System Description Table Header (see #M081)
+		signature "PSDT"
+ 1Ch	!!! details to follow (acpi.pdf p.92)
+SeeAlso: #M079
+
+Format of ACPI Secondary System Description Table:
+Offset	Size	Description	(Table M087)
+ 00h 28 BYTEs	System Description Table Header (see #M081)
+		signature "SSDT"
+ 1Ch	!!! details to follow
+SeeAlso: #M079
 ----------Mxxxxxxx0--------------------------
 MEM xxxxh:xxx0h - Multiprocessor Specification - FLOATING POINTER STRUCTURE
 Range: any paragraph boundary in the first kilobyte of the XBDA, the last
@@ -1881,11 +2054,31 @@ Bit(s)	Description	(Table M071)
 	11 level-triggered
 SeeAlso: #M069
 ----------mFEC00000--------------------------
-MEM FEC00000h - Pentium - I/O APIC
-Size:	4096 BYTEs
+MEM FEC00000h - Pentium - 82379AB I/O APIC - I/O REGISTER SELECT
+Size:	DWORD
+Desc:	bits 7-0 of the I/O Register Select memory location specify which
+	  of the APIC's registers appears in the I/O Window at FExxx010h
+Range:	the Multiprocessor Specification calls for I/O APICs to be memory-
+	  mapped on 4K boundaries between FEC00000h and FEDFC000h; the Intel
+	  82379AB I/O APIC can be memory-mapped on any 1K boundary within
+	  FEC0000h-FEC0F800h
+SeeAlso: MEM FEC00010h,MEM FEE00000h,MEM xxxxh:xxx0h"Multiprocessor"
+----------mFEC00010--------------------------
+MEM FEC00010h - Pentium - 82379AB I/O APIC - I/O WINDOW
+Size:	DWORD
 Range:	the Multiprocessor Specification calls for I/O APICs to be memory-
 	  mapped on 4K boundaries between FEC00000h and FEDFC000h
-SeeAlso: MEM FEE00000h,MEM xxxxh:xxx0h"Multiprocessor"
+SeeAlso: MEM FEC00010h
+
+(Table M078)
+Values for Intel 82379AB I/O APIC registers:
+ 00h	APIC ID
+ 01h	APIC version (read-only)
+ 02h	APIC arbitration ID (read-only)
+ 10h-11h	redirection table entry 0 (10h=low DWORD, 11h=high DWORD)
+ 12h-13h	redirection table entry 1
+ ...
+ 2Eh-2Fh	redirection table entry 15
 ----------mFEE00000--------------------------
 MEM FEE00000h - Pentium - LOCAL APIC
 Size:	4096 BYTEs
@@ -2128,15 +2321,15 @@ Wim Osterholt	<wim@djo.wtm.tudelft.nl> or Wim Osterholt 2:512/56
 Stanley Appel	<appel@stack.urc.tue.nl>
 Matthias Paul	<mpaul@ibh.rwth-aachen.de>
 --------!---Admin----------------------------
-Highest Table Number = M077
+Highest Table Number = M089
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER52A through INTER52D (preferably the original
-authenticated PKZIP archives), and the utility programs in a two additional
-archives called INTER52E.ZIP and INTER52F.ZIP
+quartet of archives named INTER53A through INTER53D (preferably the original
+authenticated PKZIP archives), and the utility and hypertext programs in
+three additional archives called INTER53E.ZIP to INTER53G.ZIP
 
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
 --------!---CONTACT_INFO---------------------
 Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
 UUCP: {uunet,harvard}!pobox.com!ralf
