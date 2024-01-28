@@ -1,13 +1,13 @@
 Public Domain/Freeware/Shareware by Ralf Brown:
 
 The MSDOS Interrupt List
-	A comprehensive listing of over 6550 functions available through
+	A comprehensive listing of over 6780 functions available through
 	interrupt calls on IBM PCs and compatibles.  Includes both
 	documented and undocumented functions.
-	Current version: INTER43A (release 43, 11/6/94)
-			 INTER43B
-			 INTER43C
-			 INTER43D (conversion and utility programs)
+	Current version: INTER44A (release 44, 1/15/95)
+			 INTER44B
+			 INTER44C
+			 INTER44D (conversion and utility programs)
 
 DVINT
 	An extract of the MSDOS Interrupt List containing the DESQview
@@ -122,6 +122,9 @@ On the Internet, by standard anonymous FTP from FTP.CS.CMU.EDU [128.2.206.173].
 If connected to AFS, you can simply perform standard Unix/VMS/whatever
 	directory listing and file copies from the above directory.
 
+Or visit my home page, and grab the files with your favorite web browser:
+     http://www.cs.cmu.edu:8001/afs/cs.cmu.edu/user/ralf/pub/WWW/ralf-home.html
+
 On FIDOnet, from Soundingboard BBS 1:129/26 1-412-621-4604 28.8k HST, file req.
 	My programs are kept in file area 8 for those wishing to download
 	manually.
@@ -146,7 +149,7 @@ mail servers:
 		    TRICKLE@BANUFS11 (Belgium)
 		    TRICKLE@DKTC11   (Denmark)
 		    TRICKLE@FRMOP11  (France)
-		    TRICKLE@DEARN    (Germany)
+		    BITFTP@BITFTP.BITNET (Germany)
 		    TRICKLE@IMIPOLI  (Italy)
 		    TRICKLE@HEARN    (Netherlands)
 		    TRICKLE@EB0UB011 (Spain)

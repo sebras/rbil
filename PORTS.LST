@@ -1,5 +1,5 @@
 [This file was provided by Wim Osterholt (2:512/56 or wim@djo.wtm.tudelft.nl).]
-Last Change: 11/6/94
+Last Change: 1/15/95
 
 
 		XT, AT and PS/2	 I/O port addresses
@@ -351,6 +351,24 @@ Last Change: 11/6/94
 			    pin 35 (8041 port 15) as turbo switch/pw lock for
 				Phoenix
 
+		 HP Vectra keyboard controller output port bit definitions
+		  bits 7-5 reserved
+		  bit 4 = output buffer full (OBF) interrupt
+		  bit 3 = HP SVC interrupt
+		  bit 2 = HP-HIL controller AutoPoll
+		  bit 1 = A20 gate
+		  bit 0 = system reset
+
+		 HP Vectra command byte bit definitions
+		  bit 7	= reserved (0)
+		  bit 6 = scancode conversion mode (1 = PC/XT, 0 = PC/AT)
+		  bit 5 = unused
+		  bit 4 = disable keyboard (unless bit 3 set)
+		  bit 3 = override keyboard disable
+		  bit 2 = System Flag (may be read from port 0060h)
+		  bit 1 = reserved
+		  bit 0 = OBF interrupt enable
+
 0060	r/w	KB controller data port or keyboard input buffer (ISA, EISA)
 		should only be read from after status port bit0 = 1
 		should only be written to if status port bit1 = 0
@@ -383,6 +401,8 @@ Last Change: 11/6/94
 		 F2	sngl  read keyboard ID (read two ID bytes)
 		 F2	sngl  read mouse ID (read two ID bytes)
 		 F3	dbl   set typematic rate/delay
+				data byte bits 4-0 are rate, 6-5 are delay, and
+				bit 7 is unused
 		 F3	dbl   set mouse sample rate in reports per second
 		 F4	sngl  enable keyboard
 		 F4	sngl  enable mouse
@@ -507,7 +527,7 @@ Last Change: 11/6/94
 0064	w	KB controller input buffer (ISA, EISA)
 		KB controller commands (data goes to port 0060):
 		 20	read  read byte zero of internal RAM, this is the
-			      last KB command send to 804x
+			      last KB command send to 8041/8042
 		      Compaq  Put current command byte on port 0060
 				command structure:
 				bit 7	reserved
@@ -565,7 +585,7 @@ Last Change: 11/6/94
 			       4 = keyboard data line stuck high
 		      Compaq   5 = Compaq diagnostic feature
 		 AC	read  diagnostic dump. the contents of the 804x RAM,
-			      output port, input port, status word are send.
+			      output port, input port, status word are sent.
 		 AD	sngl  disable keyboard (sets bit 4 of commmand byte)
 		 AE	sngl  enable keyboard  (resets bit 4 of commmand byte)
 		 AF	AWARD Enhanced Command: read keyboard version
@@ -593,7 +613,7 @@ Last Change: 11/6/94
 		 E0	read  read test inputs.
 				bit0 = kbd clock, bit1 = kbd data
 		 Exxx	AWARD Enhanced Command: active output port
-		 ED   Compaq  This is a two part command to control the state
+		 ED    Compaq This is a two part command to control the state
 			      of the NumLock CpasLock and ScrollLock LEDs
 			      The second byte contains the state to set LEDs.
 				bit 7-3	   reserved. should be set to 0.
@@ -613,8 +633,23 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 0065	r	communications port (Olivetti M24)
 
 0068	w	HP-Vectra  control buffer (HP commands)
+		 00h-54h insert standard key make code into 8041 scancode buf
+		 55h-77h insert HP key make code into 8041 scancode buffer
+		 7Ah	pass through next data byte
+		 7Bh	set RAM Switch to 0
+		 7Ch	set RAM Switch to 1 (default)
+		 7Dh	set CRT Switch to 0
+		 7Eh	set CRT Switch to 1 (default)
+		 7Fh	reserved
+		 80h-D4h insert standard key break code into scancode buffer
+		 D5h-F7h insert HP key break code into scancode buffer
+		 F8h	enable AutoPoll
+		 F9h	disable AutoPoll
+		 FAh-FEh reserved
+		 FFh	keyboard overrun
+
 0069	r	HP-Vectra  SVC (keyboard request SerViCe port)
-006A	w	HP-Vectra  clear processing, done
+006A	w	HP-Vectra  Acknowledge (clear processing, done)
 
 006C-006F	HP-HIL	(Human Interface Link = async. serial inputs 0-7)
 
@@ -846,11 +881,14 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 0073	r/w	bit 7: ???
 
 - - - - - - - - ---------------------------------------------------------------
-0074-0076	secondary CMOS (Compaq)
+0074-0076	secondary CMOS (Compaq), NVRAM (IBM) access
 
-0074	w	secondary CMOS RAM index (Compaq)
+0074	w	secondary CMOS RAM (IBM NVRAM) index, low byte
+0075	w	secondary CMOS RAM (IBM NVRAM) index, high byte
+0076	r/w	secondary CMOS RAM (IBM NVRAM) data byte
 
-0076	r/w	secondary CMOS RAM (Compaq)
+		Note:	NVRAM may be 2K, 8K, or 16K
+		See also CMOS.LST
 
 - - - - - - - - ---------------------------------------------------------------
 0078		HP-Vectra  Hard Reset: NMI enable/disable
@@ -1193,8 +1231,9 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 
 01F1	r	error register
 		diagnostic mode errors:
-		 bit 7-3	reserved
-		 bit 2-1 = 001	no error detected
+		 bit 7	 =	which drive failed (0 = master, 1 = slave)
+		 bit 6-3	reserved
+		 bit 2-0 = 001	no error detected
 			 = 010	formatter device error
 			 = 011	sector buffer error
 			 = 100	ECC circuitry error
@@ -1327,6 +1366,16 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 
 
 -------------------------------------------------------------------------------
+0208-0209 ----	Intel 82C212B "Neat" chipset - EMS emulation control
+
+	configurable, may be set to 0208, 0218, 0258, 0268, 02A8, 02B8, 02E8
+
+-------------------------------------------------------------------------------
+020C-020F ----  AIMS LAB PC Radio
+
+	configurable to 020C or 030C
+
+-------------------------------------------------------------------------------
 0210-0217 ----	Expansion unit (XT)
 
 0210	w	latch expansion bus data
@@ -1338,6 +1387,12 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 0214	w	latch data  (receiver card port)
 	r	read data   (receiver card port)
 0215	r	High byte of address, then Low byte   (receiver card port)
+
+-------------------------------------------------------------------------------
+0218-0219 ----	Intel 82C212B "Neat" chipset - EMS emulation control
+
+	base address configurable, may be set to 0208, 0218, 0258, 0268, 02A8,
+	  02B8, or 02E8
 
 ------------------------------------------------------------------------------
 0220-0223 ---- Sound Blaster / Adlib port
@@ -1480,7 +1535,19 @@ SeeAlso: 0340-034F, 0746
 		(used by TIMER.COM v1.2 which is the 'standard' timer program)
 
 -------------------------------------------------------------------------------
+0258-0259 ----	Intel 82C212B "Neat" chipset - EMS emulation control
+
+	base address configurable, may be set to 0208, 0218, 0258, 0268, 02A8,
+	  02B8, or 02E8
+
+-------------------------------------------------------------------------------
 0258-025F ----	Intel Above Board
+
+-------------------------------------------------------------------------------
+0268-0269 ----	Intel 82C212B "Neat" chipset - EMS emulation control
+
+	base address configurable, may be set to 0208, 0218, 0258, 0268, 02A8,
+	  02B8, or 02E8
 
 -------------------------------------------------------------------------------
 0278-027E ----	parallel printer port, same as 0378 and 03BC
@@ -1499,10 +1566,22 @@ SeeAlso: 0340-034F, 0746
 02A2-02A3 ----	MSM58321RS clock
 
 -------------------------------------------------------------------------------
+02A8-02A9 ----	Intel 82C212B "Neat" chipset - EMS emulation control
+
+	base address configurable, may be set to 0208, 0218, 0258, 0268, 02A8,
+	  02B8, or 02E8
+
+-------------------------------------------------------------------------------
 02B0-02BF ----	Trantor SCSI adapter
 
 -------------------------------------------------------------------------------
 02B0-02DF ----	alternate EGA,	primary EGA at 03C0
+
+-------------------------------------------------------------------------------
+02B8-02B9 ----	Intel 82C212B "Neat" chipset - EMS emulation control
+
+	base address configurable, may be set to 0208, 0218, 0258, 0268, 02A8,
+	  02B8, or 02E8
 
 -------------------------------------------------------------------------------
 02C0-02Cx ----	AST-clock
@@ -1522,6 +1601,12 @@ SeeAlso: 0340-034F, 0746
 
 -------------------------------------------------------------------------------
 02E8	  ----	S3 86C928 video controller (ELSA Winner 1000)
+
+-------------------------------------------------------------------------------
+02E8-02E9 ----	Intel 82C212B "Neat" chipset - EMS emulation control
+
+	base address configurable, may be set to 0208, 0218, 0258, 0268, 02A8,
+	  02B8, or 02E8
 
 -------------------------------------------------------------------------------
 02E8-02EF ----	serial port, same as 02F8, 03E8 and 03F8
@@ -1572,6 +1657,11 @@ SeeAlso: 0340-034F, 0746
 -------------------------------------------------------------------------------
 0300-031F ----	prototype cards
 		Periscope hardware debugger
+
+-------------------------------------------------------------------------------
+030C-030F ----  AIMS LAB PC Radio
+
+	configurable to 020C or 030C
 
 -------------------------------------------------------------------------------
 0310-031F ----	Philips CD-ROM player CM50
@@ -2496,7 +2586,7 @@ SeeAlso: 0220-0223
 		the highest priority interrupt is held, and no other interrupts
 		are acknowledged until the CPU services that interrupt.
 		 bit 7-6 = 00  reserved on 8250, 8251, 16450
-			 = 01  if FIFO queues enabled (16550 only)
+			 = 01  if FIFO queues enabled but unusable (16550 only)
 			 = 11  if FIFO queues are enabled (16550A only)
 		 bit 5-4 = 0 reserved
 		 bit 3	 = 0 reserved  8250, 16450

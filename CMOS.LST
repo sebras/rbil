@@ -1,5 +1,5 @@
-              CMOS Memory Map v1.23 June, 1994
-[Last Edit: 11/6/94]
+              CMOS Memory Map v1.24 Jan, 1995
+[Last Edit: 1/15/95]
 
 Compiled from multiple sources by Padgett Peterson
 Corrections/additions/comments to: padgett@tccslr.dnet.mmc.com
@@ -167,8 +167,16 @@ specified in the PC/AT but may have the following use on some systems:
 
  0Eh (AMSTRAD) 6  BYTEs time and date machine last used
 
- 0Fh Reset Code        
-     (IBM PS/2 "Shutdown Status Byte")
+---------------------------------------------
+ 0Fh Reset Code (IBM PS/2 "Shutdown Status Byte")
+     00h-03h	perform power-on reset
+     04h	INT 19h reboot
+     05h	flush keyboard and jump via 40h:67h
+     06h-07h	reserved
+     08h	used by POST during protected-mode RAM test
+     09h	used for INT 15/87h (block move) support
+     0Ah	jump via 40h:67h
+     0Bh-FFh	perform power-on reset
 
 ---------------------------------------------
 
@@ -231,6 +239,17 @@ mchines only. AT class machines appear to adhere to IBM PC/AT fornat.
   bit 2 store user-defined disk data at top of memory instead of 0030h:0000h
   bit 1 request F1 keypress on boot error
 
+ 11h - (AWARD) Configuration Bits
+    Bit 7   NumLock ON at reboot.
+    Bit 6   IDE Block Mode enabled.
+    Bit 5   ???
+    Bit 4   Shadow ROM BIOS at CC00-CFFF
+    Bit 3   Shadow ROM BIOS at C800-CBFF
+    Bit 2   ???
+    Bit 1   BIOS Password Enabled
+    Bit 0   0 = Password controls BIOS Setup Only
+            1 = Password required to enter System
+
 ---------------------------------------------
  12h - (IBM PS/2) Second Fixed Disk Drive Type (00-FFh) - see 11h
  12h - Hard Disk Data
@@ -263,6 +282,25 @@ mchines only. AT class machines appear to adhere to IBM PC/AT fornat.
   bit 3-2 unused or unknown
   bit 1  network password installed
   bit 0  power-on password installed
+
+ 13h - (AWARD) Configuration Bits
+    Bit 7   Set Keyboard Typematic Rate
+    Bit 4-6 Keyboard Repeat Rate
+            000 =  6 cps
+            001 =  8 cps
+            010 = 10 cps
+            011 = 12 cps
+            100 = 15 cps
+            101 = 20 cps
+            110 = 24 cps
+            111 = 30 cps
+    Bit 2-3 Keyboard Typematic Delay
+            00 =  250 Msec
+            01 =  500 Msec
+            10 =  750 Msec
+            11 = 1000 Msec
+    Bit 1   ???
+    Bit 0   Boot Up Floppy Seek
 
 ---------------------------------------------
  14h - Equipment Byte 
@@ -329,10 +367,21 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
 			default: FFFFh  - (no translation)
  1Bh - (PHOENIX) LSB of Word to 82335 RC1 roll compare register
 
+ 1Bh - (AWARD) Configuration Bits
+    Bit 7-4 ???
+    Bit 3   Shadow ROM BIOS at DC00-DFFF
+    Bit 2     "     "    "   " D800-DBFF
+    Bit 1     "     "    "   " D400-D7FF
+    Bit 0     "     "    "   " D000-D3FF
+
 ---------------------------------------------
  1Ch - (MCA) Slot 1 adapter card ID
  1Ch - (AMI) First Hard Disk user defined: # of Cylinders, High Byte
  1Ch - (PHOENIX) MSB of Word to 82335 RC1 roll compare register
+
+ 1Ch,1Dh - (AWARD) Password
+    Stored as a checksum or CRC using unknown algorithm.  (See byte 11h 
+    to enable)
 
 ---------------------------------------------
  1Dh - (MCA) Slot 2 adapter card ID
@@ -347,12 +396,14 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
        11 - First floppy drive (A:). If not there then First fixed disk (C:)
             (this is the default).
  1Dh - (PHOENIX) LSB of Word to 82335 RC2 roll compare register
+ 1Dh - (AWARD) MSB of password checksum (see byte 1Ch)
 
 ---------------------------------------------
  1Eh - (MCA) Slot 2 adapter card ID
  1Eh - (AMI) First Hard Disk user defined: Write Precompensation Cylinder, 
        Low Byte
  1Eh - (PHOENIX) MSB of Word to 82335 RC2 roll compare register
+ 1Eh - (AWARD) 2nd Hard Disk user defined (type 48): # of Cylinders Low Byte
 
 ---------------------------------------------
  1Fh - (MCA) Slot 3 adapter card ID
@@ -360,6 +411,7 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
        High Byte
  1Fh - (AMSTRAD)    WORD mouse button 2 scancode/ASCII code
 			default: FFFFh  - (no translation)
+ 1Fh - (AWARD) 2nd Hard Disk user defined (type 48): # of Cylinders High Byte
 
 ---------------------------------------------
  20h - (MCA) Slot 3 adapter card ID
@@ -370,18 +422,21 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
      bit 3    more than 8 heads
      bits 2-0 unused (0)
  20h - (PHOENIX) First user defined hard disk (type 48) Cylinders LSB
+ 20h - (AWARD) 2nd Hard Disk user defined (type 48): Number of Heads
 
 ---------------------------------------------
  21h - (MCA) Programmable Option Select configuration byte 2
  21h - (AMI) First Hard Disk user defined: Landing Zone, Low Byte
  21h - (AMSTRAD) BYTE mouse X scaling factor, default: 0Ah
  21h - (PHOENIX) First user defined hard disk (type 48) Cylinders MSB
+ 21h - (AWARD) 2nd Hard Disk user defined (type 48): Write Precomp Low Byte
 
 ---------------------------------------------
  22h - (MCA) Programmable Option Select configuration byte 3
  22h - (AMI) First Hard Disk user defined: Landing Zone, High Byte
  22h - (AMSTRAD) BYTE mouse Y scaling factor default: 0Ah
  22h - (PHOENIX) First user defined hard disk (type 48)  of Heads
+ 22h - (AWARD) 2nd Hard Disk user defined (type 48): Write Precomp High Byte
 
 ---------------------------------------------
  23h - (MCA) Programmable Option Select configuration byte 4
@@ -396,24 +451,28 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
          1   0      CGA card added; 80 x 25 mode
          1   1      mono card added; 80 x 25 mode
  23h - (PHOENIX) First user defined hard disk (type 48) Write Precomp. LSB
+ 23h - (AWARD) 2nd Hard Disk user defined (type 48): Landing Zone Low Byte
 
 ---------------------------------------------
  24h - (MCA) Programmable Option Select configuration byte 5
  24h - (AMI) Second Hard Disk user defined: # of Cylinders, Low Byte
  24h - (AMSTRAD)    BYTE initial VDU character attribute, default: 7h
  24h - (PHOENIX) First user defined hard disk (type 48) Write Precomp. MSB
+ 24h - (AWARD) 2nd Hard Disk user defined (type 48): Landing Zone High Byte
 
 ---------------------------------------------
  25h - (AMI) Second Hard Disk user defined: # of Cylinders, High Byte
  25h - (AMSTRAD)    BYTE size of RAM disk in 2K blocks
 		default: 0  - only used by the RAMDISK software supplied.
  25h - (PHOENIX) First user defined hard disk (type 48) Parking zone LSB
+ 25h - (AWARD) 2nd Hard Disk user defined (type 48): Sectors per Track
 
 ---------------------------------------------
  26h - (AMI) Second Hard Disk user defined: Number of Heads
  26h - (AMSTRAD)    BYTE initial system UART setup byte
 			default: E3h - format as for Int 14h fn 0
  26h - (PHOENIX) First user defined hard disk (type 48) Parking zone MSB
+ 26h - (AWARD) 1st Hard Disk user defined (type 49): # of Cylinders Low Byte
 
 ---------------------------------------------
  27h - (AMI) Second Hard Disk user defined: Write Precompensation Cylinder, 
@@ -421,11 +480,13 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
  27h - (AMSTRAD)    BYTE initial external UART setup byte
 			default: E3h - format as for Int 14h fn 0
  27h - (PHOENIX) First user defined hard disk (type 48) Sectors per track
+ 27h - (AWARD) 1st Hard Disk user defined (type 49): # of Cylinders High Byte
 
 ---------------------------------------------
  28h - (AMI) Second Hard Disk user defined: Write Precompensation Cylinder, 
        High Byte
- 28h - (HP Vectra) checksum over words 29h-2Dh
+ 28h - (HP Vectra) checksum over bytes 29h-2Dh
+ 28h - (AWARD) 1st Hard Disk user defined (type 49): Number of Heads
 
  28h-3Fh (AMSTRAD) 24 BYTEs user applications default: zeroes
 
@@ -433,19 +494,31 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
  29h - (AMI) Second Hard Disk user defined: Control Byte (80h if # of heads 
        is equal or greater than 8)
  29h - (PHOENIX) LSB word to Intel 82335 CC0 compare register
+ 29h - (AWARD) 1st Hard Disk user defined (type 49): Write Precomp  Low Byte
+ 29h - (HP Vectra) officially reserved "CMOS_HPCONFIG"
+	bit 7: include byte 2Ch in checksum (default = 0)
+	bit 6: select second ROM video adapter as primary (default = 0)
+	bits 5-1: reserved
+	bit 0: manufacturing test enabled
 
 ---------------------------------------------
  2Ah - (AMI) Second Hard Disk user defined: Landing Zone, Low Byte
+ 2Ah - (HP Vectra) officially reserved
  2Ah - (PHOENIX) MSB word to Intel 82335 CC0 compare register
+ 2Ah - (AWARD) 1st Hard Disk user defined (type 49): Write Precomp  High Byte
 
 ---------------------------------------------
  2Bh - (AMI) Second Hard Disk user defined: Landing Zone, High Byte
+ 2Bh - (HP Vectra) officially reserved
  2Bh - (PHOENIX) LSB word to Intel 82335 CC1 compare register
+ 2Bh - (AWARD) 1st Hard Disk user defined (type 49): Landing Zone   Low Byte
 
 ---------------------------------------------
  2Ch - (AMI) Second Hard Disk user defined: # of Sectors per track
+ 2Ch - (HP Vectra) officially reserved
  2Ch - (COMPAQ) bit 6:  0 - numlock OFF on boot, 1 - numlock ON at boot
  2Ch - (PHOENIX) MSB word to Intel 82335 CC1 compare register
+ 2Ch - (AWARD) 1st Hard Disk user defined (type 49): Landing Zone   High Byte
 
 ---------------------------------------------
  2Dh - (AMI) Configuration Options 
@@ -458,7 +531,9 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
   Bit 2 Internal Cache Enable (1 = On)
   Bit 1 Use Fast Gate A20 after boot (1 = On)
   Bit 0 Turbo Switch (1 = On)
+ 2Dh - (HP Vectra) officially reserved
  2Dh - (PHOENIX) Checks for values AAh or CCh
+ 2Dh - (AWARD) 1st Hard Disk user defined (type 49): Sectors per Track
   
 ---------------------------------------------
  2Eh - Standard CMOS Checksum, High Byte
@@ -469,7 +544,9 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
  00h-0Fh and 30h-33h are not included. This definition is used by most
  clone manufacturers including AMI, Compaq, Tandon, NEC, and Zenith. The 
  IBM PS/2 line does not follow this standard with the range 19h-31h being 
- undefined.
+ undefined.  On the original HP Vectra, this checksum only covers locations
+ 10h to 20h, with a separate checksum for bytes 29h-2Ch (see offset 28h).
+
 
 ---------------------------------------------
  30h - Extended Memory in K, Low Byte
@@ -503,6 +580,8 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
   Bit 1 D8000h Shadow ROM (Bit 1 = On)
   Bit 0 DC000h Shadow ROM (Bit 1 = On)
 
+ 34h-3Ah - (AWARD) ??? unused ???  Defaults to all FFh's.
+
 ---------------------------------------------
  35h - (AMI) Shadowing
   Bit 7 E0000h Shadow ROM (Bit 1 = On)
@@ -534,21 +613,72 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
  38h - (PHOENIX) Second user defined hard disk (type 48) Write Precomp. LSB
        NOTE: used only when PS/2 style password is NOT in effect.
 
+---------------------------------------------
  39h - (PHOENIX) Second user defined hard disk (type 48) Write Precomp. MSB
        NOTE: used only when PS/2 style password is NOT in effect.
 
+---------------------------------------------
  3Ah - (PHOENIX) Second user defined hard disk (type 48) Parking Zone LSB
        NOTE: used only when PS/2 style password is NOT in effect.
 
+---------------------------------------------
  3Bh - (PHOENIX) Second user defined hard disk (type 48) Parking Zone MSB
        NOTE: used only when PS/2 style password is NOT in effect.
 
+ 3Bh - (AWARD) Configuration Bits
+    Bit 4-7 Screen Colors Used in Setup
+        0   Yellow/White on Blue (Default)
+        1   Magenta/White on Blue
+        2   Yellow/Black on Green
+        3   Yellow/Green on Cyan
+        4   Black/Yellow on Cyan
+        5   Brown/White on Cyan
+        6   White/Green on Red
+        7   White/White on Red
+        8   Green/White on Magenta
+        9   Yellow/Red on Magenta
+        Ah  Red/White on Grey
+        Bh  Yellow/White on Grey
+        Ch  Cyan/White on Grey
+        Dh  Cyan/Yellow on Black
+        Eh  White on Black (Monochrome)
+        Fh  Green/Red on Black
+    Bit 3   ??? Default = 0
+    Bit 2   ??? Default = 0
+    Bit 1   ??? Default = 1
+    Bit 0   Enable External Cache
+
+---------------------------------------------
  3Ch - (PHOENIX) Second user defined hard disk (type 48) Sectors per track
        NOTE: used only when PS/2 style password is NOT in effect.
 
+ 3Ch - (AWARD) Boot Configuration Bits
+    Bit 7   1 = Disable Virus Warning on Boot
+    Bit 6,5 ???
+    Bit 4   Quick POST Enabled
+    Bit 3,2 ???
+    Bit 1   Enable Turbo Switch Input
+    Bit 0   0 = Boot from A, then C
+            1 = Boot from C, then A
+
+---------------------------------------------
+ 3Dh - (AWARD) ???
+
+---------------------------------------------
  3Eh - (AMI) Extended CMOS Checksum, High Byte (includes 34h - 3Dh)
 
+ 3Eh - (AWARD) Boot Configuration Bits
+    Bit 7   Shadow Video BIOS at C000h
+    Bit 6,5 ???
+    Bit 4   Swap Floppy Drive
+    Bit 3   ???
+    Bit 2   Don't Halt on Diskette Errors at Boot
+    Bit 1   Don't Halt on Keyboard Errors at Boot
+    Bit 0   Never Halt for any error at Boot
+
+---------------------------------------------
  3Fh - (AMI) Extended CMOS Checksum, Low Byte (includes 34h - 3Dh)
+ 3Fh - (AWARD) ???
 
 ---------------------------------------------
 
@@ -558,8 +688,14 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
  64 bytes, addresses will wrap so that requests for bytes 40h-7Fh will 
  return the same values as 00h-3Fh.
 
+---------------------------------------------
  40h ???
 
+ 40h - (AWARD) Motherboard Chipset (SiS 85C501/85C502 shown)
+    Bit 7-1 ???
+    Bit 0   Automatic Configuration Enabled (Default: 1=enabled)
+
+---------------------------------------------
  41h - (AMI)
   Bits 7-6 IOR/IOW Wait states
   Bits 5-4 16-bit DMA Wait States
@@ -567,43 +703,216 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
   Bit 1    EMR bit
   Bit 0    DMA Clock Source
 
+---------------------------------------------
  42h-43h ???
 
+ 42h-44h - (AWARD) ??? chipset setup ???
+
+---------------------------------------------
  44h - (AMI)
   Bit 4 NMI Power Fail Warning
   Bit 3 NMI Local Bus Timeout
 
+---------------------------------------------
  45h - (AMI) 
   Bits 7-6 AT Bus 32-Bit Delay
   Bits 5-4 AT Bus 16-Bit Delay
   Bits 3-2 AT Bus 8-Bit Delay
   Bits 1-0 AT Bus I/O Delay
 
+ 45h - (AWARD) Motherboard Chipset (SiS 85C501/85C502 shown)
+    Bit 7   System BIOS Cacheable (Default: 1=enabled)
+    Bit 6   Video BIOS Cacheable  (Default: 1=enabled)
+    Bit 6-0 ???
+
+---------------------------------------------
  46h - (AMI)
   Bits 7-6 AT Bus 32 Bit Wait States
   Bits 5-4 AT Bus 16 Bit Wait States
   Bits 3-2 AT Bus  8 Bit Wait States
   Bits 1-0 AT Bus Clock Source
 
- 47h - 50h ???
+ 46h thru 47h - (AWARD) ??? chipset setup ???
 
+---------------------------------------------
+ 47h-50h ???
+
+ 48h-4Fh - (AWARD) ??? unused ???  Defaults to all FFh's.
+
+---------------------------------------------
+ 50h - (AWARD) PCI Bus Slot 1 Latency Timer 0-255 (default: 0)
+
+---------------------------------------------
  51h - (AMI)
   Bit 7    Bank 0/1 RAS Precharge
   Bit 6    Bank 0/1 Access Wait States
   Bits 3-2 Bank 0/1 Wait States
 
- 52h ???
+ 51h - (AWARD) PCI Bus Setup
+    Bit 7   PIRQ0# Interrupt Triggering
+            0 = Edge Sensitive,
+            1 = Level Sensitive
+    Bit 6-2 ??? Default: all 1's
+    Bit 0-1     Slot 1 IRQ Setup
+        00 = A-PIRQ0 (Default)
+        01 = B-PIRQ1
+        10 = C-PIRQ2
+        11 = D-PIRQ3
 
+---------------------------------------------
+ 52h ???
+ 52h - (AWARD) PCI Bus Slot 2 Latency Timer 0-255 (default: 0)
+
+---------------------------------------------
  53h - (AMI)
   Bit 7    Bank 2/3 RAS Precharge
   Bit 6    Bank 2/3 Access Wait States
   Bits 3-2 Bank 2/3 Wait States
 
- 54h-7Fh ???
+ 53h - (AWARD) PCI Bus Setup
+    Bit 7   PIRQ1# Interrupt Triggering
+            0 = Edge Sensitive,
+            1 = Level Sensitive
+    Bit 6-2 ??? Default: all 1's
+    Bit 0-1     Slot 2 IRQ Setup
+        00 = A-PIRQ1 (Default)
+        01 = B-PIRQ2
+        10 = C-PIRQ3
+        11 = D-PIRQ0
 
+---------------------------------------------
+ 54h-7Fh ???
+ 54h - (AWARD) PCI Bus Slot 3 Latency Timer 0-255 (default: 0)
+
+---------------------------------------------
+ 55h - (AWARD) PCI Bus Setup
+    Bit 7   PIRQ2# Interrupt Triggering
+            0 = Edge Sensitive,
+            1 = Level Sensitive
+    Bit 6-2 ??? Default: all 1's
+    Bit 0-1     Slot 3 IRQ Setup
+        00 = A-PIRQ2 (Default)
+        01 = B-PIRQ3
+        10 = C-PIRQ0
+        11 = D-PIRQ1
+
+---------------------------------------------
+ 56h - (AWARD) ?? reserved for PCI Bus Slot 4 Latency Timer ??
+
+---------------------------------------------
+ 57h - (AWARD) PCI Bus Setup
+    Bit 7   PIRQ3# Interrupt Triggering
+            0 = Edge Sensitive,
+            1 = Level Sensitive
+    Bit 6-0 ??not used  Default: all 1's
+
+---------------------------------------------
+ 58h - (AWARD) ?? reserved for PCI Bus Slot 5 Latency Timer ??
+
+---------------------------------------------
+ 59h - (AWARD) ?? reserved for PCI Bus Setup ??
+
+---------------------------------------------
+ 5Ah - (AWARD) PCI Bus IRQ Setup
+    Bit 4-7 PIRQ1# Interrupt Line (0=none, Bh=IRQ11, etc)
+    Bit 0-3 PIRQ0# Interrupt Line     "      "        "
+
+---------------------------------------------
+ 5Bh - (AWARD) PCI Bus IRQ Setup
+    Bit 4-7 PIRQ3# Interrupt Line (0=none, Bh=IRQ11, etc)
+    Bit 0-3 PIRQ2# Interrupt Line     "      "        "
+
+---------------------------------------------
+ 5Ch-5Fh - (AWARD) ??? unused ???  Defaults to all FFh's.
+
+---------------------------------------------
+ 60h - (AWARD) Power Management
+    Bit 7       ???
+    Bit 6       Video Off Method
+        1  = V/H SYNC + Blank (default)
+        0  = Blank Screen
+    Bit 4,5  Video Off Option
+        00 = Always On (default)
+        01 = Suspend -> Off
+        10 = Suspend, Standby -> Off
+        11 = All Modes -> Off
+    Bit 3       PM Control by APM (1=Yes)
+    Bit 2       ???
+    Bit 0,1     Power Management Setup
+        00  User Defined
+        01  Disabled (default)
+        10  Minimum Power Savings (40 Minutes for all events)
+        11  Maximum Power Savings (20 Seconds for all events)
+
+---------------------------------------------
+ 61h - (AWARD) Power Management
+    Bit 7   PM Event on HDD Ports Activity (1=enable)
+    Bit 6   PM Event on LPT Port Activity (1=enable)
+    Bit 5   PM Event on COM Port Activity (1=enable)
+    Bit 4   HDD Power Down on Suspend
+    Bit 0-3 HDD Power Down Time
+        0       Disabled
+        1-15    Time in Minutes
+
+---------------------------------------------
+ 62h - (AWARD) Power Management
+    Bit 7-4     Standby Mode Setting (for User Defined)
+        0   Disabled
+        1   20 Seconds
+        2   1 Minute
+        3   5 Minutes
+        4   10 Minutes
+        5   15 Minutes
+        6   20 Minutes
+        7   30 Minutes
+        8   40 Minutes
+    Bit 0-3     Doze Mode Setting (for User Defined)
+        (See Standby Mode above)
+
+---------------------------------------------
+ 63h - (AWARD) Power Management
+    Bit 7       Disable PM Event on IRQ3 Activity (COM2) (1=disable)
+    Bit 6       PM Event on VGA Activity (1=enable)
+    Bit 5       ??? (Defaults to 1)
+    Bit 4       PM Event on PCI/ISA Master Activity (1=enable)
+    Bit 0-3     Suspend Mode Setting (for User Defined)
+        (See Standby Mode above)
+
+---------------------------------------------
+ 64h - (AWARD) Power Management
+    Bit 7       Disable PM Event on IRQ11 Activity (1=disable)
+    Bit 6       Disable PM Event on IRQ10 Activity (1=disable)
+    Bit 5       Disable PM Event on IRQ9 Activity (IRQ2 Redir) (1=disable)
+    Bit 4       Disable PM Event on IRQ8 Activity (RTC Alarm) (1=disable)
+    Bit 3       Disable PM Event on IRQ7 Activity (LPT1) (1=disable)
+    Bit 2       Disable PM Event on IRQ6 Activity (Floppy) (1=disable)
+    Bit 1       Disable PM Event on IRQ5 Activity (LPT2) (1=disable)
+    Bit 0       Disable PM Event on IRQ4 Activity (COM1) (1=disable)
+
+---------------------------------------------
+ 65h - (AWARD) Power Management
+    Bit 7-4     ??? may be unused.  Defaults to all 1's
+    Bit 3       Disable PM Event on IRQ15 Activity (1=disable)
+    Bit 2       Disable PM Event on IRQ14 Activity (Hard Disk) (1=disable)
+    Bit 1       Disable PM Event on IRQ13 Activity (Coprocessor) (1=disable)
+    Bit 0       Disable PM Event on IRQ12 Activity (PS/2 Mouse) (1=disable)
+
+---------------------------------------------
+ 66h-79h - (AWARD) ??? unused ???  Defaults to all FFh's.
+
+---------------------------------------------
+ 7Ah - (AWARD) Extended CMOS Checksum, High Byte
+
+---------------------------------------------
+ 7Bh - (AWARD) Extended CMOS Checksum, Low Byte
+    Award's extended checksum is the arithmetic sum of all the bytes
+    from 40h (64 decimal) through 79h (121 decimal).
+
+---------------------------------------------
 
 Revision History
 
+v1.24	Jan,  1995	Added Award info from Tim Farley (Ralf)
 v1.23   June, 1994	Added some MCA info from _The_Undocumented_PC_
 v1.22   Feb,  1994      Added NMI mask note
 v1.21   Jan,  1994      Added note for PS/2 checksum found

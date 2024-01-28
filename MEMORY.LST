@@ -1,5 +1,5 @@
 [This file was originally provided by Robin Walker.  --Ralf]
-Last Update: 11/6/94
+Last Update: 1/15/95
 
 Format of BIOS Data Segment at segment 40h:
 		{items in curly braces not documented by IBM}
@@ -192,6 +192,9 @@ Offset	Size	Description
 		[PS except Mod 25,30] pointer to reset code upon system reset
 		    with memory preserved (see offset 72h)
  69h	WORD	[PC only] cassette CRC register
+		[V20-XT-BIOS] key repeat
+		bit 7: key repeat disabled
+		bit 6: Ctrl-Alt pressed instead of just Alt
  6Bh	BYTE	[PC only] last value read from cassette
 		[XT+] POST last unexpected interrupt
 		bit 0 = IRQ0 to bit 7 = IRQ7
@@ -379,6 +382,9 @@ Offset	Size	Description
 		bit 2: =1 if multiple data rate capability determined
 		bit 1: =1 if multiple data rate capability
 		bit 0: =1 if drive has 80 tracks, =0 if 40 tracks
+		[HP 100LX/200LX] display control status
+		bit 0 =1 if DISPCTL -K
+		bit 1 =1 if DISPCTL -C
  94h	BYTE	Diskette drive 0 current track number
  95h	BYTE	Diskette drive 1 current track number
  96h	BYTE	Keyboard status byte 1
@@ -402,6 +408,16 @@ Offset	Size	Description
  98h	DWORD	Timer2: [AT, PS exc Mod 30] ptr to user wait-complete flag
 					    (see INT 15, AX=8300h)
  9Ch	DWORD	Timer2: [AT, PS exc Mod 30] user wait count in microseconds
+ 9Fh    BYTE    [HP 100LX/200LX] video zoom mode
+		02h 80x25 mono
+		03h 80x25 color
+		80h 64x18 mono
+		81h 64x18 color
+		82h 40x25 mono
+		83h 40x25 color
+		84h 40x16 mono
+		85h 40x16 color
+		(see INT 10/AH=D0h)
  A0h	BYTE	Timer2: [AT, PS exc Mod 30] Wait active flag:
 		    bit 7 =1 wait time elapsed
 		    bits 6-1 reserved
@@ -488,6 +504,7 @@ Offset	Size	Description
  ECh	WORD	(Dell 4xxDE BIOS A11) loop count for delays
  F0h-FFh	reserved for user
 100h	BYTE	Print Screen Status byte
+104h	BYTE	[MS-DOS] logical drive for single-floppy system (A: or B:)
 10Eh	BYTE	state of BREAK at start of BASICA.COM execution
 10Fh	BYTE	flag: 02h if BASICA v2.10 running
 116h	DWORD	INT 1Bh at start of BASICA.COM execution
