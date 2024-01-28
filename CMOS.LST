@@ -1,4 +1,4 @@
-CMOS Memory Map			Release 53		Last change 12jan97
+CMOS Memory Map			Release 54		Last change 29jun97
 
 Compiled from multiple sources by Padgett Peterson
 Corrections/additions/comments to: padgett@tccslr.dnet.mmc.com
@@ -10,7 +10,7 @@ Copyrights/Trademarks belong to whoever they may belong to.
 Found: Algorithm used by IBM in calculating CRC checksums for PS/2
        (see bytes 32h-33h). Complex (recursive part is 12 lines of
        assembly) and not yet validated for every model.
---------!------------------------------------
+--------!---Note-----------------------------
 			Background
 
 The CMOS (complementary metal oxide semiconductor) memory is actually 
@@ -80,7 +80,7 @@ Note: where not otherwise noted, all data points are expressed as BYTES
 Note: the entries for AMI WinBIOS also apply to AMIBIOS with core dates of 
 	12/15/95 or later
 
---------!------------------------------------
+--------!---Note-----------------------------
 		Organization of CMOS Memory - Clock
 
 00h-0Eh is defined by the clock hardware and all must follow it. Other 
@@ -193,7 +193,7 @@ Bitfields for Real-Time Clock status register D:
 Bit(s)	Description	(Table C004)
  7	Valid RAM - 1 indicates batery power good, 0 if dead or disconnected.
  6-0	unused??? (0)
---------!------------------------------------
+--------!---Note-----------------------------
 		Organization of CMOS Memory - non-Clock
 
 The last two bytes in the first hexadecimal decade (hexade ?) were not 
@@ -236,7 +236,7 @@ Values for Reset Code / Shutdown Status Byte:
  0Bh	resume execution via IRET via 40h:0067h
  0Ch	resume execution via RETF via 40h:0067h
  0Dh-FFh perform power-on reset
---------!------------------------------------
+--------!---Note-----------------------------
 
 The second group of values extends from address 10h to 2Dh. The word at
 2Eh-2Fh is a byte-wise summation of the values in these bytes. Most BIOSes
@@ -322,6 +322,7 @@ Bit(s)	Description	(Table C011)
  0	NumLock enabled at boot
 ----------R11--------------------------------
 CMOS 11h - AWARD - CONFIGURATION BITS
+SeeAlso: CMOS 5Eh"AWARD"
 
 Bitfields for AWARD configuration bits:
 Bit(s)	Description	(Table C012)
@@ -331,9 +332,10 @@ Bit(s)	Description	(Table C012)
  4	Shadow ROM BIOS at CC00-CFFF
  3	Shadow ROM BIOS at C800-CBFF
  2	???
- 1	BIOS Password Enabled
+ 1	BIOS Password Enabled (supervisor)
  0	0 = Password controls BIOS Setup Only
 	1 = Password required to enter System
+SeeAlso: #C081
 ----------R11--------------------------------
 CMOS 11h - Quadtel HT12 BIOS 03.05.03 - CONFIGURATION BITS
 
@@ -1466,7 +1468,7 @@ Bit(s)	Description	(Table C079)
  6-4	doze mode CPU clock speed (see #C080)
  3	hotkey setup enabled
  2-0	"sleep mode" CPU CLK speed (see #C080)
-SeeAlso: #C081
+SeeAlso: #C082
 
 (Table C080)
 Values for AMI (PicoPower) CPU clock speeds:
@@ -1477,16 +1479,24 @@ Values for AMI (PicoPower) CPU clock speeds:
  100	MAX/16
  101	MAX/32
  110	MAX/64
-SeeAlso: #C079,#C081
+SeeAlso: #C079,#C082
 ----------R5E--------------------------------
 CMOS 5Eh - AMI 1990 Hyundai super-NB368S notebook - ???
 	00h when values from bios defaults
 	34h when values from power up defaults
+----------R5E--------------------------------
+CMOS 5Eh - AWARD v4.50G - ?
+SeeAlso: CMOS 5Fh"AWARD"
+
+Bitfields for AWARD register 5Eh:
+Bit(s)	Description	(Table C081)
+ 0	user password enabled
+SeeAlso: #C012
 ----------R5E5F------------------------------
 CMOS 5Eh-5Fh - AMI (PicoPower) - CPU SPEEDS
 
 Bitfields for AMI (PicoPower) CPU speeds:
-Bit(s)	Description	(Table C081)
+Bit(s)	Description	(Table C082)
  7	suspend warning beeps enabled
  6-4	"full on" CPU CLK speed
 	000 MAX
@@ -1502,7 +1512,7 @@ SeeAlso: #C079
 CMOS 5Fh - AMI (PicoPower) - POWER MANAGEMENT TIMEOUTS
 
 Bitfields for AMI (PicoPower) power management timeouts:
-Bit(s)	Description	(Table C082)
+Bit(s)	Description	(Table C083)
  7	enable battery-low beeps
  5-3	SUSPEND timeout
 	000  disabled
@@ -1519,12 +1529,15 @@ Bit(s)	Description	(Table C082)
 	101  4 seconds
 	110  8 seconds
 	111  16 seconds
-SeeAlso: #C084
+SeeAlso: #C085
+----------R5F--------------------------------
+CMOS 5Fh - AWARD v4.50G - USER PASSWORD CHECKSUM
+SeeAlso: CMOS 5Eh"AWARD"
 ----------R60--------------------------------
 CMOS 60h - AWARD - POWER MANAGEMENT
 
 Bitfields for AWARD power management:
-Bit(s)	Description	(Table C083)
+Bit(s)	Description	(Table C084)
  7	???
  6	Video Off Method
 	1  = V/H SYNC + Blank (default)
@@ -1545,7 +1558,7 @@ Bit(s)	Description	(Table C083)
 CMOS 60h - AMI (PicoPower) - SLEEP TIMEOUT
 
 Bitfields for AMI (PicoPower) sleep timeout:
-Bit(s)	Description	(Table C084)
+Bit(s)	Description	(Table C085)
  5-3	SLEEP timeout
 	000  disabled
 	001  1 minute
@@ -1555,14 +1568,14 @@ Bit(s)	Description	(Table C084)
 	101  6 minutes
 	110  8 minutes
 	111  12 minutes
-SeeAlso: #C082,#C086
+SeeAlso: #C083,#C087
 ----------R6077------------------------------
 CMOS 60h-77h - AMI WinBIOS - PCI chipset-specific setup information
 ----------R61--------------------------------
 CMOS 61h - AWARD - POWER MANAGEMENT
 
 Bitfields for AWARD power management:
-Bit(s)	Description	(Table C085)
+Bit(s)	Description	(Table C086)
  7	PM Event on HDD Ports Activity (1=enable)
  6	PM Event on LPT Port Activity (1=enable)
  5	PM Event on COM Port Activity (1=enable)
@@ -1581,14 +1594,14 @@ SeeAlso: INT 1A/AX=B101h
 CMOS 62h - AMI (PicoPower) - HARD-DISK POWERDOWN
 
 Bitfields for AMI (PicoPower) hard-disk powerdown timeout:
-Bit(s)	Description	(Table C086)
+Bit(s)	Description	(Table C087)
  3-0	hard-disk timeout in minutes (0000 = disabled)
-SeeAlso: #C084
+SeeAlso: #C085
 ----------R62--------------------------------
 CMOS 62h - AWARD - POWER MANAGEMENT
 
 Bitfields for AWARD power management:
-Bit(s)	Description	(Table C087)
+Bit(s)	Description	(Table C088)
  7-4	Standby Mode Setting (for User Defined)
 	0   Disabled
 	1   20 Seconds
@@ -1605,7 +1618,7 @@ Bit(s)	Description	(Table C087)
 CMOS 63h - AWARD - POWER MANAGEMENT
 
 Bitfields for AWARD power management:
-Bit(s)	Description	(Table C088)
+Bit(s)	Description	(Table C089)
  7	Disable PM Event on IRQ3 Activity (COM2) (1=disable)
  6	PM Event on VGA Activity (1=enable)
  5	??? (Defaults to 1)
@@ -1616,7 +1629,7 @@ Bit(s)	Description	(Table C088)
 CMOS 63h - AMI (PicoPower) - BATTERY-LOW ACTIONS
 
 Bitfields for AMI (PicoPower) battery-low actions:
-Bit(s)	Description	(Table C089)
+Bit(s)	Description	(Table C090)
  5-3	battery-very-low action
 	000  MAX
 	001  MAX/2
@@ -1633,7 +1646,7 @@ CMOS 64h - AMI 1990 Hyundai super-NB368S notebook - ???
 CMOS 64h - AMI (PicoPower) - BATTERY POWER
 
 Bitfields for AMI (PicoPower) battery power:
-Bit(s)	Description	(Table C090)
+Bit(s)	Description	(Table C091)
  6	extended battery debounce enabled
  4-3	resume with modem ring
 	00 disabled
@@ -1649,7 +1662,7 @@ Bit(s)	Description	(Table C090)
 CMOS 64h - AWARD - POWER MANAGEMENT - IRQ activity events
 
 Bitfields for AWARD power management IRQ activity events:
-Bit(s)	Description	(Table C091)
+Bit(s)	Description	(Table C092)
  7	Disable PM Event on IRQ11 Activity (1=disable)
  6	Disable PM Event on IRQ10 Activity (1=disable)
  5	Disable PM Event on IRQ9 Activity (IRQ2 Redir) (1=disable)
@@ -1662,7 +1675,7 @@ Bit(s)	Description	(Table C091)
 CMOS 65h - AWARD - POWER MANAGEMENT
 
 Bitfields for AWARD power management:
-Bit(s)	Description	(Table C092)
+Bit(s)	Description	(Table C093)
  7-4	??? may be unused.  Defaults to all 1's
  3	Disable PM Event on IRQ15 Activity (1=disable)
  2	Disable PM Event on IRQ14 Activity (Hard Disk) (1=disable)
@@ -1672,7 +1685,7 @@ Bit(s)	Description	(Table C092)
 CMOS 65h - AMI (PicoPower) - PC PIN STAGGER
 
 Bitfields for AMI (PicoPower) PC pin stagger:
-Bit(s)	Description	(Table C093)
+Bit(s)	Description	(Table C094)
  7-6	PC pin stagger period
 	00  immediate
 	01  4 msec
@@ -1703,14 +1716,18 @@ CMOS 70h-77h - AWARD - IDE hard disk params for second drive on second IDE port
 CMOS 78h-7Dh - AMI WinBIOS - used by BIOS as scratch RAM
 ----------R7A--------------------------------
 CMOS 7Ah - AWARD - EXTENDED CMOS CHECKSUM (high byte)
+Note:	Award's extended checksum is the arithmetic sum of all the bytes
+	  from 40h (64 decimal) through 79h (121 decimal). [42h-79h for v4.50G]
+SeeAlso: CMOS 7Bh"AWARD"
 ----------R7B--------------------------------
 CMOS 7Bh - AWARD - EXTENDED CMOS CHECKSUM (low byte)
-    Award's extended checksum is the arithmetic sum of all the bytes
-    from 40h (64 decimal) through 79h (121 decimal).
+Note:	Award's extended checksum is the arithmetic sum of all the bytes
+	  from 40h (64 decimal) through 79h (121 decimal). [42h-79h for v4.50G]
+SeeAlso: CMOS 7Ah"AWARD"
 ----------R7E7F------------------------------
 CMOS 7Eh-7Fh - AMI WinBIOS - used as scratch RAM by power management code
 --------!---Admin----------------------------
-Highest Table Number = C093
+Highest Table Number = C094
 --------!---History--------------------------
 Revision History
 
@@ -1726,4 +1743,10 @@ v1.15	June, 1993	AMSTRAD data updated
 v1.1	June, 1993	AMSTRAD & PS/2 data added 
 v1.0	June, 1993	First release: Motorola MC 146818,  PC-AT & AMI 
 			"Hi-Flex" information baselined
----------------------------------------------
+--------!---CONTACT_INFO---------------------
+Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
+UUCP: {uunet,harvard}!pobox.com!ralf
+FIDO: Ralf Brown 1:129/26.1
+	or post a message to me in the DR_DEBUG echo (I probably won't see it
+	unless you address it to me)
+CIS:  >INTERNET:ralf@pobox.com

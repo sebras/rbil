@@ -1,4 +1,4 @@
-OPCODES LIST			Release 53		Last change 12jan97
+OPCODES LIST			Release 54		Last change 29jun97
 
 ------------------  OPCODE.LST	----------------------------
 This is DOC 'bout undocument command and document command
@@ -26,10 +26,8 @@ AirMail:
   o  CR4 Update					... and more
 --------------------------------------------------------------
 
-
----------------------------------------------------
-AAA   -	 ASCII adjust AX after addition
-
+----------O-AAA------------------------------------
+OPCODE AAA   -	 ASCII adjust AX after addition
 
 CPU:  8086+
 Type of Instruction: User
@@ -81,12 +79,8 @@ Cx486SLC:	4
 Cx486DX:	4
 IBM 486BL3X:	4
 UMC U5S:	1
-
-
-
-
----------------------------------------------------
-AAD    - ASCII adjust AX before Division
+----------O-AAD------------------------------------
+OPCODE AAD    - ASCII adjust AX before Division
 
 CPU:  8086+
 Type of Instruction: User
@@ -130,11 +124,8 @@ Cx486DX:	4
 
 IBM 486BL3X:	15
 UMC	U5S:	11
-
-
-
----------------------------------------------------
-AAM    - ASCII adjust AX after Multiply
+----------O-AAM------------------------------------
+OPCODE AAM    - ASCII adjust AX after Multiply
 
 CPU:  8086+
 Type of Instruction: User
@@ -177,11 +168,8 @@ Cx486DX:	16
 
 IBM 486BL3X:	17
 UMC	U5S:	12
-
-
-
----------------------------------------------------
-ADD4S  -  Addition for packed BCD strings
+----------O-ADD4S----------------------------------
+OPCODE ADD4S  -	 Addition for packed BCD strings
 
 
 CPU: all NECs  V-series
@@ -208,11 +196,8 @@ COP (Code of Operation)	 : 0FH 20H
 
 Clocks:		ADD4S
 NEC V20:	~19*(CL/2)+7
-
-
-
----------------------------------------------------
-BOUND	-  Chack Array Index Against Bounds
+----------O-BOUND----------------------------------
+OPCODE BOUND	-  Chack Array Index Against Bounds
 
 CPU:  80186+,NECs
 Type of Instruction: User - HLL support
@@ -266,13 +251,8 @@ Pentium:	8		int+32
 
 Cx486SLC:	11		int+11
 Cx486DX:	11		int+11
-
-
-
-
-
----------------------------------------------------
-BRKCS  -  Break with Contex Switch
+----------O-BRKCS----------------------------------
+OPCODE BRKCS  -	 Break with Contex Switch
 
 CPU:  NEC V25,V35,V25 Plus,V35 Plus,V25 Software Guard
 Type of Instruction: System
@@ -347,13 +327,8 @@ Physical Form:	BRKCS reg16
 COP (Code of Operation)	 : 0Fh 2Dh <1111 1RRR>
 
 Clocks:	 15
-
-
-
-
-
----------------------------------------------------
-BRKEM  -  Break for Emulation
+----------O-BRKEM----------------------------------
+OPCODE BRKEM  -	 Break for Emulation
 
 
 CPU: NEC/Sony V20/V30/V40/V50
@@ -387,13 +362,8 @@ COP (Code of Operation)	 : 0FH FFH imm8
 
 Clocks:		BRKEM  imm8
 NEC V20:	38
-
-
-
-
-
----------------------------------------------------
-BRKN	-  Break to Native Mode
+----------O-BRKN-----------------------------------
+OPCODE BRKN	-  Break to Native Mode
 
 CPU:  NEC (V25/V35) Software Guard only
 Type of Instruction: System
@@ -423,10 +393,8 @@ Physical Form:	BRKN  imm8
 COP (Code of Operation)	 : 63h imm8
 
 Clocks:	 56+10T [44+10T]
-
-
----------------------------------------------------
-BRKS	-  Break to Security Mode
+----------O-BRKS-----------------------------------
+OPCODE BRKS	-  Break to Security Mode
 
 CPU:  NEC (V25/V35) Software Guard  only
 Type of Instruction: System
@@ -457,10 +425,8 @@ Physical Form:	BRKS  imm8
 COP (Code of Operation)	 : F1h imm8
 
 Clocks:	 56+10T [44+10T]
-
-
----------------------------------------------------
-BRKXA	-  Break to Expansion Address
+----------O-BRKXA----------------------------------
+OPCODE BRKXA	-  Break to Expansion Address
 
 CPU:  NEC V33/V53  only
 Type of Instruction: System
@@ -525,10 +491,8 @@ Physical Form:	BRKXA  imm8
 COP (Code of Operation)	 : 0Fh E0h imm8
 
 Clocks:	 12
-
-
----------------------------------------------------
-BSWAP  - Bytes Swap
+----------O-BSWAP----------------------------------
+OPCODE BSWAP  - Bytes Swap
 
 
 CPU:  I486 +
@@ -555,14 +519,8 @@ Clocks: Cyrix Cx486SLC : 4
 	Cyrix Cx486DX  : 4
 	UMC   U5S      : 2
 	IBM 486BL3X    : 9
-
-
-
-
-
-
----------------------------------------------------
-BTCLR	-  Bit Test, If it True Clear and Branch
+----------O-BTCLR----------------------------------
+OPCODE BTCLR	-  Bit Test, If it True Clear and Branch
 
 CPU:  NEC V25,V35,V25 Plus,V35 Plus,V25 Software Guard
 Type of Instruction: User
@@ -584,13 +542,8 @@ Physical Form:	BTCLR reg/mem8,imm3, short_label
 COP (Code of Operation)	 : 0Fh 9Ch PostByte imm3  Short_Label (Total=5 bytes)
 
 Clocks:	 29
-
-
-
-
-
----------------------------------------------------
-CALLN	  - Call Native Mode Routine
+----------O-CALLN----------------------------------
+OPCODE CALLN	  - Call Native Mode Routine
 
 
 CPU: NEC/Sony V20/V30 etc
@@ -620,12 +573,8 @@ COP (Code of Operation)	 : EDH EDH imm8
 
 Clocks:
 NEC V20/V30:	38-58
-
-
-
-
----------------------------------------------------
-CLEAR1	-  Clear one bit
+----------O-CLEAR1---------------------------------
+OPCODE CLEAR1	-  Clear one bit
 
 
 CPU: NEC/Sony all V-series.
@@ -658,13 +607,8 @@ COP (Code of Operation)	 : 0FH 1BH  Postbyte  imm8
 Clocks:				 CLEAR1
 	     r/m8,CL	r/m8,i8		r/m16,CL   r/m16,i8
 NEC V20:      5/14	 6/15		  5/14	     6/15
-
-
-
-
-
----------------------------------------------------
-CMOVcc	 -    Conditional Move
+----------O-CMOVcc---------------------------------
+OPCODE CMOVcc	 -    Conditional Move
 
 CPU:  P6
 Type of Instruction:  User
@@ -701,10 +645,8 @@ CMOVNG	reg,reg/mem	0FH 4EH Postbyte
 CMOVG	reg,reg/mem	0FH 4FH Postbyte
 
 Clocks:	 ~1  (~pairing with other instructions)
-
-
----------------------------------------------------
-CMP4S  -  Compare for packed BCD strings
+----------O-CMP4S----------------------------------
+OPCODE CMP4S  -	 Compare for packed BCD strings
 
 
 CPU: NEC/Sony all  V-series
@@ -731,15 +673,8 @@ COP (Code of Operation)	 : 0FH 26H
 
 Clocks:		CMP4S
 NEC V20:	~7+19*CL
-
-
-
-
-
-
-
----------------------------------------------------
-CMPXCHG8B  - Compare and exchange 8 bytes
+----------O-CMPXCHG8B------------------------------
+OPCODE CMPXCHG8B  - Compare and exchange 8 bytes
 
 
 CPU:  Pentium (tm), Pentium Pro(tm), AMD Am5k86
@@ -769,11 +704,8 @@ COP (Code of Operation)	 : 0FH C7H Postbyte
 Clocks:	      Pentium	 : 10
 
 Note: Postbyte MMRRRMMM:  MM<>11 if (==) then INT 6
-
-
-
----------------------------------------------------
-CMPXCHG	 - Compare and exchange
+----------O-CMPXCHG--------------------------------
+OPCODE CMPXCHG	 - Compare and exchange
 
 
 
@@ -836,13 +768,8 @@ Clocks:
 Penalty if cache miss	 :
 	  Intel i486	 : 2
 	 Cyrix Cx486SLC	 : 1
-
-
-
-
-
----------------------------------------------------
-CPUID - CPU Identification
+----------O-CPUID----------------------------------
+OPCODE CPUID - CPU Identification
 
 
 CPU:  Intel 486DX/SX/DX2 SL Enhanced and all later
@@ -1211,11 +1138,8 @@ Physical Form:		 CPUID
 COP (Code of Operation): 0FH A2H
 Clocks:	  486s & Pentium  (EAX=1)	    : 14
 	  486s & Pentium  (EAX=0 or EAX>1)  : 9
-
-
-
----------------------------------------------------
-EMMS	-  Empty MMX State
+----------O-EMMS-----------------------------------
+OPCODE EMMS	-  Empty MMX State
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -1253,11 +1177,8 @@ EMMS		0FH 77H
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-ESC   -	 Escape Extrnal Cooprocessors
+----------O-ESC------------------------------------
+OPCODE ESC   -	 Escape Extrnal Cooprocessors
 
 CPU:  8086...80386, any Hybrid 486.
 Type of Instruction: User
@@ -1291,11 +1212,8 @@ Clocks:		ESC  n,Reg	ESC n,Mem8/Mem16
 286:		  9-20		      9-20
 386:		  N/A		       N/A
 486:		  N/A		       N/A
-
-
-
----------------------------------------------------
-EXT  -	Extract Bit Field
+----------O-EXT------------------------------------
+OPCODE EXT  -	Extract Bit Field
 
 
 CPU: NEC/Sony all  V-series
@@ -1323,11 +1241,8 @@ COP (Code of Operation)	 : 0FH 33H  PostByte
 
 Clocks:		EXT  reg8,reg8
 NEC V20:	26-55
-
-
-
----------------------------------------------------
-F4X4 - FPU: Multiplicate vector on Matrix 4x4
+----------O-F4X4-----------------------------------
+OPCODE F4X4 - FPU: Multiplicate vector on Matrix 4x4
 
 
 
@@ -1375,11 +1290,8 @@ COP (Code of Operation): DBH F1H
 Clocks:	   IIT 2c87    : 242
 	   IIT 3c87    : 242
 	   IIT 3c87SX  : 242
-
-
-
----------------------------------------------------
-FCMOVcc	  -  Floating Point Conditional Move
+----------O-FCMOVcc--------------------------------
+OPCODE FCMOVcc	  -  Floating Point Conditional Move
 
 CPU:  P6
 Type of Instruction:  User
@@ -1425,10 +1337,8 @@ FCMOVNU	 ST,STi DB D8+i
 
 
 Clocks:	 N/A
-
-
----------------------------------------------------
-FCOMI	-  Floating Point Compare setting Integer Flags
+----------O-FCOMI----------------------------------
+OPCODE FCOMI	-  Floating Point Compare setting Integer Flags
 
 CPU:  P6
 Type of Instruction:  User
@@ -1476,10 +1386,8 @@ FUCOMIP ST0,STi	 DF E8+i
 
 
 Clocks:	 N/A
-
-
----------------------------------------------------
-FINT	-  Finished Interrupt
+----------O-FINT-----------------------------------
+OPCODE FINT	-  Finished Interrupt
 
 CPU:  NEC V25,V35,V25 Plus,V35 Plus,V25 Software Guard
 Type of Instruction: System
@@ -1498,11 +1406,8 @@ Physical Form:	FINT
 COP (Code of Operation)	 : 0Fh 92h
 
 Clocks: 2
-
-
-
----------------------------------------------------
-FNSTDW - FPU Not wait Store Device Word register
+----------O-FNSTDW---------------------------------
+OPCODE FNSTDW - FPU Not wait Store Device Word register
 
 
 FPU:  i387SL Mobile
@@ -1513,7 +1418,7 @@ Description:
 	dest <- Device Word
 
 Format of Device word:
-	bit(s)	Description
+	bit(s)	Description	(Table )
 	0-7	Reserved
 	 8	S - Status bit:
 		    if S=1 then FP device is a static design and OS
@@ -1531,12 +1436,8 @@ CPU mode: Any
 Physical Form:		 FNSTDW	 AX
 COP (Code of Operation): DFH E1H
 Clocks:	      i387SL Mobile: 13
-
-
-
-
----------------------------------------------------
-FNSTSG - FPU Not wait Store Signature Word register
+----------O-FNSTSG---------------------------------
+OPCODE FNSTSG - FPU Not wait Store Signature Word register
 
 
 
@@ -1548,7 +1449,7 @@ Description:
 	dest <- Signature Word
 
 Format of Signature word:
-	bit(s)	Description
+	bit(s)	Description	(Table )
 	 3-0	Revision
 	 7-4	Steppin
 	11-8	Family
@@ -1574,12 +1475,8 @@ CPU mode: Any
 Physical Form:		 FNSTSG	 AX
 COP (Code of Operation): DFH E2H
 Clocks:	      i387SL Mobile: 13
-
-
-
-
----------------------------------------------------
-FPO2  -	 Floating Point Operations 2nd Way
+----------O-FPO2-----------------------------------
+OPCODE FPO2  -	 Floating Point Operations 2nd Way
 
 
 CPU: NEC/Sony  all V-series
@@ -1605,18 +1502,8 @@ COP (Code of Operation)	 :
 
 Clocks:		FPO2  imm4,reg/mem
 NEC V20:	     2/11
-
-
-
-
-
-
-
-
-
-
----------------------------------------------------
-FRICHOP - FPU: Round to Integer chop method
+----------O-FRICHOP--------------------------------
+OPCODE FRICHOP - FPU: Round to Integer chop method
 
 
 FPU:  Cyrix FPUs and 486s with FPU on chip
@@ -1650,12 +1537,8 @@ Clocks:	      Cx83D87  : 15
 	      Cx83S87  : 15
 	      CxEMC87  : 15
 	      Cx487DLC :
-
-
-
-
----------------------------------------------------
-FRINEAR - FPU: Round to Integer Nearest method
+----------O-FRINEAR--------------------------------
+OPCODE FRINEAR - FPU: Round to Integer Nearest method
 
 
 FPU:  Cyrix FPUs and 486s with FPU on chip
@@ -1689,13 +1572,8 @@ Clocks:	      Cx83D87  : 15
 	      Cx83S87  : 15
 	      CxEMC87  : 15
 	      Cx487DLC :
-
-
-
-
-
----------------------------------------------------
-FRINT2 - FPU: Round to Integer
+----------O-FRINT2---------------------------------
+OPCODE FRINT2 - FPU: Round to Integer
 
 
 FPU:  Cyrix FPUs and 486s with FPU on chip
@@ -1740,12 +1618,8 @@ Clocks:	      Cx83D87  : 15
 	      Cx83S87  : 15
 	      CxEMC87  : 15
 	      Cx487DLC :
-
-
-
-
----------------------------------------------------
-FRSTPM - FPU Reset Protected Mode
+----------O-FRSTPM---------------------------------
+OPCODE FRSTPM - FPU Reset Protected Mode
 
 
 
@@ -1764,12 +1638,8 @@ Physical Form:		 FRSTPM
 COP (Code of Operation): DBH E5H
 Clocks:	      i287XL   : 12
 	      i287XLT  : 12
-
-
-
-
----------------------------------------------------
-FSBP0 - FPU: Set Bank pointer to Bank # 0
+----------O-FSBP0----------------------------------
+OPCODE FSBP0 - FPU: Set Bank pointer to Bank # 0
 
 
 FPU:  IIT FPUs.
@@ -1795,12 +1665,8 @@ COP (Code of Operation): DBH E8H
 Clocks:	   IIT 2c87    : 6
 	   IIT 3c87    : 6
 	   IIT 3c87SX  : 6
-
-
-
-
----------------------------------------------------
-FSBP1 - FPU: Set Bank pointer to Bank # 1
+----------O-FSBP1----------------------------------
+OPCODE FSBP1 - FPU: Set Bank pointer to Bank # 1
 
 
 
@@ -1827,12 +1693,8 @@ COP (Code of Operation): DBH EBH
 Clocks:	   IIT 2c87    : 6
 	   IIT 3c87    : 6
 	   IIT 3c87SX  : 6
-
-
-
-
----------------------------------------------------
-FSBP2 - FPU: Set Bank pointer to Bank # 2
+----------O-FSBP2----------------------------------
+OPCODE FSBP2 - FPU: Set Bank pointer to Bank # 2
 
 
 
@@ -1859,12 +1721,8 @@ COP (Code of Operation): DBH EAH
 Clocks:	   IIT 2c87    : 6
 	   IIT 3c87    : 6
 	   IIT 3c87SX  : 6
-
-
-
-
----------------------------------------------------
-IBTS	-  Insert Bits String
+----------O-IBTS-----------------------------------
+OPCODE IBTS	-  Insert Bits String
 
 
 CPU:  80386 step A0-B0 only
@@ -1890,13 +1748,8 @@ COP (Code of Operation)	 : 0FH A7H Postbyte
 
 Clocks:		IBTS
 80386:		12/19
-
-
-
-
-
----------------------------------------------------
-ICEBP  - PWI Mode BreakPoint, ICE address space
+----------O-ICEBP----------------------------------
+OPCODE ICEBP  - PWI Mode BreakPoint, ICE address space
 
 
 
@@ -1928,12 +1781,8 @@ CPU mode: RM,PM0
 Physical Form:		 ICEBP
 COP (Code of Operation): F1H
 Clocks:	 IBM 486SLC2   : 460
-
-
-
-
----------------------------------------------------
-ICEBP  -  In-Circuit Emulator Breakpoint
+----------O-ICEBP----------------------------------
+OPCODE ICEBP  -	 In-Circuit Emulator Breakpoint
 
 
 
@@ -1966,13 +1815,8 @@ CPU mode: RM,PM0
 Physical Form:		 ICEBP
 COP (Code of Operation): F1H
 Clocks:		       : N/A
-
-
-
-
-
----------------------------------------------------
-ICERET	- Return from PWI mode, ICE space
+----------O-ICERET---------------------------------
+OPCODE ICERET	- Return from PWI mode, ICE space
 
 
 CPU: IBM 486SLC2
@@ -1986,7 +1830,7 @@ Description:
 	      mode.
 
 Format of ICERET Table:
-
+	(Table )
 	       Offset  Len  Description
 		0H	4	CR0
 		4H	4	EFLAGS
@@ -2072,13 +1916,8 @@ CPU mode: SMM
 Physical Form:		 ICERET
 COP (Code of Operation): 0FH 07H  Note: Code is same with Intel's LOADALL
 Clocks:	 IBM 486SLC2   : 440
-
-
-
-
-
----------------------------------------------------
-INS  -	Insert Bit String
+----------O-INS------------------------------------
+OPCODE INS  -	Insert Bit String
 
 
 CPU: NEC/Sony  all V-series
@@ -2106,16 +1945,8 @@ COP (Code of Operation)	 : 0FH 31H  PostByte
 
 Clocks:		INS  reg8,reg8
 NEC V20:	31-117
-
-
-
-
-
-
-
-
----------------------------------------------------
-INVD  - Invalidate Cache Buffer
+----------O-INVD-----------------------------------
+OPCODE INVD  - Invalidate Cache Buffer
 
 
 
@@ -2141,12 +1972,8 @@ COP (Code of Operation): 0FH 08H
 Clocks: Cyrix Cx486SLC : 4
 	      i486     : 4
 	      Pentium  : 15
-
-
-
-
----------------------------------------------------
-INVLPG	- Invalidate Page Entry In TLB
+----------O-INVLPG---------------------------------
+OPCODE INVLPG	- Invalidate Page Entry In TLB
 
 
 
@@ -2171,11 +1998,8 @@ Clocks: Cyrix Cx486SLC : 4
 	      i486     : 12 if hit
 		       : 11 if not hit
 	      Pentium  : 25
-
-
-
----------------------------------------------------
-LOADALL	 - Load All Registers
+----------O-LOADALL--------------------------------
+OPCODE LOADALL	 - Load All Registers
 
 
 CPU:  Intel 386+ +all clones
@@ -2189,7 +2013,7 @@ Description:
 	      Which Begin on  place pointed ES:EDI
 
 Format of LOADALL Table:
-
+	(Table )
 	       Offset  Len  Description
 		0H	4	CR0
 		4H	4	EFLAGS
@@ -2282,13 +2106,8 @@ Note: This operation used 102 data transfer cycles on 32bit bus
 	      i386SX: ~350
 	      i386DX: ~290
 	      i486XX: ~220
-
-
-
-
-
----------------------------------------------------
-LOADALL	 - Load All Registers From Table
+----------O-LOADALL--------------------------------
+OPCODE LOADALL	 - Load All Registers From Table
 
 
 CPU:  Intel 80286 and all its clones
@@ -2303,7 +2122,7 @@ Description:
 	      66H
 
 Format of LOADALL Table:
-
+	(Table )
 	       Address	Len  Description
 		800H	6	None
 		806H	2	MSW
@@ -2359,12 +2178,8 @@ CPU mode: RM,PM0
 Physical Form:		 LOADALL
 COP (Code of Operation): 0FH 05H
 Clocks:	      80286    : 195
-
-
-
-
----------------------------------------------------
-MOVD   -  Move Dwords
+----------O-MOVD-----------------------------------
+OPCODE MOVD   -	 Move Dwords
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -2405,12 +2220,8 @@ MOVD	r/m32,mm	0Fh 7Eh PostByte
 			mm,r/m32   r/m32,mm
      P55C:	n/a	(~1)	   (~1)
 future P6:	n/a	(~1)	   (~1)
-
-
-
-
----------------------------------------------------
-MOVQ   -  Move Qwords
+----------O-MOVQ-----------------------------------
+OPCODE MOVQ   -	 Move Qwords
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -2451,12 +2262,8 @@ Note: In PostByte instead IU registers used MMX registers,
 			mm,r/m32   r/m32,mm
      P55C:	n/a	(~1)	   (~1)
 future P6:	n/a	(~1)	   (~1)
-
-
-
-
----------------------------------------------------
-MOVSPA	  -  Move Stack Pointer After Bank Switched
+----------O-MOVSPA---------------------------------
+OPCODE MOVSPA	  -  Move Stack Pointer After Bank Switched
 
 CPU:  NEC V25,V35,V25 Plus,V35 Plus,V25 Software Guard
 Type of Instruction: System
@@ -2477,13 +2284,8 @@ Physical Form:	MOVSPA
 COP (Code of Operation)	 : 0Fh 25h
 
 Clocks:	 16
-
-
-
-
-
----------------------------------------------------
-MOVSPB	  -  Move Stack Pointer Before Bamk Switching
+----------O-MOVSPB---------------------------------
+OPCODE MOVSPB	  -  Move Stack Pointer Before Bamk Switching
 
 CPU:  NEC V25,V35,V25 Plus,V35 Plus,V25 Software Guard
 Type of Instruction: System
@@ -2506,13 +2308,8 @@ Physical Form:	MOVSPB	  reg16
 COP (Code of Operation)	 : 0Fh 95h <1111 1RRR>
 
 Clocks:	 11
-
-
-
-
-
----------------------------------------------------
-NOT1  -	 Invert a Specified bit
+----------O-NOT1-----------------------------------
+OPCODE NOT1  -	 Invert a Specified bit
 
 
 CPU: NEC/Sony  all  V-series
@@ -2598,11 +2395,8 @@ Am5k86:		~int
 Pentium Pro:	~int
 
 ++++++++++++++++++++++++++++++
-
-
-
----------------------------------------------------
-PACKSSDW   -  Pack with Signed Saturation dword to word
+----------O-PACKSSDW-------------------------------
+OPCODE PACKSSDW	  -  Pack with Signed Saturation dword to word
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -2642,11 +2436,8 @@ PACKSSDW mm,mm/m64	0FH 6BH PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PACKSSWB   -  Pack with Signed Saturation word to Byte
+----------O-PACKSSWB-------------------------------
+OPCODE PACKSSWB	  -  Pack with Signed Saturation word to Byte
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -2688,11 +2479,8 @@ PACKSSWB mm,mm/m64	0FH 63H PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PACKUSWB   -  Pack with Unsigned Saturation word to Byte
+----------O-PACKUSWB-------------------------------
+OPCODE PACKUSWB	  -  Pack with Unsigned Saturation word to Byte
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -2734,11 +2522,8 @@ PACKUSWB mm,mm/m64	0FH 67H PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PADDB	-  Packed Add Bytes
+----------O-PADDB----------------------------------
+OPCODE PADDB	-  Packed Add Bytes
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -2784,11 +2569,8 @@ PADDB	mm,mm/m64	0FH FCH PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PADDD	-  Packed Add Dwords
+----------O-PADDD----------------------------------
+OPCODE PADDD	-  Packed Add Dwords
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -2828,11 +2610,8 @@ PADDW	mm,mm/m64	0FH FEH PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PADDSB	-  Packed Add with Saturation Bytes
+----------O-PADDSB---------------------------------
+OPCODE PADDSB	-  Packed Add with Saturation Bytes
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -2878,11 +2657,8 @@ PADDSB	mm,mm/m64	0FH ECH PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PADDSW	-  Packed Add with Saturation Words
+----------O-PADDSW---------------------------------
+OPCODE PADDSW	-  Packed Add with Saturation Words
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -2924,11 +2700,8 @@ PADDSW	mm,mm/m64	0FH EDH PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PADDUSB -  Packed Add Unsigned with Saturation Bytes
+----------O-PADDUSB--------------------------------
+OPCODE PADDUSB -  Packed Add Unsigned with Saturation Bytes
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -2976,11 +2749,8 @@ PADDUSB mm,mm/m64	0FH DCH PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PADDUSW -  Packed Add Unsigned with Saturation Words
+----------O-PADDUSW--------------------------------
+OPCODE PADDUSW -  Packed Add Unsigned with Saturation Words
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -3024,11 +2794,8 @@ PADDUSW mm,mm/m64	0FH DDH PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PADDW	-  Packed Add Words
+----------O-PADDW----------------------------------
+OPCODE PADDW	-  Packed Add Words
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -3070,11 +2837,8 @@ PADDW	mm,mm/m64	0FH FDH PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PAND	-  Bitwise Logical And
+----------O-PAND-----------------------------------
+OPCODE PAND	-  Bitwise Logical And
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -3108,11 +2872,8 @@ PAND	mm,mm/m64	0FH DBH PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PANDN	-  Bitwise Logical And Not
+----------O-PANDN----------------------------------
+OPCODE PANDN	-  Bitwise Logical And Not
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -3147,11 +2908,8 @@ PANDN	mm,mm/m64	0FH DFH PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PCMPEQB -  Packed Compare for Equal Bytes
+----------O-PCMPEQB--------------------------------
+OPCODE PCMPEQB -  Packed Compare for Equal Bytes
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -3225,11 +2983,8 @@ PCMPEQB mm,mm/m64	0FH 74H PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PCMPEQD -  Packed Compare for Equal Dwords
+----------O-PCMPEQD--------------------------------
+OPCODE PCMPEQD -  Packed Compare for Equal Dwords
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -3273,11 +3028,8 @@ PCMPEQW mm,mm/m64	07H 76H PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PCMPEQW -  Packed Compare for Equal Words
+----------O-PCMPEQW--------------------------------
+OPCODE PCMPEQW -  Packed Compare for Equal Words
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -3331,11 +3083,8 @@ PCMPEQW mm,mm/m64	07H 75H PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PCMPGTB -  Packed Compare for Greater Than Bytes
+----------O-PCMPGTB--------------------------------
+OPCODE PCMPGTB -  Packed Compare for Greater Than Bytes
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -3409,11 +3158,8 @@ PCMPGTB mm,mm/m64	0FH 64H PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PCMPGTD -  Packed Compare for Greater Than Dwords
+----------O-PCMPGTD--------------------------------
+OPCODE PCMPGTD -  Packed Compare for Greater Than Dwords
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -3457,11 +3203,8 @@ PCMPGTW mm,mm/m64	0FH 66H PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PCMPGTW -  Packed Compare for Greater Than Words
+----------O-PCMPGTW--------------------------------
+OPCODE PCMPGTW -  Packed Compare for Greater Than Words
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -3515,11 +3258,8 @@ PCMPGTW mm,mm/m64	0FH 65H PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PMADDWD -  Packed Multiply and Add Dwords
+----------O-PMADDWD--------------------------------
+OPCODE PMADDWD -  Packed Multiply and Add Dwords
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -3558,11 +3298,8 @@ PMADDWD mm,mm/m64	0FH F5H PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PMULHW	-  Packed Multiply High by Words
+----------O-PMULHW---------------------------------
+OPCODE PMULHW	-  Packed Multiply High by Words
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -3601,11 +3338,8 @@ PMULHW	mm,mm/m64	0FH E5H PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PMULLW	-  Packed Multiply Low by Words
+----------O-PMULLW---------------------------------
+OPCODE PMULLW	-  Packed Multiply Low by Words
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -3644,11 +3378,8 @@ PMULLW	mm,mm/m64	0FH D5H PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-POR	-  Bitwise Logical Or
+----------O-POR------------------------------------
+OPCODE POR	-  Bitwise Logical Or
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -3682,11 +3413,8 @@ POR	mm,mm/m64	0FH EBH PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PSLLD	-  Packed Shift Left Logical Dwords
+----------O-PSLLD----------------------------------
+OPCODE PSLLD	-  Packed Shift Left Logical Dwords
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -3724,11 +3452,8 @@ PSLLD	mm,Imm8		0FH 72H/6 PostByte ImmData
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PSLLQ	-  Packed Shift Left Logical Qwords
+----------O-PSLLQ----------------------------------
+OPCODE PSLLQ	-  Packed Shift Left Logical Qwords
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -3765,11 +3490,8 @@ PSLLQ	mm,Imm8		0FH 73H/6 PostByte ImmData
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PSLLW	-  Packed Shift Left Logical Words
+----------O-PSLLW----------------------------------
+OPCODE PSLLW	-  Packed Shift Left Logical Words
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -3809,11 +3531,8 @@ PSLLW	mm,Imm8		0FH 71H/6 PostByte ImmData
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PSRAD	-  Packed Shift Right Arithmetic Dwords
+----------O-PSRAD----------------------------------
+OPCODE PSRAD	-  Packed Shift Right Arithmetic Dwords
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -3851,11 +3570,8 @@ PSRAD	mm,Imm8		0FH 72H/4 PostByte ImmData
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PSRAW	-  Packed Shift Right Arithmetic Words
+----------O-PSRAW----------------------------------
+OPCODE PSRAW	-  Packed Shift Right Arithmetic Words
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -3895,11 +3611,8 @@ PSRAW	mm,Imm8		0FH 71H/4 PostByte ImmData
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PSRLD	-  Packed Shift Right Logical Dwords
+----------O-PSRLD----------------------------------
+OPCODE PSRLD	-  Packed Shift Right Logical Dwords
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -3937,11 +3650,8 @@ PSRLD	mm,Imm8		0FH 72H/2 PostByte ImmData
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PSRLQ	-  Packed Shift Right Logical Qwords
+----------O-PSRLQ----------------------------------
+OPCODE PSRLQ	-  Packed Shift Right Logical Qwords
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -3978,11 +3688,8 @@ PSRLQ	mm,Imm8		0FH 73H/2 PostByte ImmData
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PSRLW	-  Packed Shift Right Logical Words
+----------O-PSRLW----------------------------------
+OPCODE PSRLW	-  Packed Shift Right Logical Words
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -4022,11 +3729,8 @@ PSRLW	mm,Imm8		0FH 71H/2 PostByte ImmData
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PSUBB	-  Packed Subtract Bytes
+----------O-PSUBB----------------------------------
+OPCODE PSUBB	-  Packed Subtract Bytes
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -4069,11 +3773,8 @@ PSUBB	mm,mm/m64	0FH F8H PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PSUBD	-  Packed Subtract Dwords
+----------O-PSUBD----------------------------------
+OPCODE PSUBD	-  Packed Subtract Dwords
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -4110,11 +3811,8 @@ PSUBD	mm,mm/m64	0FH FAH PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PSUBSB	-  Packed Subtract with Saturation Bytes
+----------O-PSUBSB---------------------------------
+OPCODE PSUBSB	-  Packed Subtract with Saturation Bytes
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -4159,11 +3857,8 @@ PSUBSB	mm,mm/m64	0FH E8H PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PSUBSW	-  Packed Subtract with Saturation Words
+----------O-PSUBSW---------------------------------
+OPCODE PSUBSW	-  Packed Subtract with Saturation Words
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -4204,11 +3899,8 @@ PSUBSW	mm,mm/m64	0FH E9H PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PSUBUSB -  Packed Subtract Unsigned with Saturation Bytes
+----------O-PSUBUSB--------------------------------
+OPCODE PSUBUSB -  Packed Subtract Unsigned with Saturation Bytes
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -4252,11 +3944,8 @@ PSUBUSB mm,mm/m64	0FH D8H PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PSUBUSW -  Packed Subtract Unsigned with Saturation Bytes
+----------O-PSUBUSW--------------------------------
+OPCODE PSUBUSW -  Packed Subtract Unsigned with Saturation Bytes
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -4296,11 +3985,8 @@ PSUBUSW mm,mm/m64	0FH D9H PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PSUBW	-  Packed Subtract Words
+----------O-PSUBW----------------------------------
+OPCODE PSUBW	-  Packed Subtract Words
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -4339,11 +4025,8 @@ PSUBW	mm,mm/m64	0FH F9H PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PUNPCKHBW	-  Unpack High Bytes to Words
+----------O-PUNPCKHBW------------------------------
+OPCODE PUNPCKHBW	-  Unpack High Bytes to Words
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -4392,11 +4075,8 @@ PUNPCKHBW	mm,mm/m64	0FH 68H PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PUNPCKHDQ	-  Unpack High Dwords to Qwords
+----------O-PUNPCKHDQ------------------------------
+OPCODE PUNPCKHDQ	-  Unpack High Dwords to Qwords
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -4437,11 +4117,8 @@ PUNPCKHDQ	mm,mm/m64	0FH 6AH PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PUNPCKHWD	-  Unpack High Words to Dwords
+----------O-PUNPCKHWD------------------------------
+OPCODE PUNPCKHWD	-  Unpack High Words to Dwords
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -4486,11 +4163,8 @@ PUNPCKHWD	mm,mm/m64	0FH 69H PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PUNPCKLBW	-  Unpack Low Bytes to Words
+----------O-PUNPCKLBW------------------------------
+OPCODE PUNPCKLBW	-  Unpack Low Bytes to Words
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -4541,11 +4215,8 @@ PUNPCKLBW	mm,mm/m32	0FH 60H PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PUNPCKLDQ	-  Unpack Low Dwords to Qwords
+----------O-PUNPCKLDQ------------------------------
+OPCODE PUNPCKLDQ	-  Unpack Low Dwords to Qwords
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -4587,11 +4258,8 @@ PUNPCKLDQ	mm,mm/m32	0FH 62H PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PUNPCKLWD	-  Unpack Low Words to Dwords
+----------O-PUNPCKLWD------------------------------
+OPCODE PUNPCKLWD	-  Unpack Low Words to Dwords
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -4637,11 +4305,8 @@ PUNPCKLWD	mm,mm/m32	0FH 61H PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-PXOR	-  Bitwise Logical Exclusive OR
+----------O-PXOR-----------------------------------
+OPCODE PXOR	-  Bitwise Logical Exclusive OR
 
 CPU:  all which supported IA MMX:
       Pentium (P55C only), Pentium (tm) Pro  (P6) future models
@@ -4675,11 +4340,8 @@ PXOR	mm,mm/m64	0FH EFH PostByte
 
      P55C:	n/a
 future P6:	n/a
-
-
-
----------------------------------------------------
-RDMSR  - Read From Model Specified Register
+----------O-RDMSR----------------------------------
+OPCODE RDMSR  - Read From Model Specified Register
 
 
 CPU:  Pentium (tm), IBM 386SLC,486SLC,486SLC2
@@ -5346,11 +5008,8 @@ Here ended Pentium MSRs and Starting IBM MSRs.
 
 Note: IBM MSRs documented in "486SLC2 (tm) Microprocessor Data Sheet"
 (IBM Corp. 1993,Order number: VT05452)
-
-
-
----------------------------------------------------
-RDPMC  - Read Perfomance Monitoring Counters
+----------O-RDPMC----------------------------------
+OPCODE RDPMC  - Read Perfomance Monitoring Counters
 
 
 CPU:  Pentium (tm) Pro	(P6)
@@ -5386,12 +5045,8 @@ COP & Times:
 
    RDPMC	0FH 33H
 	P6:	 n/a
-
-
-
-
----------------------------------------------------
-RDTSC  - Read From Time Stamp Counter
+----------O-RDTSC----------------------------------
+OPCODE RDTSC  - Read From Time Stamp Counter
 
 
 CPU:  Pentium (tm), Pentium Pro, AMD Am5k86
@@ -5423,12 +5078,8 @@ CPU mode: RM,PM0,SMM
 Physical Form:		 RDTSC
 COP (Code of Operation): 0FH 31H
 Clocks:	     Pentium   : n/a [20-24]
-
-
-
-
----------------------------------------------------
-REPC  - Repeat While Carry Flag
+----------O-REPC-----------------------------------
+OPCODE REPC  - Repeat While Carry Flag
 
 
 CPU:  NEC/Sony all V-series
@@ -5449,12 +5100,8 @@ Physical Form:		 REPC
 COP (Code of Operation): 65H
 Clocks:	      NEC V20  : 2
 	      NEC V30  : 2
-
-
-
-
----------------------------------------------------
-REPNC  - Repeat While Not Carry Flag
+----------O-REPNC----------------------------------
+OPCODE REPNC  - Repeat While Not Carry Flag
 
 
 
@@ -5476,16 +5123,8 @@ Physical Form:		 REPNC
 COP (Code of Operation): 64H
 Clocks:	      NEC V20  : 2
 	      NEC V30  : 2
-
-
-
-
-
-
-
-
----------------------------------------------------
-RES3  - Restore All  CPU Registers
+----------O-RES3-----------------------------------
+OPCODE RES3  - Restore All  CPU Registers
 
 
 CPU:  AMD Am386SXLV, Am386DXLV
@@ -5506,7 +5145,7 @@ Note:
 	      in main memory.
 
 Format of RES3 Table:
-
+	(Table )
 	       Offset  Len  Description
 		0H	4	CR0
 		4H	4	EFLAGS
@@ -5590,11 +5229,8 @@ Physical Form:		 RES3
 COP (Code of Operation): 0FH 07H  Note: Code is same with Intel's LOADALL
 Clocks:	   Am386SXLV   : 366
 	   Am386DXLV   : 291
-
-
-
----------------------------------------------------
-RES4  - Restore All  CPU Registers
+----------O-RES4-----------------------------------
+OPCODE RES4  - Restore All  CPU Registers
 
 
 CPU:  AMD Am486SXLV, Am486DXLV
@@ -5615,7 +5251,7 @@ Note:
 	      in main memory.
 
 Format of RES3 Table:
-
+	(Table )
 	       Offset  Len  Description
 		0H	4	CR0
 		4H	4	EFLAGS
@@ -5702,11 +5338,8 @@ CPU mode: RM,PM0,SMM
 Physical Form:		 RES4
 COP (Code of Operation): 0FH 07H  Note: Code is same with Intel's LOADALL
 Clocks:	   Am486SXLV   : N/A
-
-
-
----------------------------------------------------
-RETRBI	  -  Return from Register Bank Context
+----------O-RETRBI---------------------------------
+OPCODE RETRBI	  -  Return from Register Bank Context
 	     Switch  Interrupt.
 
 CPU:  NEC V25,V35,V25 Plus,V35 Plus,V25 Software Guard
@@ -5728,13 +5361,8 @@ Physical Form:	RETRBI
 COP (Code of Operation)	 : 0Fh 91h
 
 Clocks:	 12
-
-
-
-
-
----------------------------------------------------
-RETXA	-  Return from	Expansion Address
+----------O-RETXA----------------------------------
+OPCODE RETXA	-  Return from	Expansion Address
 
 CPU:  NEC V33/V53 only
 Type of Instruction: System
@@ -5761,10 +5389,8 @@ Physical Form:	RETXA  imm8
 COP (Code of Operation)	 : 0Fh F0h imm8
 
 Clocks:	 12
-
-
----------------------------------------------------
-ROL4  -	 Rotate	 left  4 bits
+----------O-ROL4-----------------------------------
+OPCODE ROL4  -	 Rotate	 left  4 bits
 
 
 CPU: NEC/Sony all  V-series
@@ -5795,15 +5421,8 @@ COP (Code of Operation)	 : 0FH 28H  PostByte
 
 Clocks:		ROL4 reg/mem8
 NEC V20:	    25/28
-
-
-
-
-
-
-
----------------------------------------------------
-ROR4  -	 Rotate	 right	4 bits
+----------O-ROR4-----------------------------------
+OPCODE ROR4  -	 Rotate	 right	4 bits
 
 
 CPU: NEC/Sony  all V-series
@@ -5834,15 +5453,8 @@ COP (Code of Operation)	 : 0FH 2AH  PostByte
 
 Clocks:		ROR4 reg/mem8
 NEC V20:	    29/33
-
-
-
-
-
-
-
----------------------------------------------------
-RSDC  - Restore Register and Descriptor
+----------O-RSDC-----------------------------------
+OPCODE RSDC  - Restore Register and Descriptor
 
 
 CPU:  Cyrix Cx486S/S2/D/D2/DX/DX2/DX4
@@ -5899,13 +5511,8 @@ Note: sreg3 is: 000 ES
 		011 DS
 		100 FS
 		101 GS
-
-
-
-
-
----------------------------------------------------
-RSLDT  - Restore LDTR and Descriptor
+----------O-RSLDT----------------------------------
+OPCODE RSLDT  - Restore LDTR and Descriptor
 
 
 CPU:  Cyrix Cx486S/S2/D/D2/DX/DX2/DX4
@@ -5925,7 +5532,7 @@ Description:
 
 
 Format or Register and Descriptor Structure:
-	+00	Limit (15-0)
+	+00	Limit (15-0)	(Table )
 	+02	Base  (15-0)
 	+04	Base  (23-16)
 	+05	AR byte
@@ -5953,14 +5560,8 @@ Physical Form: RSLDT  mem80
 COP (Code of Operation)	 : 0FH 7BH  [mm 000 mmm]
 Clocks	IBM BL486DX: 10
 	TI  486SXL : 14
-
-
-
-
-
-
----------------------------------------------------
-RSM  - Resume from System Managment Mode
+----------O-RSM------------------------------------
+OPCODE RSM  - Resume from System Managment Mode
 
 
 CPU:  I486 SL Enhanced+,i486SL,i386CX,i386EX
@@ -6063,11 +5664,8 @@ Clocks:	  i386CX	  : 338
 			  : 456	    ; AutoHALT restart
 			  : 465	    ; I/O Trap restart
 		 Pentium  : 83
-
-
-
----------------------------------------------------
-RSM  - Resume from SMM
+----------O-RSM------------------------------------
+OPCODE RSM  - Resume from SMM
 
 
 CPU:  Cyrix Cx486S/S2/D/D2/DX/DX2/DX4
@@ -6085,7 +5683,7 @@ Description:
 	EXIT SMM;
 
 Format of SMM Header:
-	Offset	Length	Description
+	Offset	Length	Description	(Table )
 	-00h	-	Nothing (Top of SMM space) (Not accessable)
 	-04h	32	DR7
 	-08h	32	EFLAGS
@@ -6141,14 +5739,8 @@ Physical Form: RSM
 COP (Code of Operation)	 : 0FH AAH
 Clocks	IBM BL486DX: 76
 	TI  486SXL : 58
-
-
-
-
-
-
----------------------------------------------------
-RSTS  - Restore TR and Descriptor
+----------O-RSTS-----------------------------------
+OPCODE RSTS  - Restore TR and Descriptor
 
 
 CPU:  Cyrix Cx486S/S2/D/D2/DX/DX2/DX4
@@ -6167,7 +5759,7 @@ Description:
 
 
 Format or Register and Descriptor Structure:
-	+00	Limit (15-0)
+	+00	Limit (15-0)	(Table )
 	+02	Base  (15-0)
 	+04	Base  (23-16)
 	+05	AR byte
@@ -6195,14 +5787,8 @@ Physical Form: RSTS  mem80
 COP (Code of Operation)	 : 0FH 7DH  [mm 000 mmm]
 Clocks	IBM BL486DX: 10
 	TI  486SXL : 14
-
-
-
-
-
-
----------------------------------------------------
-SET1  -	 Set a Specified Bit
+----------O-SET1-----------------------------------
+OPCODE SET1  -	 Set a Specified Bit
 
 
 CPU: NEC/Sony V-series
@@ -6235,14 +5821,8 @@ COP (Code of Operation)	 : 0FH 1DH  Postbyte  imm8
 Clocks:				 SET1
 	     r/m8,CL	r/m8,i8		r/m16,CL   r/m16,i8
 NEC V20:      4/13	 5/14		  4/13	      5/14
-
-
-
-
-
-
----------------------------------------------------
-SETALC	- Set AL to Carry Flag
+----------O-SETALC---------------------------------
+OPCODE SETALC	- Set AL to Carry Flag
 
 
 CPU:  Intel 8086 and all its clones and upward
@@ -6265,13 +5845,8 @@ Clocks:	      80286    : n/a   [3]
 	      Pentium  : n/a   [3]
 Note: n/a is Time that Intel etc not say.
       [3] is real time it executed.
-
-
-
-
-
----------------------------------------------------
-SMI  - System Managment Interrupt
+----------O-SMI------------------------------------
+OPCODE SMI  - System Managment Interrupt
 
 CPU:  AMD Am386SXLV,Am386DXLV
       AMD 486s
@@ -6306,11 +5881,8 @@ COP (Code of Operation): F1H
 Clocks:	     Am386SXLV : 357
 	     Am386DXLV : 325
 	     Am486xxxx : Don't know, do you?
-
-
-
----------------------------------------------------
-SMINT - Software SMM Interrupt
+----------O-SMINT----------------------------------
+OPCODE SMINT - Software SMM Interrupt
 
 
 CPU:  Cyrix Cx486DX/DX2/DX4
@@ -6338,15 +5910,8 @@ CPU mode: CPL=0, CCR1.bit1=1, SMAR size >= 30h.
 Physical Form: SMINT
 COP (Code of Operation)	 : 0FH 7EH
 Clocks	IBM BL486DX: 24
-
-
-
-
-
-
-
----------------------------------------------------
-STOP	-  Stop CPU
+----------O-STOP-----------------------------------
+OPCODE STOP	-  Stop CPU
 
 CPU:  NEC V25,V35,V25 Plus,V35 Plus,V25 Software Guard
 Type of Instruction: System
@@ -6365,11 +5930,8 @@ Physical Form:	STOP
 COP (Code of Operation)	 : 0Fh BEh
 
 Clocks:	 N/A
-
-
-
----------------------------------------------------
-SUB4S  -  Subtraction of packed BCD strings
+----------O-SUB4S----------------------------------
+OPCODE SUB4S  -	 Subtraction of packed BCD strings
 
 
 CPU: NEC/Sony all V-series
@@ -6398,13 +5960,8 @@ COP (Code of Operation)	 : 0FH 22H
 
 Clocks:		SUB4S
 NEC V20:	~7+19*CL
-
-
-
-
-
----------------------------------------------------
-SVDC  - Save Register and Descriptor
+----------O-SVDC-----------------------------------
+OPCODE SVDC  - Save Register and Descriptor
 
 
 CPU:  Cyrix Cx486S/S2/D/D2/DX/DX2/DX4
@@ -6424,7 +5981,7 @@ Description:
 
 
 Format or Register and Descriptor Structure:
-	+00	Limit (15-0)
+	+00	Limit (15-0)	(Table )
 	+02	Base  (15-0)
 	+04	Base  (23-16)
 	+05	AR byte
@@ -6459,13 +6016,8 @@ Note: sreg3 is: 000 ES
 		011 DS
 		100 FS
 		101 GS
-
-
-
-
-
----------------------------------------------------
-SVLDT  - Save LDTR and Descriptor
+----------O-SVLDT----------------------------------
+OPCODE SVLDT  - Save LDTR and Descriptor
 
 
 CPU:  Cyrix Cx486S/S2/D/D2/DX/DX2/DX4
@@ -6485,7 +6037,7 @@ Description:
 
 
 Format or Register and Descriptor Structure:
-	+00	Limit (15-0)
+	+00	Limit (15-0)	(Table )
 	+02	Base  (15-0)
 	+04	Base  (23-16)
 	+05	AR byte
@@ -6513,13 +6065,8 @@ Physical Form: SVLDT mem80
 COP (Code of Operation)	 : 0FH 7AH  [mm 000 mmm]
 Clocks	IBM BL486DX: 18
 	TI  486SXL : 22
-
-
-
-
-
----------------------------------------------------
-SVTS  - Save TR and Descriptor
+----------O-SVTS-----------------------------------
+OPCODE SVTS  - Save TR and Descriptor
 
 
 CPU:  Cyrix Cx486S/S2/D/D2/DX/DX2/DX4
@@ -6539,7 +6086,7 @@ Description:
 
 
 Format or Register and Descriptor Structure:
-	+00	Limit (15-0)
+	+00	Limit (15-0)	(Table )
 	+02	Base  (15-0)
 	+04	Base  (23-16)
 	+05	AR byte
@@ -6567,13 +6114,8 @@ Physical Form: SVTS mem80
 COP (Code of Operation)	 : 0FH 7CH  [mm 000 mmm]
 Clocks	IBM BL486DX: 18
 	TI  486SXL : 22
-
-
-
-
-
----------------------------------------------------
-TEST1  -  Test a Specified bit
+----------O-TEST1----------------------------------
+OPCODE TEST1  -	 Test a Specified bit
 
 
 CPU: NEC/Sony all V-series
@@ -6615,13 +6157,8 @@ COP (Code of Operation)	 : 0FH 19H  Postbyte  imm8
 Clocks:				 TEST1
 	     r/m8,CL	r/m8,i8		r/m16,CL   r/m16,i8
 NEC V20:      3/12	 4/13		 3/12	    4/13
-
-
-
-
-
----------------------------------------------------
-TSKSW  -   Task Switch
+----------O-TSKSW----------------------------------
+OPCODE TSKSW  -	  Task Switch
 
 CPU:  NEC V25,V35,V25 Plus,V35 Plus,V25 Software Guard
 Type of Instruction: System
@@ -6748,11 +6285,8 @@ Am5k86:		~int
 Pentium Pro:	~int
 
 ++++++++++++++++++++++++++++++
-
-
-
----------------------------------------------------
-UMOV  - Mov Data to Main (User) Memory
+----------O-UMOV-----------------------------------
+OPCODE UMOV  - Mov Data to Main (User) Memory
 
 
 CPU:  AMD Am386SXLV,Am386DXLV
@@ -6809,12 +6343,8 @@ COP (Code of Operation)	 : 0FH 13H Postbyte
 Clocks:
 	  Am386SXLV or AM386DXLV:  2/4
 	  IBM 486SLC2		:  4
-
-
-
-
----------------------------------------------------
-WBINVD	- Write Back and Invalidate Cache
+----------O-WBINVD---------------------------------
+OPCODE WBINVD	- Write Back and Invalidate Cache
 
 
 CPU:  I486 +
@@ -6842,11 +6372,8 @@ COP (Code of Operation): 0FH 09H
 Clocks: Cyrix Cx486SLC : 4
 	      i486     : 5
 	      Pentium  : 2000+
-
-
-
----------------------------------------------------
-WRMSR  - Write to From Model Specified Register
+----------O-WRMSR----------------------------------
+OPCODE WRMSR  - Write to From Model Specified Register
 
 CPU:  Pentium (tm), IBM 486SLC2
 Type of Instruction: System
@@ -6872,11 +6399,8 @@ CPU mode: RM,PM0,SMM
 Physical Form:		 WRMSR
 COP (Code of Operation): 0FH 30H
 Clocks:	     Pentium   : 30-45
-
-
-
----------------------------------------------------
-XADD  - Exchange and addition
+----------O-XADD-----------------------------------
+OPCODE XADD  - Exchange and addition
 
 
 CPU:  i486+
@@ -6917,12 +6441,8 @@ Clocks:
 Penalty if cache miss	 :
 	  Intel i486	 : 6/2	; Unlocked/Locked
 	 Cyrix Cx486SLC	 : 1	; N/A
-
-
-
-
----------------------------------------------------
-XBTS	-  Extract  Bits String
+----------O-XBTS-----------------------------------
+OPCODE XBTS	-  Extract  Bits String
 
 
 CPU:  80386 step A0-B0 only
@@ -7080,11 +6600,6 @@ NCR1	C4H	C5H	C6H
 NCR2	C7H	C8H	C9H
 NCR3	CAH	CBH	CCH
 NCR4	CDH	CDH	CEH
-
-
-
-
-
 ---------------------------------------------------
 APPENDIX	A1
 Cyrix Cx486S/S2/D/D2/DX/DX2/DX4
@@ -7436,11 +6951,6 @@ ARR1	C4H	C5H	C6H
 ARR2	C7H	C8H	C9H
 ARR3	CAH	CBH	CCH
 ARR4	CDH	CDH	CEH
-
-
-
-
-
 ---------------------------------------------------
 APPENDIX	A3
 Texas Instruments  TI486DX2,TI486DX4
@@ -7801,9 +7311,6 @@ Note:	5x86 Cyrix/IBM/ST
 	   0		  0	EDX after reset = [15:8]=DIR1, [7:0]=DIR0
 	   0		  1	EDX after reset = [15:8]=DIR1, [7:0]=DIR0
 	   0		  2	EDX after reset = [15:8]=04h   [7:0]=90h
-
-
-
 ---------------------------------------------------
 APPENDIX	A5
 Cyrix Cx6x86 (M1), IBM 6x86
@@ -8359,9 +7866,6 @@ Cx486DX-50	148
 Cx486DX2-66	179
 Cx486DX2-V80	209
 
-
-
-
 ------------------------------------------------
 APPENDIX D0
 Pentium P54C+ Build-in APIC
@@ -8409,7 +7913,6 @@ F0		Spurious Interrupt Vector Reg.	0..3   R
 
 
 Note: Pentium-120MHz (Step C2)	Never have APIC
-
 ---------------------------------------------------
 APPENDIX D1   INTEL 386/486SL REGISTERS
 
@@ -8499,7 +8002,7 @@ Bits	Name	Description
 
 
 Format of EMSCNTLREG:
-Bits	Description
+Bits	Description	(Table )
 7	(Global Enable)
 	If =1 EMS enable
 6	Valid bit
@@ -8516,7 +8019,7 @@ Bits	Description
 5..0	EMS Page Register Index (0-64)
 
 Format of EMSDPREG:
-Bits	Description
+Bits	Description	(Table )
 15	This EMS Page Enable (i.e. page indexed by EMSINDEXREG)
 14	EMS Valid bit
 13..11	reserved
@@ -8557,7 +8060,7 @@ SFS ENABLE	       FBh		N/A		CPU		8
 
 
 Format of CPUPWRMODE register (i486SL):
-Bits	Name	Description
+Bits	Name	Description	(Table )
 15	DT	If Unlock Status {  // See bit 0 of this register
 			if bit=0 then access to 82360SL
 			if bit=1 then access to CPUPWRMODE register
@@ -8608,9 +8111,6 @@ Bits	Description
 15..12	Member of Family (4h - SL)
 11..8	Family	(4h - 486 family)
 7..0	Revision Name (Not Same as in DX after reset)
-
-
-
 
 ---------------------------------------------
 APPENDIX E
@@ -9671,8 +9171,6 @@ OOO	Operation
 110
 111
 
-
-
 ------------------------------------------------
 APPENDIX  F1  FLOATING POINT OPCODES
 
@@ -10359,8 +9857,6 @@ ZF   - Zero Flag
 AF   - Auxiliary Carry Flag
 PF   - Parity Flag
 CF   - Carry Flag
-
-
 ---------------------------------------------------
 APPENDIX  O	CR0 register format
 
@@ -10462,8 +9958,6 @@ AM - Align Mode
 NW - No Write
 CD - Cache Disable
 PG - Paging
-
-
 ---------------------------------------------------
 APPENDIX  P   CR4 register format
 
@@ -10681,7 +10175,7 @@ Cx6x86		 ALL	 C,O	 ALL	 C,O	 ALL
 Am5k86		Z,S,P,A	 C,O	Z,S,P,A	 C,O	 ALL
 		PASSED	PASSED	PASSED	PASSED	DRIVEN
 
-Pentium Pro	Z,S,P,A	 ALL	Z,S,P,A	 ALL	 ALL		as Pentium		PASSED	DRIVEN	PASSED	DRIVEN	DRIVEN
+Pentium Pro	Z,S,P,A	 ALL	Z,S,P,A	 ALL	 ALL		as Pentium
 		PASSED	DRIVEN	PASSED	DRIVEN	DRIVEN
 
 
@@ -10691,10 +10185,6 @@ It' just an simple Episode of CPU Life.
 
 Copyright (C) Potemkin's Hackers Group 1996.
 Absolutely No Warranty On Chips beheiveour.
-
-
-
----------------------------------------------------------
 ---------------------------------------------------------
 [Credits]:
 1) THANX specially for/to Martin Malik and RealSoft.
@@ -10735,5 +10225,3 @@ Thanx for  Urri, Stas, Afo, Kernel.3
 Special Thanks for  AX (MISA).
 ------------------------------------------------------------
 Sorry, But EOF
-
-

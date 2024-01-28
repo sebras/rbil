@@ -1,4 +1,4 @@
-GLOSSARY			Release 53		Last change 12jan97
+GLOSSARY			Release 54		Last change 29jun97
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
 
 A20
@@ -475,7 +475,7 @@ also Interrupt Vector Table.
 
 Interrupt Vector Table
 	The real-mode table of 256 four-byte interrupt handler addresses,
-located in the lowest 1024 bytes of the address space.  See also Interrupt
+located in the lowest 1024 bytes of the address space.	See also Interrupt
 Descriptor Table.
 
 
@@ -885,7 +885,7 @@ backslash-separated fields; for example
 undocumented
 	Information about a product which is not publicly available from
 the manufacturer, and must be determined by reverse-engineering (disassembly,
-trial-and-error, etc.).  Undocumented information tends to change -- often
+trial-and-error, etc.).	 Undocumented information tends to change -- often
 dramatically -- between successive revisions of a product, since the
 manufacturer has no obligation to maintain compatibility in behavior which
 is not explicitly stated.

@@ -1,4 +1,4 @@
-MODEL-SPECIFIC REGISTERS	Release 53		Last change 12jan97
+MODEL-SPECIFIC REGISTERS	Release 54		Last change 29jun97
 Copyright (c) 1996,1997 Ralf Brown
 
 ----------S00000000--------------------------
@@ -387,7 +387,7 @@ MSR 00000054h - Pentium Pro - ???
 MSR 00000079h - Pentium Pro - BIOS UPDATE TRIGGER
 Size:	32 bits
 Access:	Write
-Desc:	writing the linear address of a microcode update block (see #0434)
+Desc:	writing the linear address of a microcode update block (see #0450)
 	  to this MSR cause the CPU to initiate a microcode load
 SeeAlso: INT 15/AX=D042h/BL=01h,MSR 0000008Bh
 ----------S00000082--------------------------
@@ -400,26 +400,26 @@ Bit(s)	Description	(Table R018)
  63-40	pointer within array specified below
  39-32	array identifier (see #R019)
  31-0	array data
-SeeAlso: #R020
+SeeAlso: #R031
 
 (Table R019)
 Values for AMD Am5k86 Array Pointer:
  E0h	data cache (data)
- E1h	data cache (linear tag) (see #R031)
- E4h	code cache (instruction) (see #R032)
- E5h	code cache (linear tag) (see #R033)
- E6h	code cache (valid bits) (see #R034)
- E7h	code cache (branch-prediction bits) (see #R035)
- E8h	4K TLB (page) (see #R036)
- E9h	4K TLB (linear tag) (see #R037)
- EAh	4M TLB (page) (see #R038)
- EBh	4M TLB (linear tag) (see #R039)
- ECh	data cache (physical tag) (see #R040)
- EDh	code cache (physical tag) (see #R041)
+ E1h	data cache (linear tag) (see #R020)
+ E4h	code cache (instruction) (see #R021)
+ E5h	code cache (linear tag) (see #R022)
+ E6h	code cache (valid bits) (see #R023)
+ E7h	code cache (branch-prediction bits) (see #R024)
+ E8h	4K TLB (page) (see #R025)
+ E9h	4K TLB (linear tag) (see #R026)
+ EAh	4M TLB (page) (see #R027)
+ EBh	4M TLB (linear tag) (see #R028)
+ ECh	data cache (physical tag) (see #R029)
+ EDh	code cache (physical tag) (see #R030)
 SeeAlso: #R018
 
 Bitfields for AMD AmK586 data cache linear tag:
-Bit(s)	Description	(Table R031)
+Bit(s)	Description	(Table R020)
  31-26	reserved (0)
  25	cache line is dirty
  24	user/supervisor
@@ -430,7 +430,7 @@ Bit(s)	Description	(Table R031)
 SeeAlso: #R019
 
 Bitfields for AMD Am5k86 code cache instruction:
-Bit(s)	Description	(Table R032)
+Bit(s)	Description	(Table R021)
  31-26	reserved (0)
  25	start bit 1
  24	end bit 1
@@ -445,13 +445,13 @@ Bit(s)	Description	(Table R032)
 SeeAlso: #R019
 
 Bitfields for Am5k86 code cache linear tag:
-Bit(s)	Description	(Table R033)
+Bit(s)	Description	(Table R022)
  31-20	reserved (0)
  19-0	bits 31-12 of linear address
 SeeAlso: #R019
 
 Bitfields for Am5k86 code cache valid bits:
-Bit(s)	Description	(Table R034)
+Bit(s)	Description	(Table R023)
  31-18	reserved (0)
  17	linear tag is valid
  16	user/supervisor
@@ -459,7 +459,7 @@ Bit(s)	Description	(Table R034)
 SeeAlso: #R019
 
 Bitfields for Am5k86 code cache branch prediction bits:
-Bit(s)	Description	(Table R035)
+Bit(s)	Description	(Table R024)
  31-19	reserved (0)
  18	predicted branch taken
  17-14	offset of last byte of predicted branch instruction within block
@@ -469,15 +469,15 @@ Bit(s)	Description	(Table R035)
 SeeAlso: #R019
 
 Bitfields for Am5k86 4K TLB page:
-Bit(s)	Description	(Table R036)
+Bit(s)	Description	(Table R025)
  31-22	reserved (0)
  21	page cache disable
  20	page write-through
  19-0	page frame address
-SeeAlso: #R019,#R037,#R038
+SeeAlso: #R019,#R026,#R027
 
 Bitfields for Am5k86 4K TLB linear tag:
-Bit(s)	Description	(Table R037)
+Bit(s)	Description	(Table R026)
  31-20	reserved (0)
  19	global valid bit
  18	TLB entry is dirty
@@ -485,18 +485,18 @@ Bit(s)	Description	(Table R037)
  16	read/write
  15	entry is valid
  14-0	tag (bits 31-17 of address)
-SeeAlso: #R019,#R036,#R039
+SeeAlso: #R019,#R025,#R028
 
 Bitfields for Am5k86 4M TLB page:
-Bit(s)	Description	(Table R038)
+Bit(s)	Description	(Table R027)
  31-12	reserved (0)
  11	page cache disable
  10	page write-through
  9-0	page frame address
-SeeAlso: #R019,#R036,#R039
+SeeAlso: #R019,#R025,#R028
 
 Bitfields for Am5k86 4M TLB linear tag:
-Bit(s)	Description	(Table R039)
+Bit(s)	Description	(Table R028)
  31-15	reserved (0)
  14	global valid bit
  13	TLB entry is dirty
@@ -504,10 +504,10 @@ Bit(s)	Description	(Table R039)
  11	read/write
  10	entry is valid
  9-0	tag (bits 31-22 of address)
-SeeAlso: #R019,#R037,#R038
+SeeAlso: #R019,#R026,#R027
 
 Bitfields for Am5k86 data cache physical tag:
-Bit(s)	Description	(Table R040)
+Bit(s)	Description	(Table R029)
  31-23	reserved (0)
  22-21	MESI status
 	00 invalid
@@ -515,21 +515,21 @@ Bit(s)	Description	(Table R040)
 	10 modified
 	11 exclusive
  20-0	tag (bits 31-11 of physical address)
-SeeAlso: #R019,#R041
+SeeAlso: #R019,#R030
 
 Bitfields for Am5k86 code cache physical tag:
-Bit(s)	Description	(Table R041)
+Bit(s)	Description	(Table R030)
  31-21	reserved (0)
  20	valid
  19-0	tag (bits 31-12 of physical address)
-SeeAlso: #R019,#R040
+SeeAlso: #R019,#R029
 ----------S00000083--------------------------
 MSR 00000083h - AMD Am5k86 - HARDWARE CONFIGURATION REGISTER
 Size:	8 bits
 SeeAlso: MSR 00000082h
 
 Bitfields for AMD Am5k86 Hardware Configuration Register:
-Bit(s)	Description	(Table R020)
+Bit(s)	Description	(Table R031)
  63-8	reserved
  7	disable data cache
  6	disable instruction cache
@@ -621,7 +621,7 @@ Access:	Read/Write
 SeeAlso: MSR 000000C1h,MSR 00000187h,MSR 00000011h,MSR 00000012h
 
 Bitfields for Pentium Pro Event Selection MSR:
-Bit(s)	Description	(Table R021)
+Bit(s)	Description	(Table R032)
  7-0	event type
  15-8	UMASK (Unit Mask register; set to 0 to enable all count options)
  16	USER (enable counting in rings 1,2,3)
@@ -636,14 +636,14 @@ Bit(s)	Description	(Table R021)
 MSR 00000187h - Pentium Pro - "EVNTSEL1" EVENT SELECTION 1
 Size:	32 bits
 Access:	Read/Write
-SeeAlso: MSR 000000C2h,MSR 00000186h,#R021,MSR 00000011h,MSR 00000013h
+SeeAlso: MSR 000000C2h,MSR 00000186h,#R032,MSR 00000011h,MSR 00000013h
 ----------S000001D3--------------------------
 MSR 000001D3h - Pentium Pro - ???
 ----------S000001D9--------------------------
 MSR 000001D9h - Pentium Pro - "DEBUGCTLMSR" DEBUGGING CONTROL
 
 Bitfields for Pentium Pro Debugging Control MSR:
-Bit(s)	Description	(Table R022)
+Bit(s)	Description	(Table R033)
  0	enable Last Branch records (see MSR 000001DBh,MSR 000001DCh)
  1	Branch Trap Flag
  2	performance monitor/Breakpoint pins
@@ -675,7 +675,7 @@ MSR 000001E0h - Pentium Pro - "ROB_CR_BKUPTMPDR6"
 Size:	>= 3 bits
 
 Bitfields for Pentium Pro MSR 000001E0h:
-Bit(s)	Description	(Table R023)
+Bit(s)	Description	(Table R034)
  63-3	???
  2	Fast String Enable (default is enabled)
  1-0	reserved
@@ -745,7 +745,7 @@ MSR 000002FFh - Pentium Pro - "MTRRdefType"
 SeeAlso: MSR 000000FEh,MSR 00000200h,MSR 00000250h
 
 Bitfields for Pentium Pro MSR 000002FFh:
-Bit(s)	Description	(Table R024)
+Bit(s)	Description	(Table R035)
  2-0	default memory type
  10	Fixed MTRR enable
  11	"MTRRenable"
@@ -780,7 +780,7 @@ Access:	Read/Write
 SeeAlso: MSR 00001001h,MSR 00001002h
 
 Bitfields for IBM 386/486 SLC Processor Operation Register:
-Bit(s)	Description	(Table R025)
+Bit(s)	Description	(Table R036)
  63-19	reserved
  18	(486SLC only) Low Power PLA
  17	(486SLC only) Bus Read
@@ -798,10 +798,10 @@ Bit(s)	Description	(Table R025)
  5	enable Power Interrupt
  4	enable Flush Snooping
  3	enable Snoop Input
- 2	address line A20 mask (see also #2033,#P075)
+ 2	address line A20 mask (see also #2401,#P090)
  1	enable cache parity checking
  0	Cache Parity Error occurred
-SeeAlso: #R026,#R027
+SeeAlso: #R037,#R038
 ----------S00001000--------------------------
 MSR 00001000h - Pentium Pro - DEBUG REGISTER 0 
 ----------S00001001--------------------------
@@ -810,14 +810,14 @@ Size:	48 bits
 SeeAlso: MSR 00001000h,MSR 00001002h
 
 Bitfields for IBM 386/486 SLC Cache Region Control Register:
-Bit(s)	Description	(Table R026)
+Bit(s)	Description	(Table R037)
  63-48	reserved
  47-32	extended memory cache memory limit (number of 64K blocks above 1M
 	  which may be cached)
  31-16	first megabyte read-only flags (each bit represents 64K)
  15-0	first megabyte cacheable flags (each bit represents 64K)
-SeeAlso: #R025,#R027
-----------S00001000--------------------------
+SeeAlso: #R036,#R038
+----------S00001001--------------------------
 MSR 00001001h - Pentium Pro - DEBUG REGISTER 1
 ----------S00001002--------------------------
 MSR 00001002h - IBM 386/486 SLC - PROCESSOR OPERATION REGISTER
@@ -825,7 +825,7 @@ Size:	30 bits
 SeeAlso: MSR 00001000h,MSR 00001001h,MSR 00001004h
 
 Bitfields for IBM 386/486 SLC Processor Operation Register:
-Bit(s)	Description	(Table R027)
+Bit(s)	Description	(Table R038)
  63-30	reserved
  29	enable External Dynamic Frequency Shift
  28	Dynamic Frequency Shift ready
@@ -835,7 +835,7 @@ Bit(s)	Description	(Table R027)
 	011 clock doubler
 	100 clock tripler
  23-0	reserved
-SeeAlso: #R025,#R026
+SeeAlso: #R036,#R037
 ----------S00001002--------------------------
 MSR 00001002h - Pentium Pro - DEBUG REGISTER 2
 ----------S00001003--------------------------
@@ -846,7 +846,7 @@ Size:	24 bits
 SeeAlso: MSR 00001000h
 
 Bitfields for IBM 486BL3 Processor Control Register:
-Bit(s)	Description	(Table R028)
+Bit(s)	Description	(Table R039)
  63-24	reserved
  23	OS/2 boot (0=DD1 hardware, 1=DD0 hardware)
  22	MOV CR0,x Decode
@@ -1003,7 +1003,7 @@ Desc:	this register stores the opcode of the last floating-point opcode to
 SeeAlso: MSR 8000001Ah,MSR 8000001Bh
 
 Bitfields for Pentium Floating-Point Opcode:
-Bit(s)	Description	(Table R029)
+Bit(s)	Description	(Table R040)
  63-11	reserved (0)
  10-8	low three bits of first byte of floating-point instruction
  7-0	second byte of floating-point instruction
@@ -1013,12 +1013,12 @@ Note:	both a standalone FWAIT and the instruction D8h 9Bh are represented
 MSR 8000001Ah - Pentium - FLOATING POINT - LAST NON-CONTROL OPCODE
 Size:	11 bits
 Access:	Read
-SeeAlso: MSR 80000019h,MSR 8000001Bh,#R029
+SeeAlso: MSR 80000019h,MSR 8000001Bh,#R040
 ----------S8000001B--------------------------
 MSR 8000001Bh - Pentium - FLOATING POINT - LAST EXCEPTION OPCODE
 Size:	11 bits
 Access:	Read/Write
-SeeAlso: MSR 80000019h,MSR 8000001Ah,#R029
+SeeAlso: MSR 80000019h,MSR 8000001Ah,#R040
 ----------S8000001C--------------------------
 MSR 8000001Ch - Pentium - ???
 Size:	4 bits???
@@ -1029,7 +1029,7 @@ Size:	32 bits
 Access:	Read/Write
 
 Bitfields for Probe Mode Control Register:
-Bit(s)	Description	(Table R030)
+Bit(s)	Description	(Table R041)
  31	(read-only) System Management Mode is active
  30-3	reserved (0)
  2	PB1 monitors breakpoint #1 matches instead of performance counter #1
@@ -1056,9 +1056,9 @@ Highest Table Number = R041
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER53A through INTER53D (preferably the original
+quartet of archives named INTER54A through INTER54D (preferably the original
 authenticated PKZIP archives), and the utility and hypertext conversion
-programs in three additional archives called INTER53E.ZIP to INTER53G.ZIP.
+programs in three additional archives called INTER54E.ZIP to INTER54G.ZIP.
 
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
 --------!---CONTACT_INFO---------------------

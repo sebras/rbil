@@ -6,14 +6,15 @@ The x86/MSDOS Interrupt List
 	A comprehensive listing of more than 8300 functions available through
 	interrupt calls on IBM PCs and compatibles.  Includes both
 	documented and undocumented functions, plus lists of I/O port, CMOS,
-	and memory locations, and far-call entry points.
-	Current version: INTER53A (release 53, 12jan97)
-			 INTER53B
-			 INTER53C
-			 INTER53D
-			 INTER53E (utility programs)
-			 INTER53F (WinHelp-related programs)
-			 INTER53G (other hypertext conversion programs)
+	and memory locations, far-call entry points, and model-specific
+	registers.
+	Current version: INTER54A (release 54, 29jun97)
+			 INTER54B
+			 INTER54C
+			 INTER54D
+			 INTER54E (utility programs)
+			 INTER54F (WinHelp-related programs)
+			 INTER54G (other hypertext conversion programs)
 
 DVINT
 	An extract of the MSDOS Interrupt List containing the DESQview
@@ -120,7 +121,7 @@ deliberately tampered with and should be deleted IMMEDIATELY.
 
 Beginning 9/24/95, all packages additionally include detached PGP
 signatures in an enclosed archive named PGP-SIGS.ZIP.  My PGP keys
-are available from http://pobox.com/~ralf/ or
+are available from http://pobox.com/~ralf/ralf.asc or
 ftp://ftp.cs.cmu.edu/afs/cs/user/ralf/pub/WWW/ralf.asc
 
 
@@ -182,67 +183,29 @@ Fidonet BBSs belonging to DVNet (listed below).
 
 The Interrupt List and SPAWNO are also available on Fidonet BBSs belonging
 to the Programmer's Distribution Network.  Selected PDN member boards as of
-January 1, 1993:
+October, 1996:
 
 Skokie, IL		1:115/500  USRobotics BBS	
 502-245-8117		1:2320/38  PDN HQ Node 1	ISDN
 502-245-1146		1:2320/100 PDN HQ Node 2	V.Everything
+		        1:270/101  George Peace         Harrisburg, PA    
+PageSat Satellite Systems                           
+paonline.com (Internet)                             
+FidoNet FileBone
+                                                         
+                         1:3615/50  Planet Connect Satellite Systems
+			 1:154/280  EXEC-PC BBS         Elm Grove, WI     
+			 1:124/7009 Lee Laird           Garland, TX  
+			 1:167/234  Patrick Dufresne    Quebec, Canada
+			 1:115/251  Tony Tang           Wilmette, IL
+			 1:272/44   Ted Delamare        Middletown NY
 
-Tustin, CA		1:103/208  Homer		14400 HST/V32bis
-La Palma, CA		1:103/234  The General Store	2400
-Sunnyvale, CA		1:143/226  The Rabbit's Foot	9600 HST
-San Diego, CA		1:202/302  Gandalf's		9600 HST
-Marysville, CA		1:203/988  Amber Shadow		9600 HST
-Honolulu, HI		1:345/2	   Coconuts BBS		9600 HST
-Enon, OH		1:110/270  The Blue Byte	9600 HST/V32
-Palatine, IL		1:115/439  The Midrange System	14400 HST/V32bis 
-Grove City, OH		1:226/5300 MARDUK IV		14400 HST/V32bis
-Canton, IL		1:232/26   The Proving Grounds  14400 HST/V32bis
-Ottawa, ON		1:163/211  Ned's Opus		14400 HST/V32bis
-Dumont, NJ		1:107/557  County Jail ][	14400 HST/V32bis
-Glen Falls, NY		1:267/54   The Final Frontier   9600 HST
-Albany, NY		1:267/169  MCS *USA*		14400 HST/V32bis
-Middletown, NY  (HQ)    1:272/38   PRISM BBS		14400 HST/V32bis
-New York, NY		1:278/707  The Laboratory BBS	14400 HST/V32bis
-Greenville, PA		1:2601/513 Thiel College	2400
-Mercer, PA		1:2601/531 Last Outpost		14400 HST/V32bis
-Morris Plains, NJ	1:2606/583 Atrium Way		14400 HST/V32bis
-Kansas City, MO		1:280/8	   The Unicorn EIE	9600 HST/V32
-Boulder, CO		1:104/415  World Peace BBS	14400 H96/V32bis
-Colorado Springs, CO	1:128/60   Programmer's Playhous 14400 HST/V32bis
-Merrimack, NH		1:132/130  Outer Limits		9600 HST/V32
-Hudson, NH		1:132/159  The Toy Room BBS	9600 HST
-Manchester, NH		1:132/122  Echo Beach		9600 HST
-Pomfret, CT		1:320/101  Brain Damaged	14400 HST/V32bis
-Coventry, RI		1:323/105  Prometheus System	14400 HST/V32bis
-Providence, RI		1:323/120  ChowdaNet BBS	14400 HST/V32bis
-Lawrence, MA		1:324/121  The Business Card	14400 HST/V32bis
-Plainfield, CT		1:327/452  The Plainfield News	14400 HST/V32bis
-Wenatchee, WA		1:344/61   Apple Capitol BBS	14400 HST/V32bis
-Kindersley, Sask	1:140/501  The Big Electric Cat 14400 HST/V32bis
-Nanaimo, BC		1:351/201  MegaByte BBS		14400 HST/V32bis
-Crystal River, FL	1:365/12   Gulf Coast BBS	14400 HST/V32bis
-Miami, FL		1:135/105  DevPalMiami		14400 HST/V32bis
-Chattanooga, TN		1:362/101  STARFIRE COMMAND	14400 HST/V32bis
-Caparra Heights, PR	1:367/15   The Island Sun	14400 HST/V32bis
-Watkinsville, GA	1:370/510  Route 66 BBS		14400 HST/V32bis
-Albany, GA		1:3617/3   Combat Override	9600 HST
-Charlotte, NC		1:379/4	   Programmer's Assistant 14400 HST/V32bis
-Mobile, AL		1:3625/454 On-Line Aft LateNight 14400 HST
-Corpus Christi, TX	1:160/140  Gethsemane		14400 HST/V32bis
-San Antonio, TX		1:387/255  NUL			14400 HST/V32bis
-Tulsa, OK		1:170/403  Software America Inc 14400 HST/V32bis
-Walnut Ridge, AR	1:389/10   Phil's BBS		14400 HST/V32bis
-Folsom, LA		1:390/3	   Northlake Data Xchg  14400 HST/V32bis
-Slidell, LA		1:390/11   The City O' Jazz	9600 HST/V32
-Muskogee, OK		1:3813/309 Brushy Mountain BBS  9600 HST
----Europe---
-Emmen, NL		2:282/1	   Garfield's Home	14400 HST/V32bis
-Enschede, NL		2:283/100  HAMLOT Services Brd  14400 HST/V32bis
-Maaseik, Belgium	2:292/100  FD-Help		14400 HST/V32bis
-Bologna, Italy		2:332/403  Active Line I	14400 HST/V32bis
-Pisa, Italy		2:332/602  WolfNet Point's Line V32/PEP
-Pisa, Italy		2:332/612  WolfNet Line #1	9600 HST/V32
+			 2:251/25   Graham Print        Fareham, England
+			 3:50/99    Steven Lutrov       Essendon, Victoria
+			 4:823/1    Adolfo Justiniano   Bolivia, South America
+			 5:7104/2   Henk Wolsink   Port Elizabeth, South Africa
+			 6:731/16   Bill English        Tokyo, Japan
+
 
 ------------------------------------------------------------------------
 
@@ -449,21 +412,23 @@ Files in my FTP area:
 	ftp://ftp.cs.cmu.edu/afs/cs.cmu.edu/user/ralf/pub/
 
 Files on SimTel and mirrors:
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter53a.zip
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter53b.zip
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter53c.zip
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter53d.zip
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter53e.zip
-	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter53f.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter54a.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter54b.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter54c.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter54d.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter54e.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter54f.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter54g.zip
 	ftp://ftp.simtel.net/pub/simtelnet/msdos/c/spwno413.zip
 	ftp://ftp.simtel.net/pub/simtelnet/msdos/desqview/dvint43.zip
 	ftp://ftp.simtel.net/pub/simtelnet/msdos/desqview/dvglu172.zip
 	ftp://ftp.simtel.net/pub/simtelnet/msdos/modem/rbcom346.zip
 
 Files at Garbo:
-	ftp://garbo.uwasa.fi/pc/programming/inter53a.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter53b.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter53c.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter53d.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter53e.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter53f.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter54a.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter54b.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter54c.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter54d.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter54e.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter54f.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter54g.zip

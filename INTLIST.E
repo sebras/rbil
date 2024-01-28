@@ -2,7 +2,7 @@
 /*	EEL code file for editing the Interrupt List		*/
 /*								*/
 /*	Written by Ralf Brown					*/
-/*	LastEdit:  12 Jan 97					*/
+/*	LastEdit:  21 Jan 97					*/
 /*								*/
 /*  This EEL file adds the following keybindings:		*/
 /*    Shf-Alt-A add an Access: section to the current entry	*/
@@ -11,12 +11,13 @@
 /*    Sft-Alt-I add an InstallCheck: section to current entry	*/
 /*    Shf-Alt-R add a Range: section to the current entry       */
 /*    Shf-Alt-S add a Size: section to the current entry	*/
-/*	Alt-I	add an Index: section to the current entry	*/
-/*		add another Index: line if already on Index:	*/
+/*	Alt-I	add an Index: section to the current entry;	*/
+/*		 add another Index: line if already on Index:	*/
 /*      Alt-N   add a new note to current entry or data struct  */
 /*      Alt-P   add a Program: section to the current entry     */
 /*      Alt-R   insert Return: at start of line                 */
-/*	Alt-S	insert SeeAlso: at start of line		*/
+/*	Alt-S	insert SeeAlso: at start of line; add another	*/
+/*		 SeeAlso: line if already on SeeAlso:		*/
 /*	F11	insert a blank separator line			*/
 /*	^F11	create Format of: header			*/
 /*	Shf-F11	create Values for: header			*/
@@ -75,13 +76,13 @@ char index_section[] = "Index:\t" ;
 #if EELVERSION >= 70
 char all_sections[] = "Return:|SeeAlso:|Program:|Desc:|Range:|Notes*:|BUGS*:|Example:|Index:|Access:|InstallCheck:|Size:" ;
 char indented_sections[] = "[\t ]*(Return|Notes*):" ;
-char table_headers[] = "INT |MEM |CMOS |MSR |CALL |PORT |Format |Values |Bitfields |Call " ;
+char table_headers[] = "INT |Format |Values |Bitfields |MEM |CMOS |MSR |CALL |PORT |Call |OPCODE " ;
 #endif /* Epsilon v7.0+ */
 
 char table_ID_letters[] = "0123456789CFMPR" ;
 
 char *(section_order[13]) ;
-char *(list_files[10]) ;
+char *(list_files[11]) ;
 
 when_loading()
 {
@@ -110,7 +111,8 @@ when_loading()
    list_files[6] = "msr.lst" ;
    list_files[7] = "biblio.lst" ;
    list_files[8] = "glossary.lst" ;
-   list_files[9] = NULL ;
+   list_files[9] = "opcodes.lst" ;
+   list_files[10] = NULL ;
 }
 
 /*=============================================================*/
@@ -571,7 +573,7 @@ char *func_num ;
 	 }
       nl_forward() ;			/* skip to third line of entry */
       }
-   if (parse_string(1,"[ \t]*([BCDES][HILPSX]|VXD) = [0-9A-F][0-9A-F]+h",NULL))
+   if (parse_string(1,"[ \t]*([BCDES][HILPSX]|VxD) = [0-9A-F][0-9A-F]+h",NULL))
       {
       re_search(1,"[ \t]*") ;
       func_num[6] = curchar() ;
@@ -656,6 +658,28 @@ char *func_num ;
 
 /*=============================================================*/
 
+char grab_opcode_name(func_num)
+char *func_num ;
+{
+   int i ;
+   point += 7 ;				/* skip the "OPCODE " */
+   func_num[0] = 'O' ;			/* mark this as an opcode entry */
+   for (i = 2 ; i < 12 ; i++)		/* grab the opcode name and stuff */
+      {			   		/*   it into the header line */
+      char c = curchar() ;
+      if (c == ' ' || c == '\t')
+	 break ;
+      else
+	 {
+	 func_num[i] = c ;
+	 point++ ;
+	 }
+      }
+   return 1 ;
+}
+
+/*=============================================================*/
+
 char grab_port_entry_number(func_num)
 char *func_num ;
 {
@@ -691,6 +715,8 @@ char *func_num ;
       return grab_port_entry_number(func_num) ;
    else if (parse_string(1,"MSR ",NULL) != 0)
       return grab_msr_entry_number(func_num) ;
+   else if (parse_string(1,"OPCODE ",NULL) != 0)
+      return grab_opcode_name(func_num) ;
    else
       return 0 ;
 }
@@ -1392,7 +1418,8 @@ int from, to ;
       {
       int start = point ;
       int len ;
-      if (curchar() >= 'A' && curchar() <= 'V')
+      char c = curchar() ;
+      if (c >= 'A' && c <= 'V')
 	 {
 	 if (parse_string(1,table_headers,NULL) != 0)
 	    {
@@ -1403,7 +1430,7 @@ int from, to ;
 	 else if ((len = parse_string(1,all_sections,NULL)) > 0)
 	    set_character_color(start,start+len,color_class c_function) ;
 	 }
-      else if (curchar() == '\t' &&
+      else if (c == '\t' &&
 	       (len = parse_string(1,indented_sections,NULL)) != 0)
 	 {
 	 while (curchar() == '\t')
