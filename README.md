@@ -8,6 +8,7 @@ Thank you!
 
 | Version | Release date | Links |
 | --- | --- | --- |
+| [27](https://github.com/sebras/rbil/tree/release-27/) | 1991/09/01 | [interrupts](https://raw.githubusercontent.com/sebras/rbil/release-27/INTERRUP.LST) [memory map](https://raw.githubusercontent.com/sebras/rbil/release-27/MEMORY.LST) [credits](https://raw.githubusercontent.com/sebras/rbil/release-27/INTERRUP.1ST) |
 | [26](https://github.com/sebras/rbil/tree/release-26/) | 1991/06/15 | [interrupts](https://raw.githubusercontent.com/sebras/rbil/release-26/INTERRUP.LST) [memory map](https://raw.githubusercontent.com/sebras/rbil/release-26/MEMORY.LST) [credits](https://raw.githubusercontent.com/sebras/rbil/release-26/INTERRUP.1ST) |
 | [25](https://github.com/sebras/rbil/tree/release-25/) | 1991/03/24 | [interrupts](https://raw.githubusercontent.com/sebras/rbil/release-25/INTERRUP.LST) [memory map](https://raw.githubusercontent.com/sebras/rbil/release-25/MEMORY.LST) [credits](https://raw.githubusercontent.com/sebras/rbil/release-25/INTERRUP.1ST) |
 | [91.1](https://github.com/sebras/rbil/tree/release-91.1/) | 1991/01/05 | [interrupts](https://raw.githubusercontent.com/sebras/rbil/release-91.1/INTERRUP.LST) [memory map](https://raw.githubusercontent.com/sebras/rbil/release-91.1/MEMORY.LST) [credits](https://raw.githubusercontent.com/sebras/rbil/release-91.1/INTERRUP.1ST) |

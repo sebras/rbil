@@ -1,7 +1,9 @@
+----------60---------------------------------
 INT 60 - reserved for user interrupt
 ----------60---------------------------------
-INT 60 - Zero Bug Virus
-   The "Zero Bug" virus hooks this vector.  Purpose unknown.
+INT 60 - Zero Bug Virus - INSTALLATION CHECK
+   The "Zero Bug" virus hooks this vector.  It considers itself installed if
+   offset 103h of the handler's segment contains the bytes "ZE"
 SeeAlso: INT 32
 ----------60---------------------------------
 INT 60 - Adaptec and OMTI controllers - DRIVE 0 DATA
@@ -11,6 +13,9 @@ INT 60 - Atari Portfolio - USER INTERFACE FUNCTIONS
    supplies a number of subfunctions which perform such functions as drawing
    boxes and menus, and provide input line editing
 SeeAlso: INT 61"Atari"
+----------60---------------------------------
+INT 60 - HP 95LX System Manager
+SeeAlso: INT 61"HP 95LX"
 ----------60---------------------------------
 INT 60 - PC-IPC API
 	STACK:	DWORD	pointer to parameter block (see below)
@@ -146,6 +151,9 @@ Notes:	PC/370 is an IBM 370 emulator by Donald S. Higgins
 	this is the default interrupt, however the documentation includes
 	  instructions for patching the system for another interrupt
 SeeAlso: INT 2F/AX=7F24h,INT DC"PC/370"
+----------60---------------------------------
+INT 60 - JPI TopSPEED Modula-2 - PROCEDURE ENTRY TRAP
+SeeAlso: INT 61"JPI"
 ----------60---------------------------------
 INT 60 - FTP Packet Driver - PC/TCP Packet Driver Specification
    The handler for the interrupt will start with a 3-byte jump instruction, 
@@ -539,7 +547,7 @@ Return: AL = status
 		ES:SI -> 6-byte station address
 	    02h semaphore service is unavailable
 ----------6011-------------------------------
-INT 60 - 10-NET, Banyan VINES - LOCK AND WAIT
+INT 60 - 3com, 10-NET, Banyan VINES - LOCK AND WAIT
 	AH = 11h
 	AL = drive number or 0
 	DX = number of seconds to wait
@@ -558,7 +566,7 @@ Return: AL = status
 	    09h semaphore already logged for this CPU
 SeeAlso: AH=12h,AH=13h
 ----------6012-------------------------------
-INT 60 - 10-NET, Banyan VINES - LOCK
+INT 60 - 3com, 10-NET, Banyan VINES - LOCK
 	AH = 12h
 	AL = drive number or 00h
 	ES:SI = Ethernet address or 0000h:0000h
@@ -568,7 +576,7 @@ Return: AL = status (see also AH=11h)
 Note:	unlike function 11h, this function returns immediately
 SeeAlso: AH=11h,AH=13h
 ----------6013-------------------------------
-INT 60 - 10-NET, Banyan VINES - UNLOCK
+INT 60 - 3com, 10-NET, Banyan VINES - UNLOCK
 	AH = 13h
 	AL = drive number or 00h
 	ES:SI = Ethernet address or 0000h:0000h
@@ -608,7 +616,7 @@ INT 60 - FTP Packet Driver - EXTENDED FUNC - SET MULTICAST LIST
 Return: CF set on error
 	    DH = error code (06h,09h,0Eh) (see AX=01FFh)
 	CF clear if successful
-SeeAlso: AX=17h
+SeeAlso: AH=17h
 ----------6017-------------------------------
 INT 60 - FTP Packet Driver - EXTENDED FUNC - GET MULTICAST LIST
 	AH = 17h
@@ -651,7 +659,13 @@ INT 61 - reserved for user interrupt
 INT 61 - Atari Portfolio - EXTENDED BIOS
    provides subfunctions such as turning off the machine, accessing internal
    variables, and mapping memory cards
-SeeAlso: INT 61"Atari"
+SeeAlso: INT 60"Atari"
+----------61---------------------------------
+INT 61 - HP 95LX System Manager - LOAD DS
+SeeAlso: INT 60"HP 95LX"
+----------61---------------------------------
+INT 61 - JPI TopSPEED Modula-2 - PROCEDURE EXIT TRAP
+SeeAlso: INT 61"JPI"
 ----------61---------------------------------
 INT 61 - FTP Software PC/TCP - TCP/IP TSR System Call interface
 	AH = system call number
@@ -1413,7 +1427,7 @@ Offset	Size	Description
 		000Bh timed out waiting to connect
 		000Ch communications error
 		000Dh communications error
-		000Eh host want file transferred to/from PC
+		000Eh host wants file transferred to/from PC
 		000Fh host software changed session parameter
 		0010h host software changed tap settings
 		0011h host software changed LED indicator
@@ -1482,7 +1496,7 @@ Offset	Size	Description
  02h 17 BYTEs	element (byte 00h = input port type, bytes 01h-10h = port)
 		(see AX=0001h#"Sosock" for port format)
 ----------610007BX0004-----------------------
-INT 61 - Banyan VINES - VERIFY EXISTENCE OF NAME AND RETURN CANONICAL FORM
+INT 61 - Banyan VINES - SET PORTS FOR A SERVICE
 	AX = 0007h
 	BX = 0004h
 	DS:DX -> StreetTalk name of service
@@ -1662,7 +1676,7 @@ INT 61 - Banyan VINES - CHECK SERVICE
 	    01h communications
 	    02h primary 3270 emulation
 	    03h async terminal emulation
-	    04h file deflectoin
+	    04h file deflection
 	    07h StreetTalk
 	    08h environment
 	    0Ah secondary 3270 emulation
@@ -1817,6 +1831,56 @@ Return: AX = FFFCh no Memory Control Blocks available
 	   = 0000h load in progress (not done yet)
 	     else  tcb indentifier
 SeeAlso: AH=0Fh
+----------6247-------------------------------
+INT 62 - PC Tools 7 COMMUTE - ???
+	AH = 47h
+	AL = subfunction (00h-31h)
+	???
+	CF set
+Return: ???
+----------6248-------------------------------
+INT 62 - PC Tools 7 COMMUTE - ???
+	AH = 48h
+	AL = ???
+	???
+	CF set
+Return: ???
+----------6249-------------------------------
+INT 62 - PC Tools 7 COMMUTE - ???
+	AH = 49h
+	???
+	CF set
+Return: ???
+Note:	may be the same as AH=4Ch
+----------624A-------------------------------
+INT 62 - PC Tools 7 COMMUTE - ???
+	AH = 4Ah
+	AL = subfunction (00h-46h)
+	???
+	CF set
+Return: ???
+----------624B--BX1234-----------------------
+INT 62 - PC Tools 7 COMMUTE - ???
+	AH = 4Bh
+	BX = 1234h
+	CX = 1234h
+	ES = ???
+	CF set
+Return: ???
+----------624C-------------------------------
+INT 62 - PC Tools 7 COMMUTE - ???
+	AH = 4Ch
+	BL = subfunction
+	    00h ???
+	    02h ???
+Return: CF clear if successful
+	CF set on error
+----------626262-----------------------------
+INT 62 - PC Tools 7 COMMUTE - INSTALLATION CHECK
+	AX = 6262h
+	CF set
+Return: AX = 0000h
+	BX = segment of resident code's PSP
 ----------63---------------------------------
 INT 63 - reserved for user interrupt
 ----------63---------------------------------
@@ -2073,6 +2137,7 @@ INT 67 - LIM EMS - GET PAGE FRAME SEGMENT
 Return: AH = 00h function successful
 	    BX = segment of page frame
 	AH = error code (see AH=40h)
+SeeAlso: AH=58h,AH=68h
 ----------6742-------------------------------
 INT 67 - LIM EMS - GET NUMBER OF PAGES
 	AH = 42h
@@ -2247,11 +2312,11 @@ SeeAlso: AH=4Eh
 INT 67 - LIM EMS 4.0 - MAP/UNMAP MULTIPLE HANDLE PAGES
 	AH = 50h
 	AL = subfunction
-	    00h
-	    01h
+	    00h use physical page numbers
+	    01h use segment addresses
 	DX = handle
 	CX = number of entries in array
-	DS:SI -> mapping array
+	DS:SI -> mapping array (see below)
 Return: AH = status
 	    00h successful
 	    80h internal error
@@ -2262,6 +2327,11 @@ Return: AH = status
 	    8Bh one or more physical pages are invalid
 	    8Fh invalid subfunction
 SeeAlso: AH=40h
+
+Format of mapping array entry:
+Offset	Size	Description
+ 00h	WORD	logical page number or FFFFh to unmap physical page
+ 02h	WORD	physical page number or segment address
 ----------6751-------------------------------
 INT 67 - LIM EMS 4.0 - REALLOCATE PAGES
 	AH = 51h
@@ -2324,7 +2394,7 @@ INT 67 - LIM EMS 4.0 - GET HANDLE DIRECTORY
 	AH = 54h
 	AL = subfunction
 	    00h get handle directory
-	       ES:DI -> buffer for handle directory
+	       ES:DI -> buffer for handle directory (see below)
 	    01h search for named handle
 	       DS:SI -> 8-byte name
 	    02h get total number of handles
@@ -2339,6 +2409,11 @@ Return: AL = number of entries in handle directory (subfunction 00h)
 	    8Fh undefined subfunction
 	    A0h no such handle name
 	    A1h a handle found had no name
+
+Format of handle directory entry:
+Offset	Size	Description
+ 00h	WORD	handle
+ 02h  8 BYTEs	handle's name
 ----------6755-------------------------------
 INT 67 - LIM EMS 4.0 - ALTER PAGE MAP AND JUMP
 	AH = 55h
@@ -2773,7 +2848,7 @@ Offset	Size	Description
 ----------67---------------------------------
 INT 67 - Sangoma CCPOP 3270 resident module
 ----------6801-------------------------------
-INT 68 - APPC/PC
+INT 68 - APPC/PC - NETWORK DEVICE CONTROL
 	AH = 01h
 	DS:DX -> control block
 
@@ -2790,7 +2865,7 @@ Offset	Size	Description
  2Ah  8 BYTEs	(high byte first) mode name
  32h	BYTE	logical unit session limit
  33h	BYTE	partner logical unit session limit
- 34h	BYTE	mode maximum negotiable session limit
+ 34h	BYTE	node maximum negotiable session limit
  35h	BYTE	current session limit
  36h	BYTE	minimum negotiated winner limit
  37h	BYTE	maximum negotiated loser limit
@@ -2960,7 +3035,7 @@ Offset	Size	Description
  38h	DWORD	pointer to data
  3Ch	BYTE	00h
 ----------6802-------------------------------
-INT 68 - APPC/PC
+INT 68 - APPC/PC - CONNECTION CONTROL
 	AH = 02h
 	DS:DX -> control block
 
@@ -3273,6 +3348,7 @@ Values for secondary return code (see also AH=01h):
 INT 68 - APPC/PC - PASSTHROUGH
 	AH = 07h
 	DS:DX -> control block (format depends on application subsystem)
+SeeAlso: AH=FFh
 ----------68FA-------------------------------
 INT 68 - APPC/PC - ENABLE/DISABLE APPC
 	AH = FAh
@@ -3334,6 +3410,7 @@ Note:	do not move record while trace is active
 INT 68 - APPC/PC - SET PASSTHROUGH
 	AH = FFh
 	DS:DX -> passthrough exit routine
+SeeAlso: AH=07h
 ----------68---------------------------------
 INT 68 - Sangoma CCPOP 3270 resident module
 ----------69---------------------------------
@@ -3518,7 +3595,7 @@ INT 6A - DECnet DOS LOCAL AREA TRANSPORT - SEND BREAK
 	DH = FFh
 	DL = handle
 Return: AX = 0000h if successful
-	AH bit 7 set is unable to send break
+	AH bit 7 set if unable to send break
 ----------6AD300DHFF-------------------------
 INT 6A - DECnet DOS LOCAL AREA TRANSPORT - RESET LAT COUNTERS
 	AX = D300h
@@ -3558,19 +3635,22 @@ INT 6B - Novell NASI/NACS, Ungermann-Bass Net One SERIAL I/O - BUFFERED WRITE
 	CX = length
 	ES:BX -> buffer
 Return: CX = number of bytes written
-SeeAlso: AX=0100h,INT 14/AH=19h
+Note:	also supported by NPC NCSI
+SeeAlso: AX=0100h,AH=18h,INT 14/AH=19h
 ----------6B0100-----------------------------
 INT 6B - Novell NASI/NACS, Ungermann-Bass Net One SERIAL I/O - BUFFERED READ
 	AX = 0100h
 	CX = length of buffer
 	ES:BX -> buffer
 Return: CX = number of bytes read
-SeeAlso: AX=0000h,INT 14/AH=18h,INT 14/AX=FF02h
+Note:	also supported by NPC NCSI
+SeeAlso: AX=0000h,AH=19h,INT 14/AH=18h,INT 14/AX=FF02h
 ----------6B02-------------------------------
 INT 6B - Novell NASI/NACS, Ungermann-Bass Net One SERIAL I/O - INSTALL CHECK
 	AH = 02h
 	AL nonzero
 Return: AL = 00h if present and OK
+Note:	also supported by NPC NCSI
 SeeAlso: AX=0700h
 ----------6B0600-----------------------------
 INT 6B - Novell NASI/NACS, Ungermann-Bass Net One SERIAL I/O - CONTROL
@@ -3579,11 +3659,115 @@ INT 6B - Novell NASI/NACS, Ungermann-Bass Net One SERIAL I/O - CONTROL
 	    02h send break
 	    04h disconnect
 	    06h hold
+Note:	also supported by NPC NCSI
 ----------6B0700-----------------------------
 INT 6B - Novell NASI/NACS, Ungermann-Bass Net One SERIAL I/O - GET STATUS
 	AX = 0700h
 Return: CH <> 00h if connection active
-SeeAlso: AH=02h
+Note:	also supported by NPC NCSI
+SeeAlso: AH=02h,AH=10h
+---------------------------------------------
+INT 6B - NPC NCSI EXTENDED SERIAL I/O - GET STATUS
+	AH = 10h
+	???
+Return: ???
+SeeAlso: AX=0700h,AH=12h,AH=1Fh
+---------------------------------------------
+INT 6B - NPC NCSI EXTENDED SERIAL I/O - ALLOCATE A VIRTUAL CIRCUIT
+	AH = 11h
+	???
+Return: ???
+SeeAlso: AH=12h,AH=15h,AH=16h,AH=17h,AH=18h
+---------------------------------------------
+INT 6B - NPC NCSI EXTENDED SERIAL I/O - VIRTUAL CIRCUIT STATUS
+	AH = 12h
+	???
+Return: ???
+SeeAlso: AH=10h,AH=15h,AH=1Ah,AH=1Bh,AH=1Fh
+---------------------------------------------
+INT 6B - NPC NCSI EXTENDED SERIAL I/O - SET/RETRIEVE REQUEST/REPLY SERVICE NAME
+	AH = 13h
+	???
+Return: ???
+SeeAlso: AH=14h,AH=15h
+---------------------------------------------
+INT 6B - NPC NCSI EXTENDED SERIAL I/O - SET/RETRIEVE SERVICE ADDRESS
+	AH = 14h
+	???
+Return: ???
+SeeAlso: AH=13h,AH=15h,AH=21h
+---------------------------------------------
+INT 6B - NPC NCSI EXTENDED SERIAL I/O - SET/RETRIEVE VIRTUAL CIRCUIT CONFIG
+	AH = 15h
+	???
+Return: ???
+SeeAlso: AH=13h,AH=14h
+----------6B16-------------------------------
+INT 6B - NPC NCSI EXTENDED SERIAL I/O - LOG AND/OR INITIALIZE VIRTUAL CIRCUIT
+	AH = 16h
+	???
+Return: ???
+SeeAlso: AH=11h,AH=12h,AH=17h
+----------6B17-------------------------------
+INT 6B - NPC NCSI EXTENDED SERIAL I/O - DISCONNECT A VIRTUAL CIRCUIT
+	AH = 17h
+	???
+Return: ???
+SeeAlso: AH=11h,AH=16h
+----------6B18-------------------------------
+INT 6B - NPC NCSI EXTENDED SERIAL I/O - WRITE DATA ON A VIRTUAL CIRCUIT
+	AH = 18h
+	???
+Return: ???
+SeeAlso: AX=0000h,AH=12h,AH=19h
+----------6B19-------------------------------
+INT 6B - NPC NCSI EXTENDED SERIAL I/O - READ DATA ON A VIRTUAL CIRCUIT
+	AH = 19h
+	???
+Return: ???
+SeeAlso: AX=0100h,AH=12h,AH=18h
+----------6B1A-------------------------------
+INT 6B - NPC NCSI EXTENDED SERIAL I/O - RECEIVE STATUS
+	AH = 1Ah
+	???
+Return: ???
+SeeAlso: AH=12h,AH=1Bh
+----------6B1B-------------------------------
+INT 6B - NPC NCSI EXTENDED SERIAL I/O - TRANSMIT STATUS
+	AH = 1Bh
+	???
+Return: ???
+SeeAlso: AH=12h,AH=1Ah
+----------6B1C-------------------------------
+INT 6B - NPC NCSI EXTENDED SERIAL I/O - RECEIVE BUFFER CONTROL
+	AH = 1Ch
+	???
+Return: ???
+SeeAlso: AH=1Dh,AH=1Eh
+----------6B1D-------------------------------
+INT 6B - NPC NCSI EXTENDED SERIAL I/O - TRANSMIT BUFFER CONTROL
+	AH = 1Dh
+	???
+Return: ???
+SeeAlso: AH=1Ch,AH=1Eh
+----------6B1E-------------------------------
+INT 6B - NPC NCSI EXTENDED SERIAL I/O - ISSUE CONTROL REQUEST
+	AH = 1Eh
+	???
+Return: ???
+SeeAlso: AH=1Ch,AH=1Dh
+----------6B1F-------------------------------
+INT 6B - NPC NCSI EXTENDED SERIAL I/O - EXTERNAL STATUS
+	AH = 1Fh
+	???
+Return: ???
+SeeAlso: AH=10h,AH=12h
+----------6B21-------------------------------
+INT 6B - NPC NCSI EXTENDED SERIAL I/O - QUERY NAME SERVICE
+	AH = 21h
+	???
+Return: ???
+SeeAlso: AH=14h
 ----------6B6B-------------------------------
 INT 6B - Tandy SCHOOLMATE PLUS - API
 	AH = 6Bh
@@ -3646,7 +3830,7 @@ Return: CL = security level
 	    01FFh time out on response
 	    02FFh network (hardware) error
 	    03FFh invalid password
-	    04FFh local rexource not available
+	    04FFh local resource not available
 	    05FFh server resource not available
 	    06FFh already logged in under different name
 	    07FFh login security failure (node)
@@ -3662,7 +3846,7 @@ Return: CL = security level
 	    11FFh no transporter board error
 	    12FFh time out on send
 	    13FFh item not found (spool item not on queue)
-	    14FFh dos access incompatible
+	    14FFh DOS access incompatible
 	    15FFh record already locked
 	    16FFh invalid parameter
 	    17FFh record lock time out error
@@ -4072,7 +4256,7 @@ INT 6F - 10-NET - LOCK FCB
 	DS:DX -> FCB (see INT 21/AH=0Fh)
 Return: CF set on error
 	    AX = error code (see also AH=00h)
-		2 file not found
+		0002h file not found
 	CF clear if successful
 SeeAlso: AH=12h
 ----------6F12-------------------------------
@@ -4086,7 +4270,7 @@ INT 6F - 10-NET - UNLOCK FCB
 	DS:DX -> FCB (see INT 21/AH=0Fh)
 Return: CF set on error
 	    AX = error code (see also AH=00h)
-		2 file not found
+		0002h file not found
 	CF clear if successful
 SeeAlso: AH=11h
 ----------6F13-------------------------------
@@ -4620,7 +4804,7 @@ Note:	similar to function 0003h, but apparently does not allow multiple
 	  fragments
 SeeAlso: BX=0003h
 ----------7A----BX0010-----------------------
-INT 7A - Novell NetWare Low-Level API (IPX) Driver - SPX INSTALLACTION CHECK
+INT 7A - Novell NetWare Low-Level API (IPX) Driver - SPX INSTALLATION CHECK
 	BX = 0010h
 	AL = 00h
 Return: AL = FFh if SPX loaded
@@ -5128,7 +5312,32 @@ INT 7B - Eicon Access API (3270/5250 gateways)
 INT 7C - IBM REXX88PC command language
 	???
 ----------7D---------------------------------
-INT 7D - not used
+INT 7D - [proposed] - ALTERNATE MULTIPLEX INTERRUPT
+	AH = multiplex number
+	AL = function
+	    00h usage check
+	        Return: AL = FFh if multiplex number in use
+	    01h installation check
+	    	BX,CX,DX = 6-byte program identifier
+		Return: AL = FFh if specified program installed
+			ES:BX -> entry point (for bypassing interrupt chain),
+				0000h:0000h if all API calls via INT 7D
+			CX = version number (CH = major, CL = minor)
+	    other  application-dependent
+Notes:	programs should not use fixed multiplex numbers; rather, a program
+	  should scan all multiplex numbers from 00h to FFh, remembering the
+	  first unused multiplex in case the program is not yet installed.
+	  If not previously installed, it should use that first free multiplex
+	  number.
+	before invoking INT 7D, a program must make sure it is valid.  INT 7D
+	  is valid if either (1) it points at an IRET instruction or (2) the
+	  INT 7D handler is preceded by the ASCII signature "INT7D".  If
+	  neither case holds, the vector may be uninitialized and pointing
+	  at a random location; it should thus not be called, but may be
+	  hooked by the program (without chaining), using multiplex number 00h
+	Please let me know the program identifier you use if you choose to
+	  follow this proposal.
+SeeAlso: INT 2F
 ----------7E---------------------------------
 INT 7E - RESERVED FOR DIP, Ltd. ROM LIBRARY
 ----------7F---------------------------------
@@ -5334,6 +5543,64 @@ Note:	a program may determine that it is running on an ANSK Slave by checking
 	  address is RAM, and should not be written.  However, the above check
 	  will not work on Slaves with <1MB RAM or those using the SLIM.SYS
 	  device driver
+----------7F---------------------------------
+INT 7F - Telebit ACS SERIAL I/O
+        ES:SI-> parameter block
+Return: CF set on error
+        CF clear on success
+Notes:  the signature "PDGATEWRKSTNIF" appears just prior to the interrupt
+          handler; this serves as the installation check
+
+Format of Telebit ACS parameter block:
+Offset  Size    Description
+ 00h    BYTE    command
+                    3Ch status
+                    3Dh connect
+                    3Eh disconnect
+                    3Fh read
+                    40h data/command write
+                    41h clear receive buffer
+                    42h get configuration
+                    43h get receiver status
+                    44h raw write
+                    45h search servers
+                    46h set transmit buffer size
+ 01h    BYTE    gateway number
+ 02h    BYTE    reserved
+ 03h    BYTE    port
+ 04h 17 BYTES   auxiliary buffer
+ 15h    BYTE    session
+ 16h    WORD    count of bytes passed to API
+ 18h    DWORD   buffer pointer passed to/from API
+ 1Ch    WORD    count of bytes passed from API
+ 1Eh    BYTE    return code (see below)
+
+Values for return code:
+ 00h - success
+ 01h - invalid session
+ 05h - servername invalid
+ 06h - netware fileserver bindery is locked
+ 07h communication server not active
+ 08h general failure in netware fileserver
+ 09h not logged into a fileserver
+ 10h connection table full
+ 11h no response from communication server
+ 12h connection attempt terminated abnormally
+ 13h connection refused - no sessions available
+ 14h gw_no/port already in use
+ 15h invalid connection response
+ 16h port invalid
+ 17h incorrect version in server response
+ 18h gw_no/port combination not configured
+ 19h initialization has not been completed
+ 20h no more sockets are available
+ 21h no active poolname
+ 23h FATAL internal interface error
+ 24h registration of host workstation failed - name is already in used
+ 25h registration of host workstation failed - workstation name table full
+ 26h registration of host workstation failed - only one session may be
+ 	registered for dial-in
+ FFh telebit acs api is busy - retry later
 ----------7F00-------------------------------
 INT 7F - Alloy NTNX, MW386 - SEMAPHORE LOCK AND WAIT
 	AH = 00h
@@ -5443,7 +5710,7 @@ Session Parameters for function 09h:
  TROFF		disable tracing
  AUTORESET	send reset before sending keys with function 03h
  NORESET	don't send reset
- QUIET		don't display messages sent with INT 21/AH=9
+ QUIET		don't display messages sent with INT 21/AH=09h
  NOQUIET	allow messages to be displayed
  TIMEOUT=n	set timeout in 30-second intervals, 0 = wait until ^Break
  XLATE		translate extended attribute bytes
@@ -5647,7 +5914,7 @@ INT 7F - Alloy NTNX - SWITCH HOST TO DEDICATED MODE
 Note:	in dedicated mode, the host will only poll for I/O requests from the
 	  slave processors, and not provide workstation services
 ----------7F09--CL03-------------------------
-INT 7F - Alloy NTNX - GET ALTERNATE INTERRUPT
+INT 7F - Alloy NTNX,MW386 - GET ALTERNATE INTERRUPT
 	AH = 09h
 	CL = 03h
 	AL = default interrupt number (67h,7Fh,etc)
@@ -6078,7 +6345,7 @@ Note:	the host processor may be attached in order to perform I/O via the host
 ----------7F25--CL00-------------------------
 INT 7F - Alloy ANSK, NTNX, MW386 - GET NETWORK EXECUTIVE VERSION
 	AH = 25h
-	CL = 00h            
+	CL = 00h	    
 Return: AH = version suffix letter
 	CH = major version number
 	CL = minor version number
@@ -6222,7 +6489,8 @@ Return: AL = status
 	    02h already locked
 	    03h unable to lock
 	    04h lock table full
-SeeAlso: AH=00h,,AH=41"MW386",AH=42h"NTNX"
+Note:	requests exclusive read/write access to file
+SeeAlso: AH=00h,,AH=41h"MW386",AH=42h"NTNX"
 ----------7F41-------------------------------
 INT 7F - Alloy MW386 - LOCK SEMAPHORE FOR USER
 	AH = 41h
@@ -6236,7 +6504,7 @@ Return: AL = status
 	    04h semaphore space exhausted
 SeeAlso: AH=00h,AH=42h"MW386"
 ----------7F42-------------------------------
-INT 7F - Alloy NTNX - LOCK FILE FOR USER
+INT 7F - Alloy NTNX - UNLOCK FILE FOR USER
 	AH = 42h
 	AL = user ID
 	DS:DX -> ASCIZ filename
@@ -6246,7 +6514,7 @@ Return: AL = status
 	    02h already locked
 	    03h unable to lock
 	    04h lock table full
-SeeAlso: AH=00h,AH=41h"NTNX",AH=42"MW386"
+SeeAlso: AH=00h,AH=41h"NTNX",AH=42h"MW386"
 ----------7F42-------------------------------
 INT 7F - Alloy MW386 - UNLOCK SEMAPHORE FOR USER
 	AH = 42h
@@ -6405,7 +6673,7 @@ INT 7F - Alloy MW386 - CHANGE CONSOLE MODE
 Return: CF clear if successful
 	    AL = prior console mode
 	CF set on error (caller is not remote user)
-Note:	modes 2 and 3 may be user for input through the console port; no video
+Note:	modes 2 and 3 may be used for input through the console port; no video
 	  output should be performed in these modes
 ----------7FC6-------------------------------
 INT 7F - Alloy MW386 - WRITE BYTE TO CONSOLE PORT
@@ -6645,6 +6913,7 @@ INT 80 - reserved for BASIC
 ----------80----BX0000-----------------------
 INT 80 - SoundBlaster SBFM driver - GET VERSION
 	BX = 0000h
+Return: ???
 Note:	SBFM installs at a free interrupt in the range 80h through BFh
 SeeAlso: BX=0008h
 ----------80----BX0001-----------------------
@@ -6725,7 +6994,7 @@ Return: AX = 0000h
 Notes:	this interrupt is the WinQVTNet protected mode interface to Windows 3.0
 	all buffer pointers are reset back to 0
 ----------8002-------------------------------
-INT 80 - QPC Software PKTINT.COM - GET SEGMENT ADDRESSES
+INT 80 - QPC Software PKTINT.COM - GET BUFFER ADDRESSES
 	AH = 02h
 	BX = extra bytes to allocate per packet
 Return: AX = segment address of 10K buffer (for receives???)
@@ -6744,7 +7013,7 @@ INT 80 - QPC Software PKTINT.COM - ENABLE???
 	BX = ???
 Return: ???
 ----------8005-------------------------------
-INT 80 - QPC Software PKTINT.COM - GET STATISTICS
+INT 80 - QPC Software PKTINT.COM - GET RECEIVE STATISTICS
 	AH = 05h
 Return: AX = amount of buffer currently in use
 	BX = current offset in buffer
@@ -7129,14 +7398,15 @@ Return: AH = major version
 	CL = number of states and territories in current database
 	DH = year of current database - 1900
 	DL = month of current database's file date
+Return: AX destroyed
 Notes:	if installed, the string "ZIPKEY" is present at offset 75h in the
 	  interrupt handler's segment, and the byte at 7Bh contains the API
-	  version number (currently 00h)
+	  version number (00h for v1.x, 01h for v2.0)
 	ZIPKEY is a resident ZIPCODE database by Eric Isaacson
 ----------B371-------------------------------
 INT B3 - ZIPKEY - CONVERT TWO-LETTER ABBREVIATION TO STATE CODE
 	AH = 71h
-	BX = abbreviation, in either case
+	BX = abbreviation, in either case (first letter in BL)
 Return: CF set on error
 	    AL = FFh
 	CF clear if successful
@@ -7147,6 +7417,7 @@ INT B3 - ZIPKEY - CONVERT STATE CODE TO TWO-LETTER ABBREVIATION
 	AH = 72h
 	BL = ZIPKEY state code
 Return: CF set on error
+	    AX destroyed
 	CF clear if successful
 	    AX = abbreviation, in upper case
 SeeAlso: AH=71h,AH=73h
@@ -7156,6 +7427,7 @@ INT B3 - ZIPKEY - CONVERT STATE CODE TO STATE NAME
 	BL = ZIPKEY state code
 	ES:DI -> buffer for name
 Return: CF set on error
+	    AX destroyed
 	CF clear if successful
 	    ES:DI points one byte beyond end of name
 SeeAlso: AH=72h
@@ -7166,6 +7438,7 @@ INT B3 - ZIPKEY - CONVERT ZIPCODE TO ASCII DIGITS
 	CH = last two digits of zipcode (0-99)
 	ES:DI -> buffer
 Return: CF set on error
+	    AX destroyed
 	CF clear if successful
 	    ES:DI points one byte beyond end of digit string
 ----------B375-------------------------------
@@ -7177,6 +7450,7 @@ Return: CF set on error (zipcode not found)
 	    AL = suggested state code, FFh if none
 	CF clear if successful
 	    AL = ZIPKEY state code
+	    BX = area code (v2.0+)
 SeeAlso: AH=76h,AH=79h
 ----------B376-------------------------------
 INT B3 - ZIPKEY - LOOK UP CITY AND STATE FOR ZIPCODE
@@ -7189,6 +7463,7 @@ Return: CF set on error
 	    ES:DI buffer filled with suggested city name
 	CF clear if successful
 	    AL = ZIPKEY state code
+	    BX = area code (v2.0+)
 	    ES:DI points one byte beyond end of name
 SeeAlso: AH=75h,AH=78h
 ----------B377-------------------------------
@@ -7198,6 +7473,7 @@ INT B3 - ZIPKEY - PLAY BACK EXIT KEY FOR ENTRY WITH GIVEN ZIPCODE
 	CH = last two digits of zipcode (0-99)
 	BX = 16-bit BIOS keycode for a defined ZIPKEY alternate exit key
 Return: CF set on error
+	    AX destroyed
 	CF clear if successful	
 	    zipcode specification as defined by the BX keystroke is placed in
 	      keyboard buffer, as if the user had popped up ZIPKEY and exited
@@ -7211,6 +7487,7 @@ Return: BH = number of matching entries (set to 51 if more than 50)
 	DX = zipcode region of first match (0-999)
 	CL = last two digits of first zipcode in the range (0-99)
 	CH = last two digits of last zipcode in the range (0-99)
+	AX destroyed
 SeeAlso: AH=79h,AH=7Ah
 ----------B379-------------------------------
 INT B3 - ZIPKEY - LOOK UP ZIPCODES FOR A GIVEN CITY
@@ -7241,6 +7518,7 @@ Return: BL = maximum number of characters for a city name
 	BH = ZIPKEY state code for last city-name search
 	    FFh if none
 	CX:DX = internal code identifying last city search
+	AX destroyed
 SeeAlso: AH=7Ch
 ----------B37C-------------------------------
 INT B3 - ZIPKEY - RESTORE ZIPKEY CONTEXT
@@ -7251,6 +7529,7 @@ INT B3 - ZIPKEY - RESTORE ZIPKEY CONTEXT
 	CX:DX = internal code returned by AH=7Bh
 Return: CF set on error
 	CF clear if successful
+	AX destroyed
 SeeAlso: AH=7Bh
 ----------B37D-------------------------------
 INT B3 - ZIPKEY - REQUEST POP UP
@@ -7261,6 +7540,7 @@ Return: CF set on error
 	    AL = FDh already busy with another request
 	       = FEh illegal function
 	CF clear if successful
+	    AX destroyed
 	    window popped up and was closed by the user
 ----------B37E-------------------------------
 INT B3 - ZIPKEY - GET NAME OF PRIMARY CITY FOR A ZIPCODE REGION
@@ -7283,6 +7563,17 @@ INT B3 - ZIPKEY - ENABLE/DISABLE HOTKEYS
 Return: AL = hotkey status
 	    00h off
 	    01h on
+----------B380-------------------------------
+INT B3 - ZIPKEY v2.0+ - DETERMINE STATE FOR AREA CODE
+	AH = 80h
+	BX = telephone area code (decimal)
+Return: CF clear if successful
+	    AL = ZIPKEY state code
+	    DX = first ZIP region for state (03E8h if Canada)
+	    CX = number of ZIP regions in state
+	CF set on error
+	    AL = FFh
+	    DX = 03E9h
 ----------B4---------------------------------
 INT B4 - used by IBM ROM BASIC while in interpreter
 Notes:	called by ROM BASIC
@@ -7718,7 +8009,7 @@ INT FF - AT/XT286/PS50+ - destroyed by return from protected mode
 INT FF - Z100 - WARM BOOT
 ---------------------------------------------
 Please redistribute the following files unmodified as a group, in a pair of
-archives named INTER26A and INTER26B (preferably the original authenticated
+archives named INTER27A and INTER27B (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
 	INTERRUP.A	INT 00 through INT 14
@@ -7732,12 +8023,12 @@ PKZIP archives):
 	INTPRINT.C	source code for INTPRINT
 	MEMORY.LST	format of the BIOS data area
 	INT2QH.*	program to convert list into QuickHelp database
-	INT2GUID.*	program to convert list into TurboPower GUIDE database
+	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
 This compilation is Copyright (c) 1989, 1990, 1991 Ralf Brown
 ---------------------------------------------
 ARPA: ralf@cs.cmu.edu
 UUCP: {ucbvax,harvard}!cs.cmu.edu!ralf
 BIT:  ralf%cs.cmu.edu@cmuccvma
-FIDO: Ralf Brown 1:129/26 or 1:129/53
-	or post a message to the DR_DEBUG echo
+FIDO: Ralf Brown 1:129/26.1
+	or post a message to me in the DR_DEBUG echo
 CIS:  >INTERNET:ralf@cs.cmu.edu

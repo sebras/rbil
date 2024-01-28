@@ -1,5 +1,14 @@
 Warning: Blatant advertisement follows
 
+     PC Interrupts:
+	 A Programmer's Reference to BIOS, DOS, and Third-Party Calls
+     Ralf Brown and Jim Kyle
+     ISBN 0-201-57797-6
+     ~1100 pages
+     Available October 1991
+
+-------
+
 Ever wanted the full scoop on undocumented MSDOS calls?  Run to your
 favorite bookstore and ask for
 

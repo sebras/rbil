@@ -1,3 +1,4 @@
+---------------------------------------------
 Interrupt List, part 2 of 5
 This compilation is Copyright (c) 1989,1990,1991 Ralf Brown
 ----------1500-------------------------------
@@ -275,7 +276,7 @@ INT 15 - MultiDOS Plus - CHECK MAILBOX
 	AL = mailbox number (00h-3Fh)
 Return: AH = status
 	    00h successful
-	        DX = length of first message in queue, 0000h if no message
+		DX = length of first message in queue, 0000h if no message
 	    02h invalid mailbox number
 SeeAlso: AH=04h"MultiDOS",AH=06h"MultiDOS"
 ----------1506-------------------------------
@@ -296,7 +297,7 @@ INT 15 - MultiDOS Plus - READ MAILBOX
 	ES:DI -> buffer for message
 Return: AH = status
 	    00h successful
-	        CX = number of bytes copied
+		CX = number of bytes copied
 		DX = actual length of message
 	    02h invalid mailbox number
 Note:	if the caller's buffer is not large enough, the message is truncated
@@ -617,9 +618,9 @@ INT 15 - TopView - "DISPEROR" - POP-UP ERROR WINDOW
 Return: BX = status: 1 = left button, 2 = right, 27 = ESC pressed
 Note:	window remains on-screen until ESC or indicated mouse button is pressed
 ----------151020-----------------------------
-INT 15 - TopView - UNIMPLEMENTED IN DV 2.0x
+INT 15 - TopView - UNIMPLEMENTED IN DV 2.00+
 	AX = 1020h
-Return: pops up "Programming error" window in DV 2.0x
+Return: pops up "Programming error" window in DV 2.00+
 ----------151021-----------------------------
 INT 15 - TopView - "PGMINT" - INTERRUPT ANOTHER TASK
 	AX = 1021h
@@ -632,13 +633,13 @@ Notes:	the FAR routine is entered with the current ES, DS, SI, DI, and BP
 	multiple PGMINTs to a single task are processed last-in first-out
 	if the other task is in a DOS or DV API call, the interruption will
 	  occur on return from that call
-----------151022-----------------------------
+----------151022BX0000-----------------------
 INT 15 - TopView - "GETVER" - GET VERSION
 	AX = 1022h
-	BX = 0
+	BX = 0000h
 Return: BX nonzero, TopView or compatible loaded
 	(BL = major version, BH = minor version)
-Notes:	TaskView returns BX = 0001h, DESQview 2.0 returns BX = 0A01h
+Notes:	TaskView returns BX = 0001h, DESQview 2.0+ returns BX = 0A01h
 ----------151023-----------------------------
 INT 15 - TopView - "POSWIN" - POSITION WINDOW
 	AX = 1023h
@@ -781,7 +782,7 @@ Offset	Size	Description
 18Ch	BYTE	protection level for 386 machines
 18Dh 19 BYTEs	reserved (0)
 ----------15102D-----------------------------
-INT 15 - DESQview 2.0 - KEYBOARD MOUSE CONTROL
+INT 15 - DESQview 2.0 - "KMOUSE" - KEYBOARD MOUSE CONTROL
 	AX = 102Dh
 	BL = subfunction
 	     00h determine whether using keyboard mouse
@@ -1122,9 +1123,9 @@ MODE 00h (set or display values) "WINDOW STREAM"
 	41h-5Fh display OPCODE-40h blanks with specified attribute
 	     BYTE attribute of blanks
 	60h  display next 20h characters
-	     20h BYTES characters to display
+	     20h BYTEs characters to display
 	61h-7Fh display next OPCODE-60h characters
-	     N BYTES characters to display
+	     N BYTEs characters to display
 	80h-87h	 display N blanks with default attribute
 	     BYTE low 8 bits of 11-bit count (high 3 in low 3 bits of OPCODE)
 		      [000h means 800h]
@@ -1139,7 +1140,7 @@ MODE 00h (set or display values) "WINDOW STREAM"
 	98h-9FH	 display string at logical cursor pos
 	     BYTE low 8 bits of 11-bit length (high 3 in low 3 bits of OPCODE)
 		      [000h means 800h]
-	     N BYTES string to display
+	     N BYTEs string to display
 	A0h  set logical cursor row
 	     BYTE row number (0 is top)
 	A1h  set logical cursor column
@@ -2109,7 +2110,7 @@ INT 15 - TopView - SEND MESSAGE - "REDRAW" - REDRAW WINDOW
 	    01h redraw task's default window
 	    0Ch (DV 2.26+) redraw window of task owning handle on top of stack
 	    0Dh (DV 2.26+) redraw default window of parent of current task
-SeeAlso: AH=12h/BH=0Eh
+SeeAlso: AH=12h/BH=05h"WINDOW",AH=12h/BH=0Eh
 ----------1512--BX1300-----------------------
 INT 15 - TopView - SEND MESSAGE - "SETICON" - SPECIFY POINTER ICON
 	AH = 12h
@@ -2386,7 +2387,7 @@ INT 15 - MultiDOS Plus - MAP SEMAPHORE NAME TO NUMBER
 	DS:SI -> 8-byte name
 Return: AL = status
 	    00h successful
-	        AH = semaphore number (20h-3Fh)
+		AH = semaphore number (20h-3Fh)
 	    04h out of string space
 Notes:	all eight bytes of the name are significant
 	if the name does not already exist, it is added to the name table and
@@ -2528,6 +2529,12 @@ Return: CF set on error
 	   ES:DI -> error log
 Note:	the log is a series of words, the first byte of which identifies the
 	  error code and the second the device.
+----------152403-----------------------------
+INT 15 - ???
+	AX = 2403h
+	???
+Return: ???
+Note:	reportedly used by some PS/2 models
 ----------1540-------------------------------
 INT 15 - SYSTEM - READ/MODIFY PROFILES (CONVERTIBLE)
 	AH = 40h
@@ -2980,7 +2987,12 @@ Offset	Size	Description
 		bit 0 reserved
  06h	WORD	reserved (0)
  08h	WORD	reserved (0)
- 0Ah		AWARD copyright notice here
+---AWARD BIOS---
+ 0Ah  N BYTEs	AWARD copyright notice
+---Phoenix BIOS---
+ 0Ah	BYTE	major version
+ 0Bh	BYTE	minor version (BCD)
+ 0Ch  4 BYTEs	ASCIZ string "PTL" (Phoenix Technologies Ltd)
 
 Values for model/submodel/revision:
 Model  Submdl  Rev	BIOS date	System
@@ -2996,9 +3008,11 @@ Model  Submdl  Rev	BIOS date	System
  FCh	00h	01h	06/10/85	AT model  239	  6 MHz 30MB
  FCh	00h	<> 01h	  ???		7531/2 Industrial AT
  FCh	01h	00h	11/15/85	AT models 319,339 8 MHz, Enh Keyb, 3.5"
+ FCh	01h	00h	09/17/87	Tandy 3000
  FCh	01h	00h	01/15&88	Toshiba T5200/100
  FCh	01h	00h	12/26*89	Toshiba T1200/XE
 			(Those date characters are not typos)
+ FCh	01h	30h	  ???		Tandy 3000NL
  FCh	01h	???	  ???		Compaq 286/386
  FCh	02h	00h	04/21/86	PC XT-286
  FCh	04h	00h	02/13/87     ** PS/2 Model 50
@@ -3452,7 +3466,7 @@ Return: AX and BX destroyed (seems to be bug, weren't saved&restored)
 Notes:	sends a manager stream with opcodes AEh, BDh, and BFh to task's window
 	enables an additional mouse mode
 ----------15DE10-----------------------------
-INT 15 - DESQview 2.x - "PUSHKEY" - PUT KEY INTO KEYBOARD INPUT STREAM
+INT 15 - DESQview 2+ - "PUSHKEY" - PUT KEY INTO KEYBOARD INPUT STREAM
 	AX = DE10h
 	BH = scan code
 	BL = character
@@ -3464,7 +3478,7 @@ Notes:	a later read will get the keystroke as if it had been typed by the user
 	early copies of DV 2.00 destroy AX, BX, ES, and DI
 SeeAlso: INT 16/AH=05h
 ----------15DE11BL00-------------------------
-INT 15 - DESQview 2.x - ENABLE/DISABLE AUTOMATIC JUSTIFICATION OF WINDOW
+INT 15 - DESQview 2+ - "JUSTIFY" - EN/DISABLE AUTOMATIC JUSTIFICATION OF WINDOW
 	AX = DE11h
 	BL = 00h      viewport will not move automatically
 	     nonzero  viewport will move to keep cursor visible (default)
@@ -3472,12 +3486,12 @@ Return: nothing
 ----------15DE12BX0000-----------------------
 INT 15 - DESQview 2.01+ - "CSTYLE" - SET "C"-COMPATIBLE CONTROL CHAR INTERPRET
 	AX = DE12h
-	BX = 0000h    select normal style (linefeed only moved down)
+	BX = 0000h    select normal style (linefeed only moves down)
 	     nonzero  select C style (linefeed moves to start of next line)
 Return: nothing
 Note:	set on a per-task basis, and inherited from the parent task
 ----------15DE13-----------------------------
-INT 15 - DESQview 2.2+ - GET CRITICAL NESTING COUNT
+INT 15 - DESQview 2.2+ - "GETCRIT" - GET CRITICAL NESTING COUNT
 	AX = DE13h
 Return: BX = number of calls to BEGINC or ENTERC (see INT 15/AX=101Bh,DE1Ch)
 	     without matching ENDC (see INT 15/AX=101Ch)
@@ -3732,7 +3746,7 @@ Note:	under DESQview, the following "keystrokes" invoke the following actions
 		38FCh	pop up DESQview main menu
 		38FEh	close the current window
 		38FFh	pop up DESQview learn menu
-SeeAlso: AH=00h,AH=71h,INT 15/AX=DE10h
+SeeAlso: AH=00h,AH=71h,AH=FFh,INT 15/AX=DE10h
 ----------1610-------------------------------
 INT 16 - KEYBOARD - GET ENHANCED KEYSTROKE (enhanced kbd support only)
 	AH = 10h
@@ -3783,7 +3797,7 @@ INT 16 - Shamrock Software EMAIL - GET STATUS
 	ES:BX -> 13-byte buffer for ASCIZ name
 Return: AX = 4D00h if EMAIL installed on specified port
 	    ES:BX -> "" if no connection
-	          -> "*" if connection but caller has not identified name
+		  -> "*" if connection but caller has not identified name
 		  -> name otherwise
 	    CX = version (CH = major, CL = minor)
 	    DL = privilege level of user (00h = guest)
@@ -3832,10 +3846,10 @@ INT 16 - Shamrock Software EMAIL - CHECK FOR USER FUNCTION COMMAND-WORD
 	ES:BX -> 80-byte buffer for ASCIZ user input line
 Return: AX = 4D00h if EMAIL installed on specified port
 	    DL = flags
-	        bit 0: user function supported (always set)
+		bit 0: user function supported (always set)
 		    1: user entered user-function command word
 	    if DL bit 1 set,
-	        ES:BX buffer contains line entered by user which begins with
+		ES:BX buffer contains line entered by user which begins with
 			the defined command word and has been converted to all
 			caps
 Note:	caller must process the returned commandline and invoke AX=4505h
@@ -3867,11 +3881,11 @@ INT 16 - Shamrock Software EMAIL - MONITOR XMODEM DOWNLOAD
 	ES:BX -> 13-byte buffer for ASCIZ filename
 Return: AX = 4D00h if EMAIL installed on specified port
 	    DH = Xmodem status
-	        00h no XGET command given
+		00h no XGET command given
 		01h XGET in progress
 		02h XGET completed successfully
 	    ES:BX buffer filled with last filename given to XGET command
-	    	(without path)
+		(without path)
 Note:	DH=02h will only be returned once per XGET; subsequent calls will
 	  return DH=00h
 SeeAlso: AX=4500h,INT 17/AX=2408h
@@ -3883,6 +3897,14 @@ Notes:	during startup, Microsoft Word tries to communicate with any TSRs
 	  that are present through this call.
 	If the return is not 4D53h, Word installs its own INT 9h and INT 16h
 	  handlers, otherwise it assumes that the TSR will handle the keyboard.
+----------1655FF-----------------------------
+INT 16 - Swap Utilities - ???
+	AX = 55FFh
+	BX >= 0004h
+	CX = function
+	    0000h set ??? flag
+	    other clear ??? flag
+Note:	present in SWAPSH and SWAPDT v1.77j, distributed with PC Tools 7
 ----------166969BX6968-----------------------
 INT 16 - PC Tools v5.1+ BACKTALK - UNHOOK
 	AX = 6969h
@@ -3966,9 +3988,10 @@ Note:	WATCH.COM is part of the "TSR" package by Kim Kokkonen
 INT 16 - PC Magazine PUSHDIR.COM - INSTALLATION CHECK
 	AX = 7788h
 	BX = 7789h
-Return: AX = 7789h
+	DS:SI -> signature "PUSHDIR VERSION 1.0"
+Return: AX = 7789h if installed and signature correct
 	BX = 7788h
-	DS:SI -> signature string
+	SI destroyed	      
 ----------1679-------------------------------
 INT 16 - pcANYWHERE III - CHECK STATUS
 	AH = 79h
@@ -4134,6 +4157,179 @@ INT 16 - Compaq Systempro - DISABLE CACHE CONTROLLER
 	AX = F402h
 Return: AX = E202h
 SeeAlso: AX=F400h,AX=F401h
+----------16FEA4-----------------------------
+INT 16 - PC Tools 7 CPSCHED/DESKTOP - ???
+	AX = FEA4h
+	???
+Return: ???
+----------16FEC6-----------------------------
+INT 16 - PC Tools 7 CPSCHED - ???
+	AX = FEC6h
+	DL = ???
+	???
+Return: ???
+----------16FED3-----------------------------
+INT 16 - PC Tools 7 CPSCHED/DESKTOP - ???
+	AX = FED3h
+	???
+Return: ???
+----------16FEDC-----------------------------
+INT 16 - PC Tools 7 CPSCHED - ???
+	AX = FEDCh
+	???
+Return: ???
+----------16FEEFCX0000-----------------------
+INT 16 - PC Tools 7 CPSCHED/DESKTOP - INSTALLATION CHECK
+	AX = FEEFh
+	CX = 0000h
+Return: CX = ABCDh if PC Tools scheduler (CPSCHED or DESKTOP) installed
+	    BX = segment of resident portion
+SeeAlso: AX=FFEFh
+----------16FEF1-----------------------------
+INT 16 - PC Tools 7 CPSCHED/DESKTOP - ???
+	AX = FEF1h
+	???
+Return: ???
+----------16FF-------------------------------
+INT 16 - KEYBOARD - KBUF extensions - ADD KEY TO TAIL OF KEYBOARD BUFFER
+	AH = FFh
+	DX = scan code
+Return: AL = status
+	    00h success
+	    01h failure
+Note:	KBUF is a keyboard buffer expander by Mark Adler
+SeeAlso: AH=05h
+----------16FF91-----------------------------
+INT 16 - PC Tools 7 DESKTOP - ???
+	AX = FF91h
+	???
+Return: AX = 0000h
+SeeAlso: AX=FF92h
+----------16FF92-----------------------------
+INT 16 - PC Tools 7 DESKTOP - ???
+	AX = FF92h
+	???
+Return: AX = 0000h
+Note:	like AX=FF91h, but temporarily sets ??? to 3
+SeeAlso: AX=FF91h
+----------16FF93-----------------------------
+INT 16 - PC Tools 7 DESKTOP - SET ??? FLAG
+	AX = FF93h
+	???
+Return: ???
+----------16FF94-----------------------------
+INT 16 - PC Tools 7 DESKTOP - SET ???
+	AX = FF94h
+	CX = ???
+	???
+Return: ???
+----------16FF95-----------------------------
+INT 16 - PC Tools 7 DESKTOP - SET ???
+	AX = FF95h
+	BX = ???
+	???
+Return: ???
+----------16FF96-----------------------------
+INT 16 - PC Tools 7 DESKTOP - ???
+	AX = FF96h
+	CL = ???
+Return: ???
+----------16FF97-----------------------------
+INT 16 - PC Tools 7 DESKTOP - ???
+	AX = FF97h
+	???
+Return: ???
+----------16FF98-----------------------------
+INT 16 - PC Tools 7 DESKTOP - READ ??? FROM \DESK.OVL FILE
+	AX = FF98h
+	DX = offset in file
+	???
+Return: ???
+----------16FF99-----------------------------
+INT 16 - PC Tools 7 DESKTOP - ???
+	AX = FF99h
+	???
+Return: ???
+----------16FF9A-----------------------------
+INT 16 - PC Tools 7 DESKTOP - GET NAME OF COLOR SCHEME
+	AX = FF9Ah
+Return: ES:BX -> name of current color scheme
+Note:	available even if not popped up
+----------16FF9B-----------------------------
+INT 16 - PC Tools 7 DESKTOP - UNUSED???
+	AX = FF9Bh
+	???
+Return: ???
+Note:	sounds triple-length beep
+----------16FF9E-----------------------------
+INT 16 - PC Tools 7 DESKTOP - ???
+	AX = FF9Eh
+	DL = ???
+	???
+Return: ???
+----------16FFA1-----------------------------
+INT 16 - PC Tools 7 DESKTOP - ???
+	AX = FFA1h
+	???
+Return: ???
+----------16FFA2-----------------------------
+INT 16 - PC Tools 7 DESKTOP - ???
+	AX = FFA2h
+	???
+Return: ???
+----------16FFA3BX0000-----------------------
+INT 16 - PC Tools 7 DATAMON - INSTALLATION CHECK
+	AX = FFA3h
+	BX = 0000h
+	CX = 0000h
+Return: AX = segment of resident code
+	BX = 5555h
+	CX = 5555h
+----------16FFA3BX0001-----------------------
+INT 16 - PC Tools 7 DATAMON - GET ???
+	AX = FFA3h
+	BX = 0001h
+	CX = 0001h
+Return: AX:BX -> ???
+	CX = BX
+----------16FFA3BX0002-----------------------
+INT 16 - PC Tools 7 DATAMON - GET ???
+	AX = FFA3h
+	BX = 0002h
+	CX = 0002h
+Return: AX = ??? (0 or 1)
+	CX = BX = AX
+----------16FFA3BX0003-----------------------
+INT 16 - PC Tools 7 DATAMON - GET ???
+	AX = FFA3h
+	BX = 0003h
+	CX = 0003h
+Return: AX = ??? (0 or 1)
+	CX = BX = AX
+----------16FFA3BX0004-----------------------
+INT 16 - PC Tools 7 DATAMON - SET ??? FLAG
+	AX = FFA3h
+	BX = 0004h
+	CX = 0004h
+SeeAlso: AX=FFA3h/BX=0005h
+----------16FFA3BX0005-----------------------
+INT 16 - PC Tools 7 DATAMON - CLEAR ??? FLAG
+	AX = FFA3h
+	BX = 0005h
+	CX = 0005h
+SeeAlso: AX=FFA3h/BX=0004h
+----------16FFA3BX0006-----------------------
+INT 16 - PC Tools 7 DATAMON - SET PSP SEGMENT ???
+	AX = FFA3h
+	BX = 0006h
+	CX = 0006h
+	DX = current PSP segment as known to DOS??? or 0000h
+----------16FFA4-----------------------------
+INT 16 - PC Tools 7 DESKTOP - ???
+	AX = FFA4h
+	???
+Return: ???
+Note:	available even when not popped up
 ----------16FFA5CX1111-----------------------
 INT 16 - PC-Cache v6+ - INSTALLATION CHECK
 	AX = FFA5h
@@ -4141,7 +4337,7 @@ INT 16 - PC-Cache v6+ - INSTALLATION CHECK
 Return: CH = 00h if installed
 	    ES:DI -> internal data (see below)
 	    CL = cache state
-	    	01h enabled
+		01h enabled
 		02h disabled
 SeeAlso: INT 13/AH=A0h,INT 21/AH=2Bh/CX=4358h
 
@@ -4185,15 +4381,16 @@ INT 16 - PC-Cache v6+ - FLUSH CACHE
 	CX = FFFFh
 SeeAlso: AX=FFA5h/CX=CCCCh,AX=FFA5h/CX=DDDDh,INT 13/AH=A1h
 ----------16FFA6-----------------------------
-INT 16 - PC Tools v6.0 DESKTOP API - GET ???
+INT 16 - PC Tools v6.0+ DESKTOP API - GET ???
 	AX = FFA6h
 Return: DS:SI -> ???
+Note:	available only when popped up
 ----------16FFA7-----------------------------
-INT 16 - PC Tools v6.0 DESKTOP API - GET ??? PATH
+INT 16 - PC Tools v6.0+ DESKTOP API - GET ??? PATH
 	AX = FFA7h
 Return: DS:SI -> ASCIZ path (directory from which PCTools was run???)
 ----------16FFA8-----------------------------
-INT 16 - PC Tools v6.0 DESKTOP API - ???
+INT 16 - PC Tools v6.0+ DESKTOP API - ???
 	AX = FFA8h
 	DS:SI -> three consecutive ASCIZ strings for ??? (max 256 bytes total)
 	???
@@ -4201,42 +4398,42 @@ Return: ???
 Notes:	available only when popped up
 	strings copied into internal buffer, among other actions
 ----------16FFA9-----------------------------
-INT 16 - PC Tools v6.0 DESKTOP API - GET ???
+INT 16 - PC Tools v6.0+ DESKTOP API - GET VERSION STRING
 	AX = FFA9h
-Return: DS:SI -> version string???
+Return: DS:SI -> version string
 ----------16FFAA-----------------------------
-INT 16 - PC Tools v6.0 DESKTOP API - ???
+INT 16 - PC Tools v6.0+ DESKTOP API - ???
 	AX = FFAAh
 	???
 Return: ???
 Note:	available only when popped up
 ----------16FFAB-----------------------------
-INT 16 - PC Tools v6.0 DESKTOP API - GET EDITOR SETTINGS???
+INT 16 - PC Tools v6.0+ DESKTOP API - GET EDITOR SETTINGS???
 	AX = FFABh
 Return: DS:SI -> editor setting strings???
 ----------16FFAC-----------------------------
-INT 16 - PC Tools v6.0 DESKTOP API - SET ???
+INT 16 - PC Tools v6.0+ DESKTOP API - SET ???
 	AX = FFACh
 	DL = ???
 Note:	available only when popped up
 ----------16FFAD-----------------------------
-INT 16 - PC Tools v6.0 DESKTOP API - SET ???
+INT 16 - PC Tools v6.0+ DESKTOP API - SET ???
 	AX = FFADh
 	DL = ???
 ----------16FFAE-----------------------------
-INT 16 - PC Tools v6.0 DESKTOP API - GET ???
+INT 16 - PC Tools v6.0+ DESKTOP API - GET ???
 	AX = FFAEh
 Return: AL = ???
 ----------16FFAF-----------------------------
-INT 16 - PC Tools v6.0 DESKTOP API - SET ???
+INT 16 - PC Tools v6.0+ DESKTOP API - SET ???
 	AX = FFAFh
 	DL = ???
 ----------16FFB0-----------------------------
-INT 16 - PC Tools v6.0 DESKTOP API - SET ???
+INT 16 - PC Tools v6.0+ DESKTOP API - SET ???
 	AX = FFB0h
 	BL = ???
 ----------16FFB1-----------------------------
-INT 16 - PC Tools v6.0 DESKTOP API - ???
+INT 16 - PC Tools v6.0+ DESKTOP API - ???
 	AX = FFB1h
 	???
 Return: ???
@@ -4413,7 +4610,8 @@ INT 16 - PC Tools v5.1+ DESKTOP API - CHECK WHETHER DESKTOP LOADED RESIDENT
 	AX = FFC5h
 Return: BL = nonzero if loaded resident
 	   = 00h if nonresident
-Note:	available only when popped up
+Note:	available only when popped up; should call AX=FFEFh first to ensure
+	  that DESKTOP is active
 SeeAlso: AX=FFEFh,AX=FFF3h
 ----------16FFC6-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - SET ???
@@ -4457,7 +4655,7 @@ INT 16 - PC Tools v5.1+ DESKTOP API - DISPLAY ASCIZ STRING CENTERED IN WINDOW
 Return: AX = ???
 	CX = ???
 	ES:DI -> address past last character displayed (v5.1/5.5)
-	      -> ??? on menu bar
+	      -> ??? on menu bar (v6.0)
 ----------16FFCD-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - ???
 	AX = FFCDh
@@ -4586,7 +4784,7 @@ INT 16 - PC Tools v5.1-5.5 PCShell API - GET ???
 Return: AL = 
 	    00h ???
 	    01h ???
-Note:	PCShell v6.0 displays the error message "Incorrect PCRUN version",
+Note:	PCShell v6.0+ displays the error message "Incorrect PCRUN version",
 	  awaits a keystroke, and aborts the current process
 ----------16FFDDBX0003-----------------------
 INT 16 - PC Tools v5.1+ PCShell API - REQUEST POP-UP
@@ -4624,7 +4822,7 @@ INT 16 - PC Tools v5.1+ PCShell API - CLEAR ??? FLAG
 Return: ???
 SeeAlso: AX=FFDDh/BX=0007h
 ----------16FFDDBX0009-----------------------
-INT 16 - PC Tools v6.0 PCShell API - GET PCRUN PARAMETERS
+INT 16 - PC Tools v6.0+ PCShell API - GET PCRUN PARAMETERS
 	AX = FFDDh
 	BX = 0009h
 Return: CF clear if successful
@@ -4638,14 +4836,14 @@ Offset	Size	Description
  06h	WORD	offset of buffer for ??? (length in WORD preceding buffer)
  08h	WORD	offset of buffer for ??? (length in WORD preceding buffer)
 ----------16FFDDBX000A-----------------------
-INT 16 - PC Tools v6.0 PCRUN API - INSTALLATION CHECK
+INT 16 - PC Tools v6.0+ PCRUN API - INSTALLATION CHECK
 	AX = FFDDh
 	BX = 000Ah
 Return: CX = 5555h if running
 	DX = 5555h
 Note:	also sets a flag
 ----------16FFDDBX000B-----------------------
-INT 16 - PC Tools v6.0 PCRUN API - ???
+INT 16 - PC Tools v6.0+ PCRUN API - ???
 	AX = FFDDh
 	BX = 000Bh
 	???
@@ -4659,6 +4857,7 @@ INT 16 - PC Tools v5.1+ DESKTOP API - DISPLAY POPUP MENU
 Return: AX = ???
 	    AL seems to be the number of the selected button
 Note:	available only when popped up
+SeeAlso: AX=FFEEh
 ----------16FFDF-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - ???
 	AX = FFDFh
@@ -4795,7 +4994,7 @@ INT 16 - PC Tools v5.1+ DESKTOP API - INSTALLATION CHECK
 Return: CX = ABCDh if PC Tools DESKTOP.EXE installed
 	    BX = segment of resident portion
 	    AX = ??? (v5.1/5.5 only)
-SeeAlso: AX=FFC5h,AX=FFF3h
+SeeAlso: AX=FEEFh,AX=FFC5h,AX=FFF3h
 ----------16FFF0-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - SET ???
 	AX = FFF0h
@@ -5051,7 +5250,7 @@ SeeAlso: AX=2401h,AX=2405h,AX=2409h
 INT 17 - Shamrock Software NET.24 v3.11+ - TRANSMIT COMMAND, WITH HANDSHAKE
 	AX = 2409h
 	BX = target address
-	CX = number of data byte
+	CX = number of data bytes
 	DL = command code to send
 	DS:SI -> data bytes for command
 Return: AL = status (see also AX=2400h)
@@ -5084,7 +5283,7 @@ INT 17 - FLASHUP.COM - INSTALLATION CHECK
 Return: AL = 60h
 	DX = CS of resident code
 Notes:	FLASHUP.COM is part of Flash-Up Windows by The Software Bottling Co.
-	FLASHUP also hooks INT 10 and received commands via INT 10/AH=09h,0Ah
+	FLASHUP also hooks INT 10 and receives commands via INT 10/AH=09h,0Ah
 	  consisting of an 80h followed by the actual command
 SeeAlso: INT 10/AH=09h,INT 10/AH=0Ah
 ----------1761-------------------------------
@@ -5211,10 +5410,11 @@ Return: AL = status (see also AH=81h)
 		ES:DI buffer filled
 SeeAlso: AH=88h,AH=8Bh
 ----------178D-------------------------------
-INT 17 - Alloy NTNX - RESET SPOOLER
+INT 17 - Alloy NTNX,MW386 - RESET SPOOLER
 	AH = 8Dh
 	AL = 00h
-Note:	clears all buffers and resets spooler to boot-up values
+Notes:	clears all buffers and resets spooler to boot-up values
+	MW386 supports this function for compatibility only; it is a NOP
 Return: AL = status (see AH=81h)
 ----------178E-------------------------------
 INT 17 - Alloy NTNX - GET INT 28 ENTRY POINT
@@ -5330,7 +5530,7 @@ Notes:	mode 00h affects only logical LPT1
 	  MW386 or the user is rebooted
 SeeAlso: AH=9Bh
 ----------1798-------------------------------
-INT 17 - Alloy NTNX - RESTART PRINTER
+INT 17 - Alloy NTNX,MW386 - RESTART PRINTER
 	AH = 98h
 	AL = 00h
 	DL = printer number (FFh=current)
@@ -5338,6 +5538,7 @@ Return: AL = status
 	    00h successful
 	    01h incorrect printer
 	    02h task not found
+Note:	MW386 supports this function for compatibility only; it is a NOP
 ----------1799-------------------------------
 INT 17 - Alloy NTNX, MW386 - GET/SET PRINTER MODE
 	AH = 99h
@@ -5357,7 +5558,7 @@ Return: AL = status (see AH=81h)
 	DH = mode (bits 1 and 2 set as above)
 	DL = printer owner's user number if not spooled
 ----------179A-------------------------------
-INT 17 - Alloy MW386 - SET TAB EXPANSION
+INT 17 - Alloy NTNX,MW386 - SET TAB EXPANSION
 	AH = 9Ah
 	AL = mode
 	    00h NTNX compatibility
@@ -5371,7 +5572,7 @@ Note:	beginning with MW386 v2.0, tab expansion is set on a per-printer basis
 	  rather than a per-user basis; NTNX and MW386 v1.x ignore DX
 SeeAlso: AH=A4h
 ----------179B-------------------------------
-INT 17 - Alloy MW386 - SET PRINT BREAK TIMEOUT
+INT 17 - Alloy NTNX,MW386 - SET PRINT BREAK TIMEOUT
 	AH = 9Bh
 	AL = mode
 	    00h NTNX compatibility
@@ -5476,10 +5677,40 @@ Return: AX = 55AAh if spooler available
 INT 17 - PC Magazine PCSpool - GET CONTROL BLOCK ADDRESS
 	AH = C0h
 	DX = printer port (0-3)
-Return: ES:BX -> control block
+Return: ES:BX -> control block (see below)
 SeeAlso: AH=C1h
+
+Format of control block:
+Offset	Size	Description
+ 00h	WORD	printer number
+ 02h	WORD	address of printer status port
+ 04h	WORD	number of first record in queue
+ 06h	WORD	number of last record in queue
+ 08h	DWORD	characters already printed
+ 0Ch	DWORD	number of characters remaining
+ 10h	DWORD	pointer to dequeue buffer
+ 14h	DWORD	previous count of characters printed
+ 18h	DWORD	number of clock ticks taken to print them
+ 1Ch	WORD	offset of next character to output
+ 1Eh	WORD	offset of next character to print
+ 20h	WORD	pointer to spooling queue record
+ 22h	BYTE	current spooling status
+ 23h	BYTE	current printer status:
+		00h OK
+		01h not ready
+		02h paused with message
+		03h paused
+		04h initializing
+		FEh non-existent port
+		FFh not spooled
+ 24h	BYTE	current control record type
+ 25h	WORD	observed printer speed
+ 27h	WORD	characters to print per service
+ 29h	BYTE	01h if disk write needed
+ 2Ah	BYTE	01h if queued data should be flushed
+ 2Bh	BYTE	01h to update cps status
 ----------17C1--------------------------------
-INT 17 - PC Magazine PCSpool - BUILD CONTROL RECORD
+INT 17 - PC Magazine PCSpool - BUILD PAUSE CONTROL RECORD
 	AH = C1h
 	DX = printer port (0-3)
 	DS:SI -> ASCIIZ string to save for display
@@ -5543,7 +5774,7 @@ Return: CX = 07C2h (1986d)
 ----------17CD04-----------------------------
 INT 17 - INSET - INITIALIZE LINKED MODE
 	AX = CD04h
-	ES:DI -> FAR routine for linked mode
+	ES:SI -> FAR routine for linked mode
 Return: CX = 07C2h
 Note:	calling sequence for linked-mode routine
 	AL = 00h send character in BL to printer
@@ -5582,7 +5813,7 @@ INT 17 - INSET - CANCEL LINK MODE
 Return: CX = 07C2h
 SeeAlso: AX=CD04h
 ----------17CD09-----------------------------
-INT 17 - INSET - ALTER GRAPHICS LINE SPACING
+INT 17 - INSET - ALTER TEXT LINE SPACING
 	AX = CD09h
 	CX = line spacing in 1/720th inch
 Return: CX = 07C2h
@@ -5731,13 +5962,14 @@ Values for operating system indicator:
  05h DOS 3.3+ extended partition
  06h DOS Large File System
  07h QNX, OS/2 HPFS
- 08h AIX bootable partition
+ 08h AIX bootable partition, SplitDrive
  09h AIX data partition
+ 50h Disk Manager???
  51h Disk Manager
  52h CP/M
- 56h GB ???
+ 56h GoldenBow VFeature
  61h SpeedStor
- 63h SysV/386
+ 63h SysV/386, 386/ix
  64h Novell NetWare
  75h PC/IX
  80h Minix v1.3 and below
@@ -5746,7 +5978,7 @@ Values for operating system indicator:
  E1h SpeedStor 12-bit FAT extended partition
  E4h SpeedStor 16-bit FAT extended partition
  FEh LANstep
- FFh Bad Blocks
+ FFh Xenix bad block table
 ----------1A00-------------------------------
 INT 1A - TIME - GET SYSTEM TIME
 	AH = 00h
@@ -6027,4 +6259,3 @@ INT 1F - SYSTEM DATA - 8x8 GRAPHICS FONT
    points at 1024 bytes of graphics data, 8 bytes for each character 80h-FFh
 Note:	graphics data for characters 00h-7Fh stored at F000h:FA6Eh in 100%
 	  compatible BIOSes
----------------------------------------------

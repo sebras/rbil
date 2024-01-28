@@ -9,7 +9,8 @@ The MSDOS Interrupt List
 
 DVINT
 	An extract of the MSDOS Interrupt List containing the DESQview API
-	calls.
+	calls.	Updated whenever there have been significant additions to
+	the DESQview calls in the Interrupt List.
 	Current version: DVINT590 (10/14/90)
 
 RBcomm
@@ -26,6 +27,12 @@ SPAWNO
 	which swaps the current program to disk, EMS, or XMS while the
 	spawned program executes, leaving less than 500 bytes in memory.
 	Current version: SPAWNO30 (v3.0 11/16/90)
+
+RBkeyswap
+	Exchange left control and CapsLock keys, as well as Esc and `/~.
+	Loads itself high, using just 64 bytes; needs only 128 bytes low
+	if no high memory is available.
+	Current version: RBKEYSWP (v2.0 6/22/91)
 
 DV-GLUE
 	DESQview API bindings for Turbo C.
@@ -45,13 +52,25 @@ DVPTAME
 	polling the keyboard for keystrokes.  Uses 0 bytes of memory.
 	Current version: DVPTAME (6/4/91)
 
+DVdevload
+	Load device drivers only in those DESQview windows which need the
+	services of the driver, reducing the pre-DESQview overhead and thus
+	permitting larger DESQview windows.
+	Current version: DVDEVL10 (v1.00 8/11/91)
+
 SPTURBO
 	An integrated environment for Borland's Sprint word processor and
 	Turbo C, Turbo Pascal, Turbo Assembler, Turbo Debugger, and CDECL.
 	Knows which compiler to invoke based on the file's extension, and
 	can run MAKE for multi-file projects.
         Current version: SPTURBO (v2.3 Aug 1,1989)
+	Note: DO not expect any updates, as I no longer use Sprint as a
+	      programming environment.
 
+PURGEMSG
+	Delete or copy *.MSG files such that you only see those messages
+	from a Fidonet echomail area which interest you.
+	Current version: PURGEMSG (v1.00, 8/4/91)
 
 Note: beginning 1/1/91, all packages are distributed in PKZIP archives with
       authenticity verification.  Please redistribute only the original
@@ -68,25 +87,31 @@ Availability:
 -------------
 
 On the ARPAnet, by standard anonymous FTP from CS.CMU.EDU [128.2.222.173].
-	Change directly to directory /afs/cs.cmu.edu/user/ralf/pub
-	(directories above this are not accessible via anonymous FTP)
-	[only RBcomm, DVKPOLL, SPAWNO, and the Interrupt List]
+	Change directly to directory /afs/cs.cmu.edu/user/ralf/pub with a
+	single command (directories above this are not accessible via
+	anonymous FTP). [DV-GLUE and DVINT are not available here]
 	Don't forget to set "binary" mode!  If you are refused access to
 	the directory, try again later; a fileserver may have been down.
 
+If connected to AFS, you can simply perform standard Unix/VMS/whatever
+	directory listing and file copies from the above directory.
+
 On FIDOnet, from Soundingboard BBS 1:129/26 1-412-621-4604 14.4k HST, file req.
+	My programs are kept in file area 8 for those wishing to download
+	manually.
 
 Secondary Distribution Points (new releases will be available here within a
 day or so):
 ARPA:	on WSMR-SIMTEL20.ARMY.MIL [26.2.0.74] in directories PD1:<MSDOS.x>
-	where x is INFO for the Interrupt List, MODEM for RBcomm, C for SPAWNO,
-	DESQview for DV-GLUE/DVKPOLL, and SPRINT for SPTURBO.  Note that you
-	must use mode "tenex" or "type L 8" to successfully FTP the files.
-	SIMTEL20 also has a number of mirror sites which contain all of the
-	files but may be a few days behind in updates.	These include
-	wuarchive.wustl.edu [128.252.135.4] in directories /mirrors/msdos/x
-	and sol.deakin.oz.au [128.184.1.1] in directories /pub/PC/simtel-20/x.
-FIDO:	SyncPoint BBS 1:261/1008 1-301-529-2584 File Requests.
+	where x is INFO for the Interrupt List, MODEM for RBcomm, C for
+	SPAWNO, DESQview for DV-GLUE/DVKPOLL/DVPTAME, and SPRINT for
+	SPTURBO. Note that you must use mode "tenex" or "type L 8" to
+	successfully FTP the files. SIMTEL20 also has a number of mirror
+	sites which contain all of the files but may be a few days
+	behind in updates. These include wuarchive.wustl.edu [128.252.135.4]
+	in directories /mirrors/msdos/x and sol.deakin.oz.au [128.184.1.1]
+	in directories /pub/PC/simtel-20/x.
+FIDO: SyncPoint BBS 1:261/1008 1-301-529-2584 File Requests.
 
 Bitnet users may also retrieve items on SIMTEL20 via the following automated
 mail servers:
@@ -108,8 +133,8 @@ Send a mail message containing the line
 	/HELP
 in the body for instructions.
 
-DV-GLUE, DVKPOLL, DVINT, and RBcomm are also available on Fidonet BBSs
-belonging to DVNet (listed below).
+DV-GLUE, DVKPOLL, DVINT, DVPTAME, DVdevload, and RBcomm are also available on
+Fidonet BBSs belonging to DVNet (listed below).
 
 The Interrupt List and SPAWNO are also available on Fidonet BBSs belonging
 to the Programmer's Distribution Network.  Major PDN member boards as of
