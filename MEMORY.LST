@@ -292,7 +292,11 @@ Offset	Size	Description
  D0h-EFh	reserved
  F0h-FFh	reserved for user
 100h	BYTE	Print Screen Status byte
- 
+10Eh	BYTE	state of BREAK at start of BASICA.COM execution
+10Fh	BYTE	flag: 02h if BASICA v2.10 running
+116h	DWORD	INT 1Bh at start of BASICA.COM execution
+11Ah	DWORD	INT 24h at start of BASICA.COM execution
+
 Format of Extended BIOS Data Area (see 40:0Eh for ptr) [PS only]
 Offset	Size	Description
  00h	BYTE	Length of EBDA in kilobytes
