@@ -35,6 +35,7 @@
 /*   v3.03   1/14/95 changes for Borland C++ 4.x size minimization	*/
 /*   v3.04   3/25/95 malloc/sbrk and other bugfixes		        */
 /*   v3.10   2/11/96 category filters by Bent Lynggard			*/
+/*   v3.11  12/21/97 support formatting/summarizing other intlist files */
 /************************************************************************/
 /* Recompiling:								*/
 /*   Turbo C / Borland C++						*/
@@ -51,7 +52,7 @@
 #include <string.h>
 #include <sys/stat.h>		/* S_IREAD, S_IWRITE */
 
-#define VERSION "3.10"
+#define VERSION "3.11"
 
 /***********************************************/
 /*    portability definitions		       */
@@ -201,7 +202,6 @@ extern int isatty(int) ;
 #define long_div_line chars_to_long('-','-','-','-')
 #define divider_line(line) (((long*)line)[0] == long_div_line && \
   ((long*)line)[1] == long_div_line)
-#define start_of_entry(s) (((long*)s)[0]==chars_to_long('I','N','T',' '))
 #define index_line(l) \
   (((long*)l)[0]==chars_to_long('I','n','d','e')&& \
    ((short*)l)[2]==('x'+':'*0x100))
@@ -209,7 +209,6 @@ extern int isatty(int) ;
 static char long_chars[] = "----INT Index:" ;
 #define divider_line(line) (((long*)line)[0] == ((long*)long_chars)[0]\
   && ((long*)line)[1] == ((long*)long_chars)[0])
-#define start_of_entry(s) (((long*)s)[0] == ((long*)long_chars)[1])
 #define index_line(line) (((long*)line)[0] == ((long*)long_chars)[2] && \
   ((short*)line)[2] == (short*)long_chars)[6])
 #endif
@@ -393,7 +392,7 @@ typedef struct
    {
    int part ;
    int first_on_page ; /* TRUE if a new entry starts at the top of the page */
-   char desc[24] ;
+   char desc[32] ;
    int len ;
    } HEADER ;
 
@@ -424,6 +423,7 @@ void indent_to(int where,IP_FILE *fp) ;
 void put_line(IP_FILE *fp, int len) ;
 void HPPCL_put_line(IP_FILE *fp, int len) ;
 void HPPCL_set_typeface(IP_FILE *fp,char *typeface) ;
+int start_of_entry(char *s) ;
 int is_keyword(char *s, KEYWORDS *keys, unsigned int numkeys) ;
 void output_line(char *line,IP_FILE *fp) ;
 void fill_buffer(int lines, int lines_per_page) ;
@@ -436,7 +436,7 @@ void add_table(int i) ;
 void add_category_filter_info(CF_ENUM filter, char *str) ;
 FILT_LIST *add_filter_info(FILT_LIST *list,char *str) ;
 void build_filter_lists(char *file) ;
-int make_description(char *desc,int line) ;
+int make_description(char *desc,char *type,int line) ;
 char *determine_heading(int last) ;
 void print_buffer(int last,int body_lines,int lines_per_page,int total_lines,
 		  int use_FF) ;
@@ -1092,6 +1092,23 @@ char *typeface ;
 
 /***********************************************/
 
+int start_of_entry(s)
+char *s ;
+{
+   if (!*s || !isupper(*s))
+      return 0 ;
+   return memcmp(s,"INT ",4) == 0 ||
+	  memcmp(s,"PORT ",5) == 0 ||
+	  memcmp(s,"CMOS ",5) == 0 ||
+	  memcmp(s,"MEM ",4) == 0 ||
+	  memcmp(s,"I2C ",4) == 0 ||
+	  memcmp(s,"CALL ",5) == 0 ||
+	  memcmp(s,"OPCODE ",7) == 0 ||
+	  memcmp(s,"MSR ",4) == 0 ;
+}
+
+/***********************************************/
+
 int is_keyword(s,keys,numkeys)
 char *s ;
 KEYWORDS *keys ;
@@ -1367,36 +1384,75 @@ int line, pages_printed ;
    int i ;
    int max_descrip ;
    int len, numlen ;
-
+   int is_INT_entry = 0 ;
+   
    s = buffer[line] ;
    if (start_of_entry(s))
       {
       memcpy(summary_line," -- -- -- ",10) ;
-      summary_line[1] = s[4] ;	 /* output interrupt number */
-      summary_line[2] = s[5] ;
-      len = 4 ;
-      s = buffer[line+1] ;
-      while (*s && isspace(*s))
-	 s++ ;
-      if (*s == 'A')
+      if (s[0] == 'I' && s[1] == 'N')
+	 is_INT_entry = 1 ;
+      if (is_INT_entry)
 	 {
-	 reg = s[1] ;
-	 while (*s && *s != '=')
-	    s++ ;
-	 s++ ;		/* skip the equal sign */
+	 summary_line[1] = s[4] ;	 /* output interrupt number */
+	 summary_line[2] = s[5] ;
+	 len = 4 ;
+	 s = buffer[line+1] ;
 	 while (*s && isspace(*s))
-	    s++ ;	/* skip the space between equal sign and number */
-	 if (isxdigit(*s) && isxdigit(s[1]))
+	    s++ ;
+	 if (*s == 'A')
 	    {
-	    if (reg == 'L')
-	       len += 3 ;
-	    summary_line[len++] = *s++ ;
-	    summary_line[len++] = *s++ ;
-	    if (reg == 'X')
+	    reg = s[1] ;
+	    while (*s && *s != '=')
+	       s++ ;
+	    s++ ;		/* skip the equal sign */
+	    while (*s && isspace(*s))
+	       s++ ;	/* skip the space between equal sign and number */
+	    if (isxdigit(*s) && isxdigit(s[1]))
 	       {
-	       len++ ;
+	       if (reg == 'L')
+		  len += 3 ;
 	       summary_line[len++] = *s++ ;
-	       summary_line[len] = *s ;
+	       summary_line[len++] = *s++ ;
+	       if (reg == 'X')
+		  {
+		  len++ ;
+		  summary_line[len++] = *s++ ;
+		  summary_line[len] = *s ;
+		  }
+	       }
+	    }
+	 }
+      else if (s[0] == 'C' && s[1] == 'M')
+	 {
+	 summary_line[1] = s[5] ;
+	 summary_line[2] = s[6] ;
+	 }
+      else if (s[0] == 'M' && s[1] == 'E')
+	 {
+	 memcpy(summary_line+1,s+4,4) ;
+	 if (s[8] == 'h' && s[9] == ':')
+	    memcpy(summary_line+5,s+10,4) ;
+	 else
+	    memcpy(summary_line+5,s+8,4) ;
+	 }
+      else if (s[0] == 'I' && s[1] == '2')
+	 {
+	 summary_line[1] = s[4] ;	/* output bus address */
+	 summary_line[2] = s[5] ;
+	 if (s[7] == '/')
+	    {
+	    summary_line[4] = s[8] ;
+	    summary_line[5] = s[9] ;
+	    if (s[10] != 'h')
+	       {
+	       summary_line[7] = s[10] ;
+	       summary_line[8] = s[11] ;
+	       }
+	    else if (s[11] == '/')
+	       {
+	       summary_line[7] = s[12] ;
+	       summary_line[8] = s[13] ;
 	       }
 	    }
 	 }
@@ -1412,6 +1468,12 @@ int line, pages_printed ;
 	 summary_line[len++] = ' ' ;
 	 }
       s = buffer[line] + 7 ;	/* find function description */
+      if (!is_INT_entry)
+	 {
+	 while (*s && !isspace(*s))
+	    s++ ;
+	 s++ ;
+	 }
       if (*s && *s != '-')	/* does the heading contain flags? */
 	 {
 	 while (*s && !isspace(*s))
@@ -1425,8 +1487,9 @@ int line, pages_printed ;
 	 s++ ;
       while (*s && isspace(*s))
 	 s++ ;
-      max_descrip = (page_width > sizeof(summary_line)-1) ? 
-				   sizeof(summary_line)-1 : page_width ;
+      max_descrip = (page_width > sizeof(summary_line)-1)
+		    ? sizeof(summary_line)-1
+		    : page_width ;
       while (len < max_descrip && *s)
 	 summary_line[len++] = *s++ ;
       summary_line[len] = '\0' ;
@@ -1481,7 +1544,7 @@ int i ;
    int len ;
    int summary_width ;
    char found = FALSE ;
-   
+
    prev_table++ ;
    firstchar = buffer[i][0] ;
    if (firstchar == 'C' || firstchar == 'V')  /* Call.. or Values... ? */
@@ -1528,21 +1591,34 @@ int i ;
    len = strlen(buffer[i])-1 ;
    if (len > page_width - summary_width - 5)
       len = page_width - summary_width - 5 ;
-   ip_write(buffer[i],len,tables) ;
+   if (len > 0)
+      ip_write(buffer[i],len,tables) ;
    newline(tables) ;
 }
 
 /***********************************************/
 
-int make_description(desc,line)
-char *desc ;
+int make_description(desc,type,line)
+char *desc, *type ;
 int line ;
 {
    char *start = desc ;
    
    summarize(line,pages_printed) ;
-   memcpy(desc,"INT ", 4) ;
-   desc += 4 ;
+   if (type)
+      {
+      int len = strlen(type) ;
+      char *blank = strchr(type,' ') ;
+      if (blank)
+	 len = blank - type + 1 ;
+      memcpy(desc,type,len) ;
+      desc += len ;
+      }
+   else
+      {
+      memcpy(desc,"INT ", 4) ;
+      desc += 4 ;
+      }
    *desc++ = summary_line[1] ;
    *desc++ = summary_line[2] ;
    if (summary_line[4] != '-')
@@ -1579,7 +1655,7 @@ int last ;
    memcpy(save,summary_line,sizeof(save)) ;
    if (start_of_entry(buffer[0]))
       {
-      header_first.len = make_description(header_first.desc,0) ;
+      header_first.len = make_description(header_first.desc,buffer[0],0) ;
       header_first.part = 1 ;
       header_first.first_on_page = TRUE ;
       }
@@ -1588,7 +1664,7 @@ int last ;
       for (i = 0 ; i < last ; i++)
 	 if (start_of_entry(buffer[i]))
 	    {
-	    header_first.len = make_description(header_first.desc,i) ;
+	    header_first.len = make_description(header_first.desc,buffer[i],i);
 	    header_first.part = 1 ;
 	    header_first.first_on_page = TRUE ;
 	    break ;
@@ -1612,7 +1688,7 @@ int last ;
       for (i = last-1 ; i > 0 ; i--)
 	 if (start_of_entry(buffer[i]))
 	    {
-	    header_last.len = make_description(header_last.desc,i) ;
+	    header_last.len = make_description(header_last.desc,buffer[i],i) ;
 	    header_last.part = 1 ;
 	    header_last.first_on_page = FALSE ;
 	    break ;

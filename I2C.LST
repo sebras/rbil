@@ -1,0 +1,2032 @@
+I2C-BUS DEVICES			Release 56		Last Change 21dec97
+Copyright (c) 1997 Ralf Brown
+
+--------!---Note-----------------------------
+Notes:	An I2C device uses two consecutive subaddresses; the low bit indicates
+	  whether a read (bit 0 = 1) or write (bit 0 = 0) is being performed
+	the header of each entry in this file indicates the device's subaddress
+	  (the "slave address" in official terminology) and the register number
+	  within the device; for certain indexed registers, the index value is
+	  given as the third value in the entry header
+	unless otherwise noted, all device registers are eight bits in size,
+	  and may be both read and written
+	the access method for communicating with an I2C device is
+	  implementation-dependent; for example, recent S3 chipsets supporting
+	  the "Scenic Highway" Local Peripheral Bus access the I2C bus via
+	  bit-banging of memory-mapped I/O register FF20h
+	  (see MEM A000h:FF00h"S3").  On the Zoran ZR36057 used by the
+	  Miro DC-30, the I2C bus is accessed by bit-banging memory-mapped
+	  register 17 (at offset 0x44).
+	maximum data rates on the I2C bus are also device-dependent; typical
+	  maximum rates are 80 kHz (DIMMs), 100 kHz (VPX3220A), and 400 kHz.
+----------I2800------------------------------
+I2C 28h/00h - Philips SAA5252 - VIDEO SIGNAL SETUP
+Desc:	the SAA5252 is a closed-captioning text decoder
+
+Bitfields for Philips SAA5252 video signal setup:
+Bit(s)	Description	(Table I010)
+ 3-0	offset from start of horizontal sync pulse
+ 4	vertical sync pulse has positive polarity
+ 5	horizontal sync pulse has positive polarity
+ 6	video output is negative-going instead of positive
+ 7	read Closed-Captioning data from second field instead of first
+SeeAlso: #I011
+----------I2801------------------------------
+I2C 28h/01h - Philips SAA5252 - CAPTION MODE
+Desc:	the SAA5252 is a closed-captioning text decoder
+
+Bitfields for Philips SAA5252 caption mode:
+Bit(s)	Description	(Table I011)
+ 1-0	enhanced display mode
+	00 video only
+	01 text only
+	10 normal caption mode
+	11 enhanced caption mode
+ 3-2	enhanced caption mode
+	00 shadowed character, video background
+	01 shadowed character, mesh background
+	10 normal character, video background
+	11 normal character, mesh background
+ 4	disable CC decoding and acquisition
+ 5	check lines 19-23, not just line 21
+ 6	user channel selection (0=Ch2, 1=Ch1)
+ 7	clear page memory
+SeeAlso: #I010
+----------I2802------------------------------
+I2C 28h/02h - Philips SAA5252 -
+----------I2803------------------------------
+I2C 28h/03h - Philips SAA5252 -
+----------I2804------------------------------
+I2C 28h/04h - Philips SAA5252 -
+----------I2880------------------------------
+I2C 28h/80h - Philips SAA5252 -
+Desc:	the SAA5252 is a closed-captioning text decoder
+----------I2881------------------------------
+I2C 28h/81h - Philips SAA5252 -
+----------I2882------------------------------
+I2C 28h/82h - Philips SAA5252 -
+----------I2883------------------------------
+I2C 28h/83h - Philips SAA5252 -
+Desc:	the SAA5252 is a closed-captioning text decoder
+----------I8600------------------------------
+I2C 86h/00h - ITT VPX 32xx/322xD - JEDEC MANUFACTURER ID
+Access:	Read-Only
+Range:	the VPX 32xx may be configured in hardware to reside at either 86h or
+	  8Eh
+Notes:	except as noted, the designation "VPX 32xx" refers to any of the
+	  following in the ITT Intermetall VPX video-pixel decoder series:
+	  VPX 3214C, VPX 3216B, VPX 3220, or VPX 3220A
+	except as noted, the designation "VPX 322xD" refers to either the
+	  VPX 3224D or VPX 3225D
+	the ITT VDP 3108 contains many of the same I2C registers as the
+	  VPX 32xx, although at a different bus address
+SeeAlso: I2C 86h/01h,I2C 86h/02h,I2C 86h/03h,I2C 8Ah/26h
+
+(Table I001)
+Values for JEDEC Manufacturer ID:
+ 01h	AMD
+ 02h	AMI
+ 04h	Fujitsu
+ 07h	Hitachi
+ 08h	Inmos
+ 0Bh	Intersil
+ 0Dh	Mostek
+ 0Eh	Motorola
+ 10h	NEC
+ 13h	Rockwell
+ 15h	Philips Semiconductor (Signetics)
+ 16h	Synertek
+ 19h	Xicor
+ 1Ah	Zilog
+ 1Ch	Mitsubishi
+ 1Fh	Atmel
+ 20h	SGS/Thompson
+ 23h	Wafer Scale Integration
+ 25h	Tristar
+ 26h	Visic
+ 29h	Microchip Technology
+ 2Ah	Ricoh Ltd.
+ 2Ch	Micron Technology
+ 2Fh	ACTEL
+ 31h	Catalyst
+ 32h	Panasonic
+ 34h	Cypress
+ 37h	Plessey
+ 38h	VTMC
+ 3Bh	Integrated CMOS (Vertex)
+ 3Dh	Tektronix
+ 3Eh	Sun Microsystems
+ 40h	MOSEL
+ 43h	Xerox
+ 45h	SunDisk
+ 46h	Elan Circuit Technology
+ 4Ah	Compaq
+ 4Ch	SCI
+ 4Fh	I3 Design System
+ 51h	Crosspoint Solutions
+ 52h	Alliance Semiconductor
+ 54h	Hewlett-Packard
+ 57h	New Media
+ 58h	MHS Electronic
+ 5Bh	Kawasaki Steel
+ 5Dh	TECMAR
+ 5Eh	Exar
+ 61h	Northern Telecom
+ 62h	Sanyo
+ 64h	Crystal Semiconductor
+ 67h	Asparix
+ 68h	Convex Computer
+ 6Bh	Transwitch
+ 6Dh	Cannon
+ 6Eh	Altera
+ 70h	Qualcomm
+ 73h	AMS (Austria Micro)
+ 75h	Aster Electronics
+ 76h	Bay Networks (Synoptic)
+ 79h	Thesys
+ 7Ah	Solbourne Computer
+ 7Ch	Dialog
+ 7Fh	continuation code (see #I029)
+ 83h	Fairchild
+ 85h	GTE
+ 86h	Harris
+ 89h	Intel
+ 8Ah	I.T.T.
+ 8Ch	Monolithic Memories
+ 8Fh	National
+ 91h	RCA
+ 92h	Raytheon
+ 94h	Seeq
+ 97h	Texas Instruments
+ 98h	Toshiba
+ 9Bh	Eurotechnique
+ 9Dh	Lucent (ATT)
+ 9Eh	Exel
+ A1h	Lattice Semiconductor
+ A2h	NCR
+ A4h	IBM
+ A7h	International CMOS Technology
+ A8h	SSSI
+ ABh	VLSI
+ ADh	Hyundai Electronics
+ AEh	OKI Semiconductor
+ B0h	Sharp
+ B3h	IDT
+ B5h	DEC
+ B6h	LSI Logic
+ B9h	Thinking Machine
+ BAh	Thomson CSF
+ BCh	Honeywell
+ BFh	SST
+ C1h	Siemens
+ C2h	Macronix
+ C4h	Plus Logic
+ C7h	European Silicon Str.
+ C8h	Apple Computer
+ C9h	Xilinx
+ CBh	Protocol Engines
+ CDh	Seiko Instruments
+ CEh	Samsung
+ D0h	Klic
+ D3h	Tandem
+ D5h	Integrated Silicon Solutions
+ D6h	Brooktree
+ D9h	Performance Semicond.
+ DAh	Winbond Electronic
+ DCh	Bright Micro
+ DFh	PCMCIA
+ E0h	Goldstar
+ E3h	Array Microsystems
+ E5h	Analog Devices
+ E6h	PMC-Sierra
+ E9h	Quality Semiconductor
+ EAh	Nimbus Technology
+ ECh	ITT Intermetall (see also #I002)
+ EFh	NEXCOM
+ F1h	Sony
+ F2h	Cray Research
+ F4h	Vitesse
+ F7h	Zentrum Mikroelektronic
+ F8h	TRW
+ FBh	Allied-Signal
+ FDh	Media Vision
+ FEh	Level One Communication
+Note:	bit 7 is a parity bit, set to ensure odd parity
+
+(Table I001)
+Values for JEDEC Manufacturer ID ("bank two"):
+ 01h	Cirrus Logic
+ !!!
+ 9Eh	DoD
+ !!!
+ 37h	AMIC Technology
+SeeAlso: #I028
+----------I8601------------------------------
+I2C 86h/01h - ITT VPX 32xx/322xD - CHIP ID, LOW BYTE
+Access:	Read-Only
+SeeAlso: I2C 86h/00h,I2C 86h/02h
+
+(Table I002)
+Values for ITT Chip ID:
+ 4260h	VPX 3216B
+ 4280h	VPX 3214C
+ 4680h	VPX 3220A
+ 7230h	VPX 3225D
+ 7231h	VPX 3224D
+SeeAlso: #I001
+----------I8602------------------------------
+I2C 86h/02h - ITT VPX 32xx/322xD - CHIP ID, HIGH BYTE
+Access:	Read-Only
+SeeAlso: I2C 86h/00h,I2C 86h/01h
+----------I8603------------------------------
+I2C 86h/03h - ITT VPX 32xx/322xD - JEDEC2
+Access:	Read-Only
+
+Bitfields for ITT JEDEC2 register:
+Bit(s)	Description	(Table I003)
+ 0	IFIELD
+ 7-1	reserved (all ones for VPX 3220A)
+----------I8620------------------------------
+I2C 86h/20h - ITT VPX 32xx - IF compensation
+Access:	Read/Write
+Note:	this register is also present on the ITT VDP 3108
+SeeAlso: I2C 86h/22h,I2C 8Ah/20h
+
+Bitfields for ITT VDP 3108/VPX 32xx IF compensation:
+Bit(s)	Description	(Table I004)
+ 1-0	compensation
+	00  12 dB/octave
+	01  reserved
+	10  6 dB/octave
+	11  none
+ 7-2	reserved (0)
+----------I8622------------------------------
+I2C 86h/22h - ITT VPX 32xx - SECAM deemphasis / PAL lowpass peaking filter
+Note:	this register is also present on the ITT VDP 3108
+
+Bitfields for VPX 32xx SECAM deemphasis / PAL lowpass peaking filter:
+Bit(s)	Description	(Table I005)
+ 4-0	SECAM deemphasis/PAL filter (1Fh = maximum)
+ 5	reserved
+ 7-6	chroma bandwidth select
+	00 narrow
+	01 normal
+	10 broad
+	11 reserved
+----------I8623------------------------------
+I2C 86h/23h U - ITT VPX 32xx - Unimplemented
+Note:	this register appears to correspond to a VDP 3108 register which is
+	  not applicable to the VPX series
+SeeAlso: I2C 8Ah/23h
+----------I8624------------------------------
+I2C 86h/24h U - ITT VPX 32xx - Unimplemented
+Note:	this register appears to correspond to a VDP 3108 register which is
+	  not applicable to the VPX series
+SeeAlso: I2C 8Ah/24h
+----------I8625------------------------------
+I2C 86h/25h U - ITT VPX 32xx - Unimplemented
+Note:	this register appears to correspond to a VDP 3108 register which is
+	  not applicable to the VPX series
+SeeAlso: I2C 8Ah/25h
+----------I8626------------------------------
+I2C 86h/26h - ITT VPX 32xx - FPRAM read index
+Size:	16 bits, big-endian
+Note:	this register is also present on the ITT VDP 3108
+SeeAlso: #I007,I2C 86h/27h"VPX 32xx",I2C 86h/28h"VPX 32xx"
+SeeAlso: I2C 86h/29h"VPX 32xx",I2C 8Ah/26h
+----------I8627------------------------------
+I2C 86h/27h - ITT VPX 32xx - FPRAM write index
+Size:	16 bits, big-endian
+Note:	this register is also present on the ITT VDP 3108
+SeeAlso: #I007,I2C 86h/26h"VPX 32xx",I2C 86h/28h"VPX 32xx"
+SeeAlso: I2C 86h/29h"VPX 32xx",I2C 8Ah/27h
+----------I8628------------------------------
+I2C 86h/28h - ITT VPX 32xx - FPRAM data transfer
+Size:	16 bits, big-endian
+Note:	this register is also present on the ITT VDP 3108
+SeeAlso: I2C 86h/26h"VPX 32xx",I2C 86h/27h"VPX 32xx",I2C 86h/29h"VPX 32xx"
+SeeAlso: I2C 8Ah/28h
+
+(Table I007)
+Values for ITT VPX 32xx FPRAM index:
+ 00h	???
+ 01h	???
+ 02h	???
+ 03h	???
+ 04h	???
+ 05h	???
+ 06h	???
+ 07h	???
+ 08h	???
+ 09h	???
+ 0Ah	???
+ 0Bh	???
+ 0Ch	???
+ 0Dh	???
+ 0Eh	???
+ 0Fh	???
+ 10h	???
+ 11h	??? status
+ 12h	??? status
+ 13h	??? status
+ 14h	??? (read-only)
+ 15h	???
+ 16h	??? status
+ 17h	???
+ 18h	???
+ 19h	colorburst frequency (low)			(see I2C 86h/28h/19h)
+ 1Ah	colorburst frequency (high)			(see I2C 86h/28h/1Ah)
+ 1Bh	standard select					(see I2C 86h/28h/1Bh)
+ 1Ch	NTSC tint angle (color balance)			(see I2C 86h/28h/1Ch)
+ 1Dh	???
+ 1Eh	???
+ 1Fh	???
+ 20h	current AGC gain value (read-only)		(see I2C 86h/28h/20h)
+ 21h	???
+ 22h	??? status (read-only)
+ 23h	???
+ 24h	???
+ 25h	??? status
+ 26h	crystal oscillator line-locked mode		(see I2C 86h/28h/26h)
+ 27h	??? status
+ 28h	??? vsync reference level?
+ 29h	???
+ 2Ah	???
+ 2Bh	???
+ 2Ch	???
+ 2Dh	???
+ 2Eh	??? status
+ 2Fh	??? status
+ 30h	??? status
+ 31h	???
+ 32h	??? status
+ 33h	??? (read-only)
+ 34h	???
+ 35h	???
+ 36h	??? status (signed?)
+ 37h	??? status
+ 38h	???
+ 39h	??? status
+ 3Ah	??? status (signed?)
+ 3Bh	??? (read-only)
+ 3Ch	??? (read-only)
+ 3Dh	???
+ 3Eh	???
+ 3Fh	??? status
+ 40h	??? status (signed?)
+ 41h	measured sync amplitude				(see I2C 86h/28h/41h)
+ 42h	??? status (signed)
+ 43h	??? position of hsync color attenuation? (signed)
+ 44h	???
+ 45h	??? status
+ 46h	??? status
+ 47h	??? adj for hsync rate
+ 48h	??? status
+ 49h	??? status
+ 4Ah	??? status
+ 4Bh	Horizontal PLL control				(see I2C 86h/28h/4Bh)
+ 4Ch	???
+ 4Dh	???
+ 4Eh	???
+ 4Fh	???
+ 50h	???
+ 51h	??? status
+ 52h	??? status
+ 53h	automatic standard recognition status		(see I2C 86h/28h/53h)
+ 54h	???
+ 55h	???
+ 56h	???
+ 57h	???
+ 58h	crystal oscillator center frequency adjust (signed)
+ 59h	crystal oscillator center frequency adjust for line-locked mode
+ 5Ah	??? status
+ 5Bh	???
+ 5Ch	???
+ 5Dh	???
+ 5Eh	??? status (bits 4-0 always 0)
+ 5Fh	??? status
+ 60h	??? (read-only)
+ 61h	??? (read-only)
+ 62h-6Fh unused???
+ 70h	Window#1 Read Table: Vertical Begin		(see I2C 86h/28h/70h)
+ 71h	Window#1 Read Table: Vertical Lines In		(see I2C 86h/28h/71h)
+ 72h	Window#1 Read Table: Vertical Lines Out		(see I2C 86h/28h/72h)
+ 73h	Window#1 Read Table: Horizontal Begin		(see I2C 86h/28h/73h)
+ 74h	Window#1 Read Table: Horizontal Length		(see I2C 86h/28h/74h)
+ 75h	Window#1 Read Table: Horizontal Number of Pixels (see I2C 86h/28h/75h)
+ 76h	Window#1 Read Table: ???
+ 77h	Window#1 Read Table: ???
+ 78h	Window#1 Read Table: ???
+ 79h	Window#1 Read Table: ???
+ 7Ah	Window#1 Read Table: ???
+ 7Bh	Window#1 Read Table: Blurring/Aliasing Filter	(see I2C 86h/28h/7Bh)
+ 7Ch	Window#2 Read Table: Vertical Begin		(see I2C 86h/28h/7Ch)
+ 7Dh	Window#2 Read Table: Vertical Lines In		(see I2C 86h/28h/7Dh)
+ 7Eh	Window#2 Read Table: Vertical Lines Out		(see I2C 86h/28h/7Eh)
+ 7Fh	Window#2 Read Table: Horizontal Begin		(see I2C 86h/28h/7Fh)
+ 80h	Window#2 Read Table: Horizontal Length		(see I2C 86h/28h/80h)
+ 81h	Window#2 Read Table: Horizontal Number of Pixels (see I2C 86h/28h/81h)
+ 82h	Window#2 Read Table: ???
+ 83h	Window#2 Read Table: ???
+ 84h	Window#2 Read Table: ???
+ 85h	Window#2 Read Table: ???
+ 86h	Window#2 Read Table: ???
+ 87h	Window#2 Read Table: Blurring/Aliasing Filter	(see I2C 86h/28h/87h)
+ 88h	Window#1 Load Table: Vertical Begin		(see I2C 86h/28h/88h)
+ 89h	Window#1 Load Table: Vertical Lines In		(see I2C 86h/28h/89h)
+ 8Ah	Window#1 Load Table: Vertical Lines Out		(see I2C 86h/28h/8Ah)
+ 8Bh	Window#1 Load Table: Horizontal Begin		(see I2C 86h/28h/8Bh)
+ 8Ch	Window#1 Load Table: Horizontal Length		(see I2C 86h/28h/8Ch)
+ 8Dh	Window#1 Load Table: Horizontal Number of Pixels (see I2C 86h/28h/8Dh)
+ 8Eh	Window#2 Load Table: Vertical Begin		(see I2C 86h/28h/8Eh)
+ 8Fh	Window#2 Load Table: Vertical Lines In		(see I2C 86h/28h/8Fh)
+ 90h	Window#2 Load Table: Vertical Lines Out		(see I2C 86h/28h/90h)
+ 91h	Window#2 Load Table: Horizontal Begin		(see I2C 86h/28h/91h)
+ 92h	Window#2 Load Table: Horizontal Length		(see I2C 86h/28h/92h)
+ 93h	Window#2 Load Table: Horizontal Number of Pixels (see I2C 86h/28h/93h)
+ 94h	???
+ 95h	detected scan lines per field??? (usually 106h for NTSC)
+ 96h	??? status
+ 97h	??? (read-only)
+ 98h	???
+ 99h	[3220 only] InfoWord status register		(see I2C 86h/28h/99h)
+ 9Ah	[3220 only] CommandWord control register	(see I2C 86h/28h/9Ah)
+ 9Ah	[3220A] ???
+ 9Bh	??? (read-only)
+ 9Ch-9Fh unused???
+ A0h	ACC reference level (color saturation)		(see I2C 86h/28h/A0h)
+ A1h	??? status
+ A2h	??? status
+ A3h	ACC multiplier for SECAM Dr to adjust Cr level	(see I2C 86h/28h/A3h)
+ A4h	ACC multiplier for SECAM Db to adjust Cb level	(see I2C 86h/28h/A4h)
+ A5h	measured color-burst amplitude			(see I2C 86h/28h/A5h)
+ A6h	???
+ A7h	???
+ A8h	amplitude color killer threshold		(see I2C 86h/28h/A8h)
+ A9h	amplitude color killer hysteresis		(see I2C 86h/28h/A9h)
+ AAh	??? status
+ ABh	??? status
+ ACh	??? status
+ ADh	??? status
+ AEh	???
+ AFh	???
+ B0h	??? status
+ B1h	??? status
+ B2h	Sync Amplitude reference			(see I2C 86h/28h/B2h)
+ B3h	???
+ B4h	???
+ B5h	secondary Sync Amplitude reference???
+ B6h	??? status
+ B7h	??? status
+ B8h	field counter???
+ B9h	??? status
+ BAh	???
+ BBh	??? status
+ BCh	???
+ BDh	???
+ BEh	start value for Automatic Gain Control gain	(see I2C 86h/28h/BEh)
+ BFh	??? (read-only)
+ C0h	horizontal retrace frequency			(see I2C 86h/28h/C0h)
+ C1h	horizontal offset				(see I2C 86h/28h/C1h)
+ C2h	??? affects colors
+ C3h	???
+ C4h	???
+ C5h	??? status
+ C6h	??? status
+ C7h	??? black level expander?
+ C8h	??? black level expander?
+ C9h	???
+ CAh	???
+ CBh	??? status
+ CCh	??? status
+ CDh	??? status
+ CEh	???
+ CFh	???
+ D0h-DFh blurring/aliasing filter setup (array of 6-bit values)
+ E0h	???
+ E1h	???
+ E2h	??? status
+ E3h	??? status
+ E4h	??? status
+ E5h	???
+ E6h	???
+ E7h	vertical standard lock				(see I2C 86h/28h/E7h)
+ E8h	??? status (signed?)
+ E9h	??? (read-only)
+ EAh	??? status
+ EBh	number of horizontal syncs detected in last frame (see I2C 86h/28h/EBh)
+ ECh	??? (read-only)
+ EDh	??? (read-only)
+ EEh	??? status
+ EFh	???
+ F0h	[3220A] CommandWord control register		(see I2C 86h/28h/F0h)
+ F1h	[3220A] InfoWord status register		(see I2C 86h/28h/F1h)
+ F2h	[not 3220] TV standard - write			(see I2C 86h/28h/F2h)
+ F3h	[not 3220] TV standard - read			(see I2C 86h/28h/F3h)
+ F4h	???
+ F5h-F8h unused???
+ F9h	??? status
+ FAh	??? status
+ FBh	???
+ FCh	???
+ FDh	???
+ FEh	???
+ FFh	???
+----------I8628--SF19------------------------
+I2C 86h/28h/19h U - ITT VPX 3220A - FP - Colorburst Frequency (Low)
+Note:	this register is updated whenever the television standard is set
+	  via FP-RAM location 1Bh
+SeeAlso: I2C 86h/28h/1Ah,I2C 86h/28h/1Bh,#I044
+----------I8628--SF1A------------------------
+I2C 86h/28h/1Ah U - ITT VPX 3220A - FP - Colorburst Frequency (High)
+Note:	this register is updated whenever the television standard is set
+	  via FP-RAM location 1Bh
+SeeAlso: I2C 86h/28h/19h,I2C 86h/28h/1Bh
+
+(Table I044)
+Values for ITT VPX 3220A colorburst frequency:
+ 2D33EAh  = 3.575611 MHz  (TV standard 4)
+ 2D40A5h  = 3.579545 MHz  (TV standards 1,7)
+ 2D48C6h  = 3.582056 MHz  (TV standard 5)
+ 362EFAh  = 4.286    MHz  (TV standard 2)
+ 380CB8h  = 4.433618 MHz  (TV standards 0,3,6)
+Note:	the frequency in Hz is equal to 1.206944 * setting
+----------I8628--SF1B------------------------
+I2C 86h/28h/1Bh U - ITT VPX 32xx - FP - Standard Select
+Note:	this register is documented for the VDP 3108, but not the VPX 32xx
+SeeAlso: I2C 86h/28h,I2C 86h/29h,#I019,I2C 86h/28h/19h,I2C 86h/28h/1Ah
+
+Bitfields for VDP 3108/VPX 32xx standard select register:
+Bit(s)	Description	(Table I030)
+ 2-0	television standard (see #I039)
+ 8	no HPLL setup
+ 9	no vertical setup
+ 10	no ACC setup
+ 11	write 0 to initialize standard
+	this bit is set to 1 once standard-setting is complete
+----------I8628--SF1C------------------------
+I2C 86h/28h/1Ch - ITT VPX 32xx - FP - NTSC Tint Angle (color balance)
+Size:	12 bits, signed
+SeeAlso: I2C 86h/28h,I2C 86h/29h,I2C 86h/E6h,I2C 86h/E7h,#I019
+----------I8628--SF20------------------------
+I2C 86h/28h/20h - ITT VPX 32xx - FP - Current AGC Gain Value
+SeeAlso: I2C 86h/28h/BEh,I2C 86h/28h,I2C 86h/29h,#I019
+----------I8628--SF26------------------------
+I2C 86h/28h/26h - ITT VPX 32xx - FP - Crystal Oscillator Line-Locked Mode
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+
+(Table I031)
+Values for Crystal Oscillator Line-Locked Mode:
+---write---
+ 000h	disable lock
+ 064h	enable lock
+---read---
+ 000h	oscillator currently unlocked
+ FFFh	currently locked
+----------I8628--SF41------------------------
+I2C 86h/28h/41h U - ITT VPX 32xx - FP - Measured Sync Amplitude
+Note:	this register is documented for the VDP 3108, but not the VPX 32xx
+SeeAlso: I2C 86h/28h,I2C 86h/29h,#I019
+----------I8628--SF4B------------------------
+I2C 86h/28h/4Bh - ITT VPX 32xx - FP - Horizontal PLL Control
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+
+Bitfields for VPX 32xx Horizontal PLL Control:
+Bit(s)	Description	(Table I032)
+ 4-0	gain for integrating part of PLL control
+ 9-5	gain for proportional part of PLL contorl
+ 11-10	reserved
+----------I8628--SF53------------------------
+I2C 86h/28h/53h U - ITT VPX 32xx - FP - Automatic Standard Recognition Status
+Note:	this register is documented for the VDP 3108, but not the VPX 32xx
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+
+Bitfields for VPX 32xx/VDP 31xxB Automatic Standard Recognition status:
+Bit(s)	Description	(Table I033)
+ 0	vertical sync detected
+ 1	horizontally ocked
+ 2	reserved
+ 3	color amplitude killer active
+ 4	(VDP31xxB) disable color amplitude killer
+ 5	color ident killer active
+ 6	(VDP31xxB) disable color ident killer
+ 7	(VDP31xxB) interlace detected
+ 8	(VDP31xxB) no vertical sync detection
+ 9	(VDP31xxB) spurious vertical sync detection
+----------I8628--SF58------------------------
+I2C 86h/28h/58h - ITT VPX 32xx - FP - Crystal Oscil. Center Frequency Adjust
+SeeAlso: I2C 86h/28h/26h,I2C 86h/28h/59h,I2C 86h/28h,I2C 86h/29h,#I019
+----------I8628--SF59------------------------
+I2C 86h/28h/59h - ITT VPX 32xx - FP - Crystal Oscil. Center Freq Adj (Locked)
+Note:	to set the center frequency adjust in FPRAM location 58h, set 58h to
+	  000h, set lock mode via FPRAM 26h, then read this register and write
+	  the negative of the value to FRPAM 58h
+SeeAlso: I2C 86h/28h/26h,I2C 86h/28h/58h,I2C 86h/28h,I2C 86h/29h,#I019
+----------I8628--SF70------------------------
+I2C 86h/28h/70h U - ITT VPX 32xx - FP - Window#1 Read Table: Vertical Begin
+Size:	9 bits
+Note:	this register is updated whenever the Window#1 Load Table is latched
+	  via the CommandWord, by copying FPRAM 88h
+SeeAlso: I2C 86h/28h/88h,I2C 86h/28h/F0h,I2C 86h/28h,I2C 86h/29h
+----------I8628--SF71------------------------
+I2C 86h/28h/71h U - ITT VPX 32xx - FP - Window#1 Read Table: Vertical Lines In
+Note:	this register is updated whenever the Window#1 Load Table is latched
+	  via the CommandWord, by copying FPRAM 89h (inverting bits 11 and 10)
+SeeAlso: I2C 86h/28h/89h,I2C 86h/28h/F0h,I2C 86h/28h,I2C 86h/29h
+
+Bitfields for VPX 32xx Vertical Lines In (Latched):
+Bit(s)	Description	(Table I034)
+ 8-0	number of lines (vertical begin + lines_in <= lines_per_field)
+ 9	unused???
+ 10	enable on even fields
+ 11	enable on odd fields
+----------I8628--SF72------------------------
+I2C 86h/28h/72h U - ITT VPX 32xx - FP - Window#1 Read Table: Vertical Lines Out
+Notes:	this register is updated whenever the Window#1 Load Table is latched
+	  via the CommandWord, by copying FPRAM 8Ah
+	vertical lines out must be <= vertical lines in; vertical interpolation
+	  is not supported (if fewer lines out, a nearest-neighbor algorithm is
+	  used to drop lines)
+SeeAlso: I2C 86h/28h/8Ah,I2C 86h/28h/F0h,I2C 86h/28h,I2C 86h/29h
+----------I8628--SF73------------------------
+I2C 86h/28h/73h U - ITT VPX 32xx - FP - Window#1 Read Table: Horizontal Begin
+Desc:	horizontal start of window after scaling
+Notes:	this register is updated whenever the Window#1 Load Table is latched
+	  via the CommandWord, by copying FPRAM 8Bh
+	start must be an even value; values > 0 crop the left side of image
+SeeAlso: I2C 86h/28h/8Bh,I2C 86h/28h/F0h,I2C 86h/28h,I2C 86h/29h
+----------I8628--SF74------------------------
+I2C 86h/28h/74h U - ITT VPX 32xx - FP - Window#1 Read Table: Horizontal Length
+Size:	11 bits
+Notes:	this register is updated whenever the Window#1 Load Table is latched
+	  via the CommandWord, by copying FPRAM 8Ch
+	length must be an even value; begin + length <= numpixels
+SeeAlso: I2C 86h/28h/8Ch,I2C 86h/28h/F0h,I2C 86h/28h,I2C 86h/29h
+----------I8628--SF75------------------------
+I2C 86h/28h/75h U - ITT VPX 32xx - FP - Window#1 Read Table: Horiz. NumPixels
+Size:	11 bits
+Desc:	number of active pixels for a full active line, after scaling
+Notes:	this register is updated whenever the Window#1 Load Table is latched
+	  via the CommandWord, by copying FPRAM 8Dh
+	32 <= numpixels <= 1056 (864 for 60-Hz video)
+SeeAlso: I2C 86h/28h/8Dh,I2C 86h/28h/F0h,I2C 86h/28h,I2C 86h/29h
+----------I8628--SF76------------------------
+I2C 86h/28h/76h U - ITT VPX 32xx - FP - Window#1 Read Table: 
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF77------------------------
+I2C 86h/28h/77h U - ITT VPX 32xx - FP - Window#1 Read Table: 
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF78------------------------
+I2C 86h/28h/78h U - ITT VPX 32xx - FP - Window#1 Read Table: 
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF79------------------------
+I2C 86h/28h/79h U - ITT VPX 32xx - FP - Window#1 Read Table: 
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF7A------------------------
+I2C 86h/28h/7Ah U - ITT VPX 32xx - FP - Window#1 Read Table: 
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF7B------------------------
+I2C 86h/28h/7Bh U - ITT VPX 32xx - FP - Window#1 Read Table: Blur/Alias Filter
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF7C------------------------
+I2C 86h/28h/7Ch U - ITT VPX 32xx - FP - Window#2 Read Table: Vertical Begin
+Size:	9 bits
+Note:	this register is updated whenever the Window#2 Load Table is latched
+	  via the CommandWord, by copying FPRAM 8Eh
+SeeAlso: I2C 86h/28h/8Eh,I2C 86h/28h/F0h,I2C 86h/28h,I2C 86h/29h
+----------I8628--SF7D------------------------
+I2C 86h/28h/7Dh U - ITT VPX 32xx - FP - Window#2 Read Table: Vertical Lines In
+Note:	this register is updated whenever the Window#2 Load Table is latched
+	  via the CommandWord, by copying FPRAM 8Fh
+SeeAlso: #I034,I2C 86h/28h/8Fh,I2C 86h/28h/F0h,I2C 86h/28h,I2C 86h/29h
+----------I8628--SF7E------------------------
+I2C 86h/28h/7Eh U - ITT VPX 32xx - FP - Window#2 Read Table: Vertical Lines Out
+Notes:	this register is updated whenever the Window#2 Load Table is latched
+	  via the CommandWord, by copying FPRAM 90h
+	vertical lines out must be <= vertical lines in; vertical interpolation
+	  is not supported (if fewer lines out, a nearest-neighbor algorithm is
+	  used to drop lines)
+SeeAlso: I2C 86h/28h/90h,I2C 86h/28h/F0h,I2C 86h/28h,I2C 86h/29h
+----------I8628--SF7F------------------------
+I2C 86h/28h/7Fh U - ITT VPX 32xx - FP - Window#2 Read Table: Horizontal Begin
+Desc:	horizontal start of window after scaling
+Notes:	this register is updated whenever the Window#2 Load Table is latched
+	  via the CommandWord, by copying FPRAM 91h
+	start must be an even value; values > 0 crop the left side of image
+SeeAlso: I2C 86h/28h/91h,I2C 86h/28h/F0h,I2C 86h/28h,I2C 86h/29h
+----------I8628--SF80------------------------
+I2C 86h/28h/80h U - ITT VPX 32xx - FP - Window#2 Read Table: Horizontal Length
+Size:	11 bits
+Notes:	this register is updated whenever the Window#2 Load Table is latched
+	  via the CommandWord, by copying FPRAM 92h
+	length must be an even value; begin + length <= numpixels
+SeeAlso: I2C 86h/28h/92h,I2C 86h/28h/F0h,I2C 86h/28h,I2C 86h/29h
+----------I8628--SF81------------------------
+I2C 86h/28h/81h U - ITT VPX 32xx - FP - Window#2 Read Table: Horiz. NumPixels
+Size:	11 bits
+Desc:	number of active pixels for a full active line, after scaling
+Notes:	this register is updated whenever the Window#2 Load Table is latched
+	  via the CommandWord, by copying FPRAM 93h
+	32 <= numpixels <= 1056 (864 for 60-Hz video)
+SeeAlso: I2C 86h/28h/93h,I2C 86h/28h/F0h,I2C 86h/28h,I2C 86h/29h
+----------I8628--SF82------------------------
+I2C 86h/28h/82h U - ITT VPX 32xx - FP - Window#2 Read Table: 
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF83------------------------
+I2C 86h/28h/83h U - ITT VPX 32xx - FP - Window#2 Read Table: 
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF84------------------------
+I2C 86h/28h/84h U - ITT VPX 32xx - FP - Window#2 Read Table: 
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF85------------------------
+I2C 86h/28h/85h U - ITT VPX 32xx - FP - Window#2 Read Table: 
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF86------------------------
+I2C 86h/28h/86h U - ITT VPX 32xx - FP - Window#2 Read Table: 
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF87------------------------
+I2C 86h/28h/87h U - ITT VPX 32xx - FP - Window#2 Read Table: Blur/Alias Filter
+Note:	this register is updated whenever Window#2 is latched via the
+	  CommandWord
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF88------------------------
+I2C 86h/28h/88h - ITT VPX 32xx - FP - Window#1 Load Table: Vertical Begin
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF89------------------------
+I2C 86h/28h/89h - ITT VPX 32xx - FP - Window#1 Load Table: Vertical Lines In
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF8A------------------------
+I2C 86h/28h/8Ah - ITT VPX 32xx - FP - Window#1 Load Table: Vertical Lines Out
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF8B------------------------
+I2C 86h/28h/8Bh - ITT VPX 32xx - FP - Window#1 Load Table: Horizontal Begin
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF8C------------------------
+I2C 86h/28h/8Ch - ITT VPX 32xx - FP - Window#1 Load Table: Horizontal Length
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF8D------------------------
+I2C 86h/28h/8Dh - ITT VPX 32xx - FP - Window#1 Load Table: Horizontal NumPixels
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF8E------------------------
+I2C 86h/28h/8Eh - ITT VPX 32xx - FP - Window#2 Load Table: Vertical Begin
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF8F------------------------
+I2C 86h/28h/8Fh - ITT VPX 32xx - FP - Window#2 Load Table: Vertical Lines In
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF90------------------------
+I2C 86h/28h/90h - ITT VPX 32xx - FP - Window#2 Load Table: Vertical Lines Out
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF91------------------------
+I2C 86h/28h/91h - ITT VPX 32xx - FP - Window#2 Load Table: Horizontal Begin
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF92------------------------
+I2C 86h/28h/92h - ITT VPX 32xx - FP - Window#2 Load Table: Horizontal Length
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF93------------------------
+I2C 86h/28h/93h - ITT VPX 32xx - FP - Window#2 Load Table: Horizontal NumPixels
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SF99------------------------
+I2C 86h/28h/99h - ITT VPX 3220 - FP - "InfoWord" status register
+SeeAlso: I2C 86h/28h/9Ah,I2C 86h/28h/F0h,I2C 86h/28h,I2C 86h/29h
+
+Bitfields for VPX 3220 InfoWord status register:
+Bit(s)	Description	(Table I035)
+ 1-0	reserved
+ 2	transport rate
+	0  20.25 MHz
+	1  13.5 MHz
+ 4-3	functional mode
+	00 open
+	01 forced
+	10 scan
+ 11-5	reserved
+SeeAlso: #I036
+----------I8628--SF9A------------------------
+I2C 86h/28h/9Ah - ITT VPX 3220 - FP - "CommandWord" command register
+SeeAlso: I2C 86h/28h/99h,I2C 86h/28h/F0h,I2C 86h/28h,I2C 86h/29h
+
+Bitfields for VPX 3220 CommandWord command register:
+Bit(s)	Description	(Table I036)
+ 0	line standard (for back end)
+ 1	transport rate
+	0  20.25 MHz
+	1  13.5 MHz
+ 3-2	functional mode
+	00 open
+	01 forced
+	10 scan
+ 4	Window#1 latch
+	=1 latch new window definition on next vertical retrace; autom. cleared
+ 5	Window#2 latch
+	=1 latch new window definition on next vertical retrace; autom. cleared
+ 11-6	reserved
+SeeAlso: #I035
+----------I8628--SFA0------------------------
+I2C 86h/28h/A0h - ITT VPX 32xx - FP - ACC Reference Level (Color Saturation)
+SeeAlso: I2C 86h/28h,I2C 86h/29h,#I019
+----------I8628--SFA3------------------------
+I2C 86h/28h/A3h - ITT VPX 32xx - FP - ACC Multiplier (SECAM Dr to Cr)
+SeeAlso: I2C 86h/28h,I2C 86h/29h,#I019
+----------I8628--SFA4------------------------
+I2C 86h/28h/A4h - ITT VPX 32xx - FP - ACC Multiplier (SECAM Db to Cb)
+SeeAlso: I2C 86h/28h,I2C 86h/29h,#I019
+----------I8628--SFA5------------------------
+I2C 86h/28h/A5h U - ITT VPX 32xx - FP - Measured Color-Burst Amplitude
+Note:	this register is documented for the VDP 3108, but not the VPX 32xx
+SeeAlso: I2C 86h/28h,I2C 86h/29h,#I019
+----------I8628--SFA8------------------------
+I2C 86h/28h/A8h - ITT VPX 32xx - FP - Amplitude Color Killer Threshold
+SeeAlso: I2C 86h/28h,I2C 86h/29h,#I019
+----------I8628--SFA9------------------------
+I2C 86h/28h/A9h - ITT VPX 32xx - FP - Amplitude Color Killer Hysteresis
+SeeAlso: I2C 86h/28h,I2C 86h/29h,#I019
+----------I8628--SFB2------------------------
+I2C 86h/28h/B2h - ITT VPX 32xx - FP - Sync Amplitude Reference
+Note:	the value in this location controls the automatic gain control;
+	  setting both this location and location B5h to 000h disables AGC
+SeeAlso: I2C 86h/28h/B5h,I2C 86h/28h/BEh,I2C 86h/29h,#I019
+----------I8628--SFB5------------------------
+I2C 86h/28h/B5h u - ITT VPX 32xx - FP - Sync Amplitude Reference???
+Note:	the value in this location helps control the automatic gain control;
+	  setting both location B2h and this location to 000h disables AGC
+SeeAlso: I2C 86h/28h/B2h,I2C 86h/28h/BEh,I2C 86h/29h,#I019
+----------I8628--SFBE------------------------
+I2C 86h/28h/BEh - ITT VPX 32xx - FP - Start Value for Automatic Gain Control
+Size:	6 bits
+Note:	if automatic gain control has been disabled by writing 000h to FP-RAM
+	  locations B2h and B5h, then the actual gain value can be adjusted
+	  by writing this location; the current gain value may be read from
+	  location 20h
+SeeAlso: I2C 86h/28h/B2h,I2C 86h/28h/B5h,I2C 86h/28h/20h,I2C 86h/29h,#I019
+----------I8628--SFC0------------------------
+I2C 86h/28h/C0h U - ITT VPX 32xx - FP - Horizontal Retrace Frequency
+Desc:	this appears to be the base frequency from which the HPLL attempts to
+	  lock onto the video signal (default = 700dec)
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SFC1------------------------
+I2C 86h/28h/C1h U - ITT VPX 32xx - FP - Horizontal Offset
+Desc:	signed offset from horizontal retrace to start of video data
+	  (min E52h, max 354h)
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SFD0------------------------
+I2C 86h/28h/D0h U - ITT VPX 32xx - FP - Blurring/Aliasing Filter Array
+Size:	32 entries of 6 bits each (16 locations in FPRAM)
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8628--SFE7------------------------
+I2C 86h/28h/E7h - ITT VPX 32xx - FP - Vertical Lock
+SeeAlso: I2C 86h/28h,I2C 86h/29h,#I019
+
+Bitfields for VPX 32xx Vertical Lock:
+Bit(s)	Description	(Table I042)
+ 0	enable vertical standard lock
+ 11-1	expected number of lines per field
+----------I8628--SFEB------------------------
+I2C 86h/28h/EBh - ITT VPX 32xx - FP - Lines in Last Frame
+SeeAlso: I2C 86h/28h,I2C 86h/29h,#I019
+----------I8628--SFF0------------------------
+I2C 86h/28h/F0h - ITT VPX 32xx - FP - "CommandWord" control register
+SeeAlso: I2C 86h/28h/F1h,I2C 86h/28h/99h,I2C 86h/28h,I2C 86h/29h
+
+Bitfields for VPX 32xx CommandWord control register:
+Bit(s)	Description	(Table I037)
+ 0	transport rate
+	0  20.25 MHz
+	1  13.5 MHz
+ 1	transport rate latch
+	=1 latch new transport rate (automatically cleared)
+ 3-2	timing mode
+	00 open	  (always synchronized to video)
+	01 forced (sync to video within certain limits)
+	1x scan	  (free-running, no video data output)
+ 4	timing mode latch
+	=1 latch new timing mode on next vertical retrace (autom. cleared)
+ 5	Window#1 latch
+	=1 latch new window definition on next vertical retrace; autom. cleared
+ 6	Window#2 latch
+	=1 latch new window definition on next vertical retrace; autom. cleared
+ 7	(undoc) if set, image freezes
+ 8	odd/even mode
+	=0 always toggles
+	=1 follows video signal's odd/even fields
+ 11-9	reserved (0)
+SeeAlso: #I038,#I035
+----------I8628--SFF1------------------------
+I2C 86h/28h/F1h - ITT VPX 32xx - FP - "InfoWord" status register
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+
+Bitfields for VPX 32xx InfoWord status register:
+Bit(s)	Description	(Table I038)
+ 2-0	reserved
+ 5-3	currently-active TV standard (see #I039)
+ 6	currently-active line standard
+	0 525 lines / 60 fps
+	1 625 lines / 50 fps
+ 11-7	???
+Note:	image freezes if bit 1 set on VPX 3220A
+SeeAlso: #I037,#I036
+
+(Table I039)
+Values for ITT VPX television standard:
+ 0	PAL B,G,H,I	625/50	4.433618 MHz
+ 1	NTSC M		525/60	3.579545 MHz
+ 2	SECAM		625/50	4.286	MHz
+ 3	NTSC 44		525/60	4.433618 MHz
+ 4	PAL M		525/60	3.575611 MHz
+ 5	PAL N		625/50	3.582056 MHz
+ 6	PAL 60		525/60	4.433618 MHz
+ 7	NTSC Comb	525/60	3.579545 MHz
+----------I8628--SFF2------------------------
+I2C 86h/28h/F2h - ITT VPX 32xx - FP - TV Standard, Write
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+
+Bitfields for VPX 32xx TV standard, write:
+Bit(s)	Description	(Table I040)
+ 0	selection
+	0 automatic
+	1 manual
+ 3-1	television standard (see #I039)
+ 4	manual standard latch
+	=1 latch television standard (automatically cleared)
+ 5	S-VHS select
+	0 composite video
+	1 S-VHS video
+ 9-6	threshold for standard search
+	1111 'perfect' (maximum score)
+	0000 'no video' (minimum score)
+ 11-10	reserved (0)
+SeeAlso: #I041
+----------I8628--SFF3------------------------
+I2C 86h/28h/F3h - ITT VPX 32xx - FP - TV Standard, Read
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+
+Bitfields for VPX 32xx TV standard, read:
+Bit(s)	Description	(Table I041)
+ 0	VACT (video active) suppressed
+ 1	recognition routine is running
+ 4-2	detected TV standard (see #I039)
+ 5	'no video' flag
+ 9-6	high score from recognition routing
+	1111 'perfect' (maximum score)
+	0000 'no video' (minimum score)
+ 10	line standard
+	0 525 lines / 60 fps
+	1 625 lines / 50 fps
+ 11	reserved
+SeeAlso: #I040
+----------I8628--SFF4------------------------
+I2C 86h/28h/F4h U - ITT VPX 32xx - FP - ???
+SeeAlso: I2C 86h/28h,I2C 86h/29h
+----------I8629------------------------------
+I2C 86h/29h - ITT VPX 32xx - FP status
+Access:	Read-Only
+SeeAlso: I2C 86h/26h,I2C 86h/27h,I2C 86h/28h
+
+Bitfields for VPX 32xx/VDP 3108 FP status:
+Bit(s)	Description	(Table I006)
+ 0	write request in progress
+ 1	read request in progress
+ 2	busy
+ 7-3	reserved (read as ones)
+----------I862E------------------------------
+I2C 86h/2Eh U - ITT VPX 32xx - ??? (Test Register - Front End, Chroma 2?)
+Notes:	this register appears to correspond to the VDP 3108 register
+	only bits 4-0 appear to be used; values of 04h-1Fh cause either a
+	  black-and-white display or flickering color
+SeeAlso: I2C 8Ah/2Eh
+----------I862F------------------------------
+I2C 86h/2Fh U - ITT VPX 32xx - ??? (Test Register - Front End, Chroma 1?)
+Notes:	this register appears to correspond to the VDP 3108 register
+	bits 3 and 5 cause a black-and-white display if either is set; the
+	  remaining bits appear to have no effect
+SeeAlso: I2C 8Ah/2Fh
+----------I8630------------------------------
+I2C 86h/30h - ITT VPX 32xx - Luma Notch Frequency
+SeeAlso: I2C 86h/31h,I2C 8Ah/30h
+
+Bitfields for VPX 32xx luma notch frequency:
+Bit(s)	Description	(Table I013)
+ 5-0	frequency  ( fs / 2N cos^-1(N) )
+ 6	reserved
+ 7	SECAM switch
+SeeAlso: #I012
+----------I8631------------------------------
+I2C 86h/31h - ITT VPX 32xx - Luma/Chroma Matching Delay
+SeeAlso: I2C 86h/31h"VDP 3108",I2C 86h/30h"VPX 32xx"
+
+Bitfields for VPD 3108/VPX 32xx luma/chroma matching delay:
+Bit(s)	Description	(Table I014)
+ 4-0	delay in clocks (+19), higher numbers shift chroma right
+ 7-5	reserved
+SeeAlso: #I012,#I013
+----------I8632------------------------------
+I2C 86h/32h U - ITT VPX 32xx - Unimplemented
+Note:	this register appears to correspond to a VDP 3108 register which is
+	  not applicable to the VPX series
+SeeAlso: I2C 8Ah/32h
+----------I8633------------------------------
+I2C 86h/33h - ITT VPX 32xx - Input Selector
+SeeAlso: I2C 8Ah/33h
+
+Bitfields for VDP 3108/VPX 32xx input selector:
+Bit(s)	Description	(Table I015)
+ 1-0	luma ADC select
+	00 VIN3
+	01 VIN2
+	10 VIN1
+	reserved
+ 2	chroma ADC select
+	0 VIN1
+	1 CIN  (dedicated S-VHS chroma input)
+ 3	clamping for chroma A/D converter
+ 4	(VDP3108 only) internal/external luma ADC clamp enable
+ 5	reserved
+ 6	(VPX32xx only) stand-by luma ADC
+ 7	(VPX32xx only) stand-by chroma ADC
+----------I8634------------------------------
+I2C 86h/34h - ITT VPX 32xx - Standard Select
+SeeAlso: I2C 8Ah/34h
+
+Bitfields for VDP 3108/VPX 32xx standard select:
+Bit(s)	Description	(Table I016)
+ 1-0	television standard
+	00 SECAM
+	01 PAL
+	   or NTSC compensated (VDP3108 only???)
+	10 NTSC (standard)
+	   or simple PAL (VDP3108 only???)
+	11 NTSC (comb filter)
+ 2	S-VHS mode
+ 3	chroma polarity
+	0 signed
+	1 binary offset
+ 4	(VPX 32xx only) PAL/MAC mode
+ 5	force color decoder (YCbCr-to-output bypass)
+ 7-6	reserved
+--------V-I8635------------------------------
+I2C 86h/35h U - ITT VPX 32xx - Unimplemented
+SeeAlso: I2C 8Ah/32h
+--------V-I8636------------------------------
+I2C 86h/36h U - ITT VPX 32xx - Unimplemented
+SeeAlso: I2C 8Ah/32h
+--------V-I8637------------------------------
+I2C 86h/37h U - ITT VPX 32xx - Unimplemented
+SeeAlso: I2C 8Ah/32h
+--------V-I8638------------------------------
+I2C 86h/38h U - ITT VPX 32xx - Unimplemented
+SeeAlso: I2C 8Ah/32h
+--------V-I8639------------------------------
+I2C 86h/39h U - ITT VPX 32xx - ??? (Main Test Register?)
+Notes:	this register appears to correspond to the VDP 3108 register
+	setting bit 4 has the effect of freezing the image (suppressing
+	  VACT?); all other bits appear to have no effect
+SeeAlso: I2C 8Ah/39h,I2C 86h/3Ah
+--------V-I863A------------------------------
+I2C 86h/3Ah U - ITT VPX 32xx - ??? (Test Register - FP)
+Note:	this register appears to correspond to the VDP 3108 register
+SeeAlso: I2C 8Ah/3Ah,I2C 86h/3Eh
+--------V-I863B------------------------------
+I2C 86h/3Bh U - ITT VPX 32xx - Unimplemented
+Note:	this register appears to correspond to a VDP 3108 register which is
+	  not applicable to the VPX series
+SeeAlso: I2C 8Ah/3Bh
+--------V-I863C------------------------------
+I2C 86h/3Ch U - ITT VPX 32xx - Unimplemented
+Note:	this register appears to correspond to a VDP 3108 register which is
+	  not applicable to the VPX series
+SeeAlso: I2C 8Ah/3Ch
+--------V-I863D------------------------------
+I2C 86h/3Dh U - ITT VPX 32xx - Unimplemented
+Note:	this register appears to correspond to a VDP 3108 register which is
+	  not applicable to the VPX series
+SeeAlso: I2C 8Ah/3Dh
+----------I863E------------------------------
+I2C 86h/3Eh U - ITT VPX 32xx - ??? (Test Register - Front End, Luma 2?)
+Note:	this register appears to correspond to the VDP 3108 register
+SeeAlso: I2C 8Ah/3Eh,I2C 86h/3Fh
+
+Bitfields for Test Register, Luma 2:
+Bit(s)	Description	(Table I045)
+ 0	freezes image when set
+ 3-2	if either/both bits set, video appears as an image and ghost;
+	  green and cyan appear to be horizontally separated
+ 7-4	affect color, sometimes freeze image
+SeeAlso: #I046
+----------I863F------------------------------
+I2C 86h/3Fh U - ITT VPX 32xx - ??? (Test Register - Front End, Luma1?)
+Note:	this register appears to correspond to the VDP 3108 register
+SeeAlso: I2C 8Ah/3Fh,I2C 86h/39h
+
+Bitfields for Test Register, Luma 1:
+Bit(s)	Description	(Table I046)
+ 1	freezes image when set
+ 2	freezes image when set
+ 3	chromakey???  certain colors appear as black when this bit is set
+ 5	swap Cb and Cb in internal chroma processing path
+	  (has effect of cycling colors: red->blue, blue->red, yellow->green)
+SeeAlso: #I045
+----------I86AA------------------------------
+I2C 86h/AAh - ITT VPX 3214C/322xD - Low-Power Mode
+----------I86D0------------------------------
+I2C 86h/D0h U - ITT VPX 32xx - ???
+SeeAlso: I2C 86h/D1h,I2C 86h/D2h
+----------I86D1------------------------------
+I2C 86h/D1h U - ITT VPX 32xx - ???
+SeeAlso: I2C 86h/D0h,I2C 86h/D2h
+----------I86D2------------------------------
+I2C 86h/D2h U - ITT VPX 32xx - ???
+SeeAlso: I2C 86h/D0h,I2C 86h/D3h
+----------I86D3------------------------------
+I2C 86h/D3h U - ITT VPX 32xx - ???
+SeeAlso: I2C 86h/D0h,I2C 86h/D4h
+----------I86D4------------------------------
+I2C 86h/D4h U - ITT VPX 32xx - ???
+SeeAlso: I2C 86h/D0h,I2C 86h/D5h
+----------I86D5------------------------------
+I2C 86h/D5h U - ITT VPX 32xx - ???
+Note:	when bit 7 is set the low six bits change which horizontal portion
+	  of the video image is digitized
+SeeAlso: I2C 86h/D0h,I2C 86h/D6h
+----------I86D6------------------------------
+I2C 86h/D6h U - ITT VPX 32xx - ???
+SeeAlso: I2C 86h/D0h,I2C 86h/D7h
+----------I86D7------------------------------
+I2C 86h/D7h U - ITT VPX 32xx - ???
+Note:	bit 1 causes the image to freeze when set; bit 4 changes colors to
+	  mostly cyan when set, and bit 7 shifts the image right about 1/6
+	  of the screen
+SeeAlso: I2C 86h/D0h,I2C 86h/D8h
+----------I86D8------------------------------
+I2C 86h/D8h - ITT VPX 32xx - VREF/HREF Control
+
+Bitfields for VPX 32xx VREF/HREF control:
+Bit(s)	Description	(Table I020)
+ 0	reserved
+ 1	HREF polarity (=0 active high, =1 active low)
+ 2	VREF polarity (=0 active high, =1 active low)
+ 5-3	length of HREF pulse (+2 clocks)
+ 6	PREF select
+	0 odd/even flag
+	1 Pintr (programmable interrupt)
+ 7	PREF polarity (=1 invert polarity)
+Note:	the Stealth64 Video 2001TV uses the PREF output to control the
+	  audio signal; set bit 6 to select programmable interrupt on PREF,
+	  then set bit 7 to mute, clear bit 7 to enable sound
+--------V-I86D9------------------------------
+I2C 86h/D9h U - ITT VPX 32xx - Unimplemented
+SeeAlso: I2C 86h/DDh
+--------V-I86DA------------------------------
+I2C 86h/DAh U - ITT VPX 32xx - ???
+--------V-I86DB------------------------------
+I2C 86h/DBh U - ITT VPX 32xx - ???
+--------V-I86DC------------------------------
+I2C 86h/DCh U - ITT VPX 32xx - ???
+--------V-I86DD------------------------------
+I2C 86h/DDh U - ITT VPX 32xx - Unimplemented
+SeeAlso: I2C 86h/D9h
+--------V-I86DE------------------------------
+I2C 86h/DEh U - ITT VPX 32xx - Unimplemented
+SeeAlso: I2C 86h/DDh
+--------V-I86DF------------------------------
+I2C 86h/DFh U - ITT VPX 32xx - Unimplemented
+SeeAlso: I2C 86h/DEh
+--------V-I86E0------------------------------
+I2C 86h/E0h - ITT VPX 32xx - Alpha Keyer: Ymax
+Note:	not supported by the VPX 3214C
+--------V-I86E1------------------------------
+I2C 86h/E1h - ITT VPX 32xx - Alpha Keyer: Ymin
+Note:	not supported by the VPX 3214C
+----------I86E2------------------------------
+I2C 86h/E2h - ITT VPX 32xx - Alpha Keyer: Cbmax
+Note:	not supported by the VPX 3214C
+----------I86E3------------------------------
+I2C 86h/E3h - ITT VPX 32xx - Alpha Keyer: Cbmin
+Note:	not supported by the VPX 3214C
+----------I86E4------------------------------
+I2C 86h/E4h - ITT VPX 32xx - Alpha Keyer: Crmax
+Note:	not supported by the VPX 3214C
+----------I86E5------------------------------
+I2C 86h/E5h - ITT VPX 32xx - Alpha Keyer: Crmin
+Note:	not supported by the VPX 3214C
+----------I86E6------------------------------
+I2C 86h/E6h - ITT VPX 32xx - Brightness
+Note:	signed offset: 80h = black, 7Fh = brightest
+SeeAlso: I2C 86h/E7h
+----------I86E7------------------------------
+I2C 86h/E7h - ITT VPX 32xx - Contrast / Noise Shaping
+SeeAlso: I2C 86h/E6h
+
+Bitfields for VPX 32xx contrast/noise shaping:
+Bit(s)	Description	(Table I021)
+ 5-0	contrast (00h minimum, 3Fh maximum)
+	bit 5 is integer, bits 4-0 fraction (i.e range is 0.0 - 1.96)
+ 7-6	noise shaping
+	00 rounding
+	01 truncation
+	10 one-bit error diffusion
+	11 two-bit error diffusion
+----------I86E8------------------------------
+I2C 86h/E8h - ITT VPX 32xx - Format Selector
+SeeAlso: I2C 86h/F0h,I2C 86h/28h/1Bh
+
+Bitfields for VPX 32xx format selector:
+Bit(s)	Description	(Table I022)
+ 2-0	video format
+	000 YCbCr 4:2:2 or YCbCr 4:2:2 CCIR  (16 bits/pixel)
+	001 YCbCr 4:4:4			     (24 bits/pixel)
+	010 YCbCr 4:1:1			     (12 bits/pixel)
+	011 YCbCr 4:4:4 DPCM compressed	      (8 bits/pixel)
+	100 RGB 8:8:8
+	101 RGB 8:8:8 (inverse gamma)
+	110 RGB 5:6:5 (inverse gamma)
+	111 RGB 5:5:5 (inverse gamma) + Alpha Key
+ 3	CbCr data stream format
+	0 two's complement (-128..127)
+	1 binary offset (0..255)
+ 4	contrast brightness, clamping level
+	0 clamping level = 32
+	1 clamping level = 16 (darker image)
+ 5	Gamma: round dither enable
+ 6	Alpha Key polarity (=0 active high, =1 active low)
+	if the Alpha Keyer limits have been set to the maximum limits
+	  (default), then the Alpha Key is always active, and this bit
+	  controls the state of the ALPHA pin
+	[on the 3214C, programmable output pin connected to TDO]
+ 7	Alpha Keyer median-of-3 filter enabled
+----------I86E9------------------------------
+I2C 86h/E9h U - ITT VPX 32xx - ???
+----------I86EA------------------------------
+I2C 86h/EAh - ITT VPX 32xx - Diverse Settings
+
+Bitfields for VPX 32xx diverse settings:
+Bit(s)	Description	(Table I023)
+ 2-0	reserved (0)
+ 3	connect LLC2 to ALPHA/TDO pin
+ 4	LLC/2 polarity
+ 5	output FIFO pointer reset select
+	0 on positive edge of VACTref
+	1 on VRF=0
+ 7-6	officially reserved
+ 6	=1 wraps to top before bottom of image (3220A)
+ 7	=1 freeze image (3220A)
+----------I86F0------------------------------
+I2C 86h/F0h - ITT VPX 32xx - Output FIFO
+SeeAlso: I2C 86h/F1h,I2C 86h/F2h
+
+Bitfields for VPX 32xx Output FIFO control:
+Bit(s)	Description	(Table I024)
+---asynchronous mode---
+ 4-0	FIFO Half-Full flag level (number of pixels in 32-pixel buffer before
+	  Half-Full is signalled
+---synchronous mode---
+ 3-0	[3214C only] additional length of NewVACT inactive period (+8 clocks)
+ 4	[3214C only] reserved (0)
+------
+ 7-5	bus shuffler
+	000  Out[23:0] = In[23:0]
+	001  Out[23:0] = In[7:0,23:8]
+	010  Out[23:0] = In[7:0,23:8]
+	011  Out[23:0] = In[15:0,23:16]
+	100  Out[23:0] = In[15:8,23:16,7:0]
+	101  Out[23:0] = In[7:0,15:8,23:16]
+	110  Out[23:0] = In[7:0,15:8,23:16]
+	111  Out[23:0] = In[23:16,7:0,15:8]
+----------I86F1------------------------------
+I2C 86h/F1h - ITT VPX 32xx - Output Multiplexor
+SeeAlso: I2C 86h/F0h,I2C 86h/F2h
+
+Bitfields for VPX 32xx Output Multiplexer:
+Bit(s)	Description	(Table I025)
+ 1-0	port mode
+	00 parallel output, single clock per pixel
+	01 double clock
+		port A = FO[23:16] / FO[15:8] on rising/falling PIXCLK
+		port B = FO[7:0]
+	10 test mode (3220 only)
+	11 "triple clock" (3220 only)
+	  port A = FO[23:16] / FO[15:8] / FO[7:0]
+	  port B = FO[7:0]
+ 2	(synchronous mode) data reset during VACT=0
+	(asynchronous mode) clock slope
+		(=0 positive edge triggered, =1 negative edge triggered)
+ 3	clock source
+	0 external, PIXCLK is clock source (input)
+	1 internal, PIXCLK is an output signal
+ 5-4	(synchronous mode) delay signal
+	00 no delay of "active video" signal with respect to output data
+	01 one-clock delay
+	10 two clocks
+	11 three clocks
+ 6	(3220A, not 3220; async mode) FIFO Empty low-pass filter
+ 7	(3220A, not 3220) enable HLEN (line length counter)
+SeeAlso: #I026
+----------I86F2------------------------------
+I2C 86h/F2h - ITT VPX 32xx - Output Enable
+SeeAlso: I2C 86h/F0h,I2C 86h/F1h,I2C 86h/F8h
+
+Bitfields for VPX 32xx Output Enable:
+Bit(s)	Description	(Table I026)
+ 0	enable Video Port A
+ 1	enable Video Port B
+ 2	enable PIXCLK output (322xD only)
+	reserved (32xx)
+ 3	enable controls (=0 freezes current image)
+ 4	(3220) enable LLC2 to TDO pin
+	(32xx) enable LLC clock to HF# pad
+ 5	eanble FSY-Data to HF# pad
+ 6	(3220) reserved (0)
+	(32xx) synchronize HREF and VREF with PIXCLK
+ 7	(3220) disable FE# low-pass filter
+	(32xx/322xD) disable OEQ pin function
+SeeAlso: #I025
+----------I86F4------------------------------
+I2C 86h/F4h U - ITT VPX 32xx - ??? Status
+----------I86F5------------------------------
+I2C 86h/F5h U - ITT VPX 32xx - ??? Status
+----------I86F6------------------------------
+I2C 86h/F6h U - ITT VPX 32xx - ??? Status
+----------I86F7------------------------------
+I2C 86h/F7h U - ITT VPX 32xx - ??? Status
+----------I86F8------------------------------
+I2C 86h/F8h - ITT VPX 32xx - Pad Driver Strength A
+SeeAlso: I2C 86h/F2h,I2C 86h/F9h
+
+Bitfields for VPX 32xx Pad Driver Strength A:
+Bit(s)	Description	(Table I027)
+ 2-0	driver strength of video port A
+ 5-3	driver strength of PIXCLK, HF#, and FE#
+ 7-6	additional PIXCLK strength
+SeeAlso: #I028
+----------I86F9------------------------------
+I2C 86h/F9h - ITT VPX 32xx - Pad Driver Strength B
+SeeAlso: I2C 86h/F2h,I2C 86h/F8h
+
+Bitfields for VPX 32xx Pad Driver Strength B:
+Bit(s)	Description	(Table I028)
+ 2-0	driver strength of video port B
+ 5-3	driver strength of HREF, VREF, ALPHA, and PREF
+ 7-6	reserved (0)
+SeeAlso: #I027
+--------V-I86FA------------------------------
+I2C 86h/FAh - ITT VPX 32xx - Unimplemented
+Note:	all of the VPX 32xx registers which are not listed above appear to
+	  be unimplemented; they always return FFh on reads and have no
+	  apparent effect on writes
+--------V-I8A00------------------------------
+I2C 8Ah/00h - ITT VDP 3108 - Color Lookup Table (array)
+Size:	16 entries of 12 bits each (at subaddresses 00h-0Fh)
+Desc:	the ITT VDP 3108 is a video display processor containing all necessary
+	  circuitry to process a video signal and control a CRT (e.g. a TV
+	  on a chip)
+--------V-I8A10------------------------------
+I2C 8Ah/10h - ITT VDP 31xxB - Output Pin Configuration
+--------V-I8A11------------------------------
+I2C 8Ah/11h - ITT VDP 31xxB - Picture Frame Color
+--------V-I8A12------------------------------
+I2C 8Ah/12h - ITT VDP 3108 - ???
+--------V-I8A13------------------------------
+I2C 8Ah/13h - ITT VDP 3108 - White Drive Measurement Control
+--------V-I8A14------------------------------
+I2C 8Ah/14h - ITT VDP 3108 - Luma/Chroma Matching Delay
+--------V-I8A15------------------------------
+I2C 8Ah/15h - ITT VDP 3108 - Horizontal Drive Control
+--------V-I8A16------------------------------
+I2C 8Ah/16h - ITT VDP 3108 - End of Horizontal Blanking
+--------V-I8A17------------------------------
+I2C 8Ah/17h - ITT VDP 3108 - Start of Horizontal Blanking
+--------V-I8A18------------------------------
+I2C 8Ah/18h - ITT VDP 3108 - Measurement Result - Minimum
+--------V-I8A19------------------------------
+I2C 8Ah/19h - ITT VDP 3108 - Measurement Result - Maximum
+--------V-I8A1A------------------------------
+I2C 8Ah/1Ah - ITT VDP 3108 - Measurement Result - White Drive
+--------V-I8A1B------------------------------
+I2C 8Ah/1Bh - ITT VDP 3108 - Measurement Result - Cutoff/Leakage Blue
+--------V-I8A1C------------------------------
+I2C 8Ah/1Ch - ITT VDP 3108 - Measurement Result - Cutoff/Leakage Green
+--------V-I8A1D------------------------------
+I2C 8Ah/1Dh - ITT VDP 3108 - Measurement Result - Cutoff/Leakage Red
+--------V-I8A1E------------------------------
+I2C 8Ah/1Eh - ITT VDP 3108 - Measurement ADC Status
+--------V-I8A1F------------------------------
+I2C 8Ah/1Fh - ITT VDP 3108 - ???
+--------V-I8A20------------------------------
+I2C 8Ah/20h - ITT VDP 3108 - IF compensation
+Access:	Read/Write
+SeeAlso: I2C 86h/20h,#I004
+----------I8A23------------------------------
+I2C 8Ah/23h - ITT VDP 3108 - Priority Bus overwrite register
+SeeAlso: I2C 8Ah/24h
+
+Bitfields for VDP 3108 priority bus overwrite register:
+Bit(s)	Description	(Table I017)
+ 7	overwrite priority 7
+ ...
+ 0	overwrite priority 0
+SeeAlso: #I018
+----------I8A24------------------------------
+I2C 8Ah/24h - ITT VDP 3108 - Priority Bus ID/enable register
+SeeAlso: I2C 8Ah/23h
+
+Bitfields for VDP 3108 priority bus ID register:
+Bit(s)	Description	(Table I018)
+ 2-0	priority ID (0 is highest)
+ 4-3	pad driver strength
+ 6-5	reserved
+ 7	enable priority
+SeeAlso: #I017
+----------I8A25------------------------------
+I2C 8Ah/25h - ITT VDP 3108 - Tube and Picture Measurement Control
+SeeAlso: I2C 8Ah/00h
+----------I8A26------------------------------
+I2C 8Ah/26h - ITT VDP 3108 - FPRAM read index
+Size:	16 bits, big-endian
+SeeAlso: #I019,I2C 8Ah/27h"VDP 3108",I2C 8Ah/28h"VDP 3108"
+SeeAlso: I2C 8Ah/29h"VDP 3108",I2C 86h/28h
+----------I8A27------------------------------
+I2C 8Ah/27h - ITT VDP 3108 - FPRAM write index
+Size:	16 bits, big-endian
+SeeAlso: #I019,I2C 8Ah/26h"VDP 3108",I2C 8Ah/28h"VDP 3108"
+SeeAlso: I2C 8Ah/29h"VDP 3108",I2C 86h/28h
+----------I8A28------------------------------
+I2C 8Ah/28h - ITT VDP 3108 - FPRAM data transfer
+Size:	16 bits, big-endian
+SeeAlso: I2C 8Ah/26h"VDP 3108",I2C 8Ah/27h"VDP 3108",I2C 8Ah/29h"VDP 3108"
+
+(Table I019)
+Values for ITT VDP 3108 FPRAM index:
+ 1Bh	standard select (see I2C 86h/28h/1Bh)
+ 1Ch	NTSC tilt angle (see I2C 86h/28h/1Ch)
+ 20h	current AGC gain value (see I2C 86h/28h/20h)
+ 26h	line-lock command/status (see I2C 86h/28h/26h)
+ 41h	measured sync amplitude value
+ 50h	software version number (2105dec)
+ 53h	automatic standard recognition status (see I2C 86h/28h/53h)
+ 58h	crystal oscillator center frequency adjust (see I2C 86h/28h/58h)
+ 59h	crystal oscillator center frequency adjust for line-lock mode
+	  (see I2C 86h/28h/59h)
+ 5Fh	software release (1001dec)
+ 72h	discharge sample count for deflection retrace
+ 73h	interlace offset
+ 75h	test register for BCL/EHT
+ 7Ah	Electronic High Tension time constant
+ 7Bh	Electronic High Tension compensation coefficient
+ 80h	DC offset of SAWTOOTH output
+ 8Bh	sawtooth accu0 initialization value
+ 8Ch	sawtooth accu1 initialization value
+ 8Dh	sawtooth accu2 initialization value
+ 8Eh	sawtooth accu3 initialization value
+ 8Fh	vertical discharge value
+ 9Bh	east-west accu0 initialization value
+ 9Ch	east-west accu1 initialization value
+ 9Dh	east-west accu2 initialization value
+ 9Eh	east-west accu3 initialization value
+ 9Fh	east-west accu4 initialization value
+ A0h	ACC reference level (see I2C 86h/28h/A0h)
+ A3h	ACC multiplier value for SECAM Dr to adjust Cr level
+	  (see I2C 86h/28h/A3h)
+ A4h	ACC multiplier value for SECAM Db to adjust Cb level
+	  (see I2C 86h/28h/A4h)
+ A5h	measured burst amplitude (see I2C 86h/28h/A5h)
+ A8h	amplitude color killer threshold (00h = disabled) (see I2C 86h/28h/A8h)
+ A9h	amplitude color killer hysteresis  (see I2C 86h/28h/A9h)
+ B2h	sync amplitude reference (000h = AGC disabled) (see I2C 86h/28h/B2h)
+ B5h	??? (write 000h after setting B2h to 000h to disable AGC)
+ BEh	start value for AGC gain while vertical lock/AGC inactive
+	  (see I2C 86h/28h/BEh)
+ D2h	BCL time constant
+ D3h	BCL loop gain
+ D4h	BCL threshold current
+ D5h	BCL minimum contrast
+ E7h	vertical standard select (see I2C 86h/28h/E7h)
+ EBh	detected number of lines per field (see I2C 86h/28h/EBh)
+ F0h	white drive (red)
+ F1h	white drive (green)
+ F2h	white drive (blue)
+ F9h	internal brightness (picture)
+ FAh	analog brightness for external RGB
+ FBh	analog contrast for external RGB
+ FCh	internal brightness (measurement)
+----------I8A29------------------------------
+I2C 8Ah/29h - ITT VDP 3108 - FP status
+SeeAlso: #I006,I2C 8Ah/26h"VDP 3108",I2C 8Ah/27h"VDP 3108"
+SeeAlso: I2C 8Ah/28h"VDP 3108",I2C 86h/29h
+--------V-I8A2A------------------------------
+I2C 8Ah/2Ah - ITT VDP 3108 - Enable/Disable Luma Input-16
+--------V-I8A2B------------------------------
+I2C 8Ah/2Bh - ITT VDP 3108 - Test Register - Display 2
+--------V-I8A2C------------------------------
+I2C 8Ah/2Ch - ITT VDP 3108 - Test Register - Display 3
+--------V-I8A2D------------------------------
+I2C 8Ah/2Dh - ITT VDP 3108 - Test Register - Deflection
+--------V-I8A2E------------------------------
+I2C 8Ah/2Eh - ITT VDP 3108 - Test Register - Front End, Chroma 2
+--------V-I8A2F------------------------------
+I2C 8Ah/2Fh - ITT VDP 3108 - Test Register - Front End, Chroma 1
+--------V-I8A30------------------------------
+I2C 8Ah/30h - ITT VDP 3108 - Luma Notch Frequency
+SeeAlso: I2C 86h/30h
+
+Bitfields for VDP 3108 luma notch frequency:
+Bit(s)	Description	(Table I012)
+ 5-0	frequency  (PAL/SECAM = 25, NTSC = 57)
+ 6	disable adaptive notch filter (SECAM)
+	must be 0 for PAL/NTSC
+ 7	reserved
+SeeAlso: #I013
+--------V-I8A31------------------------------
+I2C 8Ah/31h - ITT VDP 3108 - Luma/Chroma Matching Delay
+SeeAlso: I2C 8Ah/30h"VDP 3108",I2C 86h/31h"VPX 32xx"
+--------V-I8A31------------------------------
+I2C 8Ah/31h - ITT VDP 31xxB - Fast Blank Interface Mode 2
+--------V-I8A32------------------------------
+I2C 8Ah/32h - ITT VDP 3108 - Fast Blank Interface Mode
+--------V-I8A32------------------------------
+I2C 8Ah/32h - ITT VDP 31xxB - Fast Blank Interface Mode
+--------V-I8A33------------------------------
+I2C 8Ah/33h - ITT VDP 3108 - Input Selector
+SeeAlso: I2C 86h/33h,#I015
+--------V-I8A34------------------------------
+I2C 8Ah/34h - ITT VDP 3108 - Standard Select
+SeeAlso: I2C 86h/34h,#I016
+--------V-I8A34------------------------------
+I2C 8Ah/34h - ITT VDP 31xxB - I/O Port
+--------V-I8A39------------------------------
+I2C 8Ah/39h - ITT VDP 3108 - Main Test Register
+--------V-I8A3A------------------------------
+I2C 8Ah/3Ah - ITT VDP 3108 - Test Register - FP
+--------V-I8A3B------------------------------
+I2C 8Ah/3Bh - ITT VDP 3108 - Test Register - Display Processor Control
+--------V-I8A3C------------------------------
+I2C 8Ah/3Ch - ITT VDP 3108 - Test Register - Analog Backend
+--------V-I8A3D------------------------------
+I2C 8Ah/3Dh - ITT VDP 3108 - Test Register - Front End, Luma 3
+--------V-I8A3E------------------------------
+I2C 8Ah/3Eh - ITT VDP 3108 - Test Register - Front End, Luma 2
+--------V-I8A3F------------------------------
+I2C 8Ah/3Fh - ITT VDP 3108 - Test Register - Front End, Luma 1
+--------V-I8A41------------------------------
+I2C 8Ah/41h - ITT VDP 3108 - Luma Soft Limiter - Loop Filter Gain
+--------V-I8A42------------------------------
+I2C 8Ah/42h - ITT VDP 3108 - ???
+--------V-I8A43------------------------------
+I2C 8Ah/43h - ITT VDP 3108 - ???
+--------V-I8A44------------------------------
+I2C 8Ah/44h - ITT VDP 3108 - Digital RGB Insertion Contrast (Blue)
+--------V-I8A45------------------------------
+I2C 8Ah/45h - ITT VDP 3108 - Luma Soft Limiter - Notch Filter Gain
+--------V-I8A46------------------------------
+I2C 8Ah/46h - ITT VDP 3108 - ???
+--------V-I8A47------------------------------
+I2C 8Ah/47h - ITT VDP 31xxB - Picture Frame Generator Priority ID
+--------V-I8A48------------------------------
+I2C 8Ah/48h - ITT VDP 3108 - Digital RGB Insertion Contrast (Green)
+--------V-I8A49------------------------------
+I2C 8Ah/49h - ITT VDP 3108 - Luma Soft Limiter - Max Output Signal
+--------V-I8A4A------------------------------
+I2C 8Ah/4Ah - ITT VDP 3108 - ???
+--------V-I8A4B------------------------------
+I2C 8Ah/4Bh - ITT VDP 31xxB - Analog Fast Blank Input Enable
+--------V-I8A4C------------------------------
+I2C 8Ah/4Ch - ITT VDP 3108 - Digital RGB Insertion Contrast (Red)
+--------V-I8A4D------------------------------
+I2C 8Ah/4Dh - ITT VDP 3108 - Luma Soft Limiter - Max Low-Frequency Compensation
+--------V-I8A4E------------------------------
+I2C 8Ah/4Eh - ITT VDP 3108 - ???
+--------V-I8A4F------------------------------
+I2C 8Ah/4Fh - ITT VDP 31xxB - Horizontal Picture Frame Begin
+--------V-I8A50------------------------------
+I2C 8Ah/50h - ITT VDP 3108 - Side Picture Matrix Coefficient B-Y 2
+--------V-I8A51------------------------------
+I2C 8Ah/51h - ITT VDP 3108 - Main Picture Brightness
+--------V-I8A53------------------------------
+I2C 8Ah/53h - ITT VDP 3108 - Analog Fast Blank Input Enable
+--------V-I8A53------------------------------
+I2C 8Ah/53h - ITT VDP 31xxB - Horizontal Picture Frame End
+--------V-I8A54------------------------------
+I2C 8Ah/54h - ITT VDP 3108 - Main Picture Matrix Coefficient B-Y 2
+--------V-I8A55------------------------------
+I2C 8Ah/55h - ITT VDP 3108 - Side Picture Brightness
+--------V-I8A56------------------------------
+I2C 8Ah/56h - ITT VDP 31xxB - Delay and Coring
+--------V-I8A57------------------------------
+I2C 8Ah/57h - ITT VDP 3108 - PLL2/3 Filter Coefficient
+--------V-I8A57------------------------------
+I2C 8Ah/57h - ITT VDP 31xxB - End of Horizontal Blanking
+--------V-I8A58------------------------------
+I2C 8Ah/58h - ITT VDP 3108 - Side Picture Matrix Coefficient B-Y 1
+--------V-I8A59------------------------------
+I2C 8Ah/59h - ITT VDP 3108 - Black Level Expander - Tilt
+--------V-I8A5A------------------------------
+I2C 8Ah/5Ah - ITT VDP 31xxB - Limiter
+--------V-I8A5B------------------------------
+I2C 8Ah/5Bh - ITT VDP 3108 - PLL2/3 Filter Coefficient
+--------V-I8A5B------------------------------
+I2C 8Ah/5Bh - ITT VDP 31xxB - Start of Horizontal Blanking
+--------V-I8A5C------------------------------
+I2C 8Ah/5Ch - ITT VDP 3108 - Main Picture Matrix Coefficient B-Y 1
+--------V-I8A5D------------------------------
+I2C 8Ah/5Dh - ITT VDP 3108 - Black Level Expander - Threshold
+--------V-I8A5E------------------------------
+I2C 8Ah/5Eh - ITT VDP 31xxB - Text Mode Coefficients 2
+--------V-I8A5F------------------------------
+I2C 8Ah/5Fh - ITT VDP 3108 - PLL2/3 Filter Coefficient
+--------V-I8A5F------------------------------
+I2C 8Ah/5Fh - ITT VDP 31xxB - Free-Running Field Period
+--------V-I8A60------------------------------
+I2C 8Ah/60h - ITT VDP 3108 - Side Picture Matrix Coefficient G-Y 2
+--------V-I8A61------------------------------
+I2C 8Ah/61h - ITT VDP 3108 - Main Picture Contrast
+--------V-I8A62------------------------------
+I2C 8Ah/62h - ITT VDP 31xxB - Video Mode Coefficients 1
+--------V-I8A63------------------------------
+I2C 8Ah/63h - ITT VDP 3108 - Delay from Flyback to PLL2
+--------V-I8A63------------------------------
+I2C 8Ah/63h - ITT VDP 31xxB - Vertical Picture Frame Begin
+--------V-I8A64------------------------------
+I2C 8Ah/64h - ITT VDP 3108 - Main Picture Matrix Coefficient G-Y 2
+--------V-I8A65------------------------------
+I2C 8Ah/65h - ITT VDP 3108 - Side Picture Contrast
+--------V-I8A66------------------------------
+I2C 8Ah/66h - ITT VDP 3108 - Cutoff (Blue)
+--------V-I8A67------------------------------
+I2C 8Ah/67h - ITT VDP 3108 - Delay from Front Sync to PLL2
+--------V-I8A67------------------------------
+I2C 8Ah/67h - ITT VDP 31xxB - Vertical Blanking Start
+--------V-I8A68------------------------------
+I2C 8Ah/68h - ITT VDP 3108 - Side Picture Matrix Coefficient G-Y 1
+--------V-I8A69------------------------------
+I2C 8Ah/69h - ITT VDP 3108 - Luma Peaking Filter - Undershoot/Overshoot
+--------V-I8A6A------------------------------
+I2C 8Ah/6Ah - ITT VDP 3108 - Cutoff (Green)
+--------V-I8A6A------------------------------
+I2C 8Ah/6Ah - ITT VDP 31xxB - PLL3 proportional coefficient
+--------V-I8A6B------------------------------
+I2C 8Ah/6Bh - ITT VDP 3108 - Start of Active Video
+--------V-I8A6B------------------------------
+I2C 8Ah/6Bh - ITT VDP 31xxB - Picture Measurement Stop Line
+--------V-I8A6C------------------------------
+I2C 8Ah/6Ch - ITT VDP 3108 - Main Picture Matrix Coefficient G-Y 1
+--------V-I8A6D------------------------------
+I2C 8Ah/6Dh - ITT VDP 3108 - Luma Peaking Filter - Coring
+--------V-I8A6E------------------------------
+I2C 8Ah/6Eh - ITT VDP 3108 - Cutoff (Red)
+--------V-I8A6E------------------------------
+I2C 8Ah/6Eh - ITT VDP 31xxB - PLL2 proportional coefficient
+--------V-I8A6F------------------------------
+I2C 8Ah/6Fh - ITT VDP 3108 - Vertical Blanking Start
+--------V-I8A6F------------------------------
+I2C 8Ah/6Fh - ITT VDP 31xxB - Vertical Picture Frame End
+--------V-I8A70------------------------------
+I2C 8Ah/70h - ITT VDP 3108 - Side Picture Matrix Coefficient R-Y 2
+--------V-I8A71------------------------------
+I2C 8Ah/71h - ITT VDP 3108 - Enable External RGB
+--------V-I8A72------------------------------
+I2C 8Ah/72h - ITT VDP 3108 - Digital Transient Improvement
+--------V-I8A72------------------------------
+I2C 8Ah/72h - ITT VDP 31xxB - PLL2 integral coefficient
+--------V-I8A73------------------------------
+I2C 8Ah/73h - ITT VDP 3108 - Vertical Blanking Stop
+--------V-I8A73------------------------------
+I2C 8Ah/73h - ITT VDP 31xxB - Start of Black Level Expander Measurement
+--------V-I8A74------------------------------
+I2C 8Ah/74h - ITT VDP 3108 - Main Picture Matrix Coefficient R-Y 2
+--------V-I8A75------------------------------
+I2C 8Ah/75h - ITT VDP 3108 - Select Main/Side Picture Contrast/Brightness
+--------V-I8A53------------------------------
+I2C 8Ah/53h - ITT VDP 31xxB - Flyback Delay
+--------V-I8A77------------------------------
+I2C 8Ah/77h - ITT VDP 3108 - Picture Measurement Stop
+--------V-I8A77------------------------------
+I2C 8Ah/77h - ITT VDP 31xxB - Vertical Blanking Stop
+--------V-I8A78------------------------------
+I2C 8Ah/78h - ITT VDP 3108 - Side Picture Matrix Coefficient R-Y 1
+--------V-I8A79------------------------------
+I2C 8Ah/79h - ITT VDP 3108 - Enable Peaking Transient Suppression
+--------V-I8A7A------------------------------
+I2C 8Ah/7Ah - ITT VDP 3108 - Digital Transient Improvement
+--------V-I8A7A------------------------------
+I2C 8Ah/7Ah - ITT VDP 31xxB - PLL2 Clamping and Blanking
+--------V-I8A7B------------------------------
+I2C 8Ah/7Bh - ITT VDP 3108 - Picture Measurement Start
+--------V-I8A7C------------------------------
+I2C 8Ah/7Ch - ITT VDP 3108 - Main Picture Matrix Coefficient R-Y 1
+--------V-I8A7D------------------------------
+I2C 8Ah/7Dh - ITT VDP 3108 - Enable Black Level Expander
+--------V-I8A7E------------------------------
+I2C 8Ah/7Eh - ITT VDP 3108 - Delay from Flyback to Main Sync
+--------V-I8A7F------------------------------
+I2C 8Ah/7Fh - ITT VDP 3108 - Tube Measurement Line
+--------V-I8E12------------------------------
+I2C 8Eh/12h - ITT VDP 31xxB - Black Line Detector
+--------V-I8E1F------------------------------
+I2C 8Eh/1Fh - ITT VDP 31xxB - INTLC & PORT Pin Control
+--------V-I8E20------------------------------
+I2C 8Eh/20h - ITT VDP 31xxB - Sync Generator Control
+--------V-I8E21------------------------------
+I2C 8Eh/21h - ITT VDP 31xxB - Line Length
+--------V-I8E22------------------------------
+I2C 8Eh/22h - ITT VDP 31xxB - Newline
+--------V-I8E23------------------------------
+I2C 8Eh/23h - ITT VDP 31xxB - Priority Bus Override
+--------V-I8E24------------------------------
+I2C 8Eh/24h - ITT VDP 31xxB - Priority Bus ID and Control
+--------V-I8E29------------------------------
+I2C 8Eh/29h - ITT VDP 31xxB - AVO Stop
+--------V-I8E35------------------------------
+I2C 8Eh/35h - ITT VDP 31xxB - FP Status
+--------V-I8E36------------------------------
+I2C 8Eh/36h - ITT VDP 31xxB - FP Read Address
+--------V-I8E37------------------------------
+I2C 8Eh/37h - ITT VDP 31xxB - FP Write Address
+--------V-I8E38------------------------------
+I2C 8Eh/38h - ITT VDP 31xxB - FP Data Transfer
+
+(Table I043)
+Values for ITT VDP 31xxB Fast Processor register:
+ 12h	general-purpose control bits
+ 13h	standard recognition status
+ 15h	vertical field counter
+ 20h	standard select
+ 21h	input select
+ 22h	picture start position
+ 23h	luma/chroma delay
+ 27h	comb filter control
+ 31h	measured burst amplitude
+ 39h	color amplitude killer threshold
+ 3Ah	color amplitude killer hysteresis
+ 40h	scaler mode register
+ !!!
+ 74h	measured sync amplitude value
+ CBh	number of lines per field
+ DCh	NTSC tint angle
+ F0h	firmware version number
+ F1h	hardware version number
+ F7h	crystal oscillator line-locked mode
+ F8h	crystal oscillator center adjust
+ F9h	crystal oscillator center adjust (line-locked mode)
+--------m-IA0--------------------------------
+I2C A0h - SDRAM - Serial Presence Detect
+Access:	Read/Write
+Size:	256 BYTEs
+Range:	I2C addresses A0h,A2h,A4h,...,AEh, depending on the DIMM slot.
+
+Format of SDRAM Serial Presence Detect Data:
+Offset	Size	Description	(Table I047)
+ 00h	BYTE	number of bytes used by module manufacturer (00h = undefined)
+ 01h	BYTE	total size of serial EEPROM
+		00h = "RFU", 01h-0Dh = 2**N bytes (2 - 8192)
+ 02h	BYTE	memory type (general)
+		02h EDO
+		04h SDRAM
+ 03h	BYTE	number of row address bits (see #I048)
+ 04h	BYTE	number of column address bits, excluding bank select and
+		  AutoPrecharge bits (see #I048)
+ 05h	BYTE	number of rows of SDRAM components (00h = undefined)
+ 06h	WORD	module data width in bits (0000h = undefined)
+ 08h	BYTE	SDRAM module signal voltage interface (see #I050)
+ 09h	BYTE	SDRAM minimum cycle time at highest CAS latency
+		time = bits 7-4 in nanoseconds + bits 3-0 in 1/10 nanoseconds
+		Note:	high nybble values of 1-3 mean 16-18 for Rev1 (ofs 3Eh)
+ 0Ah	BYTE	SDRAM access time from clock at highest CAS latency
+		time = bits 7-4 in nanoseconds + bits 3-0 in 1/10 nanoseconds
+ 0Bh	BYTE	module configuration type (see #I051)
+ 0Ch	BYTE	refresh rate and type (see #I052)
+ 0Dh	BYTE	primary SDRAM width in bits (see #I053)
+ 0Eh	BYTE	error checking SDRAM width in bits (see #I053)
+ 0Fh	BYTE	SDRAM device attributes: minimum clock delay for back-to-back
+		  random column accesses (00h = undefined)
+ 10h	BYTE	SDRAM device attributes: supported burst lengths (see #I054)
+ 11h	BYTE	SDRAM device attributes: number of banks on device
+		(00h = reserved)
+ 12h	BYTE	SDRAM device atttributes: CAS latency (see #I055)
+ 13h	BYTE	SDRAM device atttributes: CS latency (see #I056)
+ 14h	BYTE	SDRAM device atttributes: WE latency (see #I056)
+ 15h	BYTE	SDRAM module attributes (see #I057)
+ 16h	BYTE	SDRAM device attributes: general (see #I058)
+ 17h	BYTE	SDRAM minimum cycle time at second highest CAS latency
+		time = bits 7-4 in nanoseconds + bits 3-0 in 1/10 nanoseconds
+		Note:	high nybble values of 1-3 mean 16-18 for Rev1 (ofs 3Eh)
+ 18h	BYTE	SDRAM access time from clock at second highest CAS latency
+		time = bits 7-4 in nanoseconds + bits 3-0 in 1/10 nanoseconds
+ 19h	BYTE	SDRAM minimum cycle time at third highest CAS latency
+		time = bits 7-2 in nanoseconds + bits 1-0 in 1/4 nanoseconds
+ 1Ah	BYTE	SDRAM access time from clock at third highest CAS latency
+		time = bits 7-2 in nanoseconds + bits 1-0 in 1/4 nanoseconds
+ 1Bh	BYTE	minimum row precharge time in ns (00h = undefined)
+ 1Ch	BYTE	minimum row-activate to row-activate delay in ns (00h = undef)
+ 1Dh	BYTE	minimum RAS to CAS delay in ns (00h = undefined)
+ 1Eh	BYTE	minimum RAS pulse width in ns (00h = undefined)
+ 1Fh	BYTE	density of each row on module (see #I059)
+ 20h	BYTE	!!!see spdsd_12.pdf on Intel's web site
+ 21h	BYTE
+ 22h	BYTE
+ 23h	BYTE
+ 24h 26 BYTEs	future expansion
+ 3Eh	BYTE	SPD Data revision code (12h = revision 1.2)
+		(BCD; high nybble is major, low nybble is minor)
+ 3Fh	BYTE	checksum for bytes 00h-3Eh (low byte of sum of bytes 00h-3Eh)
+ 40h  8 BYTEs	manufacturer's JEDEC ID code
+ 48h	BYTE	manufacturing location
+ 49h 18 BYTEs	manufacturer's part number
+ 5Bh  2 BYTEs	revision code
+ 5Dh  2 BYTEs	manufacturing date (structure to be determined)
+ 5Fh  4 BYTEs	assembly serial number
+ 63h 27 BYTEs	manufacturer-specific data
+ 7Eh	BYTE	Intel specification for clock frequency
+		66h = 66 MHz (for backward compatibility
+		64h (100dec) = 100 MHz
+ 7Fh	BYTE	Intel specification details for 100 MHz support
+
+Bitfields for SDRAM SPD row/column address bits:
+Bit(s)	Description	(Table I048)
+ 3-0	number of row or column address bits for bank 1 (and bank 2 if present
+	  and same size as bank 1) (see #I049)
+ 7-4	number of row or column address bits for bank 2 if present and
+	  different from bank 1
+SeeAlso: #I047
+
+(Table I049)
+Values for SDRAM SPD row/column address bits:
+ 00h	undefined
+ 01h	1 or 16
+ 02h	2 or 17
+ 03h	3
+ ...
+ 0Ah	10
+ ...
+ 0Fh	15
+SeeAlso: #I048
+
+(Table I050)
+Values for SDRAM module signal voltage interface:
+ 00h	TTL / 5.0 Volts
+ 01h	LVTTL
+ 02h	HSTL 1.5
+ 03h	SSTL 3.3
+ 04h	SSTL 2.5
+ 05h-FEh to be determined
+ FFh	new table
+SeeAlso: #I047	
+
+(Table I051)
+Values for DIMM module ECC configuration type:
+ 00h	none
+ 01h	parity
+ 02h	ECC
+ 03h-FFh to be determined
+SeeAlso: #I047
+
+Bitfields for DIMM module refresh rate and type:
+Bit(s)	Description	(Table I052)
+ 7	self-refreshing
+ 6-0	rate
+	00h normal (15.625 us)
+	01h reduced 0.25x (3.9 us)
+	02h reduced 0.5x (7.8 us)
+	03h extended 2x (31.25 us)
+	04h extended 4x (62.5 us)
+	05h extended 8x (125 us)
+	06h-7Fh to be determined
+SeeAlso: #I047
+
+Bitfields for primary/error-checking SDRAM data width:
+Bit(s)	Description	(Table I053)
+ 7	second bank has double width
+	(=0 if only one bank, or second bank is same size)
+ 6-0	data width in bits (00h = undefined)
+SeeAlso: #I047
+
+Bitfields for SDRAM supported burst lengths:
+Bit(s)	Description	(Table I054)
+ 0	burst length of 1 is supported
+ 1	burst length 2
+ 2	burst length 4
+ 3	burst length 8
+ 6-4	to be determined
+ 7	entire page can be read in a burst
+SeeAlso: #I047
+
+Bitfields for SDRAM supported CAS latencies:
+Bit(s)	Description	(Table I055)
+ 0	CAS latency of 1 is supported
+ 1	latency 2 supported
+...
+ 6	latency 7 supported
+ 7	to be determined
+SeeAlso: #I047,#I056
+
+Bitfields for SDRAM supported CS / WE latencies:
+Bit(s)	Description	(Table I056)
+ 0	CS / WE latency of 1 is supported
+ 1	latency 2 supported
+...
+ 6	latency 7 supported
+ 7	to be determined
+SeeAlso: #I047,#I055
+
+Bitfields for SDRAM module attributes:
+Bit(s)	Description	(Table I057)
+ 0	buffered addres/control inputs (Ax, RAS, CAS, WE, CKE, S)
+ 1	registered address/control inputs (Ax, RAS, CAS, WE, CKE, S)
+ 2	on-card PLL for clock
+ 3	buffered DQMB inputs
+ 4	registered DQMB inputs
+ 5	differential clock input
+ 6	redundant row address
+ 7	to be determined
+SeeAlso: #I047
+
+Bitfields for general SDRAM device attributes:
+Bit(s)	Description	(Table I058)
+ 0	supports early RAS# precharge
+ 1	supports AutoPrecharge
+ 2	supports Precharge All
+ 3	supports Write1/ReadBurst
+ 4	lower Vcc tolerance: 0 = 10%, 1 = 5%
+ 5	upper Vcc tolerance: 0 = 10%, 1 = 5%
+ 7-6	to be determined
+SeeAlso: #I047
+
+Bitfields for DIMM row density:
+Bit(s)	Description	(Table I059)
+ 0	4 MByte
+ 1	8 MB
+ 2	16 MB
+ 3	32 MB
+ 4	64 MB
+ 5	128 MB
+ 6	256 MB
+ 7	512 MB
+Note:	if the module contains multiple rows of varying sizes, multiple bits
+	  will be set
+SeeAlso: #I047
+
+Bitfields for Intel specification details for 100 MHz DIMM support:
+Bit(s)	Description	(Table I060)
+ 0	supports Intel-defined "Concurrent AutoPrecharge"
+ 1	supports CAS latency = 2 
+ 2	supports CAS latency = 3
+ 3	maximum junction temperature (0 = 90 degrees C, 1 = 100 degrees C)
+ 4	CLK3 is connected on the DIMM
+ 5	CLK2 is connected
+ 6	CLK1 is connected
+ 7	CLK0 is connected
+Note:	bits 2-1 are for backwards compatibility with existing BIOSes; for
+	  full CL=2 support at 100 MHz, check bytes 12h, 17h, and 18h
+SeeAlso: #I047
+----------IC2--------------------------------
+I2C C2h - ??? Tuner - SET TUNER FREQUENCY
+Access:	Write
+Size:	4 BYTEs
+Desc:	the tuner is programmed by writing four bytes: high byte of Freq*16,
+	  low byte of Freq*16, high byte of band, and low byte of band
+Note:	Freq is the desired frequency in MHz
+
+Bitfields for ??? Tuner band:
+Bit(s)	Description	(Table I009)
+ 2-0	TV standard???
+	001 NTSC channels 14-62, 65+
+	010 NTSC channels 1-6, cable 95-99
+	100 PAL, NTSC channels 7-13, 63, 64
+	110 SECAM
+ 7-3	apparently ignored
+ 15-8	??? (only 1xx0x110 seems to work; other values may cause the tuner to
+	  approximately tune to one of three or four different channels,
+	  depending on the original frequence and band)
+----------IC200------------------------------
+I2C C2h/00h - ??? Tuner - TUNER STATUS
+Access:	Read
+
+Bitfields for ??? Tuner status:
+Bit(s)	Description	(Table I008)
+ 1	tuner is locked onto TV signal
+--------!---BIBLIOGRAPHY---------------------
+JEDEC manufacturer ID from http://www.eia.org/jedec/download/jep-106.pdf.
+Added by Ralf Brown, 10/97.
+
+Documented VPX32xx info from file VPX3220.PDF, available from www.itt-sc.de.
+Added by Ralf Brown, 10/97.  (Undocumented info from my own poking around)
+
+VDP 3108 info from file VDP3108.PDF, available from www.itt-sc.de.
+Added by Ralf Brown, 11/97.
+
+VDP 31xxB info from file VDP31xxB.PDF, available from www.itt-sc.de.
+Added by Ralf Brown, 11/97.
+
+SDRAM Serial Presence Detection from file SPDSD_12.PDF, "SDRAM Serial Presence
+Detect (SPD) Data Structure (168- and SO-144 DIMM)", Revision 1.2, November
+1997, available from www.intel.com.  Added by Ralf Brown, 12/20/97.
+--------!---Admin----------------------------
+Highest Table Number = I060
+--------!---FILELIST-------------------------
+Please redistribute all of the files comprising the interrupt list (listed at
+the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
+quartet of archives named INTER56A through INTER56D (preferably the original
+authenticated PKZIP archives), and the utility and hypertext programs in a trio
+of additional archives called INTER56E.ZIP to INTER56G.ZIP.
+
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
+--------!---CONTACT_INFO---------------------
+Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
+FIDO: Ralf Brown 1:129/26.1
+CIS:  >INTERNET:ralf@pobox.com

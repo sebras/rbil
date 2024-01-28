@@ -1,4 +1,4 @@
-Bibliography			Release 54		Last change 29jun97
+Bibliography			Release 56		Last change 21dec97
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
 --------!---BIBLIOGRAPHY---------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
@@ -245,7 +245,7 @@ Novell IPX/SPX calls in part from an article by J. Vanderaart in the Dutch
 _LAN-Magazine_, issue #1, titled "IPX, de kabel in de knel".  Added 3/16/91.
 
 Replacements for July 1987 info derived from
-	_80286_and_80287_Programmer's_Reference_Manual, Intel #253098-004
+	_80286_and_80287_Programmer's_Reference_Manual, Intel #256998-004
 	_IBM_ROM_BIOS_, Ray Duncan, "Programmer's Quick Reference Series"
 	_DOS_and_BIOS_Functions_Quick_Reference_, Que
 	_The_MS-DOS_Encyclopedia_, Microsoft Press
@@ -704,41 +704,52 @@ Added by Ralf Brown, 12/30/96.
 
 ATAPI Removable Media Device information from _ATAPI_Removable_Media_
 _Device_BIOS_Specification_, version 0.8, September 16, 1996; Compaq Computer
-Corporation and Phoenix Technologies.  Added by Ralf Brown, 01/02/97.
+Corporation and Phoenix Technologies.  Added by Ralf Brown, 02jan97.
 
 NetWare TCP/IP API info from "The RCB Interface to the LAN WorkPlace TCP/IP
 Protocol Stack", available from occam.sjf.novell.com.
-Added by Ralf Brown, 01/04/97.
+Added by Ralf Brown, 04jan97.
 
 Intel 82347/82351/82359 I/O ports from _The_Undocumented_PC_, second edition.
-Added by Ralf Brown, 01/09/97.
+Added by Ralf Brown, 09jan97.
 
 OpenHCI info from _Open_Host_Controller_Interface_Specification_for_USB_,
-10/16/96 preliminary release 1.0a.  Added by Ralf Brown, 01/11/97.
+10/16/96 preliminary release 1.0a.  Added by Ralf Brown, 11jan97.
 
 ACPI info from _Advanced_Configuration_and_Power_Interface_Specification_,
-draft revision 0.9, October 14, 1996.  Added by Ralf Brown, 1/11/97.
+draft revision 0.9, October 14, 1996.  Added by Ralf Brown, 11jan97.
 
 PCI IRQ Routing Table Specification v1.0 from _PCI_IRQ_Routing_Table_
 _Specification_, version 1.0, Microsoft Corporation, February 27, 1996.
-Added by Ralf Brown, 1/19/97.
+Added by Ralf Brown, 19jan97.
 
 Many additional IBM BIOS functions from
 http://www.surepath.ibm.com/documents/pcs/biosintr_func_list.html.
-Added by Ralf Brown, 4/12/97.
+Added by Ralf Brown, 12apr97.
+
+Additional VxD service names from SERVICES.DAT included with VXDMON by
+Bryce Cogswell and Mark Russinovich.  Added by Ralf Brown, 09jul97.
+
+Intel 82434LX/NX (Mercury/Neptune) chipset info from "82434LX/82434NX PCI,
+Cache, and Memory Controller (PCMC)", (online as file 29047904.pdf).
+Added by Ralf Brown, 24aug97.
+
+PentiumMMX updates from "Pentium Processor Family Developer's Manual (1997)",
+Intel document number 241428 (online as file 24142805.pdf).
+Added by Ralf Brown, 02sep97.
+
+Am486 SMM state-save map from "AMD BIOS Development Guide", file 19720C.PDF.
+Added by Ralf Brown, 03sep97.
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER54A through INTER54D (preferably the original
+quartet of archives named INTER55A through INTER55D (preferably the original
 authenticated PKZIP archives), the utility programs in a fifth archive
-called INTER54E.ZIP, and the hypertext conversion programs in two additional
-archives named INTER54F.ZIP and INTER54G.ZIP
+called INTER55E.ZIP, and the hypertext conversion programs in two additional
+archives named INTER55F.ZIP and INTER55G.ZIP.
 
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
 --------!---CONTACT_INFO---------------------
 Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
-UUCP: {uunet,harvard}!pobox.com!ralf
 FIDO: Ralf Brown 1:129/26.1
-	or post a message to me in the DR_DEBUG echo (I probably won't see it
-	unless you address it to me)
 CIS:  >INTERNET:ralf@pobox.com

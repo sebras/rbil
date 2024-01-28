@@ -3,22 +3,22 @@ Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
 --------N-21F2-------------------------------
 INT 21 u - Novell NetWare v3.01+ shell interface - MULTIPLEXOR
 	AH = F2h
-	AL = function (see #1750)
+	AL = function (see #1783)
 	    (subfunction stored in various places in the request packet,
 	    depending on function number; see individual entries)
 	CX = length of request buffer
 	DX = length of reply buffer (0000h if no reply packet)
 	DS:SI -> request buffer
 	ES:DI -> reply buffer (ignored if DX=0000h)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled as appropriate for function
 Note:	this is a multiplexor providing a "raw" interface to the underlying
 	  NetWare Core Protocol.  Many functions which were accessed via a
 	  separate AH function in older versions can also be accessed here,
 	  but some NetWare 3.x calls appear to be available only here.
-SeeAlso: AX=F244h,AX=F268h/SF=3Dh,#2522
+SeeAlso: AX=F244h,AX=F268h/SF=3Dh,#2561
 
-(Table 1750)
+(Table 1783)
 Values for NetWare Core Protocol functions:
 Fnc/Subfn	Description
 01h	File Set Lock
@@ -422,7 +422,7 @@ Note:	the subfunction is stored at DS:SI for AL=56h,57h, DS:SI+2 for
 INT 21 - DoubleDOS - SEND CHARACTER TO KEYBOARD BUFFER OF OTHER JOB
 	AH = F2h
 	AL = character
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	    00h successful
 	    01h buffer full (128 characters)
 SeeAlso: AH=E2h"DoubleDOS",AH=F1h"DoubleDOS",AH=F3h"DoubleDOS"
@@ -432,127 +432,127 @@ INT 21 - Novell NetWare - LOG FILE (OLD)
 	AX = F203h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #2132 at AX=F269h)
+	DS:SI -> request packet (see #2165 at AX=F269h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F204h,AX=F269h,AH=EBh"NetWare"
 --------N-21F204-----------------------------
 INT 21 - Novell NetWare - LOCK FILE SET (OLD)
 	AX = F204h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1751)
+	DS:SI -> request packet (see #1784)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F203h,AX=F26Ah,AH=CBh"NetWare"
 
 Format of NetWare "Lock File Set (old)" request packet:
-Offset	Size	Description	(Table 1751)
+Offset	Size	Description	(Table 1784)
  00h	WORD	lock timeout in clock ticks (0000h = don't wait)
 --------N-21F207-----------------------------
 INT 21 - Novell NetWare - CLEAR FILE
 	AX = F207h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1752)
+	DS:SI -> request packet (see #1785)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=CEh,AH=EDh"NetWare",AH=F2h"NetWare",AX=F208h
 
 Format of NetWare "Clear File" request packet:
-Offset	Size	Description	(Table 1752)
+Offset	Size	Description	(Table 1785)
  00h	BYTE	directory handle
  01h	BYTE	length of filename
  02h  N BYTEs	filename
-SeeAlso: #1753
+SeeAlso: #1786
 --------N-21F208-----------------------------
 INT 21 - Novell NetWare - CLEAR FILE SET
 	AX = F208h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1753)
+	DS:SI -> request packet (see #1786)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=CFh"NetWare",AH=F2h"NetWare",AX=F207h
 
 Format of NetWare "Clear File Set" request packet:
-Offset	Size	Description	(Table 1753)
+Offset	Size	Description	(Table 1786)
  00h	BYTE	lock flag (nonzero to lock)
-SeeAlso: #1752
+SeeAlso: #1785
 --------N-21F20A-----------------------------
 INT 21 - Novell NetWare - LOCK LOGICAL RECORD SET (OLD)
 	AX = F20Ah
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #2134 at AX=F26Ch)
+	DS:SI -> request packet (see #2167 at AX=F26Ch)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F204h,AX=F26Ch,AH=D1h"NetWare"
 --------N-21F20B-----------------------------
 INT 21 - Novell NetWare - CLEAR LOGICAL RECORD
 	AX = F20Bh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1754)
+	DS:SI -> request packet (see #1787)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=D4h"NetWare",AH=F2h"NetWare",AX=F207h,AX=F20Eh
 
 Format of NetWare "Clear Logical Record" request packet:
-Offset	Size	Description	(Table 1754)
+Offset	Size	Description	(Table 1787)
  00h	BYTE	length of record name (max 128)
  01h  N BYTEs	logical record name
-SeeAlso: #1755
+SeeAlso: #1788
 --------N-21F20E-----------------------------
 INT 21 - Novell NetWare - CLEAR LOGICAL RECORD SET
 	AX = F20Eh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1755)
+	DS:SI -> request packet (see #1788)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=D5h"NetWare",AH=F2h"NetWare",AX=F207h,AX=F20Bh
 
 Format of NetWare "Clear Logical Record Set" request packet:
-Offset	Size	Description	(Table 1755)
+Offset	Size	Description	(Table 1788)
  00h	BYTE	lock flag
-SeeAlso: #1754
+SeeAlso: #1787
 --------N-21F211SF06-------------------------
 INT 21 - Novell NetWare - GET PRINTER STATUS
 	AX = F211h subfn 06h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1756)
-	ES:DI -> reply buffer (see #1757)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1789)
+	ES:DI -> reply buffer (see #1790)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=E0h"NetWare",AH=F2h"Novell",AX=F211h/SF=0Ah
 
 Format of NetWare "Get Printer Status" request packet:
-Offset	Size	Description	(Table 1756)
+Offset	Size	Description	(Table 1789)
  00h	WORD	length of following data
  02h	BYTE	06h (subfunction "Get Printer Status")
  03h	BYTE	target printer number (00h-04h)
-SeeAlso: #1757,#1467
+SeeAlso: #1790,#1502
 
 Format of NetWare "Get Printer Status" reply packet:
-Offset	Size	Description	(Table 1757)
+Offset	Size	Description	(Table 1790)
  00h	BYTE	flag: printer halted if FFh
  01h	BYTE	flag: printer off-line if FFh
  02h	BYTE	current form type
  03h	BYTE	redirected printer number
-SeeAlso: #1756
+SeeAlso: #1789
 --------N-21F211SF0A-------------------------
 INT 21 - Novell NetWare - GET PRINTER QUEUE
 	AX = F211h subfn 0Ah
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1758)
+	DS:SI -> request buffer (see #1791)
 	ES:DI -> reply buffer
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F211h/SF=06h
 
 Format of NetWare "Get Printer Queue" request packet:
-Offset	Size	Description	(Table 1758)
+Offset	Size	Description	(Table 1791)
  00h	WORD	length of following data
  02h	BYTE	0Ah (subfunction "Get Printer Queue")
 	???
@@ -561,18 +561,18 @@ INT 21 - Novell NetWare - GET VOLUME INFO WITH NUMBER
 	AX = F212h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1759)
-	ES:DI -> reply buffer (see #1760)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1792)
+	ES:DI -> reply buffer (see #1793)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=15h,AX=F217h/SF=E9h
 
 Format of NetWare "Get Volume Info with Number" request packet:
-Offset	Size	Description	(Table 1759)
+Offset	Size	Description	(Table 1792)
  00h	BYTE	volume number
-SeeAlso: #1760
+SeeAlso: #1793
 
 Format of NetWare "Get Volume Info with Number" reply packet:
-Offset	Size	Description	(Table 1760)
+Offset	Size	Description	(Table 1793)
  00h	WORD	sectors per cluster
  02h	WORD	total clusters in volume
  04h	WORD	free clusters
@@ -582,18 +582,18 @@ Offset	Size	Description	(Table 1760)
  1Ah	WORD	removability
 		0000h fixed media
 		FFFFh removable
-SeeAlso: #1759
+SeeAlso: #1792
 --------N-21F214CX0000-----------------------
 INT 21 - Novell NetWare - GET FILE SERVER DATE AND TIME
 	AX = F214h
 	CX = 0000h (no request packet)
 	DX = length of reply packet in bytes
-	ES:DI -> buffer for reply packet (see #1761)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	ES:DI -> buffer for reply packet (see #1794)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"NetWare",AH=E3h/SF=CAh,AH=E7h"NetWare"
 
 Format of NetWare "Get File Server Date and Time" reply packet:
-Offset	Size	Description	(Table 1761)
+Offset	Size	Description	(Table 1794)
  00h	BYTE	year-1900 (80-179)
  01h	BYTE	month (1-12)
  02h	BYTE	day (1-31)
@@ -601,67 +601,67 @@ Offset	Size	Description	(Table 1761)
  04h	BYTE	minute
  05h	BYTE	second
  06h	BYTE	day of week
-SeeAlso: #1666 at AH=E3h/SF=CAh,#1742 at AH=E7h
+SeeAlso: #1700 at AH=E3h/SF=CAh,#1775 at AH=E7h
 --------N-21F215SF01-------------------------
 INT 21 - Novell NetWare - GET BROADCAST MESSAGE (OLD)
 	AX = F215h subfn 01h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1475 at AH=E1h/SF=01h)
-	ES:DI -> reply buffer (see #1762)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1510 at AH=E1h/SF=01h)
+	ES:DI -> reply buffer (see #1795)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E1h/SF=01h,AX=F215h/SF=02h,AX=F215h/SF=0Bh
 
 Format of NetWare "Get Broadcast Message (Old)" reply packet:
-Offset	Size	Description	(Table 1762)
+Offset	Size	Description	(Table 1795)
  00h	BYTE	length of message (00h-37h)
 		00h if no broadcast messages pending
  01h  N BYTEs	message (no control characters or characters > 7Eh)
-SeeAlso: #1474,#1475
+SeeAlso: #1509,#1510
 --------N-21F215SF02-------------------------
 INT 21 - Novell NetWare - DISABLE BROADCASTS
 	AX = F215h subfn 02h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1476 at AH=E1h/SF=02h)
+	DS:SI -> request packet (see #1511 at AH=E1h/SF=02h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E1h/SF=02h,AX=F215h/SF=01h,AX=F215h/SF=03h
 --------N-21F215SF03-------------------------
 INT 21 - Novell NetWare - ENABLE BROADCASTS
 	AX = F215h subfn 03h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1477 at AH=E1h/SF=03h)
+	DS:SI -> request packet (see #1512 at AH=E1h/SF=03h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E1h/SF=03h,AX=F215h/SF=01h,AX=F215h/SF=02h
 --------N-21F215SF08-------------------------
 INT 21 - Novell NetWare - CHECK PIPE STATUS
 	AX = F215h subfn 08h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1488 at AH=E1h/SF=08h)
-	ES:DI -> reply buffer (see #1763)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1523 at AH=E1h/SF=08h)
+	ES:DI -> reply buffer (see #1796)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E1h/SF=08h,AX=F215h/SF=09h
 
 Format of NetWare "Check Pipe Status" reply packet:
-Offset	Size	Description	(Table 1763)
+Offset	Size	Description	(Table 1796)
  00h	BYTE	number of connections
  01h  N BYTEs	list of pipe statuses
 		00h open
 		FEh incomplete
 		FFh closed
-SeeAlso: #1488,#1489
+SeeAlso: #1523,#1524
 --------N-21F215SF09-------------------------
 INT 21 - Novell NetWare - BROADCAST TO CONSOLE
 	AX = F215h subfn 09h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1490 at AH=E1h/SF=09h)
+	DS:SI -> request packet (see #1525 at AH=E1h/SF=09h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 Note:	requires Access Control rights to the target directory or its parent
 SeeAlso: AH=E1h/SF=09h,AH=F2h"NetWare",AX=F215h/SF=08h
 --------N-21F215SF0B-------------------------
@@ -669,154 +669,154 @@ INT 21 - Novell NetWare - GET BROADCAST MESSAGE
 	AX = F215h subfn 0Bh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1764)
-	ES:DI -> reply buffer (see #1765)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1797)
+	ES:DI -> reply buffer (see #1798)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E1h/SF=01h,AX=F215h/SF=01h
 
 Format of NetWare "Get Broadcast Message" request packet:
-Offset	Size	Description	(Table 1764)
+Offset	Size	Description	(Table 1797)
  00h	WORD	length of following data
  02h	BYTE	0Bh (subfunction "Get Broadcast Message")
-SeeAlso: #1765,#1474
+SeeAlso: #1798,#1509
 
 Format of NetWare "Get Broadcast Message" reply packet:
-Offset	Size	Description	(Table 1765)
+Offset	Size	Description	(Table 1798)
  00h	BYTE	length of message
  01h  N BYTEs	message
-SeeAlso: #1764,#1475
+SeeAlso: #1797,#1510
 --------N-21F216SF00-------------------------
 INT 21 - Novell NetWare - SET DIRECTORY HANDLE
 	AX = F216h subfn 00h
 	CX = length of request buffer in bytes
 	DX = 0000h (no reply buffer)
-	DS:SI -> request buffer (see #1493 at AH=E2h/SF=00h)
+	DS:SI -> request buffer (see #1528 at AH=E2h/SF=00h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=00h,AX=F216h/SF=01h
 --------N-21F216SF01-------------------------
 INT 21 - Novell NetWare - GET DIRECTORY PATH
 	AX = F216h subfn 01h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1495 at AH=E2h/SF=01h)
-	ES:DI -> reply buffer (see #1496)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1530 at AH=E2h/SF=01h)
+	ES:DI -> reply buffer (see #1531)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=01h,AX=F216h/SF=00h
 --------N-21F216SF02-------------------------
 INT 21 - Novell NetWare - SCAN DIRECTORY INFORMATION
 	AX = F216h subfn 02h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1497 at AH=E2h/SF=02h)
-	ES:DI -> reply buffer (see #1766)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1532 at AH=E2h/SF=02h)
+	ES:DI -> reply buffer (see #1799)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=02h,AX=F216h/SF=01h,AX=F216h/SF=03h
 
 Format of NetWare "Scan Directory Information" reply packet:
-Offset	Size	Description	(Table 1766)
+Offset	Size	Description	(Table 1799)
  00h 16 BYTEs	subdirectory name
- 10h	DWORD	(big-endian) date and time of creation (see #1499)
+ 10h	DWORD	(big-endian) date and time of creation (see #1534)
  14h	DWORD	(big-endian) object ID of owner
- 18h	BYTE	maximum directory rights (see #1502)
+ 18h	BYTE	maximum directory rights (see #1537)
  19h	BYTE	unused
  1Ah	WORD	(big-endian) subdirectory number
-SeeAlso: #1497,#1498 at AH=E2h/SF=02h
+SeeAlso: #1532,#1533 at AH=E2h/SF=02h
 --------N-21F216SF03-------------------------
 INT 21 - Novell NetWare - GET EFFECTIVE DIRECTORY RIGHTS (OLD)
 	AX = F216h subfn 03h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1500 at AH=E2h/SF=03h)
-	ES:DI -> reply buffer (see #1767)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1535 at AH=E2h/SF=03h)
+	ES:DI -> reply buffer (see #1800)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=E2h/SF=03h,AX=F216h/SF=02h,AX=F216h/SF=04h,AX=F257h/SF=1Dh
 
 Format of NetWare "Get Effective Directory Rights (old)" reply buffer:
-Offset	Size	Description	(Table 1767)
- 00h	BYTE	effective directory rights (see #1502 at AH=E2h/SF=03h)
-SeeAlso: #1500,#1501 at AH=E2h/SF=03h
+Offset	Size	Description	(Table 1800)
+ 00h	BYTE	effective directory rights (see #1537 at AH=E2h/SF=03h)
+SeeAlso: #1535,#1536 at AH=E2h/SF=03h
 --------N-21F216SF04-------------------------
 INT 21 - Novell NetWare - MODIFY MAXIMUM RIGHTS MASK
 	AX = F216h subfn 04h
 	CX = length of request buffer in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet	(see #1503 at AH=E2h/SF=04h)
+	DS:SI -> request packet	(see #1538 at AH=E2h/SF=04h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=04h,AX=F216h/SF=03h,AX=F216h/SF=05h
 --------N-21F216SF05-------------------------
 INT 21 - Novell NetWare - GET VOLUME NUMBER
 	AX = F216h subfn 05h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1505 at AH=E2h/SF=05h)
-	ES:DI -> reply buffer (see #1768)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1540 at AH=E2h/SF=05h)
+	ES:DI -> reply buffer (see #1801)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=05h,AX=F216h/SF=02h,AX=F216h/SF=06h
 
 Format of NetWare "Get Volume Number" reply packet:
-Offset	Size	Description	(Table 1768)
+Offset	Size	Description	(Table 1801)
  00h	BYTE	volume number
-SeeAlso: #1505 at AH=E2h/SF=05h
+SeeAlso: #1540 at AH=E2h/SF=05h
 --------N-21F216SF06-------------------------
 INT 21 - Novell NetWare - GET VOLUME NAME
 	AX = F216h subfn 06h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1507 at AH=E2h/SF=06h)
-	ES:DI -> reply buffer (see #1769)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1542 at AH=E2h/SF=06h)
+	ES:DI -> reply buffer (see #1802)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=06h,AX=F216h/SF=05h,AX=F216h/SF=0Ah
 
 Format of NetWare "Get Volume Name" reply packet:
-Offset	Size	Description	(Table 1769)
-SeeAlso: #1507,#1508 at AH=E2h/SF=06h
+Offset	Size	Description	(Table 1802)
+SeeAlso: #1542,#1543 at AH=E2h/SF=06h
 --------N-21F216SF0A-------------------------
 INT 21 - Novell NetWare - CREATE DIRECTORY
 	AX = F216h subfn 0Ah
 	CX = length of request buffer in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1509 at AH=E2h/SF=0Ah)
+	DS:SI -> request packet (see #1544 at AH=E2h/SF=0Ah)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=39h,AH=F2h"Novell",AH=E2h/SF=0Ah,AX=F216h/SF=0Bh
 --------N-21F216SF0B-------------------------
 INT 21 - Novell NetWare - DELETE DIRECTORY
 	AX = F216h subfn 0Bh
 	CX = length of request buffer in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1511 at AH=E2h/SF=0Bh)
+	DS:SI -> request packet (see #1546 at AH=E2h/SF=0Bh)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=3Ah,AH=F2h"Novell",AH=E2h/SF=0Bh,AX=F216h/SF=0Ah
 --------N-21F216SF0C-------------------------
 INT 21 - Novell NetWare - SCAN DIRECTORY FOR TRUSTEES
 	AX = F216h subfn 0Ch
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1512 at AH=E2h/SF=0Ch)
-	ES:DI -> reply buffer (see #1770)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1547 at AH=E2h/SF=0Ch)
+	ES:DI -> reply buffer (see #1803)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=0Ch,AX=F216h/SF=0Dh
 
 Format of NetWare "Scan Directory For Trustees" reply packet:
-Offset	Size	Description	(Table 1770)
+Offset	Size	Description	(Table 1803)
  02h 16 BYTEs	directory name
  12h  4 BYTEs	date and time of creation
  16h	DWORD	(big-endian) object ID of owner
  1Ah  5 DWORDs	(big-endian) object IDs of Trustees 0 through 4
 		00000000h = end of group
- 2Eh  5 BYTEs	directory rights for Trustees 0 through 4 (see #1502)
-SeeAlso: #1512 at AH=E2h/SF=0Ch
+ 2Eh  5 BYTEs	directory rights for Trustees 0 through 4 (see #1537)
+SeeAlso: #1547 at AH=E2h/SF=0Ch
 --------N-21F216SF0D-------------------------
 INT 21 - Novell NetWare - ADD TRUSTEE TO DIRECTORY
 	AX = F216h subfn 0Dh
 	CX = length of request buffer in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet	(see #1514 at AH=E2h/SF=0Dh)
+	DS:SI -> request packet	(see #1549 at AH=E2h/SF=0Dh)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 Note:	requires Access Control rights to the target directory or its parent
 SeeAlso: AH=F2h"NetWare",AH=E2h/SF=0Dh,AX=F216h/SF=0Ch,AX=F216h/SF=0Eh
 --------N-21F216SF0E-------------------------
@@ -824,93 +824,93 @@ INT 21 - Novell NetWare - DELETE TRUSTEE FROM DIRECTORY
 	AX = F216h subfn 0Eh
 	CX = length of request buffer in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet	(see #1515 at AH=E2h/SF=0Eh)
+	DS:SI -> request packet	(see #1550 at AH=E2h/SF=0Eh)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=0Eh,AX=F216h/SF=0Ch,AX=F216h/SF=0Dh
 --------N-21F216SF0F-------------------------
 INT 21 - Novell NetWare - RENAME DIRECTORY
 	AX = F216h subfn 0Fh
 	CX = length of request buffer in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1517 at AH=E2h/SF=0Fh)
+	DS:SI -> request packet (see #1552 at AH=E2h/SF=0Fh)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=0Fh,AX=F216h/SF=0Ah
 --------N-21F216SF10-------------------------
 INT 21 - Novell NetWare - PURGE ERASED FILES (OLD)
 	AX = F216h subfn 10h
 	CX = length of request buffer in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1518 at AH=E2h/SF=10h)
+	DS:SI -> request packet (see #1553 at AH=E2h/SF=10h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=10h,AX=F216h/SF=11h
 --------N-21F216SF11-------------------------
 INT 21 - Novell NetWare - RECOVER ERASED FILE (OLD)
 	AX = F216h subfn 11h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1520 at AH=E2h/SF=11h)
-	ES:DI -> reply buffer (see #1771)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1555 at AH=E2h/SF=11h)
+	ES:DI -> reply buffer (see #1804)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=11h,AX=F216h/SF=10h
 
 Format of NetWare "Recover Erased File (Old)" reply packet:
-Offset	Size	Description	(Table 1771)
+Offset	Size	Description	(Table 1804)
  02h 15 BYTEs	ASCIZ name of erased file
  11h 15 BYTEs	ASCIZ name under which file was restored
-SeeAlso: #1520,#1521 at AH=E2h/SF=11h
+SeeAlso: #1555,#1556 at AH=E2h/SF=11h
 --------N-21F216SF12-------------------------
 INT 21 - Novell NetWare - ALLOCATE PERMANENT DIRECTORY HANDLE
 	AX = F216h subfn 12h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1522 at AH=E2h/SF=12h)
-	ES:DI -> reply buffer (see #1773)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1557 at AH=E2h/SF=12h)
+	ES:DI -> reply buffer (see #1806)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=16h,AH=E2h/SF=12h
 
 Format of NetWare IPX fragment list entry:
-Offset	Size	Description	(Table 1772)
+Offset	Size	Description	(Table 1805)
  00h	DWORD	-> fragment data
  04h	WORD	size of fragment in bytes
 
 Format of NetWare "Allocate Permanent Directory Handle" reply packet:
-Offset	Size	Description	(Table 1773)
+Offset	Size	Description	(Table 1806)
  00h	BYTE	new directory handle
  01h	BYTE	access rights
-SeeAlso: #1522,#1526,#1772
+SeeAlso: #1557,#1561,#1805
 --------N-21F216SF13-------------------------
 INT 21 - Novell NetWare - ALLOCATE TEMPORARY DIRECTORY HANDLE
 	AX = F216h subfn 13h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1524 at AH=E2h/SF=13h)
+	DS:SI -> request packet (see #1559 at AH=E2h/SF=13h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=12h,AX=F216h/SF=16h,AH=E2h/SF=13h
 --------N-21F216SF14-------------------------
 INT 21 - Novell NetWare - DEALLOCATE DIRECTORY HANDLE
 	AX = F216h subfn 14h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet	(see #1525 at AH=E2h/SF=14h)
+	DS:SI -> request packet	(see #1560 at AH=E2h/SF=14h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=14h,AX=F216h/SF=13h,AX=F216h/SF=16h
 --------N-21F216SF15-------------------------
 INT 21 - Novell NetWare - GET VOLUME INFO WITH HANDLE
 	AX = F216h subfn 15h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1527 at AH=E2h/SF=15h)
-	ES:DI -> reply buffer (see #1774)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1562 at AH=E2h/SF=15h)
+	ES:DI -> reply buffer (see #1807)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=15h,AX=F212h,AX=F216h/SF=13h
 
 Format of NetWare "Get Volume Info With Handle" reply packet:
-Offset	Size	Description	(Table 1774)
+Offset	Size	Description	(Table 1807)
  00h	WORD	(big-endian) sectors per block
  02h	WORD	(big-endian) total blocks on volume
  04h	WORD	(big-endian) blocks available on volume
@@ -918,88 +918,88 @@ Offset	Size	Description	(Table 1774)
  08h	WORD	(big-endian) directory slots available
  0Ah 16 BYTEs	NUL-padded volume name
  1Ah	WORD	(big-endian) flag: volume removable if nonzero
-SeeAlso: #1527 at AH=E2h/SF=15h
+SeeAlso: #1562 at AH=E2h/SF=15h
 --------N-21F216SF16-------------------------
 INT 21 - Novell NetWare v2+ - ALLOCATE SPECIAL TEMPORARY DIRECTORY HANDLE
 	AX = F216h subfn 16h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1529 at AH=E2h/SF=16h)
+	DS:SI -> request packet (see #1564 at AH=E2h/SF=16h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=12h,AX=F216h/SF=13h,AH=E2h/SF=16h
 --------N-21F216SF17-------------------------
 INT 21 - Novell NetWare - SAVE DIRECTORY HANDLE
 	AX = F216h subfn 17h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1530 at AH=E2h/SF=17h)
-	ES:DI -> reply buffer (see #1775)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1565 at AH=E2h/SF=17h)
+	ES:DI -> reply buffer (see #1808)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=17h,AX=F216h/SF=18h
 
 Format of NetWare "Save Directory Handle" reply packet:
-Offset	Size	Description	(Table 1775)
+Offset	Size	Description	(Table 1808)
  00h 16 BYTEs	save buffer
-SeeAlso: #1530,#1531,#1776
+SeeAlso: #1565,#1566,#1809
 --------N-21F216SF18-------------------------
 INT 21 - Novell NetWare - RESTORE DIRECTORY HANDLE
 	AX = F216h subfn 18h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1532 at AH=E2h/SF=18h)
-	ES:DI -> reply buffer (see #1776)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1567 at AH=E2h/SF=18h)
+	ES:DI -> reply buffer (see #1809)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=18h,AX=F216h/SF=17h
 
 Format of NetWare "Restore Directory Handle" reply packet:
-Offset	Size	Description	(Table 1776)
+Offset	Size	Description	(Table 1809)
  00h	BYTE	new directory handle
- 01h	BYTE	effective rights (see #1502)
-SeeAlso: #1533,#1775
+ 01h	BYTE	effective rights (see #1537)
+SeeAlso: #1568,#1808
 --------N-21F216SF19-------------------------
 INT 21 - Novell NetWare - SET DIRECTORY INFORMATION
 	AX = F216h subfn 19h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet	(see #1534 at AH=E2h/SF=19h)
+	DS:SI -> request packet	(see #1569 at AH=E2h/SF=19h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=19h,AX=F216h/SF=17h
 --------N-21F216SF1A-------------------------
 INT 21 - Novell NetWare - GET PATH NAME OF VOLUME-DIRECTORY NUMBER PAIR
 	AX = F216h subfn 1Ah
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1536 at AH=E2h/SF=1Ah)
-	ES:DI -> reply buffer (see #1777)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1571 at AH=E2h/SF=1Ah)
+	ES:DI -> reply buffer (see #1810)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=1Ah,AX=F216h/SF=0Eh
 
 Format of NetWare "Get Path Name Of Volume-Dir Number Pair" reply packet:
-Offset	Size	Description	(Table 1777)
+Offset	Size	Description	(Table 1810)
  00h 256 BYTEs	path
-SeeAlso: #1536,#1537 at AH=E2h/SF=1Ah
+SeeAlso: #1571,#1572 at AH=E2h/SF=1Ah
 --------N-21F216SF1B-------------------------
 INT 21 - Novell NetWare - SCAN SALVAGEABLE FILES (OLD)
 	AX = F216h subfn 1Bh
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1778)
-	ES:DI -> reply buffer (see #1779)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1811)
+	ES:DI -> reply buffer (see #1812)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=1Ch,AX=F216h/SF=1Dh,AX=F257h/SF=10h
 
 Format of NetWare "Scan Salvageable Files (Old)" request packet:
-Offset	Size	Description	(Table 1778)
+Offset	Size	Description	(Table 1811)
  00h	WORD	length of following data
  02h	BYTE	1Bh (subfunction "Scan Salvageable Files (Old)")
  03h	BYTE	directory handle
  04h	DWORD	last sequence number (set to FFFFFFFFh before first call)
-SeeAlso: #1779,#2054
+SeeAlso: #1812,#2087
 
 Format of NetWare "Scan Salvageable Files (Old)" reply packet:
-Offset	Size	Description	(Table 1779)
+Offset	Size	Description	(Table 1812)
  00h	DWORD	next sequence number
  04h	WORD	subdirectory
  06h	DWORD	attributes
@@ -1023,19 +1023,19 @@ Offset	Size	Description	(Table 1779)
  6Ah	DWORD	deletion date and time
  6Eh	DWORD	ID of deletor
  72h 16 BYTEs	reserved
-SeeAlso: #1778,#2055
+SeeAlso: #1811,#2088
 --------N-21F216SF1C-------------------------
 INT 21 - Novell NetWare - RECOVER SALVAGEABLE FILE (OLD)
 	AX = F216h subfn 1Ch
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1780)
+	DS:SI -> request packet (see #1813)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=1Bh,AX=F216h/SF=1Dh,AX=F257h/SF=11h
 
 Format of NetWare "Recover Salvageable File (Old)" request packet:
-Offset	Size	Description	(Table 1780)
+Offset	Size	Description	(Table 1813)
  00h	WORD	length of following data
  02h	BYTE	1Ch (subfunction "Recover Salvageable File (Old)")
  03h	BYTE	directory handle
@@ -1044,19 +1044,19 @@ Offset	Size	Description	(Table 1780)
  09h  N BYTEs	filename in DOS format
 	BYTE	length of new name for recovered file
       N BYTEs	recovered filename in NetWare VOLUME:DIRECTORY/.../FILE format
-SeeAlso: #2056
+SeeAlso: #2089
 --------N-21F216SF1D-------------------------
 INT 21 - Novell NetWare - PURGE SALVAGEABLE FILE (OLD)
 	AX = F216h subfn 1Dh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1781)
+	DS:SI -> request packet (see #1814)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=1Bh,AX=F216h/SF=1Ch,AX=F257h/SF=12h
 
 Format of NetWare "Purge Salvageable File (old)" request packet:
-Offset	Size	Description	(Table 1781)
+Offset	Size	Description	(Table 1814)
  00h	WORD	length of following data
  02h	BYTE	1Dh (subfunction "Purge Salvageable File (Old)")
  03h	BYTE	directory handle
@@ -1067,13 +1067,13 @@ INT 21 - Novell NetWare - SCAN A DIRECTORY
 	AX = F216h subfn 1Eh
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1782)
-	ES:DI -> reply buffer (see #1783)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1815)
+	ES:DI -> reply buffer (see #1816)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=02h,AX=F216h/SF=1Fh
 
 Format of NetWare "Scan A Directory" request packet:
-Offset	Size	Description	(Table 1782)
+Offset	Size	Description	(Table 1815)
  00h	WORD	length of following data
  02h	BYTE	1Eh (subfunction "Scan A Directory")
  03h	BYTE	directory handle
@@ -1081,10 +1081,10 @@ Offset	Size	Description	(Table 1782)
  05h	DWORD	sequence number
  09h	BYTE	length of search filespec
  0Ah  N BYTEs	search filespec
-SeeAlso: #1783
+SeeAlso: #1816
 
 Format of NetWare "Scan A Directory" reply packet:
-Offset	Size	Description	(Table 1783)
+Offset	Size	Description	(Table 1816)
  00h	DWORD	sequence number (copy into next request packet)
  04h	DWORD	subdirectory
  08h	DWORD	attributes
@@ -1117,19 +1117,19 @@ Offset	Size	Description	(Table 1783)
  64h	DWORD	maximum space
  68h	WORD	inherited rights mask
  6Ah 26 BYTEs	unused
-SeeAlso: #1782
+SeeAlso: #1815
 --------N-21F216SF1F-------------------------
 INT 21 - Novell NetWare - GET DIRECTORY ENTRY
 	AX = F216h subfn 1Fh
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1784)
+	DS:SI -> request packet (see #1817)
 	ES:DI -> reply buffer
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=1Eh
 
 Format of NetWare "Get Directory Entry" request packet:
-Offset	Size	Description	(Table 1784)
+Offset	Size	Description	(Table 1817)
  00h	WORD	length of following data
  02h	BYTE	1Fh (subfunction "Get Directory Entry")
 	???
@@ -1138,39 +1138,39 @@ INT 21 - Novell NetWare - SCAN VOLUME'S USER DISK RESTRICTIONS
 	AX = F216h subfn 20h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1785)
-	ES:DI -> reply buffer (see #1786)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1818)
+	ES:DI -> reply buffer (see #1819)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=23h,AX=F216h/SF=29h
 
 Format of NetWare "Scan Volume's User Disk Restrictions" request packet:
-Offset	Size	Description	(Table 1785)
+Offset	Size	Description	(Table 1818)
  00h	WORD	length of following data
  02h	BYTE	20h (subfunction "Scan Volume's User Disk Restrictions")
  03h	BYTE	volume number
  04h	DWORD	sequence number (set to 00000000h before first call)
-SeeAlso: #1786
+SeeAlso: #1819
 
 Format of NetWare "Scan Volume's User Disk Restrictions" reply packet:
-Offset	Size	Description	(Table 1786)
+Offset	Size	Description	(Table 1819)
  00h	BYTE	number of entries returned (max 12)
  01h 2N DWORDs	restriction entries [array]
 		Offset	Size	Description
 		 00h	DWORD	object ID
 		 04h	DWORD	maximum usage allowed (in 4K blocks)
-SeeAlso: #1785
+SeeAlso: #1818
 --------N-21F216SF21-------------------------
 INT 21 - Novell NetWare v3+ - ADD USER DISK SPACE RESTRICTION
 	AX = F216h subfn 21h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1787)
+	DS:SI -> request packet (see #1820)
 	ES:DI -> reply buffer (ignored)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AX=F216h/SF=20h,AX=F216h/SF=22h,AX=F216h/SF=24h
 
 Format of NetWare "Add User Disk Space Restriction" request buffer:
-Offset	Size	Description	(Table 1787)
+Offset	Size	Description	(Table 1820)
  00h	WORD	000Ah (length of following data)
  02h	BYTE	21h (subfunction "Add User Disk Space Restriction")
  03h	BYTE	volume number
@@ -1182,13 +1182,13 @@ INT 21 - Novell NetWare - REMOVE USER DISK SPACE RESTRICTIONS
 	AX = F216h subfn 22h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1788)
+	DS:SI -> request packet (see #1821)
 	ES:DI -> reply buffer
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=20h,AX=F216h/SF=21h,AX=F216h/SF=23h
 
 Format of NetWare "Remove User Disk Space Restrictions" request packet:
-Offset	Size	Description	(Table 1788)
+Offset	Size	Description	(Table 1821)
  00h	WORD	length of following data
  02h	BYTE	22h (subfunction "Remove User Disk Space Restrictions")
 	???
@@ -1197,39 +1197,39 @@ INT 21 - Novell NetWare - SCAN DIRECTORY SPACE RESTRICTIONS
 	AX = F216h subfn 23h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1789)
-	ES:DI -> reply buffer (see #1790)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1822)
+	ES:DI -> reply buffer (see #1823)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=20h,AX=F216h/SF=21h,AX=F216h/SF=22h
 
 Format of NetWare "Scan Directory Space Restrictions" request packet:
-Offset	Size	Description	(Table 1789)
+Offset	Size	Description	(Table 1822)
  00h	WORD	length of following data
  02h	BYTE	23h (subfunction "Scan Directory Space Restrictions")
  03h	BYTE	directory handle
-SeeAlso: #1790
+SeeAlso: #1823
 
 Format of NetWare "Scan Directory Space Restrictions" reply packet:
-Offset	Size	Description	(Table 1790)
+Offset	Size	Description	(Table 1823)
  00h	BYTE	number of entries returned
  01h 10N BYTEs	restrictions [array]
 		Offset	Size	Description
 		 00h	WORD	depth of directory from root
 		 02h	DWORD	maximum space allowed for files in directory
 		 04h	DWORD	current space used by files in directory
-SeeAlso: #1789
+SeeAlso: #1822
 --------N-21F216SF24-------------------------
 INT 21 - Novell NetWare v3+ - SET DIRECTORY DISK SPACE RESTRICTION
 	AX = F216h subfn 24h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1791)
+	DS:SI -> request buffer (see #1824)
 	ES:DI -> reply buffer (ignored)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AX=F216h/SF=21h,AX=F216h/SF=22h,AX=F216h/SF=23h,AX=F216h/SF=25h
 
 Format of NetWare "Set Directory Disk Space Restriction" request buffer:
-Offset	Size	Description	(Table 1791)
+Offset	Size	Description	(Table 1824)
  00h	WORD	0006h (length of following data)
  02h	BYTE	24h (subfunction "Set Directory Disk Space Restriction")
  03h	BYTE	directory handle
@@ -1240,13 +1240,13 @@ INT 21 - Novell NetWare - SET DIRECTORY/FILE INFORMATION
 	AX = F216h subfn 25h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1792)
+	DS:SI -> request packet (see #1825)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=02h
 
 Format of NetWare "Set Directory/File Information" request packet:
-Offset	Size	Description	(Table 1792)
+Offset	Size	Description	(Table 1825)
  00h	WORD	length of following data
  02h	BYTE	25h (subfunction "Set Directory/File Information")
  03h	BYTE	directory handle
@@ -1257,7 +1257,7 @@ Offset	Size	Description	(Table 1792)
  11h	DWORD	attributes
  15h	BYTE	unique ID
  16h	BYTE	flags
- 17h	BYTE	name space (see #2042)
+ 17h	BYTE	name space (see #2075)
  18h	BYTE	length of directory/file name
  19h 12 BYTEs	directory/file name
  25h	DWORD	creation date and time
@@ -1280,13 +1280,13 @@ INT 21 - Novell NetWare v3+ - SCAN FILE OR DIRECTORY FOR EXTENDED TRUSTEES
 	AX = F216h subfn 26h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1793)
-	ES:DI -> reply buffer (see #1794)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1826)
+	ES:DI -> reply buffer (see #1827)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 Desc:	get up to 20 extended trustee entries per call for a file or directory
 
 Format of NetWare "Scan File/Directory for Extended Trustees" request buffer:
-Offset	Size	Description	(Table 1793)
+Offset	Size	Description	(Table 1826)
  00h	WORD	length of following data
  02h	BYTE	26h (subfunc "Scan File or Directory For Extended Trustees")
  03h	BYTE	directory handle
@@ -1294,35 +1294,35 @@ Offset	Size	Description	(Table 1793)
 		00h for first call, increment by number of returned entries
  05h	BYTE	length of path
  06h  N BYTEs	pathname
-SeeAlso: #1793
+SeeAlso: #1826
 
 Format of NetWare "Scan File/Directory for Extended Trustees" reply buffer:
-Offset	Size	Description	(Table 1794)
+Offset	Size	Description	(Table 1827)
  00h	BYTE	number of entries returned (max 20)
  01h 20 DWORDs	(big-endian) list of object IDs
  51h 20 WORDs	list of associated trustee rights
-SeeAlso: #1794
+SeeAlso: #1827
 --------N-21F216SF27-------------------------
 INT 21 - Novell NetWare v3+ - ADD EXTENDED TRUSTEE TO DIRECTORY OR FILE
 	AX = F216h subfn 27h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1795)
+	DS:SI -> request packet (see #1828)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 
 Format of NetWare "Add Extended Trustee to Directory or File" request buffer:
-Offset	Size	Description	(Table 1795)
+Offset	Size	Description	(Table 1828)
  00h	WORD	length of following data
  02h	BYTE	27h (subfunction "Add Extended Trustee to Directory or File")
  03h	BYTE	directory handle
  04h	DWORD	(big-endian) object ID
- 08h	WORD	trustee rights (see #1796)
+ 08h	WORD	trustee rights (see #1829)
  0Ah	BYTE	path length
  0Bh  N BYTEs	path name
 
 Bitfields for NetWare trustee rights:
-Bit(s)	Description	(Table 1796)
+Bit(s)	Description	(Table 1829)
  0	read
  1	write
  3	create
@@ -1336,13 +1336,13 @@ INT 21 - Novell NetWare - SCAN DIRECTORY DISK SPACE
 	AX = F216h subfn 28h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1797)
-	ES:DI -> reply buffer (see #1798)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1830)
+	ES:DI -> reply buffer (see #1831)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=02h,AX=F216h/SF=20h
 
 Format of NetWare "Scan Directory Disk Space" request packet:
-Offset	Size	Description	(Table 1797)
+Offset	Size	Description	(Table 1830)
  00h	WORD	length of following data
  02h	BYTE	28h (subfunction "Scan Directory Disk Space")
  03h	BYTE	directory handle
@@ -1350,16 +1350,16 @@ Offset	Size	Description	(Table 1797)
  05h	DWORD	sequence number (set to FFFFFFFFh before first call)
  09h	BYTE	length of filespec
  0Ah  N BYTEs	search filespec
-SeeAlso: #1798
+SeeAlso: #1831
 
 Format of NetWare "Scan Directory Disk Space" reply packet:
-Offset	Size	Description	(Table 1798)
+Offset	Size	Description	(Table 1831)
  00h	DWORD	next sequence number
  04h	DWORD	(big-endian) subdirectory number
  08h	DWORD	(big-endian) attributes
  0Ch	BYTE	unique ID
  0Dh	BYTE	flags
- 0Eh	BYTE	name space (see #2042)
+ 0Eh	BYTE	name space (see #2075)
  0Fh	BYTE	length of name
  10h 12 BYTEs	name
  1Ch	DWORD	creation date and time
@@ -1381,45 +1381,45 @@ Offset	Size	Description	(Table 1798)
  7Ch	DWORD	primary entry
  80h	DWORD	name list
  84h	DWORD	other file fork size
-SeeAlso: #1797
+SeeAlso: #1830
 --------N-21F216SF29-------------------------
 INT 21 - Novell NetWare v3+ - GET OBJECT DISK USAGE AND RESTRICTIONS
 	AX = F216h subfn 29h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1799)
-	ES:DI -> reply buffer (see #1800)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1832)
+	ES:DI -> reply buffer (see #1833)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 Note:	this function returns successfully, showing no restriction, if an
 	  invalid object ID is specified
 SeeAlso: AX=F216h/SF=24h,AX=F216h/SF=33h
 
 Format of NetWare "Get Object Disk Restrictions" request buffer:
-Offset	Size	Description	(Table 1799)
+Offset	Size	Description	(Table 1832)
  00h	WORD	0006h (length of following data)
  02h	BYTE	21h (subfunction "Get Object Disk Restrictions")
  03h	BYTE	volume number
  04h	DWORD	(big-endian) object ID
-SeeAlso: #1800
+SeeAlso: #1833
 
 Format of NetWare "Get Object Disk Restrictions" reply buffer:
-Offset	Size	Description	(Table 1800)
+Offset	Size	Description	(Table 1833)
  00h	DWORD	disk space limit
  04h	DWORD	disk space currently in use by object
-SeeAlso: #1799
+SeeAlso: #1832
 --------N-21F216SF2A-------------------------
 INT 21 - Novell NetWare - GET EFFECTIVE RIGHTS
 	AX = F216h subfn 2Ah
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1801)
-	ES:DI -> reply buffer (see #1802)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1834)
+	ES:DI -> reply buffer (see #1835)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=32h
 
 Format of NetWare "Get Effective Rights" request packet:
-Offset	Size	Description	(Table 1801)
+Offset	Size	Description	(Table 1834)
  00h	WORD	length of following data
  02h	BYTE	2Ah (subfunction "Get Effective Rights")
 	???
@@ -1428,13 +1428,13 @@ INT 21 - Novell NetWare - REMOVE EXTENDED TRUSTEE FROM DIR OR FILE
 	AX = F216h subfn 2Bh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1772,#1802)
+	DS:SI -> request packet (see #1805,#1835)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=26h,AX=F216h/SF=27h
 
 Format of NetWare "Remove Extended Trustee From Dir Or File" request packet:
-Offset	Size	Description	(Table 1802)
+Offset	Size	Description	(Table 1835)
  00h	WORD	length of following data
  02h	BYTE	2Bh (subfunction "Remove Extended Trustee From Dir Or File")
  03h	BYTE	directory handle
@@ -1447,13 +1447,13 @@ INT 21 - Novell NetWare - GET VOLUME USAGE
 	AX = F216h subfn 2Ch
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1803)
-	ES:DI -> reply buffer (see #1804)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1836)
+	ES:DI -> reply buffer (see #1837)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=20h,AX=F216h/SF=29h
 
 Format of NetWare "Get Volume Usage" request packet:
-Offset	Size	Description	(Table 1803)
+Offset	Size	Description	(Table 1836)
  00h	WORD	length of following data
  02h	BYTE	2Ch (subfunction "Get Volume Usage")
 	???
@@ -1462,20 +1462,20 @@ INT 21 - Novell NetWare - GET DIRECTORY INFORMATION
 	AX = F216h subfn 2Dh
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1804)
-	ES:DI -> reply buffer (see #1805)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1837)
+	ES:DI -> reply buffer (see #1838)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=2Ch,AX=F216h/SF=2Eh
 
 Format of NetWare "Get Directory Information" request packet:
-Offset	Size	Description	(Table 1804)
+Offset	Size	Description	(Table 1837)
  00h	WORD	length of following data
  02h	BYTE	2Dh (subfunction "Get Directory Information")
  03h	BYTE	directory handle
-SeeAlso: #1805
+SeeAlso: #1838
 
 Format of NetWare "Get Directory Information" reply packet:
-Offset	Size	Description	(Table 1805)
+Offset	Size	Description	(Table 1838)
  00h	DWORD	total blocks
  04h	DWORD	available blocks
  08h	DWORD	total number of directory entries
@@ -1484,19 +1484,19 @@ Offset	Size	Description	(Table 1805)
  14h	BYTE	sectors per block
  15h	BYTE	length of volume name
  16h  N BYTEs	volume name
-SeeAlso: #1804
+SeeAlso: #1837
 --------N-21F216SF2E-------------------------
 INT 21 - Novell NetWare - RENAME OR MOVE
 	AX = F216h subfn 2Eh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1806)
+	DS:SI -> request packet (see #1839)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=34h,AX=F223h/SF=07h,AX=F244h
 
 Format of NetWare "Rename Or Move" request packet:
-Offset	Size	Description	(Table 1806)
+Offset	Size	Description	(Table 1839)
  00h	WORD	length of following data
  02h	BYTE	2Eh (subfunction "Rename Or Move")
  03h	BYTE	source directory handle
@@ -1511,20 +1511,20 @@ INT 21 - Novell NetWare - GET NAME SPACE INFORMATION
 	AX = F216h subfn 2Fh
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1807)
-	ES:DI -> reply buffer (see #1808)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1840)
+	ES:DI -> reply buffer (see #1841)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=30h,AX=F257h/SF=18h
 
 Format of NetWare "Get Name Space Information" request packet:
-Offset	Size	Description	(Table 1807)
+Offset	Size	Description	(Table 1840)
  00h	WORD	length of following data
  02h	BYTE	2Fh (subfunction "Get Name Space Information")
  03h	BYTE	volume number
-SeeAlso: #1808
+SeeAlso: #1841
 
 Format of NetWare "Get Name Space Information" request packet:
-Offset	Size	Description	(Table 1808)
+Offset	Size	Description	(Table 1841)
  00h	BYTE	length of namespace name
  01h  N BYTEs	name of namespace
 	BYTE	number of data streams
@@ -1537,34 +1537,34 @@ Offset	Size	Description	(Table 1808)
 	BYTE	bitmap of loaded name spaces
       N BYTEs	list of name spaces being used
 	BYTE	index number
-SeeAlso: #1807
+SeeAlso: #1840
 --------N-21F216SF30-------------------------
 INT 21 - Novell NetWare - GET NAME SPACE DIRECTORY ENTRY
 	AX = F216h subfn 30h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1809)
-	ES:DI -> reply buffer (see #1810)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1842)
+	ES:DI -> reply buffer (see #1843)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=2Fh
 
 Format of NetWare "Get Name Space Directory Entry" request packet:
-Offset	Size	Description	(Table 1809)
+Offset	Size	Description	(Table 1842)
  00h	WORD	length of following data
  02h	BYTE	30h (subfunction "Get Name Space Directory Entry")
  03h	BYTE	volume number
  04h	DWORD	sequence number (set to 00000000h before first call)
- 08h	BYTE	name space (see #2042)
-SeeAlso: #1810
+ 08h	BYTE	name space (see #2075)
+SeeAlso: #1843
 
 Format of NetWare "Get Name Space Directory Entry" request packet:
-Offset	Size	Description	(Table 1810)
+Offset	Size	Description	(Table 1843)
  00h	DWORD	next sequence number
  04h	DWORD	subdirectory
  08h	DWORD	attributes
  0Ch	BYTE	unique ID
  0Dh	BYTE	flags
- 0Eh	BYTE	name space (see #2042)
+ 0Eh	BYTE	name space (see #2075)
  0Fh	BYTE	length of name
  10h 12 BYTEs	filename
  1Ch	DWORD	creation date and time
@@ -1592,19 +1592,19 @@ Offset	Size	Description	(Table 1810)
  38h 32 BYTEs	Finder information
  58h  6 BYTEs	ProDOS information
  5Eh 38 BYTEs	reserved
-SeeAlso: #1809
+SeeAlso: #1842
 --------N-21F216SF31-------------------------
 INT 21 - Novell NetWare - OPEN DATA STREAM
 	AX = F216h subfn 31h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1811)
-	ES:DI -> reply buffer (see #1812)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1844)
+	ES:DI -> reply buffer (see #1845)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=30h
 
 Format of NetWare "Open Data Stream" request packet:
-Offset	Size	Description	(Table 1811)
+Offset	Size	Description	(Table 1844)
  00h	WORD	length of following data
  02h	BYTE	31h (subfunction "Open Data Stream")
  03h	BYTE	data stream
@@ -1613,60 +1613,60 @@ Offset	Size	Description	(Table 1811)
  06h	BYTE	open rights
  07h	BYTE	length of filename
  08h  N BYTEs	filename (8.3)
-SeeAlso: #1812
+SeeAlso: #1845
 
 Format of NetWare "Open Data Stream" reply packet:
-Offset	Size	Description	(Table 1812)
+Offset	Size	Description	(Table 1845)
  00h	DWORD	file handle
-SeeAlso: #1811
+SeeAlso: #1844
 --------N-21F216SF32-------------------------
 INT 21 - Novell NetWare v2.2+ - GET OBJECT EFFECTIVE RIGHTS
 	AX = F216h subfn 32h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1813)
-	ES:DI -> reply buffer (see #1814)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1846)
+	ES:DI -> reply buffer (see #1847)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AX=F216h/SF=29h
 
 Format of NetWare "Get Object Effective Rights" request buffer:
-Offset	Size	Description	(Table 1813)
+Offset	Size	Description	(Table 1846)
  00h	WORD	length of following data
  02h	BYTE	32h (subfunction "Get Object Effective Rights")
  03h	DWORD	object ID
  07h	BYTE	directory handle
  08h	var	counted path string
-SeeAlso: #1814
+SeeAlso: #1847
 
 Format of NetWare "Get Object Effective Rights" reply buffer:
-Offset	Size	Description	(Table 1814)
+Offset	Size	Description	(Table 1847)
  00h	WORD	object's effective rights
  02h  6 BYTEs	reserved
-SeeAlso: #1813
+SeeAlso: #1846
 --------N-21F216SF33-------------------------
 INT 21 - Novell NetWare v2.2+ - GET EXTENDED VOLUME INFORMATION
 	AX = F216h subfn 33h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1815)
-	ES:DI -> reply buffer (see #1816)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1848)
+	ES:DI -> reply buffer (see #1849)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AX=F216h/SF=29h
 
 Format of NetWare "Get Extended Volume Information" request buffer:
-Offset	Size	Description	(Table 1815)
+Offset	Size	Description	(Table 1848)
  00h	WORD	length of following data
  02h	BYTE	33h (subfunction "Get Extended Volume Information")
 ---v2.2---
  03h	BYTE	volume ID
 ---v4.x---
  03h	DWORD	volume number
-SeeAlso: #1816
+SeeAlso: #1849
 
 Format of NetWare "Get Extended Volume Information" reply buffer:
-Offset	Size	Description	(Table 1816)
+Offset	Size	Description	(Table 1849)
  00h	WORD	length of returned data
  02h	DWORD	volume type
  06h	DWORD	status flag bits
@@ -1706,15 +1706,15 @@ Offset	Size	Description	(Table 1816)
  7Eh	DWORD	object ID for Directory Services
  82h	DWORD	date and time volume last modified
  86h	var	counted volume name string
-SeeAlso: #1815
+SeeAlso: #1848
 --------N-21F217SF01-------------------------
 INT 21 - Novell NetWare - CHANGE USER PASSWORD (OLD)
 	AX = F217h subfn 01h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1544 at AH=E3h/SF=01h)
+	DS:SI -> request packet (see #1579 at AH=E3h/SF=01h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 Note:	this function requires an object of type USER, unlike the newer
 	  password changing function AX=F217h/SF=40h
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=01h,AX=F217h/SF=02h,AX=F217h/SF=40h
@@ -1723,94 +1723,94 @@ INT 21 - Novell NetWare - GET USER CONNECTION LIST (OLD)
 	AX = F217h subfn 02h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1545 at AH=E3h/SF=02h)
-	ES:DI -> reply buffer (see #1817)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1580 at AH=E3h/SF=02h)
+	ES:DI -> reply buffer (see #1850)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=02h,AX=F217h/SF=01h,AX=F217h/SF=0Ch
 
 Format of NetWare "Get User Connection List (old)" reply packet:
-Offset	Size	Description	(Table 1817)
+Offset	Size	Description	(Table 1850)
  00h	BYTE	length of connection list
  01h	BYTE	number of bytes in connection list
  02h  N BYTEs	list of connection numbers in use by user
-SeeAlso: #1545
+SeeAlso: #1580
 --------N-21F217SF0C-------------------------
 INT 21 - Novell NetWare - VERIFY SERIALIZATION
 	AX = F217h subfn 0Ch
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1549 at AH=E3h/SF=0Ch)
-	ES:DI -> reply buffer (see #1818)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1584 at AH=E3h/SF=0Ch)
+	ES:DI -> reply buffer (see #1851)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=0Ch,AX=F217h/SF=12h
 
 Format of NetWare "Verify Serialization" reply packet:
-Offset	Size	Description	(Table 1818)
+Offset	Size	Description	(Table 1851)
  00h	WORD	server application number
-SeeAlso: #1549
+SeeAlso: #1584
 --------N-21F217SF0E-------------------------
 INT 21 - Novell NetWare - GET DISK UTILIZATION
 	AX = F217h subfn 0Eh
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1553 at AH=E3h/SF=0Eh)
-	ES:DI -> reply buffer (see #1819)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1588 at AH=E3h/SF=0Eh)
+	ES:DI -> reply buffer (see #1852)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=0Eh,AX=F217h/SF=D6h
 
 Format of NetWare "Get Disk Utilization" reply packet:
-Offset	Size	Description	(Table 1819)
+Offset	Size	Description	(Table 1852)
  00h	BYTE	volume number (00h-1Fh)
  01h	DWORD	(big-endian) object ID
  05h	WORD	(big-endian) directories used by object
  07h	WORD	(big-endian) files created by object
  09h	WORD	(big-endian) disk blocks used by object-created files
-SeeAlso: #1553 at AH=E3h/SF=0Eh
+SeeAlso: #1588 at AH=E3h/SF=0Eh
 --------N-21F217SF0F-------------------------
 INT 21 - Novell NetWare - SCAN FILE INFORMATION
 	AX = F217h subfn 0Fh
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1556 at AH=E3h/SF=0Fh)
-	ES:DI -> reply buffer (see #1820)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1591 at AH=E3h/SF=0Fh)
+	ES:DI -> reply buffer (see #1853)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=0Fh,AX=F217h/SF=10h
 
 Format of NetWare "Scan File Information" reply packet:
-Offset	Size	Description	(Table 1820)
+Offset	Size	Description	(Table 1853)
  00h	WORD	next sequence number (place in request buffer for next call)
  02h 14 BYTEs	ASCIZ filename
- 10h	BYTE	file attributes (see #1073 at AX=4301h)
- 11h	BYTE	extended file attributes (see #1457 at AH=B6h)
+ 10h	BYTE	file attributes (see #1107 at AX=4301h)
+ 11h	BYTE	extended file attributes (see #1492 at AH=B6h)
  12h	DWORD	(big-endian) file size in bytes
- 16h	WORD	(big-endian) file's creation date (see #1318 at AX=5700h)
- 18h	WORD	(big-endian) date of last access (see #1317 at AX=5700h)
- 1Ah	DWORD	(big-endian) date and time of last update (see #1499)
+ 16h	WORD	(big-endian) file's creation date (see #1352 at AX=5700h)
+ 18h	WORD	(big-endian) date of last access (see #1351 at AX=5700h)
+ 1Ah	DWORD	(big-endian) date and time of last update (see #1534)
  1Eh	DWORD	(big-endian) object ID of owner
- 22h	DWORD	(big-endian) date and time last archived (see #1499)
+ 22h	DWORD	(big-endian) date and time last archived (see #1534)
  26h 55 BYTEs	reserved
-SeeAlso: #1556 at AH=E3h/SF=0Fh
+SeeAlso: #1591 at AH=E3h/SF=0Fh
 --------N-21F217SF10-------------------------
 INT 21 - Novell NetWare - SET FILE INFORMATION
 	AX = F217h subfn 10h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet	(see #1558 at AH=E3h/SF=10h)
+	DS:SI -> request packet	(see #1593 at AH=E3h/SF=10h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=10h,AX=F217h/SF=0Fh
 --------N-21F217SF11-------------------------
 INT 21 - Novell NetWare - GET FILE SERVER INFORMATION
 	AX = F217h subfn 11h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1560 at AH=E3h/SF=11h)
-	ES:DI -> reply buffer (see #1821)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1595 at AH=E3h/SF=11h)
+	ES:DI -> reply buffer (see #1854)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=11h,AX=F217h/SF=F1h
 
 Format of NetWare "Get File Server Information" reply packet:
-Offset	Size	Description	(Table 1821)
+Offset	Size	Description	(Table 1854)
  00h 48 BYTEs	server's name
  30h	BYTE	NetWare version
  31h	BYTE	NetWare subversion (0-99)
@@ -1833,46 +1833,46 @@ Offset	Size	Description	(Table 1821)
  42h	BYTE	security restrictions level
  43h	BYTE	internetwork bridge version
  44h 60 BYTEs	reserved
-SeeAlso: #1560
+SeeAlso: #1595
 --------N-21F217SF12-------------------------
 INT 21 - Novell NetWare - GET NETWORK SERIAL NUMBER
 	AX = F217h subfn 12h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1562 at AH=E3h/SF=12h)
-	ES:DI -> reply buffer (see #1822)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1597 at AH=E3h/SF=12h)
+	ES:DI -> reply buffer (see #1855)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=12h,AX=F217h/SF=0Ch
 
 Format of NetWare "Get Network Serial Number" reply packet:
-Offset	Size	Description	(Table 1822)
+Offset	Size	Description	(Table 1855)
  00h   4 BYTEs	(big-endian) NetWare server serial number
  04h   2 BYTEs	(big-endian) NetWare application serial number
-SeeAlso: #1562 at AH=E3h/SF=12h
+SeeAlso: #1597 at AH=E3h/SF=12h
 --------N-21F217SF13-------------------------
 INT 21 - Novell NetWare - GET INTERNET ADDRESS (OLD)
 	AX = F217h subfn 13h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1564 at AH=E3h/SF=13h)
-	ES:DI -> reply buffer (see #1823)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1599 at AH=E3h/SF=13h)
+	ES:DI -> reply buffer (see #1856)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=13h,AX=F217h/SF=1Ah
 
 Format of NetWare "Get Internet Address (old)" reply packet:
-Offset	Size	Description	(Table 1823)
+Offset	Size	Description	(Table 1856)
  00h  4 BYTEs	network number
  04h  6 BYTEs	physical node address
  0Ah  2 BYTEs	socket number
-SeeAlso: #1564 at AH=E3h/SF=13h,#1829
+SeeAlso: #1599 at AH=E3h/SF=13h,#1862
 --------N-21F217SF14-------------------------
 INT 21 - Novell NetWare - LOGIN OBJECT
 	AX = F217h subfn 14h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet	(see #1566 at AH=E3h/SF=14h)
+	DS:SI -> request packet	(see #1601 at AH=E3h/SF=14h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=14h,AX=F216h/SF=18h,AX=F217h/SF=CCh
 SeeAlso: AX=F258h/SF=03h,AX=F268h/SF=3Dh
 --------N-21F217SF15-------------------------
@@ -1880,56 +1880,56 @@ INT 21 - Novell NetWare - GET OBJECT CONNECTION LIST (OLD)
 	AX = F217h subfn 15h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1568 at AH=E3h/SF=15h)
-	ES:DI -> reply buffer (see #1824)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1603 at AH=E3h/SF=15h)
+	ES:DI -> reply buffer (see #1857)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=15h,AX=F217h/SF=1Bh
 
 Format of NetWare "Get Object Connection List (old)" reply packet:
-Offset	Size	Description	(Table 1824)
+Offset	Size	Description	(Table 1857)
  00h	BYTE	number of connections
  01h  N BYTEs	connection list
-SeeAlso: #1568
+SeeAlso: #1603
 --------N-21F217SF16-------------------------
 INT 21 - Novell NetWare - GET CONNECTION INFORMATION (OLD)
 	AX = F217h subfn 16h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1825)
-	ES:DI -> reply buffer (see #1826)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1858)
+	ES:DI -> reply buffer (see #1859)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=1Ch,AX=F217h/SF=1Fh
 
 Format of NetWare "Get Connection Information (old)" request packet:
-Offset	Size	Description	(Table 1825)
+Offset	Size	Description	(Table 1858)
  00h	WORD	0002h (length of following data)
  02h	BYTE	16h (subfunction "Get Connection Information (old)")
  03h	BYTE	target connection number
 Note:	connection numbers greater than the maximum supported by the server
 	  can cause ABENDs
-SeeAlso: #1826
+SeeAlso: #1859
 
 Format of NetWare "Get Connection Information (old)" reply packet:
-Offset	Size	Description	(Table 1826)
+Offset	Size	Description	(Table 1859)
  00h	DWORD	(big-endian) unique user ID, 00000000h if no one logged in
  04h	WORD	(big-endian) user type
  06h 48 BYTEs	user name
- 36h  7 BYTEs	login time (see #1742)
+ 36h  7 BYTEs	login time (see #1775)
  3Dh	BYTE	reserved
-SeeAlso: #1825
+SeeAlso: #1858
 --------N-21F217SF17-------------------------
 INT 21 - Novell NetWare - GET ENCRYPTION KEY
 	AX = F217h subfn 17h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1827)
+	DS:SI -> request packet (see #1860)
 	ES:DI -> reply buffer
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=18h,AX=F217h/SF=4Ah,AX=F217h/SF=4Bh
 
 Format of NetWare "Get Encryption Key" request packet:
-Offset	Size	Description	(Table 1827)
+Offset	Size	Description	(Table 1860)
  00h	WORD	length of following data
  02h	BYTE	17h (subfunction "Get Encryption Key")
 	???
@@ -1938,13 +1938,13 @@ INT 21 - Novell NetWare - LOGIN OBJECT ENCRYPTED
 	AX = F217h subfn 18h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1828)
+	DS:SI -> request packet (see #1861)
 	ES:DI -> reply buffer
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=14h,AX=F217h/SF=17h
 
 Format of NetWare "Login Object Encrypted" request packet:
-Offset	Size	Description	(Table 1828)
+Offset	Size	Description	(Table 1861)
  00h	WORD	length of following data
  02h	BYTE	18h (subfunction "Login Object Encrypted")
 	???
@@ -1953,20 +1953,20 @@ INT 21 - Novell NetWare - GET INTERNET ADDRESS
 	AX = F217h subfn 1Ah
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1829)
-	ES:DI -> reply buffer (see #1830)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1862)
+	ES:DI -> reply buffer (see #1863)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=13h
 
 Format of NetWare "Get Internet Address" request packet:
-Offset	Size	Description	(Table 1829)
+Offset	Size	Description	(Table 1862)
  00h	WORD	length of following data
  02h	BYTE	1Ah (subfunction "Get Internet Address")
  03h	DWORD	target connection ID
-SeeAlso: #1830
+SeeAlso: #1863
 
 Format of NetWare "Get Internet Address" reply packet:
-Offset	Size	Description	(Table 1830)
+Offset	Size	Description	(Table 1863)
  00h  4 BYTEs	network number
  04h  6 BYTEs	physical node address
  0Ah  2 BYTEs	socket number
@@ -1974,19 +1974,19 @@ Offset	Size	Description	(Table 1830)
 		00h not in use
 		02h NCP
 		03h AFP
-SeeAlso: #1829
+SeeAlso: #1862
 --------N-21F217SF1B-------------------------
 INT 21 - Novell NetWare - GET OBJECT CONNECTION LIST
 	AX = F217h subfn 1Bh
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1831)
-	ES:DI -> reply buffer (see #1832)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1864)
+	ES:DI -> reply buffer (see #1865)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=15h
 
 Format of NetWare "Get Object Connection List" request packet:
-Offset	Size	Description	(Table 1831)
+Offset	Size	Description	(Table 1864)
  00h	WORD	length of following data
  02h	BYTE	1Bh (subfunction "Get Object Connection List")
  03h	DWORD	search connection number
@@ -1995,53 +1995,53 @@ Offset	Size	Description	(Table 1831)
  07h	WORD	object type
  09h	BYTE	length of object's name
  0Ah  N BYTEs	object name
-SeeAlso: #1832
+SeeAlso: #1865
 
 Format of NetWare "Get Object Connection List" reply packet:
-Offset	Size	Description	(Table 1832)
+Offset	Size	Description	(Table 1865)
  00h	BYTE	length of connection number list
  01h  N WORDs	array of server connection numbers
-SeeAlso: #1831
+SeeAlso: #1864
 --------N-21F217SF1C-------------------------
 INT 21 - Novell NetWare v3+ - GET CONNECTION INFORMATION
 	AX = F217h subfn 1Ch
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1833)
-	ES:DI -> reply buffer (see #1834)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1866)
+	ES:DI -> reply buffer (see #1867)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=16h,AX=F217h/SF=1Fh
 
 Format of NetWare "Get Connection Information" request packet:
-Offset	Size	Description	(Table 1833)
+Offset	Size	Description	(Table 1866)
  00h	WORD	0005h (length of following data)
  02h	BYTE	1Ch (subfunction "Get Connection Information")
  03h	DWORD	target connection number
 Note:	connection numbers greater than the maximum supported by the server
 	  can cause ABENDs
-SeeAlso: #1834,#1825
+SeeAlso: #1867,#1858
 
 Format of NetWare "Get Connection Information" reply packet:
-Offset	Size	Description	(Table 1834)
+Offset	Size	Description	(Table 1867)
  00h	DWORD	(big-endian) unique user ID, 00000000h if no one logged in
  04h	WORD	(big-endian) user type
  06h 48 BYTEs	user name
- 36h  7 BYTEs	login time (see #1742)
+ 36h  7 BYTEs	login time (see #1775)
  3Dh	BYTE	reserved
-SeeAlso: #1833,#1826
+SeeAlso: #1866,#1859
 --------N-21F217SF1D-------------------------
 INT 21 - Novell NetWare v4 - CHANGE CONNECTION STATE
 	AX = F217h subfn 1Dh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1835)
+	DS:SI -> request buffer (see #1868)
 	ES:DI -> reply buffer
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 
 Format of NetWare "Change Connection State" requst buffer:
-Offset	Size	Description	(Table 1835)
+Offset	Size	Description	(Table 1868)
  00h	WORD	length of following data
  02h	BYTE	1Dh (subfunction "Change Connection State")
  03h	DWORD	new state
@@ -2050,13 +2050,13 @@ INT 21 - Novell NetWare v4 - SET WATCHDOG DELAY INTERVAL
 	AX = F217h subfn 1Eh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1836)
+	DS:SI -> request buffer (see #1869)
 	ES:DI -> reply buffer
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 
 Format of NetWare "Set Watchdog Delay Interval" request buffer:
-Offset	Size	Description	(Table 1836)
+Offset	Size	Description	(Table 1869)
  00h	WORD	length of following data
  02h	BYTE	1Eh (subfunction "Set Watchdog Delay Interval")
  03h	DWORD	interval in minutes
@@ -2065,196 +2065,196 @@ INT 21 - Novell NetWare v4 - GET CONNECTION LIST
 	AX = F217h subfn 1Fh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1837)
-	ES:DI -> reply buffer (see #1838)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1870)
+	ES:DI -> reply buffer (see #1871)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 
 Format of NetWare "Get Connection List" request buffer:
-Offset	Size	Description	(Table 1837)
+Offset	Size	Description	(Table 1870)
  00h	WORD	length of following data
  02h	BYTE	1Fh (subfunction "Get Connection List")
  03h	DWORD	object ID
  07h	DWORD	??? (initialize to FFFFFFFFh before first call)
-SeeAlso: #1838
+SeeAlso: #1871
 
 Format of NetWare "Get Connection List" reply buffer:
-Offset	Size	Description	(Table 1838)
+Offset	Size	Description	(Table 1871)
  00h	WORD	number of connections following (max 50)
  02h 50 DWORDs	connection numbers
-SeeAlso: #1837
+SeeAlso: #1870
 --------N-21F217SF32-------------------------
 INT 21 - Novell NetWare - CREATE BINDERY OBJECT
 	AX = F217h subfn 32h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet	(see #1574 at AH=E3h/SF=32h)
+	DS:SI -> request packet	(see #1609 at AH=E3h/SF=32h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=32h,AX=F217h/SF=33h,AX=F217h/SF=34h
 --------N-21F217SF33-------------------------
 INT 21 - Novell NetWare - DELETE BINDERY OBJECT
 	AX = F217h subfn 33h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet	(see #1576 at AH=E3h/SF=33h)
+	DS:SI -> request packet	(see #1611 at AH=E3h/SF=33h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=33h,AX=F217h/SF=32h,AX=F217h/SF=34h
 --------N-21F217SF34-------------------------
 INT 21 - Novell NetWare - RENAME BINDERY OBJECT
 	AX = F217h subfn 34h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet	(see #1577 at AH=E3h/SF=34h)
+	DS:SI -> request packet	(see #1612 at AH=E3h/SF=34h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=34h,AX=F217h/SF=32h,AX=F217h/SF=33h
 --------N-21F217SF35-------------------------
 INT 21 - Novell NetWare - GET BINDERY OBJECT ID
 	AX = F217h subfn 35h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1578 at AH=E3h/SF=35h)
-	ES:DI -> reply buffer (see #1839)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1613 at AH=E3h/SF=35h)
+	ES:DI -> reply buffer (see #1872)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=35h,AX=F217h/SF=36h,AX=F217h/SF=45h
 
 Format of NetWare "Get Bindery Object ID" reply packet:
-Offset	Size	Description	(Table 1839)
+Offset	Size	Description	(Table 1872)
  00h	DWORD	(big-endian) object ID
  04h	WORD	(big-endian) type of object
  06h 48 BYTEs	object name
-SeeAlso: #1578 at AH=E3h/SF=35h
+SeeAlso: #1613 at AH=E3h/SF=35h
 --------N-21F217SF36-------------------------
 INT 21 - Novell NetWare - GET BINDERY OBJECT NAME
 	AX = F217h subfn 36h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1581 at AH=E3h/SF=36h)
-	ES:DI -> reply buffer (see #1840)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1616 at AH=E3h/SF=36h)
+	ES:DI -> reply buffer (see #1873)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=36h,AX=F217h/SF=35h,AX=F217h/SF=37h
 
 Format of NetWare "Get Bindery Object Name" reply packet:
-Offset	Size	Description	(Table 1840)
+Offset	Size	Description	(Table 1873)
  00h	DWORD	(big-endian) object ID
  04h	WORD	(big-endian) type of object
  06h 48 BYTEs	object name
-SeeAlso: #1581 at AH=E3h/SF=36h
+SeeAlso: #1616 at AH=E3h/SF=36h
 --------N-21F217SF37-------------------------
 INT 21 - Novell NetWare - SCAN BINDERY OBJECT
 	AX = F217h subfn 37h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1583 at AH=E3h/SF=37h)
-	ES:DI -> reply buffer (see #1841)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1618 at AH=E3h/SF=37h)
+	ES:DI -> reply buffer (see #1874)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=37h,AX=F217h/SF=3Ch
 
 Format of NetWare "Scan Bindery Object" reply packet:
-Offset	Size	Description	(Table 1841)
+Offset	Size	Description	(Table 1874)
  00h
-SeeAlso: #1583
+SeeAlso: #1618
 --------N-21F217SF38-------------------------
 INT 21 - Novell NetWare - CHANGE BINDERY OBJECT SECURITY
 	AX = F217h subfn 38h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply buffer)
-	DS:SI -> request packet	(see #1585 at AH=E3h/SF=38h)
+	DS:SI -> request packet	(see #1620 at AH=E3h/SF=38h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=38h,AX=F217h/SF=32h
 --------N-21F217SF39-------------------------
 INT 21 - Novell NetWare - CREATE PROPERTY
 	AX = F217h subfn 39h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet	(see #1587 at AH=E3h/SF=39h)
+	DS:SI -> request packet	(see #1622 at AH=E3h/SF=39h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=39h,AX=F217h/SF=3Ah
 --------N-21F217SF3A-------------------------
 INT 21 - Novell NetWare - DELETE PROPERTY
 	AX = F217h subfn 3Ah
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet	(see #1589 at AH=E3h/SF=3Ah)
+	DS:SI -> request packet	(see #1624 at AH=E3h/SF=3Ah)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=3Ah,AX=F217h/SF=39h,AX=F217h/SF=3Bh
 --------N-21F217SF3B-------------------------
 INT 21 - Novell NetWare - CHANGE PROPERTY SECURITY
 	AX = F217h subfn 3Bh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply buffer)
-	DS:SI -> request packet	(see #1591 at AH=E3h/SF=3Bh)
+	DS:SI -> request packet	(see #1626 at AH=E3h/SF=3Bh)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=3Bh
 --------N-21F217SF3C-------------------------
 INT 21 - Novell NetWare - SCAN PROPERTY
 	AX = F217h subfn 3Ch
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1592 at AH=E3h/SF=3Ch)
-	ES:DI -> reply buffer (see #1842)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1627 at AH=E3h/SF=3Ch)
+	ES:DI -> reply buffer (see #1875)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=3Ch,AX=F217h/SF=39h,AX=F217h/SF=3Dh
 
 Format of NetWare "Scan Property" reply packet:
-Offset	Size	Description	(Table 1842)
+Offset	Size	Description	(Table 1875)
  00h
-SeeAlso: #1592
+SeeAlso: #1627
 --------N-21F217SF3D-------------------------
 INT 21 - Novell NetWare - READ PROPERTY VALUE
 	AX = F217h subfn 3Dh
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1595 at AH=E3h/SF=3Dh)
-	ES:DI -> reply buffer (see #1843)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1630 at AH=E3h/SF=3Dh)
+	ES:DI -> reply buffer (see #1876)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=3Dh,AX=F217h/SF=39h,AX=F217h/SF=3Eh
 
 Format of NetWare "Read Property Value" request packet:
-Offset	Size	Description	(Table 1843)
+Offset	Size	Description	(Table 1876)
  00h
-SeeAlso: #1595
+SeeAlso: #1630
 --------N-21F217SF3E-------------------------
 INT 21 - Novell NetWare - WRITE PROPERTY VALUE
 	AX = F217h subfn 3Eh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet	(see #1597 at AH=E3h/SF=3Eh)
+	DS:SI -> request packet	(see #1632 at AH=E3h/SF=3Eh)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=3Eh,AX=F217h/SF=39h,AX=F217h/SF=3Dh
 --------N-21F217SF3F-------------------------
 INT 21 - Novell NetWare - VERIFY BINDERY OBJECT PASSWORD
 	AX = F217h subfn 3Fh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet	(see #1600 at AH=E3h/SF=3Fh)
+	DS:SI -> request packet	(see #1635 at AH=E3h/SF=3Fh)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=3Fh,AX=F217h/SF=40h
 --------N-21F217SF40-------------------------
 INT 21 - Novell NetWare - CHANGE BINDERY OBJECT PASSWORD
 	AX = F217h subfn 40h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply buffer)
-	DS:SI -> request packet (see #1601 at AH=E3h/SF=40h)
+	DS:SI -> request packet (see #1636 at AH=E3h/SF=40h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=40h,AX=F217h/SF=3Fh
 --------N-21F217SF41-------------------------
 INT 21 - Novell NetWare v2.2+ - ADD OBJECT TO SET
 	AX = F217h subfn 41h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet	(see #1604 at AH=E3h/SF=41h)
+	DS:SI -> request packet	(see #1639 at AH=E3h/SF=41h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 Desc:	add a member to an object's group property
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=41h,AX=F217h/SF=42h,AX=F217h/SF=43h
 --------N-21F217SF42-------------------------
@@ -2262,103 +2262,103 @@ INT 21 - Novell NetWare - DELETE BINDERY OBJECT FROM SET
 	AX = F217h subfn 42h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet	(see #1605 at AH=E3h/SF=42h)
+	DS:SI -> request packet	(see #1640 at AH=E3h/SF=42h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=42h,AX=F217h/SF=41h,AX=F217h/SF=43h
 --------N-21F217SF43-------------------------
 INT 21 - Novell NetWare - IS BINDERY OBJECT IN SET?
 	AX = F217h subfn 43h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1607 at AH=E3h/SF=43h)
+	DS:SI -> request packet (see #1642 at AH=E3h/SF=43h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=43h,AX=F217h/SF=41h,AX=F217h/SF=42h
 --------N-21F217SF44-------------------------
 INT 21 - Novell NetWare - CLOSE BINDERY
 	AX = F217h subfn 44h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet	(see #1608 at AH=E3h/SF=44h)
+	DS:SI -> request packet	(see #1643 at AH=E3h/SF=44h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=44h,AX=F217h/SF=45h
 --------N-21F217SF45-------------------------
 INT 21 - Novell NetWare - OPEN BINDERY
 	AX = F217h subfn 45h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet	(see #1609 at AH=E3h/SF=45h)
+	DS:SI -> request packet	(see #1644 at AH=E3h/SF=45h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=45h,AX=F217h/SF=44h
 --------N-21F217SF46-------------------------
 INT 21 - Novell NetWare - GET BINDERY ACCESS LEVEL
 	AX = F217h subfn 46h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1610 at AH=E3h/SF=46h)
-	ES:DI -> reply buffer (see #1844)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1645 at AH=E3h/SF=46h)
+	ES:DI -> reply buffer (see #1877)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=46h,AX=F217h/SF=45h
 
 Format of NetWare "Get Bindery Access Level" reply packet:
-Offset	Size	Description	(Table 1844)
+Offset	Size	Description	(Table 1877)
  00h	BYTE	security levels
  01h	DWORD	(big-endian) object ID
-SeeAlso: #1610,#1611 at AH=E3h/SF=46h
+SeeAlso: #1645,#1646 at AH=E3h/SF=46h
 --------N-21F217SF47-------------------------
 INT 21 - Novell NetWare - SCAN BINDERY OBJECT TRUSTEE PATHS
 	AX = F217h subfn 47h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1612 at AH=E3h/SF=47h)
-	ES:DI -> reply buffer (see #1845)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1647 at AH=E3h/SF=47h)
+	ES:DI -> reply buffer (see #1878)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=47h,AX=F216h/SF=0Ch,AX=F217h/SF=48h
 
 Format of NetWare "Scan Bindery Object Trustee Paths" reply packet:
-Offset	Size	Description	(Table 1845)
+Offset	Size	Description	(Table 1878)
  00h	WORD	(big-endian) next sequence number
  02h	DWORD	(big-endian) object ID
- 06h	BYTE	trustee directory rights (see #1502 at AH=E2h/SF=03h)
+ 06h	BYTE	trustee directory rights (see #1537 at AH=E2h/SF=03h)
  07h	BYTE	length of trustee path
  08h  N BYTEs	trustee path
-SeeAlso: #1612,#1613 at AH=E3h/SF=47h
+SeeAlso: #1647,#1648 at AH=E3h/SF=47h
 --------N-21F217SF48-------------------------
 INT 21 - Novell NetWare - GET BINDERY OBJECT ACCESS LEVEL
 	AX = F217h subfn 48h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1846)
-	ES:DI -> reply buffer (see #1847)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1879)
+	ES:DI -> reply buffer (see #1880)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=45h,AX=F217h/SF=46h
 
 Format of NetWare "Get Bindery Object Access Level" request packet:
-Offset	Size	Description	(Table 1846)
+Offset	Size	Description	(Table 1879)
  00h	WORD	length of following data (max ABh)
  02h	BYTE	48h (subfunction "Get Bindery Object Access Level")
  03h	DWORD	object ID
-SeeAlso: #1847
+SeeAlso: #1880
 
 Format of NetWare "Get Bindery Object Access Level" reply packet:
-Offset	Size	Description	(Table 1847)
+Offset	Size	Description	(Table 1880)
  00h	BYTE	object access level
-SeeAlso: #1846
+SeeAlso: #1879
 --------N-21F217SF49-------------------------
 INT 21 - Novell NetWare - IS STATION A MANAGER?
 	AX = F217h subfn 49h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1848)
+	DS:SI -> request packet (see #1881)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=43h
 
 Format of NetWare "Is Station A Manager?" request packet:
-Offset	Size	Description	(Table 1848)
+Offset	Size	Description	(Table 1881)
  00h	WORD	length of following data
  02h	BYTE	49h (subfunction "Is Station A Manager?")
  03h	DWORD	object ID
@@ -2367,32 +2367,32 @@ INT 21 - Novell NetWare - KEYED VERIFY BINDERY OBJECT PASSWORD
 	AX = F217h subfn 4Ah
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1849)
+	DS:SI -> request packet (see #1882)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=4Bh
 
 Format of NetWare "Keyed Verify Bindery Object Password" request packet:
-Offset	Size	Description	(Table 1849)
+Offset	Size	Description	(Table 1882)
  00h	WORD	length of following data
  02h	BYTE	4Ah (subfunction "Keyed Verify Bindery Object Password")
  03h  8 BYTEs	key
  0Bh	WORD	type
  0Dh	BYTE	length of object's name
  0Eh  N BYTEs	object name
-SeeAlso: #1850
+SeeAlso: #1883
 --------N-21F217SF4B-------------------------
 INT 21 - Novell NetWare - KEYED CHANGE BINDERY OBJECT PASSWORD
 	AX = F217h subfn 4Bh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1850)
+	DS:SI -> request packet (see #1883)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=4Ah
 
 Format of NetWare "Keyed Change Bindery Object Password" request packet:
-Offset	Size	Description	(Table 1850)
+Offset	Size	Description	(Table 1883)
  00h	WORD	length of following data
  02h	BYTE	4Bh (subfunction "Keyed Change Bindery Object Password")
  03h  8 BYTEs	key
@@ -2401,19 +2401,19 @@ Offset	Size	Description	(Table 1850)
  0Eh  N BYTEs	object name
 	BYTE	length of new password
       N BYTEs	new password
-SeeAlso: #1601
+SeeAlso: #1636
 --------N-21F217SF4C-------------------------
 INT 21 - Novell NetWare - LIST RELATIONS OF AN OBJECT
 	AX = F217h subfn 4Ch
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1851)
-	ES:DI -> reply buffer (see #1852)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1884)
+	ES:DI -> reply buffer (see #1885)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=39h
 
 Format of NetWare "List Relations Of An Object" request packet:
-Offset	Size	Description	(Table 1851)
+Offset	Size	Description	(Table 1884)
  00h	WORD	length of following data
  02h	BYTE	4Ch (subfunction "List Relations Of An Object")
  03h	DWORD	last bindery ID seen (set to FFFFFFFFh on first call)
@@ -2422,76 +2422,76 @@ Offset	Size	Description	(Table 1851)
  0Ah  N BYTEs	object's name
 	BYTE	length of property name
       N BYTEs	property name
-SeeAlso: #1852
+SeeAlso: #1885
 
 Format of NetWare "List Relations Of An Object" reply packet:
-Offset	Size	Description	(Table 1852)
+Offset	Size	Description	(Table 1885)
  00h	WORD	number of relations returned
  02h	var	relations
-SeeAlso: #1851
+SeeAlso: #1884
 --------N-21F217SF64-------------------------
 INT 21 - Novell NetWare v2.1+ - CREATE QUEUE
 	AX = F217h subfn 64h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1615 at AH=E3h/SF=64h)
-	ES:DI -> reply buffer (see #1853)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1650 at AH=E3h/SF=64h)
+	ES:DI -> reply buffer (see #1886)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=64h,AX=F217h/SF=65h,AX=F217h/SF=66h
 
 Format of NetWare "Create Queue" reply packet:
-Offset	Size	Description	(Table 1853)
+Offset	Size	Description	(Table 1886)
  00h	DWORD	(big-endian) object ID of queue
-SeeAlso: #1615,#1616
+SeeAlso: #1650,#1651
 --------N-21F217SF65-------------------------
 INT 21 - Novell NetWare v2.1+ - DESTROY QUEUE
 	AX = F217h subfn 65h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1617 at AH=E3h/SF=65h)
+	DS:SI -> request packet (see #1652 at AH=E3h/SF=65h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=65h,AX=F217h/SF=64h,AX=F217h/SF=66h
 --------N-21F217SF66-------------------------
 INT 21 - Novell NetWare v2.1+ - READ QUEUE CURRENT STATUS (OLD)
 	AX = F217h subfn 66h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1618 at AH=E3h/SF=64h)
-	ES:DI -> reply buffer (see #1854)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1653 at AH=E3h/SF=64h)
+	ES:DI -> reply buffer (see #1887)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=66h,AX=F217h/SF=64h,AX=F217h/SF=67h
 
 Format of NetWare "Read Queue Current Status (Old)" reply packet:
-Offset	Size	Description	(Table 1854)
+Offset	Size	Description	(Table 1887)
  00h	DWORD	(big-endian) object ID of queue
- 04h	BYTE	status of queue (see #1620)
+ 04h	BYTE	status of queue (see #1655)
  05h	BYTE	number of jobs in queue (00h-FAh)
  06h	BYTE	number of servers attached to queue (00h-19h)
  07h 25 DWORDs	list of object IDs of attached servers
  6Bh 25 BYTEs	list of attached servers' stations
  84h	BYTE	(call) maximum number of servers to return
-SeeAlso: #1618,#1619 at AH=E3h/SF=66h
+SeeAlso: #1653,#1654 at AH=E3h/SF=66h
 --------N-21F217SF67-------------------------
 INT 21 - Novell NetWare v2.1+ - SET QUEUE CURRENT STATUS (OLD)
 	AX = F217h subfn 67h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1621 at AH=E3h/SF=67h)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1656 at AH=E3h/SF=67h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=67h,AX=F217h/SF=66h,AX=F217h/SF=68h
 --------N-21F217SF68-------------------------
 INT 21 - Novell NetWare v2.1+ - CREATE QUEUE JOB AND FILE (OLD)
 	AX = F217h subfn 68h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1623 at AH=E3h/SF=68h)
-	ES:DI -> reply buffer (see #1855)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1658 at AH=E3h/SF=68h)
+	ES:DI -> reply buffer (see #1888)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=68h,AX=F217h/SF=67h,AX=F217h/SF=69h
 
 Format of NetWare "Create Queue Job And File (Old)" reply packet:
-Offset	Size	Description	(Table 1855)
+Offset	Size	Description	(Table 1888)
  00h	BYTE	client station
  01h	BYTE	client task number
  02h	DWORD	(big-endian) object ID of client
@@ -2501,59 +2501,59 @@ Offset	Size	Description	(Table 1855)
  16h	WORD	(big-endian) job number
  18h	WORD	(big-endian) job type
  1Ah	BYTE	job position
- 1Bh	BYTE	job control flags (see #1633)
+ 1Bh	BYTE	job control flags (see #1668)
  1Ch 14 BYTEs	ASCIZ job file name
  2Ah  6 BYTEs	job file handle
  30h	BYTE	server station
  31h	BYTE	server task number
  32h	DWORD	(big-endian) object ID of server or 00000000h
-SeeAlso: #1623,#1625
+SeeAlso: #1658,#1660
 --------N-21F217SF69-------------------------
 INT 21 - Novell NetWare v2.1+ - CLOSE FILE AND START QUEUE JOB (OLD)
 	AX = F217h subfn 69h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1626 at AH=E3h/SF=69h)
+	DS:SI -> request packet (see #1661 at AH=E3h/SF=69h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=69h,AX=F217h/SF=6Ah,AX=F217h/SF=7Fh
 --------N-21F217SF6A-------------------------
 INT 21 - Novell NetWare v2.1+ - REMOVE JOB FROM QUEUE (OLD)
 	AX = F217h subfn 6Ah
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1628 at AH=E3h/SF=6Ah)
+	DS:SI -> request packet (see #1663 at AH=E3h/SF=6Ah)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=6Ah,AX=F217h/SF=68h,AX=F217h/SF=69h
 --------N-21F217SF6B-------------------------
 INT 21 - Novell NetWare v2.1+ - GET QUEUE JOB LIST (OLD)
 	AX = F217h subfn 6Bh
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1629 at AH=E3h/SF=6Bh)
-	ES:DI -> reply buffer (see #1856)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1664 at AH=E3h/SF=6Bh)
+	ES:DI -> reply buffer (see #1889)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=6Bh,AX=F217h/SF=6Ah,AX=F217h/SF=6Ch
 SeeAlso: AX=F217h/SF=81h
 
 Format of NetWare "Get Queue Job List (old)" reply packet:
-Offset	Size	Description	(Table 1856)
+Offset	Size	Description	(Table 1889)
  00h	WORD	(big-endian) job count
  02h  N WORDs	(big-endian) list of job numbers by position in queue
-SeeAlso: #1629,#1630 at AH=E3h/SF=6Bh
+SeeAlso: #1664,#1665 at AH=E3h/SF=6Bh
 --------N-21F217SF6C-------------------------
 INT 21 - Novell NetWare v2.1+ - READ QUEUE JOB ENTRY (OLD)
 	AX = F217h subfn 6Ch
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1631 at AH=E3h/SF=6Ch)
-	ES:DI -> reply buffer (see #1857)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1666 at AH=E3h/SF=6Ch)
+	ES:DI -> reply buffer (see #1890)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=6Ch,AX=F217h/SF=6Bh,AX=F217h/SF=6Dh
 
 Format of NetWare "Read Queue Job Entry (old)" reply packet:
-Offset	Size	Description	(Table 1857)
+Offset	Size	Description	(Table 1890)
  00h	BYTE	client station number
  01h	BYTE	client task number
  02h	DWORD	object ID of client
@@ -2565,7 +2565,7 @@ Offset	Size	Description	(Table 1857)
  16h	WORD	(big-endian) job number
  18h	WORD	(big-endian) job type
  1Ah	BYTE	job position
- 1Bh	BYTE	job control flags (see #1633)
+ 1Bh	BYTE	job control flags (see #1668)
  1Ch 14 BYTEs	ASCIZ job filename
  2Ah  6 BYTEs	job file handle
  30h	BYTE	server station
@@ -2573,51 +2573,51 @@ Offset	Size	Description	(Table 1857)
  32h	DWORD	object ID of server
  36h 50 BYTEs	ASCIZ job description string
  68h 152 BYTEs	client record area
-SeeAlso: #1631,#1632
+SeeAlso: #1666,#1667
 --------N-21F217SF6D-------------------------
 INT 21 - Novell NetWare v2.1+ - CHANGE QUEUE JOB ENTRY (OLD)
 	AX = F217h subfn 6Dh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1634 at AH=E3h/SF=6Dh)
+	DS:SI -> request packet (see #1669 at AH=E3h/SF=6Dh)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=7Bh,AH=E3h/SF=6Dh,AX=F217h/SF=6Ch
 --------N-21F217SF6E-------------------------
 INT 21 - Novell NetWare v2.1+ - CHANGE QUEUE JOB POSITION
 	AX = F217h subfn 6Eh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1635 at AH=E3h/SF=6Eh)
+	DS:SI -> request packet (see #1670 at AH=E3h/SF=6Eh)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AX=F217h/SF=6Dh,AH=E3h/SF=6Eh
 --------N-21F217SF6F-------------------------
 INT 21 - Novell NetWare v2.1+ - ATTACH QUEUE SERVER TO QUEUE
 	AX = F217h subfn 6Fh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1637 at AH=E3h/SF=6Fh)
+	DS:SI -> request packet (see #1672 at AH=E3h/SF=6Fh)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=6Fh,AX=F217h/SF=D2h
 --------N-21F217SF70-------------------------
 INT 21 - Novell NetWare v2.1+ - DETACH QUEUE SERVER FROM QUEUE
 	AX = F217h subfn 70h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1638 at AH=E3h/SF=70h)
+	DS:SI -> request packet (see #1673 at AH=E3h/SF=70h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=70h,AX=F217h/SF=6Fh
 --------N-21F217SF71-------------------------
 INT 21 - Novell NetWare v2.1+ - SERVICE QUEUE JOB AND OPEN FILE
 	AX = F217h subfn 71h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1639 at AH=E3h/SF=71h)
+	DS:SI -> request packet (see #1674 at AH=E3h/SF=71h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 Notes:	the caller must be on a workstation which is security-equivalent to a
 	  member of the queue's Q_USERS, Q_OPERATORS, or Q_SERVERS properties
 SeeAlso: AH=E3h/SF=71h,AX=F217h/SF=70h,AX=F217h/SF=72h
@@ -2626,9 +2626,9 @@ INT 21 - Novell NetWare v2.1+ - FINISH SERVICING QUEUE JOB (OLD)
 	AX = F217h subfn 72h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1640 at AH=E3h/SF=72h)
+	DS:SI -> request packet (see #1675 at AH=E3h/SF=72h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=72h,AX=F217h/SF=71h,AX=F217h/SF=73h
 SeeAlso: AX=F217h/SF=83h
 --------N-21F217SF73-------------------------
@@ -2636,18 +2636,18 @@ INT 21 - Novell NetWare v2.1+ - ABORT SERVICING QUEUE JOB (OLD)
 	AX = F217h subfn 73h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1641 at AH=E3h/SF=73h)
+	DS:SI -> request packet (see #1676 at AH=E3h/SF=73h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=73h,AX=F217h/SF=72h,AX=F217h/SF=84h
 --------N-21F217SF74-------------------------
 INT 21 - Novell NetWare v2.1+ - CHANGE TO CLIENT RIGHTS (OLD)
 	AX = F217h subfn 74h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1643 at AH=E3h/SF=74h)
+	DS:SI -> request packet (see #1678 at AH=E3h/SF=74h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 Desc:	temporarily assume the login identity of the client submitting the
 	  job being serviced
 SeeAlso: AH=F2h"NetWare",AH=E3h/SF=74h,AX=F217h/SF=85h
@@ -2656,71 +2656,71 @@ INT 21 - Novell NetWare v2.1+ - RESTORE QUEUE SERVER RIGHTS
 	AX = F217h subfn 75h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1644 at AH=E3h/SF=75h)
+	DS:SI -> request packet (see #1679 at AH=E3h/SF=75h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=75h,AX=F217h/SF=74h
 --------N-21F217SF76-------------------------
 INT 21 - Novell NetWare - READ QUEUE SERVER CURRENT STATUS (OLD)
 	AX = F217h subfn 76h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1645 at AH=E3h/SF=76h)
-	ES:DI -> reply buffer (see #1858)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1680 at AH=E3h/SF=76h)
+	ES:DI -> reply buffer (see #1891)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=76h,AX=F217h/SF=74h,AX=F217h/SF=77h
 
 Format of NetWare "Read Queue Server Current Status (old)" reply packet:
-Offset	Size	Description	(Table 1858)
+Offset	Size	Description	(Table 1891)
  00h 64 BYTEs	server status record (format depends on server)
 		first four bytes should contain estimated "price" for an
 		  average job
-SeeAlso: #1645,#1646 at AH=E3h/SF=76h
+SeeAlso: #1680,#1681 at AH=E3h/SF=76h
 --------N-21F217SF77-------------------------
 INT 21 - Novell NetWare - SET QUEUE SERVER CURRENT STATUS
 	AX = F217h subfn 77h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1647 at AH=E3h/SF=77h)
+	DS:SI -> request packet (see #1682 at AH=E3h/SF=77h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=77h,AX=F217h/SF=76h
 --------N-21F217SF78-------------------------
 INT 21 - Novell NetWare - GET QUEUE JOB FILE SIZE (OLD)
 	AX = F217h subfn 78h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1649 at AH=E3h/SF=78h)
-	ES:DI -> reply buffer (see #1859)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1684 at AH=E3h/SF=78h)
+	ES:DI -> reply buffer (see #1892)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=78h,AX=F217h/SF=71h,AX=F217h/SF=79h
 
 Format of NetWare "Get Queue Job File Size (old)" reply packet:
-Offset	Size	Description	(Table 1859)
+Offset	Size	Description	(Table 1892)
  00h	DWORD	(big-endian) object ID of queue
  04h	WORD	(big-endian) job number
  06h	DWORD	(big-endian) size of job file in bytes
-SeeAlso: #1649,#1650 at AH=E3h/SF=78h
+SeeAlso: #1684,#1685 at AH=E3h/SF=78h
 --------N-21F217SF79-------------------------
 INT 21 - Novell NetWare - CREATE QUEUE JOB AND FILE
 	AX = F217h subfn 79h
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1860)
-	ES:DI -> reply buffer (see #1861)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1893)
+	ES:DI -> reply buffer (see #1894)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=7Ah,AX=F217h/SF=7Bh
 
 Format of NetWare "Create Queue Job And File" request packet:
-Offset	Size	Description	(Table 1860)
+Offset	Size	Description	(Table 1893)
  00h	WORD	length of following data
  02h	BYTE	79h (subfunction "Create Queue Job And File")
  03h	DWORD	queue ID
- 07h 280 BYTEs	queue job structure (see #1865)
-SeeAlso: #1861,#1862,#1864
+ 07h 280 BYTEs	queue job structure (see #1898)
+SeeAlso: #1894,#1895,#1897
 
 Format of NetWare "Create Queue Job And File" reply packet:
-Offset	Size	Description	(Table 1861)
+Offset	Size	Description	(Table 1894)
  00h 10 BYTEs	reserved for future use
  0Ah	DWORD	client station
  0Eh	DWORD	client task
@@ -2733,55 +2733,55 @@ Offset	Size	Description	(Table 1861)
  26h	DWORD	job number (1-999) assigned by queue manager
  2Ah	WORD	job type
  2Ch	WORD	position of job in queue (0001h = first, etc.)
- 2Eh	WORD	job control flags (see #1633 at AH=E3h/SF=6Ch)
+ 2Eh	WORD	job control flags (see #1668 at AH=E3h/SF=6Ch)
  30h 14 BYTEs	ASCIZ job file name
  3Eh	DWORD	job file handle	(set by queue manager)
  42h	DWORD	server station (set by queue manager)
  46h	DWORD	server task number (set by queue manager)
  4Ah	DWORD	server object ID (set by queue manager)
-SeeAlso: #1860,#1865
+SeeAlso: #1893,#1898
 --------N-21F217SF7A-------------------------
 INT 21 - Novell NetWare - READ QUEUE JOB ENTRY
 	AX = F217h subfn 7Ah
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1862)
-	ES:DI -> reply buffer (see #1863)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1895)
+	ES:DI -> reply buffer (see #1896)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=79h,AX=F217h/SF=7Bh
 
 Format of NetWare "Read Queue Job Entry" request packet:
-Offset	Size	Description	(Table 1862)
+Offset	Size	Description	(Table 1895)
  00h	WORD	length of following data
  02h	BYTE	7Ah (subfunction "Read Queue Job Entry")
  03h	DWORD	queue ID
  07h	DWORD	job entry number
-SeeAlso: #1863,#1860,#1864
+SeeAlso: #1896,#1893,#1897
 
 Format of NetWare "Read Queue Job Entry" reply packet:
-Offset	Size	Description	(Table 1863)
- 00h 280 BYTEs	job structure (see #1865)
-SeeAlso: #1862
+Offset	Size	Description	(Table 1896)
+ 00h 280 BYTEs	job structure (see #1898)
+SeeAlso: #1895
 --------N-21F217SF7B-------------------------
 INT 21 - Novell NetWare v2.1+ - CHANGE QUEUE JOB ENTRY
 	AX = F217h subfn 7Bh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1864)
+	DS:SI -> request packet (see #1897)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=6Dh,AX=F217h/SF=79h,AX=F217h/SF=7Dh
 
 Format of NetWare "Change Queue Job Entry" request packet:
-Offset	Size	Description	(Table 1864)
+Offset	Size	Description	(Table 1897)
  00h	WORD	length of following data
  02h	BYTE	7Bh (subfunction "Change Queue Job Entry")
  03h	DWORD	queue ID
- 07h 280 BYTEs	job structure (see #1865)
-SeeAlso: #1860,#1862
+ 07h 280 BYTEs	job structure (see #1898)
+SeeAlso: #1893,#1895
 
 Format of NetWare v3.11+ job structure:
-Offset	Size	Description	(Table 1865)
+Offset	Size	Description	(Table 1898)
  00h	WORD	record-in-use flag
  02h	DWORD	-> previous record
  06h	DWORD	-> next record
@@ -2797,7 +2797,7 @@ Offset	Size	Description	(Table 1865)
  26h	DWORD	job number (1-999) assigned by queue manager
  2Ah	WORD	job type
  2Ch	WORD	position of job in queue (0001h = first, etc.)
- 2Eh	WORD	job control flags (see #1633 at AH=E3h/SF=6Ch)
+ 2Eh	WORD	job control flags (see #1668 at AH=E3h/SF=6Ch)
  30h 14 BYTEs	ASCIZ job file name
  3Eh	DWORD	job file handle	(set by queue manager)
  42h	DWORD	server station (set by queue manager)
@@ -2805,27 +2805,27 @@ Offset	Size	Description	(Table 1865)
  4Ah	DWORD	server object ID (set by queue manager)
  4Eh 50 BYTEs	ASCIZ job description string
  80h 152 BYTEs	client record area
-SeeAlso: #1864,#1624
+SeeAlso: #1897,#1659
 --------N-21F217SF7D-------------------------
 INT 21 - Novell NetWare - READ QUEUE CURRENT STATUS
 	AX = F217h subfn 7Dh
 	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request packet (see #1866)
-	ES:DI -> reply buffer (see #1867)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request packet (see #1899)
+	ES:DI -> reply buffer (see #1900)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=66h,AX=F217h/SF=79h,AX=F217h/SF=7Bh
 SeeAlso: AX=F217h/SF=7Eh
 
 Format of NetWare "Read Queue Current Status" request packet:
-Offset	Size	Description	(Table 1866)
+Offset	Size	Description	(Table 1899)
  00h	WORD	length of following data
  02h	BYTE	7Dh (subfunction "Read Queue Current Status")
  03h	DWORD	(big-endian) object ID of queue
-SeeAlso: #1867,#1868
+SeeAlso: #1900,#1901
 
 Format of NetWare "Read Queue Current Status" reply packet:
-Offset	Size	Description	(Table 1867)
+Offset	Size	Description	(Table 1900)
  00h	DWORD	queue ID
  04h	DWORD	queue status
 		bit 0: no more jobs can be added
@@ -2834,19 +2834,19 @@ Offset	Size	Description	(Table 1867)
  08h	DWORD	current number of jobs in queue
  0Ch	DWORD	number of servers attached to queue
  10h  N DWORDs	attached server IDs
-SeeAlso: #1866,#1619 at AH=E3h/SF=66h
+SeeAlso: #1899,#1654 at AH=E3h/SF=66h
 --------N-21F217SF7E-------------------------
 INT 21 - Novell NetWare - SET QUEUE CURRENT STATUS
 	AX = F217h subfn 7Eh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1868)
+	DS:SI -> request packet (see #1901)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=7Dh
 
 Format of NetWare "Set Queue Current Status" request packet:
-Offset	Size	Description	(Table 1868)
+Offset	Size	Description	(Table 1901)
  00h	WORD	length of following data
  02h	BYTE	7Eh (subfunction "Set Queue Current Status")
  03h	DWORD	queue ID
@@ -2854,19 +2854,19 @@ Offset	Size	Description	(Table 1868)
 		bit 0: no more jobs can be added
 		bit 1: no more queue servers can be attached
 		bit 2: attached queu servers can not service queue jobs
-SeeAlso: #1866
+SeeAlso: #1899
 --------N-21F217SF7F-------------------------
 INT 21 - Novell NetWare - CLOSE FILE AND START QUEUE JOB
 	AX = F217h subfn 7Fh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1869)
+	DS:SI -> request packet (see #1902)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=69h,AX=F217h/SF=80h,AX=F217h/SF=81h
 
 Format of NetWare "Close File And Start Queue Job" request packet:
-Offset	Size	Description	(Table 1869)
+Offset	Size	Description	(Table 1902)
  00h	WORD	length of following data
  02h	BYTE	7Fh (subfunction "Close File And Start Queue Job")
  03h	DWORD	queue ID
@@ -2876,13 +2876,13 @@ INT 21 - Novell NetWare - REMOVE JOB FROM QUEUE
 	AX = F217h subfn 80h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1870)
+	DS:SI -> request packet (see #1903)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=6Ah,AX=F217h/SF=7Fh
 
 Format of NetWare "Remove Job From Queue" request packet:
-Offset	Size	Description	(Table 1870)
+Offset	Size	Description	(Table 1903)
  00h	WORD	length of following data
  02h	BYTE	80h (subfunction "Remove Job From Queue")
  03h	DWORD	queue ID
@@ -2892,37 +2892,37 @@ INT 21 - Novell NetWare - GET QUEUE JOB LIST
 	AX = F217h subfn 81h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1871)
-	ES:DI -> reply buffer (see #1872)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1904)
+	ES:DI -> reply buffer (see #1905)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=6Bh
 
 Format of NetWare "Get Queue Job List" request packet:
-Offset	Size	Description	(Table 1871)
+Offset	Size	Description	(Table 1904)
  00h	WORD	length of following data
  02h	BYTE	81h (subfunction "Get Queue Job List")
  03h	DWORD	queue ID
  07h	DWORD	address of next job in queue
-SeeAlso: #1872
+SeeAlso: #1905
 
 Format of NetWare "Get Queue Job List" reply packet:
-Offset	Size	Description	(Table 1872)
+Offset	Size	Description	(Table 1905)
  00h	DWORD	total jobs in queue
  04h	DWORD	length of job number list (max 125)
  08h  N DWORDs	list of job numbers in queue
-SeeAlso: #1871
+SeeAlso: #1904
 --------N-21F217SF82-------------------------
 INT 21 - Novell NetWare v2.1+ - CHANGE JOB PRIORITY
 	AX = F217h subfn 82h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1873)
+	DS:SI -> request packet (see #1906)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell"
 
 Format of NetWare "Change Job Priority" request packet:
-Offset	Size	Description	(Table 1873)
+Offset	Size	Description	(Table 1906)
  00h	WORD	length of following data
  02h	BYTE	82h (subfunction "Change Job Priority")
  03h	DWORD	queue ID
@@ -2933,18 +2933,18 @@ INT 21 - Novell NetWare v3.1+ - FINISH SERVICING QUEUE JOB
 	AX = F217h subfn 83h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1651 at AH=E3h/SF=83h)
+	DS:SI -> request packet (see #1686 at AH=E3h/SF=83h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=83h,AX=F217h/SF=72h,AX=F217h/SF=84h
 --------N-21F217SF84-------------------------
 INT 21 - Novell NetWare v3.1+ - ABORT SERVICING QUEUE JOB
 	AX = F217h subfn 84h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1653 at AH=E3h/SF=84h)
+	DS:SI -> request packet (see #1688 at AH=E3h/SF=84h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 Desc:	inform the Queue Management System (QMS) that the queue server is
 	  unable to service a previously-accepted job
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=84h,AX=F217h/SF=73h,AX=F217h/SF=83h
@@ -2953,76 +2953,76 @@ INT 21 - Novell NetWare v3.1+ - CHANGE TO CLIENT RIGHTS
 	AX = F217h subfn 85h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1874)
+	DS:SI -> request packet (see #1907)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 Desc:	temporarily assume the login identity of the client submitting the
 	  job being serviced
 SeeAlso: AH=F2h"NetWare",AH=E3h/SF=74h,AX=F217h/SF=74h
 
 Format of NetWare "Change to Client Rights" request packet:
-Offset	Size	Description	(Table 1874)
+Offset	Size	Description	(Table 1907)
  00h	WORD	length of following data
  02h	BYTE	85h (subfunction "Change to Client Rights")
  03h	DWORD	queue object ID
  07h	DWORD	job number
-SeeAlso: #1643
+SeeAlso: #1678
 --------N-21F217SF86-------------------------
 INT 21 - Novell NetWare v3.1+ - READ QUEUE SERVER CURRENT STATUS
 	AX = F217h subfn 86h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1875)
-	ES:DI -> reply buffer (see #1876)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1908)
+	ES:DI -> reply buffer (see #1909)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=76h,AX=F217h/SF=77h,AX=F217h/SF=7Dh
 
 Format of NetWare "Read Queue Server Current Status" request packet:
-Offset	Size	Description	(Table 1875)
+Offset	Size	Description	(Table 1908)
  00h	WORD	length of following data
  02h	BYTE	86h (subfunction "Read Queue Server Current Status")
  03h	DWORD	queue ID
  07h	DWORD	server ID
  0Bh	DWORD	connection ID
-SeeAlso: #1876
+SeeAlso: #1909
 
 Format of NetWare "Read Queue Server Current Status" request packet:
-Offset	Size	Description	(Table 1876)
+Offset	Size	Description	(Table 1909)
  00h 64 BYTEs	server status record
-SeeAlso: #1875
+SeeAlso: #1908
 --------N-21F217SF87-------------------------
 INT 21 - Novell NetWare v3.1+ - GET QUEUE JOB FILE SIZE
 	AX = F217h subfn 87h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1877)
-	ES:DI -> reply buffer (see #1878)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1910)
+	ES:DI -> reply buffer (see #1911)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=78h
 
 Format of NetWare "Get Queue Job File Size" request packet:
-Offset	Size	Description	(Table 1877)
+Offset	Size	Description	(Table 1910)
  00h	WORD	length of following data
  02h	BYTE	87h (subfunction "Get Queue Job File Size")
 	???
-SeeAlso: #1878
+SeeAlso: #1911
 
 Format of NetWare "Get Queue Job File Size" request packet:
-Offset	Size	Description	(Table 1878)
+Offset	Size	Description	(Table 1911)
  00h	???
-SeeAlso: #1877
+SeeAlso: #1910
 --------N-21F217SF96-------------------------
 INT 21 - Novell NetWare - GET ACCOUNT STATUS
 	AX = F217h subfn 96h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1656 at AH=E3h/SF=96h)
-	ES:DI -> reply buffer (see #1879)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1691 at AH=E3h/SF=96h)
+	ES:DI -> reply buffer (see #1912)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=96h,AX=F217h/SF=97h,AX=F217h/SF=98h
 
 Format of NetWare "Get Account Status" reply packet:
-Offset	Size	Description	(Table 1879)
+Offset	Size	Description	(Table 1912)
  00h	DWORD	(big-endian) account balance
  04h	DWORD	(big-endian) credit limit
 		signed number indicating lowest allowable account balance
@@ -3034,145 +3034,145 @@ Offset	Size	Description	(Table 1879)
  FAh	DWORD	(big-endian) hold amount, server 16
 Note:	the reply buffer lists the servers which have placed holds on a portion
 	  of the account balance, and the amount reserved by each
-SeeAlso: #1656,#1657 at AH=E3h/SF=96h
+SeeAlso: #1691,#1692 at AH=E3h/SF=96h
 --------N-21F217SF97-------------------------
 INT 21 - Novell NetWare - SUBMIT ACCOUNT CHARGE
 	AX = F217h subfn 97h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1658 at AH=E3h/SF=97h)
+	DS:SI -> request packet (see #1693 at AH=E3h/SF=97h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=97h,AX=F217h/SF=96h,AX=F217h/SF=98h
 --------N-21F217SF98-------------------------
 INT 21 - Novell NetWare - SUBMIT ACCOUNT HOLD
 	AX = F217h subfn 98h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1659 at AH=E3h/SF=98h)
+	DS:SI -> request packet (see #1694 at AH=E3h/SF=98h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=98h,AX=F217h/SF=97h,AX=F217h/SF=99h
 --------N-21F217SF99-------------------------
 INT 21 - Novell NetWare - SUBMIT ACCOUNT NOTE
 	AX = F217h subfn 99h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1661 at AH=E3h/SF=99h)
+	DS:SI -> request packet (see #1696 at AH=E3h/SF=99h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=99h,AX=F217h/SF=96h,AX=F217h/SF=98h
 --------N-21F217SFC8-------------------------
 INT 21 - Novell NetWare - CHECK CONSOLE PRIVILEGES
 	AX = F217h subfn C8h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1662 at AH=E3h/SF=C8h)
+	DS:SI -> request packet (see #1697 at AH=E3h/SF=C8h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=C8h,AX=F217h/SF=C9h,AX=F217h/SF=D1h
 --------N-21F217SFC9-------------------------
 INT 21 - Novell NetWare - GET FILE SERVER DESCRIPTION STRINGS
 	AX = F217h subfn C9h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1663 at AH=E3h/SF=C9h)
-	ES:DI -> reply buffer (see #1880)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1698 at AH=E3h/SF=C9h)
+	ES:DI -> reply buffer (see #1913)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=C9h,AX=F217h/SF=C8h,AX=F217h/SF=CAh
 
 Format of NetWare "Get File Server Description Strings" reply packet:
-Offset	Size	Description	(Table 1880)
+Offset	Size	Description	(Table 1913)
  00h	var	ASCIZ name of company distributing this copy of NetWare
 	var	ASCIZ version and revision
       9 BYTEs	ASCIZ revision date (mm/dd/yy)
 	var	ASCIZ copyright notice
-SeeAlso: #1663,#1664 at AH=E3h/SF=C9h
+SeeAlso: #1698,#1699 at AH=E3h/SF=C9h
 --------N-21F217SFCA-------------------------
 INT 21 - Novell NetWare - SET FILE SERVER DATE AND TIME
 	AX = F217h subfn CAh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1666 at AH=E3h/SF=CAh)
+	DS:SI -> request packet (see #1700 at AH=E3h/SF=CAh)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=CAh,AX=F217h/SF=C8h,AX=F217h/SF=CBh
 --------N-21F217SFCB-------------------------
 INT 21 - Novell NetWare - DISABLE FILE SERVER LOGIN
 	AX = F217h subfn CBh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1667 at AH=E3h/SF=CBh)
+	DS:SI -> request packet (see #1701 at AH=E3h/SF=CBh)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=CBh,AX=F217h/SF=C8h,AX=F217h/SF=CCh
 --------N-21F217SFCC-------------------------
 INT 21 - Novell NetWare - ENABLE FILE SERVER LOGIN
 	AX = F217h subfn CCh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1669 at AH=E3h/SF=CCh)
+	DS:SI -> request packet (see #1703 at AH=E3h/SF=CCh)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=CCh,AX=F217h/SF=C8h,AX=F217h/SF=CBh
 --------N-21F217SFCD-------------------------
 INT 21 - Novell NetWare - GET FILE SERVER LOGIN STATUS
 	AX = F217h subfn CDh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1670 at AH=E3h/SF=CDh)
-	ES:DI -> reply buffer (see #1881)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1704 at AH=E3h/SF=CDh)
+	ES:DI -> reply buffer (see #1914)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=CDh,AX=F217h/SF=CBh,AX=F217h/SF=CCh
 
 Format of NetWare "Get File Server Login Status" reply packet:
-Offset	Size	Description	(Table 1881)
+Offset	Size	Description	(Table 1914)
  00h	BYTE	login state (00h disabled, 01h enabled)
-SeeAlso: #1670,#1671 at AH=E3h/SF=CDh
+SeeAlso: #1704,#1705 at AH=E3h/SF=CDh
 --------N-21F217SFCE-------------------------
 INT 21 - Novell NetWare - PURGE ALL ERASED FILES
 	AX = F217h subfn CEh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1672 at AH=E3h/SF=CEh)
+	DS:SI -> request packet (see #1706 at AH=E3h/SF=CEh)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=CEh,AX=F244h
 --------N-21F217SFCF-------------------------
 INT 21 - Novell NetWare - DISABLE TRANSACTION TRACKING
 	AX = F217h subfn CFh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1673 at AH=E3h/SF=CFh)
+	DS:SI -> request packet (see #1707 at AH=E3h/SF=CFh)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=CFh,AX=F217h/SF=D0h
 --------N-21F217SFD0-------------------------
 INT 21 - Novell NetWare - ENABLE TRANSACTION TRACKING
 	AX = F217h subfn D0h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1675 at AH=E3h/SF=D0h)
+	DS:SI -> request packet (see #1709 at AH=E3h/SF=D0h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=D0h,AX=F217h/SF=CFh
 --------N-21F217SFD1-------------------------
 INT 21 - Novell NetWare - SEND CONSOLE BROADCAST
 	AX = F217h subfn D1h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1676 at AH=E3h/SF=D1h)
+	DS:SI -> request packet (see #1710 at AH=E3h/SF=D1h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=D1h,AX=F217h/SF=D2h
 --------N-21F217SFD2-------------------------
 INT 21 - Novell NetWare v3+ - CLEAR CONNECTION NUMBER (LOGOUT STATION)
 	AX = F217h subfn D2h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1677 at AH=E3h/SF=D2h)
+	DS:SI -> request packet (see #1711 at AH=E3h/SF=D2h)
 	ES:DI ignored
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=D2h,AX=F217h/SF=D1h,AX=F217h/SF=FEh
 --------N-21F217SFD3-------------------------
@@ -3180,22 +3180,22 @@ INT 21 - Novell NetWare - DOWN FILE SERVER
 	AX = F217h subfn D3h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1680 at AH=E3h/SF=D3h)
+	DS:SI -> request packet (see #1714 at AH=E3h/SF=D3h)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=D3h,AX=F217h/SF=D2h
 --------N-21F217SFD4-------------------------
 INT 21 - Novell NetWare - GET FILE SYSTEM STATISTICS
 	AX = F217h subfn D4h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1681 at AH=E3h/SF=D4h)
-	ES:DI -> reply buffer (see #1882)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1715 at AH=E3h/SF=D4h)
+	ES:DI -> reply buffer (see #1915)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=D4h,AX=F217h/SF=D6h,AX=F217h/SF=D9h
 
 Format of NetWare "Get File System Statistics" reply packet:
-Offset	Size	Description	(Table 1882)
+Offset	Size	Description	(Table 1915)
  00h	DWORD	clock ticks since system started
  04h	WORD	maximum open files set by configuration
  06h	WORD	maximum files open concurrently
@@ -3213,19 +3213,19 @@ Offset	Size	Description	(Table 1882)
  24h	WORD	number of attached indexed files
  26h	WORD	number of indexed files available
 Note:	all fields are big-endian
-SeeAlso: #1681,#1682 at AH=E3h/SF=D4h
+SeeAlso: #1715,#1716 at AH=E3h/SF=D4h
 --------N-21F217SFD5-------------------------
 INT 21 - Novell NetWare - GET TRANSACTION TRACKING STATISTICS
 	AX = F217h subfn D5h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1683 at AH=E3h/SF=D5h)
-	ES:DI -> reply buffer (see #1883)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1717 at AH=E3h/SF=D5h)
+	ES:DI -> reply buffer (see #1916)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=D5h,AX=F217h/SF=D0h
 
 Format of NetWare "Get Transaction Tracking Statistics" reply packet:
-Offset	Size	Description	(Table 1883)
+Offset	Size	Description	(Table 1916)
  00h	DWORD	(big-endian) clock ticks since system started
  04h	BYTE	transaction tracking supported if nonzero
 		(all following fields are invalid if zero)
@@ -3247,19 +3247,19 @@ Offset	Size	Description	(Table 1883)
 	Offset	Size	Description
 	 00h	BYTE	logical connection number
 	 01h	BYTE	task number
-SeeAlso: #1683,#1684 at AH=E3h/SF=D5h
+SeeAlso: #1717,#1718 at AH=E3h/SF=D5h
 --------N-21F217SFD6-------------------------
 INT 21 - Novell NetWare - GET DISK CACHE STATISTICS
 	AX = F217h subfn D6h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1685 at AH=E3h/SF=D6h)
-	ES:DI -> reply buffer (see #1884)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1719 at AH=E3h/SF=D6h)
+	ES:DI -> reply buffer (see #1917)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=D6h,AX=F217h/SF=D5h,AX=F217h/SF=D8h
 
 Format of NetWare "Get Disk Cache Statistics" reply packet:
-Offset	Size	Description	(Table 1884)
+Offset	Size	Description	(Table 1917)
  00h	DWORD	clock ticks since system started
  04h	WORD	number of cache buffers
  06h	WORD	size of cache buffer in bytes
@@ -3286,19 +3286,19 @@ Offset	Size	Description	(Table 1884)
  4Ah	WORD	number of cache hits on unavailable block
  4Ch	WORD	number of times a cache block was scrapped
 Note:	all fields are big-endian
-SeeAlso: #1685,#1686 at AH=E3h/SF=D6h
+SeeAlso: #1719,#1720 at AH=E3h/SF=D6h
 --------N-21F217SFD7-------------------------
 INT 21 - Novell NetWare - GET DRIVE MAPPING TABLE
 	AX = F217h subfn D7h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1687 at AH=E3h/SF=D7h)
-	ES:DI -> reply buffer (see #1885)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1721 at AH=E3h/SF=D7h)
+	ES:DI -> reply buffer (see #1918)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AX=EF00h,AX=EF01h,AX=EF02h,AH=F2h"Novell",AH=E3h/SF=D7h
 
 Format of NetWare "Get Drive Mapping Table" reply packet:
-Offset	Size	Description	(Table 1885)
+Offset	Size	Description	(Table 1918)
  00h	DWORD	(big-endian) clock tick elapsed since system started
  04h	BYTE	fault tolerance (SFT) level
  05h	BYTE	number of logical drives attached to server
@@ -3313,19 +3313,19 @@ Offset	Size	Description	(Table 1885)
  6Fh	BYTE	reserved
  70h	DWORD	(big-endian) remirrored block
  74h 60 BYTEs	SFT error table (internal error counters)
-SeeAlso: #1687,#1688 at AH=E3h/SF=D7h
+SeeAlso: #1721,#1722 at AH=E3h/SF=D7h
 --------N-21F217SFD8-------------------------
 INT 21 - Novell NetWare - GET PHYSICAL DISK STATISTICS
 	AX = F217h subfn D8h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1689 at AH=E3h/SF=D8h)
-	ES:DI -> reply buffer (see #1886)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1723 at AH=E3h/SF=D8h)
+	ES:DI -> reply buffer (see #1919)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=D8h,AX=F217h/SF=D9h
 
 Format of NetWare "Get Physical Disk Statistics" request packet:
-Offset	Size	Description	(Table 1886)
+Offset	Size	Description	(Table 1919)
  00h	DWORD	(big-endian) clock ticks since system started
  04h	BYTE	physical disk channel
  05h	BYTE	flag: drive removable if nonzero
@@ -3343,22 +3343,22 @@ Offset	Size	Description	(Table 1886)
  58h	WORD	(big-endian) size of Hot Fix table
  5Ah	WORD	(big-endian) number of Hot Fix blocks available
  5Ch	BYTE	flag: Hot Fix disabled if nonzero
-SeeAlso: #1689,#1690 at AH=E3h/SF=D8h
+SeeAlso: #1723,#1724 at AH=E3h/SF=D8h
 --------N-21F217SFD9-------------------------
 INT 21 - Novell NetWare - GET DISK CHANNEL STATISTICS
 	AX = F217h subfn D9h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1691 at AH=E3h/SF=D9h)
-	ES:DI -> reply buffer (see #1887)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1725 at AH=E3h/SF=D9h)
+	ES:DI -> reply buffer (see #1920)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=D9h,AX=F217h/SF=D8h
 
 Format of NetWare "Get Disk Channel Statistics" reply packet:
-Offset	Size	Description	(Table 1887)
+Offset	Size	Description	(Table 1920)
  00h	DWORD	(big-endian) clock ticks since system started
- 04h	WORD	(big-endian) channel run state (see #1693)
- 06h	WORD	(big-endian) channel synchronization state (see #1694)
+ 04h	WORD	(big-endian) channel run state (see #1727)
+ 06h	WORD	(big-endian) channel synchronization state (see #1728)
  08h	BYTE	driver type
  09h	BYTE	major version of driver
  0Ah	BYTE	minor version of driver
@@ -3382,21 +3382,21 @@ Offset	Size	Description	(Table 1887)
  66h	BYTE	flags
  67h	BYTE	reserved
  68h 80 BYTEs	ASCIZ configuration description
-SeeAlso: #1691,#1692 at AH=E3h/SF=D9h
+SeeAlso: #1725,#1726 at AH=E3h/SF=D9h
 --------N-21F217SFDA-------------------------
 INT 21 - Novell NetWare v2.2+ - GET CONNECTION'S TASK INFORMATION
 	AX = F217h subfn DAh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1695 at AH=E3h/SF=DAh)
-	ES:DI -> reply buffer (see #1888)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1729 at AH=E3h/SF=DAh)
+	ES:DI -> reply buffer (see #1921)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=DAh,AX=F217h/SF=EAh
 
 Format of NetWare "Get Connection's Task Information" reply packet:
-Offset	Size	Description	(Table 1888)
- 00h	BYTE	lock status of connection (see #1697)
- 01h	var	Lock Status Information (see #1698)
+Offset	Size	Description	(Table 1921)
+ 00h	BYTE	lock status of connection (see #1731)
+ 01h	var	Lock Status Information (see #1732)
  N	BYTE	number of records following
  N+1	Active Task Information Records [array]
 	Offset	Size	Description
@@ -3406,36 +3406,36 @@ Offset	Size	Description	(Table 1888)
 			01h in TTS explicit transaction
 			02h in TTS implicit transaction
 			04h shared fileset lock active
-SeeAlso: #1903,#1695,#1696 at AH=E3h/SF=DAh
+SeeAlso: #1936,#1729,#1730 at AH=E3h/SF=DAh
 --------N-21F217SFDB-------------------------
 INT 21 - Novell NetWare v2.2+ - GET CONNECTION'S OPEN FILES (OLD)
 	AX = F217h subfn DBh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1699 at AH=E3h/SF=DBh)
-	ES:DI -> reply buffer (see #1889)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1733 at AH=E3h/SF=DBh)
+	ES:DI -> reply buffer (see #1922)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=DBh,AX=F217h/SF=EBh
 
 Format of NetWare "Get Connection's Open Files (old)" reply packet:
-Offset	Size	Description	(Table 1889)
+Offset	Size	Description	(Table 1922)
  00h	WORD	next request record (place in "last record" field on next call)
 		0000h if no more records
  02h	BYTE	number of records following
- 03h	var	array of File Information Records (see #1701 at AH=E3h/SF=DBh)
-SeeAlso: #1699,#1700 at AH=E3h/SF=DBh
+ 03h	var	array of File Information Records (see #1735 at AH=E3h/SF=DBh)
+SeeAlso: #1733,#1734 at AH=E3h/SF=DBh
 --------N-21F217SFDC-------------------------
 INT 21 - Novell NetWare v2.2+ - GET CONNECTIONS USING A FILE (OLD)
 	AX = F217h subfn DCh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1704 at AH=E3h/SF=DCh)
-	ES:DI -> reply buffer (see #1890)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1738 at AH=E3h/SF=DCh)
+	ES:DI -> reply buffer (see #1923)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=DCh,AX=F217h/SF=ECh
 
 Format of NetWare "Get Connections Using A File (old)" reply packet:
-Offset	Size	Description	(Table 1890)
+Offset	Size	Description	(Table 1923)
  00h	WORD	(big-endian) count of tasks which have opened or logged file
  02h	WORD	(big-endian) count of tasks which have opened file
  04h	WORD	(big-endian) count of opens for reading
@@ -3449,131 +3449,131 @@ Offset	Size	Description	(Table 1890)
 		else locked exclusively
  0Fh	BYTE	number of records following
  10h	var	array of File Usage Information Records
-		  (see #1706 at AH=E3h/SF=DCh)
-SeeAlso: #1704,#1705 at AH=E3h/SF=DCh
+		  (see #1740 at AH=E3h/SF=DCh)
+SeeAlso: #1738,#1739 at AH=E3h/SF=DCh
 --------N-21F217SFDD-------------------------
 INT 21 - Novell NetWare - GET PHYSICAL RECORD LOCKS BY CONNECTN AND FILE (OLD)
 	AX = F217h subfn DDh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1708 at AH=E3h/SF=DDh)
-	ES:DI -> reply buffer (see #1891)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1742 at AH=E3h/SF=DDh)
+	ES:DI -> reply buffer (see #1924)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=DDh,AX=F217h/SF=DEh,AX=F217h/SF=EDh
 
 Format of NetWare "Get Phys Record Locks By Conn & File (old)" reply packet:
-Offset	Size	Description	(Table 1891)
+Offset	Size	Description	(Table 1924)
  00h	WORD	next request record (place in "last record" on next call)
 		0000h if no more records
  02h	BYTE	number of physical record locks
  03h	BYTE	number of records following
  04h	var	array of Physical Record Lock Info records
-		  (see #1710 at AH=E3h/SF=DDh)
-SeeAlso: #1708,#1709 at AH=E3h/SF=DDh
+		  (see #1744 at AH=E3h/SF=DDh)
+SeeAlso: #1742,#1743 at AH=E3h/SF=DDh
 --------N-21F217SFDE-------------------------
 INT 21 - Novell NetWare - GET PHYSICAL RECORD LOCKS BY FILE (OLD)
 	AX = F217h subfn DEh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1712 at AH=E3h/SF=DEh)
-	ES:DI -> reply buffer (see #1892)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1746 at AH=E3h/SF=DEh)
+	ES:DI -> reply buffer (see #1925)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=DEh,AX=F217h/SF=EEh
 
 Format of NetWare "Get Physical Record Locks By File (old)" reply packet:
-Offset	Size	Description	(Table 1892)
+Offset	Size	Description	(Table 1925)
  00h	WORD	next request record (place in "last record" on next call)
 		0000h if no more records
  02h	BYTE	number of physical record locks
  03h	BYTE	number of records following
- 04h	var	array of Physical Record Lock Info records (see #1714)
-SeeAlso: #1712,#1713 at AH=E3h/SF=DEh
+ 04h	var	array of Physical Record Lock Info records (see #1748)
+SeeAlso: #1746,#1747 at AH=E3h/SF=DEh
 --------N-21F217SFDF-------------------------
 INT 21 - Novell NetWare - GET LOGICAL RECORDS BY CONNECTION (OLD)
 	AX = F217h subfn DFh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1715 at AH=E3h/SF=DFh)
-	ES:DI -> reply buffer (see #1893)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1749 at AH=E3h/SF=DFh)
+	ES:DI -> reply buffer (see #1926)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=DFh,AX=F217h/SF=EFh
 
 Format of NetWare "Get Logical Records By Connection (old)" reply packet:
-Offset	Size	Description	(Table 1893)
+Offset	Size	Description	(Table 1926)
  00h	WORD	next request record (place in "last record" field on next call)
 		0000h if no more locked records
  02h	BYTE	number of records following
  03h	var	array of Logical Lock Information Records
-		  (see #1717 at AH=E3h/SF=DFh)
-SeeAlso: #1715,#1716 at AH=E3h/SF=DFh
+		  (see #1751 at AH=E3h/SF=DFh)
+SeeAlso: #1749,#1750 at AH=E3h/SF=DFh
 --------N-21F217SFE0-------------------------
 INT 21 - Novell NetWare - GET LOGICAL RECORD INFORMATION (OLD)
 	AX = F217h subfn E0h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1718 at AH=E3h/SF=E0h)
-	ES:DI -> reply buffer (see #1894)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1752 at AH=E3h/SF=E0h)
+	ES:DI -> reply buffer (see #1927)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=E0h,AX=F217h/SF=F0h
 
 Format of NetWare "Get Logical Record Information (Old)" reply packet:
-Offset	Size	Description	(Table 1894)
+Offset	Size	Description	(Table 1927)
  00h	WORD	(big-endian) number of logical connections logging the record
  02h	WORD	(big-endian) number of logical connections with shareable lock
  04h	WORD	(big-endian) next request record (place in "last record" field
 		  on next call)
  06h	BYTE	locked exclusively if nonzero
  07h	BYTE	number of records following
- 08h	var	array of Task Information Records (see #1720 at AH=E3h/SF=E0h)
-SeeAlso: #1718,#1719 at AH=E3h/SF=E0h
+ 08h	var	array of Task Information Records (see #1754 at AH=E3h/SF=E0h)
+SeeAlso: #1752,#1753 at AH=E3h/SF=E0h
 --------N-21F217SFE1-------------------------
 INT 21 - Novell NetWare - GET CONNECTION'S SEMAPHORES (OLD)
 	AX = F217h subfn E1h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1721 at AH=E3h/SF=E1h)
-	ES:DI -> reply buffer (see #1895)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1755 at AH=E3h/SF=E1h)
+	ES:DI -> reply buffer (see #1928)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=E1h,AX=F217h/SF=F1h
 
 Format of NetWare "Get Connection's Semaphores (old)" reply packet:
-Offset	Size	Description	(Table 1895)
+Offset	Size	Description	(Table 1928)
  00h	WORD	next request record (place in "last record" field on next call)
  02h	BYTE	number of records following
  03h	var	array of Semaphore Information Records
-		  (see #1723 at AH=E3h/SF=E1h)
-SeeAlso: #1721,#1722 at AH=E3h/SF=E1h
+		  (see #1757 at AH=E3h/SF=E1h)
+SeeAlso: #1755,#1756 at AH=E3h/SF=E1h
 --------N-21F217SFE2-------------------------
 INT 21 - Novell NetWare - GET SEMAPHORE INFORMATION (OLD)
 	AX = F217h subfn E2h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1724 at AH=E3h/SF=E2h)
-	ES:DI -> reply buffer (see #1896)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1758 at AH=E3h/SF=E2h)
+	ES:DI -> reply buffer (see #1929)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=E2h,AX=F217h/SF=F2h
 
 Format of NetWare "Get Semaphore Information (old)" reply packet:
-Offset	Size	Description	(Table 1896)
+Offset	Size	Description	(Table 1929)
  00h	WORD	next request record (place in "last record" on next call)
 		0000h if no more
  02h	WORD	(big-endian) number of logical connections opening semaphore
  04h	BYTE	semaphore value (-127 to 128)
  05h	BYTE	number of records following
- 06h	var	array of Semaphore Information records (see #1726)
-SeeAlso: #1724,#1725 at AH=E3h/SF=E2h
+ 06h	var	array of Semaphore Information records (see #1760)
+SeeAlso: #1758,#1759 at AH=E3h/SF=E2h
 --------N-21F217SFE3-------------------------
 INT 21 - Novell NetWare - GET LAN DRIVER'S CONFIGURATION INFORMATION
 	AX = F217h subfn E3h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1727 at AH=E3h/SF=E3h)
-	ES:DI -> reply buffer (see #1897)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1761 at AH=E3h/SF=E3h)
+	ES:DI -> reply buffer (see #1930)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=E3h,AX=F217h/SF=E7h,AX=F217h/SF=E8h
 
 Format of NetWare "Get Lan Driver's Configuration Information" reply packet:
-Offset	Size	Description	(Table 1897)
+Offset	Size	Description	(Table 1930)
  00h  4 BYTEs	network number
  04h  6 BYTEs	node number
  0Ah	BYTE	LAN driver installed (00h no--remaining fields invalid)
@@ -3581,53 +3581,53 @@ Offset	Size	Description	(Table 1897)
  0Ch 160 BYTEs	configuration text
 		ASCIZ hardware type
 		ASCIZ hardware settings
-SeeAlso: #1727,#1728 at AH=E3h/SF=E3h
+SeeAlso: #1761,#1762 at AH=E3h/SF=E3h
 --------N-21F217SFE5-------------------------
 INT 21 - Novell NetWare - GET CONNECTION'S USAGE STATISTICS
 	AX = F217h subfn E5h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1730 at AH=E3h/SF=E5h)
-	ES:DI -> reply buffer (see #1898)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1763 at AH=E3h/SF=E5h)
+	ES:DI -> reply buffer (see #1931)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=E5h,AX=F217h/SF=EAh
 
 Format of NetWare "Get Connection's Usage Statistics" reply packet:
-Offset	Size	Description	(Table 1898)
+Offset	Size	Description	(Table 1931)
  00h	DWORD	(big-endian) clock ticks since server started
  04h  6 BYTEs	bytes read
  0Ah  6 BYTEs	bytes written
  10h	DWORD	(big-endian) total request packets
-SeeAlso: #1730,#1731 at AH=E3h/SF=E5h
+SeeAlso: #1763,#1764 at AH=E3h/SF=E5h
 --------N-21F217SFE6-------------------------
 INT 21 - Novell NetWare - GET OBJECT'S REMAINING DISK SPACE
 	AX = F217h subfn E6h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1732 at AH=E3h/SF=E6h)
-	ES:DI -> reply buffer (see #1899)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1765 at AH=E3h/SF=E6h)
+	ES:DI -> reply buffer (see #1932)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=E6h,AX=F216h/SF=20h,AX=F216h/SF=23h
 
 Format of NetWare "Get Object's Remaining Disk Space" reply packet:
-Offset	Size	Description	(Table 1899)
+Offset	Size	Description	(Table 1932)
  00h	DWORD	(big-endian) clock ticks elapsed since server started
  04h	DWORD	(big-endian) object ID
  08h	DWORD	(big-endian) 4K disk blocks available to user
  0Ch	BYTE	restrictions (00h enforced, FFh not enforced)
-SeeAlso: #1732,#1733 at AH=E3h/SF=E6h
+SeeAlso: #1765,#1766 at AH=E3h/SF=E6h
 --------N-21F217SFE7-------------------------
 INT 21 - Novell NetWare - GET FILE SERVER LAN I/O STATISTICS
 	AX = F217h subfn E7h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1734 at AH=E3h/SF=E7h)
-	ES:DI -> reply buffer (see #1900)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1767 at AH=E3h/SF=E7h)
+	ES:DI -> reply buffer (see #1933)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=E7h,AX=F217h/SF=11h,AX=F217h/SF=F5h
 
 Format of NetWare "Get File Server Lan I/O Statistics" reply packet:
-Offset	Size	Description	(Table 1900)
+Offset	Size	Description	(Table 1933)
  00h	DWORD	clock ticks since system started
  04h	WORD	total routing buffers
  06h	WORD	maximum routing buffers used
@@ -3657,19 +3657,19 @@ Offset	Size	Description	(Table 1900)
  3Ah	DWORD	total number of non-file-service packets
  3Eh	DWORD	total number of routed packets
 Note:	all fields are big-endian
-SeeAlso: #1734,#1735 at AH=E3h/SF=E7h
+SeeAlso: #1767,#1768 at AH=E3h/SF=E7h
 --------N-21F217SFE8-------------------------
 INT 21 - Novell NetWare - GET FILE SERVER MISC INFORMATION
 	AX = F217h subfn E8h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1736 at AH=E3h/SF=E8h)
-	ES:DI -> reply buffer (see #1901)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1769 at AH=E3h/SF=E8h)
+	ES:DI -> reply buffer (see #1934)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=E8h,AX=F217h/SF=11h,AX=F217h/SF=F5h
 
 Format of NetWare "Get File Server Misc Information" reply packet:
-Offset	Size	Description	(Table 1901)
+Offset	Size	Description	(Table 1934)
  00h	DWORD	(big-endian) clock ticks since system started
  04h	BYTE	CPU type
 		00h Motorola 68000
@@ -3686,20 +3686,20 @@ Offset	Size	Description	(Table 1901)
  10h	WORD	(big-endian) wasted server memory in KB
 		normally 0000h
  12h	WORD	number of records following (01h-03h)
- 14h	var	array of Dynamic Memory Information records (see #1738)
-SeeAlso: #1736,#1737 at AH=E3h/SF=E8h
+ 14h	var	array of Dynamic Memory Information records (see #1771)
+SeeAlso: #1769,#1770 at AH=E3h/SF=E8h
 --------N-21F217SFE9-------------------------
 INT 21 - Novell NetWare - GET VOLUME INFORMATION
 	AX = F217h subfn E9h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1739 at AH=E3h/SF=E9h)
-	ES:DI -> reply buffer (see #1902)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1772 at AH=E3h/SF=E9h)
+	ES:DI -> reply buffer (see #1935)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=E9h,AX=F212h,AX=F216h/SF=15h
 
 Format of NetWare "Get Volume Information" reply packet:
-Offset	Size	Description	(Table 1902)
+Offset	Size	Description	(Table 1935)
  00h	DWORD	(big-endian) elapsed system time
  04h	BYTE	volume number
  05h	BYTE	logical drive number
@@ -3715,53 +3715,53 @@ Offset	Size	Description	(Table 1902)
  16h	BYTE	flag: volume removable if nonzero
  17h	BYTE	flag: volume mounted if nonzero
  18h 16 BYTEs	NUL-padded volume name
-SeeAlso: #1739,#1740 at AH=E3h/SF=E9h
+SeeAlso: #1772,#1773 at AH=E3h/SF=E9h
 --------N-21F217SFEA-------------------------
 INT 21 - Novell NetWare v3.11+ - GET CONNECTION'S TASK INFORMATION
 	AX = F217h subfn EAh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1903)
-	ES:DI -> reply buffer (see #1888)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1936)
+	ES:DI -> reply buffer (see #1921)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=DAh
 
 Format of NetWare "Get Connection's Task Information" request packet:
-Offset	Size	Description	(Table 1903)
+Offset	Size	Description	(Table 1936)
  00h	WORD	length of following data
  02h	BYTE	EAh (subfunction "Get Connection's Task Information")
  03h	WORD	connection number
-SeeAlso: #1888,#1695 at AH=E3h/SF=DAh
+SeeAlso: #1921,#1729 at AH=E3h/SF=DAh
 --------N-21F217SFEB-------------------------
 INT 21 - Novell NetWare v3+ - GET CONNECTION'S OPEN FILES
 	AX = F217h subfn EBh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1904)
-	ES:DI -> reply buffer (see #1905)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1937)
+	ES:DI -> reply buffer (see #1938)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=DBh
 
 Format of NetWare "Get Connection's Open Files" request buffer:
-Offset	Size	Description	(Table 1904)
+Offset	Size	Description	(Table 1937)
  00h	WORD	0005h (length of following data)
  02h	BYTE	EBh (subfunction "Get Connection's Open Files")
  03h	WORD	target connection number
  05h	WORD	last record seen (set to 0000h for first call)
 Note:	connection numbers greater than the maximum supported by the server
 	  can cause ABENDs
-SeeAlso: #1905
+SeeAlso: #1938
 
 Format of NetWare "Get Connection's Open Files" reply buffer:
-Offset	Size	Description	(Table 1905)
+Offset	Size	Description	(Table 1938)
  00h	WORD	next request record
  02h	WORD	number of records returned (max 28)
- 04h 29N BYTEs	array of connection records (see #1906)
-SeeAlso: #1904
+ 04h 29N BYTEs	array of connection records (see #1939)
+SeeAlso: #1937
 
 Format of NetWare connection record:
-Offset	Size	Description	(Table 1906)
+Offset	Size	Description	(Table 1939)
  00h	WORD	task number
  02h	BYTE	lock type
  03h	BYTE	access control
@@ -3770,33 +3770,33 @@ Offset	Size	Description	(Table 1906)
  06h	DWORD	parent directory entry number
  0Ah	DWORD	directory entry number
  0Eh	BYTE	fork count
- 0Fh	BYTE	data stream type / name space (see #2042)
+ 0Fh	BYTE	data stream type / name space (see #2075)
  10h	BYTE	file name length
  11h 12 BYTEs	file name
-SeeAlso: #1905
+SeeAlso: #1938
 --------N-21F217SFEC-------------------------
 INT 21 - Novell NetWare v3+ - GET CONNECTIONS USING A FILE
 	AX = F217h subfn ECh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1907)
-	ES:DI -> reply buffer (see #1908)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1940)
+	ES:DI -> reply buffer (see #1941)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=DCh
 
 Format of NetWare "Get Connections Using a File" request buffer:
-Offset	Size	Description	(Table 1907)
+Offset	Size	Description	(Table 1940)
  00h	WORD	0009h (length of following data)
  02h	BYTE	ECh (subfunction "Get Connections Using a File")
  03h	BYTE	data stream type
  04h	BYTE	volume number
  05h	DWORD	directory entry number
  09h	WORD	last record seen (0000h for first call)
-SeeAlso: #1908
+SeeAlso: #1941
 
 Format of NetWare "Get Connections Using a File" reply buffer:
-Offset	Size	Description	(Table 1908)
+Offset	Size	Description	(Table 1941)
  00h	WORD	next request record
  02h	WORD	use count
  04h	WORD	open count
@@ -3807,29 +3807,29 @@ Offset	Size	Description	(Table 1908)
  0Eh	BYTE	flag: locked
  0Fh	BYTE	fork count
  10h	WORD	number of records returned (max 70)
- 12h 7N BYTEs	returned records (see #1909)
-SeeAlso: #1907
+ 12h 7N BYTEs	returned records (see #1942)
+SeeAlso: #1940
 
 Format of returned record:
-Offset	Size	Description	(Table 1909)
+Offset	Size	Description	(Table 1942)
  00h	WORD	connection number
  02h	WORD	task number
  04h	BYTE	lock type
  05h	BYTE	access flag
  06h	BYTE	lock flag
-SeeAlso: #1908
+SeeAlso: #1941
 --------N-21F217SFED-------------------------
 INT 21 - Novell NetWare v3+ - GET PHYSICAL RECORD LOCKS BY CONNECTION AND FILE
 	AX = F217h subfn EDh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1910)
-	ES:DI -> reply buffer (see #1911)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1943)
+	ES:DI -> reply buffer (see #1944)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=DDh,AX=F217h/SF=EEh
 
 Format of NetWare "Get Phys Record Locks By Conn And File" request packet:
-Offset	Size	Description	(Table 1910)
+Offset	Size	Description	(Table 1943)
  00h	WORD	length of following data
  02h	BYTE	EDh (subfunction "Get Physical Record Locks By Connection
 		  And File")
@@ -3838,10 +3838,10 @@ Offset	Size	Description	(Table 1910)
  06h	BYTE	volume number
  07h	DWORD	directory entry number
  0Bh  N BYTEs	filename
-SeeAlso: #1911
+SeeAlso: #1944
 
 Format of NetWare "Get Physical Record Locks By Connect And File" reply packet:
-Offset	Size	Description	(Table 1911)
+Offset	Size	Description	(Table 1944)
  00h	WORD	next record (place in last-seen field on next call)
  02h	WORD	number of locks returned
  04h 11N BYTEs	lock records
@@ -3850,37 +3850,37 @@ Offset	Size	Description	(Table 1911)
 		 02h	BYTE	lock status
 		 03h	DWORD	(big-endian) record start offset
 		 07h	DWORD	(big-endian) record end offset
-SeeAlso: #1910
+SeeAlso: #1943
 --------N-21F217SFEE-------------------------
 INT 21 - Novell NetWare v3+ - GET PHYSICAL RECORD LOCKS BY FILE
 	AX = F217h subfn EEh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1912)
-	ES:DI -> reply buffer (see #1913)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1945)
+	ES:DI -> reply buffer (see #1946)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=DEh
 
 Format of NetWare "Get Physical Record Locks by File" request buffer:
-Offset	Size	Description	(Table 1912)
+Offset	Size	Description	(Table 1945)
  00h	WORD	0009h (length of following data)
  02h	BYTE	EEh (subfunction "Get Physical Record Locks by File")
  03h	BYTE	data stream number
  04h	BYTE	volume number
  05h	DWORD	directory entry number
  09h	WORD	last record seen (0000h for first call)
-SeeAlso: #1913
+SeeAlso: #1946
 
 Format of NetWare "Get Physical Record Locks by File" reply buffer:
-Offset	Size	Description	(Table 1913)
+Offset	Size	Description	(Table 1946)
  00h	WORD	next request record
  02h	WORD	number of locks
- 04h 17N BYTEs	array of lock records, one per lock (see #1914)
-SeeAlso: #1912
+ 04h 17N BYTEs	array of lock records, one per lock (see #1947)
+SeeAlso: #1945
 
 Format of NetWare lock record:
-Offset	Size	Description	(Table 1914)
+Offset	Size	Description	(Table 1947)
  00h	WORD	logged count
  02h	WORD	number of shareable locks
  04h	DWORD	start offset of record
@@ -3888,52 +3888,52 @@ Offset	Size	Description	(Table 1914)
  0Ch	WORD	logical connection number
  0Eh	WORD	task number
  10h	BYTE	lock type
-SeeAlso: #1913
+SeeAlso: #1946
 --------N-21F217SFEF-------------------------
 INT 21 - Novell NetWare v3+ - GET LOGICAL RECORDS BY CONNECTION
 	AX = F217h subfn EFh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1915)
-	ES:DI -> reply buffer (see #1916)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1948)
+	ES:DI -> reply buffer (see #1949)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=DFh
 
 Format of NetWare "Get Logical Records By Connection" request packet:
-Offset	Size	Description	(Table 1915)
+Offset	Size	Description	(Table 1948)
  00h	WORD	length of following data
  02h	BYTE	EFh (subfunction "Get Logical Records By Connection")
  03h	WORD	target connection number
  05h	WORD	last record seen (set to 0000h before first call)
-SeeAlso: #1916
+SeeAlso: #1949
 
 Format of NetWare "Get Logical Records By Connection" request packet:
-Offset	Size	Description	(Table 1916)
+Offset	Size	Description	(Table 1949)
  00h	WORD	next record (place in last-seen field on next call)
  02h	WORD	number of records returned
- 04h		Logical Lock Information records (see #1717 at AH=E3h/SF=DFh)
-SeeAlso: #1915
+ 04h		Logical Lock Information records (see #1751 at AH=E3h/SF=DFh)
+SeeAlso: #1948
 --------N-21F217SFF0-------------------------
 INT 21 - Novell NetWare v3+ - GET LOGICAL RECORD INFORMATION
 	AX = F217h subfn F0h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1917)
-	ES:DI -> reply buffer (see #1918)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1950)
+	ES:DI -> reply buffer (see #1951)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=E0h,AX=F217h/SF=EFh
 
 Format of NetWare "Get Logical Record Information" request packet:
-Offset	Size	Description	(Table 1917)
+Offset	Size	Description	(Table 1950)
  00h	WORD	length of following data
  02h	BYTE	F0h (subfunction "Get Logical Record Information")
  03h	WORD	last record seen
  05h	BYTE	length of logical record name
  06h  N BYTEs	logical record name (case-sensitive)
-SeeAlso: #1918
+SeeAlso: #1951
 
 Format of NetWare "Get Logical Record Information" request packet:
-Offset	Size	Description	(Table 1918)
+Offset	Size	Description	(Table 1951)
  00h	WORD	number of connections logging record
  02h	WORD	number of shareable locks
  04h	BYTE	flag: locked exclusively if nonzero
@@ -3944,138 +3944,138 @@ Offset	Size	Description	(Table 1918)
 		 00h	WORD	connection number
 		 02h	BYTE	task number
 		 03h	BYTE	lock status
-SeeAlso: #1917
+SeeAlso: #1950
 --------N-21F217SFF1-------------------------
 INT 21 - Novell NetWare v3+ - GET CONNECTION'S SEMAPHORES
 	AX = F217h subfn F1h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1919)
-	ES:DI -> reply buffer (see #1920)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1952)
+	ES:DI -> reply buffer (see #1953)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=E1h
 
 Format of NetWare "Get Connection's Semaphores" request packet:
-Offset	Size	Description	(Table 1919)
+Offset	Size	Description	(Table 1952)
  00h	WORD	length of following data
  02h	BYTE	F1h (subfunction "Get Connection's Semaphores")
  03h	WORD	connection number
  05h	WORD	last record seen (set to 0000h before first call)
-SeeAlso: #1920
+SeeAlso: #1953
 
 Format of NetWare "Get Connection's Semaphores" reply packet:
-Offset	Size	Description	(Table 1920)
+Offset	Size	Description	(Table 1953)
  00h	WORD	next record (place in last-seen field on next call)
  02h	WORD	number of semaphores returned
- 04h	BYTEs	semaphore information records [packed array] (see #1921)
-SeeAlso: #1919
+ 04h	BYTEs	semaphore information records [packed array] (see #1954)
+SeeAlso: #1952
 
 Format of NetWare semaphore information record:
-Offset	Size	Description	(Table 1921)
+Offset	Size	Description	(Table 1954)
  00h	WORD	semaphore's current value
  02h	WORD	number of connections using semaphore
  04h	WORD	task number
  06h	BYTE	length of semaphore's name
  07h  N BYTEs	semaphore name
-SeeAlso: #1920
+SeeAlso: #1953
 --------N-21F217SFF2-------------------------
 INT 21 - Novell NetWare v3+ - GET SEMAPHORE INFORMATION
 	AX = F217h subfn F2h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1922)
-	ES:DI -> reply buffer (see #1923)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1955)
+	ES:DI -> reply buffer (see #1956)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=E2h
 
 Format of NetWare "Get Semaphore Information" request buffer:
-Offset	Size	Description	(Table 1922)
+Offset	Size	Description	(Table 1955)
  00h	WORD	length of following data (max 84h)
  02h	BYTE	F2h (subfunction "Get Semaphore Information")
  03h	WORD	last record seen (0000h on first call)
  05h	BYTE	length of semaphore name (max 128)
  06h  N BYTEs	semaphore name
-SeeAlso: #1923
+SeeAlso: #1956
 
 Format of NetWare "Get Semaphore Information" reply buffer:
-Offset	Size	Description	(Table 1923)
+Offset	Size	Description	(Table 1956)
  00h	WORD	next request record
  02h	WORD	open count
  04h	BYTE	value of semaphore
  05h	WORD	number of records returned
  07h 2N WORDs	list of logical connection number/task number pairs
-SeeAlso: #1922
+SeeAlso: #1955
 --------N-21F217SFF3-------------------------
 INT 21 - Novell NetWare v3+ - MAP DIRECTORY NUMBER TO PATH
 	AX = F217h subfn F3h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1924)
-	ES:DI -> reply buffer (see #1925)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1957)
+	ES:DI -> reply buffer (see #1958)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AX=F217h/SF=F4h
 
 Format of NetWare "Map Directory Number to Path" request buffer:
-Offset	Size	Description	(Table 1924)
+Offset	Size	Description	(Table 1957)
  00h	WORD	0007h (length of following data)
  02h	BYTE	F3h (subfunction "Map Directory Number to Path")
  03h	BYTE	volume number
  04h	DWORD	directory entry number
  08h	BYTE	name space type
-SeeAlso: #1925
+SeeAlso: #1958
 
 Format of NetWare "Map Directory Number to Path" reply buffer:
-Offset	Size	Description	(Table 1925)
+Offset	Size	Description	(Table 1958)
  00h	BYTE	directory path length
  01h  N BYTEs	directory path (NetWare style, separated by length descriptors
 		  rather than slashes or backslashes)
-SeeAlso: #1924
+SeeAlso: #1957
 --------N-21F217SFF4-------------------------
 INT 21 - Novell NetWare v3+ - CONVERT PATH TO DIRECTORY ENTRY
 	AX = F217h subfn F4h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1926)
-	ES:DI -> reply buffer (see #1927)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1959)
+	ES:DI -> reply buffer (see #1960)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AX=F217h/SF=F3h
 
 Format of NetWare "Convert Path to Directory Entry" request packet:
-Offset	Size	Description	(Table 1926)
+Offset	Size	Description	(Table 1959)
  00h	WORD	length of following data
  02h	BYTE	F4h (subfunction "Convert Path to Directory Entry")
  03h	BYTE	directory handle or 00h for none
  04h	BYTE	length of directory path
  05h  N BYTEs	directory path (must be fully qualified if no handle specified)
-SeeAlso: #1927
+SeeAlso: #1960
 
 Format of NetWare "Convert Path to Directory Entry" reply packet:
-Offset	Size	Description	(Table 1927)
+Offset	Size	Description	(Table 1960)
  00h	BYTE	volume number
  01h	DWORD	directory entry number
-SeeAlso: #1926
+SeeAlso: #1959
 --------N-21F217SFF5-------------------------
 INT 21 - Novell NetWare - GET FILE SERVER EXTENDED MISC INFORMATION
 	AX = F217h subfn F5h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1928)
-	ES:DI -> reply buffer (see #1929)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1961)
+	ES:DI -> reply buffer (see #1962)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=11h,AX=F217h/SF=C9h,AX=F217h/SF=E8h
 
 Format of NetWare "Get File Server Extended Misc Information" request packet:
-Offset	Size	Description	(Table 1928)
+Offset	Size	Description	(Table 1961)
  00h	WORD	length of following data
  02h	BYTE	F5h (subfunction "Get File Server Extended Misc Information")
  03h	BYTE	length of reply buffer
-SeeAlso: #1929
+SeeAlso: #1962
 
 Format of NetWare "Get File Server Extended Misc Information" reply packet:
-Offset	Size	Description	(Table 1929)
+Offset	Size	Description	(Table 1962)
  00h	DWORD	system interval marker
 		(up-time in clock ticks, wraps to 0 on reaching FFFFFFFFh)
  04h	BYTE	processor type
@@ -4094,27 +4094,27 @@ Offset	Size	Description	(Table 1929)
  14h	DWORD	(big-endian) total space in dynamic memory area
  18h	DWORD	maximum dynamic space used
  1Ch	DWORD	dynamic space currently used
-SeeAlso: #1928
+SeeAlso: #1961
 --------N-21F217SFF6-------------------------
 INT 21 - Novell NetWare - GET VOLUME EXTENDED INFORMATION
 	AX = F217h subfn F6h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1930)
-	ES:DI -> reply buffer (see #1931)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1963)
+	ES:DI -> reply buffer (see #1964)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=E8h
 
 Format of NetWare "Get Volume Extended Information" request packet:
-Offset	Size	Description	(Table 1930)
+Offset	Size	Description	(Table 1963)
  00h	WORD	length of following data
  02h	BYTE	F6h (subfunction "Get Volume Extended Information")
  03h	BYTE	volume number
  04h	BYTE	size of reply buffer
-SeeAlso: #1931
+SeeAlso: #1964
 
 Format of NetWare "Get Volume Extended Information" reply packet:
-Offset	Size	Description	(Table 1931)
+Offset	Size	Description	(Table 1964)
  00h	DWORD	system interval
 		(up-time in clock ticks, wraps to 0 on reaching FFFFFFFFh)
  04h	BYTE	volume number
@@ -4131,335 +4131,335 @@ Offset	Size	Description	(Table 1931)
  18h	BYTE	flag: volume is removable if nonzero
  19h	BYTE	flag: volume is mounted if nonzero
  1Ah 16 BYTEs	volume name (null-padded)
-SeeAlso: #1930
+SeeAlso: #1963
 --------N-21F217SFFE-------------------------
 INT 21 - Novell NetWare v4 - CLEAR CONNECTION NUMBER GREATER THAN 250
 	AX = F217h subfn FEh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1932)
+	DS:SI -> request packet (see #1965)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=E3h/SF=D2h,AX=F217h/SF=D2h
 
 Format of NetWare "Clear Connection Number" request buffer:
-Offset	Size	Description	(Table 1932)
+Offset	Size	Description	(Table 1965)
  00h	WORD	length of following data
  02h	BYTE	FEh (subfunction "Clear Connection Number")
  03h	DWORD	connection number
-SeeAlso: #1677
+SeeAlso: #1711
 --------N-21F21B-----------------------------
 INT 21 - Novell NetWare - LOCK PHYSICAL RECORD SET (OLD)
 	AX = F21Bh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #2135 at AX=F26Eh)
+	DS:SI -> request packet (see #2168 at AX=F26Eh)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F26Eh,AH=C2h"NetWare"
 --------N-21F21E-----------------------------
 INT 21 - Novell NetWare - CLEAR PHYSICAL RECORD
 	AX = F21Eh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1933)
+	DS:SI -> request packet (see #1966)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=5Ch,AH=BEh"NetWare",AH=F2h"Novell",AX=F20Bh,AX=F21Fh
 
 Format of NetWare "Clear Physical Record" request packet:
-Offset	Size	Description	(Table 1933)
+Offset	Size	Description	(Table 1966)
  00h	BYTE	reserved for future use
  01h  6 BYTEs	NetWare file handle
  07h	DWORD	starting offset of locked region
  0Bh	DWORD	length of locked region
-SeeAlso: #1934
+SeeAlso: #1967
 --------N-21F21F-----------------------------
 INT 21 - Novell NetWare - CLEAR PHYSICAL RECORD SET
 	AX = F21Fh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1934)
+	DS:SI -> request packet (see #1967)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=5Ch,AH=C4h"NetWare",AH=F2h"Novell",AX=F20Eh,AX=F21Eh
 
 Format of NetWare "Clear Physical Record Set" request packet:
-Offset	Size	Description	(Table 1934)
+Offset	Size	Description	(Table 1967)
  00h	BYTE	lock flag (00h = not locked)
-SeeAlso: #1933
+SeeAlso: #1966
 --------N-21F220SF00-------------------------
 INT 21 - Novell NetWare - OPEN SEMAPHORE (OLD)
 	AX = F220h subfn 00h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1935)
-	ES:DI -> reply buffer (see #1936)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1968)
+	ES:DI -> reply buffer (see #1969)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=C500h,AX=F220h/SF=01h,AX=F220h/SF=03h
 
 Format of NetWare "Open Semaphore (old)" request packet:
-Offset	Size	Description	(Table 1935)
+Offset	Size	Description	(Table 1968)
  00h	BYTE	00h (subfunction "Open Semaphore (old)")
  01h	BYTE	initial value of semaphore ( >= 0)
  02h	BYTE	length of semaphore's name (max 512)
  03h  N BYTEs	semaphore name
-SeeAlso: #1936,#1937
+SeeAlso: #1969,#1970
 
 Format of NetWare "Open Semaphore (old)" reply packet:
-Offset	Size	Description	(Table 1936)
+Offset	Size	Description	(Table 1969)
  00h	DWORD	semaphore handle
  04h	BYTE	number of processes using semaphore (including caller)
-SeeAlso: #1935,#1938
+SeeAlso: #1968,#1971
 --------N-21F220SF01-------------------------
 INT 21 - Novell NetWare - EXAMINE SEMAPHORE (OLD)
 	AX = F220h subfn 01h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1937)
-	ES:DI -> reply buffer (see #1938)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1970)
+	ES:DI -> reply buffer (see #1971)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=C501h,AX=F220h/SF=00h,AX=F220h/SF=03h
 
 Format of NetWare "Close Semaphore (old)" request packet:
-Offset	Size	Description	(Table 1937)
+Offset	Size	Description	(Table 1970)
  00h	BYTE	01h (subfunction "Examine Semaphore (old)")
  01h	DWORD	semaphore handle
-SeeAlso: #1938,#1935
+SeeAlso: #1971,#1968
 
 Format of NetWare "Close Semaphore (old)" request packet:
-Offset	Size	Description	(Table 1938)
+Offset	Size	Description	(Table 1971)
  00h	BYTE	current semaphore value
  01h	BYTE	number of processes using semaphore (including caller)
-SeeAlso: #1937,#1936
+SeeAlso: #1970,#1969
 --------N-21F220SF02-------------------------
 INT 21 - Novell NetWare - WAIT ON SEMAPHORE (OLD)
 	AX = F220h subfn 02h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1939)
+	DS:SI -> request packet (see #1972)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=C502h,AX=F220h/SF=00h,AX=F220h/SF=03h
 
 Format of NetWare "Wait on Semaphore (old)" request packet:
-Offset	Size	Description	(Table 1939)
+Offset	Size	Description	(Table 1972)
  00h	BYTE	02h (subfunction "Wait on Semaphore (old)")
  01h	DWORD	semaphore handle
  05h	WORD	timeout in 1/18s (0000h = return immediately)
-SeeAlso: #1937,#1940
+SeeAlso: #1970,#1973
 --------N-21F220SF03-------------------------
 INT 21 - Novell NetWare - SIGNAL SEMAPHORE (OLD)
 	AX = F220h subfn 03h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1940)
+	DS:SI -> request packet (see #1973)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=C503h,AX=F220h/SF=02h,AX=F220h/SF=04h
 
 Format of NetWare "Signal Semaphore (old)" request packet:
-Offset	Size	Description	(Table 1940)
+Offset	Size	Description	(Table 1973)
  00h	BYTE	03h (subfunction "Signal Semaphore (old)")
  01h	DWORD	semaphore handle
-SeeAlso: #1939,#1941
+SeeAlso: #1972,#1974
 --------N-21F220SF04-------------------------
 INT 21 - Novell NetWare - CLOSE SEMAPHORE (OLD)
 	AX = F220h subfn 04h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1941)
+	DS:SI -> request packet (see #1974)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=C504h,AX=F220h/SF=00h,AX=F220h/SF=01h
 SeeAlso: AX=F26Fh/SF=01h
 
 Format of NetWare "Close Semaphore (old)" request packet:
-Offset	Size	Description	(Table 1941)
+Offset	Size	Description	(Table 1974)
  00h	BYTE	04h (subfunction "Close Semaphore (old)")
  01h	DWORD	semaphore handle
-SeeAlso: #1940,#2138
+SeeAlso: #1973,#2171
 --------N-21F222SF00-------------------------
 INT 21 - Novell NetWare - TTS IS AVAILABLE
 	AX = F222h subfn 00h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1942)
+	DS:SI -> request packet (see #1975)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=C702h,AX=F222h/SF=01h,AX=F222h/SF=05h
 
 Format of NetWare "TTS Is Available" request packet:
-Offset	Size	Description	(Table 1942)
+Offset	Size	Description	(Table 1975)
  00h	BYTE	00h (subfunction "TTS Is Available")
 --------N-21F222SF01-------------------------
 INT 21 - Novell NetWare - TTS BEGIN TRANSACTION
 	AX = F222h subfn 01h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1943)
+	DS:SI -> request packet (see #1976)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=C700h,AX=F222h/SF=02h,AX=F222h/SF=03h
 
 Format of NetWare "TTS Begin Transaction" request packet:
-Offset	Size	Description	(Table 1943)
+Offset	Size	Description	(Table 1976)
  00h	BYTE	01h (subfunction "TTS Begin Transaction")
-SeeAlso: #1944,#1946
+SeeAlso: #1977,#1979
 --------N-21F222SF02-------------------------
 INT 21 - Novell NetWare - TTS END TRANSACTION
 	AX = F222h subfn 02h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1944)
-	ES:DI -> reply buffer (see #1945)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1977)
+	ES:DI -> reply buffer (see #1978)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=C701h,AX=F222h/SF=01h,AX=F222h/SF=04h
 
 Format of NetWare "TTS End Transaction" request packet:
-Offset	Size	Description	(Table 1944)
+Offset	Size	Description	(Table 1977)
  00h	BYTE	02h (subfunction "TTS End Transaction")
-SeeAlso: #1945,#1943
+SeeAlso: #1978,#1976
 
 Format of NetWare "TTS End Transaction" reply packet:
-Offset	Size	Description	(Table 1945)
+Offset	Size	Description	(Table 1978)
  00h	DWORD	transaction number
-SeeAlso: #1944,#1947
+SeeAlso: #1977,#1980
 --------N-21F222SF03-------------------------
 INT 21 - Novell NetWare - TTS ABORT TRANSACTION
 	AX = F222h subfn 03h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1946)
+	DS:SI -> request packet (see #1979)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=C703h,AX=F222h/SF=01h,AX=F222h/SF=02h
 SeeAlso: AX=F220h/SF=04h
 
 Format of NetWare "TTS Abort Transaction" request packet:
-Offset	Size	Description	(Table 1946)
+Offset	Size	Description	(Table 1979)
  00h	BYTE	03h (subfunction "TTS Abort Transaction")
-SeeAlso: #1943,#1944
+SeeAlso: #1976,#1977
 --------N-21F222SF04-------------------------
 INT 21 - Novell NetWare - TTS TRANSACTION STATUS
 	AX = F222h subfn 04h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1947)
+	DS:SI -> request packet (see #1980)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=C704h,AX=F222h/SF=02h,AX=F222h/SF=03h
 
 Format of NetWare "TTS Transaction Status" request packet:
-Offset	Size	Description	(Table 1947)
+Offset	Size	Description	(Table 1980)
  00h	BYTE	04h (subfunction "TTS Transaction Status")
  01h	DWORD	transaction number
-SeeAlso: #1944,#1945
+SeeAlso: #1977,#1978
 --------N-21F222SF05-------------------------
 INT 21 - Novell NetWare - TTS GET APPLICATION THRESHOLDS
 	AX = F222h subfn 05h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1948)
-	ES:DI -> reply buffer (see #1949)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1981)
+	ES:DI -> reply buffer (see #1982)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=C705h,AX=F222h/SF=06h,AX=F222h/SF=07h
 
 Format of NetWare "TTS Get Application Thresholds" request packet:
-Offset	Size	Description	(Table 1948)
+Offset	Size	Description	(Table 1981)
  00h	BYTE	05h (subfunction "TTS Get Application Thresholds")
-SeeAlso: #1949,#1950
+SeeAlso: #1982,#1983
 
 Format of NetWare "TTS Get Application Thresholds" request packet:
-Offset	Size	Description	(Table 1949)
+Offset	Size	Description	(Table 1982)
  00h	BYTE	logical lock threshold
  01h	BYTE	physical lock threshold
-SeeAlso: #1948,#1950
+SeeAlso: #1981,#1983
 --------N-21F222SF06-------------------------
 INT 21 - Novell NetWare - TTS SET APPLICATION THRESHOLDS
 	AX = F222h subfn 06h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1950)
+	DS:SI -> request packet (see #1983)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=C706h,AX=F222h/SF=05h,AX=F222h/SF=08h
 
 Format of NetWare "TTS Set Application Thresholds" request packet:
-Offset	Size	Description	(Table 1950)
+Offset	Size	Description	(Table 1983)
  00h	BYTE	06h (subfunction "TTS Set Application Thresholds")
  01h	BYTE	logical lock threshold before implicit transaction started
  02h	BYTE	physical lock threshold before implicit transaction started
-SeeAlso: #1949,#1953
+SeeAlso: #1982,#1986
 --------N-21F222SF07-------------------------
 INT 21 - Novell NetWare - TTS GET WORKSTATION THRESHOLDS
 	AX = F222h subfn 07h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1951)
-	ES:DI -> reply buffer (see #1952)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1984)
+	ES:DI -> reply buffer (see #1985)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=C707h,AX=F222h/SF=05h,AX=F222h/SF=08h
 
 Format of NetWare "TTS Get Workstation Thresholds" request packet:
-Offset	Size	Description	(Table 1951)
+Offset	Size	Description	(Table 1984)
  00h	BYTE	07h (subfunction "TTS Get Workstation Thresholds")
-SeeAlso: #1952
+SeeAlso: #1985
 
 Format of NetWare "TTS Get Workstation Thresholds" reply packet:
-Offset	Size	Description	(Table 1952)
+Offset	Size	Description	(Table 1985)
  00h	BYTE	logical lock threshold
  01h	BYTE	physical lock threshold
-SeeAlso: #1951
+SeeAlso: #1984
 --------N-21F222SF08-------------------------
 INT 21 - Novell NetWare - TTS SET WORKSTATION THRESHOLDS
 	AX = F222h subfn 08h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1953)
+	DS:SI -> request packet (see #1986)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=C708h,AX=F222h/SF=06h,AX=F222h/SF=07h
 
 Format of NetWare "TTS Set Workstation Thresholds" request packet:
-Offset	Size	Description	(Table 1953)
+Offset	Size	Description	(Table 1986)
  00h	BYTE	08h (subfunction "TTS Set Workstation Thresholds")
  01h	BYTE	logical lock threshold before implicit transaction started
  02h	BYTE	physical lock threshold before implicit transaction started
-SeeAlso: #1950
+SeeAlso: #1983
 --------N-21F222SF09-------------------------
 INT 21 - Novell NetWare - TTS GET CONTROL FLAGS
 	AX = F222h subfn 09h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1954)
-	ES:DI -> reply buffer (see #1955)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1987)
+	ES:DI -> reply buffer (see #1988)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=C702h,AX=F222h/SF=07h,AX=F222h/SF=0Ah
 
 Format of NetWare "TTS Get Transaction Bits" request packet:
-Offset	Size	Description	(Table 1954)
+Offset	Size	Description	(Table 1987)
  00h	BYTE	09h (subfunction "TTS Get Transaction Bits")
-SeeAlso: #1955
+SeeAlso: #1988
 
 Format of NetWare "TTS Get Transaction Bits" reply packet:
-Offset	Size	Description	(Table 1955)
+Offset	Size	Description	(Table 1988)
  00h	BYTE	TTS control flags
 		bit 0: forced (automatic) record locking enabled
 		bits 1-7: reserved
-SeeAlso: #1954
+SeeAlso: #1987
 --------N-21F222SF0A-------------------------
 INT 21 - Novell NetWare - TTS SET CONTROL FLAGS
 	AX = F222h subfn 0Ah
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1956)
+	DS:SI -> request packet (see #1989)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=C702h,AX=F222h/SF=08h,AX=F222h/SF=09h
 
 Format of NetWare "TTS Set Transaction Bits" request packet:
-Offset	Size	Description	(Table 1956)
+Offset	Size	Description	(Table 1989)
  00h	BYTE	0Ah (subfunction "TTS Set Transaction Bits")
  01h	BYTE	TTS control flags
 		bit 0: forced (automatic) record locking enabled
@@ -4469,13 +4469,13 @@ INT 21 - Novell NetWare v2+ - AFP CREATE DIRECTORY
 	AX = F223h subfn 01h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1957)
-	ES:DI -> reply buffer (see #1958)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1990)
+	ES:DI -> reply buffer (see #1991)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F223h/SF=02h,AX=F223h/SF=0Dh
 
 Format of NetWare "AFP Create Directory" request packet:
-Offset	Size	Description	(Table 1957)
+Offset	Size	Description	(Table 1990)
  00h	WORD	(big-endian) length of following data
  02h	BYTE	01h (subfunction "AFP Create Directory")
  03h	BYTE	volume number
@@ -4484,24 +4484,24 @@ Offset	Size	Description	(Table 1957)
  09h 32 BYTEs	Finder information
  29h	BYTE	path length
  2Ah  N BYTEs	AFP-style directory pathname (relative to AFP entry ID)
-SeeAlso: #1958,#1959,#1985
+SeeAlso: #1991,#1992,#2018
 
 Format of NetWare "AFP Create Directory" reply packet:
-Offset	Size	Description	(Table 1958)
+Offset	Size	Description	(Table 1991)
  00h	DWORD	new directory ID
-SeeAlso: #1957,#1986
+SeeAlso: #1990,#2019
 --------N-21F223SF02-------------------------
 INT 21 - Novell NetWare v2+ - AFP CREATE FILE
 	AX = F223h subfn 02h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1959)
-	ES:DI -> reply buffer (see #1960)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1992)
+	ES:DI -> reply buffer (see #1993)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F223h/SF=02h,AX=F223h/SF=03h,AX=F223h/SF=0Dh
 
 Format of NetWare "AFP Create File" request packet:
-Offset	Size	Description	(Table 1959)
+Offset	Size	Description	(Table 1992)
  00h	WORD	(big-endian) length of following data
  02h	BYTE	01h (subfunction "AFP Create Directory")
  03h	BYTE	volume number
@@ -4510,68 +4510,68 @@ Offset	Size	Description	(Table 1959)
  09h 32 BYTEs	Finder information
  29h	BYTE	path length
  2Ah  N BYTEs	AFP-style directory pathname (relative to AFP entry ID)
-SeeAlso: #1957,#1960,#1961,#1987
+SeeAlso: #1990,#1993,#1994,#2020
 
 Format of NetWare "AFP Create File" reply packet:
-Offset	Size	Description	(Table 1960)
+Offset	Size	Description	(Table 1993)
  00h	DWORD	new file's AFP entry ID
-SeeAlso: #1959,#1988
+SeeAlso: #1992,#2021
 --------N-21F223SF03-------------------------
 INT 21 - Novell NetWare v2+ - AFP DELETE FILE
 	AX = F223h subfn 03h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1961)
+	DS:SI -> request packet (see #1994)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 Note:	directories may be deleted if they are empty
 SeeAlso: AH=F2h"Novell",AX=F223h/SF=02h,AX=F223h/SF=0Dh
 
 Format of NetWare "AFP Delete File" request packet:
-Offset	Size	Description	(Table 1961)
+Offset	Size	Description	(Table 1994)
  00h	WORD	(big-endian) length of following data
  02h	BYTE	03h (subfunction "AFP Delete File")
  03h	BYTE	volume number
  04h	DWORD	AFP entry ID
  08h	BYTE	path length
  09h  N BYTEs	AFP-style pathname (relative to AFP entry ID)
-SeeAlso: #1959
+SeeAlso: #1992
 --------N-21F223SF04-------------------------
 INT 21 - Novell NetWare v2+ - AFP GET ENTRY ID FROM FILENAME
 	AX = F223h subfn 04h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1962)
-	ES:DI -> reply buffer (see #1963)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1995)
+	ES:DI -> reply buffer (see #1996)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F223h/SF=06h,AX=F223h/SF=0Ch,AX=F223h/SF=12h
 
 Format of NetWare "AFP Get Entry ID from Name" request packet:
-Offset	Size	Description	(Table 1962)
+Offset	Size	Description	(Table 1995)
  00h	WORD	(big-endian) length of following data
  02h	BYTE	04h (subfunction "AFP Get Entry ID from Name")
  03h	BYTE	volume number
  04h	DWORD	AFP entry ID
  08h	BYTE	path length
  09h  N BYTEs	AFP-style pathname (relative to AFP entry ID)
-SeeAlso: #1963,#1969
+SeeAlso: #1996,#2002
 
 Format of NetWare "AFP Get Entry ID from Name" reply packet:
-Offset	Size	Description	(Table 1963)
+Offset	Size	Description	(Table 1996)
  00h	DWORD	AFP entry ID corresponding to specified file/directory
-SeeAlso: #1962,#1970
+SeeAlso: #1995,#2003
 --------N-21F223SF05-------------------------
 INT 21 - Novell NetWare v2+ - AFP GET FILE INFORMATION
 	AX = F223h subfn 05h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1964)
-	ES:DI -> reply buffer (see #1966)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #1997)
+	ES:DI -> reply buffer (see #1999)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F223h/SF=04h,AX=F223h/SF=09h,AX=F223h/SF=13h
 
 Format of NetWare "AFP Get File Information" request packet:
-Offset	Size	Description	(Table 1964)
+Offset	Size	Description	(Table 1997)
  00h	WORD	(big-endian) length of following data
  02h	BYTE	05h (subfunction "AFP Get File Information")
  03h	BYTE	volume number
@@ -4579,10 +4579,10 @@ Offset	Size	Description	(Table 1964)
  08h	WORD	request bitmap
  0Ah	BYTE	path length
  0Bh  N BYTEs	AFP-style pathname (relative to AFP entry ID)
-SeeAlso: #1966
+SeeAlso: #1999
 
 Bitfields for NetWare AFP request bitmap:
-Bit(s)	Description	(Table 1965)
+Bit(s)	Description	(Table 1998)
  0	return AFP entry ID
  1	return data fork length
  2	return resource fork length
@@ -4599,13 +4599,13 @@ Bit(s)	Description	(Table 1965)
  13	return last-backup date and time
  14	return Finder information
  15	return long name
-SeeAlso: #1964,#1991,#1992
+SeeAlso: #1997,#2024,#2025
 
 Format of NetWare "AFP Get File Information" reply packet:
-Offset	Size	Description	(Table 1966)
+Offset	Size	Description	(Table 1999)
  00h	DWORD	AFP entry ID for specified file
  04h	DWORD	AFP entry ID for specified file's parent directory
- 08h	WORD	directory/file attributes (see #1967)
+ 08h	WORD	directory/file attributes (see #2000)
  0Ah	DWORD	length of data fork
  0Eh	DWORD	length of resource fork
  12h	WORD	total files and subdirectories contained within entry
@@ -4620,11 +4620,11 @@ Offset	Size	Description	(Table 1966)
  40h 32 BYTEs	long filename
  60h	DWORD	NetWare object ID of owner
  64h 12 BYTEs	short filename (MS-DOS 8.3 format)
- 70h	WORD	access privileges (see #1968)
-SeeAlso: #1964,#1993
+ 70h	WORD	access privileges (see #2001)
+SeeAlso: #1997,#2026
 
 Bitfields for NetWare AFP file/directory attributes:
-Bit(s)	Description	(Table 1967)
+Bit(s)	Description	(Table 2000)
  0	search mode
  1	search mode
  2	search mode
@@ -4641,10 +4641,10 @@ Bit(s)	Description	(Table 1967)
  13	archive
  14	(undefined)
  15	shareable file
-SeeAlso: #1966,#1977,#1992
+SeeAlso: #1999,#2010,#2025
 
 Bitfields for NetWare AFP access privileges:
-Bit(s)	Description	(Table 1968)
+Bit(s)	Description	(Table 2001)
  8	read (files)
  9	write (files)
  10	open (files)
@@ -4653,42 +4653,42 @@ Bit(s)	Description	(Table 1968)
  13	parental (directories): create/delete/rename subdirectories
  14	search (directories)
  15	modify file status flags
-SeeAlso: #1966,#1992,#1982
+SeeAlso: #1999,#2025,#2015
 --------N-21F223SF06-------------------------
 INT 21 - Novell NetWare v2+ - AFP GET ENTRY ID FROM NETWARE HANDLE
 	AX = F223h subfn 06h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1969)
-	ES:DI -> reply buffer (see #1970)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2002)
+	ES:DI -> reply buffer (see #2003)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F223h/SF=04h,AX=F223h/SF=0Ch,AX=F223h/SF=12h
 
 Format of NetWare "AFP Get Entry ID from NetWare Handle" request packet:
-Offset	Size	Description	(Table 1969)
+Offset	Size	Description	(Table 2002)
  00h	WORD	(big-endian) length of following data
  02h	BYTE	06h (subfunction "AFP Get Entry ID from NetWare Handle")
  03h  6 BYTEs	NetWare file handle
-SeeAlso: #1970,#1962
+SeeAlso: #2003,#1995
 
 Format of NetWare "AFP Get Entry ID from NetWare Handle" reply packet:
-Offset	Size	Description	(Table 1970)
+Offset	Size	Description	(Table 2003)
  00h	BYTE	volume number
  01h	DWORD	AFP entry ID corresponding to same file as NetWare handle
  05h	BYTE	fork indicator (00h data fork, 01h resource fork)
-SeeAlso: #1969,#1963
+SeeAlso: #2002,#1996
 --------N-21F223SF07-------------------------
 INT 21 - Novell NetWare v2+ - AFP RENAME
 	AX = F223h subfn 07h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1971)
+	DS:SI -> request packet (see #2004)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F223h/SF=01h,AX=F223h/SF=03h,AX=F223h/SF=08h
 
 Format of NetWare "AFP Rename" request packet:
-Offset	Size	Description	(Table 1971)
+Offset	Size	Description	(Table 2004)
  00h	WORD	(big-endian) length of following data
  02h	BYTE	07h (subfunction "AFP Rename")
  03h	BYTE	volume number
@@ -4705,13 +4705,13 @@ INT 21 - Novell NetWare v2+ - AFP OPEN FILE FORK
 	AX = F223h subfn 08h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1972)
-	ES:DI -> reply buffer (see #1973)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2005)
+	ES:DI -> reply buffer (see #2006)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F223h/SF=01h,AX=F223h/SF=05h,AX=F223h/SF=09h
 
 Format of NetWare "AFP Open File Fork" request packet:
-Offset	Size	Description	(Table 1972)
+Offset	Size	Description	(Table 2005)
  00h	WORD	(big-endian) length of following data
  02h	BYTE	08h (subfunction "AFP Open File Fork")
  03h	BYTE	volume number
@@ -4725,32 +4725,32 @@ Offset	Size	Description	(Table 1972)
 		bit 4: compatibility mode (should be set)
  0Ah	BYTE	path length
  0Bh  N BYTEs	AFP-style pathname (relative to AFP entry ID)
-SeeAlso: #1973
+SeeAlso: #2006
 
 Format of NetWare "AFP Open File Fork" reply packet:
-Offset	Size	Description	(Table 1973)
+Offset	Size	Description	(Table 2006)
  00h	DWORD	AFP entry ID for newly-opened file fork
  04h	DWORD	length of opened fork
  08h  6 BYTEs	NetWare file handle
-SeeAlso: #1972
+SeeAlso: #2005
 --------N-21F223SF09-------------------------
 INT 21 - Novell NetWare v2+ - AFP SET FILE INFORMATION
 	AX = F223h subfn 09h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1974)
+	DS:SI -> request packet (see #2007)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F223h/SF=05h,AX=F223h/SF=0Ah,AX=F223h/SF=13h
 
 Format of NetWare "AFP Set File Information" request packet:
-Offset	Size	Description	(Table 1974)
+Offset	Size	Description	(Table 2007)
  00h	WORD	(big-endian) length of following data
  02h	BYTE	09h (subfunction "AFP Set File Information")
  03h	BYTE	volume number
  04h	DWORD	AFP entry ID
- 08h	WORD	request bitmap (see #1975)
- 0Ah	WORD	directory/file attributes (see #1990)
+ 08h	WORD	request bitmap (see #2008)
+ 0Ah	WORD	directory/file attributes (see #2023)
  0Ch	WORD	creation date in AFP format
  0Eh	WORD	last-access date in AFP format
  10h	WORD	last-modified date in AFP format
@@ -4760,29 +4760,29 @@ Offset	Size	Description	(Table 1974)
  18h 32 BYTEs	Finder information
  38h	BYTE	path length
  39h  N BYTEs	AFP-style pathname (relative to AFP entry ID)
-SeeAlso: #1989
+SeeAlso: #2022
 
 Bitfields for NetWare AFP request bitmap:
-Bit(s)	Description	(Table 1975)
+Bit(s)	Description	(Table 2008)
  8	set attributes
  10	set creation date
  11	set last-access date
  12	set last-modified date
  13	set last-backup date
  14	set Finder information
-SeeAlso: #1974,#1989
+SeeAlso: #2007,#2022
 --------N-21F223SF0A-------------------------
 INT 21 - Novell NetWare v2+ - AFP SCAN FILE INFORMATION
 	AX = F223h subfn 0Ah
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1976)
-	ES:DI -> reply buffer (see #1978)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2009)
+	ES:DI -> reply buffer (see #2011)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F223h/SF=01h,AX=F223h/SF=03h,AX=F223h/SF=08h
 
 Format of NetWare "AFP Scan File Information" request packet:
-Offset	Size	Description	(Table 1976)
+Offset	Size	Description	(Table 2009)
  00h	WORD	(big-endian) length of following data
  02h	BYTE	0Ah (subfunction "AFP Scan File Information")
  03h	BYTE	volume number
@@ -4790,31 +4790,31 @@ Offset	Size	Description	(Table 1976)
  08h	DWORD	AFP last-seen ID (from previous call)
 		FFFFFFFFh on first call
  0Ch	WORD	number of entries to return (max. 4)
- 0Eh	WORD	search bitmap (see #1977)
- 10h	WORD	request bitmap (see #1965)
+ 0Eh	WORD	search bitmap (see #2010)
+ 10h	WORD	request bitmap (see #1998)
  12h	BYTE	path length
  13h  N BYTEs	AFS-style directory path (relative to AFP entry ID)
-SeeAlso: #1978,#1991
+SeeAlso: #2011,#2024
 
 Bitfields for NetWare AFP search bitmap:
-Bit(s)	Description	(Table 1977)
+Bit(s)	Description	(Table 2010)
  8	hidden files and directories
  9	system files and directories
  10	subdirectories
  11	files
-SeeAlso: #1976,#1991,#1965,#1967
+SeeAlso: #2009,#2024,#1998,#2000
 
 Format of NetWare "AFP Scan File Information" reply packet:
-Offset	Size	Description	(Table 1978)
+Offset	Size	Description	(Table 2011)
  00h	WORD	number of entries returned
- 02h 120N BYTEs	file information records (see #1979)
-SeeAlso: #1976
+ 02h 120N BYTEs	file information records (see #2012)
+SeeAlso: #2009
 
 Format of NetWare AFP file information:
-Offset	Size	Description	(Table 1979)
+Offset	Size	Description	(Table 2012)
  00h	DWORD	AFP entry ID
  04h	DWORD	parent directory's AFP entry ID
- 08h	WORD	directory/file attributes (see #1967)
+ 08h	WORD	directory/file attributes (see #2000)
  0Ah	DWORD	length of data fork
  0Eh	DWORD	length of resource fork
  12h	WORD	total files and subdirectories contained within entry
@@ -4829,36 +4829,36 @@ Offset	Size	Description	(Table 1979)
  40h 32 BYTEs	long filename
  60h	DWORD	NetWare object ID of owner
  64h 12 BYTEs	short filename (MS-DOS 8.3 format)
- 70h	WORD	access privileges (see #1968)
-SeeAlso: #1978
+ 70h	WORD	access privileges (see #2001)
+SeeAlso: #2011
 --------N-21F223SF0B-------------------------
 INT 21 - Novell NetWare v2+ - AFP ALLOCATE TEMPORARY DIRECTORY HANDLE
 	AX = F223h subfn 0Bh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1980)
-	ES:DI -> reply buffer (see #1981)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2013)
+	ES:DI -> reply buffer (see #2014)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F223h/SF=0Dh
 
 Format of NetWare "AFP Alloc Temporary Directory Handle" request packet:
-Offset	Size	Description	(Table 1980)
+Offset	Size	Description	(Table 2013)
  00h	WORD	(big-endian) length of following data
  02h	BYTE	0Bh (subfunction "AFT Alloc Temporary Directory Handle")
  03h	BYTE	volume number
  04h	DWORD	AFP entry ID
  08h	BYTE	path length
  09h  N BYTEs	AFP-style pathname
-SeeAlso: #1981
+SeeAlso: #2014
 
 Format of NetWare "AFP Alloc Temporary Directory Handle" request packet:
-Offset	Size	Description	(Table 1981)
+Offset	Size	Description	(Table 2014)
  00h	BYTE	directory handle
- 01h	BYTE	NetWare access rights (see #1982)
-SeeAlso: #1980
+ 01h	BYTE	NetWare access rights (see #2015)
+SeeAlso: #2013
 
 Bitfields for NetWare AFP access rights:
-Bit(s)	Description	(Table 1982)
+Bit(s)	Description	(Table 2015)
  0	read
  1	write
  2	open
@@ -4867,42 +4867,42 @@ Bit(s)	Description	(Table 1982)
  5	parental: create/delete/rename subdirectories
  6	search
  7	modify file status flags
-SeeAlso: #1981,#1968
+SeeAlso: #2014,#2001
 --------N-21F223SF0C-------------------------
 INT 21 - Novell NetWare v2+ - AFP GET ENTRY ID FROM PATHNAME
 	AX = F223h subfn 0Ch
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1983)
-	ES:DI -> reply buffer (see #1984)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2016)
+	ES:DI -> reply buffer (see #2017)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F223h/SF=04h,AX=F223h/SF=06h,AX=F223h/SF=12h
 
 Format of NetWare "AFP Get Entry ID from Path Name" request packet:
-Offset	Size	Description	(Table 1983)
+Offset	Size	Description	(Table 2016)
  00h	WORD	(big-endian) length of following data
  02h	BYTE	0Ch (subfunction "AFP Get Entry ID from Path Name")
  03h	BYTE	NetWare directory handle
  04h	BYTE	path length
  05h  N BYTEs	pathname
-SeeAlso: #1984
+SeeAlso: #2017
 
 Format of NetWare "AFP Get Entry ID from Path Name" reply packet:
-Offset	Size	Description	(Table 1984)
+Offset	Size	Description	(Table 2017)
  00h	DWORD	AFP entry ID corresponding to specified file
-SeeAlso: #1983
+SeeAlso: #2016
 --------N-21F223SF0D-------------------------
 INT 21 - Novell NetWare v2+ - AFP 2.0 CREATE DIRECTORY
 	AX = F223h subfn 0Dh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1985)
-	ES:DI -> reply buffer (see #1986)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2018)
+	ES:DI -> reply buffer (see #2019)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F223h/SF=01h,AX=F223h/SF=0Eh
 
 Format of NetWare "AFP 2.0 Create Directory" request buffer:
-Offset	Size	Description	(Table 1985)
+Offset	Size	Description	(Table 2018)
  00h	WORD	(big-endian) length of following data
  02h	BYTE	0Dh (subfunction "AFP 2.0 Create Directory")
  03h	BYTE	volume number
@@ -4912,24 +4912,24 @@ Offset	Size	Description	(Table 1985)
  29h  6 BYTEs	ProDOS information
  2Fh	BYTE	path length
  30h	var	AFS-style directory path (relative to AFP entry)
-SeeAlso: #1986,#1957
+SeeAlso: #2019,#1990
 
 Format of NetWare "AFP 2.0 Create Directory" reply buffer:
-Offset	Size	Description	(Table 1986)
+Offset	Size	Description	(Table 2019)
  00h	DWORD	new directory ID
-SeeAlso: #1985,#1958
+SeeAlso: #2018,#1991
 --------N-21F223SF0E-------------------------
 INT 21 - Novell NetWare v2+ - AFP 2.0 CREATE FILE
 	AX = F223h subfn 0Eh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1987)
-	ES:DI -> reply buffer (see #1988)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2020)
+	ES:DI -> reply buffer (see #2021)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F223h/SF=0Dh
 
 Format of NetWare "AFP 2.0 Create File" request packet:
-Offset	Size	Description	(Table 1987)
+Offset	Size	Description	(Table 2020)
  00h	WORD	(big-endian) length of following data
  02h	BYTE	0Eh (function "AFP 2.0 Create File")
  03h	BYTE	volume number
@@ -4939,30 +4939,30 @@ Offset	Size	Description	(Table 1987)
  29h  6 BYTEs	ProDOS information
  2Fh	BYTE	path length
  30h	var	AFP-style pathname (relative to AFP entry ID)
-SeeAlso: #1988,#1959
+SeeAlso: #2021,#1992
 
 Format of NetWare "AFP 2.0 Create File" reply packet:
-Offset	Size	Description	(Table 1988)
+Offset	Size	Description	(Table 2021)
  00h	DWORD	new file ID
-SeeAlso: #1987,#1960
+SeeAlso: #2020,#1993
 --------N-21F223SF10-------------------------
 INT 21 - Novell NetWare v2+ - AFP 2.0 SET FILE INFORMATION
 	AX = F223h subfn 10h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #1989)
+	DS:SI -> request packet (see #2022)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F223h/SF=09h,AX=F223h/SF=11h
 
 Format of NetWare "AFP 2.0 Set File Information" request packet:
-Offset	Size	Description	(Table 1989)
+Offset	Size	Description	(Table 2022)
  00h	WORD	(big-endian) length of following data
  02h	BYTE	10h (subfunction "AFS 2.0 Set File Information")
  03h	BYTE	volume number
  04h	DWORD	AFP entry ID
- 08h	WORD	request bitmap (see #1975)
- 0Ah	WORD	directory/file attributes (see #1990)
+ 08h	WORD	request bitmap (see #2008)
+ 0Ah	WORD	directory/file attributes (see #2023)
  0Ch	WORD	creation date in AFP format
  0Eh	WORD	last-access date in AFP format
  10h	WORD	last-modified date in AFP format
@@ -4973,10 +4973,10 @@ Offset	Size	Description	(Table 1989)
  38h  6 BYTEs	ProDOS information
  3Eh	BYTE	path length
  3Fh  N BYTEs	AFP-style pathname (relative to AFP entry ID)
-SeeAlso: #1974
+SeeAlso: #2007
 
 Bitfields for NetWare AFP directory/file attributes:
-Bit(s)	Description	(Table 1990)
+Bit(s)	Description	(Table 2023)
  0	read-only
  1	hidden
  2	system
@@ -4984,19 +4984,19 @@ Bit(s)	Description	(Table 1990)
  4	subdirectory
  5	archive
  7	shareable file
-SeeAlso: #1989
+SeeAlso: #2022
 --------N-21F223SF11-------------------------
 INT 21 - Novell NetWare v2+ - AFP 2.0 SCAN FILE INFORMATION
 	AX = F223h subfn 11h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1991)
-	ES:DI -> reply buffer (see #1992)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2024)
+	ES:DI -> reply buffer (see #2025)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F223h/SF=0Dh,AX=F223h/SF=10h
 
 Format of NetWare "AFP 2.0 Scan File Information" request packet:
-Offset	Size	Description	(Table 1991)
+Offset	Size	Description	(Table 2024)
  00h	WORD	(big-endian) length of following data
  02h	BYTE	11h (subfunction "AFP 2.0 Scan File Information")
  03h	BYTE	volume number
@@ -5004,23 +5004,23 @@ Offset	Size	Description	(Table 1991)
  08h	DWORD	AFP last-seen ID (from previous call)
 		FFFFFFFFh on first call
  0Ch	WORD	number of entries to return (max. 4)
- 0Eh	WORD	search bitmap (see #1977)
- 10h	WORD	request bitmap (see #1965)
+ 0Eh	WORD	search bitmap (see #2010)
+ 10h	WORD	request bitmap (see #1998)
  12h	BYTE	path length
  13h  N BYTEs	AFS-style directory path (relative to AFP entry ID)
-SeeAlso: #1992
+SeeAlso: #2025
 
 Format of NetWare "AFP 2.0 Scan File Information" reply packet:
-Offset	Size	Description	(Table 1992)
+Offset	Size	Description	(Table 2025)
  00h	WORD	number of entries returned
- 02h 120N BYTEs	file information records (see #1993)
-SeeAlso: #1991
+ 02h 120N BYTEs	file information records (see #2026)
+SeeAlso: #2024
 
 Format of NetWare AFP 2.0 file information:
-Offset	Size	Description	(Table 1993)
+Offset	Size	Description	(Table 2026)
  00h	DWORD	AFP entry ID
  04h	DWORD	parent directory's AFP entry ID
- 08h	WORD	directory/file attributes (see #1967)
+ 08h	WORD	directory/file attributes (see #2000)
  0Ah	DWORD	length of data fork
  0Eh	DWORD	length of resource fork
  12h	WORD	total files and subdirectories contained within entry
@@ -5035,113 +5035,113 @@ Offset	Size	Description	(Table 1993)
  40h 32 BYTEs	long filename
  60h	DWORD	NetWare object ID of owner
  64h 12 BYTEs	short filename (MS-DOS 8.3 format)
- 70h	WORD	access privileges (see #1968)
+ 70h	WORD	access privileges (see #2001)
  72h  6 BYTEs	ProDOS information
-SeeAlso: #1992,#1965,#1966
+SeeAlso: #2025,#1998,#1999
 --------N-21F223SF12-------------------------
 INT 21 - Novell NetWare v2+ - AFP GET DOS FILENAME FROM ENTRY ID
 	AX = F223h subfn 12h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1994)
-	ES:DI -> reply buffer (see #1995)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2027)
+	ES:DI -> reply buffer (see #2028)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F223h/SF=04h,AX=F223h/SF=06h
 
 Format of NetWare "AFP Get DOS Name from Entry ID" request packet:
-Offset	Size	Description	(Table 1994)
+Offset	Size	Description	(Table 2027)
  00h	WORD	(big-endian) length of following data
  02h	BYTE	12h (subfunction "AFP Get DOS Name From Entry ID")
  03h	BYTE	volume number
  04h	DWORD	AFP entry ID
-SeeAlso: #1995
+SeeAlso: #2028
 
 Format of NetWare "AFP Get DOS Name from Entry ID" reply packet:
-Offset	Size	Description	(Table 1995)
+Offset	Size	Description	(Table 2028)
  00h	BYTE	length of DOS pathname
  01h  N BYTEs	pathname corresponding to AFP entry ID
-SeeAlso: #1994
+SeeAlso: #2027
 --------N-21F223SF13-------------------------
 INT 21 - Novell NetWare v2+ - AFP GET MACINTOSH INFORMATION ON DELETED FILE
 	AX = F223h subfn 13h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1996)
-	ES:DI -> reply buffer (see #1997)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2029)
+	ES:DI -> reply buffer (see #2030)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F223h/SF=04h,AX=F223h/SF=05h,AX=F223h/SF=09h
 
 Format of NetWare "AFP Get Macintosh Info on Deleted File" request packet:
-Offset	Size	Description	(Table 1996)
+Offset	Size	Description	(Table 2029)
  00h	WORD	(big-endian) length of following data
  02h	BYTE	13h (subfunction "AFP Get Macintosh Info on Deleted File")
  03h	BYTE	volume number
  04h	DWORD	server's DOS directory entry index
-SeeAlso: #1997
+SeeAlso: #2030
 
 Format of NetWare "AFP Get Macintosh Info on Deleted File" reply packet:
-Offset	Size	Description	(Table 1997)
+Offset	Size	Description	(Table 2030)
  00h 32 BYTEs	Finder information
  20h  6 BYTEs	ProDOS information
  26h	DWORD	size of resource fork
  2Ah	BYTE	length of filename
  2Bh  N BYTEs	filename
-SeeAlso: #1996
+SeeAlso: #2029
 --------N-21F23D-----------------------------
 INT 21 - Novell NetWare - COMMIT FILE
 	AX = F23Dh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #2002)
+	DS:SI -> request packet (see #2035)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=3Eh,AH=F2h"Novell",AX=F23Eh,AX=F243h
 --------N-21F23E-----------------------------
 INT 21 - Novell NetWare - FILE SEARCH INITIALIZE (FindFirst)
 	AX = F23Eh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1998)
-	ES:DI -> reply buffer (see #1999)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2031)
+	ES:DI -> reply buffer (see #2032)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=4Eh,AH=F2h"Novell",AX=F23Fh,AX=F242h
 
 Format of NetWare "File Search Initialize" request packet:
-Offset	Size	Description	(Table 1998)
+Offset	Size	Description	(Table 2031)
  00h	BYTE	directory handle
  01h	BYTE	length of directory path
  02h  N BYTEs	path of directory to search, in VOLUME:DIRECTORY/... format
-SeeAlso: #1999,#2000
+SeeAlso: #2032,#2033
 
 Format of NetWare "File Search Initialize" reply packet:
-Offset	Size	Description	(Table 1999)
+Offset	Size	Description	(Table 2032)
  00h	BYTE	volume number
  01h	WORD	directory ID
  03h	WORD	search sequence number
  05h	BYTE	directory access rights
-SeeAlso: #1998,#2001
+SeeAlso: #2031,#2034
 --------N-21F23F-----------------------------
 INT 21 - Novell NetWare - FILE SEARCH CONTINUE (FindNext)
 	AX = F23Fh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2000)
-	ES:DI -> reply buffer (see #2001)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2033)
+	ES:DI -> reply buffer (see #2034)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=4Eh,AH=F2h"Novell",AX=F23Eh,AX=F242h
 
 Format of NetWare "File Search Continue" request packet:
-Offset	Size	Description	(Table 2000)
+Offset	Size	Description	(Table 2033)
  00h	BYTE	volume number
  02h	WORD	directory ID from File Search Initialize
  04h	WORD	search sequence (set to FFFFh before first call)
  06h	BYTE	search attributes
  07h	BYTE	length of search directory path
  08h  N BYTEs	name of search directory in VOLUME:DIRECTORY/.../DIR format
-SeeAlso: #2001
+SeeAlso: #2034
 
 Format of NetWare "File Search Continue" reply packet:
-Offset	Size	Description	(Table 2001)
+Offset	Size	Description	(Table 2034)
  00h	WORD	next search sequence
  02h	WORD	directory ID from File Search Initialize
  04h	WORD	reserved for future use
@@ -5153,19 +5153,19 @@ Offset	Size	Description	(Table 2001)
  2Ch	WORD	last-access date
  2Eh	WORD	last-modification date
  30h	WORD	last-modification time
-SeeAlso: #2000
+SeeAlso: #2033
 --------N-21F242-----------------------------
 INT 21 - Novell NetWare - CLOSE FILE
 	AX = F242h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #2002)
+	DS:SI -> request packet (see #2035)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=3Eh,AH=F2h"Novell",AX=F23Eh,AX=F243h,AX=F24Ah
 
 Format of NetWare "Commit/Close File" request packet:
-Offset	Size	Description	(Table 2002)
+Offset	Size	Description	(Table 2035)
  00h	BYTE	reserved (0)
  01h  6 BYTEs	NetWare file handle
 --------N-21F243-----------------------------
@@ -5173,21 +5173,21 @@ INT 21 - Novell NetWare - CREATE FILE
 	AX = F243h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2003)
-	ES:DI -> reply buffer (see #2004)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2036)
+	ES:DI -> reply buffer (see #2037)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=3Ch,AH=F2h"Novell",AX=F23Eh,AX=F242h,AX=F24Ah,AX=F24Dh
 
 Format of NetWare "Create File" request packet:
-Offset	Size	Description	(Table 2003)
+Offset	Size	Description	(Table 2036)
  00h	BYTE	directory handle
  01h	BYTE	file attributes
  02h	BYTE	length of filename
  03h  N BYTEs	filename in DOS format
-SeeAlso: #2004
+SeeAlso: #2037
 
 Format of NetWare "Create File" reply packet:
-Offset	Size	Description	(Table 2004)
+Offset	Size	Description	(Table 2037)
  00h  6 BYTEs	NetWare file handle
  06h	WORD	reserved
  08h 14 BYTEs	DOS-format filename
@@ -5198,32 +5198,32 @@ Offset	Size	Description	(Table 2004)
  1Eh	WORD	last-access date
  20h	WORD	last-modification date
  22h	WORD	last-modification time
-SeeAlso: #2003
+SeeAlso: #2036
 --------N-21F244-----------------------------
 INT 21 - Novell NetWare - FILE SERVICES - ERASE FILE
 	AX = F244h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #2006)
+	DS:SI -> request packet (see #2039)
 	ES:DI ignored
-Return: AL = status (see #2005)
+Return: AL = status (see #2038)
 Note:	this function only marks the file for deletion; use AH=E2h/SF=CEh to
 	  actually delete all marked files
 SeeAlso: AH=13h,AH=41h,AH=E2h/SF=0Bh,AH=E3h/SF=CEh
 
-(Table 2005)
+(Table 2038)
 Values for NetWare function status:
  00h	successful
  98h	nonexistent volume
  9Bh	invaid directory handle
  9Ch	invalid path
  FFh	no files found
-SeeAlso: #1749,#2507 at INT 2F/AX=7A20h/BX=0000h
+SeeAlso: #1782,#2546 at INT 2F/AX=7A20h/BX=0000h
 
 Format of NetWare "Erase Files" request packet:
-Offset	Size	Description	(Table 2006)
+Offset	Size	Description	(Table 2039)
  00h	BYTE	directory handle
- 01h	BYTE	search attributes (see #1073 at AX=4301h)
+ 01h	BYTE	search attributes (see #1107 at AX=4301h)
  02h	BYTE	length of filespec
  03h  N BYTEs	ASCIZ filespec (may include wildcards)
 --------N-21F247-----------------------------
@@ -5231,67 +5231,67 @@ INT 21 - Novell NetWare - GET CURRENT FILE SIZE
 	AX = F247h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2007)
-	ES:DI -> reply buffer (see #2008)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2040)
+	ES:DI -> reply buffer (see #2041)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=42h,AH=F2h"Novell",AX=F23Eh,AX=F242h,AX=F24Ah,AX=F24Dh
 
 Format of NetWare "Get Current Size of File" request packet:
-Offset	Size	Description	(Table 2007)
+Offset	Size	Description	(Table 2040)
  00h	BYTE	reserved for future use
  01h  6 BYTEs	NetWare file handle
-SeeAlso: #2008
+SeeAlso: #2041
 
 Format of NetWare "Get Current Size of File" reply packet:
-Offset	Size	Description	(Table 2008)
+Offset	Size	Description	(Table 2041)
  00h	DWORD	current size of file
-SeeAlso: #2007
+SeeAlso: #2040
 --------N-21F24A-----------------------------
 INT 21 - Novell NetWare - COPY FROM ONE FILE TO ANOTHER
 	AX = F24Ah
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2009)
-	ES:DI -> reply buffer (see #2010)
-Return: AX = status (see #2005)
+	DS:SI -> request buffer (see #2042)
+	ES:DI -> reply buffer (see #2043)
+Return: AX = status (see #2038)
 Note:	this function only marks the file for deletion; use AH=E2h/SF=CEh to
 	  actually delete all marked files
 SeeAlso: AH=F2h"Novell",AX=F243h,AX=F247h,AH=F3h"NetWare"
 
 Format of NetWare "Copy from One File to Another" request packet:
-Offset	Size	Description	(Table 2009)
+Offset	Size	Description	(Table 2042)
  00h	BYTE	reserved for future use
  01h  6 BYTEs	source NetWare file handle
  07h  6 BYTEs	destination NetWare file handle
  0Dh	DWORD	source file offset
  11h	DWORD	destination file offset
  15h	DWORD	number of bytes to copy
-SeeAlso: #2010
+SeeAlso: #2043
 
 Format of NetWare "Copy from One File to Another" reply packet:
-Offset	Size	Description	(Table 2010)
+Offset	Size	Description	(Table 2043)
  00h	DWORD	number of bytes actually copied
-SeeAlso: #2009
+SeeAlso: #2042
 --------N-21F24D-----------------------------
 INT 21 - Novell NetWare - CREATE NEW FILE
 	AX = F24Dh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2011)
-	ES:DI -> reply buffer (see #2012)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2044)
+	ES:DI -> reply buffer (see #2045)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AX=6C00h,AH=F2h"Novell",AX=F23Eh,AX=F242h,AX=F243h
 
 Format of NetWare "Create New File" request packet:
-Offset	Size	Description	(Table 2011)
+Offset	Size	Description	(Table 2044)
  00h	BYTE	directory handle
  01h	BYTE	file attributes
  02h	BYTE	length of filename
  03h  N BYTEs	filename in DOS format
-SeeAlso: #2012
+SeeAlso: #2045
 
 Format of NetWare "Create New File" reply packet:
-Offset	Size	Description	(Table 2012)
+Offset	Size	Description	(Table 2045)
  00h  6 BYTEs	NetWare file handle
  06h	WORD	reserved
  08h 14 BYTEs	DOS-format filename
@@ -5302,15 +5302,15 @@ Offset	Size	Description	(Table 2012)
  1Eh	WORD	last-access date
  20h	WORD	last-modification date
  22h	WORD	last-modification time
-SeeAlso: #2011
+SeeAlso: #2044
 --------N-21F24E-----------------------------
 INT 21 - Novell NetWare v2+ - ALLOW TASK ACCESS TO FILE
 	AX = F24Eh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2013)
-	ES:DI -> reply buffer (see #2014)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2046)
+	ES:DI -> reply buffer (see #2047)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 Desc:	allow calling task to gain access to an already-open file belonging
 	  to another task of the same client
@@ -5319,27 +5319,27 @@ Note:	the caller receives the same access rights as the owning task, and
 SeeAlso: AH=F2h"NetWare",AX=F244h
 
 Format of NetWare "Allow Task Access to File" request packet:
-Offset	Size	Description	(Table 2013)
+Offset	Size	Description	(Table 2046)
  00h	BYTE	reserved for future use
  01h  6 BYTEs	NetWare file handle
-SeeAlso: #2014
+SeeAlso: #2047
 
 Format of NetWare "Allow Task Access to File" reply packet:
-Offset	Size	Description	(Table 2014)
+Offset	Size	Description	(Table 2047)
  00h  6 BYTEs	new file handle
-SeeAlso: #2013
+SeeAlso: #2046
 --------N-21F256SF01-------------------------
 INT 21 - Novell NetWare - CLOSE EXTENDED ATTRIBUTE HANDLE
 	AX = F256h subfn 01h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #2015)
+	DS:SI -> request packet (see #2048)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F256h/SF=02h,AX=F256h/SF=04h,AX=F256h/SF=05h
 
 Format of NetWare "Close Extended Attribute Handle" request packet:
-Offset	Size	Description	(Table 2015)
+Offset	Size	Description	(Table 2048)
  00h	BYTE	01h (subfunction "Close Extended Attribute Handle")
  01h	WORD	reserved for future use
  03h	DWORD	extended attribute handle
@@ -5348,16 +5348,16 @@ INT 21 - Novell NetWare - WRITE EXTENDED ATTRIBUTE
 	AX = F256h subfn 02h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2016)
-	ES:DI -> reply buffer (see #2017)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2049)
+	ES:DI -> reply buffer (see #2050)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F256h/SF=01h,AX=F256h/SF=03h,AX=F256h/SF=05h
 
 Format of NetWare "Write Extended Attribute" request packet:
-Offset	Size	Description	(Table 2016)
+Offset	Size	Description	(Table 2049)
  00h	BYTE	02h (subfunction "Write Extended Attribute")
- 01h	WORD	flags (see #2027)
- 03h  8 BYTEs	extended attribute handle structure (see #2028)
+ 01h	WORD	flags (see #2060)
+ 03h  8 BYTEs	extended attribute handle structure (see #2061)
  0Bh	DWORD	write size
  0Fh	DWORD	write position
  13h	DWORD	access flag
@@ -5365,67 +5365,67 @@ Offset	Size	Description	(Table 2016)
  19h	WORD	key length
  1Bh  N BYTEs	key
       N BYTEs	value
-SeeAlso: #2016,#2018
+SeeAlso: #2049,#2051
 
 Format of NetWare "Write Extended Attribute" reply packet:
-Offset	Size	Description	(Table 2017)
+Offset	Size	Description	(Table 2050)
  00h	DWORD	error code
  04h	DWORD	number of bytes written
  08h	DWORD	new extended attribute handle
-SeeAlso: #2016
+SeeAlso: #2049
 --------N-21F256SF03-------------------------
 INT 21 - Novell NetWare - READ EXTENDED ATTRIBUTE
 	AX = F256h subfn 03h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2018)
-	ES:DI -> reply buffer (see #2019)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2051)
+	ES:DI -> reply buffer (see #2052)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F256h/SF=01h,AX=F256h/SF=04h,AX=F256h/SF=05h
 
 Format of NetWare "Read Extended Attribute" request packet:
-Offset	Size	Description	(Table 2018)
+Offset	Size	Description	(Table 2051)
  00h	BYTE	03h (subfunction "Read Extended Attribute")
- 01h	WORD	flags (see #2027)
- 03h  8 BYTEs	extended attribute handle structure (see #2028)
+ 01h	WORD	flags (see #2060)
+ 03h  8 BYTEs	extended attribute handle structure (see #2061)
  0Bh	DWORD	read position
  0Fh	DWORD	inspect size
  13h	WORD	key length
  15h  N BYTEs	key
-SeeAlso: #2019,#2016
+SeeAlso: #2052,#2049
 
 Format of NetWare "Read Extended Attribute" reply packet:
-Offset	Size	Description	(Table 2019)
+Offset	Size	Description	(Table 2052)
  00h	DWORD	error code
  04h	DWORD	total extended attribute value length
  08h	DWORD	new extended attribute handle
  0Ch	DWORD	access flag
  10h	WORD	value length
  12h  N BYTEs	EA value
-SeeAlso: #2018
+SeeAlso: #2051
 --------N-21F256SF04-------------------------
 INT 21 - Novell NetWare - ENUMERATE EXTENDED ATTRIBUTES
 	AX = F256h subfn 04h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2020)
-	ES:DI -> reply buffer (see #2021)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2053)
+	ES:DI -> reply buffer (see #2054)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F256h/SF=01h,AX=F256h/SF=02h,AX=F256h/SF=05h
 
 Format of NetWare "Enumerate Extended Attributes" request packet:
-Offset	Size	Description	(Table 2020)
+Offset	Size	Description	(Table 2053)
  00h	BYTE	04h (subfunction "Enumerate Extended Attributes")
- 01h	WORD	flags (see #2027)
- 03h  8 BYTEs	extended attribute handle structure (see #2028)
+ 01h	WORD	flags (see #2060)
+ 03h  8 BYTEs	extended attribute handle structure (see #2061)
  0Bh	DWORD	inspect size
  0Fh	WORD	enumeration sequence
  11h	WORD	key length
  13h  N BYTEs	key
-SeeAlso: #2021
+SeeAlso: #2054
 
 Format of NetWare "Enumerate Extended Attributes" reply packet:
-Offset	Size	Description	(Table 2021)
+Offset	Size	Description	(Table 2054)
  00h	DWORD	error code
  04h	DWORD	total extended attributes
  08h	DWORD	total extended attribute data size
@@ -5442,60 +5442,60 @@ Offset	Size	Description	(Table 2021)
 ---information level 7---
  14h	WORD	number of enumerated extended attribute structures
  16h	var	EA structure level 7
-SeeAlso: #2020
+SeeAlso: #2053
 
 Format of NetWare Extended Attribute structure level 1:
-Offset	Size	Description	(Table 2022)
+Offset	Size	Description	(Table 2055)
  00h	DWORD	length of EA value
  04h	WORD	length of EA key
  06h	DWORD	access flag
  0Ah  N BYTEs	key
-SeeAlso: #2021,#2023,#2024
+SeeAlso: #2054,#2056,#2057
 
 Format of NetWare Extended Attribute structure level 6:
-Offset	Size	Description	(Table 2023)
+Offset	Size	Description	(Table 2056)
  00h	DWORD	length of EA value
  04h	WORD	length of EA key
  06h	DWORD	access flag
  0Ah	DWORD	key extents
  0Eh	DWORD	value extents
  12h  N BYTEs	key
-SeeAlso: #2021,#2022,#2024
+SeeAlso: #2054,#2055,#2057
 
 Format of NetWare Extended Attribute structure level 7:
-Offset	Size	Description	(Table 2024)
+Offset	Size	Description	(Table 2057)
  00h	BYTE	key length
  01h  N BYTEs	key
 	BYTE	00h
-SeeAlso: #2021,#2022,#2023
+SeeAlso: #2054,#2055,#2056
 --------N-21F256SF05-------------------------
 INT 21 - Novell NetWare - DUPLICATE EXTENDED ATTRIBUTES
 	AX = F256h subfn 05h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2025)
-	ES:DI -> reply buffer (see #2026)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2058)
+	ES:DI -> reply buffer (see #2059)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F256h/SF=01h,AX=F256h/SF=02h,AX=F256h/SF=04h
 
 Format of NetWare "Duplicate Extended Attributes" request packet:
-Offset	Size	Description	(Table 2025)
+Offset	Size	Description	(Table 2058)
  00h	BYTE	05h (subfunction "Duplicate Extended Attributes")
- 01h	WORD	source flags (see #2027)
- 03h	WORD	destination flags (see #2027)
- 05h  8 BYTEs	source extended attribute structure (see #2028)
- 0Dh  8 BYTEs	destination extended attribute structure (see #2028)
-SeeAlso: #2026
+ 01h	WORD	source flags (see #2060)
+ 03h	WORD	destination flags (see #2060)
+ 05h  8 BYTEs	source extended attribute structure (see #2061)
+ 0Dh  8 BYTEs	destination extended attribute structure (see #2061)
+SeeAlso: #2059
 
 Format of NetWare "Duplicate Extended Attributes" reply packet:
-Offset	Size	Description	(Table 2026)
+Offset	Size	Description	(Table 2059)
  00h	DWORD	number duplicated
  04h	DWORD	data size duplicated
  08h	DWORD	key size duplicated
-SeeAlso: #2025
+SeeAlso: #2058
 
 Bitfields for NetWare extended attribute flags:
-Bit(s)	Description	(Table 2027)
+Bit(s)	Description	(Table 2060)
  1-0	extended attribute handle structure type
 	00 volume number and directory entry number
 	01 NetWare file handle
@@ -5504,10 +5504,10 @@ Bit(s)	Description	(Table 2027)
  2	close handle on error
  6-4	information level (0,1,6,7)
  7	not used
-SeeAlso: #2025,#2028
+SeeAlso: #2058,#2061
 
 Format of NetWare extended attribute structure:
-Offset	Size	Description	(Table 2028)
+Offset	Size	Description	(Table 2061)
 ---type 0---
  00h	DWORD	volume number
  04h	DWORD	directory entry number
@@ -5517,41 +5517,41 @@ Offset	Size	Description	(Table 2028)
 ---type 2---
  00h	DWORD	extended attribute handle
  04h  4 BYTEs	unused
-SeeAlso: #2027
+SeeAlso: #2060
 --------N-21F257SF01-------------------------
 INT 21 - Novell NetWare - OPEN/CREATE FILE OR SUBDIRECTORY
 	AX = F257h subfn 01h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2029)
-	ES:DI -> reply buffer (see #2030)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2062)
+	ES:DI -> reply buffer (see #2063)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=6C00h,AX=F257h/SF=02h,AX=F257h/SF=04h
 
 Format of NetWare "Open/Create File or Subdirectory" request packet:
-Offset	Size	Description	(Table 2029)
+Offset	Size	Description	(Table 2062)
  00h	BYTE	01h (subfunction "Open/Create File or Subdirectory")
- 01h	BYTE	name space (see #2042)
+ 01h	BYTE	name space (see #2075)
  02h	BYTE	open/create mode
  03h	WORD	search attributes
  05h	DWORD	return information mask
  09h	DWORD	create attributes
- 0Dh	WORD	desired access rights (see #2032)
+ 0Dh	WORD	desired access rights (see #2065)
  0Fh		NetWare handle/path structure
-SeeAlso: #2030
+SeeAlso: #2063
 
 Format of NetWare "Open/Create File or Subdirectory" reply packet:
-Offset	Size	Description	(Table 2030)
+Offset	Size	Description	(Table 2063)
  00h	DWORD	file handle
  04h	BYTE	open/create action
 		00h open
 		01h replace
 		03h create
  05h	BYTE	reserved
-SeeAlso: #2029
+SeeAlso: #2062
 
 Format of NetWare Handle/Path structure:
-Offset	Size	Description	(Table 2031)
+Offset	Size	Description	(Table 2064)
  00h	BYTE	volume number
  01h	DWORD	directory base or short handle
  05h	BYTE	handle flag
@@ -5562,73 +5562,73 @@ Offset	Size	Description	(Table 2031)
  07h  N BYTEs	path component
 
 Bitfields for NetWare desired access rights:
-Bit(s)	Description	(Table 2032)
+Bit(s)	Description	(Table 2065)
  0	read-only mode
  1	write-only
  2	deny read
  3	deny write
  4	compatibility mode
  6	write-through mode
-SeeAlso: #2029
+SeeAlso: #2062
 --------N-21F257SF02-------------------------
 INT 21 - Novell NetWare - INITIALIZE SEARCH
 	AX = F257h subfn 02h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2033)
-	ES:DI -> reply buffer (see #2034)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2066)
+	ES:DI -> reply buffer (see #2067)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=4Eh,AH=F2h"Novell",AX=F257h/SF=01h,AX=F257h/SF=03h
 
 Format of NetWare "Initialize Search" request packet:
-Offset	Size	Description	(Table 2033)
+Offset	Size	Description	(Table 2066)
  00h	BYTE	02h (subfunction "Initialize Search")
- 01h	BYTE	name space (see #2042)
+ 01h	BYTE	name space (see #2075)
  02h	BYTE	reserved for future use
- 03h		NetWare Handle/Path structure (see #2031)
-SeeAlso: #2034
+ 03h		NetWare Handle/Path structure (see #2064)
+SeeAlso: #2067
 
 Format of NetWare "Initialize Search" reply packet:
-Offset	Size	Description	(Table 2034)
+Offset	Size	Description	(Table 2067)
  00h  9 BYTEs	search sequence
 		BYTE	volume number
 		DWORD	directory number
 		DWORD	current directory number
-SeeAlso: #2033
+SeeAlso: #2066
 --------N-21F257SF03-------------------------
 INT 21 - Novell NetWare - SCAN NAMESPACE ENTRY INFO
 	AX = F257h subfn 03h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2035)
-	ES:DI -> reply buffer (see #2036)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2068)
+	ES:DI -> reply buffer (see #2069)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F257h/SF=04h,AX=F257h/SF=05h
 
 Format of NetWare "Search for File or Subdirectory" request packet:
-Offset	Size	Description	(Table 2035)
+Offset	Size	Description	(Table 2068)
  00h	BYTE	03h (subfunction "Search for File or Subdirectory")
 	???
-SeeAlso: #2036
+SeeAlso: #2069
 
 Format of NetWare "Search for File or Subdirectory" reply packet:
-Offset	Size	Description	(Table 2036)
+Offset	Size	Description	(Table 2069)
  00h	???
-SeeAlso: #2035
+SeeAlso: #2068
 --------N-21F257SF04-------------------------
 INT 21 - Novell NetWare - RENAME OR MOVE FILE OR SUBDIRECTORY
 	AX = F257h subfn 04h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #2037)
+	DS:SI -> request packet (see #2070)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=56h,AH=F2h"Novell",AX=F257h/SF=02h,AX=F257h/SF=03h,AX=F257h/SF=05h
 
 Format of NetWare "Rename or Move File or Subdirectory" request packet:
-Offset	Size	Description	(Table 2037)
+Offset	Size	Description	(Table 2070)
  00h	BYTE	04h (subfunction "Rename or Move File or Subdirectory")
- 01h	BYTE	name space (see #2042)
+ 01h	BYTE	name space (see #2075)
  02h	BYTE	rename flags
 		bit 0: rename successful
 		bit 1: compatibility mode
@@ -5640,44 +5640,44 @@ INT 21 - Novell NetWare - SCAN FILE OR SUBDIRECTORY FOR TRUSTEES
 	AX = F257h subfn 05h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2038)
-	ES:DI -> reply buffer (see #2039)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2071)
+	ES:DI -> reply buffer (see #2072)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F257h/SF=04h,AX=F257h/SF=06h
 
 Format of NetWare "Scan File or Subdirectory for Trustees" request packet:
-Offset	Size	Description	(Table 2038)
+Offset	Size	Description	(Table 2071)
  00h	BYTE	05h (subfunction "Scan File or Subdirectory for Trustees")
- 01h	BYTE	name space (see #2042)
+ 01h	BYTE	name space (see #2075)
  02h	BYTE	reserved for future use
  03h	DWORD	scan sequence (set to 00000000h before first call)
- 07h		NetWare Handle/Path structure (see #2031)
-SeeAlso: #2039
+ 07h		NetWare Handle/Path structure (see #2064)
+SeeAlso: #2072
 
 Format of NetWare "Scan File or Subdirectory for Trustees" reply packet:
-Offset	Size	Description	(Table 2039)
+Offset	Size	Description	(Table 2072)
  00h	DWORD	next scan sequence or FFFFFFFFh if no more
  04h	WORD	number of trustee object IDs returned
  06h		trustee structure
-SeeAlso: #2038
+SeeAlso: #2071
 --------N-21F257SF06-------------------------
 INT 21 - Novell NetWare v3+ - GET INFORMATION ABOUT FILE OR DIRECTORY
 	AX = F257h subfn 06h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2040)
-	ES:DI -> reply buffer (see #2043)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2073)
+	ES:DI -> reply buffer (see #2076)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AH=F2h"Novell",AX=F257h/SF=02h,AX=F257h/SF=05h,AX=F257h/SF=07h
 
 Format of NetWare "Get NS Entry Info" request buffer:
-Offset	Size	Description	(Table 2040)
+Offset	Size	Description	(Table 2073)
  00h	BYTE	06h (subfunction "Get NS Entry Info")
- 01h	BYTE	name space (see #2042)
+ 01h	BYTE	name space (see #2075)
  02h	BYTE	destination name space
  03h	WORD	search attributes
- 05h	DWORD	return information mask (see #2041)
+ 05h	DWORD	return information mask (see #2074)
  09h	BYTE	volume number
  0Ah	DWORD	directory base
  0Eh	BYTE	handle flag
@@ -5686,10 +5686,10 @@ Offset	Size	Description	(Table 2040)
 		FFh volume number and dir base ignored, volume part of path
  0Fh	BYTE	number of path components
  10h  N BYTEs	list of path components (each a counted string)
-SeeAlso: #2043
+SeeAlso: #2076
 
 Bitfields for return information mask:
-Bit(s)	Description	(Table 2041)
+Bit(s)	Description	(Table 2074)
  0	include filename
  1	data stream space allocated info
  2	attributes info
@@ -5703,35 +5703,35 @@ Bit(s)	Description	(Table 2041)
  10	directory info
  11	rights info
 
-(Table 2042)
+(Table 2075)
 Values for NetWare name space:
  00h	DOS
  01h	Macintosh
  02h	NFS
  03h	FTAM
  04h	OS/2
-SeeAlso: #2040,#2048
+SeeAlso: #2073,#2081
 
 Format of NetWare "Get NS Entry Info" reply buffer:
-Offset	Size	Description	(Table 2043)
+Offset	Size	Description	(Table 2076)
  00h 72 BYTEs	reserved
  48h	DWORD	creator's name space number
  4Ch 257 BYTEs	reserved
-SeeAlso: #2040
+SeeAlso: #2073
 --------N-21F257SF07-------------------------
 INT 21 - Novell NetWare - MODIFY FILE OR SUBDIRECTORY DOS INFORMATION
 	AX = F257h subfn 07h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #2044)
+	DS:SI -> request packet (see #2077)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F257h/SF=04h,AX=F257h/SF=08h
 
 Format of NetWare "Modify File or Subdirectory DOS Information" request packet:
-Offset	Size	Description	(Table 2044)
+Offset	Size	Description	(Table 2077)
  00h	BYTE	07h (subfunction "Modify File or Subdirectory DOS Information")
- 01h	BYTE	name space (see #2042)
+ 01h	BYTE	name space (see #2075)
  02h	BYTE	reserved for future use
  03h	WORD	search attributes
  05h	DWORD	modify DOS mask
@@ -5741,138 +5741,138 @@ INT 21 - Novell NetWare - DELETE FILE/DIRECTORY
 	AX = F257h subfn 08h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2045)
-	ES:DI -> reply buffer (see #2046)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2078)
+	ES:DI -> reply buffer (see #2079)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F257h/SF=01h,AX=F257h/SF=07h
 
 Format of NetWare "Delete File/Directory" request packet:
-Offset	Size	Description	(Table 2045)
+Offset	Size	Description	(Table 2078)
  00h	BYTE	08h (subfunction "Delete File/Directory")
 	???
-SeeAlso: #2046
+SeeAlso: #2079
 
 Format of NetWare "Delete File/Directory" reply packet:
-Offset	Size	Description	(Table 2046)
+Offset	Size	Description	(Table 2079)
  00h	???
-SeeAlso: #2045
+SeeAlso: #2078
 --------N-21F257SF09-------------------------
 INT 21 - Novell NetWare - SET SHORT DIRECTORY HANDLE
 	AX = F257h subfn 09h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #2047)
+	DS:SI -> request packet (see #2080)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F257h/SF=0Ch
 
 Format of NetWare "Set Short Directory Handle" request packet:
-Offset	Size	Description	(Table 2047)
+Offset	Size	Description	(Table 2080)
  00h	BYTE	09h (subfunction "Set Short Directory Handle")
- 01h	BYTE	name space (see #2042)
+ 01h	BYTE	name space (see #2075)
  02h	BYTE	data stream
  03h	BYTE	destination directory handle
  04h	BYTE	reserved for future use
- 05h		NetWare Handle/Path structure (see #2031)
+ 05h		NetWare Handle/Path structure (see #2064)
 --------N-21F257SF0A-------------------------
 INT 21 - Novell NetWare v3+ - ADD TRUSTEE SET TO FILE OR SUBDIRECTORY
 	AX = F257h subfn 0Ah
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #2048)
+	DS:SI -> request packet (see #2081)
 	ES:DI ignored
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AX=F257h/SF=0Bh
 
 Format of NetWare "Add Trustee Set" request packet:
-Offset	Size	Description	(Table 2048)
+Offset	Size	Description	(Table 2081)
  00h	BYTE	0Ah (subfunction "Add Trustee Set to File or Subdirectory")
- 01h	BYTE	name space (see #2042)
+ 01h	BYTE	name space (see #2075)
  02h  2 BYTEs	reserved
- 04h	WORD	trustee rights (see #1796)
+ 04h	WORD	trustee rights (see #1829)
  06h	WORD	object ID count
- 08h		NetWare Handle/Path structure (see #2031)
-      6 BYTEs	trustee structure (see #2049)
+ 08h		NetWare Handle/Path structure (see #2064)
+      6 BYTEs	trustee structure (see #2082)
 
 Format of NetWare trustee structure:
-Offset	Size	Description	(Table 2049)
+Offset	Size	Description	(Table 2082)
  00h	DWORD	object ID
  04h	WORD	trustee rights
-SeeAlso: #2048
+SeeAlso: #2081
 --------N-21F257SF0B-------------------------
 INT 21 - Novell NetWare - DELETE TRUSTEE
 	AX = F257h subfn 0Bh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2050)
-	ES:DI -> reply buffer (see #2051)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2083)
+	ES:DI -> reply buffer (see #2084)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F257h/SF=0Ah
 
 Format of NetWare "Delete Trustee" request packet:
-Offset	Size	Description	(Table 2050)
+Offset	Size	Description	(Table 2083)
  00h	BYTE	0Bh (subfunction "Delete Trustee")
 	???
-SeeAlso: #2051
+SeeAlso: #2084
 
 Format of NetWare "Delete Trustee" reply packet:
-Offset	Size	Description	(Table 2051)
+Offset	Size	Description	(Table 2084)
  00h	???
-SeeAlso: #2050
+SeeAlso: #2083
 --------N-21F257SF0C-------------------------
 INT 21 - Novell NetWare v2+ - ALLOCATE SHORT DIRECTORY HANDLE
 	AX = F257h subfn 0Ch
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2052)
-	ES:DI -> reply buffer (see #2053)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2085)
+	ES:DI -> reply buffer (see #2086)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 Note:	unlike "Alloc Permanent Directory Handle", this function does not
 	  automatically map a drive
 SeeAlso: AH=F2h"Novell",AX=F223h/SF=04h,AX=F223h/SF=05h,AX=F223h/SF=09h
 
 Format of NetWare "Allocate Short Directory Handle" request packet:
-Offset	Size	Description	(Table 2052)
+Offset	Size	Description	(Table 2085)
  00h	BYTE	0Ch (subfunction "Allocate Short Directory Handle")
- 01h	BYTE	name space (see #2042)
+ 01h	BYTE	name space (see #2075)
  02h  2 BYTEs	reserved for future use
  04h	WORD	allocation mode
 		bits 1-0: 00 permanent handle
 			  01 temporary handle
 			  10 special temporary handle
 			  11 reserved
- 06h		NetWare Handle/Path structure (see #2031)
-SeeAlso: #2053
+ 06h		NetWare Handle/Path structure (see #2064)
+SeeAlso: #2086
 
 Format of NetWare "Allocate Short Directory Handle" reply packet:
-Offset	Size	Description	(Table 2053)
+Offset	Size	Description	(Table 2086)
  00h	BYTE	new directory handle
  01h	BYTE	volume number
  02h	DWORD	reserved for future use
-SeeAlso: #2052
+SeeAlso: #2085
 --------N-21F257SF10-------------------------
 INT 21 - Novell NetWare - SCAN SALVAGEABLE FILES
 	AX = F257h subfn 10h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2054)
-	ES:DI -> reply buffer (see #2055)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2087)
+	ES:DI -> reply buffer (see #2088)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=1Bh,AX=F257h/SF=11h,AX=F257h/SF=12h
 
 Format of NetWare "Scan Salvageable Files" request packet:
-Offset	Size	Description	(Table 2054)
+Offset	Size	Description	(Table 2087)
  00h	BYTE	10h (subfunction "Scan Salvageable Files")
  01h	BYTE	name space
  02h	BYTE	data stream
  03h	DWORD	return information mask
  07h	DWORD	last sequence (set to FFFFFFFFh before first call)
- 0Bh		NetWare Handle/Path structure (see #2031)
-SeeAlso: #2055,#1778
+ 0Bh		NetWare Handle/Path structure (see #2064)
+SeeAlso: #2088,#1811
 
 Format of NetWare "Scan Salvageable Files" reply packet:
-Offset	Size	Description	(Table 2055)
+Offset	Size	Description	(Table 2088)
  00h	DWORD	next sequence number
  04h	WORD	deletion time
  06h	WORD	deletion date
@@ -5880,19 +5880,19 @@ Offset	Size	Description	(Table 2055)
  0Ch	DWORD	volume number
  10h	DWORD	directory entry number
  14h		NetWare Information Structure
-SeeAlso: #2054,#1779
+SeeAlso: #2087,#1812
 --------N-21F257SF11-------------------------
 INT 21 - Novell NetWare - RECOVER SALVAGEABLE FILE
 	AX = F257h subfn 11h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #2056)
+	DS:SI -> request packet (see #2089)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=1Ch,AX=F257h/SF=10h,AX=F257h/SF=12h
 
 Format of NetWare "Recover Salvageable File" request packet:
-Offset	Size	Description	(Table 2056)
+Offset	Size	Description	(Table 2089)
  00h	BYTE	11h (subfunction "Recover Salvageable File")
  01h	BYTE	name space
  02h	BYTE	reserved for future use
@@ -5901,116 +5901,116 @@ Offset	Size	Description	(Table 2056)
  0Bh	DWORD	scan directory base
  0Fh	BYTE	new file name length
  10h  N BYTEs	new file name
-SeeAlso: #2057,#1780
+SeeAlso: #2090,#1813
 --------N-21F257SF12-------------------------
 INT 21 - Novell NetWare - PURGE SALVAGEABLE FILE
 	AX = F257h subfn 12h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #2057)
+	DS:SI -> request packet (see #2090)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=1Dh,AX=F257h/SF=10h,AX=F257h/SF=11h
 
 Format of NetWare "Purge Salvageable File" request packet:
-Offset	Size	Description	(Table 2057)
+Offset	Size	Description	(Table 2090)
  00h	BYTE	12h (subfunction "Purge Salvageable File")
  01h	BYTE	name space
  02h	BYTE	reserved
  03h	DWORD	sequence number
  07h	DWORD	volume number
  0Bh	DWORD	directory entry number
-SeeAlso: #2056
+SeeAlso: #2089
 --------N-21F257SF13-------------------------
 INT 21 - Novell NetWare - GET NAMESPACE INFORMATION
 	AX = F257h subfn 13h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2058)
-	ES:DI -> reply buffer (see #2059)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2091)
+	ES:DI -> reply buffer (see #2092)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F257h/SF=12h,AX=F257h/SF=15h
 
 Format of NetWare "Get Namespace Information" request packet:
-Offset	Size	Description	(Table 2058)
+Offset	Size	Description	(Table 2091)
  00h	BYTE	13h (subfunction "Get Namespace Information")
- 01h	BYTE	source name space (see #2042)
+ 01h	BYTE	source name space (see #2075)
  02h	BYTE	destination name space
  03h	BYTE	reserved for future use
  04h	BYTE	volume number
  05h	DWORD	directory base
  09h	DWORD	namespace information mask
-SeeAlso: #2059
+SeeAlso: #2092
 
 Format of NetWare "Get Namespace Information" reply packet:
-Offset	Size	Description	(Table 2059)
+Offset	Size	Description	(Table 2092)
  00h	var	namespace-specific information
-SeeAlso: #2058
+SeeAlso: #2091
 --------N-21F257SF15-------------------------
 INT 21 - Novell NetWare - GET PATH STRING FROM SHORT DIRECTORY HANDLE
 	AX = F257h subfn 15h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2060)
-	ES:DI -> reply buffer (see #2061)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2093)
+	ES:DI -> reply buffer (see #2094)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F257h/SF=13h,AX=F257h/SF=16h
 
 Format of NetWare "Get Path String from Short Directory Handle" request packet:
-Offset	Size	Description	(Table 2060)
+Offset	Size	Description	(Table 2093)
  00h	BYTE	15h (subfunction "Get Path String from Short Directory Handle")
- 01h	BYTE	name space (see #2042)
+ 01h	BYTE	name space (see #2075)
  02h	BYTE	short directory handle
-SeeAlso: #2061
+SeeAlso: #2094
 
 Format of NetWare "Get Path String from Short Directory Handle" reply packet:
-Offset	Size	Description	(Table 2061)
+Offset	Size	Description	(Table 2094)
  00h	BYTE	length of path
  01h  N BYTEs	full directory path
-SeeAlso: #2060
+SeeAlso: #2093
 --------N-21F257SF16-------------------------
 INT 21 - Novell NetWare - GENERATE DIRECTORY BASE AND VOLUME NUMBER
 	AX = F257h subfn 16h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2062)
-	ES:DI -> reply buffer (see #2063)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2095)
+	ES:DI -> reply buffer (see #2096)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F257h/SF=15h,AX=F257h/SF=17h
 
 Format of NetWare "Generate Directory Base and Volume Number" request packet:
-Offset	Size	Description	(Table 2062)
+Offset	Size	Description	(Table 2095)
  00h	BYTE	16h (subfunction "Generate Directory Base and Volume Number")
  01h	BYTE	name space (#2802)
  02h  3 BYTEs	reserved for future use
- 05h		NetWare Handle/Path structure (see #2031)
-SeeAlso: #2063
+ 05h		NetWare Handle/Path structure (see #2064)
+SeeAlso: #2096
 
 Format of NetWare "Generate Directory Base and Volume Number" reply packet:
-Offset	Size	Description	(Table 2063)
+Offset	Size	Description	(Table 2096)
  00h	DWORD	namespace directory base
  04h	DWORD	DOS directory base
  08h	BYTE	volume number
-SeeAlso: #2062
+SeeAlso: #2095
 --------N-21F257SF17-------------------------
 INT 21 - Novell NetWare - GET NAME SPACE INFORMATION FORMAT
 	AX = F257h subfn 17h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2064)
-	ES:DI -> reply buffer (see #2065)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2097)
+	ES:DI -> reply buffer (see #2098)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F257h/SF=18h,AX=F257h/SF=19h
 
 Format of NetWare "Get Name Space Information Format" request packet:
-Offset	Size	Description	(Table 2064)
+Offset	Size	Description	(Table 2097)
  00h	BYTE	17h (subfunction "Get Name Space Information Format")
- 01h	BYTE	name space (see #2042)
+ 01h	BYTE	name space (see #2075)
  02h	BYTE	volume number
-SeeAlso: #2065
+SeeAlso: #2098
 
 Format of NetWare "Get Name Space Information Format" reply packet:
-Offset	Size	Description	(Table 2065)
+Offset	Size	Description	(Table 2098)
  00h	DWORD	fixed bitmask
  04h	DWORD	variable bitmask
  08h	DWORD	huge bitmask
@@ -6018,46 +6018,46 @@ Offset	Size	Description	(Table 2065)
  0Eh	WORD	variable bits defined
  10h	WORD	huge bits defined
  12h 128 BYTEs	field lengths
-SeeAlso: #2064
+SeeAlso: #2097
 --------N-21F257SF18-------------------------
 INT 21 - Novell NetWare - GET NAME SPACES LOADED
 	AX = F257h subfn 18h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2066)
-	ES:DI -> reply buffer (see #2067)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2099)
+	ES:DI -> reply buffer (see #2100)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F257h/SF=17h,AX=F257h/SF=19h,AX=F257h/SF=1Ah
 SeeAlso: AX=F216h/SF=2Fh
 
 Format of NetWare "Get Name Spaces Loaded" request packet:
-Offset	Size	Description	(Table 2066)
+Offset	Size	Description	(Table 2099)
  00h	BYTE	18h (subfunction "Get Name Spaces Loaded")
  01h  2 BYTEs	reserved for future use
  03h	BYTE	volume number
-SeeAlso: #2067
+SeeAlso: #2100
 
 Format of NetWare "Get Name Spaces Loaded" reply packet:
-Offset	Size	Description	(Table 2067)
+Offset	Size	Description	(Table 2100)
  00h	WORD	number of namespace elements
  02h	WORD	number of namespace elements loaded
  04h  N BYTEs	loaded name spaces (each byte contains number of one loaded
 		  name space)
-SeeAlso: #2066
+SeeAlso: #2099
 --------N-21F257SF19-------------------------
 INT 21 - Novell NetWare - WRITE NAME SPACE INFO
 	AX = F257h subfn 19h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #2068)
+	DS:SI -> request packet (see #2101)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F257h/SF=17h,AX=F257h/SF=18h
 
 Format of NetWare "Write Name Space Info" request packet:
-Offset	Size	Description	(Table 2068)
+Offset	Size	Description	(Table 2101)
  00h	BYTE	19h (subfunction "Write Name Space Info")
- 01h	BYTE	source name space (see #2042)
+ 01h	BYTE	source name space (see #2075)
  02h	BYTE	destination name space
  03h	BYTE	volume number
  04h	DWORD	directory entry number
@@ -6068,84 +6068,84 @@ INT 21 - Novell NetWare - READ EXTENDED NAME SPACE INFO
 	AX = F257h subfn 1Ah
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2069)
-	ES:DI -> reply buffer (see #2070)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2102)
+	ES:DI -> reply buffer (see #2103)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F257h/SF=18h,AX=F257h/SF=19h,AX=F257h/SF=1Bh
 
 Format of NetWare "Read Extended Name Space Info" request packet:
-Offset	Size	Description	(Table 2069)
+Offset	Size	Description	(Table 2102)
  00h	BYTE	1Ah (subfunction "Read Extended Name Space Info")
- 01h	BYTE	name space (see #2042)
+ 01h	BYTE	name space (see #2075)
  02h	BYTE	volume number
  03h	DWORD	directory base
  07h	DWORD	huge mask
  0Bh 16 BYTEs	huge state information
-SeeAlso: #2070
+SeeAlso: #2103
 
 Format of NetWare "Read Extended Name Space Info" reply packet:
-Offset	Size	Description	(Table 2070)
+Offset	Size	Description	(Table 2103)
  00h 16 BYTEs	next huge state information
  10h	DWORD	huge data length
  14h  N BYTEs	huge data
-SeeAlso: #2069
+SeeAlso: #2102
 --------N-21F257SF1B-------------------------
 INT 21 - Novell NetWare - WRITE EXTENDED NAME SPACE INFO
 	AX = F257h subfn 1Bh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2071)
-	ES:DI -> reply buffer (see #2072)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2104)
+	ES:DI -> reply buffer (see #2105)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F257h/SF=17h,AX=F257h/SF=18h,AX=F257h/SF=1Ah
 
 Format of NetWare "Write Extended Name Space Info" request packet:
-Offset	Size	Description	(Table 2071)
+Offset	Size	Description	(Table 2104)
  00h	BYTE	1Bh (subfunction "Write Extended Name Space Info")
- 01h	BYTE	name space (see #2042)
+ 01h	BYTE	name space (see #2075)
  02h	BYTE	volume number
  03h	DWORD	directory entry number
  07h	DWORD	huge mask
  0Bh 16 BYTEs	huge state information
  1Bh	DWORD	huge data length
  1Fh  N BYTEs	huge data
-SeeAlso: #2072
+SeeAlso: #2105
 
 Format of NetWare "Write Extended Name Space Info" request packet:
-Offset	Size	Description	(Table 2072)
+Offset	Size	Description	(Table 2105)
  00h 16 BYTEs	next huge state information
  10h	DWORD	huge data used
-SeeAlso: #2071
+SeeAlso: #2104
 --------N-21F257SF1C-------------------------
 INT 21 - Novell NetWare - GET NS FULL PATH STRING
 	AX = F257h subfn 1Ch
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2073)
-	ES:DI -> reply buffer (see #2074)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2106)
+	ES:DI -> reply buffer (see #2107)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 Note:	this call returns the path in reverse order (root directory last)
 SeeAlso: AH=F2h"Novell",AX=F257h/SF=03h,AX=F257h/SF=15h
 
 Format of NetWare "Get NS Full Path String" request packet:
-Offset	Size	Description	(Table 2073)
+Offset	Size	Description	(Table 2106)
  00h	BYTE	1Ch (subfunction "Get NS Full Path String")
  01h	BYTE	source name space
  02h	BYTE	destination name space
- 03h 10	BYTEs	path cookie (see #2075)
- 04h		NetWare Handle/Path structure (see #2031)
-SeeAlso: #2074
+ 03h 10	BYTEs	path cookie (see #2108)
+ 04h		NetWare Handle/Path structure (see #2064)
+SeeAlso: #2107
 
 Format of NetWare "Get NS Full Path String" reply packet:
-Offset	Size	Description	(Table 2074)
- 00h 10 BYTEs	next path cookie (see #2075)
+Offset	Size	Description	(Table 2107)
+ 00h 10 BYTEs	next path cookie (see #2108)
  0Ah	WORD	size of path component(s) in packet
  0Ch	WORD	number of path components in packet
  0Eh		path components
-SeeAlso: #2073
+SeeAlso: #2106
 
 Format of NetWare path cookie:
-Offset	Size	Description	(Table 2075)
+Offset	Size	Description	(Table 2108)
  00h	WORD	flags
 		bit 0: last component is a filename
  02h	DWORD	cookie1
@@ -6153,51 +6153,51 @@ Offset	Size	Description	(Table 2075)
 Note:	"cookie1" and "cookie2" are to be set to FFFFFFFFh initially; if
 	  "cookie2" is FFFFFFFFh on return, all path components have been
 	  transferred
-SeeAlso: #2073,#2074
+SeeAlso: #2106,#2107
 --------N-21F257SF1D-------------------------
 INT 21 - Novell NetWare - GET EFFECTIVE DIRECTORY RIGHTS
 	AX = F257h subfn 1Dh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2076)
-	ES:DI -> reply buffer (see #2077)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2109)
+	ES:DI -> reply buffer (see #2110)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AX=F216h/SF=03h,AX=F257h/SF=06h,AX=F257h/SF=0Ch,AX=F257h/SF=15h
 
 Format of NetWare "Get Effective Directory Rights" request packet:
-Offset	Size	Description	(Table 2076)
+Offset	Size	Description	(Table 2109)
  00h	BYTE	1Dh (subfunction "Get Effective Directory Rights")
- 01h	BYTE	name space (see #2042)
- 02h	BYTE	destination name space (see #2042)
+ 01h	BYTE	name space (see #2075)
+ 02h	BYTE	destination name space (see #2075)
  03h	WORD	search attributes
  05h	DWORD	return information mask
- 09h		NetWare Handle/Path structure (see #2031)
-SeeAlso: #2077
+ 09h		NetWare Handle/Path structure (see #2064)
+SeeAlso: #2110
 
 Format of NetWare "Get Effective Directory Rights" reply packet:
-Offset	Size	Description	(Table 2077)
+Offset	Size	Description	(Table 2110)
  00h	WORD	caller's effective rights
  02h		NetWare Information Structure
-SeeAlso: #2076
+SeeAlso: #2109
 --------N-21F258SF01-------------------------
 INT 21 - Novell NetWare v4+ - GET VOLUME AUDITING STATISTICS
 	AX = F258h subfn 01h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2078)
-	ES:DI -> reply buffer (see #2079)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2111)
+	ES:DI -> reply buffer (see #2112)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AX=F268h/SF=C8h
 
 Format of NetWare "Get Volume Auditing Statistics" request buffer:
-Offset	Size	Description	(Table 2078)
+Offset	Size	Description	(Table 2111)
  00h	BYTE	01h (function "Get Volume Auditing Statistics")
  01h	DWORD	volume
-SeeAlso: #2079
+SeeAlso: #2112
 
 Format of NetWare "Get Volume Auditing Statistics" reply buffer:
-Offset	Size	Description	(Table 2079)
+Offset	Size	Description	(Table 2112)
  00h	WORD	auditing version (date)
  02h	WORD	audit file version (date)
  04h	DWORD	auditing enabled flag
@@ -6207,59 +6207,59 @@ Offset	Size	Description	(Table 2079)
  14h	DWORD	audit file size threshold
  18h	DWORD	number of audit records
  1Ch	DWORD	number of history records
-SeeAlso: #2078,#2131
+SeeAlso: #2111,#2164
 --------N-21F258SF02-------------------------
 INT 21 - Novell NetWare - ADD AUDIT PROPERTY
 	AX = F258h subfn 02h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2080)
-	ES:DI -> reply buffer (see #2081)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2113)
+	ES:DI -> reply buffer (see #2114)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=39h,AX=F258h/SF=06h,AX=F258h/SF=08h
 
 Format of NetWare "Add Audit Property" request packet:
-Offset	Size	Description	(Table 2080)
+Offset	Size	Description	(Table 2113)
  00h	BYTE	02h (subfunction "Add Audit Property")
 	???
-SeeAlso: #2081
+SeeAlso: #2114
 
 Format of NetWare "Add Audit Property" reply packet:
-Offset	Size	Description	(Table 2081)
+Offset	Size	Description	(Table 2114)
  00h	???
-SeeAlso: #2080
+SeeAlso: #2113
 --------N-21F258SF03-------------------------
 INT 21 - Novell NetWare - LOGIN AS VOLUME AUDITOR
 	AX = F258h subfn 03h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2082)
-	ES:DI -> reply buffer (see #2083)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2115)
+	ES:DI -> reply buffer (see #2116)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F258h/SF=04h,AX=F258h/SF=0Dh
 
 Format of NetWare "Login As Volume Auditor" request packet:
-Offset	Size	Description	(Table 2082)
+Offset	Size	Description	(Table 2115)
  00h	BYTE	03h (subfunction "Login As Volume Auditor")
 	???
-SeeAlso: #2083
+SeeAlso: #2116
 
 Format of NetWare "Login As Volume Auditor" reply packet:
-Offset	Size	Description	(Table 2083)
+Offset	Size	Description	(Table 2116)
  00h	???
-SeeAlso: #2082
+SeeAlso: #2115
 --------N-21F258SF04-------------------------
 INT 21 - Novell NetWare - CHANGE AUDITOR PASSWORD
 	AX = F258h subfn 04h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2084)
+	DS:SI -> request buffer (see #2117)
 	ES:DI -> reply buffer
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F258h/SF=03h
 
 Format of NetWare "Change Auditor Password" request packet:
-Offset	Size	Description	(Table 2084)
+Offset	Size	Description	(Table 2117)
  00h	BYTE	04h (subfunction "Change Auditor Password")
 	???
 --------N-21F258SF05-------------------------
@@ -6267,13 +6267,13 @@ INT 21 - Novell NetWare - CHECK AUDIT ACCESS
 	AX = F258h subfn 05h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2085)
+	DS:SI -> request buffer (see #2118)
 	ES:DI -> reply buffer
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F258h/SF=02h,AX=F258h/SF=08h
 
 Format of NetWare "Check Audit Access" request packet:
-Offset	Size	Description	(Table 2085)
+Offset	Size	Description	(Table 2118)
  00h	BYTE	05h (subfunction "Check Audit Access")
 	???
 --------N-21F258SF06-------------------------
@@ -6281,13 +6281,13 @@ INT 21 - Novell NetWare - REMOVE AUDIT PROPERTY
 	AX = F258h subfn 06h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2086)
+	DS:SI -> request buffer (see #2119)
 	ES:DI -> reply buffer
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F258h/SF=02h,AX=F258h/SF=05h
 
 Format of NetWare "Remove Audit Property" request packet:
-Offset	Size	Description	(Table 2086)
+Offset	Size	Description	(Table 2119)
  00h	BYTE	06h (subfunction "Remove Audit Property")
 	???
 --------N-21F258SF07-------------------------
@@ -6295,13 +6295,13 @@ INT 21 - Novell NetWare - DISABLE AUDITING ON VOLUME
 	AX = F258h subfn 07h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2087)
+	DS:SI -> request buffer (see #2120)
 	ES:DI -> reply buffer
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F258h/SF=08h,AX=F258h/SF=09h
 
 Format of NetWare "Disable Auditing on Volume" request packet:
-Offset	Size	Description	(Table 2087)
+Offset	Size	Description	(Table 2120)
  00h	BYTE	07h (subfunction "Disable Auditing on Volume")
 	???
 --------N-21F258SF08-------------------------
@@ -6309,13 +6309,13 @@ INT 21 - Novell NetWare - ENABLE AUDITING ON VOLUME
 	AX = F258h subfn 08h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2088)
+	DS:SI -> request buffer (see #2121)
 	ES:DI -> reply buffer
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F258h/SF=07h,AX=F258h/SF=09h
 
 Format of NetWare "Enable Auditing on Volume" request packet:
-Offset	Size	Description	(Table 2088)
+Offset	Size	Description	(Table 2121)
  00h	BYTE	08h (subfunction "Enable Auditing on Volume")
 	???
 --------N-21F258SF09-------------------------
@@ -6323,13 +6323,13 @@ INT 21 - Novell NetWare - IS USER AUDITED?
 	AX = F258h subfn 09h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2089)
+	DS:SI -> request buffer (see #2122)
 	ES:DI -> reply buffer
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F258h/SF=07h,AX=F258h/SF=08h
 
 Format of NetWare "Is User Audited?" request packet:
-Offset	Size	Description	(Table 2089)
+Offset	Size	Description	(Table 2122)
  00h	BYTE	09h (subfunction "Is User Audited?")
 	???
 --------N-21F258SF0A-------------------------
@@ -6337,53 +6337,53 @@ INT 21 - Novell NetWare - READ AUDITING BITMAP
 	AX = F258h subfn 0Ah
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2090)
-	ES:DI -> reply buffer (see #2091)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2123)
+	ES:DI -> reply buffer (see #2124)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F258h/SF=0Bh,AX=F258h/SF=10h
 
 Format of NetWare "Read Auditing Bitmap" request packet:
-Offset	Size	Description	(Table 2090)
+Offset	Size	Description	(Table 2123)
  00h	BYTE	0Ah (subfunction "Read Auditing Bitmap")
 	???
-SeeAlso: #2091,#2092
+SeeAlso: #2124,#2125
 
 Format of NetWare "Read Auditing Bitmap" reply packet:
-Offset	Size	Description	(Table 2091)
+Offset	Size	Description	(Table 2124)
  00h	???
-SeeAlso: #2090,#2093
+SeeAlso: #2123,#2126
 --------N-21F258SF0B-------------------------
 INT 21 - Novell NetWare - READ AUDIT CONFIG HEADER
 	AX = F258h subfn 0Bh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2092)
-	ES:DI -> reply buffer (see #2093)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2125)
+	ES:DI -> reply buffer (see #2126)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F258h/SF=0Ah,AX=F258h/SF=11h
 
 Format of NetWare "Read Audit Configuration Header" request packet:
-Offset	Size	Description	(Table 2092)
+Offset	Size	Description	(Table 2125)
  00h	BYTE	0Bh (subfunction "Read Audit Configuration Header")
 	???
-SeeAlso: #2093,#2090
+SeeAlso: #2126,#2123
 
 Format of NetWare "Read Audit Configuration Header" reply packet:
-Offset	Size	Description	(Table 2093)
+Offset	Size	Description	(Table 2126)
  00h	???
-SeeAlso: #2092,#2091
+SeeAlso: #2125,#2124
 --------N-21F258SF0D-------------------------
 INT 21 - Novell NetWare - LOGOUT AS VOLUME AUDITOR
 	AX = F258h subfn 0Dh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2094)
+	DS:SI -> request buffer (see #2127)
 	ES:DI -> reply buffer
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F258h/SF=03h
 
 Format of NetWare "Logout as Volume Auditor" request packet:
-Offset	Size	Description	(Table 2094)
+Offset	Size	Description	(Table 2127)
  00h	BYTE	0Dh (subfunction "Logout as Volume Auditor")
 	???
 --------N-21F258SF0E-------------------------
@@ -6391,13 +6391,13 @@ INT 21 - Novell NetWare - RESET AUDITING FILE
 	AX = F258h subfn 0Eh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2095)
+	DS:SI -> request buffer (see #2128)
 	ES:DI -> reply buffer
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F258h/SF=0Ah,AX=F258h/SF=0Fh
 
 Format of NetWare "Reset Auditing File" request packet:
-Offset	Size	Description	(Table 2095)
+Offset	Size	Description	(Table 2128)
  00h	BYTE	0Eh (subfunction "Reset Auditing File")
 	???
 --------N-21F258SF0F-------------------------
@@ -6405,13 +6405,13 @@ INT 21 - Novell NetWare - RESET AUDIT HISTORY FILE
 	AX = F258h subfn 0Fh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2096)
+	DS:SI -> request buffer (see #2129)
 	ES:DI -> reply buffer
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F258h/SF=0Eh
 
 Format of NetWare "Reset Audit History File" request packet:
-Offset	Size	Description	(Table 2096)
+Offset	Size	Description	(Table 2129)
  00h	BYTE	0Fh (subfunction "Reset Audit History File")
 	???
 --------N-21F258SF10-------------------------
@@ -6419,93 +6419,93 @@ INT 21 - Novell NetWare - WRITE AUDITING BITMAP
 	AX = F258h subfn 10h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2097)
+	DS:SI -> request buffer (see #2130)
 	ES:DI -> reply buffer
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F258h/SF=0Ah,AX=F258h/SF=11h
 
 Format of NetWare "Write Auditing Bitmap" request packet:
-Offset	Size	Description	(Table 2097)
+Offset	Size	Description	(Table 2130)
  00h	BYTE	10h (subfunction "Write Auditing Bitmap")
 	???
-SeeAlso: #2098
+SeeAlso: #2131
 --------N-21F258SF11-------------------------
 INT 21 - Novell NetWare - WRITE AUDIT CONFIG HEADER
 	AX = F258h subfn 11h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2098)
+	DS:SI -> request buffer (see #2131)
 	ES:DI -> reply buffer
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F258h/SF=0Bh,AX=F258h/SF=10h
 
 Format of NetWare "Write Audit Configuration Header" request packet:
-Offset	Size	Description	(Table 2098)
+Offset	Size	Description	(Table 2131)
  00h	BYTE	11h (subfunction "Write Audit Configuration Header")
 	???
-SeeAlso: #2097
+SeeAlso: #2130
 --------N-21F258SF13-------------------------
 INT 21 - Novell NetWare - GET AUDITING FLAGS
 	AX = F258h subfn 13h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2099)
-	ES:DI -> reply buffer (see #2100)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2132)
+	ES:DI -> reply buffer (see #2133)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F258h/SF=05h
 
 Format of NetWare "Get Auditing Flags" request packet:
-Offset	Size	Description	(Table 2099)
+Offset	Size	Description	(Table 2132)
  00h	BYTE	13h (subfunction "Get Auditing Flags")
 	???
-SeeAlso: #2100
+SeeAlso: #2133
 
 Format of NetWare "Get Auditing Flags" reply packet:
-Offset	Size	Description	(Table 2100)
+Offset	Size	Description	(Table 2133)
  00h	???
-SeeAlso: #2099
+SeeAlso: #2132
 --------N-21F258SF14-------------------------
 INT 21 - Novell NetWare - CLOSE OLD AUDITING FILE
 	AX = F258h subfn 14h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2101)
+	DS:SI -> request buffer (see #2134)
 	ES:DI -> reply buffer
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F258h/SF=15h
 
 Format of NetWare "Close Old Auditing File" request packet:
-Offset	Size	Description	(Table 2101)
+Offset	Size	Description	(Table 2134)
  00h	BYTE	14h (subfunction "Close Old Auditing File")
 	???
-SeeAlso: #2102
+SeeAlso: #2135
 --------N-21F258SF15-------------------------
 INT 21 - Novell NetWare - DELETE OLD AUDITING FILE
 	AX = F258h subfn 15h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2102)
+	DS:SI -> request buffer (see #2135)
 	ES:DI -> reply buffer
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F258h/SF=14h
 
 Format of NetWare "Delete Old Auditing File" request packet:
-Offset	Size	Description	(Table 2102)
+Offset	Size	Description	(Table 2135)
  00h	BYTE	15h (subfunction "Delete Old Auditing File")
 	???
-SeeAlso: #2101
+SeeAlso: #2134
 --------N-21F258SF16-------------------------
 INT 21 - Novell NetWare - CHECK AUDIT LEVEL TWO ACCESS
 	AX = F258h subfn 16h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2103)
+	DS:SI -> request buffer (see #2136)
 	ES:DI -> reply buffer
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F258h/SF=05h
 
 Format of NetWare "Check Audit Level Two Access" request packet:
-Offset	Size	Description	(Table 2103)
+Offset	Size	Description	(Table 2136)
  00h	BYTE	16h (subfunction "Check Audit Level Two Access")
 	???
 --------N-21F25ASF01-------------------------
@@ -6513,135 +6513,135 @@ INT 21 - Novell NetWare - GET DATA MIGRATION INFO
 	AX = F25Ah subfn 01h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2104)
-	ES:DI -> reply buffer (see #2105)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2137)
+	ES:DI -> reply buffer (see #2138)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F25Ah/SF=80h,AX=F25Ah/SF=86h
 
 Format of NetWare "Get Data Migration Information" request packet:
-Offset	Size	Description	(Table 2104)
+Offset	Size	Description	(Table 2137)
  00h	WORD	length of following data
  02h	BYTE	01h (subfunction "Get Data Migration Information")
-SeeAlso: #2105
+SeeAlso: #2138
 
 Format of NetWare "Get Data Migration Information" reply packet:
-Offset	Size	Description	(Table 2105)
+Offset	Size	Description	(Table 2138)
  00h	???
-SeeAlso: #2104
+SeeAlso: #2137
 --------N-21F25ASF80-------------------------
 INT 21 - Novell NetWare - MOVE FILE DATA TO DATA MIGRATION
 	AX = F25Ah subfn 80h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2106)
-	ES:DI -> reply buffer (see #2107)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2139)
+	ES:DI -> reply buffer (see #2140)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F25Ah/SF=82h,AX=F25Ah/SF=85h
 
 Format of NetWare "Move File Data to Data Migration" request packet:
-Offset	Size	Description	(Table 2106)
+Offset	Size	Description	(Table 2139)
  00h	WORD	length of following data
  02h	BYTE	80h (subfunction "Move File Data to Data Migration")
  03h	DWORD	volume number
  07h	DWORD	directory entry number
- 0Bh	DWORD	name space (see #2042)
+ 0Bh	DWORD	name space (see #2075)
  0Fh	DWORD	support module ID
  13h	DWORD	save key flag
 		00000010h to save key when file is demigrated
-SeeAlso: #2107
+SeeAlso: #2140
 
 Format of NetWare "Move File Data to Data Migration" reply packet:
-Offset	Size	Description	(Table 2107)
+Offset	Size	Description	(Table 2140)
  00h	DWORD	volume-unique ID
-SeeAlso: #2106
+SeeAlso: #2139
 --------N-21F25ASF81-------------------------
 INT 21 - Novell NetWare - DATA MIGRATION FILE INFORMATION
 	AX = F25Ah subfn 81h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2108)
-	ES:DI -> reply buffer (see #2109)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2141)
+	ES:DI -> reply buffer (see #2142)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F25Ah/SF=80h,AX=F25Ah/SF=82h,AX=F25Ah/SF=83h
 
 Format of NetWare "Data Migration File Information" request packet:
-Offset	Size	Description	(Table 2108)
+Offset	Size	Description	(Table 2141)
  00h	WORD	length of following data
  02h	BYTE	81h (subfunction "Data Migration File Information")
  03h	DWORD	volume number
  07h	DWORD	directory entry number
- 0Bh	DWORD	name space (see #2042)
-SeeAlso: #2109
+ 0Bh	DWORD	name space (see #2075)
+SeeAlso: #2142
 
 Format of NetWare "Data Migration File Information" reply packet:
-Offset	Size	Description	(Table 2109)
+Offset	Size	Description	(Table 2142)
  00h	DWORD	support module ID
  04h	DWORD	estimate restoration time
  08h	DWORD	bitmask of supported data streams
-SeeAlso: #2108
+SeeAlso: #2141
 --------N-21F25ASF82-------------------------
 INT 21 - Novell NetWare - VOLUME DATA MIGRATION STATUS
 	AX = F25Ah subfn 82h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2110)
-	ES:DI -> reply buffer (see #2111)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2143)
+	ES:DI -> reply buffer (see #2144)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F25Ah/SF=01h,AX=F25Ah/SF=83h,AX=F25Ah/SF=84h
 
 Format of NetWare "Volume Data Migration Status" request packet:
-Offset	Size	Description	(Table 2110)
+Offset	Size	Description	(Table 2143)
  00h	WORD	length of following data
  02h	BYTE	82h (subfunction "Volume Data Migration Status")
  03h	DWORD	volume number
  07h	DWORD	support module ID
-SeeAlso: #2111
+SeeAlso: #2144
 
 Format of NetWare "Volume Data Migration Status" request packet:
-Offset	Size	Description	(Table 2111)
+Offset	Size	Description	(Table 2144)
  00h	DWORD	number of migrated files
  04h	DWORD	total size required to restore all migrated files
  08h	DWORD	total space used on migration device
  0Ch	DWORD	limbo space (demigrated files with save-key flag set)
  10h	DWORD	total space including limbo space
  14h	DWORD	number of files in limbo
-SeeAlso: #2110
+SeeAlso: #2143
 --------N-21F25ASF83-------------------------
 INT 21 - Novell NetWare - GET MIGRATION OR STATUS INFORMATION
 	AX = F25Ah subfn 83h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2112)
-	ES:DI -> reply buffer (see #2113)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2145)
+	ES:DI -> reply buffer (see #2146)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F25Ah/SF=82h,AX=F25Ah/SF=84h,AX=F25Ah/SF=85h
 
 Format of NetWare "Get Migration or Status Information" request packet:
-Offset	Size	Description	(Table 2112)
+Offset	Size	Description	(Table 2145)
  00h	WORD	length of following data
  02h	BYTE	83h (subfunction "Get Migration or Status Information")
-SeeAlso: #2113
+SeeAlso: #2146
 
 Format of NetWare "Get Migration or Status Information" request packet:
-Offset	Size	Description	(Table 2113)
+Offset	Size	Description	(Table 2146)
  00h	DWORD	presence flag
 		FFFFFFFFh if Data Migration NLM is loaded and running
  04h	DWORD	major version
  08h	DWORD	minor version
  0Ch	DWORD	flag: has support module registered with Data Migrator?
-SeeAlso: #2112
+SeeAlso: #2145
 --------N-21F25ASF84-------------------------
 INT 21 - Novell NetWare - DATA MIGRATION SUPPORT MODULE INFORMATION
 	AX = F25Ah subfn 84h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2114)
-	ES:DI -> reply buffer (see #2115)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2147)
+	ES:DI -> reply buffer (see #2148)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F25Ah/SF=82h,AX=F25Ah/SF=83h,AX=F25Ah/SF=86h
 
 Format of NetWare "Data Migration Support Module Information" request packet:
-Offset	Size	Description	(Table 2114)
+Offset	Size	Description	(Table 2147)
  00h	WORD	length of following data
  02h	BYTE	84h (subfunction "Data Migration Support Module Information")
  03h	DWORD	information level
@@ -6649,10 +6649,10 @@ Offset	Size	Description	(Table 2114)
 		0001h get loaded support modules
 		0002h get name of support module
  07h	DWORD	support module ID
-SeeAlso: #2115
+SeeAlso: #2148
 
 Format of NetWare "Data Migration Support Module Information" request packet:
-Offset	Size	Description	(Table 2115)
+Offset	Size	Description	(Table 2148)
 ---information level 0---
  00h	DWORD	read/write access status
  04h	DWORD	length of Specific Device Information block (max 384)
@@ -6667,66 +6667,66 @@ Offset	Size	Description	(Table 2115)
 ---information level 2---
  00h	BYTE	length of module name
  01h 32 BYTEs	support module name
-SeeAlso: #2114
+SeeAlso: #2147
 --------N-21F25ASF85-------------------------
 INT 21 - Novell NetWare - MOVE FILE DATA FROM DATA MIGRATION
 	AX = F25Ah subfn 85h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #2116)
+	DS:SI -> request packet (see #2149)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F25Ah/SF=80h,AX=F25Ah/SF=83h,AX=F25Ah/SF=86h
 
 Format of NetWare "Move File Data From Data Migration" request packet:
-Offset	Size	Description	(Table 2116)
+Offset	Size	Description	(Table 2149)
  00h	WORD	length of following data
  02h	BYTE	85h (subfunction "Move File Data from Data Migration")
  03h	DWORD	volume number
  07h	DWORD	directory entry number
- 0Bh	DWORD	name space (see #2042)
-SeeAlso: #2107
+ 0Bh	DWORD	name space (see #2075)
+SeeAlso: #2140
 --------N-21F25ASF86-------------------------
 INT 21 - Novell NetWare - GET OR SET DEFAULT SUPPORT MODULE
 	AX = F25Ah subfn 86h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2117)
-	ES:DI -> reply buffer (see #2118)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2150)
+	ES:DI -> reply buffer (see #2151)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F25Ah/SF=01h,AX=F25Ah/SF=80h,AX=F25Ah/SF=84h
 
 Format of NetWare "Get or Set Default Support Module" request packet:
-Offset	Size	Description	(Table 2117)
+Offset	Size	Description	(Table 2150)
  00h	WORD	length of following data
  02h	BYTE	86h (subfunction "Get or Set Default Support Module")
  03h	DWORD	direction
 		00h get default support module
 		01h set default support module
  07h	DWORD	new module ID if setting
-SeeAlso: #2118
+SeeAlso: #2151
 
 Format of NetWare "Get or Set Default Support Module" request packet:
-Offset	Size	Description	(Table 2118)
+Offset	Size	Description	(Table 2151)
  00h	DWORD	support module ID
-SeeAlso: #2117
+SeeAlso: #2150
 --------N-21F268SF01-------------------------
 INT 21 - Novell NetWare v4+ - GET TREE NAME
 	AX = F268h subfn 01h
 	CX = length of request buffer in bytes (0001h)
 	DX = length of reply buffer in bytes (0064h)
-	DS:SI -> request buffer (see #2119)
-	ES:DI -> reply buffer (see #2120)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2152)
+	ES:DI -> reply buffer (see #2153)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AX=F268h/SF=04h
 
 Format of NetWare "Get Tree Name" request buffer:
-Offset	Size	Description	(Table 2119)
+Offset	Size	Description	(Table 2152)
  00h	BYTE	01h (subfunction "Get Tree Name")
 
 Format of NetWare "Get Tree Name" reply buffer:
-Offset	Size	Description	(Table 2120)
+Offset	Size	Description	(Table 2153)
  00h	DWORD	Ping version
  04h	DWORD	length of tree name
  08h 32 BYTEs	tree name, padded with underscores ('_')
@@ -6736,18 +6736,18 @@ INT 21 - Novell NetWare v4+ - GET BINDERY CONTEXT
 	AX = F268h subfn 04h
 	CX = length of request buffer in bytes (0001h)
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2121)
-	ES:DI -> reply buffer (see #2122)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2154)
+	ES:DI -> reply buffer (see #2155)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AX=F268h/SF=01h,AX=F268h/SF=C8h
 
 Format of NetWare "Get Bindery Context" request buffer:
-Offset	Size	Description	(Table 2121)
+Offset	Size	Description	(Table 2154)
  00h	BYTE	04h (subfunction "Get Bindery Context")
 
 Format of NetWare "Get Bindery Context" reply buffer:
-Offset	Size	Description	(Table 2122)
+Offset	Size	Description	(Table 2155)
  00h	DWORD	length (max 200)
  04h  N WORDs	Unicode bindery context string
 --------N-21F268SF05-------------------------
@@ -6755,21 +6755,21 @@ INT 21 - Novell NetWare v4+ - MONITOR NDS CONNECTION
 	AX = F268h subfn 05h
 	CX = length of request buffer in bytes (0001h)
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2123)
+	DS:SI -> request buffer (see #2156)
 	ES:DI -> reply buffer (unused???)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 
 Format of NetWare "Monitor NDS Connection" request buffer:
-Offset	Size	Description	(Table 2123)
+Offset	Size	Description	(Table 2156)
  00h	BYTE	05h (subfunction "Monitor NDS Connection"
 --------N-21F268SF16-------------------------
 INT 21 - Novell NetWare v4+ - NDS LIST PARTITIONS
 	AX = F268h subfn 16h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2124)
-	ES:DI -> reply buffer (see #2125)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2157)
+	ES:DI -> reply buffer (see #2158)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 Note:	the length specified in CX must be exactly 13 bytes more than the
 	  length field at offset 09h in the request buffer for this function
@@ -6777,7 +6777,7 @@ Note:	the length specified in CX must be exactly 13 bytes more than the
 SeeAlso: AX=F268h/SF=35h
 
 Format of NetWare "NDS List Partitions" request buffer:
-Offset	Size	Description	(Table 2124)
+Offset	Size	Description	(Table 2157)
  00h	BYTE	02h
  01h	DWORD	??? (FFFFFFFFh)
  05h	DWORD	??? (00000202h)
@@ -6788,24 +6788,24 @@ Offset	Size	Description	(Table 2124)
  19h	DWORD	API version (00000000h)
  1Dh	DWORD	??? (00000000h)
  21h	DWORD	iteration (FFFFFFFFh)
-SeeAlso: #2125,#2126
+SeeAlso: #2158,#2159
 
 Format of NetWare "NDS List Partitions" reply buffer:
-Offset	Size	Description	(Table 2125)
+Offset	Size	Description	(Table 2158)
  00h	DWORD	length
  04h	DWORD	???
  08h	DWORD	return code
  0Ch	DWORD	iteration
  10h 1000 BYTEs	returned data
-SeeAlso: #2124
+SeeAlso: #2157
 --------N-21F268SF35-------------------------
 INT 21 - Novell NetWare v4+ - NDS GET SERVER NAME AND ADDRESS
 	AX = F268h subfn 35h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2126)
-	ES:DI -> reply buffer (see #2127)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2159)
+	ES:DI -> reply buffer (see #2160)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 Note:	the length specified in CX must be exactly 13 bytes more than the
 	  length field at offset 09h in the request buffer for this function
@@ -6813,7 +6813,7 @@ Note:	the length specified in CX must be exactly 13 bytes more than the
 SeeAlso: AX=F268h/SF=16h
 
 Format of NetWare "NDS Get Server Name and Address" request buffer:
-Offset	Size	Description	(Table 2126)
+Offset	Size	Description	(Table 2159)
  00h	BYTE	02h
  01h	DWORD	??? (FFFFFFFFh)
  05h	DWORD	??? (00000202h)
@@ -6821,10 +6821,10 @@ Offset	Size	Description	(Table 2126)
  0Dh	DWORD	??? (00000000h)
  11h	DWORD	function (00000035h) (subfunc "NDS Get Server Name and Addr")
  15h	DWORD	??? (00000400h)
-SeeAlso: #2124,#2127
+SeeAlso: #2157,#2160
 
 Format of NetWare "NDS Get Server Name and Address" reply buffer:
-Offset	Size	Description	(Table 2127)
+Offset	Size	Description	(Table 2160)
  00h	DWORD	length
  04h	DWORD	???
  08h	DWORD	return code
@@ -6835,20 +6835,20 @@ Offset	Size	Description	(Table 2127)
 	DWORD	??? (00000000h)
 	DWORD	??? (0000000Ch)
      12 BYTEs	server's IPX address
-SeeAlso: #2126
+SeeAlso: #2159
 --------N-21F268SF3D-------------------------
 INT 21 - Novell NetWare v4+ - NDS LOGOUT
 	AX = F268h subfn 3Dh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2128)
-	ES:DI -> reply buffer (see #2129)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2161)
+	ES:DI -> reply buffer (see #2162)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AX=F217h/SF=14h
 
 Format of NetWare "NDS Logout" request buffer:
-Offset	Size	Description	(Table 2128)
+Offset	Size	Description	(Table 2161)
  00h	BYTE	02h
  01h	DWORD	??? (FFFFFFFFh)
  05h	DWORD	??? (00000202h)
@@ -6856,32 +6856,32 @@ Offset	Size	Description	(Table 2128)
  0Dh	DWORD	??? (00000000h)
  11h	DWORD	function (0000003Dh) (subfunction "NDS Logout")
  15h	DWORD	??? (00000000h)
-SeeAlso: #2129
+SeeAlso: #2162
 
 Format of NetWare "NDS Logout" reply buffer:
-Offset	Size	Description	(Table 2129)
+Offset	Size	Description	(Table 2162)
  00h	DWORD	length
  04h	DWORD	???
  08h	DWORD	return code
-SeeAlso: #2128
+SeeAlso: #2161
 --------N-21F268SFC8-------------------------
 INT 21 - Novell NetWare v4+ - GET DS AUDITING STATISTICS
 	AX = F268h subfn C8h
 	CX = length of request buffer in bytes (0001h)
 	DX = length of reply buffer in bytes (0020h)
-	DS:SI -> request buffer (see #2130)
-	ES:DI -> reply buffer (see #2131)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2163)
+	ES:DI -> reply buffer (see #2164)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AX=F258h/SF=01h,AX=F268h/SF=01h,AX=F268h/SF=04h
 
 Format of NetWare "Get DS Auditing Statistics" request buffer:
-Offset	Size	Description	(Table 2130)
+Offset	Size	Description	(Table 2163)
  00h	BYTE	C8h (subfunction "Get DS Auditing Statistics")
-SeeAlso: #2131
+SeeAlso: #2164
 
 Format of NetWare "Get DS Auditing Statistics" reply buffer:
-Offset	Size	Description	(Table 2131)
+Offset	Size	Description	(Table 2164)
  00h	WORD	auditing version (date)
  02h	WORD	audit file version (date)
  04h	DWORD	auditing enabled flag
@@ -6891,19 +6891,19 @@ Offset	Size	Description	(Table 2131)
  14h	DWORD	audit file size threshold
  18h	DWORD	number of audit records
  1Ch	DWORD	number of history records
-SeeAlso: #2079,#2130
+SeeAlso: #2112,#2163
 --------N-21F269-----------------------------
 INT 21 - Novell NetWare - LOG FILE
 	AX = F269h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #2132)
+	DS:SI -> request packet (see #2165)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F203h,AX=F26Ah,AH=EBh"NetWare"
 
 Format of NetWare "Log File" request packet:
-Offset	Size	Description	(Table 2132)
+Offset	Size	Description	(Table 2165)
  00h	BYTE	directory handle
  01h	BYTE	lock flag
 		00h log only
@@ -6916,26 +6916,26 @@ INT 21 - Novell NetWare - LOCK FILE SET
 	AX = F26Ah
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #2133)
+	DS:SI -> request packet (see #2166)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F204h,AX=F269h,AH=CBh"NetWare"
 
 Format of NetWare "Lock File Set" request packet:
-Offset	Size	Description	(Table 2133)
+Offset	Size	Description	(Table 2166)
  00h	WORD	lock timeout in clock ticks (0000h = don't wait)
 --------N-21F26C-----------------------------
 INT 21 - Novell NetWare - LOCK LOGICAL RECORD SET
 	AX = F26Ch
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #2134)
+	DS:SI -> request packet (see #2167)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F20Ah,AX=F26Ah,AH=CBh"NetWare"
 
 Format of NetWare "Lock Logical Record Set" request packet:
-Offset	Size	Description	(Table 2134)
+Offset	Size	Description	(Table 2167)
  00h	BYTE	lock flag
 		00h shareable lock
 		01h exclusive lock
@@ -6945,13 +6945,13 @@ INT 21 - Novell NetWare - LOCK PHYSICAL RECORD SET
 	AX = F26Eh
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #2135)
+	DS:SI -> request packet (see #2168)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F21Bh,AX=F26Ch,AH=C2h"NetWare"
 
 Format of NetWare "Lock Physical Record Set" request packet:
-Offset	Size	Description	(Table 2135)
+Offset	Size	Description	(Table 2168)
  00h	BYTE	lock flag
 		00h exclusive lock
 		02h shareable lock
@@ -6961,51 +6961,51 @@ INT 21 - Novell NetWare - OPEN SEMAPHORE
 	AX = F26Fh subfn 00h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2136)
-	ES:DI -> reply buffer (see #2137)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2169)
+	ES:DI -> reply buffer (see #2170)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F26Fh/SF=01h,AX=F26Fh/SF=02h
 
 Format of NetWare "Open Semaphore" request packet:
-Offset	Size	Description	(Table 2136)
+Offset	Size	Description	(Table 2169)
  00h	BYTE	00h (subfunction "Open Semaphore")
  01h	BYTE	initial semaphore value
  02h	BYTE	length of semaphore's name
  03h  N BYTEs	semaphore name
-SeeAlso: #2137
+SeeAlso: #2170
 
 Format of NetWare "Open Semaphore" request packet:
-Offset	Size	Description	(Table 2137)
+Offset	Size	Description	(Table 2170)
  00h	DWORD	semaphore handle
  04h	BYTE	number of clients using semaphore (including caller)
-SeeAlso: #2136
+SeeAlso: #2169
 --------N-21F26FSF01-------------------------
 INT 21 - Novell NetWare - CLOSE SEMAPHORE
 	AX = F26Fh subfn 01h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #2138)
+	DS:SI -> request packet (see #2171)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F26Fh/SF=00h,AX=F26Fh/SF=03h,AX=F220h/SF=04h
 
 Format of NetWare "Close Semaphore" request packet:
-Offset	Size	Description	(Table 2138)
+Offset	Size	Description	(Table 2171)
  00h	BYTE	01h (subfunction "Close Semaphore")
  01h	DWORD	semaphore handle
-SeeAlso: #1941
+SeeAlso: #1974
 --------N-21F26FSF02-------------------------
 INT 21 - Novell NetWare - WAIT ON SEMAPHORE
 	AX = F26Fh subfn 02h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #2139)
+	DS:SI -> request packet (see #2172)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F26Fh/SF=00h,AX=F26Fh/SF=04h
 
 Format of NetWare "Wait on Semaphore" request packet:
-Offset	Size	Description	(Table 2139)
+Offset	Size	Description	(Table 2172)
  00h	BYTE	02h (subfunction "Wait on Semaphore")
  01h	DWORD	semaphore handle
  05h	WORD	timeout in clock ticks (0000h = no wait)
@@ -7014,13 +7014,13 @@ INT 21 - Novell NetWare - SIGNAL SEMAPHORE
 	AX = F26Fh subfn 03h
 	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet (see #2140)
+	DS:SI -> request packet (see #2173)
 	ES:DI ignored
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F26Fh/SF=02h,AX=F26Fh/SF=04h
 
 Format of NetWare "Signal Semaphore" request packet:
-Offset	Size	Description	(Table 2140)
+Offset	Size	Description	(Table 2173)
  00h	BYTE	03h (subfunction "Signal Semaphore")
  01h	DWORD	semaphore handle
 --------N-21F26FSF04-------------------------
@@ -7028,41 +7028,41 @@ INT 21 - Novell NetWare - EXAMINE SEMAPHORE
 	AX = F26Fh subfn 04h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2141)
-	ES:DI -> reply buffer (see #2142)
-Return: AX = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2174)
+	ES:DI -> reply buffer (see #2175)
+Return: AX = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F26Fh/SF=02h,AX=F26Fh/SF=03h
 
 Format of NetWare "Examine Semaphore" request packet:
-Offset	Size	Description	(Table 2141)
+Offset	Size	Description	(Table 2174)
  00h	BYTE	04h (subfunction "Examine Semaphore")
  01h	DWORD	semaphore handle
-SeeAlso: #2142
+SeeAlso: #2175
 
 Format of NetWare "Examine Semaphore" reply packet:
-Offset	Size	Description	(Table 2142)
+Offset	Size	Description	(Table 2175)
  00h	BYTE	semaphore's current value
  01h	BYTE	number of clients using semaphore
-SeeAlso: #2141
+SeeAlso: #2174
 --------N-21F272-----------------------------
 INT 21 - Novell NetWare v4+ - GET FILE SERVER UTC TIME
 	AX = F272h
 	CX = length of request buffer in bytes (0003h)
 	DX = length of reply buffer in bytes (0064h)
-	DS:SI -> request buffer (see #2143)
-	ES:DI -> reply buffer (see #2144)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2176)
+	ES:DI -> reply buffer (see #2177)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 
 Format of NetWare "Get File Server UTC Time" request buffer:
-Offset	Size	Description	(Table 2143)
+Offset	Size	Description	(Table 2176)
  00h	BYTE	??? (00h)
  01h	BYTE	??? (01h)
  02h	BYTE	??? (01h)
-SeeAlso: #2144
+SeeAlso: #2177
 
 Format of NetWare "Get File Server UTC Time" reply buffer:
-Offset	Size	Description	(Table 2144)
+Offset	Size	Description	(Table 2177)
  00h	DWORD	seconds
  04h	DWORD	???
  04h	DWORD	??? (00000204h)
@@ -7070,26 +7070,26 @@ Offset	Size	Description	(Table 2144)
  04h	DWORD	??? (00000000h)
  04h	DWORD	??? (FFFFFFFFh)
  04h	DWORD	??? (00000000h)
-SeeAlso: #2143
+SeeAlso: #2176
 --------N-21F27BSF01-------------------------
 INT 21 - Novell NetWare v4+ - GET CACHE INFORMATION
 	AX = F27Bh subfn 01h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2145)
-	ES:DI -> reply buffer (see #2146)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2178)
+	ES:DI -> reply buffer (see #2179)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AX=F27Bh/SF=02h
 
 Format of NetWare "Get Cache Information" request buffer:
-Offset	Size	Description	(Table 2145)
+Offset	Size	Description	(Table 2178)
  00h	WORD	0001h (length of following data)
  02h	BYTE	01h (subfunction "Get Cache Information")
-SeeAlso: #2146
+SeeAlso: #2179
 
 Format of NetWare "Get Cache Information" reply buffer:
-Offset	Size	Description	(Table 2146)
+Offset	Size	Description	(Table 2179)
  00h	DWORD	current server time
  04h	BYTE	vconsole version
  05h	BYTE	vconsole revision
@@ -7149,26 +7149,26 @@ Offset	Size	Description	(Table 2146)
  DCh	DWORD	"maxDirtyTime"
  E0h	DWORD	number of directory cache buffers
  E4h	DWORD	"cacheByteToBlockShiftFactor"
-SeeAlso: #2145
+SeeAlso: #2178
 --------N-21F27BSF02-------------------------
 INT 21 - Novell NetWare v4+ - GET SERVER INFORMATION
 	AX = F27Bh subfn 02h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2147)
-	ES:DI -> reply buffer (see #2148)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2180)
+	ES:DI -> reply buffer (see #2181)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AX=F27Bh/SF=01h
 
 Format of NetWare "Get Server Information" request buffer:
-Offset	Size	Description	(Table 2147)
+Offset	Size	Description	(Table 2180)
  00h	WORD	0001h (length of following data)
  02h	BYTE	02h (subfunction "Get Server Information")
-SeeAlso: #2148
+SeeAlso: #2181
 
 Format of NetWare "Get Server Information" reply buffer:
-Offset	Size	Description	(Table 2148)
+Offset	Size	Description	(Table 2181)
  00h	DWORD	current server time
  04h	BYTE	vconsole version
  05h	BYTE	vconsole revision
@@ -7208,26 +7208,26 @@ Offset	Size	Description	(Table 2148)
  7Eh	DWORD	number of NetBIOS packets propagated
  82h	DWORD	total number of packets serviced
  86h	DWORD	total number of packets routed
-SeeAlso: #2147
+SeeAlso: #2180
 --------N-21F27BSF04-------------------------
 INT 21 - Novell NetWare v4+ - GET USER INFORMATION
 	AX = F27Bh subfn 04h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2149)
-	ES:DI -> reply buffer (see #2150)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2182)
+	ES:DI -> reply buffer (see #2183)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 
 Format of NetWare "Get User Information" request buffer:
-Offset	Size	Description	(Table 2149)
+Offset	Size	Description	(Table 2182)
  00h	WORD	0005h (length of following data)
  02h	BYTE	04h (subfunction "Get User Information")
  03h	DWORD	connection number
-SeeAlso: #2150
+SeeAlso: #2183
 
 Format of NetWare "Get User Information" reply buffer:
-Offset	Size	Description	(Table 2150)
+Offset	Size	Description	(Table 2183)
  00h	DWORD	current server time
  04h	BYTE	vconsole version
  05h	BYTE	vconsole revision
@@ -7255,25 +7255,25 @@ Offset	Size	Description	(Table 2150)
  48h  6 BYTEs	held bytes written
  4Eh	BYTE	length of user name
  4Fh  N BYTEs	user name
-SeeAlso: #2149
+SeeAlso: #2182
 --------N-21F27BSF06-------------------------
 INT 21 - Novell NetWare v4+ - GET IPX/SPX Information
 	AX = F27Bh subfn 06h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2151)
-	ES:DI -> reply buffer (see #2152)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2184)
+	ES:DI -> reply buffer (see #2185)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 
 Format of NetWare "Get IPX/SPX Information" request buffer:
-Offset	Size	Description	(Table 2151)
+Offset	Size	Description	(Table 2184)
  00h	WORD	0001h (length of following data)
  02h	BYTE	06h (subfunction "Get IPX/SPX Information")
-SeeAlso: #2152
+SeeAlso: #2185
 
 Format of NetWare "Get IPX/SPX Information" reply buffer:
-Offset	Size	Description	(Table 2152)
+Offset	Size	Description	(Table 2185)
  00h	DWORD	current server time
  04h	BYTE	vconsole version
  05h	BYTE	vconsole revision
@@ -7308,26 +7308,26 @@ Offset	Size	Description	(Table 2152)
  4Eh	WORD	number of supressed SPX packets
  50h	WORD	"SPXNoSesListenECBCount"
  52h	WORD	"SPXWatchDogDestSesCount"
-SeeAlso: #2151
+SeeAlso: #2184
 --------N-21F27BSF08-------------------------
 INT 21 - Novell NetWare v4+ - GET CPU INFORMATION
 	AX = F27Bh subfn 08h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2153)
-	ES:DI -> reply buffer (see #2154)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2186)
+	ES:DI -> reply buffer (see #2187)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 
 Format of NetWare "Get CPU Information" request buffer:
-Offset	Size	Description	(Table 2153)
+Offset	Size	Description	(Table 2186)
  00h	WORD	0005h (length of following data)
  02h	BYTE	08h (subfunction "Get CPU Information")
  03h	DWORD	CPU number
-SeeAlso: #2154
+SeeAlso: #2187
 
 Format of NetWare "Get CPU Information" reply buffer:
-Offset	Size	Description	(Table 2154)
+Offset	Size	Description	(Table 2187)
  00h	DWORD	current server time
  04h	BYTE	vconsole version
  05h	BYTE	vconsole revision
@@ -7341,26 +7341,26 @@ Offset	Size	Description	(Table 2154)
  20h	DWORD	filesystem engine flag
  24h	DWORD	non-dedicated flag
  28h 201 BYTEs	counted string: CPU string;number of coprocessors;bus string
-SeeAlso: #2153
+SeeAlso: #2186
 --------N-21F27BSF09-------------------------
 INT 21 - Novell NetWare v4+ - GET VOLUME SWITCH INFORMATION
 	AX = F27Bh subfn 09h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2155)
-	ES:DI -> reply buffer (see #2156)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2188)
+	ES:DI -> reply buffer (see #2189)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 
 Format of NetWare "Get Volume Switch Information" request buffer:
-Offset	Size	Description	(Table 2155)
+Offset	Size	Description	(Table 2188)
  00h	WORD	0005h (length of following data)
  02h	BYTE	09h (subfunction "Get Volume Switch Information")
  03h	DWORD	starting item number
-SeeAlso: #2156
+SeeAlso: #2189
 
 Format of NetWare "Get Volume Switch Information" reply buffer:
-Offset	Size	Description	(Table 2156)
+Offset	Size	Description	(Table 2189)
  00h	DWORD	current server time
  04h	BYTE	vconsole version
  05h	BYTE	vconsole revision
@@ -7457,26 +7457,26 @@ Offset	Size	Description	(Table 2156)
 16Ch	DWORD	"F3SetHugeInfo"
 170h	DWORD	"F3GetFullPathString"
 174h	DWORD	"F3GetEffectiveDirectoryRights"
-SeeAlso: #2155
+SeeAlso: #2188
 --------N-21F27BSF0A-------------------------
 INT 21 - Novell NetWare v4+ - GET LOADED NLMs
 	AX = F27Bh subfn 0Ah
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2157)
-	ES:DI -> reply buffer (see #2158)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2190)
+	ES:DI -> reply buffer (see #2191)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 
 Format of NetWare "Get NLMs Loaded" request buffer:
-Offset	Size	Description	(Table 2157)
+Offset	Size	Description	(Table 2190)
  00h	WORD	0005h (length of following data)
  02h	BYTE	0Ah (subfunction "Get NLMs Loaded")
  03h	DWORD	first NLM number to report
-SeeAlso: #2158
+SeeAlso: #2191
 
 Format of NetWare "Get NLMs Loaded" reply buffer:
-Offset	Size	Description	(Table 2158)
+Offset	Size	Description	(Table 2191)
  00h	DWORD	current server time
  04h	BYTE	vconsole version
  05h	BYTE	vconsole revision
@@ -7484,33 +7484,33 @@ Offset	Size	Description	(Table 2158)
  08h	DWORD	total number of NLMs
  0Ch	DWORD	number of NLM numbers following (max 50)
  10h 50 DWORDs	NLM numbers
-SeeAlso: #2157
+SeeAlso: #2190
 --------N-21F27BSF0B-------------------------
 INT 21 - Novell NetWare v4+ - GET NLM INFORMATION
 	AX = F27Bh subfn 0Bh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2159)
-	ES:DI -> reply buffer (see #2160)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2192)
+	ES:DI -> reply buffer (see #2193)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 
 Format of NetWare "Get NLM Information" request buffer:
-Offset	Size	Description	(Table 2159)
+Offset	Size	Description	(Table 2192)
  00h	WORD	0005h (length of following data)
  02h	BYTE	0Bh (subfunction "Get NLM Information")
  03h	DWORD	NLM number
-SeeAlso: #2160
+SeeAlso: #2193
 
 Format of NetWare "Get NLM Information" reply buffer:
-Offset	Size	Description	(Table 2160)
+Offset	Size	Description	(Table 2193)
  00h	DWORD	current server time
  04h	BYTE	vconsole version
  05h	BYTE	vconsole revision
  06h	WORD	reserved
  08h	DWORD	identification number
  0Ch	DWORD	flags
- 10h	DWORD	NLM type (see #2161)
+ 10h	DWORD	NLM type (see #2194)
  14h	DWORD	parent identifier
  18h	DWORD	major version
  1Ch	DWORD	minor version
@@ -7524,9 +7524,9 @@ Offset	Size	Description	(Table 2160)
  3Ch	DWORD	message language
  40h	DWORD	number of referenced public identifiers
  44h 200 BYTEs	NLM strings: filename, NLM name, copyright
-SeeAlso: #2159
+SeeAlso: #2192
 
-(Table 2161)
+(Table 2194)
 Values for NetWare NLM type:
  0001h	LAN
  0002h	DSK
@@ -7540,25 +7540,25 @@ Values for NetWare NLM type:
  000Ah	file system NLM
  000Bh	real mode NLM
  000Ch	hidden NLM
-SeeAlso: #2160
+SeeAlso: #2193
 --------N-21F27BSF0D-------------------------
 INT 21 - Novell NetWare v4+ - GET OS VERSION INFORMATION
 	AX = F27Bh subfn 0Dh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2162)
-	ES:DI -> reply buffer (see #2163)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2195)
+	ES:DI -> reply buffer (see #2196)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 
 Format of NetWare "Get OS Version Information" request buffer:
-Offset	Size	Description	(Table 2162)
+Offset	Size	Description	(Table 2195)
  00h	WORD	0001h (length of following data)
  02h	BYTE	0Dh (subfunction "Get OS Version Information")
-SeeAlso: #2163
+SeeAlso: #2196
 
 Format of NetWare "Get OS Version Information" reply buffer:
-Offset	Size	Description	(Table 2163)
+Offset	Size	Description	(Table 2196)
  00h	DWORD	current server time
  04h	BYTE	vconsole version
  05h	BYTE	vconsole revision
@@ -7583,26 +7583,26 @@ Offset	Size	Description	(Table 2163)
  34h	DWORD	maximum number of spooled printers
  38h	DWORD	serial number
  3Ch	WORD	application number
-SeeAlso: #2162
+SeeAlso: #2195
 --------N-21F27BSF14-------------------------
 INT 21 - Novell NetWare v4+ - GET ACTIVE LAN BOARD LIST
 	AX = F27Bh subfn 14h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2164)
-	ES:DI -> reply buffer (see #2165)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2197)
+	ES:DI -> reply buffer (see #2198)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 
 Format of NetWare "Get Active LAN Board List" request buffer:
-Offset	Size	Description	(Table 2164)
+Offset	Size	Description	(Table 2197)
  00h	WORD	0005h (length of following data)
  02h	BYTE	14h (subfunction "Get Active LAN Board List")
  03h	DWORD	start number
-SeeAlso: #2165
+SeeAlso: #2198
 
 Format of NetWare "Get Active LAN Board List" reply buffer:
-Offset	Size	Description	(Table 2165)
+Offset	Size	Description	(Table 2198)
  00h	DWORD	current server time
  04h	BYTE	vconsole version
  05h	BYTE	vconsole revision
@@ -7610,27 +7610,27 @@ Offset	Size	Description	(Table 2165)
  08h	DWORD	maximum number of LANs
  0Ch	DWORD	number of LAN board numbers returned
  10h 50 DWORDs	board numbers
-SeeAlso: #2164
+SeeAlso: #2197
 --------N-21F27BSF15-------------------------
 INT 21 - Novell NetWare v4+ - GET LAN CONFIGURATION
 	AX = F27Bh subfn 15h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2166)
-	ES:DI -> reply buffer (see #2167)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2199)
+	ES:DI -> reply buffer (see #2200)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AX=F27Bh/SF=16h
 
 Format of NetWare "Get LAN Configuration" request buffer:
-Offset	Size	Description	(Table 2166)
+Offset	Size	Description	(Table 2199)
  00h	WORD	0005h (length of following data)
  02h	BYTE	15h (subfunction "Get LAN Configuration")
  03h	DWORD	LAN board number
-SeeAlso: #2167
+SeeAlso: #2200
 
 Format of NetWare "Get LAN Configuration" reply buffer:
-Offset	Size	Description	(Table 2167)
+Offset	Size	Description	(Table 2200)
  00h	DWORD	current server time
  04h	BYTE	vconsole version
  05h	BYTE	vconsole revision
@@ -7669,28 +7669,28 @@ Offset	Size	Description	(Table 2167)
  80h 128 BYTEs	driver card name
 100h 40 BYTEs	driver media type
 128h 180 BYTEs	driver custom variables
-SeeAlso: #2166
+SeeAlso: #2199
 --------N-21F27BSF16-------------------------
 INT 21 - Novell NetWare v4+ - GET LAN COMMON COUNTERS
 	AX = F27Bh subfn 16h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2168)
-	ES:DI -> reply buffer (see #2169)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2201)
+	ES:DI -> reply buffer (see #2202)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AX=F27Bh/SF=15h
 
 Format of NetWare "Get LAN Common Counters" request buffer:
-Offset	Size	Description	(Table 2168)
+Offset	Size	Description	(Table 2201)
  00h	WORD	0009h (length of following data)
  02h	BYTE	16h (subfunction "Get LAN Common Counters")
  03h	DWORD	LAN board number
  07h	DWORD	starting block number (set to 00000000h for first call)
-SeeAlso: #2169
+SeeAlso: #2202
 
 Format of NetWare "Get LAN Common Counters" reply buffer:
-Offset	Size	Description	(Table 2169)
+Offset	Size	Description	(Table 2202)
  00h	DWORD	current server time
  04h	BYTE	vconsole version
  05h	BYTE	vconsole revision
@@ -7716,53 +7716,53 @@ Offset	Size	Description	(Table 2169)
  4Ah	DWORD	number of checksum errors
  4Eh	DWORD	number of hardware receive mismatches
  52h 50 BYTEs	reserved
-SeeAlso: #2168
+SeeAlso: #2201
 --------N-21F27BSF29-------------------------
 INT 21 - Novell NetWare v4+ - GET PROTOCOL STACK BY BOARD
 	AX = F27Bh subfn 29h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2170)
-	ES:DI -> reply buffer (see #2171)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2203)
+	ES:DI -> reply buffer (see #2204)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 
 Format of NetWare "Get Protocol Stack by Board" request buffer:
-Offset	Size	Description	(Table 2170)
+Offset	Size	Description	(Table 2203)
  00h	WORD	0005h (length of following data)
  02h	BYTE	29h (subfunction "Get Protocol Stack by Board")
  03h	DWORD	LAN board number
-SeeAlso: #2171
+SeeAlso: #2204
 
 Format of NetWare "Get Protocol Stack by Board" reply buffer:
-Offset	Size	Description	(Table 2171)
+Offset	Size	Description	(Table 2204)
  00h	DWORD	current server time
  04h	BYTE	vconsole version
  05h	BYTE	vconsole revision
  06h	WORD	reserved
  08h	WORD	number of stacks listed (max 50)
  0Ah 50 DWORDs	protocol identifiers
-SeeAlso: #2170
+SeeAlso: #2203
 --------N-21F27BSF33-------------------------
 INT 21 - Novell NetWare v4+ - GET ROUTER INFO
 	AX = F27Bh subfn 33h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2172)
-	ES:DI -> reply buffer (see #2173)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2205)
+	ES:DI -> reply buffer (see #2206)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AX=F27Bh/SF=35h
 
 Format of NetWare "Get Router Info" request buffer:
-Offset	Size	Description	(Table 2172)
+Offset	Size	Description	(Table 2205)
  00h	WORD	0005h (length of following data)
  02h	BYTE	33h (function "Get Router Info")
  03h	DWORD	network number
-SeeAlso: #2173
+SeeAlso: #2206
 
 Format of NetWare "Get Router Info" reply buffer:
-Offset	Size	Description	(Table 2173)
+Offset	Size	Description	(Table 2206)
  00h	DWORD	current server time
  04h	BYTE	vconsole version
  05h	BYTE	vconsole revision
@@ -7771,27 +7771,27 @@ Offset	Size	Description	(Table 2173)
  0Ch	WORD	hops to net
  0Eh	WORD	network status
  10h	WORD	time to net
-SeeAlso: #2172,#2174
+SeeAlso: #2205,#2207
 --------N-21F27BSF35-------------------------
 INT 21 - Novell NetWare v4+ - GET KNOWN NETWORKS INFO
 	AX = F27Bh subfn 35h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2174)
-	ES:DI -> reply buffer (see #2175)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2207)
+	ES:DI -> reply buffer (see #2208)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AX=F27Bh/SF=33h,AX=F27Bh/SF=38h
 
 Format of NetWare "Get Router Info" request buffer:
-Offset	Size	Description	(Table 2174)
+Offset	Size	Description	(Table 2207)
  00h	WORD	0005h (length of following data)
  02h	BYTE	35h (function "Get Known Networks Info")
  03h	DWORD	start number (00000000h)
-SeeAlso: #2175
+SeeAlso: #2208
 
 Format of NetWare "Get Router Info" reply buffer:
-Offset	Size	Description	(Table 2175)
+Offset	Size	Description	(Table 2208)
  00h	DWORD	current server time
  04h	BYTE	vconsole version
  05h	BYTE	vconsole revision
@@ -7803,28 +7803,28 @@ Offset	Size	Description	(Table 2175)
 		 04h	WORD	hops to net
 		 06h	WORD	network status
 		 08h	WORD	time to net
-SeeAlso: #2172,#2174
+SeeAlso: #2205,#2207
 --------N-21F27BSF38-------------------------
 INT 21 - Novell NetWare v4+ - GET KNOWN SERVERS INFO
 	AX = F27Bh subfn 38h
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2176)
-	ES:DI -> reply buffer (see #2177)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2209)
+	ES:DI -> reply buffer (see #2210)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AX=F27Bh/SF=35h
 
 Format of NetWare "Get Known Servers" request buffer:
-Offset	Size	Description	(Table 2176)
+Offset	Size	Description	(Table 2209)
  00h	WORD	0009h (length of following data)
  02h	BYTE	38h (function "Get Known Servers")
  03h	DWORD	start number
  07h	DWORD	server type
-SeeAlso: #2177
+SeeAlso: #2210
 
 Format of NetWare "Get Known Servers" reply buffer:
-Offset	Size	Description	(Table 2177)
+Offset	Size	Description	(Table 2210)
  00h	DWORD	current server time
  04h	BYTE	vconsole version
  05h	BYTE	vconsole revision
@@ -7837,26 +7837,26 @@ Offset	Size	Description	(Table 2177)
 		 0Ah	WORD	socket number
 		 0Ch	WORD	hops to server
 		 0Eh 48 BYTEs	object name
-SeeAlso: #2176
+SeeAlso: #2209
 --------N-21F27BSF3C-------------------------
 INT 21 - Novell NetWare v4+ - GET SERVER SET COMMANDS INFO
 	AX = F27Bh subfn 3Ch
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2178)
-	ES:DI -> reply buffer (see #2179)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2211)
+	ES:DI -> reply buffer (see #2212)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 
 Format of NetWare "Get Server Set Commands Info" request packet:
-Offset	Size	Description	(Table 2178)
+Offset	Size	Description	(Table 2211)
  00h	WORD	0005h (length of following data)
  02h	BYTE	3Ch (subfunction "Get Server Set Commands Info")
  03h	DWORD	start sequence number
-SeeAlso: #2179
+SeeAlso: #2212
 
 Format of NetWare "Get Server Set Commands Info" packet:
-Offset	Size	Description	(Table 2179)
+Offset	Size	Description	(Table 2212)
  00h	DWORD	current server time
  04h	BYTE	vconsole version
  05h	BYTE	vconsole revision
@@ -7870,26 +7870,26 @@ Offset	Size	Description	(Table 2179)
  1Dh  N BYTEs	set command name
 	BYTE	number of set command values
       N BYTEs	set command values
-SeeAlso: #2178
+SeeAlso: #2211
 --------N-21F27BSF3D-------------------------
 INT 21 - Novell NetWare v4+ - GET SERVER SET CATEGORIES
 	AX = F27Bh subfn 3Dh
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #2180)
-	ES:DI -> reply buffer (see #2181)
-Return: AL = status (see #2507 at INT 2F/AX=7A20h/BX=0000h)
+	DS:SI -> request buffer (see #2213)
+	ES:DI -> reply buffer (see #2214)
+Return: AL = status (see #2546 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 
 Format of NetWare "Get Server Set Categories" request packet:
-Offset	Size	Description	(Table 2180)
+Offset	Size	Description	(Table 2213)
  00h	WORD	0005h (length of following data)
  02h	BYTE	3Dh (subfunction "Get Server Set Categories")
  03h	DWORD	start sequence number
-SeeAlso: #2181
+SeeAlso: #2214
 
 Format of NetWare "Get Server Set Categories" reply packet:
-Offset	Size	Description	(Table 2181)
+Offset	Size	Description	(Table 2214)
  00h	DWORD	current server time
  04h	BYTE	vconsole version
  05h	BYTE	vconsole revision
@@ -7898,7 +7898,7 @@ Offset	Size	Description	(Table 2181)
  0Ch	DWORD	next sequence number
  10h	BYTE	length of category name
  11h  N BYTEs	category name
-SeeAlso: #2180
+SeeAlso: #2213
 --------v-21F2AA-----------------------------
 INT 21 - VIRUS - "PcVrsDs" - INSTALLATION CHECK
 	AX = F2AAh
@@ -7907,7 +7907,7 @@ SeeAlso: AH=F1h"VIRUS",AH=F3h"VIRUS"
 --------N-21F3-------------------------------
 INT 21 - Novell NetWare - FILE SERVICES - FILE SERVER FILE COPY
 	AH = F3h
-	ES:DI -> request buffer (see #2182)
+	ES:DI -> request buffer (see #2215)
 Return: AL = status/error code
 	CX:DX = number of bytes copied
 Notes:	this function is supported by Advanced NetWare 2.0+
@@ -7915,7 +7915,7 @@ Notes:	this function is supported by Advanced NetWare 2.0+
 SeeAlso: AH=3Ch,AH=3Fh"DOS"
 
 Format of NetWare "File Server File Copy" request buffer:
-Offset	Size	Description	(Table 2182)
+Offset	Size	Description	(Table 2215)
  00h	WORD	source file handle (as returned by AH=3Ch or AH=3Dh)
  02h	WORD	destination file handle
  04h	DWORD	starting offset in source
@@ -7972,7 +7972,7 @@ INT 21 - DoubleDOS - SET/RESET KEYBOARD CONTROL FLAGS
 	AL = program for which to set flags
 	    00h this program
 	    01h other program
-	DX = keyboard control flags (see #1743 at AH=E8h"DoubleDOS")
+	DX = keyboard control flags (see #1776 at AH=E8h"DoubleDOS")
 Return: DX = previous flags
 Notes:	disabling Ctrl-PrtSc will allow the program to intercept the keystroke;
 	  disabling any of the other keystrokes disables them completely
@@ -8307,7 +8307,7 @@ Return: ???
 INT 21 UP - Rational Systems DOS/4GW - ???
 	AH = FFh
 	DH = 0Eh
-Return: DX:AX -> XBRK structure (see #0425 at INT 15/AX=BF02h)
+Return: DX:AX -> XBRK structure (see #0432 at INT 15/AX=BF02h)
 	BX = ???
 	CX = ???
 SeeAlso: INT 15/AX=BF02h
@@ -8380,8 +8380,8 @@ Return: ???
 INT 21 - TopWare Network OS v5.10+ - GET SYSTEM INFORMATION
 	AX = FF00h
 	CL = what to get
-	    00h user information (see #2183)
-	    01h drive mapping (see #2184)
+	    00h user information (see #2216)
+	    01h drive mapping (see #2217)
 	    02h printer server(s)
 	    05h local DOS drive number
 Return: ES:BX -> desired information
@@ -8391,14 +8391,14 @@ Note:	this call is only supported on Workstations, not on the server
 SeeAlso: AX=FF04h,INT 2F/AX=FF00h
 
 Format of TopWare user information:
-Offset	Size	Description	(Table 2183)
+Offset	Size	Description	(Table 2216)
  00h	BYTE	node ID
  01h 15 BYTEs	user name
  10h	WORD	user number
  12h	BYTE	group number
 
 Format of TopWare drive mapping [array]:
-Offset	Size	Description	(Table 2184)
+Offset	Size	Description	(Table 2217)
  00h	BYTE	bits 6-0: drive number (1=A:, etc.)
 		bit 7: this is a server drive
  01h  3 BYTEs	mapping drive (for example, "C:\")
@@ -8447,7 +8447,7 @@ INT 21 - TopWare Network OS v5.10+ - SEND MESSAGE
 	DH = FFh
 	DL = destination address (FFh for broadcast)
 	CX = message length (max 2000)
-	DS:SI -> message to be sent (see #2185)
+	DS:SI -> message to be sent (see #2218)
 Return: nothing
 Program: TopWare Network Operating System is manufactured by Grand Computer
 	  Company
@@ -8456,7 +8456,7 @@ Notes:	this function is supported on both Workstations and the server
 	  at all, by the destination
 
 Format of TopWare message:
-Offset	Size	Description	(Table 2185)
+Offset	Size	Description	(Table 2218)
  00h	BYTE	type code
 		07h TopSend
 		11h user application
@@ -8483,12 +8483,12 @@ Return: AL = status
 INT 21 - TopWare Network OS v5.10+ - CALL TopShow FUNCTION
 	AX = FF8Dh
 	CH = monochrome flag (01h monochrome, 00h not monochrome)
-	CL = screen mode of station to be viewed (see #2186)
+	CL = screen mode of station to be viewed (see #2219)
 	BL = graphic page number for monochrome
 Return: AL = status (00h successful, else failed)
 SeeAlso: AX=FF8Eh,AX=FFCFh
 
-(Table 2186)
+(Table 2219)
 Values for TopWare screen mode:
  00h	text mode
  01h	720x348
@@ -8519,11 +8519,11 @@ SeeAlso: AX=FF97h
 --------N-21FF9A-----------------------------
 INT 21 - TopWare Network OS v5.10+ - RECEIVE OF USER-DEFINED PACKETS
 	AX = FF9Ah
-	ES:BX -> buffer for user-defined packet (see #2187)
+	ES:BX -> buffer for user-defined packet (see #2220)
 Return: nothing
 
 Format of TopWare user-defined packet:
-Offset	Size	Description	(Table 2187)
+Offset	Size	Description	(Table 2220)
  00h	BYTE	FFh
  01h	WORD	(call) length of data field plus 3
 		(ret) length of received message (0000h if none received)
@@ -8540,11 +8540,11 @@ Note:	this function is only supported by Workstations, not the server
 --------N-21FFB0-----------------------------
 INT 21 - TopWare Network OS v5.10+ - GET SPOOLER PRINTING PRIORITY
 	AX = FFB0h
-Return: AL = priority status (see #2188)
+Return: AL = priority status (see #2221)
 SeeAlso: AX=FFB1h
 
 Bitfields for TopWare printer priority status:
-Bit(s)	Description	(Table 2188)
+Bit(s)	Description	(Table 2221)
  2	LPT3 has high priority
  1	LPT2 has high priority
  0	LPT1 has high priority
@@ -8558,11 +8558,11 @@ SeeAlso: AX=FFB0h
 --------N-21FFB3-----------------------------
 INT 21 - TopWare Network OS v5.10+ - GET DEFAULT START-OF-JOB FORMFEED STATUS
 	AX = FFB3h
-Return: AL = starting formfeed status (see #2189)
+Return: AL = starting formfeed status (see #2222)
 SeeAlso: AX=FFB4h,AX=FFC0h
 
 Bitfields for TopWare printer start-of-job formfeed status:
-Bit(s)	Description	(Table 2189)
+Bit(s)	Description	(Table 2222)
  2	LPT3 has formfeed enabled
  1	LPT2 has formfeed enabled
  0	LPT1 has formfeed enabled
@@ -8602,22 +8602,22 @@ SeeAlso: AX=FFBDh
 --------N-21FFBF-----------------------------
 INT 21 - TopWare Network OS v5.10+ - GET LOGON USER INFORMATION
 	AX = FFBFh
-	DX:BX -> buffer for logon information (see #2190)
+	DX:BX -> buffer for logon information (see #2223)
 Return: AL = status (00h successful, else failed)
 	AH = number of logged-in stations
 
 Format of TopWare logon information:
-Offset	Size	Description	(Table 2190)
+Offset	Size	Description	(Table 2223)
  00h	BYTE	station address
  01h 15 BYTEs	username
 --------N-21FFC0-----------------------------
 INT 21 - TopWare Network OS v5.10+ - GET DEFAULT END-OF-JOB FORMFEED STATUS
 	AX = FFC0h
-Return: AL = ending formfeed status (see #2191)
+Return: AL = ending formfeed status (see #2224)
 SeeAlso: AX=FFB3h,AX=FFC1h
 
 Bitfields for TopWare printer end-of-job formfeed status:
-Bit(s)	Description	(Table 2191)
+Bit(s)	Description	(Table 2224)
  2	LPT3 has formfeed enabled
  1	LPT2 has formfeed enabled
  0	LPT1 has formfeed enabled
@@ -8637,11 +8637,11 @@ SeeAlso: AX=FFC7h
 --------N-21FFC3-----------------------------
 INT 21 - TopWare Network OS v5.10+ - GET SHARING STATUS OF PRINTER SERVER
 	AX = FFC3h
-Return: AL = sharing status of printers (see #2192)
+Return: AL = sharing status of printers (see #2225)
 	    FFh if not a printer server
 
 Bitfields for TopWare printer sharing status:
-Bit(s)	Description	(Table 2192)
+Bit(s)	Description	(Table 2225)
  2	LPT3 is shared
  1	LPT2 is shared
  0	LPT1 is shared
@@ -8669,11 +8669,11 @@ SeeAlso: AX=FFC2h
 --------N-21FFC8-----------------------------
 INT 21 - TopWare Network OS v5.10+ - GET DEFAULT PRINT FILE HEADER STATUS
 	AX = FFC8h
-Return: AL = header status for printers (see #2193)
+Return: AL = header status for printers (see #2226)
 SeeAlso: AX=FFC6h
 
 Bitfields for TopWare print header status:
-Bit(s)	Description	(Table 2193)
+Bit(s)	Description	(Table 2226)
  2	LPT3 has headers enabled
  1	LPT2 has headers enabled
  0	LPT1 has headers enabled
@@ -8706,7 +8706,7 @@ INT 21 - TopWare Network OS v5.10+ - GET PRINT SERVER'S SPOOLING QUEUE STATUS
 	CL = printer server station address
 	BH = start item number of spooling file for print server
 	BL = number of the item to be retrieved
-	DS:DX -> buffer for queued file information (see #2194)
+	DS:DX -> buffer for queued file information (see #2227)
 Return: AL = status
 	    00h successful
 		AH = number of spool files
@@ -8714,7 +8714,7 @@ Return: AL = status
 	    nonzero failed
 
 Format of TopWare queued file information buffer [16-item array, one element]:
-Offset	Size	Description	(Table 2194)
+Offset	Size	Description	(Table 2227)
  00h 12 BYTEs	filename
  0Ch	DWORD	size
  10h	WORD	date
@@ -8726,14 +8726,14 @@ Offset	Size	Description	(Table 2194)
 --------N-21FFCD-----------------------------
 INT 21 - TopWare Network OS v5.10+ - GET STATUS OF ALL PRINT SERVERS
 	AX = FFCDh
-	DS:DX -> buffer for server status (see #2195)
+	DS:DX -> buffer for server status (see #2228)
 Return: AL = status
 	    00h successful
 		AH = number of print servers
 	    nonzero failed
 
 Format of TopWare server status:
-Offset	Size	Description	(Table 2195)
+Offset	Size	Description	(Table 2228)
  00h	BYTE	station address
  01h 15 BYTEs	username
  10h	BYTE	flag: 01h printer is shared, 00h sharing disabled
@@ -8749,7 +8749,7 @@ INT 21 - TopWare Network OS v5.10+ - CALL TopLook FUNCTION
 	BH = station number wishing to look
 	BL = station number to be looked at
 	CH = monochrome flag (01h monochrome, 00h not monochrome)
-	CL = screen mode (see #2186)
+	CL = screen mode (see #2219)
 Return: AL = status (00h successful, nonzero failed)
 SeeAlso: AX=FF8Dh
 --------N-21FFD6-----------------------------
@@ -8767,14 +8767,14 @@ INT 21 - TopWare Network OS v5.10+ - INITIATE ACCESS TO SPECIFIC PACKET TYPE
 	AX = FFE3h
 	DL = 00h
 	BX = packet type for Ethernet header (IP = 0800h, ARP = 0806h, etc.)
-	ES:DI -> receive routine (see #2197)
+	ES:DI -> receive routine (see #2230)
 Return: CF clear if successful
 	    AX = handle number
 	CF set on error
-	    DH = error code (03h,05h,09h,0Ah,11h) (see #2196)
+	    DH = error code (03h,05h,09h,0Ah,11h) (see #2229)
 SeeAlso: AX=FFE3h/DL=01h
 
-(Table 2196)
+(Table 2229)
 Values for TopWare error code:
  01h	invalid handle
  03h	no interfaces of the specified type found
@@ -8784,7 +8784,7 @@ Values for TopWare error code:
  0Ch	unable to send packet (usually hardware error)
  11h	invalid function
 
-(Table 2197)
+(Table 2230)
 Values TopWare receive routine is called with:
 	AX = function
 	    0000h request packet buffer
@@ -8800,7 +8800,7 @@ INT 21 - TopWare Network OS v5.10+ - END ACCESS TO SPECIFIC PACKET TYPE
 	BX = handle returned by AX=FFE3h/DL=00h
 Return: CF clear if successful
 	CF set on error
-	    DH = error code (01h,11h) (see #2196)
+	    DH = error code (01h,11h) (see #2229)
 Note:	the specified access handle will no longer be valid after this call
 SeeAlso: AX=FFE3h/DL=00h
 --------N-21FFE3DL02-------------------------
@@ -8811,7 +8811,7 @@ INT 21 - TopWare Network OS v5.10+ - SEND PACKET
 	DS:SI -> buffer containing data
 Return: CF clear if successful
 	CF set on error
-	    DH = error code (0Ch,11h) (see #2196)
+	    DH = error code (0Ch,11h) (see #2229)
 --------N-21FFE3DL03-------------------------
 INT 21 - TopWare Network OS v5.10+ - GET LOCAL NETWORK INTERFACE ADDRESS
 	AX = FFE3h
@@ -8896,19 +8896,19 @@ SeeAlso: INT 22"COMTROL",INT 26"COMTROL"
 --------D-24---------------------------------
 INT 24 C - DOS 1+ - CRITICAL ERROR HANDLER
 Notes:	invoked when a critical (usually hardware) error is encountered by DOS
-	  (see #2198); should never be called directly
+	  (see #2231); should never be called directly
 	when DOS terminates a program, it copies the previous value of the
-	  INT 24 vector out of the PSP (see #1032) and into the interrupt
+	  INT 24 vector out of the PSP (see #1066) and into the interrupt
 	  vector table
 SeeAlso: INT 21/AH=95h
 
-(Table 2198)
+(Table 2231)
 Values critical error handler is called with:
-	AH = type and processing flags (see #2199)
+	AH = type and processing flags (see #2232)
 	AL = drive number if AH bit 7 clear
-	BP:SI -> device driver header (see #1298 at INT 21/AH=52h)
+	BP:SI -> device driver header (see #1332 at INT 21/AH=52h)
 		(BP:[SI+4] bit 15 set if character device)
-	DI low byte contains error code if AH bit 7 set (see #2200)
+	DI low byte contains error code if AH bit 7 set (see #2233)
 	STACK:	DWORD	return address for INT 24 call
 		WORD	flags pushed by INT 24
 		WORD	original AX on entry to INT 21
@@ -8922,7 +8922,7 @@ Values critical error handler is called with:
 		WORD	ES
 		DWORD	return address for INT 21 call
 		WORD	flags pushed by INT 21
-Return: AL = action code (see #2201)
+Return: AL = action code (see #2234)
 	SS,SP,DS,ES,BX,CX,DX preserved
 Notes:	the only DOS calls the handler may make are INT 21/AH=01h-0Ch,30h,59h
 	if the handler returns to the application by popping the stack, DOS
@@ -8937,7 +8937,7 @@ Notes:	the only DOS calls the handler may make are INT 21/AH=01h-0Ch,30h,59h
 	  the INT 24 call skipped)
 
 Bitfields for critical error type and processing flags:
-Bit(s)	Description	(Table 2199)
+Bit(s)	Description	(Table 2232)
  7	clear = disk I/O error
 	set   = -- if block device, bad FAT image in memory
 		-- if char device, error code in DI
@@ -8950,7 +8950,7 @@ Bit(s)	Description	(Table 2199)
 	10 = root dir	11 = data area
  0	set if write, clear if read
 
-(Table 2200)
+(Table 2233)
 Values for critical error code:
  00h	write-protection violation attempted
  01h	unknown unit for driver
@@ -8974,7 +8974,7 @@ Values for critical error code:
  13h	(DOS 4.0+) out of input
  14h	(DOS 4.0+) insufficient disk space
 
-(Table 2201)
+(Table 2234)
 Values for critical error handler action code:
  00h	ignore error and continue processing request
  01h	retry operation
@@ -8988,7 +8988,7 @@ INT 25 - DOS 1+ - ABSOLUTE DISK READ (except partitions > 32M)
 	DS:BX -> buffer for data
 Return: CF clear if successful
 	CF set on error
-	    AH = status (see #2202)
+	    AH = status (see #2235)
 	    AL = error code (same as passed to INT 24 in DI)
 	    AX = 0207h if more than 64K sectors on drive -- use new-style call
 	may destroy all other registers except segment registers
@@ -9008,7 +9008,7 @@ BUGS:	DOS 3.1 through 3.3 set the word at ES:[BP+1Eh] to FFFFh if AL is an
 	  (INT 25/CX=FFFFh) for all partition sizes under DR DOS 3.41
 SeeAlso: INT 13/AH=02h,INT 25/CX=FFFFh,INT 26,INT 21/AX=7305h
 
-(Table 2202)
+(Table 2235)
 Values for disk I/O status:
  80h	device failed to respond (timeout)
  40h	seek operation failed
@@ -9023,10 +9023,10 @@ Values for disk I/O status:
 INT 25 - DOS 3.31+ - ABSOLUTE DISK READ (32M-2047M hard-disk partition)
 	CX = FFFFh
 	AL = drive number (0=A, 1=B, etc)
-	DS:BX -> disk read packet (see #2203)
+	DS:BX -> disk read packet (see #2236)
 Return: CF clear if successful
 	CF set on error
-	    AH = status (see #2202)
+	    AH = status (see #2235)
 	    AL = error code (same as passed to INT 24 in DI)
 	may destroy all other registers except segment registers
 Notes:	partition is potentially >32M (and requires this form of the call) if
@@ -9037,15 +9037,15 @@ Notes:	partition is potentially >32M (and requires this form of the call) if
 SeeAlso: INT 13/AH=02h,INT 25,INT 26/CX=FFFFh,INT 21/AX=7305h
 
 Format of disk read packet:
-Offset	Size	Description	(Table 2203)
+Offset	Size	Description	(Table 2236)
  00h	DWORD	sector number
  04h	WORD	number of sectors to read
  06h	DWORD	transfer address
-SeeAlso: #2207
+SeeAlso: #2240
 --------k-25CDCD-----------------------------
 INT 25 - Stacker - GET DEVICE DRIVER ADDRESS
 	AX = CDCDh
-	DS:BX -> buffer for address (see #2204)
+	DS:BX -> buffer for address (see #2237)
 	CX = 0001h
 	DX = 0000h
 Return: AX = CDCDh if Stacker installed
@@ -9059,17 +9059,17 @@ Note:	not supported by Stacker Anywhere; to obtain the Stacker device
 SeeAlso: INT 21/AX=4404h"Stacker"
 
 Format of Stacker v2+ driver address buffer:
-Offset	Size	Description	(Table 2204)
+Offset	Size	Description	(Table 2237)
  00h	WORD	signature CDCDh
  02h	WORD	??? 0001h
  04h	DWORD	pointer to Stacker signature at device driver offset 1Ah
-		  (see #2205)
+		  (see #2238)
 
 Format of Stacker v2+ device driver:
-Offset	Size	Description	(Table 2205)
+Offset	Size	Description	(Table 2238)
  00h	DWORD	pointer to next driver, offset=FFFFh if last driver
 		FFFFh:FFFFh for Stacker Anywhere
- 04h	WORD	device attributes (see #1299,#1300)
+ 04h	WORD	device attributes (see #1333,#1334)
  06h	WORD	device strategy entry point
  08h	WORD	device interrupt entry point
  0Ah	BYTE	number of subunits (drives) supported by driver
@@ -9098,16 +9098,16 @@ Offset	Size	Description	(Table 2205)
  B2h  4 BYTEs	ASCII string "SWP2"
  B6h 26 BYTEs	drive table ???
  D0h 150 BYTEs	???
-166h 60 BYTEs	LZSINFO structure (see #2455 at INT 2F/AX=4A12h)
-SeeAlso: #2206,#1298 at INT 21/AH=52h
+166h 60 BYTEs	LZSINFO structure (see #2494 at INT 2F/AX=4A12h)
+SeeAlso: #2239,#1332 at INT 21/AH=52h
 
 Format of Stacker boot record:
-Offset	Size	Description	(Table 2206)
+Offset	Size	Description	(Table 2239)
 1F0h  8 BYTEs	Stacker signature (first byte is CDh)
 1F8h	DWORD	pointer to start of Stacker device driver
 1FCh	WORD	Stacker volume number
 1FEh	WORD	???
-SeeAlso: #2205
+SeeAlso: #2238
 --------c-25--FFSI4358-----------------------
 INT 25 - PC-CACHE.SYS - INSTALLATION CHECK
 	AL = FFh
@@ -9126,7 +9126,7 @@ INT 26 - DOS 1+ - ABSOLUTE DISK WRITE (except partitions > 32M)
 	DS:BX -> data to write
 Return: CF clear if successful
 	CF set on error
-	    AH = status (see #2202)
+	    AH = status (see #2235)
 	    AL = error code (same as passed to INT 24 in DI)
 	    AX = 0207h if more than 64K sectors on drive -- use new-style call
 	may destroy all other registers except segment registers
@@ -9150,10 +9150,10 @@ SeeAlso: INT 13/AH=03h,INT 25,INT 26/CX=FFFFh,INT 21/AX=7305h
 INT 26 - DOS 3.31+ - ABSOLUTE DISK WRITE (32M-2047M hard-disk partition)
 	CX = FFFFh
 	AL = drive number (0=A, 1=B, etc)
-	DS:BX -> disk write packet (see #2207)
+	DS:BX -> disk write packet (see #2240)
 Return: CF clear if successful
 	CF set on error
-	    AH = status (see #2202)
+	    AH = status (see #2235)
 	    AL = error code (same as passed to INT 24 in DI)
 	may destroy all other registers except segment registers
 Notes:	partition is potentially >32M (and requires this form of the call) if
@@ -9165,11 +9165,11 @@ Notes:	partition is potentially >32M (and requires this form of the call) if
 SeeAlso: INT 13/AH=03h,INT 25/CX=FFFFh,INT 26,INT 21/AX=7305h
 
 Format of disk write packet:
-Offset	Size	Description	(Table 2207)
+Offset	Size	Description	(Table 2240)
  00h	DWORD	sector number
  04h	WORD	number of sectors to read
  06h	DWORD	transfer address
-SeeAlso: #2203
+SeeAlso: #2236
 --------G-26---------------------------------
 INT 26 - COMTROL HOSTESS i/ISA DEBUGGER - ENTER/EXIT EXTENDED ADDRESSING MODE
 	???
@@ -9216,13 +9216,16 @@ Notes:	under DOS 2.x, the critical error flag (the byte immediately after the
 	supported in OS/2 compatibility box
 	the _MS-DOS_Programmer's_Reference_ for DOS 5.0 incorrectly documents
 	  this interrupt as superseded
+	the performance of NetWare Lite servers (and probably other peer-to-
+	  peer networks) can be dramatically improved by calling INT 28
+	  frequently from an application's idle loop
 SeeAlso: INT 21/AH=34h,INT 2A/AH=84h,INT 2F/AX=1680h
 --------U-289999-----------------------------
 INT 28 u - PCXDUMP v9.00+ - INSTALLATION CHECK
 	AX = 9999h
 Return: AX = AAAAh if installed
 	    CX = version number * 100 (example: 03A2h = 930 = v9.30)
-	    DL = interrupt used by the dump function (see #2208)
+	    DL = interrupt used by the dump function (see #2241)
 		(00h if call not available)
 	    BX = CS of PCXDUMP's INT 28 handler (undocumented)
 	    ES = segment of PCXDUMP's memory block (v9.30, undocumented)
@@ -9232,7 +9235,7 @@ Notes:	if DL<>00h a dump can be requested by calling INT DL as shown
 	  time); if DL=00h the dump function can be called only by hotkeys
 	  (this is the default)
 
-(Table 2208)
+(Table 2241)
 Call PCXDUMP screen-dump function with:
 	INT xx
 	AX = 1234h

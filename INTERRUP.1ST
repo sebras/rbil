@@ -1,22 +1,22 @@
-Interrupt List			Release 54		Last change 29jun97
+Interrupt List			Release 56		Last change 21dec97
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
 --------!---FILELIST-------------------------
 Please redistribute the following files unmodified as a group, in a quartet of
-archives named INTER54A through INTER54D (preferably the original authenticated
+archives named INTER55A through INTER55D (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	this file
-	INTERRUP.A	INT 00 through INT 12     \
-	INTERRUP.B	INT 13 through INT 15/11   \
+	INTERRUP.A	INT 00 through INT 11	  \
+	INTERRUP.B	INT 12 through INT 15/11   \
 	INTERRUP.C	INT 15/12 through INT 16/6E \
-	INTERRUP.D	INT 16/6F through INT 1A/B1  \
-	INTERRUP.E	INT 1A/B2 through INT 21/43   \	  total 2286 pages at
-	INTERRUP.F	INT 21/44 through INT 21/5E    \  60 lines per page,
-	INTERRUP.G	INT 21/5F through INT 21/E2	\ 2437 with INTPRINT -p
-	INTERRUP.H	INT 21/E3 through INT 21/F1	 >(8484 entries)
-	INTERRUP.I	INT 21/F2 through INT 29	/ (3682 tables)
+	INTERRUP.D	INT 16/6F through INT 1A/AF  \
+	INTERRUP.E	INT 1A/B0 through INT 21/2A   \	  total 2341 pages at
+	INTERRUP.F	INT 21/2B through INT 21/56    \  60 lines per page,
+	INTERRUP.G	INT 21/57 through INT 21/E2	\ 2494 with INTPRINT -p
+	INTERRUP.H	INT 21/E3 through INT 21/F1	 >(8541 entries)
+	INTERRUP.I	INT 21/F2 through INT 29	/ (3785 tables)
 	INTERRUP.J	INT 2A through INT 2F/26       /
-	INTERRUP.K	INT 2F/27 through INT 2F/BF   /
-	INTERRUP.L	INT 2F/C0 through INT 32     /
+	INTERRUP.K	INT 2F/27 through INT 2F/B7   /
+	INTERRUP.L	INT 2F/B8 through INT 32     /
 	INTERRUP.M	INT 33 through INT 60	    /
 	INTERRUP.N	INT 61 through INT 66	   /
 	INTERRUP.O	INT 67 through INT 7D	  /
@@ -37,7 +37,7 @@ PKZIP archives):
 	CATEGORY.KEY	descriptions of divider-line category letters
 	COMBINE.COM	combine the pieces of the list into a single file
 	COMBINE.DOC	documentation for COMBINE
-The following files should be distributed in an archive called INTER54E:
+The following files should be distributed in an archive called INTER55E:
 	86BUGSnn.ZIP	programs to test for CPU bugs
 	COMBINE.ASM	source code for COMBINE.COM
 	INT.*		invoke interrupts from commandline
@@ -46,12 +46,12 @@ The following files should be distributed in an archive called INTER54E:
 	INTPRINT.C	source code for INTPRINT
 	INTSUM??.ZIP	interrupt list browser (Interrupt Summary)
 	IVIEW.ZIP	another interrupt list browser
-The following should be distributed in an archive called INTER54F:
+The following should be distributed in an archive called INTER55F:
 	INT2RTF.ZIP	Slava Gostrenko's Windows Help converter
 	INT2WHLP.ZIP	convert list into Windows Help database
 	HINTSRCH.ZIP	WinHelp DLL for full-text searches of interrupt list
 	WH_ED*.ZIP	WinHelp-file editor
-Finally, the following should be distributed in an archive called INTER54G:
+Finally, the following should be distributed in an archive called INTER55G:
 	IL2ME???.ZIP	convert list into Multi-Edit help database
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
 	INT2HLP.ZIP	convert list into QuickHelp database
@@ -109,16 +109,16 @@ whether or not it works the same way).	Information marked with "???" is
 known to be incomplete or guesswork.
 --------!---AVAILABILITY---------------------
 If the list is three or more months old by the time you get it, there
-is probably a newer release out already (R54 is planned for early April,
-R55 for early June 1997).  Each release supersedes all previous versions, so
+is probably a newer release out already (R56 is planned for mid-December,
+R57 for early March 1998).  Each release supersedes all previous versions, so
 there is no need to keep old versions.
 
 The newest release of this list is available in these places (please do not
-ask me to email it, at over one meg compressed it is much too large for that):
+ask me to email it, at over two megs compressed it is much too large for that):
 
 On the Internet, by standard anonymous FTP from FTP.CS.CMU.EDU [128.2.206.173].
 	Change directly to directory /afs/cs.cmu.edu/user/ralf/pub and get the
-	files inter??a.zip thru inter??d.zip.  You MUST change directory first
+	files inter??a.zip thru inter??g.zip.  You MUST change directory first
 	and in a single command because of the way CMU's anonymous FTP works.
 	Don't forget to set mode "binary" or "type L 8"!
 
@@ -135,7 +135,7 @@ On FIDOnet, from SoundingBoard BBS 1:129/26 1-412-621-4604 HST/V.32/V.34
 Alternate Distribution Points (the list will typically be available here
 within 24 hours of release):
 Internet: on the SimTel.Net mirrors as files interRRa.zip to
-	interRRf.ZIP in directory /pub/msdos/info, where RR stands for the
+	interRRg.ZIP in directory /pub/msdos/info, where RR stands for the
 	release number. Note that you must use a binary transfer mode
 	("tenex" or "type L 8" for most people) to successfully FTP the files.
 	The SimTel.Net mirrors include oak.oakland.edu [141.210.10.117],
@@ -165,7 +165,7 @@ FIDO:	boards belonging to the PDN (Programmer's Distribution Network) system
 	  28800 V.FC/V.34.  File requests from all nodes, including unlisted
 	  points (magic filename INTER for newest release).
 CompuServe: in the IBM Programming Forum (GO IBMPRO), Library 6, as INTrrA.*,
-	INTrrB.*, INTrrC.*, INTrrD.*, INTrrE.*, and INTrrF.*.
+	INTrrB.*, INTrrC.*, INTrrD.*, INTrrE.*, INTrrF.*, and INTrrG.*.
 --------!---ABBREVIATIONS--------------------
 Key to system abbreviations
 (unless otherwise indicated, a function is available on all systems)
@@ -513,7 +513,7 @@ This list is the result of the time and effort of a large number of people:
  7/94 Thomas Brugger   fd1@aixterm1.urz.uni-heidelberg.de  more miscellany
  7/94 Mark T. Vitt     70053.2236@compuserve.com      SDA/DTA interaction, misc
  8/94 Jean F. Larvoire HP6300_Q2@hpgnd.grenoble.hp.com	HP Ext. BIOS, misc
- 8/94 Matthias Paul    MPAUL@ibh.rwth-aachen.de	      K3PLUS API
+ 8/94 Matthias Paul    MPAUL@post.rwth-aachen.de      K3PLUS API
  8/94 George A. Reznik gar@spcs.ms.kiev.ua	      LZSAPI (Stacker 4)
  8/94 Kristofer Sweger 72713.1241@compuserve.com      ANSIPLUS
  9/94 Wolfgang Lierz   Wolfgang.Lierz@gmd.de	      miscellaneous
@@ -535,10 +535,10 @@ This list is the result of the time and effort of a large number of people:
 12/94 Rob Misiak       rob0006@ibm.net		      miscellaneous
 12/94 Wolfgang Lierz   Wolfgang.Lierz@gmd.de	      more HP 100LX/200LX, misc
 12/94 Michael A. Shiels masnet!mshiels@uunet.uu.net   EDOS VxD API
-12/94 Matthias Paul    MPAUL@ibh.rwth-aachen.de       HP Vectra EX-BIOS API
+12/94 Matthias Paul    MPAUL@post.rwth-aachen.de      HP Vectra EX-BIOS API
 12/94 Michael A. Shiels masnet!mshiels@uunet.uu.net   DOSISODE
  1/95 Jack Ridgway     1:3632/4			      Back&Forth Professional
- 1/95 Matthias Paul    MPAUL@ibh.rwth-aachen.de       miscellaneous
+ 1/95 Matthias Paul    MPAUL@post.rwth-aachen.de      miscellaneous
  1/95 Tim Farley       TIM@magee.mhs.compuserve.com   NetWare Event Serv. Layer
  1/95 Stanley Appel    appel@stack.urc.tue.nl	      UltraMid, MegaEm
  1/95 LARVOIRE_JEAN-FRANCOIS/HP6300_Q2@hpgnd.grenoble.hp.com  Vectra,OmniShare
@@ -548,7 +548,7 @@ This list is the result of the time and effort of a large number of people:
  2/95 Fernando Papa    fido@fing.edu.uy		      QRIP, MultiLink Advanced
  2/95 Inbar Raz	       2:403:302.42		      GRTMOUSE, miscellaneous
  3/95 Thomas Brugger   fd1@aixterm1.urz.uni-heidelberg.de  more miscellany
- 3/95 Matthias Paul    MPAUL@ibh.rwth-aachen.de       miscellaneous
+ 3/95 Matthias Paul    MPAUL@post.rwth-aachen.de      miscellaneous
  3/95 John	       tenthumbs@BIX.com	      MSWin PageFile/Reboot
  3/95 Wolfgang Lierz   Wolfgang.Lierz@gmd.de	      Stacker 4, Stac Anywhere
  3/95 Norman L. DeForest af380@cfn.cs.dal.ca	      TI Professional PC
@@ -556,7 +556,7 @@ This list is the result of the time and effort of a large number of people:
  3/95 Gerard Mannig    mannig@world-net.sct.fr	      AMI BIOS-FLASH interface
  4/95 Ralf Brown       ralf@pobox.com		      AMI BIOS INT 15 extensns
  4/95 Tim Farley       TIM@magee.mhs.compuserve.com   PCMCIA Socket Serv. 2.1
- 4/95 Matthias Paul    MPAUL@ibh.rwth-aachen.de       miscellaneous
+ 4/95 Matthias Paul    MPAUL@post.rwth-aachen.de      miscellaneous
  4/95 SkullC0DEr       SkullC0DEr 2:4631/7	      PUPClip
  5/95 Peter Charles Tonoli 071836@edna.cc.swin.edu.au CauseWay
  5/95 Stanley Appel    appel@stack.urc.tue.nl	      DOS32, virus inst.checks
@@ -569,7 +569,7 @@ This list is the result of the time and effort of a large number of people:
  6/95 James Roberts-Thomson COM3ROBERJD@ntu.ac.uk     LAN Manager wksta_info
  6/95 Peter Charles Tonoli 071836@edna.cc.swin.edu.au Linux DOSEMU
  7/95 Nico Looije      nico@djo.wtm.tudelft.nl	      NetWare printing, VLMs
- 7/95 Matthias Paul    MPAUL@ibh.rwth-aachen.de       HugeRealMode server
+ 7/95 Matthias Paul    MPAUL@post.rwth-aachen.de      HugeRealMode server
  7/95 Steve Ryckman    sryckman@pobox.com	      GO! directory locator
  7/95 Ciriaco G.de Celis  ciri@luna.gui.uva.es	      XDF
  9/95 Pawel Pilarczyk  pila@maloka.waw.pl	      Atari Portfolio INT 61h
@@ -579,18 +579,19 @@ This list is the result of the time and effort of a large number of people:
  9/95 Gabor Szappanos  SZAPI@reak.bme.hu	      virus install-checks
  9/95 Jun-ichiro Itoh  itojun@csl.sony.co.jp	      HP Hornet chipset
  9/95 Alexander I. Bobkov via root@k35.cit.spb.su     MODAL PC
-10/95 Matthias Paul    MPAUL@ibh.rwth-aachen.de       K3PLUS, miscellaneous
-10/95 Matthias Paul    MPAUL@ibh.rwth-aachen.de       WinDOS
+10/95 Matthias Paul    MPAUL@post.rwth-aachen.de      K3PLUS, miscellaneous
+10/95 Matthias Paul    MPAUL@post.rwth-aachen.de      WinDOS
 11/95 Christophe Vallat                               virus checks, 21/7160
 11/95 Peter van den Boogert  2:285/414.1	      ZFax v4.01
-11/95 Matthias Paul    MPAUL@ibh.rwth-aachen.de       BSC/SDLC ports, misc
+11/95 Matthias Paul    MPAUL@post.rwth-aachen.de      BSC/SDLC ports, misc
 12/95 George Lefterov  george@virbus.bg		      Q87 v4+ API
+12/95 Matthias Paul    MPAUL@post.rwth-aachen.de      KEYB internals, kbd codes
  1/96 Ghielmeti Lepoldo Leopoldo.Ghielmetti@epfl.ch   I1541 API
  1/96 Michael Devore				      CauseWay v1.3 DOS ext.
  2/96 Frank Kintrup    nico@uni-paderborn.de	      Windows95 long filenames
  2/96 Robert Thrun	(Langley Part, Maryland)      Tandy 2000 BIOS
  2/96 Wim Kosten       wkosten@mail.HZeeland.nl	      ATAPI
- 3/96 Matthias Paul    MPAUL@ibh.rwth-aachen.de       format of .CPI files
+ 3/96 Matthias Paul    MPAUL@post.rwth-aachen.de      format of .CPI files
  3/96 Lesha Bogdanow   boga@pts.mipt.ru		      AWDFLASH/Asustek Flash
  4/96 Antti Barck      proff@iki.fi		      Cx5x86 config registers
  4/96 Adam Seychell    s921880@minyos.its.rmit.EDU.AU DOS32 v3.2
@@ -616,9 +617,15 @@ This list is the result of the time and effort of a large number of people:
  1/97 Glenn Stumpff    gstumpff@ball.com	      PRINDIR v9.0 API
  1/97 Frank Klemm      klemm@ifk.uni-jena.de	      Keyboard Driver API
  1/97 Ralf Brown       ralf@pobox.com		      MS-DOS 7,various VxD APIs
+ 3/97 Matthias Paul    MPAUL@post.rwth-aachen.de      code pages, COUNTRY.SYS
  3/97 Scott Townsend   scott_townsend@phoenix.com     POST Memory Manager v1.0
  4/97 Dietmar Meschede mesched@math.uni-muenster.de   S3VBE/Core, S3 SpeedUp
- 5/97 Pino Navato      2:335/225.18		      misc, PCXDUMP
+ 5/97 Pino Navato      2:335/225.18		      misc, PCXDUMP, CDROM
+ 8/97 Jochem Heicke    JochemH@ami.com		      more PCI vendor IDs
+ 9/97 Pino Navato      pnavato@geocities.com	      Micro Focus COBOL
+10/97 Eugene Lisovy    2:4635/73		      VESA DDC EDID codes
+11/97 Russell A. Bell  rbell@alumni.caltech.edu	      S3 memory-mapped I/O
+12/97 Vik Heyndrickx   Vik.Heyndrickx@rug.ac.be       file sharing for DOS 7
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -725,7 +732,7 @@ Also contributing:
  Alexander A Maltsev <amp@cairccom.msk.su>, Michal Szokolo <msz@plearn.bitnet>,
  Alexander I. Yanovsky <ayan@xray.ineos.ac.ru>, John Sasse <tenthumbs@BIX.com>,
  Carlos Fernandez Sanz <100410.3445@compuserve.com>, Dr. David Leov (Israel),
- James Roberts-Thomson <COM3ROBERJD@NOTTINGHAM-TRENT.AC.UK>,
+ James Roberts-Thomson <COM3ROBERJD@NOTTINGHAM-TRENT.AC.UK>, Alfmarks@aol.com,
  Derek Kwan <dkwan@zeus.UWaterloo.ca>, Pim Schaeffer <pschaef@knoware.nl>,
  Kris Heidenstrom <Kris.Heidenstrom@actrix.gen.nz>, bill.dickson@dscmail.com,
  Dave Stephenson <bb683@freenet.toronto.on.ca>, Fernando ? <fido@fing.edu.uy>,
@@ -735,7 +742,7 @@ Also contributing:
  Ralf D. Kloth <kloth@sunwan.mpik-tueb.mpg.de>, eckertw@worms-emh4.army.mil,
  Giorgio Caimi <caimi@zeus.csr.unibo.it>, Bob Longnecker <blong@mav.com>,
  Jaroslaw Rafa <sfrafa@lfs.cyf-kr.edu.pl>, Mojmir Strhan <strhan@simultan.ch>,
- Axel C. Frinke <acfrinke@uni-bonn.de>, avp@iron.misa.ac.ru,
+ Axel C. Frinke <acfrinke@uni-bonn.de>,avp@iron.misa.ac.ru, SurfToDeet@aol.com,
  Julian Nicholls <julian@aladdin.co.uk>, ricardo.ferreira@mpcbbs.com.br,
  Vincent Lyonel <vincentl@cc.ec-lyon.fr>, <Gabor.Somlai@ohsh.u-szeged.hu>,
  Pascal Moulart <100572.1021@compuserve.com>, John Murphy <murf@perftech.com>,
@@ -763,13 +770,26 @@ Also contributing:
  Andreas Perlitz <APERLITZ@btg-agb.isar.de>, Andy.Ruddock@uk.drsolomon.com,
  Kevin Tseng <s8203143@andy.pu.edu.tw>, Emmanuel.Viollet@mail.dotcom.fr,
  Pete Shew <gbsedps1@ibmmail.com>, Alexander Adams <a.r.adams@twi.tudelft.nl>,
- Frank Baumgartner <Frank.Baumgartner@317-11-81.ccc.or.at>,
- Benjamin J. Walbeehm <denyse@interaccess.net>,Tomas.Navratil@axpsu.fpf.slu.cz,
+ Frank Baumgartner <Frank.Baumgartner@317-11-81.ccc.or.at>, scheiki@netway.at,
+ Benjamin/Denyse Walbeehm <denyse@interaccess.net>, Lee Aroner <leea@mail.com>,
+ Tomas.Navratil@axpsu.fpf.slu.cz, Ross Mitchell <rossm@matra.com.au>,
  Florian Painke <floh@muenchen.roses.de>, Jacobo Tarrio <newton-bbs@jet.es>,
  Fernando Anton <fernando@ergos.es>, Alexander Yanovsky <alik@aha.ru>,
  Bas van Sisseren <bas@zep.nl>, Torok Miklos <mitorok@physx.u-szeged.hu>,
  Peter Notebaert <Peno@adifo.be>, <Lost.Mind@childs.mn.pubnix.net>,
- Pascal Moulart <asymptote_pmo@compuserve.com>
+ Pascal Moulart <asymptote_pmo@compuserve.com>, ambrose@nevets.oau.org,
+ sz1323@rzmail.uni-erlangen.de, tim liljendahl <hitech@innocent.com>,
+ Paul Reid <71031.3603@CompuServe.COM>, David Powell <powell@cs.monash.edu.au>,
+ Alex N. Ivlev <ivlev@alpha.isan.troitsk.ru>, Barry Mead <bmead@dancris.com>,
+ Graham Inggs <ginggs@pe-pop.iafrica.com>, kilobug@kali.isicom.fr,
+ Willow Schlanger <willow@arrowweb.com>,DavMac <smcall@corryong.albury.net.au>,
+ Vladimir M. Zakharychev <loki@cnit.uniyar.ac.ru>, josh_thelen@classic.msn.com,
+ Stefano Pettini <stefano.pettini@scoutnet.org>,Steve Ball <s.ball@xtra.co.nz>,
+ Guy Gordon <gordon@atlanta.com>, Keith Mackay <alma@interlog.com>,
+ J. Paulo Santos <j.paulo.santos@mail.telepac.pt>, Andrew Belov 2:5020/181.2,
+ Thomas Voss <voss@or.uni-bonn.de>, Hafthor Stefansson <hafthor@usa.net>,
+ Veit Kannegieser <kannegv@leyla.rzpool.tu-cottbus.de>,
+ Chris Wilson <chrisperrywilson@hotmail.com>
 --------!---ADDRESSES------------------------
 The following have provided API reference and other materials at no charge:
 

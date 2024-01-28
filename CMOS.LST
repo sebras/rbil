@@ -1,4 +1,4 @@
-CMOS Memory Map			Release 54		Last change 29jun97
+CMOS-Memory Map			Release 56		Last change 21dec97
 
 Compiled from multiple sources by Padgett Peterson
 Corrections/additions/comments to: padgett@tccslr.dnet.mmc.com
@@ -54,7 +54,7 @@ an IN from port 71h will then retrieve the requested information. The
 following BASIC fragment will read 128 CMOS bytes and print them to the 
 screen in 8 rows of 16 values.
 
-CMOS RAM space has an upper limit of 128 bytes because of the structure
+The CMOS RAM space has an upper limit of 128 bytes because of the structure
 of port 70: only bits 0-6 are used for addressing, bit 7 is used to 
 enable (0) or disable (1) Non-Maskable Interrupts (NMI) and explains why
 IBM uses 80h OR <address> to read/write data & follows with  a "throw-away"
@@ -204,7 +204,7 @@ CMOS 0Eh  - IBM PS/2 - DIAGNOSTIC STATUS BYTE
 Bitfields for IBM PS/2 diagnostic status byte:
 Bit(s)	Description	(Table C005)
  7	indicates clock has lost power
- 6	incorrect checksum
+ 6	incorrect checksum>
  5	equipment configuration is incorrect
 	  (power-on check requires that atleast one floppy be installed)
  4	error in memory size
@@ -447,9 +447,12 @@ CMOS 14h - AMSTRAD - BYTE user RAM checksum
 Desc:	LSB of sum of all user bytes should be AAh
 ----------R15--------------------------------
 CMOS 15h - IBM - BASE MEMORY IN KB (low byte)
-----------R15--------------------------------
-CMOS 15h - AMSTRAD - WORD Enter key scancode/ASCII code
+----------R1516------------------------------
+CMOS 15h-16h - AMSTRAD - Enter key scancode/ASCII code
+Size:	WORD
+Desc:	specify the BIOS keycode for keyboard scancode 74h
 Note:	default: 1C0Dh	- emulates Return key
+SeeAlso: INT 09,CMOS 17h"AMSTRAD"
 ----------R16--------------------------------
 CMOS 16h - IBM - BASE MEMORY IN KB (high byte)
 Note:	The value in 15h-16h should be the same as in 0:413h and that
@@ -457,9 +460,12 @@ Note:	The value in 15h-16h should be the same as in 0:413h and that
 	  memory will return 80h in byte 15h and 02h in byte 16h.
 ----------R17--------------------------------
 CMOS 17h - IBM - EXTENDED MEMORY IN KB (low byte)
-----------R17--------------------------------
-CMOS 17h - AMSTRAD - WORD Forward delete key scancode/ASCII code
+----------R1718------------------------------
+CMOS 17h-18h - AMSTRAD - Forward delete key scancode/ASCII code
+Size:	WORD
+Desc:	specify the BIOS keycode for keyboard scancode 70h
 Note:	default: 2207h	- emulates ^G (bell/beep)
+SeeAlso: INT 09,CMOS 15h"AMSTRAD",CMOS 19h"AMSTRAD"
 ----------R18--------------------------------
 CMOS 18h - IBM - EXTENDED MEMORY IN KB (high byte)
 Notes:	some systems will only accommodate 15 MB extended (16 MB total)
@@ -487,7 +493,10 @@ Bit(s)	Description	(Table C021)
  7-4	???
 ----------R191A------------------------------
 CMOS 19h-1Ah - AMSTRAD - Joystick fire button 1 scancode/ASCII code
+Size:	WORD
+Desc:	specify the BIOS keycode for keyboard scancode 77h
 Note:	default: FFFFh	- (no translation)
+SeeAlso: INT 09,CMOS 17h"AMSTRAD",CMOS 1Bh"AMSTRAD"
 ----------R1A--------------------------------
 CMOS 1Ah - SECOND EXTENDED HARD DISK DRIVE TYPE
 SeeAlso: CMOS 19h"IBM",#C020
@@ -499,7 +508,10 @@ CMOS 1Bh - MCA - SLOT 1 ADAPTER CARD ID
 CMOS 1Bh - AMI - First Hard Disk (type 47) user defined: # of Cylinders, LSB
 ----------R1B1C------------------------------
 CMOS 1Bh-1Ch - AMSTRAD - Joystick fire button 2 scancode/ASCII code
+Size:	WORD
+Desc:	specify the BIOS keycode for keyboard scancode 78h
 Note:	default: FFFFh	- (no translation)
+SeeAlso: INT 09,CMOS 19h"AMSTRAD",CMOS 1Dh"AMSTRAD"
 ----------R1B--------------------------------
 CMOS 1Bh - PHOENIX - LSB of Word to 82335 RC1 roll compare register
 ----------R1B--------------------------------
@@ -520,15 +532,23 @@ CMOS 1Ch - AMI - First Hard Disk user defined: # of Cylinders, High Byte
 CMOS 1Ch - PHOENIX - MSB of Word to 82335 RC1 roll compare register
 ----------R1C--------------------------------
 CMOS 1Ch,1Dh - AWARD - Password
-Note:	Stored as a checksum or CRC using unknown algorithm.  (See byte 11h 
-	  to enable)
+Note:	Stored as a checksum using the following algorithm:
+	    initialize 16-bit checksum to zero
+	    for each ASCII character between 32 (space) and 127 (DEL) in the
+	      password,	add character to checksum, then rotate left two bits
+	    store low byte of result in 1Ch and high byte in 1Dh (for user
+	      password, use locations 4Dh and 4Eh instead)
+SeeAlso: CMOS 4Dh"AWARD"
 ----------R1D--------------------------------
 CMOS 1Dh - MCA - SLOT 2 ADAPTER CARD ID
 ----------R1D--------------------------------
 CMOS 1Dh - AMI - First Hard Disk user defined: Number of Heads
 ----------R1D--------------------------------
-CMOS 1Dh - AMSTRAD - WORD mouse button 1 scancode/ASCII code
+CMOS 1Dh - AMSTRAD - mouse button 1 scancode/ASCII code
+Size:	WORD
+Desc:	specify the BIOS keycode for keyboard scancode 7Dh
 Note:	default: FFFFh	- (no translation)
+SeeAlso: INT 09,CMOS 1Bh"AMSTRAD",CMOS 1Fh"AMSTRAD"
 ----------R1D--------------------------------
 CMOS 1Dh - Zenith Z-200 monitor - BOOT DRIVE SELECTION
 
@@ -569,9 +589,12 @@ CMOS 1Fh - MCA - SLOT 3 ADAPTER CARD ID
 CMOS 1Fh - AMI - First Hard Disk user defined: WPC-high
 Desc:	Write Precompensation Cylinder, high byte, for first user-defined
 	  hard disk
-----------R1F--------------------------------
-CMOS 1Fh - AMSTRAD - WORD mouse button 2 scancode/ASCII code
+----------R1F20------------------------------
+CMOS 1Fh-20h - AMSTRAD - mouse button 2 scancode/ASCII code
+Size:	WORD
+Desc:	specify the BIOS keycode for keyboard scancode 7Eh
 Note:	default: FFFFh	- (no translation)
+SeeAlso: INT 09,CMOS 1Dh"AMSTRAD"
 ----------R1F--------------------------------
 CMOS 1Fh - AWARD - 2nd Hard Disk user defined (type 48): # of Cylinders High
 ----------R1F--------------------------------
@@ -1331,6 +1354,9 @@ CMOS 4Dh - AMI (Saturn) - RESERVED
 ----------R4D--------------------------------
 CMOS 4Dh - AMI (PicoPower) - MIDDLE BIOS
 Note:	Middle BIOS is enabled if bit 1 set
+----------R4D--------------------------------
+CMOS 4Dh - AWARD - USER PASSWORD
+SeeAlso: CMOS 4Eh"AWARD",CMOS 1Ch"AWARD"
 ----------R4E--------------------------------
 CMOS 4Eh - AMI (Saturn) - SERIAL PORT
 
@@ -1346,6 +1372,9 @@ Bitfields for AMI (PicoPower) Turbo Bus video:
 Bit(s)	Description	(Table C068)
  2	memory enabled
  1	I/O enabled
+----------R4E--------------------------------
+CMOS 4Eh - AWARD - USER PASSWORD
+SeeAlso: CMOS 4Dh"AWARD",CMOS 1Ch"AWARD"
 ----------R50--------------------------------
 CMOS 50h - AWARD - PCI Bus Slot 1 Latency Timer 0-255 (default: 0)
 ----------R51--------------------------------
@@ -1726,6 +1755,80 @@ Note:	Award's extended checksum is the arithmetic sum of all the bytes
 SeeAlso: CMOS 7Ah"AWARD"
 ----------R7E7F------------------------------
 CMOS 7Eh-7Fh - AMI WinBIOS - used as scratch RAM by power management code
+---------------------------------------------
+
+From arhfond@online.ru Thu Sep	5 21:17:13 1996
+Date: Wed, 28 Aug 1996 22:35:17 +0400
+From: Agapov Vasiliy Pavlovich <arhfond@online.ru>
+To: ralf@telerama.lm.com
+Subject: Re: Ralf Brown's Interrupt List Release 42.
+
+The problem with CMOS checksum layout for the new motherboards (1995-1996)
+with AWARD, AMIBIOS (also AMIBIOS on Pentium motherboards produced beyond
+1992) and several others is the following: they have added the second checksum
+for the CMOS area from 40h to 7Ch. Any changes in the area concerned, always
+result in "CMOS checksum failure. Defaults loaded...".
+
+The problem is that every model of BIOS has its own location of the second
+checksum and its own way of determining it. When you need to change some bytes
+in the area from 40h to 7Ch you ought to determine checksum location. Here's
+the Assembly code that finds out the location of the second CMOS checksum on
+ANY motherboard. I've tested it on more than 10 different motherboards with
+AMIBIOS and AWARD BIOS and it never failed.
+
+	Before starting this code make sure to load the 128 bytes of CMOS
+data to the buffer at CMOS_DATA and assume DS as data area segment register.
+
+START:	CALL	WHAT_CMOS
+	JC	NO_SECOND_CHS
+
+; Checksum location is in word at  CHECKS_ADDRESS
+
+NO_SECOND_CHS:
+
+; There's no second checksum in this CMOS
+
+END:
+
+;******************************* SUBS **********************************
+
+WHAT_CMOS:	MOV	SI,OFFSET CMOS_DATA+40H
+		MOV	DI,OFFSET CMOS_DATA+7EH
+		CALL	FIND_CMOS_CHS
+		JNC	END_WCMOS
+		MOV	SI,OFFSET CMOS_DATA+41H
+		MOV	DI,OFFSET CMOS_DATA+7EH
+		CALL	FIND_CMOS_CHS
+END_WCMOS:	RET
+
+
+FIND_CMOS_CHS:	XOR	DX,DX
+		MOV	AX,DX
+FIND_CMOS_C1:	LODSB			; GET BYTE
+		ADD	DX,AX
+		CMP	SI,OFFSET CMOS_DATA+7CH	; ADDRESS OF CHECKSUM ?
+		JB	FIND_CMOS_C1
+		XCHG	DH,DL
+		CMP	DX,[SI]		; CHECKSUM FOUND ?
+		JZ	END_FCMOS
+		XCHG	DH,DL
+		CMP	SI,DI
+		JB	FIND_CMOS_C1
+		STC
+		RET
+END_FCMOS:	MOV	[CHECKS_ADDRESS],SI	; SAVE CHECKSUM POSITION
+		CLC
+		RET
+
+******************************** DATA *******************************
+
+CHECKS_ADDRESS	DW	0
+
+CMOS_DATA	DB   128 DUP (?)
+									    
+	  Regards,
+	    Alexey Podrezov
+	    28.08.1996
 --------!---Admin----------------------------
 Highest Table Number = C094
 --------!---History--------------------------

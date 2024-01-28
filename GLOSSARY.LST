@@ -1,4 +1,4 @@
-GLOSSARY			Release 54		Last change 29jun97
+GLOSSARY			Release 56		Last change 21dec97
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
 
 A20
@@ -83,6 +83,13 @@ hardware directly.
 BIOS Parameter Block
 	The BIOS Parameter Block stores the low-level layout of a
 drive.	See also INT 21h Function 53h.
+
+bit-banging
+	The process of sending data to or reading data from a serial
+device by raising and lowering a data line in the proper sequence
+(writing), or polling a data line and determining the bit sequence
+represented by the detected transitions and their timing.  It is
+equivalent to emulating a UART in software.
 
 Boot
 	To start up the computer or operating system. The term "boot"
@@ -450,6 +457,15 @@ during the horizontal or vertical retrace periods, as the display adapter
 was not itself accessing the display memory during those times.	 See also
 Vertical Retrace.
 
+I2C
+	(also IIC; the "2" is superscripted) A moderate-speed serial
+communications bus originally invented by Philips for consumer-electronics
+applications, such as inter-chip communication in a television set or
+high-end stereo.  The I2C bus has recently appeared on PCs in video capture
+boards and similar devices, as well as (surprisingly) SDRAM DIMMs (for the
+on-board serial EEPROM).  The ACCESS.bus is a derivative of the I2C bus
+which forms the physical layer of the Universal Serial Bus.
+
 IDE
 	(Integrated Drive Electronics) A type of disk drive interface
 which essentially extends the PC's expansion bus all the way to the
@@ -461,6 +477,9 @@ IDT
 
 IFS
 	see Installable File System
+
+IIC
+	see I2C.
 
 Installable File System
 	An Installable File System which allows non-DOS format media to
@@ -675,6 +694,11 @@ Palette Register
 	A memory location on the video controller which specifies the actual
 color displayed for a particular color number.
 
+Paragraph
+	A 16-byte unit of memory.  This size is the result of the 8086's
+segmentation model, where incrementing the segment by one advances the
+absolute location by 16 bytes.
+
 Park
 	To move a hard disk's read/write heads to a position in which
 it is safe to turn off the power and transport the disk drive.	Many
@@ -871,6 +895,12 @@ Track
 data-bearing surface of a disk.	 Tracks at the same location on
 different surfaces form a cylinder.
 
+UART
+	(Universal Asyncronous Receiver/Transmitter)  A peripheral device
+which converts a sequence of bytes into a serial bit stream at a programmable
+rate, and vice versa.  This device is what makes an RS-232 serial port
+function.  See also USART.
+
 UMB
 	see Upper Memory Block
 
@@ -890,9 +920,21 @@ dramatically -- between successive revisions of a product, since the
 manufacturer has no obligation to maintain compatibility in behavior which
 is not explicitly stated.
 
+Universal Serial Bus
+	A high-speed serial interconnection providing data rates as high
+as 48 MHz (6 MB/s) between various devices inside (or even outside of) a
+PC.  See also I2C.
+
 Upper Memory Block
 	A noncontiguous section of allocatable memory located between
 the 640K and 1024K addresses.  See also INT 21h Function 52h.
+
+USART
+	(Universal Synchronous/Asynchronous Receiver/Transmitter)
+	see also UART
+
+USB
+	see Universal Serial Bus
 
 V86
 	see Virtual-86 Mode

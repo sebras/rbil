@@ -1,22 +1,22 @@
-Interrupt List			Release 54		Last change 29jun97
+Interrupt List			Release 56		Last change 21dec97
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
 --------!---FILELIST-------------------------
 Please redistribute the following files unmodified as a group, in a quartet of
-archives named INTER54A through INTER54D (preferably the original authenticated
+archives named INTER56A through INTER56D (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
-	INTERRUP.A	INT 00 through INT 12     \
-	INTERRUP.B	INT 13 through INT 15/11   \
+	INTERRUP.A	INT 00 through INT 11	  \
+	INTERRUP.B	INT 12 through INT 15/11   \
 	INTERRUP.C	INT 15/12 through INT 16/6E \
-	INTERRUP.D	INT 16/6F through INT 1A/B1  \
-	INTERRUP.E	INT 1A/B2 through INT 21/43   \	  total 2286 pages at
-	INTERRUP.F	INT 21/44 through INT 21/5E    \  60 lines per page,
-	INTERRUP.G	INT 21/5F through INT 21/E2	\ 2437 with INTPRINT -p
-	INTERRUP.H	INT 21/E3 through INT 21/F1	 >(8484 entries)
-	INTERRUP.I	INT 21/F2 through INT 29	/ (3682 tables)
+	INTERRUP.D	INT 16/6F through INT 1A/AF  \
+	INTERRUP.E	INT 1A/B0 through INT 21/2A   \	  total 2341 pages at
+	INTERRUP.F	INT 21/2B through INT 21/56    \  60 lines per page,
+	INTERRUP.G	INT 21/57 through INT 21/E2	\ 2494 with INTPRINT -p
+	INTERRUP.H	INT 21/E3 through INT 21/F1	 >(8541 entries)
+	INTERRUP.I	INT 21/F2 through INT 29	/ (3785 tables)
 	INTERRUP.J	INT 2A through INT 2F/26       /
-	INTERRUP.K	INT 2F/27 through INT 2F/BF   /
-	INTERRUP.L	INT 2F/C0 through INT 32     /
+	INTERRUP.K	INT 2F/27 through INT 2F/B7   /
+	INTERRUP.L	INT 2F/B8 through INT 32     /
 	INTERRUP.M	INT 33 through INT 60	    /
 	INTERRUP.N	INT 61 through INT 66	   /
 	INTERRUP.O	INT 67 through INT 7D	  /
@@ -36,7 +36,7 @@ PKZIP archives):
 	CATEGORY.KEY	descriptions of divider-line category letters
 	COMBINE.COM	combine the pieces of the list into a single file
 	COMBINE.DOC	documentation for COMBINE
-The following files should be distributed in an archive called INTER54E:
+The following files should be distributed in an archive called INTER56E:
 	86BUGSnn.ZIP	programs to test for CPU bugs
 	COMBINE.ASM	source code for COMBINE.COM
 	INT.*		invoke interrupts from commandline
@@ -45,13 +45,13 @@ The following files should be distributed in an archive called INTER54E:
 	INTPRINT.C	source code for INTPRINT
 	INTSUM??.ZIP	interrupt list browser (Interrupt Summary)
 	IVIEW*.ZIP	another interrupt list browser
-The following should be distributed in an archive called INTER54F:
+The following should be distributed in an archive called INTER56F:
 	INT2RTF.ZIP	Slava Gostrenko's Windows Help converter
 	INT2WHLP.ZIP	convert list into Windows Help database
 	INTERRUP.ICO	icon for interrupt list
 	HINTSRCH.ZIP	WinHelp DLL for full-text searches of interrupt list
 	WH_ED*.ZIP	WinHelp-file editor
-Finally, the following should be distributed in an archive called INTER54G:
+Finally, the following should be distributed in an archive called INTER56G:
 	IL2ME???.ZIP	convert list into Multi-Edit help database
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
 	INT2HLP.ZIP	convert list into QuickHelp database
@@ -437,7 +437,7 @@ Notes:	programs which need to be invoked regularly should use INT 1C unless
 	default handler is at F000h:FEA5h in IBM PC and 100%-compatible BIOSes
 	may be masked by setting bit 0 on I/O port 21h
 SeeAlso: INT 1C,INT 4A"SYSTEM",INT 50"DESQview",INT 58"DoubleDOS",INT 70"IRQ8"
-SeeAlso: INT 78"GO32",INT D8"Screen Thief"
+SeeAlso: INT 78"GO32",INT D8"Screen Thief",MEM 0040h:0040h,MEM 0040h:006Ch
 --------C-08---------------------------------
 INT 08 C - CPU-generated (80286+) - DOUBLE EXCEPTION DETECTED
 Desc:	called when multiple exceptions occur on one instruction, or an
@@ -516,25 +516,25 @@ Values for keyboard make/break (scan) code:
  14h	T		 44h	F10		 74h	ExSel
  15h	Y		 45h	NumLock		 75h	--
  16h	U		 46h	ScrollLock	 76h	Clear
- 17h	I		 47h	Home
- 18h	O		 48h	UpArrow
- 19h	P		 49h	PgUp
- 1Ah	[ {		 4Ah	Grey-
- 1Bh	] }		 4Bh	LeftArrow
- 1Ch	Enter		 4Ch	Keypad 5
- 1Dh	Ctrl		 4Dh	RightArrow
- 1Eh	A		 4Eh	Grey+
+ 17h	I		 47h	Home		 77h	[Note2] Joyst But1
+ 18h	O		 48h	UpArrow		 78h	[Note2] Joyst But2
+ 19h	P		 49h	PgUp		 79h	[Note2] Joyst Right
+ 1Ah	[ {		 4Ah	Grey-		 7Ah	[Note2] Joyst Left
+ 1Bh	] }		 4Bh	LeftArrow	 7Bh	[Note2] Joyst Up
+ 1Ch	Enter		 4Ch	Keypad 5	 7Ch	[Note2] Joyst Down
+ 1Dh	Ctrl		 4Dh	RightArrow	 7Dh	[Note2] right mouse
+ 1Eh	A		 4Eh	Grey+		 7Eh	[Note2] left mouse
  1Fh	S		 4Fh	End
  20h	D		 50h	DownArrow
  21h	F		 51h	PgDn
  22h	G		 52h	Ins
  23h	H		 53h	Del
  24h	J		 54h	SysReq		---non-key codes---
- 25h	K					 00h	kbd buffer full
+ 25h	K		 55h	[Note1] F11	 00h	kbd buffer full	
  26h	L		 56h	left \| (102-key)
  27h	; :		 57h	F11		 AAh	self-test complete
  28h	' "		 58h	F12		 E0h	prefix code
- 29h	` ~					 E1h	prefix code
+ 29h	` ~		 59h	[Note1] F15	 E1h	prefix code
  2Ah	Left Shift	 5Ah	PA1		 EEh	ECHO
  2Bh	\ |		 5Bh	F13 (LWin)	 F0h	prefix code (key break)
  2Ch	Z		 5Ch	F14 (RWin)	 FAh	ACK
@@ -563,7 +563,7 @@ Notes:	scan codes 56h-E1h are only available on the extended (101/102-key)
 	the Microsoft Natural Keyboard sends make codes 5Bh, 5Ch, and 5Dh
 	  (all with an E0h prefix) for the Left Windows, Right Windows, and
 	  Menu keys on the bottom row
-	the German "Cherry G81-3000 SAD/04" keyboard contains contacts for
+	the European "Cherry G81-3000 SAx/04" keyboard contains contacts for
 	  four additional keys, which can be made available by a user
 	  modification; the three new keys located directly below the cursor
 	  pad's Delete, End, and PgDn keys send make codes 66h-68h (F19-F21);
@@ -574,7 +574,24 @@ Notes:	scan codes 56h-E1h are only available on the extended (101/102-key)
 	  additional key above the Grey- key marked with a left-pointing
 	  triangle and labeled "Fn" in the owner's booklet which returns
 	  scan codes E0h 68h on make and E0h E8h on break
-SeeAlso: #0519 at INT 16/AX=6F07h,#2846 at INT 4A/AH=05h
+	the "Preh Commander AT" keyboard with additional F11-F22 keys treats
+	  F11-F20 as Shift-F1..Shift-F10 and F21/F22 as Ctrl-F1/Ctrl-F2; the
+	  Eagle PC-2 keyboard with F11-F24 keys treated those additional keys
+	  in the same way
+	[Note1] the "Cherry G80-0777" keyboard has additional F11-F15 keys
+	  which generate make codes 55h-59h; some other extended keyboards
+	  generate codes 55h and 56h for F11 and F12, which cannot be managed
+	  by standard DOS keyboard drivers
+	[Note2] the Schneider/Amstrad PC1512 PC keyboards contain extra keys,
+	  a mouse, and a digital joystick, which are handled like extra keys.
+	  The joystick's motion scancodes are converted into standard arrow
+	  keys by the BIOS, and the joystick and mouse button scan codes are
+	  converted to FFFFh codes in the BIOS keyboard buffer
+	  (see CMOS 15h"AMSTRAD").
+	  In addition to the keys listed in the table above, there are
+	    Del-> (delete forward)	70h
+	    Enter			74h
+SeeAlso: #0526 at INT 16/AX=6F07h,#2885 at INT 4A/AH=05h
 --------C-09---------------------------------
 INT 09 C - CPU-generated (80286,80386) - PROCESSOR EXTENSION PROTECTION ERROR
 Desc:	called if the coprocessor attempts to access memory outside a segment
@@ -802,6 +819,7 @@ Notes:	most printer adapters do not reliably generate this interrupt
 	the 8259 interrupt controller generates an interrupt corresponding to
 	  IRQ7 when an error condition occurs
 SeeAlso: INT 0D"IRQ5",INT 57"DESQview",INT 5F"DoubleDOS",INT 7F"GO32"
+SeeAlso: MEM 0040h:006Bh
 --------h-0F---------------------------------
 INT 0F C - HP 95LX - REAL-TIME CLOCK
 SeeAlso: INT 0E"HP 95LX",INT 15/AX=4DD4h,INT 70"IRQ8"
@@ -840,7 +858,7 @@ Notes:	IBM standard modes do not clear the screen if the high bit of AL is set
 		33h for 18800-2
 		34h for 18800-4
 		35h for 18800-5
-		62h for 68800AX (Mach32) (see also #0649)
+		62h for 68800AX (Mach32) (see also #0656)
 	  the two bytes at C000h:0040h indicate the adapter type
 		"22" EGA Wonder
 		"31" VGA Wonder
@@ -862,7 +880,7 @@ Notes:	IBM standard modes do not clear the screen if the high bit of AL is set
 	  for SuperEGA BIOS v3.0+, C000h:0070h contains the signature
 	    "EXTMODE", indicating support for extended modes
 SeeAlso: AX=0070h,AX=007Eh,AX=10E0h,AX=10F0h,AH=40h,AX=6F05h,AH=FFh"GO32"
-SeeAlso: INT 33/AX=0028h,INT 5F/AH=00h,INT 62/AX=0001h
+SeeAlso: INT 33/AX=0028h,INT 5F/AH=00h,INT 62/AX=0001h,MEM 0040h:0049h
 Index:	installation check;Tseng ET4000|installation check;Ahead video cards
 Index:	installation check;Oak Technologies|installation check;ATI video cards
 Index:	installation check;Paradise video|installation check;Genoa video cards
@@ -897,6 +915,8 @@ Values for video mode:
      = T  80x25	 8x14  640x350	 16/64	  8   B800 EGA
      = T  80x25	 8x16  640x400	 16	  8   B800 MCGA
      = T  80x25	 9x16  720x400	 16	  8   B800 VGA
+     = T  80x43	 8x8   640x350	 16	  4   B800 EGA,VGA [17]
+     = T  80x50	 8x8   640x400	 16	  4   B800 VGA [17]
  04h = G  40x25	 8x8   320x200	  4	  .   B800 CGA,PCjr,EGA,MCGA,VGA
  05h = G  40x25	 8x8   320x200	 4gray	  .   B800 CGA,PCjr,EGA
      = G  40x25	 8x8   320x200	  4	  .   B800 MCGA,VGA
@@ -1624,7 +1644,10 @@ Notes:
 [16] Stealth64 Video 2001-series BIOS v1.03 reports 76 lines for mode 7Ch,
       resulting in incorrect scrolling for TTY output (scrolling occurs only
       after the end of the 76th line, which is not displayed)
-SeeAlso: #0010,#0081,#0116
+[17] For 43-line text on EGA or 43/50-line text on VGA, you must load an 8x8
+      font using AX=1102h after switching to mode 3; VGA may also require
+      using INT 10/AH=12h/BL=30h
+SeeAlso: #0010,#0081,#0123
 Index:	video modes
 Index:	installation check;HERKULES|installation check;HERCULES.COM
 --------V-100070-----------------------------
@@ -1678,7 +1701,7 @@ Values for Everex video mode:
  71h = G  80x30	 8x16  640x480	32K	  .	.  .	      Viewpoint TC
  76h = G  64x30	 8x16  512x480	16M	  .	.  .	      Viewpoint TC
  77h = G  80x30	 8x16  640x480	16M	  .	.  .	      Viewpoint TC
-SeeAlso: #0009,#0116
+SeeAlso: #0009,#0123
 Index:	video modes;Everex
 --------V-10007E-----------------------------
 INT 10 - VIDEO - Paradise VGA, AT&T VDC600 - SET SPECIAL MODE
@@ -1869,7 +1892,7 @@ Notes:	buggy on EGA systems--BIOS remaps cursor shape in 43 line modes, but
 	  next character cell on the right
 BUG:	AMI 386 BIOS and AST Premier 386 BIOS will lock up the system if AL
 	  is not equal to the current video mode
-SeeAlso: AH=03h,AX=CD05h,AH=12h/BL=34h,#3517
+SeeAlso: AH=03h,AX=CD05h,AH=12h/BL=34h,#3556
 
 Bitfields for cursor start and options:
 Bit(s)	Description	(Table 0012)
@@ -1941,7 +1964,7 @@ Return: nothing
 Desc:	specify which of possibly multiple display pages will be visible
 Note:	to determine whether the requested page actually exists, use AH=0Fh
 	  to query the current page after making this call
-SeeAlso: AH=0Fh,AH=43h,AH=45h,MEM 0040h:0062h
+SeeAlso: AH=0Fh,AH=43h,AH=45h,MEM 0040h:0062h,MEM 0040h:004Eh
 --------V-100500-----------------------------
 INT 10 - VIDEO - Corona/Cordata BIOS v4.10+ - SET GRAPHICS BITMAP BUFFER
 	AX = 0500h
@@ -2029,6 +2052,7 @@ Notes:	for monochrome displays, a foreground of 1 with background 0 is
 	  are matched by the pattern-comparison routine
 	on the Tandy 2000, BH=FFh specifies that the current page should be
 	  used
+BUG:	some IBM PC ROM BIOSes destroy BP when in graphics modes
 SeeAlso: AH=09h,AX=1003h,AX=1103h,AH=12h/BL=37h,AX=5001h
 
 Bitfields for character's display attribute:
@@ -2148,7 +2172,9 @@ Notes:	characters 07h (BEL), 08h (BS), 0Ah (LF), and 0Dh (CR) are interpreted
 	  and do the expected things
 	IBM PC ROMs dated 4/24/81 and 10/19/81 require that BH be the same as
 	  the current active page
-SeeAlso: AH=02h,AH=0Ah
+BUG:	if the write causes the screen to scroll, BP is destroyed by BIOSes
+	  for which AH=06h destroys BP
+SeeAlso: AH=02h,AH=06h,AH=0Ah
 --------b-100E--CXABCD-----------------------
 INT 10 - V20-XT-BIOS - TELETYPE OUTPUT WITH ATTRIBUTE
 	AH = 0Eh
@@ -2187,7 +2213,7 @@ Notes:	if mode was set with bit 7 set ("no blanking"), the returned mode will
 		  graphics mode, with bit 7 indicating the page (mode set by
 		  Hercules driver for Borland Turbo C)
 	the Tandy 2000 BIOS is only documented as returning AL, not AH or BH
-SeeAlso: AH=00h,AH=05h,AX=10F2h,AX=1130h,AX=CD04h
+SeeAlso: AH=00h,AH=05h,AX=10F2h,AX=1130h,AX=CD04h,MEM 0040h:004Ah
 --------V-100F56BX4756-----------------------
 INT 10 - VUIMAGE DISPLAY DRIVER (v2.20 and below)
 	AX = 0F56h
@@ -2313,7 +2339,7 @@ Format of palette register list:
 Offset	Size	Description	(Table 0017)
  00h 16 BYTEs	colors for palette registers 00h through 0Fh
  10h	BYTE	border color
-SeeAlso: #0380
+SeeAlso: #0387
 --------V-101003-----------------------------
 INT 10 - VIDEO - TOGGLE INTENSITY/BLINKING BIT (Jr, PS, TANDY 1000, EGA, VGA)
 	AX = 1003h
@@ -2565,6 +2591,7 @@ INT 10 - VIDEO - TEXT-MODE CHARGEN - LOAD ROM 8x8 DBL-DOT PATTERNS (PS,EGA,VGA)
 Return: nothing
 Notes:	(see AX=1100h)
 SeeAlso: AX=1100h,AX=1101h,AX=1103h,AX=1104h,AX=1112h,AH=1Bh,AX=CD10h
+SeeAlso: MEM 0040h:0084h
 --------V-101103-----------------------------
 INT 10 - VIDEO - TEXT-MODE CHARGEN - SET BLOCK SPECIFIER (PS,EGA,VGA)
 	AX = 1103h
@@ -2593,7 +2620,7 @@ SeeAlso: AX=1100h,AX=1101h,AX=1102h,AX=1103h,AX=1114h,AH=1Bh,AX=CD10h
 --------V-1011-------------------------------
 INT 10 - VIDEO - Realtek RTVGA - TEXT-MODE CHARACTER GENERATOR FUNCTIONS
 	AH = 11h
-	AL = 07h load user-specified paterns and recalculate mode parms
+	AL = 07h load user-specified patterns and recalculate mode parms
 		 parameters are the same as for AX=1110h
 	AL = 08h load monochrome patterns (8x14) and recalculate mode parms
 		 parameters are the same as for AX=1111h
@@ -2639,7 +2666,7 @@ Notes:	This function will cause a mode set, completely resetting
 	the current block specifiers may be determined with INT 10/AH=1Bh,
 	  looking at offsets 2Bh and 2Ch of the returned data (VGA only)
 	  (see AH=1Bh,#0038)
-SeeAlso: AX=1100h,AX=1111h,AX=1112h,AX=1114h,AH=1Bh,AX=CD10h
+SeeAlso: AX=1100h,AX=1111h,AX=1112h,AX=1114h,AH=1Bh,AX=CD10h,MEM 0040h:0084h
 --------V-101110-----------------------------
 INT 10 - VIDEO - Realtek RTVGA - SET USER GRAPHICS CHARACTERS
 	AX = 1110h
@@ -3173,7 +3200,7 @@ Values for Cirrus Logic video controller type:
  0020h	6205/15/25
  0030h	5432
  0031h	5434
-SeeAlso: #0649,#0659
+SeeAlso: #0656,#0666
 --------V-1012--BL81-------------------------
 INT 10 - Cirrus Logic BIOS - GET BIOS VERSION NUMBER
 	AH = 12h
@@ -3187,7 +3214,7 @@ INT 10 - Cirrus Logic BIOS - GET DESIGN REVISION CODE
 	BL = 82h
 Return: AL = chip revision
 	AH = ??? (AFh for v1.01)
-SeeAlso: AH=12h/BL=80h,AH=12h/BL=81h,#0649 at INT 1A/AX=B102h
+SeeAlso: AH=12h/BL=80h,AH=12h/BL=81h,#0656 at INT 1A/AX=B102h
 --------V-1012--BL84-------------------------
 INT 10 - Cirrus Logic BIOS v3.02 - INQUIRE OPTIONS
 	AH = 12h
@@ -3312,7 +3339,7 @@ INT 10 - Cirrus Logic BIOS - GET USER OPTIONS
 Return: AX = options word 1 (see #0030)
 	CX = options word 2 (see #0031)
 SeeAlso: AH=12h/BL=80h,AH=12h/BL=84h,AH=12h/BL=93h,AH=12h/BL=A0h
-SeeAlso: AH=12h/BL=A3h,AH=12h/BL=A4h,#0649 at INT 1A/AX=B102h
+SeeAlso: AH=12h/BL=A3h,AH=12h/BL=A4h,#0656 at INT 1A/AX=B102h
 
 Bitfields for Cirrus Logic options word 1:
 Bit(s)	Description	(Table 0030)
@@ -3438,7 +3465,7 @@ Values for Tseng ET4000 refresh rate:
  00h	60 Hz	 56 Hz	   interlaced
  01h	72 Hz	 60 Hz	   60 Hz
  02h	75 Hz	 72 Hz	   70 Hz
- 03h	90 Hz	 75 Hz	   75 Hz	
+ 03h	90 Hz	 75 Hz	   75 Hz
  04h	--	 90 Hz	   --
 --------V-1013-------------------------------
 INT 10 - VIDEO - WRITE STRING (AT and later,EGA)
@@ -3592,7 +3619,7 @@ Notes:	this function is commonly used to check for the presence of a VGA
 	  undocumented configuration switch settings, even though the EGA
 	  Wonder does not support VGA graphics; to distinguish this case,
 	  call AX=1C00h with CX nonzero, which the EGA Wonder does not support
-SeeAlso: AH=12h/BL=35h,AX=1A01h,AH=1Bh,AH=1Ch
+SeeAlso: AH=12h/BL=35h,AX=1A01h,AH=1Bh,AH=1Ch,MEM 0040h:008Ah
 Index:	installation check;VGA
 
 (Table 0037)
@@ -3793,7 +3820,7 @@ Notes:	many BIOSes corrupt the video registers when saving the state, so a
 	this function may be a better VGA installation check than the usual
 	  INT 10/AX=1A00h, since some late-model EGA cards (such as the ATI
 	  EGA Wonder) supported that call
-SeeAlso: AX=1A00h
+SeeAlso: AX=1A00h,MEM 0040h:00A8h
 
 Bitfields for requested states:
 Bit(s)	Description	(Table 0046)
@@ -4297,26 +4324,26 @@ Program: Tinytalk is a shareware screen reader by OMS Development/Eric Bohlman
 Note:	this function was a NOP in TTDEMO.EXE, but may be implemented in other
 	  variants of Tinytalk
 --------V-1040-------------------------------
-INT 10 - VIDEO - SET GRAPHICS MODE (Hercules GRAFIX)
+INT 10 - VIDEO - Hercules GRAFIX - "GMODE" - SET GRAPHICS MODE
 	AH = 40h
 Return: nothing
 Desc:	switch the Hercules Graphics Card into graphics mode (720x348)
 SeeAlso: AH=00h,AH=41h
 Index:	video modes;Hercules
 --------V-1041-------------------------------
-INT 10 - VIDEO - SET TEXT MODE (Hercules GRAFIX)
+INT 10 - VIDEO - Hercules GRAFIX - "TMODE" - SET TEXT MODE 
 	AH = 41h
 Return: nothing
 Desc:	switch the Hercules Graphics Card into text mode
 SeeAlso: AH=00h,AH=40h
 Index:	video modes;Hercules
 --------V-1042-------------------------------
-INT 10 - VIDEO - CLEAR CURRENT PAGE (Hercules GRAFIX)
+INT 10 - VIDEO - Hercules GRAFIX - "CLRSCR" - CLEAR CURRENT PAGE
 	AH = 42h
 Return: nothing
 SeeAlso: AH=45h
 --------V-1043-------------------------------
-INT 10 - VIDEO - SELECT DRAWING PAGE (Hercules GRAFIX)
+INT 10 - VIDEO - Hercules GRAFIX - "GPAGE" - SELECT DRAWING PAGE
 	AH = 43h
 	AL = page number (0,1)
 Return: nothing
@@ -4324,7 +4351,7 @@ Desc:	specify which of the two pages of video memory is to be used for
 	  output
 SeeAlso: AH=05h,AH=44h,AH=45h
 --------V-1044-------------------------------
-INT 10 - VIDEO - SELECT DRAWING FUNCTION (Hercules GRAFIX)
+INT 10 - VIDEO - Hercules GRAFIX - "LEVEL" - SELECT DRAWING FUNCTION
 	AH = 44h
 	AL = drawing function
 	    00h clear pixels
@@ -4334,22 +4361,23 @@ Return: nothing
 Desc:	specify how graphics output will change the display
 SeeAlso: AH=45h,AH=46h,AH=4Ch,AH=4Dh
 --------V-1045-------------------------------
-INT 10 - VIDEO - SELECT PAGE TO DISPLAY (Hercules GRAFIX)
+INT 10 - VIDEO - Hercules GRAFIX - "DISP" - SELECT PAGE TO DISPLAY
 	AH = 45h
 	AL = page number (0,1)
 Return: nothing
 Desc:	specify which of the two pages of video memory is visible on screen
 SeeAlso: AH=05h,AH=42h,AH=43h
 --------V-1046-------------------------------
-INT 10 - VIDEO - DRAW ONE PIXEL (Hercules GRAFIX)
+INT 10 - VIDEO - Hercules GRAFIX - "PLOT" - DRAW ONE PIXEL
 	AH = 46h
 	DI = x (0-719)
 	BP = y (0-347)
 Return: nothing
-Note:	function 44h determines operation and function 43h which page to use
+Notes:	function 44h determines operation and function 43h which page to use
+	if the indicated coordinate is valid, this function does nothing
 SeeAlso: AH=0Ch,AH=47h,AH=49h,AH=4Ch,AH=4Dh
 --------V-1047-------------------------------
-INT 10 - VIDEO - FIND PIXEL VALUE (Hercules GRAFIX)
+INT 10 - VIDEO - Hercules GRAFIX - "GETPT" - FIND PIXEL VALUE
 	AH = 47h
 	DI = x (0-719)
 	BP = y (0-347)
@@ -4358,7 +4386,7 @@ Return: AL = 00h pixel clear
 Note:	function 43h specifies which page is used
 SeeAlso: AH=0Dh,AH=46h
 --------V-1048-------------------------------
-INT 10 - VIDEO - MOVE TO POINT (Hercules GRAFIX)
+INT 10 - VIDEO - Hercules GRAFIX - "MOVE" - MOVE TO POINT
 	AH = 48h
 	DI = x (0-719)
 	BP = y (0-347)
@@ -4366,7 +4394,7 @@ Return: nothing
 Desc:	specify the location from which to start the next graphics output
 SeeAlso: AH=49h
 --------V-1049-------------------------------
-INT 10 - VIDEO - DRAW TO POINT (Hercules GRAFIX)
+INT 10 - VIDEO - Hercules GRAFIX - "DLINE" - DRAW TO POINT
 	AH = 49h
 	DI = x (0-719)
 	BP = y (0-347)
@@ -4375,7 +4403,7 @@ Note:	function 48h or 49h specify first point, 44h operation and 43h page to
 	  use
 SeeAlso: AH=43h,AH=44h,AH=48h,AH=4Ch,AH=4Dh
 --------V-104A-------------------------------
-INT 10 - VIDEO - BLOCK FILL (Hercules GRAFIX)
+INT 10 - VIDEO - Hercules GRAFIX - "BLKFIL" - BLOCK FILL
 	AH = 4Ah
 	DI = x coordinate of lower left corner
 	BP = y coordinate of lower left corner
@@ -4385,14 +4413,16 @@ Return: nothing
 Desc:	draw a solid rectangle of the specified size at the given location
 SeeAlso: AH=4Eh
 --------V-104B-------------------------------
-INT 10 - VIDEO - DISPLAY CHARACTER (Hercules GRAFIX)
+INT 10 - VIDEO - Hercules GRAFIX - "TEXT" - DISPLAY CHARACTER
 	AH = 4Bh
 	AL = character to display
 	DI = x (0-719)
 	BP = y (0-347)
 Return: nothing
-Note:	unlike the other BIOS character functions character position is
+Notes:	unlike the other BIOS character functions character position is
 	  specified in pixels rather than rows and columns
+	the character is writting using the drawing function last specified by
+	  AH=44h
 SeeAlso: AH=09h,AH=0Ah
 --------P-104B-------------------------------
 INT 10 - FRIEZE - API
@@ -4492,7 +4522,7 @@ Offset	Size	Description	(Table 0066)
  0Eh	WORD	reserved (FFFFh)
 Note:	any field which should remain unchanged may be filled with FFFFh
 --------V-104C-------------------------------
-INT 10 - VIDEO - DRAW ARC (Hercules GRAFIX)
+INT 10 - VIDEO - Hercules GRAFIX - "ARC" - DRAW ARC
 	AH = 4Ch
 	AL = quadrant (1 = upper right, 2 = upper left, etc)
 	DI = x coordinate of center
@@ -4501,7 +4531,7 @@ INT 10 - VIDEO - DRAW ARC (Hercules GRAFIX)
 Return: nothing
 SeeAlso: AH=49h,AH=4Dh
 --------V-104D-------------------------------
-INT 10 - VIDEO - DRAW CIRCLE (Hercules GRAFIX)
+INT 10 - VIDEO - Hercules GRAFIX - "CIRC" - DRAW CIRCLE
 	AH = 4Dh
 	DI = x of center
 	BP = y of center
@@ -4509,7 +4539,7 @@ INT 10 - VIDEO - DRAW CIRCLE (Hercules GRAFIX)
 Return: nothing
 SeeAlso: AH=49h,AH=4Ch
 --------V-104E-------------------------------
-INT 10 - VIDEO - FILL AREA (Hercules GRAFIX)
+INT 10 - VIDEO - Hercules GRAFIX - "FILL" - FILL AREA
 	AH = 4Eh
 	DI = x coordinate of an interior point
 	BP = y coordinate of an interior point
@@ -4882,7 +4912,7 @@ Values for VESA video mode:
 Note:	the special mode 81FFh preserves the contents of the video memory and
 	  gives access to all of the memory; VESA recommends that the special
 	  mode be a packed-pixel mode
-SeeAlso: #0009,#0010,#0082,#0116
+SeeAlso: #0009,#0010,#0082,#0123
 Index:	video modes;VESA
 
 (Table 0082)
@@ -4903,7 +4933,7 @@ Values for S3 OEM video mode:
  212h	640x480x16M (Diamond Stealth 24)
  301h	640x480x32K
 Note:	these modes are only available on video cards using S3's VESA driver
-SeeAlso: #0081,#0116,#0649 at INT 1A/AX=B102h
+SeeAlso: #0081,#0123,#0656 at INT 1A/AX=B102h
 Index:	video modes;S3
 --------V-104F03-----------------------------
 INT 10 - VESA SuperVGA BIOS - GET CURRENT VIDEO MODE
@@ -4953,6 +4983,8 @@ Return: AL = 4Fh if function supported
 	AH = status
 	    00h successful
 	    01h failed
+BUG:	Phoenix S3 Trio64V+ v1.02-02 reportedly returns garbage in DX for
+	  subfunction 01h
 SeeAlso: AX=4F01h,AX=4F06h,AX=4F07h,AX=7000h/BX=0004h
 --------V-104F06-----------------------------
 INT 10 - VESA SuperVGA BIOS v1.1+ - GET/SET LOGICAL SCAN LINE LENGTH (PIXELS)
@@ -5577,8 +5609,9 @@ SeeAlso: AX=4F15h/BL=01h,AX=4F15h/BL=02h
 INT 10 - VESA VBE/DC (Display Data Channel) - READ EDID
 	AX = 4F15h
 	BL = 01h
+	CX = 0000h
+	DX = 0000h
 	ES:DI -> 128-byte buffer for EDID record (see #0103)
-	???
 Return: AL = 4Fh if function supported
 	    AH = status
 		00h successful
@@ -5586,25 +5619,784 @@ Return: AL = 4Fh if function supported
 		01h failed
 SeeAlso: AX=4F15h/BL=00h,AX=4F15h/BL=02h
 
-Format of VESA EDid record:
+Format of VESA EDID record:
 Offset	Size	Description	(Table 0103)
- 00h  8 BYTEs	padding (all FFh)
- 08h	WORD	manufacturer ID
-		bits 6-2: first letter
+ 00h  8 BYTEs	padding (all FFh, or 00h FFh..FFh 00h)
+ 08h	WORD	manufacturer ID (see #0109)
+		bits 6-2: first letter (0=A, 1=B, etc.)
 		bits 11-7: second letter
 		bits 15-12: third letter
- 0Ah	WORD	ID code
+ 0Ah	WORD	EDID ID code -- identifies monitor model
  0Ch	DWORD	serial number or FFFFFFFFh
  10h	BYTE	week number of manufacture
  11h	BYTE	manufacture year - 1990
  12h	BYTE	EDID version
  13h	BYTE	EDID revision
- 14h	BYTE	video input
+ 14h	BYTE	video input type (see #0105)
  15h	BYTE	maximum horizontal size in cm
  16h	BYTE	maximum vertical size in cm
- 17h	BYTE	gamma factor
- 18h	BYTE	DPMS flags
-	???
+ 17h	BYTE	gamma factor (gamma = 1.0 + factor/100, so max = 3.55)
+ 18h	BYTE	DPMS flags (see #0104)
+ 19h	BYTE	chroma information: green X'/Y' and red X'/Y'
+ 1Ah	BYTE	chroma information: white X'/Y' and blue X'/Y'
+ 1Bh	BYTE	chroma information: red Y
+ 1Ch	BYTE	chroma information: red X
+ 1Dh	BYTE	chroma information: green Y
+ 1Eh	BYTE	chroma information: green X
+ 1Fh	BYTE	chroma information: blue Y
+ 20h	BYTE	chroma information: blue X
+ 21h	BYTE	chroma information: white Y
+ 22h	BYTE	chroma information: white X
+ 23h	BYTE	established timings 1 (see #0106)
+ 24h	BYTE	established timings 2 (see #0107)
+ 25h	BYTE	manufacturer's reserved timing or 00h for none
+		bit 7: 1152x870 @ 75 Hz (Mac II, Apple)
+ 26h  8 WORDs	standard timing identification
+		resolution (low byte) and vertical frequency (high byte) for
+		  each of eight modes (see #0108)
+		X resolution = (lowbyte + 31) * 8
+ 36h 18 BYTEs	detailed timing description #1 (see #3758)
+ 48h 18 BYTEs	detailed timing description #2
+ 5Ah 18 BYTEs	detailed timing description #3
+ 6Ch 18 BYTEs	detailed timing description #4
+ 7Eh	BYTE	unused???
+ 7Fh	BYTE	checksum
+		(radix-complement: 256-low byte of 16-bit sum of 00h-7Eh)
+
+Bitfields for DPMS EDID flags:
+Bit(s)	Description	(Table 0104)
+ 2-0	unused???
+ 3	display type
+	=0 non-RGB multicolor
+	=1 RGB color
+ 4	unused???
+ 5	Active Off supported
+ 6	Suspend supported
+ 7	Standby supported
+SeeAlso: #0103
+
+Bitfields for DPMS input signal type:
+Bit(s)	Description	(Table 0105)
+ 0	separate sync
+ 1	composite sync
+ 2	sync on green
+ 4-3	unused???
+ 6-5	voltage level
+	00 0.700V/0.300V (1.00 Vp-p)
+	01 0.714V/0.286V
+	10 0.100V/0.400V
+	11 reserved
+ 7	=1 digital signal, =0 analog
+SeeAlso: #0103
+
+Bitfields for DPMS established timings 1:
+Bit(s)	Description	(Table 0106)
+ 0	720x400 @ 70 Hz (VGA 640x400, IBM)
+ 1	720x400 @ 88 Hz (XGA2)
+ 2	640x480 @ 60 Hz (VGA)
+ 3	640x480 @ 67 Hz (Mac II, Apple)
+ 4	640x480 @ 72 Hz (VESA)
+ 5	640x480 @ 75 Hz (VESA)
+ 6	800x600 @ 56 Hz (VESA)
+ 7	800x600 @ 60 Hz (VESA)
+SeeAlso: #0103,#0107
+
+Bitfields for DPMS established timings 2:
+Bit(s)	Description	(Table 0107)
+ 0	800x600 @ 72 Hz (VESA)
+ 1	800x600 @ 75 Hz (VESA)
+ 2	832x624 @ 75 Hz (Mac II)
+ 3	1024x768 @ 87 Hz interlaced (8514A)
+ 4	1024x768 @ 60 Hz (VESA)
+ 5	1024x768 @ 70 Hz (VESA)
+ 6	1024x768 @ 75 Hz (VESA)
+ 7	1280x1024 @ 75 Hz (VESA)
+SeeAlso: #0103,#0106
+
+Bitfields for DPMS standard timing information:
+Bit(s)	Description	(Table 0108)
+ 5-0	vertical refresh frequency - 60 (Hz)
+ 7-6	aspect ratio (Y resolution = X resolution * aspect ratio)
+	00 ???
+	01 0.75
+	10 0.8
+	11 0.5625
+Note:	if both bytes of the timing are 00h or 01h, then the Standard Timing
+	  is "None"
+SeeAlso: #0103
+
+Format of Detailed Timing Description:
+Offset	Size	Description	(Table 3758)
+ 00h	BYTE	horizontal frequency in kHz
+ 01h	BYTE	vertical frequency in Hz
+ 02h	BYTE	horizontal active time (pixels) and X resolution
+ 03h	BYTE	horizontal blanking time (pixels)
+ 04h	BYTE	horizontal active time 2 / horizontal blanking time 2
+ 05h	BYTE	vertical active time (lines) and Y resolution
+ 06h	BYTE	vertical blanking time (lines)
+ 07h	BYTE	vertical active time 2 / vertical blanking time 2
+ 08h	BYTE	horizontal sync offset (pixels)
+ 09h	BYTE	horizontal sync pulsewidth (pixels)
+ 0Ah	BYTE	vertical sync offset / vertical sync pulsewidth
+ 0Bh	BYTE	vertical/horizontal sync offset 2 / vert/hor. sync pulsewidth 2
+ 0Ch	BYTE	horizontal image size (mm)
+ 0Dh	BYTE	vertical image size (mm)
+ 0Eh	BYTE	horizontal image size 2 / vertical image size 2
+ 0Fh	BYTE	horizontal border (pixels)
+ 10h	BYTE	vertical border (lines)
+ 11h	BYTE	type of display (!!!)
+SeeAlso: #0103
+
+(Table 0109)
+Values for manufacturer ID:
+ "AOC"	AOC International (USA) Ltd. (see #3726)
+ "API"	Acer (see #3727)
+ "AST"	AST Research (see #0110)
+ "CPL"	ALFA (see #3728)
+ "CPQ"	COMPAQ (see #3729)
+ "CTX"	CTX - Chuntex Electronic (see #3730)
+ "DEL"	Dell Computer Corp. (see #3731)
+ "DWE"	Daewoo (see #3732)
+ "ECS"	ELITEGROUP Computer Systems (see #3733)
+ "EIZ"	EIZO (see #3734)
+ "GSM"	LG Electronics Inc. (see #3742)
+ "HEI"	Hyundai Electronics Industries Co., Ltd. (see #3735)
+ "HTC"	Hitachi Ltd. (see #3736)
+ "HWP"	Hewlett Packard (see #3738)
+ "IBM"	IBM PC Company (see #3739)
+ "ICL"	Fujitsu ICL  (see #3740)
+ "IVM"	Idek Iiyama North America, Inc. (see #3741)
+ "MAG"	MAG Technology Co., Ltd. (see #3743)
+ "MEI"	Panasonic Comm. & Systems Co. (see #3752)
+ "MEL"	Mitsubishi Electronics (see #3744)
+ "MIR"	miro Computer Products AG (see #3745)
+ "NAN"	NANAO (see #3746)
+ "NEC"	NEC Technologies, Inc. (see #3747)
+ "NOK"	Nokia (see #3748)
+ "OQI"	OPTIQUEST (see #3749)
+ "PGS"	Princeton Graphic Systems (see #3750)
+ "PHL"	Philips Consumer Electronics Co. (see #3751)
+ "SAM"	Samsung (see #3753)
+ "SDI"	Samtron (see #3754)
+ "TAT"	Tatung Co. of America, Inc. (see #3755)
+ "TRL"	Royal Information Company (see #3756)
+ "VSC"	ViewSonic Corporation (see #3757)
+SeeAlso: #0103
+
+(Table 3726)
+Values for AOC monitor EDID:
+ D350h	AOC SPECTRUM 4V
+ D350h	AOC SPECTRUM 4VA
+ D350h	AOC SPECTRUM 4Vlr
+ D350h	AOC SPECTRUM 4VlrA
+SeeAlso: #0109,#3727
+
+(Table 3727)
+Values for Acer monitor EDID:
+ 0037h	AcerView 55
+ 440Bh	AcerView 11D
+ 4421h	AcerView 33D
+ 4522h	AcerView 7134e
+ 4536h	AcerView 7154e
+ 4538h	AcerView 7156e
+ 454Ch	AcerView 7176ie
+ 454Eh	AcerView 7178ie
+ 4938h	AcerView 7156i
+ 494Ch	AcerView 76i
+ 494Eh	AcerView 78i
+ 4962h	AcerView 98i
+ 4C21h	AcerView 33DL
+ 4C22h	AcerView 34TL
+ 4C37h	AcerView 55L
+ 4C38h	AcerView 56L
+ 4E4Ch	AcerView 76N
+ 5321h	AcerView 7133s
+ 5322h	AcerView 7134s
+ 5336h	AcerView 7154s
+ 5338h	AcerView 7156s
+ 5338h	AcerView 7156is
+ 534Ch	AcerView 7176is
+ 5422h	AcerView 34T
+SeeAlso: #0109,#3726,#0110
+
+(Table 0110)
+Values for AST monitor EDID:
+ 8001h	ASTVision 4V
+ 8002h	ASTVision 4I
+ 8003h	ASTVision 4N
+ 8004h	ASTVision 4L
+ 8005h	ASTVision 5L
+ 8006h	ASTVision 7L
+ 8007h	ASTVision 7H
+ 8008h	ASTVision 20H
+ 8009h	AST Sabre
+ 800Ah	ASTVision 5V
+SeeAlso: #0109,#0103,#3727,#3728
+
+(Table 3728)
+Values for ALFA monitor EDID:
+ 096Bh	ALFA TH-450
+SeeAlso: #0109,#0110,#3729
+
+(Table 3729)
+Values for Compaq monitor EDID:
+ 0011h	COMPAQ 1024
+ 0012h	COMPAQ 1024
+ 0013h	COMPAQ 1024
+ 0014h	COMPAQ 1024
+ 0015h	COMPAQ 1024
+ 0016h	COMPAQ 1024
+ 0017h	COMPAQ PRB
+ 0018h	COMPAQ PRB
+ 0019h	COMPAQ PRB
+ 001Ah	COMPAQ PRB
+ 0020h	COMPAQ PRB
+ 0021h	COMPAQ PRB
+ 0022h	COMPAQ 151FS
+ 0023h	COMPAQ 151FS
+ 0024h	COMPAQ 151FS
+ 0025h	COMPAQ 151FS
+ 0026h	COMPAQ 151FS
+ 0027h	COMPAQ 151FS
+ 0028h	COMPAQ 151FS
+ 0029h	COMPAQ PRB
+ 002Ah	COMPAQ PRB
+ 002Bh	COMPAQ PRB
+ 002Ch	COMPAQ PRB
+ 002Dh	COMPAQ 171FS
+ 002Eh	COMPAQ 171FS
+ 002Fh	COMPAQ 171FS
+ 0030h	COMPAQ 171FS
+ 0031h	COMPAQ 171FS
+ 0032h	COMPAQ 171FS
+ 0033h	COMPAQ 171FS
+ 0040h	COMPAQ QVision 200
+ 0041h	COMPAQ QVision 200
+ 0042h	COMPAQ QVision 200
+ 0043h	COMPAQ QVision 200
+ 0044h	COMPAQ QVision 200
+ 0045h	COMPAQ QVision 200
+ 0046h	COMPAQ QVision 200
+ 0047h	COMPAQ QVision 200
+ 0048h	COMPAQ QVision 200
+ 0049h	COMPAQ QVision 200
+ 0100h	COMPAQ 1024
+ 0146h	COMPAQ 1024
+ 0147h	COMPAQ 1024
+ 0346h	COMPAQ 151FS
+ 0347h	COMPAQ 151FS
+ 0348h	COMPAQ 151FS
+ 0349h	COMPAQ 151FS
+ 034Ah	COMPAQ 151FS
+ 034Bh	COMPAQ 151FS
+ 0546h	COMPAQ 171FS
+ 0547h	COMPAQ 171FS
+ 0548h	COMPAQ 171FS
+ 0549h	COMPAQ 171FS
+ 0746h	COMPAQ PRB
+ 0747h	COMPAQ PRB
+ 0846h	COMPAQ PRA
+ 0847h	COMPAQ PRA
+ 0848h	COMPAQ PRA
+ 0849h	COMPAQ PRA
+ 084Ah	COMPAQ PRA
+ 084Bh	COMPAQ PRA
+ 084Ch	COMPAQ PRA
+ 084Dh	COMPAQ PRA
+ 0946h	COMPAQ PRB
+ 0947h	COMPAQ PRB
+ 0948h	COMPAQ PRB
+ 0949h	COMPAQ PRB
+ 0A46h	COMPAQ PRA
+ 0A47h	COMPAQ PRA
+ 0A48h	COMPAQ PRA
+ 0A49h	COMPAQ PRA
+ 0A4Ah	COMPAQ PRA
+ 0A4Bh	COMPAQ PRA
+ 0A4Ch	COMPAQ PRA
+ 0A4Dh	COMPAQ PRA
+ 0D46h	COMPAQ 140
+ 0D47h	COMPAQ 140
+ 0D48h	COMPAQ 140
+ 0D49h	COMPAQ 140
+ 0D4Ah	COMPAQ 140
+ 0D4Bh	COMPAQ 140
+ 0D4Ch	COMPAQ 140
+ 0D4Dh	COMPAQ 140
+ 0F46h	COMPAQ 150
+ 0F47h	COMPAQ 150
+ 0F48h	COMPAQ 150
+ 0F49h	COMPAQ 150
+ 0F4Ah	COMPAQ 150
+ 0F4Bh	COMPAQ 150
+ 0F4Ch	COMPAQ 150
+ 0F4Dh	COMPAQ 150
+SeeAlso: #0109,#3728,#3730
+
+(Table 3730)
+Values for "CTX" monitor EDID:
+ 1451h	CTX 1451
+ 1551h	CTX 1551
+ 1562h	CTX 1562
+ 1565h	CTX 1565
+ 1765h	CTX 1765
+ 1785h	CTX 1785
+ 2085h	CTX 2085
+ 2185h	CTX 2185
+SeeAlso: #0109,#3729,#3731
+
+(Table 3731)
+Values for Dell monitor EDID:
+ 139Ah	Dell Ultrascan 14XE
+ 139Bh	Dell Ultrascan 14XE
+ 139Ch	Dell Ultrascan 14XE
+ 139Dh	Dell Ultrascan 14XE
+ 2210h	Dell Ultrascan V17X
+ 2211h	Dell Ultrascan V17X
+ 2212h	Dell Ultrascan V17X
+ 2213h	Dell Ultrascan V17X
+ 2214h	Dell Ultrascan 21TE
+ 2215h	Dell Ultrascan 21TE
+ 2216h	Dell Ultrascan 21TE
+ 2217h	Dell Ultrascan 21TE
+ 3024h	Dell VS17X
+ 3025h	Dell VS17X
+ 3026h	Dell VS17X
+ 3027h	Dell VS17X
+ 4273h	Dell VS15X
+SeeAlso: #0109,#3730,#3732
+
+(Table 3732)
+Values for Daewoo monitor EDID:
+ 1423h	Daewoo CMC-1423B1
+ 1427h	Daewoo CMC-1427X1
+ 1502h	Daewoo CMC-1502B1
+ 1505h	Daewoo CMC-1505X
+ 1507h	Daewoo CMC-1507X1
+ 1703h	Daewoo CMC-1703B
+ 7044h	Daewoo CMC-1704C
+SeeAlso: #0109,#3731,#3733
+
+(Table 3733)
+Values for ELITEGROUP Computer Systems monitor EDID:
+ 0001h	ECS VERTOS 1401
+ 0002h	ECS VERTOS 1501
+ 0003h	ECS VERTOS 1502
+ 0004h	ECS VERTOS 1503
+ 0005h	ECS VERTOS 1700
+ 0006h	ECS VERTOS 1701
+ 0007h	ECS VERTOS 1700
+ 0008h	ECS VERTOS 2101
+ 0009h	ECS VERTOS 2102
+SeeAlso: #0109,#3732,#3734
+
+(Table 3734)
+Values for EIZO monitor EDID:
+ 0200h	EIZO FlexScan F351
+ 0201h	EIZO FlexScan F553
+ 0202h	EIZO FlexScan F563
+ 0203h	EIZO FlexScan F764
+ 0204h	EIZO FlexScan F784
+ 0206h	EIZO FlexScan 6600
+ 0300h	EIZO FlexScan 6500
+ 0302h	EIZO 9060S
+ 0303h	EIZO 9065S
+ 0305h	EIZO FlexScan T563
+ 0306h	EIZO 9070S
+ 0307h	EIZO 9080i
+ 0308h	EIZO 9400i
+ 0309h	EIZO 9500
+ 030Ah	EIZO FlexScan F340iW
+ 030Ch	EIZO FlexScan F552
+ 030Dh	EIZO FlexScan F560iW
+ 030Fh	EIZO FlexScan F760iW
+ 0310h	EIZO FlexScan F780iW
+ 0311h	EIZO FlexScan T560i
+ 0312h	EIZO FlexScan T660i
+ 0313h	EIZO FlexScan T562
+ 0314h	EIZO FlexScan T662
+ 038Ch	EIZO FlexScan F550iW
+SeeAlso: #0109,#3733,#3735
+
+(Table 3735)
+Values for Hyundai monitor EDID:
+ 5864h	Hyundai DeluxScan 15 Pro
+ B81Eh	Hyundai DeluxScan 17
+SeeAlso: #0109,#3734,#3736
+
+(Table 3736)
+Values for Hitachi monitor EDID:
+ 1717h	Hitachi Accuvue GX17L
+ 1727h	Hitachi HM1764
+ 1827h	Hitachi HM1782
+ 2147h	Hitachi HM4721
+ 2149h	Hitachi HM4921
+ 4020h	Hitachi HM4020
+ 4021h	Hitachi HM4021
+ 4711h	Hitachi Accuvue UX4721
+ 4810h	Hitachi Accuvue GX20
+ 4811h	Hitachi Accuvue GX21
+ 4820h	Hitachi HM4820
+ 4821h	Hitachi HM4821
+ 4830h	Hitachi Accuvue GX20H
+ 4911h	Hitachi Accuvue UX4921
+ 6421h	Hitachi HM6421
+ 6811h	Hitachi Accuvue UX6821
+ 6821h	Hitachi HM6821
+ AB6Fh	CM-1711M
+ ABC2h	CM-2112M
+ ABC7h	CM-2111M
+ ABCCh	CM-2110M
+SeeAlso: #0109,#3735,#3738
+
+(Table 3738)
+Values for Hewlett-Packard monitor EDID:
+ 0AF0h	HP D2800A Ultra VGA 1600 21"
+ 0AF6h	HP D2806A Ergo Ultra VGA 15"
+ 0AFFh	HP D2815A 1024 Low Emission 14"
+ 0F11h	HP D3857A Multi Media 15"
+ 0F12h	HP D3858A Multi Media 14"
+SeeAlso: #0109,#3736,#3739
+
+(Table 3739)
+Values for IBM monitor EDID:
+ 198Eh	IBM G41
+ 198Fh	IBM G50
+ 1990h	IBM G70
+ 1991h	IBM G200
+ 1999h	IBM P50
+ 199Ah	IBM P70
+ 199Bh	IBM P200
+ 2112h	IBM 2112
+ 2113h	IBM 2113
+ 2114h	IBM 2114
+ 2115h	IBM 2115
+ 2117h	IBM 2117
+ 2215h	IBM 2215
+ 2238h	IBM 2238
+ 2248h	IBM 2248
+ 2264h	IBM 2264
+ 2535h	IBM 9525-0X1
+ 6312h	IBM 6312
+ 6314h	IBM 6314
+ 6315h	IBM 6315
+ 6317h	IBM 6317
+ 6319h	IBM 6319
+ 6321h	IBM 6321
+ 6322h	IBM 6322
+ 6324h	IBM 6324
+ 6325h	IBM 6325
+ 6327h	IBM 6327
+ 8504h	IBM 8504
+ 8511h	IBM 8511
+ 8512h	IBM 8512
+ 8513h	IBM 8513
+ 8514h	IBM 8514
+ 8515h	IBM 8515
+ 8517h	IBM 8517
+ 8518h	IBM 8518
+ 9504h	IBM 9504
+ 9515h	IBM 9515
+ 9517h	IBM 9517
+ 9518h	IBM 9518
+ 9521h	IBM 9521
+ 9524h	IBM 9524
+ 9525h	IBM 9525
+ 9527h	IBM 9527
+SeeAlso: #0109,#3738,#3740
+
+(Table 3740)
+Values for Fujitsu ICL monitor EDID:
+ 0100h	Fujitsu ICL ErgoPro 211v
+ 0200h	Fujitsu ICL ErgoPro 171p
+ 0400h	Fujitsu ICL ErgoPro 171v
+ 0700h	Fujitsu ICL ErgoPro 151p
+ 0800h	Fujitsu ICL ErgoPro 151p AutoBrite
+ 0A00h	Fujitsu ICL ErgoPro 151v
+ 0B00h	Fujitsu ICL ErgoPro 141v
+ 0D00h	Fujitsu ICL ErgoPro 141p
+ 0F00h	Fujitsu ICL ErgoPro 152v
+ 1400h	Fujitsu ICL ErgoPro 142v
+SeeAlso: #0109,#3739,#3741
+
+(Table 3741)
+Values for Idek Iiyama North America monitor EDID:
+ 1700h	Iiyama Vision Master MF-8617
+SeeAlso: #0109,#3740,#3742
+
+(Table 3742)
+Values for LG Electronics monitor EDID:
+ 36B4h	LG StudioWorks 44m
+ 3AA0h	LG 1505s
+ 3AA2h	LG StudioWorks 56m
+ 426Ch	LG StudioWorks 78i
+ 4E21h	LG StudioWorks 20i
+SeeAlso: #0109,#3741,#3743
+
+(Table 3743)
+Values for MAG monitor EDID:
+ 5620h	DX1595
+ 5624h	DX15T
+ 5626h	DX1795
+SeeAlso: #0109,#3742,#3744
+
+(Table 3744)
+Values for Mitsubishi monitor EDID:
+ 0040h	Mitsubishi Diamond Pro 21TX (THN-9105)
+ 2040h	Mitsubishi Diamond Scan 20H (FR-8905)
+ 2040h	Mitsubishi Diamond Pro 20X (FR-8905B)
+ 6140h	Mitsubishi Diamond Scan 17HX (FFF8705)
+ 8040h	Mitsubishi Diamond Pro 15H (SD-57xxC)
+ 4040h	Mitsubishi Diamond Pro 17TX (TFG-8705)
+ 408Fh	Mitsubishi Diamond Scan 15VX (SD58xx)
+ 40C0h	Mitsubishi Diamond Pro 87TXM (TFM8705)
+SeeAlso: #0109,#3743,#3745
+
+(Table 3745)
+Values for Miro monitor EDID:
+ 0721h	PROOFSCREEN miroC21107
+ 6815h	miroD1568
+ 6817h	PROOFSCREEN miroC1768
+ 6917h	miroD1769
+ 8217h	PROOFSCREEN miroC1782
+ 8520h	PROOFSCREEN miroC2085 E
+ 8521h	PROOFSCREEN miroC2185
+ 9321h	PROOFSCREEN miroC2193
+SeeAlso: #0109,#3744,#3746
+
+(Table 3746)
+Values for Nanao monitor EDID:
+ 0000h	NANAO USA FlexScan T2-20
+ 0400h	NANAO USA F2-15
+ 0401h	NANAO USA F2-17
+ 0402h	NANAO USA F2-17EX
+ 0403h	NANAO USA F2-21
+ 0404h	NANAO USA FX2-21
+ 0405h	NANAO USA FlexScan T2-17TS
+ 0406h	NANAO FlexScan 6600
+ 0502h	NANAO 9060S
+ 0503h	NANAO 9065S
+ 0506h	NANAO 9070U
+ 0507h	NANAO 9080i
+ 0508h	NANAO 9400i
+ 0509h	NANAO 9500
+ 050Ah	NANAO FlexScan F340iW
+ 050Bh	NANAO FlexScan F550i
+ 050Ch	NANAO FlexScan F550iW
+ 050Dh	NANAO FlexScan F560iW
+ 050Eh	NANAO FlexScan F750i
+ 050Fh	NANAO FlexScan F760iW
+ 0510h	NANAO FlexScan F780iW
+ 0511h	NANAO FlexScan T560i
+ 0512h	NANAO FlexScan T660i
+ 0513h	NANAO USA FlexScan T2-17
+ 0514h	NANAO USA FlexScan T2-20
+ 0580h	NANAO USA FlexScan 6300
+ 0800h	NANAO FlexScan 33F
+ 0802h	NANAO FlexScan 88F
+ 0805h	NANAO FlexScan 54T
+ 0882h	NANAO FlexScan 52F
+ 0900h	NANAO FlexScan 6500
+ 0902h	NANAO 9060S
+ 0906h	NANAO 9070U
+ 0907h	NANAO 9080i
+ 090Ah	NANAO FlexScan F347
+ 090Bh	NANAO FlexScan F550i
+ 090Ch	NANAO FlexScan F557
+ 090Fh	NANAO FlexScan 77F
+ 0910h	NANAO FlexScan F780iJ
+ 0911h	NANAO FlexScan T560iJ
+ 0912h	NANAO FlexScan T660iJ
+ 0913h	NANAO FlexScan 56T
+ 0914h	NANAO FlexScan 68T
+ 098Ah	NANAO FlexScan F347II
+ 098Ch	NANAO FlexScan 55F
+ 098Fh	NANAO FlexScan 76F
+ 0991h	NANAO FlexScan T567
+ 0993h	NANAO FlexScan 53T
+SeeAlso: #0109,#3745,#3747
+
+(Table 3747)
+Values for NEC monitor EDID:
+ 37FAh	NEC MultiSync XV14
+ 37FBh	NEC MultiSync XV14
+ 3A66h	NEC MultiSync C400
+ 3C00h	NEC MultiSync XE15
+ 3C0Ah	NEC MultiSync XP15
+ 3C14h	NEC MultiSync XV15
+ 3C1Eh	NEC MultiSync XE15
+ 3D5Eh	NEC MultiSync XV15+
+ 3D68h	NEC MultiSync M500
+ 3E4Eh	NEC MultiSync C500
+ 43A8h	NEC MultiSync XE17
+ 43B2h	NEC MultiSync XE17
+ 43BCh	NEC MultiSync XV17
+ 4416h	NEC MultiSync XP17
+ 533Eh	NEC MultiSync XE21
+ 53B6h	NEC MultiSync XP21
+SeeAlso: #0109,#3746,#3748
+
+(Table 3748)
+Values for Nokia monitor EDID:
+ 008Dh	NOKIA 449M
+ 0098h	NOKIA 449X
+ 00A3h	NOKIA 447KC
+ 00A9h	NOKIA 447XI
+ 00ABh	NOKIA 447KA
+ 00ADh	NOKIA 447M
+ 00B7h	NOKIA 447W
+ 00B8h	NOKIA 447X
+ 00BBh	NOKIA 447XAV
+ 00BCh	NOKIA 447K
+ 00D2h	NOKIA 445R
+SeeAlso: #0109,#3747,#3749
+
+(Table 3749)
+Values for OptiQuest monitor EDID:
+ 3138h	OPTIQUEST VA656
+ 3141h	OPTIQUEST 14ES
+ 3232h	OPTIQUEST 1562A-2
+ 3233h	OPTIQUEST 1769DC
+ 3234h	OPTIQUEST 1000S-2
+ 3332h	OPTIQUEST V655
+ 3333h	OPTIQUEST V775
+ 3432h	OPTIQUEST V650
+ 3832h	OPTIQUEST V665
+ 4637h	OPTIQUEST 1769DC
+SeeAlso: #0109,#3748,#3750
+
+(Table 3750)
+Values for Princeton Graphics monitor EDID:
+ 003Bh	Princeton EO15
+ 003Dh	Princeton EO17
+SeeAlso: #0109,#3749,#3751
+
+(Table 3751)
+Values for Philips monitor EDID:
+ 0200h	Philips CM0200 (15C)
+ 0500h	Philips CM0500 (20C)
+ 0700h	Philips CM0700 (20T)
+ 0800h	Philips CM0800 (15B)
+ 1200h	Philips CM1200 (15A)
+ 1800h	Philips CM1800 (15A)
+ 2000h	Philips CM0200 (14B)
+ 2600h	Philips 17TCM26
+ 2800h	Philips 17BCM28
+ 3800h	Philips 17ACM38
+ 5600h	Philips CM5600 (20B)
+ 700Bh	Philips CM0700 (21B)
+ 8000h	Philips CM0800 (14A)
+SeeAlso: #0109,#3750,#3752
+
+(Table 3752)
+Values for Panasonic monitor EDID:
+ 1604h	Panasonic TX-D2151W-ES
+ 1610h	Panasonic TX-D2151NM
+SeeAlso: #0109,#3751,#3753
+
+(Table 3753)
+Values for Samsung monitor EDID:
+ 0000h	Samsung SyncMaster 3Ne
+ 0100h	Samsung SyncMaster 4S
+ 1530h	Samsung 15GLsi
+ 4610h	Samsung SyncMaster 21GLs
+ 4690h	Samsung SyncMaster 20GLsi
+ 4D50h	Samsung SyncMaster 15GLe
+ 4D51h	Samsung SyncMaster 15GLi
+ 4D52h	Samsung SyncMaster 15M
+ 4D70h	Samsung SyncMaster 17GLi
+ 4D71h	Samsung SyncMaster 17GLsi
+ 4D72h	Samsung SyncMaster 6Ne
+ 4D73h	Samsung 17GLi
+ 4D74h	Samsung 17GLsi
+ 5450h	Samsung SyncMaster 15Me
+ 6D20h	Samsung SyncMaster 15GLe
+SeeAlso: #0109,#3752,#3754
+
+(Table 3754)
+Values for Samtron monitor EDID:
+ 1428h	Samtron 428PT/PTL
+ 1528h	Samtron SC-528TXL
+ 1529h	Samtron SC-528UXL
+ 1530h	Samtron SC-528MXLJ
+ 4690h	Samtron SC-208DXL+
+ 4D70h	Samtron SC-728FXL
+ 4D71h	Samtron SC-726GXL
+ 5451h	Samtron SC-528MDL
+SeeAlso: #0109,#3753,#3755
+
+(Table 3755)
+Values for Tatung monitor EDID:
+ 1F65h	Intelliscan TM651x series 15"
+ 1F67h	Intelliscan TM671x series 17"
+ 2F44h	Intelliscan TM442x series 14"
+ 2F45h	Intelliscan TM452x series 15"
+ 434Dh	Tatung CM-17MC
+ 4855h	Tatung CM-14UH
+SeeAlso: #0109,#3754,#3756
+
+(Table 3756)
+Values for Royal Information Company monitor EDID:
+ 061Ch	TRL/RIC DL-1564
+ 0622h	TRL/RIC DH-1570
+SeeAlso: #0109,#3755,#3757
+
+(Table 3757)
+Values for ViewSonic monitor EDID:
+ 0C00h	ViewSonic 17GS
+ 0C0Fh	ViewSonic 17PS
+ 0C1Fh	ViewSonic 17GA
+ 1600h	ViewSonic 21PS-2
+ 2601h	ViewSonic 15GS
+ 2600h	ViewSonic 15GS-2
+ 3141h	ViewSonic 14ES
+ 3142h	ViewSonic 14ES
+ 3143h	ViewSonic 14ES
+ 3145h	ViewSonic 15GS-3
+ 3252h	ViewSonic 21PS-2
+ 3253h	ViewSonic 21PS-2
+ 334Bh	ViewSonic 17GS-2
+ 334Ch	ViewSonic 17GS-2
+ 3351h	ViewSonic PT810
+ 344Bh	ViewSonic 17PS-2
+ 344Ch	ViewSonic 17PS-2
+ 3451h	ViewSonic PT810-2
+ 354Dh	ViewSonic GT800
+ 354Eh	ViewSonic GT800
+ 3550h	ViewSonic GT800
+ 3644h	ViewSonic 15GA
+ 3646h	ViewSonic 15GA
+ 3648h	ViewSonic 15GA
+ 364Ah	ViewSonic PT770
+ 364Bh	ViewSonic PT770
+ 364Ch	ViewSonic PT770
+ 3744h	ViewSonic 15G-2
+ 3746h	ViewSonic 15G-2
+ 3748h	ViewSonic 15G-2
+ 374Bh	ViewSonic 17GA
+ 374Ch	ViewSonic 17GA
+ 3844h	ViewSonic 15ES-2
+ 3846h	ViewSonic 15ES-2
+ 3848h	ViewSonic 15ES-2
+ 384Ah	ViewSonic 17EA
+ 384Bh	ViewSonic 17EA
+ 384Ch	ViewSonic 17EA
+ 3944h	ViewSonic 15GS-2
+ 3946h	ViewSonic 15GS-2
+ 3948h	ViewSonic 15GS-2
+ 394Ah	ViewSonic 17GS-2
+ 394Bh	ViewSonic 17GS-2
+ 394Ch	ViewSonic 17GS-2
+ 424Ah	ViewSonic GT770
+ 424Bh	ViewSonic GT770
+ 424Ch	ViewSonic GT770
+ 434Ah	ViewSonic 17PS-2
+ 434Bh	ViewSonic 17PS-2
+ 434Ch	ViewSonic 17PS-2
+ 4439h	ViewSonic 15GS-2
+ 444Ah	ViewSonic 17GA-2
+ 4637h	ViewSonic 1769DC
+SeeAlso: #0109,#3756
 --------V-104F15BL02-------------------------
 INT 10 - VESA VBE/DC (Display Data Channel) - READ VDIF
 	AX = 4F15h
@@ -5649,14 +6441,14 @@ SeeAlso: AX=4F12h
 INT 10 - Avance Logic - GET ADAPTER INFORMATION
 	AX = 4F70h
 Return:	AX = 004Fh if successful
-	    BL = board information (see #0104)
+	    BL = board information (see #0111)
 	    BH = board type???
 		00h on ALG2101
 		FFh otherwise
 SeeAlso: AX=4F00h
 
 Bitfields for Avance Logic board information:
-Bit(s)	Description	(Table 0104)
+Bit(s)	Description	(Table 0111)
  0-1	video RAM size
 	00 256K
 	01 512K
@@ -5800,14 +6592,14 @@ INT 10 - VIDEO - ATI EGA/VGA Wonder Super Switch - INSTALLATION CHECK
 	AX = 5555h
 Return: AX = AAAAh    if installed
 	BX:CX -> ??? routine in SMS.COM resident portion
-	      -> data area (see #0105) in VCONFIG
+	      -> data area (see #0112) in VCONFIG
 Program: Super Switch (SMS.COM) is a video mode switch program supplied with
 	  ATI EGA Wonder. It also maps video mode 08h to 27h or 23h.
 SeeAlso: INT 10/AH=00h,INT 14/AX=AA01h,INT 2F/AX=6400h
 Index:	screen saver;ATI Wonder SMS.COM
 
 Format of ATI Super Switch data area:
-Offset	Size	Description	(Table 0105)
+Offset	Size	Description	(Table 0112)
  00h	DWORD	original INT 09 vector
  04h	DWORD	original INT 10 vector
  08h	DWORD	original INT 1C vector
@@ -5817,13 +6609,13 @@ Offset	Size	Description	(Table 0105)
 INT 10 - Chips & Technologies Extended BIOS - RETURN CHIP INFORMATION
 	AX = 5F00h
 Return: AL = 5Fh function supported
-	    BL = chip type (see #0106)
+	    BL = chip type (see #0113)
 	    BH = video memory size (00h 256KB, 01h 512KB, 02h 1MB)
-	    CX = miscellaneous information (see #0107)
+	    CX = miscellaneous information (see #0114)
 SeeAlso: AX=5F01h
 
 Bitfields for Chips&Technologies chip type:
-Bit(s)	Description	(Table 0106)
+Bit(s)	Description	(Table 0113)
  7-4	chip type
 	0000: 82c451
 	0001: 82c452
@@ -5838,7 +6630,7 @@ Bit(s)	Description	(Table 0106)
  3-0	revision number
 
 Bitfields for Chips&Technologies miscellaneous information:
-Bit(s)	Description	(Table 0107)
+Bit(s)	Description	(Table 0114)
  0	DAC size (0=6-bit, 1=8-bit)
  1	system type (0=PC/AT, 1=PS/2)
  2	extended text modes supported by BIOS
@@ -5868,14 +6660,14 @@ SeeAlso: AX=5F01h"RTVGA"
 --------V-105F01-----------------------------
 INT 10 - Chips & Technologies Extended BIOS - SET PREPROGRAMMED EMULATION
 	AX = 5F01h
-	BL = emulation type (see #0108)
+	BL = emulation type (see #0115)
 Return: AL = 5Fh if function supported
 	    AH = status
 		00h unsuccessful
 		01h successful
 SeeAlso: AX=5F00h,AX=5F02h,AH=FFh"Oak"
 
-(Table 0108)
+(Table 0115)
 Values for Chips&Technologies emulation type:
  00h,01h reserved
  02h	CGA
@@ -5920,7 +6712,7 @@ INT 10 - Chips & Technologies Extended BIOS - SET POWER-ON DISPLAY MODE
 	AX = 5F03h
 	BL = 00h
 	CL = display mode
-	CH = mode (see #0109)
+	CH = mode (see #0116)
 Return: AL = 5Fh if function supported
 	    AH = status
 		00h unsuccessful
@@ -5928,14 +6720,14 @@ Return: AL = 5Fh if function supported
 SeeAlso: AX=5F02h,AX=5F03h/BL=01h"Chips",AX=5F90h
 
 Bitfields for Chips&Technologies display mode:
-Bit(s)	Description	(Table 0109)
+Bit(s)	Description	(Table 0116)
  1-0	scanlines (00 = 200, 01 = 350, 10 = 400)
  7	persistence (0 reset on next boot, 1 until changed)
 --------V-105F03BL01-------------------------
 INT 10 - Chips & Technologies Extended BIOS - SET POWER-ON EMULATION MODE
 	AX = 5F03h
 	BL = 01h
-	CL = emulation mode (see #0109)
+	CL = emulation mode (see #0116)
 	CH = permanence
 	    bit 7 persistence (0 reset on next boot, 1 until changed)
 Return: AL = 5Fh if function supported
@@ -5951,13 +6743,13 @@ Return: DX = ???
 --------V-105F50-----------------------------
 INT 10 - Chips & Technologies Extended BIOS - GET LAPTOP DISPLAY STATUS
 	AX = 5F50h
-Return: DL = display status (see #0110)
+Return: DL = display status (see #0117)
 Note:	this call can be used on Toshiba laptops since ~1995 instead of
 	  INT 42/AX=7503h which is no longer supported with the F655xx chips
 SeeAlso: INT 42/AX=7503h
 
 Bitfields for display status:
-Bit(s)	Description	(Table 0110)
+Bit(s)	Description	(Table 0117)
  7-4	always 0 ???
  3	1: both displays active (bit 1 also set)
  2	1: normal (monochrome display only), 0: inverse or color
@@ -5976,13 +6768,13 @@ Return: nothing
 --------V-105F90-----------------------------
 INT 10 - Chips & Technologies Extended BIOS - GET SUPERVGA STATE BUFFER SIZE
 	AX = 5F90h
-	CX = state mask (see #0111)
+	CX = state mask (see #0118)
 Return: AL = 5Fh if function supported
 	    BX = number of 64-byte blocks required
 SeeAlso: AH=1Ch,AX=5F03h,AX=5F91h,AX=5F92h
 
 Bitfields for Chips&Technologies state mask:
-Bit(s)	Description	(Table 0111)
+Bit(s)	Description	(Table 0118)
  0	video hardware
  1	BIOS data state
  2	DAC state
@@ -5990,7 +6782,7 @@ Bit(s)	Description	(Table 0111)
 --------V-105F91-----------------------------
 INT 10 - Chips & Technologies Extended BIOS - SAVE SUPERVGA STATE
 	AX = 5F91h
-	CX = state mask (see #0111)
+	CX = state mask (see #0118)
 	ES:BX -> save buffer
 Return: AL = 5Fh if function supported
 	    buffer at ES:BX filled
@@ -5998,7 +6790,7 @@ SeeAlso: AH=1Ch,AX=5F03h,AX=5F90h,AX=5F92h
 --------V-105F92-----------------------------
 INT 10 - Chips & Technologies Extended BIOS - RESTORE SUPERVGA STATE
 	AX = 5F92h
-	CX = state mask (see #0111)
+	CX = state mask (see #0118)
 	ES:BX -> previously-filled save buffer
 Return: AL = 5Fh if function supported
 SeeAlso: AH=1Ch,AX=5F03h,AX=5F90h,AX=5F92h
@@ -6007,7 +6799,7 @@ INT 10 - HUNTER 16 - SET GRAPHICS FONT
 	AH = 60h
 	AL = new font
 	    bit 7    output characters in reverse video
-	    bits 0-6 font number (see #0125 at AH=77h)
+	    bits 0-6 font number (see #0132 at AH=77h)
 Return: BH = cell width
 	BL = cell height
 Desc:	select the font to use for output in mode 6; this can be used to mix
@@ -6060,7 +6852,7 @@ SeeAlso: AH=64h,AX=6500h
 --------V-1066------------------------------------
 INT 10 - HUNTER 16 - SPLIT DISPLAY
 	AH = 66h
-	AL = control bits (see #0112)
+	AL = control bits (see #0119)
 	BH = top row of lower section of LCD (0..7)
 	BL = top row of lower section of the virtual screen (0..24)
 Return: nothing
@@ -6070,7 +6862,7 @@ Note:	the Hunter 16 has a 240x64 LCD display which serves as a window into
 	  a 640x200 virtual screen
 
 Bitfields for HUNTER 16 control bits:
-Bit(s)	Description	(Table 0112)
+Bit(s)	Description	(Table 0119)
  0-1	01: no split, 10: allow split
  2	allow scrolling the upper part
  3	allow scrolling the lower part
@@ -6150,14 +6942,14 @@ SeeAlso: AX=6F01h,AX=6F02h,AX=6F03h,AX=6F04h,AX=6F05h
 --------V-106F01-----------------------------
 INT 10 - VIDEO - Video7 VGA,VEGA VGA,HP EX-BIOS - GET MONITOR INFO
 	AX = 6F01h
-Return: AL = monitor type code (HP,VEGA VGA only) (see #0113)
-	AH = status register information (see #0114)
+Return: AL = monitor type code (HP,VEGA VGA only) (see #0120)
+	AH = status register information (see #0121)
 	CL = current value of Extended Control register (HP Ext BIOS, and only
-		if AL=41h) (see #0115)
+		if AL=41h) (see #0122)
 Notes:	bits 0-3 are the same as the EGA/VGA status register bits 0-3
 	supported by original HP Vectra AT and by ES/QS/RS series Vectras
 
-(Table 0113)
+(Table 0120)
 Values for monitor type code (HP Extended BIOS):
  00h	non-HP card with ROM and possibly its own INT 10h driver
  41h	MultiMode video display adapter
@@ -6167,7 +6959,7 @@ Values for monitor type code (HP Extended BIOS):
  51h	reserved
 
 Bitfields for status register information:
-Bit(s)	Description	(Table 0114)
+Bit(s)	Description	(Table 0121)
  0	display enable
 	0 = display enabled
 	1 = vertical or horizontal retrace in progress
@@ -6183,7 +6975,7 @@ Note:	bits 0-3 are the same as the EGA/VGA status register bits 0-3
 --------V-106F02-----------------------------
 INT 10 - HP Vectra EX-BIOS - SET MONITOR INFO
 	AX = 6F02h
-	BL = new value for extended control register (see #0115)
+	BL = new value for extended control register (see #0122)
 Return: AX,BL destroyed
 Notes:	this function is only valid when an HP MultiMode Video Display Adapter
 	  is installed
@@ -6191,7 +6983,7 @@ Notes:	this function is only valid when an HP MultiMode Video Display Adapter
 SeeAlso: AX=6F01h,AX=6F03h
 
 Bitfields for HP Vectra extended control register:
-Bit(s)	Description	(Table 0115)
+Bit(s)	Description	(Table 0122)
  0	screen resolution (0 = 200 lines, 1 = 400 lines)
  1	underline enable (if set, 'blue' of fg color = underline)
  2	font (0 = Standard-8, 1 = HP-Roman-8)
@@ -6203,7 +6995,7 @@ Bit(s)	Description	(Table 0115)
 INT 10 - HP Vectra EX-BIOS - MODIFY MONITOR INFO
 	AX = 6F03h
 	BH = exclude mask (set bits are not modified)
-	BL = new values for bits indicated by BH (see #0115)
+	BL = new values for bits indicated by BH (see #0122)
 Return: AX destroyed
 Notes:	this function is only valid when an HP MultiMode Video Display Adapter
 	  is installed
@@ -6212,14 +7004,14 @@ SeeAlso: AX=6F01h,AX=6F02h
 --------V-106F04-----------------------------
 INT 10 - VIDEO - Video7 VGA,VEGA VGA,HP Vectra - GET MODE AND SCREEN RESOLUTION
 	AX = 6F04h
-Return: AL = current video mode (see #0116)
+Return: AL = current video mode (see #0123)
 	BX = horizontal columns (text) or pixels (graphics)
 	CX = vertical columns (text) or pixels (graphics)
 SeeAlso: AX=6F05h
 --------V-106F05-----------------------------
 INT 10 - VIDEO - Video7 VGA,VEGA EXTENDED EGA/VGA,HP Vectra - SET VIDEO MODE
 	AX = 6F05h
-	BL = mode (see #0116)
+	BL = mode (see #0123)
 Return: AX,BL destroyed
 Notes:	also supported by the HP Vectra Extended BIOS on the original
 	  HP Vectra AT and by ES/QS/RS series Vectras
@@ -6228,7 +7020,7 @@ Notes:	also supported by the HP Vectra Extended BIOS on the original
 	  from 08h to 0Fh.
 SeeAlso: AH=00h,AX=0070h,AX=007Eh,AX=6F04h
 
-(Table 0116)
+(Table 0123)
 Values for Video7/VEGA video mode:
      text/ text pixel	pixel	colors disply scrn  system
      grph resol	 box  resolution       pages  addr
@@ -6307,7 +7099,7 @@ SeeAlso: AH=71h
 --------V-1070------------------------------------
 INT 10 - HUNTER 16 - DRAW ELLIPSE/CIRCLE
 	AH = 70h
-	DS:BX -> control block (see #0117)
+	DS:BX -> control block (see #0124)
 Return: nothing
 Desc:	Draws a circle or ellipse. Only valid in graphics modes.
 Note:	the Husky Hunter 16 is an 8088-based ruggedized laptop.	 Other family
@@ -6315,7 +7107,7 @@ Note:	the Husky Hunter 16 is an 8088-based ruggedized laptop.	 Other family
 SeeAlso: AH=71h"HUNTER"
 
 Format of HUNTER 16 control block:
-Offset	Size	Description	(Table 0117)
+Offset	Size	Description	(Table 0124)
  00h	WORD	center X co-ordinate
  02h	BYTE	center Y co-ordinate
  03h	WORD	radius in pixels
@@ -6327,15 +7119,15 @@ INT 10 - Everex Extended Video BIOS - RETURN EMULATION STATUS
 	AX = 7000h
 	BX = 0000h
 Return: AL = 70h if Trident-based Everex card
-	CL = monitor type (see #0118)
-	CH = feature bits (see #0119)
+	CL = monitor type (see #0125)
+	CH = feature bits (see #0126)
 	DX = video board info
-	    bits 4-15: board ID model (see #0120)
+	    bits 4-15: board ID model (see #0127)
 	    bits 0-3:  board ID revision
 	DI = BCD BIOS version number
 SeeAlso: AX=5F01h,AH=FFh"Oak"
 
-(Table 0118)
+(Table 0125)
 Values for Everex monitor type:
  00h	mono
  01h	CGA
@@ -6348,7 +7140,7 @@ Values for Everex monitor type:
  08h	super multifrequency
 
 Bitfields for Everex feature bits:
-Bit(s)	Description	(Table 0119)
+Bit(s)	Description	(Table 0126)
  7-6	memory size
 	00 = 256K
 	01 = 512K
@@ -6358,7 +7150,7 @@ Bit(s)	Description	(Table 0119)
  4	VGA protect enabled
  0	6845 emulation
 
-(Table 0120)
+(Table 0127)
 Values for board model for Trident-based Everex cards:
  0236h	Ultragraphics II
  0620h	Vision VGA
@@ -6377,14 +7169,14 @@ INT 10 - Everex Extended Video BIOS - GET SUPPORTED MODE INFO
 	AX = 7000h
 	BX = 0005h
 	CL = maximum number of modes to get info for
-	CH = mode type to get info for (see #0121)
+	CH = mode type to get info for (see #0128)
 	DL = monitor type to get info for
-	ES:DI -> buffer for mode info (see #0122)
+	ES:DI -> buffer for mode info (see #0129)
 Return: CL = total number of modes fitting criteria
 	CH = size of each info record
 SeeAlso: AX=7000h/BX=0000h,AX=7000h/BX=0004h
 
-(Table 0121)
+(Table 0128)
 Values for Everex mode type:
  00h	all modes
  01h	monochrome text modes
@@ -6395,10 +7187,10 @@ Values for Everex mode type:
  06h	256-color graphics modes
 
 Format of Everex mode information record:
-Offset	Size	Description	(Table 0122)
+Offset	Size	Description	(Table 0129)
  00h	BYTE	mode number (bit 7 set if extended mode)
- 01h	BYTE	mode type (see #0121)
- 02h	BYTE	info bits (see #0123)
+ 01h	BYTE	mode type (see #0128)
+ 02h	BYTE	info bits (see #0130)
  03h	BYTE	font height
  04h	BYTE	text columns on screen
  05h	BYTE	text rows on screen
@@ -6408,7 +7200,7 @@ Offset	Size	Description	(Table 0122)
 		     3-0 bits per pixel
 
 Bitfields for Everex info bits:
-Bit(s)	Description	(Table 0123)
+Bit(s)	Description	(Table 0130)
  7,6	reserved
  5	monochrome mode
  4	interlaced display
@@ -6424,13 +7216,13 @@ SeeAlso: AH=70h"TANDY"
 --------V-1071------------------------------------
 INT 10 - HUNTER 16 - DRAW LINE/BOX
 	AH = 71h
-	DS:BX -> control block (see #0124)
+	DS:BX -> control block (see #0131)
 Return: nothing
 Desc:	Draws a line or box. Only valid in graphics modes.
 SeeAlso: AH=70h"HUNTER"
 
 Format of HUNTER 16 control block:
-Offset	Size	Description	(Table 0124)
+Offset	Size	Description	(Table 0131)
  00h	WORD	left edge X co-ordinate
  02h	BYTE	lower edge Y co-ordinate
  03h	WORD	right edge X co-ordinate
@@ -6513,10 +7305,10 @@ SeeAlso: AH=74h,AH=75h
 --------V-1077------------------------------------
 INT 10 - HUNTER 16 - GET GRAPHICS FONT
 	AH = 77h
-Return: AL = font number (see #0125)
+Return: AL = font number (see #0132)
 SeeAlso: AH=60h"HUNTER",AH=73h"HUNTER"
 
-(Table 0125)
+(Table 0132)
 Values for HUNTER 16 graphics font number:
  00h	 7x7  in a  8x8	 cell
  01h	 5x7  in a  6x8	 cell
@@ -6543,7 +7335,7 @@ Return: AL <> 7Fh if not supported
 	AL = 7Fh if supported
 	    AH = status
 		00h successful
-		    ES:DI -> info structure (see #0126)
+		    ES:DI -> info structure (see #0133)
 		01h failed
 Program: the SOLLEX (Smos videO controLLer EXtensions) SuperVGA functions are
 	  an extension to the VESA SuperVGA BIOS Extensions (see AX=4F00h) by
@@ -6552,14 +7344,14 @@ Program: the SOLLEX (Smos videO controLLer EXtensions) SuperVGA functions are
 SeeAlso: AX=4F00h
 
 Format of SOLLEX SuperVGA info structure:
-Offset	Size	Description	(Table 0126)
+Offset	Size	Description	(Table 0133)
  00h	DWORD	pointer to VESA function dispatch table
  04h	DWORD	pointer to SOLLEX function dispatch table
  08h	DWORD	pointer to VESA SuperVGA info (see #0075 at AX=4F00h)
  0Ch	DWORD	pointer to mode info structure table, consisting of
-		  alternating ResInfo (see #0127) and VESA mode information
+		  alternating ResInfo (see #0134) and VESA mode information
 		  (see #0077 at AX=4F01h) blocks, terminated with an FFFFh word
- 10h	DWORD	pointer to font info structure table (see #0128)
+ 10h	DWORD	pointer to font info structure table (see #0135)
  14h	WORD	high resolution crystal frequency in Hz (0000h = not present)
  16h	DWORD	pointer to ASCIZ ID string
  1Ah	DWORD	pointer to timeout reset table
@@ -6588,25 +7380,25 @@ Note:	all DWORD pointers initially require segment fixups; if the segment
 	  may be assumed to be correct
 
 Format of SOLLEX SuperVGA ResInfo:
-Offset	Size	Description	(Table 0127)
+Offset	Size	Description	(Table 0134)
  00h	WORD	16-bit mode number
  02h	WORD	adapter type (00h VGA, 01h EGA, 02h CGA, 03h MDA)
- 04h	WORD	display info (see #0131)
+ 04h	WORD	display info (see #0138)
  06h	DWORD	pointer to video parameter table
  0Ah	BYTE	replacement entry in master Video Parameter
  0Bh	BYTE	mode requested for mode set by BIOS
  0Ch	DWORD	pointer to LoadReg table
- 10h	BYTE	index into table of clock values (see #0129)
-SeeAlso: #0126
+ 10h	BYTE	index into table of clock values (see #0136)
+SeeAlso: #0133
 
 Format of SOLLEX SuperVGA font info table [array] entry:
-Offset	Size	Description	(Table 0128)
+Offset	Size	Description	(Table 0135)
  00h	BYTE	required font height
  01h	BYTE	parameter to load text mode font
  02h	BYTE	parameter to load graphics mode font
-SeeAlso: #0126
+SeeAlso: #0133
 
-(Table 0129)
+(Table 0136)
 Values for SOLLEX SuperVGA clock value index:
  00h	25 MHz
  01h	28 MHz
@@ -6624,14 +7416,14 @@ Values for SOLLEX SuperVGA clock value index:
  0Dh	40 MHz
  0Eh	65 MHz
  0Fh	 1 MHz (for powerdown)
-SeeAlso: #0126
+SeeAlso: #0133
 --------V-107F00BX4000-----------------------
 INT 10 - Diamond Stealth 24 - GET S3 INFORMATION BLOCK
 	AX = 7F00h
 	BX = 4000h
 Return: AX = 007Fh if supported
 	    DX:BX -> DAC set mode routine
-SeeAlso: AX=7F00h/BX=4001h,AX=7F00h/BX=4002h,#0649 at INT 1A/AX=B102h
+SeeAlso: AX=7F00h/BX=4001h,AX=7F00h/BX=4002h,#0656 at INT 1A/AX=B102h
 --------V-107F00BX4001-----------------------
 INT 10 - Diamond Stealth 24 - GET LINEAR ADDRESS
 	AX = 7F00h
@@ -6650,7 +7442,7 @@ SeeAlso: AX=7F00h/BX=4000h,AX=7F00h/BX=4001h
 INT 10 - SOLLEX SuperVGA - ADAPTER CONTROL - SET ADAPTER
 	AX = 7F01h
 	BL = 00h
-	CX = adapter request (see #0130)
+	CX = adapter request (see #0137)
 Return: AL <> 7Fh if not supported
 	AL = 7Fh if supported
 	    AH = status
@@ -6660,7 +7452,7 @@ Note:	initializes video hardware to a particular standard
 SeeAlso: AX=7F00h"SOLLEX",AX=7F01h/BL=01h,AX=7F01h/BL=02h
 
 Bitfields for SOLLEX SuperVGA adapter request:
-Bit(s)	Description	(Table 0130)
+Bit(s)	Description	(Table 0137)
  1-0	adapter type (00 VGA, 01 EGA, 10 CGA, 11 MDA)
  2	reserved
  4-3	change displays (00 none, 01 analog 10 digital 11 panel)
@@ -6677,12 +7469,12 @@ Return: AL <> 7Fh if not supported
 	    AH = status
 		00h successful
 		01h failed
-	    BX = adapter type (see #0130)
-	    DX = display type (see #0131)
+	    BX = adapter type (see #0137)
+	    DX = display type (see #0138)
 SeeAlso: AX=7F00h"SOLLEX",AX=7F01h/BL=00h,AX=7F01h/BL=02h
 
 Bitfields for SOLLEX SuperVGA display type:
-Bit(s)	Description	(Table 0131)
+Bit(s)	Description	(Table 0138)
  15-9	reserved
  8	alternate display active
  7	Enhanced Color Display monitor active
@@ -6696,7 +7488,7 @@ Bit(s)	Description	(Table 0131)
 INT 10 - SOLLEX SuperVGA - ADAPTER CONTROL - DETERMINE ADAPTER SUPPORT
 	AX = 7F01h
 	BL = 02h
-	CX = adapter request (see #0130)
+	CX = adapter request (see #0137)
 Return: AL <> 7Fh if not supported
 	AL = 7Fh if supported
 	    AH = status
@@ -6707,7 +7499,7 @@ SeeAlso: AX=7F00h"SOLLEX",AX=7F01h/BL=00h
 INT 10 - SOLLEX SuperVGA - DISPLAY OUTPUT CONTROL - SET DISPLAY OUTPUT
 	AX = 7F02h
 	BL = 00h
-	CX = display output setting (see #0132)
+	CX = display output setting (see #0139)
 Return: AL <> 7Fh if not supported
 	AL = 7Fh if supported
 	    AH = status
@@ -6716,7 +7508,7 @@ Return: AL <> 7Fh if not supported
 SeeAlso: AX=7F00h"SOLLEX",AX=7F02h/BL=00h
 
 Bitfields for SOLLEX SuperVGA display output setting:
-Bit(s)	Description	(Table 0132)
+Bit(s)	Description	(Table 0139)
  0	CRTC control in 2,1 valid
  1	enable digital output
  2	enable analog output
@@ -6734,13 +7526,13 @@ Return: AL <> 7Fh if not supported
 	AL = 7Fh if supported
 	    AH = status
 		00h successful
-		    BX = display output setting (see #0132)
-		    CX = displays attached (see #0133)
+		    BX = display output setting (see #0139)
+		    CX = displays attached (see #0140)
 		01h failed
 SeeAlso: AX=7F00h"SOLLEX",AX=7F02h/BL=00h
 
 Bitfields for SOLLEX SuperVGA displays attached:
-Bit(s)	Description	(Table 0133)
+Bit(s)	Description	(Table 0140)
  0	PS/2 display on analog output
  1	multi-frequency monitor on analog output
  2	LCD panel attached
@@ -6848,7 +7640,7 @@ SeeAlso: AX=7F00h"SOLLEX",AX=7F04h/BL=02h
 --------V-107F05-----------------------------
 INT 10 - SOLLEX SuperVGA - LOAD REGISTER
 	AX = 7F05h
-	ES:DI -> register value table (see #0134)
+	ES:DI -> register value table (see #0141)
 Return: AL <> 7Fh if not supported
 	AL = 7Fh if supported
 	    AH = status
@@ -6857,7 +7649,7 @@ Return: AL <> 7Fh if not supported
 SeeAlso: AH=F1h,AH=F3h,AH=F5h
 
 Format of SOLLEX SuperVGA register value table:
-Offset	Size	Description	(Table 0134)
+Offset	Size	Description	(Table 0141)
  00h	WORD	base I/O register (FFFFh = end of list)
  02h 2N BYTEs	pairs of values to be written to the base I/O register as an
 		  index value and the following register as a data byte
@@ -6975,11 +7767,11 @@ SeeAlso: AH=91h
 --------N-1091-------------------------------
 INT 10 - Alloy MW386 - GET PHYSICAL WORKSTATION ADAPTER TYPE
 	AH = 91h
-Return: AL = video adapter type (see #0135)
+Return: AL = video adapter type (see #0142)
 Note:	types less than 80h do not imply that the current user is on the host
 SeeAlso: AH=90h
 
-(Table 0135)
+(Table 0142)
 Values for Alloy MW386 video adapter type:
  00h	monochrome
  01h	Hercules monochrome graphics
@@ -7310,16 +8102,16 @@ INT 10 - VIDEO - Compaq Extensions - GET ENVIRONMENT
 	BX = 0000h
 Return: BH = active monitor
 	    (00h = external, 01h = internal, 03h both, 04h neither)
-	BL = master mode (see #0136)
+	BL = master mode (see #0143)
 	CH = ASIC type and version
 	    00h (reserved, very early Compaq VGCs)
 	    31h if QVision VGA
-	CL = switchable VDU modes supported (see #0137)
-	DH = internal monitor type (see #0138)
-	DL = external monitor type (see #0138)
+	CL = switchable VDU modes supported (see #0144)
+	DH = internal monitor type (see #0145)
+	DL = external monitor type (see #0145)
 SeeAlso: AX=1A00h,AX=BF00h,AX=BF01h,AX=BF02h,AX=BF11h
 
-(Table 0136)
+(Table 0143)
 Values for Compaq video master mode:
  00h	switchable VDU not present
  04h	CGA
@@ -7330,7 +8122,7 @@ Values for Compaq video master mode:
  0Ah	TFT (active-matrix) VGA
 
 Bitfields for Compaq switchable VDU modes support:
-Bit(s)	Description	(Table 0137)
+Bit(s)	Description	(Table 0144)
  0	CGA supported
  1,2	reserved (1)
  3	MDA supported
@@ -7339,7 +8131,7 @@ Bit(s)	Description	(Table 0137)
  6	640x480x256 mode available
  7	8-bit DAC mode available
 
-(Table 0138)
+(Table 0145)
 Values for Compaq monitor type:
  00h	none
  01h	dual-mode monitor
@@ -7471,13 +8263,13 @@ INT 10 - VIDEO - Compaq Extensions - GET EXTENDED ENVIRONMENT
 Return: AL = BFh if supported
 	    CF clear
 	    ES:DI -> ASCII signature "COMPAQ"
-	    ES:SI -> advanced functionality table (see #0139)
+	    ES:SI -> advanced functionality table (see #0146)
 Note:	supported by at least the QVision board and the LTE Lite and ProSignia
 	  ROM BIOSes
 SeeAlso: AX=1A00h,AX=BF03h
 
 Bitfields for Compaq advanced video functionality:
-Bit(s)	Description	(Table 0139)
+Bit(s)	Description	(Table 0146)
  31	future graphics extensions (reserved, set to 0)
  30-16	reserved
  15-12	available video memory in 256K blocks, less one (0000 = 256K, etc.)
@@ -7493,16 +8285,16 @@ Bit(s)	Description	(Table 0139)
 INT 10 - VIDEO - Compaq Extensions - NEW ACTIVE MONITOR
 	AX = BF12h
 	BH reserved
-	BL = function mask (see #0140)
+	BL = function mask (see #0147)
 Return: CF clear
 Notes:	this function is a NOP if the VGA subsystem is inactive or the current
 	  Display Combination Code is 10h or higher
 	supported by at least the QVision board and the LTE Lite and ProSignia
 	  ROM BIOSes
-SeeAlso: AX=BF01h,AX=BF02h,#0650
+SeeAlso: AX=BF01h,AX=BF02h,#0657
 
 Bitfields for function mask:
-Bit(s)	Description	(Table 0140)
+Bit(s)	Description	(Table 0147)
  7	command mode
 	if set, bits 1 and 0 make the monitor active when set
 	if clear, bits 1 and 0 toggle the monitor's state when set
@@ -7520,7 +8312,7 @@ INT 10 - VIDEO - Compaq QVision - GAMMA CORRECTION
 Return: nothing
 Note:	these functions must be called after a video mode set, and are in
 	  effect only for the current video mode
-SeeAlso: #0650
+SeeAlso: #0657
 --------V-10BFA0BXADAD-----------------------
 INT 10 - VIDEO - Compaq ADAPT.COM - INSTALLATION CHECK
 	AX = BFA0h
@@ -7570,18 +8362,18 @@ SeeAlso: AX=C001h,AX=C002h,AX=C003h,AX=D000h"S3VBE"
 INT 10 - S3 SpeedUp v3.00+ - GET ACTIVE OPTIONS
 	AX = C001h
 Return: AX = FFFFh if function supported
-	    BX = currently active options (see #0141)
+	    BX = currently active options (see #0148)
 SeeAlso: AX=C000h,AX=C002h,AX=C003h
 
 Bitfields for S3SpeedUp options:
-Bit(s)	Description	(Table 0141)
+Bit(s)	Description	(Table 0148)
  0	speed up banked VESA modes
  1	speed up 320x200 VGA mode 13
-SeeAlso: #0147
+SeeAlso: #0154
 --------V-10C002-----------------------------
 INT 10 - S3 SpeedUp v3.00+ - SET ACTIVE OPTIONS
 	AX = C002h
-	BX = new value for active options (see #0141)
+	BX = new value for active options (see #0148)
 Return: AX = FFFFh if function supported
 SeeAlso: AX=C000h,AX=C001h,AX=C003h,AX=D003h"S3VBE"
 --------V-10C003-----------------------------
@@ -7743,25 +8535,25 @@ SeeAlso: AX=1000h,AX=1002h,AX=CD00h,AX=CD03h
 INT 10 - VIDEO - UltraVision - GET ULTRAVISION PALETTE (EGA,VGA)
 	AX = CD02h
 Return: CL = palette table number
-	DS:DX -> 17-byte palette register list (see #0142)
-	DS:SI -> current font names table (see #0143,#0144)
+	DS:DX -> 17-byte palette register list (see #0149)
+	DS:SI -> current font names table (see #0150,#0151)
 Note:	only the font names are valid on monochrome EGA systems
 SeeAlso: AX=1009h,AX=CD00h
 
 Format of UltraVision palette register list:
-Offset	Size	Description	(Table 0142)
+Offset	Size	Description	(Table 0149)
  00h 16 BYTEs	colors for palette registers 00h through 0Fh
  10h	BYTE	border color
 
 Format of UltraVision v2+ current font names table:
-Offset	Size	standard EGA	HiRes EGA	VGA	(Table 0143)
+Offset	Size	standard EGA	HiRes EGA	VGA	(Table 0150)
  00h  8 BYTEs	N/A		F19 font	F20 font
  08h  8 BYTEs	F14 font	F14 font	F14 font
  10h  8 BYTEs	N/A		F11 font	F10 font
  18h  8 BYTEs	F8 font		F8 font		F8 font
 
 Format of UltraVision v1.x current font names table:
-Offset	Size	HiRes EGA	(Table 0144)
+Offset	Size	HiRes EGA	(Table 0151)
  00h  8 BYTEs	F19/F14 font
  08h  8 BYTEs	F11/F8 font
 --------V-10CD03-----------------------------
@@ -7775,10 +8567,10 @@ SeeAlso: AX=CD01h
 --------V-10CD04-----------------------------
 INT 10 - VIDEO - UltraVision - GET UltraVision TEXT MODE (EGA,VGA)
 	AX = CD04h
-Return: AL = mode number (see #0145)
+Return: AL = mode number (see #0152)
 SeeAlso: AH=0Fh,AX=CC00h,AH=CDh
 
-(Table 0145)
+(Table 0152)
 Values for UltraVision video mode number:
  11h	80x25
  12h	80x43, 80x50
@@ -7820,7 +8612,7 @@ SeeAlso: AH=03h,AX=CD05h
 --------V-10CD07-----------------------------
 INT 10 - VIDEO - UltraVision v1.2+ - SET UNDERLINE STATUS (EGA,VGA)
 	AX = CD07h
-	CL = hardware underline status (see #0146)
+	CL = hardware underline status (see #0153)
 	BL = foreground color for normal text (FFh = current)
 	BH = foreground color for bright text (FFh = current)
 Return: CL = hardware underline status
@@ -7835,7 +8627,7 @@ Notes:	when underline or strikeout is enabled in color text modes, the
 	  strikeout without color remapping
 SeeAlso: AX=CD08h
 
-(Table 0146)
+(Table 0153)
 Values for hardware underline status:
  00h	off (color systems only)
  01h	underline below characters
@@ -7843,7 +8635,7 @@ Values for hardware underline status:
 --------V-10CD08-----------------------------
 INT 10 - VIDEO - UltraVision v1.2+ - GET UNDERLINE STATUS (EGA,VGA)
 	AX = CD08h
-Return: CL = hardware underline status (see #0146)
+Return: CL = hardware underline status (see #0153)
 	BL = foreground color for normal text
 	BH = foreground color for bright text
 Note:	only CL is valid on monochrome EGA systems
@@ -7864,7 +8656,7 @@ SeeAlso: AX=1100h,AX=1103h
 --------V-10CD-------------------------------
 INT 10 - VIDEO - UltraVision - SET ULTRAVISION TEXT MODE (EGA,VGA)
 	AH = CDh
-	AL = text mode number (see #0145)
+	AL = text mode number (see #0152)
 Return: AX = CDCDh if invalid mode
 SeeAlso: AX=CD04h
 --------A-10D0-------------------------------
@@ -7904,11 +8696,11 @@ SeeAlso: AX=D001h"S3VBE",AX=D002h"S3VBE",AX=D003h"S3VBE",AX=D005h"S3VBE"
 INT 10 - S3VBE/Core2.0 v3.00+ - GET ACTIVE OPTIONS
 	AX = D001h
 Return: AX = FFFFh if supported
-	    BX = currently active options (see #0147)
+	    BX = currently active options (see #0154)
 SeeAlso: AX=D000h"S3VBE",AX=D002h"S3VBE"
 
 Bitfields for S3VBE options:
-Bit(s)	Description	(Table 0147)
+Bit(s)	Description	(Table 0154)
  0	VESA VBE v2.0 extensions enabled
  1	linear frame buffer enabled
  2	low-resolution video mode support enabled
@@ -7917,11 +8709,11 @@ Bit(s)	Description	(Table 0147)
  12	report VBE version 1.2 (v3.10+)
  13	always fail AX=4F0Ah (v3.10+)
  14	don't copy video mode list (v3.12+)
-SeeAlso: #0141
+SeeAlso: #0148
 --------V-10D002-----------------------------
 INT 10 - S3VBE/Core2.0 v3.00+ - SET ACTIVE OPTIONS
 	AX = D002h
-	BX = new active options (see #0147)
+	BX = new active options (see #0154)
 Return: AX = FFFFh if supported
 SeeAlso: AX=D000h"S3VBE",AX=D001h"S3VBE"
 --------V-10D003-----------------------------
@@ -8024,13 +8816,13 @@ INT 10 - EGA Register Interface Library - READ ONE REGISTER
 	AH = F0h
 	BL = register number
 	BH = 00h
-	DX = group index (see #0148)
+	DX = group index (see #0155)
 Return: BL = data
 Note:	the RIL is provided by EGA.SYS, the Microsoft Mouse driver, the OS/2
 	  compatibility box, and others
 SeeAlso: AH=F1h,AH=F2h,INT 2F/AX=BC00h
 
-(Table 0148)
+(Table 0155)
 Values for group index:
  Pointer/data chips
  00h	CRT Controller (25 reg) 3B4h mono modes, 3D4h color modes
@@ -8045,7 +8837,7 @@ Values for group index:
 --------V-10F1-------------------------------
 INT 10 - EGA Register Interface Library - WRITE ONE REGISTER
 	AH = F1h
-	DX = group index (see #0148)
+	DX = group index (see #0155)
 	    if single register:
 		BL = value to write
 	    otherwise
@@ -8060,7 +8852,7 @@ INT 10 - EGA Register Interface Library - READ REGISTER RANGE
 	AH = F2h
 	CH = starting register number
 	CL = number of registers (>1)
-	DX = group index (00h,08h,10h,18h) (see #0148)
+	DX = group index (00h,08h,10h,18h) (see #0155)
 	ES:BX -> buffer, CL bytes
 Return: nothing
 Note:	the RIL is provided by EGA.SYS, the Microsoft Mouse driver, the OS/2
@@ -8071,7 +8863,7 @@ INT 10 - EGA Register Interface Library - WRITE REGISTER RANGE
 	AH = F3h
 	CH = starting register
 	CL = number of registers (>1)
-	DX = group index (00h,08h,10h,18h) (see #0148)
+	DX = group index (00h,08h,10h,18h) (see #0155)
 	ES:BX -> buffer, CL bytes
 Return: nothing
 Note:	the RIL is provided by EGA.SYS, the Microsoft Mouse driver, the OS/2
@@ -8081,14 +8873,14 @@ SeeAlso: AX=7F05h,AH=F1h,AH=F2h
 INT 10 - EGA Register Interface Library - READ REGISTER SET
 	AH = F4h
 	CX = number of registers to read (>1)
-	ES:BX -> table of register records (see #0149)
+	ES:BX -> table of register records (see #0156)
 Return: register values in table filled in
 Note:	the RIL is provided by EGA.SYS, the Microsoft Mouse driver, the OS/2
 	  compatibility box, and others
 SeeAlso: AH=F0h,AH=F2h,AH=F5h
 
 Format of EGA RIL entries in table of register records:
-Offset	Size	Description	(Table 0149)
+Offset	Size	Description	(Table 0156)
  00h	WORD	group index
 		Pointer/data chips
 		   00h CRTC (3B4h mono modes, 3D4h color modes)
@@ -8106,7 +8898,7 @@ Offset	Size	Description	(Table 0149)
 INT 10 - EGA Register Interface Library - WRITE REGISTER SET
 	AH = F5h
 	CX = number of registers to write (>1)
-	ES:BX -> table of records (see #0149)
+	ES:BX -> table of records (see #0156)
 Return: nothing
 Note:	the RIL is provided by EGA.SYS, the Microsoft Mouse driver, the OS/2
 	  compatibility box, and others
@@ -8193,12 +8985,12 @@ SeeAlso: AH=93h,AH=FEh
 --------E-10FF-------------------------------
 INT 10 - DJ GO32.EXE 80386+ DOS extender - VIDEO EXTENSIONS
 	AH = FFh
-	AL = video mode (see #0150)
+	AL = video mode (see #0157)
 Program: GO32.EXE is a DOS extender included as part of the 80386 port of the
 	  GNU C/C++ compiler by DJ Delorie and distributed as DJGPP
 SeeAlso: AH=00h,INT 21/AH=FFh"GO32"
 
-(Table 0150)
+(Table 0157)
 Values for GO32 video mode number:
  00h	80x25 text
  01h	default text
@@ -8248,14 +9040,14 @@ Note:	not all V86 monitors allow the AC flag to be set, such as Turbo
 SeeAlso: INT 12"CPU"
 --------B-11---------------------------------
 INT 11 - BIOS - GET EQUIPMENT LIST
-Return: (E)AX = BIOS equipment list word (see #0151,#2847 at INT 4B"Tandy")
+Return: (E)AX = BIOS equipment list word (see #0158,#2886 at INT 4B"Tandy")
 Note:	since older BIOSes do not know of the existence of EAX, the high word
 	  of EAX should be cleared before this call if any of the high bits
 	  will be tested
-SeeAlso: INT 4B"Tandy 2000"
+SeeAlso: INT 4B"Tandy 2000",MEM 0040h:0010h
 
 Bitfields for BIOS equipment list:
-Bit(s)	Description	(Table 0151)
+Bit(s)	Description	(Table 0158)
  0	floppy disk(s) installed (number specified by bits 7-6)
  1	80x87 coprocessor installed
  3-2	number of 16K banks of RAM on motherboard (PC only)
@@ -8288,12 +9080,12 @@ Bit(s)	Description	(Table 0151)
 	01 DMA channel 0 ???
 	10 reserved
 	11 DMA channel 3
-SeeAlso: INT 12"BIOS",#2847 at INT 4B"Tandy 2000"
+SeeAlso: INT 12"BIOS",#2886 at INT 4B"Tandy 2000"
 --------d-11----SI6A6A-----------------------
 INT 11 - Columbia Data Products Standard Device Level Protocol (SDLP) 1.6
 	SI = 6A6Ah
-	AH = command (see #0152)
-	AL = SCSI Addressing (see #0153)
+	AH = command (see #0159)
+	AL = SCSI Addressing (see #0160)
 Return: CF clear if successful
 	    DI = 6A6Ah if AH=01h on entry (maybe for all functions???)
 	    AH = ??? for command 01h
@@ -8301,7 +9093,7 @@ Return: CF clear if successful
 	    AL = error code
 SeeAlso: INT 21/AX=4402h"ASPI"
 
-(Table 0152)
+(Table 0159)
 Values for SDLP command:
  00h	SDLP initialization
  01h	SDLP System Identify
@@ -8330,7 +9122,7 @@ Values for SDLP command:
  FFh	execute SCSI command
 
 Bitfields for SDLP SCSI addressing:
-Bit(s)	Description	(Table 0153)
+Bit(s)	Description	(Table 0160)
  7-6	Host Adapter
  5-3	SCSI Target ID
  2-0	SCSI Target LUN (logical unit number)
@@ -8427,7 +9219,7 @@ Index:	screen saver;Blank-It
 INT 11 - Blank-It Screen Blanker - SET HOTKEY FOR MANUAL BLANKING
 	AX = 0225h
 	BX = 6909h
-	CL = key scan code (see #0154)
+	CL = key scan code (see #0161)
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
@@ -8436,7 +9228,7 @@ Program: Blank-It is a resident screen blanker by Rhode Island Soft Systems,
 SeeAlso: AX=0225h/BX=6900h
 Index:	screen saver;Blank-It|hotkeys;Blank-It
 
-(Table 0154)
+(Table 0161)
 Values for Blank-It hotkey scan code:
  00h	No hot key
  1Dh	Left CTRL
@@ -8553,7 +9345,7 @@ SeeAlso: INT 14/AH=04h"FOSSIL"
 INT 11 - WD7000 SDLP interface - EXECUTE GENERIC SCSI COMMAND
 	AH = FFh
 	SI = 6A6Ah
-	AL = SCSI Addressing (see #0155)
+	AL = SCSI Addressing (see #0162)
 	CX = bytes of data to be transmitted (max FFF0h)
 	DH = 00h
 	DL = length of SCSI Command Descriptor Block
@@ -8569,7 +9361,7 @@ Note:	because of busmaster operations with WD7000FASST avoid accessing
 SeeAlso: INT 21/AX=4402h"ASPI",INT 2F/AX=7F01h
 
 Bitfields for SDLP SCSI addressing:
-Bit(s)	Description	(Table 0155)
+Bit(s)	Description	(Table 0162)
  2-0	SCSI Target LUN (logical unit number)
  5-3	SCSI Target ID
  7	write flag, set for write operations, clear otherwise
@@ -8594,164 +9386,4 @@ INT 11 - BACK&FORTH (before v1.62) API
 		Return: AX = ???
 SeeAlso: INT 12/AX=FFFEh
 Index:	installation check;BACK&FORTH
---------B-12---------------------------------
-INT 12 - BIOS - GET MEMORY SIZE
-Return: AX = kilobytes of contiguous memory starting at absolute address 00000h
-Note:	this call returns the contents of the word at 0040h:0013h; in PC and
-	  XT, this value is set from the switches on the motherboard
-SeeAlso: INT 11"BIOS",INT 2F/AX=4A06h,INT 4C"Tandy 2000"
---------C-12---------------------------------
-INT 12 - CPU-generated (Pentium) - MACHINE CHECK EXCEPTION
-Notes:	Intel documents this interrupt as CPU model-dependent; for current
-	  Pentium processors, the reason for the machine check exception may
-	  be read from model-specific registers 00h and 01h (described, for
-	  example, in Christian Ludloff's 4P package)
-	this exception is enabled by bit 6 of CR4
-SeeAlso: INT 11"CPU",MSR 00000000h,MSR 00000001h
---------K-12----CX1806-----------------------
-INT 12 - KEYBUI v2.0+ - INSTALLATION CHECK
-	CX = 1806h
-Return: AX = kilobytes of contiguous memory starting at absolute address 00000h
-	CX = 1960h if installed
-Program: KEYBUI is a resident keyboard driver by Johan Zwiekhorst which allows
-	  accented characters and box drawing on standard QWERTY keyboards; it
-	  also provides break-to-DOS and screen blanking capabilities
-SeeAlso: INT 14/AX=AA01h
-Index:	screen saver;KEYBUI
---------d-12----CX1807-----------------------
-INT 12 - PARKER v2.0+ - INSTALLATION CHECK
-	CX = 1807h
-Return: AX = kilobytes of contiguous memory starting at absolute address 00000h
-	CX = 1961h if installed
-Program: PARKER is an optionally-resident hard disk parking program by Johan
-	  Zwiekhorst
---------G-1205D7BX05D7-----------------------
-INT 12 U - Borland C++ IDE - INSTALLATION CHECK
-	AX = 05D7h (1495d)
-	BX = 05D7h
-Note:	the BC++ IDE will call INT 11/AX=05D7h/BX=0088h if it is loaded
-SeeAlso: INT 11/AX=05D7h
---------v-124350BX4920-----------------------
-INT 12 C - CPI-standard virus - "FRIEND" CHECK
-	AX = 4350h
-	BX = 4920h
-	CX = AB46h
-	DX = 554Eh
-Return: if friendly (not to be infected)
-	    CX:DX -> ASCIZ identity code (changes yearly)
-SeeAlso: INT 13/AX=EC00h"VIRUS",INT 13/AX=5001h,INT 21/AX=0B56h
---------T-12FFFECXFFFE-----------------------
-INT 12 - Back&Forth v1.62+ - API
-	AX = FFFEh
-	CX = FFFEh
-	BX = function
-	    00h installation check
-		Return: AX = 0001h installed
-			     else  not loaded
-	    01h (reserved)
-	    02h build program ID list (shareware Back&Forth)
-		ES:DI -> buffer of at least 100 bytes, to be filled with words
-		Return: AX = number of programs defined
-			ES:DI buffer filled with AX words
-	    02h get memory statistics (Back&Forth Professional)
-		Return: AX = available swap memory, KBytes
-			BX = maximum task size, KBytes
-			DX = fixed overhead per task, excluding video/macro
-			      storage
-	    03h switch to specified task (task need not be open yet)
-		DX = two-letter program ID
-		Return: AX = status
-			    0000h if task undefined
-			    0001h task switch will occur when safe
-	    04h (reserved)
-	    05h (reserved)
-	    06h get version (documented only for Back&Forth Professional)
-		Return: AX = version * 100 (v1.71 = 00ABh)
-	    07h spawn program (Back&Forth Professional only???)
-		ES:DI -> BF_SPAWN record (see #0157)
-		Return: AX = status
-			    0000h if no task handles free
-			    0001h spawn will occur when safe
-	    08h get open tasks (documented only for Back&Forth Professional)
-		ES:DI -> task info buffer (see #0156,#0158)
-		Return: AX = number of open tasks (max 20)
-		Note:	the supplied buffer must be large enough to hold 21
-			  task entries
-	    09h (reserved)
-	    ---Back&Forth Professional---
-	    0Ah get active clipboard filename
-		Return: DX:AX -> ASCIZ clipboard filename
-	    0Bh get active task number
-		AX = active task number (00h-13h)
-		BX = number of tasks allocated
-		DX = maximum number of tasks
-	    0Ch (reserved)
-	    0Dh (reserved)
-	    0Eh (reserved)
-	    0Fh stuff string into keyboard buffer
-		ES:DI -> ASCIZ string to be stuffed
-		Return: nothing
-	    10h check if in graphics mode
-		Return: AX = state
-			    0000h color text mode
-			    0004h mono text mode
-			    FFFFh graphics mode
-	    11h get Back&Forth Professional user number
-		Return: AX = user number (0000h-00FFh)
-	    12h switch task by task number
-		DX = task number
-		Return: AX = status
-			    0000h attempted to switch to active task
-			    0001h task switch will occur when safe
-			    FFFFh invalid task number
-	    13h delete (kill) task
-		DX = task number
-		Return: AX = status
-			    0000h attempted to delete the active task
-			    0001h successfully deleted
-			    FFFFh invalid task number
-		Note:	the active task number will change if the deleted task
-			  was lower in the task list than the active task
-	    14h get next available task handle
-		Return:	AX = next available task handle
-			    FFFFh if task table is full
-Program: Back & Forth is a task switcher by Progressive Solutions, Inc.
-SeeAlso: INT 11/AX=FFFEh
-Index:	installation check;BACK&FORTH
-
-Format of Back&Forth task info buffer:
-Offset	Size	Description	(Table 0156)
- 00h 21 BYTEs	ASCIZ task name
- 15h	BYTE	hotkey shift state (as for INT 16/AH=02h)
- 16h	WORD	hotkey scan code (see also #0005)
- 18h	WORD	program ID
-Index:	hotkeys;Back&Forth
-SeeAlso: #0157,#0158
-
-Format of Back&Forth Professional BF_SPAWN record:
-Offset	Size	Description	(Table 0157)
- 00h 21 BYTEs	task description
- 15h	BYTE	flag: disable hotkeys
- 16h	WORD	environment size in bytes
- 18h	BYTE	hotkey shift flags
- 19h	WORD	hotkey scancode
- 1Bh	WORD	maximum number of EMS pages
- 1Dh	WORD	required memory in KBytes
- 1Fh  3 BYTEs	DESQview-style two-letter program ID
- 22h 13 BYTEs	base name of program to be run (no path or extension)
- 2Fh 66 BYTEs	directory from which to start program
- 71h 66 BYTEs	initial current directory for program
-SeeAlso: #0156,#0158
-
-Format of Back&Forth Professional BF_TASK record:
-Offset	Size	Description	(Table 0158)
- 00h	DWORD	Unix-style task start time (seconds since 1/1/1970)
- 04h 21 BYTEs	task description
- 19h	DWORD	elapsed time in task (seconds)
- 1Dh	WORD	task ID
- 1Fh	BYTE	task hotkey keyboard flags
- 20h	WORD	task hotkey scan code (see also #0005)
- 22h	DWORD	time task was suspended/exited
- 26h	WORD	task handle
-SeeAlso: #0156,#0157
 --------!---Section--------------------------

@@ -2,7 +2,7 @@
 /*	EEL code file for editing the Interrupt List		*/
 /*								*/
 /*	Written by Ralf Brown					*/
-/*	LastEdit:  21 Jan 97					*/
+/*	LastEdit:  30 Oct 97					*/
 /*								*/
 /*  This EEL file adds the following keybindings:		*/
 /*    Shf-Alt-A add an Access: section to the current entry	*/
@@ -30,6 +30,13 @@
 /*  It adds the following unbound commands:		        */
 /*      renumber-tables					        */
 /*	make-distribution					*/
+/*      filter-region						*/
+/*		run region through a specified command; by      */
+/*	       	default, the program is given the region on its */
+/* 		stdin and its stdout is used to replace the	*/
+/*		region; if one or two "%s" are given, they	*/
+/*		will be replaced by the input and output (resp) */
+/*		file the program should use.			*/
 /*								*/ 
 /*  Other:							*/
 /*	adds intlist-mode for .LST and .1ST files		*/
@@ -76,13 +83,18 @@ char index_section[] = "Index:\t" ;
 #if EELVERSION >= 70
 char all_sections[] = "Return:|SeeAlso:|Program:|Desc:|Range:|Notes*:|BUGS*:|Example:|Index:|Access:|InstallCheck:|Size:" ;
 char indented_sections[] = "[\t ]*(Return|Notes*):" ;
-char table_headers[] = "INT |Format |Values |Bitfields |MEM |CMOS |MSR |CALL |PORT |Call |OPCODE " ;
+char table_headers[] = "INT |Format |Values |Bitfields |MEM |CMOS |MSR |CALL |PORT |Call |OPCODE |I2C " ;
 #endif /* Epsilon v7.0+ */
 
-char table_ID_letters[] = "0123456789CFMPR" ;
+char table_ID_letters[] = "0123456789CFIMPRS" ;
 
 char *(section_order[13]) ;
-char *(list_files[11]) ;
+char *(list_files[13]) ;
+
+#if EELVERSION >= 90
+// Lugaru renamed the variable on us!
+#define strip_returns translation_type
+#endif /* EELVERSION >= 90 */
 
 when_loading()
 {
@@ -112,7 +124,9 @@ when_loading()
    list_files[7] = "biblio.lst" ;
    list_files[8] = "glossary.lst" ;
    list_files[9] = "opcodes.lst" ;
-   list_files[10] = NULL ;
+   list_files[10] = "smm.lst" ;
+   list_files[11] = "i2c.lst" ;
+   list_files[12] = NULL ;
 }
 
 /*=============================================================*/
@@ -588,7 +602,10 @@ char *func_num ;
 	 func_num[10] = '-' ;		/* grab() stuck a NUL into the string */
 	 }
       else /* c == 'X' || c == 'I' || c == 'P' || c == 'S' */
+	 {
 	 grab(point,point+4,func_num+8) ;
+	 func_num[12] = '-' ;
+	 }
       }
    return 1 ;				/* successful and have func number */
 }
@@ -697,10 +714,42 @@ char *func_num ;
 
 /*=============================================================*/
 
+char grab_i2c_entry_number(func_num)
+char *func_num ;
+{
+   point += 4 ;				/* skip the "I2C " */
+   func_num[0] = 'I' ;			/* mark this as an I2C port entry */
+   grab(point,point+2,func_num+1) ;	/* get slave address */
+   func_num[3] = '-' ;			/* grab() stuck a NUL into string */
+   if (character(point+3) == '/')
+      {
+      grab(point+4,point+6,func_num+3) ; /* get register address */
+      func_num[5] = '-' ;		/* grab() stuck a NUL into string */
+      if (character(point+6) != 'h' && character(point+6) != '/')
+	 {
+	 grab(point+6,point+8,func_num+5) ; /* get second byte of reg. addr */
+	 func_num[7] = '-' ;		/* grab() stuck a NUL into string */
+	 point += 2 ;
+	 }
+      if (character(point+7) == '/')
+	 {
+	 func_num[7] = 'S' ;
+	 func_num[8] = 'F' ;
+	 grab(point+8,point+10,func_num+9) ;
+	 func_num[11] = '-' ;
+	 if (character(point+10) != 'h')
+	    grab(point+10,point+12,func_num+11) ;
+	 }
+      }
+   return 1 ;
+}
+
+/*=============================================================*/
+
 char grab_entry_number(func_num)
 char *func_num ;
 {
-   strcpy(func_num,"------------") ;	/* 12 dashes */
+   strcpy(func_num,"-------------") ;	/* 13 dashes */
    point++ ;				/* go to first char of separator line */
    nl_forward() ;			/* go to first line of entry */
    if (parse_string(1,"INT ",NULL))	/* is it an interrupt entry? */
@@ -717,6 +766,8 @@ char *func_num ;
       return grab_msr_entry_number(func_num) ;
    else if (parse_string(1,"OPCODE ",NULL) != 0)
       return grab_opcode_name(func_num) ;
+   else if (parse_string(1,"I2C ",NULL) != 0)
+      return grab_i2c_entry_number(func_num) ;
    else
       return 0 ;
 }
@@ -728,7 +779,7 @@ char *func_num ;
 
 int number_one_int()
 {
-   char func_num[13] ;			/* 2->int, 4->AX, 6->extra reg, NUL */
+   char func_num[14] ;			/* 2->int, 4->AX, 6->extra reg, NUL */
    int oldpoint ;
    
    while (to_separator_line(-1))	/* find previous separator line */
@@ -737,7 +788,7 @@ int number_one_int()
       if (grab_entry_number(func_num))	/* does it belong to an intlist entry? */
 	 {				/*   if yes, success, else try again */
 	 point = oldpoint + 11 ;	/* skip NL and first ten dashes */
-	 delete(point,point+12) ;	/* replace 12 dashes by the function */
+	 delete(point,point+13) ;	/* replace 13 dashes by the function */
 	 stuff(func_num) ;		/*   number and extra register */
 	 point = oldpoint + 9 ;		/* back to category letter position */
 	 return 1 ;
@@ -1397,6 +1448,91 @@ void find_table_counter()
 
    search(1,"Highest Table Number = ") ;
    table_counter = alloc_spot(1) ;
+}
+
+/*=============================================================*/
+/*=============================================================*/
+
+char filter_cmd[128] = "" ;
+
+command filter_region()
+{
+   char new_filter_cmd[128] ;
+   get_strdef(new_filter_cmd,"Filter region through",filter_cmd) ;
+   strcpy(filter_cmd,new_filter_cmd) ;
+   if (filter_cmd[0] != 0)
+      {
+      int size ;
+      int fd ;
+      char *commandline ;
+      char *argptr ;
+      int numargs = 0 ;
+      char filename[128] ;
+      char outputfile[128] ;
+      int start = point ;
+      int end = mark ;
+      if (end < start)
+	 {
+	 start = mark ;
+	 end = point ;
+	 }
+      size = end - start ;
+      make_temp_file(filename,3*size) ;
+      /* Eps7.0 always generates same temp file!  Thus, we have to manually */
+      /* generate a second file name for use as the output file */
+      strcpy(outputfile,filename) ;
+      strcat(outputfile,"_2") ;
+      delete_file(filename) ;
+      if (write_part(filename,strip_returns,start,end) != 0)
+	 {
+	 delete_file(filename) ;
+	 return ;
+	 }
+      fd = lowopen(outputfile,3) ;
+      if (fd != -1)
+	 lowclose(fd) ;
+      /* execute the command on the temporary file */
+      commandline = malloc(strlen(filter_cmd)+strlen(filename)+strlen(outputfile)+6) ;
+      if (!commandline)
+	 {
+	 say("out of memory....") ;
+	 delete_file(filename) ;
+	 return ;
+	 }
+      argptr = strstr(filter_cmd,"%s") ;
+      if (argptr)
+	 {
+	 numargs++ ;
+	 argptr = strstr(argptr+1,"%s") ;
+	 if (argptr)
+	    numargs++ ;
+	 }
+      switch (numargs)
+	 {
+	 case 0:
+	    sprintf(commandline,"%s <%s >%s",filter_cmd,filename,outputfile) ;
+	    break ;
+	 case 1:
+	    sprintf(commandline,filter_cmd,filename) ;
+	    strcat(commandline," >") ;
+	    strcat(commandline,outputfile) ;
+	    break ;
+	 case 2:
+	    sprintf(commandline,filter_cmd,filename,outputfile) ;
+	    break ;
+	 }
+      shell("",commandline,"") ;
+      free(commandline) ;
+      delete_file(filename) ;
+      /* read back the result of the filtering */
+      kill_region() ;
+      if (do_insert_file(outputfile,strip_returns) != 0)
+	 {
+	 kill_region() ; 	/* remove any partially-read data */
+	 yank() ;		/* restore region to pre-filter state */
+	 }
+      delete_file(outputfile) ;
+      }
 }
 
 /*=============================================================*/

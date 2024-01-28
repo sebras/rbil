@@ -3,18 +3,18 @@ Public Domain/Freeware/Shareware by Ralf Brown:
 (URLs for use with your favorite WWW browser are at the end of this file)
 
 The x86/MSDOS Interrupt List
-	A comprehensive listing of more than 8300 functions available through
+	A comprehensive listing of more than 8500 functions available through
 	interrupt calls on IBM PCs and compatibles.  Includes both
 	documented and undocumented functions, plus lists of I/O port, CMOS,
 	and memory locations, far-call entry points, and model-specific
 	registers.
-	Current version: INTER54A (release 54, 29jun97)
-			 INTER54B
-			 INTER54C
-			 INTER54D
-			 INTER54E (utility programs)
-			 INTER54F (WinHelp-related programs)
-			 INTER54G (other hypertext conversion programs)
+	Current version: INTER56A (release 56, 21dec97)
+			 INTER56B
+			 INTER56C
+			 INTER56D
+			 INTER56E (utility programs)
+			 INTER56F (WinHelp-related programs)
+			 INTER56G (other hypertext conversion programs)
 
 DVINT
 	An extract of the MSDOS Interrupt List containing the DESQview
@@ -387,14 +387,16 @@ SE  Fenix, Viksj”                    2:201/298   46-8-58011629  V32b
 
            ZONE 3
  ------------------------------      ---------  ------------- -------
-AU Marwick's MadHouse, Brisbane      3:640/820  61-7-870-2972  PEPV32
-AU Sentry, Lane Cove NSW             3:711/401  61-2-428-4687  PEPV32
-AU Sentry's Shadow, Lane Cove NSW    3:711/501  61-2-418-6682  V32bTerbo
-AU Revelstone BBS, Doveton Vic       3:632/348  61-3-741-2353  PEP
-AU Southern Mail CBCS Croyton Vic    3:632/386  61-3-725-1621  PEP
-AU COMPUlink, Perth WA               3:690/628  61-9-451-7288  2400
-AU Phone Box,Inglewood SA            3:800/854  61-8-3805505   V32
-AU OZ-Board, Townsville Qsnlnd       3:640/715  61-77-21-3592  PEPV32RE
+AU Marwick's MadHouse, Brisbane      3:640/820  61-7-3870-2972  PEPV32
+AU Sentry, Lane Cove NSW             3:711/401  61-2-9428-4687  PEPV32
+AU Sentry's Shadow, Lane Cove NSW    3:711/501  61-2-9418-6682  V32bTerbo
+AU Revelstone BBS, Doveton Vic       3:632/348  61-3-9741-2353  PEP
+AU Southern Mail CBCS Croyton Vic    3:632/386  61-3-9725-1621  PEP
+AU COMPUlink, Perth WA               3:690/628  61-8-9451-7288  2400
+AU Phone Box,Inglewood SA            3:800/854  61-8-8380-5505  V32
+
+ The following phone number will come into effect in November 1997
+AU OZ-Board, Townsville Qsnlnd       3:640/715  61-7-4721-3592  PEPV32RE
 
            ZONE 6
  ------------------------------      ---------  ------------- -------

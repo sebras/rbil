@@ -1,4 +1,4 @@
-FAR CALL Interface List		Release 54		Last change 29jun97
+FAR CALL Interface List		Release 56		Last change 21dec97
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
 
 =============================================
@@ -1182,7 +1182,7 @@ Values for Plug-and-Play function status code:
  008Dh	must use ESCD support for specified device
  008Eh	message not supported
  008Fh	hardware error
-SeeAlso: #0908
+SeeAlso: #0939
 
 Format of Option ROM header:
 Offset	Size	Description	(Table F056)
@@ -1304,7 +1304,7 @@ Type	Subtype		Description
 	02h	  SSA
 	03h	  Universal Serial Bus (USB)
 			programming interface 10h = OpenHCI Host Controller
-SeeAlso: #F058,#F060,#0790
+SeeAlso: #F058,#F060,#0798
 
 (Table F060)
 Values for Plug-and-Play generic EISA device ID:
@@ -1584,9 +1584,9 @@ Highest Table Number = F069
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER54A through INTER54D (preferably the original
+quartet of archives named INTER55A through INTER55D (preferably the original
 authenticated PKZIP archives), and the utility and hypertext conversion
-programs in three additional archives called INTER54E.ZIP to INTER54G.ZIP
+programs in three additional archives called INTER55E.ZIP to INTER55G.ZIP
 
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
 --------!---CONTACT_INFO---------------------

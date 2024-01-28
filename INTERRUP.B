@@ -1,10 +1,170 @@
 Interrupt List, part 2 of 16
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
+--------B-12---------------------------------
+INT 12 - BIOS - GET MEMORY SIZE
+Return: AX = kilobytes of contiguous memory starting at absolute address 00000h
+Note:	this call returns the contents of the word at 0040h:0013h; in PC and
+	  XT, this value is set from the switches on the motherboard
+SeeAlso: INT 11"BIOS",INT 2F/AX=4A06h,INT 4C"Tandy 2000",MEM 0040h:0013h
+--------C-12---------------------------------
+INT 12 - CPU-generated (Pentium) - MACHINE CHECK EXCEPTION
+Notes:	Intel documents this interrupt as CPU model-dependent; for current
+	  Pentium processors, the reason for the machine check exception may
+	  be read from model-specific registers 00h and 01h (described, for
+	  example, in Christian Ludloff's 4P package)
+	this exception is enabled by bit 6 of CR4
+SeeAlso: INT 11"CPU",MSR 00000000h,MSR 00000001h
+--------K-12----CX1806-----------------------
+INT 12 - KEYBUI v2.0+ - INSTALLATION CHECK
+	CX = 1806h
+Return: AX = kilobytes of contiguous memory starting at absolute address 00000h
+	CX = 1960h if installed
+Program: KEYBUI is a resident keyboard driver by Johan Zwiekhorst which allows
+	  accented characters and box drawing on standard QWERTY keyboards; it
+	  also provides break-to-DOS and screen blanking capabilities
+SeeAlso: INT 14/AX=AA01h
+Index:	screen saver;KEYBUI
+--------d-12----CX1807-----------------------
+INT 12 - PARKER v2.0+ - INSTALLATION CHECK
+	CX = 1807h
+Return: AX = kilobytes of contiguous memory starting at absolute address 00000h
+	CX = 1961h if installed
+Program: PARKER is an optionally-resident hard disk parking program by Johan
+	  Zwiekhorst
+--------G-1205D7BX05D7-----------------------
+INT 12 U - Borland C++ IDE - INSTALLATION CHECK
+	AX = 05D7h (1495d)
+	BX = 05D7h
+Note:	the BC++ IDE will call INT 11/AX=05D7h/BX=0088h if it is loaded
+SeeAlso: INT 11/AX=05D7h
+--------v-124350BX4920-----------------------
+INT 12 C - CPI-standard virus - "FRIEND" CHECK
+	AX = 4350h
+	BX = 4920h
+	CX = AB46h
+	DX = 554Eh
+Return: if friendly (not to be infected)
+	    CX:DX -> ASCIZ identity code (changes yearly)
+SeeAlso: INT 13/AX=EC00h"VIRUS",INT 13/AX=5001h,INT 21/AX=0B56h
+--------T-12FFFECXFFFE-----------------------
+INT 12 - Back&Forth v1.62+ - API
+	AX = FFFEh
+	CX = FFFEh
+	BX = function
+	    00h installation check
+		Return: AX = 0001h installed
+			     else  not loaded
+	    01h (reserved)
+	    02h build program ID list (shareware Back&Forth)
+		ES:DI -> buffer of at least 100 bytes, to be filled with words
+		Return: AX = number of programs defined
+			ES:DI buffer filled with AX words
+	    02h get memory statistics (Back&Forth Professional)
+		Return: AX = available swap memory, KBytes
+			BX = maximum task size, KBytes
+			DX = fixed overhead per task, excluding video/macro
+			      storage
+	    03h switch to specified task (task need not be open yet)
+		DX = two-letter program ID
+		Return: AX = status
+			    0000h if task undefined
+			    0001h task switch will occur when safe
+	    04h (reserved)
+	    05h (reserved)
+	    06h get version (documented only for Back&Forth Professional)
+		Return: AX = version * 100 (v1.71 = 00ABh)
+	    07h spawn program (Back&Forth Professional only???)
+		ES:DI -> BF_SPAWN record (see #0164)
+		Return: AX = status
+			    0000h if no task handles free
+			    0001h spawn will occur when safe
+	    08h get open tasks (documented only for Back&Forth Professional)
+		ES:DI -> task info buffer (see #0163,#0165)
+		Return: AX = number of open tasks (max 20)
+		Note:	the supplied buffer must be large enough to hold 21
+			  task entries
+	    09h (reserved)
+	    ---Back&Forth Professional---
+	    0Ah get active clipboard filename
+		Return: DX:AX -> ASCIZ clipboard filename
+	    0Bh get active task number
+		AX = active task number (00h-13h)
+		BX = number of tasks allocated
+		DX = maximum number of tasks
+	    0Ch (reserved)
+	    0Dh (reserved)
+	    0Eh (reserved)
+	    0Fh stuff string into keyboard buffer
+		ES:DI -> ASCIZ string to be stuffed
+		Return: nothing
+	    10h check if in graphics mode
+		Return: AX = state
+			    0000h color text mode
+			    0004h mono text mode
+			    FFFFh graphics mode
+	    11h get Back&Forth Professional user number
+		Return: AX = user number (0000h-00FFh)
+	    12h switch task by task number
+		DX = task number
+		Return: AX = status
+			    0000h attempted to switch to active task
+			    0001h task switch will occur when safe
+			    FFFFh invalid task number
+	    13h delete (kill) task
+		DX = task number
+		Return: AX = status
+			    0000h attempted to delete the active task
+			    0001h successfully deleted
+			    FFFFh invalid task number
+		Note:	the active task number will change if the deleted task
+			  was lower in the task list than the active task
+	    14h get next available task handle
+		Return:	AX = next available task handle
+			    FFFFh if task table is full
+Program: Back & Forth is a task switcher by Progressive Solutions, Inc.
+SeeAlso: INT 11/AX=FFFEh
+Index:	installation check;BACK&FORTH
+
+Format of Back&Forth task info buffer:
+Offset	Size	Description	(Table 0163)
+ 00h 21 BYTEs	ASCIZ task name
+ 15h	BYTE	hotkey shift state (as for INT 16/AH=02h)
+ 16h	WORD	hotkey scan code (see also #0005)
+ 18h	WORD	program ID
+Index:	hotkeys;Back&Forth
+SeeAlso: #0164,#0165
+
+Format of Back&Forth Professional BF_SPAWN record:
+Offset	Size	Description	(Table 0164)
+ 00h 21 BYTEs	task description
+ 15h	BYTE	flag: disable hotkeys
+ 16h	WORD	environment size in bytes
+ 18h	BYTE	hotkey shift flags
+ 19h	WORD	hotkey scancode
+ 1Bh	WORD	maximum number of EMS pages
+ 1Dh	WORD	required memory in KBytes
+ 1Fh  3 BYTEs	DESQview-style two-letter program ID
+ 22h 13 BYTEs	base name of program to be run (no path or extension)
+ 2Fh 66 BYTEs	directory from which to start program
+ 71h 66 BYTEs	initial current directory for program
+SeeAlso: #0163,#0165
+
+Format of Back&Forth Professional BF_TASK record:
+Offset	Size	Description	(Table 0165)
+ 00h	DWORD	Unix-style task start time (seconds since 1/1/1970)
+ 04h 21 BYTEs	task description
+ 19h	DWORD	elapsed time in task (seconds)
+ 1Dh	WORD	task ID
+ 1Fh	BYTE	task hotkey keyboard flags
+ 20h	WORD	task hotkey scan code (see also #0005)
+ 22h	DWORD	time task was suspended/exited
+ 26h	WORD	task handle
+SeeAlso: #0163,#0164
 --------B-1300-------------------------------
 INT 13 - DISK - RESET DISK SYSTEM
 	AH = 00h
 	DL = drive (if bit 7 is set both hard disks and floppy disks reset)
-Return: AH = status (see #0159)
+Return: AH = status (see #0166)
 	CF clear if successful (returned AH=00h)
 	CF set on error
 Note:	forces controller to recalibrate drive heads (seek to track 0)
@@ -12,19 +172,19 @@ Note:	forces controller to recalibrate drive heads (seek to track 0)
 	  both the master drive and the slave drive respond to the Reset
 	  function that is issued to either drive
 SeeAlso: AH=0Dh,AH=11h,INT 21/AH=0Dh,INT 4D/AH=00h"TI Professional"
-SeeAlso: INT 56"Tandy 2000"
+SeeAlso: INT 56"Tandy 2000",MEM 0040h:003Eh
 --------B-1301-------------------------------
 INT 13 - DISK - GET STATUS OF LAST OPERATION
 	AH = 01h
 	DL = drive (bit 7 set for hard disk)
 Return: CF clear if successful (returned status 00h)
 	CF set on error
-	AH = status of previous operation (see #0159)
+	AH = status of previous operation (see #0166)
 Note:	some BIOSes return the status in AL; the PS/2 Model 30/286 returns the
 	  status in both AH and AL
-SeeAlso: AH=00h,INT 4D/AH=01h,MEM 0040h:0074h
+SeeAlso: AH=00h,INT 4D/AH=01h,MEM 0040h:0041h,MEM 0040h:0074h
 
-(Table 0159)
+(Table 0166)
 Values for disk operation status:
  00h	successful completion
  01h	invalid function in AH or invalid parameter
@@ -75,7 +235,7 @@ INT 13 - DISK - READ SECTOR(S) INTO MEMORY
 Return: CF set on error
 	    if AH = 11h (corrected ECC error), AL = burst length
 	CF clear if successful
-	AH = status (see #0159)
+	AH = status (see #0166)
 	AL = number of sectors transferred (only valid if CF set for some
 	      BIOSes)
 Notes:	errors on a floppy may be due to the motor failing to spin up quickly
@@ -84,9 +244,10 @@ Notes:	errors on a floppy may be due to the motor failing to spin up quickly
 	most BIOSes support "multitrack" reads, where the value in AL
 	  exceeds the number of sectors remaining on the track, in which
 	  case any additional sectors are read beginning at sector 1 on
-	  the following head in the same cylinder; the CONFIG.SYS command
-	  MULTITRACK can be used to force DOS to split disk accesses which
-	  would wrap across a track boundary into two separate calls
+	  the following head in the same cylinder; the MSDOS CONFIG.SYS command
+	  MULTITRACK (or the Novell DOS DEBLOCK=) can be used to force DOS to
+	  split disk accesses which would wrap across a track boundary into two
+	  separate calls
 	the IBM AT BIOS and many other BIOSes use only the low four bits of
 	  DH (head number) since the WD-1003 controller which is the standard
 	  AT controller (and the controller that IDE emulates) only supports
@@ -96,6 +257,9 @@ Notes:	errors on a floppy may be due to the motor failing to spin up quickly
 	  into bits 6 and 7 of DH
 	under Windows95, a volume must be locked (see INT 21/AX=440Dh/CX=084Bh)
 	  in order to perform direct accesses such as INT 13h reads and writes
+	all versions of MS-DOS (including v7 [Win95]) have a bug which prevents
+	  booting on hard disks with 256 heads, so many modern BIOSes provide
+	  mappings with at most 255 heads
 SeeAlso: AH=03h,AH=0Ah,AH=06h"V10DISK.SYS",AH=21h"PS/1",AH=42h"IBM"
 SeeAlso: INT 21/AX=440Dh/CX=084Bh,INT 4D/AH=02h
 --------B-1303-------------------------------
@@ -110,7 +274,7 @@ INT 13 - DISK - WRITE DISK SECTOR(S)
 	ES:BX -> data buffer
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0159)
+	AH = status (see #0166)
 	AL = number of sectors transferred
 	      (only valid if CF set for some BIOSes)
 Notes:	errors on a floppy may be due to the motor failing to spin up quickly
@@ -146,7 +310,7 @@ INT 13 - DISK - VERIFY DISK SECTOR(S)
 	ES:BX -> data buffer (PC,XT,AT with BIOS prior to 11/15/85)
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0159)
+	AH = status (see #0166)
 	AL = number of sectors verified
 Notes:	errors on a floppy may be due to the motor failing to spin up quickly
 	  enough; the write should be retried at least three times, resetting
@@ -168,17 +332,17 @@ INT 13 - FLOPPY - FORMAT TRACK
 	CH = track number
 	DH = head number
 	DL = drive number
-	ES:BX -> address field buffer (see #0160)
+	ES:BX -> address field buffer (see #0167)
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0159)
+	AH = status (see #0166)
 Notes:	on AT or higher, call AH=17h first
 	the number of sectors per track is read from the diskette parameter
 	  table pointed at by INT 1E
 SeeAlso: AH=05h"FIXED",AH=17h,AH=18h,INT 1E
 
 Format of floppy format address field buffer entry (one per sector in track):
-Offset	Size	Description	(Table 0160)
+Offset	Size	Description	(Table 0167)
  00h	BYTE	track number
  01h	BYTE	head number (0-based)
  02h	BYTE	sector number
@@ -201,7 +365,7 @@ INT 13 - FIXED DISK - FORMAT TRACK
 	DL = drive
 Return: CF set on error
 	CF clear if successful
-	AH = status code (see #0159)
+	AH = status code (see #0166)
 Notes:	AWARD AT BIOS and AMI 386sx BIOS have been extended to handle more
 	  than 1024 cylinders by placing bits 10 and 11 of the cylinder number
 	  into bits 6 and 7 of DH
@@ -220,10 +384,10 @@ SeeAlso: AH=05h"FLOPPY",AH=06h"FIXED",AH=07h"FIXED",AH=0Fh,AH=18h,AH=1Ah
 INT 13 - Future Domain SCSI BIOS - SEND SCSI MODE SELECT COMMAND
 	AH = 05h
 	DL = hard drive ID
-	ES:BX -> mode select data (see #0161)
+	ES:BX -> mode select data (see #0168)
 Return: CF set on error
 	CF clear if successful
-	AH = status code (see #0159)
+	AH = status code (see #0166)
 Notes:	this function can be called before AH=07h"SCSI" or AH=06h"SCSI" to
 	  format a SCSI disk with the desired parameters
 	the mode select data below is from the SCSI-1 specification
@@ -232,7 +396,7 @@ Notes:	this function can be called before AH=07h"SCSI" or AH=06h"SCSI" to
 SeeAlso: AH=06h"SCSI",AH=07h"SCSI",INT 4F/AX=8100h
 
 Format of Future Domain SCSI mode select data:
-Offset	Size	Description	(Table 0161)
+Offset	Size	Description	(Table 0168)
  00h	BYTE	number of bytes of remaining data (12 + vendor unique length)
  01h	BYTE	reserved (0)
  02h	BYTE	medium type (0 for hard disk)
@@ -253,7 +417,7 @@ INT 13 - 2M - FORMAT TRACK
 	ES:BX -> boot sector of future 2M diskette
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0159)
+	AH = status (see #0166)
 Program: 2M is a TSR developed by Ciriaco Garcia de Celis to support
 	  non standard diskettes with 820-902/1476-1558K (5.25 DD/HD)
 	  and 984-1066/1804-1886K/3608-3772K (3.5 DD/HD/ED)
@@ -287,7 +451,7 @@ INT 13 - FIXED DISK - FORMAT TRACK AND SET BAD SECTOR FLAGS (XT,PORT)
 	CL = sector number
 	DH = head
 	DL = drive
-Return: AH = status code (see #0159)
+Return: AH = status code (see #0166)
 Note:	AWARD AT BIOS and AMI 386sx BIOS have been extended to handle more
 	  than 1024 cylinders by placing bits 10 and 11 of the cylinder number
 	  into bits 6 and 7 of DH
@@ -298,11 +462,11 @@ INT 13 - Future Domain SCSI BIOS - FORMAT DRIVE WITH BAD SECTOR MAPPING
 	AL = interleave
 	     (0 = default, 1 = consecutive sectors, 2 - 255 = vendor unique)
 	DL = hard drive ID
-	DH = defect list info (see #0162)
-	ES:BX -> defect table A, B or C (see #0163,#0164,#0165)
+	DH = defect list info (see #0169)
+	ES:BX -> defect table A, B or C (see #0170,#0171,#0172)
 Return: CF set on error
 	CF clear if successful
-	AH = status code (see #0159)
+	AH = status code (see #0166)
 Notes:	block addresses must be in ascending order (for table B, cylinder is
 	  most significant, byte from index least significant; for table C,
 	  cylinder is most significant, sector number least significant)
@@ -315,7 +479,7 @@ Notes:	block addresses must be in ascending order (for table B, cylinder is
 SeeAlso: AH=05h"SCSI",AH=06h"FIXED",AH=07h"SCSI"
 
 Bitfields for Future Domain SCSI defect list info:
-Bit(s)	Description	(Table 0162)
+Bit(s)	Description	(Table 0169)
  7-5	drive LUN
  4	defect list is available
  3	defect list is complete (erase drive's defect list)
@@ -324,7 +488,7 @@ Bit(s)	Description	(Table 0162)
 	 101=use defect table C)
 
 Format of Future Domain SCSI defect table A:
-Offset	Size	Description	(Table 0163)
+Offset	Size	Description	(Table 0170)
  00h	WORD	number of bytes remaining in table
  02h	BYTE	reserved (0)
  03h	BYTE	reserved (0)
@@ -332,30 +496,30 @@ Offset	Size	Description	(Table 0163)
  06h  4 DWORDs	(big-endian) defect block addresses
 
 Format of Future Domain SCSI defect table B:
-Offset	Size	Description	(Table 0164)
+Offset	Size	Description	(Table 0171)
  00h	WORD	number of bytes remaining in table
  02h	BYTE	reserved (0)
  03h	BYTE	reserved (0)
  04h	WORD	(big-endian) defect list length (8*number of defects)
- 06h 8N BYTEs	defect list [array] (see #0166)
+ 06h 8N BYTEs	defect list [array] (see #0173)
 
 Format of Future Domain SCSI defect table C:
-Offset	Size	Description	(Table 0165)
+Offset	Size	Description	(Table 0172)
  00h	WORD	number of bytes remaining in table
  02h	BYTE	reserved (0)
  03h	BYTE	reserved (0)
  04h	WORD	(big-endian) defect list length (8*number of defects)
- 06h 8N BYTEs	defect list [array] (see #0166)
+ 06h 8N BYTEs	defect list [array] (see #0173)
 
 Format of Future Domain SCSI defect list entry:
-Offset	Size	Description	(Table 0166)
+Offset	Size	Description	(Table 0173)
  00h  3 BYTEs	(big-endian) cylinder number of defect
  03h	BYTE	head number of defect
  04h	DWORD	(big-endian) defect bytes from index
 --------d-1306-------------------------------
 INT 13 - Adaptec AHA-154xA/Bustek BT-542 BIOS - IDENTIFY SCSI DEVICES
 	AH = 06h
-Return: AH = status code (see #0159)
+Return: AH = status code (see #0166)
 	CF clear if successful
 	    AL = first drive supported
 		(80h nonconcurrent operation, 81h concurrent operation)
@@ -363,7 +527,7 @@ Return: AH = status code (see #0159)
 Desc:	determine the number of the first supported SCSI drive
 Note:	the return value is 80h when two SCSI drives are supported, 81h if
 	  only one SCSI drive is installed
-SeeAlso: AH=08h"PC",#0649 at INT 1A/AX=B102h
+SeeAlso: AH=08h"PC",#0656 at INT 1A/AX=B102h
 --------d-1306-------------------------------
 INT 13 - V10DISK.SYS - READ DELETED SECTORS
 	AH = 06h
@@ -373,7 +537,7 @@ INT 13 - V10DISK.SYS - READ DELETED SECTORS
 	DH = head
 	DL = drive
 	ES:BX -> buffer
-Return: AH = status code (see #0159)
+Return: AH = status code (see #0166)
 Program: V10DISK.SYS is a driver for the Flagstaff Engineering 8" floppies
 SeeAlso: AH=02h,AH=07h"V10DISK.SYS"
 --------B-1307-------------------------------
@@ -385,7 +549,7 @@ INT 13 - FIXED DISK - FORMAT DRIVE STARTING AT GIVEN TRACK (XT,PORT)
 	CL = sector number
 	DH = head
 	DL = drive
-Return: AH = status code (see #0159)
+Return: AH = status code (see #0166)
 Note:	AWARD AT BIOS and AMI 386sx BIOS have been extended to handle more
 	  than 1024 cylinders by placing bits 10 and 11 of the cylinder number
 	  into bits 6 and 7 of DH
@@ -398,7 +562,7 @@ INT 13 - Future Domain SCSI BIOS - FORMAT DRIVE
 	DL = hard drive ID
 Return: CF set on error
 	CF clear if successful
-	AH = status code (see #0159)
+	AH = status code (see #0166)
 SeeAlso: AH=05h"SCSI",AH=06h"SCSI",AH=07h"FIXED"
 --------d-1307-------------------------------
 INT 13 - V10DISK.SYS - WRITE DELETED SECTORS
@@ -409,7 +573,7 @@ INT 13 - V10DISK.SYS - WRITE DELETED SECTORS
 	DH = head
 	DL = drive
 	ES:BX -> buffer
-Return: AH = status code (see #0159)
+Return: AH = status code (see #0166)
 Program: V10DISK.SYS is a driver for the Flagstaff Engineering 8" floppies
 SeeAlso: AH=03h,AH=06h"V10DISK.SYS"
 --------B-1308-------------------------------
@@ -417,10 +581,11 @@ INT 13 - DISK - GET DRIVE PARAMETERS (PC,XT286,CONV,PS,ESDI,SCSI)
 	AH = 08h
 	DL = drive (bit 7 set for hard disk)
 Return: CF set on error
-	    AH = status (07h) (see #0159)
+	    AH = status (07h) (see #0166)
 	CF clear if successful
 	    AH = 00h
-	    BL = drive type (AT/PS2 floppies only) (see #0167)
+	    AL = 00h on at least some BIOSes
+	    BL = drive type (AT/PS2 floppies only) (see #0174)
 	    CH = low eight bits of maximum cylinder number
 	    CL = maximum sector number (bits 5-0)
 		 high two bits of maximum cylinder number (bits 7-6)
@@ -442,10 +607,12 @@ Notes:	may return successful even though specified drive is greater than the
 	  cylinder count is automatically decremented
 	on PS/1s with IBM ROM DOS 4, nonexistent drives return CF clear,
 	  BX=CX=0000h, and ES:DI = 0000h:0000h
+	the PC-Tools PCFORMAT program requires that AL=00h before it will
+	  proceed with the formatting
 SeeAlso: AH=06h"Adaptec",AH=13h"SyQuest",AH=48h,AH=15h,INT 1E
 SeeAlso: INT 41"HARD DISK 0"
 
-(Table 0167)
+(Table 0174)
 Values for diskette drive type:
  01h	360K
  02h	1.2M
@@ -463,7 +630,7 @@ INT 13 - V10DISK.SYS - SET FORMAT
 	CL = sector number
 	DH = head
 	DL = drive
-Return: AH = status code (see #0159)
+Return: AH = status code (see #0166)
 Program: V10DISK.SYS is a driver for the Flagstaff Engineering 8" floppies
 Note:	details not available
 SeeAlso: AH=03h,AH=06h"V10DISK.SYS"
@@ -483,7 +650,7 @@ INT 13 - HARD DISK - INITIALIZE CONTROLLER WITH DRIVE PARAMETERS (AT,PS)
 	DL = drive (80h for first, 81h for second)
 Return: CF clear if successful
 	CF set on error
-	AH = status (see #0159)
+	AH = status (see #0166)
 Notes:	on the PC and XT, this function uses the parameter table pointed at by
 	  INT 41
 	on the AT and later, this function uses the parameter table pointed at
@@ -502,7 +669,7 @@ INT 13 - HARD DISK - READ LONG SECTOR(S) (AT and later)
 	ES:BX -> data buffer
 Return: CF clear if successful
 	CF set on error
-	AH = status (see #0159)
+	AH = status (see #0166)
 	AL = number of sectors transferred
 Notes:	this function reads in four to seven bytes of error-correcting code
 	  along with each sector's worth of information
@@ -523,7 +690,7 @@ INT 13 - HARD DISK - WRITE LONG SECTOR(S) (AT and later)
 	ES:BX -> data buffer
 Return: CF clear if successful
 	CF set on error
-	AH = status (see #0159)
+	AH = status (see #0166)
 	AL = number of sectors transferred
 Notes:	each sector's worth of data must be followed by four to seven bytes of
 	  error-correction information
@@ -540,7 +707,7 @@ INT 13 - HARD DISK - SEEK TO CYLINDER
 	DL = drive number (80h = first, 81h = second hard disk)
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0159)
+	AH = status (see #0166)
 SeeAlso: AH=00h,AH=02h,AH=0Ah,AH=47h
 --------B-130D-------------------------------
 INT 13 - HARD DISK - RESET HARD DISKS
@@ -548,7 +715,7 @@ INT 13 - HARD DISK - RESET HARD DISKS
 	DL = drive number (80h = first, 81h = second hard disk)
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0159)
+	AH = status (see #0166)
 Notes:	reinitializes the hard disk controller, resets the specified drive's
 	  parameters, and recalibrates the drive's heads (seek to track 0)
 	for PS/2 35SX, 35LS, 40SX and L40SX, as well as many other systems,
@@ -563,7 +730,7 @@ INT 13 - HARD DISK - READ SECTOR BUFFER (XT only)
 	ES:BX -> buffer
 Return: CF set on error
 	CF clear if successful
-	AH = status code (see #0159)
+	AH = status code (see #0166)
 Notes:	transfers controller's sector buffer.  No data is read from the drive
 	used for diagnostics only on PS/2 systems
 SeeAlso: AH=0Ah
@@ -574,7 +741,7 @@ INT 13 - HARD DISK - WRITE SECTOR BUFFER (XT only)
 	ES:BX -> buffer
 Return: CF set on error
 	CF clear if successful
-	AH = status code (see #0159)
+	AH = status code (see #0166)
 Notes:	does not write data to the drive
 	should be called before formatting to initialize an XT-type
 	  controller's sector buffer
@@ -586,23 +753,24 @@ INT 13 - HARD DISK - CHECK IF DRIVE READY
 	DL = drive number (80h = first, 81h = second hard disk)
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0159 at AH=01h)
+	AH = status (see #0166 at AH=01h)
+SeeAlso: AH=11h
 --------B-1311-------------------------------
 INT 13 - HARD DISK - RECALIBRATE DRIVE
 	AH = 11h
 	DL = drive number (80h = first, 81h = second hard disk)
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0159 at AH=01h)
+	AH = status (see #0166 at AH=01h)
 Note:	causes hard disk controller to seek the specified drive to cylinder 0
-SeeAlso: AH=00h,AH=0Ch,AH=19h"FIXED DISK"
+SeeAlso: AH=00h,AH=0Ch,AH=10h,AH=19h"FIXED DISK",MEM 0040h:003Eh
 --------B-1312-------------------------------
 INT 13 - HARD DISK - CONTROLLER RAM DIAGNOSTIC (XT,PS)
 	AH = 12h
 	DL = drive number (80h = first, 81h = second hard disk)
 Return: CF set on error
 	CF clear if successful
-	AH = status code (see #0159 at AH=01h)
+	AH = status code (see #0166 at AH=01h)
 	AL = 00h
 SeeAlso: AH=13h,AH=14h
 --------d-1312-------------------------------
@@ -611,7 +779,7 @@ INT 13 - Future Domain SCSI CONTROLLER - STOP SCSI DISK
 	DL = hard drive ID
 Return: CF set on error
 	CF clear if successful
-	AH = status code (see #0159 at AH=01h)
+	AH = status code (see #0166 at AH=01h)
 Notes:	available at least on the TMC-870 8-bit SCSI controller BIOS v6.0A
 	if the given drive is a SCSI device, the SCSI Stop Unit command is sent
 	  and either "Disk prepared for shipping" or "Disk Stop command failed"
@@ -641,7 +809,7 @@ INT 13 - HARD DISK - DRIVE DIAGNOSTIC (XT,PS)
 	DL = drive number (80h = first, 81h = second hard disk)
 Return: CF set on error
 	CF clear if successful
-	AH = status code (see #0159 at AH=01h)
+	AH = status code (see #0166 at AH=01h)
 	AL = 00h
 SeeAlso: AH=12h"HARD DISK",AH=14h"HARD DISK"
 --------d-1313-------------------------------
@@ -649,10 +817,10 @@ INT 13 - SyQuest - READ DRIVE PARAMATERS (for DOS 5+)
 	AH = 13h
 	DL = drive ID (bit 7 set for hard disks)
 Return: CF set on error
-	    AH = status (07h) (see #0159 at AH=01h)
+	    AH = status (07h) (see #0166 at AH=01h)
 	CF clear if successful
 	    AH = 00h
-	    BL = drive type (AT/PS2 floppies only) (see #0167)
+	    BL = drive type (AT/PS2 floppies only) (see #0174)
 	    CH = low eight bits of maximum cylinder number
 	    CL = maximum sector number (bits 5-0)
 		 high two bits of maximum cylinder number (bits 7-6)
@@ -670,7 +838,7 @@ INT 13 - HARD DISK - CONTROLLER INTERNAL DIAGNOSTIC
 	AH = 14h
 Return: CF set on error
 	CF clear if successful
-	AH = status code (see #0159 at AH=01h)
+	AH = status code (see #0166 at AH=01h)
 	AL = 00h
 SeeAlso: AH=12h,AH=13h
 --------B-1315-------------------------------
@@ -685,7 +853,7 @@ Return: CF clear if successful
 		03h hard disk
 		    CX:DX = number of 512-byte sectors
 	CF set on error
-	    AH = status (see #0159 at AH=01h)
+	    AH = status (see #0166 at AH=01h)
 Note:	SyQuest can report type 01h or 02h for 'hard disks', since its media
 	  is removable
 SeeAlso: AH=08h,AH=16h,AH=17h,AH=19h"SCSI"
@@ -718,7 +886,7 @@ INT 13 - FLOPPY DISK - SET DISK TYPE FOR FORMAT (AT,PS)
 	DL = drive number
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0159 at AH=01h)
+	AH = status (see #0166 at AH=01h)
 Note:	this function does not handle 1.44M drives; use AH=18h instead
 SeeAlso: AH=15h,AH=18h
 --------d-131700-----------------------------
@@ -726,11 +894,11 @@ INT 13 - Future Domain SCSI CONTROLLER - GET INQUIRY INFO FROM SCSI DEVICE
 	AX = 1700h
 	CL = length of buffer
 	DL = hard drive ID
-	ES:BX -> buffer for info (see #0168)
+	ES:BX -> buffer for info (see #0175)
 Return: CF clear if successful
 	    CH = number of bytes returned in buffer???
 	CF set on error
-	    AH = status code (see #0159 at AH=01h)
+	    AH = status code (see #0166 at AH=01h)
 Notes:	this function is not available with 8-bit controller ROM versions < 7.0
 	information block bytes 5-n are vendor-specific in older SCSI devices
 	the TMC-950 does not support any Future Domain BIOS calls; instead,
@@ -738,18 +906,18 @@ Notes:	this function is not available with 8-bit controller ROM versions < 7.0
 SeeAlso: AH=18h"SCSI",AH=1Bh"SCSI"
 
 Format of Future Domain SCSI inquiry information block:
-Offset	Size	Description	(Table 0168)
+Offset	Size	Description	(Table 0175)
  00h	BYTE	device type
-		bits 0-4: peripheral device type (see #0169)
-		bits 5-7: peripheral qualifier (see #0170)
+		bits 0-4: peripheral device type (see #0176)
+		bits 5-7: peripheral qualifier (see #0177)
  01h	BYTE	device type modifier
 		bits 0-6: device type modifier
 		bit 7: removable medium
- 02h	BYTE	SCSI version (see #0171)
- 03h	BYTE	data format/capabilities (see #0172)
+ 02h	BYTE	SCSI version (see #0178)
+ 03h	BYTE	data format/capabilities (see #0179)
  04h	BYTE	additional data length (total remaining bytes)
  05h  2 BYTEs	reserved
- 07h	BYTE	device capabilities (see #0173)
+ 07h	BYTE	device capabilities (see #0180)
  08h  8 BYTEs	vendor identification (space-padded ASCII)
  10h  8 BYTEs	product identification (space-padded ASCII)
  20h  4 BYTEs	product revision level (space-padded ASCII)
@@ -757,7 +925,7 @@ Offset	Size	Description	(Table 0168)
  38h 40 BYTEs	reserved
  60h	var	vendor specific parameters
 
-(Table 0169)
+(Table 0176)
 Values for Future Domain SCSI peripheral device type:
  00h	direct-access device (e.g., magnetic disk)
  01h	sequential-access device (e.g., magnetic tape)
@@ -774,7 +942,7 @@ Values for Future Domain SCSI peripheral device type:
  0Ch-1Eh reserved
  1Fh	unknown or no device type
 
-(Table 0170)
+(Table 0177)
 Values for Future Domain SCSI peripheral qualifier:
  000b	device is currently connected to this logical unit and available
  001b	target is capable of supporting the specified peripheral, but the
@@ -784,7 +952,7 @@ Values for Future Domain SCSI peripheral qualifier:
  1xxb	vendor specific
 
 Bitfields for Future Domain SCSI version:
-Bit(s)	Description	(Table 0171)
+Bit(s)	Description	(Table 0178)
  0-2	ANSI-approved version
 	000 device might or might not comply to ANSI standard
 	001 device complies to ANSI SCSI-1
@@ -794,7 +962,7 @@ Bit(s)	Description	(Table 0171)
  6-7	ISO version
 
 Bitfields for Future Domain SCSI data format/capabilities:
-Bit(s)	Description	(Table 0172)
+Bit(s)	Description	(Table 0179)
  0-2	response data format
 	000 information block is as specified in SCSI-1
 	001 information block is as specified in CCS
@@ -805,7 +973,7 @@ Bit(s)	Description	(Table 0172)
  7	asynchronous event notification supported
 
 Bitfields for Future Domain SCSI device capabilities:
-Bit(s)	Description	(Table 0173)
+Bit(s)	Description	(Table 0180)
  0	device responds to RESET with a hard RESET
  1	tagged command queuing supported
  2	reserved
@@ -826,7 +994,7 @@ Return: AH = status
 	    01h function not available
 	    0Ch not supported or drive type unknown
 	    80h there is no disk in the drive
-	ES:DI -> 11-byte parameter table (see #0929 at INT 1E)
+	ES:DI -> 11-byte parameter table (see #0960 at INT 1E)
 Note:	this function does not set the INT 1E vector to point at the returned
 	  parameter table; it is the caller's responsibility to do so
 SeeAlso: AH=05h,AH=07h,AH=17h,INT 1E
@@ -835,10 +1003,10 @@ INT 13 - Future Domain SCSI BIOS - GET SCSI CONTROLLER INFORMATION
 	AH = 18h
 	DL = hard drive ID
 Return: CF set on error
-	    AH = status code (see #0159 at AH=01h)
+	    AH = status code (see #0166 at AH=01h)
 	CF clear if successful
 	    AX = 4321h (magic number)
-	    CX = controller family code (see #0174)
+	    CX = controller family code (see #0181)
 	    ---if family code=0200h
 		DH = number of exclusively ROM-controlled SCSI devices
 		DL = canonical SCSI device number for specified drive
@@ -854,7 +1022,7 @@ Notes:	also sets an internal flag (non-resettable) which prevents some
 	  it provides a full CAM implementation (see INT 4F/AX=8100h)
 SeeAlso: AH=05h"SCSI",AX=1700h"SCSI",AH=1Bh"SCSI",INT 4F/AX=8100h
 
-(Table 0174)
+(Table 0181)
 Values for Future Domain SCSI controller family code:
  0200h	TMC-1680/? (ROM 3.0)
  0203h	TMC-1650/1660/1670/1680 (ROM 2.0)
@@ -905,14 +1073,14 @@ INT 13 - FIXED DISK - PARK HEADS ON ESDI DRIVE (XT286,PS)
 	DL = drive
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0159 at AH=01h)
+	AH = status (see #0166 at AH=01h)
 SeeAlso: AH=11h
 --------d-1319-------------------------------
 INT 13 - Future Domain SCSI CONTROLLER - REINITIALIZE DRIVE
 	AH = 19h
 	DL = hard drive ID
 Return: CF set on error
-	    AH = status code (see #0159 at AH=01h)
+	    AH = status code (see #0166 at AH=01h)
 	CF clear if successful
 	    AH = disk type (03h = fixed disk)
 	    CX:DX = number of 512-byte sectors
@@ -930,18 +1098,18 @@ SeeAlso: AH=15h,AH=1Ah,INT 4F/AX=8100h
 INT 13 - ESDI FIXED DISK - FORMAT UNIT (PS)
 	AH = 1Ah
 	AL = defect table entry count
-	CL = format modifiers (see #0175)
+	CL = format modifiers (see #0182)
 	DL = drive (80h,81h)
-	ES:BX -> defect table (see #0176), ignored if AL=00h
+	ES:BX -> defect table (see #0183), ignored if AL=00h
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0159 at AH=01h)
+	AH = status (see #0166 at AH=01h)
 Note:	if periodic interrupt selected, INT 15/AH=0Fh is called after each
 	  cylinder is formatted
 SeeAlso: AH=07h,INT 15/AH=0Fh
 
 Bitfields for ESDI format modifiers:
-Bit(s)	Description	(Table 0175)
+Bit(s)	Description	(Table 0182)
  4	generate periodic interrupt
  3	perform surface analysis
  2	update secondary defect map
@@ -949,7 +1117,7 @@ Bit(s)	Description	(Table 0175)
  0	ignore primary defect map
 
 Format of defect table entry [array]:
-Offset	Size	Description	(Table 0176)
+Offset	Size	Description	(Table 0183)
  00h  3 BYTEs	relative sector address (little-endian)
  03h	BYTE	flags and defect count
 		bit 7: last logical sector on track
@@ -965,7 +1133,7 @@ INT 13 - Future Domain SCSI CONTROLLER - GET SCSI PARTIAL MEDIUM CAPACITY
 	DH = head
 	DL = hard drive ID
 Return: CF set on error
-	AH = status code (see #0159 at AH=01h)
+	AH = status code (see #0166 at AH=01h)
 	CX:DX = logical block number of last quickly-accessible block after
 		given block
 Notes:	sends SCSI Read Capacity command with the PMI bit set to obtain the
@@ -996,9 +1164,9 @@ INT 13 - Future Domain SCSI CONTROLLER - GET POINTER TO SCSI DISK INFO BLOCK
 	AH = 1Bh
 	DL = hard drive ID
 Return: CF set on error
-	    AH = status code (see #0159 at AH=01h)
+	    AH = status code (see #0166 at AH=01h)
 	CF clear if successful
-	    ES:BX -> SCSI disk information block (see #0177)
+	    ES:BX -> SCSI disk information block (see #0184)
 Notes:	also sets a non-resettable flag which prevents some controller messages
 	  from being displayed
 	the TMC-950 does not support any Future Domain BIOS calls; instead,
@@ -1006,8 +1174,8 @@ Notes:	also sets a non-resettable flag which prevents some controller messages
 SeeAlso: AH=18h"SCSI",AH=1Ch"SCSI"
 
 Format of Future Domain SCSI disk information block:
-Offset	Size	Description	(Table 0177)
- 00h	BYTE	drive physical information (see #0178)
+Offset	Size	Description	(Table 0184)
+ 00h	BYTE	drive physical information (see #0185)
  01h	WORD	translated number of cylinders
  03h	BYTE	translated number of heads
  04h	BYTE	translated number of sectors per track (17, 34, or 63)
@@ -1019,11 +1187,11 @@ Offset	Size	Description	(Table 0177)
  08h	BYTE	00h
  09h	BYTE	00h or extended sense code byte 02h (sense key)
  0Ah	BYTE	00h
- 0Bh 10 BYTEs	copy of Command Descriptor Block (CDB) (see #2868,#2869)
+ 0Bh 10 BYTEs	copy of Command Descriptor Block (CDB) (see #2907,#2908)
  15h	DWORD	translated number of sectors on device
 
 Bitfields for Future Domain SCSI device physical information:
-Bit(s)	Description	(Table 0178)
+Bit(s)	Description	(Table 0185)
  0	???
  1	device uses parity
  2	256 bytes per sector instead of 512
@@ -1035,7 +1203,7 @@ INT 13 - Future Domain SCSI CONTROLLER - GET POINTER TO FREE CONTROLLER RAM
 	AH = 1Ch
 	DL = hard drive ID (any valid SCSI hard disk)
 Return: CF set on error
-	    AH = status code (see #0159 at AH=01h)
+	    AH = status code (see #0166 at AH=01h)
 	CF clear if successful
 	    ES:BX -> first byte of free RAM on controller
 Notes:	the Future Domain TMC-870 contains 1024 bytes of RAM at offsets 1800h
@@ -1058,25 +1226,25 @@ SeeAlso: AX=1C08h,PORT 3510h"ESDI"
 INT 13 U - ESDI FIXED DISK - GET COMMAND COMPLETION STATUS
 	AX = 1C08h
 	DL = drive (80h,81h)
-	ES:BX -> buffer for Command Complete Status Block (see #0179)
+	ES:BX -> buffer for Command Complete Status Block (see #0186)
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0159 at AH=01h)
+	AH = status (see #0166 at AH=01h)
 SeeAlso: AX=1C09h,AX=1C0Ah,PORT 3510h"ESDI"
 
 Format of ESDI Command Complete Status Block:
-Offset	Size	Description	(Table 0179)
+Offset	Size	Description	(Table 0186)
  00h	BYTE	07h
  01h	BYTE	size of block in words (07h)
- 02h	BYTE	command error code (see #0180)
- 03h	BYTE	command status code (see #0181)
- 04h	BYTE	device error code, group 1 (see #0182)
- 05h	BYTE	device error flags, group 2 (see #0183)
+ 02h	BYTE	command error code (see #0187)
+ 03h	BYTE	command status code (see #0188)
+ 04h	BYTE	device error code, group 1 (see #0189)
+ 05h	BYTE	device error flags, group 2 (see #0190)
  06h	WORD	number of unprocessed sectors due to abnormal termination
  08h	DWORD	last Relative Sector Address processed by command
  0Ch	WORD	number of sectors corrected by ECC codes
 
-(Table 0180)
+(Table 0187)
 Values for ESDI command error code:
  00h	successful
  01h	parameter invalid
@@ -1100,24 +1268,24 @@ Values for ESDI command error code:
  13h	invalid device
  FFh	device error
 
-(Table 0181)
+(Table 0188)
 Values for ESDI command status code:
  01h	successful
  03h	successful after ECC
  05h	successful after retries
  06h	format partially completed
  07h	successful after ECC and retries
- 08h	command completed with warning (see #0180)
+ 08h	command completed with warning (see #0187)
  09h	abort complete
  0Ah	reset complete
  0Bh	data transfer ready (no status block)
- 0Ch	command completed with failure (see #0182,#0183)
+ 0Ch	command completed with failure (see #0189,#0190)
  0Dh	DMA error
- 0Eh	command block error (see #0180)
+ 0Eh	command block error (see #0187)
  0Fh	bad attention code
-SeeAlso: #0182
+SeeAlso: #0189
 
-(Table 0182)
+(Table 0189)
 Values for ESDI device error code, group 1:
  00h	successful
  01h	seek fault detected by device
@@ -1149,51 +1317,51 @@ Values for ESDI device error code, group 1:
  84h	stopped awaiting data transfer during formatting
  85h	timeout while waiting for head switch
  86h	timeout while awaiting DMA completion
-SeeAlso: #0181,#0183
+SeeAlso: #0188,#0190
 
 Bitfields for ESDI device error flags, group 2:
-Bit(s)	Description	(Table 0183)
+Bit(s)	Description	(Table 0190)
  7-5	unused
  4	ready
  3	selected
  2	write fault
  1	on track 0
  0	seek/command complete
-SeeAlso: #0182
+SeeAlso: #0189
 --------d-131C09-----------------------------
 INT 13 U - ESDI FIXED DISK - GET DEVICE STATUS
 	AX = 1C09h
 	DL = drive (80h,81h)
-	ES:BX -> buffer for Device Status Block (see #0184)
+	ES:BX -> buffer for Device Status Block (see #0191)
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0159 at AH=01h)
+	AH = status (see #0166 at AH=01h)
 SeeAlso: AX=1C08h,AX=1C0Ah,PORT 3510h"ESDI"
 
 Format of ESDI Device Status Block:
-Offset	Size	Description	(Table 0184)
+Offset	Size	Description	(Table 0191)
  00h	BYTE	08h
  01h	BYTE	number of words in block (09h)
  02h	BYTE	error flags
  03h	BYTE	unused
- 04h	BYTE	command error code (see #0180)
- 05h	BYTE	command status code (see #0181)
+ 04h	BYTE	command error code (see #0187)
+ 05h	BYTE	command status code (see #0188)
  06h	WORD	ESDI standard status
  08h  5 WORDs	ESDI vendor-specific status codes
 --------d-131C0A-----------------------------
 INT 13 U - ESDI FIXED DISK - GET DEVICE CONFIGURATION
 	AX = 1C0Ah
 	DL = drive (80h,81h)
-	ES:BX -> buffer for Drive Configuration Status Block (see #0185)
+	ES:BX -> buffer for Drive Configuration Status Block (see #0192)
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0159 at AH=01h)
+	AH = status (see #0166 at AH=01h)
 Note:	device configuration format can be found in IBM ESDI Fixed Disk Drive
 	  Adapter/A Technical Reference
 SeeAlso: AX=1C08h,AX=1C0Bh,AX=1C0Ch
 
 Format of ESDI Drive Configuration Status Block:
-Offset	Size	Description	(Table 0185)
+Offset	Size	Description	(Table 0192)
  00h	BYTE	09h
  01h	BYTE	number of words in block (06h)
  02h	BYTE	flags
@@ -1205,14 +1373,14 @@ Offset	Size	Description	(Table 0185)
 --------d-131C0B-----------------------------
 INT 13 U - ESDI FIXED DISK - GET ADAPTER CONFIGURATION
 	AX = 1C0Bh
-	ES:BX -> buffer for Controller Configuration Status Block (see #0186)
+	ES:BX -> buffer for Controller Configuration Status Block (see #0193)
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0159 at AH=01h)
+	AH = status (see #0166 at AH=01h)
 SeeAlso: AX=1C0Ch
 
 Format of ESDI Controller Configuration Status Block:
-Offset	Size	Description	(Table 0186)
+Offset	Size	Description	(Table 0193)
  00h	BYTE	E9h
  01h	BYTE	number of words in block (06h)
  02h	WORD	unused (0000h)
@@ -1221,14 +1389,14 @@ Offset	Size	Description	(Table 0186)
 --------d-131C0C-----------------------------
 INT 13 U - ESDI FIXED DISK - GET POS INFORMATION
 	AX = 1C0Ch
-	ES:BX -> buffer for POS Information Status Block (see #0187)
+	ES:BX -> buffer for POS Information Status Block (see #0194)
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0159 at AH=01h)
+	AH = status (see #0166 at AH=01h)
 SeeAlso: AX=1C0Bh
 
 Format of ESDI POS Information Status Block:
-Offset	Size	Description	(Table 0187)
+Offset	Size	Description	(Table 0194)
  00h	BYTE	EAh
  01h	BYTE	number of words in block (05h)
  02h	WORD	magic value FFDDh
@@ -1256,7 +1424,7 @@ INT 13 U - ESDI FIXED DISK - TRANSLATE RBA TO ABA
 	ES:BX -> ABA number
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0159 at AH=01h)
+	AH = status (see #0166 at AH=01h)
 Note:	ABA (absolute block address) format can be found in IBM ESDI Adapter
 	  Technical Reference by using its Device Configuration Status Block
 SeeAlso: AX=1C08h,AX=1C0Fh,PORT 3510h"ESDI"
@@ -1282,22 +1450,22 @@ INT 13 - IBMCACHE.SYS - CACHE STATUS
 	AL = subfunction
 	    01h get status record
 		DL = drive???
-		Return: ES:BX -> status record (see #0188)
+		Return: ES:BX -> status record (see #0195)
 			CF set on error
 			    AH = error code
 	    02h set cache status
-		ES:BX -> status record (see #0188)
+		ES:BX -> status record (see #0195)
 		DL = drive???
 		Return: CF set on error
 
 Format of IBMCACHE.SYS status record:
-Offset	Size	Description	(Table 0188)
+Offset	Size	Description	(Table 0195)
  00h	DWORD	total number of read requests
  04h	DWORD	total number of hits
  08h	DWORD	number of physical disk reads
  0Ch	DWORD	total number of sectors requested by physical disk reads
  10h  6 BYTEs	???
- 16h	DWORD	pointer to start of error list (see #0189)
+ 16h	DWORD	pointer to start of error list (see #0196)
  1Ah	DWORD	pointer to end of error list
  1Eh	WORD	???
  20h	BYTE	using extended memory if nonzero
@@ -1307,7 +1475,7 @@ Offset	Size	Description	(Table 0188)
  28h	WORD	sectors per page
 
 Format of IBMCACHE.SYS error list:
-Offset	Size	Description	(Table 0189)
+Offset	Size	Description	(Table 0196)
  00h	DWORD	relative block address of bad page
  04h	BYTE	drive
  05h	BYTE	sector bit-map
@@ -1341,7 +1509,7 @@ INT 13 U - Compaq, ATAPI Removable Media Device - GET CURRENT MEDIA FORMAT
 	AH = 20h
 	DL = drive number (00h,01h)
 Return: CF clear if successful
-	    AL = media type (see #0190)
+	    AL = media type (see #0197)
 	    AH = 00h
 	CF set on error
 	    AH = error code
@@ -1354,7 +1522,7 @@ Notes:	this function is supported by the 3/8/93 ROM BIOS, but only partially
 	this function is also supported by some recent versions of the Phoenix
 	  486 BIOS
 
-(Table 0190)
+(Table 0197)
 Values for Compaq/ATAPI diskette media type:
  03h	720K  (1M unformatted)
  04h	1.44M (2M unformatted)
@@ -1387,7 +1555,7 @@ INT 13 - HARD DISK - PS/1 and newer PS/2 - READ MULTIPLE DISK SECTORS
 Return: CF clear if successful
 	    ES:BX buffer filled
 	CF set on error
-	AH = status (see #0159 at AH=01h)
+	AH = status (see #0166 at AH=01h)
 Desc:	read from the disk using the Multiple Block mode available on newer
 	  IDE drives and some hard disk controllers, which generates an
 	  interrupt only after the end of transferring a group of sectors
@@ -1413,7 +1581,7 @@ INT 13 - HARD DISK - PS/1 and newer PS/2 - WRITE MULTIPLE DISK SECTORS
 	ES:BX -> buffer containing data to be written
 Return: CF clear if successful
 	CF set on error
-	AH = status (see #0159 at AH=01h)
+	AH = status (see #0166 at AH=01h)
 Desc:	write to the disk using the Multiple Block mode available on newer
 	  IDE drives and some hard disk controllers, which generates an
 	  interrupt only after the end of transferring a group of sectors
@@ -1432,15 +1600,15 @@ SeeAlso: AH=2Ch,AH=2Dh,AH=32h,AH=33h,AH=A3h,AH=A4h
 --------d-1323-------------------------------
 INT 13 U - HARD DISK - PS/1 and newer PS/2 - SET CONTROLLER FEATURES REGISTER
 	AH = 23h
-	AL = feature number (see #0191)
+	AL = feature number (see #0198)
 	DL = drive number (80h,81h)
 	???
 Return: CF clear if successful
 	CF set on error
-	AH = status (see #0159 at AH=01h)
+	AH = status (see #0166 at AH=01h)
 SeeAlso: AH=21h"PS/1",AH=22h"PS/1",AH=24h"PS/1",AH=25h"PS/1"
 
-(Table 0191)
+(Table 0198)
 Values for PS/1 hard disk feature number:
  01h	select 8-bit data transfers instead of 16-bit
  02h	enable write cache
@@ -1459,7 +1627,7 @@ Values for PS/1 hard disk feature number:
  BBh	set ECC length for read long/write long to four bytes
  CCh	enable reverting to power-on defaults
  DDh	Write Same, entire disk
-SeeAlso: #P144
+SeeAlso: #P175
 --------c-1323-------------------------------
 INT 13 U - QUICKCACHE II v4.20 - GET ??? ADDRESS
 	AH = 23h
@@ -1472,7 +1640,7 @@ INT 13 - HARD DISK - PS/1 and newer PS/2 - SET MULTIPLE MODE
 	DL = drive number (80h,81h)
 Return: CF clear if successful
 	CF set onerror
-	AH = status (see #0159 at AH=01h)
+	AH = status (see #0166 at AH=01h)
 Desc:	specify how many sectors the controller should transfer as a group
 	  between operation-complete interrupts when using the Read Multiple
 	  and Write Multiple functions (AH=21h,AH=22h)
@@ -1498,16 +1666,16 @@ INT 13 - HARD DISK - PS/1 and newer PS/2 - IDENTIFY DRIVE
 	ES:BX-> 512 byte buffer for reply packet
 Return: CF clear if successful
 	CF set on error
-	AH = status (see #0159 at AH=01h)
-	buffer filled with ATA/IDE-style drive information block (see #0192)
+	AH = status (see #0166 at AH=01h)
+	buffer filled with ATA/IDE-style drive information block (see #0199)
 Desc:	retrieves the 256 words of drive data stored on an IDE hard disk
 Notes:	the byte at address 0040h:0074h is set to the status of the operation
 	IBM officially classifies this function as optional
 SeeAlso: AH=23h"PS/1"
 
 Format of drive information block:
-Offset	Size	Description	(Table 0192)
- 00h	WORD	general drive configuration (see #0193)
+Offset	Size	Description	(Table 0199)
+ 00h	WORD	general drive configuration (see #0200)
  02h	WORD	number of cylinders
  04h	WORD	reserved
  06h	WORD	number of heads
@@ -1550,10 +1718,10 @@ Offset	Size	Description	(Table 0192)
 100h 64 BYTEs	vendor unique
 140h 96 BYTEs	reserved
 Note:	the above description is as in the ATA (AT Attachment) Specification.
-SeeAlso: #P126
+SeeAlso: #P157
 
 Bitfields for general drive configuration:
-Bit(s)	Description	(Table 0193)
+Bit(s)	Description	(Table 0200)
  15	0   reserved for non-magnetic drives
  14	format speed tolerance gap required
  13	track offset option available
@@ -1657,8 +1825,8 @@ SeeAlso: AH=21h"QUICKCACHE"
 INT 13 u - QUICKCACHE II v4.20 - GET INFO
 	AH = 30h
 	AL = what to get
-	    00h system info (see #0194)
-	    01h drive info (see #0195)
+	    00h system info (see #0201)
+	    01h drive info (see #0202)
 	    02h access frequency (array of 30 words)
 	    03h drive index
 		(array of 32 bytes indicating BIOS drive for DOS drive)
@@ -1668,7 +1836,7 @@ Program: QUICKCACHE II is a shareware disk cache by P.R. Glassel and
 	  Associates, Inc.
 
 Format of QUICKCACHE II system info:
-Offset	Size	Description	(Table 0194)
+Offset	Size	Description	(Table 0201)
  00h	BYTE	flag: cache enabled
  01h	BYTE	flag: buffered writes enabled
  02h	BYTE	flag: buffered reads enabled
@@ -1692,10 +1860,10 @@ Offset	Size	Description	(Table 0194)
  1Ah	WORD	dirty cache sectors
  1Ch	BYTE	trace buffer size
  1Dh	BYTE	reserved (padding)
-SeeAlso: #0195
+SeeAlso: #0202
 
 Format of QUICKCACHE II drive info [16-element array, one element]:
-Offset	Size	Description	(Table 0195)
+Offset	Size	Description	(Table 0202)
  00h	BYTE	DOS drive number
  01h	BYTE	BIOS drive number
  02h	BYTE	maximum sector number
@@ -1720,7 +1888,7 @@ Offset	Size	Description	(Table 0195)
  1Eh	DWORD	number of cache misses
  22h	DWORD	"wio_count"
  26h	DWORD	"dio_count"
-SeeAlso: #0194
+SeeAlso: #0201
 --------c-1331-------------------------------
 INT 13 U - QUICKCACHE II v4.20 - RESERVE MEMORY
 	AH = 31h
@@ -1844,19 +2012,19 @@ Return: CF set on error (not supported)
 	    AH = major version of extensions
 		(01h = 1.x, 20h = 2.0/EDD-1.0, 21h = 2.1/EDD-1.1)
 	    AL = internal use
-	    CX = API subset support bitmap (see #0196)
+	    CX = API subset support bitmap (see #0203)
 	    DH = extension version (v2.0+ ??? -- not present in 1.x)
 Note:	the Phoenix Enhanced Disk Drive Specification v1.0 uses version 2.0 of
 	  the INT 13 Extensions API
 SeeAlso: AH=42h"INT 13 Ext",AH=48h"INT 13 Ext"
 
 Bitfields for IBM/MS INT 13 Extensions API support bitmap:
-Bit(s)	Description	(Table 0196)
+Bit(s)	Description	(Table 0203)
  0	extended disk access functions (AH=42h-44h,47h,48h) supported
  1	removable drive controller functions (AH=45h,46h,48h,49h,INT 15/AH=52h)
 	  supported
  2	enhanced disk drive (EDD) functions (AH=48h,AH=4Eh) supported
-	extended drive parameter table is valid (see #0198,#0201)
+	extended drive parameter table is valid (see #0205,#0208)
  3-15	reserved (0)
 --------c-1341-------------------------------
 INT 13 U - QUICKCACHE II v4.20 - SAVE/RESTORE ???
@@ -1873,17 +2041,17 @@ SeeAlso: AH=40h"QUICKCACHE"
 INT 13 - IBM/MS INT 13 Extensions - EXTENDED READ
 	AH = 42h
 	DL = drive number
-	DS:SI -> disk address packet (see #0197)
+	DS:SI -> disk address packet (see #0204)
 Return: CF clear if successful
 	    AH = 00h
 	CF set on error
-	    AH = error code (see #0159)
+	    AH = error code (see #0166)
 	    disk address packet's block count field set to number of blocks
 	      successfully transferred
 SeeAlso: AH=02h,AH=41h"INT 13 Ext",AH=43h"INT 13 Ext"
 
 Format of disk address packet:
-Offset	Size	Description	(Table 0197)
+Offset	Size	Description	(Table 0204)
  00h	BYTE	10h (size of packet)
  01h	BYTE	reserved (0)
  02h	WORD	number of blocks to transfer (max 007Fh for Phoenix EDD)
@@ -1910,11 +2078,11 @@ INT 13 - IBM/MS INT 13 Extensions - EXTENDED WRITE
 	   00h,01h write without verify
 	   02h write with verify
 	DL = drive number
-	DS:SI -> disk address packet (see #0197)
+	DS:SI -> disk address packet (see #0204)
 Return: CF clear if successful
 	    AH = 00h
 	CF set on error
-	    AH = error code (see #0159)
+	    AH = error code (see #0166)
 	    disk address packet's block count field set to number of blocks
 	      successfully transferred
 Note:	the BIOS returns CF set/AH=01h (invalid function) if verify is
@@ -1924,11 +2092,11 @@ SeeAlso: AH=03h,AH=41h"INT 13 Ext",AH=42h"INT 13 Ext",AH=44h
 INT 13 - IBM/MS INT 13 Extensions - VERIFY SECTORS
 	AH = 44h
 	DL = drive number
-	DS:SI -> disk address packet (see #0197)
+	DS:SI -> disk address packet (see #0204)
 Return: CF clear if successful
 	    AH = 00h
 	CF set on error
-	    AH = error code (see #0159)
+	    AH = error code (see #0166)
 	    disk address packet's block count field set to number of blocks
 	      successfully verified
 SeeAlso: AH=04h,AH=41h"INT 13 Ext",AH=42h"INT 13 Ext",AH=47h
@@ -1944,7 +2112,7 @@ Return: CF clear if successful
 	    AH = 00h
 	    AL = lock state (00h = unlocked)
 	CF set on error
-	    AH = error code (see #0159)
+	    AH = error code (see #0166)
 Notes:	this function is required to be supported for any removable drives
 	  numbered 80h or higher
 	up to 255 locks may be placed on a drive, and the media will not
@@ -1958,49 +2126,49 @@ INT 13 - IBM/MS INT 13 Extensions - EJECT MEDIA
 Return: CF clear if successful
 	    AH = 00h
 	CF set on error
-	    AH = error code (see #0159)
+	    AH = error code (see #0166)
 SeeAlso: AH=49h,INT 15/AH=52h"INT 13 Extensions"
 --------d-1347-------------------------------
 INT 13 - IBM/MS INT 13 Extensions - EXTENDED SEEK
 	AH = 47h
 	DL = drive number
-	DS:SI -> disk address packet (see #0197)
+	DS:SI -> disk address packet (see #0204)
 Return: CF clear if successful
 	    AH = 00h
 	CF set on error
-	    AH = error code (see #0159)
+	    AH = error code (see #0166)
 SeeAlso: AH=0Ch,AH=42h"INT 13 Ext"
 --------d-1348-------------------------------
 INT 13 - IBM/MS INT 13 Extensions - GET DRIVE PARAMETERS
 	AH = 48h
 	DL = drive (80h-FFh)
-	DS:SI -> buffer for drive parameters (see #0198)
+	DS:SI -> buffer for drive parameters (see #0205)
 Return: CF clear if successful
 	    AH = 00h
 	    DS:SI buffer filled
 	CF set on error
-	    AH = error code (see #0159)
+	    AH = error code (see #0166)
 SeeAlso: AH=08h,AH=41h,AH=49h
 
 Format of IBM/MS INT 13 Extensions drive parameters:
-Offset	Size	Description	(Table 0198)
+Offset	Size	Description	(Table 0205)
  00h	WORD	(call) size of buffer (001Ah for v1.x, 001Eh for v2.x)
 		(ret) size of returned data
- 02h	WORD	information flags (see #0199)
+ 02h	WORD	information flags (see #0206)
  04h	DWORD	number of physical cylinders on drive
  08h	DWORD	number of physical heads on drive
  0Ch	DWORD	number of physical sectors per track
  10h	QWORD	total number of sectors on drive
  18h	WORD	bytes per sector
 ---v2.0+ ---
- 1Ah	DWORD	-> EDD configuration parameters (see #0201)
+ 1Ah	DWORD	-> EDD configuration parameters (see #0208)
 		FFFFh:FFFFh if not available
 Note:	if the size is less than 30 on call, the final DWORD will not be
 	  returned by a v2.x implementation
-SeeAlso: #0200,#2828
+SeeAlso: #0207,#2867
 
 Bitfields for IBM/MS INT 13 Extensions information flags:
-Bit(s)	Description	(Table 0199)
+Bit(s)	Description	(Table 0206)
  0	DMA boundary errors handled transparently
  1	cylinder/head/sectors-per-track information is valid
  2	removable drive
@@ -2009,17 +2177,17 @@ Bit(s)	Description	(Table 0199)
  5	drive can be locked (required if drive >= 80h is removable)
  6	CHS information set to maximum supported values, not current media
  15-7	reserved (0)
-SeeAlso: #0198
+SeeAlso: #0205
 
 Format of Phoenix Enhanced Disk Drive Spec translated drive parameter table:
-Offset	Size	Description	(Table 0200)
+Offset	Size	Description	(Table 0207)
  00h	WORD	number of cylinders
  02h	BYTE	number of heads
  03h	BYTE	A0h (signature indicating translated table)
  04h	BYTE	number of physical sectors per track
  05h	WORD	starting write precompensation cylinder number
  07h	BYTE	reserved
- 08h	BYTE	control byte (see #2830 at INT 41"DISK 0")
+ 08h	BYTE	control byte (see #2869 at INT 41"DISK 0")
  09h	WORD	number of physical cylinders
  0Bh	BYTE	number of physical heads
  0Ch	WORD	cylinder number of landing zone
@@ -2027,13 +2195,13 @@ Offset	Size	Description	(Table 0200)
  0Fh	BYTE	checksum
 Program: the Phoenix Enhanced Disk Drive Specification is an addition to the
 	  IBM/MS INT 13 extensions
-SeeAlso: #0201,#2828
+SeeAlso: #0208,#2867
 
 Format of Phoenix Enhanced Disk Drive Spec Fixed Disk Parameter Table:
-Offset	Size	Description	(Table 0201)
+Offset	Size	Description	(Table 0208)
  00h	WORD	physical I/O port base address
  02h	WORD	disk-drive control port address
- 04h	BYTE	drive flags (see #0202)
+ 04h	BYTE	drive flags (see #0209)
  05h	BYTE	proprietary information
 		bits 7-4 reserved (0)
 		bits 3-0: Phoenix proprietary (used by BIOS)
@@ -2045,25 +2213,25 @@ Offset	Size	Description	(Table 0201)
  09h	BYTE	programmed I/O control
 		bits 7-4: reserved (0)
 		bits 3-0: PIO type (1-4) as per ATA-2 specification
- 0Ah	WORD	drive options (see #0203)
+ 0Ah	WORD	drive options (see #0210)
  0Ch  2 BYTEs	reserved (0)
  0Eh	BYTE	extension revision level (high nybble=major, low nybble=minor)
 		(currently 10h for v1.0 and 11h for v1.1)
  0Fh	BYTE	2's complement checksum of bytes 00h-0Eh
 		8-bit sum of all bytes 00h-0Fh should equal 00h
-SeeAlso: #0200
+SeeAlso: #0207
 
 Bitfields for Phoenix Enhanced Disk Drive Spec drive flags:
-Bit(s)	Description	(Table 0202)
+Bit(s)	Description	(Table 0209)
  7	reserved (1)
  6	LBA enabled
  5	reserved (1)
  4	drive is slave
  3-0	reserved (0)
-SeeAlso: #0201,#0203
+SeeAlso: #0208,#0210
 
 Bitfields for Phoenix Enhanced Disk Drive Spec drive options:
-Bit(s)	Description	(Table 0203)
+Bit(s)	Description	(Table 0210)
  0	fast PIO enabled
  1	fast DMA access enabled
  2	block PIO (multi-sector transfers) enabled
@@ -2081,7 +2249,7 @@ Bit(s)	Description	(Table 0203)
 	10 reserved
 	11 proprietary translation
  15-8	reserved
-SeeAlso: #0201,#0202
+SeeAlso: #0208,#0209
 --------d-1349-------------------------------
 INT 13 - IBM/MS INT 13 Extensions - EXTENDED MEDIA CHANGE
 	AH = 49h
@@ -2089,30 +2257,30 @@ INT 13 - IBM/MS INT 13 Extensions - EXTENDED MEDIA CHANGE
 Return: CF clear if media has not changed
 	    AH = 00h
 	CF set if media may have changed
-	    AH = 06h (see #0159)
+	    AH = 06h (see #0166)
 Note:	unlike AH=16h, any drive number may be specified
 SeeAlso: AH=16h,AH=41h"INT 13 Ext",AH=46h
 --------d-134A-------------------------------
 INT 13 - Bootable CD-ROM - INITIATE DISK EMULATION
 	AH = 4Ah
 	AL = 00h
-	DS:SI -> specification packet (see #0204)
+	DS:SI -> specification packet (see #0211)
 Return: CF clear if successful
 	CF set on error (drive will not be in emulation mode)
 	AX = return codes
 SeeAlso: AH=48h,AX=4B00h,AH=4Ch,AH=4Dh
 
 Format of Bootable CD-ROM Specification Packet:
-Offset	Size	Description	(Table 0204)
+Offset	Size	Description	(Table 0211)
  00h	BYTE	size of packet in bytes (13h)
- 01h	BYTE	boot media type (see #0205)
+ 01h	BYTE	boot media type (see #0212)
  02h	BYTE	drive number
 		00h floppy image
 		80h bootable hard disk
 		81h-FFh nonbootable or no emulation
  03h	BYTE	CD-ROM controller number
  04h	DWORD	Logical Block Address of disk image to emulate
- 08h	WORD	device specification (see also #0205)
+ 08h	WORD	device specification (see also #0212)
 		(IDE) bit 0: drive is slave instead of master
 		(SCSI)	bits 7-0: LUN and PUN
 			bits 15-8: bus number
@@ -2124,10 +2292,10 @@ Offset	Size	Description	(Table 0204)
  10h	BYTE	low byte of cylinder count (for INT 13/AH=08h)
  11h	BYTE	sector count, high bits of cylinder count (for INT 13/AH=08h)
  12h	BYTE	head count (for INT 13/AH=08h)
-SeeAlso: #0206,AH=08h
+SeeAlso: #0213,AH=08h
 
 Bitfields for Bootable CD-ROM boot media type:
-Bit(s)	Description	(Table 0205)
+Bit(s)	Description	(Table 0212)
  3-0	media type
 	0000 no emulation
 	0001 1.2M diskette
@@ -2138,12 +2306,12 @@ Bit(s)	Description	(Table 0205)
  5-4	reserved (0)
  6	image contains ATAPI driver
  7	image contains SCSI driver(s)
-SeeAlso: #0204
+SeeAlso: #0211
 --------d-134B00-----------------------------
 INT 13 - Bootable CD-ROM - TERMINATE DISK EMULATION
 	AX = 4B00h
 	DL = drive number or 7Fh to terminate all emulations
-	DS:SI -> empty specification packet (see #0204)
+	DS:SI -> empty specification packet (see #0211)
 Return: CF clear if successful
 	CF set on error (drive will still be in emulation mode)
 	AX = return codes
@@ -2153,7 +2321,7 @@ SeeAlso: AH=48h,AH=4Ah,AX=4B00h,AH=4Ch,AH=4Dh
 INT 13 - Bootable CD-ROM - GET STATUS
 	AX = 4B01h
 	DL = drive number
-	DS:SI -> empty specification packet (see #0204)
+	DS:SI -> empty specification packet (see #0211)
 Return: CF clear if successful
 	CF set on error
 	AX = return codes
@@ -2164,7 +2332,7 @@ SeeAlso: AH=48h,AH=4Ah,AX=4B00h,AH=4Ch,AH=4Dh
 INT 13 - Bootable CD-ROM - INITIATE DISK EMULATION AND BOOT
 	AH = 4Ch
 	AL = 00h
-	DS:SI -> specification packet (see #0204)
+	DS:SI -> specification packet (see #0211)
 Return: never, if successful
 	CF set (error while attempting to boot)
 	AX = error codes
@@ -2172,19 +2340,19 @@ SeeAlso: AH=48h,AH=4Ah,AX=4B00h,AH=4Dh
 --------d-134D00-----------------------------
 INT 13 - Bootable CD-ROM - RETURN BOOT CATALOG
 	AX = 4D00h
-	DS:SI -> command packet (see #0206)
+	DS:SI -> command packet (see #0213)
 Return: CF clear if successful
 	CF set on error
 	AX = return codes
 SeeAlso: AH=48h,AH=4Ah,AX=4B00h,AH=4Ch
 
 Format of Bootable CD-ROM "get boot catalog" command packet:
-Offset	Size	Description	(Table 0206)
+Offset	Size	Description	(Table 0213)
  00h	BYTE	size of packet in bytes (08h)
  01h	BYTE	number of sectors of boot catalog to read
  02h	DWORD	-> buffer for boot catalog
  06h	WORD	first sector in boot catalog to transfer
-SeeAlso: #0204
+SeeAlso: #0211
 --------d-134E-------------------------------
 INT 13 - IBM/MS INT 13 Extensions v2.1 - SET HARDWARE CONFIGURATION
 	AH = 4Eh
@@ -2203,7 +2371,7 @@ Return: CF clear if successful
 		00h command was safe (only affected specified drive)
 		01h other devices are affected
 	CF set on error
-	    AH = error code (see #0159)
+	    AH = error code (see #0166)
 Note:	DMA and PIO modes are mutually exclusive, so selecting DMA disables
 	  PIO (for either the specified device or all devices on that
 	  controller), and selecting PIO disables DMA
@@ -2242,12 +2410,12 @@ INT 13 - Seagate ST01/ST02 - RESERVED
 --------d-135503-----------------------------
 INT 13 - Seagate ST01/ST01 - Set Device Type Qualifier (DTQ)
 	AX = 5503h
-	DH = DTQ byte (see #0207)
+	DH = DTQ byte (see #0214)
 	DL = drive ID (80h, 81h, ...)
 Return: nothing
 
 Bitfields for DTQ byte:
-Bit(s)	Description	(Table 0207)
+Bit(s)	Description	(Table 0214)
  7	reserved
  6	SCSI drive attached
  5	reserved
@@ -2323,14 +2491,14 @@ INT 13 - SyQuest - Generic SCSI pass through
 	AH = 59h
 	CX = HOST_ID, 0-based
 	DX = 80h
-	ES:BX pointer to SCSI structure (see #0208)
+	ES:BX pointer to SCSI structure (see #0215)
 Return: CF clear
 	AH = 95h
 SeeAlso: AH=12h"SyQuest",AH=13h"SyQuest",AH=1Fh"SyQuest"
 
 Format of SyQuest SCSI structure:
-Offset	Size	Description	(Table 0208)
- 00h	WORD	opcode (see #0209)
+Offset	Size	Description	(Table 0215)
+ 00h	WORD	opcode (see #0216)
  02h	BYTE	target's SCSI ID
  03h	BYTE	target's logical unit number
  04h	BYTE	data direction (00h no data xfer, 01h data in, FFh data out)
@@ -2345,12 +2513,12 @@ Offset	Size	Description	(Table 0208)
  07h	BYTE	command data block length
  08h	DWORD	request data length
  0Ch	DWORD	result data length (actual length of data transferred)
- 10h	DWORD	-> CDB (see #2868,#2869,#2870)
+ 10h	DWORD	-> CDB (see #2907,#2908,#2909)
  14h	DWORD	-> data buffer
 Note:	The handler does not perform a 'Request Sense' command if there was an
 	  error
 
-(Table 0209)
+(Table 0216)
 Values for SCSI opcode:
  00h	verify interface
 	clears carry flag and returns if function is available
@@ -2363,7 +2531,7 @@ Values for SCSI opcode:
  03h	execute SCSI command
  04h	device reset
  05h	SCSI bus reset
-SeeAlso: #0208
+SeeAlso: #0215
 --------d-1370-------------------------------
 INT 13 - Priam EDVR.SYS DISK PARTITIONING SOFTWARE???
 	AH = 70h
@@ -2390,7 +2558,7 @@ Note:	intercepted by PC-Cache (v5.1 only)
 --------c-137B00-----------------------------
 INT 13 - NOW! v3.05 - GET INFORMATION
 	AX = 7B00h
-	CX:DX -> 1F8h-byte buffer for information record (see #0210)
+	CX:DX -> 1F8h-byte buffer for information record (see #0217)
 Return: AX = 0000h
 	BX = segment of main resident code
 	ES = ???
@@ -2398,7 +2566,7 @@ Program: NOW! is a disk cache by Vertisoft Systems, Inc.
 SeeAlso: AX=7B02h,AH=EFh
 
 Format of NOW! information record:
-Offset	Size	Description	(Table 0210)
+Offset	Size	Description	(Table 0217)
  00h 80 BYTEs	name of directory from which NOW! was started
  50h 424 BYTEs	???
  81h  ? BYTEs	array of bytes for ???
@@ -2418,7 +2586,7 @@ SeeAlso: AX=7B00h
 INT 13 - NOW! v3.05 - SET INFORMATION
 	AX = 7B02h
 	BX = segment of ??? (10h above a PSP)
-	CX:DX -> 1F8h-byte information record (see #0210)
+	CX:DX -> 1F8h-byte information record (see #0217)
 Return: ???
 Program: NOW! is a disk cache by Vertisoft Systems, Inc.
 Note:	NOW! grabs the INT 24h value from the PSP reached via the segment in
@@ -2468,8 +2636,8 @@ INT 13 - FAST! v4.02+ - API
 	AH = 80h
 	CX = 6572h
 	DX = 1970h
-	ES:BX -> request packet (see #0212)
-	AL = function number (see #0211)
+	ES:BX -> request packet (see #0219)
+	AL = function number (see #0218)
 Return: AH = status (except function 06h)
 	    00h if successful
 	    01h invalid function
@@ -2482,7 +2650,7 @@ Program: FAST! is a disk cache by Future Computing Systems and marketed by
 SeeAlso: AX=8001h,AX=8006h,AX=8007h
 Index:	hotkeys;FAST!
 
-(Table 0211)
+(Table 0218)
 Values for FAST! function:
  01h	get cache information (see AX=8001h)
  04h	disable cache
@@ -2506,11 +2674,11 @@ Values for FAST! function:
  17h	(v5.00d+) increase cache size to maximum
 
 Format of FAST! request packet:
-Offset	Size	Description	(Table 0212)
- 00h	DWORD	pointer to 19-byte signature string (see #0213)
+Offset	Size	Description	(Table 0219)
+ 00h	DWORD	pointer to 19-byte signature string (see #0220)
  04h	DWORD	pointer to buffer for data (if needed by function)
 
-(Table 0213)
+(Table 0220)
 Values for FAST! v4.04-v5.03 signature string:
  13h 07h 06h 08h 11h 18h 0Fh 0Eh 02h 18h 13h 08h 0Bh 08h 01h 00h 04h 08h 15h
 --------c-138001CX6572-----------------------
@@ -2518,17 +2686,17 @@ INT 13 - FAST! v4.02+ - GET CACHE INFORMATION
 	AX = 8001h
 	CX = 6572h
 	DX = 1970h
-	ES:BX -> request packet (see #0214)
+	ES:BX -> request packet (see #0221)
 Return: AH = 00h if successful
 SeeAlso: AH=80h,AX=8006h
 
 Format of FAST! request packet:
-Offset	Size	Description	(Table 0214)
- 00h	DWORD	-> 19-byte signature string (see #0213)
- 04h	DWORD	-> buffer for cache information (see #0215)
+Offset	Size	Description	(Table 0221)
+ 00h	DWORD	-> 19-byte signature string (see #0220)
+ 04h	DWORD	-> buffer for cache information (see #0222)
 
 Format of FAST! cache information (v5.00-5.03):
-Offset	Size	Description	(Table 0215)
+Offset	Size	Description	(Table 0222)
  00h	WORD	binary version number of FAST! (v5.00 = 01F4h)
  02h	BYTE	revision letter (61h = X.XXa, 62h = X.XXb, etc.)
  03h	BYTE	FAST! variant
@@ -2540,7 +2708,7 @@ Offset	Size	Description	(Table 0215)
  14h	DWORD	total number of writes (only counted when staging enabled)
  18h	DWORD	number of physical disk writes (only when staging enabled)
  1Ch	DWORD	number of write errors while flushing cache
- 20h	WORD	flags1 (see #0216)
+ 20h	WORD	flags1 (see #0223)
  22h	WORD	flags
 		bit 0: ???
 		bit 1: staged writes enabled
@@ -2572,7 +2740,7 @@ Offset	Size	Description	(Table 0215)
  52h	WORD	???
 
 Bitfields for FAST! flags1:
-Bit(s)	Description	(Table 0216)
+Bit(s)	Description	(Table 0223)
  0	beep on flush
  3	hotkeys enabled
  4	mouse idle check enabled
@@ -2583,26 +2751,26 @@ INT 13 - FAST! v4.02+ - INSTALLATION CHECK
 	AX = 8006h
 	CX = 6572h
 	DX = 1970h
-	ES:BX -> request packet (see #0217)
+	ES:BX -> request packet (see #0224)
 Return: AX = 1965h if installed
 SeeAlso: AH=80h,AX=8001h,AX=8007h
 
 Format of FAST! request packet:
-Offset	Size	Description	(Table 0217)
- 00h	DWORD	-> 19-byte signature string (see #0213)
+Offset	Size	Description	(Table 0224)
+ 00h	DWORD	-> 19-byte signature string (see #0220)
 --------c-138007CX6572-----------------------
 INT 13 - FAST! v4.02+ - UNHOOK INTERRUPTS
 	AX = 8007h
 	CX = 6572h
 	DX = 1970h
-	ES:BX -> request packet (see #0218)
+	ES:BX -> request packet (see #0225)
 Return: AX = 1965h if installed
 SeeAlso: AH=80h,AX=8006h
 Index:	uninstall;FAST!
 
 Format of FAST! request packet:
-Offset	Size	Description	(Table 0218)
- 00h	DWORD	-> 19-byte signature string (see #0213)
+Offset	Size	Description	(Table 0225)
+ 00h	DWORD	-> 19-byte signature string (see #0220)
 --------c-1381--SI4358-----------------------
 INT 13 - Super PC-Kwik v3.20+ - ???
 	AH = 81h
@@ -2868,7 +3036,7 @@ INT 13 CU - Super PC-Kwik v5.10+ - PROGRAM LOAD NOTIFICATION
 	AH = A6h
 	SI = 4358h
 	DS:DX -> ASCIZ program name
-	ES:BX -> EXEC data block (see #1242 at INT 21/AH=4Bh)
+	ES:BX -> EXEC data block (see #1276 at INT 21/AH=4Bh)
 Return: ???
 Note:	called and used internally by Super PC-Kwik when a program is loaded
 	  with INT 21/AX=4B00h
@@ -3077,11 +3245,11 @@ Index:	installation check;Digiboard DigiCHANNEL
 --------S-1400-------------------------------
 INT 14 - SERIAL - INITIALIZE PORT
 	AH = 00h
-	AL = port parameters (see #0219)
+	AL = port parameters (see #0226)
 	DX = port number (00h-03h) (04h-43h for Digiboard XAPCM232.SYS)
-Return: AH = line status (see #0223)
+Return: AH = line status (see #0230)
 	    FFh if error on Digiboard XAPCM232.SYS
-	AL = modem status (see #0224)
+	AL = modem status (see #0231)
 Notes:	default handler is at F000h:E739h in IBM PC and 100% compatible BIOSes
 	since the PCjr supports a maximum of 4800 bps, attempting to set 9600
 	  bps will result in 4800 bps
@@ -3093,12 +3261,12 @@ SeeAlso: AX=8000h"ARTICOM",AH=81h"COMM-DRV",AH=82h"COURIERS",AH=8Ch
 SeeAlso: MEM 0040h:0000h,PORT 03F8h"Serial"
 
 Bitfields for serial port parameters:
-Bit(s)	Description	(Table 0219)
+Bit(s)	Description	(Table 0226)
  7-5	data rate (110,150,300,600,1200,2400,4800,9600 bps)
  4-3	parity (00 or 10 = none, 01 = odd, 11 = even)
  2	stop bits (set = 2, clear = 1)
  1-0	data bits (00 = 5, 01 = 6, 10 = 7, 11 = 8)
-SeeAlso: #0221,#0226,#0227,#0228
+SeeAlso: #0228,#0233,#0234,#0235
 --------S-1400-------------------------------
 INT 14 - FOSSIL (Fido/Opus/Seadog Standard Interface Level) - INITIALIZE
 	AH = 00h
@@ -3115,14 +3283,14 @@ INT 14 - FOSSIL (Fido/Opus/Seadog Standard Interface Level) - INITIALIZE
 	    110	 4800 bd
 	    111	 9600 bd (4800 on PCjr)
 	DX = port number (0-3 or FFh if only performing non-I/O setup)
-Return: AH = RS-232 status code bits (see #0220)
+Return: AH = RS-232 status code bits (see #0227)
 	AL = modem status bits
 	    bit 3: always 1
 	    bit 7: DCD - carrier detect
-SeeAlso: #0219,AH=05h"FOSSIL",AH=81h"COMM-DRV",AH=82h"COURIERS"
+SeeAlso: #0226,AH=05h"FOSSIL",AH=81h"COMM-DRV",AH=82h"COURIERS"
 
 Bitfields for FOSSIL RS-232 status:
-Bit(s)	Description	(Table 0220)
+Bit(s)	Description	(Table 0227)
  0	RDA - input data is available in buffer
  1	OVRN - data has been lost
  5	THRE - room is available in output buffer
@@ -3130,27 +3298,27 @@ Bit(s)	Description	(Table 0220)
 --------S-1400-------------------------------
 INT 14 - Tandy 2000 - SERIAL - RESET COMM PORT
 	AH = 00h
-	AL = RS-232C parameters (see #0221)
+	AL = RS-232C parameters (see #0228)
 	DL = port number
 	DH = protocol
 	    bit 0: use XON/XOFF on received data
 	    bit 1: use XON/XOFF when transmitting
-Return: AH = line status (see #0223)
-	AL = modem status (see #0224)
+Return: AH = line status (see #0230)
+	AL = modem status (see #0231)
 Note:	this interrupt is identical to INT 53 on the Tandy 2000
 SeeAlso: AH=04h"Tandy 2000",INT 53"Tandy 2000"
 --------S-1400-------------------------------
 INT 14 - MBBIOS - INITIALIZE PORT
 	AH = 00h
-	AL = port parameters (see #0221)
+	AL = port parameters (see #0228)
 	DX = port number
-Return: AH = line status (see #0223)
-	AL = modem status (see #0224)
+Return: AH = line status (see #0230)
+	AL = modem status (see #0231)
 Note:	MBBIOS was written by H. Roy Engehausen
 SeeAlso: AH=04h"MBBIOS",AH=05h"MBBIOS",AH=09h"MBBIOS"
 
 Bitfields for MBBIOS port parameters:
-Bit(s)	Description	(Table 0221)
+Bit(s)	Description	(Table 0228)
  7-5	data rate
 	(normally 110,150,300,600,1200,2400,4800,9600 bps;
 	9600,14400,19200,28800,38400,57600,115200,330400 bps
@@ -3158,13 +3326,13 @@ Bit(s)	Description	(Table 0221)
  4-3	parity (00 or 10 = none, 01 = odd, 11 = even)
  2	stop bits (set = 2, clear = 1)
  1-0	data bits (00 = 5, 01 = 6, 10 = 7, 11 = 8)
-SeeAlso: #0219
+SeeAlso: #0226
 --------N-1400--DXFFFF-----------------------
 INT 14 - Connection Manager - MODIFY DEFAULT CONNECTION PARAMETERS
 	AH = 00h
 	DX = FFFFh
 	ES:DI -> vector string specifying new parameters
-Return: AH = return code (00h,03h) (see #0222)
+Return: AH = return code (00h,03h) (see #0229)
 Program: Connection Manager by Softwarehouse Corp. permits the sharing of
 	  serial ports over an IPX or NetBIOS-based network
 Note:	if DX is 0-3 on entry, Connection Manager emulates the standard BIOS
@@ -3172,7 +3340,7 @@ Note:	if DX is 0-3 on entry, Connection Manager emulates the standard BIOS
 	  value, the call is chained
 SeeAlso: AH=04h/DX=FFFFh,AH=08h/DX=FFFFh,AH=0Ah/DX=FFFFh
 
-(Table 0222)
+(Table 0229)
 Values for Connection Manager return code:
  00h	successful
  01h	no such connection
@@ -3188,17 +3356,17 @@ INT 14 - SERIAL - WRITE CHARACTER TO PORT
 	DX = port number (00h-03h) (04h-43h for Digiboard XAPCM232.SYS)
 Return: AH bit 7 clear if successful
 	AH bit 7 set on error
-	AH bits 6-0 = port status (see #0223)
+	AH bits 6-0 = port status (see #0230)
 Notes:	various network and serial-port drivers support the standard BIOS
 	  functions with interrupt-driven I/O instead of the BIOS's polled I/O
 	the 04/08/93 Compaq system ROM uses only the low two bits of DX
-SeeAlso: AH=02h,AH=0Bh"FOSSIL",AX=8000h"ARTICOM",AH=89h
+SeeAlso: AH=02h,AH=0Bh"FOSSIL",AX=8000h"ARTICOM",AH=89h,MEM 0040h:007Ch
 --------N-1401--DXFFFF-----------------------
 INT 14 - Connection Manager - SEND CHARACTER
 	AH = 01h
 	DX = FFFFh
 	BH = character to send
-Return: AH = return code (00h-02h,06h) (see #0222)
+Return: AH = return code (00h-02h,06h) (see #0229)
 Notes:	if DX is 0-3 on entry, Connection Manager emulates the standard BIOS
 	  function, but redirects the port over the network; if DX is any other
 	  value, the call is chained
@@ -3210,7 +3378,7 @@ INT 14 - SERIAL - READ CHARACTER FROM PORT
 	AH = 02h
 	AL = 00h (ArtiCom)
 	DX = port number (00h-03h (04h-43h for Digiboard XAPCM232.SYS))
-Return: AH = line status (see #0223)
+Return: AH = line status (see #0230)
 	AL = received character if AH bit 7 clear
 Notes:	will timeout if DSR is not asserted, even if function 03h returns
 	  data ready
@@ -3230,8 +3398,8 @@ INT 14 - Connection Manager - RECEIVE CHARACTER
 	AH = 02h
 	DX = FFFFh
 	BH = character to send
-Return: AH = return code (00h-02h,04h,FFh) (see #0222)
-	BH = line status (see #0223)
+Return: AH = return code (00h-02h,04h,FFh) (see #0229)
+	BH = line status (see #0230)
 	AL = received character (if any)
 Notes:	if DX is 0-3 on entry, Connection Manager emulates the standard BIOS
 	  function, but redirects the port over the network; if DX is any other
@@ -3244,14 +3412,14 @@ INT 14 - SERIAL - GET PORT STATUS
 	AH = 03h
 	AL = 00h (ArtiCom)
 	DX = port number (00h-03h) (04h-43h for Digiboard XAPCM232.SYS)
-Return: AH = line status (see #0223)
-	AL = modem status (see #0224)
+Return: AH = line status (see #0230)
+	AL = modem status (see #0231)
 	AX = 9E00h if disconnected (ArtiCom)
 Note:	the 04/08/93 Compaq system ROM uses only the low two bits of DX
 SeeAlso: AH=00h,AH=07h"MultiDOS",AX=8000h"ARTICOM",AH=81h"COURIERS",AX=FD02h
 
 Bitfields for serial line status:
-Bit(s)	Description	(Table 0223)
+Bit(s)	Description	(Table 0230)
  7	timeout
  6	transmit shift register empty
  5	transmit holding register empty
@@ -3264,7 +3432,7 @@ Note:	for COMM-DRV, if bit 7 is set, an error occurred, and may be retrieved
 	  through a separate call (see AX=8000h"COMM-DRV")
 
 Bitfields for modem status:
-Bit(s)	Description	(Table 0224)
+Bit(s)	Description	(Table 0231)
  7	carrier detect
  6	ring indicator
  5	data set ready
@@ -3278,16 +3446,16 @@ INT 14 - Connection Manager - RETURN COMMUNICATION PORT STATUS
 	AH = 03h
 	DX = FFFFh
 	AL = connection ID
-Return: AH = return code (00h-02h) (see #0222)
-	BH = line status (see #0225)
-	BL = modem status (see #0224) (only bits 4,5,7; all others zero)
+Return: AH = return code (00h-02h) (see #0229)
+	BH = line status (see #0232)
+	BL = modem status (see #0231) (only bits 4,5,7; all others zero)
 Notes:	if DX is 0-3 on entry, Connection Manager emulates the standard BIOS
 	  function, but redirects the port over the network; if DX is any other
 	  value, the call is chained
 SeeAlso: AH=00h/DX=FFFFh,AH=04h/DX=FFFFh,AH=0Ah/DX=FFFFh
 
 Bitfields for Connection Manager line status:
-Bit(s)	Description	(Table 0225)
+Bit(s)	Description	(Table 0232)
  7	CTS changed
  6	current CTS state
  5	timeout
@@ -3302,34 +3470,34 @@ INT 14 - SERIAL - EXTENDED INITIALIZE (CONVERTIBLE,PS)
 	AL = break status
 	    00h if break
 	    01h if no break
-	BH = parity (see #0226)
+	BH = parity (see #0233)
 	BL = number of stop bits
 	    00h one stop bit
 	    01h two stop bits (1.5 if 5 bit word length)
-	CH = word length (see #0227)
-	CL = bps rate (see #0228)
+	CH = word length (see #0234)
+	CL = bps rate (see #0235)
 	DX = port number
-Return: AX = port status code (see #0223,#0224)
+Return: AX = port status code (see #0230,#0231)
 SeeAlso: AH=00h,AH=1Eh,AX=8000h"ARTICOM"
 
-(Table 0226)
+(Table 0233)
 Values for serial port parity:
  00h	no parity
  01h	odd parity
  02h	even parity
  03h	stick parity odd
  04h	stick parity even
-SeeAlso: #0219,#0227,#0228,#0229
+SeeAlso: #0226,#0234,#0235,#0236
 
-(Table 0227)
+(Table 0234)
 Values for serial port word length:
  00h	5 bits
  01h	6 bits
  02h	7 bits
  03h	8 bits
-SeeAlso: #0219,#0226,#0228,#0264
+SeeAlso: #0226,#0233,#0235,#0271
 
-(Table 0228)
+(Table 0235)
 Values for serial port bps rate:
  00h	110 (19200 if ComShare installed)
  01h	150 (38400 if ComShare installed)
@@ -3344,7 +3512,7 @@ Values for serial port bps rate:
  09h	38400
  0Ah	57600
  0Bh	115200
-SeeAlso: #0219,#0226,#0228,#0265,#0272,AH=36h,#0283,#0523,#2570
+SeeAlso: #0226,#0233,#0235,#0272,#0279,AH=36h,#0290,#0530,#2609
 --------S-1404-------------------------------
 INT 14 - Tandy 2000 - SERIAL - FLUSH COMM BUFFER
 	AH = 04h
@@ -3377,12 +3545,12 @@ INT 14 - MultiDOS Plus IODRV - INITIALIZE PORT
 Return: port initialized; if Hayes-compatible modem, a connection has been
 	  established
 Note:	the port number is stored at offset BEh in the Task Control Block
-	  (see #0375 at INT 15/AH=13h"MultiDOS")
+	  (see #0382 at INT 15/AH=13h"MultiDOS")
 SeeAlso: AH=00h,AH=05h"MultiDOS",AH=20h"MultiDOS",INT 15/AH=13h"MultiDOS"
 --------S-1404-------------------------------
 INT 14 - Digiboard DigiCHANNEL PC/X* - CHANGE BAUD RATE
 	AH = 04h
-	AL = initializing parameters (see #0229)
+	AL = initializing parameters (see #0236)
 	BX = baud rate
 	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
 Return: AH = status
@@ -3391,12 +3559,12 @@ Return: AH = status
 SeeAlso: AH=05h"Digiboard"
 
 Bitfields for Digiboard initializing parameters:
-Bit(s)	Description	(Table 0229)
+Bit(s)	Description	(Table 0236)
  7-5	unused
  4-3	parity (00 none, 01 odd, 11 even)
  2	stop bits (0 = one, 1 = two)
  1-0	data bits (00 = five, 01 = six, 10 = seven, 11 = eight)
-SeeAlso: #0226,#0227
+SeeAlso: #0233,#0234
 --------S-1404-------------------------------
 INT 14 - MBBIOS - INSTALLATION CHECK
 	AH = 04h
@@ -3407,7 +3575,7 @@ SeeAlso: AH=00h"MBBIOS",AH=09h"MBBIOS"
 INT 14 - Connection Manager - OPEN COMMUNICATION
 	AH = 04h
 	DX = FFFFh
-	ES:DI -> Connection Request protocol vector (see #0230)
+	ES:DI -> Connection Request protocol vector (see #0237)
 Return: AH = return code
 	    00h successful
 		AL = connection ID
@@ -3430,16 +3598,16 @@ SeeAlso: AH=00h/DX=FFFFh,AH=05h/DX=FFFFh,AH=06h/DX=FFFFh,AH=07h/DX=FFFFh
 SeeAlso: AH=0Ah/DX=FFFFh,AH=0Ch/DX=FFFFh
 
 Format of Connection Manager protocol command vector:
-Offset	Size	Description	(Table 0230)
+Offset	Size	Description	(Table 0237)
  00h	WORD	(big-endian) total length of command (including this word)
  02h	WORD	(big-endian) command code
 		EF01h Connection Request
 		EF06h Modify Connection Parameters
- 04h  N BYTEs	list of subvectors (see #0232)
+ 04h  N BYTEs	list of subvectors (see #0239)
 		allowable subvector types are 01h-04h,17h,18h for command code
-		  EF01h; 03h,04h for command code EF06h (see #0231)
+		  EF01h; 03h,04h for command code EF06h (see #0238)
 
-(Table 0231)
+(Table 0238)
 Values for Connection Manager subvector type code:
  01h	Connection ID
  02h	Destination ID
@@ -3463,168 +3631,168 @@ Values for Connection Manager subvector type code:
  19h	Flow control
 
 Format of Connection Manager subvector:
-Offset	Size	Description	(Table 0232)
+Offset	Size	Description	(Table 0239)
  00h	BYTE	length of subvector
- 01h	BYTE	type code (see #0231)
+ 01h	BYTE	type code (see #0238)
  02h N-2 BYTEs	data, which may include subvectors
-SeeAlso: #0233,#0234,#0235,#0236,#0237,#0238,#0239,#0240,#0241,#0242,#0243
-SeeAlso: #0244,#0245,#0247,#0248,#0249,#0250,#0251,#0252,#0230
+SeeAlso: #0240,#0241,#0242,#0243,#0244,#0245,#0246,#0247,#0248,#0249,#0250
+SeeAlso: #0251,#0252,#0254,#0255,#0256,#0257,#0258,#0259,#0237
 
 Format of Connection ID subvector:
-Offset	Size	Description	(Table 0233)
+Offset	Size	Description	(Table 0240)
  00h	BYTE	03h (length)
  01h	BYTE	01h (subvector "Connection ID")
  02h	BYTE	connection ID
-SeeAlso: #0232
+SeeAlso: #0239
 
 Format of Destination ID subvector:
-Offset	Size	Description	(Table 0234)
+Offset	Size	Description	(Table 0241)
  00h	BYTE	length
  01h	BYTE	02h (subvector "Destination ID")
  02h  N BYTEs	subvector(s) of type 0Eh, 0Fh, or 10h
-SeeAlso: #0232
+SeeAlso: #0239
 
 Format of Asynchronous line parameters subvector:
-Offset	Size	Description	(Table 0235)
+Offset	Size	Description	(Table 0242)
  00h	BYTE	length
  01h	BYTE	03h (subvector "Asynchronous line parameters")
  02h  N BYTEs	subvector(s) of type 09h, 0Ah, or 19h
-SeeAlso: #0232
+SeeAlso: #0239
 
 Format of Data transfer parameters subvector:
-Offset	Size	Description	(Table 0236)
+Offset	Size	Description	(Table 0243)
  00h	BYTE	length
  01h	BYTE	04h (subvector "Data transfer parameters")
  02h  N BYTEs	subvector(s) of type 0Bh, 0Ch, or 0Dh
-SeeAlso: #0232
+SeeAlso: #0239
 
 Format of Line speed subvector:
-Offset	Size	Description	(Table 0237)
+Offset	Size	Description	(Table 0244)
  00h	BYTE	04h (length)
  01h	BYTE	09h (subvector "Line speed")
  02h	WORD	bit map, highest set bit selects speed
 		bit 0: 2400
 		bits 1-7: 1800, 1200, 600, 300, 115200, 150, 110 bps
 		bits 8-15: 57600, 38400, 19200, 14400, 9600, 7200, 4800, 3600
-SeeAlso: #0232
+SeeAlso: #0239
 
 Format of Serial coding subvector:
-Offset	Size	Description	(Table 0238)
+Offset	Size	Description	(Table 0245)
  00h	BYTE	length
  01h	BYTE	0Ah (subvector "Serial coding")
  02h  N BYTEs	subvector(s) of type 11h, 12h, or 13h
-SeeAlso: #0232
+SeeAlso: #0239
 
 Format of Packet size subvector:
-Offset	Size	Description	(Table 0239)
+Offset	Size	Description	(Table 0246)
  00h	BYTE	04h (length)
  01h	BYTE	0Bh (subvector "Packet size")
  02h	WORD	(big-endian) packet size, 1 to 1024
-SeeAlso: #0232
+SeeAlso: #0239
 
 Format of Timers subvector:
-Offset	Size	Description	(Table 0240)
+Offset	Size	Description	(Table 0247)
  00h	BYTE	length
  01h	BYTE	0Ch (subvector "Timers")
  02h  8 BYTEs	subvector of type 14h or 15h
-SeeAlso: #0232
+SeeAlso: #0239
 
 Format of Special characters subvector:
-Offset	Size	Description	(Table 0241)
+Offset	Size	Description	(Table 0248)
  00h	BYTE	length
  01h	BYTE	0Dh (subvector "Special characters")
  02h  N BYTEs	list of ASCII characters to be used as EOM or EOB
-SeeAlso: #0232
+SeeAlso: #0239
 
 Format of Target ID:
-Offset	Size	Description	(Table 0242)
+Offset	Size	Description	(Table 0249)
  00h	BYTE	length
  01h	BYTE	0Eh (subvector "Target ID")
  02h  N BYTEs	target ID, 1-16 bytes
-SeeAlso: #0232
+SeeAlso: #0239
 
 Format of Telephone number subvector:
-Offset	Size	Description	(Table 0243)
+Offset	Size	Description	(Table 0250)
  00h	BYTE	length
  01h	BYTE	0Fh (subvector "Telephone number")
  02h  N BYTEs	telephone number
-SeeAlso: #0232
+SeeAlso: #0239
 
 Format of ASCII destination ID subvector:
-Offset	Size	Description	(Table 0244)
+Offset	Size	Description	(Table 0251)
  00h	BYTE	length
  01h	BYTE	10h (subvector "ASCII destination ID")
  02h  N BYTEs	destination ID
-SeeAlso: #0232
+SeeAlso: #0239
 
 Format of Parity subvector:
-Offset	Size	Description	(Table 0245)
+Offset	Size	Description	(Table 0252)
  00h	BYTE	03h (length)
  01h	BYTE	11h (subvector "Parity")
- 02h	BYTE	parity type (see #0246)
-SeeAlso: #0232
+ 02h	BYTE	parity type (see #0253)
+SeeAlso: #0239
 
 Bitfields for Connection Manager parity type:
-Bit(s)	Description	(Table 0246)
+Bit(s)	Description	(Table 0253)
  7	odd
  6	even
  5	mark
  4	space
  3	none
-SeeAlso: #0245
+SeeAlso: #0252
 
 Format of Bits per character subvector:
-Offset	Size	Description	(Table 0247)
+Offset	Size	Description	(Table 0254)
  00h	BYTE	03h (length)
  01h	BYTE	12h (subvector "Bits per character")
  02h	BYTE	bits per character
 		bit 7: seven
 		bit 6: eight
-SeeAlso: #0232
+SeeAlso: #0239
 
 Format of Number of stop bits subvector:
-Offset	Size	Description	(Table 0248)
+Offset	Size	Description	(Table 0255)
  00h	BYTE	03h (length)
  01h	BYTE	13h (subvector "Number of stop bits")
  02h	BYTE	stop bits
 		bit 7: one
 		bit 6: 1.5
 		bit 5: two
-SeeAlso: #0232
+SeeAlso: #0239
 
 Format of Packet timer and Intercharacter timer subvectors:
-Offset	Size	Description	(Table 0249)
+Offset	Size	Description	(Table 0256)
  00h	BYTE	04h (length)
  01h	BYTE	subvector type
 		14h Packet timer
 		15h Intercharacter timer
  02h	WORD	(big-endian) unit of value representing 20ms
-SeeAlso: #0232
+SeeAlso: #0239
 
 Format of Flags subvector:
-Offset	Size	Description	(Table 0250)
+Offset	Size	Description	(Table 0257)
  00h	BYTE	03h (length)
  01h	BYTE	17h (subvector "Flags")
  02h	BYTE	flags
 		bit 7: queueing requested
-SeeAlso: #0232
+SeeAlso: #0239
 
 Format of Parameter ranges subvector:
-Offset	Size	Description	(Table 0251)
+Offset	Size	Description	(Table 0258)
  00h	BYTE	length
  01h	BYTE	18h (subvector "Parameter ranges")
  02h  N BYTEs	subvector(s) of type 09h, 11h, 12h, or 13h
-SeeAlso: #0232
+SeeAlso: #0239
 
 Format of Flow control subvector:
-Offset	Size	Description	(Table 0252)
+Offset	Size	Description	(Table 0259)
  00h	BYTE	length (02h-04h)
  01h	BYTE	19h (subvector "Flow control")
  02h	BYTE	XOFF character
  03h	BYTE	XON character
 Note:	if length is 02h, flow control is disabled; if length is 03h, any
 	  character will be accepted as XON after an XOFF
-SeeAlso: #0232
+SeeAlso: #0239
 --------S-140400-----------------------------
 INT 14 - Microsoft Systems Journal TSRCOMM INT14 - INSTALLATION CHECK
 	AX = 0400h
@@ -3678,17 +3846,17 @@ INT 14 - SERIAL - EXTENDED COMMUNICATION PORT CONTROL (CONVERTIBLE,PS)
 	AH = 05h
 	AL = function
 	    00h read modem control register
-	      Return: BL = modem control register (see #0253)
+	      Return: BL = modem control register (see #0260)
 		      AH = status
 	    01h write modem control register
-	      BL = modem control register (see #0253)
+	      BL = modem control register (see #0260)
 	      Return: AX = status
 	DX = port number
 Note:	also supported by ArtiCom
 SeeAlso: AH=00h,AH=1Fh,AX=8000h"ARTICOM",AH=FBh
 
 Bitfields for modem control register:
-Bit(s)	Description	(Table 0253)
+Bit(s)	Description	(Table 0260)
  0	data terminal ready
  1	request to send
  2	OUT1
@@ -3718,7 +3886,7 @@ SeeAlso: INT 15/AH=13h"MultiDOS"
 --------S-1405-------------------------------
 INT 14 - Digiboard DigiCHANNEL PC/X* - CHANGE PROTOCOL
 	AH = 05h
-	AL = protocol (see #0254)
+	AL = protocol (see #0261)
 	BH = new XOFF character (00h = current)
 	BL = new XON character (00h = current)
 	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
@@ -3728,7 +3896,7 @@ Return: AH = status
 SeeAlso: AH=04h"Digiboard"
 
 Bitfields for Digiboard protocol:
-Bit(s)	Description	(Table 0254)
+Bit(s)	Description	(Table 0261)
  7-4	unused
  3	RTS/CTS
  2	DSR
@@ -3742,7 +3910,7 @@ SeeAlso: AH=00h"MBBIOS",AH=06h"MBBIOS",AH=06h"FOSSIL"
 --------S-1405-------------------------------
 INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - CHANGE PORT PROTOCOL
 	AH = 05h
-	AL = new port protocol (see #0255)
+	AL = new port protocol (see #0262)
 	BH = new XOFF character
 	BL = new XON character
 	DX = port number
@@ -3750,7 +3918,7 @@ Return: AH = FFh if invalid protocol
 SeeAlso: AH=00h,AH=04h"SERIAL",AH=06h"PC-MOS"
 
 Bitfields for PC-MOS/386 serial port protocol:
-Bit(s)	Description	(Table 0255)
+Bit(s)	Description	(Table 0262)
  7	set to enable/disable CD monitoring, clear to set protocol
 ---bit 7 set---
  4	CD monitoring enabled
@@ -3826,7 +3994,7 @@ INT 14 - Connection Manager - SEND CHARACTER BLOCK
 	AL = connection ID
 	CX = number of characters to send
 	ES:DI -> buffer containing data to be sent
-Return: AH = return code (see #0222)
+Return: AH = return code (see #0229)
 Program: Connection Manager by Softwarehouse Corp. permits the sharing of
 	  serial ports over an IPX or NetBIOS-based network
 SeeAlso: AH=04h/DX=FFFFh,AH=07h/DX=FFFFh,AH=09h/DX=FFFFh
@@ -3840,7 +4008,7 @@ SeeAlso: AH=16h
 --------S-1407-------------------------------
 INT 14 - MultiDOS Plus IODRV - GET PORT STATUS
 	AH = 07h
-Return: CL = modem status (see #0224)
+Return: CL = modem status (see #0231)
 	CH = character at head of input queue (if any)
 	DX = number of characters in input queue
 Note:	the port number is stored at offset BEh in the Task Control Block
@@ -3866,7 +4034,7 @@ INT 14 - TelAPI - READ BLOCK
 	ES:DI -> buffer for data
 Return: AX > 0000h number of characters actually read
 	AX = 0000h host has closed connection
-	AX < 0000h error code (see #0316)
+	AX < 0000h error code (see #0323)
 	CX = ???
 Note:	translates CRLF into local EOL if the connection is in ASCII mode,
 	  negotiates various Telnet options, and immediately executes several
@@ -3882,8 +4050,8 @@ INT 14 - Connection Manager - RECEIVE CHARACTER BLOCK
 	    nonzero do not wait if no data avaiable
 	CX = size of receive buffer
 	ES:DI -> buffer for received characters
-Return: AH = return code (00h-02h,04h,FFh) (see #0222)
-	BH = line status (see #0225)
+Return: AH = return code (00h-02h,04h,FFh) (see #0229)
+	BH = line status (see #0232)
 	CX = number of characters received
 Program: Connection Manager by Softwarehouse Corp. permits the sharing of
 	  serial ports over an IPX or NetBIOS-based network
@@ -3897,7 +4065,7 @@ SeeAlso: AH=09h"FOSSIL"
 --------S-1408-------------------------------
 INT 14 - MultiDOS Plus 4.0 IODRV - GET AND RESET PORT LINE STATUS
 	AH = 08h
-Return: AL = line status (see #0223)
+Return: AL = line status (see #0230)
 	AH destroyed
 Notes:	the port number is stored at offset BEh in the Task Control Block
 	on every line status change, the line status is ORed with the line
@@ -3908,7 +4076,7 @@ SeeAlso: AH=03h,AH=04h"MultiDOS",AH=07h"MultiDOS",INT 15/AH=13h"MultiDOS"
 INT 14 - Digiboard DigiCHANNEL PC/X* - ALTERNATE STATUS CHECK
 	AH = 08h
 	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
-Return: AH = RS232 status bits (see #0223 at AH=03h)
+Return: AH = RS232 status bits (see #0230 at AH=03h)
 	ZF set if no characters queued
 	ZF clear if character available
 	    AL = next character
@@ -3918,7 +4086,7 @@ INT 14 - MBBIOS - NON-DESTRUCTIVE READ
 	AH = 08h
 	DX = port number
 Return: AL = character (if AH bit 0 set)
-	AH = status (see #0223)
+	AH = status (see #0230)
 SeeAlso: AH=0Bh"MBBIOS",AH=0Ch"FOSSIL"
 --------S-1408-------------------------------
 INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - INPUT STATUS CHECK
@@ -3933,7 +4101,7 @@ INT 14 - Connection Manager - RETURN DEFAULT CONNECTION PARAMETERS
 	AH = 08h
 	DX = FFFFh
 	CX = size of buffer for parameters or 0000h to get length
-	ES:DI -> buffer for parameter vector (see #0230)
+	ES:DI -> buffer for parameter vector (see #0237)
 Return: AH = return code
 	    00h successful
 		CX = number of bytes required (if CX=0000h on entry)
@@ -3965,16 +4133,16 @@ SeeAlso: AH=08h"Digiboard",AH=0Ah"Digiboard",AH=10h"Digiboard"
 --------S-1409-------------------------------
 INT 14 - MBBIOS - GET/SET OPTIONS
 	AH = 09h
-	AL = option byte (see #0256)
+	AL = option byte (see #0263)
 	DX = port number???
 Return: AL = old option byte
 SeeAlso: AH=00h"MBBIOS",AH=04h"MBBIOS",AH=10h"FOSSIL"
 
 Bitfields for MBBIOS option byte:
-Bit(s)	Description	(Table 0256)
+Bit(s)	Description	(Table 0263)
  0	transmit buffering enabled
  2	hardware handshaking enabled
- 5	high-speed option enabled (see AH=00h"MBBIOS",#0221)
+ 5	high-speed option enabled (see AH=00h"MBBIOS",#0228)
  other	reserved
 --------S-1409-------------------------------
 INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - RESET I/O BUFFER POINTERS
@@ -3987,7 +4155,7 @@ INT 14 - Connection Manager - SEND BREAK
 	AH = 09h
 	DX = FFFFh
 	AL = connection ID
-Return: AH = return code (00h-02h) (see #0222 at AH=00h/DX=FFFFh)
+Return: AH = return code (00h-02h) (see #0229 at AH=00h/DX=FFFFh)
 Program: Connection Manager by Softwarehouse Corp. permits the sharing of
 	  serial ports over an IPX or NetBIOS-based network
 SeeAlso: AH=02h/DX=FFFFh,AH=03h/DX=FFFFh
@@ -4008,8 +4176,8 @@ SeeAlso: AH=09h"Digiboard",AH=0Dh"Digiboard"
 INT 14 - MBBIOS - WRITE BUFFER
 	AH = 0Ah
 	CX = count
-	ES:DI -> buffer (see #0257)
-Return: AX = status (see #0223,#0224)
+	ES:DI -> buffer (see #0264)
+Return: AX = status (see #0230,#0231)
 	CX = unsent character count
 	DI updated
 Note:	the PACCOM version of MBBIOS does not use CX or ES:DI; instead, ES
@@ -4019,7 +4187,7 @@ Note:	the PACCOM version of MBBIOS does not use CX or ES:DI; instead, ES
 SeeAlso: AH=01h,AH=0Bh"MBBIOS",AH=0Ch"MBBIOS",AH=19h"FOSSIL"
 
 Format of MBBIOS PACCOM buffer:
-Offset	Size	Description	(Table 0257)
+Offset	Size	Description	(Table 0264)
  00h 504 BYTEs	data area
 1F8h	WORD	length of data in data area
 1FAh	BYTE	flags/status
@@ -4032,8 +4200,8 @@ Offset	Size	Description	(Table 0257)
 INT 14 - Connection Manager - MODIFY ACTIVE CONNECTION PARAMETERS
 	AH = 0Ah
 	DX = FFFFh
-	ES:DI -> vector string containing new parameters (see #0230)
-Return: AH = return code (00h-03h,06h) (see #0222)
+	ES:DI -> vector string containing new parameters (see #0237)
+Return: AH = return code (00h-03h,06h) (see #0229)
 Program: Connection Manager by Softwarehouse Corp. permits the sharing of
 	  serial ports over an IPX or NetBIOS-based network
 Note:	any subvectors valid for the Change Parameters command replace the
@@ -4053,10 +4221,10 @@ INT 14 - MBBIOS - READ BUFFER
 	AH = 0Bh
 	CX = size of buffer
 	ES:DI -> buffer
-Return: AH = composite line status (see #0223) formed by ORing all statuses
+Return: AH = composite line status (see #0230) formed by ORing all statuses
 		  on receive interrupts; bit 0 set if additional characters
 		  available
-	AL = composite modem status (see #0224) formed by ORing all statuses
+	AL = composite modem status (see #0231) formed by ORing all statuses
 	CX = number of characters actually read
 	DI updated
 Note:	the PACCOM version of MBBIOS does not use CX or ES:DI on call,
@@ -4077,7 +4245,7 @@ INT 14 - Connection Manager - PREPARE FOR INBOUND CONNECTION
 	    01h notify user on connecting
 	BL = connection type
 	    00h connection will use Connection Manager API
-Return: AH = return code (00h-02h) (see #0222 at AH=00h/DX=FFFFh)
+Return: AH = return code (00h-02h) (see #0229 at AH=00h/DX=FFFFh)
 	AL = connection ID if AH=00h
 Program: Connection Manager by Softwarehouse Corp. permits the sharing of
 	  serial ports over an IPX or NetBIOS-based network
@@ -4102,7 +4270,7 @@ INT 14 - Connection Manager - TEST FOR INBOUND CONNECTION REQUEST
 	AH = 0Ch
 	DX = FFFFh
 	AL = connection ID from AH=0Bh/DX=FFFFh
-Return: AH = return code (00h-03h) (see also #0222 at AH=00h/DX=FFFFh)
+Return: AH = return code (00h-03h) (see also #0229 at AH=00h/DX=FFFFh)
 	    03h not prepared for inbound connection
 	AL = connection ID (if AH=00h) or correct connection ID (if AH=02h)
 Program: Connection Manager by Softwarehouse Corp. permits the sharing of
@@ -4119,10 +4287,10 @@ SeeAlso: AH=0Eh
 INT 14 - Digiboard DigiCHANNEL PC/X* - GET POINTER TO CH_KEY_RDY FLAG
 	AH = 0Dh
 	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
-Return: ES:BX -> CH_KEY_RDY flag (see #0258)
+Return: ES:BX -> CH_KEY_RDY flag (see #0265)
 SeeAlso: AH=0Ah"Digiboard"
 
-(Table 0258)
+(Table 0265)
 Values for Digiboard CH_KEY_RDY flag:
  00h	receive buffer empty
  FFh	characters available
@@ -4197,7 +4365,7 @@ INT 14 - Connection Manager - SET HARDWARE FLOW STATE
 	DX = FFFFh
 	AL = connection ID from AH=04h/DX=FFFFh
 	BL = RTS state (00h off, 01h on)
-Return: AH = return code (00h-03h) (see also #0222 at AH=00h/DX=FFFFh)
+Return: AH = return code (00h-03h) (see also #0229 at AH=00h/DX=FFFFh)
 	    03h invalid request (BL not 00h or 01h)
 Program: Connection Manager by Softwarehouse Corp. permits the sharing of
 	  serial ports over an IPX or NetBIOS-based network
@@ -4205,13 +4373,13 @@ SeeAlso: AH=03h/DX=FFFFh,AH=0Ah/DX=FFFFh
 --------S-140F-------------------------------
 INT 14 - FOSSIL - ENABLE/DISABLE FLOW CONTROL
 	AH = 0Fh
-	AL = bit mask describing requested flow control (see #0259)
+	AL = bit mask describing requested flow control (see #0266)
 	DX = port number
 Return: nothing
 SeeAlso: AH=09h"MBBIOS",AH=10h"FOSSIL"
 
 Bitfields for FOSSIL requested flow control:
-Bit(s)	Description	(Table 0259)
+Bit(s)	Description	(Table 0266)
  0	XON/XOFF on transmit (watch for XOFF while sending)
  1	CTS/RTS (CTS on transmit/RTS on receive)
  2	reserved
@@ -4240,8 +4408,8 @@ INT 14 - Connection Manager - RETURN ACTIVE CONNECTION PARAMETERS
 	DX = FFFFh
 	AL = connection ID
 	CX = size of buffer or 0000h to get length of returned vector
-	ES:DI -> buffer for connection parameter vector (see #0230)
-Return: AH = return code (00h-02h,06h) (see #0222 at AH=00h/DX=FFFFh)
+	ES:DI -> buffer for connection parameter vector (see #0237)
+Return: AH = return code (00h-02h,06h) (see #0229 at AH=00h/DX=FFFFh)
 	CX = number of bytes which could not be returned because the given
 	      buffer was too small
 Program: Connection Manager by Softwarehouse Corp. permits the sharing of
@@ -4278,11 +4446,11 @@ INT 14 - Connection Manager - QUERY SERVICE NAMES
 	CL = subfunction
 	    00h search first
 	    01h search next
-	ES:DI -> pattern buffer (see #0260)
-Return: AH = return code (00h,01h,03h,06h) (see also #0222 at AH=00h/DX=FFFFh)
+	ES:DI -> pattern buffer (see #0267)
+Return: AH = return code (00h,01h,03h,06h) (see also #0229 at AH=00h/DX=FFFFh)
 	    01h no (more) matching names
 	    03h invalid request
-	ES:DI buffer filled with reply buffer (see #0260) containing matched
+	ES:DI buffer filled with reply buffer (see #0267) containing matched
 		  name if AH=00h
 Program: Connection Manager by Softwarehouse Corp. permits the sharing of
 	  serial ports over an IPX or NetBIOS-based network
@@ -4291,7 +4459,7 @@ Desc:	obtain the names of groups and lines available for connection requests,
 SeeAlso: AH=04h/DX=FFFFh,AH=0Bh/DX=FFFFh
 
 Format of Connection Manager pattern/reply buffer:
-Offset	Size	Description	(Table 0260)
+Offset	Size	Description	(Table 0267)
  00h	WORD	length of pattern (30h or 32h)
  02h 16 BYTEs	server pattern or name
  12h 16 BYTEs	group pattern or name
@@ -4346,8 +4514,8 @@ INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - GET CURRENT PORT PARAMETERS
 	DX = port number
 Return: AH = status
 	    FFh port number invalid
-	AL = line parameters (see #0223)
-	AH = flow control configuration (see #0255 at AH=05h"PC-MOS")
+	AL = line parameters (see #0230)
+	AH = flow control configuration (see #0262 at AH=05h"PC-MOS")
 	CX:BX = bps rate
 	DL = XOFF character or 00h for none
 	DH = XON character or 00h for none
@@ -4437,7 +4605,7 @@ Program: PC-MOS/386 v5.01 is a multitasking, multiuser MS-DOS 5.0-compatible
 --------S-1416-------------------------------
 INT 14 - Digiboard DigiCHANNEL PC/X* - CCB COMMAND
 	AH = 16h
-	AL = CCB command number (see #0261) (see also following entries)
+	AL = CCB command number (see #0268) (see also following entries)
 	BL = byte 2
 	BH = byte 3
 	CL = byte 1 (for all channel functions except 4Eh and 4Fh)
@@ -4448,7 +4616,7 @@ Return: AH = status
 	    FFh error
 SeeAlso: AX=1646h,AH=18h"Digiboard"
 
-(Table 0261)
+(Table 0268)
 Values for Digiboard CCB command number:
  40h	Set Receive Mid Water Mark
  41h	Set Receive High Water Mark
@@ -4684,13 +4852,13 @@ INT 14 - FOSSIL - RETURN INFORMATION ABOUT THE DRIVER
 	AH = 1Bh
 	DX = port number
 	CX = size of user buffer
-	ES:DI -> user buffer for driver info (see #0262)
+	ES:DI -> user buffer for driver info (see #0269)
 Return: AX = number of characters transferred
 	CX = 3058h ("0X") (X00 FOSSIL only)
 	DX = 2030h (" 0") (X00 FOSSIL only)
 
 Format of FOSSIL driver info:
-Offset	Size	Description	(Table 0262)
+Offset	Size	Description	(Table 0269)
  00h	WORD	size of structure in bytes
  02h	BYTE	FOSSIL spec driver conforms to
  03h	BYTE	revision level of this specific driver
@@ -4727,37 +4895,37 @@ INT 14 - X00 FOSSIL - EXTENDED LINE CONTROL INITIALIZATION
 	AL = break status
 	    00h if break
 	    01h if no break
-	BH = parity (see #0263)
+	BH = parity (see #0270)
 	BL = number of stop bits
 	    00h one stop bit
 	    01h two stop bits (1.5 if 5 bit word length)
-	CH = word length (see #0264)
-	CL = bps rate (see #0265)
+	CH = word length (see #0271)
+	CL = bps rate (see #0272)
 	DX = port number
-Return: AX = port status code (see #0223,#0224)
+Return: AX = port status code (see #0230,#0231)
 Notes:	this function is intended to exactly emulate the PS/2 BIOS AH=04h call
 	if the port was locked at X00 load time, the appropriate parameters are
 	  ignored
 SeeAlso: AH=00h,AH=04h"SERIAL"
 
-(Table 0263)
+(Table 0270)
 Values for X00 FOSSIL parity:
  00h	no parity
  01h	odd parity
  02h	even parity
  03h	stick parity odd
  04h	stick parity even
-SeeAlso: #0226,#0264,#0265
+SeeAlso: #0233,#0271,#0272
 
-(Table 0264)
+(Table 0271)
 Values for X00 FOSSIL word length:
  00h	5 bits
  01h	6 bits
  02h	7 bits
  03h	8 bits
-SeeAlso: #0227,#0263,#0265
+SeeAlso: #0234,#0270,#0272
 
-(Table 0265)
+(Table 0272)
 Values for X00 FOSSIL bps rate:
  00h	110
  01h	150
@@ -4768,19 +4936,19 @@ Values for X00 FOSSIL bps rate:
  06h	4800
  07h	9600
  08h	19200
-SeeAlso: #0228,#0263,#0264
+SeeAlso: #0235,#0270,#0271
 --------S-141E------------------------------------
 INT 14 - HUNTER 16 - READ COMMS PARAMETERS
 	AH = 1Eh
 	CX = channel number (00h COM1, 01h COM2, ...)
-	DS:BX -> buffer for communications parameters (see #0266)
+	DS:BX -> buffer for communications parameters (see #0273)
 Return: DS:BX buffer filled
 Note:	the Husky Hunter 16 is an 8088-based ruggedized laptop.	 Other family
 	  members are the Husky Hunter, Husky Hunter 16/80, and Husky Hawk.
 SeeAlso: AH=20h"HUNTER"
 
 Format of HUNTER 16 communications parameters:
-Offset	Size	Description	(Table 0266)
+Offset	Size	Description	(Table 0273)
  00h	BYTE	communications type (00h IBM, nonzero Husky)
  01h	BYTE	port number (00h COM1, 01h COM2)
  02h	BYTE	baud rate (00h 110 bps, 01h 150, 02h 300, 03h 600, 04h 1200,
@@ -4788,7 +4956,7 @@ Offset	Size	Description	(Table 0266)
  03h	BYTE	data bits (01h seven, 02h eight)
  04h	BYTE	parity (00h none, 01h odd, 02h even)
  05h	BYTE	stop bits (00h one, 01h two)
- 06h	BYTE	handshake (see #0267)
+ 06h	BYTE	handshake (see #0274)
  07h	BYTE	handshake protocol (00h none, 01h Xon/Xoff, 02h HWK3780)
  08h	BYTE	Nulls after CR (0-20)
  09h	BYTE	LF (00h off, 01h on)
@@ -4800,7 +4968,7 @@ Offset	Size	Description	(Table 0266)
  0Eh  5 BYTEs	reserved
 
 Bitfields for HUNTER 16 handshake:
-Bit(s)	Description	(Table 0267)
+Bit(s)	Description	(Table 0274)
  0-1	0: RTS off, 1: RTS hold, 2: RTS true
  2	DTR enabled
  4	CTS enabled
@@ -4812,17 +4980,17 @@ INT 14 - X00 FOSSIL - EXTENDED SERIAL PORT STATUS/CONTROL
 	DX = port number
 	AL = direction
 	    00h read modem control register
-		Return: BL = modem control register (see #0268)
+		Return: BL = modem control register (see #0275)
 			AH = status
 	    01h write modem control register
-		BL = modem control register (see #0268)
+		BL = modem control register (see #0275)
 		Return: AX = status
 Notes:	this function is intended to exactly emulate the PS/2 BIOS AH=05h call
 	X00 forces BL bit 3 set (interrupts cannot be disabled)
 SeeAlso: AH=00h,AH=05h"SERIAL"
 
 Bitfields for X00 FOSSIL modem control register:
-Bit(s)	Description	(Table 0268)
+Bit(s)	Description	(Table 0275)
  0	data terminal ready
  1	request to send
  2	OUT1
@@ -4849,7 +5017,7 @@ SeeAlso: AH=21h"Alloy",AH=22h"Alloy",AH=23h"Alloy",INT 17/AH=8Bh"Alloy"
 --------S-1420-------------------------------
 INT 14 - MultiDOS Plus - INITIALIZE PORT
 	AH = 20h
-	AL = port parameters (see #0219 at AH=00h"SERIAL")
+	AL = port parameters (see #0226 at AH=00h"SERIAL")
 	DX = port number (0-3)
 Return: AH = status
 	    00h successful
@@ -4866,7 +5034,7 @@ SeeAlso: AH=0Ah"Digiboard"
 INT 14 - HUNTER 16 - SELECT COMMS PARAMETERS
 	AH = 20h
 	CX = channel number (00h COM1, 01h COM2, ...)
-	DS:BX -> buffer with communications parameter (see #0266)
+	DS:BX -> buffer with communications parameter (see #0273)
 Return: AX = status
 	    0000h successful
 	    0001h invalid parameter
@@ -4895,11 +5063,11 @@ INT 14 - MultiDOS Plus - TRANSMIT CHARACTER
 	AH = 21h
 	AL = character to send
 	DX = port number
-Return: AH = status (see #0269)
+Return: AH = status (see #0276)
 Note:	monitor mode must have been turned on with AH=24h before calling
 SeeAlso: AH=20h"MultiDOS",AH=22h"MultiDOS",AH=24h"MultiDOS"
 
-(Table 0269)
+(Table 0276)
 Values for MultiDOS Plus status:
  00h	successful
  39h	no DSR or CTS
@@ -4955,7 +5123,7 @@ INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - RECEIVE CHARACTER, WITH TIMEOUT
 	AH = 22h
 	DX = port number
 	SI = timeout in timer ticks (0000h = default)
-Return: AH = port status (see also #0223 at AH=03h)
+Return: AH = port status (see also #0230 at AH=03h)
 	     bit 7 = 1 indicates time-out
 	AL = character received
 Program: PC-MOS/386 v5.01 is a multitasking, multiuser MS-DOS 5.0-compatible
@@ -4976,14 +5144,14 @@ INT 14 - Alloy MW386 v2+ - GET PORT NUMBER FROM LOGICAL PORT ID
 	AL = logical port (01h COM1, 02h COM2)
 	DH = user ID
 	DL = process ID (DH,DL both FFh for current task)
-Return: AL = MW386 port mode (see #0270)
+Return: AL = MW386 port mode (see #0277)
 	CX = MW386 port number
 	DH = owner's user ID
 	DL = owner's task ID
 SeeAlso: AH=20h"Alloy",INT 17/AH=8Bh"Alloy"
 
 Bitfields for MW386 port mode:
-Bit(s)	Description	(Table 0270)
+Bit(s)	Description	(Table 0277)
  0	port is shared (spooler only)
  1	port is spooled instead of direct (spooler only)
  2	port is assigned as logical COM device, not in spooler
@@ -4992,8 +5160,8 @@ Bit(s)	Description	(Table 0270)
 INT 14 - MultiDOS Plus - GET PORT STATUS
 	AH = 23h
 	DX = port number
-Return: AH = line status (see #0223 at AH=03h)
-	AL = modem status (see #0224 at AH=03h)
+Return: AH = line status (see #0230 at AH=03h)
+	AL = modem status (see #0231 at AH=03h)
 SeeAlso: AH=03h,AH=07h"MultiDOS",AH=20h"MultiDOS"
 --------S-1423-------------------------------
 INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - DECLARE PORT OWNERSHIP
@@ -5014,14 +5182,14 @@ SeeAlso: AH=21h"HUNTER",AH=24h"HUNTER"
 INT 14 - Alloy MW386 v2+ - CHANGE PHYSICAL PORT PARAMETERS
 	AH = 24h
 	CX = physical I/O port number
-	DS:DX -> configuration table (see #0271)
+	DS:DX -> configuration table (see #0278)
 Return: AH = 00h
 Note:	invalid port numbers are merely ignored
 SeeAlso: INT 17/AH=96h
 
 Format of Alloy MW386 configuration table:
-Offset	Size	Description	(Table 0271)
- 00h	BYTE	baud rate (see #0272)
+Offset	Size	Description	(Table 0278)
+ 00h	BYTE	baud rate (see #0279)
  01h	BYTE	data bits (00h=5, 01h=6, 02h=7, 03h=8)
  02h	BYTE	parity (00h none, 01h odd, 02h even)
  03h	BYTE	stop bits (00h=1, 01h=2)
@@ -5029,7 +5197,7 @@ Offset	Size	Description	(Table 0271)
 		00h none, 01h XON/XOFF, 02h DTR/DSR, 03h XPC, 04h RTS/CTS
  05h	BYTE	transmit flow control (as for receive)
 
-(Table 0272)
+(Table 0279)
 Values for Alloy MW386 baud rate:
  00h	38400
  01h	19200
@@ -5044,7 +5212,7 @@ Values for Alloy MW386 baud rate:
  0Ah	300
  0Bh	150
  0Ch	134.5
-SeeAlso: #0228
+SeeAlso: #0235
 --------S-1424-------------------------------
 INT 14 - MultiDOS Plus - SET MONITOR MODE
 	AH = 24h
@@ -5188,7 +5356,7 @@ Program: The ComShare System is a modem-sharing program for NetBIOS and
 	  NetWare-based networks by NashaKala Corporation
 Note:	ComShare supports the standard BIOS INT 14h calls with a slight
 	  change in the interpretation of speed values
-	  (see #0228 at AH=04h"SERIAL")
+	  (see #0235 at AH=04h"SERIAL")
 SeeAlso: AH=00h"SERIAL",AH=04h"SERIAL",AX=F4FFh
 --------t-144000-----------------------------
 INT 14 - I1541 - INSTALLATION CHECK
@@ -5227,10 +5395,10 @@ INT 14 - I1541 - SEND LISTEN SIGNAL
 	BH = device number (0..15)
 Return: CF clear if successful
 	CF set on error
-	    AL = error number (see #0273)
+	    AL = error number (see #0280)
 SeeAlso: AX=4005h,AX=4006h
 
-(Table 0273)
+(Table 0280)
 Values for I1541 error number:
  00h	device not present
  01h	listener not ready
@@ -5241,14 +5409,14 @@ Values for I1541 error number:
 --------t-144005-----------------------------
 INT 14 - I1541 - SEND SECONDARY ADDRESS FOR LISTEN
 	AX = 4005h
-	BL = channel number and mode (see #0274)
+	BL = channel number and mode (see #0281)
 Return: CF clear if successful
 	CF set on error
-	    AL = error number (see #0273)
+	    AL = error number (see #0280)
 SeeAlso: AX=4004h,AX=4006h
 
 Bitfields for I1541 channel number and mode:
-Bit(s)	Description	(Table 0274)
+Bit(s)	Description	(Table 0281)
  7-4	mode
 	0110 read/write
 	1110 close channel
@@ -5259,7 +5427,7 @@ INT 14 - I1541 - SEND UNLISTEN SIGNAL
 	AX = 4006h
 Return: CF clear if successful
 	CF set on error
-	    AL = error number (see #0273)
+	    AL = error number (see #0280)
 SeeAlso: AX=4004h,AX=4005h
 --------t-144007-----------------------------
 INT 14 - I1541 - SEND TALK SIGNAL
@@ -5267,15 +5435,15 @@ INT 14 - I1541 - SEND TALK SIGNAL
 	BH = device number (0-15)
 Return: CF clear if successful
 	CF set on error
-	    AL = error number (see #0273)
+	    AL = error number (see #0280)
 SeeAlso: AX=4008h,AX=4009h
 --------t-144008-----------------------------
 INT 14 - I1541 - SEND SECONDARY ADDRESS FOR TALK
 	AX = 4008h
-	BL = channel number and mode (see #0274)
+	BL = channel number and mode (see #0281)
 Return: CF clear if successful
 	CF set on error
-	    AL = error number (see also #0273)
+	    AL = error number (see also #0280)
 		40h turn around time-out
 SeeAlso: AX=4007h,AX=4009h
 --------t-144009-----------------------------
@@ -5283,7 +5451,7 @@ INT 14 - I1541 - SEND UNTALK SIGNAL
 	AX = 4009h
 Return: CF clear if successful
 	CF set on error
-	   AL = error number (see #0273)
+	   AL = error number (see #0280)
 SeeAlso: AX=4007h,AX=4008h
 --------t-14400A-----------------------------
 INT 14 - I1541 - SEND A BYTE TO A DEVICE
@@ -5294,7 +5462,7 @@ INT 14 - I1541 - SEND A BYTE TO A DEVICE
 	    01h this is the last byte to be sent
 Return: CF clear if successful
 	CF set on error
-	    AL = error number (see #0273)
+	    AL = error number (see #0280)
 SeeAlso: AX=4000h,AX=400Bh
 --------t-14400B-----------------------------
 INT 14 - I1541 - RECEIVE A BYTE FROM A DEVICE
@@ -5383,15 +5551,15 @@ SeeAlso: INT 17/AX=6F00h,INT 33/AX=6F00h
 --------S-146F01-----------------------------
 INT 14 - HP Vectra EX-BIOS - "F14_EXINIT" - INITIALIZE SERIAL PORT
 	AX = 6F01h
-	BX = port attributes (see #0275)
+	BX = port attributes (see #0282)
 	DX = port number (0-3)
-Return: AH = line status (see #0223)
-	AL = modem status (see #0224)
+Return: AH = line status (see #0230)
+	AL = modem status (see #0231)
 Note:	supported by original HP Vectra AT and by ES/QS/RS series Vectras
 SeeAlso: AX=6F00h
 
 Bitfields for HP Vectra Extended BIOS serial port attributes:
-Bit(s)	Description	(Table 0275)
+Bit(s)	Description	(Table 0282)
  8-5	data rate (110, 150, 300, 600, 1200, 2400, 4800, 9600, 19200)
  4-3	parity
 	00 none
@@ -5409,8 +5577,8 @@ INT 14 - HP Vectra EX-BIOS - "F14_PUT_BUFFER" - TRANSMIT BUFFER
 	CX = number of characters in buffer
 	DX = port number (0-3)
 	ES:DI -> buffer containing characters
-Return: AH = line status (see #0223)
-	AL = modem status (see #0224)
+Return: AH = line status (see #0230)
+	AL = modem status (see #0231)
 	CX = number of bytes actually sent
 	ES:DI -> next byte to be transferred (unchanged if all bytes sent)
 Desc:	send characters from the specified buffer until all characters have
@@ -5423,7 +5591,7 @@ INT 14 - HP Vectra EX-BIOS - "F14_GET_BUFFER" - READ DATA INTO BUFFER
 	CX = size of buffer
 	DX = port number (0-3)
 	ES:DI -> buffer for received characters
-Return: AH = line status (see #0223)
+Return: AH = line status (see #0230)
 	---on error (AH bit 7 set)---
 	   AL = 00h
 	   ES:DI -> next byte to be transferred
@@ -5445,7 +5613,7 @@ INT 14 - HP Vectra EX-BIOS - "F14_TRM_BUFFER" - READ UNTIL TERMINATOR
 	CX = size of buffer
 	DX = port number (0-3)
 	ES:DI -> buffer for received characters
-Return: AH = line status (see #0223)
+Return: AH = line status (see #0230)
 	---on error (AH bit 7 set)---
 	   AL = 00h
 	   ES:DI -> next byte to be transferred
@@ -5459,6 +5627,17 @@ Notes:	supported by original HP Vectra AT and by ES/QS/RS series Vectras
 	polls the Data Set Ready modem status and Data Ready line status bits
 	  to determine when characters are available
 SeeAlso: AX=6F00h,AX=6F02h,AX=6F03h
+--------U-147000-----------------------------
+INT 14 - NEWCOM - INSTALLATION CHECK
+	AX = 7000h
+Return: AX = 4E43h ('NC') if installed
+	BX = 4F4Dh ('OM') if installed
+	    CH = major version number
+	    CL = minor version number
+	    DH = patch level
+	    DL = language (currently: 00h English, 01h French)
+Program: Newcom is a DOS commandline-enhancer by kilobug@kali.isicom.fr
+SeeAlso: INT 2F/AX=D44Dh
 --------S-147E-------------------------------
 INT 14 - FOSSIL - INSTALL AN EXTERNAL APPLICATION FUNCTION
 	AH = 7Eh
@@ -5509,16 +5688,16 @@ SeeAlso: AX=8001h,AX=8002h
 INT 14 - COMM-DRV v14.0 - READ PORT METRICS - GET ERROR CODE AND BUFFER STATUS
 	AX = 8000h
 	DX = port number
-Return: AX = code for last error (see #0276)
+Return: AX = code for last error (see #0283)
 	BX = number of characters in output buffer
 	CX = nubmer of characters in input buffer
-	DX = state flag (see #0277)
+	DX = state flag (see #0284)
 Program: COMM-DRV is a universal serial communications driver by Willies'
 	  Computer Software Company, which supports standard INT 14 and
 	  FOSSIL calls as well as its own interfaces
 SeeAlso: AX=8001h"COMM-DRV",AX=8002h"COMM-DRV",AX=8003h"COMM-DRV"
 
-(Table 0276)
+(Table 0283)
 Values for COMM-DRV error code:
  00h	no error
  01h	buffer not set or attempted to change buffer for active port
@@ -5570,31 +5749,31 @@ Values for COMM-DRV error code:
  2Fh	hardware memory > 64K
 
 Bitfields for state flag :
-Bit(s)	Description	(Table 0277)
+Bit(s)	Description	(Table 0284)
  0	port is active
  1	output throttled (XOFF received, or DSR or CTS reset)
  2	input throttled (XOFF sent, or DTR or RTS reset)
 --------S-148001-----------------------------
 INT 14 - ARTICOM - UNLOAD ASYNCHRONOUS REDIRECTOR FROM MEMORY
 	AX = 8001h
-Return: AX = error code, if error (see #0279)
+Return: AX = error code, if error (see #0286)
 SeeAlso: AX=8000h"ARTICOM",AX=8002h"ARTICOM",AX=8003h"ARTICOM"
 Index:	uninstall;ARTICOM
 --------S-148001-----------------------------
 INT 14 - COMM-DRV v14.0 - READ PORT METRICS - GET PORT PARAMETERS
 	AX = 8001h
 	DX = port number
-Return: BX:DI -> Port Control Block (see #0286)
+Return: BX:DI -> Port Control Block (see #0293)
 SeeAlso: AX=8000h"COMM-DRV",AX=8002h"COMM-DRV",AX=8003h"COMM-DRV"
 --------S-148002-----------------------------
 INT 14 - ARTICOM - GET ASYNCHRONOUS REDIRECTOR STATUS
 	AX = 8002h
-	ES:DI -> buffer for redirector status structure (see #0278)
-Return: AX = error code, if error (see #0279)
+	ES:DI -> buffer for redirector status structure (see #0285)
+Return: AX = error code, if error (see #0286)
 SeeAlso: AX=8000h"ARTICOM",AX=8003h"ARTICOM"
 
 Format of ARTICOM redirector status:
-Offset	Size	Description	(Table 0278)
+Offset	Size	Description	(Table 0285)
  00h	WORD	redirector major and minor version numbers
  02h	WORD	redirectable ports found
  04h	WORD	redirectable ports + local ports found
@@ -5607,16 +5786,16 @@ INT 14 - COMM-DRV v14.0 - READ PORT METRICS - GET PORT PARAMETERS
 	DX = port number
 Return: AH bit 7 set on error
 	AH bit 7 clear if successful
-	    BX:DI -> Port Control Block (see #0286) (modifyable portion only)
+	    BX:DI -> Port Control Block (see #0293) (modifyable portion only)
 SeeAlso: AX=8000h"COMM-DRV",AX=8001h"COMM-DRV",AX=8003h"COMM-DRV"
 --------S-148003-----------------------------
 INT 14 - ARTICOM - TRANSLATE ERROR CODE TO ERROR STRING
 	AX = 8003h
-	CX = error number to translate (see #0279)
+	CX = error number to translate (see #0286)
 Return: ES:DI -> ASCIZ error text or 0000h:0000h if unable to translate
 SeeAlso: AX=8000h
 
-(Table 0279)
+(Table 0286)
 Values for ARTICOM error codes:
  00h	"No error"
  01h	"An invalid port number was specified"
@@ -5650,15 +5829,15 @@ INT 14 - ARTICOM - ATTACH ASYNCHRONOUS RESOURCE
 	DX = port to redirect (COM1=0, COM2=1, ...)
 	CH = attach type
 	CL = adapter to use for attach, 0FFh to search all
-	ES:DI -> attachment structure (see #0280)
-Return: AX = error code, if error (see #0279)
+	ES:DI -> attachment structure (see #0287)
+Return: AX = error code, if error (see #0286)
 Note:	The wildcard '*' is supported in the server and resource fields.  If
 	  wild cards are used then the first matching available server is
 	  attached.
 SeeAlso: AX=8000h,AX=8003h,AX=8005h
 
 Format of ARTICOM attachment structure:
-Offset	Size	Description	(Table 0280)
+Offset	Size	Description	(Table 0287)
  00h 16 BYTEs	server to look for attach
  10h 16 BYTEs	attach to resource name
  20h 16 BYTEs	username for attach
@@ -5670,7 +5849,7 @@ Offset	Size	Description	(Table 0280)
 INT 14 - ARTICOM - DETACH ASYNCHRONOUS RESOURCE
 	AX = 8005h
 	DX = port to detach (COM1=0, COM2=1, ...)
-Return: AX = error code, if error (see #0279)
+Return: AX = error code, if error (see #0286)
 Note:	only a previously attached resource can be detached
 SeeAlso: AX=8000h,AX=8003h,AX=8004h
 --------S-148006-----------------------------
@@ -5678,9 +5857,9 @@ INT 14 - ARTICOM - GET RESOURCE INFORMATION
 	AX = 8006h
 	BX = remote port (COM1=0, COM2=1, ...)
 	CL = adapter number, FFh to try all adapters
-	ES:DI -> resource information structure (see #0281)
+	ES:DI -> resource information structure (see #0288)
 	DS:SI -> 16 byte server name. See note.
-Return: AX = error code, if error (see #0279)
+Return: AX = error code, if error (see #0286)
 	BX = next remote port, recall to get next resource info
 Note:	Wild cards supported in both the resource field and server name
 	  string DS:SI. If wild cards used then first matching available
@@ -5689,7 +5868,7 @@ Note:	Wild cards supported in both the resource field and server name
 SeeAlso: AX=8000h,AX=8002h,AX=8003h,AX=8007h
 
 Format of ARTICOM resource information structure:
-Offset	Size	Description	(Table 0281)
+Offset	Size	Description	(Table 0288)
  00h	BYTE	00h = free, else used
  01h 16 BYTEs	resource name
  11h 16 BYTEs	username of resource user
@@ -5703,20 +5882,20 @@ Offset	Size	Description	(Table 0281)
 INT 14 - ARTICOM - GET REDIRECTED PORT INFORMATION
 	AX = 8007h
 	DX = port index (COM1=0, COM2=1, ...)
-	ES:DI -> buffer for port information structure (see #0282)
+	ES:DI -> buffer for port information structure (see #0289)
 Return: CF clear if redirection info returned and port is redirected
 	CF set if not a redirected port
-	AX = error code, if error (see #0279)
+	AX = error code, if error (see #0286)
 SeeAlso: AX=8000h,AX=8003h,AX=8006h,AX=8008h
 
 Format of ARTICOM port information structure:
-Offset	Size	Description	(Table 0282)
+Offset	Size	Description	(Table 0289)
  00h 16 BYTEs	server name resource is on
  10h	BYTE	adapter number server is on
  11h 16 BYTEs	resource name
  21h	WORD	remote port index, use to get additional information
  23h	WORD	buffer size
- 25h	WORD	baud rate (see #0283)
+ 25h	WORD	baud rate (see #0290)
  26h	BYTE	modem status register
  27h	BYTE	modem control register
  28h	BYTE	line status register
@@ -5729,7 +5908,7 @@ Offset	Size	Description	(Table 0282)
  33h	BYTE	if server changes allowed?
  34h	WORD	FFFFh (-1) if connection ok, else old port index
 
-(Table 0283)
+(Table 0290)
 Values for ARTICOM baud rate:
  00h	110
  01h	150
@@ -5748,20 +5927,20 @@ Values for ARTICOM baud rate:
  0Eh	2000
  0Fh	3600
  10h	7200
-SeeAlso: #0228
+SeeAlso: #0235
 --------S-148008-----------------------------
 INT 14 - ARTICOM - GET AVAILABLE SERVER NAME
 	AX = 8008h
 	BX = server index (0,1,...)
-	ES:DI -> server name structure (see #0284)
-Return: AX = error code, if error (see #0279)
+	ES:DI -> server name structure (see #0291)
+Return: AX = error code, if error (see #0286)
 	BX = next remote port, repeat call to get next available server
 Note:	the wildcard '*' is supported in the server name field.	 Set the
 	  server name to FFh to search for all servers.
 SeeAlso: AX=8000h,AX=8003h,AX=8007h
 
 Format of ARTICOM server name structure:
-Offset	 Size	  Description	(Table 0284)
+Offset	 Size	  Description	(Table 0291)
   00h 16 BYTEs	  (call) ASCIZ server name
   10h	 BYTE	  (ret) the adapter server is found
 --------S-148009-----------------------------
@@ -5777,19 +5956,19 @@ INT 14 - ARTICOM - MODIFY FLOW CONTROL
 	AX = 800Ah
 	BL = flow control type (00h none, 01h XON/XOFF, 02h RTS/CTS)
 	DX = port index (COM1=0, COM2=1, ...)
-Return: AX = error code, if error (see #0279)
+Return: AX = error code, if error (see #0286)
 Note:	for attached ports only!
 SeeAlso: AX=8000h,AX=8003h,AX=8009h
 --------S-148025-----------------------------
 INT 14 - ARTICOM - SET INTERNAL SEND/RECEIVE VECTOR
 	AX = 8025h
-	DS:DX -> address of trap function (see #0285) to call on read/write
+	DS:DX -> address of trap function (see #0292) to call on read/write
 Return: nothing
 Note:	setting the vector to a user function allows the redirector's activity
 	  to be monitored.
 SeeAlso: AX=8000h,AX=8035h,INT 21/AH=25h
 
-(Table 0285)
+(Table 0292)
 Values ARTICOM trap function is called with:
 	AH = operation
 	    80h reading character
@@ -5817,11 +5996,11 @@ SeeAlso: AH=83h,AH=8Dh
 --------S-1481-------------------------------
 INT 14 - COMM-DRV - EXTENDED INITIALIZATION
 	AH = 81h
-	BX:DI -> port control block (see #0286)
+	BX:DI -> port control block (see #0293)
 	DX = port number
-Return: AH = line status register (see #0223)
+Return: AH = line status register (see #0230)
 	    error if bit 7 set
-	AL = modem status register (see #0224)
+	AL = modem status register (see #0231)
 Program: COMM-DRV is a universal serial communications driver by Willies'
 	  Computer Software Company, which supports standard INT 14 and
 	  FOSSIL calls as well as its own interfaces
@@ -5829,7 +6008,7 @@ Note:	AX=8001h should be called first to fill in the port control block
 SeeAlso: AH=00h,AX=8001h,AH=82h"COMM-DRV",AH=86h"COMM-DRV"
 
 Format of COMM-DRV port control block:
-Offset	Type	Description	(Table 0286)
+Offset	Type	Description	(Table 0293)
  00h	WORD	port IO address
  02h	WORD	port IRQ
  04h	WORD	baud rate
@@ -5852,12 +6031,12 @@ Offset	Type	Description	(Table 0286)
 --------V-148100-----------------------------
 INT 14 - VIDEO FOSSIL - RETURN VFOSSIL INFORMATION
 	AX = 8100h
-	ES:DI -> buffer for VFOSSIL information (see #0287)
+	ES:DI -> buffer for VFOSSIL information (see #0294)
 Return: AX = 1954h if installed
 SeeAlso: AH=7Eh,AX=8101h
 
 Format of VFOSSIL information:
-Offset	Size	Description	(Table 0287)
+Offset	Size	Description	(Table 0294)
  00h	WORD	size of information in bytes, including this field
  02h	WORD	VFOSSIL major version
  04h	WORD	VFOSSIL revision level
@@ -5865,7 +6044,7 @@ Offset	Size	Description	(Table 0287)
 --------V-148101-----------------------------
 INT 14 - VIDEO FOSSIL - OPEN VFOSSIL
 	AX = 8101h
-	ES:DI -> buffer for application function table (see #0288)
+	ES:DI -> buffer for application function table (see #0295)
 	CX = length of buffer in bytes
 Return: AX = 1954h if installed
 	    BH = highest VFOSSIL application function supported
@@ -5875,39 +6054,39 @@ Note:	the number of initialized pointers in the application function table
 SeeAlso: AX=8102h
 
 Format of VFOSSIL application function table:
-Offset	Size	Description	(Table 0288)
- 00h	DWORD	-> function to query current video mode (VioGetMode)(see #0293)
- 04h	DWORD	-> function to set video mode (VioSetMode) (see #0294)
- 08h	DWORD	-> function to query hardware config (VioGetConfig) (see #0295)
- 0Ch	DWORD	-> function to write data in TTY mode (VioWrtTTY) (see #0296)
- 10h	DWORD	-> function to get current ANSI state (VioGetANSI) (see #0297)
- 14h	DWORD	-> function to set new ANSI state (VioSetANSI) (see #0298)
+Offset	Size	Description	(Table 0295)
+ 00h	DWORD	-> function to query current video mode (VioGetMode)(see #0300)
+ 04h	DWORD	-> function to set video mode (VioSetMode) (see #0301)
+ 08h	DWORD	-> function to query hardware config (VioGetConfig) (see #0302)
+ 0Ch	DWORD	-> function to write data in TTY mode (VioWrtTTY) (see #0303)
+ 10h	DWORD	-> function to get current ANSI state (VioGetANSI) (see #0304)
+ 14h	DWORD	-> function to set new ANSI state (VioSetANSI) (see #0305)
  18h	DWORD	-> function to get curr cursor position (VioGetCurPos)
-		  (see #0299)
- 1Ch	DWORD	-> function to set cursor position (VioSetCurPos) (see #0300)
- 20h	DWORD	-> function to get cursor shape (VioGetCurType) (see #0301)
- 24h	DWORD	-> function to set cursor shape (VioSetCurType) (see #0302)
- 28h	DWORD	-> function to scroll screen up (VioScrollUp) (see #0303)
- 2Ch	DWORD	-> function to scroll screen down (VioScrollDn) (see #0304)
- 30h	DWORD	-> function to read cell string from screen (VioReadCellStr)
-		  (see #0305)
- 34h	DWORD	-> function to read char string from screen (VioReadCharStr)
 		  (see #0306)
- 38h	DWORD	-> function to write a cell string (VioWrtCellStr)
-		  (see #0307)
- 3Ch	DWORD	-> function to write char string, leaving attr (VioWrtCharStr)
-		  (see #0308)
- 40h	DWORD	-> function to write char string,const attr (VioWrtCharStrAttr)
-		  (see #0309)
- 44h	DWORD	-> function to replicate an attribute (VioWrtNAttr)
-		  (see #0310)
- 48h	DWORD	-> function to replicate a cell (VioWrtNCell)
-		  (see #0311)
- 4Ch	DWORD	-> function to replicate a character (VioWrtNChar)
+ 1Ch	DWORD	-> function to set cursor position (VioSetCurPos) (see #0307)
+ 20h	DWORD	-> function to get cursor shape (VioGetCurType) (see #0308)
+ 24h	DWORD	-> function to set cursor shape (VioSetCurType) (see #0309)
+ 28h	DWORD	-> function to scroll screen up (VioScrollUp) (see #0310)
+ 2Ch	DWORD	-> function to scroll screen down (VioScrollDn) (see #0311)
+ 30h	DWORD	-> function to read cell string from screen (VioReadCellStr)
 		  (see #0312)
+ 34h	DWORD	-> function to read char string from screen (VioReadCharStr)
+		  (see #0313)
+ 38h	DWORD	-> function to write a cell string (VioWrtCellStr)
+		  (see #0314)
+ 3Ch	DWORD	-> function to write char string, leaving attr (VioWrtCharStr)
+		  (see #0315)
+ 40h	DWORD	-> function to write char string,const attr (VioWrtCharStrAttr)
+		  (see #0316)
+ 44h	DWORD	-> function to replicate an attribute (VioWrtNAttr)
+		  (see #0317)
+ 48h	DWORD	-> function to replicate a cell (VioWrtNCell)
+		  (see #0318)
+ 4Ch	DWORD	-> function to replicate a character (VioWrtNChar)
+		  (see #0319)
 
 Format of VFOSSIL video mode data structure:
-Offset	Size	Description	(Table 0289)
+Offset	Size	Description	(Table 0296)
  00h	WORD	length of structure including this field
  02h	BYTE	mode characteristics
 		bit 0: clear if MDA, set otherwise
@@ -5919,10 +6098,10 @@ Offset	Size	Description	(Table 0289)
  08h	WORD	reserved
  0Ah	WORD	reserved
  0Ch	DWORD	reserved
-SeeAlso: #0293,#0294
+SeeAlso: #0300,#0301
 
 Format of VFOSSIL video configuration data:
-Offset	Size	Description	(Table 0290)
+Offset	Size	Description	(Table 0297)
  00h	WORD	structure length including this field
  02h	WORD	adapter type
 		00h monochrome/printer
@@ -5936,16 +6115,16 @@ Offset	Size	Description	(Table 0290)
 		02h enhanced color
 		09h 8514
  06h	DWORD	adapter memory size
-SeeAlso: #0295
+SeeAlso: #0302
 
 Format of VFOSSIL cursor type record:
-Offset	Size	Description	(Table 0291)
+Offset	Size	Description	(Table 0298)
  00h	WORD	cursor start line
  02h	WORD	cursor end line
  04h	WORD	cursor width (always 01h)
  06h	WORD	cursor attribute (FFFFh = hidden)
 
-(Table 0292)
+(Table 0299)
 Values for VFOSSIL error code:
  0000h	successful
  0074h	internal VIO failure
@@ -5956,85 +6135,85 @@ Values for VFOSSIL error code:
  01A5h	invalid VIO parameter
  01B4h	invalid VIO handle
 
-(Table 0293)
+(Table 0300)
 Call VioGetMode with:
 	STACK:	WORD	VIO handle (must be 00h)
-		DWORD	pointer to video mode data structure (see #0289)
-Return: AX = error code (00h, 74h, 17Eh, 1B4h) (see #0292)
-SeeAlso: #0294
+		DWORD	pointer to video mode data structure (see #0296)
+Return: AX = error code (00h, 74h, 17Eh, 1B4h) (see #0299)
+SeeAlso: #0301
 
-(Table 0294)
+(Table 0301)
 Call VioSetMode with:
 	STACK:	WORD	VIO handle (must be 00h)
-		DWORD	pointer to video mode data structure (see #0289)
-Return: AX = error code (00h, 74h, 163h, 17Eh, 1A5h, 1B4h) (see #0292)
-SeeAlso: #0293
+		DWORD	pointer to video mode data structure (see #0296)
+Return: AX = error code (00h, 74h, 163h, 17Eh, 1A5h, 1B4h) (see #0299)
+SeeAlso: #0300
 
-(Table 0295)
+(Table 0302)
 Call VioGetConfig with:
 	STACK:	WORD	VIO handle (must be 00h)
-		DWORD	pointer to video configuration data buffer (see #0290)
-Return: AX = error code (00h, 74h, 17Eh, 1B4h) (see #0292)
+		DWORD	pointer to video configuration data buffer (see #0297)
+Return: AX = error code (00h, 74h, 17Eh, 1B4h) (see #0299)
 
-(Table 0296)
+(Table 0303)
 Call VioWrtTTY with:
 	STACK:	WORD	VIO handle (must be 00h)
 		WORD	length of string
 		DWORD	pointer to character string to be written to screen
-Return: AX = error code (00h, 74h, 1B4h) (see #0292)
+Return: AX = error code (00h, 74h, 1B4h) (see #0299)
 Notes:	write wraps at end of line and terminates if it reaches end of screen
 	in ANSI mode, ANSI control sequences are interpreted, and this func is
 	  not required to be reentrant; in non-ANSI mode, the function is
 	  reentrant and may be called from within an MS-DOS function call
 
-(Table 0297)
+(Table 0304)
 Call VioGetANSI with:
 	STACK:	WORD	VIO handle (must be 00h)
 		DWORD	pointer to WORD which will be set to 00h if ANSI is off
 			or 01h if ANSI is on
-Return: AX = error code (00h, 74h, 1B4h) (see #0292)
-SeeAlso: #0298
+Return: AX = error code (00h, 74h, 1B4h) (see #0299)
+SeeAlso: #0305
 
-(Table 0298)
+(Table 0305)
 Call VioSetANSI with:
 	STACK:	WORD	VIO handle (must be 00h)
 		DWORD	pointer to WORD indicating new state of ANSI
 			00h off, 01h on
-Return: AX = error code (00h, 74h, 1A4h, 1B4h) (see #0292)
-SeeAlso: #0297
+Return: AX = error code (00h, 74h, 1A4h, 1B4h) (see #0299)
+SeeAlso: #0304
 
-(Table 0299)
+(Table 0306)
 Call VioGetCurPos with:
 	STACK:	WORD	VIO handle (must be 00h)
 		DWORD	pointer to WORD to hold current cursor column (0-based)
 		DWORD	pointer to WORD to hold current cursor row (0-based)
-Return: AX = error code (00h, 74h, 1B4h) (see #0292)
-SeeAlso: #0300
+Return: AX = error code (00h, 74h, 1B4h) (see #0299)
+SeeAlso: #0307
 
-(Table 0300)
+(Table 0307)
 Call VioSetCurPos with:
 	STACK:	WORD	VIO handle (must be 00h)
 		WORD	cursor column
 		WORD	cursor row
-Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see #0292)
+Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see #0299)
 Note:	if either coordinate is invalid, the cursor is not moved
-SeeAlso: #0299
+SeeAlso: #0306
 
-(Table 0301)
+(Table 0308)
 Call VioGetCurType with:
 	STACK:	WORD	VIO handle (must be 00h)
-		DWORD	pointer to cursor type record (see #0291)
-Return: AX = error code (00h, 74h, 1B4h) (see #0292)
-SeeAlso: #0302
+		DWORD	pointer to cursor type record (see #0298)
+Return: AX = error code (00h, 74h, 1B4h) (see #0299)
+SeeAlso: #0309
 
-(Table 0302)
+(Table 0309)
 Call VioSetCurType with:
 	STACK:	WORD	VIO handle (must be 00h)
-		DWORD	pointer to cursor type record (see #0291)
-Return: AX = error code (00h, 74h, 1A4h, 1B4h) (see #0292)
-SeeAlso: #0303
+		DWORD	pointer to cursor type record (see #0298)
+Return: AX = error code (00h, 74h, 1A4h, 1B4h) (see #0299)
+SeeAlso: #0310
 
-(Table 0303)
+(Table 0310)
 Call VioScrollUp with:
 	STACK:	WORD	VIO handle (must be 00h)
 		DWORD	pointer to char/attr cell for filling emptied rows
@@ -6043,10 +6222,10 @@ Call VioScrollUp with:
 		WORD	bottom row of scroll area
 		WORD	left column of scroll area
 		WORD	top row of scroll area
-Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see #0292)
-SeeAlso: #0304,INT 10/AH=06h
+Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see #0299)
+SeeAlso: #0311,INT 10/AH=06h
 
-(Table 0304)
+(Table 0311)
 Call VioScrollDn with:
 	STACK:	WORD	VIO handle (must be 00h)
 		DWORD	pointer to char/attr cell for filling emptied rows
@@ -6055,10 +6234,10 @@ Call VioScrollDn with:
 		WORD	bottom row of scroll area
 		WORD	left column of scroll area
 		WORD	top row of scroll area
-Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see #0292)
-SeeAlso: #0303,INT 10/AH=07h
+Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see #0299)
+SeeAlso: #0310,INT 10/AH=07h
 
-(Table 0305)
+(Table 0312)
 Call VioReadCellStr with:
 	STACK:	WORD	VIO handle (must be 00h)
 		WORD	column at which to start reading
@@ -6066,9 +6245,9 @@ Call VioReadCellStr with:
 		DWORD	pointer to WORD containing length of buffer in bytes
 			on return, WORD contains number of bytes actually read
 		DWORD	pointer to buffer for cell string
-Return: AX = error code (00h, 74h, 166h ,167h, 1B4h) (see #0292)
+Return: AX = error code (00h, 74h, 166h ,167h, 1B4h) (see #0299)
 
-(Table 0306)
+(Table 0313)
 Call VioReadCharStr with:
 	STACK:	WORD	VIO handle (must be 00h)
 		WORD	column at which to start reading
@@ -6076,29 +6255,29 @@ Call VioReadCharStr with:
 		DWORD	pointer to WORD containing length of buffer in bytes
 			on return, WORD contains number of bytes actually read
 		DWORD	pointer to buffer for character string
-Return: AX = error code (00h, 74h, 166h ,167h, 1B4h) (see #0292)
+Return: AX = error code (00h, 74h, 166h ,167h, 1B4h) (see #0299)
 
-(Table 0307)
+(Table 0314)
 Call VioWrtCellStr with:
 	STACK:	WORD	VIO handle (must be 00h)
 		WORD	column at which to start writing
 		WORD	row at which to start writing
 		WORD	length of cell string in bytes
 		DWORD	pointer to cell string to write
-Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see #0292)
+Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see #0299)
 Note:	write wraps at end of line and terminates if it reaches end of screen
 
-(Table 0308)
+(Table 0315)
 Call VioWrtCharStr with:
 	STACK:	WORD	VIO handle (must be 00h)
 		WORD	column at which to start writing
 		WORD	row at which to start writing
 		WORD	length of character string
 		DWORD	pointer to character string to write
-Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see #0292)
+Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see #0299)
 Note:	write wraps at end of line and terminates if it reaches end of screen
 
-(Table 0309)
+(Table 0316)
 Call VioWrtCharStrAttr with:
 	STACK:	WORD	VIO handle (must be 00h)
 		DWORD	pointer to attribute to be applied to each character
@@ -6106,37 +6285,37 @@ Call VioWrtCharStrAttr with:
 		WORD	row at which to start writing
 		WORD	length of character string
 		DWORD	pointer to character string to write
-Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see #0292)
+Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see #0299)
 Note:	write wraps at end of line and terminates if it reaches end of screen
 
-(Table 0310)
+(Table 0317)
 Call VioWrtNAttr with:
 	STACK:	WORD	VIO handle (must be 00h)
 		WORD	column at which to start writing
 		WORD	row at which to start writing
 		WORD	number of times to write attribute
 		DWORD	pointer to display attribute to replicate
-Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see #0292)
+Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see #0299)
 Note:	write wraps at end of line and terminates if it reaches end of screen
 
-(Table 0311)
+(Table 0318)
 Call VioWrtNCell with:
 	STACK:	WORD	VIO handle (must be 00h)
 		WORD	column at which to start writing
 		WORD	row at which to start writing
 		WORD	number of times to write cell
 		DWORD	pointer to cell to replicate
-Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see #0292)
+Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see #0299)
 Note:	write wraps at end of line and terminates if it reaches end of screen
 
-(Table 0312)
+(Table 0319)
 Call VioWrtNChar with:
 	STACK:	WORD	VIO handle (must be 00h)
 		WORD	column at which to start writing
 		WORD	row at which to start writing
 		WORD	number of times to write character
 		DWORD	pointer to character to replicate
-Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see #0292)
+Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see #0299)
 Note:	write wraps at end of line and terminates if it reaches end of screen
 --------V-148102-----------------------------
 INT 14 - VIDEO FOSSIL - CLOSE VFOSSIL
@@ -6212,7 +6391,7 @@ INT 14 - COMM-DRV v14.0 - SEND PACKET
 	CX = packet length in bytes
 	DX = port number
 	ES:DI -> packet to be sent
-Return: AH = line status (see #0223)
+Return: AH = line status (see #0230)
 	    bit 7 set on error
 	AL destroyed
 SeeAlso: AH=83h"COMM-DRV",AH=85h"COMM-DRV",AH=86h"COMM-DRV"
@@ -6227,7 +6406,7 @@ INT 14 - COMM-DRV v14.0 - RECEIVE PACKET
 	CX = length of packet in bytes
 	DX = port number
 	ES:DI -> buffer for packet
-Return: AH = line status (see #0223)
+Return: AH = line status (see #0230)
 	    bit 7 set on error
 	AL destroyed
 Note:	this call requires that at least the requested number of bytes are
@@ -6350,7 +6529,7 @@ INT 14 - COMM-DRV v14.0 - READ PACKET NONDESTRUCTIVELY
 	CX = length of packet in bytes
 	DX = port number
 	ES:DI -> buffer for packet
-Return: AH = line status (see #0223)
+Return: AH = line status (see #0230)
 	    bit 7 set on error (see AX=8000h"COMM-DRV")
 	AL destroyed
 Program: COMM-DRV is a universal serial communications driver by Willies'
@@ -6367,14 +6546,14 @@ INT 14 - 3com BAPI SERIAL I/O - CONNECT TO PORT
 	AH = A0h
 	ES:BX -> ASCIZ internet host name
 	CX = length of name
-Return: AH = return code (00h,04h-06h,08h,0Ah-0Ch) (see #0313)
+Return: AH = return code (00h,04h-06h,08h,0Ah-0Ch) (see #0320)
 	CL = session ID
 Program: the Bridge Application Program Interface is a set of functions which
 	  makes many of the details of LAN communications transparent
 Note:	Novell TELAPI.EXE returns AH=09h (not supported) and CL=00h
 SeeAlso: AH=A1h"BAPI",AH=A2h"BAPI",AH=A5h"BAPI",AX=AF00h
 
-(Table 0313)
+(Table 0320)
 Values for 3com BAPI return code:
  00h	successful
  01h	no characters written
@@ -6404,18 +6583,18 @@ SeeAlso: AH=A1h"TES"
 INT 14 - 3com BAPI SERIAL I/O - DISCONNECT FROM PORT
 	AH = A1h
 	DH = session ID (00h for external session managment)
-Return: AH = return code (00h,03h,07h,0Ah,0Bh) (see #0313)
+Return: AH = return code (00h,03h,07h,0Ah,0Bh) (see #0320)
 	AL destroyed (Novell TELAPI.EXE)
 SeeAlso: AH=A0h"BAPI"
 --------S-14A1-------------------------------
 INT 14 - Interconnections Inc. TES - GET LIST OF SESSIONS WITH STATUS
 	AH = A1h
 Return: CX = number of active sessions
-	ES:SI -> status array (see #0314)
+	ES:SI -> status array (see #0321)
 SeeAlso: AH=A2h"TES",AH=A3h"TES"
 
 Format of Interconnections TES status array entry:
-Offset	Size	Description	(Table 0314)
+Offset	Size	Description	(Table 0321)
  00h	BYTE	status
  01h	WORD	offset of name
 --------S-14A2-------------------------------
@@ -6423,7 +6602,7 @@ INT 14 - 3com BAPI SERIAL I/O - WRITE CHARACTER
 	AH = A2h
 	AL = character
 	DH = session ID (00h for external session managment)
-Return: AH = return code (00h,01h,03h,07h,0Ah,0Bh) (see #0313)
+Return: AH = return code (00h,01h,03h,07h,0Ah,0Bh) (see #0320)
 SeeAlso: AH=A0h"BAPI",AH=A3h"BAPI",AH=A4h"BAPI"
 --------S-14A2-------------------------------
 INT 14 - Interconnections Inc. TES - GET LIST OF SERVER NAMES
@@ -6435,7 +6614,7 @@ SeeAlso: AH=A1h"TES"
 INT 14 - 3com BAPI SERIAL I/O - READ CHARACTER
 	AH = A3h
 	DH = session ID (00h for external session managment)
-Return: AH = return code (00h,02h,03h,07h,0Ah,0Bh) (see #0313)
+Return: AH = return code (00h,02h,03h,07h,0Ah,0Bh) (see #0320)
 	AL = character read or 00h if none available
 SeeAlso: AH=A0h"BAPI",AH=A2h"BAPI",AH=A5h"BAPI",AH=A7h"BAPI"
 --------S-14A3-------------------------------
@@ -6454,7 +6633,7 @@ INT 14 - 3com BAPI SERIAL I/O - WRITE BLOCK
 	CX = length of buffer in bytes
 	DH = session ID (00h for external session managment)
 	ES:BX -> buffer containing data
-Return: AH = return code (00h,01h,03h,07h,0Ah,0Bh) (see #0313)
+Return: AH = return code (00h,01h,03h,07h,0Ah,0Bh) (see #0320)
 	CX = number of bytes actually sent
 SeeAlso: AH=19h,AH=86h,AH=A0h"BAPI",AH=A5h"BAPI"
 --------S-14A4-------------------------------
@@ -6469,7 +6648,7 @@ INT 14 - 3com BAPI SERIAL I/O - READ BLOCK
 	CX = length of buffer
 	DH = session ID (00h for external session managment)
 	ES:BX -> buffer for data
-Return: AH = return code (00h,02h,03h,07h,0Ah,0Bh) (see #0313)
+Return: AH = return code (00h,02h,03h,07h,0Ah,0Bh) (see #0320)
 	CX = number of bytes actually read
 SeeAlso: AH=18h,AH=83h"COURIERS",AH=A0h"BAPI",AH=A3h"BAPI",AH=A4h"BAPI"
 SeeAlso: AH=A7h"BAPI",AX=FF02h
@@ -6483,7 +6662,7 @@ SeeAlso: AH=A4h"TES",AH=A6h"TES"
 INT 14 - 3com BAPI SERIAL I/O - SEND SHORT BREAK
 	AH = A6h
 	DH = session ID (00h for external session managment)
-Return: AH = return code (00h,03h,07h,0Ah,0Bh) (see #0313)
+Return: AH = return code (00h,03h,07h,0Ah,0Bh) (see #0320)
 Desc:	generate a short break signal; if data delivery was turned off by the
 	  break, wait for the host to turn it on again
 SeeAlso: AH=1Ah,AH=8Ah,AH=FAh,AH=A0h"BAPI"
@@ -6499,7 +6678,7 @@ SeeAlso: AH=A3h"TES",AH=A5h"TES"
 INT 14 - 3com BAPI SERIAL I/O - READ STATUS
 	AH = A7h
 	DH = session ID (00h for external session managment)
-Return: AH = return code (00h,03h,07h,0Ah,0Bh) (see #0313)
+Return: AH = return code (00h,03h,07h,0Ah,0Bh) (see #0320)
 	CX = number of bytes available for reading
 Note:	Novell TELAPI.EXE v4.01 always returns either 0 or 1 bytes available
 SeeAlso: AH=A5h"BAPI"
@@ -6528,7 +6707,7 @@ INT 14 - Novell TelAPI v4.01 - CONNECTION INFORMATION???
 	    28h ???
 	    else
 		Return: AH = 09h (not supported)
-Return: AH = return code (see #0313)
+Return: AH = return code (see #0320)
 	    00h successful
 		CL = ??? (0/1/8) (subfunctions 02h,0Dh,0Fh,10h)
 		CL = ??? (7Fh/FFh) (subfunction 28h)
@@ -6548,7 +6727,7 @@ INT 14 - Novell TelAPI v4.01 - CONNECTION CONTROL???
 	    else
 		Return: AH = 09h (not supported)
 	???
-Return: AH = return code (see #0313)
+Return: AH = return code (see #0320)
 	???
 SeeAlso: AH=A8h"TelAPI",AH=E4h,INT 6B/AX=0600h
 --------V-14AA01-----------------------------
@@ -6631,14 +6810,14 @@ Index:	screen saver;DimVGA
 --------V-14AA0B-----------------------------
 INT 14 - DimVGA v2.1+ - SET HOTKEY
 	AX = AA0Bh
-	BH = shift state (see #0315)
+	BH = shift state (see #0322)
 	BL = keyboard scancode
 Return: AX = FFFFh
 SeeAlso: AX=AA01h,AX=AA0Ch
 Index:	screen saver;DimVGA
 
 Bitfields for DimVGA hotkey shift state:
-Bit(s)	Description	(Table 0315)
+Bit(s)	Description	(Table 0322)
  7-4	unused
  3	Alt key pressed
  2	Ctrl key pressed
@@ -6648,7 +6827,7 @@ Bit(s)	Description	(Table 0315)
 INT 14 - DimVGA v2.1+ - GET HOTKEY
 	AX = AA0Ch
 Return: AX = FFFFh
-	BH = shift state (see #0315)
+	BH = shift state (see #0322)
 	BL = keyboard scancode
 SeeAlso: AX=AA01h,AX=AA0Bh
 Index:	screen saver;DimVGA
@@ -6713,21 +6892,21 @@ SeeAlso: AH=A0h"BAPI"
 INT 14 - 3com BAPI SERIAL I/O - EN/DISABLE "ENTER COMMAND MODE" (ECM) CHARACTER
 	AH = B0h
 	AL = new state (00h disabled, 01h enabled)
-Return: AH = return code (00h,07h,0Ah) (see #0313)
+Return: AH = return code (00h,07h,0Ah) (see #0320)
 Note:	disabling the ECM character allows applications to send data which
 	  includes the ECM character
 SeeAlso: AX=AF00h"BAPI",AH=B1h,AH=B2h
 --------S-14B1-------------------------------
 INT 14 - 3com BAPI SERIAL I/O - ENTER COMMAND MODE
 	AH = B1h
-Return: AH = return code (00h,07h,0Ah) (see #0313)
+Return: AH = return code (00h,07h,0Ah) (see #0320)
 Desc:	provide a means for the application or terminal emulator to perform
 	  the same action normally caused by the ECM character
 SeeAlso: AH=B0h,AH=B2h
 --------S-14B2-------------------------------
 INT 14 - 3com BAPI SERIAL I/O - GET ECM WATCH STATE
 	AH = B2h
-Return: AH = return code (00h,07h,0Ah) (see #0313)
+Return: AH = return code (00h,07h,0Ah) (see #0320)
 	AL = watch flag (00h disabled, 01h enabled)
 Desc:	determine whether the ECM character is enabled
 SeeAlso: AH=B0h,AH=B1h
@@ -6745,7 +6924,7 @@ INT 14 - 3com BAPI SERIAL I/O - GET/SET CONFIGURATION INFO
 	    CL = driver EOL type (Telnet client to Telnet server)
 		01h driver should send CR-NUL pair
 		02h driver should send CR-LF pair
-Return: AH = return code (00h,03h,09h-0Bh) (see #0313)
+Return: AH = return code (00h,03h,09h-0Bh) (see #0320)
 	---if AL=00h---
 	CX = configuration item value (above)
 SeeAlso: AH=B2h
@@ -6757,13 +6936,13 @@ INT 14 - TelAPI - "telopen" - CREATE TELNET CONNECTION (BLOCKING)
 	DS:DI -> 2-byte remote host (session) identifier
 	ES:SI -> 1700-byte buffer for Telnet state record
 	    0000h:0000h to use TelAPI internally-allocated space
-Return: AX = status (0000h-0009h,FED3h,FF37h,FFBDh,FFC0h,FFCDh) (see #0316)
+Return: AX = status (0000h-0009h,FED3h,FF37h,FFBDh,FFC0h,FFCDh) (see #0323)
 	ES:SI buffer filled with state record
 	ES:SI -> internally-allocated state record in some versions
 Note:	the remote host identifier may be used to refer to this connection
 SeeAlso: AH=E1h,AH=ECh,AX=FF00h
 
-(Table 0316)
+(Table 0323)
 Values for TelAPI status:
  0000h-7FFFh	successful (session number)
  FED3h	(-301)	no session allocated, or out of TelAPI data space
@@ -6779,14 +6958,14 @@ Values for TelAPI status:
 INT 14 - MX5 Extended FOSSIL - GET MNP STATUS BLOCK
 	AX = E000h
 	DX = port number (0-3)
-Return: ES:BX -> status block (see #0317)
+Return: ES:BX -> status block (see #0324)
 Program: MX5 is a FOSSIL driver by MagicSoft which emulates MNP Level 5, and
-	  ships with the MTEZ terminal program as MTEMNP.DRV (a TSR despite
+	  ships with the METZ terminal program as MTEMNP.DRV (a TSR despite
 	  the .DRV extension)
 SeeAlso: AX=E006h
 
 Format of MX5 Extended FOSSIL status block:
-Offset	Size	Description	(Table 0317)
+Offset	Size	Description	(Table 0324)
  00h	BYTE	flag: active (00h no, 01h yes)
  01h	BYTE	MNP level (2,4,5)
  02h	BYTE	series ID from remote MNP
@@ -6862,7 +7041,7 @@ SeeAlso: AX=E006h
 INT 14 - TelAPI - "telclose" - TERMINATE TELNET CONNECTION
 	AH = E1h
 	BX = connection ID
-Return: AX = status (0000h,FFF7h,maybe others) (see #0316)
+Return: AX = status (0000h,FFF7h,maybe others) (see #0323)
 Note:	flushes and releases all buffers and data space used by the connection
 SeeAlso: AH=E0h,AH=E6h,AX=FF00h
 --------N-14E2-------------------------------
@@ -6873,7 +7052,7 @@ INT 14 - TelAPI - "telread" - BUFFERED READ
 	ES:SI -> buffer for data
 Return: AX > 0000h number of characters actually read
 	AX = 0000h host has closed connection
-	AX < 0000h error code (see #0316)
+	AX < 0000h error code (see #0323)
 Note:	translates CRLF into local EOL if the connection is in ASCII mode,
 	  negotiates various Telnet options, and immediately executes several
 	  different Telnet action commands
@@ -6885,7 +7064,7 @@ INT 14 - TelAPI - "telwrite" - BUFFERED WRITE
 	CX = length of buffer in bytes
 	ES:SI -> buffer containing data
 Return: AX > 0000h number of characters actually written
-	AX < 0000h error code (see #0316)
+	AX < 0000h error code (see #0323)
 Note:	translates local EOL into CRLF if the connection is in ASCII mode,
 	  sends the appropriate Telnet commands for the characters selected
 	  for IP, AYT, AO, EC, EL, and Break
@@ -6894,20 +7073,20 @@ SeeAlso: AH=06h"TelAPI",AH=E2h,AH=E6h,AX=FF00h,INT 6B/AH=00h
 INT 14 - TelAPI - "telioctl" - CONNECTION CONTROL
 	AH = E4h
 	BX = connection ID (see AH=E0h"TelAPI")
-	CX = Telnet command/option identifier (see #0319)
-	ES:SI -> buffer containing command/option argument (see #0318)
-Return: AX = status (0000h, etc.) (see #0316)
+	CX = Telnet command/option identifier (see #0326)
+	ES:SI -> buffer containing command/option argument (see #0325)
+Return: AX = status (0000h, etc.) (see #0323)
 Desc:	start filter control, initiate Telnet option negotiation, or get filter
 	  control status
 SeeAlso: AH=A9h,AH=E6h,AX=FF00h,INT 6B/AX=0600h
 
 Format of TelAPI Telnet command/option argument:
-Offset	Size	Description	(Table 0318)
+Offset	Size	Description	(Table 0325)
  00h  5 WORD	numeric arguments
  0Ah	DWORD	-> ASCIZ string
-SeeAlso: #0319
+SeeAlso: #0326
 
-(Table 0319)
+(Table 0326)
 Values for TelAPI Telnet command/option identifier:
  01h	ASCII		args: none
  02h	BINARY		args: none
@@ -6930,11 +7109,11 @@ Values for TelAPI Telnet command/option identifier:
  18h	TERMTYPE	args: -> terminal type
  19h	ATTACHPORT	args: port number ; returns session number
  1Bh	TRANSMIT_EOR	args: EOR enabled	append EOR to every telwrite?
-SeeAlso: #0318
+SeeAlso: #0325
 --------N-14E5-------------------------------
 INT 14 - TelAPI - "telreset" - RESET ALL CONNECTIONS
 	AH = E5h
-Return: AX = status (0000h,other) (see also #0316)
+Return: AX = status (0000h,other) (see also #0323)
 	    FFFFh unable to reset
 Desc:	close all sessions and reset TelAPI to defaults
 SeeAlso: AH=E1h,AH=E6h,AX=FF00h
@@ -6972,18 +7151,18 @@ INT 14 - TelAPI - "telportosn" - GET SESSION NUMBER FOR COM PORT
 	AH = E9h
 	DX = serial port number (0000h-0003h = COM1-COM4)
 Return: AX >= 0000h session number
-	AX < 0000h error code (see #0316)
+	AX < 0000h error code (see #0323)
 SeeAlso: AH=E0h,AH=E8h,AH=EAh,AX=FF00h
 --------N-14EA-------------------------------
 INT 14 - TelAPI - "telstatus" - GET TELNET CONNECTION STATUS INFORMATION
 	AH = EAh
 	BX = connection ID (see AH=E0h"TelAPI")
-	ES:SI -> buffer for status info (see #0320)
+	ES:SI -> buffer for status info (see #0327)
 Return: AX = status (0000h,FFFFh,etc.)
 SeeAlso: AH=E9h,AH=EBh,AX=FF00h
 
 Format of TelAPI Telnet connection status information:
-Offset	Size	Description	(Table 0320)
+Offset	Size	Description	(Table 0327)
  00h  4 BYTEs	remote host IP address
  04h 20 BYTEs	reserved
  18h	WORD	local port number
@@ -7004,20 +7183,20 @@ Offset	Size	Description	(Table 0320)
  28h	BYTE	EL escape character
  29h 41 BYTEs	ASCIZ Telnet-negotiated terminal type
  52h  9 BYTEs	session ID
-SeeAlso: #0321
+SeeAlso: #0328
 --------N-14EB-------------------------------
 INT 14 - TelAPI - "telname" - GET AVAILABLE/INUSE STATUS FOR ALL SESSIONS
 	AH = EBh
-	ES:SI -> buffer for session statuses (see #0321)
+	ES:SI -> buffer for session statuses (see #0328)
 Return: ES:SI buffer filled
 SeeAlso: AH=E9h,AH=EAh,AX=FF00h
 
 Format of TelAPI session status information [array]:
-Offset	Size	Description	(Table 0321)
+Offset	Size	Description	(Table 0328)
  00h	BYTE	session state (00h available, 01h connected)
  01h  9 BYTEs	session ID if connected
  0Ah	WORD	attached COM port if connected, FFFFh if not
-SeeAlso: #0320
+SeeAlso: #0327
 --------N-14EC-------------------------------
 INT 14 - TelAPI - "telnblkopen" - CREATE TELNET CONNECTION (NON-BLOCKING)
 	AH = ECh
@@ -7026,7 +7205,7 @@ INT 14 - TelAPI - "telnblkopen" - CREATE TELNET CONNECTION (NON-BLOCKING)
 	DS:DI -> 2-byte remote host (connection) identifier
 	ES:SI -> 1700-byte buffer for Telnet state record
 	    0000h:0000h to use TelAPI internally-allocated space
-Return: AX = status (0000h-0009h,FED3h,FF37h,FFBDh,FFC0h,FFCDh) (see #0316)
+Return: AX = status (0000h-0009h,FED3h,FF37h,FFBDh,FFC0h,FFCDh) (see #0323)
 	ES:SI buffer filled with state record
 	ES:SI -> internally-allocated state record in some versions
 Notes:	the remote host identifier may be used to refer to this connection
@@ -7038,7 +7217,7 @@ SeeAlso: AH=E0h"TelAPI",AH=EDh,AX=FF00h
 INT 14 - TelAPI - "telpoll" - POLL TELNET SESSION FOR CONNECTION COMPLETION
 	AH = EDh
 	BX = connection ID (see AH=ECh)
-Return: AX = status (0000h,0001h,FFFFh,etc.) (see also #0316)
+Return: AX = status (0000h,0001h,FFFFh,etc.) (see also #0323)
 	    0000h session now connected
 	    0001h connection still in progress
 Note:	this function is not supported by the Microdyne TelAPI v3.7
@@ -7085,7 +7264,7 @@ SeeAlso: AH=07h"MBBIOS",AH=1Ah,AH=8Ah
 --------S-14FB-------------------------------
 INT 14 - IBM/Yale EBIOS SERIAL I/O - SET OUTGOING MODEM SIGNALS
 	AH = FBh
-	AL = modem control register (see #0253 at AH=05h"SERIAL")
+	AL = modem control register (see #0260 at AH=05h"SERIAL")
 	DX = port (00h-03h)
 Return: nothing
 SeeAlso: AH=05h"SERIAL"
@@ -7093,7 +7272,7 @@ SeeAlso: AH=05h"SERIAL"
 INT 14 - IBM/Yale EBIOS SERIAL I/O - READ CHARACTER, NO WAIT
 	AH = FCh
 	DX = port (00h-03h)
-Return: AH = RS232 status bits (see #0223 at AH=03h)
+Return: AH = RS232 status bits (see #0230 at AH=03h)
 	AL = character
 SeeAlso: AH=02h,AH=0Ch,AX=FF02h
 --------S-14FD02-----------------------------
@@ -7147,17 +7326,17 @@ INT 14 - COMM-DRV v14.0 - GET INT 14 FLAGS
 	DX = port number
 Return: AH bit 7 set on error
 	AH bit 7 clear if successful
-	    BX = flags (see #0322)
+	    BX = flags (see #0329)
 SeeAlso: AX=FFFDh
 
 Bitfields for INT 14h flags:
-Bit(s)	Description	(Table 0322)
+Bit(s)	Description	(Table 0329)
  0	port active for INT 14h
  1	interface behaving like a FOSSIL driver
 --------S-14FFFD-----------------------------
 INT 14 - COMM-DRV v14.0 - SET INT 14 FLAGS
 	AX = FFFDh
-	BX = flags (see #0322)
+	BX = flags (see #0329)
 	DX = port number
 Return: AH bit 7 set on error
 	AH bit 7 clear if successful
@@ -7170,7 +7349,7 @@ Return: AH bit 7 set on error
 --------S-14FFFF-----------------------------
 INT 14 - COMM-DRV v14.0 - GET INT 14 INFORMATION AREA
 	AX = FFFFh
-	BX:SI -> DWORD buffer for address of information area (see #0323)
+	BX:SI -> DWORD buffer for address of information area (see #0330)
 		  (initialized to zeros)
 Return: BX:SI buffer filled with nonzero value if installed
 Program: COMM-DRV is a universal serial communications driver by Willies'
@@ -7179,7 +7358,7 @@ Program: COMM-DRV is a universal serial communications driver by Willies'
 Index:	installation check;COMM-DRV
 
 Format of COMM-DRV information area:
-Offset	Size	Description	(Table 0323)
+Offset	Size	Description	(Table 0330)
  00h  8 BYTEs	signature "COMM-DRV"
  08h  2 BYTEs	00h,00h
  0Ah	DWORD	-> direct address mapping table
@@ -7193,7 +7372,7 @@ INT 15 - CASSETTE - TURN ON TAPE DRIVE'S MOTOR (PC and PCjr only)
 Return: CF set on error
 	    AH = 86h no cassette present
 	CF clear if successful
-SeeAlso: AH=01h"CASSETTE"
+SeeAlso: AH=01h"CASSETTE",MEM 0040h:0067h"PC"
 --------M-1500-------------------------------
 INT 15 - Amstrad PC1512 - GET AND RESET MOUSE COUNTS
 	AH = 00h
@@ -7222,7 +7401,7 @@ SeeAlso: AH=00h"CASSETTE"
 --------b-1501-------------------------------
 INT 15 - Amstrad PC1512 - WRITE DATA TO NON-VOLATILE RAM
 	AH = 01h
-	AL = NVRAM location (00h to 3Fh) (see #0324)
+	AL = NVRAM location (00h to 3Fh) (see #0331)
 	BL = NVRAM data value
 Return: AH = return code
 	    00h OK
@@ -7231,7 +7410,7 @@ Return: AH = return code
 SeeAlso: AH=02h"Amstrad"
 
 Format of Amstrad NVRAM:
-Offset	Size	Description	(Table 0324)
+Offset	Size	Description	(Table 0331)
  00h	BYTE	time of day: seconds
  01h	BYTE	alarm time: seconds
  02h	BYTE	time of day: minutes
@@ -7242,9 +7421,9 @@ Offset	Size	Description	(Table 0324)
  07h	BYTE	day of month
  08h	BYTE	month
  09h	BYTE	year mod 100
- 0Ah	BYTE	RTC status register A (see #0325)
- 0Bh	BYTE	RTC status register B (see #0326)
- 0Ch	BYTE	RTC status register C (read-only) (see #0327)
+ 0Ah	BYTE	RTC status register A (see #0332)
+ 0Bh	BYTE	RTC status register B (see #0333)
+ 0Ch	BYTE	RTC status register C (read-only) (see #0334)
  0Dh	BYTE	RTC status register D
 		bit 7: battery good
  0Eh  6 BYTEs	time and date machine last used
@@ -7267,14 +7446,14 @@ Note:	bytes 00h-0Dh are the same on the IBM AT as they are used/updated by
 	  the clock chip
 
 Bitfields for RTC status register A:
-Bit(s)	Description	(Table 0325)
+Bit(s)	Description	(Table 0332)
  7	set if date/time being updated
  6-4	time base speed, default 010 = 32768 Hz
  3-0	interrupt rate selection, default 0110 = 1024 Hz
-SeeAlso: #0324
+SeeAlso: #0331
 
 Bitfields for RTC status register B:
-Bit(s)	Description	(Table 0326)
+Bit(s)	Description	(Table 0333)
  7	clear if normal update, set if abort update
  6	periodic interrupt enable
  5	alarm interrupt enable
@@ -7283,15 +7462,15 @@ Bit(s)	Description	(Table 0326)
  2	date mode (clear = BCD, set = binary)
  1	24-hour format
  0	daylight saving time enable
-SeeAlso: #0324
+SeeAlso: #0331
 
 Bitfields for RTC status register C:
-Bit(s)	Description	(Table 0327)
+Bit(s)	Description	(Table 0334)
  7	IRQF flag
  6	PF flag
  5	AF flag
  4	UF flag
-SeeAlso: #0324
+SeeAlso: #0331
 --------O-1501-------------------------------
 INT 15 - VMiX - "sys_chanreq" - I/O CHANNEL OBJECT MANAGER
 	AH = 01h
@@ -7360,10 +7539,10 @@ Return: CF clear if successful
 	    DX = number of bytes read
 	    ES:BX -> byte following last byte read
 	CF set on error
-	AH = status (see #0328)
-SeeAlso: AH=00h"CASSETTE",AH=03h"CASSETTE"
+	AH = status (see #0335)
+SeeAlso: AH=00h"CASSETTE",AH=03h"CASSETTE",MEM 0040h:0069h,MEM 0040h:006Bh"PC"
 
-(Table 0328)
+(Table 0335)
 Values for Cassette status:
  00h	successful
  01h	CRC error
@@ -7463,7 +7642,7 @@ INT 15 - CASSETTE - WRITE DATA (PC and PCjr only)
 Return: CF clear if successful
 	    ES:BX -> byte following last byte written
 	CF set on error
-	AH = status (see #0328)
+	AH = status (see #0335)
 	CX = 0000h
 SeeAlso: AH=00h"CASSETTE",AH=02h"CASSETTE"
 --------V-1503-------------------------------
@@ -7492,7 +7671,7 @@ SeeAlso: AH=00h"MultiDOS",AH=0Ah"MultiDOS"
 --------B-1504-------------------------------
 INT 15 - SYSTEM - BUILD ABIOS SYSTEM PARAMETER TABLE (PS)
 	AH = 04h
-	ES:DI -> 32-byte results buffer for System Parameter Table (see #0329)
+	ES:DI -> 32-byte results buffer for System Parameter Table (see #0336)
 	DS = segment containing ABIOS RAM extensions (zero if none)
 Return: CF clear if successful
 	    AH = 00h success
@@ -7504,7 +7683,7 @@ Return: CF clear if successful
 SeeAlso: AH=05h"ABIOS",AH=C1h
 
 Format of ABIOS System Parameter Table:
-Offset	Size	Description	(Table 0329)
+Offset	Size	Description	(Table 0336)
  00h	DWORD	FAR address of ABIOS Common Start Routine
  04h	DWORD	FAR address of ABIOS Interrupt Routine
  08h	DWORD	FAR address of ABIOS Time-out Routine
@@ -7540,7 +7719,7 @@ SeeAlso: AH=05h"MultiDOS"
 --------B-1505-------------------------------
 INT 15 - SYSTEM - BUILD ABIOS INITIALIZATION TABLE (PS)
 	AH = 05h
-	ES:DI -> results buffer of length 18h * Number_of_Entries (see #0330)
+	ES:DI -> results buffer of length 18h * Number_of_Entries (see #0337)
 	DS = segment containing ABIOS RAM extensions (zero if none)
 Return: CF clear if successful
 	    AH = 00h success
@@ -7552,8 +7731,8 @@ Return: CF clear if successful
 SeeAlso: AH=04h"ABIOS",AH=C1h
 
 Format of one entry of ABIOS Initialization Table:
-Offset	Size	Description	(Table 0330)
- 00h	WORD	device ID (see #0331)
+Offset	Size	Description	(Table 0337)
+ 00h	WORD	device ID (see #0338)
  02h	WORD	number of Logical IDs
  04h	WORD	Device Block length (zero for ABIOS patch or extension)
  06h	DWORD	-> init routine for Device Block and Function Transfer Table
@@ -7564,7 +7743,7 @@ Offset	Size	Description	(Table 0330)
  11h	BYTE	revision (device driver revision level this ABIOS supports)
  12h  6 BYTEs	reserved
 
-(Table 0331)
+(Table 0338)
 Values for ABIOS device ID:
  00h	ABIOS internal calls
  01h	floppy disk
@@ -7760,7 +7939,7 @@ INT 15 - VMiX - "sys_sysreq" - SYSTEM CONFIGURATION MANAGER
 		 no additional arguments
 		---if "open"---
 		 WORD	comm port (00h-03h)
-		 WORD	BIOS parameter byte (see #0219 at INT 14/AH=00h),
+		 WORD	BIOS parameter byte (see #0226 at INT 14/AH=00h),
 			except bits 7-5: 000 = 19200, 001 = 38400, 011 = 115200
 		---if "delay"---
 		 WORD	time in seconds
@@ -7973,15 +8152,15 @@ INT 15 - TopView - "ISOBJ" - VERIFY OBJECT HANDLE
 	AX = 1016h
 	ES:DI = possible object handle
 Return: BX = status
-	    FFFFh if ES:DI is a valid object handle (see #0333)
+	    FFFFh if ES:DI is a valid object handle (see #0340)
 	    0000h if ES:DI is not
 Note:	under DESQview versions prior to 2.50, an object handle is always a
 	  pointer to the object; for versions 2.50 and up, only task handles
 	  are always pointers--other handles may consist of a unique object
-	  number and offset into DESQview's common memory (see #0342)
+	  number and offset into DESQview's common memory (see #0349)
 SeeAlso: AX=DE14h,AX=DE2Bh,AX=DE2Ch
 
-(Table 0332)
+(Table 0339)
 Values for DESQview object type:
  00h	window/task
  01h	mailbox
@@ -7992,18 +8171,18 @@ Values for DESQview object type:
  06h	objectq
 
 Format of DESQview object:
-Offset	Size	Description	(Table 0333)
+Offset	Size	Description	(Table 0340)
  00h	WORD	offset in common memory of previous object of same type
  02h	WORD	offset in common memory of next object of same type
  04h	WORD	signature FEDCh (DV 2.42-)
 		signature FEDCh or object number (DV 2.50+)
- 06h	WORD	object type (see #0332)
+ 06h	WORD	object type (see #0339)
  08h	DWORD	object handle to return to caller
  0Ch	DWORD	canonicalized object address (segment = common memory)
  10h	WORD	offset in common memory of owning task
 		(0000h for unowned OBJECTQs)
  12h	WORD	mapping context
-		offset in common memory of mapping context record (see #0335)
+		offset in common memory of mapping context record (see #0342)
 	remainder varies by object type and DESQview version
 ---v2.42 keyboard object---
  14h	WORD	flag bits (see also AH=12h/BH=0Ah"OBJECT")
@@ -8031,7 +8210,7 @@ Offset	Size	Description	(Table 0333)
  14h	BYTE	00h window, 01h task
  15h	BYTE	internal (not Switch menu) window number???
  16h	BYTE	internal (not Switch menu) window number???
- 17h	WORD	segment of internal window record (see #0336)
+ 17h	WORD	segment of internal window record (see #0343)
  19h  2 BYTEs	???
  1Bh	BYTE	cursor row
  1Ch	BYTE	cursor column
@@ -8105,7 +8284,7 @@ Offset	Size	Description	(Table 0333)
 		bit 6: perform protected-attribute processing on select fields
  9Ch	BYTE	???
  9Dh	WORD	offset in common memory of current register save record
-		  (see #0334).	No register save record in use if < 01C0h
+		  (see #0341).	No register save record in use if < 01C0h
  9Fh	WORD	offset in common memory of task's keyboard object
  A1h	WORD	offset in common memory of task's OBJECTQ object
  A3h	WORD	offset in common memory of task's mailbox object
@@ -8117,7 +8296,7 @@ Offset	Size	Description	(Table 0333)
 		bit 0: run in foreground only
  B4h	BYTE	???
  B5h	BYTE	??? bitflags
- B6h	BYTE	task status (see #0472 at AX=DE2Ch)
+ B6h	BYTE	task status (see #0479 at AX=DE2Ch)
  B7h  9 BYTEs	???
  C0h	WORD	head pointer for keyboard buffer (wraps back to 00h after 80h)
  C2h	WORD	tail pointer for keyboard buffer (wraps back to 00h after 80h)
@@ -8145,7 +8324,7 @@ Offset	Size	Description	(Table 0333)
  FBh	WORD	???
  FDh	BYTE	???
  FFh 12 BYTEs	???
-10Bh	DWORD	pointer to process record (see #0337,#0338)
+10Bh	DWORD	pointer to process record (see #0344,#0345)
 10Dh 10 BYTEs	???
 119h	DWORD	SS:SP for ???
 11Dh  4 BYTEs	???
@@ -8158,7 +8337,7 @@ Offset	Size	Description	(Table 0333)
 ---v2.42
 142h	DWORD	pointer to first task instance data record in system memory
 148h	DWORD	pointer to last task instance data record in system memory
-		(see #0339)
+		(see #0346)
 14Ah	BYTE	???
 14Dh 42 BYTEs	task's default keyboard object
 177h 32 BYTEs	task's ObjectQ object
@@ -8201,7 +8380,7 @@ Same as v2.60 below except there is an extra 29 bytes inserted somewhere
 140h	DWORD	pointer to ??? in system memory
 144h	DWORD	pointer to first task instance data record in system memory
 148h	DWORD	pointer to last task instance data record in system memory
-		(from INT 15/AX=DE27h) (see #0339)
+		(from INT 15/AX=DE27h) (see #0346)
 14Ch	BYTE	???
 14Eh 42 BYTEs	task's default keyboard object
 179h 32 BYTEs	task's ObjectQ object
@@ -8210,7 +8389,7 @@ Same as v2.60 below except there is an extra 29 bytes inserted somewhere
 452h	--	default top of private stack
 
 Format of DESQview Register Save Record:
-Offset	Size	Description	(Table 0334)
+Offset	Size	Description	(Table 0341)
  00h	WORD	AX
  02h	WORD	BX
  04h	WORD	CX
@@ -8223,7 +8402,7 @@ Offset	Size	Description	(Table 0334)
  16h	WORD	original flags
 
 Format of DESQview mapping context record:
-Offset	Size	Description	(Table 0335)
+Offset	Size	Description	(Table 0342)
  00h	WORD	lowest segment in process's memory
 		(often start of system memory chain)
  02h	WORD	size of process's memory in paragraphs
@@ -8278,11 +8457,11 @@ Offset	Size	Description	(Table 0335)
  ---v2.53 (2.5x???)
  4Eh 12 BYTEs	???
  ---v2.60
- 4Eh	WORD	segment of script buffer (see #0340)
+ 4Eh	WORD	segment of script buffer (see #0347)
  50h  6 BYTEs	???
 
 Format of DESQview Internal Window Record (v2.31-2.60):
-Offset	Size	Description	(Table 0336)
+Offset	Size	Description	(Table 0343)
  00h	BYTE	internal window number???
  01h	BYTE	display page???
  02h	BYTE	video mode
@@ -8293,7 +8472,7 @@ Offset	Size	Description	(Table 0336)
  0Ch 116 BYTEs	???
 
 Format of DESQview process record (v2.31):
-Offset	Size	Description	(Table 0337)
+Offset	Size	Description	(Table 0344)
 -470h 13 BYTEs	filename of ??? Script
 -463h 1117 BYTEs ??? (script buffer???)
  -6h  6 BYTEs	???
@@ -8305,10 +8484,10 @@ Offset	Size	Description	(Table 0337)
  18h 1024 BYTEs process's interrupt vector table
 418h 376 BYTEs	???
 590h		first MCB in process
-SeeAlso: #0338
+SeeAlso: #0345
 
 Format of DESQview process record (v2.52-v2.60) (probably also 2.5x):
-Offset	Size	Description	(Table 0338)
+Offset	Size	Description	(Table 0345)
  00h 28 BYTEs	EXE header of last EXE, ??? if last program run was COM
  1Ch ??? BYTEs	overwritten with ASCIZ filename of last program run (EXE/COM)
 11Ch	WORD	segment of parent PSP in process
@@ -8319,7 +8498,7 @@ Offset	Size	Description	(Table 0338)
 128h  4 BYTEs	???
 12Ch	DWORD	pointer to first process instance data record in system memory
 130h	DWORD	pointer to last process instance data record in system memory
-		(from INT 15/AX=DE27h) (see #0339)
+		(from INT 15/AX=DE27h) (see #0346)
 134h  8 BYTEs	???
 13Ch	WORD	size of current environment
 13Eh	WORD	segment of current environment
@@ -8354,10 +8533,10 @@ Offset	Size	Description	(Table 0338)
 164h 1024 BYTEs process's interrupt vector table
 564h 108 BYTEs	???
 5D0h		first MCB in process
-SeeAlso: #0337
+SeeAlso: #0344
 
 Format of DESQview task or process instance data record (v2.5x???, v2.60):
-Offset	Size	Description	(Table 0339)
+Offset	Size	Description	(Table 0346)
  00h	DWORD	pointer to next record of same type or 00000000
  04h	DWORD	pointer to previous record of same type or 00000000
  08h	DWORD	pointer to source area of memory during restore state
@@ -8367,13 +8546,13 @@ Offset	Size	Description	(Table 0339)
  14h  N BYTEs	source memory buffer during restore state
 
 Format of DESQview script buffer (v2.60):
-Offset	Size	Description	(Table 0340)
+Offset	Size	Description	(Table 0347)
  00h 13 BYTEs	ASCIZ Script filename
  0Dh 80 BYTEs	???
- 5Eh  N BYTEs	script records (see #0341)
+ 5Eh  N BYTEs	script records (see #0348)
 
 Format of one DESQview script record (v2.60):
-Offset	Size	Description	(Table 0341)
+Offset	Size	Description	(Table 0348)
  00h	BYTE	signature 12h
  01h 18 BYTEs	blank-padded script name
  13h	BYTE	ASCII code of key attached to script or 0 if non-ASCII key
@@ -8382,29 +8561,29 @@ Offset	Size	Description	(Table 0341)
  16h	WORD	size of script in bytes
  18h  N	BYTEs	script (ASCII code of each keystroke; if 0, next byte is
 		  scan code of non-ASCII key)
-SeeAlso: #0340
+SeeAlso: #0347
 
 Format of DESQview Common Memory Header (v2.31-2.60):
-Offset	Size	Description	(Table 0342)
+Offset	Size	Description	(Table 0349)
  00h	WORD	offset of lowest used block
  02h	WORD	bytes of commom memory, including header
  04h	WORD	offset of first free block
  06h  N BYTEs	size depends of DV version, ??? (DVP buffer???)
 Note:	the above is located at the beginning of the commom memory segment
-SeeAlso: #0343,#0344,#0352
+SeeAlso: #0350,#0351,#0359
 
 Format of DESQview Free block header:
-Offset	Size	Description	(Table 0343)
+Offset	Size	Description	(Table 0350)
  00h	WORD	size of block in bytes including header
  02h	WORD	offset of next free block
  04h  N BYTEs	free block
-SeeAlso: #0342,#0344
+SeeAlso: #0349,#0351
 
 Format of DESQview Used block header:
-Offset	Size	Description	(Table 0344)
+Offset	Size	Description	(Table 0351)
  00h	WORD	size of block in bytes including header
  02h  N BYTEs	used block
-SeeAlso: #0342,#0343
+SeeAlso: #0349,#0350
 --------Q-151017-----------------------------
 INT 15 - TopView - UNIMPLEMENTED IN DV 2.x
 	AX = 1017h
@@ -8523,13 +8702,13 @@ INT 15 - TopView - "POSWIN" - POSITION WINDOW
 	BX = segment of object handle for parent window within which to
 	       position the window (0 = full screen)
 	ES = segment of object handle for window to be positioned
-	DL = general window position (see #0345)
+	DL = general window position (see #0352)
 	CH = number of columns to offset from position specified by DL
 	CL = number of rows to offset from position specified by DL
 Return: nothing
 
 Bitfields for TopView general window position:
-Bit(s)	Description	(Table 0345)
+Bit(s)	Description	(Table 0352)
  0,1	horizontal position
 	00 = current, 01 = center, 10 = left, 11 = right
  2,3	vertical position
@@ -8571,14 +8750,14 @@ SeeAlso: AX=101Dh,AX=101Eh,INT 21/AH=82h
 --------Q-15102C-----------------------------
 INT 15 - DESQview v2.00+ - "NEWPROC" - START NEW APPLICATION IN NEW PROCESS
 	AX = 102Ch
-	ES:DI -> contents of .PIF/.DVP file (see #0346)
+	ES:DI -> contents of .PIF/.DVP file (see #0353)
 	BX = size of .PIF/.DVP info
 Return: BX = segment of object handle for new task
 	     0000h on error
 SeeAlso: AX=DE24h,INT 21/AH=4Bh
 
 Format of .PIF/.DVP file:
-Offset	Size	Description	(Table 0346)
+Offset	Size	Description	(Table 0353)
  00h	BYTE	reserved (0)
  01h	BYTE	checksum of bytes 02h through 170h
  02h 30 BYTEs	blank-padded program title
@@ -8599,7 +8778,7 @@ Offset	Size	Description	(Table 0346)
  EDh	WORD	system memory in KB
  EFh 64 BYTEs	ASCIZ shared program name
 12Fh 64 BYTEs	ASCIZ shared program data file
-16Fh	BYTE	program flags 1 (see #0347)
+16Fh	BYTE	program flags 1 (see #0354)
 170h	BYTE	flags2
 		bit 6: uses command-line parameters in field at A5h
 		bit 5: swaps interrupt vectors
@@ -8612,7 +8791,7 @@ Offset	Size	Description	(Table 0346)
 178h	BYTE	nonzero if application swappable
 179h  3 BYTEs	reserved (0) according to Quarterdeck documentation
 		in actual .DVP files, frequently 01h
-17Ch	BYTE	nonzero to automatically close on exit (see also #0349)
+17Ch	BYTE	nonzero to automatically close on exit (see also #0356)
 17Dh	BYTE	nonzero if copy-protect floppy is required
 ---information unique to DESQview 2.0+---
 17Eh	BYTE	.DVP version number
@@ -8623,9 +8802,9 @@ Offset	Size	Description	(Table 0346)
 180h	BYTE	initial number of rows in physical window
 181h	BYTE	initial number of columns in physical window
 182h	WORD	maximum expanded memory to allow, in KB
-184h	BYTE	DVP program flags 3 (see #0348)
+184h	BYTE	DVP program flags 3 (see #0355)
 185h	BYTE	keyboard conflict level (0-4 for DV<2.26, 00h-0Fh for DV2.26+)
-		(see #0350)
+		(see #0357)
 186h	BYTE	number of graphics pages used
 187h	WORD	extra system memory size
 189h	BYTE	initial screen mode (FFh = default) (overrides offset E5h)
@@ -8635,7 +8814,7 @@ Offset	Size	Description	(Table 0346)
 		00h no serial ports
 		01h only COM1
 		02h only COM2
-18Bh	BYTE	DVP program flags 4 (see #0349)
+18Bh	BYTE	DVP program flags 4 (see #0356)
 18Ch	BYTE	protection level for 386 machines
 18Dh 19 BYTEs	reserved (0) for regular DESQview
 ---information unique to DESQview/X 1.0---
@@ -8652,54 +8831,54 @@ Offset	Size	Description	(Table 0346)
 190h 10 BYTEs	reserved (0)
 19Ah	WORD	length of data follownig XDVP signature
 19Ch  4 BYTEs	signature "XDVP"
-1A0h  N BYTEs	list of variable length records (see #0351)
+1A0h  N BYTEs	list of variable length records (see #0358)
 
 Bitfields for .PIF/.DVP program flags 1:
-Bit(s)	Description	(Table 0347)
+Bit(s)	Description	(Table 0354)
  7	writes text directly to screen
- 6	runs in foreground only (see also #0346 offset 184h)
+ 6	runs in foreground only (see also #0353 offset 184h)
  5	uses math coprocessor
  4	accesses system keyboard buffer directly
  3-1	reserved (0)
  0	swappable
-SeeAlso: #0346,#0348,#0349
+SeeAlso: #0353,#0355,#0356
 
 Bitfields for .DVP program flags 3:
-Bit(s)	Description	(Table 0348)
+Bit(s)	Description	(Table 0355)
  7	automatically assign window position
  5	maximum memory value has been specified
  4	disallow "Close" command
  3	foreground-only when doing graphics
 	set by DV 2.3+ when "Runs in Background" = "D" (undoc)
- 2	don't virtualize (see also #0349)
+ 2	don't virtualize (see also #0356)
  1	foreground-only during DOS calls
 	set by DV 2.3+ when "Runs in Background" = "D" (undoc)
-SeeAlso: #0346,#0347,#0349
+SeeAlso: #0353,#0354,#0356
 
 Bitfields for .DVP program flags 4:
-Bit(s)	Description	(Table 0349)
+Bit(s)	Description	(Table 0356)
  7	automatically close application on exit if .COM or .EXE	specified
-	(see also #0346 offset 17Ch)
+	(see also #0353 offset 17Ch)
  6	swappable if not using serial ports
  5	start program with window hidden (v2.26+)
  4	start program in background (v2.26+)
- 3	virtualize text (see also #0348)
- 2	virtualize graphics (see also #0348)
+ 3	virtualize text (see also #0355)
+ 2	virtualize graphics (see also #0355)
  1	share CPU when foreground
  0	share EGA when foreground and zoomed
-SeeAlso: #0346,#0347,#0348
+SeeAlso: #0353,#0354,#0355
 
 Bitfields for DESQview keyboard conflict level:
-Bit(s)	Description	(Table 0350)
+Bit(s)	Description	(Table 0357)
  3	save/restore entire INT 09 handler state every taskswtch
  2	take special precautions for programs which read the BIOS keyboard
 	  buffer directly from memory
  1	never indicate keystroke available during scripts/xfers
  0	only indicate keystroke available every sixth poll
-SeeAlso: #0346
+SeeAlso: #0353
 
 Format of DESQview/X variable length record:
-Offset	Size	Description	(Table 0351)
+Offset	Size	Description	(Table 0358)
  00h	WORD	length of following record, 0000h if end of record list
  02h	BYTE	record type
 		01h script filename, up to 64 characters
@@ -8719,7 +8898,7 @@ Offset	Size	Description	(Table 0351)
 Note:	if there are multiple occurrences of record types 01h, 02h, or 03h,
 	  only the last instance of each type is used; multiple occurrences of
 	  type 04h are concatenated
-SeeAlso: #0346
+SeeAlso: #0353
 --------Q-15102D-----------------------------
 INT 15 - DESQview v2.00+ - "KMOUSE" - KEYBOARD MOUSE CONTROL
 	AX = 102Dh
@@ -8735,20 +8914,20 @@ INT 15 - DESQview v2.40+ - ALLOCATE SYSTEM MEMORY
 	BX = number of bytes
 Return: AX = status
 	    0000h successful
-		ES:DI -> allocated system memory (see #0352)
+		ES:DI -> allocated system memory (see #0359)
 	    0001h failed
 		ES:DI = 0000h:0000h
 Note:	under DV 2.42, this call is identical to AX=1001h
 SeeAlso: AX=1001h,AX=1002h,AX=DE0Ch
 
 Format of DESQview system memory block header:
-Offset	Size	Description	(Table 0352)
+Offset	Size	Description	(Table 0359)
  00h	WORD	segment of next header or 0000h
  02h	WORD	segment of previous header or 0000h
  04h	WORD	size of block in paragraphs, including header
  06h	BYTE	availability flag (00h in use, 01h free)
 Note:	this header is located one paragraph before the memory block proper
-SeeAlso: #0342
+SeeAlso: #0349
 --------Q-1511-------------------------------
 INT 15 - TopView commands
 	AH = 11h
@@ -8792,7 +8971,7 @@ Return: CF clear if installed
 	    AX = segment at which QEXT.SYS is located
 Desc:	QEXT.SYS is Quarterdeck's HMA manager for DESQview; more recent
 	  versions also implement the XMS standard
-Note:	a private entry point (see #0353) may be found by searching the
+Note:	a private entry point (see #0360) may be found by searching the
 	  beginning of the returned segment for the signature string
 	  "QUARTERDECK EXTENDED MEMORY MANAGER 286"; the word immediately
 	  prior to the signature contains the QEXT version number in BCD,
@@ -8800,7 +8979,7 @@ Note:	a private entry point (see #0353) may be found by searching the
 	  code segment of the private entry point
 SeeAlso: INT 2F/AX=4310h"XMS",INT 67/AH=3Fh
 
-(Table 0353)
+(Table 0360)
 Call QEXT.SYS private entry point with:
 	AH = 00h ???
 	AH = nonzero ???

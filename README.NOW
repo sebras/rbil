@@ -1,7 +1,7 @@
-Here at last the long-delayed new release....  My queue of submissions
-has grown again -- if you've sent in any contributions which don't
-appear in this release but which I've acknowledged, they are still on
-my queue and will appear in the next release.
+My queue of submissions still isn't empty -- if you've sent in any
+contributions which don't appear in this release but which I've
+acknowledged, they are still on my queue and will appear in the
+future.
 
 Since the interrupt list proper has now grown beyond the size that can
 be accomodated by four 360K archives, I am allowing the first four
@@ -12,18 +12,60 @@ UPCOMING CHANGES
 ================
 
 None planned at this time.
-Still on the queue: the rest of the documented REAL/32 API, more
-OpenDOS info, the rest of the TI Professional info, ....
+Still on the queue: the final bits of the documented REAL/32 API, more
+OpenDOS info, the rest of the TI Professional info, lots of chipset
+info (see NEEDHELP.TXT), ....
 
 
 WHAT'S NEW
 ==========
 
+INTER56
+
+new files:
+	I2C.LST
+	NEEDHELP.TXT
+
+updated files:
+	PCICFG10.ZIP
+
+new info:
+	S3 memory-mapped I/O
+	VPX 3220A video decoder
+	SDRAM Serial Presence Detect
+	VESA DDC monitor EDID codes
+	MS-DOS 7 file-sharing behavior
+        more Novell DOS notes
+	more KEYB.COM internals
+	more REAL/32 calls and structures
+
+
+INTER55
+
+new files:
+	SMM.LST (not finished yet)
+
+updated files:
+	OPCODES.LST
+	PCICFG09.ZIP (updated data files; now includes source code)
+	INTLIST.E (added filter-region command)
+
+new info:
+	many more PCI vendor and device IDs
+	code pages and COUNTRY.SYS formats
+	"Neptune" chipset info
+	Micro Focus COBOL
+	OPTi 82C206/82C281,282,283/82C291,295 chipset info
+	PentiumMMX updates
+	Am486 SMM
+	FBOOT
+	CD-ROM API updates
+
 INTER54
 
 new files:
 	INT2IPF.ZIP
-	PCICFG09.ZIP (this release only -- will become a separate package)
+	PCICFG09.ZIP (will eventually become a separate package)
 
 new formatting:
 	a slight addition to divider lines to allow finer-grained
@@ -50,6 +92,7 @@ new info:
 	MPU-401 MIDI UART
 	Desktop Management Interface extension to PnP BIOS
 
+
 INTER53
 
 new info:
@@ -68,22 +111,3 @@ new info:
 	PCI Power Management
 	ATAPI Removable Media Device BIOS Specification
 	updated OPCODES.LST now includes MMX instructions
-
-
-INTER52
-
-new files:
-	MSR.LST		model-specific registers list
-	IL2ME.ZIP	convert to ASMEdit help file
-	INT2TPH.ZIP	convert to Turbo Pascal help file
-	INT2RTF.ZIP	convert to WinHelp RTF file
-new info:
-	TI Professional PC
-	APM v1.2
-	Cherry keyboard chipcard reader
-	KeyRus, Volkov Commander
-	XPACK
-other improvements:
-	enhanced INTLIST.E (now does syntax highlighting)
-	corrected repeated error in Novell NetWare multiplexor functions
-	fixed a variety of incorrect cross-references
