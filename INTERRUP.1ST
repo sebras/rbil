@@ -1,15 +1,15 @@
-Interrupt List		Release 36			Last change 8/1/93
+Interrupt List		Release 37			Last change 10/3/93
 
 Please redistribute the following files unmodified as a group, in a trio of
-archives named INTER36A through INTER36C (preferably the original authenticated
+archives named INTER37A through INTER37C (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	this file
-	INTERRUP.A	INT 00 through INT 14	 \
-	INTERRUP.B	INT 15 through INT 15     \
-	INTERRUP.C	INT 16 through INT 21/41   \   total 1302 pages at
+	INTERRUP.A	INT 00 through INT 13	 \
+	INTERRUP.B	INT 14 through INT 15     \
+	INTERRUP.C	INT 16 through INT 21/41   \   total 1348 pages at
 	INTERRUP.D	INT 21/42 through INT 21/7F \  60 lines per page,
-	INTERRUP.E	INT 21/80 through INT 21/FF  \ 1394 with INTPRINT -p
-	INTERRUP.F	INT 22 through INT 2F/7F     / (5573 entries)
+	INTERRUP.E	INT 21/80 through INT 21/FF  \ 1443 with INTPRINT -p
+	INTERRUP.F	INT 22 through INT 2F/7F     / (5715 entries)
 	INTERRUP.G	INT 2F/C0 through INT 2F/FF /
 	INTERRUP.H	INT 30 through INT 5F	   /
 	INTERRUP.I	INT 60 through INT 67	  /
@@ -23,7 +23,7 @@ PKZIP archives):
 	MEMORY.LST	format of the BIOS data area
 	PORTS.LST	a listing of I/O ports
 	COMBINE.BAT	combine the pieces of the list into a single file
-The following files should be distributed in an archive called INTER36D:
+The following files should be distributed in an archive called INTER37D:
 	INT.COM		invoke interrupts from commandline
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
 	INT2HLP.BAT	Perl script to convert list into QuickHelp database
@@ -47,10 +47,10 @@ original distribution for your convenience.  These other archives are
 maintained by other people, so please do not ask me any questions about them
 (all I'll do is refer you to the creator).  The additional distributions
 I am currently aware of contain a ready-made Quick Help database (compiled
-by Brad Willcott <bxw@ccadfa.cc.adfa.oz.au>), a ready-made Norton Guides
+by Brad Willcott <b-willcott@adfa.oz.au>), a ready-made Norton Guides
 database (compiled by Michael Gallias <gallias@ph.und.ac.za> and distributed
-as RBNGrr.*), and a ready-made WinHelp database (compiled by Loewy Ron
-<76350.333@compuserve.com> and distributed as INTWIN*.*).
+as RBNGrr.*), and a ready-made WinHelp database (compiled by Ron Loewy
+<76350.333@compuserve.com> and occasionally distributed as INTWIN*.*).
 --------!---COPYRIGHT------------------------
 	NOTICE		NOTICE		NOTICE		NOTICE
 
@@ -81,43 +81,42 @@ whether or not it works the same way).	Information marked with "???" is
 known to be incomplete or guesswork.
 --------!---AVAILABILITY---------------------
 If the list is more than three months old by the time you get it, there
-is probably a newer release out already (R36 is planned for early August,
-R37 for early October).  Each release supersedes all previous versions, so
+is probably a newer release out already (R38 is planned for early December,
+R39 for early February).  Each release supersedes all previous versions, so
 there is no need to keep old versions.
 
 The newest release of this list is available in these places (please do not
-ask me to email it, at 800K compressed it is much too large for that):
+ask me to email it, at 900K compressed it is much too large for that):
 
 On the Internet, by standard anonymous FTP from FTP.CS.CMU.EDU [128.2.206.173].
 	Change directly to directory /afs/cs.cmu.edu/user/ralf/pub and get the
-	files inter??a.zip thru inter??c.zip.  You MUST change directory first
+	files inter??a.zip thru inter??d.zip.  You MUST change directory first
 	and in a single command because of the way CMU's anonymous FTP works.
 	Don't forget to set mode "binary" or "type L 8"!  ZIP unarchivers for
 	MSDOS and Unix are available in the "archivers" subdirectory.  Note
 	that I have now graduated and will probably not be able to keep this
-	directory updated much longer.  Use SIMTEL20 instead.
+	directory updated much longer.  Check OAK.OAKLAND.EDU instead.
 
 If connected to AFS, you can simply perform standard Unix/VMS/whatever
 	directory listing and file copies from the above directory.
 
 On FIDOnet, from SoundingBoard BBS 1:129/26 1-412-621-4604 9600/14.4k HST/V32
-	as files INTERrrA.ZIP, INTERrrB.ZIP, and INTERrrC.ZIP (rr stands for
-	the release number), in file area #8.  First-time callers may download.
+	as files INTERrrA.ZIP to INTERrrD.ZIP (rr stands for the release
+	number), in file area #8.  First-time callers may download.
 	File Requests.
 
 Alternate Distribution Points (the list will typically be available here
 within twelve hours of release):
-Internet: on WSMR-SIMTEL20.ARMY.MIL [192.88.110.20] as files INTERrrA.ZIP,
-	INTERrrB.ZIP and INTERrrC.ZIP in directory PD1:<MSDOS.INFO>, where rr
-	stands for the release number.	Note that you must use a binary
-	transfer mode ("tenex" or "type L 8" for most people) to successfully
-	FTP the files.	SIMTEL20 also has a number of mirror sites which
-	contain all of the files but may be a few days behind in updates.
-	These include oak.oakland.edu [141.210.10.117], wuarchive.wustl.edu
-	[128.252.135.4], ftp.uu.net [137.39.1.9], nic.funet.fi
-	[128.214.6.100], src.doc.ic.ac.uk [146.169.3.7] and archie.au
-	[139.130.4.6].
-FIDO:	SyncPoint BBS 1:261/1008 1-301-529-2584 File Requests.
+Internet: on WSMR-SIMTEL20.ARMY.MIL [192.88.110.20] as files INTERrrA.ZIP to
+	INTERrrD.ZIP in directory PD1:<MSDOS.INFO>, where rr stands for the
+	release number. Note that you must use a binary transfer mode
+	("tenex" or "type L 8" for most people) to successfully FTP the
+	files.	SIMTEL20 also has a number of mirror sites which contain all
+	of the files but may be a few days behind in updates.  These include
+	oak.oakland.edu [141.210.10.117], wuarchive.wustl.edu [128.252.135.4],
+	ftp.uu.net [137.39.1.9], nic.funet.fi [128.214.6.100],
+	src.doc.ic.ac.uk [146.169.3.7] and archie.au [139.130.4.6].
+FIDO:	SyncPoint BBS 1:261/1008 1-410-529-2584 File Requests.
 
 Additional Distribution Points:
 BITnet: you may retrieve the copy on WSMR-SIMTEL20.ARMY.MIL via the following
@@ -317,7 +316,7 @@ This list is the result of the time and effort of a large number of people:
 10/91 Michael A Shiels mshiels@masnet.uucp	      FTP Packet Driver 1.10
 10/91 Marcus Groeber   2:241/5609.1		      DR DOS
 11/91 Fridrik Skulason frisk@complex.is		      more virus install checks
-11/91 Christopher J Ambler chris@nike.calpoly.edu     FSBBS 2.0
+11/91 Christopher J Ambler cambler@cymbal.aix.calpoly.edu  FSBBS 2.0
 12/91 Robin Walker     rdhw@phoenix.cambridge.ac.uk   new PS/2 keyboard funcs
  1/92 Krzysztof Halasa khc@inf.pm.waw.pl	      EMM386 executable header
  1/92 Michael A Shiels mshiels@masnet.uucp	      pcAnywhere IV/LAN, misc
@@ -336,7 +335,7 @@ This list is the result of the time and effort of a large number of people:
  1/92 Michael A Shiels mshiels@masnet.uucp	      ASPI,ASPITAPE,Canon SI3
  1/92 Michael A Shiels mshiels@masnet.uucp	      Win3 INT 2F/40, misc
  2/92 Michael A Shiels mshiels@masnet.uucp	      miscellany
- 2/92 Dan Bodoh	       bodoh@xraylith.wisc.edu	      DVSIXDI
+ 2/92 Dan Bodoh        danb@bunt.sps.mot.com	      DVSIXDI
  2/92 Gary E. Miller   GEM@cup.portal.com	      more Btrieve API
  2/92 Ralf Brown       ralf@telerama.pgh.pa.us        TKERNEL private API
  2/92 Ralf Brown       ralf@telerama.pgh.pa.us        PC Paint Plus 2.0
@@ -344,7 +343,7 @@ This list is the result of the time and effort of a large number of people:
  3/92 Frank Vorstenbosch akcs.kingswood@hpcvbbs.cv.hp.com  more Kingswood API
  3/92 Michael A Shiels mshiels@masnet.uucp	      MBBIOS
  3/92 Ralf Brown       ralf@telerama.pgh.pa.us        DPMILOAD API
- 3/92 Joseph Gil       yogi@cs.ubc.ca		      HP 95LX
+ 3/92 Joseph Gil       yogi@cs.technion.ac.il	      HP 95LX
  3/92 Ralf Brown       ralf@telerama.pgh.pa.us        386MAX 6.0 API
  3/92 Fyodor Evseev    Ted@ppicnit.perm.su	      AutoCAD Digitizer ADI
  3/92 Tim Farley       tim@magee.mhs.compuserve.com   Advanced Power Management
@@ -352,7 +351,7 @@ This list is the result of the time and effort of a large number of people:
  4/92 Andrew Rossmann  andyross@infopls.chi.il.us     SMARTDRV v4.00, QEMM
  4/92 Tamura Jones     2:512/36.7		      METZTSR.COM
  4/92 Tamura Jones     2:512/36.7		      Vanderaart txtwin,DR MDOS
- 4/92 Dan Bodoh	       bodoh@xraylith.wisc.edu	      DESQview/X .DVP file
+ 4/92 Dan Bodoh        danb@bunt.sps.mot.com	      DESQview/X .DVP file
  5/92 William Peavy    70042.2310@CompuServe.COM      Borland FP shortcuts
  5/92 Ralf Brown       ralf@telerama.pgh.pa.us        FGDRIVER v1.10
  5/92 Tim Farley       tim@magee.mhs.compuserve.com   Vedit VSWAP, NG.EXE
@@ -409,7 +408,7 @@ This list is the result of the time and effort of a large number of people:
  3/93 George L. Fulk   fulkgl@vnet.IBM.COM	      OS/2 2.x VDMs, FAPI
  3/93 Andrew Schulman  76320.302@CompuServe.COM	      Novell DPMS
  3/93 Dan Fandrich     ubc-cs!merlin!fch!dan	      more Future Domain SCSI
- 3/93 Konstantin Kisurin  kkk@ton.kiev.ua	      more 386MAX
+ 3/93 Konstantin Kisurin  kkk@toi.kiev.ua	      more 386MAX
  4/93 Arne Schapers				      DR-DOS details
  4/93 Geoff Chappell   cix.compulink.co.uk!geoffc     DOS4 ExtAttrib support
  4/93 Morten Welinder  terra@diku.dk		      miscellaneous
@@ -440,6 +439,16 @@ This list is the result of the time and effort of a large number of people:
  7/93 Ralf Brown       ralf@telerama.pgh.pa.us	      386MAX v7.00/QEMM v7.01
  7/93 Joe Souza	       Webcorp, Sausalito, CA	      WEB API
  7/93 Michael Hung   mhkhung@electrical.watstar.uwaterloo.edu  PharLap 386/DOSX
+ 8/93 John Howells     10031.353@compuserve.com	      EMS,XMS,VCPI,DPMI bugs
+ 8/93 Tim Farley       tim@magee.mhs.compuserve.com   PCMCIA Socket Services
+ 8/93 Dan Bodoh        danb@bunt.sps.mot.com	      DESQview internal data
+ 9/93 Gary E. Miller   GEM@cup.portal.com	      Diamond Stealth 24X
+ 9/93 Frank Vorstenbosch  prompt@hacktic.nl	      more Kingswood API, misc
+ 9/93 Phil Rea	       2:253/410		      TopWare Network OS
+ 9/93 Andreas Westfeld westfeld@freia.inf.tu-dresden.de Olivetti Quaderno
+ 9/93 Alexi Lookin     alexi@riaph.irkutsk.su	      Avance Logic, C&T video
+ 9/93 Inbar Raz	       2:401:100.1		      Juko UNIQUE UX, misc
+ 9/93 Gary E. Miller   GEM@cup.portal.com	      Phar Lap 386|DOS-Ext.
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -521,7 +530,8 @@ Also contributing:
  Jiri Kuchta <kuchta@dcse.fee.vutbr.cs>, Pavel Shtemenko <pasha@opi.odessa.ua>,
  Paul Ratcliffe <70630.647@compuserve.com>, Ivan Martinez 4:801/6,
  David Woolley <100121.53@compuserve.com>,Paul Vojta <vojta@math.berkeley.edu>,
- Mark T. Vitt <70053.2236@compuserve.com>
+ Mark T. Vitt <70053.2236@compuserve.com>,kevinc@kpc.com,
+ Nico E. de Vries <nevries@aip.nl>, Riku Saikkonen <riku.saikkonen@compart.fi>
 --------!---BIBLIOGRAPHY---------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -982,6 +992,13 @@ Phar Lap 386|DOS-Extender v4.0/4.1 info extracted from 386DOSX.DOC.  Added
 
 Novell NetWare 3270 API (INT 6F) extracted from Novell SNA Note 3-133,
 "API/HLLAPI INFORMATION", dated March 7, 1991.  Added by Ralf Brown, 7/28/93.
+
+PCMCIA Socket Services from _PCMCIA_Socket_Services_Interface_Specification_,
+Revision A.00, dated June 20, 1991.  Added by Ralf Brown, 8/30/93.
+
+MEMORY.LST updates from "IBM Local Area Network Technical Reference"
+SC30-3383-03, December 1990 (page D-31), and "IBM PS/2 and PC BIOS Interface
+Technical Reference" (September 1991 edition).  Added 9/24/93.
 --------!---ADDRESSES------------------------
 The following have provided API reference materials at no charge:
 
@@ -1060,6 +1077,12 @@ Cambridge, MA 02138
 Voice: (617) 661-1510
 FTP:	pharlap.com
 
+Phoenix Technologies, Ltd.	(PCMCIA Socket Services)
+40 Airport Parkway		[6/91]
+San Jose, CA 95110-1008
+Voice: (408) 452-6500
+FAX:   (408) 452-1985
+
 Quarterdeck Office Systems	(DESQview 2.26)
 150 Pico Boulevard		[12/92]
 Santa Monica, CA 90405
@@ -1103,13 +1126,13 @@ Fremont, OH 43420
 A.N.D. Technologies		(PSPS)
 P.O. Box 64811			[5/93]
 Los Angeles, CA 90064
-Voice: (213) 848-9345
-CIS: 71011,3570
+Voice:	(213) 848-9345
+CIS:	71011,3570
 
 Artisoft Inc.			(LANtastic)
 575 East River Rd.
 Tucson, AZ 85704
-Voice: (602) 293-6363
+Voice:	(602) 293-6363
 
 G.T. Becker			(RighTime)
 Air System Technologies, Inc.	[4/91]
@@ -1119,14 +1142,14 @@ Dallas, TX 75234
 Better Software Technology, Inc. (Switch-It)
 55 New York Ave			[1990]
 Framingham, MA 01701
-Voice: (508) 879-0744
-FAX:   (508) 872-1734
+Voice:	(508) 879-0744
+FAX:	(508) 872-1734
 
 Beame & Whiteside Software Ltd	(BW-TCP)
 P.O. Box 8130			[6/93]
 Dundas, ON L9H 5E7
 Canada
-Voice: (416) 765-0822
+Voice:	(416) 765-0822
 FTP:	ftp.bws.com
 
 Biologic			(HRAM, MIN-MEM)
@@ -1146,13 +1169,13 @@ nm1d@wb1dsw.nh.usa.na
 Borland International Inc.	(Turbo Pascal, Turbo C)
 1800 Green Hills Rd.
 Scotts Valley, CA 95066
-Voice: (408) 438-8400
+Voice:	(408) 438-8400
 
 Bromfield Software Products	(SCROLLit)
 P.O. Box 70081			[5/93]
 Ottawa, Ontario K2P 2M3
 Canada
-CIS:  71054,3051
+CIS:	71054,3051
 
 Andrzej Brzezinski		(CALCULATOR)
 308-70 Garry St.		[12/90]
@@ -1163,13 +1186,13 @@ Budget Software Company		(Disk Spool II)
 P. O. Box 12282			[12/91]
 12162 E. Mississippi Ave.
 Aurora, CO  80012-3499
-Voice: (303) 695-9095
+Voice:	(303) 695-9095
 
 Commercial Software Associates	(VMiX)
 Post Office Box 36
 Corona del Mar, CA 92625    
-Voice: (714) 720-1214 (8-6pm PDT)
-BBS:   (714) 720-1139 (24 Hrs.)
+Voice:	(714) 720-1214 (8-6pm PDT)
+BBS:	(714) 720-1139 (24 Hrs.)
 
 Compaq Computer Corporation
 20555 S.H. 249
@@ -1196,56 +1219,56 @@ Number 2 Frederick Sanger Road
 Surrey Research Park
 Guildford, Surrey GU2 5XN
 England
-Voice: +44 483 301 555
-FAX:   +44 483 301 434
+Voice:	+44 483 301 555
+FAX:	+44 483 301 434
 
 [DPMI Committee]
 Albert Teng, DPMI Committee Secretary
 Mailstop NW1-18
 2801 Northwestern Parkway
 Santa Clara, CA 95051
-FAX:   (408) 765-5165
+FAX:	(408) 765-5165
 
 Dynamic Microprocessor Associates (pcANYWHERE)
 1776 E. Jericho Turnpike
 Huntington, NY 11743
-Voice: (516)-462-0440
+Voice:	(516)-462-0440
 
 EasyNet Systems Inc.		(EasyNet ShareLan)
 4283 Village Centre Court	[as of 4/88]
 Mississauga, Ontario L4Z 1S2
-Voice: (416) 273-6410
+Voice:	(416) 273-6410
 
 Eicon Technology Corporation
 2196 32nd Avenue
 Montreal, Quebec, Canada H8T 3H7
-Voice: (514) 631-2592
+Voice:	(514) 631-2592
 
 Ergo Computing			(OS/286, OS/386)
 1 Intercontinental Way
 Peabody, MA 01960
-Voice: (508) 535-7510
-FAX:   (508) 535-7512
+Voice:	(508) 535-7510
+FAX:	(508) 535-7512
 
 Eric Isaacson Software		(ZIPKEY)
 416 East University Ave.
 Bloomington, IN 47401-4739
-Voice: (812) 339-1811
+Voice:	(812) 339-1811
 
 ESaSS B.V.			(TBSCANX, ThunderByte, STACKMAN)
 Thunderbyte PC Immunizer Division
 P.O. Box 1380
 6501 BJ Nijmegen
 The Netherlands
-Voice: +31-80-787 881
-FAX:   +31-80-789 186
-BBS:   +31-85-212 395
+Voice:	+31-80-787 881
+FAX:	+31-80-789 186
+BBS:	+31-85-212 395
 
 Express Consulting		(EZRECV)
 4960 Hamilton Ave. Suite 211	[7/92]
 San Jose, CA 95130
-Voice: (408) 374-7992
-FAX:   (408) 374-3115
+Voice:	(408) 374-7992
+FAX:	(408) 374-3115
 
 FAB Software			(Newkey)
 P.O. Box 336			[10/90]
@@ -1259,9 +1282,9 @@ Toronto, Canada M5C 2J8
 FlashTek, Inc.			(X-32VM)
 804 Airport Way, Suite D	[9/92]
 Sandpoint, ID 83864
-Voice: (208) 263-7311
-FAX:   (208) 263-8772
-UUCP:  x-32vm@proto.com
+Voice:	(208) 263-7311
+FAX:	(208) 263-8772
+UUCP:	x-32vm@proto.com
 
 Geoff Friesen			(IC)
 Box 94				[10/92]
@@ -1271,10 +1294,11 @@ Canada R7N 2T9
 Frontier Technologies Corp.	(Super-TCP)
 10201 N. Port Washington
 Mequon, WI 53092
-Voice: (414) 241-4555
+Voice:	(414) 241-4555
+FTP:	isi.frontiertech.com
 
 FTP Software, Inc.		(PC/TCP)
-Voice: (800) 282-4387
+Voice:	(800) 282-4387
 FTP:	vax.ftp.com
 
 Gamma Software			(APCAL)
@@ -1291,7 +1315,7 @@ V6B 3X5
 Information Modes		($25 Network)
 P.O. Drawer F
 Denton, TX 76202
-Voice: (817) 387-3339
+Voice:	(817) 387-3339
 
 Innovative Data Concepts, Inc.	(SWAP?? utilities, TesSeRact library)
 122 North York Road
@@ -1308,7 +1332,7 @@ Brookfield, CT 06804
 Isogon Corporation		(NewSpace)
 330 Seventh Avenue
 New York, NY 10001
-Voice: (212) 967-2424
+Voice:	(212) 967-2424
 
 Jorj Software Co.		(JORJ)
 4354 Fletcher Rd.		[5/91]
@@ -1317,32 +1341,32 @@ Manchester MI 48158
 JP Software			(4DOS)
 P.O. Box 1470
 E. Arlington, MA 02174
-Voice: (617) 646-3975
+Voice:	(617) 646-3975
 
 KANSYS, Inc.			(AutoBraille)
 1016 Ohio			[12/91]
 Lawrence, KS 66044
-Voice: (800) 279-4880
-       (913) 843-0351
+Voice:	(800) 279-4880
+	(913) 843-0351
 
 Key Software Products		(The Last Byte)
 440 Ninth Avenue
 Menlo Park, CA 94025
-Voice: (415) 364-9847 [8am-6pm PST]
-BBS:   (415) 364-9847 [7pm-8am PST]
+Voice:	(415) 364-9847 [8am-6pm PST]
+BBS:	(415) 364-9847 [7pm-8am PST]
 
 Lassen Software, Inc.		(Trusted Access)
 5923 Clark Rd, Suite F		[4/93]
 P.O. Box 2319
 Paradise, CA 95967-2319
-Voice: (305) 445-6304
+Voice:	(305) 445-6304
 
 Microsystems Software, Inc.	(MAGic)
 600 Worcester Road
 Framingham, MA 01701
-Voice: (508) 626-8511
-FAX:   (508) 626-8515
-BBS:   (508) 875-8009
+Voice:	(508) 626-8511
+FAX:	(508) 626-8515
+BBS:	(508) 875-8009
 
 MicroTalk			(ASAP)
 337 S. Peterson
@@ -1553,6 +1577,7 @@ SK-UPPS is a trademark of Schneider & Koch GmbH
 SK-PASSPORT is a trademark of SysKonnect, Inc.
 PostScript is a trademark of Adobe, Inc.
 Hayes is a trademark of Hayes Microcomputer Products Inc.
+SpaceManager is a trademark of Vertisoft Systems, Inc.
 Various other names are trademarks or registered trademarks of their respective
     holders
 --------!---QUOTES---------------------------
@@ -1568,7 +1593,8 @@ What they're saying about this list:
    and program-specific.  Quite simply, some of Snooper's reports wouldn't
    be there without it.	 Very useful in that it reports bugs and
    incompatibilities books rarely mention.  And it's free!"
-	John P. Vias, SNOOPER.DOC v1.07.	
+	John P. Vias, SNOOPER.DOC v1.07 (Snooper is a shareware system
+	information program).
 
   "Ralf Brown maintains an astounding file which is chock-full of
    detailed, absolutely-indispensable information for DOS programmers on

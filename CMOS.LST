@@ -1,11 +1,17 @@
-                    CMOS Memory Map v1.15
+
+           CMOS Memory Map v1.20    September, 1993
 
 Compiled from multiple sources by Padgett Peterson
 Corrections/additions/comments to: padgett@tccslr.dnet.mmc.com
 
 No guarantees of any kind.
 
+Wanted: Algorithm used by IBM in calculating CRC checksums for PS/2
+        (see bytes 32h-33h).
+
 Copyrights/Trademarks belong to whoever they may belong to.
+
+			Background
 
 The CMOS (complementary metal oxide semiconductor) memory is actually 
 a 64 or 128 byte battery-backed RAM memory module that is a part of the 
@@ -14,16 +20,17 @@ system clock chip. Some IBM PS/2 models have the capability for a
 
 First used with clock-calender cards for the IBM PC-XT, when the PC/AT
 (Advanced Technology) was introduced in 1985, the Motorola MC146818 
-was a part of the motherboard. Since the clock only uses fourteen of 
-the RAM bytes, the rest are available for storing system configuration data. 
+became a part of the motherboard. Since the clock only uses fourteen of 
+the RAM bytes, the rest are available for storing system configuration data.
 
-Interestingly, the original IBM-PC/AT standard for the region 10h-3Fh
-is nearly universal with one notable exception: The IBM PS/2 systems
-deviate considerably (AMSTRAD 8086 machines were among the first to 
-actively use the CMOS memory available).
+Interestingly, the original IBM-PC/AT (Advanced Technology) standard for 
+the region 10h-3Fh is nearly universal with one notable exception: The 
+IBM PS/2 systems deviate considerably (Note: AMSTRAD 8086 machines were 
+among the first to actively use the CMOS memory available and since they 
+*predate* the AT, do not follow the AT standard).
 
 This is just another example of how IBM created a standard, lost control 
-of it, tried to replace it, and lost market share in the process. 
+of it, tried to replace it, failed and lost market share in the process. 
 
 Originally, the IBM PC/AT only made use of a small portion of CMOS memory
 and was defined in the IBM PC/AT Technical Reference Manual, specifically 
@@ -33,8 +40,11 @@ options such as wait states, clock speeds, initial boot drive selection, and
 password storage.
 
 Later, as CMOS memory requirements grew, newer clock chips with 128
-bytes of RAM came into use. However once the AT standard was established,
-only IBM has tried to change the definitions of that first definition.
+bytes of RAM came into use. However the fact remains that once the AT 
+standard was established, only IBM has tried to change the definitions 
+of that first description.
+
+			Accessing the CMOS
 
 The CMOS memory exists outside of the normal address space and cannot
 contain directly executable code. It is reachable through IN and OUT
@@ -44,8 +54,9 @@ an IN from port 71h will then retrieve the requested information. The
 following BASIC fragment will read 128 CMOS bytes and print them to the 
 screen in 8 rows of 16 values.
 
-Note that if the CMOS only has 64 bytes available, addressing will wrap and
-addresses from 40h-7Fh will mirror 00h-3Fh. Output will be hexadecimal.
+Note that if the CMOS only has 64 bytes available, addressing will 
+generally wrap and addresses from 40h-7Fh will mirror 00h-3Fh. Output will 
+be hexadecimal.
 
 10 CLS
 20 FOR i = 0 TO &H7F 
@@ -53,6 +64,15 @@ addresses from 40h-7Fh will mirror 00h-3Fh. Output will be hexadecimal.
 40 PRINT USING "\   \"; HEX$(INP(&H71));
 50 NEXT i
 60 PRINT " " 
+
+Note: where not otherwise noted, all data points are expressed as BYTES
+      these are eight bit values and are read from MSB to LSB e.g.
+      0000 0000     0101 1010 binary would be written as 5Ah
+      7654 3210     where only some bits are used this is represented with
+                    Xs e.g bits 5-3 would be shown as 00xx x000
+
+
+		Organization of CMOS Memory - Clock
 
 00h-0Eh is defined by the clock hardware and all must follow it. Other 
 manufacturers generally follow the same format as specified for the
@@ -62,8 +82,6 @@ region 10h - 2Fh. Some also follow the IBM format for 30h-33h but not all
 The first fourteen bytes are dedicated to the MC146818 chip clock functions 
 and consist of ten read/write data registers and four status registers, two 
 of which are read/write and two of which are read only.
-
-Note: where not otherwise noted, all data points are expressed as BYTES
 
 The format of the ten clock data registers (bytes 00h-09h) is:
 
@@ -115,11 +133,13 @@ The following is the on-chip status register information.
   Bit 5 - Alarm Interrupt flag 
   Bit 4 - Update-Ended Interrupt Flag
   Bit 3-0 ???
- 
+
  0Dh Status Register D (read only)
   Bit 7 - Valid RAM - 1 indicates batery power good, 0 if dead or
           disconnected.
   Bit 6-0 ???
+
+		Organization of CMOS Memory - non-Clock
 
 The last two bytes in the first hexadecimal decade (hexade ?) were not 
 specified in the PC/AT but may have the following use on some systems:
@@ -134,7 +154,7 @@ specified in the PC/AT but may have the following use on some systems:
      Bit 2 - (1) indicates that time is invalid
      Bit 1 - (1) indicates installed adaptors do not match configuration
      Bit 0 - (1) indicates a time-out while reading adaptor ID
- 
+
  0Eh (AMSTRAD) 6  BYTEs time and date machine last used
 
  0Fh Reset Code        
@@ -151,7 +171,7 @@ the definition is thought to be specific to a manufacturer/model (AMI,
 AMSTRAD, IBM AT, IBM PS/2) the identification is enclosed in parens. The
 AMSTAD definitions appear to relate to 8088/8086 (PC and PC/XT class)
 mchines only. AT class machines appear to adhere to IBM PC/AT fornat.
- 
+
  10h - Floppy Drive Type
 
   Bits 7-4 - First Floppy Disk Drive Type
@@ -160,25 +180,27 @@ mchines only. AT class machines appear to adhere to IBM PC/AT fornat.
    2h      1.2 MB 5 1/4 Drive - note: not listed in PS/2 technical manual
    3h      720 KB 3 1/2 Drive
    4h     1.44 MB 3 1/2 Drive
-   5h-Fh  unused
+   5h-Fh  unused (??? 5h: 2.88 Mb 3 1/2 Drive ???)
 
    Bits 3-0 Second Floppy Disk Drive Type (bit settings same as A)
- 
+
    Hence a PC having a 5 1/4 1.2 Mb A: drive and a 1.44 Mb B: drive will
    have a value of 24h in byte 10h. With a single 1.44 drive: 40h.
 
- 11h - (IBM-PS/2) First Fixed Disk Drive Type Byte (00-FFh)
+ 11h - (IBM-PS/2) First Fixed Disk Drive Type Byte (00-FFh) Note: if IBM
+   ESDI or SCSI drive controller is used, CMOS drive type will be zero (00 -
+   no drive) and Int 13h will be directed to controller ROM.
  11h - (AMI) Keyboard Typematic Data 
- 
+
   Bit 7 Enable Typematic (1 = On)
 
-  Bits 6-5 Typematic Delay
+  Bits 6-5 Typematic Delay (wait before begin repeating)
    00b 250 ms
    01b 500 ms
    10b 750 ms
    11b 100 ms
 
-  Bits 4-0 Typematic Rate
+  Bits 4-0 Typematic Rate char/sec e.g. 01010b = 12.0 cps
    00000b - 300  01000b - 159  10000b - 75  11000b - 37
    00001b - 267  01001b - 133  10001b - 67  11001b - 33
    00010b - 240  01010b - 120  10010b - 60  11010b - 30
@@ -187,15 +209,18 @@ mchines only. AT class machines appear to adhere to IBM PC/AT fornat.
    00101b - 185  01101b -  92  10101b - 46  11101b - 23
    00110b - 171  01110b -  86  10110b - 43  11110b - 21
    00111b - 160  01111b -  80  10111b - 40  11111b - 20
- 
- 12h - (IBM PS/2) Second Hard Disk Drive Type (00-FFh)
+
+ 12h - (IBM PS/2) Second Fixed Disk Drive Type (00-FFh) - see 11h
  12h - Hard Disk Data
   Bits 7-4 First Hard Disk Drive
    00     No drive
    01-0Eh Hard drive Type 1-14
    0Fh    Hard Disk Type 16-255 (actual Hard Drive Type is in CMOS RAM 1Ah)
-  Bits 3-0 Second Hard Disk Drive Type (same as above)
+  Bits 3-0 Second Hard Disk Drive Type (same as above except extrnded type
+          will be found in 1Bh).
   A PC with a single type 2 (20 Mb ST-225) hard disk will have 20h in byte 12h
+  Note: some PCs utilizing external disk controller ROMs will use type 0 to
+   disable ROM BIOS (e.g. Zenith 248 with Plus HardCard).
 
  13h (AMI) Advanced Setup Options
   Bit 7 Mouse Enabled (1 = On)
@@ -203,10 +228,10 @@ mchines only. AT class machines appear to adhere to IBM PC/AT fornat.
   Bit 5 Memory Test Tick Sound (1 = On)
   Bit 4 Memory Parity Error Check (1 = On)
   Bit 3 Press <Esc> to Disable Memory Test (1 = On)
-  Bit 2 User-Defined Hard Disk (1 = On)
+  Bit 2 User-Defined Hard Disk (1 = Type 47 data area at address 0:300h)
   Bit 1 Wait for <F1> Message if Error (1 = On)
-  Bit 0 Turn Num Lock Off at boot (1 = On)
- 
+  Bit 0 Turn Num Lock On at boot (1 = On)
+
  14h - Equipment Byte 
   Bits 7-6 Number of Floppy Drives (system must have at least one)
    00b     1 Drive
@@ -214,18 +239,18 @@ mchines only. AT class machines appear to adhere to IBM PC/AT fornat.
    10b ??? 3 Drives
    11b ??? 4 Drives
   Bits 5-4 Monitor Type
-   00b Not CGA or MDA (typ for VGA)
+   00b Not CGA or MDA (observed for EGA & VGA)
    01b 40x25 CGA
    10b 80x25 CGA
    11b MDA (Monochrome)
-  Bit 3 Display Enabled (1 = On)
-  Bit 2 Keyboard Enabled (1 = On)
+  Bit 3 Display Enabled (1 = On)   (turned off to enable boot of rackmount)
+  Bit 2 Keyboard Enabled (1 = On)  (turned off to enable boot of rackmount)
   Bit 1 Math coprocessor Installed (1 = On)
-  Bit 0 Floppy Drive Installed (1 = On)
+  Bit 0 Floppy Drive Installed (1 = On) (turned off for rackmount boot)
 
  14h - (AMSTRAD)    BYTE user RAM checksum
 			LSB of sum of all user bytes should be AAh
- 
+
  15h - Base Memory in K, Low Byte
  15h - (AMSTRAD)    WORD Enter key scancode/ASCII code
 			default: 1C0Dh  - emulates Return key
@@ -243,7 +268,7 @@ mchines only. AT class machines appear to adhere to IBM PC/AT fornat.
   15 Mb extended or 16 Mb total) Format is the same as in 15h-16h
 
  19h - First Extended Hard Disk Drive Type (not in original AT
-  specification but now nearly universally used).
+  specification but now nearly universally used except for PS/2).
   0-Fh unused (would not require extension. Note: this has the effect
     making type 0Fh (15d) unavailable.
   10h-FFh First Extended Hard Drive Type 16d-255d
@@ -255,19 +280,30 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
 			default: FFFFh  - (no translation)
 
  1Ah - Second Extended Hard Disk Drive Type (see 19h above)
- 
- 1Bh - (AMI) First Hard Disk user defined: # of Cylinders, Low Byte
+
+ 1Bh - (AMI) First Hard Disk (type 47) user defined: # of Cylinders, LSB
  1Bh - (AMSTRAD)    WORD Joystick fire button 2 scancode/ASCII code
 			default: FFFFh  - (no translation)
+ 1Bh - (PHOENIX) LSB of Word to 82335 RC1 roll compare register
 
  1Ch - (AMI) First Hard Disk user defined: # of Cylinders, High Byte
+ 1Ch - (PHOENIX) MSB of Word to 82335 RC1 roll compare register
 
  1Dh - (AMI) First Hard Disk user defined: Number of Heads
  1Dh - (AMSTRAD)    WORD mouse button 1 scancode/ASCII code
 			default: FFFFh  - (no translation)
+ 1Dh - (Zenith Z-200 monitor) Boot Drive Selection
+       Bits 6-5 (0xx0 0000)
+       00 - MFM Monitor
+       01 - First floppy drive (A:)
+       10 - First fixed disk (C:)
+       11 - First floppy drive (A:). If not there then First fixed disk (C:)
+            (this is the default).
+ 1Dh - (PHOENIX) LSB of Word to 82335 RC2 roll compare register
 
  1Eh - (AMI) First Hard Disk user defined: Write Precompensation Cylinder, 
        Low Byte
+ 1Eh - (PHOENIX) MSB of Word to 82335 RC2 roll compare register
 
  1Fh - (AMI) First Hard Disk user defined: Write Precompensation Cylinder, 
        High Byte
@@ -276,18 +312,19 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
 
  20h - (AMI) First Hard Disk user defined: Control Byte (80h if # of heads 
        is equal or greater than 8)
- 
+ 20h - (PHOENIX) First user defined hard disk (type 48) Cylinders LSB
+
  21h - (AMI) First Hard Disk user defined: Landing Zone, Low Byte
  21h - (AMSTRAD) BYTE mouse X scaling factor, default: 0Ah
+ 21h - (PHOENIX) First user defined hard disk (type 48) Cylinders MSB
 
 
  22h - (AMI) First Hard Disk user defined: Landing Zone, High Byte
  22h - (AMSTRAD) BYTE mouse Y scaling factor default: 0Ah
-
+ 22h - (PHOENIX) First user defined hard disk (type 48)  of Heads
 
  23h - (AMI) First Hard Disk user defined: # of Sectors per track
  23h - (AMSTRAD) BYTE initial VDU mode and drive count  default: 20h
-
     bit 7:  enables extended serial flow control
             (NB this is buggy)
     bit 6:  set if two floppy drives installed
@@ -296,41 +333,51 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
          0   1      CGA card added; 40 x 25 mode
          1   0      CGA card added; 80 x 25 mode
          1   1      mono card added; 80 x 25 mode
+ 23h - (PHOENIX) First user defined hard disk (type 48) Write Precomp. LSB
 
  24h - (AMI) Second Hard Disk user defined: # of Cylinders, Low Byte
  24h - (AMSTRAD)    BYTE initial VDU character attribute, default: 7h
+ 24h - (PHOENIX) First user defined hard disk (type 48) Write Precomp. MSB
 
 
  25h - (AMI) Second Hard Disk user defined: # of Cylinders, High Byte
  25h - (AMSTRAD)    BYTE size of RAM disk in 2K blocks
 		default: 0  - only used by the RAMDISK software supplied.
+ 25h - (PHOENIX) First user defined hard disk (type 48) Parking zone LSB
 
 
  26h - (AMI) Second Hard Disk user defined: Number of Heads
  26h - (AMSTRAD)    BYTE initial system UART setup byte
 			default: E3h - format as for Int 14h fn 0
+ 26h - (PHOENIX) First user defined hard disk (type 48) Parking zone MSB
 
  27h - (AMI) Second Hard Disk user defined: Write Precompensation Cylinder, 
        Low Byte
  27h - (AMSTRAD)    BYTE initial external UART setup byte
 			default: E3h - format as for Int 14h fn 0
+ 27h - (PHOENIX) First user defined hard disk (type 48) Sectors per track
 
  28h - (AMI) Second Hard Disk user defined: Write Precompensation Cylinder, 
        High Byte
- 
+ 28h - (HP Vectra) checksum over words 29h-2Dh
+
  28h-3Fh (AMSTRAD) 24 BYTEs user applications default: zeroes
 
 
  29h - (AMI) Second Hard Disk user defined: Control Byte (80h if # of heads 
        is equal or greater than 8)
+ 29h - (PHOENIX) LSB word to Intel 82335 CC0 compare register
 
  2Ah - (AMI) Second Hard Disk user defined: Landing Zone, Low Byte
+ 2Ah - (PHOENIX) MSB word to Intel 82335 CC0 compare register
 
  2Bh - (AMI) Second Hard Disk user defined: Landing Zone, High Byte
+ 2Bh - (PHOENIX) LSB word to Intel 82335 CC1 compare register
 
  2Ch - (AMI) Second Hard Disk user defined: # of Sectors per track
  2Ch - (COMPAQ) bit 6:  0 - numlock OFF on boot, 1 - numlock ON at boot
- 
+ 29h - (PHOENIX) MSB word to Intel 82335 CC1 compare register
+
  2Dh - (AMI) Configuration Options 
   Bit 7 Weitek Installed(1 = On)
   Bit 6 Floppy Drive Seek - turn off for fast boot
@@ -341,6 +388,7 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
   Bit 2 Internal Cache Enable (1 = On)
   Bit 1 Use Fast Gate A20 after boot (1 = On)
   Bit 0 Turbo Switch (1 = On)
+ 2Dh - (PHOENIX) Checks for values AAh or CCh
   
  2Eh - Standard CMOS Checksum, High Byte
  2Fh - Standard CMOS Checksum, Low Byte
@@ -366,9 +414,10 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
               to 640k - all machines surveyed have this bit set)
   Bits 6-0 ???
  33h - (IBM PS/2) Configuration CRC high byte (see entry for 32h)
+ 33h - (PHOENIX) Bit 4 (000x 0000) bit 4 from Intel CPU register CP0
 
  34h - (AMI) Shadowing & Boot Password
-  Bits 7-6 Password
+  Bits 7-6 Password Selection
    00b Disable 10b Reserved
    01b Set     11b Boot
   Bit 5 C8000h Shadow ROM (Bit 1 = On) 
@@ -377,7 +426,7 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
   Bit 2 D4000h Shadow ROM (Bit 1 = On)
   Bit 1 D8000h Shadow ROM (Bit 1 = On)
   Bit 0 DC000h Shadow ROM (Bit 1 = On)
- 
+
  35h - (AMI) Shadowing
   Bit 7 E0000h Shadow ROM (Bit 1 = On)
   Bit 6 E4000h Shadow ROM (Bit 1 = On)
@@ -387,19 +436,40 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
   Bit 2 C0000h Shadow ROM (Bit 1 = On)
   Bit 1 C4000h Shadow ROM (Bit 1 = On)
   Bit 0 Reserved
- 
- 36h ???
+ 35h - (PHOENIX) Second user defined hard disk (type 48) Cylinders LSB
+       NOTE: used only when PS/2 style password is NOT in effect.
+
+ 36h - (PHOENIX) Second user defined hard disk (type 48) Cylinders MSB
+       NOTE: used only when PS/2 style password is NOT in effect.
 
  37h - (IBM PS/2) Date Century Byte 
+ 37h - (PHOENIX) Second user defined hard disk (type 48) # of heads
+       NOTE: used only when PS/2 style password is NOT in effect.
 
  38h-3Dh (AMI) Encrypted Password
 
  38h-3Fh ??? (IBM PS/2) Encrypted Password. Initialized to 00h in all
      bytes. Will accept from 1-7 scan codes. 
 
+ 38h - (PHOENIX) Second user defined hard disk (type 48) Write Precomp. LSB
+       NOTE: used only when PS/2 style password is NOT in effect.
+
+ 39h - (PHOENIX) Second user defined hard disk (type 48) Write Precomp. MSB
+       NOTE: used only when PS/2 style password is NOT in effect.
+
+ 3Ah - (PHOENIX) Second user defined hard disk (type 48) Parking Zone LSB
+       NOTE: used only when PS/2 style password is NOT in effect.
+
+ 3Bh - (PHOENIX) Second user defined hard disk (type 48) Parking Zone MSB
+       NOTE: used only when PS/2 style password is NOT in effect.
+
+ 3Ch - (PHOENIX) Second user defined hard disk (type 48) Sectors per track
+       NOTE: used only when PS/2 style password is NOT in effect.
+
  3Eh - (AMI) Extended CMOS Checksum, High Byte (includes 34h - 3Dh)
+
  3Fh - (AMI) Extended CMOS Checksum, Low Byte (includes 34h - 3Dh)
- 
+
  End of original 64 CMOS RAM bytes. Many modern chips now contain 128
  bytes and the IBM PS/2 has provision for 2k of "Expansion CMOS". 
  The AMI HI-FLEX description is below. If the chip does have only
@@ -414,44 +484,47 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
   Bits 3-2  8-bit DMA Wait States
   Bit 1    EMR bit
   Bit 0    DMA Clock Source
- 
+
  42h-43h ???
 
  44h - (AMI)
   Bit 4 NMI Power Fail Warning
   Bit 3 NMI Local Bus Timeout
- 
+
  45h - (AMI) 
   Bits 7-6 AT Bus 32-Bit Delay
   Bits 5-4 AT Bus 16-Bit Delay
   Bits 3-2 AT Bus 8-Bit Delay
   Bits 1-0 AT Bus I/O Delay
- 
+
  46h - (AMI)
   Bits 7-6 AT Bus 32 Bit Wait States
   Bits 5-4 AT Bus 16 Bit Wait States
   Bits 3-2 AT Bus  8 Bit Wait States
   Bits 1-0 AT Bus Clock Source
- 
+
  47h - 50h ???
- 
+
  51h - (AMI)
   Bit 7    Bank 0/1 RAS Precharge
   Bit 6    Bank 0/1 Access Wait States
   Bits 3-2 Bank 0/1 Wait States
- 
+
  52h ???
- 
+
  53h - (AMI)
   Bit 7    Bank 2/3 RAS Precharge
   Bit 6    Bank 2/3 Access Wait States
   Bits 3-2 Bank 2/3 Wait States
- 
+
  54h-7Fh ???
 
 
 Revision History
+
+v1.20	Sept, 1993      PHOENIX data from Wim Osterholt added
+                        additional AMI data from Howie (hjh@gwd.dst.gov.au)
 v1.15   June, 1993      AMSTRAD data updated
 v1.1 	June, 1993	AMSTRAD & PS/2 data added 
-v1.0	June, 1993	First release
-
+v1.0	June, 1993	First release: Motorola MC 146818,  PC-AT & AMI 
+                        "Hi-Flex" information baselined

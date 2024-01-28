@@ -132,7 +132,7 @@ Notes:	if the file is already protected, the old password must be added after
 	  "Get/Set File Attributes" function, subfunction 3, documented in
 	  Concurrent DOS.
 SeeAlso: AH=0Fh,AH=17h,AX=4302h,AX=4305h,AX=4454h
---------O-214304-----------------------------C26!
+--------O-214304-----------------------------
 INT 21 U - DR-DOS 5.0-6.0 internal - GET ENCRYPTED PASSWORD
 	AX = 4304h
 	DS:DX -> ASCIZ filename
@@ -143,7 +143,7 @@ Return: CF clear if successful
 	    AX = error code (see AH=59h)
 Note:	this function is only supported by DR-DOS 5.0 and 6.0 and DRMDOS 5.1
 SeeAlso: AX=4303h,AX=4305h
---------O-214305-----------------------------C26!
+--------O-214305-----------------------------
 INT 21 U - DR-DOS 5.0-6.0 internal - SET EXTENDED FILE ATTRIBUTES
 	AX = 4305h
 	DS:DX -> ASCIZ filename
@@ -155,7 +155,7 @@ Desc:	this function allows the extended attributes, and optionally the
 	  encrypted password, of a file to be set.
 Note:	this function is only supported by DR-DOS 5.0 and 6.0 and DRMDOS 5.1
 SeeAlso: AX=4304h,AX=4311h
---------O-214306-----------------------------C26!
+--------O-214306-----------------------------
 INT 21 - DR-DOS 6.0 - GET FILE OWNER
 	AX = 4306h
 	DS:DX -> ASCIZ filename
@@ -164,7 +164,7 @@ Return: CF clear if successful
 	CF set on error
 	    AX = error code (see AH=59h)
 SeeAlso: AX=4307h
---------O-214307-----------------------------C26!
+--------O-214307-----------------------------
 INT 21 - DR-DOS 6.0 - SET FILE OWNER
 	AX = 4307h
 	CX = ??? (owner identification number?)
@@ -269,11 +269,16 @@ Return: CF clear if successful
 Note:	format of data is driver-specific (see below for some specific cases)
 SeeAlso: AX=4400h,AX=4403h,AX=4404h,INT 2F/AX=122Bh
 --------N-214402-----------------------------
-INT 21 - Network Driver Interface Spec 2.0.1 - PROTOCOL MANAGER
+INT 21 - Network Driver Interface Specification (NDIS) 2.0.1 - PROTOCOL MANAGER
 	AX = 4402h
 	BX = file handle for device "PROTMAN$"
-	DS:DX -> request block (see below)
 	CX = 000Eh (size of request block)
+	DS:DX -> request block (see below)
+Return: CF clear if successful
+	    AX = number of bytes actually read
+	CF set on error
+	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+SeeAlso: AX=4402h"FTPSOFT"
 
 Format of request block for GetProtocolManagerInfo:
 Offset	Size	Description
@@ -443,6 +448,17 @@ Values for boundary protocol level:
  04h	transport
  05h	session
  FFh	not specified
+
+Format of dispatch table:
+Offset	Size	Description
+ 00h	DWORD	-> common characteristics table (see above)
+ 04h  4 BYTEs	???
+ 08h	DWORD	-> ??? function (called with 12 bytes of stack arguments)
+ 0Ch	DWORD	-> ??? function (called with 10 bytes of stack arguments)
+ 10h	DWORD	-> ??? function (called with 16 bytes of stack arguments)
+ 14h	DWORD	-> ??? function (called with 4 bytes of stack arguments)
+ 18h	DWORD	-> ??? function (called with 18 bytes of stack arguments)
+ 1Ch	DWORD	-> ??? function (called with 12 bytes of stack arguments)
 
 Format of MAC Service-Specific Characteristics Table:
 Offset	Size	Description
@@ -1654,7 +1670,7 @@ Return: CF clear if successful
 	CF set on error
 	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
 Notes:	this function is supported by Microsoft EMM386.EXE v4.45+ and
-	  CEMM v5.10+
+	  CEMM v5.10+, and is intended for use by MS Windows as it starts up
 	if no other program has hooked INT 67, an alternate installation
 	  check for CEMM is testing for the string
 	  "COMPAQ EXPANDED MEMORY MANAGER 386" at offset 14h in the INT 67
@@ -1709,7 +1725,8 @@ Return: CF clear if successful
 	CF set on error
 	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
 Notes:	this function is supported by Microsoft EMM386.EXE v4.45+,
-	  QEMM-386 v6+, and CEMM v5.10+
+	  QEMM-386 v6+, and CEMM v5.10+, and is intended for use by MS Windows
+	  as it starts up
 	for QEMM-386, this call always returns an error if Windows3 support
 	  has been disabled with the NW3 switch
 SeeAlso: AX=4402h/SF=00h,AX=4402h"EMM386",INT 2F/AX=D201h/BX=5145h
@@ -1732,7 +1749,7 @@ Return: CF clear if successful
 	CF set on error
 	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
 Note:	this function is supported by Microsoft EMM386.EXE v4.45+ and
-	  CEMM v5.10+
+	  CEMM v5.10+, and is intended for use by MS Windows as it starts up
 SeeAlso: AX=4402h/SF=00h,AX=4402h"EMM386",INT 67/AH=3Fh
 
 Format of memory manager version:
@@ -1750,8 +1767,10 @@ Return: CF clear if successful
 	    buffer filled
 	CF set on error
 	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
-Note:	an error is returned if the number of bytes to be read does not match
+Notes:	an error is returned if the number of bytes to be read does not match
 	  the number of bytes returned for the specified data item
+	this function is part of the interface which allows MS Windows to
+	  cooperate with memory managers
 SeeAlso: AX=4402h/SF=00h,AX=4402h/SF=01h,AX=4402h/SF=02h,INT 67/AX=FFA5h
 
 Format of data buffer:
@@ -1785,7 +1804,7 @@ Offset	Size	Description
  02h	WORD	segment of ???
  04h	WORD	segment of device driver's code
 --------N-214402-----------------------------
-INT 21 - FTPSOFT.DOS - GET ???
+INT 21 - FTPSOFT.DOS v3.1 - GET ???
 	AX = 4402h
 	BX = file handle for device "FTPSOFT$"
 	CX = size of buffer
@@ -1794,28 +1813,65 @@ Return: CF clear if successful
 	    buffer filled
 	CF set on error
 	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
-SeeAlso: AH=3Fh"PC/TCP"
+Program: FTPSOFT.DOS is a device driver for Protocol Manager support from
+	   FTP Software, Inc.
+SeeAlso: AH=3Fh"PC/TCP",AX=4402h"NDIS"
 
 Format of data:
 Offset	Size	Description
  00h	WORD	(call) BA98h (if different, no data returned)
- 02h	DWORD	-> ???
- 06h	DWORD	(call) -> record with new data (see below)
- 0Ah	DWORD	-> ???
+ 02h	DWORD	-> NDIS common characteristics table (see AX=4402h"NDIS")
+ 06h	DWORD	(call) -> new dispatch table (see AX=4402h"NDIS")
+ 0Ah	DWORD	-> 28-byte buffer for ??? data
  0Eh	DWORD	???
- 12h	DWORD	-> ??? function
+ 12h	DWORD	-> FAR function to reset dispatch jump table to defaults
  16h	BYTE	???
+Note:	the addresses in the new dispatch table are copied into an internal
+	  jump table which may be reset by calling the function pointed at by
+	  offset 12h
+----------214402-----------------------------
+INT 21 U - PenDOS PENDEV.SYS - GET ENTRY POINTS
+	AX = 4402h
+	BX = file handle for device "$$PENDOS" or "$$PD_REG"
+	CX = size of buffer (4 for $$PENDOS and a 4,8,12, or 16 for $$PD_REG)
+	DS:DX -> buffer for entry point record (see below)
+Return: CF clear if successful
+	    buffer filled
+	CF set on error
+	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+Program: A limited version of PenDOS by Communication Intelligence Corporation,
+	  which provides pen capability to keyboard-based programs, is bundled
+	  with IBM DOS 6.1
+SeeAlso: AX=4403h"PENDEV.SYS"
 
-Format of new data:
+Format of entry point record:
 Offset	Size	Description
- 00h  8 BYTEs	???
- 08h	WORD	??? \ may be a DWORD
- 0Ah	WORD	??? /
- 0Ch	DWORD	???
- 10h	DWORD	???
- 14h	DWORD	???
- 18h	DWORD	???
- 1Ch	DWORD	???
+ 00h	DWORD	-> array of jumps
+ 04h	WORD	offset of function to retrieve entry point
+ 06h  2 BYTEs	signature "Pe"
+ 08h	WORD	offset of function to set entry point
+ 0Ah  2 BYTEs	signature "nD"
+ 0Ch	WORD	offset of function to clear entry point
+ 0Eh	WORD	signature "OS"
+
+Call function to retrieve entry point with:
+	AX = index of entry point (0-9)
+Return: CF clear if successful
+	    DX:AX -> desired entry point
+	CF set on error (AX out of range)
+
+Call function to set entry point with:
+	AX = index of entry point (0-9)
+	DX:SI -> new handler
+Return: CF clear if successful
+	CF set on error (AX out of range)
+
+Call function to clear entry point with:
+	AX = index of entry point (0-9)
+Return: CF clear if successful
+	CF set on error (AX out of range)
+Note:	resets the jump at the specified entry point to its default target,
+	  which simply returns
 --------D-214403-----------------------------
 INT 21 - DOS 2+ - IOCTL - WRITE TO CHARACTER DEVICE CONTROL CHANNEL
 	AX = 4403h
@@ -2137,6 +2193,22 @@ Return: CF clear if successful
 Desc:	specified that 386MAX should shift from AUTO to ON mode on any INT 67
 	  call other than INT 67/AH=3Fh
 SeeAlso: AX=4403h/SF=01h,AX=4403h/SF=03h,AX=4403h/SF=05h
+----------214403-----------------------------
+INT 21 U - PenDOS PENDEV.SYS - ???
+	AX = 4403h
+	BX = file handle for device "$$PENDOS" or "$$PD_REG"
+	CX = size of buffer
+	DS:DX -> buffer containing ???
+Return: CF clear if successful
+	    buffer filled
+	CF set on error
+	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+Program: A limited version of PenDOS by Communication Intelligence Corporation,
+	  which provides pen capability to keyboard-based programs, is bundled
+	  with IBM DOS 6.1
+Note:	this call sets the WORD at offset 1Ah into the device driver request
+	  header used to call the driver to 0000h.
+SeeAlso: AX=4402h"PENDEV.SYS"
 --------D-214404-----------------------------
 INT 21 - DOS 2+ - IOCTL - READ FROM BLOCK DEVICE CONTROL CHANNEL
 	AX = 4404h
@@ -3031,30 +3103,32 @@ SeeAlso: AX=4452h
 
 Format of internal variable table:
 Offset	Size	Description
- 00h	DWORD	pointer to ???
+ 00h	WORD	???
+ 02h	WORD	segment of ???
  04h  7 BYTEs	???
  0Bh	WORD	KB of extended memory at startup
  0Dh	BYTE	number of far jump entry points
  0Eh	WORD	segment containing far jumps to DR-DOS entry points (see below)
----DR-DOS 6.0---
  10h	WORD	(only if kernel loaded in HMA) offset in HMA of first free HMA
 		memory block (see below) or 0000h if none; segment is FFFFh
  12h	WORD	pointer to segment of environment variables set in CONFIG,
 		or 0000h if already used
+---DR-DOS 6.0---
  14h	WORD	(only if kernel loaded in HMA) offset in HMA of first used HMA
 		memory block (see below) or 0000h if none; segment is FFFFh
 Note:	the segment used for the DR-DOS 6.0 CONFIG environment variables
 	  (excluding COMSPEC, VER and OS) is only useful for programs/drivers
-	  called from CONFIG.SYS. The word is set to zero later and the area
-	  lost.
+	  called from CONFIG.SYS. The word is set to zero later when the area
+	  is copied to the COMMAND.COM environment space.  This allows
+	  CONFIG.SYS to pass information to AUTOEXEC.BAT.
 
 Format of kernel entry jump table for DR-DOS 5.0-6.0:
 Offset	Size	Description
  00h  5 BYTEs	far jump to kernel entry point for CP/M CALL 5
  05h  5 BYTEs	far jump to kernel entry point for INT 20
  0Ah  5 BYTEs	far jump to kernel entry point for INT 21
- 0Fh  5 BYTEs	far jump to kernel entry point for INT 22??? (RETF)
- 14h  5 BYTEs	far jump to kernel entry point for INT 23??? (RETF)
+ 0Fh  5 BYTEs	far jump to kernel entry point for INT 22 (RETF)
+ 14h  5 BYTEs	far jump to kernel entry point for INT 23 (RETF)
  19h  5 BYTEs	far jump to kernel entry point for INT 24
  1Eh  5 BYTEs	far jump to kernel entry point for INT 25
  23h  5 BYTEs	far jump to kernel entry point for INT 26
@@ -3066,9 +3140,13 @@ Offset	Size	Description
  41h  5 BYTEs	far jump to kernel entry point for INT 2D (IRET)
  46h  5 BYTEs	far jump to kernel entry point for INT 2E (IRET)
  4Bh  5 BYTEs	far jump to kernel entry point for INT 2F
-Note:	all of these entry points are indirected through this jump table
+Notes:	all of these entry points are indirected through this jump table
 	  to allow the kernel to be relocated into high memory while leaving
 	  the actual entry addresses in low memory for maximum compatibility
+	some of these entry points (22h,23h,24h,2Eh,2Fh) are replaced as soon
+	  as COMMAND.COM is loaded, and return immediately to the caller, some
+	  returning an error code (the original handler for INT 2F returns
+	  AL=03h [fail]).
 
 Format of HMA Memory Block (DR-DOS 6.0 kernel loaded in HMA):
 Offset	Size	Description
@@ -3091,6 +3169,19 @@ INT 21 - DR MultiUser DOS 5.0 - API
 Notes:	DR-DOS 5.0 returns CF set and AX=0001h
 	this API is also available on INT E0
 SeeAlso: AX=4452h,INT E0"CP/M"
+--------N-2144E0-----------------------------
+INT 21 U - Sun PC-NFS - API???
+	AX = 44E0h
+	DS:DX -> ???
+	SS:BP -> stack frame (see below)
+Return: ???
+Note:	this function is also supported by Beame&Whiteside's BWPCNFS shim; the
+	  description presented here was derived from that shim
+
+Format of stack frame:
+Offset	Size	Description
+ 00h	WORD	-> previous stack frame
+ 02h	DWORD	return address
 --------d-2144FFBXFFFF-----------------------
 INT 21 U - NewSpace - ???
 	AX = 44FFh
@@ -3178,9 +3269,9 @@ Return: CF clear if successful
 	CF set on error
 	    AX = error code (07h,08h,09h) (see AH=59h)
 	    BX = maximum paragraphs available for specified memory block
-Notes:	under DOS 2.1-5.0, if there is insufficient memory to expand the block
+Notes:	under DOS 2.1-6.0, if there is insufficient memory to expand the block
 	  as much as requested, the block will be made as large as possible
-	DOS 2.1-5.0 coalesces any free blocks immediately following the block
+	DOS 2.1-6.0 coalesces any free blocks immediately following the block
 	  to be resized
 SeeAlso: AH=48h,AH=49h,AH=83h
 --------D-214B-------------------------------
@@ -4654,7 +4745,7 @@ Offset	Size	Description
 	Offset	Size	Description
 	 00h-1Eh as for DOS 3.1+ (see below)
 	 1Fh	WORD	byte offset of directory entry within sector
-	 21h 11 BYTES	filename in FCB format (no path/period, blank-padded)
+	 21h 11 BYTEs	filename in FCB format (no path/period, blank-padded)
 	 2Ch	DWORD	(SHARE.EXE) pointer to previous SFT sharing same file
 	 30h	WORD	(SHARE.EXE) network machine number which opened file
 			(Windows Enhanced mode DOSMGR uses the virtual machine
@@ -5518,17 +5609,23 @@ Return: CF clear if successful
 	    AX = error code
 SeeAlso: AX=5702h/BX=FFFFh,AX=5703h"OS/2"
 ----------215702BXFFFF-----------------------
-INT 21 - OS/2 v1.1+ Family API - DosQPathInfo
+INT 21 - OS/2 v1.1+ Compatibility Box Family API - DosQPathInfo
 	AX = 5702h
 	BX = FFFFh
 	CX = size of buffer for information
-	DX = level of information
+	DX = level of information (0002h)
 	DS:SI -> filename
-	ES:DI -> buffer for information
+	ES:DI -> buffer for information (see below)
 Return: CF clear if successful
+	    AL = 00h
 	CF set on error
 	    AX = error code
 SeeAlso: AX=5702h"OS/2",AX=5703h/BX=FFFFh
+
+Format of path information:
+Offset	Size	Description
+ 00h 22 BYTEs	???
+ 16h	DWORD	extended attribute size (none present if less than 5)
 --------D-215703-----------------------------
 INT 21 - DOS 4.x only - GET EXTENDED ATTRIBUTE PROPERTIES
 	AX = 5703h
@@ -6070,11 +6167,12 @@ SeeAlso: AX=5D0Bh,INT 2A/AH=80h,INT 2A/AH=81h,INT 2A/AH=82h
 
 Format of DOS 3.10-3.30 Swappable Data Area:
 Offset	Size	Description
+ -34	BYTE	(DOS 3.10+) printer echo flag (00h off, FFh active)
  -31	BYTE	(DOS 3.30) current switch character
  -28	BYTE	(DOS 3.30) incremented on each INT 21/AX=5E01h call
  -27 16 BYTEs	(DOS 3.30) machine name set by INT 21/AX=5E01h
  -11  5 WORDs	zero-terminated list of offsets which need to be patched to
-		enabled critical-section calls (see INT 2A/AH=80h)
+		enable critical-section calls (see INT 2A/AH=80h)
  -1	BYTE	unused padding
 ---start of actual SDA---
  00h	BYTE	critical error flag ("ErrorMode")
@@ -6261,7 +6359,7 @@ BUG:	DR-DOS 3.41 and 5.0 read the value for ES from the DS field of the DPL;
 	  which sets both DS and ES fields to the same value
 SeeAlso: AH=59h
 --------D-215D0B-----------------------------
-INT 21 U - DOS 4.x only internal - GET DOS SWAPPABLE DATA AREAS
+INT 21 OU - DOS 4.x only internal - GET DOS SWAPPABLE DATA AREAS
 	AX = 5D0Bh
 Return: CF set on error
 	    AX = error code (see AH=59h)
@@ -6289,11 +6387,12 @@ Offset	Size	Description
 
 Format of DOS 4.0-6.0 swappable data area:
 Offset	Size	Description
+ -34	BYTE	printer echo flag (00h off, FFh active)
  -31	BYTE	current switch character (ignored by DOS 5+)
  -28	BYTE	incremented on each INT 21/AX=5E01h call
  -27 16 BYTEs	machine name set by INT 21/AX=5E01h
  -11  5 WORDs	zero-terminated list of offsets which need to be patched to
-		enabled critical-section calls (see INT 2A/AH=80h)
+		enable critical-section calls (see INT 2A/AH=80h)
 		(all offsets are 0D0Ch, but this list is still present for
 		DOS 3.x compatibility)
  -1	BYTE	unused padding
@@ -6877,7 +6976,7 @@ INT 21 - DOS 4+ network - GET EXTENDED REDIRECTION LIST ENTRY
 Return: CF set on error
 	    AX = error code (see AH=59h)
 	CF clear if successful
-	    AX = server's netowrk process ID handle (10NET)
+	    AX = server's network process ID handle (10NET)
 	    BH = device status flag (bit 0 clear if valid)
 	    BL = device type (03h if printer, 04h if drive)
 	    CX = stored parameter value (user data) from AX=5F03h
@@ -8674,7 +8773,7 @@ INT 21 - DOS 3.3+ - GET EXTENDED COUNTRY INFORMATION
 	CX = size of buffer (>= 5)
 Return: CF set on error
 	    AX = error code (see AH=59h)
-	CF clear if succesful
+	CF clear if successful
 	    CX = size of country information returned
 	    ES:DI -> country information
 Notes:	AL=05h appears to return same info for all countries and codepages; it
@@ -8725,7 +8824,7 @@ Offset	Size	Description
  07h	BYTE	last excluded character in range  / range are illegal
  08h	BYTE	??? (02h for MS-DOS 3.30-6.00)
  09h	BYTE	number of illegal (terminator) characters
- 0Ah  N BYTES	characters which terminate a filename:	."/\[]:|<>+=;,
+ 0Ah  N BYTEs	characters which terminate a filename:	."/\[]:|<>+=;,
 Note:	partially documented for DOS 5+, but undocumented for earlier versions
 
 Format of filename uppercase table:
@@ -9048,7 +9147,7 @@ SeeAlso: AX=5703h,AX=6C01h,AH=6Eh"OS/2"
 INT 21 U - DOS 5+ ROM - GET ROM SCAN START ADDRESS
 	AX = 6F00h
 Return: BX = current ROM scan starting segment
-SeeAlso: AH=6DH,AX=6F01h,AX=6F02h
+SeeAlso: AH=6Dh,AX=6F01h,AX=6F02h
 ----------216F01-----------------------------
 INT 21 U - DOS 5+ ROM - SET ROM SCAN START ADDRESS
 	AX = 6F01h
@@ -9078,8 +9177,8 @@ INT 21 - PCW Weather Card interface - GET DATA SEGMENT
 	BX = 6060h
 	CX = 7070h
 	DX = 7070h
-	SX = 7070h
-	DX = 7070h
+	SI = 7070h
+	DI = 7070h
 Return: AX = segment of data structure
 Notes:	the data structure is at offset 516 from this segment.
 	the update byte is at offset 514 from this segment.  Updates are
@@ -9120,26 +9219,20 @@ INT 21 - PCW Weather Card interface - INSTALLATION CHECK
 	BX = 7070h
 	CX = 7070h
 	DX = 7070h
-	SX = 7070h
-	DX = 7070h
+	SI = 7070h
+	DI = 7070h
 Return: AX = 0070h
 	BX = 0070h
 	CX = 0070h
 	DX = 0070h
-	SX = 0070h
-	DX = 0070h
+	SI = 0070h
+	DI = 0070h
 SeeAlso: AX=7070h/BX=6060h,AX=8080h
 --------v-2176-------------------------------
 INT 21 - VIRUS - "Klaeren"/"Hate" - INSTALLATION CHECK
 	AH = 76h
 Return: AL = 48h if resident
 SeeAlso: AX=6969h,AX=7700h"VIRUS"
---------U-217761-----------------------------
-INT 21 - WATCH.COM v3.2+ - INSTALLATION CHECK
-	AX = 7761h ('wa')
-Return: AX = 6177h
-Note:	WATCH.COM is part of the "TSR" package by TurboPower Software
-SeeAlso: INT 16/AX=7761h
 --------v-217700-----------------------------
 INT 21 - VIRUS - "Growing Block" - INSTALLATION CHECK
 	AX = 7700h
@@ -9152,6 +9245,12 @@ Return: DX = 3477h if installed
 	    AX = segment of resident code
 Program: ScrollIt is a shareware backscroll utility by Bromfield Software
 	  Products
+--------U-217761-----------------------------
+INT 21 - WATCH.COM v3.2+ - INSTALLATION CHECK
+	AX = 7761h ('wa')
+Return: AX = 6177h
+Note:	WATCH.COM is part of the "TSR" package by TurboPower Software
+SeeAlso: INT 16/AX=7761h
 --------v-217F-------------------------------
 INT 21 - VIRUS - "Squeaker" - INSTALLATION CHECK
 	AH = 7Fh

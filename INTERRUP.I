@@ -122,6 +122,103 @@ Notes:	Arbiter may use any interrupt from 60h to 66h (parameterized)
 	  the interrupt handler address
 	Arbiter makes a PC disk look like a slow disk over an SNA link to an
 	  IBM mainframe
+--------N-60---------------------------------
+INT 60 - Excelan LAN Workplace for DOS 3.5 - API
+	ES:BX -> request packet
+Return: request packet updated
+Notes:	this interrupt is also supported by Beame&Whiteside's BWLWP35 shim,
+	  which was used in creating this description
+	the installation check consists of testing for the WORD 4142h ('AB')
+	  immediately preceding the interrupt handler
+BUG:	because BWLWP35 range-checks only the low byte of the function number,
+	  and has a fencepost error even in that test, functions 000Bh and
+	  XX01h-XX0Bh (XX nonzero) branch to random locations
+SeeAlso: INT 2F/AX=7A40h
+
+Format of request packet:
+Offset	Size	Description
+ 00h 12 BYTEs	???
+ 0Ch	WORD	(return) error code (see below)
+ 0Eh	DWORD	-> FAR function for ???
+ 12h	WORD	function number
+		0001h ???
+		0002h NOP
+		0003h NOP
+		0004h NOP
+		0005h ???
+		0006h get ??? record
+		0007h NOP
+		0008h reset ???
+		0009h NOP
+		000Ah set ???
+	???
+---function 01h---
+ 20h	BYTE	(call) subfunction (32h-3Bh)
+		3Bh non-blocking I/O request (will be tested every clock tick)
+ 21h	BYTE	(return) error code
+		00h successful
+		09h invalid connection number
+		2Ah bad connection type
+		45h ???
+---function 01h, subfunction 32h---
+ 3Ah	WORD	(call) connection type (01h stream, 02h datagram)
+---function 01h, subfunction 34h---
+ 26h	WORD	(call) ???
+ 28h	WORD	(call) ???
+ 2Ah	WORD	(call) ???
+---function 01h, subfunction 35h---
+ 1Ah	WORD	(call) connection number???
+ 26h	WORD	(return) ???
+---function 01h, subfunction 36h---
+ 1Ah	WORD	(call) connection number???
+ 38h	WORD	???
+---function 01h, subfunction 37h---
+ 24h	WORD	(return) ???
+ 26h	WORD	(return) ???
+---function 01h, subfunction 38h---
+ 1Ah	WORD	(call) connection number???
+---function 01h, subfunction 3Ah---
+ 22h	WORD	(call) ???
+		667Eh ???
+		667Fh ???
+ 24h	BYTE	(call 667Eh) ???
+ 24h	WORD	(return 667Fh) ???
+---function 01h, subfunction 3Bh---
+ 0Eh	DWORD	(call) -> function to invoke for I/O or 0000h:0000h
+		function called with AX = 0000h
+				     STACK: DWORD -> request packet
+					    WORD 0000h
+			should return STACK unchanged
+ 1Ah	WORD	(call) connection number???
+ 21h	BYTE	(return) set to 01h when I/O becomes possible
+ 22h	BYTE	(call) direction (00h write, 01h read)
+ 34h	DWORD	(return) -> next pending request packet
+---function 05h---
+ 1Eh	WORD	(call) ???
+ 20h	WORD	(call) ???
+ 34h	DWORD	(call) -> ???
+---function 06h---
+ 16h	DWORD	(call) -> buffer for ??? record (see below)
+ 1Ah	WORD	(call) number of bytes to copy
+ 22h	WORD	(return) number of bytes transferred
+---function 08h---
+ 14h	WORD	(return) ??? (0001h)
+---function 0Ah---
+ 16h	DWORD	(call) -> WORD ???
+ 1Ch	WORD	(call) must be 000Ah for BWLWP35
+
+Values for error code:
+ 0000h	successful
+ 002Dh	invalid function
+ 0050h	???
+
+Format of ??? record:
+Offset	Size	Description
+ 00h	WORD	offset of ???
+ 02h  4 BYTEs	???
+ 06h	DWORD	IP address (big-endian)
+ 0Ah  6 BYTEs	physical address (big-endian)
+	???
 --------G-60---------------------------------
 INT 60 U - INTRSPY/CMDSPY API
 Program: INTRSPY is a script-driven debugger included with the book
@@ -2585,7 +2682,7 @@ Return: AX = return code
 	    FFFEh password is invalid
 	    FFFDh display mode is invalid
 	   else successful
-		BL = old value of the semapor of MDEBUG
+		BL = old value of the semaphor of MDEBUG
 		BH = old value of the INT 08h semaphor
 		    (this semaphor is always reset after this function)
 --------N-6006-------------------------------
@@ -2870,7 +2967,7 @@ INT 61 - HP 95LX System Manager - LOAD DS
 SeeAlso: INT 0F"HP 95LX",INT 60"HP 95LX"
 --------r-61---------------------------------
 INT 61 - JPI TopSPEED Modula-2 v1 - PROCEDURE EXIT TRAP
-SeeAlso: INT 61"JPI"
+SeeAlso: INT 60"JPI"
 --------d-61---------------------------------
 INT 61 - Adaptec and OMTI controllers - DRIVE 0 DATA
 Note:	this vector stores the second four bytes of the parameter table for
@@ -3005,7 +3102,7 @@ Return: CF clear
 Notes:	this call is not documented by FTP, Inc. for any version
 	most of the information returned by this call is available via the
 	  documented get_kernel_info or net_info commands.
-	not supported by Beame&Whiteside's BWPCTCP v3.0a shim
+	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: INT 61"PC/TCP",INT 61/AH=2Ah"PC/TCP"
 
 Format of network debugging information:
@@ -3057,7 +3154,7 @@ INT 61 - Banyan VINES - "Sosock" - OPEN COMMUNICATIONS SOCKET
 	AX = 0001h subfn 0001h
 	DS:DX -> communications control block (function 0001h)
 Return: AX = status (see below)
-Note:	BANYAN can use any interrupt from 60h through 66h.  The Banyan
+Note:	Banyan can use any interrupt from 60h through 66h.  The Banyan
 	  interrupt handler is identified by the string "BANV" in the four
 	  bytes immediately preceding the interrupt handler
 SeeAlso: AX=0001h/SF=0002h,AX=0001h/SF=0008h,INT 15/AX=DE2Eh
@@ -3109,7 +3206,7 @@ INT 61 - Banyan VINES - "Sosend" - INITIATE OUTPUT EVENT
 	AX = 0001h subfn 0002h
 	DS:DX -> communications control block (function 0002h)
 Return: AX = status (see below)
-Note:	BANYAN can use any interrupt from 60h through 66h.  The Banyan
+Note:	Banyan can use any interrupt from 60h through 66h.  The Banyan
 	  interrupt handler is identified by the string "BANV" in the four
 	  bytes immediately preceding the interrupt handler
 SeeAlso: AX=0001h/SF=0001h,AX=0001h/SF=0005h
@@ -3184,7 +3281,7 @@ INT 61 - Banyan VINES - "Sorec" - RECEIVE INPUT EVENT NOTIFICATION
 	AX = 0001h subfn 0003h
 	DS:DX -> communications control block (function 0003h)
 Return: AX = status (00-0Ah,97h,A2h,A3h) (see AX=0001h/SF=0002h)
-Note:	BANYAN can use any interrupt from 60h through 66h.  The Banyan
+Note:	Banyan can use any interrupt from 60h through 66h.  The Banyan
 	  interrupt handler is identified by the string "BANV" in the four
 	  bytes immediately preceding the interrupt handler
 SeeAlso: AX=0001h/SF=0002h
@@ -3237,7 +3334,7 @@ INT 61 - Banyan VINES - "Soclose" - CLOSE A SOCKET
 	AX = 0001h subfn 0004h
 	DS:DX -> communications control block (function 0004h)
 Return: AX = status (00h-0Ah,97h) (see AX=0001h/SF=0002h)
-Note:	BANYAN can use any interrupt from 60h through 66h.  The Banyan
+Note:	Banyan can use any interrupt from 60h through 66h.  The Banyan
 	  interrupt handler is identified by the string "BANV" in the four
 	  bytes immediately preceding the interrupt handler
 SeeAlso: AX=0001h/SF=0001h,INT 15/AX=DE2Eh
@@ -3257,7 +3354,7 @@ INT 61 - Banyan VINES - "Sowait" - WAIT FOR ASYNCHRONOUS EVENT COMPLETION
 	AX = 0001h subfn 0005h
 	DS:DX -> communications control block (function 0005h)
 Return: AX = status (see below)
-Notes:	BANYAN can use any interrupt from 60h through 66h.  The Banyan
+Notes:	Banyan can use any interrupt from 60h through 66h.  The Banyan
 	  interrupt handler is identified by the string "BANV" in the four
 	  bytes immediately preceding the interrupt handler
 	returns results for all asynchronous operations invoked from the
@@ -3290,7 +3387,7 @@ INT 61 - Banyan VINES - "Sosession" - REGISTER APPLICATION WITH COMM SERVICE
 Return: AX = status
 	    0000h  successful
 	    00A2h  no more buffer space available
-Note:	BANYAN can use any interrupt from 60h through 66h (default 61h).  The
+Note:	Banyan can use any interrupt from 60h through 66h (default 61h).  The
 	  Banyan interrupt handler is identified by the string "BANV" in the
 	  four bytes immediately preceding the interrupt handler
 SeeAlso: AX=0001h/SF=0001h,AX=0001h/SF=0009h
@@ -3308,7 +3405,7 @@ INT 61 - Banyan VINES - "Soint" - SET USER COMPLETION FUNCTION
 	AX = 0001h subfn 000Bh
 	DS:DX -> communications control block (function 000Bh)
 Return: AX = status (00h-0Ah,A2h) (see AX=0001h/SF=0005h)
-Notes:	BANYAN can use any interrupt from 60h through 66h.  The Banyan
+Notes:	Banyan can use any interrupt from 60h through 66h.  The Banyan
 	  interrupt handler is identified by the string "BANV" in the four
 	  bytes immediately preceding the interrupt handler
 	FAR user function is invoked with SS,DS, and ES set to segment of
@@ -4383,7 +4480,7 @@ Return: CF clear if successful
 Notes:	there are a large number of tags available; the items returned
 	  all refer to local kernel configuration, and are not needed in
 	  normal use.
-	not supported by Beame&Whiteside's BWPCTCP v3.0a shim
+	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=02"PC/TCP"
 --------N-6102-------------------------------
 INT 61 - Banyan VINES - GET REVISION NUMBER
@@ -4407,7 +4504,7 @@ Return: CF clear if successful
 Notes:	there are a large number of tags available; the items returned
 	  all refer to local kernel configuration, and are not needed in
 	  normal use.
-	not supported by Beame&Whiteside's BWPCTCP v3.0a shim
+	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=01h"PC/TCP"
 --------N-6105-------------------------------
 INT 61 - PC/TCP kernel v2.05+ - "get_addr" - GET INTERNET ADDRESS OF NET DESCR
@@ -4460,7 +4557,7 @@ Return: CF clear if successful
 	    AX = error code (see INT 61"PC/TCP")
 Notes:	the new network descriptor can be accessed from all processes and is
 	  independent of DOS
-	not supported by Beame&Whiteside's BWPCTCP v3.0a shim
+	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=08h"PC/TCP"
 SeeAlso: INT 61/AH=29h
 --------N-6108-------------------------------
@@ -4493,7 +4590,7 @@ INT 61 - PC/TCP kernel v2.05 - "net_send" - ???
 Return: ???
 Notes:	this function is described as "unused" in the v2.05 and v2.2
 	  documentation
-	not supported by Beame&Whiteside's BWPCTCP v3.0a shim
+	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: AH=0Bh
 --------N-610B-------------------------------
 INT 61 - PC/TCP kernel v2.05 - "net_sendto" - ???
@@ -4502,7 +4599,7 @@ INT 61 - PC/TCP kernel v2.05 - "net_sendto" - ???
 Return: ???
 Notes:	this function is described as "unused" in the v2.05 and v2.2
 	  documentation
-	not supported by Beame&Whiteside's BWPCTCP v3.0a shim
+	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: AH=0Ah
 --------N-610C-------------------------------
 INT 61 u - PC/TCP kernel v2.05+ - "net_stat" - GET CONNECTION STATISTICS
@@ -4519,7 +4616,7 @@ Return: CF clear if successful
 	    AX = error code (see INT 61"PC/TCP")
 Notes:	the fields filled in for a network descriptor depend on the protocol
 	  family used by that descriptor's connection
-	not supported by Beame&Whiteside's BWPCTCP v3.0a shim
+	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
 
 Format of kernel TCP statistics:
@@ -4628,7 +4725,7 @@ INT 61 - PC/TCP kernel v2.05+ - "net_shutdown" - UNINSTALL
 Return: CF clear if successful
 	CF set on error
 	    AX = error code (see INT 61"PC/TCP")
-Note:	not supported by Beame&Whiteside's BWPCTCP v3.0a shim
+Note:	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
 --------N-6111-------------------------------
 INT 61 - PC/TCP kernel v2.05+ - "disable_async" - DISABLE ASYNCHRONOUS HANDLERS
@@ -4684,7 +4781,7 @@ Return: CF set
 	    AX = 0018h (see INT 61"PC/TCP")
 Notes:	displays error message "Illegal system call!  Please upgrade your
 	  PCserver software" to standard output
-	not supported by Beame&Whiteside's BWPCTCP v3.0a shim
+	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=0Ah,INT 61/AH=15h
 --------N-6115-------------------------------
 INT 61 - PC/TCP kernel v2.05 - "net_recvfrom" - ???
@@ -4692,7 +4789,7 @@ INT 61 - PC/TCP kernel v2.05 - "net_recvfrom" - ???
 	???
 Return: ???
 Notes:	this function is described as "unused" in the v2.2 documentation
-	not supported by Beame&Whiteside's BWPCTCP v3.0a shim
+	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: INT 61/AH=0Bh,INT 61/AH=14h
 --------N-6116-------------------------------
 INT 61 - PC/TCP kernel v2.05+ - "net_peer" - GET DATA ON REMOTE PEER
@@ -4712,7 +4809,7 @@ Return: CF clear if successful
 	    AX = error code (see INT 61"PC/TCP")
 Notes:	this routine is deprecated in v2.1+ and will eventually be withdrawn;
 	  in v2.1+, this function calls AH=01h which should be used instead
-	not supported by Beame&Whiteside's BWPCTCP v3.0a shim
+	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=01h"PC/TCP"
 --------N-6118-------------------------------
 INT 61 - PC/TCP kernel v2.05+ - "net_eof" - CLOSE TRANSMIT SIDE OF CONNECTION
@@ -4827,7 +4924,7 @@ Return: CF clear if successful
 	    AX = error code (see INT 61"PC/TCP")
 Notes:	bufferred data is transmitted immediately, overriding Nagle's algorithm
 	  if necessary
-	not supported by Beame&Whiteside's BWPCTCP v3.0a shim
+	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
 --------N-611F-------------------------------
 INT 61 - PC/TCP kernel v2.05+ - "net_asynch" - SET UP ASYNCHRONOUS CALL-BACK
@@ -4897,7 +4994,7 @@ Return: CF clear if successful
 	    DS:DX -> value (usually 32 bits) returned by selected option
 	CF set on error
 	    AX = error code (see INT 61"PC/TCP")
-Note:	not supported by Beame&Whiteside's BWPCTCP v3.0a shim
+Note:	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=20h
 --------N-6122-------------------------------
 INT 61 u - PC/TCP kernel v2.05+ - "net_getdesc" - ALLOCATE NETWORK DESCRIPTOR
@@ -4957,7 +5054,7 @@ Return: CF clear if successful
 	CF set on error
 	    AX = error code (see INT 61"PC/TCP")
 Notes:	normally one would use AH=25h instead of this function
-	not supported by Beame&Whiteside's BWPCTCP v3.0a shim
+	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=25h,INT 61/AH=27h
 --------N-6127-------------------------------
 INT 61 - PC/TCP kernel v2.05+ - "ad_domain" - GET HOST NAME FROM DNS
@@ -5003,7 +5100,7 @@ Return: CF clear
 	buffer filled
 Notes:	size of buffer may vary with kernel version; 26 bytes is the size for
 	  versions 2.05 through 2.2
-	not supported by Beame&Whiteside's BWPCTCP v3.0a shim
+	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
 
 Format of configuration information:
@@ -5036,7 +5133,7 @@ Return: CF clear if successful
 	    AX = error code (see INT 61"PC/TCP")
 Notes:	this function will case a NET_AS_ALARM to be generated; it is intended
 	  for TSRs, etc. to regain control periodically
-	not supported by Beame&Whiteside's BWPCTCP v3.0a shim
+	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
 --------N-6130-------------------------------
 INT 61 - PC/TCP kernel v2.05+ - "icmp_ping" - SEND ICMP ECHO REQUEST (PING)
@@ -5046,7 +5143,7 @@ INT 61 - PC/TCP kernel v2.05+ - "icmp_ping" - SEND ICMP ECHO REQUEST (PING)
 Return: CF clear if successful (i.e. reply received)
 	CF set on error
 	    AX = error code (see INT 61"PC/TCP")
-Note:	not supported by Beame&Whiteside's BWPCTCP v3.0a shim
+Note:	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
 --------N-61---------------------------------
 INT 61 u - PC/TCP kernel v2.05 - NOP for SLIP kernel
@@ -5056,14 +5153,14 @@ INT 61 u - PC/TCP kernel v2.05 - NOP for SLIP kernel
 	    33h "net_dump_routes"
 Notes:	these functions are described as "unused" in the v2.2 documentation
 	router configuration can be altered using INT 61/AH=01h
-	not supported by Beame&Whiteside's BWPCTCP v3.0a shim
+	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 --------N-6134-------------------------------
 INT 61 U - PC/TCP kernel v2.1+ - "icmp_destun" - ???
 	AH = 34h
 	???
 Return: ???
 Notes:	this function is described as "reserved" in the v2.2 documentation
-	not supported by Beame&Whiteside's BWPCTCP v3.0a shim
+	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 --------N-6150-------------------------------
 INT 61 - PC/TCP kernel v2.05+ - "nm_prs_addr" - TRANSLATE NUMERICAL IP ADDRESS
 	AH = 50h
@@ -5153,11 +5250,14 @@ INT 62 - BW-TCP - HARDWARE DRIVER (ETHDEV.SYS) - API
 	AH = function
 	    00h get physical hardware address
 		DS:DX -> 6-byte buffer for address
+		Return: AX = length of hardware address???
 	    01h NOP for ETHDEV.ODI
 	    02h initialize
 	    03h get real IP address
 		DS:SI -> DWORD buffer for IP address
-	    04h ???
+	    04h set ???
+		BX = ???
+		ES:SI -> FAR routine for ???
 	    05h ???
 	    06h ???
 	    07h ???
@@ -5195,6 +5295,7 @@ INT 62 - BW-TCP - HARDWARE DRIVER (ETHDEV.SYS) - API
 		ES:SI -> ???
 		Return: AL = 00h if CF clear
 	    15h get ??? (call after reading ETHDEV27 device)
+		Return: AX = ??? (destroyed???)
 	    16h ???
 	    17h ???
 		DX = segment of ???
@@ -5845,7 +5946,7 @@ SeeAlso: AX=004Dh,AX=004Eh,AX=004Fh
 --------V-620051-----------------------------
 INT 62 u - FGDRIVER v1.10 - "FG_DRAWMASK" - DISPLAY IMAGE (MASKING MAP)
 	AX = 0051h
-	ES:BX -> array containing image stores as a masking map (see below)
+	ES:BX -> array containing image stored as a masking map (see below)
 	CX = number of pixel runs in masking map
 	DX = width of masking map in pixels
 Notes:	this call is ignored in text modes and in native EGA and VGA graphics
@@ -6445,7 +6546,7 @@ INT 62 u - FGDRIVER v1.10 - "FG_BOX" - DRAW UNFILLED RECTANGLE
 Notes:	FGDRIVER is the external video driver for the shareware
 	  Fastgraph/Light by Ted Gruber Software
 	the rectangle is drawn in screen space, respecting the clipping region,
-	  width edges of the width specified with AX=00A3h (default = 1 is set
+	  with edges of the width specified with AX=00A3h (default = 1 is set
 	  by "FG_SETMODE")
 	this function has no effect in text modes
 SeeAlso: AX=002Bh,AX=002Ch,AX=002Eh,AX=0030h,AX=00A3h
@@ -6668,7 +6769,7 @@ Return: CF clear if successful
 	    AL = error code
 Note:	this function is supported by at least the SLIP and ODI versions of
 	  ETHDEV.SYS
-SeeAlso: INT 21/AH=3Fh"BW-TCP",INT 62"BW-TCP",INT 63"BW-TCP"
+SeeAlso: INT 21/AH=3Fh"BW-TCP",INT 62"BW-TCP",INT 63"BW-TCP",INT 64/AH=FEh
 --------*-63---------------------------------
 INT 63 - reserved for user interrupt
 --------d-63---------------------------------
@@ -6710,11 +6811,12 @@ INT 63 - HP 100LX - MAP HIGH MEMORY
 Return: ???
 SeeAlso: AH=01h
 --------N-6300-------------------------------
-INT 63 - BW-TCP - TCPIP.SYS - ???
+INT 63 - BW-TCP - TCPIP.SYS - SET IP ADDRESS???
 	AH = 00h
-	DS:DX -> DWORD containing IP address (big-endian)
-	???
-Return: ???
+	DS:BX -> DWORD containing IP address (big-endian)
+Return: CF clear if successful
+	CF set on error
+	AX destroyed
 Note:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
@@ -6742,11 +6844,13 @@ INT 63 - BW-TCP - TCPIP.SYS - ???
 Return: ???
 SeeAlso: AH=00h"BW-TCP",AH=01h"BW-TCP"
 --------N-6303-------------------------------
-INT 63 - BW-TCP - TCPIP.SYS - GET ???
+INT 63 - BW-TCP - TCPIP.SYS - GET IP ADDRESS
 	AH = 03h
-	DS:SI -> buffer for DWORD ???
-	???
-Return: ???
+	DS:SI -> buffer for DWORD IP address (big-endian)
+Return: AX destroyed
+	CF clear if successful
+	CF set on error
+Note:	this call may use ARP or RARP to determine the address
 --------N-6304-------------------------------
 INT 63 - BW-TCP - TCPIP.SYS - ???
 	AH = 04h
@@ -6769,11 +6873,12 @@ INT 63 - BW-TCP - TCPIP.SYS - ???
 	???
 Return: ???
 --------N-6308-------------------------------
-INT 63 - BW-TCP - TCPIP.SYS - ???
+INT 63 - BW-TCP - TCPIP.SYS - SET DEFAULT ??? HANDLER
 	AH = 08h
-	DS:BX -> DWORD ???
+	DS:BX -> DWORD containing IP address
+Return: CF clear if successful
+	CF set on error
 	???
-Return: ???
 --------N-6309-------------------------------
 INT 63 - BW-TCP - TCPIP.SYS - INSTALL ??? HANDLERS
 	AH = 09h
@@ -6921,23 +7026,25 @@ Return: ???
 --------N-631E-------------------------------
 INT 63 - BW-TCP - TCPIP.SYS - ???
 	AH = 1Eh
-	DS:BX -> DWORD ???
+	DS:BX -> DWORD containing IP address (big-endian)
 	???
-Return: ???
+Return: CF clear if successful
+	CF set on error
+	???
 --------N-631F-------------------------------
-INT 63 - BW-TCP - TCPIP.SYS - INSTALL ???
+INT 63 - BW-TCP - TCPIP.SYS - SET SOCKET ??? HANDLER
 	AH = 1Fh
-	BX = identifier???
-	ES:SI -> ???
+	BX = socket number
+	ES:SI -> FAR function for ???
 Return: CF clear if successful
 	CF set on error (out of slots)
 SeeAlso: AH=20h
 --------N-6320-------------------------------
-INT 63 - BW-TCP - TCPIP.SYS - DELETE ???
+INT 63 - BW-TCP - TCPIP.SYS - REMOVE SOCKET ??? HANDLER
 	AH = 20h
-	BX = identifier of ??? to be deleted
+	BX = socket number
 Return: CF clear if successful
-	CF set on error (not installed)
+	CF set on error (not set)
 SeeAlso: AH=1Fh
 --------N-6321-------------------------------
 INT 63 - BW-TCP - TCPIP.SYS - ???
@@ -7081,13 +7188,89 @@ Note:	This vector is overwritten by Pdisk to install custom harddrive types.
 	  It can either destroy 4 vectors and take no memory or TSR and take
 	  up some memory.
 SeeAlso: INT 65"Pdisk"
---------N-64---------------------------------
-INT 64 - BW-NFS - BWRPC API
-	AH = function (01h-07h,0Ch,10h,11h,FEh)
-Note:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
+--------N-6401-------------------------------
+INT 64 U - BW-NFS - BWRPC - ???
+	AH = 01h
+	ES:BX -> ??? (at least 8 bytes)
+	ES:BP -> DWORD ???
+	???
+Return: CF clear if successful
+	    ???
+	CF set on error
+	    CX = 0000h
+Notes:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
+	the BWRPC installation check consists of determining the interrupt
+	  vector assigned to it (two more than the value returned by reading
+	  the ETHDEV27 device), and testing whether the word immediately
+	  preceding the interrupt handler is 4257h ('BW')
 SeeAlso: INT 62"BW-TCP",INT 63"BW-TCP"
+Index:	installation checks;BWRPC
+--------N-6402-------------------------------
+INT 64 U - BW-NFS - BWRPC - ???
+	AH = 02h
+	DS:DI -> ???
+Return: ???
+Note:	this call is passed directly through to INT 62/AH=07h
+SeeAlso: INT 62"BW-TCP"
+--------N-6403-------------------------------
+INT 64 U - BW-NFS - BWRPC - ADD ???
+	AH = 03h
+	AL = ???
+	BP = ???
+	ES:SI -> ???
+Return: ???
+Note:	this call is passed directly through to INT 62/AH=0Bh
+SeeAlso: AH=04h,INT 62"BW-TCP"
+--------N-6404-------------------------------
+INT 64 U - BW-NFS - BWRPC - REMOVE ???
+	AH = 04h
+	BP = ???
+Return: ???
+Note:	this call is passed directly through to INT 62/AH=0Ch
+SeeAlso: AH=03h,INT 62"BW-TCP"
+--------N-6405-------------------------------
+INT 64 U - BW-NFS - BWRPC - ???
+	AH = 05h
+	CX = ???
+Return: ???
+Note:	this call is passed directly through to INT 62/AH=13h
+SeeAlso: INT 62"BW-TCP"
+--------N-6406-------------------------------
+INT 64 U - BW-NFS - BWRPC - ???
+	AH = 06h
+	ES:SI -> ???
+Return: AL = 00h if CF clear
+Note:	this call is passed directly through to INT 62/AH=14h
+SeeAlso: INT 62"BW-TCP"
+--------N-6407-------------------------------
+INT 64 U - BW-NFS - BWRPC - GET IP ADDRESS
+	AH = 07h
+Return: CX:DX = IP address
+--------N-6410-------------------------------
+INT 64 U - BW-NFS - BWRPC - CALL ETHDEV.SYS
+	AH = 10h
+	AL = ETHDEV function number
+	other registers as appropriate for ETHDEV call
+Return: as returned by ETHDEV
+Note:	this call is passed directly through to INT 62
+SeeAlso: INT 62"BW-TCP"
+--------N-6411-------------------------------
+INT 64 U - BW-NFS - BWRPC - NOP???
+	AH = 11h
+Return: CF clear
+--------N-64FE-------------------------------
+INT 64 - BW-NFS - BWRPC - MAP EMS PAGE FRAME
+	AH = FEh
+	AL = direction
+	    00h map in driver's memory block
+	    01h map out driver's memory block
+Return: CF clear if successful
+	CF set on error
+	    AL = error code
+Note:	this call is passed through directly to ETHDEV.SYS (see INT 62/AH=FEh)
+SeeAlso: INT 21/AH=3Fh"BW-TCP",INT 62/AH=FEh,INT 63"BW-TCP"
 --------*-65---------------------------------
 INT 65 - reserved for user interrupt
 --------d-65---------------------------------
@@ -7426,6 +7609,144 @@ Return: AX = digitized sound capabilities
 Note:	the installation check for the MIDI driver is to test for the signature
 	  "MIDI" six bytes before the interrupt handler
 SeeAlso: AX=0688h
+----------6610-------------------------------
+INT 66 - PenDOS - TDMOUSE.EXE - GET ???
+	AH = 10h
+Return: CF clear
+	AX = 0000h
+	BX = ??? (0012h)
+	DX:CX -> TDMOUSE INT 33 handler (IRET to hide mouse from other apps)
+Program: TDMOUSE is a PenDOS hardware driver which allows a mouse to emulate
+	  a touchpad; PenDOS is a set of programs by Communication Intelligence
+	  Corporation which makes applications pen-aware
+----------6611-------------------------------
+INT 66 - PenDOS - TDMOUSE.EXE - SET ??? HANDLER
+	AH = 11h
+	DX:BX -> new handler for ???
+Return: CF clear
+	AX = 0000h
+	DX:BX -> old handler for ??? (points at RETF by default)
+----------6612-------------------------------
+INT 66 - PenDOS - TDMOUSE.EXE - INITIALIZE
+	AH = 12h
+Return:	CF clear
+	AX = 0000h
+Note:	this function calls the old mouse handler with functions 0000h, 0002h,
+	  0007h, 0008h, 000Fh, 0004h, and 000Ch (in that order)
+SeeAlso: AH=13h
+----------6613-------------------------------
+INT 66 - PenDOS - TDMOUSE.EXE - SHUTDOWN???
+	AH = 13h
+Return: CF clear
+	other register as returned by INT 33/AX=0000h
+SeeAlso: AH=12h
+----------6614-------------------------------
+INT 66 - PenDOS - TDMOUSE.EXE - ???
+	AH = 14h
+	BX = ???
+	CX = ???
+Return: CF clear
+	AX = 0000h
+----------6615-------------------------------
+INT 66 - PenDOS - TDMOUSE.EXE - SET ??? HANDLER
+	AH = 15h
+	DX:BX -> new handler for ???
+Return: CF clear
+	AX = 0000h
+	DX:BX -> old handler (points at RETF by default)
+----------6616-------------------------------
+INT 66 - PenDOS - TDMOUSE.EXE - UNUSED FUNCTIONS
+	AH = 16h to 1Fh
+Return: CF set
+Program: TDMOUSE is a PenDOS hardware driver which allows a mouse to emulate
+	  a touchpad; PenDOS is a set of programs by Communication Intelligence
+	  Corporation which makes applications pen-aware
+----------6621-------------------------------
+INT 66 - PenDOS - PINK - ???
+	AH = 21h
+Return: CF clear if successful
+	CF set on error
+Note:	this function sets ??? flag or counter (also set by AH=2Fh) to FFFFh
+----------6622-------------------------------
+INT 66 - PenDOS - PINK - ???
+	AH = 22h
+	DX:BX -> ???
+	CL = ???
+Return: CF clear if successful
+	CF set on error
+	???
+SeeAlso: AH=24h
+----------6623-------------------------------
+INT 66 - PenDOS - PINK - ???
+	AH = 23h
+	???
+Return: CF clear if successful
+	CF set on error
+	???
+----------6624-------------------------------
+INT 66 - PenDOS - PINK - ???
+	AH = 24h
+	DX:BX -> ???
+	CL = ???
+Return: CF clear if successful
+	CF set on error
+	???
+SeeAlso: AH=22h
+----------6625-------------------------------
+INT 66 - PenDOS - PINK - ???
+	AH = 25h
+	CL = ??? (NOP if 00h)
+	???
+Return: CF clear if successful
+	CF set on error
+	???
+----------6627-------------------------------
+INT 66 - PenDOS - PINK - ???
+	AH = 27h
+	BL = ???
+	BH = ???
+	CL = ??? (0-3)
+	DL = ??? (> BL)
+	DH = ??? (> BH)
+Return: ???
+----------6628-------------------------------
+INT 66 - PenDOS - PINK - ???
+	AH = 28h
+	???
+Return: CF clear if successful
+	CF set on error
+	???
+Note:	this function sets ??? flag or counter (also set by AH=2Fh) to FFFFh
+----------6629-------------------------------
+INT 66 - PenDOS - PINK - ???
+	AH = 29h
+	???
+Return: ???
+Note:	this function sets ??? flag or counter (also set by AH=2Fh) to FFFFh
+----------662A-------------------------------
+INT 66 - PenDOS - PINK - ???
+	AH = 2Ah
+	DL = ??? (nonzero)
+	DH = ??? (nonzero)
+Return: CF clear if successful
+	CF set on error
+	???
+----------662B-------------------------------
+INT 66 - PenDOS - PINK - ???
+	AH = 2Bh
+	???
+Return: CF clear if successful
+	CF set on error
+	???
+----------662F-------------------------------
+INT 66 - PenDOS - PINK - INITIALIZE
+	AH = 2Fh
+	???
+Return: AX = status
+	    0000h failed
+	    FFFFh successful
+	???
+Note:	this function sets ??? flag or counter to FFFFh and hooks INT 1Ch
 --------F-663345-----------------------------
 INT 66 - BitFax Scheduler - REMOVE TSR FROM MEMORY
 	AX = 3345h
@@ -7434,6 +7755,81 @@ Note:	the installation check consists of checking for the signature
 	  "BitFax Scheduler" beginning two bytes past the interrupt handler
 SeeAlso: AH=04h,INT 2F/AH=2Ah,INT 2F/AX=CB00h
 Index:	installation check;BitFax Scheduler
+----------6640-------------------------------
+INT 66 - PenDOS - PKEYUS - GET VERSION
+	AH = 40h
+Return: CF clear
+	AX = 0000h
+	BH = major version (02h for version bundled with IBM DOS 6.1)
+	BL = minor version (00h for version bundled with IBM DOS 6.1)
+	DL = ??? (4Eh)
+	DH = ??? (0Eh)
+----------6641-------------------------------
+INT 66 - PenDOS - PKEYUS - SET ???
+	AH = 41h
+	BX = ???
+	CL = ??? (08h-20h)
+	DL = screen column??? (<= 50h)
+	DH = screen row???  (<= 3Ch)
+Return: AX = status (0000h successful, 0001h error)
+Note:	this function also sets an internal flag
+SeeAlso: AH=42h,AH=43h
+----------6642-------------------------------
+INT 66 - PenDOS - PKEYUS - ???
+	AH = 42h
+Return: CF clear
+	AX = 0000h
+Note:	this function also clears the flag set by AH=41h
+SeeAlso: AH=41h
+----------6643-------------------------------
+INT 66 - PenDOS - PKEYUS - ???
+	AH = 43h
+	BX = ???
+	DX = ???
+Return: AX = status
+	    0000h if AH=41h flag set
+	    else
+		AH = ???
+		AL = ???
+		BX = ???
+		DX = ???
+SeeAlso: AH=41h	
+----------6644-------------------------------
+INT 66 - PenDOS - PKEYUS - UNUSED FUNCTIONS
+	AH = 44h to 4Fh
+Return: CF set
+----------6650-------------------------------
+INT 66 - PenDOS - PMOUSE - SET ???
+	AH = 50h
+	BX = ???
+	CH = ???
+	DX = ???
+Return: CF clear
+	AX = 0000h
+----------6651-------------------------------
+INT 66 - PenDOS - PMOUSE - NOP
+	AH = 51h
+Return: CF set
+----------6652-------------------------------
+INT 66 - PenDOS - PMOUSE - ???
+	AH = 52h
+	BX = ???
+	CL = ???
+	DX = ???
+Return: ???
+----------6653-------------------------------
+INT 66 - PenDOS - PMOUSE - UNUSED FUNCTIONS
+	AH = 53h to 57h
+Return: CF set
+----------66---------------------------------
+INT 66 - PenDOS - PMOUSE - ALTERNATE API
+	AH = function (58h-5Fh)
+Note:	these functions exactly duplicate AH=50h-57h
+----------66C5-------------------------------
+INT 66 - PenDOS - VLOAD - API
+	AH = C5h
+	???
+Return: ???
 --------t-66FFFBBXFFFB-----------------------
 INT 66 - MicroHelp Stay-Res Plus - ???
 	AX = FFFBh
@@ -8198,17 +8594,20 @@ Values for EMS function status:
 --------m-6741-------------------------------
 INT 67 - LIM EMS - GET PAGE FRAME SEGMENT
 	AH = 41h
-Return: AH = 00h function successful
-	    BX = segment of page frame
-	AH = error code (see AH=40h)
+Return: AH = status (see also AH=40h)
+	    00h function successful
+		BX = segment of page frame
 SeeAlso: AH=58h,AH=68h
 --------m-6742-------------------------------
 INT 67 - LIM EMS - GET NUMBER OF PAGES
 	AH = 42h
-Return: AH = 00h function successful
-	    BX = number of unallocated pages
-	    DX = total number of pages
-	AH = error code (see AH=40h)
+Return: AH = status (see also AH=40h)
+	    00h function successful
+		BX = number of unallocated pages
+		DX = total number of pages
+BUG:	DOS 6.0 EMM386.EXE causes a system lock-up or reboot if in AUTO mode
+	  when this call is made; use AH=46h to ensure that EMM386 is ON
+	  before making this call
 SeeAlso: INT 2F/AX=2702h
 --------m-6743-------------------------------
 INT 67 - LIM EMS - GET HANDLE AND ALLOCATE MEMORY
@@ -8861,7 +9260,7 @@ Note:	RM386 traps this functions on the initial transition to protected
 	  overridden simply by hooking the interrupt
 SeeAlso: AX=5DE3h
 --------m-675DE3-----------------------------
-INT 67 - RM386 - GET PAGE TABLE
+INT 67 - RM386 - SET PAGE TABLE
 	AX = 5DE3h
 	ES:DI -> 1088-byte buffer containing page table
 Notes:	only the access bits of the page table are used, the remainder is
@@ -9132,6 +9531,7 @@ Return: AH = 00h    VCPI is present
 	    BH = major version number
 	    BL = minor version number
 	AH nonzero  VCPI not present
+BUG:	MS Windows 3.00 is reported to "object violently" to this call.
 SeeAlso: INT 2F/AX=1687h
 --------E-67DE01-----------------------------
 INT 67 - Virtual Control Program Interface - GET PROTECTED MODE INTERFACE

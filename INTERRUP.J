@@ -1007,7 +1007,7 @@ Return: AX > 0	DECnet socket for the session
 --------N-69010F-----------------------------
 INT 69 - DECnet DOS CTERM - DEINSTALL CTERM
 	AX = 010Fh
-Return: AH = 00h succesful uninstall
+Return: AH = 00h successful uninstall
 	   other error code
 Note:	CTERM must have been the last TSR loaded in order to deinstall it
 SeeAlso: AX=0100h
@@ -1188,34 +1188,175 @@ Offset	Size	Description
  -5	BYTE	major version number
  -4	BYTE	minor version number
  -3   3 BYTEs	signature (ASCII "LAT")
---------N-6A---------------------------------
-INT 6A U - Super-TCP DOS TSR Kernel v3.57 - API
-	AX = function
-	    0000h installation check
-		Return: AX = 4357h ('CW')
-	    0001h
-		BL = ???
-		BH = ???
-	    0002h
-		Return: AX = 0000h
-			BL = ???
-			BH = ???
-	    0003h get ??? data area
-		Return: CX:DX -> data area (see below)
-	    0004h ??? !!!
-	    0005h ???
-	    000Fh ???
-	    0010h ???
-	    else
-		Return: AX = FFFEh
+--------N-6A0000-----------------------------
+INT 6A U - Super-TCP DOS TSR Kernel v3.57 - INSTALLATION CHECK
+	AX = 0000h
+Return: AX = 4357h ('CW')
 Program: Super-TCP is a TCP/IP protocol stack by Frontier Technologies Corp.
-SeeAlso: INT 61"PCTCP",INT 62"BW-TCP"
+Note:	an alternate installation check is to test for the ASCIZ signature
+	  "FTC Super-TCP" three bytes past the interrupt handler
+SeeAlso: AX=0001h,AX=0002h,AX=000Fh,AX=0010h,INT 61"PCTCP",INT 62"BW-TCP"
+--------N-6A0001-----------------------------
+INT 6A U - Super-TCP DOS TSR Kernel v3.57 - ???
+	AX = 0001h
+	BH = function number
+	    01h ???
+		DS:SI -> ??? 24-byte record1 (see below)
+		ES:DI -> buffer containing ???
+	    02h ???
+		DS:SI -> ??? 18-byte record2 (see below)
+		ES:DI -> buffer containing ???
+	    04h ???
+		BL = subfunction
+		    01h
+			DS:SI -> ??? 28-byte record3 (see below)
+			ES:DI -> buffer containing ???
+		    02h
+			DS:SI -> ??? 28-byte record3 (see below)
+			ES:DI -> buffer containing ???
+		    03h
+			DS:SI -> ??? 28-byte record3 (see below)
+		    else Return: AX = 0005h
+	    05h ???
+		DS:SI -> ??? 20-byte record4 (see below)
+		ES:DI -> buffer containing ???
+	    06h ???
+		BL = subfunction
+		    01h
+			DS:SI -> ??? 40-byte record5 (see below)
+		    02h
+			DS:SI -> ??? 20-byte record6 (see below)
+			ES:DI -> ???
+		    03h
+			DS:SI -> ??? 20-byte record6 (see below)
+		    04h
+			DS:SI -> ??? 46-byte record7 (see below)
+		    else Return: AX = 0005h
+	    11h ???
+		DS:SI -> ??? 28-byte record8 (see below)
+		ES:DI -> ???
+Return: AX = function status
+	    0000h successful
+	    0005h unsupported function
+	    000Ah out of memory
+SeeAlso: AX=0000h
+
+Format of record1:
+Offset	Size	Description
+ 00h  4 BYTEs	???
+ 04h	WORD	size of ES:DI buffer
+ 06h 18 BYTEs	???
+
+Format of record2:
+Offset	Size	Description
+ 00h  4 BYTEs	???
+ 04h	WORD	size of ES:DI buffer
+ 06h 12 BYTEs	???
+
+Format of record3:
+Offset	Size	Description
+ 00h  2 BYTEs	???
+ 02h	WORD	???
+ 04h	WORD	size of ES:DI buffer
+ 06h	WORD	???
+ 08h	WORD	operation number (for function 0401h)
+ 0Ah	DWORD	-> ???
+ 0Eh	WORD	(return) ???
+ 10h 12 BYTEs	???
+
+Format of record4:
+Offset	Size	Description
+ 00h  4 BYTEs	???
+ 04h	WORD	size of ES:DI buffer
+ 06h 14 BYTEs	???
+
+Format of record5:
+Offset	Size	Description
+ 00h	BYTE	operation??? (00h-07h)
+ 01h	BYTE	???
+ 02h	WORD	(return) ???
+ 04h	DWORD	-> ???
+ 08h  4 BYTEs	???
+ 0Ch	DWORD	-> ??? or 0000h:0000h
+ 10h 16 BYTEs	???
+ 20h	DWORD	???
+ 24h  4 BYTEs	???
+
+Format of record6:
+Offset	Size	Description
+ 00h  4 BYTEs	???
+ 04h	WORD	size of ES:DI buffer
+ 06h 14 BYTEs	???
+
+Format of record7:
+Offset	Size	Description
+ 00h	WORD	???
+ 02h	WORD	???
+ 04h	WORD	???
+ 06h 40 BYTEs	???
+
+Format of record8:
+Offset	Size	Description
+ 00h  4 BYTEs	???
+ 04h	WORD	size of ES:DI buffer
+ 06h  6 BYTEs	???
+ 0Ch	WORD	(return) ???
+ 0Eh	WORD	operation??? (01h-03h)
+ 10h 12 BYTEs	???
+--------N-6A0002-----------------------------
+INT 6A U - Super-TCP DOS TSR Kernel v3.57 - ???
+	AX = 0002h
+	BX = ??? (zero/nonzero)
+	CX = ??? identifier (see AX=0004h)
+	DS:SI -> 40-byte buffer for ??? or 0000h:0000h
+	ES:DI -> buffer for ??? or 0000h:0000h
+Return: AX = 0000h (successful) ???
+	BL = ???
+	BH = ???
+	CX = ???
+	DX = ???
+--------N-6A0003-----------------------------
+INT 6A U - Super-TCP DOS TSR Kernel v3.57 - GET ??? DATA AREA
+	AX = 0003h
+Return: CX:DX -> data area (see below)
 
 Format of data area:
 Offset	Size	Description
  00h  2 BYTEs	???
  02h	DWORD	original INT 6A vector
+ 06h  2 BYTEs	???
+ 08h 96 BYTEs	array of 16 6-byte ???
+ 68h	WORD	number of elements of above array in use
+ 6Ah	WORD	???
 	???
+--------N-6A0004-----------------------------
+INT 6A U - Super-TCP DOS TSR Kernel v3.57 - ALLOCATE ???
+	AX = 0004h
+	CX = size in ???
+Return: AX = 0000h (successful)
+	CX = DX = ???
+SeeAlso: AX=0005h,AX=000Fh
+--------N-6A0005-----------------------------
+INT 6A U - Super-TCP DOS TSR Kernel v3.57 - FREE/CLOSE ???
+	AX = 0005h
+	CX = ??? identifier (from AX=0004h)
+Return: AX = status (0000h successful, FFFFh failed)
+SeeAlso: AX=0004h,AX=000Fh
+--------N-6A000F-----------------------------
+INT 6A U - Super-TCP DOS TSR Kernel v3.57 - FREE/CLOSE ALL ???
+	AX = 000Fh
+Return: AX = 0000h (successful)
+SeeAlso: AX=0000h,AX=0004h,AX=0005h
+--------N-6A0010-----------------------------
+INT 6A U - Super-TCP DOS TSR Kernel v3.57 - UNINSTALL
+	AX = 0010h
+Return: AX = status
+	    0000h successful
+	    0002h can't uninstall, interrupt vector hooked by another program
+Program: Super-TCP is a TCP/IP protocol stack by Frontier Technologies Corp.
+Note:	if AX is not one of the values listed here on entry, Super-TCP
+	  returns AX=FFFEh
+SeeAlso: AX=0000h
 --------N-6A01--DHFF-------------------------
 INT 6A - DECnet DOS LOCAL AREA TRANSPORT - SEND BYTE
 	AH = 01h
@@ -1357,22 +1498,24 @@ Return: CX = number of bytes written
 Program: NASI is Novell's NetWare Asynchronous Services Interface which runs
 	  on workstations; NACS is the NetWare Asynchronous Communications
 	  Services module which runs on servers
-Note:	also supported by TelAPI and NPC NCSI
-SeeAlso: AX=0100h,AH=18h,INT 14/AH=19h
+Note:	also supported by TelAPI and NPC NCSI; for TelAPI, nonzero values in
+	  AL specify a connection ID
+SeeAlso: AX=0100h,AH=18h,INT 14/AH=19h,INT 14/AH=E3h
 --------S-6B0100-----------------------------
 INT 6B - Novell NASI/NACS, Ungermann-Bass Net One SERIAL I/O - BUFFERED READ
 	AX = 0100h
 	CX = length of buffer
 	ES:BX -> buffer
 Return: CX = number of bytes read
-Note:	also supported by TelAPI and NPC NCSI
-SeeAlso: AX=0000h,AH=19h,INT 14/AH=18h,INT 14/AX=FF02h
+Note:	also supported by TelAPI and NPC NCSI; for TelAPI, nonzero values in
+	  AL specify a connection ID
+SeeAlso: AX=0000h,AH=19h,INT 14/AH=18h,INT 14/AH=E2h,INT 14/AX=FF02h
 --------S-6B02-------------------------------
 INT 6B - Novell NASI/NACS, Ungermann-Bass Net One SERIAL I/O - INSTALL CHECK
 	AH = 02h
 	AL nonzero
 Return: AL = 00h if present and OK
-Note:	also supported by TelAPI and NPC NCSI
+Note:	this function is also supported by TelAPI and NPC NCSI
 SeeAlso: AX=0700h
 --------S-6B0600-----------------------------
 INT 6B - Novell NASI/NACS, Ungermann-Bass Net One SERIAL I/O - CONTROL
@@ -1385,12 +1528,12 @@ Return: CF clear if successful
 	    AL = 00h
 	CF set on error
 	    AX < 0
-Note:	also supported by TelAPI and NPC NCSI
+Note:	this function is also supported by TelAPI and NPC NCSI
 --------S-6B0700-----------------------------
 INT 6B - Novell NASI/NACS, Ungermann-Bass Net One SERIAL I/O - GET STATUS
 	AX = 0700h
 Return: CH <> 00h if connection active
-Notes:	also supported by TelAPI and NPC NCSI
+Notes:	this function is also supported by TelAPI and NPC NCSI
 	Novell TelAPI returns CX=FF01h and CF clear
 SeeAlso: AH=02h,AH=10h
 --------N-6B08-------------------------------
@@ -1399,77 +1542,107 @@ INT 6B - TelAPI - ???
 Return: CF clear
 	    AL = 00h
 	    CX = 0000h
-Note:	also clears ??? flag
+Note:	this function also clears ??? flag
 SeeAlso: INT 14/AX=FF00h
 --------S-6B10-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - GET STATUS
 	AH = 10h
+	AL = connection ID (Novell TELAPI.EXE)
+	CX = ???
+Return: CF clear if successful
+	    CL = ???
+	    CH = ???
+	CF set on error
 	???
-Return: ???
-Note:	also supported by TelAPI
+Note:	this function is also supported by TelAPI
 SeeAlso: AX=0700h,AH=12h,AH=1Fh
 --------S-6B11-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - ALLOCATE A VIRTUAL CIRCUIT
 	AH = 11h
 	???
-Return: ???
-Note:	also supported by TelAPI
+Return: CF clear if successful
+	    AL = virtual circuit number??? (01h for Novell TELAPI.EXE)
+	    CL = ??? (01h for Novell TELAPI.EXE)
+	    CH = ??? (01h for Novell TELAPI.EXE)
+	CF set on error
+	    ???
+Note:	this function is also supported by TelAPI
 SeeAlso: AH=12h,AH=15h,AH=16h,AH=17h,AH=18h
 --------S-6B12-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - VIRTUAL CIRCUIT STATUS
 	AH = 12h
-	???
+	AL = virtual circuit number
+	CL = ???
+	ES:BX -> ???
 Return: ???
-Note:	also supported by TelAPI
+Note:	this function is also supported by TelAPI
 SeeAlso: AH=10h,AH=15h,AH=1Ah,AH=1Bh,AH=1Fh
 --------S-6B13-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - SET/RETRIEVE REQUEST/REPLY SERVICE NAME
 	AH = 13h
-	???
+	AL = virtual circuit number
+	CL = direction (00h get, nonzero set)
+	ES:BX -> buffer for/containing service name
 Return: ???
-Note:	also supported by TelAPI
+Note:	this function is also supported by TelAPI
 SeeAlso: AH=14h,AH=15h
 --------S-6B14-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - SET/RETRIEVE SERVICE ADDRESS
 	AH = 14h
-	???
+	AL = virtual circuit number
+	ES:BX -> buffer for/containing service address
 Return: ???
-Note:	also supported by TelAPI
+Note:	this function is also supported by TelAPI, which only supports
+	  retrieving the address
 SeeAlso: AH=13h,AH=15h,AH=21h
 --------S-6B15-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - SET/RETRIEVE VIRTUAL CIRCUIT CONFIG
 	AH = 15h
-	???
+	AL = virtual circuit number
+	CL = direction (00h get, nonzero set)
+	ES:BX -> buffer for/containing virtual circuit configuration
 Return: ???
-Note:	also supported by TelAPI
+Note:	this function is also supported by TelAPI
 SeeAlso: AH=13h,AH=14h
 --------S-6B16-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - LOG AND/OR INITIALIZE VIRTUAL CIRCUIT
 	AH = 16h
 	???
-Return: ???
-Note:	also supported by TelAPI
+Return: CF clear if successful
+	    AL = virtual circuit number???
+	CF set on error
+	    ???
+Note:	this function is also supported by TelAPI, which always returns CF
+	  clear and AL=00h
 SeeAlso: AH=11h,AH=12h,AH=17h
 --------S-6B17-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - DISCONNECT A VIRTUAL CIRCUIT
 	AH = 17h
+	AL = virtual circuit number???
+Return: CF clear if successful
+	CF set on error
 	???
-Return: ???
-Note:	also supported by TelAPI
+Note:	this function is also supported by TelAPI, which always returns CF
+	  clear and AL=00h
 SeeAlso: AH=11h,AH=16h
 --------S-6B18-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - WRITE DATA ON A VIRTUAL CIRCUIT
 	AH = 18h
+	AL = virtual circuit number
 	???
-Return: ???
-Note:	also supported by TelAPI
+Return: CF clear if successful
+	CF set on error
+	???
+Note:	this function is also supported by TelAPI, which always returns CF
+	  clear and AL=30h
 SeeAlso: AX=0000h,AH=12h,AH=19h
 --------S-6B19-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - READ DATA ON A VIRTUAL CIRCUIT
 	AH = 19h
+	AL = virtual circuit number
 	???
 Return: ???
-Note:	also supported by TelAPI
+Note:	this function is also supported by TelAPI
 SeeAlso: AX=0100h,AH=12h,AH=18h
 --------S-6B1A-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - RECEIVE STATUS
@@ -3019,7 +3192,7 @@ Values for socket number:
  0453h	Routing Information Packet
  0455h	NetBIOS Packet
  0456h	diagnostics
- 0457h	??? (appears to be related to server serial numbers)
+ 0457h	server serial numbers (labeled "Copy Protection" by Lanalyzer)
  4000h-7FFFh used for dynamic allocation
  4444h	Brightwork Development's SiteLock server
  5555h	Brightwork Development's SiteLock client (workstation)
@@ -3072,9 +3245,9 @@ Offset	Size	Description
  08h	BYTE	in use flag (see below)
  09h	BYTE	completion code (see below)
  0Ah	WORD	(big-endian) socket number (see INT 7A/BX=0000h)
- 0Ch  4 BYTES	IPX workspace
- 10h 12 BYTES	driver workspace
- 1Ch  6 BYTES	immediate local node address
+ 0Ch  4 BYTEs	IPX workspace
+ 10h 12 BYTEs	driver workspace
+ 1Ch  6 BYTEs	immediate local node address
  22h	WORD	fragment count
  24h	var	fragment descriptors
 		Offset	Size	Description
@@ -3133,9 +3306,9 @@ Offset	Size	Description
  02h	WORD	(big-endian) length in bytes of total packet
  04h	BYTE	transport control
  05h	BYTE	packet type (see below)
- 06h 10 BYTES	destination internetwork address
+ 06h 10 BYTEs	destination internetwork address
  10h	WORD	(big-endian) destination socket
- 12h 10 BYTES	source internetwork address
+ 12h 10 BYTEs	source internetwork address
  1Ch	WORD	(big-endian) source socket
 
 Values for IPX packet type:
@@ -4848,7 +5021,7 @@ Offset	Size	Description
  01h	BYTE	gateway number
  02h	BYTE	reserved
  03h	BYTE	port
- 04h 17 BYTES	auxiliary buffer
+ 04h 17 BYTEs	auxiliary buffer
  15h	BYTE	session
  16h	WORD	count of bytes passed to API
  18h	DWORD	buffer pointer passed to/from API
@@ -5064,7 +5237,7 @@ Session Parameters for function 09h:
  FPAUSE		full-duration pause
  FTNOWAIT	return immediately from functions 5Ah and 5Bh (Rabbit only)
  FTWAIT		wait for file transfer to complete (Rabbit only)
- IPAUSE		interruptible pause
+ IPAUSE		interruptable pause
  RABESC		??? (Rabbit only)
  NORABESC	??? (Rabbit only)
  SCANCODE	??? (Rabbit only)
@@ -6121,7 +6294,7 @@ SeeAlso: AH=D6h
 INT 7F - Alloy MW386 - RESET NETWORK EXECUTIVE
 	AH = D6h
 	DS:DX -> reset packet (see below)
-Return: never if succesful
+Return: never if successful
 Note:	all users will be shut down immediately if successful
 SeeAlso: AH=CFh
 
@@ -9499,7 +9672,7 @@ Note:	used but not chained by virus
 SeeAlso: INT E0"VIRUS",INT F1"VIRUS"
 --------!---FILELIST-------------------------
 Please redistribute the following files unmodified as a group, in a trio of
-archives named INTER36A through INTER36C (preferably the original authenticated
+archives named INTER37A through INTER37C (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
 	INTERRUP.A	INT 00 through INT 14
@@ -9521,7 +9694,7 @@ PKZIP archives):
 	MEMORY.LST	format of the BIOS data area
 	PORTS.LST	a listing of I/O ports
 	COMBINE.BAT	combine the pieces of the list into a single file
-The following files should be distributed in an archive called INTER36D:
+The following files should be distributed in an archive called INTER37D:
 	INT.COM		invoke interrupts from commandline
 	INT2HLP.BAT	Perl script to convert list into QuickHelp database
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database

@@ -377,6 +377,17 @@ Notes:	during startup, Microsoft Word tries to communicate with any TSRs
 	if the return is not 4D53h, Word installs its own INT 09 and INT 16
 	  handlers; otherwise it assumes that the TSR will handle the keyboard
 SeeAlso: INT 1A/AX=3601h
+--------U-1655FF-----------------------------
+INT 16 - Swap Utilities - ???
+	AX = 55FFh
+	BX >= 0004h
+	CX = function
+	    0000h set ??? flag
+	    other clear ??? flag
+Note:	present in SWAPSH and SWAPDT v1.77j, distributed with PC Tools v7, as
+	  well as the Trusted Access SCRNBLNK.COM; this may be part of the
+	  standard TesSeRact library
+SeeAlso: INT 2F/AX=5453h
 ----------165758BX4858-----------------------
 INT 16 U - Netroom CACHECLK - INSTALLATION CHECK
 	AX = 5758h
@@ -428,17 +439,6 @@ Note:	the installation check consists of calling this function and comparing
 	  BX against 5859h on return; if it has changed, POSTNET is installed
 SeeAlso: AX=5758h/BX=5858h
 Index:	installation check;Netroom POSTNET
---------U-1655FF-----------------------------
-INT 16 - Swap Utilities - ???
-	AX = 55FFh
-	BX >= 0004h
-	CX = function
-	    0000h set ??? flag
-	    other clear ??? flag
-Note:	present in SWAPSH and SWAPDT v1.77j, distributed with PC Tools v7, as
-	  well as the Trusted Access SCRNBLNK.COM; this may be part of the
-	  standard TesSeRact library
-SeeAlso: INT 2F/AX=5453h
 --------U-166969BX6968-----------------------
 INT 16 - PC Tools v5.1+ BACKTALK - UNHOOK
 	AX = 6969h
@@ -825,7 +825,7 @@ Return: AX = 0088h if installed
 Program: CALCULATOR is a shareware popup calculator by Andrzej Brzezinski and
 	  Marek Kosznik
 --------b-16F0-------------------------------
-INT 16 - Compaq 386 - SET CPU SPEED
+INT 16 - Compaq 386 and newer - SET CPU SPEED
 	AH = F0h
 	AL = speed
 	    00h equivalent to 6 MHz 80286 (COMMON)
@@ -859,22 +859,24 @@ Offset	Size	Description
  16h	DWORD	pointer to user data
 	more???
 --------b-16F1-------------------------------
-INT 16 - Compaq 386 - READ CURRENT CPU SPEED
+INT 16 - Compaq 386 and newer - READ CURRENT CPU SPEED
 	AH = F1h
 Return: AL = speed code (see AH=F0h)
 	     if AL = 09h, CX = speed code
 SeeAlso: AH=F0h,AH=F3h
 --------b-16F2-------------------------------
-INT 16 - Compaq 386 - DETERMINE ATTACHED KEYBOARD TYPE
+INT 16 - Compaq 386 and newer - DETERMINE ATTACHED KEYBOARD TYPE
 	AH = F2h
 Return: AL = type
 	    00h if 11-bit AT keyboard is in use
 	    01h if 9-bit PC keyboard is in use
+	AH = 00h (04/08/93 system ROM)
 --------b-16F3-------------------------------
 INT 16 - Compaq 80286s - SET CPU SPEED LIMIT (OVERRIDE JUMPER)
 	AH = F3h
-	AL = 00h limit is 6 Mhz
-	   = 01h limit is 8 Mhz/6 Mhz
+	AL = new limit
+	    00h limit is 6 Mhz
+	    01h limit is 8 Mhz/6 Mhz
 SeeAlso: AH=F0h,AH=F1h
 --------U-16F398-----------------------------
 INT 16 U - NORTON GUIDES - INSTALLATION CHECK
@@ -884,7 +886,7 @@ Return: AX = 6A73h ("js")
 	BL = ASCII code of current hot key
 Note:	NG.EXE was written by John Socha
 --------b-16F400-----------------------------
-INT 16 - Compaq Systempro - CACHE CONTROLLER STATUS
+INT 16 - Compaq Systempro and higher - CACHE CONTROLLER STATUS
 	AX = F400h
 Return: AH = E2h
 	AL = status
@@ -893,12 +895,12 @@ Return: AH = E2h
 	    02h disabled
 SeeAlso: AX=F401h,AX=F402h
 --------b-16F401-----------------------------
-INT 16 - Compaq Systempro - ENABLE CACHE CONTROLLER
+INT 16 - Compaq Systempro and higher - ENABLE CACHE CONTROLLER
 	AX = F401h
 Return: AX = E201h
 SeeAlso: AX=F400h,AX=F402h
 --------b-16F402-----------------------------
-INT 16 - Compaq Systempro - DISABLE CACHE CONTROLLER
+INT 16 - Compaq Systempro and higher - DISABLE CACHE CONTROLLER
 	AX = F402h
 Return: AX = E202h
 SeeAlso: AX=F400h,AX=F401h
@@ -1153,7 +1155,7 @@ INT 16 U - PC Tools v7+ DESKTOP - ???
 	???
 Return: AX = 0000h
 Note:	like AX=FF91h, but temporarily sets ??? to 3
-SeeAlso: AX=FF91h,AX=FF92h
+SeeAlso: AX=FF91h,AX=FFFDh
 --------U-16FF93-----------------------------
 INT 16 U - PC Tools v7+ DESKTOP - SET ??? FLAG
 	AX = FF93h
@@ -2995,7 +2997,7 @@ Offset	Size	Description
 INT 17 - PC Magazine PCSpool - BUILD PAUSE CONTROL RECORD
 	AH = C1h
 	DX = printer port (0-3)
-	DS:SI -> ASCIIZ string to save for display
+	DS:SI -> ASCIZ string to save for display
 Note:	flushes pending writes
 SeeAlso: AH=C0h,AH=C2h
 --------c-17C2-------------------------------
@@ -3344,6 +3346,7 @@ Values for operating system indicator:
  63h	GNU HURD
  64h	Novell NetWare
  65h	Novell NetWare (3.11)
+ 70h	DiskSecure Multi-Boot
  75h	PC/IX
  80h	Minix v1.1 - 1.4a
  81h	Minix v1.4b+
@@ -3740,15 +3743,86 @@ SeeAlso: AH=7Fh,AH=83h
 --------X-1A80-------------------------------
 INT 1A - PCMCIA Socket Services - GET NUMBER OF ADAPTERS
 	AH = 80h
-	???
-Return: ???
+Return: CF clear if successful
+	    CX = 5353h ('SS') if Socket Services installed
+		AL = number of adapters present (0-16)
+	    AH destroyed
+	CF set on error
+	    AH = error code (see below)
 SeeAlso: AH=83h"PCMCIA"
+
+Values for PCMCIA error codes:
+ 01h	"BAD_ADAPTER" nonexistent adapter
+ 02h	"BAD_ATTRIBUTE" invalid attribute specified
+ 03h	"BAD_BASE" invalid system memory base address
+ 04h	"BAD_EDC" invalid EDC generator specified
+ 05h	"BAD_INDICATOR" invalid indicator specified
+ 06h	"BAD_IRQ" invalid IRQ channel specified
+ 07h	"BAD_OFFSET" invalid PCMCIA card offset specified
+ 08h	"BAD_PAGE" invalid page specified
+ 09h	"BAD_READ" unable to complete request
+ 0Ah	"BAD_SIZE" invalid window size specified
+ 0Bh	"BAD_SOCKET" nonexistent socket specified
+ 0Ch	"BAD_TECHNOLOGY" unsupported Card Technology for writes
+ 0Dh	"BAD_TYPE" unavailable window type specified
+ 0Eh	"BAD_VCC" invalid Vcc power level index specified
+ 0Fh	"BAD_VPP" invalid Vpp1 or Vpp2 power level index specified
+ 10h	"BAD_WAIT" invalid number of wait states specified
+ 11h	"BAD_WINDOW" nonexistent window specified
+ 12h	"BAD_WRITE" unable to complete request
+ 13h	"NO_ADAPTERS" no adapters installed, but Socket Services is present
+ 14h	"NO_CARD" no card in socket
 --------X-1A81-------------------------------
 INT 1A - PCMCIA Socket Services - REGISTER STATUS CHANGE CALLBACK
 	AH = 81h
-	???
-Return: ???
+	DS:DX -> callback routine (see below) or 0000h:0000h to disable
+Return: CF clear if successful
+	    AH destroyed
+	CF set on error
+	    AH = error code (see AH=80h"PCMCIA")
+Note:	the callback will be invoked on any socket changes whose notification
+	  has not been disabled with the status change enable mask; it may be
+	  invoked either while processing a hardware interrupt from the adapter
+	  or while processing the following Socket Services request
 SeeAlso: AH=80h"PCMCIA",AH=82h"PCMCIA"
+
+Callback routine invoked with:
+	AL = adapter number
+	BH = status change interrupt enable mask (see below)
+	BL = socket number
+	DH = current socket status (see below)
+	DL = current card status (see below)
+Return: all registers preserved
+Notes:	the callback may be invoked during a hardware interrupt, and may not
+	  call on Socket Services
+	the callback will be invoked once for each socket with a status change
+
+Bitfields for status change enable mask:
+ bits 0,1 reserved (0)
+ bit 2	ejection request
+ bit 3	insertion request
+ bit 4	battery dead change
+ bit 5	battery warning change
+ bit 6	ready change
+ bit 7	card detect change
+
+Bitfields for current socket status:
+ bit 0	reserved (0)
+ bit 1	card locked
+ bit 2	card ejection request pending
+ bit 3	card insertion request pending
+ bit 4	card ejection complete
+ bit 5	card insertion complete
+ bit 6	reserved (0)
+ bit 7	card changed
+
+Bitfields for current card status:
+ bit 0	write protected
+ bits 1-3 reserved (0)
+ bit 4	battery voltage detect 1 (battery dead)
+ bit 5	battery voltage detect 2 (battery warning)
+ bit 6	ready
+ bit 7	card detect
 --------s-1A8100-----------------------------
 INT 1A - Tandy 2500, Tandy 1000L series - DIGITAL SOUND - INSTALLATION CHECK
 	AX = 8100h
@@ -3756,9 +3830,74 @@ Return: AH > 80h if supported
 --------X-1A82-------------------------------
 INT 1A - PCMCIA Socket Services - REGISTER CARD TECHNOLOGY CALLBACK
 	AH = 82h
-	???
-Return: ???
-SeeAlso: AH=81h"PCMCIA"
+	DS:DX -> callback routine (see below) or 0000h:0000h
+Return: CF clear if successful
+	    AH destroyed
+	CF set on error
+	    AH = error code (see AH=80h"PCMCIA")
+Note:	the callback is invoked on a Write Multiple request with an unsupported
+	  card technology type
+SeeAlso: AH=81h"PCMCIA",AH=94h
+
+Callback routine invoked with:
+	ES:AX -> Low-Level Socket Services Routines (see below)
+	BH = socket attributes (see below)
+	CX = number of bytes or words to write
+	DS:SI -> data buffer to be written
+	DX:DI -> 26-bit linear card address
+	BP = card technology type
+Return: CF clear if successful
+	CF set on error
+	    AH = error code (07h,0Ch,12h,14h) (see AH=80h"PCMCIA")
+
+Bitfields for socket attributes:
+ bit 0	memory type (clear = common, set = attribute)
+ bit 1	data width (clear = byte, set = word)
+ bit 2	even bytes only (only valid if bit 1 set)
+ bit 3	packed buffer
+ bits 4-7 reserved (0)
+
+Format of Low-Level Socket Services Routines:
+Offset	Size	Description
+ 00h	WORD	offset of Write Many routine (see below)
+ 02h	WORD	offset of Write One routine (see below)
+ 04h	WORD	offset of Read One routine (see below)
+ 06h	WORD	offset of Increment Offset routine (see below)
+ 08h	WORD	offset of Set Offset routine (see below)
+ 0Ah	WORD	offset of Get Status routine (see below)
+
+Call Write Many routine with:
+	BH = socket attributes (see above)
+	CX = number of bytes or words to write
+	DS:SI -> data to be written
+Return: CF clear if successful
+	CF set on error
+
+Call Write One routine with:
+	AL/AX = data to be written
+	BH = socket attributes (see above)
+Return: CF clear if successful
+	CF set on error
+
+Call Read One routine with:
+	BH = socket attributes (see above)
+Return: CF clear if successful
+	    AL/AX = data read
+	CF set on error
+
+Call Increment Offset routine with:
+	BH = socket attributes (see above)
+Return: CF clear if successful
+	CF set on error
+
+Call Set Offset routine with:
+	DX:DI = new offset address
+Return: CF clear if successful
+	CF set on error
+
+Call Get Status routine with:
+	nothing
+Return: AL = current card status (see AH=81h"PCMCIA")
 --------s-1A83-------------------------------
 INT 1A - Tandy 2500, Tandy 1000L series - START PLAYING DIGITAL SOUND
 	AH = 83h
@@ -3777,8 +3916,16 @@ SeeAlso: AH=84h,INT 15/AH=91h
 --------X-1A83-------------------------------
 INT 1A - PCMCIA Socket Services - GET SOCKET SERVICES VERSION NUMBER
 	AH = 83h
-	???
-Return: ???
+	AL = adapter number
+Return: CF clear if successful
+	    AX = Socket Services version (BCD)
+	    BX = implementation version (BCD)
+	    CX = 5353h ("SS")
+	    DS:SI -> ASCIZ implementor description
+	CF set on error
+	    AH = error code (01h) (see AH=80h"PCMCIA")
+Note:	the current version (from the Revision A.00 documentation) of Socket
+	  Services is 1.00 (AX=0100h)
 SeeAlso: AH=80h"PCMCIA"
 --------s-1A84-------------------------------
 INT 1A - Tandy 2500, Tandy 1000L series - STOP PLAYING DIGITAL SOUND
@@ -3788,9 +3935,34 @@ SeeAlso: AH=83h,AH=85h
 --------X-1A84-------------------------------
 INT 1A - PCMCIA Socket Services - INQUIRE ADAPTER
 	AH = 84h
-	???
-Return: ???
+	AL = adapter number
+Return: CF clear if successful
+	    AH destroyed
+	    BH = number of windows
+	    BL = number of sockets (1-16)
+	    CX = number of EDCs
+	    DH = capabilities (see below)
+	    DL = status change interrupt used (only if DH bit 3 set)(see below)
+	CF set on error
+	    AH = error code (01h) (see AH=80h"PCMCIA")
 SeeAlso: AH=80h"PCMCIA",AH=85h"PCMCIA",AH=87h
+
+Bitfields for capabilities:
+ bit 0	indicators are per-adapter rather than per-socket
+ bit 1	power management is per-adapter rather than per-socket
+ bit 2	data bus width is per-socket rather than per-window
+ bit 3	status change interrupt
+ bit 4	status change interrupt is software shareable
+ bit 5	status change interrupt is hardware shareable
+ bits 6-7 reserved (0)
+
+Values for status change interrupt usage:
+ 00h-0Fh IRQ level
+ 10h	NMI
+ 11h	I/O check
+ 12h	bus error
+ 13h	vendor specific
+ 14h-FFh reserved
 --------s-1A85-------------------------------
 INT 1A - Tandy 2500, Tandy 1000L series - DIGITAL SOUND???
 	AH = 85h
@@ -3800,145 +3972,474 @@ SeeAlso: AH=7Fh,AH=83h
 --------X-1A85-------------------------------
 INT 1A - PCMCIA Socket Services - GET ADAPTER
 	AH = 85h
-	???
-Return: ???
+	AL = adapter number
+Return: CF clear if successful
+	    AH destroyed
+	    DH = adapter attributes (see below)
+	CF set on error
+	    AH = error code (01h) (see AH=80h"PCMCIA")
 SeeAlso: AH=84h"PCMCIA",AH=86h
+
+Bitfields for adapter attributes:
+ bit 0	attempting to reduce power consumption
+ bit 1	adapter preserves state information during reduced power consumption
+ bit 2	enable status change interrupts
+ bit 3	software share status change
+ bit 4	hardware share status change
+ bits 5-7 reserved (0)
 --------X-1A86-------------------------------
 INT 1A - PCMCIA Socket Services - SET ADAPTER
 	AH = 86h
-	???
-Return: ???
+	AL = adapter number
+	DH = new adapter attributes (see AH=85h"PCMCIA")
+Return: CF clear if successful
+	    AH destroyed
+	CF set on error
+	    AH = error code (01h) (see AH=80h"PCMCIA")
 SeeAlso: AH=84h"PCMCIA",AH=85h"PCMCIA"
 --------X-1A87-------------------------------
 INT 1A - PCMCIA Socket Services - INQUIRE WINDOW
 	AH = 87h
-	???
-Return: ???
+	AL = adapter number
+	BH = window number
+Return: CF clear if successful
+	    AH destroyed
+	    BL = capabilities (see below)
+	    CX = bitmap of assignable sockets
+	    DH = EISA A15-A12 address lines (in bits 7-4, bits 3-0 = 0)
+	    DL = supported access speeds (see below)
+	    DS:SI -> Memory Window Characteristics table (see below)
+	    DS:DI -> I/O Window Characteristics table (see below)
+	CF set on error
+	    AH = error code (01h,11h) (see AH=80h"PCMCIA")
 SeeAlso: AH=84h"PCMCIA",AH=88h,AH=89h,AH=8Ch
+
+Bitfields for window capabilities:
+ bit 0	common memory
+ bit 1	attribute memory
+ bit 2	I/O space
+ bit 3	EISA I/O mappable
+ bit 4	separate enable for EISA comon space
+ bits 5-7 reserved (0)
+
+Values for supported access speeds:
+ bit 0	WAIT line monitoring
+ bit 1	100 ns
+ bit 2	150 ns
+ bit 3	200 ns
+ bit 4	250 ns
+ bit 5	300 ns
+ bit 6	600 ns
+ bit 7	reserved (0)
+
+Format of Memory Window Characteristics table:
+Offset	Size	Description
+ 00h	WORD	window capabilities (see below)
+ 02h	WORD	minimum base address in 4K pages
+ 04h	WORD	maximum base address in 4K pages
+ 06h	WORD	minimum window size in 4K pages
+ 08h	WORD	maximum window size in 4K pages
+ 0Ah	WORD	window size granularity (4K units)
+ 0Ch	WORD	required base address alignment (4K units)
+ 0Eh	WORD	required card offset alignment (4K units)
+
+Format of I/O Window Characteristics table:
+Offset	Size	Description
+ 00h	WORD	window capabilities (see below)
+ 02h	WORD	minimum base address in bytes
+ 04h	WORD	maximum base address in bytes
+ 06h	WORD	minimum window size in bytes
+ 08h	WORD	maximum window size in bytes
+ 0Ah	WORD	window size granularity (bytes)
+
+Bitfields for window capabilities:
+ bit 0	programmable base address
+ bit 1	programmable window size
+ bit 2	window disable/enable supported
+ bit 3	8-bit data bus
+ bit 4	16-bit data bus
+ bit 5	base address alignment on size boundary required
+ bit 6	power-of-two size granularity
+---memory windows---
+ bit 7	card offset must be aligned on size boundary
+ bit 8	paging hardware available
+ bit 9	paging hardware shared
+ bit 10	page disable/enable supported
+ bits 11-15 reserved (0)
+---I/O windows---
+ bits 7-15 reserved (0)
 --------X-1A88-------------------------------
 INT 1A - PCMCIA Socket Services - GET WINDOW
 	AH = 88h
-	???
-Return: ???
+	AL = adapter number
+	BH = window number
+Return: CF clear if successful
+	    AH destroyed
+	    BL = socket number (0-16) (0 = not assigned)
+	    CX = window size (bytes for I/O window, 4K units for memory window)
+	    DH = window attributes (see below)
+	    DL = access speed (only one bit set) (see AH=87h)
+	    SI = window base address (bytes if I/O, 4K units if memory)
+	    DI = card offset address (memory only, 4K units)
+	CF set on error
+	    AH = error code (01h,11h) (see AH=80h"PCMCIA")
 SeeAlso: AH=87h,AH=89h,AH=8Ah
+
+Bitfields for window attributes:
+ bit 0	memory-mapped rather than I/O-mapped
+ bit 1	attribute memory rather than common (memory-mapped)
+	EISA mapped (I/O)
+ bit 2	enabled
+ bit 3	16-bit data path
+ bit 4	subdivided into pages (memory-mapped only)
+ bit 5	non-specific access slot enable (EISA-mapped only)
+ bits 6-7 reserved (0)
 --------X-1A89-------------------------------
 INT 1A - PCMCIA Socket Services - SET WINDOW
 	AH = 89h
-	???
-Return: ???
+	AL = adapter number
+	BH = window number
+	BL = socket number
+	CX = window size (bytes if I/O window, 4K units if memory window)
+	DH = window attributes (see AH=88h)
+	DL = access speed (only one bit set) (see AH=87h)
+	SI = window base address (bytes if I/O, 4K units if memory window)
+	DI = card offset addrress (memory only, 4K units)
+Return: CF clear if successful
+	    AH destroyed
+	CF set on error
+	    AH = error code (01h,03h,07h,08h,0Ah,0Bh,0Dh,10h,11h)
+		(see AH=80h"PCMCIA")
 SeeAlso: AH=87h,AH=88h,AH=8Bh
 --------X-1A8A-------------------------------
 INT 1A - PCMCIA Socket Services - GET PAGE
 	AH = 8Ah
-	???
-Return: ???
+	AL = adapter number
+	BH = window number
+	BL = page number
+Return: CF clear if successful
+	    AH destroyed
+	    DX = page attributes
+		bit 0: page enabled
+		bits 15-1 reserved (0)
+	    DI = memory card offset (4K units)
+	CF set on error
+	    AH = error code (01h,08h,11h) (see AH=80h"PCMCIA")
+Notes:	this function is only valid for memory-mapped windows
+	the socket being operated on is implied by the previous AH=89h call
 SeeAlso: AH=88h,AH=8Bh
 --------X-1A8B-------------------------------
 INT 1A - PCMCIA Socket Services - SET PAGE
 	AH = 8Bh
-	???
-Return: ???
+	AL = adapter number
+	BH = window number
+	BL = page number
+	DX = page attributes
+	    bit 0: page enabled
+	    bits 15-1 reserved (0)
+	DI = memory card offset (4K units)
+Return: CF clear if successful
+	    AH destroyed
+	CF set on error
+	    AH = error code (01h,02h,07h,08h,11h) (see AH=80h"PCMCIA")
+Notes:	this function is only valid for memory-mapped windows
+	the socket being operated on is implied by the previous AH=89h call
 SeeAlso: AH=89h,AH=8Ah
 --------X-1A8C-------------------------------
 INT 1A - PCMCIA Socket Services - INQUIRE SOCKET
 	AH = 8Ch
-	???
-Return: ???
+	AL = adapter number
+	BL = socket number (01h to maximum supported by adapter)
+Return: CF clear if successful
+	    AH destroyed
+	    DH = capabilities (see below)
+	    DL = hardware indicators (see below)
+	    DS:SI -> Socket Characteristics table (see below)
+	    DS:DI -> Power Management table (see below)
+	CF set on error
+	    AH = error code (01h,0Bh) (see AH=80h"PCMCIA")
 SeeAlso: AH=87h,AH=8Dh,AH=8Eh
+
+Bitfields for socket capabilities:
+ bit 0	card change
+ bit 1	card lock
+ bit 2	insert card (motor control)
+ bit 3	eject card (motor control)
+ bits 4-7 reserved (0)
+
+Bitfields for socket hardware indicators:
+ bit 0	busy status
+ bit 1	write-protected
+ bit 2	battery status
+ bit 3	card lock status
+ bit 4	XIP status (eXecute-In-Place)
+ bits 5-7 reserved (0)
+
+Format of Socket Characteristics table:
+Offset	Size	Description
+ 00h	WORD	supported card types
+		bit 0: memory card
+		bit 1: I/O card
+		bits 2-7 reserved (0)
+ 02h	WORD	steerable IRQ levels (bit 0 = IRQ0 to bit 15 = IRQ15)
+ 04h	WORD	additional steerable IRQ levels
+		bit 0: NMI
+		bit 1: I/O check
+		bit 2: bus error
+		bit 3: vendor-unique
+		bits 4-7 reserved (0)
+
+Format of Power Management table:
+Offset	Size	Description
+ 00h	WORD	number of entries in table (0 if power management not avail)
+ 02h 2N BYTEs	power levels
+		byte 0: voltage in 0.1V units
+		byte 1: power supply
+			bit 7: Vcc
+			bit 6: Vpp1
+			bit 5: Vpp2
 --------X-1A8D-------------------------------
 INT 1A - PCMCIA Socket Services - GET SOCKET
 	AH = 8Dh
-	???
-Return: ???
+	AL = adapter number
+	BL = socket number (01h to maximum supported by adapter)
+Return: CF clear if successful
+	    AH destroyed
+	    BH = status change interrupt enable mask (see AH=81h"PCMCIA")
+	    CH = Vcc level (lower nybble)
+	    CL = Vpp1 level (upper nybble) and Vpp2 level (lower nybble)
+	    DH = current socket status (see AH=81h"PCMCIA")
+	    DL = indicators (see AH=8Ch)
+	    SI = card type (see below)
+	    DI = IRQ level steering (I/O only) (see below)
+	CF set on error
+	    AH = error code (01h,0Bh) (see AH=80h"PCMCIA")
 SeeAlso: AH=8Ch,AH=8Eh
+
+Bitfields for card type:
+ bit 0	memory
+ bit 1	I/O
+ bits 2-15 reserved (0)
+
+Bitfields for I/O level steering:
+ bits 0-4	IRQ level (0-15=IRQ,16=NMI,17=I/O check,18=bus error,19=vendor)
+ bits 5-14	reserved (0)
+ bit 15		interrupt steering enabled
 --------X-1A8E-------------------------------
 INT 1A - PCMCIA Socket Services - SET SOCKET
 	AH = 8Eh
-	???
-Return: ???
+	AL = adapter number
+	BL = socket number (01h to maximum supported by adapter)
+	BH = status change interrupt enable mask (see AH=81h"PCMCIA")
+	CL = Vpp1 level (upper nybble) and Vpp2 level (lower nybble)
+	DH = current socket status (see AH=81h"PCMCIA")
+	DL = indicators (see AH=8Ch)
+	SI = card type (see AH=8Dh)
+	DI = IRQ level steering (I/O only) (see AH=8Dh)
+Return: CF clear if successful
+	    AH destroyed
+	CF set on error
+	    AH = error code (01h,02h,05h,06h,0Bh,0Eh,0Fh) (see AH=80h"PCMCIA")
 SeeAlso: AH=8Ch,AH=8Dh
 --------X-1A8F-------------------------------
 INT 1A - PCMCIA Socket Services - GET CARD
 	AH = 8Fh
-	???
-Return: ???
+	AL = adapter number
+	BL = socket number (01h to maximum supported by adapter)
+Return: CF clear if successful
+	    AH destroyed
+	    DL = current card status (see AH=81h"PCMCIA")
+	CF set on error
+	    AH = error code (01h,0Bh) (see AH=80h"PCMCIA")
 SeeAlso: AH=8Dh,AH=90h
 --------X-1A90-------------------------------
 INT 1A - PCMCIA Socket Services - RESET CARD
 	AH = 90h
-	???
-Return: ???
+	AL = adapter number
+	BL = socket number (01h to maximum supported by adapter)
+Return: CF clear if successful
+	    AH destroyed
+	CF set on error
+	    AH = error code (01h,0Bh,14h) (see AH=80h"PCMCIA")
+Note:	toggles RESET pin of the specified card, but does not wait after
+	  toggling the pin; it is the caller's responsibility to avoid
+	  accessing the card before it is ready again
 --------X-1A91-------------------------------
 INT 1A - PCMCIA Socket Services - READ ONE
 	AH = 91h
-	???
-Return: ???
+	AL = adapter number
+	BL = socket number (01h to maximum supported by adapter)
+	BH = attributes (see below)
+	DX:SI = card address
+Return: CF clear if successful
+	    AH destroyed
+	    CL/CX = value read
+	CF set on error
+	    AH = error code (01h,07h,09h,0Bh,14h) (see AH=80h"PCMCIA")
+	    CX may be destroyed
+Note:	this function is only valid for I/O-mapped sockets
 SeeAlso: AH=92h,AH=93h,INT 21/AX=440Dh"IOCTL"
+
+Bitfields for attributes:
+ bit 0	attribute memory instead of common memory
+ bit 1	word rather than byte
+ bit 2	even bytes only
 --------X-1A92-------------------------------
 INT 1A - PCMCIA Socket Services - WRITE ONE
 	AH = 92h
-	???
-Return: ???
+	AL = adapter number
+	BL = socket number (01h to maximum supported by adapter)
+	BH = attributes (see AH=91h)
+	CL/CX = value to write
+	DX:SI = card address
+Return: CF clear if successful
+	    AH destroyed
+	CF set on error
+	    AH = error code (01h,07h,0Bh,12h,14h) (see AH=80h"PCMCIA")
+Note:	this function is only valid for I/O-mapped sockets; it also does not
+	  implement Card Technology handling--use AH=94h when writing to
+	  non-RAM technologies
 SeeAlso: AH=91h,AH=94h,INT 21/AX=440Dh"IOCTL"
 --------X-1A93-------------------------------
 INT 1A - PCMCIA Socket Services - READ MULTIPLE
 	AH = 93h
-	???
-Return: ???
+	AL = adapter number
+	BL = socket number (01h to maximum supported by adapter)
+	BH = attributes (see AH=91h)
+	CX = number of bytes or words to read
+	DX:SI = card address
+	DS:DI -> data buffer to be filled
+Return: CF clear if successful
+	    AH destroyed
+	CF set on error
+	    AH = error code (01h,07h,09h,0Bh,14h) (see AH=80h"PCMCIA")
+Note:	this function is only available on I/O-mapped sockets
 SeeAlso: AH=91h,AH=94h,INT 21/AX=440Dh"IOCTL"
 --------X-1A94-------------------------------
 INT 1A - PCMCIA Socket Services - WRITE MULTIPLE
 	AH = 94h
-	???
-Return: ???
-SeeAlso: AH=92h,AH=93h,INT 21/AX=440Dh"IOCTL"
+	AL = adapter number
+	BL = socket number (01h to maximum supported by adapter)
+	BH = attributes (see AH=91h)
+	CX = number of bytes or words to read
+	DX:DI = card address
+	DS:SI -> buffer containing data
+	BP = Card Technology type (0000h = RAM)
+Return: CF clear if successful
+	    AH destroyed
+	CF set on error
+	    AH = error code (01h,07h,0Bh,0Ch,12h,14h) (see AH=80h"PCMCIA")
+Notes:	this function is only available on I/O-mapped sockets
+	Socket Services calls the Card Technology callback (see AH=82h"PCMCIA")
+	  for any card technology it does not directly support
+SeeAlso: AH=82h"PCMCIA",AH=92h,AH=93h,INT 21/AX=440Dh"IOCTL"
 --------X-1A95-------------------------------
 INT 1A - PCMCIA Socket Services - INQUIRE ERROR DETECTION CODE
 	AH = 95h
-	???
-Return: ???
+	AL = adapter number
+	BH = EDC generator number
+Return: CF clear if successful
+	    AH destroyed
+	    CX = bitmap of assignable sockets
+	    DH = EDC capabilities (see below)
+	    DL = supported EDC types (see below)
+	CF set on error
+	    AH = error code (01h,04h) (see AH=80h"PCMCIA")
 SeeAlso: AH=96h,AH=9Ch
+
+Bitfields for EDC capabilities:
+ bit 0	unidirectional only generation
+ bit 1	bidirectional only generation
+ bit 2	register-based (I/O-mapped) support
+ bit 3	memory-mapped support
+ bit 4	pausable
+ bits 5-7 reserved (0)
+
+Bitfields for supported EDC types:
+ bit 0	8-bit checksum
+ bit 1	16-bit CRC-SDLC
+ bits 2-7 reserved (0)
 --------X-1A96-------------------------------
 INT 1A - PCMCIA Socket Services - GET ERROR DETECTION CODE
 	AH = 96h
-	???
-Return: ???
+	AL = adapter number
+	BH = EDC generator number
+Return: CF clear if successful
+	    AH destroyed
+	    BL = socket number
+	    DH = EDC attributes (see below)
+	    DL = EDC type (see AH=95h) (only one bit set)
+	CF set on error
+	    AH = error code (01h,04h) (see AH=80h"PCMCIA")
 SeeAlso: AH=95h,AH=97h,AH=9Ch
+
+Bitfields for EDC attributes:
+ bit 0	unidirectional only
+ bit 1	(if bit 0 set) clear=read, set=write
+ bits 2-7 reserved (0)
 --------X-1A97-------------------------------
 INT 1A - PCMCIA Socket Services - SET ERROR DETECTION CODE
 	AH = 97h
-	???
-Return: ???
+	AL = adapter number
+	BH = EDC generator
+	BL = socket number
+	DH = EDC attributes (see AH=96h)
+	DL = EDC type (see AH=95h) (only one bit may be set)
+Return: CF clear if successful
+	    AH destroyed
+	CF set on error
+	    AH = error code (01h,02h,04h,0Bh) (see AH=80h"PCMCIA")
 SeeAlso: AH=96h,AH=9Ch
 --------X-1A98-------------------------------
 INT 1A - PCMCIA Socket Services - START ERROR DETECTION CODE
 	AH = 98h
-	???
-Return: ???
+	AL = adapter number
+	BH = EDC generator
+Return: CF clear if successful
+	    AH destroyed
+	CF set on error
+	    AH = error code (01h,04h) (see AH=80h"PCMCIA")
 SeeAlso: AH=96h,AH=99h,AH=9Bh,AH=9Ch
 --------X-1A99-------------------------------
 INT 1A - PCMCIA Socket Services - PAUSE ERROR DETECTION CODE
 	AH = 99h
-	???
-Return: ???
+	AL = adapter number
+	BH = EDC generator
+Return: CF clear if successful
+	    AH destroyed
+	CF set on error
+	    AH = error code (01h,04h) (see AH=80h"PCMCIA")
 SeeAlso: AH=9Ah
 --------X-1A9A-------------------------------
 INT 1A - PCMCIA Socket Services - RESUME ERROR DETECTION CODE
 	AH = 9Ah
-	???
-Return: ???
+	AL = adapter number
+	BH = EDC generator
+Return: CF clear if successful
+	    AH destroyed
+	CF set on error
+	    AH = error code (01h,04h) (see AH=80h"PCMCIA")
 SeeAlso: AH=99h,AH=98h
 --------X-1A9B-------------------------------
 INT 1A - PCMCIA Socket Services - STOP ERROR DETECTION CODE
 	AH = 9Bh
-	???
-Return: ???
+	AL = adapter number
+	BH = EDC generator
+Return: CF clear if successful
+	    AH destroyed
+	CF set on error
+	    AH = error code (see AH=80h"PCMCIA")
 SeeAlso: AH=98h,AH=99h,AH=9Ch
 --------X-1A9C-------------------------------
 INT 1A - PCMCIA Socket Services - READ ERROR DETECTION CODE
 	AH = 9Ch
-	???
-Return: ???
+	AL = adapter number
+	BH = EDC generator
+Return: CF clear if successful
+	    AH destroyed
+	    DL/DX = computed checksum or CRC
+	CF set on error
+	    AH = error code (01h,04h) (see AH=80h"PCMCIA")
 SeeAlso: AH=95h,AH=96h,AH=98h,AH=99h,AH=9Bh
 --------c-1AA0-------------------------------
 INT 1A U - Disk Spool II v2.07+ - INSTALLATION CHECK
@@ -5365,7 +5866,7 @@ Return: AL = status
 		to next full record
 	    FFh failed (no matching file found)
 Notes:	not supported by MS Windows 3.0 DOSX.EXE DOS extender
-	MS-DOS returns nonsense is the FCB record number field is set to a very
+	MS-DOS returns nonsense if the FCB record number field is set to a very
 	  large positive number, and status FFh if negative; DR-DOS returns the
 	  correct file size in both cases
 SeeAlso: AH=42h
@@ -5410,7 +5911,7 @@ Notes:	Phar Lap uses INT 21/AH=25h as the entry point for all 386/DOS-Extender
 	this function is also supported by FlashTek X-32VM
 SeeAlso: AH=30h"Phar Lap"
 --------E-212502-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - GET PROTECTED-MODE INTERRUPT VECTOR
+INT 21 P - Phar Lap 386/DOS-Extender - GET PROTECTED-MODE INTERRUPT VECTOR
 	AX = 2502h
 	CL = interrupt number
 Return: CF clear
@@ -5418,7 +5919,7 @@ Return: CF clear
 Note:	this function is also supported by FlashTek X-32VM
 SeeAlso: AX=2503h,AX=2504h,INT 31/AX=0204h
 --------E-212503-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - GET REAL-MODE INTERRUPT VECTOR
+INT 21 P - Phar Lap 386/DOS-Extender - GET REAL-MODE INTERRUPT VECTOR
 	AX = 2503h
 	CL = interrupt number
 Return: CF clear
@@ -5426,7 +5927,7 @@ Return: CF clear
 Note:	this function is also supported by FlashTek X-32VM
 SeeAlso: AX=2502h,AX=2504h,AH=35h,INT 31/AX=0200h
 --------E-212504-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - SET PROTECTED-MODE INTERRUPT VECTOR
+INT 21 P - Phar Lap 386/DOS-Extender - SET PROTECTED-MODE INTERRUPT VECTOR
 	AX = 2504h
 	CL = interrupt number
 	DS:EDX = CS:EIP of protected-mode interrupt handler
@@ -5434,7 +5935,7 @@ Return: CF clear
 Note:	this function is also supported by FlashTek X-32VM
 SeeAlso: AX=2502h,AX=2505h,INT 31/AX=0205h
 --------E-212505-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - SET REAL-MODE INTERRUPT VECTOR
+INT 21 P - Phar Lap 386/DOS-Extender - SET REAL-MODE INTERRUPT VECTOR
 	AX = 2505h
 	CL = interrupt number
 	EBX = CS:IP of real-mode interrupt handler
@@ -5442,7 +5943,7 @@ Return: CF clear
 Note:	this function is also supported by FlashTek X-32VM
 SeeAlso: AX=2503h,AX=2504h,INT 31/AX=0201h
 --------E-212506-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - SET INT TO ALWAYS GAIN CONTRL IN PROT MODE
+INT 21 P - Phar Lap 386/DOS-Extender - SET INT TO ALWAYS GAIN CNTRL IN PR. MODE
 	AX = 2506h
 	CL = interrupt number
 	DS:EDX = CS:EIP of protected-mode interrupt handler
@@ -5452,7 +5953,7 @@ Notes:	this function modifies both the real-mode low-memory interrupt
 	interrupts occurring in real mode are resignaled in protected mode
 	this function is also supported by FlashTek X-32VM
 --------E-212507-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - SET REAL- & PROTECTED-MODE INT VECTORS
+INT 21 P - Phar Lap 386/DOS-Extender - SET REAL- & PROTECTED-MODE INT VECTORS
 	AX = 2507h
 	CL = interrupt numbern
 	DS:EDX = CS:EIP of protected-mode interrupt handler
@@ -5462,7 +5963,7 @@ Notes:	interrupts are disabled until both vectors have been modified
 	this function is also supported by FlashTek X-32VM
 SeeAlso: AX=2504h,AX=2505h
 --------E-212508-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - GET SEGMENT LINEAR BASE ADDRESS
+INT 21 P - Phar Lap 386/DOS-Extender - GET SEGMENT LINEAR BASE ADDRESS
 	AX = 2508h
 	BX = segment selector
 Return: CF clear if successful
@@ -5471,7 +5972,7 @@ Return: CF clear if successful
 Note:	this function is also supported by FlashTek X-32VM
 SeeAlso: AX=2509h
 --------E-212509-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - CONVERT LINEAR TO PHYSICAL ADDRESS
+INT 21 P - Phar Lap 386/DOS-Extender - CONVERT LINEAR TO PHYSICAL ADDRESS
 	AX = 2509h
 	EBX = linear address to convert
 Return: CF clear if successful
@@ -5479,7 +5980,7 @@ Return: CF clear if successful
 	CF set if linear address not mapped in page tables
 SeeAlso: AX=2508h
 --------E-212509-----------------------------
-INT 21 - FlashTek X-32VM - GET SYSTEM SEGMENTS AND SELECTORS
+INT 21 P - FlashTek X-32VM - GET SYSTEM SEGMENTS AND SELECTORS
 	AX = 2509h
 Return: CF clear
 	EAX high word = default DS
@@ -5490,7 +5991,7 @@ Return: CF clear
 	ESI high word = PSP selector
 	SI = environment selector
 --------E-21250A-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - MAP PHYSICAL MEMORY AT END OF SEGMENT
+INT 21 P - Phar Lap 386/DOS-Extender - MAP PHYSICAL MEMORY AT END OF SEGMENT
 	AX = 250Ah
 	ES = segment selector in the Local Descriptor Table (LDT) of segment
 	     to modify
@@ -5504,7 +6005,7 @@ Return: CF clear if successful
 		09h invalid segment selector
 SeeAlso: INT 31/AX=0800h
 --------E-21250C-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - GET HARDWARE INTERRUPT VECTORS
+INT 21 P - Phar Lap 386/DOS-Extender - GET HARDWARE INTERRUPT VECTORS
 	AX = 250Ch
 Return: CF clear
 	AL = base interrupt vector for IRQ0-IRQ7
@@ -5513,7 +6014,7 @@ Return: CF clear
 Note:	this function is also supported by FlashTek X-32VM
 SeeAlso: INT 31/AX=0400h,INT 67/AX=DE0Ah
 --------E-21250D-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - GET REAL-MODE LINK INFORMATION
+INT 21 P - Phar Lap 386/DOS-Extender - GET REAL-MODE LINK INFORMATION
 	AX = 250Dh
 Return: CF clear
 	EAX = CS:IP of real-mode callback procedure that will call through
@@ -5540,7 +6041,7 @@ Offset	Size	Description
  04h	WORD	protected-mode ES selector
  06h	WORD	protected-mode DS selector
 --------E-21250E-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - CALL REAL-MODE PROCEDURE
+INT 21 P - Phar Lap 386/DOS-Extender - CALL REAL-MODE PROCEDURE
 	AX = 250Eh
 	EBX = CS:IP of real-mode procedure to call
 	ECX = number of two-byte words to copy from protected-mode stack
@@ -5557,17 +6058,18 @@ Note:	this function is also supported by FlashTek X-32VM; under X-32VM, the
 	  call will fail if ECX > 0000003Fh
 SeeAlso: AX=250Dh,AX=2510h,AH=E1h"OS/286",INT 31/AX=0301h
 --------E-21250F-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - CONVERT PROTECTED-MODE ADDRESS TO MS-DOS
+INT 21 P - Phar Lap 386/DOS-Extender - CONVERT PROTECTED-MODE ADDRESS TO MS-DOS
 	AX = 250Fh
 	ES:EBX = 48-bit protected-mode address to convert
-Return: CF clear if successful (address < 1MB)
+	ECX = 00000000h or length of data in bytes
+Return: CF clear if successful (address < 1MB and contiguous)
 	    ECX = 32-bit real-mode MS-DOS address
-	CF set on error (address >= 1MB)
+	CF set on error (address >= 1MB or not contiguous)
 	    ECX = linear address
 Note:	this function is also supported by FlashTek X-32VM
 SeeAlso: AX=2510h
 --------E-212510-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - CALL REAL-MODE PROCEDURE, REGISTERS
+INT 21 P - Phar Lap 386/DOS-Extender - CALL REAL-MODE PROCEDURE, REGISTERS
 	AX = 2510h
 	EBX = CS:IP of real-mode procedure to call
 	ECX = number of two-byte words to copy to protected-mode stack to
@@ -5597,7 +6099,7 @@ Offset	Size	Description
  10h	DWORD	real-mode ECX value
  14h	DWORD	real-mode EDX value
 --------E-212511-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - ISSUE REAL-MODE INTERRUPT
+INT 21 P - Phar Lap 386/DOS-Extender - ISSUE REAL-MODE INTERRUPT
 	AX = 2511h
 	DS:EDX -> parameter block (see below)
 Return: all segment registers unchanged
@@ -5619,9 +6121,9 @@ Offset	Size	Description
  0Eh	DWORD	real-mode EDX value
 Note: all other real-mode values set from protected-mode registers
 --------E-212512-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - LOAD PROGRAM FOR DEBUGGING
+INT 21 P - Phar Lap 386/DOS-Extender - LOAD PROGRAM FOR DEBUGGING
 	AX = 2512h
-	DS:EDX -> pointer to ASCIIZ program name
+	DS:EDX -> pointer to ASCIZ program name
 	ES:EBX -> pointer to parameter block (see below)
 	ECX = size in bytes of LDT buffer
 Return: CF clear if successful
@@ -5634,6 +6136,7 @@ Return: CF clear if successful
 		0Ah environment invalid
 		0Bh invalid file format
 		80h LDT too small
+SeeAlso: AX=2517h
 
 Format of parameter block:
 Offset	Size	Description
@@ -5658,7 +6161,7 @@ Output:
  26h	WORD	initial FS value
  28h	WORD	initial GS value
 --------E-212513-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - ALIAS SEGMENT DESCRIPTOR
+INT 21 P - Phar Lap 386/DOS-Extender - ALIAS SEGMENT DESCRIPTOR
 	AX = 2513h
 	BX = segment selector of descriptor in GDT or LDT
 	CL = access-rights byte for alias descriptor
@@ -5670,7 +6173,7 @@ Return: CF clear if successful
 		08h insufficient memory (can't grow LDT)
 		09h invalid segment selector in BX
 --------E-212514-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - CHANGE SEGMENT ATTRIBUTES
+INT 21 P - Phar Lap 386/DOS-Extender - CHANGE SEGMENT ATTRIBUTES
 	AX = 2514h
 	BX = segment selector of descriptor in GDT or LDT
 	CL = new access-rights byte
@@ -5681,7 +6184,7 @@ Return: CF clear if successful
 		09h invalid selector in BX
 SeeAlso: AX=2515h,INT 31/AX=0009h
 --------E-212515-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - GET SEGMENT ATTRIBUTES
+INT 21 P - Phar Lap 386/DOS-Extender - GET SEGMENT ATTRIBUTES
 	AX = 2515h
 	BX = segment selector of descriptor in GDT or LDT
 Return: CF clear if successful
@@ -5693,22 +6196,27 @@ Return: CF clear if successful
 		09h invalid segment selector in BX
 SeeAlso: AX=2514h
 --------E-212516-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - FREE ALL MEMORY OWNED BY LDT
+INT 21 P - Phar Lap 386/DOS-Extender v2.2+ - FREE ALL MEMORY OWNED BY LDT
 	AX = 2516h
-	???
-Return: ???
+Return: CF clear
+Note:	this function must be called from Ring 0 or the CS descriptor is freed
 --------E-212517-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - GET INFO ON DOS DATA BUFFER
+INT 21 P - Phar Lap 386/DOS-Extender v2.1c+ - GET INFO ON DOS DATA BUFFER
 	AX = 2517h
-	???
-Return: ???
+Return: CF clear
+	ES:EBX -> data buffer (protected mode address)
+	ECX -> data buffer (real mode address)
+	EDX = size of data buffer in bytes
+Note:	the data buffer's address changes after calls to AX=2512h and AX=252Ah
+SeeAlso: AX=2512h,AX=252Ah,AX=2530h
 --------E-212518-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - SPECIFY HANDLER FOR MOVED SEGMENTS
+INT 21 P - Phar Lap 386/DOS-Extender 2.1c+ - SPECIFY HANDLER FOR MOVED SEGMENTS
 	AX = 2518h
-	???
-Return: ???
+	ES:EBX -> function to call when a segment is moved
+Return: CF clear
+	ES:EBX -> previous handler
 --------E-212519-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender VMM - GET ADDITIONAL MEMORY ERROR INFO
+INT 21 P - Phar Lap 386/DOS-Extender VMM - GET ADDITIONAL MEMORY ERROR INFO
 	AX = 2519h
 Return: CF clear
 	EAX = error code
@@ -5720,7 +6228,7 @@ Return: CF clear
 	    FFFFFFFFh	paging disabled
 Note:	VMM is the Virtual Memory Manager option
 --------E-21251A-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender VMM - LOCK PAGES IN MEMORY
+INT 21 P - Phar Lap 386/DOS-Extender VMM - LOCK PAGES IN MEMORY
 	AX = 251Ah
 	EDX = number of 4k pages to lock
 	if BL = 00h
@@ -5734,7 +6242,7 @@ Return: CF clear if successful
 		09h invalid address range
 SeeAlso: AX=251Bh,AX=EB06h,INT 31/AX=0600h
 --------E-21251B-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender VMM - UNLOCK PAGES
+INT 21 P - Phar Lap 386/DOS-Extender VMM - UNLOCK PAGES
 	AX = 251Bh
 	EDX = number of pages to unlock
 	if BL = 00h
@@ -5746,26 +6254,71 @@ Return: CF clear if successful
 	    EAX = error code
 		09h invalid address range
 SeeAlso: AX=251Ah,AX=EB07h,INT 31/AX=0601h
+--------E-21251C-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM v2.1c+ - FREE PHYSICAL MEMORY PAGES
+	AX = 251Ch
+	BH = preservation flag (00h preserve contents, 01h discard contents)
+	EDX = number of pages to free
+	BL = address type
+	    00h linear address
+		ECX = linear address of first page to be freed
+	    01h pointer
+		ES:ECX -> first page to be freed
+Return: CF clear if successful
+	CF set on error
+	    EAX = error code
+		08h memory error, swap space full, no VMM or DPMI
+		09h invalid address
 --------E-21251D-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender VMM - READ PAGE-TABLE ENTRY
+INT 21 OP - Phar Lap 386/DOS-Extender VMM v2.1c - READ PAGE-TABLE ENTRY
 	AX = 251Dh
-	???
-Return: ???
-SeeAlso: AX=251Eh,AX=EB00h,INT 31/AX=0506h
+	BL = address type
+	    00h linear address
+		ECX = linear address of page table entry to read
+	    01h pointer
+		ES:ECX -> page table entry to read
+Return: CF clear if successful
+	    EAX = contents of page table entry
+	CF set on error
+	    EAX = error code
+		09h invalid address or NOPAGE option set
+		78h invalid under DPMI
+Note:	this function is obsolete; use AX=252Bh/BH=09h instead
+SeeAlso: AX=251Eh,AX=252Bh/BH=09h,AX=EB00h,INT 31/AX=0506h
 --------E-21251E-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender VMM - WRITE PAGE-TABLE ENTRY
+INT 21 OP - Phar Lap 386/DOS-Extender VMM v2.1c - WRITE PAGE-TABLE ENTRY
 	AX = 251Eh
-	???
-Return: ???
-SeeAlso: AX=251Dh,INT 31/AX=0507h
+	BL = address type
+	    00h linear address
+		ECX = linear address of page table entry to read
+	    01h pointer
+		ES:ECX -> page table entry to read
+	EDX = new value for page table entry
+Return: CF clear if successful
+	CF set on error
+	    EAX = error code
+		09h invalid address or NOPAGE option set
+		82h not compatible with DPMI
+Note:	this call is obsolete; use AX=252Bh/BH=0Ah instead
+SeeAlso: AX=251Dh,AX=252Bh/BH=0Ah,INT 31/AX=0507h
 --------E-21251F-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender VMM - EXHANGE TWO PAGE-TABLE ENTRIES
+INT 21 P - Phar Lap 386/DOS-Extender VMM - EXHANGE TWO PAGE-TABLE ENTRIES
 	AX = 251Fh
-	???
-Return: ???
+	BL = address type
+	    00h linear address
+		ECX = linear address of first page table entry
+		EDX = linear address of second page table entry
+	    01h pointer
+		ES:ECX -> first page table entry
+		ES:EDX -> second page table entry
+Return: CF clear if successful
+	CF set on error
+	    EAX = error code
+		09h invalid address or NOPAGE option set
+		82h not compatible with DPMI
 SeeAlso: AX=251Dh,AX=251Eh
 --------E-212520-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender VMM - GET MEMORY STATISTICS
+INT 21 P - Phar Lap 386/DOS-Extender VMM - GET MEMORY STATISTICS
 	AX = 2520h
 	DS:EDX -> pointer to buffer at least 100 bytes in size (see below)
 	BL = 0 (don't reset VM stats), 1 (reset VM stats)
@@ -5802,7 +6355,7 @@ Offset	Size	Description
 		swap space)
  60h  4 BYTEs	???
 --------E-212521-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender VMM - LIMIT PROGRAM'S EXTENDED MEMORY USAGE
+INT 21 P - Phar Lap 386/DOS-Extender VMM - LIMIT PROGRAM'S EXTENDED MEM USAGE
 	AX = 2521h
 	EBX = max 4k pages of physical extended memory which program may use
 Return: CF clear if successful
@@ -5813,24 +6366,25 @@ Return: CF clear if successful
 		08h insufficient memory or -nopage switch used
 SeeAlso: AX=2522h
 --------E-212522-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender VMM - SPECIFY ALTERNATE PAGE-FAULT HANDLER
+INT 21 P - Phar Lap 386/DOS-Ext VMM v2.2+ - SPECIFY ALTERNATE PAGE-FAULT HANDLR
 	AX = 2522h
-	???
-Return: ???
+	ES:EBX -> alternate handler for page faults
+Return: CF clear
+	ES:EBX -> previous page-fault handler
 SeeAlso: AX=2523h
 --------E-212523-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender VMM - SPECIFY OUT-OF-SWAP-SPACE HANDLER
+INT 21 P - Phar Lap 386/DOS-Ext VMM v2.2+ - SPECIFY OUT-OF-SWAP-SPACE HANDLER
 	AX = 2523h
 	???
 Return: ???
 SeeAlso: AX=2522h
 --------E-212524-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender VMM - INSTALL PAGE-REPLACEMENT HANDLERS
+INT 21 P - Phar Lap 386/DOS-Ext VMM v2.2+ - INSTALL PAGE-REPLACEMENT HANDLERS
 	AX = 2524h
 	???
 Return: ???
 --------E-212525-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender VMM - LIMIT PROGRAM'S CONVENTIONAL MEM USAGE
+INT 21 P - Phar Lap 386/DOS-Extender VMM - LIMIT PROGRAM'S CONVENT'L MEM USAGE
 	AX = 2525h
 	EBX = limit in 4k pages of physical conventional memory which program
 	      may use
@@ -5841,8 +6395,8 @@ Return: CF clear if successful
 	    EAX = error code
 		08h insufficient memory or -nopage switch used
 SeeAlso: AX=2521h
---------E-212526-----------------------------C33!
-INT 21 - Phar Lap 386/DOS-Extender - GET CONFIGURATION INFORMATION
+--------E-212526-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - GET CONFIGURATION INFORMATION
 	AX = 2526h
 	???
 Return: ???
@@ -5855,13 +6409,41 @@ Offset	Size	Description
 		bit 25: set if -NONESTDPMI specified
 		bit 26: set if -NODPMI specified
 		bit 27: set if -NOPCDWEITEK specified
---------E-212529-----------------------------C33!
-INT 21 - Phar Lap 386/DOS-Extender - LOAD FLAT MODEL .EXP or .REX FILE
+--------E-212527-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM - EN/DISABLE STATE SAVE ON INTERRUPTS
+	AX = 2527h
+	EBX = new status (00h disabled, 01h enabled)
+Return: CF clear
+	EBX = previous state save flag
+SeeAlso: AX=2528h
+--------E-212528-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM - READ REGISTERS AFTER CTRL-C INT
+	AX = 2528h
+	DS:EBX -> buffer for registers (see below)
+Return: CF clear if successful
+	    DS:EBX buffer filled
+	CF set on error
+	    EAX = error code
+		83h interrupt state save not enabled
+		84h no active interrupt
+SeeAlso: AX=2527h
+
+Format of buffer for registers:
+Offset	Size	Description
+ 00h  8 BYTEs	unused
+ 08h  4	DWORDs	EAX,EBX,ECX,EDX
+ 18h  4 DWORDs	ESI,EDI,EBP,ESP
+ 28h  6 WORDs	CS,DS,SS,ES,FS,GS
+ 34h	DWORD	EIP
+ 38h	DWORD	EFLAGS
+--------E-212529-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender - LOAD FLAT MODEL .EXP or .REX FILE
 	AX = 2529h
 	???
 Return: ES:EBX -> parameter block
 	???
 Note:	details not available at this time
+SeeAlso: AX=252Ah
 
 Format of parameter block:
 Offset	Size	Description
@@ -5869,8 +6451,48 @@ Offset	Size	Description
  1Ch	DWORD	flags
 		bit 0: child linked with -UNPRIVILEGED
 		bits 1-31 reserved
+--------E-21252A-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM - NEW LOAD PROGRAM FOR DEBUG
+	AX = 252Ah
+	DS:EDX -> ASCIZ program name
+	ES:EBX -> parameter block (see AX=2512h)
+	ECX = size of LDT buffer in bytes
+	ESI = bit flags
+	    bit 0: allow demand paging rather than loading entire program
+	    bit 1: demand page from swap file rather than from .EXP
+Return: CF clear if successful
+	    EAX = VMM handle or FFFFFFFFh if none
+	    ECX = number of descriptors in LDT buffer
+	CF set on error
+	    EAX = error code
+		02h file error
+		    EBX = file error code (see below)
+		    ECX = DOS error code if EBX=1,2,3, or 8
+		08h insufficient memory
+		    EBX = memory error code (see below)
+		80h LDT buffer too small
+		87h called twice without intervening call to AX=2531h
+SeeAlso: AX=2512h,AX=2517h,AX=2529h,AX=2531h
+
+Values for file error code:
+ 01h	DOS open error
+ 02h	DOS seek error
+ 03h	DOS read error
+ 04h	not an .EXP or .REX file
+ 05h	invalid file format
+ 06h	-OFFSET is not a multiple of 64K
+ 07h	-NOPAGE incompatible with -REALBREAK/-OFFSET
+ 08h	DOS error loading .EXE file
+
+Values for memory error code:
+ 01h	out of physical memory
+ 02h	out of swap space
+ 04h	unable to change extended memory allocation
+ 05h	-MAXPGMMEM exceeded
+ 06h	insufficient low memory to REALBREAK value
+ 07h	insufficient low memory for PSP and environment
 --------E-21252B-----------------------------
-INT 21 - FlashTek X-32VM - VIRTUAL MEMORY MANAGEMENT - PAGE LOCKING
+INT 21 P - FlashTek X-32VM - VIRTUAL MEMORY MANAGEMENT - PAGE LOCKING
 	AX = 252Bh
 	BH = function
 	    05h lock pages
@@ -5884,8 +6506,8 @@ INT 21 - FlashTek X-32VM - VIRTUAL MEMORY MANAGEMENT - PAGE LOCKING
 Return: CF clear if successful
 	CF set on error
 Note:	if X-32 is not using virtual memory, this function always succeeds
---------E-21252BBH09-------------------------C33!
-INT 21 - Phar Lap 386/DOS-Extender v4.1 - GET PAGE TABLE ENTRY/PAGE TABLE INFO
+--------E-21252BBH09-------------------------
+INT 21 P - Phar Lap 386/DOS-Extender v4.1 - GET PAGETABLE ENTRY/PAGE TABLE INFO
 	AX = 252Bh
 	BH = 09h
 	BL = subfunction
@@ -5900,9 +6522,9 @@ Return: CF clear if successful
 	    EAX = error code
 		0009h invalid address
 		0082h running under DPMI
-SeeAlso: AX=252Bh/BH=0Ah
---------E-21252BBH0A-------------------------C33!
-INT 21 - Phar Lap 386/DOS-Extender v4.1 - SET PAGE TABLE ENTRY/PAGE TABLE INFO
+SeeAlso: AX=251Dh,AX=252Bh/BH=0Ah
+--------E-21252BBH0A-------------------------
+INT 21 P - Phar Lap 386/DOS-Extender v4.1 - SET PAGETABLE ENTRY/PAGE TABLE INFO
 	AX = 252Bh
 	BH = 0Ah
 	BL = subfunction
@@ -5918,8 +6540,8 @@ Return: CF clear if successful
 		0009h invalid address
 		0082h running under DPMI
 SeeAlso: AX=252Bh/BH=09h
---------E-21252BBH0B-------------------------C33!
-INT 21 - Phar Lap 386/DOS-Extender v4.1 - MAP DATA FILE AT FILE OFFSET
+--------E-21252BBH0B-------------------------
+INT 21 P - Phar Lap 386/DOS-Extender v4.1 - MAP DATA FILE AT FILE OFFSET
 	AX = 252Bh
 	BH = 0Bh
 	BL = subfunction
@@ -5945,43 +6567,193 @@ Format of mapping structure:
 Offset	Size	Description
  00h	DWORD	starting file offset to be mapped
  04h	DWORD	DOS file access and sharing modes (see INT 21/AH=3Dh)
+--------E-21252C-----------------------------
+INT 21 P - Phar Lap 386/DOS-Ext VMM v3.0 - ADD UNMAPPED PAGES AT END OF SEGMENT
+	AX = 252Ch
+	BX = segment selector
+	ECX = number of 4K pages to add
+Return: CF clear if successful
+	    EAX = offset in segment of beginning of unmapped pages
+	CF set on error
+	    EAX = error code
+		08h insufficent memory
+		09h invalid selector
+		82h not supported by current DPMI
+--------E-21252D-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM v2.3+ - CLOSE VMM FILE HANDLE
+	AX = 252Dh
+	EBX = VMM file handle
+Return: CF clear if successful
+	CF set on error
+	    EAX = error code (81h invalid VMM handle)
+--------E-21252E-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM v2.3+ - GET/SET VMM PARAMETERS
+	AX = 252Eh
+	CL = direction (00h get parameters, 01h set parameters)
+	DS:EBX -> parameter buffer (see below)
+Return: CF clear if successful
+	CF set on error
+	    EAX = error code (81h bad parameter value)
+
+Format of VMM parameter buffer:
+Offset	Size	Description
+ 00h	DWORD	flags
+		bit 0: page fault logging enabled
+		bit 1: SWAPEXEC switch
+		bit 2: zero allocated memory
+ 04h	DWORD	scan period for page aging, in milliseconds
+ 08h	DWORD	maximum size (in bytes) to check on each page scan
+ 0Ch 52 BYTEs	unused
+--------E-21252F-----------------------------
+INT 21 P - Phar Lap 386/DOS-Ext VMM v3.0 - WRITE RECORD TO VMM PAGE LOG FILE
+	AX = 252Fh
+	DS:EBX -> data to be written
+	CX = size of data in bytes
+Return: CF clear if successful
+	CF set on error
+	    EAX = error code (85h no page log file or not 386/VMM)
+--------E-212530-----------------------------
+INT 21 P - Phar Lap 386/DOS-Ext VMM v2.3+ - SET SIZE OF BUFFER FOR DOS CALLS
+	AX = 2530h
+	ECX = size of data buffer in bytes (1024 to 65536)
+Return: CF clear if successful
+	CF set on error
+	    EAX = error code
+		08h insufficient low memory
+		81h invalid size
+SeeAlso: AX=2517h
+--------E-212531-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM v3.0 - READ/WRITE LDT DESCRIPTOR
+	AX = 2531h
+	BX = segment selector
+	ECX = direction (00h read, 01h write)
+	DS:EDX -> 8-byte buffer for descriptor contents
+Return: CF clear if successful
+	CF set on error
+	    EAX = error code
+		81h invalid selector
+		82h DPMI running, or not a code or data segment
 --------E-212532-----------------------------
-INT 21 - FlashTek X-32VM - GET EXCEPTION HANDLER VECTOR
+INT 21 P - Phar Lap 386/DOS-Extender - GET EXCEPTION HANDLER VECTOR
 	AX = 2532h
 	CL = exception number (00h-0Fh)
 Return: CF clear if successful
 	    ES:EBX = CS:EIP of current exception handler
 	CF set on error (CL > 0Fh)
-SeeAlso: AX=2533h
+Notes:	this call is also supported by the FlashTek X-32VM extender
+	this function is incompatible with 386|VMM; use AX=2522h instead
+SeeAlso: AX=2522h,AX=2533h
 --------E-212533-----------------------------
-INT 21 - FlashTek X-32VM - SET EXCEPTION HANDLER VECTOR
+INT 21 P - Phar Lap 386/DOS-Extender - SET EXCEPTION HANDLER VECTOR
 	AX = 2533h
 	CL = exception number (00h-0Fh)
 	DS:EDX = CS:EIP of new exception handler
 Return: CF clear if successful
 	CF set on error (CL > 0Fh)
-SeeAlso: AX=2532h
---------E-212534-----------------------------C33!
-INT 21 - Phar Lap 386/DOS-Extender v4.0+ - GET INTERRUPT FLAG
+Notes:	this call is also supported by the FlashTek X-32VM extender
+	this function is incompatible with 386|VMM; use AX=2522h instead
+SeeAlso: AX=2522h,AX=2532h
+--------E-212534-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender v3.0+ - GET INTERRUPT FLAG
 	AX = 2534h
-	???
-Return: ???
-Note:	details not available at this time
---------E-212535-----------------------------C33!
-INT 21 - Phar Lap 386/DOS-Extender v4.0+ - READ/WRITE SYSTEM REGISTERS
+Return: CF clear
+	EAX = interrupt state (00h disabled, 01h enabled)
+--------E-212535-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender v3.0+ - READ/WRITE SYSTEM REGISTERS
 	AX = 2535h
-	???
-Return: ???
-Notes:	only available under MS Windows if PHARLAP.386 VDD is installed
-	details not available at this time
---------E-21253C-----------------------------C33!
-INT 21 - Phar Lap 386/DOS-Extender v4.0+ - SHRINK 386|VMM SWAP FILE
+	EBX = direction (00h read registers, 01h write)
+	DS:EDX -> system register record (see below)
+Return: CF clear
+Note:	this call is only available under MS Windows if PHARLAP.386 VDD is
+	  installed
+
+Format of system register record:
+Offset	Size	Description
+ 00h	DWORD	CR0
+ 04h  4 DWORDs	DR0,DR1,DR2,DR3
+ 14h  2 DWORDs	reserved
+ 1Ch  2 DWORDs	DR6,DR7
+ 24h  3 DWORDs	reserved
+--------E-212536----------------------------
+INT 21 P - Phar Lap 386/DOS-Ext VMM v3.0+ - MIN/MAX EXTENDED/CONV MEMORY USAGE
+	AX = 2536h
+	EBX = bit flags
+	    bit 0: modifying conventional memory rather than extended memory
+	    bit 1: setting maximum memory usage rather than minimum
+	ECX = new limit in 4K pages
+Return: CF clear if successful
+	    EAX = new limit
+	CF set on error
+	    EAX = error code (08h memory error or -NOPAGE set)
+	    EBX = maximum limit in pages
+	    ECX = minimum limit in pages
+--------E-212537----------------------------
+INT 21 P - Phar Lap 386/DOS-Ext VMM v3.0 - ALLOCATE DOS MEMORY ABOVE DOS BUFFER
+	AX = 2537h
+	BX = number of paragraphs to allocate
+Return: CF clear if successful
+	    AX = real-mode segment of allocated block
+	CF set on error
+	    AX = error code
+		07h MS-DOS memory chain corrupted
+		08h insufficient low memory
+	    BX = size in paragraphs of largest free block
+SeeAlso: AH=48h
+--------E-212538----------------------------
+INT 21 P - Phar Lap 386/DOS-Ext VMM v3.0 - READ PROTMODE REGS AFTER SFTWARE INT
+	AX = 2538h
+	DS:EBX -> buffer for registers (see AX=2528h)
+	ECX = register record to retrieve
+	    00h first interrupt state
+	    01h next interrupt state
+		EDX = handle for current interrupt state
+Return: CF clear if successful
+	    DS:EBX buffer filled
+	    EDX = handle of current interrupt state
+	    ESI = number of interrupt which occurred
+	CF set on error
+	    EAX = error code
+		81h invalid handle in EDX
+		83h register saving not enabled
+		84h no more interrupt states
+SeeAlso: AX=2527h,AX=2528h
+--------E-212539----------------------------
+INT 21 P - Phar Lap 386/DOS-Ext VMM v3.0 - GET OFFSET OF .EXP FILE HEADER
+	AX = 2539h
+	BX = MS-DOS file handle for open file
+Return: CF clear if successful
+	    EAX = offset of .EXP header in file
+	CF set on error
+	    EAX = error code (02h file error)
+	    EBX = file error code
+		02h DOS error seeking
+		03h DOS error reading
+		04h invalid file type	
+		05h invalid file format
+	    ECX = DOS error code if EBX=02h or 03h
+	current file position in file modified
+--------E-21253A----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender v3.0+ - INSTALL MOD. SEG FAILURE HANDLER
+	AX = 253Ah
+	ES:EBX -> function to be called when INT 21/AH=4Ah is about to return
+		an error
+Return: CF clear
+	ES:EBX -> previous handler
+SeeAlso: AH=4Ah
+--------E-21253B----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender v3.0+ - JUMP TO REAL MODE CODE, NO CONTEXT
+	AX = 253Bh
+	DS:EBX -> buffer containing register contents (see AX=2528h)
+Return: never returns
+SeeAlso: AX=2528h
+--------E-21253C-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender VMM v3.0+ - SHRINK 386|VMM SWAP FILE
 	AX = 253Ch
-	???
-Return: ???
-Note:	details not available at this time
---------E-2F253D-----------------------------C33!
-INT 2F - Phar Lap 386/DOS-Extender v4.0+ - READ/WRITE IDT DESCRIPTOR
+Return: CF clear
+	EAX = old size of swap file in bytes
+	EBX = new size of swap file in bytes
+--------E-21253D-----------------------------
+INT 21 P - Phar Lap 386/DOS-Extender v4.0+ - READ/WRITE IDT DESCRIPTOR
 	AX = 253Dh
 	BL = interrupt number
 	ECX = direction (0 = read, 1 = write)
@@ -5999,7 +6771,7 @@ Notes:	this call will always fail under DPMI because it is not possible to
 	  because the processor does not allow an interrupt to be vectored to
 	  a less privileged ring
 --------E-2125C0-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - ALLOCATE MS-DOS MEMORY BLOCK
+INT 21 P - Phar Lap 386/DOS-Extender - ALLOCATE MS-DOS MEMORY BLOCK
 	AX = 25C0h
 	BX = number of 16-byte paragraphs of MS-DOS memory requested
 Return: CF clear if successful
@@ -6011,7 +6783,7 @@ Return: CF clear if successful
 	    BX = size in paragraphs of largest available memory block
 SeeAlso: AX=25C1h,AX=25C2h
 --------E-2125C1-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - RELEASE MS-DOS MEMORY BLOCK
+INT 21 P - Phar Lap 386/DOS-Extender - RELEASE MS-DOS MEMORY BLOCK
 	AX = 25C1h
 	CX = real-mode paragraph address of memory block to free
 Return: CF clear if successful
@@ -6022,7 +6794,7 @@ Return: CF clear if successful
 		09h invalid memory block address in CX
 SeeAlso: AX=25C0h,AX=25C2h
 --------E-2125C2-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - MODIFY MS-DOS MEMORY BLOCK
+INT 21 P - Phar Lap 386/DOS-Extender - MODIFY MS-DOS MEMORY BLOCK
 	AX = 25C2h
 	BX = new requested block size in paragraphs
 	CX = real-mode paragraph address of memory block to modify
@@ -6036,10 +6808,10 @@ Return: CF clear if successful
 	    BX = size in paragraphs of largest available memory block
 SeeAlso: AX=25C0h,AX=25C1h
 --------E-2125C3-----------------------------
-INT 21 - Phar Lap 386/DOS-Extender - EXECUTE PROGRAM
+INT 21 P - Phar Lap 386/DOS-Extender - EXECUTE PROGRAM
 	AX = 25C3h
 	ES:EBX -> pointer to parameter block (see below)
-	DS:EDX -> pointer to ASCIIZ program filename
+	DS:EDX -> pointer to ASCIZ program filename
 Return: CF clear if successful
 	    all registers unchanged
 	CF set on error
@@ -6062,7 +6834,7 @@ INT 21 - DOS 1+ - CREATE NEW PROGRAM SEGMENT PREFIX
 	AH = 26h
 	DX = segment at which to create PSP (see below)
 Notes:	new PSP is updated with memory size information; INTs 22h, 23h, 24h
-	  taken from interrupt vector table
+	  taken from interrupt vector table; the parent PSP field is set to 0
 	(DOS 2+) DOS assumes that the caller's CS is the segment of the PSP to
 	  copy
 SeeAlso: AH=4Bh,AH=50h,AH=51h,AH=55h,AH=62h,AH=67h
@@ -6296,6 +7068,16 @@ Offset	Size	Description
  00h	WORD	number of return codes which can be stored by following buffer
  02h	WORD	current position in buffer (treated as a ring)
  04h  N BYTEs	ELRES buffer
+----------212B01CX444D-----------------------
+INT 21 - Quarterdeck DOS-UP.SYS v2.00 - INSTALLATION CHECK
+	AX = 2B01h
+	CX = 444Dh ('DM')
+	DX = 4158h ('AX')
+Return: AX = 0000h if installed
+	    BX = version??? (0002h)
+	    CX = 4845h ('HE')
+	    DX = 5245h ('RE')
+	    ES = DOS-UP driver segment
 --------T-212B01CX5441-----------------------
 INT 21 - TAME v2.10+ - INSTALLATION CHECK
 	AX = 2B01h
@@ -6646,12 +7428,15 @@ Notes:	the OS/2 v1.x Compatibility Box returns major version 0Ah (10)
 	DOS 4.01 and 4.02 identify themselves as version 4.00; use
 	  INT 21/AH=87h to distinguish between the original European MS-DOS 4.0
 	  and the later PC-DOS 4.0x and MS-DOS 4.0x
+	IBM DOS 6.1 reports its version as 6.00; use the OEM number to
+	  distinguish between MS-DOS 6.00 and IBM DOS 6.1 (there was never an
+	  IBM DOS 6.0)
 	generic MS-DOS 3.30, Compaq MS-DOS 3.31, and others identify themselves
 	  as PC-DOS by returning OEM number 00h
 	the version returned under DOS 4.0x may be modified by entries in
-	  the special program list (see AH=52h)
-	the version returned under DOS 5+ may be modified by SETVER; use
-	  AX=3306h to get the true version number
+	  the special program list (see AH=52h); the version returned under
+	  DOS 5+ may be modified by SETVER--use AX=3306h to get the true
+	  version number
 SeeAlso: AX=3000h/BX=3000h,AX=3306h,AX=4452h,AH=87h,INT 15/AX=4900h
 SeeAlso: INT 2F/AX=122Fh,INT 2F/AX=E002h
 
@@ -6841,7 +7626,7 @@ Return: BL = major version
 	DL = revision (bits 2-0, all others 0)
 	DH = version flags
 	    bit 3: DOS is in ROM
-	    bit 4: DOS in in HMA
+	    bit 4: DOS is in HMA
 	AL = FFh if true DOS version < 5.0
 Notes:	this function always returns the true version number, unlike AH=30h,
 	  whose return value may be changed with SETVER
@@ -7329,7 +8114,7 @@ Notes:	if new directory name includes a drive letter, the default drive is
 SeeAlso: AH=47h,INT 2F/AX=1105h
 --------D-213C-------------------------------
 INT 21 - DOS 2+ - "CREAT" - CREATE OR TRUNCATE FILE
-	AH = 3CH
+	AH = 3Ch
 	CX = file attributes (see below)
 	DS:DX -> ASCIZ filename
 Return: CF clear if successful
@@ -7627,6 +8412,7 @@ Notes:	the B&W socket library performs an INT 21/AX=4401h with DX=0060h before
 	  call the private API interrupt with AH=15h
 	the installation check for the TCP/IP stack is to test for the
 	  existence of the character device UDP-IP10
+SeeAlso: INT 14/AH=56h,INT 62"BW-TCP",INT 63/AH=03h,INT 64/AH=00h
 Index:	installation check;BW-TCP hardware driver
 Index:	installation check;BW-TCP TCPIP.SYS
 

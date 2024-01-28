@@ -391,7 +391,7 @@ INT 21 u - European MS-DOS 4.0 - "PBLOCK" - BLOCK A PROCESS
 	AH = 99h
 	DS:BX -> memory location to block on
 	CX = timeout in milliseconds
-	DH = nonzero if interruptible
+	DH = nonzero if interruptable
 Return: CF clear if awakened by event
 	    AX = 0000h
 	CF set if unusual wakeup
@@ -1725,6 +1725,7 @@ Return: AL = status
 		DX = partition size in KB
 	    FFh unsucessful
 		AH = error code (01h) (see AX=DF01h)
+SeeAlso: AX=DF05h
 --------T-21DF04-----------------------------
 INT 21 - Software Carousel - GET PARTITION NAME
 	AX = DF04h
@@ -1736,6 +1737,7 @@ Return: AL = status
 		ES:BX -> partition name (if CX nonzero)
 	    FFh unsucessful
 		AH = error code (01h) (see AX=DF01h)
+SeeAlso: AX=DF06h
 --------T-21DF05-----------------------------
 INT 21 - Software Carousel - CHANGE PARTITION SIZE
 	AX = DF05h
@@ -1748,6 +1750,7 @@ Return: AL = status
 		AH = error code (01h,04h,05h) (see AX=DF01h)
 	BX = minimum size allowed
 	CX = maximum size available
+SeeAlso: AX=DF03h
 --------T-21DF06-----------------------------
 INT 21 - Software Carousel - CHANGE PARTITION NAME
 	AX = DF06h
@@ -1759,6 +1762,7 @@ Return: AL = status
 	    01h successful
 	    FFh unsucessful
 		AH = error code (01h) (see AX=DF01h)
+SeeAlso: AX=DF04h
 --------T-21DF07-----------------------------
 INT 21 - Software Carousel - SEND COMMAND TO MEMORY SECTION
 	AX = DF07h
@@ -2171,7 +2175,7 @@ INT 21 - Novell NetWare - MESSAGE SERVICES - BROADCAST TO CONSOLE
 	AH = E1h subfn 09h
 	DS:SI -> request buffer (see below)
 	ES:DI -> reply buffer (see below)
-Return: AL = status (see AH=E1h/SF=09h)
+Return: AL = status (see AH=E1h/SF=08h)
 Desc:	send a one-line message to the system console on the default file
 	  server
 Note:	this function is supported by NetWare 4.0+ and Advanced NetWare 1.0+
@@ -3093,7 +3097,7 @@ Offset	Size	Description
  44h	BYTE	security restrictions level
  45h	BYTE	internetwork bridge version
  46h 60 BYTEs	reserved
---------N-21E3--SF12--------------------
+--------N-21E3--SF12-------------------------
 INT 21 - Novell NetWare - GET SERIAL NUMBER
 	AH = E3h subfn 12h
 	AL = 00h
@@ -6533,7 +6537,7 @@ INT 21 - DOS v2.11 - OEM FUNCTION
 SeeAlso: AH=F8h"OEM",AH=FEh"OEM"
 --------K-21FF-------------------------------
 INT 21 - CED (Command EDitor) - INSTALLABLE COMMANDS
-	AH = FFH
+	AH = FFh
 	AL = subfunction
 	    00h add installable command
 	       BL = mode - bit 0 = 1 callable from DOS prompt
@@ -6574,12 +6578,6 @@ INT 21 - DOSED.COM - INSTALLATION CHECK
 Return: ES:DI -> "DOSED" if installed
 Program: DOSED is a free DOS commandline editor/history buffer by Sverre H.
 	  Huseby
---------N-21FF-------------------------------
-INT 21 - Topware Network Operating System - ???
-	AH = FFh
-	???
-Return: ???
-SeeAlso: INT 2F/AX=FF00h
 --------v-21FF-------------------------------
 INT 21 - VIRUS - "Sunday", "Tumen 0.5", "Hero" - INSTALLATION CHECK
 	AH = FFh
@@ -6736,6 +6734,33 @@ INT 21 UP - Rational Systems DOS/4GW - ???
 	AL = ???
 	DL = ???
 Return: ???
+--------N-21FF00-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET SYSTEM INFORMATION
+	AX = FF00h
+	CL = what to get
+	    00h user information
+	    01h drive mapping
+	    02h printer server(s)
+	    05h local DOS drive number
+Return: ES:BX -> desired information (see below)
+Program: TopWare Network Operating System is manufactured by Grand Computer
+	  Company
+Note:	this call is only supported on Workstations, not on the server
+SeeAlso: AX=FF04h,INT 2F/AX=FF00h
+
+Format of user information:
+Offset	Size	Description
+ 00h	BYTE	node ID
+ 01h 15 BYTEs	user name
+ 10h	WORD	user number
+ 12h	BYTE	group number
+
+Format of drive mapping [array]:
+Offset	Size	Description
+ 00h	BYTE	bits 6-0: drive number (1=A:, etc.)
+		bit 7: this is a server drive
+ 01h  3 BYTEs	mapping drive (for example, "C:\")
+ 04h 64 BYTEs	current directory
 --------E-21FF00DX0078-----------------------
 INT 21 - Rational Systems DOS/4G - INSTALLATION CHECK
 	AX = FF00h
@@ -6743,6 +6768,18 @@ INT 21 - Rational Systems DOS/4G - INSTALLATION CHECK
 Return: AL <> 00h if installed
 	    GS = segment of kernel if nonzero
 SeeAlso: INT 15/AX=BF02h
+--------N-21FF04-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET/SET DEFAULT FILE PROTECTION ATTRIBS
+	AX = FF04h
+	CL = function
+	    00h get protections
+		Return: BH = read attribute
+			BL = write attribute
+	    01h set protections
+		BH = read attribute
+		BL = write attribute
+Note:	this function is supported only on Workstations, not on the server
+SeeAlso: AX=FF00h"TopWare"
 --------v-21FF0F-----------------------------
 INT 21 - FLU_SHOT+ v1.83 - INSTALLATION CHECK
 	AX = FF0Fh
@@ -6757,6 +6794,311 @@ INT 21 - VIRUS - "Twins" - INSTALLATION CHECK
 	AX = FF10h
 Return: AL = 07h if resident
 SeeAlso: AX=FF0Fh,AX=FFFEh
+--------N-21FF80DHFF-------------------------
+INT 21 - TopWare Network OS v5.10+ - SEND MESSAGE
+	AX = FF80h
+	DH = FFh
+	DL = destination address (FFh for broadcast)
+	CX = message length (max 2000)
+	DS:SI -> message to be sent (see below)
+Return: nothing
+Program: TopWare Network Operating System is manufactured by Grand Computer
+	  Company
+Notes:	this function is supported on both Workstations and the server
+	there is no guarantee that the message will be received correctly, or
+	  at all, by the destination
+
+Format of message:
+Offset	Size	Description
+ 00h	BYTE	type code
+		07h TopSend
+		11h user application
+		other reserved for TopWare
+ 01h	var	data
+Note:	sending messages with a type code other than 11h will cause
+	  unpredictable results
+--------N-21FF82-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET STATION ADDRESS
+	AX = FF82h
+Return: AL = station address
+Note:	this function is supported on both Workstations and the server
+SeeAlso: AX=FF91h
+--------N-21FF8C-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET STATUS OF TopShow/Emulated FUNCTION
+	AX = FF8Ch
+	BL = subfunction
+	    00h get TopShow status
+	    FFh get Emulated status
+Return: AL = status
+	    00h not installed
+	    01h already installed
+--------N-21FF8D-----------------------------
+INT 21 - TopWare Network OS v5.10+ - CALL TopShow FUNCTION
+	AX = FF8Dh
+	CH = monochrome flag (01h monochrome, 00h not monochrome)
+	CL = screen mode of station to be viewed (see below)
+	BL = graphic page number for monochrome
+Return: AL = status (00h successful, else failed)
+SeeAlso: AX=FF8Eh,AX=FFCFh
+
+Values for screen mode:
+ 00h	text mode
+ 01h	720x348
+ 02h	640x408
+ 03h	720x352
+ 04h	640x390
+ 05h	reserved
+--------N-21FF8E-----------------------------
+INT 21 - TopWare Network OS v5.10+ - CANCEL TopShow FUNCTION
+	AX = FF8Eh
+Return: AL = 00h (successful, TopShow removed)
+SeeAlso: AX=FF8Dh
+--------N-21FF91-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET FILE SERVER STATION NUMBER
+	AX = FF91h
+Return: AL = station number of file server
+SeeAlso: AX=FF82h
+--------N-21FF97-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET MAXIMUM STATION NUMBER (server only)
+	AX = FF97h
+Return: AL = maximum station number
+SeeAlso: AX=FF98h
+--------N-21FF98-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET MAXIMUM FILE NUMBER (server only)
+	AX = FF98h
+Return: AL = maximum file
+SeeAlso: AX=FF97h
+--------N-21FF9A-----------------------------
+INT 21 - TopWare Network OS v5.10+ - RECEIVE OF USER-DEFINED PACKETS
+	AX = FF9Ah
+	ES:BX -> buffer for user-defined packet (see below)
+Return: nothing
+
+Format of user-defined packet:
+Offset	Size	Description
+ 00h	BYTE	FFh
+ 01h	WORD	(call) length of data field plus 3
+		(return) length of received message (0000h if none received)
+ 03h	BYTE	destination ID (FFh for broadcast message)
+ 04h	BYTE	sending station ID
+ 05h	BYTE	type code (11h; all other codes reserved for TopWare)
+ 06h  N BYTEs	received message
+--------N-21FF9F-----------------------------
+INT 21 - TopWare Network OS v5.10+ - ENABLE/DISABLE TopTerm SERVICE
+	AX = FF9Fh
+	CL = new state (00h disable [disregard TopTerm packets], 01h enable)
+Return: AL = status (00h successful, FFh failed)
+Note:	this function is only supported by Workstations, not the server
+--------N-21FFB0-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET SPOOLER PRINTING PRIORITY
+	AX = FFB0h
+Return: AL = priority status (see below)
+SeeAlso: AX=FFB1h
+
+Bitfields for printer priority status:
+ bit 0	LPT1 has high priority
+ bit 1	LPT2 has high priority
+ bit 2	LPT3 has high priority
+--------N-21FFB1-----------------------------
+INT 21 - TopWare Network OS v5.10+ - SET SPOOLER PRINTING PRIORITY
+	AX = FFB1h
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+	CH = new priority (00h normal, 01h high)
+Return: nothing
+SeeAlso: AX=FFB0h
+--------N-21FFB3-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET DEFAULT START-OF-JOB FORMFEED STATUS
+	AX = FFB3h
+Return: AL = starting formfeed status (see below)
+SeeAlso: AX=FFB4h,AX=FFC0h
+
+Bitfields for printer start-of-job formfeed status:
+ bit 0	LPT1 has formfeed enabled
+ bit 1	LPT2 has formfeed enabled
+ bit 2	LPT3 has formfeed enabled
+--------N-21FFB4-----------------------------
+INT 21 - TopWare Network OS v5.10+ - SET DEFAULT START-OF-JOB FORMFEED STATUS
+	AX = FFB4h
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+	CH = new formfeed status (00h off, 01h on)
+Return: nothing
+SeeAlso: AX=FFB3h,AX=FFC1h
+--------N-21FFBB-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET PRINTER SERVER STATION ADDRESS
+	AX = FFBBh
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+Return: AL = current mapping printer server station number
+	    00h if local
+SeeAlso: AX=FFBCh
+--------N-21FFBC-----------------------------
+INT 21 - TopWare Network OS v5.10+ - CANCEL TopShow FUNCTION
+	AX = FFBCh
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+	CL = printer server station address or 00h for local printer
+Return: AL = status (00h successful, else failed)
+SeeAlso: AX=FFBBh
+--------N-21FFBD-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET CURRENT AUTOPRINT TIME
+	AX = FFBDh
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+Return: AX = current AutoPrint timeout in clock ticks
+SeeAlso: AX=FFBEh
+--------N-21FFBE-----------------------------
+INT 21 - TopWare Network OS v5.10+ - SET AUTOPRINT TIME
+	AX = FFBEh
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+	BX = timeout in clock ticks
+SeeAlso: AX=FFBDh
+--------N-21FFBF-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET LOGON USER INFORMATION
+	AX = FFBFh
+	DX:BX -> buffer for logon information (see below)
+Return: AL = status (00h successful, else failed)
+	AH = number of logged-in stations
+
+Format of logon information:
+Offset	Size	Description
+ 00h	BYTE	station address
+ 01h 15 BYTEs	username
+--------N-21FFC0-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET DEFAULT END-OF-JOB FORMFEED STATUS
+	AX = FFC0h
+Return: AL = ending formfeed status (see below)
+SeeAlso: AX=FFB3h,AX=FFC1h
+
+Bitfields for printer end-of-job formfeed status:
+ bit 0	LPT1 has formfeed enabled
+ bit 1	LPT2 has formfeed enabled
+ bit 2	LPT3 has formfeed enabled
+--------N-21FFC1-----------------------------
+INT 21 - TopWare Network OS v5.10+ - SET DEFAULT END-OF-JOB FORMFEED STATUS
+	AX = FFC1h
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+	CH = new formfeed status (00h off, 01h on)
+Return: nothing
+SeeAlso: AX=FFB4h,AX=FFC0h
+--------N-21FFC2-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET DEFAULT COPIES OF SPOOLING FILE
+	AX = FFC2h
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+Return: AL = default number of copies printed
+SeeAlso: AX=FFC7h
+--------N-21FFC3-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET SHARING STATUS OF PRINTER SERVER
+	AX = FFC3h
+Return: AL = sharing status of printers (see below)
+	    FFh if not a printer server
+
+Bitfields for printer sharing status:
+ bit 0	LPT1 is shared
+ bit 1	LPT2 is shared
+ bit 2	LPT3 is shared
+--------N-21FFC4-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET/SET LPT PORT ON PRINT SERVER
+	AX = FFC4h
+	BL = subfunction
+	    00h get
+		Return: AL = mapped printer port on print server
+	    01h set
+		CL = network printer port (00h LPT1, 01h LPT2, 02h LPT3)
+	CH = local printer (00h LPT1, 01h LPT2, 02h LPT3)
+--------N-21FFC6-----------------------------
+INT 21 - TopWare Network OS v5.10+ - SET DEFAULT PRINT FILE HEADER
+	AX = FFC6h
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+	CL = header state (00h off, 01h on)
+SeeAlso: AX=FFC8h
+--------N-21FFC7-----------------------------
+INT 21 - TopWare Network OS v5.10+ - SET DEFAULT PRINT COPIES
+	AX = FFC7h
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+	CL = new default number of copies to print
+SeeAlso: AX=FFC2h
+--------N-21FFC8-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET DEFAULT PRINT FILE HEADER STATUS
+	AX = FFC8h
+Return: AL = header status for printers (see below)
+SeeAlso: AX=FFC6h
+
+Bitfields for print header status:
+ bit 0	LPT1 has headers enabled
+ bit 1	LPT2 has headers enabled
+ bit 2	LPT3 has headers enabled
+--------N-21FFC9-----------------------------
+INT 21 - TopWare Network OS v5.10+ - SET PRINTER SHARING
+	AX = FFC9h
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+	CL = new sharing state (00h off, 01h on)
+Return: AL = status (00h successful, FFh not printer server)
+--------N-21FFCA-----------------------------
+INT 21 - TopWare Network OS v5.10+ - MOVE FILE FROM ONE PRINT SERVER TO ANOTHER
+	AX = FFCAh
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+	CL = original printer server station address
+	BL = target printer server station address
+	DS:DX -> filename (12 bytes)
+Return: AL = status (00h successful, else failed)
+SeeAlso: AX=FFCBh
+--------N-21FFCB-----------------------------
+INT 21 - TopWare Network OS v5.10+ - DELETE FILE FROM SPOOLING QUEUE
+	AX = FFCBh
+	CH = printer number (00h LPT1, 01h LPT2, 02h LPT3)
+	CL = printer server station address
+	DS:DX -> filename (12 bytes)
+Return: AL = status (00h successful, else failed)
+SeeAlso: AX=FFCAh
+--------N-21FFCC-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET PRINT SERVER'S SPOOLING QUEUE STATUS
+	AX = FFCCh
+	CL = printer server station address
+	BH = start item number of spooling file for print server
+	BL = number of the item to be retrieved
+	DS:DX -> buffer for queued file information (see below)
+Return: AL = status
+	    00h successful
+		AH = number of spool files
+		DS:DX buffer filled
+	    nonzero failed
+
+Format of queued file information buffer [16-item array, one element]:
+Offset	Size	Description
+ 00h 12 BYTEs	filename
+ 0Ch	DWORD	size
+ 10h	WORD	date
+ 12h	WORD	time
+ 14h 15 BYTEs	username
+ 23h	BYTE	count
+ 24h	BYTE	flag: header
+ 25h	BYTE	print number
+--------N-21FFCD-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET STATUS OF ALL PRINT SERVERS
+	AX = FFCDh
+	DS:DX -> buffer for server status (see below)
+Return: AL = status
+	    00h successful
+		AH = number of print servers
+	    nonzero failed
+
+Format of server status:
+Offset	Size	Description
+ 00h	BYTE	station address
+ 01h 15 BYTEs	username
+ 10h	BYTE	flag: 01h printer is shared, 00h sharing disabled
+ 11h	BYTE	number of files pending in queue
+--------N-21FFCF-----------------------------
+INT 21 - TopWare Network OS v5.10+ - CALL TopLook FUNCTION
+	AX = FFCFh
+	DH = page number (0-2, 2 is text mode)
+	DL = type
+	    00h look at specific screen
+	    01h AutoLook on
+	    FFh AutoLook off
+	BH = station number wishing to look
+	BL = station number to be looked at
+	CH = monochrome flag (01h monochrome, 00h not monochrome)
+	CL = screen mode (see AX=FF8Dh)
+Return: AL = status (00h successful, nonzero failed)
+SeeAlso: AX=FF8Dh
 --------v-21FFFE-----------------------------
 INT 21 - VIRUS - "08/15"/"Many Fingers" - INSTALLATION CHECK
 	AX = FFFEh

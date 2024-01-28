@@ -148,7 +148,7 @@ BUGS:	DOS 3.1 through 3.3 set the word at ES:[BP+1Eh] to FFFFh if AL is an
 	DR-DOS 3.41 will return with a jump instead of RETF, leaving the
 	  wrong number of bytes on the stack; use the huge-partition version
 	  (INT 25/CX=FFFFh) for all partition sizes under DR-DOS 3.41
-SeeAlso: INT 13/AH=02h,INT 2F/CX=FFFFh,INT 26
+SeeAlso: INT 13/AH=02h,INT 25/CX=FFFFh,INT 26
 --------D-25----CXFFFF-----------------------
 INT 25 - DOS 3.31+ - ABSOLUTE DISK READ (>32M hard-disk partition)
 	CX = FFFFh
@@ -369,7 +369,8 @@ Return: AX = 0000h if successful
 	    AL = error code
 Notes:	invokes either INT 5B or INT 5C as appropriate
 	also supported by Lantastic, NetWare, 10NET, etc.
-	NetWare 2.15 NetBIOS emulator returns CF clear if succesful, set on err
+	NetWare 2.15 NetBIOS emulator returns CF clear if successful, CF set
+	  on error
 SeeAlso: AH=01h,AX=0500h,INT 5B,INT 5C"NetBIOS"
 --------N-2A0500-----------------------------
 INT 2A - NETWORK (Microsoft,LANtastic) - GET NETWORK RESOURCE AVAILABILITY
@@ -494,7 +495,7 @@ Return: CF clear if OK to print in background now
 Desc:	used to inform interested programs that PRINT is about to start its
 	  background processing, and allow those programs to postpone the
 	  processing if necessary
-Notes:	when PRINT gains control and want to begin printing, it calls this
+Notes:	when PRINT gains control and wants to begin printing, it calls this
 	  function.  If CF is clear on return, PRINT begins its background
 	  processing, and calls AX=8701h when it is done.  If CF is set on
 	  return, PRINT will relinquish control immediately, and will not
@@ -709,7 +710,7 @@ INT 2C P - RM386 v6.00 - CLOAKING - SET SEGMENT BASE ADDRESS
 Return: CF clear if successful
 	CF set on error
 	    AX = error code (see AX=0000h)
-Return: AX=0000h,AX=0003h,AX=0004h
+Return: AX=0000h,AX=0003h,AX=0004h,INT 31/AX=0007h
 --------m-2C0003-----------------------------
 INT 2C P - RM386 v6.00 - CLOAKING - SET SEGMENT LIMIT
 	AX = 0003h
@@ -718,7 +719,7 @@ INT 2C P - RM386 v6.00 - CLOAKING - SET SEGMENT LIMIT
 Return: CF clear if successful
 	CF set on error
 	    AX = error code (see AX=0000h)
-SeeAlso: AX=0000h,AX=0002h,AX=0004h
+SeeAlso: AX=0000h,AX=0002h,AX=0004h,INT 31/AX=0008h
 --------m-2C0004-----------------------------
 INT 2C P - RM386 v6.00 - CLOAKING - SET SEGMENT ACCESS MODE
 	AX = 0004h
@@ -727,7 +728,7 @@ INT 2C P - RM386 v6.00 - CLOAKING - SET SEGMENT ACCESS MODE
 Return: CF clear if successful
 	CF set on error
 	    AX = error code (see AX=0000h)
-SeeAlso: AX=0000h,AX=0002h,AX=0003h,AX=0005h
+SeeAlso: AX=0000h,AX=0002h,AX=0003h,AX=0005h,INT 31/AX=0009h
 --------m-2C0005-----------------------------
 INT 2C P - RM386 v6.00 - CLOAKING - SET SEGMENT EXTENDED ACCESS MODE
 	AX = 0005h
@@ -736,21 +737,21 @@ INT 2C P - RM386 v6.00 - CLOAKING - SET SEGMENT EXTENDED ACCESS MODE
 Return: CF clear if successful
 	CF set on error
 	    AX = error code (see AX=0000h)
-SeeAlso: AX=0000h,AX=0002h,AX=0003h,AX=0004h
+SeeAlso: AX=0000h,AX=0002h,AX=0003h,AX=0004h,INT 31/AX=0009h
 --------m-2C0006-----------------------------
 INT 2C P - RM386 v6.00 - CLOAKING - GET PROTECTED-MODE INTERRUPT VECTOR
 	AX = 0006h
 	CL = vector
 Return: CF clear
 	DX:EBX -> current interrupt handler
-SeeAlso: AX=0007h
+SeeAlso: AX=0007h,INT 31/AX=0204h
 --------m-2C0007-----------------------------
 INT 2C P - RM386 v6.00 - CLOAKING - SET PROTECTED-MODE INTERRUPT VECTOR
 	AX = 0007h
 	CL = vector
 	DX:EBX -> interrupt handler
 Return: CF clear
-SeeAlso: AX=0006h
+SeeAlso: AX=0006h,INT 31/AX=0205h
 --------m-2C0008-----------------------------
 INT 2C P - RM386 v6.00 - CLOAKING - GET PASSALONG ADDRESS
 	AX = 0008h
@@ -864,7 +865,7 @@ Return: CF clear if successful
 	CF set if no more nested procedure call space available
 Note:	this call uses the V86-mode stack supplied in the client structure, and
 	  calls the routine specified by CS:IP in the client structure
-SeeAlso: AX=0026h,AX=0027h
+SeeAlso: AX=0026h,AX=0027h,INT 31/AX=0301h
 --------m-2C0026-----------------------------
 INT 2C P - RM386 v6.00 - CLOAKING - CALL V86-MODE INTERRUPT HANDLER
 	AX = 0026h
@@ -874,7 +875,7 @@ Return: CF clear if successful
 	    client register structure updated
 	CF set if no more nested procedure call space available
 Note:	this call uses the V86-mode stack supplied in the client structure
-SeeAlso: AX=0025h,AX=0027h
+SeeAlso: AX=0025h,AX=0027h,INT 31/AX=0300h
 --------m-2C0027-----------------------------
 INT 2C P - RM386 v6.00 - CLOAKING - CHAIN TO V86-MODE INTERRUPT HANDLER
 	AX = 0027h
@@ -1529,11 +1530,6 @@ Offset	Size	Description
  07h	DWORD	pointer to first variable to initialize on the copy reloaded
 		from the previous TSR still resident
  0Bh	DWORD	pointer to last variable (all variables packed in one block)
---------N-2F---------------------------------
-INT 2F U - PC LAN PROGRAM REDIR/REDIRIFS internal - ???
-	AX = 02xxh
-	???
-Return: ???
 --------c-2F00-------------------------------
 INT 2F U - DOS 2.x only PRINT.COM - ???
 	AH = 00h
@@ -1688,6 +1684,11 @@ Notes:	called by DOS 3.3 PRINT.COM
 	these functions are supposedly used to signal opening and closing of
 	  printers
 SeeAlso: AX=0200h,AX=0203h
+--------N-2F---------------------------------
+INT 2F U - PC LAN PROGRAM REDIR/REDIRIFS internal - ???
+	AX = 02xxh
+	???
+Return: ???
 --------l-2F0500-----------------------------
 INT 2F U - DOS 3+ CRITICAL ERROR HANDLER - INSTALLATION CHECK
 	AX = 0500h
@@ -1998,7 +1999,7 @@ Call European MS-DOS 4.0 device helper function with:
 	    09h "ProcBlock" block on event
 		AX:BX = event identifier (typically a pointer)
 		CX = timeout in ms or 0000h for never
-		DH = interruptible flag (nonzero if pause may be interrupted)
+		DH = interruptable flag (nonzero if pause may be interrupted)
 		interrupts disabled
 		Return: after corresponding ProcRun call
 			CF clear if event wakeup, set if unusual wakeup
@@ -2205,12 +2206,12 @@ Notes:	supported by OS/2 v1.3+ compatibility box, which always returns AL=FFh
 	  installed even when it is not
 SeeAlso: AX=1080h,INT 21/AH=52h
 --------d-2F1001-----------------------------
-INT 2F U - SuperStor PRO SSTORDRV.SYS - SET ???
+INT 2F U - DR-DOS 6.0 SHARE internal - SET ???
 	AX = 1001h
-	BX = ???
-	DX = ???
-Program: SuperStor is a disk-compression program by Addstor.
-SeeAlso: AX=F800h
+	DX:BX -> ???function
+Note:	this function is also supported by SuperStor, a disk-compression
+	  program by Addstor which is bundled with DR-DOS 6.0
+SeeAlso: AX=1000h,X=F800h
 --------f-2F1040-----------------------------
 INT 2F U - DOS 4 only SHARE internal - ???
 	AX = 1040h
@@ -3556,8 +3557,8 @@ INT 2F U - DOS 3.2+ - SET DISK INTERRUPT HANDLER
 	DS:DX -> interrupt handler disk driver calls on read/write
 	ES:BX = address to restore INT 13 to on system halt (exit from root
 		 shell) or warm boot (INT 19)
-Return: DS:DX from previous invocation of this function
-	ES:BX from previous invocation of this function
+Return: DS:DX set by previous invocation of this function
+	ES:BX set by previous invocation of this function
 Notes:	IO.SYS hooks INT 13 and inserts one or more filters ahead of the
 	  original INT 13 handler.  The first is for disk change detection
 	  on floppy drives, the second is for tracking formatting calls and
@@ -3567,7 +3568,7 @@ Notes:	IO.SYS hooks INT 13 and inserts one or more filters ahead of the
 	  also points there unless IO.SYS has installed a special filter for
 	  hard disk reads (on systems with model byte FCh and BIOS date
 	  "01/10/84" only), in which case it points at the special filter
-	most DOS 3.3+ disk access is via the vector in DS:DX, although a few
+	most DOS 3.2+ disk access is via the vector in DS:DX, although a few
 	  functions are still invoked via an INT 13 instruction
 	this is a dangerous security loophole for any virus-monitoring software
 	  which does not trap this call ("INT13", "Nomenklatura", and many
@@ -3893,7 +3894,7 @@ INT 2F - CD-ROM v2.00+ - GET DIRECTORY ENTRY
 		 minimum 255 bytes for direct copy
 Return: CF set on error
 	    AX = error code
-	CF clear if succesful
+	CF clear if successful
 	    AX = disk format (0=High Sierra,1=ISO 9660)
 
 Format of directory entry (direct copy):
@@ -4288,7 +4289,7 @@ Notes:	used to prevent a task switch from occurring
 	nested calls are allowed, and must be followed by an appropriate number
 	  of "end critical section" calls
 	not supported in Windows/386 2.x. Get INDOS flag with INT 21/AH=34h and
-	  and increment by hand.
+	  increment by hand.
 SeeAlso: AX=1682h,INT 15/AX=101Bh,INT 21/AH=34h
 --------W-2F1682-----------------------------
 INT 2F - MS Windows 3+ - END CRITICAL SECTION
@@ -4360,10 +4361,28 @@ Value  Name    CallOut V86 PM	Description
 442h	VTDAPI
 444h	VADMAD			Autoinitialize DMA (Windows 3.0)
 1025h	MMD
+2860h	COMMTASK   N	N  Y	Windows 386-mode preemptive tasker by James
+				A. Kenemuth of Interabang Computing
+28C0h	VXD	   N	Y  Y	Generic VxD for real and protected mode by
+				Andrew Schulman in MSJ February 1993
+3098h	VstlthD	   N	N  N	for QEMM Stealth ROM mode
+7FE0h	VWFD	   N	Y  Y	??? by Neil Sandlin of Microsoft
+7FE1h	VWATCHD	   N	Y  Y	basic driver w/ no functionality except tracing
+				by Keith Jin of Microsoft PSS
+7FE5h	VFINTD	   N	Y  Y	Virtual Floppy Interrupt trapper by Neil
+				Sandlin of Microsoft
+7FE7h	VMPAGES	   N	Y  Y	demonstration of exporting VxD services, by
+				Neil Sandlin of Microsoft
+7FE9h	VIdleD	   N	N  N	demonstration of Call_When_Idle function, by
+				Bernie McIlroy of Microsoft
+7FEBh	VMIOD	   N	N  N	Virtual Monitor I/O Traffic Device, by Neil
+				Sandlin of Microsoft
+7FEDh	VMIRQD	   N	N  N	Virtual Monitor IRQ Traffic Device, by Neil
+				Sandlin of Microsoft
 Note:	The high bit of the VxD ID is reserved for future use. The
 	next 10 bits are the OEM # which is assigned by Microsoft. The
 	low 5 bits are the device number.  Naturally, this scheme has not
-	been adhered to.
+	been adhered to since there are now more than 32 different VxDs.
 
 Call VTD.386 entry point with:
 	AX = 0000h get VTD version number
@@ -4423,7 +4442,7 @@ Return: AX = 0000h if installed
 		bit 0: 32-bit programs supported
 	    CL = processor type (02h=80286, 03h=80386, 04h=80486)
 	    DH = DPMI major version
-	    DL = two-digit DPMI minor version
+	    DL = two-digit DPMI minor version (binary)
 	    SI = number of paragraphs of DOS extender private data
 	    ES:DI -> DPMI mode-switch entry point
 	AX nonzero if not installed
@@ -4474,6 +4493,9 @@ Notes:	the vendor name is used to determine which entry point to return; it is
 	available in protected mode only
 	32-bit applications use ESI and EDI, 16-bit applications use SI and DI
 	this call is present but not documented for DPMI 0.9
+	the Borland C++ 3.1 DPMILOAD does not handle requests for entry points
+	  other than the MS-DOS one gracefully, producing an unhandled
+	  exception report; this has been fixed in the Borland Pascal 7 version
 SeeAlso: INT 31/AX=0A00h,INT 31/AH=57h
 
 Vendor names:
@@ -5118,8 +5140,8 @@ SeeAlso: AX=270Eh,AX=2710h,AX=2711h,AX=2713h
 INT 2F - DR-DOS 6.0 TaskMAX - GET/SET PASTE LINE TERMINATOR STRING
 	AX = 2710h
 	CX = length of string (max 15 keystrokes, 0000h to get current string)
-	DS:SI -> pasting lead-in string (character/scan-code pairs)
-Return: ES:DI -> current lead-in string
+	DS:SI -> pasting terminator string (character/scan-code pairs)
+Return: ES:DI -> current terminator string
 Note:	the specified sequence of keystrokes is sent to the application after
 	  every line of a spreadsheet paste operation
 SeeAlso: AX=270Eh,AX=270Fh,AX=2713h
@@ -5137,7 +5159,7 @@ INT 2F - DR-DOS 6.0 TaskMAX - INITIATE EXPORTING TASK DATA
 INT 2F - DR-DOS 6.0 TaskMAX - INITIATE PASTE OPERATION
 	AX = 2713h
 	DX = task index
-	CX = past mode
+	CX = paste mode
 	    0000h alphanumeric
 	    0001h numeric
 	    0002h text
@@ -5191,6 +5213,7 @@ INT 2F - Kingswood TSR INTERFACE - COMPATIBILITY MODE
 Return: AL = status
 	    00h not installed
 	    FFh one or more TSRs using this interface is installed
+		DX may be destroyed
 Note:	this function is provided to that the multiplex number will appear used
 	  to other programs
 SeeAlso: AH=39h/BL=00h
@@ -5198,14 +5221,14 @@ SeeAlso: AH=39h/BL=00h
 INT 2F - Kingswood TSR INTERFACE - INSTALLATION CHECK
 	AH = 39h
 	BL = 00h
-	AL = TSR ID number (01h-FFh, currently only 01h-0Eh used) (see below)
+	AL = TSR ID number (01h-FFh, currently only 01h-1Bh used) (see below)
 Return: AL = status
 	    00h not installed
 	    FFh installed
 		DX = segment address of resident module
 Note:	All of Kingswood Software's TSRs use this interface.  Usually the
 	  resident module is installed by allocating a block of upper memory,
-	  setting its owner ID to 0008h (DOS data), and filling the MCB name
+	  setting its owner ID to 000Ah (used by DOS), and filling the MCB name
 	  field with the TSR's name.
 SeeAlso: AX=3900h,AH=39h/BL=01h
 
@@ -5224,11 +5247,24 @@ Values for TSR ID number:
  0Ch	EXTWILD
  0Dh	BREAKOUT
  0Eh	STOPDISK
+ 0Fh	MEMINIT
+ 10h	JANUSEXT
+ 11h	CAPS
+ 12h	ANSI
+ 13h	TRAPPER
+ 14h	EATMEM
+ 15h	WPJOKE
+ 16h	SHOWDOS
+ 17h	LOGINTS
+ 18h	BLANKVGA
+ 19h	SWAPEXEC
+ 1Ah	SHELL
+ 1Bh	TSRGAMES
 
 Format of TSR modules:
 Offset	Size	Description
  00h  4 BYTEs	signature "FTSR"
- 04h	WORD	segment address of this module
+ 04h	WORD	segment address of this module (used to check validity)
  06h	WORD	number of words to skip (usually 0000h if no PSP present)
  08h  N WORDs	module-defined data that must be at a fixed segment offset
 		(usually only a PSP if file access is required)
@@ -5257,6 +5293,7 @@ INT 2F - Kingswood TSR INTERFACE - APPLICATION-SPECIFIC FUNCTION CALLS
 	BL = function number (02h-FFh)
 	AL = TSR ID number (01h-FFh)
 	CX,DX,SI,DI,DS,ES may contain parameters
+	BH reserved for use by the function dispatcher
 Return: as appropriate for the called function
 SeeAlso: AX=3900h,AH=39h/BL=00h,AX=3901h/BL=02h
 --------r-2F3901BL02-------------------------
@@ -5264,6 +5301,7 @@ INT 2F - Kingswood TSR Windows - OPEN WINDOW
 	AX = 3901h
 	BL = 02h
 Return: AX = error code (0000h if successful)
+	SI,DI,DS,ES preserved
 Notes:	opens the next TSR window on top of any others.	 Only three
 	  TSR windows can be opened at any one time.  The three windows
 	  are all 40x11 characters, partly overlapping.
@@ -5273,6 +5311,7 @@ INT 2F - Kingswood TSR Windows - HIDE WINDOWS
 	AX = 3901h
 	BL = 03h
 Return: AX = error code (0000h if successful)
+	SI,DI,DS,ES preserved
 Notes:	Hide any visible TSR windows from view.
 SeeAlso: AH=39h/BL=00h,AX=3901h/BL=02h,AX=3901h/BL=05h
 --------r-2F3901BL04-------------------------
@@ -5280,6 +5319,7 @@ INT 2F - Kingswood TSR Windows - SHOW WINDOWS
 	AX = 3901h
 	BL = 04h
 Return: AX = error code (0000h if successful)
+	SI,DI,DS,ES preserved
 Notes:	Re-display all TSR windows after a HIDE WINDOWS call.
 SeeAlso: AH=39h/BL=00h,AX=3901h/BL=02h,AX=3901h/BL=03h
 --------r-2F3901BL05-------------------------
@@ -5287,6 +5327,7 @@ INT 2F - Kingswood TSR Windows - CLOSE WINDOW
 	AX = 3901h
 	BL = 05h
 Return: AX = error code (0000h if successful)
+	SI,DI,DS,ES preserved
 Notes:	Close the last opened TSR window.
 SeeAlso: AH=39h/BL=00h,AX=3901h/BL=02h
 --------r-2F3901BL06-------------------------
@@ -5295,6 +5336,7 @@ INT 2F - Kingswood TSR Windows - SET WINDOW TITLE
 	BL = 06h
 	DS:SI -> title string
 Return: AX = error code (0000h if successful)
+	SI,DI,DS,ES preserved
 SeeAlso: AH=39h/BL=00h,AX=3901h/BL=02h
 --------r-2F3901BL07-------------------------
 INT 2F - Kingswood TSR Windows - POSITION CURSOR
@@ -5303,6 +5345,7 @@ INT 2F - Kingswood TSR Windows - POSITION CURSOR
 	CH = Y coordinate (0-10)
 	CL = X coordinate (0-39)
 Return: AX = error code (0000h if successful)
+	SI,DI,DS,ES preserved
 Note:	the hardware cursor is always disabled when a TSR window is opened;
 	  this call only sets a text position
 SeeAlso: AH=39h/BL=00h,AX=3901h/BL=08h,AX=3901h/BL=09h
@@ -5312,6 +5355,7 @@ INT 2F - Kingswood TSR Windows - DISPLAY STRING
 	BL = 08h
 	DS:SI -> string
 Return: AX = error code (0000h if successful)
+	SI,DI,DS,ES preserved
 Notes:	The text is not clipped.
 	This routine understands Tab, NewLine and Carriage Return
 SeeAlso: AH=39h/BL=00h,AX=3901h/BL=07h
@@ -5321,6 +5365,7 @@ INT 2F - Kingswood TSR Windows - SCROLL WINDOW
 	BL = 09h
 	CL = scroll direction: 00h up, FFh down, 00h clear window
 Return: AX = error code (0000h if successful)
+	SI,DI,DS,ES preserved
 SeeAlso: AH=39h/BL=00h,AX=3901h/BL=07h
 --------r-2F3901BL0A-------------------------
 INT 2F - Kingswood TSR Windows - SOUND BEEPER
@@ -5330,6 +5375,7 @@ INT 2F - Kingswood TSR Windows - SOUND BEEPER
 	     (divide 1843200 by required frequency to get value for DX)
 	CL = sound length in 18.2 Hz clock ticks
 Return: AX = error code (0000h if successful)
+	SI,DI,DS,ES preserved
 SeeAlso: AH=39h/BL=00h
 --------r-2F3901BL0B-------------------------
 INT 2F - Kingswood TSR Windows - ADD OR REMOVE USER
@@ -5338,9 +5384,29 @@ INT 2F - Kingswood TSR Windows - ADD OR REMOVE USER
 	CL = number of users increment: +1 if adding a new user
 					-1 if removing a user
 Return: AX = error code (0000h if successful)
+	SI,DI,DS,ES preserved
 Note:	the TSR windows resident module may only be removed when the internal
 	  user count is zero
 SeeAlso: AH=39h/BL=00h,AX=3901h/BL=02h
+--------V-2F3912BL03-------------------------
+INT 2F - Kingswood ANSI display driver - SET COMPATIBILITY MODE
+	AX = 3912h
+	BL = 03h
+	CL = new mode (00h fast, FFh BIOS)
+Return: AL = old compatibility mode
+	SI,DI,DS,ES preserved
+SeeAlso: AX=3900h,AX=3912h/BL=04h
+--------V-2F3912BL04-------------------------
+INT 2F - Kingswood ANSI display driver - SET FLAGS
+	AX = 3912h
+	BL = 04h
+	CL = new flags
+	    bit 0: do not wrap at end of line
+	    bit 1: wait for beeps to end before displaying next character
+	    bit 2: do not use graphics cursor
+Return: AL = old flags
+	SI,DI,DS,ES preserved
+SeeAlso: AX=3900h,AX=3912h/BL=03h
 --------W-2F4000-----------------------------
 INT 2F - Windows 3.x (OS/2 2.x???) - GET VIRTUAL DEVICE DRIVER (VDD) CAPABLTIES
 	AX = 4000h
@@ -5352,7 +5418,7 @@ Return: AL = 01h does not virtualize video access
 		 graphics modes, and VGA multiplane modes
 	     FFh virtualizes the video fully
 Note:	this function is used by display drivers to find out what capabilities
-	  exist for the VDD driver and also trigger then VDD driver to call
+	  exist for the VDD driver and also trigger the VDD driver to call
 	  functions 4005h and 4006h.  This function also gives the Video Driver
 	  hardware access to the video registers.
 --------O-2F4001-----------------------------
@@ -5463,7 +5529,7 @@ Offset	Size	Description
 Format of XMS handle [array]:
 Offset	Size	Description
  00h	BYTE	flag 01h=free, 02h=used, 04h=unused
- 01h	BYTE	lock 00h=unlocked, 01h=locked
+ 01h	BYTE	lock count (00h=unlocked)
  02h	DWORD	address of XMS block in KB (shift left by 10 for abs. address)
  06h	DWORD	size of XMS block in KB
 --------m-2F4310-----------------------------
@@ -5540,6 +5606,8 @@ Perform a FAR call to the driver entry point with AH set to the function code
 			   DX:BX = 32-bit linear address of locked block
 			= 0000h failure
 			   BL = error code (80h,81h,A2h,ACh,ADh) (see below)
+	     Note: MS Windows 3.x rejects this function for handles allocated
+			after Windows started
 	0Dh  Unlock extended memory block
 	     DX = handle of block to unlock
 	     Return: AX = 0001h success
@@ -5553,6 +5621,8 @@ Perform a FAR call to the driver entry point with AH set to the function code
 			   DX = block size in KB
 			= 0000h failure
 			   BL = error code (80h,81h,A2h) (see below)
+	     BUG: MS Windows 3.10 acts as though unallocated handles are in use
+	     Note: MS Windows 3.00 has problems with this call
 	0Fh  Reallocate extended memory block
 	     DX = handle of block
 	     BX = new size of block in KB
@@ -5637,6 +5707,7 @@ Perform a FAR call to the driver entry point with AH set to the function code
 			    EDX = block size in KB
 			= 0000h failure
 			    BL = status (80h,81h,A2h) (see below)
+	     BUG: DOS 6.0 HIMEM.SYS leaves CX unchanged
 	8Fh  (XMS v3.0) Reallocate any extended memory block
 	     DX = unlocked handle
 	     EBX = new size in KB
@@ -7118,6 +7189,7 @@ Index:	installation check;TesSeRact TSR interface|uninstall;TesSeRact
 
 Values for TesSeract names:
  "AVATAR  "	AVATAR.SYS
+ "QeditTSR"	TSR version of SemWare's Qedit editor
  "SCRNBLNK"	Trusted Access screen blanker
 
 Format of User Parameter Block:
@@ -7325,7 +7397,7 @@ Return: AL = 00h not installed
 Program: SCRNSAV2.COM is a screen saver for PS/2s with VGA by Alan Ballard
 SeeAlso: INT 10/AX=5555h
 Index:	screen saver;SCRNSAV2
-----------2F7000------------------------------
+--------N-2F7000-----------------------------
 INT 2F - License Service API - INSTALLATION CHECK
 	AX = 7000h
 	CX = license server index (0000h to 001Fh)
@@ -7339,7 +7411,7 @@ Notes:	The License Service API is being maintained by Microsoft but is being
 	Each license service provider must search for the next free index
 	  slot to use
 SeeAlso: AX=7001h,AX=7003h,AX=7004h,AX=7005h
-----------2F7001------------------------------
+--------N-2F7001-----------------------------
 INT 2F - License Service API - REQUEST LICENSE
 	AX = 7001h
 	CX = license server index (0000h to 001Fh)
@@ -7367,7 +7439,7 @@ Offset	Size	Description
  04h	DWORD	secret to be challenged (1-255)
  08h	DWORD	size of challenge in bytes (1-255)
  0Ch  N BYTEs	challenge data
-----------2F7002------------------------------
+--------N-2F7002-----------------------------
 INT 2F - License Service API - RELEASE LICENSE
 	AX = 7002h
 	CX = license server index (0000h to 001Fh)
@@ -7383,7 +7455,7 @@ Offset	Size	Description
  00h	DWORD	handle indentifying license context
  04h	DWORD	total units consumed
  08h	DWORD	address of comment string
-----------2F7003------------------------------
+--------N-2F7003-----------------------------
 INT 2F - License Service API - UPDATE
 	AX = 7003h
 	CX = license server index (0000h to 001Fh)
@@ -7402,7 +7474,7 @@ Offset	Size	Description
  0Ch	DWORD	additional units required
  10h	DWORD	address of comment string
  14h	DWORD	address of SLSCHALLENGE structure (see AX=7001h)
-----------2F7004------------------------------
+--------N-2F7004-----------------------------
 INT 2F - License Service API - GET ERROR
 	AX = 7004h
 	CX = license server index (0000h to 001Fh)
@@ -7420,7 +7492,7 @@ Offset	Size	Description
  08h	DWORD	error code
  0Ch	DWORD	buffer size in bytes
  10h  N BYTEs	data buffer
-----------2F7005------------------------------
+--------N-2F7005-----------------------------
 INT 2F - License Service API - QUERY LICENSE
 	AX = 7005h
 	CX = license server index (0000h to 001Fh)
@@ -7541,7 +7613,7 @@ Desc:	set ??? to its default value
 Note:	this call is a NOP under TBMI v2.0 (TBMI2)
 SeeAlso: AX=7A17h
 --------N-2F7A16-----------------------------
-INT 2F OU - Novell NetWare - TBMI v1.1 only -
+INT 2F OU - Novell NetWare - TBMI v1.1 only - ???
 	AX = 7A16h
 	CX = ???
 	???
@@ -7632,18 +7704,43 @@ Return: AX = 7AFFh if installed
 		bits 15-2: ???
 	    CX = version (CH=major, CL=minor)
 	    DX = 0000h
-	    ES:DI -> entry point for ???
-SeeAlso: AX=7A41h
+	    ES:DI -> entry point for TCP/IP stack (see below)
+Notes:	Novell's LAN Workplace for DOS TCPIP.EXE also supports this interface
+	this function is also supported by the Beame&Whiteside BWLWP40 shim,
+	  but it only returns AL and ES:DI, and does not support AX=7A41h
+SeeAlso: AX=7A41h,INT 60"Excelan"
+
+Call entry point with:
+	ES:SI -> parameter block (see below)
+	???
+Return: ES:SI parameter block updated
+
+Format of parameter block:
+Offset	Size	Description
+ 00h	DWORD	???
+ 04h	WORD	(return) ???
+ 06h	WORD	(return) ???
+ 08h  4 BYTEs	???
+ 0Ch	BYTE	flags???
+ 0Dh  7 BYTEs	???
+ 14h	BYTE	(return) ???
+ 15h	BYTE	(call) ??? number, bit 7 set if ???
+ 16h	BYTE	???
+ 17h	BYTE	(return) result or error code
+	???
 --------N-2F7A41-----------------------------
-INT 2F - Novell NetWare - TCP/IP Protocol Stack - ???
+INT 2F - Novell NetWare - TCP/IP Protocol Stack - WINDOWS SUPPORT???
 	AX = 7A41h
-	ES:DI -> ???
+	ES:DI -> FAR entry point for ??? (will be called with BX=1,2,3,4)
 Return: AX = 7AFFh if supported
-	    BX = ???
+	    BX = ??? (see AX=7A40h)
 	    CX = version (CH=major, CL=minor)
 	    DX = 0000h
-	    SI = ???
-	    ES:DI -> entry point for ???
+	    ES:SI -> DWORD containing passed value of ES:DI
+	    ES:DI -> entry point for TCP/IP stack
+Notes:	Novell's LAN Workplace for DOS TCPIP.EXE also supports this interface
+	the pointer which is set to ES:DI is cleared to 0000h:0000h when
+	  a Windows exit broadcast is received
 SeeAlso: AX=7A40h
 --------N-2F7A4DBX0001-----------------------
 INT 2F - Novell Netware - ???

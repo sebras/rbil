@@ -1,22 +1,22 @@
 Warning: Blatant advertisements follow
 
 Tired of wearing out printer ribbons getting a hardcopy of the interrupt
-list?  Want the list split up by subject?  Try
+list?  Want the list split up by subject and thoroughly indexed?  Try
 
      PC Interrupts:
        A Programmer's Reference to BIOS, DOS, and Third-Party Calls
+       (second edition)
      Ralf Brown and Jim Kyle
-     1024 pages
+     1200 pages
      Addison-Wesley
-     ISBN 0-201-57797-6
-     $32.95
+     ISBN 0-201-62485-0
+     $39.95
 
-Corresponds to INTER26 with the most important new material from INTER27.
+Corresponds to the non-networking portions of INTER36 with a few of the
+additions from INTER37.  Available some time in November.
 
-[Apology: somewhere between our manuscript and the first printing, someone
- at the publisher cut out the list of contributors without our knowledge.
- On behalf of the publisher, I apologize for this mistake; the list will
- be restored in the second printing.]
+The companion book Network Interrupts (500+ pages, ISBN 0-201-62644-6, $29.95)
+should be available in December or January 1994.
 
 -------
 
@@ -49,16 +49,37 @@ lots of examples, etc.
 
 Jolt Productivity Award winner, 1991.
 
+Note: the second edition, which has seemingly been "in the works" forever,
+will be ISBN 0-201-63287-X.
+
 -------
 
 WindowBook, Inc., the folks who prepared the hypertext version for
-_Undocumented_DOS_ is tracking my releases of the interrupt list, and
-offering the WindowBook version for $39.95 ($19.95 for updates).  You
-can reach them at 800-524-0380 or 617-661-9515.  Note that I have no
-financial interest whatsoever in WindowBook's offering, I'm just
-letting people know of value-added versions of the list.
+_Undocumented_DOS_, first edition, is tracking my releases of the
+interrupt list, and offering the WindowBook version for $39.95 ($19.95
+for updates).  You can reach them at 800-524-0380 or 617-661-9515.  Note
+that I have no financial interest whatsoever in WindowBook's offering,
+I'm just letting people know of value-added versions of the list.
 
 	Window Book, Inc.
 	61 Howard Street
 	Cambridge, MA 02139
+
+-------
+
+The newest Addison-Wesley catalog lists the following books which may
+be of interest:
+
+	DOS Internals
+	Geoff Chappell
+	608 pages + 1.44M disk, $39.95
+	ISBN 0-201-60835-9
+	"available November 1993"
+
+	The Undocumented PC: A Programmer's Guide to I/O, CPUs, and
+	  Fixed Memory Areas
+	Frank van Gilluwe
+	656 pages + 1.44M disk, $44.95
+	ISBN 0-201-62277-7
+	"available November 1993"
 

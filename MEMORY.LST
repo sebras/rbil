@@ -1,5 +1,5 @@
 [This file was originally provided by Robin Walker.  --Ralf]
-Last Update: 7/13/93
+Last Update: 9/24/93
 
 Format of BIOS Data Segment at segment 40h:
 		{items in curly braces not documented by IBM}
@@ -15,14 +15,14 @@ Offset	Size	Description
  0Ah	WORD	Base I/O address of 2nd parallel I/O port, zero if none
  0Ch	WORD	Base I/O address of 3rd parallel I/O port, zero if none
  0Eh	WORD	[non-PS] Base I/O address of 4th parallel port, zero if none
-		[PS] Segment of Extended BIOS Data Segment
+		[PS] {Segment of Extended BIOS Data Segment}
 		    Note: Above fields filled in turn by POST as it finds
 		    parallel ports. POST never leaves gaps. DOS and BIOS
 		    parallel device numbers may de redefined by re-assigning
 		    these fields.
  10h	WORD	Installed hardware:
 		    bits 15-14: number of parallel devices
-		    bit	    13: [Conv] Internal modem
+		    bit	    13: [Conv, PS/2-55LS] Internal modem
 		    bit	    12: reserved
 		    bits 11- 9: number of serial devices
 		    bit	     8: reserved
@@ -39,10 +39,13 @@ Offset	Size	Description
 		    bit	     0: =1 if diskette available for boot
  12h	BYTE	[Conv] POST status
 		[AT] {Manufacturing test initialisation flags}
+		[PS/2-25] POST system flag
+		    bit 0: optional memory failed; memory remapped
+		    bit 1: real-time clock installed
  13h	WORD	Base memory size in kbytes (0-640)
  15h	BYTE	[AT] {Manufacturing test scratch pad}
  16h	BYTE	[AT] {Manufacturing test scratch pad}
-		[PS/2 Mod 30] BIOS control flags
+		[PS/2 Mod 30] {BIOS control flags}
  17h	BYTE	Keyboard status flags 1:
 		    bit 7 =1 INSert active
 		    bit 6 =1 Caps Lock active
@@ -88,7 +91,7 @@ Offset	Size	Description
 		    bit 5 =1 general controller failure
 		    bits 4-0:
 			    00h no error
-			    01h invalid request
+			    01h invalid request/parameter
 			    02h address mark not found
 			    03h write-protect error
 			    04h sector not found
@@ -97,6 +100,12 @@ Offset	Size	Description
 			    09h DMA across 64k boundary
 			    0Ch media type unknown
 			    10h CRC error on read
+		    Note: the following values for this byte differ somewhat
+			from the bitfield definition above:
+			    30h drive does not support media sense
+			    31h no media in drive
+			    32h drive does not support media type
+			    AAh diskette drive not ready
  42h  7 BYTEs	Diskette/Fixed disk status/command bytes
     42h BYTE	XT: command byte to hard disk controller
 		AT: write precompensation cylinder number / 4
@@ -121,19 +130,21 @@ Offset	Size	Description
  63h	WORD	Video CRT controller base address: color=03D4h, mono=03B4h
  65h	BYTE	Video current setting of mode select register 03D8h/03B8h
  66h	BYTE	Video current setting of CGA palette register 03D9h
- 67h	DWORD	POST real mode re-entry point after certain resets
+ 67h	DWORD	{POST real mode re-entry point after certain resets}
+		[PS except Mod 25,30] pointer to reset code upon system reset
+		    with memory preserved (see offset 72h)
  6Bh	BYTE	POST last unexpected interrupt
  6Ch	DWORD	Timer ticks since midnight
  70h	BYTE	Timer overflow, non-zero if has counted past midnight
  71h	BYTE	Ctrl-Break flag: bit 7=1
  72h	WORD	POST reset flag:
-		    = 1234h if to bypass memory test (warm boot)
-		    = 4321h [PS/2 MCA only] if to preserve memory
+		    = 1234h to bypass memory test (warm boot)
+		    = 4321h [PS/2 except Mod 25,30] to preserve memory
 		    = 5678h [Conv] system suspended
 		    = 9ABCh [Conv] manufacturing test mode
 		    = ABCDh [Conv] POST loop mode
 		    =	64h Burn-in mode
- 74h	BYTE	Fixed disk last operation status: {except ESDI drives}
+ 74h	BYTE	Fixed disk last operation status, except ESDI drives:
 		    00h no error
 		    01h invalid function request
 		    02h address mark not found
@@ -171,8 +182,14 @@ Offset	Size	Description
  77h	BYTE	Fixed disk: I/O port offset {IBM document only for XT}
 		[WD1002-27X SuperBIOS] used in track recalculation
  78h  3 BYTEs	Parallel devices 1-3 time-out counters
- 7Bh	BYTE	parallel device 4 time-out counter [non-PS]
+ 7Bh	BYTE	parallel device 4 time-out counter [non-PS and PS Mod 25,30]
+		bit 7-6 reserved
 		bit 5 set if Virtual DMA Spec supported [PS] (see INT 4B)
+		bit 4 reserved
+		bit 3 set if INT 4Bh intercepted
+		bit 2 reserved
+		bit 1 set if Generic SCSI CBIOS services available on INT 4Bh
+		bit 0 reserved
  7Ch  4 BYTEs	Serial devices 1-4 time-out counters
  80h	WORD	Keyboard buffer start as offset from segment 40h (normally 1Eh)
  82h	WORD	Keyboard buffer end+1 as offset from segment 40h (normally 3Eh)
@@ -211,7 +228,7 @@ Offset	Size	Description
 		    400-line double scan. VGA resets this byte to x9h after the
 		    mode set.
 		    See also note for next byte.
- 89h	BYTE	Video MCGA/VGA mode-set option control:
+ 89h	BYTE	{Video MCGA/VGA mode-set option control:}
 		    bits 7 and 4:
 			0 0  350-line mode requested
 			0 1  400-line mode at next mode set
@@ -246,11 +263,13 @@ Offset	Size	Description
 							  01  60Hz
 							  10  72Hz???
 							  11  70Hz
- 8Ah	BYTE	Video [MCGA/VGA]: index into Display Combination Code table
+ 8Ah	BYTE	{Video [MCGA/VGA]: index into Display Combination Code table}
+ 8Bh 11 BYTEs	reserved [PC, PCjr, PC/XT 11/8/82, and Convertible]
  8Bh	BYTE	Diskette media control [not XT]:
 		    bits 7-6: Last data rate set by controller:
-			      00=500kbps, 01=300kbps, 10=250kbps, 11=reserved
+			      00=500kbps, 01=300kbps, 10=250kbps, 11=1Mbps
 		    bits 5-4: Last diskette drive step rate selected
+			      00=0Ch, 01=0Dh, 10=0Eh, 11=0Ah
 		    bits 3-2: {Data rate at start of operation}
 		    bits 1-0: reserved
  8Ch	BYTE	Fixed disk controller status [not XT]
@@ -258,7 +277,7 @@ Offset	Size	Description
  8Eh	BYTE	Fixed disk Interrupt Control [not XT]
 		cleared to 00h at start of disk operation, set to FFh by IRQ14
 		handler when hard disk controller completes command
- 8Fh	BYTE	Diskette controller information [not XT]:
+ 8Fh	BYTE	{Diskette controller information [not XT]:}
 		    bit 7:  reserved
 		    bit 6:  =1 drive 1 determined
 		    bit 5:  =1 drive 1 is multi-rate, valid if drive determined
@@ -269,10 +288,11 @@ Offset	Size	Description
 		    bit 0:  =1 drive 0 supports 80 tracks, always valid
  90h	BYTE	Diskette drive 0 media state
  91h	BYTE	Diskette drive 1 media state
-		    bits 7-6: Data rate: 00=500kbps, 01=300kbps, 10=250kbps
+		    bits 7-6: Data rate
+				00=500kbps, 01=300kbps, 10=250kbps, 11=1Mbps
 		    bit	   5: =1 if double stepping reqd (e.g. 360kB in 1.2MB)
 		    bit	   4: =1 if media established
-		    bit	   3: reserved
+		    bit	   3: =1 if drive capable of supporting 4MB media
 		    bits 2-0: on exit from BIOS, contain:
 			    000 trying 360kB in 360kB
 			    001 trying 360kB in 1.2MB
@@ -282,8 +302,20 @@ Offset	Size	Description
 			    101 1.2MB in 1.2MB established
 			    110 reserved
 			    111 all other formats/drives
- 92h	BYTE	Diskette drive 0 media state at start of operation
- 93h	BYTE	Diskette drive 1 media state at start of operation
+ 92h	BYTE	{Diskette drive 0 media state at start of operation}
+		officially "Drive 2 media state"
+		bits 7-3 as above
+		bit 2: =1 if multiple data rate capability determined
+		bit 1: =1 if multiple data rate capability
+		bit 0: =1 if drive has 80 tracks, =0 if 40 tracks
+ 92h	BYTE	[Olivetti Quaderno] Hard Disk powerdown countdown in clock
+		ticks (HD turned off when counter reaches zero)
+ 93h	BYTE	{Diskette drive 1 media state at start of operation}
+		officially "Drive 3 media state"
+		bits 7-3 as above
+		bit 2: =1 if multiple data rate capability determined
+		bit 1: =1 if multiple data rate capability
+		bit 0: =1 if drive has 80 tracks, =0 if 40 tracks
  94h	BYTE	Diskette drive 0 current track number
  95h	BYTE	Diskette drive 1 current track number
  96h	BYTE	Keyboard status byte 1
@@ -311,7 +343,9 @@ Offset	Size	Description
 		    bit 7 =1 wait time elapsed
 		    bits 6-1 reserved
 		    bit 0 =1 INT 15h, AH=86h has occurred
- A1h  7 BYTEs	reserved for network adapters (oh really?)
+ A1h	BYTE	bit 5 set if LAN Support Program Interrupt Arbitrator present
+		(DEVICE=DXMA0MOD.SYS)
+ A2h  6 BYTEs	reserved for network adapters
  A4h	DWORD	[PS/2 Mod 30] Saved Fixed Disk Interrupt Vector
  A8h	DWORD	Video: EGA/MCGA/VGA ptr to Video Save Pointer Table (see below)
  ACh-AFh	reserved
@@ -331,7 +365,7 @@ Offset	Size	Description
  C0h 16 BYTEs	(1988 Phoenix 386 BIOS 1.10 03) drive parameters for hard disk
 		type 49 (see INT 41,INT 46)
  C0h 14 BYTEs	reserved
- CEh	WORD	count of days since last boot???
+ CEh	WORD	count of days since last boot
  D0h-EFh	reserved
  D0h	BYTE	[Digiboard MV/4] length of data table
  D1h	BYTE	[Digiboard MV/4] product ID

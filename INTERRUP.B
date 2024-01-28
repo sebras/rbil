@@ -1,5 +1,2306 @@
 Interrupt List, part 2 of 10
 This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
+--------S-14---------------------------------
+INT 14 - SERIAL - Digiboard DigiCHANNEL PC/X* Extender INT 14 (XAPCM232.SYS)
+Note:	the installation check for this driver is to determine whether the
+	  "~DOSXAM~" character device exists
+Index:	installation check;Digiboard DigiCHANNEL
+--------S-1400-------------------------------
+INT 14 - SERIAL - INITIALIZE PORT
+	AH = 00h
+	AL = port parameters
+	    bits 7-5 data rate (110,150,300,600,1200,2400,4800,9600 bps)
+	    bits 4-3 parity (00 or 10 = none, 01 = odd, 11 = even)
+	    bit 2    stop bits (set = 2, clear = 1)
+	    bits 1-0 data bits (00 = 5, 01 = 6, 10 = 7, 11 = 8)
+	DX = port number (00h-03h) (04h-43h for Digiboard XAPCM232.SYS)
+Return: AH = line status (see AH=03h)
+	    FFh if error on Digiboard XAPCM232.SYS
+	AL = modem status (see AH=03h)
+Notes:	default handler is at F000h:E739h in IBM PC and 100% compatible BIOSes
+	since the PCjr supports a maximum of 4800 bps, attempting to set 9600
+	  bps will result in 4800 bps
+	various network and serial-port drivers support the standard BIOS
+	  functions with interrupt-driven I/O instead of the BIOS's polled I/O
+	the 04/08/93 Compaq system ROM uses only the low two bits of DX
+SeeAlso: AH=04h"SERIAL",AH=04h"MultiDOS",AH=05h"SERIAL",AH=57h
+SeeAlso: AX=8000h"ARTICOM",AH=81h"COMM-DRV",AH=82h"COURIERS",AH=8Ch
+--------S-1400-------------------------------
+INT 14 - FOSSIL (Fido/Opus/Seadog Standard Interface Level) - INITIALIZE
+	AH = 00h
+	AL = initializing parameters
+	    7 - 6 - 5	   4 - 3     2	  1 - 0
+	    -BAUD RATE-	   PARITY   STOP   WORD
+				    BITS  LENGTH
+	    000 19200 bd   00 none  0: 1  00: 5
+	    001 38400 bd   01 odd   1: 2  01: 6
+	    010	  300 bd   11 even	  10: 7
+	    011	  600 bd		  11: 8
+	    100	 1200 bd
+	    101	 2400 bd
+	    110	 4800 bd
+	    111	 9600 bd (4800 on PCjr)
+	DX = port number (0-3 or FFh if only performing non-I/O setup)
+Return: AH = RS-232 status code bits
+	    bit 0: RDA - input data is available in buffer
+	    bit 1: OVRN - data has been lost
+	    bit 5: THRE - room is available in output buffer
+	    bit 6: TSRE - output buffer empty
+	AL = modem status bits
+	    bit 3: always 1
+	    bit 7: DCD - carrier detect
+SeeAlso: AH=05h"FOSSIL",AH=81h"COMM-DRV",AH=82h"COURIERS"
+--------S-1400-------------------------------
+INT 14 - MBBIOS - INITIALIZE PORT
+	AH = 00h
+	AL = port parameters
+	    bits 7-5 data rate
+			(normally 110,150,300,600,1200,2400,4800,9600 bps;
+			9600,14400,19200,28800,38400,57600,115200,330400 bps
+			if the high-speed option is set)
+	    bits 4-3 parity (00 or 10 = none, 01 = odd, 11 = even)
+	    bit 2    stop bits (set = 2, clear = 1)
+	    bits 1-0 data bits (00 = 5, 01 = 6, 10 = 7, 11 = 8)
+	DX = port number
+Return: AH = line status (see AH=03h)
+	AL = modem status (see AH=03h)
+Note:	MBBIOS was written by H. Roy Engehausen
+SeeAlso: AH=04h"MBBIOS",AH=05h"MBBIOS"
+--------S-1401-------------------------------
+INT 14 - SERIAL - WRITE CHARACTER TO PORT
+	AH = 01h
+	AL = character to write
+	DX = port number (00h-03h) (04h-43h for Digiboard XAPCM232.SYS)
+Return: AH bit 7 clear if successful
+	AH bit 7 set on error
+	AH bits 6-0 = port status (see AH=03h)
+Notes:	various network and serial-port drivers support the standard BIOS
+	  functions with interrupt-driven I/O instead of the BIOS's polled I/O
+	the 04/08/93 Compaq system ROM uses only the low two bits of DX
+SeeAlso: AH=02h,AH=0Bh"FOSSIL",AX=8000h"ARTICOM",AH=89h
+--------S-1402-------------------------------
+INT 14 - SERIAL - READ CHARACTER FROM PORT
+	AH = 02h
+	AL = 00h (ArtiCom)
+	DX = port number (00h-03h (04h-43h for Digiboard XAPCM232.SYS))
+Return: AH = line status (see AH=03h)
+	AL = received character if AH bit 7 clear
+Notes:	will timeout if DSR is not asserted, even if function 03h returns
+	  data ready
+	various network and serial-port drivers support the standard BIOS
+	  functions with interrupt-driven I/O instead of the BIOS's polled I/O
+	the 04/08/93 Compaq system ROM uses only the low two bits of DX
+SeeAlso: AH=01h,AH=02h"FOSSIL",AH=84h,AH=FCh
+--------S-1402-------------------------------
+INT 14 - FOSSIL - RECEIVE CHARACTER WITH WAIT
+	AH = 02h
+	DX = port number (0-3)
+Return: AL = character received
+	AH = 00h
+SeeAlso: AH=01h,AH=02h"SERIAL"
+--------S-1403-------------------------------
+INT 14 - SERIAL - GET PORT STATUS
+	AH = 03h
+	AL = 00h (ArtiCom)
+	DX = port number (00h-03h) (04h-43h for Digiboard XAPCM232.SYS)
+Return: AH = line status (see below)
+	AL = modem status (see below)
+	AX = 9E00h if disconnected (ArtiCom)
+Note:	the 04/08/93 Compaq system ROM uses only the low two bits of DX
+SeeAlso: AH=00h,AH=07h"MultiDOS",AX=8000h"ARTICOM",AH=81h"COURIERS",AX=FD02h
+
+Bitfields for line status:
+ bit 7	timeout
+ bit 6	transmit shift register empty
+ bit 5	transmit holding register empty
+ bit 4	break detected
+ bit 3	framing error
+ bit 2	parity error
+ bit 1	overrun error
+ bit 0	receive data ready
+
+Bitfields for modem status:
+ bit 7	carrier detect
+ bit 6	ring indicator
+ bit 5	data set ready
+ bit 4	clear to send
+ bit 3	delta carrier detect
+ bit 2	trailing edge of ring indicator
+ bit 1	delta data set ready
+ bit 0	delta clear to send
+--------S-1404-------------------------------
+INT 14 - SERIAL - EXTENDED INITIALIZE (CONVERTIBLE,PS)
+	AH = 04h
+	AL = break status
+	    00h if break
+	    01h if no break
+	BH = parity (see below)
+	BL = number of stop bits
+	    00h one stop bit
+	    01h two stop bits (1.5 if 5 bit word length)
+	CH = word length (see below)
+	CL = bps rate (see below)
+	DX = port number
+Return: AX = port status code (see AH=00h)
+SeeAlso: AH=00h,AH=1Eh,AX=8000h"ARTICOM"
+
+Values for parity:
+ 00h	no parity
+ 01h	odd parity
+ 02h	even parity
+ 03h	stick parity odd
+ 04h	stick parity even
+
+Values for word length:
+ 00h	5 bits
+ 01h	6 bits
+ 02h	7 bits
+ 03h	8 bits
+
+Values for bps rate:
+ 00h	110
+ 01h	150
+ 02h	300
+ 03h	600
+ 04h	1200
+ 05h	2400
+ 06h	4800
+ 07h	9600
+ 08h	19200
+--------S-1404-------------------------------
+INT 14 - FOSSIL - INITIALIZE DRIVER
+	AH = 04h
+	DX = port number
+	optionally BX=4F50h
+		   ES:CX -> byte to be set upon ^C
+Return: AX = 1954h (if successful)
+	BL = maximum function number supported (excluding 7Eh and above)
+	BH = revision of FOSSIL specification supported
+	DTR is raised
+Note:	the word at offset 6 in the interrupt handler contains 1954h, and the
+	  following byte contains the maximum function number supported; this
+	  can serve as an installation check
+SeeAlso: AH=05h"FOSSIL",AH=1Ch,INT 11/AH=BCh
+Index:	installation check;FOSSIL
+--------S-1404-------------------------------
+INT 14 - MultiDOS Plus IODRV - INITIALIZE PORT
+	AH = 04h
+Return: port initialized; if Hayes-compatible modem, a connection has been
+	  established
+Note:	the port number is stored at offset BEh in the Task Control Block
+	  (see INT 15/AH=13h"MultiDOS")
+SeeAlso: AH=00h,AH=05h"MultiDOS",AH=20h"MultiDOS",INT 15/AH=13h"MultiDOS"
+--------S-1404-------------------------------
+INT 14 - Digiboard DigiCHANNEL PC/X* - CHANGE BAUD RATE
+	AH = 04h
+	AL = initializing parameters
+	    bits 7-5 unused
+	    bits 4,3: parity (00 none, 01 odd, 11 even)
+	    bit 2: stop bits (0 = one, 1 = two)
+	    bits 1,0: data bits (00 = five, 01 = six, 10 = seven, 11 = eight)
+	BX = baud rate
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    FFh error
+SeeAlso: AH=05h"Digiboard"
+--------S-1404-------------------------------
+INT 14 - MBBIOS - INQUIRY
+	AH = 04h
+Return: AH = AAh
+	AL = 55h
+SeeAlso: AH=00h"MBBIOS",AH=09h"MBBIOS"
+--------S-140400-----------------------------
+INT 14 - Microsoft Systems Journal TSRCOMM INT14 - INSTALLATION CHECK
+	AX = 0400h
+Return: AX = 0FF0h
+SeeAlso: AX=0401h,AX=0408h
+--------S-140401-----------------------------
+INT 14 - Microsoft Systems Journal TSRCOMM INT14 - INITIALIZE MODE
+	AX = 0401h
+	CX = mode
+SeeAlso: AX=0400h,AX=0402h
+--------S-140402-----------------------------
+INT 14 - Microsoft Systems Journal TSRCOMM INT14 - EXTENDED INITIALIZE
+	AX = 0402h
+	CL = parameters
+SeeAlso: AX=0400h,AX=0401h
+--------S-140403-----------------------------
+INT 14 - Microsoft Systems Journal TSRCOMM INT14 - SET TIMEOUT
+	AX = 0403h
+	CX = timeout
+SeeAlso: AX=0400h
+--------S-140404-----------------------------
+INT 14 - Microsoft Systems Journal TSRCOMM INT14 - CLEAR THE RECEIVE BUFFER
+	AX = 0404h
+SeeAlso: AX=0400h,AX=0405h,AX=0406h
+--------S-140405-----------------------------
+INT 14 - Microsoft Systems Journal TSRCOMM INT14 - GET RECEIVE BUFFER COUNT
+	AX = 0405h
+Return: AX = number of characters in buffer
+SeeAlso: AX=0400h,AX=0404h,AX=0407h
+--------S-140406-----------------------------
+INT 14 - Microsoft Systems Journal TSRCOMM INT14 - CLEAR THE TRANSMIT BUFFER
+	AX = 0406h
+SeeAlso: AX=0400h,AX=0404h,AX=0407h
+--------S-140407-----------------------------
+INT 14 - Microsoft Systems Journal TSRCOMM INT14 - GET TRANSMIT BUFFER COUNT
+	AX = 0407h
+Return: AX = number of characters in the buffer
+SeeAlso: AX=0400h,AX=0405h,AX=0406h
+--------S-140408-----------------------------
+INT 14 - Microsoft Systems Journal TSRCOMM INT14 - UNINSTALL
+	AX = 0408h
+SeeAlso: AX=0400h
+--------S-1405-------------------------------
+INT 14 - SERIAL - EXTENDED COMMUNICATION PORT CONTROL (CONVERTIBLE,PS)
+	AH = 05h
+	AL = function
+	    00h read modem control register
+	      Return: BL = modem control register (see below)
+		      AH = status
+	    01h write modem control register
+	      BL = modem control register (see below)
+	      Return: AX = status
+	DX = port number
+Note:	also supported by ArtiCom
+SeeAlso: AH=00h,AH=1Fh,AX=8000h"ARTICOM",AH=FBh
+
+Bitfields for modem control register:
+ bit 0	data terminal ready
+ bit 1	request to send
+ bit 2	OUT1
+ bit 3	OUT2
+ bit 4	LOOP
+ bits 5-7 reserved
+--------S-1405-------------------------------
+INT 14 - FOSSIL - DEINITIALIZE DRIVER
+	AH = 05h
+	DX = port number
+Return: none
+	DTR is not affected
+SeeAlso: AH=00h,AH=04h"FOSSIL",AH=1Dh,AH=8Dh
+--------S-1405-------------------------------
+INT 14 - MultiDOS Plus IODRV - READ CHARACTER FROM PORT
+	AH = 05h
+	AL = timeout in seconds (00h = never)
+Return: AL = status
+	    00h successful
+		AH = character read
+	    01h read error
+	    02h timed out
+	    other modem status (CTS, DSR) changed
+Note:	the port number is stored at offset BEh in the Task Control Block
+SeeAlso: AH=02h,AH=04h"MultiDOS",AH=06h"MultiDOS",AH=22h"MultiDOS"
+SeeAlso: INT 15/AH=13h"MultiDOS"
+--------S-1405-------------------------------
+INT 14 - Digiboard DigiCHANNEL PC/X* - CHANGE PROTOCOL
+	AH = 05h
+	AL = protocol
+	    bits 7-4 unused
+	    bit 3: RTS/CTS
+	    bit 2: DSR
+	    bits 1,0: XON/XOFF
+	BH = new XOFF character (00h = current)
+	BL = new XON character (00h = current)
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    FFh error
+SeeAlso: AH=04h"Digiboard"
+--------S-1405-------------------------------
+INT 14 - MBBIOS - DROP DTR AND RTS
+	AH = 05h
+	DX = port number
+Return: none
+SeeAlso: AH=00h"MBBIOS",AH=06h"MBBIOS",AH=06h"FOSSIL"
+--------S-1405-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - CHANGE PORT PROTOCOL
+	AH = 05h
+	AL = bit 7: set to enable/disable CD monitoring, clear to set protocol
+	     ---bit 7 set---
+	     bit 4: CD monitoring enabled
+	     bit 5: automatic restart enabled
+	     ---bit 7 clear---
+	     bit 0: receive XON/XOFF
+	     bit 1: transmit XON/XOFF
+	     bit 2: DTR/DSR
+	     bit 3: RTS/CTS
+	BH = new XOFF character
+	BL = new XON character
+	DX = port number
+Return: AH = FFh if invalid protocol
+SeeAlso: AH=00h,AH=04h"SERIAL",AH=06h"PC-MOS"
+--------S-1406-------------------------------
+INT 14 - FOSSIL - RAISE/LOWER DTR
+	AH = 06h
+	DX = port
+	AL = DTR state to be set
+	    00h = lower
+	    01h = raise
+SeeAlso: AH=05h"MBBIOS",AH=1Ah
+--------S-1406-------------------------------
+INT 14 - MultiDOS Plus IODRV - WRITE CHARACTER TO PORT
+	AH = 06h
+	AL = character
+Return: AL = status
+	    00h successful
+Notes:	the port number is stored at offset BEh in the Task Control Block
+	if output queue is full, the calling task is blocked until the
+	  character can be stored
+SeeAlso: AH=01h,AH=04h"MultiDOS",AH=05h"MultiDOS",AH=21h"MultiDOS"
+SeeAlso: INT 15/AH=13h"MultiDOS"
+--------S-1406-------------------------------
+INT 14 - MBBIOS - RAISE DTR AND RTS
+	AH = 06h
+	DX = port number
+Return: none
+SeeAlso: AH=05h"MBBIOS",AH=07h"MBBIOS"
+--------S-1406-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - DRIVER 'ID' FUNCTION
+	AH = 06h
+	DX = port number
+Return: AH bit 7 set
+	AL = number of highest function supported by driver
+Program: PC-MOS/386 v5.01 is a multitasking, multiuser MS-DOS 5.0-compatible
+	  operating system by The Software Link, Inc.
+SeeAlso: AH=18h"PC-MOS"
+--------N-1406-------------------------------
+INT 14 - TelAPI - WRITE???
+	AH = 06h
+	CX = number of characters to write???
+	DX = port number
+	ES:DI -> buffer containing data???
+Return: AX = number of characters actually sent??? (negative on error)
+	CX = ???
+Note:	under Novell TELAPI.EXE v4.01, this function and AH=07h are implemented
+	  with identical code
+SeeAlso: AH=07h"TelAPI",AH=E0h"TelAPI"
+--------S-1407-------------------------------
+INT 14 - FOSSIL - RETURN TIMER TICK PARAMETERS
+	AH = 07h
+Return: AL = timer tick interrupt number
+	AH = ticks per second on interrupt number in AL
+	DX = approximate number of milliseconds per tick
+SeeAlso: AH=16h
+--------S-1407-------------------------------
+INT 14 - MultiDOS Plus IODRV - GET PORT STATUS
+	AH = 07h
+Return: CL = modem status (see AH=03h)
+	CH = character at head of input queue (if any)
+	DX = number of characters in input queue
+Note:	the port number is stored at offset BEh in the Task Control Block
+SeeAlso: AH=03h,AH=05h"MultiDOS",AH=08h"MultiDOS",AH=09h"MultiDOS"
+SeeAlso: AH=23h"MultiDOS",INT 15/AH=13h"MultiDOS"
+--------S-1407-------------------------------
+INT 14 - MBBIOS - SEND BREAK
+	AH = 07h
+	DX = port number
+Return: none
+SeeAlso: AH=06h"MBBIOS"
+--------S-1407-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - SEND RS-232 BREAK
+	AH = 07h
+	BX = duration of break in clock ticks
+	DX = port number
+Return: nothing
+--------N-1407-------------------------------
+INT 14 - TelAPI - WRITE???
+	AH = 07h
+	CX = number of characters to write???
+	DX = port number
+	ES:DI -> buffer containing data???
+Return: AX = number of characters actually sent??? (negative on error)
+	CX = ???
+Note:	under Novell TELAPI.EXE v4.01, this function and AH=06h are implemented
+	  with identical code
+SeeAlso: AH=06h"TelAPI",AH=E0h"TelAPI"
+--------S-1408-------------------------------
+INT 14 - FOSSIL - FLUSH OUTPUT BUFFER WAITING TILL ALL OUTPUT IS DONE
+	AH = 08h
+	DX = port number
+SeeAlso: AH=09h"FOSSIL"
+--------S-1408-------------------------------
+INT 14 - MultiDOS Plus 4.0 IODRV - GET AND RESET PORT LINE STATUS
+	AH = 08h
+Return: AL = line status (see AH=03h)
+	AH destroyed
+Notes:	the port number is stored at offset BEh in the Task Control Block
+	on every line status change, the line status is ORed with the line
+	  status accumulator; this function returns the accumulator and clears
+	  it
+SeeAlso: AH=03h,AH=04h"MultiDOS",AH=07h"MultiDOS",INT 15/AH=13h"MultiDOS"
+--------S-1408-------------------------------
+INT 14 - Digiboard DigiCHANNEL PC/X* - ALTERNATE STATUS CHECK
+	AH = 08h
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = RS232 status bits (see AH=03h)
+	ZF set if no characters queued
+	ZF clear if character available
+	    AL = next character
+SeeAlso: AH=03h,AH=08h"PC-MOS",AH=09h"Digiboard"
+--------S-1408-------------------------------
+INT 14 - MBBIOS - NON-DESTRUCTIVE READ
+	AH = 08h
+	DX = port number
+Return: AL = character
+	AH = status (see AH=02h)
+SeeAlso: AH=0Bh"MBBIOS",AH=0Ch"FOSSIL"
+--------S-1408-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - INPUT STATUS CHECK
+	AH = 08h
+	DX = port number
+Return: CF set if carrier loss detected
+	ZF set if input buffer empty
+	ZF clear if characters available
+	    AL = next character dequeued
+--------S-1409-------------------------------
+INT 14 - FOSSIL - PURGE OUTPUT BUFFER THROWING AWAY ALL PENDING OUTPUT
+	AH = 09h
+	DX = port number
+SeeAlso: AH=08h"FOSSIL",AH=0Ah"FOSSIL",AH=88h
+--------S-1409-------------------------------
+INT 14 - MultiDOS Plus IODRV - RESET PORT STATUS
+	AH = 09h
+Return: modem status byte cleared
+Note:	the port number is stored at offset BEh in the Task Control Block
+SeeAlso: AH=04h"MultiDOS",AH=07h"MultiDOS",INT 15/AH=13h"MultiDOS"
+--------S-1409-------------------------------
+INT 14 - Digiboard DigiCHANNEL PC/X* - CLEAR BUFFERS
+	AH = 09h
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    FFh error
+SeeAlso: AH=08h"Digiboard",AH=0Ah"Digiboard",AH=10h"Digiboard"
+--------S-1409-------------------------------
+INT 14 - MBBIOS - GET/SET OPTIONS
+	AH = 09h
+	AL = option byte
+		00000001b - Transmit Buffering Enabled
+		00000101b - Hardware Handshaking Enabled
+		00100000b - High Speed Option Enabled
+	DX = port number???
+Return: AL = old option byte
+SeeAlso: AH=04h"MBBIOS",AH=10h"FOSSIL"
+--------S-1409-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - RESET I/O BUFFER POINTERS
+	AH = 09h
+	DX = port number
+Return: nothing
+SeeAlso: AH=13h"PC-MOS"
+--------S-140A-------------------------------
+INT 14 - FOSSIL - PURGE INPUT BUFFER THROWING AWAY ALL PENDING INPUT
+	AH = 0Ah
+	DX = port number
+SeeAlso: AH=09h"FOSSIL",AH=85h
+--------S-140A-------------------------------
+INT 14 - Digiboard DigiCHANNEL PC/X* - INPUT QUEUE CHECK
+	AH = 0Ah
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AX = number of characters available in buffer
+Note:	this function is also supported by the PC-MOS/386 v5.01 $serial.sys
+SeeAlso: AH=09h"Digiboard",AH=0Dh"Digiboard"
+--------S-140A-------------------------------
+INT 14 - MBBIOS - WRITE BUFFER
+	AH = 0Ah
+	CX = count
+	ES:DI -> buffer
+Return: AX = status (see AH=03h)
+	DI = is updated
+	CX = unsent character count
+SeeAlso: AH=0Bh"MBBIOS",AH=19h"FOSSIL"
+--------S-140B-------------------------------
+INT 14 - FOSSIL - TRANSMIT NO WAIT
+	AH = 0Bh
+	AL = character
+	DX = port number
+Return: AX = 0000h character not accepted
+	   = 0001h character accepted
+SeeAlso: AH=01h
+--------S-140B-------------------------------
+INT 14 - MBBIOS - READ BUFFER
+	AH = 0Bh
+	CX = size of buffer
+	ES:DI -> buffer
+Return: AH = LSR
+	AL = MSR
+	CX = count of characters
+	DI = is updated
+SeeAlso: AH=08h"MBBIOS",AH=0Ah"MBBIOS",AH=18h"FOSSIL"
+--------S-140C-------------------------------
+INT 14 - FOSSIL - NON-DESTRUCTIVE READ AHEAD
+	AH = 0Ch
+	DX = port number
+Return: AX = FFFFh character not available
+	AX = 00xxh character xx available
+SeeAlso: AH=08h"MBBIOS",AH=20h"FOSSIL"
+--------S-140D-------------------------------
+INT 14 - FOSSIL - KEYBOARD READ WITHOUT WAIT
+	AH = 0Dh
+Return: AX = FFFFh character not available
+	   = xxyyh standard IBM-style scan code
+SeeAlso: AH=0Eh
+--------S-140D-------------------------------
+INT 14 - Digiboard DigiCHANNEL PC/X* - GET POINTER TO CH_KEY_RDY FLAG
+	AH = 0Dh
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: ES:BX -> CH_KEY_RDY flag
+SeeAlso: AH=0Ah"Digiboard"
+
+Values for CH_KEY_RDY flag:
+ 00h	receive buffer empty
+ FFh	characters available
+--------S-140E-------------------------------
+INT 14 - FOSSIL - KEYBOARD READ WITH WAIT
+	AH = 0Eh
+Return: AX = xxyyh standard IBM-style scan code
+SeeAlso: AH=0Dh"FOSSIL"
+--------S-140E-------------------------------
+INT 14 - Digiboard DigiCHANNEL PC/X* - WRITE STRING
+	AH = 0Eh
+	CX = number of characters to write
+	ES:BX -> string
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AX = number of characters actually written
+	ZF clear if successful
+	ZF set on error
+SeeAlso: AH=0Fh"Digiboard"
+--------S-140F-------------------------------
+INT 14 - FOSSIL - ENABLE/DISABLE FLOW CONTROL
+	AH = 0Fh
+	AL = bit mask describing requested flow control (see below)
+	DX = port number
+SeeAlso: AH=09h"MBBIOS",AH=10h"FOSSIL"
+
+Bitfields for requested flow control:
+ bit 0	XON/XOFF on transmit (watch for XOFF while sending)
+ bit 1	CTS/RTS (CTS on transmit/RTS on receive)
+ bit 2	reserved
+ bit 3	XON/XOFF on receive (send XOFF when buffer near full)
+ bit 4-7 all 1
+--------S-140F-------------------------------
+INT 14 - Digiboard DigiCHANNEL PC/X* - READ STRING
+	AH = 0Fh
+	CX = number of characters to read
+	ES:BX -> buffer
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AX = number of characters read
+	ZF clear if successful
+	ZF set on error (line status or wrong number of characters)
+SeeAlso: AH=0Eh"Digiboard"
+--------S-1410-------------------------------
+INT 14 - FOSSIL - EXTENDED ^C/^K CHECKING AND TRANSMIT ON/OFF
+	AH = 10h
+	AL = bit mask
+	    bit 0: enable/disable ^C/^K checking
+	    bit 1: enable/disable the transmitter
+	DX = port number
+SeeAlso: AH=0Fh"FOSSIL"
+--------S-1410-------------------------------
+INT 14 - Digiboard DigiCHANNEL PC/X* - CLEAR RECEIVE BUFFER
+	AH = 10h
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    FFh error
+SeeAlso: AH=09h"Digiboard",AH=11h"Digiboard"
+--------S-1411-------------------------------
+INT 14 - FOSSIL - SET CURRENT CURSOR LOCATION
+	AH = 11h
+	DH = row
+	DL = column
+Note:	this is the same as INT 10/AH=02h
+SeeAlso: AH=12h"FOSSIL"
+--------S-1411-------------------------------
+INT 14 - Digiboard DigiCHANNEL PC/X* - CLEAR TRANSMIT BUFFER
+	AH = 11h
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    FFh error
+SeeAlso: AH=09h"Digiboard",AH=10h"Digiboard"
+----------1411-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - DISABLE PORT
+	AH = 11h
+	DX = port number
+Return: AL = status
+	    00h successful
+	    01h IRQ for port is shared
+	    02h IRQ was reserved
+SeeAlso: AH=04h,AH=05h,AH=12h"PC-MOS"
+--------S-1412-------------------------------
+INT 14 - FOSSIL - READ CURRENT CURSOR LOCATION
+	AH = 12h
+Return: DH = row
+	DL = column
+Note:	this is the same as INT 10/AH=03h
+SeeAlso: AH=11h"FOSSIL"
+--------S-1412-------------------------------
+INT 14 - Digiboard DigiCHANNEL PC/X* - GET TRANSMIT BUFFER FREE SPACE
+	AH = 12h
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AX = number of bytes free
+SeeAlso: AH=0Ah"Digiboard"
+--------S-1412-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - GET CURRENT PORT PARAMETERS
+	AH = 12h
+	DX = port number
+Return: AH = status
+	    FFh port number invalid
+	AL = line parameters (see AH=00h)
+	AH = flow control configuration (see AH=05h"PC-MOS")
+	CX:BX = bps rate
+	DL = XOFF character or 00h for none
+	DH = XON character or 00h for none
+--------S-1413-------------------------------
+INT 14 - FOSSIL - SINGLE CHARACTER ANSI WRITE TO SCREEN
+	AH = 13h
+	AL = character
+Note:	should not be called if it is unsafe to call DOS
+SeeAlso: AH=15h
+--------S-1413-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - REGISTER A PORT WITH A TERMINAL
+	AH = 13h
+	DX = port number
+Return: AH = status
+	    FFh port number invalid
+	    else
+		ES:BX -> BYTE flag (00h buffer empty, FFh buffer contains data)
+SeeAlso: AH=17h"PC-MOS"
+--------S-1414-------------------------------
+INT 14 - FOSSIL - ENABLE OR DISABLE WATCHDOG PROCESSING
+	AH = 14h
+	AL = 01h enable watchdog
+	     00h disable watchdog
+	DX = port number
+--------S-1414-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - OUTPUT STRING
+	AH = 14h
+	CX = number of characters in string
+	DX = port number
+	ES:BX -> string to be sent
+	SI = timeout in timer ticks or 0000h for default
+Return: AX = number of bytes actually sent
+	ZF clear if successful
+	ZF set on timeout
+SeeAlso: AH=01h,AH=15h"PC-MOS"
+--------S-1415-------------------------------
+INT 14 - FOSSIL - WRITE CHARACTER TO SCREEN USING BIOS SUPPORT ROUTINES
+	AH = 15h
+	AL = character
+SeeAlso: AH=13h"FOSSIL"
+--------S-1415-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - INPUT STRING
+	AH = 15h
+	CX = size of buffer
+	DX = port number
+	ES:BX -> buffer for received characters
+	SI = timeout in clock ticks or 0000h for default
+Return: AX = number of characters actually read
+	ZF set on timeout (no data available)
+SeeAlso: AH=02h,AH=14h"PC-MOS",AH=16h"PC-MOS"
+--------S-1416-------------------------------
+INT 14 - FOSSIL - INSERT/DELETE FUNCTION FROM TIMER TICK CHAIN
+	AH = 16h
+	AL = function
+	    00h = delete
+	    01h = add
+	ES:DX -> routine to call
+Return: AX = status
+	    0000h successful
+	    0001h unsuccessful
+SeeAlso: AH=07h"FOSSIL"
+--------S-1416-------------------------------
+INT 14 - Digiboard DigiCHANNEL PC/X* - CCB COMMAND
+	AH = 16h
+	AL = CCB command number (see below)
+	BL = byte 2
+	BH = byte 3
+	CL = byte 1 (for all channel functions except 4Eh and 4Fh)
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    FFh error
+SeeAlso: AH=18h"Digiboard"
+
+Values for CCB command number:
+ 40h	Set Receive Mid Water Mark
+ 41h	Set Receive High Water Mark
+ 42h	Flush Receive Buffer
+ 43h	Flush Transmit Buffer
+ 44h	Transmit Pause
+ 45h	Transmit Resume
+ 46h	Set Interrupt to Host Mask
+ 47h	Set Baud, Data, Stop and Parity
+ 48h	Send Break
+ 49h	Set Modem Lines
+ 4Ah	Set Break Count
+ 4Bh	Set Handshake
+ 4Ch	Set Xon/Xoff Characters
+ 4Dh	Set Transmit Mid Water Mark
+ 4Eh	IRQ Polling Timer to Host
+ 4Fh	Buffer Set All
+ 50h	Port On
+ 51h	Port Off
+ 52h	Receive Pause
+ 53h	Special Character Interrupt
+ 54h	RS-422 Enable
+--------S-1416-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - LINK TO ANOTHER SERIAL DRIVER
+	AH = 16h
+	ES:BX -> calling driver's INT 14 entry point
+Return: nothing
+Program: PC-MOS/386 v5.01 is a multitasking, multiuser MS-DOS 5.0-compatible
+	  operating system by The Software Link, Inc.
+--------S-1417-------------------------------
+INT 14 - FOSSIL - REBOOT SYSTEM
+	AH = 17h
+	AL = method
+	    00h = cold boot
+	    01h = warm boot
+SeeAlso: INT 19
+--------S-1417-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - WRITE MODEM CONTROL REGISTER
+	AH = 17h
+	AL = new value for UART's modem control register
+	DX = port number
+Return: nothing
+--------S-1418-------------------------------
+INT 14 - FOSSIL - READ BLOCK
+	AH = 18h
+	CX = maximum number of characters to transfer
+	DX = port number
+	ES:DI -> user buffer
+Return: AX = number of characters transferred
+SeeAlso: AH=19h"FOSSIL",AH=83h"COURIERS",AX=FF02h,INT 6B/AX=0100h
+--------S-1418-------------------------------
+INT 14 - Digiboard DigiCHANNEL PC/X* - SEND BIOS COMMAND
+	AH = 18h
+	ES:BX -> 16-byte command string
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h timeout
+	AL = mailbox status
+	    00h no errors
+	    8Xh BIOS error
+	ES:BX buffer filled in with mailbox string
+	ZF clear if no errors
+	ZF set if either status byte contains an error code
+SeeAlso: AH=16h"Digiboard"
+--------S-1418-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - GET DRIVER DESCRIPTION
+	AH = 18h
+	DX = port number
+Return: DS:BX -> 40-byte buffer containing a string identifying the serial
+		driver
+SeeAlso: AH=06h"PC-MOS"
+--------S-1419-------------------------------
+INT 14 - FOSSIL - WRITE BLOCK
+	AH = 19h
+	CX = maximum number of characters to transfer
+	DX = port number
+	ES:DI -> user buffer
+Return: AX = number of characters transferred
+SeeAlso: AH=18h"FOSSIL",AH=86h,INT 6B/AX=0000h
+--------S-1419-------------------------------
+INT 14 - Digiboard DigiCHANNEL PC/X* - SPECIAL CHARACTER INTERRUPT
+	AH = 19h
+	BL = flag
+	    00h disable special character interrupt
+	    FFh enable interrupt
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    FFh failed
+SeeAlso: AH=1Ah"Digiboard"
+--------S-1419-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - SELECTIVE BUFFER FLUSH
+	AH = 19h
+	AL = what to flush
+		bit 0: input buffer
+		bit 1: output buffer
+	DX = port number
+Return: nothing
+SeeAlso: AH=09h"PC-MOS"
+--------S-141A-------------------------------
+INT 14 - FOSSIL - BREAK BEGIN OR END
+	AH = 1Ah
+	AL = 00h stop sending 'break'
+	     01h start sending 'break'
+	DX = port number
+SeeAlso: AH=06h"FOSSIL",AH=8Ah,AH=FAh
+--------S-141A-------------------------------
+INT 14 - Digiboard DigiCHANNEL PC/X - SPECIAL CHARACTER FLAG/COUNTER
+	AH = 1Ah
+	BX = subfunction
+	    00h return pointer to special character flag byte
+	    01h return pointer to special character counter word
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: ES:BX -> special character flag or counter
+Notes:	flag is FFh if one or more special characters are in the receive
+	  buffer; it is 00h and the counter is invalid if no special characters
+	  are in the receive buffer
+	counter (if valid) contains the number of characters in the receive
+	  buffer up to and including the last-received special character
+--------S-141B-------------------------------
+INT 14 - FOSSIL - RETURN INFORMATION ABOUT THE DRIVER
+	AH = 1Bh
+	DX = port number
+	CX = size of user buffer
+	ES:DI -> user buffer for driver info (see below)
+Return: AX = number of characters transferred
+	CX = 3058h ("0X") (X00 FOSSIL only)
+	DX = 2030h (" 0") (X00 FOSSIL only)
+
+Format of driver info:
+Offset	Size	Description
+ 00h	WORD	size of structure in bytes
+ 02h	BYTE	FOSSIL spec driver conforms to
+ 03h	BYTE	revision level of this specific driver
+ 04h	DWORD	pointer to ASCIZ identification string
+ 08h	WORD	size of the input buffer
+ 0Ah	WORD	number of bytes left in buffer
+ 0Ch	WORD	size of the output buffer
+ 0Eh	WORD	number of bytes left in buffer
+ 10h	BYTE	width of screen
+ 11h	BYTE	length of screen
+ 12h	BYTE	actual baud rate, computer to modem
+--------S-141C-------------------------------
+INT 14 - X00 FOSSIL - ACTIVATE PORT
+	AH = 1Ch
+	DX = port number
+Return: AX = 1954h if successful
+	BL = maximum function number supported (not including 7Eh and above)
+	BH = revision of FOSSIL specification supported
+Note:	this is a duplicate of AH=04h, so that AH=04h may be made compatible
+	  with the PS/2 BIOS in a future release
+SeeAlso: AH=04h"FOSSIL",AH=1Dh
+--------S-141D-------------------------------
+INT 14 - X00 FOSSIL - DEACTIVATE PORT
+	AH = 1Dh
+	DX = port number
+Return: none
+Notes:	this is a duplicate of AH=05h, so that AH=05h may be made compatible
+	  with the PS/2 BIOS in a future release
+	ignored if the port was never activated with AH=04h or AH=1Ch
+SeeAlso: AH=05h"FOSSIL",AH=1Ch
+--------S-141E-------------------------------
+INT 14 - X00 FOSSIL - EXTENDED LINE CONTROL INITIALIZATION
+	AH = 1Eh
+	AL = break status
+	    00h if break
+	    01h if no break
+	BH = parity (see below)
+	BL = number of stop bits
+	    00h one stop bit
+	    01h two stop bits (1.5 if 5 bit word length)
+	CH = word length (see below)
+	CL = bps rate (see below)
+	DX = port number
+Return: AX = port status code (see AH=00h)
+Notes:	this function is intended to exactly emulate the PS/2 BIOS AH=04h call
+	if the port was locked at X00 load time, the appropriate parameters are
+	  ignored
+SeeAlso: AH=00h,AH=04h"SERIAL I/O"
+
+Values for parity:
+ 00h	no parity
+ 01h	odd parity
+ 02h	even parity
+ 03h	stick parity odd
+ 04h	stick parity even
+
+Values for word length:
+ 00h	5 bits
+ 01h	6 bits
+ 02h	7 bits
+ 03h	8 bits
+
+Values for bps rate:
+ 00h	110
+ 01h	150
+ 02h	300
+ 03h	600
+ 04h	1200
+ 05h	2400
+ 06h	4800
+ 07h	9600
+ 08h	19200
+--------S-141F-------------------------------
+INT 14 - X00 FOSSIL - EXTENDED SERIAL PORT STATUS/CONTROL
+	AH = 1Fh
+	AL = 00h read modem control register
+	      Return: BL = modem control register (see below)
+		      AH = status
+	AL = 01h write modem control register
+	      BL = modem control register (see below)
+	      Return: AX = status
+	DX = port number
+Notes:	this function is intended to exactly emulate the PS/2 BIOS AH=05h call
+	X00 forces BL bit 3 set (interrupts cannot be disabled)
+SeeAlso: AH=00h,AH=05h"SERIAL I/O"
+
+Bitfields for modem control register:
+ bit 0	data terminal ready
+ bit 1	request to send
+ bit 2	OUT1
+ bit 3	OUT2 (interrupts) enabled
+ bit 4	LOOP
+ bits 5-7 reserved
+--------S-1420-------------------------------
+INT 14 - X00 FOSSIL - DESTRUCTIVE READ WITH NO WAIT
+	AH = 20h
+	DX = port number
+Return: AH = 00h if character was available
+	    AL = next character (removed from receive buffer)
+	AX = FFFFh if no character available
+SeeAlso: AH=0Ch,AH=21h"X00"
+--------S-1420-------------------------------
+INT 14 - Alloy MW386 - ATTACH LOGICAL COMMUNICATIONS PORT TO PHYSICAL PORT
+	AH = 20h
+	AL = logical port (01h COM1, 02h COM2)
+	DX = physical port number
+Return: AX = status
+	    0000h successful
+	    FFFFh failed
+SeeAlso: AH=21h"Alloy",AH=22h"Alloy",AH=23h"Alloy",INT 17/AH=8Bh"Alloy"
+--------S-1420-------------------------------
+INT 14 - MultiDOS Plus - INITIALIZE PORT
+	AH = 20h
+	AL = port parameters (see AH=00h"SERIAL")
+	DX = port number (0-3)
+Return: AH = status
+	    00h successful
+	    41h no such port
+	    64h monitor mode already active
+SeeAlso: AH=00h"SERIAL",AH=04h"MultiDOS",AH=21h"MultiDOS",AH=23h"MultiDOS"
+--------S-1420-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - CHECK OUTPUT QUEUE
+	AH = 20h
+	DX = port number
+Return: AX = number of bytes in output buffer
+SeeAlso: AH=0Ah"PC-MOS"
+--------S-1421-------------------------------
+INT 14 - X00 FOSSIL - STUFF RECEIVE BUFFER
+	AH = 21h
+	AL = character
+	DX = port number
+Notes:	the given character is inserted at the end of the receive buffer as if
+	  it had just arrived from the serial port; all normal receive
+	  processing (XON/XOFF, ^C/^K) is performed on the character
+	fully re-entrant
+SeeAlso: AH=20h"X00"
+--------S-1421-------------------------------
+INT 14 - Alloy MW386 v1.x only - RELEASE PHYSICAL COMMUNICATIONS PORT
+	AH = 21h
+	DX = physical port number
+Return: AX = status
+	    0000h successful
+	    FFFFh failed
+SeeAlso: AH=20h"Alloy",AH=22h"Alloy"
+--------S-1421-------------------------------
+INT 14 - MultiDOS Plus - TRANSMIT CHARACTER
+	AH = 21h
+	AL = character to send
+	DX = port number
+Return: AH = status (see below)
+Note:	monitor mode must have been turned on with AH=24h before calling
+SeeAlso: AH=20h"MultiDOS",AH=22h"MultiDOS",AH=24h"MultiDOS"
+
+Values for status:
+ 00h	successful
+ 39h	no DSR or CTS
+ 3Ch	no DSR
+ 3Bh	no CTS
+ 41h	no such port
+ 42h	monitor mode not active
+ 97h	timed out
+--------S-1421-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - OUTPUT CHARACTER, WITH TIMEOUT
+	AH = 21h
+	AL = char to send
+	DX = port number
+	SI = timeout in timer ticks (0000h = default)
+Program: PC-MOS/386 v5.01 is a multitasking, multiuser MS-DOS 5.0-compatible
+	  operating system by The Software Link, Inc.
+SeeAlso: AH=01h,AH=0Eh"PC/MOS",AH=22h"PC-MOS"
+--------S-1422-------------------------------
+INT 14 - Alloy MW386 v2+ - RELEASE LOGICAL COMMUNICATIONS PORT
+	AH = 22h
+	AL = logical port (01h COM1, 02h COM2)
+Return: AX = status (0000h successful)
+SeeAlso: AH=20h"Alloy",AH=21h"Alloy"
+--------S-1422-------------------------------
+INT 14 - MultiDOS Plus - RECEIVE CHARACTER
+	AH = 22h
+	DX = port number
+Return: AH = status (see also AH=21h"MultiDOS")
+	    00h successful
+		AL = character
+	    3Dh framing and parity error
+	    3Eh overrun error
+	    3Fh framing error
+	    40h parity error
+	    96h ring buffer overflow
+Note:	if no character is available, this function waits until a character
+	  arrives or an implementation-dependent timeout elapses
+SeeAlso: AH=20h"MultiDOS",AH=21h"MultiDOS",AH=27h
+--------S-1422-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - RECEIVE CHARACTER, WITH TIMEOUT
+	AH = 22h
+	DX = port number
+	SI = timeout in timer ticks (0000h = default)
+Return: AH = port status (see AH=03h bits 0..6)
+	     bit 7 = 1 indicates time-out
+	AL = character received
+Program: PC-MOS/386 v5.01 is a multitasking, multiuser MS-DOS 5.0-compatible
+	  operating system by The Software Link, Inc.
+SeeAlso: AH=02h,AH=0Fh"PC-MOS",AH=21h"PC-MOS"
+--------S-1423-------------------------------
+INT 14 - Alloy MW386 v2+ - GET PORT NUMBER FROM LOGICAL PORT ID
+	AH = 23h
+	AL = logical port (01h COM1, 02h COM2)
+	DH = user ID
+	DL = process ID (DH,DL both FFh for current task)
+Return: AL = MW386 port mode (see below)
+	CX = MW386 port number
+	DH = owner's user ID
+	DL = owner's task ID
+SeeAlso: AH=20h"Alloy",INT 17/AH=8Bh"Alloy"
+
+Bitfields for MW386 port mode:
+ bit 0	port is shared (spooler only)
+ bit 1	port is spooled instead of direct (spooler only)
+ bit 2	port is assigned as logical COM device, not in spooler
+ bit 3	port is free
+--------S-1423-------------------------------
+INT 14 - MultiDOS Plus - GET PORT STATUS
+	AH = 23h
+	DX = port number
+Return: AH = line status (see AH=03h)
+	AL = modem status (see AH=03h)
+SeeAlso: AH=03h,AH=07h"MultiDOS",AH=20h"MultiDOS"
+--------S-1423-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - DECLARE PORT OWNERSHIP
+	AH = 23h
+	DX = port number
+	BX = TCB segment/selector address of owner task
+Return: nothing
+SeeAlso: AH=0Dh"PC-MOS"
+--------S-1424-------------------------------
+INT 14 - Alloy MW386 v2+ - CHANGE PHYSICAL PORT PARAMETERS
+	AH = 24h
+	CX = physical I/O port number
+	DS:DX -> configuration table (see below)
+Return: AH = 00h
+Note:	invalid port numbers are merely ignored
+SeeAlso: INT 17/AH=96h
+
+Format of configuration table:
+Offset	Size	Description
+ 00h	BYTE	baud rate (see below)
+ 01h	BYTE	data bits (00h=5, 01h=6, 02h=7, 03h=8)
+ 02h	BYTE	parity (00h none, 01h odd, 02h even)
+ 03h	BYTE	stop bits (00h=1, 01h=2)
+ 04h	BYTE	receive flow control
+		00h none, 01h XON/XOFF, 02h DTR/DSR, 03h XPC, 04h RTS/CTS
+ 05h	BYTE	transmit flow control (as for receive)
+
+Values for baud rate:
+ 00h	38400
+ 01h	19200
+ 02h	9600
+ 03h	7200
+ 04h	4800
+ 05h	3600
+ 06h	2400
+ 07h	2000
+ 08h	1200
+ 09h	600
+ 0Ah	300
+ 0Bh	150
+ 0Ch	134.5
+--------S-1424-------------------------------
+INT 14 - MultiDOS Plus - SET MONITOR MODE
+	AH = 24h
+	AL = port status storage
+	    00h single status for entire receive buffer
+	    01h separate status kept for each byte in receive buffer
+	DX = port number
+Return: AH = status
+	    00h successful
+	    3Ah invalid status storage specified
+	    41h no such port
+	    64h monitor mode already active
+Note:	in monitor mode, MultiDOS redirects all BIOS video output to a serial
+	  port
+SeeAlso: AH=20h"MultiDOS",AH=25h
+--------S-1424-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - ???
+	AH = 24h
+Return: ???
+Program: PC-MOS/386 v5.01 is a multitasking, multiuser MS-DOS 5.0-compatible
+	  operating system by The Software Link, Inc.
+--------S-1425-------------------------------
+INT 14 - MultiDOS Plus - CLEAR BUFFERS
+	AH = 25h
+	AL = function
+	    00h only clear buffers
+	    01h clear buffers and deactivate
+	DX = port number
+Return: AH = status
+	    00h successful
+	    3Ah invalid function
+	    41h no such port
+	    42h monitor mode not active
+SeeAlso: AH=20h"MultiDOS",AH=24h"MultiDOS"
+--------S-1427-------------------------------
+INT 14 - MultiDOS Plus - GET BUFFER CHARACTER COUNT
+	AH = 27h
+	DX = port number
+Return: AH = status
+	    00h successful
+	    41h no such port
+	    42h monitor mode not active
+	AL = number of characters in receive buffer
+--------S-1456-------------------------------
+INT 14 U - BWCOM14 - INSTALLATION CHECK
+	AH = 56h
+Return: CX = 0001h if installed
+Program: BWCOM14 is a network serial port emulator (simulating a Hayes modem
+	  connected to the serial port) distributed as part of the
+	  Beame&Whiteside BW-NFS package
+SeeAlso: AH=57h,AH=58h
+--------S-1457-------------------------------
+INT 14 U - BWCOM14 - INITIALIZE
+	AH = 57h
+	DL = port number
+Return: AL = initialization status (00h successful, 01h already initialized)
+	CX = port status (0001h port redirected, 0002h and FFFFh failed)
+Note:	after this call, all invocations of INT 14/AH=00h-03h for the specified
+	  port will be handled by BWCOM14 until AH=58h is called
+SeeAlso: AH=00h"SERIAL",AH=56h,AH=58h
+--------S-1458-------------------------------
+INT 14 U - BWCOM14 - SHUTDOWN
+	AH = 58h
+Return: CX = status (0001h successful, 0002h not initialized)
+Note:	after this call, BWCOM14 will no longer redirect the COM port
+SeeAlso: AH=56h,AH=57h
+--------S-147E-------------------------------
+INT 14 - FOSSIL - INSTALL AN EXTERNAL APPLICATION FUNCTION
+	AH = 7Eh
+	AL = code assigned to external application (80h-BFh)
+	    80h reserved for communications FOSSIL
+	    81h video FOSSIL
+	    82h reserved for keyboard FOSSIL
+	    83h reserved for system FOSSIL
+	ES:DX -> entry point
+Return: AX = 1954h
+	BL = code assigned to application (same as input AL)
+	DH = 00h failed
+	     01h successful
+SeeAlso: AH=7Fh,AH=80h"FOSSIL",AX=8100h,AH=82h"FOSSIL",AH=83h"FOSSIL"
+--------S-147F-------------------------------
+INT 14 - FOSSIL - REMOVE AN EXTERNAL APPLICATION FUNCTION
+	AH = 7Fh
+	AL = code assigned to external application
+	ES:DX -> entry point
+Return: AX = 1954h
+	BL = code assigned to application (same as input AL)
+	DH = 00h failed
+	     01h successful
+SeeAlso: AH=7Eh
+--------S-1480-------------------------------
+INT 14 - COMMUNICATIONS FOSSIL
+	AH = 80h
+SeeAlso: AH=7Eh
+--------S-1480-------------------------------
+INT 14 - COURIERS.COM - INSTALLATION CHECK
+	AH = 80h
+Return: AH = E8h if loaded
+Program: COURIERS is a TSR utility by PC Magazine
+--------S-148000-----------------------------
+INT 14 - ARTICOM - INSTALLATION CHECK
+	AX = 8000h
+Return: AL = FFh if installed
+	    BH = major version
+	    BL = minor version
+Program: ArtiCom is an asynchronous communications driver by Artisoft which
+	  works on top of NetBIOS and allows modem/serial-port sharing by
+	  programs using INT 14 for serial I/O.
+Note:	ArtiCom supports 32 simultaneous COM ports using multiport cars and
+	  drivers
+SeeAlso: AH=00h,AH=01h,AH=02h,AH=03h,AH=04h,AH=05h,AX=8001h,AX=8002h
+--------S-148001-----------------------------
+INT 14 - ARTICOM - UNLOAD ASYNCHRONOUS REDIRECTOR FROM MEMORY
+	AX = 8001h
+Return: AX = error code, if error (see AX=8003h)
+SeeAlso: AX=8000h,AX=8002h,AX=8003h
+Index:	uninstall;ARTICOM
+--------S-148002-----------------------------
+INT 14 - ARTICOM - GET ASYNCHRONOUS REDIRECTOR STATUS
+	AX = 8002h
+	ES:DI -> buffer for redirector status structure (see below)
+Return: AX = error code, if error (see AX=8003h)
+SeeAlso: AX=8000h,AX=8003h
+
+Format of redirector status:
+Offset	Size	Description
+ 00h	WORD	redirector major and minor version numbers
+ 02h	WORD	redirectable ports found
+ 04h	WORD	redirectable ports + local ports found
+ 06h	WORD	redirector internal buffer size
+ 08h	WORD	maximum servers maintained
+ 0Ah	WORD	number of adapters found
+--------S-148003-----------------------------
+INT 14 - ARTICOM - TRANSLATE ERROR CODE TO ERROR STRING
+	AX = 8003h
+	CX = error number to translate
+Return: ES:DI -> ASCIZ error text or NULL if can't translate.
+SeeAlso: AX=8000h
+
+Values for error codes:
+ 00h	"No error"
+ 01h	"An invalid port number was specified"
+ 02h	"Port is already redirected"
+ 03h	"Too many ports redirected"
+ 04h	"Cannot locate the server"
+ 05h	"Server is busy"
+ 06h	"Access denied"
+ 07h	"Resource in use"
+ 08h	"Resource in use - request queued"
+ 09h	"No such resource"
+ 0Ah	"Invalid username/password pair"
+ 0Bh	"Noncompatible version number"
+ 0Ch	"Can't remove from memory"
+ 0Dh	"Bad NETBIOS adapter number"
+ 0Eh	"No more entries in list"
+ 0Fh	"Resource is not available at this time"
+ 10h	"Invalid value to INT 14 call"
+--------S-148004-----------------------------
+INT 14 - ARTICOM - ATTACH ASYNCHRONOUS RESOURCE
+	AX = 8004h
+	DX = port to redirect (COM1=0, COM2=1, ...)
+	CH = attach type
+	CL = adapter to use for attach, 0FFh to search all
+	ES:DI -> attachment structure (see below)
+Return: AX = error code, if error (see AX=8003h)
+Note:	The wildcard '*' is supported in the server and resource fields.  If
+	  wild cards are used then the first matching available server is
+	  attached.
+SeeAlso: AX=8000h,AX=8003h,AX=8005h
+
+Format of attachment structure:
+Offset	Size	Description
+ 00h 16 BYTEs	server to look for attach
+ 10h 16 BYTEs	attach to resource name
+ 20h 16 BYTEs	username for attach
+ 30h 16 BYTEs	password for username or resource
+ 40h	BYTE	attach type
+		00h normal
+		01h queue if resource is in use (not yet supported in v1.00)
+--------S-148005-----------------------------
+INT 14 - ARTICOM - DETACH ASYNCHRONOUS RESOURCE
+	AX = 8005h
+	DX = port to detach (COM1=0, COM2=1, ...)
+Return: AX = error code, if error (see AX=8003h)
+Note:	only a previously attached resource can be detached
+SeeAlso: AX=8000h,AX=8003h,AX=8004h
+--------S-148006-----------------------------
+INT 14 - ARTICOM - GET RESOURCE INFORMATION
+	AX = 8006h
+	BX = remote port (COM1=0, COM2=1, ...)
+	CL = adapter number, FFH to try all adapters
+	ES:DI -> resource information structure (see below)
+	DS:SI -> 16 byte server name. See note.
+Return: AX = error code, if error (see AX=8003h)
+	BX = next remote port, recall to get next resource info
+Note:	Wild cards supported in both the resource field and server name
+	string DS:SI. If wild cards used then first matching available
+	resource information is searched. Set resource field to 0FFh to
+	return all resources.
+SeeAlso: AX=8000h,AX=8002h,AX=8003h,AX=8007h
+
+Format of resource information structure:
+Offset	Size	Description
+ 00h	BYTE	00h = free, else used
+ 01h 16 BYTEs	resource name
+ 11h 16 BYTEs	username of resource user
+ 21h	WORD	amount of time used
+ 23h	WORD	amount of time remaining
+ 53h 48 BYTEs	description of resource
+ 93h 64 BYTEs	initialization string for modem
+ B3h 32 BYTEs	dial string for modem
+ D3h 32 BYTEs	hang-up string for modem
+--------S-148007-----------------------------
+INT 14 - ARTICOM - GET REDIRECTED PORT INFORMATION
+	AX = 8007h
+	DX = port index (COM1=0, COM2=1, ...)
+	ES:DI -> buffer for port information structure (see below)
+Return: CF clear if redirection info returned and port is redirected
+	CF set if not a redirected port
+	AX = error code, if error (see AX=8003h)
+SeeAlso: AX=8000h,AX=8003h,AX=8006h,AX=8008h
+
+Format of port information structure:
+Offset	Size	Description
+ 00h 16 BYTEs	server name resource is on
+ 10h	BYTE	adapter number server is on
+ 11h 16 BYTEs	resource name
+ 21h	WORD	remote port index, use to get additional information
+ 23h	WORD	buffer size
+ 25h	WORD	baud rate (see below)
+ 26h	BYTE	modem status register
+ 27h	BYTE	modem control register
+ 28h	BYTE	line status register
+ 29h	BYTE	line control register
+ 2Ah	BYTE	flow control in use: 0 - NONE, 1 - XON/XOFF, 2 - RTS/CTS
+ 2Bh	WORD	send timeout in ticks
+ 2Dh	WORD	receive timeout in ticks
+ 2Fh	WORD	time used on remote port
+ 31h	WORD	time left before timeout
+ 33h	BYTE	if server changes allowed?
+ 34h	WORD	FFFFh (-1) if connection ok, else old port index
+
+Values for baud rate:
+ 00h	110
+ 01h	150
+ 02h	300
+ 03h	600
+ 04h	1200
+ 05h	2400
+ 06h	4800
+ 07h	9600
+ 08h	19200
+ 09h	38400
+ 0Ah	57600
+ 0Bh	115200
+ 0Ch	134.5
+ 0Dh	1800
+ 0Eh	2000
+ 0Fh	3600
+ 10h	7200
+--------S-148008-----------------------------
+INT 14 - ARTICOM - GET AVAILABLE SERVER NAME
+	AX = 8008h
+	BX = server index (0,1,...)
+	ES:DI -> server name structure (see below)
+Return: AX = error code, if error (see AX=8003h)
+	BX = next remote port, repeat call to get next available server
+Note:	the wildcard '*' is supported in the server name field.	 Set the
+	  server name to FFh to search for all servers.
+SeeAlso: AX=8000h,AX=8003h,AX=8007h
+
+Format of server name structure:
+Offset	 Size	  Description
+  00h 16 BYTEs	  (call) ASCIZ servername
+  10h	 BYTE	  (return) the adapter server is found
+--------S-148009-----------------------------
+INT 14 - ARTICOM - SET SEND AND RECEIVE TIMEOUTS
+	AX = 8009h
+	BX = send timeout in ticks
+	CX = receive timeout in ticks
+	DX = port index (COM1=0, COM2=1, ...)
+Return: nothing
+SeeAlso: AX=8000h,AX=800Ah
+--------S-14800A-----------------------------
+INT 14 - ARTICOM - MODIFY FLOW CONTROL
+	AX = 800Ah
+	BL = flow control type (00h none, 01h XON/XOFF, 02h RTS/CTS)
+	DX = port index (COM1=0, COM2=1, ...)
+Return: AX = error code, if error (see AX=8003h)
+Note:	for attached ports only!
+SeeAlso: AX=8000h,AX=8003h,AX=8009h
+--------S-148025-----------------------------
+INT 14 - ARTICOM - SET INTERNAL SEND/RECEIVE VECTOR
+	AX = 8025h
+	DS:DX -> address of trap function (see below) to call on read/write
+Note:	setting the vector to a user function allows the redirector's activity
+	  to be monitored.
+SeeAlso: AX=8000h,AX=8035h,INT 21/AH=25h
+
+Trap function called with:
+	AH = operation
+	    80h reading character
+	    81h writing character
+	AL = character
+	Return: AX must be preserved
+		far JUMP to old trap function (see AX=8035h)
+--------S-148035-----------------------------
+INT 14 - ARTICOM - GET INTERNAL SEND/RECEIVE VECTOR
+	AX = 8035h
+Return: ES:BX -> address of current send/receive routine
+Note:	this function returns the address of the routine which is called
+	  inside A-REDIR.EXE each time a character is received or sent on the
+	  active COM port.
+SeeAlso: AX=8000h,AX=8025h,INT 21/AH=35h
+--------S-1481-------------------------------
+INT 14 - COURIERS.COM - CHECK IF PORT BUSY
+	AH = 81h
+	AL = port number (1-4)
+Return: AH = 00h port available
+	     01h port exists but already in use
+	     02h port nonexistent
+Program: COURIERS is a TSR utility by PC Magazine
+SeeAlso: AH=83h,AH=8Dh
+--------S-1481-------------------------------
+INT 14 - Egberto Willies COMM-DRV - EXTENDED INITIALIZATION
+	AH = 81h
+	BX:DI -> port control block
+Return: ???
+SeeAlso: AH=00h
+
+Format of port control block:
+Offset	Type	Description
+ 00h	WORD	port IO address
+ 02h	WORD	port IRQ
+ 04h	WORD	baud rate
+ 06h	WORD	parity
+ 08h	WORD	data bits
+ 0Ah	WORD	stop bits
+ 0Ch	WORD	break status
+		0000h off
+ 0Eh	WORD	flow control protocol
+ 10h	BYTE	input block
+ 11h	BYTE	output block
+ 12h	WORD	low threshold
+ 14h	WORD	high threshold
+ 16h	WORD	segment of buffer
+ 18h	WORD	offset of buffer
+ 1Ah	WORD	input buffer length
+ 1Ch	WORD	output buffer length
+ 1Eh	BYTE	auxiliary address
+ 1Fh	BYTE	spare
+ 20h  4 WORDs	spares
+--------V-148100-----------------------------
+INT 14 - VIDEO FOSSIL - RETURN VFOSSIL INFORMATION
+	AX = 8100h
+	ES:DI -> buffer for VFOSSIL information (see below)
+Return: AX = 1954h if installed
+SeeAlso: AH=7Eh,AX=8101h
+
+Format of VFOSSIL information:
+Offset	Size	Description
+ 00h	WORD	size of information in bytes, including this field
+ 02h	WORD	VFOSSIL major version
+ 04h	WORD	VFOSSIL revision level
+ 06h	WORD	highest VFOSSIL application function supported
+--------V-148101-----------------------------
+INT 14 - VIDEO FOSSIL - OPEN VFOSSIL
+	AX = 8101h
+	ES:DI -> buffer for application function table (see below)
+	CX = length of buffer in bytes
+Return: AX = 1954h if installed
+	    BH = highest VFOSSIL application function supported
+Note:	the number of initialized pointers in the application function table
+	  will never exceed CX/4; if the buffer is large enough, BH+1 pointers
+	  will be initialized
+SeeAlso: AX=8102h
+
+Format of application function table:
+Offset	Size	Description
+ 00h	DWORD	-> function to query current video mode (VioGetMode)
+ 04h	DWORD	-> function to set video mode (VioSetMode)
+ 08h	DWORD	-> function to query hardware config (VioGetConfig)
+ 0Ch	DWORD	-> function to write data in TTY mode (VioWrtTTY)
+ 10h	DWORD	-> function to get current ANSI state (VioGetANSI)
+ 14h	DWORD	-> function to set new ANSI state (VioSetANSI)
+ 18h	DWORD	-> function to get curr cursor position (VioGetCurPos)
+ 1Ch	DWORD	-> function to set cursor position (VioSetCurPos)
+ 20h	DWORD	-> function to get cursor shape (VioGetCurType)
+ 24h	DWORD	-> function to set cursor shape (VioSetCurType)
+ 28h	DWORD	-> function to scroll screen up (VioScrollUp)
+ 2Ch	DWORD	-> function to scroll screen down (VioScrollDn)
+ 30h	DWORD	-> function to read cell string from screen (VioReadCellStr)
+ 34h	DWORD	-> function to read char string from screen (VioReadCharStr)
+ 38h	DWORD	-> function to write a cell string (VioWrtCellStr)
+ 3Ch	DWORD	-> function to write char string, leaving attr (VioWrtCharStr)
+ 40h	DWORD	-> function to write char string,const attr (VioWrtCharStrAttr)
+ 44h	DWORD	-> function to replicate an attribute (VioWrtNAttr)
+ 48h	DWORD	-> function to replicate a cell (VioWrtNCell)
+ 4Ch	DWORD	-> function to replicate a character (VioWrtNChar)
+
+Format of video mode data structure:
+Offset	Size	Description
+ 00h	WORD	length of structure including this field
+ 02h	BYTE	mode characteristics
+		bit 0: clear if MDA, set otherwise
+		bit 1: graphics mode
+		bit 2: color disabled (black-and-white)
+ 03h	BYTE	number of colors supported (1=2 colors, 4=16 colors, etc)
+ 04h	WORD	number of text columns
+ 06h	WORD	number of text rows
+ 08h	WORD	reserved
+ 0Ah	WORD	reserved
+ 0Ch	DWORD	reserved
+
+Format of video configuration data:
+Offset	Size	Description
+ 00h	WORD	structure length including this field
+ 02h	WORD	adapter type
+		00h monochrome/printer
+		01h CGA
+		02h EGA
+		03h VGA
+		07h 8514/A
+ 04h	WORD	display type
+		00h monochrome
+		01h color
+		02h enhanced color
+		09h 8514
+ 06h	DWORD	adapter memory size
+
+Format of cursor type record:
+Offset	Size	Description
+ 00h	WORD	cursor start line
+ 02h	WORD	cursor end line
+ 04h	WORD	cursor width (always 01h)
+ 06h	WORD	cursor attribute (FFFFh = hidden)
+
+Call VioGetMode with:
+	STACK:	WORD	VIO handle (must be 00h)
+		DWORD	pointer to video mode data structure (see above)
+Return: AX = error code (00h, 74h, 17Eh, 1B4h) (see below)
+
+Values for error code:
+ 0000h	successful
+ 0074h	internal VIO failure
+ 0163h	unsupported mode
+ 0166h	invalid row value
+ 0167h	invalid column value
+ 017Eh	buffer too small
+ 01A5h	invalid VIO parameter
+ 01B4h	invalid VIO handle
+
+Call VioSetMode with:
+	STACK:	WORD	VIO handle (must be 00h)
+		DWORD	pointer to video mode data structure (see above)
+Return: AX = error code (00h, 74h, 163h, 17Eh, 1A5h, 1B4h) (see above)
+
+Call VioGetConfig with:
+	STACK:	WORD	VIO handle (must be 00h)
+		DWORD	pointer to video configuration data buffer (see above)
+Return: AX = error code (00h, 74h, 17Eh, 1B4h) (see above)
+
+Call VioWrtTTY with:
+	STACK:	WORD	VIO handle (must be 00h)
+		WORD	length of string
+		DWORD	pointer to character string to be written to screen
+Return: AX = error code (00h, 74h, 1B4h) (see above)
+Notes:	write wraps at end of line and terminates if it reaches end of screen
+	in ANSI mode, ANSI control sequences are interpreted, and this func is
+	  not required to be reentrant; in non-ANSI mode, the function is
+	  reentrant and may be called from within an MS-DOS function call
+
+Call VioGetANSI with:
+	STACK:	WORD	VIO handle (must be 00h)
+		DWORD	pointer to WORD which will be set to 00h if ANSI is off
+			or 01h if ANSI is on
+Return: AX = error code (00h, 74h, 1B4h) (see above)
+
+Call VioSetANSI with:
+	STACK:	WORD	VIO handle (must be 00h)
+		DWORD	pointer to WORD indicating new state of ANSI
+			00h off
+			01h on
+Return: AX = error code (00h, 74h, 1A4h, 1B4h) (see above)
+
+Call VioGetCurPos with:
+	STACK:	WORD	VIO handle (must be 00h)
+		DWORD	pointer to WORD to hold current cursor column (0-based)
+		DWORD	pointer to WORD to hold current cursor row (0-based)
+Return: AX = error code (00h, 74h, 1B4h) (see above)
+
+Call VioSetCurPos with:
+	STACK:	WORD	VIO handle (must be 00h)
+		WORD	cursor column
+		WORD	cursor row
+Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see above)
+Note:	if either coordinate is invalid, the cursor is not moved
+
+Call VioGetCurType with:
+	STACK:	WORD	VIO handle (must be 00h)
+		DWORD	pointer to cursor type record (see above)
+Return: AX = error code (00h, 74h, 1B4h) (see above)
+
+Call VioSetCurType with:
+	STACK:	WORD	VIO handle (must be 00h)
+		DWORD	pointer to cursor type record (see above)
+Return: AX = error code (00h, 74h, 1A4h, 1B4h) (see above)
+
+Call VioScrollUp with:
+	STACK:	WORD	VIO handle (must be 00h)
+		DWORD	pointer to char/attr cell for filling emptied rows
+		WORD	number or rows to scroll (FFFFh = clear area)
+		WORD	right column of scroll area
+		WORD	bottom row of scroll area
+		WORD	left column of scroll area
+		WORD	top row of scroll area
+Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see above)
+
+Call VioScrollDn with:
+	STACK:	WORD	VIO handle (must be 00h)
+		DWORD	pointer to char/attr cell for filling emptied rows
+		WORD	number or rows to scroll (FFFFh = clear area)
+		WORD	right column of scroll area
+		WORD	bottom row of scroll area
+		WORD	left column of scroll area
+		WORD	top row of scroll area
+Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see above)
+
+Call VioReadCellStr with:
+	STACK:	WORD	VIO handle (must be 00h)
+		WORD	column at which to start reading
+		WORD	row at which to start reading
+		DWORD	pointer to WORD containing length of buffer in bytes
+			on return, WORD contains number of bytes actually read
+		DWORD	pointer to buffer for cell string
+Return: AX = error code (00h, 74h, 166h ,167h, 1B4h) (see above)
+
+Call VioReadCharStr with:
+	STACK:	WORD	VIO handle (must be 00h)
+		WORD	column at which to start reading
+		WORD	row at which to start reading
+		DWORD	pointer to WORD containing length of buffer in bytes
+			on return, WORD contains number of bytes actually read
+		DWORD	pointer to buffer for character string
+Return: AX = error code (00h, 74h, 166h ,167h, 1B4h) (see above)
+
+Call VioWrtCellStr with:
+	STACK:	WORD	VIO handle (must be 00h)
+		WORD	column at which to start writing
+		WORD	row at which to start writing
+		WORD	length of cell string in bytes
+		DWORD	pointer to cell string to write
+Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see above)
+Note:	write wraps at end of line and terminates if it reaches end of screen
+
+Call VioWrtCharStr with:
+	STACK:	WORD	VIO handle (must be 00h)
+		WORD	column at which to start writing
+		WORD	row at which to start writing
+		WORD	length of character string
+		DWORD	pointer to character string to write
+Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see above)
+Note:	write wraps at end of line and terminates if it reaches end of screen
+
+Call VioWrtCharStrAttr with:
+	STACK:	WORD	VIO handle (must be 00h)
+		DWORD	pointer to attribute to be applied to each character
+		WORD	column at which to start writing
+		WORD	row at which to start writing
+		WORD	length of character string
+		DWORD	pointer to character string to write
+Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see above)
+Note:	write wraps at end of line and terminates if it reaches end of screen
+
+Call VioWrtNAttr with:
+	STACK:	WORD	VIO handle (must be 00h)
+		WORD	column at which to start writing
+		WORD	row at which to start writing
+		WORD	number of times to write attribute
+		DWORD	pointer to display attribute to replicate
+Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see above)
+Note:	write wraps at end of line and terminates if it reaches end of screen
+
+Call VioWrtNCell with:
+	STACK:	WORD	VIO handle (must be 00h)
+		WORD	column at which to start writing
+		WORD	row at which to start writing
+		WORD	number of times to write cell
+		DWORD	pointer to cell to replicate
+Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see above)
+Note:	write wraps at end of line and terminates if it reaches end of screen
+
+Call VioWrtNChar with:
+	STACK:	WORD	VIO handle (must be 00h)
+		WORD	column at which to start writing
+		WORD	row at which to start writing
+		WORD	number of times to write character
+		DWORD	pointer to character to replicate
+Return: AX = error code (00h, 74h, 166h, 167h, 1B4h) (see above)
+Note:	write wraps at end of line and terminates if it reaches end of screen
+--------V-148102-----------------------------
+INT 14 - VIDEO FOSSIL - CLOSE VFOSSIL
+	AX = 8102h
+Return: AX = 1954h
+Note:	terminates all operations; after this call, the video FOSSIL may either
+	  be removed from memory or reinitialized
+SeeAlso: AX=8101h,AX=8103h
+--------V-148103-----------------------------
+INT 14 - VIDEO FOSSIL - UNINSTALL
+	AX = 8103h
+Return: AX = 1954h
+Note:	this is an extension to the VFOSSIL spec by Bob Hartman's VFOS_IBM
+--------K-1482-------------------------------
+INT 14 - KEYBOARD FOSSIL
+	AH = 82h
+SeeAlso: AH=7Eh
+--------S-1482-------------------------------
+INT 14 - COURIERS.COM - CONFIGURE PORT
+	AH = 82h
+	AL = port number (1-4)
+	BX = speed (bps)
+	CX = bit flags
+	    bit 0: enable input flow control
+	    bit 1: enable output flow control
+	    bit 2: use X.PC protocol (not yet implemented)
+SeeAlso: AH=00h,AH=8Ch,INT 7A"X.PC"
+----------1483-------------------------------
+INT 14 - SYSTEM FOSSIL
+	AH = 83h
+SeeAlso: AH=7Eh
+--------S-1483-------------------------------
+INT 14 - COURIERS.COM - START INPUT
+	AH = 83h
+	ES:BX -> circular input buffer
+	CX = length of buffer
+		(should be at least 128 bytes if input flow control enabled)
+SeeAlso: AH=18h,AH=87h,AH=8Dh,AH=A5h"BAPI"
+--------S-1484-------------------------------
+INT 14 - COURIERS.COM - READ CHARACTER
+	AH = 84h
+Return: ZF set if no characters available
+	ZF clear
+	   AL = character
+	   AH = modem status bits
+		bit 7: set on input buffer overflow
+SeeAlso: AH=02h,AH=86h,AH=89h
+--------S-1485-------------------------------
+INT 14 - COURIERS.COM - FLUSH PENDING INPUT
+	AH = 85h
+SeeAlso: AH=0Ah,AH=88h
+--------S-1486-------------------------------
+INT 14 - COURIERS.COM - START OUTPUT
+	AH = 86h
+	ES:BX -> output buffer
+	CX = length of output buffer
+SeeAlso: AH=19h,AH=83h"COURIERS",AH=A4h"BAPI"
+--------S-1487-------------------------------
+INT 14 - COURIERS.COM - OUTPUT STATUS
+	AH = 87h
+Return: AX = number of unsent characters
+--------S-1488-------------------------------
+INT 14 - COURIERS.COM - ABORT OUTPUT
+	AH = 88h
+SeeAlso: AH=09h,AH=85h
+--------S-1489-------------------------------
+INT 14 - COURIERS.COM - SEND SINGLE CHARACTER
+	AH = 89h
+	CL = character to send
+SeeAlso: AH=01h,AH=84h
+--------S-148A-------------------------------
+INT 14 - COURIERS.COM - SEND BREAK
+	AH = 8Ah
+SeeAlso: AH=89h,AH=FAh
+--------S-148C-------------------------------
+INT 14 - COURIERS.COM - SET SPEED
+	AH = 8Ch
+	BX = speed in bps
+SeeAlso: AH=00h,AH=82h"COURIERS"
+--------S-148D-------------------------------
+INT 14 - COURIERS.COM - DECONFIGURE PORT
+	AH = 8Dh
+SeeAlso: AH=82h"COURIERS"
+--------S-14A0-------------------------------
+INT 14 - 3com BAPI SERIAL I/O - CONNECT TO PORT
+	AH = A0h
+	ES:BX -> ASCIZ internet host name
+	CX = length of name
+Return: AH = return code (00h,04h-06h,08h,0Ah-0Ch) (see below)
+	CL = session ID
+Program: the Bridge Application Program Interface is a set of functions which
+	  makes many of the details of LAN communications transparent
+Note:	Novell TELAPI.EXE returns AH=09h (not supported) and CL=00h
+SeeAlso: AH=A1h"BAPI",AH=A2h"BAPI",AH=A5h"BAPI",AX=AF00h
+
+Values for return code:
+ 00h	successful
+ 01h	no characters written
+ 02h	no characters read
+ 03h	no such session
+ 04h	clearinghouse name not found
+ 05h	no response from host
+ 06h	no more sessions available
+ 07h	session aborted
+ 08h	invalid clearinghouse name
+ 09h	not supported
+ 0Ah	internal (general) network error
+ 0Bh	out of memory
+ 0Ch	invalid IP address
+--------S-14A0--CXFFFF-----------------------
+INT 14 - Interconnections Inc. TES - INSTALLATION CHECK/STATUS REPORT
+	AH = A0h
+	CX = FFFFh
+Return: CF clear if successful
+	    AX = 5445h ('TE')
+	    CX <> FFFFh
+	    DX = port number
+	CF set on error
+Program: TES is a network serial port emulation program
+SeeAlso: AH=A1h"TES"
+--------S-14A1-------------------------------
+INT 14 - 3com BAPI SERIAL I/O - DISCONNECT FROM PORT
+	AH = A1h
+	DH = session ID (00h for external session managment)
+Return: AH = return code (00h,03h,07h,0Ah,0Bh) (see AH=A0h"BAPI")
+	AL destroyed (Novell TELAPI.EXE)
+SeeAlso: AH=A0h"BAPI"
+--------S-14A1-------------------------------
+INT 14 - Interconnections Inc. TES - GET LIST OF SESSIONS WITH STATUS
+	AH = A1h
+Return: CX = number of active sessions
+	ES:SI -> status array (see below)
+SeeAlso: AH=A2h"TES",AH=A3h"TES"
+
+Format of status array entry:
+Offset	Size	Description
+ 00h	BYTE	status
+ 01h	WORD	offset of name
+--------S-14A2-------------------------------
+INT 14 - 3com BAPI SERIAL I/O - WRITE CHARACTER
+	AH = A2h
+	AL = character
+	DH = session ID (00h for external session managment)
+Return: AH = return code (00h,01h,03h,07h,0Ah,0Bh) (see AH=A0h"BAPI")
+SeeAlso: AH=A0h"BAPI",AH=A3h"BAPI",AH=A4h"BAPI"
+--------S-14A2-------------------------------
+INT 14 - Interconnections Inc. TES - GET LIST OF SERVER NAMES
+	AH = A2h
+Return: CX = number of servers
+	ES:SI -> array of offsets from ES for server names
+SeeAlso: AH=A1h"TES"
+--------S-14A3-------------------------------
+INT 14 - 3com BAPI SERIAL I/O - READ CHARACTER
+	AH = A3h
+	DH = session ID (00h for external session managment)
+Return: AH = return code (00h,02h,03h,07h,0Ah,0Bh) (see AH=A0h"BAPI")
+	AL = character read or 00h if none available
+SeeAlso: AH=A0h"BAPI",AH=A2h"BAPI",AH=A5h"BAPI",AH=A7h"BAPI"
+--------S-14A3-------------------------------
+INT 14 - Interconnections Inc. TES - START A NEW SESSION
+	AH = A3h
+	ES:SI -> ???
+Return: CF clear if successful
+	    AX = 5445h ('TE')
+	    CX <> FFFFh
+	    DX = port number
+	CF set on error
+SeeAlso: AH=A1h"TES",AH=A4h"TES",AH=A6h"TES"
+--------S-14A4-------------------------------
+INT 14 - 3com BAPI SERIAL I/O - WRITE BLOCK
+	AH = A4h
+	CX = length of buffer in bytes
+	DH = session ID (00h for external session managment)
+	ES:BX -> buffer containing data
+Return: AH = return code (00h,01h,03h,07h,0Ah,0Bh) (see AH=A0h"BAPI")
+	CX = number of bytes actually sent
+SeeAlso: AH=19h,AH=86h,AH=A0"BAPI",AH=A5h"BAPI"
+--------S-14A4-------------------------------
+INT 14 - Interconnections Inc. TES - HOLD CURRENTLY ACTIVE SESSION
+	AH = A4h
+	???
+Return: ???
+SeeAlso: AH=A3h"TES",AH=A5h"TES"
+--------S-14A5-------------------------------
+INT 14 - 3com BAPI SERIAL I/O - READ BLOCK
+	AH = A5h
+	CX = length of buffer
+	DH = session ID (00h for external session managment)
+	ES:BX -> buffer for data
+Return: AH = return code (00h,02h,03h,07h,0Ah,0Bh) (see AH=A0h"BAPI")
+	CX = number of bytes actually read
+SeeAlso: AH=18h,AH=83h"COURIERS",AH=A0h"BAPI",AH=A3h"BAPI",AH=A4h"BAPI"
+SeeAlso: AH=A7h"BAPI",AX=FF02h
+--------S-14A5-------------------------------
+INT 14 - Interconnections Inc. TES - RESUME A SESSION
+	AH = A5h
+	AL = session number
+Return: ???
+SeeAlso: AH=A4h"TES",AH=A6h"TES"
+--------S-14A6-------------------------------
+INT 14 - 3com BAPI SERIAL I/O - SEND SHORT BREAK
+	AH = A6h
+	DH = session ID (00h for external session managment)
+Return: AH = return code (00h,03h,07h,0Ah,0Bh) (see AH=A0h"BAPI")
+Desc:	generate a short break signal; if data delivery was turned off by the
+	  break, wait for the host to turn it on again
+SeeAlso: AH=1Ah,AH=8Ah,AH=FAh,AH=A0h"BAPI"
+--------S-14A6-------------------------------
+INT 14 - Interconnections Inc. TES - DROP A SESSION
+	AH = A6h
+	AL = session number
+Return: AH = status
+	    00h successful
+	    else error
+SeeAlso: AH=A3h"TES",AH=A5h"TES"
+--------S-14A7-------------------------------
+INT 14 - 3com BAPI SERIAL I/O - READ STATUS
+	AH = A7h
+	DH = session ID (00h for external session managment)
+Return: AH = return code (00h,03h,07h,0Ah,0Bh) (see AH=A0h"BAPI")
+	CX = number of bytes available for reading
+Note:	Novell TELAPI.EXE v4.01 always returns either 0 or 1 bytes available
+SeeAlso: AH=A5h"BAPI"
+--------S-14A7-------------------------------
+INT 14 - Interconnections Inc. TES - SWITCH TO NEXT ACTIVE SESSION
+	AH = A7h
+	???
+Return: ???
+SeeAlso: AH=A3h"TES",AH=A5h"TES"
+--------S-14A8-------------------------------
+INT 14 - Interconnections Inc. TES - SEND STRING TO COMMAND INTERPRETER
+	AH = A8h
+	AL = 00h no visible response
+	ES:SI -> ASCIZ command
+Return: ???
+--------N-14A8-------------------------------
+INT 14 - Novell TelAPI v4.01 - CONNECTION INFORMATION???
+	AH = A8h
+	DH = session ID???
+	CH = subfunction
+	    02h ???
+	    0Dh ???
+	    0Fh ???
+	    10h ???
+	    11h ???
+	    28h ???
+	    else
+		Return: AH = 09h (not supported)
+Return: AH = return code (see AH=A0h"BAPI")
+	    00h successful
+		CL = ??? (0/1/8) (subfunctions 02h,0Dh,0Fh,10h)
+		CL = ??? (7Fh/FFh) (subfunction 28h)
+		CX = ??? (subfunction 11h)
+SeeAlso: AH=A9h"TelAPI"
+--------N-14A9-------------------------------
+INT 14 - Novell TelAPI v4.01 - CONNECTION CONTROL???
+	AH = A9h
+	DH = session ID???
+	CH = subfunction
+	    02h ???
+	    0Dh ???
+	    0Fh ???
+	    10h ???
+	    11h ???
+	    28h ???
+	    else
+		Return: AH = 09h (not supported)
+	???
+Return: AH = return code (see AH=A0h"BAPI")
+	???
+SeeAlso: AH=A8h"TelAPI",AH=E4h,INT 6B/AX=0600h
+--------S-14AF00BXAAAA-----------------------
+INT 14 - 3com BAPI SERIAL I/O - INSTALLATION CHECK
+	AX = AF00h
+	BX = AAAAh
+Return: AX = AF01h if installed
+	    BH = protocol type (if BX=AAAAh on entry)
+		01h NetManage TCP/IP
+	    BL = version for protocol type (if BX=AAAAh on entry)
+Note:	early versions of the BAPI and the ROM BIOS simply destroy AX; this
+	  behavior is used to determine whether the newer functions (AH=B0h,
+	  AH=B1h,etc) are available
+SeeAlso: AH=A0h"BAPI"
+--------S-14B0-------------------------------
+INT 14 - 3com BAPI SERIAL I/O - EN/DISABLE "ENTER COMMAND MODE" (ECM) CHARACTER
+	AH = B0h
+	AL = new state (00h disabled, 01h enabled)
+Return: AH = return code (00h,07h,0Ah) (see AH=A0h"BAPI")
+Note:	disabling the ECM character allows applications to send data which
+	  includes the ECM character
+SeeAlso: AX=AF00h"BAPI",AH=B1h,AH=B2h
+--------S-14B1-------------------------------
+INT 14 - 3com BAPI SERIAL I/O - ENTER COMMAND MODE
+	AH = B1h
+Return: AH = return code (00h,07h,0Ah) (see AH=A0h"BAPI")
+Desc:	provide a means for the application or terminal emulator to perform
+	  the same action normally caused by the ECM character
+SeeAlso: AH=B0h,AH=B2h
+--------S-14B2-------------------------------
+INT 14 - 3com BAPI SERIAL I/O - GET ECM WATCH STATE
+	AH = B2h
+Return: AH = return code (00h,07h,0Ah) (see AH=A0h"BAPI")
+	AL = watch flag (00h disabled, 01h enabled)
+Desc:	determine whether the ECM character is enabled
+SeeAlso: AH=B0h,AH=B1h
+--------S-14B3-------------------------------
+INT 14 - 3com BAPI SERIAL I/O - GET/SET CONFIGURATION INFO
+	AH = B3h
+	AL = direction (00h get, 01h set)
+	DH = session ID (00h for external session managment)
+	DL = configuration item (00h = end-of-line mapping)
+	CX = new configuration item value (if AL=01h)
+	    ---if DL=00h---
+	    CH = application EOL type (app to Telnet client)
+		01h application will send lone CR
+		02h application will send CR-? pair
+	    CL = driver EOL type (Telnet client to Telnet server)
+		01h driver should send CR-NUL pair
+		02h driver should send CR-LF pair
+Return: AH = return code (00h,03h,09h-0Bh) (see AH=A0h"BAPI")
+	---if AL=00h---
+	CX = configuration item value (see above)
+SeeAlso: AH=B2h
+--------N-14E0-------------------------------
+INT 14 - TelAPI - ???
+	AH = E0h
+	BX = ???
+	CX:DX = ???
+	DS:DI -> ???
+	ES:SI -> ???
+Return: AX = status (0000h,FF37h,etc.)
+	ES:SI -> ??? if ???
+	???
+SeeAlso: AH=ECh,AX=FF00h
+--------S-14E000-----------------------------
+INT 14 - MX5 Extended FOSSIL - GET MNP STATUS BLOCK
+	AX = E000h
+	DX = port number (0-3)
+Return: ES:BX -> status block (see below)
+Program: MX5 is a FOSSIL driver by MagicSoft which emulates MNP Level 5, and
+	  ships with the MTEZ terminal program as MTEMNP.DRV (a TSR despite
+	  the .DRV extension)
+SeeAlso: AX=E006h
+
+Format of status block:
+Offset	Size	Description
+ 00h	BYTE	flag: active (00h no, 01h yes)
+ 01h	BYTE	MNP level (2,4,5)
+ 02h	BYTE	series ID from remote MNP
+ 03h	DWORD	total packets transmitted
+ 07h	DWORD	duplicate packets transmitted
+ 0Bh	DWORD	maximum speed
+ 0Fh	DWORD	total packets received
+ 13h	DWORD	duplicate packets received
+ 17h	DWORD	maximum speed
+--------S-14E001-----------------------------
+INT 14 - MX5 Extended FOSSIL - GET/SET MNP LEVEL
+	AX = E001h
+	BH = function
+	    00h get MNP level
+	    01h set MNP level
+		BL = new level (00h none, 02h/04h/05h MNP level N)
+	DX = port number (0-3)
+Return: BL = MNP level
+SeeAlso: AX=E002h,AX=E003h,AX=E004h,AX=E006h
+--------S-14E002-----------------------------
+INT 14 - MX5 Extended FOSSIL - GET/SET MNP ANSWER/ORIGINATE MODE
+	AX = E002h
+	BH = function
+	    00h get answer/originate mode
+	    01h set mode
+		BL = new mode (00h originate [default], 01h answer)
+	DX = port number (0-3)
+Return: BL = answer/originate mode
+SeeAlso: AX=E001h,AX=E003h,AX=E006h
+--------S-14E003-----------------------------
+INT 14 - MX5 Extended FOSSIL - GET/SET MNP WAIT TICKS
+	AX = E003h
+	BH = function
+	    00h get wait ticks
+	    01h set wait ticks
+		BL = MNP wait ticks (default 0Eh)
+	DX = port number (0-3)
+Return: BL = wait ticks
+SeeAlso: AX=E001h,AX=E002h,AX=E006h
+--------S-14E004-----------------------------
+INT 14 - MX5 Extended FOSSIL - GET/SET MNP CONNECT SOUND LEVEL
+	AX = E004h
+	BH = function
+	    00h get sound level
+	    01h set sound level
+		BL = new sound level (00h off, 01h on [default])
+	DX = port number
+Return: BL = sound state
+Desc:	specify whether MX5 should generate beeps after an MNP connection
+	  (three high beeps if successful, high then low on connection failure)
+SeeAlso: AX=E002h,AX=E006h
+--------S-14E005-----------------------------
+INT 14 - MX5 Extended FOSSIL - UNINSTALL
+	AX = E005h
+Return: BX = segment of MX5's memory block or 0000h on failure
+Note:	caller must free the returned memory block to complete the uninstall
+SeeAlso: AX=E006h
+--------S-14E006BX0000-----------------------
+INT 14 - MX5 Extended FOSSIL - INSTALLATION CHECK
+	AX = E006h
+	BX = 0000h
+Return: BX = 4D58h ('MX') if installed
+	    AH = major version
+	    AL = minor version
+SeeAlso: AX=E000h,AX=E001h,AX=E005h,AX=E007h
+--------S-14E007-----------------------------
+INT 14 - MX5 Extended FOSSIL - WAIT SPECIFIED NUMBER OF TICKS
+	AX = E007h
+	CX = number of ticks to wait
+Return: nothing
+SeeAlso: AX=E006h
+--------N-14E1-------------------------------
+INT 14 - TelAPI - ???
+	AH = E1h
+	BX = connection ID
+	???
+Return: AX = status (0000h,FFF7h,maybe others)
+	???
+SeeAlso: AH=E6h,AX=FF00h
+--------N-14E2-------------------------------
+INT 14 - TelAPI - BUFFERED READ
+	AH = E2h
+	BX = connection ID
+	CX = length of buffer in bytes
+	ES:SI -> buffer for data
+Return: AX = number of characters actually read??? (negative on error)
+SeeAlso: AH=E6h,AX=FF00h,INT 6B/AH=01h
+--------N-14E3-------------------------------
+INT 14 - TelAPI - BUFFERED WRITE
+	AH = E3h
+	BX = connection ID
+	CX = length of buffer in bytes
+	ES:SI -> buffer containing data
+Return: AX = number of characters actually written??? (negative on error)
+SeeAlso: AH=07h"TelAPI",AH=E6h,AX=FF00h,INT 6B/AH=00h
+--------N-14E4-------------------------------
+INT 14 - TelAPI - CONNECTION CONTROL???
+	AH = E4h
+	BX = connection ID
+	CX = ???
+	ES:SI -> 10-byte buffer containing ???
+Return: ???
+SeeAlso: AH=A9h,AH=E6h,AX=FF00h,INT 6B/AX=0600h
+--------N-14E5-------------------------------
+INT 14 - TelAPI - ???
+	AH = E5h
+Return: AX = status???
+SeeAlso: AH=E6h,AX=FF00h
+--------N-14E6-------------------------------
+INT 14 - TelAPI - ???
+	AH = E6h
+Return: AX = status???
+Notes:	TelAPI also supports the NASI/NACS and NCSI APIs on INT 6B
+	this function invokes AH=E5h internally
+SeeAlso: AX=FF00h,INT 6B/AH=00h,INT 6B/AH=10h
+--------N-14E7-------------------------------
+INT 14 - TelAPI - GET ???
+	AH = E7h
+	ES:SI -> 20-byte buffer for ???
+Return: AX = 0000h (successful)
+	ES:SI buffer filled
+SeeAlso: AX=FF00h
+--------N-14E8-------------------------------
+INT 14 - TelAPI - SET ???
+	AH = E8h
+	BX = connection ID
+	CL = new value for ???
+	DX = ??? (ignored by Novell TELAPI v4.01)
+Return: AX = status (0000h,FFFFh)
+SeeAlso: AX=FF00h
+--------N-14E9-------------------------------
+INT 14 - TelAPI - ???
+	AH = E9h
+	DX = ???
+Return: ???
+SeeAlso: AX=FF00h
+--------N-14EA-------------------------------
+INT 14 - TelAPI - GET CONNECTION INFO???
+	AH = EAh
+	BX = connection ID
+	ES:SI -> buffer for info???
+Return: AX = status (0000h,FFFFh,etc.)
+SeeAlso: AX=FF00h
+--------N-14EB-------------------------------
+INT 14 - TelAPI - GET ???
+	AH = EBh
+	ES:SI -> buffer for ???
+Return: ES:SI buffer filled
+SeeAlso: AX=FF00h
+--------N-14EC-------------------------------
+INT 14 - TelAPI - ???
+	AH = ECh
+	BX = ???
+	CX:DX = ???
+	DS:DI -> ???
+	ES:SI -> ???
+Return: AX = status (0000h,FF37h,etc.)
+	ES:SI -> ??? if ???
+	???
+Note:	this function is not supported by the Microdyne TelAPI v3.7
+SeeAlso: AH=E0h"TelAPI",AX=FF00h
+--------N-14ED-------------------------------
+INT 14 - TelAPI - ???
+	AH = EDh
+	BX = connection ID
+Return: AX = status (0000h,FFFFh,etc.)
+Note:	this function is not supported by the Microdyne TelAPI v3.7
+SeeAlso: AX=FF00h
+--------a-14F0F0-----------------------------
+INT 14 - ASAP v1.0 - ???
+	AX = F0F0h
+	DX = ???
+	???
+Return: ???
+Program: ASAP (Automatic Screen Access Program) is a shareware screen reader by
+	  MicroTalk
+SeeAlso: AX=F0F1h
+--------a-14F0F1DX0000-----------------------
+INT 14 - ASAP v1.0 - INSTALLATION CHECK
+	AX = F0F1h
+	DX = 0000h
+Return: DX = segment of resident code
+	   = 0000h if not installed
+Program: ASAP (Automatic Screen Access Program) is a shareware screen reader by
+	  MicroTalk
+SeeAlso: AX=F0F0h,INT 10/AX=3800h
+--------S-14F4FF-----------------------------
+INT 14 - IBM/Yale EBIOS SERIAL I/O - INSTALLATION CHECK
+	AX = F4FFh
+	DX = port (00h-03h)
+Return: CF clear if present
+	    AX = 0000h
+	CF set if not present
+	    AX <> 0000h
+--------S-14F9-------------------------------
+INT 14 - IBM/Yale EBIOS SERIAL I/O - REGAIN CONTROL
+	AH = F9h
+	DX = port (00h-03h)
+--------S-14FA-------------------------------
+INT 14 - IBM/Yale EBIOS SERIAL I/O - SEND BREAK
+	AH = FAh
+	DX = port (00h-03h)
+SeeAlso: AH=1Ah,AH=8Ah
+--------S-14FB-------------------------------
+INT 14 - IBM/Yale EBIOS SERIAL I/O - SET OUTGOING MODEM SIGNALS
+	AH = FBh
+	AL = modem control register (see AH=05h)
+	DX = port (00h-03h)
+SeeAlso: AH=05h"SERIAL"
+--------S-14FC-------------------------------
+INT 14 - IBM/Yale EBIOS SERIAL I/O - READ CHARACTER, NO WAIT
+	AH = FCh
+	DX = port (00h-03h)
+Return: AH = RS232 status bits (see AH=00h)
+	AL = character
+SeeAlso: AH=02h,AH=0Ch,AX=FF02h
+--------S-14FD02-----------------------------
+INT 14 - IBM/Yale EBIOS SERIAL I/O - READ STATUS
+	AX = FD02h
+Return: CX = number of characters available
+--------N-14FF00-----------------------------
+INT 14 - TelAPI - INSTALLATION CHECK
+	AX = FF00h
+Return: AL = FFh if installed
+	AH = 00h for Novell TELAPI.EXE
+SeeAlso: AH=E6h
+--------S-14FF02-----------------------------
+INT 14 - IBM/Yale EBIOS SERIAL I/O - BUFFERED READ
+	AX = FF02h
+	CX = length
+	DX = port (00h-03h)
+	ES:BX -> buffer
+Return: CX = number of characters read
+SeeAlso: AH=18h,AH=83h"COURIERS",AH=A5h"BAPI",AH=FCh
 --------t-15---------------------------------
 INT 15 - Microsoft TSR Specification
 	No additional information available at this time.
@@ -715,6 +3016,7 @@ Offset	Size	Description
  08h	DWORD	object handle to return to caller
  0Ch	DWORD	canonicalized object address (segment = common memory)
  10h	WORD	offset in common memory of owning task
+		(0000h for unowned OBJECTQs)
  12h	WORD	mapping context
 		offset in common memory of mapping context record (see below)
 	remainder varies by object type and DESQview version
@@ -740,15 +3042,16 @@ Offset	Size	Description
  22h	WORD	offset in common memory of mailbox name (counted string)
 		0000h if no name
      <= 5 BYTEs ???
----v2.22-2.42 window/task object---
+---v2.22-2.42,2.52,2.60 window/task object---
  14h	BYTE	00h window, 01h task
  15h	BYTE	internal (not Switch menu) window number???
  16h	BYTE	internal (not Switch menu) window number???
- 17h	WORD	segment of internal window record
+ 17h	WORD	segment of internal window record (see below)
  19h  2 BYTEs	???
  1Bh	BYTE	cursor row
  1Ch	BYTE	cursor column
- 1Dh  2 BYTEs	???
+ 1Dh	BYTE	visible window origin, row
+ 1Eh	BYTE	visible window origin, column
  1Fh	BYTE	window height (logical)
  20h	BYTE	window width (logical)
  21h	BYTE	window position, row
@@ -759,7 +3062,14 @@ Offset	Size	Description
  26h	BYTE	column of left of frame (or window if unframed)
  27h	BYTE	window height (physical, including frame)
  28h	BYTE	window width (physical, including frame)
- 29h  6 BYTEs	???
+ 29h	BYTE	unzoomed visible origin, row (00h before first zoom)
+ 2Ah	BYTE	unzoomed visible origin, column (00h before first zoom)
+ 2Bh	BYTE	unzoomed window position, row (00h before first zoom)
+ 2Ch	BYTE	unzoomed window position, column (00h before first zoom)
+ 2Dh	BYTE	unzoomed window height (00h before first zoom)
+ 2Eh	BYTE	unzoomed window width (00h before first zoom)
+		unzoomed parameters above are updated when window is zoomed
+		to full	screen
  2Fh	BYTE	??? initially logical window height
  30h	BYTE	??? initially logical window width
  31h  2 BYTEs	???
@@ -773,7 +3083,8 @@ Offset	Size	Description
  5Ah  8 BYTEs	window frame characters: ul,ur,ll,lr,t,b,l,r
  62h  3 BYTEs	???
  65h	BYTE	??? bitflags
- 66h  2 BYTEs	???
+ 66h	BYTE	bit 0: window is zoomed
+ 67h	BYTE	???
  68h	WORD	offset in common memory of window name or 0000h if untitled
  6Ah	WORD	length of window name
  6Ch  2 BYTEs	???
@@ -829,6 +3140,7 @@ Offset	Size	Description
  C6h	WORD	segment of keyboard buffer for task
  C8h	WORD	offset in common memory of ??? keyboard object
  CAh	BYTE	???
+---v2.22-2.42
  CBh	WORD	offset in common memory of ??? object
  CEh	BYTE	??? flag
  CFh	WORD	offset in common memory of default notify window for task
@@ -839,26 +3151,78 @@ Offset	Size	Description
  DBh	WORD	offset in common memory of ??? object
  DDh  2 BYTEs	???
  DFh	WORD	API level for task
- E1h	WORD	offset in common memory of ??? keyboard object
+ E1h	WORD	offset in common memory of object task is waiting on if task
+		status is 'waiting', else 0000h
  E7h	WORD	segment of ???
- E9h 18 BYTEs	???
+ E9h 4	BYTEs	???
+ EDh	WORD	EMS handle of virtualization buffer, 0000h if no virtualization
+ F1h 12 BYTEs	???
  FBh	WORD	???
  FDh	BYTE	???
- FFh 26 BYTEs	???
+ FFh 12 BYTEs	???
+10Bh	DWORD	pointer to process record (see below)
+10Dh 10 BYTEs	???
 119h	DWORD	SS:SP for ???
 11Dh  4 BYTEs	???
 121h	DWORD	pointer to ???
-125h 35 BYTEs	???
+125h 25 BYTEs	???
+13Eh	DWORD	pointer to ??? in system memory
 ---v2.22
+142h  3 BYTEs	???
 145h		task's default keyboard object
 ---v2.42
-148h	WORD	???
+142h	DWORD	pointer to first task instance data record in system memory
+148h	DWORD	pointer to last task instance data record in system memory
+		(see below)
 14Ah	BYTE	???
 14Dh 42 BYTEs	task's default keyboard object
 177h 32 BYTEs	task's ObjectQ object
 197h 41 BYTEs	task's default mailbox object
 1C0h 24 BYTEs	first register save record
 450h	--	default top of private stack
+---v2.52 (probably all DV/X)
+Same as v2.60 below except there is an extra 29 bytes inserted somewhere
+  before offset 9Fh, but not yet known exactly where.  Also, for the WAIT_ON
+  field (v2.60 offset E3h), some X apps (probably waiting on a socket) have
+  0000h even when waiting.
+---v2.60
+ CBh	WORD	??? (added in 2.50 - rest is same as 2.42)
+ CDh	WORD	offset in common memory of ??? object
+ D0h	BYTE	??? flag
+ D1h	WORD	offset in common memory of default notify window for task
+		or 0000h if none
+ D3h  4 BYTEs	???
+ D7h	BYTE	window number on Switch Window menu
+ D8h  5 BYTEs	???
+ DDh	WORD	offset in common memory of ??? object
+ DFh  2 BYTEs	???
+ E1h	WORD	API level for task
+ E3h	WORD	If status at B6h=waiting, offset in common memory of object
+		that task is waiting on, else 0000h. (Task with CPU also
+		has 0000h here)
+ E9h	WORD	segment of ???
+ EBh 4	BYTEs	???
+ EFh	WORD	EMS handle of virtualization buffer, 0 if no virtualization
+ F3h 12 BYTEs	???
+ FDh	WORD	???
+ FFh	BYTE	???
+101h  8 BYTEs	???
+109h	DWORD	pointer to process record in system memory
+10Dh 14 BYTEs  ???
+11Bh	DWORD	SS:SP for ???
+11Fh  4 BYTEs	???
+123h	DWORD	pointer to ???
+127h 25 BYTEs	???
+140h	DWORD	pointer to ??? in system memory
+144h	DWORD	pointer to first task instance data record in system memory
+148h	DWORD	pointer to last task instance data record in system memory
+		 (from INT 15/AX=DE27h, see below)
+14Ch	BYTE	???
+14Eh 42 BYTEs	task's default keyboard object
+179h 32 BYTEs	task's ObjectQ object
+199h 41 BYTEs	task's default mailbox object
+1C2h 24 BYTEs	first register save record
+452h	--	default top of private stack
 
 Format of Register Save Record:
 Offset	Size	Description
@@ -875,10 +3239,180 @@ Offset	Size	Description
 
 Format of mapping context record:
 Offset	Size	Description
- 00h	WORD	segment of start of system memory chain
+ 00h	WORD	lowest segment in process's memory
+		(often start of system memory chain)
  02h	WORD	size of process's memory in paragraphs
- 04h 15 BYTEs	???
+ 04h	BYTE	flag: 00h if process swapped out, 01h otherwise
+ 05h	BYTE	flag: 00h if allocated in conventional memory, 01h if EMS
+ 06h  2 BYTEs	???
+ 08h	WORD	EMS handle if in EMS, else 0
+ 0Ah  2 BYTEs	??? (nonzero if system memory resides in shared mem???)
+ 0Ch	WORD	segment of system memory block that contains process record,
+		referenced from segment of start of system memory chain
+ 0Eh	BYTE	???
+ 0Fh	WORD	size of system memory block that contains process record
+		and DOS memory in paragraphs
+ 11h	BYTE	bit flags
+		Bit 0: Swapped out???
+		Bit 1: ???
+		Bit 2: Swapped out???
+ 12h	BYTE	???
  13h	BYTE	reference count
+ ---v2.31
+ 14h 10 BYTEs	???
+ 1Eh	WORD	segment of process record
+ 20h  2 BYTEs	???
+ 22h	WORD	segment of ???	(in first free system memory block???)
+ 24h	WORD	segment of end of system memory chain
+ 26h	WORD	segment of start of system memory chain
+ 28h  8 BYTEs	???
+ 2Ah	DWORD	pointer to ??? (process record???)
+ 2Dh 10 BYTEs	???
+ 37h	BYTE	lowest interrupt vector to save on context switch
+ 38h	BYTE	highest interrupt vector to save on context switch
+ 39h	WORD	offset in common memory of main task with this context
+ 3Ah 12 BYTEs	???
+ 46h	BYTE	internal mapping context number
+ 47h 12 BYTEs	???
+ ---v2.5x-2.60
+ 14h  6 BYTEs	???
+ 1Ah	WORD	segment of process record
+ 1Ch  2 BYTEs	???
+ 1Eh	WORD	segment of first free system memory block
+ 20h	WORD	segment of start of system memory chain
+ 22h	WORD	segment of end of system memory chain
+ 24h 8	BYTEs	???
+ 2Ch	DWORD	pointer to ??? (1 segment into process record???)
+ 30h 3	BYTEs	???
+ 33h	WORD	Offset in common memory of main task with this context
+ 35h 7	BYTEs	???
+ 3Ch	BYTE	internal mapping context number
+ 3Dh 14 BYTEs	???
+ 4Bh	WORD	first DOS memory segment (first MCB segment+1)
+ 4Dh	BYTE	??? (flag???)
+ ---v2.53 (2.5x???)
+ 4Eh 12 BYTEs	???
+ ---v2.60
+ 4Eh	WORD	segment of script buffer (see below)
+ 50h  6 BYTEs	???
+
+Format of Internal Window Record (v2.31-2.60):
+Offset	Size	Description
+ 00h	BYTE	internal window number???
+ 01h	BYTE	display page???
+ 02h	BYTE	video mode
+ 03h  3 BYTEs	???
+ 06h	BYTE	logical window height
+ 07h	BYTE	logical window width
+ 08h	DWORD	pointer to text video buffer
+ 0Ch 116 BYTEs	???
+
+Format of process record (v2.31):
+Offset	Size	Description
+-470h 13 BYTEs	filename of ??? Script
+-463h 1117 BYTEs ??? (script buffer???)
+ -6h  6 BYTEs	???
+ 00h	WORD	segment of parent PSP in process
+ 02h  5 BYTEs	???
+ 07h	WORD	segment of current PSP in process
+ 09h	WORD	segment of first MCB in process
+ 0Bh 13 BYTEs	???
+ 18h 1024 BYTEs process's interrupt vector table
+418h 376 BYTEs	???
+590h		first MCB in process
+
+Format of process record (v2.53-v2.60) (probably also 2.5x):
+Offset	Size	Description
+ 00h 28 BYTEs	EXE header of last EXE, ??? if last program run was COM
+ 1Ch ??? BYTEs	overwritten with ASCIZ filename of last program run (EXE/COM)
+11Ch	WORD	segment of parent PSP in process
+11Eh  4 BYTEs	???
+122h	WORD	segment of current PSP
+124h	WORD	segment of current PSP
+126h	WORD	segment of first MCB in process
+128h  4 BYTEs	???
+12Ch	DWORD	pointer to first process instance data record in system memory
+130h	DWORD	pointer to last process instance data record in system memory
+		(from INT 15/AX=DE27h, see below)
+134h  8 BYTEs	???
+13Ch	WORD	size of current environment
+13Eh	WORD	segment of current environment
+140h	WORD	segment of current PSP
+142h	DWORD	entry point of current program
+146h 10 BYTEs	???
+---v2.52 (v2.5x???)
+150h	BYTE	???
+151h	WORD	segment of parent PSP in process
+153h	WORD	???
+155h	WORD	???
+157h	WORD	???
+159h  4 BYTEs	???
+15Dh	WORD	segment of current environment
+15Fh	WORD	segment of current PSP
+161h	WORD	segment of ???
+162h	WORD	???
+164h  3 BYTEs	???
+168h 1024 BYTEs process's interrupt vector table
+568h 120 BYTEs	???
+5E0h		first MCB in process
+---v2.60
+150h	WORD	segment of parent PSP in process
+152h	WORD	???
+154h	WORD	???
+156h	WORD	???
+158h  4 BYTEs	???
+15Ch	WORD	segment of current environment
+15Eh	WORD	segment of current PSP
+160h	WORD	segment of ???
+162h	WORD	???
+164h 1024 BYTEs process's interrupt vector table
+564h 108 BYTEs	???
+5D0h		first MCB in process
+
+Format of task or process instance data record (v2.5x???, v2.60):
+Offset	Size	Description
+ 00h	DWORD	pointer to next record of same type or 00000000
+ 04h	DWORD	pointer to previous record of same type or 00000000
+ 08h	DWORD	pointer to source area of memory during restore state
+ 0Ch	WORD	number of bytes to save/restore
+ 0Eh	DWORD	pointer to destination area of memory during restore state
+ 12h	WORD	??? (0)
+ 14h  N BYTEs	source memory buffer during restore state
+
+Format of script buffer (v2.60):
+Offset	Size	Description
+ 00h 13 BYTEs	ASCIZ Script filename
+ 0Dh 80 BYTEs	???
+ 5Eh  N BYTEs	script records (see below)
+
+Format of one script record (v2.60):
+Offset	Size	Description
+ 00h	BYTE	signature 12h
+ 01h 18 BYTEs	blank-padded script name
+ 13h	BYTE	ASCII code of key attached to script or 0 if non-ASCII key
+ 14h	BYTE	scan code of key attached to script if non-ASCII, else 0
+ 15h	BYTE	???
+ 16h	WORD	size of script in bytes
+ 18h  N	BYTEs	script (ASCII code of each keystroke; if 0, next byte is
+		scan code of non-ASCII key)
+
+Format of Common Memory Header (v2.31-2.60) (at beginning of commom mem seg):
+Offset	Size	Description
+ 00h	WORD	offset of lowest used block
+ 02h	WORD	bytes of commom memory, including header
+ 04h	WORD	offset of first free block
+ 06h  N BYTEs	size depends of DV version, ??? (DVP buffer???)
+
+Format of Free block header:
+Offset	Size	Description
+ 00h	WORD	size of block in bytes including header
+ 02h	WORD	offset of next free block
+ 04h  N BYTEs	free block
+
+Format of Used block header:
+Offset	Size	Description
+ 00h	WORD	size of block in bytes including header
+ 02h  N BYTEs	used block
 --------Q-151017-----------------------------
 INT 15 - TopView - UNIMPLEMENTED IN DV 2.x
 	AX = 1017h
@@ -2399,7 +4933,7 @@ INT 15 - TopView - SEND MESSAGE - "CLOSE" - CLOSE OBJECT
 	    03h close task's default mailbox
 	    04h close KEYBOARD object (handle on top of stack)
 	    05h close task's default KEYBOARD
-	    06h close givent task's OBJECTQ (task's handle on top of stack)
+	    06h close given task's OBJECTQ (task's handle on top of stack)
 	    07h close current task's OBJECTQ
 Notes:	when an OBJECTQ is closed, each object in the OBJECTQ is sent an
 	  ERASE message (AH=12h/BH=0Eh)
@@ -2441,7 +4975,7 @@ INT 15 - TopView - SEND MESSAGE - "STATUS" - GET OBJECT STATUS
 		panel:	 verify success of last OPEN or APPLY
 	    02h return status of last msg READ from mailbox (handle on stack)
 	    03h return status of last msg READ from task's default mailbox
-	    04h get status of last msg from task's KEYBOARD (task handle on stk)
+	    04h get stat of last msg from task's KEYBOARD (task handle on stk)
 	    05h get status of last msg from task's default KEYBOARD
 	    06h return whether OBJECTQ is open or not (handle on top of stack)
 	    07h return whether task's default OBJECTQ is open or not
@@ -2463,7 +4997,7 @@ Notes:	if object is a panel object, the status indicates the error code:
 	  00000000h open
 	  80000000h closed
 	if object is a keyboard in keystroke mode, the status is the extended
-	  character code (scan code) of teh last keystroke
+	  character code (scan code) of the last keystroke
 	if object is a keyboard in field mode, the status indicates the reason
 	  for the last return from the field manager
 	  00h Enter key pressed
@@ -3147,7 +5681,7 @@ SeeAlso: AH=1Ch"VMiX",AH=1Eh"VMiX"
 INT 15 - MultiDOS Plus - TEST RESOURCE SEMAPHORE BY NAME
 	AH = 1Dh
 	DS:SI -> 8-byte name
-Return; AH = status
+Return: AH = status
 	    00h semaphore not in use
 	    01h semaphore owned by another task
 	    02h invalid semaphore number
@@ -3337,19 +5871,17 @@ Return: CF clear if successful
 INT 15 - Compaq SLT/286 or Portable 386 - READ LCD/PLASMA TIMEOUT
 	AX = 4000h
 Return: AX = 4000h
-	CL = 00h timeout disabled
-	   else timeout in minutes
+	CL = timeout in minutes, 00h if disabled
 SeeAlso: AX=4001h,AX=4600h
---------V-154001CL00-------------------------
+--------V-154001-----------------------------
 INT 15 - Compaq SLT/286 or Portable 386 - SET LCD/PLASMA TIMEOUT
 	AX = 4001h
-	CL = 00h timeout disabled
-	   else	 timeout in minutes
-Return: AL = 00h timeout modified
-	     01h timeout cannot be modified
-	     40h timeout cannot be modified
-	CL = 00h timeout disabled
-	   else timeout in minutes
+	CL = timeout in minutes, 00h to disable
+Return: AL = status
+	    00h timeout modified
+	    01h timeout cannot be modified
+	    40h timeout cannot be modified
+	CL = timeout in minutes, 00h if disabled
 SeeAlso: AX=4000h,AX=4601h
 --------B-1541-------------------------------
 INT 15 - SYSTEM - WAIT ON EXTERNAL EVENT (CONVERTIBLE and some others)
@@ -3408,32 +5940,118 @@ INT 15 - SYSTEM - (DE)ACTIVATE INTERNAL MODEM POWER (CONVERTIBLE)
 	AH = 44h
 	AL = new modem power state (00h power off, 01h power on)
 SeeAlso: AH=42h
+--------b-1544C0-----------------------------
+INT 15 - Olivetti Quaderno - INITIALIZE DIGITAL SIGNAL PROCESSING???
+	AX = 44C0h
+	ES:DI -> new DSP procedure (exchanged with CMOS[28h])
+	ES:SI -> ??? buffer
+Return: ES:DI -> old DSP procedure
+	ES:SI buffer filled with ten bytes from CMOS (addresses 14h-1Ch)
+	  followed by 00h (addresses 15h-1Ch copied only if less than 21h)
+Note:	this function is also supported by XBIOS.COM
+SeeAlso: AX=44C9h
+--------b-1544C1-----------------------------
+INT 15 - Olivetti Quaderno - ???
+	AX = 44C1h
+	???
+Return: ???
+Note:	this function is also supported by XBIOS.COM
+SeeAlso: AX=44C9h
+--------b-1544C2-----------------------------
+INT 15 - Olivetti Quaderno - ???
+	AX = 44C2h
+	DL = byte to be written to I/O port 350h
+Note:	this function is also supported by XBIOS.COM
+SeeAlso: AX=44C3h,AX=44C9h
+--------b-1544C3-----------------------------
+INT 15 - Olivetti Quaderno - GET ???
+	AX = 44C3h
+Return: DH = bitfields
+	    bits 0,1: "tres complique"
+	    bits 2-4: zero
+	    bits 5-7: bits 5-7 read from I/O port 351h
+	DL = value read from I/O port 350h
+Note:	this function is also supported by XBIOS.COM
+SeeAlso: AX=44C2h,AX=44C9h
+--------b-1544C4-----------------------------
+INT 15 - Olivetti Quaderno - ???
+	AX = 44C4h and 44C5h
+	???
+Return: ???
+Note:	this function is also supported by XBIOS.COM
+SeeAlso: AX=44C9h
+--------b-1544C6-----------------------------
+INT 15 - Olivetti Quaderno - READ LCD
+	AX = 44C6h
+Return: DX = FFFFh clock is displayed on LCD display
+	DX = other: hex number displayed in first four positions of display
+	BH = left alphanumeric character on display (see below)
+	BL = right alphanumeric character on display (see below)
+	CL = flags
+	    bit 0: right colon on
+	    bit 1: left colon on
+	    bits 2-7 unused	
+Notes:	the LCD display has the format HH:HH:AA, where H is a hex digit and A
+	  is an alphanumeric character
+	this function is also supported by XBIOS.COM
+SeeAlso: AX=44C7h,AX=44C9h
+
+Values for alphanumeric characters:
+ 00h-0Fh hex digit
+ 2Bh	"+"
+ 2Dh	"-"
+ 30h-39h "0" to "9"
+ 41h-5Ah "A" to "Z"
+ 61h-6Ah "a" to "z"
+ else	blank
+--------b-1544C7-----------------------------
+INT 15 - Olivetti Quaderno - WRITE LCD
+	AX = 44C7h
+	DX = hex display
+	    FFFFh display clock and "HI", "Md", or "Lo"
+		BH,BL,CL unused
+	    other: display specified hex number in first four positions
+		BH = left alphanumeric character on display (see AX=44C6h)
+		BL = right alphanumeric character on display (see AX=44C6h)
+		CL = flags
+		    bit 0: right colon on
+		    bit 1: left colon on
+		    bits 2-7 unused
+Note:	this function is also supported by XBIOS.COM
+SeeAlso: AX=44C6h
+--------b-1544C8-----------------------------
+INT 15 - Olivetti Quaderno - ???
+	AX = 44C8h
+	CL = ??? (00h,02h,21h)
+	CH = ???
+	???
+Return: ???
+Note:	this function is also supported by XBIOS.COM
+SeeAlso: AX=44C9h
+--------b-1544C9-----------------------------
+INT 15 - Olivetti Quaderno - GET XBIOS VERSION
+	AX = 44C9h
+Return: AL = major version
+	AH = minor version
+Note:	this function is also supported by XBIOS.COM
 --------b-154600-----------------------------
 INT 15 - Compaq SLT/286 - READ POWER CONSERVATION/MODEM CONFIGURATION
 	AX = 4600h
 Return: AH = modem configuration information
-	    bit 0 powerup state
-		    0 off
-		    1 on
-		1 modem installed
-		2 IRQ line assignment
-		    0 IRQ 4
-		    1 IRQ 3
-		3 COM port assignment
-		    0 = COM 2
-		    1 = COM 1
-		4 modem state
-		    0 not assigned
-		    1 assigned
-		5 modem is on
+	    bit 0 powerup state (0 off, 1 on)
+	    bit	1 modem installed
+	    bit	2 IRQ line assignment (0 IRQ 4, 1 IRQ 3)
+	    bit 3 COM port assignment (0 = COM 2, 1 = COM 1)
+	    bit 4 modem state (0 not assigned, 1 assigned)
+	    bit 5 modem is on
 	AL = power conservation status information
 	    bit 0  power source (0 internal, 1 external)
-	       1-2 low battery state
+	    bits 1-2 low battery state
 		    00 no low battery condition
 		    01 low battery 1
 		    10 reserved
 		    11 low battery 2
-	       3-4 power conservation mode
+	    bits 3-4 power conservation mode
 		    00 automatic
 		    01 on
 		    10 off
@@ -3446,29 +6064,41 @@ Return: AH = modem configuration information
 	DL = current fixed disk drive inactivity timeout (1-21 minutes)
 SeeAlso: AX=4280h,AX=4601h,INT 77
 --------b-154601-----------------------------
-INT 15 - Compaq SLT/286 - Modify Power Conservation/Modem Configuration
+INT 15 - Compaq SLT/286 - MODIFY POWER CONSERVATION/MODEM CONFIGURATION
 	AX = 4601h
 	BL = system inactivity timeout (1-21 minutes)
-	   = FFh do not change
+	    FFh do not change
 	CL = video display inactivity timeout (1-63 minutes)
-	   = FFh do not change
+	    FFh do not change
 	DL = current fixed disk drive inactivity timeout (1-21 minutes)
-	   = FFh do not change
-	DH = 00h turn modem OFF
-	   = 01h turn modem ON
-	   = FFh do not change modem state
+	    FFh do not change
+	DH = new modem state (00h turn off, 01h turn on, FFh don't change)
 Return: CF clear if successful
 	    AH = 00h
 	    BL = current system inactivity timeout (1-21 minutes)
 	    CL = current video display inactivity timeout (1-63 minutes)
 	    DL = current fixed disk drive inactivity timeout (1-21 minutes)
-	    DH = FFh modem state unchanged
-	       = 00h modem turned OFF
-	       = 01h modem turned ON
+	    DH = modem state (FFh unchanged, 00h turned off, 01h turned on)
 	CF set on error
-	    AH = 01h input is out of range
-	       = 02h - No modem present
+	    AH = error code
+	        01h input is out of range
+	        02h no modem present
 SeeAlso: AX=4600h,INT 77
+--------b-154604-----------------------------
+INT 15 - Compaq "Caravel"/"Alladin" 08/05/93 ROMs - GET ???
+	AX = 4604h
+Return: CF clear if successful
+	    AL = byte read from I/O port 03F8h
+	CF set on error (not supported)
+	    AH = 86h (unsupported function)
+--------b-154605-----------------------------
+INT 15 - Compaq "Caravel"/"Alladin" 08/05/93 ROMs - ???
+	AX = 4605h
+Return: CF clear if successful
+	CF set on error (not supported)
+	    AH = 86h (unsupported function)
+Note:	this function is a NOP (other than clearing CF) in the 08/05/93 version
+	  of the "Caravel" and "Aladdin" ROM
 --------D-154900-----------------------------
 INT 15 - Far East MS-DOS - GET DOS TYPE
 	AX = 4900h
@@ -4017,6 +6647,9 @@ Notes:	TSRs which wish to allocate extended memory to themselves often hook
 	  use the memory between the new and old sizes at will.
 	the standard BIOS only returns memory between 1MB and 16MB; use AH=C7h
 	  for memory beyond 16MB
+	not all BIOSes correctly return the carry flag, making this call
+	  unreliable unless one first checks whether it is supported through
+	  a mechanism other than calling the function and testing CF
 SeeAlso: AH=87h,AH=C7h
 --------B-1589-------------------------------
 INT 15 - SYSTEM - SWITCH TO PROTECTED MODE
@@ -4032,13 +6665,15 @@ INT 15 - SYSTEM - SWITCH TO PROTECTED MODE
 		     28h  SS
 		     30h  CS
 		     38h  uninitialized, used to build descriptor for BIOS CS
-	CX = offset into protected-mode CS to jump to
 Return: CF set on error
 	   AH = FFh  error enabling address line 20
 	CF clear if successful
 	   AH = 00h
 	   in protected mode at specified address
-Note:	BL and BH must be multiples of 8
+Notes:	BL and BH must be multiples of 8
+	the protected-mode CS must reference the same memory as the CS this
+	  function is called from because execution continues with the address
+	  following the interrupt call
 SeeAlso: AH=87h,AH=88h,INT 67/AX=DE0Ch
 --------B-1590-------------------------------
 INT 15 - OS HOOK - DEVICE BUSY (AT,PS)
@@ -4411,24 +7046,8 @@ Offset	Size	Description
  02h	BYTE	model (see below)
  03h	BYTE	submodel (see below)
  04h	BYTE	BIOS revision: 0 for first release, 1 for 2nd, etc.
- 05h	BYTE	feature byte 1:
-		bit 7: DMA channel 3 used by hard disk BIOS
-		bit 6: 2nd 8259 installed
-		bit 5: Real-Time Clock installed
-		bit 4: INT 15/AH=4Fh called upon INT 09h
-		bit 3: wait for external event (INT 15/AH=41h) supported
-		bit 2: extended BIOS area allocated (usually at top of RAM)
-		bit 1: bus is Micro Channel instead of ISA
-		bit 0: system has dual bus (Micro Channel + ISA)
- 06h	BYTE	feature byte 2:
-		bit 7: reserved
-		bit 6: INT 16/AH=09h (keyboard functionality) supported
-		bit 5: INT 15/AH=C6h (get POS data) supported
-		bit 4: INT 15/AH=C7h (return memory map info) supported
-		bit 3: INT 15/AH=C8h (en/disable CPU functions) supported
-		bit 2: non-8042 keyboard controller
-		bit 1: data streaming supported
-		bit 0: reserved
+ 05h	BYTE	feature byte 1 (see below)
+ 06h	BYTE	feature byte 2 (see below)
  07h	BYTE	feature byte 3:
 		bits 7-5 reserved
 		bit 4: ??? (set on 1992 PS/1's, N51SX, CL57SX, 35SX?, 40SX?)
@@ -4455,6 +7074,26 @@ Offset	Size	Description
 ---Quadram Quad386---
  0Ah 17 BYTEs	ASCII signature string "Quadram Quad386XT"
 
+Bitfields for feature byte 1:
+ bit 7	DMA channel 3 used by hard disk BIOS
+ bit 6	2nd 8259 installed
+ bit 5	Real-Time Clock installed
+ bit 4	INT 15/AH=4Fh called upon INT 09h
+ bit 3	wait for external event (INT 15/AH=41h) supported
+ bit 2	extended BIOS area allocated (usually at top of RAM)
+ bit 1	bus is Micro Channel instead of ISA
+ bit 0	system has dual bus (Micro Channel + ISA)
+
+Bitfields for feature byte 2:
+ bit 7	reserved
+ bit 6	INT 16/AH=09h (keyboard functionality) supported
+ bit 5	INT 15/AH=C6h (get POS data) supported
+ bit 4	INT 15/AH=C7h (return memory map info) supported
+ bit 3	INT 15/AH=C8h (en/disable CPU functions) supported
+ bit 2	non-8042 keyboard controller
+ bit 1	data streaming supported
+ bit 0	reserved
+
 Values for model/submodel/revision:
 Model  Submdl  Rev	BIOS date	System
  FFh	*	*	04/24/81	PC (original)
@@ -4467,24 +7106,38 @@ Model  Submdl  Rev	BIOS date	System
  FEh	A6h	???	  ???		Quadram Quad386
  FDh	*	*	06/01/83	PCjr
  FCh	*	*	01/10/84	AT models 068,099 6 MHz 20MB
+ FCh	00h	00h	  ???		PC3270/AT
  FCh	00h	01h	06/10/85	AT model  239	  6 MHz 30MB
- FCh	00h	<> 01h	  ???		7531/2 Industrial AT
+ FCh	00h	> 01h	  ???		7531/2 Industrial AT
  FCh	01h	00h	11/15/85	AT models 319,339 8 MHz, Enh Keyb, 3.5"
  FCh	01h	00h	09/17/87	Tandy 3000
  FCh	01h	00h	01/15&88	Toshiba T5200/100
  FCh	01h	00h	12/26*89	Toshiba T1200/XE
+ FCh	01h	00h	04/05A92	Toshiba T4500SX-C
+ FCh	01h	00h	07/17o92	Toshiba T1800SX
+ FCh	01h	00h	12/25n92	Toshiba T1850SX
+ FCh	01h	00h	01/13E93	Toshiba T4400C
 			(Those date characters are not typos)
+ FCh	01h	00h	04/08/93	Compaq
+ FCh	01h	00h	04/12/93	Compaq
+ FCh	01h	20h	06/10/92	AST
  FCh	01h	30h	  ???		Tandy 3000NL
  FCh	01h	???	  ???		Compaq 286/386
  FCh	02h	00h	04/21/86	PC XT-286
+ FCh	02h	00h	08/05/93	Compaq "Caravel" ROM
  FCh	04h	00h	02/13/87     ** PS/2 Model 50 (10 MHz/1 ws 286)
+ FCh	04h	02h	  ???		PS/2 Model 50
  FCh	04h	03h	04/18/88	PS/2 Model 50Z (10 MHz/0 ws 286)
+ FCh	04h	04h	  ???		PS/2 Model 50Z
  FCh	05h	00h	02/13/87     ** PS/2 Model 60 (10 MHz 286)
- FCh	06h	???	  ???		7552 "Gearbox"
+ FCh	06h	00h	  ???		IBM 7552-140 "Gearbox"
+ FCh	06h	01h	  ???		IBM 7552-540 "Gearbox"
  FCh	08h	***	  ???		Epson, unknown model
+ FCh	08h	00h	  ???		PS/2 Model 25/286
  FCh	09h	00h	  ???		PS/2 Model 25 (10 MHz 286)
  FCh	09h	02h	06/28/89	PS/2 Model 30-286
  FCh	0Bh	00h	02/16/90	PS/1 Model 2011 (10 MHz 286)
+ FCh	20h	00h	02/18/93	Compaq ProLinea
  FCh	30h	***	  ???		Epson, unknown model
  FCh	31h	***	  ???		Epson, unknown model
  FCh	33h	***	  ???		Epson, unknown model
@@ -4496,18 +7149,32 @@ Model  Submdl  Rev	BIOS date	System
  FCh	51h	***	  ???		Olivetti PCS286
  FCh	52h	***	  ???		Olivetti M300
  FCh	81h	00h	01/15/88	Phoenix 386 BIOS v1.10 10a
- FBh	00h	01h	01/10/86	PC XT, Enh Keyb, 3.5" support
+ FCh	81h	01h	  ???		"OEM machine"
+ FCh	82h	01h	  ???		"OEM machine"
+ FCh	94h	00h	  ???		Zenith 386
+ FBh	00h	01h	01/10/86	PC XT-089, Enh Keyb, 3.5" support
  FBh	00h	02h	05/09/86	PC XT
  FBh	4Ch	***	  ???		Olivetti M200
  FAh	00h	00h	09/02/86	PS/2 Model 30 (8 MHz 8086)
  FAh	00h	01h	12/12/86	PS/2 Model 30
  FAh	01h	00h	  ???		PS/2 Model 25/25L (8 MHz 8086)
+ FAh	30h	00h	  ???		IBM Restaurant Terminal
  FAh	4Eh	***	  ???		Olivetti M111
+ FAh	FEh	00h	  ???		IBM PCradio 9075
  F9h	00h	00h	09/13/85	PC Convertible
+ F9h	FFh	00h	  ???		PC Convertible
  F8h	00h	00h	03/30/87     ** PS/2 Model 80 (16MHz 386)
  F8h	01h	00h	10/07/87	PS/2 Model 80 (20MHz 386)
+ F8h	02h	00h	  ???		PS/2 Model 55-5571
+ F8h	04h	00h	  ???		PS/2 Model 70
  F8h	04h	02h	04/11/88	PS/2 Model 70 20MHz, type 2 system brd
  F8h	04h	03h	03/17/89	PS/2 Model 70 20MHz, type 2 system brd
+ F8h	05h	00h	  ???		IBM PC 7568
+ F8h	06h	00h	  ???		PS/2 Model 55-5571
+ F8h	07h	00h	  ???		IBM PC 7561/2
+ F8h	07h	01h	  ???		PS/2 Model 55-5551
+ F8h	07h	02h	  ???		IBM PC 7561/2
+ F8h	07h	03h	  ???		PS/2 Model 55-5551
  F8h	09h	00h	  ???		PS/2 Model 70 16MHz, type 1 system brd
  F8h	09h	02h	04/11/88	PS/2 Model 70 some models
  F8h	09h	03h	03/17/89	PS/2 Model 70 some models
@@ -4515,36 +7182,85 @@ Model  Submdl  Rev	BIOS date	System
  F8h	0Bh	02h	12/16/89	PS/2 Model P70 ??
  F8h	0Ch	00h	11/02/88	PS/2 Model 55SX (16 MHz 386SX)
  F8h	0Dh	00h	  ???		PS/2 Model 70 25MHz, type 3 system brd
- F8h	11h	00h	10/01/90	PS/2 Model 90 (25 MHz 486)
- F8h	13h	00h	10/01/90	PS/2 Model 90 (33 MHz 486)
- F8h	14h	00h	10/01/90	PS/2 Model 90-AK9 (25 MHz 486)
+ F8h	0Eh	00h	  ???		PS/1 486SX
+ F8h	0Fh	00h	  ???		PS/1 486DX
+ F8h	10h	00h	  ???		PS/2 Model 55-5551
+ F8h	11h	00h	10/01/90	PS/2 Model 90 XP (25 MHz 486)
+ F8h	12h	00h	  ???		PS/2 Model 95 XP
+ F8h	13h	00h	10/01/90	PS/2 Model 90 XP (33 MHz 486)
+ F8h	14h	00h	10/01/90	PS/2 Model 90-AK9 (25 MHz 486), 95 XP
+ F8h	15h	00h	  ???		PS/2 Model 90 XP
  F8h	16h	00h	10/01/90	PS/2 Model 90-AKD (33 MHz 486)
+ F8h	17h	00h	  ???		PS/2 Model 90 XP
  F8h	19h	05h	  ???		PS/2 Model 35/35LS or 40 (20 MHz 386SX)
+ F8h	1Ah	00h	  ???		PS/2 Model 95 XP
  F8h	1Bh	00h	10/02/89	PS/2 Model 70-486 (25 MHz 486)
  F8h	1Ch	00h	02/08/90	PS/2 Model 65-121 (16 MHz 386SX)
  F8h	1Eh	00h	02/08/90	PS/2 Model 55LS (16 MHz 386SX)
- F8h	23h	01h	  ???		PS/2 Model L40 (20 MHz 386SX)
+ F8h	23h	00h	  ???		PS/2 Model L40 SX
+ F8h	23h	01h	  ???		PS/2 Model L40 SX (20 MHz 386SX)
+ F8h	25h	00h	  ???		PS/2 Model 57 SLC
  F8h	25h	06h	  ???		PS/2 Model M57 (20 MHz 386SLC)
+ F8h	26h	00h	  ???		PS/2 Model 57 SX
  F8h	26h	01h	  ???		PS/2 Model 57 (20 MHz 386SX)
- F8h	2Ah	00h	  ???		PS/2 Model 95 (50 MHz 486)
+ F8h	28h	00h	  ???		PS/2 Model 95 XP
+ F8h	29h	00h	  ???		PS/2 Model 90 XP
+ F8h	2Ah	00h	  ???		PS/2 Model 95 XP (50 MHz 486)
  F8h	2Bh	00h	  ???		PS/2 Model 90 (50 MHz 486)
+ F8h	2Ch	00h	  ???		PS/2 Model 95 XP
  F8h	2Ch	01h	  ???		PS/2 Model 95 (20 MHz 486SX)
- F8h	2Dh	00h	  ???		PS/2 Model 90 (20 MHz 486SX)
+ F8h	2Dh	00h	  ???		PS/2 Model 90 XP (20 MHz 486SX)
+ F8h	2Eh	00h	  ???		PS/2 Model 95 XP
  F8h	2Eh	01h	  ???		PS/2 Model 95 (20 MHz 486SX + 487SX)
- F8h	2Fh	00h	  ???		PS/2 Model 90 (20 MHz 486SX + 487SX)
+ F8h	2Fh	00h	  ???		PS/2 Model 90 XP (20 MHz 486SX + 487SX)
  F8h	30h	00h	  ???		PS/1 Model 2121 (16 MHz 386SX)
+ F8h	33h	00h	  ???		PS/2 Model 30-386
+ F8h	34h	00h	  ???		PS/2 Model 25-386
+ F8h	36h	00h	  ???		PS/2 Model 95 XP
+ F8h	37h	00h	  ???		PS/2 Model 90 XP
+ F8h	38h	00h	  ???		PS/2 Model 57
+ F8h	39h	00h	  ???		PS/2 Model 95 XP
+ F8h	3Fh	00h	  ???		PS/2 Model 90 XP
+ F8h	40h	00h	  ???		PS/2 Model 95 XP
+ F8h	41h	00h	  ???		PS/2 Model 77
+ F8h	45h	00h	  ???		PS/2 Model 90 XP (Pentium)
+ F8h	46h	00h	  ???		PS/2 Model 95 XP (Pentium)
+ F8h	47h	00h	  ???		PS/2 Model 90/95 E (Pentium)
+ F8h	48h	00h	  ???		PS/2 Model 85
+ F8h	49h	00h	  ???		PS/ValuePoint 325T
+ F8h	4Ah	00h	  ???		PS/ValuePoint 425SX
+ F8h	4Bh	00h	  ???		PS/ValuePoint 433DX
+ F8h	4Eh	00h	  ???		PS/2 Model 295
  F8h	50h	00h	  ???		PS/2 Model P70 (8573) (16 MHz 386)
  F8h	50h	01h	12/16/89	PS/2 Model P70 (8570-031)
  F8h	52h	00h	  ???		PS/2 Model P75 (33 MHz 486)
+ F8h	56h	00h	  ???		PS/2 Model CL57 SX
+ F8h	57h	00h	  ???		PS/2 Model 90 XP
+ F8h	58h	00h	  ???		PS/2 Model 95 XP
+ F8h	59h	00h	  ???		PS/2 Model 90 XP
+ F8h	5Ah	00h	  ???		PS/2 Model 95 XP
+ F8h	5Bh	00h	  ???		PS/2 Model 90 XP
+ F8h	5Ch	00h	  ???		PS/2 Model 95 XP
+ F8h	5Dh	00h	  ???		PS/2 Model N51 SLC
+ F8h	5Eh	00h	  ???		IBM ThinkPad 700
  F8h	61h	***	  ???		Olivetti P500
  F8h	62h	***	  ???		Olivetti P800
  F8h	80h	00h	  ???		PS/2 Model 80 (25 MHz 386)
  F8h	80h	01h	11/21/89	PS/2 Model 80-A21
+ F8h	81h	00h	  ???		PS/2 Model 55-5502
+ F8h	87h	00h	  ???		PS/2 Model N33SX
+ F8h	88h	00h	  ???		PS/2 Model 55-5530T
+ F8h	97h	00h	  ???		PS/2 Model 55 Note N23SX
+ F8h	99h	00h	  ???		PS/2 Model N51 SX
+ F8h	F2h	30h	  ???		Reply Model 32
+ F8h	F6h	30h	  ???		Memorex Telex
+ F8h	FDh	00h	  ???		IBM Processor Complex (with VPD)
  F8h	???	???	  ???		PS/2 Model 90 (25 MHz 486SX)
  F8h	???	???	  ???		PS/2 Model 95 (25 MHz 486SX)
  F8h	???	???	  ???		PS/2 Model 90 (25 MHz 486SX + 487SX)
  F8h	???	???	  ???		PS/2 Model 95 (25 MHz 486SX + 487SX)
  E1h	???	???	  ???		??? (checked for by DOS4GW.EXE)
+ E1h	00h	00h	  ???		PS/2 Model 55-5530 Laptop
  9Ah	*	*	  ???		Compaq XT/Compaq Plus
  30h	???	???	  ???		Sperry PC
  2Dh	*	*	  ???		Compaq PC/Compaq Deskpro
@@ -5153,6 +7869,46 @@ Return: CF clear if successful
 	SI:DI = 4-byte compressed ID (DI = bytes 0&1, SI = bytes 2&3)
 Note:	call with AL=84h if using 32-bit CS addressing mode instead of 16-bit
 SeeAlso: AX=D800h
+----------15D8-------------------------------
+INT 15 - Compaq EISA System ROM 04/08/93 - ??? API
+	AH = D8h
+	AL = function
+	    20h ???
+	    21h ???
+	    22h ???
+		BL = 00h
+		Return: CF set, AH = 86h if BL nonzero
+	    23h ???
+		BL = 00h or 80h
+		Return: CF set, AH = 86h if BL neither 00h nor 80h		
+	???
+Return: ???
+Note:	the Compaq "Caravel" supports functions 20h and 21h, even though it
+	  does not support any other EISA ROM functions and does not contain
+	  the EISA signature string
+----------15D8-------------------------------
+INT 15 - Compaq EISA System ROM 04/08/93 - ??? API
+	AH = D8h
+	AL = function
+	    24h ???
+		CX = ???
+		???
+	    25h ???
+		CX = ???
+		SI = ???
+		DI = ???
+		???
+	    26h ???
+		BX = ???
+		SI = ???
+		CX = size of ??? in bytes
+	???
+Return: CF clear if successful
+	    ???
+	CF set on error
+	    AH = 87h if ??? failed
+Note:	these functions are only available if ??? from keyboard controller
+	  command C0h
 --------X-15D8-------------------------------
 INT 15 - EISA SYSTEM ROM - 32-bit CS ADDRESSING MODE CALLS
 	AH = D8h
@@ -5163,6 +7919,14 @@ Note:	these functions are identical to AX=D800h to D804h, except that they
 	  should be called when using 32-bit CS addressing mode (pointers use
 	  ESI rather than SI as offset) instead of 16-bit addressing mode
 SeeAlso: AX=D800h,AX=D801h,AX=D802h,AX=D803h,AX=D804h
+----------15D8-------------------------------
+INT 15 - Compaq EISA System ROM 04/08/93 - 32-bit CS ADDRESSING MODE CALLS
+	AH = D8h
+	AL = A0h to A6h
+	other registers as appropriate for AL=20h to 26h
+Return: as appropriate for AL=20h to 26h
+Note:	these functions are identical to AX=D820h to D826h, except that they
+	  should be called when using 32-bit CS addressing mode
 --------Q-15DE00-----------------------------
 INT 15 - DESQview - GET PROGRAM NAME
 	AX = DE00h
@@ -5566,16 +8330,18 @@ Return: ???
 Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
 SeeAlso: AX=DE2Ah
 --------Q-15DE29BX0000-----------------------
-INT 15 U - DESQview v2.50+ - ???
+INT 15 U - DESQview/X - ???
 	AX = DE29h
 	BX = 0000h
 	???
 Return: CF clear if successful
 	    ???
 	CF set on error
-Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+Notes:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+	under DESQview 2.60, this function and all other subfunctions of
+	  AX=DE29h always return CF set, as they are unique to DESQview/X
 --------Q-15DE29BX0001-----------------------
-INT 15 U - DESQview v2.50+ - ???
+INT 15 U - DESQview/X - ???
 	AX = DE29h
 	BX = 0001h
 	DX = segment of window handle
@@ -5585,7 +8351,7 @@ Return: CF clear if successful
 	CF set on error
 Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
 --------Q-15DE29BX0002-----------------------
-INT 15 U - DESQview v2.50+ - ???
+INT 15 U - DESQview/X - ???
 	AX = DE29h
 	BX = 0002h
 	DX = segment of window handle
@@ -5595,7 +8361,7 @@ Return: CF clear if successful
 	CF set on error
 Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
 --------Q-15DE29BX0003-----------------------
-INT 15 U - DESQview v2.50+ - ???
+INT 15 U - DESQview/X - ???
 	AX = DE29h
 	BX = 0003h
 	DX = segment of window handle
@@ -5604,7 +8370,7 @@ Return: CF clear if successful
 	CF set on error
 Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
 --------Q-15DE29BX0004-----------------------
-INT 15 U - DESQview v2.50+ - GET DISPLAY NAME
+INT 15 U - DESQview/X - GET DISPLAY NAME
 	AX = DE29h
 	BX = 0004h
 	CX = size of buffer in bytes
@@ -5617,14 +8383,15 @@ Return: CF clear if successful
 Notes:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
 	the name ":0" refers to the local display
 --------Q-15DE29BX0005-----------------------
-INT 15 U - DESQview v2.50+ - ???
+INT 15 U - DESQview/X - ???
 	AX = DE29h
 	BX = 0005h
 	???
 Return: CF clear if successful
 	    ???
 	CF set on error
-Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+Note:	under DESQview 2.60, this function and all other subfunctions of
+	  AX=DE29h always return CF set, as they are unique to DESQview/X
 --------Q-15DE2A-----------------------------
 INT 15 - DESQview v2.50+ - "DISPATCHINTAFTERDOS" - INTERRUPT ANOTHER TASK
 	AX = DE2Ah
@@ -6165,14 +8932,14 @@ Return: BX = status
 	    0001h keyboard focus has been given to a direct window since the
 		last call
 	    0000h if not
-Notes:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
-	Quarterdeck states that this call will not be available under future
-	  versions of DESQview Classic
+Notes:	DESQview 2.50-2.53 are distributed as part of DESQview/X v1.00-1.10.
+	Quarterdeck stated that this call would not be available under future
+	  versions of DESQview Classic, but it is still present in v2.60
 --------Q-15DE30-----------------------------
 INT 15 - DESQview v2.50+ - "GETDVXVERSION" - GET DESQview/X VERSION
 	AX = DE30h
 Return: BX = version (BH=major, BL=minor) or 0000h if not DESQview/X
-Notes:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+Notes:	DESQview 2.50-2.53 are distributed as part of DESQview/X v1.00-1.10.
 	you must first check the DESQview version to verify that it is 2.50 or
 	  greater
 SeeAlso: INT 21/AH=2Bh/CX=4445h
@@ -6184,24 +8951,34 @@ INT 15 - DESQview/X v1.10 - ???
 	    nonzero ???
 	???
 Return: ???
+--------b-15DF-------------------------------
+INT 15 - Juko UNIQUE UX BIOS - TURBO MODE CONTROL
+	AH = DFh
+	AL = function
+	    00h turn on Turbo mode
+	    01h turn off Turbo mode
+	    02h set Turbo mode according to hardware switch
+SeeAlso: INT 13/AX=FFFFh
 --------b-15E00F-----------------------------
 INT 15 - Compaq Systempro - MULTIPROCESSOR DISPATCH
 	AX = E00Fh
 	ES:BX -> start of 2nd processor's execution
-Return: AL = 0Fh successful
-	   = 00h failure
+Return: AL = status
+	    0Fh successful
+	    00h failure
 SeeAlso: AX=E10Eh,AX=E200h
 --------b-15E10E-----------------------------
 INT 15 - Compaq Systempro - MULTIPROCESSOR END-OF-DISPATCH
 	AX = E10Eh
 	ES:BX -> start of 2nd processor's execution
-Return: AL = 0Fh successful (halted)
-	   = 00h failure (not halted)
+Return: AL = status
+	    0Fh successful (halted)
+	    00h failure (not halted)
 SeeAlso: AX=E00Fh,AX=E200h
 --------b-15E200-----------------------------
 INT 15 - Compaq Systempro - MULTIPROCESSOR AVAILABLE
 	AX = E200h
-Return: AX = 8000h if 2nd processor available
+Return: AX bit 15 set if 2nd processor available
 SeeAlso: AX=E00Fh,AX=E10Eh
 ----------15E4-------------------------------
 INT 15 - Tandy??? - ???
@@ -6213,6 +8990,38 @@ Return: DL = 00h if successful???
 Note:	the section of code in 386MAX which calls these functions also checks
 	  whether the ROM BIOS has both Tandy and Phoenix Technologies
 	  signatures if these calls fail
+----------15E4-------------------------------
+INT 15 - Compaq EISA System ROM 04/08/93 - ???
+	AH = E4h
+	AL = subfunction
+	    00h get ???
+		Return: CF clear
+			AH = 00h
+			CX = 0000h
+			BX = ??? (read from [XBDA:0094h])
+	    01h,02h unsupported by this ROM version
+		Return: CF set, AH = 86h
+	    80h,90h,A0h,B0h,C0h,D0h,E0h,F0h unsupported by this ROM version
+		Return: CF set, AH = 86h
+	    81h,91h,A1h,B1h,C1h,D1h,E1h,F1h unsupported by this ROM version
+		Return: CF set, AH = 86h
+--------b-15E800-----------------------------
+INT 15 - Compaq Caravel - ???
+	AX = E800h
+	???
+Return: ???
+--------b-15E801-----------------------------
+INT 15 - Compaq Caravel - ???
+	AX = E801h
+	???
+Return: ???
+--------b-15E802-----------------------------
+INT 15 - Compaq Caravel - ???
+	AX = E802h
+	???
+Return: CF clear
+	AX = 0000h
+	CX = 0000h
 --------m-15F200CX454D-----------------------
 INT 15 - Tandon memory mapper - Tandon MAPPER HARDWARE INITIALISATION CHECK ???
 	AX = F200h

@@ -1,13 +1,13 @@
 Public Domain/Freeware/Shareware by Ralf Brown:
 
 The MSDOS Interrupt List
-	A comprehensive listing of over 5000 functions available through
+	A comprehensive listing of over 5700 functions available through
 	interrupt calls on IBM PCs and compatibles.  Includes both
 	documented and undocumented functions.
-	Current version: INTER36A (release 36, 8/1/93)
-			 INTER36B
-			 INTER36C
-			 INTER36D (conversion and utility programs)
+	Current version: INTER37A (release 37, 10/3/93)
+			 INTER37B
+			 INTER37C
+			 INTER37D (conversion and utility programs)
 
 DVINT
 	An extract of the MSDOS Interrupt List containing the DESQview
@@ -60,7 +60,7 @@ DVKPOLL
 	"Poor man's version" of TAME.  Makes programs give up CPU time when
 	they are in an idle loop polling the keyboard for keystrokes.
 	Current version: DVKPOLL2 (6/18/88)
-	Note: This program has been superceded by DVPTAME.
+	Note: This program has been superseded by DVPTAME.
 
 DVPTAME
 	"Not-so-poor man's version" of TAME.  Tells DESQview to give the
@@ -113,9 +113,9 @@ On the Internet, by standard anonymous FTP from FTP.CS.CMU.EDU [128.2.206.173].
 	anonymous FTP). [DV-GLUE is not available here]
 	Don't forget to set "binary" mode!  If you are refused access to
 	the directory, try again later; a fileserver may have been down.
-	Note: since I have now graduated, I do not know how much longer
-	I will be able to keep this directory updated.  Use SIMTEL20
-	instead.
+	Note: since I have now graduated, I do not know how much longer I
+	will be able to keep this directory updated.  Check OAK.OAKLAND.EDU
+	or mirrors instead.
 
 If connected to AFS, you can simply perform standard Unix/VMS/whatever
 	directory listing and file copies from the above directory.
@@ -126,7 +126,9 @@ On FIDOnet, from Soundingboard BBS 1:129/26 1-412-621-4604 14.4k HST, file req.
 
 Alternate Distribution Points (new versions will be available here
 usually within twelve hours of release):
-Internet: on WSMR-SIMTEL20.ARMY.MIL [192.88.110.20] in directories
+Internet:  SIMTEL20 has been shut down; I do not yet know what arrangements
+	   have been made to replace it.
+	on WSMR-SIMTEL20.ARMY.MIL [192.88.110.20] in directories
 	PD1:<MSDOS.x> where x is INFO for the Interrupt List, MODEM for
 	RBcomm, C for SPAWNO, ASMUTL for AMISLIB, DESQview for
 	DV-GLUE/DVKPOLL/DVPTAME, and SPRINT for	SPTURBO. Note that you
@@ -137,7 +139,7 @@ Internet: on WSMR-SIMTEL20.ARMY.MIL [192.88.110.20] in directories
 	[128.252.135.4], ftp.uu.net [137.39.1.9], nic.funet.fi
 	[128.214.6.100], src.doc.ic.ac.uk [146.169.3.7] and archie.au
 	[139.130.4.6].
-FIDO: SyncPoint BBS 1:261/1008 1-301-529-2584 File Requests.
+FIDO: SyncPoint BBS 1:261/1008 1-410-529-2584 File Requests.
 
 Bitnet users may also retrieve items on SIMTEL20 via the following automated
 mail servers:

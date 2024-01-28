@@ -192,8 +192,8 @@ Values for result code:
  0507h	page length not defined or supported
  0508h	page width not defined or supported
  0509h	date & time requested are ridiculous
- 050Ah	Subject text was not an ASCIIZ string
- 050Bh	From text was not an ASCIIZ string
+ 050Ah	Subject text was not an ASCIZ string
+ 050Bh	From text was not an ASCIZ string
  050Ch	requested envelope ID was not found
  050Dh	requested envelope ID is not valid
  050Eh	envelope requested was not found
@@ -939,7 +939,7 @@ INT 2F U - PC Tools v8.0 DRIVEMAP - CRITICAL SECTION???
 	BX = phase
 	    0000h leave critical section???
 	    nonzero enter critical section???
--------R-2F9213-----------------------------
+--------R-2F9213-----------------------------
 INT 2F U - PC Tools v8.0 DRIVEMAP - ???
 	AX = 9213h
 	BX = function number (0000h-000Bh)
@@ -1222,7 +1222,7 @@ SeeAlso: AX=AB00h,AX=AB02h,INT 7B"Btrieve",INT 7F/AX=0200h
 --------f-2FAB02-----------------------------
 INT 2F - Btrieve Multi-User - GET NEW PROCESS ID
 	AX = AB02h
-Return: AL = 00h succesful
+Return: AL = 00h successful
 	    BX = process ID
 	AL > 00h failed, retry after calling INT 7F/AX=0200h
 SeeAlso: AX=AB00h,AX=AB01h,INT 7B"Btrieve",INT 7F/AX=0200h
@@ -1238,8 +1238,8 @@ SeeAlso: AX=1500h"GRAPHICS"
 INT 2F U - DOS 3.3+ DISPLAY.SYS internal - INSTALLATION CHECK
 	AX = AD00h
 Return: AL = FFh if installed
-	    BX = ??? (0100h in MS-DOS 3.30, PC-DOS 4.01)
-Note:	DOS 5.0 DISPLAY.SYS chains to previous handler if AL is not one of the
+	    BX = ??? (0100h for MS-DOS 3.3+)
+Note:	DOS 5+ DISPLAY.SYS chains to previous handler if AL is not one of the
 	  subfunctions listed here
 --------O-2FAD00-----------------------------
 INT 2F U - DR-DOS 3.41,5.0 KEYB - INSTALLATION CHECK
@@ -1281,7 +1281,7 @@ Return: CF set if buffer too small
 	    ES:DI buffer filled
 SeeAlso: AX=AD01h,AX=AD02h
 
-Format of DOS 5.0 code page information:
+Format of DOS 5.0-6.0 code page information:
 Offset	Size	Description
  00h	WORD	number of software code pages
  02h	WORD	??? (0003h)
@@ -1300,7 +1300,7 @@ INT 2F U - DOS 4.x DISPLAY.SYS internal - INSTALLATION CHECK???
 Return: AX = FFFFh
 	BX = ??? (0100h in PC-DOS 4.01)
 --------V-2FAD10-----------------------------
-INT 2F U - DOS 5.0 DISPLAY.SYS internal - ???
+INT 2F U - DOS 5+ DISPLAY.SYS internal - ???
 	AX = AD10h
 	???
 Return: CF clear if successful
@@ -1432,15 +1432,16 @@ Notes:	this call requests execution of the command which a previous call to
 	APPEND hooks this call
 ----------2FAF-------------------------------
 INT 2F U - ???
-	AH = AFh !!!
+	AH = AFh
 	???
 Return: ???
 --------V-2FB000-----------------------------
 INT 2F - DOS 3.3+ GRAFTABL.COM - INSTALLATION CHECK
 	AX = B000h
-Return: AL = 00h not installed, OK to install
-	   = 01h not installed, not OK to install
-	   = FFh installed
+Return: AL = status
+	    00h not installed, OK to install
+	    01h not installed, not OK to install
+	    FFh installed
 Notes:	called by DISPLAY.SYS
 	documented for DOS 5.0, but undocumented in prior versions
 SeeAlso: AX=B001h
@@ -1450,8 +1451,8 @@ INT 2F - DOS 3.3+ GRAFTABL.COM - GET GRAPHICS FONT TABLE
 	DS:BX -> DWORD buffer for address of 8x8 font table
 Return: buffer filled
 	AL = FFh
-Note:	PC-DOS 3.30/4.01 set the font table offset to 0130h, MS-DOS 3.30 to
-	  0030h
+Note:	PC-DOS 3.30/4.01 and MS-DOS 6.0 set the font table offset to 0130h,
+	  MS-DOS 3.30 sets it to 0030h
 SeeAlso: AX=B000h
 --------I-2FB400-----------------------------
 INT 2F - IBM PC3270 EMULATION PROG v3 - INSTALLATION CHECK
@@ -1806,7 +1807,7 @@ Return: AL = 00h not installed, OK to install
 Note:	AH=BCh is the default value, which may be changed by a command line
 	  parameter to any value between 80h and FFh
 SeeAlso: AX=BC06h"EGA",INT 10/AH=FAh"EGA"
---------s-2FBC00BX3F3F-----------------------C22!
+--------s-2FBC00BX3F3F-----------------------
 INT 2F - MediaVision MVSOUND.SYS - INSTALLATION CHECK
 	AX = BC00h
 	BX = 3F3Fh ('??')
@@ -1816,7 +1817,7 @@ Return: if installed, BX XOR CX XOR DX = 4D56h ('MV')
 Program: MVSOUND.SYS is a driver for the MediaVision ProAudio Spectrum family
 	  of sound boards; its primary programmer was Bryan Crane
 SeeAlso: AX=BC01h"MVSOUND",AX=BC02h,AX=BC03h,AX=BC04h,AX=BC06h"MVSOUND"
---------s-2FBC01BX6D20-----------------------C22!
+--------s-2FBC01BX6D20-----------------------
 INT 2F - MediaVision MVSOUND.SYS - GET VERSION
 	AX = BC01h
 	BX = 6D20h ('m ')
@@ -1824,17 +1825,17 @@ INT 2F - MediaVision MVSOUND.SYS - GET VERSION
 	DX = 2020h ('  ')
 Return: BX = ASCII major version (leading zeros significant)
 	CX = ASCII minor version (leading zeros significant)
---------s-2FBC02-----------------------------C22!
+--------s-2FBC02-----------------------------
 INT 2F - MediaVision MVSOUND.SYS - GET STATE TABLE POINTER
 	AX = BC02h
 Return: BX:DX -> state table
 SeeAlso: AX=BC00h"MVSOUND",AX=BC03h
---------s-2FBC03-----------------------------C22!
+--------s-2FBC03-----------------------------
 INT 2F - MediaVision MVSOUND.SYS - GET FUNCTION TABLE POINTER
 	AX = BC03h
 Return: BX:DX -> function table
 SeeAlso: AX=BC00h"MVSOUND",AX=BC02h
---------s-2FBC04-----------------------------C22!
+--------s-2FBC04-----------------------------
 INT 2F - MediaVision MVSOUND.SYS - GET DMA AND IRQ CHANNELS
 	AX = BC04h
 Return: AX = 4D56h ('MV')
@@ -1849,13 +1850,13 @@ Return: BX = 5456h ("TV")
 	CL = minor version
 	DL = revision
 SeeAlso: AX=BC00h"EGA",INT 10/AH=FAh"EGA"
---------s-2FBC06-----------------------------C22!
+--------s-2FBC06-----------------------------
 INT 2F - MediaVision MVSOUND.SYS - GET STATUS STRING
 	AX = BC06h
 Return: AX = 4D56h ('MV')
 	DX:BX -> status string (first byte 0Ch if no status message to display)
 SeeAlso: AX=BC00h"MVSOUND",AX=BC01h"MVSOUND",AX=BC0Bh"MVSOUND"
---------s-2FBC0B-----------------------------C22!
+--------s-2FBC0B-----------------------------
 INT 2F - MediaVision MVSOUND.SYS - GET EXECUTABLE PATH
 	AX = BC0Bh
 Return: BX:DX -> ASCIZ path for MVPROAS.EXE, 0000h:0000h if not available
@@ -2138,7 +2139,7 @@ Offset	Size	Description
 ---LSL 1.10+ ---
  0Ch	WORD	maximum number of boards which LSL can handle
  0Eh	WORD	maximum number of protocol IDs which LSL can handle
- 10h 12 BYTES	reserved
+ 10h 12 BYTEs	reserved
 
 Format of LSL Statistics Table:
 Offset	Size	Description
@@ -2393,7 +2394,7 @@ Note:	AH=C0h is the default; WANG_ER scans all multiplex numbers from C0h to
 	  completed by comparing the resident code with the copy in the
 	  transient program
 ----------2FC000-----------------------------
-INT 2F - APSIHOOK.SYS - INSTALLATION CHECK
+INT 2F - ASPIHOOK.SYS - INSTALLATION CHECK
 	AX = C000h
 Return: AL = FFh if multiplex number in use
 	    ES:DI -> ASCIZ signature "ASPIHOOK" if ASPIHOOK.SYS installed
@@ -2420,7 +2421,7 @@ Index:	screen saver;AD-DOS
 --------V-2FC002-----------------------------
 INT 2F - AD-DOS - CHECK FOR NEW INPUT
 	AX = C002h
-Return: AL = 00h if succesful
+Return: AL = 00h if successful
 	    BX = status
 		0000h no input since last check
 		0001h new input available
@@ -2456,7 +2457,7 @@ SeeAlso: AX=C000h"QMR",AX=C002h"QMR"
 --------V-2FC004-----------------------------
 INT 2F - AD-DOS - GET MINUTES TO WAIT
 	AX = C004h
-Return: AL = 00h if succesful
+Return: AL = 00h if successful
 	    BX = minutes to wait before blanking screen
 SeeAlso: AX=C000h"AD-DOS",AX=C003h
 Index:	screen saver;AD-DOS
@@ -2633,6 +2634,93 @@ INT 2F U - Explosiv 2.00 - SET ???
 	BL = ???
 SeeAlso: AX=C05Bh
 Index:	screen saver;Explosiv
+--------d-2FC300DX0000-----------------------
+INT 2F U - SpaceManager - INSTALLATION CHECK
+	AX = C300h
+	DX = 0000h
+Return: AL = FFh if any SpaceManager programs installed
+	    BX = 6F73h
+	    CX = 6F68h
+Program: SpaceManager is an enhancement for MS-DOS DoubleSpace by Vertisoft
+	  Systems, Inc.
+Note:	AH=C3h is the default; SpaceManager programs scan from C3h to FFh for
+	  a free multiplex number
+SeeAlso: AX=C300h/DX=0666h
+--------d-2FC300DX0666-----------------------
+INT 2F U - SpaceManager - INSTALLATION VERIFICATION
+	AX = C300h
+	DX = 0666h for any SpaceManager prog or program identifier (see below)
+	BX = 4F53h
+	CX = 4F48h
+Return: AL = FFh if BX/CX as specified and specified program installed
+	    BX = 6F73h
+	    CX = 6F68h
+Notes:	AH=C3h is the default; SpaceManager programs scan from C3h to FFh for
+	  a free multiplex number
+	this call is chained if BX,CX, or DX are not as specified above
+SeeAlso: AX=C300h/DX=0000h
+
+Values for SpaceManager program identifier:
+ 9000h	SMOUNT (SuperMount)
+ 9001h	SELECTC (SelectCompress)
+ 9002h	SUPERX (SuperExchange)
+ 9003h	FORTUNE (FortuneTeller)
+--------d-2FC301DX9003-----------------------
+INT 2F U - SpaceManager - ???
+	AX = C301h
+	DX = program identifier (9000h,9001h,9003h) (see AX=C300h)
+	???
+Return: ???
+--------d-2FC302DX9003-----------------------
+INT 2F U - SpaceManager - ENABLE PROGRAM
+	AX = C302h
+	DX = program identifier (9000h,9001h,9003h) (see AX=C300h)
+Return: AX destroyed
+SeeAlso: AX=C303h,AX=C306h
+--------d-2FC303DX9003-----------------------
+INT 2F U - SpaceManager - DISABLE PROGRAM
+	AX = C303h
+	DX = program identifier (9000h,9001h,9003h) (see AX=C300h)
+Return: AX destroyed
+SeeAlso: AX=C302h,AX=C306h
+--------d-2FC304DX9003-----------------------
+INT 2F U - SpaceManager - GET PER-DRIVE ENABLEMENT TABLE
+	AX = C304h
+	DX = program identifier (9000h,9001h,9003h) (see AX=C300h)
+Return: ES:BX -> 26-byte drive table (00h disabled for drive, 01h enabled)
+	AX destroyed
+--------d-2FC305DX9003-----------------------
+INT 2F U - SpaceManager - FORTUNE.EXE - NOP
+	AX = C305h
+	DX = 9003h
+Return: AX destroyed
+--------d-2FC305-----------------------------
+INT 2F U - SpaceManager - ???
+	AX = C305h
+	DX = program identifier (9000h,9001h) (see AX=C300h)
+	???
+Return: ???
+--------d-2FC306DX9003-----------------------
+INT 2F U - SpaceManager - CHECK WHETHER PROGRAM ENABLED
+	AX = C306h
+	DX = program identifier (9000h,9001h,9003h) (see AX=C300h)
+Return: AL = current state (00h disabled, FAh enabled)
+	AH destroyed
+SeeAlso: AX=C302h,AX=C303h
+--------d-2FC307DX9001-----------------------
+INT 2F U - SpaceManager - SELECTC - ???
+	AX = C307h
+	DX = 9001h
+	BX = ???
+	CX = ???
+	???
+Return: ???
+--------d-2FC308DX9001-----------------------
+INT 2F U - SpaceManager - SELECTC - ???
+	AX = C308h
+	DX = 9001h
+	???
+Return: ???
 --------d-2FC64CBX5553-----------------------
 INT 2F U - Smart Prompt - INSTALLATION CHECK
 	AX = C64Ch
@@ -2674,6 +2762,14 @@ Notes:	called by StackMan when it goes resident to inform interested TSRs that
 	  offset 0Ah from the INT B4 handler
 SeeAlso: INT B4"StackMan",INT B5"StackMan"
 Index:	installation check;STACKMAN|broadcasts;STACKMAN installation
+----------2FCA-------------------------------
+INT 2F - FAXPLUS - FAX TSR
+	AH = CAh
+	???
+Return: ???
+Program: FAXTSR is a resident FAX send/receive module for FAXPLUS by Frans
+	  Veldman
+SeeAlso: AH=2Ah"Gammafax"
 --------v-2FCA00BX5442-----------------------
 INT 2F - TBSCANX - INSTALLATION CHECK
 	AX = CA00h
@@ -3481,7 +3577,7 @@ INT 2F - Intel Image Processing Interface - SELECT SCAN LINE
 	AX = CD03h
 	BX = scan line
 	CX = requested density in dots per inch (300, 600, or 1200)
-Return: AL = 00h succesful
+Return: AL = 00h successful
 		CX = density at which scan line was mapped
 		ES:DI -> start of scan line
 	AL = 80h unsuccessful
@@ -3665,7 +3761,7 @@ Program: TEMPLEXX is a popup keyboard template by Henson Scientific, Inc.
 Note:	values in AL other than 00h cause an immediate return without modifying
 	  any registers
 --------G-2FD000-----------------------------
-INT 2F - MDEBUG display driver - GET DRIVER STATUS
+INT 2F C - MDEBUG display driver - GET DRIVER STATUS
 	AX = D000h
 Return: CF set on error
 	    all other registers must be unchanged)
@@ -3721,12 +3817,12 @@ Notes:	INT 2F/AH=D0h is used by CD/Networker to communicate between a
 	At present there is only one CD/Networker TSR; the bitmap always = 4.
 SeeAlso: AX=D002h"Lotus",INT 2F/AX=1500h"CD-ROM"
 --------G-2FD001-----------------------------
-INT 2F - MDEBUG display driver - INITIALIZE DRIVER
+INT 2F C - MDEBUG display driver - INITIALIZE DRIVER
 	AX = D001h
 Return: CF set on error
 	AL = driver semaphor
 	AH = buffer semaphor
-Notes:	MDEBUG calls this function after every succesful call of the function
+Notes:	MDEBUG calls this function after every successful call of the function
 	  00h. The function should reset all internal data and the status of
 	  the driver. If this function returns an error, MDEBUG will not call
 	  the other functions in this popup session.
@@ -3735,7 +3831,7 @@ Notes:	MDEBUG calls this function after every succesful call of the function
 	  command driver
 SeeAlso: AX=D000h
 --------G-2FD002-----------------------------
-INT 2F - MDEBUG display driver - SAVE GRAPHIC DATA
+INT 2F C - MDEBUG display driver - SAVE GRAPHIC DATA
 	AX = D002h
 Return: CF set on error
 	CF clear if successful
@@ -3754,7 +3850,7 @@ Note:	the format of the data area changes with each minor revision, so it
 	  cannot be counted on
 SeeAlso: AX=D000h"Lotus"
 --------G-2FD003-----------------------------
-INT 2F - MDEBUG display driver - RESTORE GRAPHIC DATA
+INT 2F C - MDEBUG display driver - RESTORE GRAPHIC DATA
 	AX = D003h
 Return: CF set on error
 	CF clear if successful
@@ -4267,7 +4363,7 @@ Offset	Size	Description
  06h	WORD	XMS handle for swapping
 	???
 --------l-2FD44E-----------------------------
-INT 2F - 4DOS v3.0+ - AWAITING USER INPUT
+INT 2F C - 4DOS v3.0+ - AWAITING USER INPUT
 	AX = D44Eh
 ---4DOS v3.01+---
 	BX = 0000h 4DOS is ready to display prompt
@@ -4349,7 +4445,7 @@ Return: CF set on error
 	CF clear on success
 SeeAlso: AX=D600h"VSWAP",INT 21/AH=4Bh"EXEC"
 --------N-2FD701BX0000-----------------------
-INT 2F - BANYAN VINES v4+ - GET BANV INTERRUPT NUMBER
+INT 2F - Banyan VINES v4+ - GET BANV INTERRUPT NUMBER
 	AX = D701h
 	BX = 0000h
 Return: AX = 0000h installed
@@ -4360,21 +4456,21 @@ Note:	if AX is nonzero, VINES 3.x or earlier may be installed, thus it is
 	  INT 60 through INT 66 for the string "BANV"
 SeeAlso: AX=D702h,AX=D703h,AX=D704h
 --------N-2FD702-----------------------------
-INT 2F U - BANYAN VINES v4+ - PCPRINT interface
+INT 2F U - Banyan VINES v4+ - PCPRINT interface
 	AX = D702h
 	BX = function
 	???
 Return: ???
 SeeAlso: AX=D701h,AX=D703h,INT 61/AX=0005h"Banyan"
 --------N-2FD703-----------------------------
-INT 2F U - BANYAN VINES v4+ - MAIL interface
+INT 2F U - Banyan VINES v4+ - MAIL interface
 	AX = D703h
 	BX = function
 	???
 Return: ???
 SeeAlso: AX=D702h,AX=D704h
 --------N-2FD704-----------------------------
-INT 2F U - BANYAN VINES v4+ - Streettalk Directory Assistance interface
+INT 2F U - Banyan VINES v4+ - Streettalk Directory Assistance interface
 	AX = D704h
 	BX = function
 	???
@@ -4575,7 +4671,7 @@ Note:	a separate copy of TRAP is loaded for each interrupt to be traced; thus
 INT 2F U - Beame&Whiteside BWSNMP - INSTALLATION CHECK
 	AX = DAB2h
 Return: AX = 00FFh if installed
-	    BX:CX -> MIB table???
+	    BX:CX -> MIB table
 Program: BWSNMP is part of the BW-NFS package
 SeeAlso: INT 62"BW-TCP"
 --------K-2FDC00-----------------------------
@@ -5249,7 +5345,7 @@ Note:	as NDOS is a licensed version of 4DOS v3.03, the API is identical to
 	  check returns AX=44EEh instead of AX=44DDh
 SeeAlso: AX=D44Dh,AX=E44Eh
 --------l-2FE44EBX0000-----------------------
-INT 2F - NDOS - AWAITING USER INPUT
+INT 2F C - NDOS - AWAITING USER INPUT
 	AX = E44Eh
 	BX = 0000h NDOS is ready to display prompt
 	   = 0001h NDOS has displayed the prompt, about to accept user input
@@ -5276,7 +5372,7 @@ Return: AL = status
 		if running under DPMI:
 			BX = DPMI version (BH = major, BL = minor)
 SeeAlso: AH=A1h,AX=F100h,AX=FBA1h
---------E-2FED03-----------------------------C33!
+--------E-2FED03-----------------------------
 INT 2F R - Phar Lap 386/DOS-Extender v4.1 - GET EXTENDER ENTRY POINT
 	AX = ED03h
 	CX = real-mode code segment
@@ -5697,6 +5793,32 @@ INT 2F - WINX - EXECUTE COMMAND
 Return: AX = FFFFh if WINX is busy processing a different request
 	   = 0000h if successful
 SeeAlso: AX=F200h,AX=F202h
+----------2FF400-----------------------------
+INT 2F - FINDIRQ.COM - INSTALLATION CHECK
+	AX = F400h
+Return: AL = 01h if installed
+Program: FINDIRQ is a program by Rick Knoblaugh published in the 9/28/93 issue
+	  of PC Magazine; when run as a TSR it can determine which IRQs are
+	  used only when a device is active
+SeeAlso: AX=F401h
+----------2FF401CX5121-----------------------
+INT 2F - FINDIRQ.COM - GET HOOKED INTERRUPTS
+	AX = F401h
+	CX = 5121h ('Q!')
+Return: AX:DX -> hooked interrupt table (see below)
+SeeAlso: AX=F400h
+
+Format of hooked interrupt table:
+Offset	Size	Description
+ 00h	BYTE	1Ch
+ 01h	DWORD	FINDIRQ's INT 1C handler
+ 05h	DWORD	original INT 1C handler
+ 09h	BYTE	28h
+ 0Ah	DWORD	FINDIRQ's INT 28 handler
+ 0Eh	DWORD	original INT 28 handler
+ 12h	BYTE	2Fh
+ 13h	DWORD	FINDIRQ's INT 2F handler
+ 17h	DWORD	original INT 2F handler
 --------d-2FF700-----------------------------
 INT 2F - AUTOPARK.COM - INSTALLATION CHECK
 	AX = F700h
@@ -6175,14 +6297,14 @@ Return: CX = status (see also AX=FB42h/BX=0004h)
 	    0002h invalid selector
 	    FFF9h ??? error
 --------E-2FFB42BX0014-----------------------
-INT 2F RU - Borland C++ 3.0 DPMILOAD.EXE - ???
+INT 2F RU - Borland C++ 3.0 DPMILOAD.EXE - INSTALLATION CHECK
 	AX = FB42h
-	BX = 0014h ???
-		CX = 0001h
-		Return: BX = 0000h
+	BX = 0014h
+	CX = 0001h
+Return: BX = 0000h if installed
 Note:	unlike most of the DPMILOAD functions, this call is available only in
 	  real or V86 mode
-SeeAlso: AX=FB42h/BX=000Ah
+SeeAlso: AX=FB42h/BX=0001h,AX=FB42h/BX=000Ah
 --------E-2FFB42BX0015-----------------------
 INT 2F RU - Borland C++ 3.0 DPMILOAD.EXE - UNINSTALL
 	AX = FB42h

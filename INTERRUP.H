@@ -129,7 +129,7 @@ Notes:	only modify descriptors allocated with INT 31/AX=0000h
 	  selector being modified
 	not supported by MS Windows 3.0 in Standard mode
 SeeAlso: AX=0006h,AX=0008h,AX=0009h,AX=000Ch,INT 21/AX=3503h
-SeeAlso: INT 21/AH=E9h"OS/286"
+SeeAlso: INT 21/AH=E9h"OS/286",INT 2C/AX=0002h
 --------E-310008-----------------------------
 INT 31 P - DPMI 0.9+ - SET SEGMENT LIMIT
 	AX = 0008h
@@ -145,6 +145,7 @@ Notes:	CX must be zero for 16-bit DPMI implementations
 	  selector being modified
 	not supported by MS Windows 3.0 in Standard mode
 SeeAlso: AX=0007h,AX=0009h,AX=000Ch,INT 21/AX=3505h,INT 21/AH=E9h"OS/286"
+SeeAlso: INT 2C/AX=0003h
 --------E-310009-----------------------------
 INT 31 P - DPMI 0.9+ - SET DESCRIPTOR ACCESS RIGHTS
 	AX = 0009h
@@ -158,7 +159,8 @@ Notes:	if the Present bit is clear, CL bits 0-3 may have any value
 	DPMI 1.0+ automatically reloads any segment registers containing the
 	  selector being modified
 	not supported by MS Windows 3.0 in Standard mode
-SeeAlso: AX=0007h,AX=0008h,AX=000Ch,INT 21/AX=2514h
+SeeAlso: AX=0007h,AX=0008h,AX=000Ch,INT 21/AX=2514h,INT 2C/AX=0004h
+SeeAlso: INT 2C/AX=0005h
 --------E-31000A-----------------------------
 INT 31 P - DPMI 0.9+ - CREATE ALIAS DESCRIPTOR
 	AX = 000Ah
@@ -379,7 +381,8 @@ Return: CF clear
 Notes:	16-bit programs use CX:DX, 32-bit programs use CX:EDX
 	DPMI implementations are required to support all 256 vectors
 	not supported by MS Windows 3.0 in Standard mode
-SeeAlso: AX=0200h,AX=0205h,INT 21/AX=2502h,INT 2F/AX=FB42h/BX=0024h
+SeeAlso: AX=0200h,AX=0205h,INT 21/AX=2502h,INT 2C/AX=0006h
+SeeAlso: INT 2F/AX=FB42h/BX=0024h
 --------E-310205-----------------------------
 INT 31 P - DPMI 0.9+ - SET PROTECTED MODE INTERRUPT VECTOR
 	AX = 0205h
@@ -395,13 +398,14 @@ Notes:	16-bit programs use CX:DX, 32-bit programs use CX:EDX
 	hardware interrupts are reflected to the virtual machine's primary
 	  client, software interrupts to the current client
 	not supported by MS Windows 3.0 in Standard mode
-SeeAlso: AX=0201h,AX=0204h,INT 21/AX=2504h,INT 2F/AX=FB42h/BX=0025h
+SeeAlso: AX=0201h,AX=0204h,INT 21/AX=2504h,INT 2C/AX=0007h
+SeeAlso: INT 2F/AX=FB42h/BX=0025h
 --------E-310210-----------------------------
 INT 31 P - DPMI 1.0+ - GET PROTECTED MODE EXTENDED PROCESSOR EXCEPTION HANDLER
 	AX = 0210h
 	BL = exception number (00h-1Fh)
 Return: CF clear if successful
-	    CX:(EDX) = selector:offset of exception handler
+	    CX:(E)DX = selector:offset of exception handler
 	CF set on error
 	    AX = error code (8021h) (see AX=0000h)
 Note:	DPMI host reflects exception to current client's handler
@@ -411,7 +415,7 @@ INT 31 P - DPMI 1.0+ - GET REAL MODE EXTENDED PROCESSOR EXCEPTION HANDLER
 	AX = 0211h
 	BL = exception number (00h-1Fh)
 Return: CF clear if successful
-	    CX:(EDX) = selector:offset of exception handler
+	    CX:(E)DX = selector:offset of exception handler
 	CF set on error
 	    AX = error code (8021h) (see AX=0000h)
 Notes:	returns address of protected-mode handler for real-mode exception
@@ -467,7 +471,7 @@ Notes:	16-bit programs use ES:DI as pointer, 32-bit programs use ES:EDI
 	DPMI will provide a small (30 words) real mode stack if SS:SP is zero
 	the real mode handler must return with the stack in the same state as
 	  it was on being called
-SeeAlso: AX=0302h,INT 21/AX=2511h,INT 21/AH=E3h"OS/286"
+SeeAlso: AX=0302h,INT 21/AX=2511h,INT 21/AH=E3h"OS/286",INT 2C/AX=0026h
 SeeAlso: INT 2F/AX=FB42h/BX=000Dh
 
 Format of real mode call structure:
@@ -511,6 +515,7 @@ Notes:	16-bit programs use ES:DI as pointer, 32-bit programs use ES:EDI
 	the real mode handler must return with the stack in the same state as
 	  it was on being called
 SeeAlso: AX=0300h,AX=0302h,INT 21/AX=250Eh,INT 21/AH=E1h"OS/286"
+SeeAlso: INT 2C/AX=0025h
 --------E-310302-----------------------------
 INT 31 P - DPMI 0.9+ - CALL REAL MODE PROCEDURE WITH IRET FRAME
 	AX = 0302h
@@ -624,6 +629,8 @@ Return: CF clear
 	CL = processor type (02h=80286, 03h=80386, 04h=80486)
 	DH = curr value of virtual master interrupt controller base interrupt
 	DL = curr value of virtual slave interrupt controller base interrupt
+BUG:	the Windows NT March 1993 beta reports version 0090h (0.144); this has
+	  been fixed in the final release
 SeeAlso: AX=0401h,INT 21/AX=250Ch,INT 2F/AX=1687h,INT 67/AX=DE0Ah
 --------E-310401-----------------------------
 INT 31 P - DPMI 1.0+ - GET DPMI CAPABILITIES
@@ -690,6 +697,9 @@ Return: CF clear if successful
 Notes:	no selectors are allocated
 	the memory block is allocated unlocked (can be locked with AX=0600h)
 	allocations are often page granular (see AX=0604h)
+	under MS Windows 3.10 Enhanced mode with paging enabled, it is possible
+	  for this function to fail even if AX=0500h indicates that enough
+	  memory is available
 SeeAlso: AX=0000h,AX=0100h,AX=0500h,AX=0502h,AX=0503h,AX=0504h,AX=0D00h
 SeeAlso: INT 2F/AX=FB42h/BX=0002h
 --------E-310502-----------------------------
@@ -917,6 +927,8 @@ Return: CF clear if successful
 	CF set on error
 	    AX = error code (DPMI 1.0+)
 		8001h unsupported, 16-bit host
+BUG:	the Borland C++ 3.1 DPMILOAD returns with CF clear but BX and CX
+	  unchanged
 --------E-310700-----------------------------
 INT 31 P - DPMI 0.9+ - MARK PAGES AS PAGING CANDIDATES
 	AX = 0700h
@@ -1027,6 +1039,9 @@ Return: CF clear if successful
 Notes:	extended API parameters are vendor-specific
 	DPMI 1.0+ supports this function solely for backward compatibility; use
 	  INT 2F/AX=168Ah instead
+	this function is not supported by MS Windows 3.10, BC++ 3.1 DPMILOAD,
+	  or QDPMI v1.0x; use INT 2F/AX=168Ah instead.	It is supported by
+	  386MAX v7.01.
 SeeAlso: INT 2F/AX=168Ah
 --------E-310B00-----------------------------
 INT 31 P - DPMI 0.9+ - SET DEBUG WATCHPOINT
@@ -1116,7 +1131,7 @@ Offset	Size	Description
  04h	DWORD	(return) allocated length of block
  08h	DWORD	(return) shared memory handle
  0Ch	DWORD	(return) linear address of memory block
- 10h  6 BYTEs	selector:offset32 of ASCIZ name for memory block
+ 10h	PWORD	selector:offset32 of ASCIZ name for memory block
 		(name max 128 bytes)
  16h  2 BYTEs	reserved
  18h  4 BYTEs	reserved (00h)
@@ -3017,7 +3032,7 @@ Note:	INT 49 is the default, but may be overridden on the commandline.  The
 	  uses CodeRunneR, which places the signature "RT" at offset 0000h in
 	  the interrupt handler's segment, followed by MAGic's TSR ID of
 	  "VMAG".
-SeeAlso: AX=0001h,AX=0003h,AX=0004h,AX=0008h
+SeeAlso: AX=0002h,AX=0003h,AX=0004h,AX=0008h
 Index:	installation check;MAGic
 
 Values for status:
