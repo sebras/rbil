@@ -1,5 +1,4 @@
-
-              CMOS Memory Map v1.22 February, 1994
+              CMOS Memory Map v1.23 June, 1994
 
 Compiled from multiple sources by Padgett Peterson
 Corrections/additions/comments to: padgett@tccslr.dnet.mmc.com
@@ -147,6 +146,8 @@ The following is the on-chip status register information.
           disconnected.
   Bit 6-0 ???
 
+---------------------------------------------
+
 		Organization of CMOS Memory - non-Clock
 
 The last two bytes in the first hexadecimal decade (hexade ?) were not 
@@ -168,6 +169,8 @@ specified in the PC/AT but may have the following use on some systems:
  0Fh Reset Code        
      (IBM PS/2 "Shutdown Status Byte")
 
+---------------------------------------------
+
 The second group of values extends from address 10h to 2Dh. The word at
 2Eh-2Fh is a byte-wise summation of the values in these bytes. Most BIOSes
 will generate a CMOS Checksum error if this value is invalid however many 
@@ -180,6 +183,7 @@ AMSTRAD, IBM AT, IBM PS/2) the identification is enclosed in parens. The
 AMSTAD definitions appear to relate to 8088/8086 (PC and PC/XT class)
 mchines only. AT class machines appear to adhere to IBM PC/AT fornat.
 
+---------------------------------------------
  10h - Floppy Drive Type
 
   Bits 7-4 - First Floppy Disk Drive Type
@@ -195,19 +199,18 @@ mchines only. AT class machines appear to adhere to IBM PC/AT fornat.
    Hence a PC having a 5 1/4 1.2 Mb A: drive and a 1.44 Mb B: drive will
    have a value of 24h in byte 10h. With a single 1.44 drive: 40h.
 
+---------------------------------------------
  11h - (IBM-PS/2) First Fixed Disk Drive Type Byte (00-FFh) Note: if IBM
    ESDI or SCSI drive controller is used, CMOS drive type will be zero (00 -
    no drive) and Int 13h will be directed to controller ROM.
+
  11h - (AMI) Keyboard Typematic Data 
-
   Bit 7 Enable Typematic (1 = On)
-
   Bits 6-5 Typematic Delay (wait before begin repeating)
    00b 250 ms
    01b 500 ms
    10b 750 ms
    11b 100 ms
-
   Bits 4-0 Typematic Rate char/sec e.g. 01010b = 12.0 cps
    00000b - 300  01000b - 159  10000b - 75  11000b - 37
    00001b - 267  01001b - 133  10001b - 67  11001b - 33
@@ -218,6 +221,16 @@ mchines only. AT class machines appear to adhere to IBM PC/AT fornat.
    00110b - 171  01110b -  86  10110b - 43  11110b - 21
    00111b - 160  01111b -  80  10111b - 40  11111b - 20
 
+ 11h - (AMI) Advanced Setup Options
+  bit 7 mouse enabled
+  bit 6 test memory above 1 megabyte
+  bit 5 generate clicks during memory test
+  bit 4 enable memory parity check
+  bit 3 display key for Setup while booting
+  bit 2 store user-defined disk data at top of memory instead of 0030h:0000h
+  bit 1 request F1 keypress on boot error
+
+---------------------------------------------
  12h - (IBM PS/2) Second Fixed Disk Drive Type (00-FFh) - see 11h
  12h - Hard Disk Data
   Bits 7-4 First Hard Disk Drive
@@ -230,6 +243,7 @@ mchines only. AT class machines appear to adhere to IBM PC/AT fornat.
   Note: some PCs utilizing external disk controller ROMs will use type 0 to
    disable ROM BIOS (e.g. Zenith 248 with Plus HardCard).
 
+---------------------------------------------
  13h (AMI) Advanced Setup Options
   Bit 7 Mouse Enabled (1 = On)
   Bit 6 Test Memory above 1 MB (1 = On)
@@ -240,6 +254,16 @@ mchines only. AT class machines appear to adhere to IBM PC/AT fornat.
   Bit 1 Wait for <F1> Message if Error (1 = On)
   Bit 0 Turn Num Lock On at boot (1 = On)
 
+ 13h (PS/2 MCA) internal POST operations
+  bit 7  POST sets VGA pel information
+  bit 6  RTC battery OK
+  bit 5  invoke ROM BASIC from POST
+  bit 4  POST sets typematic to 30cps/250ms delay instead of 10.9cps/500ms
+  bit 3-2 unused or unknown
+  bit 1  network password installed
+  bit 0  power-on password installed
+
+---------------------------------------------
  14h - Equipment Byte 
   Bits 7-6 Number of Floppy Drives (system must have at least one)
    00b     1 Drive
@@ -259,27 +283,33 @@ mchines only. AT class machines appear to adhere to IBM PC/AT fornat.
  14h - (AMSTRAD)    BYTE user RAM checksum
 			LSB of sum of all user bytes should be AAh
 
+---------------------------------------------
  15h - Base Memory in K, Low Byte
  15h - (AMSTRAD)    WORD Enter key scancode/ASCII code
 			default: 1C0Dh  - emulates Return key
 
+---------------------------------------------
  16h Base Memory in K, High Byte
   The value in 15h-16h should be the same as in 0:413h and that returned by 
   Int 12h. A PC having 640k (280h) of conventional memory will return 80h in 
   byte 15h and 02h in byte 16h.
 
+---------------------------------------------
  17h - Extended Memory in K, Low Byte
  17h - (AMSTRAD)    WORD Forward delete key scancode/ASCII code
 			default: 2207h  - emulates ^G (bell/beep)
 
+---------------------------------------------
  18h - Extended Memory in K, High Byte (some systems will only accommodate 
   15 Mb extended or 16 Mb total) Format is the same as in 15h-16h
 
+---------------------------------------------
  19h - First Extended Hard Disk Drive Type (not in original AT
   specification but now nearly universally used except for PS/2).
   0-Fh unused (would not require extension. Note: this has the effect
     making type 0Fh (15d) unavailable.
   10h-FFh First Extended Hard Drive Type 16d-255d
+ 19h - (MCA) Slot 0 adapter card ID
 
 For most manufacturers the last drive type (typically either 47d or 49d)
 is "user defined" and parameters are stored elsewhere in the CMOS.
@@ -287,16 +317,24 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
  19h - (AMSTRAD)    WORD Joystick fire button 1 scancode/ASCII code
 			default: FFFFh  - (no translation)
 
+---------------------------------------------
  1Ah - Second Extended Hard Disk Drive Type (see 19h above)
+ 1Ah - (MCA) Slot 0 adapter card ID
 
+---------------------------------------------
+ 1Bh - (MCA) Slot 1 adapter card ID
  1Bh - (AMI) First Hard Disk (type 47) user defined: # of Cylinders, LSB
  1Bh - (AMSTRAD)    WORD Joystick fire button 2 scancode/ASCII code
 			default: FFFFh  - (no translation)
  1Bh - (PHOENIX) LSB of Word to 82335 RC1 roll compare register
 
+---------------------------------------------
+ 1Ch - (MCA) Slot 1 adapter card ID
  1Ch - (AMI) First Hard Disk user defined: # of Cylinders, High Byte
  1Ch - (PHOENIX) MSB of Word to 82335 RC1 roll compare register
 
+---------------------------------------------
+ 1Dh - (MCA) Slot 2 adapter card ID
  1Dh - (AMI) First Hard Disk user defined: Number of Heads
  1Dh - (AMSTRAD)    WORD mouse button 1 scancode/ASCII code
 			default: FFFFh  - (no translation)
@@ -309,28 +347,43 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
             (this is the default).
  1Dh - (PHOENIX) LSB of Word to 82335 RC2 roll compare register
 
+---------------------------------------------
+ 1Eh - (MCA) Slot 2 adapter card ID
  1Eh - (AMI) First Hard Disk user defined: Write Precompensation Cylinder, 
        Low Byte
  1Eh - (PHOENIX) MSB of Word to 82335 RC2 roll compare register
 
+---------------------------------------------
+ 1Fh - (MCA) Slot 3 adapter card ID
  1Fh - (AMI) First Hard Disk user defined: Write Precompensation Cylinder, 
        High Byte
  1Fh - (AMSTRAD)    WORD mouse button 2 scancode/ASCII code
 			default: FFFFh  - (no translation)
 
- 20h - (AMI) First Hard Disk user defined: Control Byte (80h if # of heads 
-       is equal or greater than 8)
+---------------------------------------------
+ 20h - (MCA) Slot 3 adapter card ID
+ 20h - (AMI) First Hard Disk user defined: Control Byte
+     bits 7-6 no retries (1)
+     bit 5    bad sector map at last cylinder+1
+     bit 4    unused (0)
+     bit 3    more than 8 heads
+     bits 2-0 unused (0)
  20h - (PHOENIX) First user defined hard disk (type 48) Cylinders LSB
 
+---------------------------------------------
+ 21h - (MCA) Programmable Option Select configuration byte 2
  21h - (AMI) First Hard Disk user defined: Landing Zone, Low Byte
  21h - (AMSTRAD) BYTE mouse X scaling factor, default: 0Ah
  21h - (PHOENIX) First user defined hard disk (type 48) Cylinders MSB
 
-
+---------------------------------------------
+ 22h - (MCA) Programmable Option Select configuration byte 3
  22h - (AMI) First Hard Disk user defined: Landing Zone, High Byte
  22h - (AMSTRAD) BYTE mouse Y scaling factor default: 0Ah
  22h - (PHOENIX) First user defined hard disk (type 48)  of Heads
 
+---------------------------------------------
+ 23h - (MCA) Programmable Option Select configuration byte 4
  23h - (AMI) First Hard Disk user defined: # of Sectors per track
  23h - (AMSTRAD) BYTE initial VDU mode and drive count  default: 20h
     bit 7:  enables extended serial flow control
@@ -343,49 +396,57 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
          1   1      mono card added; 80 x 25 mode
  23h - (PHOENIX) First user defined hard disk (type 48) Write Precomp. LSB
 
+---------------------------------------------
+ 24h - (MCA) Programmable Option Select configuration byte 5
  24h - (AMI) Second Hard Disk user defined: # of Cylinders, Low Byte
  24h - (AMSTRAD)    BYTE initial VDU character attribute, default: 7h
  24h - (PHOENIX) First user defined hard disk (type 48) Write Precomp. MSB
 
-
+---------------------------------------------
  25h - (AMI) Second Hard Disk user defined: # of Cylinders, High Byte
  25h - (AMSTRAD)    BYTE size of RAM disk in 2K blocks
 		default: 0  - only used by the RAMDISK software supplied.
  25h - (PHOENIX) First user defined hard disk (type 48) Parking zone LSB
 
-
+---------------------------------------------
  26h - (AMI) Second Hard Disk user defined: Number of Heads
  26h - (AMSTRAD)    BYTE initial system UART setup byte
 			default: E3h - format as for Int 14h fn 0
  26h - (PHOENIX) First user defined hard disk (type 48) Parking zone MSB
 
+---------------------------------------------
  27h - (AMI) Second Hard Disk user defined: Write Precompensation Cylinder, 
        Low Byte
  27h - (AMSTRAD)    BYTE initial external UART setup byte
 			default: E3h - format as for Int 14h fn 0
  27h - (PHOENIX) First user defined hard disk (type 48) Sectors per track
 
+---------------------------------------------
  28h - (AMI) Second Hard Disk user defined: Write Precompensation Cylinder, 
        High Byte
  28h - (HP Vectra) checksum over words 29h-2Dh
 
  28h-3Fh (AMSTRAD) 24 BYTEs user applications default: zeroes
 
-
+---------------------------------------------
  29h - (AMI) Second Hard Disk user defined: Control Byte (80h if # of heads 
        is equal or greater than 8)
  29h - (PHOENIX) LSB word to Intel 82335 CC0 compare register
 
+---------------------------------------------
  2Ah - (AMI) Second Hard Disk user defined: Landing Zone, Low Byte
  2Ah - (PHOENIX) MSB word to Intel 82335 CC0 compare register
 
+---------------------------------------------
  2Bh - (AMI) Second Hard Disk user defined: Landing Zone, High Byte
  2Bh - (PHOENIX) LSB word to Intel 82335 CC1 compare register
 
+---------------------------------------------
  2Ch - (AMI) Second Hard Disk user defined: # of Sectors per track
  2Ch - (COMPAQ) bit 6:  0 - numlock OFF on boot, 1 - numlock ON at boot
- 29h - (PHOENIX) MSB word to Intel 82335 CC1 compare register
+ 2Ch - (PHOENIX) MSB word to Intel 82335 CC1 compare register
 
+---------------------------------------------
  2Dh - (AMI) Configuration Options 
   Bit 7 Weitek Installed(1 = On)
   Bit 6 Floppy Drive Seek - turn off for fast boot
@@ -398,6 +459,7 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
   Bit 0 Turbo Switch (1 = On)
  2Dh - (PHOENIX) Checks for values AAh or CCh
   
+---------------------------------------------
  2Eh - Standard CMOS Checksum, High Byte
  2Fh - Standard CMOS Checksum, Low Byte
 
@@ -408,14 +470,18 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
  IBM PS/2 line does not follow this standard with the range 19h-31h being 
  undefined.
 
+---------------------------------------------
  30h - Extended Memory in K, Low Byte
 
+---------------------------------------------
  31h - Extended Memory in K, High Byte 
  (??? this appears to mirror the value in bytes 17h-18h.) 
 
+---------------------------------------------
  32h - Century Byte (BCD value for the century - currently 19)
  32h - (IBM-PS2) Configuration CRC low byte. CRC for range 10h-31h
 
+---------------------------------------------
  33h - Information Flag
   Bit 7 128K (??? believe this indicates the presence of the special 128k
               memory expansion board for the AT to boost the "stock" 512k
@@ -424,6 +490,7 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
  33h - (IBM PS/2) Configuration CRC high byte (see entry for 32h)
  33h - (PHOENIX) Bit 4 (000x 0000) bit 4 from Intel CPU register CP0
 
+---------------------------------------------
  34h - (AMI) Shadowing & Boot Password
   Bits 7-6 Password Selection
    00b Disable 10b Reserved
@@ -435,6 +502,7 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
   Bit 1 D8000h Shadow ROM (Bit 1 = On)
   Bit 0 DC000h Shadow ROM (Bit 1 = On)
 
+---------------------------------------------
  35h - (AMI) Shadowing
   Bit 7 E0000h Shadow ROM (Bit 1 = On)
   Bit 6 E4000h Shadow ROM (Bit 1 = On)
@@ -447,13 +515,16 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
  35h - (PHOENIX) Second user defined hard disk (type 48) Cylinders LSB
        NOTE: used only when PS/2 style password is NOT in effect.
 
+---------------------------------------------
  36h - (PHOENIX) Second user defined hard disk (type 48) Cylinders MSB
        NOTE: used only when PS/2 style password is NOT in effect.
 
+---------------------------------------------
  37h - (IBM PS/2) Date Century Byte 
  37h - (PHOENIX) Second user defined hard disk (type 48) # of heads
        NOTE: used only when PS/2 style password is NOT in effect.
 
+---------------------------------------------
  38h-3Dh (AMI) Encrypted Password
 
  38h-3Fh ??? (IBM PS/2) Encrypted Password. Initialized to 00h in all
@@ -477,6 +548,8 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
  3Eh - (AMI) Extended CMOS Checksum, High Byte (includes 34h - 3Dh)
 
  3Fh - (AMI) Extended CMOS Checksum, Low Byte (includes 34h - 3Dh)
+
+---------------------------------------------
 
  End of original 64 CMOS RAM bytes. Many modern chips now contain 128
  bytes and the IBM PS/2 has provision for 2k of "Expansion CMOS". 
@@ -530,6 +603,7 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
 
 Revision History
 
+v1.23   June, 1994	Added some MCA info from _The_Undocumented_PC_
 v1.22   Feb,  1994      Added NMI mask note
 v1.21   Jan,  1994      Added note for PS/2 checksum found
 v1.20	Sept, 1993      PHOENIX data from Wim Osterholt added

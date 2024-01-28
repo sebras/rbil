@@ -1,6 +1,5 @@
 [This file was provided by Wim Osterholt (2:512/56 or wim@djo.wtm.tudelft.nl).]
-Last Change: 4/3/94
-
+Last Change: 6/5/94
 
 
 		XT, AT and PS/2	 I/O port addresses
@@ -137,7 +136,16 @@ Last Change: 4/3/94
 		 bit 2 = 0  enable video interrupt
 		 bit 1 = 0  enable keyboard, mouse, RTC interrupt
 		 bit 0 = 0  enable timer interrupt
-		OCW2:
+
+0020	r	PIC  interrupt request/in-service registers by OCW3
+		request register:
+		 bit 7-0 = 0  no active request for the corresponding int. line
+			 = 1  active request for corresponding interrupt line
+		in-service register:
+		 bit 7-0 = 0  corresponding line not currently being serviced
+			 = 1  corresponding int. line currently being serviced
+
+0020	w	OCW2:
 		 bit 7-5 = 000	rotate in auto EOI mode (clear)
 			 = 001	nonspecific EOI
 			 = 010	no operation
@@ -149,14 +157,6 @@ Last Change: 4/3/94
 		 bit 4	 = 0	reserved
 		 bit 3	 = 0	reserved
 		 bit 2-0	interrupt request to which the command applies
-
-0020	r	PIC  interrupt request/in-service registers by OCW3
-		request register:
-		 bit 7-0 = 0  no active request for the corresponding int. line
-			 = 1  active request for corresponding interrupt line
-		in-service register:
-		 bit 7-0 = 0  corresponding line not currently being serviced
-			 = 1  corresponding int. line currently being serviced
 
 0020	w	PIC OCW3
 		 bit 7	 = 0   reserved
@@ -193,10 +193,67 @@ Last Change: 4/3/94
 		  0081,0000  enable range compare CC0 0-8M    CC1 disable
 
 -------------------------------------------------------------------------------
-0022-0023 ----	???
+0022-0023 ----	Chip Set Data
+
+0022	w	index for accesses to data port
+0023	r/w	chip set data
+
+-------------------------------------------------------------------------------
+0022-0023 ----	Cyrix Cx486SLC/DLC processor Cache Configuration Registers
 
 0022	w	index for accesses to next port
-0023	r/w	???
+		C0h CR0
+		C1h CR1
+		C4h non-cacheable region 1, start address bits 31-24
+		C5h non-cacheable region 1, start address bits 23-16
+		C6h non-cacheable region 1, start addr 15-12, size (low nybble)
+		C7h non-cacheable region 2, start address bits 31-24
+		C8h non-cacheable region 2, start address bits 23-16
+		C9h non-cacheable region 2, start addr 15-12, size (low nybble)
+		CAh non-cacheable region 3, start address bits 31-24
+		CBh non-cacheable region 3, start address bits 23-16
+		CCh non-cacheable region 3, start addr 15-12, size (low nybble)
+		CDh non-cacheable region 4, start address bits 31-24
+		CEh non-cacheable region 4, start address bits 23-16
+		CFh non-cacheable region 4, start addr 15-12, size (low nybble)
+0023	r/w	cache configuration register array (indexed by port 0022h)
+
+		non-cacheable region sizes:
+		 00h  disabled
+		 01h  4K
+		 02h  8K
+		 03h  16K
+		 04h  32K
+		 05h  64K
+		 06h  128K
+		 07h  256K
+		 08h  512K
+		 09h  1M
+		 0Ah  2M
+		 0Bh  4M
+		 0Ch  8M
+		 0Dh  16M
+		 0Eh  32M
+		 0Fh  4G
+
+		Configuration Register 0 format:
+		 bit 0	"NC0" first 64K of each 1M noncacheable in real/V86
+		 bit 1	"NC1" 640K-1M noncacheable
+		 bit 2	"A20M" enables A20M# input pin
+		 bit 3	"KEN"  enables KEN# input pin
+		 bit 4	"FLUSH" enables KEN# input pin
+		 bit 5	"BARB" enables internal cache flushing on bus holds
+		 bit 6	"C0" cache direct-mapped instead of 2-way associative
+		 bit 7	"SUSPEND" enables SUSP# input and SUSPA# output pins
+
+		Configuration Register 1 format;
+		 bit 0	"RPL" enables output pins RPLSET and RPLVAL#
+
+-------------------------------------------------------------------------------
+0026-0027 ----  Power Management
+
+0026	w	index for data port
+0027	r/w	power management data
 
 -------------------------------------------------------------------------------
 0038-003F ----	PC radio by CoZet Info Systems
@@ -253,8 +310,9 @@ Last Change: 4/3/94
 		 bit 3-0 = 00
 
 0048		EISA
-004A		EISA
-004B		EISA
+0049		8254 timer 2, not used (counter 1)
+004A		EISA programmable interval timer 2
+004B		EISA programmable interval timer 2
 
 -------------------------------------------------------------------------------
 0060-006F ----	Keyboard controller (8041, 8042)  (or PPI (8255) on XT)
@@ -296,18 +354,53 @@ Last Change: 4/3/94
 0060	r/w	KB controller data port or keyboard input buffer (ISA, EISA)
 		should only be read from after status port bit0 = 1
 		should only be written to if status port bit1 = 0
-		keyboard commands (data goes also to port 0060):
+		keyboard commands (data also goes to port 0060h):
+		 E6	sngl  set mouse scaling to 1:1
+		 E7	sngl  set mouse scaling to 2:1
+		 E8	dbl   set mouse resolution
+				(00h = 1/mm,01h = 2/mm,02h = 4/mm,03h = 8/mm)
+		 E9	sngl  get mouse information
+				read two status bytes:
+				  byte 0
+					bit 7 unused
+					bit 6 remote rather than stream mode
+					bit 5 mouse enabled
+					bit 4 scaling set to 2:1
+					bit 3 unused
+					bit 2 left button pressed
+					bit 1 unused
+					bit 0 right button pressed
+				  byte 1: resolution
 		 ED	dbl   set/reset mode indicators Caps Num Scrl
+				bit 2 = CapsLk, bit 1 = NumLk, bit 0 = ScrlLk
 		 EE	sngl  diagnostic echo. returns EE.
-		 EF-F2	sngl  NOP (No OPeration). reserved for future use
+		 EF	sngl  NOP (No OPeration). reserved for future use
+		 F0	dbl   get/set scan code set
+				00h get current set
+				01h scancode set 1 (except Type 2 ctrlr)
+				02h scancode set 2 (default)
+				03h scancode set 3
+		 F2	sngl  read keyboard ID (read two ID bytes)
+		 F2	sngl  read mouse ID (read two ID bytes)
 		 F3	dbl   set typematic rate/delay
+		 F3	dbl   set mouse sample rate in reports per second
 		 F4	sngl  enable keyboard
+		 F4	sngl  enable mouse
 		 F5	sngl  disable keyboard. set default parameters
+		 F5	sngl  disable mouse, set default parameters
 		 F6	sngl  set default parameters
-		 F7-FD	sngl  NOP
+		 F7	sngl  [MCA] set all keys to typematic (scancode set 3)
+		 F8	sngl  [MCA] set all keys to make/release
+		 F9	sngl  [MCA] set all keys to make only
+		 FA	sngl  [MCA] set all keys to typematic/make/release
+		 FB	sngl  [MCA] set al keys to typematic
+		 FC	dbl   [MCA] set specific key to make/release
+		 FD	dbl   [MCA] set specific key to make only
 		 FE	sngl  resend last scancode
 		 FF	sngl  perform internal power-on reset function
-
+		 FF	sngl  reset mouse
+		Note:	must issue command D4h to port 64h first to access
+			  mouse functions
 
 0060	r	KeyBoard or KB controller data output buffer (via PPI on XT)
 
@@ -378,11 +471,22 @@ Last Change: 4/3/94
 		 bit 4 = 0 keyboard inhibit
 		 bit 3 = 1 data in input register is command
 			 0 data in input register is data
-		 bit 2 = 0 system flag status 0=power up or reset 1=selftest OK
+		 bit 2 = system flag status 0=power up or reset 1=selftest OK
 		 bit 1 = 1 input buffer full (input 60/64 has data for 8042)
 		 bit 0 = 1 output buffer full (output 60 has data for system)
 
-0064	r	 KB controller read status by Compaq
+0064	r	KB controller read status (MCA)
+		 bit 7 = 1 parity error on transmission from keyboard
+		 bit 6 = 1 general timeout
+		 bit 5 = 1 mouse output buffer full
+		 bit 4 = 0 keyboard inhibit
+		 bit 3 = 1 data in input register is command
+			 0 data in input register is data
+		 bit 2 = system flag status 0=power up or reset 1=selftest OK
+		 bit 1 = 1 input buffer full (input 60/64 has data for 8042)
+		 bit 0 = 1 output buffer full (output 60 has data for system)
+
+0064	r	KB controller read status by Compaq
 		 bit 7 = 1 parity error detected (11-bit format only). If an
 			   error is detected, a Resend command is sent to the
 			   keyboard once only, as an attempt to recover.
@@ -432,7 +536,9 @@ Last Change: 4/3/94
 		 A1   Compaq  unknown speedfunction ??
 		 A2   Compaq  unknown speedfunction ??
 		 A3   Compaq  Enable system speed control
+		 A4	MCA   check if password installed
 		 A4   Compaq  Toggle speed
+		 A5	MCA   load password
 		 A5   Compaq  Special reed. the 8042 places the real values
 			      of port 2 except for bits 4 and 5 wich are given
 			      a new definition in the output buffer. No output
@@ -441,7 +547,11 @@ Last Change: 4/3/94
 				if bit 5 = 1, an 11-bit keyboard is in use
 				if bit 4 = 0, outp-buff-full interrupt disabled
 				if bit 4 = 1, output-buffer-full int. enabled
+		 A6	MCA   check password
 		 A6   Compaq  unknown speedfunction ??
+		 A7	MCA   disable mouse port
+		 A8	MCA   enable mouse port
+		 A9	MCA   test mouse port
 		 AA	sngl  initiate self-test. will return 55 to data port
 		      Compaq  Initializes ports 1 and 2, disables the keyboard
 			      and clears the buffer pointers. It then places
@@ -461,8 +571,8 @@ Last Change: 4/3/94
 		 C0	read  read input port
 		      Compaq  Places status of input port in output buffer. use
 			      this command only when the output buffer is empty
-		 C1	AWARD Enhanced Command: poll input port Low nibble
-		 C2	AWARD Enhanced Command: poll input port High nibble
+		 C1	MCA   Enhanced Command: poll input port Low nibble
+		 C2	MCA   Enhanced Command: poll input port High nibble
 		 D0	read  read output port
 		      Compaq  Places byte in output port in output buffer. use
 			      this command only when the output buffer is empty
@@ -472,14 +582,15 @@ Last Change: 4/3/94
 			      the output port to control the A20 gate
 		      Compaq  The system speed bits are not set by this command
 			      use commands A1-A6 (!) for speed functions.
-		 D2	AWARD Enhanced Command: write keyboard output buffer
-		 D3	AWARD Enhanced Command: write pointing device out.buf.
+		 D2	MCA   Enhanced Command: write keyboard output buffer
+		 D3	MCA   Enhanced Command: write pointing device out.buf.
+		 D4	MCA   write to mouse
 		 D4	AWARD Enhanced Command: write to auxiliary device
 		 DD	sngl  disable address line A20 (HP Vectra only???)
 			      default in Real Mode
 		 DF	sngl  enable address line A20 (HP Vectra only???)
-		 E0	read  read test inputs. bit0 = T0 and bit1 = T1
-		      Compaq  T0=keyboard clock stream	 T1=KB data stream
+		 E0	read  read test inputs.
+				bit0 = kbd clock, bit1 = kbd data
 		 Exxx	AWARD Enhanced Command: active output port
 		 ED   Compaq  This is a two part command to control the state
 			      of the NumLock CpasLock and ScrollLock LEDs
@@ -507,10 +618,25 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 006C-006F	HP-HIL	(Human Interface Link = async. serial inputs 0-7)
 
 -------------------------------------------------------------------------------
+0065	  ----  AT&T 6300+ high/low chip select
+
+-------------------------------------------------------------------------------
 0065	  ----	???
 
 0065	r/w	???
 		bit 2: A20 gate control (set = A20 enabled, clear = disabled)
+
+-------------------------------------------------------------------------------
+0066-0067 ----  AT&T 6300+ system configuration switches
+
+-------------------------------------------------------------------------------
+0068	  ----  C&T chipsets, turbo mode control
+
+-------------------------------------------------------------------------------
+006B-006F ----  SSGA control registers
+
+006B	?	RAM enable/remap
+006C-006F	undocumented
 
 -------------------------------------------------------------------------------
 0070-007F ----	CMOS RAM/RTC (Real Time Clock  MC146818)
@@ -768,10 +894,16 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 008F	r/w	DMA refresh page register
 
 -------------------------------------------------------------------------------
+0084	  ----  Compaq POST Diagnostic
+
+-------------------------------------------------------------------------------
+0084	  ----  EISA Synchronize Bus Cycle
+
+-------------------------------------------------------------------------------
 0090-009F ----	PS/2 POS (Programmable Option Select)
 
 0090		Central arbitration control port
-0091		Card selection feedback
+0091	r	Card selection feedback
 
 0092	r/w	PS/2 system control port A  (port B is at 0061)
 		 bit 7-6   any bit set to 1 turns activity light on
@@ -904,7 +1036,15 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 00DC	w	DMA channel 4-7 clear mask register (ISA, EISA)
 00DE	w	DMA channel 4-7 write mask register (ISA, EISA)
 
-00E0		split address register, memory encoding registers PS/2m80 only
+-------------------------------------------------------------------------------
+00E0-00E7 ----  Microchannel
+
+00E0	r/w	split address register, memory encoding registers PS/2m80 only
+00E1	r/w	memory register
+00E3	r/w	error trace
+00E4	r/w	error trace
+00E5	r/w	error trace
+00E7	r/w	error trace
 
 -------------------------------------------------------------------------------
 00F0-00F5 ----	PCjr Disk Controller
@@ -917,9 +1057,11 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 -------------------------------------------------------------------------------
 00F0-00FF ----	coprocessor (8087..80387)
 
-00F0		math coprocessor clear busy latch
-00F1		math coprocessor reset
-00F8-00FF	math coprocessor
+00F0	w	math coprocessor clear busy latch
+00F1	w	math coprocessor reset
+00F8	r/w	opcode transfer
+00FA	r/w	opcode transfer
+00FC	r/w	opcode transfer
 
 -------------------------------------------------------------------------------
 00F9-00FF ----	PC radio by CoZet Info Systems
@@ -1000,6 +1142,12 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 
 -------------------------------------------------------------------------------
 0170-0177 ----	HDC 2	(2nd Fixed Disk Controller)   same as 01Fx (ISA, EISA)
+
+-------------------------------------------------------------------------------
+0178-0179 ----  Power Management
+
+0178	w	index selection for data port
+0179	r/w	power management data
 
 -------------------------------------------------------------------------------
 0178-017F ----	PC radio by CoZet Info Systems
@@ -1178,6 +1326,29 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 	r	read data   (receiver card port)
 0215	r	High byte of address, then Low byte   (receiver card port)
 
+------------------------------------------------------------------------------
+0220-0223 ---- Sound Blaster / Adlib port
+
+0220	r/w	Left speaker -- Status / Address port
+0221	w	Left speaker -- Data port
+0222	r/w	Right speaker -- Status / Address port
+		Address:
+		    01 -- Enable waveform control
+		    02 -- Timer #1 data
+		    03 -- Timer #2 data
+		    04 -- Timer control flags
+		    08 -- Speech synthesis mode
+		 20-35 -- Amplitude Modulation / Vibrato
+		 40-55 -- Level key scaling / Total level
+		 60-75 -- Attack / Decay rate
+		 80-95 -- Sustain / Release rate
+		 A0-B8 -- Octave / Frequency Number
+		 C0-C8 -- Feedback / Algorithm
+		 E0-F5 -- Waveform Selection
+0223	w	Right speaker -- Data port
+
+SeeAlso: 0388-0389
+
 -------------------------------------------------------------------------------
 0220-0227 ----	Soundblaster PRO and SSB 16 ASP
 
@@ -1285,6 +1456,9 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 02FF	r/w	scratch register
 
 -------------------------------------------------------------------------------
+0300      ---- Award POST Diagnostic
+
+-------------------------------------------------------------------------------
 0300-0301 ---- Soundblaster 16 ASP MPU-Midi
 
 -------------------------------------------------------------------------------
@@ -1389,6 +1563,90 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 0360-0367 ----	PC network (XT only)
 
 -------------------------------------------------------------------------------
+0360-036F ----  National Semiconductor DP8390C/NS3249C network chipset
+Note:	cards based on this IEEE 802.3 networking chipset can use any range
+	  of 16 consecutive addresses, and provide a total of four pages of
+	  sixteen register
+
+Page 0	r					w
+
+00	Command	reg. 			CR	Command reg.		CR
+01	current local DMA address 0	CLDA0	page start reg. 	PSTART
+02	current local DMA address 1	CLDA1	page stop reg.		PSTOP
+03	boundary pointer		BNRY	boundary pointer	BNRY
+04	transmit status reg.		TSR	Tx page start address	TPSR
+05	number of collisions reg.	NCR	Tx byte count reg.0 	TBCR0 
+06	FIFO					Tx byte count reg.1	TBCR1
+07	interrupt status reg.		ISR	interrupt status reg.	ISR
+08	current remote DMA address 0	CRDA0	remote start addr.reg.0	RSAR0
+09	current remote DMA address 1	CRDA1	remote start addr.reg.1	RSAR1
+0A	reserved				remote byte count reg.0	RBCR0
+0B	reserved				remote byte count reg.1	RBCR1
+0C	receive status reg.		RSR	Rx configuration reg.	RCR
+0D	tally counter 0 (frame errors)	CNTR0	Tx configuration reg.	TCR
+0E	tally counter 1 (CRC errors)	CNTR1	data configuration reg.	DCR
+0F	tally counter 2 (missed pkt)	CNTR2	interrupt mask reg.	IMR
+
+Page 1	r/w
+
+00	Command			CR
+01	physical address reg.0	PAR0
+02	physical address reg.1	PAR1		
+03	physical address reg.2	PAR2		
+04	physical address reg.3	PAR3		
+05	physical address reg.4	PAR4		
+06	physical address reg.5	PAR5		
+07	current page reg.	CURR			
+08	multicast address reg.0	MAR0		
+09	multicast address reg.1	MAR1		
+0A	multicast address reg.2	MAR2		
+0B	multicast address reg.3	MAR3		
+0C	multicast address reg.4	MAR4		
+0D	multicast address reg.5	MAR5		
+0E	multicast address reg.6	MAR6		
+0F	multicast address reg.7	MAR7		
+
+Page 2	r					w
+	diagnostics page - should never be modfied under normal operation.
+
+00	Command				CR	Command			 CR
+01	page start reg.			PSTART	current local DMA addr.0 CLDA0
+02	page stop reg.			BPSTOP	current local DMA addr.1 CLDA1
+03	remote next packet pointer		remote next packet pointer
+04	Tx page start address		TPSR	reserved
+05	local next packet pointer		local next packet pointer
+06	address counter (upper)			address counter (upper)
+07	address counter (lower)			address counter (lower)
+08	reserved				reserved
+09	reserved				reserved
+0A	reserved				reserved
+0B	reserved				reserved
+0C	Rx configuration reg.		RCR	reserved
+0D	Tx configuration reg.		TCR	reserved
+0E	data configuration reg.		DCR	reserved
+0F	interrupt mask reg.		IMR	reserved
+
+Page 3	r					w
+	Test Page - should never be modified !
+
+00	Command CR				Command CR
+
+	bit0=1  software reset command. 1=offline  0=online
+	bit1=0  activate NIC after reset command
+	bit2=1  start transmision of a packet
+	bit3-5  remote DMA command
+		 000 not allowed
+		 001 remote read
+		 010 remote write
+		 011 send packet
+		 1xx abort/complete rmote DMA
+	bit 6,7 page select
+		 00 register page 0
+		 01 register page 1
+		 10 register page 2
+		 11 register page 3
+
+-------------------------------------------------------------------------------
 0370-0377 ----	FDC 2  (2nd Floppy Disk Controller 8272)  same as 03F0
 
 0372	w	diskette controller DOR (Digital Output Register)
@@ -1422,6 +1680,27 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 038B	r/w	 on board 8273 receiver interrupt status
 038C	r/w	 on board 8273 data
 
+------------------------------------------------------------------------------
+0388-0389 ---- Sound Blaster / Adlib port
+
+0388	r/w	Both Speakers -- Status / Address port
+		Address:
+		     01 -- Enable waveform control
+		     02 -- Timer #1 data
+		     03 -- Timer #2 data
+		     04 -- Timer control flags
+		     08 -- Speech synthesis mode
+		  20-35 -- Amplitude Modulation / Vibrato
+		  40-55 -- Level key scaling / Total level
+		  60-75 -- Attack / Decay rate
+		  80-95 -- Sustain / Release rate
+		  A0-B8 -- Octave / Frequency Number
+		  C0-C8 -- Feedback / Algorithm
+		  E0-F5 -- Waveform Selection
+0389	w	Data port
+
+SeeAlso: 0220-0223
+
 -------------------------------------------------------------------------------
 0388-0389 ---- Soundblaster PRO FM-Chip
 0388-038B ---- Soundblaster 16 ASP FM-Chip
@@ -1439,16 +1718,16 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 -------------------------------------------------------------------------------
 03A0-03AF ----	1st SDLC (Binary Synchronous Data Link Control adapter)
 
-0380	r/w	 on board 8255 port A, internal/external sense
-0381	r/w	 on board 8255 port B, external modem interface
-0382	r/w	 on board 8255 port C, internal control and gating
-0383	r/w	 on board 8255 mode register
-0384	r/w	 on board 8253 counter 0 unused
-0385	r/w	 on board 8253 channel 1 inactivity time-out
-0386	r/w	 on board 8253 channel 2 inactivity time-out
-0387	r/w	 on board 8253 mode register
-0388	r/w	 on board 8251 data
-0389	r/w	 on board 8251 command/mode/status register
+03A0	r/w	 on board 8255 port A, internal/external sense
+03A1	r/w	 on board 8255 port B, external modem interface
+03A2	r/w	 on board 8255 port C, internal control and gating
+03A3	r/w	 on board 8255 mode register
+03A4	r/w	 on board 8253 counter 0 unused
+03A5	r/w	 on board 8253 channel 1 inactivity time-out
+03A6	r/w	 on board 8253 channel 2 inactivity time-out
+03A7	r/w	 on board 8253 mode register
+03A8	r/w	 on board 8251 data
+03A9	r/w	 on board 8251 command/mode/status register
 
 -------------------------------------------------------------------------------
 03B0-03BF ----	MDA  (Monochrome Display Adapter based on 6845)
@@ -1548,7 +1827,8 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 03C1	r	VGA	other attribute register
 03C2	r	EGA VGA input status 0 register
 	w	VGA	miscellaneous output register
-03C3	r/w	VGA	video subsystem enable
+03C3	r/w	VGA	video subsystem enable (see also port 46E8h)
+			for IBM, motherboard VGA only
 03C4	w	EGA	TS index register
 	r/w	VGA	sequencer index register
 03C5	w	EGA	TS data register
@@ -1617,9 +1897,9 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 03DA	w	EGA/VGA feature control register
 
 03DB	w	clear light pen latch
-03DC	r/w	preset licht pen latch
+03DC	r/w	preset light pen latch
 
-03DF		CRT/CPU page register  PCjr only
+03DF		CRT/CPU page register  (PCjr only)
 
 -------------------------------------------------------------------------------
 03E8-03EF ----	serial port, same as 02E8, 02F8 and 03F8
@@ -1910,7 +2190,7 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 		bit settings same as 04D6
 		 bit 7	 = 0  enable stop register
 		 bit 6	 = 0  terminal count is an output for this channel
-(default)
+				(default)
 		 bit 5-4      DMA cycle timing
 			 = 00 ISA-compatible (default)
 			 = 01 type A timing mode
@@ -1926,8 +2206,7 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 -------------------------------------------------------------------------------
 0461	r/w	Extended NMI status/control register
 		 bit 7 = 1  NMI pending from fail-safe timer (read only)
-		 bit 6 = 1  NMI pending from bus timeout NMI status (read
-only)
+		 bit 6 = 1  NMI pending from bus timeout NMI status (read only)
 		 bit 5 = 1  NMI pending (read only)
 		 bit 4	    reserved
 		 bit 3 = 1  bus timeout NMI enable (read/write)
@@ -1963,6 +2242,8 @@ only)
 		 bit 0 = 0  slot 9  had control last
 
 -------------------------------------------------------------------------------
+0481-048B ---- EISA DMA page registers
+
 0481	r/w	DMA channel 2 address byte 3 (high)
 0482	r/w	DMA channel 3 address byte 3 (high)
 0483	r/w	DMA channel 1 address byte 3 (high)
@@ -1971,11 +2252,16 @@ only)
 048A	r/w	DMA channel 7 address byte 3 (high)
 048B	r/w	DMA channel 5 address byte 3 (high)
 
+-------------------------------------------------------------------------------
+04C6-04CF ---- EISA DMA count registers
+
 04C6	r/w	DMA channel 5 word count byte 2 (high)
 04CA	r/w	DMA channel 6 word count byte 2 (high)
 04CE	r/w	DMA channel 7 word count byte 2 (high)
 
 -------------------------------------------------------------------------------
+04D0-04D1 ---- EISA IRQ control
+
 04D0	w	IRQ 0-7 interrupt edge/level registers
 		 bit 7 = 1  IRQ 7 is level sensitive
 		 bit 6 = 1  IRQ 6 is level sensitive
@@ -1994,6 +2280,11 @@ only)
 		 bit 1 = 1  IRQ 9  is level sensitive
 		 bit 0	    reserved
 
+-------------------------------------------------------------------------------
+04D4-04D6 ---- EISA DMA control
+
+04D4	r	DMA chaining status
+
 04D4	w	extended DMA chaining mode register, channels 4-7
 		 bit 7-5 = 0  reserved
 		 bit 4	 = 0  generates IRQ 13
@@ -2008,7 +2299,7 @@ only)
 		bit settings same as 04B
 		 bit 7	 = 0  enable stop register
 		 bit 6	 = 0  terminal count is an output for this channel
-(default)
+				(default)
 		 bit 5-4      DMA cycle timing
 			 = 00 ISA-compatible (default)
 			 = 01 type A timing mode
@@ -2020,6 +2311,17 @@ only)
 			 = 10 32-bit I/O, count by bytes
 			 = 11 16-bit I/O, count by bytes
 		 bit 1-0      DMA channel select
+
+-------------------------------------------------------------------------------
+04E0-04FF ---- EISA DMA stop registers
+
+04E0-04E2 r/w	channel 0
+04E4-04E6 r/w	channel 1
+04E8-04EA r/w	channel 2
+04EC-04EE r/w	channel 3
+04F4-04F6 r/w	channel 5
+04F8-04FA r/w	channel 6
+04FC-04FE r/w	channel 7
 
 -------------------------------------------------------------------------------
 0601	w	System control. Laptop chipset: Headland HL21 & Acer M5105
@@ -2046,6 +2348,9 @@ only)
 0628-062F ----	PC network (adapter 2)
 
 -------------------------------------------------------------------------------
+0680	  ----  Microchannel POST Diagnostic (write only)
+
+-------------------------------------------------------------------------------
 06E2-06E3 ----	data aquisition (adapter 1)
 
 -------------------------------------------------------------------------------
@@ -2055,6 +2360,9 @@ only)
 0800-08FF ----	I/O port access registers for extended CMOS RAM or SRAM
 		(256 bytes at a time)
 		Sometimes plain text can be seen here.
+
+-------------------------------------------------------------------------------
+0800-08FF ----  reserved for EISA system motherboard
 
 -------------------------------------------------------------------------------
 0A20-0A23 ----	Token Ring (adapter 1)
@@ -2068,39 +2376,176 @@ only)
 0C00	r/w	page register to write to SRAM or I/O
 
 -------------------------------------------------------------------------------
+0C00-0CFF ----  reserved for EISA system motherboard
+
+-------------------------------------------------------------------------------
 0C7C		bit 7-4 (Compaq)
 
 -------------------------------------------------------------------------------
-0C80-0C83 ----	system board ID registers
+0C80-0C83 ----	EISA system board ID registers
+
+-------------------------------------------------------------------------------
+1000-10FF ----  available for EISA slot 1
 
 -------------------------------------------------------------------------------
 1390-1393 ----	cluster (adapter 3)
 
 -------------------------------------------------------------------------------
-2100-210F ----	IBM XGA (eXtended Graphics Adapter  8514/A)
-2110-211F ----	IBM XGA (eXtended Graphics Adapter  8514/A)
-2120-212F ----	IBM XGA (eXtended Graphics Adapter  8514/A)
-2130-213F ----	IBM XGA (eXtended Graphics Adapter  8514/A)
-2140-214F ----	IBM XGA (eXtended Graphics Adapter  8514/A)
-2150-215F ----	IBM XGA (eXtended Graphics Adapter  8514/A)
-2160-216F ----	IBM XGA (eXtended Graphics Adapter  8514/A)
-2170-217F ----	IBM XGA (eXtended Graphics Adapter  8514/A)
+1400-14FF ----  available for EISA slot 1
+
+-------------------------------------------------------------------------------
+1800-18FF ----  available for EISA slot 1
+
+-------------------------------------------------------------------------------
+1C00-1CFF ----  available for EISA slot 1
+
+-------------------------------------------------------------------------------
+1C80-1C8F ----  VESA XGA Video in EISA slot 1
+
+1C80-1C83 r/w	EISA Video ID
+1C84	r/w	EISA Video expansion board control	
+1C85	r/w	EISA Setup control
+1C88	r/w	EISA Video Programmable Option Select 0
+1C89-1C8F r/w	EISA Video Programmable Option Select 1-7
+
+-------------------------------------------------------------------------------
+2000-20FF ----  available for EISA slot 2
+
+-------------------------------------------------------------------------------
+2100-210F ----	IBM XGA (eXtended Graphics Adapter  8514/A) (first installed)
+2110-211F ----	IBM XGA (eXtended Graphics Adapter  8514/A) (second installed)
+2120-212F ----	IBM XGA (eXtended Graphics Adapter  8514/A) (third installed)
+2130-213F ----	IBM XGA (eXtended Graphics Adapter  8514/A) (fourth installed)
+2140-214F ----	IBM XGA (eXtended Graphics Adapter  8514/A) (fifth installed)
+2150-215F ----	IBM XGA (eXtended Graphics Adapter  8514/A) (sixth installed)
+2160-216F ----	IBM XGA (eXtended Graphics Adapter  8514/A) (seventh installed)
+2170-217F ----	IBM XGA (eXtended Graphics Adapter  8514/A) (eighth installed)
+
+-------------------------------------------------------------------------------
+2100	  ----  XGA Video Operating Mode Register
+
+Note:	this port is for the first XGA in the system; 2110-2170 are used for
+	  the second through eighth XGAs
+
+-------------------------------------------------------------------------------
+2101	  ----  XGA VIdeo Aperture Control
+
+Note:	this port is for the first XGA in the system; 2111-2171 are used for
+	  the second through eighth XGAs
+
+-------------------------------------------------------------------------------
+2102-2103 ----  XGA ???
+
+Note:	this port is for the first XGA in the system; 211x-217x are used for
+	  the second through eighth XGAs
+
+-------------------------------------------------------------------------------
+2104	  ----  XGA Video Interrupt Enable
+
+Note:	this port is for the first XGA in the system; 211x-217x are used for
+	  the second through eighth XGAs
+
+-------------------------------------------------------------------------------
+2105	  ----  XGA Video Interrupt Status
+
+Note:	this port is for the first XGA in the system; 211x-217x are used for
+	  the second through eighth XGAs
+
+-------------------------------------------------------------------------------
+2106	  ----  XGA Video Virtual Memory Control
+
+Note:	this port is for the first XGA in the system; 211x-217x are used for
+	  the second through eighth XGAs
+
+-------------------------------------------------------------------------------
+2107	  ----  XGA Video Virtual Memory Interrupt Status
+
+Note:	this port is for the first XGA in the system; 211x-217x are used for
+	  the second through eighth XGAs
+
+-------------------------------------------------------------------------------
+2108	  ----  XGA Video Aperture Index
+
+Note:	this port is for the first XGA in the system; 211x-217x are used for
+	  the second through eighth XGAs
+
+-------------------------------------------------------------------------------
+2109	  ----	XGA Video Memory Access Mode
+
+Note:	this port is for the first XGA in the system; 211x-217x are used for
+	  the second through eighth XGAs
+
+-------------------------------------------------------------------------------
+210A	  ----  XGA Video Index for Data
+
+Note:	this port is for the first XGA in the system; 211x-217x are used for
+	  the second through eighth XGAs
+
+-------------------------------------------------------------------------------
+210B	  ----  XGA Video Data (byte)
+
+Note:	this port is for the first XGA in the system; 211x-217x are used for
+	  the second through eighth XGAs
+
+-------------------------------------------------------------------------------
+210C-210F ----	XGA Video Data (word/dword)
+
+Note:	this port is for the first XGA in the system; 211x-217x are used for
+	  the second through eighth XGAs
+
+-------------------------------------------------------------------------------
+2110-217F ----  secondary XGA adapters (see individual entries above)
 
 -------------------------------------------------------------------------------
 2390-2393 ----	cluster (adapter 4)
 
 -------------------------------------------------------------------------------
+2400-24FF ----  available for EISA slot 2
+
+-------------------------------------------------------------------------------
 27C6	r/w	LCD timeout in minutes (Compaq LTE Lite)
 
 -------------------------------------------------------------------------------
-3220-3227 ----	serial port 3, description same as 03F8
-3228-322F ----	serial port 4, description same as 03F8
+2800-28FF ----  available for EISA slot 2
+
+-------------------------------------------------------------------------------
+2C80-2C8F ----  VESA XGA Video in EISA slot 2 (see 1C80-1C8F)
+
+-------------------------------------------------------------------------------
+3000-30FF ----  available for EISA slot 3
+
+-------------------------------------------------------------------------------
+3220-3227 ----	serial port 3, description same as 03F8 (MCA)
+3228-322F ----	serial port 4, description same as 03F8 (MCA)
+
+-------------------------------------------------------------------------------
+3400-34FF ----  available for EISA slot 3
 
 -------------------------------------------------------------------------------
 3540-354F ----	IBM SCSI (Small Computer System Interface) adapter
 3550-355F ----	IBM SCSI (Small Computer System Interface) adapter
 3560-356F ----	IBM SCSI (Small Computer System Interface) adapter
 3570-357F ----	IBM SCSI (Small Computer System Interface) adapter
+
+-------------------------------------------------------------------------------
+3800-38FF ----  available for EISA slot 3
+
+-------------------------------------------------------------------------------
+3C00-3CFF ----  available for EISA slot 3
+
+-------------------------------------------------------------------------------
+3C80-3C8F ----  VESA XGA Video in EISA slot 3
+
+3C80-3C83 r/w	EISA Video ID
+3C84	r/w	EISA Video expansion board control	
+3C85	r/w	EISA Setup control
+3C88	r/w	EISA Video Programmable Option Select 0
+3C89-3C8F r/w	EISA Video Programmable Option Select 1-7
+
+SeeAlso: 1C80-1C8F,2C80-2C8F,7C80-7C8F
+
+-------------------------------------------------------------------------------
+4000-40FF ----  available for EISA slot 4
 
 -------------------------------------------------------------------------------
 4220-4227 ----	serial port, description same as 03F8
@@ -2112,13 +2557,113 @@ only)
 42E1	r/w	GPIB (adapter 2)
 
 -------------------------------------------------------------------------------
+4400-44FF ----  available for EISA slot 4
+
+-------------------------------------------------------------------------------
+46E8	  ----  VGA video adapter enable
+
+46E8	r/w	enable flags
+		bits 7-5 unused or vendor-specific
+		bit 4: setup for POS registers (MCA)
+		bit 3: enable video I/O ports and video buffer
+		bits 2-0 unused or vendor-specific
+
+Note:	IBM uses this port for adapter-card VGAs only, and port 03C3 for
+	  motherboard VGA only
+
+SeeAlso: 03C3
+
+-------------------------------------------------------------------------------
+4800-48FF ----  available for EISA slot 4
+
+-------------------------------------------------------------------------------
+4C00-4CFF ----  available for EISA slot 4
+
+-------------------------------------------------------------------------------
+4C80-4C8F ----  VESA XGA Video in EISA slot 4 (see 3C80-3C8F)
+
+SeeAlso: 1C80-1C8F,6C80-6C8F
+
+-------------------------------------------------------------------------------
+5000-50FF ----  available for EISA slot 5
+
+-------------------------------------------------------------------------------
 5220-5227 ----	serial port, description same as 03F8
 5228-522F ----	serial port, description same as 03F8
+
+-------------------------------------------------------------------------------
+5400-54FF ----  available for EISA slot 5
+
+-------------------------------------------------------------------------------
+5800-58FF ----  available for EISA slot 5
+
+-------------------------------------------------------------------------------
+5C00-5CFF ----  available for EISA slot 5
+
+-------------------------------------------------------------------------------
+5C80-5C8F ----  VESA XGA Video in EISA slot 5
+
+5C80-5C83 r/w	EISA Video ID
+5C84	r/w	EISA Video expansion board control	
+5C85	r/w	EISA Setup control
+5C88	r/w	EISA Video Programmable Option Select 0
+5C89-5C8F r/w	EISA Video Programmable Option Select 1-7
+
+SeeAlso: 2C80-2C8F,4C80-4C8F,6C80-6C8F
+
+-------------------------------------------------------------------------------
+6000-60FF ----  available for EISA slot 6
 
 -------------------------------------------------------------------------------
 62E0-62EF ----	GPIB (General Purpose Interface Bus, IEEE 488 interface)
 
 62E1	r/w	GPIB (adapter 3)
+
+-------------------------------------------------------------------------------
+6400-64FF ----  available for EISA slot 6
+
+-------------------------------------------------------------------------------
+6800-68FF ----  available for EISA slot 6
+
+-------------------------------------------------------------------------------
+6C00-6CFF ----  available for EISA slot 6
+
+-------------------------------------------------------------------------------
+6C80-6C8F ----  VESA XGA Video in EISA slot 1
+
+6C80-6C83 r/w	EISA Video ID
+6C84	r/w	EISA Video expansion board control	
+6C85	r/w	EISA Setup control
+6C88	r/w	EISA Video Programmable Option Select 0
+6C89-1C8F r/w	EISA Video Programmable Option Select 1-7
+
+SeeAlso: 1C80-1C8F,2C80-2C8F,5C80-5C8F
+
+-------------------------------------------------------------------------------
+7000-70FF ----  available for EISA slot 7
+
+-------------------------------------------------------------------------------
+7400-74FF ----  available for EISA slot 7
+
+-------------------------------------------------------------------------------
+7800-78FF ----  available for EISA slot 7
+
+-------------------------------------------------------------------------------
+7C00-7CFF ----  available for EISA slot 7
+
+-------------------------------------------------------------------------------
+7C80-7C8F ----  VESA XGA Video in EISA slot 7
+
+7C80-7C83 r/w	EISA Video ID
+7C84	r/w	EISA Video expansion board control	
+7C85	r/w	EISA Setup control
+7C88	r/w	EISA Video Programmable Option Select 0
+7C89-7C8F r/w	EISA Video Programmable Option Select 1-7
+
+SeeAlso: 1C80-1C8F, 6C80-6C8F
+
+-------------------------------------------------------------------------------
+8000-80FF ----  available for EISA slot 8
 
 -------------------------------------------------------------------------------
 82E0-82EF ----	GPIB (General Purpose Interface Bus, IEEE 488 interface)
@@ -2128,6 +2673,27 @@ only)
 -------------------------------------------------------------------------------
 82F8-82FF ----	serial port, description same as 03F8
 83F8-83FF ----	serial port, description same as 03F8
+
+-------------------------------------------------------------------------------
+8400-84FF ----  available for EISA slot 8
+
+-------------------------------------------------------------------------------
+8800-88FF ----  available for EISA slot 8
+
+-------------------------------------------------------------------------------
+8C00-8CFF ----  available for EISA slot 8
+
+-------------------------------------------------------------------------------
+9000-90FF ----  available for EISA slot 9
+
+-------------------------------------------------------------------------------
+9400-94FF ----  available for EISA slot 9
+
+-------------------------------------------------------------------------------
+9800-98FF ----  available for EISA slot 9
+
+-------------------------------------------------------------------------------
+9C00-9CFF ----  available for EISA slot 9
 
 -------------------------------------------------------------------------------
 A220	  ????	soundblaster support in AMI Hi-Flex BIOS  ????
@@ -2190,3 +2756,19 @@ MEMORY-MAPPED ADDRESSES
 		bit 0	= 0  parity error in byte 0 (in 32-bit double word)
 
 -------------------------------------------------------------------------------
+C0000000-C000FFFF	Weitek "Abacus" math coprocessor
+
+-------------------------------------------------------------------------------
+
+
+
+
+-------------CREDITS-------------------------
+Chuck Proctor <71534.2302@CompuServe.COM>
+
+[Some of the information in this list was extracted from Frank van Gilluwe's
+_The_Undocumented_PC_, a must-have book for anyone programming down to the
+"bare metal" of a PC.]
+
+[Some of the information in this list from the shareware version of Dave
+Williams' DOSREF, v3.0]

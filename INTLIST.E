@@ -2,11 +2,12 @@
 /*	EEL code file for editing the Interrupt List		*/
 /*								*/
 /*	Written by Ralf Brown					*/
-/*	LastEdit:  3 Jun 93					*/
+/*	LastEdit: 7 May 94					*/
 /*								*/
 /*  This EEL file adds the following keybindings:		*/
 /*    Shf-Alt-B add another BUG: to the current entry           */
 /*    Shf-Alt-D add a Desc: section to the current entry	*/
+/*    Shf-Alt-R add a Range: section to the current entry       */
 /*	Alt-I	add an Index: section to the current entry	*/
 /*		add another Index: line if already on Index:	*/
 /*      Alt-N   add a new note to current entry or data struct  */
@@ -22,9 +23,14 @@
 /*		preceding the current entry			*/
 /*	^F12	jump to a specified entry			*/
 /*								*/
+/*  It adds the following unbound commands:		        */
+/*      renumber-tables					        */
+/*								*/
 /*  Other:							*/
 /*	adds intlist-mode for .LST and .1ST files		*/
 /*	switches current buffer into intlist-mode on loading	*/
+/*      maintains a table counter which is inserted each time   */
+/*        a table is created in the text		        */
 /****************************************************************/
 
 #include "eel.h"
@@ -32,15 +38,40 @@
 keytable intlist_tab ;			/* key table for IntList mode */
 
 /*=============================================================*/
+/*    Global Variables					       */
 /*=============================================================*/
 
 char return_section[] = "Return: " ;
 char program_section[] = "Program: " ;
 char desc_section[] = "Desc:\t" ;
+char range_section[] = "Range:\t" ;
 char notes_section[] = "Notes*:\t" ;
 char bugs_section[] = "BUGS*:\t" ;
 char seealso_section[] = "SeeAlso: " ;
 char index_section[] = "Index:\t" ;
+
+char *(section_order[9]) ;
+
+when_loading()
+{
+   /* list the sections of an entry in the order they should appear (if */
+   /* present at all) */
+   section_order[0] = return_section ;
+   section_order[1] = program_section ;
+   section_order[2] = desc_section ;
+   section_order[3] = range_section ;
+   section_order[4] = notes_section ;
+   section_order[5] = bugs_section ;
+   section_order[6] = seealso_section ;
+   section_order[7] = index_section ;
+   section_order[8] = NULL ;
+}
+
+/*=============================================================*/
+/*    Buffer-specific variables				       */
+/*=============================================================*/
+
+buffer spot table_counter ;
 
 /*=============================================================*/
 /*=============================================================*/
@@ -66,6 +97,7 @@ int is_separator_line()
 int to_separator_line(dir)
 int dir ;
 {
+   nl_reverse() ;
    return search(dir,"\n--------") ;
 }
 
@@ -78,27 +110,16 @@ int to_section_start(section)
 char *section ;
 {
    int i, j, len ;
-   char *(sections[8]) ;
 
-   /* list the sections of an entry in the order they should appear (if */
-   /* present at all) */
-   sections[0] = return_section ;
-   sections[1] = program_section ;
-   sections[2] = desc_section ;
-   sections[3] = notes_section ;
-   sections[4] = bugs_section ;
-   sections[5] = seealso_section ;
-   sections[6] = index_section ;
-   sections[7] = NULL ;
-   for (i = 0 ; sections[i] ; i++)
-      if (strcmp(section,sections[i]) == 0)
+   for (i = 0 ; section_order[i] ; i++)
+      if (strcmp(section,section_order[i]) == 0)
 	 break ;
-   if (sections[i])
+   if (section_order[i])
       {
-      while (!is_separator_line() && !empty_line())
+      while (!is_separator_line())
 	 {
-	 for (j = i ; sections[j] ; j++)
-	    if (parse_string(1,sections[j],NULL))
+	 for (j = i ; section_order[j] ; j++)
+	    if (parse_string(1,section_order[j],NULL))
 	       {
 	       if ((len = parse_string(1,section,NULL)) != 0)
 		  {
@@ -207,6 +228,17 @@ command desc() on intlist_tab[ALT('D')]
 }
 
 /*=============================================================*/
+/* Add a Range: section if the current entry does not already  */
+/* have one; if there is already a Range: section, move to the */
+/* start of it						       */
+/*=============================================================*/
+
+command range() on intlist_tab[ALT('R')]
+{
+   make_section(range_section,1,NULL) ;
+}
+
+/*=============================================================*/
 /* Add a "Program: " section to the current entry if it does   */
 /* not have one; otherwise, move to the beginning of the       */
 /* Program: section					       */
@@ -289,6 +321,36 @@ command separator_line() on intlist_tab[FKEY(11)]
 }
 
 /*=============================================================*/
+/*=============================================================*/
+
+void insert_table_counter()
+{
+   char counter[6] ;
+   save_var point = *table_counter + 3 ;
+
+   /* increment that table counter */
+   while (curchar() >= '0')
+      {
+      if (curchar() < '9')
+	 {
+	 replace(point,curchar()+1) ;
+	 break ;
+	 }
+      else
+	 {
+	 replace(point,'0') ;
+	 point-- ;
+	 }
+      }
+   restore_vars() ;
+   /* and now insert the incremented value at point */
+   stuff("(Table ") ;
+   grab(*table_counter,*table_counter+4,counter) ;
+   stuff(counter) ;
+   stuff(")") ;
+}
+
+/*=============================================================*/
 /* type the name of a structure, then invoke this function     */
 /* to create the "Format of X:" and "Offset Size Descr" lines  */
 /*=============================================================*/
@@ -302,7 +364,9 @@ command structure_header() on intlist_tab[FCTRL(11)]
       {
       stuff("Format of ") ;
       to_end_line() ;
-      stuff(":\nOffset\tSize\tDescription\n 00h\t") ;
+      stuff(":\nOffset\tSize\tDescription\t") ;
+      insert_table_counter() ;
+      stuff("\n 00h\t") ;
       }
    else
       point = start ;
@@ -320,7 +384,8 @@ command value_header() on intlist_tab[FSHIFT(11)]
    to_begin_line() ;
    if (parse_string(1,"Values for ",NULL) == 0)
       {
-      stuff("Values for ") ;
+      insert_table_counter() ;
+      stuff("\nValues for ") ;
       to_end_line() ;
       stuff(":\n ") ;
       }
@@ -340,8 +405,11 @@ command call_with_header() on intlist_tab[FALT(11)]
    to_begin_line() ;
    if (parse_string(1,"Call ",NULL) == 0)
       {
-      stuff("Call ") ;
+      insert_table_counter() ;
+      stuff("\nCall ") ;
       to_end_line() ;
+      if (character(point-1) != ' ')
+	 stuff(" ") ;
       stuff("with:\n") ;
       }
    else
@@ -362,7 +430,9 @@ command bitfields_for_header() on intlist_tab[FALT(12)]
       {
       stuff("Bitfields for ") ;
       to_end_line() ;
-      stuff(":\n") ;
+      stuff(":\nBit(s)\tDescription\t") ;
+      insert_table_counter() ;
+      stuff("\n ") ;
       }
    else
       point = start ;
@@ -461,7 +531,7 @@ int number_one_int()
 	 point = oldpoint + 11 ;	/* skip NL and first ten dashes */
 	 delete(point,point+12) ;	/* replace 12 dashes by the function */
 	 stuff(func_num) ;		/*   number and extra register */
-	 point = oldpoint ;		/* back to start of line, allowing repeat */
+	 point = oldpoint + 9 ;		/* back to category letter position */
 	 return 1 ;
 	 }
       point = oldpoint ;
@@ -488,7 +558,7 @@ command number_int() on intlist_tab[FKEY(12)]
 	 break ;
 	 }
       if (((i+1) % 100) == 0)
-	 say("%d...",i+1) ;
+	 say("%4d...",i+1) ;
       }
    if (iter > 1 && !hit_top)
       say("Done.") ;
@@ -680,10 +750,8 @@ int val ;
 {
    if (val < 0)
       return '-' ;
-   else if (val > 9)
-      return 'A' + val - 10 ;
    else
-      return '0' + val ;
+      return (val > 9) ? ('A' + val - 10) : ('0' + val) ;
 }
 
 /*=============================================================*/
@@ -696,6 +764,7 @@ int *first_entry ;
    int ah, al, t1, t2, match, found ;
    char buf[7] ;
 
+   if (extra_str) extra_str = 0 ;  /* for now, to avoid compiler warning */
    *first_entry = 0 ;
    ah = hex2_to_int(entry[2],entry[3]) ;
    while (1)
@@ -850,6 +919,187 @@ command goto_int() on intlist_tab[FCTRL(12)]
 }
 
 /*=============================================================*/
+/*=============================================================*/
+
+void fix_unnumbered_tables()
+{
+   int matchsize ;
+   
+   point = 0 ;
+   while (search(1,"\n\n"))
+      {
+      switch(curchar())
+	 {
+	 case 'C':
+	    if (parse_string(1,"Call ") != 0)
+	       {
+	       /* we got Call..., we know it doesn't have a table number */
+	       insert_table_counter() ;
+	       stuff("\n") ;
+	       }
+	    break ;
+	 case 'V':
+	    if (parse_string(1,"Values ") != 0)
+	       {
+	       /* we know this Values... doesn't have a table number */
+	       insert_table_counter() ;
+	       stuff("\n") ;
+	       }
+	    break ;
+	 case 'B':
+	    if (parse_string(1,"Bitfields ",0) == 0)
+	       break ;
+	    nl_forward() ;    /* skip to start of next line */
+	    if (parse_string(1,".*\t%(Table ",0) == 0)
+	       {
+	       /* if the pattern didn't match, there is no table number, */
+	       /* so add it */
+	       to_end_line() ;
+	       matchsize = parse_string(-1,"[ \t]+",0) ;
+	       if (matchsize)
+		  delete(point-matchsize,point) ;
+	       stuff("\t") ;
+	       insert_table_counter() ;
+	       }
+	    break ;
+	 case 'F':
+	    if (parse_string(1,"Format ",0) == 0)
+	       break ;
+	    nl_forward() ;    /* skip to start of next line */
+	    if (parse_string(1,".*\t%(Table ",0) == 0)
+	       {
+	       /* if the pattern didn't match, there is no table number, */
+	       /* so add it */
+	       to_end_line() ;
+	       matchsize = parse_string(-1,"[ \t]+",0) ;
+	       if (matchsize)
+		  delete(point-matchsize,point) ;
+	       stuff("\t") ;
+	       insert_table_counter() ;
+	       }
+	    break ;
+	 default:
+	    /* not a table header, so ignore it */
+	    break ;
+	 }
+      }
+}
+
+/*=============================================================*/
+/*=============================================================*/
+
+int *gather_table_numbers(number_of_tables)
+int *number_of_tables ;
+{
+   int i, num_tables ;
+   int tcount = 0 ;
+   char counter[5] ;
+   int *new_numbers ;
+   int old_number ;
+   save_var case_fold = 0 ;
+   
+   grab(*table_counter,*table_counter+4,counter) ;
+   num_tables = strtoi(counter,10) ;
+   new_numbers = (int *)malloc((num_tables+2)*sizeof(int)) ;
+   for (i = 0 ; i <= num_tables ; i++)
+      new_numbers[i] = 0 ;
+   point = 0 ;
+   while (search(1,"(Table "))
+      {
+      grab(point,point+4,counter) ;
+      old_number = strtoi(counter,10) ;
+      if (old_number > 0 && old_number <= num_tables)
+	 new_numbers[old_number] = ++tcount ;
+      }
+   if (number_of_tables)
+      *number_of_tables = num_tables ;
+   return new_numbers ;
+}
+
+/*=============================================================*/
+/*=============================================================*/
+
+int adjust_table_numbers(num_tables,new_numbers)
+int num_tables ;
+int *new_numbers ;
+{
+   char counter[5] ;
+   int old_number ;
+   int dangling = 0 ;
+   
+   point = 0 ;
+   while (search(1,"(Table "))
+      {
+      grab(point,point+4,counter) ;
+      old_number = strtoi(counter,10) ;
+      if (old_number > 0 && old_number <= num_tables)
+	 {
+	 delete(point,point+4) ;
+	 bprintf("%04d",new_numbers[old_number]) ;
+	 }
+      }
+   point = 0 ;
+   while (re_search(1,"[, \t]%#[0-9][0-9][0-9][0-9]"))
+      {
+      grab(point-4,point,counter) ;
+      old_number = strtoi(counter,10) ;
+      if (old_number > 0 && old_number <= num_tables)
+	 {
+	 if (new_numbers[old_number])
+	    {
+	    delete(point-4,point) ;
+	    bprintf("%04d",new_numbers[old_number]) ;
+	    }
+	 else /* dangling xref */
+	    {
+	    dangling++ ;
+	    point -= 4 ;
+	    stuff("?") ;
+	    point += 4 ;
+	    }
+	 }
+      }
+   return dangling ;
+}
+
+/*=============================================================*/
+/*=============================================================*/
+
+command renumber_tables()
+{
+   int number_of_tables ;
+   int *new_numbers ;
+   spot start = alloc_spot(1) ;
+   int dangling ;
+   
+   *start = point ;
+   say("Pass 1: numbering unnumbered tables") ;
+   fix_unnumbered_tables() ;
+   say("Pass 2: gathering table numbers") ;
+   new_numbers = gather_table_numbers(&number_of_tables) ;
+   say("Pass 3: adjusting table numbers") ;
+   dangling = adjust_table_numbers(number_of_tables,new_numbers) ;
+   free(new_numbers) ;
+   if (dangling)
+      say("%d dangling cross-references, search for '#?'",dangling) ;
+   else
+      say("Done") ;
+   point = *start ;
+   free_spot(start) ;
+}
+
+/*=============================================================*/
+/*=============================================================*/
+
+void find_table_counter()
+{
+   save_var point = (size() > 10000) ? size() - 10000 : 0 ;
+
+   search(1,"Highest Table Number = ") ;
+   table_counter = alloc_spot(1) ;
+}
+
+/*=============================================================*/
 /* Put the current buffer into IntList major mode	       */
 /*=============================================================*/
 
@@ -864,6 +1114,7 @@ command intlist_mode()
    margin_right = 79 ;
    want_backups = 1 ;
    undo_size = 100000 ;     /* less than default 500,000 since list is so big */
+   find_table_counter() ;
 }
 
 when_loading()

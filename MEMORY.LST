@@ -1,5 +1,5 @@
 [This file was originally provided by Robin Walker.  --Ralf]
-Last Update: 2/6/94
+Last Update: 5/22/94
 
 Format of BIOS Data Segment at segment 40h:
 		{items in curly braces not documented by IBM}
@@ -39,10 +39,21 @@ Offset	Size	Description
 		    bit	     0: =1 if diskette available for boot
  12h	BYTE	[Conv] POST status
 		[AT] {Manufacturing test initialisation flags}
+		    bit 0: Manufacturing test mode rather than normal operation
+		    bits 1-7 unused
+		[MCA] Manufacturing test
+		    bit 7: POST flag, ???
+		    bits 6-5 unused
+		    bit 4: POST flag, slot 4 has adapter identifier EDAFh
+		    bit 3: POST flag, 80x25 color video
+		    bit 2: POST flag, ???
+		    bit 1: unused
+		    bit 0: manufacturing test mode rather than normal operation
 		[PS/2-25] POST system flag
 		    bit 0: optional memory failed; memory remapped
 		    bit 1: real-time clock installed
- 13h	WORD	Base memory size in kbytes (0-640)
+ 13h	WORD	Base memory size in KBytes (0-640)
+ 15h	WORD	[PC,XT] adapater memory size in KBytes
  15h	BYTE	[AT] {Manufacturing test scratch pad}
 		[Compaq Deskpro 386] previous scan code
  16h	BYTE	[AT] {Manufacturing test scratch pad}
@@ -67,14 +78,14 @@ Offset	Size	Description
 		    bit 1 =1 Left Alt pressed
 		    bit 0 =1 Left Ctrl pressed
  19h	BYTE	Keyboard: Alt-nnn keypad workspace
- 1Ah	WORD	Keyboard: ptr to next character in keyboard buffer
- 1Ch	WORD	Keyboard: ptr to first free slot in keyboard buffer
+ 1Ah	WORD	Keyboard: pointer to next character in keyboard buffer
+ 1Ch	WORD	Keyboard: pointer to first free slot in keyboard buffer
  1Eh 16 WORDs	Keyboard circular buffer (but see 80h, 82h for override)
  3Eh	BYTE	Diskette recalibrate status:
 		    bit 7 =1 Diskette hardware interrupt occurred
 		    bits 6-4 reserved
-		    bit 3 =1 Recalibrate diskette 3
-		    bit 2 =1 Recalibrate diskette 2
+		    bit 3 =1 Recalibrate diskette 3 (PC,XT only)
+		    bit 2 =1 Recalibrate diskette 2 (PC,XT only)
 		    bit 1 =1 Recalibrate diskette 1
 		    bit 0 =1 Recalibrate diskette 0
  3Fh	BYTE	Diskette motor status:
@@ -82,8 +93,8 @@ Offset	Size	Description
 			  =0 current operation is read or verify
 		    bit 6    reserved
 		    bits 5-4 diskette drive number selected (0-3)
-		    bit 3 =1 diskette 3 motor on
-		    bit 2 =1 diskette 2 motor on
+		    bit 3 =1 diskette 3 motor on (PC,XT only)
+		    bit 2 =1 diskette 2 motor on (PC,XT only)
 		    bit 1 =1 diskette 1 motor on
 		    bit 0 =1 diskette 0 motor on
  40h	BYTE	Diskette motor turn-off time-out count
@@ -122,6 +133,35 @@ Offset	Size	Description
 		AT: 101DHHHH, D=drive number, HHHH=head number
     48h BYTE	XT: INT 13h subfunction number
 		AT: comand byte to hard disk controller
+ 42h	BYTE	disk controller status register 0
+		bits 7-6: interrupt code
+			00 normal completion
+			01 abnormal termination during execution
+			10 invalid command
+			11 abnormal termination: ready line on/diskette change
+		bit 5: requested seek complete
+		bit 4: drive fault
+		bit 3: drive not ready
+		bit 2: head state at time of interrupt
+		bits 1-0: selected drive (drives 2&3 on PC,XT only)
+ 43h	BYTE	diskette controller status register 1
+		bit 7: attempted access beyon last cylinder
+		bit 6: unused
+		bit 5: CRC error on read
+		bit 4: DMA overrun
+		bit 3: unused
+		bit 2: data error
+		bit 1: disk write protected
+		bit 0: missing address mark
+ 44h	BYTE	diskette controller status register 2
+		bit 7: unused
+		bit 6: found deleted data address mark
+		bit 5: CRC error in data field
+		bit 4: wrong cylinder number read
+		bit 3: verify equal
+		bit 2: can't find sector matching verify condition
+		bit 1: bad cylinder
+		bit 0: unable to find address mark
  49h	BYTE	Video current mode
  4Ah	WORD	Video columns on screen
  4Ch	WORD	Video page (regen buffer) size in bytes
@@ -131,21 +171,39 @@ Offset	Size	Description
  62h	BYTE	Video current page number
  63h	WORD	Video CRT controller base address: color=03D4h, mono=03B4h
  65h	BYTE	Video current setting of mode select register 03D8h/03B8h
+		bits 7-6 unused
+		bit 5: attribute bit 7 controls blinking instead of background
+		bit 4: mode 6 graphics in monochrome
+		bit 3: video signal enabled
+		bit 2: monochrome
+		bit 1: graphics
+		bit 0: 80x25 text
  66h	BYTE	Video current setting of CGA palette register 03D9h
+		bits 7-6 unused
+		bit 5: palette (0/1)
+		bit 4: intense background colors in text mode
+		bit 3: intense border color (40x25) / background color (mode 5)
+		bit 2: red
+		bit 1: green
+		bit 0: blue
+ 67h	WORD	[PC only] cassette time count
  67h	DWORD	{POST real mode re-entry point after certain resets}
 		[PS except Mod 25,30] pointer to reset code upon system reset
 		    with memory preserved (see offset 72h)
- 6Bh	BYTE	POST last unexpected interrupt
+ 69h	WORD	[PC only] cassette CRC register
+ 6Bh	BYTE	[PC only] last value read from cassette
+		[XT+] POST last unexpected interrupt
+		bit 0 = IRQ0 to bit 7 = IRQ7
  6Ch	DWORD	Timer ticks since midnight
  70h	BYTE	Timer overflow, non-zero if has counted past midnight
  71h	BYTE	Ctrl-Break flag: bit 7=1
  72h	WORD	POST reset flag:
-		    = 1234h to bypass memory test (warm boot)
-		    = 4321h [PS/2 except Mod 25,30] to preserve memory
-		    = 5678h [Conv] system suspended
-		    = 9ABCh [Conv] manufacturing test mode
-		    = ABCDh [Conv] POST loop mode
-		    =	64h Burn-in mode
+		    1234h to bypass memory test (warm boot)
+		    4321h [PS/2 except Mod 25,30] to preserve memory
+		    5678h [Conv] system suspended
+		    9ABCh [Conv] manufacturing test mode
+		    ABCDh [Conv] POST loop mode
+		    0064h Burn-in mode
  74h	BYTE	Fixed disk last operation status, except ESDI drives:
 		    00h no error
 		    01h invalid function request
@@ -188,7 +246,7 @@ Offset	Size	Description
 		bit 7-6 reserved
 		bit 5 set if Virtual DMA Spec supported [PS] (see INT 4B)
 		bit 4 reserved
-		bit 3 set if INT 4Bh intercepted
+		bit 3 set if INT 4Bh intercepted and must be chained
 		bit 2 reserved
 		bit 1 set if Generic SCSI CBIOS services available on INT 4Bh
 		bit 0 reserved
@@ -199,16 +257,16 @@ Offset	Size	Description
  84h	BYTE	Video EGA/MCGA/VGA rows on screen minus one
  85h	WORD	Video EGA/MCGA/VGA character height in scan-lines
  87h	BYTE	Video EGA/VGA control: [MCGA: =00h]
-		    bit 7:  =1 if not to clear RAM (see INT 10h, AH=00h)
-		    bits 6-5: RAM on adapter = (this field + 1) * 64K
-		    bit 4:  reserved
-		    bit 3:  =0 if EGA/VGA video system active, =1 if inactive
-		    bit 2:  =1 if to wait for display enable (what means this?)
-		    bit 1:  =0 for color or ECD monitor, =1 for mono monitor
-		    bit 0:  =0 alphanumeric cursor emulation enabled, =1 not.
-			    When enabled, text mode cursor size (INT 10,AH=01h)
-			    settings looking like CGA ones are translated to
-			    equivalent EGA/VGA ones.
+		bit 7:	=1 if not to clear RAM (see INT 10h, AH=00h)
+		bits 6-5: RAM on adapter = (this field + 1) * 64K
+		bit 4:	reserved
+		bit 3:	=0 if EGA/VGA video system active, =1 if inactive
+		bit 2:	=1 if to wait for display enable (what means this?)
+		bit 1:	=0 for color or ECD monitor, =1 for mono monitor
+		bit 0:	=0 alphanumeric cursor emulation enabled, =1 not.
+			When enabled, text mode cursor size (INT 10,AH=01h)
+			settings looking like CGA ones are translated to
+			equivalent EGA/VGA ones.
  88h	BYTE	Video EGA/VGA switches: [MCGA: reserved]
 		    bits 7-4: power-on state of feature connector bits 3-0
 		    bits 3-0: configuration switches 4-1 (=0 on, =1 off)
@@ -290,20 +348,20 @@ Offset	Size	Description
 		    bit 0:  =1 drive 0 supports 80 tracks, always valid
  90h	BYTE	Diskette drive 0 media state
  91h	BYTE	Diskette drive 1 media state
-		    bits 7-6: Data rate
-				00=500kbps, 01=300kbps, 10=250kbps, 11=1Mbps
-		    bit	   5: =1 if double stepping reqd (e.g. 360kB in 1.2MB)
-		    bit	   4: =1 if media established
-		    bit	   3: =1 if drive capable of supporting 4MB media
-		    bits 2-0: on exit from BIOS, contain:
-			    000 trying 360kB in 360kB
-			    001 trying 360kB in 1.2MB
-			    010 trying 1.2MB in 1.2MB
-			    011 360kB in 360kB established
-			    100 360kB in 1.2MB established
-			    101 1.2MB in 1.2MB established
-			    110 reserved
-			    111 all other formats/drives
+		bits 7-6: Data rate
+			    00=500kbps, 01=300kbps, 10=250kbps, 11=1Mbps
+		bit    5: =1 if double stepping required (e.g. 360kB in 1.2MB)
+		bit    4: =1 if media established
+		bit    3: =1 if drive capable of supporting 4MB media
+		bits 2-0: on exit from BIOS, contain:
+			000 trying 360kB in 360kB
+			001 trying 360kB in 1.2MB
+			010 trying 1.2MB in 1.2MB
+			011 360kB in 360kB established
+			100 360kB in 1.2MB established
+			101 1.2MB in 1.2MB established
+			110 reserved
+			111 all other formats/drives
  92h	BYTE	{Diskette drive 0 media state at start of operation}
 		officially "Drive 2 media state"
 		bits 7-3 as above
@@ -321,23 +379,23 @@ Offset	Size	Description
  94h	BYTE	Diskette drive 0 current track number
  95h	BYTE	Diskette drive 1 current track number
  96h	BYTE	Keyboard status byte 1
-		    bit 7 =1 read-ID in progress
-		    bit 6 =1 last code read was first of two ID codes
-		    bit 5 =1 force Num Lock if read-ID and enhanced keyboard
-		    bit 4 =1 enhanced keyboard installed
-		    bit 3 =1 Right Alt pressed
-		    bit 2 =1 Right Ctrl pressed
-		    bit 1 =1 last code read was E0h
-		    bit 0 =1 last code read was E1h
+		bit 7 =1 read-ID in progress
+		bit 6 =1 last code read was first of two ID codes
+		bit 5 =1 force Num Lock if read-ID and enhanced keyboard
+		bit 4 =1 enhanced keyboard installed
+		bit 3 =1 Right Alt pressed
+		bit 2 =1 Right Ctrl pressed
+		bit 1 =1 last code read was E0h
+		bit 0 =1 last code read was E1h
  97h	BYTE	Keyboard status byte 2
-		    bit 7 =1 keyboard transmit error flag
-		    bit 6 =1 LED update in progress
-		    bit 5 =1 RESEND received from keyboard
-		    bit 4 =1 ACK received from keyboard
-		    bit 3 reserved, must be zero
-		    bit 2 Caps Lock LED
-		    bit 1 Num Lock LED
-		    bit 0 Scroll Lock LED
+		bit 7 =1 keyboard transmit error flag
+		bit 6 =1 LED update in progress
+		bit 5 =1 RESEND received from keyboard
+		bit 4 =1 ACK received from keyboard
+		bit 3 reserved, must be zero
+		bit 2 Caps Lock LED
+		bit 1 Num Lock LED
+		bit 0 Scroll Lock LED
  98h	DWORD	Timer2: [AT, PS exc Mod 30] ptr to user wait-complete flag
 					    (see INT 15, AX=8300h)
  9Ch	DWORD	Timer2: [AT, PS exc Mod 30] user wait count in microseconds
@@ -410,21 +468,19 @@ Offset	Size	Description
  01h 15 BYTEs	reserved
  17h	BYTE	Number of entries in POST error log (0-5)
  18h  5 WORDs	POST error log (each word is a POST error number)
- 19h-21h	reserved
  22h	DWORD	Pointing Device Driver entry point
  26h	BYTE	Pointing Device Flags 1
-		   bit 7:    =1 command in progress
-		   bit 6:    =1 resend
-		   bit 5:    =1 acknowledge
-		   bit 4:    =1 error
-		   bit 3:    =0 reserved
-		   bits 2-0: index count
+		   bit 7:    command in progress
+		   bit 6:    resend byte (FAh) received
+		   bit 5:    acknowledge byte (FEh) received
+		   bit 4:    error byte (FCh) received
+		   bit 3:    unexpected value received
+		   bits 2-0: index count for auxiliary device data at 28h
  27h	BYTE	Pointing Device Flags 2
-		   bit 7:    =1 device driver far call flag
+		   bit 7:    device driver far call flag
 		   bits 6-3: reserved
-		   bits 2-0: package size
- 28h  7 BYTEs	Pointing Device Auxiliary Device Data
- 2Fh	BYTE	reserved
+		   bits 2-0: package size (number of bytes received) - 1
+ 28h  8 BYTEs	Pointing Device Auxiliary Device Data
  30h	DWORD	Vector for INT 07h stored here during 80387 interrupt
  34h	DWORD	Vector for INT 01h stored here during INT 07h emulation
  38h	BYTE	Scratchpad for 80287/80387 interrupt code
@@ -432,18 +488,57 @@ Offset	Size	Description
  3Bh	BYTE	??? seen non-zero on Model 30
  3Ch	BYTE	???
  3Dh 16 BYTEs	Fixed Disk parameter table for drive 0 (for older machines
-			which don't directly support the installed drive)
+		  which don't directly support the installed drive)
  4Dh 16 BYTEs	Fixed Disk parameter table for drive 1 (for older machines
-			which don't directly support the installed drive)
- 5Dh-6Bh	???
+		  which don't directly support the installed drive)
+ 5Dh-67h	???
+ 68h	BYTE	cache control
+		bits 7-2 unused (0)
+		bit 1: CPU cache failed test
+		bit 0: CPU cache disabled
+ 69h-6Bh	???
  6Ch	BYTE	Fixed disk: (=FFh on ESDI systems)
 		    bits 7-4: Channel number 00-0Fh
 		    bits 3-0: DMA arbitration level 00-0Eh
  6Dh	BYTE	???
  6Eh	WORD	current typematic setting (see INT 16/AH=03h)
- 70h 167 BYTEs	???
+ 70h	BYTE	number of attached hard drives
+ 71h	BYTE	hard disk 16-bit DMA channel
+ 72h	BYTE	interrupt status for hard disk controller (1Fh on timeout)
+ 73h	BYTE	hard disk operation flags
+		bit 7: controller issued operation-complete INT 76h
+		bit 6: controller has been reset
+		bits 5-0: unused (0)
+ 74h	DWORD	old INT 76h vector
+ 78h	BYTE	hard disk DMA type
+		typically 44h for reads and 4Ch for writes
+ 79h	BYTE	status of last hard disk operation
+ 7Ah	BYTE	hard disk timeout counter
+ 7Bh-7Dh
+ 7Eh  8 WORDs	storage for hard disk controller status
+ 8Eh-E6h
+ E7h	BYTE	floppy drive type
+		bit 7: drive(s) present
+		bits 6-2: unused (0)
+		bit 1: drive 1 is 5.25" instead of 3.5"
+		bit 0: drive 0 is 5.25"
+ E8h-EBh
+ ECh	BYTE	hard disk parameters flag
+		bit 7: parameters loaded into EBDA
+		bits 6-0: unused (0)
+ EDh	BYTE	???
+ EEh	BYTE	CPU family ID (03h = 386, 04h = 486, etc.) (see INT 15/AH=C9h)
+ EFh	BYTE	CPU stepping (see INT 15/AH=C9h)
+ F0h 39 BYTEs  ???
 117h	WORD	keyboard ID (see INT 16/AH=0Ah)
-119h and up:	??? seen non-zero on Model 60
+		(most commonly 41ABh)
+119h	BYTE	???
+11Ah	BYTE	non-BIOS INT 18h flag
+		bits 7-1: unused (0)
+		bit 0: set by BIOS before calling user INT 18h at offset 11Dh
+11Bh  2 BYTE	???
+11Dh	DWORD	user INT 18h vector if BIOS has re-hooked INT 18h
+121h and up:	??? seen non-zero on Model 60
 3F0h	BYTE	Fixed disk buffer (???!!!)
  
 Format of Video Save Pointer Table [EGA/VGA/MCGA only]:
@@ -568,22 +663,22 @@ Offset	Size	Description
  01h	BYTE	Version number
  02h	BYTE	Maximum display type code that can appear in DCC table
  03h	BYTE	reserved
- 04h	ARRAY OF 2 BYTEs Each pair of bytes gives a valid display combination
-		    Meaning of each byte:
-			00h	no display
-			01h	MDA with mono display
-			02h	CGA with color display
-			03h	reserved
-			04h	EGA with color display
-			05h	EGA with mono display
-			06h	Professional Graphics Controller
-			07h	VGA with mono display
-			08h	VGA with color display
-			09h	reserved
-			0Ah	MCGA with digital color display
-			0Bh	MCGA with analog mono display
-			0Ch	MCGA with analog color display
-			FFh	unrecognised video system
+ 04h 2N BYTEs	Each pair of bytes gives a valid display combination
+		Meaning of each byte:
+		 00h	 no display
+		 01h	 MDA with mono display
+		 02h	 CGA with color display
+		 03h	 reserved
+		 04h	 EGA with color display
+		 05h	 EGA with mono display
+		 06h	 Professional Graphics Controller
+		 07h	 VGA with mono display
+		 08h	 VGA with color display
+		 09h	 reserved
+		 0Ah	 MCGA with digital color display
+		 0Bh	 MCGA with analog mono display
+		 0Ch	 MCGA with analog color display
+		 FFh	 unrecognised video system
  
 Format of User Palette Profile Table [VGA only]:
 Offset	Size	Description

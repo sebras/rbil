@@ -1,5 +1,5 @@
-			    INTPRINT v2.24
-                            by Ralf Brown
+			    INTPRINT v3.00
+			    by Ralf Brown
 
 The INTPRINT program is hereby donated to the public domain, with the sincere
 hope that proper credit will be retained in all copies and derivatives.
@@ -17,36 +17,36 @@ Usage:
    intprint [options] intlist [[>|>>]outfile]
 
 where the options are:
-        -b    boldface the title lines, Return:, and Notes: by overprinting
-        -B    boldface by sending printer control sequences
+	-b    boldface the title lines, Return:, and Notes: by overprinting
+	-B    boldface by sending printer control sequences
 
 	-d    (duplex) print even/odd pages with different margins; suitable
 	      for binding the printout.
 
-        -e    assume printer is in elite mode (96 characters per line), and
+	-e    assume printer is in elite mode (96 characters per line), and
 	      indent the output eight spaces to center the printout.  This
 	      is primarily for the default printer, as other printers may
 	      force the equivalent or override this option.
 
-        -ffile  create a file containing only the data structures described
-              in the interrupt list.
+	-ffile	create a file containing only the data structures described
+	      in the interrupt list.
 	      NOTE: you must put the filename immediately after the 'f'; no
-              blanks are allowed.
+	      blanks are allowed.
 
-	-Ffile  filter the listing based on include and exclude strings
+	-Ffile	filter the listing based on include and exclude strings
 	      in 'file'.  Only entries whose headers match none of the
 	      exclude strings and at least one of the include strings
 	      will be processed.  All others will be skipped.
 	      NOTE: you must put the filename immediately after the 'F'; no
-              blanks are allowed.
+	      blanks are allowed.
 
 	-H    print a heading on each page indicating which interrupts
 	      are listed on the page
 
-        -iN   indent the output N spaces.  The output device is assumed to be
-              at least 80+N characters wide.
+	-iN   indent the output N spaces.  The output device is assumed to be
+	      at least 80+N characters wide.
 	      NOTE: you must put the number immediately after the 'i'; no
-              blanks are allowed.
+	      blanks are allowed.
 
 	-I    assume the printer is capable of producing IBM character
 	      graphics.  Printers other than "default" may force this option.
@@ -55,7 +55,7 @@ where the options are:
 	      with all dashes.
 
 	-lN   print N lines per pages, overriding the printer-specific
-	      default.  Use 0 to omit page breaks (in this case, the
+	      default.	Use 0 to omit page breaks (in this case, the
 	      reported number of pages and -r page restriction may be
 	      incorrect unless you also use -L); this can be useful if
 	      you only want to filter the list before processing it
@@ -70,15 +70,15 @@ where the options are:
 	      character of the name to get the next filename, and continue
 	      until it is unable to open the file thus selected.
 
-        -nN   assume N pages have already been printed, and start numbering
-              at N+1.  This option allows you to create a properly-numbered
-              printout even if there is not enough disk space to concatenate
+	-nN   assume N pages have already been printed, and start numbering
+	      at N+1.  This option allows you to create a properly-numbered
+	      printout even if there is not enough disk space to concatenate
 	      the parts of the interrupt list or hold a complete output file.
 	      See the examples below.
 	      NOTE: you must put the number immediately after the 'n'; no
-              blanks are allowed.
+	      blanks are allowed.
 
-        -p    print the page number at the bottom center of each page
+	-p    print the page number at the bottom center of each page
 
 	-Pname use control codes for the specified printer (-P? lists the
 	      supported printers).  The printer name may be given in either
@@ -95,22 +95,36 @@ where the options are:
 	      you must specify the appropriate page length with -L so
 	      that page numbers can be computed correctly.
 
-        -sfile  create a one-line-per-function summary and write it to "file"
-              if -n is also given, the summary will be appended to "file",
-              allowing a properly numbered summary file to be created even if
-              there is not enough disk space to concatenate the parts of the
-              list.  See the examples below.
+	-sfile	create a one-line-per-function summary and write it to "file"
+	      if -n is also given, the summary will be appended to "file",
+	      allowing a properly numbered summary file to be created even if
+	      there is not enough disk space to concatenate the parts of the
+	      list.  See the examples below.  If -p is also given, page
+	      numbers will be included in the summary.	If -V is also given,
+	      byte offsets for use by INTERVUE will be included.
 	      NOTE: you must put the filename immediately after the 's'; no
-              blanks are allowed.
+	      blanks are allowed.
 
 	-tN   select typeface N for the chosen printer (currently supported
 	      only for the HP).
 
+	-Tfile	create a one-line-per-table summary and write it to "file"
+	      if -n is also given, the summary will be appended to the named
+	      file.  If -p is also given, page numbers will be included in
+	      the summary.  If -V is also given, byte offsets for use by
+	      INTERVUE will be included.
+	      NOTE: you must put the filename immediately after the 'T'; no
+	      blanks are allowed.
+
+	-V    indicate that the summary file is intended for use by INTERVUE.
+	      INTPRINT will output byte offsets that allow INTERVUE to jump
+	      directly to an entry.  Also forces -I.
+
 	-wN   (widow lines) search N lines from the end of the page for a
-	      good place to break.  The default is ten lines; the valid
+	      good place to break.  The default is eight lines; the valid
 	      range is from 3 to one-half of the page length.
 	      NOTE: you must put the number immediately after the 'w'; no
-              blanks are allowed.
+	      blanks are allowed.
 
 	-x    include Index: lines in formatted listing.  These lines are
 	      are excluded by default because they are intended primarily
@@ -181,23 +195,27 @@ is preceded by a blank.
 EXAMPLES:
 ---------
 
-        Print the interrupt list with page numbers, and create a summary file,
+	Print the interrupt list with page numbers, and create a summary file,
 	without concatenating INTERRUP.A, INTERRUP.B, and INTERRUP.C:
 
 		A> intprint -sb:interrup.sum -p interrup.a >prn
-		116 pages.   [screen output from INTPRINT]
-		A> intprint -sb:interrup.sum -p -n116 interrup.b prn
-		261 pages.   [screen output from INTPRINT]
-		A> intprint -sb:interrup.sum -p -n261 interrup.c >prn
-		386 pages.   [screen output from INTPRINT]
+		146 pages    [screen output from INTPRINT]
+		A> intprint -sb:interrup.sum -p -n146 interrup.b prn
+		285 pages    [screen output from INTPRINT]
+		A> intprint -sb:interrup.sum -p -n285 interrup.c >prn
+		403 pages    [screen output from INTPRINT]
 
 	or, more easily:
 		A> intprint -sb:interrup.sum -m -p interrup.a prn
-		942 pages.   [screen output from INTPRINT]
+		1587 pages   [screen output from INTPRINT]
 
-        Create only a summary file:
+	Create only a summary file:
 
 		C> intprint -sinterrupt.sum interrup.lst nul
+
+	Create a listing of the tables in the interrupt list:
+
+		C> intprint -Tinterrup.tbl interrup.lst nul
 
 	Print only those entries containing the string "DOS", except
 	those containing the string "DR-DOS"
@@ -209,8 +227,8 @@ EXAMPLES:
 		C> intprint -Fdos interrup.lst nul
 		
 
-        Print the interrupt list on an Epson FX80, using 54 lines per page and
-        omitting both page numbers and summary:
+	Print the interrupt list on an Epson FX80, using 54 lines per page and
+	omitting both page numbers and summary:
 
 		C> intprint -Pepson -l54 interrup.lst >prn
 
@@ -230,14 +248,15 @@ EXAMPLES:
 	page, using form-feeds:
 
 		C> intprint -Php -p interrup.lst >interrup.pcl
-		942 pages.   [screen output from INTPRINT]
+		1587 pages    [screen output from INTPRINT]
 
 ------------------------------------------------------------------------------
 
 PORTABILITY:
 ------------
 
-INTPRINT.C contains the source code for INTPRINT, for those people who are
-using the interrupt list on a machine which does not run MSDOS.  This code has
-been tested with Turbo C and Mach (BSD 4.3 Unix) "cc".
+INTPRINT.C contains the source code for INTPRINT, for those people who
+are using the interrupt list on a machine which does not run MSDOS.
+This code has been tested with Turbo C v2.0, Borland C++ v3.1, and Mach
+(BSD 4.3 Unix) "cc" and "gcc".
 

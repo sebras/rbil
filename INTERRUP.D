@@ -145,13 +145,14 @@ INT 1A - SNAP.EXE 3.2+ - "SNAP_SENDWITHREPLY" - SEND MSG AND GET REPLY
 		DWORD	pointer to reply buffer
 		WORD	length of reply buffer
 		WORD	0000h (use default "Cparams" structure)
-Return: AX = status (see below)
+Return: AX = status (see #0421)
 	STACK unchanged
 Program: SNAP.EXE is a TSR written by IBM and Carnegie Mellon University
 	  which implements the Simple Network Application Protocol
 SeeAlso: AX=6205h
 
-Values for status:
+(Table 0421)
+Values for SNAP.EXE status:
  0000h	successful
  F830h	"SNAP_ABORTED"
  FC04h	"SNAP_SERVERDIED"
@@ -181,7 +182,7 @@ INT 1A - SNAP.EXE 3.2+ - "SNAP_SENDNOREPLY" - SEND MSG, DON'T AWAIT REPLY
 		DWORD	pointer to message
 		WORD	length of message
 		WORD	0000h (use default "Cparms" structure)
-Return: AX = status (see AX=6108h)
+Return: AX = status (see #0421)
 	STACK unchanged
 SeeAlso: AX=6108h
 --------N-1A6308-----------------------------
@@ -194,15 +195,15 @@ INT 1A - SNAP.EXE 3.2+ - "SNAP_BEGINCONV" - BEGIN CONVERSATION
 		WORD	offset of ASCIZ password
 		WORD	offset of password length
 		WORD	offset of password type
-		WORD	offset of "Cparms" structure (see below)
+		WORD	offset of "Cparms" structure (see #0422)
 Return: ???
 	STACK unchanged
 Note:	all stacked offsets are within the SNAP data segment (use AX=6A01h
 	  to allocate a buffer)
 SeeAlso: AX=6405h,AX=7202h
 
-Format of Cparms structure:
-Offset	Size	Description
+Format of SNAP.EXE Cparms structure:
+Offset	Size	Description	(Table 0422)
  00h	WORD	retry delay in seconds
  02h	WORD	timeout delay in seconds
  04h	WORD	maximum buffer size
@@ -214,7 +215,7 @@ INT 1A - SNAP.EXE 3.2+ - "SNAP_ENDCONV" - END CONVERSATION
 		DWORD	pointer to message buffer
 		WORD	length of message
 		WORD	0000h (use default "Cparms" structure)
-Return: AX = status (see AX=6108h)
+Return: AX = status (see #0421)
 	STACK unchanged
 Program: SNAP.EXE is a TSR written by IBM and Carnegie Mellon University
 	  which implements the Simple Network Application Protocol
@@ -310,7 +311,7 @@ INT 1A - SNAP.EXE 3.2+ - "SNAP_SETCONVPARMS" - SET CONVERSATION PARAMETERS
 	AX = 7202h
 	STACK:	WORD	conversation ID (0000h-0009h)
 		WORD	offset within resident data segment of "Cparms"
-			structure (see AX=6308h)
+			  structure (see #0422)
 Return: AX = status???
 	STACK unchanged
 SeeAlso: AX=6308h
@@ -383,9 +384,10 @@ Return: CF clear if successful
 		AL = number of adapters present (0-16)
 	    AH destroyed
 	CF set on error
-	    AH = error code (see below)
+	    AH = error code (see #0423)
 SeeAlso: AH=83h"PCMCIA"
 
+(Table 0423)
 Values for PCMCIA error codes:
  01h	"BAD_ADAPTER" nonexistent adapter
  02h	"BAD_ATTRIBUTE" invalid attribute specified
@@ -410,30 +412,31 @@ Values for PCMCIA error codes:
 --------X-1A81-------------------------------
 INT 1A - PCMCIA Socket Services v1.00 - REGISTER STATUS CHANGE CALLBACK
 	AH = 81h
-	DS:DX -> callback routine (see below) or 0000h:0000h to disable
+	DS:DX -> callback routine (see #0424) or 0000h:0000h to disable
 Return: CF clear if successful
 	    AH destroyed
 	CF set on error
-	    AH = error code (see AH=80h"PCMCIA")
+	    AH = error code (see #0423)
 Note:	the callback will be invoked on any socket changes whose notification
 	  has not been disabled with the status change enable mask; it may be
 	  invoked either while processing a hardware interrupt from the adapter
 	  or while processing the following Socket Services request
 SeeAlso: AH=80h"PCMCIA",AH=82h"PCMCIA"
 
-Callback routine invoked with:
+(Table 0424)
+Values PCMCIA callback routine is invoked with:
 	AL = adapter number
-	BH = status change interrupt enable mask (see below)
+	BH = status change interrupt enable mask (see #0425)
 	BL = socket number
-	DH = current socket status (see below)
-	DL = current card status (see below)
+	DH = current socket status (see #0426)
+	DL = current card status (see #0427)
 Return: all registers preserved
 Notes:	the callback may be invoked during a hardware interrupt, and may not
 	  call on Socket Services
 	the callback will be invoked once for each socket with a status change
 
-Bitfields for status change enable mask:
-Bit(s)	Description
+Bitfields for PCMCIA status change interrupt enable mask:
+Bit(s)	Description	(Table 0425)
  7	card detect change
  6	ready change
  5	battery warning change
@@ -442,8 +445,8 @@ Bit(s)	Description
  2	ejection request
  1-0	reserved (0)
 
-Bitfields for current socket status:
-Bit(s)	Description
+Bitfields for PCMCIA current socket status:
+Bit(s)	Description	(Table 0426)
  7	card changed
  6	reserved (0)
  5	card insertion complete
@@ -453,8 +456,8 @@ Bit(s)	Description
  1	card locked
  0	reserved (0)
 
-Bitfields for current card status:
-Bit(s)	Description
+Bitfields for PCMCIA current card status:
+Bit(s)	Description	(Table 0427)
  7	card detect
  6	ready
  5	battery voltage detect 2 (battery warning)
@@ -487,75 +490,82 @@ Note:	the value in DX should be 1/10 the corresponding value for
 --------X-1A82-------------------------------
 INT 1A - PCMCIA Socket Services v1.00 - REGISTER CARD TECHNOLOGY CALLBACK
 	AH = 82h
-	DS:DX -> callback routine (see below) or 0000h:0000h
+	DS:DX -> callback routine (see #0428) or 0000h:0000h
 Return: CF clear if successful
 	    AH destroyed
 	CF set on error
-	    AH = error code (see AH=80h"PCMCIA")
+	    AH = error code (see #0423)
 Note:	the callback is invoked on a Write Multiple request with an unsupported
 	  card technology type
 SeeAlso: AH=81h"PCMCIA",AH=94h
 
-Callback routine invoked with:
-	ES:AX -> Low-Level Socket Services Routines (see below)
-	BH = socket attributes (see below)
+(Table 0428)
+Values PCMCIA callback routine is invoked with:
+	ES:AX -> Low-Level Socket Services Routines (see #0430)
+	BH = socket attributes (see #0429)
 	CX = number of bytes or words to write
 	DS:SI -> data buffer to be written
 	DX:DI -> 26-bit linear card address
 	BP = card technology type
 Return: CF clear if successful
 	CF set on error
-	    AH = error code (07h,0Ch,12h,14h) (see AH=80h"PCMCIA")
+	    AH = error code (07h,0Ch,12h,14h) (see #0423)
 
-Bitfields for socket attributes:
-Bit(s)	Description
+Bitfields for PCMCIA socket attributes:
+Bit(s)	Description	(Table 0429)
  7-4	reserved (0)
  3	packed buffer
  2	even bytes only (only valid if 1 set)
  1	data width (clear = byte, set = word)
  0	memory type (clear = common, set = attribute)
 
-Format of Low-Level Socket Services Routines:
-Offset	Size	Description
- 00h	WORD	offset of Write Many routine (see below)
- 02h	WORD	offset of Write One routine (see below)
- 04h	WORD	offset of Read One routine (see below)
- 06h	WORD	offset of Increment Offset routine (see below)
- 08h	WORD	offset of Set Offset routine (see below)
- 0Ah	WORD	offset of Get Status routine (see below)
+Format of PCMCIA Low-Level Socket Services Routines:
+Offset	Size	Description	(Table 0430)
+ 00h	WORD	offset of Write Many routine (see #0431)
+ 02h	WORD	offset of Write One routine (see #0432)
+ 04h	WORD	offset of Read One routine (see #0433)
+ 06h	WORD	offset of Increment Offset routine (see #0434)
+ 08h	WORD	offset of Set Offset routine (see #0435)
+ 0Ah	WORD	offset of Get Status routine (see #0436)
 
+(Table 0431)
 Call Write Many routine with:
-	BH = socket attributes (see above)
+	BH = socket attributes (see #0429)
 	CX = number of bytes or words to write
 	DS:SI -> data to be written
 Return: CF clear if successful
 	CF set on error
 
+(Table 0432)
 Call Write One routine with:
 	AL/AX = data to be written
-	BH = socket attributes (see above)
+	BH = socket attributes (see #0429)
 Return: CF clear if successful
 	CF set on error
 
+(Table 0433)
 Call Read One routine with:
-	BH = socket attributes (see above)
+	BH = socket attributes (see #0429)
 Return: CF clear if successful
 	    AL/AX = data read
 	CF set on error
 
+(Table 0434)
 Call Increment Offset routine with:
-	BH = socket attributes (see above)
+	BH = socket attributes (see #0429)
 Return: CF clear if successful
 	CF set on error
 
+(Table 0435)
 Call Set Offset routine with:
 	DX:DI = new offset address
 Return: CF clear if successful
 	CF set on error
 
+(Table 0436)
 Call Get Status routine with:
 	nothing
-Return: AL = current card status (see AH=81h"PCMCIA")
+Return: AL = current card status (see #0427)
 --------s-1A83-------------------------------
 INT 1A - Tandy 2500, Tandy 1000L series - START PLAYING DIGITAL SOUND
 	AH = 83h
@@ -584,7 +594,7 @@ Return: CF clear if successful
 	    CX = 5353h ("SS")
 	    DS:SI -> ASCIZ implementor description
 	CF set on error
-	    AH = error code (01h) (see AH=80h"PCMCIA")
+	    AH = error code (01h) (see #0423)
 Note:	the current version (from the Revision A.00 documentation) of Socket
 	  Services is 1.00 (AX=0100h)
 SeeAlso: AH=80h"PCMCIA"
@@ -603,14 +613,14 @@ Return: CF clear if successful
 	    BH = number of windows
 	    BL = number of sockets (1-16)
 	    CX = number of EDCs
-	    DH = capabilities (see below)
-	    DL = status change interrupt used (only if DH bit 3 set)(see below)
+	    DH = capabilities (see #0437)
+	    DL = status change interrupt used (only if DH bit 3 set)(see #0438)
 	CF set on error
-	    AH = error code (01h) (see AH=80h"PCMCIA")
+	    AH = error code (01h) (see #0423)
 SeeAlso: AH=80h"PCMCIA",AH=85h"PCMCIA",AH=87h
 
-Bitfields for capabilities:
-Bit(s)	Description
+Bitfields for PCMCIA capabilities:
+Bit(s)	Description	(Table 0437)
  7-6	reserved (0)
  5	status change interrupt is hardware shareable
  4	status change interrupt is software shareable
@@ -619,7 +629,8 @@ Bit(s)	Description
  1	power management is per-adapter rather than per-socket
  0	indicators are per-adapter rather than per-socket
 
-Values for status change interrupt usage:
+(Table 0438)
+Values for PCMCIA status change interrupt usage:
  00h-0Fh IRQ level
  10h	NMI
  11h	I/O check
@@ -639,13 +650,13 @@ INT 1A - PCMCIA Socket Services v1.00 - GET ADAPTER
 	AL = adapter number
 Return: CF clear if successful
 	    AH destroyed
-	    DH = adapter attributes (see below)
+	    DH = adapter attributes (see #0439)
 	CF set on error
-	    AH = error code (01h) (see AH=80h"PCMCIA")
+	    AH = error code (01h) (see #0423)
 SeeAlso: AH=84h"PCMCIA",AH=86h
 
-Bitfields for adapter attributes:
-Bit(s)	Description
+Bitfields for PCMCIA adapter attributes:
+Bit(s)	Description	(Table 0439)
  7-5	reserved (0)
  4	hardware share status change
  3	software share status change
@@ -656,11 +667,11 @@ Bit(s)	Description
 INT 1A - PCMCIA Socket Services v1.00 - SET ADAPTER
 	AH = 86h
 	AL = adapter number
-	DH = new adapter attributes (see AH=85h"PCMCIA")
+	DH = new adapter attributes (see #0439)
 Return: CF clear if successful
 	    AH destroyed
 	CF set on error
-	    AH = error code (01h) (see AH=80h"PCMCIA")
+	    AH = error code (01h) (see #0423)
 SeeAlso: AH=84h"PCMCIA",AH=85h"PCMCIA"
 --------X-1A87-------------------------------
 INT 1A - PCMCIA Socket Services v1.00 - INQUIRE WINDOW
@@ -669,18 +680,18 @@ INT 1A - PCMCIA Socket Services v1.00 - INQUIRE WINDOW
 	BH = window number
 Return: CF clear if successful
 	    AH destroyed
-	    BL = capabilities (see below)
+	    BL = capabilities (see #0440)
 	    CX = bitmap of assignable sockets
 	    DH = EISA A15-A12 address lines (in bits 7-4, bits 3-0 = 0)
-	    DL = supported access speeds (see below)
-	    DS:SI -> Memory Window Characteristics table (see below)
-	    DS:DI -> I/O Window Characteristics table (see below)
+	    DL = supported access speeds (see #0441)
+	    DS:SI -> Memory Window Characteristics table (see #0442)
+	    DS:DI -> I/O Window Characteristics table (see #0443)
 	CF set on error
-	    AH = error code (01h,11h) (see AH=80h"PCMCIA")
+	    AH = error code (01h,11h) (see #0423)
 SeeAlso: AH=84h"PCMCIA",AH=88h,AH=89h,AH=8Ch
 
-Bitfields for window capabilities:
-Bit(s)	Description
+Bitfields for PCMCIA window capabilities:
+Bit(s)	Description	(Table 0440)
  7-5	reserved (0)
  4	separate enable for EISA comon space
  3	EISA I/O mappable
@@ -688,8 +699,8 @@ Bit(s)	Description
  1	attribute memory
  0	common memory
 
-Bitfields for supported access speeds:
-Bit(s)	Description
+Bitfields for PCMCIA supported access speeds:
+Bit(s)	Description	(Table 0441)
  7	reserved (0)
  6	600 ns
  5	300 ns
@@ -699,9 +710,9 @@ Bit(s)	Description
  1	100 ns
  0	WAIT line monitoring
 
-Format of Memory Window Characteristics table:
-Offset	Size	Description
- 00h	WORD	window capabilities (see below)
+Format of PCMCIA Memory Window Characteristics table:
+Offset	Size	Description	(Table 0442)
+ 00h	WORD	window capabilities (see #0444)
  02h	WORD	minimum base address in 4K pages
  04h	WORD	maximum base address in 4K pages
  06h	WORD	minimum window size in 4K pages
@@ -710,17 +721,17 @@ Offset	Size	Description
  0Ch	WORD	required base address alignment (4K units)
  0Eh	WORD	required card offset alignment (4K units)
 
-Format of I/O Window Characteristics table:
-Offset	Size	Description
- 00h	WORD	window capabilities (see below)
+Format of PCMCIA I/O Window Characteristics table:
+Offset	Size	Description	(Table 0443)
+ 00h	WORD	window capabilities (see #0444)
  02h	WORD	minimum base address in bytes
  04h	WORD	maximum base address in bytes
  06h	WORD	minimum window size in bytes
  08h	WORD	maximum window size in bytes
  0Ah	WORD	window size granularity (bytes)
 
-Bitfields for window capabilities:
-Bit(s)	Description
+Bitfields for PCMCIA window capabilities:
+Bit(s)	Description	(Table 0444)
  0	programmable base address
  1	programmable window size
  2	window disable/enable supported
@@ -745,16 +756,16 @@ Return: CF clear if successful
 	    AH destroyed
 	    BL = socket number (0-16) (0 = not assigned)
 	    CX = window size (bytes for I/O window, 4K units for memory window)
-	    DH = window attributes (see below)
-	    DL = access speed (only one bit set) (see AH=87h)
+	    DH = window attributes (see #0445)
+	    DL = access speed (only one bit set) (see #0441)
 	    SI = window base address (bytes if I/O, 4K units if memory)
 	    DI = card offset address (memory only, 4K units)
 	CF set on error
-	    AH = error code (01h,11h) (see AH=80h"PCMCIA")
+	    AH = error code (01h,11h) (see #0423)
 SeeAlso: AH=87h,AH=89h,AH=8Ah
 
-Bitfields for window attributes:
-Bit(s)	Description
+Bitfields for PCMCIA window attributes:
+Bit(s)	Description	(Table 0445)
  0	memory-mapped rather than I/O-mapped
  1	attribute memory rather than common (memory-mapped)
 	EISA mapped (I/O)
@@ -770,15 +781,14 @@ INT 1A - PCMCIA Socket Services v1.00 - SET WINDOW
 	BH = window number
 	BL = socket number
 	CX = window size (bytes if I/O window, 4K units if memory window)
-	DH = window attributes (see AH=88h)
-	DL = access speed (only one bit set) (see AH=87h)
+	DH = window attributes (see #0445)
+	DL = access speed (only one bit set) (see #0441)
 	SI = window base address (bytes if I/O, 4K units if memory window)
 	DI = card offset addrress (memory only, 4K units)
 Return: CF clear if successful
 	    AH destroyed
 	CF set on error
-	    AH = error code (01h,03h,07h,08h,0Ah,0Bh,0Dh,10h,11h)
-		(see AH=80h"PCMCIA")
+	    AH = error code (01h,03h,07h,08h,0Ah,0Bh,0Dh,10h,11h) (see #0423)
 SeeAlso: AH=87h,AH=88h,AH=8Bh
 --------X-1A8A-------------------------------
 INT 1A - PCMCIA Socket Services v1.00 - GET PAGE
@@ -788,16 +798,16 @@ INT 1A - PCMCIA Socket Services v1.00 - GET PAGE
 	BL = page number
 Return: CF clear if successful
 	    AH destroyed
-	    DX = page attributes (see below)
+	    DX = page attributes (see #0446)
 	    DI = memory card offset (4K units)
 	CF set on error
-	    AH = error code (01h,08h,11h) (see AH=80h"PCMCIA")
+	    AH = error code (01h,08h,11h) (see #0423)
 Notes:	this function is only valid for memory-mapped windows
 	the socket being operated on is implied by the previous AH=89h call
 SeeAlso: AH=88h,AH=8Bh
 
-Bitfields for page attributes:
-Bit(s)	Description
+Bitfields for PCMCIA page attributes:
+Bit(s)	Description	(Table 0446)
  0	page enabled
  15-1	reserved (0)
 --------X-1A8B-------------------------------
@@ -806,12 +816,12 @@ INT 1A - PCMCIA Socket Services v1.00 - SET PAGE
 	AL = adapter number
 	BH = window number
 	BL = page number
-	DX = page attributes (see AH=8Ah)
+	DX = page attributes (see #0446)
 	DI = memory card offset (4K units)
 Return: CF clear if successful
 	    AH destroyed
 	CF set on error
-	    AH = error code (01h,02h,07h,08h,11h) (see AH=80h"PCMCIA")
+	    AH = error code (01h,02h,07h,08h,11h) (see #0423)
 Notes:	this function is only valid for memory-mapped windows
 	the socket being operated on is implied by the previous AH=89h call
 SeeAlso: AH=89h,AH=8Ah
@@ -822,24 +832,24 @@ INT 1A - PCMCIA Socket Services v1.00 - INQUIRE SOCKET
 	BL = socket number (01h to maximum supported by adapter)
 Return: CF clear if successful
 	    AH destroyed
-	    DH = capabilities (see below)
-	    DL = hardware indicators (see below)
-	    DS:SI -> Socket Characteristics table (see below)
-	    DS:DI -> Power Management table (see below)
+	    DH = capabilities (see #0447)
+	    DL = hardware indicators (see #0448)
+	    DS:SI -> Socket Characteristics table (see #0449)
+	    DS:DI -> Power Management table (see #0451)
 	CF set on error
-	    AH = error code (01h,0Bh) (see AH=80h"PCMCIA")
+	    AH = error code (01h,0Bh) (see #0423)
 SeeAlso: AH=87h,AH=8Dh,AH=8Eh
 
-Bitfields for socket capabilities:
-Bit(s)	Description
+Bitfields for PCMCIA socket capabilities:
+Bit(s)	Description	(Table 0447)
  0	card change
  1	card lock
  2	insert card (motor control)
  3	eject card (motor control)
  4-7	reserved (0)
 
-Bitfields for socket hardware indicators:
-Bit(s)	Description
+Bitfields for PCMCIA socket hardware indicators:
+Bit(s)	Description	(Table 0448)
  0	busy status
  1	write-protected
  2	battery status
@@ -847,9 +857,9 @@ Bit(s)	Description
  4	XIP status (eXecute-In-Place)
  5-7	reserved (0)
 
-Format of Socket Characteristics table:
-Offset	Size	Description
- 00h	WORD	supported card types (see below)
+Format of PCMCIA Socket Characteristics table:
+Offset	Size	Description	(Table 0449)
+ 00h	WORD	supported card types (see #0450)
  02h	WORD	steerable IRQ levels (bit 0 = IRQ0 to bit 15 = IRQ15)
  04h	WORD	additional steerable IRQ levels
 		bit 0: NMI
@@ -859,13 +869,13 @@ Offset	Size	Description
 		bits 4-7 reserved (0)
 
 Bitfields for supported card types:
-Bit(s)	Description
+Bit(s)	Description	(Table 0450)
  0	memory card
  1	I/O card
  2-7	reserved (0)
 
-Format of Power Management table:
-Offset	Size	Description
+Format of PCMCIA Power Management table:
+Offset	Size	Description	(Table 0451)
  00h	WORD	number of entries in table (0 if power management not avail)
  02h 2N BYTEs	power levels
 		byte 0: voltage in 0.1V units
@@ -880,25 +890,25 @@ INT 1A - PCMCIA Socket Services v1.00 - GET SOCKET
 	BL = socket number (01h to maximum supported by adapter)
 Return: CF clear if successful
 	    AH destroyed
-	    BH = status change interrupt enable mask (see AH=81h"PCMCIA")
-	    CH = Vcc level (lower nybble)
+	    BH = status change interrupt enable mask (see #0425)
+	    CH = Vcc level (lower nybble) (see #0451)
 	    CL = Vpp1 level (upper nybble) and Vpp2 level (lower nybble)
-	    DH = current socket status (see AH=81h"PCMCIA")
-	    DL = indicators (see AH=8Ch)
-	    SI = card type (see below)
-	    DI = IRQ level steering (I/O only) (see below)
+	    DH = current socket status (see #0426)
+	    DL = indicators (see #0448)
+	    SI = card type (see #0452)
+	    DI = IRQ level steering (I/O only) (see #0453)
 	CF set on error
-	    AH = error code (01h,0Bh) (see AH=80h"PCMCIA")
+	    AH = error code (01h,0Bh) (see #0423)
 SeeAlso: AH=8Ch,AH=8Eh
 
-Bitfields for card type:
-Bit(s)	Description
+Bitfields for PCMCIA card type:
+Bit(s)	Description	(Table 0452)
  0	memory
  1	I/O
  2-15	reserved (0)
 
-Bitfields for I/O level steering:
-Bit(s)	Description
+Bitfields for PCMCIA I/O level steering:
+Bit(s)	Description	(Table 0453)
  15	interrupt steering enabled
  14-5	reserved (0)
  4-0	IRQ level (0-15=IRQ,16=NMI,17=I/O check,18=bus error,19=vendor)
@@ -907,16 +917,16 @@ INT 1A - PCMCIA Socket Services v1.00 - SET SOCKET
 	AH = 8Eh
 	AL = adapter number
 	BL = socket number (01h to maximum supported by adapter)
-	BH = status change interrupt enable mask (see AH=81h"PCMCIA")
+	BH = status change interrupt enable mask (see #0425)
 	CL = Vpp1 level (upper nybble) and Vpp2 level (lower nybble)
-	DH = current socket status (see AH=81h"PCMCIA")
-	DL = indicators (see AH=8Ch)
-	SI = card type (see AH=8Dh)
-	DI = IRQ level steering (I/O only) (see AH=8Dh)
+	DH = current socket status (see #0426)
+	DL = indicators (see #0448)
+	SI = card type (see #0452)
+	DI = IRQ level steering (I/O only) (see #0453)
 Return: CF clear if successful
 	    AH destroyed
 	CF set on error
-	    AH = error code (01h,02h,05h,06h,0Bh,0Eh,0Fh) (see AH=80h"PCMCIA")
+	    AH = error code (01h,02h,05h,06h,0Bh,0Eh,0Fh) (see #0423)
 SeeAlso: AH=8Ch,AH=8Dh
 --------X-1A8F-------------------------------
 INT 1A - PCMCIA Socket Services v1.00 - GET CARD
@@ -925,9 +935,9 @@ INT 1A - PCMCIA Socket Services v1.00 - GET CARD
 	BL = socket number (01h to maximum supported by adapter)
 Return: CF clear if successful
 	    AH destroyed
-	    DL = current card status (see AH=81h"PCMCIA")
+	    DL = current card status (see #0427)
 	CF set on error
-	    AH = error code (01h,0Bh) (see AH=80h"PCMCIA")
+	    AH = error code (01h,0Bh) (see #0423)
 SeeAlso: AH=8Dh,AH=90h
 --------X-1A90-------------------------------
 INT 1A - PCMCIA Socket Services v1.00 - RESET CARD
@@ -937,7 +947,7 @@ INT 1A - PCMCIA Socket Services v1.00 - RESET CARD
 Return: CF clear if successful
 	    AH destroyed
 	CF set on error
-	    AH = error code (01h,0Bh,14h) (see AH=80h"PCMCIA")
+	    AH = error code (01h,0Bh,14h) (see #0423)
 Note:	toggles RESET pin of the specified card, but does not wait after
 	  toggling the pin; it is the caller's responsibility to avoid
 	  accessing the card before it is ready again
@@ -946,19 +956,19 @@ INT 1A - PCMCIA Socket Services v1.00 - READ ONE
 	AH = 91h
 	AL = adapter number
 	BL = socket number (01h to maximum supported by adapter)
-	BH = attributes (see below)
+	BH = attributes (see #0454)
 	DX:SI = card address
 Return: CF clear if successful
 	    AH destroyed
 	    CL/CX = value read
 	CF set on error
-	    AH = error code (01h,07h,09h,0Bh,14h) (see AH=80h"PCMCIA")
+	    AH = error code (01h,07h,09h,0Bh,14h) (see #0423)
 	    CX may be destroyed
 Note:	this function is only valid for I/O-mapped sockets
 SeeAlso: AH=92h,AH=93h,INT 21/AX=440Dh"IOCTL"
 
-Bitfields for attributes:
-Bit(s)	Description
+Bitfields for PCMCIA attributes:
+Bit(s)	Description	(Table 0454)
  2	even bytes only
  1	word rather than byte
  0	attribute memory instead of common memory
@@ -967,13 +977,13 @@ INT 1A - PCMCIA Socket Services v1.00 - WRITE ONE
 	AH = 92h
 	AL = adapter number
 	BL = socket number (01h to maximum supported by adapter)
-	BH = attributes (see AH=91h)
+	BH = attributes (see #0454)
 	CL/CX = value to write
 	DX:SI = card address
 Return: CF clear if successful
 	    AH destroyed
 	CF set on error
-	    AH = error code (01h,07h,0Bh,12h,14h) (see AH=80h"PCMCIA")
+	    AH = error code (01h,07h,0Bh,12h,14h) (see #0423)
 Note:	this function is only valid for I/O-mapped sockets; it also does not
 	  implement Card Technology handling--use AH=94h when writing to
 	  non-RAM technologies
@@ -983,14 +993,14 @@ INT 1A - PCMCIA Socket Services v1.00 - READ MULTIPLE
 	AH = 93h
 	AL = adapter number
 	BL = socket number (01h to maximum supported by adapter)
-	BH = attributes (see AH=91h)
+	BH = attributes (see #0454)
 	CX = number of bytes or words to read
 	DX:SI = card address
 	DS:DI -> data buffer to be filled
 Return: CF clear if successful
 	    AH destroyed
 	CF set on error
-	    AH = error code (01h,07h,09h,0Bh,14h) (see AH=80h"PCMCIA")
+	    AH = error code (01h,07h,09h,0Bh,14h) (see #0423)
 Note:	this function is only available on I/O-mapped sockets
 SeeAlso: AH=91h,AH=94h,INT 21/AX=440Dh"IOCTL"
 --------X-1A94-------------------------------
@@ -998,7 +1008,7 @@ INT 1A - PCMCIA Socket Services v1.00 - WRITE MULTIPLE
 	AH = 94h
 	AL = adapter number
 	BL = socket number (01h to maximum supported by adapter)
-	BH = attributes (see AH=91h)
+	BH = attributes (see #0454)
 	CX = number of bytes or words to read
 	DX:DI = card address
 	DS:SI -> buffer containing data
@@ -1006,10 +1016,10 @@ INT 1A - PCMCIA Socket Services v1.00 - WRITE MULTIPLE
 Return: CF clear if successful
 	    AH destroyed
 	CF set on error
-	    AH = error code (01h,07h,0Bh,0Ch,12h,14h) (see AH=80h"PCMCIA")
+	    AH = error code (01h,07h,0Bh,0Ch,12h,14h) (see #0423)
 Notes:	this function is only available on I/O-mapped sockets
-	Socket Services calls the Card Technology callback (see AH=82h"PCMCIA")
-	  for any card technology it does not directly support
+	Socket Services calls the Card Technology callback (see #0428) for
+	  any card technology it does not directly support
 SeeAlso: AH=82h"PCMCIA",AH=92h,AH=93h,INT 21/AX=440Dh"IOCTL"
 --------X-1A95-------------------------------
 INT 1A - PCMCIA Socket Services v1.00 - INQUIRE ERROR DETECTION CODE
@@ -1019,14 +1029,14 @@ INT 1A - PCMCIA Socket Services v1.00 - INQUIRE ERROR DETECTION CODE
 Return: CF clear if successful
 	    AH destroyed
 	    CX = bitmap of assignable sockets
-	    DH = EDC capabilities (see below)
-	    DL = supported EDC types (see below)
+	    DH = EDC capabilities (see #0455)
+	    DL = supported EDC types (see #0456)
 	CF set on error
-	    AH = error code (01h,04h) (see AH=80h"PCMCIA")
+	    AH = error code (01h,04h) (see #0423)
 SeeAlso: AH=96h,AH=9Ch
 
 Bitfields for EDC capabilities:
-Bit(s)	Description
+Bit(s)	Description	(Table 0455)
  0	unidirectional only generation
  1	bidirectional only generation
  2	register-based (I/O-mapped) support
@@ -1035,7 +1045,7 @@ Bit(s)	Description
  5-7	reserved (0)
 
 Bitfields for supported EDC types:
-Bit(s)	Description
+Bit(s)	Description	(Table 0456)
  0	8-checksum
  1	16-CRC-SDLC
  2-7	reserved (0)
@@ -1047,14 +1057,14 @@ INT 1A - PCMCIA Socket Services v1.00 - GET ERROR DETECTION CODE
 Return: CF clear if successful
 	    AH destroyed
 	    BL = socket number
-	    DH = EDC attributes (see below)
-	    DL = EDC type (see AH=95h) (only one bit set)
+	    DH = EDC attributes (see #0457)
+	    DL = EDC type (see #0456) (only one bit set)
 	CF set on error
-	    AH = error code (01h,04h) (see AH=80h"PCMCIA")
+	    AH = error code (01h,04h) (see #0423)
 SeeAlso: AH=95h,AH=97h,AH=9Ch
 
 Bitfields for EDC attributes:
-Bit(s)	Description
+Bit(s)	Description	(Table 0457)
  0	unidirectional only
  1	(if 0 set) clear=read, set=write
  2-7	reserved (0)
@@ -1064,12 +1074,12 @@ INT 1A - PCMCIA Socket Services v1.00 - SET ERROR DETECTION CODE
 	AL = adapter number
 	BH = EDC generator
 	BL = socket number
-	DH = EDC attributes (see AH=96h)
-	DL = EDC type (see AH=95h) (only one bit may be set)
+	DH = EDC attributes (see #0457)
+	DL = EDC type (see #0456) (only one bit may be set)
 Return: CF clear if successful
 	    AH destroyed
 	CF set on error
-	    AH = error code (01h,02h,04h,0Bh) (see AH=80h"PCMCIA")
+	    AH = error code (01h,02h,04h,0Bh) (see #0423)
 SeeAlso: AH=96h,AH=9Ch
 --------X-1A98-------------------------------
 INT 1A - PCMCIA Socket Services v1.00 - START ERROR DETECTION CODE
@@ -1079,7 +1089,7 @@ INT 1A - PCMCIA Socket Services v1.00 - START ERROR DETECTION CODE
 Return: CF clear if successful
 	    AH destroyed
 	CF set on error
-	    AH = error code (01h,04h) (see AH=80h"PCMCIA")
+	    AH = error code (01h,04h) (see #0423)
 SeeAlso: AH=96h,AH=99h,AH=9Bh,AH=9Ch
 --------X-1A99-------------------------------
 INT 1A - PCMCIA Socket Services v1.00 - PAUSE ERROR DETECTION CODE
@@ -1089,7 +1099,7 @@ INT 1A - PCMCIA Socket Services v1.00 - PAUSE ERROR DETECTION CODE
 Return: CF clear if successful
 	    AH destroyed
 	CF set on error
-	    AH = error code (01h,04h) (see AH=80h"PCMCIA")
+	    AH = error code (01h,04h) (see #0423)
 SeeAlso: AH=9Ah
 --------X-1A9A-------------------------------
 INT 1A - PCMCIA Socket Services v1.00 - RESUME ERROR DETECTION CODE
@@ -1099,7 +1109,7 @@ INT 1A - PCMCIA Socket Services v1.00 - RESUME ERROR DETECTION CODE
 Return: CF clear if successful
 	    AH destroyed
 	CF set on error
-	    AH = error code (01h,04h) (see AH=80h"PCMCIA")
+	    AH = error code (01h,04h) (see #0423)
 SeeAlso: AH=99h,AH=98h
 --------X-1A9B-------------------------------
 INT 1A - PCMCIA Socket Services v1.00 - STOP ERROR DETECTION CODE
@@ -1109,7 +1119,7 @@ INT 1A - PCMCIA Socket Services v1.00 - STOP ERROR DETECTION CODE
 Return: CF clear if successful
 	    AH destroyed
 	CF set on error
-	    AH = error code (see AH=80h"PCMCIA")
+	    AH = error code (see #0423)
 SeeAlso: AH=98h,AH=99h,AH=9Ch
 --------X-1A9C-------------------------------
 INT 1A - PCMCIA Socket Services v1.00 - READ ERROR DETECTION CODE
@@ -1120,7 +1130,7 @@ Return: CF clear if successful
 	    AH destroyed
 	    DL/DX = computed checksum or CRC
 	CF set on error
-	    AH = error code (01h,04h) (see AH=80h"PCMCIA")
+	    AH = error code (01h,04h) (see #0423)
 SeeAlso: AH=95h,AH=96h,AH=98h,AH=99h,AH=9Bh
 --------c-1AA0-------------------------------
 INT 1A U - Disk Spool II v2.07+ - INSTALLATION CHECK
@@ -1132,8 +1142,9 @@ Return: AH = B0h if installed
 	    ES:SI -> current despool file
 	    CL = despooler state (00h disabled, 41h enabled)
 	    CH = spooler state (00h disabled, 41h enabled)
-	    DL = 00h despooler is currently active printing a file
-	       = 41h despooler is standing by
+	    DL = despooler activity
+		00h currently active printing a file
+	        41h standing by
 	    DH = 00h ???
 	       = 41h ???
 	    DI = 0000h ???
@@ -1151,12 +1162,11 @@ Return: AH = BAh if installed
 	    ES = code segment
 	    ES:BX -> name of current spool file
 	    ES:SI -> current despool file
-	    CL = 00h despooler is disabled
-	       = 41h despooler is enabled
-	    CH = 00h spooler is disabled
-	       = 41h spooler is enabled
-	    DL = 00h despooler is currently active printing a file
-	       = 41h despooler is standing by
+	    CL = despooler state (00h disabled, 41h enabled)
+	    CH = spooler state (00h disabled, 41h enabled)
+	    DL = despooler activity
+		00h currently active printing a file
+	        41h standing by
 	    DH = 00h ???
 	       = 41h ???
 	    DI = 0000h ???
@@ -1173,32 +1183,35 @@ SeeAlso: AH=A0h,AH=ABh,AH=ADh
 --------c-1AAD-------------------------------
 INT 1A U - Disk Spool II v1.83 - FUNCTION CALLS
 	AH = ADh
-	AL = function code
-	    02h enable spooler only
-	    03h enable the despooler
-	    04h disable the despooler
-	    08h inhibit popup menu
-	    09h enable popup menu
-	    0Ah ???
-	    0Bh disable the spooler
-	    0Ch start despooler after last successfully printed document???
-	    0Dh start despooler at the exact point where it last left off???
-	    0Eh pop up the menu
-	    0Fh ???
-	    11h ???
-	    14h ???
-	    15h ???
-	    16h ???
-	    17h ???
-	    18h ???
-	    19h ???
-	    20h clear file pointed to by the despooler???
-	    21h ???
-	    22h ???
-	    23h ???
-	    30h ???
+	AL = function code (see #0458)
 Return: AH = 00h if successful
 SeeAlso: AH=ABh
+
+(Table 0458)
+Values for Disk Spool function code:
+ 02h	enable spooler only
+ 03h	enable the despooler
+ 04h	disable the despooler
+ 08h	inhibit popup menu
+ 09h	enable popup menu
+ 0Ah	???
+ 0Bh	disable the spooler
+ 0Ch	start despooler after last successfully printed document???
+ 0Dh	start despooler at the exact point where it last left off???
+ 0Eh	pop up the menu
+ 0Fh	???
+ 11h	???
+ 14h	???
+ 15h	???
+ 16h	???
+ 17h	???
+ 18h	???
+ 19h	???
+ 20h	clear file pointed to by the despooler???
+ 21h	???
+ 22h	???
+ 23h	???
+ 30h	???
 --------d-1AB001CX4D52-----------------------
 INT 1A - Microsoft Real-Time Compression Interface (MRCI) - ROM-BASED SERVER
 	AX = B001h
@@ -1206,7 +1219,7 @@ INT 1A - Microsoft Real-Time Compression Interface (MRCI) - ROM-BASED SERVER
 	DX = 4349h ("CI")
 Return: CX = 4943h ("IC") if installed
 	DX = 524Dh ("RM") if installed
-	    ES:DI -> MRCINFO structure (see below)
+	    ES:DI -> MRCINFO structure (see #0459)
 Note:	this call is functionally identical to INT 2F/AX=4A12h, which should
 	  be called first, as this call is used for the first, ROM-based
 	  MRCI server, while the other call is used for RAM-based servers
@@ -1214,18 +1227,18 @@ Note:	this call is functionally identical to INT 2F/AX=4A12h, which should
 SeeAlso: INT 2F/AX=4A12h
 
 Format of MRCINFO structure:
-Offset	Size	Description
+Offset	Size	Description	(Table 0459)
  00h  4 BYTEs	vendor signature
 		"MSFT" Microsoft
  04h	WORD	server version (high=major)
  06h	WORD	MRCI specification version
- 08h	DWORD	address of server entry point
- 0Ch	WORD	bit flags: server capabilities (see below)
- 0Eh	WORD	bit flags: hardware assisted capabilities (see below)
+ 08h	DWORD	address of server entry point (see #0461)
+ 0Ch	WORD	bit flags: server capabilities (see #0460)
+ 0Eh	WORD	bit flags: hardware assisted capabilities (see #0460)
  10h	WORD	maximum block size supported by server (at least 8192 bytes)
 
-Bitfields for capabilities:
-Bit(s)	Description
+Bitfields for MRCI capabilities:
+Bit(s)	Description	(Table 0460)
  0	standard compress
  1	standard decompress
  2	update compress
@@ -1236,8 +1249,9 @@ Bit(s)	Description
  15	this structure is in ROM and can't be modified
 	(server capabilities only)
 
+(Table 0461)
 Call MRCI entry point with:
-	DS:SI -> MRCREQUEST structure (see below)
+	DS:SI -> MRCREQUEST structure (see #0462)
 	CX = type of client (0000h application, 0001h file system)
 	AX = operation
 	    0001h perform standard compression
@@ -1258,13 +1272,13 @@ Return: AX = status
 Note:	MRCI driver may chain to a previous driver
 
 Format of MRCREQUEST structure:
-Offset	Size	Description
+Offset	Size	Description	(Table 0462)
  00h	DWORD	pointer to source buffer
  04h	WORD	size of source buffer (0000h = 64K)
  06h	WORD	(UpdateCompress only)
 		(call) offset in source buffer of beginning of changed data
 		(return) offset in destination buffer of beginning of changed
-			compressed data
+			  compressed data
  08h	DWORD	pointer to destination buffer
 		must contain original compressed data for UpdateCompress
  0Ch	WORD	size of destination buffer (0000h = 64K)
@@ -1285,8 +1299,8 @@ INT 1A - Intel PCI BIOS v2.0c - INSTALLATION CHECK
 Return: AH = 00h if installed
 	    CF clear
 	    EDX = 20494350h (' ICP')
-	    EDI = physical address of protected-mode entry point (see below)
-	    AL = PCI hardware characteristics (see below)
+	    EDI = physical address of protected-mode entry point (see #0464)
+	    AL = PCI hardware characteristics (see #0463)
 	    BH = PCI interface level major version (BCD)
 	    BL = PCI interface level minor version (BCD)
 	    CL = number of last PCI bus in system
@@ -1297,7 +1311,7 @@ Note:	this function may require up to 1024 byte of stack; it will not enable
 SeeAlso: AX=B181h
 
 Bitfields for PCI hardware characteristics:
-Bit(s)	Description
+Bit(s)	Description	(Table 0463)
  0	configuration space access mechanism 1 supported
  1	configuration space access mechanism 2 supported
  2-3	reserved
@@ -1305,6 +1319,7 @@ Bit(s)	Description
  5	Special Cycle generation mechanism 2 supported
  6-7	reserved
 
+(Table 0464)
 Call protected-mode entry point with:
 	registers as for real/V86-mode INT call
 	CS = ring 0 descriptor with access to full address space
@@ -1685,15 +1700,15 @@ INT 1A - Disk Spool II v4.0x - GET SPOOL FILE STATUS
 	ES:BX -> ASCIZ filename (max 32 chars)
 Return: AH = status
 	    00h successful
-		ES:SI -> spool file status record (see below)
+		ES:SI -> spool file status record (see #0465)
 	    F0h not a spool file
 	    FFh failed
 Note:	this function is also supported by Vertisoft's Emulaser utility ELSPL,
 	  as that is a licensed version of Disk Spool II
 SeeAlso: AH=E0h,AX=E302h,AX=E401h
 
-Format of spool file status record:
-Offset	Size	Description
+Format of Disk Spool II spool file status record:
+Offset	Size	Description	(Table 0465)
  00h	BYTE	hour of creation or last update
  01h	BYTE	minute of creation or last update
  02h	BYTE	year-1980 of creation or last update
@@ -1716,7 +1731,7 @@ Offset	Size	Description
 INT 1A - Disk Spool II v4.0x - UPDATE SPOOL FILE
 	AX = E302h
 	ES:BX -> ASCIZ filename (max 32 chars)
-	ES:SI -> spool file status record (see AX=E301h)
+	ES:SI -> spool file status record (see #0465)
 Return: AH = status
 	    00h successful
 	    F0h not a spool file
@@ -1884,11 +1899,12 @@ Notes:	this is the preferred interrupt to chain when a program needs to be
 SeeAlso: INT 08
 --------B-1D---------------------------------
 INT 1D - SYSTEM DATA - VIDEO PARAMETER TABLES
-Note:	default parameter table at F000h:F0A4h for 100% compatible BIOSes
+Note:	the default parameter table (see #0466) is located at F000h:F0A4h for
+	  100% compatible BIOSes
 SeeAlso: INT 10/AH=00h
 
 Format of video parameters:
-Offset	Size	Description
+Offset	Size	Description	(Table 0466)
  00h 16 BYTEs	6845 register values for modes 00h and 01h
  10h 16 BYTEs	6845 register values for modes 02h and 03h
  20h 16 BYTEs	6845 register values for modes 04h and 05h
@@ -1901,11 +1917,12 @@ Offset	Size	Description
  50h  8 BYTEs	CRT controller mode bytes for each of modes 00h through 07h
 --------B-1E---------------------------------
 INT 1E - SYSTEM DATA - DISKETTE PARAMETERS
-Note:	default parameter table at F000h:EFC7h for 100% compatible BIOSes
+Note:	the default parameter table (see #0467) is located at F000h:EFC7h for
+	  100% compatible BIOSes
 SeeAlso: INT 13/AH=0Fh,INT 41
 
 Format of diskette parameter table:
-Offset	Size	Description
+Offset	Size	Description	(Table 0467)
  00h	BYTE	first specify byte
 		bits 7-4: step rate
 		bits 3-0: head unload time (0Fh = 240 ms)
@@ -1931,7 +1948,7 @@ SeeAlso: INT 10/AX=5000h,INT 43
 --------J-1F90-------------------------------
 INT 1F - NEC PC-9801 - COPY EXTENDED MEMORY
 	AH = 90h
-	ES:BX -> global descriptor table (see INT 15/AH=87h)
+	ES:BX -> global descriptor table (see #0319 at INT 15/AH=87h)
 	CX = number of bytes to copy
 	SI = 0000h
 	DI = 0000h
@@ -2082,18 +2099,18 @@ SeeAlso: AH=02h,AH=06h"OUTPUT"
 --------D-210A-------------------------------
 INT 21 - DOS 1+ - BUFFERED INPUT
 	AH = 0Ah
-	DS:DX -> buffer (see below)
+	DS:DX -> buffer (see #0468)
 Return: buffer filled with user input
 Notes:	^C/^Break are checked, and INT 23 is called if either detected
 	reads from standard input, which may be redirected under DOS 2+
-	if the maximum buffer size (see below) is set to 00h, this call returns
+	if the maximum buffer size (see #0468) is set to 00h, this call returns
 	  immediately without reading any input
 SeeAlso: AH=0Ch,INT 2F/AX=4810h
 
-Format of input buffer:
-Offset	Size	Description
+Format of DOS input buffer:
+Offset	Size	Description	(Table 0468)
  00h	BYTE	maximum characters buffer can hold
- 01h	BYTE	(input) number of chars from last input which may be recalled
+ 01h	BYTE	(call) number of chars from last input which may be recalled
 		(return) number of characters actually read, excluding CR
  02h  N BYTEs	actual characters read, including the final carriage return
 --------K-210A00-----------------------------
@@ -2107,8 +2124,9 @@ SeeAlso: AH=FFh"CED"
 --------D-210B-------------------------------
 INT 21 - DOS 1+ - GET STDIN STATUS
 	AH = 0Bh
-Return: AL = 00h if no character available
-	   = FFh if character is available
+Return: AL = status
+	    00h if no character available
+	    FFh if character is available
 Notes:	^C/^Break are checked, and INT 23 is called if either pressed
 	standard input is always the keyboard under DOS 1.x, but may be
 	  redirected under DOS 2+
@@ -2179,7 +2197,7 @@ SeeAlso: AH=0Eh/DL=ADh,AH=0Eh/DL=AEh,INT 13/AX=A759h
 --------D-210F-------------------------------
 INT 21 - DOS 1+ - OPEN FILE USING FCB
 	AH = 0Fh
-	DS:DX -> unopened File Control Block (see below)
+	DS:DX -> unopened File Control Block (see #0469)
 Return: AL = status
 	    00h successful
 	    FFh file not found or access denied
@@ -2192,7 +2210,7 @@ BUG:	APPEND for DOS 3.3+ corrupts DX if the file is not found
 SeeAlso: AH=10h,AH=16h,AH=3Dh,4303h
 
 Format of File Control Block:
-Offset	Size	Description
+Offset	Size	Description	(Table 0469)
  -7	BYTE	extended FCB if FFh
  -6   5 BYTEs	reserved
  -1	BYTE	file attribute if extended FCB
@@ -2202,19 +2220,19 @@ Offset	Size	Description
  0Ch	WORD	current block number
  0Eh	WORD	logical record size
  10h	DWORD	file size
- 14h	WORD	date of last write (see AX=5700h)
- 16h	WORD	time of last write (see AX=5700h) (DOS 1.1+)
- 18h  8 BYTEs	reserved (see below)
+ 14h	WORD	date of last write (see #0762 at AX=5700h)
+ 16h	WORD	time of last write (see #0761 at AX=5700h) (DOS 1.1+)
+ 18h  8 BYTEs	reserved (see #0470,#0471,#0472,#0473,#0474)
  20h	BYTE	record within current block
  21h	DWORD	random access record number (if record size is > 64 bytes, high
-		byte is omitted)
+		  byte is omitted)
 Note:	to use an extended FCB, you must specify the address of the FFh flag at
 	  offset -7, rather than the address of the drive number field
 
-Format of reserved field for DOS 1.0:
-Offset	Size	Description
+Format of FCB reserved field for DOS 1.0:
+Offset	Size	Description	(Table 0470)
  16h	WORD	location in directory (if high byte = FFh, low byte is device
-		ID)
+		  ID)
  18h	WORD	number of first cluster in file
  1Ah	WORD	current absolute cluster number on disk
  1Ch	WORD	current relative cluster number within file
@@ -2222,8 +2240,8 @@ Offset	Size	Description
  1Eh	BYTE	dirty flag (00h = not dirty)
  1Fh	BYTE	unused
 
-Format of reserved field for DOS 1.10-1.25:
-Offset	Size	Description
+Format of FCB reserved field for DOS 1.10-1.25:
+Offset	Size	Description	(Table 0471)
  18h	BYTE	bit 7: set if logical device
 		bit 6: not dirty
 		bits 5-0: disk number or logical device ID
@@ -2232,8 +2250,8 @@ Offset	Size	Description
  1Dh	WORD	current relative cluster number within file
  1Fh	BYTE	unused
 
-Format of reserved field for DOS 2.x:
-Offset	Size	Description
+Format of FCB reserved field for DOS 2.x:
+Offset	Size	Description	(Table 0472)
  18h	BYTE	bit 7: set if logical device
 		bit 6: set if open???
 		bits 5-0: ???
@@ -2243,8 +2261,8 @@ Offset	Size	Description
  1Eh	BYTE	???
  1Fh	BYTE	???
 
-Format of reserved field for DOS 3.x:
-Offset	Size	Description
+Format of FCB reserved field for DOS 3.x:
+Offset	Size	Description	(Table 0473)
  18h	BYTE	number of system file table entry for file
  19h	BYTE	attributes
 		bits 7,6: 00 = SHARE.EXE not loaded, disk file
@@ -2254,7 +2272,8 @@ Offset	Size	Description
 		bits 5-0: low six bits of device attribute word
 ---SHARE.EXE loaded, local file---
  1Ah	WORD	starting cluster of file on disk
- 1Ch	WORD	(DOS 3.x) offset within SHARE of sharing record (see AH=52h)
+ 1Ch	WORD	(DOS 3.x) offset within SHARE of sharing record
+		  (see #0733 at AH=52h)
  1Eh	BYTE	file attribute
  1Fh	BYTE	???
 ---SHARE.EXE loaded, remote file---
@@ -2270,8 +2289,8 @@ Offset	Size	Description
 Note:	if FCB opened on character device, DWORD at 1Ah is set to the address
 	  of the device driver header, then the BYTE at 1Ah is overwritten.
 
-Format of reserved field for DOS 5.0:
-Offset	Size	Description
+Format of FCB reserved field for DOS 5.0:
+Offset	Size	Description	(Table 0474)
  18h	BYTE	number of system file table entry for file
  19h	BYTE	attributes
 		bits 7,6: 00 = SHARE.EXE not loaded, disk file
@@ -2301,7 +2320,7 @@ Offset	Size	Description
 --------D-2110-------------------------------
 INT 21 - DOS 1+ - CLOSE FILE USING FCB
 	AH = 10h
-	DS:DX -> File Control Block (see AH=0Fh)
+	DS:DX -> File Control Block (see #0469)
 Return: AL = status
 	    00h successful
 	    FFh failed
@@ -2312,7 +2331,7 @@ SeeAlso: AH=0Fh,AH=16h,AH=3Eh
 --------D-2111-------------------------------
 INT 21 - DOS 1+ - FIND FIRST MATCHING FILE USING FCB
 	AH = 11h
-	DS:DX -> unopened FCB (see AH=0Fh), may contain '?' wildcards
+	DS:DX -> unopened FCB (see #0469), may contain '?' wildcards
 Return: AL = status
 	    00h successful
 		[DTA] unopened FCB for first matching file
@@ -2321,7 +2340,7 @@ Notes:	the type of the returned FCB depends on whether the input FCB was a
 	  normal or an extended FCB
 	the data returned in the DTA is actually the drive number (or extended
 	  FCB header and drive number) followed by the file's directory entry
-	  (see below); this format happens to be compatible with an unopened
+	  (see #0475); this format happens to be compatible with an unopened
 	  FCB
 	for extended FCBs with search attribute 08h, the volume label (if any)
 	  will be returned even if the current directory is not the root dir.
@@ -2337,21 +2356,21 @@ Notes:	the type of the returned FCB depends on whether the input FCB was a
 	  starting cluster of a file
 SeeAlso: AH=12h,AH=1Ah,AH=4Eh,INT 2F/AX=111Bh
 
-Format of directory entry:
-Offset	Size	Description
+Format of DOS directory entry:
+Offset	Size	Description	(Table 0475)
  00h  8 BYTEs	blank-padded filename
  08h  3 BYTEs	blank-padded file extension
  0Bh	BYTE	attributes
  0Ch 10 BYTEs	reserved
 		used by DR-DOS to store file password
- 16h	WORD	time of creation or last update (see AX=5700h)
- 18h	WORD	date of creation or last update (see AX=5700h)
+ 16h	WORD	time of creation or last update (see #0761 at AX=5700h)
+ 18h	WORD	date of creation or last update (see #0762 at AX=5700h)
  1Ah	WORD	starting cluster number
  1Ch	DWORD	file size
 --------D-2112-------------------------------
 INT 21 - DOS 1+ - FIND NEXT MATCHING FILE USING FCB
 	AH = 12h
-	DS:DX -> unopened FCB (see AH=0Fh)
+	DS:DX -> unopened FCB (see #0469)
 Return: AL = status
 	    00h successful
 		[DTA] = unopened FCB
@@ -2362,7 +2381,7 @@ SeeAlso: AH=1Ah,AH=4Fh,INT 2F/AX=111Ch
 --------D-2113-------------------------------
 INT 21 - DOS 1+ - DELETE FILE USING FCB
 	AH = 13h
-	DS:DX -> unopened FCB (see AH=0Fh), filename filled with template for
+	DS:DX -> unopened FCB (see #0469), filename filled with template for
 		deletion ('?' wildcards allowed)
 Return: AL = status
 	    00h one or more files successfully deleted
@@ -2383,7 +2402,7 @@ SeeAlso: AH=41h,INT 2F/AX=1113h
 --------D-2114-------------------------------
 INT 21 - DOS 1+ - SEQUENTIAL READ FROM FCB FILE
 	AH = 14h
-	DS:DX -> opened FCB (see AH=0Fh)
+	DS:DX -> opened FCB (see #0469)
 Return: AL = status
 	    00h successful
 	    01h end of file (no data)
@@ -2399,7 +2418,7 @@ SeeAlso: AH=0Fh,AH=15h,AH=1Ah,AH=3Fh,INT 2F/AX=1108h
 --------D-2115-------------------------------
 INT 21 - DOS 1+ - SEQUENTIAL WRITE TO FCB FILE
 	AH = 15h
-	DS:DX -> opened FCB (see AH=0Fh)
+	DS:DX -> opened FCB (see #0469)
 	[DTA] = record to write
 Return: AL = status
 	    00h successful
@@ -2415,7 +2434,7 @@ SeeAlso: AH=0Fh,AH=14h,AH=1Ah,AH=40h,INT 2F/AX=1109h
 --------D-2116-------------------------------
 INT 21 - DOS 1+ - CREATE OR TRUNCATE FILE USING FCB
 	AH = 16h
-	DS:DX -> unopened FCB (see AH=0Fh), wildcards not allowed
+	DS:DX -> unopened FCB (see #0469), wildcards not allowed
 Return: AL = status
 	    00h successful
 	    FFh directory full or file exists and is read-only or locked
@@ -2427,7 +2446,7 @@ SeeAlso: AH=0Fh,AH=10h,AH=3Ch
 --------D-2117-------------------------------
 INT 21 - DOS 1+ - RENAME FILE USING FCB
 	AH = 17h
-	DS:DX -> modified FCB (see also AH=0Fh)
+	DS:DX -> modified FCB (see also #0469)
 		the old filename ('?' wildcards OK) is in the standard location
 		while the new filename ('?' wildcards OK) is stored in the 11
 		bytes beginning at offset 11h
@@ -2444,7 +2463,7 @@ INT 21 - DOS 1+ - NULL FUNCTION FOR CP/M COMPATIBILITY
 Return: AL = 00h
 Note:	corresponds to the CP/M BDOS function "get bit map of logged drives",
 	  which is meaningless under MS-DOS
-SeeAlso: AH=1Dh,AH=1Eh,AH=20h,AX=4459h
+SeeAlso: AH=1Dh,AH=1Eh,AH=20h,AX=4459h,INT 60/DI=0513h
 --------D-2119-------------------------------
 INT 21 - DOS 1+ - GET CURRENT DEFAULT DRIVE
 	AH = 19h
@@ -2466,11 +2485,12 @@ INT 21 - DOS 1+ - GET ALLOCATION INFORMATION FOR DEFAULT DRIVE
 Return: AL = sectors per cluster (allocation unit)
 	CX = bytes per sector
 	DX = total number of clusters
-	DS:BX -> media ID byte (see below)
+	DS:BX -> media ID byte (see #0476)
 Note:	under DOS 1.x, DS:BX points at an actual copy of the FAT; later
 	  versions return a pointer to a copy of the FAT's ID byte
 SeeAlso: AH=1Ch,AH=36h
 
+(Table 0476)
 Values for media ID byte:
  FFh	floppy, double-sided, 8 sectors per track (320K)
  FEh	floppy, single-sided, 8 sectors per track (160K)
@@ -2486,7 +2506,7 @@ INT 21 - DOS 1+ - GET ALLOCATION INFORMATION FOR SPECIFIC DRIVE
 Return: AL = sectors per cluster (allocation unit), or FFh if invalid drive
 	CX = bytes per sector
 	DX = total number of clusters
-	DS:BX -> media ID byte (see AH=1Bh)
+	DS:BX -> media ID byte (see #0476)
 Notes:	under DOS 1.x, DS:BX points at an actual copy of the FAT; later
 	  versions return a pointer to a copy of the FAT's ID byte
 	on a DBLSPACE drive, the total number of clusters is based on the
@@ -2511,7 +2531,7 @@ INT 21 - DOS 1+ - GET DRIVE PARAMETER BLOCK FOR DEFAULT DRIVE
 	AH = 1Fh
 Return: AL = status
 	    00h successful
-		DS:BX -> Drive Parameter Block (DPB) (see below for DOS 1.x,
+		DS:BX -> Drive Parameter Block (DPB) (see #0477 for DOS 1.x,
 			AH=32h for DOS 2+)
 	    FFh invalid drive
 Note:	this call was undocumented prior to the release of DOS 5.0; however,
@@ -2519,7 +2539,7 @@ Note:	this call was undocumented prior to the release of DOS 5.0; however,
 SeeAlso: AH=32h
 
 Format of DOS 1.1 and MS-DOS 1.25 drive parameter block:
-Offset	Size	Description
+Offset	Size	Description	(Table 0477)
  00h	BYTE	sequential device ID
  01h	BYTE	logical drive number (0=A:)
  02h	WORD	bytes per sector
@@ -2545,7 +2565,7 @@ SeeAlso: AH=18h,AH=1Dh,AH=1Eh,AX=4459h
 --------D-2121-------------------------------
 INT 21 - DOS 1+ - READ RANDOM RECORD FROM FCB FILE
 	AH = 21h
-	DS:DX -> opened FCB (see AH=0Fh)
+	DS:DX -> opened FCB (see #0469)
 Return: AL = status
 	    00h successful
 	    01h end of file, no data read
@@ -2561,7 +2581,7 @@ SeeAlso: AH=14h,AH=22h,AH=27h,AH=3Fh
 --------D-2122-------------------------------
 INT 21 - DOS 1+ - WRITE RANDOM RECORD TO FCB FILE
 	AH = 22h
-	DS:DX -> opened FCB (see AH=0Fh)
+	DS:DX -> opened FCB (see #0469)
 	[DTA] = record to write
 Return: AL = status
 	    00h successful
@@ -2579,7 +2599,7 @@ SeeAlso: AH=15h,AH=21h,AH=28h,AH=40h
 --------D-2123-------------------------------
 INT 21 - DOS 1+ - GET FILE SIZE FOR FCB
 	AH = 23h
-	DS:DX -> unopened FCB (see AH=0Fh), wildcards not allowed
+	DS:DX -> unopened FCB (see #0469), wildcards not allowed
 Return: AL = status
 	    00h successful (matching file found)
 		FCB random record field filled with size in records, rounded up
@@ -2594,7 +2614,7 @@ SeeAlso: AH=42h
 --------D-2124-------------------------------
 INT 21 - DOS 1+ - SET RANDOM RECORD NUMBER FOR FCB
 	AH = 24h
-	DS:DX -> opened FCB (see AH=0Fh)
+	DS:DX -> opened FCB (see #0469)
 Notes:	computes the random record number corresponding to the current record
 	  number and record size, then stores the result in the FCB
 	normally used when switching from sequential to random access
@@ -2738,8 +2758,8 @@ SeeAlso: INT 31/AX=0400h,INT 67/AX=DE0Ah
 INT 21 P - Phar Lap 386/DOS-Extender - GET REAL-MODE LINK INFORMATION
 	AX = 250Dh
 Return: CF clear
-	EAX = CS:IP of real-mode callback procedure that will call through
-		from real mode to a protected-mode routine
+	EAX = CS:IP of real-mode callback procedure (see #0478) that will
+		  call through from real mode to a protected-mode routine
 	EBX = 32-bit real-mode address of intermode call data buffer
 	ECX = size in bytes of intermode call data buffer
 	ES:EDX = protected-mode address of intermode call data buffer
@@ -2747,16 +2767,17 @@ Notes:	this function is also supported by FlashTek X-32VM
 	X-32VM guarantees the intermode buffer to be at least 4 KB
 SeeAlso: AX=250Eh
 
-Call real-mode callback with:
+(Table 0478)
+Call Phar Lap real-mode callback with:
 	STACK:	DWORD	offset to protected-mode code
 		WORD	placeholder for protected-mode CS
-		DWORD	pointer to selector structure (see below)
+		DWORD	pointer to selector structure (see #0479)
 			or 0000h:0000h for defaults
 		var	parameters for protected-mode procedure
 Return: via FAR return
 
-Format of selector structure:
-Offset	Size	Description
+Format of Phar Lap selector structure:
+Offset	Size	Description	(Table 0479)
  00h	WORD	protected-mode GS selector
  02h	WORD	protected-mode FS selector
  04h	WORD	protected-mode ES selector
@@ -2795,7 +2816,7 @@ INT 21 P - Phar Lap 386/DOS-Extender - CALL REAL-MODE PROCEDURE, REGISTERS
 	EBX = CS:IP of real-mode procedure to call
 	ECX = number of two-byte words to copy to protected-mode stack to
 	      real-mode stack
-	DS:EDX -> pointer to parameter block (see below)
+	DS:EDX -> pointer to parameter block (see #0480)
 Return: CF clear if successful
 	    all segment registers unchanged,
 	    EDX unchanged
@@ -2809,8 +2830,8 @@ Note:	unlike most of the preceding 25xxh functions, this one is not
 	  supported by FlashTek X-32VM
 SeeAlso: AX=250Eh,AX=250Fh
 
-Format of parameter block:
-Offset	Size	Description
+Format of Phar Lap real-mode call parameter block:
+Offset	Size	Description	(Table 0480)
  00h	WORD	real-mode DS value
  02h	WORD	real-mode ES value
  04h	WORD	real-mode FS value
@@ -2822,7 +2843,7 @@ Offset	Size	Description
 --------E-212511-----------------------------
 INT 21 P - Phar Lap 386/DOS-Extender - ISSUE REAL-MODE INTERRUPT
 	AX = 2511h
-	DS:EDX -> parameter block (see below)
+	DS:EDX -> parameter block (see #0481)
 Return: all segment registers unchanged
 	EDX unchanged
 	all other registers contain values set by the real-mode int handler
@@ -2831,8 +2852,8 @@ Return: all segment registers unchanged
 Note:	this function is also supported by FlashTek X-32VM
 SeeAlso: AX=2503h,AX=2505h,AX=250Eh,AH=E3h"OS/286",INT 31/AX=0300h
 
-Format of parameter block:
-Offset	Size	Description
+Format of Phar Lap real-mode interrupt parameter block:
+Offset	Size	Description	(Table 0481)
  00h	WORD	interrupt number
  02h	WORD	real-mode DS value
  04h	WORD	real-mode ES value
@@ -2845,22 +2866,25 @@ Note: all other real-mode values set from protected-mode registers
 INT 21 P - Phar Lap 386/DOS-Extender - LOAD PROGRAM FOR DEBUGGING
 	AX = 2512h
 	DS:EDX -> pointer to ASCIZ program name
-	ES:EBX -> pointer to parameter block (see below)
+	ES:EBX -> pointer to parameter block (see #0483)
 	ECX = size in bytes of LDT buffer
 Return: CF clear if successful
 	    EAX = number of segment descriptors in LDT
 	CF set on error
-	    EAX = error code
-		02h file not found or path invalid
-		05h access denied
-		08h insufficient memory
-		0Ah environment invalid
-		0Bh invalid file format
-		80h LDT too small
+	    EAX = error code (see #0482)
 SeeAlso: AX=2517h
 
-Format of parameter block:
-Offset	Size	Description
+(Table 0482)
+Values for Phar Lap error code:
+ 02h	file not found or path invalid
+ 05h	access denied
+ 08h	insufficient memory
+ 0Ah	environment invalid
+ 0Bh	invalid file format
+ 80h	LDT too small
+
+Format of Phar Lap program load parameter block:
+Offset	Size	Description	(Table 0483)
 Input:
  00h	DWORD	32-bit offset of environment string
  04h	WORD	segment of environment string
@@ -3041,12 +3065,12 @@ SeeAlso: AX=251Dh,AX=251Eh
 --------E-212520-----------------------------
 INT 21 P - Phar Lap 386/DOS-Extender VMM - GET MEMORY STATISTICS
 	AX = 2520h
-	DS:EDX -> pointer to buffer at least 100 bytes in size (see below)
+	DS:EDX -> pointer to buffer at least 100 bytes in size (see #0484)
 	BL = 0 (don't reset VM stats), 1 (reset VM stats)
 Return: carry flag clear
 
-Format of VM stats buffer:
-Offset	Size	Description
+Format of Phar Lap VM statistics buffer:
+Offset	Size	Description	(Table 0484)
  00h	DWORD	VM status
 		0001h VM subsystem is present
 		0000h VM not present
@@ -3128,12 +3152,12 @@ INT 21 P - Phar Lap 386/DOS-Extender - GET CONFIGURATION INFORMATION
 	???
 Return: ???
 Notes:	details are not yet available
-	this function takes a pointer to the configuration buffer (see below)
+	this function takes a pointer to the configuration buffer (see #0485)
 	  and a poitner to a BYTE as arguments
 
-Format of configuration buffer:
-Offset	Size	Description
- 00h	DWORD	flags 1 (see below)
+Format of Phar Lap configuration buffer:
+Offset	Size	Description	(Table 0485)
+ 00h	DWORD	flags 1 (see #0486)
  04h	DWORD	flags 2 (unused through v5.0)
  08h	DWORD	flags 3 (unused through v5.0)
  0Ch	DWORD	386|DOS-Extender major version
@@ -3193,11 +3217,7 @@ Offset	Size	Description
  D8h	DWORD	DPMI flag (0 = not present, 1 = present)
  DCh	DWORD	DPMI major version
  E0h	DWORD	DPMI minor version
- E4h	DWORD	DPMI capabilities flags
-		bit 0: paging supported
-		bit 1: physical device mapping
-		bit 2: conventional memory mapping
-		bit 3: exceptions restartable
+ E4h	DWORD	DPMI capabilities flags (see #0487)
  E8h	DWORD	VCPI major version
  ECh	DWORD	VCPI minor version
  F0h	WORD	VCPI: IRQ0-7 physical base interrupt vector
@@ -3229,7 +3249,7 @@ Offset	Size	Description
 138h 50 DWORDs	reserved (0)
 
 Bitfields for flags 1:
-Bit(s)	Description
+Bit(s)	Description	(Table 0486)
  0	-NOPAGE specified
  1	-A20 specified
  2	-VDISK specified
@@ -3262,6 +3282,13 @@ Bit(s)	Description
  27	-NOPCDWEITEK specified
 ---v4.2+ ---
  28	-WININT21 specified
+
+Bitfields for DPMI capabilities flags:
+Bit(s)	Description	(Table 0487)
+ 0	paging supported
+ 1	physical device mapping
+ 2	conventional memory mapping
+ 3	exceptions restartable
 --------E-212527-----------------------------
 INT 21 P - Phar Lap 386/DOS-Extender VMM - EN/DISABLE STATE SAVE ON INTERRUPTS
 	AX = 2527h
@@ -3272,7 +3299,7 @@ SeeAlso: AX=2528h
 --------E-212528-----------------------------
 INT 21 P - Phar Lap 386/DOS-Extender VMM - READ REGISTERS AFTER CTRL-C INT
 	AX = 2528h
-	DS:EBX -> buffer for registers (see below)
+	DS:EBX -> buffer for registers (see #0488)
 Return: CF clear if successful
 	    DS:EBX buffer filled
 	CF set on error
@@ -3281,8 +3308,8 @@ Return: CF clear if successful
 		84h no active interrupt
 SeeAlso: AX=2527h
 
-Format of buffer for registers:
-Offset	Size	Description
+Format of Phar Lap buffer for registers:
+Offset	Size	Description	(Table 0488)
  00h  8 BYTEs	unused
  08h  4	DWORDs	EAX,EBX,ECX,EDX
  18h  4 DWORDs	ESI,EDI,EBP,ESP
@@ -3293,13 +3320,13 @@ Offset	Size	Description
 INT 21 P - Phar Lap 386/DOS-Extender - LOAD FLAT MODEL .EXP or .REX FILE
 	AX = 2529h
 	???
-Return: ES:EBX -> parameter block
+Return: ES:EBX -> parameter block (see #0489)
 	???
 Note:	details not available at this time
 SeeAlso: AX=252Ah
 
-Format of parameter block:
-Offset	Size	Description
+Format of Phar Lap program load parameter block:
+Offset	Size	Description	(Table 0489)
  00h	DWORD	initial EIP
  04h	WORD	initial CS
  06h	DWORD	initial ESP
@@ -3320,7 +3347,7 @@ Offset	Size	Description
 INT 21 P - Phar Lap 386/DOS-Extender VMM - NEW LOAD PROGRAM FOR DEBUG
 	AX = 252Ah
 	DS:EDX -> ASCIZ program name
-	ES:EBX -> parameter block (see AX=2512h)
+	ES:EBX -> parameter block (see #0483)
 	ECX = size of LDT buffer in bytes
 	ESI = bit flags
 	    bit 0: allow demand paging rather than loading entire program
@@ -3331,15 +3358,16 @@ Return: CF clear if successful
 	CF set on error
 	    EAX = error code
 		02h file error
-		    EBX = file error code (see below)
+		    EBX = file error code (see #0490)
 		    ECX = DOS error code if EBX=1,2,3, or 8
 		08h insufficient memory
-		    EBX = memory error code (see below)
+		    EBX = memory error code (see #0491)
 		80h LDT buffer too small
 		87h called twice without intervening call to AX=2531h
 SeeAlso: AX=2512h,AX=2517h,AX=2529h,AX=2531h
 
-Values for file error code:
+(Table 0490)
+Values for Phar Lap file error code:
  01h	DOS open error
  02h	DOS seek error
  03h	DOS read error
@@ -3349,7 +3377,8 @@ Values for file error code:
  07h	-NOPAGE incompatible with -REALBREAK/-OFFSET
  08h	DOS error loading .EXE file
 
-Values for memory error code:
+(Table 0491)
+Values for Phar Lap memory error code:
  01h	out of physical memory
  02h	out of swap space
  04h	unable to change extended memory allocation
@@ -3388,9 +3417,10 @@ INT 21 Pu - Phar Lap 386/DOS-Extender - GET PAGE TYPES
 	???
 Return: ???
 Note:	returns one word per page
+SeeAlso: #0492
 
-Bitfields for page information:
-Bit(s)	Description
+Bitfields for Phar Lap page information:
+Bit(s)	Description	(Table 0492)
  7	mapped to read/write data file
  6	mapped to read-only data file
  5	swapped to disk
@@ -3465,7 +3495,7 @@ INT 21 P - Phar Lap 386/DOS-Extender v4.1+ - MAP DATA FILE AT FILE OFFSET
 	    01h by logical address
 		ES:ECX = logical address at which to map data file
 	EDX = number of bytes to map
-	DS:ESI -> mapping structure (see below)
+	DS:ESI -> mapping structure (see #0493)
 	DS:EDI -> ASCIZ filename
 Return: CF clear if successful
 	CF set on error
@@ -3478,10 +3508,10 @@ Return: CF clear if successful
 		0086h all 386|VMM file handles already in use
 SeeAlso: AX=252Bh/BH=03h,AX=252Bh/BH=09h
 
-Format of mapping structure:
-Offset	Size	Description
+Format of Phar Lap mapping structure:
+Offset	Size	Description	(Table 0493)
  00h	DWORD	starting file offset to be mapped
- 04h	DWORD	DOS file access and sharing modes (see INT 21/AH=3Dh)
+ 04h	DWORD	DOS file access and sharing modes (see #0522 at INT 21/AH=3Dh)
 --------E-21252C-----------------------------
 INT 21 P - Phar Lap 386/DOS-Ext VMM v3.0 - ADD UNMAPPED PAGES AT END OF SEGMENT
 	AX = 252Ch
@@ -3505,13 +3535,13 @@ Return: CF clear if successful
 INT 21 P - Phar Lap 386/DOS-Extender VMM v2.3+ - GET/SET VMM PARAMETERS
 	AX = 252Eh
 	CL = direction (00h get parameters, 01h set parameters)
-	DS:EBX -> parameter buffer (see below)
+	DS:EBX -> parameter buffer (see #0494)
 Return: CF clear if successful
 	CF set on error
 	    EAX = error code (81h bad parameter value)
 
-Format of VMM parameter buffer:
-Offset	Size	Description
+Format of Phar Lap VMM parameter buffer:
+Offset	Size	Description	(Table 0494)
  00h	DWORD	flags
 		bit 0: page fault logging enabled
 		---v5.0+ ---
@@ -3578,13 +3608,13 @@ Return: CF clear
 INT 21 P - Phar Lap 386/DOS-Extender v3.0+ - READ/WRITE SYSTEM REGISTERS
 	AX = 2535h
 	EBX = direction (00h read registers, 01h write)
-	DS:EDX -> system register record (see below)
+	DS:EDX -> system register record (see #0495)
 Return: CF clear
 Note:	this call is only available under MS Windows if PHARLAP.386 VDD is
 	  installed
 
-Format of system register record:
-Offset	Size	Description
+Format of Phar Lap system register record:
+Offset	Size	Description	(Table 0495)
  00h	DWORD	CR0
  04h  4 DWORDs	DR0,DR1,DR2,DR3
  14h  2 DWORDs	reserved
@@ -3618,7 +3648,7 @@ SeeAlso: AH=48h
 --------E-212538----------------------------
 INT 21 P - Phar Lap 386/DOS-Ext VMM v3.0 - READ PROTMODE REGS AFTER SFTWARE INT
 	AX = 2538h
-	DS:EBX -> buffer for registers (see AX=2528h)
+	DS:EBX -> buffer for registers (see #0488)
 	ECX = register record to retrieve
 	    00h first interrupt state
 	    01h next interrupt state
@@ -3659,7 +3689,7 @@ SeeAlso: AH=4Ah
 --------E-21253B----------------------------
 INT 21 P - Phar Lap 386/DOS-Extender v3.0+ - JUMP TO REAL MODE CODE, NO CONTEXT
 	AX = 253Bh
-	DS:EBX -> buffer containing register contents (see AX=2528h)
+	DS:EBX -> buffer containing register contents (see #0488)
 Return: never returns
 SeeAlso: AX=2528h
 --------E-21253C-----------------------------
@@ -3687,29 +3717,29 @@ Notes:	this call will always fail under DPMI because it is not possible to
 	  because the processor does not allow an interrupt to be vectored to
 	  a less privileged ring
 --------E-21253F-----------------------------
-INT 21 Pu - Phar Lap 386/DOS-Extenderr v6.0+ - ALLOCATE LDT DESCRIPTOR
+INT 21 Pu - Phar Lap 386/DOS-Extender v6.0+ - ALLOCATE LDT DESCRIPTOR
 	AX = 253Fh
 	BX = LDT descriptor to allocate (0000h for any)
 	???
 Return: ???
 --------E-212540-----------------------------
-INT 21 Pu - Phar Lap 386/DOS-Extenderr v6.0+ - FORCE ALIAS OF SEGMENT
+INT 21 Pu - Phar Lap 386/DOS-Extender v6.0+ - FORCE ALIAS OF SEGMENT
 	AX = 2540h
 	???
 Return: ???
 --------E-212544-----------------------------
-INT 21 Pu - Phar Lap 386/DOS-Extenderr v6.0+ - FREE DLL
+INT 21 Pu - Phar Lap 386/DOS-Extender v6.0+ - FREE DLL
 	AX = 2544h
 	???
 Return: ???
 --------E-212545-----------------------------
-INT 21 Pu - Phar Lap 386/DOS-Extenderr v6.0+ - GET/SET PROCEDURE ADDRESS
+INT 21 Pu - Phar Lap 386/DOS-Extender v6.0+ - GET/SET PROCEDURE ADDRESS
 	AX = 2545h
 	ECX = direction (00h get, 01h set)
 	???
 Return: ???
 --------E-212546-----------------------------
-INT 21 Pu - Phar Lap 386/DOS-Extenderr v6.0+ - GET MODULE HANDLE
+INT 21 Pu - Phar Lap 386/DOS-Extender v6.0+ - GET MODULE HANDLE
 	AX = 2546h
 	???
 Return: ???
@@ -3753,23 +3783,24 @@ SeeAlso: AX=25C0h,AX=25C1h
 --------E-2125C3-----------------------------
 INT 21 P - Phar Lap 386/DOS-Extender - EXECUTE PROGRAM
 	AX = 25C3h
-	ES:EBX -> pointer to parameter block (see below)
+	ES:EBX -> pointer to parameter block (see #0497)
 	DS:EDX -> pointer to ASCIZ program filename
 Return: CF clear if successful
 	    all registers unchanged
 	CF set on error
-	    EAX = error code (see below)
+	    EAX = error code (see #0496)
 
-Values for error code:
- 01h function code in AL is invalid ???
- 02h file not found or path invalid
- 05h access denied
- 08h insufficient memory to load program
- 0Ah environment invalid
- 0Bh invalid file format
+(Table 0496)
+Values for Phar Lap error code:
+ 01h	function code in AL is invalid ???
+ 02h	file not found or path invalid
+ 05h	access denied
+ 08h	insufficient memory to load program
+ 0Ah	environment invalid
+ 0Bh	invalid file format
 
 Format of parameter block:
-Offset	Size	Description
+Offset	Size	Description	(Table 0497)
  00h	DWORD	32-bit offset of environment string
  04h	WORD	segment selector of environment string
  06h	DWORD	32-bit offset of command-tail string
@@ -3777,15 +3808,15 @@ Offset	Size	Description
 --------D-2126-------------------------------
 INT 21 - DOS 1+ - CREATE NEW PROGRAM SEGMENT PREFIX
 	AH = 26h
-	DX = segment at which to create PSP (see below)
+	DX = segment at which to create PSP (see #0498)
 Notes:	new PSP is updated with memory size information; INTs 22h, 23h, 24h
 	  taken from interrupt vector table; the parent PSP field is set to 0
 	(DOS 2+) DOS assumes that the caller's CS is the segment of the PSP to
 	  copy
 SeeAlso: AH=4Bh,AH=50h,AH=51h,AH=55h,AH=62h,AH=67h
 
-Format of PSP:
-Offset	Size	Description
+Format of Program Segment Prefix (PSP):
+Offset	Size	Description	(Table 0498)
  00h  2 BYTEs	INT 20 instruction for CP/M CALL 0 program termination
 		the CDh 20h here is often used as a signature for a valid PSP
  02h	WORD	segment of first byte beyond memory allocated to program
@@ -3799,7 +3830,7 @@ Offset	Size	Description
  12h	DWORD	DOS 1.1+ stored INT 24 critical error handler address
  16h	WORD	segment of parent PSP
  18h 20 BYTEs	DOS 2+ Job File Table, one byte per file handle, FFh = closed
- 2Ch	WORD	DOS 2+ segment of environment for process
+ 2Ch	WORD	DOS 2+ segment of environment for process (see #0499)
  2Eh	DWORD	DOS 2+ process's SS:SP on entry to last INT 21 call
  32h	WORD	DOS 3+ number of entries in JFT (default 20)
  34h	DWORD	DOS 3+ pointer to JFT (default PSP:0018h)
@@ -3852,7 +3883,7 @@ Notes:	in DOS v3+, the limit on simultaneously open files may be increased by
 	  discussion
 
 Format of environment block:
-Offset	Size	Description
+Offset	Size	Description	(Table 0499)
  00h  N BYTEs	first environment variable, ASCIZ string of form "var=value"
       N BYTEs	second environment variable, ASCIZ string
 	...
@@ -3866,7 +3897,7 @@ Offset	Size	Description
 INT 21 - DOS 1+ - RANDOM BLOCK READ FROM FCB FILE
 	AH = 27h
 	CX = number of records to read
-	DS:DX -> opened FCB (see AH=0Fh)
+	DS:DX -> opened FCB (see #0469)
 Return: AL = status
 	    00h successful, all records read
 	    01h end of file, no data read
@@ -3882,7 +3913,7 @@ SeeAlso: AH=21h,AH=28h,AH=3Fh
 INT 21 - DOS 1+ - RANDOM BLOCK WRITE TO FCB FILE
 	AH = 28h
 	CX = number of records to write
-	DS:DX -> opened FCB (see AH=0Fh)
+	DS:DX -> opened FCB (see #0469)
 	[DTA] = records to write
 Return: AL = status
 	    00h successful
@@ -3901,7 +3932,7 @@ SeeAlso: AH=22h,AH=27h,AH=40h,AH=59h
 --------D-2129-------------------------------
 INT 21 - DOS 1+ - PARSE FILENAME INTO FCB
 	AH = 29h
-	AL = parsing options (see below)
+	AL = parsing options (see #0500)
 	DS:SI -> filename string (both '*' and '?' wildcards OK)
 	ES:DI -> buffer for unopened FCB
 Return: AL = result code
@@ -3909,7 +3940,7 @@ Return: AL = result code
 	    01h successful parse, wildcards present
 	    FFh failed (invalid drive specifier)
 	DS:SI -> first unparsed character
-	ES:DI buffer filled with unopened FCB (see AH=0Fh)
+	ES:DI buffer filled with unopened FCB (see #0469)
 Notes:	asterisks expanded to question marks in the FCB
 	all processing stops when a filename terminator is encountered
 	cannot be used with filespecs which include a path (DOS 2+)
@@ -3920,7 +3951,7 @@ Notes:	asterisks expanded to question marks in the FCB
 SeeAlso: AH=0Fh,AH=16h,AH=26h
 
 Bitfields for parsing options:
-Bit(s)	Description
+Bit(s)	Description	(Table 0500)
  0	skip leading separators
  1	use existing drive number in FCB if no drive is specified, instead of
 	  setting field to zero
@@ -3995,7 +4026,9 @@ Notes:	in DESQview v1.x, there were no subfunctions; this call only identified
 	  whether or not DESQview was loaded.  DESQview v2.52 performs function
 	  01h for all subfunction requests 0Ch and higher and appears to ignore
 	  all lower-numbered functions not listed here.
-	DESQview versions 2.5x are part of DESQview/X v1.0x.
+	DESQview versions 2.50-2.52 are part of DESQview/X v1.0x; version 2.53
+	  is part of DESQview/X v1.10; and version 2.63 is part of DESQview/X
+	  v2.00.
 BUG:	subfunction 05h does not appear to work correctly in DESQview 2.52
 SeeAlso: INT 10/AH=FEh,INT 10/AH=FFh,INT 15/AX=1024h,INT 15/AX=DE30h
 --------U-212B--CX454C-----------------------
@@ -4003,7 +4036,7 @@ INT 21 - ELRES v1.1 - INSTALLATION CHECK
 	AH = 2Bh
 	CX = 454Ch ('EL')
 	DX = 5253h ('RS')
-Return: ES:BX -> ELRES history structure (see below)
+Return: ES:BX -> ELRES history structure (see #0501)
 	DX = DABEh (signature, DAve BEnnett)
 Program: ELRES is an MS-DOS return code (errorlevel) recorder by David H.
 	  Bennett which stores recent errorlevel values, allows them to be
@@ -4012,7 +4045,7 @@ Program: ELRES is an MS-DOS return code (errorlevel) recorder by David H.
 SeeAlso: AH=4Bh"ELRES",AH=4Dh
 
 Format of ELRES history structure:
-Offset	Size	Description
+Offset	Size	Description	(Table 0501)
  00h	WORD	number of return codes which can be stored by following buffer
  02h	WORD	current position in buffer (treated as a ring)
  04h  N BYTEs	ELRES buffer
@@ -4035,13 +4068,13 @@ INT 21 - TAME v2.10+ - INSTALLATION CHECK
 	BH = ???
 	    00h skip ???, else do
 Return: AL = 02h if installed
-	ES:DX -> data area in TAME-RES (see below)
+	ES:DX -> data area in TAME-RES (see #0502,#0506,#0507)
 Program: TAME is a shareware program by David G. Thomas which gives up CPU time
 	  to other partitions under a multitasker when the current partition's
 	  program incessantly polls the keyboard or system time
 
 Format of TAME 2.10-2.20 data area:
-Offset	Size	Description
+Offset	Size	Description	(Table 0502)
  00h	BYTE	data structure minor version number (01h in TAME 2.20)
  01h	BYTE	data structure major version number (07h in TAME 2.20)
  02h	DWORD	number of task switches
@@ -4066,13 +4099,13 @@ Offset	Size	Description
  3Eh	WORD	Y in /max:X,Y or /freq:X,Y
  40h	WORD	number of polls remaining before next task switch
  42h	WORD	/KEYIDLE value
- 44h	BYTE	interrupts already grabbed by TAME (see below)
+ 44h	BYTE	interrupts already grabbed by TAME (see #0503)
  45h	BYTE	flags for interrupts which may be acted on (same bits as above)
  46h	BYTE	TAME enabled (01h) or disabled (00h)
  47h	BYTE	/TIMEPOLL (01h) or /NOTIMEPOLL (00h)
  48h	BYTE	/NOTIMER (01h) or /TIMER (00h)
  49h	BYTE	window or task number for this task
- 4Ah	BYTE	multitasker type (see below)
+ 4Ah	BYTE	multitasker type (see #0504)
  4Bh	BYTE	type of task switching selected
 		bit 0: DESQview???
 		bit 1: DoubleDOS???
@@ -4087,7 +4120,7 @@ Offset	Size	Description
  50h	BYTE	???
 
 Bitfields for interrupts already grabbed by TAME:
-Bit(s)	Description
+Bit(s)	Description	(Table 0503)
  0	INT 10h
  1	INT 14h
  2	INT 15h
@@ -4096,6 +4129,7 @@ Bit(s)	Description
  5	INT 21h
  6	INT 28h
 
+(Table 0504)
 Values for multitasker type:
  01h	DESQview
  02h	DoubleDOS
@@ -4104,7 +4138,7 @@ Values for multitasker type:
  05h	VM/386
 
 Bitfields for type of task switching selected:
-Bit(s)	Description
+Bit(s)	Description	(Table 0505)
  0	DESQview
  1	DoubleDOS
  2	TopView
@@ -4113,7 +4147,7 @@ Bit(s)	Description
  5	HLT instruction
 
 Format of TAME 2.30 data area:
-Offset	Size	Description
+Offset	Size	Description	(Table 0506)
  00h	BYTE	data structure minor version number (02h in TAME 2.30)
  01h	BYTE	data structure major version number (0Ah in TAME 2.30)
  02h	DWORD	number of task switches
@@ -4146,11 +4180,11 @@ Offset	Size	Description
  56h	WORD	task switches left until next FGONLY DESQview API call
  58h	WORD	multitasker version
  5Ah	WORD	virtual screen segment
- 5Ch	BYTE	interrupts already grabbed by TAME (see above)
+ 5Ch	BYTE	interrupts already grabbed by TAME (see #0503)
  5Dh	BYTE	flags for interrupts which may be acted on (same bits as above)
  5Eh	BYTE	window or task number for this task
- 5Fh	BYTE	multitasker type (see above)
- 60h	BYTE	type of task switching selected (bit flags) (see above)
+ 5Fh	BYTE	multitasker type (see #0504)
+ 60h	BYTE	type of task switching selected (bit flags) (see #0505)
  61h	BYTE	watch_DOS
  62h	BYTE	bit flags
 		bit 0: TAME enabled
@@ -4163,7 +4197,7 @@ Offset	Size	Description
  64h	WORD	signature DA34h
 
 Format of TAME 2.60 data area:
-Offset	Size	Description
+Offset	Size	Description	(Table 0507)
  00h	BYTE	data structure minor version number (02h in TAME 2.60)
  01h	BYTE	data structure major version number (0Bh in TAME 2.60)
  02h	DWORD	number of task switches
@@ -4200,11 +4234,11 @@ Offset	Size	Description
  62h	WORD	task switches remaining until next FGONLY DESQview API call
  64h	WORD	multitasker version ???
  66h	WORD	virtual screen segment
- 68h	BYTE	interrupts already grabbed by TAME (see above)
+ 68h	BYTE	interrupts already grabbed by TAME (see #0503)
  69h	BYTE	flags for interrupts which may be acted on (same bits as above)
  6Ah	BYTE	window or task number for this task
- 6Bh	BYTE	multitasker type (see above)
- 6Ch	BYTE	type of task switching selected (bit flags) (see above)
+ 6Bh	BYTE	multitasker type (see #0504)
+ 6Ch	BYTE	type of task switching selected (bit flags) (see #0505)
  6Dh	BYTE	watch_DOS
  6Eh	BYTE	bit flags
 		bit 0: TAME enabled
@@ -4226,12 +4260,14 @@ INT 21 - pcANYWHERE IV/LAN - INSTALLATION CHECK
 	BX = 4D41h ('MA')
 	CX = 7063h ('pc')
 	DX = 4157h ('AW')
-Return: AX = 4F4Bh ('OK') if large host resident
-	   = 6F6Bh ('ok') if small host resident
-	CX:DX -> API entry point
+Return: AX = resident program
+	    4F4Bh ('OK') if large host resident
+	    6F6Bh ('ok') if small host resident
+	CX:DX -> API entry point (see #0508)
 SeeAlso: INT 16/AH=79h
 
-Call API entry point with:
+(Table 0508)
+Call pcANYWHERE API entry point with:
 	AX = 0000h get pcANYWHERE IV version
 	    DS:SI -> BYTE buffer for host type code
 	    Return: AH = version number
@@ -4241,28 +4277,20 @@ Call API entry point with:
 			01h limited-feature LAN host
 			other API may not be supported
 	AX = 0001h initialize operation
-	    DS:SI -> initialization request structure (see below)
-	    Return: AX = function status (see below)
+	    DS:SI -> initialization request structure (see #0509)
+	    Return: AX = function status (see #0512)
 	AX = 0002h get status
 	    Return: AH = current operating mode (see init req structure below)
-		    AL = current connection status
-			bit 0: a physical connection is active
-			bit 1: remove screen updating is active
-			bit 2: connection checking is active
-			bit 3: hot key detection is active
-			bit 4: background file transfer is active
+		    AL = current connection status (see #0511)
 	AX = 0003h suspend remote screen updates
-	    Return: AX = function status (see below)
+	    Return: AX = function status (see #0512)
 	AX = 0004h resume screen updates
-	    Return: AX = function status (see below)
+	    Return: AX = function status (see #0512)
 	AX = 0005h end current remote access session
-	    DS:SI -> termination request structure (see below)
-	    Return: AX = function status (see below)
+	    DS:SI -> termination request structure (see #0510)
+	    Return: AX = function status (see #0512)
 	AX = 0006h remove pcANYWHERE IV from memory
-	    Return: AX = status
-			0000h successful
-			FFD2h unable to release allocated memory
-			FFD1h unable to release interrupt vectors
+	    Return: AX = status (see #0512)
 	AX = 8000h read data from communications channel
 	    DS:BX -> buffer
 	    CX = buffer size
@@ -4279,8 +4307,8 @@ Call API entry point with:
 			= 0000h if connection lost
 			< 0000h on error
 
-Format of initialization request structure:
-Offset	Size	Description
+Format of pcANYWHERE initialization request structure:
+Offset	Size	Description	(Table 0509)
  00h	BYTE	operating mode
 		00h wait for a call
 		01h hot key activates
@@ -4290,8 +4318,8 @@ Offset	Size	Description
  04h	WORD	DS-relative pointer to path for config files
  06h	WORD	DS-relative pointer to path for program files
 
-Format of termination request structure:
-Offset	Size	Description
+Format of pcANYWHERE termination request structure:
+Offset	Size	Description	(Table 0510)
  00h	BYTE	operating mode after termination
 		00h wait for a call
 		01h hot key activates
@@ -4299,16 +4327,27 @@ Offset	Size	Description
 		80h use current mode
 		FFh remove from memory
 
-Values for function status:
+Bitfields for current connection status:
+Bit(s)	Description	(Table 0511)
+ 0	a physical connection is active
+ 1	remove screen updating is active
+ 2	connection checking is active
+ 3	hot key detection is active
+ 4	background file transfer is active
+
+(Table 0512)
+Values for pcANYWHERE function status:
  0000h	function completed successfully
+ FFD1h	unable to release interrupt vectors
+ FFD2h	unable to release allocated memory
  FFF2h	unable to establish a connection when operating mode is
-	"Initiate a call"
+	  "Initiate a call"
  FFF3h	modem configuration is invalid (corrupt config)
  FFF4h	modem initialization failed (no modem response)
  FFF5h	the communications device could not be initialized
  FFF6h	the host operator aborted the function
  FFF7h	the communications driver type specified in the configuration file is
-	different than the one loaded when pcANYWHERE IV was initially started
+	  different than the one loaded when pcANYWHERE IV was started
  FFF9h	the configuration file is invalid
  FFFAh	the configuration file could not be found
  FFFBh	no session is active
@@ -4366,6 +4405,16 @@ Note:	on most systems, the resolution of the system clock is about 5/100sec,
 	on some systems, DL may always return 00h
 SeeAlso: AH=2Ah,AH=2Dh,AH=E7h,INT 1A/AH=00h,INT 1A/AH=02h,INT 1A/AH=FEh
 SeeAlso: INT 2F/AX=120Dh
+--------v-212C00-----------------------------
+INT 21 - SKUDO - INSTALLATION CHECK
+	AX = 2C00h
+	CX = 534Bh ('SK')
+	DX = 5544h ('UD')
+	BX = 4F21h ('O!')
+Return: AX = 5349h ('SI') if installed
+	    CH = version number
+	    CL = subversion
+Program: SKUDO is an antivirus TSR by Jordi Mas
 --------D-212D-------------------------------
 INT 21 - DOS 1+ - SET SYSTEM TIME
 	AH = 2Dh
@@ -4412,7 +4461,7 @@ Return: AL = major version number (00h if DOS 1.x)
 	AH = minor version number
 	BL:CX = 24-bit user serial number (most versions do not use this)
 ---if DOS <5 or AL=00h---
-	BH = MS-DOS OEM number (see below)
+	BH = MS-DOS OEM number (see #0513)
 ---if DOS 5+ and AL=01h---
 	BH = version flag
 	    bit 3: DOS is in ROM
@@ -4430,12 +4479,13 @@ Notes:	the OS/2 v1.x Compatibility Box returns major version 0Ah (10)
 	generic MS-DOS 3.30, Compaq MS-DOS 3.31, and others identify themselves
 	  as PC-DOS by returning OEM number 00h
 	the version returned under DOS 4.0x may be modified by entries in
-	  the special program list (see AH=52h); the version returned under
-	  DOS 5+ may be modified by SETVER--use AX=3306h to get the true
+	  the special program list (see #0759 at AH=52h); the version returned
+	  under DOS 5+ may be modified by SETVER--use AX=3306h to get the true
 	  version number
 SeeAlso: AX=3000h/BX=3000h,AX=3306h,AX=4452h,AH=87h,INT 15/AX=4900h
 SeeAlso: INT 2F/AX=122Fh,INT 2F/AX=E002h
 
+(Table 0513)
 Values for DOS OEM number:
  00h	IBM
  01h	Compaq
@@ -4529,7 +4579,7 @@ Notes:	the value in DX only affects the memory block containing the PSP;
 	the minimum number of paragraphs which will remain resident is 11h
 	  for DOS 2.x and 06h for DOS 3+
 	most TSRs can save some memory by releasing their environment block
-	  before terminating (see AH=26h,AH=49h)
+	  before terminating (see #0498 at AH=26h,AH=49h)
 SeeAlso: AH=00h,AH=4Ch,AH=4Dh,INT 20,INT 22,INT 27
 --------D-2132-------------------------------
 INT 21 - DOS 2+ - GET DOS DRIVE PARAMETER BLOCK FOR SPECIFIC DRIVE
@@ -4537,12 +4587,13 @@ INT 21 - DOS 2+ - GET DOS DRIVE PARAMETER BLOCK FOR SPECIFIC DRIVE
 	DL = drive number (00h = default, 01h = A:, etc)
 Return: AL = status
 	    00h successful
-		DS:BX -> Drive Parameter Block (DPB) for specified drive
+		DS:BX -> Drive Parameter Block (DPB) (see #0514) for specified
+			  drive
 	    FFh invalid or network drive
 Notes:	the OS/2 compatibility box supports the DOS 3.3 version of this call
 	  except for the DWORD at offset 12h
 	this call updates the DPB by reading the disk; the DPB may be accessed
-	  via the DOS list of lists (see AH=52h) if disk access is not
+	  via the DOS list of lists (see #0724 at AH=52h) if disk access is not
 	  desirable.
 	undocumented prior to the release of DOS 5.0; only the DOS 4+ version
 	  of the DPB has been documented, however
@@ -4551,7 +4602,7 @@ Notes:	the OS/2 compatibility box supports the DOS 3.3 version of this call
 SeeAlso: AH=1Fh,AH=52h
 
 Format of DOS Drive Parameter Block:
-Offset	Size	Description
+Offset	Size	Description	(Table 0514)
  00h	BYTE	drive number (00h = A:, 01h = B:, etc)
  01h	BYTE	unit number within device driver
  02h	WORD	bytes per sector
@@ -4586,6 +4637,7 @@ Offset	Size	Description
  1Dh	WORD	cluster at which to start search for free space when writing,
 		usually the last cluster allocated
  1Fh	WORD	number of free clusters on drive, FFFFh = unknown
+SeeAlso: #0760
 --------D-2133-------------------------------
 INT 21 - DOS 2+ - EXTENDED BREAK CHECKING
 	AH = 33h
@@ -4692,7 +4744,11 @@ SeeAlso: AX=330Fh,AX=357Fh
 INT 21 - DOS 2+ - GET ADDRESS OF INDOS FLAG
 	AH = 34h
 Return: ES:BX -> one-byte InDOS flag
-Notes:	the value of InDOS is incremented whenever an INT 21 function begins
+Notes:	this function executes on the DOS stack, and thus cannot be called
+	  while another DOS function is already executing; you should use
+	  this function once at the beginning of the program and store the
+	  returned pointer rather than calling it when requiring DOS access
+	the value of InDOS is incremented whenever an INT 21 function begins
 	  and decremented whenever one completes
 	during an INT 28 call, it is safe to call some INT 21 functions even
 	  though InDOS may be 01h instead of zero
@@ -4906,11 +4962,11 @@ INT 21 - DIET v1.43e - GET TSR OPTIONS
 	AX = 37D4h
 	BX = 899Dh ('DI' + 'ET')
 Return: AX = 0000h
-	DX = TSR options (see below)
+	DX = TSR options (see #0515)
 SeeAlso: AX=37D0h,AX=37D2h,AX=37D5h
 
-Bitfields for TSR options:
-Bit(s)	Description
+Bitfields for DIET TSR options:
+Bit(s)	Description	(Table 0515)
  0	automated compression of DIETed file
  1	automated compression of newly-created file
  2	suppress DIET message
@@ -4920,7 +4976,7 @@ Bit(s)	Description
 INT 21 - DIET v1.43e - SET TSR OPTIONS
 	AX = 37D5h
 	BX = 899Dh ('DI' + 'ET')
-	DX = TSR options (see AX=37D4h)
+	DX = TSR options (see #0515)
 Return: AX = 0000h
 Program: DIET is a transparent file copressor/decompressor by Teddy Matsumoto
 SeeAlso: AX=37D0h,AX=37D3h,AX=37D4h
@@ -4951,7 +5007,8 @@ Note:	the resident code will call the specified external procedure at the
 	  beginning of decompression and when compression is exited on failure
 SeeAlso: AX=37DDh
 
-External procedure called with:
+(Table 0516)
+Values DIET external procedure is called with:
 	STACK:	WORD	class
 			FFFDh creation failed for unknown reasons
 			FFFEh creation failed due to lack of space
@@ -4992,7 +5049,7 @@ INT 21 - DOS 2+ - GET COUNTRY-SPECIFIC INFORMATION
 	AH = 38h
 --DOS 2.x--
 	AL = 00h get current-country info
-	DS:DX -> buffer for returned info (see below)
+	DS:DX -> buffer for returned info (see #0517,#0518)
 Return: CF set on error
 	    AX = error code (02h)
 	CF clear if successful
@@ -5003,7 +5060,7 @@ Return: CF set on error
 	AL = 01h thru 0FEh for specific country with code <255
 	AL = 0FFh for specific country with code >= 255
 	   BX = 16-bit country code
-	DS:DX -> buffer for returned info (see below)
+	DS:DX -> buffer for returned info (see #0518)
 Return: CF set on error
 	    AX = error code (02h)
 	CF clear if successful
@@ -5016,7 +5073,7 @@ Note:	this function is not supported by the Borland DPMI host, but no error
 SeeAlso: AH=65h,INT 10/AX=5001h,INT 2F/AX=110Ch,INT 2F/AX=1404h
 
 Format of DOS 2.00-2.10 country info:
-Offset	Size	Description
+Offset	Size	Description	(Table 0517)
  00h	WORD	date format  0 = USA	mm dd yy
 			     1 = Europe dd mm yy
 			     2 = Japan	yy mm dd
@@ -5029,8 +5086,8 @@ Offset	Size	Description
  08h 24 BYTEs	reserved
 
 Format of DOS 2.11+ country info:
-Offset	Size	Description
- 00h	WORD	date format (see above)
+Offset	Size	Description	(Table 0518)
+ 00h	WORD	date format (see #0517)
  02h  5 BYTEs	ASCIZ currency symbol string
  07h  2 BYTEs	ASCIZ thousands separator
  09h  2 BYTEs	ASCIZ decimal separator
@@ -5050,6 +5107,7 @@ Offset	Size	Description
  16h  2 BYTEs	ASCIZ data-list separator
  18h 10 BYTEs	reserved
 
+(Table 0519)
 Values for country code:
  001h	United States
  002h	Canadian-French
@@ -5088,9 +5146,9 @@ INT 21 - DOS 3+ - SET COUNTRY CODE
 	DX = FFFFh
 	AL = 01h thru FEh for specific country with code <255
 	AL = FFh for specific country with code >= 255
-	   BX = 16-bit country code (see AH=38h)
+	   BX = 16-bit country code (see #0519)
 Return: CF set on error
-	    AX = error code (see AH=59h)
+	    AX = error code (see #0770 at AH=59h)
 	CF clear if successful
 Note:	not supported by OS/2
 SeeAlso: INT 2F/AX=1403h
@@ -5101,7 +5159,7 @@ INT 21 - DOS 2+ - "MKDIR" - CREATE SUBDIRECTORY
 Return: CF clear if successful
 	    AX destroyed
 	CF set on error
-	    AX = error code (03h,05h) (see AH=59h)
+	    AX = error code (03h,05h) (see #0770 at AH=59h)
 Notes:	all directories in the given path except the last must exist
 	fails if the parent directory is the root and is full
 	DOS 2.x-3.3 allow the creation of a directory sufficiently deep that
@@ -5109,6 +5167,7 @@ Notes:	all directories in the given path except the last must exist
 	  because the path would exceed 64 characters
 	under the FlashTek X-32 DOS extender, the pointer is in DS:EDX
 SeeAlso: AH=3Ah,AH=3Bh,AH=6Dh,AH=71h,AH=E2h/SF=0Ah,INT 2F/AX=1103h
+SeeAlso: INT 60/DI=0511h
 --------D-213A-------------------------------
 INT 21 - DOS 2+ - "RMDIR" - REMOVE SUBDIRECTORY
 	AH = 3Ah
@@ -5116,10 +5175,10 @@ INT 21 - DOS 2+ - "RMDIR" - REMOVE SUBDIRECTORY
 Return: CF clear if successful
 	    AX destroyed
 	CF set on error
-	    AX = error code (03h,05h,06h,10h) (see AH=59h)
+	    AX = error code (03h,05h,06h,10h) (see #0770 at AH=59h)
 Notes:	directory must be empty (contain only '.' and '..' entries)
 	under the FlashTek X-32 DOS extender, the pointer is in DS:EDX
-SeeAlso: AH=39h,AH=3Bh,AH=71h,AH=E2h/SF=0Bh,INT 2F/AX=1101h
+SeeAlso: AH=39h,AH=3Bh,AH=71h,AH=E2h/SF=0Bh,INT 2F/AX=1101h,INT 60/DI=0512h
 --------D-213B-------------------------------
 INT 21 - DOS 2+ - "CHDIR" - SET CURRENT DIRECTORY
 	AH = 3Bh
@@ -5127,7 +5186,7 @@ INT 21 - DOS 2+ - "CHDIR" - SET CURRENT DIRECTORY
 Return: CF clear if successful
 	    AX destroyed
 	CF set on error
-	    AX = error code (03h) (see AH=59h)
+	    AX = error code (03h) (see #0770 at AH=59h)
 Notes:	if new directory name includes a drive letter, the default drive is
 	  not changed, only the current directory on that drive
 	changing the current directory also changes the directory in which
@@ -5137,12 +5196,12 @@ SeeAlso: AH=47h,AH=71h,INT 2F/AX=1105h
 --------D-213C-------------------------------
 INT 21 - DOS 2+ - "CREAT" - CREATE OR TRUNCATE FILE
 	AH = 3Ch
-	CX = file attributes (see below)
+	CX = file attributes (see #0520)
 	DS:DX -> ASCIZ filename
 Return: CF clear if successful
 	    AX = file handle
 	CF set on error
-	    AX = error code (03h,04h,05h) (see AH=59h)
+	    AX = error code (03h,04h,05h) (see #0770 at AH=59h)
 Notes:	if a file with the given name exists, it is truncated to zero length
 	under the FlashTek X-32 DOS extender, the pointer is in DS:EDX
 	DR-DOS checks the system password or explicitly supplied password at
@@ -5151,7 +5210,7 @@ Notes:	if a file with the given name exists, it is truncated to zero length
 SeeAlso: AH=16h,AH=3Dh,AH=5Ah,AH=5Bh,AH=93h,INT 2F/AX=1117h
 
 Bitfields for file attributes:
-Bit(s)	Description
+Bit(s)	Description	(Table 0520)
  0	read-only
  1	hidden
  2	system
@@ -5162,13 +5221,13 @@ Bit(s)	Description
 --------D-213D-------------------------------
 INT 21 - DOS 2+ - "OPEN" - OPEN EXISTING FILE
 	AH = 3Dh
-	AL = access and sharing modes (see below)
+	AL = access and sharing modes (see #0521)
 	DS:DX -> ASCIZ filename
 	CL = attribute mask of files to look for (server call only)
 Return: CF clear if successful
 	    AX = file handle
 	CF set on error
-	    AX = error code (01h,02h,03h,04h,05h,0Ch,56h) (see AH=59h)
+	    AX = error code (01h,02h,03h,04h,05h,0Ch,56h) (see #0770 at AH=59h)
 Notes:	file pointer is set to start of file
 	file handles which are inherited from a parent also inherit sharing
 	  and access restrictions
@@ -5181,7 +5240,7 @@ Notes:	file pointer is set to start of file
 SeeAlso: AH=0Fh,AH=3Ch,AX=4301h,AX=5D00h,INT 2F/AX=1116h,INT 2F/AX=1226h
 
 Bitfields for access and sharing modes:
-Bit(s)	Description
+Bit(s)	Description	(Table 0521)
  2-0	access mode
 	000 read only
 	001 write only
@@ -5200,7 +5259,8 @@ Bit(s)	Description
 	if set, file is private to current process and will not be inherited
 	  by child processes
 
-File sharing behavior:
+(Table 0522)
+Values of DOS file sharing behavior:
 	  |	Second and subsequent Opens
  First	  |Compat  Deny	  Deny	 Deny	Deny
  Open	  |	   All	  Write	 Read	None
@@ -5241,7 +5301,7 @@ INT 21 - DOS 2+ - "CLOSE" - CLOSE FILE
 Return: CF clear if successful
 	    AX destroyed
 	CF set on error
-	    AX = error code (06h) (see AH=59h)
+	    AX = error code (06h) (see #0770 at AH=59h)
 Note:	if the file was written to, any pending disk writes are performed, the
 	  time and date stamps are set to the current time, and the directory
 	  entry is updated
@@ -5255,7 +5315,7 @@ INT 21 - DOS 2+ - "READ" - READ FROM FILE OR DEVICE
 Return: CF clear if successful
 	    AX = number of bytes actually read (0 if at EOF before call)
 	CF set on error
-	    AX = error code (05h,06h) (see AH=59h)
+	    AX = error code (05h,06h) (see #0770 at AH=59h)
 Notes:	data is read beginning at current file position, and the file position
 	  is updated after a successful read
 	the returned AX may be smaller than the request in CX if a partial
@@ -5271,14 +5331,15 @@ INT 21 - Turbo Debug HARDWARE BREAKPOINTS - READ STATUS BLOCK
 	AH = 3Fh
 	BX = handle for character device "TDHDEBUG"
 	CX = number of bytes to read
-	DS:DX -> buffer for status block (see below)
+	DS:DX -> buffer for status block (see #0524)
 Return: CF clear if successful
 	    AX = number of bytes actually read
 	CF set on error
-	    AX = error code (05h,06h) (see AH=59h)
+	    AX = error code (05h,06h) (see #0770 at AH=59h)
 SeeAlso: AH=40h"Turbo Debug"
 
-Values for status of command:
+(Table 0523)
+Values for status of Turbo Debugger command:
  00h	successful
  01h	invalid handle
  02h	no more breakpoints available
@@ -5290,35 +5351,35 @@ Values for status of command:
  08h	driver not initialized yet
  FEh	recursive entry (hardware breakpoint inside hw bp handler)
 
-Format of status block:
-Offset	Size	Description
- 00h	BYTE	status of command (see above)
+Format of Turbo Debugger status block:
+Offset	Size	Description	(Table 0524)
+ 00h	BYTE	status of command (see #0523)
 ---status for command 01h---
  01h	WORD	device driver interface version number (currently 1)
  03h	WORD	device driver software version
  05h	BYTE	maximum simultaneous hardware breakpoints
- 06h	BYTE	configuration bits (see below)
- 07h	BYTE	supported breakpoint types (see below)
- 08h	WORD	supported addressing match modes (see below)
- 0Ah	WORD	supported data matches (see below)
+ 06h	BYTE	configuration bits (see #0525)
+ 07h	BYTE	supported breakpoint types (see #0526)
+ 08h	WORD	supported addressing match modes (see #0527)
+ 0Ah	WORD	supported data matches (see #0528)
  0Ch	BYTE	maximum data match length (01h, 02h, or 04h)
  0Dh	WORD	size of onboard memory (in KB)
  0Fh	WORD	maximum number of trace-back events
  11h	WORD	hardware breakpoint enable byte address segment (0000h if not
-		supported)
+		  supported)
 ---status for command 04h---
  01h	BYTE	handle to use when referring to the just-set breakpoint
 
-Bitfields for configuration bits:
-Bit(s)	Description
+Bitfields for Turbo Debugger configuration bits:
+Bit(s)	Description	(Table 0525)
  0	CPU and DMA accesses are distinct
  1	can detect DMA transfers
  2	supports data mask
  3	hardware pass counter on breakpoints
  4	can match on data as well as addresses
 
-Bitfields for supported breakpoint types:
-Bit(s)	Description
+Bitfields for Turbo Debugger supported breakpoint types:
+Bit(s)	Description	(Table 0526)
  0	memory read
  1	memory write
  2	memory read/write
@@ -5327,8 +5388,8 @@ Bit(s)	Description
  5	I/O read/write
  6	instruction fetch
 
-Bitfields for supported addressing match modes:
-Bit(s)	Description
+Bitfields for Turbo Debugger supported addressing match modes:
+Bit(s)	Description	(Table 0527)
  0	any address
  1	equal to test value
  2	not equal
@@ -5339,8 +5400,8 @@ Bit(s)	Description
  7	within range
  8	outside range
 
-Bitfields for supported data matches:
-Bit(s)	Description
+Bitfields for Turbo Debugger supported data matches:
+Bit(s)	Description	(Table 0528)
  0	any data
  1	equal to test value
  2	not equal
@@ -5355,11 +5416,11 @@ INT 21 - PC/TCP IPCUST.SYS - READ CONFIGURATION DATA
 	AH = 3Fh
 	BX = handle for character device "$IPCUST"
 	CX = number of bytes to read
-	DS:DX -> buffer for configuration data (see below)
+	DS:DX -> buffer for configuration data (see #0529)
 Return: CF clear if successful
 	    AX = number of bytes actually read
 	CF set on error
-	    AX = error code (05h,06h) (see AH=59h)
+	    AX = error code (05h,06h) (see #0770 at AH=59h)
 Notes:	if less than the entire data is read or written, the next read/write
 	  continues where the previous one ended; IOCTL calls AX=4402h and
 	  AX=4403h both reset the location at which the next operation starts
@@ -5372,8 +5433,8 @@ Notes:	if less than the entire data is read or written, the next read/write
 	  must read the PC/TCP configuration
 SeeAlso: AH=40h"IPCUST",AX=4402h"IPCUST",AX=4402h"FTPSOFT"
 
-Format of configuration data:
-Offset	Size	Description
+Format of PC/TCP configuration data:
+Offset	Size	Description	(Table 0529)
  00h 12 BYTEs	IPCUST.SYS device driver header
  12h	BYTE	???
  13h	BYTE	???
@@ -5419,11 +5480,11 @@ INT 21 - WORKGRP.SYS - GET ENTRY POINT
 	AH = 3Fh
 	BX = file handle for device "NET$HLP$"
 	CX = 0008h
-	DS:DX -> buffer for entry point record (see AX=4402h"WORKGRP.SYS")
+	DS:DX -> buffer for entry point record (see #0597)
 Return: CF clear if successful
 	    AX = number of bytes actually read (0 if at EOF before call)
 	CF set on error
-	    AX = error code (05h,06h) (see AH=59h)
+	    AX = error code (05h,06h) (see #0770 at AH=59h)
 Program: WORKGRP.SYS is the portion of Microsoft's Workgroup Connection which
 	  permits communication with PCs running Windows for Workgroups or
 	  LAN Manager
@@ -5433,11 +5494,11 @@ INT 21 - BW-TCP - GET DRIVER INFO
 	AH = 3Fh
 	BX = file handle for device "ETHDEV27"
 	CX = 002Bh
-	DS:DX -> buffer for driver info (see below)
+	DS:DX -> buffer for driver info (see #0530)
 Return: CF clear if successful
 	    AX = number of bytes actually read (0 if at EOF before call)
 	CF set on error
-	    AX = error code (05h,06h) (see AH=59h)
+	    AX = error code (05h,06h) (see #0770 at AH=59h)
 Program: BW-TCP is a TCP/IP protocol stack by Beame & Whiteside Software
 Notes:	the B&W socket library performs an INT 21/AX=4401h with DX=0060h before
 	  making this call to retrieve the driver information; one should also
@@ -5448,8 +5509,8 @@ SeeAlso: INT 14/AH=56h,INT 62/AH=00h"ETHDEV",INT 63/AH=03h,INT 64/AH=00h
 Index:	installation check;BW-TCP hardware driver
 Index:	installation check;BW-TCP TCPIP.SYS
 
-Format of driver info:
-Offset	Size	Description
+Format of BW-TCP driver info:
+Offset	Size	Description	(Table 0530)
  00h	WORD	I/O base address
  02h	BYTE	shared memory page (01h = segment 0100h, etc.)
  03h	BYTE	interrupt vector for private API
@@ -5486,8 +5547,8 @@ Offset	Size	Description
 Note:	for each driver, if version=0, the driver is not installed or does
 	  not support the version check
 
-Format of server records:
-Offset	Size	Description
+Format of BW-TCP server records:
+Offset	Size	Description	(Table 0531)
  00h	BYTE	number of server records following
  01h  N DWORDs	internet addresses of servers
 --------y-213F-------------------------------
@@ -5495,22 +5556,22 @@ INT 21 - Trusted Access - NB.SYS - GET STATE
 	AH = 3Fh
 	BX = file handle for device "$$NB$$NB"
 	CX = 0002h (size of state)
-	DS:DX -> buffer for state record
+	DS:DX -> buffer for state record (see #0532)
 Return: CF clear if successful
 	    AX = number of bytes actually read (0 if at EOF before call)
 	CF set on error
-	    AX = error code (05h,06h) (see AH=59h)
+	    AX = error code (05h,06h) (see #0770 at AH=59h)
 Program: Trusted Access is a security and access-control package by Lassen
 	  Software, Inc.; NB.SYS is a device driver to prevent the user from
 	  terminating CONFIG.SYS or AUTOEXEC.BAT with Ctrl-Break
 SeeAlso: AH=40h"NB.SYS",AX=4101h
 
-Format of state record:
-Offset	Size	Description
+Format of Trusted Access state record:
+Offset	Size	Description	(Table 0532)
  00h	BYTE	00h off, 01h on
  01h	BYTE	keys being disabled
 		bit 0: Ctrl-Break
-		bit 1: SysRq
+		bit 1: SysReq
 		bit 2: Ctrl and Alt
 		bit 3: Ctrl-Alt-Del
 		bit 7: all keys (overrides other bits)
@@ -5523,7 +5584,7 @@ INT 21 - DOS 2+ - "WRITE" - WRITE TO FILE OR DEVICE
 Return: CF clear if successful
 	    AX = number of bytes actually written
 	CF set on error
-	    AX = error code (05h,06h) (see AH=59h)
+	    AX = error code (05h,06h) (see #0770 at AH=59h)
 Notes:	if CX is zero, no data is written, and the file is truncated or
 	  extended to the current position
 	data is written beginning at the current file position, and the file
@@ -5541,16 +5602,16 @@ INT 21 - Turbo Debug HARDWARE BREAKPOINTS - SEND CMD TO HARDWARE BRKPNT DRIVER
 	AH = 40h
 	BX = handle for character device "TDHDEBUG"
 	CX = number of bytes to write
-	DS:DX -> hardware breakpoint command (see below)
+	DS:DX -> hardware breakpoint command (see #0533)
 Return: CF clear if successful
 	    AX = number of bytes actually written
 	CF set on error
-	    AX = error code (05h,06h) (see AH=59h)
+	    AX = error code (05h,06h) (see #0770 at AH=59h)
 Note:	results are retrieved by reading from the device
 SeeAlso: AH=3Fh"Turbo Debug"
 
-Format of hardware breakpoint commands:
-Offset	Size	Description
+Format of Turbo Debugger hardware breakpoint commands:
+Offset	Size	Description	(Table 0533)
  00h	BYTE	command code
 		00h install interrupt vectors
 		01h get hardware capabilities
@@ -5562,9 +5623,9 @@ Offset	Size	Description
 		07h restore interrupt vectors
 ---command code 00h---
  01h	DWORD	pointer to Turbo Debugger entry point to be jumped to on
-		hardware breakpoint; call with CPU state the same as on
-		the breakpoint except for pushing AX and placing an entry
-		code (FFh if breakout button or breakpoint handle) in AH
+		  hardware breakpoint; call with CPU state the same as on
+		  the breakpoint except for pushing AX and placing an entry
+		  code (FFh if breakout button or breakpoint handle) in AH
 ---command code 04h---
  01h	BYTE	breakpoint type
 		00h memory read
@@ -5574,42 +5635,33 @@ Offset	Size	Description
 		04h I/O write
 		05h I/O read/write
 		06h instruction fetch
- 02h	BYTE	address matching mode
-		00h any address
-		01h equal to test value
-		02h different from test value
-		03h above test value
-		04h below test value
-		05h below or equal to test value
-		06h above or equal to test value
-		07h within inclusive range
-		08h outside specified range
+ 02h	BYTE	address matching mode (see #0534)
  03h	DWORD	32-bit linear low address
  07h	DWORD	32-bit linear high address
  0Bh	WORD	pass count
  0Dh	BYTE	data size (01h, 02h, or 04h)
- 0Eh	BYTE	source of matched bus cycle
-		01h CPU
-		02h DMA
-		03h either
- 0Fh	BYTE	data-matching mode
-		00h match any
-		01h equal to test value
-		02h different from test value
-		03h above test value
-		04h below test value
-		05h below or equal to test value
-		06h above or equal to test value
-		07h within specified range
-		08h outside specified range
+ 0Eh	BYTE	source of matched bus cycle (01h CPU, 02h DMA, 03h either)
+ 0Fh	BYTE	data-matching mode (see #0534)
  10h	DWORD	low data value
  14h	DWORD	high data value
  18h	DWORD	data mask specifying which bits of the data are tested
 ---command code 05h---
  01h	BYTE	handle of breakpoint to clear (breakpoint returned from command
-		04h)
+		  04h)
 ---command code 06h---
  01h	WORD	base address of hardware debugger board
+
+(Table 0534)
+Values for Turbo Debugger address/data matching mode:
+ 00h	match any
+ 01h	equal to test value
+ 02h	different from test value
+ 03h	above test value
+ 04h	below test value
+ 05h	below or equal to test value
+ 06h	above or equal to test value
+ 07h	within inclusive range
+ 08h	outside specified range
 --------N-2140-------------------------------
 INT 21 - PC/TCP IPCUST.SYS - WRITE CONFIGURATION DATA
 	AH = 40h
@@ -5619,7 +5671,7 @@ INT 21 - PC/TCP IPCUST.SYS - WRITE CONFIGURATION DATA
 Return: CF clear if successful
 	    AX = number of bytes actually written
 	CF set on error
-	    AX = error code (05h,06h) (see AH=59h)
+	    AX = error code (05h,06h) (see #0770 at AH=59h)
 Notes:	if less than the entire data is read or written, the next read/write
 	  continues where the previous one ended; IOCTL calls AX=4402h and
 	  AX=4403h both reset the location at which the next operation starts
@@ -5635,12 +5687,12 @@ SeeAlso: AH=3Fh"IPCUST",AX=4402h"IPCUST"
 INT 21 U - Trusted Access - NB.SYS - SET STATE
 	AH = 40h
 	BX = handle for character device "$$NB$$NB"
-	DS:DX -> state record (see AH=3Fh"NB.SYS")
+	DS:DX -> state record (see #0532)
 	CX ignored
 Return: CF clear if successful
 	    AX = number of bytes actually written
 	CF set on error
-	    AX = error code (05h,06h) (see AH=59h)
+	    AX = error code (05h,06h) (see #0770 at AH=59h)
 Program: Trusted Access is a security and access-control package by Lassen
 	  Software, Inc.; NB.SYS is a device driver to prevent the user from
 	  terminating CONFIG.SYS or AUTOEXEC.BAT with Ctrl-Break
@@ -5673,7 +5725,7 @@ INT 21 - DOS 2+ - "UNLINK" - DELETE FILE
 Return: CF clear if successful
 	    AX destroyed (DOS 3.3) AL seems to be drive of deleted file
 	CF set on error
-	    AX = error code (02h,03h,05h) (see AH=59h)
+	    AX = error code (02h,03h,05h) (see #0770 at AH=59h)
 Notes:	(DOS 3.1+) wildcards are allowed if invoked via AX=5D00h, in which case
 	  the filespec must be canonical (as returned by AH=60h), and only
 	  files matching the attribute mask in CL are deleted
@@ -5709,7 +5761,7 @@ INT 21 - DOS 2+ - "LSEEK" - SET CURRENT FILE POSITION
 Return: CF clear if successful
 	    DX:AX = new file position in bytes from start of file
 	CF set on error
-	    AX = error code (01h,06h) (see AH=59h)
+	    AX = error code (01h,06h) (see #0770 at AH=59h)
 Notes:	for origins 01h and 02h, the pointer may be positioned before the
 	  start of the file; no error is returned in that case, but subsequent
 	  attempts at I/O will produce errors
@@ -5734,23 +5786,27 @@ INT 21 - DOS 2+ - GET FILE ATTRIBUTES
 	AX = 4300h
 	DS:DX -> ASCIZ filename
 Return: CF clear if successful
-	    CX = file attributes (see AX=4301h)
+	    CX = file attributes (see #0535)
 	    AX = CX (DR-DOS 5.0)
 	CF set on error
-	    AX = error code (01h,02h,03h,05h) (see AH=59h)
+	    AX = error code (01h,02h,03h,05h) (see #0770 at AH=59h)
 Notes:	under the FlashTek X-32 DOS extender, the filename pointer is in DS:EDX
 	under DR-DOS 3.41 and 5.0, attempts to change the subdirectory bit are
 	  simply ignored without an error
-SeeAlso: AX=4301h,AX=4310h,AH=71h,AH=B6h,INT 2F/AX=110Fh
+BUG:	Windows for Workgroups returns error code 05h (access denied) instead
+	  of error code 02h (file not found) when attempting to get the
+	  attributes of a nonexistent file.  This causes open() with O_CREAT
+	  and fopen() with the "w" mode to fail in Borland C++.
+SeeAlso: AX=4301h,AX=4310h,AH=71h,AH=B6h,INT 2F/AX=110Fh,INT 60/DI=0517h
 --------D-214301-----------------------------
 INT 21 - DOS 2+ - "CHMOD" - SET FILE ATTRIBUTES
 	AX = 4301h
-	CX = new file attributes (see below)
+	CX = new file attributes (see #0535)
 	DS:DX -> ASCIZ filename
 Return: CF clear if successful
 	    AX destroyed
 	CF set on error
-	    AX = error code (01h,02h,03h,05h) (see AH=59h)
+	    AX = error code (01h,02h,03h,05h) (see #0770 at AH=59h)
 Notes:	will not change volume label or directory attribute bits, but will
 	  change the other attribute bits of a directory (the directory
 	  bit must be cleared to successfully change the other attributes of a
@@ -5766,7 +5822,7 @@ Notes:	will not change volume label or directory attribute bits, but will
 SeeAlso: AX=4300h,AX=4311h,AH=71h,INT 2F/AX=110Eh
 
 Bitfields for file attributes:
-Bit(s)	Description
+Bit(s)	Description	(Table 0535)
  7	shareable (Novell NetWare)
  6	unused
  5	archive
@@ -5786,7 +5842,7 @@ INT 21 - DR-DOS 3.41+ internal - GET ACCESS RIGHTS
 	AX = 4302h
 	DS:DX -> ASCIZ pathname
 Return: CF clear if successful
-	    CX = access rights (see below)
+	    CX = access rights (see #0536)
 	    AX = CX (DR-DOS 5.0)
 	CF set on error
 	    AX = error code
@@ -5805,8 +5861,8 @@ Notes:	this protection scheme has been coordinated on all current Digital
 	  4-11.
 SeeAlso: AX=4303h
 
-Bitfields for access rights:
-Bit(s)	Description
+Bitfields for DR-DOS file access rights:
+Bit(s)	Description	(Table 0536)
  0	owner delete requires password
  1	owner execution requires password (FlexOS)
  2	owner write requires password
@@ -5823,7 +5879,7 @@ Bit(s)	Description
 INT 21 - DR-DOS 3.41+ internal - SET ACCESS RIGHTS AND PASSWORD
 	AX = 4303h
 	CX = access rights
-	     bits 11-0: access rights (see AX=4302h"DR-DOS")
+	     bits 11-0: access rights (see #0536)
 	     bit 15: new password is to be set
 	DS:DX -> ASCIZ pathname
 	[DTA] = new password if CX bit 15 is set (blank-padded to 8 characters)
@@ -5844,7 +5900,7 @@ INT 21 U - DR-DOS 5.0-6.0 internal - GET ENCRYPTED PASSWORD
 Return: CF clear if successful
 	    CX = AX = 0000h if no password assigned to file
 	CF set on error
-	    AX = error code (see AH=59h)
+	    AX = error code (see #0770 at AH=59h)
 Note:	this function is only supported by DR-DOS 5.0 and 6.0 and DRMDOS 5.1
 SeeAlso: AX=4303h,AX=4305h
 --------O-214305-----------------------------
@@ -5854,7 +5910,7 @@ INT 21 U - DR-DOS 5.0-6.0 internal - SET EXTENDED FILE ATTRIBUTES
 	???
 Return: CF clear if successful
 	CF set on error
-	    AX = error code (see AH=59h)
+	    AX = error code (see #0770 at AH=59h)
 Desc:	this function allows the extended attributes, and optionally the
 	  encrypted password, of a file to be set.
 Note:	this function is only supported by DR-DOS 5.0 and 6.0 and DRMDOS 5.1
@@ -5866,7 +5922,7 @@ INT 21 - DR-DOS 6.0 - GET FILE OWNER
 Return: CF clear if successful
 	    AX = CX = value set with AX=4307h
 	CF set on error
-	    AX = error code (see AH=59h)
+	    AX = error code (see #0770 at AH=59h)
 SeeAlso: AX=4307h
 --------O-214307-----------------------------
 INT 21 - DR-DOS 6.0 - SET FILE OWNER
@@ -5875,31 +5931,31 @@ INT 21 - DR-DOS 6.0 - SET FILE OWNER
 	DS:DX -> ASCIZ filename
 Return: CF clear if successful
 	CF set on error
-	    AX = error code (see AH=59h)
+	    AX = error code (see #0770 at AH=59h)
 SeeAlso: AX=4306h
 --------N-214310-----------------------------
 INT 21 - Banyan VINES 2.1+ - GET EXTENDED FILE ATTRIBUTES
 	AX = 4310h
 	DS:DX -> ASCIZ filename
 Return: CF clear if successful
-	    CH = attributes (see AX=4311h)
+	    CH = attributes (see #0537)
 	CF set on error
-	    AX = error code (01h,02h,03h,05h) (see AH=59h)
+	    AX = error code (01h,02h,03h,05h) (see #0770 at AH=59h)
 Note:	the filename may be a directory but must be on a VINES file service
 SeeAlso: AX=4300h,AX=4311h,AH=B6h,INT 2F/AX=110Fh
 --------N-214311-----------------------------
 INT 21 - Banyan VINES 2.1+ - SET EXTENDED FILE ATTRIBUTES
 	AX = 4311h
-	CH = new attributes (see below)
+	CH = new attributes (see #0537)
 	DS:DX -> ASCIZ filename
 Return: CF clear if successful
 	CF set on error
-	    AX = error code (01h,02h,03h,05h) (see AH=59h)
+	    AX = error code (01h,02h,03h,05h) (see #0770 at AH=59h)
 Note:	the filename may be a directory but must be on a VINES file service
 SeeAlso: AX=4301h,AX=4305h,AX=4310h,INT 2F/AX=110Eh
 
-Bitfields for extended file attributes:
-Bit(s)	Description
+Bitfields for VINES extended file attributes:
+Bit(s)	Description	(Table 0537)
  7	unused
  6	shareable
  5	execute-only
@@ -5921,10 +5977,10 @@ INT 21 - DOS 2+ - IOCTL - GET DEVICE INFORMATION
 	AX = 4400h
 	BX = handle
 Return: CF clear if successful
-	    DX = device information word (see below)
+	    DX = device information word (see #0538)
 	    AX destroyed
 	CF set on error
-	    AX = error code (01h,05h,06h) (see AH=59h)
+	    AX = error code (01h,05h,06h) (see #0770 at AH=59h)
 Notes:	value in DH corresponds to high byte of device driver's attribute word
 	  if handle refers to a character device
 	Novell NetWare reportedly does not return a drive number in bits 5-0
@@ -5932,7 +5988,7 @@ Notes:	value in DH corresponds to high byte of device driver's attribute word
 SeeAlso: AX=4401h,INT 2F/AX=122Bh
 
 Bitfields for device information word:
-Bit(s)	Description
+Bit(s)	Description	(Table 0538)
  character device
   14	device driver can process IOCTL requests (see AX=4402h)
   13	output until busy supported
@@ -5958,11 +6014,11 @@ Bit(s)	Description
 INT 21 - DOS 2+ - IOCTL - SET DEVICE INFORMATION
 	AX = 4401h
 	BX = handle (must refer to character device)
-	DX = device information word (see AX=4400h)
+	DX = device information word (see #0538)
 	    (DH must be zero)
 Return: CF clear if successful
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 SeeAlso: AX=4400h,INT 2F/AX=122Bh
 --------D-214402-----------------------------
 INT 21 - DOS 2+ - IOCTL - READ FROM CHARACTER DEVICE CONTROL CHANNEL
@@ -5973,7 +6029,7 @@ INT 21 - DOS 2+ - IOCTL - READ FROM CHARACTER DEVICE CONTROL CHANNEL
 Return: CF clear if successful
 	    AX = number of bytes actually read
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Note:	format of data is driver-specific (see below for some specific cases)
 SeeAlso: AX=4400h,AX=4403h,AX=4404h,INT 2F/AX=122Bh
 --------N-214402-----------------------------
@@ -5981,41 +6037,44 @@ INT 21 - Network Driver Interface Specification (NDIS) 2.0.1 - PROTOCOL MANAGER
 	AX = 4402h
 	BX = file handle for device "PROTMAN$"
 	CX = 000Eh (size of request block)
-	DS:DX -> request block (see below)
+	DS:DX -> request block (see #0539,#0540,#0541,#0542,#0543,#0547,#0548)
 Return: CF clear if successful
 	    AX = number of bytes actually read
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 SeeAlso: AX=4402h"FTPSOFT"
 
-Format of request block for GetProtocolManagerInfo:
-Offset	Size	Description
+Format of NDIS request block for GetProtocolManagerInfo:
+Offset	Size	Description	(Table 0539)
  00h	WORD	01h
- 02h	WORD	returned status (see below)
+ 02h	WORD	returned status (see #0549)
  04h	DWORD	returned pointer to structure representing parsed user config
  08h	DWORD	unused
  0Ch	WORD	returned BCD version of NDIS on which Protocol Manager is based
+SeeAlso: #0540,#0541,#0542,#0543,#0544,#0545,#0546,#0547,#0548
 
-Format of request block for RegisterModule:
-Offset	Size	Description
+Format of NDIS request block for RegisterModule:
+Offset	Size	Description	(Table 0540)
  00h	WORD	02h
- 02h	WORD	returned status (see below)
- 04h	DWORD	pointer to module's common characteristics table (see below)
+ 02h	WORD	returned status (see #0549)
+ 04h	DWORD	pointer to module's common characteristics table (see #0550)
  08h	DWORD	pointer to list of modules to which the module is to be bound
  0Ch	WORD	unused
+SeeAlso: #0539,#0541,#0542,#0543,#0544,#0545,#0546,#0547,#0548
 
-Format of request block for BindAndStart:
-Offset	Size	Description
+Format of NDIS request block for BindAndStart:
+Offset	Size	Description	(Table 0541)
  00h	WORD	03h
- 02h	WORD	returned status (see below)
+ 02h	WORD	returned status (see #0549)
  04h	DWORD	caller's virtual address in FailingModules structure
  08h	DWORD	unused
  0Ch	WORD	unused
+SeeAlso: #0539,#0540,#0542,#0543,#0544,#0545,#0546,#0547,#0548
 
-Format of request block for GetProtocolManagerLinkage:
-Offset	Size	Description
+Format of NDIS request block for GetProtocolManagerLinkage:
+Offset	Size	Description	(Table 0542)
  00h	WORD	04h
- 02h	WORD	returned status (see below)
+ 02h	WORD	returned status (see #0549)
  04h	DWORD	returned dispatch point
  08h	DWORD	unused
  0Ch	WORD	returned protocol manager DS
@@ -6024,60 +6083,68 @@ Note:	the dispatch point may be called as follows instead of using this IOCTL
 	       DWORD pointer to request block
 	Return: AX = returned status
 		STACK popped
+SeeAlso: #0539,#0540,#0541,#0543,#0544,#0545,#0546,#0547,#0548
 
-Format of request block for GetProtocolIniPath:
-Offset	Size	Description
+Format of NDIS request block for GetProtocolIniPath:
+Offset	Size	Description	(Table 0543)
  00h	WORD	05h
- 02h	WORD	returned status (see below)
+ 02h	WORD	returned status (see #0549)
  04h	DWORD	pointer to a buffer for the ASCIZ pathname of PROTOCOL.INI
  08h	DWORD	unused
  0Ch	WORD	buffer length
+SeeAlso: #0539,#0540,#0541,#0542,#0544,#0545,#0546,#0547,#0548
 
-Format of request block for RegisterProtocolManagerInfo:
-Offset	Size	Description
+Format of NDIS request block for RegisterProtocolManagerInfo:
+Offset	Size	Description	(Table 0544)
  00h	WORD	06h
- 02h	WORD	returned status (see below)
+ 02h	WORD	returned status (see #0549)
  04h	DWORD	pointer to structure containing parsed user config file
  08h	DWORD	unused
  0Ch	WORD	length of structure
+SeeAlso: #0539,#0540,#0541,#0542,#0543,#0545,#0546,#0547,#0548
 
-Format of request block for InitAndRegister:
-Offset	Size	Description
+Format of NDIS request block for InitAndRegister:
+Offset	Size	Description	(Table 0545)
  00h	WORD	07h
- 02h	WORD	returned status (see below)
+ 02h	WORD	returned status (see #0549)
  04h	DWORD	unused
  08h	DWORD	poitner to ASCIZ name of the module to be prebind initialized
  0Ch	WORD	unused
+SeeAlso: #0539,#0540,#0541,#0542,#0543,#0544,#0546,#0547,#0548
 
-Format of request block for UnbindAndStop:
-Offset	Size	Description
+Format of NDIS request block for UnbindAndStop:
+Offset	Size	Description	(Table 0546)
  00h	WORD	08h
- 02h	WORD	returned status (see below)
+ 02h	WORD	returned status (see #0549)
  04h	DWORD	failing modules as for BindAndStart
  08h	DWORD	if not 0000h:0000h, pointer to ASCIZ name of module to unbind
 		if 0000h:0000h, terminate a set of previously dynamically
 		  bound protocol modules
  0Ch	WORD	unused
+SeeAlso: #0539,#0540,#0541,#0542,#0543,#0544,#0545,#0547,#0548
 
-Format of request block for BindStatus:
-Offset	Size	Description
+Format of NDIS request block for BindStatus:
+Offset	Size	Description	(Table 0547)
  00h	WORD	09h
- 02h	WORD	returned status (see below)
+ 02h	WORD	returned status (see #0549)
  04h	DWORD	must be 0000h:0000h
 		on return, points to root tree
  08h	DWORD	0000h:0000h
  0Ch	WORD	unused under DOS
+SeeAlso: #0539,#0540,#0541,#0542,#0543,#0544,#0545,#0546,#0548
 
-Format of request block for RegisterStatus:
-Offset	Size	Description
+Format of NDIS request block for RegisterStatus:
+Offset	Size	Description	(Table 0548)
  00h	WORD	0Ah
- 02h	WORD	returned status (0000h, 0008h, 002Ch) (see below)
+ 02h	WORD	returned status (0000h, 0008h, 002Ch) (see #0549)
  04h	DWORD	0000h:0000h
  08h	DWORD	pointer to 16-byte ASCIZ module name
  0Ch	WORD	0000h
 Note:	not supported by the 10NET v5.0 PROTMAN$ driver
+SeeAlso: #0539,#0540,#0541,#0542,#0543,#0544,#0545,#0546,#0547
 
-Values for status code:
+(Table 0549)
+Values for NDIS status code:
  0000h	success
  0001h	wait for release--protocol has retained control of the data buffer
  0002h	request queued
@@ -6111,8 +6178,8 @@ Values for status code:
  00FFh	general failure
  F000h-FFFFh reserved for vendor-specific codes, treated as general failure
 
-Format of common characteristics table:
-Offset	Size	Description
+Format of NDIS common characteristics table:
+Offset	Size	Description	(Table 0550)
  00h	WORD	size of table in bytes
  02h	BYTE	NDIS major version
  03h	BYTE	NDIS minor version
@@ -6125,30 +6192,31 @@ Offset	Size	Description
 		bit 2: dynamically bound
 		bits 3-31 reserved, must be 0
  0Ch 16 BYTEs	ASCIZ module name
- 1Ch	BYTE	upper boundary protocol level (see below)
+ 1Ch	BYTE	upper boundary protocol level (see #0551)
  1Dh	BYTE	upper boundary interface type
 		for MACs: 1 = MAC
 		for data links and transports: to be defined
 		for session: 1 = NCB
 		any level: 0 = private (ISV-defined)
- 1Eh	BYTE	lower boundary protocol level (see below)
+ 1Eh	BYTE	lower boundary protocol level (see #0551)
  1Fh	BYTE	lower boundary interface type
 		same as offset 1Dh
  20h	WORD	module ID filled in by protocol manager
  22h	WORD	module DS
  24h	DWORD	system request entry point
- 28h	DWORD	pointer to service-specific characteristics
+ 28h	DWORD	pointer to service-specific characteristics (see #0553,#0555)
 		0000h:0000h if none
  2Ch	DWORD	pointer to service-specific status, or 0000h:0000h if none
- 30h	DWORD	pointer to upper dispatch table (see below)
+ 30h	DWORD	pointer to upper dispatch table (see #0552)
 		0000h:0000h if none
- 34h	DWORD	pointer to lower dispatch table (see below)
+ 34h	DWORD	pointer to lower dispatch table (see #0552)
 		0000h:0000h if none
  38h  2 DWORDs	reserved, must be 0
 Note:	for compatibility with NDIS 1.x.x, a major version of 00h is
 	  interpreted as 01h
 
-Values for boundary protocol level:
+(Table 0551)
+Values for NDIS boundary protocol level:
  00h	physical
  01h	Media Access Control
  02h	Data link
@@ -6157,9 +6225,9 @@ Values for boundary protocol level:
  05h	session
  FFh	not specified
 
-Format of dispatch table:
-Offset	Size	Description
- 00h	DWORD	-> common characteristics table (see above)
+Format of NDIS dispatch table:
+Offset	Size	Description	(Table 0552)
+ 00h	DWORD	-> common characteristics table (see #0550)
  04h  4 BYTEs	???
  08h	DWORD	-> ??? function (called with 12 bytes of stack arguments)
  0Ch	DWORD	-> ??? function (called with 10 bytes of stack arguments)
@@ -6169,18 +6237,18 @@ Offset	Size	Description
  1Ch	DWORD	-> ??? function (called with 12 bytes of stack arguments)
 
 Format of MAC Service-Specific Characteristics Table:
-Offset	Size	Description
+Offset	Size	Description	(Table 0553)
  00h	WORD	length of table in bytes
  02h 16 BYTEs	ASCIZ MAC type name, "802.3", "802.4", "802.5", "802.6", "DIX",
-		"DIX+802.3", "APPLETALK", "ARCNET", "FDDI", "SDLC", "BSC",
-		"HDLC", or "ISDN"
+		  "DIX+802.3", "APPLETALK", "ARCNET", "FDDI", "SDLC", "BSC",
+		  "HDLC", or "ISDN"
  12h	WORD	length of station addresses in bytes
  14h 16 BYTEs	permanent station address
  24h 16 BYTEs	current station address
  34h	DWORD	current functional adapter address (00000000h if none)
  38h	DWORD	pointer to multicast address list
  3Ch	DWORD	link speed in bits/sec
- 40h	DWORD	service flags (see below)
+ 40h	DWORD	service flags (see #0554)
  44h	WORD	maximum frame size which may be both sent and received
  46h	DWORD	total transmit buffer capacity in bytes
  4Ah	WORD	transmit buffer allocation block size in bytes
@@ -6195,7 +6263,7 @@ Offset	Size	Description
  60h  N BYTEs	vendor-specific info
 
 Bitfields for service flags:
-Bit(s)	Description
+Bit(s)	Description	(Table 0554)
  0	supports broadcast
  1	supports multicast
  2	supports functional/group addressing
@@ -6216,20 +6284,20 @@ Bit(s)	Description
  16	MAC normally sets FrameSize = 0 in ReceiveLookahead
  17-31	reserved, must be 0
 
-Format of NetBIOS Service-Specific Characteristics Table
-Offset	Size	Description
+Format of NetBIOS Service-Specific Characteristics Table:
+Offset	Size	Description	(Table 0555)
  00h	WORD	length of table in bytes
  02h 16 BYTEs	ASCIZ type name of NetBIOS module
  12h	WORD	NetBIOS module code
  14h  N BYTEs	vendor-specific info
 
 Format of MAC Service-Specific Status Table:
-Offset	Size	Description
+Offset	Size	Description	(Table 0556)
  00h	WORD	length of table in bytes
  02h	DWORD	seconds since 0:00 1/1/70 when diagnostics last run
 		(FFFFFFFFh = never)
- 06h	DWORD	MAC status bits (see below)
- 0Ah	WORD	current packet filter flags (see below)
+ 06h	DWORD	MAC status bits (see #0557)
+ 0Ah	WORD	current packet filter flags (see #0558)
  0Ch	DWORD	pointer to media-specific status table or 0000h:0000h
  10h	DWORD	seconds past 0:00 1/1/70 of last ClearStatistics
  14h	DWORD	total frames received (FFFFFFFFh = not counted)
@@ -6255,7 +6323,7 @@ Offset	Size	Description
  64h  N BYTEs	vendor-specific info
 
 Bitfields for MAC status bits:
-Bit(s)	Description
+Bit(s)	Description	(Table 0557)
  0-2	operational status
 	000 hardware not installed
 	001 hardware failed startup diagnostics
@@ -6271,7 +6339,7 @@ Bit(s)	Description
  6-31	reserved
 
 Bitfields for packet filter flags:
-Bit(s)	Description
+Bit(s)	Description	(Table 0558)
  0	directed/multicast or group/functional
  1	broadcast
  2	promiscuous
@@ -6282,14 +6350,14 @@ INT 21 U - IBM SYSTEM 36/38 WORKSTATION EMULATION - VDI.SYS - GET ???
 	AX = 4402h
 	BX = handle for character device "GDMS"
 	CX = number of bytes to read (>= 4)
-	DS:DX -> buffer (see below)
+	DS:DX -> buffer (see #0559)
 Return: CF set on error
-	    AX = error code (see AH=59h)
+	    AX = error code (see #0770 at AH=59h)
 	CF clear if successful
 	    AX = number of bytes read
 
-Format of returned data:
-Offset	Size	Description
+Format of System 36/38 emulator returned data:
+Offset	Size	Description	(Table 0559)
  00h  4 BYTEs	???
  04h	DWORD	pointer to ???
  08h  4 BYTEs	???
@@ -6300,7 +6368,7 @@ INT 21 U - LASTBYTE.SYS v1.19 - IOCTL - GET ??? TABLE
 	CX = 0004h
 	DS:DX -> DWORD to hold address of 39-byte table of ???
 Return: CF set on error
-	    AX = error code (see AH=59h)
+	    AX = error code (see #0770 at AH=59h)
 	CF clear if successful
 	    AX = number of bytes read
 Program: LASTBYTE.SYS is part of the shareware "The Last Byte" memory
@@ -6313,13 +6381,14 @@ INT 21 - HIGHUMM.SYS v1.17+ - IOCTL - GET API ADDRESS
 	CX = 0004h
 	DS:DX -> DWORD to hold entry point
 Return: CF set on error
-	    AX = error code (see AH=59h)
+	    AX = error code (see #0770 at AH=59h)
 	CF clear if successful
 	    AX = number of bytes read
 Program: HIGHUMM.SYS is part of the shareware "The Last Byte" memory management
 	  package by Key Software Products
 SeeAlso: AX=4402h"LASTBYTE"
 
+(Table 0560)
 Call HIGHUMM.SYS entry point with:
 	AH = 00h allocate UMB (same as XMS function 10h) (see INT 2F/AX=4310h)
 	    DX = size in paragraphs
@@ -6378,15 +6447,15 @@ INT 21 - SMARTDRV.SYS v3.x only - IOCTL - GET CACHE STATUS
 	AX = 4402h
 	BX = file handle for device "SMARTAAR"
 	CX = number of bytes to read (min 28h)
-	DS:DX -> buffer for status record (see below)
+	DS:DX -> buffer for status record (see #0561)
 Return: CF clear if successful
 	    AX = number of bytes actually read
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 SeeAlso: AX=4403h"SMARTDRV",INT 2F/AX=4A10h/BX=0000h
 
 Format of SMARTDRV status record:
-Offset	Size	Description
+Offset	Size	Description	(Table 0561)
  00h	BYTE	write-through flag (always 01h)
  01h	BYTE	writes should be buffered (always 00h)
  02h	BYTE	cache enabled if 01h
@@ -6418,16 +6487,17 @@ INT 21 - CD-ROM device driver - IOCTL INPUT
 	AX = 4402h
 	BX = file handle referencing character device for CD-ROM driver
 	CX = number of bytes to read
-	DS:DX -> control block (see below)
+	DS:DX -> control block (see #0563)
 Return: CF clear if successful
 	    AX = number of bytes actually read
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Note:	the data returned depends on the first byte of the control block; the
 	  remainder of the control block is filled by the driver
 SeeAlso: AX=4403h"CD-ROM",INT 2F/AX=0802h
 
-Values for data being requested:
+(Table 0562)
+Values for CD-ROM data being requested:
  00h	device driver header address
  01h	drive head location
  02h	reserved
@@ -6444,9 +6514,9 @@ Values for data being requested:
  0Dh	audio sub-channel info
  0Eh	UPC code
 
-Format of control block:
-Offset	Size	Description
- 00h	BYTE	data being requested (see above)
+Format of CD-ROM control block:
+Offset	Size	Description	(Table 0563)
+ 00h	BYTE	data being requested (see #0562)
 ---function 00h---
  01h	DWORD	device driver header address (see also AH=52h)
 ---function 01h---
@@ -6476,7 +6546,7 @@ Notes:	output channels 0 and 1 are left and right, 2 and 3 are left prime and
  01h	BYTE	number of bytes read
  02h 128 BYTEs	buffer for drive bytes
 ---function 06h---
- 01h	DWORD	device parameters (see below)
+ 01h	DWORD	device parameters (see #0564)
 ---function 07h---
  01h	BYTE	read mode
 		00h cooked
@@ -6527,8 +6597,8 @@ Note:	copies 96 bytes of sub-channel info per sector into buffer
  09h	BYTE	zero
  0Ah	BYTE	"AFRAME"
 
-Bitfields for device parameters:
-Bit(s)	Description
+Bitfields for CD-ROM device parameters:
+Bit(s)	Description	(Table 0564)
  0	door open
  1	door unlocked
  2	supports raw reading in addition to cooked
@@ -6549,7 +6619,7 @@ INT 21 - Quarterdeck - QEMM-386 v5+ - GET API ENTRY POINT
 Return: CF clear if successful
 	    buffer filled (see INT 67/AH=3Fh for entry point parameters)
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Note:	Quarterdeck recently (June 1993) documented this function, but the
 	  documentation incorrectly states that it is only available for
 	  QEMM 6+
@@ -6559,15 +6629,15 @@ INT 21 U - Quarterdeck - HOOKROM.SYS - GET HOOKED VECTOR TABLE
 	AX = 4402h
 	BX = file handle for device "HOOKROM$"
 	CX = 0004h
-	DS:DX -> DWORD buffer for address of hooked vector table (see below)
+	DS:DX -> DWORD buffer for address of hooked vector table (see #0565)
 Return: CF clear if successful
 	    DS:DX buffer filled
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 SeeAlso: AX=4402h/SF=01h
 
-Format of hooked vector table entry:
-Offset	Size	Description
+Format of HOOKROM.SYS hooked vector table entry:
+Offset	Size	Description	(Table 0565)
  00h  5 BYTEs	FAR jump to actual interrupt handler
 		(end of table if first byte is not EAh)
  05h	BYTE	interrupt vector number
@@ -6576,11 +6646,11 @@ INT 21 - Advanced SCSI Programming Interface (ASPI) - INTERFACE
 	AX = 4402h
 	BX = file handle for device "SCSIMGR$"
 	CX = 0004h or 0005h (see notes)
-	DS:DX -> buffer for result (see below), set to zeros before call
+	DS:DX -> buffer for result (see #0566), set to zeros before call
 Return: CF clear if successful
 	    AX = 0004h or 0005h (see notes)
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Note:	the variant of the call requesting five bytes is an UNDOCUMENTED
 	  extension supported by Adaptec's ASPI2DOS.SYS, ASPI4DOS.SYS, and
 	  ASPI7DOS.SYS; if made of a host manager which does not support the
@@ -6598,11 +6668,12 @@ Note:	the variant of the call requesting five bytes is an UNDOCUMENTED
 	  Block on the stack and the caller must clean up the stack
 SeeAlso: AX=440Ch"ASPITAPE",INT 11/AH=FFh"WD7000"
 
-Format of IOCTL result:
-Offset	Size	Description
+Format of ASPI IOCTL result:
+Offset	Size	Description	(Table 0566)
  00h	DWORD	function address
  04h	BYTE	number of SCSI host adapters supported by host manager
 
+(Table 0567)
 Values for ASPI request number:
  00h	"HA_INQ"	host adapter inquiry
  01h	"GET_TYPE"	get device type
@@ -6613,11 +6684,11 @@ Values for ASPI request number:
  06h	get disk drive information
 
 Format of SCSI Request Block (64 bytes):
-Offset	Size	Description
- 00h	BYTE	request number (see above)
- 01h	BYTE	request status (see below)
+Offset	Size	Description	(Table 0568)
+ 00h	BYTE	request number (see #0567)
+ 01h	BYTE	request status (see #0569)
  02h	BYTE	host adapter ID
- 03h	BYTE	request flags (see below)
+ 03h	BYTE	request flags (see #0570)
  04h	DWORD	reserved
 ---request 00h---
  08h	BYTE	(return) number of host adapters
@@ -6628,7 +6699,7 @@ Offset	Size	Description
 ---request 01h---
  08h	BYTE	target ID
  09h	BYTE	logical unit number
- 0Ah	BYTE	(return) device type (see below)
+ 0Ah	BYTE	(return) device type (see #0573)
 ---request 02h---
  08h	BYTE	target ID
  09h	BYTE	logical unit number
@@ -6637,8 +6708,8 @@ Offset	Size	Description
  0Fh	DWORD	data buffer pointer
  13h	DWORD	next request pointer (for linking)
  17h	BYTE	CDB length
- 18h	BYTE	(return) host adapter status (see below)
- 19h	BYTE	(return) target status (see below)
+ 18h	BYTE	(return) host adapter status (see #0568)
+ 19h	BYTE	(return) target status (see #0572)
  1Ah	DWORD	post routine address
  1Eh	WORD	real mode Post DS
  20h	DWORD	SRB pointer
@@ -6652,8 +6723,8 @@ Offset	Size	Description
  08h	BYTE	target ID
  09h	BYTE	logical unit number
  0Ah 14 BYTEs	reserved
- 18h	BYTE	(return) host adapter status (see below)
- 19h	BYTE	(return) target status (see below)
+ 18h	BYTE	(return) host adapter status (see #0571)
+ 19h	BYTE	(return) target status (see #0572)
  1Ah	DWORD	post routine address
  1Eh 34 BYTEs	workspace
 ---request 05h---
@@ -6667,7 +6738,8 @@ Offset	Size	Description
  0Dh	BYTE	preferred sector size translation
  0Eh 10 BYTEs	reserved
 
-Values for request status:
+(Table 0569)
+Values for ASPI request status:
  00h	not done yet
  01h	completed successfully
  02h	aborted by host
@@ -6677,8 +6749,8 @@ Values for request status:
  82h	no device attached
  else	status
 
-Bitfields for request flags:
-Bit(s)	Description
+Bitfields for ASPI request flags:
+Bit(s)	Description	(Table 0570)
  0	posting enabled
  1	linking enabled
  2	direction
@@ -6686,6 +6758,7 @@ Bit(s)	Description
  4	transfer from host to SCSI target
 Note:	no data is transferred if both bits 3 and 4 are set
 
+(Table 0571)
 Values for host adapter status:
  00h	no error detected
  11h	select timeout
@@ -6693,12 +6766,14 @@ Values for host adapter status:
  13h	bus error
  14h	bus failure
 
+(Table 0572)
 Values for target status:
  00h	no status
  02h	sense data stored in SRB
  08h	target busy
  18h	reservation error
 
+(Table 0573)
 Values for device type:
  00h	disk drive
  01h	tape drive (streamer)
@@ -6711,6 +6786,7 @@ Values for device type:
  08h	autochanger
  09h	communications device
 
+(Table 0574)
 Values for disk drive flags:
  00h	no INT 13 access
  01h	INT 13 with DOS access
@@ -6718,8 +6794,8 @@ Values for disk drive flags:
  03h	invalid flags
 
 Format of CCB:
-Offset	Size	Description
- 00h	BYTE	command code (see below)
+Offset	Size	Description	(Table 0575)
+ 00h	BYTE	command code (see #0576)
  01h	BYTE	flags
 		bits 4-0: vary by function
 		bits 7-5: logical unit number
@@ -6728,8 +6804,9 @@ Offset	Size	Description
  04h	BYTE	length
  05h	BYTE	control
 	...
- 06h/0Ah 14 BYTEs buffer for sense data (see below)
+ 06h/0Ah 14 BYTEs buffer for sense data (see #0577)
 
+(Table 0576)
 Values for CCB command code:
  00h	test unit ready
  01h	rewind
@@ -6758,13 +6835,13 @@ Values for CCB command code:
  D4h	set document feeder mode
 
 Format of sense data:
-Offset	Size	Description
+Offset	Size	Description	(Table 0577)
  00h	BYTE	error code (bit 7 set if valid)
  01h	BYTE	segment number
  02h	BYTE	sense key
 		bit 6: EOM
 		bit 5: ILI
-		bits 0-3: sense key (see below)
+		bits 0-3: sense key (see #0578)
  03h  4 BYTEs	information bytes
  07h	BYTE	additional sense length (0Ah)
  08h  4 BYTEs	command-specific information
@@ -6773,6 +6850,7 @@ Offset	Size	Description
  0Eh	BYTE	field replaceable unit code
  0Fh  3 BYTEs	sense key specific bytes
 
+(Table 0578)
 Values for sense key:
  00h	no sense data
  02h	SCSI unit not ready
@@ -6786,12 +6864,12 @@ INT 21 U - Qualitas 386MAX v6.00+ - IOCTL INPUT - GET STATE
 	AX = 4402h
 	BX = file handle for device "386MAX$$"
 	CX = number of bytes to read
-	DS:DX -> BYTE 03h followed by 386MAX state buffer (see below)
+	DS:DX -> BYTE 03h followed by 386MAX state buffer (see #0579)
 Return: CF clear if successful
 	    buffer at DS:DX+1 filled
 	    AX = number of bytes actually copied
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Notes:	if the value given in CX is less than the size of the state record
 	  (5Ah for v6.01, 66h for v7.00), only a partial state record will be
 	  returned
@@ -6811,7 +6889,7 @@ Notes:	if the value given in CX is less than the size of the state record
 SeeAlso: AX=4403h/SF=03h"386MAX",INT 67/AH=3Fh
 
 Format of 386MAX v6.01+ state:
-Offset	Size	Description
+Offset	Size	Description	(Table 0579)
  -1	BYTE	(call) 03h
  00h  6 BYTEs	signature "386MAX"
  06h  4 BYTEs	version string "N;NN" or "N.NN" (i.e. "6;01" for v6.01)
@@ -6820,7 +6898,7 @@ Offset	Size	Description
  0Ah	WORD	segment of low-memory portion of 386MAX.SYS
  0Ch  2 BYTEs	???
  0Eh	WORD	segment of ??? memory block or 0000h
- 10h	WORD	bit flags 1 (see below)
+ 10h	WORD	bit flags 1 (see #0580)
  12h	WORD	starting address of video memory in KB
  14h  2 BYTEs	???
  16h	WORD	total high DOS memory in KB
@@ -6833,24 +6911,24 @@ Offset	Size	Description
  24h	WORD	IO port to write (OUT DX,AL) to invoke 386MAX API functions
  26h	WORD	??? (depends on DOS version)
  28h	WORD	size of ??? in paragraphs
- 2Ah	DWORD	machine type (see below)
+ 2Ah	DWORD	machine type (see #0588)
  2Eh	DWORD	-> first DOS memory control block
- 32h	WORD	system configuration flags (see below)
- 34h	WORD	debugging flags 1 (see below)
- 36h	WORD	debugging flags 2 (see below)
+ 32h	WORD	system configuration flags (see #0581)
+ 34h	WORD	debugging flags 1 (see #0582)
+ 36h	WORD	debugging flags 2 (see #0583)
  38h  2 BYTEs	???
  3Ah	WORD	segment of first MCB in high memory chain
- 3Ch	WORD	feature flags 1 (see below)
- 3Eh	WORD	feature flags 2 (see below)
- 40h	WORD	feature flags 3 (see below)
- 42h	WORD	segment of first 386MAX control block??? (see below)
+ 3Ch	WORD	feature flags 1 (see #0585)
+ 3Eh	WORD	feature flags 2 (see #0586)
+ 40h	WORD	feature flags 3 (see #0587)
+ 42h	WORD	segment of first 386MAX control block??? (see #0589)
  44h	WORD	amount of memory to report available on INT 15/AH=88h
  46h  4 BYTEs	???
  4Ah	WORD	number of K at start of address space swapped with fast
-		extended memory (SWAP= parameter)
+		  extended memory (SWAP= parameter)
  4Ch  2 BYTEs	???
  4Eh	WORD	segment address of ???
- 50h	WORD	debugging flags 3 (see below)
+ 50h	WORD	debugging flags 3 (see #0584)
  52h	DWORD	old INT 21h
  56h	DWORD	pointer to 386MAX's EMS (INT 67h) handler
 ---386MAX v7.00---
@@ -6858,8 +6936,8 @@ Offset	Size	Description
  5Eh	DWORD	bytes of extended memory (EXT= parameter)
  62h  4 BYTEs	???
 
-Bitfields for bit flags 1:
-Bit(s)	Description
+Bitfields for 386MAX bit flags 1:
+Bit(s)	Description	(Table 0580)
  1	???
  2	allow A20 to be enabled/disabled???
  3	??? (cleared by calling INT 67 functions or starting MSWindows)
@@ -6876,8 +6954,8 @@ Bit(s)	Description
  14	???
  15	???
 
-Bitfields for system configuration flags:
-Bit(s)	Description
+Bitfields for 386MAX system configuration flags:
+Bit(s)	Description	(Table 0581)
  1	ROM compressed???
  3	???
  5	386MAX loaded into high memory
@@ -6890,8 +6968,8 @@ Bit(s)	Description
  14	enable A20 control???
  15	???
 
-Bitfields for debugging flags 1:
-Bit(s)	Description
+Bitfields for 386MAX debugging flags 1:
+Bit(s)	Description	(Table 0582)
  0	DEBUG=LED
  1	DEBUG=X67
  2	DEBUG=INV
@@ -6909,8 +6987,8 @@ Bit(s)	Description
  14	DEBUG=XR
  15	DEBUG=EMSERR (generate INT 01 on returning error from EMS call)
 
-Bitfields for debugging flags 2:
-Bit(s)	Description
+Bitfields for 386MAX debugging flags 2:
+Bit(s)	Description	(Table 0583)
  0	DEBUG=ROMSWAP
  1	DEBUG=UNSHADOWROM
  2	DEBUG=COMPROM
@@ -6926,16 +7004,16 @@ Bit(s)	Description
  14	DEBUG=EVM (generate INT 01 on entering V86 mode)
  15	DEBUG=EMSSAVE or DEBUG=VDS
 
-Bitfields for debugging flags 3:
-Bit(s)	Description
+Bitfields for 386MAX debugging flags 3:
+Bit(s)	Description	(Table 0584)
  10	DEBUG=EPM
  12	DEBUG=ABIOS
  13	DEBUG=XMSPTED
  14	DEBUG=TIME
  15	DEBUG=SCRUB
 
-Bitfields for feature flags 1:
-Bit(s)	Description
+Bitfields for 386MAX feature flags 1:
+Bit(s)	Description	(Table 0585)
  1	Weitek present
  2	no DPMI services
  3	NODMA
@@ -6949,8 +7027,8 @@ Bit(s)	Description
  14	EXT= specified
  15	NOEMS, allow prior expanded memory manager to provide EMS
 
-Bitfields for feature flags 2:
-Bit(s)	Description
+Bitfields for 386MAX feature flags 2:
+Bit(s)	Description	(Table 0586)
  0	UNSHIFT specified (FORCEA20 disabled)
  1	NOXRAM
  2	NOSCSI specified
@@ -6965,8 +7043,8 @@ Bit(s)	Description
  12	USE= specified
  13	ROM= specified
 
-Bitfields for feature flags 3:
-Bit(s)	Description
+Bitfields for 386MAX feature flags 3:
+Bit(s)	Description	(Table 0587)
  0	Windows3 support enabled
  1	SHADOWROM
  2	don't compress ROM (NOCOMPROM)
@@ -6981,8 +7059,8 @@ Bit(s)	Description
  13	NOSCRUB
  15	NOFRAME
 
-Bitfields for machine type:
-Bit(s)	Description
+Bitfields for 386MAX machine type:
+Bit(s)	Description	(Table 0588)
  12	Amstrad
  13	Epson
  14	Zenith Data Systems
@@ -7005,7 +7083,7 @@ Bit(s)	Description
  31	JET386
 
 Format of 386MAX control block:
-Offset	Size	Description
+Offset	Size	Description	(Table 0589)
  00h	WORD	segment of next block (FFFFh if last)
  02h	WORD	segment of previous block (FFFFh if first)
  04h 12 BYTEs	filename
@@ -7024,8 +7102,8 @@ Offset	Size	Description
  2Bh	BYTE	???
  2Ch	WORD	PSP
 
-Format of high memory info record:
-Offset	Size	Description
+Format of 386MAX high memory info record:
+Offset	Size	Description	(Table 0590)
  00h	WORD	segment address of memory region
  02h	WORD	size of memory region in paragraphs
  04h	BYTE	type or flags???
@@ -7035,10 +7113,10 @@ Offset	Size	Description
 		42h if ROM
  05h	BYTE	???
 
-Format of ROM shadowing record:
-Offset	Size	Description
+Format of 386MAX ROM shadowing record:
+Offset	Size	Description	(Table 0591)
  00h	WORD	logical start segment of ROM??? (may be used by BlueMAX when it
-		squeezes together the ROMs to make room)
+		  squeezes together the ROMs to make room)
  02h	WORD	physical start segment of ROM
  04h  2 BYTEs	???
  06h	WORD	size of shadowed ROM in paragraphs
@@ -7050,7 +7128,8 @@ Offset	Size	Description
 		bit 12: ???
 		bit 10: ???
 
-Values for memory type:
+(Table 0592)
+Values for 386MAX memory type:
  00h	unused by EMS
  01h	DOS
  04h	page frame overlapping ROM???
@@ -7060,24 +7139,25 @@ Values for memory type:
 Note:	the type may be 00h (unused) if the 16K page is split among different
 	  uses (such as ROM and high RAM)
 
+(Table 0593)
 Call 386MAX API (via OUT DX,AL) with:
 	STACK: WORD value for DX
 	AH = 00h unused
 		Return: AH = 84h (unsupported function)
 	AH = 01h get high memory information
 		ES:DI -> buffer for array of high memory info records
-			(see above)
+			(see #0590)
 		Return: CX = number of records placed in buffer
 	AH = 02h get shadowed ROM info
-		ES:DI -> buffer for array of ROM shadowing records (see above)
+		ES:DI -> buffer for array of ROM shadowing records (see #0591)
 		Return: CX = number of records placed in buffer
 	AH = 03h get 386MAX state
-		ES:DI -> 90-byte buffer for state (see above)
+		ES:DI -> 90-byte buffer for state (see #0579)
 		Return: AH = 00h (successful)
 			buffer filled
 	AH = 04h get memory types???
 		ES:DI -> buffer for memory type info (array of bytes, one per
-			16K page) (see above)
+			16K page) (see #0592)
 		Return:	CX = number of bytes placed in buffer
 	AH = 05h get page table entries
 		AL = A20 control (00h enable A20 first, 01h leave unchanged)
@@ -7088,7 +7168,7 @@ Call 386MAX API (via OUT DX,AL) with:
 		Return: CX = number of bytes returned (four per 4K page)
 			ES:DI buffer filled
 	AH = 06h get memory speed info
-		ES:DI -> buffer for memory speed records (see below)
+		ES:DI -> buffer for memory speed records (see #0594)
 		Return: AH = 00h (successful)
 			CX = number of bytes placed in buffer
 		Note:	this function can take over a second to execute
@@ -7111,20 +7191,20 @@ Call 386MAX API (via OUT DX,AL) with:
 		Return: AH = status (00h OK, A4h not possible at this time)
 		Note:	if AL=00h, this function always returns success
 	AH = 09h toggle Bit Flags 1 flags
-		BX = bitmask of bit flags 1's flags to toggle (see above)
+		BX = bitmask of bit flags 1's flags to toggle (see #0580)
 		Return: AH = 00h (successful)
 		Note:	enables A20 first
 	AH = 0Ah toggle Debugging Flags 1 flags
-		BX = bitmask of Debugging Flags 1's bits to toggle (see above)
+		BX = bitmask of Debugging Flags 1's bits to toggle (see #0582)
 		Return: AH = 00h (successful)
 		Notes:	enables A20 first
 			does ??? if bit 3 on after specified bits are toggled
 	AH = 0Bh toggle Debugging Flags 2 flags
-		BX = bitmask of Debugging Flags 2's bits to toggle (see above)
+		BX = bitmask of Debugging Flags 2's bits to toggle (see #0583)
 		Return: AH = 00h (successful)
 		Note:	enables A20 first
 	AH = 0Ch toggle feature flags 3
-		BX = bitmask of feature flags 3's bits to toggle (see above)
+		BX = bitmask of feature flags 3's bits to toggle (see #0587)
 		Return: AH = 00h (successful)
 		Note:	enables A20 first
 	AH = 0Dh specify 386MAX high-memory location
@@ -7238,11 +7318,11 @@ Call 386MAX API (via OUT DX,AL) with:
 			???
 		Note:	this function appears to be broken in v7.00
 	AH = 1Eh get memory info
-		ES:DI -> memory info (see below)
+		ES:DI -> memory info (see #0595)
 		Return: ???
 	AH = 1Fh get DPMI host information
 		Return: AX = 0000h if successful
-			BX = DPMI flags (see INT 31/AX=0400h)
+			BX = DPMI flags (see #1605 at INT 31/AX=0400h)
 			CL = CPU type (02h = 80286, 03h = 80386, etc.)
 			DX = DPMI ver supported (DH=major, DL=2-digit minor)
 			SI = ???
@@ -7339,7 +7419,7 @@ Call 386MAX API (via OUT DX,AL) with:
 		ES??? = ???
 		Return: ???
 	AH = 28h (v7.00) get ???
-		Return: AH = status (00h,8Fh) (see INT 67/AH=40h)
+		Return: AH = status (00h,8Fh) (see #1891 at INT 67/AH=40h)
 			if AH=00h,
 			    CX = ???
 			    DX = ???
@@ -7360,14 +7440,14 @@ Return: AH = status (as for EMS INT 67 calls)
 	    etc.
 	STACK popped (value placed in DX if no specific return value for DX)
 
-Format of memory speed record:
-Offset	Size	Description
+Format of 386MAX memory speed record:
+Offset	Size	Description	(Table 0594)
  00h	DWORD	page table entry for 4K page
  04h	WORD	number of microticks (840ns units) required for REP LODSD of
-		entire 4K page
+		  entire 4K page
 
-Format of memory info [array]:
-Offset	Size	Description
+Format of 386MAX memory info [array]:
+Offset	Size	Description	(Table 0595)
  00h	DWORD	linear start address
  04h	DWORD	size in bytes
  08h	WORD	XMS handle (if next byte = 04h)
@@ -7398,19 +7478,19 @@ INT 21 - PGS1600.DEV - IOCTL - GET CONFIGURATION INFO
 	AX = 4402h
 	BX = file handle for device "PGS1600$"
 	CX = 0018h (size of buffer)
-	DS:DX -> configuration buffer (see below)
+	DS:DX -> configuration buffer (see #0596)
 Return: CF clear if successful
 	    buffer filled
 	    AX = number of bytes actually copied
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Program: PGS1600.DEV is a device driver for the Cornerstone Technology PG1600
 	  display adapter, which provides a 1600x1200 monochrome display as
 	  well as one of two emulations, MDA or CGA.
 SeeAlso: AX=4403h"PGS1600"
 
-Format of configuration information:
-Offset	Size	Description
+Format of PGS1600.DEV configuration information:
+Offset	Size	Description	(Table 0596)
  00h	WORD	version (high byte = major, low byte = minor)
  02h	WORD	board initialisation mode
  04h	WORD	board I/O address
@@ -7438,7 +7518,7 @@ INT 21 - PC/TCP IPCUST.SYS - RESET CONFIGURATION DATA READ POINTER
 Return: CF clear if successful
 	    AX destroyed
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Notes:	there are a total of 378h bytes of configuration data for IPCUST.SYS
 	  version 2.05.	 If less than the entire data is read or written,
 	  the next read/write continues where the previous one ended; this
@@ -7463,53 +7543,62 @@ Program: WORKGRP.SYS is the portion of Microsoft's Workgroup Connection which
 	  LAN Manager
 SeeAlso: AH=3Fh"WORKGRP.SYS"
 
-Format of entry point record:
-Offset	Size	Description
+Format of WORKGRP.SYS entry point record:
+Offset	Size	Description	(Table 0597)
  00h	WORD	3633h  \ signature???
  02h	WORD	EF6Fh  /
  04h	DWORD	address of entry point
 Note:	first four bytes of buffer must be 6Fh E9h 33h 36h on entry when using
 	  IOCTL rather than READ to get the entry point record
 
+(Table 0598)
 Call WORKGRP entry point with:
 	STACK:	WORD	function number (0000h-0009h)
 Return: STACK unchanged
 
+(Table 0599)
 Call WORKGRP function 00h with:
 	STACK:	WORD	0000h (function "get ???")
 Return: DX:AX -> data table
 
+(Table 0600)
 Call WORKGRP function 01h with:
 	STACK:	WORD	0001h (function "hook ???")
 Return: STACK:	DWORD	pointer to ???
 		WORD	0001h (function number)
 
+(Table 0601)
 Call WORKGRP function 02h with:
 	STACK:	WORD	0002h (function "unhook ???")
 	???
 Return: ???
 
+(Table 0602)
 Call WORKGRP function 03h with:
 	STACK:	WORD	0003h (function "reenable printer port")
 		WORD	LPT port number
 Return: ???
 
+(Table 0603)
 Call WORKGRP function 04h with:
 	STACK:	WORD	0004h (function "disable printer port")
 		WORD	LPT port number
 Return: ???
 
+(Table 0604)
 Call WORKGRP function 05h with:
 	STACK:	WORD	0005h (function "???")
 		???
 Return: ???
 
+(Table 0605)
 Call WORKGRP function 06h with:
 	STACK:	WORD	0006h (function "???")
 Return: STACK unchanged
 	AX = 0000h
 	DX = 0000h
 
+(Table 0606)
 Call WORKGRP functions 07h-09h with:
 	STACK:	WORD	0007h-0009h (NOP functions)
 Return: STACK unchanged
@@ -7519,16 +7608,16 @@ Return: STACK unchanged
 INT 21 - 10NET v5.0 - 10BEUI.DOS - API
 	AX = 4402h
 	BX = file handle referencing device "10BEUI$"
-	DS:DX -> parameter record (see below)
+	DS:DX -> parameter record (see #0607)
 	CX ignored
 Return: CF clear if successful
 	    AX destroyed
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 SeeAlso: AX=4402h"10MEMMGR",INT 6F/AH=00h"10NET"
 
-Format of parameter record:
-Offset	Size	Description
+Format of 10NET 10BEUI.DOS parameter record:
+Offset	Size	Description	(Table 0607)
  00h	WORD	000Ah (function number???)
  02h	WORD	???
  04h	DWORD	pointer to buffer for ???
@@ -7538,20 +7627,21 @@ Offset	Size	Description
 INT 21 - 10NET v5.0 - 10MEMMGR.SYS - API
 	AX = 4402h
 	BX = file handle referencing device "MEMMGR0$"
-	DS:DX -> 6-byte buffer for interface info (see below)
+	DS:DX -> 6-byte buffer for interface info (see #0608)
 	CX ignored
 Return: CF clear if successful
 	    AX destroyed
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 SeeAlso: AX=4402h"10BEUI",INT 6F/AH=00h"10NET"
 
-Format of interface info:
-Offset	Size	Description
- 00h	DWORD	address of entry point (see below)
+Format of 10NET 10MEMMGR.SYS interface info:
+Offset	Size	Description	(Table 0608)
+ 00h	DWORD	address of entry point (see #0609)
  04h	WORD	version (0500h for v5.00)
 
-Call entry point with:
+(Table 0609)
+Call 10NET 10MEMMGR.SYS entry point with:
 	AL = 01h ???
 	    BX = ???
 	    Return: CF clear if successful
@@ -7572,17 +7662,188 @@ Call entry point with:
 	    Return: CF set
 		    AX = 0000h
 		    BL = 01h
+--------V-214402-----------------------------
+INT 21 - Compaq AG1024.SYS - RGDI - GET DRIVER LOCATION
+	AX = 4402h
+	BX = file handle for device "$$$$RGDI"
+	CX = 0006h (size of returned data)
+	DS:DX -> location record (see #0610)
+Return: CF clear if successful
+	    buffer filled
+	CF set on error
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
+Program: AG1024.SYS is a device driver for the Advanced Graphics 1024 adapter
+SeeAlso: AX=4403h"RGDI"
+
+Format of Compaq AG1024.SYS location record:
+Offset	Size	Description	(Table 0610)
+ 00h	WORD	signature 55AAh
+ 02h	WORD	segment of ???
+ 04h	WORD	segment of device driver's code
+--------N-214402-----------------------------
+INT 21 - FTPSOFT.DOS v3.1 - GET ???
+	AX = 4402h
+	BX = file handle for device "FTPSOFT$"
+	CX = size of buffer
+	DS:DX -> buffer for data (see #0611)
+Return: CF clear if successful
+	    buffer filled
+	CF set on error
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
+Program: FTPSOFT.DOS is a device driver for Protocol Manager support from
+	   FTP Software, Inc.
+SeeAlso: AH=3Fh"PC/TCP",AX=4402h"NDIS"
+
+Format of FTPSOFT.DOS data:
+Offset	Size	Description	(Table 0611)
+ 00h	WORD	(call) BA98h (if different, no data returned)
+ 02h	DWORD	-> NDIS common characteristics table
+		  (see #0550 at AX=4402h"NDIS")
+ 06h	DWORD	(call) -> new dispatch table (see #0552 at AX=4402h"NDIS")
+ 0Ah	DWORD	-> 28-byte buffer for ??? data
+ 0Eh	DWORD	???
+ 12h	DWORD	-> FAR function to reset dispatch jump table to defaults
+ 16h	BYTE	???
+Note:	the addresses in the new dispatch table are copied into an internal
+	  jump table which may be reset by calling the function pointed at by
+	  offset 12h
+--------n-214402-----------------------------
+INT 21 U - PenDOS PENDEV.SYS - GET ENTRY POINTS
+	AX = 4402h
+	BX = file handle for device "$$PENDOS" or "$$PD_REG"
+	CX = size of buffer (4 for $$PENDOS and a 4,8,12, or 16 for $$PD_REG)
+	DS:DX -> buffer for entry point record (see #0612)
+Return: CF clear if successful
+	    buffer filled
+	CF set on error
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
+Program: A limited version of PenDOS by Communication Intelligence Corporation,
+	  which provides pen capability to keyboard-based programs, is bundled
+	  with IBM DOS 6.1
+SeeAlso: AX=4403h"PENDEV.SYS"
+
+Format of PENDEV.SYS entry point record:
+Offset	Size	Description	(Table 0612)
+ 00h	DWORD	-> array of jumps
+ 04h	WORD	offset of function to retrieve entry point (see #0613)
+ 06h  2 BYTEs	signature "Pe"
+ 08h	WORD	offset of function to set entry point (see #0614)
+ 0Ah  2 BYTEs	signature "nD"
+ 0Ch	WORD	offset of function to clear entry point (see #0615)
+ 0Eh	WORD	signature "OS"
+
+(Table 0613)
+Call PENDEV.SYS function to retrieve entry point with:
+	AX = index of entry point (0-9)
+Return: CF clear if successful
+	    DX:AX -> desired entry point
+	CF set on error (AX out of range)
+
+(Table 0614)
+Call PENDEV.SYS function to set entry point with:
+	AX = index of entry point (0-9)
+	DX:SI -> new handler
+Return: CF clear if successful
+	CF set on error (AX out of range)
+
+(Table 0615)
+Call PENDEV.SYS function to clear entry point with:
+	AX = index of entry point (0-9)
+Return: CF clear if successful
+	CF set on error (AX out of range)
+Note:	resets the jump at the specified entry point to its default target,
+	  which simply returns
+--------N-214402-----------------------------
+INT 21 U - LAN Manager - TCPDRV.DOS - API
+	AX = 4402h
+	BX = file handle referencing device "TCPDRV$"
+	CX = 0019h
+	DS:DX -> buffer containing request block
+Return: CF clear if successful
+	    buffer filled
+	CF set on error
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
+Program: TCPDRV.DOS is the low-level device driver supporting LAN Manager's
+	  TCP/IP protocol stack
+
+Format of TCPDRV.DOS request block:
+Offset	Size	Description	(Table 0616)
+ 00h	BYTE	(call) function number
+		00h initialize ???
+		06h get ???
+		07h get ???
+ 01h	BYTE	(call) 00h
+		(return) error code if error, unchanged if successful
+ 02h	WORD	signature 4354h ('CT')
+---function 00h---
+ 04h	DWORD	(call) pointer to ??? FAR function
+		function is called with ES:BX -> device driver request used to
+		  invoke this function
+ 08h  4 BYTEs	???
+ 0Ch	DWORD	(call) pointer to ??? record, WORD at offset 22h is read
+ 10h	DWORD	(return) -> ??? buffer if 0000h:0000h on call
+---function 06h---
+ 04h  4 BYTEs	???
+ 08h	DWORD	(return) pointer to ???
+---function 07h---
+ 04h	DWORD	(return) pointer to ??? record
+--------y-214402-----------------------------
+INT 21 U - PC Tools 9 CPRLOW.EXE - GET CODE AND DATA ADDRESSES
+	AX = 4402h
+	BX = file handle referencing device "RECLOWLD"
+	DS:DX -> buffer for address list (see #0617)
+	CX ignored
+Return: CF clear if successful
+	    buffer filled
+	CF set on error
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
+
+Format of CPRLOW address list:
+Offset	Size	Description	(Table 0617)
+ 00h	WORD	segment of CPRLOW code
+ 02h	WORD	offset in code segment of ??? entry point
+		(switches into protected mode)
+ 04h	WORD	offset in code segment of jump array (see #0618)
+ 06h	WORD	segment of copy of interrupt vector table at CPRLOW load time
+Note:	neither the entry point nor the jump array is valid until after a
+	  CPR /LOAD, because CPR.EXE installs the code into CPRLOW at runtime.
+
+Format of CPRLOW jump array:
+Offset	Size	Description	(Table 0618)
+ 00h  3 BYTEs	initialize CPRLOW interrupt hooks
+ 03h  3 BYTEs	reset timers and enable CPR (hotkey enable)
+ 06h  3 BYTEs	disable CPR (hotkey disable)
+ 09h  3 BYTEs	clear ??? flag, hotkey disable, and ???
+ 0Ch  3 BYTEs	initialize delay loop counter (destroys AX,BX,CX,DX)
+ 0Fh  3 BYTEs	disable CPR completely (commandline /DISABLE)
+ 12h  3 BYTEs	enable ??? if CPR enabled by both cmdline and hotkey
+ 15h  3 BYTEs	enable CPR (commandline /ENABLE)
+--------m-214402-----------------------------
+INT 21 U - Novell DOS 7 EMM386.EXE - GET STATE RECORD???
+	AX = 4402h
+	BX = file handle for device "EMMXXXX0"
+	CX = 003Eh (size of state record)
+	DS:DX -> buffer for state record (see #0619)
+Return: CF clear if successful
+	    buffer filled (see INT 67/AH=3Fh function 1B00h)
+	CF set on error
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
+
+Format of Novell DOS 7 EMM386.EXE state record:
+Offset	Size	Description	(Table 0619)
+ 00h	WORD	signature EDC0h
+ 02h 60 BYTEs	???
 --------m-214402SF00-------------------------
 INT 21 U - Memory Managers - GET API ENTRY POINT
 	AX = 4402h subfn 00h
 	BX = file handle for device "EMMXXXX0"
 	CX = 0006h (size of buffer in bytes)
-	DS:DX -> buffer for API entry point record (see below)
+	DS:DX -> buffer for API entry point record (see #0621)
 		first byte must be 00h on entry
 Return: CF clear if successful
 	    buffer filled (see INT 67/AH=3Fh function 1B00h)
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Notes:	this function is supported by Microsoft EMM386.EXE v4.45+ and
 	  CEMM v5.10+, and is intended for use by MS Windows as it starts up
 	if no other program has hooked INT 67, an alternate installation
@@ -7592,11 +7853,13 @@ Notes:	this function is supported by Microsoft EMM386.EXE v4.45+ and
 	  offset of the API entry point
 SeeAlso: AX=4402h/SF=01h,AX=4402h/SF=02h,AX=4402h"EMM386",INT 67/AH=3Fh
 
-Format of API entry point record:
-Offset	Size	Description
+Format of memory manager API entry point record:
+Offset	Size	Description	(Table 0620)
  00h	WORD	??? (0022h for CEMM 5.11, 0025h for MS EMM386 v4.45)
- 02h	DWORD	manager's private API entry point (see below,INT 67/AX=FFA5h)
+ 02h	DWORD	manager's private API entry point
+		(see #0621,#1909 at INT 67/AX=FFA5h)
 
+(Table 0621)
 Call CEMM v5.10+ entry point with:
 	AH = 00h get memory manager's state
 	    Return: AH = state
@@ -7632,12 +7895,12 @@ INT 21 U - Memory Managers - GET EMM IMPORT STRUCTURE ADDRESS
 	AX = 4402h subfn 01h
 	BX = file handle for device "EMMXXXX0"
 	CX = 0006h (size of buffer in bytes)
-	DS:DX -> buffer for EMM import structure record (see below)
+	DS:DX -> buffer for EMM import structure record (see #0622)
 		first byte must be 01h on entry
 Return: CF clear if successful
-	    buffer filled (see INT 67/AH=3Fh function 1B00h)
+	    buffer filled (see also INT 67/AH=3Fh function 1B00h)
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Notes:	this function is supported by Microsoft EMM386.EXE v4.45+,
 	  QEMM-386 v6+, and CEMM v5.10+, and is intended for use by MS Windows
 	  as it starts up
@@ -7647,16 +7910,17 @@ SeeAlso: AX=4402h/SF=00h,AX=4402h"EMM386",INT 2F/AX=D201h/BX=5145h
 SeeAlso: INT 67/AH=3Fh
 
 Format of EMM import structure record:
-Offset	Size	Description
- 00h	DWORD	physical address of EMM import structure
+Offset	Size	Description	(Table 0622)
+ 00h	DWORD	physical address of EMM import structure (see #0623)
  04h	BYTE	EMM import structure major version
  05h	BYTE	EMM import structure minor version
 Note:	version 1.00 contains only EMS information (Windows 3.0+)
 	version 1.10 contains UMB/XMS/HMA/EMS information (Windows 3.1)
 	version 1.11 is version 1.10 plus memory manager maker/product name
+SeeAlso: #1886
 
 Format of Global EMM Import record:
-Offset	Size	Description
+Offset	Size	Description	(Table 0623)
  00h	BYTE	bit flags
 		bit 2: ???
 		bit 3: free EMM386 virtual HMA only if hma_page_table_paddr!=0
@@ -7665,7 +7929,7 @@ Offset	Size	Description
  02h	WORD	size of structure in bytes
  04h	WORD	structure version
  06h	DWORD	reserved
- 0Ah 384 BYTEs	64 EMS frame status records (see below), one per 16K of
+ 0Ah 384 BYTEs	64 EMS frame status records (see #0624), one per 16K of
 		  real-mode 1M address space
 18Ah	BYTE	??? (must be at least 3*number_of_EMS_frames+4)
 18Bh	BYTE	number of UMB frame descriptors following
@@ -7673,31 +7937,31 @@ Offset	Size	Description
 		each is 4 DWORDs giving physical page numbers for the four
 		  4K pages of a 16K EMS frame (00000000h if non-UMB page)
 var	BYTE	number of EMS handle info records following
-    16N BYTEs	EMS handle info records (see below)
+    16N BYTEs	EMS handle info records (see #0626)
 ---version 1.10+ ---
 	DWORD	realmode INT 67 vector (used by Windows to set breakpoints)
 	DWORD	physical address of HMA page table values
 	BYTE	number of free page entries following
      2N DWORDs	free page entries
 		each is:
-		  DWORD	physical page number
-		  DWORD number of consecutive physical pages
+		    DWORD	physical page number
+		    DWORD	number of consecutive physical pages
 	BYTE	number of XMS handle info records following
 		00h if memory manager does not emulate XMS or has real mode
 		  XMS code which can execute in the Windows environment
-    12N BYTEs	XMS handle info records (see below)
+    12N BYTEs	XMS handle info records (see #0627)
 	BYTE	number of free UMB info records following
      2N WORDs	free UMB info records
 		each is:
-		  WORD	real mode start segment
-		  WORD	size in paragraphs
+		    WORD	real mode start segment
+		    WORD	size in paragraphs
 ---version 1.11---	
      20 BYTEs	blank-padded maker name
      20 BYTEs	blank-padded product name
 
 Format of EMS frame status record:
-Offset	Size	Description
- 00h	BYTE	frame type (see below)
+Offset	Size	Description	(Table 0624)
+ 00h	BYTE	frame type (see #0625)
  01h	BYTE	owner handle (00h/FFh = none) from frame including UMB
 		index to UMB frame descriptors
  02h	WORD	logical page for frame, 7FFFh if none, FFFFh if non-EMS frame
@@ -7708,7 +7972,7 @@ Offset	Size	Description
 		  01: UMB mapping
 
 Bitfields for EMS frame type:
-Bit(s)	Description
+Bit(s)	Description	(Table 0625)
  0	EMS frame
  1	(if EMS frame) in standard 64K page frame
  2	first 4K of frame is UMB
@@ -7717,7 +7981,7 @@ Bit(s)	Description
  5	last 4K of frame is UMB
 
 Format of EMS handle info record:
-Offset	Size	Description
+Offset	Size	Description	(Table 0626)
  00h	BYTE	handle number (00h = system handle)
  01h	BYTE	flags
 		bit 0: normal handle rather than system handle
@@ -7729,7 +7993,7 @@ Note:	all values should be zero for the system handle if no large frame
 	  support is present
 
 Format of XMS handle info record:
-Offset	Size	Description
+Offset	Size	Description	(Table 0627)
  00h	WORD	handle
  02h	WORD	flags
 		bit 0: handle usable by Windows
@@ -7742,18 +8006,18 @@ INT 21 U - Memory Managers - GET MEMORY MANAGER VERSION
 	AX = 4402h subfn 02h
 	BX = file handle for device "EMMXXXX0"
 	CX = 0002h (size of buffer in bytes)
-	DS:DX -> buffer for memory manager version (see below)
+	DS:DX -> buffer for memory manager version (see #0628)
 		first byte must be 02h on entry
 Return: CF clear if successful
 	    buffer filled
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Note:	this function is supported by Microsoft EMM386.EXE v4.45+ and
 	  CEMM v5.10+, and is intended for use by MS Windows as it starts up
 SeeAlso: AX=4402h/SF=00h,AX=4402h"EMM386",INT 67/AH=3Fh
 
 Format of memory manager version:
-Offset	Size	Description
+Offset	Size	Description	(Table 0628)
  00h	BYTE	major version
  01h	BYTE	minor version (binary)
 --------m-214402-----------------------------
@@ -7761,20 +8025,20 @@ INT 21 U - Microsoft EMM386.EXE v4.45 - GET MEMORY MANAGER INFORMATION
 	AX = 4402h
 	BX = file handle for device "EMMXXXX0"
 	CX = size of buffer in bytes (varies, see below)
-	DS:DX -> buffer for returned data (see below)
+	DS:DX -> buffer for returned data (see #0629)
 		first byte must be set on entry to indicate desired data
 Return: CF clear if successful
 	    buffer filled
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Notes:	an error is returned if the number of bytes to be read does not match
 	  the number of bytes returned for the specified data item
 	this function is part of the interface which allows MS Windows to
 	  cooperate with memory managers
 SeeAlso: AX=4402h/SF=00h,AX=4402h/SF=01h,AX=4402h/SF=02h,INT 67/AX=FFA5h
 
-Format of data buffer:
-Offset	Size	Description
+Format of EMM386.EXE data buffer:
+Offset	Size	Description	(Table 0629)
  00h	BYTE	(call) function
 		03h get ???
 		04h get ???
@@ -7785,158 +8049,6 @@ Offset	Size	Description
  00h	WORD	segment of UMB containing EMM386 code/data
  02h	WORD	number of paragraphs of EMM386 code/data in UMB
  04h	WORD	???
---------V-214402-----------------------------
-INT 21 - Compaq AG1024.SYS - RGDI - GET DRIVER LOCATION
-	AX = 4402h
-	BX = file handle for device "$$$$RGDI"
-	CX = 0006h (size of returned data)
-	DS:DX -> location record (see below)
-Return: CF clear if successful
-	    buffer filled
-	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
-Program: AG1024.SYS is a device driver for the Advanced Graphics 1024 adapter
-SeeAlso: AX=4403h"RGDI"
-
-Format of location record:
-Offset	Size	Description
- 00h	WORD	signature 55AAh
- 02h	WORD	segment of ???
- 04h	WORD	segment of device driver's code
---------N-214402-----------------------------
-INT 21 - FTPSOFT.DOS v3.1 - GET ???
-	AX = 4402h
-	BX = file handle for device "FTPSOFT$"
-	CX = size of buffer
-	DS:DX -> buffer for data (see below)
-Return: CF clear if successful
-	    buffer filled
-	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
-Program: FTPSOFT.DOS is a device driver for Protocol Manager support from
-	   FTP Software, Inc.
-SeeAlso: AH=3Fh"PC/TCP",AX=4402h"NDIS"
-
-Format of data:
-Offset	Size	Description
- 00h	WORD	(call) BA98h (if different, no data returned)
- 02h	DWORD	-> NDIS common characteristics table (see AX=4402h"NDIS")
- 06h	DWORD	(call) -> new dispatch table (see AX=4402h"NDIS")
- 0Ah	DWORD	-> 28-byte buffer for ??? data
- 0Eh	DWORD	???
- 12h	DWORD	-> FAR function to reset dispatch jump table to defaults
- 16h	BYTE	???
-Note:	the addresses in the new dispatch table are copied into an internal
-	  jump table which may be reset by calling the function pointed at by
-	  offset 12h
---------n-214402-----------------------------
-INT 21 U - PenDOS PENDEV.SYS - GET ENTRY POINTS
-	AX = 4402h
-	BX = file handle for device "$$PENDOS" or "$$PD_REG"
-	CX = size of buffer (4 for $$PENDOS and a 4,8,12, or 16 for $$PD_REG)
-	DS:DX -> buffer for entry point record (see below)
-Return: CF clear if successful
-	    buffer filled
-	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
-Program: A limited version of PenDOS by Communication Intelligence Corporation,
-	  which provides pen capability to keyboard-based programs, is bundled
-	  with IBM DOS 6.1
-SeeAlso: AX=4403h"PENDEV.SYS"
-
-Format of entry point record:
-Offset	Size	Description
- 00h	DWORD	-> array of jumps
- 04h	WORD	offset of function to retrieve entry point
- 06h  2 BYTEs	signature "Pe"
- 08h	WORD	offset of function to set entry point
- 0Ah  2 BYTEs	signature "nD"
- 0Ch	WORD	offset of function to clear entry point
- 0Eh	WORD	signature "OS"
-
-Call function to retrieve entry point with:
-	AX = index of entry point (0-9)
-Return: CF clear if successful
-	    DX:AX -> desired entry point
-	CF set on error (AX out of range)
-
-Call function to set entry point with:
-	AX = index of entry point (0-9)
-	DX:SI -> new handler
-Return: CF clear if successful
-	CF set on error (AX out of range)
-
-Call function to clear entry point with:
-	AX = index of entry point (0-9)
-Return: CF clear if successful
-	CF set on error (AX out of range)
-Note:	resets the jump at the specified entry point to its default target,
-	  which simply returns
---------N-214402-----------------------------
-INT 21 U - LAN Manager - TCPDRV.DOS - API
-	AX = 4402h
-	BX = file handle referencing device "TCPDRV$"
-	CX = 0019h
-	DS:DX -> buffer containing request block
-Return: CF clear if successful
-	    buffer filled
-	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
-Program: TCPDRV.DOS is the low-level device driver supporting LAN Manager's
-	  TCP/IP protocol stack
-
-Format of request block:
-Offset	Size	Description
- 00h	BYTE	(call) function number
-		00h initialize ???
-		06h get ???
-		07h get ???
- 01h	BYTE	(call) 00h
-		(return) error code if error, unchanged if successful
- 02h	WORD	signature 4354h ('CT')
----function 00h---
- 04h	DWORD	(call) pointer to ??? FAR function
-		function is called with ES:BX -> device driver request used to
-		  invoke this function
- 08h  4 BYTEs	???
- 0Ch	DWORD	(call) pointer to ??? record, WORD at offset 22h is read
- 10h	DWORD	(return) -> ??? buffer if 0000h:0000h on call
----function 06h---
- 04h  4 BYTEs	???
- 08h	DWORD	(return) pointer to ???
----function 07h---
- 04h	DWORD	(return) pointer to ??? record
---------y-214402-----------------------------
-INT 21 U - PC Tools 9 CPRLOW.EXE - GET CODE AND DATA ADDRESSES
-	AX = 4402h
-	BX = file handle referencing device "RECLOWLD"
-	DS:DX -> buffer for address list (see below)
-	CX ignored
-Return: CF clear if successful
-	    buffer filled
-	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
-
-Format of address list:
-Offset	Size	Description
- 00h	WORD	segment of CPRLOW code
- 02h	WORD	offset in code segment of ??? entry point
-		(switches into protected mode)
- 04h	WORD	offset in code segment of jump array (see below)
- 06h	WORD	segment of copy of interrupt vector table at CPRLOW load time
-Note:	neither the entry point nor the jump array is valid until after a
-	  CPR /LOAD, because CPR.EXE installs the code into CPRLOW at runtime.
-
-Format of jump array:
-Offset	Size	Description
- 00h  3 BYTEs	initialize CPRLOW interrupt hooks
- 03h  3 BYTEs	reset timers and enable CPR (hotkey enable)
- 06h  3 BYTEs	disable CPR (hotkey disable)
- 09h  3 BYTEs	clear ??? flag, hotkey disable, and ???
- 0Ch  3 BYTEs	initialize delay loop counter (destroys AX,BX,CX,DX)
- 0Fh  3 BYTEs	disable CPR completely (commandline /DISABLE)
- 12h  3 BYTEs	enable ??? if CPR enabled by both cmdline and hotkey
- 15h  3 BYTEs	enable CPR (commandline /ENABLE)
 --------D-214403-----------------------------
 INT 21 - DOS 2+ - IOCTL - WRITE TO CHARACTER DEVICE CONTROL CHANNEL
 	AX = 4403h
@@ -7946,7 +8058,7 @@ INT 21 - DOS 2+ - IOCTL - WRITE TO CHARACTER DEVICE CONTROL CHANNEL
 Return: CF clear if successful
 	    AX = number of bytes actually written
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Notes:	format of data is driver-specific (see below for some specific cases)
 	if the file handle refers to "4DOSSTAK", the 4DOS (v2.x-3.03)
 	  KEYSTACK.SYS driver will push the specified characters on the
@@ -7959,31 +8071,36 @@ INT 21 - SMARTDRV.SYS v3.x only - IOCTL - CACHE CONTROL
 	AX = 4403h
 	BX = handle for device "SMARTAAR"
 	CX = number of bytes to write
-	DS:DX -> SMARTDRV control block (see below)
+	DS:DX -> SMARTDRV control block (see #0631)
 Return: CF clear if successful
 	    AX = number of bytes actually written
-	       = 0000h if control block too small for given command
+	        0000h if control block too small for given command
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 SeeAlso: AX=4402h"SMARTDRV",INT 2F/AX=4A10h/BX=0000h
 
+(Table 0630)
+Values for SMARTDRV function code:
+ 00h	flush cache
+ 01h	flush and discard cache
+ 02h	disable caching (flushes and discards cache first)
+ 03h	enable caching
+ 04h	control write caching
+ 05h	set flushing tick count
+ 06h	lock cache contents
+ 07h	unlock cache contents
+ 08h	set flush-on-reboot flag
+ 09h	unused
+ 0Ah	control full-track caching
+ 0Bh	reduce cache size
+ 0Ch	increase cache size
+ 0Dh	set INT 13 chain address
+
 Format of SMARTDRV control block:
-Offset	Size	Description
- 00h	BYTE	function code
-		00h flush cache
-		01h flush and discard cache
-		02h disable caching (flushes and discards cache first)
-		03h enable caching
-		04h control write caching
-		05h set flushing tick count
-		06h lock cache contents
-		07h unlock cache contents
-		08h set flush-on-reboot flag
-		09h unused
-		0Ah control full-track caching
-		0Bh reduce cache size
-		0Ch increase cache size
-		0Dh set INT 13 chain address
+Offset	Size	Description	(Table 0631)
+ 00h	BYTE	function code (see #0630)
+---functions 00h-03h,06h,07h---
+ no additional fields
 ---function 04h---
  01h	BYTE	write caching control action
 		00h turn off write-through
@@ -8008,15 +8125,15 @@ INT 21 - CD-ROM device driver - IOCTL OUTPUT
 	AX = 4403h
 	BX = file handle referencing character device for CD-ROM driver
 	CX = number of bytes to write
-	DS:DX -> control block (see below)
+	DS:DX -> control block (see #0632)
 Return: CF clear if successful
 	    AX = number of bytes actually written
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 SeeAlso: AX=4402h"CD-ROM",INT 2F/AX=0802h
 
-Format of control block:
-Offset	Size	Description
+Format of CR-ROM control block:
+Offset	Size	Description	(Table 0632)
  00h	BYTE	function code
 		00h eject disk
 		01h lock/unlock door
@@ -8043,21 +8160,21 @@ Note:	output channels 0 and 1 are left and right, 2 and 3 are left prime and
 	  right prime; a volume of 00h is off
 ---function 04h---
  01h  N BYTEs	bytes to send directly to the CD-ROM drive without
-		interpretation
+		  interpretation
 --------d-214403-----------------------------
 INT 21 - Brian Antoine Seagate ST-01 SCSI.SYS - IOCTL - EXECUTE COMMANDS
 	AX = 4403h
 	BX = handle for device "SCSITAPE"
 	CX = number of bytes to write
-	DS:DX -> SCSITAPE control block (see below)
+	DS:DX -> SCSITAPE control block (see #0633)
 Return: CF clear if successful
 	    AX = number of bytes actually written
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 SeeAlso: AX=4405h"ST-01",INT 78/AH=10h
 
 Format of SCSITAPE control block:
-Offset	Size	Description
+Offset	Size	Description	(Table 0633)
  00h	WORD	command type
 		'F' Format (argument 1 = interleave, argument 2 = format type)
 		'E' Erase
@@ -8084,7 +8201,7 @@ INT 21 U - AI Architects - OS/x86??? - API
 Return: CF clear if successful
 	    AX = number of bytes actually written
 	CF set on error
-	    AX = error code (01h,05h,06h,0Ch,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Ch,0Dh) (see #0770 at AH=59h)
 Notes:	these functions are only available if the DOS extender was loaded as a
 	  device driver in CONFIG.SYS
 	called by TKERNEL (a licensed version of AI Architects/Ergo OS/x86)
@@ -8092,7 +8209,7 @@ SeeAlso: INT 2F/AX=FBA1h/BX=0081h,INT 2F/AX=FBA1h/BX=0082h
 Index:	installation check;OS/x86|entry point;OS/x86|uninstall;OS/x86
 
 Format of buffer on return:
-Offset	Size	Description
+Offset	Size	Description	(Table 0634)
  00h  4 BYTEs	signature "IABH"
 ---if func 81h---
  (no additional fields)
@@ -8108,11 +8225,11 @@ INT 21 - PGS1600.DEV - IOCTL - SET CONFIGURATION???
 	AX = 4403h
 	BX = file handle for device "PGS1600$"
 	CX = 0018h (size of buffer)
-	DS:DX -> configuration buffer (see AX=4402h"PGS1600")
+	DS:DX -> configuration buffer (see #0596 at AX=4402h"PGS1600")
 Return: CF clear if successful
 	    AX = number of bytes actually written
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Program: PGS1600.DEV is a device driver for the Cornerstone Technology PG1600
 	  display adapter, which provides a 1600x1200 monochrome display as
 	  well as one of two emulations, MDA or CGA.
@@ -8125,7 +8242,7 @@ INT 21 - PC/TCP IPCUST.SYS - RESET CONFIGURATION DATA READ POINTER
 Return: CF clear if successful
 	    AX destroyed
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Notes:	there are a total of 378h bytes of configuration data for IPCUST.SYS
 	  version 2.05.	 If less than the entire data is read or written,
 	  the next read/write continues where the previous one ended; this
@@ -8139,7 +8256,7 @@ SeeAlso: AH=3Fh"IPCUST",AH=40h"IPCUST",AX=4402h"IPCUST"
 INT 21 - Compaq AG1024.SYS - CPQ_MGES - IOCTL OUTPUT
 	AX = 4403h
 	BX = file handle referencing device "CPQ_MGES"
-	DS:DX -> request packet (see below)
+	DS:DX -> request packet (see #0635)
 	CX ignored
 Return: CF clear if successful
 	    AX destroyed
@@ -8148,12 +8265,12 @@ Return: CF clear if successful
 	      available (amount returned is smaller of this and requested
 	      amount)
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Program: AG1024.SYS is a device driver for the Advanced Graphics 1024 adapter
 SeeAlso: AX=4403h"RGDI"
 
-Format of request packet:
-Offset	Size	Description
+Format of Compaq AG1024.SYS request packet:
+Offset	Size	Description	(Table 0635)
  00h	WORD	function
 		0000h get ??? (26h bytes)
 		0001h get ??? (36h bytes)
@@ -8174,7 +8291,7 @@ Offset	Size	Description
 INT 21 - Compaq AG1024.SYS - RGDI - IOCTL OUTPUT
 	AX = 4403h
 	BX = file handle referencing device "$$$$RGDI"
-	DS:DX -> request packet (see below)
+	DS:DX -> request packet (see #0636)
 	CX ignored
 Return: CF clear if successful
 	    AX destroyed
@@ -8183,12 +8300,12 @@ Return: CF clear if successful
 	      available (amount returned is smaller of this and requested
 	      amount)
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Program: AG1024.SYS is a device driver for the Advanced Graphics 1024 adapter
 SeeAlso: AX=4402h"RGDI",AX=4403h"CPQ_MGES"
 
-Format of request packet:
-Offset	Size	Description
+Format of Compaq AG1024.SYS request packet:
+Offset	Size	Description	(Table 0636)
  00h	WORD	function
 		0000h get entry points
 		0001h get ???
@@ -8203,7 +8320,7 @@ Return: DS:DX -> BYTE status (00h = successful)
 	CF clear if successful
 	    AX destroyed
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Note:	this function will fail if any EMS or UMBs are in use
 SeeAlso: AX=4403h/SF=02h,AX=4403h/SF=03h,AX=4403h/SF=05h
 --------m-214403SF02-------------------------
@@ -8216,18 +8333,19 @@ Return: DS:DX -> BYTE status (00h = successful)
 	CF clear if successful
 	    AX destroyed
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 SeeAlso: AX=4403h/SF=01h,AX=4403h/SF=03h,AX=4403h/SF=05h
 --------m-214403SF03-------------------------
 INT 21 U - Qualitas 386MAX v6.01+ - SET STATE
 	AX = 4403h subfn 03h
 	BX = handle for device "386MAX$$"
 	CX = number of bytes to copy (up to size of state buffer)
-	DS:DX -> BYTE 03h followed by state buffer (see AX=4402h"386MAX")
+	DS:DX -> BYTE 03h followed by state buffer
+		  (see #0579 at AX=4402h"386MAX")
 Return: CF clear if successful
 	    AX = number of bytes actually written
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Note:	the first byte of the buffer must be either 01h, 02h, or 03h
 	  (specifying the version of the state record) and the buffer must
 	  contain CX bytes AFTER the initial byte
@@ -8241,7 +8359,7 @@ INT 21 U - Qualitas 386MAX v7.00+ - LIMIT AUTOMATIC ACTIVATION TO STD EMS CALLS
 Return: CF clear if successful
 	    AX destroyed
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Desc:	specifies that 386MAX will only shift from AUTO to ON mode on standard
 	  EMS calls INT 67/AH=40h-5Dh
 SeeAlso: AX=4403h/SF=02h,AX=4403h/SF=03h,AX=4403h/SF=06h
@@ -8254,7 +8372,7 @@ INT 21 U - Qualitas 386MAX v7.00+ - ALLOW AUTOMATIC ACTIVATION ON ANY INT 67
 Return: CF clear if successful
 	    AX destroyed
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Desc:	specified that 386MAX should shift from AUTO to ON mode on any INT 67
 	  call other than INT 67/AH=3Fh
 SeeAlso: AX=4403h/SF=01h,AX=4403h/SF=03h,AX=4403h/SF=05h
@@ -8267,7 +8385,7 @@ INT 21 U - PenDOS PENDEV.SYS - ???
 Return: CF clear if successful
 	    buffer filled
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Program: A limited version of PenDOS by Communication Intelligence Corporation,
 	  which provides pen capability to keyboard-based programs, is bundled
 	  with IBM DOS 6.1
@@ -8283,7 +8401,7 @@ INT 21 - DOS 2+ - IOCTL - READ FROM BLOCK DEVICE CONTROL CHANNEL
 Return: CF clear if successful
 	    AX = number of bytes actually read
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Note:	format of data is driver-specific
 SeeAlso: AX=4402h,AX=4405h,INT 2F/AX=122Bh
 --------d-214404-----------------------------
@@ -8301,12 +8419,12 @@ INT 21 - Stacker - GET STACVOL FILE SECTORS
 	AX = 4404h
 	BL = drive number (0 is current drive)
 	CX = byte count (i.e., 200h = 1 sector)
-	DS:DX -> buffer (see below)
+	DS:DX -> buffer (see #0637)
 Return: Data Buffer contains the number of sectors requested from the
 	  STACVOL physical file for the drive specified.
 
-Format of stacker buffer:
-Offset	Size	Description
+Format of Stacker buffer:
+Offset	Size	Description	(Table 0637)
  00h	WORD	01CDh
  02h	WORD	sector count
  04h	DWORD	number of starting sector
@@ -8316,20 +8434,26 @@ INT 21 - DUBLDISK.SYS v2.6 - GET INFO
 	AX = 4404h
 	BL = drive number of DoubleDisk drive (00h = default, 01h = A:, etc.)
 	CX = number of bytes (000Ah-0014h, call ignored otherwise)
-	DS:DX -> data record (see below)
+	DS:DX -> data record (see #0638)
 Return: CF clear if successful
 	    AX = number of bytes read
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Program: DUBLDISK.SYS is the device driver portion of DoubleDisk, a disk
 	  expander by Vertisoft Systems, Inc.
-Note:	the installation check consists of scanning memory for the signature
-	  "FAT 2.6  byte:", which is immediately followed by a data table
+Note:	the installation check for v2.6 consists of scanning memory for the
+	  signature "FAT 2.6  byte:", which is immediately followed by a data
+	  table (see #0639)
+BUG:	VOPT (a disk optimizer by Golden Bow Software) assumes that any driver
+	  which returns the "correct" number of bytes when the first word of
+	  the buffer for the data record contains the signature value 4444h is
+	  DoubleDisk; a workaround is for the non-DoubleDisk driver to return
+	  no data if the signature is present
 SeeAlso: AX=440Dh
 Index:	installation check;DUBLDISK.SYS
 
-Format of data record:
-Offset	Size	Description
+Format of DUBLDISK data record:
+Offset	Size	Description	(Table 0638)
  00h	WORD	(call) signature 4444h
  02h	BYTE	(call) function
 			00h ???
@@ -8344,8 +8468,8 @@ Offset	Size	Description
  08h	WORD	???
  0Ah	BYTE	???
 
-Format of signature data table:
-Offset	Size	Description
+Format of DUBLDISK signature data table:
+Offset	Size	Description	(Table 0639)
  00h  5 BYTEs	???
  05h	BYTE	first drive number
  06h	BYTE	number of drives
@@ -8355,15 +8479,15 @@ INT 21 - DBLSPACE.BIN - IOCTL - FLUSH OR INVALIDATE INTERNAL CACHES
 	AX = 4404h
 	BL = drive number (00h = default, 01h = A:, etc)
 	CX = 000Ah (size of DSPACKET structure)
-	DS:DX -> DSPACKET structure (see below)
+	DS:DX -> DSPACKET structure (see #0640)
 Return: CF clear if IOCTL successful -- check DSPACKET for actual status
 	    AX = number of bytes actually transferred
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 SeeAlso: AX=4405h"DBLSPACE",INT 2F/AX=4A11h/BX=0000h
 
-Format of DSPACKET structure:
-Offset	Size	Description
+Format of DoubleSpace DSPACKET structure:
+Offset	Size	Description	(Table 0640)
  00h	WORD	signature 444Dh ("DM")
  02h	BYTE	command code
 		46h ('F') flush internal caches
@@ -8376,15 +8500,15 @@ INT 21 - DBLSPACE.BIN 6.2 - IOCTL - GET ??? FOR SPECIFIED DRIVE
 	AX = 4404h
 	BL = drive number (00h = default, 01h = A:, etc)
 	CX = size of DSPACKET structure (ignored in DOS 6.2)
-	DS:DX -> DSPACKET structure (see below)
+	DS:DX -> DSPACKET structure (see #0641)
 Return: CF clear if IOCTL successful -- check DSPACKET for actual status
 	    AX = number of bytes actually transferred
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 SeeAlso: AX=4405h"DBLSPACE",INT 2F/AX=4A11h/BX=0000h
 
-Format of DSPACKET structure:
-Offset	Size	Description
+Format of DoubleSpace DSPACKET structure:
+Offset	Size	Description	(Table 0641)
  00h	WORD	signature 444Dh ("DM")
  02h	BYTE	command code
 		53h ('S') get ??? for specified drive
@@ -8403,19 +8527,19 @@ INT 21 U - xDISK v3.31 - CONFIGURE
 Return: CF clear if successful
 	    AX = number of bytes actually transferred
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Program: xDISK is a shareware resizeable EMS RAMdisk by FM de Monasterio
 SeeAlso: AX=4405h"xDISK",INT 2F/AH=DDh/BX=7844h"xDISK"
 --------c-214404-----------------------------
 INT 21 - COMBI-disk v1.13 - GET DATA RECORD
 	AX = 4404h
 	BL = drive number (00h = default, 01h = A:, etc)
-	CX =  (length of data packet)
-	DS:DX -> buffer for data packet (see below)
+	CX = 0032h (length of data packet)
+	DS:DX -> buffer for data packet (see #0642)
 Return: CF clear if successful
 	    AX = number of bytes actually transferred
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Program: COMBI-disk is a shareware combination cache and RAMdisk sharing a
 	  single pool of memory by Vadim V. Vlasov
 Note:	the installation check consists of scanning the valid drives for one
@@ -8424,8 +8548,8 @@ Note:	the installation check consists of scanning the valid drives for one
 SeeAlso: AX=4405h"COMBI"
 Index:	installation check;COMBI-disk
 
-Format of data packet:
-Offset	Size	Description
+Format of COMBI-disk data packet:
+Offset	Size	Description	(Table 0642)
  00h  6 BYTEs	ASCIZ signature "COMBI"
  06h	WORD	version (high byte = major, low = decimal minor version)
  08h	BYTE	current options (see below)
@@ -8450,6 +8574,41 @@ Offset	Size	Description
  2Ch	WORD	number of sectors read from RAM disk
  2Eh	WORD	number of RAM disk write requests
  30h	WORD	number of sectors written to RAM disk
+--------d-214404-----------------------------
+INT 21 - SFS v1.00 - GET CONFIGURATION INFORMATION
+	AX = 4404h
+	BL = drive number (00h = default, 01h = A:, etc)
+	CX = 001Ah (length of data packet)
+	DS:DX -> buffer for data packet (see #0643)
+Return: CF clear if successful
+	    AX = number of bytes actually transferred
+	CF set on error
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
+Program: SFS (Secure FileSystem) is a shareware encrypting disk driver by
+	  Peter C. Gutmann
+SeeAlso: AX=4405h"SFS"
+
+Format of SFS data packet:
+Offset	Size	Description	(Table 0643)
+ 00h  4 BYTEs	signature string "SFS1"
+ 04h	WORD	SFS unit number (0-based)
+ 06h	WORD	drive on which the SFS volume is mounted
+ 08h	DWORD	sector offset of logical volume from start of physical volume
+		0 if logical volume = physical volume
+ 0Ch	WORD	flag: 00h = no disk mounted, 01h = disk mounted
+ 0Eh	WORD	flag: 00h read/write, 01h read-only
+ 10h	WORD	quick-unmount hotkey (high byte = shift state, low = scan code)
+ 12h	WORD	auto-unmount time in minutes, or 0000h if already expired, or
+		FFFFh if not set
+ 14h	WORD	time in minutes remaining before auto-unmount
+ 16h	WORD	internal driver check code
+		0000h no error
+		0001h driver consistency check failed
+		0002h unit consistency check failed
+ 18h	WORD	disk access mode
+		0000h BIOS
+		0001h IDE direct access
+		0002h SCSI direct access
 --------D-214405-----------------------------
 INT 21 - DOS 2+ - IOCTL - WRITE TO BLOCK DEVICE CONTROL CHANNEL
 	AX = 4405h
@@ -8459,7 +8618,7 @@ INT 21 - DOS 2+ - IOCTL - WRITE TO BLOCK DEVICE CONTROL CHANNEL
 Return: CF clear if successful
 	    AX = number of bytes actually written
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Note:	format of data is driver-specific
 SeeAlso: AX=4403h,AX=4404h,INT 2F/AX=122Bh
 --------d-214405-----------------------------
@@ -8467,27 +8626,27 @@ INT 21 - Brian Antoine Seagate ST-01 SCSI.SYS - IOCTL - EXECUTE COMMANDS
 	AX = 4405h
 	BX = drive number (00h = default, 01h = A:, etc)
 	CX = number of bytes to write
-	DS:DX -> SCSIDISK control block (see AX=4403h"ST-01")
+	DS:DX -> SCSIDISK control block (see also #0633 at AX=4403h"ST-01")
 Return: CF clear if successful
 	    AX = number of bytes actually written
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 SeeAlso: AX=4403h"ST-01"
 --------d-214405-----------------------------
 INT 21 U - DBLSPACE.BIN - IOCTL - FLUSH OR INVALIDATE INTERNAL CACHES
 	AX = 4405h
 	BL = drive number (00h = default, 01h = A:, etc)
 	CX = 000Ah (size of DSPACKET structure)
-	DS:DX -> DSPACKET structure (see below)
+	DS:DX -> DSPACKET structure (see #0644)
 Return: CF clear if IOCTL successful -- check DSPACKET for actual status
 	    AX = number of bytes actually transferred
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Note:	this call is identical to the documented AX=4404h
 SeeAlso: AX=4404h"DBLSPACE",INT 2F/AX=4A11h/BX=0000h
 
-Format of DSPACKET structure:
-Offset	Size	Description
+Format of DoubleSpace DSPACKET structure:
+Offset	Size	Description	(Table 0644)
  00h	WORD	signature 444Dh ("DM")
  02h	BYTE	command code
 		46h ('F') flush internal caches
@@ -8505,7 +8664,7 @@ INT 21 U - xDISK v3.31 - ???
 Return: CF clear if successful
 	    AX = number of bytes actually transferred
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Program: xDISK is a shareware resizeable EMS RAMdisk by FM de Monasterio
 SeeAlso: AX=4404h"xDISK",INT 2F/AH=DDh/BX=7844h"xDISK"
 --------d-214405-----------------------------
@@ -8513,32 +8672,37 @@ INT 21 - COMBI-disk v1.13 - CONTROL COMBI-disk
 	AX = 4405h
 	BL = drive number (00h = default, 01h = A:, etc) for RAM disk
 	CX = number of bytes to write
-	DS:DX -> buffer containing command packet (see below)
+	DS:DX -> buffer containing command packet (see #0646)
 Return: CF clear if successful
 	    AX = number of bytes actually transferred
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 SeeAlso: AX=4404h"COMBI"
 
-Format of command packet:
-Offset	Size	Description
+(Table 0645)
+Values for COMBI-disk command code:
+ 80h	flush cache
+ 81h	change options byte
+ 82h	shrink memory
+ 83h	expand memory
+ 84h	get dirty block information
+ 85h	reset write errors
+ 86h	reset counters
+
+Format of COMBI-disk command packet:
+Offset	Size	Description	(Table 0646)
  00h	WORD	version
- 02h	BYTE	command code
-		80h flush cache
-		81h change options byte
-		82h shrink memory
-		83h expand memory
-		84h get dirty block information
-		85h reset write errors
-		86h reset counters
+ 02h	BYTE	command code (see #0645)
+---command code 80h---
+ no additional fields
 ---command code 81h---
- 03h	BYTE	new options byte (see below)
+ 03h	BYTE	new options byte (see #0647)
 ---command code 82h---
  03h	WORD	number of KB to release
 ---command code 83h---
  03h	WORD	number of KB to expand
 ---command code 84h---
- 03h	DWORD	-> buffer for block info (see below)
+ 03h	DWORD	-> buffer for block info (see #0648)
 ---command code 85h---
  03h	DWORD	block ID
 ---command code 86h---
@@ -8549,8 +8713,8 @@ Offset	Size	Description
 Note:	multiple commands may be placed in a single packet by stringing
 	  together as many command/argument pairs as desired
 
-Bitfields for options byte:
-Bit(s)	Description
+Bitfields for COMBI-disk options byte:
+Bit(s)	Description	(Table 0647)
  0	cache off
  1	cache frozen
  2	write caching enabled
@@ -8558,13 +8722,92 @@ Bit(s)	Description
  5	fix memory allocation (no XMS lending)
  6	no 'sector not found' error
 
-Format of block info:
-Offset	Size	Description
+Format of COMBI-disk block info:
+Offset	Size	Description	(Table 0648)
  00h	DWORD	block ID
  04h	BYTE	bitmask of valid sectors in block
  05h	BYTE	bitmask of dirty sectors in block
  06h	BYTE	last error returned by BIOS
  07h	BYTE	number of errors
+--------D-214405-----------------------------
+INT 21 - SFS v1.00 - DRIVER CONTROL
+	AX = 4405h
+	BL = drive number (00h = default, 01h = A:, etc)
+	CX = number of bytes to write
+	DS:DX -> data to write (see #0650)
+Return: CF clear if successful
+	    AX = number of bytes actually written
+	CF set on error
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
+Program: SFS (Secure FileSystem) is a shareware encrypting disk driver by
+	  Peter C. Gutmann
+SeeAlso: AX=4404h"SFS"
+
+(Table 0649)
+Values for SFS control function:
+ 00h	"PACKET_SET_DISKINFO"	 set disk parameters
+ 01h	"PACKET_SET_KEYINFO"	 set keying information
+ 02h	"PACKET_SET_READONLY"	 select read/write or read-only
+ 03h	"PACKET_SET_DRIVENO"	 set drive number to mount
+ 04h	"PACKET_SET_MOUNTSTATUS" set mount status
+ 05h	"PACKET_SET_UNMOUNT"	 set/clear quick-unmount hotkey
+ 06h	"PACKET_SET_TIMEOUT"	 set/clear auto-unmount timeout
+
+Format of SFS control data packet:
+Offset	Size	Description	(Table 0650)
+ 00h	WORD	signature 4330h ('C0')
+ 02h	WORD	function (see #0649)
+---function 00h---
+ 04h	WORD	sector size in bytes
+ 06h	BYTE	sectors per cluster
+ 07h	WORD	number of boot sectors
+ 09h	BYTE	number of copies of FAT
+ 0Ah	WORD	size of root directory in entries
+ 0Ch	WORD	number of sectors on disk, 16-bit
+ 0Eh	BYTE	media descriptor byte
+ 0Fh	WORD	sectors per FAT
+ 11h	WORD	sectors per track
+ 13h	WORD	number of heads
+ 15h	DWORD	number of hidden sectors
+ 19h	DWORD	number of sectors on disk, 32-bit
+---function 01h---
+ 04h 20 BYTEs	master IV for encrypted disk
+ 18h 64 BYTEs	NDC/SHS keying information
+---function 02h---
+ 04h	WORD	read-only state: 00h read-only, 01h read/write
+---function 03h---
+ 04h	WORD	drive number (see #0651)
+ 06h	DWORD	sector offset of logical volume from start of physical volume
+		0 if logical volume = physical volume
+---function 04h---
+ 04h	WORD	mount status (00h unmounted, 01h mounted)
+---function 05h---
+ 04h	WORD	hotkey (high byte = shift state, low byte = scan code or 00h)
+		0000h to disable hotkey
+---function 06h---
+ 04h	WORD	timeout in minutes before automatic unmount
+		0000h to disable auto-unmount
+Notes:	the data for function 00h corresponds to a DOS BPB (see AH=53h)
+	functions 00h, 01h, and 03h automatically unmount the encrypted drive
+	unmounting a drive with function 04h also destroys the encryption
+	  information in the driver and forces all dirty buffers to be flushed
+
+Bitfields for SFS drive number:
+Bit(s)	Description	(Table 0651)
+ 15-12	drive access mode
+	0000 BIOS access
+	0001 direct IDE access
+	0010 direct SCSI access
+---if BIOS access---
+ 11-8	unused (0)
+ 7-0	BIOS drive number
+---if IDE access---
+ 11-8	unused (0)
+ 7-0	IDE drive number
+---if SCSI access---
+ 11-8	SCSI host number
+ 7-4	SCSI target ID
+ 3-0	SCSI logical unit number
 --------D-214406-----------------------------
 INT 21 - DOS 2+ - IOCTL - GET INPUT STATUS
 	AX = 4406h
@@ -8574,7 +8817,7 @@ Return: CF clear if successful
 		00h not ready (device) or at EOF (file)
 		FFh ready
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Note:	files may not register as being at EOF if positioned there by AH=42h
 SeeAlso: AX=4407h,INT 2F/AX=122Bh
 --------D-214407-----------------------------
@@ -8586,7 +8829,7 @@ Return: CF clear if successful
 		00h not ready
 		FFh ready
 	CF set on error
-	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+	    AX = error code (01h,05h,06h,0Dh) (see #0770 at AH=59h)
 Note:	for DOS 2+, files are always ready for output, even if the disk is
 	  full or no media is in the drive
 SeeAlso: AX=4406h,INT 2F/AX=122Bh
@@ -8595,10 +8838,9 @@ INT 21 - DOS 3.0+ - IOCTL - CHECK IF BLOCK DEVICE REMOVABLE
 	AX = 4408h
 	BL = drive number (00h = default, 01h = A:, etc)
 Return: CF clear if successful
-	    AX = 0000h if removable
-	       = 0001h if fixed
+	    AX = media type (0000h removable, 0001h fixed)
 	CF set on error
-	    AX = error code (01h,0Fh) (see AH=59h)
+	    AX = error code (01h,0Fh) (see #0770 at AH=59h)
 SeeAlso: AX=4400h,AX=4409h,INT 2F/AX=122Bh
 --------D-214409-----------------------------
 INT 21 - DOS 3.1+ - IOCTL - CHECK IF BLOCK DEVICE REMOTE
@@ -8610,11 +8852,11 @@ Return: CF clear if successful
 		bit 12: drive is remote
 		bit  9: direct I/O not allowed
 	CF set on error
-	    AX = error code (01h,0Fh) (see AH=59h)
+	    AX = error code (01h,0Fh) (see #0770 at AH=59h)
 Note:	on local drives, DX bits not listed above are the attribute word from
-	  the device driver header (see AH=52h); for remote drives, the other
-	  bits appear to be undefined for DOS versions prior to 5.0 (they are
-	  all cleared in DOS 5+)
+	  the device driver header (see #0744 at AH=52h); for remote drives,
+	  the other bits appear to be undefined for DOS versions prior to 5.0
+	  (they are all cleared in DOS 5+)
 SeeAlso: AX=4400h,AX=4408h,AX=440Ah,INT 2F/AX=122Bh
 --------D-21440A-----------------------------
 INT 21 - DOS 3.1+ - IOCTL - CHECK IF HANDLE IS REMOTE
@@ -8625,7 +8867,7 @@ Return: CF clear if successful
 		bit 15: set if remote
 		bit 14: date/time not set on close
 	CF set on error
-	    AX = error code (01h,06h) (see AH=59h)
+	    AX = error code (01h,06h) (see #0770 at AH=59h)
 Notes:	if file is remote, Novell Advanced NetWare 2.0 returns the number of
 	  the file server on which the handle is located in CX
 	DR-DOS 3.41 and 5.0 clear all bits of DX except bit 15
@@ -8637,7 +8879,7 @@ INT 21 - DOS 3.1+ - IOCTL - SET SHARING RETRY COUNT
 	DX = number of retries (default 3)
 Return: CF clear if successful
 	CF set on error
-	    AX = error code (01h) (see AH=59h)
+	    AX = error code (01h) (see #0770 at AH=59h)
 Notes:	delay is dependent on processor speed (value in CX specifies number of
 	  64K-iteration empty loops to execute)
 	if DX=0000h on entry, the retry count is left unchanged
@@ -8646,46 +8888,52 @@ SeeAlso: AH=52h,INT 2F/AX=1224h,INT 2F/AX=122Bh
 INT 21 - DOS 3.2+ - IOCTL - GENERIC CHARACTER DEVICE REQUEST
 	AX = 440Ch
 	BX = device handle
-	CH = category code
-	    00h unknown (DOS 3.3+)
-	    01h COMn: (DOS 3.3+)
-	    03h CON (DOS 3.3+)
-	    05h LPTn:
-	    9Eh Media Access Control driver (STARLITE)
-	    00h-7Fh reserved for Microsoft
-	    80h-FFh reserved for OEM/user-defined
-	CL = function
-	    00h MAC driver Bind (STARLITE)
-	    45h set iteration (retry) count
-	    4Ah select code page
-	    4Ch start code-page preparation
-	    4Dh end code-page preparation
-	    5Fh set display information (DOS 4+)
-	    65h get iteration (retry) count
-	    6Ah query selected code page
-	    6Bh query prepare list
-	    7Fh get display information (DOS 4+)
-	DS:DX -> parameter block (see below)
+	CH = category code (see #0652)
+	CL = function number (see #0653)
+	DS:DX -> parameter block (see #0654,#0655,#0656,#0657,#0658,#0659)
 	SI = parameter to pass to driver (European MS-DOS 4.0, OS/2 comp box)
 	DI = parameter to pass to driver (European MS-DOS 4.0, OS/2 comp box)
 Return: CF set on error
-	    AX = error code (see AH=59h)
+	    AX = error code (see #0770 at AH=59h)
 	CF clear if successful
 	    DS:DX -> iteration count if CL=65h
 	    SI = returned value (European MS-DOS 4.0, OS/2 comp box)
 	    DI = returned value (European MS-DOS 4.0, OS/2 comp box)
-Notes:	bit assignments for function code in CL:
-	    bit 7: set to ignore if unsupported, clear to return error
-	    bit 6: set if passed to driver, clear if intercepted by DOS
-	    bit 5: set if queries data from device, clear if sends command
-	    bits 4-0: subfunction
-	DR-DOS 3.41 and 5.0 return error code 16h on CL=45h,65h if the device
+Note:	DR-DOS 3.41 and 5.0 return error code 16h on CL=45h,65h if the device
 	  does not support a retry counter
 SeeAlso: AX=440Dh,INT 2F/AX=0802h,INT 2F/AX=122Bh,INT 2F/AX=14FFh
 SeeAlso: INT 2F/AX=1A01h
 
+(Table 0652)
+Values for IOCTL category code:
+ 00h	unknown (DOS 3.3+)
+ 01h	COMn: (DOS 3.3+)
+ 03h	CON (DOS 3.3+)
+ 05h	LPTn:
+ 9Eh	Media Access Control driver (STARLITE)
+ 00h-7Fh reserved for Microsoft
+ 80h-FFh reserved for OEM/user-defined
+
+(Table 0653)
+Values for generic character IOCTL function:
+ 00h	MAC driver Bind (STARLITE)
+ 45h	set iteration (retry) count
+ 4Ah	select code page
+ 4Ch	start code-page preparation
+ 4Dh	end code-page preparation
+ 5Fh	set display information (DOS 4+)
+ 65h	get iteration (retry) count
+ 6Ah	query selected code page
+ 6Bh	query prepare list
+ 7Fh	get display information (DOS 4+)
+Note:	bit assignments for function code:
+	    bit 7: set to ignore if unsupported, clear to return error
+	    bit 6: set if passed to driver, clear if intercepted by DOS
+	    bit 5: set if queries data from device, clear if sends command
+	    bits 4-0: subfunction
+
 Format of parameter block for function 00h:
-Offset	Size	Description
+Offset	Size	Description	(Table 0654)
  00h  8 BYTEs	ASCIZ signature "STARMAC"
  08h	WORD	version
  0Ah	WORD	flags
@@ -8709,12 +8957,12 @@ Offset	Size	Description
  24h	DWORD	UnBind entry point (filled in by MAC driver)
 
 Format of parameter block for function 45h:
-Offset	Size	Description
+Offset	Size	Description	(Table 0655)
  00h	WORD	number of times output is attempted before driver assumes
-		device is busy
+		  device is busy
 
 Format of parameter block for functions 4Ah and 6Ah:
-Offset	Size	Description
+Offset	Size	Description	(Table 0656)
  00h	WORD	length of data
  02h	WORD	code page ID
  04h 2N BYTEs	DCBS (double byte character set) lead byte range
@@ -8722,7 +8970,7 @@ Offset	Size	Description
 	WORD	0000h  end of data (DOS 4.0)
 
 Format of parameter block for function 4Ch:
-Offset	Size	Description
+Offset	Size	Description	(Table 0657)
  00h	WORD	flags
 		DISPLAY.SYS = 0000h
 		PRINTER.SYS bit 0 clear to prepare downloaded font, set to
@@ -8732,30 +8980,30 @@ Offset	Size	Description
  06h  N WORDs	code page 1,...,N
 
 Format of parameter block for function 4Dh:
-Offset	Size	Description
+Offset	Size	Description	(Table 0658)
  00h	WORD	length of data
  02h	WORD	code page ID
 
 Format of parameter block for functions 5Fh and 7Fh:
-Offset	Size	Description
+Offset	Size	Description	(Table 0659)
  00h	BYTE	level (0 for DOS 4.x-6.0)
  01h	BYTE	reserved (0)
  02h	WORD	length of following data (14)
  04h	WORD	control flags
-		  bit 0 set for blink, clear for intensity
-		  bits 1 to 15 reserved
+		bit 0 set for blink, clear for intensity
+		bits 1-15 reserved
  06h	BYTE	mode type (1=text, 2=graphics)
  07h	BYTE	reserved (0)
  08h	WORD	colors
-		   0 = monochrome
-		   else N bits per pixel
+		0000h = monochrome
+		else N bits per pixel
  0Ah	WORD	pixel columns
  0Ch	WORD	pixel rows
  0Eh	WORD	character columns
  10h	WORD	character rows
 
 Format of parameter block for function 6Bh:
-Offset	Size	Description
+Offset	Size	Description	(Table 0660)
  00h	WORD	length of following data
  02h	WORD	number of hardware code pages
  04h  N WORDs	hardware code pages 1,...,N
@@ -8772,9 +9020,9 @@ INT 21 - Greg Shenaut ASPITAPE.SYS - INTERFACE
 	    02h "mtget" - get tape status
 	    03h ignore end-of-tape errors
 	    04h enable end-of-tape errors
-	DS:DX -> parameter block (see below)
+	DS:DX -> parameter block (see #0661,#0662)
 Return: CF set on error
-	    AX = error code (see AH=59h)
+	    AX = error code (see #0770 at AH=59h)
 	CF clear if successful
 	    DS:DX -> data block
 Notes:	This device driver is a simple DOS interface to the Adaptec Advanced
@@ -8787,8 +9035,8 @@ Notes:	This device driver is a simple DOS interface to the Adaptec Advanced
 	once opend these devices must be put into RAW mode
 SeeAlso: AX=4402h"ASPI"
 
-Format of mtop parameter block:
-Offset	Size	Description
+Format of ASPITAPE.SYS mtop parameter block:
+Offset	Size	Description	(Table 0661)
  00h	WORD	operation code
 		00h "MTWEOF" - write an end-of-file record
 		01h "MTFSF" - forward space file
@@ -8800,24 +9048,24 @@ Offset	Size	Description
 		07h "MTNOP" - perform TEST UNIT READY
  02h	DWORD	repetition count
 
-Format of mtget parameter block:
-Offset	Size	Description
+Format of ASPITAPE.SYS mtget parameter block:
+Offset	Size	Description	(Table 0662)
  00h	BYTE	ASPI host ID
  01h	BYTE	SCSI target ID
  02h	BYTE	SCSI logical unit number
  03h	BYTE	device parameters
 		bit 0: drive must use fixed-block read and write
 		bit 7: drive is an ASPI device
- 04h	BYTE	current device state (see below)
+ 04h	BYTE	current device state (see #0663)
  05h	BYTE	unit number within driver
  06h	WORD	fixed block blocksize
  08h	BYTE	last SCSI status
  09h	BYTE	last SCSI sense key
- 0Ah	WORD	last SCSI opcode (packed) (see below)
+ 0Ah	WORD	last SCSI opcode (packed) (see #0664)
  0Ch	WORD	residual bytes from SCSI opcode
 
-Bitfields for current device state:
-Bit(s)	Description
+Bitfields for ASPITAPE.SYS current device state:
+Bit(s)	Description	(Table 0663)
  0	device currently opened in buffered mode
  1	drive currently opened in nonbuffered mode
  2	rewind drive on last close
@@ -8828,7 +9076,7 @@ Bit(s)	Description
  7	drive may be busy rewinding
 
 Bitfields for SCSI opcode:
-Bit(s)	Description
+Bit(s)	Description	(Table 0664)
  0-7	SCSI operation (SCSI packet byte 0)
  8-10	SCSI flags (SCSI packet byte 1)
  11-12	ASPI "Direction Bits" (ASPI SRB byte 3)
@@ -8836,15 +9084,12 @@ Bit(s)	Description
 INT 21 - DOS 3.2+ - IOCTL - GENERIC BLOCK DEVICE REQUEST
 	AX = 440Dh
 	BL = drive number (00h=default,01h=A:,etc)
-	CH = category code
-	    08h disk drive
-	    00h-7Fh reserved for Microsoft
-	    80h-FFh reserved for OEM/user-defined
-	CL = minor code (function) (see below)
-	DS:DX -> (DOS) parameter block (see below)
-	SI:DI -> (OS/2 comp box) parameter block (see below)
+	CH = category code (see #0665)
+	CL = minor code (function) (see #0666)
+	DS:DX -> (DOS) parameter block (see #0667,#0669,#0670,#0671,#0672)
+	SI:DI -> (OS/2 comp box) parameter block (see #0673,#0674,#0675,#0676)
 Return: CF set on error
-	    AX = error code (01h,02h) (see AH=59h)
+	    AX = error code (01h,02h) (see #0770 at AH=59h)
 	CF clear if successful
 	    DS:DX -> data block if CL=60h or CL=61h
 Notes:	DOS 4.01 seems to ignore the high byte of the number of directory
@@ -8857,7 +9102,14 @@ Notes:	DOS 4.01 seems to ignore the high byte of the number of directory
 	  prior to 5.0
 SeeAlso: AX=440Ch,AH=69h,INT 2F/AX=0802h,INT 2F/AX=122Bh
 
-Values for minor code:
+(Table 0665)
+Values for block device IOCTL category code:
+ 08h	disk drive
+ 00h-7Fh reserved for Microsoft
+ 80h-FFh reserved for OEM/user-defined
+
+(Table 0666)
+Values for generic block IOCTL minor code:
  00h	(OS/2)	\ used to lock/unlock a drive
  01h	(OS/2)	/
  40h	set device parameters
@@ -8886,15 +9138,15 @@ Values for minor code:
  78h	(PCMCIA) get next CIS tuple
 
 Format of parameter block for functions 40h, 60h:
-Offset	Size	Description
+Offset	Size	Description	(Table 0667)
  00h	BYTE	special functions
 		bit 0 set if function to use current BPB, clear if Device
-			BIOS Parameter Block field contains new default BPB
+			  BIOS Parameter Block field contains new default BPB
 		bit 1 set if function to use track layout fields only
 			must be clear if CL=60h
 		bit 2 set if all sectors in track same size (should be set)
 		bits 3-7 reserved
- 01h	BYTE	device type (see below)
+ 01h	BYTE	device type (see #0668)
  02h	WORD	device attributes
 		bit 0 set if nonremovable medium
 		bit 1 set if door lock ("changeline") supported
@@ -8906,12 +9158,14 @@ Offset	Size	Description
 		    01h 320K/360K disk
 		F8h for DUBLDISK.SYS v2.6 expanded drives
 		always 00h for other drive types
- 07h 31 BYTEs	device BPB (see AH=53h), bytes after BPB offset 1Eh omitted
+ 07h 31 BYTEs	device BPB (see #0760 at AH=53h), bytes after BPB offset 1Eh
+		  omitted
 ---function 40h only---
  26h	WORD	number of sectors per track (start of track layout field)
-		max 63
+		(maximum 63)
  28h  N word pairs: number,size of each sector in track
 
+(Table 0668)
 Values for device type:
  00h	320K/360K disk
  01h	1.2M disk
@@ -8925,7 +9179,7 @@ Values for device type:
  09h	(DOS 5+) 2.88M floppy
 
 Format of parameter block for functions 41h, 61h:
-Offset	Size	Description
+Offset	Size	Description	(Table 0669)
  00h	BYTE	special functions (reserved, must be zero)
  01h	WORD	number of disk head
  03h	WORD	number of disk cylinder
@@ -8934,7 +9188,7 @@ Offset	Size	Description
  09h	DWORD	transfer address
 
 Format of parameter block for function 42h:
-Offset	Size	Description
+Offset	Size	Description	(Table 0670)
  00h	BYTE	reserved, must be zero (DOS <3.2)
 		  bit 0=0: format/verify track
 			1: format status call (DOS 3.2+), don't actually format
@@ -8948,7 +9202,7 @@ Offset	Size	Description
  03h	WORD	number of disk cylinder
 
 Format of parameter block for function 62h:
-Offset	Size	Description
+Offset	Size	Description	(Table 0671)
  00h	BYTE	reserved, must be zero (DOS <3.2)
 		  bit 0=0: verify single track
 			1: verify multiple tracks
@@ -8963,20 +9217,20 @@ Offset	Size	Description
  05h	WORD	number of tracks to verify (equivalent to 255 or fewer sectors)
 
 Format of parameter block for functions 46h, 66h:
-Offset	Size	Description
+Offset	Size	Description	(Table 0672)
  00h	WORD	(call) info level (should be 0000h)
  02h	DWORD	disk serial number (binary)
  06h 11 BYTEs	volume label or "NO NAME    "
  11h  8 BYTEs	filesystem type "FAT12	 " or "FAT16   " (CL=66h only)
 
 Format of parameter block for functions 47h, 67h:
-Offset	Size	Description
+Offset	Size	Description	(Table 0673)
  00h	BYTE	special-function field (must be zero)
  01h	BYTE	disk-access flag, nonzero if access allowed by driver
 
 Format of parameter block for function 52h:
- 00h	BYTE	(call) unused???
-		(return) 00h if flast/ATA drive but no card inserted
+ 00h	BYTE	(call) unused???	(Table 0674)
+		(return) 00h if flash/ATA drive but no card inserted
 			unchanged otherwise
 Notes:	the absense of a flash card should be tested by checking the DOS error
 	  code rather than the returned byte
@@ -8984,13 +9238,13 @@ Notes:	the absense of a flash card should be tested by checking the DOS error
 	  PCDISK.EXE v1.02c PCMCIA/ATA driver if no ATA card is inserted
 
 Format of parameter block for function 68h:
-Offset	Size	Description
+Offset	Size	Description	(Table 0675)
  00h	BYTE	01h for default media type, 00h for any other media type
-		(see also INT 13/AH=20h)
+		(see also INT 13/AH=20h"Compaq")
  01h	BYTE	02h for 720K, 07h for 1.44M, 09h for 2.88M
 
 Format of parameter block for function 73h:
-Offset	Size	Description
+Offset	Size	Description	(Table 0676)
  00h	BYTE	???
 		00h ATA card inserted ???
 		80h ATA card not inserted ???
@@ -9026,7 +9280,7 @@ INT 21 - DOS 3.2+ - IOCTL - GET LOGICAL DRIVE MAP
 	AX = 440Eh
 	BL = drive number (00h=default,01h=A:,etc)
 Return: CF set on error
-	    AX = error code (01h,0Fh) (see AH=59h)
+	    AX = error code (01h,0Fh) (see #0770 at AH=59h)
 	CF clear if successful
 	    AL = 00h block device has only one logical drive assigned
 		 1..26 the last letter used to reference the drive (1=A:,etc)
@@ -9038,7 +9292,7 @@ INT 21 - DOS 3.2+ - IOCTL - SET LOGICAL DRIVE MAP
 	AX = 440Fh
 	BL = physical drive number (00h=default,01h=A:,etc))
 Return: CF set on error
-	    AX = error code (01h,0Fh) (see AH=59h)
+	    AX = error code (01h,0Fh) (see #0770 at AH=59h)
 	CF clear if successful
 	    drive now responds to next logical drive number
 Notes:	maps logical drives to physical drives, similar to DOS's treatment of
@@ -9050,8 +9304,8 @@ SeeAlso: AX=440Eh,INT 2F/AX=122Bh
 INT 21 - DOS 5+ - IOCTL - QUERY GENERIC IOCTL CAPABILITY (HANDLE)
 	AX = 4410h
 	BX = handle for device
-	CH = category code (see AX=440Ch)
-	CL = function code
+	CH = category code (see #0652)
+	CL = function code (see #0653)
 Return: CF clear if successful
 	    AX = 0000h	specified IOCTL function is supported
 	CF set on error
@@ -9072,8 +9326,8 @@ SeeAlso: AX=4411h/BX=FFFFh
 INT 21 - DOS 5+ - IOCTL - QUERY GENERIC IOCTL CAPABILITY (DRIVE)
 	AX = 4411h
 	BL = drive number
-	CH = category code (see AX=440Dh)
-	CL = function code
+	CH = category code (see #0665)
+	CL = function code (see #0666)
 Return: CF clear if successful
 	    AX = 0000h	specified IOCTL function is supported
 	CF set on error
@@ -9095,9 +9349,9 @@ INT 21 O - DR-DOS 5.0-6.0 - DETERMINE DOS TYPE
 	AX = 4412h
 	CF set
 Return: CF set if not DR-DOS
-	    AX = error code (see AH=59h)
+	    AX = error code (see #0770 at AH=59h)
 	CF clear if DR-DOS
-	    DX = AX = version code (see AX=4452h)
+	    DX = AX = version code (see #0678)
 Note:	this obsolete call, which is no longer supported in Novell DOS 7, is
 	  identical to AX=4452h
 SeeAlso: AX=4452h
@@ -9141,13 +9395,13 @@ SeeAlso: AX=4456h,AX=4457h,AX=4458h
 INT 21 - Concurrent DOS v3.2+ - INSTALLATION CHECK
 	AX = 4451h
 Return: CF set if not Concurrent DOS
-	    AX = error code (see AH=59h)
+	    AX = error code (see #0770 at AH=59h)
 	CF clear if successful
 	    AH = single-user/multiuser nature
 		10h single-user
-		    AL = operating system version ID (see AX=4452h)
+		    AL = operating system version ID (see #0678)
 		14h multiuser
-		    AL = operating system version ID (see below)
+		    AL = operating system version ID (see #0677)
 Notes:	as of Concurrent DOS/XM 5.0 (possibly earlier), the version is stored
 	  in the environment variable VER
 	use this function if you are looking for multiuser capabilities,
@@ -9155,7 +9409,8 @@ Notes:	as of Concurrent DOS/XM 5.0 (possibly earlier), the version is stored
 	this function should never return the single-user values
 SeeAlso: AX=4452h,AX=4459h
 
-Values for operating system version ID:
+(Table 0677)
+Values for Digital Research operating system version ID:
  32h	Concurrent PC DOS 3.2
  41h	Concurrent DOS 4.1
  50h	Concurrent DOS/XM 5.0 or Concurrent DOS/386 1.1
@@ -9168,14 +9423,14 @@ INT 21 - DR-DOS 3.41+ - DETERMINE DOS TYPE/GET DR-DOS VERSION
 	AX = 4452h ("DR")
 	CF set
 Return: CF set if not DR-DOS
-	    AX = error code (see AH=59h)
+	    AX = error code (see #0770 at AH=59h)
 	CF clear if DR-DOS
 	    AX = version code
 	    AH = single-user/multiuser nature
 		10h single-user
-		    AL = operating system version ID (see below)
+		    AL = operating system version ID (see #0678)
 		14h multiuser
-		    AL = operating system version ID (see AX=4451h)
+		    AL = operating system version ID (see #0677)
 	    DX modified (see note)
 Notes:	the DR-DOS version is stored in the environment variable VER
 	use this function if looking for single-user capabilities, AX=4451h
@@ -9186,7 +9441,8 @@ Notes:	the DR-DOS version is stored in the environment variable VER
 	  the calling program
 SeeAlso: AX=4412h,AX=4451h,AX=4459h
 
-Values for operating system version ID:
+(Table 0678)
+Values for Digital Research operating system version ID:
  60h	DOS Plus
  63h	DR-DOS 3.41
  64h	DR-DOS 3.42
@@ -9204,24 +9460,25 @@ SeeAlso: AX=4303h,AX=4414h
 --------O-214456-----------------------------
 INT 21 U - DR-DOS 5.0+ - HISTORY BUFFER CONTROL
 	AX = 4456h
-	DL = new state
-	    00h set to application
-	    01h COMMAND.COM history buffers
-Return: AL/AX = previous value of ??? flags (bit 7 is the history buffer bit)
-Note:	This was seen called by COMMAND.COM of DR-DOS 6.0; DR-DOS 6.0 only
-	  checks bit 0 and ignores the rest of DL
---------O-214456DL02-------------------------
-INT 21 U - Novell DOS 7 - ???
-	AX = 4456h
-	DL = 02h
-Return: AX = previous value of ??? (bit 0 may be toggled by this call)
-SeeAlso: AX=4456h/DL=04h
---------O-214456DL04-------------------------
-INT 21 U - Novell DOS 7 - TOGGLE ??? FLAG
-	AX = 4456h
-	DL = 04h
-Return: AX = previous value of ??? (bit 1 is the toggled flag)
-SeeAlso: AX=4456h/DL=02h
+	DL = control flags (see #0679)
+Return: AL = previous value of state flags (see #0680)
+Note:	DR-DOS 6.0 only checks bit 0 and ignores the rest of DL
+SeeAlso: #0681
+
+Bitfields for control flags:
+Bit(s)	Description	(Table 0679)
+ 0	whose buffer: 0=application, 1=COMMAND.COM
+---Novell DOS 7---
+ 1	toggle HISTORY usage
+ 2	toggle INSERT state 
+Note:	only one bit at a time may be used
+
+Bitfields for state flags:
+Bit(s)	Description	(Table 0680)
+ 0	HISTORY buffer enabled
+ 1	INSERT enabled
+ 2-5	unused
+ 7	whose buffer: 0=application, 1=COMMAND.COM
 --------O-214457-----------------------------
 INT 21 U - DR-DOS 5.0+ - SHARE/HILOAD CONTROL
 	AX = 4457h
@@ -9251,26 +9508,38 @@ SeeAlso: INT 2F/AX=1000h
 --------O-214458-----------------------------
 INT 21 U - DR-DOS 5.0+ internal - GET POINTER TO INTERNAL VARIABLE TABLE
 	AX = 4458h
-Return: ES:BX -> internal variable table (see below)
+Return: ES:BX -> internal variable table (see #0681,#0682)
 	AX = ??? (0B50h for DR-DOS 5.0, 0A56h for DR-DOS 6.0, 0FE4h for
-		Novell DOS 7)
+		  Novell DOS 7)
 SeeAlso: AX=4452h
 
 Format of DR-DOS 5.0-6.0 internal variable table:
-Offset	Size	Description
+Offset	Size	Description	(Table 0681)
  00h	WORD	???
  02h	WORD	segment of ???
- 04h  7 BYTEs	???
+ 04h	WORD	offset within DOS data segment of history control structure
+		  for COMMAND.COM history buffer (see #0683)
+ 06h	WORD	offset within DOS data segment of history control structure
+		  for application history buffer (see #0683)
+ 08h	BYTE	initial history state flags (see #0680)
+ 09h  2 BYTEs	???
  0Bh	WORD	KB of extended memory at startup
  0Dh	BYTE	number of far jump entry points
- 0Eh	WORD	segment containing far jumps to DR-DOS entry points (see below)
+ 0Eh	WORD	segment containing far jumps to DR-DOS entry points (see #0684)
  10h	WORD	(only if kernel loaded in HMA) offset in HMA of first free HMA
-		memory block (see below) or 0000h if none; segment is FFFFh
+		  memory block (see #0685) or 0000h if none; segment is FFFFh
  12h	WORD	pointer to segment of environment variables set in CONFIG,
-		or 0000h if already used
+		  or 0000h if already used
 ---DR-DOS 6.0---
  14h	WORD	(only if kernel loaded in HMA) offset in HMA of first used HMA
-		memory block (see below) or 0000h if none; segment is FFFFh
+		memory block (see #0685) or 0000h if none; segment is FFFFh
+ 16h  8 BYTEs	???
+ 1Eh	WORD	offset in DOS data segment of full COUNTRY.SYS filename
+ 20h  8 BYTEs	???
+ 28h	WORD	offset in DOS data segment of SHARE hook table
+ 2Ah  2 BYTEs	???
+ 2Ch	WORD	offset in DOS data segment of far pointer to INT 2F/AX=1000h
+		  handler
 Note:	the segment used for the DR-DOS 6.0 CONFIG environment variables
 	  (excluding COMSPEC, VER and OS) is only useful for programs/drivers
 	  called from CONFIG.SYS. The word is set to zero later when the area
@@ -9278,14 +9547,20 @@ Note:	the segment used for the DR-DOS 6.0 CONFIG environment variables
 	  CONFIG.SYS to pass information to AUTOEXEC.BAT.
 
 Format of Novell DOS 7 internal variable table:
-Offset	Size	Description
+Offset	Size	Description	(Table 0682)
  00h	???
  1Eh	WORD	offset of COUNTRY.SYS filename
  42h 16 DWORDs	pointers to ??? entry points
 	???
 
+Format of history control structure:
+Offset	Size	Description	(Table 0683)
+ 00h	WORD	segment of buffer
+ 02h	WORD	size of buffer in bytes
+ 04h	WORD	???
+
 Format of kernel entry jump table for DR-DOS 5.0-6.0:
-Offset	Size	Description
+Offset	Size	Description	(Table 0684)
  00h  5 BYTEs	far jump to kernel entry point for CP/M CALL 5
  05h  5 BYTEs	far jump to kernel entry point for INT 20
  0Ah  5 BYTEs	far jump to kernel entry point for INT 21
@@ -9311,7 +9586,7 @@ Notes:	all of these entry points are indirected through this jump table
 	  AL=03h [fail]).
 
 Format of HMA Memory Block (DR-DOS 6.0 kernel loaded in HMA):
-Offset	Size	Description
+Offset	Size	Description	(Table 0685)
  00h	WORD	offset of next HMA Memory Block (0000h if last block)
  02h	WORD	size of this block in bytes (at least 10h)
  04h	BYTE	type of HMA Memory Block (interpreted by MEM)
@@ -9335,13 +9610,13 @@ SeeAlso: AX=4452h,INT E0"CP/M"
 INT 21 U - Sun PC-NFS - API???
 	AX = 44E0h
 	DS:DX -> ???
-	SS:BP -> stack frame (see below)
+	SS:BP -> stack frame (see #0686)
 Return: ???
 Note:	this function is also supported by Beame&Whiteside's BWPCNFS shim; the
 	  description presented here was derived from that shim
 
-Format of stack frame:
-Offset	Size	Description
+Format of PC-NFS stack frame:
+Offset	Size	Description	(Table 0686)
  00h	WORD	-> previous stack frame
  02h	DWORD	return address
 --------d-2144FFBXFFFF-----------------------
@@ -9352,4 +9627,4 @@ INT 21 U - NewSpace - ???
 Program: NewSpace is a TSR by Isogon Corporation which automatically compresses
 	  all files as they are written and decompresses them as they are read
 SeeAlso: AX=4414h/BX=FFFFh
---------!------------------------------------
+--------!---Section--------------------------

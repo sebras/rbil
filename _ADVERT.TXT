@@ -13,11 +13,10 @@ list?  Want the list split up by subject and thoroughly indexed?  Try
      $39.95
 
 Corresponds to the non-networking portions of INTER36 with a few of the
-additions from INTER37.  Available Now.
+additions from INTER37.
 
-The companion book Network Interrupts is now available.  It corresponds
-to the networking portions of INTER37 with a few of the additions from
-INTER38.
+The companion book Network Interrupts corresponds to the networking
+portions of INTER37 with a few of the additions from INTER38.
 
      Network Interrupts: A Programmer's Reference to Network APIs
      Ralf Brown and Jim Kyle
@@ -83,8 +82,6 @@ The following books may also be of interest:
 	The Undocumented PC: A Programmer's Guide to I/O, CPUs, and
 	  Fixed Memory Areas
 	Frank van Gilluwe
-	656 pages + 1.44M disk, $44.95
+	916 pages + 1.44M disk, $44.95
 	Addison-Wesley
 	ISBN 0-201-62277-7
-	"available November 1993"
-

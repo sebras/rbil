@@ -1,40 +1,42 @@
-Interrupt List		Release 40			 Last change 4/3/94
+Interrupt List		Release 41			  Last change 6/5/94
 
 Please redistribute the following files unmodified as a group, in a trio of
-archives named INTER40A through INTER40C (preferably the original authenticated
+archives named INTER41A through INTER41C (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	this file
 	INTERRUP.A	INT 00 through INT 13     \
 	INTERRUP.B	INT 14 through INT 15/7F   \
 	INTERRUP.C	INT 15/80 through INT 19    \  
-	INTERRUP.D	INT 1A through INT 21/44     \   total 1489 pages at
+	INTERRUP.D	INT 1A through INT 21/44     \   total 1551 pages at
 	INTERRUP.E	INT 21/45 through INT 21/BF   \  60 lines per page,
-	INTERRUP.F	INT 21/C0 through INT 2C       > 1594 with INTPRINT -p
-	INTERRUP.G	INT 2D through INT 2F/7F      /  (6281 entries)
-	INTERRUP.H	INT 2F/80 through INT 2F/FF  /
+	INTERRUP.F	INT 21/C0 through INT 2C       > 1653 with INTPRINT -p
+	INTERRUP.G	INT 2D through INT 2F/7F      /  (6390 entries)
+	INTERRUP.H	INT 2F/80 through INT 2F/FF  /	 (2176 tables)
 	INTERRUP.I	INT 30 through INT 60	    /
-	INTERRUP.J	INT 61 through INT 69	   /
-	INTERRUP.K	INT 6A through INT FF	  /
+	INTERRUP.J	INT 61 through INT 6A	   /
+	INTERRUP.K	INT 6B through INT FF	  /
 	INTERRUP.PRI	a brief primer on interrupts
 	INTPRINT.COM	a simple formatter that also generates a list summary
 	INTPRINT.DOC	instructions for INTPRINT
+	OVERVIEW.LST	brief listing of major uses of each interrupt
 	86BUGS.LST	a listing of CPU bugs and undocumented features
 	CMOS.LST	a description of the CMOS RAM data bytes
 	GLOSSARY.LST	a glossary of terms, abbreviations, and acronyms
 	MEMORY.LST	format of the BIOS data area
 	PORTS.LST	a listing of I/O ports
+	CATEGORY.KEY	descriptions of divider-line category letters
 	COMBINE.BAT	combine the pieces of the list into a single file
-The following files should be distributed in an archive called INTER40D:
-	INT.COM		invoke interrupts from commandline
+The following files should be distributed in an archive called INTER41D:
+	INT.*		invoke interrupts from commandline
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
 	INT2HLP.BAT	Perl script to convert list into QuickHelp database
 	INT2QH.*	convert list into QuickHelp database
+	INT2WHLP.*	convert list into Windows Help database
 	INTERVUE.EXE	indexed interrupt list browser
 	INTHELP.*	convert list into TurboPower GUIDE database
 	INTLIST.E	Epsilon extension for handling list
 	INTLIST.ICO	Windows icon for INTERVUE
 	INTPRINT.C	source code for INTPRINT
-	INTWHLP1.*	convert list into Windows Help database
 	RB2NG.*		convert list into Norton Guides database
 
 Concatenate INTERRUP.A, .B, .C, .D, .E, .F, .G, .H, .I, .J, and .K with
@@ -464,14 +466,23 @@ This list is the result of the time and effort of a large number of people:
  2/94 Peter van den Boogert  P.C.vdnBoogert@kub.nl    ZFAX v2.x, v3.01
  2/94 Jesper Rene Frandsen jesperf@daimi.aau.dk	      VESA XGA BIOS,misc video
  2/94 Jesper Rene Frandsen jesperf@daimi.aau.dk	      Husky Hunter 16 BIOS
- 2/94 Ciriaco Garcia de Celis  amiga@hp9000.uva.es    CiriSoft, 2M
+ 2/94 Ciriaco Garcia de Celis  ciri@luna.gui.uva.es   CiriSoft, 2M
  2/94 Wolfgang Lierz   Wolfgang.Lierz@gmd.de	      Norton Utils v7, misc
  2/94 Menno Pieters    aj132@freenet.hsc.colorado.edu DimVGA
  3/94 Markus Lomb      Markus_Lomb@confusion.fido.de  bitFOSS,bitFOSSI,WDTSR
  3/94 taQ Okazaki      CXB00750@niftyserve.or.jp      Windows Global EMM Import
  3/94 Wolfgang Lierz   Wolfgang.Lierz@gmd.de	      PCMCIA, Award PCDISK.EXE
- 3/94	!!!					      Novell XQL
+ 3/94 Clinton Warren   CIW@MACOLA.usa.com	      Novell XQL
  3/94 Reidar Gresseth  gresseth@unixg.ubc.ca	      Explosiv API
+ 4/94 Uwe Zimmermann   u.zimmermann@genie.geis.com    Adv.Power Management v1.1
+ 4/94 Thomas Brugger   fd1@aixfile1.urz.uni-heidelberg.de  NetWare VLMs & more
+ 5/94 Wolfgang Lierz   Wolfgang.Lierz@gmd.de	      Toshiba laptops,misc
+ 5/94 Jan Beulich      Jan_Beulich@Novell.COM	      DPMS v1.0
+ 5/94 Ralf Brown       ralf@telerama.lm.com	      Novell DOS 7 EMM386.EXE
+ 5/94 Frank Kintrup    nico@uni-paderborn.de	      FK TSR Utils, misc OS/2
+ 5/94 Christian Franke franke@I1.Informatik.RWTH-Aachen.DE  redirector, Win3
+ 5/94 Peter Claus Gutmann  pgut01@cs.aukuni.ac.nz     SFS (Secure FileSystem)
+ 5/94 Wilbert van Leijen wilbert@dragons.nest.nl      ODIHLP, misc
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -545,7 +556,7 @@ Also contributing:
  Jerzy Tarasiuk <JT@zfja-gate.fuw.edu.pl>, Roman Rutman <jbari@CCSG.TAU.AC.IL>,
  Lutz Schroer <hmls@IDEFIX.RZ.TU-CLAUSTHAL.DE>, Per-Eric Larsson 2:203/410.15,
  Otto-Michael Braun <omb@ahobln.br.schule.de>, Martin Winkler 2:2402/330.6,
- Scott C. Pedigo <100020.723@CompuServe.COM>, Wilbert Van Leijen 2:281/256.14,
+ Scott C. Pedigo <100020.723@CompuServe.COM>, Ed Mulroy 70007.4630,
  Frank van der Linden <vdlinden@fwi.uva.nl>, Ben Castricum <benc@htsa.aha.nl>,
  Andrei Tsyganenko <ANDY@GODZILLA.UMD.EDU>, Jeremy.Laidman@cowan.EDU.AU,
  Brian Long <BLONG@boruk.mhs.compuserve.com>, John_Murphy@perftech.com,
@@ -562,9 +573,14 @@ Also contributing:
  Holger Genz (via volker@bsd-home.iam.uni-bonn.de), Thomas Valjak 2:245/1803,
  Wonyong Koh <f7wyk@chem.krict.re.kr>, Igor V. Krasikov <kiv@kiv.kiev.ua>,
  Andreas Groegel <groegeas@minnie.informatik.uni-stuttgart.de>,
- Wolfgang Lorenz <100112.220@CompuServe.COM>,
+ Wolfgang Lorenz <100112.220@CompuServe.COM>, michael_rothman@VNET.IBM.COM,
  Thomas Brugger <fd1@aixfile1.urz.uni-heidelberg.de>,
- Yinrong Huang <HUANGY@SLUVCA.SLU.EDU>
+ Yinrong Huang <HUANGY@SLUVCA.SLU.EDU>, David.Bourgin@babbage.imag.fr,
+ Christoph Fischer <Fisher@rz.uni-karlsruhe.de>, Peter_Schuette@ks.fido.de,
+ David Perry <davep@demon.csd.unsw.EDU.AU>,Yury Semenov <yury@petre.odessa.ua>,
+ Bill Potvin II <70540.120@compuserve.com>, Jordi Mas <jordi@qdeck.com>,
+ Chad Robinson <crobinso@vaxc.stevens-tech.edu>,
+ Martin Trnovec <umertrno@savba.savba.sk>
 --------!---BIBLIOGRAPHY---------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -1071,6 +1087,14 @@ in the March 1994 Dr. Dobb's Journal.  Added by Ralf Brown, 3/26/94.
 
 Novell XQL INT 7Bh from XQL C interface source of 7/89.  Added by Ralf Brown,
 3/94.
+
+Various PS/1 and DOS/V calls were found in Frank van Gilluwe's book
+_The_Undocumented_PC_, Addison-Wesley 1994.  ISBN 0-201-62277-7.  Added by
+Ralf Brown, 4/16/94.
+
+Various ports and miscellaneous data structure were found in Frank van
+Gilluwe's book _The_Undocumented_PC_, Addison-Wesley 1994.  ISBN 0-201-62277-7.
+Added by Ralf Brown, 6/5/94.
 --------!---ADDRESSES------------------------
 The following have provided API reference and other materials at no charge:
 
@@ -1222,6 +1246,12 @@ Webcorp				(WEB)
 Sausalito, CA 94965
 Voice: (415) 331-1449
 FAX:   (415) 331-0911
+
+Willies' Computer Software Company  (COMM-DRV)
+2470 S. Dairy Ashford, Suite 188    [5/94]
+Houton, TX 77077
+Voice: (800) 966-4832
+       (713) 498-4832
 --------!---ADDRESSES------------------------
 Other addresses: 
 
@@ -1293,6 +1323,10 @@ P. O. Box 12282			[12/91]
 12162 E. Mississippi Ave.
 Aurora, CO  80012-3499
 Voice:	(303) 695-9095
+
+Cirrus Logic			(video adapters)
+3100 West Warren Ave
+Fremont, CA 94538
 
 Commercial Software Associates	(VMiX)
 Post Office Box 36
@@ -1683,25 +1717,28 @@ Voice: (404) 428-0008
 --------!---TRADEMARKS-----------------------
 To keep the lawyers happy:
 
-Microsoft, MS, MS DOS, OS/2 are trademarks of Microsoft Corp.
-IBM, PC, PCjr, PC/XT, PC/AT, XT/286, PS/2, TopView are trademarks of IBM Corp.
+ArtiCom is a registered trademark of Artisoft, Inc.
+ASAP is a trademark of MicroTalk.
+Banyan is a registered trademark of Banyan Systems, Inc.
 Compaq is a registered trademark of Compaq Computer Corp.
 Corona and Cordata are trademarks of Cordata Computer
-Logitech is a trademark of Logitech, Inc.
-Turbo C and Turbo Pascal are registered trademarks of Borland International
-Tandy 1000 is a registered trademark of Tandy Corp.
 DESQview, DESQview/X, QEMM-386, and QRAM are trademarks of Quarterdeck Office
 	Systems
-TaskView and OmniView are trademarks of Sunny Hill Software
-10NET is a registered trademark of Tiara Computer Systems, Inc.
+HALO'88 is a trademark of Media Cybernetics.
+Hayes is a trademark of Hayes Microcomputer Products Inc.
+IBM, PC, PCjr, PC/XT, PC/AT, XT/286, PS/2, TopView are trademarks of IBM Corp.
+Logitech is a trademark of Logitech, Inc.
+Microsoft, MS, MS DOS, OS/2 are trademarks of Microsoft Corp.
 Mouse Systems is a trademark of Mouse Systems Corp.
 NetWare is a registered trademark of Novell Development Corp.
-TesSeRact is a trademark of the TesSeRact Development Team.
 PC Tools is a trademark of Central Point Software, Inc.
-HALO'88 is a trademark of Media Cybernetics.
-Banyan is a registered trademark of Banyan Systems, Inc.
 StreetTalk, VINES, and Banyan Network Server are trademarks of Banyan Systems,
 	Inc.
+Tandy 1000 is a registered trademark of Tandy Corp.
+TaskView and OmniView are trademarks of Sunny Hill Software
+10NET is a registered trademark of Tiara Computer Systems, Inc.
+TesSeRact is a trademark of the TesSeRact Development Team.
+Turbo C and Turbo Pascal are registered trademarks of Borland International
 286/DOS-Extender and 386/DOS-Extender are trademarks of Phar Lap Software, Inc.
 Carbon Copy Plus is a trademark of Meridian Technology, Inc.
 GIF is a trademark of Compuserve, Inc.
@@ -1709,18 +1746,16 @@ VUIMAGE is a trademark of Offe Enterprises.
 Soft-ICE is a trademark of Nu-Mega Technologies.
 MAGic is a trademark of Microsystems Software, Inc.
 LANtastic is a trademark of Artisoft, Inc.
-ArtiCom is a registered trademark of Artisoft, Inc.
-ASAP is a trademark of MicroTalk.
 HRAM is a trademark of Biologic.
 ImageCapture is a trademark of International Computers.
 FlashTek, X-32, and X-32VM are trademarks fo FlashTek, Inc.
 SK-UPPS is a trademark of Schneider & Koch GmbH
 SK-PASSPORT is a trademark of SysKonnect, Inc.
 PostScript is a trademark of Adobe, Inc.
-Hayes is a trademark of Hayes Microcomputer Products Inc.
 SpaceManager is a trademark of Vertisoft Systems, Inc.
 Husky, Hunter, Hunter 16, Hawk, 8/16, Sidebox and Oracle GT are trademarks
 	of Husky Computers Limited.
+COMM-DRV is a trademark of Willies' Computer Software Company.
 Various other names are trademarks or registered trademarks of their respective
     holders
 --------!---QUOTES---------------------------
@@ -1770,7 +1805,7 @@ Snail mail:
 	   (Letters which enclose a Self-Addressed Stamped Envelope [or self-
 	    addressed envelope and international return coupon] or e-mail
 	    address will be given priority.  This address will remain valid
-	    until May 1, 1995.)
+	    until at least May 1, 1995.)
 
 I reply to all e-mail submissions and inquiries.  If you do not receive a reply
 within a reasonable time, send your message again, giving a better return path
