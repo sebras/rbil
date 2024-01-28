@@ -1,4 +1,5 @@
 [This file was provided by Robin Walker.  --Ralf]
+Last Update: 1/29/92
 
 Format of BIOS Data Segment at segment 40h:
 		{items in curly braces not documented by IBM}
@@ -257,7 +258,7 @@ Offset	Size	Description
 		    bit 3 =1 Right Alt pressed
 		    bit 2 =1 Right Ctrl pressed
 		    bit 1 =1 last code read was E0h
-		    bit 1 =1 last code read was E1h
+		    bit 0 =1 last code read was E1h
  97h	BYTE	Keyboard status byte 2
 		    bit 7 =1 keyboard transmit error flag
 		    bit 6 =1 LED update in progress
@@ -331,7 +332,11 @@ Offset	Size	Description
  6Ch	BYTE	Fixed disk: (=FFh on ESDI systems)
 		    bits 7-4: Channel number 00-0Fh
 		    bits 3-0: DMA arbitration level 00-0Eh
- 6Dh and up:	??? seen non-zero on Model 60
+ 6Dh	BYTE	???
+ 6Eh	WORD	current typematic setting (see INT 16/AH=03h)
+ 70h 167 BYTEs	???
+117h	WORD	keyboard ID (see INT 16/AH=0Ah)
+119h and up:	??? seen non-zero on Model 60
 3F0h	BYTE	Fixed disk buffer (???!!!)
  
 Format of Video Save Pointer Table [EGA/VGA/MCGA only]:

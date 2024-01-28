@@ -1,6 +1,8 @@
----------------------------------------------
-Interrupt List, part 2 of 5
-This compilation is Copyright (c) 1989,1990,1991 Ralf Brown
+Interrupt List, part 2 of 6
+This compilation is Copyright (c) 1989,1990,1991,1992 Ralf Brown
+----------15---------------------------------
+INT 15 - Microsoft TSR Specification
+	No additional information available at this time.
 ----------1500-------------------------------
 INT 15 - CASSETTE - TURN ON TAPE DRIVE'S MOTOR (PC and PCjr only)
 	AH = 00h
@@ -473,7 +475,7 @@ SeeAlso: INT 7F/AH=E8h
 INT 15 - TopView - "GETMEM" - ALLOCATE "SYSTEM" MEMORY
 	AX = 1001h
 	BX = number of bytes to allocate
-Return: ES:DI -> block of memory or 0000h:0000h (DV 2.26+)
+Return: ES:DI -> block of memory or 0000h:0000h (DV v2.26+)
 Note:	use SETERROR (AX=DE15h) to avoid a user prompt if there is insufficient
 	  common memory
 SeeAlso: AX=1002h,AX=DE0Ch,AX=DE15h
@@ -611,16 +613,16 @@ INT 15 - TopView - "DISPEROR" - POP-UP ERROR WINDOW
 			 10 = right
 			 11 = either
 	     bit 15: beep if 1
-	DS:DI -> text of message
+	ES:DI -> text of message
 	CH = width of error window (0 = default)
 	CL = height of error window (0 = default)
 	DX = segment of object handle
 Return: BX = status: 1 = left button, 2 = right, 27 = ESC pressed
 Note:	window remains on-screen until ESC or indicated mouse button is pressed
 ----------151020-----------------------------
-INT 15 - TopView - UNIMPLEMENTED IN DV 2.00+
+INT 15 - TopView - UNIMPLEMENTED IN DV v2.00+
 	AX = 1020h
-Return: pops up "Programming error" window in DV 2.00+
+Return: pops up "Programming error" window in DV v2.00+
 ----------151021-----------------------------
 INT 15 - TopView - "PGMINT" - INTERRUPT ANOTHER TASK
 	AX = 1021h
@@ -639,7 +641,7 @@ INT 15 - TopView - "GETVER" - GET VERSION
 	BX = 0000h
 Return: BX nonzero, TopView or compatible loaded
 	(BL = major version, BH = minor version)
-Notes:	TaskView returns BX = 0001h, DESQview 2.0+ returns BX = 0A01h
+Notes:	TaskView returns BX = 0001h, DESQview v2.00+ returns BX = 0A01h
 ----------151023-----------------------------
 INT 15 - TopView - "POSWIN" - POSITION WINDOW
 	AX = 1023h
@@ -687,7 +689,7 @@ INT 15 - DESQview (TopView???) - UNIMPLEMENTED IN DV 2.x
 	AL = 26h thru 2Ah
 Return: pops up "Programming error" window in DV 2.x
 ----------15102B-----------------------------
-INT 15 - DESQview 2.0+ (TopView???) - "POSTTASK" - AWAKEN TASK
+INT 15 - DESQview v2.00+ (TopView???) - "POSTTASK" - AWAKEN TASK
 	AX = 102Bh
 	BX = segment of object handle for task
 Return: nothing
@@ -695,7 +697,7 @@ Note:	forces a task which is waiting on its objectq to continue by placing
 	  the handle for the task on the objectq
 SeeAlso: AX=101Dh,AX=101Eh
 ----------15102C-----------------------------
-INT 15 - DESQview 2.0+ (TopView???) - START NEW APPLICATION IN NEW PROCESS
+INT 15 - DESQview v2.00+ (TopView???) - START NEW APPLICATION IN NEW PROCESS
 	AX = 102Ch
 	ES:DI -> contents of .PIF/.DVP file (see below)
 	BX = size of .PIF/.DVP info
@@ -747,9 +749,9 @@ Offset	Size	Description
 17Dh	BYTE	nonzero if copy-protect floppy is required
 ---information unique to DESQview 2.0+---
 17Eh	BYTE	.DVP version number
-		00h DESQview 1.2+
-		01h DESQview 2.0+
-		02h DESQview 2.2+
+		00h DESQview v1.2+
+		01h DESQview v2.0+
+		02h DESQview v2.2+
 17Fh	BYTE	reserved (0)
 180h	BYTE	initial number of rows in physical window
 181h	BYTE	initial number of columns in physical window
@@ -784,7 +786,7 @@ Offset	Size	Description
 18Ch	BYTE	protection level for 386 machines
 18Dh 19 BYTEs	reserved (0)
 ----------15102D-----------------------------
-INT 15 - DESQview 2.0+ - "KMOUSE" - KEYBOARD MOUSE CONTROL
+INT 15 - DESQview v2.00+ - "KMOUSE" - KEYBOARD MOUSE CONTROL
 	AX = 102Dh
 	BL = subfunction
 	     00h determine whether using keyboard mouse
@@ -793,7 +795,7 @@ INT 15 - DESQview 2.0+ - "KMOUSE" - KEYBOARD MOUSE CONTROL
 	     01h turn keyboard mouse on
 	     02h turn keyboard mouse off
 ----------15102E-----------------------------
-INT 15 - DESQview 2.40 - ALLOCATE ??? MEMORY
+INT 15 - DESQview v2.40 - ALLOCATE ??? MEMORY
 	AX = 102Eh
 	BX = number of bytes
 Return: AX = status
@@ -819,7 +821,7 @@ INT 15 - MultiDOS Plus - TURN OFF AltZ TOGGLE
 Note:	disables the Alt-Z MultiDOS command/program-selection hotkey
 SeeAlso: AH=12h"MultiDOS"
 ----------151117BX0000-----------------------
-INT 15 - DESQview 2.2+ - "ASSERTMAP" - GET/SET MAPPING CONTEXT
+INT 15 - DESQview v2.20+ - "ASSERTMAP" - GET/SET MAPPING CONTEXT
 	AX = 1117h
 	BX = 0000h	get current mapping context without setting
 	     nonzero	set new mapping context
@@ -834,10 +836,21 @@ Notes:	this function differs from AX = DE17h for DESQview v2.20 through 2.25
 	  stack in use will not be mapped out by the call
 SeeAlso: AX=DE17h,INT 2F/AX=1685h
 ----------1511DE-----------------------------
-INT 15 - DESQview - XDV.COM - INSTALLATION CHECK
+INT 15 - DESQview - QEXT.SYS - INSTALLATION CHECK
 	AX = 11DEh
 Return: CF clear if installed
-	    AX = segment at which XDV is located
+	    AX = segment at which QEXT.SYS is located
+Note:	a private entry point may be found by searching the beginning of the
+	  returned segment for the signature string
+	  "QUARTERDECK EXTENDED MEMORY MANAGER 286"; the word immediately
+	  prior to the signature contains the QEXT version number in BCD,
+	  and the word prior to that contains the offset within the QEXT
+	  code segment of the private entry point
+SeeAlso: INT 67/AH=3Fh
+
+Call private entry point with:
+	AH = 00h ???
+	AH = nonzero ???
 ----------1512-------------------------------
 INT 15 - VMiX - PUT PROCESS TO SLEEP
 	AH = 12h
@@ -942,7 +955,7 @@ INT 15 - TopView - SEND MESSAGE - "ADDR" - GET HANDLE OF MESSAGE SENDER
 Return: DWORD on stack is task handle of message sender
 SeeAlso: AH=12h/BH=00h
 ----------1512--BH03-------------------------
-INT 15 - DESQview 2.26+ - "CONNECT" - CONNECT TWO WINDOWS
+INT 15 - DESQview v2.26+ - "CONNECT" - CONNECT TWO WINDOWS
 	AH = 12h
 	BH = 03h
 	BL = window to be connected
@@ -1715,7 +1728,7 @@ Asynchronous notification routine defined by manager stream 8Ah called with:
 	       51h  main menu popped down
 Return: all registers unchanged
 ----------1512--BH06-------------------------
-INT 15 - DESQview 2.2+ - SEND MESSAGE - "SETPRI" - SET PRIORITY WITHIN OBJECTQ
+INT 15 - DESQview 2.20+ - SEND MESSAGE - "SETPRI" - SET PRIORITY WITHIN OBJECTQ
 	AH = 12h
 	BH = 06h
 	BL = object
@@ -1730,7 +1743,7 @@ Notes:	initially all objects have the same default value.  Should only make
 	  reordered
 SeeAlso: AH=12h/BH=07h
 ----------1512--BH07-------------------------
-INT 15 - DESQview 2.2+ - SEND MESSAGE - "GETPRI" - GET PRIORITY WITHIN OBJECTQ
+INT 15 - DESQview 2.20+ - SEND MESSAGE - "GETPRI" - GET PRIORITY WITHIN OBJECTQ
 	AH = 12h
 	BH = 07h
 	BL = object
@@ -2168,7 +2181,7 @@ Note:	release exclusive access by sending CLOSE message to mailbox
 	access may be requested multiple times, and requires multiple CLOSEs
 SeeAlso: AH=12h/BH=0Dh
 ----------1512--BH15-------------------------
-INT 15 - DESQview 2.2+ - SEND MESSAGE - "SETFLAGS" - SET OBJECT FLAGS
+INT 15 - DESQview v2.20+ - SEND MESSAGE - "SETFLAGS" - SET OBJECT FLAGS
 	AH = 12h
 	BH = 15h
 	BL = object
@@ -2190,7 +2203,7 @@ Notes:	only available if the API level has been set to at least 2.20
 	equivalent to performing SUBFROM and ADDTO calls on the object
 SeeAlso: AH=12h/BH=0Ah,AH=12h/BH=0Bh,AH=12h/BH=16h
 ----------1512--BH16-------------------------
-INT 15 - DESQview 2.2+ - SEND MESSAGE - "GETFLAGS" - GET OBJECT FLAGS
+INT 15 - DESQview v2.20+ - SEND MESSAGE - "GETFLAGS" - GET OBJECT FLAGS
 	AH = 12h 
 	BH = 16h
 	BL = object
@@ -2491,13 +2504,13 @@ Note:	if the event counter is zero, the task is suspended until the event is
 	  call returns immediately
 SeeAlso: AX=1E00h,AX=1E01h
 ----------151F-------------------------------
-INT 15 - MultiDOS Plus 4.01 - GET MEMORY PARAMETERS
+INT 15 - MultiDOS Plus v4.01 - GET MEMORY PARAMETERS
 	AH = 1Fh
 Return: BX = first segment of conventional memory
 	DX = first segment of EMS swap frame into which MultiDOS will load
 		programs
 ----------1520-------------------------------
-INT 15 - MultiDOS Plus 4.01 - CHECK IF MULTITASKING ENABLED
+INT 15 - MultiDOS Plus v4.01 - CHECK IF MULTITASKING ENABLED
 	AH = 20h
 Return: AX = current state
 	    0000h multitasking enabled
@@ -2939,6 +2952,9 @@ Notes:	type codes are allocated as follows:
 	  00-7F non-reentrant devices; OS must arbitrate access
 	  80-BF reentrant devices; ES:BX points to a unique control block
 	  C0-FF wait-only calls, no complementary INT 15/AH=91h call
+	floppy and hard disk BIOS code uses this call to implement a timeout;
+	  for device types 00h and 01h, a return of CF set means that the
+	  timeout expired before the disk responded.
 	this function should be hooked by a multitasker to allow other tasks
 	  to execute while the BIOS is waiting for I/O completion; the default
 	  handler merely returns with AH=00h and CF clear
@@ -2979,6 +2995,9 @@ Return: CF set if BIOS doesn't support call
 	    86h unsupported function
 Notes:	the 1/10/86 XT BIOS returns an incorrect value for the feature byte
 	the configuration table is at F000h:E6F5h in 100% compatible BIOSes
+	Dell machines contain the signature "DELL" or "Dell" at absolute FE076h
+	  and a model byte at absolute address FE845h
+	Tandy 1000 machines contain 21h in the byte at F000h:C000h
 
 Format of ROM configuration table:
 Offset	Size	Description
@@ -2986,7 +3005,7 @@ Offset	Size	Description
  02h	BYTE	model (see below)
  03h	BYTE	submodel (see below)
  04h	BYTE	BIOS revision: 0 for first release, 1 for 2nd, etc.
- 05h	BYTE	features:
+ 05h	BYTE	feature byte 1:
 		bit 7 = DMA channel 3 used by hard disk BIOS
 		bit 6 = 2nd 8259 installed
 		bit 5 = Real-Time Clock installed
@@ -2995,8 +3014,16 @@ Offset	Size	Description
 		bit 2 = extended BIOS area allocated (usually at top of RAM)
 		bit 1 = bus is Micro Channel instead of ISA
 		bit 0 reserved
- 06h	WORD	reserved (0)
- 08h	WORD	reserved (0)
+ 06h	BYTE	feature byte 2:
+		bit 7 = ???
+		bit 6 = INT 16h/AH=09h (keyboard functionality) supported
+		bits 5-0 = ???
+ 07h	BYTE	feature byte 3:
+		reserved (0)
+ 08h	BYTE	feature byte 4:
+		reserved (0)
+ 09h	BYTE	feature byte 5:
+		reserved (0)
 ---AWARD BIOS---
  0Ah  N BYTEs	AWARD copyright notice
 ---Phoenix BIOS---
@@ -3025,12 +3052,13 @@ Model  Submdl  Rev	BIOS date	System
  FCh	01h	30h	  ???		Tandy 3000NL
  FCh	01h	???	  ???		Compaq 286/386
  FCh	02h	00h	04/21/86	PC XT-286
- FCh	04h	00h	02/13/87     ** PS/2 Model 50
- FCh	04h	03h	04/18/88	PS/2 Model 50Z
- FCh	05h	00h	02/13/87     ** PS/2 Model 60
+ FCh	04h	00h	02/13/87     ** PS/2 Model 50 (10 MHz/1 ws 286)
+ FCh	04h	03h	04/18/88	PS/2 Model 50Z (10 MHz/0 ws 286)
+ FCh	05h	00h	02/13/87     ** PS/2 Model 60 (10 MHz 286)
  FCh	06h	???	  ???		7552 "Gearbox"
+ FCh	09h	00h	  ???		PS/2 Model 25 (10 MHz 286)
  FCh	09h	02h	06/28/89	PS/2 Model 30-286
- FCh	0Bh	00h	02/16/90	PS/1
+ FCh	0Bh	00h	02/16/90	PS/1 Model 2011 (10 MHz 286)
  FCh	42h	***	  ???		Olivetti M280
  FCh	45h	***	  ???		Olivetti M380 (XP 1, XP3, XP 5)
  FCh	48h	***	  ???		Olivetti M290
@@ -3042,34 +3070,51 @@ Model  Submdl  Rev	BIOS date	System
  FBh	00h	01h	01/10/86	PC XT, Enh Keyb, 3.5" support
  FBh	00h	02h	05/09/86	PC XT
  FBh	4Ch	***	  ???		Olivetti M200
- FAh	00h	00h	09/02/86	PS/2 Model 30
+ FAh	00h	00h	09/02/86	PS/2 Model 30 (8 MHz 8086)
  FAh	00h	01h	12/12/86	PS/2 Model 30
- FAh	01h	00h	  ???		PS/2 Model 25
+ FAh	01h	00h	  ???		PS/2 Model 25/25L (8 MHz 8086)
  FAh	4Eh	***	  ???		Olivetti M111
  F9h	00h	00h	09/13/85	PC Convertible
- F8h	00h	00h	03/30/87     ** PS/2 Model 80 16MHz
- F8h	01h	00h	10/07/87	PS/2 Model 80 20MHz
+ F8h	00h	00h	03/30/87     ** PS/2 Model 80 (16MHz 386)
+ F8h	01h	00h	10/07/87	PS/2 Model 80 (20MHz 386)
  F8h	04h	02h	04/11/88	PS/2 Model 70 20MHz, type 2 system brd
  F8h	04h	03h	03/17/89	PS/2 Model 70 20MHz, type 2 system brd
- F8h	09h	???	  ???		PS/2 Model 70 16MHz, type 1 system brd
+ F8h	09h	00h	  ???		PS/2 Model 70 16MHz, type 1 system brd
  F8h	09h	02h	04/11/88	PS/2 Model 70 some models
  F8h	09h	03h	03/17/89	PS/2 Model 70 some models
  F8h	0Bh	00h	01/18/89	PS/2 Model P70 (8573-121) typ 2 sys brd
  F8h	0Bh	02h	12/16/89	PS/2 Model P70 ??
- F8h	0Ch	00h	11/02/88	PS/2 Model 55SX
- F8h	0Dh	???	  ???		PS/2 Model 70 25MHz, type 3 system brd
- F8h	11h	00h	10/01/90	PS/2 Model ??
- F8h	13h	00h	10/01/90	PS/2 Model ??
- F8h	14h	00h	10/01/90	PS/2 Model 90-AK9
- F8h	16h	00h	10/01/90	PS/2 Model 90-AKD
- F8h	1Bh	00h	10/02/89	PS/2 Model 70-486
- F8h	1Ch	00h	02/08/90	PS/2 Model 65-121
- F8h	1Eh	00h	02/08/90	PS/2 Model ??
- F8h	50h	00h	  ???		PS/2 Model P70 (8573) 16 MHz
+ F8h	0Ch	00h	11/02/88	PS/2 Model 55SX (16 MHz 386SX)
+ F8h	0Dh	00h	  ???		PS/2 Model 70 25MHz, type 3 system brd
+ F8h	11h	00h	10/01/90	PS/2 Model 90 (25 MHz 486)
+ F8h	13h	00h	10/01/90	PS/2 Model 90 (33 MHz 486)
+ F8h	14h	00h	10/01/90	PS/2 Model 90-AK9 (25 MHz 486)
+ F8h	16h	00h	10/01/90	PS/2 Model 90-AKD (33 MHz 486)
+ F8h	19h	05h	  ???		PS/2 Model 35/35LS or 40 (20 MHz 386SX)
+ F8h	1Bh	00h	10/02/89	PS/2 Model 70-486 (25 MHz 486)
+ F8h	1Ch	00h	02/08/90	PS/2 Model 65-121 (16 MHz 386SX)
+ F8h	1Eh	00h	02/08/90	PS/2 Model 55LS (16 MHz 386SX)
+ F8h	23h	01h	  ???		PS/2 Model L40 (20 MHz 386SX)
+ F8h	25h	06h	  ???		PS/2 Model M57 (20 MHz 386SLC)
+ F8h	26h	01h	  ???		PS/2 Model 57 (20 MHz 386SX)
+ F8h	2Ah	00h	  ???		PS/2 Model 95 (50 MHz 486)
+ F8h	2Bh	00h	  ???		PS/2 Model 90 (50 MHz 486)
+ F8h	2Ch	01h	  ???		PS/2 Model 95 (20 MHz 486SX)
+ F8h	2Dh	00h	  ???		PS/2 Model 90 (20 MHz 486SX)
+ F8h	2Eh	01h	  ???		PS/2 Model 95 (20 MHz 486SX + 487SX)
+ F8h	2Fh	00h	  ???		PS/2 Model 90 (20 MHz 486SX + 487SX)
+ F8h	30h	00h	  ???		PS/1 Model 2121 (16 MHz 386SX)
+ F8h	50h	00h	  ???		PS/2 Model P70 (8573) (16 MHz 386)
  F8h	50h	01h	12/16/89	PS/2 Model P70 (8570-031)
+ F8h	52h	00h	  ???		PS/2 Model P75 (33 MHz 486)
  F8h	61h	***	  ???		Olivetti P500
  F8h	62h	***	  ???		Olivetti P800
+ F8h	80h	00h	  ???		PS/2 Model 80 (25 MHz 386)
  F8h	80h	01h	11/21/89	PS/2 Model 80-A21
+ F8h	???	???	  ???		PS/2 Model 90 (25 MHz 486SX)
+ F8h	???	???	  ???		PS/2 Model 95 (25 MHz 486SX)
+ F8h	???	???	  ???		PS/2 Model 90 (25 MHz 486SX + 487SX)
+ F8h	???	???	  ???		PS/2 Model 95 (25 MHz 486SX + 487SX)
  9Ah	*	*	  ???		Compaq XT/Compaq Plus
  30h	???	???	  ???		Sperry PC
  2Dh	*	*	  ???		Compaq PC/Compaq Deskpro
@@ -3078,6 +3123,21 @@ Model  Submdl  Rev	BIOS date	System
       Read Model byte at F000h:FFFEh and BIOS date at F000h:FFF5h.
    ** These BIOS versions require the DASDDRVR.SYS patches.
   *** These Olivetti machines store the submodel in the byte at F000h:FFFDh.
+
+Values for Dell model byte:
+ 02h	Dell 200
+ 03h	Dell 300
+ 05h	Dell 220
+ 06h	Dell 310
+ 07h	Dell 325
+ 09h	Dell 310A
+ 0Ah	Dell 316
+ 0Bh	Dell 220E
+ 0Ch	Dell 210
+ 0Dh	Dell 316SX
+ 0Eh	Dell 316LT
+ 0Fh	Dell 320LX
+ 11h	Dell 425E
 ----------15C1-------------------------------
 INT 15 - SYSTEM - RETURN EXTENDED-BIOS DATA-AREA SEGMENT ADDRESS (PS)
 	AH = C1h
@@ -3225,10 +3285,18 @@ INT 15 - PS/2 Model 95 - ???
 	???
 Return: ???
 ----------15C9-------------------------------
-INT 15 - PS/2 Model 95 - ???
-	AH = C9h
-	???
-Return: ???
+INT 15 - newer PS/2; various BIOSes - GET CPU TYPE AND MASK REVISION
+        AH = C9h
+	AL = 10h (may be required on some non-PS BIOSes)
+Return: AH = 00h
+	CH = CPU type
+	    03h 80386
+            04h 80486
+        CL = mask revision
+	    23h 386SX
+Notes:	the BIOS must save DX at startup in order to be able to support this
+	  call; PS/2 Models 56, 57, 90, and 95 are known to support it
+	the PS/2 BIOS merely reads CMOS locations 190h (type) and 191h (rev)
 ----------15CA-------------------------------
 INT 15 - PS/2 Model 95 - ???
 	AH = CAh
@@ -3360,20 +3428,21 @@ SeeAlso: AX=D800h,AX=D801h,AX=D802h,AX=D803h,AX=D804h
 ----------15DE00-----------------------------
 INT 15 - DESQview - GET PROGRAM NAME
 	AX = DE00h
-Return: AX = offset into DESQVIEW.DVO of current program's record (see below)
+Return: AX = offset into DESQVIEW.DVO of program most recently selected from
+		the "Switch Windows" menu (see below)
 SeeAlso: AX=DE07h
 
 Format of program entry in DESQVIEW.DVO:
 Offset	Size	Description
- 00h	BYTE	length of name
+ 00h	BYTE	length of name (FFh if end of file)
  01h  N BYTEs	name
       2 BYTEs	keys to invoke program (second = 00h if only one key used)
-	WORD	program type
-		0000h normal program
-		0004h divider
-		0080h Delete a Program
-		0081h Change a Program
-	BYTE	end flag: 00h for all but last entry, which is FFh
+	BYTE	program type
+		00h normal program
+		04h divider
+		80h Delete a Program
+		81h Change a Program
+	WORD	??? apparently always 0000h
 ----------15DE01-----------------------------
 INT 15 - DESQview - UPDATE "OPEN WINDOW" MENU
 	AX = DE01h
@@ -3429,7 +3498,7 @@ INT 15 - DESQview - UNIMPLEMENTED
 	AX = DE09h
 Return: nothing (NOP in DV 1.x and 2.x)
 ----------15DE0A-----------------------------
-INT 15 - DESQview 2.x - "DBGPOKE" - DISPLAY CHARACTER ON STATUS LINE
+INT 15 - DESQview v2.00+ - "DBGPOKE" - DISPLAY CHARACTER ON STATUS LINE
 	AX = DE0Ah
 	BL = character
 Return: character displayed, next call will display in next position (which
@@ -3441,17 +3510,16 @@ Notes:	displays character on bottom line of *physical* screen, regardless
 	this API call may be made from a hardware interrupt handler
 SeeAlso: AX=1003h
 ----------15DE0B-----------------------------
-INT 15 - DESQview 2.x - "APILEVEL" - DEFINE MINIMUM API LEVEL REQUIRED
+INT 15 - DESQview v2.00+ - "APILEVEL" - DEFINE MINIMUM API LEVEL REQUIRED
 	AX = DE0Bh
-	BL = API level major version number
-	BH = API level minor version number
-Return: AX = maximum API level (AL = major, AH = minor)
+	BL = API level minor version number
+	BH = API level major version number
+Return: AX = maximum API level (AH = major, AL = minor)
 Notes:	if the requested API level is greater than the version of DESQview, a
 	  "You need a newer version" error window is popped up
 	the API level defaults to 1.00, and is inherited by child tasks
-	some early copies of DV 2.00 return AX=0200h instead of 0002h
 ----------15DE0C-----------------------------
-INT 15 - DESQview 2.x - "GETMEM" - ALLOCATE "SYSTEM" MEMORY
+INT 15 - DESQview v2.00+ - "GETMEM" - ALLOCATE "SYSTEM" MEMORY
 	AX = DE0Ch
 	BX = number of bytes
 Return: ES:DI -> allocated block or 0000h:0000h (DV 2.26+)
@@ -3459,13 +3527,13 @@ Note:	use SETERROR (AX=DE15h) to avoid a user prompt if there is insufficient
 	  system memory
 SeeAlso: AX=1001h,AX=DE0Dh,AX=DE15h
 ----------15DE0D-----------------------------
-INT 15 - DESQview 2.x - "PUTMEM" - DEALLOCATE "SYSTEM" MEMORY
+INT 15 - DESQview v2.00+ - "PUTMEM" - DEALLOCATE "SYSTEM" MEMORY
 	AX = DE0Dh
 	ES:DI -> previously allocated block
 Return: nothing
 SeeAlso: AX=1002h,AX=DE0Ch
 ----------15DE0E-----------------------------
-INT 15 - DESQview 2.x - "FINDMAIL" - FIND MAILBOX BY NAME
+INT 15 - DESQview v2.00+ - "FINDMAIL" - FIND MAILBOX BY NAME
 	AX = DE0Eh
 	ES:DI -> name to find
 	CX = length of name
@@ -3474,13 +3542,13 @@ Return: BX = 0000h not found
 		DS:SI = object handle
 SeeAlso: AH=12h/BH=11h
 ----------15DE0F-----------------------------
-INT 15 - DESQview 2.x - ENABLE DESQview EXTENSIONS
+INT 15 - DESQview v2.00+ - ENABLE DESQview EXTENSIONS
 	AX = DE0Fh
 Return: AX and BX destroyed (seems to be bug, weren't saved&restored)
 Notes:	sends a manager stream with opcodes AEh, BDh, and BFh to task's window
 	enables an additional mouse mode
 ----------15DE10-----------------------------
-INT 15 - DESQview 2+ - "PUSHKEY" - PUT KEY INTO KEYBOARD INPUT STREAM
+INT 15 - DESQview v2.00+ - "PUSHKEY" - PUT KEY INTO KEYBOARD INPUT STREAM
 	AX = DE10h
 	BH = scan code
 	BL = character
@@ -3492,27 +3560,27 @@ Notes:	a later read will get the keystroke as if it had been typed by the user
 	early copies of DV 2.00 destroy AX, BX, ES, and DI
 SeeAlso: INT 16/AH=05h
 ----------15DE11BL00-------------------------
-INT 15 - DESQview 2+ - "JUSTIFY" - EN/DISABLE AUTOMATIC JUSTIFICATION OF WINDOW
+INT 15 - DESQview 2.00+ - "JUSTIFY" - EN/DISABLE AUTOMATIC WINDOW JUSTIFICATION
 	AX = DE11h
 	BL = 00h      viewport will not move automatically
 	     nonzero  viewport will move to keep cursor visible (default)
 Return: nothing
 ----------15DE12BX0000-----------------------
-INT 15 - DESQview 2.01+ - "CSTYLE" - SET "C"-COMPATIBLE CONTROL CHAR INTERPRET
+INT 15 - DESQview v2.01+ - "CSTYLE" - SET "C"-COMPATIBLE CONTROL CHAR INTERPRET
 	AX = DE12h
 	BX = 0000h    select normal style (linefeed only moves down)
 	     nonzero  select C style (linefeed moves to start of next line)
 Return: nothing
 Note:	set on a per-task basis, and inherited from the parent task
 ----------15DE13-----------------------------
-INT 15 - DESQview 2.2+ - "GETCRIT" - GET CRITICAL NESTING COUNT
+INT 15 - DESQview v2.20+ - "GETCRIT" - GET CRITICAL NESTING COUNT
 	AX = DE13h
 Return: BX = number of calls to BEGINC or ENTERC (see INT 15/AX=101Bh,DE1Ch)
 	     without matching ENDC (see INT 15/AX=101Ch)
 Note:	this API call may be made from within a hardware interrupt handler
 SeeAlso: AX=101Bh,AX=101Ch,AX=DE1Bh,AX=DE1Ch
 ----------15DE14-----------------------------
-INT 15 - DESQview 2.2+ - GET OBJECT TYPE
+INT 15 - DESQview v2.20+ - GET OBJECT TYPE
 	AX = DE14h
 	ES:DI -> object
 Return: BL = 00h not an object
@@ -3525,7 +3593,7 @@ Return: BL = 00h not an object
 	     10h panel
 SeeAlso: AX=1016h
 ----------15DE15BL00-------------------------
-INT 15 - DESQview 2.2+ - SET ERROR HANDLING
+INT 15 - DESQview v2.20+ - SET ERROR HANDLING
 	AX = DE15h
 	BL = 00h post system error on all error conditions
 	     01h return carry flag set on calls to ADDTO, SUBFROM, and WRITE
@@ -3536,7 +3604,7 @@ INT 15 - DESQview 2.2+ - SET ERROR HANDLING
 Return: nothing
 SeeAlso: AX=DE16h
 ----------15DE16-----------------------------
-INT 15 - DESQview 2.2+ - GET ERROR HANDLING
+INT 15 - DESQview v2.20+ - GET ERROR HANDLING
 	AX = DE16h
 Return: BL = 00h always post system error
 	     01h return carry flag set on failed mailbox writes
@@ -3544,13 +3612,13 @@ Return: BL = 00h always post system error
 		 GETMEM calls
 SeeAlso: AX=DE15h
 ----------15DE17-----------------------------
-INT 15 - DESQview 2.20-2.25 - reserved
+INT 15 - DESQview v2.20-2.25 - reserved
 	AX = DE17h
 Return: pops up "Programming error" window
 Note:	AX = 1117h is NOT identical to this call under DESQview 2.20 thru 2.25
 SeeAlso: AX=1117h
 ----------15DE17BX0000-----------------------
-INT 15 - DESQview 2.26+ - "ASSERTMAP" - GET/SET MAPPING CONTEXT
+INT 15 - DESQview v2.26+ - "ASSERTMAP" - GET/SET MAPPING CONTEXT
 	AX = DE17h
 	BX = 0000h	get current mapping context without setting
 	     nonzero	set new mapping context
@@ -3563,7 +3631,7 @@ Notes:	mapping contexts determine conventional-memory addressability; setting
 	this API call may be made from a hardware interrupt handler
 SeeAlso: AX=1117h,INT 2F/AX=1685h
 ----------15DE18-----------------------------
-INT 15 - DESQview 2.2+ internal -
+INT 15 - DESQview v2.20+ - internal - ???
 	AX = DE18h
 	BP = function number
 	    high byte must be 10h
@@ -3577,7 +3645,7 @@ INT 15 - DESQview 2.2+ internal -
 		    ES:DI -> 18-byte buffer to hold ???
 Note:	calls video driver (NOP for Hercules driver,probably CGA and MCGA also)
 ----------15DE19-----------------------------
-INT 15 - DESQview 2.23+ - "GETCOMMON" - ALLOCATE "COMMON" MEMORY
+INT 15 - DESQview v2.23+ - "GETCOMMON" - ALLOCATE "COMMON" MEMORY
 	AX = DE19h
 	BX = number of bytes to allocate
 Return: AX = 0000h successful
@@ -3586,18 +3654,18 @@ Return: AX = 0000h successful
 Note:	this API call may be made from within a hardware interrupt handler
 SeeAlso: AX=DE0Ch,AX=DE15h,AX=DE1Ah
 ----------15DE1A-----------------------------
-INT 15 - DESQview 2.23+ - "PUTCOMMON" - DEALLOCATE "COMMON" MEMORY
+INT 15 - DESQview v2.23+ - "PUTCOMMON" - DEALLOCATE "COMMON" MEMORY
 	AX = DE1Ah
 	DS:SI -> previously allocated block
 Note:	this function may be called from within a hardware interrupt handler
 SeeAlso: AX=DE0Dh,AX=DE19h
 ----------15DE1B-----------------------------
-INT 15 - DESQview 2.23+ internal - DECREMENT CRITICAL NESTING COUNT
+INT 15 - DESQview v2.23+ internal - DECREMENT CRITICAL NESTING COUNT
 	AX = DE1Bh
 Return: nothing
 SeeAlso: AX=101Ch,AX=DE13h,AX=DE1Ch
 ----------15DE1C-----------------------------
-INT 15 - DESQview 2.23+ - "ENTERC" - INCREMENT CRITICAL NESTING COUNT
+INT 15 - DESQview v2.23+ - "ENTERC" - INCREMENT CRITICAL NESTING COUNT
 	AX = DE1Ch
 Return: nothing
 Notes:	similar to AX=101Bh, but begins the critical region without ensuring
@@ -3607,7 +3675,7 @@ Notes:	similar to AX=101Bh, but begins the critical region without ensuring
 	this API call may be made from within a hardware interrupt handler
 SeeAlso: AX=101Bh,AX=101Ch,AX=DE13h,AX=DE1Bh
 ----------15DE1D-----------------------------
-INT 15 - DESQview 2.23+ - "PUTKEY" - FAKE USER KEYSTROKES
+INT 15 - DESQview v2.23+ - "PUTKEY" - FAKE USER KEYSTROKES
 	AX = DE1Dh
 	DX = segment of handle for task to receive keystroke
 	BL = character
@@ -3620,7 +3688,7 @@ Notes:	the key is treated as though the user had pressed it, ignoring any
 	multiple PUTKEYs are seen in the order in which they are executed
 SeeAlso: AX=DE10h
 ----------15DE1E-----------------------------
-INT 15 - DESQview 2.23+ - "SCRNINFO" - GET TRUE VIDEO PARAMETERS
+INT 15 - DESQview v2.23+ - "SCRNINFO" - GET TRUE VIDEO PARAMETERS
 	AX = DE1Eh
 Return:	CL = actual number of rows on screen
 	CH = actual number of columns on screen
@@ -3628,13 +3696,13 @@ Return:	CL = actual number of rows on screen
 Note:	this API call may be made from a hardware interrupt handler
 SeeAlso: INT 10/AH=0Fh
 ----------15DE1F-----------------------------
-INT 15 - DESQview 2.23+ - "DOSUSER" - GET HANDLE OF TASK CURRENTLY USING DOS
+INT 15 - DESQview v2.23+ - "DOSUSER" - GET HANDLE OF TASK CURRENTLY USING DOS
 	AX = DE1Fh
 Return: BX = segment of task handle or 0000h if no tasks are using DOS
 Note:	this API call may be made from within a hardware interrupt handler
 SeeAlso: AX=DE13h
 ----------15DE20-----------------------------
-INT 15 - DESQview 2.26+ - "DISPATCHINT" - INTERRUPT ANOTHER TASK
+INT 15 - DESQview v2.26+ - "DISPATCHINT" - INTERRUPT ANOTHER TASK
 	AX = DE20h
 	BX = segment of handle of task to interupt
 	DX:CX -> FAR interrupt routine
@@ -3649,14 +3717,14 @@ Notes:	unlike "PGMINT" (AX=1021h), DISPATCHINT may be applied to the task
 	this API call may be made from within a hardware interrupt handler
 SeeAlso: AX=1021h
 ----------15DE21BX0000-----------------------
-INT 15 - DESQview 2.26+ - "ASSERTVIR" - CONTROL 386 SCREEN VIRTUALIZATION
+INT 15 - DESQview v2.26+ - "ASSERTVIR" - CONTROL 386 SCREEN VIRTUALIZATION
 	AX = DE21h
 	BX = 0000h turn off
 	     nonzero turn on
 Return: BX = old state of virtualization
 Note:	this API call may be made from within a hardware interrupt handler
 ----------15DE22-----------------------------
-INT 15 - DESQview 2.26+ - "PROCESSMEM" - GET TASK MEMORY STATUS
+INT 15 - DESQview v2.26+ - "PROCESSMEM" - GET TASK MEMORY STATUS
 	AX = DE22h
 	DX = segment of task handle
 Return: DX = total amount of memory in paragraphs
@@ -3672,22 +3740,22 @@ Notes:	if the task handle is a child task, the returned values will be for the
 	  unchanged, because the memory usage cannot be determined
 SeeAlso: AX=DE04h,AX=DE05h,AX=DE06h
 ----------15DE23-----------------------------
-INT 15 - DESQview 2.31+ - ???
+INT 15 - DESQview v2.31+ - ???
 	AX = DE23h
 	BX = ??? IRQ number on first PIC?
 	CX = ??? IRQ number on second PIC?
 Return: ???
 ----------15DE24-----------------------------
-INT 15 - DESQview 2.40 - ???
+INT 15 - DESQview v2.40 - ???
 	AX = DE24h
 Return: BX = ??? (0000h for v2.40)
 ----------15DE25-----------------------------
-INT 15 - DESQview 2.40 - ???
+INT 15 - DESQview v2.40 - ???
 	AX = DE25h
 	???
 Return: nothing
 ----------15DE26-----------------------------
-INT 15 - DESQview 2.40 - GET ???
+INT 15 - DESQview v2.40 - GET ???
 	AX = DE26h
 Return: BX = segment of handle for ??? (current window?)
 ----------15E00F-----------------------------
@@ -3709,6 +3777,17 @@ INT 15 - Compaq Systempro - MULTIPROCESSOR AVAILABLE
 	AX = E200h
 Return: AX = 8000h if 2nd processor available
 SeeAlso: AX=E00Fh,AX=E10Eh
+----------15F200CX454D-----------------------
+INT 15 - Tandon memory mapper - Tandon MAPPER HARDWARE INITIALISATION CHECK ???
+	AX = F200h
+	CX = 454Dh
+Return: CF clear if hardware already initialised
+	    BX = upper RAM areas in use
+		bit 0: C000-C3FF
+		bit 1: C400-C7FF
+		...
+		bit 11: EC00-EFFF
+	CF set if hardware not initialised yet
 ----------1600-------------------------------
 INT 16 - KEYBOARD - GET KEYSTROKE
 	AH = 00h
@@ -3716,7 +3795,7 @@ Return: AH = scan code
 	AL = ASCII character
 Note:	on extended keyboards, this function discards any extended keystrokes,
 	  returning only when a non-extended keystroke is available
-SeeAlso: AH=01h,AH=05h,AH=10h
+SeeAlso: AH=01h,AH=05h,AH=10h,AH=20h,INT 18/AH=00h
 ----------1601-------------------------------
 INT 16 - KEYBOARD - CHECK FOR KEYSTROKE
 	AH = 01h
@@ -3728,7 +3807,7 @@ Note:	if a keystroke is present, it is not removed from the keyboard buffer;
 	  however, any extended keystrokes which are not compatible with 83/84-
 	  key keyboards are removed in the process of checking whether a
 	  non-extended keystroke is available
-SeeAlso: AH=00h,AH=11h
+SeeAlso: AH=00h,AH=11h,AH=21h,INT 18/AH=01h
 ----------1602-------------------------------
 INT 16 - KEYBOARD - GET SHIFT FLAGS
 	AH = 02h
@@ -3741,19 +3820,25 @@ Return: AL = shift flags
 		2: Ctrl key pressed (either Ctrl on 101/102-key keyboards)
 		1: left shift key pressed
 		0: right shift key pressed
-SeeAlso: AH=12h
+SeeAlso: AH=12h,AH=22h,INT 18/AH=02h
 ----------1603-------------------------------
 INT 16 - KEYBOARD - SET TYPEMATIC RATE AND DELAY
 	AH = 03h
 	AL = subfunction
-	    00h (PCjr) set default delay and rate
-	    01h (PCjr) increase delay before repeat
-	    02h (PCjr) decrease repeat rate by factor of 2
-	    03h (PCjr) increase delay and decrease repeat rate
-	    04h (PCjr) turn off typematic repeat
-	    05h (AT,PS) set repeat rate and delay
+	    00h set default delay and rate (PCjr and some PS/2)
+	    01h increase delay before repeat (PCjr)
+	    02h decrease repeat rate by factor of 2 (PCjr)
+	    03h increase delay and decrease repeat rate (PCjr)
+	    04h turn off typematic repeat (PCjr and some PS/2)
+	    05h set repeat rate and delay (AT,PS)
 		BH = delay value (00h = 250ms to 03h = 1000ms)
 		BL = repeat rate (00h=30/sec to 0Ch=10/sec [def] to 1Fh=2/sec)
+	    06h get current typematic rate and delay (newer PS/2s)
+		Return: BL = repeat rate (see above)
+			BH = delay (see above)
+Note:	use INT 16/AH=09h to determine whether some of the subfunctions are
+	  supported
+SeeAlso: INT 16/AH=09h
 ----------1604-------------------------------
 INT 16 - KEYBOARD - SET KEYCLICK (PCjr only)
 	AH = 04h
@@ -3770,12 +3855,34 @@ Return: AL = 00h if successful
 	     01h if keyboard buffer full
 Note:	under DESQview, the following "keystrokes" invoke the following
 	  actions when they are read from the keyboard buffer:
-	  	38FBh or FB00h	switch to next window (only if main menu
+		38FBh or FB00h	switch to next window (only if main menu
 				popped up)
 		38FCh or FC00h	pop up DESQview main menu
 		38FEh or FE00h	close the current window
 		38FFh or FF00h	pop up DESQview learn menu
 SeeAlso: AH=00h,AH=71h,AH=FFh,INT 15/AX=DE10h
+----------1609-------------------------------
+INT 16 - KEYBOARD - GET KEYBOARD FUNCTIONALITY
+	AH = 09h
+Return: AL = keyboard functions supported
+	    bit 7: reserved
+	    bit 6: 
+	    bit 5:
+	    bit 4: INT 16/AH=0Ah supported
+	    bit 3: INT 16/AX=0306h supported
+	    bit 2: INT 16/AX=0305h supported
+	    bit 1: INT 16/AX=0304h supported
+	    bit 0: INT 16/AX=0300h supported
+Note:	this function is only available if bit 6 of the second feature byte
+	  returned by INT 15/AH=C0h is set
+SeeAlso: AH=03h,AH=0Ah,INT 15/AH=C0h
+----------160A-------------------------------
+INT 16 - KEYBOARD - GET KEYBOARD ID
+	AH = 0Ah
+Return: BX = keyboard ID
+Note:	check return value from AH=09h to determine whether this function is
+	  supported
+SeeAlso: AH=09h
 ----------1610-------------------------------
 INT 16 - KEYBOARD - GET ENHANCED KEYSTROKE (enhanced kbd support only)
 	AH = 10h
@@ -3784,7 +3891,7 @@ Return: AH = scan code
 Notes:	if no keystroke is available, this function waits until one is placed
 	  in the keyboard buffer
 	unlike AH=00h, this function does not discard extended keystrokes
-SeeAlso: AH=00h,AH=11h
+SeeAlso: AH=00h,AH=11h,AH=20h
 ----------1611-------------------------------
 INT 16 - KEYBOARD - CHECK FOR ENHANCED KEYSTROKE (enh kbd support only)
 	AH = 11h
@@ -3794,7 +3901,7 @@ Return: ZF set if no keystroke available
 	    AL = ASCII character
 Notes:	if a keystroke is available, it is not removed from the keyboard buffer
 	unlike AH=01h, this function does not discard extended keystrokes
-SeeAlso: AH=01h,AH=10h
+SeeAlso: AH=01h,AH=10h,AH=21h
 ----------1612-------------------------------
 INT 16 - KEYBOARD - GET EXTENDED SHIFT STATES (enh kbd support only)
 	AH = 12h
@@ -3818,7 +3925,25 @@ Return: AL = shift flags 1 (same as returned by AH=02h)
 		0: left Ctrl key pressed
 Notes:	AL bit 3 set only for left Alt key on many machines
 	AH bits 7 through 4 always clear on a Compaq SLT/286
-SeeAlso: AH=02h
+SeeAlso: AH=02h,AH=22h
+----------1620-------------------------------
+INT 16 - KEYBOARD - GET 122-KEY KEYSTROKE???
+	AH = 20h
+Return: ??? see AH=10h
+Note:	use AH=09h to determine whether this function is supported
+SeeAlso: AH=00h,AH=10h,AH=21h
+----------1621-------------------------------
+INT 16 - KEYBOARD - CHECK FOR 122-KEY KEYSTROKE???
+	AH = 21h
+Return: ??? see AH=11h
+Note:	use AH=09h to determine whether this function is supported
+SeeAlso: AH=01h,AH=11h,AH=20h
+----------1622-------------------------------
+INT 16 - KEYBOARD - GET 122-KEY SHIFT STATUS???
+	AH = 22h
+Return: ??? see AH=12h
+Note:	use AH=09h to determine whether this function is supported
+SeeAlso: AH=02h,AH=12h
 ----------164500-----------------------------
 INT 16 - Shamrock Software EMAIL - GET STATUS
 	AX = 4500h
@@ -3948,18 +4073,26 @@ Return: DX nonzero if installed
 	    BX = CS of resident code
 	    DX = PSP segment of resident code
 	    DS:SI -> ASCIZ identification string "CPoint Talk"
-----------166F-------------------------------
-INT 16 - MS Windows - ???
-	AH = 6Fh
-	???
-Return: ???
 ----------166F00BX0000-----------------------
-INT 16 - MS Windows - ???
+INT 16 - HP Vectra - ??? - INSTALLATION CHECK
 	AX = 6F00h
 	BX = 0000h
-	???
-Return: BX = 4850h if ???
+Return: BX = 4850h if present
 Note:	called by recent MS Mouse drivers
+----------166F0D-----------------------------
+INT 16 - HP Vectra - ???
+	AX = 6F0Dh
+	???
+Return: ???
+Note:	called by MS Windows HPSYSTEM.DRV and HPEBIOS.386
+SeeAlso: AX=6F0Eh
+----------166F0E-----------------------------
+INT 16 - HP Vectra - ???
+	AX = 6F0Eh
+	???
+Return: ???
+Note:	called by MS Windows HPSYSTEM.DRV and HPEBIOS.386
+SeeAlso: AX=6F0Dh
 ----------1670-------------------------------
 INT 16 - FAKEY.COM - INSTALLATION CHECK
 	AH = 70h
@@ -4009,10 +4142,11 @@ INT 16 - pcANYWHERE III - LOG OFF
 	    02h leave in Automatic Mode
 	    FFh leave in current operating mode
 ----------167761-----------------------------
-INT 16 - WATCH.COM - INSTALLATION CHECK
+INT 16 - WATCH.COM v2.x-v3.0 - INSTALLATION CHECK
 	AX = 7761h ('wa')
 Return: AX = 5741h ('WA') if installed
 Note:	WATCH.COM is part of the "TSR" package by Kim Kokkonen
+SeeAlso: INT 21/AX=7761h
 ----------167788BX7789-----------------------
 INT 16 - PC Magazine PUSHDIR.COM - INSTALLATION CHECK
 	AX = 7788h
@@ -4098,6 +4232,19 @@ INT 16 - MAKEY.COM - INSTALLATION CHECK
 	AH = 80h
 Return: AX = 1954h if installed
 Note:	MAKEY is a utility by System Enhancement Associates
+----------1699-------------------------------
+INT 16 - SCOUT v5.4 - GET ???
+	AH = 99h
+Return: AX = ABCDh
+	BX:CX -> ??? (appears to be start of PSP for resident portion)
+Note:	Scout is a memory-resident file manager by New-Ware
+SeeAlso: AH=9Eh
+----------169E-------------------------------
+INT 16 - SCOUT v5.4 - INSTALLATION CHECK
+	AH = 9Eh
+Return: AX = ABCDh if installed
+Note:	Scout is a memory-resident file manager by New-Ware
+SeeAlso: AH=99h
 ----------16AA-------------------------------
 INT 16 - PTxxx.COM - (xxx=CGA,EGA,VGA,HER...) CALL GATE FOR GRAPHICS
 	AH = AAh
@@ -4922,6 +5069,7 @@ INT 16 - PC Tools v5.1+ DESKTOP API - PRINT CHARACTER
 	BL = character to print to currently open printer or print file
 Return: CF set on error
 Note:	available only when popped up
+SeeAlso: INT 17/AH=00h
 ----------16FFE4-----------------------------
 INT 16 - PC Tools v5.1+ DESKTOP API - ???
 	AX = FFE4h
@@ -5196,18 +5344,19 @@ Return: AH = printer status
 		2: unused
 		1: unused
 		0: timeout
+SeeAlso: AH=F1h,INT 16/AX=FFE3h,INT 1A/AH=11h"NEC"
 ----------1701-------------------------------
 INT 17 - PRINTER - INITIALIZE PORT
 	AH = 01h
 	DX = printer number (00h-02h)
 Return: AH = printer status (see AH=00h)
-SeeAlso: AH=02h
+SeeAlso: AH=02h,INT 1A/AH=10h"NEC"
 ----------1702-------------------------------
 INT 17 - PRINTER - GET STATUS
 	AH = 02h
 	DX = printer number (00h-02h)
 Return: AH = printer status (see AH=00h)
-SeeAlso: AH=01h
+SeeAlso: AH=01h,AH=F2h,INT 1A/AH=12h"NEC"
 ----------1702--DX0000-----------------------
 INT 17 - INSET - INSTALLATION CHECK
 	AH = 02h
@@ -5315,6 +5464,24 @@ Return: AL = status (see also AX=2400h)
 	    03h transmission error
 	    06h remote breaks connection
 SeeAlso: AX=240Ah,AX=240Bh
+----------1751-------------------------------
+INT 17 - AX (Japanese AT) PRINTER - JIS/Shift-JIS CONVERSION
+	AH = 51h
+	???
+Return: ???
+Note:	one of AH=51h and AH=52h converts from JIS (Japanese Industry Standard)
+	  characters to Shift-JIS characters, and the other performs the
+	  opposite conversion
+SeeAlso: AH=52h
+----------1752-------------------------------
+INT 17 - AX (Japanese AT) PRINTER - JIS/Shift-JIS CONVERSION
+	AH = 52h
+	???
+Return: ???
+Note:	one of AH=51h and AH=52h converts from JIS (Japanese Industry Standard)
+	  characters to Shift-JIS characters, and the other performs the
+	  opposite conversion
+SeeAlso: AH=51h
 ----------1760-------------------------------
 INT 17 - FLASHUP.COM - INSTALLATION CHECK
 	AH = 60h
@@ -5903,7 +6070,7 @@ INT 17 - NorthNet Jetstream API - PRINT DATA BUFFER
 Return: AX = status
 	    0000h printer not ready (see also AH=02h)
 	    other printing started
-SeeAlso: AH=F2h,AH=F3h,AH=F5h
+SeeAlso: AH=00h,AH=F2h,AH=F3h,AH=F5h
 ----------17F2-------------------------------
 INT 17 - NorthNet Jetstream API - GET PRINT PROGRESS STATUS
 	AH = F2h
@@ -5911,7 +6078,7 @@ INT 17 - NorthNet Jetstream API - GET PRINT PROGRESS STATUS
 Return: AX = status
 	    0000h prior print request finished
 	    other number of characters left to print
-SeeAlso: AH=F1h,AH=F3h
+SeeAlso: AH=02h,AH=F1h,AH=F3h
 ----------17F3-------------------------------
 INT 17 - NorthNet Jetstream API - ABORT PRINT OPERATION
 	AH = F3h
@@ -5940,6 +6107,53 @@ Note:	only PCs produced by IBM contain BASIC in ROM, so the action is
 	  unpredicatable on compatibles; this interrupt often reboots the
 	  system, and often has no effect at all
 SeeAlso: INT 86"NetBIOS"
+----------1800-------------------------------
+INT 18 - NEC PC-9800 series - KEYBOARD - GET KEYSTROKE
+	AH = 00h
+Return: AX = keystroke
+SeeAlso: AH=01h,AH=02h,INT 16/AH=00h
+----------1801-------------------------------
+INT 18 - NEC PC-9800 series - KEYBOARD - CHECK FOR KEYSTROKE
+	AH = 01h
+Return: ZF set if no keystroke available
+	ZF clear if keystroke available
+	    AX = keystroke
+SeeAlso: AH=00h,AH=02h,INT 16/AH=01h
+----------1802-------------------------------
+INT 18 - NEC PC-9800 series - KEYBOARD - GET SHIFT STATUS
+	AH = 02h
+Return: AL = shift flags
+SeeAlso: AH=00h,AH=02h,AH=03h,AH=04h,INT 16/AH=02h
+----------18---------------------------------
+INT 18 - NEC PC-9800 series - KEYBOARD
+	AH = function
+	    03h initialize keyboard
+	    04h key pressed
+	???
+Return: ???
+Note:	details are not available at this time
+SeeAlso: INT 16/AH=00h,INT 16/AH=01h,INT 16/AH=02h
+----------18---------------------------------
+INT 18 - NEC PC-9800 series - VIDEO
+	AH = function
+	    0Ah set video mode
+	    0Bh get video mode
+	    0Ch start text screen display
+	    0Dh end text screen display
+	    0Eh set single display area
+	    0Fh set multiple display area
+	    10h set cursor shape
+	    11h display cursor
+	    12h terminate cursor
+	    13h set cursor position
+	    14h read font patter
+	    16h initialize text video RAM
+	    1Ah define user character
+	???
+Return: ???
+Notes:	details are not available at this time
+	text video RAM is located at segments A000h (characters) and A200h
+	  (attributes)
 ----------19---------------------------------
 INT 19 - SYSTEM - BOOTSTRAP LOADER
    Reboot the system without clearing memory or restoring interrupt vectors.
@@ -5963,11 +6177,19 @@ Notes:	to accomplish a warm boot equivalent to Ctrl-Alt-Del, store 1234h in
 	  0040h:0072h and jump to FFFFh:0000h.	For a cold boot equivalent to
 	  a reset, store 0000h at 0040h:0072h before jumping.
 	VDISK.SYS hooks this interrupt to allow applications to find out how
-	  much extended memory has been used by VDISKs (the three bytes at
-	  offset 2Ch in the INT 19 handler's segment contain the linear address
-	  of the first free extended memory).
+	  much extended memory has been used by VDISKs (see below).  DOS 3.3+
+	  PRINT hooks INT 19 but does not set up a correct VDISK header block
+	  at the beginning of its INT 19 handler segment, thus causing some
+	  programs to overwrite extended memory which is already in use.
 	default handler is at F000h:E6F2h for 100% compatible BIOSes
 SeeAlso: INT 14/AH=17h,INT 18
+
+Format of VDISK header block (at beginning of INT 19 handler's segment):
+Offset	Size	Description
+ 00h 18 BYTEs	n/a (for VDISK.SYS, the device driver header)
+ 12h 11 BYTEs	signature string "VDISK  Vn.m" for VDISK.SYS version n.m
+ 1Dh 15 BYTEs	n/a
+ 2Ch  3 BYTEs	linear address of first byte of available extended memory
 
 Format of hard disk master boot sector:
 Offset	Size	Description
@@ -6012,6 +6234,7 @@ Values for operating system indicator:
  75h PC/IX
  80h Minix v1.3 and below
  81h Minix v1.5+
+ C6h DR-DOS 6.0 LOGIN.EXE-secured partition
  DBh CP/M
  E1h SpeedStor 12-bit FAT extended partition
  E4h SpeedStor 16-bit FAT extended partition
@@ -6115,8 +6338,26 @@ INT 1A - TIME - SET SYSTEM-TIMER DAY COUNTER (XT2,PS)
 Return: CF set on error
 	CF clear if successful
 SeeAlso: AH=05h,AH=0Ah
+----------1A10-------------------------------
+INT 1A - NEC PC-9800 series - PRINTER - INITIALIZE
+	AH = 10h
+	???
+Return: ???
+SeeAlso: AH=11h,AH=12h,INT 17/AH=01h
+----------1A11-------------------------------
+INT 1A - NEC PC-9800 series - PRINTER - OUTPUT CHARACTER
+	AH = 11h
+	???
+Return: ???
+SeeAlso: AH=10h,AH=12h,INT 17/AH=00h
+----------1A12-------------------------------
+INT 1A - NEC PC-9800 series - PRINTER - SENSE STATUS
+	AH = 12h
+	???
+Return: ???
+SeeAlso: AH=10h,AH=11h,INT 17/AH=02h
 ----------1A3601-----------------------------
-INT 1A - WORD PERFECT 5.0 Third Party Interface - INSTALLATION CHECK
+INT 1A - WORD PERFECT v5.0 Third Party Interface - INSTALLATION CHECK
 	AX = 3601h
 Return: DS:SI = routine to monitor keyboard input, immediately preceded by the
 		ASCIZ string "WPCORP\0"
@@ -6139,6 +6380,10 @@ INT 1A - PCjr - SET UP SOUND MULTIPLEXOR
 	     01h source is cassette input
 	     02h source is I/O channel "Audio IN"
 	     03h source is sound generator chip
+----------1A8100-----------------------------
+INT 1A - Tandy 2500, Tandy 1000L series - DIGITAL SOUND
+	AX = 8100h
+Return: AH > 80h if supported
 ----------1AA0-------------------------------
 INT 1A - Disk Spool II v??? - INSTALLATION CHECK
 	AH = A0h
@@ -6222,6 +6467,23 @@ INT 1A - Disk Spool II v??? - FUNCTION CALLS
 	    0Eh pop up the menu
 	    20h clear file pointed to by the despooler
 SeeAlso: AH=A0h
+----------1AF7-------------------------------
+INT 1A - RighTime v1.1 - TEMPORARILY DISABLE
+	AH = F7h
+Notes:	RighTime is a TSR by G.T. Becker which continuously adjusts the system
+	  time to correct for clock drift
+	any AH value from F0h-F7h or F9h-FEh will perform this function in
+	  version 1.1, but F7h is the function called by transient portion
+SeeAlso: AH=F8h,AH=FFh"RighTime"
+----------1AF8-------------------------------
+INT 1A - RighTime v1.1 - ENABLE
+	AH = F8h
+Notes:	RighTime is a TSR by G.T. Becker which continuously adjusts the system
+	  time to correct for clock drift
+	RighTime is TeSseRact-compatible (see INT 2F/AX=5453h) and modifies its
+	  TeSseRact program identifier based on its current state: "RighTime"
+	  when enabled, "RighTim"F7h when disabled.
+SeeAlso: AH=F7h,AH=FFh"RighTime"
 ----------1AFE-------------------------------
 INT 1A - AT&T 6300 - READ TIME AND DATE
 	AH = FEh
@@ -6230,7 +6492,7 @@ Return: BX = day count (0 = Jan 1, 1984)
 	CL = minute
 	DH = second
 	DL = hundredths
-SeeAlso: AH=FFh,INT 21/AH=2Ah,INT 21/AH=2Ch
+SeeAlso: AH=FFh"AT&T",INT 21/AH=2Ah,INT 21/AH=2Ch
 ----------1AFF-------------------------------
 INT 1A - AT&T 6300 - SET TIME AND DATE
 	AH = FFh
@@ -6241,6 +6503,14 @@ INT 1A - AT&T 6300 - SET TIME AND DATE
 	DL = hundredths
 Return: ???
 SeeAlso: AH=FEh,INT 21/AH=2Bh,INT 21/AH=2Dh
+----------1AFF-------------------------------
+INT 1A - RighTime v1.1 - PERMANENTLY DISABLE
+	AH = FFh
+Notes:	RighTime is a TSR by G.T. Becker which continuously adjusts the system
+	  time to correct for clock drift
+	upon being permanently disabled, RighTime closes the file handle
+	  referencing its executable (which is updated with time correction
+	  information every two minutes while RighTime is enabled).
 ----------1B---------------------------------
 INT 1B - KEYBOARD - CONTROL-BREAK HANDLER
    called when INT 09 determines that Control-Break has been pressed
@@ -6250,8 +6520,9 @@ SeeAlso: INT 23
 ----------1C---------------------------------
 INT 1C - TIME - SYSTEM TIMER TICK
    called on each clock tick by the INT 08 handler
-Note:	preferred interrupt to chain when a program needs to be invoked
+Notes:	preferred interrupt to chain when a program needs to be invoked
 	  regularly
+	not available on NEC 9800-series PCs
 SeeAlso: INT 08
 ----------1D---------------------------------
 INT 1D - SYSTEM DATA - VIDEO PARAMETER TABLES
@@ -6297,3 +6568,4 @@ INT 1F - SYSTEM DATA - 8x8 GRAPHICS FONT
    points at 1024 bytes of graphics data, 8 bytes for each character 80h-FFh
 Note:	graphics data for characters 00h-7Fh stored at F000h:FA6Eh in 100%
 	  compatible BIOSes
+---------------------------------------------

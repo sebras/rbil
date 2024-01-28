@@ -1,28 +1,31 @@
-Interrupt List		Release 28 (v91.5)		Last change 11/17/91
+Interrupt List		Release 29			Last change 2/9/92
 
 Please redistribute the following files unmodified as a group, in a pair of
-archives named INTER28A and INTER28B (preferably the original authenticated
+archives named INTER29A and INTER29B (preferably the original authenticated
 PKZIP archives):
         INTERRUP.1ST	this file
-	INTERRUP.A	INT 00 through INT 14 \
-	INTERRUP.B	INT 15 through INT 1F  \ total 651 pages at 60 lines
-	INTERRUP.C	INT 20 through INT 2E  / per page, 702 with INTPRINT -p
-	INTERRUP.D	INT 2F through INT 5F /
-	INTERRUP.E	INT 60 through INT FF/
+	INTERRUP.A	INT 00 through INT 14   \
+	INTERRUP.B	INT 15 through INT 1F    \  total 716 pages at
+	INTERRUP.C	INT 20 thru INT 21/7F     \ 60 lines per page,
+	INTERRUP.D	INT 21/80 thru INT 2F/7F  / 767 with INTPRINT -p
+	INTERRUP.E      INT 2F/80 thru INT 5F    /  (3232 entries)
+	INTERRUP.F	INT 60 through INT FF   /
         INTERRUP.PRI	a brief primer on interrupts
 	INTPRINT.COM	a simple formatter that also generates a list summary
 	INTPRINT.DOC	instructions for INTPRINT
 	INTPRINT.C	source code for INTPRINT
 	MEMORY.LST	format of the BIOS data area
-The following files should be distributed in an archive called INTER28C:
+The following files should be distributed in an archive called INTER28C (they
+have not been updated since Release 28):
 	INT2HLP.BAT	Perl script to convert list into QuickHelp database
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
 	INT2QH.*	program to convert list into QuickHelp database
 	INTHELP.*	convert list into TurboPower GUIDE database
 
-Concatenate INTERRUP.A, .B, .C, .D, and .E with
-  COPY /B INTERRUP.A+INTERRUP.B+INTERRUP.C+INTERRUP.D+INTERRUP.E INTERRUP.LST
-to create an interrupt list file identical to my master copy.
+Concatenate INTERRUP.A, .B, .C, .D, .E, and .F with
+  COPY /B INTERRUP.A+INTERRUP.B+INTERRUP.C+INTERRUP.D+INTERRUP.E+INTERRUP.F
+	INTERRUP.LST
+(all on one line) to create an interrupt list file identical to my master copy.
 
 Use INTPRINT to generate a one-line-per-call summary file and/or a file
 containing only data structure formats.  See INTPRINT.DOC for details.
@@ -38,7 +41,7 @@ files from the previous release.
 ---------------------------------------------
 	NOTICE		NOTICE		NOTICE		NOTICE
 
-This compilation is (c) Copyright 1989, 1990, 1991 Ralf Brown
+This compilation is (c) Copyright 1989, 1990, 1991, 1992 Ralf Brown
 Permission is granted to use and redistribute the files comprising the
 interrupt listing in any way (including conversion to another format),
 provided that my name and addresses and the names of all contributers
@@ -53,8 +56,7 @@ Please send corrections/additions to me rather than distributing a
 modified version of the list, so that all may benefit from your
 contribution.
 ---------------------------------------------
-The entries for INT 10/AH=70h-73h, INT F8"TANDY", INT FA"TANDY", and
-INT FB"TANDY" are
+The entries for INT F8"TANDY", INT FA"TANDY", and INT FB"TANDY" are
 
 (c) Copyright 1987 Daniel D. Lanciani.  All rights reserved.
 Redistribution and use are freely permitted provided that the above
@@ -64,12 +66,13 @@ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION,
 THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 PARTICULAR PURPOSE.
 -------
-INT 0A"Tandy", INT 0D"Tandy", and INT 86"NetBIOS" have been completely
-rewritten.  All other information contained in the July 1987 version on which
-the above copyright was claimed in March 1991 has been removed and replaced
-with independently-obtained new versions.  Any similarities between the July
-1987 entries and their replacements are due solely to the nature of the
-information or the use of identical reference materials.
+INT 0A"Tandy", INT 0D"Tandy", INT 10/AH=70h-73h, and INT 86"NetBIOS" have been
+completely rewritten.  All other information contained in the July 1987
+version on which the above copyright was claimed in March 1991 has been
+removed and replaced with independently-obtained new versions.  Any
+similarities between the July 1987 entries and their replacements are due
+solely to the nature of the information or the use of identical reference
+materials.
 ---------------------------------------------
 DISCLAIMER:  THIS MATERIAL IS PROVIDED "AS IS".  I verify the information
 contained in this list to the best of my ability, but I cannot be held
@@ -81,9 +84,9 @@ it works the same way).  Information marked with "???" is known to be
 incomplete or guesswork.
 ---------------------------------------------
 If the list is more than three months old by the time you get it, there
-is probably a newer release out already (R29 is planned for early 
-February).  Each release supercedes all previous versions, so there is
-no need to keep old versions.
+is probably a newer release out already (R30 is planned for late April,
+R31 for early July).  Each release supercedes all previous versions, so
+there is no need to keep old versions.
 
 The newest release of this list is available in these places (please do not
 ask me to email it, it is just too large for that):
@@ -282,7 +285,7 @@ among them
  4/91 David H. Bennett 74635.1671@compuserve.com      ELRES API
  4/91 Michael A Shiels mshiels@masnet.uucp	      Interconnections Inc. TES
  4/91 Manfred Young    fyoung @ BIX		      DOS, LANstep, misc
- 4/91 Fridrik Skulason frisk@RHI.HI.IS		      virus installation checks
+ 4/91 Fridrik Skulason frisk@complex.is 	      virus installation checks
  4/91 Joseph G. Souza  1:322/327		      Alloy ANSK, NTNX, MW386
  4/91 Frank Gladu				      Alloy ANSK, NTNX, MW386
  4/91 Tamura Jones     2:512/36.7		      Win3 DOSX, Soundblaster
@@ -306,8 +309,28 @@ among them
  9/91 Holger Veit      veit@du9ds3.uni-duisburg.de    Optima 1024 VGA zoom
  9/91 Gary E. Miller   GEM@cup.portal.com	      Rabbit LLAPI
 10/91 Michael A Shiels mshiels@masnet.uucp	      FTP Packet Driver 1.10
-11/91 Fridrik Skulason frisk@RHI.HI.IS		      more virus install checks
+10/91 Marcus Groeber   2:241/5609.1		      DR DOS
+11/91 Fridrik Skulason frisk@complex.is 	      more virus install checks
 11/91 Christopher J Ambler chris@nike.calpoly.edu     FSBBS 2.0
+12/91 Robin Walker     rdhw@phoenix.cambridge.ac.uk   new PS/2 keyboard funcs
+ 1/92 Krzysztof Halasa 2:480/16.5 (Warsaw, Poland)    EMM386 executable header
+ 1/92 Michael A Shiels mshiels@masnet.uucp	      pcAnywhere IV/LAN, misc
+ 1/92 Michael A Shiels mshiels@masnet.uucp	      ISOLAN Multi-Protoc Sftwr
+ 1/92 Michael A Shiels mshiels@masnet.uucp	      PCW Weather Card, FaxBIOS
+ 1/92 Jan-Pieter Cornet cornet@duteca2.et.TUDelft.NL  DR-DOS CDS & misc
+ 1/92 Frank Vorstenbosch akcs.kingswood@hpcvbbs.cv.hp.com  Kingswood TSR API
+ 1/92 Jacob Rieper     73377.1220@compuserve.com      DR-DOS 6.0 TaskMAX
+ 1/92 Fridrik Skulason frisk@complex.is		      more viruses, std names
+ 1/92 Tim Farley       72717.2253@compuserve.com      Microsoft EMM386.EXE
+ 1/92 Alexi Lookin  Sergey.Bychkow@kvant.Glas.Apc.Org NetWare TBMI 2.0
+ 1/92 Ralf Brown       ralf@cs.cmu.edu		      more QEMM API
+ 1/92 Tim Farley       72717.2253@compuserve.com      more PS/x model IDs
+ 1/92 Kevin Gillett    1:153/101		      SOLLEX SuperVGA extnsions
+ 1/92 Michael A Shiels mshiels@masnet.uucp            B.Antoine ST-01 SCSI.SYS
+ 1/92 Michael A Shiels mshiels@masnet.uucp            ASPI,ASPITAPE,Canon SI3
+ 1/92 Michael A Shiels mshiels@masnet.uucp            Win3 INT 2F/40, misc
+ 2/92 Michael A Shiels mshiels@masnet.uucp            miscellany
+ 2/92 Dan Bodoh	       bodoh@xraylith.wisc.edu	      DVSIXDI
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -353,11 +376,15 @@ Also contributing:
  Claude Marche <marche@lri.lri.fr>, Bent Lynggaard <lynggaard@risoe.dk>,
  Drake Koefoed (Eugene, OR), Michael L. Kaufman <kaufman@eecs.nwu.edu>,
  Mark T Garlanger <garlangr@ecn.purdue.edu>, J. B. Gill <JBG@arlan.byu.edu>,
- Frank Behrens (Dresden, FRG), Bruce Gingery 1:310/5.1, John Navas,
+ Frank Behrens (Dresden, Germany), Bruce Gingery 1:310/5.1, John Navas,
  Johan Zwiekhorst 2:292/100, Klaus Fischer 2:243/64, Steve Grant (New Jersey),
  Jeff Pipkins <pipkins@cpqhou.se.hou.compaq.com>, Wim Osterholt (Netherlands),
- Brett Warthen <73270.405@compuserve.com>, Dan Bodoh <bodoh@xraylith.wisc.edu>,
- Brian.McGuinness@nirvonics.com, Mitch Davis 3:634/384.6
+ Brett Warthen <73270.405@compuserve.com>, THOMAS DWYER <tomiii@mtu.edu>,
+ Brian.McGuinness@nirvonics.com, Mitch Davis 3:634/384.6,
+ noesis@ucscb.UCSC.EDU, Timo Salmi <ts@uwasa.fi>, Jack Alvrus (Florida),
+ Eberhard Mattes <mattes@azu.informatik.uni-stuttgart.de>,
+ Mark Aitchison <PHYS169@csc.canterbury.ac.nz>, Guenther Thiele (Austria),
+ Alex Fedorov <inex@telebox.tele.fi>
 ---------------------------------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -675,6 +702,32 @@ Various and sundry references from Michael Shiels:
 
 Additional video modes extracted from the VPIC v4.6 configuration files.
 Added by Ralf Brown, 9/14/91.
+
+Japanese functions extracted from the January 1992 issue of _Windows/DOS_
+_Developer's_Journal_:
+	"Japanese Double Byte Character Processing", John G. Nelson, p23.
+	"Uncovering the NEC-9801 PC", John G. Nelson, p35.
+Added by Ralf Brown, 1/2/92.
+
+Additional SMARTDRV info gleaned from "Programmer's Workbench", Dr. Dobb's
+Journal, January 1992.  Added by Ralf Brown, 1/4/92.
+
+Miscellaneous tidbits found in Andrew Rossman's (andyross@infopls.chi.il.us)
+INFOPLUS v1.50 of January 1, 1992.  Added by Ralf Brown, 1/4/92.
+
+Da Vinci eMail Dispatcher interface calls were extracted from the
+_Da_Vinci_Systems_Dispatcher_Development_Toolkit_ (Revision 2), dated
+20 June 1990.  Added 1/7/92.
+
+FaxBIOS calls and structures gleaned from the FaxBios sample source code
+including struct/enum .h files (dated 1 October 1991).  Added 1/8/92.
+
+SOLLEX SuperVGA calls extracted from _SOLLEX_Super_VGA_Standard_ (Smos
+videO controLLer EXtensions), No. S03-SP-001-01, dated 9/23/91,
+copyright Seiko Epson Corp.  Added by Ralf Brown, 1/20/92.
+
+RSIS information was found in "RSIS: Relocated Screen Interface Specification",
+available for free from V Communications, Inc. (see below).
 ---------------------------------------------
 The following have provided API reference materials at no charge:
 
@@ -708,7 +761,7 @@ Redmond, WA 98073-9717
 Voice: (206) 882-8080
 FAX:   (206) 883-8101
 
-Nanosoft, Inc.			(MultiDOS Plus)
+Nanosoft, Inc.			(MultiDOS Plus, TurboNET)
 13 Westfield Road
 Natick, MA 01760
 Voice: (800) 678-2141
@@ -733,6 +786,11 @@ Ostenbergstr. 99/137
 W4600 Dortmund 50
 GERMANY
 
+V Communications, Inc.		(RSIS)
+4320 Stevens Creek Blvd, Suite 275  [2/92]
+San Jose, CA 95129
+Voice: (408) 296-4224
+
 Video Electronics Standards Association (VESA SuperVGA BIOS extensions)
 1330 South Bascom Avenue, Suite D
 San Jose, CA 95128-4502
@@ -746,13 +804,28 @@ Artisoft Inc.			(LANtastic)
 Tucson, AZ 85704
 Voice: (602) 293-6363
 
+G.T. Becker			(RighTime)
+Air System Technologies, Inc.	[4/91]
+14232 Marsh Lane, Suite 339
+Dallas, TX 75234
+
+Biologic			(HRAM, MIN-MEM)
+PO Box 1267			[9/91]
+Manassas, VA 22110
+
+Rich Bono			(ISR.COM)
+7 Redfield Circle		[2/91]
+Derry, New Hampshire, 03038
+rbono@necis.ma.nec.com
+nm1d@wb1dsw.nh.usa.na
+
 Borland International Inc.	(Turbo Pascal, Turbo C)
 1800 Green Hills Rd.
 Scotts Valley, CA 95066
 Voice: (408) 438-8400
 
 Budget Software Company		(Disk Spool II)
-P. O. Box 12282
+P. O. Box 12282			[12/91]
 12162 E. Mississippi Ave.
 Aurora, CO  80012-3499
 Voice: (303) 695-9095
@@ -867,6 +940,17 @@ Voice: (508) 626-8511
 FAX:   (508) 626-8515
 BBS:   (508) 875-8009
 
+MicroTalk			(ASAP)
+337 S. Peterson
+Louisville, KY 40206
+Voice: (502) 897-2705
+BBS:   (502) 893-2269
+
+John Newlin
+New-Ware			(SCOUT)
+8050 Camino Kiosco
+San Diego, CA 92122
+
 Novell, Inc.			(NetWare)
 122 East 1700 South
 Provo, UT 84601
@@ -897,6 +981,8 @@ Germany
 BBS:   +49 89-307 2079
 
 Softlogic Solutions, Inc.	(DoubleDOS)
+One Perimeter Road
+Manchester, NH 03103
 
 Software Concepts Design	(FLU_SHOT)
 594 Third Avenue
@@ -908,6 +994,12 @@ STSC, Inc.			(APL*Plus/PC)
 Rockville, MD 20852		[may be outdated]
 Voice: (301) 984-5000
 Telex: 898-085
+
+George A. Theall		(RECALL)
+TifaWARE
+506 South 41st St., #3M
+Philadelphia, PA 19104
+Voice: (215) 662-0558
 
 David G. Thomas 		(TAME)
 c/o PowerSoft
@@ -958,6 +1050,8 @@ VUIMAGE is a trademark of Offe Enterprises.
 Soft-ICE is a trademark of Nu-Mega Technologies.
 MAGic is a trademark of Microsystems Software, Inc.
 LANtastic is a trademark of Artisoft, Inc.
+ASAP is a trademark of MicroTalk.
+HRAM is a trademark of Biologic.
 Various other names are trademarks or registered trademarks of their respective
     holders
 ---------------------------------------------
@@ -982,7 +1076,7 @@ prevent future interrupt conflicts).
 Address e-mail to:
 	ARPA: ralf@cs.cmu.edu
 	UUCP: {ucbvax,harvard}!cs.cmu.edu!ralf
-	BIT:  ralf%cs.cmu.edu@cmuccvma
+	BIT:  ralf%cs.cmu.edu@carnegie
 	FIDO: Ralf Brown 1:129/26.1
 		or post a message to me in the DR_DEBUG echo
 	CompuServe:   >INTERNET:ralf@cs.cmu.edu

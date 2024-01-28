@@ -15,6 +15,8 @@
 /*   v1.41  7/9/91   HP PCL support by P.J.Farley III		       */
 /*   v2.00  9/1/91   modular printer definitions		       */
 /*		     printing multipart interrupt list		       */
+/*   v2.01  2/9/92   fixed summary entry for non-numeric AX= and AH=   */
+/*		     smarter page breaks			       */
 /***********************************************************************/
 /* Recompiling: 						       */
 /*   Turbo C / Borland C++					       */
@@ -24,7 +26,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define VERSION "2.00"
+#define VERSION "2.01"
 
 #define MAXLINE 81   /* at most 80 chars per line (plus newline) */
 #define MAXPAGE 200  /* at most 200 lines per page */
@@ -116,6 +118,7 @@ void put_line(FILE *fp, int len) ;
 void HPPCL_put_line(FILE *fp, int len) ;
 void fputcstr(cstr *s, FILE *fp) ;
 int divider_line(char *line) ;
+int section_start(char *line) ;
 void output_line(char *line,FILE *fp) ;
 void fill_buffer(int lines, int lines_per_page) ;
 int find_page_break(int lines) ;
@@ -360,6 +363,20 @@ char *line ;
 
 /***********************************************/
 
+int section_start(line)
+char *line ;
+{
+   if (strncmp(line,"Return:",7) == 0 ||
+       strncmp(line,"Note:",5) == 0 ||
+       strncmp(line,"Notes:",6) == 0 ||
+       strncmp(line,"SeeAlso:",8) == 0 ||
+       strncmp(line,"BUG:",4) == 0)
+      return 1 ;
+   return 0 ;
+}
+
+/***********************************************/
+
 void output_line(line,fp)
 char *line ;
 FILE *fp ;
@@ -386,9 +403,7 @@ FILE *fp ;
 	    fputc('\r',fp) ;
 	    }
 	 }
-      else if (strncmp(line,"Return:",7) == 0 || strncmp(line,"Note:",5) == 0 ||
-	       strncmp(line,"Notes:",6) == 0 || strncmp(line,"BUG:",4) == 0 ||
-	       strncmp(line,"SeeAlso:",8) == 0)
+      else if (section_start(line))
 	 {
 	 strncpy(bold,line,sizeof bold) ;
 	 *strchr(bold,':') = '\0' ;
@@ -501,7 +516,8 @@ int lines ;
       {
       if (strcmp(buffer[lines-i-1],"\n") == 0 ||
 	  strlen(buffer[lines-i-1]) == 0 ||
-	  divider_line(buffer[lines-i-1]))
+	  divider_line(buffer[lines-i-1]) ||
+	  section_start(buffer[lines-i]))
 	 return lines - i ;
       }
    return lines ;
@@ -542,7 +558,8 @@ int line, pages_printed ;
 	 s++ ;	/* skip the equal sign */
 	 while (*s && isspace(*s))
 	    s++ ;
-	 if (strchr("0123456789ABCDEFabcdef",*s) != NULL)
+	 if (strchr("0123456789ABCDEFabcdef",*s) != NULL &&
+	     strchr("0123456789ABCDEFabcdef",s[1]) != NULL)
 	    {
 	    summary_line[len++] = *s++ ;
 	    summary_line[len++] = *s++ ;

@@ -1,4 +1,4 @@
-Public Domain and Freeware by Ralf Brown:
+Public Domain/Freeware/Shareware by Ralf Brown:
 
 The MSDOS Interrupt List
 	A comprehensive listing of functions available through interrupt
@@ -29,6 +29,7 @@ SPAWNO
 	bytes in memory.  Also includes a variant for Turbo Pascal v4.0 or
 	higher.
 	Current version: SPAWNO40 (v4.0 11/17/91)
+        Price: libraries free, source code $100.
 
 RBkeyswap
 	Exchange left control and CapsLock keys, as well as Esc and `/~.
@@ -91,7 +92,7 @@ Availability:
 On the ARPAnet, by standard anonymous FTP from CS.CMU.EDU [128.2.222.173].
 	Change directly to directory /afs/cs.cmu.edu/user/ralf/pub with a
 	single command (directories above this are not accessible via
-	anonymous FTP). [DV-GLUE and DVINT are not available here]
+	anonymous FTP). [DV-GLUE is not available here]
 	Don't forget to set "binary" mode!  If you are refused access to
 	the directory, try again later; a fileserver may have been down.
 

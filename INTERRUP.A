@@ -1,21 +1,23 @@
-Interrupt List		Release 28 (v91.5)		Last change 11/17/91
-This compilation is Copyright (c) 1989, 1990, 1991 Ralf Brown
+Interrupt List		Release 29			Last change 2/9/92
+This compilation is Copyright (c) 1989, 1990, 1991, 1992 Ralf Brown
 ---------------------------------------------
 Please redistribute the following files unmodified as a group, in a pair of
-archives named INTER28A and INTER28B (preferably the original authenticated
+archives named INTER29A and INTER29B (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
-	INTERRUP.A	INT 00 through INT 14 \
-	INTERRUP.B	INT 15 through INT 1F  \ total 651 pages at 60 lines
-	INTERRUP.C	INT 20 through INT 2E  / per page, 702 with INTPRINT -p
-	INTERRUP.D	INT 2F through INT 5F /
-	INTERRUP.E	INT 60 through INT FF/
+	INTERRUP.A	INT 00 through INT 14   \
+	INTERRUP.B	INT 15 through INT 1F    \  total 716 pages at
+	INTERRUP.C	INT 20 thru INT 21/7F     \ 60 lines per page,
+	INTERRUP.D	INT 21/80 thru INT 2F/7F  / 767 with INTPRINT -p
+	INTERRUP.E      INT 2F/80 thru INT 5F    /  (3232 entries)
+	INTERRUP.F	INT 60 through INT FF   /
 	INTERRUP.PRI	a brief introduction to interrupts
 	INTPRINT.COM	a simple formatter that also generates a list summary
 	INTPRINT.DOC	instructions for INTPRINT
 	INTPRINT.C	source code for INTPRINT
 	MEMORY.LST	format of the BIOS data area
-The following files should be distributed in an archive called INTER28C:
+The following files should be distributed in an archive called INTER28C (they
+have not been updated since Release 28):
 	INT2HLP.BAT	Perl script to convert list into QuickHelp database
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
 	INT2QH.*	program to convert list into QuickHelp database
@@ -33,7 +35,7 @@ that they have already been addressed.
 ARPA: ralf@cs.cmu.edu
 UUCP: {ucbvax,harvard}!cs.cmu.edu!ralf
 BIT:  ralf%cs.cmu.edu@cmuccvma
-FIDO: Ralf Brown 1:129/26.1 or 1:129/53
+FIDO: Ralf Brown 1:129/26.1
 	or post a message to me in the DR_DEBUG echo
 CIS:  >INTERNET:ralf@cs.cmu.edu 
 
@@ -167,6 +169,7 @@ SeeAlso: INT 0C"CPU",INT 0D"CPU"
 INT 06 - HP 95LX - SLEEP/WAKEUP
 Note:	called just before going into light or deep (shutdown) sleep and just
 	  after returning from light or deep sleep
+SeeAlso: INT 0B"HP 95LX"
 ----------07---------------------------------
 INT 07 - CPU-generated (80286+) - PROCESSOR EXTENSION NOT AVAILABLE
 Notes:	automatically called if a coprocessor instruction is encountered when
@@ -182,7 +185,7 @@ Notes:	generated 18.2 times per second by channel 0 of the 8254 system timer,
 	  clock running at the proper rate
 	default handler is at F000h:FEA5h in IBM PC and 100%-compatible BIOSes
 	may be masked by setting bit 0 on I/O port 21h
-SeeAlso: INT 1C,INT 4A,INT 50"DESQview",INT 58"DoubleDOS",INT 70
+SeeAlso: INT 1C,INT 4A,INT 50"DESQview",INT 58"DoubleDOS",INT 70,INT 78"GO32"
 ----------08---------------------------------
 INT 08 - CPU-generated (80286+) - DOUBLE EXCEPTION DETECTED
 Notes:	called when multiple exceptions occur on one instruction, or an
@@ -214,7 +217,7 @@ Notes:	generated when data is received from the keyboard.  This is normally a
 			   destination of the jump at that address)
 	    Shift-PrtSc	 invoke INT 05
 SeeAlso: INT 05,INT 0B"HP 95LX",INT 15/AH=4Fh,INT 15/AH=85h,INT 16,INT 1B
-SeeAlso: INT 51"DESQview",INT 59"DoubleDOS"
+SeeAlso: INT 51"DESQview",INT 59"DoubleDOS",INT 79"GO32"
 ----------09---------------------------------
 INT 09 - CPU-generated (80286+) - PROCESSOR EXTENSION PROTECTION ERROR
 Notes:	called if the coprocessor attempts to access memory outside a segment
@@ -242,7 +245,7 @@ Notes:	the TOPS and PCnet adapters use this interrupt request line by default
 	many VGA boards do not implement the vertical retrace interrupt,
 	  including the IBM VGA Adapter where the traces are either cut or
 	  removed
-SeeAlso: INT 52"DESQview",INT 5A"DoubleDOS",INT 71
+SeeAlso: INT 52"DESQview",INT 5A"DoubleDOS",INT 71,INT 7A"GO32"
 ----------0A---------------------------------
 INT 0A - IRQ2 - Tandy 1000-series HARD DISK
 Note:	may be masked by setting bit 2 on I/O port 21h
@@ -252,7 +255,7 @@ INT 0A - IRQ2 - ROLAND MPU MIDI INTERFACE
 Note:	newer Roland cards and MIDI interfaces by other manufacturers use
 	  a jumper-selectable IRQ, but software and hardware generally defaults
 	  to IRQ2
-SeeAlso: INT 52"DESQview",INT 5A"DoubleDOS",INT 71
+SeeAlso: INT 52"DESQview",INT 5A"DoubleDOS",INT 71,INT 7A"GO32"
 ----------0A---------------------------------
 INT 0A - CPU-generated (80286+ protected mode) - INVALID TASK STATE SEGMENT
 Notes:	automatically called during a task switch if the new TSS specified by
@@ -276,7 +279,7 @@ Notes:	the TOPS and PCnet adapters use this interrupt request line as an
 	on PS/2's, COM2 through COM8 share this interrupt; on many PC's, COM4
 	  shares this interrupt
 	may be masked by setting bit 3 on I/O port 21h
-SeeAlso: INT 0C"COM1",INT 53"DESQview",INT 5B"DoubleDOS"
+SeeAlso: INT 0C"COM1",INT 53"DESQview",INT 5B"DoubleDOS",INT 7B"GO32"
 ----------0B---------------------------------
 INT 0B - CPU-generated (80286+ protected mode) - SEGMENT NOT PRESENT
 Notes:	generated when loading a segment register if the segment descriptor
@@ -289,12 +292,12 @@ SeeAlso: INT 0A"CPU",INT 0E"hardware"
 ----------0B---------------------------------
 INT 0B - HP 95LX - LOW-LEVEL KEYBOARD HANDLER
 Note:	debounces key, places the keycode in I/O register 60h, and calls INT 09
-SeeAlso: INT 09
+SeeAlso: INT 09,INT 0D"HP 95LX"
 ----------0C---------------------------------
 INT 0C - IRQ4 - SERIAL COMMUNICATIONS (COM1)
 Notes:	on many PC's, COM3 shares this interrupt
 	may be masked by setting bit 4 on I/O port 21h
-SeeAlso: INT 0B"COM2",INT 54"DESQview",INT 5C"DoubleDOS"
+SeeAlso: INT 0B"COM2",INT 54"DESQview",INT 5C"DoubleDOS",INT 7C"GO32"
 ----------0C---------------------------------
 INT 0C - CPU-generated (80286+) - STACK FAULT
 Notes:	generated on stack overflow/underflow in protected mode
@@ -346,11 +349,13 @@ Notes:	under DESQview, only the INT 15h vector and BASIC segment address (the
 	  process
 	may be masked by setting bit 5 on I/O port 21h
 SeeAlso: INT 0E"IRQ6",INT 0F"IRQ7",INT 55"DESQview",INT 5D"DoubleDOS"
+SeeAlso: INT 7D"GO32"
 ----------0D---------------------------------
 INT 0D - IRQ5 - Tandy 1000 60 Hz RAM REFRESH
 SeeAlso: INT 55
 ----------0D---------------------------------
 INT 0D - HP 95LX - INFRARED INTERRUPT
+SeeAlso: INT 0B"HP 95LX",INT 0E"HP 95LX"
 ----------0D---------------------------------
 INT 0D - CPU-generated (80286+) - GENERAL PROTECTION VIOLATION
 Notes:	called in real mode when
@@ -375,22 +380,24 @@ INT 0E - IRQ6 - DISKETTE CONTROLLER
 Notes:	generated by floppy disk controller on completion of an operation
 	default handler is at F000h:EF57h in IBM PC and 100%-compatible BIOSes
 	may be masked by setting bit 6 on I/O port 21h
-SeeAlso: INT 0D"IRQ5",INT 56"DESQview",INT 5E"DoubleDOS"
+SeeAlso: INT 0D"IRQ5",INT 56"DESQview",INT 5E"DoubleDOS",INT 7E"GO32"
 ----------0E---------------------------------
 INT 0E - CPU-generated (80386+ native mode) - PAGE FAULT
 Note:	used to implement virtual memory
 SeeAlso: INT 0B"hardware"
 ----------0E---------------------------------
 INT 0E - HP 95LX - EXTERNAL CARD INTERRUPT
+SeeAlso: INT 0D"HP 95LX",INT 0F"HP 95LX"
 ----------0F---------------------------------
 INT 0F - IRQ7 - PARALLEL PRINTER
 Notes:	generated by the LPT1 printer adapter when printer becomes ready
 	most printer adapters do not reliably generate this interrupt
 	the 8259 interrupt controller generates an interrupt corresponding to
 	  IRQ7 when an error condition occurs
-SeeAlso: INT 0D"LPT2",INT 57"DESQview",INT 5F"DoubleDOS"
+SeeAlso: INT 0D"LPT2",INT 57"DESQview",INT 5F"DoubleDOS",INT 7F"GO32"
 ----------0F---------------------------------
 INT 0F - HP 95LX - REAL-TIME CLOCK
+SeeAlso: INT 0E"HP 95LX",INT 70
 ----------10---------------------------------
 INT 10 - CPU-generated (80286+) - COPROCESSOR ERROR
 Notes:	generated by the CPU when the -ERROR pin is asserted by the coprocessor
@@ -410,6 +417,39 @@ Notes:	IBM standard modes do not clear the screen if the high bit of AL is set
 	  (EGA or higher only)
 	the Tseng ET4000 chipset is used by the Orchid Prodesigner II, Diamond
 	  SpeedSTAR VGA, Groundhog Graphics Shadow VGA
+	the installation check for Ahead adapters is the signature "AHEAD" at
+	  C000h:0025h
+	the installation check for ATI adapters is the signature "761295520" at
+	  C000h:0031h; the byte at C000h:0043h indicates the chipset revision:
+		31h for 18800
+		32h for 18800-1
+		33h for 18800-2
+		34h for 18800-4
+		35h for 18800-5
+	  the two bytes at C000h:0040h indicate the adapter type
+		"31" VGA Wonder
+		"32" EGA Wonder800+
+	  the byte at C000h:0042h contains feature flags
+		bit 1: mouse port present
+		bit 4: programmable video clock
+	  the byte at C000h:0044h contains additional feature flags if chipset
+	  byte > 30h
+		bit 0: 70 Hz non-interlaced display
+		bit 1: Korean (double-byte) characters
+		bit 2: 45 MHz memory clock rather than 40 MHz
+		bit 3: zero wait states
+		bit 4: paged ROMs
+		bit 6: no 8514/A monitor support
+		bit 7: HiColor DAC
+	the installation check for Genoa video adapters is the signature
+	  77h XXh 99h 66h at C000h:0037h, where XXh is
+		00h for Genoa 6200/6300
+		11h for Genoa 6400/6600
+		22h for Genoa 6100
+		33h for Genoa 5100/5200
+		55h for Genoa 5300/5400
+	the installation check for Paradise adapters is the signature "VGA=" at
+	  C000h:007Dh
 SeeAlso: AX=0070h,AX=007Eh,AX=10F0h,AX=6F05h,AH=FFh"GO32",INT 5F/AH=00h
 
 Values for video mode:
@@ -438,8 +478,8 @@ Values for video mode:
  07h = T   80x25  9x14		 mono	  var	B000 MDA,Hercules,EGA
      = T   80x25  9x16		 mono		B000 VGA
  08h = G   20x25  8x8	160x200	  16		     PCjr
-     = T  132x25  8x8		  16		B800 ATI EGA/VGA Wonder **
-     = T  132x25  8x8		 mono		B000 ATI EGA/VGA Wonder **
+     = T  132x25  8x8		  16		B800 ATI EGA/VGA Wonder [1]
+     = T  132x25  8x8		 mono		B000 ATI EGA/VGA Wonder [1]
      = G   90x43  8x8	720x352	 mono		B000 Hercules + MSHERC.COM
  09h = G   40x25  8x8	320x200	  16		     PCjr
  0Ah = G   80x25  8x8	640x200	   4		     PCjr
@@ -455,7 +495,8 @@ Values for video mode:
      = G   80x30  8x16	640x480	 16/64		A000 ATI EGA Wonder
      = G		640x480	  16		     UltraVision+256K EGA
  13h = G   40x25  8x8	320x200 256/256k	A000 VGA,MCGA,ATI VIP
- 14h = G   80x25  8x8	640x200			     Lava Chrome II EGA
+ 14h = T  132x25  Nx16		  16		     XGA, IBM Enhanced VGA [2]
+     = G   80x25  8x8	640x200			     Lava Chrome II EGA
      = G		640x400	  16		     Tecmar VGA/AD
  15h = G   80x25  8x14	640x350			     Lava Chrome II EGA
  16h = G   80x25  8x14	640x350			     Lava Chrome II EGA
@@ -475,14 +516,14 @@ Values for video mode:
  1Ch = G		640x480	 256		     Tecmar VGA/AD
  1Dh = G		800x600	 256		     Tecmar VGA/AD
  20h = G		240x128			B000 HP 95LX
- 21h = G   80x43  8x8	720x348	 mono		B000 DESQview 2.x+Hercules ***
+ 21h = G   80x43  8x8	720x348	 mono		B000 DESQview 2.x+Hercules [3]
  22h = T  132x44  8x8				     Tseng Labs EVA
      = T  132x44  8x8		 16/256	   2	B800 Tseng ET4000 chipset
      = T  132x44  8x8				     Ahead Systems EGA2001
      = T  132x44  8x8		  16	   2	B800 Ahead B
      = T  132x44		  16		     Orchid Prodesigner VGA
      = T  132x43				     Allstar Peacock (VGA)
-     = G   80x43  8x8	720x348	 mono		B800 DESQview 2.x+Hercules ***
+     = G   80x43  8x8	720x348	 mono		B800 DESQview 2.x+Hercules [3]
  23h = T  132x25  6x14				     Tseng Labs EVA
      = T  132x25  8x14		 16/256	   4	B800 Tseng ET4000 chipset
      = T  132x25  8x14				     Ahead Systems EGA2001
@@ -620,6 +661,7 @@ Values for video mode:
      = T  132x25  8x14		 16/256k	B800 Trident TVGA 8800/8900
      = T  132x43				     Lava Chrome II EGA
      = T   80x60		  16		     MORSE VGA
+     = G					     AX PC
  54h = G  100x42  8x14	800x600	  16		A000 ATI EGA Wonder, VGA Wonder
      = G		800x600	 256		     Oak VGA	
      = T  132x25				     Lava Chrome II EGA
@@ -641,7 +683,7 @@ Values for video mode:
      = T  132x25  7x16		  16		     AT&T VDC600
      = T  132x43  8x11		 16/256k	B800 Trident TVGA 8800/8900
      = G   94x29  8x14	752x410			     Lava Chrome II EGA
-     = G  128x48  8x16 1024x768	 16/256k	A000 ATI VGA Wonder v4+	 *!
+     = G  128x48  8x16 1024x768	 16/256k	A000 ATI VGA Wonder v4+	 [4]
      = G	       1024x768	 16/256h	     ATI VGA Wonder Plus
  56h = T  132x43  8x8		   3???	   2	B000 NSI Smart EGA+
      = T  132x43  7x9		   4		B000 Paradise VGA
@@ -740,7 +782,7 @@ Values for video mode:
  69h = G		720x540	 256		     Video7 V-RAM VGA
  6Ah = G		800x600	  16		A000 VESA standard interface
      = G		800x600	  16		     Genoa 6400
-     = G  	  	800x600	  16	   	A000 Ahead A
+     = G		800x600	  16		A000 Ahead A
      = G  100x75  8x8	800x600	  16	   1	A000 Ahead B (VESA) (see 71h)
      = G		800x600	  16		     Zymos Poach, Hi Res 512
      = G		800x600	  16		     Epson LT-386SX in CRT Mode
@@ -779,25 +821,26 @@ Values for video mode:
  7Dh = G		512x512	 256		     Genoa
  7Eh =	 special mode set (see AX=007Eh)	     Paradise VGA, AT&T VDC600
  7Fh =	 special function set (see AX=007Fh)	     Paradise VGA, AT&T VDC600
- 82h = T   80x25		 B&W		     AT&T VDC overlay mode *
- 83h = T   80x25				     AT&T VDC overlay mode *
- 86h = G		640x200	 B&W		     AT&T VDC overlay mode *
+ 82h = T   80x25		 B&W		     AT&T VDC overlay mode [5]
+ 83h = T   80x25				     AT&T VDC overlay mode [5]
+ 86h = G		640x200	 B&W		     AT&T VDC overlay mode [5]
  88h = G   90x43  8x8	720x352	 mono		B000 Hercules + MSHERC.COM
- C0h = G		640x400	 2/prog pallet	     AT&T VDC overlay mode *
- C4h =	 disable output				     AT&T VDC overlay mode *
+ C0h = G		640x400	 2/prog pallet	     AT&T VDC overlay mode [5]
+ C4h =	 disable output				     AT&T VDC overlay mode [5]
  D0h = G		640x400	   2		B800 DEC VAXmate AT&T mode
-
- *  for AT&T VDC overlay modes, BL contains the DEB mode, which may be 06h,
-	  40h, or 44h
- ** for ATI EGA Wonder, mode 08h is only valid if SMS.COM is loaded resident.
+Notes:
+[1] for ATI EGA Wonder, mode 08h is only valid if SMS.COM is loaded resident.
       SMS maps mode 08h to mode 27h if the byte at location 0040:0063 is 0B4h,
       otherwise to mode 23h, thus selecting the appropriate (monochrome or
       color) 132x25 character mode.
     for ATI VGA Wonder, mode 08h is the same, and only valid if VCONFIG loaded
       resident
- *** DESQview intercepts calls to change into these two modes (21h is page 0,
+[2] early XGA boards support 132-column text but do not have this BIOS mode
+[3] DESQview intercepts calls to change into these two modes (21h is page 0,
       22h is page 1) even if there is no Hercules graphics board installed
- *! ATI BIOS v4-1.00 has a text-scrolling bug in this mode
+[4] ATI BIOS v4-1.00 has a text-scrolling bug in this mode
+[5] for AT&T VDC overlay modes, BL contains the DEB mode, which may be 06h,
+	  40h, or 44h
 ----------100070-----------------------------
 INT 10 - VIDEO - Everex Micro Enhancer EGA/Viewpoint VGA - EXTENDED MODE SET
 	AX = 0070h
@@ -832,12 +875,12 @@ Values for video mode:
  16h = T   80x30  8x16		 256				VGA only
  18h = T  100x27  8x16		  16				VGA only
  20h = G	       1024x768	  16				Everex 629,678
- 								Everex EV-673
+								Everex EV-673
  21h = T  160x64  8x16 1280x1024  16				1MB VGA only
  30h = G		640x480	 256				Everex 629,678
- 								Everex EV-673
+								Everex EV-673
  31h = G		800x600	 256				Everex 629,678
- 								Everex EV-673
+								Everex EV-673
  32h = G  128x48  8x16 1024x768	 256				1MB VGA only
  40h = T  132x30  8x16		  16				VGA only
  50h = T  132x32  8x16		 mono				VGA only
@@ -944,6 +987,8 @@ Notes:	on a CGA, returned column numbers are always multiples of 2 (320-
 INT 10 - VIDEO -  SELECT ACTIVE DISPLAY PAGE
 	AH = 05h
 	AL = new page number (00h to number of pages - 1) (see AH=00h)
+Note:	to determine whether the requested page actually exists, use AH=0Fh
+	  to query the current page after making this call
 SeeAlso: AH=0Fh
 ----------1005-------------------------------
 INT 10 - VIDEO - MANIPULATE CRT/CPU PAGE REGISTERS (PCjr)
@@ -980,7 +1025,7 @@ INT 10 - VIDEO - SCROLL UP WINDOW
 	DH,DL = row,column of window's lower right corner
 Note:	affects only the currently active page (see AH=05h)
 Warning: some implementations have a bug which destroys BP
-SeeAlso: AH=07h,AH=72h,AH=73h
+SeeAlso: AH=07h,AH=72h,AH=73h,AX=7F07h
 ----------1007-------------------------------
 INT 10 - VIDEO - SCROLL DOWN WINDOW
 	AH = 07h
@@ -1436,6 +1481,9 @@ Return: BH = 00h color mode in effect (I/O port 3Dxh)
 	     03h 256k bytes memory installed
 	CH = feature bits
 	CL = switch settings
+Note:	one possible check for the presence of an EGA or later display card
+	  is to call this function with BH=FFh; if not present, BH will be
+	  unchanged on return
 ----------1012--BL20-------------------------
 INT 10 - VIDEO - ALTERNATE FUNCTION SELECT (PS,EGA,VGA,MCGA) - ALTERNATE PRTSC
 	AH = 12h
@@ -1900,7 +1948,7 @@ Note:	unlike the other BIOS character functions character position is
 	  specified in pixels rather than rows and columns
 SeeAlso: AH=09h,AH=0Ah
 ----------104B-------------------------------
-INT 10 - FRIEZE v7+ - API
+INT 10 - FRIEZE v7.0+ - API
 	AH = 4Bh
 	CL = function
 	    00h reserved
@@ -1990,15 +2038,17 @@ Return: AL = 4Fh function supported
 	AH = status
 	    00h successful
 	    01h failed
-SeeAlso: AX=4F01h
+SeeAlso: AX=4F01h,AX=7F00h
 
 Format of SuperVGA information:
 Offset	Size	Description
  00h  4 BYTEs	signature ('VESA')
  04h	WORD	VESA version number
  06h	DWORD	pointer to OEM name
+		"761295520" for ATI
  0Ah  4 BYTEs	capabilities
  0Eh	DWORD	pointer to list of supported VESA and OEM video modes
+		(list of words terminated with FFFFh)
  12h 238 BYTEs	reserved
 ----------104F01-----------------------------
 INT 10 - VESA SuperVGA BIOS - GET SuperVGA MODE INFORMATION
@@ -2112,7 +2162,7 @@ Return: AL = 4Fh function supported
 	    01h failed
 SeeAlso: AX=4F06h,AX=4F07h,AX=7000h/BX=0004h
 ----------104F06-----------------------------
-INT 10 - VESA SuperVGA BIOS 1.1 - GET/SET LOGICAL SCAN LINE LENGTH
+INT 10 - VESA SuperVGA BIOS v1.1 - GET/SET LOGICAL SCAN LINE LENGTH
 	AX = 4F06h
 	BL = function
 	    00h set scan line length
@@ -2132,7 +2182,7 @@ Notes:	if the desired width is not achievable, the next larger width will be
 	  multiplied by the character cell width/height
 SeeAlso: AX=4F01h,AX=4F05h,AX=4F07h
 ----------104F07BH00-------------------------
-INT 10 - VESA SuperVGA BIOS 1.1 - GET/SET DISPLAY START
+INT 10 - VESA SuperVGA BIOS v1.1 - GET/SET DISPLAY START
 	AX = 4F07h
 	BH = 00h (reserved)
 	BL = 00h set display start
@@ -2160,6 +2210,12 @@ Return: BX = 1954h if installed
 	    AL = 00 if inactive, nonzero if active
 Note:	SCROLOCK is a utility supplied with System Enhancement Associates' ARC
 SeeAlso: AH=51h
+----------105001-----------------------------
+INT 10 - VIDEO - AX PC - GET SCREEN COUNTRY CODE
+	AX = 5001h
+Return: BX = 0053h Japan
+	   = other not Japan
+SeeAlso: AH=00h,INT 21/AH=38h
 ----------1051-------------------------------
 INT 10 - SCROLOCK.COM - ENABLE/DISABLE
 	AH = 51h
@@ -2167,7 +2223,19 @@ INT 10 - SCROLOCK.COM - ENABLE/DISABLE
 	    00h disable
 	    nonzero enable
 Note:	SCROLOCK is a utility supplied with System Enhancement Associates' ARC
-SeeAlso: AH=50h
+SeeAlso: AH=50h"SCROLOCK"
+----------1053-------------------------------
+INT 10 - Show Partner F/X v3.6 - START PRESENTATION
+	AH = 53h
+	DS:DX -> ASCIZ name of presentation file (no path, extension forced to
+		.PR2)
+Return: ???
+SeeAlso: AH=55h
+----------1055-------------------------------
+INT 10 - Show Partner F/X v3.6 - UNINSTALL
+	AH = 55h
+Return: FXSHOW.EXE removed from memory
+SeeAlso: AH=53h
 ----------105555-----------------------------
 INT 10 - VIDEO - ATI EGA/VGA Wonder Super Switch - INSTALLATION CHECK
 	AX = 5555h
@@ -2176,7 +2244,7 @@ Return: AX = AAAAh    if installed
 	      -> data area in VCONFIG
 Note:	Super Switch (SMS.COM) is a video mode switch program supplied with
 	  ATI EGA Wonder. It also maps video mode 08h to 27h or 23h.
-SeeAlso: INT 10/AH=00h
+SeeAlso: INT 10/AH=00h,INT 2F/AX=6400h
 
 Format of data area:
 Offset	Size	Description
@@ -2329,19 +2397,19 @@ Return: AL = 6Fh
 	CX = 0000h
 SeeAlso: AH=12h/BL=10h
 ----------1070-------------------------------
-INT 10 - VIDEO - GET VIDEO RAM ADDRESS (TANDY 2000 only)
+INT 10 - VIDEO - GET ADDRESS OF VIDEO RAM (TANDY 2000 only)
 	AH = 70h
-Return: AX = segment address of the following
-	[BX] = offset address of green plane
-	[CX] = segment address of green plane
-	[DX] = segment address of red/blue plane
-	       (red offset = 0, blue offset = 4000)
+Return: AX:BX -> WORD containing green plane's offset
+	AX:CX -> WORD containing green plane's segment
+	AX:DX -> WORD containing segment of red (offset 0) and blue (offset
+			4000) planes
 SeeAlso: AH=71h
 ----------107000BX0000-----------------------
 INT 10 - Everex Extended Video BIOS - RETURN EMULATION STATUS
 	AX = 7000h
 	BX = 0000h
-Return: CL = monitor type
+Return: AL = 70h if Trident-based Everex card
+	CL = monitor type
 	    00h mono
 	    01h CGA
 	    02h EGA
@@ -2363,6 +2431,11 @@ Return: CL = monitor type
 	    bits 4-15: board ID model
 	    bits 0-3:  board ID revision
 	DI = BCD BIOS version number
+Note:	board models for Trident-based Everex cards:
+	    236h Ultragraphics II
+	    620h Vision VGA
+	    673h EVGA
+	    678h Viewpoint
 ----------107000BX0004-----------------------
 INT 10 - Everex Extended Video BIOS - GET PAGING FUNCTION POINTER FOR CURR MODE
 	AX = 7000h
@@ -2415,30 +2488,340 @@ Offset	Size	Description
 		bits 7-4 reserved
 		     3-0 bits per pixel
 ----------1071-------------------------------
-INT 10 - VIDEO - GET INCRAM ADDRESSES (TANDY 2000 only)
+INT 10 - VIDEO - GET ADDRESS OF INCRAM (TANDY 2000 only)
 	AH = 71h
-Return: AX  = segment address of the following
-	[BX] = segment address of INCRAM
-	[CX] = offset address of INCRAM
+Return: AX:BX -> WORD containing segment address of INCRAM
+	AX:CX -> WORD containing offset of INCRAM
 SeeAlso: AH=70h
 ----------1072-------------------------------
-INT 10 - VIDEO - SCROLL SCREEN RIGHT (TANDY 2000 only)
+INT 10 - VIDEO - SCROLL RIGHT PART OR ALL OF SCREEN (TANDY 2000 only)
 	AH = 72h
-	AL = number of columns blanked at left of window
-	     00h = blank entire window
-	BH = attributes to be used on blank columns
-	CH,CL = row, column of upper left corner of window
-	DH,DL = row, column of lower right corner
-SeeAlso: AH=06h,AH=07h,AH=73h
+	AL = number of columns to shift scroll area, 00h to clear entire area
+	BH = new attributes for blanked columns at left
+	CH,CL = row, column of upper left corner of scroll area
+	DH,DL = row, column of lower right corner of scroll area
+SeeAlso: AH=06h,AH=07h,AH=73h,INT 15/AH=12h/BH=05h
 ----------1073------------------------------
-INT 10 - VIDEO - SCROLL SCREEN LEFT (TANDY 2000 only)
+INT 10 - VIDEO - SCROLL LEFT PART OR ALL OF SCREEN (TANDY 2000 only)
 	AH = 73h
-	AL = number of columns blanked at right of window
-	     00h = blank entire window
-	BH = attributes to be used on blank columns
-	CH,CL = row, column of upper left corner of window
-	DH,DL = row, column of lower right corner
-SeeAlso: AH=06h,AH=07h,AH=72h
+	AL = number of columns to shift scroll area, 00h to clear entire area
+	BH = new attributes for blanked columns at right
+	CH,CL = row, column of upper left corner of scroll area
+	DH,DL = row, column of lower right corner of scroll area
+SeeAlso: AH=06h,AH=07h,AH=72h,INT 15/AH=12h/BH=05h
+----------107F00-----------------------------
+INT 10 - SOLLEX SuperVGA - GET EXTENSIONS INFO
+	AX = 7F00h
+Return: AL != 7Fh if not supported
+	AL = 7Fh if supported
+	    AH = status
+		00h successful
+		    ES:DI -> info structure (see below)
+		01h failed
+SeeAlso: AX=4F00h
+
+Format of info structure:
+Offset	Size	Description
+ 00h	DWORD	pointer to VESA function dispatch table
+ 04h	DWORD	pointer to SOLLEX function dispatch table
+ 08h	DWORD	pointer to VESA SuperVGA info (see AX=4F00h)
+ 0Ch	DWORD	pointer to mode info structure table, consisting of
+		alternating ResInfo (see below) and VESA mode information
+		(see AX=4F01h) blocks, terminated with an FFFFh word
+ 10h	DWORD	pointer to font info structure table (see below)
+ 14h	WORD	high resolution crystal frequency in Hz (0000h = not present)
+ 16h	DWORD	pointer to ASCIZ ID string
+ 1Ah	DWORD	pointer to timeout reset table
+		array of bytes, each a multiple of the minimum time increment
+ 1Eh	WORD	minimum time increment in timer ticks
+ 20h	BYTE	inverse options supported
+		bit 0: inverse supported
+		bits 1-7: reserved
+ 21h	BYTE	normal color value
+ 22h	BYTE	inverse color value
+ 23h	WORD	port to be accessed for normal/inverse settings
+ 25h	WORD	type of interface chip (currently undefined)
+ 27h	WORD	program operational mode
+		bits 1-0: 00 no preference
+			  01 terse (minimum detail in program messages)
+			  10 verbose
+			  11 use menus if supported, verbose mode otherwise
+		bits 7-2: reserved
+ 29h	WORD	SOLLEX specification version
+ 2Bh	WORD	version of VESA/SOLLEX implementation
+ 2Dh	DWORD	offset to relocatable portion of SOLLEX extensions (for CONFIG)
+ 2Eh	DWORD	offset to unused section of the extensions ROM
+ 31h 16 BYTEs	reserved
+Note:	all DWORD pointers initially require segment fixups; if the segment
+	  is 0000h, it should be changed to the returned ES, otherwise it
+	  may be assumed to be correct
+
+Format of ResInfo:
+Offset	Size	Description
+ 00h	WORD	16-bit mode number
+ 02h	WORD	adapter type (00h VGA, 01h EGA, 02h CGA, 03h MDA)
+ 04h	WORD	display info (see AX=7F01h/BL=01h)
+ 06h	DWORD	pointer to video parameter table
+ 0Ah	BYTE	replacement entry in master Video Parameter
+ 0Bh	BYTE	mode requested for mode set by BIOS
+ 0Ch	DWORD	pointer to LoadReg table
+ 10h	BYTE	index into table of clock values (see below)
+
+Format of font info table [array] entry:
+Offset	Size	Description
+ 00h	BYTE	required font height
+ 01h	BYTE	parameter to load text mode font
+ 02h	BYTE	parameter to load graphics mode font
+
+Values for clock value index:
+ 00h	25 MHz
+ 01h	28 MHz
+ 02h	PCLK
+ 03h	31.5 MHz (VESA 640x480)
+ 04h	reserved
+ 05h	16 MHz (EGA)
+ 06h	PCLK
+ 07h	24 MHz (EGA)
+ 08h	25 MHz
+ 09h	28 MHz
+ 0Ah	36 MHz
+ 0Bh	45 MHz (for 1024x768)
+ 0Ch	80 MHz
+ 0Dh	40 MHz
+ 0Eh	65 MHz
+ 0Fh	 1 MHz (for powerdown)
+----------107F01BL00-------------------------
+INT 10 - SOLLEX SuperVGA - ADAPTER CONTROL - SET ADAPTER
+	AX = 7F01h
+	BL = 00h
+	CX = adapter request
+	    bits 1-0: adapter type (00 VGA, 01 EGA, 10 CGA, 11 MDA)
+	    bit 2:    reserved
+	    bits 4-3: change displays (00 none, 01 analog 10 digital 11 panel)
+	    bits 6-5: desired monitor sense (01 color, 10 mono, 11=8514)
+	    bit 7:    lock override
+	    bit 8:    alternate adapter mode
+	    bits 15-9: reserved
+Return: AL != 7Fh if not supported
+	AL = 7Fh if supported
+	    AH = status
+		00h successful
+		01h failed
+Note:	initializes video hardware to a particular standard
+SeeAlso: AX=7F00h,AX=7F01h/BL=01h,AX=7F01h/BL=02h
+----------107F01BL01-------------------------
+INT 10 - SOLLEX SuperVGA - ADAPTER CONTROL - GET ADAPTER
+	AX = 7F01h
+	BL = 01h
+Return: AL != 7Fh if not supported
+	AL = 7Fh if supported
+	    AH = status
+		00h successful
+		01h failed
+	    BX = adapter type (see AX=7F01h/BL=00h)
+	    DX = display type
+		bits 1-0: monitor sense (00 none, 01 color, 10 mono, 11=8514)
+		bit 2:	  multi-frequency analog monitor active
+		bit 3:	  LCD panel active
+		bit 4:	  plasma/electroluminescent panel active
+		bit 5:	  PS/2-type monitor active
+		bit 6:	  multi-frequency digital monitor active
+		bit 7:	  Enhanced Color Display monitor active
+		bit 8:	  alternate display active
+		bits 15-9: reserved
+SeeAlso: AX=7F00h,AX=7F01h/BL=00h,AX=7F01h/BL=02h
+----------107F01BL02-------------------------
+INT 10 - SOLLEX SuperVGA - ADAPTER CONTROL - DETERMINE ADAPTER SUPPORT
+	AX = 7F01h
+	BL = 02h
+	CX = adapter request (see AX=7F01h/BL=00h)
+Return: AL != 7Fh if not supported
+	AL = 7Fh if supported
+	    AH = status
+		00h requested setting can successfully be made
+		01h requested setting not available in this configuration
+SeeAlso: AX=7F00h,AX=7F01h/BL=00h
+----------107F02BL00-------------------------
+INT 10 - SOLLEX SuperVGA - DISPLAY OUTPUT CONTROL - SET DISPLAY OUTPUT
+	AX = 7F02h
+	BL = 00h
+	CX = display output setting
+	    bit 0: CRTC control in bits 2,1 valid
+	    bit 1: enable digital output
+	    bit 2: enable analog output
+	    bit 3: panel control in bits 5,4 valid
+	    bit 4: enable LCD output
+	    bit 5: enable plasma/EL output
+	    bit 6: inverse control in bit 7 valid
+	    bit 7: 0=normal, 1=inverse
+	    bits 15-8 reserved
+Return: AL != 7Fh if not supported
+	AL = 7Fh if supported
+	    AH = status
+		00h successful
+		01h failed
+SeeAlso: AX=7F00h,AX=7F02h/BL=00h
+----------107F02BL01-------------------------
+INT 10 - SOLLEX SuperVGA - DISPLAY OUTPUT CONTROL - GET DISPLAY OUTPUT
+	AX = 7F02h
+	BL = 01h
+Return: AL != 7Fh if not supported
+	AL = 7Fh if supported
+	    AH = status
+		00h successful
+		    BX = display output setting (see AX=7F02h/BL=00h)
+		    CX = displays attached
+			bit 0: PS/2 display on analog output
+			bit 1: multi-frequency monitor on analog output
+			bit 2: LCD panel attached
+			bit 3: plasma/electroluminescent panel attached
+			bit 4: multi-frequency monitor on digital output
+			bit 5: Enhanced Color Display attached to digital outpt
+			bit 6: alternate display
+			bits 15-7: reserved
+		01h failed
+SeeAlso: AX=7F00h,AX=7F02h/BL=00h
+----------107F03BL00-------------------------
+INT 10 - SOLLEX SuperVGA - VIDEO SUPPORT CONTROL - GET SUPPORT INFO
+	AX = 7F03h
+	BL = 00h
+	CX = support type
+		0000h VGA, 0001h EGA, 0002h CGA, 0003h MDA, 0004h extensions,
+		0005h-0012h reserved for SOLLEX, 0013h Hercules,
+		0014h-001Fh reserved for SOLLEX, 0020h-00FFh reserved for OEM
+Return: AL != 7Fh if not supported
+	AL = 7Fh if supported
+	    AH = status
+		00h successful
+		    CX = size of video support code
+		    DX = segment of physical video support (0000h if no ROM)
+		    ES = segment of active video support
+		    ES:DI -> information block (DI = 0000h if none available)
+		01h failed
+SeeAlso: AX=7F03h/BL=01h
+----------107F03BL01-------------------------
+INT 10 - SOLLEX SuperVGA - VIDEO SUPPORT CONTROL - INITIALIZE VIDEO SUPPORT
+	AX = 7F03h
+	BL = 01h
+	CX = support request
+	ES = segment of support code
+Return: AL != 7Fh if not supported
+	AL = 7Fh if supported
+	    AH = status
+		00h successful
+		01h failed
+Note:	initializes the indicated video support by calling ES:0003h; this
+	  function may be used to switch the active video support back to
+	  ROM after AX=7F03h/BL=02h
+SeeAlso: AX=7F03h/BL=00h
+----------107F03BL02-------------------------
+INT 10 - SOLLEX SuperVGA - VIDEO SUPPORT CONTROL - GO RAM RESIDENT
+	AX = 7F03h
+	BL = 02h
+	CX = support request
+	ES = destination segment
+Return: AL != 7Fh if not supported
+	AL = 7Fh if supported
+	    AH = status
+		00h successful
+		01h failed
+SeeAlso: AX=7F00h,AX=7F03h/BL=01h
+----------107F04BL00-------------------------
+INT 10 - SOLLEX SuperVGA - POWER CONTROL - SET POWER STATE
+	AX = 7F04h
+	BL = 00h
+	CX = new power state
+Return: AL != 7Fh if not supported
+	AL = 7Fh if supported
+	    AH = status
+		00h successful
+		01h failed
+Note:	higher values progressively reduce the operations available on the
+	  video adapter while yielding increasing power savings
+SeeAlso: AX=7F00h,AX=7F04h/BL=01h
+----------107F04BL01-------------------------
+INT 10 - SOLLEX SuperVGA - POWER CONTROL - GET POWER STATE
+	AX = 7F04h
+	BL = 01h
+Return: AL != 7Fh if not supported
+	AL = 7Fh if supported
+	    AH = status
+		00h successful
+		    CX = current power state
+		    DX = maximum state
+		01h failed
+SeeAlso: AX=7F00h,AX=7F04h/BL=00h
+----------107F04BL02-------------------------
+INT 10 - SOLLEX SuperVGA - POWER CONTROL - SET TIMEOUT RESET
+	AX = 7F04h
+	BL = 02h
+	CX = timeout reset
+Return: AL != 7Fh if not supported
+	AL = 7Fh if supported
+	    AH = status
+		00h successful
+		01h failed
+SeeAlso: AX=7F00h,AX=7F04h/BL=03h
+----------107F04BL03-------------------------
+INT 10 - SOLLEX SuperVGA - POWER CONTROL - GET TIMEOUT RESET
+	AX = 7F04h
+	BL = 03h
+Return: AL != 7Fh if not supported
+	AL = 7Fh if supported
+	    AH = status
+		00h successful
+		    BX = time increment
+		    CX = current timeout reset
+		    DX = maximum timeout reset
+		    ES:DI -> timeout reset table (array of bytes)
+		01h failed
+Note:	the timeout period is computed as (BYTE ES:[DI+CX]) * BX timer ticks
+SeeAlso: AX=7F00h,AX=7F04h/BL=02h
+----------107F05-----------------------------
+INT 10 - SOLLEX SuperVGA - LOAD REGISTER
+	AX = 7F05h
+	ES:DI -> register value table (see below)
+Return: AL != 7Fh if not supported
+	AL = 7Fh if supported
+	    AH = status
+		00h successful
+		01h failed
+SeeAlso: AH=F1h,AH=F3h,AH=F5h
+
+Format of register value table:
+Offset	Size	Description
+ 00h	WORD	base I/O register (FFFFh = end of list)
+ 02h 2N BYTEs	pairs of values to be written to the base I/O register as an
+		index value and the following register as a data byte
+ 2N+2	WORD	FFFFh (end of data list)
+	... (repeats until FFFFh base address)
+----------107F06-----------------------------
+INT 10 - SOLLEX SuperVGA - MULTIPLE FONT CONTROL
+	AX = 7F06h
+	BL = subfunction
+	    00h set multiple font state
+		CX = new state (00h off, 01h on)
+	    01h get multiple font state
+		Return: BL = current state (00h off, 01h on)
+Return: AL != 7Fh if not supported
+	AL = 7Fh if supported
+	    AH = status
+		00h successful
+		01h failed
+SeeAlso: AH=11h
+----------107F07-----------------------------
+INT 10 - SOLLEX SuperVGA - FILL VIDEO RAM
+	AX = 7F07h
+	BL = how much to fill
+	   00h regen size
+	   01h all video memory
+	CX = pattern to write (normally 0720h for text modes and 0000h for gr)
+Return: AL != 7Fh if not supported
+	AL = 7Fh if supported
+	    AH = status
+		00h successful
+		01h failed
+SeeAlso: AH=06h
 ----------1080--DX4456-----------------------
 INT 10 - VIDEO (DESQview 2.0x only) - internal - SET ??? HANDLER
 	AH = 80h
@@ -2818,7 +3201,7 @@ INT 10 - EGA Register Interface Library - WRITE ONE REGISTER
 Return: BL = data
 Note:	provided by the Microsoft Mouse driver, OS/2 compatibility box, and
 	  others
-SeeAlso: AH=F0h,AH=F3h
+SeeAlso: AX=7F05h,AH=F0h,AH=F3h
 ----------10F2-------------------------------
 INT 10 - EGA Register Interface Library - READ REGISTER RANGE
 	AH = F2h
@@ -2842,7 +3225,7 @@ INT 10 - EGA Register Interface Library - WRITE REGISTER RANGE
 	ES:BX -> buffer, CL bytes
 Note:	provided by the Microsoft Mouse driver, OS/2 compatibility box, and
 	  others
-SeeAlso: AH=F1h,AH=F2h
+SeeAlso: AX=7F05h,AH=F1h,AH=F2h
 ----------10F4-------------------------------
 INT 10 - EGA Register Interface Library - READ REGISTER SET
 	AH = F4h
@@ -2875,7 +3258,7 @@ INT 10 - EGA Register Interface Library - WRITE REGISTER SET
 	ES:BX -> table of records (see AH=F4h)
 Note:	provided by the Microsoft Mouse driver, OS/2 compatibility box, and
 	  others
-SeeAlso: AH=F1h,AH=F3h,AH=F4h
+SeeAlso: AX=7F05h,AH=F1h,AH=F3h,AH=F4h
 ----------10F6------------------------------
 INT 10 - EGA Register Interface Library - REVERT TO DEFAULT REGISTERS
 	AH = F6h
@@ -2922,13 +3305,19 @@ Note:	FASTBUFF.COM is a keyboard speedup/screen blanking utility by David
 ----------10FE------------------------------
 INT 10 - TopView - GET SHADOW BUFFER
 	AH = FEh
-	ES:DI -> assumed video buffer (B800h:0000h color, B000h:0000h mono)
+	ES:DI -> assumed video buffer
+		B800h:0000h color text/CGA graphics, B000h:0000h mono text,
+		  or A000h:0000h EGA/VGA graphics (RSIS environments only)
 Return: ES:DI -> actual video buffer for calling process
-Notes:	if no multitasker is installed, ES:DI is returned unchanged
+Notes:	if no multitasker or RSIS-compliant environment is installed, ES:DI is
+	  returned unchanged; RSIS is the Relocated Screen Interface
+	  Specification
+	for display pages other than 0, use AH=05h and AH=0Fh to determine
+	  whether a particular page exists
 	TopView requires a call to AH=FFh to notify it that the screen has
 	  changed; DESQview will check for changes itself until the first call
 	  to AH=FFh
-SeeAlso: AH=FFh,INT 15/AX=1024h,INT 21/AH=2Bh"DESQview"
+SeeAlso: AH=05h,AH=FFh,INT 15/AX=1024h,INT 21/AH=2Bh"DESQview"
 ----------10FF-------------------------------
 INT 10 - TopView - UPDATE SCREEN FROM SHADOW BUFFER
 	AH = FFh
@@ -2953,15 +3342,15 @@ INT 10 - DJ GO32.EXE 80386+ DOS extender - VIDEO EXTENSIONS
 	    08h biggest graphics
 SeeAlso: AH=00h,INT 21/AH=FFh"GO32"
 ----------10FF00-----------------------------
-INT 10 - CARBON COPY PLUS 5.0 - CHECK IF CC CONNECTED TO CCHELP
+INT 10 - CARBON COPY PLUS v5.0 - CHECK IF CC CONNECTED TO CCHELP
 	AX = FF00h
 Return: BL = 00h not connected
 	   = 01h connected
 ----------10FF01-----------------------------
-INT 10 - CARBON COPY PLUS 5.0 - DISCONNECT AND RESET LINE
+INT 10 - CARBON COPY PLUS v5.0 - DISCONNECT AND RESET LINE
 	AX = FF01h
 ----------10FF02-----------------------------
-INT 10 - CARBON COPY PLUS 5.0 - GET LAST PHONE NUMBER DIALED
+INT 10 - CARBON COPY PLUS v5.0 - GET LAST PHONE NUMBER DIALED
 	AX = FF02h
 Return: ES:DI -> ASCIZ phone number
 ----------11---------------------------------
@@ -3144,7 +3533,6 @@ Notes:	errors on a floppy may be due to the motor failing to spin up quickly
 	  the disk with AH=00h between attempts
 	AWARD AT BIOS extended to handle more than 1024 cylinders by placing
 	  bits 10 and 11 of the cylinder number into bits 6 and 7 of DH
-	apparently, the AMI BIOS also follows this convention
 SeeAlso: AH=03h,AH=0Ah
 ----------1303-------------------------------
 INT 13 - DISK - WRITE DISK SECTOR(S)
@@ -3165,7 +3553,6 @@ Notes:	errors on a floppy may be due to the motor failing to spin up quickly
 	  the disk with AH=00h between attempts
 	AWARD AT BIOS extended to handle more than 1024 cylinders by placing
 	  bits 10 and 11 of the cylinder number into bits 6 and 7 of DH
-	apparently, the AMI BIOS also follows this convention
 SeeAlso: AH=02h,AH=0Bh
 ----------1304-------------------------------
 INT 13 - DISK - VERIFY DISK SECTOR(S)
@@ -3188,7 +3575,6 @@ Notes:	errors on a floppy may be due to the motor failing to spin up quickly
 	  checks whether the sector's stored CRC matches the data's actual CRC
 	AWARD AT BIOS extended to handle more than 1024 cylinders by placing
 	  bits 10 and 11 of the cylinder number into bits 6 and 7 of DH
-	apparently, the AMI BIOS also follows this convention
 SeeAlso: AH=02h
 ----------1305-------------------------------
 INT 13 - FLOPPY - FORMAT TRACK
@@ -3227,7 +3613,6 @@ INT 13 - FIXED DISK - FORMAT TRACK
 Return: AH = status code (see AH=01h)
 Notes:	AWARD AT BIOS extended to handle more than 1024 cylinders by placing
 	  bits 10 and 11 of the cylinder number into bits 6 and 7 of DH
-	apparently, the AMI BIOS also follows this convention
 	for XT-type controllers on an AT or higher, AH=0Fh should be called
 	  first
 SeeAlso: AH=05h"FLOPPY",AH=06h,AH=07h,AH=0Fh,AH=18h,AH=1Ah
@@ -3240,9 +3625,8 @@ INT 13 - FIXED DISK - FORMAT TRACK AND SET BAD SECTOR FLAGS (XT,PORT)
 	DH = head
 	DL = drive
 Return: AH = status code (see AH=01h)
-Notes:	AWARD AT BIOS extended to handle more than 1024 cylinders by placing
+Note:	AWARD AT BIOS extended to handle more than 1024 cylinders by placing
 	  bits 10 and 11 of the cylinder number into bits 6 and 7 of DH
-	apparently, the AMI BIOS also follows this convention
 ----------1307-------------------------------
 INT 13 - FIXED DISK - FORMAT DRIVE STARTING AT GIVEN TRACK (XT,PORT)
 	AH = 07h
@@ -3255,7 +3639,6 @@ INT 13 - FIXED DISK - FORMAT DRIVE STARTING AT GIVEN TRACK (XT,PORT)
 Return: AH = status code (see AH=01h)
 Note:	AWARD AT BIOS extended to handle more than 1024 cylinders by placing
 	  bits 10 and 11 of the cylinder number into bits 6 and 7 of DH
-	apparently, the AMI BIOS also follows this convention
 SeeAlso: AH=1Ah
 ----------1308-------------------------------
 INT 13 - DISK - GET DRIVE PARAMETERS (PC,XT286,CONV,PS,ESDI,SCSI)
@@ -3265,7 +3648,11 @@ Return: CF set on error
 	    AH = status (07h) (see AH=01h)
 	CF clear if successful
 	    AH = 00h
-	    BL = drive type (see AH=17h) (AT/PS2 floppies only)
+	    BL = drive type (AT/PS2 floppies only)
+	    	01h 360K
+		02h 1.2M
+		03h 720K
+		04h 1.44M
 	    CH = low eight bits of maximum cylinder number
 	    CL = maximum sector number (bits 5-0)
 		 high two bits of maximum cylinder number (bits 7-6)
@@ -3780,6 +4167,32 @@ INT 13 - ???
 Return: AH = ???
 	???
 Note:	intercepted by PC-Cache (v5.1 only)
+----------1380--CX6572-----------------------
+INT 13 - FAST! - API
+	AH = 80h
+	CX = 6572h
+	DX = 1970h
+	ES:BX -> data structure (see below)
+	AL = function
+	    01h ???
+	    04h ???
+	    05h ???
+	    06h installation check
+		Return: AX = 1965h if installed
+	    07h ???
+	    09h ???
+	    0Ah ???
+	    0Bh ???
+	    0Ch set ??? flag
+	    0Dh clear ??? flag
+Return: AH = 00h if successful (except function 06h)
+
+Format of data structure:
+Offset	Size	Description
+ 00h	DWORD	pointer to 19-byte signature string 
+		13h 07h 06h 08h 11h 18h 0Fh 0Eh 02h 18h 13h 08h 0Bh 08h 01h 00h
+		  04h 08h 15h  (v4.04)
+ 04h	???	???
 ----------1381--SI4358-----------------------
 INT 13 - Super PC Kwik/PC-Cache 5.x - ???
 	AH = 81h
@@ -3831,27 +4244,27 @@ Note:	PC Tools PC-Cache 5.x is an OEM version of Super PC Kwik, and thus
 	  supports this call
 SeeAlso: AH=83h
 ----------138EED-----------------------------
-INT 13 - HyperDisk 4.01+ - ???
+INT 13 - HyperDisk v4.01+ - ???
 	AX = 8EEDh
 	???
 Return: ???
 Note:	HyperDisk is a shareware disk cache by HyperWare (Roger Cross)
 SeeAlso: AX=8EEEh,AX=8EEFh,AH=EEh,INT 2F/AH=DFh
 ----------138EEE-----------------------------
-INT 13 - HyperDisk 4.01+ - ???
+INT 13 - HyperDisk v4.01+ - ???
 	AX = 8EEEh
 Return: CF set
 	AX = CS of HyperDisk resident code
 	???
-Note:	identical to AX=8EEFh in HYPERDKX v4.21
+Note:	identical to AX=8EEFh in HYPERDKX v4.21-4.30
 SeeAlso: AX=8EEDh,AX=8EEFh,AH=EEh
 ----------138EEF-----------------------------
-INT 13 - HyperDisk 4.01+ - ???
+INT 13 - HyperDisk v4.01+ - ???
 	AX = 8EEFh
 Return: CF set
 	AX = CS of HyperDisk resident code
 	???
-Note:	identical to AX=8EEEh in HYPERDKX v4.21
+Note:	identical to AX=8EEEh in HYPERDKX v4.21-4.30
 SeeAlso: AX=8EEDh,AX=8EEEh,AH=EEh
 ----------13A0--SI4358-----------------------
 INT 13 - Super PC Kwik - GET RESIDENT CODE SEGMENT
@@ -3876,6 +4289,13 @@ INT 13 - Super PC Kwik - ???
 Return: ???
 Note:	PC Tools PC-Cache 5.x is an OEM version of Super PC Kwik, and thus
 	  supports this call
+----------13A5-------------------------------
+INT 13 - Super PC Kwik - ???
+	AH = A5h
+	SI = ???
+Return: AX = ???
+	SI = ???
+Note:	called when a program terminates but stays resident (see INT 21/AH=31h)
 ----------13AD-------------------------------
 INT 13 - Priam HARD DISK CONTROLLER???
 	AH = ADh
@@ -3947,7 +4367,8 @@ Return: AH = line status (see AH=03h)
 Notes:	default handler is at F000h:E739h in IBM PC and 100% compatible BIOSes
 	since the PCjr supports a maximum of 4800 bps, attempting to set 9600
 	  bps will result in 4800 bps
-SeeAlso: AH=04h"SERIAL",AH=04h"MultiDOS",AH=05h"SERIAL",AH=82h,AH=8Ch
+SeeAlso: AH=04h"SERIAL",AH=04h"MultiDOS",AH=05h"SERIAL",AH=81h"COMM-DRV"
+SeeAlso: AH=82h"COURIERS",AH=8Ch
 ----------1400-------------------------------
 INT 14 - FOSSIL (Fido/Opus/Seadog Standard Interface Level) - INITIALIZE
 	AH = 00h
@@ -3972,7 +4393,7 @@ Return: AH = RS-232 status code bits
 	AL = modem status bits
 	    3: always 1
 	    7: DCD - carrier detect
-SeeAlso: AH=05h"FOSSIL",AH=82h
+SeeAlso: AH=05h"FOSSIL",AH=81h"COMM-DRV",AH=82h"COURIERS"
 ----------1401-------------------------------
 INT 14 - SERIAL - WRITE CHARACTER TO PORT
 	AH = 01h
@@ -4418,7 +4839,7 @@ INT 14 - FOSSIL - READ BLOCK
 	DX = port number
 	ES:DI -> user buffer
 Return: AX = number of characters transferred
-SeeAlso: AH=19h"FOSSIL",AH=83h,AX=FF02h,INT 6B/AX=0100h
+SeeAlso: AH=19h"FOSSIL",AH=83h"COURIERS",AX=FF02h,INT 6B/AX=0100h
 ----------1418-------------------------------
 INT 14 - Digiboard DigiCHANNEL PC/X* - SEND BIOS COMMAND
 	AH = 18h
@@ -4783,6 +5204,35 @@ Return: AH = 00h port available
 	     02h port nonexistent
 Note:	COURIERS is a TSR utility by PC Magazine
 SeeAlso: AH=83h,AH=8Dh
+----------1481-------------------------------
+INT 14 - Egberto Willies COMM-DRV - EXTENDED INITIALIZATION
+	AH = 81h
+	BX:DI -> port control block
+Return: ???
+SeeAlso: AH=00h
+
+Format of port control block:
+Offset	Type	Description
+ 00h	WORD	port IO address
+ 02h	WORD	port IRQ
+ 04h	WORD	baud rate
+ 06h	WORD	parity
+ 08h	WORD	data bits
+ 0Ah	WORD	stop bits
+ 0Ch	WORD	break status
+		    0000h off
+ 0Eh	WORD	flow control protocol
+ 10h	BYTE	input block
+ 11h	BYTE	output block
+ 12h	WORD	low threshold
+ 14h	WORD	high threshold
+ 16h	WORD	segment of buffer
+ 18h	WORD	offset of buffer
+ 1Ah	WORD	input buffer length
+ 1Ch	WORD	output buffer length
+ 1Eh	BYTE	auxiliary address
+ 1Fh	BYTE	spare
+ 20h  4 WORDs	spares
 ----------148100-----------------------------
 INT 14 - VIDEO FOSSIL - RETURN VFOSSIL INFORMATION
 	AX = 8100h
@@ -5054,7 +5504,7 @@ INT 14 - COURIERS.COM - CONFIGURE PORT
 	    bit 0: enable input flow control
 	    bit 1: enable output flow control
 	    bit 2: use X.PC protocol (not yet implemented)
-SeeAlso: AH=00h,AH=8Ch
+SeeAlso: AH=00h,AH=8Ch,INT 7Ah"X.PC"
 ----------1483-------------------------------
 INT 14 - SYSTEM FOSSIL
 	AH = 83h
@@ -5084,7 +5534,7 @@ INT 14 - COURIERS.COM - START OUTPUT
 	AH = 86h
 	ES:BX -> output buffer
 	CX = length of output buffer
-SeeAlso: AH=19h,AH=83h,AH=A4h"BAPI"
+SeeAlso: AH=19h,AH=83h"COURIERS",AH=A4h"BAPI"
 ----------1487-------------------------------
 INT 14 - COURIERS.COM - OUTPUT STATUS
 	AH = 87h
@@ -5182,7 +5632,7 @@ INT 14 - 3com BAPI SERIAL I/O - READ BLOCK
 	DH = session number (00h)
 	ES:BX -> buffer
 Return: CX = number of bytes read
-SeeAlso: AH=18h,AH=83h,AH=A4h"BAPI",AX=FF02h
+SeeAlso: AH=18h,AH=83h"COURIERS",AH=A4h"BAPI",AX=FF02h
 ----------14A5-------------------------------
 INT 14 - Interconnections Inc. TES - RESUME A SESSION
 	AH = A5h
@@ -5232,6 +5682,24 @@ INT 14 - 3com BAPI SERIAL I/O - ENABLE/DISABLE "ENTER COMMAND MODE" CHARACTER
 ----------14B1-------------------------------
 INT 14 - 3com BAPI SERIAL I/O - ENTER COMMAND MODE
 	AH = B1h
+----------14F0F0-----------------------------
+INT 14 - ASAP v1.0 - ???
+	AX = F0F0h
+	DX = ???
+	???
+Return: ???
+Note:	ASAP (Automatic Screen Access Program) is a shareware screen reader by
+	  MicroTalk
+SeeAlso: AX=F0F1h
+----------14F0F1DX0000-----------------------
+INT 14 - ASAP v1.0 - INSTALLATION CHECK
+	AX = F0F1h
+	DX = 0000h
+Return: DX = segment of resident code
+	   = 0000h if not installed
+Note:	ASAP (Automatic Screen Access Program) is a shareware screen reader by
+	  MicroTalk
+SeeAlso: AX=F0F0h
 ----------14F4FF-----------------------------
 INT 14 - IBM/Yale EBIOS SERIAL I/O - INSTALLATION CHECK
 	AX = F4FFh
@@ -5279,3 +5747,4 @@ INT 14 - IBM/Yale EBIOS SERIAL I/O - BUFFERED READ
 	ES:BX -> buffer
 Return: CX = number of characters read
 SeeAlso: AH=18h,AH=83h"COURIERS",AH=A5h"BAPI",AH=FCh
+---------------------------------------------
