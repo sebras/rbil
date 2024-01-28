@@ -3,7 +3,7 @@ Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
 --------V-P03C003C1--------------------------
 PORT 03C0-03C1 - EGA/VGA - ATTRIBUTE CONTROLLER
 Range:	PORT 03C0h or PORT 02C0h (alternate EGA)
-SeeAlso: PORT 03C2h,PORT 03D0h,#P494
+SeeAlso: PORT 03C2h,PORT 03D0h,#P466
 
 03C0  rW  ATC index/data register
 		Every write access to this register will toggle an internal
@@ -20,16 +20,16 @@ SeeAlso: PORT 03C2h,PORT 03D0h,#P494
 			  1=video access to registers
 		  bit4-0: index in ATC (0..31)
 
-		indexed registers in ATC (flipflop set to 'data'): (see #P267)
+		indexed registers in ATC (flipflop set to 'data'): (see #P410)
 03C1  R-  (VGA)	ATC index/data read register
 
-(Table P267)
+(Table P410)
 Values for EGA/VGA indexed registers in ATC:
- 00h-0Fh 16 palette registers (see #P268)
- 10h	mode control register (see #P269)
- 11h	(EGA) overscan color register (see #P270) (default: 00h)
- 11h	(VGA) overscan color register (see #P271) (default: 00h)
- 12h	color enable register (see #P272)
+ 00h-0Fh 16 palette registers (see #P411)
+ 10h	mode control register (see #P412)
+ 11h	(EGA) overscan color register (see #P413) (default: 00h)
+ 11h	(VGA) overscan color register (see #P414) (default: 00h)
+ 12h	color enable register (see #P415)
  13h	horizontal pixel panning register
 	bit7-4: reserved
 	bit3-0: horizontal pixel panning
@@ -48,10 +48,10 @@ Values for EGA/VGA indexed registers in ATC:
 	bit6  : reserved
 	bit5-4: select high resolution / color mode
 	bit3-0: reserved
-SeeAlso: #P273,#P279
+SeeAlso: #P418,#P448
 
 Bitfields for EGA/VGA indexed ATC palette register:
-Bit(s)	Description	(Table P268)
+Bit(s)	Description	(Table P411)
  7-6	reserved
  5	secondary red video
  4	secondary green/intensity video
@@ -59,10 +59,10 @@ Bit(s)	Description	(Table P268)
  2	primary red video
  1	primary green video
  0	primary blue video
-SeeAlso: #P267
+SeeAlso: #P410
 
 Bitfields for EGA/VGA ATC mode control register:
-Bit(s)	Description	(Table P269)
+Bit(s)	Description	(Table P412)
  7	(VGA) SB/SG select (0=4 pages of 64 regs, 1=16 pages of 16 regs)
  6	(VGA) PELCLK/2 (0=4bit color, 1=8bit color)
  5	(VGA) enable pixel panning (0=all, 1=up to line compare register value)
@@ -71,10 +71,10 @@ Bit(s)	Description	(Table P269)
  2	line graphics enable (0=background, 1=line 8=9)
  1	1=mono, 0=color select
  0	1=graphics, 0=text select
-SeeAlso: #P267
+SeeAlso: #P410
 
 Bitfields for EGA overscan color register:
-Bit(s)	Description	(Table P270)
+Bit(s)	Description	(Table P413)
  7-6	reserved
  5	secondary red (SR)
  4	secondary green (SR) / intensity
@@ -82,10 +82,10 @@ Bit(s)	Description	(Table P270)
  2	primary red (PR)
  1	primary green (PG)
  0	primary blue (PB)
-SeeAlso: #P267,#P271
+SeeAlso: #P410,#P414
 
 Bitfields for VGA overscan color register:
-Bit(s)	Description	(Table P271)
+Bit(s)	Description	(Table P414)
  7	secondary intensity border color (SI)
  6	secondary red (SR)
  5	secondary green (SG)
@@ -94,10 +94,10 @@ Bit(s)	Description	(Table P271)
  2	primary red (PR)
  1	primary green (PG)
  0	primary blue (PB)
-SeeAlso: #P267,#P270
+SeeAlso: #P410,#P413
 
 Bitfields for EGA/VGA color enable register:
-Bit(s)	Description	(Table P272)
+Bit(s)	Description	(Table P415)
  7-6	reserved
  5-4	diagnose / video status select
 	EGA:		VGA, ET4000:
@@ -109,7 +109,7 @@ Bit(s)	Description	(Table P272)
  2	enable plane 2
  1	enable plane 1
  0	enable plane 0
-SeeAlso: #P267
+SeeAlso: #P410
 ----------P03C003C7--------------------------
 PORT 03C0-03C7 - Sunshine EW-901, EW-901A, EW-904, EW-904A
 Desc:	EPROM writer card for EPROMs up to 27512
@@ -120,8 +120,8 @@ PORT 03C2-03CF - EGA/VGA - MISCELLANEOUS REGISTERS
 Range:	PORT 03C2h or PORT 02C2h (alternate EGA)
 SeeAlso: PORT 03C0h,PORT 03C4h,PORT 03C6h,PORT 03D0h
 
-03C2  R-  input status 0 register (see #P385)
-03C2  -W  miscellaneous output register (see #P278)
+03C2  R-  input status 0 register (see #P416)
+03C2  -W  miscellaneous output register (see #P417)
 03C3  RW  (VGA)	video subsystem enable (see also PORT 46E8h)
 		for IBM, motherboard VGA only
 			 bit7-4=0: reserved
@@ -130,7 +130,7 @@ SeeAlso: PORT 03C0h,PORT 03C4h,PORT 03C6h,PORT 03D0h
 			 bit0	 : select video subsystem (address 03C3h)
 
 Bitfields for EGA/VGA input status 0 register:
-Bit(s)	Description	(Table P385)
+Bit(s)	Description	(Table P416)
  7	(VGA) vertical retrace interrupt is pending
 	(EGA) =0 vertical retrace in progress
  6-5	(VGA) reserved (0)
@@ -142,7 +142,7 @@ Bit(s)	Description	(Table P385)
  3-0	reserved (0)
 
 Bitfields for EGA/VGA miscellaneous output register:
-Bit(s)	Description	(Table P278)
+Bit(s)	Description	(Table P417)
 ---Genoa SuperEGA in all emulation modes---
  7-6: vertical resolution
 	00 (EGA) 200 lines
@@ -178,29 +178,29 @@ SeeAlso: PORT 03C4h"Tseng",PORT 03C6h,PORT 03D0h
 03C4  -W  EGA	TS index register
 		bit7-3 : reserved (VGA only)
 		bit2-0 : current TS index
-03C4  RW  VGA	sequencer register index (see #P273)
+03C4  RW  VGA	sequencer register index (see #P418)
 03C5  -W  EGA	TS data register
 03C5  RW  VGA	sequencer register data
 
-(Table P273)
+(Table P418)
 Values for EGA/VGA indexed TS (sequencer) registers:
  00h	reset register
 	bit7-2 : reserved
 	bit1 =0: synchronous reset (EGA/VGA)
 	bit0 =0: asynchronous reset (EGA, ET4000)
 		 synchronous reset, also (VGA)
- 01h	clocking mode register / TS mode (see #P274)
- 02h	map mask register (see #P275)
- 03h	character map select register / font select (see #P276)
- 04h	memory mode register (see #P386)
+ 01h	clocking mode register / TS mode (see #P419)
+ 02h	map mask register (see #P420)
+ 03h	character map select register / font select (see #P421)
+ 04h	memory mode register (see #P422)
  07h	(undoc VGA) reset horizontal character counter
 	any write to this register holds horizontal character counter at 00h
 	  until any other sequencer register is written
 Note:	register 07h is documented in the C&T Wingine documentation
-SeeAlso: #P488,#P487,#P486
+SeeAlso: #P423,#P444,#P433
 
 Bitfields for EGA/VGA sequencer clocking mode register:
-Bit(s)	Description	(Table P274)
+Bit(s)	Description	(Table P419)
  7-6	reserved
  5	(VGA) =1: screen refresh off
  4	(VGA) shift load (0=4x8, 1=1x32)
@@ -208,20 +208,20 @@ Bit(s)	Description	(Table P274)
  2	serial shift video load (0=4x8, 1=2x16)
  1	(EGA) CRTC bandwidth (0=4/5, 1=2/5)
  0	dot clocks per character (0=9, 1=8) (ET4000: see 06h)
-SeeAlso: #P273
+SeeAlso: #P418
 
 Bitfields for EGA/VGA sequencer map mask register:
-Bit(s)	Description	(Table P275)
+Bit(s)	Description	(Table P420)
  7-4	reserved
  4	Genoa SuperEGA only: plane4 ???
  3	write enable display memory plane 3
  2	write enable display memory plane 2
  1	write enable display memory plane 1
  0	write enable display memory plane 0
-SeeAlso: #P273
+SeeAlso: #P418
 
 Bitfields for EGA/VGA sequencer character map select register:
-Bit(s)	Description	(Table P276)
+Bit(s)	Description	(Table P421)
  7-6	reserved
  5	(VGA) bit3 for second text-font
  4	(VGA) bit3 for first text-font
@@ -236,10 +236,10 @@ Bit(s)	Description	(Table P276)
 	   1 01b = 24KB
 	   1 10b = 40KB
 	   1 11b = 56KB
-SeeAlso: #P273
+SeeAlso: #P418
 
 Bitfields for EGA/VGA sequencer memory mode register:
-Bit(s)	Description	(Table P386)
+Bit(s)	Description	(Table P422)
  7-4	reserved
  3	=1 (VGA) enable chain 4 linear graphics mode
 	(when set, low two bits of CPU address select the plane)
@@ -248,28 +248,28 @@ Bit(s)	Description	(Table P386)
 	1 sequential mode
  1	=1 extended memory (0=64KB, 1=more)
  0	(EGA) 1=textmode, 0=graphics mode
-SeeAlso: #P273
+SeeAlso: #P418
 ----------P03C403C5--------------------------
 PORT 03C4-03C5 - Cirrus Logic GRAPHICS - EXTENDED SEQUENCER REGISTERS
 SeeAlso: PORT 03C4h"EGA",PORT 03C4h"S3",PORT 03C4h"Tseng"
 
-03C4  RW  sequencer register index (see #P487)
+03C4  RW  sequencer register index (see #P444)
 03C5  RW  sequencer register data
 
-(Table P488)
+(Table P423)
 Values for Cirrus CL-GD7556 extended sequencer registers:
- 00h-04h same as EGA/VGA (see #P273) 
+ 00h-04h same as EGA/VGA (see #P418) 
  06h	"SR6" key register -- enable access to extension registers
 	set to xxx1x010 to unlock extended sequencer and CRTC registers
- 07h	"SR7" extended sequencer mode (see #P646)
- 08h	"SR8" DDC2B control (see #P647)
+ 07h	"SR7" extended sequencer mode (see #P424)
+ 08h	"SR8" DDC2B control (see #P425)
  09h	"SR9" scratch pad #0
  0Ah	"SRA" scratch pad #1
  0Bh	"SRB" VCLK0 numerator  !!!gd7556hrm.pdf p.239
  0Ch	"SRC" VCLK1 numerator
  0Dh	"SRD" VCLK2 numerator
  0Eh	"SRE" VCLK3 numerator
- 0Fh	"SRF" display memory control (see #P648)
+ 0Fh	"SRF" display memory control (see #P426)
  10h	"SR10" hardware cursor/icon coarse horizontal position
  11h	"SR11" hardware cursor/icon coarse vertical position
  12h	"SR12" hardware cursor attributes
@@ -305,18 +305,18 @@ Values for Cirrus CL-GD7556 extended sequencer registers:
  33h	"SR33" spare register
  34h	"SR34" Host CPU cycle stop control
 Note:	the scratch pad registers are reserved for use by the VGA BIOS
-SeeAlso: #P273,#P486,#P487
+SeeAlso: #P418,#P433,#P444
 
 Bitfields for Cirrus CL-GD7556 extended sequencer mode register:
-Bit(s)	Description	(Table P646)
+Bit(s)	Description	(Table P424)
  7-4	display memory segment
  3-1	CRT Controller character clock divisor
  0	select high-resolution packed-pixel mode
 !!!gd7556hrm.pdf p.234
-SeeAlso: #P488
+SeeAlso: #P423
 
 Bitfields for Cirrus CL-GD7556 DDC2B Control register:
-Bit(s)	Description	(Table P647)
+Bit(s)	Description	(Table P425)
  7	DDCD output status (read-only)
  6-3	reserved
  2	DDCC output status (read-only)
@@ -325,10 +325,10 @@ Bit(s)	Description	(Table P647)
 Notes:	bits 1 and 0 are used to drive the I2C bus used for DDC communications;
 	  bits 7 and 2 are used to read back the current state of the bus lines
 	SR24 bit 7 must be cleared to enable access to the bus
-SeeAlso: #P488,#M098,I2C A0h"DDC"
+SeeAlso: #P423,#M079,I2C A0h"DDC"
 
 Bitfields for Cirrus CL-GD7556 Display Memory Control register:
-Bit(s)	Description	(Table P648)
+Bit(s)	Description	(Table P426)
  7	bank select for display memory
  6	!!!gd7556hrm.pdf p.241
  5	reserved
@@ -336,17 +336,82 @@ Bit(s)	Description	(Table P648)
  2	RAS# cycle select for display memory
  1	display memory configuration symmetry
  0	multiple-CAS# / multiple-WE# select for display memory
-SeeAlso: #P448
+SeeAlso: #P540
 ----------P03C403C5--------------------------
-PORT 03C4-03C5 - S3 GRAPHICS - EXTENDED SEQUENCER REGISTERS
-SeeAlso: PORT 03C4h"EGA",PORT 03C4h"Cirrus",PORT 03C4h"Tseng"
+PORT 03C4-03C5 - NVIDIA - EXTENDED SEQUENCER REGISTERS
+SeeAlso: PORT 03C4h"EGA",PORT 03C4h"S3",PORT 03C4h"Tseng"
 
-03C4  RW  sequencer register index (see #P486)
+03C4  RW  sequencer register index (see #P427)
 03C5  RW  sequencer register data
 
-(Table P486)
+(Table P427)
+Values for NVIDIA NV3/RIVA128 extended sequencer registers:
+ 06h	key register (enable access to extended registers when set to 57h,
+	  disable access when set to any other value)
+ 19h	extended start address and offset
+	bits 7-5: offset bits 10-8
+	bits 4-0: address bits 20-16
+ 1Ah	flags (see #P428)
+ 1Bh	refresh FIFO control (see #P429)
+ 20h	FIFO watermark (see #P430)
+ 25h	miscellaneous extension bits (see #P431)
+ 28h	framebuffer format
+ 2Dh	extended horizontal bits (see #P432)
+ 30h	graphics cursor control 0
+ 31h	graphics cursor control 1
+ ???
+
+Bitfields for NVIDIA NV3 flags:
+Bit(s)	Description	(Table P428)
+ !!!nv3ref.h
+SeeAlso: #P427
+
+Bitfields for NVIDIA NV3 refresh FIFO control:
+Bit(s)	Description	(Table P429)
+ 7	underflow warning
+ 2-0	burst length
+	000 eight
+	001 32
+	010 64
+	011 128
+	100 256
+SeeAlso: #P427,#P430
+
+Bitfields for NVIDIA NV3 FIFO watermark:
+Bit(s)	Description	(Table P430)
+ 7	reset FIFO
+ 5-0	watermark, in eight-byte units (refresh FIFO will start refilling
+	  when occupancy falls below twice this value)
+SeeAlso: #P427,#P429
+
+Bitfields for NVIDIA NV3 miscellaneous extension bits:
+Bit(s)	Description	(Table P431)
+ 5	offset bit 11
+ 4	horizontal blanking end, bit 6
+ 3	vertical blanking start, bit 10
+ 2	vertical retrace start, bit 10
+ 1	vertical display end, bit 10
+ 0	vertical total, bit 10
+SeeAlso: #P427,#P432
+
+Bitfields for NVIDIA NV3 extended horizontal bits:
+Bit(s)	Description	(Table P432)
+ 4	"inter_half_start" bit 8
+ 3	horizontal retrace start, bit 8
+ 2	horizontal blanking start, bit 8
+ 1	display end, bit 8
+ 0	display total, bit 8
+SeeAlso: #P427,#P431
+----------P03C403C5--------------------------
+PORT 03C4-03C5 - S3 GRAPHICS - EXTENDED SEQUENCER REGISTERS
+SeeAlso: PORT 03C4h"EGA",PORT 03C4h"Cirrus",PORT 03C4h"Tseng",PORT 03C4"NVIDIA"
+
+03C4  RW  sequencer register index (see #P433)
+03C5  RW  sequencer register data
+
+(Table P433)
 Values for S3 extended sequencer registers:
- 00h-04h same as EGA/VGA (see #P273) 
+ 00h-04h same as EGA/VGA (see #P418) 
  08h	S3 864/964/765 (Trio64V): key register -- enable access to S3 extended
 	  registers when set to x6h
 ---S3 Trio32/Trio64/Trio64V+ ---
@@ -354,24 +419,24 @@ Values for S3 extended sequencer registers:
 	bit 7: disable port I/O when memory-mapped I/O is enabled
 	bits 6-0: reserved
 	bit 1: ??? (set by Stealth64 Video 2001)
- 0Ah	"SRA" external bus request control register (see #P387)
- 0Bh	"SRB" miscellaneous extended sequencer register (see #P388)
- 0Dh	"SRD" VSYNC/HSYNC control (see #P389)
- 10h	"SR10" MCLK value (low) (see #P390)
- 11h	"SR11" MCLK value (high) (see #P391)
- 12h	"SR12" DCLK value (low) (see #P390)
- 13h	"SR13" DCLK value (high) (see #P391)
- 14h	"SR14" CLKSYN control 1 (see #P392)
- 15h	"SR15" CLKSYN control 2 (see #P393)
+ 0Ah	"SRA" external bus request control register (see #P434)
+ 0Bh	"SRB" miscellaneous extended sequencer register (see #P435)
+ 0Dh	"SRD" VSYNC/HSYNC control (see #P437)
+ 10h	"SR10" MCLK value (low) (see #P438)
+ 11h	"SR11" MCLK value (high) (see #P439)
+ 12h	"SR12" DCLK value (low) (see #P438)
+ 13h	"SR13" DCLK value (high) (see #P439)
+ 14h	"SR14" CLKSYN control 1 (see #P440)
+ 15h	"SR15" CLKSYN control 2 (see #P441)
  16h	"SR16" CLKSYN Test (high) (reserved for testing of clock synth)
  17h	"SR17" CLKSYN Test (low) (reserved for testing of clock synth)
- 18h	"SR18" RAMDAC/CLKSYN Control (see #P394)
+ 18h	"SR18" RAMDAC/CLKSYN Control (see #P442)
 ---S3 Trio64V+ ---
- 1Ch	"SR1C" signal select (see #P476)
-SeeAlso: #P273,#P488,#P487
+ 1Ch	"SR1C" signal select (see #P443)
+SeeAlso: #P418,#P423,#P444
 
 Bitfields for S3 Trio32/64/64V+ "SRA" external bus request control register:
-Bit(s)	Description	(Table P387)
+Bit(s)	Description	(Table P434)
  7	fast CPU writes
 	when set and MCLK is less than 57 MHz, CPU writes take 2 MCLKs instead
 	  of 3 MCLKs (for MCLKs of 55-57 MHz, SR15 bit 7 should also be set)
@@ -383,11 +448,11 @@ Bit(s)	Description	(Table P387)
 	  Trio's memory bus
 Note:	bit 6 must be set for 4M fast page-mode memory; it has no effect if
 	  EDO memory is selected via CR36 bit 2
-SeeAlso: #P486
+SeeAlso: #P433
 
 Bitfields for S3 Trio32/64/64V+ "SRB" misc extended sequencer register:
-Bit(s)	Description	(Table P388)
- 7-4	alternate color mode (for feature connector input) (see #P417)
+Bit(s)	Description	(Table P435)
+ 7-4	alternate color mode (for feature connector input) (see #P436)
  3	(Trio32 only) enable packed 24 bpp (mode 12); also requires CR67 bits
 		  7-4=0000
  2	reserved
@@ -397,9 +462,9 @@ Bit(s)	Description	(Table P388)
  0	dot clock select (testing only)
 	=0 use internal dot clock
 	=1 use VCLKI
-SeeAlso: #P486,#P416
+SeeAlso: #P433,#P499
 
-(Table P417)
+(Table P436)
 Values for S3 Trio32/Trio64 color mode:
 0000	mode 0 = 8-bit, 1 pixel/VCLK
 0001	mode 8 = 8-bit, 2 pixels/VCLK
@@ -410,10 +475,10 @@ Values for S3 Trio32/Trio64 color mode:
 else	reserved
 Note:	mode 8 also requires SR18 bit 7=1 and either SR15 bit 4=1 or
 	  SR15 bit 6=1
-SeeAlso: #P388,#P416
+SeeAlso: #P435,#P499
 
 Bitfields for S3 "SRD" Trio32/Trio64 VSYNC/HSYNC control:
-Bit(s)	Description	(Table P389)
+Bit(s)	Description	(Table P437)
  7-6	vertical sync control
 	00 normal operation
 	01 force to 0
@@ -430,23 +495,23 @@ Note:	bits 7-4 are used to select the DPMS power mode as follows:
 	    0001 Standby
 	    0100 Suspend
 	    0101 Off
-SeeAlso: #P486
+SeeAlso: #P433
 
 Bitfields for S3 Trio32/Trio64 "SR10"/"SR12" MCLK/DCLK value (low):
-Bit(s)	Description	(Table P390)
+Bit(s)	Description	(Table P438)
  7	reserved
  6-5	PLL R value
  4-0	PLL N-divider value
-SeeAlso: #P391,#P486
+SeeAlso: #P439,#P433
 
 Bitfields for S3 Trio32/Trio64 "SR11"/"SR13" MCLK/DCLK value (high):
-Bit(s)	Description	(Table P391)
+Bit(s)	Description	(Table P439)
  7	reserved
  6-0	PLL M-divider value
-SeeAlso: #P390,#P486
+SeeAlso: #P438,#P433
 
 Bitfields for S3 Trio32/Trio64 "SR14" CLKSYN control 1:
-Bit(s)	Description	(Table P392)
+Bit(s)	Description	(Table P440)
  7	select external DCLK (testing only; also requires external strapping)
  6	select external MCLK (testing only)
  5	select Pin146 function
@@ -459,10 +524,10 @@ Bit(s)	Description	(Table P392)
  2	enable clock synthesizer counters (testing only)
  1	power down MCLK PLL (testing only)
  0	power down DCLK PLL (testing only)
-SeeAlso: #P393,#P486
+SeeAlso: #P441,#P433
 
 Bitfields for S3 Trio32/Trio64 "SR15" CLKSYN control 2:
-Bit(s)	Description	(Table P393)
+Bit(s)	Description	(Table P441)
  7	enable fast memory writes (2 MCLKs instead of 3 MCLKs) by bypassing
 	  VGA lienar addressing logic (requires SRA bit 7 set)
  6	invert DCLK
@@ -482,11 +547,11 @@ Notes:	bits 1 and 5 also require that PORT 03C2h bits 3-2=11
 	bit 0 should be cleared after loading the new MCLK value to avoid
 	  repeated loading
 	either bit 4 or 6 must be set for clock-doubled RAMDAC operation
-	  (see #P387)
-SeeAlso: #P392,#P394,#P486
+	  (see #P434)
+SeeAlso: #P440,#P442,#P433
 
 Bitfields for S3 Trio32/Trio64 "SR18" RAMDAC/CLKSYN control:
-Bit(s)	Description	(Table P394)
+Bit(s)	Description	(Table P442)
  7	enable clock-doubled mode (see also #393)
  6	fast LUT write cycle (1 DCLK instead of default 2 DCLKs)
  5	power down RAMDAC (RAMDAC memory is retained even when powered down)
@@ -495,10 +560,10 @@ Bit(s)	Description	(Table P394)
  2	(testing only) place red data on internal data bus
  1	(testing only) reset RAMDAC test counter
  0	(testing only) enable test counter
-SeeAlso: #P393
+SeeAlso: #P441
 
 Bitfields for S3 Trio64V+ "SR1C" signal select:
-Bit(s)	Description	(Table P476)
+Bit(s)	Description	(Table P443)
  7-2	reserved
  1-0	signal select
 	VL-Bus:
@@ -510,17 +575,17 @@ Bit(s)	Description	(Table P476)
 	    00 Pin151 is ENFEAT#, Pin190 is STWR#, Pin153 is ROMEN# (default)
 	    01 Pin151 is reserved, Pin190 is STWR#, Pin153 is ROMEN#
 	    1x Pin151 is GOP0, Pin190 is GOP1, Pin153 is ROMEN#
-SeeAlso: #P468
+SeeAlso: #P073
 ----------P03C403C5--------------------------
 PORT 03C4-03C5 - Tseng Labs GRAPHICS - EXTENDED SEQUENCER REGISTERS
 SeeAlso: PORT 03C4h"EGA",PORT 03C4h"Cirrus",PORT 03C4h"S3"
 
-03C4  RW  sequencer register index (see #P487)
+03C4  RW  sequencer register index (see #P444)
 03C5  RW  sequencer register data
 
-(Table P487)
+(Table P444)
 Values for Tseng Labs extended sequencer registers:
- 00h-04h same as EGA/VGA (see #P273)
+ 00h-04h same as EGA/VGA (see #P418)
  06h	ET3000 only: Zoom control register
  06h	ET4000 only: TS state control (protected by 'key')
 	bit7-3 : reserved
@@ -533,11 +598,11 @@ Values for Tseng Labs extended sequencer registers:
 		   10 0b= 12
 		   11 1b= 16
 	bit0	: reserved
- 07h	ET3000/ET4000 only: TS auxiliary mode (see #P277)
-SeeAlso: #P273,#P488,#P486
+ 07h	ET3000/ET4000 only: TS auxiliary mode (see #P445)
+SeeAlso: #P418,#P423,#P433
 
 Bitfields for ET3000/ET4000 sequencer auxiliary mode:
-Bit(s)	Description	(Table P277)
+Bit(s)	Description	(Table P445)
  7	compatibility mode (1=VGA, 0=EGA)
  6	select MCLK/2 (with bit0=0)
  5	BIOS ROM address map 2
@@ -554,7 +619,7 @@ Bit(s)	Description	(Table P277)
 Notes:	at least on the ET4000, this register is protected by a 'key'
 	this register is also supported by ET3000, but the above description
 	  is based on the ET4000
-SeeAlso: #P273
+SeeAlso: #P418
 --------V-P03C603C9--------------------------
 PORT 03C6-03C9 - EGA/VGA/MCGA - DAC REGISTERS
 Range:	PORT 03C6h or PORT 02C6h (alternate)
@@ -589,7 +654,7 @@ SeeAlso: PORT 83C6h"Wingine"
 
 		 REP-mode: if pixel are doubled in current video mode
 		 EDP-mode: pseudo-truecolor with Edsun dynamic palette
-		 (see #P283,#P284)
+		 (see #P446,#P447)
 
 		 Palette-color-register single-byte-format (each 3 times):
 		  Mode A:		  Mode C:
@@ -625,7 +690,7 @@ SeeAlso: PORT 83C6h"Wingine"
 		  bit7-2: reserved
 		  bit1	: 0=EGA mode, 1=backward compatibility mode
 		  bit0	: not used
-03C8  R?  (S3 Trio32/64) General Input Port (see #P406)
+03C8  R?  (S3 Trio32/64) General Input Port (see #P486)
 03C9  RW  (VGA,MCGA) PEL data register
 		 Three consequtive reads (in read mode) or writes (in write
 		 mode) in the order: red, green, blue. The internal DAC index
@@ -633,7 +698,7 @@ SeeAlso: PORT 83C6h"Wingine"
 		  bit7-6: HiColor VGA DACs only: color-value bit7-6
 		  bit5-0:			 color-value bit5-0
 
-(Table P283)
+(Table P446)
 Values for EDSUN CEG (Continuous Edge Graphics) modes::
  x:  mode:	 colors:  mix:	pixel depth:  effective colors:
  0 = disabled	   256	   -	     8		    256
@@ -652,9 +717,9 @@ Values for EDSUN CEG (Continuous Edge Graphics) modes::
  13 = D		   223	  32	     8		 792096
  14 = D+REP	   223	  32	  8 dblscn	 792096
  15 = D+EDP	   223	  32			truecolor
-SeeAlso: #P284
+SeeAlso: #P447
 
-(Table P284)
+(Table P447)
 Values for EDSUN CEG mixing codes:
  Mode A:	       |  Mode C:
  mix: new:	old:   |   mix: new:   old:   colorcode:
@@ -684,7 +749,7 @@ Values for EDSUN CEG mixing codes:
    5 = 10/32   22/32   |   ...	    =  ...    ...
    6 =	6/32   26/32   |   DFh	    =  0/32  32/32
    7 =	2/32   30/32   |   E0h-FFh  =	-      -   normal color
-SeeAlso: #P283
+SeeAlso: #P446
 --------V-P03CA03CD--------------------------
 PORT 03CA-03CD - EGA/VGA/MCGA - GRAPHICS POSITION
 Range:	PORT 03C0h or PORT 02C0h (alternate)
@@ -700,7 +765,7 @@ SeeAlso: PORT 03C0h,PORT 03C2h,PORT 03C4h,PORT 03C6h,PORT 03CEh"EGA",PORT 03D0h
 		 bit3-2: reserved, but existent
 		 bit1-0: bits 5-4 of write segment pointer
 03CC  -W  EGA	graphics 1 position register
-03CC  R-  VGA	miscellaneous output register (see PORT 03C2h-W,#P278,#P295)
+03CC  R-  VGA	miscellaneous output register (see PORT 03C2h-W,#P417,#P537)
 03CD  RW  (ET3000, ET4000, ET4000/W32) GDC segment select ('key' protected)
 		The existence of this r/w register is often used as
 		detection of ET3000, ET4000 and ET4000/W32 chips.
@@ -716,27 +781,27 @@ SeeAlso: PORT 03CEh"Chips&Technologies"
 03CE  RW  VGA	graphics address register / GDC index
 		      bit7-4: reserved
 		      bit3-0: index
-03CF  -W  EGA	GDC data register (see #P279)
-03CF  RW  VGA	other graphics register (see #P279)
+03CF  -W  EGA	GDC data register (see #P448)
+03CF  RW  VGA	other graphics register (see #P448)
 
-(Table P279)
+(Table P448)
 Values for EGA/VGA indexed registers in GDC:
  00h	set/reset register (default 00h)
-	functionality depending on write mode (register 05h) (see #P282)
+	functionality depending on write mode (register 05h) (see #P452)
 	bit7-4: reserved
 	bit3  : 0=write 00h, 1=write FFh in plane 3
 	bit2  : 0=write 00h, 1=write FFh in plane 2
 	bit1  : 0=write 00h, 1=write FFh in plane 1
 	bit0  : 0=write 00h, 1=write FFh in plane 0
- 01h	enable set/reset register (default 00h) (see #P280)
- 02h	color compare register (default 00h) (see #P281)
- 03h	data rotate register (default 00h) (see #P490)
+ 01h	enable set/reset register (default 00h) (see #P449)
+ 02h	color compare register (default 00h) (see #P450)
+ 03h	data rotate register (default 00h) (see #P451)
  04h	read map select register (default 00h)
 	bit7-3: reserved
 	bit2  : EGA?? & Genoa SuperEGA: map select bit2
 	bit1-0: map select (0..3)
- 05h	mode register (see #P282)
- 06h	miscellaneous register (see #P495)
+ 05h	mode register (see #P452)
+ 06h	miscellaneous register (see #P453)
  07h	color don't care register
 	bit7-4: reserved
 	bit3=1: color plane 3 don't care (ignore bit3)
@@ -754,30 +819,30 @@ Values for EGA/VGA indexed registers in GDC:
 	       = 05h unlock Paradise specific registers
 	bit7-3: reserved
 	bit2-0: flipflops, reserved
-SeeAlso: #P489
+SeeAlso: #P454
 
 Bitfields for EGA/VGA GDC enable set/reset register:
-Bit(s)	Description	(Table P280)
+Bit(s)	Description	(Table P449)
  7-4	reserved (used on Genoa SuperEGA???)
  3	enable set/reset plane 3
  2	enable set/reset plane 2
  1	enable set/reset plane 1
  0	enable set/reset plane 0
  3-0	0=CPU access, 1=set/reset access to plane
-SeeAlso: #P279
+SeeAlso: #P448
 
 Bitfields for EGA/VGA GDC color compare register:
-Bit(s)	Description	(Table P281)
+Bit(s)	Description	(Table P450)
  7-4	reserved
  3	color compare 3
  2	color compare 2
  1	color compare 1
  0	color compare 0
  3-0	(color number)
-SeeAlso: #P279
+SeeAlso: #P448
 
 Bitfields for EGA/VGA data rotate register (GR3):
-Bit(s)	Description	(Table P490)
+Bit(s)	Description	(Table P451)
  7-5	reserved
  4-3	logical function select
 	00 CPU-data overwrites
@@ -785,10 +850,10 @@ Bit(s)	Description	(Table P490)
 	10 CPU-data OR with latch-register
 	11 CPU-data XOR with latch-register
  2-0	rotate count
-SeeAlso: #P279
+SeeAlso: #P448
 
 Bitfields for EGA/VGA GDC mode register:
-Bit(s)	Description	(Table P282)
+Bit(s)	Description	(Table P452)
  7	reserved
  6	(VGA) 0=standard, 1=enable 256 colors
  5	shift register mode, 0=standard, 1=CGA-graphics
@@ -801,10 +866,10 @@ Bit(s)	Description	(Table P282)
 	01 mode1, plane source is latch-register
 	10 mode2, plane source is CPU as set/reset
 	11 (VGA) mode3, CPU as set/reset AND bitmask
-SeeAlso: #P279
+SeeAlso: #P448
 
 Bitfields for EGA/VGA GDC miscellaneous register:
-Bit(s)	Description	(Table P495)
+Bit(s)	Description	(Table P453)
  7-4	reserved (=0)
  3-2	memory map
 	00b = A0000..BFFFF (128KB)
@@ -813,17 +878,17 @@ Bit(s)	Description	(Table P495)
 	11b = B8000..BFFFF (32KB)
  1	chain odd maps to even, 1=subst addess bit0
  0	0=testmode, 1=graphics mode
-SeeAlso: #P279
+SeeAlso: #P448
 --------V-P03CE03CF--------------------------
 PORT 03CE-03CF - Chips&Technologies - GRAPHICS CONTROLLER EXTENDED REGISTERS
 SeeAlso: PORT 03CE"EGA"
 
 03CE  RW  graphics address register / GDC index
-03CF  RW  other graphics register (see #P489)
+03CF  RW  other graphics register (see #P454)
 
-(Table P489)
+(Table P454)
 Values for Cirrus CL-GD7556 extended GDC registers:
- 00h-08h same as EGA/VGA (see #P279)
+ 00h-08h same as EGA/VGA (see #P448)
  09h	"GR9" display memory offset 0
  0Ah	"GRA" display memory offset 1
  0Bh	"GRB" graphics controller mode extensions
@@ -863,14 +928,14 @@ Values for Cirrus CL-GD7556 extended GDC registers:
  33h	"GR33" BitBLT mode extensions
 !!! (details to be added)
 Note:	the scratch pad registers are reserved for use by the VGA BIOS
-SeeAlso: #P279
+SeeAlso: #P448
 --------V-P03CE03CF--------------------------
 PORT 03CE-03CF - Compaq Qvision - Functionality Level
 
-03CE  -W  graphics address register (index for next port) (see #P285)
+03CE  -W  graphics address register (index for next port) (see #P455)
 03CF  RW  other graphics register
 
-(Table P285)
+(Table P455)
 Values for Compaq QVision graphics register index:
  0Ch  RO    controller version
 		2Fh Advanced VGA
@@ -898,19 +963,19 @@ PORT 03D4-03D5 - COLOR VIDEO - CRT CONTROL REGISTERS
 	    bit 7-6 =0: (VGA) reserved
 	    bit 5   =0: (VGA) reserved for testage
 	    bit 4-0   : selects which register is to be accessed through 03D5
-03D5  -W  CRT (6845) data register   (CGA/MCGA/color EGA/color VGA) (see #P286)
+03D5  -W  CRT (6845) data register   (CGA/MCGA/color EGA/color VGA) (see #P456)
 	selected by PORT 03D4h. registers 0C-0F may be read
 	  (see also PORT 03B5h)
 	MCGA, native EGA and VGA use very different defaults from those
 	  mentioned for the other adapters; for additional notes and
 	  registers 00h-0Fh and EGA/VGA registers 10h-18h and ET4000
-	  registers 32h-37h see PORT 03B5h (see #P259)
+	  registers 32h-37h see PORT 03B5h (see #P402)
 	registers 10h-11h on CGA, EGA, VGA and 12h-14h on EGA, VGA are
-	  conflictive with MCGA (see #P287)
+	  conflictive with MCGA (see #P458)
 
-(Table P286)
+(Table P456)
 Values for EGA/VGA+ CRT Controller register index:
- 00h-0Fh	same as MDA/CGA (see #P259)
+ 00h-0Fh	same as MDA/CGA (see #P402)
  10h R-	native VGA with bit7=1 in end horizontal blanking (03h) and ET4000:
 	       start vertical retrace
  10h -W start vertical retrace
@@ -943,7 +1008,7 @@ Values for EGA/VGA+ CRT Controller register index:
  16h	(EGA,VGA) end vertical blanking register
 	       bit7-5 : EGA: reserved, but used on original EGA???
 	       bit4-0 : end vertical blanking
- 17h	(EGA,VGA) "CR17" mode control register (see #P262)
+ 17h	(EGA,VGA) "CR17" mode control register (see #P405)
  18h	(EGA,VGA) "CR18" line compare register
  19h	Genoa SuperEGA only: double scan control
 	       at 3B5h only in MDA, HGC emulation, but at 3D5h even in
@@ -953,30 +1018,30 @@ Values for EGA/VGA+ CRT Controller register index:
 	       bit3-1 : 1=test, 0=normal
 	       bit0   : double scan enable
  22h	(VGA) "CR22" CPU Latch Data Register (read-only)
- 24h	(VGA) "CR24" Attribute Controller Toggle register (R-O) (see #P497)
+ 24h	(VGA) "CR24" Attribute Controller Toggle register (R-O) (see #P457)
  3xh	(VGA)  !!!chips\64200.pdf p.57
-Notes:	registers 10h-14h on the MCGA have conflicting uses (see #P287)
+Notes:	registers 10h-14h on the MCGA have conflicting uses (see #P458)
 	registers 22h,24h, and 3xh exist on the standard IBM VGA but were not
 	  documented
-SeeAlso: #P472,#P473,#P474
+SeeAlso: #P504,#P464,#P465
 
 Bitfields for VGA "CR24" Attribute Controller Toggle register:
-Bit(s)	Description	(Table P497)
+Bit(s)	Description	(Table P457)
  7-3	current attribute controller index
  2	palette address source
  1	reserved
  0	state of attribute-controller flip-flop (0 = index, 1 = data)
 Note:	this register was not documented for the original IBM VGA; this
 	   description is from the C&T Wingine documentation
-SeeAlso: #P286,#P494
+SeeAlso: #P456,#P466
 
-(Table P287)
+(Table P458)
 Values for MCGA (only) CRT Controller register index:
- 00h-0Fh	same as MDA/CGA (see #P259)
- 10h -W mode control register (defaults 18h, 1Ah, 19h) (see #P288)
- 10h R-	mode control status register (see #P289)
- 11h -W	interrupt control register (default 30h) (see #P290)
- 12h RW	character generator/sync polarity register (see #P291)
+ 00h-0Fh	same as MDA/CGA (see #P402)
+ 10h -W mode control register (defaults 18h, 1Ah, 19h) (see #P459)
+ 10h R-	mode control status register (see #P460)
+ 11h -W	interrupt control register (default 30h) (see #P461)
+ 12h RW	character generator/sync polarity register (see #P462)
  12h R-	display sense register (int. control reg [11h] bit7=1)
 	bit 7-2	 : not used
 	bit 1-0	 : pins 11 & 12 in monitor cable
@@ -984,15 +1049,15 @@ Values for MCGA (only) CRT Controller register index:
 		01b = analogue monochrom monitor
 		10b = analogue color graphics monitor
 		11b = no monitor
- 13h -W character font pointer register (see #P287)
+ 13h -W character font pointer register (see #P458)
 	only 00h, 10h, 20h, 30h (default 00h) are allowed here
 	  for textmode fonts at A0000, A2000, A4000, A6000
  14h -W	number of characters to load during vert. retrace period (default FFh)
 Note:	registers 10h-14h can appear at PORT 03D5h only, not at 03B5h
-SeeAlso: #P259,#P286,#P472,#P475
+SeeAlso: #P402,#P456,#P504,#P463
 
 Bitfields for MCGA (only) CRT mode control register:
-Bit(s)	Description	(Table P288)
+Bit(s)	Description	(Table P459)
  7	suppress hsync/vsync
  6	reserved (0)
  5	reserved
@@ -1001,10 +1066,10 @@ Bit(s)	Description	(Table P288)
  2	reserved
  1	videomode 11h active
  0	videomode 13h active
-SeeAlso: #P287,#P289
+SeeAlso: #P458,#P460
 
 Bitfields for MCGA (only) CRT mode control status register:
-Bit(s)	Description	(Table P289)
+Bit(s)	Description	(Table P460)
  7	status bit0 CGA mode control register
  6	reserved
  5	clockrate 640 pixel, =0: clockrate/2 320 pixel
@@ -1013,10 +1078,10 @@ Bit(s)	Description	(Table P289)
  2	double-scan activated
  1	videomode 11h active
  0	videomode 13h active
-SeeAlso: #P287,#P288
+SeeAlso: #P458,#P459
 
 Bitfields for MCGA (only) CRT interrupt control register:
-Bit(s)	Description	(Table P290)
+Bit(s)	Description	(Table P461)
  7	set output driver to tristate
 	=0: for reading of character generator reg (12h)
 	=1: for reading of display sense register (12h)
@@ -1024,10 +1089,10 @@ Bit(s)	Description	(Table P290)
  5	=0 requested intr ok to handle
  4	=0 free interrupt latch register
  3-0	reserved
-SeeAlso: #P287
+SeeAlso: #P458
 
 Bitfields for MCGA (only) CRT character generator/sync polarity register:
-Bit(s)	Description	(Table P291)
+Bit(s)	Description	(Table P462)
  7	character generator active
  6	=1 load codepage during display
 	=0 load codepage during retrace
@@ -1038,19 +1103,19 @@ Bit(s)	Description	(Table P291)
  1	positive vsync polarity
  0	positive hsync polarity
 Note:	default 46h in all modes, except 04h in mode 11h)
-SeeAlso: #P287
+SeeAlso: #P458
 --------V-P03D403D5--------------------------
 PORT 03D4-03D5 - Chips&Technologies VIDEO CHIPS - EXTENDED CRT CONTROL REGISTERS
 SeeAlso: PORT 03D4h"COLOR VIDEO",PORT 03D4h"Tseng"
 
-03D4  RW  CRT control register index (see #P475)
+03D4  RW  CRT control register index (see #P463)
 03D5  RW  CRT control register value
 
-(Table P475)
+(Table P463)
 Values for Chips&Technologies CRT Controller register index:
- 00h-18h same as EGA/VGA (see #P286)
- 22h	same as VGA (see #P286)
- 24h	same as VGA (see #P286)
+ 00h-18h same as EGA/VGA (see #P456)
+ 22h	same as VGA (see #P456)
+ 24h	same as VGA (see #P456)
 ---C&T 82C4xx---
  D3h RW "RD3" 82C426: gray-level control 1 !!!chips\82c426.pdf p.16
  D4h RW "RD4" 82C426: gray-level control 2
@@ -1065,25 +1130,25 @@ Values for Chips&Technologies CRT Controller register index:
  DDh RW "RDD" vertical sync width / blink control
  DEh RW "RDE" timing control
  DFh RW "RDF" function control
-SeeAlso: #P259,#P287,#P472,#P473
+SeeAlso: #P402,#P458,#P504,#P464
 --------V-P03D403D5--------------------------
 PORT 03D4-03D5 - Cirrus Logic VIDEO CHIPS - EXTENDED CRT CONTROL REGISTERS
 SeeAlso: PORT 03D4h"COLOR VIDEO",PORT 03D4h"Tseng"
 
-03D4  RW  CRT control register index (see #P473)
+03D4  RW  CRT control register index (see #P464)
 03D5  RW  CRT control register value
 
-(Table P473)
+(Table P464)
 Values for Cirrus Logic CRT Controller register index:
- 00h-18h same as EGA/VGA (see #P286)
+ 00h-18h same as EGA/VGA (see #P456)
 ---Cirrus CL-GD7556---
  19h	"CR19" Interlace End
  1Ah	"CR1A" miscellaneous control
  1Bh	"CR1B" extended display control
  1Ch	"CR1C" horizontal total and sync
  1Dh	"CR1D" color key compare type
- 22h	same as VGA (see #P286)
- 24h	same as VGA (see #P286)
+ 22h	same as VGA (see #P456)
+ 24h	same as VGA (see #P456)
  25h	"CR25" revision
  26h	"CR26" attribute controller index readback
  27h	"CR27" device identification
@@ -1108,18 +1173,18 @@ Values for Cirrus Logic CRT Controller register index:
  ...
  BFh	"CRBF" CRT vertical back porch
 !!! details to be added
-SeeAlso: #P259,#P472,#P474
+SeeAlso: #P402,#P504,#P465
 --------V-P03D403D5--------------------------
 PORT 03D4-03D5 - S3 VIDEO CHIPS - EXTENDED CRT CONTROL REGISTERS
 SeeAlso: PORT 03D4h"COLOR VIDEO",PORT 03D4h"Tseng"
 
-03D4  RW  CRT control register index (see #P474)
+03D4  RW  CRT control register index (see #P465)
 03D5  RW  CRT control register value
 
-(Table P474)
+(Table P465)
 Values for S3, Inc. CRT Controller register index:
- 00h-18h same as EGA/VGA (see #P286)
- 22h	same as VGA (see #P286)
+ 00h-18h same as EGA/VGA (see #P456)
+ 22h	same as VGA (see #P456)
  24h	"CR24" attribute controller index/data status
  26h R- "CR24" (duplicate of 24h)
  2Dh R- "CR2D" new Chip ID (high) (same as high byte of PCI device ID)
@@ -1128,26 +1193,26 @@ Values for S3, Inc. CRT Controller register index:
 		11h Trio64
  2Fh R- "CR2F" S3 7xx/866/x68: chipset revision
 		chip ID 8811h is Trio64/64V+; revision 4xh or 5xh is Trio64V+
- 30h RW	"CR30" chip ID/revision (see #P302)
- 31h RW	"CR31" memory configuration (see #P303)
- 32h RW "CR32" backward compatibility 1 (see #P304)
- 33h RW "CR33" backward compatibility 2 (see #P305)
- 34h RW "CR34" backward compatibility 3 (see #P306)
- 35h RW "CR35" CRT register lock (see #P307)
- 36h R	"CR36" Reset State read 1 (see #P395)
- 37h R	"CR37" Reset State read 2 (see #P396)
+ 30h RW	"CR30" chip ID/revision (see #P467)
+ 31h RW	"CR31" memory configuration (see #P468)
+ 32h RW "CR32" backward compatibility 1 (see #P469)
+ 33h RW "CR33" backward compatibility 2 (see #P470)
+ 34h RW "CR34" backward compatibility 3 (see #P471)
+ 35h RW "CR35" CRT register lock (see #P472)
+ 36h R	"CR36" Reset State read 1 (see #P473)
+ 37h R	"CR37" Reset State read 2 (see #P474)
  38h RW	"CR38" S3 Register lock 1
 	set reg 38h to 48h and reg 39h to A5h to unlock other S3 registers
  39h RW	"CR39" S3 Register lock 2
- 3Ah RW "CR3A" S3 Miscellaneous 1 (see #P397)
+ 3Ah RW "CR3A" S3 Miscellaneous 1 (see #P475)
 	bit 4: ???
- 3Bh RW "CR3B" Data Transfer Execute position (see #P398)
- 3Ch RW "CR3C" Interlace Retrace start position (see also #P400)
- 40h RW "CR40" System Configuration (see #P399)
+ 3Bh RW "CR3B" Data Transfer Execute position (see #P476)
+ 3Ch RW "CR3C" Interlace Retrace start position (see also #P478)
+ 40h RW "CR40" System Configuration (see #P477)
  41h	"CR41" BIOS Flag register (used by S3 BIOS)
- 42h RW "CR42" mode control (see #P400)
- 43h RW "CR43" extended mode (see #P401)
- 45h RW "CR45" hardware graphics cursor mode (see #P402)
+ 42h RW "CR42" mode control (see #P478)
+ 43h RW "CR43" extended mode (see #P479)
+ 45h RW "CR45" hardware graphics cursor mode (see #P480)
  46h RW "CR46" hardware cursor origin X (hi), bits 2-0 only
  47h RW "CR47" hardware cursor origin X (lo)
 	testing that register 47h can be read and written once the S3 registers
@@ -1165,38 +1230,38 @@ Values for S3, Inc. CRT Controller register index:
  4Dh RW "CR4D" hardware graphics cursor map start address (lo)
  4Eh RW "CR4E" hardware cursor pattern start X (bits 5-0 only)
  4Fh RW "CR4F" hardware cursor pattern start Y (bits 5-0 only)
- 50h RW "CR50" S3 801+: Extended System Control 1 (see #P403)
- 51h RW "CR51" S3 801+: Extended System Control 2 (see #P404)
+ 50h RW "CR50" S3 801+: Extended System Control 1 (see #P481)
+ 51h RW "CR51" S3 801+: Extended System Control 2 (see #P482)
  52h RW "CR52" S3 801+: Extended BIOS Flag 1
-		bits 7-6 are sync polarities (see #P278) for Diamond cards
- 53h RW "CR53" S3 801+: Extended Memory Control 1 (see #P383)
- 54h RW "CR54" S3 801+: Extended Memory Control 2 (see #P405,#P491)
- 55h RW "CR55" S3 801+: Extended Video DAC Control (see #P406)
- 56h RW "CR56" S3 801+: External Sync Control 1 (see #P407)
- 57h RW "CR57" S3 801+: External Sync Control 2 (see #P408)
- 58h RW "CR58" S3 801+: Linear Address Window Control (see #P308)
+		bits 7-6 are sync polarities (see #P417) for Diamond cards
+ 53h RW "CR53" S3 801+: Extended Memory Control 1 (see #P483)
+ 54h RW "CR54" S3 801+: Extended Memory Control 2 (see #P484,#P485)
+ 55h RW "CR55" S3 801+: Extended Video DAC Control (see #P486)
+ 56h RW "CR56" S3 801+: External Sync Control 1 (see #P487)
+ 57h RW "CR57" S3 801+: External Sync Control 2 (see #P488)
+ 58h RW "CR58" S3 801+: Linear Address Window Control (see #P489)
  59h RW "CR59" S3 801+: Linear Address Window Position (bits 31-24)
  5Ah RW "CR5A" S3 801+: Linear Address Window Position (bits 23-16)
 	Notes:	the address is forced to be a multiple of the memory window
-		  size (see #P308) by ignoring the lowest bits
+		  size (see #P489) by ignoring the lowest bits
 		for Trio64 new memory-mapped I/O, the LAW must be on a 64M
 		  boundary
  5Bh RW "CR5B" S3 801+: Extended BIOS Flag 2
- 5Ch RW "CR5C" S3 801+: General Output Port (see #P409)
- 5Dh RW "CR5D" S3 801+: Extended Horizontal Overflow (see #P410)
- 5Eh RW "CR5E" S3 801+: Extended Vertical Overflow (see #P411)
+ 5Ch RW "CR5C" S3 801+: General Output Port (see #P490)
+ 5Dh RW "CR5D" S3 801+: Extended Horizontal Overflow (see #P491)
+ 5Eh RW "CR5E" S3 801+: Extended Vertical Overflow (see #P492)
  5Fh RW "CR5F" S3 928/964: Bus Grant Termination Position
- 60h RW "CR60" S3 864/964: extended memory control 3 (see #P412)
- 61h RW "CR61" S3 864/964/Trio: extended memory control 4 (see #P492)
+ 60h RW "CR60" S3 864/964: extended memory control 3 (see #P493)
+ 61h RW "CR61" S3 864/964/Trio: extended memory control 4 (see #P494)
  62h RW "CR62" S3 864/964: extended memory control 5
- 63h RW "CR63" S3 864/964: external sync delay adjustment (high) (see #P413)
+ 63h RW "CR63" S3 864/964: external sync delay adjustment (high) (see #P495)
  64h RW "CR64" S3 864/964: genlocking adjustment
- 65h RW "CR65" S3 864/964: extended miscellaneous control (see #P414)
- 66h RW "CR66" S3 864/964: extended miscellaneous control 1 (see #P415)
- 67h RW "CR67" S3 864/964: extended miscellaneous control 2 (see #P309)
- 67h RW "CR67" S3 Trio32/64: extended miscellaneous control 2 (see #P416)
- 68h RW "CR68" S3 864/964: configuration 3 (see #P418)
- 69h RW "CR69" S3 864/964: extended system control 3 (see #P419)
+ 65h RW "CR65" S3 864/964: extended miscellaneous control (see #P496)
+ 66h RW "CR66" S3 864/964: extended miscellaneous control 1 (see #P497)
+ 67h RW "CR67" S3 864/964: extended miscellaneous control 2 (see #P498)
+ 67h RW "CR67" S3 Trio32/64: extended miscellaneous control 2 (see #P499)
+ 68h RW "CR68" S3 864/964: configuration 3 (see #P500)
+ 69h RW "CR69" S3 864/964: extended system control 3 (see #P501)
  6Ah RW "CR6A" S3 864/964: extended system control 4
 		(bits 5-0 = offset of 64K bank)
  6Bh RW "CR6B" S3 864/964: extended BIOS flag 3
@@ -1204,18 +1269,18 @@ Values for S3, Inc. CRT Controller register index:
  6Dh RW "CR6D" S3 864/964: extended miscellaneous control
  6Dh RW "CR6D" S3 Trio64V+: extended BIOS flag 5 (reserved for BIOS)
  6Eh RW "CR6E" S3 Trio64V+: extended BIOS flag 6 (reserved for BIOS)
- 6Fh RW "CR6F" S3 Trio64V+: configuration 4 (see #P493)
-SeeAlso: #P259,#P287,#P472,#P473,#P475
+ 6Fh RW "CR6F" S3 Trio64V+: configuration 4 (see #P503)
+SeeAlso: #P402,#P458,#P504,#P464,#P463
 
 Bitfields for S3 "CR24" Attribute Index register:
-Bit(s)	Description	(Table P494)
+Bit(s)	Description	(Table P466)
  7	inverse of current state of internal address flip-flop
  6	reserved (0)
  5	video display is enabled (mirror of PORT 03C0h bit 5)
  4-0	current attribute contorller index (from PORT 03C0h)
-SeeAlso: #P286,#P497,PORT 03C0h
+SeeAlso: #P456,#P457,PORT 03C0h
 
-(Table P302)
+(Table P467)
 Values for S3 chip ID/Revision register "CR30":
  81h	86c911
  82h	86c911A/924
@@ -1230,10 +1295,10 @@ Values for S3 chip ID/Revision register "CR30":
  D1h	Vision964P
  Exh	Trio32/64, 86c866, 86c868, 86c968; actual ID and revision stored in
 	  PORT 03B5h registers 2Dh, 2Eh, and 2Fh
-SeeAlso: #P303
+SeeAlso: #P468
 
 Bitfields for S3 "CR31" memory configuration register:
-Bit(s)	Description	(Table P303)
+Bit(s)	Description	(Table P468)
  7	(except 864/964) enable BIOS ROM address space C6800h-C7FFFh
 	(Trio64V+) reserved
  6	enable page-mode memory access for text-mode font access
@@ -1242,12 +1307,12 @@ Bit(s)	Description	(Table P303)
  2	VGA 16-bit memory bus (clear for 8-bit memory bus)
  1	two-page screen image (enables 2048-pixel wide screen)
  0	enable base-address offset (turn on bank-switched operation)
-SeeAlso: #P286,#P302,#P304
+SeeAlso: #P456,#P467,#P469
 
 Bitfields for S3 "CR32" Backwards Compatibility 1 register:
-Bit(s)	Description	(Table P304)
+Bit(s)	Description	(Table P469)
  7	(928,964) tri-state serial output pins SC, SOE0, and SXNR
- 6	fix VGA screen page using display start address bits 16&17 (see #P303)
+ 6	fix VGA screen page using display start address bits 16&17 (see #P468)
 	(Trio64V+) force wrap on 256K boundary even when display start address
 	  changed
  5	???
@@ -1260,10 +1325,10 @@ Bit(s)	Description	(Table P304)
 	01 7 dots
 	10 9 dits
 Note:	on the Trio64V+, bits 7, 5, and 3-0 are reserved
-SeeAlso: #P303,#P305,#M122
+SeeAlso: #P468,#P470,#M076
 
 Bitfields for S3 "CR33" Backwards Compatibility 2 register:
-Bit(s)	Description	(Table P305)
+Bit(s)	Description	(Table P470)
  7	override CGA "enable video" at PORT 03D8h bit 3
  6	lock palette/overscan registers
  5	blank signal does not include border area, is same as display enable
@@ -1274,10 +1339,10 @@ Bit(s)	Description	(Table P305)
 	  on PORT 03D4h register 7h bits 1 and 6)
  0	reserved (Trio32/64)
 Note:	on the Trio64V+, bits 7, 2, and 0 are reserved
-SeeAlso: #P286,#P304,#P306
+SeeAlso: #P456,#P469,#P471
 
 Bitfields for S3 "CR34" Backwards Compatibility 3 register:
-Bit(s)	Description	(Table P306)
+Bit(s)	Description	(Table P471)
  7-5	(Trio32/64/64V+) reserved
  7	lock PORT 03C2h bits 2,3
  5	lock SR1 bit 5
@@ -1286,18 +1351,18 @@ Bit(s)	Description	(Table P306)
  2	PCI retries not handled during DAC cycles (requires bit 0 clear)
  1	do not handle PCI master aborts during DAC cycles (requires bit 0 clear)
  0	disable PCI master aborts/retries during DAC cycles
-SeeAlso: #P305,#P307
+SeeAlso: #P470,#P472
 
 Bitfields for S3 "CR35" Register Lock register:
-Bit(s)	Description	(Table P307)
+Bit(s)	Description	(Table P472)
  7-6	(Trio32/Trio64) reserved
  5	lock horizontal timing registers
  4	lock vertical timing registers
  3-0	CPU base address (in 64K units), bits 17-14
-SeeAlso: #P286,#P306,#P395
+SeeAlso: #P456,#P471,#P473
 
 Bitfields for S3 "CR36" Configuration 1 register:
-Bit(s)	Description	(Table P395)
+Bit(s)	Description	(Table P473)
  7-5	video memory size
 	111 less than 1M
 	110 one meg
@@ -1319,10 +1384,10 @@ Bit(s)	Description	(Table P395)
 	11 reserved
 Note:	the default value of this register is latched from external pins at
 	  power-up; bits 1-0 are read-only
-SeeAlso: #P286,#P307,#P396
+SeeAlso: #P456,#P472,#P474
 
 Bitfields for S3 "CR37" Configuration 2 register:
-Bit(s)	Description	(Table P396)
+Bit(s)	Description	(Table P474)
  7-5	monitor type
  7-5	(Trio64V+) reserved
  4	(VL-Bus) enable RAMDAC write snooping
@@ -1335,10 +1400,10 @@ Notes:	the default value of this register is latched from external pins at
 	  power-up
 	the description of this register is based on the Trio32/Trio64/Trio64V+
 	  documentation and may vary somewhat for other S3 chips
-SeeAlso: #P286,#P395
+SeeAlso: #P456,#P473
 
 Bitfields for S3 "CR3A" Miscellaneous 1 register:
-Bit(s)	Description	(Table P397)
+Bit(s)	Description	(Table P475)
  7	disable PCI burst read cycles
 	(must set CR66 bit 7 before setting this bit)
  6	reserved
@@ -1350,20 +1415,20 @@ Bit(s)	Description	(Table P397)
  1-0	alternate refresh count: number of refresh cycles per scan line
 Note:	the description of this register is based on the Trio32/Trio64/Trio64V+
 	  documentation and may vary somewhat for other S3 chips
-SeeAlso: #P286
+SeeAlso: #P456
 
 Bitfields for S3 "CR3B" Start Display FIFO Register:
-Bit(s)	Description	(Table P398)
+Bit(s)	Description	(Table P476)
  7-0	bits 7-0 of time in characters clocks from start of active display
 	  until FIFO data fetching restarts after start of horizontal blanking
 	  (bit 8 is in CR5D bit 6)
 Note:	the value for this register is typically CR0 less 5, and helps ensure
 	  adequate time for RAM refresh, etc. taht require control of display
 	  memory
-SeeAlso: #P286
+SeeAlso: #P456
 
 Bitfields for S3 "CR40" System Configuration register:
-Bit(s)	Description	(Table P399)
+Bit(s)	Description	(Table P477)
  7-6	reserved (0)
  5	reserved ("WDL_DELAY") (1)
  4	(VL-Bus) Ready Control
@@ -1371,37 +1436,37 @@ Bit(s)	Description	(Table P399)
 	=1 minimum one wait state (controlled by CR58 bit 3)
  3-1	reserved (0)
  0	enable enhanced (8514/A superset) register access at PORT x2E8h
-SeeAlso: #P286
+SeeAlso: #P456
 
 Bitfields for S3 "CR42" Mode Control register:
-Bit(s)	Description	(Table P400)
+Bit(s)	Description	(Table P478)
  7-6	reserved (0)
  5	interlaced video
  4-0	reserved
 Note:	bit 5 also enables CR3C
-SeeAlso: #P286,#P401
+SeeAlso: #P456,#P479
 
 Bitfields for S3 "CR43" Extended Mode register:
-Bit(s)	Description	(Table P401)
+Bit(s)	Description	(Table P479)
  7	double horizontal CRT parameters (CRTC registers 00h, etc.)
  6-3	reserved (0)
  3	(Trio64V+) ??? used by BIOS, officially reserved
  2	logical screen width (CR13), bit 8
  1-0	reserved (0)
 Note:	bit 2 is disabled unless CR51 bits 5-4=00
-SeeAlso: #P286,#P400
+SeeAlso: #P456,#P478
 
 Bitfields for S3 "CR45" Hardware Graphics Cursor Mode register:
-Bit(s)	Description	(Table P402)
+Bit(s)	Description	(Table P480)
  7-5	reserved (0)
  4	enable Hardware Cursor Right Storage (last 256 bytes of 1K line, or
 	  last 512 bytes of 2K line)
  3-1	reserved (0)
  0	enable hardware graphics cursor in Enhanced (8514/A) mode
-SeeAlso: #P286
+SeeAlso: #P456
 
 Bitfields for S3 "CR50" Extended System Control 1 register:
-Bit(s)	Description	(Table P403)
+Bit(s)	Description	(Table P481)
  7-6	Graphics Engine screen width
 	(note: bit 0 below is MSB for the following)
 	000 = 1024 (2048 if CR31 bit 1 set)
@@ -1421,10 +1486,10 @@ Bit(s)	Description	(Table P403)
  2	enable -BREQ/-BGNT functions (reserved on Trio64V+)
  1	reserved (0)
  0	bit 2 of Graphics Engine screen width (refer to bits 7-6 above)
-SeeAlso: #P286,#P383,#P404
+SeeAlso: #P456,#P483,#P482
 
 Bitfields for S3 "CR51" Extended System Control 2 register:
-Bit(s)	Description	(Table P404)
+Bit(s)	Description	(Table P482)
  7-6	reserved (0)
  5-4	logical screen width, bits 9-8
  3-2	CPU base address, bits 19-18
@@ -1433,10 +1498,10 @@ Notes:	if the upper four bits of the display start address have been set via
 	  CR69 bits 3-0, then bits 1-0 and CR31 bits 5-4 are ignored
 	if the upper 6 base address bits have been set via CR6A bits 5-0, then
 	  bits 3-2 and CR35 bits 3-0 are ignored
-SeeAlso: #P286,#P403
+SeeAlso: #P456,#P481
 
 Bitfields for S3 "CR53" Extended Memory Control 1 register:
-Bit(s)	Description	(Table P383)
+Bit(s)	Description	(Table P483)
  7	reserved
  6	(Trio32/64/64V+) swap nybbles in each byte of video memory read or
 	  written
@@ -1454,17 +1519,17 @@ Bit(s)	Description	(Table P383)
 	(used for big-endian addressing)
  0	(Trio32/64) enable write per bit
 	(Trio64V+) reserved
-SeeAlso: #P286,#P405
+SeeAlso: #P456,#P484
 
 Bitfields for S3 Trio32/64 "CR54" Extended Memory Control 2 register:
-Bit(s)	Description	(Table P405)
+Bit(s)	Description	(Table P484)
  7-3	"M" number of 8-byte memory cycles not dedicated to filling display
 	  FIFO (less one)
  2-0	reserved (0)
-SeeAlso: #P491,#P286,#P383
+SeeAlso: #P485,#P456,#P483
 
 Bitfields for S3 Trio64V+ "CR54" Extended Memory Control 2 register:
-Bit(s)	Description	(Table P491)
+Bit(s)	Description	(Table P485)
  2,7-3	"M" maximum number of 8-byte memory cycles before LPB/CPU/Graphics
 	  Engine must yield the memory bus
  1-0	big-endian byte-swapping (except for linear addressing/image writes)
@@ -1475,10 +1540,10 @@ Bit(s)	Description	(Table P491)
 		BE#[3:0]=0000 swap all bytes
 		BE#[3:0]=0011 or 1100 swap bytes within selected word
 		else no swapping
-SeeAlso: #P286,#P405 
+SeeAlso: #P456,#P484 
 
 Bitfields for S3 "CR55" Extended RAMDAC Control register:
-Bit(s)	Description	(Table P406)
+Bit(s)	Description	(Table P486)
  7	tri-state VCLK output
  6-5	reserved (0)
  4	hardware cursor mode
@@ -1487,10 +1552,10 @@ Bit(s)	Description	(Table P406)
  3	reserved (0)
  2	enable General Input Port read (at PORT 03C8h)
  1-0	reserved (0)
-SeeAlso: #P286
+SeeAlso: #P456
 
 Bitfields for S3 "CR56" External Sync Control 1 register:
-Bit(s)	Description	(Table P407)
+Bit(s)	Description	(Table P487)
  7-5	reserved (0)
  4	preset frame select
 	=0 start with odd frame after V-counter reset
@@ -1501,21 +1566,21 @@ Bit(s)	Description	(Table P407)
  1	tri-state HSYNC output
  0	enable VSYNC input for genlocking
 Note:	bits 4-3 are reserved on the Trio64V+
-SeeAlso: #P286,#P408
+SeeAlso: #P456,#P488
 
 Bitfields for S3 "CR57" External Sync Control 2 register:
-Bit(s)	Description	(Table P408)
+Bit(s)	Description	(Table P488)
  7-0	delay in scan lines from falling edge of VSYNC to reset of V-counter
 Note:	this register must NOT be 00h when genlocking is enabled (CR56 bit 0)
-SeeAlso: #P286,#P407
+SeeAlso: #P456,#P487
 
 Bitfields for S3 "CR58" Linear Addressing Control register:
-Bit(s)	Description	(Table P308)
+Bit(s)	Description	(Table P489)
  7	RAS Pre-Charge time adjust
 	=0 CR68 bit 3 defines pre-charge time
 	=1 decrease pre-charge time by 0.5 MCLKs, increase RAS time by 0.5 MCLKs
  6-5	reserved
- 4	enable linear addressing (see also #P361)
+ 4	enable linear addressing (see also #P601)
  3	(VL-Bus) addresses latched in T1 cycle, instead of delaying one clock
 	  until T2 cycle; only in effect when CR40 bit 4 is set
  2	reserved
@@ -1526,20 +1591,20 @@ Bit(s)	Description	(Table P308)
 	11 = 4M (Trio64/64V+, not Trio32)
 Note:	this description is based on the Trio32/Trio64 documenation; the
 	  bits may vary slightly for other S3 chips
-SeeAlso: #P306
+SeeAlso: #P471
 
 Bitfields for S3 "CR5C" General Output Port:
-Bit(s)	Description	(Table P409)
+Bit(s)	Description	(Table P490)
  7-0	system-specific
 ---Diamond---
  0	???
  1	???
 ---STB Pegasus---
  7	map video memory with bits 31-26 = 011111
-SeeAlso: #P286
+SeeAlso: #P456
 
 Bitfields for S3 "CR5D" Extended Horizontal Overflow register:
-Bit(s)	Description	(Table P410)
+Bit(s)	Description	(Table P491)
  7	bit 8 of Bus-Grant Terminate Position (CR5F)
 	(Trio64V+) reserved
  6	bit 8 of Start FIFO Fetch (CR3B)
@@ -1549,10 +1614,10 @@ Bit(s)	Description	(Table P410)
  2	bit 8 of Start Horizontal Blank (CR2)
  1	bit 8 of Horizontal Display End (CR1)
  0	bit 8 of Horizontal Total (CR0)
-SeeAlso: #P286,#P411
+SeeAlso: #P456,#P492
 
 Bitfields for S3 "CR5E" Extended Vertical Overflow register:
-Bit(s)	Description	(Table P411)
+Bit(s)	Description	(Table P492)
  7	reserved (0)
  6	line compare position (CR18), bit 10
  5	reserved (0)
@@ -1561,16 +1626,16 @@ Bit(s)	Description	(Table P411)
  2	start of vertical blank (CR15), bit 10
  1	vertical display end (CR12), bit 10
  0	vertical total (CR6), bit 10
-SeeAlso: #P286,#P410
+SeeAlso: #P456,#P491
 
 Bitfields for S3 Trio32/64 "CR60" Extended Memory Control 3 register:
-Bit(s)	Description	(Table P412)
+Bit(s)	Description	(Table P493)
  7-0	"N" maximum number of 4-byte (1M video memory) or 8-byte (2M/4M) units
 	  written to display FIFO in an uninterruptible burst
-SeeAlso: #P286,#P492
+SeeAlso: #P456,#P494
 
 Bitfields for S3 Trio64V+ "CR61" Extended Memory Control 4 register:
-Bit(s)	Description	(Table P492)
+Bit(s)	Description	(Table P494)
  7	reserved
  6-5	byte-swapping for image writes
 	00 none (default)
@@ -1578,19 +1643,19 @@ Bit(s)	Description	(Table P492)
 	10 swap all bytes within a doubleword
 	11 reserved
  4-0	reserved
-SeeAlso: #P286,#P412
+SeeAlso: #P456,#P493
 
 Bitfields for S3 Trio32/64 "CR63" External Sync Control 3 register:
-Bit(s)	Description	(Table P413)
+Bit(s)	Description	(Table P495)
  7-4	character clock reset delay
  3-0	HSYNC reset adjustment, in character clocks
 Notes:	these two values are used to align the external and internally-generated
 	  video during genlocking
 	this register is not documented for the Trio64V+, and may not exist
-SeeAlso: #P286
+SeeAlso: #P456
 
 Bitfields for S3 Trio32/64/64V+ "CR65" Extended Miscellaneous Control register:
-Bit(s)	Description	(Table P414)
+Bit(s)	Description	(Table P496)
  7-5	reserved (0)
  4-3	(Trio32/64V+) delay -BLANK by N DCLKs
 	a two-DCLK delay is required for color mode 12
@@ -1599,10 +1664,10 @@ Bit(s)	Description	(Table P414)
 	=0 PORT 46E8h
 	=1 PORT 03C3h
  1-0	reserved (0)
-SeeAlso: #P286,#P415
+SeeAlso: #P456,#P497
 
 Bitfields for S3 Trio32/64/64V+ "CR66" Extended Miscellaneous Control 1 reg:
-Bit(s)	Description	(Table P415)
+Bit(s)	Description	(Table P497)
  7	enable PCI bus disconnect on misaligned burst memory accesses
  6	tri-state pixel address bus
 ---Trio32/64---
@@ -1617,18 +1682,18 @@ Bit(s)	Description	(Table P415)
  1	software reset graphics engine
  0	enable enhanced functions (this is a mirror of
 	  PORT 4AE8h bit 0)
-SeeAlso: #P286,#P414,PORT 4AE8h
+SeeAlso: #P456,#P496,PORT 4AE8h
 
 Bitfields for S3 864/964 "CR67" Extended Miscellaneous Control 2 register:
-Bit(s)	Description	(Table P309)
+Bit(s)	Description	(Table P498)
  7-4	color mode???
 	(values of 0000/0010/0101/0111 indicate a 16-bit pixel port)
  3-2	???
-SeeAlso: #P286,#P306,#P416
+SeeAlso: #P456,#P471,#P499
 
 Bitfields for S3 Trio32/64/64V+ "CR67" Extended Miscellaneous Control 2 reg:
-Bit(s)	Description	(Table P416)
- 7-4	color mode (see #P417)
+Bit(s)	Description	(Table P499)
+ 7-4	color mode (see #P436)
  3-2	(Trio32/Trio64) reserved (0)
  3-2	(Trio64V+) streams mode
 	00 disable Streams Processor
@@ -1639,10 +1704,10 @@ Bit(s)	Description	(Table P416)
  0	VCLK phase (=0 VCLK is inverted DCLK; =1 VCLK in phase with DCLK)
 Note:	the streams mode should only be changed during vertical sync
 	  (PORT 03DAh bit 3)
-SeeAlso: #P286,#P309,#P388
+SeeAlso: #P456,#P498,#P435
 
 Bitfields for S3 Trio32/64/64V+ "CR68" Configuration 3 register:
-Bit(s)	Description	(Table P418)
+Bit(s)	Description	(Table P500)
  7	(Trio32/64 VL-Bus) Upper Address Decode
 	=0 decode all 32 bits of system address bus
 	=1 SAUP input used to decode upper address lines
@@ -1659,23 +1724,23 @@ Bit(s)	Description	(Table P418)
 	11 = no stretch, no delay
 Note:	the default value of this register is latched from external pins at
 	  power-up
-SeeAlso: #P286
+SeeAlso: #P456
 
 Bitfields for S3 Trio32/Trio64 "CR69" Extended System Control 3 register:
-Bit(s)	Description	(Table P419)
+Bit(s)	Description	(Table P501)
  7-4	reserved (0)
  3-0	display start address, bits 19-16
-SeeAlso: #P286,#P420
+SeeAlso: #P456,#P502
 
 Bitfields for S3 Trio32/Trio64 "CR6A" Extended System Control 4 register:
-Bit(s)	Description	(Table P420)
+Bit(s)	Description	(Table P502)
  7-6	reserved
  5-0	bits 19-14 of CPU base address
 Note:	CR31 bit 0 must be set to enable this register
-SeeAlso: #P286,#P419
+SeeAlso: #P456,#P501
 
 Bitfields for S3 Trio64V+ "CR6F" Configuration 4 register:
-Bit(s)	Description	(Table P493)
+Bit(s)	Description	(Table P503)
  7-5	reserved
  4-3	WE# delay (on both rising and falling edges)
 	00 three units
@@ -1689,17 +1754,17 @@ Bit(s)	Description	(Table P493)
 	=1 mirror MMIO FF20h at PORT 00E2h
  0	configure for Trio64-compatible mode instead of LPB mode
  !!! p.19-16
-SeeAlso: #P286,MEM A000h:FF00h"S3"
+SeeAlso: #P456,MEM A000h:FF00h"S3"
 --------V-P03D403D5--------------------------
 PORT 03D4-03D5 - Tseng Labs VIDEO CHIPS - EXTENDED CRT CONTROL REGISTERS
 SeeAlso: PORT 03D4h"COLOR VIDEO",PORT 03D4h"S3",PORT 03D4h"Cirrus"
 
-03D4  RW  CRT control register index (see #P472)
+03D4  RW  CRT control register index (see #P504)
 03D5  RW  CRT control register value
 
-(Table P472)
+(Table P504)
 Values for Tseng Labs ET3000/ET4000 CRT Controller register index:
- 00h-18h same as EGA/VGA (see #P286)
+ 00h-18h same as EGA/VGA (see #P456)
 ---ET3000 only---
  1Bh	x-zoom start register
 	The existence of this register is often used to decide between ET3000
@@ -1714,7 +1779,7 @@ Values for Tseng Labs ET3000/ET4000 CRT Controller register index:
  24h	compatibility register (see register 34h)
  25h	overflow high register (see registers 35h, 07h)
 ---ET4000---
- 32h	RAS/CAS configuration ('key' protected) (see #P297)
+ 32h	RAS/CAS configuration ('key' protected) (see #P505)
  33h	extended start address
 	      This register is often used to decide between ET4000
 	      and ET3000, when bit3-0 can be reread after write.
@@ -1722,14 +1787,14 @@ Values for Tseng Labs ET3000/ET4000 CRT Controller register index:
 	       bit3-2 : cursor address bit 17-16
 	       bit1-0 : linear start address bits 17-16
  34h	6845 compatibility control register ('key' protected)
-	  (see #P298)
- 35h	overflow high register (protected by 11h, bit7) (see #P299)
- 36h	video system configuration 1 ('key' protected) (see #P300)
- 37h	video system configuration 2 ('key' protected) (see #P301)
-SeeAlso: #P259,#P473,#P474
+	  (see #P506)
+ 35h	overflow high register (protected by 11h, bit7) (see #P507)
+ 36h	video system configuration 1 ('key' protected) (see #P508)
+ 37h	video system configuration 2 ('key' protected) (see #P509)
+SeeAlso: #P402,#P464,#P465
 
 Bitfields for ET4000 RAS/CAS configuration register:
-Bit(s)	Description	(Table P297)
+Bit(s)	Description	(Table P505)
  7	static column memory
 	ET4000/W32i: interleave mode
  6	RAL RAS&CAS column setup time
@@ -1737,10 +1802,10 @@ Bit(s)	Description	(Table P297)
  4-3	RSP, RAS pre-charge time
  2	CPS, CAS pre-charge time
  1-0	CSW, CAS low pulse width
-SeeAlso: #P286,#P298
+SeeAlso: #P456,#P506
 
 Bitfields for ET4000 compatibility control register:
-Bit(s)	Description	(Table P298)
+Bit(s)	Description	(Table P506)
  7	6845 compatibility enabled
  6	ENBA enable double scan/underline in AT&T mode
  5	ENXL enable translation ROM on writing
@@ -1749,10 +1814,10 @@ Bit(s)	Description	(Table P298)
  2	TRIS tristate ET4000 output pins
  1	CS2 MCLCK clock select 2
  0	EMCK enable translation of CS0 bit
-SeeAlso: #P286,#P297,#P299
+SeeAlso: #P456,#P505,#P507
 
 Bitfields for ET4000 overflow high register:
-Bit(s)	Description	(Table P299)
+Bit(s)	Description	(Table P507)
  7	vertical interlace mode
  6	alternate RMW control
  5	external sync reset (gen-lock) the line/chr counter
@@ -1761,20 +1826,20 @@ Bit(s)	Description	(Table P299)
  2	vertical display end bit10
  1	vertical total bit10
  0	vertical blank start bit10
-SeeAlso: #P286,#P298,#P300
+SeeAlso: #P456,#P506,#P508
 
 Bitfields for ET4000 video system configuration 1 register:
-Bit(s)	Description	(Table P300)
+Bit(s)	Description	(Table P508)
  7	enable 16bit I/O read/write
  6	enable 16bit display memory read/write
  5	addressing mode (0=IBM, 1=TLI)
  4	0=segment / 1=linear system configuration
  3	font width control (1=up to 16bit, 0=8bit)
  2-0	refresh count per line-1
-SeeAlso: #P286,#P299,#P301
+SeeAlso: #P456,#P507,#P509
 
 Bitfields for ET4000 video system configuration 2 register:
-Bit(s)	Description	(Table P301)
+Bit(s)	Description	(Table P509)
  7	DRAM display memory type (1=VRAM, 0=DRAM)
  6	test (1=TLI interal test mode)
  5	priority threshold control (0=more mem BW)
@@ -1782,7 +1847,7 @@ Bit(s)	Description	(Table P301)
  3	display memory data depth
  2	bus read data latch control
  1-0	display memory data bus width
-SeeAlso: #P286,#P300
+SeeAlso: #P456,#P508
 ----------P03D603D7--------------------------
 PORT 03D6-03D7 - CGA (Color Graphics Adapter) - MIRRORS OF 03D4/03D5
 
@@ -1793,41 +1858,41 @@ PORT 03D6-03D7 - CGA (Color Graphics Adapter) - MIRRORS OF 03D4/03D5
 ----------P03D603D7--------------------------
 PORT 03D6-03D7 - Chips&Technologies VGA - EXTENSION REGISTERS
 
-03D6  -W  extension register index (see #P449)
+03D6  -W  extension register index (see #P510)
 03D7  RW  extension register data
 
-(Table P449)
+(Table P510)
 Values for Chips&Technologies extension register index:
- 00h	"XR00"	chip version (see #P498)
- 01h	"XR01"	configuration (see #P499)
- 02h	"XR02"	CPU interface control (see #P625)
- 03h	"XR03"	master control (see #P626)
- 04h	"XR04"	memory control (see #P627)
- 05h	"XR05"	clock control (see #P628)
+ 00h	"XR00"	chip version (see #P511)
+ 01h	"XR01"	configuration (see #P512)
+ 02h	"XR02"	CPU interface control (see #P513)
+ 03h	"XR03"	master control (see #P514)
+ 04h	"XR04"	memory control (see #P515)
+ 05h	"XR05"	clock control (see #P516)
  06h	"XR06"	color palette control / DRAM interface
  07h	"XR07"	reserved
  08h	"XR08"	general purpose output select B
  09h	"XR09"	general purpose output select A
  0Ah	"XR0A"	cursor address top
- 0Bh	"XR0B"	CPU paging (see #P629)
- 0Ch	"XR0C"	start address top (see #P630)
- 0Dh	"XR0D"	auxiliary offset (see #P631)
- 0Eh	"XR0E"	text mode control (see #P632)
+ 0Bh	"XR0B"	CPU paging (see #P517)
+ 0Ch	"XR0C"	start address top (see #P518)
+ 0Dh	"XR0D"	auxiliary offset (see #P519)
+ 0Eh	"XR0E"	text mode control (see #P520)
  0Fh	"XR0F"	configuration register 2
- 10h	"XR10"	single/low map register (see #P633)
- 11h	"XR11"	high map register (see #P634)
- 14h	"XR14"	emulation mode (see #P635)
- 15h	"XR15"	write protect (see #P636)
+ 10h	"XR10"	single/low map register (see #P521)
+ 11h	"XR11"	high map register (see #P522)
+ 14h	"XR14"	emulation mode (see #P523)
+ 15h	"XR15"	write protect (see #P524)
  16h	"XR16"	trap enable
  17h	"XR17"	trap status
  18h	"XR18"	alternate horizontal display end
  19h	"XR19"	alternate horizontal sync start / half-line
- 1Ah	"XR1A"	alternate horizontal sync end (see #P637)
+ 1Ah	"XR1A"	alternate horizontal sync end (see #P525)
  1Bh	"XR1B"	alternate horizontal total
  1Ch	"XR1C"	alternate horizontal blank start / horizontal panel size
- 1Dh	"XR1D"	alternate horizontal blank end (see #P638)
+ 1Dh	"XR1D"	alternate horizontal blank end (see #P526)
  1Eh	"XR1E"	alternate offset
- 1Fh	"XR1F"	virtual EGA switch (see #P639)
+ 1Fh	"XR1F"	virtual EGA switch (see #P527)
  20h	"XR20"	453 Interface ID
  21h	"XR21"	Sliding Hold A
  22h	"XR22"	Sliding Hold B
@@ -1836,7 +1901,7 @@ Values for Chips&Technologies extension register index:
  25h	"XR25"	Flat-Panel "AltGrHVirtPanelSize" / 453 Pin Definition
  26h	"XR26"	453 Configuration
  27h	"XR27"	reserved
- 28h	"XR28"	video interface (see #P640)
+ 28h	"XR28"	video interface (see #P528)
  29h	"XR29"	function control
  2Ah	"XR2A"	frame interrupt count
  2Bh	"XR2B"	default video color (to be displayed when screen blanked)
@@ -1856,8 +1921,8 @@ Values for Chips&Technologies extension register index:
  39h	"XR39"	graphics cursor color 0
  3Ah	"XR3A"	graphics cursor color 1
  3Bh	"XR3B"	reserved
- 3Ch	"XR3C"	serial / row count (see #P641)
- 3Dh	"XR3D"	multiplexor mode (see #P642)
+ 3Ch	"XR3C"	serial / row count (see #P529)
+ 3Dh	"XR3D"	multiplexor mode (see #P530)
  41h	"XR41"	virtual EGA switch register (82C453)
  44h	"XR44"	software flag register 1
  45h	"XR45"	software flag register 2 / foreground color
@@ -1893,17 +1958,17 @@ Values for Chips&Technologies extension register index:
  6Dh	"XR6D"	FRC control
  6Eh	"XR6E"	polynomial FRC control
  6Fh	"XR6F"	frame buffer control
- 70h	"XR70"	setup/disable control (see #P643)
+ 70h	"XR70"	setup/disable control (see #P531)
  71h-7Ch	reserved
  7Dh	"XR7D"	flat-panel compensation diagnostic
- 7Eh	"XR7E"	CGA/Hercules color selection (see #P644)
- 7Fh	"XR7F"	diagnostics (see #P645)
+ 7Eh	"XR7E"	CGA/Hercules color selection (see #P532)
+ 7Fh	"XR7F"	diagnostics (see #P533)
 !!! chips\64200.pdf p.28, p.72
 Note:	not all C&T chips support all of the above registers; see the tables
 	  for the individual registers for a list of supporting chipsets
 
 Bitfields for Chips&Technologies "XR00" chip version:
-Bit(s)	Description	(Table P498)
+Bit(s)	Description	(Table P511)
  7-4	chip type
 	0000 = 82C451
 	0001 = 82C452
@@ -1920,10 +1985,10 @@ Bit(s)	Description	(Table P498)
 	1011 = 64310 Wingine DGX-PCI (if bit 3 set)
  3-0	chip revision (0000 = first silicon)
 Note:	this register is read-only
-SeeAlso: #P449,#P499
+SeeAlso: #P510,#P512
 
 Bitfields for Chips&Technologies "XR01" configuration:
-Bit(s)	Description	(Table P499)
+Bit(s)	Description	(Table P512)
  7-4	configuration bits 7-4 (latched from pins on falling edge of RESET)
  3	memory configuration
 	0 video memory pins always drive
@@ -1938,10 +2003,10 @@ Bit(s)	Description	(Table P499)
 	10 local bus
 	11 ISA
 Note:	this register is read-only
-SeeAlso: #P449,#P498,#P625
+SeeAlso: #P510,#P511,#P513
 
 Bitfields for Chips&Technologies "XR02" CPU interface register:
-Bit(s)	Description	(Table P625)
+Bit(s)	Description	(Table P513)
  7	status of attribute flip-flop (read-only) (0 = index, 1 = data)
  6	palette address decoding
 	0 access only at PORT 03C6h-03C9h
@@ -1956,14 +2021,14 @@ Bit(s)	Description	(Table P625)
 	10 EGA mapping - write index at 03C0h, data at 03C0h or 03C1h (8-bit)
 	11 reserved
  2-0	reserved (0)
-SeeAlso: #P449,#P499,PORT 83C6h
+SeeAlso: #P510,#P512,PORT 83C6h
 
 Bitfields for Chips&Technologies "XR03" Master Control register:
-Bit(s)	Description	(Table P626)
+Bit(s)	Description	(Table P514)
  7	XREQ# direction (=0 input, =1 output)
  6	XREQ# divide (=0 DispEnable for all lines, =1 even-numbered lines)
  5	XREQ# mode (=0 DispEnable only, =1 split-buffer VRAM transfer timing)
-	(see #P641"XR3C",#P642"XR3D")
+	(see #P529"XR3C",#P530"XR3D")
  4	alternate VGA address
 	=1 map at PORT 02C6h-02C9h instead of 03C6h-03C9h
  3-2	reserved
@@ -1975,10 +2040,10 @@ Bit(s)	Description	(Table P626)
 Note:	a write-only copy of this register may be accessed at PORT 0022h
 	  (index E0h) and PORT 0023h; a read-write copy exists in systems with
 	  built-in Wingine support
-SeeAlso: #P449,#P625,#P627
+SeeAlso: #P510,#P513,#P515
 
 Bitfields for Chips&Technologies "XR04" Memory Control register:
-Bit(s)	Description	(Table P627)
+Bit(s)	Description	(Table P515)
  7-6	reserved (0)
  5	enable CPU memory write buffer
  4-3	reserved (0)
@@ -1988,57 +2053,57 @@ Bit(s)	Description	(Table P627)
  0	memory configuration
 	=0 8-bit data, two DRAM chips of 256Kx4
 	=1 16-bit data, four DRAM chips of 256Kx4
-SeeAlso: #P449,#P626
+SeeAlso: #P510,#P514
 
 Bitfields for Chips&Technologies "XR05" Clock Control register:
-Bit(s)	Description	(Table P628)
+Bit(s)	Description	(Table P516)
  !!!
-SeeAlso: #P449
+SeeAlso: #P510
 
 Bitfields for Chips&Technologies "XR0B" CPU Paging register:
-Bit(s)	Description	(Table P629)
+Bit(s)	Description	(Table P517)
  7-3	reserved (0)
  2	divide CPU addresses by 4 (chain-4 mode)
- 1	use two maps for CPU to access extended video memory (see #P633,#P634)
+ 1	use two maps for CPU to access extended video memory (see #P521,#P522)
  0	memory-mapping mode
 	=0 VGA-compatible
 	=1 extended mapping for 512K video memory
-SeeAlso: #P449,#P630
+SeeAlso: #P510,#P518
 
 Bitfields for Chips&Technologies "XR0C" Start Address Top register:
-Bit(s)	Description	(Table P630)
+Bit(s)	Description	(Table P518)
  7-1	reserved (0)
  0	high-order bit of display start address when 512K display memory used
-SeeAlso: #P449,#P629
+SeeAlso: #P510,#P517
 
 Bitfields for Chips&Technologies "XR0D" Auxiliary Offset register:
-Bit(s)	Description	(Table P631)
+Bit(s)	Description	(Table P519)
  7-2	reserved (0)
  1	LSB of memory offset (CR13) in Chain and Chain-4 modes
  0	LBS of alternate memory offset (XR1E) in Chain/Chain-4 modes
-SeeAlso: #P449
+SeeAlso: #P510
 
 Bitfields for Chips&Technologies "XR0E" Text Mode Control register:
-Bit(s)	Description	(Table P632)
+Bit(s)	Description	(Table P520)
  7-4	reserved (0)
  3	cursor style (0 = replace, 1 = XOR)
  2	disable cursor blink
  1-0	reserved (0)
-SeeAlso: #P449
+SeeAlso: #P510
 
 Bitfields for Chips&Technologies "XR10" Single/Low Map register:
-Bit(s)	Description	(Table P633)
+Bit(s)	Description	(Table P521)
  7-0
 !!!chips\64200.pdf p.80
-SeeAlso: #P449,#P634
+SeeAlso: #P510,#P522
 
 Bitfields for Chips&Technologies "XR11" High Map register:
-Bit(s)	Description	(Table P634)
+Bit(s)	Description	(Table P522)
  7-0
-SeeAlso: #P449,#P633
+SeeAlso: #P510,#P521
 
 Bitfields for Chips&Technologies "XR14" Emulation Mode register:
-Bit(s)	Description	(Table P635)
+Bit(s)	Description	(Table P523)
  7	enable interrupt output function (=0 tri-state IRQ# line)
  6	enable VSync status bit at PORT 03BAh/03DAh
  5	vertical retrace status
@@ -2053,10 +2118,10 @@ Bit(s)	Description	(Table P635)
 	01 CGA
 	10 MDA/Hercules
 	11 EGA
-SeeAlso: #P449
+SeeAlso: #P510
 
 Bitfields for Chips&Technologies "XR15" Write Protect register:
-Bit(s)	Description	(Table P636)
+Bit(s)	Description	(Table P524)
  7	write protect AR11 (both bits 7 and 0 must be clear to write AR11)
  6
  5
@@ -2065,31 +2130,31 @@ Bit(s)	Description	(Table P636)
  2
  1
  0	!!!chips\64200.pdf p.82
-SeeAlso: #P449
+SeeAlso: #P510
 
 Bitfields for Chips&Technologies "XR1A" Alternate Horizontal Sync End register:
-Bit(s)	Description	(Table P637)
+Bit(s)	Description	(Table P525)
  7
  6-5
  4-0
-SeeAlso: #P449,#P638
+SeeAlso: #P510,#P526
 
 Bitfields for Chips&Technologies "XR1D" Alternate Horizontal Blank End reg:
-Bit(s)	Description	(Table P638)
+Bit(s)	Description	(Table P526)
  7
  6-5
  4-0
-SeeAlso: #P449,#P637
+SeeAlso: #P510,#P525
 
 Bitfields for Chips&Technologies "XR1F" Virtual EGA Switch register:
-Bit(s)	Description	(Table P639)
+Bit(s)	Description	(Table P527)
  7
  6-4	reserved (0)
  3-0	virtual EGA switches
-SeeAlso: #P449
+SeeAlso: #P510
 
 Bitfields for Chips&Technologies "XR28" Video Interface register:
-Bit(s)	Description	(Table P640)
+Bit(s)	Description	(Table P528)
  7	reserved
  6
  5	interlaced video
@@ -2098,10 +2163,10 @@ Bit(s)	Description	(Table P640)
  2	shut off video
  1
  0
-SeeAlso: #P449
+SeeAlso: #P510
 
 Bitfields for Chips&Technologies "XR3C" Serial/Row Count register:
-Bit(s)	Description	(Table P641)
+Bit(s)	Description	(Table P529)
  7-6	reserved (0)
  5-3	row count (number of transfer cycles)
 	000 = 64
@@ -2111,52 +2176,52 @@ Bit(s)	Description	(Table P641)
 	1x0 = 1024
 	1x1 = 2048
  2-0	serial count (same as for bits 5-3, but in units of serial clocks)
-SeeAlso: #P449,#P642,#P626
+SeeAlso: #P510,#P530,#P514
 
 Bitfields for Chips&Technologies "XR3D" Multiplexer Mode register:
-Bit(s)	Description	(Table P642)
+Bit(s)	Description	(Table P530)
  7-5	reserved
  4
  3
  2-0	multiplexer mode
-SeeAlso: #P449,#P641,#P626
+SeeAlso: #P510,#P529,#P514
 
 Bitfields for Chips&Technologies "XR70" Setup/Disable Control register:
-Bit(s)	Description	(Table P643)
+Bit(s)	Description	(Table P531)
  7
  6-0	reserved (0)
-SeeAlso: #P449
+SeeAlso: #P510
 
 Bitfields for Chips&Technologies "XR7E" CGA Color Select register:
-Bit(s)	Description	(Table P644)
+Bit(s)	Description	(Table P532)
  7-6	reserved
  5
  4
  3-0
 Note:	this is a mirror of the register accessed via PORT 03D9h, which is
 	  always visible, while PORT 03D9h is only visible in CGA emulation
-SeeAlso: #P449,PORT 03D9h
+SeeAlso: #P510,PORT 03D9h
 
 Bitfields for Chips&Technologies "XR7F" Diagnostic register:
-Bit(s)	Description	(Table P645)
+Bit(s)	Description	(Table P533)
  7	special test function (should remain cleared)
  6	enable test function in bits 5-2
  5-2	test function
  1	tri-state output pins: !!!
  0	tri-state output pins: !!! chips\64200.pdf p.90
-SeeAlso: #P449
+SeeAlso: #P510
 ----------P03D803DF--------------------------
 PORT 03D8-03DF - COLOR VIDEO - CRT MODE AND STATUS REGISTERS
 
-03D8  RW  CGA mode control register  (except PCjr) (see #P292)
+03D8  RW  CGA mode control register  (except PCjr) (see #P534)
 	cannot be found on native color EGA, color VGA, but on most clones
-03D9  RW  CGA palette register (see #P294)
+03D9  RW  CGA palette register (see #P536)
 	(MCGA) CGA border control register
 	Cannot be found on native EGA, VGA (without translation ROM) but
 	  only most clones. Read access on Genoa SuperEGA is 'reset'???
-03DA  R-  CGA status register (see #P293)
+03DA  R-  CGA status register (see #P535)
 	color EGA/VGA: input status 1 register
-03DA  -W  color EGA/color VGA feature control register (see #P295)
+03DA  -W  color EGA/color VGA feature control register (see #P537)
 	(at PORT 03BAh w in mono mode, VGA: 3CAh r)
 03DA  -W  HZ309 (MDA/HGC/CGA clone) card from in Heath/Zenith HZ150 PC
 	bit7-1=0: unknown, zero is default and known to function
@@ -2182,13 +2247,13 @@ PORT 03D8-03DF - COLOR VIDEO - CRT MODE AND STATUS REGISTERS
 	bit0 =0: reserved
 03DE  --  (MCGA) reserved
 03DE  -W  (AT&T & color ET4000 in AT&T compatibility mode & C&T 82C426)
-          AT&T mode control register (see #P296)
+	  AT&T mode control register (see #P538)
 	(register enabled in ET4000, if bit7=1 in CRTC 3D4h/34h.)
 03DF  --  (MCGA) reserved
 03DF  ?W  CRT/CPU page register	 (PCjr only)
 
 Bitfields for CGA/Hercules mode control register:
-Bit(s)	Description	(Table P292)
+Bit(s)	Description	(Table P534)
  7-0	=A0h color ET4000: second part of 'key', see Hercules compatibility
 	  register (see PORT 03BFh) for details. For resetting the key, e.g.
 	  write 01h to PORT 03BFh and 29h to PORT 03D8h.
@@ -2206,10 +2271,10 @@ Bit(s)	Description	(Table P292)
  1	=0  text mode
 	=1  320*200 graphics mode
  0	text columns (0 = 40*25 text mode, 1 = 80*25 text mode)
-SeeAlso: #P293
+SeeAlso: #P535
 
 Bitfields for CGA status register:
-Bit(s)	Description	(Table P293)
+Bit(s)	Description	(Table P535)
  7-6	not used
  7	(C&T Wingine) vertical sync in progress (if enabled by XR14)
  5-4	color EGA, color ET4000, C&T: diagnose video display feedback, select
@@ -2226,10 +2291,10 @@ Bit(s)	Description	(Table P293)
 	=1  memory access without interfering with display
 	    (VGA,Genoa SuperEGA) horizontal or vertical retrace
 	(C&T Wingine) display enabled (retrace/DE selected by XR14)
-SeeAlso: #P292,#P294,#P449
+SeeAlso: #P534,#P536,#P510
 
 Bitfields for CGA palette register:
-Bit(s)	Description	(Table P294)
+Bit(s)	Description	(Table P536)
  7-6	not used
  5	=0 active 320x200x4 color set: red, green brown
 	=1 active 320x200x4 color set: cyan, magenta, white
@@ -2242,10 +2307,10 @@ Bit(s)	Description	(Table P294)
 	  in 640*200
  0	blue border in 40*25, blue background in 320*200, blue foreground in
 	   640*200
-SeeAlso: #P292,#P293
+SeeAlso: #P534,#P535
 
 Bitfields for color EGA/VGA feature control register:
-Bit(s)	Description	(Table P295)
+Bit(s)	Description	(Table P537)
  7	ET4000 only: enable NMI generation ('key' protected)
  6-4	not used
  3	(VGA) 0 = normal vsync, 1 = vsync OR display enable
@@ -2255,10 +2320,10 @@ Bit(s)	Description	(Table P295)
 	(VGA) reserved (0)
  0	(EGA,ET4000,Wingine) FEAT0 control bit0 (pin19 feature connector)
 	(VGA) reserved (0)
-SeeAlso: #P293
+SeeAlso: #P535
 
 Bitfields for AT&T mode control register:
-Bit(s)	Description	(Table P296)
+Bit(s)	Description	(Table P538)
  7	reserved
  6	underline color attribute enable
 	ET4000: enabled, if bit6=1 in CRTC 3D4h/34h.
@@ -2284,21 +2349,21 @@ Notes:	the CL-PD6729 has compatible registers, but the port address
 	the CL-PD6832 supports a superset of this register set
 SeeAlso: PORT 03E0h"CardBus"
 
-03E0  ?W  index for data register (see #P447)
+03E0  ?W  index for data register (see #P539)
 03E1  RW  register data
 
 Bitfields for Cirrus Logic CL-PD6710/6722 index register:
-Bit(s)	Description	(Table P447)
+Bit(s)	Description	(Table P539)
  7	device number (when dual CL-PD67xx's are used)
  6	socket number (CL-PD6722 dual-socket adapter only)
- 5-0	register index (see #P448)
+ 5-0	register index (see #P540)
 
-(Table P448)
+(Table P540)
 Values for Cirrus Logic CL-PD6710/6722 register number:
  00h
  ...
  3Fh
-SeeAlso: #P447
+SeeAlso: #P539
 ----------P03E003E7--------------------------
 PORT 03E0-03E7	- LPT port address on the UniRAM card by German magazine c't
 Range:	selectable from PORT 0260h, PORT 02E0h, PORT 02E8h, PORT 02F0h,
@@ -2324,7 +2389,7 @@ PORT 03E8-03EF - COM port addresses on UniRAM card by German magazine c't
 Range:	selectable from PORT 0238h, PORT 02E8h, PORT 02F8h, PORT 0338h,
 	  PORT 03E0h, PORT 03E8h, or PORT 03F8h
 SeeAlso: PORT 03E0h"UniRAM"
-----------P03E003E7--------------------------
+----------P03E803EF--------------------------
 PORT 03E8-03EF - LPT port address on the UniRAM card by German magazine c't
 Range:	selectable from PORT 0260h, PORT 02E0h, PORT 02E8h, PORT 02F0h,
 	  PORT 03E0h, or PORT 03E8h.
@@ -2346,12 +2411,12 @@ Note:	floppy disk controller is usually an 8272, 8272A, NEC765 (or
 	  2.88M
 SeeAlso: PORT 0370h-0377h
 
-03F0  R-  diskette controller status A (PS/2) (see #P310)
-03F0  R-  diskette controller status A (PS/2 model 30) (see #P311)
-03F0  R-  diskette EHD controller board jumper settings (82072AA) (see #P312)
-03F1  R-  diskette controller status B (PS/2) (see #P313)
-03F1  R-  diskette controller status B (PS/2 model 30) (see #P314)
-03F2  -W  diskette controller DOR (Digital Output Register) (see #P315)
+03F0  R-  diskette controller status A (PS/2) (see #P541)
+03F0  R-  diskette controller status A (PS/2 model 30) (see #P542)
+03F0  R-  diskette EHD controller board jumper settings (82072AA) (see #P543)
+03F1  R-  diskette controller status B (PS/2) (see #P544)
+03F1  R-  diskette controller status B (PS/2 model 30) (see #P545)
+03F2  -W  diskette controller DOR (Digital Output Register) (see #P546)
 03F3  ?W  tape drive register (on the 82077AA)
 	bit 7-2	 reserved, tri-state
 	bit 1-0	 tape select
@@ -2359,29 +2424,29 @@ SeeAlso: PORT 0370h-0377h
 		=01  drive1
 		=10  drive2
 		=11  drive3
-03F4  R-  diskette controller main status register (see #P318)
+03F4  R-  diskette controller main status register (see #P549)
 	Note:	in non-DMA mode, all data transfers occur through
 		  PORT 03F5h and the status registers (bit 5 here
 		  indicates data read/write rather than than
 		  command/status read/write)
-03F4  -W  diskette controller data rate select register (see #P319)
-03F5  R-  diskette command/data register 0 (ST0) (see #P320)
-	status register 1 (ST1) (see #P321)
-	status register 2 (ST2) (see #P322)
-	status register 3 (ST3) (see #P323)
+03F4  -W  diskette controller data rate select register (see #P550)
+03F5  R-  diskette command/data register 0 (ST0) (see #P551)
+	status register 1 (ST1) (see #P552)
+	status register 2 (ST2) (see #P553)
+	status register 3 (ST3) (see #P554)
 03F5  -W  diskette command register.  The commands summarized here are
 	  mostly multibyte commands. This is for brief recognition only.
-	  (see #P326)
+	  (see #P557)
 03F6  --  reserved on FDC
-03F6  rW  FIXED disk controller data register (see #P324)
-03F7  RW  harddisk controller (see #P325)
+03F6  rW  FIXED disk controller data register (see #P555)
+03F7  RW  harddisk controller (see #P556)
 03F7  R-  diskette controller DIR (Digital Input Register, PC/AT mode)
 		 bit 7 = 1 diskette change
 		 bit 6-0   tri-state on FDC
 03F7  R-  diskette controller DIR (Digital Input Register, PS/2 mode)
-	  (see #P316)
+	  (see #P547)
 03F7  R-  diskette controller DIR (Digital Input Register, PS/2 model 30)
-	  (see #P317)
+	  (see #P548)
 03F7  -W  configuration control register (PC/AT, PS/2)
 		 bit 7-2       reserved, tri-state
 		 bit 1-0 = 00  500 Kb/S mode (MFM)
@@ -2399,7 +2464,7 @@ SeeAlso: PORT 0370h-0377h
 	conflict bit 0	   FIXED DISK drive 0 select
 
 Bitfields for diskette controller status A (PS/2):
-Bit(s)	Description	(Table P310)
+Bit(s)	Description	(Table P541)
  7	interrupt pending
  6	-DRV2	second drive installed
  5	step
@@ -2408,10 +2473,10 @@ Bit(s)	Description	(Table P310)
  2	-index
  1	-write protect
  0	+direction
-SeeAlso: #P311,#P313
+SeeAlso: #P542,#P544
 
 Bitfields for diskette controller status A (PS/2 model 30):
-Bit(s)	Description	(Table P311)
+Bit(s)	Description	(Table P542)
  7	interrupt pending
  6	DRQ
  5	step F/F
@@ -2420,10 +2485,10 @@ Bit(s)	Description	(Table P311)
  2	+index
  1	+write protect
  0	-direction
-SeeAlso: #P310,#P312,#P314
+SeeAlso: #P541,#P543,#P545
 
 Bitfields for diskette EHD controller board jumper settings:
-Bit(s)	Description	(Table P312)
+Bit(s)	Description	(Table P543)
  7-6	drive 3
  5-4	drive 2
  3-2	drive 1
@@ -2432,10 +2497,10 @@ Bit(s)	Description	(Table P312)
 	 01  720Kb
 	 10  2.8Mb
 	 11  1.4Mb
-SeeAlso: #P310
+SeeAlso: #P541
 
 Bitfields for diskette controller status B (PS/2):
-Bit(s)	Description	(Table P313)
+Bit(s)	Description	(Table P544)
  7-6	reserved (1)
  5	drive select (0=A:, 1=B:)
  4	write data
@@ -2443,10 +2508,10 @@ Bit(s)	Description	(Table P313)
  2	write enable
  1	motor enable 1
  0	motor enable 0
-SeeAlso: #P310,#P314
+SeeAlso: #P541,#P545
 
 Bitfields for diskette controller status B (PS/2 model 30):
-Bit(s)	Description	(Table P314)
+Bit(s)	Description	(Table P545)
  7	-DRV2 second drive installed
  6	-DS1
  5	-DS0
@@ -2455,10 +2520,10 @@ Bit(s)	Description	(Table P314)
  2	write enable F/F
  1	-DS3
  0	-DS2
-SeeAlso: #P311,#P313
+SeeAlso: #P542,#P544
 
 Bitfields for diskette controller Digital Output Register (DOR):
-Bit(s)	Description	(Table P315)
+Bit(s)	Description	(Table P546)
  7-6	reserved on PS/2
  7	drive 3 motor enable
  6	drive 2 motor enable
@@ -2468,20 +2533,20 @@ Bit(s)	Description	(Table P315)
  2	=1  FDC enable	(controller reset)
 	=0  hold FDC at reset
  1-0	drive select (0=A 1=B ..)
-SeeAlso: #P310,#P318,#P319,#P316
+SeeAlso: #P541,#P549,#P550,#P547
 
 Bitfields for diskette controller Digital Input Register (PS/2 mode):
-Bit(s)	Description	(Table P316)
+Bit(s)	Description	(Table P547)
  7	= 1 diskette change
  6-3	= 1
  2	datarate select1
  1	datarate select0
  0	= 0 high density select (500Kb/s, 1Mb/s)
  0	(conflict) FIXED DISK drive 0 select
-SeeAlso: #P317,#P315
+SeeAlso: #P548,#P546
 
 Bitfields for diskette controller Digital Input Register (PS/2 model 30):
-Bit(s)	Description	(Table P317)
+Bit(s)	Description	(Table P548)
  7	= 0 diskette change
  6-4	= 0
  3	-DMA gate (value from DOR register)
@@ -2489,10 +2554,10 @@ Bit(s)	Description	(Table P317)
  1	datarate select1
  0	datarate select0
  0	(conflict) FIXED DISK drive 0 select
-SeeAlso: #P316
+SeeAlso: #P547
 
 Bitfields for diskette controller main status register:
-Bit(s)	Description	(Table P318)
+Bit(s)	Description	(Table P549)
  7	=1  RQM	 data register is ready
 	=0  no access is permitted
  6	=1  transfer is from controller to system
@@ -2503,10 +2568,10 @@ Bit(s)	Description	(Table P318)
  2	drive 2 busy (reserved on PS/2)
  1	drive 1 busy (= drive is in seek mode)
  0	drive 0 busy (= drive is in seek mode)
-SeeAlso: #P315
+SeeAlso: #P546
 
 Bitfields for diskette controller data rate select register:
-Bit(s)	Description	(Table P319)
+Bit(s)	Description	(Table P550)
  7-2	reserved on 8272
  7	software reset (self clearing)	82072/82077AA
  6	power down			82072/82077AA
@@ -2518,10 +2583,10 @@ Bit(s)	Description	(Table P319)
 	=01  300 Kb/S MFM	150 Kb/S FM
 	=10  250 Kb/S MFM	125 Kb/S FM
 	=11  1Mb/S	MFM	illegal	 FM on 8207x
-SeeAlso: #P315
+SeeAlso: #P546
 
 Bitfields for diskette command/data register 0 (ST0):
-Bit(s)	Description	(Table P320)
+Bit(s)	Description	(Table P551)
  7-6	last command status
 	00  command terminated successfully
 	01  command terminated abnormally
@@ -2532,10 +2597,10 @@ Bit(s)	Description	(Table P320)
  3	not ready
  2	head number at interrupt
  1-0	unit select (0=A 1=B .. ) (on PS/2: 01=A  10=B)
-SeeAlso: #P321,#P322,#P323
+SeeAlso: #P552,#P553,#P554
 
 Bitfields for diskette status register 1 (ST1):
-Bit(s)	Description	(Table P321)
+Bit(s)	Description	(Table P552)
  7	end of cylinder; sector# greater then sectors/track
  6	=0
  5	CRC error in ID or data field
@@ -2544,10 +2609,10 @@ Bit(s)	Description	(Table P321)
  2	sector ID not found
  1	write protect detected during write
  0	ID address mark not found
-SeeAlso: #P320,#P322,#P323
+SeeAlso: #P551,#P553,#P554
 
 Bitfields for diskette status register 2 (ST2):
-Bit(s)	Description	(Table P322)
+Bit(s)	Description	(Table P553)
  7	=0
  6	deleted Data Address Mark detected
  5	CRC error in data
@@ -2556,10 +2621,10 @@ Bit(s)	Description	(Table P322)
  2	scan command failed, sector not found
  1	bad cylinder, ID not found
  0	missing Data Address Mark
-SeeAlso: #P320,#P321,#P323
+SeeAlso: #P551,#P552,#P554
 
 Bitfields for diskette status register 3 (ST3):
-Bit(s)	Description	(Table P323)
+Bit(s)	Description	(Table P554)
  7	fault status signal
  6	write protect status
  5	ready status
@@ -2567,20 +2632,20 @@ Bit(s)	Description	(Table P323)
  3	two sided status signal
  2	side select (head select)
  1-0	unit select (0=A 1=B .. )
-SeeAlso: #P320,#P321,#P322
+SeeAlso: #P551,#P552,#P553
 
 Bitfields for fixed disk controller data register:
-Bit(s)	Description	(Table P324)
+Bit(s)	Description	(Table P555)
  7-4	reserved
  3	=0  reduce write current
 	=1  head select 3 enable
  2	disk reset enable
  1	disk initialization disable
  0	reserved
-SeeAlso: #P315,#P325
+SeeAlso: #P546,#P556
 
 Bitfields for hard disk controller:
-Bit(s)	Description	(Table P325)
+Bit(s)	Description	(Table P556)
  6	FIXED DISK write gate
  5	FIXED DISK head select 3 / reduced write current
  4	FIXED DISK head select 2
@@ -2588,9 +2653,9 @@ Bit(s)	Description	(Table P325)
  2	FIXED DISK head select 0
  1	FIXED DISK drive 1 select
  0	FIXED DISK drive 0 select
-SeeAlso: #P324
+SeeAlso: #P555
 
-(Table P326)
+(Table P557)
 Values for diskette commands:
 	MFM = MFM mode selected, opposite of MF mode
 	HDS = head select
@@ -2648,12 +2713,12 @@ Note:	to unlock access to these ports instead of the standard floppy
 	  should be no other instructions between the two OUTs); after
 	  that, values written to PORT 03F0h select the data accessed through
 	  PORT 03F1h until an AAh is written to 03F0h
-SeeAlso: #0656
+SeeAlso: #0706
 
-03F0  ?W  index port (see #P327)
+03F0  ?W  index port (see #P558)
 03F1  RW  data port
 
-(Table P327)
+(Table P558)
 Values for RZ1000 IDE controller registers:
  00h	???
 	bit 7:
@@ -2691,24 +2756,24 @@ SeeAlso: INT 14/AH=00h"SERIAL"
 03F8  R-  receiver buffer register (RBR), which contains the received
 	  character. Bit 0 is received first
 		 bit 7-0   data bits when DLAB=0 (Divisor Latch Access Bit)
-03F8  RW  divisor latch low byte (DLL) when DLAB=1 (see #P328)
-03F9  RW  divisor latch high byte (DLM) when DLAB=1 (see #P328)
-03F9  RW  interrupt enable register (IER) when DLAB=0 (see #P329)
-03FA  R-  interrupt identification register (see #P330)
+03F8  RW  divisor latch low byte (DLL) when DLAB=1 (see #P559)
+03F9  RW  divisor latch high byte (DLM) when DLAB=1 (see #P559)
+03F9  RW  interrupt enable register (IER) when DLAB=0 (see #P560)
+03FA  R-  interrupt identification register (see #P561)
 	Information about a pending interrupt is stored here. When the ID
 	  register is addressed, thehighest priority interrupt is held, and
 	  no other interrupts are acknowledged until the CPU services that
 	  interrupt.
-03FA  -W  16650 FIFO Control Register (FCR) (see #P331)
-03FB  RW  line control register (LCR) (see #P332)
-03FC  RW  modem control register (see #P333)
-03FD  R-  line status register (LSR) (see #P334)
-03FE  R-  modem status register (MSR) (see #P335)
+03FA  -W  16650 FIFO Control Register (FCR) (see #P562)
+03FB  RW  line control register (LCR) (see #P563)
+03FC  RW  modem control register (see #P564)
+03FD  R-  line status register (LSR) (see #P565)
+03FE  R-  modem status register (MSR) (see #P566)
 03FF  RW  scratch register (SCR)
 	(not used for serial I/O; available to any application using 16450,
 	  16550) (not present on original 8250)
 
-(Table P328)
+(Table P559)
 Values for serial port divisor latch registers:
  Some baudrates (using standard 1.8432 Mhz clock):
        baudrate	   divisor	 DLM  DLL
@@ -2735,7 +2800,7 @@ Note:	MIDI baudrate 32250Bd with 4Mhz quarz for c't MIDI interface
 	  following c't 01/1991:   '14400'	  00h 08h
 
 Bitfields for serial port interrupt enable register (IER):
-Bit(s)	Description	(Table P329)
+Bit(s)	Description	(Table P560)
  7-6	reserved (0)
  5	(82510) "timer"
 	(other) reserved (0)
@@ -2749,19 +2814,19 @@ Bit(s)	Description	(Table P329)
 Note:	16550(A) will interrupt with a timeout if data exists in the FIFO
 	  and isn't read within the time it takes to receive four bytes or if
 	  no data is received within the time it takes to receive four bytes
-SeeAlso: #P330
+SeeAlso: #P561
 
 Bitfields for serial port interrupt identification register (IIR):
-Bit(s)	Description	(Table P330)
+Bit(s)	Description	(Table P561)
  7-6	=00  reserved on 8250, 8251, 16450
 	=01  if FIFO queues enabled but unusable (16550 only)
-	=11  if FIFO queues are enabled (16550A only) (see also #P331)
+	=11  if FIFO queues are enabled (16550A only) (see also #P562)
  6-5	used by 82510 for bank select (00 = default bank0)
  5-4	reserved (0)
  3-1	identify pending interrupt with the highest priority
 	110	(16550,82510) timeout interrupt pending
-	101	(82510) timer interrupt (see #P329)
-	100	(82510) transmit machine (see #P329)
+	101	(82510) timer interrupt (see #P560)
+	100	(82510) transmit machine (see #P560)
 	011	receiver line status interrupt. priority=highest
 	010	received data available register interrupt. pr.=second
 	001	transmitter holding register empty interrupt. pr.=third
@@ -2772,10 +2837,10 @@ Bit(s)	Description	(Table P330)
 Notes:	interrupt pending flag uses reverse logic, 0=pending, 1=none
 	interrupt will occur if any of the line status bits are set
 	THRE bit is set when THRE register is emptied into the TSR
-SeeAlso: #P329
+SeeAlso: #P560
 
 Bitfields for serial port FIFO control register (FCR):
-Bit(s)	Description	(Table P331)
+Bit(s)	Description	(Table P562)
  7-6	received data available interrupt trigger level (16550)
 	00  1 byte
 	01  4 bytes
@@ -2796,10 +2861,10 @@ Notes:	bit 0 must be set in order to write to other FCR bits
 	  the transmit shift register is not cleared
 	due to a hardware bug, 16550 FIFOs don't work correctly (this
 	  was fixed in the 16550A)
-SeeAlso: #P330
+SeeAlso: #P561
 
 Bitfields for serial port Line Control Register (LCR):
-Bit(s)	Description	(Table P332)
+Bit(s)	Description	(Table P563)
  7	=1  divisor latch access bit (DLAB)
 	=0  receiver buffer, transmitter holding, or interrupt enable register
 	  access
@@ -2821,10 +2886,10 @@ Bit(s)	Description	(Table P332)
 	01 word length is 6 bits
 	10 word length is 7 bits
 	11 word length is 8 bits
-SeeAlso: #P333,#P334,#P335
+SeeAlso: #P564,#P565,#P566
 
 Bitfields for serial port Modem Control Register (MCR):
-Bit(s)	Description	(Table P333)
+Bit(s)	Description	(Table P564)
  7-6	reserved (0)
  5	(82510 only) state of OUT0 pin
  4	loopback mode for diagnostic testing of serial port
@@ -2848,10 +2913,10 @@ Bit(s)	Description	(Table P333)
 	  MIDI-compatible current loop connectors.
  1	force request-to-send active (RTS)
  0	force data-terminal-ready active (DTR)
-SeeAlso: #P332,#P334,#P335
+SeeAlso: #P563,#P565,#P566
 
 Bitfields for serial port Line Status Register (LSR):
-Bit(s)	Description	(Table P334)
+Bit(s)	Description	(Table P565)
  7	=0  reserved
 	=1  on some chips produced by UMC
  6	transmitter shift and holding registers empty
@@ -2868,10 +2933,10 @@ Bit(s)	Description	(Table P334)
 	  destroys the previous character.
  0	data ready. a complete incoming character has been received and sent
 	  to the receiver buffer register.
-SeeAlso: #P332,#P333,#P335
+SeeAlso: #P563,#P564,#P566
 
 Bitfields for serial port Modem Status Register (MSR):
-Bit(s)	Description	(Table P335)
+Bit(s)	Description	(Table P566)
  7	data carrier detect (-DCD)
  6	ring indicator (-RI)
  5	data set ready (-DSR)
@@ -2885,7 +2950,7 @@ Notes:	bits 0-3 are reset when the CPU reads the MSR
 	bit 5 is the Modem Control Register DTR during loopback test
 	bit 6 is the Modem Control Register OUT1 during loopback test
 	bit 7 is the Modem Control Register OUT2 during loopback test
-SeeAlso: #P332,#P333,#P334
+SeeAlso: #P563,#P564,#P565
 --------!---Note-----------------------------
 Note:	Adresses above 03FF generally apply to EISA and PCI machines only !
 	EISA port assignments:
@@ -2904,13 +2969,13 @@ SeeAlso: PORT 0481h-048Bh"EISA",PORT 04D4h-04D6h"EISA"
 0403  RW  DMA channel 1 word count byte 2 (high)
 0405  RW  DMA channel 2 word count byte 2 (high)
 0407  RW  DMA channel 3 word count byte 2 (high)
-040A  -W  extended DMA chaining mode register, channels 0-3 (see #P336)
-040A  R-  channel interrupt (IRQ13) status register (see #P337)
-040B  -W  DMA extended mode register for channels 0-3 (see #P338)
+040A  -W  extended DMA chaining mode register, channels 0-3 (see #P567)
+040A  R-  channel interrupt (IRQ13) status register (see #P568)
+040B  -W  DMA extended mode register for channels 0-3 (see #P569)
 	(bit settings same as PORT 04D6h)
 
 Bitfields for EISA extended DMA chaining mode register (channels 0-3):
-Bit(s)	Description	(Table P336)
+Bit(s)	Description	(Table P567)
  7-5	reserved
  4	=0  generate IRQ13
 	=1  generate terminal count
@@ -2919,17 +2984,17 @@ Bit(s)	Description	(Table P336)
  2	=0  disable buffer chaining mode (default)
 	=1  enable buffer chaining mode
  1-0	DMA channel select
-SeeAlso: #P337,#P338,#P345
+SeeAlso: #P568,#P569,#P576
 
 Bitfields for EISA channel interrupt (IRQ13) status register:
-Bit(s)	Description	(Table P337)
+Bit(s)	Description	(Table P568)
  7-5  interrupt on channels 7-5
  4	  reserved
  3-0  interrupt on channels 3-0
-SeeAlso: #P336
+SeeAlso: #P567
 
 Bitfields for EISA DMA extended mode register (channels 0-3):
-Bit(s)	Description	(Table P338)
+Bit(s)	Description	(Table P569)
  7	=0 enable stop register
  6	=0 terminal count is an output for this channel	(default)
  5-4	DMA cycle timing
@@ -2943,30 +3008,30 @@ Bit(s)	Description	(Table P338)
 	10 32-bit I/O, count by bytes
 	11 16-bit I/O, count by bytes
  1-0	DMA channel select
-SeeAlso: #P336,#P346
+SeeAlso: #P567,#P577
 ----------P040A043F--------------------------
 PORT 040A-043F - Intel 82378ZB embedded DMA controller
-Range:	relocatable via Relocation Base Address register (see #0871)
-SeeAlso: PORT 0401h"EISA",#0860,#0871
+Range:	relocatable via Relocation Base Address register (see #1002)
+SeeAlso: PORT 0401h"EISA",#0991,#1002
 
-040A  R-  scatter/gather interrupt status (see #P339)
+040A  R-  scatter/gather interrupt status (see #P570)
 040B  -W  DMA1 extended mode
-0410  -W  CH0 scatter/gather command (see #P340)
+0410  -W  CH0 scatter/gather command (see #P571)
 0411  -W  CH1 scatter/gather command
 0412  -W  CH2 scatter/gather command
 0413  -W  CH3 scatter/gather command
 0414  -W  CH4 scatter/gather command
 0415  -W  CH5 scatter/gather command
 0416  -W  CH6 scatter/gather command
-0417  -W  CH7 scatter/gather command (see #P340)
-0418  R-  CH0 scatter/gather status (see #P341)
+0417  -W  CH7 scatter/gather command (see #P571)
+0418  R-  CH0 scatter/gather status (see #P572)
 0419  R-  CH1 scatter/gather status
 041A  R-  CH2 scatter/gather status
 041B  R-  CH3 scatter/gather status
 041C  R-  CH4 scatter/gather status
 041D  R-  CH5 scatter/gather status
 041E  R-  CH6 scatter/gather status
-041F  R-  CH7 scatter/gather status (see #P341)
+041F  R-  CH7 scatter/gather status (see #P572)
 0420d RW  CH0 scatter/gather descriptor table address
 0424d RW  CH1 scatter/gather descriptor table address
 0428d RW  CH2 scatter/gather descriptor table address
@@ -2976,15 +3041,15 @@ SeeAlso: PORT 0401h"EISA",#0860,#0871
 0438d RW  CH6 scatter/gather descriptor table address
 043Cd RW  CH7 scatter/gather descriptor table address
 
-(Table P339)
+(Table P570)
 Call Intel 82378ZB Scatter/Gather Interrupt Status Register with:
  7	channel 7 has interrupt due to S/G transfer
  ...
  0	channel 0 has interrupt due to S/G transfer
-SeeAlso: #P340,#P341
+SeeAlso: #P571,#P572
 
 Bitfields for Intel 82378ZB Scatter/Gather Command Register:
-Bit(s)	Description	(Table P340)
+Bit(s)	Description	(Table P571)
   7	select last-buffer termination type
 	=0 assert IRQ13 on completion
 	=1 assert EOP on completion
@@ -2995,10 +3060,10 @@ Bit(s)	Description	(Table P340)
 	01 start S/G command
 	10 stop S/G command
 	11 reserved
-SeeAlso: #P339,#P341,#0871
+SeeAlso: #P570,#P572,#1002
 
 Bitfields for Intel 82378ZB Scatter/Gather Status Register:
-Bit(s)	Description	(Table P341)
+Bit(s)	Description	(Table P572)
  7	no next link
  6	reserved
  5	issue IRQ13 instead of EOP at end of last buffer
@@ -3011,7 +3076,7 @@ Bit(s)	Description	(Table P341)
 	=0 empty
  1	reserved
  0	scatter/gather is active
-SeeAlso: #P340
+SeeAlso: #P571
 --------X-P040D040F--------------------------
 PORT 040D-040F - EISA - Intel 82357
 
@@ -3021,13 +3086,13 @@ PORT 040D-040F - EISA - Intel 82357
 ----------P04610462--------------------------
 PORT 0461-0462 - EISA NMI CONTROL
 
-0461  RW  Extended NMI status/control register (see #P342)
+0461  RW  Extended NMI status/control register (see #P573)
 0462  -W  Software NMI register. writing to this register causes an NMI	if
 	  NMIs are enabled
 	bit 7 = 1  generates an NMI
 
 Bitfields for EISA extended NMI status control register:
-Bit(s)	Description	(Table P342)
+Bit(s)	Description	(Table P573)
  7  R-	NMI pending from fail-safe (watchdog) timer
  6  R-	NMI pending from bus timeout NMI status
  5  R-	NMI pending from I/O port status
@@ -3070,21 +3135,21 @@ Note:	these registers are also supported on many non-EISA machines, e.g. by
 	  most machines using Intel PCI chipsets
 SeeAlso: PORT 04D4h-040Bh"EISA"
 
-04D0  -W  IRQ 0-7 interrupt edge/level registers (see #P343)
-04D1  -W  IRQ 8-15 interrupt edge/level registers (see #P344)
+04D0  -W  IRQ 0-7 interrupt edge/level registers (see #P574)
+04D1  -W  IRQ 8-15 interrupt edge/level registers (see #P575)
 
 Bitfields for EISA IRQ 0-7 interrupt edge/level register:
-Bit(s)	Description	(Table P343)
+Bit(s)	Description	(Table P574)
  7	IRQ 7 is level sensitive
  6	IRQ 6 is level sensitive
  5	IRQ 5 is level sensitive
  4	IRQ 4 is level sensitive
  3	IRQ 3 is level sensitive
  2-0	reserved
-SeeAlso: #P344
+SeeAlso: #P575
 
 Bitfields for EISA IRQ 8-15 interrupt edge/level register:
-Bit(s)	Description	(Table P344)
+Bit(s)	Description	(Table P575)
  7	IRQ 15 is level sensitive
  6	IRQ 14 is level sensitive
  5	reserved (1)
@@ -3093,19 +3158,19 @@ Bit(s)	Description	(Table P344)
  2	IRQ 10 is level sensitive
  1	IRQ 9  is level sensitive
  0	reserved
-SeeAlso: #P343
+SeeAlso: #P574
 ----------P04D404D6--------------------------
 PORT 04D4-04D6 - EISA DMA control
 Note:	PORT 04D6h is also supported by the Intel 82378ZB System I/O controller
 SeeAlso: PORT 0401h-040Bh"EISA",PORT 04D0h-04D1h"EISA"
 
 04D4  R-  DMA chaining status
-04D4  -W  extended DMA chaining mode register, channels 4-7 (see #P345)
-04D6  -W  DMA extended mode register for channels 4-7 (see #P346)
+04D4  -W  extended DMA chaining mode register, channels 4-7 (see #P576)
+04D6  -W  DMA extended mode register for channels 4-7 (see #P577)
 	bit settings same as PORT 040Bh
 
 Bitfields for EISA extended DMA chaining mode register (channels 4-7):
-Bit(s)	Description	(Table P345)
+Bit(s)	Description	(Table P576)
  7-5	reserved (0)
  4	=0  generate IRQ 13
 	=1  generate terminal count
@@ -3114,10 +3179,10 @@ Bit(s)	Description	(Table P345)
  2	=0  disable buffer chaining mode (default)
 	=1  enable buffer chaining mode
  1-0	DMA channel select
-SeeAlso: #P336,#P346
+SeeAlso: #P567,#P577
 
 Bitfields for EISA DMA extended mode register (channels 4-7):
-Bit(s)	Description	(Table P346)
+Bit(s)	Description	(Table P577)
  7	=0  enable stop register
  6	=0  terminal count is an output for this channel (default)
  5-4	DMA cycle timing
@@ -3131,7 +3196,7 @@ Bit(s)	Description	(Table P346)
 	10 32-bit I/O, count by bytes
 	11 16-bit I/O, count by bytes
  1-0	DMA channel select
-SeeAlso: #P338,#P345
+SeeAlso: #P569,#P576
 ----------P04E004FF--------------------------
 PORT 04E0-04FF - EISA DMA stop registers
 SeeAlso: PORT 0481h-048Bh"EISA"
@@ -3149,7 +3214,7 @@ Range:	dipswitch selectable from PORT 0530h-0533h, PORT 0604h-0607h,
 	  PORT 0E80h-0E83h, and PORT 0F40h-0F43h
 SeeAlso: PORT 0530h"Windows Sound System"
 
-0530  RW  address select (see #P347)
+0530  RW  address select (see #P578)
 0531  RW  data (selected by PORT 0530h)
 0532  RW  status
 0533  RW  PIO data
@@ -3164,19 +3229,19 @@ Notes:	the Sound Galaxy NX16 sound cards contains a Crystal CS4231, and thus
 	  though by default it is not placed at any of the addresses used by
 	  the WSS
 
-0534  ?W  register select (index) (see #P347)
+0534  ?W  register select (index) (see #P578)
 0535  RW  data register (selected by PORT 0534h)
 0536  R?  (CS4231A) status register
 0537  RW  (CS4231A) PIO data register
 
-(Table P347)
+(Table P578)
 Values for Windows Sound System CS4231 Codec register number:
  00h	Mixer: ADC volume (left)
  01h	Mixer: ADC volume (right)
- 02h	Mixer: Line In volume (right) (see #P348)
- 03h	Mixer: Line In volume (left) (see #P348)
- 04h	Mixer: FM volume (right) (see #P348)
- 05h	Mixer: FM volume (left) (see #P348)
+ 02h	Mixer: Line In volume (right) (see #P579)
+ 03h	Mixer: Line In volume (left) (see #P579)
+ 04h	Mixer: FM volume (right) (see #P579)
+ 05h	Mixer: FM volume (left) (see #P579)
  06h	Mixer: playback DAC volume (left)
  07h	Mixer: playback DAC volume (right)
  08h	playback data format
@@ -3191,8 +3256,8 @@ Values for Windows Sound System CS4231 Codec register number:
  0Fh	playback count (low)
  10h	configuration register 2
  11h	configuration register 3
- 12h	Mixer: CD volume (right) (see #P348)
- 13h	Mixer: CD volume (left) (see #P348)
+ 12h	Mixer: CD volume (right) (see #P579)
+ 13h	Mixer: CD volume (left) (see #P579)
  14h	timer (low)
  15h	timer (high)
  16h	Mixer: microphone input control (left)
@@ -3200,7 +3265,7 @@ Values for Windows Sound System CS4231 Codec register number:
  18h	Codec status register 3
  19h	Mixer: output attenuation (left)
  1Ah	mono input/output control
-	(Sound Galaxy) SB volume (see #P349)
+	(Sound Galaxy) SB volume (see #P580)
  1Bh	Mixer: output attenuation (right)
  1Ch	record data format
  1Dh	playback variable frequency
@@ -3215,28 +3280,28 @@ Notes:	to enable the microphone input on the Sound Galaxy, ALL of the
 	  first 32 registers
 
 Bitfields for WSS mixer volume:
-Bit(s)	Description	(Table P348)
+Bit(s)	Description	(Table P579)
  7	disable input source
  6-5	reserved???
  4-0	volume (00h = highest, 1Fh = lowest)
-SeeAlso: #P347,#P349
+SeeAlso: #P578,#P580
 Note:	the GW2000 GWBVOL.EXE only permits the setting of volume levels
 	  08h (reported as 16) to 18h (reported as 0, and sets bit 7 as well)
 
 Bitfields for WSS mixer volume (SoundBlaster):
-Bit(s)	Description	(Table P349)
+Bit(s)	Description	(Table P580)
  7	disable input source
  6-4	reserved???
  3-0	volume (00h = highest, 0Fh = lowest)
-SeeAlso: #P347,#P348
+SeeAlso: #P578,#P579
 ----------P0601------------------------------
 PORT 0601 - Headland HL21, Acer M5105 chipsets - SYSTEM CONTROL
 
-0601  -W  system control (see #P350)
-0601  R-  status (see #P351)
+0601  -W  system control (see #P581)
+0601  R-  status (see #P582)
 
 Bitfields for Headland HL21/Acer M5105 system control register:
-Bit(s)	Description	(Table P350)
+Bit(s)	Description	(Table P581)
  7	=1  power LED on
  6	=1  LCD backlight off
  5	???
@@ -3245,10 +3310,10 @@ Bit(s)	Description	(Table P350)
  2	=1  video chips disabled, screen blanked.
  1	???
  0	=1  will lock up your machine!
-SeeAlso: #P351
+SeeAlso: #P582
 
 Bitfields for Headland HL21/Acer M5105 status register:
-Bit(s)	Description	(Table P351)
+Bit(s)	Description	(Table P582)
  7	=0  if screen enabled always these values
  6	=0
  5	=0
@@ -3257,7 +3322,7 @@ Bit(s)	Description	(Table P351)
  2	=1  (=0 at low power)
  1	=0  power OK
  0	=0
-SeeAlso: #P350
+SeeAlso: #P581
 ----------P06040607--------------------------
 PORT 0604-0607 - Gravis Ultra Sound Daughter Card by Advanced Gravis
 Range:	dipswitch selectable from PORT 0530h-0533h, PORT 0604h-0607h,
@@ -3275,42 +3340,42 @@ Range:	PORT 0678h or PORT 0378h, depending on the base address of the parallel
 	  port (0278h or 0378h)
 SeeAlso: PORT 0278h,PORT 0778h,PORT 07BCh
 
-0278  RW  (when ECR bits 7-5=011) ECP Address/RLE FIFO (see #P660)
+0278  RW  (when ECR bits 7-5=011) ECP Address/RLE FIFO (see #P583)
 	(this is the same address normally used for parallel port data)
-0678  RW  (when ECR bits 7-5=010) standard parallel port data FIFO (see #P661)
-0678  RW  (when ECR bits 7-5=011) ECP data FIFO (see #P662)
-0678  RW  (when ECR bits 7-5=110) test FIFO (see #P663)
-0678  RW  (when ECR bits 7-5=111) ECP configuration A (see #P664)
-0679  RW  (when ECR bits 7-5=111) ECP configuration B (see #P665)
-067A  RW  extended control register (ECR) (see #P666)
+0678  RW  (when ECR bits 7-5=010) standard parallel port data FIFO (see #P584)
+0678  RW  (when ECR bits 7-5=011) ECP data FIFO (see #P585)
+0678  RW  (when ECR bits 7-5=110) test FIFO (see #P586)
+0678  RW  (when ECR bits 7-5=111) ECP configuration A (see #P587)
+0679  RW  (when ECR bits 7-5=111) ECP configuration B (see #P588)
+067A  RW  extended control register (ECR) (see #P589)
 
 Bitfields for ECP Address/RLE FIFO:
-Bit(s)	Description	(Table P660)
+Bit(s)	Description	(Table P583)
  7	address/RLE-count select
 	=0 RLE count
 	=1 channel address
  6-0	channel address (bit 7 set)
 	RLE count, less 1 (bit 7 clear)
 Notes:	when using hardware RLE decompression, the associated data is written
-	  to the data FIFO (see #P662) after the count is set here
+	  to the data FIFO (see #P585) after the count is set here
 	an RLE count of 1 (two identical bytes) will cause unnecessary
 	  expansions
 	the peripheral device performs the interpretation of this byte as
 	  address or RLE count; writing to this port simply causes the AUTOFD#
 	  line to be asserted to tell the peripheral that the byte is not data
-SeeAlso: #P666,#P661
+SeeAlso: #P589,#P584
 
 Bitfields for ECP Standard Parallel Port data FIFO:
-Bit(s)	Description	(Table P661)
+Bit(s)	Description	(Table P584)
  7-0	standard parallel port data
 Notes:	data written or DMAed to this port are buffered in the FIFO and
 	  transmitted to the peripheral using a standard ISA-compatible
 	  hardware handshake
 	PORT 027Ah bit 5 must be clear to enable the forward transfer direction
-SeeAlso: #P660,#P661,#P666
+SeeAlso: #P583,#P584,#P589
 
 Bitfields for ECP data FIFO:
-Bit(s)	Description	(Table P662)
+Bit(s)	Description	(Table P585)
  7-0	ECP-mode data
 Notes:	data written or DMAed to this port are buffered in the FIFO and
 	  transmitted to the peripheral using an ECP hardware handshake;
@@ -3319,10 +3384,10 @@ Notes:	data written or DMAed to this port are buffered in the FIFO and
 	when PORT 027Ah bit 5 is set (reverse transfer), data is read from the
 	  peripheral and placed in the FIFO, from which it may be read by
 	  reading this port
-SeeAlso: #P660,#P666,#P663
+SeeAlso: #P583,#P589,#P586
 
 Bitfields for ECP test FIFO:
-Bit(s)	Description	(Table P663)
+Bit(s)	Description	(Table P586)
  7-0	test FIFO data
 Notes:	writes to this port write to the FIFO, reads from this port read from
 	  the FIFO, without actually transferring any data out the parallel
@@ -3334,20 +3399,20 @@ Notes:	writes to this port write to the FIFO, reads from this port read from
 	  set in the ECR.  Similarly, the read threshold can be determined by
 	  emptying the FIFO, setting the direction bit in PORT 027Ah, and
 	  writing a byte at a time until a service interrupt is set.
-SeeAlso: #P660,#P666,#P662
+SeeAlso: #P583,#P589,#P585
 
 Bitfields for ECP configuration A:
-Bit(s)	Description	(Table P664)
+Bit(s)	Description	(Table P587)
  7-4	(read-only) implementation identification
 	bit 7: ISA-style interrupt
 	bit 4: eight-bit implementation
  3-0	reserved
 Note:	this register can only be accessed when the Extended Control
 	  Register bits 7-5 are set to 111
-SeeAlso: #P666,#P665,#P660,#P662,#P663
+SeeAlso: #P589,#P588,#P583,#P585,#P586
 
 Bitfields for ECP configuration B:
-Bit(s)	Description	(Table P665)
+Bit(s)	Description	(Table P588)
  7	reserved (0)
  6	IRQ status (reflects actual value driven onto either IRQ5 or IRQ7; used
 	  to check for interrupt conflicts)
@@ -3356,10 +3421,10 @@ Notes:	this register can only be accessed when the Extended Control
 	  Register bits 7-5 are set to 111
 	bit 4 of the parallel control port (027Ah/037Ah) must be cleared before
 	  bit 6 will show the interrupt status
-SeeAlso: #P666,#P664
+SeeAlso: #P589,#P587
 
 Bitfields for ECP Extended Control Register (ECR):
-Bit(s)	Description	(Table P666)
+Bit(s)	Description	(Table P589)
  7-5	ECP mode
 	000 ISA-compatible
 	001 PS/2-compatible (bidirectional port)
@@ -3386,7 +3451,7 @@ Notes:	if the port is currently in modes 000 or 001, it may be switched into
 	  back to modes 000 or 001
 	if a FIFO overrun or underrun occurs, BOTH bits 1 and 0 are set; to
 	  clear the FIFO error condition, switch the port to mode 000 or 001
-SeeAlso: #P664,#P665,#P662
+SeeAlso: #P587,#P588,#P585
 ----------P06800681--------------------------
 PORT 0680-0681 - Microchannel POST Diagnostic (write only)
 
@@ -3419,34 +3484,34 @@ SeeAlso: PORT 0240h-024Fh,PORT 0340h-034Fh
 		06h-09h	  Revision 3.7 and above. ICS Mixer present
 		0Ah-	  UltraMax. CS4231 present, no ICS mixer
 0746  -W  Mixer Control Port
-----------P0678067A--------------------------
+----------P0778077A--------------------------
 PORT 0778-077A - Intel 82091AA - ECP-mode PARALLEL PORT
 Range:	PORT 0678h or PORT 0378h, depending on the base address of the parallel
 	  port (0278h or 0378h)
 SeeAlso: PORT 0378h,PORT 0678h,PORT 07BCh
 
-0378  RW  (when ECR bits 7-5=011) ECP Address/RLE FIFO (see #P660)
+0378  RW  (when ECR bits 7-5=011) ECP Address/RLE FIFO (see #P583)
 	(this is the same address normally used for parallel port data)
-0778  RW  (when ECR bits 7-5=010) standard parallel port data FIFO (see #P661)
-0778  RW  (when ECR bits 7-5=011) ECP data FIFO (see #P662)
-0778  RW  (when ECR bits 7-5=110) test FIFO (see #P663)
-0778  RW  (when ECR bits 7-5=111) ECP configuration A (see #P664)
-0779  RW  (when ECR bits 7-5=111) ECP configuration B (see #P665)
-077A  RW  extended control register (ECR) (see #P666)
+0778  RW  (when ECR bits 7-5=010) standard parallel port data FIFO (see #P584)
+0778  RW  (when ECR bits 7-5=011) ECP data FIFO (see #P585)
+0778  RW  (when ECR bits 7-5=110) test FIFO (see #P586)
+0778  RW  (when ECR bits 7-5=111) ECP configuration A (see #P587)
+0779  RW  (when ECR bits 7-5=111) ECP configuration B (see #P588)
+077A  RW  extended control register (ECR) (see #P589)
 ----------P07900793--------------------------
 PORT 0790-0793 - cluster (adapter 1)
-----------P0678067A--------------------------
+----------P07BC07BE--------------------------
 PORT 07BC-07BE - Intel 82091AA - ECP-mode PARALLEL PORT
 SeeAlso: PORT 03BCh,PORT 0678h,PORT 0778h
 
-03BC  RW  (when ECR bits 7-5=011) ECP Address/RLE FIFO (see #P660)
+03BC  RW  (when ECR bits 7-5=011) ECP Address/RLE FIFO (see #P583)
 	(this is the same address normally used for parallel port data)
-07BC  RW  (when ECR bits 7-5=010) standard parallel port data FIFO (see #P661)
-07BC  RW  (when ECR bits 7-5=011) ECP data FIFO (see #P662)
-07BC  RW  (when ECR bits 7-5=110) test FIFO (see #P663)
-07BC  RW  (when ECR bits 7-5=111) ECP configuration A (see #P664)
-07BD  RW  (when ECR bits 7-5=111) ECP configuration B (see #P665)
-07BE  RW  extended control register (ECR) (see #P666)
+07BC  RW  (when ECR bits 7-5=010) standard parallel port data FIFO (see #P584)
+07BC  RW  (when ECR bits 7-5=011) ECP data FIFO (see #P585)
+07BC  RW  (when ECR bits 7-5=110) test FIFO (see #P586)
+07BC  RW  (when ECR bits 7-5=111) ECP configuration A (see #P587)
+07BD  RW  (when ECR bits 7-5=111) ECP configuration B (see #P588)
+07BE  RW  extended control register (ECR) (see #P589)
 ----------P080008FF--------------------------
 PORT 0800-08FF - I/O port access registers for extended CMOS RAM or SRAM
 		(256 bytes at a time)
@@ -3498,13 +3563,13 @@ PORT 0C80-0C83 - EISA system board ID registers
 PORT 0CF8-0CFF - PCI Configuration Mechanism 1 - Configuration Registers
 SeeAlso: PORT 0CF8h"Mechanism 2"
 
-0CF8d -W  configuration address port (see #P352)
+0CF8d -W  configuration address port (see #P590)
 0CFCd RW  configuration data port (when PORT 0CF8h bit 31 is set)
 
 Bitfields for PCI configuration address port:
-Bit(s)	Description	(Table P352)
+Bit(s)	Description	(Table P590)
  1-0	reserved (00)
- 7-2	configuration register number (see #0798)
+ 7-2	configuration register number (see #0850)
  10-8	function
  15-11	device number
  23-16	bus number
@@ -3512,7 +3577,7 @@ Bit(s)	Description	(Table P352)
  31	enable configuration space mapping
 Note:	configuration registers are considered DWORDs, so the number in bits
 	  7-2 is the configuration space address shifted right two bits
-SeeAlso: #P353
+SeeAlso: #P591
 --------X-P0CF80CFA--------------------------
 PORT 0CF8-0CFA - PCI Configuration Mechanism 2 - Configuration Registers
 Notes:	this configuration mechanism is deprecated as of PCI version 2.1;
@@ -3525,27 +3590,27 @@ Notes:	this configuration mechanism is deprecated as of PCI version 2.1;
 	the Intel "Saturn" and "Neptune" chipsets use configuration mechanism 2
 SeeAlso: PORT 0CF8h"Mechanism 1",PORT C000h"PCI Configuration",PORT 0CFBh
 
-0CF8  RW  Configuration Space Enable (CSE) (see #P353)
+0CF8  RW  Configuration Space Enable (CSE) (see #P591)
 0CFA  RW  Forward Register (selects target bus number)
 
 Bitfields for PCI Configuration Space Enable:
-Bit(s)	Description	(Table P353)
+Bit(s)	Description	(Table P591)
  0	Special Cycle Enable (SCE)
  3-1	target function number (PCI logical device within physical device)
  7-4	key (non-zero to allow configuration)
-SeeAlso: #P352
+SeeAlso: #P590
 ----------P0CF9------------------------------
 PORT 0CF9 - Intel chipsets - TURBO/RESET CONTROL REGISTER
 Notes:	this port can only be accessed via 8-bit IN or OUT instructions by
 	  the CPU
 	supported by the Intel "Saturn" and "Neptune" (82434NX) chipsets,
 	  the Intel 82454KX/GX (450GX chipset), Intel 82420EX chipset, etc.
-SeeAlso: PORT C051h,#0851,#0937
+SeeAlso: PORT C051h,#0982,#1106
 
-0CF9  RW  reboot system, optionally selecting de-turbo mode (see #P354)
+0CF9  RW  reboot system, optionally selecting de-turbo mode (see #P592)
 
 Bitfields for Intel 82420EX turbo/reset control register:
-Bit(s)	Description	(Table P354)
+Bit(s)	Description	(Table P592)
  7-4	reserved (0)
  3	(450KX/GX only) enable CPU BIST on reset
  2	reset CPU
@@ -3565,7 +3630,7 @@ SeeAlso: PORT 0CF8h
 0CFB  RW  specify which PCI access mechanism is to be enabled
 
 Bitfields for Intel 82434NX PCI mechanism control register:
-Bit(s)	Description	(Table P355)
+Bit(s)	Description	(Table P593)
  7-1	reserved
  0	PCI Configuration Access Mechanism Select
 	=0 use PCI configuration access mechanism #2 (0CF8/0CFA) (default)
@@ -3609,10 +3674,10 @@ PORT 1390-1393 - cluster (adapter 3)
 PORT 13C6 - Compaq - ???
 Note:	this port is read by the Compaq MS-DOS 4.0/5.0 CHARSET utility
 
-13C6  R?  Compaq video status??? (see #P384)
+13C6  R?  Compaq video status??? (see #P594)
 
 Bitfields for Compaq video status???:
-Bit(s)	Description	(Table P384)
+Bit(s)	Description	(Table P594)
  7	???
  6	flag
  5-3	???
@@ -3643,7 +3708,7 @@ SeeAlso: PORT 2065h
 PORT 1C80-1C8F - VESA XGA Video in EISA slot 1
 
 1C80-1C83  RW	EISA Video ID
-1C84  RW	EISA Video expansion board control (see #P356)
+1C84  RW	EISA Video expansion board control (see #P595)
 1C85  RW	EISA Setup control
 1C88  RW	EISA Video Programmable Option Select 0
 1C89-1C8F  RW	EISA Video Programmable Option Select 1-7
@@ -3662,10 +3727,10 @@ PORT 1C80-1C83 - EISA board product ID (board in slot 1)
 --------X-P1C84------------------------------
 PORT 1C84 - EISA CONFIGURATION FLAGS (board in slot 1)
 
-1C84  RW  configuration flags (see #P356)
+1C84  RW  configuration flags (see #P595)
 
 Bitfields for EISA Add-in Card configuration flags:
-Bit(s)	Description	(Table P356)
+Bit(s)	Description	(Table P595)
  0	enable
  1	IOCHKERR (read-only) card is generating CHCHK#, causing an NMI
  2	IOCHKRST reset card
@@ -3784,9 +3849,9 @@ Note:	Alternative addresses may depend on adapter manufacturer,
 
 21xA  RW  ET4000/W32(i) CRTC-B/Sprite index register
 	bit7-0: index
-21xB  RW  ET4000/W32(i) CRTC-B/Sprite data register (see #P357)
+21xB  RW  ET4000/W32(i) CRTC-B/Sprite data register (see #P596)
 
-(Table P357)
+(Table P596)
 Values for ET4000/W32(i) CRTC-B/Sprite data register index:
  E0h	CRTC-B / Sprite Horizontal Pixel Position, Low
 	   bit7-0: horizontal pixel position bit7-0
@@ -3891,7 +3956,7 @@ SeeAlso: PORT 1C80h-1C83h
 --------X-P2C84------------------------------
 PORT 2C84 - EISA CONFIGURATION FLAGS (board in slot 2)
 
-2C84  RW  configuration flags (see #P356)
+2C84  RW  configuration flags (see #P595)
 --------X-P300030FF--------------------------
 PORT 3000-30FF - available for EISA slot 3
 --------S-P32203227--------------------------
@@ -3960,7 +4025,7 @@ SeeAlso: PORT 1C80h-1C83h
 --------X-P3C84------------------------------
 PORT 3C84 - EISA CONFIGURATION FLAGS (board in slot 3)
 
-3C84  RW  configuration flags (see #P356)
+3C84  RW  configuration flags (see #P595)
 --------X-P400040FF--------------------------
 PORT 4000-40FF - available for EISA slot 4
 ----------P42204227--------------------------
@@ -3975,11 +4040,11 @@ PORT 42E0-42EF - GPIB (General Purpose Interface Bus, IEEE 488 interface)
 PORT 42E8 - 8514/A and hardware-compatible video cards
 Note:	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 
-42E8w R-  Misc. control: Subsystem Status (see #P421)
-42E8w -W  Misc. control: Subsystem Control (see #P358)
+42E8w R-  Misc. control: Subsystem Status (see #P597)
+42E8w -W  Misc. control: Subsystem Control (see #P598)
 
 Bitfields for 8514/A Subsystem Status register:
-Bit(s)	Description	(Table P421)
+Bit(s)	Description	(Table P597)
  15-8	(8514/A) reserved
  13	(S3) ???
  12-8	(S3) ???
@@ -3989,10 +4054,10 @@ Bit(s)	Description	(Table P421)
  2	FIFO overflow (interrupt generated if enabled)
  1	Graphics Engine busy (interrupt generated if enabled)
  0	vertical sync (interrupt generated if enabled)
-SeeAlso: #P358
+SeeAlso: #P598
 
 Bitfields for 8514/A Subsystem Control Register:
-Bit(s)	Description	(Table P358)
+Bit(s)	Description	(Table P598)
  15-14	GP_RESET
       W	00 no change
 	01 normal operation
@@ -4009,7 +4074,7 @@ Bit(s)	Description	(Table P358)
  2	acknowledge invalid I/O interrupt (and clear)
  1	acknowledge inside-scissors interrupt (and clear)
  0	acknowledge vertical blanking interrupt (and clear)
-SeeAlso: #P421
+SeeAlso: #P597
 --------V-P42EC------------------------------
 PORT 42EC - ATI Mach64 - ???
 SeeAlso: PORT 42EDh"Mach64"
@@ -4043,12 +4108,12 @@ PORT 4F15 - Tseng Labs ET6000 - Read EDID through Display Data Channel
 PORT 46E8 - VGA - VIDEO ADAPTER ENABLE
 Note:	IBM uses this port for adapter-card VGAs only, and PORT 03C3h for
 	  motherboard VGA only (see 03C3 for details)
-SeeAlso: PORT 03C3h,PORT 46E8h"8514/A",#P414
+SeeAlso: PORT 03C3h,PORT 46E8h"8514/A",#P496
 
-46E8  rW  Misc. control: enable flags / select ROM page (8514/A) (see #P359)
+46E8  rW  Misc. control: enable flags / select ROM page (8514/A) (see #P599)
 
 Bitfields for VGA miscellaneous control register:
-Bit(s)	Description	(Table P359)
+Bit(s)	Description	(Table P599)
  7-5	unused or vendor-specific
  4	setup for POS registers (MCA)
  3	enable video I/O ports and video buffer
@@ -4058,10 +4123,10 @@ PORT 46E8 - 8514/A and compatible (e.g. ATI Graphics Ultra) - ROM PAGE SELECT
 Note:	this register is readable on the C&T 82c480 chipset
 SeeAlso: PORT 46E8h"VGA"
 
-46E8w -W  ROM page select (see #P360)
+46E8w -W  ROM page select (see #P600)
 
 Bitfields for 8514/A ROM page select register:
-Bit(s)	Description	(Table P360)
+Bit(s)	Description	(Table P600)
  2-0	select which 4K page of 32K ROM to map at segment C700h
  3	enable VGA
  4	select VGA setup mode
@@ -4080,17 +4145,17 @@ PORT 4800-48FF - available for EISA slot 4
 PORT 4AE8-4AE9 - 8514/A and compatible - CRT CONTROL
 Notes:	supported by ATI Mach8 and Mach32 chipsets
 	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
-SeeAlso: #P415
+SeeAlso: #P497
 
-4AE8w -W  CRT control: Advanced function control (see also #P361)
+4AE8w -W  CRT control: Advanced function control (see also #P601)
 	(02h = VGA mode, 03h = 480-line mode, 07h = 768-line mode)
 
 Bitfields for S3 8514/A-compatible Advanced Function Control register:
-Bit(s)	Description	(Table P361)
+Bit(s)	Description	(Table P601)
  15-7	reserved
  6	(928 only) enable Write Posting
  5	(928+) enable memory-mapped I/O
- 4	(928+) enable linear addressing (see also #P308)
+ 4	(928+) enable linear addressing (see also #P489)
  3	reserved
  2	(911-928) screen size (1 = 800x600 or 1024x768, 0=640x480)
 	(Trio32/Trio64) enhanced modes pixel length (0 = 8+ bpp, 1 = 4 bpp)
@@ -4112,7 +4177,7 @@ SeeAlso: PORT 1C80h-1C8Fh,PORT 6C80h-6C8Fh
 --------X-P4C84------------------------------
 PORT 4C84 - EISA CONFIGURATION FLAGS (board in slot 4)
 
-4C84  RW  configuration flags (see #P356)
+4C84  RW  configuration flags (see #P595)
 --------X-P500050FF--------------------------
 PORT 5000-50FF - available for EISA slot 5
 --------S-P52205227--------------------------
@@ -4180,7 +4245,7 @@ SeeAlso: PORT 1C80h-1C83h
 --------X-P5C84------------------------------
 PORT 5C84 - EISA CONFIGURATION FLAGS (board in slot 5)
 
-5C84  RW  configuration flags (see #P356)
+5C84  RW  configuration flags (see #P595)
 --------V-P5EE85EE9--------------------------
 PORT 5EE8-5EE9 - C&T 82c480 - EXTENDED CONFIGURATION REGISTER 3
 Note:	the 82c480 is an 8514/A-compatible video chipset
@@ -4191,10 +4256,10 @@ SeeAlso: PORT 52E8h"C&T",PORT 56E8h"C&T",PORT 5AE8h"C&T"
 PORT 5EEE - ATI Mach32 - MEMORY APERTURE CONFIGURATION REGISTER
 SeeAlso: PORT 42EEh"Mach32"
 
-5EEEw RW  Memory Aperture Configuration (see #P362)
+5EEEw RW  Memory Aperture Configuration (see #P602)
 
 Bitfields for ATI Mach32 Memory Aperture Configuration Register:
-Bit(s)	Description	(Table P362)
+Bit(s)	Description	(Table P602)
  1-0	direct memory interface mapping
 	00 disabled
 	01 1M aperture (not on PCI)
@@ -4235,10 +4300,10 @@ SeeAlso: PORT 66ECh"Mach64"
 PORT 6AEE - ATI Mach8/Mach32 - MAXIMUM WAIT STATES
 SeeAlso: PORT 36EEh,PORT 6EEEh,PORT 76EEh,PORT 7AEEh,PORT 8EEEh
 
-6AEE  RW  maximum wait states (see #P363)
+6AEE  RW  maximum wait states (see #P603)
 
 Bitfields for ATI Mach8/Mach32 wait state configuration:
-Bit(s)	Description	(Table P363)
+Bit(s)	Description	(Table P603)
  10	leave alone ("PASSTHROUGH_OVERRIDE")
  9	enable for 16-bit I/O
  8	0=horizontal degree-mode line draws
@@ -4265,7 +4330,7 @@ SeeAlso: PORT 1C80h-1C8Fh"XGA",PORT 2C80h-2C8Fh"XGA",PORT 5C80h-5C8Fh"XGA"
 --------X-P6C84------------------------------
 PORT 6C84 - EISA CONFIGURATION FLAGS (board in slot 6)
 
-6C84  RW  configuration flags (see #P356)
+6C84  RW  configuration flags (see #P595)
 --------V-P6EEC------------------------------
 PORT 6EEC - ATI Mach64 - ???
 SeeAlso: PORT 6AECh"Mach64"
@@ -4312,10 +4377,10 @@ PORT 7800-78FF - available for EISA slot 7
 PORT 7AEE - ATI Mach8/Mach32 - EXTENDED GRAPHICS ENGINE CONGIFURATION
 SeeAlso: PORT 8EEEh
 
-7AEEw -W  extended graphics engine configuration (see #P364)
+7AEEw -W  extended graphics engine configuration (see #P604)
 
 Bitfields for Mach8/Mach32 extended graphics engine configuration:
-Bit(s)	Description	(Table P364)
+Bit(s)	Description	(Table P604)
  15	drawing pixel size to be written next (68800-6 only)
  14	enable 8-bit DAC (Mach-32 only)
  13-12	DAC address inputs RS(3:2) control (Mach-32 only)
@@ -4359,7 +4424,7 @@ SeeAlso: PORT 1C80h-1C8Fh,PORT 6C80h-6C8Fh
 --------X-P7C84------------------------------
 PORT 7C84 - EISA CONFIGURATION FLAGS (board in slot 7)
 
-7C84  RW  configuration flags (see #P356)
+7C84  RW  configuration flags (see #P595)
 --------V-P7EEE------------------------------
 PORT 7EEE - ATI Mach8/Mach32 - BOUNDS ACCUMULATOR (RIGHT)
 SeeAlso: PORT 72EEh"BOUNDS",PORT 76EEh"BOUNDS",PORT 7AEEh"BOUNDS"
@@ -4435,11 +4500,11 @@ Notes:	supported by ATI Mach8 and Mach32 chipsets
 SeeAlso: PORT 82E8h,PORT 86E8h
 
 8AE8w -W  drawing control: destination Y position / axial step constant
-	  (see #P424)
+	  (see #P605)
 Note:	this port may be read on S3 chipsets
 
 Bitfields for 8514/A destination Y position / axial step constant register:
-Bit(s)	Description	(Table P424)
+Bit(s)	Description	(Table P605)
  11-0	destination Y position
  13-0	axial step constant for line drawing
  15-14	reserved
@@ -4451,7 +4516,7 @@ Desc:	define the row at which the second of two edges for a polygon or
 SeeAlso: PORT 8AE8h
 
 8AEAw RW  drawing control: destination Y position 2 / axial step constant 2
-	  (see #P424)
+	  (see #P605)
 --------X-P8C008CFF--------------------------
 PORT 8C00-8CFF - available for EISA slot 8
 --------X-P8C808C83--------------------------
@@ -4460,8 +4525,8 @@ SeeAlso: PORT 1C80h-1C83h
 --------X-P8C84------------------------------
 PORT 8C84 - EISA CONFIGURATION FLAGS (board in slot 8)
 
-8C84  RW  configuration flags (see #P356)
---------V-P8EE88EEF--------------------------
+8C84  RW  configuration flags (see #P595)
+--------V-P8EE88EE9--------------------------
 PORT 8EE8-8EE9 - 8514/A and compatible - DESTINATION X POSITION
 Desc:	define the left column of the destination for a BLT, the diagonal step
 	  constant for a line, or the ending column of a line segment in a
@@ -4472,7 +4537,7 @@ Notes:	supported by ATI Mach8 and Mach32 chipsets
 SeeAlso: PORT DAEEh"Mach32",PORT 8EEAh
 
 8EE8w -W  drawing control: destination X position / axial step constant
-	  (see #P424)
+	  (see #P605)
 --------V-P8EEA8EEB--------------------------
 PORT 8EEA-8EEB - S3 Trio64 - DESTINATION X COORD 2 / AXIAL STEP CONSTANT 2
 Desc:	define the column at which the second of two edges for a polygon or
@@ -4481,15 +4546,15 @@ Desc:	define the column at which the second of two edges for a polygon or
 SeeAlso: PORT 8EE8h
 
 8EEAw RW  drawing control: destination X position 2 / diagonal step constant 2
-	  (see #P424)
+	  (see #P605)
 --------V-P8EEE------------------------------
 PORT 8EEE - ATI Mach32 - READ EXTENDED GRAPHICS CONFIGURATION
 SeeAlso: PORT 72EEh
 
-8EEE  R-  read extended graphics configuration (see #P364)
+8EEE  R-  read extended graphics configuration (see #P604)
 --------X-P900090FF--------------------------
 PORT 9000-90FF - available for EISA slot 9
---------V-P92E892EF--------------------------
+--------V-P92E892E9--------------------------
 PORT 92E8-92E9 - 8514/A and compatible - BRESENHAM ERROR TERM
 Desc:	specify the initial error term for drawing a line using the Bresenham
 	  algorithm
@@ -4539,11 +4604,11 @@ Notes:	supported by ATI Mach8 and Mach32 chipsets
 	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 SeeAlso: PORT 9AEAh
 
-9AE8w R-  drawing control: graphic processor status (see #P365)
-9AE8w -W  drawing control: command register (see #P366)
+9AE8w R-  drawing control: graphic processor status (see #P606)
+9AE8w -W  drawing control: command register (see #P607)
 
 Bitfields for 8514/A graphic processor status:
-Bit(s)	Description	(Table P365)
+Bit(s)	Description	(Table P606)
  15-10	(8514/A) reserved
  15	(S3 Trio64 only) queue status flags 9
  14-11	(S3 Trio64 only) queue status flags 10-13
@@ -4557,14 +4622,14 @@ Bit(s)	Description	(Table P365)
 Note:	queue status flag N is cleared whenever at least N slots are available
 	  in the FIFO; at any given time, the CPU may write only as many values
 	  to the FIFO as there are slots available
-SeeAlso: #P366
+SeeAlso: #P607
 
 Bitfields for 8514/A command register :
-Bit(s)	Description	(Table P366)
- 15-13	command (see #P425)
+Bit(s)	Description	(Table P607)
+ 15-13	command (see #P608)
  12	byte sequence (0=high byte first, 1=low byte first)
  11-10	(8514/A) reserved
- 11	(S3 Trio) high bit of command (see #P425)
+ 11	(S3 Trio) high bit of command (see #P608)
  10	(S3 Trio) enable 32-bit write access
  9	enable 16-bit write access (16BIT)
  8	0=use 8514/A data, 1=pixel data trans reg (PCDATA) (see PORT E2E8h)
@@ -4578,9 +4643,9 @@ Bit(s)	Description	(Table P366)
  2	0=draw last pixel, 1=don't draw last pixel (LASTPIX)
  1	0=single pixel, 1=4pixel (PLANAR)
  0	0=read data, 1=write data (RD/WR) (must be 1 on S3 Trio)
-SeeAlso: #P365,#P426
+SeeAlso: #P606,#P609
 
-(Table P425)
+(Table P608)
 Values for 8514/A command:
  000	no operation (used to force synchronization with graphics processor,
 	  or to set up short stroke vector drawing without writing any pixels)
@@ -4600,32 +4665,32 @@ Values for 8514/A command:
  1011	polygon fill pattern
  1100	4-point trapezoid fill pattern
  1101	Bresenham trapezoid fill pattern
-SeeAlso: #P366
+SeeAlso: #P607
 --------V-P9AEA9AEB--------------------------
 PORT 9AEA-9AEB - S3 Trio64 - DRAWING COMMAND 2
 Desc:	specify the drawing direction for the second edge of a Bresenham
 	  trapezoid
 SeeAlso: PORT 9AE8h
 
-9AEAw -W  drawing command 2 (see #P426)
+9AEAw -W  drawing command 2 (see #P609)
 
 Bitfields for S3 Trio64 Drawing Command 2 register:
-Bit(s)	Description	(Table P426)
+Bit(s)	Description	(Table P609)
  15-8	reserved
  7-5	drawing direction
 	 7	0=draw vector above, 1=draw vector below (INC_Y)
 	 6	0=x is maj. axis, 1=y is maj. axis (YMAJAXIS)
 	 5	0=draw vector left, 1=draw vector right (INC_X)
  4-0	reserved
-SeeAlso: #P366
+SeeAlso: #P607
 --------V-P9AEE------------------------------
 PORT 9AEE - ATI Mach8/Mach32 - LINEDRAW INDEX REGISTER
 SeeAlso: PORT FEEEh
 
 9AEE  -W  linedraw index register (specifies interpretation of PORT FEEEh)
-	  (see #P367)
+	  (see #P610)
 
-(Table P367)
+(Table P610)
 Values for ATI Mach8/Mach32 Linedraw Index Register:
  00h	set current X
  01h	set current Y
@@ -4641,19 +4706,19 @@ SeeAlso: PORT 1C80h-1C83h
 --------X-P9C84------------------------------
 PORT 9C84 - EISA CONFIGURATION FLAGS (board in slot 9)
 
-9C84  RW  configuration flags (see #P356)
---------V-P9EE8------------------------------
+9C84  RW  configuration flags (see #P595)
+--------V-P9EE89EE9--------------------------
 PORT 9EE8-9EE9 - 8514/A and compatible - SHORT STROKE VECTORS
 Desc:	specify two short-stroke vectors to be drawn one after the other
 Notes:	supported by ATI Mach8 and Mach32 chipsets
 	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
-	bit 12 of the command register (see PORT 9AE8h,#P366) specifies which
+	bit 12 of the command register (see PORT 9AE8h,#P607) specifies which
 	  vector is drawn first
 
-9EE8w -W  short line vector transfer (see #P427)
+9EE8w -W  short line vector transfer (see #P611)
 
 Bitfields for 8514/A short-stroke vector:
-Bit(s)	Description	(Table P427)
+Bit(s)	Description	(Table P611)
  15-13	second vector: drawing direction
  12	second vector: draw/move
  11-0	second vector: length in pixels (less 1)
@@ -4671,7 +4736,7 @@ PORT A220 - soundblaster support in AMI Hi-Flex BIOS  ????
 PORT A2E0-A2EF - GPIB (General Purpose Interface Bus, IEEE 488 interface)
 
 A2E1  RW  GPIB (adapter 5)
---------V-PA2E8A2EF--------------------------
+--------V-PA2E8A2EB--------------------------
 PORT A2E8-A2EB - 8514/A and compatible - BACKGROUND COLOR
 Notes:	supported by ATI Mach8 and Mach32 chipsets
 	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
@@ -4683,10 +4748,10 @@ A2E8d RW  (S3) drawing control: 32bpp background color
 PORT A2EE-A2EF - ATI Mach8/Mach32 - LINE DRAW OPTIONS
 SeeAlso: PORT 8EEEh,PORT CEEEh
 
-A2EEw RW  line drawing options (see #P368)
+A2EEw RW  line drawing options (see #P612)
 
 Bitfields for ATI Mach8/Mach32 line drawing options:
-Bit(s)	Description	(Table P368)
+Bit(s)	Description	(Table P612)
  10-9	clipping mode
 	00 disable clip exception
 	01 stroked plain lines
@@ -4703,7 +4768,7 @@ Bit(s)	Description	(Table P368)
 		OCTANT field species N*45 degrees
  2	do NOT draw last pixel of a line
  1	polyline draw
---------V-PA6E8A6EF--------------------------
+--------V-PA6E8A6EB--------------------------
 PORT A6E8-A6EB - 8514/A and compatible - FOREGROUND COLOR
 Notes:	supported by ATI Mach8 and Mach32 chipsets
 	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
@@ -4711,7 +4776,7 @@ SeeAlso: PORT A2E8h,PORT AAE8h,PORT AEE8h
 
 A6E8w -W  drawing control: foreground color
 A6E8d RW  (S3) drawing control: foreground color for 32bpp modes
---------V-PAAE8AAEF--------------------------
+--------V-PAAE8AAEB--------------------------
 PORT AAE8-AAEB - 8514/A and compatible - WRITE MASK
 Desc:	specify which bit planes are updates when a pixel is written
 Notes:	supported by ATI Mach8 and Mach32 chipsets
@@ -4720,7 +4785,7 @@ SeeAlso: PORT A6E8h,PORT AEE8h
 
 AAE8w -W  drawing control: write mask
 AAE8d RW  (S3) drawing control: write mask for 32bpp modes
---------V-PAEE8AEEF--------------------------
+--------V-PAEE8AEEB--------------------------
 PORT AEE8-AEEB - 8514/A and compatible - READ MASK
 Desc:	specify which bit planes are used as a data source
 Notes:	supported by ATI Mach8 and Mach32 chipsets
@@ -4737,7 +4802,7 @@ AFFF  RW  plane 0-3 system latch (video register)
 PORT B220-B227 - serial port, description same as 03F8
 --------S-PB228B22F--------------------------
 PORT B228-B22F - serial port, description same as 03F8
---------V-PB2E8B2EF--------------------------
+--------V-PB2E8B2EB--------------------------
 PORT B2E8-B2EB - 8514/A and compatible - COLOR COMPARE
 Notes:	supported by ATI Graphics Ultra
 	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
@@ -4749,29 +4814,29 @@ B2E8d RW  (S3) drawing control: color compare for 32bpp modes
 PORT B2EE - ATI Mach32 - ???
 
 B2EEw RW  ???
---------V-PB6E8B6EF--------------------------
+--------V-PB6E8B6E9--------------------------
 PORT B6E8-B6E9 - 8514/A and compatible - BACKGROUND MIX
 Notes:	supported by ATI Mach8 and Mach32 chipsets
 	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 SeeAlso: PORT BAE8h,PORT BEE8h,PORT B2E8h
 
-B6E8w -W  drawing control: background mix (see #P423)
+B6E8w -W  drawing control: background mix (see #P613)
 Note:	this register may be read on S3 chipsets
 --------V-PB6EE------------------------------
 PORT B6EE - ATI Mach32 - ???
 
 B6EEw RW  ???
---------V-PBAE8BAEF--------------------------
+--------V-PBAE8BAE9--------------------------
 PORT BAE8-BAE9 - 8514/A and compatible - FOREGROUND MIX
 Notes:	supported by ATI Mach8 and Mach32 chipsets
 	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 SeeAlso: PORT B6E8h
 
-BAE8w -W  drawing control: foreground mix (see #P423)
+BAE8w -W  drawing control: foreground mix (see #P613)
 Note:	this register may be read on S3 chipsets
 
 Bitfields for 8514/A color mix register:
-Bit(s)	Description	(Table P423)
+Bit(s)	Description	(Table P613)
  15-7	reserved
  6-5	color source
 	00 background color
@@ -4800,7 +4865,7 @@ Bit(s)	Description	(Table P423)
 PORT BAEE - ATI Mach32 - ???
 
 BAEEw RW  ???
---------V-PBEE8BEEF--------------------------
+--------V-PBEE8BEE9--------------------------
 PORT BEE8-BEE9 - 8514/A and compatible - MULTIFUNCTION CONTROL
 Notes:	supported by ATI Mach8 and Mach32 chipsets
 	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
@@ -4808,11 +4873,11 @@ Notes:	supported by ATI Mach8 and Mach32 chipsets
 	  command (see PORT 9AE8h) is required to ensure correct read-back
 	  immediately after a write
 
-BEE8w -W  drawing control: multi-function control (see #P422)
+BEE8w -W  drawing control: multi-function control (see #P615)
 BEE8w R-  (S3) value of register specified by current value of multi-function
-	  read select register (index 0Fh bits 3-0) (see #P422)
+	  read select register (index 0Fh bits 3-0) (see #P615)
 
-(Table P369)
+(Table P614)
 Values for index into 8514/A multi-function drawing control registers:
  00h RW minor axis pixel count
  01h RW top scissors
@@ -4826,12 +4891,12 @@ Values for index into 8514/A multi-function drawing control registers:
 ---S3 chipsets---
  0Dh RW (S3 864/964) miscellaneous 2
  0Eh RW (S3 801+) miscellaneous
- 0Fh -W (S3 801/805/928) read register select (see #P370)
-SeeAlso: #P422
+ 0Fh -W (S3 801/805/928) read register select (see #P616)
+SeeAlso: #P615
 
 Bitfields for 8514/A Multi-Function Control registers:
-Bit(s)	Description	(Table P422)
- 15-12	register index (see #P369)
+Bit(s)	Description	(Table P615)
+ 15-12	register index (see #P614)
 ---register 00h: minor axis pixel count---
  11-0	rectangle height - 1
 ---register 01h: top scissors---
@@ -4883,10 +4948,10 @@ Bit(s)	Description	(Table P422)
 		  address in register 0Dh is nonzero
 ---register 0Fh: multifunction read select---
  11-4	reserved
- 3-0	(S3)	read select (see #P370)
- 2-0	(8514/A) read select (see #P370)
+ 3-0	(S3)	read select (see #P616)
+ 2-0	(8514/A) read select (see #P616)
 
-(Table P370)
+(Table P616)
 Values for S3 multifunction read select register:
  00h	PORT BEE8h register 00h
  01h	PORT BEE8h register 01h
@@ -4900,7 +4965,7 @@ Values for S3 multifunction read select register:
  08h	PORT 42E8h (bits 11-0 only)
  09h	PORT 46E8h
  0Ah	PORT BEE8h register 0Dh
-SeeAlso: #P369,#P422
+SeeAlso: #P614,#P615
 --------X-PC000CFFF--------------------------
 PORT C000-CFFF - PCI Configuration Mechanism 2 - CONFIGURATION SPACE
 Note:	to access the configuration space, write the target bus number to
@@ -4909,19 +4974,19 @@ Note:	to access the configuration space, write the target bus number to
 	  port(s) in the range C000h to CFFFh (where Cxrrh accesses location
 	  'rr' in physical device 'x's configuration data)
 SeeAlso: PORT 0CF8h"Mechanism 2",PORT 0CFAh"Mechanism 2"
-SeeAlso: #0798 at INT 1A/AX=B10Ah
+SeeAlso: #0850 at INT 1A/AX=B10Ah
 --------d-PC100C1FF--------------------------
 PORT C100-C1FF - Intel Pentium mboard - PCTech RZ1000 EIDE controller
 Desc:	the PCI configuration registers for the EIDE controller are visible
 	  on these ports when the PCI configuration space has been opened via
 	  ports 0CF8h and 0CFAh
-SeeAlso: PORT 03F0h"RZ1000",PORT 0CF8h,#0798 at INT 1A/AX=B10Ah
+SeeAlso: PORT 03F0h"RZ1000",PORT 0CF8h,#0850 at INT 1A/AX=B10Ah
 ----------PC200C204--------------------------
 PORT C200-C204 - Intel Pentium mboard ("Neptune" chipset)
 Desc:	the PCI configuration registers for the motherboard chipset are visible
 	  on these ports when the PCI configuration space has been opened via
 	  ports 0CF8h and 0CFAh
-SeeAlso: #0798 at INT 1A/AX=B10Ah
+SeeAlso: #0850 at INT 1A/AX=B10Ah
 --------S-PC220C227--------------------------
 PORT C220-C227 - serial port, description same as 03F8
 --------S-PC228C22F--------------------------
@@ -4948,10 +5013,10 @@ CAEEw RW  ???
 PORT CEEE - ATI Mach8/Mach32 - DATAPATH CONFIGURATION
 SeeAlso: PORT 8EEEh
 
-CEEEw -W  datapath configuration (see #P371)
+CEEEw -W  datapath configuration (see #P617)
 
 Bitfields for ATI Mach8/Mach32 datapath configuration:
-Bit(s)	Description	(Table P371)
+Bit(s)	Description	(Table P617)
  15-13	foreground color source
 	000 background color reg
 	001 foreground color reg
@@ -5044,7 +5109,7 @@ SeeAlso: PORT 0140h-014Fh"Future Domain TMC-16x0"
 --------d-Pxxxx------------------------------
 PORT xxxx - AMD Am53C974A PC-SCSI II SCSI adapter
 Range:	anywhere, on a 128-port boundary
-SeeAlso: #0823
+SeeAlso: #0897
 
 +000  R-  current transfer count register (low)
 +000  -W  start transfer count register (low)
@@ -5092,43 +5157,43 @@ SeeAlso: PORT 0140h-014Fh"Future Domain TMC-16x0"
 --------p-Pxxxx------------------------------
 PORT xxxx - AMD-645 - Power Management Registers
 Range:	on any 256-byte boundary
-SeeAlso: #0848
+SeeAlso: #0976
 
-+000w RC  power management status (see #P428)
-+002w RW  power management enable (see #P429)
-+004w RW  power management control (see #P430)
++000w RC  power management status (see #P618)
++002w RW  power management enable (see #P619)
++004w RW  power management control (see #P620)
 +006	  unused???
 +008d RW  power management timer (24 or 32 bits)
 +00C	  unused???
-+010d RW  processor power management control (see #P431)
++010d RW  processor power management control (see #P621)
 +014  R-  "P_LVL2" processor level 2 -- reading switches to C2 power state
 +015  R-  "P_LVL3" processor level 3 -- reading switches to C3 power state
 +016	  unused???
-+020w RC  general purpose status (see #P432)
-+022w RW  general purpose SCI enable (see #P433)
-+024w RW  general purpose SMI enable (see #P434)
-+026w RW  power supply control (see #P435)
-+028w RC  global power management status (see #P436)
-+02Aw RW  global power management enable (see #P437)
-+02Cw RW  global power management control (see #P438)
-+02E      unused???
++020w RC  general purpose status (see #P622)
++022w RW  general purpose SCI enable (see #P623)
++024w RW  general purpose SMI enable (see #P624)
++026w RW  power supply control (see #P625)
++028w RC  global power management status (see #P626)
++02Aw RW  global power management enable (see #P627)
++02Cw RW  global power management control (see #P628)
++02E	  unused???
 +02F  RW  SMI command
-	writing this port sets the SW_SMI_STS bit (see #P436,#P437)
-+030d RC  primary activity detection status (see #P439)
-+034d RW  primary activity detection enable (see #P440)
-+038d RW  general purpose timer reload enable (see #P441)
-+03C      unused???
-+040  RW  control of general-purpose I/O direction (see #P442)
-+041      ???
-+042  RW  output value for GPIO port (see #P443)
+	writing this port sets the SW_SMI_STS bit (see #P626,#P627)
++030d RC  primary activity detection status (see #P629)
++034d RW  primary activity detection enable (see #P630)
++038d RW  general purpose timer reload enable (see #P631)
++03C	  unused???
++040  RW  control of general-purpose I/O direction (see #P632)
++041	  ???
++042  RW  output value for GPIO port (see #P633)
 +043  RW  ???
-+044  RW  input value for GPIO port (see #P444)
++044  RW  input value for GPIO port (see #P634)
 +045  RW  ???
 +046w RW  output value for general-purpose output port
 +048w RW  input value for general-purpose input port
 
 Bitfields for AMD-645 Power Management Control Status:
-Bit(s)	Description	(Table P428)
+Bit(s)	Description	(Table P618)
  15	wakeup request -- system will transition from suspend to normal working
  14-12	reserved (0)
  11	power button override (set when PWRBTN# asserted for more than 4 sec)
@@ -5145,22 +5210,22 @@ Bit(s)	Description	(Table P428)
  0	ACPI timer carried into highest bit
 Note:	all bits are write-clear: write a 1 bit to acknowledge the
 	  status and clear that bit
-SeeAlso: #P429,MEM xxxxh:xxx0h"ACPI"
+SeeAlso: #P619,MEM xxxxh:xxx0h"ACPI"
 
 Bitfields for AMD-645 Power Management Enable register:
-Bit(s)	Description	(Table P429)
+Bit(s)	Description	(Table P619)
  15-11	reserved (0)
  10	enable SCI/SMI on RTC alarm
  9	reserved (0)
- 8	enable SCI/SMI when PB_STS set (see #P428 bit 8)
+ 8	enable SCI/SMI when PB_STS set (see #P618 bit 8)
  7-6	reserved
- 5	enable SCI/SMI when GBL_STS set (see #P428 bit 5)
+ 5	enable SCI/SMI when GBL_STS set (see #P618 bit 5)
  4-1	reserved
  0	enable SCI/SMI when ACPI timer carries
-SeeAlso: #P428,#P430,MEM xxxxh:xxx0h"ACPI"
+SeeAlso: #P618,#P620,MEM xxxxh:xxx0h"ACPI"
 
 Bitfields for AMD-645 Power Management Control register:
-Bit(s)	Description	(Table P430)
+Bit(s)	Description	(Table P620)
  15-14	reserved (0)
  13	(write) force transition into sleep state (bits 12-10) when set
 	(read) always 0
@@ -5178,10 +5243,10 @@ Bit(s)	Description	(Table P430)
  0	power management event interrupt type
 	0 generate SMI
 	1 generate SCI
-SeeAlso: #P428,#P429
+SeeAlso: #P618,#P619
 
 Bitfields for AMD-645 Processor Power Management Control register:
-Bit(s)	Description	(Table P431)
+Bit(s)	Description	(Table P621)
  31-5	reserved (0)
  4	enable clock throttling
 	0 = suspend processor on reading P_LVL2 port at offset 14h
@@ -5193,45 +5258,45 @@ Bit(s)	Description	(Table P431)
 	...
 	111 6/8 - 7/8
  0	reserved (0)
-SeeAlso: #P430,#P431
+SeeAlso: #P620,#P621
 
 Bitfields for AMD-645 General Purpose Status register:
-Bit(s)	Description	(Table P432)
+Bit(s)	Description	(Table P622)
  15-10	reserved (0)
  9	"USB_STS"	USB peripheral generated resume event
  8	"RI_STS"	ring detected (RI# asserted)
  7	"EXT7_STS"	EXTSMI7# pin toggled
  6-0	"EXT?_STS"	EXTSMI6# - EXTSMI0# pins toggled
-SeeAlso: #P430,#P433
+SeeAlso: #P620,#P623
 
 Bitfields for AMD-645 General Purpose SCI Enable register:
-Bit(s)	Description	(Table P433)
+Bit(s)	Description	(Table P623)
  15-10	reserved (0)
  9	enable SCI when USB_STS bit becomes set
  8	enable SCI when RI_STS bit becomes set
  7-0	enable SCI when EXT?_STS bit becomes set
-SeeAlso: #P432,#P434
+SeeAlso: #P622,#P624
 
 Bitfields for AMD-645 General Purpose SMI Enable register:
-Bit(s)	Description	(Table P434)
+Bit(s)	Description	(Table P624)
  15-10	reserved (0)
  9	enable SMI when USB_STS bit becomes set
  8	enable SMI when RI_STS bit becomes set
  7-0	enable SMI when EXT?_STS bit becomes set
-SeeAlso: #P432,#P433,#P435
+SeeAlso: #P622,#P623,#P625
 
 Bitfields for AMD-645 Power Supply Control register:
-Bit(s)	Description	(Table P435)
+Bit(s)	Description	(Table P625)
  15-11	reserved (0)
  10	enable setting of RI_STS bit to turn on power
  9	set PB_STS bit to resume from suspend
  8	set RTC_STS bit to resume from suspend on RTC alarm
  7-1	reserved (0)
  0	enable setting of EXT0_STS bit to resume from suspend
-SeeAlso: #P432,#P436,#P437
+SeeAlso: #P622,#P626,#P627
 
 Bitfields for AMD-645 PM Global Status register:
-Bit(s)	Description	(Table P436)
+Bit(s)	Description	(Table P626)
  15-7	reserved (0)
  6	"SW_SMI_STS" SMI_CMD port has been written
  5	"BIOS_STS" set whenever GLB_RLS bit is set; GLB_RLS is cleared when
@@ -5240,24 +5305,24 @@ Bit(s)	Description	(Table P436)
  3	GP1 timer timed out
  2	GP0 timer timed out
  1	secondary event timer timed out
- 0	"PACT_STS" an enabled primary system activity has occurred (see #P440)
+ 0	"PACT_STS" an enabled primary system activity has occurred (see #P630)
 Note:	this register is write-clear: writing a 1 to a bit clears that bit
-SeeAlso: #P435
+SeeAlso: #P625
 
 Bitfields for AMD-645 PM Global Enable register:
-Bit(s)	Description	(Table P437)
+Bit(s)	Description	(Table P627)
  15-7	reserved (0)
  6	enable SMI when SMI_CMD port is written
- 5	enable SMI when BIOS_STS bit set (see #P436)
+ 5	enable SMI when BIOS_STS bit set (see #P626)
  4	enable SMI on legacy USB events
  3	enable SMI when GP1 timer times out
  2	enable SMI when GP0 timer times out
  1	enable SMI when secondary event timer times out
  0	enable SMI on occurrence of any primary activity
-SeeAlso: #P435,#P436,#P438
+SeeAlso: #P625,#P626,#P628
 
 Bitfields for AMD-645 PM Global Control ("GLB_CTL") register:
-Bit(s)	Description	(Table P438)
+Bit(s)	Description	(Table P628)
  15-9	reserved
  8	SMI is active
  7-5	reserved
@@ -5274,10 +5339,10 @@ Bit(s)	Description	(Table P438)
 	  set, the GBL_STS bit is set by hardware; when GBL_STS is cleared,
 	  this bit is cleared by hardware
  0	enable SMI generation
-SeeAlso: #P435,#P436,#P437,MEM xxxxh:xxx0h"ACPI"
+SeeAlso: #P625,#P626,#P627,MEM xxxxh:xxx0h"ACPI"
 
 Bitfields for AMD-645 PM Primary Activity Detect Status register:
-Bit(s)	Description	(Table P439)
+Bit(s)	Description	(Table P629)
  31-8	reserved (0)
  7	keyboard controller accessed via PORT 0060h
  6	serial port accessed (via PORT 03F8h-03FFh, 02F8h-02FFh, 03E8h-03EFh,
@@ -5286,15 +5351,15 @@ Bit(s)	Description	(Table P439)
  4	video controller accessed
  3	IDE or Floppy controller accessed
  2	reserved (0)
- 1	a primary interrupt occurred (see #0848 [offset 44h])
+ 1	a primary interrupt occurred (see #0976 [offset 44h])
  0	ISA busmaster or DMA activity occurred
 Note:	this register is write-clear: write a 1 to a bit to clear it
-SeeAlso: #P440,#P438
+SeeAlso: #P630,#P628
 
 Bitfields for AMD-645 PM Primary Activity Detect Enable register:
-Bit(s)	Description	(Table P440)
+Bit(s)	Description	(Table P630)
  31-8	reserved (0)
----set PACT_STS (see #P436) whenever:
+---set PACT_STS (see #P626) whenever:
  7	keyboard controller is accessed via PORT 0060h
  6	serial port is accessed (via PORT 03F8h-03FFh, 02F8h-02FFh,
 	  PORT 03E8h-03EFh, or PORT 02E8h-02EFh)
@@ -5302,12 +5367,12 @@ Bit(s)	Description	(Table P440)
  4	video controller is accessed
  3	IDE or Floppy controller is accessed
  2	reserved (0)
- 1	a primary interrupt occurrs (see #0848 [offset 44h])
+ 1	a primary interrupt occurrs (see #0976 [offset 44h])
  0	ISA busmaster or DMA activity occurrs
-SeeAlso: #P439,#P438
+SeeAlso: #P629,#P628
 
 Bitfields for AMD-645 GP Timer Reload Enable register:
-Bit(s)	Description	(Table P441)
+Bit(s)	Description	(Table P631)
  31-8	reserved (0)
  7	reload GP1 whenever keyboard controller is accessed
  6	reload GP1 whenever a serial port is accessed
@@ -5316,10 +5381,10 @@ Bit(s)	Description	(Table P441)
  3	reload GP1 whenever IDE or floppy controller is accessed
  2-1	reserved (0)
  0	reload GP0 whenever a primary activity is detected
-SeeAlso: #P440,#P439
+SeeAlso: #P630,#P629
 
 Bitfields for AMD-645 GPIO Direction Control register:
-Bit(s)	Description	(Table P442)
+Bit(s)	Description	(Table P632)
  7-5	reserved (0)
  4	direction of GPIO4 (0 = input, 1 = output)
 	this bit sets Pin136, which is always output if configured as GPO_WE#
@@ -5328,10 +5393,10 @@ Bit(s)	Description	(Table P442)
  2	direction of GPIO2/I2CD1 (0 = input, 1 = output)
  1	direction of GPIO1/I2CD2 (0 = input, 1 = output)
  0	direction of GPIO0 (0 = input, 1 = output)
-SeeAlso: #P440,#P443
+SeeAlso: #P630,#P633
 
 Bitfields for AMD-645 GPIO Port Output Value register:
-Bit(s)	Description	(Table P443)
+Bit(s)	Description	(Table P633)
  7-5	reserved
  4	value for GPIO4 pin (ignored if pin configured as GPO_WE#)
  3	value for GPIO3 pin (ignored if pin configured as GPI_RE#)
@@ -5341,11 +5406,11 @@ Bit(s)	Description	(Table P443)
 Note:	while these bits can be read back, they only indicate the values which
 	  are driven onto the pins if configured for output; to read the actual
 	  input values, use the "input value" register at offset 44h
-	  (see #P444)
-SeeAlso: #P444
+	  (see #P634)
+SeeAlso: #P634
 
 Bitfields for GPIO Port Input Value (EXTSMI_VAL) register:
-Bit(s)	Description	(Table P444)
+Bit(s)	Description	(Table P634)
  7	(if GPIO3 set to input) current EXTSMI7# on XD7 (Pin122)
  6	(if GPIO3 set to input) current EXTSMI6# on XD6 (Pin121)
  5	(if GPIO3 set to input) current EXTSMI5# on XD5 (Pin119)
@@ -5356,10 +5421,10 @@ Bit(s)	Description	(Table P444)
  2	GPIO2 input value
  1	GPIO1 input value
  0	GPIO0 input value
-SeeAlso: #P443
+SeeAlso: #P633
 --------X-Pxxxx------------------------------
 PORT xxxx - AMD-645 - USB
-SeeAlso: #0847 at INT 1A/AX=B10Ah/SF=1106h
+SeeAlso: #0973 at INT 1A/AX=B10Ah/SF=1106h
 Note:	further details are supposedly in the UHCI v1.1 standard
 
 +000w ?W  USB command
@@ -5374,15 +5439,15 @@ Note:	further details are supposedly in the UHCI v1.1 standard
 --------d-Pxxxx------------------------------
 PORT xxxx - Intel 82371 - Bus Master IDE Registers
 
-+000  RW  command register, primary channel (see #P372)
-+002  Rw  status register, primary channel (see #P373)
-+004d RW  IDE descriptor table pointer, primary channel (see #P374)
-+008  RW  command register, secondary channel (see #P372)
-+00A  Rw  status register, secondary channel (see #P373)
-+00Cd RW  IDE descriptor table pointer, secondary channel (see #P374)
++000  RW  command register, primary channel (see #P635)
++002  Rw  status register, primary channel (see #P636)
++004d RW  IDE descriptor table pointer, primary channel (see #P637)
++008  RW  command register, secondary channel (see #P635)
++00A  Rw  status register, secondary channel (see #P636)
++00Cd RW  IDE descriptor table pointer, secondary channel (see #P637)
 
 Bitfields for Intel 82371 Bus Master IDE command register:
-Bit(s)	Description	(Table P372)
+Bit(s)	Description	(Table P635)
  7-4	reserved
  3	bus master read/write control
 	=0 read
@@ -5391,10 +5456,10 @@ Bit(s)	Description	(Table P372)
  0	start/stop bus master
 	=1 start
 	=0 stop
-SeeAlso: #P373,#P374
+SeeAlso: #P636,#P637
 
 Bitfields for Intel 82371 Bus Master IDE status register:
-Bit(s)	Description	(Table P373)
+Bit(s)	Description	(Table P636)
  7	reserved (0)
  6	drive 1 is DMA-capable
  5	drive 0 is DMA_capable
@@ -5404,31 +5469,31 @@ Bit(s)	Description	(Table P373)
  1	IDE DMA error
 	write 1 to this bit to clear it
  0	bus master IDE active (read-only)
-SeeAlso: #P372,#P374
+SeeAlso: #P635,#P637
 
 Bitfields for Intel 82371 Bus Master IDE descriptor table pointer register:
-Bit(s)	Description	(Table P374)
+Bit(s)	Description	(Table P637)
  31-2	descriptor table base address bits 31-2
  1-0	reserved
 Note:	the descriptor table must not cross a 4K boundary
-SeeAlso: #P372,#P373
+SeeAlso: #P635,#P636
 ----------Pxxxx------------------------------
 PORT xxxx - Intel 82371SB - USB Host I/O Registers
-InstallCheck: see #0913 at INT 1A/AX=B10Ah
-SeeAlso: #0913
+InstallCheck: see #1082 at INT 1A/AX=B10Ah
+SeeAlso: #1082
 
-+000w RW  USB command register (see #P375)
-+002w Rw  USB status (see #P376)
-+004w RW  USB interrupt enable (see #P377)
-+006w RW  Frame Number (see #P378)
++000w RW  USB command register (see #P638)
++002w Rw  USB status (see #P639)
++004w RW  USB interrupt enable (see #P640)
++006w RW  Frame Number (see #P641)
 +008d RW  Frame List Base Address
 	   (bits 11-0 must be written as zeros)
-+00C  RW  Start of Frame Modify (see #P379)
-+010w RW  port 1 status/control (see #P380)
-+012w RW  port 2 status/control (see #P380)
++00C  RW  Start of Frame Modify (see #P642)
++010w RW  port 1 status/control (see #P643)
++012w RW  port 2 status/control (see #P643)
 
 Bitfields for Intel 82371SB USB command register:
-Bit(s)	Description	(Table P375)
+Bit(s)	Description	(Table P638)
  15-8	reserved
  7	maximum packet size (0=32 bytes, 1=64 bytes)
  6	Host Controller has been configured (set by software)
@@ -5438,10 +5503,10 @@ Bit(s)	Description	(Table P375)
  2	global reset
  1	host controller reset
  0	run/stop schedule (0=stop, 1=run)
-SeeAlso: #P376
+SeeAlso: #P639
 
 Bitfields for Intel 82371SB USB status register:
-Bit(s)	Description	(Table P376)
+Bit(s)	Description	(Table P639)
  15-6	reserved
  5	host controller halted
  4	host controller process error
@@ -5450,34 +5515,34 @@ Bit(s)	Description	(Table P376)
  1	USB error interrupt
  0	USB interrupt
 Note:	to clear a bit in this register, write a 1 to it
-SeeAlso: #P375
+SeeAlso: #P638
 
 Bitfields for Intel 82371SB USB interrupt enable register:
-Bit(s)	Description	(Table P377)
+Bit(s)	Description	(Table P640)
  15-4	reserved
  3	enable short packet interrupts
  2	enable Interrupt On Complete
  1	enable Resume
  0	enable Timeout/CRC
-SeeAlso: #P376,#P378
+SeeAlso: #P639,#P641
 
 Bitfields for Intel 82371SB Frame Number register:
-Bit(s)	Description	(Table P378)
+Bit(s)	Description	(Table P641)
  15-11	reserved
  10-0	Frame List Current Index/Frame Number
 	incremented at end of each time frame (~1ms)
 Note:	only WORD writes are allowed to this register
-SeeAlso: #P375,#P377
+SeeAlso: #P638,#P640
 
 Bitfields for Intel 82371SB Start of Frame Modify register:
-Bit(s)	Description	(Table P379)
+Bit(s)	Description	(Table P642)
  7	reserved
  6-0	SOF timing value (default 64)
 Note:	SOF cycle time equals 11936+timing value
-SeeAlso: #P375
+SeeAlso: #P638
 
 Bitfields for Intel 82371SB Port 1/2 status/control register:
-Bit(s)	Description	(Table P380)
+Bit(s)	Description	(Table P643)
  15-13	reserved (0)
  12	suspend port
  11-10	reserved
@@ -5495,7 +5560,7 @@ Bit(s)	Description	(Table P380)
 	write 1 to this bit to clear it
  0	current connect status (read-only)
 Note:	only WORD writes are permitted to this register
-SeeAlso: #P375
+SeeAlso: #P638
 --------!---CREDITS--------------------------
 Wim Osterholt		<wim@djo.wtm.tudelft.nl>		Original File
 Chuck Proctor		<71534.2302@CompuServe.COM>
@@ -5557,13 +5622,13 @@ edition.
 
 [many more sources listed in BIBLIO.LST]
 --------!---Admin----------------------------
-Highest Table Number = P669
+Highest Table Number = P643
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER57A through INTER57D (preferably the original
+quartet of archives named INTER58A through INTER58D (preferably the original
 authenticated PKZIP archives), and the utility and hypertext programs in a trio
-of additional archives called INTER57E.ZIP to INTER57G.ZIP.
+of additional archives called INTER58E.ZIP to INTER58G.ZIP.
 
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
 --------!---CONTACT_INFO---------------------

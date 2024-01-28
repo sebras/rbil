@@ -1,4 +1,4 @@
-I2C-BUS DEVICES			Release 57		Last Change 22mar98
+I2C-BUS DEVICES			Release 58		Last Change 28jun98
 Copyright (c) 1997,1998 Ralf Brown
 
 --------!---Note-----------------------------
@@ -18,8 +18,8 @@ Notes:	An I2C device uses two consecutive subaddresses; the low bit indicates
 	  bit-banging of memory-mapped I/O register FF20h
 	  (see MEM A000h:FF00h"S3").  On the Zoran ZR36057 used by the
 	  Miro DC-30, the I2C bus is accessed by bit-banging memory-mapped
-	  register 17 (at offset 0x44).  On the Cirrus Logic GD7556, extended
-	  sequencer register 8 is used (see #P647).
+	  register 17 (at offset 0x44).	 On the Cirrus Logic GD7556, extended
+	  sequencer register 8 is used (see #P425).
 	maximum data rates on the I2C bus are also device-dependent; typical
 	  maximum rates are 80 kHz (DIMMs), 100 kHz (VPX3220A), and 400 kHz.
 	in DDC (Dislay Data Channel) 2B, the monitor's EDID info appears to be
@@ -95,7 +95,7 @@ I2C 0Fh - Reserved by Philips for future definition
 --------p-I16--------------------------------
 I2C 16h - Benchmarq BQ2090 Battery-Charge Monitor
 !!!harris\bq2090.pdf
---------V-I18--------------------------------
+--------V-I1800------------------------------
 I2C 18h/00h - Raytheon TMC2361 - FILTER AND TEST PATTERN REGISTER
 Access:	Read/Write
 Desc:	the TMC2361 is a VGA-to-Television encoder
@@ -106,7 +106,7 @@ Note:	the second byte of a 'write' telegram sets the register to be accessed;
 SeeAlso: I2C 18h/01h,I2C 18h/02h,I2C 18h/05h,I2C 18h/06h
 
 Bitfields for Raytheon TMC2361 Filter and Test Pattern Register:
-Bit(s)	Description	(Table I063)
+Bit(s)	Description	(Table I001)
  7-5	test pattern foreground color select
 	bit 7: red
 	bit 6: green
@@ -130,7 +130,7 @@ Range:	I2C addresses 18h, 1Ah, 1Ch, or 1Eh may be selected by external pins
 SeeAlso: I2C 18h/00h,I2C 18h/02h,I2C 18h/05h,I2C 18h/06h
 
 Bitfields for Raytheon TMC2361 Encoder Control Register:
-Bit(s)	Description	(Table I062)
+Bit(s)	Description	(Table I002)
  7	"HQSZ"
  6	reserved (0)
  5-4	television standard
@@ -152,7 +152,7 @@ Range:	I2C addresses 18h, 1Ah, 1Ch, or 1Eh may be selected by external pins
 SeeAlso: I2C 18h/00h,I2C 18h/01h,I2C 18h/05h,I2C 18h/06h
 
 Bitfields for Raytheon TMC2361 Reset Control Register:
-Bit(s)	Description	(Table I061)
+Bit(s)	Description	(Table I003)
  7-4	reserved (0)
  3	clock out select
 	=0 use PXCK
@@ -181,7 +181,7 @@ Note:	on writes, the register index auto-increments until it reaches 4; this
 SeeAlso: I2C 28h/01h,I2C 28h/02h,I2C 28h/80h
 
 Bitfields for Philips SAA5252 video signal setup:
-Bit(s)	Description	(Table I010)
+Bit(s)	Description	(Table I004)
  3-0	offset from start of horizontal sync pulse
  4	vertical sync pulse has positive polarity
  5	horizontal sync pulse has positive polarity
@@ -195,7 +195,7 @@ Desc:	the SAA5252 is a closed-captioning text decoder
 SeeAlso: I2C 28h/00h,I2C 28h/04h,I2C 28h/80h
 
 Bitfields for Philips SAA5252 caption mode:
-Bit(s)	Description	(Table I011)
+Bit(s)	Description	(Table I005)
  1-0	enhanced display mode
 	00 video only
 	01 text only
@@ -244,7 +244,7 @@ Note:	on reads, the register index autoincrements until it reaches 82h,
 SeeAlso: I2C 28h/81h,I2C 28h/00h,I2C 28h/04h
 
 Bitfields for SAA5252 status flags:
-Bit(s)	Description	(Table I067)
+Bit(s)	Description	(Table I006)
  7	power-on reset has occurred (all write registers cleared to 00h)
  6-4	reserved (0)
  3	data bytes are from Field 2
@@ -260,7 +260,7 @@ Desc:	get the first data byte from the most recently received line of closed-
 SeeAlso: I2C 28h/00h,I2C 28h/80h,I2C 28h/82h
 
 Bitfields for SAA5252 data byte:
-Bit(s)	Description	(Table I068)
+Bit(s)	Description	(Table I007)
  6-0	decoded closed-captioning character
  7	parity error
 SeeAlso: #I067
@@ -270,6 +270,21 @@ Access:	Read-Only
 Desc:	get the second data byte from the most recently received line of
 	  closed-captioning data
 SeeAlso: I2C 28h/00h,I2C 28h/80h,I2C 28h/81h,#I067
+--------s-I3A68------------------------------
+I2C 3Ah/68h - ITT MAS 3507D MPEG Audio Decoder - DATA REGISTER (WRITE)
+Access:	Write-Only
+Size:	16 bits
+Note:	see http://www.itt-sc.de/pdf/mas3507d.pdf p.15-25
+--------s-I3A69------------------------------
+I2C 3Ah/69h - ITT MAS 3507D MPEG Audio Decoder - DATA REGISTER (READ)
+Access:	Read-Only
+Size:	16 bits
+Note:	see http://www.itt-sc.de/pdf/mas3507d.pdf p.15-25
+--------s-I3A6A------------------------------
+I2C 3Ah/6Ah - ITT MAS 3507D MPEG Audio Decoder - CONTROL REGISTER
+Access:	Write-Only
+Size:	16 bits
+Note:	see http://www.itt-sc.de/pdf/mas3507d.pdf p.15-25
 --------V-I40--------------------------------
 I2C 40h - Harris HMP8154/8156/8156A
 Desc:	the HMP8154 and HMP8156(A) are NTSC/PAL video encoders
@@ -305,6 +320,13 @@ SeeAlso: I2C 4Ah
 I2C 4Ah - Philips SAA7111
 Range:	I2C 48h or I2C 4Ah, selected by external pin
 SeeAlso: I2C 48h/00h
+--------s-I80--------------------------------
+I2C 80h - ITT MSP 3400C Multistandard Sound Processor
+Note:	http://www.itt-sc.de/pdf/msp3400c.pdf, p.16-42
+SeeAlso: I2C 84h
+--------s-I84--------------------------------
+I2C 84h - ITT MSP 3400C Multistandard Sound Processor
+SeeAlso: I2C 80h
 ----------I8600------------------------------
 I2C 86h/00h - ITT VPX 32xx/322xD - JEDEC MANUFACTURER ID
 Access:	Read-Only
@@ -319,7 +341,7 @@ Notes:	except as noted, the designation "VPX 32xx" refers to any of the
 	  VPX 32xx, although at a different bus address
 SeeAlso: I2C 86h/01h,I2C 86h/02h,I2C 86h/03h,I2C 8Ah/26h
 
-(Table I001)
+(Table I009)
 Values for JEDEC Manufacturer ID:
  01h	AMD
  02h	AMI
@@ -450,7 +472,7 @@ Values for JEDEC Manufacturer ID:
  FEh	Level One Communication
 Note:	bit 7 is a parity bit, set to ensure odd parity
 
-(Table I001)
+(Table I009)
 Values for JEDEC Manufacturer ID ("bank two"):
  01h	Cirrus Logic
  !!!
@@ -463,7 +485,7 @@ I2C 86h/01h - ITT VPX 32xx/322xD - CHIP ID, LOW BYTE
 Access:	Read-Only
 SeeAlso: I2C 86h/00h,I2C 86h/02h
 
-(Table I002)
+(Table I010)
 Values for ITT Chip ID:
  4260h	VPX 3216B
  4280h	VPX 3214C
@@ -480,7 +502,7 @@ I2C 86h/03h - ITT VPX 32xx/322xD - JEDEC2
 Access:	Read-Only
 
 Bitfields for ITT JEDEC2 register:
-Bit(s)	Description	(Table I003)
+Bit(s)	Description	(Table I011)
  0	IFIELD
  7-1	reserved (all ones for VPX 3220A)
 ----------I8620------------------------------
@@ -490,7 +512,7 @@ Note:	this register is also present on the ITT VDP 3108
 SeeAlso: I2C 86h/22h,I2C 8Ah/20h
 
 Bitfields for ITT VDP 3108/VPX 32xx IF compensation:
-Bit(s)	Description	(Table I004)
+Bit(s)	Description	(Table I012)
  1-0	compensation
 	00  12 dB/octave
 	01  reserved
@@ -502,7 +524,7 @@ I2C 86h/22h - ITT VPX 32xx - SECAM deemphasis / PAL lowpass peaking filter
 Note:	this register is also present on the ITT VDP 3108
 
 Bitfields for VPX 32xx SECAM deemphasis / PAL lowpass peaking filter:
-Bit(s)	Description	(Table I005)
+Bit(s)	Description	(Table I013)
  4-0	SECAM deemphasis/PAL filter (1Fh = maximum)
  5	reserved
  7-6	chroma bandwidth select
@@ -544,7 +566,7 @@ Note:	this register is also present on the ITT VDP 3108
 SeeAlso: I2C 86h/26h"VPX 32xx",I2C 86h/27h"VPX 32xx",I2C 86h/29h"VPX 32xx"
 SeeAlso: I2C 8Ah/28h
 
-(Table I007)
+(Table I014)
 Values for ITT VPX 32xx FPRAM index:
  00h	???
  01h	???
@@ -780,7 +802,7 @@ Note:	this register is updated whenever the television standard is set
 	  via FP-RAM location 1Bh
 SeeAlso: I2C 86h/28h/19h,I2C 86h/28h/1Bh
 
-(Table I044)
+(Table I015)
 Values for ITT VPX 3220A colorburst frequency:
  2D33EAh  = 3.575611 MHz  (TV standard 4)
  2D40A5h  = 3.579545 MHz  (TV standards 1,7)
@@ -794,7 +816,7 @@ Note:	this register is documented for the VDP 3108, but not the VPX 32xx
 SeeAlso: I2C 86h/28h,I2C 86h/29h,#I019,I2C 86h/28h/19h,I2C 86h/28h/1Ah
 
 Bitfields for VDP 3108/VPX 32xx standard select register:
-Bit(s)	Description	(Table I030)
+Bit(s)	Description	(Table I016)
  2-0	television standard (see #I039)
  8	no HPLL setup
  9	no vertical setup
@@ -812,7 +834,7 @@ SeeAlso: I2C 86h/28h/BEh,I2C 86h/28h,I2C 86h/29h,#I019
 I2C 86h/28h/26h - ITT VPX 32xx - FP - Crystal Oscillator Line-Locked Mode
 SeeAlso: I2C 86h/28h,I2C 86h/29h
 
-(Table I031)
+(Table I017)
 Values for Crystal Oscillator Line-Locked Mode:
 ---write---
  000h	disable lock
@@ -829,7 +851,7 @@ I2C 86h/28h/4Bh - ITT VPX 32xx - FP - Horizontal PLL Control
 SeeAlso: I2C 86h/28h,I2C 86h/29h
 
 Bitfields for VPX 32xx Horizontal PLL Control:
-Bit(s)	Description	(Table I032)
+Bit(s)	Description	(Table I018)
  4-0	gain for integrating part of PLL control
  9-5	gain for proportional part of PLL contorl
  11-10	reserved
@@ -839,7 +861,7 @@ Note:	this register is documented for the VDP 3108, but not the VPX 32xx
 SeeAlso: I2C 86h/28h,I2C 86h/29h
 
 Bitfields for VPX 32xx/VDP 31xxB Automatic Standard Recognition status:
-Bit(s)	Description	(Table I033)
+Bit(s)	Description	(Table I019)
  0	vertical sync detected
  1	horizontally locked
  2	reserved
@@ -872,7 +894,7 @@ Note:	this register is updated whenever the Window#1 Load Table is latched
 SeeAlso: I2C 86h/28h/89h,I2C 86h/28h/F0h,I2C 86h/28h,I2C 86h/29h
 
 Bitfields for VPX 32xx Vertical Lines In (Latched):
-Bit(s)	Description	(Table I034)
+Bit(s)	Description	(Table I020)
  8-0	number of lines (vertical begin + lines_in <= lines_per_field)
  9	unused???
  10	enable on even fields
@@ -1027,7 +1049,7 @@ I2C 86h/28h/99h - ITT VPX 3220 - FP - "InfoWord" status register
 SeeAlso: I2C 86h/28h/9Ah,I2C 86h/28h/F0h,I2C 86h/28h,I2C 86h/29h
 
 Bitfields for VPX 3220 InfoWord status register:
-Bit(s)	Description	(Table I035)
+Bit(s)	Description	(Table I021)
  1-0	reserved
  2	transport rate
 	0  20.25 MHz
@@ -1043,7 +1065,7 @@ I2C 86h/28h/9Ah - ITT VPX 3220 - FP - "CommandWord" command register
 SeeAlso: I2C 86h/28h/99h,I2C 86h/28h/F0h,I2C 86h/28h,I2C 86h/29h
 
 Bitfields for VPX 3220 CommandWord command register:
-Bit(s)	Description	(Table I036)
+Bit(s)	Description	(Table I022)
  0	line standard (for back end)
  1	transport rate
 	0  20.25 MHz
@@ -1114,7 +1136,7 @@ I2C 86h/28h/E7h - ITT VPX 32xx - FP - Vertical Lock
 SeeAlso: I2C 86h/28h,I2C 86h/29h,#I019
 
 Bitfields for VPX 32xx Vertical Lock:
-Bit(s)	Description	(Table I042)
+Bit(s)	Description	(Table I023)
  0	enable vertical standard lock
  11-1	expected number of lines per field
 ----------I8628--SFEB------------------------
@@ -1125,7 +1147,7 @@ I2C 86h/28h/F0h - ITT VPX 32xx - FP - "CommandWord" control register
 SeeAlso: I2C 86h/28h/F1h,I2C 86h/28h/99h,I2C 86h/28h,I2C 86h/29h
 
 Bitfields for VPX 32xx CommandWord control register:
-Bit(s)	Description	(Table I037)
+Bit(s)	Description	(Table I024)
  0	transport rate
 	0  20.25 MHz
 	1  13.5 MHz
@@ -1152,7 +1174,7 @@ I2C 86h/28h/F1h - ITT VPX 32xx - FP - "InfoWord" status register
 SeeAlso: I2C 86h/28h,I2C 86h/29h
 
 Bitfields for VPX 32xx InfoWord status register:
-Bit(s)	Description	(Table I038)
+Bit(s)	Description	(Table I025)
  2-0	reserved
  5-3	currently-active TV standard (see #I039)
  6	currently-active line standard
@@ -1162,7 +1184,7 @@ Bit(s)	Description	(Table I038)
 Note:	image freezes if bit 1 set on VPX 3220A
 SeeAlso: #I037,#I036
 
-(Table I039)
+(Table I026)
 Values for ITT VPX television standard:
  0	PAL B,G,H,I	625/50	4.433618 MHz
  1	NTSC M		525/60	3.579545 MHz
@@ -1177,7 +1199,7 @@ I2C 86h/28h/F2h - ITT VPX 32xx - FP - TV Standard, Write
 SeeAlso: I2C 86h/28h,I2C 86h/29h
 
 Bitfields for VPX 32xx TV standard, write:
-Bit(s)	Description	(Table I040)
+Bit(s)	Description	(Table I027)
  0	selection
 	0 automatic
 	1 manual
@@ -1197,7 +1219,7 @@ I2C 86h/28h/F3h - ITT VPX 32xx - FP - TV Standard, Read
 SeeAlso: I2C 86h/28h,I2C 86h/29h
 
 Bitfields for VPX 32xx TV standard, read:
-Bit(s)	Description	(Table I041)
+Bit(s)	Description	(Table I028)
  0	VACT (video active) suppressed
  1	recognition routine is running
  4-2	detected TV standard (see #I039)
@@ -1219,7 +1241,7 @@ Access:	Read-Only
 SeeAlso: I2C 86h/26h,I2C 86h/27h,I2C 86h/28h
 
 Bitfields for VPX 32xx/VDP 3108 FP status:
-Bit(s)	Description	(Table I006)
+Bit(s)	Description	(Table I029)
  0	write request in progress
  1	read request in progress
  2	busy
@@ -1241,7 +1263,7 @@ I2C 86h/30h - ITT VPX 32xx - Luma Notch Frequency
 SeeAlso: I2C 86h/31h,I2C 8Ah/30h
 
 Bitfields for VPX 32xx luma notch frequency:
-Bit(s)	Description	(Table I013)
+Bit(s)	Description	(Table I030)
  5-0	frequency  ( fs / 2N cos^-1(N) )
  6	reserved
  7	SECAM switch
@@ -1251,7 +1273,7 @@ I2C 86h/31h - ITT VPX 32xx - Luma/Chroma Matching Delay
 SeeAlso: I2C 86h/31h"VDP 3108",I2C 86h/30h"VPX 32xx"
 
 Bitfields for VPD 3108/VPX 32xx luma/chroma matching delay:
-Bit(s)	Description	(Table I014)
+Bit(s)	Description	(Table I031)
  4-0	delay in clocks (+19), higher numbers shift chroma right
  7-5	reserved
 SeeAlso: #I012,#I013
@@ -1265,7 +1287,7 @@ I2C 86h/33h - ITT VPX 32xx - Input Selector
 SeeAlso: I2C 8Ah/33h
 
 Bitfields for VDP 3108/VPX 32xx input selector:
-Bit(s)	Description	(Table I015)
+Bit(s)	Description	(Table I032)
  1-0	luma ADC select
 	00 VIN3
 	01 VIN2
@@ -1284,7 +1306,7 @@ I2C 86h/34h - ITT VPX 32xx - Standard Select
 SeeAlso: I2C 8Ah/34h
 
 Bitfields for VDP 3108/VPX 32xx standard select:
-Bit(s)	Description	(Table I016)
+Bit(s)	Description	(Table I033)
  1-0	television standard
 	00 SECAM
 	01 PAL
@@ -1342,7 +1364,7 @@ Note:	this register appears to correspond to the VDP 3108 register
 SeeAlso: I2C 8Ah/3Eh,I2C 86h/3Fh
 
 Bitfields for Test Register, Luma 2:
-Bit(s)	Description	(Table I045)
+Bit(s)	Description	(Table I034)
  0	freezes image when set
  3-2	if either/both bits set, video appears as an image and ghost;
 	  green and cyan appear to be horizontally separated
@@ -1354,7 +1376,7 @@ Note:	this register appears to correspond to the VDP 3108 register
 SeeAlso: I2C 8Ah/3Fh,I2C 86h/39h
 
 Bitfields for Test Register, Luma 1:
-Bit(s)	Description	(Table I046)
+Bit(s)	Description	(Table I035)
  1	freezes image when set
  2	freezes image when set
  3	chromakey???  certain colors appear as black when this bit is set
@@ -1396,7 +1418,7 @@ SeeAlso: I2C 86h/D0h,I2C 86h/D8h
 I2C 86h/D8h - ITT VPX 32xx - VREF/HREF Control
 
 Bitfields for VPX 32xx VREF/HREF control:
-Bit(s)	Description	(Table I020)
+Bit(s)	Description	(Table I036)
  0	reserved
  1	HREF polarity (=0 active high, =1 active low)
  2	VREF polarity (=0 active high, =1 active low)
@@ -1453,7 +1475,7 @@ I2C 86h/E7h - ITT VPX 32xx - Contrast / Noise Shaping
 SeeAlso: I2C 86h/E6h
 
 Bitfields for VPX 32xx contrast/noise shaping:
-Bit(s)	Description	(Table I021)
+Bit(s)	Description	(Table I037)
  5-0	contrast (00h minimum, 3Fh maximum)
 	bit 5 is integer, bits 4-0 fraction (i.e range is 0.0 - 1.96)
  7-6	noise shaping
@@ -1466,7 +1488,7 @@ I2C 86h/E8h - ITT VPX 32xx - Format Selector
 SeeAlso: I2C 86h/F0h,I2C 86h/28h/1Bh
 
 Bitfields for VPX 32xx format selector:
-Bit(s)	Description	(Table I022)
+Bit(s)	Description	(Table I038)
  2-0	video format
 	000 YCbCr 4:2:2 or YCbCr 4:2:2 CCIR  (16 bits/pixel)
 	001 YCbCr 4:4:4			     (24 bits/pixel)
@@ -1495,7 +1517,7 @@ I2C 86h/E9h U - ITT VPX 32xx - ???
 I2C 86h/EAh - ITT VPX 32xx - Diverse Settings
 
 Bitfields for VPX 32xx diverse settings:
-Bit(s)	Description	(Table I023)
+Bit(s)	Description	(Table I039)
  2-0	reserved (0)
  3	connect LLC2 to ALPHA/TDO pin
  4	LLC/2 polarity
@@ -1510,7 +1532,7 @@ I2C 86h/F0h - ITT VPX 32xx - Output FIFO
 SeeAlso: I2C 86h/F1h,I2C 86h/F2h
 
 Bitfields for VPX 32xx Output FIFO control:
-Bit(s)	Description	(Table I024)
+Bit(s)	Description	(Table I040)
 ---asynchronous mode---
  4-0	FIFO Half-Full flag level (number of pixels in 32-pixel buffer before
 	  Half-Full is signalled
@@ -1532,7 +1554,7 @@ I2C 86h/F1h - ITT VPX 32xx - Output Multiplexor
 SeeAlso: I2C 86h/F0h,I2C 86h/F2h
 
 Bitfields for VPX 32xx Output Multiplexer:
-Bit(s)	Description	(Table I025)
+Bit(s)	Description	(Table I041)
  1-0	port mode
 	00 parallel output, single clock per pixel
 	01 double clock
@@ -1561,7 +1583,7 @@ I2C 86h/F2h - ITT VPX 32xx - Output Enable
 SeeAlso: I2C 86h/F0h,I2C 86h/F1h,I2C 86h/F8h
 
 Bitfields for VPX 32xx Output Enable:
-Bit(s)	Description	(Table I026)
+Bit(s)	Description	(Table I042)
  0	enable Video Port A
  1	enable Video Port B
  2	enable PIXCLK output (322xD only)
@@ -1588,7 +1610,7 @@ I2C 86h/F8h - ITT VPX 32xx - Pad Driver Strength A
 SeeAlso: I2C 86h/F2h,I2C 86h/F9h
 
 Bitfields for VPX 32xx Pad Driver Strength A:
-Bit(s)	Description	(Table I027)
+Bit(s)	Description	(Table I043)
  2-0	driver strength of video port A
  5-3	driver strength of PIXCLK, HF#, and FE#
  7-6	additional PIXCLK strength
@@ -1598,7 +1620,7 @@ I2C 86h/F9h - ITT VPX 32xx - Pad Driver Strength B
 SeeAlso: I2C 86h/F2h,I2C 86h/F8h
 
 Bitfields for VPX 32xx Pad Driver Strength B:
-Bit(s)	Description	(Table I028)
+Bit(s)	Description	(Table I044)
  2-0	driver strength of video port B
  5-3	driver strength of HREF, VREF, ALPHA, and PREF
  7-6	reserved (0)
@@ -1732,7 +1754,7 @@ Note:	subaddresses auto-increment, allowing any or all of registers 00h to
 SeeAlso: I2C 8Ah/01h"TDA8366",I2C 8Ah/03h"TDA8366"
 
 Bitfields for TDA8366 Source Select (write-only):
-Bit(s)	Description	(Table I069)
+Bit(s)	Description	(Table I045)
  7-6	source select 1: decoder and text
 	00 CVBS(int)
 	01 CVBS(ext)
@@ -1752,7 +1774,7 @@ Bit(s)	Description	(Table I069)
 SeeAlso: #I070,#I85
 
 Bitfields for TDA8366 Status 1 (read-only):
-Bit(s)	Description	(Table I085)
+Bit(s)	Description	(Table I046)
  7	"POR" power-on reset flag
  6	"FSI" field frequency (0 = 50 Hz, 1 = 60 Hz)
  5	"STS" S-VHS input signal present
@@ -1761,7 +1783,7 @@ Bit(s)	Description	(Table I085)
  2-0	color decoder mode (see #I087)
 SeeAlso: #I069,#I086
 
-(Table I087)
+(Table I047)
 Values for TDA8366 color decoder mode:
  000b	automatic detection (write) / none identified (read)
  001b	force NTSC 3.58 MHz
@@ -1777,7 +1799,7 @@ I2C 8Ah/01h - Philips TDA8366 - DECODER MODE / STATUS 2
 SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/02h"TDA8366"
 
 Bitfields for TDA8366 Decoder Mode (write-only):
-Bit(s)	Description	(Table I070)
+Bit(s)	Description	(Table I048)
  7-6	field frequency
 	00 auto-detect, 60 Hz when not synchronized
 	01 60 Hz
@@ -1794,7 +1816,7 @@ Note:	when bits 7-6 are changed, a new frequency is only set when not
 SeeAlso: #I069,#I071,#I086
 
 Bitfields for TDA8366 Status 2 (read-only):
-Bit(s)	Description	(Table I086)
+Bit(s)	Description	(Table I049)
  7	"NDF" vertical output stage has failed
  6	"IN1" RGB insertion (Pin24) is active
  5	reserved
@@ -1814,7 +1836,7 @@ Access:	Write-Only
 SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/01h"TDA8366",I2C 8Ah/03h"TDA8366"
 
 Bitfields for TDA8366 Hue Control:
-Bit(s)	Description	(Table I071)
+Bit(s)	Description	(Table I050)
  7-6	reserved
  5-0	hue
 SeeAlso: #I070,#I072
@@ -1824,7 +1846,7 @@ Access:	Write-Only
 SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/02h"TDA8366",I2C 8Ah/0Bh"TDA8366"
 
 Bitfields for TDA8366 Horizontal Shift:
-Bit(s)	Description	(Table I072)
+Bit(s)	Description	(Table I051)
  7-6	reserved
  5-0	horizontal shift value
 SeeAlso: #I071,#I073
@@ -1855,7 +1877,7 @@ Access:	Write-Only
 SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/07h"TDA8366",I2C 8Ah/09h"TDA8366"
 
 Bitfields for TDA8366 Vertical Slope Control:
-Bit(s)	Description	(Table I073)
+Bit(s)	Description	(Table I052)
  7	"NCIN" vertical divider mode
 	=1 switched to search window
  6	reserved
@@ -1867,7 +1889,7 @@ Access:	Write-Only
 SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/08h"TDA8366",I2C 8Ah/0Ah"TDA8366"
 
 Bitfields for TDA8366 Vertical Amplitude Control:
-Bit(s)	Description	(Table I074)
+Bit(s)	Description	(Table I053)
  7	"VID" disable video identification mode
  6	"LBM" force long blanking mode to 50 Hz standard
 	=0 adapt to either 50 or 60 Hz
@@ -1879,7 +1901,7 @@ Access:	Write-Only
 SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/09h"TDA8366",I2C 8Ah/0Bh"TDA8366"
 
 Bitfields for TDA8366 S-Correction:
-Bit(s)	Description	(Table I075)
+Bit(s)	Description	(Table I054)
  7	"HCO" enable EHT tracking on East-West as well as vertical
  6	"EVG" enable vertical guard (RGB blanking)
  5-0	S-correction value
@@ -1890,7 +1912,7 @@ Access:	Write-Only
 SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/03h"TDA8366",I2C 8Ah/0Ch"TDA8366"
 
 Bitfields for TDA8366 Vertical Shift:
-Bit(s)	Description	(Table I076)
+Bit(s)	Description	(Table I055)
  7	"SBL" enable service blanking mode
  6	"PRD" trigger overvoltage protection mode
  5-0	vertical shift value
@@ -1902,7 +1924,7 @@ Access:	Write-Only
 SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/02h"TDA8366",I2C 8Ah/0Dh"TDA8366"
 
 Bitfields for TDA8366 White Point (Red):
-Bit(s)	Description	(Table I077)
+Bit(s)	Description	(Table I056)
  7-6	vertical deflection mode
 	00 normal
 	01 compress
@@ -1916,7 +1938,7 @@ Access:	Write-Only
 SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/0Ch"TDA8366",I2C 8Ah/0Eh"TDA8366"
 
 Bitfields for TDA8366 White Point (Green):
-Bit(s)	Description	(Table I078)
+Bit(s)	Description	(Table I057)
  7	"SFM" start-up horizontal frequency
 	=0 maximum
 	=1 nominal
@@ -1931,7 +1953,7 @@ Access:	Write-Only
 SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/0Ch"TDA8366",I2C 8Ah/0Dh"TDA8366"
 
 Bitfields for TDA8366 White Point (Blue):
-Bit(s)	Description	(Table I079)
+Bit(s)	Description	(Table I058)
  7	"MAT" force PAL matrix, instead of adapting to video standard
  6	"PHL" allow color crystal PLL to free-run
  5-0	whilte point (blue) value
@@ -1942,7 +1964,7 @@ Access:	Write-Only
 SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/0Eh"TDA8366",I2C 8Ah/10h"TDA8366"
 
 Bitfields for TDA8366 Peaking:
-Bit(s)	Description	(Table I080)
+Bit(s)	Description	(Table I059)
  7-4	Y-delay adjustment (bits 7-5 * 40 ns + bit 4 * 40ns) [*]
 	(normally set to 1000)
  3-0	peaking value
@@ -1957,7 +1979,7 @@ Access:	Write-Only
 SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/11h"TDA8366",I2C 8Ah/12h"TDA8366"
 
 Bitfields for TDA8366 Brightness Control:
-Bit(s)	Description	(Table I081)
+Bit(s)	Description	(Table I060)
  7	"RBL" RGB blanking is active
  6	"COR" enable noise coring (peaking)
  5-0	brightness value
@@ -1970,7 +1992,7 @@ Access:	Write-Only
 SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/10h"TDA8366",I2C 8Ah/12h"TDA8366"
 
 Bitfields for TDA8366 Saturation Control:
-Bit(s)	Description	(Table I082)
+Bit(s)	Description	(Table I061)
  7	"IE1" enable fast blanking
  6	reserved
  5-0	saturation value
@@ -1983,7 +2005,7 @@ Access:	Write-Only
 SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/10h"TDA8366",I2C 8Ah/11h"TDA8366"
 
 Bitfields for TDA8366 Contrast Control:
-Bit(s)	Description	(Table I083)
+Bit(s)	Description	(Table I062)
  7	"AFW" enlarge AFC window to 240 kHz
  6	"IFS" reduce IF sensitivity
  5-0	contrast value
@@ -1997,7 +2019,7 @@ Access:	Write-Only
 SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/10h"TDA8366",I2C 8Ah/FEh"TDA8366"
 
 Bitfields for TDA8366 AGC Take-Over Control:
-Bit(s)	Description	(Table I084)
+Bit(s)	Description	(Table I063)
  7	"MOD" modulation standard
 	=0 negative (i.e. SECAM)
 	=1 positive
@@ -2037,7 +2059,7 @@ I2C 8Ah/23h - ITT VDP 3108 - Priority Bus overwrite register
 SeeAlso: I2C 8Ah/24h
 
 Bitfields for VDP 3108 priority bus overwrite register:
-Bit(s)	Description	(Table I017)
+Bit(s)	Description	(Table I064)
  7	overwrite priority 7
  ...
  0	overwrite priority 0
@@ -2047,7 +2069,7 @@ I2C 8Ah/24h - ITT VDP 3108 - Priority Bus ID/enable register
 SeeAlso: I2C 8Ah/23h
 
 Bitfields for VDP 3108 priority bus ID register:
-Bit(s)	Description	(Table I018)
+Bit(s)	Description	(Table I065)
  2-0	priority ID (0 is highest)
  4-3	pad driver strength
  6-5	reserved
@@ -2071,7 +2093,7 @@ I2C 8Ah/28h - ITT VDP 3108 - FPRAM data transfer
 Size:	16 bits, big-endian
 SeeAlso: I2C 8Ah/26h"VDP 3108",I2C 8Ah/27h"VDP 3108",I2C 8Ah/29h"VDP 3108"
 
-(Table I019)
+(Table I066)
 Values for ITT VDP 3108 FPRAM index:
  1Bh	standard select (see I2C 86h/28h/1Bh)
  1Ch	NTSC tilt angle (see I2C 86h/28h/1Ch)
@@ -2146,7 +2168,7 @@ I2C 8Ah/30h - ITT VDP 3108 - Luma Notch Frequency
 SeeAlso: I2C 86h/30h
 
 Bitfields for VDP 3108 luma notch frequency:
-Bit(s)	Description	(Table I012)
+Bit(s)	Description	(Table I067)
  5-0	frequency  (PAL/SECAM = 25, NTSC = 57)
  6	disable adaptive notch filter (SECAM)
 	must be 0 for PAL/NTSC
@@ -2364,7 +2386,7 @@ I2C 8Eh/37h - ITT VDP 31xxB - FP Write Address
 --------V-I8E38------------------------------
 I2C 8Eh/38h - ITT VDP 31xxB - FP Data Transfer
 
-(Table I043)
+(Table I068)
 Values for ITT VDP 31xxB Fast Processor register:
  12h	general-purpose control bits
  13h	standard recognition status
@@ -2424,7 +2446,7 @@ Notes:	the I2C specification defines bus addresses Axh for use by memory
 	  completed, which may take several milliseconds
 --------m-IA0--------------------------------
 I2C A0h - VESA DDC monitor's EDID EEPROM
-Note:	access to the DDC clock/data lines is chipset-specific.  On S3's
+Note:	access to the DDC clock/data lines is chipset-specific.	 On S3's
 	  Trio64V+, the DDC lines share a port with the LPB's I2C bus: when the
 	  feature connector is disabled, they are connected to the monitor
 	  as well to the Local Peripheral Bus' serial port lines
@@ -2442,7 +2464,7 @@ Notes:	the I2C specification defines bus addresses Axh for use by memory
 SeeAlso: INT 15/AX=53B0h/BH=01h
 
 Format of SDRAM Serial Presence Detect Data:
-Offset	Size	Description	(Table I047)
+Offset	Size	Description	(Table I069)
  00h	BYTE	number of bytes used by module manufacturer (00h = undefined)
  01h	BYTE	total size of serial EEPROM
 		00h = "RFU", 01h-0Dh = 2**N bytes (2 - 8192)
@@ -2509,14 +2531,14 @@ Offset	Size	Description	(Table I047)
  7Fh	BYTE	Intel specification details for 100 MHz support
 
 Bitfields for SDRAM SPD row/column address bits:
-Bit(s)	Description	(Table I048)
+Bit(s)	Description	(Table I070)
  3-0	number of row or column address bits for bank 1 (and bank 2 if present
 	  and same size as bank 1) (see #I049)
  7-4	number of row or column address bits for bank 2 if present and
 	  different from bank 1
 SeeAlso: #I047
 
-(Table I049)
+(Table I071)
 Values for SDRAM SPD row/column address bits:
  00h	undefined
  01h	1 or 16
@@ -2528,7 +2550,7 @@ Values for SDRAM SPD row/column address bits:
  0Fh	15
 SeeAlso: #I048
 
-(Table I050)
+(Table I072)
 Values for SDRAM module signal voltage interface:
  00h	TTL / 5.0 Volts
  01h	LVTTL
@@ -2539,7 +2561,7 @@ Values for SDRAM module signal voltage interface:
  FFh	new table
 SeeAlso: #I047	
 
-(Table I051)
+(Table I073)
 Values for DIMM module ECC configuration type:
  00h	none
  01h	parity
@@ -2548,7 +2570,7 @@ Values for DIMM module ECC configuration type:
 SeeAlso: #I047
 
 Bitfields for DIMM module refresh rate and type:
-Bit(s)	Description	(Table I052)
+Bit(s)	Description	(Table I074)
  7	self-refreshing
  6-0	rate
 	00h normal (15.625 us)
@@ -2561,14 +2583,14 @@ Bit(s)	Description	(Table I052)
 SeeAlso: #I047
 
 Bitfields for primary/error-checking SDRAM data width:
-Bit(s)	Description	(Table I053)
+Bit(s)	Description	(Table I075)
  7	second bank has double width
 	(=0 if only one bank, or second bank is same size)
  6-0	data width in bits (00h = undefined)
 SeeAlso: #I047
 
 Bitfields for SDRAM supported burst lengths:
-Bit(s)	Description	(Table I054)
+Bit(s)	Description	(Table I076)
  0	burst length of 1 is supported
  1	burst length 2
  2	burst length 4
@@ -2578,7 +2600,7 @@ Bit(s)	Description	(Table I054)
 SeeAlso: #I047
 
 Bitfields for SDRAM supported CAS latencies:
-Bit(s)	Description	(Table I055)
+Bit(s)	Description	(Table I077)
  0	CAS latency of 1 is supported
  1	latency 2 supported
 ...
@@ -2587,7 +2609,7 @@ Bit(s)	Description	(Table I055)
 SeeAlso: #I047,#I056
 
 Bitfields for SDRAM supported CS / WE latencies:
-Bit(s)	Description	(Table I056)
+Bit(s)	Description	(Table I078)
  0	CS / WE latency of 1 is supported
  1	latency 2 supported
 ...
@@ -2596,7 +2618,7 @@ Bit(s)	Description	(Table I056)
 SeeAlso: #I047,#I055
 
 Bitfields for SDRAM module attributes:
-Bit(s)	Description	(Table I057)
+Bit(s)	Description	(Table I079)
  0	buffered addres/control inputs (Ax, RAS, CAS, WE, CKE, S)
  1	registered address/control inputs (Ax, RAS, CAS, WE, CKE, S)
  2	on-card PLL for clock
@@ -2608,7 +2630,7 @@ Bit(s)	Description	(Table I057)
 SeeAlso: #I047
 
 Bitfields for general SDRAM device attributes:
-Bit(s)	Description	(Table I058)
+Bit(s)	Description	(Table I080)
  0	supports early RAS# precharge
  1	supports AutoPrecharge
  2	supports Precharge All
@@ -2619,7 +2641,7 @@ Bit(s)	Description	(Table I058)
 SeeAlso: #I047
 
 Bitfields for DIMM row density:
-Bit(s)	Description	(Table I059)
+Bit(s)	Description	(Table I081)
  0	4 MByte
  1	8 MB
  2	16 MB
@@ -2633,7 +2655,7 @@ Note:	if the module contains multiple rows of varying sizes, multiple bits
 SeeAlso: #I047
 
 Bitfields for Intel specification details for 100 MHz DIMM support:
-Bit(s)	Description	(Table I060)
+Bit(s)	Description	(Table I082)
  0	supports Intel-defined "Concurrent AutoPrecharge"
  1	supports CAS latency = 2 
  2	supports CAS latency = 3
@@ -2678,7 +2700,7 @@ Notes:	Freq is the 16 * (desired frequency in MHz + IF frequency), assuming
 Index:	TSA5505T;TSA5512;TSA5515T;FI1236MK2
 
 Bitfields for Philips TSA5523M Tuner band:
-Bit(s)	Description	(Table I009)
+Bit(s)	Description	(Table I083)
  7-0	open-collector control bits
 	each bit turns on one NPN transistor
  2-0	(TSA5522) band-switch
@@ -2718,7 +2740,7 @@ I2C C0h - Philips TSA5523M Frequency Synthesizer - STATUS
 Range:	I2C addresses C0h, C2h, C4h, or C6h, selectable by external pin
 
 Bitfields for TSA5523M status:
-Bit(s)	Description	(Table I064)
+Bit(s)	Description	(Table I084)
  7	Power-On Reset flag (cleared after first read)
  6	PLL is phase-locked
  5	digital level of P2 (requires that open-collector control bit 2 = 0)
@@ -2741,7 +2763,7 @@ I2C C2h/00h - Philips FI1236MK2 Tuner - TUNER STATUS
 Access:	Read
 
 Bitfields for ??? Tuner status:
-Bit(s)	Description	(Table I008)
+Bit(s)	Description	(Table I085)
  1	tuner is locked onto TV signal
 --------V-IE0--------------------------------
 I2C E0h - TDA8443A - I2C-bus controlled YUV/RGB switch
@@ -2759,9 +2781,19 @@ SeeAlso: I2C FAh,I2C FCh,I2C FEh
 ----------IFA--------------------------------
 I2C FAh - 10-bit addressing - Device addresses 1xxh
 SeeAlso: I2C F8h,I2C FCh,I2C FEh
+----------IFA--------------------------------
+I2C FAh - Chrontel CH7002 Video Encoder
+Range:	I2C addresses FAh or FCh, selectable by external pin
+SeeAlso: I2C FCh"Chrontel"
+
+!!! chrontel\7002long.pdf p.20
 ----------IFC--------------------------------
 I2C FCh - 10-bit addressing - Device addresses 2xxh
 SeeAlso: I2C F8h,I2C FAh,I2C FEh
+----------IFC--------------------------------
+I2C FCh - Chrontel CH7002 Video Encoder
+Range:	I2C addresses FAh or FCh, selectable by external pin
+SeeAlso: I2C FAh"Chrontel"
 ----------IFE--------------------------------
 I2C FEh - 10-bit addressing - Device addresses 3xxh
 SeeAlso: I2C F8h,I2C FAh,I2C FCh
@@ -2774,7 +2806,7 @@ Note:	the address to which the CS4922 responds must be programmed via the
 	  with a microprogram by sending data over I2C (see #I065)
 
 Format of Crystal Semiconductor microprogram data:
-Offset	Size	Description	(Table I065)
+Offset	Size	Description	(Table I086)
  00h	WORD	starting address in RAM
 		high three bits ignored; bit 12 indicates program/data memory
 		the CS4920A contains 4K words of program RAM, 2K words data
@@ -2785,39 +2817,39 @@ Offset	Size	Description	(Table I065)
 	...	(above may be repeated arbitrarily often)
 	WORD	FFFFh end marker
       3 BYTEs	24-bit checksum (sum of all previous bytes)
---------V-Ixx0F------------------------------
+--------V-Ixx00------------------------------
 I2C xxh/00h - CS4952/53 - "CONTROL_0"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
 SeeAlso: I2C xxh/01h"CS4952",I2C xxh/02h"CS4952"
 
 !!!details to follow   -- 4952.pdf p. 29
---------V-Ixx0F------------------------------
+--------V-Ixx01------------------------------
 I2C xxh/01h - CS4952/53 - "CONTROL_1"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
 SeeAlso: I2C xxh/00h"CS4952",I2C xxh/02h"CS4952"
---------V-Ixx0F------------------------------
+--------V-Ixx02------------------------------
 I2C xxh/02h - CS4952/53 - "CONTROL_2"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
 SeeAlso: I2C xxh/00h"CS4952",I2C xxh/01h"CS4952"
---------V-Ixx0F------------------------------
+--------V-Ixx04------------------------------
 I2C xxh/04h - CS4952/53 - "DAC"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
---------V-Ixx0F------------------------------
+--------V-Ixx07------------------------------
 I2C xxh/07h - CS4952/53 - "STATUS"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
---------V-Ixx0F------------------------------
+--------V-Ixx08------------------------------
 I2C xxh/08h - CS4952/53 - "BKG_COLOR"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
---------V-Ixx0F------------------------------
+--------V-Ixx09------------------------------
 I2C xxh/09h - CS4952/53 - "GPIO_CTRL_REG"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
---------V-Ixx0F------------------------------
+--------V-Ixx0A------------------------------
 I2C xxh/0Ah - CS4952/53 - "GPIO_DATA_REG"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
---------V-Ixx0F------------------------------
+--------V-Ixx0D------------------------------
 I2C xxh/0Dh - CS4952/53 - "C_AMP"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
---------V-Ixx0F------------------------------
+--------V-Ixx0E------------------------------
 I2C xxh/0Eh - CS4952/53 - "Y_AMP"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
 --------V-Ixx0F------------------------------
@@ -2827,52 +2859,52 @@ Desc:	specify the I2C bus address to which the CS4952 responds (see #I066)
 Note:	the power-up default is 00h
 
 Bitfields for CS4952/CS4953 I2C bus address:
-Bit(s)	Description	(Table I066)
+Bit(s)	Description	(Table I087)
  7	unused???
  6-0	high seven bits of I2C address to which the chip should respond
---------V-Ixx0F------------------------------
+--------V-Ixx10------------------------------
 I2C xxh/10h - CS4952/53 - "SC_AMP"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
---------V-Ixx0F------------------------------
+--------V-Ixx11------------------------------
 I2C xxh/11h - CS4952/53 - "SC_SYNTH0"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
---------V-Ixx0F------------------------------
+--------V-Ixx12------------------------------
 I2C xxh/12h - CS4952/53 - "SC_SYNTH1"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
---------V-Ixx0F------------------------------
+--------V-Ixx13------------------------------
 I2C xxh/13h - CS4952/53 - "SC_SYNTH2"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
---------V-Ixx0F------------------------------
+--------V-Ixx14------------------------------
 I2C xxh/14h - CS4952/53 - "SC_SYNTH3"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
---------V-Ixx0F------------------------------
+--------V-Ixx15------------------------------
 I2C xxh/15h - CS4952/53 - "HUE_LSB"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
---------V-Ixx0F------------------------------
+--------V-Ixx16------------------------------
 I2C xxh/16h - CS4952/53 - "HUE_MSB"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
---------V-Ixx0F------------------------------
+--------V-Ixx18------------------------------
 I2C xxh/18h - CS4952/53 - "CC_EN"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
---------V-Ixx0F------------------------------
+--------V-Ixx19------------------------------
 I2C xxh/19h - CS4952/53 - "CC_21_1"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
---------V-Ixx0F------------------------------
+--------V-Ixx1A------------------------------
 I2C xxh/1Ah - CS4952/53 - "CC_21_2"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
---------V-Ixx0F------------------------------
+--------V-Ixx1B------------------------------
 I2C xxh/1Bh - CS4952/53 - "CC_284_1"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
---------V-Ixx0F------------------------------
+--------V-Ixx1C------------------------------
 I2C xxh/1Ch - CS4952/53 - "CC_284_2"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
---------V-Ixx0F------------------------------
+--------V-Ixx3B------------------------------
 I2C xxh/3Bh - CS4952/53 - "INT_EN"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
---------V-Ixx0F------------------------------
+--------V-Ixx3C------------------------------
 I2C xxh/3Ch - CS4952/53 - "INT_CLR"
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
---------V-Ixx0F------------------------------
+--------V-Ixx3D------------------------------
 I2C xxh/3Dh - CS4952/53 - "ID_REG"
 Access:	Read-Only
 Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
@@ -2883,11 +2915,11 @@ Highest Table Number = I087
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER57A through INTER57D (preferably the original
+quartet of archives named INTER58A through INTER58D (preferably the original
 authenticated PKZIP archives), and the utility and hypertext programs in a trio
-of additional archives called INTER57E.ZIP to INTER57G.ZIP.
+of additional archives called INTER58E.ZIP to INTER58G.ZIP.
 
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
 --------!---CONTACT_INFO---------------------
 Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
 FIDO: Ralf Brown 1:129/26.1

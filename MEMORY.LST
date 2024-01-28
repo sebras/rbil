@@ -1,4 +1,4 @@
-MEMORY MAP			Release 57		 Last change 22mar98
+MEMORY MAP			Release 58		Last change 28jun98
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
 
 --------H-M00000000--------------------------
@@ -326,7 +326,7 @@ Bit(s)	Description	(Table M010)
  2	either Ctrl pressed
  1	Left Shift pressed
  0	Right Shift pressed
-SeeAlso: #M011,#0511
+SeeAlso: #M011,#0561
 --------K-M00400018--------------------------
 MEM 0040h:0018h - KEYBOARD - STATUS FLAGS 2
 Size:	BYTE
@@ -342,7 +342,7 @@ Bit(s)	Description	(Table M011)
  2	Sys Req pressed
  1	Left Alt pressed
  0	Left Ctrl pressed
-SeeAlso: #M010,#0512
+SeeAlso: #M010,#0562
 --------K-M00400019--------------------------
 MEM 0040h:0019h - KEYBOARD - ALT-nnn KEYPAD WORKSPACE
 Size:	BYTE
@@ -671,7 +671,7 @@ Values for fixed disk last operation status:
  CCh	write fault on selected drive
  E0h	status error/error register is zero
  FFh	sense failed
-SeeAlso: #0166
+SeeAlso: #0211
 --------d-M00400074--------------------------
 MEM 0040h:0074h - WD1002-27X SuperBIOS - TOTAL DRIVES, FIRST CONTROLLER ONLY
 Size:	BYTE
@@ -768,7 +768,7 @@ SeeAlso: MEM 0040h:001Ch,MEM 0040h:003Eh,MEM 0040h:0080h,INT 16/AH=05h
 --------V-M00400084--------------------------
 MEM 0040h:0084h - VIDEO (EGA/MCGA/VGA) - ROWS ON SCREEN MINUS ONE
 Size:	BYTE
-SeeAlso: MEM 0040h:0085h
+SeeAlso: MEM 0040h:0085h,INT 10/AX=1100h
 --------V-M00400085--------------------------
 MEM 0040h:0085h - VIDEO (EGA/MCGA/VGA) - CHARACTER HEIGHT IN SCAN-LINES
 Size:	WORD
@@ -1275,7 +1275,7 @@ Desc:	this word contains an indication of the type of keyboard
 	  (controller???) attached to the system
 Note:	AMI's APM code checks for 4147h vs. other value (5047h seen on Intel
 	  "Plato" motherboard)
-SeeAlso: #0510,INT 16/AH=F2h
+SeeAlso: #0560,INT 16/AH=F2h
 --------b-M004000CE--------------------------
 MEM 0040h:00CEh	- COUNT OF DAYS SINCE LAST BOOT
 Size:	WORD
@@ -1372,10 +1372,14 @@ MEM 0040h:00D8h - EHD floppy - DRIVE 1 DISKETTE MEDIA STATE
 Size:	BYTE
 SeeAlso: MEM 0040h:00D7h"EHD",MEM 0040h:00D9h"EHD",MEM 0040h:00DAh"EHD"
 --------b-M004000D8--------------------------
-MEM 0040h:00D8h	- AMI BIOS v1.00.12.AX1T - EPP - PARALLEL PORT 1 IRQ
+MEM 0040h:00D8h - AMI BIOS v1.00.12.AX1T - EPP - PARALLEL PORT 1 IRQ
 Size:	BYTE
 SeeAlso: MEM 0040h:00D2h"AMI",MEM 0040h:00D6h"AMI",MEM 0040h:00D7h"AMI"
 SeeAlso: MEM 0040h:00DDh"AMI"
+--------b-M004000D8--------------------------
+MEM 0040h:00D8h U - Phoenix BIOS 4.0 Rel 6.0 - POWER MANAGEMENT FLAGS
+Size:	BYTE
+SeeAlso: INT 15/AX=5300h
 --------d-M004000D9--------------------------
 MEM 0040h:00D9h - EHD floppy - DRIVE 2 DISKETTE MEDIA STATE
 Size:	BYTE
@@ -1411,7 +1415,7 @@ Values for AMI Enhanced Parallel Port mode:
  01h	compatibility mode
  02h	bi-directional mode
  04h	EPP mode
-SeeAlso: #0561
+SeeAlso: #0611
 --------d-M004000DC--------------------------
 MEM 0040h:00DCh - EHD floppy - DRIVE 1 NEEDS RECALIBARATION
 Size:	BYTE
@@ -1438,7 +1442,7 @@ SeeAlso: MEM 0040h:00D2h"AMI",MEM 0040h:00DCh"AMI"
 MEM 0040h:00E0h	- AMI BIOS v1.00.12.AX1T - EPP - REAL-TIME DEVICE COUNT
 Size:	BYTE
 Desc:	contains the number of advertised real-time devices as set by EPP
-	  function 12h (see #0556)
+	  function 12h (see #0606)
 SeeAlso: MEM 0040h:00D2h"AMI",MEM 0040h:00DFh"AMI"
 --------b-M004000E0--------------------------
 MEM 0040h:00E0h - Phoenix 386 BIOS - DRIVE PARAMETER TABLE FOR FIRST HARD DISK
@@ -1584,7 +1588,7 @@ Note:	the S3 graphics processor registers can be mapped at either
 SeeAlso: MEM A000h:8180h
 
 Format of S3 Trio32/Trio64 packed memory-mapped registers:
-Offset	Size	Description	(Table M100)
+Offset	Size	Description	(Table M057)
 8100h	DWORD	drawing control: row (low word), column (high word)
 		"CUR_X" and "CUR_Y" (see PORT 82E8h,PORT 86E8h)
 8104h	DWORD	(Trio64) drawing control: row 2 (low word), column 2 (high word)
@@ -1608,15 +1612,15 @@ Offset	Size	Description	(Table M100)
 8134h	DWORD	background mix (low word) and foreground mix (high word)
 		(see PORT B6E8h,PORT BAE8h)
 8138h	DWORD	top scissors (low word) and left scissors (high word)
-		(see PORT BEE8h,#P369)
+		(see PORT BEE8h,#P614)
 813Ch	DWORD	bottom scissors (low word) and right scissors (high word)
-		(see PORT BEE8h,#P369)
+		(see PORT BEE8h,#P614)
 8140h	DWORD	data manipulation control (low word) and miscellaneous 2 (high
-		  word) (see PORT BEE8h,#P369)
+		  word) (see PORT BEE8h,#P614)
 8144h	DWORD	miscellaneous (low word) and read register select (high word)
-		(see PORT BEE8h,#P369)
+		(see PORT BEE8h,#P614)
 8148h	DWORD	minor axis pixel count (low word) and major axis pixel count
-		  (high word) (see PORT BEE8h,#P369,PORT 96E8h)
+		  (high word) (see PORT BEE8h,#P614,PORT 96E8h)
 814Ch	WORD	(Trio64) major axis pixel count 2 (see PORT 96EAh)
 8150h	DWORD	pixel data transfer (see PORT E2E8h,PORT E2EAh)
 8154h 4 DWORDs	???
@@ -1626,7 +1630,7 @@ Offset	Size	Description	(Table M100)
 816Ch	DWORD	??? (written by STLTH64.DRV for Win95)
 Note:	setting 8138h to 0 and 813Ch to 12345678h may be a magic value to unlock
 	  some S3 features
-SeeAlso: #M095,#M101
+SeeAlso: #M073,#M070
 --------V-MA0008180--------------------------
 MEM A000h:8180h - S3 - STREAMS PROCESSOR
 Size:	128 BYTEs
@@ -1636,45 +1640,45 @@ Note:	the S3 graphics processor registers can be mapped at either
 SeeAlso: MEM A000h:8100h,MEM A000h:FF00h
 
 Format of S3 Streams Processor memory-mapped registers:
-Offset	Size	Description	(Table M097)
-8180h	DWORD	primary stream control (see #M107)
-8184h	DWORD	chroma key control (see #M108)
+Offset	Size	Description	(Table M058)
+8180h	DWORD	primary stream control (see #M059)
+8184h	DWORD	chroma key control (see #M063)
 8188h	DWORD	unused??? (high word seems to echo 8184h, low word 8180h)
 818Ch	DWORD	unused??? (high word seems to echo 8184h, low word 8180h)
-8190h	DWORD	secondary stream control (see #M106)
-8194h	DWORD	chroma key upper bound (bits 23-0) (see also #M108)
-8198h	DWORD	secondary stream stretch (see #M119)
+8190h	DWORD	secondary stream control (see #M061)
+8194h	DWORD	chroma key upper bound (bits 23-0) (see also #M063)
+8198h	DWORD	secondary stream stretch (see #M062)
 819Ch	DWORD	??? (set by S3_32.DLL)
 		bits 30-16: ???
 		bits 14-0: ???
-81A0h	DWORD	blend control (see #M104)
+81A0h	DWORD	blend control (see #M064)
 81A4h 3 DWORDs	unused??? (reads as FFFFFFFFh)
 81B0h 4 DWORDs	??? (appear to be read-only)
 81C0h	DWORD	primary frame buffer address 0 (bits 21-0, multiple of 8)
 81C4h	DWORD	primary frame buffer address 1 (bits 21-0, multiple of 8)
 81C8h	DWORD	primary stream stride (bits 11-0 only)
-81CCh	DWORD	double buffer/LPB control (see #M105)
+81CCh	DWORD	double buffer/LPB control (see #M065)
 81D0h	DWORD	secondary frame buffer address 0 (bits 21-0, multiple of 8)
 81D4h	DWORD	secondary frame buffer address 1 (bits 21-0, multiple of 8)
 81D8h	DWORD	secondary stream stride (bits 11-0 only)
-81DCh	DWORD	opaque overlay control (see #M120)
+81DCh	DWORD	opaque overlay control (see #M066)
 81E0h	DWORD	K1 -- vertical stretch (lines in) (bits 10-0 only)
 		set to one less than # lines in
 81E4h	DWORD	K2 -- vertical stretch (stretch factor) (bits 10-0 only)
 		set to -(#lines_in - #lines_out)
 81E8h	DWORD	DDA vertical accumulator (bits 11-0 only) (lines out)
 		set to (#lines_out) - 1
-81ECh	DWORD	streams FIFO and RAS control (see #M109)
-81F0h	DWORD	primary start coordinate (see #M110)
-81F4h	DWORD	primary window size (see #M111)
-81F8h	DWORD	secondary start coordinate (see #M110)
-81FCh	DWORD	secondary window size (see #M111)
+81ECh	DWORD	streams FIFO and RAS control (see #M067)
+81F0h	DWORD	primary start coordinate (see #M068)
+81F4h	DWORD	primary window size (see #M069)
+81F8h	DWORD	secondary start coordinate (see #M068)
+81FCh	DWORD	secondary window size (see #M069)
 Note:	changes to registers 81E0h-81E8h do not take effect until the next
 	  VSYNC
-SeeAlso: #M095,#M100,#M101
+SeeAlso: #M073,#M057,#M070
 
 Bitfields for S3 Streams Processor primary stream control:
-Bit(s)	Description	(Table M107)
+Bit(s)	Description	(Table M059)
  31	reserved
  30-28	filter characteristics
 	000 unchanged primary stream
@@ -1682,13 +1686,13 @@ Bit(s)	Description	(Table M107)
 	010 2X stretch by interpolating horizontally (replicating vertically)
 	else reserved
  27	reserved
- 26-24	color mode (see #M118)
+ 26-24	color mode (see #M060)
  23-0	officially reserved, but writing nonzero values can hang display
 Notes:	the primary stream is the output from the display RAM
-	bits 26-24 correspond to CR67 color mode field (see #P417)
-SeeAlso: #M097,#M106
+	bits 26-24 correspond to CR67 color mode field (see #P436)
+SeeAlso: #M058,#M061
 
-(Table M118)
+(Table M060)
 Values for S3 Streams Processor color mode:
  000b	eight bits per pixel
  001b	YCrCb 4:2:2 unsigned, range 10h-F0h (secondary stream only)
@@ -1698,10 +1702,10 @@ Values for S3 Streams Processor color mode:
  101b	high-color (5-6-5)
  110b	reserved
  111b	true-color (32bpp, high byte ignored)
-SeeAlso: #M107,#M106
+SeeAlso: #M059,#M061
 
 Bitfields for S3 Streams Processor secondary stream control:
-Bit(s)	Description	(Table M106)
+Bit(s)	Description	(Table M061)
  31	reserved
  30-28	filter characteristics
 	000 unchanged secondary stream
@@ -1711,26 +1715,26 @@ Bit(s)	Description	(Table M106)
 	else reserved
  28	enable smoothing between horizontally adjacent bits (trial-and-error)
  27	reserved
- 26-24	color mode (see #M118,#M096)
+ 26-24	color mode (see #M060,#M074)
  23-12	reserved
  11-0	initial value of DDA horizontal accumulator
 	set to 2*(inwidth-1)-(outwidth-1)
 Notes:	the secondary stream is typically live video, but can be pointed at
 	  any part of video memory
 	changes to this register do not take effect until the next VSYNC
-SeeAlso: #M097,#M107,#M119
+SeeAlso: #M058,#M059,#M062
 
 Bitfields for S3 Streams Processor stretch/filter constants:
-Bit(s)	Description	(Table M119)
+Bit(s)	Description	(Table M062)
  31-27	reserved
  26-16	K2 horizontal scaling factor (input width - output width)
  15-11	reserved
  10-0	K1 horizontal scaling factor (input width - 1)
 Note:	changes to this register do not take effect until the next VSYNC
-SeeAlso: #M106
+SeeAlso: #M061
 
 Bitfields for S3 Streams Processor chroma-key control:
-Bit(s)	Description	(Table M108)
+Bit(s)	Description	(Table M063)
  31-29	reserved
  28	key control
 	=1 normal color-key or chroma-key
@@ -1749,10 +1753,10 @@ Bit(s)	Description	(Table M108)
 Note:	if the keyed stream is YUV or YCrCb, then this register contains the
 	  lower bound and 8194h contains the upper bound of the chromakey
 	  value
-SeeAlso: #M097
+SeeAlso: #M058
 
 Bitfields for S3 Streams Processor blend control:
-Bit(s)	Description	(Table M104)
+Bit(s)	Description	(Table M064)
  31-27	reserved (unused)
  26-24	blend type
 	000 show secondary stream (video) overlaying primary stream
@@ -1773,15 +1777,15 @@ Notes:	for blend type 011, the primary and secondary stream intensities should
 	  incorrect colors; for blend type 010, the secondary stream intensity
 	  is automatically computed as 20h - bits12-8
 	changes to this register do not take effect until the next VSYNC
-SeeAlso: #M097
+SeeAlso: #M058
 
 Bitfields for S3 Streams Processor double-buffer/LPB control:
-Bit(s)	Description	(Table M105)
+Bit(s)	Description	(Table M065)
  31-7	reserved (unused; all but bit 7 appear to be read-only, as well)
  6	LPB frame buffer auto-toggle
 	if set, End-of-Frame toggles bit 4
  5	delay loading LPB input buffer select until next End-of-Frame
- 4	LPB input buffer select (see #M095)
+ 4	LPB input buffer select (see #M073)
 	0 use LPB frame buffer address 0 (FF0Ch) for incoming video data
 	1 use LPB frame buffer address 1 (FF10h)
  3	reserved
@@ -1793,10 +1797,10 @@ Bit(s)	Description	(Table M105)
  0	primary stream buffer select
 	=0 use frame buffer address 0 (81C0h)
 	=1 use frame buffer address 1 (81C4h)
-SeeAlso: #M097,#M095
+SeeAlso: #M058,#M073
 
 Bitfields for S3 Streams Processor opaque overlay control:
-Bit(s)	Description	(Table M120)
+Bit(s)	Description	(Table M066)
  31	enable opaque overlay control
  30	select top stream (0 = secondary on top, 1 = primary)
  29	reserved
@@ -1808,10 +1812,10 @@ Bit(s)	Description	(Table M120)
 	number of quadwords from background's left edge to position at which
 	  to stop fetching pixels
  2-0	reserved
-SeeAlso: #M097
+SeeAlso: #M058
 
 Bitfields for S3 Streams Processor streams FIFO and RAS control register:
-Bit(s)	Description	(Table M109)
+Bit(s)	Description	(Table M067)
  31-22	reserved (0)
  21	skip 0.5 MCLK delay of PD[63:0] output (default = 0)
  20	skip memory arbitration for ROM cycles (default = 0)
@@ -1838,23 +1842,23 @@ Bit(s)	Description	(Table M109)
 	10000 primary stream = 8, secondary = 16
 	11000 primary stream = 0, secondary = 24
 	else reserved
-SeeAlso: #M097
+SeeAlso: #M058
 
 Bitfields for S3 Streams Processor start coordinate:
-Bit(s)	Description	(Table M110)
+Bit(s)	Description	(Table M068)
  31-27	reserved (read-only)
  26-16	X coordinate (column) of upper left corner, plus 1
  15-11	reserved (read-only)
  10-0	Y coordinate (row) of upper left corner, plus 1
-SeeAlso: #M097,#M111
+SeeAlso: #M058,#M069
 
 Bitfields for S3 Streams Processor window size:
-Bit(s)	Description	(Table M111)
+Bit(s)	Description	(Table M069)
  31-27	reserved (read-only)
  26-16	width in pixels - 1
  15-11	reserved (read-only)
  10-0	height in scan lines
-SeeAlso: #M097,#M110
+SeeAlso: #M058,#M068
 --------V-MA0008200--------------------------
 MEM A000h:8200h - S3 ViRGE - MEMORY-MAPPED MEMORY-PORT CONTROL REGISTERS
 Size:	40 BYTEs
@@ -1863,7 +1867,7 @@ Note:	the S3 graphics processor registers can be mapped at either
 	  frame buffer
 
 Format of S3 memory-maped port control registers:
-Offset	Size	Description	(Table M101)
+Offset	Size	Description	(Table M070)
 8200h	DWORD	FIFO control
 8204h	DWORD	MIU control
 8208h	DWORD	streams timeout
@@ -1871,7 +1875,7 @@ Offset	Size	Description	(Table M101)
 8210h 4 DWORDs	???
 8220h	DWORD	DMA read base address
 8224h	DWORD	DMA read stride width
-SeeAlso: #M100
+SeeAlso: #M057
 --------V-MA00082E8--------------------------
 MEM A000h:82E8h - S3 - MEMORY-MAPPED CURRENT Y POSITION REGISTER
 Size:	WORD
@@ -1894,14 +1898,14 @@ Note:	the S3 graphics processor registers can be mapped at either
 	  frame buffer
 
 Format of S3 memory-mapped subsystem registers:
-Offset	Size	Description	(Table M102)
+Offset	Size	Description	(Table M071)
 8504h	DWORD	subsystem Control/Status Register (see PORT 42E8h,PORT 9AE8h)
 		on read:
 		    bit 13 indicates whether graphics processor is busy
 		    bits 12-8 indicate number of free FIFO slots
 8508h	DWORD	???
 850Ch	DWORD	advanced function control (see PORT 4AE8h)
-SeeAlso: #M095,#M100,#M103
+SeeAlso: #M073,#M057,#M072
 --------V-MA0008580--------------------------
 MEM A000h:8580h - S3 - MEMORY-MAPPED DMA REGISTERS
 Size:	32 BYTEs
@@ -1910,7 +1914,7 @@ Note:	the S3 graphics processor registers can be mapped at either
 	  frame buffer
 
 Format of S3 memory-mapped DMA registers:
-Offset	Size	Description	(Table M103)
+Offset	Size	Description	(Table M072)
 8580h	DWORD	start address in system memory
 8584h	DWORD	transfer length
 8588h	DWORD	transfer enable
@@ -1919,7 +1923,7 @@ Offset	Size	Description	(Table M103)
 8594h	DWORD	DMA write pointer
 8598h	DWORD	DMA read pointer
 859Ch	DWORD	DMA enable
-SeeAlso: #M100,#M095
+SeeAlso: #M057,#M073
 --------V-MA00086E8--------------------------
 MEM A000h:86E8h - S3 - MEMORY-MAPPED ENHANCED REGISTERS
 Size:	? BYTEs
@@ -1987,28 +1991,28 @@ Note:	the S3 graphics processor registers can be mapped at either
 SeeAlso: MEM A000h:8180h
 
 Format of S3 Local Peripheral Bus memory-mapped registers:
-Offset	Size	Description	(Table M095)
-FF00h	DWORD	LPB mode (see #M096)
-FF04h	DWORD	LPB FIFO status (see #M121)
-FF08h	DWORD	interrupt status (see #M122)
+Offset	Size	Description	(Table M073)
+FF00h	DWORD	LPB mode (see #M074)
+FF04h	DWORD	LPB FIFO status (see #M075)
+FF08h	DWORD	interrupt status (see #M076)
 FF0Ch	DWORD	frame buffer address 0 (bits 21-0, multiple of 8)
 		offset within frame buffer at which to store incoming data from
-		  LPB when Streams Processor double-buffer control (see #M105)
+		  LPB when Streams Processor double-buffer control (see #M065)
 		  bit 4 clear
 FF10h	DWORD	frame buffer address 1 (bits 21-0, multiple of 8)
 		offset within frame buffer at which to store incoming data from
-		  LPB when Streams Processor double-buffer control (see #M105)
+		  LPB when Streams Processor double-buffer control (see #M065)
 		  bit 4 is set
-FF14h	DWORD	"direct address" = index for FF18h (see #M099)
-FF18h	DWORD	"direct data" (see #M099)
+FF14h	DWORD	"direct address" = index for FF18h (see #M077)
+FF18h	DWORD	"direct data" (see #M077)
 		Note: the direct address/direct data registers presumably rely
 		  on the attached device inserting data into the digital video
 		  stream, as on a Diamond Stealth64 Video, the "direct data"
 		  appears to reflect the video stream data (i.e. it varies, but
 		  with a pattern that depends on the video image, and stops
 		  varying when video is frozen)
-FF1Ch	DWORD	general purpose I/O (see #M123)
-FF20h	DWORD	LPB serial port -- I2C/DDC access (see #M098)
+FF1Ch	DWORD	general purpose I/O (see #M078)
+FF20h	DWORD	LPB serial port -- I2C/DDC access (see #M079)
 FF24h	DWORD	input window size (high word = rows, low word = columns)
 FF28h	DWORD	data offsets
 		(video alignment; high word = rows ; low word = columns)
@@ -2031,10 +2035,10 @@ FF40h 8 DWORDs	LPB output FIFO - data transfer
 		  this organization allows use of a REP MOVSD instruction to
 		  fill the FIFO
 		on ISA bus, there must be a delay between successive writes
-SeeAlso: #M097
+SeeAlso: #M058
 
 Bitfields for S3 Local Peripheral Bus LPB Mode register:
-Bit(s)	Description	(Table M096)
+Bit(s)	Description	(Table M074)
  0	enable LPB
  3-1	LPB operational mode
 	000 Scenic/MX2
@@ -2095,10 +2099,10 @@ Bit(s)	Description	(Table M096)
  30	reserved
  31	(read-only) current state of CFLEVEL input (Pin182) in Video In/Out
 	  mode (refer to bits 3-1)
-SeeAlso: #M095
+SeeAlso: #M073
 
 Bitfields for S3 Local Peripheral Bus LPB FIFO status:
-Bit(s)	Description	(Table M121)
+Bit(s)	Description	(Table M075)
  31	video FIFO 1 is almost empty (has exactly one full slot)
  30	video FIFO 1 is empty
  29	video FIFO 1 is full
@@ -2112,10 +2116,10 @@ Bit(s)	Description	(Table M121)
  11	output FIFO is full
  10-4	reserved
  3-0	number of free four-byte slots in FIFO (there are 8 slots)
-SeeAlso: #M095,#M122
+SeeAlso: #M073,#M076
 
 Bitfields for S3 Local Peripheral Bus interrupt status:
-Bit(s)	Description	(Table M122)
+Bit(s)	Description	(Table M076)
  31-25	reserved
  24	drive serial port clock line low on receipt of start condition
 	(causes I2C wait states until interrupt handler responds to start cond)
@@ -2130,9 +2134,9 @@ Bit(s)	Description	(Table M122)
  1	HSYNC received (end of line)
  0	LPB output FIFO emptied
 Note:	bits 3-0 are write-clear: writing a 1 to a bit resets it
-SeeAlso: #M095,#P304
+SeeAlso: #M073,#P469
 
-(Table M099)
+(Table M077)
 Values for S3 Local Peripheral Bus "direct address" index:
  0000h CP3 installation (FF18h reads 00C3h if installed)
  0001h ?
@@ -2152,17 +2156,17 @@ Values for S3 Local Peripheral Bus "direct address" index:
  0508h ?
  050Ch ?
  0510h ?
-SeeAlso: #M095
+SeeAlso: #M073
 
 Bitfields for S3 Local Peripheral Bus General-Purpose I/O:
-Bit(s)	Description	(Table M123)
+Bit(s)	Description	(Table M078)
  3-0	values to drive onto LPB GP output lines whenever CR5C is written
  7-4	values of GP input lines (read-only), latched whenever CR5C is read
  31-8	unused (read-only 0)
-SeeAlso: #M095
+SeeAlso: #M073
 
 Bitfields for S3 Local Peripheral Bus serial-port register:
-Bit(s)	Description	(Table M098)
+Bit(s)	Description	(Table M079)
  0	I2C clock line [SCL] (write)
 	=1 tri-state SCL, allowing other devices to pull it low
  1	I2C data line [SDA] (write)
@@ -2183,7 +2187,7 @@ Notes:	see file I2C.LST for details of the I2C device registers accessible
 	  bits are connected to the monitor's DDC data and clock lines
 	the official documentation erroneously lists the mirrors in bits 12-8
 	  instead of 20-16
-SeeAlso: #M095,PORT 00E2h,#P647
+SeeAlso: #M073,PORT 00E2h,#P425
 --------V-MB0000000--------------------------
 MEM B000h:0000h - MDA TEXT BUFFER
 Size:	4096 BYTEs
@@ -2219,15 +2223,15 @@ MEM BFF0h:0000h - ET4000/W32 ACL accelerator
 Size:	169 BYTES
 
 Format of ET4000/W32 memory-mapped registers:
-Offset	Size	Description	(Table M057)
- 00h	DWORD	MMU Registers: memory base pointer register 0 (see #M058)
- 04h	DWORD	MMU Registers: memory base pointer register 1 (see #M058)
- 08h	DWORD	MMU Registers: memory base pointer register 2 (see #M058)
+Offset	Size	Description	(Table M080)
+ 00h	DWORD	MMU Registers: memory base pointer register 0 (see #M081)
+ 04h	DWORD	MMU Registers: memory base pointer register 1 (see #M081)
+ 08h	DWORD	MMU Registers: memory base pointer register 2 (see #M081)
  0Ch  7 BYTEs	???
- 13h	BYTE	MMU Registers: MMU control register (see #M059)
+ 13h	BYTE	MMU Registers: MMU control register (see #M082)
  14h 28 BYTEs	???
  30h	BYTE	Non-Queued Registers: suspend/terminate
- 31h	BYTE	Non-Queued Registers: operation state (see #M060) (write-only)
+ 31h	BYTE	Non-Queued Registers: operation state (see #M083) (write-only)
  32h	BYTE	Non-Queued Registers: sync enable
  33h	BYTE	???
  34h	BYTE	Non-Queued Registers: interrupt mask
@@ -2236,22 +2240,22 @@ Offset	Size	Description	(Table M057)
 		bit 1: read status (RDST) 1=ACL active, queue not empty
 		bit 0: write status (WRST) 1=queue full
  37h 73 BYTEs	???
- 80h	DWORD	Queued Registers: pattern address (see #M061)
- 84h	DWORD	Queued Registers: source address (see #M061)
- 88h	WORD	Queued Registers: pattern Y offset (see #M062)
- 8Ah	WORD	Queued Registers: source Y offset (see #M062)
- 8Ch	WORD	Queued Registers: destination y offset (see #M062)
+ 80h	DWORD	Queued Registers: pattern address (see #M084)
+ 84h	DWORD	Queued Registers: source address (see #M084)
+ 88h	WORD	Queued Registers: pattern Y offset (see #M085)
+ 8Ah	WORD	Queued Registers: source Y offset (see #M085)
+ 8Ch	WORD	Queued Registers: destination y offset (see #M085)
  8Eh	BYTE	Queued Registers: virtual bus size
- 8Fh	BYTE	Queued Registers: X/Y direction (see #M063)
- 90h	BYTE	Queued Registers: pattern wrap (see #M064)
+ 8Fh	BYTE	Queued Registers: X/Y direction (see #M086)
+ 90h	BYTE	Queued Registers: pattern wrap (see #M087)
  91h	BYTE	???
- 92h	BYTE	Queued Registers: source wrap (see #M064)
+ 92h	BYTE	Queued Registers: source wrap (see #M087)
  93h	BYTE	???
  94h	WORD	Queued Registers: X position
  96h	WORD	Queued Registers: Y position
- 98h	WORD	Queued Registers: X count (see #M065)
- 9Ah	WORD	Queued Registers: Y count (see #M065)
- 9Ch	BYTE	Queued Registers: routine control (see #M066)
+ 98h	WORD	Queued Registers: X count (see #M088)
+ 9Ah	WORD	Queued Registers: Y count (see #M088)
+ 9Ch	BYTE	Queued Registers: routine control (see #M089)
  9Dh	BYTE	Queued Registers: reload control
  9Eh	BYTE	Queued Registers: background ROP for mixing
  9Fh	BYTE	Queued Registers: foreground ROP for mixing
@@ -2260,13 +2264,13 @@ Offset	Size	Description	(Table M057)
  A8h	DWORD	Queued Registers: internal source address
 
 Bitfields for ET4000/W32 memory base pointer register:
-Bit(s)	Description	(Table M058)
+Bit(s)	Description	(Table M081)
  31-22	reserved
  21-0	memory base pointer
-SeeAlso: #M057
+SeeAlso: #M080
 
 Bitfields for ET4000/W32 MMU control register:
-Bit(s)	Description	(Table M059)
+Bit(s)	Description	(Table M082)
  7	reserved
  6-4	linear address control (LAC)
 	  bit 6: MMU aperture 2
@@ -2277,37 +2281,37 @@ Bit(s)	Description	(Table M059)
 	  bit 2: MMU aperture 2
 	  bit 1: MMU aperture 1
 	  bit 0: MMU aperture 0
-SeeAlso: #M057 
+SeeAlso: #M080 
 
 Bitfields for ET4000/W32 operation state register:
-Bit(s)	Description	(Table M060)
+Bit(s)	Description	(Table M083)
  7-4	reserved
  3	restart operation after ACL-interruption
  2-1	reserved
  0	restore status before ACL-interruption
-SeeAlso: #M057
+SeeAlso: #M080
 
 Bitfields for ET4000/W32 memory address register:
-Bit(s)	Description	(Table M061)
+Bit(s)	Description	(Table M084)
  31-22	reserved
  21-0	memory base pointer
-SeeAlso: #M057
+SeeAlso: #M080
 
 Bitfields for ET4000/W32 offset register:
-Bit(s)	Description	(Table M062)
+Bit(s)	Description	(Table M085)
  15-12	reserved
  11-0	Y offset
-SeeAlso: #M057
+SeeAlso: #M080
 
 Bitfields for ET4000/W32 X/Y direction register:
-Bit(s)	Description	(Table M063)
+Bit(s)	Description	(Table M086)
  7-2	reserved
  1	X direction
  0	Y direction
-SeeAlso: #M057
+SeeAlso: #M080
 
 Bitfields for ET4000/W32 wrap register:
-Bit(s)	Description	(Table M064)
+Bit(s)	Description	(Table M087)
  7	reserved
  6-4	pattern Y wrap
 	000 = 1 line	
@@ -2328,16 +2332,16 @@ Bit(s)	Description	(Table M064)
 	101 = 32 byte	
 	110 = 64 byte	
 	111 = no wrap	
-SeeAlso: #M057
+SeeAlso: #M080
 
 Bitfields for ET4000/W32 count register:
-Bit(s)	Description	(Table M065)
+Bit(s)	Description	(Table M088)
  15-12	reserved
  11-0	pixel count
-SeeAlso: #M057
+SeeAlso: #M080
 
 Bitfields for ET4000/W32 routine control register:
-Bit(s)	Description	(Table M066)
+Bit(s)	Description	(Table M089)
  7-6	reserved			   
  5-4	routing of CPU address (ADRO)	   
 	00 don't use CPU address	   
@@ -2353,7 +2357,7 @@ Bit(s)	Description	(Table M066)
 	100 CPU data is x-count	   
 	101 CPU data is y-count	   
 	10x reserved			
-SeeAlso: #M057 
+SeeAlso: #M080 
 --------V-MC0000000--------------------------
 MEM C000h:0000h - VIDEO BIOS (EGA and newer)
 Size:	varies (usually 16K-24K for EGA, 24K-32K for VGA)
@@ -2400,7 +2404,7 @@ SeeAlso: INT 15/AH=C0h
 MEM F000h:xxxxh - AWARD Flash Hook
 
 Format of AWARD Flash BIOS interface:
-Offset	Size	Description	(Table M067)
+Offset	Size	Description	(Table M090)
  00h  8 BYTEs	signature "AWDFLASH"
  08h	WORD	offset in F000h of FAR function: Get ???
 		Return: BL = ??? (00h)
@@ -2420,7 +2424,7 @@ Note:	the AWDFLASH utility copies the ROM from F000h and uses the copy
 MEM F000h:xxxxh - Asustek Flash Hook
 
 Format of Asustek Flash interface:
-Offset	Size	Description	(Table M068)
+Offset	Size	Description	(Table M091)
  00h 10 BYTEs	signature "ASUS_FLASH"
  0Ah  6 BYTEs	blanks (padding)
  10h	WORD	interface version??? (current PFLASH.EXE requires 0101h)
@@ -2433,22 +2437,22 @@ MEM xxxxh:xxx0h - Advanced Configuration and Power Interface Spec (ACPI) v0.9+
 Range: any paragraph boundary in the first kilobyte of the XBDA, the last
 	kilobyte of conventional memory, or from E000h:0000h to F000h:FFE0h
 Note:	scan paragraph boundaries for the signature string "RSD PTR ", followed
-	  by a valid Root System Description Pointer structure (see #M069)
+	  by a valid Root System Description Pointer structure (see #M092)
 SeeAlso: INT 15/AX=E820h
 !!!acpi\acpi10.pdf p.194
 
 Format of ACPI Root System Description Pointer structure:
-Offset	Size	Description	(Table M069)
+Offset	Size	Description	(Table M092)
  00h  8 BYTEs	signature "RSD PTR "
  08h	BYTE	checksum (entire structure, including this byte, must
 		  add up to zero)
  09h  6 BYTEs	OEM identifier
  0Fh	BYTE	reserved (0)
- 10h	DWORD	physical address of Root System Description Table (see #M071)
-SeeAlso: #M071
+ 10h	DWORD	physical address of Root System Description Table (see #M094)
+SeeAlso: #M094
 
 Format of ACPI System Description Table header:
-Offset	Size	Description	(Table M070)
+Offset	Size	Description	(Table M093)
  00h  4 BYTEs	signature
  04h	DWORD	length of table in bytes, including this header
  08h	BYTE	revision of specification corresponding to signature
@@ -2460,31 +2464,31 @@ Offset	Size	Description	(Table M070)
 ---ACPI v1.0---
  1Ch  4 BYTEs	vendor ID for table-creation utility used
  20h  4 BYTEs	revision of table-creation utility
-SeeAlso: #M069,#M071,#M074,#M072,#M075,#M076,#M078,#M117
+SeeAlso: #M092,#M094,#M097,#M095,#M098,#M103,#M106,#M108
 
 Format of ACPI Root System Description Table:
-Offset	Size	Description	(Table M071)
- 00h 36 BYTEs	System Description Table Header (see #M070)
+Offset	Size	Description	(Table M094)
+ 00h 36 BYTEs	System Description Table Header (see #M093)
 		signature "RSDT"
  24h  N DWORDs	physical addresses of other description tables
-		(see #M074,#M072,#M075,#M076,#M078,#M079)
+		(see #M097,#M095,#M098,#M103,#M106,#M107)
 Notes:	the number of table pointers is implied by the table length
 	  field in the header (at offset 04h)
 	for ACPI v0.9, the header is eight bytes smaller and thus all
 	  following offsets are 8 less
-SeeAlso: #M069
+SeeAlso: #M092
 
 Format of ACPI Fixed ACPI Description Table:
-Offset	Size	Description	(Table M072)
- 00h 36 BYTEs	System Description Table Header (see #M070)
+Offset	Size	Description	(Table M095)
+ 00h 36 BYTEs	System Description Table Header (see #M093)
 		signature "FACP"
  24h	DWORD	physical address of the Firmware ACPI Control Structure
-		  (see #M076)
+		  (see #M103)
  28h	DWORD	physical address of the Differentiated System Description Table
-		  (see #M074)
+		  (see #M097)
  2Ch	BYTE	interrupt mode
 		00h dual PIC (industry-standard AT-type)
-		01h multiple APIC (see #M075)
+		01h multiple APIC (see #M098)
 		else reserved
  2Dh	BYTE	reserved
  2Eh	WORD	system vector of SCI interrupt
@@ -2523,7 +2527,7 @@ Offset	Size	Description	(Table M072)
 		  state C3; >1000 if C3 not supported
  64h	WORD	size of contiguous cacheable memory which must be read to flush
 		  all dirty lines from a processor's memory cache; use if
-		  fixed feature flag WBINVD (see #M073) is clear
+		  fixed feature flag WBINVD (see #M096) is clear
 		0000h if flushing not supported
  66h	WORD	memory stride size (in bytes) to flush processor's memory cache
  68h	BYTE	bit index of processor's duty cycle setting within the
@@ -2536,11 +2540,11 @@ Offset	Size	Description	(Table M072)
  6Ch	BYTE	index within RTC CMOS RAM of the century alarm value
 		00h = not supported
  6Dh	BYTE	reserved
- 6Eh	DWORD	fixed feature flags (see #M073)
-SeeAlso: #M069,CMOS 7Dh,CMOS 7Eh,CMOS 7Fh
+ 6Eh	DWORD	fixed feature flags (see #M096)
+SeeAlso: #M092,CMOS 7Dh,CMOS 7Eh,CMOS 7Fh
 
 Bitfields for ACPI Fixed Feature Flags:
-Bit(s)	Description	(Table M073)
+Bit(s)	Description	(Table M096)
  0	WBINVD instruction is correctly supported by processor
  1	WBINVD instruction flushes all caches and maintains coherency, but
 	  does not guarantee invalidation of all caches
@@ -2563,36 +2567,36 @@ Bit(s)	Description	(Table M073)
 	=0 24 bits
 	=1 32 bits
  9-31	reserved
-SeeAlso: #M072
+SeeAlso: #M095
 
 Format of ACPI Differentiated System Description Table:
-Offset	Size	Description	(Table M074)
- 00h 36 BYTEs	System Description Table Header (see #M070)
+Offset	Size	Description	(Table M097)
+ 00h 36 BYTEs	System Description Table Header (see #M093)
 		signature "DSDT"
  24h		complex byte stream; refer to ACPI document and software
-SeeAlso: #M069
+SeeAlso: #M092
 
 Format of ACPI Multiple APIC Description Table:
-Offset	Size	Description	(Table M075)
- 00h 36 BYTEs	System Description Table Header (see #M070)
+Offset	Size	Description	(Table M098)
+ 00h 36 BYTEs	System Description Table Header (see #M093)
 		signature "APIC"
  24h	DWORD	physical address of the local APIC in each processor's address
 		  space
- 28h	DWORD	multiple-APIC flags (see #M115)
- 2Ch 12N BYTEs	APIC structures (see #M112,#M113)
+ 28h	DWORD	multiple-APIC flags (see #M099)
+ 2Ch 12N BYTEs	APIC structures (see #M100,#M102)
 		first byte of each is type, second is length; types other than
 		  00h and 01h are currently reserved and should be skipped
-SeeAlso: #M069
+SeeAlso: #M092
 
 Bitfields for ACPI Multiple APIC Description Table flags:
-Bit(s)	Description	(Table M115)
+Bit(s)	Description	(Table M099)
  0	system contains AT-compatible dual 8259 interrupt controllers in
 	  addition to APICs
  1-31	reserved (0)
-SeeAlso: #M075
+SeeAlso: #M098
 
 Format of ACPI Local APIC Structure:
-Offset	Size	Description	(Table M112)
+Offset	Size	Description	(Table M100)
  00h	BYTE	structure type (00h = Processor Local APIC)
  01h	BYTE	length of this structure (0Ch for v0.9, 08h for v1.0)
  02h	BYTE	processor ID
@@ -2601,92 +2605,92 @@ Offset	Size	Description	(Table M112)
  04h	DWORD	physical address of APIC
  08h	DWORD	flags (TBD)
 --v1.0---
- 04h	DWORD	flags (see #M116)
-SeeAlso: #M075,#M113
+ 04h	DWORD	flags (see #M101)
+SeeAlso: #M098,#M102
 
 Bitfields for ACPI Local APIC flags:
-Bit(s)	Description	(Table M116)
+Bit(s)	Description	(Table M101)
  0	APIC enabled
  1-31	reserved (0)
-SeeAlso: #M112
+SeeAlso: #M100
 
 Format of ACPI I/O APIC Structure:
-Offset	Size	Description	(Table M113)
+Offset	Size	Description	(Table M102)
  00h	BYTE	structure type (00h = Processor Local APIC)
  01h	BYTE	0Ch (length of this structure)
  02h	BYTE	I/O APIC's ID
  03h	BYTE	reserved (0)
  04h	DWORD	physical address of the APIC
  08h	DWORD	number of first system interrupt vector for APIC
-SeeAlso: #M075,#M112
+SeeAlso: #M098,#M100
 
 Format of ACPI Firmware ACPI Control Structure:
-Offset	Size	Description	(Table M076)
+Offset	Size	Description	(Table M103)
  00h  4 BYTEs	signature "FACS"
  04h	DWORD	length of entire structure in bytes (>= 40h)
  08h	DWORD	value of system's hardware signature at last boot
  0Ch	DWORD	real-mode ACPI OS waking vector
 		if nonzero, control is transferred to this address on next BIOS
 		  POST
- 10h	DWORD	global lock (see #M077)
- 14h	DWORD	(v1.0) firmware control structure flags (see #M114)
+ 10h	DWORD	global lock (see #M105)
+ 14h	DWORD	(v1.0) firmware control structure flags (see #M104)
  18h 44 BYTEs	reserved (0)
 Notes:	this structure is located on a 64-byte boundary anywhere in the
 	  first 4GB of memory
 	the BIOS is required to omit the address space containing this
 	  structure from system memory in the system's memory map
-SeeAlso: #M069,INT 15/AX=E820h
+SeeAlso: #M092,INT 15/AX=E820h
 
 Bitfields for ACPI Firmware Control Structure Feature flags:
-Bit(s)	Description	(Table M114)
+Bit(s)	Description	(Table M104)
  0	system supports S4BIOS_REQ
 	=0 operating system must save/restore memory state in order to go to S4
  1-31	reserved (0)
-SeeAlso: #M076
+SeeAlso: #M103
 
 Bitfields for ACPI Embedded Controller Arbitration Structure:
-Bit(s)	Description	(Table M077)
+Bit(s)	Description	(Table M105)
  0	request for Global Lock ownership is pending
  1	Global Lock is currently owned
  2-31	reserved
-SeeAlso: #M076
+SeeAlso: #M103
 
 Format of ACPI Persistent System Description Table:
-Offset	Size	Description	(Table M078)
- 00h 36 BYTEs	System Description Table Header (see #M070)
+Offset	Size	Description	(Table M106)
+ 00h 36 BYTEs	System Description Table Header (see #M093)
 		signature "PSDT"
  24h		complex byte stream; refer to ACPI document and software
-SeeAlso: #M069
+SeeAlso: #M092
 
 Format of ACPI Secondary System Description Table:
-Offset	Size	Description	(Table M079)
- 00h 36 BYTEs	System Description Table Header (see #M070)
+Offset	Size	Description	(Table M107)
+ 00h 36 BYTEs	System Description Table Header (see #M093)
 		signature "SSDT"
  24h		complex byte stream; refer to ACPI document and software
-SeeAlso: #M069
+SeeAlso: #M092
 
 Format of ACPI Smart Battery Description Table:
-Offset	Size	Description	(Table M117)
- 00h 36 BYTEs	System Description Table Header (see #M070)
+Offset	Size	Description	(Table M108)
+ 00h 36 BYTEs	System Description Table Header (see #M093)
 		signature "SBST"
  24h	DWORD	energy level in mWh at which system should warn user
  28h	DWORD	energy level in mWh at which system should automatically enter
 		  sleep state
  2Ch	DWORD	energy level in mWh at which system should perform an emergency
 		  shutdown
-SeeAlso: #M069
+SeeAlso: #M092
 ----------Mxxxxxxx0--------------------------
 MEM xxxxh:xxx0h - Multiprocessor Specification - FLOATING POINTER STRUCTURE
 InstallCheck: scan paragraph boundaries for the signature string "_MP_",
-	  followed by a valid floating pointer structure (see #M080)
+	  followed by a valid floating pointer structure (see #M109)
 Range: any paragraph boundary in the first kilobyte of the XBDA, the last
 	kilobyte of conventional memory, or from F000h:0000h to F000h:FFE0h
 SeeAlso: MEM FEE00000h
 
 Format of Multiprocessor Specification Floating Pointer structure:
-Offset	Size	Description	(Table M080)
+Offset	Size	Description	(Table M109)
  00h  4 BYTEs	signature "_MP_"
- 04h	DWORD	physical address of MP configuration table (see #M081)
+ 04h	DWORD	physical address of MP configuration table (see #M110)
 		00000000h if no configuration table
  08h	BYTE	length of this structure in paragraphs (currently 01h)
  09h	BYTE	revision of MP specification supported
@@ -2703,7 +2707,7 @@ Offset	Size	Description	(Table M080)
  0Dh  3	BYTEs	MP feature bytes 3-5 (reserved, must be 00h)
 
 Format of Multiprocessor Specification configuration table header:
-Offset	Size	Description	(Table M081)
+Offset	Size	Description	(Table M110)
  00h  4 BYTEs	signature "PCMP"
  04h	WORD	length of base configuration table in bytes, including
 		  this header
@@ -2722,11 +2726,11 @@ Offset	Size	Description	(Table M081)
 		  (in bytes)
  2Ah	BYTE	checksum for extended table entries (includes only
 		  extended entries following base table)
- 2Ch	var	configuration table entries (see #M082)
-SeeAlso: #M080
+ 2Ch	var	configuration table entries (see #M111)
+SeeAlso: #M109
 
 Format of Multiprocessor Specification configuration table entries:
-Offset	Size	Description	(Table M082)
+Offset	Size	Description	(Table M111)
  00h	BYTE	entry type code
 		00h processor
 		01h bus
@@ -2752,7 +2756,7 @@ Offset	Size	Description	(Table M082)
  0Ch  8 BYTEs	reserved
 ---bus---
  01h	BYTE	bus ID (assigned sequentially from 00h by BIOS)
- 02h  6 BYTEs	bus type (blank-padded ASCII string) (see #M083)
+ 02h  6 BYTEs	bus type (blank-padded ASCII string) (see #M112)
 ---I/O APIC---
  01h	BYTE	APIC identifier
  02h	BYTE	APIC version
@@ -2766,7 +2770,7 @@ Offset	Size	Description	(Table M082)
 		01h NMI
 		02h system management interrupt
 		03h vectored interrupt (from external PIC)
- 02h	BYTE	APIC control (see #M084)
+ 02h	BYTE	APIC control (see #M113)
  03h	BYTE	unused
  04h	BYTE	source bus identifier
  05h	BYTE	source bus IRQ
@@ -2794,9 +2798,9 @@ Offset	Size	Description	(Table M082)
  04h	DWORD	number indicating predefined address space range to be removed
 		00h ISA-compatible I/O range (x100h-x3FFh and aliases)
 		01h VGA-compatible I/O range (x3B0h-x3BBh,x3C0h-x3DFh,aliases)
-SeeAlso: #M081
+SeeAlso: #M110
 
-(Table M083)
+(Table M112)
 Values for Multiprocessor Specification bus name:
  "CBUS"		Corollary CBus
  "CBUSII"	Corollary CBus II
@@ -2816,10 +2820,10 @@ Values for Multiprocessor Specification bus name:
  "VL"		VESA Local Bus
  "VME"		VMEbus
  "XPRESS"	Express System Bus
-SeeAlso: #M082
+SeeAlso: #M111
 
 Bitfields for Multiprocessor Specification APIC control:
-Bit(s)	Description	(Table M084)
+Bit(s)	Description	(Table M113)
  1-0	input signal polarity
 	00 conforms to bus specification
 	01 active high
@@ -2830,7 +2834,7 @@ Bit(s)	Description	(Table M084)
 	01 edge-triggered
 	10 reserved
 	11 level-triggered
-SeeAlso: #M082
+SeeAlso: #M111
 --------X-Mxxxxxxx0--------------------------
 MEM xxxxh:xxx0h - PCI IRQ Routing Table Specification v1.0
 Size:	N paragraphs (N >= 2)
@@ -2839,7 +2843,7 @@ InstallCheck: scan for the signature string "$PIR" followed by a valid
 Range:	any paragraph boundary within the range F0000h to FFFFFh
 
 Format of PCI IRQ Routing Table v1.0:
-Offset	Size	Description	(Table M085)
+Offset	Size	Description	(Table M114)
  00h  4 BYTEs	signature "$PIR"
  04h	WORD	version (0100h for v1.0)
  06h	WORD	table size in bytes
@@ -2853,12 +2857,12 @@ Offset	Size	Description	(Table M085)
  1Fh	BYTE	checksum (set to make 8-bit sum of bytes in entire structure
 		  equal 00h)
 --- optional data ---
- 20h 16 BYTEs	first slot entry (see #M086)
+ 20h 16 BYTEs	first slot entry (see #M115)
 	...
      16 BYTEs	Nth slot entry
 
 Format of PCI IRQ Routing Table slot entry:
-Offset	Size	Description	(Table M086)
+Offset	Size	Description	(Table M115)
  00h	BYTE	PCI bus number
  01h	BYTE	PCI device number (bits 7-3)
  02h	BYTE	link value for INTA#
@@ -2871,7 +2875,7 @@ Offset	Size	Description	(Table M086)
  0Ch	WORD	IRQ bitmap for INTD#
  0Eh	BYTE	slot number (00h = motherboard, other = vendor-specific)
  0Fh	BYTE	reserved
-SeeAlso: #M085,#0956 at INT 1A/AX=B406h
+SeeAlso: #M114,#1125 at INT 1A/AX=B406h
 --------H-mFEC00000--------------------------
 MEM FEC00000h - Pentium - 82379AB I/O APIC - I/O REGISTER SELECT
 Size:	DWORD
@@ -2893,7 +2897,7 @@ Note:	this memory-mapped register is also supported by the Intel 82093AA
 	  I/O APIC
 SeeAlso: MEM FEC00010h
 
-(Table M087)
+(Table M116)
 Values for Intel 82379AB/82093AA I/O APIC registers:
  00h	APIC ID
  01h	APIC version (read-only)
@@ -2915,7 +2919,7 @@ Values for Intel 82379AB/82093AA I/O APIC registers:
  3Eh-3Fh	redirection table entry 23
 
 Bitfields for APIC redirection table entry:
-Bit(s)	Description	(Table M088)
+Bit(s)	Description	(Table M117)
  63-56	destination
 !!!29056601.pdf pg. 10
  55-17	reserved
@@ -3023,7 +3027,7 @@ Size:	DWORD
 Note:	read-only
 
 Bitfields for Pentium APIC error status register:
-Bit(s)	Description	(Table M089)
+Bit(s)	Description	(Table M118)
  0	send checksum error
  1	receive checksum error
  2	send accept error
@@ -3037,12 +3041,12 @@ Bit(s)	Description	(Table M089)
 MEM FEE00300h - Pentium - LOCAL APIC - INTERRUPT COMMAND REGISTER (ICR)
 Size:	DWORD
 Note:	this is the low half of the 64-bit ICR
-SeeAlso: MEM FEE00310h,#M090
+SeeAlso: MEM FEE00310h,#M119
 
 Bitfields for Pentium APIC Interrupt Command Register:
-Bit(s)	Description	(Table M090)
+Bit(s)	Description	(Table M119)
  7-0	interrupt vector number
- 10-8	delivery mode (see #M091)
+ 10-8	delivery mode (see #M120)
  11	destination mode
  12	delivery status (read-only)
 	1 = transfer pending
@@ -3057,9 +3061,9 @@ Bit(s)	Description	(Table M090)
 	11 all except self
  55-20	reserved
  63-56	destination for interrupt request or message
-SeeAlso: #M093
+SeeAlso: #M122
 
-(Table M091)
+(Table M120)
 Values for Pentium APIC delivery mode:
  000b	fixed
  001b	lowest-priority
@@ -3069,19 +3073,19 @@ Values for Pentium APIC delivery mode:
  101b	INIT
  110b	start up
  111b	reserved
-SeeAlso: #M090
+SeeAlso: #M119
 --------H-mFEE00310--------------------------
 MEM FEE00310h - Pentium - LOCAL APIC - INTERRUPT COMMAND REGISTER (ICR)
 Size:	DWORD
 Note:	this is the high half of the 64-bit ICR
-SeeAlso: MEM FEE00300h,#M090
+SeeAlso: MEM FEE00300h,#M119
 --------H-mFEE00320--------------------------
 MEM FEE00320h - Pentium - LOCAL APIC - LOCAL VECTOR TABLE ENTRY 0 (TIMER)
 Size:	DWORD
 SeeAlso: MEM FEE00350h,MEM FEE00370h,MEM FEE003E0h,INT 70h
 
 Bitfields for Pentium APIC timer local vector entry:
-Bit(s)	Description	(Table M092)
+Bit(s)	Description	(Table M121)
  7-0	interrupt vector number
  11-8	reserved
  12	delivery status (read-only)
@@ -3090,7 +3094,7 @@ Bit(s)	Description	(Table M092)
  16	interrupt delivery disabled
  17	timer mode (0=one-shot, 1=periodic)
  31-18	reserved
-SeeAlso: #M094,#M093
+SeeAlso: #M123,#M122
 --------H-mFEE00330--------------------------
 MEM FEE00330h - Pentium - LOCAL APIC - RESERVED
 SeeAlso: MEM FEE00000h
@@ -3103,7 +3107,7 @@ Size:	DWORD
 SeeAlso: MEM FEE00320h,MEM FEE00360h
 
 Bitfields for Pentium APIC LINTx local vector entry:
-Bit(s)	Description	(Table M093)
+Bit(s)	Description	(Table M122)
  7-0	interrupt vector number
  10-8	delivery mode
 	000 fixed
@@ -3119,11 +3123,11 @@ Bit(s)	Description	(Table M093)
 	1 level-sensitive
  16	interrupt delivery disabled
  31-17	reserved
-SeeAlso: #M092
+SeeAlso: #M121
 --------H-mFEE00360--------------------------
 MEM FEE00360h - Pentium - LOCAL APIC - LOCAL VECTOR TABLE ENTRY 2 (LINT1)
 Size:	DWORD
-SeeAlso: MEM FEE00350h,MEM FEE00370h,#M093
+SeeAlso: MEM FEE00350h,MEM FEE00370h,#M122
 --------H-mFEE00370--------------------------
 MEM FEE00370h - Pentium - LOCAL APIC - LOCAL VECTOR TABLE ENTRY 3 (Error)
 Size:	DWORD
@@ -3160,7 +3164,7 @@ Size:	DWORD
 SeeAlso: MEM FEE00000h,MEM FEE00320h
 
 Bitfields for Pentium APIC timer divide configuration:
-Bit(s)	Description	(Table M094)
+Bit(s)	Description	(Table M123)
  3,1,0	divisor
 	000 divide by 2
 	001 by 4
@@ -3172,7 +3176,7 @@ Bit(s)	Description	(Table M094)
  31-4	reserved
 Note:	the divisor determines the timer's time base relative to the processor
 	  clock
-SeeAlso: #M092
+SeeAlso: #M121
 ----------MFFFF0010--------------------------
 MEM FFFFh:0010h - HIGH MEMORY AREA (HMA)
 Size:	65520 BYTEs
@@ -3188,11 +3192,11 @@ Highest Table Number = M123
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER57A through INTER57D (preferably the original
+quartet of archives named INTER58A through INTER58D (preferably the original
 authenticated PKZIP archives), and the utility and hypertext programs in
-three additional archives called INTER57E.ZIP to INTER57G.ZIP.
+three additional archives called INTER58E.ZIP to INTER58G.ZIP.
 
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1998 Ralf Brown
 --------!---CONTACT_INFO---------------------
 Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
 UUCP: {uunet,harvard}!pobox.com!ralf

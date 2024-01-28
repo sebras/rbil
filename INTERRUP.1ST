@@ -1,19 +1,19 @@
-Interrupt List			Release 57		Last change 22mar98
+Interrupt List			Release 58		Last change 28jun98
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
 --------!---FILELIST-------------------------
 Please redistribute the following files unmodified as a group, in a quartet of
-archives named INTER57A through INTER57D (preferably the original authenticated
+archives named INTER58A through INTER58D (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	this file
 	INTERRUP.A	INT 00 through INT 10/FD  \
 	INTERRUP.B	INT 10/FE through INT 15/11\
 	INTERRUP.C	INT 15/12 through INT 16/6E \
 	INTERRUP.D	INT 16/6F through INT 1A/AF  \
-	INTERRUP.E	INT 1A/B0 through INT 21/24   \	  total 2381 pages at
+	INTERRUP.E	INT 1A/B0 through INT 21/24   \	  total 2407 pages at
 	INTERRUP.F	INT 21/25 through INT 21/51    \  60 lines per page,
-	INTERRUP.G	INT 21/52 through INT 21/E1	\ 2537 with INTPRINT -p
-	INTERRUP.H	INT 21/E2 through INT 21/F1	 >(8579 entries)
-	INTERRUP.I	INT 21/F2 through INT 29	/ (3879 tables)
+	INTERRUP.G	INT 21/52 through INT 21/E0	\ 2564 with INTPRINT -p
+	INTERRUP.H	INT 21/E1 through INT 21/F1	 >(8605 entries)
+	INTERRUP.I	INT 21/F2 through INT 29	/ (3928 tables)
 	INTERRUP.J	INT 2A through INT 2F/19       /
 	INTERRUP.K	INT 2F/1A through INT 2F/AE   /
 	INTERRUP.L	INT 2F/AF through INT 31/FE  /
@@ -37,7 +37,7 @@ PKZIP archives):
 	CATEGORY.KEY	descriptions of divider-line category letters
 	COMBINE.COM	combine the pieces of the list into a single file
 	COMBINE.DOC	documentation for COMBINE
-The following files should be distributed in an archive called INTER57E:
+The following files should be distributed in an archive called INTER58E:
 	86BUGSnn.ZIP	programs to test for CPU bugs
 	COMBINE.ASM	source code for COMBINE.COM
 	INT.*		invoke interrupts from commandline
@@ -46,12 +46,13 @@ The following files should be distributed in an archive called INTER57E:
 	INTPRINT.C	source code for INTPRINT
 	INTSUM??.ZIP	interrupt list browser (Interrupt Summary)
 	IVIEW.ZIP	another interrupt list browser
-The following should be distributed in an archive called INTER57F:
+	VIEWINTL.ZIP	list viewer by Sly Golovanov
+The following should be distributed in an archive called INTER58F:
 	INT2RTF.ZIP	Slava Gostrenko's Windows Help converter
 	INT2WHLP.ZIP	convert list into Windows Help database
 	HINTSRCH.ZIP	WinHelp DLL for full-text searches of interrupt list
 	WH_ED*.ZIP	WinHelp-file editor
-Finally, the following should be distributed in an archive called INTER57G:
+Finally, the following should be distributed in an archive called INTER58G:
 	IL2ME???.ZIP	convert list into Multi-Edit help database
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
 	INT2HLP.ZIP	convert list into QuickHelp database
@@ -627,9 +628,12 @@ This list is the result of the time and effort of a large number of people:
 11/97 Russell A. Bell  rbell@alumni.caltech.edu	      S3 memory-mapped I/O
 12/97 Vik Heyndrickx   Vik.Heyndrickx@rug.ac.be       file sharing for DOS 7
  1/98 George L Fulk    fulkgl@ibm.net		      Win95 updates
- 1/98 Roger Scudder				      transcription
- 1/98 David Brioso				      transcription
- 1/98 Pino Navato				      transcription
+ 1/98 Roger Scudder    rscudder@usa.net		      transcription
+ 1/98 David Brioso     dbrioso@hotmail.com	      transcription
+ 1/98 Pino Navato      pnavato@geocities.com	      transcription
+ 3/98 George L. Fulk   fulkgl@ibm.net		      more DOS int., FAT32 SDA
+ 5/98 Teppo Lehtonen   lehto@sci.fi  		      transcription
+ 6/98 Serguei Shtyliov serge@coudert.msk.ru	      PCI vendor IDs
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -709,7 +713,7 @@ Also contributing:
  Brian Long <BLONG@boruk.mhs.compuserve.com>, John_Murphy@perftech.com,
  Peter Singer <100024.1603@CompuServe.COM>, Martin Shipley <martin@buss.co.uk>,
  Jiri Kuchta <kuchta@dcse.fee.vutbr.cs>, Pavel Shtemenko <pasha@opi.odessa.ua>,
- Paul Ratcliffe <70630.647@compuserve.com>, Ivan Martinez 4:801/6,
+ Paul Ratcliffe <70630.647@compuserve.com>, Ivan Martinez 4:801/6, Steve Ball,
  David Woolley <100121.53@compuserve.com>,Paul Vojta <vojta@math.berkeley.edu>,
  Ronald Lokker <rlokker@fys.ruu.nl>, Wolfram Joost <WOJO@TEAMWORK.SH.SUB.ORG>,
  Nico E. de Vries <nevries@aip.nl>, Riku Saikkonen <riku.saikkonen@compart.fi>,
@@ -796,8 +800,12 @@ Also contributing:
  Chris Wilson <chrisperrywilson@hotmail.com>, Mark Ament <ament@xs4all.nl>,
  Richard Jonsson <richard_jonsson@hotmail.com>, Gary A <garya@nitco.com>,
  Maik Nijhuis <mnijhuis@sloep85.cs.vu.nl>, Bjorn Hultman <bjorn@btbits.se>,
- Matthias Drochner <drochner@zelux6.zel.kfa-juelich.de>,
+ Matthias Drochner <drochner@zelux6.zel.kfa-juelich.de>,Eli <afn41472@afn.org>,
  Dave Crocker <dcrocker@imsltd.com>, paul couchman <bp@onthenet.com.au>,
+ Phil Brutsche <brutsche@ne.uswest.net>, Andreas Mohr <100.30936@germany.net>,
+ Derek Soeder <dereks@sulphur-springs.isd.tenet.edu>,
+ Kostya Zalyan <Kostya.Zalyan@p17.f15.n5001.z2.fidonet.org>,
+ Anthony Appleyard <MCLSSAA2@fs2.mt.umist.ac.uk>
 --------!---ADDRESSES------------------------
 The following have provided API reference and other materials at no charge:
 
@@ -1557,10 +1565,10 @@ Snail mail:
 	   (Letters which enclose a Self-Addressed Stamped Envelope [or self-
 	    addressed envelope and international return coupon] or e-mail
 	    address will be given priority.  This address will remain valid
-	    until at least November 1, 1997.)
+	    until at least November 1, 1998.)
 
 Visit my home page!	http://www.pobox.com/~ralf
 
-I reply to all e-mail submissions and inquiries.  If you do not receive a reply
-within a reasonable time, send your message again, giving a better return path
+I reply to all e-mail submissions.  If you do not receive a reply within
+a reasonable time, send your message again, giving a better return path
 (a surprising number of mailers do not insert a correct From: address!)

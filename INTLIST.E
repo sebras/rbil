@@ -2,7 +2,7 @@
 /*	EEL code file for editing the Interrupt List		*/
 /*								*/
 /*	Written by Ralf Brown					*/
-/*	LastEdit:  22 Mar 98					*/
+/*	LastEdit:  28 Jun 98					*/
 /*								*/
 /*  This EEL file adds the following keybindings:		*/
 /*    Shf-Alt-A add an Access: section to the current entry	*/
@@ -1229,14 +1229,15 @@ void fix_unnumbered_tables()
 short *gather_table_numbers(new_numbers)
 short *new_numbers ;
 {
-   int tcount[6] ;
-   char counter[5] ;
+   int tcount[9] ;
+   char counter[6] ;
    int old_number ;
    int table_type ;
    spot start = alloc_spot(1) ;
    save_var case_fold = 0 ;
    
    tcount[0] = tcount[1] = tcount[2] = tcount[3] = tcount[4] = tcount[5] = 0 ;
+   tcount[6] = tcount[7] = tcount[8] = 0 ;
    *start = point ;
    point = 0 ;
    while (search(1,"(Table "))
@@ -1265,7 +1266,7 @@ int adjust_table_numbers(new_numbers, dangling)
 short *new_numbers ;
 int dangling ;
 {
-   char counter[5] ;
+   char counter[6] ;
    int old_number ;
    int old_type ;
    char *tbl ;
@@ -1294,7 +1295,7 @@ int dangling ;
 	 }
       }
    point = 0 ;
-   while (re_search(1,"[, \t]%#[0-9CFMPR][0-9][0-9][0-9]"))
+   while (re_search(1,"[, \t]%#[0-9CFIMPRS][0-9][0-9][0-9]"))
       {
       grab(point-4,point,counter) ;
       tbl = index(table_ID_letters,counter[0]) ;

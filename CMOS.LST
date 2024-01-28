@@ -1,4 +1,4 @@
-CMOS-Memory Map			Release 57		Last change 22mar98
+CMOS-Memory Map			Release 58		Last change 28jun98
 
 Compiled from multiple sources by Padgett Peterson
 Corrections/additions/comments to: padgett@tccslr.dnet.mmc.com
@@ -1645,11 +1645,17 @@ Bit(s)	Description	(Table C088)
 	8   40 Minutes
  0-3	Doze Mode Setting (for User Defined)
 	(See Standby Mode above)
+----------R62--------------------------------
+CMOS 62h - AWARD v4.51pg - BIT FLAGS
+
+Bitfields for AWARD v4.51pg CMOS 62h:
+Bit(s)	Description	(Table C089)
+ 0	user password is enabled
 ----------R63--------------------------------
 CMOS 63h - AWARD - POWER MANAGEMENT
 
 Bitfields for AWARD power management:
-Bit(s)	Description	(Table C089)
+Bit(s)	Description	(Table C090)
  7	Disable PM Event on IRQ3 Activity (COM2) (1=disable)
  6	PM Event on VGA Activity (1=enable)
  5	??? (Defaults to 1)
@@ -1660,7 +1666,7 @@ Bit(s)	Description	(Table C089)
 CMOS 63h - AMI (PicoPower) - BATTERY-LOW ACTIONS
 
 Bitfields for AMI (PicoPower) battery-low actions:
-Bit(s)	Description	(Table C090)
+Bit(s)	Description	(Table C091)
  5-3	battery-very-low action
 	000  MAX
 	001  MAX/2
@@ -1677,7 +1683,7 @@ CMOS 64h - AMI 1990 Hyundai super-NB368S notebook - ???
 CMOS 64h - AMI (PicoPower) - BATTERY POWER
 
 Bitfields for AMI (PicoPower) battery power:
-Bit(s)	Description	(Table C091)
+Bit(s)	Description	(Table C092)
  6	extended battery debounce enabled
  4-3	resume with modem ring
 	00 disabled
@@ -1693,7 +1699,7 @@ Bit(s)	Description	(Table C091)
 CMOS 64h - AWARD - POWER MANAGEMENT - IRQ activity events
 
 Bitfields for AWARD power management IRQ activity events:
-Bit(s)	Description	(Table C092)
+Bit(s)	Description	(Table C093)
  7	Disable PM Event on IRQ11 Activity (1=disable)
  6	Disable PM Event on IRQ10 Activity (1=disable)
  5	Disable PM Event on IRQ9 Activity (IRQ2 Redir) (1=disable)
@@ -1706,7 +1712,7 @@ Bit(s)	Description	(Table C092)
 CMOS 65h - AWARD - POWER MANAGEMENT
 
 Bitfields for AWARD power management:
-Bit(s)	Description	(Table C093)
+Bit(s)	Description	(Table C094)
  7-4	??? may be unused.  Defaults to all 1's
  3	Disable PM Event on IRQ15 Activity (1=disable)
  2	Disable PM Event on IRQ14 Activity (Hard Disk) (1=disable)
@@ -1716,7 +1722,7 @@ Bit(s)	Description	(Table C093)
 CMOS 65h - AMI (PicoPower) - PC PIN STAGGER
 
 Bitfields for AMI (PicoPower) PC pin stagger:
-Bit(s)	Description	(Table C094)
+Bit(s)	Description	(Table C095)
  7-6	PC pin stagger period
 	00  immediate
 	01  4 msec
@@ -1845,7 +1851,7 @@ CMOS_DATA	DB   128 DUP (?)
 	    Alexey Podrezov
 	    28.08.1996
 --------!---Admin----------------------------
-Highest Table Number = C094
+Highest Table Number = C095
 --------!---History--------------------------
 Revision History
 

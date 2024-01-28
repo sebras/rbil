@@ -1,5 +1,293 @@
 Interrupt List, part 8 of 16
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
+--------E-21E1-------------------------------
+INT 21 - OS/286, OS/386 - ISSUE REAL PROCEDURE CALL
+	AH = E1h
+	???
+Return: ???
+Note:	protected mode only???
+SeeAlso: AH=E0h"OS/286",AH=E2h"OS/286",AH=E3h"OS/286",AX=250Eh,INT 31/AX=0301h
+--------T-21E1-------------------------------
+INT 21 - DoubleDOS - CLEAR KEYBOARD BUFFER FOR CURRENT JOB
+	AH = E1h
+SeeAlso: AH=E2h"DoubleDOS",AH=E3h"DoubleDOS",AH=E8h"DoubleDOS"
+SeeAlso: AH=F1h"DoubleDOS"
+--------v-21E1-------------------------------
+INT 21 - VIRUS - "Mendoza", "Fu Manchu" - INSTALLATION CHECK
+	AH = E1h
+Return: AX = 0300h if "Mendoza" resident
+	AX = 0400h if "Fu Manchu" resident
+SeeAlso: AX=E00Fh,AH=E4h"VIRUS"
+--------N-21E1--SF00-------------------------
+INT 21 - Novell NetWare - MESSAGE SERVICES - SEND BROADCAST MESSAGE
+	AH = E1h subfn 00h
+	DS:SI -> request buffer (see #1683)
+	ES:DI -> reply buffer (see #1684)
+Return: AL = status
+	    00h successful
+	    FEh I/O error or out of dynamic workspace
+Note:	this function is supported by NetWare 4.0+ and Advanced NetWare 1.0+
+SeeAlso: AH=DEh"NetWare",AH=DEh/DL=04h,AH=E1h/SF=01h,AH=E1h/SF=04h
+SeeAlso: AH=E1h/SF=09h
+
+Format of NetWare "Send Broadcast Message" request buffer:
+Offset	Size	Description	(Table 1683)
+ 00h	WORD	length of following data (max 9Eh)
+ 02h	BYTE	00h (subfunction "Send Broadcast Message")
+ 03h	BYTE	number of connections (01h-64h)
+ 04h  N BYTEs	list of connections to receive broadcast message
+	BYTE	length of message (01h-37h)
+      N BYTEs	broadcast message (no control characters or characters > 7Eh)
+SeeAlso: #1684
+
+Format of NetWare "Send Broadcast Message" reply buffer:
+Offset	Size	Description	(Table 1684)
+ 00h	WORD	(call) size of following results buffer (max 65h)
+ 02h	BYTE	number of connections
+ 03h  N BYTEs	list of per-connection results
+		00h successful
+		FCh message rejected due to lack of buffer space
+		FDh invalid connection number
+		FFh blocked (see also AH=E1h/SF=02h)
+SeeAlso: #1683
+--------N-21E1--SF01-------------------------
+INT 21 - Novell NetWare - MESSAGE SERVICES - GET BROADCAST MESSAGE (OLD)
+	AH = E1h subfn 01h
+	DS:SI -> request buffer (see #1685)
+	ES:DI -> reply buffer (see #1686)
+Return: AL = status
+	    00h successful
+	    FCh full message queue
+	    FEh out of dynamic workspace
+Note:	this function is supported by NetWare 4.0+ and Advanced NetWare 1.0+
+SeeAlso: AH=DEh/DL=04h,AH=E1h/SF=00h,AH=E1h/SF=05h,AH=E1h/SF=09h
+SeeAlso: AX=F215h/SF=01h,AX=F215h/SF=0Bh
+
+Format of NetWare "Get Broadcast Message" request buffer:
+Offset	Size	Description	(Table 1685)
+ 00h	WORD	0001h (length of following data)
+ 02h	BYTE	01h (subfunction "Get Broadcast Message")
+SeeAlso: #1686,#1973
+
+Format of NetWare "Get Broadcast Message" reply buffer:
+Offset	Size	Description	(Table 1686)
+ 00h	WORD	(call) size of following results buffer (max 38h)
+ 02h	BYTE	length of message (00h-37h)
+		00h if no broadcast messages pending
+ 03h  N BYTEs	message (no control characters or characters > 7Eh)
+SeeAlso: #1685,#1971,#1974
+--------N-21E1--SF02-------------------------
+INT 21 - Novell NetWare - MESSAGE SERVICES - DISABLE BROADCAST MESSAGES
+	AH = E1h subfn 02h
+	DS:SI -> request buffer (see #1688)
+	ES:DI -> reply buffer (see #1689)
+Return: AL = error code
+Note:	these functions are supported by NetWare 4.0+ but are not listed in
+	  _NetWare_System_Calls--DOS_; they may be obsolete
+SeeAlso: AH=E1h/SF=00h,AH=E1h/SF=03h,AH=E1h/SF=04h,AH=E1h/SF=09h
+SeeAlso: AX=F215h/SF=02h
+
+Format of NetWare "Disable Broadcasts" request packet:
+Offset	Size	Description	(Table 1687)
+ 00h	WORD	0001h (length of following data)
+ 02h	BYTE	02h (subfunction "Enable Broadcast Messages")
+SeeAlso: #1688,#1689
+--------N-21E1--SF03-------------------------
+INT 21 - Novell NetWare - MESSAGE SERVICES - ENABLE BROADCAST MESSAGES
+	AH = E1h subfn 03h
+	DS:SI -> request buffer (see #1688)
+	ES:DI -> reply buffer (see #1689)
+Return: AL = error code
+Note:	these functions are supported by NetWare 4.0+ but are not listed in
+	  _NetWare_System_Calls--DOS_; they may be obsolete
+SeeAlso: AH=E1h/SF=00h,AH=E1h/SF=02h,AH=E1h/SF=04h,AH=E1h/SF=09h
+SeeAlso: AX=F215h/SF=03h
+
+Format of NetWare "Enable Broadcast Messages" request buffer:
+Offset	Size	Description	(Table 1688)
+ 00h	WORD	0001h (length of following data)
+ 02h	BYTE	03h (subfunction "Enable Broadcast Messages")
+SeeAlso: #1689,#1687
+
+Format of NetWare "Enable/Disable Broadcast Messages" reply buffer:
+Offset	Size	Description	(Table 1689)
+ 00h	WORD	(call) 0000h (no data returned)
+SeeAlso: #1688,#1687
+--------N-21E1--SF04-------------------------
+INT 21 O - Novell NetWare - MESSAGE SERVICES - SEND PERSONAL MESSAGE
+	AH = E1h subfn 04h
+	DS:SI -> request buffer (see #1690)
+	ES:DI -> reply buffer (see #1691)
+Return: AL = status
+	    00h successful
+	    FEh I/O error or out of dynamic workspace
+Notes:	this function is supported by NetWare 4.0+ and Advanced NetWare 1.0-2.x
+	message pipes use CPU time on the file server; IPX, SPX, or NetBIOS
+	  connections should be used for peer-to-peer communications as these
+	  protocols do not use file server time
+SeeAlso: AH=E1h/SF=00h,AH=E1h/SF=05h,AH=E1h/SF=06h,AH=E1h/SF=08h
+
+Format of NetWare "Send Personal Message" request buffer:
+Offset	Size	Description	(Table 1690)
+ 00h	WORD	length of following data (max E5h)
+ 02h	BYTE	04h (subfunction "Send Personal Message")
+ 03h	BYTE	number of connections (01h-64h)
+ 04h  N BYTEs	list of connections to receive broadcast message
+	BYTE	length of message (01h-7Eh)
+      N BYTEs	message (no control characters or characters > 7Eh)
+SeeAlso: #1691
+
+Format of NetWare "Send Personal Message" reply buffer:
+Offset	Size	Description	(Table 1691)
+ 00h	WORD	(call) size of following results buffer (max 65h)
+ 02h	BYTE	number of connections
+ 03h  N BYTEs	list of per-connection results
+		00h successful
+		FCh message rejected because queue is full (contains 6 msgs)
+		FDh incomplete pipe
+		FFh failed
+SeeAlso: #1690
+--------N-21E1--SF05-------------------------
+INT 21 O - Novell NetWare - MESSAGE SERVICES - GET PERSONAL MESSAGE
+	AH = E1h subfn 05h
+	DS:SI -> request buffer (see #1692)
+	ES:DI -> reply buffer (see #1693)
+Return: AL = status
+	    00h successful
+	    FEh out of dynamic workspace
+Desc:	return the oldest message in the default file server's message queue
+	  for the calling workstation
+Note:	this function is supported by NetWare 4.0+ and Advanced NetWare 1.0-2.x
+SeeAlso: AH=E1h/SF=01h,AH=E1h/SF=04h,AH=E1h/SF=06h,AH=E1h/SF=08h
+
+Format of NetWare "Get Personal Message" request buffer:
+Offset	Size	Description	(Table 1692)
+ 00h	WORD	0001h (length of following data)
+ 02h	BYTE	05h (subfunction "Get Personal Message")
+SeeAlso: #1693
+
+Format of NetWare "Get Personal Message" reply buffer:
+Offset	Size	Description	(Table 1693)
+ 00h	WORD	(call) size of following results buffer (max 80h)
+ 02h	BYTE	connection number of sending station
+ 03h	BYTE	length of message (00h-7Eh)
+		00h if no personal messages pending
+ 04h  N BYTEs	message (no control characters or characters > 7Eh)
+SeeAlso: #1692
+--------N-21E1--SF06-------------------------
+INT 21 O - Novell NetWare - MESSAGE SERVICES - OPEN MESSAGE PIPE
+	AH = E1h subfn 06h
+	DS:SI -> request buffer (see #1694)
+	ES:DI -> reply buffer (see #1695)
+Return: AL = status
+	    00h successful
+	    FEh out of dynamic workspace
+Note:	this function is supported by NetWare 4.0+ and Advanced NetWare 1.0-2.x
+SeeAlso: AH=E1h/SF=04h,AH=E1h/SF=07h,AH=E1h/SF=08h
+
+Format of NetWare "Open Message Pipe" request buffer:
+Offset	Size	Description	(Table 1694)
+ 00h	WORD	length of following data (max 66h)
+ 02h	BYTE	06h (subfunction "Open Message Pipe")
+ 03h	BYTE	number of pipes to open (01h-64h)
+ 04h  N BYTEs	list of connection numbers
+SeeAlso: #1695,#1696,#1699
+
+Format of NetWare "Open Message Pipe" reply buffer:
+Offset	Size	Description	(Table 1695)
+ 00h	WORD	(call) size of following results buffer (max 65h)
+ 02h	BYTE	number of connections
+ 03h  N BYTEs	list of results
+		00h successful
+		FEh incomplete (target half not yet created)
+		FFh failed
+SeeAlso: #1694,#1697,#1700
+--------N-21E1--SF07-------------------------
+INT 21 O - Novell NetWare - MESSAGE SERVICES - CLOSE MESSAGE PIPE
+	AH = E1h subfn 07h
+	DS:SI -> request buffer (see #1696)
+	ES:DI -> reply buffer (see #1697)
+Return: AL = status
+	    00h successful
+	    FCh full message queue
+	    FEh out of dynamic workspace
+Note:	this function is supported by NetWare 4.0+ and Advanced NetWare 1.0-2.x
+SeeAlso: AH=E1h/SF=05h,AH=E1h/SF=06h,AH=E1h/SF=08h
+
+Format of NetWare "Close Mesage Pipe" request buffer:
+Offset	Size	Description	(Table 1696)
+ 00h	WORD	length of following data (max 66h)
+ 02h	BYTE	07h (subfunction "Close Message Pipe")
+ 03h	BYTE	number of pipes to close (01h-64h)
+ 04h  N BYTEs	list of connection numbers
+SeeAlso: #1694,#1697
+
+Format of NetWare "Close Message Pipe" reply buffer:
+Offset	Size	Description	(Table 1697)
+ 00h	WORD	(call) size of following results buffer (max 65h)
+ 02h	BYTE	number of connections
+ 03h  N BYTEs	list of results
+		00h successful
+		FDh failed
+		FFh no such pipe
+SeeAlso: #1695,#1696
+--------N-21E1--SF08-------------------------
+INT 21 O - Novell NetWare - MESSAGE SERVICES - CHECK PIPE STATUS
+	AH = E1h subfn 08h
+	DS:SI -> request buffer (see #1699)
+	ES:DI -> reply buffer (see #1700)
+Return: AL = status (see #1698)
+Note:	this function is supported by NetWare 4.0+ and Advanced NetWare 1.0-2.x
+SeeAlso: AH=E1h/SF=05h,AH=E1h/SF=06h,AH=E1h/SF=07h,AX=F215h/SF=08h
+
+(Table 1698)
+Values for NetWare function status:
+ 00h	successful
+ FCh	full message queue
+ FEh	out of dynamic workspace
+SeeAlso: #1703
+
+Format of NetWare "Check Pipe Status" request buffer:
+Offset	Size	Description	(Table 1699)
+ 00h	WORD	length of following data (max 66h)
+ 02h	BYTE	08h (subfunction "Check Pipe Status")
+ 03h	BYTE	number of pipes to monitor (01h-64h)
+ 04h  N BYTEs	list of connection numbers
+SeeAlso: #1694,#1700
+
+Format of NetWare "Check Pipe Status" reply buffer:
+Offset	Size	Description	(Table 1700)
+ 00h	WORD	(call) size of following results buffer (max 65h)
+ 02h	BYTE	number of connections
+ 03h  N BYTEs	list of pipe statuses
+		00h open
+		FEh incomplete
+		FFh closed
+SeeAlso: #1695,#1699,#1972
+--------N-21E1--SF09-------------------------
+INT 21 - Novell NetWare - MESSAGE SERVICES - BROADCAST TO CONSOLE
+	AH = E1h subfn 09h
+	DS:SI -> request buffer (see #1701)
+	ES:DI -> reply buffer (see #1702)
+Return: AL = status (see #1698)
+Desc:	send a one-line message to the system console on the default file
+	  server
+Note:	this function is supported by NetWare 4.0+ and Advanced NetWare 1.0+
+SeeAlso: AH=DEh/DL=04h,AH=E1h/SF=00h,AH=E1h/SF=01h,AH=E3h/SF=D1h
+SeeAlso: AX=F215h/SF=09h
+
+Format of NetWare "Broadcast to Console" request buffer:
+Offset	Size	Description	(Table 1701)
+ 00h	WORD	length of following data (max 3Eh)
+ 02h	BYTE	09h (subfunction "Broadcast to Console")
+ 03h	BYTE	length of message (01h-3Ch)
+ 04h  N BYTEs	message (no control characters or characters > 7Eh)
+SeeAlso: #1702
+
+Format of NetWare reply buffer:
+Offset	Size	Description	(Table 1702)
+ 00h	WORD	(call) 0000h (no results returned)
+SeeAlso: #1701
 --------E-21E2-------------------------------
 INT 21 - OS/286, OS/386 - SET REAL PROCEDURE SIGNAL HANDLER
 	AH = E2h
@@ -17,9 +305,9 @@ SeeAlso: AH=F2h"DoubleDOS"
 --------N-21E2--SF00-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - SET DIRECTORY HANDLE
 	AH = E2h subfn 00h
-	DS:SI -> request buffer (see #1528)
-	ES:DI -> reply buffer (see #1529)
-Return: AL = status (00h,98h,9Bh,9Ch) (see #1527)
+	DS:SI -> request buffer (see #1704)
+	ES:DI -> reply buffer (see #1705)
+Return: AL = status (00h,98h,9Bh,9Ch) (see #1703)
 Desc:	set the target handle to reference the directory specified by the
 	  source handle and the source path; both handles must refer to the
 	  same file server
@@ -28,7 +316,7 @@ Notes:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 	the target handle is not changed if this function fails
 SeeAlso: AH=E2h/SF=01h,AH=E2h/SF=12h,AH=E2h/SF=13h,AX=F216h/SF=00h
 
-(Table 1527)
+(Table 1703)
 Values for NetWare function status:
  00h	successful
  84h	not permitted to create
@@ -43,51 +331,51 @@ Values for NetWare function status:
  A0h	directory not empty
  C6h	no console rights
  FCh	no such bindery object
-SeeAlso: #1522,#1554
+SeeAlso: #1698,#1730
 
 Format of NetWare "Set Directory Handle" request buffer:
-Offset	Size	Description	(Table 1528)
+Offset	Size	Description	(Table 1704)
  00h	WORD	length of following data (max 103h)
  02h	BYTE	00h (subfunction "Set Directory Handle")
  03h	BYTE	directory handle of target
  04h	BYTE	directory handle of source
  05h	BYTE	length of source directory path (01h-FFh)
  06h  N BYTEs	source directory path
-SeeAlso: #1529
+SeeAlso: #1705
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1529)
+Offset	Size	Description	(Table 1705)
  00h	WORD	(call) 0000h (no results returned)
-SeeAlso: #1528
+SeeAlso: #1704
 --------N-21E2--SF01-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - GET DIRECTORY PATH
 	AH = E2h subfn 01h
-	DS:SI -> request buffer (see #1530)
-	ES:DI -> reply buffer (see #1531)
-Return: AL = status (00h,9Bh) (see #1527)
+	DS:SI -> request buffer (see #1706)
+	ES:DI -> reply buffer (see #1707)
+Return: AL = status (00h,9Bh) (see #1703)
 Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 	  Alloy NTNX
 SeeAlso: AH=E2h/SF=02h,AH=E2h/SF=03h,AH=E2h/SF=1Ah,AH=E9h,AX=F216h/SF=01h
 
 Format of NetWare "Get Directory Path" request buffer:
-Offset	Size	Description	(Table 1530)
+Offset	Size	Description	(Table 1706)
  00h	WORD	0002h (length of following data)
  02h	BYTE	01h (subfunction "Get Directory Path")
  03h	BYTE	directory handle
-SeeAlso: #1531,#1532
+SeeAlso: #1707,#1708
 
 Format of NetWare "Get Directory Path" reply buffer:
-Offset	Size	Description	(Table 1531)
+Offset	Size	Description	(Table 1707)
  00h	WORD	(call) length of following data buffer
  02h	BYTE	length of directory path (01h-FFh)
  03h  N BYTEs	full directory path including volume
-SeeAlso: #1530,#1533
+SeeAlso: #1706,#1709
 --------N-21E2--SF02-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - SCAN DIRECTORY INFORMATION
 	AH = E2h subfn 02h
-	DS:SI -> request buffer (see #1532)
-	ES:DI -> reply buffer (see #1533)
-Return: AL = status (00h,98h,9Bh,9Ch) (see #1527)
+	DS:SI -> request buffer (see #1708)
+	ES:DI -> reply buffer (see #1709)
+Return: AL = status (00h,98h,9Bh,9Ch) (see #1703)
 Desc:	get information about the first or next subdirectory of the specified
 	  directory
 Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
@@ -95,7 +383,7 @@ Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 SeeAlso: AH=E2h/SF=01h,AH=E2h/SF=03h,AH=E2h/SF=19h,AX=F216h/SF=02h
 
 Format of NetWare "Scan Directory Information" request buffer:
-Offset	Size	Description	(Table 1532)
+Offset	Size	Description	(Table 1708)
  00h	WORD	length of following data (max 104h)
  02h	BYTE	02h (subfunction "Scan Directory Information")
  03h	BYTE	directory handle
@@ -103,21 +391,21 @@ Offset	Size	Description	(Table 1532)
 		0000h for first call, returned subdir number + 1 on next call
  06h	BYTE	length of directory path
  07h  N BYTEs	directory path
-SeeAlso: #1530,#1533
+SeeAlso: #1706,#1709
 
 Format of NetWare "Scan Directory Information" reply buffer:
-Offset	Size	Description	(Table 1533)
+Offset	Size	Description	(Table 1709)
  00h	WORD	(call) 001Ch (length of following data buffer)
  02h 16 BYTEs	subdirectory name
- 12h	DWORD	(big-endian) date and time of creation (see #1534)
+ 12h	DWORD	(big-endian) date and time of creation (see #1710)
  16h	DWORD	(big-endian) object ID of owner
- 1Ah	BYTE	maximum directory rights (see #1537)
+ 1Ah	BYTE	maximum directory rights (see #1713)
  1Bh	BYTE	unused
  1Ch	WORD	(big-endian) subdirectory number
-SeeAlso: #1531,#1532,#1799 at AX=F216h/SF=02h
+SeeAlso: #1707,#1708,#1975 at AX=F216h/SF=02h
 
 Bitfields for NetWare date and time:
-Bit(s)	Description	(Table 1534)
+Bit(s)	Description	(Table 1710)
  31-25	year-1980
  24-21	month
  20-16	day
@@ -127,30 +415,30 @@ Bit(s)	Description	(Table 1534)
 --------N-21E2--SF03-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - GET EFFECTIVE DIRECTORY RIGHTS
 	AH = E2h subfn 03h
-	DS:SI -> request buffer (see #1535)
-	ES:DI -> reply buffer (see #1536)
-Return: AL = status (00h,98h,9Bh) (see #1527)
+	DS:SI -> request buffer (see #1711)
+	ES:DI -> reply buffer (see #1712)
+Return: AL = status (00h,98h,9Bh) (see #1703)
 Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 	  Alloy NTNX
 SeeAlso: AH=E2h/SF=01h,AH=E2h/SF=02h,AX=F216h/SF=03h
 
 Format of NetWare "Get Effective Directory Rights (old)" request buffer:
-Offset	Size	Description	(Table 1535)
+Offset	Size	Description	(Table 1711)
  00h	WORD	length of following data (max 102h)
  02h	BYTE	03h (subfunction "Get Effective Directory Rights (old)")
  03h	BYTE	directory handle
  04h	BYTE	length of directory path (00h-FFh)
  05h  N BYTEs	directory path
-SeeAlso: #1536,#1538
+SeeAlso: #1712,#1714
 
 Format of NetWare "Get Effective Directory Rights" reply buffer:
-Offset	Size	Description	(Table 1536)
+Offset	Size	Description	(Table 1712)
  00h	WORD	(call) 0001h (length of following data buffer)
- 02h	BYTE	effective directory rights (see #1537)
-SeeAlso: #1535
+ 02h	BYTE	effective directory rights (see #1713)
+SeeAlso: #1711
 
 Bitfields for NetWare directory rights:
-Bit(s)	Description	(Table 1537)
+Bit(s)	Description	(Table 1713)
  0	reading allowed
  1	writing allowed
  2	opens allowed
@@ -160,138 +448,138 @@ Bit(s)	Description	(Table 1537)
 	  rights
  6	directory search allowed
  7	file attributes may be changed
-SeeAlso: #1536,#1538
+SeeAlso: #1712,#1714
 --------N-21E2--SF04-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - MODIFY MAXIMUM RIGHTS MASK
 	AH = E2h subfn 04h
-	DS:SI -> request buffer (see #1538)
-	ES:DI -> reply buffer (see #1539)
-Return: AL = status (00h,8Ch,98h,9Ch) (see #1527)
+	DS:SI -> request buffer (see #1714)
+	ES:DI -> reply buffer (see #1715)
+Return: AL = status (00h,8Ch,98h,9Ch) (see #1703)
 Notes:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 	  Alloy NTNX
 SeeAlso: AH=E2h/SF=03h,AH=E2h/SF=0Ah,AH=E2h/SF=0Dh,AX=F216h/SF=04h
 
 Format of NetWare "Modify Maximum Rights Mask" request buffer:
-Offset	Size	Description	(Table 1538)
+Offset	Size	Description	(Table 1714)
  00h	WORD	length of following data (max 104h)
  02h	BYTE	04h (subfunction "Modify Maximum Rights Mask")
  03h	BYTE	directory handle
- 04h	BYTE	rights to grant (see #1537)
- 05h	BYTE	rights to revoke (see #1537)
+ 04h	BYTE	rights to grant (see #1713)
+ 05h	BYTE	rights to revoke (see #1713)
  06h	BYTE	length of directory path (00h-FFh)
  07h  N BYTEs	directory path
 Note:	the rights specified at offset 05h are revoked first, and then the
 	  rights specified at offset 04h are added to the resulting rights
 	  mask
-SeeAlso: #1535,#1539
+SeeAlso: #1711,#1715
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1539)
+Offset	Size	Description	(Table 1715)
  00h	WORD	(call) 0000h (no results returned)
-SeeAlso: #1538
+SeeAlso: #1714
 --------N-21E2--SF05-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - GET VOLUME NUMBER
 	AH = E2h subfn 05h
-	DS:SI -> request buffer (see #1540)
-	ES:DI -> reply buffer (see #1541)
-Return: AL = status (00h,98h) (see #1527)
+	DS:SI -> request buffer (see #1716)
+	ES:DI -> reply buffer (see #1717)
+Return: AL = status (00h,98h) (see #1703)
 Notes:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 	  Alloy NTNX
 SeeAlso: AH=DAh,AH=E2h/SF=02h,AH=E2h/SF=05h,AH=E2h/SF=15h,AH=E3h/SF=E9h
 SeeAlso: AX=F216h/SF=05h
 
 Format of NetWare "Get Volume Number" request buffer:
-Offset	Size	Description	(Table 1540)
+Offset	Size	Description	(Table 1716)
  00h	WORD	length of following data (max 12h)
  02h	BYTE	05h (subfunction "Get Volume Number")
  03h	BYTE	length of volume name (01h-10h)
  04h  N BYTEs	volume name
-SeeAlso: #1541,#1801 at AX=F216h/SF=05h
+SeeAlso: #1717,#1977 at AX=F216h/SF=05h
 
 Format of NetWare "Get Volume Number" reply buffer:
-Offset	Size	Description	(Table 1541)
+Offset	Size	Description	(Table 1717)
  00h	WORD	(call) 0001h (length of following results buffer)
  02h	BYTE	volume number
-SeeAlso: #1540,#1801 at AX=F216h/SF=05h
+SeeAlso: #1716,#1977 at AX=F216h/SF=05h
 --------N-21E2--SF06-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - GET VOLUME NAME
 	AH = E2h subfn 06h
-	DS:SI -> request buffer (see #1542)
-	ES:DI -> reply buffer (see #1543)
-Return: AL = status (00h,98h) (see #1527)
+	DS:SI -> request buffer (see #1718)
+	ES:DI -> reply buffer (see #1719)
+Return: AL = status (00h,98h) (see #1703)
 Notes:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 	  Alloy NTNX
 SeeAlso: AH=DAh,AH=E2h/SF=02h,AH=E2h/SF=05h,AH=E2h/SF=15h,AH=E2h/SF=1Ah
 SeeAlso: AH=E3h/SF=E9h,AX=F216h/SF=06h
 
 Format of NetWare "Get Volume Name" request buffer:
-Offset	Size	Description	(Table 1542)
+Offset	Size	Description	(Table 1718)
  00h	WORD	0002h (length of following data)
  02h	BYTE	06h (subfunction "Get Volume Name")
  03h	BYTE	volume number
-SeeAlso: #1543,#1802 at AX=F216h/SF=06h
+SeeAlso: #1719,#1978 at AX=F216h/SF=06h
 
 Format of NetWare "Get Volume Name" reply buffer:
-Offset	Size	Description	(Table 1543)
+Offset	Size	Description	(Table 1719)
  00h	WORD	(call) 0011h (length of following results buffer)
  02h	BYTE	length of volume name
  03h 16 BYTEs	NUL-padded volume name
-SeeAlso: #1542,#1802 at AX=F216h/SF=06h
+SeeAlso: #1718,#1978 at AX=F216h/SF=06h
 --------N-21E2--SF0A-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - CREATE DIRECTORY
 	AH = E2h subfn 0Ah
-	DS:SI -> request buffer (see #1544)
-	ES:DI -> reply buffer (see #1545)
-Return: AL = status (00h,84h,98h,FCh) (see #1527)
+	DS:SI -> request buffer (see #1720)
+	ES:DI -> reply buffer (see #1721)
+Return: AL = status (00h,84h,98h,FCh) (see #1703)
 Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 	  Alloy NTNX
 SeeAlso: AH=39h,AH=E2h/SF=0Bh,AH=E2h/SF=0Fh,AX=F216h/SF=0Ah
 
 Format of NetWare "Create Directory" request buffer:
-Offset	Size	Description	(Table 1544)
+Offset	Size	Description	(Table 1720)
  00h	WORD	length of following data (max 103h)
  02h	BYTE	0Ah (subfunction "Create Directory")
  03h	BYTE	directory handle
- 04h	BYTE	maximum directory rights (see #1537)
+ 04h	BYTE	maximum directory rights (see #1713)
  05h	BYTE	length of directory path (00h-FFh)
  06h  N BYTEs	directory path
-SeeAlso: #1545,#1546
+SeeAlso: #1721,#1722
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1545)
+Offset	Size	Description	(Table 1721)
  00h	WORD	(call) 0000h (no data returned)
-SeeAlso: #1544,#1546
+SeeAlso: #1720,#1722
 --------N-21E2--SF0B-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - DELETE DIRECTORY
 	AH = E2h subfn 0Bh
-	DS:SI -> request buffer (see #1546)
-	ES:DI -> reply buffer (see #1545)
-Return: AL = status (00h,8Ah,98h,9Bh,9Ch,9Fh,A0h) (see #1527)
+	DS:SI -> request buffer (see #1722)
+	ES:DI -> reply buffer (see #1721)
+Return: AL = status (00h,8Ah,98h,9Bh,9Ch,9Fh,A0h) (see #1703)
 Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 	  Alloy NTNX
 SeeAlso: AH=3Ah,AH=E2h/SF=0Ah,AH=E2h/SF=0Fh,AX=F216h/SF=0Bh
 
 Format of NetWare "Delete Directory" request buffer:
-Offset	Size	Description	(Table 1546)
+Offset	Size	Description	(Table 1722)
  00h	WORD	length of following data (max 103h)
  02h	BYTE	0Bh (subfunction "Delete Directory")
  03h	BYTE	directory handle
  04h	BYTE	unused
  05h	BYTE	length of directory path (00h-FFh)
  06h  N BYTEs	directory path
-SeeAlso: #1544,#1545
+SeeAlso: #1720,#1721
 --------N-21E2--SF0C-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - SCAN DIRECTORY FOR TRUSTEES
 	AH = E2h subfn 0Ch
-	DS:SI -> request buffer (see #1547)
-	ES:DI -> reply buffer (see #1548)
-Return: AL = status (00h,9Ch) (see also #1527)
+	DS:SI -> request buffer (see #1723)
+	ES:DI -> reply buffer (see #1724)
+Return: AL = status (00h,9Ch) (see also #1703)
 	    9Ch no more trustees
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E2h/SF=0Dh,AH=E2h/SF=0Eh,AH=E3h/SF=47h,AX=F216h/SF=0Ch
 
 Format of NetWare "Scan Directory For Trustees" request buffer:
-Offset	Size	Description	(Table 1547)
+Offset	Size	Description	(Table 1723)
  00h	WORD	length of following data (max 103h)
  02h	BYTE	0Ch (subfunction "Scan Directory For Trustees")
  03h	BYTE	directory handle
@@ -299,50 +587,50 @@ Offset	Size	Description	(Table 1547)
 		00h on first call, increment for each subsequent call
  05h	BYTE	length of directory path (00h-FFh)
  06h  N BYTEs	directory path
-SeeAlso: #1548,#1549,#1803 at AX=F216h/SF=0Ch
+SeeAlso: #1724,#1725,#1979 at AX=F216h/SF=0Ch
 
 Format of NetWare "Scan Directory For Trustees" reply buffer:
-Offset	Size	Description	(Table 1548)
+Offset	Size	Description	(Table 1724)
  00h	WORD	(call) 0031h (length of following results buffer)
  02h 16 BYTEs	directory name
  12h  4 BYTEs	date and time of creation
  16h	DWORD	(big-endian) object ID of owner
  1Ah  5 DWORDs	(big-endian) object IDs of Trustees 0 through 4
 		00000000h = end of group
- 2Eh  5 BYTEs	directory rights for Trustees 0 through 4 (see #1537)
-SeeAlso: #1547,#1551,#1803 at AX=F216h/SF=0Ch
+ 2Eh  5 BYTEs	directory rights for Trustees 0 through 4 (see #1713)
+SeeAlso: #1723,#1727,#1979 at AX=F216h/SF=0Ch
 --------N-21E2--SF0D-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - ADD TRUSTEE TO DIRECTORY
 	AH = E2h subfn 0Dh
-	DS:SI -> request buffer (see #1549)
-	ES:DI -> reply buffer (see #1551)
-Return: AL = status (00h,8Ch,FCh) (see #1527)
+	DS:SI -> request buffer (see #1725)
+	ES:DI -> reply buffer (see #1727)
+Return: AL = status (00h,8Ch,FCh) (see #1703)
 Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 	  Alloy NTNX
 SeeAlso: AH=E2h/SF=0Ch,AH=E2h/SF=0Eh,AH=E3h/SF=47h,AX=F216h/SF=0Dh
 
 Format of NetWare "Add Trustee To Directory" request buffer:
-Offset	Size	Description	(Table 1549)
+Offset	Size	Description	(Table 1725)
  00h	WORD	length of following data (max 107h)
  02h	BYTE	0Dh (subfunction "Add Trustee To Directory")
  03h	BYTE	directory handle
  04h	DWORD	(big-endian) object ID of trustee
- 08h	BYTE	trustee directory rights (see #1537)
+ 08h	BYTE	trustee directory rights (see #1713)
  09h	BYTE	length of directory path (00h-FFh)
  0Ah  N BYTEs	directory path
-SeeAlso: #1551
+SeeAlso: #1727
 --------N-21E2--SF0E-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - DELETE TRUSTEE FROM DIRECTORY
 	AH = E2h subfn 0Eh
-	DS:SI -> request buffer (see #1550)
-	ES:DI -> reply buffer (see #1551)
-Return: AL = status (00h,98h,9Bh,9Ch) (see #1527)
+	DS:SI -> request buffer (see #1726)
+	ES:DI -> reply buffer (see #1727)
+Return: AL = status (00h,98h,9Bh,9Ch) (see #1703)
 Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 	  Alloy NTNX
 SeeAlso: AH=E2h/SF=0Ch,AH=E2h/SF=0Dh,AX=F216h/SF=0Eh
 
 Format of NetWare "Delete Trustee From Directory" request buffer:
-Offset	Size	Description	(Table 1550)
+Offset	Size	Description	(Table 1726)
  00h	WORD	length of following data (max 107h)
  02h	BYTE	0Eh (subfunction "Delete Trustee From Directory")
  03h	BYTE	directory handle
@@ -350,25 +638,25 @@ Offset	Size	Description	(Table 1550)
  08h	BYTE	unused
  09h	BYTE	length of directory path (00h-FFh)
  0Ah  N BYTEs	directory path
-SeeAlso: #1551
+SeeAlso: #1727
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1551)
+Offset	Size	Description	(Table 1727)
  00h	WORD	(call) 0000h (no data returned)
-SeeAlso: #1550,#1552,#1553
+SeeAlso: #1726,#1728,#1729
 --------N-21E2--SF0F-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - RENAME DIRECTORY
 	AH = E2h subfn 0Fh
-	DS:SI -> request buffer (see #1552)
-	ES:DI -> reply buffer (see #1551)
-Return: AL = status (00h,8Bh,9Bh,9Ch,9Eh) (see #1527)
+	DS:SI -> request buffer (see #1728)
+	ES:DI -> reply buffer (see #1727)
+Return: AL = status (00h,8Bh,9Bh,9Ch,9Eh) (see #1703)
 Notes:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 	  Alloy NTNX
 	directories SYS:LOGIN, SYS:MAIL, and SYS:PUBLIC must not be renamed
 SeeAlso: AH=56h,AH=E2h/SF=0Ah,AH=E2h/SF=0Bh,AX=F216h/SF=0Fh
 
 Format of NetWare "Rename Directory" request buffer:
-Offset	Size	Description	(Table 1552)
+Offset	Size	Description	(Table 1728)
  00h	WORD	length of following data (max 111h)
  02h	BYTE	0Fh (subfunction "Rename Directory")
  03h	BYTE	directory handle
@@ -376,13 +664,13 @@ Offset	Size	Description	(Table 1552)
  05h  N BYTEs	directory path
 	BYTE	length of new directory name (01h-0Eh)
       N BYTEs	new directory name
-SeeAlso: #1551
+SeeAlso: #1727
 --------N-21E2--SF10-------------------------
 INT 21 - Novell NetWare - FILE SERVICES - PURGE ERASED FILES (OLD)
 	AH = E2h subfn 10h
-	DS:SI -> request buffer (see #1553)
-	ES:DI -> reply buffer (see #1551)
-Return: AL = status (00h,C6h) (see #1554)
+	DS:SI -> request buffer (see #1729)
+	ES:DI -> reply buffer (see #1727)
+Return: AL = status (00h,C6h) (see #1730)
 Desc:	purges files marked for deletion on the file server by the calling
 	  workstation
 Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
@@ -390,32 +678,32 @@ Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 SeeAlso: AH=13h,AH=41h,AH=E2h/SF=11h,AH=E3h/SF=CEh,AX=F244h,AX=F216h/SF=10h
 
 Format of NetWare "Purge Erased Files" request buffer:
-Offset	Size	Description	(Table 1553)
+Offset	Size	Description	(Table 1729)
  00h	WORD	0001h (length of following data)
  02h	BYTE	10h (subfunction "Purge Erased Files")
-SeeAlso: #1551
+SeeAlso: #1727
 --------N-21E2--SF11-------------------------
 INT 21 - Novell NetWare - FILE SERVICES - RESTORE ERASED FILE (OLD)
 	AH = E2h subfn 11h
-	DS:SI -> request buffer (see #1555)
-	ES:DI -> reply buffer (see #1556)
-Return: AL = status (00h,98h,FFh) (see #1554)
+	DS:SI -> request buffer (see #1731)
+	ES:DI -> reply buffer (see #1732)
+Return: AL = status (00h,98h,FFh) (see #1730)
 Desc:	restores one file marked for deletion which has not yet been purged
 Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 	  Alloy NTNX
 SeeAlso: AH=13h,AH=41h,AH=E2h/SF=10h,AH=E3h/SF=CEh,AX=F244h
 
-(Table 1554)
+(Table 1730)
 Values for NetWare function status:
  00h	successful
  98h	nonexistent volume
  9Ch	invalid path
  C6h	no console rights
  FFh	no more erased files
-SeeAlso: #1527,#1587
+SeeAlso: #1703,#1763
 
 Format of NetWare "Restore Erased File" request buffer:
-Offset	Size	Description	(Table 1555)
+Offset	Size	Description	(Table 1731)
  00h	WORD	length of following data (max 13h)
  02h	BYTE	11h (subfunction "Restore Erased File")
  03h	BYTE	directory handle or 00h
@@ -423,46 +711,46 @@ Offset	Size	Description	(Table 1555)
  05h  N BYTEs	volume name (including colon)
 Note:	if both a directory handle and a volume name are specified, the volume
 	  name overrides the handle
-SeeAlso: #1556,#1804
+SeeAlso: #1732,#1980
 
 Format of NetWare "Restore Erased File" reply buffer:
-Offset	Size	Description	(Table 1556)
+Offset	Size	Description	(Table 1732)
  00h	WORD	(call) 001Eh (size of following results buffer)
  02h 15 BYTEs	ASCIZ name of erased file
  11h 15 BYTEs	ASCIZ name under which file was restored
-SeeAlso: #1555,#1804
+SeeAlso: #1731,#1980
 --------N-21E2--SF12-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - ALLOC PERMANENT DIRECTORY HANDLE
 	AH = E2h subfn 12h
-	DS:SI -> request buffer (see #1557)
-	ES:DI -> reply buffer (see #1558)
-Return: AL = status (00h,98h,9Ch) (see #1554)
+	DS:SI -> request buffer (see #1733)
+	ES:DI -> reply buffer (see #1734)
+Return: AL = status (00h,98h,9Ch) (see #1730)
 Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 	  Alloy NTNX
 SeeAlso: AH=E2h/SF=00h,AH=E2h/SF=13h,AH=E2h/SF=14h,AX=F216h/SF=12h
 
 Format of NetWare "Allocate Permanent Directory Handle" request buffer:
-Offset	Size	Description	(Table 1557)
+Offset	Size	Description	(Table 1733)
  00h	WORD	length of following data (max 103h)
  02h	BYTE	12h (subfunction "Allocate Permanent Directory Handle")
  03h	BYTE	directory handle
  04h	BYTE	drive ('A'-'Z')
  05h	BYTE	length of directory path
  06h  N BYTEs	directory path
-SeeAlso: #1558,#1559,#1806
+SeeAlso: #1734,#1735,#1982
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1558)
+Offset	Size	Description	(Table 1734)
  00h	WORD	(call) 0002h (size of following results buffer)
  02h	BYTE	new directory handle
- 03h	BYTE	effective directory rights (see #1537)
-SeeAlso: #1557,#1806
+ 03h	BYTE	effective directory rights (see #1713)
+SeeAlso: #1733,#1982
 --------N-21E2--SF13-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - ALLOC TEMPORARY DIRECTORY HANDLE
 	AH = E2h subfn 13h
-	DS:SI -> request buffer (see #1559)
-	ES:DI -> reply buffer (see #1558)
-Return: AL = status (00h,98h,9Ch) (see #1554)
+	DS:SI -> request buffer (see #1735)
+	ES:DI -> reply buffer (see #1734)
+Return: AL = status (00h,98h,9Ch) (see #1730)
 Notes:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 	  Alloy NTNX
 	this call is the same as AH=E2h/SF=12h except that the directory handle
@@ -472,40 +760,40 @@ SeeAlso: AH=D6h,AH=E2h/SF=00h,AH=E2h/SF=12h,AH=E2h/SF=14h,AH=E2h/SF=16h
 SeeAlso: AX=F216h/SF=13h
 
 Format of NetWare "Allocate Temporary Directory Handle" request buffer:
-Offset	Size	Description	(Table 1559)
+Offset	Size	Description	(Table 1735)
  00h	WORD	length of following data (max 103h)
  02h	BYTE	13h (subfunction "Allocate Temporary Directory Handle")
  03h	BYTE	directory handle
  04h	BYTE	drive ('A'-'Z')
  05h	BYTE	length of directory path
  06h  N BYTEs	directory path
-SeeAlso: #1557,#1560
+SeeAlso: #1733,#1736
 --------N-21E2--SF14-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - DEALLOCATE DIRECTORY HANDLE
 	AH = E2h subfn 14h
-	DS:SI -> request buffer (see #1560)
-	ES:DI -> reply buffer (see #1561)
-Return: AL = status (00h,9Bh) (see #1527)
+	DS:SI -> request buffer (see #1736)
+	ES:DI -> reply buffer (see #1737)
+Return: AL = status (00h,9Bh) (see #1703)
 Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 	  Alloy NTNX
 SeeAlso: AH=E2h/SF=12h,AH=E2h/SF=13h,AX=F216h/SF=14h
 
 Format of NetWare "Deallocate Directory Handle" request buffer:
-Offset	Size	Description	(Table 1560)
+Offset	Size	Description	(Table 1736)
  00h	WORD	0002h (length of following data)
  02h	BYTE	14h (subfunction "Deallocate Directory Handle")
  03h	BYTE	directory handle
-SeeAlso: #1561
+SeeAlso: #1737
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1561)
+Offset	Size	Description	(Table 1737)
  00h	WORD	(call) 0000h (no returned data)
-SeeAlso: #1560
+SeeAlso: #1736
 --------N-21E2--SF15-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - GET VOLUME INFO WITH HANDLE
 	AH = E2h subfn 15h
-	DS:SI -> request buffer (see #1562)
-	ES:DI -> reply buffer (see #1563)
+	DS:SI -> request buffer (see #1738)
+	ES:DI -> reply buffer (see #1739)
 Return: AL = status
 	    00h successful
 Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
@@ -514,14 +802,14 @@ SeeAlso: AH=DAh,AH=E2h/SF=02h,AH=E2h/SF=06h,AH=E2h/SF=19h,AH=E3h/SF=E9h
 SeeAlso: AX=F216h/SF=15h
 
 Format of NetWare "Get Volume Info with Handle" request buffer:
-Offset	Size	Description	(Table 1562)
+Offset	Size	Description	(Table 1738)
  00h	WORD	0002h (length of following data)
  02h	BYTE	15h (subfunction "Get Volume Info With Handle")
  03h	BYTE	directory handle
-SeeAlso: #1563,#1807
+SeeAlso: #1739,#1983
 
 Format of NetWare "Get Volume Info with Handle" reply buffer:
-Offset	Size	Description	(Table 1563)
+Offset	Size	Description	(Table 1739)
  00h	WORD	(call) 001Ch (length of following results buffer)
  02h	WORD	(big-endian) sectors per block
  04h	WORD	(big-endian) total blocks on volume
@@ -530,31 +818,31 @@ Offset	Size	Description	(Table 1563)
  0Ah	WORD	(big-endian) directory slots available
  0Ch 16 BYTEs	NUL-padded volume name
  1Ch	WORD	(big-endian) flag: volume removable if nonzero
-SeeAlso: #1562,#1807
+SeeAlso: #1738,#1983
 --------N-21E2--SF16-------------------------
 INT 21 u - Novell NetWare - DIRECTORY SERVICES - ALLOC SPECIAL TEMP DIR HANDLE
 	AH = E2h subfn 16h
-	DS:SI -> request buffer (see #1564)
-	ES:DI -> reply buffer (see #1561)
+	DS:SI -> request buffer (see #1740)
+	ES:DI -> reply buffer (see #1737)
 Return: AL = status
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX,
 	  but is not described in _NetWare_System_Calls--DOS_
 SeeAlso: AH=E2h/SF=13h,AH=E2h/SF=14h,AX=F216h/SF=16h
 
 Format of NetWare "Alloc Special Temporary Directory Handle" request buffer:
-Offset	Size	Description	(Table 1564)
+Offset	Size	Description	(Table 1740)
  00h	WORD	length of following data
  02h	BYTE	16h (subfunction "Allocate Special Temporary Directory Handle")
  03h	BYTE	source directory handle
  04h	BYTE	drive name ('A'-'Z')
  05h	BYTE	path length
  06h  N BYTEs	directory path
-SeeAlso: #1561
+SeeAlso: #1737
 --------N-21E2--SF17-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - SAVE DIRECTORY HANDLE
 	AH = E2h subfn 17h
-	DS:SI -> request buffer (see #1565)
-	ES:DI -> reply buffer (see #1566)
+	DS:SI -> request buffer (see #1741)
+	ES:DI -> reply buffer (see #1742)
 Return: AL = status
 	    00h successful
 	    else network error code
@@ -562,22 +850,22 @@ Note:	this function is supported by Advanced NetWare 2.0+ and Alloy NTNX
 SeeAlso: AH=E2h/SF=12h,AH=E2h/SF=17h,AX=F216h/SF=17h
 
 Format of NetWare "Save Directory Handle" request buffer:
-Offset	Size	Description	(Table 1565)
+Offset	Size	Description	(Table 1741)
  00h	WORD	0002h (length of following data)
  02h	BYTE	17h (subfunction "Save Directory Handle")
  03h	BYTE	directory handle
-SeeAlso: #1566,#1567
+SeeAlso: #1742,#1743
 
 Format of NetWare "Save Directory Handle" reply buffer:
-Offset	Size	Description	(Table 1566)
+Offset	Size	Description	(Table 1742)
  00h	WORD	(call) 0010h (length of following results buffer)
  02h 16 BYTEs	save buffer
-SeeAlso: #1565,#1568
+SeeAlso: #1741,#1744
 --------N-21E2--SF18-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - RESTORE DIRECTORY HANDLE
 	AH = E2h subfn 18h
-	DS:SI -> request buffer (see #1567)
-	ES:DI -> reply buffer (see #1568)
+	DS:SI -> request buffer (see #1743)
+	ES:DI -> reply buffer (see #1744)
 Return: AL = status
 	    00h successful
 	    else network error code
@@ -587,48 +875,48 @@ Note:	this function is supported by Advanced NetWare 2.0+ and Alloy NTNX
 SeeAlso: AH=E2h/SF=12h,AH=E2h/SF=17h,AX=F216h/SF=18h
 
 Format of NetWare "Restore Directory Handle" request buffer:
-Offset	Size	Description	(Table 1567)
+Offset	Size	Description	(Table 1743)
  00h	WORD	0011h (length of following data)
  02h	BYTE	18h (subfunction "Restore Directory Handle")
  03h 16 BYTEs	save buffer
-SeeAlso: #1565,#1568
+SeeAlso: #1741,#1744
 
 Format of NetWare "Restore Directory Handle" reply buffer:
-Offset	Size	Description	(Table 1568)
+Offset	Size	Description	(Table 1744)
  00h	WORD	(call) 0002h (length of following results buffer)
  02h	BYTE	new directory handle
- 03h	BYTE	effective rights (see #1537)
-SeeAlso: #1567
+ 03h	BYTE	effective rights (see #1713)
+SeeAlso: #1743
 --------N-21E2--SF19-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - SET DIRECTORY INFORMATION
 	AH = E2h subfn 19h
-	DS:SI -> request buffer (see #1569)
-	ES:DI -> reply buffer (see #1570)
-Return: AL = status (00h,9Bh,9Ch) (see #1527)
+	DS:SI -> request buffer (see #1745)
+	ES:DI -> reply buffer (see #1746)
+Return: AL = status (00h,9Bh,9Ch) (see #1703)
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E2h/SF=02h,AH=E2h/SF=0Fh,AX=F216h/SF=19h
 
 Format of NetWare "Set Directory Information" request buffer:
-Offset	Size	Description	(Table 1569)
+Offset	Size	Description	(Table 1745)
  00h	WORD	length of following data (max 10Bh)
  02h	BYTE	19h (subfunction "Set Directory Information")
  03h	BYTE	directory handle
  04h	DWORD	(big-endian) date and time of creation
  08h	DWORD	(big-endian) object ID of owner
- 0Ch	BYTE	maximum directory rights (see #1537)
+ 0Ch	BYTE	maximum directory rights (see #1713)
  0Dh	BYTE	length of directory path
  0Eh  N BYTEs	directory path
-SeeAlso: #1570
+SeeAlso: #1746
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1570)
+Offset	Size	Description	(Table 1746)
  00h	WORD	(call) 0000h (no results returned)
-SeeAlso: #1569
+SeeAlso: #1745
 --------N-21E2--SF1A-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET PATH FROM DIRECTORY ENTRY
 	AH = E2h subfn 1Ah
-	DS:SI -> request buffer (see #1571)
-	ES:DI -> reply buffer (see #1572)
+	DS:SI -> request buffer (see #1747)
+	ES:DI -> reply buffer (see #1748)
 Return: AL = status
 	    00h successful
 Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
@@ -636,18 +924,18 @@ Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 SeeAlso: AH=E2h/SF=01h,AH=E2h/SF=06h,AH=E3h/SF=D7h,AX=F216h/SF=1Ah
 
 Format of NetWare "Get Path from Directory Entry" request buffer:
-Offset	Size	Description	(Table 1571)
+Offset	Size	Description	(Table 1747)
  00h	WORD	0004h (length of following data)
  02h	BYTE	1Ah (subfunction "Get Path From Directory Entry")
  03h	BYTE	volume number (00h-1Fh)
  04h	WORD	(big-endian) directory entry number
-SeeAlso: #1572,#1810
+SeeAlso: #1748,#1986
 
 Format of NetWare "Get Path from Directory Entry" reply buffer:
-Offset	Size	Description	(Table 1572)
+Offset	Size	Description	(Table 1748)
  00h	WORD	(call) size of following results record (max 200h)
  02h 256 BYTEs	path
-SeeAlso: #1571,#1810
+SeeAlso: #1747,#1986
 --------E-21E3-------------------------------
 INT 21 - OS/286, OS/386 - ISSUE REAL INTERRUPT
 	AH = E3h
@@ -668,8 +956,8 @@ SeeAlso: AH=F3h"DoubleDOS"
 --------N-21E3-------------------------------
 INT 21 - Novell NetWare - CONNECTION CONTROL
 	AH = E3h
-	DS:SI -> request buffer (see #1573)
-	ES:DI -> reply buffer (see #1574)
+	DS:SI -> request buffer (see #1749)
+	ES:DI -> reply buffer (see #1750)
 Return: AL = status
 	    00h successful
 	    else error code
@@ -677,7 +965,7 @@ Note:	supported by NetWare 4.0+, Advanced NetWare 1.0+, and Alloy NTNX
 SeeAlso: AH=E3h/SF=0Ah,AH=E3h/SF=32h,AH=E3h/SF=64h,AH=E3h/SF=C8h
 
 Format of NetWare request buffer:
-Offset	Size	Description	(Table 1573)
+Offset	Size	Description	(Table 1749)
  00h	WORD	length of following data
  02h	BYTE	subfunction number (see also AH=E3h/SF=01h,AH=E3h/SF=02h)
 		00h login
@@ -691,24 +979,24 @@ Offset	Size	Description	(Table 1573)
 	var	depends on subfunction
 Notes:	the above subfunctions are not described in _NetWare_System_Calls--DOS_
 	see separate entries below for other subfunctions
-SeeAlso: #1574,#1575,#1578
+SeeAlso: #1750,#1751,#1754
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1574)
+Offset	Size	Description	(Table 1750)
  00h	WORD	(call) length of following buffer space for results
 	var	depends on subfunction
-SeeAlso: #1573
+SeeAlso: #1749
 
 Format of NetWare object property:
-Offset	Size	Description	(Table 1575)
- 00h 1-16 BYTEs property name (see also #1576)
+Offset	Size	Description	(Table 1751)
+ 00h 1-16 BYTEs property name (see also #1752)
   N	BYTE	flags
 		bit 0: property is dynamic
 		bit 1: property is a set rather than an item
- N+1	BYTE	security levels (see #1577)
+ N+1	BYTE	security levels (see #1753)
 	???
 
-(Table 1576)
+(Table 1752)
 Values for names of well-known NetWare properties:
  ACCOUNT_BALANCE
  ACCOUNT_SERVERS
@@ -721,7 +1009,7 @@ Values for names of well-known NetWare properties:
  PASSWORD
  SECURITY_EQUALS
 
-(Table 1577)
+(Table 1753)
 Values for NetWare security levels:
  00h	"anyone" everyone may access
  01h	"logged" only logged-in clients may access
@@ -731,7 +1019,7 @@ Values for NetWare security levels:
 Note:	the above values are stored in a nybble; the high half-byte is write
 	  access and the low half-byte is read access
 
-(Table 1578)
+(Table 1754)
 Values for NetWare object type:
  0000h	unknown
  0001h	user
@@ -758,8 +1046,8 @@ Values for NetWare object type:
 --------N-21E3--SF01-------------------------
 INT 21 - Novell NetWare - CONNECTION SERVICES - CHANGE USER PASSWORD (OLD)
 	AH = E3h subfn 01h
-	DS:SI -> request buffer (see #1579)
-	ES:DI -> reply buffer (see #1583)
+	DS:SI -> request buffer (see #1755)
+	ES:DI -> reply buffer (see #1759)
 Return: AL = status
 	    00h successful
 	    else error code
@@ -767,7 +1055,7 @@ Note:	supported by NetWare 4.0+, Advanced NetWare 1.0+, and Alloy NTNX
 SeeAlso: AH=E3h/SF=0Ah,AH=E3h/SF=32h,AH=E3h/SF=64h,AH=E3h/SF=C8h
 
 Format of NetWare "Change User Password (old)" request packet:
-Offset	Size	Description	(Table 1579)
+Offset	Size	Description	(Table 1755)
  00h	WORD	length of following data
  02h	BYTE	01h (subfunction "Change User Password (old)")
  03h	BYTE	length of user name
@@ -776,12 +1064,12 @@ Offset	Size	Description	(Table 1579)
       N BYTEs	old password
 	BYTE	length of new password
       N BYTEs	new password
-SeeAlso: #1583
+SeeAlso: #1759
 --------N-21E3--SF02-------------------------
 INT 21 - Novell NetWare - CONNECTION SERVICES - CHANGE USER PASSWORD (OLD)
 	AH = E3h subfn 02h
-	DS:SI -> request buffer (see #1580)
-	ES:DI -> reply buffer (see #1581)
+	DS:SI -> request buffer (see #1756)
+	ES:DI -> reply buffer (see #1757)
 Return: AL = status
 	    00h successful
 	    else error code
@@ -789,20 +1077,20 @@ Note:	supported by NetWare 4.0+, Advanced NetWare 1.0+, and Alloy NTNX
 SeeAlso: AH=E3h/SF=01h,AH=E3h/SF=03h,AH=E3h/SF=0Ah
 
 Format of NetWare "Get User Connection List (old)" request packet:
-Offset	Size	Description	(Table 1580)
+Offset	Size	Description	(Table 1756)
  00h	WORD	length of following data
  02h	BYTE	02h (subfunction "Get User Connection List (old)")
  03h	BYTE	length of user name
  04h  N BYTEs	user name
-SeeAlso: #1581,#1850
+SeeAlso: #1757,#2026
 
 Format of NetWare "Get User Connection List (old)" reply packet:
-Offset	Size	Description	(Table 1581)
+Offset	Size	Description	(Table 1757)
  00h	WORD	(call) length of following buffer
  02h	BYTE	length of connection list
  03h	BYTE	number of bytes in connection list
  04h  N BYTEs	list of connection numbers in use by user
-SeeAlso: #1580,#1850
+SeeAlso: #1756,#2026
 --------N-21E3--SF03-------------------------
 INT 21 - Novell NetWare - CONNECTION SERVICES - MAP OBJECT TO NUMBER (OLD)
 	AH = E3h subfn 03h
@@ -816,8 +1104,8 @@ SeeAlso: AH=E3h/SF=01h,AH=E3h/SF=02h,AH=E3h/SF=0Ah
 --------N-21E3--SF0A-------------------------
 INT 21 - Novell NetWare - CONNECTION SERVICES - ENTER LOGIN AREA
 	AH = E3h subfn 0Ah
-	DS:SI -> request buffer (see #1582)
-	ES:DI -> reply buffer (see #1583)
+	DS:SI -> request buffer (see #1758)
+	ES:DI -> reply buffer (see #1759)
 Return: AL = status
 	    00h successful
 Desc:	change the login directory for the calling workstation
@@ -826,24 +1114,24 @@ Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 SeeAlso: AH=D7h,AH=E3h/SF=14h
 
 Format of NetWare "Enter Login Area" request buffer:
-Offset	Size	Description	(Table 1582)
+Offset	Size	Description	(Table 1758)
  00h	WORD	length of following data (max 102h)
  02h	BYTE	0Ah (subfunction "Enter Login Area")
  03h	BYTE	number of local drives
  04h	BYTE	length of subdirectory name (00h-FFh)
  05h  N BYTEs	name of subdirectory under SYS:LOGIN where to find the login
 		  utility
-SeeAlso: #1583
+SeeAlso: #1759
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1583)
+Offset	Size	Description	(Table 1759)
  00h	WORD	(call) 0000h (no data returned)
-SeeAlso: #1579,#1582,#1586
+SeeAlso: #1755,#1758,#1762
 --------N-21E3--SF0C-------------------------
 INT 21 U - Novell NetWare - VERIFY NETWORK SERIAL NUMBER
 	AH = E3h subfn 0Ch
-	DS:SI -> request buffer (see #1584)
-	ES:DI -> reply buffer (see #1585)
+	DS:SI -> request buffer (see #1760)
+	ES:DI -> reply buffer (see #1761)
 Return: AL = status
 	    00h successful
 Note:	if the network serial number to be verified is correct, the reply
@@ -851,22 +1139,22 @@ Note:	if the network serial number to be verified is correct, the reply
 SeeAlso: AH=E3h/SF=12h,AX=F217h/SF=0Ch
 
 Format of NetWare "Verify Network Serial Number" request buffer:
-Offset	Size	Description	(Table 1584)
+Offset	Size	Description	(Table 1760)
  00h	WORD	0005h (length of following data)
  02h	BYTE	0Ch (subfunction "Verify Network Serial Number")
  03h	DWORD	(big-endian) network serial number to verify
-SeeAlso: #1585,#1851
+SeeAlso: #1761,#2027
 
 Format of NetWare "Verify Network Serial Number" reply buffer:
-Offset	Size	Description	(Table 1585)
+Offset	Size	Description	(Table 1761)
  00h	WORD	(call) 0002h (size of following results buffer)
  02h	WORD	(big-endian) application number
-SeeAlso: #1584,#1851
+SeeAlso: #1760,#2027
 --------N-21E3--SF0D-------------------------
 INT 21 - Novell NetWare - MESSAGE SERVICES - LOG NETWORK MESSAGE
 	AH = E3h subfn 0Dh
-	DS:SI -> request buffer (see #1586)
-	ES:DI -> reply buffer (see #1583)
+	DS:SI -> request buffer (see #1762)
+	ES:DI -> reply buffer (see #1759)
 Return: AL = status
 	    00h successful
 Desc:	append a line to the default file server's NET$LOG.MSG file
@@ -875,97 +1163,97 @@ Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 SeeAlso: AH=E1h/SF=09h
 
 Format of NetWare "Log Network Message" request buffer:
-Offset	Size	Description	(Table 1586)
+Offset	Size	Description	(Table 1762)
  00h	WORD	length of following data (max 52h)
  02h	BYTE	0Dh (subfunction "Log Network Message")
  03h	BYTE	length of message (01h-50h)
  04h  N BYTEs	message (no control characters or characters > 7Eh)
-SeeAlso: #1583
+SeeAlso: #1759
 --------N-21E3--SF0E-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET DISK UTILIZATION
 	AH = E3h subfn 0Eh
-	DS:SI -> request buffer (see #1588)
-	ES:DI -> reply buffer (see #1589)
-Return: AL = status (00h,98h,F2h) (see #1587)
+	DS:SI -> request buffer (see #1764)
+	ES:DI -> reply buffer (see #1765)
+Return: AL = status (00h,98h,F2h) (see #1763)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the caller must have bindery object read privileges
 SeeAlso: AH=E3h/SF=11h,AH=E3h/SF=D6h,AH=E3h/SF=D9h,AH=E3h/SF=E6h,AH=E3h/SF=E9h
 SeeAlso: AX=F217h/SF=0Eh
 
-(Table 1587)
+(Table 1763)
 Values for NetWare function status:
  00h	successful
  98h	nonexistent volume
  F2h	not permitted to read object
-SeeAlso: #1554,#1590
+SeeAlso: #1730,#1766
 
 Format of NetWare "Get Disk Utilization" request buffer:
-Offset	Size	Description	(Table 1588)
+Offset	Size	Description	(Table 1764)
  00h	WORD	0005h (length of following data)
  02h	BYTE	0Eh (subfunction "Get Disk Utilization")
  03h	BYTE	volume number (00h-1Fh)
  04h	DWORD	(big-endian) object ID
-SeeAlso: #1589,#1852
+SeeAlso: #1765,#2028
 
 Format of NetWare "Get Disk Utilization" reply buffer:
-Offset	Size	Description	(Table 1589)
+Offset	Size	Description	(Table 1765)
  00h	WORD	(call) 000Bh (size of following results buffer)
  02h	BYTE	volume number (00h-1Fh)
  03h	DWORD	(big-endian) object ID
  07h	WORD	(big-endian) directories used by object
  09h	WORD	(big-endian) files created by object
  0Bh	WORD	(big-endian) disk blocks used by object-created files
-SeeAlso: #1588,#1852
+SeeAlso: #1764,#2028
 --------N-21E3--SF0F-------------------------
 INT 21 - Novell NetWare - FILE SERVICES - SCAN FILE INFORMATION
 	AH = E3h subfn 0Fh
-	DS:SI -> request buffer (see #1591)
-	ES:DI -> reply buffer (see #1592)
-Return: AL = status (see #1590)
+	DS:SI -> request buffer (see #1767)
+	ES:DI -> reply buffer (see #1768)
+Return: AL = status (see #1766)
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=B6h,AH=E3h/SF=10h,AX=F217h/SF=0Fh
 
-(Table 1590)
+(Table 1766)
 Values for NetWare function status:
  00h	successful
  89h	not permitted to search directory
  FFh	no more matching files
-SeeAlso: #1587,#1608
+SeeAlso: #1763,#1784
 
 Format of NetWare "Scan File Information" request buffer:
-Offset	Size	Description	(Table 1591)
+Offset	Size	Description	(Table 1767)
  00h	WORD	length of following data (max 105h)
  02h	BYTE	0Fh (subfunction "Scan File Information")
  03h	WORD	(big-endian) sequence number
 		FFFFh on first call
  05h	BYTE	directory handle or 00h
- 06h	BYTE	search attributes (see #1107 at AX=4301h)
+ 06h	BYTE	search attributes (see #1285 at AX=4301h)
  07h	BYTE	length of filespec
  08h  N BYTEs	ASCIZ uppercase filespec
-SeeAlso: #1592,#1853
+SeeAlso: #1768,#2029
 
 Format of NetWare "Scan File Information" reply buffer:
-Offset	Size	Description	(Table 1592)
+Offset	Size	Description	(Table 1768)
  00h	WORD	(call) 005Eh (size of following results buffer)
  02h	WORD	next sequence number (place in request buffer for next call)
  04h 14 BYTEs	ASCIZ filename
- 12h	BYTE	file attributes (see #1107 at AX=4301h)
- 13h	BYTE	extended file attributes (see #1492 at AH=B6h)
+ 12h	BYTE	file attributes (see #1285 at AX=4301h)
+ 13h	BYTE	extended file attributes (see #1668 at AH=B6h)
  14h	DWORD	(big-endian) file size in bytes
- 18h	WORD	(big-endian) file's creation date (see #1352 at AX=5700h)
- 1Ah	WORD	(big-endian) date of last access (see #1351 at AX=5700h)
- 1Ch	DWORD	(big-endian) date and time of last update (see #1534)
+ 18h	WORD	(big-endian) file's creation date (see #1531 at AX=5700h)
+ 1Ah	WORD	(big-endian) date of last access (see #1530 at AX=5700h)
+ 1Ch	DWORD	(big-endian) date and time of last update (see #1710)
  20h	DWORD	(big-endian) object ID of owner
- 24h	DWORD	(big-endian) date and time last archived (see #1534)
+ 24h	DWORD	(big-endian) date and time last archived (see #1710)
  28h 55 BYTEs	reserved
 Note:	the official documentation erroneously lists the field at offset 04h as
 	  15 bytes and thus shifts the remaining fields by one byte
-SeeAlso: #1591,#1853
+SeeAlso: #1767,#2029
 --------N-21E3--SF10-------------------------
 INT 21 - Novell NetWare - FILE SERVICES - SET FILE INFORMATION
 	AH = E3h subfn 10h
-	DS:SI -> request buffer (see #1593)
-	ES:DI -> reply buffer (see #1594)
+	DS:SI -> request buffer (see #1769)
+	ES:DI -> reply buffer (see #1770)
 Return: AL = status
 	    00h successful
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
@@ -974,33 +1262,33 @@ Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=B6h,AH=E3h/SF=0Fh,AX=F217h/SF=10h
 
 Format of NetWare "Set File Information" request buffer:
-Offset	Size	Description	(Table 1593)
+Offset	Size	Description	(Table 1769)
  00h	WORD	length of following data (max 151h)
  02h	BYTE	10h (subfunction "Set File Information")
- 03h	BYTE	file attributes (see #1107 at AX=4301h)
- 04h	BYTE	extended file attributes (see #1492 at AH=B6h)
+ 03h	BYTE	file attributes (see #1285 at AX=4301h)
+ 04h	BYTE	extended file attributes (see #1668 at AH=B6h)
  05h  4 BYTEs	reserved
- 09h	WORD	(big-endian) file's creation date (see #1352 at AX=5700h)
- 0Bh	WORD	(big-endian) date of last access (see #1351 at AX=5700h)
- 0Dh	DWORD	(big-endian) date and time of last update (see #1534)
+ 09h	WORD	(big-endian) file's creation date (see #1531 at AX=5700h)
+ 0Bh	WORD	(big-endian) date of last access (see #1530 at AX=5700h)
+ 0Dh	DWORD	(big-endian) date and time of last update (see #1710)
  11h	DWORD	(big-endian) object ID of owner
- 15h	DWORD	(big-endian) date and time last archived (see #1534)
+ 15h	DWORD	(big-endian) date and time last archived (see #1710)
  19h 56 BYTEs	reserved
  51h	BYTE	directory handle or 00h
- 52h	BYTE	search attributes (see #1107 at AX=4301h)
+ 52h	BYTE	search attributes (see #1285 at AX=4301h)
  53h	BYTE	length of filename
  54h  N BYTEs	filename
-SeeAlso: #1594
+SeeAlso: #1770
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1594)
+Offset	Size	Description	(Table 1770)
  00h	WORD	(call) 0000h (no results returned)
-SeeAlso: #1593
+SeeAlso: #1769
 --------N-21E3--SF11-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET FILE SERVER INFORMATION
 	AH = E3h subfn 11h
-	DS:SI -> request buffer (see #1595)
-	ES:DI -> reply buffer (see #1596)
+	DS:SI -> request buffer (see #1771)
+	ES:DI -> reply buffer (see #1772)
 Return: AL = status
 	    00h successful
 Desc:	determine the version of software installed on the file server and
@@ -1010,13 +1298,13 @@ SeeAlso: AH=E3h/SF=0Eh,AH=E3h/SF=12h,AH=E3h/SF=CDh,AH=E3h/SF=D3h,AH=E3h/SF=E7h
 SeeAlso: AH=E7h"Novell",AX=F217h/SF=11h
 
 Format of NetWare "Get File Server Information" request buffer:
-Offset	Size	Description	(Table 1595)
+Offset	Size	Description	(Table 1771)
  00h	WORD	0001h (length of following data)
  02h	BYTE	11h (subfunction "Get File Server Information")
-SeeAlso: #1596,#1854 at AX=F217h/SF=11h
+SeeAlso: #1772,#2030 at AX=F217h/SF=11h
 
 Format of NetWare "Get File Server Information" reply buffer:
-Offset	Size	Description	(Table 1596)
+Offset	Size	Description	(Table 1772)
  00h	WORD	(call) 0080h (size of following results buffer)
  02h 48 BYTEs	server's name
  32h	BYTE	NetWare version
@@ -1040,14 +1328,14 @@ Offset	Size	Description	(Table 1596)
  44h	BYTE	security restrictions level
  45h	BYTE	internetwork bridge version
  46h 60 BYTEs	reserved
-SeeAlso: #1595,#1854
+SeeAlso: #1771,#2030
 --------N-21E3--SF12-------------------------
 INT 21 - Novell NetWare - GET NETWORK SERIAL NUMBER
 	AH = E3h subfn 12h
 	AL = 00h
 	BX = CX = DX = 0000h
-	DS:SI -> request buffer (see #1597)
-	ES:DI -> reply buffer (see #1598)
+	DS:SI -> request buffer (see #1773)
+	ES:DI -> reply buffer (see #1774)
 Return: AL = status
 	    00h successful
 Desc:	return the serial number and application number for the software
@@ -1058,53 +1346,53 @@ Notes:	this function is supported by Advanced NetWare 2.1+
 SeeAlso: AH=E3h/SF=0Ch,AH=E3h/SF=11h,AX=F217h/SF=12h
 
 Format of NetWare "Get Serial Number" request buffer:
-offset	 size	description	(Table 1597)
+offset	 size	description	(Table 1773)
  00h	 WORD	0001h (length of following data)
  02h	 BYTE	12h (subfunction "Get Serial Number")
-SeeAlso: #1598,#1855
+SeeAlso: #1774,#2031
 
 Format of NetWare "Get Serial Number" reply buffer:
-offset	 size	description	(Table 1598)
+offset	 size	description	(Table 1774)
  00h	 WORD	(call) 0006h (size of following results buffer)
  02h   4 BYTEs	(big-endian) NetWare server serial number
  06h   2 BYTEs	(big-endian) NetWare application serial number
-SeeAlso: #1597,#1855
+SeeAlso: #1773,#2031
 --------N-21E3--SF13-------------------------
 INT 21 - Novell NetWare - CONNECTION SERVICES - GET INTERNET ADDRESS (OLD)
 	AH = E3h subfn 13h
-	DS:SI -> request buffer (see #1599)
-	ES:DI -> reply buffer (see #1600)
+	DS:SI -> request buffer (see #1775)
+	ES:DI -> reply buffer (see #1776)
 Return: AL = status
 	    00h successful
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=DCh"NetWare",AH=E3h/SF=16h,AH=EEh"NetWare",AX=F217h/SF=13h
 
 Format of NetWare "Get Internet Address (old)" request buffer:
-Offset	Size	Description	(Table 1599)
+Offset	Size	Description	(Table 1775)
  00h	WORD	0002h (length of following data)
  02h	BYTE	13h (subfunction "Get Internet Address")
  03h	BYTE	logical connection number (01h-64h)
-SeeAlso: #1600,#1856
+SeeAlso: #1776,#2032
 
 Format of NetWare "Get Internet Address (old)" reply buffer:
-Offset	Size	Description	(Table 1600)
+Offset	Size	Description	(Table 1776)
  00h	WORD	(call) 000Ch (length of following results buffer)
  02h  4 BYTEs	network number
  06h  6 BYTEs	physical node address
  0Ch  2 BYTEs	socket number
-SeeAlso: #1599,#1856 at AX=F217h/SF=13h
+SeeAlso: #1775,#2032 at AX=F217h/SF=13h
 --------N-21E3--SF14-------------------------
 INT 21 - Novell NetWare - CONNECTION SERVICES - LOGIN TO FILE SERVER
 	AH = E3h subfn 14h
-	DS:SI -> request buffer (see #1601)
-	ES:DI -> reply buffer (see #1602)
+	DS:SI -> request buffer (see #1777)
+	ES:DI -> reply buffer (see #1778)
 Return: AL = status
 	    00h successful
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=D7h"NetWare",AH=F1h"NetWare",AX=F217h/SF=14h
 
 Format of NetWare "Login to File Server" request buffer:
-Offset	Size	Description	(Table 1601)
+Offset	Size	Description	(Table 1777)
  00h	WORD	length of following data (max B3h)
  02h	BYTE	14h (subfunction "Login To File Server")
  03h	WORD	(big-endian) type of object
@@ -1112,17 +1400,17 @@ Offset	Size	Description	(Table 1601)
  06h  N BYTEs	object's name
 	BYTE	length of password
       N BYTEs	password
-SeeAlso: #1602
+SeeAlso: #1778
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1602)
+Offset	Size	Description	(Table 1778)
  00h	WORD	(call) 0000h (no data returned)
-SeeAlso: #1601
+SeeAlso: #1777
 --------N-21E3--SF15-------------------------
 INT 21 - Novell NetWare - CONNECTION SERVICES - GET OBJECT CONNECTION LIST(OLD)
 	AH = E3h subfn 15h
-	DS:SI -> request buffer (see #1603)
-	ES:DI -> reply buffer (see #1604)
+	DS:SI -> request buffer (see #1779)
+	ES:DI -> reply buffer (see #1780)
 Return: AL = status
 	    00h successful
 Desc:	this function retrieves a list indicating the connection numbers under
@@ -1131,50 +1419,50 @@ Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=DCh"NetWare",AH=E3h/SF=16h,AX=F217h/SF=15h
 
 Format of NetWare "Get Object Connection Numbers" request buffer:
-Offset	Size	Description	(Table 1603)
+Offset	Size	Description	(Table 1779)
  00h	WORD	length of following data (max 33h)
  02h	BYTE	15h (subfunction "Get Object Connection Numbers")
  03h	WORD	(big-endian) type of object
  05h	BYTE	length of object's name (01h-2Fh)
  06h  N BYTEs	object's name
-SeeAlso: #1604,#1857
+SeeAlso: #1780,#2033
 
 Format of NetWare "Get Object Connection Numbers" reply buffer:
-Offset	Size	Description	(Table 1604)
+Offset	Size	Description	(Table 1780)
  00h	WORD	(call) length of following results buffer (max 65h)
  02h	BYTE	number of connections
  03h  N BYTEs	connection list
-SeeAlso: #1603,#1857
+SeeAlso: #1779,#2033
 --------N-21E3--SF16-------------------------
 INT 21 - Novell NetWare - CONNECTION SERVICES - GET CONNECTION INFORMATION
 	AH = E3h subfn 16h
-	DS:SI -> request buffer (see #1605)
-	ES:DI -> reply buffer (see #1606)
+	DS:SI -> request buffer (see #1781)
+	ES:DI -> reply buffer (see #1782)
 Return: AL = status
 	    00h successful
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=D7h,AH=DCh"NetWare",AH=E3h/SF=14h
 
 Format of NetWare "Get Connection Information" request buffer:
-Offset	Size	Description	(Table 1605)
+Offset	Size	Description	(Table 1781)
  00h	WORD	0002h (length of following data)
  02h	BYTE	16h (subfunction "Get Connection Information")
  03h	BYTE	logical connection number (01h-64h)
 
 Format of NetWare "Get Connection Information" reply buffer:
-Offset	Size	Description	(Table 1606)
+Offset	Size	Description	(Table 1782)
  00h	WORD	(call) 003Eh (length of following results buffer)
  02h	DWORD	(big-endian) object ID for object logged in on the connection
 		00000000h if no object logged in
  06h	WORD	(big-endian) type of object
  08h 48 BYTEs	name of object
- 38h  7 BYTEs	login time (see #1607)
+ 38h  7 BYTEs	login time (see #1783)
 Note:	much of the Novell documentation incorrectly states the reply buffer
 	  length as 3Fh instead of 40h, which corresponds to a results length
 	  of 3Dh (61) bytes instead of the correct 3Eh (62) bytes
 
 Format of NetWare login time:
-Offset	Size	Description	(Table 1607)
+Offset	Size	Description	(Table 1783)
  00h	BYTE	year (80-99 = 1980-1999, 00-79 = 2000-2079)
  01h	BYTE	month (1-12)
  02h	BYTE	day (1-31)
@@ -1185,14 +1473,14 @@ Offset	Size	Description	(Table 1607)
 --------N-21E3--SF32-------------------------
 INT 21 - Novell NetWare - BINDERY SERVICES - CREATE BINDERY OBJECT
 	AH = E3h subfn 32h
-	DS:SI -> request buffer (see #1609)
-	ES:DI -> reply buffer (see #1610)
-Return: AL = status (see #1608)
+	DS:SI -> request buffer (see #1785)
+	ES:DI -> reply buffer (see #1786)
+Return: AL = status (see #1784)
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=33h,AH=E3h/SF=34h,AH=E3h/SF=38h,AH=E3h/SF=39h
 SeeAlso: AX=F217h/SF=32h
 
-(Table 1608)
+(Table 1784)
 Values for NetWare function status:
  00h	successful
  96h	server out of memory
@@ -1206,10 +1494,10 @@ Values for NetWare function status:
  FCh	no such object
  FEh	server bindery locked
  FFh	bindery failure
-SeeAlso: #1590,#1615
+SeeAlso: #1766,#1791
 
 Format of NetWare "Create Bindery Object" request buffer:
-Offset	Size	Description	(Table 1609)
+Offset	Size	Description	(Table 1785)
  00h	WORD	length of following data (max 35h)
  02h	BYTE	32h (subfunction "Create Bindery Object")
  03h	BYTE	object flag (00h static, 01h dynamic)
@@ -1217,40 +1505,40 @@ Offset	Size	Description	(Table 1609)
  05h	WORD	(big-endian) type of object
  07h	BYTE	length of object's name
  08h  N BYTEs	object's name
-SeeAlso: #1610
+SeeAlso: #1786
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1610)
+Offset	Size	Description	(Table 1786)
  00h	WORD	0000h (no data returned)
-SeeAlso: #1609,#1611,#1612
+SeeAlso: #1785,#1787,#1788
 --------N-21E3--SF33-------------------------
 INT 21 - Novell NetWare - BINDERY SERVICES - DELETE BINDERY OBJECT
 	AH = E3h subfn 33h
-	DS:SI -> request buffer (see #1611)
-	ES:DI -> reply buffer (see #1610)
-Return: AL = status (see #1608)
+	DS:SI -> request buffer (see #1787)
+	ES:DI -> reply buffer (see #1786)
+Return: AL = status (see #1784)
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=32h,AH=E3h/SF=34h,AX=F217h/SF=33h
 
 Format of NetWare "Delete Bindery Object" request buffer:
-Offset	Size	Description	(Table 1611)
+Offset	Size	Description	(Table 1787)
  00h	WORD	length of following data (max 33h)
  02h	BYTE	33h (subfunction "Delete Bindery Object")
  03h	WORD	(big-endian) type of object
  05h	BYTE	length of object's name (01h-2Fh)
  06h  N BYTEs	object's name
-SeeAlso: #1610
+SeeAlso: #1786
 --------N-21E3--SF34-------------------------
 INT 21 - Novell NetWare - BINDERY SERVICES - RENAME BINDERY OBJECT
 	AH = E3h subfn 34h
-	DS:SI -> request buffer (see #1612)
-	ES:DI -> reply buffer (see #1610)
-Return: AL = status (see #1608)
+	DS:SI -> request buffer (see #1788)
+	ES:DI -> reply buffer (see #1786)
+Return: AL = status (see #1784)
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=32h,AH=E3h/SF=33h,AX=F217h/SF=34h
 
 Format of NetWare "Rename Bindery Object" request buffer:
-Offset	Size	Description	(Table 1612)
+Offset	Size	Description	(Table 1788)
  00h	WORD	length of following data (max 63h)
  02h	BYTE	34h (subfunction "Rename Bindery Object")
  03h	WORD	(big-endian) type of object
@@ -1258,46 +1546,46 @@ Offset	Size	Description	(Table 1612)
  06h  N BYTEs	object's name
 	BYTE	length of new name (01h-2Fh)
       N BYTEs	new name
-SeeAlso: #1610
+SeeAlso: #1786
 --------N-21E3--SF35-------------------------
 INT 21 - Novell NetWare - BINDERY SERVICES - GET BINDERY OBJECT ID
 	AH = E3h subfn 35h
-	DS:SI -> request buffer (see #1613)
-	ES:DI -> reply buffer (see #1614)
-Return: AL = status (00h,96h,FCh,FEh,FFh) (see #1615)
+	DS:SI -> request buffer (see #1789)
+	ES:DI -> reply buffer (see #1790)
+Return: AL = status (00h,96h,FCh,FEh,FFh) (see #1791)
 Notes:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 	the requesting workstation must be logged into the file server with
 	  read access to the bindery object
 SeeAlso: AH=E3h/SF=36h,AH=E3h/SF=44h,AX=F217h/SF=35h
 
 Format of NetWare "Get Bindery Object ID" request buffer:
-Offset	Size	Description	(Table 1613)
+Offset	Size	Description	(Table 1789)
  00h	WORD	length of following data (max 33h)
  02h	BYTE	35h (subfunction "Get Bindery Object ID")
  03h	WORD	(big-endian) type of object
  05h	BYTE	length of object's name
  06h  N BYTEs	object's name
-SeeAlso: #1614,#1872
+SeeAlso: #1790,#2048
 
 Format of NetWare "Get Bindery Object ID" reply buffer:
-Offset	Size	Description	(Table 1614)
+Offset	Size	Description	(Table 1790)
  00h	WORD	(call) 0036h (length of following buffer space)
  02h	DWORD	(big-endian) object ID
  06h	WORD	(big-endian) type of object
  08h 48 BYTEs	object name
-SeeAlso: #1613,#1872 at AX=F217h/SF=35h
+SeeAlso: #1789,#2048 at AX=F217h/SF=35h
 --------N-21E3--SF36-------------------------
 INT 21 - Novell NetWare - BINDERY SERVICES - GET BINDERY OBJECT NAME
 	AH = E3h subfn 36h
-	DS:SI -> request buffer (see #1616)
-	ES:DI -> reply buffer (see #1617)
-Return: AL = status (see #1615)
+	DS:SI -> request buffer (see #1792)
+	ES:DI -> reply buffer (see #1793)
+Return: AL = status (see #1791)
 Notes:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 	the requesting workstation must be logged into the file server with
 	  read access to the bindery object
 SeeAlso: AH=E3h/SF=35h,AH=E3h/SF=44h,AX=F217h/SF=36h
 
-(Table 1615)
+(Table 1791)
 Values for NetWare function status:
  00h	successful
  96h	server out of memory
@@ -1306,28 +1594,28 @@ Values for NetWare function status:
  FCh	no such object
  FEh	server bindery locked
  FFh	bindery failure
-SeeAlso: #1608,#1621
+SeeAlso: #1784,#1797
 
 Format of NetWare "Get Bindery Object Name" request buffer:
-Offset	Size	Description	(Table 1616)
+Offset	Size	Description	(Table 1792)
  00h	WORD	0005h (length of following data)
  02h	BYTE	36h (subfunction "Get Bindery Object Name")
  03h	DWORD	(big-endian) object ID
-SeeAlso: #1617,#1873 at AX=F217h/SF=36h
+SeeAlso: #1793,#2049 at AX=F217h/SF=36h
 
 Format of NetWare "Get Bindery Object Name" reply buffer:
-Offset	Size	Description	(Table 1617)
+Offset	Size	Description	(Table 1793)
  00h	WORD	(call) 0036h (length of following buffer space)
  02h	DWORD	(big-endian) object ID
  06h	WORD	(big-endian) type of object
  08h 48 BYTEs	object name
-SeeAlso: #1616,#1873
+SeeAlso: #1792,#2049
 --------N-21E3--SF37-------------------------
 INT 21 - Novell NetWare - BINDERY SERVICES - SCAN BINDERY OBJECT
 	AH = E3h subfn 37h
-	DS:SI -> request buffer (see #1618)
-	ES:DI -> reply buffer (see #1619)
-Return: AL = status (see #1615)
+	DS:SI -> request buffer (see #1794)
+	ES:DI -> reply buffer (see #1795)
+Return: AL = status (see #1791)
 Notes:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 	the requesting workstation must be logged into the file server with
 	  read access to the bindery object
@@ -1335,17 +1623,17 @@ SeeAlso: AH=E3h/SF=32h,AH=E3h/SF=33h,AH=E3h/SF=38h,AH=E3h/SF=3Ch
 SeeAlso: AX=F217h/SF=37h
 
 Format of NetWare "Scan Bindery Object" request buffer:
-Offset	Size	Description	(Table 1618)
+Offset	Size	Description	(Table 1794)
  00h	WORD	length of following data (max 37h)
  02h	BYTE	37h (subfunction "Scan Bindery Object")
  03h	DWORD	(big-endian) last object ID
  07h	WORD	(big-endian) type of object
  09h	BYTE	length of object's name
  0Ah  N BYTEs	object's name
-SeeAlso: #1619,#1874
+SeeAlso: #1795,#2050
 
 Format of NetWare "Scan Bindery Object" reply buffer:
-Offset	Size	Description	(Table 1619)
+Offset	Size	Description	(Table 1795)
  00h	WORD	(call) 0039h (length of following buffer space)
  02h	DWORD	(big-endian) object ID
 		FFFFFFFFh for first call
@@ -1354,18 +1642,18 @@ Offset	Size	Description	(Table 1619)
  38h	BYTE	object flag (00h static, 01h dynamic)
  39h	BYTE	object's security levels
  3Ah	BYTE	object properties flag (00h no, FFh yes)
-SeeAlso: #1618,#1874
+SeeAlso: #1794,#2050
 --------N-21E3--SF38-------------------------
 INT 21 - Novell NetWare - BINDERY SERVICES - CHANGE BINDERY OBJECT SECURITY
 	AH = E3h subfn 38h
-	DS:SI -> request buffer (see #1620)
-	ES:DI -> reply buffer (see #1623)
-Return: AL = status (00h,96h,F0h,F1h,FBh,FCh,FEh,FFh) (see #1621)
+	DS:SI -> request buffer (see #1796)
+	ES:DI -> reply buffer (see #1799)
+Return: AL = status (00h,96h,F0h,F1h,FBh,FCh,FEh,FFh) (see #1797)
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=32h,AH=E3h/SF=3Bh,AX=F217h/SF=38h
 
 Format of NetWare "Change Bindery Object Security" request buffer:
-Offset	Size	Description	(Table 1620)
+Offset	Size	Description	(Table 1796)
  00h	WORD	length of following data (max 34h)
  02h	BYTE	38h (subfunction "Change Bindery Object Security")
  03h	BYTE	new security levels
@@ -1373,17 +1661,17 @@ Offset	Size	Description	(Table 1620)
  06h	BYTE	length of object's name (01h-2Fh)
  07h  N BYTEs	object name
 Note:	the object type may not be WILD (FFFFh)
-SeeAlso: #1623
+SeeAlso: #1799
 --------N-21E3--SF39-------------------------
 INT 21 - Novell NetWare - BINDERY SERVICES - CREATE PROPERTY
 	AH = E3h subfn 39h
-	DS:SI -> request buffer (see #1622)
-	ES:DI -> reply buffer (see #1623)
-Return: AL = status (see #1621)
+	DS:SI -> request buffer (see #1798)
+	ES:DI -> reply buffer (see #1799)
+Return: AL = status (see #1797)
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=32h,AH=E3h/SF=3Bh,AX=F217h/SF=39h
 
-(Table 1621)
+(Table 1797)
 Values for NetWare function status:
  00h	successful
  96h	server out of memory
@@ -1397,10 +1685,10 @@ Values for NetWare function status:
  FCh	no such object
  FEh	server bindery locked
  FFh	bindery failure
-SeeAlso: #1615,#1625
+SeeAlso: #1791,#1801
 
 Format of NetWare "Create Property" request buffer:
-Offset	Size	Description	(Table 1622)
+Offset	Size	Description	(Table 1798)
  00h	WORD	length of following data (max 45h)
  02h	BYTE	39h (subfunction "Create Property")
  03h	WORD	(big-endian) type of object
@@ -1410,23 +1698,23 @@ Offset	Size	Description	(Table 1622)
 	BYTE	property security levels
 	BYTE	length of property's name (01h-0Fh)
       N BYTEs	property's name
-SeeAlso: #1623
+SeeAlso: #1799
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1623)
+Offset	Size	Description	(Table 1799)
  00h	WORD	(call) 0000h (no data returned)
-SeeAlso: #1620,#1623,#1624
+SeeAlso: #1796,#1799,#1800
 --------N-21E3--SF3A-------------------------
 INT 21 - Novell NetWare - BINDERY SERVICES - DELETE PROPERTY
 	AH = E3h subfn 3Ah
-	DS:SI -> request buffer (see #1624)
-	ES:DI -> reply buffer (see #1623)
-Return: AL = status (see #1621)
+	DS:SI -> request buffer (see #1800)
+	ES:DI -> reply buffer (see #1799)
+Return: AL = status (see #1797)
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=32h,AH=E3h/SF=39h,AX=F217h/SF=3Ah
 
 Format of NetWare "Delete Property" request buffer:
-Offset	Size	Description	(Table 1624)
+Offset	Size	Description	(Table 1800)
  00h	WORD	length of following data (max 43h)
  02h	BYTE	3Ah (subfunction "Delete Property")
  03h	WORD	(big-endian) type of object
@@ -1434,17 +1722,17 @@ Offset	Size	Description	(Table 1624)
  06h  N BYTEs	object's name
 	BYTE	length of property's name (01h-0Fh)
       N BYTEs	property's name
-SeeAlso: #1623
+SeeAlso: #1799
 --------N-21E3--SF3B-------------------------
 INT 21 - Novell NetWare - BINDERY SERVICES - CHANGE PROPERTY SECURITY
 	AH = E3h subfn 3Bh
-	DS:SI -> request buffer (see #1626)
-	ES:DI -> reply buffer (see #1623)
-Return: AL = status (see #1625)
+	DS:SI -> request buffer (see #1802)
+	ES:DI -> reply buffer (see #1799)
+Return: AL = status (see #1801)
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=38h,AX=F217h/SF=3Bh
 
-(Table 1625)
+(Table 1801)
 Values for NetWare function status:
  00h	successful
  96h	server out of memory
@@ -1454,10 +1742,10 @@ Values for NetWare function status:
  FCh	no such object
  FEh	server bindery locked
  FFh	bindery failure
-SeeAlso: #1621,#1629
+SeeAlso: #1797,#1805
 
 Format of NetWare "Change Property Security" request buffer:
-Offset	Size	Description	(Table 1626)
+Offset	Size	Description	(Table 1802)
  00h	WORD	length of following data (max 44h)
  02h	BYTE	3Bh (subfunction "Change Property Security")
  03h	WORD	(big-endian) type of object
@@ -1470,14 +1758,14 @@ Note:	the object type may not be WILD (FFFFh)
 --------N-21E3--SF3C-------------------------
 INT 21 - Novell NetWare - BINDERY SERVICES - SCAN PROPERTY
 	AH = E3h subfn 3Ch
-	DS:SI -> request buffer (see #1627)
-	ES:DI -> reply buffer (see #1628)
-Return: AL = status (00h,96h,F1h,FBh,FCh,FEh,FFh) (see #1625)
+	DS:SI -> request buffer (see #1803)
+	ES:DI -> reply buffer (see #1804)
+Return: AL = status (00h,96h,F1h,FBh,FCh,FEh,FFh) (see #1801)
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=37h,AH=E3h/SF=3Bh,AX=F217h/SF=3Ch
 
 Format of NetWare "Scan Property" request buffer:
-Offset	Size	Description	(Table 1627)
+Offset	Size	Description	(Table 1803)
  00h	WORD	length of following data (max 47h)
  02h	BYTE	3Ch (subfunction "Scan Property")
  03h	WORD	(big-endian) type of object
@@ -1487,10 +1775,10 @@ Offset	Size	Description	(Table 1627)
 		FFFFFFFFh for first call
 	BYTE	length of property's name (01h-0Fh)
       N BYTEs	property's name
-SeeAlso: #1628,#1875
+SeeAlso: #1804,#2051
 
 Format of NetWare "Scan Property" reply buffer:
-Offset	Size	Description	(Table 1628)
+Offset	Size	Description	(Table 1804)
  00h	WORD	(call) 0018h (length of following results buffer)
  02h 16 BYTEs	property name
  12h	BYTE	property flags
@@ -1498,18 +1786,18 @@ Offset	Size	Description	(Table 1628)
  14h	DWORD	(big-endian) sequence number
  18h	BYTE	property value flag (00h no, FFh yes)
  19h	BYTE	more properties (00h no, FFh yes)
-SeeAlso: #1627,#1875
+SeeAlso: #1803,#2051
 --------N-21E3--SF3D-------------------------
 INT 21 - Novell NetWare - BINDERY SERVICES - READ PROPERTY VALUE
 	AH = E3h subfn 3Dh
-	DS:SI -> request buffer (see #1630)
-	ES:DI -> reply buffer (see #1631)
-Return: AL = status (see #1629)
+	DS:SI -> request buffer (see #1806)
+	ES:DI -> reply buffer (see #1807)
+Return: AL = status (see #1805)
 Desc:	retrieve one 128-byte segment of the specified property's value
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=39h,AH=E3h/SF=3Ch,AH=E3h/SF=3Eh,AX=F217h/SF=3Dh
 
-(Table 1629)
+(Table 1805)
 Values for NetWare function status:
  00h	successful
  96h	server out of memory
@@ -1523,10 +1811,10 @@ Values for NetWare function status:
  FCh	no such object
  FEh	server bindery locked
  FFh	bindery failure
-SeeAlso: #1625,#1634
+SeeAlso: #1801,#1810
 
 Format of NetWare "Read Property Value" request buffer:
-Offset	Size	Description	(Table 1630)
+Offset	Size	Description	(Table 1806)
  00h	WORD	length of following data (max 44h)
  02h	BYTE	3Dh (subfunction "Read Property Value")
  03h	WORD	(big-endian) type of object
@@ -1535,26 +1823,26 @@ Offset	Size	Description	(Table 1630)
 	BYTE	segment number (01h on first call, increment until done)
 	BYTE	length of property's name (01h-0Fh)
       N BYTEs	property name
-SeeAlso: #1631,#1876
+SeeAlso: #1807,#2052
 
 Format of NetWare "Read Property Value" reply buffer:
-Offset	Size	Description	(Table 1631)
+Offset	Size	Description	(Table 1807)
  00h	WORD	(call) 0082h (length of following results buffer)
  02h 128 BYTEs	property's value
  82h	BYTE	more segments (00h no, FFh yes)
  83h	BYTE	property's flags
-SeeAlso: #1630,#1876
+SeeAlso: #1806,#2052
 --------N-21E3--SF3E-------------------------
 INT 21 - Novell NetWare - BINDERY SERVICES - WRITE PROPERTY VALUE
 	AH = E3h subfn 3Eh
-	DS:SI -> request buffer (see #1632)
-	ES:DI -> reply buffer (see #1633)
-Return: AL = status (see #1629)
+	DS:SI -> request buffer (see #1808)
+	ES:DI -> reply buffer (see #1809)
+Return: AL = status (see #1805)
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=39h,AH=E3h/SF=3Ch,AH=E3h/SF=3Dh,AX=F217h/SF=3Eh
 
 Format of NetWare "Write Property Value" request buffer:
-Offset	Size	Description	(Table 1632)
+Offset	Size	Description	(Table 1808)
  00h	WORD	length of following data (max C5h)
  02h	BYTE	3Eh (subfunction "Write Property Value")
  03h	WORD	(big-endian) type of object
@@ -1565,22 +1853,22 @@ Offset	Size	Description	(Table 1632)
 	BYTE	length of property's name (01h-0Fh)
       N BYTEs	property name
     128 BYTEs	property value segment
-SeeAlso: #1633
+SeeAlso: #1809
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1633)
+Offset	Size	Description	(Table 1809)
  00h	WORD	(call) 0000h (no data returned)
-SeeAlso: #1632,#1635
+SeeAlso: #1808,#1811
 --------N-21E3--SF3F-------------------------
 INT 21 - Novell NetWare - BINDERY SERVICES - VERIFY BINDERY OBJECT PASSWORD
 	AH = E3h subfn 3Fh
-	DS:SI -> request buffer (see #1635)
-	ES:DI -> reply buffer (see #1633)
-Return: AL = status (see #1634)
+	DS:SI -> request buffer (see #1811)
+	ES:DI -> reply buffer (see #1809)
+Return: AL = status (see #1810)
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=40h,AX=F217h/SF=3Fh
 
-(Table 1634)
+(Table 1810)
 Values for NetWare function status:
  00h	successful
  96h	server out of memory
@@ -1590,10 +1878,10 @@ Values for NetWare function status:
  FEh	server bindery locked
  FFh	bindery failure: no such object, bad password, no password for object,
 	  or invalid old password
-SeeAlso: #1629,#1638
+SeeAlso: #1805,#1814
 
 Format of NetWare "Verify Bindery Object Password" request buffer:
-Offset	Size	Description	(Table 1635)
+Offset	Size	Description	(Table 1811)
  00h	WORD	length of following data (max 133h)
  02h	BYTE	3Fh (subfunction "Verify Bindery Object Password")
  03h	WORD	(big-endian) type of object
@@ -1601,18 +1889,18 @@ Offset	Size	Description	(Table 1635)
  06h  N BYTEs	object name
 	BYTE	length of password (00h-7Fh)
       N BYTEs	password
-SeeAlso: #1633
+SeeAlso: #1809
 --------N-21E3--SF40-------------------------
 INT 21 - Novell NetWare - BINDERY SERVICES - CHANGE BINDERY OBJECT PASSWORD
 	AH = E3h subfn 40h
-	DS:SI -> request buffer (see #1636)
-	ES:DI -> reply buffer (see #1637)
-Return: AL = status (see #1634)
+	DS:SI -> request buffer (see #1812)
+	ES:DI -> reply buffer (see #1813)
+Return: AL = status (see #1810)
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=3Fh,AH=E3h/SF=41h,AX=F217h/SF=40h
 
 Format of NetWare "Change Bindery Object Password" request buffer:
-Offset	Size	Description	(Table 1636)
+Offset	Size	Description	(Table 1812)
  00h	WORD	length of following data (max 133h)
  02h	BYTE	40h (subfunction "Change Bindery Object Password")
  03h	WORD	(big-endian) type of object
@@ -1622,23 +1910,23 @@ Offset	Size	Description	(Table 1636)
       N BYTEs	old password
 	BYTE	length of new password (00h-7Fh)
       N BYTEs	new password
-SeeAlso: #1637,#1883
+SeeAlso: #1813,#2059
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1637)
+Offset	Size	Description	(Table 1813)
  00h	WORD	(call) 0000h (no data returned)
-SeeAlso: #1636,#1639
+SeeAlso: #1812,#1815
 --------N-21E3--SF41-------------------------
 INT 21 - Novell NetWare - BINDERY SERVICES - ADD BINDERY OBJECT TO SET
 	AH = E3h subfn 41h
-	DS:SI -> request buffer (see #1639)
-	ES:DI -> reply buffer (see #1637)
-Return: AL = status (see #1638)
+	DS:SI -> request buffer (see #1815)
+	ES:DI -> reply buffer (see #1813)
+Return: AL = status (see #1814)
 Desc:	add the specified object to an object's group property
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=40h,AH=E3h/SF=42h,AH=E3h/SF=43h,AX=F217h/SF=41h
 
-(Table 1638)
+(Table 1814)
 Values for NetWare function status:
  00h	successful
  96h	server out of memory
@@ -1652,10 +1940,10 @@ Values for NetWare function status:
  FCh	no such object
  FEh	server bindery locked
  FFh	bindery failure
-SeeAlso: #1634,#1649
+SeeAlso: #1810,#1825
 
 Format of NetWare "Add Bindery Object to Set" request buffer:
-Offset	Size	Description	(Table 1639)
+Offset	Size	Description	(Table 1815)
  00h	WORD	length of following data (max 75h)
  02h	BYTE	41h (subfunction "Add Bindery Object to Set")
  03h	WORD	(big-endian) type of object
@@ -1666,19 +1954,19 @@ Offset	Size	Description	(Table 1639)
 	WORD	(big-endian) type of member object
 	BYTE	length of member object's name
       N BYTEs	member object's name
-SeeAlso: #1637
+SeeAlso: #1813
 --------N-21E3--SF42-------------------------
 INT 21 - Novell NetWare - BINDERY SERVICES - DELETE BINDERY OBJECT FROM SET
 	AH = E3h subfn 42h
-	DS:SI -> request buffer (see #1640)
-	ES:DI -> reply buffer (see #1641)
-Return: AL = status (see #1638)
+	DS:SI -> request buffer (see #1816)
+	ES:DI -> reply buffer (see #1817)
+Return: AL = status (see #1814)
 Desc:	delete the specified object from a set property
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=40h,AH=E3h/SF=42h,AH=E3h/SF=43h,AX=F217h/SF=42h
 
 Format of NetWare "Delete Bindery Object from Set" request buffer:
-Offset	Size	Description	(Table 1640)
+Offset	Size	Description	(Table 1816)
  00h	WORD	length of following data (max 75h)
  02h	BYTE	42h (subfunction "Delete Bindery Object from Set")
  03h	WORD	(big-endian) type of object
@@ -1689,18 +1977,18 @@ Offset	Size	Description	(Table 1640)
 	WORD	(big-endian) type of member object
 	BYTE	length of member object's name
       N BYTEs	member object's name
-SeeAlso: #1641
+SeeAlso: #1817
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1641)
+Offset	Size	Description	(Table 1817)
  00h	WORD	(call) 0000h (no data returned)
-SeeAlso: #1640,#1642,#1643,#1644
+SeeAlso: #1816,#1818,#1819,#1820
 --------N-21E3--SF43-------------------------
 INT 21 - Novell NetWare - BINDERY SERVICES - IS BINDERY OBJECT IN SET
 	AH = E3h subfn 43h
-	DS:SI -> request buffer (see #1642)
-	ES:DI -> reply buffer (see #1641)
-Return: AL = status (see #1638)
+	DS:SI -> request buffer (see #1818)
+	ES:DI -> reply buffer (see #1817)
+Return: AL = status (see #1814)
 Desc:	determine whether the specified object is a member of the given set
 	  property
 Notes:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
@@ -1708,7 +1996,7 @@ Notes:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=41h,AH=E3h/SF=42h,AX=F217h/SF=43h
 
 Format of NetWare "Is Bindery Object in Set?" request buffer:
-Offset	Size	Description	(Table 1642)
+Offset	Size	Description	(Table 1818)
  00h	WORD	length of following data (max 75h)
  02h	BYTE	43h (subfunction "Is Bindery Object In Set")
  03h	WORD	(big-endian) type of object
@@ -1719,27 +2007,27 @@ Offset	Size	Description	(Table 1642)
 	WORD	(big-endian) type of member object
 	BYTE	length of member object's name
       N BYTEs	member object's name
-SeeAlso: #1641
+SeeAlso: #1817
 --------N-21E3--SF44-------------------------
 INT 21 - Novell NetWare - BINDERY SERVICES - CLOSE BINDERY
 	AH = E3h subfn 44h
-	DS:SI -> request buffer (see #1643)
-	ES:DI -> reply buffer (see #1641)
+	DS:SI -> request buffer (see #1819)
+	ES:DI -> reply buffer (see #1817)
 Return: AL = status
 	    00h successful
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=45h,AX=F217h/SF=44h
 
 Format of NetWare "Close Bindery" request buffer:
-Offset	Size	Description	(Table 1643)
+Offset	Size	Description	(Table 1819)
  00h	WORD	0001h (length of following data)
  02h	BYTE	44h (subfunction "Close Bindery")
-SeeAlso: #1641,#1644
+SeeAlso: #1817,#1820
 --------N-21E3--SF45-------------------------
 INT 21 - Novell NetWare - BINDERY SERVICES - OPEN BINDERY
 	AH = E3h subfn 45h
-	DS:SI -> request buffer (see #1644)
-	ES:DI -> reply buffer (see #1641)
+	DS:SI -> request buffer (see #1820)
+	ES:DI -> reply buffer (see #1817)
 Return: AL = status
 	    00h successful
 Notes:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
@@ -1748,73 +2036,73 @@ Notes:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=44h,AX=F217h/SF=45h
 
 Format of NetWare "Open Bindery" request buffer:
-Offset	Size	Description	(Table 1644)
+Offset	Size	Description	(Table 1820)
  00h	WORD	0001h (length of following data)
  02h	BYTE	45h (subfunction "Open Bindery")
-SeeAlso: #1641,#1643
+SeeAlso: #1817,#1819
 --------N-21E3--SF46-------------------------
 INT 21 - Novell NetWare - BINDERY SERVICES - GET BINDERY ACCESS LEVEL
 	AH = E3h subfn 46h
-	DS:SI -> request buffer (see #1645)
-	ES:DI -> reply buffer (see #1646)
+	DS:SI -> request buffer (see #1821)
+	ES:DI -> reply buffer (see #1822)
 Return: AL = status
 	    00h successful
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AX=F217h/SF=46h
 
 Format of NetWare "Get Bindery Access Level" request buffer:
-Offset	Size	Description	(Table 1645)
+Offset	Size	Description	(Table 1821)
  00h	WORD	0001h (length of following data)
  02h	BYTE	46h (subfunction "Get Bindery Access Level")
-SeeAlso: #1646,#1877
+SeeAlso: #1822,#2053
 
 Format of NetWare "Get Bindery Access Level" reply buffer:
-Offset	Size	Description	(Table 1646)
+Offset	Size	Description	(Table 1822)
  00h	WORD	0005h (length of following buffer)
  02h	BYTE	security levels
  03h	DWORD	(big-endian) object ID
-SeeAlso: #1645,#1877
+SeeAlso: #1821,#2053
 --------N-21E3--SF47-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - SCAN BINDERY OBJ TRUSTEE PATHS
 	AH = E3h subfn 47h
-	DS:SI -> request buffer (see #1647)
-	ES:DI -> reply buffer (see #1648)
-Return: AL = status (00h,96h,F0h,F1h,FCh,FEh,FFh) (see #1649)
+	DS:SI -> request buffer (see #1823)
+	ES:DI -> reply buffer (see #1824)
+Return: AL = status (00h,96h,F0h,F1h,FCh,FEh,FFh) (see #1825)
 Desc:	iterate through the directories to which an object is a trustee
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E2h/SF=0Ch,AH=E2h/SF=0Dh,AH=E2h/SF=0Eh,AX=F217h/SF=47h
 
 Format of NetWare "Scan Bindery Object Trustee Paths" request buffer:
-Offset	Size	Description	(Table 1647)
+Offset	Size	Description	(Table 1823)
  00h	WORD	0008h (length of following data)
  02h	BYTE	47h (subfunction "Scan Bindery Object Trustee Paths")
  03h	BYTE	volume number (00h-1Fh)
  04h	WORD	(big-endian) last sequence number (FFFFh on first call)
  06h	DWORD	(big-endian) object ID
-SeeAlso: #1648,#1878
+SeeAlso: #1824,#2054
 
 Format of NetWare "Scan Bindery Object Trustee Paths" reply buffer:
-Offset	Size	Description	(Table 1648)
+Offset	Size	Description	(Table 1824)
  00h	WORD	(call) length of following results buffer (max 107h)
  02h	WORD	(big-endian) next sequence number
  04h	DWORD	(big-endian) object ID
- 08h	BYTE	trustee directory rights (see #1537 at AH=E2h/SF=03h)
+ 08h	BYTE	trustee directory rights (see #1713 at AH=E2h/SF=03h)
  09h	BYTE	length of trustee path
  0Ah  N BYTEs	trustee path
-SeeAlso: #1647,#1878
+SeeAlso: #1823,#2054
 --------N-21E3--SF64-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - CREATE QUEUE
 	AH = E3h subfn 64h
-	DS:SI -> request buffer (see #1650)
-	ES:DI -> reply buffer (see #1651)
+	DS:SI -> request buffer (see #1826)
+	ES:DI -> reply buffer (see #1827)
 Return: AL = status (00h,96h,99h,9Bh,9Ch,EDh-F1h,F5h,F7h,FCh,FEh,FFh)
-	      (see #1649)
+	      (see #1825)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	caller must be on a workstation with supervisor privileges
 SeeAlso: AH=E3h/SF=65h,AH=E3h/SF=66h,AH=E3h/SF=68h,AH=E3h/SF=6Bh
 SeeAlso: AX=F217h/SF=64h
 
-(Table 1649)
+(Table 1825)
 Values for NetWare function status:
  00h (0)	successful
  96h (150)	server out of memory
@@ -1843,10 +2131,10 @@ Values for NetWare function status:
  FCh (252)	no such object
  FEh (254)	server bindery locked
  FFh (255)	bindery failure
-SeeAlso: #1638,#1690,#1366,#2546 at INT 2F/AX=7A20h/BX=0000h
+SeeAlso: #1814,#1866,#1545,#2724 at INT 2F/AX=7A20h/BX=0000h
 
 Format of NetWare "Create Queue" request buffer:
-Offset	Size	Description	(Table 1650)
+Offset	Size	Description	(Table 1826)
  00h	WORD	length of following data (max ABh)
  02h	BYTE	64h (subfunction "Create Queue")
  03h	WORD	(big-endian) queue type
@@ -1855,18 +2143,18 @@ Offset	Size	Description	(Table 1650)
 	BYTE	directory handle or 00h
 	BYTE	length of path name (01h-76h)
       N BYTEs	path name of directory in which to create queue subdirectory
-SeeAlso: #1651,#1886
+SeeAlso: #1827,#2062
 
 Format of NetWare "Create Queue" reply buffer:
-Offset	Size	Description	(Table 1651)
+Offset	Size	Description	(Table 1827)
  00h	WORD	(call) 0004h (size of following results buffer)
  02h	DWORD	(big-endian) object ID of queue
-SeeAlso: #1650,#1886
+SeeAlso: #1826,#2062
 --------N-21E3--SF65-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - DESTROY QUEUE
 	AH = E3h subfn 65h
-	DS:SI -> request buffer (see #1652)
-	ES:DI -> reply buffer (see #1657)
+	DS:SI -> request buffer (see #1828)
+	ES:DI -> reply buffer (see #1833)
 Return: AL = status (00h,96h,9Ch,D0h,D1h,FFh) (see also AH=E3h/SF=64h)
 	    FFh hardware failure
 Desc:	abort all active jobs, detach all job servers, remove all job entries,
@@ -1878,17 +2166,17 @@ SeeAlso: AH=E3h/SF=64h,AH=E3h/SF=66h,AH=E3h/SF=68h,AH=E3h/SF=6Ah,AH=E3h/SF=70h
 SeeAlso: AX=F217h/SF=65h
 
 Format of NetWare "Destroy Queue" request buffer:
-Offset	Size	Description	(Table 1652)
+Offset	Size	Description	(Table 1828)
  00h	WORD	0005h (length of following data)
  02h	BYTE	65h (subfunction "Destroy Queue")
  03h	DWORD	(big-endian) object ID of queue
-SeeAlso: #1657
+SeeAlso: #1833
 --------N-21E3--SF66-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - READ QUEUE CURRENT STATUS (OLD)
 	AH = E3h subfn 66h
-	DS:SI -> request buffer (see #1653)
-	ES:DI -> reply buffer (see #1654)
-Return: AL = status (00h,96h,9Ch,D1h-D3h,F1h,FCh,FEh,FFh) (see #1649)
+	DS:SI -> request buffer (see #1829)
+	ES:DI -> reply buffer (see #1830)
+Return: AL = status (00h,96h,9Ch,D1h-D3h,F1h,FCh,FEh,FFh) (see #1825)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	caller must be on a workstation which is security-equivalent to a
 	  member of the queue's Q_USERS or Q_OPERATORS properties
@@ -1896,59 +2184,59 @@ SeeAlso: AH=E3h/SF=64h,AH=E3h/SF=67h,AH=E3h/SF=6Fh,AH=E3h/SF=76h
 SeeAlso: AX=F217h/SF=66h
 
 Format of NetWare "Read Queue Current Status (old)" request buffer:
-Offset	Size	Description	(Table 1653)
+Offset	Size	Description	(Table 1829)
  00h	WORD	0005h (length of following data)
  02h	BYTE	66h (subfunction "Read Queue Current Status")
  03h	DWORD	(big-endian) object ID of queue
-SeeAlso: #1654,#1887 at AX=F217h/SF=66h
+SeeAlso: #1830,#2063 at AX=F217h/SF=66h
 
 Format of NetWare "Read Queue Current Status (old)" reply buffer:
-Offset	Size	Description	(Table 1654)
+Offset	Size	Description	(Table 1830)
  00h	WORD	(call) 0085h (size of following results)
  02h	DWORD	(big-endian) object ID of queue
- 06h	BYTE	status of queue (see #1655)
+ 06h	BYTE	status of queue (see #1831)
  07h	BYTE	number of jobs in queue (00h-FAh)
  08h	BYTE	number of servers attached to queue (00h-19h)
  09h 25 DWORDs	list of object IDs of attached servers
  6Dh 25 BYTEs	list of attached servers' stations
  86h	BYTE	(call) maximum number of servers to return
-SeeAlso: #1653,#1887 at AX=F217h/SF=66h
+SeeAlso: #1829,#2063 at AX=F217h/SF=66h
 
 Bitfields for NetWare queue status:
-Bit(s)	Description	(Table 1655)
+Bit(s)	Description	(Table 1831)
  0	operator disabled addition of new jobs
  1	operator refuses additional job servers attaching
  2	operator disabled job servicing
-SeeAlso: #1654,#1656
+SeeAlso: #1830,#1832
 --------N-21E3--SF67-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - SET QUEUE CURRENT STATUS (OLD)
 	AH = E3h subfn 67h
-	DS:SI -> request buffer (see #1656)
-	ES:DI -> reply buffer (see #1657)
-Return: AL = status (00h,96h,9Ch,D0h,D1h,D3h,FEh,FFh) (see #1649)
+	DS:SI -> request buffer (see #1832)
+	ES:DI -> reply buffer (see #1833)
+Return: AL = status (00h,96h,9Ch,D0h,D1h,D3h,FEh,FFh) (see #1825)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	caller must have operator privileges
 SeeAlso: AH=E3h/SF=64h,AH=E3h/SF=66h,AH=E3h/SF=6Fh,AH=E3h/SF=76h
 SeeAlso: AX=F217h/SF=67h
 
 Format of NetWare "Set Queue Current Status (old)" request buffer:
-Offset	Size	Description	(Table 1656)
+Offset	Size	Description	(Table 1832)
  00h	WORD	0006h (length of following data)
  02h	BYTE	67h (subfunction "Set Queue Current Status")
  03h	DWORD	(big-endian) object ID of queue
- 07h	BYTE	queue status (see #1655)
-SeeAlso: #1657
+ 07h	BYTE	queue status (see #1831)
+SeeAlso: #1833
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1657)
+Offset	Size	Description	(Table 1833)
  00h	WORD	(call) 0000h (no results returned)
 --------N-21E3--SF68-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - CREATE QUEUE JOB AND FILE
 	AH = E3h subfn 68h
-	DS:SI -> request buffer (see #1658)
-	ES:DI -> reply buffer (see #1660)
+	DS:SI -> request buffer (see #1834)
+	ES:DI -> reply buffer (see #1836)
 Return: AL = status (00h,96h,99h,9Ch,D0h-D4h,DAh,EDh,EFh-F1h,F7h,FCh,FEh,FFh)
-		(see #1649)
+		(see #1825)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	caller must be on a workstation which is security-equivalent to a
 	  member of the queue's Q_USER property
@@ -1956,15 +2244,15 @@ SeeAlso: AX=B807h,AH=E0h"SPOOLING",AH=E3h/SF=69h,AH=E3h/SF=6Ah,AH=E3h/SF=6Eh
 SeeAlso: AX=F217h/SF=68h
 
 Format of NetWare "Create Queue Job and File" request buffer:
-Offset	Size	Description	(Table 1658)
+Offset	Size	Description	(Table 1834)
  00h	WORD	0107h (length of following data)
  02h	BYTE	68h (subfunction "Close File and Start Queue Job")
  03h	DWORD	(big-endian) object ID of queue
- 07h 256 BYTEs	job structure (see #1659)
-SeeAlso: #1660,#1888
+ 07h 256 BYTEs	job structure (see #1835)
+SeeAlso: #1836,#2064
 
 Format of NetWare old-style job structure:
-Offset	Size	Description	(Table 1659)
+Offset	Size	Description	(Table 1835)
  00h	BYTE	client station
  01h	BYTE	client task number
  02h	DWORD	(big-endian) object ID of client
@@ -1976,7 +2264,7 @@ Offset	Size	Description	(Table 1659)
  16h	WORD	(big-endian) job number
  18h	WORD	(big-endian) job type
  1Ah	BYTE	job position
- 1Bh	BYTE	job control flags (see #1668)
+ 1Bh	BYTE	job control flags (see #1844)
  1Ch 14 BYTEs	ASCIZ job file name
  2Ah  6 BYTEs	job file handle
  30h	BYTE	server station
@@ -1984,10 +2272,10 @@ Offset	Size	Description	(Table 1659)
  32h	DWORD	(big-endian) object ID of server
  36h 50 BYTEs	ASCIZ job description string
  68h 152 BYTEs	client record area
-SeeAlso: #1658,#1898
+SeeAlso: #1834,#2074
 
 Format of NetWare "Create Queue Job and File" reply buffer:
-Offset	Size	Description	(Table 1660)
+Offset	Size	Description	(Table 1836)
  00h	WORD	(call) 0036h (size of following results buffer)
  02h	BYTE	client station
  03h	BYTE	client task number
@@ -1998,47 +2286,47 @@ Offset	Size	Description	(Table 1660)
  18h	WORD	(big-endian) job number
  1Ah	WORD	(big-endian) job type
  1Ch	BYTE	job position
- 1Dh	BYTE	job control flags (see #1668)
+ 1Dh	BYTE	job control flags (see #1844)
  1Eh 14 BYTEs	ASCIZ job file name
  2Ch  6 BYTEs	job file handle
  32h	BYTE	server station
  33h	BYTE	server task number
  34h	DWORD	(big-endian) object ID of server or 00000000h
-SeeAlso: #1658,#1888
+SeeAlso: #1834,#2064
 --------N-21E3--SF69-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - CLOSE FILE AND START QUEUE JOB (OLD)
 	AH = E3h subfn 69h
-	DS:SI -> request buffer (see #1661)
-	ES:DI -> reply buffer (see #1662)
-Return: AL = status (00h,96h,D0h,D1h,D3h,D5h,D6h,FEh,FFh) (see #1649)
+	DS:SI -> request buffer (see #1837)
+	ES:DI -> reply buffer (see #1838)
+Return: AL = status (00h,96h,D0h,D1h,D3h,D5h,D6h,FEh,FFh) (see #1825)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	caller must be on the workstation which created the job
 SeeAlso: AH=E3h/SF=68h,AH=E3h/SF=6Ah,AH=E3h/SF=6Eh,AX=F217h/SF=69h
 
 Format of NetWare "Close File and Start Queue Job (old)" request buffer:
-Offset	Size	Description	(Table 1661)
+Offset	Size	Description	(Table 1837)
  00h	WORD	0007h (length of following data)
  02h	BYTE	69h (subfunction "Close File and Start Queue Job")
  03h	DWORD	(big-endian) object ID of queue
  07h	WORD	(big-endian) job number
-SeeAlso: #1662
+SeeAlso: #1838
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1662)
+Offset	Size	Description	(Table 1838)
  00h	WORD	(call) 0000h (no results returned)
-SeeAlso: #1661,#1663
+SeeAlso: #1837,#1839
 --------N-21E3--SF6A-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - REMOVE JOB FROM QUEUE (OLD)
 	AH = E3h subfn 6Ah
-	DS:SI -> request buffer (see #1663)
-	ES:DI -> reply buffer (see #1662)
-Return: AL = status (00h,96h,D0h,D1h,D5h,D6h,FEh,FFh) (see #1649)
+	DS:SI -> request buffer (see #1839)
+	ES:DI -> reply buffer (see #1838)
+Return: AL = status (00h,96h,D0h,D1h,D5h,D6h,FEh,FFh) (see #1825)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	caller must have created the job or be an operator
 SeeAlso: AH=E3h/SF=68h,AH=E3h/SF=6Ah,AH=E3h/SF=6Eh,AX=F217h/SF=6Ah
 
 Format of NetWare "Remove Job From Queue (old)" request buffer:
-Offset	Size	Description	(Table 1663)
+Offset	Size	Description	(Table 1839)
  00h	WORD	0007h (length of following data)
  02h	BYTE	6Ah (subfunction "Remove Job From Queue (old)")
  03h	DWORD	(big-endian) object ID of queue
@@ -2046,49 +2334,49 @@ Offset	Size	Description	(Table 1663)
 --------N-21E3--SF6B-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - GET QUEUE JOB LIST (OLD)
 	AH = E3h subfn 6Bh
-	DS:SI -> request buffer (see #1664)
-	ES:DI -> reply buffer (see #1665)
-Return: AL = status (00h,96h,9Ch,D0h-D3h,FCh,FEh,FFh) (see #1649)
+	DS:SI -> request buffer (see #1840)
+	ES:DI -> reply buffer (see #1841)
+Return: AL = status (00h,96h,9Ch,D0h-D3h,FCh,FEh,FFh) (see #1825)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	caller must be on a workstation which is security-equivalent to a
 	  member of the Q_USERS or Q_OPERATORS properties
 SeeAlso: AH=E3h/SF=68h,AH=E3h/SF=6Ah,AH=E3h/SF=6Eh,AX=F217h/SF=6Bh
 
 Format of NetWare "Get Queue Job List (old)" request buffer:
-Offset	Size	Description	(Table 1664)
+Offset	Size	Description	(Table 1840)
  00h	WORD	0005h (length of following data)
  02h	BYTE	6Bh (subfunction "Get Queue Job List (old)")
  03h	DWORD	(big-endian) object ID of queue
-SeeAlso: #1665
+SeeAlso: #1841
 
 Format of NetWare "Get Queue Job List (old)" reply buffer:
-Offset	Size	Description	(Table 1665)
+Offset	Size	Description	(Table 1841)
  00h	WORD	(call) size of following results buffer (max 1F6h)
  02h	WORD	(big-endian) job count
  04h  N WORDs	(big-endian) list of job numbers by position in queue
 	WORD	maximum job numbers
-SeeAlso: #1664
+SeeAlso: #1840
 --------N-21E3--SF6C-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - READ QUEUE JOB ENTRY (OLD)
 	AH = E3h subfn 6Ch
-	DS:SI -> request buffer (see #1666)
-	ES:DI -> reply buffer (see #1667)
-Return: AL = status (00h,96h,D0h-D3h,D5h,FCh,FEh,FFh) (see #1649)
+	DS:SI -> request buffer (see #1842)
+	ES:DI -> reply buffer (see #1843)
+Return: AL = status (00h,96h,D0h-D3h,D5h,FCh,FEh,FFh) (see #1825)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	caller must be on a workstation which is security-equivalent to a
 	  member of the Q_USERS, Q_OPERATORS, or Q_SERVERS properties
 SeeAlso: AH=E3h/SF=68h,AH=E3h/SF=6Ah,AH=E3h/SF=6Eh,AX=F217h/SF=6Ch
 
 Format of NetWare "Read Queue Job Entry (old)" request buffer:
-Offset	Size	Description	(Table 1666)
+Offset	Size	Description	(Table 1842)
  00h	WORD	0007h (length of following data)
  02h	BYTE	6Ch (subfunction "Read Queue Job Entry (old)")
  03h	DWORD	(big-endian) object ID of queue
  07h	WORD	(big-endian) job number
-SeeAlso: #1667
+SeeAlso: #1843
 
 Format of NetWare "Read Queue Job Entry (old)" reply buffer:
-Offset	Size	Description	(Table 1667)
+Offset	Size	Description	(Table 1843)
  00h	WORD	(call) 0100h (size of following results)
  02h	BYTE	client station number
  03h	BYTE	client task number
@@ -2101,7 +2389,7 @@ Offset	Size	Description	(Table 1667)
  18h	WORD	(big-endian) job number
  1Ah	WORD	(big-endian) job type
  1Ch	BYTE	job position
- 1Dh	BYTE	job control flags (see #1668)
+ 1Dh	BYTE	job control flags (see #1844)
  1Eh 14 BYTEs	ASCIZ job filename
  2Ch  6 BYTEs	job file handle
  32h	BYTE	server station
@@ -2109,10 +2397,10 @@ Offset	Size	Description	(Table 1667)
  34h	DWORD	object ID of server
  38h 50 BYTEs	ASCIZ job description string
  6Ah 152 BYTEs	client record area
-SeeAlso: #1666
+SeeAlso: #1842
 
 Bitfields for NetWare job control flags:
-Bit(s)	Description	(Table 1668)
+Bit(s)	Description	(Table 1844)
  3	job will be serviced automatically if connection broken
  4	job remains in queue after server aborts job
  5	client has not filled associated job file
@@ -2120,31 +2408,31 @@ Bit(s)	Description	(Table 1668)
 	  cleared by user or operator
  7	Operator Hold--job advances, but cannot be serviced until this is
 	  cleared by an operator
-SeeAlso: #1667
+SeeAlso: #1843
 --------N-21E3--SF6D-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - CHANGE QUEUE JOB ENTRY (OLD)
 	AH = E3h subfn 6Dh
-	DS:SI -> request buffer (see #1669)
-	ES:DI -> reply buffer (see #1671)
-Return: AL = status (00h,96h,D0h,D1h,D5h,D7h,FEh,FFh) (see #1649)
+	DS:SI -> request buffer (see #1845)
+	ES:DI -> reply buffer (see #1847)
+Return: AL = status (00h,96h,D0h,D1h,D5h,D7h,FEh,FFh) (see #1825)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	caller must be an operator or the user who created the job
 SeeAlso: AH=E3h/SF=68h,AH=E3h/SF=6Ah,AH=E3h/SF=6Ch,AH=E3h/SF=6Eh
 SeeAlso: AX=F217h/SF=6Dh
 
 Format of NetWare "Change Queue Job Entry" request buffer:
-Offset	Size	Description	(Table 1669)
+Offset	Size	Description	(Table 1845)
  00h	WORD	0105h (length of following data)
  02h	BYTE	6Dh (subfunction "Change Queue Job Entry")
  03h	DWORD	(big-endian) object ID of queue
- 07h 256 BYTEs	job structure (see #1659)
-SeeAlso: #1671
+ 07h 256 BYTEs	job structure (see #1835)
+SeeAlso: #1847
 --------N-21E3--SF6E-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - CHANGE QUEUE JOB POSITION
 	AH = E3h subfn 6Eh
-	DS:SI -> request buffer (see #1670)
-	ES:DI -> reply buffer (see #1671)
-Return: AL = status (00h,96h,D0h,D1h,D5h,D6h,FEh,FFh) (see #1649)
+	DS:SI -> request buffer (see #1846)
+	ES:DI -> reply buffer (see #1847)
+Return: AL = status (00h,96h,D0h,D1h,D5h,D6h,FEh,FFh) (see #1825)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	caller must be an operator
 	if the specified position is greater than the number of jobs in the
@@ -2153,24 +2441,24 @@ SeeAlso: AH=E3h/SF=68h,AH=E3h/SF=6Ah,AH=E3h/SF=6Ch,AH=E3h/SF=6Dh
 SeeAlso: AX=F217h/SF=6Eh
 
 Format of NetWare "Change Queue Job Position" request buffer:
-Offset	Size	Description	(Table 1670)
+Offset	Size	Description	(Table 1846)
  00h	WORD	0008h (length of following data)
  02h	BYTE	6Eh (subfunction "Change Queue Job Position")
  03h	DWORD	(big-endian) object ID of queue
  07h	WORD	(big-endian) job number
  09h	BYTE	new position in queue
 		(01h = first, FAh [250] = last position in full queue)
-SeeAlso: #1671
+SeeAlso: #1847
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1671)
+Offset	Size	Description	(Table 1847)
  00h	WORD	(call) 0000h (no results returned)
-SeeAlso: #1669,#1670,#1672
+SeeAlso: #1845,#1846,#1848
 --------N-21E3--SF6F-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - ATTACH QUEUE SERVER TO QUEUE
 	AH = E3h subfn 6Fh
-	DS:SI -> request buffer (see #1672)
-	ES:DI -> reply buffer (see #1671)
+	DS:SI -> request buffer (see #1848)
+	ES:DI -> reply buffer (see #1847)
 Return: AL = status (00h,96h,9Ch,D0h,D1h,D3h,DAh,DBh,FEh,FFh)
 		(see also AH=E3h/SF=64h)
 	    FFh bindery failure, or no such property, or no such member
@@ -2183,17 +2471,17 @@ SeeAlso: AH=E3h/SF=70h,AH=E3h/SF=71h,AH=E3h/SF=72h,AH=E3h/SF=73h,AH=E3h/SF=76h
 SeeAlso: AX=F217h/SF=6Fh
 
 Format of NetWare "Attach Queue Server to Queue" request buffer:
-Offset	Size	Description	(Table 1672)
+Offset	Size	Description	(Table 1848)
  00h	WORD	0005h (length of following data)
  02h	BYTE	6Fh (subfunction "Attach Queue Server To Queue")
  03h	DWORD	(big-endian) object ID of queue
-SeeAlso: #1671,#1673
+SeeAlso: #1847,#1849
 --------N-21E3--SF70-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - DETACH QUEUE SERVER FROM QUEUE
 	AH = E3h subfn 70h
-	DS:SI -> request buffer (see #1673)
-	ES:DI -> reply buffer (see #1671)
-Return: AL = status (00h,96h,9Ch,D0h,D1h,D2h,FEh,FFh) (see #1649)
+	DS:SI -> request buffer (see #1849)
+	ES:DI -> reply buffer (see #1847)
+Return: AL = status (00h,96h,9Ch,D0h,D1h,D2h,FEh,FFh) (see #1825)
 Desc:	remove the calling job server from the specified queue's list of
 	  servers
 Notes:	this function is supported by Advanced NetWare 2.1+
@@ -2202,18 +2490,18 @@ SeeAlso: AH=E3h/SF=6Fh,AH=E3h/SF=72h,AH=E3h/SF=73h,AH=E3h/SF=76h
 SeeAlso: AX=F217h/SF=70h
 
 Format of NetWare "Detach Queue Server From Queue" request buffer:
-Offset	Size	Description	(Table 1673)
+Offset	Size	Description	(Table 1849)
  00h	WORD	0005h (length of following data)
  02h	BYTE	70h (subfunction "Detach Queue Server From Queue")
  03h	DWORD	(big-endian) object ID of queue
-SeeAlso: #1671,#1672
+SeeAlso: #1847,#1848
 --------N-21E3--SF71-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - SERVICE QUEUE JOB AND OPEN FILE
 	AH = E3h subfn 71h
-	DS:SI -> request buffer (see #1674)
-	ES:DI -> reply buffer (see #1660)
+	DS:SI -> request buffer (see #1850)
+	ES:DI -> reply buffer (see #1836)
 Return: AL = status (00h,96h,9Ch,D0h,D1h,D3h,D5h,D9h,DAh,FEh,FFh)
-		(see #1649)
+		(see #1825)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the caller must be on a workstation which is security-equivalent to a
 	  member of the queue's Q_USERS, Q_OPERATORS, or Q_SERVERS properties
@@ -2221,19 +2509,19 @@ SeeAlso: AH=E3h/SF=6Fh,AH=E3h/SF=72h,AH=E3h/SF=73h,AH=E3h/SF=76h
 SeeAlso: AX=F217h/SF=71h
 
 Format of NetWare "Service Queue Job and Open File" request buffer:
-Offset	Size	Description	(Table 1674)
+Offset	Size	Description	(Table 1850)
  00h	WORD	0007h (length of following data)
  02h	BYTE	71h (subfunction "Service Queue Job and Open File")
  03h	DWORD	(big-endian) object ID of queue
  07h	WORD	(big-endian) target job type
 		FFFFh any
-SeeAlso: #1660,#1675
+SeeAlso: #1836,#1851
 --------N-21E3--SF72-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - FINISH SERVICING QUEUE JOB AND FILE
 	AH = E3h subfn 72h
-	DS:SI -> request buffer (see #1675)
-	ES:DI -> reply buffer (see #1677)
-Return: AL = status (00h,96h,D0h,D1h,D6h) (see #1649)
+	DS:SI -> request buffer (see #1851)
+	ES:DI -> reply buffer (see #1853)
+Return: AL = status (00h,96h,D0h,D1h,D6h) (see #1825)
 Desc:	inform the Queue Management System (QMS) that the queue server has
 	  completed a job
 Notes:	this function is supported by Advanced NetWare 2.1+
@@ -2243,19 +2531,19 @@ SeeAlso: AH=E3h/SF=6Fh,AH=E3h/SF=71h,AH=E3h/SF=73h,AH=E3h/SF=76h
 SeeAlso: AX=F217h/SF=72h
 
 Format of NetWare "Finish Servicing Queue Job and File (old)" request buffer:
-Offset	Size	Description	(Table 1675)
+Offset	Size	Description	(Table 1851)
  00h	WORD	000Bh (length of following data)
  02h	BYTE	72h (subfunction "Finish Servicing Queue Job and File (old)")
  03h	DWORD	(big-endian) object ID of queue
  07h	WORD	(big-endian) job number
  09h	DWORD	(big-endian) charge
-SeeAlso: #1677,#1674,#1686
+SeeAlso: #1853,#1850,#1862
 --------N-21E3--SF73-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - ABORT SERVICING QUEUE JOB AND FILE
 	AH = E3h subfn 73h
-	DS:SI -> request buffer (see #1676)
-	ES:DI -> reply buffer (see #1677)
-Return: AL = status (00h,96h,D0h,D1h,D6h,D9h) (see #1649)
+	DS:SI -> request buffer (see #1852)
+	ES:DI -> reply buffer (see #1853)
+Return: AL = status (00h,96h,D0h,D1h,D6h,D9h) (see #1825)
 Desc:	inform the Queue Management System (QMS) that the queue server is
 	  unable to service a previously-accepted job
 Notes:	this function is supported by Advanced NetWare 2.1+
@@ -2266,23 +2554,23 @@ SeeAlso: AH=E3h/SF=6Fh,AH=E3h/SF=71h,AH=E3h/SF=72h,AH=E3h/SF=76h,AH=E3h/SF=84h
 SeeAlso: AX=F217h/SF=73h
 
 Format of NetWare "Abort Servicing Queue Job and File (old)" request buffer:
-Offset	Size	Description	(Table 1676)
+Offset	Size	Description	(Table 1852)
  00h	WORD	0007h (length of following data)
  02h	BYTE	73h (subfunction "Abort Servicing Queue Job and File (old)")
  03h	DWORD	(big-endian) object ID of queue
  07h	WORD	(big-endian) job number
-SeeAlso: #1677,#1675
+SeeAlso: #1853,#1851
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1677)
+Offset	Size	Description	(Table 1853)
  00h	WORD	(call) 0000h (no results returned)
-SeeAlso: #1675,#1676,#1678,#1679
+SeeAlso: #1851,#1852,#1854,#1855
 --------N-21E3--SF74-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - CHANGE TO CLIENT RIGHTS (OLD)
 	AH = E3h subfn 74h
-	DS:SI -> request buffer (see #1678)
-	ES:DI -> reply buffer (see #1677)
-Return: AL = status (00h,96h,D0h,D1h,D5h,D9h) (see #1649)
+	DS:SI -> request buffer (see #1854)
+	ES:DI -> reply buffer (see #1853)
+Return: AL = status (00h,96h,D0h,D1h,D5h,D9h) (see #1825)
 Desc:	temporarily assume the login identity of the client submitting the
 	  job being serviced
 Notes:	this function is supported by Advanced NetWare 2.1+
@@ -2290,18 +2578,18 @@ Notes:	this function is supported by Advanced NetWare 2.1+
 SeeAlso: AH=E3h/SF=75h,AX=F217h/SF=74h
 
 Format of NetWare "Change to Client Rights (old)" request buffer:
-Offset	Size	Description	(Table 1678)
+Offset	Size	Description	(Table 1854)
  00h	WORD	0007h (length of following data)
  02h	BYTE	74h (subfunction "Change To Client Rights (old)")
  03h	DWORD	(big-endian) object ID of queue
  07h	WORD	(big-endian) job number
-SeeAlso: #1677,#1679
+SeeAlso: #1853,#1855
 --------N-21E3--SF75-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - RESTORE QUEUE SERVER RIGHTS
 	AH = E3h subfn 75h
-	DS:SI -> request buffer (see #1679)
-	ES:DI -> reply buffer (see #1677)
-Return: AL = status (00h,96h,9Ch,D0h,D1h,D3h,D5h,D9h,DAh,FEh,FFh) (see #1649)
+	DS:SI -> request buffer (see #1855)
+	ES:DI -> reply buffer (see #1853)
+Return: AL = status (00h,96h,9Ch,D0h,D1h,D3h,D5h,D9h,DAh,FEh,FFh) (see #1825)
 Desc:	restore server's own identity after assuming the login identity of the
 	  client submitting the job being serviced
 Notes:	this function is supported by Advanced NetWare 2.1+
@@ -2309,16 +2597,16 @@ Notes:	this function is supported by Advanced NetWare 2.1+
 SeeAlso: AH=E3h/SF=74h,AX=F217h/SF=75h
 
 Format of NetWare "Restore Queue Server Rights" request buffer:
-Offset	Size	Description	(Table 1679)
+Offset	Size	Description	(Table 1855)
  00h	WORD	0001h (length of following data)
  02h	BYTE	75h (subfunction "Change To Client Rights")
-SeeAlso: #1677,#1678
+SeeAlso: #1853,#1854
 --------N-21E3--SF76-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - READ QUEUE SERVER CURRENT STATUS OLD
 	AH = E3h subfn 76h
-	DS:SI -> request buffer (see #1680)
-	ES:DI -> reply buffer (see #1681)
-Return: AL = status (00h,96h,9Ch,D1h-D3h,F1h,FCh,FEh,FFh) (see #1649)
+	DS:SI -> request buffer (see #1856)
+	ES:DI -> reply buffer (see #1857)
+Return: AL = status (00h,96h,9Ch,D1h-D3h,F1h,FCh,FEh,FFh) (see #1825)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	caller must be on a workstation which is security-equivalent to a
 	  member of the Q_USERS or Q_OPERATORS properties
@@ -2326,52 +2614,52 @@ SeeAlso: AH=E3h/SF=68h,AH=E3h/SF=6Ch,AH=E3h/SF=6Fh,AH=E3h/SF=77h,AH=E3h/SF=78h
 SeeAlso: AX=F217h/SF=76h
 
 Format of NetWare "Read Queue Server Current Status (old)" request buffer:
-Offset	Size	Description	(Table 1680)
+Offset	Size	Description	(Table 1856)
  00h	WORD	000Ah (length of following data)
  02h	BYTE	76h (subfunction "Read Queue Server Current Status (old)")
  03h	DWORD	(big-endian) object ID of queue
  07h	DWORD	(big-endian) object ID of server
  0Bh	BYTE	server station
-SeeAlso: #1681
+SeeAlso: #1857
 
 Format of NetWare "Read Queue Server Current Status (old)" reply buffer:
-Offset	Size	Description	(Table 1681)
+Offset	Size	Description	(Table 1857)
  00h	WORD	(call) 0040h (size of following results)
  02h 64 BYTEs	server status record (format depends on server)
 		first four bytes should contain estimated "price" for an
 		  average job
-SeeAlso: #1680,#1891
+SeeAlso: #1856,#2067
 --------N-21E3--SF77-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - SET QUEUE SERVER CURRENT STATUS
 	AH = E3h subfn 77h
-	DS:SI -> request buffer (see #1682)
-	ES:DI -> reply buffer (see #1683)
-Return: AL = status (00h,96h,9Ch,D0h,D1h,FEh,FFh) (see #1649)
+	DS:SI -> request buffer (see #1858)
+	ES:DI -> reply buffer (see #1859)
+Return: AL = status (00h,96h,9Ch,D0h,D1h,FEh,FFh) (see #1825)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	caller must be a job server which has attached itself to the queue
 SeeAlso: AH=E3h/SF=68h,AH=E3h/SF=6Ch,AH=E3h/SF=6Fh,AH=E3h/SF=76h,AH=E3h/SF=78h
 SeeAlso: AX=F217h/SF=77h
 
 Format of NetWare "Set Queue Server Current Status" request buffer:
-Offset	Size	Description	(Table 1682)
+Offset	Size	Description	(Table 1858)
  00h	WORD	0045h (length of following data)
  02h	BYTE	77h (subfunction "Set Queue Server Current Status")
  03h	DWORD	(big-endian) object ID of queue
  07h 64 BYTEs	server status record (format depends on server)
 		first four bytes should contain estimated "price" for an
 		  average job
-SeeAlso: #1683
+SeeAlso: #1859
 
 Format of NetWare "Set Queue Server Current Status" reply buffer:
-Offset	Size	Description	(Table 1683)
+Offset	Size	Description	(Table 1859)
  00h	WORD	(call) 0000h (no results returned)
-SeeAlso: #1682
+SeeAlso: #1858
 --------N-21E3--SF78-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - GET QUEUE JOB'S FILE SIZE (OLD)
 	AH = E3h subfn 78h
-	DS:SI -> request buffer (see #1684)
-	ES:DI -> reply buffer (see #1685)
-Return: AL = status (see also #1649)
+	DS:SI -> request buffer (see #1860)
+	ES:DI -> reply buffer (see #1861)
+Return: AL = status (see also #1825)
 	    00h successful
 Notes:	this function is supported by Advanced NetWare 2.1+
 	caller must be on a workstation which is security-equivalent to a
@@ -2379,26 +2667,26 @@ Notes:	this function is supported by Advanced NetWare 2.1+
 SeeAlso: AH=E3h/SF=68h,AH=E3h/SF=6Ch,AH=E3h/SF=71h,AX=F217h/SF=78h
 
 Format of NetWare "Get Queue Job's File Size (old)" request buffer:
-Offset	Size	Description	(Table 1684)
+Offset	Size	Description	(Table 1860)
  00h	WORD	0007h (length of following data)
  02h	BYTE	78h (subfunction "Get Queue Job's File Size (old)")
  03h	DWORD	(big-endian) object ID of queue
  07h	WORD	(big-endian) job number
-SeeAlso: #1685,#1892 at AX=F217h/SF=78h
+SeeAlso: #1861,#2068 at AX=F217h/SF=78h
 
 Format of NetWare "Get Queue Job's File Size (old)" reply buffer:
-Offset	Size	Description	(Table 1685)
+Offset	Size	Description	(Table 1861)
  00h	WORD	(call) 000Ah (size of following results)
  02h	DWORD	(big-endian) object ID of queue
  06h	WORD	(big-endian) job number
  08h	DWORD	(big-endian) size of job file in bytes
-SeeAlso: #1684,#1892 at AX=F217h/SF=78h
+SeeAlso: #1860,#2068 at AX=F217h/SF=78h
 --------N-21E3--SF83-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - FINISH SERVICING QUEUE JOB
 	AH = E3h subfn 83h
-	DS:SI -> request buffer (see #1686)
-	ES:DI -> reply buffer (see #1687)
-Return: AL = status (00h,96h,D0h,D1h,D6h,D9h) (see #1649)
+	DS:SI -> request buffer (see #1862)
+	ES:DI -> reply buffer (see #1863)
+Return: AL = status (00h,96h,D0h,D1h,D6h,D9h) (see #1825)
 Desc:	inform the Queue Management System (QMS) that the queue server has
 	 completed servicing a previously-accepted job
 Notes:	this function is supported by Advanced NetWare 3.1+
@@ -2408,24 +2696,24 @@ SeeAlso: AH=E3h/SF=6Fh,AH=E3h/SF=71h,AH=E3h/SF=72h,AH=E3h/SF=73h,AH=E3h/SF=84h
 SeeAlso: AX=F217h/SF=83h
 
 Format of NetWare "Finish Servicing Queue Job" request buffer:
-Offset	Size	Description	(Table 1686)
+Offset	Size	Description	(Table 1862)
  00h	WORD	0007h (length of following data)
  02h	BYTE	84h (subfunction "Abort Servicing Queue Job")
  03h	DWORD	(big-endian) object ID of queue
  07h	WORD	(big-endian) job number
  09h	DWORD	(big-endian) charge for job
-SeeAlso: #1687,#1675
+SeeAlso: #1863,#1851
 
 Format of NetWare "Finish Servicing Queue Job" reply buffer:
-Offset	Size	Description	(Table 1687)
+Offset	Size	Description	(Table 1863)
  00h	WORD	(call) 0000h (no results returned)
-SeeAlso: #1686
+SeeAlso: #1862
 --------N-21E3--SF84-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - ABORT SERVICING QUEUE JOB
 	AH = E3h subfn 84h
-	DS:SI -> request buffer (see #1688)
-	ES:DI -> reply buffer (see #1689)
-Return: AL = status (00h,96h,D0h,D1h,D6h,D9h) (see #1649)
+	DS:SI -> request buffer (see #1864)
+	ES:DI -> reply buffer (see #1865)
+Return: AL = status (00h,96h,D0h,D1h,D6h,D9h) (see #1825)
 Desc:	inform the Queue Management System (QMS) that the queue server is
 	  unable to service a previously-accepted job
 Notes:	this function is supported by Advanced NetWare 3.1+
@@ -2435,27 +2723,27 @@ SeeAlso: AH=E3h/SF=6Fh,AH=E3h/SF=71h,AH=E3h/SF=72h,AH=E3h/SF=73h,AH=E3h/SF=76h
 SeeAlso: AX=F217h/SF=84h
 
 Format of NetWare "Abort Servicing Queue Job" request buffer:
-Offset	Size	Description	(Table 1688)
+Offset	Size	Description	(Table 1864)
  00h	WORD	0007h (length of following data)
  02h	BYTE	84h (subfunction "Abort Servicing Queue Job")
  03h	DWORD	(big-endian) object ID of queue
  07h	WORD	(big-endian) job number
-SeeAlso: #1689
+SeeAlso: #1865
 
 Format of NetWare "Abort Servicing Queue Job" reply buffer:
-Offset	Size	Description	(Table 1689)
+Offset	Size	Description	(Table 1865)
  00h	WORD	(call) 0000h (no results returned)
-SeeAlso: #1688
+SeeAlso: #1864
 --------N-21E3--SF96-------------------------
 INT 21 - Novell NetWare - ACCOUNTING SERVICES - GET ACCOUNT STATUS
 	AH = E3h subfn 96h
-	DS:SI -> request buffer (see #1691)
-	ES:DI -> reply buffer (see #1692)
-Return: AL = status (00h,C0h,C1h) (see #1690)
+	DS:SI -> request buffer (see #1867)
+	ES:DI -> reply buffer (see #1868)
+Return: AL = status (00h,C0h,C1h) (see #1866)
 Note:	this function is supported by Advanced NetWare 2.1+
 SeeAlso: AH=E3h/SF=97h,AH=E3h/SF=98h,AH=E3h/SF=99h,AX=F217h/SF=96h
 
-(Table 1690)
+(Table 1866)
 Values for NetWare function status:
  00h	successful
  C0h	no account privileges
@@ -2463,19 +2751,19 @@ Values for NetWare function status:
  C2h	credit limit exceeded
  C3h	too many holds on account
  C6h	no console rights
-SeeAlso: #1649
+SeeAlso: #1825
 
 Format of NetWare "Get Account Status" request buffer:
-Offset	Size	Description	(Table 1691)
+Offset	Size	Description	(Table 1867)
  00h	WORD	length of following data (max 33h)
  02h	BYTE	96h (subfunction "Get Account Status")
  03h	WORD	(big-endian) type of bindery object
  05h	BYTE	length of object name (01h to 2Fh)
  06h  N BYTEs	object name
-SeeAlso: #1692,#1912 at AX=F217h/SF=96h
+SeeAlso: #1868,#2088 at AX=F217h/SF=96h
 
 Format of NetWare "Get Account Status" reply buffer:
-Offset	Size	Description	(Table 1692)
+Offset	Size	Description	(Table 1868)
  00h	WORD	(call) length of following buffer space
  02h	DWORD	(big-endian) account balance
  06h	DWORD	(big-endian) credit limit
@@ -2488,18 +2776,18 @@ Offset	Size	Description	(Table 1692)
  FCh	DWORD	(big-endian) hold amount, server 16
 Note:	the reply buffer lists the servers which have placed holds on a portion
 	  of the account balance, and the amount reserved by each
-SeeAlso: #1691,#1912 at AX=F217h/SF=96h
+SeeAlso: #1867,#2088 at AX=F217h/SF=96h
 --------N-21E3--SF97-------------------------
 INT 21 - Novell NetWare - ACCOUNTING SERVICES - SUBMIT ACCOUNT CHARGE
 	AH = E3h subfn 97h
-	DS:SI -> request buffer (see #1693)
-	ES:DI -> reply buffer (see #1695)
-Return: AL = status (00h,C0h-C2h) (see #1690)
+	DS:SI -> request buffer (see #1869)
+	ES:DI -> reply buffer (see #1871)
+Return: AL = status (00h,C0h-C2h) (see #1866)
 Note:	this function is supported by Advanced NetWare 2.1+
 SeeAlso: AH=E3h/SF=96h,AH=E3h/SF=98h,AX=F217h/SF=97h
 
 Format of NetWare "Submit Account Charge" request buffer:
-Offset	Size	Description	(Table 1693)
+Offset	Size	Description	(Table 1869)
  00h	WORD	length of following data (max 13Fh)
  02h	BYTE	97h (subfunction "Submit Account Charge")
  03h	WORD	(big-endian) service type
@@ -2512,41 +2800,41 @@ Offset	Size	Description	(Table 1693)
  12h  N BYTEs	object name
 	BYTE	length of comment
       N BYTEs	comment
-SeeAlso: #1695
+SeeAlso: #1871
 --------N-21E3--SF98-------------------------
 INT 21 - Novell NetWare - ACCOUNTING SERVICES - SUBMIT ACCOUNT HOLD
 	AH = E3h subfn 98h
-	DS:SI -> request buffer (see #1694)
-	ES:DI -> reply buffer (see #1695)
-Return: AL = status (00h,C0h-C3h) (see #1690)
+	DS:SI -> request buffer (see #1870)
+	ES:DI -> reply buffer (see #1871)
+Return: AL = status (00h,C0h-C3h) (see #1866)
 Note:	this function is supported by Advanced NetWare 2.1+
 SeeAlso: AH=E3h/SF=96h,AH=E3h/SF=97h,AX=F217h/SF=98h
 
 Format of NetWare "Submit Account Hold" request buffer:
-Offset	Size	Description	(Table 1694)
+Offset	Size	Description	(Table 1870)
  00h	WORD	length of following data (max 37h)
  02h	BYTE	98h (subfunction "Submit Account Hold")
  03h	DWORD	(big-endian) amount of account balance to reserve
  07h	WORD	(big-endian) type of bindery object
  09h	BYTE	length of object's name
  0Ah  N BYTEs	object name
-SeeAlso: #1695
+SeeAlso: #1871
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1695)
+Offset	Size	Description	(Table 1871)
  00h	WORD	0000h (no data returned)
-SeeAlso: #1693,#1694,#1696,#1697
+SeeAlso: #1869,#1870,#1872,#1873
 --------N-21E3--SF99-------------------------
 INT 21 - Novell NetWare - ACCOUNTING SERVICES - SUBMIT ACCOUNT NOTE
 	AH = E3h subfn 99h
-	DS:SI -> request buffer (see #1696)
-	ES:DI -> reply buffer (see #1695)
-Return: AL = status (00h,C0h) (see #1690)
+	DS:SI -> request buffer (see #1872)
+	ES:DI -> reply buffer (see #1871)
+Return: AL = status (00h,C0h) (see #1866)
 Note:	this function is supported by Advanced NetWare 2.1+
 SeeAlso: AH=E3h/SF=96h,AX=F217h/SF=99h
 
 Format of NetWare "Submit Account Note" request buffer:
-Offset	Size	Description	(Table 1696)
+Offset	Size	Description	(Table 1872)
  00h	WORD	length of following data (max 137h)
  02h	BYTE	99h (subfunction "Submit Account Note")
  03h	WORD	(big-endian) type of service
@@ -2557,13 +2845,13 @@ Offset	Size	Description	(Table 1696)
  0Ah  N BYTEs	object name
 	BYTE	length of comment
       N BYTEs	comment
-SeeAlso: #1695
+SeeAlso: #1871
 --------N-21E3--SFC8-------------------------
 INT 21 - Novell NetWare - FILE SERVER - CHECK CONSOLE PRIVILEGES
 	AH = E3h subfn C8h
-	DS:SI -> request buffer (see #1697)
-	ES:DI -> reply buffer (see #1695)
-Return: AL = status (00h,C6h) (see #1690)
+	DS:SI -> request buffer (see #1873)
+	ES:DI -> reply buffer (see #1871)
+Return: AL = status (00h,C6h) (see #1866)
 Desc:	determine whether the caller is a console operator
 Notes:	this function is supported by Advanced NetWare 2.1+
 	NetWare determines console privileges by checking the file server's
@@ -2571,15 +2859,15 @@ Notes:	this function is supported by Advanced NetWare 2.1+
 SeeAlso: AH=E3h/SF=C9h,AH=E3h/SF=D1h,AX=F217h/SF=C8h
 
 Format of NetWare "Check Console Privileges" request buffer:
-Offset	Size	Description	(Table 1697)
+Offset	Size	Description	(Table 1873)
  00h	WORD	0001h (length of following data)
  02h	BYTE	C8h (subfunction "Check Console Privileges")
-SeeAlso: #1695
+SeeAlso: #1871
 --------N-21E3--SFC9-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET FILE SERVER DESCRIPTION STRINGS
 	AH = E3h subfn C9h
-	DS:SI -> request buffer (see #1698)
-	ES:DI -> reply buffer (see #1699)
+	DS:SI -> request buffer (see #1874)
+	ES:DI -> reply buffer (see #1875)
 Return: AL = status
 	    00h successful
 Notes:	this function is supported by Advanced NetWare 2.1+
@@ -2587,32 +2875,32 @@ Notes:	this function is supported by Advanced NetWare 2.1+
 SeeAlso: AH=E3h/SF=11h,AH=E3h/SF=CDh,AH=E3h/SF=E8h,AX=F217h/SF=C9h
 
 Format of NetWare "Get File Server Description Strings" request buffer:
-Offset	Size	Description	(Table 1698)
+Offset	Size	Description	(Table 1874)
  00h	WORD	0001h (length of following data)
  02h	BYTE	C9h (subfunction "Get File Server Description Strings")
-SeeAlso: #1699,#1913 at AX=F217h/SF=C9h
+SeeAlso: #1875,#2089 at AX=F217h/SF=C9h
 
 Format of NetWare "Get File Server Description Strings" reply buffer:
-Offset	Size	Description	(Table 1699)
+Offset	Size	Description	(Table 1875)
  00h	WORD	(call) 0200h (size of following results buffer)
  02h	var	ASCIZ name of company distributing this copy of NetWare
 	var	ASCIZ version and revision
       9 BYTEs	ASCIZ revision date (mm/dd/yy)
 	var	ASCIZ copyright notice
-SeeAlso: #1698,#1913 at AX=F217h/SF=C9h
+SeeAlso: #1874,#2089 at AX=F217h/SF=C9h
 --------N-21E3--SFCA-------------------------
 INT 21 - Novell NetWare - FILE SERVER - SET FILE SERVER DATE AND TIME
 	AH = E3h subfn CAh
-	DS:SI -> request buffer (see #1700)
-	ES:DI -> reply buffer (see #1702)
-Return: AL = status (00h,C6h) (see #1690)
+	DS:SI -> request buffer (see #1876)
+	ES:DI -> reply buffer (see #1878)
+Return: AL = status (00h,C6h) (see #1866)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have console operator privileges
 SeeAlso: AH=2Bh"DATE",AH=2Dh"TIME",AH=E3h/SF=C8h,AH=E7h"Novell",AX=F217h/SF=CAh
 SeeAlso: AX=F214h
 
 Format of NetWare "Set File Server Date and Time" request buffer:
-Offset	Size	Description	(Table 1700)
+Offset	Size	Description	(Table 1876)
  00h	WORD	0007h (length of following data)
  02h	BYTE	CAh (subfunction "Set File Server Date And Time")
  03h	BYTE	year (00-79 = 2000-2079, 80-99 = 1980-1999)
@@ -2621,69 +2909,69 @@ Offset	Size	Description	(Table 1700)
  06h	BYTE	hour (0-23)
  07h	BYTE	minute
  08h	BYTE	second
-SeeAlso: #1702,#1794 at AX=F214h
+SeeAlso: #1878,#1970 at AX=F214h
 --------N-21E3--SFCB-------------------------
 INT 21 - Novell NetWare - FILE SERVER - DISABLE FILE SERVER LOGIN
 	AH = E3h subfn CBh
-	DS:SI -> request buffer (see #1701)
-	ES:DI -> reply buffer (see #1702)
-Return: AL = status (00h,C6h) (see #1690)
+	DS:SI -> request buffer (see #1877)
+	ES:DI -> reply buffer (see #1878)
+Return: AL = status (00h,C6h) (see #1866)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have console operator privileges
 SeeAlso: AH=E3h/SF=C8h,AH=E3h/SF=CCh,AH=E3h/SF=D3h,AX=F217h/SF=CBh
 
 Format of NetWare "Disable File Server Login" request buffer:
-Offset	Size	Description	(Table 1701)
+Offset	Size	Description	(Table 1877)
  00h	WORD	0001h (length of following data)
  02h	BYTE	CBh (subfunction "Disable File Server Login")
-SeeAlso: #1702,#1703
+SeeAlso: #1878,#1879
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1702)
+Offset	Size	Description	(Table 1878)
  00h	WORD	(call) 0000h (no results returned)
-SeeAlso: #1700,#1701,#1703
+SeeAlso: #1876,#1877,#1879
 --------N-21E3--SFCC-------------------------
 INT 21 - Novell NetWare - FILE SERVER - ENABLE FILE SERVER LOGIN
 	AH = E3h subfn CCh
-	DS:SI -> request buffer (see #1703)
-	ES:DI -> reply buffer (see #1702)
-Return: AL = status (00h,C6h) (see #1690)
+	DS:SI -> request buffer (see #1879)
+	ES:DI -> reply buffer (see #1878)
+Return: AL = status (00h,C6h) (see #1866)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have console operator privileges
 SeeAlso: AH=E3h/SF=C8h,AH=E3h/SF=CBh,AX=F217h/SF=CCh
 
 Format of NetWare "Enable File Server Login" request buffer:
-Offset	Size	Description	(Table 1703)
+Offset	Size	Description	(Table 1879)
  00h	WORD	0001h (length of following data)
  02h	BYTE	CCh (subfunction "Enable File Server Login")
-SeeAlso: #1702
+SeeAlso: #1878
 --------N-21E3--SFCD-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET FILE SERVER LOGIN STATUS
 	AH = E3h subfn CDh
-	DS:SI -> request buffer (see #1704)
-	ES:DI -> reply buffer (see #1705)
-Return: AL = status (00h,C6h) (see #1690)
+	DS:SI -> request buffer (see #1880)
+	ES:DI -> reply buffer (see #1881)
+Return: AL = status (00h,C6h) (see #1866)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have console operator privileges
 SeeAlso: AH=E3h/SF=C8h,AH=E3h/SF=CBh,AH=E3h/SF=CCh
 
 Format of NetWare "Get File Server Login Status" request buffer:
-Offset	Size	Description	(Table 1704)
+Offset	Size	Description	(Table 1880)
  00h	WORD	0001h (length of following data)
  02h	BYTE	CDh (subfunction "Get File Server Login Status")
-SeeAlso: #1705,#1914 at AX=F217h/SF=CDh
+SeeAlso: #1881,#2090 at AX=F217h/SF=CDh
 
 Format of NetWare "Get File Server Login Status" reply buffer:
-Offset	Size	Description	(Table 1705)
+Offset	Size	Description	(Table 1881)
  00h	WORD	(call) 0001h (size of following results buffer)
  02h	BYTE	login state (00h disabled, 01h enabled)
-SeeAlso: #1704,#1914 at AX=F217h/SF=CDh
+SeeAlso: #1880,#2090 at AX=F217h/SF=CDh
 --------N-21E3--SFCE-------------------------
 INT 21 - Novell NetWare - FILE SERVICES - PURGE ALL ERASED FILES
 	AH = E3h subfn CEh
-	DS:SI -> request buffer (see #1706)
-	ES:DI -> reply buffer (see #1708)
-Return: AL = status (00h,C6h) (see #1690)
+	DS:SI -> request buffer (see #1882)
+	ES:DI -> reply buffer (see #1884)
+Return: AL = status (00h,C6h) (see #1866)
 Desc:	all files marked for deletion on the file server are purged, regardless
 	  of which workstation actually erased them
 Notes:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
@@ -2692,36 +2980,36 @@ Notes:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 SeeAlso: AH=13h,AH=E2h/SF=10h,AH=E3h/SF=C8h,AX=F217h/SF=CEh,AX=F244h
 
 Format of NetWare "Purge All Erased Files" request buffer:
-Offset	Size	Description	(Table 1706)
+Offset	Size	Description	(Table 1882)
  00h	WORD	0001h (length of following data)
  02h	BYTE	CEh (subfunction "Purge All Erased Files")
-SeeAlso: #1708
+SeeAlso: #1884
 --------N-21E3--SFCF-------------------------
 INT 21 - Novell NetWare - FILE SERVER - DISABLE TRANSACTION TRACKING
 	AH = E3h subfn CFh
-	DS:SI -> request buffer (see #1707)
-	ES:DI -> reply buffer (see #1708)
-Return: AL = status (00h,C6h) (see #1690)
+	DS:SI -> request buffer (see #1883)
+	ES:DI -> reply buffer (see #1884)
+Return: AL = status (00h,C6h) (see #1866)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have console operator privileges
 SeeAlso: AH=E3h/SF=C8h,AH=E3h/SF=D0h
 
 Format of NetWare "Disable Transaction Tracking" request buffer:
-Offset	Size	Description	(Table 1707)
+Offset	Size	Description	(Table 1883)
  00h	WORD	0001h (length of following data)
  02h	BYTE	CFh (subfunction "Disable Transaction Tracking")
-SeeAlso: #1708,#1709
+SeeAlso: #1884,#1885
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1708)
+Offset	Size	Description	(Table 1884)
  00h	WORD	(call) 0000h (no results returned)
-SeeAlso: #1706,#1707,#1709
+SeeAlso: #1882,#1883,#1885
 --------N-21E3--SFD0-------------------------
 INT 21 - Novell NetWare - FILE SERVER - ENABLE TRANSACTION TRACKING
 	AH = E3h subfn D0h
-	DS:SI -> request buffer (see #1709)
-	ES:DI -> reply buffer (see #1708)
-Return: AL = status (00h,C6h) (see #1713)
+	DS:SI -> request buffer (see #1885)
+	ES:DI -> reply buffer (see #1884)
+Return: AL = status (00h,C6h) (see #1889)
 Desc:	restart transaction tracking after being stopped either explicitly by
 	  AH=E3h/SF=CFh or automatically due to a full transaction volume
 Notes:	this function is supported by Advanced NetWare 2.1+
@@ -2729,16 +3017,16 @@ Notes:	this function is supported by Advanced NetWare 2.1+
 SeeAlso: AH=E3h/SF=C8h,AH=E3h/SF=CFh,AX=F217h/SF=D0h
 
 Format of NetWare "Enable Transaction Tracking" request buffer:
-Offset	Size	Description	(Table 1709)
+Offset	Size	Description	(Table 1885)
  00h	WORD	0001h (length of following data)
  02h	BYTE	D0h (subfunction "Enable Transaction Tracking")
-SeeAlso: #1708,#1707
+SeeAlso: #1884,#1883
 --------N-21E3--SFD1-------------------------
 INT 21 - Novell NetWare - FILE SERVER - SEND CONSOLE BROADCAST
 	AH = E3h subfn D1h
-	DS:SI -> request buffer (see #1710)
-	ES:DI -> reply buffer (see #1712)
-Return: AL = status (00h,C6h) (see #1713)
+	DS:SI -> request buffer (see #1886)
+	ES:DI -> reply buffer (see #1888)
+Return: AL = status (00h,C6h) (see #1889)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have console operator privileges
 	the broadcast message will not be received by workstations which have
@@ -2747,7 +3035,7 @@ SeeAlso: AH=E1h/SF=02h,AH=E1h/SF=09h,AH=E3h/SF=C8h,AH=E3h/SF=D3h
 SeeAlso: AX=F217h/SF=D1h
 
 Format of NetWare "Send Console Broadcast" request buffer:
-Offset	Size	Description	(Table 1710)
+Offset	Size	Description	(Table 1886)
  00h	WORD	length of following data (max A2h)
  02h	BYTE	D1h (subfunction "Send Console Broadcast")
  03h	BYTE	number of connections to receive message
@@ -2755,13 +3043,13 @@ Offset	Size	Description	(Table 1710)
  04h  N BYTEs	connection list
 	BYTE	length of message (max 3Ch)
       N BYTEs	message
-SeeAlso: #1712
+SeeAlso: #1888
 --------N-21E3--SFD2-------------------------
 INT 21 - Novell NetWare - FILE SERVER - CLEAR CONNECTION NUMBER
 	AH = E3h subfn D2h
-	DS:SI -> request buffer (see #1711)
-	ES:DI -> reply buffer (see #1712)
-Return: AL = status (00h,C6h) (see #1713)
+	DS:SI -> request buffer (see #1887)
+	ES:DI -> reply buffer (see #1888)
+Return: AL = status (00h,C6h) (see #1889)
 Desc:	close the open files and release all file locks for a connection,
 	  abort transactions if a TTS file server, and detach from the file
 	  server
@@ -2770,59 +3058,59 @@ Notes:	this function is supported by Advanced NetWare 2.1+
 SeeAlso: AH=E3h/SF=C9h,AH=E3h/SF=D1h,AX=F217h/SF=D2h,AX=F217h/SF=FEh
 
 Format of NetWare "Clear Connection Number" request buffer:
-Offset	Size	Description	(Table 1711)
+Offset	Size	Description	(Table 1887)
  00h	WORD	0002h (length of following data)
  02h	BYTE	D2h (subfunction "Clear Connection Number")
  03h	BYTE	connection number
-SeeAlso: #1712,#1965
+SeeAlso: #1888,#2141
 
 Format of NetWare reply buffer:
-Offset	Size	Description	(Table 1712)
+Offset	Size	Description	(Table 1888)
  00h	WORD	(call) 0000h (no results returned)
-SeeAlso: #1710,#1711,#1714
+SeeAlso: #1886,#1887,#1890
 --------N-21E3--SFD3-------------------------
 INT 21 - Novell NetWare - FILE SERVER - DOWN FILE SERVER
 	AH = E3h subfn D3h
-	DS:SI -> request buffer (see #1714)
-	ES:DI -> reply buffer (see #1712)
-Return: AL = status (00h,C6h,FFh) (see #1713)
+	DS:SI -> request buffer (see #1890)
+	ES:DI -> reply buffer (see #1888)
+Return: AL = status (00h,C6h,FFh) (see #1889)
 Desc:	take down the file server
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have SUPERVISOR privileges
 SeeAlso: AH=E3h/SF=C8h,AH=E3h/SF=CBh,AH=E3h/SF=CFh,AH=E3h/SF=D1h
 
-(Table 1713)
+(Table 1889)
 Values for NetWare function status:
  00h	successful
  C6h	no console rights
  FFh	files open
-SeeAlso: #1690,#1741
+SeeAlso: #1866,#1917
 
 Format of NetWare "Down File Server" request buffer:
-Offset	Size	Description	(Table 1714)
+Offset	Size	Description	(Table 1890)
  00h	WORD	0002h (length of following data)
  02h	BYTE	D3h (subfunction "Down File Server")
  03h	BYTE	flag: force down even if files open if nonzero
-SeeAlso: #1712
+SeeAlso: #1888
 --------N-21E3--SFD4-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET FILE SYSTEM STATISTICS
 	AH = E3h subfn D4h
-	DS:SI -> request buffer (see #1715)
-	ES:DI -> reply buffer (see #1716)
-Return: AL = status (00h,C6h) (see #1713)
+	DS:SI -> request buffer (see #1891)
+	ES:DI -> reply buffer (see #1892)
+Return: AL = status (00h,C6h) (see #1889)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have console operator privileges
 SeeAlso: AH=E3h/SF=0Eh,AH=E3h/SF=C8h,AH=E3h/SF=D9h,AH=E3h/SF=E7h,AH=E3h/SF=E8h
 SeeAlso: AX=F217h/SF=D4h
 
 Format of NetWare "Get File System Statistics" request buffer:
-Offset	Size	Description	(Table 1715)
+Offset	Size	Description	(Table 1891)
  00h	WORD	0001h (length of following data)
  02h	BYTE	D4h (subfunction "Get File System Statistics")
-SeeAlso: #1716,#1915 at AX=F217h/SF=D4h
+SeeAlso: #1892,#2091 at AX=F217h/SF=D4h
 
 Format of NetWare "Get File System Statistics" reply buffer:
-Offset	Size	Description	(Table 1716)
+Offset	Size	Description	(Table 1892)
  00h	WORD	(call) 0028h (size of following results buffer)
  02h	DWORD	clock ticks since system started
  06h	WORD	maximum open files set by configuration
@@ -2841,26 +3129,26 @@ Offset	Size	Description	(Table 1716)
  26h	WORD	number of attached indexed files
  28h	WORD	number of indexed files available
 Note:	all fields except the first are big-endian
-SeeAlso: #1715,#1915 at AX=F217h/SF=D4h
+SeeAlso: #1891,#2091 at AX=F217h/SF=D4h
 --------N-21E3--SFD5-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET TRANSACTION TRACKING STATISTICS
 	AH = E3h subfn D5h
-	DS:SI -> request buffer (see #1717)
-	ES:DI -> reply buffer (see #1718)
-Return: AL = status (00h,C6h) (see #1713)
+	DS:SI -> request buffer (see #1893)
+	ES:DI -> reply buffer (see #1894)
+Return: AL = status (00h,C6h) (see #1889)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have console operator privileges
 SeeAlso: AH=E3h/SF=C8h,AH=E3h/SF=CFh,AH=E3h/SF=D0h,AH=E3h/SF=E8h
 SeeAlso: AX=F217h/SF=D5h
 
 Format of NetWare "Get Transaction Tracking Statistics" request buffer:
-Offset	Size	Description	(Table 1717)
+Offset	Size	Description	(Table 1893)
  00h	WORD	0001h (length of following data)
  02h	BYTE	D5h (subfunction "TTS Get Statistics")
-SeeAlso: #1718,#1916 at AX=F217h/SF=D5h
+SeeAlso: #1894,#2092 at AX=F217h/SF=D5h
 
 Format of NetWare "Get Transaction Tracking Statistics" reply buffer:
-Offset	Size	Description	(Table 1718)
+Offset	Size	Description	(Table 1894)
  00h	WORD	(call) length of following results buffer (max 1BCh)
  02h	DWORD	(big-endian) clock ticks since system started
  06h	BYTE	transaction tracking supported if nonzero
@@ -2883,26 +3171,26 @@ Offset	Size	Description	(Table 1718)
 	Offset	Size	Description
 	 00h	BYTE	logical connection number
 	 01h	BYTE	task number
-SeeAlso: #1717,#1916 at AX=F217h/SF=D5h
+SeeAlso: #1893,#2092 at AX=F217h/SF=D5h
 --------N-21E3--SFD6-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET DISK CACHE STATISTICS
 	AH = E3h subfn D6h
-	DS:SI -> request buffer (see #1719)
-	ES:DI -> reply buffer (see #1720)
-Return: AL = status (00h,C6h) (see #1713)
+	DS:SI -> request buffer (see #1895)
+	ES:DI -> reply buffer (see #1896)
+Return: AL = status (00h,C6h) (see #1889)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have console operator privileges
 SeeAlso: AH=E3h/SF=C8h,AH=E3h/SF=D5h,AH=E3h/SF=D8h,AH=E3h/SF=D9h,AH=E3h/SF=E6h
 SeeAlso: AX=F217h/SF=D6h
 
 Format of NetWare "Get Disk Cache Statistics" request buffer:
-Offset	Size	Description	(Table 1719)
+Offset	Size	Description	(Table 1895)
  00h	WORD	0001h (length of following data)
  02h	BYTE	D6h (subfunction "Get Disk Cache Statistics")
-SeeAlso: #1720,#1917 at AX=F217h/SF=D6h
+SeeAlso: #1896,#2093 at AX=F217h/SF=D6h
 
 Format of NetWare "Get Disk Cache Statistics" reply buffer:
-Offset	Size	Description	(Table 1720)
+Offset	Size	Description	(Table 1896)
  00h	WORD	(call) 004Eh (length of following results buffer)
  02h	DWORD	clock ticks since system started
  06h	WORD	number of cache buffers
@@ -2930,26 +3218,26 @@ Offset	Size	Description	(Table 1720)
  4Ch	WORD	number of cache hits on unavailable block
  4Eh	WORD	number of times a cache block was scrapped
 Note:	all fields except the first are big-endian
-SeeAlso: #1719,#1917 at AX=F217h/SF=D6h
+SeeAlso: #1895,#2093 at AX=F217h/SF=D6h
 --------N-21E3--SFD7-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET DRIVE MAPPING TABLE
 	AH = E3h subfn D7h
-	DS:SI -> request buffer (see #1721)
-	ES:DI -> reply buffer (see #1722)
-Return: AL = status (00h,C6h) (see #1713)
+	DS:SI -> request buffer (see #1897)
+	ES:DI -> reply buffer (see #1898)
+Return: AL = status (00h,C6h) (see #1889)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have console operator privileges
 SeeAlso: AH=E3h/SF=C8h,AH=E3h/SF=D6h,AH=E3h/SF=D9h,AH=E3h/SF=E6h,AH=E3h/SF=E9h
 SeeAlso: AX=F217h/SF=D7h
 
 Format of NetWare "Get Drive Mapping Table" request buffer:
-Offset	Size	Description	(Table 1721)
+Offset	Size	Description	(Table 1897)
  00h	WORD	0001h (length of following data)
  02h	BYTE	D7h (subfunction "Get Drive Mapping Table")
-SeeAlso: #1722,#1918 at AX=F217h/SF=D7h
+SeeAlso: #1898,#2094 at AX=F217h/SF=D7h
 
 Format of NetWare "Get Drive Mapping Table" reply buffer:
-Offset	Size	Description	(Table 1722)
+Offset	Size	Description	(Table 1898)
  00h	WORD	(call) 00ECh (length of following results buffer)
  02h	DWORD	(big-endian) clock tick elapsed since system started
  06h	BYTE	fault tolerance (SFT) level
@@ -2965,26 +3253,26 @@ Offset	Size	Description	(Table 1722)
  71h	BYTE	reserved
  72h	DWORD	(big-endian) remirrored block
  76h 60 BYTEs	SFT error table (internal error counters)
-SeeAlso: #1721,#1918 at AX=F217h/SF=D7h
+SeeAlso: #1897,#2094 at AX=F217h/SF=D7h
 --------N-21E3--SFD8-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET PHYSICAL DISK STATISTICS
 	AH = E3h subfn D8h
-	DS:SI -> request buffer (see #1723)
-	ES:DI -> reply buffer (see #1724)
-Return: AL = status (00h,C6h) (see #1713)
+	DS:SI -> request buffer (see #1899)
+	ES:DI -> reply buffer (see #1900)
+Return: AL = status (00h,C6h) (see #1889)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have console operator privileges
 SeeAlso: AH=E3h/SF=C8h,AH=E3h/SF=D9h,AH=E3h/SF=E9h,AX=F217h/SF=D8h
 
 Format of NetWare "Get Physical Disk Statistics" request buffer:
-Offset	Size	Description	(Table 1723)
+Offset	Size	Description	(Table 1899)
  00h	WORD	0002h (length of following data)
  02h	BYTE	D8h (subfunction "Get Physical Disk Statistics")
  03h	BYTE	physical disk number
-SeeAlso: #1724,#1919 at AX=F217h/SF=D8h
+SeeAlso: #1900,#2095 at AX=F217h/SF=D8h
 
 Format of NetWare "Get Physical Disk Statistics" reply buffer:
-Offset	Size	Description	(Table 1724)
+Offset	Size	Description	(Table 1900)
  00h	WORD	(call) 005Dh (size of following results record)
  02h	DWORD	(big-endian) clock ticks since system started
  06h	BYTE	physical disk channel
@@ -3003,31 +3291,31 @@ Offset	Size	Description	(Table 1724)
  5Ah	WORD	(big-endian) size of Hot Fix table
  5Ch	WORD	(big-endian) number of Hot Fix blocks available
  5Eh	BYTE	flag: Hot Fix disabled if nonzero
-SeeAlso: #1723,#1919 at AX=F217h/SF=D8h
+SeeAlso: #1899,#2095 at AX=F217h/SF=D8h
 --------N-21E3--SFD9-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET DISK CHANNEL STATISTICS
 	AH = E3h subfn D9h
-	DS:SI -> request buffer (see #1725)
-	ES:DI -> reply buffer (see #1726)
-Return: AL = status (00h,C6h) (see #1713)
+	DS:SI -> request buffer (see #1901)
+	ES:DI -> reply buffer (see #1902)
+Return: AL = status (00h,C6h) (see #1889)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have console operator privileges
 SeeAlso: AH=E3h/SF=C8h,AH=E3h/SF=D8h,AH=E3h/SF=E6h,AH=E3h/SF=E9h
 SeeAlso: AX=F217h/SF=D9h
 
 Format of NetWare "Get Disk Channel Statistics" request buffer:
-Offset	Size	Description	(Table 1725)
+Offset	Size	Description	(Table 1901)
  00h	WORD	0002h (length of following data)
  02h	BYTE	D9h (subfunction "Get Disk Channel Statistics")
  03h	BYTE	channel number
-SeeAlso: #1726,#1920 at AX=F217h/SF=D9h
+SeeAlso: #1902,#2096 at AX=F217h/SF=D9h
 
 Format of NetWare "Get Disk Channel Statistics" reply buffer:
-Offset	Size	Description	(Table 1726)
+Offset	Size	Description	(Table 1902)
  00h	WORD	(call) 00A8h (size of following results record)
  02h	DWORD	(big-endian) clock ticks since system started
- 06h	WORD	(big-endian) channel run state (see #1727)
- 08h	WORD	(big-endian) channel synchronization state (see #1728)
+ 06h	WORD	(big-endian) channel run state (see #1903)
+ 08h	WORD	(big-endian) channel synchronization state (see #1904)
  0Ah	BYTE	driver type
  0Bh	BYTE	major version of driver
  0Ch	BYTE	minor version of driver
@@ -3051,17 +3339,17 @@ Offset	Size	Description	(Table 1726)
  68h	BYTE	flags
  69h	BYTE	reserved
  6Ah 80 BYTEs	ASCIZ configuration description
-SeeAlso: #1725,#1920 at AX=F217h/SF=D9h
+SeeAlso: #1901,#2096 at AX=F217h/SF=D9h
 
-(Table 1727)
+(Table 1903)
 Values for channel run state:
  0000h	running
  0001h	being stopped
  0002h	stopped
  0003h	nonfunctional
-SeeAlso: #1726,#1728
+SeeAlso: #1902,#1904
 
-(Table 1728)
+(Table 1904)
 Values for channel synchronization state:
  0000h	not in use
  0002h	used by NetWare, no other requests
@@ -3069,30 +3357,30 @@ Values for channel synchronization state:
  0006h	in use, not needed by NetWare
  0008h	in use, needed by NetWare
  000Ah	channel released, NetWare should use it
-SeeAlso: #1726,#1727
+SeeAlso: #1902,#1903
 --------N-21E3--SFDA-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET CONNECTION'S TASK INFORMATION
 	AH = E3h subfn DAh
-	DS:SI -> request buffer (see #1729)
-	ES:DI -> reply buffer (see #1730)
-Return: AL = status (00h,C6h) (see #1741)
+	DS:SI -> request buffer (see #1905)
+	ES:DI -> reply buffer (see #1906)
+Return: AL = status (00h,C6h) (see #1917)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have console operator privileges
 SeeAlso: AH=E3h/SF=C8h,AH=E3h/SF=DBh,AH=E3h/SF=DFh,AH=E3h/SF=E1h,AH=E3h/SF=E5h
 SeeAlso: AX=F217h/SF=DAh
 
 Format of NetWare "Get Connection's Task Information" request buffer:
-Offset	Size	Description	(Table 1729)
+Offset	Size	Description	(Table 1905)
  00h	WORD	0003h (length of following data)
  02h	BYTE	DAh (subfunction "Get Connection's Task Information")
  03h	WORD	(big-endian) logical connection number
-SeeAlso: #1730,#1921 at AX=F217h/SF=DAh
+SeeAlso: #1906,#2097 at AX=F217h/SF=DAh
 
 Format of NetWare "Get Connection's Task Information" reply buffer:
-Offset	Size	Description	(Table 1730)
+Offset	Size	Description	(Table 1906)
  00h	WORD	(call) size of following results record (max 1FEh)
- 02h	BYTE	lock status of connection (see #1731)
- 03h	var	Lock Status Information (see #1732)
+ 02h	BYTE	lock status of connection (see #1907)
+ 03h	var	Lock Status Information (see #1908)
  N	BYTE	number of records following
  N+1	Active Task Information Records [array]
 	Offset	Size	Description
@@ -3101,19 +3389,19 @@ Offset	Size	Description	(Table 1730)
 			01h in TTS explicit transaction
 			02h in TTS implicit transaction
 			04h shared fileset lock active
-SeeAlso: #1729,#1921 at AX=F217h/SF=DAh
+SeeAlso: #1905,#2097 at AX=F217h/SF=DAh
 
-(Table 1731)
+(Table 1907)
 Values for lock status of connection:
  00h	no locks
  01h	waiting on physical record lock
  02h	waiting on file lock
  03h	waiting on logical record lock
  04h	waiting on semaphore
-SeeAlso: #1730,#1732
+SeeAlso: #1906,#1908
 
 Format of Lock Status Information:
-Offset	Size	Description	(Table 1732)
+Offset	Size	Description	(Table 1908)
 ---lock status 00h---
  no fields
 ---lock status 01h---
@@ -3136,40 +3424,40 @@ Offset	Size	Description	(Table 1732)
  00h	BYTE	number of waiting task
  01h	BYTE	length of semaphore's name
  02h  N BYTEs	ASCIZ semaphore name
-SeeAlso: #1730,#1731
+SeeAlso: #1906,#1907
 --------N-21E3--SFDB-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET CONNECTION'S OPEN FILES (OLD)
 	AH = E3h subfn DBh
-	DS:SI -> request buffer (see #1733)
-	ES:DI -> reply buffer (see #1734)
-Return: AL = status (00h,C6h) (see #1741)
+	DS:SI -> request buffer (see #1909)
+	ES:DI -> reply buffer (see #1910)
+Return: AL = status (00h,C6h) (see #1917)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have console operator privileges
 SeeAlso: AH=E2h/SF=1Ah,AH=E3h/SF=C8h,AH=E3h/SF=DAh,AH=E3h/SF=DCh,AH=E3h/SF=DFh
 SeeAlso: AH=E3h/SF=E1h,AX=F217h/SF=DBh
 
 Format of NetWare "Get Connection's Open Files (old)" request buffer:
-Offset	Size	Description	(Table 1733)
+Offset	Size	Description	(Table 1909)
  00h	WORD	0005h (length of following data)
  02h	BYTE	DBh (subfunction "Get Connection's Open Files")
  03h	WORD	(big-endian) logical connection number
  05h	WORD	(big-endian) last record seen (0000h on first call)
-SeeAlso: #1734,#1922 at AX=F217h/SF=DBh
+SeeAlso: #1910,#2098 at AX=F217h/SF=DBh
 
 Format of NetWare "Get Connection's Open Files (old)" reply buffer:
-Offset	Size	Description	(Table 1734)
+Offset	Size	Description	(Table 1910)
  00h	WORD	(call) size of following results record (max 1FEh)
  02h	WORD	next request record (place in "last record" field on next call)
 		0000h if no more records
  04h	BYTE	number of records following
- 05h	var	array of File Information Records (see #1735)
-SeeAlso: #1733,#1922 at AX=F217h/SF=DBh
+ 05h	var	array of File Information Records (see #1911)
+SeeAlso: #1909,#2098 at AX=F217h/SF=DBh
 
 Format of NetWare File Information Record:
-Offset	Size	Description	(Table 1735)
+Offset	Size	Description	(Table 1911)
  00h	BYTE	task number
- 01h	BYTE	lock flags (see #1736)
- 02h	BYTE	access flags (see #1737)
+ 01h	BYTE	lock flags (see #1912)
+ 02h	BYTE	access flags (see #1913)
  03h	BYTE	lock type
 		00h no lock
 		FEh file lock
@@ -3177,20 +3465,20 @@ Offset	Size	Description	(Table 1735)
  04h	BYTE	volume number (00h-1Fh)
  05h	WORD	(big-endian) directory entry number
  07h 14 BYTEs	ASCIZ filename
-SeeAlso: #1734
+SeeAlso: #1910
 
 Bitfields for lock flags:
-Bit(s)	Description	(Table 1736)
+Bit(s)	Description	(Table 1912)
  0	file is locked
  1	file opened Shareable
  2	logged
  3	file opened Normal
  6	TTS holding lock
  7	Transaction Flag set on file
-SeeAlso: #1735,#1737
+SeeAlso: #1911,#1913
 
 Bitfields for access flags:
-Bit(s)	Description	(Table 1737)
+Bit(s)	Description	(Table 1913)
  0	file open for reading by calling station
  1	file open for writing by calling station
  2	deny reads by other stations
@@ -3198,30 +3486,30 @@ Bit(s)	Description	(Table 1737)
  4	file detached
  5	TTS Holding Detach
  6	TTS Holding Open
-SeeAlso: #1735,#1736
+SeeAlso: #1911,#1912
 --------N-21E3--SFDC-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET CONNECTIONS USING A FILE
 	AH = E3h subfn DCh
-	DS:SI -> request buffer (see #1738)
-	ES:DI -> reply buffer (see #1739)
-Return: AL = status (00h,C6h) (see #1741)
+	DS:SI -> request buffer (see #1914)
+	ES:DI -> reply buffer (see #1915)
+Return: AL = status (00h,C6h) (see #1917)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have console operator privileges
 SeeAlso: AH=E3h/SF=C8h,AH=E3h/SF=DAh,AH=E3h/SF=DBh,AH=E3h/SF=DFh,AH=E3h/SF=E1h
 SeeAlso: AX=F217h/SF=DCh
 
 Format of NetWare "Get Connections Using a File" request buffer:
-Offset	Size	Description	(Table 1738)
+Offset	Size	Description	(Table 1914)
  00h	WORD	length of following data (max 104h)
  02h	BYTE	DCh (subfunction "Get Connections Using a File")
  03h	WORD	(big-endian) last record (0000h on first call)
  05h	BYTE	directory handle
  06h	BYTE	length of file path
  07h  N BYTEs	ASCIZ file path
-SeeAlso: #1739,#1923 at AX=F217h/SF=DCh
+SeeAlso: #1915,#2099 at AX=F217h/SF=DCh
 
 Format of NetWare "Get Connections Using a File" reply buffer:
-Offset	Size	Description	(Table 1739)
+Offset	Size	Description	(Table 1915)
  00h	WORD	(call) size of following results record (max 1FEh)
  02h	WORD	(big-endian) count of tasks which have opened or logged file
  04h	WORD	(big-endian) count of tasks which have opened file
@@ -3235,15 +3523,15 @@ Offset	Size	Description	(Table 1739)
 		00h not locked exclusively
 		else locked exclusively
  11h	BYTE	number of records following
- 12h	var	array of File Usage Information Records (see #1740)
-SeeAlso: #1738,#1923 at AX=F217h/SF=DCh
+ 12h	var	array of File Usage Information Records (see #1916)
+SeeAlso: #1914,#2099 at AX=F217h/SF=DCh
 
 Format of NetWare File Usage Information Record:
-Offset	Size	Description	(Table 1740)
+Offset	Size	Description	(Table 1916)
  00h	WORD	(big-endian) logical connection number
  02h	BYTE	task number
- 03h	BYTE	lock flags (see #1736)
- 04h	BYTE	access flags (see #1737)
+ 03h	BYTE	lock flags (see #1912)
+ 04h	BYTE	access flags (see #1913)
  05h	BYTE	lock type
 		00h no lock
 		FEh file lock
@@ -3251,22 +3539,22 @@ Offset	Size	Description	(Table 1740)
 --------N-21E3--SFDD-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET PHYSICAL RECORD LOCKS BY CONN&FILE
 	AH = E3h subfn DDh
-	DS:SI -> request buffer (see #1742)
-	ES:DI -> reply buffer (see #1743)
-Return: AL = status (00h,C6h,FFh) (see #1741)
+	DS:SI -> request buffer (see #1918)
+	ES:DI -> reply buffer (see #1919)
+Return: AL = status (00h,C6h,FFh) (see #1917)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have console operator privileges
 SeeAlso: AH=E3h/SF=C8h,AH=E3h/SF=DEh,AH=E3h/SF=DFh,AX=F217h/SF=DDh
 
-(Table 1741)
+(Table 1917)
 Values for NetWare function status:
  00h	successful
  C6h	no console rights
  FFh	file not open
-SeeAlso: #1713,#1782
+SeeAlso: #1889,#1958
 
 Format of NetWare "Get Phys Record Locks by Conn and File" request buffer:
-Offset	Size	Description	(Table 1742)
+Offset	Size	Description	(Table 1918)
  00h	WORD	0016h (length of following data)
  02h	BYTE	DDh (subfunction "Get Physical Record Locks by Connection and
 		  File")
@@ -3275,65 +3563,65 @@ Offset	Size	Description	(Table 1742)
  07h	BYTE	volume number (00h-1Fh)
  08h	WORD	(big-endian) directory handle
  0Ah 14 BYTEs	ASCIZ filename
-SeeAlso: #1743,#1924 at AX=F217h/SF=DDh
+SeeAlso: #1919,#2100 at AX=F217h/SF=DDh
 
 Format of NetWare "Get Phys Record Locks by Conn and File" reply buffer:
-Offset	Size	Description	(Table 1743)
+Offset	Size	Description	(Table 1919)
  00h	WORD	(call) size of following results record (max 1FEh)
  02h	WORD	next request record (place in "last record" on next call)
 		0000h if no more records
  04h	BYTE	number of physical record locks
  05h	BYTE	number of records following
- 06h	var	array of Physical Record Lock Info records (see #1744)
-SeeAlso: #1742,#1924 at AX=F217h/SF=DDh
+ 06h	var	array of Physical Record Lock Info records (see #1920)
+SeeAlso: #1918,#2100 at AX=F217h/SF=DDh
 
 Format of NetWare Physical Record Lock Info:
-Offset	Size	Description	(Table 1744)
+Offset	Size	Description	(Table 1920)
  00h	BYTE	task number
- 01h	BYTE	lock status (see #1745)
+ 01h	BYTE	lock status (see #1921)
  02h	DWORD	(big-endian) starting offset of record in file
  06h	DWORD	(big-endian) ending offset of record in file
-SeeAlso: #1743
+SeeAlso: #1919
 
 Bitfields for lock status:
-Bit(s)	Description	(Table 1745)
+Bit(s)	Description	(Table 1921)
  0	exclusive lock
  1	shareable lock
  2	logged
  6	lock held by TTS
-SeeAlso: #1744
+SeeAlso: #1920
 --------N-21E3--SFDE-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET PHYSICAL RECORD LOCKS BY FILE
 	AH = E3h subfn DEh
-	DS:SI -> request buffer (see #1746)
-	ES:DI -> reply buffer (see #1747)
-Return: AL = status (00h,C6h,FFh) (see #1741)
+	DS:SI -> request buffer (see #1922)
+	ES:DI -> reply buffer (see #1923)
+Return: AL = status (00h,C6h,FFh) (see #1917)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have console operator privileges
 SeeAlso: AH=E3h/SF=C8h,AH=E3h/SF=DDh,AH=E3h/SF=DFh,AX=F217h/SF=DEh
 
 Format of NetWare "Get Physical Record Locks by File" request buffer:
-Offset	Size	Description	(Table 1746)
+Offset	Size	Description	(Table 1922)
  00h	WORD	length of following data (max 104h)
  02h	BYTE	DEh (subfunction "Get Physical Record Locks by File")
  03h	WORD	(big-endian) last record seen (0000h on first call)
  05h	BYTE	directory handle
  06h	BYTE	length of filename
  07h  N BYTEs	ASCIZ filename
-SeeAlso: #1747,#1925 at AX=F217h/SF=DEh
+SeeAlso: #1923,#2101 at AX=F217h/SF=DEh
 
 Format of NetWare "Get Physical Record Locks by File" reply buffer:
-Offset	Size	Description	(Table 1747)
+Offset	Size	Description	(Table 1923)
  00h	WORD	(call) size of following results record (max 1FEh)
  02h	WORD	next request record (place in "last record" on next call)
 		0000h if no more records
  04h	BYTE	number of physical record locks
  05h	BYTE	number of records following
- 06h	var	array of Physical Record Lock Info records (see #1748)
-SeeAlso: #1746,#1925 at AX=F217h/SF=DEh
+ 06h	var	array of Physical Record Lock Info records (see #1924)
+SeeAlso: #1922,#2101 at AX=F217h/SF=DEh
 
 Format of NetWare Physical Record Lock Info:
-Offset	Size	Description	(Table 1748)
+Offset	Size	Description	(Table 1924)
  00h	WORD	(big-endian) number of tasks logging record
  02h	WORD	(big-endian) number of tasks with shareable lock
  04h	DWORD	(big-endian) starting offset of record in file
@@ -3344,64 +3632,64 @@ Offset	Size	Description	(Table 1748)
 		00h none
 		FEh file lock
 		FFh Begin Share File Set lock
-SeeAlso: #1747
+SeeAlso: #1923
 --------N-21E3--SFDF-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET LOGICAL RECORDS BY CONNECTION
 	AH = E3h subfn DFh
-	DS:SI -> request buffer (see #1749)
-	ES:DI -> reply buffer (see #1750)
-Return: AL = status (00h,C6h) (see #1741)
+	DS:SI -> request buffer (see #1925)
+	ES:DI -> reply buffer (see #1926)
+Return: AL = status (00h,C6h) (see #1917)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have console operator privileges
 SeeAlso: AH=E3h/SF=C8h,AH=E3h/SF=DDh,AH=E3h/SF=E0h,AH=E3h/SF=E2h
 SeeAlso: AX=F217h/SF=DFh
 
 Format of NetWare "Get Logical Records by Connection" request buffer:
-Offset	Size	Description	(Table 1749)
+Offset	Size	Description	(Table 1925)
  00h	WORD	0005h (length of following data)
  02h	BYTE	DFh (subfunction "Get Logical Records By Connection")
  03h	WORD	(big-endian) logical connection number
  05h	WORD	(big-endian) last record seen (0000h on first call)
-SeeAlso: #1750,#1926 at AX=F217h/SF=DFh
+SeeAlso: #1926,#2102 at AX=F217h/SF=DFh
 
 Format of NetWare "Get Logical Records by Connection" reply buffer:
-Offset	Size	Description	(Table 1750)
+Offset	Size	Description	(Table 1926)
  00h	WORD	(call) size of following results record (max 1FEh)
  02h	WORD	next request record (place in "last record" field on next call)
 		0000h if no more locked records
  04h	BYTE	number of records following
- 05h	var	array of Logical Lock Information Records (see #1751)
-SeeAlso: #1749,#1926 at AX=F217h/SF=DFh
+ 05h	var	array of Logical Lock Information Records (see #1927)
+SeeAlso: #1925,#2102 at AX=F217h/SF=DFh
 
 Format of NetWare Logical Lock Information Record:
-Offset	Size	Description	(Table 1751)
+Offset	Size	Description	(Table 1927)
  00h	BYTE	task number
- 01h	BYTE	lock status (see #1745)
+ 01h	BYTE	lock status (see #1921)
  02h	BYTE	length of logical lock's name
  03h  N BYTEs	logical lock's name
-SeeAlso: #1750
+SeeAlso: #1926
 --------N-21E3--SFE0-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET LOGICAL RECORD INFORMATION
 	AH = E3h subfn E0h
-	DS:SI -> request buffer (see #1752)
-	ES:DI -> reply buffer (see #1753)
-Return: AL = status (00h,C6h) (see #1741)
+	DS:SI -> request buffer (see #1928)
+	ES:DI -> reply buffer (see #1929)
+Return: AL = status (00h,C6h) (see #1917)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have console operator privileges
 SeeAlso: AH=E3h/SF=C8h,AH=E3h/SF=DDh,AH=E3h/SF=DFh,AH=E3h/SF=E2h
 SeeAlso: AX=F217h/SF=E0h
 
 Format of NetWare "Get Logical Record Information" request buffer:
-Offset	Size	Description	(Table 1752)
+Offset	Size	Description	(Table 1928)
  00h	WORD	length of following data (max 67h)
  02h	BYTE	E0h (subfunction "Get Logical Record Information")
  03h	WORD	(big-endian) last record seen (0000h on first call)
  05h	BYTE	length of logical record's name
  06h  N BYTEs	logical record's name
-SeeAlso: #1753,#1927 at AH=E3h/SF=E0h
+SeeAlso: #1929,#2103 at AH=E3h/SF=E0h
 
 Format of NetWare "Get Logical Record Information" reply buffer:
-Offset	Size	Description	(Table 1753)
+Offset	Size	Description	(Table 1929)
  00h	WORD	(call) size of following results record (max 200h)
  02h	WORD	(big-endian) number of logical connections logging the record
  04h	WORD	(big-endian) number of logical connections with shareable lock
@@ -3409,44 +3697,44 @@ Offset	Size	Description	(Table 1753)
 		  on next call)
  08h	BYTE	locked exclusively if nonzero
  09h	BYTE	number of records following
- 0Ah	var	array of Task Information Records (see #1754)
-SeeAlso: #1752,#1927 at AH=E3h/SF=E0h
+ 0Ah	var	array of Task Information Records (see #1930)
+SeeAlso: #1928,#2103 at AH=E3h/SF=E0h
 
 Format of NetWare Task Information Record:
-Offset	Size	Description	(Table 1754)
+Offset	Size	Description	(Table 1930)
  00h	WORD	(big-endian) logical connection number
  02h	BYTE	task number
- 03h	BYTE	lock status (see #1745)
-SeeAlso: #1753
+ 03h	BYTE	lock status (see #1921)
+SeeAlso: #1929
 --------N-21E3--SFE1-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET CONNECTION'S SEMAPHORES
 	AH = E3h subfn E1h
-	DS:SI -> request buffer (see #1755)
-	ES:DI -> reply buffer (see #1756)
-Return: AL = status (00h,C6h) (see #1741)
+	DS:SI -> request buffer (see #1931)
+	ES:DI -> reply buffer (see #1932)
+Return: AL = status (00h,C6h) (see #1917)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have console operator privileges
 SeeAlso: AH=E3h/SF=C8h,AH=E3h/SF=DBh,AH=E3h/SF=DFh,AH=E3h/SF=E2h
 SeeAlso: AX=F217h/SF=E1h
 
 Format of NetWare "Get Connection's Semaphores" request buffer:
-Offset	Size	Description	(Table 1755)
+Offset	Size	Description	(Table 1931)
  00h	WORD	0005h (length of following data)
  02h	BYTE	E1h (subfunction "Get Connection's Semaphores")
  03h	WORD	(big-endian) logical connection number
  05h	WORD	(big-endian) last record seen (0000h on first call)
-SeeAlso: #1756,#1928 at AX=F217h/SF=E1h
+SeeAlso: #1932,#2104 at AX=F217h/SF=E1h
 
 Format of NetWare "Get Connection's Semaphores" reply buffer:
-Offset	Size	Description	(Table 1756)
+Offset	Size	Description	(Table 1932)
  00h	WORD	(call) size of following results record (max 1FEh)
  02h	WORD	next request record (place in "last record" field on next call)
  04h	BYTE	number of records following
- 05h	var	array of Semaphore Information Records (see #1757)
-SeeAlso: #1755,#1928 at AX=F217h/SF=E1h
+ 05h	var	array of Semaphore Information Records (see #1933)
+SeeAlso: #1931,#2104 at AX=F217h/SF=E1h
 
 Format of NetWare Semaphore Information Record:
-Offset	Size	Description	(Table 1757)
+Offset	Size	Description	(Table 1933)
  00h	WORD	(big-endian) open count
  02h	BYTE	semaphore value (-128 to 127)
  03h	BYTE	task number
@@ -3454,61 +3742,61 @@ Offset	Size	Description	(Table 1757)
  05h	BYTE	length of semaphore's name
  06h  N BYTEs	semaphore's name
      14 BYTEs	filename
-SeeAlso: #1756
+SeeAlso: #1932
 --------N-21E3--SFE2-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET SEMAPHORE INFORMATION
 	AH = E3h subfn E2h
-	DS:SI -> request buffer (see #1758)
-	ES:DI -> reply buffer (see #1759)
-Return: AL = status (00h,C6h) (see #1741)
+	DS:SI -> request buffer (see #1934)
+	ES:DI -> reply buffer (see #1935)
+Return: AL = status (00h,C6h) (see #1917)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have console operator privileges
 SeeAlso: AH=E3h/SF=C8h,AH=E3h/SF=E1h,AX=F217h/SF=E2h
 
 Format of NetWare "Get Semaphore Information" request buffer:
-Offset	Size	Description	(Table 1758)
+Offset	Size	Description	(Table 1934)
  00h	WORD	length of following data (max 83h)
  02h	BYTE	E2h (subfunction "Get LAN Driver's Configuration Information")
  03h	WORD	(big-endian) last record seen (0000h on first call)
  05h	BYTE	length of semaphore's name (01h-7Fh)
  06h  N BYTEs	semaphore's name
-SeeAlso: #1759,#1929 at AX=F217h/SF=E2h
+SeeAlso: #1935,#2105 at AX=F217h/SF=E2h
 
 Format of NetWare "Get Semaphore Information" reply buffer:
-Offset	Size	Description	(Table 1759)
+Offset	Size	Description	(Table 1935)
  00h	WORD	(call) size of following results buffer (max 1FEh)
  02h	WORD	next request record (place in "last record" on next call)
 		0000h if no more
  04h	WORD	(big-endian) number of logical connections opening semaphore
  06h	BYTE	semaphore value (-127 to 128)
  07h	BYTE	number of records following
- 08h	var	array of Semaphore Information records (see #1760)
-SeeAlso: #1759,#1929 at AX=F217h/SF=E2h
+ 08h	var	array of Semaphore Information records (see #1936)
+SeeAlso: #1935,#2105 at AX=F217h/SF=E2h
 
 Format of NetWare Semaphore Information:
-Offset	Size	Description	(Table 1760)
+Offset	Size	Description	(Table 1936)
  00h	WORD	(big-endian) logical connection number
  02h	BYTE	task number
-SeeAlso: #1759
+SeeAlso: #1935
 --------N-21E3--SFE3-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET LAN DRIVER'S CONFIGURATION INFO
 	AH = E3h subfn E3h
-	DS:SI -> request buffer (see #1761)
-	ES:DI -> reply buffer (see #1762)
-Return: AL = status (00h,C6h) (see #1741)
+	DS:SI -> request buffer (see #1937)
+	ES:DI -> reply buffer (see #1938)
+Return: AL = status (00h,C6h) (see #1917)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	the calling workstation must have console operator privileges
 SeeAlso: AH=E3h/SF=C8h,AH=E3h/SF=E7h,AH=E3h/SF=E8h,AX=F217h/SF=E3h
 
 Format of NetWare "Get LAN Driver's Configuration Info" request buffer:
-Offset	Size	Description	(Table 1761)
+Offset	Size	Description	(Table 1937)
  00h	WORD	0002h (length of following data)
  02h	BYTE	E3h (subfunction "Get LAN Driver's Configuration Information")
  03h	BYTE	LAN board (00h-03h)
-SeeAlso: #1762,#1930 at AX=F217h/SF=E3h
+SeeAlso: #1938,#2106 at AX=F217h/SF=E3h
 
 Format of NetWare "Get LAN Driver's Configuration Info" reply buffer:
-Offset	Size	Description	(Table 1762)
+Offset	Size	Description	(Table 1938)
  00h	WORD	(call) 00ACh (size of following results buffer)
  02h  4 BYTEs	network number
  06h  6 BYTEs	node number
@@ -3517,13 +3805,13 @@ Offset	Size	Description	(Table 1762)
  0Eh 160 BYTEs	configuration text
 		ASCIZ hardware type
 		ASCIZ hardware settings
-SeeAlso: #1761,#1930 at AX=F217h/SF=E3h
+SeeAlso: #1937,#2106 at AX=F217h/SF=E3h
 --------N-21E3--SFE5-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET CONNECTION'S USAGE STATISTICS
 	AH = E3h subfn E5h
-	DS:SI -> request buffer (see #1763)
-	ES:DI -> reply buffer (see #1764)
-Return: AL = status (00h,C6h) (see #1741)
+	DS:SI -> request buffer (see #1939)
+	ES:DI -> reply buffer (see #1940)
+Return: AL = status (00h,C6h) (see #1917)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	one must have console operator privileges to get statistics for logical
 	  connections other than one's own
@@ -3531,51 +3819,51 @@ SeeAlso: AH=E3h/SF=C8h,AH=E3h/SF=DAh,AH=E3h/SF=DBh,AH=E3h/SF=E1h
 SeeAlso: AX=F217h/SF=E5h
 
 Format of NetWare "Get Connection's Usage Statistics" request buffer:
-Offset	Size	Description	(Table 1763)
+Offset	Size	Description	(Table 1939)
  00h	WORD	0003h (length of following data)
  02h	BYTE	E5h (subfunction "Get Connection's Usage Statistics")
  03h	WORD	(big-endian) logical connection number
-SeeAlso: #1764,#1931 at AX=F217h/SF=E5h
+SeeAlso: #1940,#2107 at AX=F217h/SF=E5h
 
 Format of NetWare "Get Connection's Usage Statistics" reply buffer:
-Offset	Size	Description	(Table 1764)
+Offset	Size	Description	(Table 1940)
  00h	WORD	(call) 0014h (size of following results record)
  02h	DWORD	(big-endian) clock ticks since server started
  06h  6 BYTEs	bytes read
  0Ch  6 BYTEs	bytes written
  12h	DWORD	(big-endian) total request packets
-SeeAlso: #1763,#1931 at AX=F217h/SF=E5h
+SeeAlso: #1939,#2107 at AX=F217h/SF=E5h
 --------N-21E3--SFE6-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET BINDERY OBJECT DISK SPACE LEFT
 	AH = E3h subfn E6h
-	DS:SI -> request buffer (see #1765)
-	ES:DI -> reply buffer (see #1766)
-Return: AL = status (00h,C6h) (see #1741)
+	DS:SI -> request buffer (see #1941)
+	ES:DI -> reply buffer (see #1942)
+Return: AL = status (00h,C6h) (see #1917)
 Notes:	this function is supported by Advanced NetWare 2.1+
 	one must have console operator privileges to get the free space for
 	  other bindery objects
 SeeAlso: AH=E3h/SF=C8h,AH=E3h/SF=E8h,AH=E3h/SF=E9h
 
 Format of NetWare "Get Bindery Object Disk Space Left" request buffer:
-Offset	Size	Description	(Table 1765)
+Offset	Size	Description	(Table 1941)
  00h	WORD	0005h (length of following data)
  02h	BYTE	E6h (subfunction "Get Bindery Object Disk Space Left")
  03h	DWORD	(big-endian) object ID
-SeeAlso: #1766,#1932 at AX=F217h/SF=E6h
+SeeAlso: #1942,#2108 at AX=F217h/SF=E6h
 
 Format of NetWare "Get Bindery Object Disk Space Left" reply buffer:
-Offset	Size	Description	(Table 1766)
+Offset	Size	Description	(Table 1942)
  00h	WORD	(call) 000Fh (size of following results buffer)
  02h	DWORD	(big-endian) clock ticks elapsed since server started
  06h	DWORD	(big-endian) object ID
  0Ah	DWORD	(big-endian) 4K disk blocks available to user
  0Eh	BYTE	restrictions (00h enforced, FFh not enforced)
-SeeAlso: #1765,#1932 at AX=F217h/SF=E6h
+SeeAlso: #1941,#2108 at AX=F217h/SF=E6h
 --------N-21E3--SFE7-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET FILE SERVER LAN I/O STATISTICS
 	AH = E3h subfn E7h
-	DS:SI -> request buffer (see #1767)
-	ES:DI -> reply buffer (see #1768)
+	DS:SI -> request buffer (see #1943)
+	ES:DI -> reply buffer (see #1944)
 Return: AL = status
 	    00h successful
 Note:	this function is supported by Advanced NetWare 2.1+
@@ -3583,13 +3871,13 @@ SeeAlso: AH=E3h/SF=0Eh,AH=E3h/SF=11h,AH=E3h/SF=D3h,AH=E3h/SF=E8h
 SeeAlso: AH=E7h"Novell",AX=F217h/SF=E7h
 
 Format of NetWare "Get File Server LAN I/O Statistics" request buffer:
-Offset	Size	Description	(Table 1767)
+Offset	Size	Description	(Table 1943)
  00h	WORD	0001h (length of following data)
  02h	BYTE	E7h (subfunction "Get File Server LAN I/O Statistics")
-SeeAlso: #1768,#1933 at AX=F217h/SF=E7h
+SeeAlso: #1944,#2109 at AX=F217h/SF=E7h
 
 Format of NetWare "Get File Server LAN I/O Statistics" reply buffer:
-Offset	Size	Description	(Table 1768)
+Offset	Size	Description	(Table 1944)
  00h	WORD	(call) 0042h (size of following results buffer)
  02h	DWORD	clock ticks since system started
  06h	WORD	total routing buffers
@@ -3620,25 +3908,25 @@ Offset	Size	Description	(Table 1768)
  3Ch	DWORD	total number of non-file-service packets
  40h	DWORD	total number of routed packets
 Note:	all fields except the first are big-endian
-SeeAlso: #1768,#1933 at AX=F217h/SF=E7h
+SeeAlso: #1944,#2109 at AX=F217h/SF=E7h
 --------N-21E3--SFE8-------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET FILE SERVER MISC INFORMATION
 	AH = E3h subfn E8h
-	DS:SI -> request buffer (see #1769)
-	ES:DI -> reply buffer (see #1770)
-Return: AL = status (00h,C6h) (see #1741)
+	DS:SI -> request buffer (see #1945)
+	ES:DI -> reply buffer (see #1946)
+Return: AL = status (00h,C6h) (see #1917)
 Note:	this function is supported by Advanced NetWare 2.1+
 SeeAlso: AH=E3h/SF=0Eh,AH=E3h/SF=11h,AH=E3h/SF=CDh,AH=E3h/SF=E7h
 SeeAlso: AX=F217h/SF=E8h
 
 Format of NetWare "Get File Server Misc Information" request buffer:
-Offset	Size	Description	(Table 1769)
+Offset	Size	Description	(Table 1945)
  00h	WORD	0001h (length of following data)
  02h	BYTE	E8h (subfunction "Get File Server Misc Information")
-SeeAlso: #1770,#1934 at AX=F217h/SF=E8h
+SeeAlso: #1946,#2110 at AX=F217h/SF=E8h
 
 Format of NetWare "Get File Server Misc Information" reply buffer:
-Offset	Size	Description	(Table 1770)
+Offset	Size	Description	(Table 1946)
  00h	WORD	(call) size of following results buffer (max 0048h)
  02h	DWORD	(big-endian) clock ticks since system started
  06h	BYTE	CPU type
@@ -3656,33 +3944,33 @@ Offset	Size	Description	(Table 1770)
  12h	WORD	(big-endian) wasted server memory in KB
 		normally 0000h
  14h	WORD	number of records following (01h-03h)
- 16h	var	array of Dynamic Memory Information records (see #1771)
-SeeAlso: #1769,#1934 at AX=F217h/SF=E8h
+ 16h	var	array of Dynamic Memory Information records (see #1947)
+SeeAlso: #1945,#2110 at AX=F217h/SF=E8h
 
 Format of NetWare Dynamic Memory Information:
-Offset	Size	Description	(Table 1771)
+Offset	Size	Description	(Table 1947)
  00h	DWORD	(big-endian) total dynamic space
  04h	DWORD	(big-endian) maximum dynamic space used
  08h	DWORD	(big-endian) current dynamic space usage
 --------N-21E3--SFE9-------------------------
 INT 21 - Novell NetWare - DIRECTORY SERVICES - GET VOLUME INFORMATION
 	AH = E3h subfn E9h
-	DS:SI -> request buffer (see #1772)
-	ES:DI -> reply buffer (see #1773)
+	DS:SI -> request buffer (see #1948)
+	ES:DI -> reply buffer (see #1949)
 Return: AL = status
 	    00h successful
 Notes:	this function is supported by Advanced NetWare 2.1+
 SeeAlso: AH=DAh,AH=E2h/SF=15h,AX=F217h/SF=E9h
 
 Format of NetWare "Get Volume Information" request buffer:
-Offset	Size	Description	(Table 1772)
+Offset	Size	Description	(Table 1948)
  00h	WORD	0002h (length of following data)
  02h	BYTE	E9h (subfunction "Get Volume Information")
  03h	BYTE	directory handle
-SeeAlso: #1773,#1935 at AX=F217h/SF=E9h
+SeeAlso: #1949,#2111 at AX=F217h/SF=E9h
 
 Format of NetWare "Get Volume Information" reply buffer:
-Offset	Size	Description	(Table 1773)
+Offset	Size	Description	(Table 1949)
  00h	WORD	(call) 0028h (length of following results buffer)
  02h	DWORD	(big-endian) elapsed system time
  06h	BYTE	volume number
@@ -3699,12 +3987,12 @@ Offset	Size	Description	(Table 1773)
  18h	BYTE	flag: volume removable if nonzero
  19h	BYTE	flag: volume mounted if nonzero
  1Ah 16 BYTEs	NUL-padded volume name
-SeeAlso: #1772,#1935 at AX=F217h/SF=E9h
+SeeAlso: #1948,#2111 at AX=F217h/SF=E9h
 --------N-21E4-------------------------------
 INT 21 O - Novell NetWare - SET FILE ATTRIBUTES (FCB)
 	AH = E4h
-	CL = file attributes (see #1774)
-	DX:DX -> FCB (see #1034 at AH=0Fh)
+	CL = file attributes (see #1950)
+	DX:DX -> FCB (see #1210 at AH=0Fh)
 Return: AL = error code
 Note:	this function was added in NetWare 4.0, but was removed some time prior
 	  to Advanced NetWare 2.15, and is no longer listed in current Novell
@@ -3712,7 +4000,7 @@ Note:	this function was added in NetWare 4.0, but was removed some time prior
 SeeAlso: AX=4301h
 
 Bitfields for NetWare file attributes:
-Bit(s)	Description	(Table 1774)
+Bit(s)	Description	(Table 1950)
  0	read only
  1	hidden
  2	system
@@ -3753,7 +4041,7 @@ SeeAlso: AX=E402h
 --------N-21E5-------------------------------
 INT 21 O - Novell NetWare - UPDATE FILE SIZE (FCB)
 	AH = E5h
-	DS:DX -> FCB (see #1034 at AH=0Fh)
+	DS:DX -> FCB (see #1210 at AH=0Fh)
 Return: AL = (unreliable) return code
 Notes:	this function was added in NetWare 4.0, but was removed some time prior
 	  to Advanced NetWare 2.15, and is no longer listed in current Novell
@@ -3800,7 +4088,7 @@ SeeAlso: AH=E2h"OS/286"
 --------N-21E7-------------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET FILE SERVER DATE AND TIME
 	AH = E7h
-	DS:DX -> date/time buffer (see #1775)
+	DS:DX -> date/time buffer (see #1951)
 Return: AL = error code
 	    00h successful
 	    FFh unsuccessful
@@ -3809,7 +4097,7 @@ Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+,
 SeeAlso: AH=2Ah,AH=2Ch,AX=5FC0h,AH=E3h/SF=CAh,AX=F214h
 
 Format of NetWare date/time buffer:
-Offset	Size	Description	(Table 1775)
+Offset	Size	Description	(Table 1951)
  00h	BYTE	year (80-99 = 1980-1999, 0-79 = 2000-2079)
  01h	BYTE	month (1=Jan)
  02h	BYTE	day
@@ -3817,7 +4105,7 @@ Offset	Size	Description	(Table 1775)
  04h	BYTE	minutes
  05h	BYTE	seconds
  06h	BYTE	day of week (0 = Sunday) (Novell and NTNX only)
-SeeAlso: #1794
+SeeAlso: #1970
 --------E-21E7-------------------------------
 INT 21 - OS/286, OS/386 - CREATE CODE SEGMENT
 	AH = E7h
@@ -3859,7 +4147,7 @@ SeeAlso: AH=E7h"OS/286",AH=E9h"OS/286"
 INT 21 - DoubleDOS - SET/RESET KEYBOARD CONTROL FLAGS
 	AH = E8h
 	AL = program for which to set flags (00h this program, 01h other)
-	DX = keyboard control flags (see #1776)
+	DX = keyboard control flags (see #1952)
 Return: DX = previous flags
 Notes:	disabling Ctrl-PrtSc will allow the program to intercept the keystroke;
 	  disabling any of the other keystrokes disables them completely
@@ -3868,7 +4156,7 @@ SeeAlso: AH=E1h"DoubleDOS",AH=E2h"DoubleDOS",AH=E3h"DoubleDOS"
 SeeAlso: AH=F8h"DoubleDOS"
 
 Bitfields for DoubleDOS keyboard control flags:
-Bit(s)	Description	(Table 1776)
+Bit(s)	Description	(Table 1952)
  0	menu
  1	exchange
  2	entire keyboard enable/disable
@@ -3898,12 +4186,12 @@ SeeAlso: INT 31/AX=0007h,INT 31/AX=0008h
 --------T-21E9-------------------------------
 INT 21 - DoubleDOS - SET TIMESHARING PRIORITY
 	AH = E9h
-	AL = new priority (see #1777)
+	AL = new priority (see #1953)
 Return: AL = priority setting if AL=05h on entry
 Note:	identical to AH=F9h
 SeeAlso: AH=EAh"DoubleDOS",AH=EBh"DoubleDOS",AH=F9h"DoubleDOS"
 
-(Table 1777)
+(Table 1953)
 Values for DoubleDOS timesharing priority:
  00h	visible program gets 70%, invisible gets 30% (default)
  01h	visible program gets 50%, invisible gets 50%
@@ -3934,7 +4222,7 @@ INT 21 - Novell NetWare shell 3.01 - MAP A FAKE ROOT DIRECTORY
 	BL = drive number (0=default, 1=A:, ...)
 	DS:DX -> ASCIZ path for fake root (may include server name or be empty)
 Return: CF set on error
-	    AL = error code (03h,0Fh,11h) (see #1366 at AH=59h/BX=0000h)
+	    AL = error code (03h,0Fh,11h) (see #1545 at AH=59h/BX=0000h)
 	CF clear if successful
 Note:	if drive is not currently mapped, a drive mapping will be created
 SeeAlso: AX=E906h
@@ -4015,20 +4303,20 @@ INT 21 - Novell NetWare - SYNCHRONIZATION SERVICES - LOG FILE
 		01h lock as well as log file
 		    BP = lock timeout in timer ticks (1/18 second)
 			0000h = don't wait if file already locked
-Return: AL = status (see #1778)
+Return: AL = status (see #1954)
 Desc:	add the location and size of the specified file to the log table and
 	  optionally lock the file
 Note:	this function is supported by NetWare 4.6+, Advanced NetWare 1.0+, and
 	  Alloy NTNX
 SeeAlso: AH=BCh"NetWare",AH=CAh,AH=D0h,AH=ECh"NetWare",AH=EDh"NetWare"
 
-(Table 1778)
+(Table 1954)
 Values for NetWare status:
  00h	successful
  96h	no dynamic memory for file
  FEh	timed out
  FFh	failed
-SeeAlso: #1741
+SeeAlso: #1917
 --------T-21EB-------------------------------
 INT 21 - DoubleDOS - TURN ON TASK SWITCHING
 	AH = EBh
@@ -4180,13 +4468,13 @@ SeeAlso: AX=EF01h,AX=EF02h,AX=EF03h,AX=EF04h
 --------N-21EF01-----------------------------
 INT 21 - Novell NetWare - WORKSTATION - GET DRIVE FLAG TABLE
 	AX = EF01h
-Return: ES:SI -> network shell's 32-byte drive flag table (see #1779)
+Return: ES:SI -> network shell's 32-byte drive flag table (see #1955)
 	AX = 0000h
 Notes:	this function is supported by Advanced NetWare 1.0+
 	each byte in the drive flag table corresponds to a drive
 SeeAlso: AX=EF00h,AX=EF02h,AX=EF03h
 
-(Table 1779)
+(Table 1955)
 Values in NetWare drive flag table:
  00h	drive is not mapped
  01h	permanent network drive
@@ -4207,13 +4495,13 @@ SeeAlso: AX=EF01h,AX=EF03h,AX=F002h
 --------N-21EF03-----------------------------
 INT 21 - Novell NetWare - WORKSTATION - GET CONNECTION ID TABLE
 	AX = EF03h
-Return: ES:SI -> network shell's connection ID table (see #1780)
+Return: ES:SI -> network shell's connection ID table (see #1956)
 	AX = 0000h
 Note:	this function is supported by Advanced NetWare 1.0+
 SeeAlso: AX=EF00h,AX=EF02h,AX=EF04h,AX=F002h
 
 Format of NetWare connection ID table [one entry of eight-element array]:
-Offset	Size	Description	(Table 1780)
+Offset	Size	Description	(Table 1956)
  00h	BYTE	in-use flag
 		E0h AES temporary
 		F8h IPX in critical section
@@ -4241,13 +4529,13 @@ Offset	Size	Description	(Table 1780)
 --------N-21EF04-----------------------------
 INT 21 - Novell NetWare - WORKSTATION - GET FILE SERVER NAME TABLE
 	AX = EF04h
-Return: ES:SI -> network shell's file server name table (see #1781)
+Return: ES:SI -> network shell's file server name table (see #1957)
 	AX = 0000h
 Note:	this function is supported by Advanced NetWare 1.0+
 SeeAlso: AX=EF03h
 
 Format of file server name table:
-Offset	Size	Description	(Table 1781)
+Offset	Size	Description	(Table 1957)
  00h 48 BYTEs	ASCIZ server name for first entry in connection ID table
  30h 48 BYTEs	ASCIZ server name for second entry in connection ID table
 	...
@@ -4326,11 +4614,11 @@ INT 21 - Novell NetWare - CONNECTION SERVICES - FILE SERVER CONNECTION
 		DL = connection ID
 	    02h logout from file server
 		DL = connection ID
-Return: AL = status (see #1782)
+Return: AL = status (see #1958)
 Note:	these functions are supported by Advanced NetWare 1.0+
 SeeAlso: AH=D7h"NetWare",AH=E3h/SF=14h
 
-(Table 1782)
+(Table 1958)
 Values for NetWare function status:
  00h	successful
  F8h	already attached to server
@@ -4339,7 +4627,7 @@ Values for NetWare function status:
  FCh	unknown file server
  FEh	server bindery locked
  FFh	no response from server, or connection does not exist
-SeeAlso: #1741,#2038
+SeeAlso: #1917,#2214
 --------T-21F1-------------------------------
 INT 21 - DoubleDOS - CLEAR KEYBOARD BUFFER FOR CURRENT JOB
 	AH = F1h

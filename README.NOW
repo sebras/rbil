@@ -1,7 +1,7 @@
-My queue of submissions has grown again -- if you've sent in any
-contributions which don't appear in this release but which I've
-acknowledged, they are still on my queue and will appear in the
-future.
+It doesn't look like I'll manage to clear out my queue of submissions
+anytime soon....  If you've sent in any contributions which don't
+appear in this release but which I've acknowledged, they are still on
+my queue and will appear in the future.
 
 Still on the queue: the final bits of the documented REAL/32 API, more
 OpenDOS info, the rest of the TI Professional info, lots of chipset
@@ -15,13 +15,24 @@ beginning with archive D.
 UPCOMING CHANGES
 ================
 
-Since PORTS.LST will be running out of table numbers in the not-too-distant
-future, I expect to increase all table numbers from four to five characters
-by INTER59 (and possibly even for INTER58).
+Because PORTS.LST will be running out of table numbers in the
+not-too-distant future, I will be increasing all table numbers from
+four to five characters as of INTER59.
 
 
 WHAT'S NEW
 ==========
+
+INTER58
+
+updated files:
+	OPCODES.LST
+
+new info:
+	more undocumented MS-DOS 7.x calls
+	Intel 440BX chipset
+	SMBIOS v2.2
+
 
 INTER57
 
@@ -77,34 +88,3 @@ new info:
 	Am486 SMM
 	FBOOT
 	CD-ROM API updates
-
-INTER54
-
-new files:
-	INT2IPF.ZIP
-	PCICFG09.ZIP (will eventually become a separate package)
-
-new formatting:
-	a slight addition to divider lines to allow finer-grained
-	division of the Windows VxD services information: a VxD entry
-	now appears as
-
-		--------W-20----Vx0021-----------------------
-		INT 20 P - Microsoft Windows - PageFile DEVICE - SERVICES
-			VxD = 0021h
-			...
-		SeeAlso: INT 20/VxD=0001h
-
-	entries in OPCODES.LST now appear as
-		----------O-AAA------------------------------------
-		OPCODE AAA   -	 ASCII adjust AX after addition
-	to permit cross-references such as
-		SeeAlso: OPCODE "AAA"
-
-new info:
-	many more PCI vendor and device IDs
-	Adaptec AHA-154x, TMC-16x0, and Xirlink XL-22x SCSI adapters
-	POST Memory Manager Specification v1.0
-	S3VBE/Core, S3 SpeedUp
-	MPU-401 MIDI UART
-	Desktop Management Interface extension to PnP BIOS
