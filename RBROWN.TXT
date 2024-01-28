@@ -1,13 +1,16 @@
 Public Domain/Freeware/Shareware by Ralf Brown:
 
+(URLs for use with your favorite WWW browser are at the end of this file)
+
 The MSDOS Interrupt List
-	A comprehensive listing of over 6780 functions available through
+	A comprehensive listing of over 7050 functions available through
 	interrupt calls on IBM PCs and compatibles.  Includes both
 	documented and undocumented functions.
-	Current version: INTER44A (release 44, 1/15/95)
-			 INTER44B
-			 INTER44C
-			 INTER44D (conversion and utility programs)
+	Current version: INTER45A (release 45, 3/26/95)
+			 INTER45B
+			 INTER45C
+			 INTER45D
+			 INTER45E (conversion and utility programs)
 
 DVINT
 	An extract of the MSDOS Interrupt List containing the DESQview
@@ -20,9 +23,9 @@ RBcomm
 	PCZ, or PUMA/MPt integration for file transfers; ANSI/VT102, VT52, 
  	and AVATAR emulation (including 132 columns); speeds to 115200 bps;
 	a powerful macro language; dialing directory; ANSI music; and
-	more.  Runs in 65K with DSZ, 46K without.  While it works under
+	more.  Runs in 65K with DSZ, 47K without.  While it works under
 	plain DOS, additional features are available under DESQview.
-	Current version: RBCOM341 (v3.41 1/10/93)
+	Current version: RBCOM346 (v3.46 1/29/95)
 
 SPAWNO
 	A replacement for the Turbo C and Microsoft C spawn..() functions
@@ -139,6 +142,7 @@ Internet:  SimTel Software Repository mirrors in directories /pub/msdos/X.
 	oak.oakland.edu [141.210.10.117], wuarchive.wustl.edu [128.252.135.4],
 	ftp.uu.net [137.39.1.9], nic.funet.fi [128.214.6.100],
 	src.doc.ic.ac.uk [146.169.3.7] and archie.au [139.130.4.6].
+     Some packages are also on GARBO.UWASA.FI in /pc/programming.
 FIDO: SyncPoint BBS 1:261/1008 1-410-529-2584 File Requests.
 
 Bitnet users may also retrieve items on SimTel via the following automated
@@ -416,3 +420,25 @@ AU OZ-Board, Townsville Qsnlnd       3:640/715  61-77-21-3592  PEPV32RE
            ZONE 6
  ------------------------------      ---------  ------------- -------
 HK TAIC Maximus Kowloon              6:700/1    85-2-789-1267  PEPV32
+
+
+======================================================================
+
+URLs: (still under construction)
+
+Home page:  http://www.cs.cmu.edu:8001/afs/cs/user/ralf/pub/WWW/ralf-home.html
+
+Files on SimTel mirrors:
+	ftp://oak.oakland.edu/SimTel/msdos/info/inter45a.zip
+	ftp://oak.oakland.edu/SimTel/msdos/info/inter45b.zip
+	ftp://oak.oakland.edu/SimTel/msdos/info/inter45c.zip
+	ftp://oak.oakland.edu/SimTel/msdos/info/inter45d.zip
+	ftp://oak.oakland.edu/SimTel/msdos/info/inter45e.zip
+	ftp://oak.oakland.edu/SimTel/msdos/desqview/dvint43.zip
+
+Files at Garbo:
+	ftp://garbo.uwasa.fi/pc/programming/inter45a.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter45b.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter45c.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter45d.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter45e.zip

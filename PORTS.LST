@@ -1,5 +1,5 @@
 [This file was provided by Wim Osterholt (2:512/56 or wim@djo.wtm.tudelft.nl).]
-Last Change: 1/15/95
+Last Change: 3/26/95
 
 
 		XT, AT and PS/2	 I/O port addresses
@@ -191,6 +191,24 @@ Last Change: 1/15/95
 		  00C1,0000  enable range compare CC0 0-4M    CC1 disable
 		  00C1,40E1  enable range compare CC0 0-4M    CC1 4M-6M
 		  0081,0000  enable range compare CC0 0-8M    CC1 disable
+
+-------------------------------------------------------------------------------
+0022-0025 ----	Intel 82360SL Chipset (for 386SL)
+
+0022	w	CPU write mode register
+		bit 0: unlock configuration space
+		bit 1: enable selected unit
+		bits 3-2: unit
+		    00 memory configuration
+		    01 cache
+		    10 internal bus
+		    11 external bus
+
+0023    r       configuration status register
+		bit 7: 82360 configuration is open
+
+0024    w       82360 configuration index
+0025	r/w	82360 configuration data
 
 -------------------------------------------------------------------------------
 0022-0023 ----	Chip Set Data
@@ -554,12 +572,18 @@ Last Change: 1/15/95
 			       bit0 =	enableoutput buffer full interrupt
 
 		 60   Compaq  Load new command (60 to [64], command to [60])
+		 A0    AMI    get ASCIZ copyright message on port 0060
+		 A1    AMI    get controller version byte on port 0060
 		 A1   Compaq  unknown speedfunction ??
 		 A2   Compaq  unknown speedfunction ??
+		 A2    AMI    set keyboard controller pins 22 and 23 low
 		 A3   Compaq  Enable system speed control
-		 A4	MCA   check if password installed
+		 A2    AMI    set keyboard controller pins 22 and 23 high
+		 A4    MCA    check if password installed
 		 A4   Compaq  Toggle speed
-		 A5	MCA   load password
+		 A4    AMI    set internal system speed flag to low
+		 A5    MCA    load password
+		 A5    AMI    set internal system speed flag to high
 		 A5   Compaq  Special reed. the 8042 places the real values
 			      of port 2 except for bits 4 and 5 wich are given
 			      a new definition in the output buffer. No output
@@ -568,12 +592,17 @@ Last Change: 1/15/95
 				if bit 5 = 1, an 11-bit keyboard is in use
 				if bit 4 = 0, outp-buff-full interrupt disabled
 				if bit 4 = 1, output-buffer-full int. enabled
-		 A6	MCA   check password
+		 A6    MCA    check password
+		 A6    AMI    get internal system speed flag on port 0060
 		 A6   Compaq  unknown speedfunction ??
-		 A7	MCA   disable mouse port
-		 A8	MCA   enable mouse port
-		 A9	MCA   test mouse port
-		 AA	sngl  initiate self-test. will return 55 to data port
+		 A7    MCA    disable mouse port
+		 A7    AMI    set internal flag indicating bad write cache
+		 A8    MCA    enable mouse port
+		 A8    AMI    set internal flag indicating good write cache
+		 A9    MCA    test mouse port
+		 A9    AMI    get internal flag indicating cache OK to 0060
+		 AA	sngl  initiate self-test. will return 55h to data port
+				if self-test successful, FCh if failed
 		      Compaq  Initializes ports 1 and 2, disables the keyboard
 			      and clears the buffer pointers. It then places
 			      55 in the output buffer.
@@ -588,12 +617,29 @@ Last Change: 1/15/95
 			      output port, input port, status word are sent.
 		 AD	sngl  disable keyboard (sets bit 4 of commmand byte)
 		 AE	sngl  enable keyboard  (resets bit 4 of commmand byte)
-		 AF	AWARD Enhanced Command: read keyboard version
+		 AF    AWARD  Enhanced Command: read keyboard version
+		 B1    AMI    set keyboard controller P11 line low
+		 B2    AMI    set keyboard controller P12 line low
+		 B3    AMI    set keyboard controller P13 line low
+		 B4    AMI    set keyboard controller P22 line low
+		 B5    AMI    set keyboard controller P23 line low
+		 B8    AMI    set keyboard controller P10 line high
+		 B9    AMI    set keyboard controller P11 line high
+		 BA    AMI    set keyboard controller P12 line high
+		 BB    AMI    set keyboard controller P13 line high
+		 BC    AMI    set keyboard controller P22 line high
+		 BD    AMI    set keyboard controller P23 line high
 		 C0	read  read input port
 		      Compaq  Places status of input port in output buffer. use
 			      this command only when the output buffer is empty
-		 C1	MCA   Enhanced Command: poll input port Low nibble
-		 C2	MCA   Enhanced Command: poll input port High nibble
+		 C1    MCA    Enhanced Command: poll input port Low nibble
+		 C2    MCA    Enhanced Command: poll input port High nibble
+		 C8    AMI    unblock keyboard controller lines P22 and P23
+		 C9    AMI    block keyboard controller lines P22 and P23
+		 CA    AMI    read keyboard mode, return in 0060 bit 0
+			      (bit clear if ISA mode, set if PS/2 mode)
+		 CB    AMI    set keyboard mode (write back mode byte returned
+				by CA, modifying only bit 0)
 		 D0	read  read output port
 		      Compaq  Places byte in output port in output buffer. use
 			      this command only when the output buffer is empty
@@ -1095,6 +1141,15 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 00E7	r/w	error trace
 
 -------------------------------------------------------------------------------
+00EC-00ED ----  Compaq LTE Elite
+
+-------------------------------------------------------------------------------
+00EF	  ----  Hyunday Super-NB386S (AMD386sx with Intel chipset)
+
+		Warning: any access to this port causes a cold reset on this
+		  machine!
+
+-------------------------------------------------------------------------------
 00F0-00F5 ----	PCjr Disk Controller
 
 00F0		disk controller
@@ -1110,6 +1165,12 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 00F8	r/w	opcode transfer
 00FA	r/w	opcode transfer
 00FC	r/w	opcode transfer
+
+-------------------------------------------------------------------------------
+00F9	  ----  Compaq LTE Elite
+
+-------------------------------------------------------------------------------
+00FB	  ----  Compaq LTE Elite
 
 -------------------------------------------------------------------------------
 00F9-00FF ----	PC radio by CoZet Info Systems
@@ -1220,9 +1281,14 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 
 01ED	r/w	select internal register. Data to/from 01EF
 01EE	r
-01EF	r/w	reg.
-		5  = 1000xxxx  for low CPU clock speed (4MHz on Morse/Mitac)
-		   = 0xxxxxxx  for high CPU clock speed (16MHz on Morse/Mitac)
+01EF	r/w	register value
+		05h  = 1000xxxx for low CPU clock speed (4MHz on Morse/Mitac)
+		     = 0xxxxxxx for high CPU clock speed (16MHz on Morse/Mitac)
+		10h memory size
+		   bits 2-0 = size
+			   (undefined,512K,640K,1024K,2560K,2048K,4096K,undef.)
+		14h ???
+		   bit 2: 384K extended memory in 1024K system
 
 -------------------------------------------------------------------------------
 01F0-01F7 ----	HDC 1	(1st Fixed Disk Controller)   same as 017x (ISA, EISA)
@@ -1247,8 +1313,8 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 		  bit 4	 = 1  ID found
 			 = 0  ID not found
 		  bit 3	      reserved
-		  bit 2	 = 1  command completed
-			 = 0  command aborted
+		  bit 2	 = 1  command aborted
+			 = 0  command completed
 		  bit 1	 = 1  track 000 not found
 			 = 0  track 000 found
 		  bit 0	 = 1  DAM not found
@@ -1257,17 +1323,21 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 01F1	w	WPC/4  (Write Precompensation Cylinder divided by 4)
 
 01F2	r/w	sector count
-01F3	r/w	sector number
-01F4	r/w	cylinder low
-01F5	r/w	cylinder high
+01F3	r/w	sector number (CHS mode)
+		logical block address, bits 0-7 (LBA mode)
+01F4	r/w	cylinder low (CHS mode)
+		logical block address, bits 15-8 (LBA mode)
+01F5	r/w	cylinder high (CHS mode)
+		logical block address, bits 23-16 (LBA mode)
 
 01F6	r/w	drive/head
 		 bit 7	 = 1
-		 bit 6	 = 0
+		 bit 6	 = LBA mode enabled, rather than default CHS mode
 		 bit 5	 = 1
 		 bit 4	 = 0  drive 0 select
 			 = 1  drive 1 select
-		 bit 3-0      head select bits
+		 bit 3-0 =    head select bits (CHS mode)
+			      logical block address, bits 27-24 (LBA mode)
 
 01F7	r	status register
 		 bit 7 = 1  controller is executing a command
@@ -1451,6 +1521,18 @@ SeeAlso: 0388-0389
 -------------------------------------------------------------------------------
 0234-0237 ----	Adaptec 154xB/154xC SCSI adapter.
 		alternate address at 0130, 0134, 0230, 0330 and 0334
+
+-------------------------------------------------------------------------------
+0238-023x ----  Bus Mouse Port (secondary address)
+
+		secondary address for bus mice from MS and Logitech, and the
+		  ATI video adapter mouse
+
+-------------------------------------------------------------------------------
+023C-023x ----  Bus Mouse Port (primary address)
+
+		primary address for bus mice from MS and Logitech, and the
+		  ATI video adapter mouse
 
 -------------------------------------------------------------------------------
 0240-024F ----	Gravis Ultra Sound by Advanced Gravis
@@ -3017,6 +3099,13 @@ SeeAlso: 0240-024F, 0340-034F
 1C00-1CFF ----	available for EISA slot 1
 
 -------------------------------------------------------------------------------
+1C65	  ----	Compaq Contura Aero
+
+1C65	r/???	bit 6: operating on battery power
+
+		See also: 2065
+
+-------------------------------------------------------------------------------
 1C80-1C8F ----	VESA XGA Video in EISA slot 1
 
 1C80-1C83 r/w	EISA Video ID
@@ -3038,6 +3127,13 @@ SeeAlso: 0240-024F, 0340-034F
 
 -------------------------------------------------------------------------------
 2000-20FF ----	available for EISA slot 2
+
+-------------------------------------------------------------------------------
+2065	  ----	Compaq Contura Aero
+
+2065	w	??? (84h seen)
+
+		See also: 1C65, 2465
 
 -------------------------------------------------------------------------------
 2100-210F ----	IBM XGA (eXtended Graphics Adapter  8514/A) (first installed)
@@ -3137,6 +3233,14 @@ Note:	this port is for the first XGA in the system; 211x-217x are used for
 
 -------------------------------------------------------------------------------
 2400-24FF ----	available for EISA slot 2
+
+-------------------------------------------------------------------------------
+2465	  ----	Compaq Contura Aero
+
+	r	current battery power level
+		(166 fully-charged, 130 = LowBat1)
+
+		See also: 1C65, 2065
 
 -------------------------------------------------------------------------------
 27C6	r/w	LCD timeout in minutes (Compaq LTE Lite)
@@ -3568,3 +3672,8 @@ Williams' DOSREF, v3.0]
 [Compaq QVision info from the _COMPAQ_QVision_Graphics_System_Technical_
 _Reference_Guide_, second edition (October 1993).  Compaq part number
 073A/0693.  Much more to come!]
+
+[AMI keyboard controller port 0064 commands from the American Megatrends, Inc.
+_Version_KF_and_KH_Keyboard_Controller_BIOS_Reference_, available on the
+AMI BBS and american.megatrends.com as KFKHMAN.ZIP.]
+

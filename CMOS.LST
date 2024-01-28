@@ -1,5 +1,5 @@
               CMOS Memory Map v1.24 Jan, 1995
-[Last Edit: 1/15/95]
+[Last Edit: 3/26/95]
 
 Compiled from multiple sources by Padgett Peterson
 Corrections/additions/comments to: padgett@tccslr.dnet.mmc.com
@@ -598,6 +598,8 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
 ---------------------------------------------
  36h - (PHOENIX) Second user defined hard disk (type 48) Cylinders MSB
        NOTE: used only when PS/2 style password is NOT in effect.
+ 36h - (AWARD)
+	bit 6: IDE 32-bit transfer mode
 
 ---------------------------------------------
  37h - (IBM PS/2) Date Century Byte 
@@ -808,6 +810,7 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
 
 ---------------------------------------------
  58h - (AWARD) ?? reserved for PCI Bus Slot 5 Latency Timer ??
+	bit 3: onboard CMD IDE Mode 3
 
 ---------------------------------------------
  59h - (AWARD) ?? reserved for PCI Bus Setup ??
@@ -899,6 +902,12 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
 
 ---------------------------------------------
  66h-79h - (AWARD) ??? unused ???  Defaults to all FFh's.
+
+---------------------------------------------
+ 68h-6Fh - (AWARD) IDE hard disk params for first drive on secondary IDE port
+
+---------------------------------------------
+ 70h-77h - (AWARD) IDE hard disk params for second drive on secondary IDE port
 
 ---------------------------------------------
  7Ah - (AWARD) Extended CMOS Checksum, High Byte

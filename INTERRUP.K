@@ -9,21 +9,21 @@ Note:	the installation check consists of testing for the signature string
 	  "APPC/PC" nine bytes before the interrupt handler
 SeeAlso: AH=01h/SF=1B00h,AH=FAh
 --------h-68---------------------------------
-INT 68 C - HP Vectra - IRQ16 - 8041 SERVICE REQUEST
+INT 68 C - HP Vectra AT - IRQ16 - 8041 SERVICE REQUEST
 SeeAlso: INT 08"IRQ0",INT 69"HP Vectra",INT 6F"HP Vectra"
 --------N-6801--SF1B00-----------------------
 INT 68 - APPC/PC - NETWORK DEVICE CONTROL - DISPLAY
 	AH = 01h subfn 1B00h
-	DS:DX -> control block (see #2143)
+	DS:DX -> control block (see #2272)
 Return: control block updated
 SeeAlso: AH=01h/SF=2000h,AH=01h/SF=2B00h,INT 68"Novell"
 
 Format of APPC/PC "DISPLAY" control block:
-Offset	Size	Description	(Table 2143)
+Offset	Size	Description	(Table 2272)
  00h 12 BYTEs	reserved
  0Ch	WORD	1B00h (verb "DISPLAY")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #2144)
+ 14h	DWORD	(big-endian) return code (see #2273)
  18h	WORD	00h
  1Ah  8 BYTEs	(big-endian) logical unit ID
  22h  8 BYTEs	(big-endian) partner logical unit name
@@ -41,7 +41,7 @@ Offset	Size	Description	(Table 2143)
  3Ch	BYTE	bit 7: SESSION_TERMINATION_TARGET_DRAIN
 		bit 6: SESSION_TERMINATION_SOURCE_DRAIN
 
-(Table 2144)
+(Table 2273)
 Values for APPC/PC return code:
  0000h	successful
  0001h	BAD_TP_ID
@@ -83,16 +83,16 @@ Values for APPC/PC return code:
 --------N-6801--SF2000-----------------------
 INT 68 - APPC/PC - NETWORK DEVICE CONTROL - ATTACH PHYSICAL UNIT
 	AH = 01h subfn 2000h
-	DS:DX -> control block (see #2145)
+	DS:DX -> control block (see #2274)
 Return: control block updated
 SeeAlso: AH=01h/SF=2100h,AH=01h/SF=2B00h
 
 Format of APPC/PC "Attach Physical Unit" control block:
-Offset	Size	Description	(Table 2145)
+Offset	Size	Description	(Table 2274)
  00h 12 BYTEs	reserved
  0Ch	WORD	2000h (verb "Attach Physical Unit")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #2144)
+ 14h	DWORD	(big-endian) return code (see #2273)
  18h	WORD	00h
  1Ah	BYTE	version
  1Bh	BYTE	release
@@ -107,16 +107,16 @@ Offset	Size	Description	(Table 2145)
 --------N-6801--SF2100-----------------------
 INT 68 - APPC/PC - NETWORK DEVICE CONTROL - ATTACH LOGICAL UNIT
 	AH = 01h subfn 2100h
-	DS:DX -> control block (see #2146)
+	DS:DX -> control block (see #2275)
 Return: control block updated
-SeeAlso: #2149,#2150,#2152,AH=01h/SF=2000h,AH=01h/SF=2200h,AH=01h/SF=2B00h
+SeeAlso: #2278,#2279,#2281,AH=01h/SF=2000h,AH=01h/SF=2200h,AH=01h/SF=2B00h
 
 Format of APPC/PC "Attach Logical Unit" control block:
-Offset	Size	Description	(Table 2146)
+Offset	Size	Description	(Table 2275)
  00h 12 BYTEs	reserved
  0Ch	WORD	2100h (verb "Attach Logical Unit")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #2144)
+ 14h	DWORD	(big-endian) return code (see #2273)
  18h	WORD	70  offset to partner logical unit record
  1Ah  8 BYTEs	(big-endian) logical unit name
  22h  8 BYTEs	(big-endian) logical unit ID
@@ -133,11 +133,11 @@ Offset	Size	Description	(Table 2146)
  3Eh	DWORD	pointer to LU_LU_PASSWORD_EXIT routine, FFFFFFFFh=no pswd exit
  42h	DWORD	00h
  46h	WORD	total length of partner records
- 48h	var	array of partner logical unit records (see #2147)
-SeeAlso: #2149,#2150,#2152
+ 48h	var	array of partner logical unit records (see #2276)
+SeeAlso: #2278,#2279,#2281
 
 Format of APPC/PC partner logical unit record:
-Offset	Size	Description	(Table 2147)
+Offset	Size	Description	(Table 2276)
  00h	WORD	length of this partner logical unit record
  02h	WORD	42  offset to mode records
  04h  8 BYTEs	(big-endian) partner logical unit name
@@ -151,10 +151,10 @@ Offset	Size	Description	(Table 2147)
  18h	BYTE	partner logical unit adapter number
  19h 17 BYTEs	(counted string) partner logical unit adapter address
  2Ah	WORD	total length of mode records
- 2Ch 16N BYTEs	array of mode records (see #2148)
+ 2Ch 16N BYTEs	array of mode records (see #2277)
 
 Format of mode record:
-Offset	Size	Description	(Table 2148)
+Offset	Size	Description	(Table 2277)
  00h	WORD	16  length of this mode record
  02h  8 BYTEs	(big-endian) mode name
  0Ah	WORD	RU_SIZE high bound
@@ -167,7 +167,7 @@ pointers are called by pushing the DWORD pointer to the verb on the stack and
 then performing a FAR call.
 
 Format of ACCESS_LU_LU_PW verb:
-Offset	Size	Description	(Table 2149)
+Offset	Size	Description	(Table 2278)
  00h 12 BYTEs	reserved
  0Ch	WORD	1900h (verb "ACCESS_LU_LU_PW")
  0Eh  8 BYTEs	(big-endian) logical unit ID
@@ -176,14 +176,14 @@ Offset	Size	Description	(Table 2149)
  26h 17 BYTEs	(counted string) partner fully qualified logical unit name
  37h	BYTE	password available (0=no, 1=yes)
  38h  8 BYTEs	password
-SeeAlso: #2146,#2150,#2152
+SeeAlso: #2275,#2279,#2281
 
 Format of CREATE_TP verb:
-Offset	Size	Description	(Table 2150)
+Offset	Size	Description	(Table 2279)
  00h 12 BYTEs	reserved
  0Ch	WORD	2300h (verb "CREATE_TP")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) sense code (see #2151)
+ 14h	DWORD	(big-endian) sense code (see #2280)
  18h  8 BYTEs	(big-endian) TP ID
  20h  8 BYTEs	(big-endian) logical unit ID
  28h	DWORD	(big-endian) conversation ID
@@ -202,9 +202,9 @@ Offset	Size	Description	(Table 2150)
  B5h 11 BYTEs	(counted string) user ID
  C0h	BYTE	0 verification should be performed
 		1 already verified
-SeeAlso: #2149,#2152
+SeeAlso: #2278,#2281
 
-(Table 2151)
+(Table 2280)
 Values for APPC/PC sense code:
  00000000h	Ok
  080F6051h	SECURITY_NOT_VALID
@@ -215,7 +215,7 @@ Values for APPC/PC sense code:
  10086041h	SYNC_LEVEL_NOT_SUPPORTED
 
 Format of SYSLOG verb:
-Offset	Size	Description	(Table 2152)
+Offset	Size	Description	(Table 2281)
  00h 12 BYTEs	reserved
  0Ch	WORD	2600h (verb "SYSLOG")
  0Eh 10 BYTEs	00h
@@ -228,68 +228,68 @@ Offset	Size	Description	(Table 2152)
  36h	WORD	length of data
  38h	DWORD	pointer to data
  3Ch	BYTE	00h
-SeeAlso: #2149,#2150
+SeeAlso: #2278,#2279
 --------N-6801--SF2200-----------------------
 INT 68 - APPC/PC - NETWORK DEVICE CONTROL - DETACH LOGICAL UNIT
 	AH = 01h subfn 2200h
-	DS:DX -> control block (see #2153)
+	DS:DX -> control block (see #2282)
 Return: control block updated
 SeeAlso: AH=01h/SF=2000h,AH=01h/SF=2100h,AH=01h/SF=2700h
 
 Format of APPC/PC "Detach Logical Unit" control block:
-Offset	Size	Description	(Table 2153)
+Offset	Size	Description	(Table 2282)
  00h 12 BYTEs	reserved
  0Ch	WORD	2200h (verb "Detach Logical Unit")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #2144)
+ 14h	DWORD	(big-endian) return code (see #2273)
  18h  8 BYTEs	(big-endian) logical unit ID
  20h	BYTE	00h
 --------N-6801--SF2700-----------------------
 INT 68 - APPC/PC - NETWORK DEVICE CONTROL - DETACH PHYSICAL UNIT
 	AH = 01h subfn 2700h
-	DS:DX -> control block (see #2154)
+	DS:DX -> control block (see #2283)
 Return: control block updated
 SeeAlso: AH=01h/SF=2000h,AH=01h/SF=2100h,AH=01h/SF=2200h
 
 Format of APPC/PC "Detach Physical Unit" control block:
-Offset	Size	Description	(Table 2154)
+Offset	Size	Description	(Table 2283)
  00h 12 BYTEs	reserved
  0Ch	WORD	2700h (verb "Detach Physical Unit")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #2144)
+ 14h	DWORD	(big-endian) return code (see #2273)
  18h	BYTE	00h  type: hard
 		01h  type: soft
 --------N-6801--SF2B00-----------------------
 INT 68 - APPC/PC - NETWORK DEVICE CONTROL - ACTIVATE DLC
 	AH = 01h subfn 2B00h
-	DS:DX -> control block (see #2155)
+	DS:DX -> control block (see #2284)
 Return: control block updated
 SeeAlso: AH=01h/SF=1B00h,AH=01h/SF=2000h
 
 Format of APPC/PC "Activate DLC" control block:
-Offset	Size	Description	(Table 2155)
+Offset	Size	Description	(Table 2284)
  00h 12 BYTEs	reserved
  0Ch	WORD	2B00h (verb "Activate DLC")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #2144)
+ 14h	DWORD	(big-endian) return code (see #2273)
  18h  8 BYTEs	(big-endian) DLC name
  20h	BYTE	adapter number
 --------N-6802--SF0100-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - ALLOCATE
 	AH = 02h subfn 0100h
-	DS:DX -> control block (see #2156)
+	DS:DX -> control block (see #2285)
 Return: control block updated
 SeeAlso: AH=02h/SF=0500h
 
 Format of APPC/PC "Allocate" control block:
-Offset	Size	Description	(Table 2156)
+Offset	Size	Description	(Table 2285)
  00h 12 BYTEs	reserved
  0Ch	WORD	0100h (verb "Allocate" or "MC_Allocate")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2157)
- 16h	DWORD	(big-endian) error code (see #2158)
+ 14h	WORD	(big-endian) primary return code (see #2286)
+ 16h	DWORD	(big-endian) error code (see #2287)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	(MC_Allocate only) conversation type
@@ -312,7 +312,7 @@ Offset	Size	Description	(Table 2156)
  A6h	WORD	PIP_DATA length
  A8h	DWORD	pointer to PIP_DATA
 
-(Table 2157)
+(Table 2286)
 Values for APPC/PC primary return code:
  0000h	successful
  0001h	parameter check
@@ -341,7 +341,7 @@ Values for APPC/PC primary return code:
  F003h	APPC abended
  F004h	incomplete
 
-(Table 2158)
+(Table 2287)
 Values for APPC/PC error code:
  0001h	bad TP ID
  0002h	bad conversation ID
@@ -388,56 +388,56 @@ Values for APPC/PC error code:
 --------N-6802--SF0300-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - CONFIRM
 	AH = 02h subfn 0300h
-	DS:DX -> control block (see #2159)
+	DS:DX -> control block (see #2288)
 Return: control block updated
 SeeAlso: AH=02h/SF=0400h
 
 Format of APPC/PC "Confirm" control block:
-Offset	Size	Description	(Table 2159)
+Offset	Size	Description	(Table 2288)
  00h 12 BYTEs	reserved
  0Ch	WORD	0300h (verb "Confirm" or "MC_Confirm")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2157)
- 16h	DWORD	(big-endian) error code (see #2158)
+ 14h	WORD	(big-endian) primary return code (see #2286)
+ 16h	DWORD	(big-endian) error code (see #2287)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	request to send received (0=no, 1=yes)
 --------N-6802--SF0400-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - CONFIRMED
 	AH = 02h subfn 0400h
-	DS:DX -> control block (see #2160)
+	DS:DX -> control block (see #2289)
 Return: control block updated
 SeeAlso: AH=02h/SF=0300h
 
 Format of APPC/PC "Confirmed" control block:
-Offset	Size	Description	(Table 2160)
+Offset	Size	Description	(Table 2289)
  00h 12 BYTEs	reserved
  0Ch	WORD	0400h (verb "Confirmed" or "MC_Confirmed")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2157)
- 16h	DWORD	(big-endian) error code (see #2158)
+ 14h	WORD	(big-endian) primary return code (see #2286)
+ 16h	DWORD	(big-endian) error code (see #2287)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
 --------N-6802--SF0500-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - DEALLOCATE
 	AH = 02h subfn 0500h
-	DS:DX -> control block (see #2161)
+	DS:DX -> control block (see #2290)
 Return: control block updated
 SeeAlso: AH=02h/SF=0100h,AH=02h/SF=0300h
 
 Format of APPC/PC "Deallocate" control block:
-Offset	Size	Description	(Table 2161)
+Offset	Size	Description	(Table 2290)
  00h 12 BYTEs	reserved
  0Ch	WORD	0500h (verb "Deallocate" or "MC_Deallocate")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2157)
- 16h	DWORD	(big-endian) error code (see #2158)
+ 14h	WORD	(big-endian) primary return code (see #2286)
+ 16h	DWORD	(big-endian) error code (see #2287)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	00h
@@ -453,37 +453,37 @@ Offset	Size	Description	(Table 2161)
 --------N-6802--SF0600-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - FLUSH
 	AH = 02h subfn 0600h
-	DS:DX -> control block (see #2162)
+	DS:DX -> control block (see #2291)
 Return: control block updated
 SeeAlso: AH=02h/SF=0300h
 
 Format of APPC/PC "Flush" control block:
-Offset	Size	Description	(Table 2162)
+Offset	Size	Description	(Table 2291)
  00h 12 BYTEs	reserved
  0Ch	WORD	0600h (verb "Flush" or "MC_Flush")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2157)
- 16h	DWORD	(big-endian) error code (see #2158)
+ 14h	WORD	(big-endian) primary return code (see #2286)
+ 16h	DWORD	(big-endian) error code (see #2287)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
 --------N-6802--SF0700-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - GET ATTRIBUTES
 	AH = 02h subfn 0700h
-	DS:DX -> control block (see #2163)
+	DS:DX -> control block (see #2292)
 Return: control block updated
 SeeAlso: AH=02h/SF=0300h
 
 Format of APPC/PC "Get_Attributes" control block:
-Offset	Size	Description	(Table 2163)
+Offset	Size	Description	(Table 2292)
  00h 12 BYTEs	reserved
  0Ch	WORD	0700h (verb "Get_Attributes" or "MC_Get_Attributes")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2157)
- 16h	DWORD	(big-endian) error code (see #2158)
+ 14h	WORD	(big-endian) primary return code (see #2286)
+ 16h	DWORD	(big-endian) error code (see #2287)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h  8 BYTEs	(big-endian) logical unit ID
@@ -499,38 +499,38 @@ Offset	Size	Description	(Table 2163)
 --------N-6802--SF0800-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - GET CONVERSATION TYPE
 	AH = 02h subfn 0800h
-	DS:DX -> control block (see #2164)
+	DS:DX -> control block (see #2293)
 Return: control block updated
 SeeAlso: AH=02h/SF=0300h
 
 Format of APPC/PC "Get_Type" control block:
-Offset	Size	Description	(Table 2164)
+Offset	Size	Description	(Table 2293)
  00h 12 BYTEs	reserved
  0Ch	WORD	0800h (verb "Get_Type")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2157)
- 16h	DWORD	(big-endian) error code (see #2158)
+ 14h	WORD	(big-endian) primary return code (see #2286)
+ 16h	DWORD	(big-endian) error code (see #2287)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
- 26h	BYTE	(return) type (0=basic conversation, 1=mapped conversation)
+ 26h	BYTE	(ret) type (0=basic conversation, 1=mapped conversation)
 --------N-6802--SF0900-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - POST ON RECEIPT
 	AH = 02h subfn 0900h
-	DS:DX -> control block (see #2165)
+	DS:DX -> control block (see #2294)
 Return: control block updated
 SeeAlso: AH=02h/SF=0A00h
 
 Format of APPC/PC "Post_on_Receipt" control block:
-Offset	Size	Description	(Table 2165)
+Offset	Size	Description	(Table 2294)
  00h 12 BYTEs	reserved
  0Ch	WORD	0900h (verb "Post_on_Receipt")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2157)
- 16h	DWORD	(big-endian) error code (see #2158)
+ 14h	WORD	(big-endian) primary return code (see #2286)
+ 16h	DWORD	(big-endian) error code (see #2287)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	WORD	maximum length
@@ -538,19 +538,19 @@ Offset	Size	Description	(Table 2165)
 --------N-6802--SF0A00-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - PREPARE TO RECEIVE
 	AH = 02h subfn 0A00h
-	DS:DX -> control block (see #2166)
+	DS:DX -> control block (see #2295)
 Return: control block updated
 SeeAlso: AH=02h/SF=0900h,AH=02h/SF=0B00h
 
 Format of APPC/PC "Prepare_to_Receive" control block:
-Offset	Size	Description	(Table 2166)
+Offset	Size	Description	(Table 2295)
  00h 12 BYTEs	reserved
  0Ch	WORD	0A00h (verb "Prepare_to_Receive" or "MC_Prepare_to_Receive")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2157)
- 16h	DWORD	(big-endian) error code (see #2158)
+ 14h	WORD	(big-endian) primary return code (see #2286)
+ 16h	DWORD	(big-endian) error code (see #2287)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	type (0=SYNC_LEVEL, 1=FLUSH)
@@ -558,29 +558,29 @@ Offset	Size	Description	(Table 2166)
 --------N-6802--SF0B00-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - RECEIVE AND WAIT
 	AH = 02h subfn 0B00h
-	DS:DX -> control block (see #2167)
+	DS:DX -> control block (see #2296)
 Return: control block updated
 SeeAlso: AH=02h/SF=0C00h,AH=02h/SF=0F00h
 
 Format of APPC/PC "Receive_and_Wait" control block:
-Offset	Size	Description	(Table 2167)
+Offset	Size	Description	(Table 2296)
  00h 12 BYTEs	reserved
  0Ch	WORD	0B00h (verb "Receive_and_Wait" or "MC_Receive_and_Wait")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2157)
- 16h	DWORD	(big-endian) error code (see #2158)
+ 14h	WORD	(big-endian) primary return code (see #2286)
+ 16h	DWORD	(big-endian) error code (see #2287)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
- 26h	BYTE	type of information received (see #2168)
+ 26h	BYTE	type of information received (see #2297)
  27h	BYTE	(MC_Receive_and_Wait only) fill (0=buffer, 1=LL)
  28h	BYTE	Request_to_Send_Received (0=no, 1=yes)
  29h	WORD	maximum length
  2Bh	WORD	data length
  2Dh	DWORD	pointer to data
 
-(Table 2168)
+(Table 2297)
 Values for type of information received:
  00h	data
  01h	data complete
@@ -592,22 +592,22 @@ Values for type of information received:
 --------N-6802--SF0C00-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - RECEIVE IMMEDIATE
 	AH = 02h subfn 0C00h
-	DS:DX -> control block (see #2169)
+	DS:DX -> control block (see #2298)
 Return: control block updated
 SeeAlso: AH=02h/SF=0B00h,AH=02h/SF=0F00h
 
 Format of APPC/PC "Receive_Immediate" control block:
-Offset	Size	Description	(Table 2169)
+Offset	Size	Description	(Table 2298)
  00h 12 BYTEs	reserved
  0Ch	WORD	0C00h (verb "Receive_Immediate" or "MC_Receive_Immediate")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2157)
- 16h	DWORD	(big-endian) error code (see #2158)
+ 14h	WORD	(big-endian) primary return code (see #2286)
+ 16h	DWORD	(big-endian) error code (see #2287)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
- 26h	BYTE	type of information received (see #2168)
+ 26h	BYTE	type of information received (see #2297)
  27h	BYTE	(MC_Receive_Immediate only) fill (0=buffer, 1=LL)
  28h	BYTE	Request_to_Send_Received (0=no, 1=yes)
  29h	WORD	maximum length
@@ -616,37 +616,37 @@ Offset	Size	Description	(Table 2169)
 --------N-6802--SF0E00-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - REQUEST TO SEND
 	AH = 02h subfn 0E00h
-	DS:DX -> control block (see #2170)
+	DS:DX -> control block (see #2299)
 Return: control block updated
 SeeAlso: AH=02h/SF=0F00h,AH=02h/SF=1000h
 
 Format of APPC/PC "Request_to_Send" control block:
-Offset	Size	Description	(Table 2170)
+Offset	Size	Description	(Table 2299)
  00h 12 BYTEs	reserved
  0Ch	WORD	0E00h (verb "Request_to_Send" or "MC_Request_to_Send")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2157)
- 16h	DWORD	(big-endian) error code (see #2158)
+ 14h	WORD	(big-endian) primary return code (see #2286)
+ 16h	DWORD	(big-endian) error code (see #2287)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
 --------N-6802--SF0F00-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - SEND DATA
 	AH = 02h subfn 0F00h
-	DS:DX -> control block (see #2171)
+	DS:DX -> control block (see #2300)
 Return: control block updated
 SeeAlso: AH=02h/SF=0E00h,AH=02h/SF=1000h
 
 Format of APPC/PC "Send_Data" control block:
-Offset	Size	Description	(Table 2171)
+Offset	Size	Description	(Table 2300)
  00h 12 BYTEs	reserved
  0Ch	WORD	0F00h (verb "Send_Data" or "MC_Send_Data")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2157)
- 16h	DWORD	(big-endian) error code (see #2158)
+ 14h	WORD	(big-endian) primary return code (see #2286)
+ 16h	DWORD	(big-endian) error code (see #2287)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	request to send received (0=no, 1=yes)
@@ -656,19 +656,19 @@ Offset	Size	Description	(Table 2171)
 --------N-6802--SF1000-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - SEND ERROR
 	AH = 02h subfn 1000h
-	DS:DX -> control block (see #2172)
+	DS:DX -> control block (see #2301)
 Return: control block updated
 SeeAlso: AH=02h/SF=0F00h
 
 Format of APPC/PC "Send_Error" control block:
-Offset	Size	Description	(Table 2172)
+Offset	Size	Description	(Table 2301)
  00h 12 BYTEs	reserved
  0Ch	WORD	1000h (verb "Send_Error" or "MC_Send_Error")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2157)
- 16h	DWORD	(big-endian) error code (see #2158)
+ 14h	WORD	(big-endian) primary return code (see #2286)
+ 16h	DWORD	(big-endian) error code (see #2287)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	request to send received (0=no, 1=yes)
@@ -679,19 +679,19 @@ Offset	Size	Description	(Table 2172)
 --------N-6802--SF1200-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - TEST
 	AH = 02h subfn 1200h
-	DS:DX -> control block (see #2173)
+	DS:DX -> control block (see #2302)
 Return: control block updated
 SeeAlso: AH=02h/SF=1300h
 
 Format of APPC/PC "Test" control block:
-Offset	Size	Description	(Table 2173)
+Offset	Size	Description	(Table 2302)
  00h 12 BYTEs	reserved
  0Ch	WORD	1200h (verb "Test" or "MC_Test")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2157)
- 16h	DWORD	(big-endian) error code (see #2158)
+ 14h	WORD	(big-endian) primary return code (see #2286)
+ 16h	DWORD	(big-endian) error code (see #2287)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	(MC_Test only) test (0=posted, 1=request_to_send received)
@@ -702,19 +702,19 @@ Note:	error code has different interpretations for:
 --------N-6802--SF1300-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - WAIT
 	AH = 02h subfn 1300h
-	DS:DX -> control block (see #2174)
+	DS:DX -> control block (see #2303)
 Return: control block updated
 SeeAlso: AH=02h/SF=1200h
 
 Format of APPC/PC "Wait" control block:
-Offset	Size	Description	(Table 2174)
+Offset	Size	Description	(Table 2303)
  00h 12 BYTEs	reserved
  0Ch	WORD	1300h (verb "Wait")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #2157)
- 16h	DWORD	(big-endian) error code (see #2158,#2173)
+ 14h	WORD	(big-endian) primary return code (see #2286)
+ 16h	DWORD	(big-endian) error code (see #2287,#2302)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	number of conversations to wait on
@@ -722,30 +722,30 @@ Offset	Size	Description	(Table 2174)
 --------N-6803--SF2400-----------------------
 INT 68 - APPC/PC - TP STARTED
 	AH = 03h subfn 2400h
-	DS:DX -> control block (see #2175)
+	DS:DX -> control block (see #2304)
 Return: control block updated
 
 Format of APPC/PC "TP Started" control block:
-Offset	Size	Description	(Table 2175)
+Offset	Size	Description	(Table 2304)
  00h 12 BYTEs	reserved
  0Ch	WORD	2400h (verb "TP Started")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #2144)
+ 14h	DWORD	(big-endian) return code (see #2273)
  18h	WORD	00h
  1Ah  8 BYTEs	(big-endian) logical unit ID
  22h  8 BYTEs	(big-endian) TP ID
 --------N-6803--SF2800-----------------------
 INT 68 - APPC/PC - GET ALLOCATE
 	AH = 03h subfn 2800h
-	DS:DX -> control block (see #2176)
+	DS:DX -> control block (see #2305)
 Return: control block updated
 
 Format of APPC/PC "Get ALLOCATE" control block:
-Offset	Size	Description	(Table 2176)
+Offset	Size	Description	(Table 2305)
  00h 12 BYTEs	reserved
  0Ch	WORD	2800h (verb "Get ALLOCATE")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #2144)
+ 14h	DWORD	(big-endian) return code (see #2273)
  18h	WORD	00h
  1Ah  8 BYTEs	(big-endian) logical unit ID
  22h	BYTE	type (00h dequeue, 01h test)
@@ -753,15 +753,15 @@ Offset	Size	Description	(Table 2176)
 --------N-6803--SF2A00-----------------------
 INT 68 - APPC/PC - CHANGE LOGICAL UNIT
 	AH = 03h subfn 2A00h
-	DS:DX -> control block (see #2177)
+	DS:DX -> control block (see #2306)
 Return: control block updated
 
 Format of APPC/PC "Change Logical Unit" control block:
-Offset	Size	Description	(Table 2177)
+Offset	Size	Description	(Table 2306)
  00h 12 BYTEs	reserved
  0Ch	WORD	2A00h (verb "Change Logical Unit")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #2144)
+ 14h	DWORD	(big-endian) return code (see #2273)
  18h	WORD	00h
  1Ah  8 BYTEs	(big-endian) logical unit ID
  22h	DWORD	pointer to CREATE_TP_EXIT routine
@@ -778,28 +778,28 @@ Offset	Size	Description	(Table 2177)
 --------N-6804-------------------------------
 INT 68 - APPC/PC - TRANSACTION PROCESSING
 	AH = 04h
-	DS:DX -> control block (see #2178)
+	DS:DX -> control block (see #2307)
 Return: control block updated
 
 Format of APPC/PC control block:
-Offset	Size	Description	(Table 2178)
+Offset	Size	Description	(Table 2307)
  00h 12 BYTEs	reserved
  0Ch	WORD	verb (action)
 		2500h TP_ENDED
 		2900h TP_VALID
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #2144)
+ 14h	DWORD	(big-endian) return code (see #2273)
  18h	WORD	00h
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	-> CREATE_TP record (only if verb = 2900h)
 --------N-6805-------------------------------
 INT 68 - APPC/PC - TRANSFER MESSAGE DATA
 	AH = 05h
-	DS:DX -> control block (see #2179)
+	DS:DX -> control block (see #2308)
 Return: control block updated
 
 Format of APPC/PC "Transfer Message Data" control block:
-Offset	Size	Description	(Table 2179)
+Offset	Size	Description	(Table 2308)
  00h 12 BYTEs	reserved
  0Ch	WORD	1C00h (verb "Transfer Message Data")
  0Eh	BYTE	data type
@@ -808,29 +808,33 @@ Offset	Size	Description	(Table 2179)
 		02h alert subvectors
 		03h PDSTATS subvectors
  0Fh  5 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #2144)
+ 14h	DWORD	(big-endian) return code (see #2273)
  18h 12 BYTEs	00h
- 24h	BYTE	flags
-		bit 0: don't add correlation subvector
-		bit 1: don't add product set ID subvector
-		bit 2: don't do SYSLOG
-		bit 3: don't send SSCP_PU_SESSION
+ 24h	BYTE	flags (see #2309)
  25h	BYTE	00h
  26h	WORD	length of data
  28h  N BYTEs	data
+
+Bitfields for APPC/PC message transfer flags:
+Bit(s)	Description	(Table 2309)
+ 0	don't add correlation subvector
+ 1	don't add product set ID subvector
+ 2	don't do SYSLOG
+ 3	don't send SSCP_PU_SESSION
+SeeAlso: #2308
 --------N-6806-------------------------------
 INT 68 - APPC/PC - CHANGE NUMBER OF SESSIONS
 	AH = 06h
-	DS:DX -> control block (see #2180)
+	DS:DX -> control block (see #2310)
 Return: control block updated
 
 Format of APPC/PC "Change Number of Sessions" control block:
-Offset	Size	Description	(Table 2180)
+Offset	Size	Description	(Table 2310)
  00h 12 BYTEs	reserved
  0Ch	WORD	1500h (verb "Change Number of Sessions")
  0Eh  6 BYTEs	00h
- 14h	WORD	(big-endian) primary return code (see #2157)
- 16h	DWORD	(big-endian) secondary return code (see #2144,#2181)
+ 14h	WORD	(big-endian) primary return code (see #2286)
+ 16h	DWORD	(big-endian) secondary return code (see #2273,#2311)
  1Ah  8 BYTEs	(big-endian) logical unit ID
  22h  8 BYTEs	blanks
  2Ah  8 BYTEs	(big-endian) partner logical unit name
@@ -847,7 +851,7 @@ Offset	Size	Description	(Table 2180)
 		bit 6: drain source
 		bit 5: target responsible, not source
 
-(Table 2181)
+(Table 2311)
 Values for secondary return code (see also AH=01h/SF=1B00h):
  0000h	accepted
  0001h	negotiated
@@ -908,11 +912,11 @@ SeeAlso: AH=FDh,INT 68"Novell"
 --------N-68FB-------------------------------
 INT 68 - APPC/PC - CONVERT
 	AH = FBh
-	DS:DX -> control block (see #2182)
+	DS:DX -> control block (see #2312)
 Return: control block updated
 
 Format of APPC/PC "CONVERT" control block:
-Offset	Size	Description	(Table 2182)
+Offset	Size	Description	(Table 2312)
  00h 12 BYTEs	reserved
  0Ch	WORD	1A00h (verb "CONVERT")
  0Eh  6 BYTEs	00h
@@ -943,19 +947,19 @@ SeeAlso: AH=FAh,AH=FCh,AH=FEh
 --------N-68FE-------------------------------
 INT 68 - APPC/PC - SET TRACE DESTINATION
 	AH = FEh
-	AL = trace destinations (see #2183)
-	DS:DX -> trace stats record if AL bit 0 set (see #2184)
+	AL = trace destinations (see #2313)
+	DS:DX -> trace stats record if AL bit 0 set (see #2314)
 SeeAlso: AH=FCh,AH=FDh
 
 Bitfields for trace destinations:
-Bit(s)	Description	(Table 2183)
+Bit(s)	Description	(Table 2313)
  0	storage (DS:DX -> trace stats record)
  1	display
  2	file (trace written to file OUTPUT.PC)
  3	printer
 
 Format of APPC/PC Trace Statistics Record:
-Offset	Size	Description	(Table 2184)
+Offset	Size	Description	(Table 2314)
  00h	DWORD	pointer to storage trace buffer
  04h	WORD	max number of 80-byte records in trace
  06h	WORD	(high-order byte first!) current record number (must init to 0)
@@ -971,7 +975,7 @@ SeeAlso: AH=07h,INT 68"Novell"
 INT 69 - Zenith AT BIOS - ???
 Note:	called by INT 09 handler
 --------h-69---------------------------------
-INT 69 C - HP Vectra - IRQ17 - KEYBOARD OUTPUT-BUFFER-FULL SERVICE ROUTINE
+INT 69 C - HP Vectra AT - IRQ17 - KEYBOARD OUTPUT-BUFFER-FULL SERVICE ROUTINE
 SeeAlso: INT 09"IRQ1",INT 68"HP Vectra",INT 6A"HP Vectra"
 --------N-690100-----------------------------
 INT 69 - DECnet DOS CTERM - INSTALLATION CHECK
@@ -997,18 +1001,18 @@ SeeAlso: AX=0101h
 INT 69 - DECnet DOS CTERM - STATUS
 	AX = 0103h
 	DX = session handle
-Return: AH status flags (see #2185)
-	AL = reason code if DECnet error (see #2186)
+Return: AH status flags (see #2315)
+	AL = reason code if DECnet error (see #2316)
 SeeAlso: AX=0104h
 
 Bitfields for DECnet DOS CTERM status flags:
-Bit(s)	Description	(Table 2185)
+Bit(s)	Description	(Table 2315)
  7	session has been aborted
  6	DECnet error
  1	trace data available
  0	receive data available
 
-(Table 2186)
+(Table 2316)
 Values for reason code:
  00h	normal disconnect
  01h	unknown message from host
@@ -1030,14 +1034,14 @@ Index:	error codes;DECnet DOS CTERM|DECnet DOS CTERM;error codes
 INT 69 - DECnet DOS CTERM - DECnet STATUS
 	AX = 0104h
 	DX = session handle
-Return: AX = reason code (see #2186)
+Return: AX = reason code (see #2316)
 Note:	use this call when AX=0103h returns a DECnet error
 SeeAlso: AX=0103h
 --------N-690105-----------------------------
 INT 69 - DECnet DOS CTERM - OPEN SESSION
 	AX = 0105h
 	DS:BX -> ASCIZ node name
-	ES:DX -> buffer for session control block (see INT 6A/AH=D0h)
+	ES:DX -> buffer for session control block (see #2332 at INT 6A/AH=D0h)
 Return: AX <= 0 on error
 	AX > 0 session handle
 SeeAlso: AX=0103h,AX=0106h,AX=010Ah
@@ -1047,7 +1051,7 @@ INT 69 - DECnet DOS CTERM - CLOSE SESSION
 	DX = session handle
 Return: AH = status
 	    00h good close
-	    other error code (see #2186)
+	    other error code (see #2316)
 SeeAlso: AX=0103h,AX=0105h
 --------N-69010A-----------------------------
 INT 69 - DECnet DOS CTERM - GET SESSION CONTROL BLOCK SIZE
@@ -1065,19 +1069,19 @@ INT 69 - DECnet DOS CTERM - DEINSTALL CTERM
 	AX = 010Fh
 Return: AH = status
 	    00h successful uninstall
-	    other error code (see #2186)
+	    other error code (see #2316)
 Note:	CTERM must have been the last TSR loaded in order to deinstall it
 SeeAlso: AX=0100h
 Index:	uninstall;DECnet DOS CTERM
 --------N-690A-------------------------------
 INT 69 - DECnet DOS 2.1+ - DATA LINK LAYER
 	AH = 0Ah
-	AL = function number (see #2187)
-	ES:BX -> Datalink Communication Block (see #2189)
-Return: AX = status (see #2188)
+	AL = function number (see #2317)
+	ES:BX -> Datalink Communication Block (see #2319)
+Return: AX = status (see #2318)
 SeeAlso: INT 6D"DECnet"
 
-(Table 2187)
+(Table 2317)
 Values for DECnet DOS Data Link Layer function:
  00h	initialize
  01h	open portal
@@ -1100,7 +1104,7 @@ Values for DECnet DOS Data Link Layer function:
  12h	set DECPARM
  13h	external loopback
 
-(Table 2188)
+(Table 2318)
 Values for DECnet DOS Data Link Layer status:
  00h	successful
  01h	hardware failed to initialize
@@ -1127,7 +1131,7 @@ Values for DECnet DOS Data Link Layer status:
 Index:	error codes;DECnet DOS|DECnet DOS;error codes
 
 Format of Datalink Communication Block:
-Offset	Size	Description	(Table 2189)
+Offset	Size	Description	(Table 2319)
  00h	WORD	portal ID
  02h  6 BYTEs	source address
  08h  6 BYTEs	destination address
@@ -1241,17 +1245,17 @@ Range:	INT 60h to INT 7Fh, selected by configuration
 --------N-6A---------------------------------
 INT 6A - DECnet DOS - LOCAL AREA TRANSPORT PROGRAM
 Note:	the installation check consists of testing for a signature area
-	  immediately preceding the interrupt handler (see #2190)
+	  immediately preceding the interrupt handler (see #2320)
 SeeAlso: AH=01h/DH=FFh,INT 6B"DECnet",INT 6D"DECnet"
 Index:	installation check;DECnet DOS Local Area Transport
 
 Format of DECnet DOS signature area:
-Offset	Size	Description	(Table 2190)
+Offset	Size	Description	(Table 2320)
  -5	BYTE	major version number
  -4	BYTE	minor version number
  -3   3 BYTEs	signature (ASCII "LAT")
 --------h-6A---------------------------------
-INT 6A C - HP Vectra - IRQ18 - RESERVED HARDWARE INTERRUPT
+INT 6A C - HP Vectra AT - IRQ18 - RESERVED HARDWARE INTERRUPT
 SeeAlso: INT 0A"IRQ0",INT 69"HP Vectra",INT 6B"HP Vectra"
 --------N-6A0000-----------------------------
 INT 6A U - Super-TCP DOS TSR Kernel v3.57 - INSTALLATION CHECK
@@ -1267,83 +1271,83 @@ INT 6A U - Super-TCP DOS TSR Kernel v3.57 - ???
 	AX = 0001h
 	BH = function number
 	    01h ???
-		DS:SI -> ??? 24-byte record1 (see #2192)
+		DS:SI -> ??? 24-byte record1 (see #2322)
 		ES:DI -> buffer containing ???
 	    02h ???
-		DS:SI -> ??? 18-byte record2 (see #2193)
+		DS:SI -> ??? 18-byte record2 (see #2323)
 		ES:DI -> buffer containing ???
 	    04h ???
 		BL = subfunction
 		    01h
-			DS:SI -> ??? 28-byte record3 (see #2194)
+			DS:SI -> ??? 28-byte record3 (see #2324)
 			ES:DI -> buffer containing ???
 		    02h
-			DS:SI -> ??? 28-byte record3 (see #2194)
+			DS:SI -> ??? 28-byte record3 (see #2324)
 			ES:DI -> buffer containing ???
 		    03h
-			DS:SI -> ??? 28-byte record3 (see #2194)
+			DS:SI -> ??? 28-byte record3 (see #2324)
 		    else Return: AX = 0005h
 	    05h ???
-		DS:SI -> ??? 20-byte record4 (see #2195)
+		DS:SI -> ??? 20-byte record4 (see #2325)
 		ES:DI -> buffer containing ???
 	    06h ???
 		BL = subfunction
 		    01h
-			DS:SI -> ??? 40-byte record5 (see #2196)
+			DS:SI -> ??? 40-byte record5 (see #2326)
 		    02h
-			DS:SI -> ??? 20-byte record6 (see #2197)
+			DS:SI -> ??? 20-byte record6 (see #2327)
 			ES:DI -> ???
 		    03h
-			DS:SI -> ??? 20-byte record6 (see #2197)
+			DS:SI -> ??? 20-byte record6 (see #2327)
 		    04h
-			DS:SI -> ??? 46-byte record7 (see #2198)
+			DS:SI -> ??? 46-byte record7 (see #2328)
 		    else Return: AX = 0005h
 	    11h ???
-		DS:SI -> ??? 28-byte record8 (see #2199)
+		DS:SI -> ??? 28-byte record8 (see #2329)
 		ES:DI -> ???
-Return: AX = function status (see #2191)
+Return: AX = function status (see #2321)
 SeeAlso: AX=0000h
 
-(Table 2191)
+(Table 2321)
 Values for Super-TCP function status:
  0000h	successful
  0005h	unsupported function
  000Ah	out of memory
 
 Format of record1:
-Offset	Size	Description	(Table 2192)
+Offset	Size	Description	(Table 2322)
  00h  4 BYTEs	???
  04h	WORD	size of ES:DI buffer
  06h 18 BYTEs	???
 
 Format of record2:
-Offset	Size	Description	(Table 2193)
+Offset	Size	Description	(Table 2323)
  00h  4 BYTEs	???
  04h	WORD	size of ES:DI buffer
  06h 12 BYTEs	???
 
 Format of record3:
-Offset	Size	Description	(Table 2194)
+Offset	Size	Description	(Table 2324)
  00h  2 BYTEs	???
  02h	WORD	???
  04h	WORD	size of ES:DI buffer
  06h	WORD	???
  08h	WORD	operation number (for function 0401h)
  0Ah	DWORD	-> ???
- 0Eh	WORD	(return) ???
+ 0Eh	WORD	(ret) ???
  10h 12 BYTEs	???
 
 Format of record4:
-Offset	Size	Description	(Table 2195)
+Offset	Size	Description	(Table 2325)
  00h  4 BYTEs	???
  04h	WORD	size of ES:DI buffer
  06h 14 BYTEs	???
 
 Format of record5:
-Offset	Size	Description	(Table 2196)
+Offset	Size	Description	(Table 2326)
  00h	BYTE	operation??? (00h-07h)
  01h	BYTE	???
- 02h	WORD	(return) ???
+ 02h	WORD	(ret) ???
  04h	DWORD	-> ???
  08h  4 BYTEs	???
  0Ch	DWORD	-> ??? or 0000h:0000h
@@ -1352,24 +1356,24 @@ Offset	Size	Description	(Table 2196)
  24h  4 BYTEs	???
 
 Format of record6:
-Offset	Size	Description	(Table 2197)
+Offset	Size	Description	(Table 2327)
  00h  4 BYTEs	???
  04h	WORD	size of ES:DI buffer
  06h 14 BYTEs	???
 
 Format of record7:
-Offset	Size	Description	(Table 2198)
+Offset	Size	Description	(Table 2328)
  00h	WORD	???
  02h	WORD	???
  04h	WORD	???
  06h 40 BYTEs	???
 
 Format of record8:
-Offset	Size	Description	(Table 2199)
+Offset	Size	Description	(Table 2329)
  00h  4 BYTEs	???
  04h	WORD	size of ES:DI buffer
  06h  6 BYTEs	???
- 0Ch	WORD	(return) ???
+ 0Ch	WORD	(ret) ???
  0Eh	WORD	operation??? (01h-03h)
  10h 12 BYTEs	???
 --------N-6A0002-----------------------------
@@ -1387,10 +1391,10 @@ Return: AX = 0000h (successful) ???
 --------N-6A0003-----------------------------
 INT 6A U - Super-TCP DOS TSR Kernel v3.57 - GET ??? DATA AREA
 	AX = 0003h
-Return: CX:DX -> data area (see #2200)
+Return: CX:DX -> data area (see #2330)
 
 Format of Super-TCP data area:
-Offset	Size	Description	(Table 2200)
+Offset	Size	Description	(Table 2330)
  00h  2 BYTEs	???
  02h	DWORD	original INT 6A vector
  06h  2 BYTEs	???
@@ -1448,10 +1452,10 @@ INT 6A - DECnet DOS LOCAL AREA TRANSPORT - STATUS
 	AH = 03h
 	DH = FFh
 	DL = handle
-Return: AH = status flags (see #2201)
+Return: AH = status flags (see #2331)
 
 Bitfields for DECnet DOS LAT status flags:
-Bit(s)	Description	(Table 2201)
+Bit(s)	Description	(Table 2331)
  5	transmit buffer empty
  3	session in start state
  2	session not active
@@ -1464,14 +1468,14 @@ INT 6A - DECnet DOS LOCAL AREA TRANSPORT - OPEN SESSION
 	AL = password flag
 	    FFh no password
 	    0Fh password at ES:DI
-	ES:BX -> LAT session control block (see #2202)
+	ES:BX -> LAT session control block (see #2332)
 	ES:DI -> 16-byte blank-padded password (optional)
 Return: AH = 00h success
 	    DL = handle
 SeeAlso: AX=D000h
 
 Format of LAT Session Control Block:
-Offset	Size	Description	(Table 2202)
+Offset	Size	Description	(Table 2332)
  00h 18 BYTEs	service name
  12h 18 BYTEs	node name (future use)
  24h 18 BYTEs	port name (future use)
@@ -1525,10 +1529,10 @@ INT 6A - DECnet DOS LOCAL AREA TRANSPORT - CLOSE SESSION
 	AX = D000h
 	DH = FFh
 	DL = handle
-Return: AX = status (see #2203)
+Return: AX = status (see #2333)
 SeeAlso: AH=D0h
 
-(Table 2203)
+(Table 2333)
 Values for DECnet DOS LAT function status:
  0000h	successful
  0001h	no such session
@@ -1578,12 +1582,12 @@ SeeAlso: AX=D500h
 --------N-6B---------------------------------
 INT 6B - DECnet DOS - PORT DRIVER
 Note:	the installation check consists of testing for a signature area
-	  (see #2204) immediately preceding the interrupt handler
+	  (see #2334) immediately preceding the interrupt handler
 SeeAlso: INT 6A"DECnet",INT 6C"DECnet"
 Index:	installation check;DECnet DOS Port Driver
 
 Format of DECnet DOS signature area:
-Offset	Size	Description	(Table 2204)
+Offset	Size	Description	(Table 2334)
  -5	BYTE	major version number
  -4	BYTE	minor version number
  -3   3 BYTEs	signature (ASCII "PDV")
@@ -1591,7 +1595,7 @@ Offset	Size	Description	(Table 2204)
 INT 6B - VIRUS - "Saddam" - ORIGINAL INT 21h VECTOR
 SeeAlso: INT 21/AX=FFFFh,INT 61"VIRUS",INT 70"VIRUS"
 --------h-6B---------------------------------
-INT 6B C - HP Vectra - IRQ19 - RESERVED HARDWARE INTERRUPT
+INT 6B C - HP Vectra AT - IRQ19 - RESERVED HARDWARE INTERRUPT
 SeeAlso: INT 0B"IRQ0",INT 6A"HP Vectra",INT 6C"HP Vectra"
 --------S-6B0000-----------------------------
 INT 6B - Novell NASI/NACS, Ungermann-Bass Net One SERIAL I/O - BUFFERED WRITE
@@ -1717,13 +1721,13 @@ INT 6B - NPC NCSI EXTENDED SERIAL I/O - SET/RETRIEVE VIRTUAL CIRCUIT CONFIG
 	AH = 15h
 	AL = virtual circuit number
 	CL = direction (00h get, nonzero set)
-	ES:BX -> buffer for/containing virtual circuit config (see #2205)
+	ES:BX -> buffer for/containing virtual circuit config (see #2335)
 Return: ES:BX buffer filled
 Note:	this function is also supported by TelAPI
 SeeAlso: AH=13h"NCSI",AH=14h"NCSI"
 
 Format of virtual circuit configuration:
-Offset	Size	Description	(Table 2205)
+Offset	Size	Description	(Table 2335)
  00h	WORD	buffer length
  02h	WORD	port ID
  04h	WORD	receive rate
@@ -1829,7 +1833,7 @@ INT 6B - NPC NCSI EXTENDED SERIAL I/O - QUERY NAME SERVICE
 	AH = 21h
 	AL = virtual circuit number
 	CL = ??? (00h or 01h)
-	ES:BX -> buffer for service name structure (see #2206)
+	ES:BX -> buffer for service name structure (see #2336)
 Return: CF clear if successful
 	    ES:BX buffer filled
 	CF set on error
@@ -1841,7 +1845,7 @@ Notes:	a program should call this function after allocating a virtual circuit
 SeeAlso: AH=14h"NCSI"
 
 Format of NCSI service name structure:
-Offset	Size	Description	(Table 2206)
+Offset	Size	Description	(Table 2336)
  00h	WORD	buffer length
  02h  8 BYTEs	service name
  0Ah  8 BYTEs	general name
@@ -1866,18 +1870,18 @@ INT 6C - DOS 3.2 Realtime Clock update
 --------N-6C---------------------------------
 INT 6C - DECnet DOS network scheduler
 Notes:	the installation check consists of testing for a signature area
-	  immediately preceding the interrupt handler (see #2207)
+	  immediately preceding the interrupt handler (see #2337)
 	also supported by DEC Pathworks for DOS
 SeeAlso: INT 6B"DECnet",INT 6D"DECnet",INT 6E"DECnet"
 Index:	installation check;DECnet DOS scheduler
 
 Format of DECnet DOS signature area:
-Offset	Size	Description	(Table 2207)
+Offset	Size	Description	(Table 2337)
  -5	BYTE	major version number
  -4	BYTE	minor version number
  -3   3 BYTEs	signature (ASCII "SCH")
 --------h-6C---------------------------------
-INT 6C C - HP Vectra - IRQ20 - HP-HIL CONTROLLER INTERRUPT
+INT 6C C - HP Vectra AT - IRQ20 - HP-HIL CONTROLLER INTERRUPT
 SeeAlso: INT 0C"IRQ0",INT 6B"HP Vectra",INT 6D"HP Vectra"
 --------V-6D---------------------------------
 INT 6D - VIDEO - many VGA - VIDEO BIOS ENTRY POINT
@@ -1894,33 +1898,33 @@ INT 6D - DECnet DOS (before 2.1) - DATA LINK LAYER PROGRAM
 	???
 Return: ???
 Note:	the installation check consists of testing for a signature area
-	  immediately preceding the interrupt handler (see #2208)
+	  immediately preceding the interrupt handler (see #2338)
 SeeAlso: INT 69/AH=0Ah,INT 6C"DECnet",INT 6E"DECnet"
 Index:	installation check;DECnet DOS Data Link Layer
 
 Format of DECnet DOS signature area:
-Offset	Size	Description	(Table 2208)
+Offset	Size	Description	(Table 2338)
  -5	BYTE	major version number
  -4	BYTE	minor version number
  -3   3 BYTEs	signature (ASCII "DLL")
 --------h-6D---------------------------------
-INT 6D C - HP Vectra - IRQ21 - RESERVED HARDWARE INTERRUPT
+INT 6D C - HP Vectra AT - IRQ21 - RESERVED HARDWARE INTERRUPT
 SeeAlso: INT 0D"IRQ0",INT 6C"HP Vectra",INT 6E"HP Vectra"
 --------N-6E---------------------------------
 INT 6E - DECnet DOS - DECnet NETWORK PROCESS API
 Notes:	this is the main DECnet DOS access, and is described in Digital manual
 	  AA-EB46B-TV ("DECnet-DOS Programmer's Reference Manual")
 	there is a signature/data area immediately prior to the interrupt
-	  handler which may be used as an installation check (see #2209)
+	  handler which may be used as an installation check (see #2339)
 Index:	installation check;DECnet DOS
 
 Format of DECnet DOS signature area:
-Offset	Size	Description	(Table 2209)
+Offset	Size	Description	(Table 2339)
  -5	BYTE	major version number
  -4	BYTE	minor version number
  -3   3 BYTEs	signature (ASCII "DNP")
 --------h-6E---------------------------------
-INT 6E C - HP Vectra - IRQ22 - RESERVED HARDWARE INTERRUPT
+INT 6E C - HP Vectra AT - IRQ22 - RESERVED HARDWARE INTERRUPT
 SeeAlso: INT 0E"IRQ0",INT 6D"HP Vectra",INT 6F/AH=00h"HP Vectra"
 --------N-6F---------------------------------
 INT 6F - Novell NetWare - PCOX API (3270 PC terminal interface)
@@ -1941,7 +1945,7 @@ INT 6F - Novell NetWare - PCOX API (3270 PC terminal interface)
 		    bits 4-2: monitor support
 		Return: nothing
 	    0003h read status
-		Return: AX = status word (see #2210)
+		Return: AX = status word (see #2340)
 	    0004h read cursor position
 		Return: AX = cursor position
 	    0005h get character from device buffer
@@ -1984,28 +1988,28 @@ INT 6F - Novell NetWare - PCOX API (3270 PC terminal interface)
 	    0011h perform structured field operation
 		CX = request number
 		DS:DX -> parameter list
-		Return: AX = status word (see #2210)
+		Return: AX = status word (see #2340)
 			CX = error number
 	    0012h set cursor position for direct write buffer
 		DX = new cursor position
-		Return: AX = status word (see #2210)
+		Return: AX = status word (see #2340)
 	    0013h write direct to buffer
 		DL = character to be written
 		DH = translation option
-		Return: AX = status word (see #2210)
+		Return: AX = status word (see #2340)
 	    0014h write direct to buffer without echo
 		DL = character to be written
 		DH = translation option
-		Return: AX = status word (see #2210)
+		Return: AX = status word (see #2340)
 	    0015h set direct write string length
 		DX = string value
 		Return: nothing
 	    0016h write string direct to buffer
 		DS:DX -> string
-		Return: AX = status word (see #2210)
+		Return: AX = status word (see #2340)
 	    0017h write string direct to buffer, untranslated
 		DS:DX -> string
-		Return: AX = status word (see #2210)
+		Return: AX = status word (see #2340)
 	    0018h get direct-write cursor position
 		Return: AX = cursor position
 	    0019h convert row/column to cursor position
@@ -2047,10 +2051,10 @@ INT 6F - Novell NetWare - PCOX API (3270 PC terminal interface)
 		Return: AX = field length
 	    0024h read field
 		DS:DX -> buffer for field contents
-		Return: AX = status word (see #2210)
+		Return: AX = status word (see #2340)
 	    0025h read screen
 		DS:DX -> buffer for screen contents
-		Return: AX = status word (see #2210)
+		Return: AX = status word (see #2340)
 	    0026h read buffer untranslated
 		DX = cursor position
 		Return: AX = buffer code
@@ -2071,7 +2075,7 @@ INT 6F - Novell NetWare - PCOX API (3270 PC terminal interface)
 		Return: AX = status (0000h not available, 0001h successful)
 
 Bitfields for PCOX status word:
-Bit(s)	Description	(Table 2210)
+Bit(s)	Description	(Table 2340)
  0,1	cursor type
  2	cursor inhibited
  3	display inhibited
@@ -2086,18 +2090,18 @@ Bit(s)	Description	(Table 2210)
 --------N-6F00-------------------------------
 INT 6F - 10NET - LOGIN
 	AH = 00h
-	DS:DX -> login record (see #2211)
+	DS:DX -> login record (see #2341)
 Return: CL = security level
-	AX = status (see #2212)
+	AX = status (see #2342)
 SeeAlso: AH=01h,AH=80h,INT 21/AX=4402h"10MEMMGR"
 
 Format of 10NET login record:
-Offset	Size	Description	(Table 2211)
+Offset	Size	Description	(Table 2341)
  00h  8 BYTEs	user name
  08h  8 BYTEs	password
  10h 12 BYTEs	name of SuperStation
 
-(Table 2212)
+(Table 2342)
 Values for 10NET status:
  0000h	successful
  01FFh	"RTO_NERR" transmit interrupt lost (time out on response)
@@ -2171,18 +2175,18 @@ Values for 10NET status:
  44FFh	"NPUP_NERR" new password error
  45FFh	"MAXS_NERR" maximum allowed disk space exceeded
  46FFh	"TDOW_NERR" time-of-day/day-of-week error
-SeeAlso: #2239
+SeeAlso: #2369
 Index:	error codes;10Net|10Net;error codes
 --------b-6F00-------------------------------
 INT 6F - HP Vectra EX-BIOS - "F_ISR" (internal) - RESPOND TO LOGICAL ISR
 	AH = 00h
-	BP = ID for driver (see #2213)
-	DH = data type (see #2214)
+	BP = ID for driver (see #2343)
+	DH = data type (see #2344)
 	DL = physical device driver's index (driver ID / 6)
 	BX,CX = data
-	ES:0000h -> physical device's Describe Record (see #2221)
+	ES:0000h -> physical device's Describe Record (see #2351)
 	---keypress event data---
-	    BH = keyboard state (only if bit 5 of DH set) (see #2215)
+	    BH = keyboard state (only if bit 5 of DH set) (see #2345)
 	    BL = scancode (if bit 4 of DH clear)
 	    CX = number of scancodes in list (if bit 4 of DH set)
 	    ES:SI -> scancode list (if bit 4 of DH set)
@@ -2191,17 +2195,18 @@ INT 6F - HP Vectra EX-BIOS - "F_ISR" (internal) - RESPOND TO LOGICAL ISR
 	    CX = new Y position (abs device) or Y increment (relative device)
 	---button event data
 	    BL = button information
+		bits 15-8 reserved
 		bit 7: button state (0 = down, 1 = up)
 		bits 6-0: button number (0-7)
 	    BH = reserved
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 	---if device is keyboard translator---
 	    BL = translated scancode
-	    BH = new keyboard state (if DH bit 5 set) (see #2215)
-	    DH = new scancode type (see #2214)
-Notes:	INT 6F corresponds to IRQ23, which is unavailable because of its use
-	  as a BIOS extension software interrupt
+	    BH = new keyboard state (if DH bit 5 set) (see #2345)
+	    DH = new scancode type (see #2344)
+Notes:	INT 6F corresponds to IRQ23 on the original HP Vectra AT, which is
+	  unavailable because of its use as a BIOS extension software interrupt
 	the INT 6F handler consists of an instruction to load DS with the
 	  driver's data segment followed by an indexed far jump using BP to
 	  select the destination vector; since the interrupt handler is
@@ -2212,15 +2217,15 @@ Notes:	INT 6F corresponds to IRQ23, which is unavailable because of its use
 	  entry point address and a WORD for the driver's data segment
 	this function is not user-callable, as it is a response to a physical
 	  event, and assumes that the caller has already handled the physical
-	  interrupt and updated the Describe Record (see #2221) to reflect
+	  interrupt and updated the Describe Record (see #2351) to reflect
 	  the event
 SeeAlso: INT 6C"HP Vectra",INT 6F/AH=02h"HP Vectra"
 
-(Table 2213)
+(Table 2343)
 Values for HP Vectra EX-BIOS driver ID:
  0000h	V_SCOPY (null driver, but DS value points at system copyright string)
- 0006h	V_DOLITTLE
- 000Ch	V_PNULL
+ 0006h	V_DOLITTLE (null driver)
+ 000Ch	V_PNULL (null driver)
  0012h	V_SYSTEM
  0018h	reserved
  001Eh	V_S8259
@@ -2260,9 +2265,10 @@ Values for HP Vectra EX-BIOS driver ID:
  010Eh	reserved
  0114h	V_HPHIL
  011Ah-01C2h reserved
+ 016Eh	V_SCANDOOR (scancode management chip driver) (ES/QS/RS only)
  01C8h-0228h available
 
-(Table 2214)
+(Table 2344)
 Values for HP Vectra EX-BIOS ISR data type:
  00h	reserved "T_KC_R0"
  01h	reserved "T_KC_R1"
@@ -2291,7 +2297,7 @@ Values for HP Vectra EX-BIOS ISR data type:
  47h	specially-formed data (640x200) generated by V_LPOINTER
 
 Bitfields for HP Vectra EX-BIOS keyboard state:
-Bit(s)	Description	(Table 2215)
+Bit(s)	Description	(Table 2345)
  0	Alt pressed
  1	Left Shift pressed
  2	Right Shift pressed
@@ -2300,9 +2306,9 @@ Bit(s)	Description	(Table 2215)
  5	NumLock active
  6	Right unlabeled key pressed (some international keyboards)
  7	Left unlabeled key pressed (some international keyboards)
-SeeAlso: #0427
+SeeAlso: #0442
 
-(Table 2216)
+(Table 2346)
 Values for HP Vectra EX-BIOS status:
  00h	successful
  02h	unsupported function
@@ -2318,11 +2324,11 @@ Note:	status codes are always even; negative values (>= 80h) indicate errors
 	  while positive values indicate exceptional conditions
 
 Format of HP EX-BIOS driver header data:
-Offset	Size	Description	(Table 2217)
- 00h	WORD	driver attributes (see #2218)
+Offset	Size	Description	(Table 2347)
+ 00h	WORD	driver attributes (see #2348)
  02h	WORD	string index of driver's name
- 04h	WORD	driver's default logical device vector (see #2213)
- 06h	WORD	driver's parent class (bitset) (see #2219)
+ 04h	WORD	driver's default logical device vector (see #2343)
+ 06h	WORD	driver's parent class (bitset) (see #2349)
  08h	WORD	driver's child class (bitset)
  0Ah	WORD	driver's parent vector
  0Ch	WORD	driver's child vector
@@ -2333,10 +2339,10 @@ Notes:	this structure is located at offset 0 in the driver's data segment,
 	  main entry)
 	only the first WORD is required, and everything from offset 6 onward
 	  is only required if the device wishes to perform device mapping
-SeeAlso: #2220,#2221
+SeeAlso: #2350,#2351
 
 Bitfields for HP EX-BIOS driver header attributes:
-Bit(s)	Description	(Table 2218)
+Bit(s)	Description	(Table 2348)
  15	this is a complete driver header
  14	"ATR_DEVCFG" reserved
  13	driver can be mapped with the parent vector at offset 0Ah
@@ -2363,10 +2369,10 @@ Bit(s)	Description	(Table 2218)
  2	this driver header is in ROM
  1	"ATR_YIELD" reserved
  0	reserved
-SeeAlso: #2217,#2219
+SeeAlso: #2347,#2349
 
 Bitfields for HP EX-BIOS driver class:
-Bit(s)	Description	(Table 2219)
+Bit(s)	Description	(Table 2349)
  15	maps F1 to F8 softkeys
  14	keyboard
  13	cursor pad
@@ -2386,10 +2392,10 @@ Bit(s)	Description	(Table 2219)
  0	class extension bit
 Note:	special values: FFFFh maps to all other devices (V_PNULL), and 0000h
 	  maps to no other driver
-SeeAlso: #2217
+SeeAlso: #2347
 
 Format of HP EX-BIOS global data area:
-Offset	Size	Description	(Table 2220)
+Offset	Size	Description	(Table 2350)
  00h 20 BYTEs	reserved
  14h	BYTE	sound driver status
  15h	BYTE	number of pending key clicks (max 4) (see AH=34h/BP=0012h)
@@ -2401,16 +2407,16 @@ Offset	Size	Description	(Table 2220)
  1Dh	BYTE	reserved
  1Eh	WORD	next unused string index number
  20h	...	reserved
-SeeAlso: #2217
+SeeAlso: #2347
 
 Format of HP EX-BIOS Driver Describe Record:
-Offset	Size	Description	(Table 2221)
- 00h 16 BYTEs	EX-BIOS driver header data (see #2217)
+Offset	Size	Description	(Table 2351)
+ 00h 16 BYTEs	EX-BIOS driver header data (see #2347)
  10h	BYTE	device GID type
 		bits 7-4: device type
 		bits 3-0: physical device link address
- 11h	BYTE	physical device ID (see #2223)
- 12h	WORD	logical device status bits (see #2222)
+ 11h	BYTE	physical device ID (see #2353)
+ 12h	WORD	logical device status bits (see #2352)
  14h	BYTE	physical device vector number (driver ID / 6)
  15h	BYTE	maximum number of axes reported (0-2)
  16h	BYTE	device class
@@ -2438,16 +2444,16 @@ Offset	Size	Description	(Table 2221)
 		(fraction of one logical unit)
 
 Bitfields for HP logical device status flags:
-Bit(s)	Description	(Table 2222)
+Bit(s)	Description	(Table 2352)
  15-5	reserved
  4	event enabled
  3	tracking enabled
  2	clipping enabled
  1	button error occurred
  0	interrupt in progress
-SeeAlso: #2221
+SeeAlso: #2351
 
-(Table 2223)
+(Table 2353)
 Values for HP-HIL device ID:
  00h-02h reserved
  03h	Swiss-French keyboard
@@ -2495,19 +2501,19 @@ INT 6F - 10NET - LOGOFF
 	AH = 01h
 	DS:DX -> superstation ID or nulls (12 bytes)
 Return: CX = number of files closed
-	AX = status (see also #2212)
+	AX = status (see also #2342)
 	    08FFh superstation ID not already logged in
 SeeAlso: AH=00h"10NET",AH=81h
 --------N-6F02-------------------------------
 INT 6F - 10NET - STATUS OF NODE
 	AH = 02h
-	DS:DX -> 512-byte status record (see #2225)
+	DS:DX -> 512-byte status record (see #2355)
 Return:	CF clear if successful
 	CF set on error
-	    AX = error code (see #2212)
+	    AX = error code (see #2342)
 SeeAlso: INT 21/AX=5E01h"10NET"
 
-(Table 2224)
+(Table 2354)
 Values for 10NET station type:
  00h	workstation
  01h	superstation
@@ -2517,16 +2523,16 @@ Values for 10NET station type:
  05h	reserved
 
 Format of 10NET node status record:
-Offset	Size	Description	(Table 2225)
+Offset	Size	Description	(Table 2355)
  00h  8 BYTEs	user name (0 if none)
- 08h	BYTE	station type (see #2224)
+ 08h	BYTE	station type (see #2354)
  09h 24 BYTEs	list of superstations logged into more than one superstation
  21h 12 BYTEs	node ID
  2Dh	WORD	message count for this station (send for user node, receive for
 		  superstations)
 ---for superstations only---
  2Fh	WORD	drives allocated (bit 0=A:, bit 1=B:,...)
- 31h	BYTE	user service flags (see #2226)
+ 31h	BYTE	user service flags (see #2356)
  32h	BYTE	printers allocated (bit 0=LPT1,...)
  33h	BYTE	number of unprinted spool files
  34h	BYTE	number of opened files
@@ -2538,7 +2544,7 @@ Offset	Size	Description	(Table 2225)
 1F7h  3 BYTEs	date: day/mon/year-1980
 
 Bitfields for 10NET user service flags:
-Bit(s)	Description	(Table 2226)
+Bit(s)	Description	(Table 2356)
  7	gate
  6	print permit on
  4	SUBMIT is on
@@ -2549,17 +2555,17 @@ Bit(s)	Description	(Table 2226)
 --------b-6F0200-----------------------------
 INT 6F - HP Vectra EX-BIOS - "F_SYSTEM SF_INIT" - START INITIALIZING DRIVER
 	AX = 0200h
-	BP = driver ID (see #2213)
-	BX = "last-used DS" value from HP global data area (see #2220)
-Return: AH = status (see #2216)
+	BP = driver ID (see #2343)
+	BX = "last-used DS" value from HP global data area (see #2350)
+Return: AH = status (see #2346)
 	BX = new "last-used DS" value
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AX=0202h,AH=0Ah"F_INS_FIXOWNDS"
 --------b-6F0202-----------------------------
 INT 6F - HP Vectra EX-BIOS - "F_SYSTEM SF_START" - COMPLETE DRIVER INITIALIZ.
 	AX = 0202h
-	BP = driver ID (see #2213)
-Return: AH = status (see #2216)
+	BP = driver ID (see #2343)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AX=0200h,AX=0204h"HP Vectra"
 --------W-6F0204-----------------------------
@@ -2573,14 +2579,14 @@ Note:	intercepting this call will allow a DOS application to ensure that
 --------b-6F0204-----------------------------
 INT 6F - HP Vectra EX-BIOS - "F_SYSTEM SF_REPORT_STATE" - GET DRIVER STATE
 	AX = 0204h
-	BP = driver ID (see #2213)
-Return: AH = status (see #2216)
-	DX = device state from Logical Describe Record (see #2221,#2227)
+	BP = driver ID (see #2343)
+Return: AH = status (see #2346)
+	DX = device state from Logical Describe Record (see #2351,#2357)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AX=0200h,AX=0206h"HP Vectra"
 
 Bitfields for HP Vectra V_HPHIL driver state:
-Bit(s)	Description	(Table 2227)
+Bit(s)	Description	(Table 2357)
  0	link configuration in progress
  1	reserved
  2	no devices attached
@@ -2597,8 +2603,8 @@ Bit(s)	Description	(Table 2227)
 --------b-6F0206-----------------------------
 INT 6F - HP Vectra EX-BIOS - "F_SYSTEM SF_VERSION_DESC" - GET DRIVER VERSION
 	AX = 0206h
-	BP = driver ID (see #2213)
-Return: AH = status (see #2216)
+	BP = driver ID (see #2343)
+Return: AH = status (see #2346)
 	BX = driver release date code
 	    (BL = BCD years since 1960, BH = BCD week number within year)
 	CX = length of version string
@@ -2608,15 +2614,15 @@ SeeAlso: AH=00h"HP Vectra",AX=0200h,AX=0204h"HP Vectra",AX=0208h
 --------b-6F0208-----------------------------
 INT 6F - HP Vectra EX-BIOS - "F_SYSTEM SF_DEF_ATTR" - RESET TO DEFAULT ATTR
 	AX = 0208h
-	BP = driver ID (see #2213)
-Return: AH = status (see #2216)
+	BP = driver ID (see #2343)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AX=0200h,AX=020Ah,AX=020Ch
 --------b-6F020A-----------------------------
 INT 6F - HP Vectra EX-BIOS - "F_SYSTEM SF_GET_ATTR" - GET CURRENT ATTRIBUTES
 	AX = 020Ah
-	BP = driver ID (see #2213)
-Return: AH = status (see #2216)
+	BP = driver ID (see #2343)
+Return: AH = status (see #2346)
 	BX,CX = current attributes
 	BP,DS destroyed
 	---for V_LTOUCH, V_LPOINTER---
@@ -2626,35 +2632,35 @@ SeeAlso: AH=00h"HP Vectra",AX=0200h,AX=0208h,AX=020Ch
 --------b-6F020C-----------------------------
 INT 6F - HP Vectra EX-BIOS - "F_SYSTEM SF_SET_ATTR" - SET DEVICE ATTRIBUTES
 	AX = 020Ch
-	BP = driver ID (see #2213)
+	BP = driver ID (see #2343)
 	BX,CX = new attributes
 	---for V_LTOUCH, V_LPOINTER---
 	    BX = new logical width
 	    CX = new logical height
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AX=0200h,AX=0208h,AX=020Ah
 --------b-6F020E-----------------------------
 INT 6F - HP Vectra EX-BIOS - "F_SYSTEM SF_OPEN" - RESERVE DRIVER FOR ACCESS
 	AX = 020Eh
-	BP = driver ID (see #2213) for V_HPHIL, others
-Return: AH = status (see #2216)
+	BP = driver ID (see #2343) for V_HPHIL, others
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	place device in open state, which allows output to the device
 SeeAlso: AH=00h"HP Vectra",AX=0200h,AX=0208h,AX=0210h
 --------b-6F0210-----------------------------
 INT 6F - HP Vectra EX-BIOS - "F_SYSTEM SF_CLOSE" - RELEASE DRIVER
 	AX = 0210h
-	BP = driver ID (see #2213) for V_HPHIL, others
-Return: AH = status (see #2216)
+	BP = driver ID (see #2343) for V_HPHIL, others
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	place device in closed state, which disallows output to the device
 SeeAlso: AH=00h"HP Vectra",AX=0200h,AX=0208h,AX=020Eh
 --------b-6F0212-----------------------------
 INT 6F - HP Vectra EX-BIOS - "F_SYSTEM SF_TIMEOUT" - REPORT REQUESTED TIMEOUT
 	AX = 0212h
-	BP = driver ID (see #2213)
-Return: AH = status (see #2216)
+	BP = driver ID (see #2343)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	report to driver that a previously-requested timeout interval has
 	  expired
@@ -2662,8 +2668,8 @@ SeeAlso: AH=00h"HP Vectra",AX=0200h,AX=0208h,AX=020Eh,AX=0214h,AX=0216h
 --------b-6F0214-----------------------------
 INT 6F - HP Vectra EX-BIOS - "F_SYSTEM SF_INTERVAL" - 60 HZ INTERVAL EXPIRED
 	AX = 0214h
-	BP = driver ID (see #2213)
-Return: AH = status (see #2216)
+	BP = driver ID (see #2343)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	report to driver that a previously-requested 60 Hz interval has
 	  expired
@@ -2671,8 +2677,8 @@ SeeAlso: AH=00h"HP Vectra",AX=0200h,AX=0208h,AX=020Eh,AX=0212h,AX=0216h
 --------b-6F0216-----------------------------
 INT 6F - HP Vectra EX-BIOS - "F_SYSTEM SF_TEST" - PERFORM HARDWARE TEST
 	AX = 0216h
-	BP = driver ID (see #2213)
-Return: AH = status (see #2216)
+	BP = driver ID (see #2343)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 	---on failure---
 	CX = length of reason string
@@ -2682,11 +2688,11 @@ SeeAlso: AH=00h"HP Vectra",AX=0200h,AX=0208h,AX=020Eh,AX=0212h,AX=0214h
 INT 6F - 10NET - GET ADDRESS OF CONFIGURATION TABLE
 	AH = 03h
 	DS:DI -> node ID (optional)
-Return: ES:BX -> configuration table (see #2228)
+Return: ES:BX -> configuration table (see #2358)
 SeeAlso: AH=13h,INT 21/AX=5E01h"10NET"
 
 Format of 10NET configuration table:
-Offset	Size	Description	(Table 2228)
+Offset	Size	Description	(Table 2358)
 -41	WORD	local device table address
 -39	WORD	extended network error mapping table address
 -37	WORD	shared device table address
@@ -2720,7 +2726,7 @@ Offset	Size	Description	(Table 2228)
  1Eh	BYTE	CT_CFLG (chat permit)
 		bit 1: sound bell
 		bit 0: CHAT permit
- 1Fh	BYTE	CT_PSFLG (see #2229)
+ 1Fh	BYTE	CT_PSFLG (see #2359)
  20h	BYTE	in 10Net flag
  21h	WORD	receive message count
  23h	WORD	send message count
@@ -2741,7 +2747,7 @@ Offset	Size	Description	(Table 2228)
  50h  N WORDs	addresses of timer blocks
 
 Bitfields for CT_PSFLG:
-Bit(s)	Description	(Table 2229)
+Bit(s)	Description	(Table 2359)
  5	PRINT permit
  4	KB initiated
  3	CHAT called FOXPTRM
@@ -2751,15 +2757,15 @@ Bit(s)	Description	(Table 2229)
 --------N-6F04-------------------------------
 INT 6F - 10NET - SEND
 	AH = 04h
-	DS:BX -> send record (see #2230)
+	DS:BX -> send record (see #2360)
 	DS:DX -> data (max 1024 bytes)
 Return:	CF clear if successful
 	CF set on error
-	    AX = error code (see #2212)
+	    AX = error code (see #2342)
 SeeAlso: AH=05h,AH=09h,AH=0Ah
 
 Format of 10NET send record:
-Offset	Size	Description	(Table 2230)
+Offset	Size	Description	(Table 2360)
  00h 12 BYTEs	receiving node's ID
 		if first byte has high-order bit set, message is directed to
 		  the CT_RGATE vector at the receiver
@@ -2770,7 +2776,7 @@ Offset	Size	Description	(Table 2230)
 INT 6F - HP Vectra EX-BIOS - "F_INS_BASEHPVT" - GET HP_VECTOR_TABLE ADDRESS
 	AH = 04h
 	BP = 0012h (driver ID for V_SYSTEM)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	ES = segment of HP_VECTOR_TABLE (see also AH=00h"HP Vectra")
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AH=06h"F_INS_XCHGFIX",AH=08h"F_INS_XCHGRSVD"
@@ -2778,16 +2784,16 @@ SeeAlso: AH=00h"HP Vectra",AH=06h"F_INS_XCHGFIX",AH=08h"F_INS_XCHGRSVD"
 INT 6F - HP Vectra EX-BIOS - "F_TRACK_INIT" - RESET TRACKING DRIVER TO DEFAULTS
 	AH = 04h
 	BP = 005Ah (driver ID for V_STRACK)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AH=06h"F_TRACK_ON",AH=08h"F_TRACK_OFF"
 SeeAlso: AH=0Ah"F_DEF_MASKS",AH=0Ch"F_SET_LIMITS_X"
 --------b-6F0400-----------------------------
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_LOCK" - RESERVE SUB-ADDRESSES
 	AX = 0400h
-	BP = driver ID (see #2213)
+	BP = driver ID (see #2343)
 	DH,DL = major,minor address (optional)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	reserve specified sub-addresses on an already-allocated driver for
 	  exclusive access
@@ -2798,7 +2804,7 @@ SeeAlso: AH=02h"HP Vectra",AX=0402h"SF_UNLOCK"
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_ENABLE_SVC" - UNMASK 8041 SVC INT
 	AX = 0400h
 	BP = 001Eh (driver ID for V_S8259)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AX=0402h"SF_DISABLE_SVC",AX=0404h"SF_ENABLE_KBD"
 SeeAlso: AX=0408h"SF_ENABLE_HPHIL"
@@ -2806,7 +2812,7 @@ SeeAlso: AX=0408h"SF_ENABLE_HPHIL"
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_DEF_LINKS" - SET DEFAULT PARENTS
 	AX = 0400h
 	BP = 002Ah (driver ID for V_SINPUT)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	set the parent vectors in the physical device driver headers to their
 	  system defaults
@@ -2817,7 +2823,7 @@ INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_VID_ID_HP" - INSTALLATION CHECK
 	AX = 0400h
 	BP = 0054h (driver ID for V_SVIDEO)
 	???
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BX = 4850h ('BP')
 	BP,DS destroyed
 	???
@@ -2828,15 +2834,15 @@ SeeAlso: AX=0408h/BP=0054h,AX=040Ah/BP=0054h
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_MOUSE_COM" - INIT INT 33 HANDLER
 	AX = 0400h
 	BP = 00CCh (driver ID for V_LHPMOUSE)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AX=0402h/BP=00CCh
 --------b-6F0402-----------------------------
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_UNLOCK" - RELEASE SUB-ADDRESSES
 	AX = 0402h
-	BP = driver ID (see #2213)
+	BP = driver ID (see #2343)
 	DH,DL = major,minor address (optional)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	release specified sub-addresses from exclusive access
 Note:	this function is documented as present but unsupported in the drivers
@@ -2846,7 +2852,7 @@ SeeAlso: AH=02h"HP Vectra",AX=0400h"SF_LOCK"
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_DISABLE_SVC" - MASK 8041 SVC INT
 	AX = 0402h
 	BP = 001Eh (driver ID for V_S8259)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AX=0400h/BP=001Eh,AX=0406h/BP=001Eh
 SeeAlso: AX=040Ah/BP=001Eh
@@ -2854,8 +2860,8 @@ SeeAlso: AX=040Ah/BP=001Eh
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_GET_LINKS" - GET DRIVER LINK FIELDS
 	AX = 0402h
 	BP = 002Ah (driver ID for V_SINPUT)
-	ES:SI -> buffer for link table (see #2231)
-Return: AH = status (see #2216)
+	ES:SI -> buffer for link table (see #2361)
+Return: AH = status (see #2346)
 	ES:SI buffer filled
 	BP,DS destroyed
 Desc:	get the parent and child vectors for the seven supported physical
@@ -2864,7 +2870,7 @@ SeeAlso: AH=00h"HP Vectra",AX=0400h"SF_DEF_LINKS",AX=0404h"SF_SET_LINKS"
 SeeAlso: AH=06h"F_INQUIRE"
 
 Format of HP Vectra EX-BIOS driver link table:
-Offset	Size	Description	(Table 2231)
+Offset	Size	Description	(Table 2361)
  00h	BYTE	vector number of HP-HIL device #1's child
  01h	BYTE	vector number of HP-HIL device #1's parent
 	...
@@ -2875,7 +2881,7 @@ INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_VID_GET_INFO" - GET DISPLAY INFO
 	AX = 0402h
 	BP = 0054h (driver ID for V_SVIDEO)
 	???
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 	???
 Note:	only partially documented
@@ -2885,15 +2891,15 @@ SeeAlso: AX=0408h/BP=0054h,AX=040Ah/BP=0054h
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_MOUSE_COM" - FORCE INT 33 INIT
 	AX = 0402h
 	BP = 00CCh (driver ID for V_LHPMOUSE)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	set up INT 33 even if no mouse is installed
 SeeAlso: AH=00h"HP Vectra",AX=0400h/BP=00CCh
 --------b-6F0404-----------------------------
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_TRACK_ON" - GRAPHICS CURSOR ON
 	AX = 0404h
-	BP = driver ID (see #2213) for V_LPOINTER, V_LTOUCH, V_LTABLET
-Return: AH = status (see #2216)
+	BP = driver ID (see #2343) for V_LPOINTER, V_LTOUCH, V_LTABLET
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	enables graphics cursor tracking of the logical device's movement
 SeeAlso: AH=00h"HP Vectra",AX=0400h,AX=0406h"SF_TRACK_OFF"
@@ -2901,7 +2907,7 @@ SeeAlso: AH=00h"HP Vectra",AX=0400h,AX=0406h"SF_TRACK_OFF"
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_ENABLE_KBD" - UNMASK 8041 OBF INT
 	AX = 0404h
 	BP = 001Eh (driver ID for V_S8259)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AX=0400h"SF_ENABLE_SVC",AX=0406h"SF_DISABLE_KBD"
 SeeAlso: AX=0408h"SF_ENABLE_HPHIL"
@@ -2909,8 +2915,8 @@ SeeAlso: AX=0408h"SF_ENABLE_HPHIL"
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_SET_LINKS" - SET DRIVER LINK FIELDS
 	AX = 0404h
 	BP = 002Ah (driver ID for V_SINPUT)
-	ES:SI -> buffer containing link table (see #2231)
-Return: AH = status (see #2216)
+	ES:SI -> buffer containing link table (see #2361)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	specify the parent and child vectors for the seven supported physical
 	  device drivers
@@ -2921,7 +2927,7 @@ INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_VID_SET_INFO" - SET EXT-CTRL INFO
 	AX = 0404h
 	BP = 0054h (driver ID for V_SVIDEO)
 	???
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 	???
 Note:	only partially documented
@@ -2930,8 +2936,8 @@ SeeAlso: AX=0408h/BP=0054h,AX=040Ah/BP=0054h
 --------b-6F0406-----------------------------
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_TRACK_OFF" - GRAPHICS CURSOR OFF
 	AX = 0406h
-	BP = driver ID (see #2213) for V_LPOINTER, V_LTOUCH, V_LTABLET
-Return: AH = status (see #2216)
+	BP = driver ID (see #2343) for V_LPOINTER, V_LTOUCH, V_LTABLET
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	disables graphics cursor tracking of the logical device's movement
 SeeAlso: AH=00h"HP Vectra",AX=0400h,AX=0404h"SF_TRACK_ON"
@@ -2940,7 +2946,7 @@ SeeAlso: AX=0408h"SF_CREATE_EVENT"
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_DISABLE_KBD" - MASK 8041 OBF INT
 	AX = 0406h
 	BP = 001Eh (driver ID for V_S8259)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AX=0402h"SF_DISABLE_SVC",AX=0404h"SF_ENABLE_KBD"
 SeeAlso: AX=040Ah"SF_DISABLE_HPHIL"
@@ -2949,7 +2955,7 @@ INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_VID_MOD_INFO" - SET EXT-CTRL REG
 	AX = 0406h
 	BP = 0054h (driver ID for V_SVIDEO)
 	???
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 	???
 Note:	only partially documented
@@ -2959,17 +2965,17 @@ SeeAlso: AX=0408h/BP=0054h,AX=040Ah/BP=0054h
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_CRV_RECONFIGURE" - RECONFIG LINK
 	AX = 0406h
 	BP = 0114h (driver ID for V_HPHIL)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AX=020Eh,AX=0408h"SF_CRV_WR_PROMPTS"
 SeeAlso: AX=0410h"SF_CRV_SELF_TEST"
 --------b-6F0408-----------------------------
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_CREATE_EVENT" - SET EVENT HANDLER
 	AX = 0408h
-	BP = driver ID (see #2213) for V_LPOINTER, V_LTOUCH, V_LTABLET
+	BP = driver ID (see #2343) for V_LPOINTER, V_LTOUCH, V_LTABLET
 	ES:SI -> new event handler (see AH=00h"HP Vectra")
 	DX = new handler's DS
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	ES:SI -> old event handler
 	DX = old handler's DS
 	BP,DS destroyed
@@ -2982,7 +2988,7 @@ SeeAlso: AX=040Ah"SF_EVENT_ON",AX=040Ch"SF_EVENT_OFF",AH=06h"F_SAMPLE"
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_ENABLE_HPHIL" - UNMASK HP-HIL INT
 	AX = 0408h
 	BP = 001Eh (driver ID for V_S8259)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AX=0400h/BP=001Eh,AX=0404h/BP=001Eh
 SeeAlso: AX=040Ah/BP=001Eh
@@ -2991,7 +2997,7 @@ INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_VID_GET_RES" - GET VIDMODE RESOLUTN
 	AX = 0408h
 	BP = 0054h (driver ID for V_SVIDEO)
 	???
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 	???
 Note:	only partially documented
@@ -3001,15 +3007,15 @@ SeeAlso: AX=0406h/BP=0054h,AX=040Ah/BP=0054h
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_CRV_WR_PROMPTS" - WRITE PROMPT
 	AX = 0408h
 	BP = 0114h (driver ID for V_HPHIL)
-	BX = device address indicator (see #2232)
+	BX = device address indicator (see #2362)
 	DH = HP HIL device major address
 	DL = prompt number
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AX=020Eh,AX=0406h/BP=0114h,AX=040Ah/BP=0114h
 
 Bitfields for HP Vectra V_HPHIL device address indicator:
-Bit(s)	Description	(Table 2232)
+Bit(s)	Description	(Table 2362)
  15-14	reserved
  13	address in DH is valid (must be set, clear is reserved)
  12	valid value in DL
@@ -3017,8 +3023,8 @@ Bit(s)	Description	(Table 2232)
 --------b-6F040A-----------------------------
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_EVENT_ON" - ENABLE EVENT HANDLER
 	AX = 040Ah
-	BP = driver ID (see #2213) for V_LPOINTER, V_LTOUCH, V_LTABLET
-Return: AH = status (see #2216)
+	BP = driver ID (see #2343) for V_LPOINTER, V_LTOUCH, V_LTABLET
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AX=0408h"SF_CREATE_EVENT",AX=040Ch"SF_EVENT_OFF"
 SeeAlso: AX=040Eh"SF_CLIPPING_ON"
@@ -3026,7 +3032,7 @@ SeeAlso: AX=040Eh"SF_CLIPPING_ON"
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_DISABLE_HPHIL" - MASK HP-HIL INT
 	AX = 040Ah
 	BP = 001Eh (driver ID for V_S8259)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AX=0402h/BP=001Eh,AX=0406h/BP=001Eh
 SeeAlso: AX=0408h/BP=001Eh
@@ -3035,7 +3041,7 @@ INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_VID_SET_MODE" - SET VIDEO MODE
 	AX = 040Ah
 	BP = 0054h (driver ID for V_SVIDEO)
 	???
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 	???
 Note:	only partially documented
@@ -3046,7 +3052,7 @@ INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_CREATE_INTR" - CREATE INTERVAL ENTRY
 	AX = 040Ah
 	BP = 00AEh (driver ID for V_8041)
 	BH = vector number of driver to be called regularly (vector addr / 6)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	add a driver to the list (max eight) of drivers which will be called
 	  by the HP's 8041 at 60 Hz
@@ -3058,17 +3064,17 @@ SeeAlso: AX=0412h/BP=00AEh,AX=0416h/BP=00AEh,AX=041Ah/BP=00AEh
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_CRV_WR_ACK" - ACKNOWLEDGE DEVICE
 	AX = 040Ah
 	BP = 0114h (driver ID for V_HPHIL)
-	BX = device address indicator (see #2232)
+	BX = device address indicator (see #2362)
 	DH = HP HIL device major address
 	DL = acknowledge number (specific if 01h-07h, generic otherwise)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AX=0406h/BP=0114h,AX=040Ch/BP=0114h
 --------b-6F040C-----------------------------
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_EVENT_OFF" - DISABLE EVENT HANDLER
 	AX = 040Ch
-	BP = driver ID (see #2213) for V_LPOINTER, V_LTOUCH, V_LTABLET
-Return: AH = status (see #2216)
+	BP = driver ID (see #2343) for V_LPOINTER, V_LTOUCH, V_LTABLET
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AX=0408h"SF_CREATE_EVENT",AX=040Ah"SF_EVENT_ON"
 --------b-6F040CBP00AE-----------------------
@@ -3076,7 +3082,7 @@ INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_DELET_INTR" - DELETE INTERVAL ENTRY
 	AX = 040Ch
 	BP = 00AEh (driver ID for V_8041)
 	BH = vector number of driver to be removed (vector addr / 6)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	remove a driver to the list (max eight) of drivers which will be called
 	  by the HP's 8041 at 60 Hz
@@ -3086,10 +3092,10 @@ SeeAlso: AX=0412h/BP=00AEh,AX=0416h/BP=00AEh,AX=041Ah/BP=00AEh
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_CRV_REPEAT" - SET KEY REPEAT RATE
 	AX = 040Ch
 	BP = 0114h (driver ID for V_HPHIL)
-	BX = device address indicator (see #2232)
+	BX = device address indicator (see #2362)
 	DH = HP HIL device major address
 	DL = repeat rate (00h = 30 Hz, 01h = 60 Hz)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Note:	this function is only available if the driver is in the open state
 	  (see AX=020Eh"SF_OPEN")
@@ -3097,8 +3103,8 @@ SeeAlso: AH=00h"HP Vectra",AX=040Ah/BP=0114h,AX=040Eh/BP=0114h
 --------b-6F040E-----------------------------
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_CLIPPING_ON" - ENABLE CLIPPING
 	AX = 040Eh
-	BP = driver ID (see #2213) for V_LPOINTER, V_LTOUCH, V_LTABLET
-Return: AH = status (see #2216)
+	BP = driver ID (see #2343) for V_LPOINTER, V_LTOUCH, V_LTABLET
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	causes the physical device's motion to be clipped to prevent overflow
 	  or underflow of the logical position
@@ -3108,7 +3114,7 @@ INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_ENABL_INTR" - START INTERRUPT SRVICE
 	AX = 040Eh
 	BP = 00AEh (driver ID for V_8041)
 	BH = vector number of driver to be called regularly (vector addr / 6)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	enable 60 Hz calling of a driver previously added to the list of
 	  drivers to be called by the HP's 8041
@@ -3118,9 +3124,9 @@ SeeAlso: AX=0412h/BP=00AEh,AX=0416h/BP=00AEh,AX=041Ah/BP=00AEh
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_CRV_DISABLE_REPEAT" - KEY REPT OFF
 	AX = 040Eh
 	BP = 0114h (driver ID for V_HPHIL)
-	BX = device address indicator (see #2232)
+	BX = device address indicator (see #2362)
 	DH = HP HIL device major address
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Note:	this function is only available if the driver is in the open state
 	  (see AX=020Eh"SF_OPEN")
@@ -3129,8 +3135,8 @@ SeeAlso: AX=0416h/BP=0114h
 --------b-6F0410-----------------------------
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_CLIPPING_OFF" - DISABLE CLIPPING
 	AX = 0410h
-	BP = driver ID (see #2213) for V_LPOINTER, V_LTOUCH, V_LTABLET
-Return: AH = status (see #2216)
+	BP = driver ID (see #2343) for V_LPOINTER, V_LTOUCH, V_LTABLET
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	disables clipping of the physical device's motion, which may cause
 	  overflow or underflow of the logical position
@@ -3140,7 +3146,7 @@ INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_DISBL_INTR" - END INTERRUPT SERVICE
 	AX = 0410h
 	BP = 00AEh (driver ID for V_8041)
 	BH = vector number of driver (vector addr / 6)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	disable 60 Hz interval calls to the specified driver
 SeeAlso: AH=00h"HP Vectra",AX=040Ch/BP=00AEh,AX=040Eh/BP=00AEh
@@ -3149,10 +3155,10 @@ SeeAlso: AX=0412h/BP=00AEh,AX=0416h/BP=00AEh,AX=041Ah/BP=00AEh
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_CRV_SELF_TEST" - PERFORM SELFTEST
 	AX = 0410h
 	BP = 0114h (driver ID for V_HPHIL)
-	BX = device address indicator (see #2232)
+	BX = device address indicator (see #2362)
 	DH = HP HIL device major address
 	ES:SI -> buffer for result
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	CX = number of bytes in buffer
 	BP,DS destroyed
 Note:	this function is only available if the driver is in the open state
@@ -3162,7 +3168,7 @@ SeeAlso: AH=00h"HP Vectra",AX=040Ch/BP=0114h,AX=0412h/BP=0114h
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_SET_RAMSW" - SET RAM SWITCH IN 8041
 	AX = 0412h
 	BP = 00AEh (driver ID for V_8041)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	sets a flag in the 8041 indicating that a second 256K bank of RAM
 	  on the motherboard is enabled
@@ -3172,10 +3178,10 @@ SeeAlso: AX=0414h/BP=00AEh,AX=0416h/BP=00AEh,AX=041Ah/BP=00AEh
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_CRV_REPORT_STATUS" - GET DEVSTATUS
 	AX = 0412h
 	BP = 0114h (driver ID for V_HPHIL)
-	BX = device address indicator (see #2232)
+	BX = device address indicator (see #2362)
 	DH = HP HIL device major address
 	ES:SI -> 15-byte buffer for status
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	CX = number of bytes returned in buffer
 	BP,DS destroyed
 Note:	this function is only available if the driver is in the open state
@@ -3185,7 +3191,7 @@ SeeAlso: AH=00h"HP Vectra",AX=0410h/BP=0114h,AX=0414h/BP=0114h
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_CLR_RAMSW" - CLEAR 8041 RAM SWITCH
 	AX = 0414h
 	BP = 00AEh (driver ID for V_8041)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	clears a flag in the 8041 indicating that a second 256K bank of RAM
 	  on the motherboard is enabled, causing the second bank to be disabled
@@ -3196,10 +3202,10 @@ SeeAlso: AX=0412h/BP=00AEh,AX=0418h/BP=00AEh,AX=041Ah/BP=00AEh
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_CRV_REPORT_NAME" - GET DEV NAME
 	AX = 0414h
 	BP = 0114h (driver ID for V_HPHIL)
-	BX = device address indicator (see #2232)
+	BX = device address indicator (see #2362)
 	DH = HP HIL device major address
 	ES:SI -> 15-byte buffer for name
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	CX = number of bytes returned in buffer
 	BP,DS destroyed
 Note:	this function is only available if the driver is in the open state
@@ -3209,7 +3215,7 @@ SeeAlso: AH=00h"HP Vectra",AX=0412h/BP=0114h
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_SET_CRTSW" - SET CRT TO MULTIMODE
 	AX = 0416h
 	BP = 00AEh (driver ID for V_8041)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	sets a flag in the 8041 indicating that the primary display is the
 	  Multimode graphics adapter (default)
@@ -3224,14 +3230,14 @@ INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_KEYBOARD_REPEAT" - SET TYPEMATIC
 	DL = rate
 	    bits 7-4: delay value	
 	    bits 3-0: typematic rate
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AX=040Eh/BP=0114h,AX=0418h/BP=0114h
 --------b-6F0418BP00AE-----------------------
 INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_CLR_CRTSW" - SET CRT TO MONOCHROME
 	AX = 0418h
 	BP = 00AEh (driver ID for V_8041)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	clears a flag in the 8041, indicating that the primary display is the
 	  monochrome adapter
@@ -3245,7 +3251,7 @@ INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_KEYBOARD_LED" - SET KEYBOARD LEDS
 	    bit 0: scroll lock
 	    bit 1: NumLock
 	    bit 2: CapsLock
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AX=040Eh/BP=0114h,AX=0416h/BP=0114h
 --------b-6F041ABP00AE-----------------------
@@ -3253,35 +3259,35 @@ INT 6F - HP Vectra EX-BIOS - "F_IO_CTRL SF_PASS_THRU" - SEND DATA BYTE TO 8041
 	AX = 041Ah
 	BP = 00AEh (driver ID for V_8041)
 	BL = byte to send to 8041
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AX=040Ah/BP=00AEh,AX=040Eh/BP=00AEh
 --------N-6F05-------------------------------
 INT 6F - 10NET - RECEIVE
 	AH = 05h
 	CX = number of seconds before timeout
-	DS:DX -> receive buffer (see #2233)
+	DS:DX -> receive buffer (see #2363)
 Return:	CF clear if successful
 	    AH = FEh if dequeued message is a CB message
 	CF set on error
-	    AX = error code (see #2212)
+	    AX = error code (see #2342)
 SeeAlso: AH=04h"10NET"
 
 Format of 10NET receive buffer:
-Offset	Size	Description	(Table 2233)
+Offset	Size	Description	(Table 2363)
  00h 12 BYTEs	sending node's ID
  0Ch	WORD	length of message
  0Eh  N BYTEs	message (maximum 1024 bytes)
 --------b-6F06-------------------------------
 INT 6F - HP Vectra EX-BIOS - "F_PUT_BYTE" - WRITE A BYTE OF DATA TO DEVICE
 	AH = 06h
-	BP = driver ID (see #2213) for V_HPHIL, others
+	BP = driver ID (see #2343) for V_HPHIL, others
 	AL = value to output
 	---if driver is V_HPHIL---
-	BX = device address indicator (see #2232)
+	BX = device address indicator (see #2362)
 	DH = HP HIL device major address
 	DL = HP-HIL device register (00h-7Fh)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	output a byte to a specific HP-HIL device register
 Note:	this function is only available if the driver is in the open state
@@ -3290,13 +3296,13 @@ SeeAlso: AH=04h"HP Vectra",AH=08h"F_GET_BYTE",AH=0Ah"F_PUT_BUFFER"
 --------b-6F06-------------------------------
 INT 6F - HP Vectra EX-BIOS - "F_SAMPLE" - POLL CURRENT ABSOLUTE POSITION
 	AH = 06h
-	BP = driver ID (see #2213) for V_LTOUCH, V_LPOINTER, V_LTABLET, etc.
-Return: AH = status (see #2216)
+	BP = driver ID (see #2343) for V_LTOUCH, V_LPOINTER, V_LTABLET, etc.
+Return: AH = status (see #2346)
 	BX = current logical X position
 	CX = current logical Y position
-	DL = button transitions
-	DH = current button states
-	ES:0000h -> logical device's Describe Record (see #2221)
+	DL = button transitions (bit N = button N state has changed)
+	DH = current button states (bit N = current button N state)
+	ES:0000h -> logical device's Describe Record (see #2351)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AX=040Ah"SF_EVENT_ON",AX=040Eh"SF_CLIPPING_ON"
 --------b-6F06--BP0012-----------------------
@@ -3306,10 +3312,12 @@ INT 6F - HP Vectra EX-BIOS - "F_INS_XCHGFIX" - EXCH VALUES WITH FIXED VECTOR
 	BX = vector address
 	DX = new value for DS
 	ES:DI -> new CS:IP entry point
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	DX = old value for DS
 	ES:DI -> old CS:IP entry point
 	BP,DS destroyed
+Desc:	replace an existing EX-BIOS driver at a fixed HPVT location without
+	  initialization
 SeeAlso: AH=00h"HP Vectra",AH=04h"F_INS_BASEHPVT",AH=08h"F_INS_XCHGRSVD"
 SeeAlso: AH=0Ah"F_INS_XCHGFREE",AH=0Ch"F_INS_FIXOWNDS"
 --------b-6F06--BP002A-----------------------
@@ -3317,7 +3325,7 @@ INT 6F - HP Vectra EX-BIOS - "F_INQUIRE" - GET DRIVER PHYSICAL DESCRIBE RECORD
 	AH = 06h
 	BP = 002Ah (driver ID for V_SINPUT)
 	AL = HP-HIL physical device number (01h-07h)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	ES:SI -> physical describe record for driver
 	BP,DS destroyed
 Note:	the returned physical describe record must not be modified
@@ -3327,7 +3335,7 @@ SeeAlso: AH=0Ch/BP=002Ah
 INT 6F - HP Vectra EX-BIOS - "F_TRACK_ON" - ENABLE CURSOR TRACKING
 	AH = 06h
 	BP = 005Ah (driver ID for V_STRACK)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AH=04h"F_TRACK_INIT",AH=08h"F_TRACK_OFF"
 SeeAlso: AH=0Ah"F_DEF_MASKS",AH=0Ch"F_SET_LIMITS_X"
@@ -3357,12 +3365,12 @@ SeeAlso: AH=07h,AH=0Fh,INT 21/AH=5Ch
 --------b-6F08-------------------------------
 INT 6F - HP Vectra EX-BIOS - "F_GET_BYTE" - READ A BYTE OF DATA FROM DEVICE
 	AH = 08h
-	BP = driver ID (see #2213) for V_HPHIL (0114h), others
+	BP = driver ID (see #2343) for V_HPHIL (0114h), others
 	---if device is V_HPHIL---
-	BX = device address indicator (see #2232)
+	BX = device address indicator (see #2362)
 	DH = HP HIL device major address
 	DL = HP-HIL device register (00h-7Fh)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	AL = value read from device
 	BP,DS destroyed
 Desc:	generic read-byte function; for driver V_HPHIL, retrieves the value
@@ -3376,7 +3384,7 @@ INT 6F - HP Vectra EX-BIOS - "F_INS_XCHGRSVD" - EXCH VALUES WITH RESRVED VECTOR
 	BP = 0012h (driver ID for V_SYSTEM)
 	DX = new value for DS
 	ES:DI -> new CS:IP entry point
-Return: AH = status (00h,F6h) (see also #2216)
+Return: AH = status (00h,F6h) (see also #2346)
 	    00h successful
 		BX = vector address used
 		DX = old value for DS
@@ -3391,8 +3399,8 @@ SeeAlso: AH=0Ch/BP=0012h
 INT 6F - HP Vectra EX-BIOS - "F_INQUIRE_ALL" - GET DRIVER STATUS TABLE
 	AH = 08h
 	BP = 002Ah (driver ID for V_SINPUT)
-	ES:SI -> buffer for device status table (see #2234)
-Return: AH = status (see #2216)
+	ES:SI -> buffer for device status table (see #2364)
+Return: AH = status (see #2346)
 	ES:SI buffer filled
 	BP,DS destroyed
 Note:	the returned physical describe record must not be modified
@@ -3400,7 +3408,7 @@ SeeAlso: AH=00h"HP Vectra",AX=0400h/BP=002Ah,AH=06h/BP=002Ah,AH=0Ah/BP=002Ah
 SeeAlso: AH=0Ch/BP=002Ah
 
 Format of HP Vectra HP-HIL physical device status table:
-Offset	Size	Description	(Table 2234)
+Offset	Size	Description	(Table 2364)
  00h	BYTE	status for HP-HIL device #1
 		bit 0: device present
 		bits 7-2 reserved
@@ -3412,7 +3420,7 @@ Offset	Size	Description	(Table 2234)
 INT 6F - HP Vectra EX-BIOS - "F_TRACK_OFF" - DISABLE CURSOR TRACKING
 	AH = 08h
 	BP = 005Ah (driver ID for V_STRACK)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Note:	also removes the graphics cursor sprite from the screen
 SeeAlso: AH=00h"HP Vectra",AH=04h"F_TRACK_INIT",AH=06h"F_TRACK_ON"
@@ -3420,42 +3428,42 @@ SeeAlso: AH=0Ah"F_DEF_MASKS",AH=0Ch"F_SET_LIMITS_X"
 --------N-6F09-------------------------------
 INT 6F - 10NET - SUBMIT
 	AH = 09h
-	DS:BX -> submit record (see #2235)
+	DS:BX -> submit record (see #2365)
 SeeAlso: AH=04h"10NET"
 
 Format of 10NET submit record:
-Offset	Size	Description	(Table 2235)
+Offset	Size	Description	(Table 2365)
  00h 12 BYTEs	destination node ID (must be logged in)
  0Ch	WORD	length+2 of following 'command line' text
  0Eh  N BYTEs	command line text (<=100 bytes), system adds CR
 --------N-6F0A-------------------------------
 INT 6F - 10NET - CHAT
 	AH = 0Ah
-	DS:BX -> control parameters (see #2236)
-	DS:DX -> chat message (see #2237)
+	DS:BX -> control parameters (see #2366)
+	DS:DX -> chat message (see #2367)
 SeeAlso: AH=04h"10NET",AH=8Ah
 
 Format of 10NET chat control parameters:
-Offset	Size	Description	(Table 2236)
+Offset	Size	Description	(Table 2366)
  00h  8 BYTEs	sender ID, defaults to node's userID if nulls
  08h  8 BYTEs	destination user ID, 'EVERYONE' may be used
  10h 12 BYTEs	destination node ID
 
 Format of 10NET chat message:
-Offset	Size	Description	(Table 2237)
+Offset	Size	Description	(Table 2367)
  00h	WORD	length+2 of following text
  02h  N BYTEs	text, max 101 bytes
 --------b-6F0A-------------------------------
 INT 6F - HP Vectra EX-BIOS - "F_PUT_BUFFER" - WRITE A BUFFER TO DEVICE
 	AH = 0Ah
-	BP = driver ID (see #2213) for V_HPHIL (0114h), others
+	BP = driver ID (see #2343) for V_HPHIL (0114h), others
 	CX = number of bytes to write
 	ES:DI -> buffer containing data
 	---if driver is V_HPHIL---
-	BX = device address indicator (see #2232)
+	BX = device address indicator (see #2362)
 	DH = HP HIL device major address
 	DL = HP-HIL device register (00h-7Fh)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	CX = number of unwritten bytes left in buffer
 	BP,DS destroyed
 SeeAlso: AH=06h"F_PUT_BYTE",AH=0Ah"F_PUT_BLOCK",AH=0Ch"F_GET_BUFFER"
@@ -3463,18 +3471,18 @@ SeeAlso: AH=0Eh"F_PUT_WORD"
 --------b-6F0A-------------------------------
 INT 6F - HP Vectra EX-BIOS - "F_PUT_BLOCK" - WRITE BLOCKS TO DEVICE
 	AH = 0Ah
-	BP = driver ID (see #2213) for block device
+	BP = driver ID (see #2343) for block device
 	DH = device major number
 	DL = device minor number
-	ES:DI -> command block (see #2238)
-Return: AH = status (see #2216)
+	ES:DI -> command block (see #2368)
+Return: AH = status (see #2346)
 	BX = operation status
 	BP,DS destroyed
 SeeAlso: AH=06h"F_PUT_BYTE",AH=0Ah"F_PUT_BUFFER",AH=0Ch"F_GET_BUFFER"
 SeeAlso: AH=0Eh"F_PUT_WORD"
 
 Format of HP Vectra F_PUT_BLOCK/F_GET_BLOCK command block:
-Offset	Size	Description	(Table 2238)
+Offset	Size	Description	(Table 2368)
  00h	DWORD	data transfer address
  04h	WORD	number of blocks
  06h	DWORD	block address (some devices only use low word)
@@ -3484,7 +3492,7 @@ INT 6F - HP Vectra EX-BIOS - "F_INS_XCHGFREE" - EXCH VALUES WITH FREE VECTOR
 	BP = 0012h (driver ID for V_SYSTEM)
 	DX = new value for DS
 	ES:DI -> new CS:IP entry point
-Return: AH = status (00h,F6h) (see also #2216)
+Return: AH = status (00h,F6h) (see also #2346)
 	    00h successful
 		BX = vector address used
 		DX = old value for DS
@@ -3499,7 +3507,7 @@ SeeAlso: AH=0Ch/BP=0012h
 INT 6F - HP Vectra EX-BIOS - "F_INQUIRE_FIRST" - GET PHYSICAL DRIVER VECTOR
 	AH = 0Ah
 	BP = 002Ah (driver ID for V_SINPUT)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BX = vector address for first HP-HIL device
 	BP,DS destroyed
 Note:	all seven HP-HIL devices use consecutive vectors in the
@@ -3515,7 +3523,7 @@ INT 6F - HP Vectra EX-BIOS - "F_DEF_MASKS" - DEFINE GRAPHICS CURSOR MASKS
 	CH = height in scan lines
 	CL = hot-spot Y coordinate
 	ES:SI -> sprite mask (screen mask followed by XOR sprite mask)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Note:	the save area is one byte wider than the actual sprite mask; the total
 	  size of the sprite is at most 144 bytes
@@ -3527,11 +3535,11 @@ INT 6F - 10NET - LOCK SEMAPHORE, RETURN IMMEDIATELY
 	AL = drive number or 0
 	ES:SI = Ethernet address or 0
 	DS:BX -> 31-byte ASCIZ semaphore name
-Return: AL = status (see #2239)
+Return: AL = status (see #2369)
 Note:	same as INT 60/AH=12h
 SeeAlso: AH=0Ch"10NET",INT 60/AH=12h
 
-(Table 2239)
+(Table 2369)
 Values for 10NET status:
  00h	successful
  01h	semaphore currently locked
@@ -3543,7 +3551,7 @@ Values for 10NET status:
  07h	not logged in
  08h	write to network failed
  09h	semaphore already logged in this CPU
-SeeAlso: #2212
+SeeAlso: #2342
 Index:	error codes;10-Net|10-Net;error codes
 --------N-6F0C-------------------------------
 INT 6F - 10NET - UNLOCK SEMAPHORE
@@ -3551,28 +3559,28 @@ INT 6F - 10NET - UNLOCK SEMAPHORE
 	AL = drive number or 0
 	ES:SI = Ethernet address or 0
 	DS:BX -> 31-byte ASCIZ semaphore name
-Return: AL = status (see also #2239)
+Return: AL = status (see also #2369)
 	    01h semaphore not locked
 Note:	same as INT 60/AH=13h
 SeeAlso: AH=0Bh,INT 60/AH=13h
 --------b-6F0C-------------------------------
 INT 6F - HP Vectra EX-BIOS - "F_GET_BUFFER" - READ A BUFFER OF DATA FROM DEVICE
 	AH = 0Ch
-	BP = driver ID (see #2213) for V_HPHIL (0114h), others
+	BP = driver ID (see #2343) for V_HPHIL (0114h), others
 	CX = number of bytes or blocks to read
 	DS:SI -> buffer for received data
-Return: AH = status (see #2216 at AH=00h"HP Vectra")
+Return: AH = status (see #2346 at AH=00h"HP Vectra")
 	BP,DS destroyed
 SeeAlso: AH=08h"F_GET_BYTE",AH=0Ah"F_PUT_BUFFER",AH=0Ch"F_GET_BLOCK"
 SeeAlso: AH=10h"F_GET_WORD"
 --------b-6F0C-------------------------------
 INT 6F - HP Vectra EX-BIOS - "F_GET_BLOCK" - READ BLOCKS OF DATA FROM DEVICE
 	AH = 0Ch
-	BP = driver ID (see #2213)
+	BP = driver ID (see #2343)
 	DH = device major number
 	DL = device minor number
-	ES:DI -> command block (see #2238)
-Return: AH = status (see #2216 at AH=00h"HP Vectra")
+	ES:DI -> command block (see #2368)
+Return: AH = status (see #2346 at AH=00h"HP Vectra")
 	BX = operation status
 	BP,DS destroyed
 SeeAlso: AH=08h"F_GET_BYTE",AH=0Ah"F_PUT_BLOCK",AH=0Ch"F_GET_BUFFER"
@@ -3583,7 +3591,7 @@ INT 6F - HP Vectra EX-BIOS - "F_INS_FIXOWNDS" - INSTALL VALUES IN FIXED VECTOR
 	BP = 0012h (driver ID for V_SYSTEM)
 	BX = vector address used
 	ES:DI -> new CS:IP entry point
-Return: AH = status (00h) (see #2216)
+Return: AH = status (00h) (see #2346)
 	BP,DS destroyed
 Note:	on installation, the given entry point will be invoked with an SF_INIT
 	  call (see AX=0200h"SF_INIT"), which should return the routine's DS
@@ -3595,7 +3603,7 @@ SeeAlso: AH=0Eh/BP=0012h,AH=12h/BP=0012h
 INT 6F - HP Vectra EX-BIOS - "F_INQUIRE_ENTRY" - GET GID DRIVER ENTRY POINT
 	AH = 0Ch
 	BP = 002Ah (driver ID for V_SINPUT)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	ES:BX -> physical GID driver CS:IP
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AX=0400h/BP=002Ah,AH=06h/BP=002Ah,AH=08h/BP=002Ah
@@ -3606,7 +3614,7 @@ INT 6F - HP Vectra EX-BIOS - "F_SET_LIMITS_X" - SET HORIZONTAL TRACKING LIMITS
 	BP = 005Ah (driver ID for V_STRACK)
 	CX = minimum X coordinate
 	DX = maximum X coordinate
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AH=04h/BP=005Ah,AH=08h/BP=005Ah,AH=0Eh/BP=005Ah
 SeeAlso: AH=10h/BP=005Ah,AH=12h/BP=005Ah,INT 33/AX=0007h
@@ -3618,14 +3626,14 @@ INT 6F - 10NET - "WHO" - ENUMERATE USERS ON NETWORK
 	    02h return non-superstations only
 	    otherwise return all
 	CX = length of data buffer
-	DS:DX -> array of records to be filled (see #2240)
+	DS:DX -> array of records to be filled (see #2370)
 Return: CL = number of records returned (responding stations)
 SeeAlso: AH=16h,AH=8Dh
 
 Format of station record:
-Offset	Size	Description	(Table 2240)
+Offset	Size	Description	(Table 2370)
  00h 12 BYTEs	node ID
- 0Ch	BYTE	station flags (see #2241)
+ 0Ch	BYTE	station flags (see #2371)
 ---if AL = 01h---
  0Dh	BYTE	version number
  0Eh	WORD	level number of 10Net software in responding node
@@ -3635,7 +3643,7 @@ Offset	Size	Description	(Table 2240)
  16h	WORD	level number
 
 Bitfields for station flags:
-Bit(s)	Description	(Table 2241)
+Bit(s)	Description	(Table 2371)
  1	workstation
  2	superstation
  3	xgate
@@ -3643,14 +3651,14 @@ Bit(s)	Description	(Table 2241)
 --------N-6F0E-------------------------------
 INT 6F - 10NET - SPOOL/PRINT
 	AH = 0Eh
-	DS:DX -> spool/print record (see #2243)
+	DS:DX -> spool/print record (see #2373)
 Return:	CF clear if successful
 	CF set on error
-	    AX = error code (see also #2212)
+	    AX = error code (see also #2342)
 		17FFh device not mounted
 		18FFh already spooling to named device
 
-(Table 2242)
+(Table 2372)
 Values for 10NET spooler operation code:
  0000h	initiate spool
  0001h	abort print
@@ -3664,11 +3672,11 @@ Values for 10NET spooler operation code:
  0009h	queue non-spooled file for printing
 
 Format of 10NET Spool/Print record:
-Offset	Size	Description	(Table 2243)
- 00h	WORD	operation code (see #2242)
+Offset	Size	Description	(Table 2373)
+ 00h	WORD	operation code (see #2372)
  02h 11 BYTEs	file name in FCB format
 ---if operation code = 00h or 06h---
- 0Dh	BYTE	notification flags (see #2244)
+ 0Dh	BYTE	notification flags (see #2374)
  0Eh	BYTE	days to keep (FFh=forever)
  0Fh	BYTE	bits 0,1: device (1=LPT1)
 		bits 4-7: remote drive to store spool file (1=A,...)
@@ -3701,13 +3709,13 @@ Offset	Size	Description	(Table 2243)
 		    FFh	no more items
  0Eh	WORD	unused
  10h	WORD	length of following area
- 12h  N BYTEs	up to 64 bytes to receive $SCNTL records (see #2245)
+ 12h  N BYTEs	up to 64 bytes to receive $SCNTL records (see #2375)
 ---if operation code = 09h---
  0Dh  3 BYTEs	unused
  10h  N BYTEs	path to non-spooled file to be queued for printing
 
 Bitfields for notification flags:
-Bit(s)	Description	(Table 2244)
+Bit(s)	Description	(Table 2374)
  7	queue to top
  6	do ID page
  5	no form feed
@@ -3718,12 +3726,12 @@ Bit(s)	Description	(Table 2244)
  0	notify at print start
 
 Format of 10NET $SCNTL record:
-Offset	Size	Description	(Table 2245)
+Offset	Size	Description	(Table 2375)
  00h  8 BYTEs	user ID
  08h 11 BYTEs	filename in FCB format
  13h  6 BYTEs	node ID
  19h  3 BYTEs	creation date
- 1Ch	BYTE	notification flags (see #2244)
+ 1Ch	BYTE	notification flags (see #2374)
  1Dh	BYTE	retention time in days
  1Eh	BYTE	printing device (LPTx)
  1Fh  3 BYTEs	date last printed (0 = never)
@@ -3734,15 +3742,15 @@ Offset	Size	Description	(Table 2245)
 --------b-6F0E-------------------------------
 INT 6F - HP Vectra EX-BIOS - "F_PUT_WORD" - WRITE WORD OF DATA TO DEVICE
 	AH = 0Eh
-	BP = driver ID (see #2213)
+	BP = driver ID (see #2343)
 	DX = data word
-Return: AH = status (see #2216 at AH=00h"HP Vectra")
+Return: AH = status (see #2346 at AH=00h"HP Vectra")
 	BP,DS destroyed
 SeeAlso: AH=06h"F_PUT_BYTE",AH=0Ah"F_PUT_BUFFER",AH=10h"F_GET_WORD"
 --------b-6F0E-------------------------------
 INT 6F - HP Vectra EX-BIOS - "F_PUT_WORD" - WRITE A WORD OF DATA
 	AH = 0Eh
-	BP = driver ID (see #2213)
+	BP = driver ID (see #2343)
 	??? details not yet available
 Return: ???
 SeeAlso: AH=06h"HP Vectra",AH=0Ah"HP Vectra",AH=10h"HP Vectra"
@@ -3752,7 +3760,7 @@ INT 6F - HP Vectra EX-BIOS - "F_INS_FIXGETDS" - INSTALL VALUES IN FIXED VECTOR
 	BP = 0012h (driver ID for V_SYSTEM)
 	BX = vector address used
 	ES:DI -> new CS:IP entry point
-Return: AH = status (00h) (see #2216)
+Return: AH = status (00h) (see #2346)
 	BP,DS destroyed
 Note:	on installation, the given entry point will be invoked with an SF_INIT
 	  call (see AX=0200h"SF_INIT"), with the "last used DS" value in BX;
@@ -3767,7 +3775,7 @@ INT 6F - HP Vectra EX-BIOS - "F_SET_LIMITS_Y" - SET VERTICAL TRACKING LIMITS
 	BP = 005Ah (driver ID for V_STRACK)
 	CX = minimum Y coordinate
 	DX = maximum Y coordinate
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AH=04h/BP=005Ah,AH=08h/BP=005Ah,AH=0Ch/BP=005Ah
 SeeAlso: AH=10h/BP=005Ah,AH=12h/BP=005Ah,INT 33/AX=0008h
@@ -3787,8 +3795,8 @@ SeeAlso: INT 21/AX=5D08h
 --------b-6F0E-------------------------------
 INT 6F - HP Vectra EX-BIOS - "F_GET_WORD" - READ WORD OF DATA FROM DEVICE
 	AH = 0Eh
-	BP = driver ID (see #2213)
-Return: AH = status (see #2216 at AH=00h"HP Vectra")
+	BP = driver ID (see #2343)
+Return: AH = status (see #2346 at AH=00h"HP Vectra")
 	DX = data word
 	BP,DS destroyed
 SeeAlso: AH=08h"F_GET_BYTE",AH=0Ch"F_GET_BUFFER",AH=0Eh"F_PUT_WORD"
@@ -3798,7 +3806,7 @@ INT 6F - HP Vectra EX-BIOS - "F_INS_FIXGLBDS" - INSTALL VALUES IN FIXED VECTOR
 	BP = 0012h (driver ID for V_SYSTEM)
 	BX = vector address used
 	ES:DI -> new CS:IP entry point
-Return: AH = status (00h) (see #2216)
+Return: AH = status (00h) (see #2346)
 	BP,DS destroyed
 Note:	on installation, the given entry point will be invoked with an SF_INIT
 	  call (see AX=0200h"SF_INIT"), with BX set to the EX-BIOS global
@@ -3812,7 +3820,7 @@ INT 6F - HP Vectra EX-BIOS - "F_PUT_SPRITE" - DISPLAY GRAPHICS CURSOR SPRITE
 	BP = 005Ah (driver ID for V_STRACK)
 	BX = X coordinate
 	CX = Y coordinate
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AH=04h"F_TRACK_INIT",AH=08h"F_TRACK_OFF"
 SeeAlso: AH=12h"F_REMOVE_SPRITE",INT 33/AX=0004h
@@ -3824,10 +3832,10 @@ INT 6F - 10NET - LOCK FCB
 	    02h random
 	    03h random block
 		CX = number of records
-	DS:DX -> FCB (see #0533 at INT 21/AH=0Fh)
+	DS:DX -> FCB (see #0574 at INT 21/AH=0Fh)
 Return:	CF clear if successful
 	CF set on error
-	    AX = error code (see also #2212)
+	    AX = error code (see also #2342)
 		0002h file not found
 SeeAlso: AH=12h,INT 21/AH=0Fh
 --------N-6F12-------------------------------
@@ -3838,10 +3846,10 @@ INT 6F - 10NET - UNLOCK FCB
 	    01h random
 	    02h random block
 		CX = number of records
-	DS:DX -> FCB (see #0533 at INT 21/AH=0Fh)
+	DS:DX -> FCB (see #0574 at INT 21/AH=0Fh)
 Return:	CF clear if successful
 	CF set on error
-	    AX = error code (see also #2212)
+	    AX = error code (see also #2342)
 		0002h file not found
 SeeAlso: AH=11h
 --------b-6F12--BP0012-----------------------
@@ -3849,7 +3857,7 @@ INT 6F - HP Vectra EX-BIOS - "F_INS_FREEOWNDS" - INSTALL VALUES IN FREE VECTOR
 	AH = 12h
 	BP = 0012h (driver ID for V_SYSTEM)
 	ES:DI -> new CS:IP entry point
-Return: AH = status (00h) (see #2216)
+Return: AH = status (00h) (see #2346)
 	BP,DS destroyed
 Note:	on installation, the given entry point will be invoked with an SF_INIT
 	  call (see AX=0200h"SF_INIT"), which should return the routine's DS
@@ -3861,7 +3869,7 @@ SeeAlso: AH=16h/BP=0012h,AH=18h/BP=0012h
 INT 6F - HP Vectra EX-BIOS - "F_REMOVE_SPRITE" - REMOVE GRAPHICS CURSOR SPRITE
 	AH = 12h
 	BP = 005Ah (driver ID for V_STRACK)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AH=06h"F_TRACK_ON",AH=10h"F_PUT_SPRITE"
 --------N-6F13-------------------------------
@@ -3871,7 +3879,7 @@ INT 6F - 10NET v3.3+ - GET REMOTE CONFIGURATION TABLE ADDRESS
 Return:	CF clear if successful
 	    ES:BX = configuration table address on given machine
 	CF set on error
-	    AX = error code (see #2212)
+	    AX = error code (see #2342)
 SeeAlso: AH=03h
 --------N-6F14-------------------------------
 INT 6F - 10NET v3.3+ - GET REMOTE MEMORY
@@ -3883,13 +3891,13 @@ INT 6F - 10NET v3.3+ - GET REMOTE MEMORY
 Return:	CF clear if successful
 	    CX = amount of memory copied to DS:SI
 	CF set on error
-	    AX = error code (see #2212)
+	    AX = error code (see #2342)
 --------b-6F14--BP0012-----------------------
 INT 6F - HP Vectra EX-BIOS - "F_INS_FREEGETDS" - INSTALL VALUES IN FREE VECTOR
 	AH = 14h
 	BP = 0012h (driver ID for V_SYSTEM)
 	ES:DI -> new CS:IP entry point
-Return: AH = status (00h) (see #2216)
+Return: AH = status (00h) (see #2346)
 	BP,DS destroyed
 Note:	on installation, the given entry point will be invoked with an SF_INIT
 	  call (see AX=0200h"SF_INIT"), with the "last used DS" value in BX;
@@ -3903,15 +3911,15 @@ INT 6F - 10NET v3.3+ - GET SHARED DEVICE ENTRY
 	AX = 1501h
 	BX = zero-based index
 	DS:SI -> node ID, 12 bytes blank-padded
-	ES:DI -> 85-byte buffer for shared device table entry (see #2246)
+	ES:DI -> 85-byte buffer for shared device table entry (see #2376)
 Return:	CF clear if successful
 	    ES:DI buffer contains shared device table entry of BXth device
 	CF set on error
-	    AX = error code (see #2212)
+	    AX = error code (see #2342)
 SeeAlso: AX=1502h,AX=1503h,AX=9501h
 
 Format of 10NET shared device table entry:
-Offset	Size	Description	(Table 2246)
+Offset	Size	Description	(Table 2376)
  00h  8 BYTEs	device
  08h  8 BYTEs	alias
  10h 64 BYTEs	path
@@ -3925,7 +3933,7 @@ INT 6F - 10NET v3.3+ - SET SHARED DEVICE ENTRY
 	ES:DI -> valid shared device table entry
 Return:	CF clear if successful
 	CF set on error
-	    AX = error code (see #2212)
+	    AX = error code (see #2342)
 SeeAlso: AX=1501h,AX=1503h,AX=9502h
 --------N-6F1503-----------------------------
 INT 6F - 10NET v3.3+ - DELETE SHARED DEVICE ENTRY
@@ -3934,7 +3942,7 @@ INT 6F - 10NET v3.3+ - DELETE SHARED DEVICE ENTRY
 	DS:SI -> node ID, 12 bytes blank-padded
 Return:	CF clear if successful
 	CF set on error
-	    AX = error code (see #2212)
+	    AX = error code (see #2342)
 SeeAlso: AX=1501h,AX=1502h,AX=9503h
 --------N-6F16-------------------------------
 INT 6F - 10NET v5.0 - "GL WHO" - ???
@@ -3947,7 +3955,7 @@ INT 6F - HP Vectra EX-BIOS - "F_INS_FREEGLBDS" - INSTALL VALUES IN FREE VECTOR
 	AH = 16h
 	BP = 0012h (driver ID for V_SYSTEM)
 	ES:DI -> new CS:IP entry point
-Return: AH = status (00h) (see #2216 at INT 6F/AH=00h"HP Vectra")
+Return: AH = status (00h) (see #2346 at INT 6F/AH=00h"HP Vectra")
 	BP,DS destroyed
 Note:	on installation, the given entry point will be invoked with an SF_INIT
 	  call (see AX=0200h"SF_INIT"), with BX set to the EX-BIOS global
@@ -3963,7 +3971,7 @@ INT 6F - 10NET v3.3+ - MOUNT
 	DS:DX -> node ID, 12 bytes blank-padded
 Return:	CF clear if successful
 	CF set on error
-	    AX = error code (see #2212)
+	    AX = error code (see #2342)
 SeeAlso: AH=18h
 --------N-6F18-------------------------------
 INT 6F - 10NET v3.3+ - UNMOUNT
@@ -3975,7 +3983,7 @@ INT 6F - 10NET v3.3+ - UNMOUNT
 	    04h,05h COMx
 Return:	CF clear if successful
 	CF set on error
-	    AX = error code (see #2212)
+	    AX = error code (see #2342)
 SeeAlso: AH=17h
 --------b-6F18--BP0012-----------------------
 INT 6F - HP Vectra EX-BIOS - "F_INS_FIND" - FIND DRIVER BY ATTRIBUTES
@@ -3986,7 +3994,7 @@ INT 6F - HP Vectra EX-BIOS - "F_INS_FIND" - FIND DRIVER BY ATTRIBUTES
 	DX = pattern
 	SI = first vector address to search
 	DI = offset in HP header of field to test
-Return: AH = status (00h,FEh) (see #2216 at INT 6F/AH=00h"HP Vectra")
+Return: AH = status (00h,FEh) (see #2346 at INT 6F/AH=00h"HP Vectra")
 	BP,DS destroyed
 	---if AH=00h---
 	SI = first matching vector address
@@ -4029,7 +4037,7 @@ Return: ???
 INT 6F - HP Vectra EX-BIOS - "F_RAM_GET" - GET EX-BIOS FREE RAM AREA
 	AH = 1Eh
 	BP = 0012h (driver ID for V_SYSTEM)
-Return: AH = status (00h) (see #2216 at INT 6F/AH=00h"HP Vectra")
+Return: AH = status (00h) (see #2346 at INT 6F/AH=00h"HP Vectra")
 	BX = last-used DS
 	DX = maximum DS
 	BP,DS destroyed
@@ -4050,7 +4058,7 @@ INT 6F - HP Vectra EX-BIOS - "F_RAM_RET" - RESERVE EX-BIOS MEMORY
 	BP = 0012h (driver ID for V_SYSTEM)
 	BX = new value for "last-used DS"
 	DX = new value for "maximum DS"
-Return: AH = status (00h) (see #2216 at INT 6F/AH=00h"HP Vectra")
+Return: AH = status (00h) (see #2346 at INT 6F/AH=00h"HP Vectra")
 	BP,DS destroyed
 Note:	the F_INS_FIXGETDS and F_INS_FREEGETDS functions
 	  (see AH=0Eh/BP=0012h,AH=14h/BP=0012h) also modify the values returned
@@ -4072,7 +4080,7 @@ INT 6F - HP Vectra EX-BIOS - "F_CMOS_GET" - READ CMOS MEMORY
 	AH = 22h
 	BP = 0012h (driver ID of V_SYSTEM)
 	BL = address of CMOS byte to read
-Return: AH = status (see #2216 at AH=00h"HP Vectra")
+Return: AH = status (see #2346 at AH=00h"HP Vectra")
 	AL = byte read
 	BP,DS destroyed
 Note:	supported by ES, QS, and RS series HP Vectras
@@ -4083,7 +4091,7 @@ INT 6F - HP Vectra EX-BIOS - "F_CMOS_RET" - WRITE CMOS MEMORY
 	BP = 0012h (driver ID of V_SYSTEM)
 	BL = address of CMOS byte to write
 	AL = new value
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Note:	updates the CMOS checksum fields (both IBM-standard and HP checksums)
 SeeAlso: AH=00h"HP Vectra",AH=22h/BP=0012h
@@ -4091,7 +4099,7 @@ SeeAlso: AH=00h"HP Vectra",AH=22h/BP=0012h
 INT 6F - HP Vectra EX-BIOS - "F_YIELD" - GIVE UP CPU TO OTHER TASKS
 	AH = 2Ah
 	BP = 0012h (driver ID of V_SYSTEM)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Note:	this is a hook for multitasking systems
 SeeAlso: AH=00h"HP Vectra",INT 15/AX=1000h,INT 2F/AX=1680h
@@ -4099,7 +4107,7 @@ SeeAlso: AH=00h"HP Vectra",INT 15/AX=1000h,INT 2F/AX=1680h
 INT 6F - HP Vectra EX-BIOS - "F_SND_CLICK_ENABLE" - TURN ON KEYCLICKS
 	AH = 30h
 	BP = 0012h (driver ID of V_SYSTEM)
-Return: AH = status (see #2216 at AH=00h"HP Vectra")
+Return: AH = status (see #2346 at AH=00h"HP Vectra")
 	BP,DS destroyed
 Desc:	enables keyclicks and flushes any pending keyclicks
 SeeAlso: AH=32h/BP=0012h,AH=34h/BP=0012h,AH=36h/BP=0012h
@@ -4107,7 +4115,7 @@ SeeAlso: AH=32h/BP=0012h,AH=34h/BP=0012h,AH=36h/BP=0012h
 INT 6F - HP Vectra EX-BIOS - "F_SND_CLICK_DISABLE" - TURN OFF KEYCLICKS
 	AH = 32h
 	BP = 0012h (driver ID of V_SYSTEM)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	disables keyclicks and flushes any pending keyclicks
 SeeAlso: AH=00h"HP Vectra",AH=30h/BP=0012h,AH=38h/BP=0012h
@@ -4115,7 +4123,7 @@ SeeAlso: AH=00h"HP Vectra",AH=30h/BP=0012h,AH=38h/BP=0012h
 INT 6F - HP Vectra EX-BIOS - "F_SND_CLICK" - GENERATE KEYCLICK
 	AH = 34h
 	BP = 0012h (driver ID of V_SYSTEM)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 Desc:	generate a keyclick if fewer than four clicks are already pending
 Note:	if keyclicks are already pending, the remaining click count is
@@ -4125,24 +4133,24 @@ SeeAlso: AH=00h"HP Vectra",AH=30h/BP=0012h,AH=36h/BP=0012h,AH=3Ah/BP=0012h
 INT 6F - HP Vectra EX-BIOS - "F_SND_BEEP_ENABLE" - ENABLE BEEPS
 	AH = 36h
 	BP = 0012h (driver ID of V_SYSTEM)
-Return: AH = status (see #2216 at AH=00h"HP Vectra")
+Return: AH = status (see #2346 at AH=00h"HP Vectra")
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AH=30h/BP=0012h,AH=34h/BP=0012h,AH=38h/BP=0012h
 --------b-6F38--BP0012-----------------------
 INT 6F - HP Vectra EX-BIOS - "F_SND_BEEP_DISABLE" - DISABLE BEEPS
 	AH = 38h
 	BP = 0012h (driver ID of V_SYSTEM)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AH=32h/BP=0012h,AH=36h/BP=0012h
 --------b-6F3A--BP0012-----------------------
 INT 6F - HP Vectra EX-BIOS - "F_SND_BEEP" - SOUND BEEP WITH CURRENT VALUES
 	AH = 3Ah
 	BP = 0012h (driver ID of V_SYSTEM)
-Return: AH = status (see #2216 at AH=00h"HP Vectra")
+Return: AH = status (see #2346 at AH=00h"HP Vectra")
 	BP,DS destroyed
 Desc:	make a sound of the frequency and duration defined in the EX-BIOS
-	  global data area (see #2220)
+	  global data area (see #2350)
 SeeAlso: AH=00h"HP Vectra",AH=34h/BP=0012h,AH=36h/BP=0012h,AH=38h/BP=0012h
 SeeAlso: AH=3Ch/BP=0012h,AH=3Eh/BP=0012h
 --------b-6F3C--BP0012-----------------------
@@ -4151,23 +4159,23 @@ INT 6F - HP Vectra EX-BIOS - "F_SND_SET_BEEP" - SET BEEP FREQUENCY AND DURATION
 	BP = 0012h (driver ID of V_SYSTEM)
 	BX = frequency in Hz (1-25000, 0 = off)
 	DX = duration in 10-microsecond increments
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
-SeeAlso: AH=00h"HP Vectra",AH=3Ah/BP=0012h,AH=3Eh/BP=0012h,#2220
+SeeAlso: AH=00h"HP Vectra",AH=3Ah/BP=0012h,AH=3Eh/BP=0012h,#2350
 --------b-6F3E--BP0012-----------------------
 INT 6F - HP Vectra EX-BIOS - "F_SND_TONE" - SOUND TONE WITH FREQ AND DURATION
 	AH = 3Eh
 	BP = 0012h (driver ID of V_SYSTEM)
 	BX = frequency in Hz (1-25000, 0 = off)
 	DX = duration in 10-microsecond increments
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AH=3Ah/BP=0012h,AH=3Ch/BP=0012h,AH=40h/BP=0012h
 --------b-6F40--BP0012-----------------------
 INT 6F - HP Vectra EX-BIOS - "F_STR_GET_FREE_INDEX" - FIND FREE STRING INDEX
 	AH = 40h
 	BP = 0012h (driver ID of V_SYSTEM)
-Return: AH = status (see #2216)
+Return: AH = status (see #2346)
 	BX = next free string index
 	BP,DS destroyed
 Desc:	get the next string index available to user programs
@@ -4176,13 +4184,13 @@ SeeAlso: AH=00h"HP Vectra",AH=42h/BP=0012h,AH=44h/BP=0012h,AH=46h/BP=0012h
 INT 6F - HP Vectra EX-BIOS - "F_STR_DEL_BUCKET" - DEL HEADER FROM BUCKET LIST
 	AH = 42h
 	BP = 0012h (driver ID of V_SYSTEM)
-	ES:DI -> bucket header (see #2247)
-Return: AH = status (00h,FEh) (see #2216 at AH=00h"HP Vectra")
+	ES:DI -> bucket header (see #2377)
+Return: AH = status (00h,FEh) (see #2346 at AH=00h"HP Vectra")
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AH=40h/BP=0012h,AH=44h/BP=0012h
 
 Format of HP Vectra EX-BIOS bucket header:
-Offset	Size	Description	(Table 2247)
+Offset	Size	Description	(Table 2377)
  00h	DWORD	pointer to next bucket header (FFFFh:FFFFh if last)
  04h	WORD	upper bound on string index
  06h	WORD	lower bound on string index
@@ -4194,8 +4202,8 @@ Note:	the strings pointed at by the offset pointers are byte-counted ASCIZ
 INT 6F - HP Vectra EX-BIOS - "F_STR_PUT_BUCKET" - ADD HEADER TO BUCKET HDR LIST
 	AH = 44h
 	BP = 0012h (driver ID of V_SYSTEM)
-	ES:DI -> bucket header (see #2247)
-Return: AH = status (00h) (see #2216)
+	ES:DI -> bucket header (see #2377)
+Return: AH = status (00h) (see #2346)
 	BP,DS destroyed
 SeeAlso: AH=00h"HP Vectra",AH=42h/BP=0012h,AH=46h/BP=0012h
 --------b-6F46--BP0012-----------------------
@@ -4203,7 +4211,7 @@ INT 6F - HP Vectra EX-BIOS - "F_STR_GET_STRING" - FIND STRING IN BUCKET LIST
 	AH = 46h
 	BP = 0012h (driver ID of V_SYSTEM)
 	BX = string index
-Return: AH = status (00h,other) (see #2216)
+Return: AH = status (00h,other) (see #2346)
 	BP,DS destroyed
 	---if successful---
 	CX = length of string (excluding count byte and terminating NUL)
@@ -4215,7 +4223,7 @@ INT 6F - HP Vectra EX-BIOS - "F_STR_GET_INDEX" - GET INDEX FOR STRING
 	AH = 48h
 	BP = 0012h (driver ID of V_SYSTEM)
 	ES:DI -> ASCIZ string
-Return: AH = status (00h,other) (see #2216 at AH=00h"HP Vectra")
+Return: AH = status (00h,other) (see #2346 at AH=00h"HP Vectra")
 	BP,DS destroyed
 	---if successful---
 	BX = index for the given string
@@ -4223,16 +4231,16 @@ SeeAlso: AH=00h"HP Vectra",AH=40h/BP=0012h,AH=46h/BP=0012h
 --------N-6F80-------------------------------
 INT 6F - 10NET v5.0 - LOGIN
 	AH = 80h
-	DS:DX -> login record (see #2248)
+	DS:DX -> login record (see #2378)
 Return: CF clear if successful
 	    BL = number of days until password expires (00h = never)
 	    CL = security level
 	CF set on error
-	    AX = status (see #2212)
+	    AX = status (see #2342)
 SeeAlso: AH=00h,AH=81h
 
 Format of 10NET login record:
-Offset	Size	Description	(Table 2248)
+Offset	Size	Description	(Table 2378)
  00h  8 BYTEs	user name
  08h  8 BYTEs	password
  10h 15 BYTEs	server node ID
@@ -4242,65 +4250,65 @@ Offset	Size	Description	(Table 2248)
 INT 6F - 10NET v5.0 - LOGOUT
 	AH = 81h
 	DS:DX -> server node ID (DX=0000h for universal logout)
-Return: AX = status (see #2212)
+Return: AX = status (see #2342)
 SeeAlso: AH=01h,AH=80h
 --------N-6F8A-------------------------------
 INT 6F - 10NET v5.0 - CHAT
 	AH = 8Ah
-	DS:BX -> chat parameters (see #2249)
-	DS:DX -> chat message (see #2250)
+	DS:BX -> chat parameters (see #2379)
+	DS:DX -> chat message (see #2380)
 Return: CF clear if successful
 	CF set on error
-	    AX = status (see #2212)
+	    AX = status (see #2342)
 SeeAlso: AH=0Ah
 
 Format of 10NET chat parameters:
-Offset	Size	Description	(Table 2249)
+Offset	Size	Description	(Table 2379)
  00h  8 BYTEs	sender's user name
  08h  8 BYTEs	destination user name
  10h 15 BYTEs	destination node (0 if broadcast-style chat)
 
 Format of 10NET chat message:
-Offset	Size	Description	(Table 2250)
+Offset	Size	Description	(Table 2380)
  00h	WORD	message length
  02h  N BYTEs	chat message contents
 --------N-6F8D-------------------------------
 INT 6F - 10NET v5.0 - "WHO" - ENUMERATE USERS ON NETWORK
 	AH = 8Dh
-	BX = service mask (see #2251)
+	BX = service mask (see #2381)
 	CX = length of buffer
-	DS:DX -> buffer for array of Who data structures (see #2252)
+	DS:DX -> buffer for array of Who data structures (see #2382)
 Return: CF clear if successful
 	    CX = number of nodes matching service mask
 	    DS:DX buffer filled
 	CF set on error
-	    AX = status (see #2212)
+	    AX = status (see #2342)
 SeeAlso: AH=0Dh
 
 Bitfields for 10NET service mask:
-Bit(s)	Description	(Table 2251)
+Bit(s)	Description	(Table 2381)
  0	workstation
  1	file server
  2	print server
  3	de-spool server
 
 Format of 10NET Who data structure:
-Offset	Size	Description	(Table 2252)
+Offset	Size	Description	(Table 2382)
  00h  8 BYTEs	user name
  08h 15 BYTEs	node ID
  17h  3 BYTEs	unique portion of Ethernet address
  1Ah	BYTE	Who group number
- 1Bh	WORD	service mask (see #2251)
+ 1Bh	WORD	service mask (see #2381)
  1Dh	DWORD	serial number
  21h	BYTE	maximum concurrent users with same serial number allowed on net
- 22h	BYTE	chat mask (see #2253)
- 23h	BYTE	internal system bits (see #2254)
+ 22h	BYTE	chat mask (see #2383)
+ 23h	BYTE	internal system bits (see #2384)
  24h  9 BYTEs	version number in format MM.mm.xxx
  2Dh	BYTE	number of shared directories
  2Eh	BYTE	number of shared printer queues
 
 Bitfields for 10NET chat mask:
-Bit(s)	Description	(Table 2253)
+Bit(s)	Description	(Table 2383)
  0	chat permitted
  1	bell enabled
  2	chat keyboard initiated
@@ -4310,7 +4318,7 @@ Bit(s)	Description	(Table 2253)
  6	chat is idle
 
 Bitfields for 10NET internal system bits:
-Bit(s)	Description	(Table 2254)
+Bit(s)	Description	(Table 2384)
  0	submit permitted
  1	submit initiated
  2	submit executing
@@ -4323,14 +4331,14 @@ INT 6F - 10NET v5.0 - GET SHARED DEVICE ENTRY
 	AX = 9501h
 	BX = zero-based index
 	DS:SI -> server's node ID
-	ES:DI -> buffer for shared device structure (see #2255)
+	ES:DI -> buffer for shared device structure (see #2385)
 Return: CF clear if successful
 	CF set on error
-	    AX = status (see #2212)
+	    AX = status (see #2342)
 SeeAlso: AX=1501h,AX=9502h,AX=9503h,AX=9504h
 
 Format of 10NET shared device structure:
-Offset	Size	Description	(Table 2255)
+Offset	Size	Description	(Table 2385)
  00h  8 BYTEs	alias
  08h	BYTE	type (02h modem, 03h print queue, 04h directory)
  09h	BYTE	access rights
@@ -4342,8 +4350,8 @@ Offset	Size	Description	(Table 2255)
 ---directory---
  32h 64 BYTEs	pathname of shared directory
 ---print queue---
- 32h	BYTE	notification bit mask (see #2256)
- 33h	BYTE	job control bit mask (see #2257)
+ 32h	BYTE	notification bit mask (see #2386)
+ 33h	BYTE	job control bit mask (see #2387)
  34h	WORD	number of days to retain file
  36h	WORD	test print length
  38h	BYTE	number of copies to print
@@ -4367,7 +4375,7 @@ Offset	Size	Description	(Table 2255)
  51h	WORD	offset of first print device structure (FFFFh if empty)
 
 Bitfields for notification flags:
-Bit(s)	Description	(Table 2256)
+Bit(s)	Description	(Table 2386)
  0	user at print start
  1	operator at start, with reply
  2	user at print completion
@@ -4377,7 +4385,7 @@ Bit(s)	Description	(Table 2256)
  6	user on print error
 
 Bitfields for 10NET job control mask:
-Bit(s)	Description	(Table 2257)
+Bit(s)	Description	(Table 2387)
  0	print banner page
  1	eject page at end of job
  2	mark as "held" (queue but don't print)
@@ -4388,10 +4396,10 @@ Bit(s)	Description	(Table 2257)
 INT 6F - 10NET v5.0 - SET SHARED DEVICE ENTRY
 	AX = 9502h
 	DS:SI -> server's node ID
-	ES:DI -> shared device structure (see #2255)
+	ES:DI -> shared device structure (see #2385)
 Return: CF clear if successful
 	CF set on error
-	    AX = status (see #2212)
+	    AX = status (see #2342)
 SeeAlso: AX=1502h,AX=9501h,AX=9503h,AX=9504h
 --------N-6F9503-----------------------------
 INT 6F - 10NET v5.0 - DELETE SHARED DEVICE
@@ -4400,7 +4408,7 @@ INT 6F - 10NET v5.0 - DELETE SHARED DEVICE
 	DS:SI -> server's node ID
 Return: CF clear if successful
 	CF set on error
-	    AX = status (see #2212)
+	    AX = status (see #2342)
 SeeAlso: AX=1503h,AX=9501h,AX=9502h,AX=9504h
 --------N-6F9504-----------------------------
 INT 6F - 10NET v5.0 - ENUMERATE USERS OF SHARED DEVICE
@@ -4411,7 +4419,7 @@ INT 6F - 10NET v5.0 - ENUMERATE USERS OF SHARED DEVICE
 Return: CF clear if successful
 	    ES:DI -> node ID of the CX'th user of the BX'th device
 	CF set on error
-	    AX = status (see #2212)
+	    AX = status (see #2342)
 SeeAlso: AX=9501h,AX=9502h,AX=9503h
 --------N-6F99-------------------------------
 INT 6F - 10NET v5.0 - AUDIT
@@ -4420,7 +4428,7 @@ INT 6F - 10NET v5.0 - AUDIT
 	ES:DI -> data to be appended to audit trail file (max 106 bytes)
 Return: CF clear if successful
 	CF set on error
-	    AX = status (see #2212)
+	    AX = status (see #2342)
 SeeAlso: AH=19h,AH=9Ch
 --------N-6F9C-------------------------------
 INT 6F - 10NET v5.0 - GET LOGIN LIST
@@ -4429,7 +4437,7 @@ INT 6F - 10NET v5.0 - GET LOGIN LIST
 Return: CF clear if successful
 	    DS:DI -> BX'th node ID that caller's machine is logged into
 	CF set on error
-	    AX = status (see #2212)
+	    AX = status (see #2342)
 --------H-70---------------------------------
 INT 70 C - IRQ8 - CMOS REAL-TIME CLOCK
 Desc:	this interrupt is called when the real-time clock chip generates an
@@ -4581,12 +4589,76 @@ SeeAlso: INT 79"AutoCAD",INT 7A/AX=0001h"AutoCAD",INT 7B/AX=8001h"AutoCAD"
 --------d-78---------------------------------
 INT 78 - ADP-60 IDE controller - ORIGINAL INT 13
 SeeAlso: INT 79"ADP-60"
+--------s-78-------------------------------
+INT 78 - ULTRAMID - API
+	AX = function
+	--- digital functions ---
+	    0000h start digital
+		ES:DI -> Sound Structure
+		Return: AX = voice used
+	    0001h play next buffer
+		ES:DI -> Sound Structure
+	    0002h set panning
+		BX = pan
+		CX = voice
+	    0003h set volume
+		BX = volume
+		CX = voice
+	    0004h set rate (not yet implemented)
+	    0005h pause digital
+		CX = voice
+	    0006h restart digital
+		CX = voice
+	    0007h stop digital
+		CX = voice
+	    0008h get digital position
+		CX = voice
+		Return: AX:DX -> position in PC buffer
+	    0009h get voice status (not yet implemented)
+	--- MIDI functions ---
+	    000Ah load MIDI patches
+		ES:DI -> MIDI track just after the Mtrk header
+		BX:DX = length of MIDI track
+	    000Bh load XMIDI patches
+		ES:DI -> event buffer including the EVNT header
+	    000Ch load patch
+		CX = MIDI number of patch
+	    000Dh unload patch
+		CX = MIDI number of patch
+	    000Eh start sequence
+	    000Fh unload all patches
+	    0010h MIDI out byte
+		CX = MIDI byte
+	    0011h MIDI out string
+		CX = length
+		ES:DI -> string of MIDI data
+	    0012h all notes off
+	--- resource functions ---
+	    0013h allocate memory
+		BX:DX = size of GUS memory needed
+		Return: AX:DX = address of memory, or 0000:0000 if not avaiable
+	    0014h free memory
+		BX:DX = address of memory to be freed
+	    0015h uninstall
+	    0016h sem enter
+	    0017h sem leave
+	    0018h add external semaphore 
+		BX:DX -> external semaphore
+	    0019h clear external semaphore
+		BX:DX -> external semaphore
+	    001Ah application start
+	    001Bh application end
+Program: UltraMid is a TSR from Advanced Gravis to play MIDI and digital data
+	   through the Gravis UltraSound (GUS)
+Range:	INT 78 to INT 7F
+Notes:	the installation check is testing for the signature "ULTRAMID" at
+	  offset 0103h in the interrupt handler's segment
 --------d-7800-------------------------------
 INT 78 - TARGA.DEV - CMC International SCSI device driver - SET I/O PORT
 	AH = 00h
 	DX = interface board I/O port
 Return: CF set on error
-	    AL = error code (see #2258)
+	    AL = error code (see #2388)
 Note:	if this routine is not called, the port is the driver's default
 	  (usually 0280h or 0300h)
 	an installation check is performed by TARGA.DEV upon initialization
@@ -4595,7 +4667,7 @@ Note:	if this routine is not called, the port is the driver's default
 SeeAlso: AH=01h,AH=02h
 Index:	installation check;TARGA.DEV
 
-(Table 2258)
+(Table 2388)
 Values for TARGA.DEV error code:
  00h	illegal command given to SCSI code
  01h	invalid I/O port specified (must be from 100H to 3F8H, and must be on
@@ -4630,7 +4702,7 @@ INT 78 - TARGA.DEV - SET DMA CHANNEL
 	AH = 02h
 	AL = interface board DMA channel
 Return: CF set on error
-	AL = error code (see #2258)
+	AL = error code (see #2388)
 Note:	if this routine is not called, the DMA channel is the driver's default
 	  (usually 3)
 SeeAlso: AH=00h,AH=03h"TARGA"
@@ -4644,7 +4716,7 @@ INT 78 - TARGA.DEV - SET SCSI DEVICE NUMBER
 	AH = 04h
 	AL = SCSI device number
 Return: CF set on error
-	AL = error code (see #2258)
+	AL = error code (see #2388)
 Note:	if this routine is not called, the device number used is the driver's
 	  default (usually 0)
 SeeAlso: AH=02h,AH=05h
@@ -4667,99 +4739,99 @@ SeeAlso: AH=13h,AH=14h,AH=15h
 INT 78 - TARGA.DEV - INTERFACE BOARD SELF-TEST
 	AH = 08h
 Return: CF set on error
-	AL = error code (see #2258)
+	AL = error code (see #2388)
 Note:	the SCSI bus is also reset
 SeeAlso: AH=09h
 --------d-7809-------------------------------
 INT 78 - TARGA.DEV - RESET SCSI BUS
 	AH = 09h
-Return: AL = error code if carry set (see #2258)
+Return: AL = error code if carry set (see #2388)
 SeeAlso: AH=08h
 --------d-7810-------------------------------
 INT 78 - TARGA.DEV - SEND SCSI COMMAND
 	AH = 10h
-	DS:SI -> command bytes (see #2259)
+	DS:SI -> command bytes (see #2389)
 Return: AH = SCSI status byte
 	CF clear if successful
 	    AL = SCSI message byte
 	CF set on error
-	    AL = error code (see #2258)
+	    AL = error code (see #2388)
 SeeAlso: AH=11h,INT 21/AX=4403h"ST-01"
 
 Format of SCSI Command:
-Offset	Size	Description	(Table 2259)
+Offset	Size	Description	(Table 2389)
  00h	BYTE	length of command
  01h	???	command bytes
 --------d-7811-------------------------------
 INT 78 - TARGA.DEV - SEND SCSI COMMAND, RECEIVE DATA (PROGRAMMED I/O)
 	AH = 11h
-	DS:SI -> command bytes (see #2260)
+	DS:SI -> command bytes (see #2390)
 	ES:BX -> data storage area
 	CX = number of data bytes to transfer
 Return: AH = SCSI status byte
 	CF clear if successful
 	    AL = SCSI message byte
 	CF set on error
-	    AL = error code (see #2258)
+	    AL = error code (see #2388)
 Note:	this command receives data internally one byte at a time
 SeeAlso: AH=10h,AH=13h
 
 Format of TARGA.DEV SCSI Command:
-Offset	Size	Description	(Table 2260)
+Offset	Size	Description	(Table 2390)
  00h	BYTE	length of command
  01h	???	command bytes
 --------d-7812-------------------------------
 INT 78 - TARGA.DEV - SEND SCSI COMMAND AND DATA (PROGRAMMED I/O)
 	AH = 12h
-	DS:SI -> command bytes (see #2261)
+	DS:SI -> command bytes (see #2391)
 	ES:BX -> data storage area
 	CX = number of data bytes to transfer
 Return: AH = SCSI status byte
 	CF clear if successful
 	    AL = SCSI message byte
 	CF set on error
-	    AL = error code (see #2258)
+	    AL = error code (see #2388)
 Note:	this command sends data internally one byte at a time
 SeeAlso: AH=14h
 
 Format of TARGA.DEV SCSI Command:
-Offset	Size	Description	(Table 2261)
+Offset	Size	Description	(Table 2391)
  00h	BYTE	length of command
  01h	???	command bytes
 --------d-7813-------------------------------
 INT 78 - TARGA.DEV - SEND SCSI COMMAND, RECEIVE DATA (DMA)
 	AH = 13h
-	DS:SI -> command bytes (see #2262)
+	DS:SI -> command bytes (see #2392)
 	ES:BX -> data storage area
 	DX:CX = number of data bytes to transfer
 Return: AH = SCSI status byte (if early return mode is clear)
 	CF clear if successful
 	    AL = SCSI message byte (if early return mode is clear)
 	CF set on error
-	    AL = error code (see #2258)
+	    AL = error code (see #2388)
 Note:	this command receives data using DMA
 SeeAlso: AH=11h,AH=12h
 
 Format of TARGA.DEV SCSI Command:
-Offset	Size	Description	(Table 2262)
+Offset	Size	Description	(Table 2392)
  00h	BYTE	length of command
  01h	???	command bytes
 --------d-7814-------------------------------
 INT 78 - TARGA.DEV - SEND SCSI COMMAND AND DATA (DMA)
 	AH = 14h
-	DS:SI -> command bytes (see #2263)
+	DS:SI -> command bytes (see #2393)
 	ES:BX -> data storage area
 	DX:CX = number of data bytes to transfer
 Return: AH = SCSI status byte (if early return mode is clear)
 	CF clear if successful
 	    AL = SCSI message byte (if early return mode is clear)
 	CF set on error
-	    AL = error code (see #2258)
+	    AL = error code (see #2388)
 Note:	this command sends data using DMA
 SeeAlso: AH=12h,AH=13h
 
 Format of TARGA.DEV SCSI Command:
-Offset	Size	Description	(Table 2263)
+Offset	Size	Description	(Table 2393)
  00h	BYTE	length of command
  01h	???	command bytes
 --------d-7815-------------------------------
@@ -4769,7 +4841,7 @@ Return: AH = SCSI status byte
 	CF clear if successful
 	    AL = SCSI message byte
 	CF set on error
-	    AL = error code (see #2258)
+	    AL = error code (see #2388)
 Note:	if AH=06h was previously called to set the early return mode, this
 	  function finishes a command AH=13h or AH=14h which returned before
 	  the last DMA transfer was finished
@@ -4867,7 +4939,7 @@ Note:	this interrupt is used for IPX/SPX access in NetWare versions through
 	  sometimes called internally with BX bit 15 set, which causes the
 	  handler to bypass some initial checks and an optional call to the
 	  IPX Windows support handler set with INT 2F/AX=7AFFh/BX=0000h
-	  (see #1547)
+	  (see #1619)
 SeeAlso: INT 2F/AX=7A00h,INT 64"Novell",INT 7A/BX=0000h
 --------N-7A----BX0000-----------------------
 INT 7A - Novell NetWare - IPX Driver - OPEN SOCKET
@@ -4877,7 +4949,7 @@ INT 7A - Novell NetWare - IPX Driver - OPEN SOCKET
 	    FFh open until close
 	DX = socket number (high byte in DL)
 	    0000h dynamic allocation
-	    else  socket to open (see #2264)
+	    else  socket to open (see #2394)
 Return: AL = return code
 	    00h success
 		DX = socket number
@@ -4890,11 +4962,11 @@ Notes:	TSRs which need to use sockets should set AL to FFh, non-resident
 	this function is supported by Advanced NetWare 1.02+
 SeeAlso: INT 7A/BX=0001h,INT 7A/BX=0004h,INT 7A/BX=0023h
 
-(Table 2264)
+(Table 2394)
 Values for IPX socket number:
  0451h	File Service (NetWare Core Protocol)
- 0452h	Service Advertising Protocol (see #2272)
- 0453h	Routing Information Packet (see #2275)
+ 0452h	Service Advertising Protocol (see #2402)
+ 0453h	Routing Information Packet (see #2405)
  0455h	NetBIOS Packet
  0456h	diagnostics
  0457h	server serial numbers (labeled "Copy Protection" by Lanalyzer)
@@ -4908,7 +4980,7 @@ Note:	SiteLock is an application metering product using IPX to communicate
 --------N-7A----BX0001-----------------------
 INT 7A - Novell NetWare - IPX Driver - CLOSE SOCKET
 	BX = 0001h
-	DX = socket number (high byte in DL) (see #2264)
+	DX = socket number (high byte in DL) (see #2394)
 Notes:	also cancels events set by any Event Control Blocks for the socket
 	the program must close all open sockets before terminating
 	this function is supported by Advanced NetWare 1.02+
@@ -4916,7 +4988,7 @@ SeeAlso: BX=0000h
 --------N-7A----BX0002-----------------------
 INT 7A - Novell NetWare - IPX Driver - GET LOCAL TARGET
 	BX = 0002h
-	ES:SI -> target internetwork address (see INT 7A/BX=000Bh)
+	ES:SI -> target internetwork address (see #2409 at INT 7A/BX=000Bh)
 	ES:DI -> 6-byte buffer for local target
 Return: AL = return code
 	    00h success
@@ -4936,7 +5008,7 @@ SeeAlso: BX=0009h
 --------N-7A----BX0003-----------------------
 INT 7A - Novell NetWare - IPX Driver - SEND PACKET
 	BX = 0003h
-	ES:SI -> Event Control Block (see #2265,#2266)
+	ES:SI -> Event Control Block (see #2395,#2396)
 Notes:	returns immediately; IPX attempts to send the packet in the background
 	this function is supported by Advanced NetWare 1.02+
 	this function is nearly identical to BX=000Fh, except that it always
@@ -4945,12 +5017,12 @@ Notes:	returns immediately; IPX attempts to send the packet in the background
 SeeAlso: BX=0004h,BX=000Fh,INT 21/AH=EEh"Novell"
 
 Format of IPX Event Control Block:
-Offset	Size	Description	(Table 2265)
+Offset	Size	Description	(Table 2395)
  00h	DWORD	Link
- 04h	DWORD	-> Event Service Routine (00000000h if none) (see #2269)
- 08h	BYTE	in use flag (see #2267)
- 09h	BYTE	completion code (see #2268)
- 0Ah	WORD	(big-endian) socket number (see #2264)
+ 04h	DWORD	-> Event Service Routine (00000000h if none) (see #2399)
+ 08h	BYTE	in use flag (see #2397)
+ 09h	BYTE	completion code (see #2398)
+ 0Ah	WORD	(big-endian) socket number (see #2394)
  0Ch  4 BYTEs	IPX workspace
  10h 12 BYTEs	driver workspace
  1Ch  6 BYTEs	immediate local node address
@@ -4963,18 +5035,18 @@ Notes:	ESR is a far procedure that is called when the ECB has been handled.
 	  On call, the in use flag is zero if the ECB has been handled,
 	  non-zero otherwise. If the flag is zero, the completion code holds
 	  the result of the event.
-	the first fragment should start with an IPX header (see #2270)
+	the first fragment should start with an IPX header (see #2400)
 	all fragments are concatenated and sent in one piece
 	node address FFh FFh FFh FFh FFh FFh broadcasts to all nodes
 
 Format of AES-ECB:
-Offset	Size	Description	(Table 2266)
+Offset	Size	Description	(Table 2396)
  00h	DWORD	Link
- 04h	DWORD	ESR (Event Service Routine) address (see #2269)
- 08h	BYTE	in use flag (see #2267)
+ 04h	DWORD	ESR (Event Service Routine) address (see #2399)
+ 08h	BYTE	in use flag (see #2397)
  09h  5 BYTEs	AES workspace
 
-(Table 2267)
+(Table 2397)
 Values for ECB in use flag:
  00h	available
  E0h	AES temporary
@@ -4989,7 +5061,7 @@ Values for ECB in use flag:
  FEh	awaiting packet reception
  FFh	sending packet
 
-(Table 2268)
+(Table 2398)
 Values for ECB completion code:
  00h	success
  ECh	remote terminated connection without acknowledging packet
@@ -5003,34 +5075,34 @@ Values for ECB completion code:
  FEh	packet undeliverable
  FFh	physical error
 
-(Table 2269)
+(Table 2399)
 Values Event Service Routine is called with:
 	AL = caller's identity (00h = AES, FFh = IPX)
 	ES:SI -> event control block
 	interrupts disabled
 Return: all registers preserved
-SeeAlso: #2265,#2270
+SeeAlso: #2395,#2400
 
 Format of IPX header:
-Offset	Size	Description	(Table 2270)
+Offset	Size	Description	(Table 2400)
  00h	WORD	(big-endian) checksum
  02h	WORD	(big-endian) length in bytes of total packet
  04h	BYTE	transport control
- 05h	BYTE	packet type (see #2271)
+ 05h	BYTE	packet type (see #2401)
  06h 10 BYTEs	destination internetwork address
  10h	WORD	(big-endian) destination socket
  12h 10 BYTEs	source internetwork address
  1Ch	WORD	(big-endian) source socket
-SeeAlso: #2265,#2281
+SeeAlso: #2395,#2411
 
-(Table 2271)
+(Table 2401)
 Values for IPX packet type:
  00h	unknown packet type
  01h	routing information packet
  02h	echo packet
  03h	error packet
  04h	packet exchange packet (always use this one)
- 05h	SPX packet (see #2281)
+ 05h	SPX packet (see #2411)
  11h	NetWare Core Protocol
  14h	Propagated Packet (for NetWare), NetBIOS name packet
  15h-1Eh experimental protocols
@@ -5040,25 +5112,25 @@ Note:	undocumented packet type 14h will cross up to 16 networks deep in
 	  reserved, as IPX places the traversed server nodes there.
 
 Format of Service Advertising Protocol Service Query Packet:
-Offset	Size	Description	(Table 2272)
+Offset	Size	Description	(Table 2402)
  00h 30 BYTEs	IPX header
  1Eh	WORD	(big-endian) query type
 		0001h general find service
 		0003h find nearest server
  20h	WORD	(big-endian) server type (see INT 21/AH=E3h"NetWare")
-SeeAlso: #2273
+SeeAlso: #2403
 
 Format of Service Advertising Protocol Server Identification Packet:
-Offset	Size	Description	(Table 2273)
+Offset	Size	Description	(Table 2403)
  00h 30 BYTEs	IPX header
  1Eh	WORD	(big-endian) response type
 		0002h general service
 		0004h nearest service
- 20h 64N BYTEs	server entries (1-7) (see #2274)
-SeeAlso: #2272,#2275
+ 20h 64N BYTEs	server entries (1-7) (see #2404)
+SeeAlso: #2402,#2405
 
 Format of SAP server entry:
-Offset	Size	Description	(Table 2274)
+Offset	Size	Description	(Table 2404)
  00h	WORD	(big-endian) server type (see INT 21/AH=E3h"NetWare")
  02h 48 BYTEs	ASCIZ server name
  32h  2 WORDs	(big-endian) network number
@@ -5067,14 +5139,14 @@ Offset	Size	Description	(Table 2274)
  3Eh	WORD	(big-endian) number of hops between caller and server
 
 Format of IPX Routing Information packet:
-Offset	Size	Description	(Table 2275)
+Offset	Size	Description	(Table 2405)
  00h 30 BYTEs	IPX header
  1Eh	WORD	operation (0001h request, 0002h response)
- 20h 8N BYTEs	network entries (1-50) (see #2276)
-SeeAlso: #2273
+ 20h 8N BYTEs	network entries (1-50) (see #2406)
+SeeAlso: #2403
 
 Format of RIP network entry:
-Offset	Size	Description	(Table 2276)
+Offset	Size	Description	(Table 2406)
  00h	DWORD	network number (FFFFFFFFh = general request)
  04h	WORD	(response) number of hops
  06h	WORD	(response) number of clock ticks to reach destination
@@ -5105,12 +5177,12 @@ SeeAlso: BX=0006h,BX=0007h,BX=0008h
 INT 7A - Novell NetWare - IPX Driver - CANCEL EVENT
 	BX = 0006h
 	ES:SI -> Event Control Block (see BX=0003h)
-Return: AL = return code (see #2277)
+Return: AL = return code (see #2407)
 Notes:	cannot cancel packets which the node's driver has already sent
 	this function is supported by Advanced NetWare 1.02+
 SeeAlso: BX=0005h
 
-(Table 2277)
+(Table 2407)
 Values for IPX return code:
  00h	success
  F9h	event in use
@@ -5134,14 +5206,14 @@ SeeAlso: BX=0005h
 --------N-7A----BX0009-----------------------
 INT 7A - Novell NetWare - IPX Driver - GET INTERNETWORK ADDRESS
 	BX = 0009h
-	ES:SI -> buffer for own internetwork address (see #2278)
+	ES:SI -> buffer for own internetwork address (see #2408)
 Return: ES:SI buffer filled
 	SI destroyed
 Note:	this function is supported by Advanced NetWare 1.02+
 SeeAlso: BX=0002h,BX=000Bh
 
 Format of IPX internetwork address:
-Offset	Size	Description	(Table 2278)
+Offset	Size	Description	(Table 2408)
  00h  4 BYTEs	(big-endian) network number
  04h  6 BYTEs	(big-endian) node number within network
 --------N-7A----BX000A-----------------------
@@ -5154,7 +5226,7 @@ SeeAlso: INT 15/AX=1000h,INT 21/AH=89h,INT 2F/AX=1680h
 --------N-7A----BX000B-----------------------
 INT 7A - Novell NetWare - IPX Driver - DISCONNECT FROM TARGET
 	BX = 000Bh
-	ES:SI -> internetwork address (see #2279)
+	ES:SI -> internetwork address (see #2409)
 Notes:	this function permits the network software on the remote machine to
 	  remove any virtual connection with the calling machine
 	only use in point-to-point networks
@@ -5163,7 +5235,7 @@ Notes:	this function permits the network software on the remote machine to
 SeeAlso: BX=0002h,BX=0009h
 
 Format of IPX internetwork address:
-Offset	Size	Description	(Table 2279)
+Offset	Size	Description	(Table 2409)
  00h  4 BYTEs	(big-endian) destination network
  04h  6 BYTEs	(big-endian) destination node
  0Ah  2 BYTEs	(big-endian) destination socket
@@ -5213,7 +5285,7 @@ Notes:	this function is supported by Advanced NetWare 2.1+
 	IPX is sometimes called internally with BX bit 15 set, which causes the
 	  entry point handler to bypass some checks and an optional call to
 	  the IPX Windows support handler set with INT 2F/AX=7AFFh/BX=0000h
-	  (see #1547)
+	  (see #1619)
 SeeAlso: BX=0015h
 --------N-7A----BX0011-----------------------
 INT 7A - Novell NetWare - SPX Driver - ESTABLISH SPX CONNECTION
@@ -5221,17 +5293,17 @@ INT 7A - Novell NetWare - SPX Driver - ESTABLISH SPX CONNECTION
 	AL = retry count
 	AH = watchdog flag
 	ES:SI -> Event Control Block (see BX=0003h)
-Return: AL = status (see #2280)
+Return: AL = status (see #2410)
 	DX = assigned connection ID number
 Desc:	attempt to establish a connection with a listening socket
 Notes:	there should always be at least two SPX ECB's listening to a socket, so
 	  that NetWare can perform its internal packet exchanges
-	the first fragment should start with a SPX header (see #2281).	Fill
+	the first fragment should start with a SPX header (see #2411).	Fill
 	  in all destination addresses.
 	this function is supported by Advanced NetWare 2.1+
 SeeAlso: BX=0000h,BX=0012h,BX=0013h,BX=0014h,BX=0015h
 
-(Table 2280)
+(Table 2410)
 Values for SPX function status:
  00h	attempting to contact destination socket
  EFh	local connection table full
@@ -5239,16 +5311,16 @@ Values for SPX function status:
  FFh	sending socket not open
 
 Format of SPX header:
-Offset	Size	Description	(Table 2281)
+Offset	Size	Description	(Table 2411)
  00h	WORD	(big-endian) checksum
  02h	WORD	(big-endian) length in bytes of total packet
  04h	BYTE	transport control
- 05h	BYTE	packet type (see INT 7A/BX=0003h)
+ 05h	BYTE	packet type (see #2401 at INT 7A/BX=0003h)
  06h 10 BYTEs	destination internet address
  10h	WORD	(big-endian) destination socket
  12h 10 BYTEs	source internet address
  1Ch	WORD	(big-endian) source socket
- 1Eh	BYTE	connection control (see #2282)
+ 1Eh	BYTE	connection control (see #2412)
  1Fh	BYTE	datastream type
 		FEh terminate connection request packet
 		FFh terminate connection acknowledgement packet
@@ -5258,10 +5330,10 @@ Offset	Size	Description	(Table 2281)
  24h	WORD	(big-endian) sequence number
  26h	WORD	(big-endian) acknowledge number
  28h	WORD	(big-endian) allocation number
-SeeAlso: #2270
+SeeAlso: #2400
 
 Bitfields for SPX connection control:
-Bit(s)	Description	(Table 2282)
+Bit(s)	Description	(Table 2412)
  3-0	unused???
  4	end of message
  5	reserved
@@ -5298,7 +5370,7 @@ SeeAlso: BX=0011h,BX=0013h
 INT 7A - Novell NetWare - SPX Driver - GET SPX CONNECTION STATUS
 	BX = 0015h
 	DX = connection ID
-	ES:SI -> status buffer (see #2283)
+	ES:SI -> status buffer (see #2413)
 Return: AL = return code
 	    00h connection still valid
 		ES:SI -> status buffer filled
@@ -5307,7 +5379,7 @@ Note:	this function is supported by Advanced NetWare 2.1+
 SeeAlso: BX=0010h,BX=0011h
 
 Format of SPX status buffer:
-Offset	Size	Description	(Table 2283)
+Offset	Size	Description	(Table 2413)
  00h	BYTE	connection state
 		01h waiting to establish connection
 		02h starting (attempting to create connection)
@@ -5330,7 +5402,7 @@ Offset	Size	Description	(Table 2283)
 		  local SPX may send
  10h	WORD	(big-endian) connection socket
  12h  6 BYTEs	immediate node address--bridge on local network to destination
- 18h 10 BYTEs	destination internetwork address (see INT 7A/BX=000Bh)
+ 18h 10 BYTEs	destination internetwork address (see #2409 at INT 7A/BX=000Bh)
  22h	WORD	(big-endian) retransmit count
  24h	WORD	(big-endian) estimated roundtrip delay
  26h	WORD	(big-endian) retransmitted packets
@@ -5355,13 +5427,13 @@ SeeAlso: BX=0011h,BX=0016h
 --------N-7A----BX0018-----------------------
 INT 7A U - Novell NetWare - IPX Driver - internal - ADD DIAGNOSTIC ELEMENT
 	BX = 0018h
-	ES:SI -> diagnostic element (see #2284) to be added to Diagnostic Queue
+	ES:SI -> diagnostic element (see #2414) to be added to Diagnostic Queue
 Note:	this function is supported on file servers only under v2.15; v3.02 also
 	  supports it on workstations
 SeeAlso: BX=0019h
 
 Format of IPX diagnostic element:
-Offset	Size	Description	(Table 2284)
+Offset	Size	Description	(Table 2414)
  00h	DWORD	pointer to next diagnostic element
  04h	DWORD	pointer to function for ???
  08h	DWORD	pointer to function for ???
@@ -5387,21 +5459,36 @@ INT 7A U - Novell NetWare - IPX Driver - INTERNAL
 Return: ???
 Notes:	this function is supported on file servers only under v2.15; v3.02 also
 	  supports it on workstations
-	used by NetWare Access Server
+	used by NetWare Access Server, which may call INT 15/AX=1117h with
+	  BX=0000h in some cases (it uses a modified DESQview)
 --------N-7A----BX001C-----------------------
-INT 7A U - Novell NetWare - NetWare Access Server - ???
-	BX = 001Ch to 001Eh
-	???
-Return: ???
+INT 7A U - Novell NetWare - NetWare Access Server - GET ???
+	BX = 001Ch
+Return: AX = length of ???
+	ES:BX -> ???
+Notes:	these functions are NOPs for standard IPX drivers such as IPXODI v2.12
+SeeAlso: INT 2F/AX=7AF1h,INT 7A/BX=001Dh,INT 7A/BX=001Eh
+--------N-7A----BX001D-----------------------
+INT 7A U - Novell NetWare - NetWare Access Server - GET ??? ECB AND SOCKET
+	BX = 001Dh
+Return: DX = socket number chosen by IPX
+	ES:SI -> ECB in IPX's code segment (will be listening)
 	BX corrupted
 Notes:	these functions are NOPs for standard IPX drivers such as IPXODI v2.12
-SeeAlso: INT 2F/AX=7AF1h
+SeeAlso: INT 2F/AX=7AF1h,INT 7A/BX=001Ch,INT 7A/BX=001Eh
+--------N-7A----BX001E-----------------------
+INT 7A U - Novell NetWare - NetWare Access Server - GET ??? ECB
+	BX = 001Eh
+Return: ES:SI -> ECB
+	BX corrupted
+Notes:	these functions are NOPs for standard IPX drivers such as IPXODI v2.12
+SeeAlso: INT 2F/AX=7AF1h,INT 7A/BX=001Ch,INT 7A/BX=001Dh
 --------N-7A----BX001F-----------------------
 INT 7A - Novell NetWare - IPXODI v2.12+ - GET IPX FLAGS
 	BX = 001Fh
 	DX = 0000h
 Return: AX = ???
-	BX:CX -> ??? entry point (see #2285)
+	BX:CX -> ??? entry point (see #2415)
 	DX = flags
 	    bit 0: IPXODI rather than dedicated IPX
 	    bit 1: checksumming functions 0020h-0022h supported
@@ -5411,32 +5498,20 @@ Note:	IPXODI v2.12 is distributed as part of the Personal NetWare system
 	  bundled with Novell DOS 7
 SeeAlso: BX=0020h,INT 2F/AX=7A2Fh
 
-(Table 2285)
+(Table 2415)
 Call IPXODI entry point with:
-	ES:SI -> ??? data (offset 24h is far pointer to ??? data)
+	ES:SI -> ECB??? (offset 24h is far pointer to ??? data)
 --------N-7A----BX0020-----------------------
 INT 7A - Novell NetWare - IPXODI v2.12+ - SEND WITH CHECKSUM
 	BX = 0020h
-	ES:SI -> ECB data (see #2286)
+	ES:SI -> ECB (see #2395 at INT 7A/BX=0003h)
 Return: DS preserved
 	BX,BP corrupted
 SeeAlso: BX=001Fh,BX=0021h,BX=0022h,INT 2F/AX=7A2Fh
-
-Format of ECB data:
-Offset	Size	Description	(Table 2286)
- 00h  8 BYTEs	???
- 08h	BYTE	(return) ???
- 09h	BYTE	(return) ???
- 0Ah	WORD	???
- 0Ch 16 BYTEs	???
- 1Ch  3 WORDs	???
- 22h	WORD	number of records at offset 28h
- 24h	DWORD	-> ???
- 28h 6N BYTEs	??? records
 --------N-7A----BX0021-----------------------
 INT 7A - Novell NetWare - IPXODI v2.12+ - IPX GENERATE CHECKSUM
 	BX = 0021h
-	ES:SI -> ECB data (see #2286)
+	ES:SI -> ECB data (see #2395 at INT 7A/BX=0003h)
 Return: ES,DS,SI preserved
 	BX,BP corrupted
 Notes:	the checksum and TransportControl fields of the IPX packet are updated
@@ -5445,7 +5520,7 @@ SeeAlso: BX=001Fh,BX=0020h,BX=0022h,INT 2F/AX=7A2Fh
 --------N-7A----BX0022-----------------------
 INT 7A - Novell NetWare - IPXODI v2.12+ - IPX VERIFY CHECKSUM
 	BX = 0022h
-	ES:SI -> ECB data (see #2286)
+	ES:SI -> ECB data (see #2395 at INT 7A/BX=0003h)
 Return: AX = status (0000h checksum matches)
 	DS,ES,SI preserved
 	BX,BP corrupted
@@ -5456,7 +5531,7 @@ INT 7A - Novell NetWare - IPXODI v2.12+ - OPEN LOOK-AHEAD SOCKET
 	BX = 0023h
 	AL = ???
 	DX = socket number
-	ES:SI -> Look Ahead handler (see #2287)
+	ES:SI -> Look Ahead handler (see #2416)
 Return: AL = 00h if successful
 	BX corrupted
 Notes:	the socket will always be long-lived, and must thus be explicitly
@@ -5466,22 +5541,22 @@ Notes:	the socket will always be long-lived, and must thus be explicitly
 	  pointing at an IPX version greater than 3.30
 SeeAlso: INT 7A/BX=0000h,INT 7A/BX=0001h
 
-(Table 2287)
+(Table 2416)
 Call IPX Look-Ahead handler with:
 	AX = socket
-	DS:SI -> look-ahead structure (see #1617 at INT 2F/AX=C000h"LSL")
+	DS:SI -> look-ahead structure (see #1694 at INT 2F/AX=C000h"LSL")
 	DF clear
 	interrupt disabled (must remain disabled)
 Return: AX = packet use
 	    0000h application want packet
-		ES:SI -> ODI ECB (see #1618 at INT 2F/AX=C000h"LSL")
+		ES:SI -> ODI ECB (see #1695 at INT 2F/AX=C000h"LSL")
 	    8001h application does not want packet
 	ZF set if AX=0000h
 	DS,DI,BP,SS,SP preserved
 --------N-7A----BX0024-----------------------
 INT 7A U - Novell NetWare - IPXODI v2.20+ - SET INTERNETWORK ADDRESS
 	BX = 0024h
-	ES:SI -> buffer containing internetwork address (see #2279)
+	ES:SI -> buffer containing internetwork address (see #2409)
 Return: BX,CX,SI,DI,ES destroyed
 Note:	this function differs from INT 7A/BX=000Ch in that it unconditionally
 	  sets the address
@@ -5498,17 +5573,17 @@ Return: AX = status
 		  excessivly long packets)
 	BX = width of graphics area in pixels, or 0000h if using packet
 		  communication
-	DX:CX -> packet-mode entry point (see #2288)
+	DX:CX -> packet-mode entry point (see #2417)
 SeeAlso: AX=0001h,AX=0200h,AX=07D0h,INT 61/AX=0007h"OPTIMA",INT 78"AutoCAD"
 SeeAlso: INT 79/AX=0001h,INT 7B/AX=8001h"AutoCAD",INT 7C"AutoShade"
 
-(Table 2288)
+(Table 2417)
 Call packet-mode entry point with:
-STACK:	DWORD	pointer to request packet (see #2289)
+STACK:	DWORD	pointer to request packet (see #2418)
 	WORD	length of packet
 
 Format of request packet:
-Offset	Size	Description	(Table 2289)
+Offset	Size	Description	(Table 2418)
  00h	WORD	function number (00h-45h for Compaq VGADI41.EXE)
 --------A-7A0200BX0000-----------------------
 INT 7A R - AutoCAD Device Interface - RENDERING DEVICE - INITIALIZE (RDLINKUP)
@@ -5516,7 +5591,7 @@ INT 7A R - AutoCAD Device Interface - RENDERING DEVICE - INITIALIZE (RDLINKUP)
 	BX = 0000h
 	CX = interface level (0001h)
 Return: BX = 0000h (driver uses packet communication)
-	DX:CX -> packet-mode entry point (see #2288)
+	DX:CX -> packet-mode entry point (see #2417)
 SeeAlso: AX=0001h"AutoCAD",INT 79/AX=0001h,INT 7B/AX=8001h"AutoCAD"
 --------I-7A04-------------------------------
 INT 7A - IBM 3270 Workstation Program API - CREATE A QUEUE
@@ -5543,11 +5618,11 @@ INT 7A - IBM 3270 Workstation Program API - SESSION SERVICES
 	BX = 8020h (synchronous request)
 	CX = 0000h
 	DX = ID of session manager (SESSMGR)
-	AL = service (see #2290)
+	AL = service (see #2419)
 	ES:DI -> control block
 Return: ???
 
-(Table 2290)
+(Table 2419)
 Values for service:
  01h	get session ID
  02h	get session info
@@ -5564,11 +5639,11 @@ INT 7A - IBM 3270 Workstation Program API - KEYBOARD SERVICES
 	BX = 8020h (synchronous request)
 	CX = 0000h
 	DX = ID of keyboard manager
-	AL = service number (see #2291)
+	AL = service number (see #2420)
 	ES:DI -> control block
 Return: ???
 
-(Table 2291)
+(Table 2420)
 Values for 3270 Workstation Program keyboard service:
  01h	connect to keyboard
  02h	disconnect from keyboard
@@ -5583,11 +5658,11 @@ INT 7A - IBM 3270 Workstation Program API - WINDOW SERVICES
 	BX = 8020h (synchronous request)
 	CX = 00FFh
 	DX = ID of window service controller (WSCTRL)
-	AL = service number (see #2292)
+	AL = service number (see #2421)
 	ES:DI -> control block
 Return: ???
 
-(Table 2292)
+(Table 2421)
 Values for 3270 Workstation Program window service:
  01h	connect to WS control
  02h	disconnect from WS control
@@ -5700,10 +5775,10 @@ INT 7A - IBM 3270 Workstation Program API - HOST SERVICES
 	BX = request type (4000h async, 8028h synchronous)
 	CX = 0000h
 	DX = ID of MFIC
-	AL = service (see #2293)
+	AL = service (see #2422)
 	ES:DI -> control block
 
-(Table 2293)
+(Table 2422)
 Values for 3270 Workstation Program host service:
  01h	connect to host
  02h	disconnect from host
@@ -5726,10 +5801,10 @@ Range:	unknown, selected by device driver commandline arguments
 --------I-7A81-------------------------------
 INT 7A - IBM 3270 Workstation Program API - RESOLVE A GATE NAME
 	AH = 81h
-	ES:DI -> 8-char blank-padded gate name (see #2294)
+	ES:DI -> 8-char blank-padded gate name (see #2423)
 Return: DX = gate ID
 
-(Table 2294)
+(Table 2423)
 Values for 3270 Workstation Program gate name:
  "SESSMGR "
  "KEYBOARD"
@@ -5751,10 +5826,10 @@ Return: ???
 --------I-7AFDCB-----------------------------
 INT 7A - IBM Personal Communications/3270 - INSTALLATION CHECK
 	AX = FDCBh
-Return: DX:AX -> PCS/3270 signature block if loaded (see #2295)
+Return: DX:AX -> PCS/3270 signature block if loaded (see #2424)
 
 Format of Personal Communications/3270 signature block:
-Offset	Size	Description	(Table 2295)
+Offset	Size	Description	(Table 2424)
  04h	WORD	PCS/3270 signature (5741h)
  06h	WORD	version (0501h = PCS/3270 v1.0)
 --------I-7AFE01-----------------------------
@@ -5793,29 +5868,29 @@ INT 7A U - IBM PC3270 EMUL PROG v3 - INTERNAL ???
 Return: CX = 1200h
 --------f-7B---------------------------------
 INT 7B - Btrieve API (single user)
-	DS:DX -> 38-byte parameter record (see #2296)
+	DS:DX -> 38-byte parameter record (see #2425)
 Return: return code field set
 Note:	Btrieve sets low byte of vector to 33h; this serves as the installation
 	  check
 SeeAlso: INT 2F/AX=AB01h,INT 7F/AX=0200h
 
 Format of Btrieve parameter record:
-Offset	Size	Description	(Table 2296)
+Offset	Size	Description	(Table 2425)
  00h	DWORD	pointer to data buffer
  04h	WORD	data buffer length
  06h	DWORD	pointer to 90-byte record containing positioning info
 		(should be same for all calls for same file)
  0Ah	DWORD	pointer to 38-byte FCB info buffer
 		(should be same for all calls for same file)
- 0Eh	WORD	function code (see #2297)
+ 0Eh	WORD	function code (see #2426)
  10h	DWORD	pointer to file name/key buffer
  14h	BYTE	key length
  15h	BYTE	key number
- 16h	DWORD	pointer to status code (see #2298)
+ 16h	DWORD	pointer to status code (see #2427)
  1Ah	WORD	interface code (version specific)
 		6176h version 5.10
 
-(Table 2297)
+(Table 2426)
 Values for function code:
  00h	open
  01h	close
@@ -5869,7 +5944,7 @@ Notes:	add 50 (32h) to any "get" operation to just return the key data
 	add 400 (190h) for a multiple-record nowait lock (nowait lock returns
 	  error 54h or 55h if record already locked)
 
-(Table 2298)
+(Table 2427)
 Values for Btrieve status code:
  00h	successful
  01h	invalid operation
@@ -5978,10 +6053,10 @@ Notes:	This interrupt is called by AutoCAD to perform its output
 SeeAlso: AX=8001h,AX=8002h,INT 78"AutoCAD",INT 7A/AX=0001h"AutoCAD"
 ----------7B---------------------------------
 INT 7B - Novell XQL - XQL PRIMITIVES MANAGER API
-	DS:DX -> parameter block (see #2300)
+	DS:DX -> parameter block (see #2429)
 Return: parameter block updated
 
-(Table 2299)
+(Table 2428)
 Values for Novell XQL function number:
  00h	log in
  01h	log out
@@ -6025,12 +6100,12 @@ Values for Novell XQL function number:
  27h	"tCnvFcn"
  28h	"tValFcn"
  29h	"tMaskFcn"
-SeeAlso: #2300
+SeeAlso: #2429
 
 Format of XQL parameter block:
-Offset	Size	Description	(Table 2300)
+Offset	Size	Description	(Table 2429)
  00h  4 BYTEs	signature "XQLP"
- 04h	WORD	function number (see #2299)
+ 04h	WORD	function number (see #2428)
  06h	WORD	handle
  08h	WORD	status
  0Ah	WORD	session ID
@@ -6299,7 +6374,7 @@ INT 7C - PRINDIR v8.02+ - API
 		(01h = LPT1 ... 03h = LPT3, 04h = COM1 ... 07h = COM4)
 	   0Dh force buffer dump
 	   0Eh set display color
-	       AL = new color attribute (see INT 10/AH=08h)
+	       AL = new color attribute (see #0013 at INT 10/AH=08h)
 	   0Fh set popup hotkey
 	       AL = hotkey scancode
 	   10h toggle byte display
@@ -6343,11 +6418,11 @@ INT 7C - SK-UPPS Data Link Interface API - GET DRIVER VERSION
 	AX = 0000h
 Return: AH = major DLI version
 	AL = minor DLI version
-	DX = OEM signature (see #2301)
+	DX = OEM signature (see #2430)
 	CL = DLI 2.8+ topology: 1=Ethernet, 2=FDDI, 3=Token-Ring
 SeeAlso: AX=0002h,AX=000Bh,AX=000Dh,AX=000Eh
 
-(Table 2301)
+(Table 2430)
 Values for SK-UPPS Data Link Interface OEM signature (defined by SK):
  0001h		experimental
  3343h	('3C')	3COM
@@ -6364,12 +6439,12 @@ Values for SK-UPPS Data Link Interface OEM signature (defined by SK):
 --------N-7C0001-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - DOWN DRIVER
 	AX = 0001h
-Return: AX = completion code (see #2302)
+Return: AX = completion code (see #2431)
 Note:	the DLI will refuse to unload if there are any protocols
 	  (see AX=0007h) or clients (see AX=0010h) active.
 Index:	uninstall;SK-UPPS Data Link Interface
 
-(Table 2302)
+(Table 2431)
 Values for SK-UPPS completion code:
  0000h	SUCCESS
  0005h	INVALID_MULTICAST
@@ -6387,34 +6462,34 @@ Values for SK-UPPS completion code:
 --------N-7C0002-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - GET DRIVER STATUS
 	AX = 0002h
-	ES:DI -> Status Information Block (SIB) (see #2314)
-Return: AX = completion code (see #2302)
+	ES:DI -> Status Information Block (SIB) (see #2443)
+Return: AX = completion code (see #2431)
 Note:	GET DRIVER INFO (AX=000Eh) should be used instead.
 SeeAlso: AX=0000h,AX=000Bh,AX=000Dh,AX=000Eh
 --------N-7C0003-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - CHANGE DRIVER ADDRESS
 	AX = 0003h
 	ES:DI -> new node address (6 bytes)
-Return: AX = completion code (see #2302)
+Return: AX = completion code (see #2431)
 Note:	the DLI will refuse to change the address if any protocols
 	  (see AX=0007h) are active
 SeeAlso: AX=0001h,AX=000Eh
 --------N-7C0004-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - REQUEST BUFFER
 	AX = 0004h
-	DX = protocol ID (see AX=0007h,#2305)
-Return: AX = completion code (see also #2302)
+	DX = protocol ID (see AX=0007h,#2434)
+Return: AX = completion code (see also #2431)
 	    0000h successful
-		ES:BX -> Memory Buffer (Mbuf) (see #2303)
+		ES:BX -> Memory Buffer (Mbuf) (see #2432)
 Note:	if the DLI has no free Mbufs, it will set an internal flag for the
 	  protocol and later call the protocol's Event Upcall with
-	  EV_BUFFER_AVAILABLE (see #2309,#2310) as soon as an Mbuf becomes
+	  EV_BUFFER_AVAILABLE (see #2438,#2439) as soon as an Mbuf becomes
 	  available.  There will only be one "buffer available" Upcall, even
 	  if this function has been called several times before.
 SeeAlso: AX=0005h,AX=0006h,AX=0012h,AX=0013h
 
 Format of SK-UPPS Memory Buffer (Mbuf):
-Offset	Size	Description	(Table 2303)
+Offset	Size	Description	(Table 2432)
  00h	DWORD	-> NEXT Mbuf (linked list)
  04h	WORD	OFFSET of actual data within DATA area
  06h  2 BYTEs	reserved (currently unused)
@@ -6427,13 +6502,13 @@ Offset	Size	Description	(Table 2303)
 --------N-7C0005-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - RELEASE BUFFER
 	AX = 0005h
-	ES:BX -> Mbuf (see #2303)
+	ES:BX -> Mbuf (see #2432)
 Return: nothing
 SeeAlso: AX=0004h
 --------N-7C0006-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - TRANSMIT FRAME
 	AX = 0006h
-	ES:BX -> Mbuf (see #2303)
+	ES:BX -> Mbuf (see #2432)
 Return: nothing
 Notes:	The DLI will send LENGTH bytes found in the Mbuf's DATA area starting
 	  at OFFSET. A complete and valid frame must be stored there. The DLI
@@ -6442,12 +6517,12 @@ Notes:	The DLI will send LENGTH bytes found in the Mbuf's DATA area starting
 	On Ethernet, the DLI will always send a minimum of 60 bytes, regardless
 	  of the value found in the LENGTH field.
 	This function returns immediately; the DLI will call the protocol's
-	  Transmit Upcall (see #2304) when the frame has been sent.
+	  Transmit Upcall (see #2433) when the frame has been sent.
 	The Mbuf's IN USE field will be non-zero until the DLI calls the
 	  Transmit Upcall.
 SeeAlso: AX=0002h,AX=0004h,AX=0013h
 
-(Table 2304)
+(Table 2433)
 Values SK-UPPS Transmit Upcall is called with:
 	ES:BX -> Mbuf (NEXT field destroyed)
 	interrupts disabled
@@ -6456,25 +6531,25 @@ Note:	On FDDI the bytes of the source and destination node fields in the MAC
 --------N-7C0007-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - REGISTER PROTOCOL
 	AX = 0007h
-	ES:BX -> Protocol Control Block (see #2305)
-Return: AX = completion code (see #2302)
+	ES:BX -> Protocol Control Block (see #2434)
+Return: AX = completion code (see #2431)
 Program: SK-UPPS is the Schneider & Koch Universal Portable Protocol Stack,
 	  which provides an API on top of its Data Link Interface, allowing the
 	  use of any of several network transport layers
 SeeAlso: AX=0008h,AX=000Bh
 
 Format of SK-UPPS Protocol Control Block (PCB):
-Offset	Size	Description	(Table 2305)
+Offset	Size	Description	(Table 2434)
  00h	WORD	(big-endian) protocol type
- 02h	WORD	protocol mode (see #2306)
- 04h	DWORD	-> Receive Upcall routine (see #2307)
+ 02h	WORD	protocol mode (see #2435)
+ 04h	DWORD	-> Receive Upcall routine (see #2436)
  08h	DWORD	-> Transmit Upcall routine
- 0Ch	DWORD	-> Event Upcall routine (see #2309)
+ 0Ch	DWORD	-> Event Upcall routine (see #2438)
  10h	DWORD	-> ASCIZ protocol name (zero if none)
  14h	WORD	protocol ID will be returned here (always non-zero)
 
 Bitfields for SK-UPPS protocol mode:
-Bit(s)	Description	(Table 2306)
+Bit(s)	Description	(Table 2435)
  0	promiscuous mode; protocol receives all frames regardless of their
 	  destination (PROTOCOL TYPE must be FFFFh)
  1	if set, protocol's Event Upcall will be called on entry and exit of the
@@ -6506,14 +6581,14 @@ Notes:	If PROTOCOL TYPE is FFFFh and neither the "promiscuous" nor the "hook"
 	Some DLIs do not support all or even any of the "promiscuous",
 	  "receive non-LLC" and "receive all multicasts" mode bits.
 
-(Table 2307)
+(Table 2436)
 Values SK-UPPS Receive Upcall is called with:
  ES:BX -> Mbuf
- AX = receive status (see #2308) (also stored in Mbuf's RECEIVE STATUS field)
+ AX = receive status (see #2437) (also stored in Mbuf's RECEIVE STATUS field)
  interrupts disabled
 
 Bitfields for SK-UPPS receive status:
-Bit(s)	Description	(Table 2308)
+Bit(s)	Description	(Table 2437)
  0-2	reserved (0), currently unused
  3	frame check sequence (FCS) error
  4	overflow (frame too long)
@@ -6534,22 +6609,22 @@ Notes:	The protocol's Receive Upcall routine will be called whenever a frame
 	  must point to an Mbuf, which the DLI will then pass to the RELEASE
 	  BUFFER function (see AX=0005h). See also notes for PROTOCOL MODE.
 
-(Table 2309)
+(Table 2438)
 Values SK-UPPS Event Upcall is called with:
- AX = event code (see #2310)
+ AX = event code (see #2439)
 Note:	All Event Upcalls may be ignored by the protocol.
 
-(Table 2310)
+(Table 2439)
 Values for SK-UPPS Event Upcall event code:
  00h	EV_BUFFER_AVAILABLE client may now call REQUEST BUFFER (AX=0004h)
  01h	EV_ISR_START	    start of Interrupt Service Routine
  02h	EV_ISR_END	    end of ISR (see bit 1 in PCB's protocol mode field)
  03h	EV_BUFFER_WANTED    DLI temporarily out of Mbufs
- 04h	EV_NETWORK_STATUS   DLI 2.8+ network status -- DX=status (see #2311)
+ 04h	EV_NETWORK_STATUS   DLI 2.8+ network status -- DX=status (see #2440)
  05h	EV_IO_CONTROL	    DLI 2.8+ I/O control -- DX=subfunc (see AX=0016h)
 
 Bitfields for EV_NETWORK_STATUS in register DX:
-Bit(s)	Description	(Table 2311)
+Bit(s)	Description	(Table 2440)
 	Token-Ring		FDDI
  15	SIGNAL_LOSS		SIGNAL_LOSS
  14	HARD_ERROR		HARD_ERROR
@@ -6571,8 +6646,8 @@ Note:	EV_NETWORK_STATUS is not supported on Ethernet
 --------N-7C0008-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - DISABLE PROTOCOL
 	AX = 0008h
-	BX = protocol ID (see #2305)
-Return: AX = completion code (see #2302)
+	BX = protocol ID (see #2434)
+Return: AX = completion code (see #2431)
 Note:	the DLI will handle any Mbufs given to TRANSMIT FRAME (AX=0006h) as if
 	  they had been given to TRANSMIT FRAME RELEASE (AX=0013h).
 	all multicast addresses registered for this protocol will be disabled.
@@ -6582,9 +6657,9 @@ SeeAlso: AX=0007h,AX=000Bh
 --------N-7C0009-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - REGISTER MULTICAST
 	AX = 0009h
-	BX = protocol ID (see #2305)
+	BX = protocol ID (see #2434)
 	ES:DI -> multicast address (6 bytes)
-Return: AX = completion code (see #2302)
+Return: AX = completion code (see #2431)
 Notes:	The broadcast address is always enabled.
 	Set bit 9 of PCB's protocol mode field in REGISTER PROTOCOL call
 	  (AX=0007h) to receive all multicast frames.
@@ -6592,16 +6667,16 @@ SeeAlso: AX=000Ah,AX=0014h
 --------N-7C000A-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - DISABLE MULTICAST
 	AX = 000Ah
-	BX = protocol ID (see #2305)
+	BX = protocol ID (see #2434)
 	ES:DI -> multicast address (6 bytes)
-Return: AX = completion code (see #2302)
+Return: AX = completion code (see #2431)
 SeeAlso: AX=0009h,AX=0014h
 --------N-7C000B-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - GET PROTOCOL LIST
 	AX = 000Bh
 	ES:DI -> protocol ID buffer
 	CX = number of 2-byte protocol IDs that may be stored in buffer
-Return: AX = completion code (see #2302)
+Return: AX = completion code (see #2431)
 	CX = number of active protocols (regardless of value returned in AX)
 	protocol ID buffer filled with active protocol IDs
 Program: SK-UPPS is the Schneider & Koch Universal Portable Protocol Stack,
@@ -6613,27 +6688,27 @@ SeeAlso: AX=000Ch,AX=0014h
 --------N-7C000C-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - GET PROTOCOL STATUS
 	AX = 000Ch
-	BX = protocol ID (see #2305,AX=000Bh)
-	ES:DI -> Protocol Status Block (see #2312)
-Return: AX = completion code (see #2302)
+	BX = protocol ID (see #2434,AX=000Bh)
+	ES:DI -> Protocol Status Block (see #2441)
+Return: AX = completion code (see #2431)
 SeeAlso: AX=000Bh,AX=0014h
 
 Format of SK-UPPS Protocol Status Block (PSB):
-Offset	Size	Description	(Table 2312)
+Offset	Size	Description	(Table 2441)
  00h	DWORD	-> ASCIZ protocol name
- 04h	WORD	protocol mode (see #2306)
+ 04h	WORD	protocol mode (see #2435)
  06h	WORD	protocol type (see AX=0007h)
  08h	WORD	number of registered multicasts (see AX=0009h,AX=0014h)
 --------N-7C000D-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - GET DRIVER STATISTICS
 	AX = 000Dh
 	BX = flag: 0=don't clear statistics, 1=clear statistics
-	ES:DI -> Statistics Data Block (see #2313)
-Return: AX = completion code (see #2302)
+	ES:DI -> Statistics Data Block (see #2442)
+Return: AX = completion code (see #2431)
 SeeAlso: AX=0002h,AX=0015h
 
 Format of SK-UPPS Statistics Data Block (SDB):
-Offset	Size	Description	(Table 2313)
+Offset	Size	Description	(Table 2442)
  00h	DWORD	node uptime in ticks (1/18.21 sec.)
  04h	DWORD	bytes received
  08h	DWORD	bytes transmitted
@@ -6656,10 +6731,10 @@ Note:	fields 26h through 2Ch are always zero, except in some very old
 --------N-7C000E-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - DLI 2.5+ - GET DRIVER INFO
 	AX = 000Eh
-	ES:DI -> Driver Information Block (see #2314)
+	ES:DI -> Driver Information Block (see #2443)
 	BX = offset of 1st field within DIB to be returned
 	CX = number of bytes to be returned
-Return: AX = completion code (see #2302)
+Return: AX = completion code (see #2431)
 	CX = number of bytes copied (regardless of value returned in AX)
 Program: SK-UPPS is the Schneider & Koch Universal Portable Protocol Stack,
 	  which provides an API on top of its Data Link Interface, allowing the
@@ -6667,7 +6742,7 @@ Program: SK-UPPS is the Schneider & Koch Universal Portable Protocol Stack,
 SeeAlso: AX=0000h,AX=0002h,AX=000Bh,AX=000Dh,AX=0015h
 
 Format of SK-UPPS Driver Information Block (DIB):
-Offset	Size	Description	(Table 2314)
+Offset	Size	Description	(Table 2443)
  00h  6 BYTEs	physical node address (from adapter's ROM)
  06h  6 BYTEs	current node address (see AX=0003h)
  0Ch	BYTE	adapter id (defined by OEM)
@@ -6677,7 +6752,7 @@ Offset	Size	Description	(Table 2314)
  16h	WORD	base I/O port (zero if none)
  18h	BYTE	DMA line (FFh if none)
  19h	BYTE	DLI 2.4+ topology (see AX=0000h)
- 1Ah	WORD	size of an Mbuf's DATA area (see #2303)
+ 1Ah	WORD	size of an Mbuf's DATA area (see #2432)
  1Ch  2 BYTEs	reserved (currently unused)
  1Eh	WORD	total number of Mbufs the DLI has
  20h	WORD	maximum number of Mbufs that can be allocated via REQUEST
@@ -6689,7 +6764,7 @@ Offset	Size	Description	(Table 2314)
 --------N-7C000F-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - FEED BACK BUFFER
 	AX = 000Fh
-	ES:BX -> Mbuf (see #2303)
+	ES:BX -> Mbuf (see #2432)
 Return: nothing
 Notes:	A protocol may call this function instead of returning the Mbuf
 	  directly from the Receive Upcall if it is running in "promiscuous",
@@ -6713,16 +6788,16 @@ SeeAlso: AX=0010h
 --------N-7C0012-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - SYNC REQUEST BUFFER
 	AX = 0012h
-	DX = protocol ID (see #2305)
-Return: AX = completion code (see #2302)
-	if AX=0000h: ES:BX -> Mbuf (see #2303)
+	DX = protocol ID (see #2434)
+Return: AX = completion code (see #2431)
+	if AX=0000h: ES:BX -> Mbuf (see #2432)
 Note:	If the protocol wants to be informed when an Mbuf becomes available,
 	  REQUEST BUFFER (AX=0004h) should be used instead.
 SeeAlso: AX=0004h,AX=0005h,AX=0006h,AX=0013h
 --------N-7C0013-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - TRANSMIT FRAME RELEASE
 	AX = 0013h
-	ES:BX -> Mbuf (see #2303)
+	ES:BX -> Mbuf (see #2432)
 Return: nothing
 Notes:	Returns immediately; The protocol's Transmit Upcall will NOT be called.
 	The Mbuf may no more be used by the protocol in any way (i.e. the
@@ -6731,10 +6806,10 @@ SeeAlso: AX=0004h,AX=0013h
 --------N-7C0014-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - GET MULTICAST LIST
 	AX = 0014h
-	BX = protocol ID (see #2305,AX=000Bh)
+	BX = protocol ID (see #2434,AX=000Bh)
 	ES:DI -> multicast address buffer
 	CX = number of 6-byte multicast addresses that may be stored in buffer
-Return: AX = completion code (see #2302)
+Return: AX = completion code (see #2431)
 	CX = number of registered multicast addresses for this protocol
 	  (regardless of value returned in AX)
 	multicast address buffer filled with multicast addresses registered for
@@ -6746,16 +6821,16 @@ SeeAlso: AX=000Bh,AX=0009h,AX=000Ch
 --------N-7C0015-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - DLI 2.6+ - GET MEDIA STATISTICS
 	AX = 0015h
-	ES:DI -> media-specific statistics buffer (see #2315,#2316,#2317)
+	ES:DI -> media-specific statistics buffer (see #2444,#2445,#2446)
 	BX = offset of 1st field within MSS to be returned
 	CX = number of bytes to be returned
-Return: AX = completion code (see #2302)
+Return: AX = completion code (see #2431)
 	CX = number of bytes copied (regardless of value returned in AX)
 Note:	not supported by all DLIs (will return AX=FFFFh if not supported).
 SeeAlso: AX=0000h,AX=000Dh
 
 Format of SK-UPPS media-specific statistics for Ethernet:
-Offset	Size	Description	(Table 2315)
+Offset	Size	Description	(Table 2444)
  00h	DWORD	alignment errors
  04h	DWORD	frame check sequence (FCS) errors
  08h	DWORD	single collision frames
@@ -6773,7 +6848,7 @@ Offset	Size	Description	(Table 2315)
  38h	DWORD	internal MAC receive errors
 
 Format of SK-UPPS media-specific statistics for FDDI:
-Offset	Size	Description	(Table 2316)
+Offset	Size	Description	(Table 2445)
  00h	DWORD	SMT operating version id (refer to ANSI 7.1.2.2)
  04h	DWORD	SMT CF state: 1=Isolated, 2= Wrap_S, 3=Wrap_A, 4=Wrap_B,
 		  5=Wrap_AB, 6=Thru (refer to ANSI SMT 9.7.4.3)
@@ -6794,7 +6869,7 @@ Offset	Size	Description	(Table 2316)
  34h	DWORD	attachment optical bypass present: 1=true, 2=false
 
 Format of SK-UPPS media-specific statistics for Token-Ring:
-Offset	Size	Description	(Table 2317)
+Offset	Size	Description	(Table 2446)
  00h  6 BYTEs	upstream neighbour
  06h	WORD	local ring number
  08h	DWORD	ring up count
@@ -6831,7 +6906,7 @@ SeeAlso: AX=0001h
 --------N-7C0017-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - DLI 2.8+ - INTERRUPT REQUEST
 	AX = 0017h
-Return: AX = completion code (see #2302)
+Return: AX = completion code (see #2431)
 Notes:	not supported by all DLIs (will return AX=FFFFh, if not supported).
 	must be called with interrupts disabled; when the client re-enables
 	  interrupts, an interrupt will be generated and reported to the client
@@ -6857,10 +6932,10 @@ INT 7D - HyperPAD v2.2 - API ACCESS
 Note:	this vector is hooked but immediately passed on (without checking
 	  whether the previous handler was 0000h:0000h).  The sole purpose of
 	  this vector is to provide the address of the data area described
-	  below (see #2318).
+	  below (see #2447).
 
 Format of HyperPAD data area:
-Offset	Size	Description	(Table 2318)
+Offset	Size	Description	(Table 2447)
  -16h	DWORD	pointer to ??? FAR function
  -12h	DWORD	pointer to callback setting function
 		[C calling conventions, (*callback)(int (_loadds far *)()) ]
@@ -6896,7 +6971,7 @@ Desc:	arbitrate the use of the bus and select the specified target device
 ----------7D02-------------------------------
 INT 7D - SCSILink - SEND COMMAND
 	AH = 02h
-	ES:BX -> parameter block (see #2319)
+	ES:BX -> parameter block (see #2448)
 Return: CF clear if successful
 	CF set on error
 	    AL = initiator error
@@ -6905,24 +6980,24 @@ Desc:	send the specified command block to the target device and perform any
 	  related I/O
 
 Format of SCSILink parameter block:
-Offset	Size	Description	(Table 2319)
+Offset	Size	Description	(Table 2448)
  00h	DWORD	size of command block
- 04h	DWORD	address of command block (see #2320)
+ 04h	DWORD	address of command block (see #2449)
  08h	DWORD	size of buffer
  0Ch	DWORD	address of buffer
 
 Format of SCSILink command block:
-Offset	Size	Description	(Table 2320)
+Offset	Size	Description	(Table 2449)
  00h		info not yet available
 ----------7D03-------------------------------
 INT 7D - SCSILink - SET TIMEOUT
 	AH = 03h
-	AL = timeout selector (see #2321)
+	AL = timeout selector (see #2450)
 	BX = new value in 55ms ticks
 Desc:	change an internal timeout value to allow communication with very
 	  slow targets
 
-(Table 2321)
+(Table 2450)
 Values for SCSILink timeout selector:
  00h	time to wait for bus (default 18)
  01h	time to wait for new phase (default 5)

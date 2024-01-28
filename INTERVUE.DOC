@@ -1,0 +1,103 @@
+
+                               INTERVUE V1.5
+                               January, 1995
+              Copyright 1992,95 Bob Williamson CIS 76570,2752
+
+  INTERVUE is a viewer for the Interrupt List maintained by Ralf Brown.  
+  The program is Public Domain Software and may be freely copied and 
+  distributed.  The Interrupt List is avaliable for downloading from
+  CompuServe and numerous other BBS's.  The files are named INTnnA.ZIP,
+  INTnnB.ZIP, and INTnnC.ZIP (nn = current release no.).  
+  
+  INTERVUE is provided as a 'no frills' alternative to the commercial 
+  Interrupt List viewers.  The primary design critera were compatibity with 
+  all operating environments and small executable size.  No modification to 
+  the Interrupt List files is required for using the viewer.
+
+  Version 1.4a contains an improved search alogrithm for the List entries,
+  case insensitive search, expanded technical documentation, and a Windows
+  Icon.
+ 
+  INTERVUE is designed to be backward and foward compatible with the 
+  Interrupt List releases, subject to the following constraints: 
+
+        The Summary File format must be compatible with release 32.
+        The individual List files size must not exceed 7 segments (458Kb).
+        The number of List files must not exceed 15.
+        The INTERRUP.A file header format must be consistent with release 32.
+        
+  To install INTERVUE, first copy the Interrupt List files, INTnnA.ZIP and 
+  INTnnB.ZIP, to a subdirectory on the fixed disk and UNZIP them.  Next, use 
+  INTPRINT to create the Summary File (INTERRUP.SUM) with the following 
+  command:
+
+        INTPRINT -sINTERRUP.SUM -m -i INTERRUP.A nul
+
+  Copy INTERVUE to the Interrupt List directory and execute the program.  
+  The INTERRUP.SUM file serves as the menu for accessing the function 
+  descriptions contained in the Interrupt List files (INTERRUP.?).  To run 
+  INTERVUE from a search path, add the following command to the AUTOEXEC.BAT 
+  file:
+
+        set intervue = drv:\path
+
+  The 'drv:\path' is the drive and path where the Interrupt List files are
+  located.  INTERVUE may then be placed in any active search path.
+
+  The following keys are active within the INTERVUE text display window:
+  Home, End, PageUp, PageDn, UpArrow, DnArrow, Tab, Shift-Tab, Esc, F1, 
+  F2, F3, Ctrl-C, & Enter.
+
+  INTERVUE is written in 8086 assembler, uses conventional memory (640Kb)
+  only, compatible with DOS 2.0 & >, RSIS compliant (DESQview aware), and 
+  is compatible with both mono and color video.  Requires 3Mb disk space
+  for the Interrupt List files (unzipped).  INTERVUE has no command line
+  parameters, does not use a setup file, and makes no disk writes.
+
+                          Search Alogrithm:
+
+  At initialization, the environment is checked for a path to the Interrupt
+  List files.  If none is found, the default path is used.  INTERRUP.A is 
+  opened and the first 1680 bytes of text are read to build an array mapping 
+  Int, Fct, & Sub to the INTERRUP file extension.  Next, INTERRUP.SUM is read 
+  into the file buffer and displayed as a menu.  When a function is selected 
+  (Enter), the List file with the Int, Fct, & Sub is read into the buffer and 
+  searched for a match.
+
+  The search string is formed from the Summary file entry by re-creating
+  the List file description line (three format variations).  The List
+  file description line does not contain the Fct & Sub, so a verify string 
+  is created to check the List file dashed line above the description for 
+  Int, Fct & Sub.  A hit is returned from verify if either a match is 
+  found, or if Int, Fct & Sub are absent from the dashed line above the 
+  description (some with Int only are missing).  The verify compare allows 
+  List file formatting fluctuations of + or - 5 bytes.  
+
+  The only observed search problem occurs from identical entries (Int, Fct,
+  Sub, & description) in the Summary file.  The search will always find the 
+  first of these entries in the List file.  Use of F3 (next match) will 
+  reveal all of the subsequent identical description entries in the List file, 
+  which will show unique values in BX or other registers.  With the 'feature' 
+  documented, and with awareness of how the search works, this should be a
+  minor inconvience. 
+   
+  The List file is always searched sequentially from the beginning in order 
+  to count the newlines and display the tally.  No pointers are used with  
+  the List files, and no binary search techniques are used.  The file buffer
+  segment offset is incremented by one following each byte compare, and
+  tested for zero to identify segment boundaries.  The aux timer vector is
+  unhooked/hooked and start/end crit section (2F 16 81-82 & 15 DE 1C-1B) is 
+  called for file reads and the search.  A time slice is released for DPMI
+  (Windows) and DESQview in idle loops.  The file reads are 8000h, with a 
+  compare of AX, CX for eof.  
+
+  Memory is released, retaining 16Kb for the program, and 7 segs allocated  
+  for the file buffer.  Errors trapped are mem allocation, file too big, file 
+  not found, checksum, and crit.  Stack seg is 512 bytes.
+  
+  Please report any INTERVUE bugs or problems, and upgrade suggestions.
+
+                                      Thanks,
+                                      Bob Williamson
+                                      CIS 76570,2752
+                

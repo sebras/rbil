@@ -31,11 +31,16 @@
 /*   v3.00   6/4/94  -T, -V, and multi-file break section skipping	*/
 /*		     major speedups; checked for BC++3.1 compatibility	*/
 /*   v3.01   6/11/94 bugfix: crashed with -l0 -L1 on lines >=80 chars   */
+/*   v3.02   1/7/95  bugfix by Mark Shapiro: garbage with -B -PHP_PCL	*/
+/*   v3.03   1/14/95 changes for Borland C++ 4.x size minimization	*/ 
+/*   v3.04   3/25/95 malloc/sbrk and other bugfixes		        */
 /************************************************************************/
 /* Recompiling:								*/
 /*   Turbo C / Borland C++						*/
 /*	tcc -mt -lt -O -a -Z -p -k- intprint				*/
-/*      bcc -mt -lt -a -O1agim -p intprint.c				*/
+/*      bcc -mt -lt -a -d -O1agim -p intprint.c				*/
+/*   Borland C++ 4.x (as .EXE, from John <tenthumbs@bix.com>)		*/
+/*	bcc -ms -a -d -O1agim -p intprint.c noehs.lib			*/
 /************************************************************************/
 
 #include <ctype.h>
@@ -45,7 +50,7 @@
 #include <string.h>
 #include <sys/stat.h>		/* S_IREAD, S_IWRITE */
 
-#define VERSION "3.01"
+#define VERSION "3.04"
 
 /***********************************************/
 /*    portability definitions		       */
@@ -67,7 +72,8 @@
    #define read _read
    #define write _write
    void _Cdecl _setenvp(void) {} /* don't need environment--don't include it */
-   void *_Cdecl malloc(size_t size) { return sbrk(size) ; }
+   void *_Cdecl malloc(size_t size)
+	 { void *x = sbrk(size) ; return (x==(char*)-1) ? 0 : x ; }
    void _Cdecl free(void *var) { (void)var ; }
    /* since our free() doesn't do anything, macro it out of existence */
    #define free(p)
@@ -75,7 +81,26 @@
    #ifdef __BORLANDC__
    void _Cdecl _setupio(void) {}
    #pragma warn -eff
-   #endif
+   /* BC++ v3.1 sets __BORLANDC__ to 0x0410!! */
+   #if __BORLANDC__ >= 0x0400 && __BORLANDC__ != 0x0410
+   /* Changes by John Sasse to minimize executable size */
+   #if 1
+      /* the preferred way */
+      /* Borland claims they "might" stop supporting these functions. Right */
+      #define   _close(a)      _rtl_close(a)
+      #define   _creat(a,b)    _rtl_creat(a,b)
+      #define   _open(a,b)     _rtl_open(a,b)
+      #define   _read(a,b,c)   _rtl_read(a,b,c)
+      #define   _write(a,b,c)  _rtl_write(a,b,c)
+      #if __BORLANDC__ == 0x400
+      /* They forgot to change this in 4.00 only */
+      #undef    _read
+      #endif
+   #else
+      #pragma warn -obs    /* the easy way */
+   #endif /* 1 */
+   #endif /* __BORLANDC__ >= 0x400 */
+   #endif /* __BORLANDC__ */
 
 #undef _other_
 #endif /* __TURBOC__ */
@@ -132,11 +157,15 @@ extern int isatty(int) ;
 #define NEED_ULTOA
 #endif
 
+#endif /* _other_ */
+
+/*--------------------------------------------------*/
+
 /* the last character of the line termination sequence, i.e. '\n' for CRLF */
 /* and LF, '\r' if your system uses CR or LFCR */
+#ifndef LINE_TERMINATOR
 #define LINE_TERMINATOR '\n'
-
-#endif /* _other_ */
+#endif /* LINE_TERMINATOR */
 
 /*--------------------------------------------------*/
 /*  catchall for macros which might not be defined  */
@@ -180,6 +209,94 @@ extern int isatty(int) ;
    
 #define section_file_start(s) (s[0] == '-' && memcmp(s+1,"-------!---Section",18) == 0)
 
+
+/***********************************************/
+/*    stub functions to reduce executable size */
+/***********************************************/
+
+#ifdef __BORLANDC__
+/* Changes by John Sasse */
+/* BC++ v3.1 sets __BORLANDC__ to 0x0410!!  */
+#if __BORLANDC__ >= 0x0400 && __BORLANDC__ != 0x0410
+/*      Everything within this conditional may be placed in
+ *      a separate source file if desired.
+ */
+
+/* stack overflow checking can never be allowed inside
+   the run-time library */
+#pragma option -N-
+
+#include <errno.h>
+/* the next 3 include files are necessary only if this
+   is compiled as a separate file */
+#if 0
+#include <io.h>
+#include <stdlib.h>
+#include <string.h>
+#endif
+
+/* declarations */
+void _Cdecl      __ErrorMessage (const char *__message);
+int  pascal near __IOerror (int  _doserror_);
+int  pascal near __DOSerror (int  _doserror_);
+void _Cdecl      _abort (void);
+
+
+/* may be referenced by a lot of things */
+int _Cdecl _doserrno = 0;
+
+/*
+    The _rtl_* functions all call __IOError which originally
+    referenced sys_nerr and sys_errlist. Unfortunately, the
+    source file for these also contains perror which calls
+    fputs. Hence you get lots of extra code.
+    This is a very minimal replacement.
+*/
+int pascal near __IOerror(int _doserror_)
+{
+/* if _doserror_ is < 0, it might be a System V error.
+   we don't care */
+    _doserrno = (_doserror_ < 0) ? (-1) : _doserror_;
+    errno = EIO;        /* a default value */
+    return (-1);
+}
+
+/* __DOSerror and __IOerror are in the same source file.
+   This may not actually be called. Better safe ...
+*/
+#if 1
+int pascal near __DOSerror(int _doserror_)
+{
+    __IOerror(_doserror_);
+    return (_doserror_);
+}
+#endif
+
+/*
+   The startup code, among others, references _setargv which
+   references abort. The run-time library version says "raise
+   (SIGABRT)", bringing in a lot of unnecessary code.
+*/
+void _Cdecl abort (void)
+{
+    _abort ();
+}
+
+/* necessary to avoid referencing _streams */
+#if 1
+#define STDERR      2
+
+void _Cdecl __ErrorMessage(const char *msg)
+{
+    _rtl_write(STDERR, msg, strlen(msg));
+}
+#endif
+
+/* restore command line state; note the "." */
+#pragma option -N.
+
+#endif  /* __BORLANDC__ >= 0x400 */
+#endif  /* __BORLANDC__ */
 
 /***********************************************/
 /*    replacement file I/O function macros     */
@@ -651,6 +768,7 @@ char *msg ;
    newline(err) ;
    ip_puts(msg,err) ;
    newline(err) ;
+   ip_flush(err) ;
    exit(1) ;
 }
 
@@ -1021,6 +1139,7 @@ IP_FILE *fp ;
 	       ip_write(line,pos,fp) ;
 	       ip_putcstr(&printer->bold_off,fp) ;
 	       line += pos ;	   /* adjust because no longer at left edge */
+	       len -= pos ;
 	       }
 	    else
 	       {

@@ -8,6 +8,14 @@ Desc:	provides subfunctions such as turning off the machine, accessing
 	  internal variables, and mapping memory cards
 SeeAlso: INT 60"Atari"
 --------b-61---------------------------------
+INT 61 - TI Professional PC - FACTORY ROM DATA AREA POINTER (NOT A VECTOR!)
+Desc:	the low word of this vector contains the segment of the RAM data area
+	  to be used by the expansion ROM at F400h:0000h, and the high word
+	  contains the length of the data area; this segment and size are
+	  both set to 0000h if no ROM is installed at F400h:0000h
+SeeAlso: INT 60"TI Professional PC",INT 62"TI Professional"
+SeeAlso: INT 66"TI Professional PC"
+--------b-61---------------------------------
 INT 61 - HP 95LX System Manager - LOAD DS
 SeeAlso: INT 0F"HP 95LX",INT 60"HP 95LX"
 --------r-61---------------------------------
@@ -34,30 +42,30 @@ Program: PAGE and SWAPx are utilities from PC-Magazin, the German edition of
 SeeAlso: INT 66"INCA"
 --------N-61---------------------------------
 INT 61 - TCPOpen kernel - API
-	ES:BX -> request packet (see #1861)
+	ES:BX -> request packet (see #1960)
 Program: TCPOpen is a TCP/IP protocol stack by Lanera
 Range:	INT 60 to INT 7F, selected by configuration file
 Note:	there does not appear to be an installation check, though function
 	  FFFFh can be used to verify that the software is indeed functioning
 
 Format of TCPOpen request packet:
-Offset	Size	Description	(Table 1861)
+Offset	Size	Description	(Table 1960)
  00h  8 BYTEs	???
  08h	WORD	function number (0000h-001Ah or FFF9h-FFFFh)
  0Ah	WORD	???
  0Ch  2 BYTEs	???
- 0Eh	WORD	(return) return code
+ 0Eh	WORD	(ret) return code
  10h  2 BYTEs	???
  12h	WORD	???
- 14h	WORD	(return) 0001h if requested function complete
- 16h	WORD	(return) ???
+ 14h	WORD	(ret) 0001h if requested function complete
+ 16h	WORD	(ret) ???
  18h  6 BYTEs	???
  1Eh	DWORD	-> ???
  22h	WORD	??? or 0000h
- 24h	WORD	(return) ???
-SeeAlso: #1862
+ 24h	WORD	(ret) ???
+SeeAlso: #1961
 
-(Table 1862)
+(Table 1961)
 Call TCPOpen Function FFFFh: installation verification
 Return: offset 10h = BEEFh
 	offset 14h = 0001h
@@ -153,8 +161,8 @@ INT 61 - FTP Software PC/TCP - TCP/IP TSR System Call interface
 	    02h "pkt_free" (v2.05; this is "get_kernel_info" in v2.1+)
 Return: CF clear if successful
 	CF set on error
-	    AL = basic error (see #1863)
-	    AH = suberror number (see #1864,#1865)
+	    AL = basic error (see #1962)
+	    AH = suberror number (see #1963,#1964)
 Range:	INT 20h to INT E0h, selected by configuration
 Notes:	the installation check consists of testing for the signature "TCPTSR"
 	  three bytes beyond the start of the interrupt handler
@@ -164,7 +172,7 @@ BUG:	the SLIP kernel for v2.05 bounds-checks the wrong register, so values
 SeeAlso: INT 61/AH=00h"PC/TCP",INT 61/AH=2Ah,INT 61/AH=54h
 Index:	installation check;PC/TCP
 
-(Table 1863)
+(Table 1962)
 Values for PC/TCP error code:
  00h "NET_NOERR" successful
  01h "NET_ERR_INUSE" protocol or socket already in use
@@ -210,7 +218,7 @@ Values for PC/TCP error code:
  24h "NET_ERR_NOQIOS" ran out of resources; try again later
  25h "NET_ERR_WOULD_TRUNCATE" datagram too large and "don't truncate" was set
 
-(Table 1864)
+(Table 1963)
 Values for subcodes of PC/TCP error 0Ah "NET_ERR_HOST_UNREACHABLE":
  00h	no error
  01h	host unreachable
@@ -220,7 +228,7 @@ Values for subcodes of PC/TCP error 0Ah "NET_ERR_HOST_UNREACHABLE":
  05h	no route
  06h	gateway down
 
-(Table 1865)
+(Table 1964)
 Values for subcodes of PC/TCP error 1Ch "NET_ERR_ICMPMESG":
  07h	unrecognised
  08h	can't fragment
@@ -232,7 +240,7 @@ Values for subcodes of PC/TCP error 1Ch "NET_ERR_ICMPMESG":
 --------N-6100-------------------------------
 INT 61 U - PC/TCP kernel v2.05+ - GET DEBUG INFORMATION
 	AH = 00h
-	DS:SI -> 216-byte buffer for network debugging information (see #1866)
+	DS:SI -> 216-byte buffer for network debugging information (see #1965)
 Return: CF clear
 	AX = 0000h
 	buffer filled
@@ -243,7 +251,7 @@ Notes:	this call is not documented by FTP, Inc. for any version
 SeeAlso: INT 61"PC/TCP",INT 61/AH=2Ah"PC/TCP"
 
 Format of network debugging information:
-Offset	Size	Description	(Table 1866)
+Offset	Size	Description	(Table 1965)
  00h	DWORD	number of interrupts
  04h	DWORD	receive buffer low-water mark
  08h	DWORD	transmit buffer low-water mark
@@ -276,6 +284,36 @@ Offset	Size	Description	(Table 1866)
  B2h	DWORD	pointer to TCP connection list???
  B6h	DWORD	pointer to IP routing table???
  BAh 30 BYTEs	???
+--------N-6100-------------------------------
+INT 61 - Banyan VINES - CALL A SERVICE
+	AH = 00h
+	AL = service ID (1..16)
+	other registers vary by service
+Return: AX = status (see #1968)
+Desc:	Calls an adapter driver or redirector service. The service handler
+	  pointers are stored at offset 0010h in the code segment of the
+	  BANV interrupt handler (see #1966).
+Note:	Banyan can use any interrupt from 60h through 66h.  The Banyan
+	  interrupt handler is identified by the string "BANV" in the four
+	  bytes immediately preceding the interrupt handler
+SeeAlso: AH=01h,AH=03h
+
+Format of the BANV code segment (revision 5.53):
+Offset	Size	Description	(Table 1966)
+ 00h 16	BYTEs	reserved
+ 10h 16	DWORDs	far pointers to the service handlers (0 = not installed)
+ 50h	DWORD	far pointer to last called service
+ 54h	WORD	VINES revision
+ 56h	DWORD	VINES revision long
+ 5Ah	WORD	VINES revision (lower bound)
+ 5Ch	DWORD	VINES revision (lower bound) long
+ 60h	WORD	VINES revision (upper bound)
+ 62h	DWORD	VINES revision (upper bound) long
+ 66h	WORD	end of PCCONFIG area
+ 68h	WORD	start of PCCONFIG area
+ 6Ah  4	BYTEs	BANV interrupt identifier ("BANV")
+ 6Eh  N	BYTEs	BANV interrupt service
+SeeAlso: #1967
 --------V-610000-----------------------------
 INT 61 - OPTIMA 1024 VGA-Sync,ET-3000 chipset - ZOOM DISPLAY
 	AX = 0000h
@@ -286,24 +324,52 @@ Notes:	INT 61h is the default interrupt; the actual interrupt number can be
 	not all vendors include the Tseng TSR which supports these functions
 SeeAlso: AX=0001h"OPTIMA",AX=0002h"OPTIMA",AX=0005h"OPTIMA"
 SeeAlso: INT 16/AH=FFh"OPTIMA"
+--------N-610001-----------------------------
+INT 61 - Banyan VINES - INTERNAL COMMUNICATION
+	AX = 0001h
+	BX -> internal communications control block (see #1967)
+	DS = 0001h
+	CX = caller's data segment
+	DX = caller's data segment
+Return: AX = status
+	    0000h successful
+	    00A5h resource not available
+Range:	INT 60 to INT 66
+Notes:	This service is handled by the adapter driver
+	The existence of the following subfunctions has been verified:
+	  0001h, 0002h, 0003h, 0004h, 0005h, 0008h, 0009h, 000Ah, 000Bh, 000Ch
+	  0012h, 0013h, 0015h, 0016h
+
+Format of internal communications control block:
+Offset	Size	Description	(Table 1967)
+ 00h	WORD	subfunction number
+ 02h	WORD	magic number (FEFEh)
+ 04h	WORD	??? result, should be set to 0 before calling
+ 06h	WORD	??? reserved
+ 08h	WORD	??? caller's code segment if function 000Bh, 0 else
+ 0Ah	WORD	??? main input/output parameter
+ 0Ch	WORD	??? some output parameter
+ 0Eh	WORD	??? some input/output parameter
+SeeAlso: #1966
 --------N-610001SF0001-----------------------
 INT 61 - Banyan VINES - "Sosock" - OPEN COMMUNICATIONS SOCKET
 	AX = 0001h subfn 0001h
-	DS:DX -> communications control block (function 0001h) (see #1868)
-Return: AX = status (0000h-0002h,0098h,009Eh-00A2h) (see #1867)
+	DS:DX -> communications control block (function 0001h) (see #1969)
+Return: AX = status (0000h-0002h,0098h,009Eh-00A2h) (see #1968)
 Range:	INT 60h to INT 66h
 Note:	The Banyan interrupt handler is identified by the string "BANV" in
 	  the four bytes immediately preceding the interrupt handler
 SeeAlso: AX=0001h/SF=0002h,AX=0001h/SF=0008h,INT 15/AX=DE2Eh
 
-(Table 1867)
+(Table 1968)
 Values for VINES status:
  0000h	successful
  0001h	service not installed
  0002h	invalid service ID
- 0098h	resource already in use
- 0003h-000Ah reserved for BANV interface errors
+ 0003h	invalid function
+ 0004h-000Ah reserved for BANV interface errors
  0097h	invalid socket identifier
+ 0098h	resource already in use
  009Bh	destination node unreachable
  009Ch	message overflow
  009Dh	destination socket nonexistent
@@ -318,15 +384,15 @@ Values for VINES status:
  00B1h	resource disconnect
 
 Format of VINES control block to open socket:
-Offset	Size	Description	(Table 1868)
+Offset	Size	Description	(Table 1969)
  00h	WORD	0001h
  02h	WORD	pointer to argument block
  04h	WORD	error return code
  06h  4 BYTEs	reserved
-SeeAlso: #1869
+SeeAlso: #1970
 
 Format of VINES argument block for opening socket:
-Offset	Size	Description	(Table 1869)
+Offset	Size	Description	(Table 1970)
  00h	WORD	pointer to 2-byte buffer for socket identifier
  02h	WORD	address family
 		0003h Banyan
@@ -336,57 +402,60 @@ Offset	Size	Description	(Table 1869)
 		    0002h SPP socket
  06h	WORD	protocol number
 		FFFFh default
- 08h	WORD	pointer to 16-byte buffer for socket address (see #1870)
+ 08h	WORD	pointer to 16-byte buffer for socket address (see #1971)
  0Ah	WORD	local port number
 		0000h if service should assign transient port number
 		0001h to 01FFh well-known port number (assigned by Banyan)
-SeeAlso: #1868
+SeeAlso: #1969
 
-Format of IPC port:
-Offset	Size	Description	(Table 1870)
+Format of Banyan VINES IPC port:
+Offset	Size	Description	(Table 1971)
  00h	WORD	address family (always 0003h for Banyan ports)
  04h  4 BYTEs	network number (server's serial number)
  06h	WORD	subnet number  (0001h = server, 8000h-FFFEh = PC)
  08h	WORD	port ID (0001h-01FFh for "well-known" ports)
  0Ah	BYTE	hop count
  0Bh  5 BYTEs	filler
+SeeAlso: #1976
 --------N-610001SF0002-----------------------
 INT 61 - Banyan VINES - "Sosend" - INITIATE OUTPUT EVENT
 	AX = 0001h subfn 0002h
-	DS:DX -> communications control block (function 0002h) (see #1871)
+	DS:DX -> communications control block (function 0002h) (see #1972)
 Return: AX = status (0000h-0002h,0097h,009Bh-009Dh,00A2h,00A3h,00B1h)
-	    (see #1867)
+	    (see #1968)
 Range:	INT 60h to INT 66h
 Note:	The Banyan interrupt handler is identified by the string "BANV" in
 	  the four bytes immediately preceding the interrupt handler
 SeeAlso: AX=0001h/SF=0001h,AX=0001h/SF=0005h
 
 Format of VINES control block for subfunction 0002h:
-Offset	Size	Description	(Table 1871)
+Offset	Size	Description	(Table 1972)
  00h	WORD	0002h
- 02h	WORD	pointer to argument block (see #1872)
+ 02h	WORD	pointer to argument block (see #1973)
  04h	WORD	error return code (0000h,0097h,00A2h,00A3h,00A5h,00A6h,00B1h)
-		(see #1867)
+		(see #1968)
  06h  4 BYTEs	reserved
+SeeAlso: #1977
 
 Format of VINES argument block for subfunction 0002h:
-Offset	Size	Description	(Table 1872)
+Offset	Size	Description	(Table 1973)
  00h	WORD	routine metric
  02h	WORD	error return code
  04h	WORD	socket identifier
- 06h	WORD	pointer to send buffer (see #1874)
+ 06h	WORD	pointer to send buffer (see #1975)
  08h	WORD	length of send buffer
- 0Ah	WORD	message request flags (see #1873)
- 0Ch 16 BYTEs	socket address (see #1875)
+ 0Ah	WORD	message request flags (see #1974)
+ 0Ch 16 BYTEs	socket address (see #1976)
  1Ch	WORD	timeout value in multiples of 200ms
  1Eh	WORD	connection identifier
  20h	WORD	type of request
 		0001h send message
 		0002h establish a virtual connection
 		0003h terminate a virtual connection
+SeeAlso: #1972,#1978
 
 Bitfields for message request flags:
-Bit(s)	Description	(Table 1873)
+Bit(s)	Description	(Table 1974)
  0	async request
  1	reliable message
  2	flush receive buffer on overflow
@@ -394,98 +463,103 @@ Bit(s)	Description	(Table 1873)
  4	vectored request (if set, send buffer contains buffer descriptors)
  5	connection-specific receive
  6	change to connection-specific receive mode
+SeeAlso: #1973,#1978
 
 Format of buffer descriptor:
-Offset	Size	Description	(Table 1874)
+Offset	Size	Description	(Table 1975)
  00h	WORD	data segment
  02h	WORD	buffer pointer
  04h	WORD	buffer length
  06h	WORD	character count
+SeeAlso: #1973
 
 Format of VINES socket address for unreliable datagrams:
-Offset	Size	Description	(Table 1875)
+Offset	Size	Description	(Table 1976)
  00h	WORD	0003h	  address family
  02h	DWORD	FFFFFFFFh network number
  06h	WORD	FFFFh	  subnet number
  08h	WORD		  local port number
  0Ah	BYTE	00h-0Fh	  hop count
  0Bh  5 BYTEs	0000h	  filler
+SeeAlso: #1971
 --------N-610001SF0003-----------------------
 INT 61 - Banyan VINES - "Sorec" - RECEIVE INPUT EVENT NOTIFICATION
 	AX = 0001h subfn 0003h
-	DS:DX -> communications control block (function 0003h) (see #1876)
-Return: AX = status (00-0Ah,97h,A2h,A3h) (see #1867)
+	DS:DX -> communications control block (function 0003h) (see #1977)
+Return: AX = status (00-0Ah,97h,A2h,A3h) (see #1968)
 Range:	INT 60h to INT 66h
 Note:	The Banyan interrupt handler is identified by the string "BANV" in
 	  the four bytes immediately preceding the interrupt handler
 SeeAlso: AX=0001h/SF=0002h
 
 Format of VINES control block for subfunction 0003h:
-Offset	Size	Description	(Table 1876)
+Offset	Size	Description	(Table 1977)
  00h	WORD	0003h
- 02h	WORD	pointer to argument block (see #1877)
+ 02h	WORD	pointer to argument block (see #1978)
  04h	WORD	error return code (0000h,0097h,00A2h,00A3h,00A5h,00A6h,00B1h)
-		(see #1867)
+		(see #1968)
  06h  4 BYTEs	reserved
-SeeAlso: #1877
+SeeAlso: #1972,#1978,#1980
 
 Format of VINES argument block for subfunction 0003h:
-Offset	Size	Description	(Table 1877)
+Offset	Size	Description	(Table 1978)
  00h	WORD	character count
  02h	WORD	error return code
  04h	WORD	socket identifier
- 06h	WORD	pointer to receive buffer (see #1878)
+ 06h	WORD	pointer to receive buffer (see #1979)
  08h	WORD	length of receive buffer
- 0Ah	WORD	message request flags (see #1873)
- 0Ch 16 BYTEs	socket address (see #1870)
+ 0Ah	WORD	message request flags (see #1974)
+ 0Ch 16 BYTEs	socket address (see #1971)
  1Ch	WORD	timeout value in multiples of 200ms
  1Eh	WORD	connection identifier
  20h	WORD	type of response
 		0001h message received
 		0002h virtual connection established
 		0003h virtual connection terminated
-SeeAlso: #1876
+SeeAlso: #1977,#1981
 
 Format of buffer descriptor:
-Offset	Size	Description	(Table 1878)
+Offset	Size	Description	(Table 1979)
  00h	WORD	data segment
  02h	WORD	buffer pointer
  04h	WORD	buffer length
  06h	WORD	character count
+SeeAlso: #1978
 --------N-610001SF0004-----------------------
 INT 61 - Banyan VINES - "Soclose" - CLOSE A SOCKET
 	AX = 0001h subfn 0004h
-	DS:DX -> communications control block (function 0004h) (see #1879)
-Return: AX = status (0000h-000Ah,0097h) (see #1867)
+	DS:DX -> communications control block (function 0004h) (see #1980)
+Return: AX = status (0000h-000Ah,0097h) (see #1968)
 Range:	INT 60h to INT 66h
 Note:	The Banyan interrupt handler is identified by the string "BANV" in
 	  the four bytes immediately preceding the interrupt handler
 SeeAlso: AX=0001h/SF=0001h,INT 15/AX=DE2Eh
 
 Format of VINES control block to close socket:
-Offset	Size	Description	(Table 1879)
+Offset	Size	Description	(Table 1980)
  00h	WORD	0004h
- 02h	WORD	pointer to argument block (see #1880)
- 04h	WORD	error return code (see #1867)
+ 02h	WORD	pointer to argument block (see #1981)
+ 04h	WORD	error return code (see #1968)
  06h  4 BYTEs	reserved
+SeeAlso: #1977,#1983
 
 Format of VINES argument block for closing socket:
-Offset	Size	Description	(Table 1880)
+Offset	Size	Description	(Table 1981)
  00h	WORD	socket identifier
-SeeAlso: #1879
+SeeAlso: #1978,#1980,#1984
 --------N-610001SF0005-----------------------
 INT 61 - Banyan VINES - "Sowait" - WAIT FOR ASYNCHRONOUS EVENT COMPLETION
 	AX = 0001h subfn 0005h
-	DS:DX -> communications control block (see #1882)
-Return: AX = status (0000h-000Ah,00A2h,00A3h) (see #1881)
+	DS:DX -> communications control block (see #1983)
+Return: AX = status (0000h-000Ah,00A2h,00A3h) (see #1982)
+Desc:	returns results for all asynchronous operations invoked from the
+	  data segment used for this call
 Range:	INT 60h to INT 66h
 Notes:	The Banyan interrupt handler is identified by the string "BANV" in
 	  the four bytes immediately preceding the interrupt handler
-	returns results for all asynchronous operations invoked from the
-	  data segment used for this call
 SeeAlso: AX=0001h/SF=0002h,AX=0001h/SF=0009h
 
-(Table 1881)
+(Table 1982)
 Values for VINES function status:
  0000h	successful
  0001h	service not installed
@@ -495,20 +569,22 @@ Values for VINES function status:
  00A3h	timeout event
 
 Format of VINES control block for subfunction 0005h:
-Offset	Size	Description	(Table 1882)
+Offset	Size	Description	(Table 1983)
  00h	WORD	0005h
- 02h	WORD	pointer to argument block (see #1883)
+ 02h	WORD	pointer to argument block (see #1984)
  04h	WORD	error return code
  06h  4 BYTEs	reserved
+SeeAlso: #1980,#1985
 
 Format of VINES argument block for subfunction 0005h:
-Offset	Size	Description	(Table 1883)
+Offset	Size	Description	(Table 1984)
  00h	WORD	pointer to WORD event pointer
  02h	WORD	timeout in multiples of 200ms, FFFFh = infinite
+SeeAlso: #1981,#1983
 --------N-610001SF0008-----------------------
 INT 61 - Banyan VINES - "Sosession" - REGISTER APPLICATION WITH COMM SERVICE
 	AX = 0001h subfn 0008h
-	DS:DX -> communications control block (function 0008h) (see #1884)
+	DS:DX -> communications control block (function 0008h) (see #1985)
 Return: AX = status
 	    0000h  successful
 	    00A2h  no more buffer space available
@@ -518,38 +594,41 @@ Note:	The Banyan interrupt handler is identified by the string "BANV" in
 SeeAlso: AX=0001h/SF=0001h,AX=0001h/SF=0009h
 
 Format of VINES control block for subfunction 0006h:
-Offset	Size	Description	(Table 1884)
+Offset	Size	Description	(Table 1985)
  00h	WORD	0008h
  02h	WORD	process type
 		0001h transient process
 		0002h resident process
  04h	WORD	error return code
  06h  4 BYTEs	reserved
+SeeAlso: #1983,#1986
 --------N-610001SF000B-----------------------
 INT 61 - Banyan VINES - "Soint" - SET USER COMPLETION FUNCTION
 	AX = 0001h subfn 000Bh
-	DS:DX -> communications control block (function 000Bh) (see #1885)
-Return: AX = status (00h-0Ah,A2h) (see #1881)
+	DS:DX -> communications control block (function 000Bh) (see #1986)
+Return: AX = status (00h-0Ah,A2h) (see #1982)
 Range:	INT 60h to INT 66h
 Note:	The Banyan interrupt handler is identified by the string "BANV" in
 	  the four bytes immediately preceding the interrupt handler
 SeeAlso: AX=0001h/SF=0005h,AX=0001h/SF=0008h
 
 Format of VINES control block for subfunction 000Bh:
-Offset	Size	Description	(Table 1885)
+Offset	Size	Description	(Table 1986)
  00h	WORD	000Bh
- 02h	WORD	pointer to argument block (see #1886)
- 04h	WORD	error return code (see #1867)
+ 02h	WORD	pointer to argument block (see #1987)
+ 04h	WORD	error return code (see #1968)
  06h  2 BYTEs	reserved
  08h	WORD	user CS register
+SeeAlso: #1985
 
 Format of VINES argument block for subfunction 000Bh:
-Offset	Size	Description	(Table 1886)
- 00h	WORD	pointer to user interrupt function (see #1887)
+Offset	Size	Description	(Table 1987)
+ 00h	WORD	pointer to user interrupt function (see #1988)
  02h	WORD	pointer to user stack
  04h	WORD	initial timeout value in multiples of 200ms, FFFFh = infinite
+SeeAlso: #1987
 
-(Table 1887)
+(Table 1988)
 Values FAR user function is invoked with:
 	SS = DS = ES = segment of control block
 	STACK:	DWORD	return address
@@ -574,15 +653,15 @@ SeeAlso: INT 16/AH=FFh"OPTIMA"
 --------I-610002-----------------------------
 INT 61 - Banyan VINES - 3270 INTERFACE
 	AX = 0002h
-	BH = function number (see #1888)
-	DS:CX -> argument block (except BH=00h,1Ah) (see #1890)
-Return: AX = status (see #1889)
+	BH = function number (see #1989)
+	DS:CX -> argument block (except BH=00h,1Ah) (see #1991)
+Return: AX = status (see #1990)
 Notes:	Either 3270/SNA or 3270/BSC interface may use AX=0002h, depending on
 	  which is loaded first.  The other interface will use AX=000Ah
 	Status codes greater than 63h indicate an inconsistency in the 3270/SNA
 	  or 3270/BSC resident driver, which must be reloaded by the user
 
-(Table 1888)
+(Table 1989)
 Values for VINES 3270 interface function number:
  00h "pi2reset"	 reset 3270/SNA or 3270/BSC driver
  02h "pi2bsc"	 (3270/BSC only)
@@ -606,7 +685,7 @@ Values for VINES 3270 interface function number:
  1Ch "pi2sprof"	 save profile info in res driver (not supp in >3.0)
  1Dh "pi2gprof"	 get prevsly stored profile info (not supp in >3.0)
 
-(Table 1889)
+(Table 1990)
 Values for VINES 3270 status:
  0000h	successful
  000Bh	invalid parameter or data does not fit data area
@@ -631,34 +710,35 @@ Values for VINES 3270 status:
  0077h	encountered connection request
  0078h	encountered unrecognizable data
  0079h	encountered unknown connection ID (ext info via "pi2gerr")
+SeeAlso: #1968
 
 Format of argument block for BH=03h,04h:
-Offset	Size	Description	(Table 1890)
+Offset	Size	Description	(Table 1991)
  00h	WORD	size of data area (max 256)
  02h  N BYTEs	data area
-SeeAlso: #1891,#1892,#1893
+SeeAlso: #1992,#1993,#1994
 
 Format of argument block for BH=05h:
-Offset	Size	Description	(Table 1891)
+Offset	Size	Description	(Table 1992)
  00h	WORD	logical unit/device number
  02h	WORD	pointer to WORD buffer for cursor index
  04h	WORD	pointer to BYTE buffer for current field attribute
-SeeAlso: #1890,#1892,#1893
+SeeAlso: #1991,#1993,#1994
 
 Format of argument block for BH=07h:
-Offset	Size	Description	(Table 1892)
+Offset	Size	Description	(Table 1993)
  00h	WORD	logical unit/device number
  02h	WORD	ASCII data byte
  04h	WORD	pointer to WORD count of characters which will need updating
-SeeAlso: #1890,#1891,#1893
+SeeAlso: #1991,#1992,#1994
 
 Format of argument block for BH=08h:
-Offset	Size	Description	(Table 1893)
+Offset	Size	Description	(Table 1994)
  00h	WORD	logical unit/device number
- 02h	WORD	3270 keystroke (see #1894)
-SeeAlso: #1890,#1891,#1892,#1895
+ 02h	WORD	3270 keystroke (see #1995)
+SeeAlso: #1991,#1992,#1993,#1996
 
-(Table 1894)
+(Table 1995)
 Values for 3270 keystroke:
  0000h	Enter
  0001h	Clear
@@ -693,22 +773,22 @@ Values for 3270 keystroke:
  0033h	Backspace	
 
 Format of argument block for BH=0Ah:
-Offset	Size	Description	(Table 1895)
+Offset	Size	Description	(Table 1996)
  00h	WORD	logical unit/device number
  02h	WORD	screen index
  04h	WORD	pointer to WORD buffer for field length
  06h	WORD	pointer to WORD buffer for offset in screen of field start
-SeeAlso: #1893,#1896
+SeeAlso: #1994,#1997
 
 Format of argument block for BH=0Fh:
-Offset	Size	Description	(Table 1896)
+Offset	Size	Description	(Table 1997)
  00h	WORD	logical unit/device number
  02h	WORD	clear mask (clear these bits of status after returning status)
- 04h	WORD	pointer to WORD buffer for device status (see #1897)
-SeeAlso: #1895,#1898
+ 04h	WORD	pointer to WORD buffer for device status (see #1998)
+SeeAlso: #1996,#1999
 
-Bitfields for device status:
-Bit(s)	Description	(Table 1897)
+Bitfields for Banyan 3270 device status:
+Bit(s)	Description	(Table 1998)
  10	status modified
  9	buffer modified
  8	set cursor
@@ -720,19 +800,19 @@ Bit(s)	Description	(Table 1897)
 	11  80-character line
 
 Format of argument block for BH=12h:
-Offset	Size	Description	(Table 1898)
+Offset	Size	Description	(Table 1999)
  00h	WORD	pointer to WORD buffer for number of logical units or devices
  02h	WORD	pointer to WORD buffer for version number
  04h	WORD	pointer to 64-byte buffer for logical unit/device list
-SeeAlso: #1896,#1899
+SeeAlso: #1997,#2000
 
 Format of argument block for BH=13h:
-Offset	Size	Description	(Table 1899)
- 00h 16 BYTEs	communications port address (see #1870)
-SeeAlso: #1898,#1900
+Offset	Size	Description	(Table 2000)
+ 00h 16 BYTEs	communications port address (see #1971)
+SeeAlso: #1999,#2001
 
 Format of argument block for BH=14h:
-Offset	Size	Description	(Table 1900)
+Offset	Size	Description	(Table 2001)
  00h	WORD	logical unit/device number
 		0000h attach any free device of the specified type
  02h	WORD	logical unit/device type
@@ -740,38 +820,38 @@ Offset	Size	Description	(Table 1900)
 		(3270/BSC) 02h display
 		(3270/BSC) 03h printer
  04h	WORD	pointer to WORD buffer for attached logical unit/device number
-SeeAlso: #1899,#1901
+SeeAlso: #2000,#2002
 
 Format of argument block for BH=16h:
-Offset	Size	Description	(Table 1901)
- 00h	WORD	pointer to 18-byte buffer for device block (see #1906)
+Offset	Size	Description	(Table 2002)
+ 00h	WORD	pointer to 18-byte buffer for device block (see #2007)
 		first WORD must be set to desired logical unit/device number
-SeeAlso: #1900,#1902
+SeeAlso: #2001,#2003
 
 Format of argument block for BH=17h:
-Offset	Size	Description	(Table 1902)
+Offset	Size	Description	(Table 2003)
  00h	WORD	logical unit/device number
- 02h	WORD	pointer to information block in caller's DS (see #1907)
-SeeAlso: #1901,#1903
+ 02h	WORD	pointer to information block in caller's DS (see #2008)
+SeeAlso: #2002,#2004
 
 Format of argument block for BH=18h:
-Offset	Size	Description	(Table 1903)
+Offset	Size	Description	(Table 2004)
  00h	WORD	pointer to WORD buffer for major error code
  02h	WORD	pointer to WORD buffer for minor error code
-SeeAlso: #1902,#1904
+SeeAlso: #2003,#2005
 
 Format of argument block for BH=19h:
-Offset	Size	Description	(Table 1904)
+Offset	Size	Description	(Table 2005)
  00h	WORD	logical unit/device number
-SeeAlso: #1903,#1905
+SeeAlso: #2004,#2006
 
 Format of argument block for BH=1Ch,1Dh:
-Offset	Size	Description	(Table 1905)
- 00h	WORD	pointer to profile block in caller's DS (see #1910)
-SeeAlso: #1890,#1904
+Offset	Size	Description	(Table 2006)
+ 00h	WORD	pointer to profile block in caller's DS (see #2011)
+SeeAlso: #1991,#2005
 
 Format of device block, argument block for BH=15h:
-Offset	Size	Description	(Table 1906)
+Offset	Size	Description	(Table 2007)
  00h	WORD	logical unit/device number
  02h	WORD	logical unit/device type
  04h	WORD	display model number
@@ -785,14 +865,14 @@ Offset	Size	Description	(Table 1906)
  10h	WORD	printer port number
 
 Format of information block:
-Offset	Size	Description	(Table 1907)
+Offset	Size	Description	(Table 2008)
  00h	WORD	device model number
  02h	DWORD	screen buffer pointer
- 06h	DWORD	status line pointer (see #1908)
+ 06h	DWORD	status line pointer (see #2009)
  0Ah	DWORD	reserved
 
-Format of status line:
-Offset	Size	Description	(Table 1908)
+Format of Banyan VINES 3270 status line:
+Offset	Size	Description	(Table 2009)
  00h	BYTE	comm line status
 		00h inactive
 		01h active
@@ -806,7 +886,7 @@ Offset	Size	Description	(Table 1908)
  03h	BYTE	screen ownership
 		00h SLU->PLU session owns screen
 		01h SLU->SSCP session owns screen
- 04h	BYTE	keyboard status (see #1909)
+ 04h	BYTE	keyboard status (see #2010)
  05h	BYTE	insert mode
 		01h if in insert mode
  06h	BYTE	numeric
@@ -835,8 +915,8 @@ Offset	Size	Description	(Table 1908)
 	BYTE	extended color
 		01h other than base color is in effect
 
-(Table 1909)
-Values for keyboard status:
+(Table 2010)
+Values for Banyan VINES 3270 keyboard status:
  00h	UNLOCK - ready to accept data
  01h	TIME - aid was struck
  02h	SYSTEM - received response no restore
@@ -847,8 +927,8 @@ Values for keyboard status:
  07h	NUMERIC - attempt to enter in numeric field
  08h	PROGRAM - error in outbound data stream
 
-Format of profile block:
-Offset	Size	Description	(Table 1910)
+Format of Banyan VINES 3270 profile block:
+Offset	Size	Description	(Table 2011)
  00h 64 BYTEs	gateway service name
  40h 16 BYTEs	gateway comm port address
  50h	WORD	primary logical unit number
@@ -868,11 +948,11 @@ SeeAlso: AX=0000h"OPTIMA",INT 16/AH=FFh"OPTIMA"
 --------N-610003SF00-------------------------
 INT 61 - Banyan VINES - ASYNC TERMINAL EMULATION - INIT USER BUFFER PTR INFO
 	AX = 0003h subfn 00h
-	DS:BX -> argument block (see #1912)
-Return: AX = status (see #1911)
+	DS:BX -> argument block (see #2013)
+Return: AX = status (see #2012)
 SeeAlso: AX=0003h/SF=06h,AX=0003h/SF=08h,AX=0003h/SF=0Dh
 
-(Table 1911)
+(Table 2012)
 Values for VINES function status:
  0000h	successful
  000Bh	invalid session ID
@@ -899,15 +979,16 @@ Values for VINES function status:
  0020h	access rights list for connection/dialout does not include this user
  0021h	service not responding
  0022h	missing telephone number
+SeeAlso: #1968,#2016
 
 Format of VINES argument block:
-Offset	Size	Description	(Table 1912)
+Offset	Size	Description	(Table 2013)
  00h	BYTE	session ID (00h)
  01h	BYTE	00h (func "initialize user buffer pointer information area")
- 02h	WORD	-> user buffer ptr info area in caller's current DS (see #1913)
+ 02h	WORD	-> user buffer ptr info area in caller's current DS (see #2014)
 
 Format of user buffer ptr info area:
-Offset	Size	Description	(Table 1913)
+Offset	Size	Description	(Table 2014)
  00h	WORD	flags
 		0000h don't read interface's data buffer
 		0001h read data buffer
@@ -918,10 +999,10 @@ Offset	Size	Description	(Table 1913)
 		  in ring buffer filled
  0Eh	DWORD	pointer to screen buffer
  12h	DWORD	pointer to field containing cursor position
- 16h	DWORD	pointer to terminal status area (see #1914)
+ 16h	DWORD	pointer to terminal status area (see #2015)
 
 Format of VINES terminal status area:
-Offset	Size	Description	(Table 1914)
+Offset	Size	Description	(Table 2015)
  00h	BYTE	status of session: 4Eh=oNline, 46h=oFfline, 57h=Waiting
  01h	BYTE	terminal type (00h=VT100, 01h=TTY, 02h=VT52, 03h=IBM3101)
  02h	BYTE	current keypad mode (VT100,VT52 only)
@@ -931,10 +1012,10 @@ Offset	Size	Description	(Table 1914)
 		00h off
 		01h on
  07h	WORD	line error count
- 09h	WORD	primary error code (see #1915)
+ 09h	WORD	primary error code (see #2016)
  0Bh	WORD	secondary error code
 
-(Table 1915)
+(Table 2016)
 Values for VINES primary error code:
  0000h	no error
  0001h	unable to make connection
@@ -962,15 +1043,16 @@ Values for VINES primary error code:
  0015h	communications error
  0016h	unable to make connection
  0017h	unable to make connection
+SeeAlso: #2012
 --------N-610003SF01-------------------------
 INT 61 - Banyan VINES - ASYNC TERMINAL EMULATION - SEND TO HOST
 	AX = 0003h subfn 01h
-	DS:BX -> argument block (see #1916)
-Return: AX = status (see #1911)
+	DS:BX -> argument block (see #2017)
+Return: AX = status (see #2012)
 SeeAlso: AX=0003h/SF=00h,AX=0003h/SF=02h,AX=0003h/SF=14h
 
 Format of VINES argument block for Function 0003h subfunction 01h:
-Offset	Size	Description	(Table 1916)
+Offset	Size	Description	(Table 2017)
  00h	BYTE	session ID (00h)
  01h	BYTE	01h (function "send to host")
  02h	BYTE	type
@@ -982,10 +1064,10 @@ Offset	Size	Description	(Table 1916)
 		05h left arrow
 		06h right arrow
 		07h break
- 03h  N BYTEs	type-specific info (see #1917)
+ 03h  N BYTEs	type-specific info (see #2018)
 
 Format of type-specific info:
-Offset	Size	Description	(Table 1917)
+Offset	Size	Description	(Table 2018)
 ---ASCII byte---
  03h	BYTE	byte to send to host
 ---ASCII string---
@@ -1011,15 +1093,16 @@ Offset	Size	Description	(Table 1917)
 		...
 		07h PF8
 		08h Home
+SeeAlso: #2017
 --------N-610003SF02-------------------------
 INT 61 - Banyan VINES - ASYNC TERMINAL EMULATION - "CONTROL MONITOR"
 	AX = 0003h subfn 02h
-	DS:BX -> argument block (see #1918)
-Return: AX = status (see #1911)
+	DS:BX -> argument block (see #2019)
+Return: AX = status (see #2012)
 SeeAlso: AX=0003h/SF=03h,AX=0003h/SF=05h
 
 Format of VINES argument block for Function 0003h subfunction 02h:
-Offset	Size	Description	(Table 1918)
+Offset	Size	Description	(Table 2019)
  00h	BYTE	session ID (00h)
  01h	BYTE	02h (function "control monitor")
  02h	BYTE	display flag
@@ -1028,14 +1111,14 @@ Offset	Size	Description	(Table 1918)
 --------N-610003SF03-------------------------
 INT 61 - Banyan VINES - ASYNC TERMINAL EMULATION - "FLOW CONTROL DATA"
 	AX = 0003h subfn 03h
-	DS:BX -> argument block (see #1919)
-Return: AX = status (see #1911)
+	DS:BX -> argument block (see #2020)
+Return: AX = status (see #2012)
 Desc:	this function permits the caller to freeze/unfreeze the display and
 	  the ring buffer
 SeeAlso: AX=0003h/SF=02h,AX=0003h/SF=06h
 
 Format of VINES argument block for Function 0003h subfunction 03h:
-Offset	Size	Description	(Table 1919)
+Offset	Size	Description	(Table 2020)
  00h	BYTE	session ID (00h)
  01h	BYTE	03h (function "flow control data")
  02h	BYTE	flow control flag
@@ -1044,29 +1127,29 @@ Offset	Size	Description	(Table 1919)
 --------N-610003SF04-------------------------
 INT 61 - Banyan VINES - ASYNC TERMINAL EMULATION - END ACTIVE SESSION
 	AX = 0003h subfn 04h
-	DS:BX -> argument block (see #1920)
-Return: AX = status (see #1911)
+	DS:BX -> argument block (see #2021)
+Return: AX = status (see #2012)
 SeeAlso: AX=0003h/SF=0Ah,AX=0003h/SF=0Dh,AX=0003h/SF=0Fh
 
 Format of VINES argument block for ending active session:
-Offset	Size	Description	(Table 1920)
+Offset	Size	Description	(Table 2021)
  00h	BYTE	session ID (00h)
  01h	BYTE	04h (function "end active session")
 --------N-610003SF05-------------------------
 INT 61 - Banyan VINES - ASYNC TERMINAL EMULATION - SET SESSION PARAMETER
 	AX = 0003h subfn 05h
-	DS:BX -> argument block (see #1921)
-Return: AX = status (see #1911)
+	DS:BX -> argument block (see #2022)
+Return: AX = status (see #2012)
 SeeAlso: AX=0003h/SF=00h,AX=0003h/SF=06h,AX=0003h/SF=08h
 
 Format of VINES argument block for setting session parameters:
-Offset	Size	Description	(Table 1921)
+Offset	Size	Description	(Table 2022)
  00h	BYTE	session ID (00h)
  01h	BYTE	05h (function "set session parameter")
- 02h	BYTE	parameter number (see #1922)
+ 02h	BYTE	parameter number (see #2023)
  03h	BYTE	new parameter value
 
-(Table 1922)
+(Table 2023)
 Values for parameter number:
  00h	line speed (00h=any, 01h=50, 02h=110, 03h=134.5, 04h=150,
 		  05h=300, 06h=600, 07h=1200, 08h=2400, 09h=4800, 0Ah=9600)
@@ -1084,28 +1167,29 @@ Values for parameter number:
  0Dh	cursor shape (00h=underscore, 01h=block)
  0Eh	character set (00h=UK, 01h=US ASCII)
  0Fh	printer port (00h=LPT1, 01h=LPT2, 02h=LPT3)
+SeeAlso: #2022
 --------N-610003SF06-------------------------
 INT 61 - Banyan VINES - ASYNC TERMINAL EMULATION - GET SESSION PARAMETER
 	AX = 0003h subfn 06h
-	DS:BX -> argument block (see #1923)
-Return: AX = status (see #1911)
+	DS:BX -> argument block (see #2024)
+Return: AX = status (see #2012)
 SeeAlso: AX=0003h/SF=00h,AX=0003h/SF=05h,AX=0003h/SF=07h
 
 Format of VINES argument block for getting session parameters:
-Offset	Size	Description	(Table 1923)
+Offset	Size	Description	(Table 2024)
  00h	BYTE	session ID (00h)
  01h	BYTE	06h (function "get session parameter")
- 02h	BYTE	parameter number (see #1922)
- 03h	BYTE	(return) current parameter value
+ 02h	BYTE	parameter number (see #2023)
+ 03h	BYTE	(ret) current parameter value
 --------N-610003SF07-------------------------
 INT 61 - Banyan VINES - ASYNC TERMINAL EMULATION - SET TAB SETTINGS
 	AX = 0003h subfn 07h
-	DS:BX -> argument block (see #1924)
-Return: AX = status (see #1911)
+	DS:BX -> argument block (see #2025)
+Return: AX = status (see #2012)
 SeeAlso: AX=0003h/SF=05h,AX=0003h/SF=08h
 
 Format of VINES argument block for setting tab settings:
-Offset	Size	Description	(Table 1924)
+Offset	Size	Description	(Table 2025)
  00h	BYTE	session ID (00h)
  01h	BYTE	07h (function "set tab settings")
  02h	WORD	pointer to 80-byte buffer in caller's current DS
@@ -1113,12 +1197,12 @@ Offset	Size	Description	(Table 1924)
 --------N-610003SF08-------------------------
 INT 61 - Banyan VINES - ASYNC TERMINAL EMULATION - GET TAB SETTINGS
 	AX = 0003h subfn 08h
-	DS:BX -> argument block (see #1925)
-Return: AX = status (see #1911)
+	DS:BX -> argument block (see #2026)
+Return: AX = status (see #2012)
 SeeAlso: AX=0003h/SF=06h,AX=0003h/SF=07h
 
 Format of VINES argument block for getting tab settings:
-Offset	Size	Description	(Table 1925)
+Offset	Size	Description	(Table 2026)
  00h	BYTE	session ID (00h)
  01h	BYTE	08h (function "get tab settings")
  02h	WORD	pointer to 80-byte buffer in caller's current DS
@@ -1126,23 +1210,23 @@ Offset	Size	Description	(Table 1925)
 --------N-610003SF09-------------------------
 INT 61 - Banyan VINES - ASYNC TERMINAL EMULATION - REFRESH EMULATION SCREEN
 	AX = 0003h subfn 09h
-	DS:BX -> argument block (see #1926)
-Return: AX = status (see #1911)
+	DS:BX -> argument block (see #2027)
+Return: AX = status (see #2012)
 SeeAlso: AX=0003h/SF=00h,AX=0003h/SF=0Bh
 
 Format of VINES argument block for Function 0003h subfunction 09h:
-Offset	Size	Description	(Table 1926)
+Offset	Size	Description	(Table 2027)
  00h	BYTE	session ID (00h)
  01h	BYTE	09h (function "refresh emulation screen")
 --------N-610003SF0A-------------------------
 INT 61 - Banyan VINES - ASYNC TERMINAL EMULATION - SUSPEND SESSION TEMPORARILY
 	AX = 0003h subfn 0Ah
-	DS:BX -> argument block (see #1927)
-Return: AX = status (see #1911)
+	DS:BX -> argument block (see #2028)
+Return: AX = status (see #2012)
 SeeAlso: AX=0003h/SF=04h,AX=0003h/SF=09h,AX=0003h/SF=0Bh,AX=0003h/SF=0Dh
 
 Format of VINES argument block:
-Offset	Size	Description	(Table 1927)
+Offset	Size	Description	(Table 2028)
  00h	BYTE	session ID (00h)
  01h	BYTE	0Ah (function "suspend session temporarily")
  02h	WORD	size of session information to be saved
@@ -1150,12 +1234,12 @@ Offset	Size	Description	(Table 1927)
 --------N-610003SF0B-------------------------
 INT 61 - Banyan VINES - ASYNC TERMINAL EMULATION - RESUME SUSPENDED SESSION
 	AX = 0003h subfn 0Bh
-	DS:BX -> argument block (see #1928)
-Return: AX = status (see #1911)
+	DS:BX -> argument block (see #2029)
+Return: AX = status (see #2012)
 SeeAlso: AX=0003h/SF=09h,AX=0003h/SF=0Ah
 
 Format of VINES argument block:
-Offset	Size	Description	(Table 1928)
+Offset	Size	Description	(Table 2029)
  00h	BYTE	session ID (00h)
  01h	BYTE	0Bh (function "restore previously suspended session")
  02h	WORD	size of buffer into which session info is restored
@@ -1163,12 +1247,12 @@ Offset	Size	Description	(Table 1928)
 --------N-610003SF0C-------------------------
 INT 61 - Banyan VINES - ASYNC TERMINAL EMULATION - SET SCROLL LOCK CHECKING
 	AX = 0003h subfn 0Ch
-	DS:BX -> argument block (see #1929)
-Return: AX = status (see #1911)
+	DS:BX -> argument block (see #2030)
+Return: AX = status (see #2012)
 SeeAlso: AX=0003h/SF=00h
 
 Format of VINES argument block:
-Offset	Size	Description	(Table 1929)
+Offset	Size	Description	(Table 2030)
  00h	BYTE	session ID (00h)
  01h	BYTE	0Ch (function "set state of scroll lock checking")
  02h	BYTE	check_scroll_lock flag
@@ -1177,23 +1261,23 @@ Offset	Size	Description	(Table 1929)
 --------N-610003SF0D-------------------------
 INT 61 - Banyan VINES - ASYNC TERMINAL EMULATION - EXIT EMULATION
 	AX = 0003h subfn 0Dh
-	DS:BX -> argument block (see #1930)
-Return: AX = status (see #1911)
+	DS:BX -> argument block (see #2031)
+Return: AX = status (see #2012)
 SeeAlso: AX=0003h/SF=04h,AX=0003h/SF=0Ah
 
 Format of VINES argument block:
-Offset	Size	Description	(Table 1930)
+Offset	Size	Description	(Table 2031)
  00h	BYTE	session ID (00h)
  01h	BYTE	0Dh (function "exit emulation")
 --------N-610003SF0E-------------------------
 INT 61 - Banyan VINES - ASYNC TERMINAL EMULATION - INTERRUPT ON CHAR FROM HOST
 	AX = 0003h subfn 0Eh
-	DS:BX -> argument block (see #1931)
-Return: AX = status (see #1911)
+	DS:BX -> argument block (see #2032)
+Return: AX = status (see #2012)
 SeeAlso: AX=0003h/SF=00h,AX=0003h/SF=14h
 
 Format of VINES argument block:
-Offset	Size	Description	(Table 1931)
+Offset	Size	Description	(Table 2032)
  00h	BYTE	session ID (00h)
  01h	BYTE	0Eh (function "interrupt on character from host")
  02h	DWORD	pointer to routine to be called (0000h:0000h = don't call)
@@ -1201,18 +1285,18 @@ Offset	Size	Description	(Table 1931)
 --------N-610003SF0F-------------------------
 INT 61 - Banyan VINES - ASYNC TERMINAL EMULATION - START A SESSION
 	AX = 0003h subfn 0Fh
-	DS:BX -> argument block (see #1932)
-Return: AX = status (see #1911)
+	DS:BX -> argument block (see #2033)
+Return: AX = status (see #2012)
 SeeAlso: AX=0003h/SF=04h,AX=0003h/SF=0Bh
 
 Format of VINES argument block:
-Offset	Size	Description	(Table 1932)
+Offset	Size	Description	(Table 2033)
  00h	BYTE	session ID (00h)
  01h	BYTE	0Fh (function "start a session")
- 02h	WORD	pointer to information area in caller's current DS (see #1933)
+ 02h	WORD	pointer to information area in caller's current DS (see #2034)
 
 Format of VINES information area:
-Offset	Size	Description	(Table 1933)
+Offset	Size	Description	(Table 2034)
  00h	WORD	length of service name
  02h	WORD	pointer to service name in caller's DS
  04h	BYTE	type of connection (00h=connection name, 01h=dialout)
@@ -1221,30 +1305,30 @@ Offset	Size	Description	(Table 1933)
 --------N-610003SF10-------------------------
 INT 61 - Banyan VINES - ASYNC TERMINAL EMULATION - START/STOP PRINTING
 	AX = 0003h subfn 10h
-	DS:BX -> argument block (see #1934)
-Return: AX = status (see #1911)
+	DS:BX -> argument block (see #2035)
+Return: AX = status (see #2012)
 SeeAlso: AX=0003h/SF=06h,AX=0003h/SF=13h
 
 Format of VINES argument block:
-Offset	Size	Description	(Table 1934)
+Offset	Size	Description	(Table 2035)
  00h	BYTE	session ID (00h)
- 01h	BYTE	10h (function "start/stop printing of data received from host)
+ 01h	BYTE	10h (function "start/stop printing of data received from host")
  02h	WORD	print capture flag (00h=off, 01h=on)
 --------N-610003SF11-------------------------
 INT 61 - Banyan VINES - ASYNC TERMINAL EMULATION - GET FILE TRANSFER PARAMETERS
 	AX = 0003h subfn 11h
-	DS:BX -> argument block (see #1935)
-Return: AX = status (see #1911)
+	DS:BX -> argument block (see #2036)
+Return: AX = status (see #2012)
 SeeAlso: AX=0003h/SF=00h,AX=0003h/SF=12h
 
 Format of VINES argument block:
-Offset	Size	Description	(Table 1935)
+Offset	Size	Description	(Table 2036)
  00h	BYTE	session ID (00h)
  01h	BYTE	11h (function "get file transfer parameters")
- 02h	WORD	pointer to info area in caller's current DS (see #1936)
+ 02h	WORD	pointer to info area in caller's current DS (see #2037)
 
 Format of VINES info area:
-Offset	Size	Description	(Table 1936)
+Offset	Size	Description	(Table 2037)
  00h	BYTE	protocol flag (00h none, 01h Kermit)
  01h	BYTE	direction flag (00h send, 01h receive)
  02h	BYTE	length of null-terminated PC filename
@@ -1254,18 +1338,18 @@ Offset	Size	Description	(Table 1936)
 --------N-610003SF12-------------------------
 INT 61 - Banyan VINES - ASYNC TERMINAL EMULATION - GET CONNECTION INFORMATION
 	AX = 0003h subfn 12h
-	DS:BX -> argument block (see #1937)
-Return: AX = status (see #1911)
+	DS:BX -> argument block (see #2038)
+Return: AX = status (see #2012)
 SeeAlso: AX=0003h/SF=11h,AX=0003h/SF=15h
 
 Format of VINES argument block:
-Offset	Size	Description	(Table 1937)
+Offset	Size	Description	(Table 2038)
  00h	BYTE	session ID (00h)
  01h	BYTE	12h (function "get connection information")
- 02h	WORD	offset of buffer for connection information (see #1938)
+ 02h	WORD	offset of buffer for connection information (see #2039)
 
 Format of VINES connection information:
-Offset	Size	Description	(Table 1938)
+Offset	Size	Description	(Table 2039)
  00h	WORD	length of service name (returned)
  02h	WORD	pointer to 64-byte buffer for service name
  04h	BYTE	type of connection
@@ -1277,24 +1361,24 @@ Offset	Size	Description	(Table 1938)
 --------N-610003SF13-------------------------
 INT 61 - Banyan VINES - ASYNC TERMINAL EMULATION - START/STOP TRACING TRAFFIC
 	AX = 0003h subfn 13h
-	DS:BX -> argument block (see #1939)
-Return: AX = status (see #1911)
+	DS:BX -> argument block (see #2040)
+Return: AX = status (see #2012)
 SeeAlso: AX=0003h/SF=00h,AX=0003h/SF=0Eh
 
 Format of VINES argument block:
-Offset	Size	Description	(Table 1939)
+Offset	Size	Description	(Table 2040)
  00h	BYTE	session ID (00h)
  01h	BYTE	13h (function "start/stop tracing data traffic in session")
  02h	BYTE	trace flag (00h=off, 01h=on)
 --------N-610003SF14-------------------------
 INT 61 - Banyan VINES - ASYNC TERMINAL EMULATION - INTERRUPT ON HOST MESSAGE
 	AX = 0003h subfn 14h
-	DS:BX -> argument block (see #1940)
-Return: AX = status (see #1911)
+	DS:BX -> argument block (see #2041)
+Return: AX = status (see #2012)
 SeeAlso: AX=0003h/SF=0Eh
 
 Format of VINES argument block:
-Offset	Size	Description	(Table 1940)
+Offset	Size	Description	(Table 2041)
  00h	BYTE	session ID (00h)
  01h	BYTE	14h (function "interrupt on message from host")
  02h	DWORD	pointer to routine to be called (0000h:0000h = don't call)
@@ -1302,12 +1386,12 @@ Offset	Size	Description	(Table 1940)
 --------N-610003SF15-------------------------
 INT 61 - Banyan VINES - ASYNC TERMINAL EMULATION - RESET ERROR
 	AX = 0003h subfn 15h
-	DS:BX -> argument block (see #1941)
-Return: AX = status (see #1911)
+	DS:BX -> argument block (see #2042)
+Return: AX = status (see #2012)
 SeeAlso: AX=0003h/SF=00h,AX=0003h/SF=12h
 
 Format of VINES argument block:
-Offset	Size	Description	(Table 1941)
+Offset	Size	Description	(Table 2042)
  00h	BYTE	session ID (00h)
  01h	BYTE	15h (function "reset error")
 --------V-610003-----------------------------
@@ -1320,20 +1404,302 @@ Notes:	INT 61h is the default interrupt; the actual interrupt number can be
 	  obtained by calling INT 16/AH=FFh
 	not all vendors include the Tseng TSR which supports these functions
 SeeAlso: AX=0000h"OPTIMA",AX=0005h"OPTIMA",INT 16/AH=FFh"OPTIMA"
+--------N-610004-----------------------------
+INT 61 - Banyan VINES - FILE SERVICE CONTROL
+	AX = 0004h
+	DS:DX -> request block (see #2044)
+Return: AX = status (see #2043)
+Notes:	This service is handled by the redirector
+	The request dispatch table contains dummy entries for requests 0Ah,
+	  0Dh, 15h, 19h, and 1Ah, which always return error 0033h (invalid
+	  request ID)
+
+(Table 2043)
+Values for Banyan VINES file service control status code:
+ 0000h	successful
+ 0002h	file not found
+ 0003h	path not found
+ 000Fh	invalid drive
+ 0015h	drive not ready
+ 0033h	invalid request ID
+ 0034h	drive not connected
+ 0037h	drive number out of range
+ 0038h	drive number not available
+ 003Ah	invalid operation
+ 0055h	drive already connected
+ 0057h	invalid number of entries
+
+Format of Banyan VINES file service request block:
+Offset	Size	Description	(Table 2044)
+ 00h	WORD	request ID (1..28)
+ 02h  n BYTES	additional parameters and result buffer
+--------N-610004SF0001-----------------------
+INT 61 - Banyan VINES - SET DRIVE CONNECTION
+	AX = 0004h subfn 0001h
+	DS:DX -> request block (see #2045)
+Return: AX = status (0000h,0037h,0038h,0055h) (see #2043)
+Desc:	Maps the specified file service to a DOS drive letter
+Note:	If an empty service name is specified, an existing connection will
+	  be removed
+SeeAlso: AX=0004h/SF=0002h
+
+Format of VINES Function 0004h/Subfunction 0001h request block:
+Offset	Size	Description	(Table 2045)
+ 00h	WORD	0001h
+ 02h	BYTE	drive number (0=default, 1=A, ...)
+ 03h 16	BYTEs	reserved
+ 13h 64	BYTEs	null-terminated file service name
+ 53h  5	BYTEs	reserved
+--------N-610004SF0002-----------------------
+INT 61 - Banyan VINES - GET DRIVE CONNECTION
+	AX = 0004h subfn 0002h
+	DS:DX -> request block (see #2046)
+Return: AX = status (0000h,0034h,0037h) (see #2043)
+Desc:	Returns the StreetTalk name of the associated file service
+SeeAlso: AX=0004h/SF=0001h,AX=0004h/SF=0003h
+
+Format of VINES Function 0004h/Subfunction 0002h request block:
+Offset	Size	Description	(Table 2046)
+ 00h	WORD	0002h
+ 02h	BYTE	drive number (0=default, 1=A, ...)
+ 03h 16	BYTEs	reserved
+ 13h 64	BYTEs	buffer for null-terminated file service name
+ 53h  5	BYTEs	reserved
+--------N-610004SF0003-----------------------
+INT 61 - Banyan VINES - GET NETWORK DRIVE MAP
+	AX = 0004h subfn 0003h
+	DS:DX -> request block (see #2047)
+Return: AX = status
+	    0000h drive map returned in request block
+Desc:	Returns a bit map indicating which drive numbers are connected to a
+	  file service
+Note:	Only bits 0-25 are significant
+SeeAlso: AX=0004h/SF=0002h
+
+Format of VINES Function 0004h/Subfunction 0003h request block:
+Offset	Size	Description	(Table 2047)
+ 00h	WORD	0003h
+ 02h	DWORD	buffer for drive map (bit0=A, bit1=B, ...)
+--------N-610004SF0004-----------------------
+INT 61 - Banyan VINES - SET USER NAME
+	AX = 0004h subfn 0004h
+	DS:DX -> request block (see #2048)
+Return: AX = status (0000h) (see #2043)
+Notes:	Other side effects, if any, not known
+SeeAlso: AX=0004h/SF=0005h,AX=0006h/SF=0004h,AX=0007h/BX=0005h
+
+Format of VINES Function 0004h/Subfunction 0004h request block:
+Offset	Size	Description	(Table 2048)
+ 00h	WORD	0004h
+ 02h 64	BYTE	null-terminated user name
+--------N-610004SF0005-----------------------
+INT 61 - Banyan VINES - GET USER NAME
+	AX = 0004h subfn 0005h
+	DS:DX -> request block (see #2049)
+Return: AX = status (see also #2043)
+	    0000h user name returned in request block
+Desc:	Returns the StreetTalk name of the currently logged in user
+SeeAlso: AX=0004h/SF=0004h,AX=0006h/SF=0004h,AX=0007h/BX=0005h
+SeeAlso: AX=0004h/SF=0004h
+
+Format of VINES Function 0004h/Subfunction 0005h request block:
+Offset	Size	Description	(Table 2049)
+ 00h	WORD	0005h (subfunction "Get User Name")
+ 02h 64	BYTE	buffer for null-terminated user name
+--------N-610004SF0006-----------------------
+INT 61 - Banyan VINES - TEST DRIVE CONNECTION
+	AX = 0004h subfn 0006h
+	DS:DX -> request block (see #2050)
+Return: AX = status (see also #2043)
+	    0000h connection flag returned in request block
+Desc:	Returns a flag indicating if the drive is connected to a file service
+SeeAlso: AX=0004h/SF=0007h
+
+Format of VINES Function 0004h/Subfunction 0006h request block:
+Offset	Size	Description	(Table 2050)
+ 00h	WORD	0006h (subfunction "Test Drive Connection")
+ 02h	BYTE	buffer for connection flag (1 = not connected, 2 = connected)
+--------N-610004SF0007-----------------------
+INT 61 - Banyan VINES - GET CONNECTION DATA STRUCTURES
+	AX = 0004h subfn 0007h
+	DS:DX -> request block (see #2051)
+Return: AX = status (see also #2043)
+	    0000h pointer returned in request block
+	    0033h invalid request ID
+Desc:	Returns pointers to various internal data structures
+
+Format of VINES Function 0004h/Subfunction 0007h request block:
+Offset	Size	Description	(Table 2051)
+ 00h	WORD	0007h
+ 02h	BYTE	request ID (0..7) (see #2052)
+ 03h	WORD	buffer for pointer segment
+ 05h	WORD	buffer for pointer offset
+SeeAlso: #2053,#2054
+
+(Table 2052)
+Values for VINES pointer ID:
+ 00h	job file table ???
+ 01h	drive handle table
+ 02h	drive connection table
+ 03h	IPC port of drive Z:
+ 04h	end of drive connection table
+ 05h	???
+ 06h	???
+ 07h	redirector data segment (offset=0)
+SeeAlso: #2051
+
+Format of VINES drive handle table:
+Offset	Size	Description	(Table 2053)
+ 00h	BYTE	handle to default drive (0 = not connected)
+ 01h	BYTE	handle to drive A: (0 = not connected)
+	...
+ 1Ah	BYTE	handle to drive Z: (0 = not connected)
+SeeAlso: #2054
+
+Format of VINES drive connection table:
+Offset	Size	Description	(Table 2054)
+ 00h	WORD	file service type (?) (0001h if drive Z:, 0000h else)
+ 02h 16	BYTEs	IPC port (contains the server serial number)
+ 12h 46	BYTEs	???
+ 40h 64	BYTEs	null-terminated StreetTalk name of associated file service
+ 80h 64	BYTEs	null-terminated root directory (/ROOT: parameter of SETDRIVE)
+SeeAlso: #2053
 --------N-610004SF0008-----------------------
 INT 61 - Banyan VINES - GET SERVER SERIAL NUMBER
 	AX = 0004h subfn 0008h
-	DS:DX -> request block (see #1942)
-Return: AX = status
-	    0000h server ID returned in request block
-	    000Fh invalid drive
-	    0015h drive not ready
+	DS:DX -> request block (see #2055)
+Return: AX = status (0000h,000Fh,0015h) (see #2043)
+Notes:	The server ID is extracted from the IPC port address of the associated
+	  file service stored in the drive connection table
+	The server serial number and the server subnet number are returned in
+	  big-endian (Motorola) format (i.e. MSB first)
+SeeAlso: AX=0004h/SF=0005h
 
 Format of VINES request block for getting server serial number:
-Offset	Size	Description	(Table 1942)
+Offset	Size	Description	(Table 2055)
  00h	WORD	0008h
  02h	WORD	drive number (0=default, 1=A, ...)
- 04h  6 BYTEs	buffer for server ID
+ 04h	DWORD	buffer for server serial number
+ 08h	WORD	buffer for server subnet number (always 0001h)
+--------N-610004SF0009-----------------------
+INT 61 - Banyan VINES - SET ??? PARAMETER
+	AX = 0004h subfn 0009h
+	DS:DX -> request block (see #2056)
+Return: AX = status (0000h) (see #2043)
+Notes:	The specified WORD parameter is copied to offset 1702h of the
+	  redirector code segment (revision 5.53)
+SeeAlso: AX=0004h/SF=000Bh
+
+Format of VINES Function 0004h/Subfunction 0009h request block:
+Offset	Size	Description	(Table 2056)
+ 00h	WORD	0009h
+ 02h	WORD	parameter
+--------N-610004SF000B-----------------------
+INT 61 - Banyan VINES - GET ??? DRIVE PARAMETER
+	AX = 0004h subfn 000Bh
+	DS:DX -> request block (see #2057)
+Return: AX = status (0000h,0034h,0037h) (see #2043)
+Notes:	This request returns a WORD value from the drive connection table
+	  read from offset 0012h of the specified drive's entry (usually 0037h)
+SeeAlso: AX=0004h/SF=0009h
+
+Format of VINES Function 0004h/Subfunction 000Bh request block:
+Offset	Size	Description	(Table 2057)
+ 00h	WORD	000Bh
+ 02h	BYTE	drive number (0=default, 1=A, ...)
+ 03h	WORD	buffer for parameter
+--------N-610004SF000C-----------------------
+INT 61 - Banyan VINES - LOGOUT FROM VINES
+	AX = 0004h subfn 000Ch
+	DS:DX -> request block (see #2058)
+Return: AX = status 0000h (see #2043)
+Desc:	Terminates a running VINES session and clears all session specific
+	  buffers
+SeeAlso: AX=0004h/SF=0008h
+
+Format of VINES Function 0004h/Subfunction 000Ch request block:
+Offset	Size	Description	(Table 2058)
+ 00h	WORD	000Ch
+--------N-610004SF000E-----------------------
+INT 61 - Banyan VINES - GET ACCESS RIGHTS LIST (ARL)
+	AX = 0004h subfn 000Eh
+	DS:DX -> request block (see #2059)
+Return: AX = status (see also #2043)
+	    0000h request has been processed
+Desc:	Returns the owner, group, and extended access rights for the specified
+	  file or directory
+Note:	A status of 0000h does not necessarily indicate a successful request;
+	  check the status word at offset 000Eh of the request block too
+SeeAlso: AX=0004h/SF=000Fh
+
+Format of VINES Function 0004h/Subfunction 000Eh request block:
+Offset	Size	Description	(Table 2059)
+ 00h	WORD	000Eh (subfunction "Get Access Rights List")
+ 02h	BYTE	drive number (0=default, 1=A, ...)
+ 03h	BYTE	reserved
+ 04h	DWORD	pointer to path specification (drive letter ignored)
+ 08h	DWORD	pointer to ARL control block (see #2060)
+ 0Ch	WORD	buffer for number of ARL entries (1..5)
+ 0Eh	WORD	buffer for status (see #2061)
+
+Format of ARL control block:
+Offset	Size	Description	(Table 2060)
+ 00h 64	BYTEs	1st StreetTalk name (user, list, or service)
+ 40h	WORD	1st ARL
+ 42h 64	BYTEs	2nd StreetTalk name (user, list, or service)
+ 82h	WORD	2nd ARL
+ 84h 64	BYTEs	3rd StreetTalk name (user, list, or service)
+ C4h	WORD	3rd ARL
+ C6h 64	BYTEs	4th StreetTalk name (user, list, or service)
+106h	WORD	4th ARL
+108h 64	BYTEs	5th StreetTalk name (user, list, or service)
+148h	WORD	5th ARL
+
+(Table 2061)
+Values for VINES Get/Set Access Rights List status:
+ 0000h	successful
+ 0002h	file not found
+ 0003h	path not found
+ 003Ah	invalid operation
+ 0057h	invalid number of entries
+--------N-610004SF000F-----------------------
+INT 61 - Banyan VINES - SET ACCESS RIGHTS LIST (ARL)
+	AX = 0004h subfn 000Fh
+	DS:DX -> request block (see #2062)
+Return: AX = status (see also #2043)
+	    0000h request has been processed
+Desc:	Sets the owner, group, and extended access rights for the specified
+	  file or directory
+Note:	A status of 0000h does not necessarily indicate a successful request;
+	  check the status word at offset 000Eh of the request block too
+	If the number of ARL entries is less than 1 or greater than 5, error
+	  0057h (invalid number of entries) is returned
+SeeAlso: AX=0004h/SF=000Eh
+
+Format of VINES Function 0004h/Subfunction 000Fh request block:
+Offset	Size	Description	(Table 2062)
+ 00h	WORD	000Fh
+ 02h	BYTE	drive number (0=default, 1=A, ...)
+ 03h	BYTE	reserved
+ 04h	DWORD	pointer to path specification (drive letter ignored)
+ 08h	DWORD	pointer to ARL control block (see #2060)
+ 0Ch	WORD	number of ARL entries (1..5)
+ 0Eh	WORD	buffer for status (see #2061)
+--------N-610004SF0010-----------------------
+INT 61 - Banyan VINES - FILE SERVICE CONTROL - ???
+	AX = 0004h subfn 0010h
+	DS:DX -> request block (see #2063)
+Return: AX = status (see also #2043)
+	    0000h request has been processed
+SeeAlso: AX=0004h/SF=000Fh
+
+Format of VINES Function 0004h/Subfunction 0010h request block:
+Offset	Size	Description	(Table 2063)
+ 00h	WORD	0010h
+ 02h	BYTE	drive number (0=default, 1=A, ...)
+ 03h	BYTE	reserved
+ 04h 64	BYTEs	???
+ 44h 16	BYTEs	IPC port (see #1971 at AX=0001h"Sosock")
 --------V-610004-----------------------------
 INT 61 - OPTIMA 1024 VGA-Sync,ET-3000 chipset - ENTER SPECIFY MODE
 	AX = 0004h
@@ -1345,26 +1711,28 @@ Notes:	Specify Mode is enabled by hot key (seeAlso below), and allows
 	not all vendors include the Tseng TSR which supports these functions
 SeeAlso: AX=0000h"OPTIMA",AX=0007h"OPTIMA",INT 16/AH=FFh"OPTIMA"
 --------N-610005-----------------------------
-INT 61 - Banyan VINES - PRINTER CONTROL
+INT 61 - Banyan VINES - PRINT SERVICE CONTROL
 	AX = 0005h
-	DS:DX -> request block (see #1943)
+	DS:DX -> request block (see #2064)
 Return: AX = status
 	    0000h successful
 	    0001h network software not installed or incompatible
+Note:	This service is handled by the redirector
 SeeAlso: INT 2F/AX=D702h
 
 Format of VINES request block for printer control:
-Offset	Size	Description	(Table 1943)
+Offset	Size	Description	(Table 2064)
  00h	WORD	function
 		0201h "endspool" all data for a print job has been sent
 		0205h "getactive" get currently active printer port
+		0207h ??? purpose unknown; called periodically every second
  02h	WORD	number of active port (1-3)
  04h	WORD	??? (0 for func 0201h, 3 for func 0205h)
  06h	WORD	0000h
 --------V-610005-----------------------------
 INT 61 - OPTIMA 1024 VGA-Sync - QUERY ZOOM WINDOW
 	AX = 0005h
-	BX:CX -> buffer for window parameters (see #1944)
+	BX:CX -> buffer for window parameters (see #2065)
 Range:	unknown
 Notes:	INT 61 is the default interrupt; the actual interrupt number can be
 	  obtained by calling INT 16/AH=FFh
@@ -1373,7 +1741,7 @@ SeeAlso: AX=0000h"OPTIMA",AX=0003h"OPTIMA",AX=0006h"OPTIMA"
 SeeAlso: INT 16/AH=FFh"OPTIMA"
 
 Format of Optima 1024 window parameters:
-Offset	Size	Description	(Table 1944)
+Offset	Size	Description	(Table 2065)
  00h	WORD	X start of zoom window
  02h	WORD	Y start of zoom window
  04h	WORD	X end of zoom window
@@ -1384,7 +1752,7 @@ Offset	Size	Description	(Table 1944)
 --------V-610006-----------------------------
 INT 61 - OPTIMA 1024 VGA-Sync,ET-3000 chipset - SET ZOOM WINDOW
 	AX = 0006h
-	BX:CX -> zoom window description (see #1945)
+	BX:CX -> zoom window description (see #2066)
 Range:	unknown
 Notes:	width of zoom window must be a multiple of the pixel replication (zoom)
 	  factor
@@ -1395,11 +1763,58 @@ SeeAlso: AX=0000h"OPTIMA",AX=0001h"OPTIMA",AX=0005h"OPTIMA",AX=0008h"OPTIMA"
 SeeAlso: INT 16/AH=FFh"OPTIMA"
 
 Format of Optima 1024 zoom window description:
-Offset	Size	Description	(Table 1945)
+Offset	Size	Description	(Table 2066)
  00h	WORD	X start of zoom window
  02h	WORD	Y start of zoom window
  04h	WORD	X end of zoom window
  06h	WORD	Y end of zoom window
+--------N-610006-----------------------------
+INT 61 - Banyan VINES - GET ADDRESS OF INTERNAL VARIABLE
+	AX = 0006h
+	BX = bits 14..0: request ID (see #2067)
+	     bit  15:	 result destination flag (0 for ES:BX, 1 for AX:BX)
+Return: AX = status
+	    0000h successful
+	    000Bh invalid request
+	ES:BX -> internal variable (bit 15 of BX was not set)
+	AX:BX -> internal variable (bit 15 of BX was set)
+Note:	This service is handled by the redirector
+
+(Table 2067)
+Values for request IDs:
+Request	Length	Description
+ 0000h	   1	???
+ 0001h	  16	StreetTalk port
+ 0002h	   4	StreetTalk session handle
+ 0003h	   6	colors
+ 0004h	  64	StreetTalk name of currently logged in user
+ 0005h	   0	old clear text password (always returns error code 000Bh)
+ 0006h	   0	default group (not applicable)
+ 0007h	   1	message queue count
+ 0008h	   1	message flag
+ 0009h	  16	TalkPort
+ 000Ah	   2	TalkPort socket
+ 000Bh	  64	StreetTalk name of mail service
+ 000Ch	   2	message timeout
+ 000Dh	   2	next message place
+ 000Eh	 246	message queue
+ 000Fh	  14	system nonce
+ 0010h	   2	failed login count
+ 0011h	   1	new mail message received
+ 0012h	   8	mail capabilities
+ 0013h	   3	printer port diverted
+ 0014h	  32	international location
+ 0015h	  16	IPC port of drive Z:
+ 0016h	1024	pointer to current directory table
+ 0017h	   2	maximum number of file volume mappings
+ 0018h	  24	routine to call back for messages
+ 0019h	   4	current virtual machine
+ 001Ah	  20	DOS redirector message bell tones
+ 001Bh	   2	various flags used for internal communication
+ 001Ch	   0	OS/2 client configuration (always returns error code 000Bh)
+ 001Dh	   8	redirector/IFS file version
+ 001Eh	   0	reserved (always returns error code 000Bh)
+ 001Fh	   4	address of VVINESD.386 dispatch
 --------V-610007-----------------------------
 INT 61 - OPTIMA 1024 VGA-Sync,ET-3000 chipset - QUERY APPLICATION KEY
 	AX = 0007h
@@ -1413,19 +1828,19 @@ Notes:	In specify mode, the END key has been reserved for applications.
 	not all vendors include the Tseng TSR which supports these functions
 SeeAlso: AX=0000h"OPTIMA",AX=0001h"OPTIMA",AX=0004h"OPTIMA"
 SeeAlso: INT 16/AH=FFh"OPTIMA",INT 7A/AX=0001h"AutoCAD"
---------N-610007BX0002-----------------------
-INT 61 - Banyan VINES - GET PORTS FOR A SERVICE
+--------N-610007BX0000-----------------------
+INT 61 - Banyan VINES - RECONNECT TO STREETTALK
 	AX = 0007h
-	BX = 0002h
-	DS:DX -> StreetTalk service name
-	DS:DI -> port record block (see #1947)
-Return: AX = status (see #1946)
-SeeAlso: AX=0007h/BX=0004h
+	BX = 0000h
+Return: AX = status (see #2068)
+SeeAlso: AX=0007h/BX=0002h
 
-(Table 1946)
+(Table 2068)
 Values for VINES function status:
  0000h	successful
- 0001h	PC network software not installed or incompatible
+ 0001h	requested handler not installed or incompatible
+ 000Bh	service busy
+ 000Ch	invalid request ID
  03E9h	incorrect name syntax
  03EAh	organization name too long
  03EBh	group name too long
@@ -1437,32 +1852,90 @@ Values for VINES function status:
  03F8h	not a StreetTalk name
  0409h	modify access denied
  040Dh	appropriate StreetTalk name unavailable
+ 0411h	all matching names have been returned
+ 0412h	some groups unavailable, all available matches returned
+--------N-610007BX0001-----------------------
+INT 61 - Banyan VINES - GET MM PORT FOR A SERVICE
+	AX = 0007h
+	BX = 0001h
+	DS:DX -> StreetTalk service name (64 bytes)
+	DS:DI -> 16-byte buffer for IPC port (see #1971 at AX=0001h"Sosock")
+Return: AX = status (see #2068)
+Notes:	This function calls AX=0007/BX=0002h with the port count set to 1 and
+	  the port type set to 00h
+SeeAlso: AX=0007h/BX=0002h,AX=0007h/BX=0004h,AX=0007h/BX=000Ah
+--------N-610007BX0002-----------------------
+INT 61 - Banyan VINES - GET PORTS FOR A SERVICE
+	AX = 0007h
+	BX = 0002h
+	DS:DX -> StreetTalk service name
+	DS:DI -> port record block (see #2069)
+Return: AX = status (see #2068)
+Note:	if the requested number of ports is greater than five, it will be reset
+	  to five
+SeeAlso: AX=0007h,BX=0001h,AX=0007h/BX=0003h,AX=0007h/BX=0004h
+SeeAlso: AX=0007h/BX=000Ah
 
 Format of VINES port record block:
-Offset	Size	Description	(Table 1947)
- 00h	WORD	number of 17-byte elements
- 02h 17 BYTEs	element (byte 00h = input port type, bytes 01h-10h = port)
-		(see #1870 for port format)
+Offset	Size	Description	(Table 2069)
+ 00h	WORD	(call) number of 17-byte elements (01h-05h) to be filled
+ 02h	BYTE	(call) port type for first port
+ 03h 16 BYTEs	(ret) port (see #1971)
+ 13h	BYTE	(call) port type for second port
+ 14h 16 BYTEs	(ret) port (see #1971)
+ 24h	BYTE	(call) port type for third port
+ 25h 16 BYTEs	(ret) port (see #1971)
+ 35h	BYTE	(call) port type for fourth port
+ 36h 16 BYTEs	(ret) port (see #1971)
+ 46h	BYTE	(call) port type for fifth port
+ 47h 16 BYTEs	(ret) port (see #1971)
+ 57h	BYTE	reserved
+SeeAlso: #2071
+--------N-610007BX0003-----------------------
+INT 61 - Banyan VINES - FIND A SERVICE
+	AX = 0007h
+	BX = 0003h
+	DS:DX -> port control block (see #2070)
+Return: AX = status (see AX=0007h)
+SeeAlso: AX=0007h/BX=0002h,AX=0007h/BX=0004h,AX=0007h/BX=0005h
+
+Format of port control block:
+Offset	Size	Description	(Table 2070)
+ 00h	WORD	???
+ 02h	WORD	???
+ 04h 16	BYTEs	IPC port (see #1971 at AX=0001h"Sosock")
+ 14h  5	WORDs	???
+SeeAlso: #2076
 --------N-610007BX0004-----------------------
 INT 61 - Banyan VINES - SET PORTS FOR A SERVICE
 	AX = 0007h
 	BX = 0004h
-	DS:DX -> StreetTalk name of service
-	DS:DI -> port record block (see #1948)
-Return: AX = status (see #1946)
-SeeAlso: AX=0007h/BX=0002h
+	DS:DX -> StreetTalk name of service (max 64 bytes)
+	DS:DI -> port record block (see #2071)
+Return: AX = status (see #2068)
+SeeAlso: AX=0007h/BX=0002h,AX=0007h/BX=0003h,AX=0007h/BX=000Ah
 
 Format of VINES port record block:
-Offset	Size	Description	(Table 1948)
+Offset	Size	Description	(Table 2071)
  00h	WORD	number of 17-byte elements
- 02h 17 BYTEs	element: byte 00h = input port type, 01h-10h = port
-		(see #1870 for port format)
+ 02h	BYTE	port type for first port
+ 03h 16 BYTEs	first IPC port (see #1971)
+ 13h	BYTE	port type for second port
+ 14h 16 BYTEs	second IPC port (see #1971)
+ 24h	BYTE	port type for third port
+ 25h 16 BYTEs	third IPC port (see #1971)
+ 35h	BYTE	port type for fourth port
+ 36h 16 BYTEs	fourth IPC port (see #1971)
+ 46h	BYTE	port type for fifth port
+ 47h 16 BYTEs	fifth IPC port (see #1971)
+ 57h	BYTE	reserved
+SeeAlso: #2069
 --------N-610007BX0005-----------------------
 INT 61 - Banyan VINES - GET USER NAME
 	AX = 0007h
 	BX = 0005h
 	DS:DX -> 64-byte buffer for user's StreetTalk name
-Return: AX = status
+Return: AX = status (see also #2068)
 	    0000h successful
 	    0001h network software not installed or incompatible
 Note:	if no user logged in, first byte of returned name will be 00h
@@ -1473,41 +1946,42 @@ INT 61 - Banyan VINES - TRANSLATE ERROR INTO ASCII STRING
 	BX = 0006h
 	SI = error code (>100)
 	DS:DX -> 80-byte buffer for error text
-Return: AX = status
+Return: AX = status (see also #2068)
 	    0000h successful
 	    0001h network software not installed or incompatible
 --------N-610007BX0007-----------------------
 INT 61 - Banyan VINES - VERIFY EXISTENCE OF NAME AND RETURN CANONICAL FORM
 	AX = 0007h
 	BX = 0007h
-	DS:DX -> NiceName block (see #1949)
-Return: AX = status (see #1946)
+	DS:DX -> NiceName block (see #2072)
+Return: AX = status (see #2068)
 SeeAlso: AX=0007h/BX=0005h,AX=0007h/BX=0008h
 
 Format of VINES NiceName block:
-Offset	Size	Description	(Table 1949)
+Offset	Size	Description	(Table 2072)
  00h	WORD	type of name
 		0064h (100) organization
 		00C8h (200) group
 		012Ch (300) item
  02h	WORD	pointer to ASCIZ input name
  04h	WORD	pointer to 64-byte buffer for output name
+SeeAlso: #2073
 --------N-610007BX0008-----------------------
 INT 61 - Banyan VINES - ENUMERATE StreetTalk NAMES
 	AX = 0007h
 	BX = 0008h
-	DS:DX -> enumerate block (see #1950)
-Return: AX = status
+	DS:DX -> enumerate block (see #2073)
+Return: AX = status (see also #2068)
 	    0000h successful
 	    0411h all matching names have been returned
 	    0412h some groups unavailable, all available matches returned
 Note:	each program using this call should continue until a nonzero status
 	  is returned; otherwise, some resources will not be freed for several
 	  hours
-SeeAlso: AX=0007h/BX=0007h
+SeeAlso: AX=0007h/BX=0005h,AX=0007h/BX=0007h,AX=0007h/BX=0009h
 
 Format of VINES enumerate block:
-Offset	Size	Description	(Table 1950)
+Offset	Size	Description	(Table 2073)
  00h	WORD	return code
  02h	WORD	pointer to pattern string
  04h	WORD	enumerate type
@@ -1520,35 +1994,82 @@ Offset	Size	Description	(Table 1950)
 		0002h service names
 		0003h list names
 		0004h nicknames
- 08h	WORD	pointer to category criteria block (see #1951) or 0
+ 08h	WORD	pointer to category criteria block (see #2074) or 0
  0Ah	WORD	pointer to array of 64-byte returned names
  0Ch	WORD	number of names returned
  0Eh  6 BYTEs	reserved for subsequent enumerated calls (set to zeros on first
 		  call)
+SeeAlso: #2072
 
 Format of category criteria block:
-Offset	Size	Description	(Table 1951)
+Offset	Size	Description	(Table 2074)
  00h	WORD	exclude flag
 		0000h return only items with the specified categories
 		0001h return all items except those with the given categories
- 02h	WORD	number of categories
- 04h	WORD	category 1 value (see #1952)
+ 02h	WORD	number of categories (max 5, 0000h = match all categories)
+ 04h	WORD	category 1 value (see #2075)
  06h	WORD	category 2 value
-		...
-SeeAlso: #1950
+ 08h	WORD	category 3 value
+ 0Ah	WORD	category 4 value
+ 0Ch	WORD	category 5 value
+SeeAlso: #2073
 
-(Table 1952)
+(Table 2075)
 Values for common VINES service categories:
+ 0001h	server service
  0002h	file service
  0003h	print service
  0004h	mail service
  0005h	StreetTalk
  0006h	time service
+ 0007h	FTP service
  0008h	semaphore service
  0009h	3270/SNA service
- 000Ah	asynchronous terminal emulation service
+ 000Ah	terminal emulation service
+ 000Bh	asynchronous terminal service
  000Ch	NETBIOS service
  000Dh	PC-based service
+ 000Eh	BSC service
+ 000Fh	APPC service
+ 0010h	NM service
+ 0011h	VS service
+ 0012h	POP service
+ 0013h	AFP service
+ 0014h	VCS service
+ 0015h	EMS service
+ 0016h	LN service
+ 0017h	BS service
+ 0023h	RIPL service
+ 0064h	ADM service
+SeeAlso: #2074
+--------N-610007BX0009-----------------------
+INT 61 - Banyan VINES - TRANSLATE ERROR INTO ASCII STRING (SELECTED PORT)
+	AX = 0007h
+	BX = 0009h
+	SI = error code
+	DS:DX -> 80-byte buffer for error text
+	DS:DI -> IPC port (16 bytes; see AX=0001h#"Sosock" for port format)
+Return: AX = status (see AX=0007h)
+Note:	Same as AX=0007h/BX=0006h, except IPC port is specified explicitly
+SeeAlso: AX=0007h/BX=0006h
+--------N-610007BX000A-----------------------
+INT 61 - Banyan VINES - internal, OS/2 only - GET MANY PORTS FOR SERVICE
+	AX = 0007h
+	BX = 000Ah
+	DS:DX -> port control block (see #2076)
+Return: AX = status (see AX=0007h)
+Note:	This function cannot be called from applications, as the DS register
+	  is checked against the redirector data segment address (status code
+	  0001h will be returned if DS doesn't match)
+SeeAlso: AX=0007h/BX=0001h,AX=0007h/BX=0002h,AX=0007h/BX=0004h
+
+Format of port control block:
+Offset	Size	Description	(Table 2076)
+ 00h	WORD	???
+ 02h	WORD	???
+ 04h 16	BYTEs	IPC port (see #1971 at AX=0001h"Sosock")
+ 14h 14 WORDs	???
+SeeAlso: #2070
 --------V-610008-----------------------------
 INT 61 - OPTIMA 1024 VGA-Sync,ET-3000 chipset - SET ZOOM OFFSET
 	AX = 0008h
@@ -1560,29 +2081,51 @@ Notes:	INT 61 is the default interrupt; the actual interrupt number can be
 	  obtained by calling INT 16/AH=FFh
 	not all vendors include the Tseng TSR which supports these functions
 SeeAlso: AX=0000h"OPTIMA",AX=0006h"OPTIMA",INT 16/AH=FFh"OPTIMA"
+--------N-610008BX0000-----------------------
+INT 61 - Banyan VINES - TALKPORT SERVICE - GET HANDLER ADDRESS
+	AX = 0008h
+	BX = 0000h
+Return: AX = status
+	    0000h successful
+	ES:DX = far pointer to handler
+Desc:	The TalkPort is a facility to display event messages (e.g. mail
+	  received, printing on a local printer, ...) on the screen
+Note:	This service is handled by the redirector
+SeeAlso: AX=0008h/BX=0001h,AX=0008h/BX=0002h
+--------N-610008BX0001-----------------------
+INT 61 - Banyan VINES - TALKPORT SERVICE - SET HANDLER ADDRESS
+	AX = 0008h
+	BX = 0001h
+	ES:DX -> new handler
+Return: AX = status
+	    0000h successful
+SeeAlso: AX=0008h/BX=0000h
 --------N-610008BX0002-----------------------
-INT 61 - Banyan VINES - POST MESSAGE ON LOCAL DISPLAY
+INT 61 - Banyan VINES - TALKPORT SERVICE - POST MESSAGE ON LOCAL DISPLAY
 	AX = 0008h
 	BX = 0002h
-	CX = message display flags (see #1953)
+	CX = message display flags (see #2077)
 	DS:DX -> ASCIZ string to display (only first 80 chars used)
 Return: AX = status
 	    0000h successful
 	    000Bh message display function currently busy
 	    000Ch message queue full
-Note:	queues up to three messages to be displayed on the bottom line
-SeeAlso: AX=0008h/BX=0003h
+Notes:	queues up to three messages to be displayed on the bottom line
+	This service is handled by the redirector
+	In a DOS session, TalkPort messages are displayed on display line 25;
+	  in a Windows session, TalkPort messages are displayed in dialog boxes
+SeeAlso: AX=0008h/BX=0000h,AX=0008h/BX=0003h
 
 Bitfields for VINES message display flags:
-Bit(s)	Description	(Table 1953)
+Bit(s)	Description	(Table 2077)
  0	message will remain on screen until user presses ^X
  1	ring bell after displaying message
  2	blink
 --------N-610008BX0003-----------------------
-INT 61 - Banyan VINES - INTERCEPT VINES 25th-LINE MESSAGES AT LOCAL PC
+INT 61 - Banyan VINES - TALKPORT SERVICE - INTERCEPT VINES 25th-LINE MESSAGES
 	AX = 0008h
 	BX = 0003h
-	DS:DX -> request block (see #1954)
+	DS:DX -> request block (see #2078)
 Return: AX = status
 	    0000h successful
 	    0001h network software not installed or incompatible
@@ -1593,35 +2136,69 @@ Notes:	message handler should not call BIOS or DOS functions, and should
 SeeAlso: AX=0008h/BX=0002h
 
 Format of VINES request block for 25-th line messages:
-Offset	Size	Description	(Table 1954)
+Offset	Size	Description	(Table 2078)
  00h	DWORD	pointer to user-written message handler
  04h	DWORD	pointer to next request block (filled in by VINES)
  08h	DWORD	pointer to previous request block (filled in by VINES)
- 0Ch	DWORD	pointer to message storage area (filled by VINES) (see #1955)
+ 0Ch	DWORD	pointer to message storage area (filled by VINES) (see #2079)
 
 Format of message storage area:
-Offset	Size	Description	(Table 1955)
- 00h 16 BYTEs	IPC port of message sender (see #1870)
+Offset	Size	Description	(Table 2079)
+ 00h 16 BYTEs	IPC port of message sender (see #1971)
  10h	BYTE	message flags
  11h	WORD	reserved
  13h	BYTE	length of message
  14h 80 BYTEs	message text
+SeeAlso: #2078
+--------N-610009-----------------------------
+INT 61 - Banyan VINES - NETBIOS CLIENT SERVICE
+	AX = 0009h
+	other parameters, if any, unknown
 --------N-61000A-----------------------------
 INT 61 - Banyan VINES - SECONDARY 3270 INTERFACE
 	AX = 000Ah
 Note:	either 3270/SNA or 3270/BSC interface will use AX=000Ah, depending on
 	  which is loaded second.  The first interface loaded will use AX=0002h
 SeeAlso: INT 61/AX=0002h
+--------N-61000B-----------------------------
+INT 61 - Banyan VINES - SEMAPHORE SERVICE
+	AX = 000Bh
+	other parameters, if any, unknown
+--------N-61000C-----------------------------
+INT 61 - Banyan VINES - 3270 KEYBOARD HANDLER
+	AX = 000Ch
+	other parameters, if any, unknown
+--------N-61000D-----------------------------
+INT 61 - Banyan VINES - T3270 SERVICE FUNCTION
+	AX = 000Dh
+	other parameters, if any, unknown
+--------N-61000E-----------------------------
+INT 61 - Banyan VINES - ENHANCED 3270 SERVICE
+	AX = 000Eh
+	other parameters, if any, unknown
+--------N-61000F-----------------------------
+INT 61 - Banyan VINES - COMM WINDOWS ENTRY POINT
+	AX = 000Fh
+	other parameters, if any, unknown
+Note:	This service ist handled by the adapter driver
+--------N-610010-----------------------------
+INT 61 - Banyan VINES - INTERFACE TO NBNS
+	AX = 0010h
+	other parameters, if any, unknown
 --------N-6101-------------------------------
 INT 61 - Banyan VINES - CHECK SERVICE
 	AH = 01h
-	AL = service ID (see #1956)
+	AL = service ID (see #2080)
 Return: AX = status
 	    0000h installed
 	    0001h not installed
 	    0002h invalid ID
+	    0003h invalid function
+Note:	Only the offset part of the service pointer is checked for a nonzero
+	  value
+SeeAlso: AH=00h,AH=02h"VINES",AH=03h"VINES"
 
-(Table 1956)
+(Table 2080)
 Values for VINES service ID:
  01h	communications
  02h	primary 3270 emulation
@@ -1632,7 +2209,10 @@ Values for VINES service ID:
  0Ah	secondary 3270 emulation
  0Bh	semaphore service
  0Ch	3270 emulation active status
- 0Dh	3270 keyboard interrupt simulator
+ 0Dh	T3270 keyboard interrupt simulator
+ 0Eh	enhanced 3270 service
+ 0Fh	comm Windows entry point
+ 10h	interface to NBNS
 --------N-6101--BX0000-----------------------
 INT 61 u - PC/TCP kernel v2.1+ - "net_config" - CONFIGURE RUNNING KERNEL
 	AH = 01h
@@ -1643,7 +2223,7 @@ INT 61 u - PC/TCP kernel v2.1+ - "net_config" - CONFIGURE RUNNING KERNEL
 	ES:DI -> integer containing size of buffer
 Return: CF clear if successful
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Range:	INT 20 to INT E0, selected by configuration
 Notes:	there are a large number of tags available; the items returned
 	  all refer to local kernel configuration, and are not needed in
@@ -1657,6 +2237,7 @@ INT 61 - Banyan VINES - GET REVISION NUMBER
 Return: AX = 0000h installed
 	    DS:DX buffer contains revision number as
 		10000d * major_ver + 100d * minor_ver + patch_revision
+SeeAlso: AH=01h"VINES",AH=04h"VINES",AH=07h"VINES"
 --------N-6102--BX0000-----------------------
 INT 61 u - PC/TCP kernel v2.1+ - "get_kernel_info" - GET MISCELLAN LOCAL INFO
 	AH = 02h
@@ -1668,13 +2249,31 @@ INT 61 u - PC/TCP kernel v2.1+ - "get_kernel_info" - GET MISCELLAN LOCAL INFO
 Return: CF clear if successful
 	    Data loaded into specified buffer, and size value altered
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Range:	INT 20 to INT E0, selected by configuration
 Notes:	there are a large number of tags available; the items returned
 	  all refer to local kernel configuration, and are not needed in
 	  normal use.
 	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=01h"PC/TCP"
+--------N-6103-------------------------------
+INT 61 - Banyan VINES - INSTALL SERVICE HANDLER
+	AH = 03h
+	AL = service ID (see #2080)
+	DS:DX -> new service handler
+Return: AX = 0000h successful
+SeeAlso: AH=00h,AH=01h"VINES",AH=02h"VINES",AH=05h"VINES"
+--------N-6104-------------------------------
+INT 61 - Banyan VINES - CHECK VINES REVISION NUMBER IN RANGE
+	AH = 04h
+	DS:DX -> 2-byte buffer containing the VINES revision number
+	    DS:DX buffer contains revision number as
+		10000d * major_ver + 100d * minor_ver + patch_revision
+Return: AX = status
+	    0000h valid version
+	    0004h out of range
+Note:	For Revision 5.53, the valid range is 4.10(0) to 6.19(99)
+SeeAlso: AH=02h"VINES",AH=07h"VINES",AH=08h"VINES"
 --------N-6105-------------------------------
 INT 61 - PC/TCP kernel v2.05+ - "get_addr" - GET INTERNET ADDRESS OF NET DESCR
 	AH = 05h
@@ -1682,28 +2281,108 @@ INT 61 - PC/TCP kernel v2.05+ - "get_addr" - GET INTERNET ADDRESS OF NET DESCR
 Return: CF clear if successful
 	    DX:AX = Internet address of ND
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Range:	INT 20 to INT E0, selected by configuration
 Notes:	the installation check consists of testing for the signature "TCPTSR"
 	  three bytes beyond the start of the interrupt handler
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=16h"PC/TCP"
 SeeAlso: INT 63/AH=25h"BW-TCP"
+--------N-6105-------------------------------
+INT 61 - Banyan VINES - READ PCCONFIG BYTES
+	AH = 05h
+	CX = number of bytes to copy
+	    (max. 0175h for VINES 4.00, max. 017Fh for VINES 4.10+)
+	SI = offset of area to be copied (see #2081,#2082)
+Return: AX = status
+	    0000h successful
+	    0004h out of range
+Notes:	The PCCONFIG area is located in the code segment of the BANV handler
+	To find out which PCCONFIG structure applies, call this function first
+	  with CX=0006h to get the VINES revision number
+SeeAlso: AH=02h"VINES",AH=04h"VINES",AH=06h"VINES",AH=0Bh"VINES"
+
+Format of PCCONFIG area (VINES 4.00):
+Offset	Size	Description	(Table 2081)
+ 00h  6	BYTEs	VINES revision (ASCII, zero-padded)
+ 06h  2	BYTEs	NEWREV-number (ASCII, two digits)
+ 08h	WORD	hardware interrupt level
+ 0Ah	WORD	DMA channel
+ 0Ch	WORD	I/O address
+ 0Eh	DWORD	adapter ROM address (linear)
+ 12h	DWORD	adapter RAM address (linear)
+ 16h	WORD	BANV interrupt
+ 18h 32	BYTEs	default login group #1
+ 38h 32	BYTEs	default login group #2
+ 58h 32	BYTEs	default login group #3
+ 78h	WORD	semaphore locking support flag
+ 7Ah	WORD	extended StreetTalk flag
+ 7Ch	WORD	maximum number of file volumes
+ 7Eh	WORD	NetBIOS flag
+ 80h 60	BYTEs	default network adapter
+ BCh 60	BYTEs	default communications driver
+ F8h	WORD	maximum number of SPP connections
+ FAh	WORD	maximum number of open sockets
+ FCh	WORD	communications buffer size (10..60 KB)
+ FEh 20	BYTEs	location directory on drive Z:
+112h 33	BYTEs	auxiliary configuration area #1 (see #2083)
+133h 33	BYTEs	auxiliary configuration area #2
+154h 33	BYTEs	auxiliary configuration area #3
+SeeAlso: #2082
+
+Format of PCCONFIG area (VINES 4.10+):
+Offset	Size	Description	(Table 2082)
+ 00h  6	BYTEs	VINES revision (ASCII, zero-padded)
+ 06h  2	BYTEs	NEWREV-number (ASCII, two digits)
+ 08h	WORD	hardware interrupt level
+ 0Ah	WORD	DMA channel
+ 0Ch	WORD	I/O address
+ 0Eh	DWORD	adapter ROM address (linear)
+ 12h	DWORD	adapter RAM address (linear)
+ 16h	WORD	BANV interrupt
+ 18h 32	BYTEs	default login group #1
+ 38h 32	BYTEs	default login group #2
+ 58h 32	BYTEs	default login group #3
+ 78h	WORD	semaphore locking support flag
+ 7Ah	WORD	extended StreetTalk flag
+ 7Ch	WORD	named pipes support flag
+ 7Eh	WORD	maximum number of file volumes
+ 80h	WORD	NetBIOS flag
+ 82h 60	BYTEs	default network adapter
+ BEh 60	BYTEs	default communications driver
+ FAh	WORD	maximum number of SPP connections
+ FCh	WORD	maximum number of open sockets
+ FEh	WORD	communications buffer size (10..60 KB)
+100h	WORD	number of mailslots
+102h	WORD	maximum number of open files
+104h	WORD	maximum number of NetBIOS sessions
+106h	WORD	maximum number of NetBIOS commands
+108h 20	BYTEs	location directory on drive Z:
+11Ch 33	BYTEs	auxiliary configuration area #1 (see #2083)
+13Dh 33	BYTEs	auxiliary configuration area #2
+15Eh 33	BYTEs	auxiliary configuration area #3
+
+Format of auxiliary configuration area:
+Offset	Size	Description	(Table 2083)
+ 00h 16	BYTEs	item name (no zero terminator if length = 16)
+ 10h	BYTE	item value type (1=text, else numeric)
+ 11h 16	BYTEs	item value (string if type 1, else DWORD)
+SeeAlso: #2081,#2082
 --------N-6106-------------------------------
 INT 61 - PC/TCP kernel v2.05 - "net_info" - GET INTERFACE STATISTICS
 	AH = 06h
 	BX = network descriptor (must be allocated and open)
-	DS:SI -> 38-byte buffer for interface statistics (see #1957)
+	DS:SI -> 38-byte buffer for interface statistics (see #2084)
 Return: CF clear if successful
 	    buffer filled
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962)
 Desc:	returns the statistics relevant to the particular network interface
 	   used by the specified network descriptor
 Range:	INT 20 to INT E0, selected by configuration
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=05h"PC/TCP"
 
 Format of PC/TCP interface statistics:
-Offset	Size	Description	(Table 1957)
+Offset	Size	Description	(Table 2084)
  00h	WORD	interface class (e.g. 802.3)
  02h	WORD	type (manufacturer) of interface
  04h	WORD	interface number
@@ -1716,6 +2395,13 @@ Offset	Size	Description	(Table 1957)
  1Ch	DWORD	send errors
  20h	WORD	length of local net address (e.g. 0006h for Ethernet)
  22h	DWORD	pointer to local net address
+--------N-6106-------------------------------
+INT 61 - Banyan VINES - GET PCCONFIG BASE ADDRESS
+	AH = 06h
+	DS:DX -> 4-byte buffer for far pointer to PCCONFIG area
+Return: AX = 0000h successful
+Note:	The PCCONFIG area is located in the code segment of the BANV handler
+SeeAlso: AH=05h"VINES",AH=0Bh"VINES"
 --------N-6107-------------------------------
 INT 61 - PC/TCP kernel v2.05+ - "net_globalize" - MAKE NET DESCRIPTOR GLOBAL
 	AH = 07h
@@ -1723,12 +2409,20 @@ INT 61 - PC/TCP kernel v2.05+ - "net_globalize" - MAKE NET DESCRIPTOR GLOBAL
 Return: CF clear if successful
 	    AX = global network descriptor
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962)
 Notes:	the new network descriptor can be accessed from all processes and is
 	  independent of DOS
 	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=08h"PC/TCP"
 SeeAlso: INT 61/AH=29h
+--------N-6107-------------------------------
+INT 61 - Banyan VINES - GET VINES REVISION NUMBER (LONG)
+	AH = 07h
+	DS:DX -> 4-byte buffer for result
+Return: AX = 0000h successful
+	    DS:DX buffer contains revision number as
+		10000d * major_ver + 100d * minor_ver + patch_revision
+SeeAlso: AH=02h"VINES",AH=04h"VINES",AH=08h"VINES"
 --------N-6108-------------------------------
 INT 61 - PC/TCP kernel v2.05+ - "net_release" - CLOSE A NETWORK DESCRIPTOR
 	AH = 08h
@@ -1736,13 +2430,24 @@ INT 61 - PC/TCP kernel v2.05+ - "net_release" - CLOSE A NETWORK DESCRIPTOR
 Return: CF clear if successful
 	    AX = 0000h (BWPCTCP shim)
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962)
 Range:	INT 20 to INT E0, selected by configuration
 Note:	the descriptor will be closed and resources released.  If a stream
 	  descriptor, the protocol (FIN etc) is completed unless the
 	  non-blocking option has been set.
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=09h"PC/TCP"
 SeeAlso: INT 63/AH=0Eh"BW-TCP"
+--------N-6108-------------------------------
+INT 61 - Banyan VINES - CHECK VINES REVISION NUMBER IN RANGE (LONG)
+	AH = 08h
+	DS:DX -> 4-byte buffer containing the VINES revision number
+	    DS:DX buffer contains revision number as
+		10000d * major_ver + 100d * minor_ver + patch_revision
+Return: AX = status
+	    0000h valid version
+	    0004h out of range
+Note:	For Revision 5.53, the valid range is 4.10(0) to 6.19(99)
+SeeAlso: AH=04h"VINES",AH=07h"VINES"
 --------N-6109-------------------------------
 INT 61 - PC/TCP kernel v2.05+ - "net_releaseall" - CLOSE ALL NON-GLOBAL DESCRS
 	AH = 09h
@@ -1752,6 +2457,11 @@ Notes:	this call performs function 08h on every non-global network descriptor.
 	  Global descriptors must be released individually.
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=08h"PC/TCP"
 SeeAlso: INT 63/AH=0Eh"BW-TCP"
+--------N-6109-------------------------------
+INT 61 - Banyan VINES - GET VALUE OF AN OS/2 BACKEND VARIABLE
+	AH = 09h
+	other parameters, if any, unknown
+SeeAlso: AH=0Ah"VINES"
 --------N-610A-------------------------------
 INT 61 - PC/TCP kernel v2.05 - "net_send" - ???
 	AH = 0Ah
@@ -1761,6 +2471,11 @@ Notes:	this function is described as "unused" in the v2.05 and v2.2
 	  documentation
 	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: AH=0Bh
+--------N-610A-------------------------------
+INT 61 - Banyan VINES - SET VALUE OF AN OS/2 BACKEND VARIABLE
+	AH = 0Ah
+	other parameters, if any, unknown
+SeeAlso: AH=09h"VINES"
 --------N-610B-------------------------------
 INT 61 - PC/TCP kernel v2.05 - "net_sendto" - ???
 	AH = 0Bh
@@ -1771,26 +2486,31 @@ Notes:	this function is described as "unused" in the v2.05 and v2.2
 	  documentation
 	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: AH=0Ah
+--------N-610B-------------------------------
+INT 61 - Banyan VINES - SET PCCONFIG IN BACKEND
+	AH = 0Bh
+	other parameters, if any, unknown
+SeeAlso: AH=05h"VINES",AH=06h"VINES"
 --------N-610C-------------------------------
 INT 61 u - PC/TCP kernel v2.05+ - "net_stat" - GET CONNECTION STATISTICS
 	AH = 0Ch
 	BX = network descriptor or one of the following:
-	    FFFCh for kernel ICMP statistics (see #1961)
-	    FFFDh for kernel UDP statistics (see #1960)
-	    FFFEh for kernel IP statistics (see #1959)
-	    FFFFh for kernel TCP statistics (see #1958)
+	    FFFCh for kernel ICMP statistics (see #2088)
+	    FFFDh for kernel UDP statistics (see #2087)
+	    FFFEh for kernel IP statistics (see #2086)
+	    FFFFh for kernel TCP statistics (see #2085)
 	DS:DX -> 64-byte buffer
 Return: CF clear if successful
 	    buffer filled
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962)
 Notes:	the fields filled in for a network descriptor depend on the protocol
 	  family used by that descriptor's connection
 	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
 
 Format of PC/TCP kernel TCP statistics:
-Offset	Size	Description	(Table 1958)
+Offset	Size	Description	(Table 2085)
  00h 16 BYTEs	unused
  10h	DWORD	bytes sent
  14h	DWORD	bytes received
@@ -1803,10 +2523,10 @@ Offset	Size	Description	(Table 1958)
  34h	DWORD	resets
  38h	DWORD	duplicate packets
  3Ch	DWORD	retransmits
-SeeAlso: #1959,#1960,#1961
+SeeAlso: #2086,#2087,#2088
 
 Format of PC/TCP kernel IP statistics:
-Offset	Size	Description	(Table 1959)
+Offset	Size	Description	(Table 2086)
  00h  8 BYTEs	unused
  08h	DWORD	invalid IP header length errors
  0Ch	DWORD	protocol errors (unwanted packets)
@@ -1822,10 +2542,10 @@ Offset	Size	Description	(Table 1959)
  34h	DWORD	IP packets discarded + bad security + bad fragments
  38h	DWORD	fragments received
  3Ch  4 BYTEs	unused
-SeeAlso: #1958,#1960,#1961
+SeeAlso: #2085,#2087,#2088
 
 Format of PC/TCP kernel UDP statistics:
-Offset	Size	Description	(Table 1960)
+Offset	Size	Description	(Table 2087)
  00h 28 BYTEs	unused
  1Ch	DWORD	packets dropped for lack of buffers
  20h	DWORD	packets sent
@@ -1835,10 +2555,10 @@ Offset	Size	Description	(Table 1960)
  30h  4 BYTEs	unused
  34h	DWORD	truncated receives
  38h  8 BYTEs	unused
-SeeAlso: #1958,#1959,#1961
+SeeAlso: #2085,#2086,#2088
 
 Format of PC/TCP kernel ICMP statistics:
-Offset	Size	Description	(Table 1961)
+Offset	Size	Description	(Table 2088)
  00h	DWORD	"TimeEx" sent
  04h	DWORD	"TimeEx" received
  08h	DWORD	"ParamProb" sent
@@ -1855,14 +2575,14 @@ Offset	Size	Description	(Table 1961)
  34h	DWORD	"DestUn" sent
  38h	DWORD	ICMP Echo replies received
  3Ch	DWORD	ICMP Echo replies sent
-SeeAlso: #1958,#1959,#1960
+SeeAlso: #2085,#2086,#2087
 --------N-610D-------------------------------
 INT 61 - PC/TCP kernel v2.05+ - "is_netnd" - CHECK IF NETWORK DESCRIPTOR VALID
 	AH = 0Dh
 	BX = possible network descriptor
 Return: CF clear if valid
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=08h"PC/TCP"
 SeeAlso: INT 61/AH=22h
 --------N-610E-------------------------------
@@ -1897,7 +2617,7 @@ INT 61 - PC/TCP kernel v2.05+ - "net_shutdown" - UNINSTALL
 	AH = 10h
 Return: CF clear if successful
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Range:	INT 20 to INT E0, selected by configuration
 Note:	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
@@ -1921,19 +2641,19 @@ SeeAlso: INT 61"PC/TCP",INT 61/AH=11h
 INT 61 - PC/TCP kernel v2.05 - "net_connect" - OPEN A NETWORK CONNECTION
 	AH = 13h
 	BX = network descriptor (FFFFh for automatic net_getdesc)
-	DX = protocol (see #1962)
-	DS:SI -> buffer for "addr" structure (see #1963)
+	DX = protocol (see #2089)
+	DS:SI -> buffer for "addr" structure (see #2090)
 Return: CF clear if successful
 	    AX = network descriptor used or allocated
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Notes:	resets the connection with AH=19h in various cases
 	will wait for protocol on stream connections unless non-blocking was
 	  set with AH=20h
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=18h,INT 61/AH=23h
 SeeAlso: INT 63/AH=14h"BW-TCP"
 
-(Table 1962)
+(Table 2089)
 Values for PC/TCP protocol:
  0001h	raw net (undocumented)
  0002h	raw IP
@@ -1942,17 +2662,17 @@ Values for PC/TCP protocol:
  0005h	raw ICMP
 
 Format of structure "addr":
-Offset	Size	Description	(Table 1963)
+Offset	Size	Description	(Table 2090)
  00h	DWORD	Internet address (network order)
  04h	WORD	remote socket number (network order)
  06h	WORD	local socket number (network order) 0000h means "you choose"
- 08h	BYTE	protocol (see #1962)
+ 08h	BYTE	protocol (see #2089)
 --------N-6114-------------------------------
 INT 61 Ou - PC/TCP kernel v2.05 - "net_recv" - NO LONGER SUPPORTED
 	AH = 14h
 	BX = network descriptor
 Return: CF set
-	    AX = 0018h (see INT 61"PC/TCP")
+	    AX = 0018h (see #1962 at INT 61"PC/TCP")
 Notes:	displays error message "Illegal system call!  Please upgrade your
 	  PCserver software" to standard output
 	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
@@ -1969,11 +2689,11 @@ SeeAlso: INT 61/AH=0Bh,INT 61/AH=14h
 INT 61 - PC/TCP kernel v2.05+ - "net_peer" - GET DATA ON REMOTE PEER
 	AH = 16h
 	BX = network descriptor
-	DS:DX -> 9-byte buffer for "addr" structure (see #1963)
+	DS:DX -> 9-byte buffer for "addr" structure (see #2090)
 Return: CF clear if successful
 	    buffer filled
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Range:	INT 20 to INT E0, selected by configuration
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
 --------N-6117-------------------------------
@@ -1981,7 +2701,7 @@ INT 61 - PC/TCP kernel v2.05+ - "net_reconfig" - RE-READ KERNEL CONFIGURATION
 	AH = 17h
 Return: CF clear if successful
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Notes:	this routine is deprecated in v2.1+ and will eventually be withdrawn;
 	  in v2.1+, this function calls AH=01h which should be used instead
 	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
@@ -1992,7 +2712,7 @@ INT 61 - PC/TCP kernel v2.05+ - "net_eof" - CLOSE TRANSMIT SIDE OF CONNECTION
 	BX = network descriptor
 Return: CF clear if successful
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Note:	a TCP "FIN" command is sent and no further data may be transmitted,
 	  although the connection remains open
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=13h"PC/TCP"
@@ -2003,7 +2723,7 @@ INT 61 - PC/TCP kernel v2.05+ - "net_abort" - RESET A NETWORK CONNECTION
 	BX = network descriptor
 Return: CF clear if successful
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Desc:	immediately destroys the specified connection
 Note:	send a TCP "RST" command if a stream connection is open
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=24h
@@ -2012,13 +2732,13 @@ INT 61 - PC/TCP kernel v2.05+ - "net_write" - WRITE TO THE NETWORK
 	AH = 1Ah
 	BX = network descriptor
 	CX = number of bytes to transmit (0000h allowed)
-	DX = send options (see #1964)
+	DX = send options (see #2091)
 	DS:SI -> data to be written
 Return: CF clear if successful
 	    AX = number of bytes actually written
 	    DX = ???
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Range:	INT 20h to INT E0h, selected by configuration
 Notes:	the installation check consists of testing for the signature "TCPTSR"
 	  three bytes beyond the start of the interrupt handler
@@ -2026,7 +2746,7 @@ SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=1Bh,INT 61/AH=1Ch
 SeeAlso: INT 63/AH=19h"BW-TCP",INT 63/AH=1Bh"BW-TCP"
 
 Bitfields for PC/TCP send options:
-Bit(s)	Description	(Table 1964)
+Bit(s)	Description	(Table 2091)
  0	signal "URG"ent data
  3	attempt rerouting on non-stream calls if first attempt fails
  4	send data with PUSH flag (no override of Nagle) (see option 0Ch)
@@ -2038,19 +2758,19 @@ INT 61 - PC/TCP kernel v2.05+ - "net_read" - READ FROM THE NETWORK
 	AH = 1Bh
 	BX = network descriptor
 	CX = maximum number of bytes to read
-	DX = receive options (see #1965)
+	DX = receive options (see #2092)
 	DS:SI -> buffer for data
-	ES:DI -> "addr" structure (see #1963) for remote from which to read
+	ES:DI -> "addr" structure (see #2090) for remote from which to read
 		0000h:0000h for any
 Return: CF clear if successful
 	    AX = number of bytes actually read
 	    DX = ???
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=1Ah,INT 61/AH=1Dh
 
 Bitfields for PC/TCP receive options:
-Bit(s)	Description	(Table 1965)
+Bit(s)	Description	(Table 2092)
  1	do not remove data from queue, just copy it
  2	do not copy data, just remove it from queue
  5	fail if datagram would be truncated
@@ -2061,14 +2781,14 @@ INT 61 - PC/TCP kernel v2.05+ - "net_writeto" - WRITE A DATAGRAM
 	AH = 1Ch
 	BX = network descriptor
 	CX = number of bytes to transmit (0000h allowed)
-	DX = send options (see #1964)
+	DX = send options (see #2091)
 	DS:SI -> data to be written
-	ES:DI -> "addr" structure (see #1963)
+	ES:DI -> "addr" structure (see #2090)
 Return: CF clear if successful
 	    AX = number of bytes actually written
 	    DX = ???
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Note:	this function differs from AH=1Ah in that the address and socket
 	  numbers can be overridden
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=1Ah,INT 61/AH=1Dh
@@ -2078,14 +2798,14 @@ INT 61 - PC/TCP kernel v2.05+ - "net_readfrom" - READ A DATAGRAM
 	AH = 1Dh
 	BX = network descriptor
 	CX = maximum number of bytes to read
-	DX = receive options (see #1964)
+	DX = receive options (see #2091)
 	DS:SI -> buffer for received data
-	ES:DI -> 9-byte buffer containing "addr" structure (see #1963)
+	ES:DI -> 9-byte buffer containing "addr" structure (see #2090)
 Return: CF clear if successful
 	    AX = number of bytes read
 	    DX = ???
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Notes:	this function can read from any host or a designated host depending
 	  on settings in the "addr" structure
 	only for use with datagram or Raw descriptors
@@ -2096,7 +2816,7 @@ INT 61 - PC/TCP kernel v2.05+ - "net_flush" - FLUSH PENDING DATA
 	BX = network descriptor
 Return: CF clear if successful
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Range:	INT 20 to INT E0, selected by configuration
 Notes:	bufferred data is transmitted immediately, overriding Nagle's algorithm
 	  if necessary
@@ -2106,17 +2826,17 @@ SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
 INT 61 - PC/TCP kernel v2.05+ - "net_asynch" - SET UP ASYNCHRONOUS CALL-BACK
 	AH = 1Fh
 	BX = network descriptor
-	CX = event type (see #1966)
-	DS:SI -> event handler routine (see #1967)
+	CX = event type (see #2093)
+	DS:SI -> event handler routine (see #2094)
 	ES:DI = 32-bit hint passed to handler
 Return: CF clear if successful
 	    DS:DX -> previous handler
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Note:	ICMP messages do not trigger events on stream connections
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
 
-(Table 1966)
+(Table 2093)
 Values for PC/TCP event type:
  00h	alarm
  01h	open (successfully opened stream connection)
@@ -2127,10 +2847,10 @@ Values for PC/TCP event type:
  06h	close (local host closed connection and protocol is complete)
  07h	error (error code passed to handler as arg)
 
-(Table 1967)
+(Table 2094)
 Values PC/TCP user event handler is called with:
 	BX = network descriptor
-	CX = event type (see #1966)
+	CX = event type (see #2093)
 	DS:DX -> arg
 	ES:DI = 32-bit hint value
 	STACK:	small stack, possibly the DOS stack
@@ -2141,15 +2861,15 @@ INT 61 - PC/TCP kernel v2.05+ - "set_option" - SET AN OPTION ON A DESCRIPTOR
 	CX = length of buffer (usually 04h)
 	DS:DX -> buffer containing option
 	SI = (ignored by v2.2-)
-	DI = option to set (see #1968)
+	DI = option to set (see #2095)
 Return: CF clear if successful
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Note:	Beame&Whiteside's BWPCTCP shim only supports options 01h and 0Bh; all
 	  others return CF clear
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=21h
 
-(Table 1968)
+(Table 2095)
 Values for PC/TCP option to get or set:
  01h	set non-blocking mode if non-zero
  02h	timeout of call in milliseconds
@@ -2168,11 +2888,11 @@ INT 61 - PC/TCP kernel v2.05+ - "get_option" - GET OPTIONS APPLIED TO NET DESCR
 	CX = length of buffer
 	DS:DX -> buffer for return values
 	SI = 0004h (ignored by v2.2-)
-	DI = option (see #1968)
+	DI = option (see #2095)
 Return: CF clear if successful
 	    DS:DX -> value (usually 32 bits) returned by selected option
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Note:	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=20h
 --------N-6122-------------------------------
@@ -2181,7 +2901,7 @@ INT 61 u - PC/TCP kernel v2.05+ - "net_getdesc" - ALLOCATE NETWORK DESCRIPTOR
 Return: CF clear if successful
 	    AX = network descriptor
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Note:	the descriptor will be an integer in the range 00h-1Fh, and a DOS call
 	  is made to allocate this as a file descriptor.  Hence a number may
 	  not refer to a PC/TCP network descriptor and a DOS file handle
@@ -2192,11 +2912,11 @@ INT 61 - PC/TCP kernel v2.05+ - "net_listen" - LISTEN FOR INCOMING CONNECTIONS
 	AH = 23h
 	BX = network descriptor or FFFFh to allocate descriptor
 	DX = type of service
-	DS:SI -> "addr" structure (see #1963)
+	DS:SI -> "addr" structure (see #2090)
 Return: CF clear if successful
 	    AX = network descriptor
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Notes:	type of service and "addr" structure are as for AH=13h
 	any of the address structure can be zero; normally local socket number
 	  is filled in prior to call
@@ -2217,7 +2937,7 @@ INT 61 - PC/TCP kernel v2.05+ - "ad_res_name" - GET HOST NAME GIVEN ADDRESS
 Return: CF clear if successful
 	   buffer filled with ASCIZ host name
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Note:	this function will use the host table and or DNS to resolve the
 	  address, depending on kernel configuration.  Use this call for the
 	  normal gethostbyaddr function.
@@ -2231,7 +2951,7 @@ INT 61 - PC/TCP kernel v2.05+ - "ad_htable" - GET HOST NAME FROM LOCAL TABLE
 Return: CF clear if successful
 	    buffer filled with ASCIZ host name
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Notes:	normally one would use AH=25h instead of this function
 	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=25h,INT 61/AH=27h
@@ -2244,7 +2964,7 @@ INT 61 - PC/TCP kernel v2.05+ - "ad_domain" - GET HOST NAME FROM DNS
 Return: CF clear if successful
 	    buffer filled with ASCIZ host name
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Note:	normally one would use AH=25h instead of this function
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=25h,INT 61/AH=26h
 --------N-6128-------------------------------
@@ -2254,7 +2974,7 @@ INT 61 - PC/TCP kernel v2.05+ - "net_swap" - EXCHANGE TWO NETWORK DESCRIPTORS
 	CX = network descriptor 2
 Return: CF clear if successful
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Note:	the two descriptors will exchange places; both must be local or both
 	  global
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
@@ -2264,7 +2984,7 @@ INT 61 - PC/TCP kernel v2.05+ - "net_getglobdesc" - ALLOCATE GLOBAL DESCRIPTOR
 Return: CF clear if successful
 	    AX = network descriptor
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Note:	use this function rather than AH=22h to avoid a DOS call by the PC/TCP
 	  kernel; the returned descriptor will be >= 40h and cannot be used
 	  with "net_select" (AH=0Eh)
@@ -2273,7 +2993,7 @@ SeeAlso: INT 61/AH=22h
 --------N-612A-------------------------------
 INT 61 - PC/TCP kernel v2.05+ - GET CONFIGURATION INFORMATION
 	AH = 2Ah
-	DS:SI -> 26-byte buffer for configuration information (see #1969)
+	DS:SI -> 26-byte buffer for configuration information (see #2096)
 Return: CF clear
 	AX = 0000h
 	buffer filled
@@ -2283,7 +3003,7 @@ Notes:	size of buffer may vary with kernel version; 26 bytes is the size for
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
 
 Format of PC/TCP configuration information:
-Offset	Size	Description	(Table 1969)
+Offset	Size	Description	(Table 2096)
  00h	BYTE	maximum TCP connections available
  01h	BYTE	maximum UDP connections available
  02h	BYTE	maximum IP connections available
@@ -2305,11 +3025,11 @@ INT 61 - PC/TCP kernel v2.02+ - "net_alarm" - SET TIMED ASYNCHRONOUS EVENT
 	AH = 2Bh
 	BX = network descriptor
 	CX,DX = time before alarm in milliseconds
-	DS:SI -> handler which will receive call (see INT 61/AH=1Fh)
+	DS:SI -> handler which will receive call (see #2094 at INT 61/AH=1Fh)
 	ES:DI = 32-bit cookie passed to handler
 Return: CF clear if successful
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Notes:	this function will cause a NET_AS_ALARM to be generated; it is intended
 	  for TSRs, etc. to regain control periodically
 	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
@@ -2321,7 +3041,7 @@ INT 61 - PC/TCP kernel v2.05+ - "icmp_ping" - SEND ICMP ECHO REQUEST (PING)
 	CX = length of data to send
 Return: CF clear if successful (i.e. reply received)
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Note:	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
 --------N-61---------------------------------
@@ -2333,6 +3053,12 @@ INT 61 u - PC/TCP kernel v2.05 - NOP for SLIP kernel
 Notes:	these functions are described as "unused" in the v2.2 documentation
 	router configuration can be altered using INT 61/AH=01h
 	this function is not supported by Beame&Whiteside's BWPCTCP v3.0a shim
+--------N-6132-------------------------------
+INT 61 U - PC/TCP kernel v2.3 - GET ???
+	AH = 32h
+Return: AX = ???
+Note:	this function is fully re-entrant, and may be called even when another
+	  PC/TCP kernel call is already in progress
 --------N-6134-------------------------------
 INT 61 U - PC/TCP kernel v2.1+ - "icmp_destun" - ???
 	AH = 34h
@@ -2347,7 +3073,7 @@ INT 61 - PC/TCP kernel v2.05+ - "nm_prs_addr" - TRANSLATE NUMERICAL IP ADDRESS
 Return: CF clear if successful
 	    DX:AX -> IP address
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Range:	INT 20 to INT E0, selected by configuration
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=54h
 --------N-6151-------------------------------
@@ -2360,7 +3086,7 @@ Return: CF clear if successful
 	    DX:AX -> IP address of host
 	    destination buffer filled with canonical host name
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Note:	this function calls DOS, and can fail if the DOS call fails
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=54h
 --------N-6152-------------------------------
@@ -2373,7 +3099,7 @@ Return: CF clear if successful
 	    DX:AX -> IP address of host
 	    destination buffer filled with canonical host name
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Note:	this function will poll all configured domain name servers if necessary
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=54h
 --------N-6153-------------------------------
@@ -2383,7 +3109,7 @@ INT 61 - PC/TCP kernel v2.05- - "nm_ien116" - RESOLVE HOST NAME USING IEN116
 Return: CF clear if successful
 	    DX:AX -> IP address of host
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Range:	INT 20 to INT E0, selected by configuration
 Note:	this function is not supported by v2.10+
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=54h
@@ -2397,7 +3123,7 @@ Return: CF clear if successful
 	    DX:AX -> IP address of host
 	    destination buffer filled with canonical host name
 	CF set on error
-	    AX = error code (see INT 61"PC/TCP")
+	    AX = error code (see #1962 at INT 61"PC/TCP")
 Note:	this function uses all configured methods in turn to resolve the
 	  name (numerical, then host table, then DNS, then IEN116)
 BUG:	the SLIP kernel for v2.05 bounds-checks the wrong register, so values
@@ -2405,6 +3131,72 @@ BUG:	the SLIP kernel for v2.05 bounds-checks the wrong register, so values
 	  this bug as well; it has been fixed in the v2.2 SLIPDRV kernel.
 SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=50h,INT 61/AH=51h
 SeeAlso: INT 61/AH=52h,INT 61/AH=53h
+--------N-6155-------------------------------
+INT 61 U - PC/TCP kernel v2.3 - ???
+	AH = 55h
+	???
+Return: ???
+SeeAlso: INT 61"PC/TCP"
+--------N-6156-------------------------------
+INT 61 U - PC/TCP kernel v2.3 - ???
+	AH = 56h
+	???
+Return: ???
+SeeAlso: INT 61"PC/TCP"
+--------N-6157-------------------------------
+INT 61 U - PC/TCP kernel v2.3 - ???
+	AH = 57h
+	???
+Return: ???
+SeeAlso: INT 61"PC/TCP"
+--------N-6158-------------------------------
+INT 61 U - PC/TCP kernel v2.3 - ???
+	AH = 58h
+	???
+Return: ???
+SeeAlso: INT 61"PC/TCP"
+--------N-6159-------------------------------
+INT 61 U - PC/TCP kernel v2.3 - ???
+	AH = 59h
+	???
+Return: ???
+SeeAlso: INT 61"PC/TCP"
+--------N-615A-------------------------------
+INT 61 U - PC/TCP kernel v2.3 - ???
+	AH = 5Ah
+	???
+Return: ???
+SeeAlso: INT 61"PC/TCP"
+--------N-615B-------------------------------
+INT 61 U - PC/TCP kernel v2.3 - ???
+	AH = 5Bh
+	???
+Return: ???
+SeeAlso: INT 61"PC/TCP"
+--------N-615C-------------------------------
+INT 61 U - PC/TCP kernel v2.3 - ???
+	AH = 5Ch
+	???
+Return: ???
+SeeAlso: INT 61"PC/TCP"
+--------N-615D-------------------------------
+INT 61 U - PC/TCP kernel v2.3 - ???
+	AH = 5Dh
+	???
+Return: ???
+SeeAlso: INT 61"PC/TCP"
+--------N-615E-------------------------------
+INT 61 U - PC/TCP kernel v2.3 - ???
+	AH = 5Eh
+	???
+Return: ???
+SeeAlso: INT 61"PC/TCP"
+--------N-615F-------------------------------
+INT 61 U - PC/TCP kernel v2.3 - ???
+	AH = 5Fh
+	???
+Return: ???
+SeeAlso: INT 61"PC/TCP"
 --------*-62---------------------------------
 INT 62 - reserved for user interrupt
 --------d-62---------------------------------
@@ -2412,6 +3204,14 @@ INT 62 - Adaptec and OMTI controllers - DRIVE 0 DATA
 Notes:	this vector stores the third four bytes of the parameter table for
 	  hard disk 0
 SeeAlso: INT 60"Adaptec",INT 61"Adaptec",INT 63"Adaptec"
+--------b-62---------------------------------
+INT 62 - TI Professional PC - OPTION ROM DATA AREA POINTER (NOT A VECTOR!)
+Desc:	the low word of this vector contains the segment of the RAM data area
+	  to be used by the expansion ROM at F400h:2000h, and the high word
+	  contains the length of the data area; this segment and size are
+	  both set to 0000h if no ROM is installed at F400h:2000h
+SeeAlso: INT 61"TI Professional PC",INT 63"TI Professional"
+SeeAlso: INT 66"TI Professional PC"
 --------b-62---------------------------------
 INT 62 - HP 95LX - USED BY CALCULATOR
 SeeAlso: INT 60"HP 95LX"
@@ -2449,7 +3249,7 @@ INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - GET PHYSICAL HARDWARE ADDRESS
 	AH = 00h
 	DS:DX -> 6-byte buffer for address
 Return: AX = length of hardware address???
-Range:	INT 60 to INT 65 ???
+Range:	INT 4C to INT FB, selected by configuration
 Note:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
@@ -2460,7 +3260,7 @@ SeeAlso: INT 63"BW-TCP",INT 64"BW-NFS"
 INT 62 u - FGDRIVER v3.03 - "FG_ALLOCATE" - CREATE VIRTUAL VIDEO PAGE
 	AX = 0000h
 	BX = page number (0000h-003Fh)
-Return: AX = status (0000h,0001h,0007h,0008h) (see #1970)
+Return: AX = status (0000h,0001h,0007h,0008h) (see #2097)
 Program: FGDRIVER is the external video driver for the shareware
 	  Fastgraph/Light by Ted Gruber Software
 Notes:	For FGDRIVER v1.10, this function was "FG_GETMODE" (see AX=003Fh);
@@ -2472,7 +3272,7 @@ Notes:	For FGDRIVER v1.10, this function was "FG_GETMODE" (see AX=003Fh);
 SeeAlso: AX=0001h,AX=0002h,AX=0003h,AX=002Eh
 Index:	installation check;Fastgraph/Light
 
-(Table 1970)
+(Table 2097)
 Values for FGDRIVER status:
  0000h	successful
  0001h	specified page is a physical or logical page
@@ -2487,7 +3287,7 @@ Values for FGDRIVER status:
 INT 62 u - FGDRIVER v3.03 - "FG_ALLOCCMS" - CREATE LOGICAL VIDEO PAGE (CONVMEM)
 	AX = 0001h
 	BX = page number (0001h-003Fh)
-Return: AX = status (0000h,FFFCh,FFFDh,FFFEh) (see #1970)
+Return: AX = status (0000h,FFFCh,FFFDh,FFFEh) (see #2097)
 Notes:	For FGDRIVER v1.10, this function was "FG_SETMODE" (see AX=0093h);
 	  "FG_ALLOCCMS" was AX=009Dh
 	The only operation which is allowed on logical pages is "FG_COPYPAGE"
@@ -2497,7 +3297,7 @@ SeeAlso: AX=0000h,AX=0002h,AX=0003h,AX=0012h,AX=002Eh
 INT 62 u - FGDRIVER v3.03 - "FG_ALLOCEMS" - CREATE LOGICAL VIDEO PAGE (EMS)
 	AX = 0002h
 	BX = page number (0001h-003Fh)
-Return: AX = status (0000h,FFFCh,FFFDh,FFFEh) (see #1970)
+Return: AX = status (0000h,FFFCh,FFFDh,FFFEh) (see #2097)
 Notes:	For FGDRIVER v1.10, this function was "FG_TESTMODE" (see AX=00A7h);
 	  "FG_ALLOCEMS" was AX=009Eh
 	You must first call "FG_INITEMS" (see AX=004Ch) before using this
@@ -2509,7 +3309,7 @@ SeeAlso: AX=0000h,AX=0001h,AX=0003h,AX=0012h,AX=002Eh,AX=004Ch
 INT 62 u - FGDRIVER v3.03 - "FG_ALLOCXMS" - CREATE LOGICAL VIDEO PAGE (XMS)
 	AX = 0003h
 	BX = page number (0001h-003Fh)
-Return: AX = status (0000h,FFFCh,FFFDh,FFFEh) (see #1970)
+Return: AX = status (0000h,FFFCh,FFFDh,FFFEh) (see #2097)
 Notes:	For FGDRIVER v1.10, this function was "FG_BESTMODE" (see AX=0005h),
 	  and "FG_ALLOCXMS" was AX=009Fh
 	You must first call "FG_INITXMS" (see AX=004Eh) before using this
@@ -2520,7 +3320,7 @@ SeeAlso: AX=0000h,AX=0001h,AX=0002h,AX=0012h,AX=002Eh,AX=004Eh
 --------V-620004-----------------------------
 INT 62 u - FGDRIVER v1.10,3.03 - "FG_AUTOMODE" - GET VIDEO MODE W/MOST FEATURES
 	AX = 0004h
-Return: AX = proposed video mode number (see #1984 at AX=0093h)
+Return: AX = proposed video mode number (see #2111 at AX=0093h)
 Program: FGDRIVER is the external video driver for the shareware
 	  Fastgraph/Light by Ted Gruber Software
 SeeAlso: AX=0005h,AX=003Fh,AX=0093h,AX=00A1h,AX=00A7h
@@ -2628,7 +3428,7 @@ SeeAlso: AX=0008h,AX=000Dh,AX=0025h,AX=0078h
 --------V-62000F-----------------------------
 INT 62 u - FGDRIVER v3.03 - "FG_CLIPMASK" - DISPLAY CLIPPED IMAGE (MASKING MAP)
 	AX = 000Fh
-	ES:BX -> array containing image stored as a masking map (see #1971)
+	ES:BX -> array containing image stored as a masking map (see #2098)
 	CX = number of pixel runs in masking map
 	DX = width of masking map in pixels
 Notes:	For FGDRIVER v1.10, this function was "FG_YCONVERT" (see AX=00B3h);
@@ -2787,7 +3587,7 @@ SeeAlso: AX=0010h,AX=0022h,AX=002Ch,AX=0038h,AX=007Eh,AX=0085h
 --------V-62001D-----------------------------
 INT 62 u - FGDRIVER v3.03 - "FG_DRAWMASK" - DISPLAY IMAGE (MASKING MAP)
 	AX = 001Dh
-	ES:BX -> array containing image stored as a masking map (see #1971)
+	ES:BX -> array containing image stored as a masking map (see #2098)
 	CX = number of pixel runs in masking map
 	DX = width of masking map in pixels
 Notes:	For FGDRIVER v1.10, this function was "FG_MAPRGB" (see AX=005Ah);
@@ -2799,7 +3599,7 @@ Notes:	For FGDRIVER v1.10, this function was "FG_MAPRGB" (see AX=005Ah);
 SeeAlso: AX=000Fh,AX=001Dh,AX=0086h,AX=008Ch
 
 Format of FGDRIVER masking map:
-Offset	Size	Description	(Table 1971)
+Offset	Size	Description	(Table 2098)
  00h	BYTE	length of first "protect" run (pixels remain unchanged)
  01h	BYTE	length of first "zero" run (pixels set to background color)
  02h	BYTE	length of second "protect" run
@@ -2931,7 +3731,7 @@ SeeAlso: AX=0026h,AX=0027h,AX=0028h
 --------V-62002A-----------------------------
 INT 62 u - FGDRIVER v3.03 - "FG_FLIPMASK" - DISPLAY INV CLIPPED IMAGE (MASKMAP)
 	AX = 002Ah
-	ES:BX -> array containing image stored as a masking map (see #1971)
+	ES:BX -> array containing image stored as a masking map (see #2098)
 	CX = number of pixel runs in masking map
 	DX = width of masking map in pixels
 Notes:	For FGDRIVER v1.10, this function was "FG_RECT" (see AX=0080h);
@@ -2978,7 +3778,7 @@ SeeAlso: AX=007Ch
 INT 62 u - FGDRIVER v3.03 - "FG_FREEPAGE" - FREE VIRTUAL OR LOGICAL VIDEO PAGE
 	AX = 002Eh
 	BX = page number (0000h-003Fh)
-Return: AX = status (0000h,0001h,0007h,0009h) (see #1970)
+Return: AX = status (0000h,0001h,0007h,0009h) (see #2097)
 Note:	For FGDRIVER v1.10, this function was "FG_POLYGON" (see AX=0079h);
 	  "FG_FREEPAGE" was AX=0043h
 SeeAlso: AX=0000h,AX=0001h,AX=0002h,AX=0003h
@@ -3051,7 +3851,7 @@ SeeAlso: AX=0042h,AX=006Fh,AX=008Eh
 --------V-620036-----------------------------
 INT 62 u - FGDRIVER v3.03 - "FG_GETENTRY" - GET PAGE TYPE AND ADDRESS
 	AX = 0036h
-	ES:BX -> variable pointer record (see #1972)
+	ES:BX -> variable pointer record (see #2099)
 	CX = page number (00h-3Fh)
 Notes:	For FGDRIVER v1.10, this function was "FG_CHGTEXT" (see AX=000Ch);
 	  "FG_GETENTRY" did not exist yet
@@ -3061,13 +3861,13 @@ Notes:	For FGDRIVER v1.10, this function was "FG_CHGTEXT" (see AX=000Ch);
 SeeAlso: AX=0000h,AX=008Fh
 
 Format of FGDRIVER variable pointer record:
-Offset	Size	Description	(Table 1972)
+Offset	Size	Description	(Table 2099)
  00h	WORD	segment of WORD buffer for page address
  02h	WORD	offset of WORD buffer for page address
- 04h	WORD	segment of WORD buffer for page type (se #1973)
+ 04h	WORD	segment of WORD buffer for page type (se #2100)
  06h	WORD	offset of WORD buffer for page type
 
-(Table 1973)
+(Table 2100)
 Values for FGDRIVER page type:
  0000h	unallocated
  0001h	physical
@@ -3103,13 +3903,13 @@ SeeAlso: AX=0016h,AX=0034h
 --------V-62003A-----------------------------
 INT 62 u - FGDRIVER v3.03 - "FG_GETKEY" - GET NEXT KEYSTROKE
 	AX = 003Ah
-	ES:BX -> variable pointer record (see #1974)
+	ES:BX -> variable pointer record (see #2101)
 Return: (after next keystroke if no typeahead) variables updated
 Note:	For FGDRIVER v1.10, this function was unused; "FG_GETKEY" was AX=006Eh
 SeeAlso: AX=000Ah,AX=0051h,AX=0054h,AX=00ADh,INT 16/AH=00h
 
 Format of FGDRIVER variable pointer record:
-Offset	Size	Description	(Table 1974)
+Offset	Size	Description	(Table 2101)
  00h	WORD	segment of BYTE buffer for ASCII keycode
  02h	WORD	offset of BYTE buffer for ASCII keycode
  04h	WORD	segment of BYTE buffer for extended keycode
@@ -3176,7 +3976,7 @@ SeeAlso: AX=0030h,AX=0032h,AX=0076h,AX=0077h
 --------V-620042-----------------------------
 INT 62 u - FGDRIVER v3.03 - "FG_GETRGB" - GET VIDEO DAC REGISTER CONTENTS
 	AX = 0042h
-	ES:BX -> variable pointer record (see #1975)
+	ES:BX -> variable pointer record (see #2102)
 	CX = DAC register number
 Return: variables updated
 Notes:	For FGDRIVER v1.10, this function was "FG_ALLOCATE" (see AX=0000h);
@@ -3186,7 +3986,7 @@ Notes:	For FGDRIVER v1.10, this function was "FG_ALLOCATE" (see AX=0000h);
 SeeAlso: AX=0035h,AX=006Fh,AX=008Eh
 
 Format of FGDRIVER variable pointer record:
-Offset	Size	Description	(Table 1975)
+Offset	Size	Description	(Table 2102)
  00h	WORD	segment of WORD buffer for red component of DAC register
  02h	WORD	offset of WORD buffer for red component
  04h	WORD	segment of WORD buffer for green component of DAC register
@@ -3325,7 +4125,7 @@ SeeAlso: AX=0078h,AX=0079h,AX=007Ah
 INT 62 u - FGDRIVER v3.03 - "FG_INTJOY" - GET KEYCODES CORRESP TO JOYSTICK POS
 	AX = 0050h
 	CX = joystick number (0001h or 0002h)
-	ES:BX -> variable pointer record (see #1976)
+	ES:BX -> variable pointer record (see #2103)
 Notes:	For FGDRIVER v1.10, this function was "FG_PATTERN" (see AX=0072h);
 	  "FG_INTJOY" was AX=0079h
 	If the indicated joystick has not been initialized with AX=0075h, both
@@ -3335,7 +4135,7 @@ Notes:	For FGDRIVER v1.10, this function was "FG_PATTERN" (see AX=0072h);
 SeeAlso: AX=0009h,AX=0044h,AX=0046h,AX=004Dh,AX=0061h
 
 Format of FGDRIVER variable pointer record:
-Offset	Size	Description	(Table 1976)
+Offset	Size	Description	(Table 2103)
  00h	WORD	segment of BYTE buffer for button code
  02h	WORD	offset of BYTE buffer for button code
  04h	WORD	segment of BYTE buffer for joystick position
@@ -3343,7 +4143,7 @@ Offset	Size	Description	(Table 1976)
 --------V-620051-----------------------------
 INT 62 u - FGDRIVER v3.03 - "FG_INTKEY" - GET KEYSTROKE, NO WAIT
 	AX = 0051h
-	ES:BX -> variable pointer record (see #1977)
+	ES:BX -> variable pointer record (see #2104)
 Return: variables updated
 Notes:	For FGDRIVER v1.10, this function was "FG_DRAWMASK" (see AX=001Dh);
 	  "FG_INTKEY" was AX=006Fh
@@ -3352,7 +4152,7 @@ Notes:	For FGDRIVER v1.10, this function was "FG_DRAWMASK" (see AX=001Dh);
 SeeAlso: AX=000Ah,AX=003Ah,AX=0054h,AX=00ADh,INT 16/AH=01h
 
 Format of FGDRIVER variable pointer record:
-Offset	Size	Description	(Table 1977)
+Offset	Size	Description	(Table 2104)
  00h	WORD	segment of BYTE buffer for ASCII keycode
  02h	WORD	offset of BYTE buffer for ASCII keycode
  04h	WORD	segment of BYTE buffer for extended keycode
@@ -3498,7 +4298,7 @@ INT 62 u - FGDRIVER v3.03 - "FG_MOUSEBUT" - GET MOUSE BUTTON PRESS/RELEASE CNTS
 	AX = 005Eh
 	CX = mouse button (1 = left press, 2 = right press, 3 = middle press,
 		  -1=left release, -2=right release, -3=middle release)
-	ES:BX -> variable pointer record (see #1978)
+	ES:BX -> variable pointer record (see #2105)
 Return: variables updated
 Notes:	For FGDRIVER v1.10, this function was "FG_TCMASK" (see AX=00A5h);
 	  "FG_MOUSEBUT" was AX=007Ch
@@ -3508,7 +4308,7 @@ Notes:	For FGDRIVER v1.10, this function was "FG_TCMASK" (see AX=00A5h);
 SeeAlso: AX=005Fh,AX=0061h,AX=0064h
 
 Format of FGDRIVER variable pointer record:
-Offset	Size	Description	(Table 1978)
+Offset	Size	Description	(Table 2105)
  00h	WORD	segment of WORD buffer for press/release count
  02h	WORD	offset of WORD buffer for press/release count
  04h	WORD	segment of WORD buffer for screen space col of last press/rls
@@ -3580,13 +4380,13 @@ SeeAlso: AX=0062h,AX=0064h,INT 33/AX=0004h
 --------V-620064-----------------------------
 INT 62 u - FGDRIVER v3.03 - "FG_MOUSEPOS" - GET CURRENT MOUSE POSITION
 	AX = 0064h
-	ES:BX -> variable pointer record (see #1979)
+	ES:BX -> variable pointer record (see #2106)
 Notes:	For FGDRIVER v1.10, this function was "FG_FADEIN" (see AX=0027h);
 	  "FG_MOUSEPOS" was AX=007Dh
 SeeAlso: AX=0063h
 
 Format of FGDRIVER variable pointer record:
-Offset	Size	Description	(Table 1979)
+Offset	Size	Description	(Table 2106)
  00h	WORD	segment of WORD buffer for mouse column
  02h	WORD	offset of WORD buffer for mouse column
  04h	WORD	segment of WORD buffer for mouse row
@@ -3729,7 +4529,7 @@ SeeAlso: AX=0021h,AX=0039h
 --------V-620073-----------------------------
 INT 62 u - FGDRIVER v3.03 - "FG_PCXHEAD" - GET PCX FILE HEADER
 	AX = 0073h
-	ES:BX -> variable pointer record (see #1980)
+	ES:BX -> variable pointer record (see #2107)
 Return: AX = status
 	    0000h successful
 	    FFFEh not a PCX file
@@ -3739,7 +4539,7 @@ Note:	For FGDRIVER v1.10, this function was "FG_SETNUM" (see AX=0094h);
 SeeAlso: AX=0074h,AX=009Ah
 
 Format of FGDRIVER variable pointer record:
-Offset	Size	Description	(Table 1980)
+Offset	Size	Description	(Table 2107)
  00h	WORD	segment of ASCIZ filename
  02h	WORD	offset of ASCIZ filename
  04h	WORD	segment of 128-byte buffer for PCX header
@@ -3783,7 +4583,7 @@ SeeAlso: AX=0041h,AX=0076h
 INT 62 u - FGDRIVER v3.03 - "FG_POLYFILL" - DRAW A FILLED CONVEX POLYGON
 	AX = 0078h
 	CX = number of vertices
-	ES:BX -> variable pointer record (see #1981)
+	ES:BX -> variable pointer record (see #2108)
 Notes:	For FGDRIVER v1.10, this function was "FG_BUTTON" (see AX=0009h);
 	  "FG_POLYFILL" did not exist yet
 	The vertex array consists of pairs of words specifying the X and Y
@@ -3795,7 +4595,7 @@ Notes:	For FGDRIVER v1.10, this function was "FG_BUTTON" (see AX=0009h);
 SeeAlso: AX=000Eh,AX=0025h,AX=0079h,AX=007Ah,AX=007Bh
 
 Format of FGDRIVER variable pointer record:
-Offset	Size	Description	(Table 1981)
+Offset	Size	Description	(Table 2108)
  00h	WORD	segment of vertex array
  02h	WORD	offset of vertex array
  04h	WORD	segment of work array
@@ -3804,14 +4604,14 @@ Offset	Size	Description	(Table 1981)
 INT 62 u - FGDRIVER v3.03 - "FG_POLYGON" - DRAW AN UNFILLED POLYGON
 	AX = 0079h
 	CX = number of vertices in polygon
-	ES:BX -> variable pointer record (see #1982)
+	ES:BX -> variable pointer record (see #2109)
 Notes:	For FGDRIVER v1.10, this function was "FG_INTJOY" (see AX=0050h);
 	  "FG_POLYGON" was AX=002Eh
 	This call is ignored in text modes
 SeeAlso: AX=0078h,AX=007Ah,AX=007Bh
 
 Format of FGDRIVER variable pointer record:
-Offset	Size	Description	(Table 1982)
+Offset	Size	Description	(Table 2109)
  00h	WORD	segment of WORD array containing vertex columns
  02h	WORD	offset of WORD array containing vertex columns
  04h	WORD	segment of WORD array containing vertex rows
@@ -3820,7 +4620,7 @@ Offset	Size	Description	(Table 1982)
 INT 62 u - FGDRIVER v3.03 - "FG_POLYLINE" - DRAW AN UNFILLED POLYGON
 	AX = 007Ah
 	CX = number of vertices in polygon
-	ES:BX -> vertex array (see #1983)
+	ES:BX -> vertex array (see #2110)
 Notes:	For FGDRIVER v1.10, this function was "FG_MOUSEINI" (see AX=0061h);
 	  "FG_POLYLINE" did not exist yet
 	This function is equivalent to "FG_POLYGON", but uses only a single
@@ -3829,7 +4629,7 @@ Notes:	For FGDRIVER v1.10, this function was "FG_MOUSEINI" (see AX=0061h);
 SeeAlso: AX=0076h,AX=0078h,AX=0079h,AX=007Bh
 
 Format of FGDRIVER vertex array element:
-Offset	Size	Description	(Table 1983)
+Offset	Size	Description	(Table 2110)
  00h	WORD	column
  02h	WORD	row
 --------V-62007B-----------------------------
@@ -3943,7 +4743,7 @@ SeeAlso: AX=0010h,AX=0022h,AX=002Ch,AX=0038h,AX=0086h,AX=008Ch,AX=009Ah
 --------V-620086-----------------------------
 INT 62 u - FGDRIVER v3.03 - "FG_REVMASK" - DISPLAY REVERSED IMAGE (MASKING MAP)
 	AX = 0086h
-	ES:BX -> array containing image stored as a masking map (see #1971)
+	ES:BX -> array containing image stored as a masking map (see #2098)
 	CX = number of pixel runs in masking map
 	DX = width of masking map in pixels
 Notes:	For FGDRIVER v1.10, this function was unused; "FG_REVMASK" was AX=0053h
@@ -4039,7 +4839,7 @@ INT 62 u - FGDRIVER v3.03 - "FG_SETENTRY" - SET TYPE AND ADDRESS OF VIDEO PAGE
 	AX = 008Fh
 	BX = page number (00h-3Fh)
 	CX = page address
-	DX = page type (see #1973 at AX=0036h)
+	DX = page type (see #2100 at AX=0036h)
 Notes:	For FGDRIVER v1.10, this function was "FG_HUSHNEXT" (see AX=0049h);
 	  "FG_SETENTRY" did not exist yet
 SeeAlso: AX=002Eh,AX=0036h,AX=0093h
@@ -4074,7 +4874,7 @@ SeeAlso: AX=003Bh
 --------V-620093-----------------------------
 INT 62 u - FGDRIVER v3.03 - "FG_SETMODE" - SELECT VIDEO MODE AND INITIALIZE
 	AX = 0093h
-	BX = new video mode or FFFFh for current mode (see #1984)
+	BX = new video mode or FFFFh for current mode (see #2111)
 	ES:DX -> WORD ???
 Notes:	For FGDRIVER v1.10, this function was "FG_SUSPEND" (see AX=00A0h);
 	  "FG_SETMODE" was AX=0001h
@@ -4082,7 +4882,7 @@ Notes:	For FGDRIVER v1.10, this function was "FG_SUSPEND" (see AX=00A0h);
 	  region to the entire screen, text rows to 25, etc.
 SeeAlso: AX=003Fh,INT 10/AH=00h
 
-(Table 1984)
+(Table 2111)
 Values for FGDRIVER video mode:
  00h-07h standard BIOS modes
  09h	PCjr/Tandy1000 320x200x16
@@ -4148,7 +4948,7 @@ Note:	For FGDRIVER v1.10, this function was "FG_GETCLOCK" (see AX=0033h)
 INT 62 u - FGDRIVER v3.03 - "FG_SHOWPCX" - DISPLAY IMAGE FROM PCX FILE
 	AX = 009Ah
 	ES:BX -> ASCIZ filename of PCX image
-	CX = flags (see #1985)
+	CX = flags (see #2112)
 Return: AX = status
 	    0000h success
 	    0001h file not found
@@ -4159,7 +4959,7 @@ Notes:	For FGDRIVER v1.10, this function was unused; "FG_SHOWPCX" did not
 SeeAlso: AX=004Ah,AX=0057h,AX=0058h,AX=0059h,AX=0060h"1.10",AX=009Bh,AX=009Ch
 
 Bitfields for FGDRIVER flags:
-Bit(s)	Description	(Table 1985)
+Bit(s)	Description	(Table 2112)
  0	use current palette rather than PCX file's palette
  1	display image at cursor position instead of position in PCX header
  2-15	reserved
@@ -4205,7 +5005,7 @@ SeeAlso: AX=0048h,AX=006Ah,AX=009Eh,AX=00A0h,AX=00AAh
 INT 62 u - FGDRIVER v3.03 - "FG_SOUNDS" - PLAY SOUNDS IN BACKGROUND
 	AX = 009Eh
 	CX = number of times to cycle through sound list
-	ES:BX -> sounds array (see #1986)
+	ES:BX -> sounds array (see #2113)
 Notes:	For FGDRIVER v1.10, this function was "FG_ALLOCEMS" (see AX=0002h);
 	  "FG_SOUNDS" was AX=0089h
 	This call is ignored if asynchronous sound (AX=0089h,AX=008Bh,
@@ -4213,7 +5013,7 @@ Notes:	For FGDRIVER v1.10, this function was "FG_ALLOCEMS" (see AX=0002h);
 SeeAlso: AX=0048h,AX=006Bh,AX=009Dh,AX=00A0h,AX=00ABh
 
 Format of FGDRIVER sounds array element:
-Offset	Size	Description	(Table 1986)
+Offset	Size	Description	(Table 2113)
  00h	WORD	frequency of sound in Hertz (0000h ends array)
  02h	WORD	duration of sound in clock ticks
 --------V-62009F-----------------------------
@@ -4235,7 +5035,7 @@ SeeAlso: AX=0048h,AX=006Ah,AX=009Eh,AX=00A0h,AX=00AAh
 --------V-6200A1-----------------------------
 INT 62 u - FGDRIVER v3.03 - "FG_SVGAINIT" - INITIALIZE FASTGRAPH SVGA KERNEL
 	AX = 00A1h
-	BX = method (see #1987)
+	BX = method (see #2114)
 Return: AX = status
 	    0000h no VESA BIOS or supported SVGA chipset
 	    0001h using VESA BIOS
@@ -4247,7 +5047,7 @@ Notes:	For FGDRIVER v1.10, this function was "FG_INITXMS" (see AX=004Eh);
 	  "FG_MEMORY"
 SeeAlso: AX=0023h,AX=00A2h,AX=00A3h
 
-(Table 1987)
+(Table 2114)
 Values for FGDRIVER SVGA method:
  0000h	autodetect, give chipset-specific code priority over VESA
  0001h	autodetect, give VESA priority over chipset-specific code
@@ -4275,13 +5075,13 @@ Values for FGDRIVER SVGA method:
 --------V-6200A2-----------------------------
 INT 62 u - FGDRIVER v3.03 - "FG_SVGASTAT" - GET SVGA CHIPSET INFORMATION
 	AX = 00A2h
-Return: AX = chipset information (see #1988)
+Return: AX = chipset information (see #2115)
 Note:	For FGDRIVER v1.10, this function was "FG_BOX" (see AX=0006h);
 	  "FG_SVGASTAT" did not exist yet
 SeeAlso: AX=0023h,AX=00A1h,AX=00A3h
 
 Bitfields for FGDRIVER chipset information:
-Bit(s)	Description	(Table 1988)
+Bit(s)	Description	(Table 2115)
  0	SVGA kernel initialized
  1	VESA support enabled
  2	extended video pages available in modes 13-23
@@ -4290,13 +5090,13 @@ Bit(s)	Description	(Table 1988)
 --------V-6200A3-----------------------------
 INT 62 u - FGDRIVER v3.03 - "FG_SVGAVER" - GET FASTGRAPH SVGA KERNEL VERSION
 	AX = 00A3h
-	ES:BX -> variable pointer record (see #1989)
+	ES:BX -> variable pointer record (see #2116)
 Note:	For FGDRIVER v1.10, this function was "FG_BOXDEPTH" (see AX=0007h);
 	  "FG_SVGAVER" did not exist yet
 SeeAlso: AX=00A1h,AX=00A2h
 
 Format of FGDRIVER variable pointer record:
-Offset	Size	Description	(Table 1989)
+Offset	Size	Description	(Table 2116)
  00h	WORD	segment of WORD buffer for major version
  02h	WORD	offset of WORD buffer for major version
  04h	WORD	segment of WORD buffer for minor version (hundredths)
@@ -4324,7 +5124,7 @@ INT 62 u - FGDRIVER v3.03 - "FG_TCXFER" - COPY REGION EXCLUDING TRANSPARENT
 	AX = 00A6h
 	CX = source video page
 	DX = destination video page
-	ES:BX -> copy record (see #1990)
+	ES:BX -> copy record (see #2117)
 Notes:	For FGDRIVER v1.10, this function was unused; "FG_TCXFER" was AX=005Dh
 	Pixels which are in any of the colors defined as transparent with
 	  "FG_TCMASK" (see AX=00A5h) are left unchanged in the destination
@@ -4358,14 +5158,14 @@ INT 62 u - FGDRIVER v3.03 - "FG_TRANSFER" - COPY REGION
 	AX = 00A9h
 	CX = source video page
 	DX = destination video page
-	ES:BX -> copy record (see #1990)
+	ES:BX -> copy record (see #2117)
 Notes:	For FGDRIVER v1.10, this function was unused;"FG_TRANSFER" was AX=005Ch
 	The source and destination regions must not overlap if they are located
 	  on the same page
 SeeAlso: AX=0083h,AX=0087h,AX=0089h,AX=00A6h
 
 Format of FGDRIVER copy record:
-Offset	Size	Description	(Table 1990)
+Offset	Size	Description	(Table 2117)
  00h	WORD	left edge column of source region
  02h	WORD	right edge column of source region
  04h	WORD	top edge row of source region
@@ -4390,14 +5190,14 @@ SeeAlso: AX=006Ah,AX=009Dh,AX=00ABh
 --------V-6200AB-----------------------------
 INT 62 u - FGDRIVER v3.03 - "FG_VOICES" - PLAY SOUNDS IN BACKGROUND
 	AX = 00ABh
-	ES:BX -> tone array (see #1991)
+	ES:BX -> tone array (see #2118)
 	CX = number of times to repeat tone array
 Notes:	For FGDRIVER v1.10, this function was unused; "FG_VOICES" was AX=008Bh
 	This function is only available on the PCjr and Tandy 1000 machines
 SeeAlso: AX=0048h,AX=006Bh,AX=009Eh,AX=00AAh
 
 Format of FGDRIVER tone array element:
-Offset	Size	Description	(Table 1991)
+Offset	Size	Description	(Table 2118)
  00h	WORD	channel number (0000h terminates array)
  02h	WORD	frequency
  04h	WORD	volume
@@ -4424,14 +5224,14 @@ Note:	For FGDRIVER v1.10, this function was unused; "FG_WAITVR" did not
 --------V-6200AF-----------------------------
 INT 62 u - FGDRIVER v3.03 - "FG_WHERE" - GET CURRENT CURSOR POSITION
 	AX = 00AFh
-	ES:BX -> variable pointers (see #1992)
+	ES:BX -> variable pointers (see #2119)
 Return: indicated variables filled with cursor row and column for active
 	  display
 Note:	For FGDRIVER v1.10, this function was unused; "FG_WHERE" was AX=0034h
 SeeAlso: AX=0045h,AX=0047h,AX=0055h,AX=0068h
 
 Format of FGDRIVER variable pointers:
-Offset	Size	Description	(Table 1992)
+Offset	Size	Description	(Table 2119)
  00h	WORD	segment of WORD buffer for cursor row
  02h	WORD	offset of WORD buffer for cursor row
  04h	WORD	segment WORD buffer for cursor column
@@ -4477,7 +5277,7 @@ INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - NOP for ETHDEV.ODI
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
-Range:	INT 60 to INT 65 ???
+Range:	INT 4C to INT FB, selected by configuration
 SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63"BW-TCP",INT 64"BW-NFS"
 --------T-6202-------------------------------
 INT 62 - Cswitch - WAIT FOR SEMAPHORE
@@ -4509,7 +5309,7 @@ INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - GET REAL IP ADDRESS
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
-Range:	INT 60 to INT 65 ???
+Range:	INT 4C to INT FB, selected by configuration
 Note:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
@@ -4555,7 +5355,7 @@ INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - ???
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
-Range:	INT 60 to INT 65 ???
+Range:	INT 4C to INT FB, selected by configuration
 Note:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
@@ -4588,15 +5388,15 @@ SeeAlso: AH=05h,AH=06h
 INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - ???
 	AH = 08h
 	CX = ???
-	ES:SI -> ??? buffer (see #1993)
+	ES:SI -> ??? buffer (see #2120)
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
-Range:	INT 60 to INT 65 ???
+Range:	INT 4C to INT FB, selected by configuration
 SeeAlso: AH=FEh,INT 21/AH=3Fh"BW-TCP",INT 63"BW-TCP",INT 64"BW-NFS"
 
 Format of BW-TCP ??? buffer:
-Offset	Size	Description	(Table 1993)
+Offset	Size	Description	(Table 2120)
  00h  6 BYTEs	hardware address???
  06h  6 BYTEs	???
  0Ch	WORD	???
@@ -4622,7 +5422,7 @@ Return: CF clear if successful
 	    AX = handler ID
 	CF set on error
 	    AL = error code
-Range:	INT 60 to INT 65 ???
+Range:	INT 4C to INT FB, selected by configuration
 Note:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
@@ -4688,7 +5488,7 @@ INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - REMOVE ???
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
-Range:	INT 60 to INT 65 ???
+Range:	INT 4C to INT FB, selected by configuration
 Note:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
@@ -4733,7 +5533,7 @@ INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - END CRITICAL SECTION
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
-Range:	INT 60 to INT 65 ???
+Range:	INT 4C to INT FB, selected by configuration
 Note:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
@@ -4775,7 +5575,7 @@ Return: CF clear if successful
 	    AX = socket number??? (memory variable incremented after reading)
 	CF set on error
 	    AL = error code
-Range:	INT 60 to INT 65 ???
+Range:	INT 4C to INT FB, selected by configuration
 Note:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
@@ -4816,7 +5616,7 @@ Return: CF clear if successful
 	    AX = ??? (destroyed???)
 	CF set on error
 	    AL = error code
-Range:	INT 60 to INT 65 ???
+Range:	INT 4C to INT FB, selected by configuration
 Notes:	call this function after reading the "ETHDEV27" device
 	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
@@ -4842,7 +5642,7 @@ INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - ALLOCATE AND MAP EMS FOR DRIVER
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
-Range:	INT 60 to INT 65 ???
+Range:	INT 4C to INT FB, selected by configuration
 Notes:	calls function 17h after EMS allocated and mapped
 	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
@@ -4923,7 +5723,7 @@ INT 62 - BW-TCP - ETHDRV.SYS - MAP EMS PAGE FRAME
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
-Range:	INT 60 to INT 65 ???
+Range:	INT 4C to INT FB, selected by configuration
 Notes:	this function is supported by at least the SLIP and ODI versions of
 	  ETHDEV.SYS
 	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
@@ -4938,6 +5738,14 @@ INT 63 - Adaptec and OMTI controllers - DRIVE 0 DATA
 Desc:	this vector stores the last four bytes of the parameter table for
 	  hard disk 0
 SeeAlso: INT 60"Adaptec",INT 61"Adaptec",INT 62"Adaptec",INT 64"Adaptec"
+--------b-63---------------------------------
+INT 63 - TI Professional PC - OPTION ROM DATA AREA POINTER (NOT A VECTOR!)
+Desc:	the low word of this vector contains the segment of the RAM data area
+	  to be used by the expansion ROM at F400h:4000h, and the high word
+	  contains the length of the data area; this segment and size are
+	  both set to 0000h if no ROM is installed at F400h:4000h
+SeeAlso: INT 60"TI Professional PC",INT 62"TI Professional"
+SeeAlso: INT 64"TI Professional PC"
 ----------63---------------------------------
 INT 63 - Oracle SQL Protected Mode Executive - ???
 --------d-63---------------------------------
@@ -4949,16 +5757,16 @@ INT 63 - Kofax KF9X00 image manipulation card interface
 --------Q-63---------------------------------
 INT 63 - DESQview/X - SOCKET API
 Notes:	parameters are passed by patching!! data field immediately following
-	  the entry point, as detailed below; the preferred method for calling
-	  the socket API is via INT 15/AX=DE2Eh
+	  the entry point, as detailed below (see #2121); the preferred
+	  method for calling the socket API is via INT 15/AX=DE2Eh
 	the installation check consists of testing for the string "dvxunix"
 	  (yes, lowercase) at offset 9 from the interrupt handler start
-	  (see #1994)
+	  (see #2121)
 SeeAlso: INT 15/AX=DE2Eh,INT BE"DESQview"
 Index:	installation check;DESQview/X socket interface
 
 Format of DESQview/X socket interrupt handler entry:
-Offset	Size	Description	(Table 1994)
+Offset	Size	Description	(Table 2121)
  00h  3 BYTEs	near jump or short jump + NOP to actual interrupt handler
  03h	WORD	offset from following pointer for initial top of local stack
  05h	DWORD	pointer to argument/stack block (see INT 15/AX=DE2Eh)
@@ -4979,7 +5787,7 @@ INT 63 - BW-TCP - TCPIP.SYS - SET IP ADDRESS???
 Return: CF clear if successful
 	CF set on error
 	AX destroyed
-Range:	INT 61 to INT 66 ???
+Range:	INT 4D to INT FC, selected by configuration
 Note:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
@@ -4996,7 +5804,7 @@ INT 63 - BW-TCP - TCPIP.SYS - ???
 	ES:BX -> ???
 	???
 Return: ???
-Range:	INT 61 to INT 66 ???
+Range:	INT 4D to INT FC, selected by configuration
 Note:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
@@ -5026,7 +5834,7 @@ INT 63 - BW-TCP - TCPIP.SYS - ???
 	DS:BX -> ???
 	ES:SI -> ???
 Return: ???
-Range:	INT 61 to INT 66 ???
+Range:	INT 4D to INT FC, selected by configuration
 --------N-6306-------------------------------
 INT 63 - BW-TCP - TCPIP.SYS - ???
 	AH = 06h
@@ -5071,7 +5879,7 @@ INT 63 - BW-TCP - TCPIP.SYS - ???
 	AH = 0Ch
 	???
 Return: ???
-Range:	INT 61 to INT 66 ???
+Range:	INT 4D to INT FC, selected by configuration
 --------N-630D-------------------------------
 INT 63 - BW-TCP - TCPIP.SYS - INSTALL DEFAULT ??? HANDLER
 	AH = 0Dh
@@ -5093,7 +5901,7 @@ INT 63 - BW-TCP - TCPIP.SYS - ???
 	DS:DI -> ???
 	???
 Return: ???
-Range:	INT 61 to INT 66 ???
+Range:	INT 4D to INT FC, selected by configuration
 --------N-6310-------------------------------
 INT 63 - BW-TCP - TCPIP.SYS - ???
 	AH = 10h
@@ -5116,7 +5924,7 @@ SeeAlso: INT 61/AH=23h
 INT 63 - BW-TCP - TCPIP.SYS - NOP
 	AH = 13h
 Return: nothing
-Range:	INT 61 to INT 66 ???
+Range:	INT 4D to INT FC, selected by configuration
 --------N-6314-------------------------------
 INT 63 - BW-TCP - TCPIP.SYS - OPEN NETWORK CONNECTION
 	AH = 14h
@@ -5131,6 +5939,7 @@ INT 63 - BW-TCP - TCPIP.SYS - ???
 	DS:DI -> ???
 	???
 Return: ???
+Range:	INT 4D to INT FC, selected by configuration
 --------N-6316-------------------------------
 INT 63 - BW-TCP - TCPIP.SYS - RESET NETWORK CONNECTION
 	AH = 16h
@@ -5144,7 +5953,7 @@ INT 63 - BW-TCP - TCPIP.SYS - ???
 	DS:DI -> ???
 	???
 Return: ???
-Range:	INT 61 to INT 66 ???
+Range:	INT 4D to INT FC, selected by configuration
 SeeAlso: AH=18h
 --------N-6318-------------------------------
 INT 63 - BW-TCP - TCPIP.SYS - ???
@@ -5161,6 +5970,7 @@ INT 63 - BW-TCP - TCPIP.SYS - WRITE TO THE NETWORK
 	???
 Return: BX = number of bytes NOT written
 	???
+Range:	INT 4D to INT FC, selected by configuration
 Note:	calls AH=17h with interrupts disabled and ??? set to 01h
 SeeAlso: AH=1Ah,AH=1Bh,INT 61/AH=1Ah"PC/TCP"
 --------N-631A-------------------------------
@@ -5179,7 +5989,7 @@ INT 63 - BW-TCP - TCPIP.SYS - ???
 	ES:BP -> ???
 Return: DX = ???
 	???
-Range:	INT 61 to INT 66 ???
+Range:	INT 4D to INT FC, selected by configuration
 --------N-631C-------------------------------
 INT 63 - BW-TCP - TCPIP.SYS - ???
 	AH = 1Ch
@@ -5193,6 +6003,7 @@ INT 63 - BW-TCP - TCPIP.SYS - ???
 	AH = 1Dh
 	???
 Return: ???
+Range:	INT 4D to INT FC, selected by configuration
 --------N-631E-------------------------------
 INT 63 - BW-TCP - TCPIP.SYS - ???
 	AH = 1Eh
@@ -5215,7 +6026,7 @@ INT 63 - BW-TCP - TCPIP.SYS - REMOVE SOCKET ??? HANDLER
 	BX = socket number
 Return: CF clear if successful
 	CF set on error (not set)
-Range:	INT 61 to INT 66 ???
+Range:	INT 4D to INT FC, selected by configuration
 SeeAlso: AH=1Fh
 --------N-6321-------------------------------
 INT 63 - BW-TCP - TCPIP.SYS - ???
@@ -5227,6 +6038,7 @@ SeeAlso: INT 61/AH=1Ch"PC/TCP"
 INT 63 - BW-TCP - TCPIP.SYS - REMOVE ??? HANDLER
 	AH = 22h
 Return: CF clear
+Range:	INT 4D to INT FC, selected by configuration
 Note:	decrements a counter if not already zero, and calls AH=0Ah with BL=11h
 	  if the counter reaches zero
 --------N-6323-------------------------------
@@ -5240,7 +6052,7 @@ Return: CF clear if successful
 INT 63 - BW-TCP - TCPIP.SYS - GET SOCKET
 	AH = 24h
 Return: AX = socket number (0400h-FFFFh)
-Range:	INT 61 to INT 66 ???
+Range:	INT 4D to INT FC, selected by configuration
 Note:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
@@ -5255,6 +6067,7 @@ INT 63 - BW-TCP - TCPIP.SYS - SET INTERNET ADDRESS???
 	AH = 26h
 	CL:CH:DL:DH = Internet address
 Return: nothing
+Range:	INT 4D to INT FC, selected by configuration
 Note:	this function sets a different variable than AH=25h returns
 SeeAlso: AH=25h
 --------N-6327-------------------------------
@@ -5273,7 +6086,7 @@ INT 63 - BW-TCP - TCPIP.SYS - ???
 	AH = 29h
 	???
 Return: ???
-Range:	INT 61 to INT 66 ???
+Range:	INT 4D to INT FC, selected by configuration
 Note:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
@@ -5288,6 +6101,14 @@ Notes:	these vectors are used by the following Adaptec controllers:
 	these vectors are NOT used by the following Adaptec controllers:
 	    ACB 2310, ACB 2312, ACB 2320D, ACB 2322D
 SeeAlso: INT 60"Adaptec",INT 65"Adaptec",INT 66"Adaptec",INT 67"Adaptec"
+--------b-64---------------------------------
+INT 64 - TI Professional PC - OPTION ROM DATA AREA POINTER (NOT A VECTOR!)
+Desc:	the low word of this vector contains the segment of the RAM data area
+	  to be used by the expansion ROM at F400h:6000h, and the high word
+	  contains the length of the data area; this segment and size are
+	  both set to 0000h if no ROM is installed at F400h:6000h
+SeeAlso: INT 60"TI Professional PC",INT 63"TI Professional"
+SeeAlso: INT 65"TI Professional PC"
 ----------64---------------------------------
 INT 64 - Oracle SQL Protected Mode Executive - ???
 --------N-64---------------------------------
@@ -5371,7 +6192,7 @@ Return: CF clear if successful
 	    ???
 	CF set on error
 	    CX = 0000h
-Range:	INT 62 to INT 67 ???
+Range:	INT 4E to INT FD, selected by configuration
 Notes:	the Beame&Whiteside TCP/IP protocol stack uses two consecutive
 	  interrupts (62h and 63h by default); the BW-NFS client uses a third
 	  consecutive interrupt (64h by default) if it is loaded
@@ -5402,7 +6223,7 @@ INT 64 U - BW-NFS - BWRPC - REMOVE ???
 	AH = 04h
 	BP = ???
 Return: ???
-Range:	INT 62 to INT 67 ???
+Range:	INT 4E to INT FD, selected by configuration
 Note:	this call is passed directly through to INT 62/AH=0Ch
 SeeAlso: AH=03h,INT 62/AH=0Ch"ETHDEV"
 --------N-6405-------------------------------
@@ -5417,6 +6238,7 @@ INT 64 U - BW-NFS - BWRPC - ???
 	AH = 06h
 	ES:SI -> ???
 Return: AL = 00h if CF clear
+Range:	INT 4E to INT FD, selected by configuration
 Note:	this call is passed directly through to INT 62/AH=14h
 SeeAlso: INT 62/AH=14h"ETHDEV"
 --------N-6407-------------------------------
@@ -5435,7 +6257,7 @@ SeeAlso: INT 62/AH=00h"ETHDEV"
 INT 64 U - BW-NFS - BWRPC - NOP???
 	AH = 11h
 Return: CF clear
-Range:	INT 62 to INT 67 ???
+Range:	INT 4E to INT FD, selected by configuration
 --------N-64FE-------------------------------
 INT 64 - BW-NFS - BWRPC - MAP EMS PAGE FRAME
 	AH = FEh
@@ -5445,6 +6267,7 @@ INT 64 - BW-NFS - BWRPC - MAP EMS PAGE FRAME
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
+Range:	INT 4E to INT FD, selected by configuration
 Note:	this call is passed through directly to ETHDEV.SYS (see INT 62/AH=FEh)
 SeeAlso: INT 21/AH=3Fh"BW-TCP",INT 62/AH=FEh,INT 63"BW-TCP"
 --------*-65---------------------------------
@@ -5454,6 +6277,14 @@ INT 65 - Adaptec controllers - DRIVE 1 DATA
 Desc:	this vector stores the second four bytes of the parameter table for
 	  hard disk 1
 SeeAlso: INT 64"Adaptec",INT 66"Adaptec",INT 67"Adaptec"
+--------b-65---------------------------------
+INT 65 - TI Professional PC - OPTION ROM DATA AREA POINTER (NOT A VECTOR!)
+Desc:	the low word of this vector contains the segment of the RAM data area
+	  to be used by the expansion ROM at F400h:8000h, and the high word
+	  contains the length of the data area; this segment and size are
+	  both set to 0000h if no ROM is installed at F400h:8000h
+SeeAlso: INT 60"TI Professional PC",INT 64"TI Professional"
+SeeAlso: INT 66"TI Professional PC"
 --------h-65---------------------------------
 INT 65 - Data General DG10 - MicroECLIPSE COPROCESSOR INTERFACE
 SeeAlso: INT 64"DG10",INT 66"DG10"
@@ -5495,12 +6326,12 @@ INT 65 - Ad Lib SOUND.COM - INTERFACE
 	    0017h WaveForm
 	ES:BX -> arguments
 Note:	the installation check consists of checking for the signature block
-	  immediately preceding the interrupt handler (see #1995)
+	  immediately preceding the interrupt handler (see #2122)
 SeeAlso: SI=8000h
 Index:	installation check;Ad Lib SOUND.COM
 
 Format of AdLib signature block:
-Offset	Size	Description	(Table 1995)
+Offset	Size	Description	(Table 2122)
  00h	WORD	version number
  02h 19 BYTEs	"SOUND-DRIVER-AD-LIB"
  15h	BYTE	01h
@@ -5603,6 +6434,24 @@ INT 66 - Adaptec controllers - DRIVE 1 DATA
 Desc:	this vector stores the third four bytes of the parameter table for
 	  hard disk 1
 SeeAlso: INT 64"Adaptec",INT 65"Adaptec",INT 67"Adaptec"
+--------b-66---------------------------------
+INT 66 - TI Professional PC - SYSTEM INFORMATION (NOT A VECTOR!)
+Desc:	the low word of this vector contains the system memory size in
+	  paragraphs; the third byte contains the number of outstanding
+	  interrupt requests, and the fourth byte contains a description
+	  of the installed drive types (see #2123)
+SeeAlso: INT 60"TI Professional PC",INT 67"TI Professional"
+
+Bitfields for TI Professional drive type information:
+Bit(s)	Description	(Table 2123)
+ 7	floppy drive D: has 80 tracks
+ 6	floppy drive D: is double-sided
+ 5	floppy drive C: has 80 tracks
+ 4	floppy drive C: is double-sided
+ 3	floppy drive B: has 80 tracks
+ 2	floppy drive B: is double-sided
+ 1	floppy drive A: has 80 tracks
+ 0	floppy drive A: is double-sided
 --------h-66---------------------------------
 INT 66 - Data General DG10 - MicroECLIPSE COPROCESSOR INTERFACE
 SeeAlso: INT 64"DG10"
@@ -5665,13 +6514,13 @@ SeeAlso: AH=06h,AX=3345h,INT 2F/AX=8000h"FaxBIOS"
 --------F-6605-------------------------------
 INT 66 - BitFax Scheduler - CONVERT FILE AND SEND FAX
 	AH = 05h
-	BX:CX -> command block (see #1996)
+	BX:CX -> command block (see #2124)
 	???
 Return: ???
 SeeAlso: AH=03h
 
 Format of BitFax command block:
-Offset	Size	Description	(Table 1996)
+Offset	Size	Description	(Table 2124)
  00h 18 BYTEs	configuration bytes???
  12h	BYTEs	ASCIZ temporary file name to place converted fax
  52h	BYTEs	ASCIZ directory containing BitFax executables
@@ -5695,7 +6544,7 @@ SeeAlso: AH=04h
 --------s-660688-----------------------------
 INT 66 - IBMSND driver - PLAY 8-BIT DIGITIZED SOUND
 	AX = 0688h
-	DS:SI -> SNDSTRUC (see #1997)
+	DS:SI -> SNDSTRUC (see #2125)
 Return: ???
 Program: The IBMSND driver is part of John W. Ratcliff's
 	   The IBM Digitized Sound Package
@@ -5706,7 +6555,7 @@ Note:	the installation check consists of looking for a valid signature
 SeeAlso: AX=068Bh,AX=068Fh,AX=0701h
 
 Format of IBMSND driver SNDSTRUC:
-Offset	Size	Description	(Table 1997)
+Offset	Size	Description	(Table 2125)
  00h	DWORD	-> audio data
  04h	WORD	length of audio data in bytes
  06h	DWORD	-> playback status flag
@@ -5721,24 +6570,24 @@ SeeAlso: AX=0688h,AX=068Bh,AX=068Ch
 --------s-66068A-----------------------------
 INT 66 - IBMSND driver - PREFORMAT SOUND
 	AX = 068Ah
-	DS:SI -> SNDSTRUC (see #1997)
+	DS:SI -> SNDSTRUC (see #2125)
 Desc:	convert audio data into output hardware format
 SeeAlso: AX=068Bh
 --------s-66068B-----------------------------
 INT 66 - IBMSND driver - PLAY PREFORMATTED SOUND
 	AX = 068Bh
-	DS:SI -> SNDSTRUC (see #1997)
+	DS:SI -> SNDSTRUC (see #2125)
 Return: AX = ???
 SeeAlso: AX=0688h,AX=068Ah,AX=068Fh
 --------s-66068C-----------------------------
 INT 66 - IBMSND driver - REPORT AUDIO DRIVER CAPABILITIES
 	AX = 068Ch
-Return: AX = capabilities (see #1998)
+Return: AX = capabilities (see #2126)
 	DX = playback rate if fixed-frequency playback
 SeeAlso: AX=0689h,AX=068Dh
 
 Bitfields for IBMSND driver capabilities:
-Bit(s)	Description	(Table 1998)
+Bit(s)	Description	(Table 2126)
  0	can play audio in background
  1	data is massaged
  2	driver plays at fixed frequency, resampling input data to fit
@@ -6048,6 +6897,16 @@ INT 67 - Adaptec controllers - DRIVE 1 DATA
 Desc:	this vector stores the last four bytes of the parameter table for
 	  hard disk 1
 SeeAlso: INT 64"Adaptec",INT 65"Adaptec",INT 66"Adaptec"
+--------b-67---------------------------------
+INT 67 - TI Professional PC - SYSTEM DATA (NOT A VECTOR!)
+Desc:	this vector contains the TI Pro's system configuration words
+	  (see #2127)
+SeeAlso: INT 66"TI Professional PC"
+
+Bitfields for TI Professional PC System Configuration doubleword:
+Bit(s)	Description	(Table 2127)
+ 0	8087 present
+ 31-1	reserved (0)
 --------d-67---------------------------------
 INT 67 - Pdisk by Scott Garfinkle - Overwritten for Hard Drive information
 SeeAlso: INT 64"Pdisk",INT 66"Pdisk"
@@ -6065,11 +6924,11 @@ Note:	this is not a vector; when loaded for the first time, CUCKOO.COM uses
 INT 67 - PC-NET, Alloy NTNX - LOCK SEMAPHORE AND WAIT
 	AH = 00h
 	DS:DX -> ASCIZ semaphore name (max 64 bytes)
-Return: AL = status (see #1999)
+Return: AL = status (see #2128)
 	AH = semaphore owner if status=02h
 SeeAlso: AH=01h,AH=02h"PC-NET",INT 7F/AH=00h
 
-(Table 1999)
+(Table 2128)
 Values for PC-NET semaphore function status:
  00h	successful
  01h	invalid function
@@ -6080,14 +6939,14 @@ Values for PC-NET semaphore function status:
 INT 67 - PC-NET, Alloy NTNX - LOCK SEMAPHORE
 	AH = 01h
 	DS:DX -> ASCIZ semaphore name (max 64 bytes)
-Return: AL = status (see #1999)
+Return: AL = status (see #2128)
 	AH = semaphore owner if status=02h
 SeeAlso: AH=00h,AH=02h"PC-NET",INT 7F/AH=01h"Alloy"
 --------N-6702-------------------------------
 INT 67 - PC-NET, Alloy NTNX - UNLOCK SEMAPHORE
 	AH = 02h
 	DS:DX -> ASCIZ semaphore name (max 64 bytes)
-Return: AL = status (see #1999)
+Return: AL = status (see #2128)
 	AH = semaphore owner if status=02h
 SeeAlso: AH=00h,AH=01h"PC-NET",INT 7F/AH=02h
 --------m-671E-------------------------------
@@ -6100,19 +6959,19 @@ SeeAlso: AH=1Fh,INT 21/AX=4402h"386MAX"
 --------m-671F-------------------------------
 INT 67 U - Qualitas 386MAX v7.00 - MEMLIMIT - API
 	AH = 1Fh
-	DS:SI -> request packet (see #2000)
+	DS:SI -> request packet (see #2129)
 Return: AH = status (00h successful, 84h invalid function code, etc.)
 SeeAlso: AH=1Eh
 
 Format of 386MAX MEMLIMIT request packet:
-Offset	Size	Description	(Table 2000)
+Offset	Size	Description	(Table 2129)
  00h	WORD	function code (00h-0Fh)
- 02h	WORD	return code (see #2001)
+ 02h	WORD	return code (see #2130)
  04h  4 BYTEs	???
  08h	WORD	???
 	???
 
-(Table 2001)
+(Table 2130)
 Values for 386MAX MEMLIMIT return code:
  00h	unknown request
  01h	invalid parameter for VCPI limit
@@ -6130,7 +6989,7 @@ INT 67 U - QEMM-386 v4.23+ - INSTALLATION CHECK
 	CX = 5145h ("QE")
 	DX = 4D4Dh ("MM")
 Return: AH = 00h if installed
-	    ES:DI -> QEMM API entry point (see #2002,#2005,#2116)
+	    ES:DI -> QEMM API entry point (see #2131,#2134,#2245)
 Notes:	if no other program has hooked INT 67, an alternate installation
 	  check is to test for the string
 	  "QUARTERDECK EXPANDED MEMORY MANAGER 386" at offset 14h in the INT 67
@@ -6154,7 +7013,7 @@ Notes:	if no other program has hooked INT 67, an alternate installation
 SeeAlso: AX=5BF0h,AH=DDh,AX=FFA5h,INT 15/AX=11DEh,INT 21/AX=4402h/SF=01h
 SeeAlso: INT 21/AX=4402h"QEMM",INT 21/AX=4402h"386MAX",INT 2F/AX=D201h/BX=5145h
 
-(Table 2002)
+(Table 2131)
 Values for calling QEMM "QPI_GetStatus" function:
 	AH = 00h get QEMM state
 Return: CF clear
@@ -6162,9 +7021,9 @@ Return: CF clear
 	    bit 0 set if QEMM turned OFF
 	    bit 1 set if in "Auto" mode
 Note:	this function is officially documented
-SeeAlso: #2003,#2004,#2005,#2116
+SeeAlso: #2132,#2133,#2134,#2245
 
-(Table 2003)
+(Table 2132)
 Values for calling QEMM "QPI_SetStatus" function:
 	AH = 01h set QEMM state
 	AL = new state
@@ -6172,9 +7031,9 @@ Values for calling QEMM "QPI_SetStatus" function:
 Return: CF clear if successful
 	CF set on error
 Note:	this function is officially documented
-SeeAlso: #2002
+SeeAlso: #2131
 
-(Table 2004)
+(Table 2133)
 Values for calling QEMM QPI function 02h:
 	AH = 02h get ???
 Return: CF clear
@@ -6183,9 +7042,9 @@ Return: CF clear
 	Offset	Size	Description
 	 00h	DWORD	page table entry for ???
 		???
-SeeAlso: #2005
+SeeAlso: #2134
 
-(Table 2005)
+(Table 2134)
 Values for calling QEMM "QPI_GetVersion" function:
 	AH = 03h get QEMM version
 Return: CF clear
@@ -6194,65 +7053,65 @@ Notes:	this function is officially documented.	 The most recent official docs
 	  state that the version is returned in both AX and BX; older
 	  documentation only mentions BX
 	MICEMM returns AX=0001h, BX unchanged
-SeeAlso: #2002,#2006
+SeeAlso: #2131,#2135
 
-(Table 2006)
+(Table 2135)
 Values for calling QEMM QPI function 04h:
 	AH = 04h allocate 4K page and set AUTO/ON mode
 Return: CF clear if successful
 	    DX = page number of a 4K page
 	CF set if unable to allocate page
 Note:	QEMM mode unchanged if not AUTO/OFF
-SeeAlso: #2007
+SeeAlso: #2136
 
-(Table 2007)
+(Table 2136)
 Values for calling QEMM QPI function 05h:
 	AH = 05h free 4K page and turn QEMM off
 	DX = page number returned by function 04h
 Return: CF clear
 Note:	QEMM mode unchanged if not AUTO/ON
-SeeAlso: #2006,#2008
+SeeAlso: #2135,#2137
 
-(Table 2008)
+(Table 2137)
 Values for calling QEMM QPI function 06h:
 	AH = 06h make new mapping context???
 	DX = page number of 4K page to hold page table
 Return: CF clear
 Note:	copies page table into given page and then sets ??? page table entry
 	  to point at copy
-SeeAlso: #2009,#2010
+SeeAlso: #2138,#2139
 
-(Table 2009)
+(Table 2138)
 Values for calling QEMM QPI function 07h:
 	AH = 07h get mapping context
 Return: CF clear
 	DX = page number of page table for current mapping context
-SeeAlso: #2005,#2008,#2010
+SeeAlso: #2134,#2137,#2139
 
-(Table 2010)
+(Table 2139)
 Values for calling QEMM QPI function 08h:
 	AH = 08h set mapping context???
 	DX = linear page number of page table
 Return: CF clear
-SeeAlso: #2005,#2008,#2009,#2011,#2013
+SeeAlso: #2134,#2137,#2138,#2140,#2142
 
-(Table 2011)
+(Table 2140)
 Values for calling QEMM QPI function 09h:
 	AH = 09h get linear page number for page table entry
 	CX = page table index
 Return: CF clear
 	DX = linear page number
-SeeAlso: #2012
+SeeAlso: #2141
 
-(Table 2012)
+(Table 2141)
 Values for calling QEMM QPI function 0Ah:
 	AH = 0Ah set linear page number for page table entry
 	CX = page table index
 	DX = linear page number
 Return: CF clear
-SeeAlso: #2011
+SeeAlso: #2140
 
-(Table 2013)
+(Table 2142)
 Values for calling QEMM QPI function 0Bh:
 	AH = 0Bh map 4K pages
 	BX = number of pages
@@ -6261,18 +7120,18 @@ Values for calling QEMM QPI function 0Bh:
 	      into the address space beginning with the first page
 	      allocated to the handle)
 Return: AH = 00h
-SeeAlso: #2010,#2014
+SeeAlso: #2139,#2143
 
-(Table 2014)
+(Table 2143)
 Values for calling QEMM QPI function 0Ch:
 	AH = 0Ch get available memory
 Return: CF clear
 	BX = 0001h
 	CX = total 4K pages???
 	DX = number of 4K pages free
-SeeAlso: #2013,#2015
+SeeAlso: #2142,#2144
 
-(Table 2015)
+(Table 2144)
 Values for calling QEMM QPI function 0Dh:
 	AH = 0Dh CRT controller I/O port trapping
 	AL = mode
@@ -6282,7 +7141,7 @@ Values for calling QEMM QPI function 0Dh:
 	    02h only trap on I/O ports 03C6h, 03C8h, and 03C9h
 Return: CF clear
 
-(Table 2016)
+(Table 2145)
 Values for calling QEMM QPI function 0Eh:
 	AH = 0Eh set cursor virtualization callbacks
 	DS:BX -> FAR routine for getting hardware cursor address
@@ -6295,7 +7154,7 @@ Note:	both callbacks are invoked with CL indicating which
 	  ES:DX is called with BL or BH (depending on CL)
 	  set to the appropriate half of the cursor's address
 
-(Table 2017)
+(Table 2146)
 Values for calling QEMM QPI function 0Fh:
 	AH = 0Fh unmap 4K pages
 	CX = first page number
@@ -6305,7 +7164,7 @@ Return: CF clear
 Note:	if CX=0100h and DX=0010h, the HMA is remapped to
 	  simulate a disabled A20
 
-(Table 2018)
+(Table 2147)
 Values for calling QEMM QPI function 1000h:
 	AX = 1000h get protected-mode interface
 	DS:SI -> 16-byte buffer for two GDT entries
@@ -6318,7 +7177,7 @@ Return: CF clear
 	DI points to first unused page table entry
 SeeAlso: INT 67/AX=DE01h
 
-(Table 2019)
+(Table 2148)
 Values for calling QEMM QPI function 1001h:
 	AX = 1001h get CPU debug registers
 	ES:DI -> buffer for debug registers (8 DWORDs)
@@ -6326,7 +7185,7 @@ Return: CF clear
 	BL = INT01 handling (see function 1002h)
 	ES:DI buffer filled
 
-(Table 2020)
+(Table 2149)
 Values for calling QEMM QPI function 1002h:
 	AX = 1002h set CPU debug registers
 	BL = INT01 handling
@@ -6339,14 +7198,14 @@ Notes:	identical to INT 67/AX=DE09h if BL=01h
 	the INT01 handling flag is set to 01h by the general-protection
 	  violation handler for certain privileged instructions
 
-(Table 2021)
+(Table 2150)
 Values for calling QEMM QPI function 1003h:
 	AX = 1003h get machine status word CR0
 Return: CF clear
 	EAX = contents of CR0
 SeeAlso: INT 67/AX=DE07h
 
-(Table 2022)
+(Table 2151)
 Values for calling QEMM QPI function 1004h:
 	AX = 1004h allocate a 4K page
 Return: CF clear if successful
@@ -6354,26 +7213,26 @@ Return: CF clear if successful
 	CF set on error
 SeeAlso: INT 67/AX=DE04h
 
-(Table 2023)
+(Table 2152)
 Values for calling QEMM QPI function 1005h:
 	AX = 1005h free 4K page
 	EDX = linear address of page to free
 Return: CF clear
 SeeAlso: INT 67/AX=DE05h
 
-(Table 2024)
+(Table 2153)
 Values for calling QEMM QPI function 1006h:
 	AX = 1006h NOP
 Return: CF set
 
-(Table 2025)
+(Table 2154)
 Values for calling QEMM QPI function 1007h:
 	AX = 1007h get maximum physical memory address
 Return: CF clear
 	EDX = physical address of highest 4K memory page
 SeeAlso: INT 67/AX=DE02h
 
-(Table 2026)
+(Table 2155)
 Values for calling QEMM QPI function 1008h:
 	AX = 1008h get physical address of page in first megabyte
 	CX = page number (linear address shifted right 12 bits)
@@ -6381,7 +7240,7 @@ Return: CF clear
 	EDX = linear address of page
 SeeAlso: function 1F00h
 
-(Table 2027)
+(Table 2156)
 Values for calling QEMM QPI function 1009h:
 	AX = 1009h switch to protected mode
 	ESI = linear address in first megabyte of system reg values
@@ -6394,7 +7253,7 @@ Return: interrupts disabled
 	      before enabling interrupts
 	EAX, ESI, DS, ES, FS, GS destroyed
 
-(Table 2028)
+(Table 2157)
 Values for calling QEMM QPI function 100Ah:
 	AX = 100Ah switch back to virtual-86 mode
 	DS = selector for data segment from function 1000h
@@ -6413,7 +7272,7 @@ Values for calling QEMM QPI function 100Ah:
 	will switch to virtual86 mode with interrupts disabled, all
 	  segment registers loaded, and EAX destroyed.
 
-(Table 2029)
+(Table 2158)
 Values for calling QEMM QPI function 11h:
 	AH = 11h get memory type map
 	AL = zero/nonzero ??? (set by QEMM.COM but apparently ignored
@@ -6429,14 +7288,14 @@ Note:	each byte of the buffer corresponds to a 4K page, and
 	  08h = split ROM, 09h = page frame, 0Ah = RAMmable,
 	  0Bh = conventional, 83h = high RAM under MS Windows
 
-(Table 2030)
+(Table 2159)
 Values for calling QEMM QPI function 12h:
 	AH = 12h get HIRAM chain
 Return: CF clear
 	BX = segment of first MCB in high memory
 	    0000h if no high memory
 
-(Table 2031)
+(Table 2160)
 Values for calling QEMM QPI function 1300h:
 	AX = 1300h VIDRAMEGA???
 	BL = 00h copy ???
@@ -6446,7 +7305,7 @@ Return: CF clear
 	    00h if all pages clean
 	    01h if any page dirty
 
-(Table 2032)
+(Table 2161)
 Values for calling QEMM QPI function 1301h:
 	AX = 1301h check if pages modified
 	DX:DI = start address of range to check
@@ -6458,7 +7317,7 @@ Return: CF clear
 	    1000h one or more pages is dirty
 		DI = low word of first dirty page's linear addr
 
-(Table 2033)
+(Table 2162)
 Values for calling QEMM QPI function 1302h:
 	AX = 1302h ???
 	BL = ???
@@ -6473,7 +7332,7 @@ Note:	disables certain interrupts at the two 8259 PICs during
 	  execution; also modifies CRT controller during
 	  execution under certain circumstances
 
-(Table 2034)
+(Table 2163)
 Values for calling QEMM QPI function 1303h:
 	AX = 1303h initialize EGA graphics virtualization
 	BX = number of pages (less 1) of EMS to allocate
@@ -6481,13 +7340,13 @@ Return: CF clear if successful
 	    DX = EMS handle
 	CF set on error
 
-(Table 2035)
+(Table 2164)
 Values for calling QEMM QPI function 1304h:
 	AX = 1304h shutdown EGA graphics virtualization
 	DX = EMS handle being used for virtualization
 Return: CF clear
 
-(Table 2036)
+(Table 2165)
 Values for calling QEMM QPI function 1305h:
 	AX = 1305h select portion of EGA graphics to virtualize???
 	(related to graphics virtualization, changes memory mappings)
@@ -6497,7 +7356,7 @@ Note:	disables certain interrupts at the two 8259 PICs during
 	  execution (see func 130Ch) and runs inside a QEMM
 	  critical section
 
-(Table 2037)
+(Table 2166)
 Values for calling QEMM QPI function 1306h:
 	AX = 1306h set DESQview critical section counter address
 	ES:BX -> WORD DESQview critical section counter or 0000h:0000h
@@ -6505,7 +7364,7 @@ Return: CF clear
 Note:	also sets a pointer in the low-memory part of QEMM to
 	  the current value of INT 15 if ES:BX not 0000h:0000h
 
-(Table 2038)
+(Table 2167)
 Values for calling QEMM QPI function 1307h:
 	AX = 1307h ??? (changes memory mappings for entire A000h segment)
 Return: CF clear
@@ -6513,7 +7372,7 @@ Note:	disables certain interrupts at the two 8259 PICs during
 	  execution (see func 130Ch) and runs inside a QEMM
 	  critical section
 
-(Table 2039)
+(Table 2168)
 Values for calling QEMM QPI function 1308h:
 	AX = 1308h start/reset CRT controller I/O trapping
 	BL = subfunction
@@ -6523,7 +7382,7 @@ Return: CF clear
 Note:	if called more than once in a row with BL nonzero, the
 	  original state of the I/O port trapping will be lost
 
-(Table 2040)
+(Table 2169)
 Values for calling QEMM QPI function 1309h:
 	AX = 1309h Hercules mode-change support
 	ES:BX -> new address for Hercules mode-change callback
@@ -6531,14 +7390,14 @@ Return: CF clear
 Note:	the callback function is called whenever the CRTC mode
 	  register is written, with AL set to the value written
 
-(Table 2041)
+(Table 2170)
 Values for calling QEMM QPI function 130Ah:
 	AX = 130Ah virtualize EGA/VGA DAC registers (I/O ports 03C8h/03C9h)
-	CX:DX -> DAC register virtualization buffer (see #2123)
+	CX:DX -> DAC register virtualization buffer (see #2252)
 		or 0000h:0000h to disable
 Return: CF clear
 
-(Table 2042)
+(Table 2171)
 Values for calling QEMM QPI function 130Bh:
 	AX = 130Bh ???
 	BL = ??? (??? or 00h)
@@ -6546,43 +7405,43 @@ Return: CF clear
 	???
 Note:	calls AX=130Eh in some cases
 
-(Table 2043)
+(Table 2172)
 Values for calling QEMM QPI function 130Ch:
 	AX = 130Ch set interrupts to mask
 	BX = interrupts to mask out during AX=1302h,AX=1307h,AX=1308h,
 	      AX=130Dh,AX=1310h (BL = master PIC, BH = slave PIC)
 Return: CF clear
 
-(Table 2044)
+(Table 2173)
 Values for calling QEMM QPI function 130Dh:
 	AX = 130Dh map EGA memory at A0000h
 	???
 Return: CF clear
 Note:	disables certain interrupts at the two 8259 PICs during execution
-	  (see #2043) and runs inside a QEMM critical section
-	calls AX=1307h (see #2038)
+	  (see #2172) and runs inside a QEMM critical section
+	calls AX=1307h (see #2167)
 
-(Table 2045)
+(Table 2174)
 Values for calling QEMM QPI function 130Eh:
 	AX = 130Eh ??? (modifies CRT controller setup)
 	???
 Return: CF clear
 
-(Table 2046)
+(Table 2175)
 Values for calling QEMM QPI function 130Fh:
 	AX = 130Fh reset ???
 Return: CF clear
 
-(Table 2047)
+(Table 2176)
 Values for calling QEMM QPI function 1310h:
 	AX = 1310h copy modified pages to physical video RAM???
 	???
 Return: CF clear
 Note:	disables certain interrupts at the two 8259 PICs during execution
-	  (see #2043) and runs inside a QEMM critical section
-	also calls AX=130Dh (see #2044)
+	  (see #2172) and runs inside a QEMM critical section
+	also calls AX=130Dh (see #2173)
 
-(Table 2048)
+(Table 2177)
 Values for calling QEMM QPI function 1311h:
 	AX = 1311h set ???
 	BL = zero/nonzero???
@@ -6591,23 +7450,23 @@ Note:	certain operations will be performed with interrupts
 	  (as set by AX=130Ch) enabled rather than disabled if
 	  called with BL nonzero
 
-(Table 2049)
+(Table 2178)
 Values for calling QEMM QPI function 1312h:
 	AX = 1312h (v6.02) NOP???
 Note:	called by DV 2.42, but appears to be a NOP in QEMM 6.02
 
-(Table 2050)
+(Table 2179)
 Values for calling QEMM QPI function 1400h:
 	AX = 1400h initialize DESQview "protection level" support
 	ES:DI -> protection level configuration (at least 24 bytes)
-		(see #2117)
+		(see #2246)
 	BL = highest ??? to return (one less than number of words)
 Return: CF clear
 	AX = ??? (4204h for v6.00)
 Note:	QEMM also sets the protected mode INT 02 and INT 06
 	  vectors to alternate handlers in certain cases
 
-(Table 2051)
+(Table 2180)
 Values for calling QEMM QPI function 1401h:
 	AX = 1401h turn off DESQview protection level support
 		Return: CF clear
@@ -6618,7 +7477,7 @@ Values for calling QEMM QPI function 1401h:
 			  vectors to the default handlers if they had been
 			  revectored by function 1400h
 
-(Table 2052)
+(Table 2181)
 Values for calling QEMM QPI function 1402h:
 	AX = 1402h set protection level???
 		BL = protection level???
@@ -6637,7 +7496,7 @@ Values for calling QEMM QPI function 1402h:
 		 06h  3 WORDs	??? (copied to X:0000h)
 		 0Ch	WORD	???
 
-(Table 2053)
+(Table 2182)
 Values for calling QEMM QPI function 1403h:
 	AX = 1403h add ??? to end of list and ??? (execute func 1406h)
 		ES:DI -> ??? structure added to end of ??? list
@@ -6646,18 +7505,18 @@ Values for calling QEMM QPI function 1403h:
 			 seems to be a key or index)
 		Return: CF clear
 
-(Table 2054)
+(Table 2183)
 Values for calling QEMM QPI function 1404h:
 	AX = 1404h NOP
 		Return: CF clear
 
-(Table 2055)
+(Table 2184)
 Values for calling QEMM QPI function 1405h:
 	AX = 1405h remove ??? from ??? list
 		BX = key???
 		Return: CF clear
 
-(Table 2056)
+(Table 2185)
 Values for calling QEMM QPI function 1406h:
 	AX = 1406h ???
 		???
@@ -6668,7 +7527,7 @@ Values for calling QEMM QPI function 1406h:
 			when not a NOP, one of the actions is to write-protect
 			  certain memory pages
 
-(Table 2057)
+(Table 2186)
 Values for calling QEMM QPI function 1407h:
 	AX = 1407h ???
 		???
@@ -6677,21 +7536,21 @@ Values for calling QEMM QPI function 1407h:
 		Note:	same as function 1406h, but only does anything if
 			  protection level 2 is active
 
-(Table 2058)
+(Table 2187)
 Values for calling QEMM QPI function 1408h:
 	AX = 1408h unprotect???
 		???
 		Return: CF clear
 			???
 
-(Table 2059)
+(Table 2188)
 Values for calling QEMM QPI function 1409h:
 	AX = 1409h abort program causing protection violation???
 		???
 		Return: CF clear
 			???
 
-(Table 2060)
+(Table 2189)
 Values for calling QEMM QPI function 140Ah:
 	AX = 140Ah set ???
 		BX = index of ???
@@ -6700,7 +7559,7 @@ Values for calling QEMM QPI function 140Ah:
 		Notes:	no range checking is performed on BX
 			this function is a NOP unless protection level 3 active
 
-(Table 2061)
+(Table 2190)
 Values for calling QEMM QPI function 140Bh:
 	AX = 140Bh get ???
 		BX = index of ???
@@ -6710,14 +7569,14 @@ Values for calling QEMM QPI function 140Bh:
 		Notes:	no range checking is performed on BX
 			this function is a NOP unless protection level 3 active
 
-(Table 2062)
+(Table 2191)
 Values for calling QEMM QPI function 15h:
 	AH = 15h set timer channel 0 virtualization buffer
 		ES:BX -> WORD buffer for timer channel 0 divisor
 			0000h:0000h to disable virtualization
 		Return: CF clear
 
-(Table 2063)
+(Table 2192)
 Values for calling QEMM v5.00+ QPI function 1600h:
 	AX = 1600h get memory access status
 		ES:DI -> 256-byte buffer
@@ -6725,18 +7584,18 @@ Values for calling QEMM v5.00+ QPI function 1600h:
 		Note:	each byte of the buffer indicates the status of a 4K
 			  page (bit 0 set if read, bit 1 set if written)
 
-(Table 2064)
+(Table 2193)
 Values for calling QEMM v5.00+ QPI function 1601h:
 	AX = 1601h set memory access status
-		ES:DI -> 256-byte buffer containing access statuses (see #2063)
+		ES:DI -> 256-byte buffer containing access statuses (see #2192)
 
-(Table 2065)
+(Table 2194)
 Values for calling QEMM v5.00+ QPI function 17h:
 	AH = 17h get memory usage statistics
-		ES:DI -> 81-byte buffer for memory statistics (see #2121)
+		ES:DI -> 81-byte buffer for memory statistics (see #2250)
 		Return: CF clear
 
-(Table 2066)
+(Table 2195)
 Values for calling QEMM v5.11+ QPI function 18h:
 	AH = 18h check whether conventional memory mapped into address range
 		ES:BX = starting address
@@ -6746,12 +7605,12 @@ Values for calling QEMM v5.11+ QPI function 18h:
 			     01h all pages in range are conventional memory
 				(physical address == virtual address)
 
-(Table 2067)
+(Table 2196)
 Values for calling QEMM v5.11+ QPI function 19h:
 	AH = 19h NOP
 		Return: CF set
 
-(Table 2068)
+(Table 2197)
 Values for calling QEMM v5.11+ "QPI_UntrappedIORead" function:
 	AX = 1A00h get byte from I/O port
 	DX = port number
@@ -6759,7 +7618,7 @@ Return: CF clear
 	BL = port value
 Note:	this function was officially documented with the release of QEMM 7.50
 
-(Table 2069)
+(Table 2198)
 Values for calling QEMM v5.11+ "QPI_UntrappedIOWrite" function:
 	AX = 1A01h send byte to I/O port
 	BL = value to send
@@ -6767,7 +7626,7 @@ Values for calling QEMM v5.11+ "QPI_UntrappedIOWrite" function:
 Return: CF clear
 Note:	this function was officially documented with the release of QEMM 7.50
 
-(Table 2070)
+(Table 2199)
 Values for calling QEMM v5.11+ "QPI_UntrappedIOReadIndexed" function:
 	AX = 1A02h
 	BH = index value to send
@@ -6776,7 +7635,7 @@ Return: CF clear
 	BL = value read from I/O port (DX+1)
 Note:	this function was officially documented with the release of QEMM 7.50
 
-(Table 2071)
+(Table 2200)
 Values for calling QEMM v5.11+ "QPI_UntrappedIOWriteIndexed" function:
 	AX = 1A03h send bytes to two consecutive I/O ports
 	BH = value for first I/O port (DX)
@@ -6785,7 +7644,7 @@ Values for calling QEMM v5.11+ "QPI_UntrappedIOWriteIndexed" function:
 Return: CF clear
 Note:	this function was officially documented with the release of QEMM 7.50
 
-(Table 2072)
+(Table 2201)
 Values for calling QEMM v7.03+ "QPI_UntrappedIO" function:
 	AX = 1A04h
 	BX = value to write to port
@@ -6797,27 +7656,27 @@ Return: CF clear
 	BX = value read (if CX indicates read)
 Note:	this function was officially documented with the release of QEMM 7.50
 
-(Table 2073)
+(Table 2202)
 Values for calling QEMM v7.03+ function 1A05h
 	AX = 1A05h
 	???
 Return: ???
 
-(Table 2074)
+(Table 2203)
 Values for calling QEMM v7.03+ "QPI_GetIOCallback" function:
 	AX = 1A06h
 Return: CF clear
 	ES:DI -> current I/O callback function
 Note:	this function was officially documented with the release of QEMM 7.50
 
-(Table 2075)
+(Table 2204)
 Values for calling QEMM v7.03+ "QPI_SetIOCallback" function:
 	AX = 1A07h
 	ES:DI -> new I/O callback function
 Return: CF clear
 Note:	this function was officially documented with the release of QEMM 7.50
 
-(Table 2076)
+(Table 2205)
 Values for calling QEMM v7.03+ "QPI_GetPortTrap" function:
 	AX = 1A08h
 	DX = I/O port number
@@ -6825,29 +7684,29 @@ Return: CF clear
 	BL = trapping state (00h not being trapped, 01h trap installed)
 Note:	this function was officially documented with the release of QEMM 7.50
 
-(Table 2077)
+(Table 2206)
 Values for calling QEMM v7.03+ "QPI_SetPortTrap" function:
 	AX = 1A09h
 	DX = I/O port number
 Return: CF clear
 Note:	this function was officially documented with the release of QEMM 7.50
 
-(Table 2078)
+(Table 2207)
 Values for calling QEMM v7.03+ "QPI_ClearPortTrap" function:
 	AX = 1A0Ah
 	DX = I/O port number
 Return: CF clear
 Note:	this function was officially documented with the release of QEMM 7.50
 
-(Table 2079)
+(Table 2208)
 Values for calling QEMM v5.11+ QPI function 1B00h:
 	AX = 1B00h get EMM Import Structure address
-	ES:DI -> buffer for EMM import data structure (see #2119)
+	ES:DI -> buffer for EMM import data structure (see #2248)
 Return: CF set on error
 	CF clear if successful
 SeeAlso: INT 21/AX=4402h/SF=01h
 
-(Table 2080)
+(Table 2209)
 Values for calling QEMM v5.11+ QPI function 1B01h:
 	AX = 1B01h disable V86 mode
 Return: CF set on error
@@ -6856,7 +7715,7 @@ Return: CF set on error
 Note:	shuts down EMS and initializes Global EMM Import record; this function
 	  is invoked from the callback supplied by INT 2F/AX=1605h
 
-(Table 2081)
+(Table 2210)
 Values for calling QEMM v5.11+ QPI function 1B02h:
 	AX = 1B02h enable V86 mode
 Return: CF set on error
@@ -6864,24 +7723,25 @@ Return: CF set on error
 Note:	restarts EMS and frees Global EMM Import record; this function is
 	  invoked from the callback supplied by INT 2F/AX=1605h
 
-(Table 2082)
+(Table 2211)
 Values for calling QEMM v5.11+ QPI function 1B03h:
 	AX = 1B03h MS Windows initializing
 	CX = segment from which Windows init broadcast made???
 	DX = Windows startup flags
 	DI = Windows version number (major in upper byte)
 Return: CF clear if successful
-	    DS:SI -> V86 mode enable/disable callback (see INT 2F/AX=1605h)
-	    ES:BX -> startup info structure (see INT 2F/AX=1605h)
+	    DS:SI -> V86 mode enable/disable callback
+		  (see #1413 at INT 2F/AX=1605h)
+	    ES:BX -> startup info structure (see #1410 at INT 2F/AX=1605h)
 	CF set on error (unable to start Windows)
 SeeAlso: INT 2F/AX=1605h
 
-(Table 2083)
+(Table 2212)
 Values for calling QEMM v5.11+ QPI function 1B04h:
 	AX = 1B04h MS Windows terminating
 Return: CF clear
 
-(Table 2084)
+(Table 2213)
 Values for calling QEMM v5.11+ QPI function 1B05h:
 	AX = 1B05h determine whether program is driver
 	DS:DX -> ASCIZ filename
@@ -6893,7 +7753,7 @@ Return: CF clear
 Note:	when MS Windows 3.0 standard mode starts, QEMM patches all drivers
 	  until GDI.EXE is loaded
 
-(Table 2085)
+(Table 2214)
 Values for calling QEMM v5.11+ QPI function 1B06h:
 	AX = 1B06h patch protected-mode check in Windows driver
 	CX = length of data pointed at by DS:DX
@@ -6904,33 +7764,33 @@ Note:	patches all SMSW x/TEST x,1 instruction sequences into MOV x,CS/VERW x
 	  only indicate protected mode in native protected mode and not in V86
 	  mode
 
-(Table 2086)
+(Table 2215)
 Values for calling QEMM v5.11+ QPI function 1B07h:
 	AX = 1B07h
 BUG: QEMM 6.00-7.01 accept this and branch randomly
 
-(Table 2087)
+(Table 2216)
 Values for calling QEMM v5.11+ QPI function 1Bxxh:
 	AX = 1B08h to 1BFFh
 Return: CF set
 
-(Table 2088)
+(Table 2217)
 Values for calling QEMM v5.11+ QPI function 1C00h:
 	AX = 1C00h disable IRQ0-7 calldowns
 Return: CF clear
 
-(Table 2089)
+(Table 2218)
 Values for calling QEMM v5.11+ QPI function 1C01h:
 	AX = 1C01h set V86-mode IRQ0-7 handlers
 	ES:DI -> 8 DWORDs containing V86-mode handler addresses
 Return: CF clear
 
-(Table 2090)
+(Table 2219)
 Values for calling QEMM v5.11+ QPI function 1C02h:
 	AX = 1C02h disable IRQ8-15 handlers
 Return: CF clear
 
-(Table 2091)
+(Table 2220)
 Values for calling QEMM v5.11+ QPI function 1C03h:
 	AX = 1C03h set V86-mode IRQ8-15 handlers
 	ES:DI -> 8 DWORDs containing V86-mode handler addresses
@@ -6942,7 +7802,7 @@ Note:	when enabled, the appropriate IRQs are reflected back to the specified
 	  handlers in virtual-86 mode after the CPU automatically invokes the
 	  protected-mode handler inside QEMM
 
-(Table 2092)
+(Table 2221)
 Values for calling QEMM v7.03+ "QPI_SimulateHWInt" function:
 	AX = 1C04h
 	BX = number of interrupt to simulate
@@ -6953,43 +7813,40 @@ Notes:	this function will allow proper simulation of a hardware interrupt
 	  space
 	this function was officially documented with the release of QEMM v7.50
 
-(Table 2093)
-Values for calling QEMM v6.00+ QPI function 1D00h:
+(Table 2222)
+Values for calling QEMM v6.0x only QPI function 1D00h:
 	AX = 1D00h switch to pre-Stealth interrupt vector table
 Return: CF clear if supported (QEMM v6.x)
 	CF set if not supported (QEMM v7+)
-Notes:	also switches VGA Save table pointer
-	  (0040h:00A8h) and overwrites the vectors
-	  currently assigned for use by the two
-	  interrupt controllers (see INT 67/AX=DE0Ah)
-	  with the vectors for INT 08-0F and 70-77 (to
+Notes:	also switches VGA Save table pointer (0040h:00A8h) and overwrites the
+	  vectors currently assigned for use by the two interrupt controllers
+	  (see INT 67/AX=DE0Ah) with the vectors for INT 08-0F and 70-77 (to
 	  avoid crashing the system).
 	functions 1Dxxh are not supported by QEMM v7.01, and always return CF
 	  set
 
-(Table 2094)
-Values for calling QEMM v6.00+ QPI function 1D01h:
+(Table 2223)
+Values for calling QEMM v6.0x only QPI function 1D01h:
 	AX = 1D01h restore user interrupt vector table
 Return: CF clear if supported (QEMM v6.x)
 	CF set if not supported (QEMM v7+)
-Notes:	interrupts should be disabled around the
-	  AX=1D00h and AX=1D01h calls because QEMM does
-	  not modify the memory maps to map in ROM, so
+Notes:	interrupts should be disabled around the AX=1D00h and AX=1D01h calls
+	  because QEMM does not modify the memory maps to map in ROM, so
 	  an interrupt could be disastrous
 	clears any pending IRQ7 at end of function
 	functions 1Dxxh are not supported by QEMM v7.01, and always return CF
 	  set
 
-(Table 2095)
+(Table 2224)
 Values for calling QEMM v6.00+ QPI function 1Dxxh:
 	AX = 1D02h to 1DFFh
 Return: CF set
 
-(Table 2096)
+(Table 2225)
 Values for calling QEMM v6.00+ "QEMM_GET_INFO"/"QPI_GetInfo" function:
 	AX = 1E00h get Stealth configuration
 Return:	CF clear
-	BL = memory configuration flags (documented as "reserved") (see #2120)
+	BL = memory configuration flags (documented as "reserved") (see #2249)
 	BH = (v7.00+) disk buffer flags
 	    bit 0: DISKBUFFRAME buffer instead of DISKBUF buffer
 	    bit 1: buffer has already been used
@@ -7001,29 +7858,29 @@ Return:	CF clear
 	DI = reserved (always 0000h for v6.00)
 Note:	this function is officially documented
 
-(Table 2097)
+(Table 2226)
 Values for calling QEMM v6.00+ "QPI_GetStealthCount" function:
 	AX = 1E01h get number of Stealth'ed ROMs
 Return: CF clear
 	BX = number of Stealth'ed ROMs
 Note:	this function is officially documented
 
-(Table 2098)
+(Table 2227)
 Values for calling QEMM v6.00+ "QPI_GetStealthList" function:
 	AX = 1E02h
-	ES:DI -> buffer for Stealth ROM info (see #2122)
+	ES:DI -> buffer for Stealth ROM info (see #2251)
 Return: CF clear
 	BX = number of Stealth'ed ROMs
 	ES:DI buffer filled
 Note:	this function is officially documented
 
-(Table 2099)
+(Table 2228)
 Values for unimplemented Stealth information functions:
 	AX = 1E03h to 1EFFh
 Return: CF set
 
 
-(Table 2100)
+(Table 2229)
 Values for calling QEMM v6.00+ "QEMM_GET_PTE"/"QPI_GetPTE" function:
 	AX = 1F00h get page table entry
 	CX = page number (0000h-010Fh)
@@ -7031,7 +7888,7 @@ Return:	CF clear
 	EDX = page table entry
 Note:	this function is officially documented
 
-(Table 2101)
+(Table 2230)
 Values for calling QEMM v6.00+ "QEMM_SET_PTE"/"QPI_SetPTE" function:
 	AX = 1F01h set page table entry
 	CX = page number (0000h-010Fh)
@@ -7040,12 +7897,12 @@ Return: CF clear
 Note:	this function is officially documented
 SeeAlso: function 1008h
 
-(Table 2102)
+(Table 2231)
 Values for calling QEMM v6.00+ QPI function 1Fxxh:
 	AX = 1F02h to 1FFFh
 Return: CF set
 
-(Table 2103)
+(Table 2232)
 Values for calling QEMM v6.00+ "QEMM_GET_VHI_INFO"/"QPI_GetVHIInfo" function:
 	AX = 2000h "QEMM_GET_VHI_INFO" get VirtualHDIRQ information
 Return: CF clear
@@ -7056,23 +7913,23 @@ Return: CF clear
 	    bit 0: VirtualHDIRQ currently enabled
 		(INT 15/AH=90h suppressed when enabled)
 Note:	this function is officially documented
-SeeAlso: #2104
+SeeAlso: #2233
 
-(Table 2104)
+(Table 2233)
 Values for calling QEMM v6.00+ "QEMM_SET_VHI_INFO"/"QPI_SetVHIInfo" function:
 	AX = 2001h set VirtualHDIRQ state
 	BL bit 0 = new VirtualHDIRQ state
 Return: CF clear
-	BL = old VHI setting (bits 0 and 7, see #2103)
+	BL = old VHI setting (bits 0 and 7, see #2232)
 Note:	this function is officially documented
-SeeAlso: #2103
+SeeAlso: #2232
 
-(Table 2105)
+(Table 2234)
 Values for calling QEMM v6.00+ QPI function 20xxh:
 	AX = 2002h to 20FFh
 Return: CF set
 
-(Table 2106)
+(Table 2235)
 Values for calling QEMM v6.00+ "QEMM_COPY_STEALTH_ROMS"/"QPI_CopyStealthRoms":
 	AX = 2100h copy data from Stealthed address space
 	DS:SI -> start address of hidden memory to copy
@@ -7082,25 +7939,25 @@ Return: CF clear if successful
 	CF set on error (no Stealth or DS:SI < C000h:0000h or DS:SI + ECX > 1M)
 Note:	this function was officially documented with the release of QEMM 7.50
 
-(Table 2107)
+(Table 2236)
 Values for calling QEMM v6.00+ QPI function 21xxh:
 	AX = 2101h to 21FFh
 Return: CF set
 
-(Table 2108)
+(Table 2237)
 Values for calling QEMM v6.03+ QPI function 2200h:
 	AX = 2200h DESQview/X support -- get ???
 Return: CF clear
 	ES:DI -> ???
 
-(Table 2109)
+(Table 2238)
 Values for calling QEMM v6.03+ QPI function 2201h:
 	AX = 2201h DESQview/X support -- set ???
 	ES:DI -> ??? or 0000h:0000h
 Return: CF clear if successful
 	CF set on error
 
-(Table 2110)
+(Table 2239)
 Values for calling QEMM v6.04+ QPI function 2300h:
 	AX = 2300h get ???
 	BX = which ??? to get (must be 0000h for v6.04)
@@ -7108,7 +7965,7 @@ Return: CF clear if successful
 	    ES:DI -> ???
 	CF set on error
 
-(Table 2111)
+(Table 2240)
 Values for calling QEMM v6.04+ QPI function 2301h:
 	AX = 2301h set ???
 	BX = which ??? to set (must be 0000h for v6.04)
@@ -7116,25 +7973,25 @@ Values for calling QEMM v6.04+ QPI function 2301h:
 Return: CF clear if successful
 	CF set on error
 
-(Table 2112)
+(Table 2241)
 Values for calling QEMM v6.04+ QPI function 2302h:
 	AX = 2302h clear specified ???
 	BX = which ??? to clear (must be 0000h for v6.04)
 Return: CF clear if successful
 	CF set on error
 
-(Table 2113)
+(Table 2242)
 Values for calling QEMM v6.04+ QPI function 23FFh:
 	AX = 23FFh clear all ???
 Return: CF clear if successful
 	CF set on error
 
-(Table 2114)
+(Table 2243)
 Values for calling QEMM v6.04+ QPI function 23xxh:
 	AX = 2303h to 23FEh
 Return: CF set
 
-(Table 2115)
+(Table 2244)
 Values for calling QEMM v7.01+ QPI function 24h:
 	AH = 24h ST-DBL support
 	AL = subfunction
@@ -7144,13 +8001,13 @@ Values for calling QEMM v7.01+ QPI function 24h:
 Return: CF clear if successful
 	CF set on error
 
-(Table 2116)
+(Table 2245)
 Values for calling QEMM unimplemented QPI functions:
 	AH = 25h to FFh
 Return: CF set
 
 Format of QEMM protection level configuration:
-Offset	Size	Description	(Table 2117)
+Offset	Size	Description	(Table 2246)
  00h	WORD	segment of 128 breakpoint (INT 3) instructions for use in
 		  DESQview protection level 3 interrupt vector checking, or
 		  0000h to disable; in pl3, INTs 00-7F are pointed at these
@@ -7158,7 +8015,7 @@ Offset	Size	Description	(Table 2117)
  02h	DWORD	-> array of actual interrupt handler addresses for INT 00-7F
 		  when interrupt vectors are pointed at protection level 3
 		  breakpoints
- 06h	DWORD	far pointer to ??? region list (see #2118)
+ 06h	DWORD	far pointer to ??? region list (see #2247)
  0Ah	DWORD	far pointer to buffer for returned ???
  0Eh	DWORD	seg:ofs of function to call on protection violation???
  12h	WORD	segment of ???
@@ -7167,20 +8024,20 @@ Offset	Size	Description	(Table 2117)
 	???
 
 Format of protection level Region List:
-Offset	Size	Description	(Table 2118)
+Offset	Size	Description	(Table 2247)
  00h	WORD	number of PAIRS of pointers to follow
  02h 2N DWORDs	start/end seg:ofs addresses of ??? regions
 Note:	QEMM converts the segmented addresses into linear addresses in place
 
 Format of EMM Import structure:
-Offset	Size	Description	(Table 2119)
+Offset	Size	Description	(Table 2248)
  00h	DWORD	physical address of EMM import struct
  04h	BYTE	major version (v6.00 sets to 01h)
  05h	BYTE	minor version (v6.00 sets to 00h/0Bh)
 SeeAlso: INT 21/AX=4402h/SF=01h
 
 Bitfields for memory configuration flags:
-Bit(s)	Description	(Table 2120)
+Bit(s)	Description	(Table 2249)
  0	conventional memory sorted
  1	conventional memory filled
  2	???
@@ -7189,7 +8046,7 @@ Bit(s)	Description	(Table 2120)
  5	???
 
 Format of QEMM 6.0 memory statistics:
-Offset	Size	Description	(Table 2121)
+Offset	Size	Description	(Table 2250)
  00h	BYTE	01h if Shadow RAM found, 00h otherwise
  01h	DWORD	initial conventional memory in bytes
  05h	DWORD	initial extended memory in bytes
@@ -7216,24 +8073,24 @@ Offset	Size	Description	(Table 2121)
 		(set to 0 by QEMM.COM prior to call)
 
 Format of Stealth ROM info [array]:
-Offset	Size	Description	(Table 2122)
+Offset	Size	Description	(Table 2251)
  00h	WORD	starting segment of ROM
  02h	WORD	length of ROM in paragraphs
 
 Format of QEMM EGA/VGA DAC register virtualization buffer:
-Offset	Size	Description	(Table 2123)
+Offset	Size	Description	(Table 2252)
  00h	BYTE	(temp) current color register number
  01h	BYTE	(temp) number of bytes written so far for current color reg
  02h 768 BYTEs	three bytes per color register
 --------m-6740-------------------------------
 INT 67 - LIM EMS - GET MANAGER STATUS
 	AH = 40h
-Return: AH = status (00h,80h,81h,84h) (see #2124)
+Return: AH = status (00h,80h,81h,84h) (see #2253)
 Note:	this call can be used only after establishing that the EMS driver is in
 	  fact present
 SeeAlso: AH=3Fh,AX=FFA5h
 
-(Table 2124)
+(Table 2253)
 Values for EMS function status:
  00h	successful
  80h	internal error
@@ -7294,7 +8151,7 @@ SeeAlso: INT 2F/AX=2702h
 INT 67 - LIM EMS - GET HANDLE AND ALLOCATE MEMORY
 	AH = 43h
 	BX = number of logical pages to allocate
-Return: AH = status (00h,80h,81h,84h,85h,87h,88h,89h) (see #2124)
+Return: AH = status (00h,80h,81h,84h,85h,87h,88h,89h) (see #2253)
 	DX = handle if AH=00h
 SeeAlso: AH=45h
 --------m-6744-------------------------------
@@ -7304,30 +8161,30 @@ INT 67 - LIM EMS - MAP MEMORY
 	BX = logical page number
 	    or FFFFh to unmap (QEMM)
 	DX = handle
-Return: AH = status (00h,80h,81h,83h,84h,8Ah,8Bh) (see #2124)
+Return: AH = status (00h,80h,81h,83h,84h,8Ah,8Bh) (see #2253)
 SeeAlso: AH=69h
 --------m-6745-------------------------------
 INT 67 - LIM EMS - RELEASE HANDLE AND MEMORY
 	AH = 45h
 	DX = EMM handle
-Return: AH = status (00h,80h,81h,83h,84h,86h) (see #2124)
+Return: AH = status (00h,80h,81h,83h,84h,86h) (see #2253)
 SeeAlso: AH=43h
 --------m-6746-------------------------------
 INT 67 - LIM EMS - GET EMM VERSION
 	AH = 46h
-Return: AH = status (00h,80h,81h,84h) (see #2124)
+Return: AH = status (00h,80h,81h,84h) (see #2253)
 	AL = EMM version number if AH=00h
 --------m-6747-------------------------------
 INT 67 - LIM EMS - SAVE MAPPING CONTEXT
 	AH = 47h
 	DX = handle
-Return: AH = status (00h,80h,81h,83h,84h,8Ch-8Eh) (see #2124)
+Return: AH = status (00h,80h,81h,83h,84h,8Ch-8Eh) (see #2253)
 SeeAlso: AH=48h
 --------m-6748-------------------------------
 INT 67 - LIM EMS - RESTORE MAPPING CONTEXT
 	AH = 48h
 	DX = handle
-Return: AH = status (00h,80h,81h,83h,84h,8Eh) (see #2124)
+Return: AH = status (00h,80h,81h,83h,84h,8Eh) (see #2253)
 SeeAlso: AH=47h
 --------m-6749-------------------------------
 INT 67 - LIM EMS - reserved - GET I/O PORT ADDRESSES
@@ -7340,20 +8197,20 @@ Note:	defined in EMS 3.0, but undocumented in EMS 3.2
 --------m-674B-------------------------------
 INT 67 - LIM EMS - GET NUMBER OF EMM HANDLES
 	AH = 4Bh
-Return: AH = status (00h,80h,81h,83h,84h) (see #2124)
+Return: AH = status (00h,80h,81h,83h,84h) (see #2253)
 	BX = number of EMM handles if AH=00h
 --------m-674C-------------------------------
 INT 67 - LIM EMS - GET PAGES OWNED BY HANDLE
 	AH = 4Ch
 	DX = EMM handle
-Return: AH = status (see #1423)
+Return: AH = status (see #1504)
 	BX = number of logical pages if AH=00h
 SeeAlso: AH=4Dh
 --------m-674D-------------------------------
 INT 67 - LIM EMS - GET PAGES FOR ALL HANDLES
 	AH = 4Dh
 	ES:DI -> array to receive information
-Return: AH = status (00h,80h,81h,84h) (see #2124)
+Return: AH = status (00h,80h,81h,84h) (see #2253)
 	---if AH=00h---
 	BX = number of active EMM handles
 	array filled with 2-word entries, consisting of a handle and the
@@ -7403,12 +8260,12 @@ INT 67 - LIM EMS 4.0 - MAP/UNMAP MULTIPLE HANDLE PAGES
 	    01h use segment addresses
 	DX = handle
 	CX = number of entries in array
-	DS:SI -> mapping array (see #2125)
-Return: AH = status (00h,80h,81h,83h,84h,8Ah,8Bh,8Fh) (see #2124)
+	DS:SI -> mapping array (see #2254)
+Return: AH = status (00h,80h,81h,83h,84h,8Ah,8Bh,8Fh) (see #2253)
 SeeAlso: AH=40h
 
 Format of EMS mapping array entry:
-Offset	Size	Description	(Table 2125)
+Offset	Size	Description	(Table 2254)
  00h	WORD	logical page number or FFFFh to unmap physical page
  02h	WORD	physical page number or segment address
 --------m-6751-------------------------------
@@ -7416,10 +8273,10 @@ INT 67 - LIM EMS 4.0 - REALLOCATE PAGES
 	AH = 51h
 	DX = handle
 	BX = number of pages to be allocated to handle
-Return:	AH = status (00h,80h,81h,83h,84h,87h,88h) (see #2126)
+Return:	AH = status (00h,80h,81h,83h,84h,87h,88h) (see #2255)
 	BX = actual number of pages allocated to handle
 
-(Table 2126)
+(Table 2255)
 Values for EMS function status:
  00h	successful
  80h	internal error
@@ -7450,7 +8307,7 @@ INT 67 - LIM EMS 4.0 - GET/SET HANDLE ATTRIBUTES
 			    00h only volatile handles supported
 			    01h both volatile and non-volatile supported
 	DX = handle
-Return: AH = status (00h,80h,81h,83h,84h,8Fh-91h) (see #2124)
+Return: AH = status (00h,80h,81h,83h,84h,8Fh-91h) (see #2253)
 SeeAlso: AH=53h
 --------m-6753-------------------------------
 INT 67 - LIM EMS 4.0 - GET/SET HANDLE NAME
@@ -7461,25 +8318,25 @@ INT 67 - LIM EMS 4.0 - GET/SET HANDLE NAME
 	    01h set handle name
 	       DS:SI -> 8-byte handle name
 	DX = handle
-Return: AH = status (00h,80h,81h,83h,84h,8Fh,A1h) (see #2124)
+Return: AH = status (00h,80h,81h,83h,84h,8Fh,A1h) (see #2253)
 SeeAlso: AH=52h
 --------m-6754-------------------------------
 INT 67 - LIM EMS 4.0 - GET HANDLE DIRECTORY
 	AH = 54h
 	AL = subfunction
 	    00h get handle directory
-	       ES:DI -> buffer for handle directory (see #2127)
+	       ES:DI -> buffer for handle directory (see #2256)
 	    01h search for named handle
 	       DS:SI -> 8-byte name
 	    02h get total number of handles
 Return: AL = number of entries in handle directory (subfunction 00h)
 	DX = value of named handle (subfunction 01h)
 	BX = total number of handles (subfunction 02h)
-	AH = status (00h,80h,81h,84h,8Fh,A0h,A1h) (see also #2126)
+	AH = status (00h,80h,81h,84h,8Fh,A0h,A1h) (see also #2255)
 	    A1h a handle found had no name
 
 Format of EMS handle directory entry:
-Offset	Size	Description	(Table 2127)
+Offset	Size	Description	(Table 2256)
  00h	WORD	handle
  02h  8 BYTEs	handle's name
 --------m-6755-------------------------------
@@ -7491,7 +8348,7 @@ INT 67 - LIM EMS 4.0 - ALTER PAGE MAP AND JUMP
 	DX = handle
 	DS:SI -> structure containing map and jump address
 Return: (at target address unless error)
-	AH = status (00h,80h,81h,83h,84h,8Ah,8Bh,8Fh) (see #2124)
+	AH = status (00h,80h,81h,83h,84h,8Ah,8Bh,8Fh) (see #2253)
 SeeAlso: AH=56h
 --------m-6756-------------------------------
 INT 67 - LIM EMS 4.0 - ALTER PAGE MAP AND CALL
@@ -7507,7 +8364,7 @@ INT 67 - LIM EMS 4.0 - ALTER PAGE MAP AND CALL
 		Return: BX = stack space required
 Return: (if successful, the target address is called.  Use a RETF to return and
 	 restore mapping context)
-	AH = status (00h,80h,81h,83h,84h,8Ah,8Bh,8Fh) (see #2124)
+	AH = status (00h,80h,81h,83h,84h,8Ah,8Bh,8Fh) (see #2253)
 SeeAlso: AH=55h
 --------m-6756FF-----------------------------
 INT 67 - RM386 v6.00 - ???
@@ -7521,13 +8378,13 @@ INT 67 - LIM EMS 4.0 - MOVE/EXCHANGE MEMORY REGION
 	AL = subfunction
 	    00h move memory region
 	    01h exchange memory region
-	DS:SI -> structure describing source and destination (see #2129)
-Return: AH = status (see #2128)
+	DS:SI -> structure describing source and destination (see #2258)
+Return: AH = status (see #2257)
 Note:	source and destination may overlap for a move, in which case the copy
 	  direction is chosen such that the destination receives an intact copy
 	  of the source region
 
-(Table 2128)
+(Table 2257)
 Values for EMS function status:
  00h	successful
  80h	internal error
@@ -7547,7 +8404,7 @@ Values for EMS function status:
  A2h	attempted to wrap around 1M conventional address space
 
 Format of EMS copy data:
-Offset	Size	Description	(Table 2129)
+Offset	Size	Description	(Table 2258)
  00h	DWORD	region length in bytes
  04h	BYTE	source memory type
 		00h conventional
@@ -7566,15 +8423,15 @@ INT 67 - LIM EMS 4.0 - GET MAPPABLE PHYSICAL ADDRESS ARRAY
 	AH = 58h
 	AL = subfunction
 	    00h get mappable physical address array
-		ES:DI -> buffer to be filled with array (see #2130)
+		ES:DI -> buffer to be filled with array (see #2259)
 	    01h get number of entries in m.p.a. array
 Return: CX = number of entries in array
-	AH = status (00h,80h,81h,84h,8Fh) (see #2128)
+	AH = status (00h,80h,81h,84h,8Fh) (see #2257)
 Note:	the returned array for subfunction 00h is filled in physical segment
 	  address order
 
 Format of EMS mappable physical address entry:
-Offset	Size	Description	(Table 2130)
+Offset	Size	Description	(Table 2259)
  00h	WORD	physical page segment
  02h	WORD	physical page number
 --------m-675857-----------------------------
@@ -7592,7 +8449,7 @@ INT 67 - LIM EMS 4.0 - GET EXPANDED MEMORY HARDWARE INFORMATION
 	AH = 59h
 	AL = subfunction
 	    00h get hardware configuration array
-		ES:DI -> buffer to be filled with array (see #2131)
+		ES:DI -> buffer to be filled with array (see #2260)
 	    01h get unallocated raw page count
 		Return: BX = unallocated raw pages
 			DX = total raw pages
@@ -7602,7 +8459,7 @@ Note:	subfunction 00h is for use by operating systems only, and can be
 	  enabled or disabled at any time by the operating system
 
 Format of EMS hardware configuration array:
-Offset	Size	Description	(Table 2131)
+Offset	Size	Description	(Table 2260)
  00h	WORD	size of raw EMM pages in paragraphs
  02h	WORD	number of alternate register sets
  04h	WORD	size of mapping-context save area in bytes
@@ -7618,7 +8475,7 @@ INT 67 - LIM EMS 4.0 - ALLOCATE STANDARD/RAW PAGES
 	    01h allocate raw pages
 	BX = number of pages to allocate
 Return: DX = handle
-	AH = status (00h,80h,81h,84h,85h,87h,88h,8Fh) (see #2124)
+	AH = status (00h,80h,81h,84h,85h,87h,88h,8Fh) (see #2253)
 --------m-675B-------------------------------
 INT 67 - LIM EMS 4.0 - ALTERNATE MAP REGISTER SET
 	AH = 5Bh
@@ -7635,11 +8492,11 @@ INT 67 - LIM EMS 4.0 - ALTERNATE MAP REGISTER SET
 		Return: BL = number of map register set; 00h = not supported
 	    04h deallocate alternate map register set
 		BL = number of alternate map register set
-Return: AH = status (00h,80h,81h,84h,8Fh,9Ah-9Dh,A3h,A4h) (see #2132)
+Return: AH = status (00h,80h,81h,84h,8Fh,9Ah-9Dh,A3h,A4h) (see #2261)
 Note:	this function is for use by operating systems only, and can be
 	  enabled or disabled at any time by the operating system
 
-(Table 2132)
+(Table 2261)
 Values for EMS function status:
  00h	successful
  80h	internal error
@@ -7667,7 +8524,7 @@ INT 67 - LIM EMS 4.0 - ALTERNATE MAP REGISTER SET - DMA REGISTERS
 	       BL = DMA register set number
 	    08h deallocate DMA register set
 	       BL = DMA register set number
-Return: AH = status (00h,80h,81h,84h,8Fh,9Ah-9Fh,A3h,A4h) (see #2132)
+Return: AH = status (00h,80h,81h,84h,8Fh,9Ah-9Fh,A3h,A4h) (see #2261)
 Note:	this function is for use by operating systems only, and can be
 	  enabled or disabled at any time by the operating system
 --------m-675BE0-----------------------------
@@ -7692,12 +8549,12 @@ SeeAlso: AX=5BE0h,AX=5BE2h
 --------m-675BE2-----------------------------
 INT 67 - RM386 v6.00+ - GET INTERRUPT VECTORS
 	AX = 5BE2h
-Return: DS:SI -> V86-mode table (see #2133)
+Return: DS:SI -> V86-mode table (see #2262)
 	ES:BX -> ??? (undoc, middle of device driver interrupt routine!)
 SeeAlso: AX=5BE0h,AX=5BE1h
 
 Format of RM386 V86-mode table:
-Offset	Size	Description	(Table 2133)
+Offset	Size	Description	(Table 2262)
  00h	DWORD	original INT 13 vector
  04h	DWORD	original INT 15 vector
  08h	DWORD	original INT 19 vector
@@ -7717,11 +8574,11 @@ INT 67 - MICEMM v4D, RM386 - GET ADDRESS MAP
 	AX = 5BF1h
 	ES:BX -> 256-byte (MICEMM) or 512-byte (RM386) buffer for memory types
 Return: AH = 00h
-	ES:BX buffer filled (see #2134)
+	ES:BX buffer filled (see #2263)
 Note:	each byte in the buffer specifies the type of a 4K page of memory
 SeeAlso: AX=5BE0h,AX=5BF0h
 
-(Table 2134)
+(Table 2263)
 Values for MICEMM/RM386 memory type:
  00h	unused (MICEMM), RAM/available (RM386)
  02h	DOS extension (XMS UMB)
@@ -7750,14 +8607,14 @@ SeeAlso: AX=5BF0h,AX=5DE0h
 INT 67 - RM386 v6.00 - GET RM386 GLOBAL FLAGS
 	AX = 5BF4h
 Return: AH = 00h
-	BX = global flags 1 (see #2135)
-	CX = global flags 2 (see #2136)
-	DX = global flags 3 (see #2137)
-	SI = global flags 4 (see #2138)
+	BX = global flags 1 (see #2264)
+	CX = global flags 2 (see #2265)
+	DX = global flags 3 (see #2266)
+	SI = global flags 4 (see #2267)
 SeeAlso: AX=5BF0h
 
 Bitfields for RM386 global flags 1:
-Bit(s)	Description	(Table 2135)
+Bit(s)	Description	(Table 2264)
  0-3	reserved
  4	V86 mode
  5	reserved
@@ -7771,7 +8628,7 @@ Bit(s)	Description	(Table 2135)
  15	PS/2-style A20 control
 
 Bitfields for RM386 global flags 2:
-Bit(s)	Description	(Table 2136)
+Bit(s)	Description	(Table 2265)
  0	HMA in use
  1	XMS present
  2	using XMS driver memory
@@ -7784,7 +8641,7 @@ Bit(s)	Description	(Table 2136)
  12-15	reserved
 
 Bitfields for RM386 global flags 3:
-Bit(s)	Description	(Table 2137)
+Bit(s)	Description	(Table 2266)
  0	NOTEST
  1	NOEBDA
  2	Windows3 support
@@ -7803,7 +8660,7 @@ Bit(s)	Description	(Table 2137)
  15	NOHMA set
 
 Bitfields for RM386 global flags 4:
-Bit(s)	Description	(Table 2138)
+Bit(s)	Description	(Table 2267)
  0	"NOV8259" don't virtualize interrupt controller
  1	NOSCSI
  2	NOSCAN
@@ -7830,9 +8687,9 @@ SeeAlso: AX=5BF0h
 --------m-675C-------------------------------
 INT 67 - LIM EMS 4.0 - PREPARE EXPANDED MEMORY HARDWARE FOR WARM BOOT
 	AH = 5Ch
-Return: AH = status (see #2139)
+Return: AH = status (see #2268)
 
-(Table 2139)
+(Table 2268)
 Values for EMS function status:
  00h	successful
  80h	internal error
@@ -7864,7 +8721,7 @@ INT 67 - Nanosoft MD386 - GET ALTERNATE MAP STRUCTURE
 	AX = 5D04h
 	BX = alternate register set number
 	ES:DI -> 1024-byte buffer for map structure
-Return: AH = status (see #2124)
+Return: AH = status (see #2253)
 	buffer filled if AH=00h
 Note:	used for debugging purposes
 SeeAlso: AX=5D05h
@@ -7873,7 +8730,7 @@ INT 67 - Nanosoft MD386 - GET INTERNAL HANDLE TABLE
 	AX = 5D05h
 	BX = handle number
 	ES:DI -> 1024-byte buffer for handle table
-Return: AH = status (see #2124)
+Return: AH = status (see #2253)
 	buffer filled if AH=00h
 Note:	used for debugging purposes
 SeeAlso: AX=5D04h
@@ -8146,7 +9003,7 @@ INT 67 - EEMS - PAGE MAPPING
 	    06h deallocate pages mapped to frames in conventional memory
 		CH = first page frame
 		CL = number of frames
-Return: AH = status (see #2124)
+Return: AH = status (see #2253)
 Note:	similar to EMS function 4Eh, except that a subrange of pages can be
 	  specified
 SeeAlso: AH=69h
@@ -8184,14 +9041,14 @@ INT 67 - Virtual Control Program Interface - GET PROTECTED MODE INTERFACE
 		  main control program
 Return: AH = 00h successful
 	    DI -> first unused page table entry in buffer
-	    EBX -> protected mode entry point in code segment (see #2140)
+	    EBX -> protected mode entry point in code segment (see #2269)
 	AH = nonzero  failed
 Note:	protected mode entry point may be called with AX=DE00h-DE05h and
 	  AX=DE0Ch (in each case, all other registers as appropriate for
 	  the function)
 SeeAlso: INT 2F/AX=1687h,INT 67/AH=3Fh
 
-(Table 2140)
+(Table 2269)
 Call QEMM v6.03 protected mode entry point additionally with:
 	AX = DF00h ???
 		???
@@ -8214,7 +9071,7 @@ Return: AH = 00h  successful
 	AH nonzero: failed
 Notes:	returns total number of pages available to ALL tasks in system
 	also available in protected mode by calling the protected-mode VCPI
-	  entry point (see AX=DE01h,#2140)
+	  entry point (see AX=DE01h,#2269)
 SeeAlso: AX=DE04h
 --------E-67DE04-----------------------------
 INT 67 - Virtual Control Program Interface - ALLOCATE A 4K PAGE
@@ -8225,7 +9082,7 @@ Return: AH = 00h successful
 Notes:	the client program is responsible for freeing all memory allocated
 	  with this call before terminating
 	also available in protected mode by calling the protected-mode VCPI
-	  entry point (see AX=DE01h,#2140)
+	  entry point (see AX=DE01h,#2269)
 SeeAlso: AH=3Fh,AX=DE03h,AX=DE05h
 --------E-67DE05-----------------------------
 INT 67 - Virtual Control Program Interface - FREE 4K PAGE
@@ -8235,7 +9092,7 @@ Return: AH = status
 	    00h successful
 	    nonzero failed
 Note:	also available in protected mode by calling the protected-mode VCPI
-	  entry point (see AX=DE01h,#2140)
+	  entry point (see AX=DE01h,#2269)
 SeeAlso: AH=3Fh,AX=DE04h
 --------E-67DE06-----------------------------
 INT 67 - Virtual Control Program Interface - GET PHYS ADDR OF PAGE IN FIRST MB
@@ -8292,7 +9149,7 @@ SeeAlso: AX=DE0Ah,INT 2C/AX=002Ah
 INT 67 - Virtual Control Program Interface - SWITCH TO PROTECTED MODE
 	AX = DE0Ch
 	ESI = linear address in first megabyte of values for system
-	      registers (see #2141)
+	      registers (see #2270)
 	interrupts disabled
 Return: interrupts disabled
 	GDTR, IDTR, LDTR, TR loaded
@@ -8320,7 +9177,7 @@ Note:	in protected mode, calling the protected-mode VCPI entry point with
 SeeAlso: AH=3Fh,INT 15/AH=89h,INT 38/AH=10h
 
 Format of system register values for switch to protected mode:
-Offset	Size	Description	(Table 2141)
+Offset	Size	Description	(Table 2270)
  00h	DWORD	value for CR3
  04h	DWORD	linear address in first megabyte of value for GDTR
  08h	DWORD	linear address in first megabyte of value for IDTR
@@ -8346,7 +9203,7 @@ SeeAlso: AX=5DFFh"RM386",INT 2F/AX=4310h
 INT 67 - Microsoft EMM386.EXE v4.20+ - INSTALLATION CHECK
 	AX = FFA5h
 Return: AX = 845Ah/84A5h if loaded
-	    BX:CX -> API entry point (see #2142)
+	    BX:CX -> API entry point (see #2271)
 Notes:	this call is available even if EMM386 is not providing EMS
 	the returned AX is 845Ah inside of MSWindows, 84A5h under bare DOS
 	if no other program has hooked INT 67, an alternate installation
@@ -8356,7 +9213,7 @@ Notes:	this call is available even if EMM386 is not providing EMS
 	  contains the offset of the API entry point
 SeeAlso: AH=3Fh,AX=FFA5h/BX=4345h,INT 21/AX=4402h"EMM386.EXE"
 
-(Table 2142)
+(Table 2271)
 Call EMM386.EXE API entry point with:
 	AH = 00h get memory manager's status
 	    Return: AH = status
@@ -8379,7 +9236,7 @@ Call EMM386.EXE API entry point with:
 		 (using INT 21/AH=09h)
 	AH = 05h print available report
 		 (the one shown when running EMM386 from the DOS prompt)
-SeeAlso: #0687 at INT 21/AX=4402h/SF=02h,#1337 at INT 2F/AX=12FFh/BX=0106h
+SeeAlso: #0733 at INT 21/AX=4402h/SF=02h,#1402 at INT 2F/AX=12FFh/BX=0106h
 --------m-67FFA5BX4345-----------------------
 INT 67 U - Compaq CEMM v5.10+ - PRIVATE API
 	AX = FFA5h
@@ -8398,5 +9255,5 @@ Return: AH = 84h
 	AL = status (84h = error, FFh = success)
 Note:	if BX <> 4345h or DX > 0004h on entry, CEMM behaves identically to
 	  Microsoft's EMM386 (see AX=FFA5h"EMM386")
-SeeAlso: AX=FFA5h"EMM386",#0687 at INT 21/AX=4402h/SF=02h,#2142
+SeeAlso: AX=FFA5h"EMM386",#0733 at INT 21/AX=4402h/SF=02h,#2271
 --------!---Section--------------------------
