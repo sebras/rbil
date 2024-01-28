@@ -25,6 +25,18 @@ portions of INTER37 with a few of the additions from INTER38.
      ISBN 0-201-6644-6
      $29.95
 
+Coming soon (scheduled for December 1994):
+
+     Uninterrupted Interrupts: A Programmer's CD-ROM References to
+       Network APIs, and to the BIOS, DOS, and Third-Party Calls
+     Ralf Brown and Jim Kyle
+     Addison-Wesley
+     ISBN 0-201-40966-6
+     $49.95
+
+CD-ROM containing the full text of both PC Interrupts (2nd ed) and
+Network Interrupts, updated to include information added through INTER42.
+
 -------
 
 PC Interrupts is now available in Chinese.  I don't know the exact title
@@ -85,3 +97,7 @@ The following books may also be of interest:
 	916 pages + 1.44M disk, $44.95
 	Addison-Wesley
 	ISBN 0-201-62277-7
+
+Again, I have no financial interest in the above (though I have met both
+authors).
+

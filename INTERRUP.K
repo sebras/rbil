@@ -14,16 +14,16 @@ SeeAlso: INT 08"IRQ0",INT 69"Hewlett Packard"
 --------N-6801--SF1B00-----------------------
 INT 68 - APPC/PC - NETWORK DEVICE CONTROL - DISPLAY
 	AH = 01h subfn 1B00h
-	DS:DX -> control block (see #1951)
+	DS:DX -> control block (see #2108)
 Return: control block updated
 SeeAlso: AH=01h/SF=2000h,AH=01h/SF=2B00h,INT 68"Novell"
 
 Format of APPC/PC "DISPLAY" control block:
-Offset	Size	Description	(Table 1951)
+Offset	Size	Description	(Table 2108)
  00h 12 BYTEs	reserved
  0Ch	WORD	1B00h (verb "DISPLAY")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #1952)
+ 14h	DWORD	(big-endian) return code (see #2109)
  18h	WORD	00h
  1Ah  8 BYTEs	(big-endian) logical unit ID
  22h  8 BYTEs	(big-endian) partner logical unit name
@@ -41,7 +41,7 @@ Offset	Size	Description	(Table 1951)
  3Ch	BYTE	bit 7: SESSION_TERMINATION_TARGET_DRAIN
 		bit 6: SESSION_TERMINATION_SOURCE_DRAIN
 
-(Table 1952)
+(Table 2109)
 Values for APPC/PC return code:
  0000h	successful
  0001h	BAD_TP_ID
@@ -83,16 +83,16 @@ Values for APPC/PC return code:
 --------N-6801--SF2000-----------------------
 INT 68 - APPC/PC - NETWORK DEVICE CONTROL - ATTACH PHYSICAL UNIT
 	AH = 01h subfn 2000h
-	DS:DX -> control block (see #1953)
+	DS:DX -> control block (see #2110)
 Return: control block updated
 SeeAlso: AH=01h/SF=2100h,AH=01h/SF=2B00h
 
 Format of APPC/PC "Attach Physical Unit" control block:
-Offset	Size	Description	(Table 1953)
+Offset	Size	Description	(Table 2110)
  00h 12 BYTEs	reserved
  0Ch	WORD	2000h (verb "Attach Physical Unit")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #1952)
+ 14h	DWORD	(big-endian) return code (see #2109)
  18h	WORD	00h
  1Ah	BYTE	version
  1Bh	BYTE	release
@@ -107,16 +107,16 @@ Offset	Size	Description	(Table 1953)
 --------N-6801--SF2100-----------------------
 INT 68 - APPC/PC - NETWORK DEVICE CONTROL - ATTACH LOGICAL UNIT
 	AH = 01h subfn 2100h
-	DS:DX -> control block (see #1954)
+	DS:DX -> control block (see #2111)
 Return: control block updated
 SeeAlso: AH=01h/SF=2000h,AH=01h/SF=2200h,AH=01h/SF=2B00h
 
 Format of APPC/PC "Attach Logical Unit" control block:
-Offset	Size	Description	(Table 1954)
+Offset	Size	Description	(Table 2111)
  00h 12 BYTEs	reserved
  0Ch	WORD	2100h (verb "Attach Logical Unit")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #1952)
+ 14h	DWORD	(big-endian) return code (see #2109)
  18h	WORD	70  offset to partner logical unit record
  1Ah  8 BYTEs	(big-endian) logical unit name
  22h  8 BYTEs	(big-endian) logical unit ID
@@ -133,10 +133,10 @@ Offset	Size	Description	(Table 1954)
  3Eh	DWORD	pointer to LU_LU_PASSWORD_EXIT routine, FFFFFFFFh=no pswd exit
  42h	DWORD	00h
  46h	WORD	total length of partner records
- 48h	var	array of partner logical unit records (see #1955)
+ 48h	var	array of partner logical unit records (see #2112)
 
 Format of APPC/PC partner logical unit record:
-Offset	Size	Description	(Table 1955)
+Offset	Size	Description	(Table 2112)
  00h	WORD	length of this partner logical unit record
  02h	WORD	42  offset to mode records
  04h  8 BYTEs	(big-endian) partner logical unit name
@@ -150,10 +150,10 @@ Offset	Size	Description	(Table 1955)
  18h	BYTE	partner logical unit adapter number
  19h 17 BYTEs	(counted string) partner logical unit adapter address
  2Ah	WORD	total length of mode records
- 2Ch 16N BYTEs	array of mode records (see #1956)
+ 2Ch 16N BYTEs	array of mode records (see #2113)
 
 Format of mode record:
-Offset	Size	Description	(Table 1956)
+Offset	Size	Description	(Table 2113)
  00h	WORD	16  length of this mode record
  02h  8 BYTEs	(big-endian) mode name
  0Ah	WORD	RU_SIZE high bound
@@ -166,7 +166,7 @@ pointers are called by pushing the DWORD pointer to the verb on the stack and
 then performing a FAR call.
 
 Format of ACCESS_LU_LU_PW verb:
-Offset	Size	Description	(Table 1957)
+Offset	Size	Description	(Table 2114)
  00h 12 BYTEs	reserved
  0Ch	WORD	1900h (verb "ACCESS_LU_LU_PW")
  0Eh  8 BYTEs	(big-endian) logical unit ID
@@ -177,11 +177,11 @@ Offset	Size	Description	(Table 1957)
  38h  8 BYTEs	password
 
 Format of CREATE_TP verb:
-Offset	Size	Description	(Table 1958)
+Offset	Size	Description	(Table 2115)
  00h 12 BYTEs	reserved
  0Ch	WORD	2300h (verb "CREATE_TP")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) sense code (see #1959)
+ 14h	DWORD	(big-endian) sense code (see #2116)
  18h  8 BYTEs	(big-endian) TP ID
  20h  8 BYTEs	(big-endian) logical unit ID
  28h	DWORD	(big-endian) conversation ID
@@ -201,7 +201,7 @@ Offset	Size	Description	(Table 1958)
  C0h	BYTE	0 verification should be performed
 		1 already verified
 
-(Table 1959)
+(Table 2116)
 Values for APPC/PC sense code:
  00000000h	Ok
  080F6051h	SECURITY_NOT_VALID
@@ -212,7 +212,7 @@ Values for APPC/PC sense code:
  10086041h	SYNC_LEVEL_NOT_SUPPORTED
 
 Format of SYSLOG verb:
-Offset	Size	Description	(Table 1960)
+Offset	Size	Description	(Table 2117)
  00h 12 BYTEs	reserved
  0Ch	WORD	2600h (verb "SYSLOG")
  0Eh 10 BYTEs	00h
@@ -228,64 +228,64 @@ Offset	Size	Description	(Table 1960)
 --------N-6801--SF2200-----------------------
 INT 68 - APPC/PC - NETWORK DEVICE CONTROL - DETACH LOGICAL UNIT
 	AH = 01h subfn 2200h
-	DS:DX -> control block (see #1961)
+	DS:DX -> control block (see #2118)
 Return: control block updated
 SeeAlso: AH=01h/SF=2000h,AH=01h/SF=2100h,AH=01h/SF=2700h
 
 Format of APPC/PC "Detach Logical Unit" control block:
-Offset	Size	Description	(Table 1961)
+Offset	Size	Description	(Table 2118)
  00h 12 BYTEs	reserved
  0Ch	WORD	2200h (verb "Detach Logical Unit")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #1952)
+ 14h	DWORD	(big-endian) return code (see #2109)
  18h  8 BYTEs	(big-endian) logical unit ID
  20h	BYTE	00h
 --------N-6801--SF2700-----------------------
 INT 68 - APPC/PC - NETWORK DEVICE CONTROL - DETACH PHYSICAL UNIT
 	AH = 01h subfn 2700h
-	DS:DX -> control block (see #1962)
+	DS:DX -> control block (see #2119)
 Return: control block updated
 SeeAlso: AH=01h/SF=2000h,AH=01h/SF=2100h,AH=01h/SF=2200h
 
 Format of APPC/PC "Detach Physical Unit" control block:
-Offset	Size	Description	(Table 1962)
+Offset	Size	Description	(Table 2119)
  00h 12 BYTEs	reserved
  0Ch	WORD	2700h (verb "Detach Physical Unit")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #1952)
+ 14h	DWORD	(big-endian) return code (see #2109)
  18h	BYTE	00h  type: hard
 		01h  type: soft
 --------N-6801--SF2B00-----------------------
 INT 68 - APPC/PC - NETWORK DEVICE CONTROL - ACTIVATE DLC
 	AH = 01h subfn 2B00h
-	DS:DX -> control block (see #1963)
+	DS:DX -> control block (see #2120)
 Return: control block updated
 SeeAlso: AH=01h/SF=1B00h,AH=01h/SF=2000h
 
 Format of APPC/PC "Activate DLC" control block:
-Offset	Size	Description	(Table 1963)
+Offset	Size	Description	(Table 2120)
  00h 12 BYTEs	reserved
  0Ch	WORD	2B00h (verb "Activate DLC")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #1952)
+ 14h	DWORD	(big-endian) return code (see #2109)
  18h  8 BYTEs	(big-endian) DLC name
  20h	BYTE	adapter number
 --------N-6802--SF0100-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - ALLOCATE
 	AH = 02h subfn 0100h
-	DS:DX -> control block (see #1964)
+	DS:DX -> control block (see #2121)
 Return: control block updated
 SeeAlso: AH=02h/SF=0500h
 
 Format of APPC/PC "Allocate" control block:
-Offset	Size	Description	(Table 1964)
+Offset	Size	Description	(Table 2121)
  00h 12 BYTEs	reserved
  0Ch	WORD	0100h (verb "Allocate" or "MC_Allocate")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #1965)
- 16h	DWORD	(big-endian) error code (see #1966)
+ 14h	WORD	(big-endian) primary return code (see #2122)
+ 16h	DWORD	(big-endian) error code (see #2123)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	(MC_Allocate only) conversation type
@@ -308,7 +308,7 @@ Offset	Size	Description	(Table 1964)
  A6h	WORD	PIP_DATA length
  A8h	DWORD	pointer to PIP_DATA
 
-(Table 1965)
+(Table 2122)
 Values for APPC/PC primary return code:
  0000h	successful
  0001h	parameter check
@@ -337,7 +337,7 @@ Values for APPC/PC primary return code:
  F003h	APPC abended
  F004h	incomplete
 
-(Table 1966)
+(Table 2123)
 Values for APPC/PC error code:
  0001h	bad TP ID
  0002h	bad conversation ID
@@ -384,56 +384,56 @@ Values for APPC/PC error code:
 --------N-6802--SF0300-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - CONFIRM
 	AH = 02h subfn 0300h
-	DS:DX -> control block (see #1967)
+	DS:DX -> control block (see #2124)
 Return: control block updated
 SeeAlso: AH=02h/SF=0400h
 
 Format of APPC/PC "Confirm" control block:
-Offset	Size	Description	(Table 1967)
+Offset	Size	Description	(Table 2124)
  00h 12 BYTEs	reserved
  0Ch	WORD	0300h (verb "Confirm" or "MC_Confirm")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #1965)
- 16h	DWORD	(big-endian) error code (see #1966)
+ 14h	WORD	(big-endian) primary return code (see #2122)
+ 16h	DWORD	(big-endian) error code (see #2123)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	request to send received (0=no, 1=yes)
 --------N-6802--SF0400-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - CONFIRMED
 	AH = 02h subfn 0400h
-	DS:DX -> control block (see #1968)
+	DS:DX -> control block (see #2125)
 Return: control block updated
 SeeAlso: AH=02h/SF=0300h
 
 Format of APPC/PC "Confirmed" control block:
-Offset	Size	Description	(Table 1968)
+Offset	Size	Description	(Table 2125)
  00h 12 BYTEs	reserved
  0Ch	WORD	0400h (verb "Confirmed" or "MC_Confirmed")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #1965)
- 16h	DWORD	(big-endian) error code (see #1966)
+ 14h	WORD	(big-endian) primary return code (see #2122)
+ 16h	DWORD	(big-endian) error code (see #2123)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
 --------N-6802--SF0500-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - DEALLOCATE
 	AH = 02h subfn 0500h
-	DS:DX -> control block (see #1969)
+	DS:DX -> control block (see #2126)
 Return: control block updated
 SeeAlso: AH=02h/SF=0100h,AH=02h/SF=0300h
 
 Format of APPC/PC "Deallocate" control block:
-Offset	Size	Description	(Table 1969)
+Offset	Size	Description	(Table 2126)
  00h 12 BYTEs	reserved
  0Ch	WORD	0500h (verb "Deallocate" or "MC_Deallocate")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #1965)
- 16h	DWORD	(big-endian) error code (see #1966)
+ 14h	WORD	(big-endian) primary return code (see #2122)
+ 16h	DWORD	(big-endian) error code (see #2123)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	00h
@@ -449,37 +449,37 @@ Offset	Size	Description	(Table 1969)
 --------N-6802--SF0600-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - FLUSH
 	AH = 02h subfn 0600h
-	DS:DX -> control block (see #1970)
+	DS:DX -> control block (see #2127)
 Return: control block updated
 SeeAlso: AH=02h/SF=0300h
 
 Format of APPC/PC "Flush" control block:
-Offset	Size	Description	(Table 1970)
+Offset	Size	Description	(Table 2127)
  00h 12 BYTEs	reserved
  0Ch	WORD	0600h (verb "Flush" or "MC_Flush")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #1965)
- 16h	DWORD	(big-endian) error code (see #1966)
+ 14h	WORD	(big-endian) primary return code (see #2122)
+ 16h	DWORD	(big-endian) error code (see #2123)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
 --------N-6802--SF0700-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - GET ATTRIBUTES
 	AH = 02h subfn 0700h
-	DS:DX -> control block (see #1971)
+	DS:DX -> control block (see #2128)
 Return: control block updated
 SeeAlso: AH=02h/SF=0300h
 
 Format of APPC/PC "Get_Attributes" control block:
-Offset	Size	Description	(Table 1971)
+Offset	Size	Description	(Table 2128)
  00h 12 BYTEs	reserved
  0Ch	WORD	0700h (verb "Get_Attributes" or "MC_Get_Attributes")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #1965)
- 16h	DWORD	(big-endian) error code (see #1966)
+ 14h	WORD	(big-endian) primary return code (see #2122)
+ 16h	DWORD	(big-endian) error code (see #2123)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h  8 BYTEs	(big-endian) logical unit ID
@@ -495,38 +495,38 @@ Offset	Size	Description	(Table 1971)
 --------N-6802--SF0800-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - GET CONVERSATION TYPE
 	AH = 02h subfn 0800h
-	DS:DX -> control block (see #1972)
+	DS:DX -> control block (see #2129)
 Return: control block updated
 SeeAlso: AH=02h/SF=0300h
 
 Format of APPC/PC "Get_Type" control block:
-Offset	Size	Description	(Table 1972)
+Offset	Size	Description	(Table 2129)
  00h 12 BYTEs	reserved
  0Ch	WORD	0800h (verb "Get_Type")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #1965)
- 16h	DWORD	(big-endian) error code (see #1966)
+ 14h	WORD	(big-endian) primary return code (see #2122)
+ 16h	DWORD	(big-endian) error code (see #2123)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	(return) type (0=basic conversation, 1=mapped conversation)
 --------N-6802--SF0900-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - POST ON RECEIPT
 	AH = 02h subfn 0900h
-	DS:DX -> control block (see #1973)
+	DS:DX -> control block (see #2130)
 Return: control block updated
 SeeAlso: AH=02h/SF=0A00h
 
 Format of APPC/PC "Post_on_Receipt" control block:
-Offset	Size	Description	(Table 1973)
+Offset	Size	Description	(Table 2130)
  00h 12 BYTEs	reserved
  0Ch	WORD	0900h (verb "Post_on_Receipt")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #1965)
- 16h	DWORD	(big-endian) error code (see #1966)
+ 14h	WORD	(big-endian) primary return code (see #2122)
+ 16h	DWORD	(big-endian) error code (see #2123)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	WORD	maximum length
@@ -534,19 +534,19 @@ Offset	Size	Description	(Table 1973)
 --------N-6802--SF0A00-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - PREPARE TO RECEIVE
 	AH = 02h subfn 0A00h
-	DS:DX -> control block (see #1974)
+	DS:DX -> control block (see #2131)
 Return: control block updated
 SeeAlso: AH=02h/SF=0900h,AH=02h/SF=0B00h
 
 Format of APPC/PC "Prepare_to_Receive" control block:
-Offset	Size	Description	(Table 1974)
+Offset	Size	Description	(Table 2131)
  00h 12 BYTEs	reserved
  0Ch	WORD	0A00h (verb "Prepare_to_Receive" or "MC_Prepare_to_Receive")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #1965)
- 16h	DWORD	(big-endian) error code (see #1966)
+ 14h	WORD	(big-endian) primary return code (see #2122)
+ 16h	DWORD	(big-endian) error code (see #2123)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	type (0=SYNC_LEVEL, 1=FLUSH)
@@ -554,29 +554,29 @@ Offset	Size	Description	(Table 1974)
 --------N-6802--SF0B00-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - RECEIVE AND WAIT
 	AH = 02h subfn 0B00h
-	DS:DX -> control block (see #1975)
+	DS:DX -> control block (see #2132)
 Return: control block updated
 SeeAlso: AH=02h/SF=0C00h,AH=02h/SF=0F00h
 
 Format of APPC/PC "Receive_and_Wait" control block:
-Offset	Size	Description	(Table 1975)
+Offset	Size	Description	(Table 2132)
  00h 12 BYTEs	reserved
  0Ch	WORD	0B00h (verb "Receive_and_Wait" or "MC_Receive_and_Wait")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #1965)
- 16h	DWORD	(big-endian) error code (see #1966)
+ 14h	WORD	(big-endian) primary return code (see #2122)
+ 16h	DWORD	(big-endian) error code (see #2123)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
- 26h	BYTE	type of information received (see #1976)
+ 26h	BYTE	type of information received (see #2133)
  27h	BYTE	(MC_Receive_and_Wait only) fill (0=buffer, 1=LL)
  28h	BYTE	Request_to_Send_Received (0=no, 1=yes)
  29h	WORD	maximum length
  2Bh	WORD	data length
  2Dh	DWORD	pointer to data
 
-(Table 1976)
+(Table 2133)
 Values for type of information received:
  00h	data
  01h	data complete
@@ -588,22 +588,22 @@ Values for type of information received:
 --------N-6802--SF0C00-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - RECEIVE IMMEDIATE
 	AH = 02h subfn 0C00h
-	DS:DX -> control block (see #1977)
+	DS:DX -> control block (see #2134)
 Return: control block updated
 SeeAlso: AH=02h/SF=0B00h,AH=02h/SF=0F00h
 
 Format of APPC/PC "Receive_Immediate" control block:
-Offset	Size	Description	(Table 1977)
+Offset	Size	Description	(Table 2134)
  00h 12 BYTEs	reserved
  0Ch	WORD	0C00h (verb "Receive_Immediate" or "MC_Receive_Immediate")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #1965)
- 16h	DWORD	(big-endian) error code (see #1966)
+ 14h	WORD	(big-endian) primary return code (see #2122)
+ 16h	DWORD	(big-endian) error code (see #2123)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
- 26h	BYTE	type of information received (see #1976)
+ 26h	BYTE	type of information received (see #2133)
  27h	BYTE	(MC_Receive_Immediate only) fill (0=buffer, 1=LL)
  28h	BYTE	Request_to_Send_Received (0=no, 1=yes)
  29h	WORD	maximum length
@@ -612,37 +612,37 @@ Offset	Size	Description	(Table 1977)
 --------N-6802--SF0E00-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - REQUEST TO SEND
 	AH = 02h subfn 0E00h
-	DS:DX -> control block (see #1978)
+	DS:DX -> control block (see #2135)
 Return: control block updated
 SeeAlso: AH=02h/SF=0F00h,AH=02h/SF=1000h
 
 Format of APPC/PC "Request_to_Send" control block:
-Offset	Size	Description	(Table 1978)
+Offset	Size	Description	(Table 2135)
  00h 12 BYTEs	reserved
  0Ch	WORD	0E00h (verb "Request_to_Send" or "MC_Request_to_Send")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #1965)
- 16h	DWORD	(big-endian) error code (see #1966)
+ 14h	WORD	(big-endian) primary return code (see #2122)
+ 16h	DWORD	(big-endian) error code (see #2123)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
 --------N-6802--SF0F00-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - SEND DATA
 	AH = 02h subfn 0F00h
-	DS:DX -> control block (see #1979)
+	DS:DX -> control block (see #2136)
 Return: control block updated
 SeeAlso: AH=02h/SF=0E00h,AH=02h/SF=1000h
 
 Format of APPC/PC "Send_Data" control block:
-Offset	Size	Description	(Table 1979)
+Offset	Size	Description	(Table 2136)
  00h 12 BYTEs	reserved
  0Ch	WORD	0F00h (verb "Send_Data" or "MC_Send_Data")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #1965)
- 16h	DWORD	(big-endian) error code (see #1966)
+ 14h	WORD	(big-endian) primary return code (see #2122)
+ 16h	DWORD	(big-endian) error code (see #2123)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	request to send received (0=no, 1=yes)
@@ -652,19 +652,19 @@ Offset	Size	Description	(Table 1979)
 --------N-6802--SF1000-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - SEND ERROR
 	AH = 02h subfn 1000h
-	DS:DX -> control block (see #1980)
+	DS:DX -> control block (see #2137)
 Return: control block updated
 SeeAlso: AH=02h/SF=0F00h
 
 Format of APPC/PC "Send_Error" control block:
-Offset	Size	Description	(Table 1980)
+Offset	Size	Description	(Table 2137)
  00h 12 BYTEs	reserved
  0Ch	WORD	1000h (verb "Send_Error" or "MC_Send_Error")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #1965)
- 16h	DWORD	(big-endian) error code (see #1966)
+ 14h	WORD	(big-endian) primary return code (see #2122)
+ 16h	DWORD	(big-endian) error code (see #2123)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	request to send received (0=no, 1=yes)
@@ -675,19 +675,19 @@ Offset	Size	Description	(Table 1980)
 --------N-6802--SF1200-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - TEST
 	AH = 02h subfn 1200h
-	DS:DX -> control block (see #1981)
+	DS:DX -> control block (see #2138)
 Return: control block updated
 SeeAlso: AH=02h/SF=1300h
 
 Format of APPC/PC "Test" control block:
-Offset	Size	Description	(Table 1981)
+Offset	Size	Description	(Table 2138)
  00h 12 BYTEs	reserved
  0Ch	WORD	1200h (verb "Test" or "MC_Test")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #1965)
- 16h	DWORD	(big-endian) error code (see #1966)
+ 14h	WORD	(big-endian) primary return code (see #2122)
+ 16h	DWORD	(big-endian) error code (see #2123)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	(MC_Test only) test (0=posted, 1=request_to_send received)
@@ -698,19 +698,19 @@ Note:	error code has different interpretations for:
 --------N-6802--SF1300-----------------------
 INT 68 - APPC/PC - CONNECTION CONTROL - WAIT
 	AH = 02h subfn 1300h
-	DS:DX -> control block (see #1982)
+	DS:DX -> control block (see #2139)
 Return: control block updated
 SeeAlso: AH=02h/SF=1200h
 
 Format of APPC/PC "Wait" control block:
-Offset	Size	Description	(Table 1982)
+Offset	Size	Description	(Table 2139)
  00h 12 BYTEs	reserved
  0Ch	WORD	1300h (verb "Wait")
  0Eh	BYTE	1 if MC_ (mapped conversation) form of verb
 		0 if basic verb
  0Fh  5 BYTEs	reserved (0)
- 14h	WORD	(big-endian) primary return code (see #1965)
- 16h	DWORD	(big-endian) error code (see #1966,#1981)
+ 14h	WORD	(big-endian) primary return code (see #2122)
+ 16h	DWORD	(big-endian) error code (see #2123,#2138)
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	(big-endian) conversation ID
  26h	BYTE	number of conversations to wait on
@@ -718,30 +718,30 @@ Offset	Size	Description	(Table 1982)
 --------N-6803--SF2400-----------------------
 INT 68 - APPC/PC - TP STARTED
 	AH = 03h subfn 2400h
-	DS:DX -> control block (see #1983)
+	DS:DX -> control block (see #2140)
 Return: control block updated
 
 Format of APPC/PC "TP Started" control block:
-Offset	Size	Description	(Table 1983)
+Offset	Size	Description	(Table 2140)
  00h 12 BYTEs	reserved
  0Ch	WORD	2400h (verb "TP Started")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #1952)
+ 14h	DWORD	(big-endian) return code (see #2109)
  18h	WORD	00h
  1Ah  8 BYTEs	(big-endian) logical unit ID
  22h  8 BYTEs	(big-endian) TP ID
 --------N-6803--SF2800-----------------------
 INT 68 - APPC/PC - GET ALLOCATE
 	AH = 03h subfn 2800h
-	DS:DX -> control block (see #1984)
+	DS:DX -> control block (see #2141)
 Return: control block updated
 
 Format of APPC/PC "Get ALLOCATE" control block:
-Offset	Size	Description	(Table 1984)
+Offset	Size	Description	(Table 2141)
  00h 12 BYTEs	reserved
  0Ch	WORD	2800h (verb "Get ALLOCATE")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #1952)
+ 14h	DWORD	(big-endian) return code (see #2109)
  18h	WORD	00h
  1Ah  8 BYTEs	(big-endian) logical unit ID
  22h	BYTE	type (00h dequeue, 01h test)
@@ -749,15 +749,15 @@ Offset	Size	Description	(Table 1984)
 --------N-6803--SF2A00-----------------------
 INT 68 - APPC/PC - CHANGE LOGICAL UNIT
 	AH = 03h subfn 2A00h
-	DS:DX -> control block (see #1985)
+	DS:DX -> control block (see #2142)
 Return: control block updated
 
 Format of APPC/PC "Change Logical Unit" control block:
-Offset	Size	Description	(Table 1985)
+Offset	Size	Description	(Table 2142)
  00h 12 BYTEs	reserved
  0Ch	WORD	2A00h (verb "Change Logical Unit")
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #1952)
+ 14h	DWORD	(big-endian) return code (see #2109)
  18h	WORD	00h
  1Ah  8 BYTEs	(big-endian) logical unit ID
  22h	DWORD	pointer to CREATE_TP_EXIT routine
@@ -774,28 +774,28 @@ Offset	Size	Description	(Table 1985)
 --------N-6804-------------------------------
 INT 68 - APPC/PC - TRANSACTION PROCESSING
 	AH = 04h
-	DS:DX -> control block (see #1986)
+	DS:DX -> control block (see #2143)
 Return: control block updated
 
 Format of APPC/PC control block:
-Offset	Size	Description	(Table 1986)
+Offset	Size	Description	(Table 2143)
  00h 12 BYTEs	reserved
  0Ch	WORD	verb (action)
 		2500h TP_ENDED
 		2900h TP_VALID
  0Eh  6 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #1952)
+ 14h	DWORD	(big-endian) return code (see #2109)
  18h	WORD	00h
  1Ah  8 BYTEs	(big-endian) TP_ID
  22h	DWORD	-> CREATE_TP record (only if verb = 2900h)
 --------N-6805-------------------------------
 INT 68 - APPC/PC - TRANSFER MESSAGE DATA
 	AH = 05h
-	DS:DX -> control block (see #1987)
+	DS:DX -> control block (see #2144)
 Return: control block updated
 
 Format of APPC/PC "Transfer Message Data" control block:
-Offset	Size	Description	(Table 1987)
+Offset	Size	Description	(Table 2144)
  00h 12 BYTEs	reserved
  0Ch	WORD	1C00h (verb "Transfer Message Data")
  0Eh	BYTE	data type
@@ -804,7 +804,7 @@ Offset	Size	Description	(Table 1987)
 		02h alert subvectors
 		03h PDSTATS subvectors
  0Fh  5 BYTEs	00h
- 14h	DWORD	(big-endian) return code (see #1952)
+ 14h	DWORD	(big-endian) return code (see #2109)
  18h 12 BYTEs	00h
  24h	BYTE	flags
 		bit 0: don't add correlation subvector
@@ -817,16 +817,16 @@ Offset	Size	Description	(Table 1987)
 --------N-6806-------------------------------
 INT 68 - APPC/PC - CHANGE NUMBER OF SESSIONS
 	AH = 06h
-	DS:DX -> control block (see #1988)
+	DS:DX -> control block (see #2145)
 Return: control block updated
 
 Format of APPC/PC "Change Number of Sessions" control block:
-Offset	Size	Description	(Table 1988)
+Offset	Size	Description	(Table 2145)
  00h 12 BYTEs	reserved
  0Ch	WORD	1500h (verb "Change Number of Sessions")
  0Eh  6 BYTEs	00h
- 14h	WORD	(big-endian) primary return code (see #1965)
- 16h	DWORD	(big-endian) secondary return code (see #1952,#1989)
+ 14h	WORD	(big-endian) primary return code (see #2122)
+ 16h	DWORD	(big-endian) secondary return code (see #2109,#2146)
  1Ah  8 BYTEs	(big-endian) logical unit ID
  22h  8 BYTEs	blanks
  2Ah  8 BYTEs	(big-endian) partner logical unit name
@@ -843,7 +843,7 @@ Offset	Size	Description	(Table 1988)
 		bit 6: drain source
 		bit 5: target responsible, not source
 
-(Table 1989)
+(Table 2146)
 Values for secondary return code (see also AH=01h/SF=1B00h):
  0000h	accepted
  0001h	negotiated
@@ -904,11 +904,11 @@ SeeAlso: AH=FDh,INT 68"Novell"
 --------N-68FB-------------------------------
 INT 68 - APPC/PC - CONVERT
 	AH = FBh
-	DS:DX -> control block (see #1990)
+	DS:DX -> control block (see #2147)
 Return: control block updated
 
 Format of APPC/PC "CONVERT" control block:
-Offset	Size	Description	(Table 1990)
+Offset	Size	Description	(Table 2147)
  00h 12 BYTEs	reserved
  0Ch	WORD	1A00h (verb "CONVERT")
  0Eh  6 BYTEs	00h
@@ -939,19 +939,19 @@ SeeAlso: AH=FAh,AH=FCh,AH=FEh
 --------N-68FE-------------------------------
 INT 68 - APPC/PC - SET TRACE DESTINATION
 	AH = FEh
-	AL = trace destinations (see #1991)
-	DS:DX -> trace stats record if AL bit 0 set (see #1992)
+	AL = trace destinations (see #2148)
+	DS:DX -> trace stats record if AL bit 0 set (see #2149)
 SeeAlso: AH=FCh,AH=FDh
 
 Bitfields for trace destinations:
-Bit(s)	Description	(Table 1991)
+Bit(s)	Description	(Table 2148)
  0	storage (DS:DX -> trace stats record)
  1	display
  2	file (trace written to file OUTPUT.PC)
  3	printer
 
 Format of APPC/PC Trace Statistics Record:
-Offset	Size	Description	(Table 1992)
+Offset	Size	Description	(Table 2149)
  00h	DWORD	pointer to storage trace buffer
  04h	WORD	max number of 80-byte records in trace
  06h	WORD	(high-order byte first!) current record number (must init to 0)
@@ -993,18 +993,18 @@ SeeAlso: AX=0101h
 INT 69 - DECnet DOS CTERM - STATUS
 	AX = 0103h
 	DX = session handle
-Return: AH status flags (see #1993)
-	AL = reason code if DECnet error (see #1994)
+Return: AH status flags (see #2150)
+	AL = reason code if DECnet error (see #2151)
 SeeAlso: AX=0104h
 
 Bitfields for DECnet DOS CTERM status flags:
-Bit(s)	Description	(Table 1993)
+Bit(s)	Description	(Table 2150)
  7	session has been aborted
  6	DECnet error
  1	trace data available
  0	receive data available
 
-(Table 1994)
+(Table 2151)
 Values for reason code:
  00h	normal disconnect
  01h	unknown message from host
@@ -1026,7 +1026,7 @@ Index:	error codes;DECnet DOS CTERM|DECnet DOS CTERM;error codes
 INT 69 - DECnet DOS CTERM - DECnet STATUS
 	AX = 0104h
 	DX = session handle
-Return: AX = reason code (see #1994)
+Return: AX = reason code (see #2151)
 Note:	use this call when AX=0103h returns a DECnet error
 SeeAlso: AX=0103h
 --------N-690105-----------------------------
@@ -1043,7 +1043,7 @@ INT 69 - DECnet DOS CTERM - CLOSE SESSION
 	DX = session handle
 Return: AH = status
 	    00h good close
-	    other error code (see #1994)
+	    other error code (see #2151)
 SeeAlso: AX=0103h,AX=0105h
 --------N-69010A-----------------------------
 INT 69 - DECnet DOS CTERM - GET SESSION CONTROL BLOCK SIZE
@@ -1061,19 +1061,19 @@ INT 69 - DECnet DOS CTERM - DEINSTALL CTERM
 	AX = 010Fh
 Return: AH = status
 	    00h successful uninstall
-	    other error code (see #1994)
+	    other error code (see #2151)
 Note:	CTERM must have been the last TSR loaded in order to deinstall it
 SeeAlso: AX=0100h
 Index:	uninstall;DECnet DOS CTERM
 --------N-690A-------------------------------
 INT 69 - DECnet DOS 2.1+ - DATA LINK LAYER
 	AH = 0Ah
-	AL = function number (see #1995)
+	AL = function number (see #2152)
 	ES:BX -> Datalink Communication Block
-Return: AX = status (see #1996)
+Return: AX = status (see #2153)
 SeeAlso: INT 6D"DECnet"
 
-(Table 1995)
+(Table 2152)
 Values for DECnet DOS Data Link Layer function:
  00h	initialize
  01h	open portal
@@ -1096,7 +1096,7 @@ Values for DECnet DOS Data Link Layer function:
  12h	set DECPARM
  13h	external loopback
 
-(Table 1996)
+(Table 2153)
 Values for DECnet DOS Data Link Layer status:
  00h	successful
  01h	hardware failed to initialize
@@ -1123,7 +1123,7 @@ Values for DECnet DOS Data Link Layer status:
 Index:	error codes;DECnet DOS|DECnet DOS;error codes
 
 Format of Datalink Communication Block:
-Offset	Size	Description	(Table 1997)
+Offset	Size	Description	(Table 2154)
  00h	WORD	portal ID
  02h  6 BYTEs	source address
  08h  6 BYTEs	destination address
@@ -1242,7 +1242,7 @@ SeeAlso: AH=01h/DH=FFh,INT 6B"DECnet",INT 6D"DECnet"
 Index:	installation check;DECnet DOS Local Area Transport
 
 Format of DECnet DOS signature area:
-Offset	Size	Description	(Table 1998)
+Offset	Size	Description	(Table 2155)
  -5	BYTE	major version number
  -4	BYTE	minor version number
  -3   3 BYTEs	signature (ASCII "LAT")
@@ -1263,63 +1263,63 @@ INT 6A U - Super-TCP DOS TSR Kernel v3.57 - ???
 	AX = 0001h
 	BH = function number
 	    01h ???
-		DS:SI -> ??? 24-byte record1 (see #2000)
+		DS:SI -> ??? 24-byte record1 (see #2157)
 		ES:DI -> buffer containing ???
 	    02h ???
-		DS:SI -> ??? 18-byte record2 (see #2001)
+		DS:SI -> ??? 18-byte record2 (see #2158)
 		ES:DI -> buffer containing ???
 	    04h ???
 		BL = subfunction
 		    01h
-			DS:SI -> ??? 28-byte record3 (see #2002)
+			DS:SI -> ??? 28-byte record3 (see #2159)
 			ES:DI -> buffer containing ???
 		    02h
-			DS:SI -> ??? 28-byte record3 (see #2002)
+			DS:SI -> ??? 28-byte record3 (see #2159)
 			ES:DI -> buffer containing ???
 		    03h
-			DS:SI -> ??? 28-byte record3 (see #2002)
+			DS:SI -> ??? 28-byte record3 (see #2159)
 		    else Return: AX = 0005h
 	    05h ???
-		DS:SI -> ??? 20-byte record4 (see #2003)
+		DS:SI -> ??? 20-byte record4 (see #2160)
 		ES:DI -> buffer containing ???
 	    06h ???
 		BL = subfunction
 		    01h
-			DS:SI -> ??? 40-byte record5 (see #2004)
+			DS:SI -> ??? 40-byte record5 (see #2161)
 		    02h
-			DS:SI -> ??? 20-byte record6 (see #2005)
+			DS:SI -> ??? 20-byte record6 (see #2162)
 			ES:DI -> ???
 		    03h
-			DS:SI -> ??? 20-byte record6 (see #2005)
+			DS:SI -> ??? 20-byte record6 (see #2162)
 		    04h
-			DS:SI -> ??? 46-byte record7 (see #2006)
+			DS:SI -> ??? 46-byte record7 (see #2163)
 		    else Return: AX = 0005h
 	    11h ???
-		DS:SI -> ??? 28-byte record8 (see #2007)
+		DS:SI -> ??? 28-byte record8 (see #2164)
 		ES:DI -> ???
-Return: AX = function status (see #1999)
+Return: AX = function status (see #2156)
 SeeAlso: AX=0000h
 
-(Table 1999)
+(Table 2156)
 Values for Super-TCP function status:
  0000h	successful
  0005h	unsupported function
  000Ah	out of memory
 
 Format of record1:
-Offset	Size	Description	(Table 2000)
+Offset	Size	Description	(Table 2157)
  00h  4 BYTEs	???
  04h	WORD	size of ES:DI buffer
  06h 18 BYTEs	???
 
 Format of record2:
-Offset	Size	Description	(Table 2001)
+Offset	Size	Description	(Table 2158)
  00h  4 BYTEs	???
  04h	WORD	size of ES:DI buffer
  06h 12 BYTEs	???
 
 Format of record3:
-Offset	Size	Description	(Table 2002)
+Offset	Size	Description	(Table 2159)
  00h  2 BYTEs	???
  02h	WORD	???
  04h	WORD	size of ES:DI buffer
@@ -1330,13 +1330,13 @@ Offset	Size	Description	(Table 2002)
  10h 12 BYTEs	???
 
 Format of record4:
-Offset	Size	Description	(Table 2003)
+Offset	Size	Description	(Table 2160)
  00h  4 BYTEs	???
  04h	WORD	size of ES:DI buffer
  06h 14 BYTEs	???
 
 Format of record5:
-Offset	Size	Description	(Table 2004)
+Offset	Size	Description	(Table 2161)
  00h	BYTE	operation??? (00h-07h)
  01h	BYTE	???
  02h	WORD	(return) ???
@@ -1348,20 +1348,20 @@ Offset	Size	Description	(Table 2004)
  24h  4 BYTEs	???
 
 Format of record6:
-Offset	Size	Description	(Table 2005)
+Offset	Size	Description	(Table 2162)
  00h  4 BYTEs	???
  04h	WORD	size of ES:DI buffer
  06h 14 BYTEs	???
 
 Format of record7:
-Offset	Size	Description	(Table 2006)
+Offset	Size	Description	(Table 2163)
  00h	WORD	???
  02h	WORD	???
  04h	WORD	???
  06h 40 BYTEs	???
 
 Format of record8:
-Offset	Size	Description	(Table 2007)
+Offset	Size	Description	(Table 2164)
  00h  4 BYTEs	???
  04h	WORD	size of ES:DI buffer
  06h  6 BYTEs	???
@@ -1383,10 +1383,10 @@ Return: AX = 0000h (successful) ???
 --------N-6A0003-----------------------------
 INT 6A U - Super-TCP DOS TSR Kernel v3.57 - GET ??? DATA AREA
 	AX = 0003h
-Return: CX:DX -> data area (see #2008)
+Return: CX:DX -> data area (see #2165)
 
 Format of Super-TCP data area:
-Offset	Size	Description	(Table 2008)
+Offset	Size	Description	(Table 2165)
  00h  2 BYTEs	???
  02h	DWORD	original INT 6A vector
  06h  2 BYTEs	???
@@ -1444,10 +1444,10 @@ INT 6A - DECnet DOS LOCAL AREA TRANSPORT - STATUS
 	AH = 03h
 	DH = FFh
 	DL = handle
-Return: AH = status flags (see #2009)
+Return: AH = status flags (see #2166)
 
 Bitfields for DECnet DOS LAT status flags:
-Bit(s)	Description	(Table 2009)
+Bit(s)	Description	(Table 2166)
  5	transmit buffer empty
  3	session in start state
  2	session not active
@@ -1460,14 +1460,14 @@ INT 6A - DECnet DOS LOCAL AREA TRANSPORT - OPEN SESSION
 	AL = password flag
 	    FFh no password
 	    0Fh password at ES:DI
-	ES:BX -> LAT session control block (see #2010)
+	ES:BX -> LAT session control block (see #2167)
 	ES:DI -> 16-byte blank-padded password (optional)
 Return: AH = 00h success
 	    DL = handle
 SeeAlso: AX=D000h
 
 Format of LAT Session Control Block:
-Offset	Size	Description	(Table 2010)
+Offset	Size	Description	(Table 2167)
  00h 18 BYTEs	service name
  12h 18 BYTEs	node name (future use)
  24h 18 BYTEs	port name (future use)
@@ -1521,10 +1521,10 @@ INT 6A - DECnet DOS LOCAL AREA TRANSPORT - CLOSE SESSION
 	AX = D000h
 	DH = FFh
 	DL = handle
-Return: AX = status (see #2011)
+Return: AX = status (see #2168)
 SeeAlso: AH=D0h
 
-(Table 2011)
+(Table 2168)
 Values for DECnet DOS LAT function status:
  0000h	successful
  0001h	no such session
@@ -1574,12 +1574,12 @@ SeeAlso: AX=D500h
 --------N-6B---------------------------------
 INT 6B - DECnet DOS - PORT DRIVER
 Note:	the installation check consists of testing for a signature area
-	  (see #2012) immediately preceding the interrupt handler
+	  (see #2169) immediately preceding the interrupt handler
 SeeAlso: INT 6A"DECnet",INT 6C"DECnet"
 Index:	installation check;DECnet DOS Port Driver
 
 Format of DECnet DOS signature area:
-Offset	Size	Description	(Table 2012)
+Offset	Size	Description	(Table 2169)
  -5	BYTE	major version number
  -4	BYTE	minor version number
  -3   3 BYTEs	signature (ASCII "PDV")
@@ -1713,13 +1713,13 @@ INT 6B - NPC NCSI EXTENDED SERIAL I/O - SET/RETRIEVE VIRTUAL CIRCUIT CONFIG
 	AH = 15h
 	AL = virtual circuit number
 	CL = direction (00h get, nonzero set)
-	ES:BX -> buffer for/containing virtual circuit config (see #2013)
+	ES:BX -> buffer for/containing virtual circuit config (see #2170)
 Return: ES:BX buffer filled
 Note:	this function is also supported by TelAPI
 SeeAlso: AH=13h"NCSI",AH=14h"NCSI"
 
 Format of virtual circuit configuration:
-Offset	Size	Description	(Table 2013)
+Offset	Size	Description	(Table 2170)
  00h	WORD	buffer length
  02h	WORD	port ID
  04h	WORD	receive rate
@@ -1825,7 +1825,7 @@ INT 6B - NPC NCSI EXTENDED SERIAL I/O - QUERY NAME SERVICE
 	AH = 21h
 	AL = virtual circuit number
 	CL = ??? (00h or 01h)
-	ES:BX -> buffer for service name structure (see #2014)
+	ES:BX -> buffer for service name structure (see #2171)
 Return: CF clear if successful
 	    ES:BX buffer filled
 	CF set on error
@@ -1837,7 +1837,7 @@ Notes:	a program should call this function after allocating a virtual circuit
 SeeAlso: AH=14h"NCSI"
 
 Format of NCSI service name structure:
-Offset	Size	Description	(Table 2014)
+Offset	Size	Description	(Table 2171)
  00h	WORD	buffer length
  02h  8 BYTEs	service name
  0Ah  8 BYTEs	general name
@@ -1868,7 +1868,7 @@ SeeAlso: INT 6B"DECnet",INT 6D"DECnet",INT 6E"DECnet"
 Index:	installation check;DECnet DOS scheduler
 
 Format of DECnet DOS signature area:
-Offset	Size	Description	(Table 2015)
+Offset	Size	Description	(Table 2172)
  -5	BYTE	major version number
  -4	BYTE	minor version number
  -3   3 BYTEs	signature (ASCII "SCH")
@@ -1895,7 +1895,7 @@ SeeAlso: INT 69/AH=0Ah,INT 6C"DECnet",INT 6E"DECnet"
 Index:	installation check;DECnet DOS Data Link Layer
 
 Format of DECnet DOS signature area:
-Offset	Size	Description	(Table 2016)
+Offset	Size	Description	(Table 2173)
  -5	BYTE	major version number
  -4	BYTE	minor version number
  -3   3 BYTEs	signature (ASCII "DLL")
@@ -1911,7 +1911,7 @@ Notes:	this is the main DECnet DOS access, and is described in Digital manual
 Index:	installation check;DECnet DOS
 
 Format of DECnet DOS signature area:
-Offset	Size	Description	(Table 2017)
+Offset	Size	Description	(Table 2174)
  -5	BYTE	major version number
  -4	BYTE	minor version number
  -3   3 BYTEs	signature (ASCII "DNP")
@@ -1937,7 +1937,7 @@ INT 6F - Novell NetWare - PCOX API (3270 PC terminal interface)
 		    bits 4-2: monitor support
 		Return: nothing
 	    0003h read status
-		Return: AX = status word (see #2018)
+		Return: AX = status word (see #2175)
 	    0004h read cursor position
 		Return: AX = cursor position
 	    0005h get character from device buffer
@@ -1980,28 +1980,28 @@ INT 6F - Novell NetWare - PCOX API (3270 PC terminal interface)
 	    0011h perform structured field operation
 		CX = request number
 		DS:DX -> parameter list
-		Return: AX = status word (see #2018)
+		Return: AX = status word (see #2175)
 			CX = error number
 	    0012h set cursor position for direct write buffer
 		DX = new cursor position
-		Return: AX = status word (see #2018)
+		Return: AX = status word (see #2175)
 	    0013h write direct to buffer
 		DL = character to be written
 		DH = translation option
-		Return: AX = status word (see #2018)
+		Return: AX = status word (see #2175)
 	    0014h write direct to buffer without echo
 		DL = character to be written
 		DH = translation option
-		Return: AX = status word (see #2018)
+		Return: AX = status word (see #2175)
 	    0015h set direct write string length
 		DX = string value
 		Return: nothing
 	    0016h write string direct to buffer
 		DS:DX -> string
-		Return: AX = status word (see #2018)
+		Return: AX = status word (see #2175)
 	    0017h write string direct to buffer, untranslated
 		DS:DX -> string
-		Return: AX = status word (see #2018)
+		Return: AX = status word (see #2175)
 	    0018h get direct-write cursor position
 		Return: AX = cursor position
 	    0019h convert row/column to cursor position
@@ -2043,10 +2043,10 @@ INT 6F - Novell NetWare - PCOX API (3270 PC terminal interface)
 		Return: AX = field length
 	    0024h read field
 		DS:DX -> buffer for field contents
-		Return: AX = status word (see #2018)
+		Return: AX = status word (see #2175)
 	    0025h read screen
 		DS:DX -> buffer for screen contents
-		Return: AX = status word (see #2018)
+		Return: AX = status word (see #2175)
 	    0026h read buffer untranslated
 		DX = cursor position
 		Return: AX = buffer code
@@ -2067,7 +2067,7 @@ INT 6F - Novell NetWare - PCOX API (3270 PC terminal interface)
 		Return: AX = status (0000h not available, 0001h successful)
 
 Bitfields for PCOX status word:
-Bit(s)	Description	(Table 2018)
+Bit(s)	Description	(Table 2175)
  0,1	cursor type
  2	cursor inhibited
  3	display inhibited
@@ -2082,18 +2082,18 @@ Bit(s)	Description	(Table 2018)
 --------N-6F00-------------------------------
 INT 6F - 10NET - LOGIN
 	AH = 00h
-	DS:DX -> login record (see #2019)
+	DS:DX -> login record (see #2176)
 Return: CL = security level
-	AX = status (see #2020)
+	AX = status (see #2177)
 SeeAlso: AH=01h,AH=80h,INT 21/AX=4402h"10MEMMGR"
 
 Format of 10NET login record:
-Offset	Size	Description	(Table 2019)
+Offset	Size	Description	(Table 2176)
  00h  8 BYTEs	user name
  08h  8 BYTEs	password
  10h 12 BYTEs	name of SuperStation
 
-(Table 2020)
+(Table 2177)
 Values for 10NET status:
  0000h	successful
  01FFh	"RTO_NERR" transmit interrupt lost (time out on response)
@@ -2167,7 +2167,7 @@ Values for 10NET status:
  44FFh	"NPUP_NERR" new password error
  45FFh	"MAXS_NERR" maximum allowed disk space exceeded
  46FFh	"TDOW_NERR" time-of-day/day-of-week error
-SeeAlso: #2031
+SeeAlso: #2188
 Index:	error codes;10Net|10Net;error codes
 --------b-6F00-------------------------------
 INT 6F - Hewlett Packard - EXTENDED BIOS - "F_ISR" - RESPOND TO LOGICAL ISR
@@ -2181,19 +2181,19 @@ INT 6F - 10NET - LOGOFF
 	AH = 01h
 	DS:DX -> superstation ID or nulls (12 bytes)
 Return: CX = number of files closed
-	AX = status (see also #2020)
+	AX = status (see also #2177)
 	    08FFh superstation ID not already logged in
 SeeAlso: AH=00h"10NET",AH=81h
 --------N-6F02-------------------------------
 INT 6F - 10NET - STATUS OF NODE
 	AH = 02h
-	DS:DX -> 512-byte status record (see #2022)
+	DS:DX -> 512-byte status record (see #2179)
 Return:	CF clear if successful
 	CF set on error
-	    AX = error code (see #2020)
+	    AX = error code (see #2177)
 SeeAlso: INT 21/AX=5E01h"10NET"
 
-(Table 2021)
+(Table 2178)
 Values for 10NET station type:
  00h	workstation
  01h	superstation
@@ -2203,16 +2203,16 @@ Values for 10NET station type:
  05h	reserved
 
 Format of 10NET node status record:
-Offset	Size	Description	(Table 2022)
+Offset	Size	Description	(Table 2179)
  00h  8 BYTEs	user name (0 if none)
- 08h	BYTE	station type (see #2021)
+ 08h	BYTE	station type (see #2178)
  09h 24 BYTEs	list of superstations logged into more than one superstation
  21h 12 BYTEs	node ID
  2Dh	WORD	message count for this station (send for user node, receive for
 		  superstations)
 ---for superstations only---
  2Fh	WORD	drives allocated (bit 0=A:, bit 1=B:,...)
- 31h	BYTE	user service flags (see #2023)
+ 31h	BYTE	user service flags (see #2180)
  32h	BYTE	printers allocated (bit 0=LPT1,...)
  33h	BYTE	number of unprinted spool files
  34h	BYTE	number of opened files
@@ -2224,7 +2224,7 @@ Offset	Size	Description	(Table 2022)
 1F7h  3 BYTEs	date: day/mon/year-1980
 
 Bitfields for 10NET user service flags:
-Bit(s)	Description	(Table 2023)
+Bit(s)	Description	(Table 2180)
  7	gate
  6	print permit on
  4	SUBMIT is on
@@ -2264,11 +2264,11 @@ Note:	intercepting this call will allow a DOS application to ensure that
 INT 6F - 10NET - GET ADDRESS OF CONFIGURATION TABLE
 	AH = 03h
 	DS:DI -> node ID (optional)
-Return: ES:BX -> configuration table (see #2024)
+Return: ES:BX -> configuration table (see #2181)
 SeeAlso: AH=13h,INT 21/AX=5E01h"10NET"
 
 Format of 10NET configuration table:
-Offset	Size	Description	(Table 2024)
+Offset	Size	Description	(Table 2181)
 -41	WORD	local device table address
 -39	WORD	extended network error mapping table address
 -37	WORD	shared device table address
@@ -2302,7 +2302,7 @@ Offset	Size	Description	(Table 2024)
  1Eh	BYTE	CT_CFLG (chat permit)
 		bit 1: sound bell
 		bit 0: CHAT permit
- 1Fh	BYTE	CT_PSFLG (see #2025)
+ 1Fh	BYTE	CT_PSFLG (see #2182)
  20h	BYTE	in 10Net flag
  21h	WORD	receive message count
  23h	WORD	send message count
@@ -2323,7 +2323,7 @@ Offset	Size	Description	(Table 2024)
  50h  N WORDs	addresses of timer blocks
 
 Bitfields for CT_PSFLG:
-Bit(s)	Description	(Table 2025)
+Bit(s)	Description	(Table 2182)
  5	PRINT permit
  4	KB initiated
  3	CHAT called FOXPTRM
@@ -2333,15 +2333,15 @@ Bit(s)	Description	(Table 2025)
 --------N-6F04-------------------------------
 INT 6F - 10NET - SEND
 	AH = 04h
-	DS:BX -> send record (see #2026)
+	DS:BX -> send record (see #2183)
 	DS:DX -> data (max 1024 bytes)
 Return:	CF clear if successful
 	CF set on error
-	    AX = error code (see #2020)
+	    AX = error code (see #2177)
 SeeAlso: AH=05h,AH=09h,AH=0Ah
 
 Format of 10NET send record:
-Offset	Size	Description	(Table 2026)
+Offset	Size	Description	(Table 2183)
  00h 12 BYTEs	receiving node's ID
 		if first byte has high-order bit set, message is directed to
 		  the CT_RGATE vector at the receiver
@@ -2363,15 +2363,15 @@ SeeAlso: AH=02h"Hewlett Packard",AH=06h"Hewlett Packard"
 INT 6F - 10NET - RECEIVE
 	AH = 05h
 	CX = number of seconds before timeout
-	DS:DX -> receive buffer (see #2027)
+	DS:DX -> receive buffer (see #2184)
 Return:	CF clear if successful
 	    AH = FEh if dequeued message is a CB message
 	CF set on error
-	    AX = error code (see #2020)
+	    AX = error code (see #2177)
 SeeAlso: AH=04h"10NET"
 
 Format of 10NET receive buffer:
-Offset	Size	Description	(Table 2027)
+Offset	Size	Description	(Table 2184)
  00h 12 BYTEs	sending node's ID
  0Ch	WORD	length of message
  0Eh  N BYTEs	message (maximum 1024 bytes)
@@ -2415,29 +2415,29 @@ SeeAlso: AH=06h"Hewlett Packard",AH=0Ah"Hewlett Packard",AH=0Ch"Hewlett"
 --------N-6F09-------------------------------
 INT 6F - 10NET - SUBMIT
 	AH = 09h
-	DS:BX -> submit record (see #2028)
+	DS:BX -> submit record (see #2185)
 SeeAlso: AH=04h"10NET"
 
 Format of 10NET submit record:
-Offset	Size	Description	(Table 2028)
+Offset	Size	Description	(Table 2185)
  00h 12 BYTEs	destination node ID (must be logged in)
  0Ch	WORD	length+2 of following 'command line' text
  0Eh  N BYTEs	command line text (<=100 bytes), system adds CR
 --------N-6F0A-------------------------------
 INT 6F - 10NET - CHAT
 	AH = 0Ah
-	DS:BX -> control parameters (see #2029)
-	DS:DX -> chat message (see #2030)
+	DS:BX -> control parameters (see #2186)
+	DS:DX -> chat message (see #2187)
 SeeAlso: AH=04h"10NET",AH=8Ah
 
 Format of 10NET chat control parameters:
-Offset	Size	Description	(Table 2029)
+Offset	Size	Description	(Table 2186)
  00h  8 BYTEs	sender ID, defaults to node's userID if nulls
  08h  8 BYTEs	destination user ID, 'EVERYONE' may be used
  10h 12 BYTEs	destination node ID
 
 Format of 10NET chat message:
-Offset	Size	Description	(Table 2030)
+Offset	Size	Description	(Table 2187)
  00h	WORD	length+2 of following text
  02h  N BYTEs	text, max 101 bytes
 --------b-6F0A-------------------------------
@@ -2453,11 +2453,11 @@ INT 6F - 10NET - LOCK SEMAPHORE, RETURN IMMEDIATELY
 	AL = drive number or 0
 	ES:SI = Ethernet address or 0
 	DS:BX -> 31-byte ASCIZ semaphore name
-Return: AL = status (see #2031)
+Return: AL = status (see #2188)
 Note:	same as INT 60/AH=12h
 SeeAlso: AH=0Ch"10NET",INT 60/AH=12h
 
-(Table 2031)
+(Table 2188)
 Values for 10NET status:
  00h	successful
  01h	semaphore currently locked
@@ -2469,7 +2469,7 @@ Values for 10NET status:
  07h	not logged in
  08h	write to network failed
  09h	semaphore already logged in this CPU
-SeeAlso: #2020
+SeeAlso: #2177
 Index:	error codes;10-Net|10-Net;error codes
 --------N-6F0C-------------------------------
 INT 6F - 10NET - UNLOCK SEMAPHORE
@@ -2477,7 +2477,7 @@ INT 6F - 10NET - UNLOCK SEMAPHORE
 	AL = drive number or 0
 	ES:SI = Ethernet address or 0
 	DS:BX -> 31-byte ASCIZ semaphore name
-Return: AL = status (see also #2031)
+Return: AL = status (see also #2188)
 	    01h semaphore not locked
 Note:	same as INT 60/AH=13h
 SeeAlso: AH=0Bh,INT 60/AH=13h
@@ -2496,14 +2496,14 @@ INT 6F - 10NET - "WHO" - ENUMERATE USERS ON NETWORK
 	    02h return non-superstations only
 	    otherwise return all
 	CX = length of data buffer
-	DS:DX -> array of records to be filled (see #2032)
+	DS:DX -> array of records to be filled (see #2189)
 Return: CL = number of records returned (responding stations)
 SeeAlso: AH=16h,AH=8Dh
 
 Format of station record:
-Offset	Size	Description	(Table 2032)
+Offset	Size	Description	(Table 2189)
  00h 12 BYTEs	node ID
- 0Ch	BYTE	station flags (see #2033)
+ 0Ch	BYTE	station flags (see #2190)
 ---if AL = 01h---
  0Dh	BYTE	version number
  0Eh	WORD	level number of 10Net software in responding node
@@ -2513,7 +2513,7 @@ Offset	Size	Description	(Table 2032)
  16h	WORD	level number
 
 Bitfields for station flags:
-Bit(s)	Description	(Table 2033)
+Bit(s)	Description	(Table 2190)
  1	workstation
  2	superstation
  3	xgate
@@ -2521,14 +2521,14 @@ Bit(s)	Description	(Table 2033)
 --------N-6F0E-------------------------------
 INT 6F - 10NET - SPOOL/PRINT
 	AH = 0Eh
-	DS:DX -> spool/print record (see #2035)
+	DS:DX -> spool/print record (see #2192)
 Return:	CF clear if successful
 	CF set on error
-	    AX = error code (see also #2020)
+	    AX = error code (see also #2177)
 		17FFh device not mounted
 		18FFh already spooling to named device
 
-(Table 2034)
+(Table 2191)
 Values for 10NET spooler operation code:
  0000h	initiate spool
  0001h	abort print
@@ -2542,11 +2542,11 @@ Values for 10NET spooler operation code:
  0009h	queue non-spooled file for printing
 
 Format of 10NET Spool/Print record:
-Offset	Size	Description	(Table 2035)
- 00h	WORD	operation code (see #2034)
+Offset	Size	Description	(Table 2192)
+ 00h	WORD	operation code (see #2191)
  02h 11 BYTEs	file name in FCB format
 ---if operation code = 00h or 06h---
- 0Dh	BYTE	notification flags (see #2036)
+ 0Dh	BYTE	notification flags (see #2193)
  0Eh	BYTE	days to keep (FFh=forever)
  0Fh	BYTE	bits 0,1: device (1=LPT1)
 		bits 4-7: remote drive to store spool file (1=A,...)
@@ -2585,7 +2585,7 @@ Offset	Size	Description	(Table 2035)
  10h  N BYTEs	path to non-spooled file to be queued for printing
 
 Bitfields for notification flags:
-Bit(s)	Description	(Table 2036)
+Bit(s)	Description	(Table 2193)
  7	queue to top
  6	do ID page
  5	no form feed
@@ -2596,12 +2596,12 @@ Bit(s)	Description	(Table 2036)
  0	notify at print start
 
 Format of 10NET $SCNTL record:
-Offset	Size	Description	(Table 2037)
+Offset	Size	Description	(Table 2194)
  00h  8 BYTEs	user ID
  08h 11 BYTEs	filename in FCB format
  13h  6 BYTEs	node ID
  19h  3 BYTEs	creation date
- 1Ch	BYTE	notification flags (see #2036)
+ 1Ch	BYTE	notification flags (see #2193)
  1Dh	BYTE	retention time in days
  1Eh	BYTE	printing device (LPTx)
  1Fh  3 BYTEs	date last printed (0 = never)
@@ -2644,10 +2644,10 @@ INT 6F - 10NET - LOCK FCB
 	    02h random
 	    03h random block
 		CX = number of records
-	DS:DX -> FCB (see #0486 at INT 21/AH=0Fh)
+	DS:DX -> FCB (see #0506 at INT 21/AH=0Fh)
 Return:	CF clear if successful
 	CF set on error
-	    AX = error code (see also #2020)
+	    AX = error code (see also #2177)
 		0002h file not found
 SeeAlso: AH=12h,INT 21/AH=0Fh
 --------N-6F12-------------------------------
@@ -2658,10 +2658,10 @@ INT 6F - 10NET - UNLOCK FCB
 	    01h random
 	    02h random block
 		CX = number of records
-	DS:DX -> FCB (see #0486 at INT 21/AH=0Fh)
+	DS:DX -> FCB (see #0506 at INT 21/AH=0Fh)
 Return:	CF clear if successful
 	CF set on error
-	    AX = error code (see also #2020)
+	    AX = error code (see also #2177)
 		0002h file not found
 SeeAlso: AH=11h
 --------N-6F13-------------------------------
@@ -2671,7 +2671,7 @@ INT 6F - 10NET v3.3+ - GET REMOTE CONFIGURATION TABLE ADDRESS
 Return:	CF clear if successful
 	    ES:BX = configuration table address on given machine
 	CF set on error
-	    AX = error code (see #2020)
+	    AX = error code (see #2177)
 SeeAlso: AH=03h
 --------N-6F14-------------------------------
 INT 6F - 10NET v3.3+ - GET REMOTE MEMORY
@@ -2683,21 +2683,21 @@ INT 6F - 10NET v3.3+ - GET REMOTE MEMORY
 Return:	CF clear if successful
 	    CX = amount of memory copied to DS:SI
 	CF set on error
-	    AX = error code (see #2020)
+	    AX = error code (see #2177)
 --------N-6F1501-----------------------------
 INT 6F - 10NET v3.3+ - GET SHARED DEVICE ENTRY
 	AX = 1501h
 	BX = zero-based index
 	DS:SI -> node ID, 12 bytes blank-padded
-	ES:DI -> 85-byte buffer for shared device table entry (see #2038)
+	ES:DI -> 85-byte buffer for shared device table entry (see #2195)
 Return:	CF clear if successful
 	    ES:DI buffer contains shared device table entry of BXth device
 	CF set on error
-	    AX = error code (see #2020)
+	    AX = error code (see #2177)
 SeeAlso: AX=1502h,AX=1503h,AX=9501h
 
 Format of 10NET shared device table entry:
-Offset	Size	Description	(Table 2038)
+Offset	Size	Description	(Table 2195)
  00h  8 BYTEs	device
  08h  8 BYTEs	alias
  10h 64 BYTEs	path
@@ -2711,7 +2711,7 @@ INT 6F - 10NET v3.3+ - SET SHARED DEVICE ENTRY
 	ES:DI -> valid shared device table entry
 Return:	CF clear if successful
 	CF set on error
-	    AX = error code (see #2020)
+	    AX = error code (see #2177)
 SeeAlso: AX=1501h,AX=1503h,AX=9502h
 --------N-6F1503-----------------------------
 INT 6F - 10NET v3.3+ - DELETE SHARED DEVICE ENTRY
@@ -2720,7 +2720,7 @@ INT 6F - 10NET v3.3+ - DELETE SHARED DEVICE ENTRY
 	DS:SI -> node ID, 12 bytes blank-padded
 Return:	CF clear if successful
 	CF set on error
-	    AX = error code (see #2020)
+	    AX = error code (see #2177)
 SeeAlso: AX=1501h,AX=1502h,AX=9503h
 --------N-6F16-------------------------------
 INT 6F - 10NET v5.0 - "GL WHO" - ???
@@ -2736,7 +2736,7 @@ INT 6F - 10NET v3.3+ - MOUNT
 	DS:DX -> node ID, 12 bytes blank-padded
 Return:	CF clear if successful
 	CF set on error
-	    AX = error code (see #2020)
+	    AX = error code (see #2177)
 SeeAlso: AH=18h
 --------N-6F18-------------------------------
 INT 6F - 10NET v3.3+ - UNMOUNT
@@ -2748,7 +2748,7 @@ INT 6F - 10NET v3.3+ - UNMOUNT
 	    04h,05h COMx
 Return:	CF clear if successful
 	CF set on error
-	    AX = error code (see #2020)
+	    AX = error code (see #2177)
 SeeAlso: AH=17h
 --------N-6F19-------------------------------
 INT 6F U - 10NET v5.0 - AUDIT
@@ -2823,16 +2823,16 @@ SeeAlso: BP=0012h/AH=22h
 --------N-6F80-------------------------------
 INT 6F - 10NET v5.0 - LOGIN
 	AH = 80h
-	DS:DX -> login record (see #2039)
+	DS:DX -> login record (see #2196)
 Return: CF clear if successful
 	    BL = number of days until password expires (00h = never)
 	    CL = security level
 	CF set on error
-	    AX = status (see #2020)
+	    AX = status (see #2177)
 SeeAlso: AH=00h,AH=81h
 
 Format of 10NET login record:
-Offset	Size	Description	(Table 2039)
+Offset	Size	Description	(Table 2196)
  00h  8 BYTEs	user name
  08h  8 BYTEs	password
  10h 15 BYTEs	server node ID
@@ -2842,65 +2842,65 @@ Offset	Size	Description	(Table 2039)
 INT 6F - 10NET v5.0 - LOGOUT
 	AH = 81h
 	DS:DX -> server node ID (DX=0000h for universal logout)
-Return: AX = status (see #2020)
+Return: AX = status (see #2177)
 SeeAlso: AH=01h,AH=80h
 --------N-6F8A-------------------------------
 INT 6F - 10NET v5.0 - CHAT
 	AH = 8Ah
-	DS:BX -> chat parameters (see #2040)
-	DS:DX -> chat message (see #2041)
+	DS:BX -> chat parameters (see #2197)
+	DS:DX -> chat message (see #2198)
 Return: CF clear if successful
 	CF set on error
-	    AX = status (see #2020)
+	    AX = status (see #2177)
 SeeAlso: AH=0Ah
 
 Format of 10NET chat parameters:
-Offset	Size	Description	(Table 2040)
+Offset	Size	Description	(Table 2197)
  00h  8 BYTEs	sender's user name
  08h  8 BYTEs	destination user name
  10h 15 BYTEs	destination node (0 if broadcast-style chat)
 
 Format of 10NET chat message:
-Offset	Size	Description	(Table 2041)
+Offset	Size	Description	(Table 2198)
  00h	WORD	message length
  02h  N BYTEs	chat message contents
 --------N-6F8D-------------------------------
 INT 6F - 10NET v5.0 - "WHO" - ENUMERATE USERS ON NETWORK
 	AH = 8Dh
-	BX = service mask (see #2042)
+	BX = service mask (see #2199)
 	CX = length of buffer
-	DS:DX -> buffer for array of Who data structures (see #2043)
+	DS:DX -> buffer for array of Who data structures (see #2200)
 Return: CF clear if successful
 	    CX = number of nodes matching service mask
 	    DS:DX buffer filled
 	CF set on error
-	    AX = status (see #2020)
+	    AX = status (see #2177)
 SeeAlso: AH=0Dh
 
 Bitfields for 10NET service mask:
-Bit(s)	Description	(Table 2042)
+Bit(s)	Description	(Table 2199)
  0	workstation
  1	file server
  2	print server
  3	de-spool server
 
 Format of 10NET Who data structure:
-Offset	Size	Description	(Table 2043)
+Offset	Size	Description	(Table 2200)
  00h  8 BYTEs	user name
  08h 15 BYTEs	node ID
  17h  3 BYTEs	unique portion of Ethernet address
  1Ah	BYTE	Who group number
- 1Bh	WORD	service mask (see #2042)
+ 1Bh	WORD	service mask (see #2199)
  1Dh	DWORD	serial number
  21h	BYTE	maximum concurrent users with same serial number allowed on net
- 22h	BYTE	chat mask (see #2044)
- 23h	BYTE	internal system bits (see #2045)
+ 22h	BYTE	chat mask (see #2201)
+ 23h	BYTE	internal system bits (see #2202)
  24h  9 BYTEs	version number in format MM.mm.xxx
  2Dh	BYTE	number of shared directories
  2Eh	BYTE	number of shared printer queues
 
 Bitfields for 10NET chat mask:
-Bit(s)	Description	(Table 2044)
+Bit(s)	Description	(Table 2201)
  0	chat permitted
  1	bell enabled
  2	chat keyboard initiated
@@ -2910,7 +2910,7 @@ Bit(s)	Description	(Table 2044)
  6	chat is idle
 
 Bitfields for 10NET internal system bits:
-Bit(s)	Description	(Table 2045)
+Bit(s)	Description	(Table 2202)
  0	submit permitted
  1	submit initiated
  2	submit executing
@@ -2923,14 +2923,14 @@ INT 6F - 10NET v5.0 - GET SHARED DEVICE ENTRY
 	AX = 9501h
 	BX = zero-based index
 	DS:SI -> server's node ID
-	ES:DI -> buffer for shared device structure (see #2046)
+	ES:DI -> buffer for shared device structure (see #2203)
 Return: CF clear if successful
 	CF set on error
-	    AX = status (see #2020)
+	    AX = status (see #2177)
 SeeAlso: AX=1501h,AX=9502h,AX=9503h,AX=9504h
 
 Format of 10NET shared device structure:
-Offset	Size	Description	(Table 2046)
+Offset	Size	Description	(Table 2203)
  00h  8 BYTEs	alias
  08h	BYTE	type (02h modem, 03h print queue, 04h directory)
  09h	BYTE	access rights
@@ -2942,8 +2942,8 @@ Offset	Size	Description	(Table 2046)
 ---directory---
  32h 64 BYTEs	pathname of shared directory
 ---print queue---
- 32h	BYTE	notification bit mask (see #2047)
- 33h	BYTE	job control bit mask (see #2048)
+ 32h	BYTE	notification bit mask (see #2204)
+ 33h	BYTE	job control bit mask (see #2205)
  34h	WORD	number of days to retain file
  36h	WORD	test print length
  38h	BYTE	number of copies to print
@@ -2967,7 +2967,7 @@ Offset	Size	Description	(Table 2046)
  51h	WORD	offset of first print device structure (FFFFh if empty)
 
 Bitfields for notification flags:
-Bit(s)	Description	(Table 2047)
+Bit(s)	Description	(Table 2204)
  0	user at print start
  1	operator at start, with reply
  2	user at print completion
@@ -2977,7 +2977,7 @@ Bit(s)	Description	(Table 2047)
  6	user on print error
 
 Bitfields for 10NET job control mask:
-Bit(s)	Description	(Table 2048)
+Bit(s)	Description	(Table 2205)
  0	print banner page
  1	eject page at end of job
  2	mark as "held" (queue but don't print)
@@ -2988,10 +2988,10 @@ Bit(s)	Description	(Table 2048)
 INT 6F - 10NET v5.0 - SET SHARED DEVICE ENTRY
 	AX = 9502h
 	DS:SI -> server's node ID
-	ES:DI -> shared device structure (see #2046)
+	ES:DI -> shared device structure (see #2203)
 Return: CF clear if successful
 	CF set on error
-	    AX = status (see #2020)
+	    AX = status (see #2177)
 SeeAlso: AX=1502h,AX=9501h,AX=9503h,AX=9504h
 --------N-6F9503-----------------------------
 INT 6F - 10NET v5.0 - DELETE SHARED DEVICE
@@ -3000,7 +3000,7 @@ INT 6F - 10NET v5.0 - DELETE SHARED DEVICE
 	DS:SI -> server's node ID
 Return: CF clear if successful
 	CF set on error
-	    AX = status (see #2020)
+	    AX = status (see #2177)
 SeeAlso: AX=1503h,AX=9501h,AX=9502h,AX=9504h
 --------N-6F9504-----------------------------
 INT 6F - 10NET v5.0 - ENUMERATE USERS OF SHARED DEVICE
@@ -3011,7 +3011,7 @@ INT 6F - 10NET v5.0 - ENUMERATE USERS OF SHARED DEVICE
 Return: CF clear if successful
 	    ES:DI -> node ID of the CX'th user of the BX'th device
 	CF set on error
-	    AX = status (see #2020)
+	    AX = status (see #2177)
 SeeAlso: AX=9501h,AX=9502h,AX=9503h
 --------N-6F99-------------------------------
 INT 6F - 10NET v5.0 - AUDIT
@@ -3020,7 +3020,7 @@ INT 6F - 10NET v5.0 - AUDIT
 	ES:DI -> data to be appended to audit trail file (max 106 bytes)
 Return: CF clear if successful
 	CF set on error
-	    AX = status (see #2020)
+	    AX = status (see #2177)
 SeeAlso: AH=19h,AH=9Ch
 --------N-6F9C-------------------------------
 INT 6F - 10NET v5.0 - GET LOGIN LIST
@@ -3029,7 +3029,7 @@ INT 6F - 10NET v5.0 - GET LOGIN LIST
 Return: CF clear if successful
 	    DS:DI -> BX'th node ID that caller's machine is logged into
 	CF set on error
-	    AX = status (see #2020)
+	    AX = status (see #2177)
 --------H-70---------------------------------
 INT 70 - IRQ8 - CMOS REAL-TIME CLOCK
 Desc:	this interrupt is called when the real-time clock chip generates an
@@ -3186,7 +3186,7 @@ INT 78 - TARGA.DEV - CMC International SCSI device driver - SET I/O PORT
 	AH = 00h
 	DX = interface board I/O port
 Return: CF set on error
-	    AL = error code (see #2049)
+	    AL = error code (see #2206)
 Note:	if this routine is not called, the port is the driver's default
 	  (usually 0280h or 0300h)
 	an installation check is performed by TARGA.DEV upon initialization
@@ -3195,7 +3195,7 @@ Note:	if this routine is not called, the port is the driver's default
 SeeAlso: AH=01h,AH=02h
 Index:	installation check;TARGA.DEV
 
-(Table 2049)
+(Table 2206)
 Values for TARGA.DEV error code:
  00h	illegal command given to SCSI code
  01h	invalid I/O port specified (must be from 100H to 3F8H, and must be on
@@ -3216,7 +3216,7 @@ INT 78 - HugeRealMode Driver - API
 	    00h installation check
 		Return: AX = DBCA if installed
 	    01h get entry point
-	        Return: ES:BX -> far call entry point
+		Return: ES:BX -> far call entry point
 Program: the HugeRealMode driver was published in the German DOS Extra Nr. 20
 	  (1992), and makes a 4G flat address space (for both data and code)
 	  available to real-mode DOS programs
@@ -3230,7 +3230,7 @@ INT 78 - TARGA.DEV - SET DMA CHANNEL
 	AH = 02h
 	AL = interface board DMA channel
 Return: CF set on error
-	AL = error code (see #2049)
+	AL = error code (see #2206)
 Note:	if this routine is not called, the DMA channel is the driver's default
 	  (usually 3)
 SeeAlso: AH=00h,AH=03h"TARGA"
@@ -3244,7 +3244,7 @@ INT 78 - TARGA.DEV - SET SCSI DEVICE NUMBER
 	AH = 04h
 	AL = SCSI device number
 Return: CF set on error
-	AL = error code (see #2049)
+	AL = error code (see #2206)
 Note:	if this routine is not called, the device number used is the driver's
 	  default (usually 0)
 SeeAlso: AH=02h,AH=05h
@@ -3267,13 +3267,13 @@ SeeAlso: AH=13h,AH=14h,AH=15h
 INT 78 - TARGA.DEV - INTERFACE BOARD SELF-TEST
 	AH = 08h
 Return: CF set on error
-	AL = error code (see #2049)
+	AL = error code (see #2206)
 Note:	the SCSI bus is also reset
 SeeAlso: AH=09h
 --------d-7809-------------------------------
 INT 78 - TARGA.DEV - RESET SCSI BUS
 	AH = 09h
-Return: AL = error code if carry set (see #2049)
+Return: AL = error code if carry set (see #2206)
 SeeAlso: AH=08h
 --------d-7810-------------------------------
 INT 78 - TARGA.DEV - SEND SCSI COMMAND
@@ -3283,11 +3283,11 @@ Return: AH = SCSI status byte
 	CF clear if successful
 	    AL = SCSI message byte
 	CF set on error
-	    AL = error code (see #2049)
+	    AL = error code (see #2206)
 SeeAlso: AH=11h,INT 21/AX=4403h"ST-01"
 
 Format of SCSI Command:
-Offset	Size	Description	(Table 2050)
+Offset	Size	Description	(Table 2207)
  00h	BYTE	length of command
  01h	???	command bytes
 --------d-7811-------------------------------
@@ -3300,12 +3300,12 @@ Return: AH = SCSI status byte
 	CF clear if successful
 	    AL = SCSI message byte
 	CF set on error
-	    AL = error code (see #2049)
+	    AL = error code (see #2206)
 Note:	this command receives data internally one byte at a time
 SeeAlso: AH=10h,AH=13h
 
 Format of TARGA.DEV SCSI Command:
-Offset	Size	Description	(Table 2051)
+Offset	Size	Description	(Table 2208)
  00h	BYTE	length of command
  01h	???	command bytes
 --------d-7812-------------------------------
@@ -3318,12 +3318,12 @@ Return: AH = SCSI status byte
 	CF clear if successful
 	    AL = SCSI message byte
 	CF set on error
-	    AL = error code (see #2049)
+	    AL = error code (see #2206)
 Note:	this command sends data internally one byte at a time
 SeeAlso: AH=14h
 
 Format of TARGA.DEV SCSI Command:
-Offset	Size	Description	(Table 2052)
+Offset	Size	Description	(Table 2209)
  00h	BYTE	length of command
  01h	???	command bytes
 --------d-7813-------------------------------
@@ -3336,12 +3336,12 @@ Return: AH = SCSI status byte (if early return mode is clear)
 	CF clear if successful
 	    AL = SCSI message byte (if early return mode is clear)
 	CF set on error
-	    AL = error code (see #2049)
+	    AL = error code (see #2206)
 Note:	this command receives data using DMA
 SeeAlso: AH=11h,AH=12h
 
 Format of TARGA.DEV SCSI Command:
-Offset	Size	Description	(Table 2053)
+Offset	Size	Description	(Table 2210)
  00h	BYTE	length of command
  01h	???	command bytes
 --------d-7814-------------------------------
@@ -3354,12 +3354,12 @@ Return: AH = SCSI status byte (if early return mode is clear)
 	CF clear if successful
 	    AL = SCSI message byte (if early return mode is clear)
 	CF set on error
-	    AL = error code (see #2049)
+	    AL = error code (see #2206)
 Note:	this command sends data using DMA
 SeeAlso: AH=12h,AH=13h
 
 Format of TARGA.DEV SCSI Command:
-Offset	Size	Description	(Table 2054)
+Offset	Size	Description	(Table 2211)
  00h	BYTE	length of command
  01h	???	command bytes
 --------d-7815-------------------------------
@@ -3369,7 +3369,7 @@ Return: AH = SCSI status byte
 	CF clear if successful
 	    AL = SCSI message byte
 	CF set on error
-	    AL = error code (see #2049)
+	    AL = error code (see #2206)
 Note:	if AH=06h was previously called to set the early return mode, this
 	  function finishes a command AH=13h or AH=14h which returned before
 	  the last DMA transfer was finished
@@ -3384,7 +3384,7 @@ Program: AVATAR.SYS is a CON driver by George Adam Stanislav which interprets
 	  AVATAR command codes just as ANSI.SYS interprets ANSI commands
 Note:	if a keystroke is available, it is removed from the keyboard buffer
 	  before being returned
-SeeAlso: INT 29
+SeeAlso: INT 29,INT 2F/AX=1A00h/BX=4156h
 --------E-79---------------------------------
 INT 79 - DJGPP GO32.EXE DOS EXTENDER - RELOCATED IRQ1
 Notes:	this vector is overwritten when GO32 starts but is not restored by
@@ -3467,7 +3467,7 @@ Note:	this interrupt is used for IPX/SPX access in NetWare versions through
 	  sometimes called internally with BX bit 15 set, which causes the
 	  handler to bypass some initial checks and an optional call to the
 	  IPX Windows support handler set with INT 2F/AX=7AFFh/BX=0000h
-	  (see #1471)
+	  (see #1514)
 SeeAlso: INT 2F/AX=7A00h,INT 64"Novell",INT 7A/BX=0000h
 --------N-7A----BX0000-----------------------
 INT 7A - Novell NetWare - IPX Driver - OPEN SOCKET
@@ -3477,7 +3477,7 @@ INT 7A - Novell NetWare - IPX Driver - OPEN SOCKET
 	    FFh open until close
 	DX = socket number (high byte in DL)
 	    0000h dynamic allocation
-	    else  socket to open (see #2055)
+	    else  socket to open (see #2212)
 Return: AL = return code
 	    00h success
 		DX = socket number
@@ -3490,7 +3490,7 @@ Notes:	TSRs which need to use sockets should set AL to FFh, non-resident
 	this function is supported by Advanced NetWare 1.02+
 SeeAlso: INT 7A/BX=0001h,INT 7A/BX=0004h,INT 7A/BX=0023h
 
-(Table 2055)
+(Table 2212)
 Values for IPX socket number:
  0451h	File Service (NetWare Core Protocol)
  0452h	Service Advertising Protocol
@@ -3535,7 +3535,7 @@ SeeAlso: BX=0009h
 --------N-7A----BX0003-----------------------
 INT 7A - Novell NetWare - IPX Driver - SEND PACKET
 	BX = 0003h
-	ES:SI -> Event Control Block (see #2056,#2057)
+	ES:SI -> Event Control Block (see #2213,#2214)
 Notes:	returns immediately; IPX attempts to send the packet in the background
 	this function is supported by Advanced NetWare 1.02+
 	this function is nearly identical to BX=000Fh, except that it always
@@ -3544,11 +3544,11 @@ Notes:	returns immediately; IPX attempts to send the packet in the background
 SeeAlso: BX=0004h,BX=000Fh,INT 21/AH=EEh"Novell"
 
 Format of IPX Event Control Block:
-Offset	Size	Description	(Table 2056)
+Offset	Size	Description	(Table 2213)
  00h	DWORD	Link
  04h	DWORD	-> Event Service Routine (00000000h if none)
- 08h	BYTE	in use flag (see #2058)
- 09h	BYTE	completion code (see #2059)
+ 08h	BYTE	in use flag (see #2215)
+ 09h	BYTE	completion code (see #2216)
  0Ah	WORD	(big-endian) socket number (see INT 7A/BX=0000h)
  0Ch  4 BYTEs	IPX workspace
  10h 12 BYTEs	driver workspace
@@ -3567,13 +3567,13 @@ Notes:	ESR is a far procedure that is called when the ECB has been handled.
 	node address FFh FFh FFh FFh FFh FFh broadcasts to all nodes
 
 Format of AES-ECB:
-Offset	Size	Description	(Table 2057)
+Offset	Size	Description	(Table 2214)
  00h	DWORD	Link
  04h	DWORD	ESR address
- 08h	BYTE	in use flag (see #2058)
+ 08h	BYTE	in use flag (see #2215)
  09h  5 BYTEs	AES workspace
 
-(Table 2058)
+(Table 2215)
 Values for ECB in use flag:
  00h	available
  E0h	AES temporary
@@ -3588,7 +3588,7 @@ Values for ECB in use flag:
  FEh	awaiting packet reception
  FFh	sending packet
 
-(Table 2059)
+(Table 2216)
 Values for ECB completion code:
  00h	success
  ECh	remote terminated connection without acknowledging packet
@@ -3602,24 +3602,24 @@ Values for ECB completion code:
  FEh	packet undeliverable
  FFh	physical error
 
-(Table 2060)
+(Table 2217)
 Values event Service Routine is called with:
 	AL = caller's identity (00h = AES, FFh = IPX)
 	ES:SI -> event control block
 	interrupts disabled
 
 Format of IPX header:
-Offset	Size	Description	(Table 2061)
+Offset	Size	Description	(Table 2218)
  00h	WORD	(big-endian) checksum
  02h	WORD	(big-endian) length in bytes of total packet
  04h	BYTE	transport control
- 05h	BYTE	packet type (see #2062)
+ 05h	BYTE	packet type (see #2219)
  06h 10 BYTEs	destination internetwork address
  10h	WORD	(big-endian) destination socket
  12h 10 BYTEs	source internetwork address
  1Ch	WORD	(big-endian) source socket
 
-(Table 2062)
+(Table 2219)
 Values for IPX packet type:
  00h	unknown packet type
  01h	routing information packet
@@ -3636,7 +3636,7 @@ Note:	undocumented packet type 14h will cross up to 16 networks deep in
 	  reserved, as IPX places the traversed server nodes there.
 
 Format of Service Advertising Protocol Service Query Packet:
-Offset	Size	Description	(Table 2063)
+Offset	Size	Description	(Table 2220)
  00h 30 BYTEs	IPX header
  1Eh	WORD	(big-endian) query type
 		0001h general find service
@@ -3644,15 +3644,15 @@ Offset	Size	Description	(Table 2063)
  20h	WORD	(big-endian) server type (see INT 21/AH=E3h"NetWare")
 
 Format of Service Advertising Protocol Server Identification Packet:
-Offset	Size	Description	(Table 2064)
+Offset	Size	Description	(Table 2221)
  00h 30 BYTEs	IPX header
  1Eh	WORD	(big-endian) response type
 		0002h general service
 		0004h nearest service
- 20h 64N BYTEs	server entries (1-7) (see #2065)
+ 20h 64N BYTEs	server entries (1-7) (see #2222)
 
 Format of SAP server entry:
-Offset	Size	Description	(Table 2065)
+Offset	Size	Description	(Table 2222)
  00h	WORD	(big-endian) server type (see INT 21/AH=E3h"NetWare")
  02h 48 BYTEs	ASCIZ server name
  32h  2 WORDs	(big-endian) network number
@@ -3661,13 +3661,13 @@ Offset	Size	Description	(Table 2065)
  3Eh	WORD	(big-endian) number of hops between caller and server
 
 Format of IPX Routing Information packet:
-Offset	Size	Description	(Table 2066)
+Offset	Size	Description	(Table 2223)
  00h 30 BYTEs	IPX header
  1Eh	WORD	operation (0001h request, 0002h response)
- 20h 8N BYTEs	network entries (1-50) (see #2067)
+ 20h 8N BYTEs	network entries (1-50) (see #2224)
 
 Format of RIP network entry:
-Offset	Size	Description	(Table 2067)
+Offset	Size	Description	(Table 2224)
  00h	DWORD	network number (FFFFFFFFh = general request)
  04h	WORD	(response) number of hops
  06h	WORD	(response) number of clock ticks to reach destination
@@ -3698,12 +3698,12 @@ SeeAlso: BX=0006h,BX=0007h,BX=0008h
 INT 7A - Novell NetWare - IPX Driver - CANCEL EVENT
 	BX = 0006h
 	ES:SI -> Event Control Block (see BX=0003h)
-Return: AL = return code (see #2068)
+Return: AL = return code (see #2225)
 Notes:	cannot cancel packets which the node's driver has already sent
 	this function is supported by Advanced NetWare 1.02+
 SeeAlso: BX=0005h
 
-(Table 2068)
+(Table 2225)
 Values for IPX return code:
  00h	success
  F9h	event in use
@@ -3727,14 +3727,14 @@ SeeAlso: BX=0005h
 --------N-7A----BX0009-----------------------
 INT 7A - Novell NetWare - IPX Driver - GET INTERNETWORK ADDRESS
 	BX = 0009h
-	ES:SI -> buffer for own internetwork address (see #2069)
+	ES:SI -> buffer for own internetwork address (see #2226)
 Return: ES:SI buffer filled
 	SI destroyed
 Note:	this function is supported by Advanced NetWare 1.02+
 SeeAlso: BX=0002h,BX=000Bh
 
-Format of internetwork address:
-Offset	Size	Description	(Table 2069)
+Format of IPX internetwork address:
+Offset	Size	Description	(Table 2226)
  00h  4 BYTEs	(big-endian) network number
  04h  6 BYTEs	(big-endian) node number within network
 --------N-7A----BX000A-----------------------
@@ -3747,7 +3747,7 @@ SeeAlso: INT 15/AX=1000h,INT 21/AH=89h,INT 2F/AX=1680h
 --------N-7A----BX000B-----------------------
 INT 7A - Novell NetWare - IPX Driver - DISCONNECT FROM TARGET
 	BX = 000Bh
-	ES:SI -> internetwork address (see #2070)
+	ES:SI -> internetwork address (see #2227)
 Notes:	this function permits the network software on the remote machine to
 	  remove any virtual connection with the calling machine
 	only use in point-to-point networks
@@ -3755,8 +3755,8 @@ Notes:	this function permits the network software on the remote machine to
 	this function is supported by Advanced NetWare 1.02+
 SeeAlso: BX=0002h,BX=0009h
 
-Format of internetwork address:
-Offset	Size	Description	(Table 2070)
+Format of IPX internetwork address:
+Offset	Size	Description	(Table 2227)
  00h  4 BYTEs	(big-endian) destination network
  04h  6 BYTEs	(big-endian) destination node
  0Ah  2 BYTEs	(big-endian) destination socket
@@ -3806,7 +3806,7 @@ Notes:	this function is supported by Advanced NetWare 2.1+
 	IPX is sometimes called internally with BX bit 15 set, which causes the
 	  entry point handler to bypass some checks and an optional call to
 	  the IPX Windows support handler set with INT 2F/AX=7AFFh/BX=0000h
-	  (see #1471)
+	  (see #1514)
 SeeAlso: BX=0015h
 --------N-7A----BX0011-----------------------
 INT 7A - Novell NetWare - SPX Driver - ESTABLISH SPX CONNECTION
@@ -3814,7 +3814,7 @@ INT 7A - Novell NetWare - SPX Driver - ESTABLISH SPX CONNECTION
 	AL = retry count
 	AH = watchdog flag
 	ES:SI -> Event Control Block (see BX=0003h)
-Return: AL = status (see #2071)
+Return: AL = status (see #2228)
 	DX = assigned connection ID number
 Desc:	attempt to establish a connection with a listening socket
 Notes:	there should always be at least two SPX ECB's listening to a socket, so
@@ -3824,7 +3824,7 @@ Notes:	there should always be at least two SPX ECB's listening to a socket, so
 	this function is supported by Advanced NetWare 2.1+
 SeeAlso: BX=0000h,BX=0012h,BX=0013h,BX=0014h,BX=0015h
 
-(Table 2071)
+(Table 2228)
 Values for SPX function status:
  00h	attempting to contact destination socket
  EFh	local connection table full
@@ -3832,7 +3832,7 @@ Values for SPX function status:
  FFh	sending socket not open
 
 Format of SPX header:
-Offset	Size	Description	(Table 2072)
+Offset	Size	Description	(Table 2229)
  00h	WORD	(big-endian) checksum
  02h	WORD	(big-endian) length in bytes of total packet
  04h	BYTE	transport control
@@ -3841,7 +3841,7 @@ Offset	Size	Description	(Table 2072)
  10h	WORD	(big-endian) destination socket
  12h 10 BYTEs	source internet address
  1Ch	WORD	(big-endian) source socket
- 1Eh	BYTE	connection control (see #2073)
+ 1Eh	BYTE	connection control (see #2230)
  1Fh	BYTE	datastream type
 		FEh terminate connection request packet
 		FFh terminate connection acknowledgement packet
@@ -3852,8 +3852,8 @@ Offset	Size	Description	(Table 2072)
  26h	WORD	(big-endian) acknowledge number
  28h	WORD	(big-endian) allocation number
 
-Bitfields for connection control:
-Bit(s)	Description	(Table 2073)
+Bitfields for SPX connection control:
+Bit(s)	Description	(Table 2230)
  3-0	unused???
  4	end of message
  5	reserved
@@ -3890,7 +3890,7 @@ SeeAlso: BX=0011h,BX=0013h
 INT 7A - Novell NetWare - SPX Driver - GET SPX CONNECTION STATUS
 	BX = 0015h
 	DX = connection ID
-	ES:SI -> status buffer (see #2074)
+	ES:SI -> status buffer (see #2231)
 Return: AL = return code
 	    00h connection still valid
 		ES:SI -> status buffer filled
@@ -3898,8 +3898,8 @@ Return: AL = return code
 Note:	this function is supported by Advanced NetWare 2.1+
 SeeAlso: BX=0010h,BX=0011h
 
-Format of status buffer:
-Offset	Size	Description	(Table 2074)
+Format of SPX status buffer:
+Offset	Size	Description	(Table 2231)
  00h	BYTE	connection state
 		01h waiting to establish connection
 		02h starting (attempting to create connection)
@@ -3947,13 +3947,13 @@ SeeAlso: BX=0011h,BX=0016h
 --------N-7A----BX0018-----------------------
 INT 7A U - Novell NetWare - IPX Driver - internal - ADD DIAGNOSTIC ELEMENT
 	BX = 0018h
-	ES:SI -> diagnostic element (see #2075) to be added to Diagnostic Queue
+	ES:SI -> diagnostic element (see #2232) to be added to Diagnostic Queue
 Note:	this function is supported on file servers only under v2.15; v3.02 also
 	  supports it on workstations
 SeeAlso: BX=0019h
 
-Format of diagnostic element:
-Offset	Size	Description	(Table 2075)
+Format of IPX diagnostic element:
+Offset	Size	Description	(Table 2232)
  00h	DWORD	pointer to next diagnostic element
  04h	DWORD	pointer to function for ???
  08h	DWORD	pointer to function for ???
@@ -3993,7 +3993,7 @@ INT 7A - Novell NetWare - IPXODI v2.12+ - GET IPX FLAGS
 	BX = 001Fh
 	DX = 0000h
 Return: AX = ???
-	BX:CX -> ??? entry point (see #2076)
+	BX:CX -> ??? entry point (see #2233)
 	DX = flags
 	    bit 0: IPXODI rather than dedicated IPX
 	    bit 1: checksumming functions 0020h-0022h supported
@@ -4003,19 +4003,19 @@ Note:	IPXODI v2.12 is distributed as part of the Personal NetWare system
 	  bundled with Novell DOS 7
 SeeAlso: BX=0020h,INT 2F/AX=7A2Fh
 
-(Table 2076)
-Call entry point with:
+(Table 2233)
+Call IPXODI entry point with:
 	ES:SI -> ??? data (offset 24h is far pointer to ??? data)
 --------N-7A----BX0020-----------------------
 INT 7A - Novell NetWare - IPXODI v2.12+ - SEND WITH CHECKSUM
 	BX = 0020h
-	ES:SI -> ECB data (see #2077)
+	ES:SI -> ECB data (see #2234)
 Return: DS preserved
 	BX,BP corrupted
 SeeAlso: BX=001Fh,BX=0021h,BX=0022h,INT 2F/AX=7A2Fh
 
 Format of ECB data:
-Offset	Size	Description	(Table 2077)
+Offset	Size	Description	(Table 2234)
  00h  8 BYTEs	???
  08h	BYTE	(return) ???
  09h	BYTE	(return) ???
@@ -4028,7 +4028,7 @@ Offset	Size	Description	(Table 2077)
 --------N-7A----BX0021-----------------------
 INT 7A - Novell NetWare - IPXODI v2.12+ - IPX GENERATE CHECKSUM
 	BX = 0021h
-	ES:SI -> ECB data (see #2077)
+	ES:SI -> ECB data (see #2234)
 Return: ES,DS,SI preserved
 	BX,BP corrupted
 Notes:	the checksum and TransportControl fields of the IPX packet are updated
@@ -4037,7 +4037,7 @@ SeeAlso: BX=001Fh,BX=0020h,BX=0022h,INT 2F/AX=7A2Fh
 --------N-7A----BX0022-----------------------
 INT 7A - Novell NetWare - IPXODI v2.12+ - IPX VERIFY CHECKSUM
 	BX = 0022h
-	ES:SI -> ECB data (see #2077)
+	ES:SI -> ECB data (see #2234)
 Return: AX = status (0000h checksum matches)
 	DS,ES,SI preserved
 	BX,BP corrupted
@@ -4048,7 +4048,7 @@ INT 7A - Novell NetWare - IPXODI v2.12+ - OPEN LOOK-AHEAD SOCKET
 	BX = 0023h
 	AL = ???
 	DX = socket number
-	ES:SI -> Look Ahead handler (see #2078)
+	ES:SI -> Look Ahead handler (see #2235)
 Return: AL = 00h if successful
 	BX corrupted
 Notes:	the socket will always be long-lived, and must thus be explicitly
@@ -4058,22 +4058,22 @@ Notes:	the socket will always be long-lived, and must thus be explicitly
 	  pointing at an IPX version greater than 3.30
 SeeAlso: INT 7A/BX=0000h,INT 7A/BX=0001h
 
-(Table 2078)
+(Table 2235)
 Call IPX Look-Ahead handler with:
 	AX = socket
-	DS:SI -> look-ahead structure (see #1540 at INT 2F/AX=C000h"LSL")
+	DS:SI -> look-ahead structure (see #1583 at INT 2F/AX=C000h"LSL")
 	DF clear
 	interrupt disabled (must remain disabled)
 Return: AX = packet use
 	    0000h application want packet
-		ES:SI -> ODI ECB (see #1541 at INT 2F/AX=C000h"LSL")
+		ES:SI -> ODI ECB (see #1584 at INT 2F/AX=C000h"LSL")
 	    8001h application does not want packet
 	ZF set if AX=0000h
 	DS,DI,BP,SS,SP preserved
 --------N-7A----BX0024-----------------------
 INT 7A U - Novell NetWare - IPXODI v2.20+ - SET INTERNETWORK ADDRESS
 	BX = 0024h
-	ES:SI -> buffer containing internetwork address (see #2070)
+	ES:SI -> buffer containing internetwork address (see #2227)
 Return: BX,CX,SI,DI,ES destroyed
 Note:	this function differs from INT 7A/BX=000Ch in that it unconditionally
 	  sets the address
@@ -4090,17 +4090,17 @@ Return: AX = status
 		  excessivly long packets)
 	BX = width of graphics area in pixels, or 0000h if using packet
 		  communication
-	DX:CX -> packet-mode entry point (see #2079)
+	DX:CX -> packet-mode entry point (see #2236)
 SeeAlso: AX=0001h,AX=0200h,AX=07D0h,INT 61/AX=0007h"OPTIMA",INT 78"AutoCAD"
 SeeAlso: INT 79/AX=0001h,INT 7B/AX=8001h"AutoCAD",INT 7C"AutoShade"
 
-(Table 2079)
+(Table 2236)
 Call packet-mode entry point with:
-STACK:	DWORD	pointer to request packet (see #2080)
+STACK:	DWORD	pointer to request packet (see #2237)
 	WORD	length of packet
 
 Format of request packet:
-Offset	Size	Description	(Table 2080)
+Offset	Size	Description	(Table 2237)
  00h	WORD	function number (00h-45h for Compaq VGADI41.EXE)
 --------A-7A0200BX0000-----------------------
 INT 7A R - AutoCAD Device Interface - RENDERING DEVICE - INITIALIZE (RDLINKUP)
@@ -4108,7 +4108,7 @@ INT 7A R - AutoCAD Device Interface - RENDERING DEVICE - INITIALIZE (RDLINKUP)
 	BX = 0000h
 	CX = interface level (0001h)
 Return: BX = 0000h (driver uses packet communication)
-	DX:CX -> packet-mode entry point (see #2079)
+	DX:CX -> packet-mode entry point (see #2236)
 SeeAlso: AX=0001h"AutoCAD",INT 79/AX=0001h,INT 7B/AX=8001h"AutoCAD"
 --------I-7A04-------------------------------
 INT 7A - IBM 3270 Workstation Program API - CREATE A QUEUE
@@ -4135,11 +4135,11 @@ INT 7A - IBM 3270 Workstation Program API - SESSION SERVICES
 	BX = 8020h (synchronous request)
 	CX = 0000h
 	DX = ID of session manager (SESSMGR)
-	AL = service (see #2081)
+	AL = service (see #2238)
 	ES:DI -> control block
 Return: ???
 
-(Table 2081)
+(Table 2238)
 Values for service:
  01h	get session ID
  02h	get session info
@@ -4156,11 +4156,11 @@ INT 7A - IBM 3270 Workstation Program API - KEYBOARD SERVICES
 	BX = 8020h (synchronous request)
 	CX = 0000h
 	DX = ID of keyboard manager
-	AL = service number (see #2082)
+	AL = service number (see #2239)
 	ES:DI -> control block
 Return: ???
 
-(Table 2082)
+(Table 2239)
 Values for 3270 Workstation Program keyboard service:
  01h	connect to keyboard
  02h	disconnect from keyboard
@@ -4175,11 +4175,11 @@ INT 7A - IBM 3270 Workstation Program API - WINDOW SERVICES
 	BX = 8020h (synchronous request)
 	CX = 00FFh
 	DX = ID of window service controller (WSCTRL)
-	AL = service number (see #2083)
+	AL = service number (see #2240)
 	ES:DI -> control block
 Return: ???
 
-(Table 2083)
+(Table 2240)
 Values for 3270 Workstation Program window service:
  01h	connect to WS control
  02h	disconnect from WS control
@@ -4292,10 +4292,10 @@ INT 7A - IBM 3270 Workstation Program API - HOST SERVICES
 	BX = request type (4000h async, 8028h synchronous)
 	CX = 0000h
 	DX = ID of MFIC
-	AL = service (see #2084)
+	AL = service (see #2241)
 	ES:DI -> control block
 
-(Table 2084)
+(Table 2241)
 Values for 3270 Workstation Program host service:
  01h	connect to host
  02h	disconnect from host
@@ -4318,10 +4318,10 @@ Range:	unknown, selected by device driver commandline arguments
 --------I-7A81-------------------------------
 INT 7A - IBM 3270 Workstation Program API - RESOLVE A GATE NAME
 	AH = 81h
-	ES:DI -> 8-char blank-padded gate name (see #2085)
+	ES:DI -> 8-char blank-padded gate name (see #2242)
 Return: DX = gate ID
 
-(Table 2085)
+(Table 2242)
 Values for 3270 Workstation Program gate name:
  "SESSMGR "
  "KEYBOARD"
@@ -4343,10 +4343,10 @@ Return: ???
 --------I-7AFDCB-----------------------------
 INT 7A - IBM Personal Communications/3270 - INSTALLATION CHECK
 	AX = FDCBh
-Return: DX:AX -> PCS/3270 signature block if loaded (see #2086)
+Return: DX:AX -> PCS/3270 signature block if loaded (see #2243)
 
 Format of Personal Communications/3270 signature block:
-Offset	Size	Description	(Table 2086)
+Offset	Size	Description	(Table 2243)
  04h	WORD	PCS/3270 signature (5741h)
  06h	WORD	version (0501h = PCS/3270 v1.0)
 --------I-7AFE01-----------------------------
@@ -4385,29 +4385,29 @@ INT 7A U - IBM PC3270 EMUL PROG v3 - INTERNAL ???
 Return: CX = 1200h
 --------f-7B---------------------------------
 INT 7B - Btrieve API (single user)
-	DS:DX -> 38-byte parameter record (see #2087)
+	DS:DX -> 38-byte parameter record (see #2244)
 Return: return code field set
 Note:	Btrieve sets low byte of vector to 33h; this serves as the installation
 	  check
 SeeAlso: INT 2F/AX=AB01h,INT 7F/AX=0200h
 
 Format of Btrieve parameter record:
-Offset	Size	Description	(Table 2087)
+Offset	Size	Description	(Table 2244)
  00h	DWORD	pointer to data buffer
  04h	WORD	data buffer length
  06h	DWORD	pointer to 90-byte record containing positioning info
 		(should be same for all calls for same file)
  0Ah	DWORD	pointer to 38-byte FCB info buffer
 		(should be same for all calls for same file)
- 0Eh	WORD	function code (see #2088)
+ 0Eh	WORD	function code (see #2245)
  10h	DWORD	pointer to file name/key buffer
  14h	BYTE	key length
  15h	BYTE	key number
- 16h	DWORD	pointer to status code (see #2089)
+ 16h	DWORD	pointer to status code (see #2246)
  1Ah	WORD	interface code (version specific)
 		6176h version 5.10
 
-(Table 2088)
+(Table 2245)
 Values for function code:
  00h	open
  01h	close
@@ -4461,7 +4461,7 @@ Notes:	add 50 (32h) to any "get" operation to just return the key data
 	add 400 (190h) for a multiple-record nowait lock (nowait lock returns
 	  error 54h or 55h if record already locked)
 
-(Table 2089)
+(Table 2246)
 Values for Btrieve status code:
  00h	successful
  01h	invalid operation
@@ -4570,10 +4570,10 @@ Notes:	This interrupt is called by AutoCAD to perform its output
 SeeAlso: AX=8001h,AX=8002h,INT 78"AutoCAD",INT 7A/AX=0001h"AutoCAD"
 ----------7B---------------------------------
 INT 7B - Novell XQL - XQL PRIMITIVES MANAGER API
-	DS:DX -> parameter block (see #2090)
+	DS:DX -> parameter block (see #2247)
 Return: parameter block updated
 
-(Table 2090)
+(Table 2247)
 Values for Novell XQL function number:
  00h	log in
  01h	log out
@@ -4619,9 +4619,9 @@ Values for Novell XQL function number:
  29h	"tMaskFcn"
 
 Format of XQL parameter block:
-Offset	Size	Description	(Table 2091)
+Offset	Size	Description	(Table 2248)
  00h  4 BYTEs	signature "XQLP"
- 04h	WORD	function number (see #2090)
+ 04h	WORD	function number (see #2247)
  06h	WORD	handle
  08h	WORD	status
  0Ah	WORD	session ID
@@ -4934,11 +4934,11 @@ INT 7C - SK-UPPS Data Link Interface API - GET DRIVER VERSION
 	AX = 0000h
 Return: AH = major DLI version
 	AL = minor DLI version
-	DX = OEM signature (see #2092)
+	DX = OEM signature (see #2249)
 	CL = DLI 2.8+ topology: 1=Ethernet, 2=FDDI, 3=Token-Ring
 SeeAlso: AX=0002h,AX=000Bh,AX=000Dh,AX=000Eh
 
-(Table 2092)
+(Table 2249)
 Values for SK-UPPS Data Link Interface OEM signature (defined by SK):
  0001h		experimental
  3343h	('3C')	3COM
@@ -4955,12 +4955,12 @@ Values for SK-UPPS Data Link Interface OEM signature (defined by SK):
 --------N-7C0001-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - DOWN DRIVER
 	AX = 0001h
-Return: AX = completion code (see #2093)
+Return: AX = completion code (see #2250)
 Note:	the DLI will refuse to unload if there are any protocols
 	  (see AX=0007h) or clients (see AX=0010h) active.
 Index:	uninstall;SK-UPPS Data Link Interface
 
-(Table 2093)
+(Table 2250)
 Values for SK-UPPS completion code:
  0000h	SUCCESS
  0005h	INVALID_MULTICAST
@@ -4978,34 +4978,34 @@ Values for SK-UPPS completion code:
 --------N-7C0002-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - GET DRIVER STATUS
 	AX = 0002h
-	ES:DI -> Status Information Block (SIB) (see #2105)
-Return: AX = completion code (see #2093)
+	ES:DI -> Status Information Block (SIB) (see #2262)
+Return: AX = completion code (see #2250)
 Note:	GET DRIVER INFO (AX=000Eh) should be used instead.
 SeeAlso: AX=0000h,AX=000Bh,AX=000Dh,AX=000Eh
 --------N-7C0003-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - CHANGE DRIVER ADDRESS
 	AX = 0003h
 	ES:DI -> new node address (6 bytes)
-Return: AX = completion code (see #2093)
+Return: AX = completion code (see #2250)
 Note:	the DLI will refuse to change the address if any protocols
 	  (see AX=0007h) are active
 SeeAlso: AX=0001h,AX=000Eh
 --------N-7C0004-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - REQUEST BUFFER
 	AX = 0004h
-	DX = protocol ID (see AX=0007h,#2096)
-Return: AX = completion code (see also #2093)
+	DX = protocol ID (see AX=0007h,#2253)
+Return: AX = completion code (see also #2250)
 	    0000h successful
-		ES:BX -> Memory Buffer (Mbuf) (see #2094)
+		ES:BX -> Memory Buffer (Mbuf) (see #2251)
 Note:	if the DLI has no free Mbufs, it will set an internal flag for the
 	  protocol and later call the protocol's Event Upcall with
-	  EV_BUFFER_AVAILABLE (see #2100,#2101) as soon as an Mbuf becomes
+	  EV_BUFFER_AVAILABLE (see #2257,#2258) as soon as an Mbuf becomes
 	  available.  There will only be one "buffer available" Upcall, even
 	  if this function has been called several times before.
 SeeAlso: AX=0005h,AX=0006h,AX=0012h,AX=0013h
 
 Format of SK-UPPS Memory Buffer (Mbuf):
-Offset	Size	Description	(Table 2094)
+Offset	Size	Description	(Table 2251)
  00h	DWORD	-> NEXT Mbuf (linked list)
  04h	WORD	OFFSET of actual data within DATA area
  06h  2 BYTEs	reserved (currently unused)
@@ -5018,13 +5018,13 @@ Offset	Size	Description	(Table 2094)
 --------N-7C0005-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - RELEASE BUFFER
 	AX = 0005h
-	ES:BX -> Mbuf (see #2094)
+	ES:BX -> Mbuf (see #2251)
 Return: nothing
 SeeAlso: AX=0004h
 --------N-7C0006-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - TRANSMIT FRAME
 	AX = 0006h
-	ES:BX -> Mbuf (see #2094)
+	ES:BX -> Mbuf (see #2251)
 Return: nothing
 Notes:	The DLI will send LENGTH bytes found in the Mbuf's DATA area starting
 	  at OFFSET. A complete and valid frame must be stored there. The DLI
@@ -5033,12 +5033,12 @@ Notes:	The DLI will send LENGTH bytes found in the Mbuf's DATA area starting
 	On Ethernet, the DLI will always send a minimum of 60 bytes, regardless
 	  of the value found in the LENGTH field.
 	This function returns immediately; the DLI will call the protocol's
-	  Transmit Upcall (see #2095) when the frame has been sent.
+	  Transmit Upcall (see #2252) when the frame has been sent.
 	The Mbuf's IN USE field will be non-zero until the DLI calls the
 	  Transmit Upcall.
 SeeAlso: AX=0002h,AX=0004h,AX=0013h
 
-(Table 2095)
+(Table 2252)
 Values SK-UPPS Transmit Upcall is called with:
 	ES:BX -> Mbuf (NEXT field destroyed)
 	interrupts disabled
@@ -5047,17 +5047,17 @@ Note:	On FDDI the bytes of the source and destination node fields in the MAC
 --------N-7C0007-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - REGISTER PROTOCOL
 	AX = 0007h
-	ES:BX -> Protocol Control Block (see #2096)
-Return: AX = completion code (see #2093)
+	ES:BX -> Protocol Control Block (see #2253)
+Return: AX = completion code (see #2250)
 Program: SK-UPPS is the Schneider & Koch Universal Portable Protocol Stack,
 	  which provides an API on top of its Data Link Interface, allowing the
 	  use of any of several network transport layers
 SeeAlso: AX=0008h,AX=000Bh
 
 Format of SK-UPPS Protocol Control Block (PCB):
-Offset	Size	Description	(Table 2096)
+Offset	Size	Description	(Table 2253)
  00h	WORD	(big-endian) protocol type
- 02h	WORD	protocol mode (see #2097)
+ 02h	WORD	protocol mode (see #2254)
  04h	DWORD	-> Receive Upcall routine
  08h	DWORD	-> Transmit Upcall routine
  0Ch	DWORD	-> Event Upcall routine
@@ -5065,7 +5065,7 @@ Offset	Size	Description	(Table 2096)
  14h	WORD	protocol ID will be returned here (always non-zero)
 
 Bitfields for SK-UPPS protocol mode:
-Bit(s)	Description	(Table 2097)
+Bit(s)	Description	(Table 2254)
  0	promiscuous mode; protocol receives all frames regardless of their
 	  destination (PROTOCOL TYPE must be FFFFh)
  1	if set, protocol's Event Upcall will be called on entry and exit of the
@@ -5097,14 +5097,14 @@ Notes:	If PROTOCOL TYPE is FFFFh and neither the "promiscuous" nor the "hook"
 	Some DLIs do not support all or even any of the "promiscuous",
 	  "receive non-LLC" and "receive all multicasts" mode bits.
 
-(Table 2098)
+(Table 2255)
 Values SK-UPPS Receive Upcall is called with:
  ES:BX -> Mbuf
- AX = receive status (see #2099) (also stored in Mbuf's RECEIVE STATUS field)
+ AX = receive status (see #2256) (also stored in Mbuf's RECEIVE STATUS field)
  interrupts disabled
 
 Bitfields for SK-UPPS receive status:
-Bit(s)	Description	(Table 2099)
+Bit(s)	Description	(Table 2256)
  0-2	reserved (0), currently unused
  3	frame check sequence (FCS) error
  4	overflow (frame too long)
@@ -5125,12 +5125,12 @@ Notes:	The protocol's Receive Upcall routine will be called whenever a frame
 	  must point to an Mbuf, which the DLI will then pass to the RELEASE
 	  BUFFER function (see AX=0005h). See also notes for PROTOCOL MODE.
 
-(Table 2100)
+(Table 2257)
 Values SK-UPPS Event Upcall is called with:
- AX = event code (see #2101)
+ AX = event code (see #2258)
 Note:	All Event Upcalls may be ignored by the protocol.
 
-(Table 2101)
+(Table 2258)
 Values for SK-UPPS Event Upcall event code:
  00h	EV_BUFFER_AVAILABLE client may now call REQUEST BUFFER (AX=0004h)
  01h	EV_ISR_START	    start of Interrupt Service Routine
@@ -5140,7 +5140,7 @@ Values for SK-UPPS Event Upcall event code:
  05h	EV_IO_CONTROL	    DLI 2.8+ I/O control (DX=subfunction; see AX=0016h)
 
 Bitfields for EV_NETWORK_STATUS in register DX:
-Bit(s)	Description	(Table 2102)
+Bit(s)	Description	(Table 2259)
 	Token-Ring		FDDI
  15	SIGNAL_LOSS		SIGNAL_LOSS
  14	HARD_ERROR		HARD_ERROR
@@ -5162,8 +5162,8 @@ Note:	EV_NETWORK_STATUS is not supported on Ethernet
 --------N-7C0008-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - DISABLE PROTOCOL
 	AX = 0008h
-	BX = protocol ID (see #2096)
-Return: AX = completion code (see #2093)
+	BX = protocol ID (see #2253)
+Return: AX = completion code (see #2250)
 Note:	the DLI will handle any Mbufs given to TRANSMIT FRAME (AX=0006h) as if
 	  they had been given to TRANSMIT FRAME RELEASE (AX=0013h).
 	all multicast addresses registered for this protocol will be disabled.
@@ -5173,9 +5173,9 @@ SeeAlso: AX=0007h,AX=000Bh
 --------N-7C0009-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - REGISTER MULTICAST
 	AX = 0009h
-	BX = protocol ID (see #2096)
+	BX = protocol ID (see #2253)
 	ES:DI -> multicast address (6 bytes)
-Return: AX = completion code (see #2093)
+Return: AX = completion code (see #2250)
 Notes:	The broadcast address is always enabled.
 	Set bit 9 of PCB's protocol mode field in REGISTER PROTOCOL call
 	  (AX=0007h) to receive all multicast frames.
@@ -5183,16 +5183,16 @@ SeeAlso: AX=000Ah,AX=0014h
 --------N-7C000A-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - DISABLE MULTICAST
 	AX = 000Ah
-	BX = protocol ID (see #2096)
+	BX = protocol ID (see #2253)
 	ES:DI -> multicast address (6 bytes)
-Return: AX = completion code (see #2093)
+Return: AX = completion code (see #2250)
 SeeAlso: AX=0009h,AX=0014h
 --------N-7C000B-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - GET PROTOCOL LIST
 	AX = 000Bh
 	ES:DI -> protocol ID buffer
 	CX = number of 2-byte protocol IDs that may be stored in buffer
-Return: AX = completion code (see #2093)
+Return: AX = completion code (see #2250)
 	CX = number of active protocols (regardless of value returned in AX)
 	protocol ID buffer filled with active protocol IDs
 Program: SK-UPPS is the Schneider & Koch Universal Portable Protocol Stack,
@@ -5204,27 +5204,27 @@ SeeAlso: AX=000Ch,AX=0014h
 --------N-7C000C-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - GET PROTOCOL STATUS
 	AX = 000Ch
-	BX = protocol ID (see #2096,AX=000Bh)
-	ES:DI -> Protocol Status Block (see #2103)
-Return: AX = completion code (see #2093)
+	BX = protocol ID (see #2253,AX=000Bh)
+	ES:DI -> Protocol Status Block (see #2260)
+Return: AX = completion code (see #2250)
 SeeAlso: AX=000Bh,AX=0014h
 
 Format of SK-UPPS Protocol Status Block (PSB):
-Offset	Size	Description	(Table 2103)
+Offset	Size	Description	(Table 2260)
  00h	DWORD	-> ASCIZ protocol name
- 04h	WORD	protocol mode (see #2097)
+ 04h	WORD	protocol mode (see #2254)
  06h	WORD	protocol type (see AX=0007h)
  08h	WORD	number of registered multicasts (see AX=0009h,AX=0014h)
 --------N-7C000D-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - GET DRIVER STATISTICS
 	AX = 000Dh
 	BX = flag: 0=don't clear statistics, 1=clear statistics
-	ES:DI -> Statistics Data Block (see #2104)
-Return: AX = completion code (see #2093)
+	ES:DI -> Statistics Data Block (see #2261)
+Return: AX = completion code (see #2250)
 SeeAlso: AX=0002h,AX=0015h
 
 Format of SK-UPPS Statistics Data Block (SDB):
-Offset	Size	Description	(Table 2104)
+Offset	Size	Description	(Table 2261)
  00h	DWORD	node uptime in ticks (1/18.21 sec.)
  04h	DWORD	bytes received
  08h	DWORD	bytes transmitted
@@ -5247,10 +5247,10 @@ Note:	fields 26h through 2Ch are always zero, except in some very old
 --------N-7C000E-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - DLI 2.5+ - GET DRIVER INFO
 	AX = 000Eh
-	ES:DI -> Driver Information Block (see #2105)
+	ES:DI -> Driver Information Block (see #2262)
 	BX = offset of 1st field within DIB to be returned
 	CX = number of bytes to be returned
-Return: AX = completion code (see #2093)
+Return: AX = completion code (see #2250)
 	CX = number of bytes copied (regardless of value returned in AX)
 Program: SK-UPPS is the Schneider & Koch Universal Portable Protocol Stack,
 	  which provides an API on top of its Data Link Interface, allowing the
@@ -5258,7 +5258,7 @@ Program: SK-UPPS is the Schneider & Koch Universal Portable Protocol Stack,
 SeeAlso: AX=0000h,AX=0002h,AX=000Bh,AX=000Dh,AX=0015h
 
 Format of SK-UPPS Driver Information Block (DIB):
-Offset	Size	Description	(Table 2105)
+Offset	Size	Description	(Table 2262)
  00h  6 BYTEs	physical node address (from adapter's ROM)
  06h  6 BYTEs	current node address (see AX=0003h)
  0Ch	BYTE	adapter id (defined by OEM)
@@ -5268,7 +5268,7 @@ Offset	Size	Description	(Table 2105)
  16h	WORD	base I/O port (zero if none)
  18h	BYTE	DMA line (FFh if none)
  19h	BYTE	DLI 2.4+ topology (see AX=0000h)
- 1Ah	WORD	size of an Mbuf's DATA area (see #2094)
+ 1Ah	WORD	size of an Mbuf's DATA area (see #2251)
  1Ch  2 BYTEs	reserved (currently unused)
  1Eh	WORD	total number of Mbufs the DLI has
  20h	WORD	maximum number of Mbufs that can be allocated via REQUEST
@@ -5280,7 +5280,7 @@ Offset	Size	Description	(Table 2105)
 --------N-7C000F-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - FEED BACK BUFFER
 	AX = 000Fh
-	ES:BX -> Mbuf (see #2094)
+	ES:BX -> Mbuf (see #2251)
 Return: nothing
 Notes:	A protocol may call this function instead of returning the Mbuf
 	  directly from the Receive Upcall if it is running in "promiscuous",
@@ -5304,16 +5304,16 @@ SeeAlso: AX=0010h
 --------N-7C0012-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - SYNC REQUEST BUFFER
 	AX = 0012h
-	DX = protocol ID (see #2096)
-Return: AX = completion code (see #2093)
-	if AX=0000h: ES:BX -> Mbuf (see #2094)
+	DX = protocol ID (see #2253)
+Return: AX = completion code (see #2250)
+	if AX=0000h: ES:BX -> Mbuf (see #2251)
 Note:	If the protocol wants to be informed when an Mbuf becomes available,
 	  REQUEST BUFFER (AX=0004h) should be used instead.
 SeeAlso: AX=0004h,AX=0005h,AX=0006h,AX=0013h
 --------N-7C0013-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - TRANSMIT FRAME RELEASE
 	AX = 0013h
-	ES:BX -> Mbuf (see #2094)
+	ES:BX -> Mbuf (see #2251)
 Return: nothing
 Notes:	Returns immediately; The protocol's Transmit Upcall will NOT be called.
 	The Mbuf may no more be used by the protocol in any way (i.e. the
@@ -5322,10 +5322,10 @@ SeeAlso: AX=0004h,AX=0013h
 --------N-7C0014-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - GET MULTICAST LIST
 	AX = 0014h
-	BX = protocol ID (see #2096,AX=000Bh)
+	BX = protocol ID (see #2253,AX=000Bh)
 	ES:DI -> multicast address buffer
 	CX = number of 6-byte multicast addresses that may be stored in buffer
-Return: AX = completion code (see #2093)
+Return: AX = completion code (see #2250)
 	CX = number of registered multicast addresses for this protocol
 	  (regardless of value returned in AX)
 	multicast address buffer filled with multicast addresses registered for
@@ -5337,16 +5337,16 @@ SeeAlso: AX=000Bh,AX=0009h,AX=000Ch
 --------N-7C0015-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - DLI 2.6+ - GET MEDIA STATISTICS
 	AX = 0015h
-	ES:DI -> media-specific statistics buffer (see #2106,#2107,#2108)
+	ES:DI -> media-specific statistics buffer (see #2263,#2264,#2265)
 	BX = offset of 1st field within MSS to be returned
 	CX = number of bytes to be returned
-Return: AX = completion code (see #2093)
+Return: AX = completion code (see #2250)
 	CX = number of bytes copied (regardless of value returned in AX)
 Note:	not supported by all DLIs (will return AX=FFFFh if not supported).
 SeeAlso: AX=0000h,AX=000Dh
 
 Format of SK-UPPS media-specific statistics for Ethernet:
-Offset	Size	Description	(Table 2106)
+Offset	Size	Description	(Table 2263)
  00h	DWORD	alignment errors
  04h	DWORD	frame check sequence (FCS) errors
  08h	DWORD	single collision frames
@@ -5364,7 +5364,7 @@ Offset	Size	Description	(Table 2106)
  38h	DWORD	internal MAC receive errors
 
 Format of SK-UPPS media-specific statistics for FDDI:
-Offset	Size	Description	(Table 2107)
+Offset	Size	Description	(Table 2264)
  00h	DWORD	SMT operating version id (refer to ANSI 7.1.2.2)
  04h	DWORD	SMT CF state: 1=Isolated, 2= Wrap_S, 3=Wrap_A, 4=Wrap_B,
 		  5=Wrap_AB, 6=Thru (refer to ANSI SMT 9.7.4.3)
@@ -5385,7 +5385,7 @@ Offset	Size	Description	(Table 2107)
  34h	DWORD	attachment optical bypass present: 1=true, 2=false
 
 Format of SK-UPPS media-specific statistics for Token-Ring:
-Offset	Size	Description	(Table 2108)
+Offset	Size	Description	(Table 2265)
  00h  6 BYTEs	upstream neighbour
  06h	WORD	local ring number
  08h	DWORD	ring up count
@@ -5422,7 +5422,7 @@ SeeAlso: AX=0001h
 --------N-7C0017-----------------------------
 INT 7C - SK-UPPS Data Link Interface API - DLI 2.8+ - INTERRUPT REQUEST
 	AX = 0017h
-Return: AX = completion code (see #2093)
+Return: AX = completion code (see #2250)
 Notes:	not supported by all DLIs (will return AX=FFFFh, if not supported).
 	must be called with interrupts disabled; when the client re-enables
 	  interrupts, an interrupt will be generated and reported to the client
@@ -5451,7 +5451,7 @@ Note:	this vector is hooked but immediately passed on (without checking
 	  below.
 
 Format of HyperPAD data area:
-Offset	Size	Description	(Table 2109)
+Offset	Size	Description	(Table 2266)
  -16h	DWORD	pointer to ??? FAR function
  -12h	DWORD	pointer to callback setting function
 		[C calling conventions, (*callback)(int (_loadds far *)()) ]
@@ -5487,7 +5487,7 @@ Desc:	arbitrate the use of the bus and select the specified target device
 ----------7D02-------------------------------
 INT 7D - SCSILink - SEND COMMAND
 	AH = 02h
-	ES:BX -> parameter block (see #2110)
+	ES:BX -> parameter block (see #2267)
 Return: CF clear if successful
 	CF set on error
 	    AL = initiator error
@@ -5496,24 +5496,24 @@ Desc:	send the specified command block to the target device and perform any
 	  related I/O
 
 Format of SCSILink parameter block:
-Offset	Size	Description	(Table 2110)
+Offset	Size	Description	(Table 2267)
  00h	DWORD	size of command block
- 04h	DWORD	address of command block (see #2111)
+ 04h	DWORD	address of command block (see #2268)
  08h	DWORD	size of buffer
  0Ch	DWORD	address of buffer
 
 Format of SCSILink command block:
-Offset	Size	Description	(Table 2111)
+Offset	Size	Description	(Table 2268)
  00h		info not yet available
 ----------7D03-------------------------------
 INT 7D - SCSILink - SET TIMEOUT
 	AH = 03h
-	AL = timeout selector (see #2112)
+	AL = timeout selector (see #2269)
 	BX = new value in 55ms ticks
 Desc:	change an internal timeout value to allow communication with very
 	  slow targets
 
-(Table 2112)
+(Table 2269)
 Values for SCSILink timeout selector:
  00h	time to wait for bus (default 18)
  01h	time to wait for new phase (default 5)
@@ -5585,6 +5585,13 @@ Notes:	this vector is overwritten when GO32 starts but is not restored by
 	the newest versions of GO32 dynamically allocate the vectors used
 	  for the relocated IRQs, much as DESQview does (see INT 50"DESQview")
 SeeAlso: INT 0E,INT 7D"GO32",INT 7F"GO32"
+--------s-7E00FE-----------------------------
+INT 7E - SBOS - UNINSTALL
+	AX = 00FEh
+Return: nothing, SBOS removed
+Program: SBOS is a SoundBlaster emulator for the Gravis UltraSound
+Note:	this function may not be called if any SBOS vectors have been hooked
+SeeAlso: INT 21/AX=FD12h
 --------m-7E5857BL57-------------------------
 INT 7E - XLOAD - INSTALLATION CHECK
 	AX = 5857h
@@ -5607,1955 +5614,5 @@ INT 7E - XLOAD - GET XLOAD MEMORY SIZE
 Return: AX = 0000h
 	CX = segment of XLOAD TSR
 	DX = size of memory block in which XLOAD TSR is located
-SeeAlso: AX=5857h/BL=57h/AX=5857h/BL=5Ah
---------V-7F---------------------------------
-INT 7F - IBM XGA - ???
---------V-7F---------------------------------
-INT 7F - Halo88 - API
-	BX = function number (see #2113)
-	additional parameters on stack
-Return: ???
-Program: Halo88 is a suite of graphics routines
-Note:	according to Stuart Kemp, the code appears to make no provisions for
-	   chaining
-
-(Table 2113)
-Values for Halo88 API function:
- 64h	arc
- 65h	bar
- 66h	box
- 67h	circle
- 68h	clr
- 69h	default hatch style
- 6Ah	default line style
- 6Bh	delhcur
- 6Ch	delln / deltcur
- 6Dh	ellipse
- 6Eh	fill
- 6Fh	flood
- 70h	flood2
- 71h	init graphics
- 72h	init hcur
- 73h	init marker
- 74h	init tcur
- 75h	inqarc
- 76h	inqbknd
- 77h	inqclr
- 78h	inqerr
- 79h	inqgcur
- 7Ah	inqhcur
- 7Bh	inqmarker
- 7Dh	inqtcur
- 7Eh	inqtext
- 7Fh	lnabs
- 80h	lnrel
- 81h	markerabs
- 82h	markerrel
- 83h	moveabs
- 84h	movehcurabs
- 85h	movehcurrel
- 86h	moverel
- 87h	movetcurabs
- 88h	movetcurrel
- 89h	movefrom
- 8Ah	moveto
- 8Bh	pie
- 8Ch	polylnabs
- 8Dh	polylnrel
- 8Eh	ptabs
- 8Fh	ptrel
- 91h	setasp
- 92h	set color
- 93h	set font
- 94h	set hatch	style
- 95h	set line style
- 97h	settext
- 98h	set text color
- 99h	btext
- 9Ah	setseg
- 9Bh	display
- 9Ch	setscreen
- 9Eh	close graphics
- 9Fh	ftinit
- A0h	ftlocate
- A1h	ftext
- A5h	set viewport
- A6h	set window
- A7h	set world
- AAh	ftcolor
- ACh	initlp
- ADh	inqasp
- AEh	inqdev
- AFh	inqdisplay
- B0h	inqft
- B1h	inqftcolor
- B2h	inqinterlace
- B3h	inqlpa
- B4h	inqlpg
- B5h	inqmode
- B6h	inqscreen
- B7h	inqversion
- B8h	roam
- B9h	scroll
- BAh	setieee
- BBh	set interlace
- BCh	shift
- BDh	start graphics
- BEh	vpan
- CBh	gwrite
- CCh	gread
- CDh	setxor
- CEh	rbox
- CFh	rcir
- D0h	rlnabs
- D1h	rlnrel
- D2h	delbox
- D3h	delcir
- D5h	setseg2
- DCh	worldoff
- DDh	mapwtod
- DEh	mapdtow
- DFh	mapwton
- E0h	mapntow
- E1h	mapdton
- E2h	mapntod
- E3h	inqworld
- E4h	inqviewport
- E5h	set line width
- E6h	lnjoint
- E7h	set locator
- E8h	read locator
- E9h	setdev
- EBh	setstext
- ECh	setstclr
- EDh	setstang
- EEh	stext
- EFh	inqstext
- F0h	setdegree
- F1h	inqstsize
- F2h	polyfabs
- F3h	polyfrel
- F4h	inqdrange
- F5h	inqstang
- F6h	orglocator
- F7h	inqlocator
- F8h	inqarea
- F9h	setipal
- FAh	setborder
- FBh	inqcrange
- FEh	setclip
- FFh	fcir
-100h	setcrange
-101h	setdrange
-102h	setlattr
-103h	polycabs
-104h	polycrel
-108h	memcom
-109h	memexp
-10Ah	memmov
-10Eh	movefx
-10Fh	movetx
-110h	inqrgb
-111h	save image
-112h	restore image
-113h	setapal
-114h	setxpal
-118h	inqtsize
-12Eh	gprint
-130h	setprn
-131h	setpattr
-133h	setbattr
-135h	pexpand
-136h	ptnorm
-137h	pfnorm
-13Bh	inqprn
-13Ch	lopen
-13Dh	lclose
-13Eh	lappend
-13Fh	lrecord
-140h	lswitch
-142h	inqfun
-15Dh	lsetup
-15Eh	lrest
-15Fh	lsave
---------N-7F---------------------------------
-INT 7F - CONVERGENT TECHNOLOGIES ClusterShare CTOS ACCESS VECTOR
-	AL = request ID
-	    01h "Request"/"RequestDirect"
-		ES:BX -> pRq
-		DX ignored
-	    04h "Wait"
-		ES:BX -> ppMsgRet
-		DX = exchange
-	    05h "AllocExch"
-		ES:BX -> pExchRet
-	    06h "DeAllocExch"
-		DX = exchange
-	    07h "Check"
-		ES:BX -> ppMsgRet
-		DX = exchange
-	CX = 4354h ('CT')
-Return: AX = status
-	    0000h successful
---------S-7F---------------------------------
-INT 7F - Telebit ACS SERIAL I/O
-	ES:SI-> parameter block (see #2114)
-Return: CF set on error
-	CF clear on success
-Notes:	the signature "PDGATEWRKSTNIF" appears just prior to the interrupt
-	  handler; this serves as the installation check
-Index:	installation check;Telebit ACS Serial I/O
-
-Format of Telebit ACS parameter block:
-Offset	Size	Description	(Table 2114)
- 00h	BYTE	command (see #2115)
- 01h	BYTE	gateway number
- 02h	BYTE	reserved
- 03h	BYTE	port
- 04h 17 BYTEs	auxiliary buffer
- 15h	BYTE	session
- 16h	WORD	count of bytes passed to API
- 18h	DWORD	buffer pointer passed to/from API
- 1Ch	WORD	count of bytes passed from API
- 1Eh	BYTE	return code (see #2116)
-
-(Table 2115)
-Values for Telebit ACS command:
- 3Ch	status
- 3Dh	connect
- 3Eh	disconnect
- 3Fh	read
- 40h	data/command write
- 41h	clear receive buffer
- 42h	get configuration
- 43h	get receiver status
- 44h	raw write
- 45h	search servers
- 46h	set transmit buffer size
-
-(Table 2116)
-Values for Telebit ACS return code:
- 00h	success
- 01h	invalid session
- 05h	servername invalid
- 06h	NetWare fileserver bindery is locked
- 07h	communication server not active
- 08h	general failure in NetWare fileserver
- 09h	not logged into a fileserver
- 10h	connection table full
- 11h	no response from communication server
- 12h	connection attempt terminated abnormally
- 13h	connection refused - no sessions available
- 14h	gateway number/port already in use
- 15h	invalid connection response
- 16h	port invalid
- 17h	incorrect version in server response
- 18h	gateway number/port combination not configured
- 19h	initialization has not been completed
- 20h	no more sockets are available
- 21h	no active poolname
- 23h	FATAL internal interface error
- 24h	registration of host workstation failed - name is already in use
- 25h	registration of host workstation failed - workstation name table full
- 26h	registration of host workstation failed - only one session may be
-	  registered for dial-in
- FFh	Telebit ACS API is busy - retry later
---------N-7F---------------------------------
-INT 7F - Non-dedicated NetWare 2.x File Server - ENTER CONSOLE MODE
-Notes:	the installation check consists of checking for the signature "Lynn"
-	  in the four bytes preceding the interrupt handler; if present, the
-	  current program is running as a DOS task on a non-dedicated NetWare
-	  2.x file server.
-	Before placing the server into "console" mode, it is recommended that
-	  NetWare broadcast messages be disabled with INT 21/AX=DE00h.
-SeeAlso: INT 21/AX=DE00h
-Index:	installation check;non-dedicated NetWare server
---------S-7F---------------------------------
-INT 7F U - YTERM - ???
-SeeAlso: INT 7E"YTERM"
---------E-7F---------------------------------
-INT 7F - DJGPP GO32.EXE DOS EXTENDER - RELOCATED IRQ7
-Notes:	this vector is overwritten when GO32 starts but is not restored by
-	  early versions of the DOS extender
-	the newest versions of GO32 dynamically allocate the vectors used
-	  for the relocated IRQs, much as DESQview does (see INT 50"DESQview")
-SeeAlso: INT 0F,INT 7E"GO32"
-----------7F---------------------------------
-INT 7F - Canon IXHND2 Scanner Interface
---------N-7F---------------------------------
-INT 7F - Alloy 386/MultiWare (MW386), Novell-Type Network Executive (NTNX)
-Notes:	the words at C800h:0000h and C800h:0002h will both be 584Eh if the
-	  MW386 multitasking system is present (i.e. signature "NXNX")
-	NTNX allows its API to be placed on a different interrupt than 7Fh at
-	  load time.  To determine the actual vector used, open the device
-	  "SPOOLER" with INT 21/AX=3D02h, place it in RAW mode with
-	  INT 21/AX=4400h and INT 21/AX=4401h, then read one byte which will
-	  be the actual interrupt number being used; the other interrupts may
-	  be found with INT 7F/AH=09h/CL=03h
---------N-7F---------------------------------
-INT 7F - Alloy NetWare Support Kit (ANSK) v2.2+ - INSTALLATION CHECK
-Note:	a program may determine that it is running on an ANSK Slave by checking
-	  the five bytes at F000h:0000h for the ASCIZ signature "ANSK"; this
-	  address is RAM, and should not be written.  However, the above check
-	  will not work on Slaves with <1MB RAM or those using the SLIM.SYS
-	  device driver
---------N-7F00-------------------------------
-INT 7F - Alloy NTNX, MW386 - SEMAPHORE LOCK AND WAIT
-	AH = 00h
-	DS:DX -> ASCIZ semaphore name (max 64 bytes)
-Return: AL = status (see #2117)
-	AH = semaphore owner if status=02h
-SeeAlso: AH=01h,AH=02h,AH=41h,INT 67/AH=00h
-
-(Table 2117)
-Values for Alloy function status:
- 00h	successful
- 01h	invalid function
- 02h	semaphore already locked
- 03h	unable to lock/unlock semaphore
- 04h	semaphore space exhausted
- 05h	host/target PC did not respond (NTNX)
---------N-7F00-------------------------------
-INT 7F - G8BPQ - proposed addition - GET NODE/SWITCH VERSION AND DESCRIPTION
-	AH = 00h
-	ES:SI -> buffer for "USERS" text string
-Return: AH = major version
-	AL = minor version
-	CX = length of returned string
-Program: the G8BPQ AX25 Networking Package is amateur packet radio software by
-	  John Wiseman which allows a PC to act as a node in an AX.25 network
-SeeAlso: AH=01h"G8BPQ",AH=09h"G8BPQ"
---------N-7F01-------------------------------
-INT 7F - Alloy NTNX, MW386 - SEMAPHORE LOCK
-	AH = 01h
-	DS:DX -> ASCIZ semaphore name (max 64 bytes)
-Return: AL = status (see #2117)
-	AH = semaphore owner if status=02h
-SeeAlso: AH=00h,AH=02h,AH=41h
---------V-7F01-------------------------------
-INT 7F - TIGA Communications Driver v2.05 - GET ENTRY POINTS
-	AH = 01h
-Return: BX = 1234h if installed
-	    DX:AX -> array of FAR entry points
-	    CH = driver major version
-	    CL = driver minor version
-Note:	TIGACD 2.05 returns CF set on unrecognized functions in AX
-SeeAlso: AX=1234h,AX=4321h
---------N-7F01-------------------------------
-INT 7F - G8BPQ v4.00+ - HOST MODE - SET APPLICATION FLAGS AND MASK
-	AH = 01h
-	AL = stream number (01h-40h)
-	CL = new application flags
-	    bit 7: monitored frames available via AH=0Bh"G8BPQ"
-	DL = new application mask
-Program: the G8BPQ AX25 Networking Package is amateur packet radio software by
-	  John Wiseman which allows a PC to act as a node in an AX.25 network
-Range:	INT 00h to INT FFh, set in configuration file BPQCFG.TXT for v4.03+
-	  (earlier versions were hard-wired for INT 7F)
-SeeAlso: AH=00h"G8BPQ",AH=02h"G8BPQ",AH=0Bh"G8BPQ"
---------I-7F0104BX0000-----------------------
-INT 7F - HLLAPI (IBM 3270 High-Level Language API)/LLAPI (Rabbit Low Level API)
-	AX = 0104h (HLLAPI gate ID)
-	BX = 0000h
-	DS:SI -> parameter control block (see #2118)
-Return: parameter control block updated
-Note:	the installation check for the Novell HLLAPI TSR is the signature
-	  string "CXI" (for the company Novell bought) immediately prior to
-	  the interrupt handler
-SeeAlso: AX=0105h,AX=ABCDh
-
-Format of HLLAPI parameter control block:
-Offset	Size	Description	(Table 2118)
- 00h  3 BYTEs	signature = 'PCB'
- 03h	BYTE	function number (see #2119,#2120)
- 04h	WORD	segment of control string
- 06h	WORD	offset of control string
- 08h	WORD	length of control string, unless explicit end-of-str char set
- 0Ah	BYTE	unused (IBM)
-		ControlString[0] (Rabbit)
- 0Bh	WORD	return code (see #2122)
- 0Dh	WORD	maximum length of control string (IBM)
-		unused (Rabbit)
-
-(Table 2119)
-Values for HLLAPI function number:
- 00h	OEM function (Query system for Attachmate implementation)
- 01h	Connect presentation space
- 02h	Disconnect presentation space
- 03h	Send string of keystrokes as if typed from keyboard
- 04h	Wait ~60s, returns status of presentation space
- 05h	Copy current presentation space into a user-defined buffer
- 06h	Search presentation space for first occurrence of a specified string
- 07h	Query cursor location in current presentation space
- 08h	Copy part or all of current presentation space into user buffer
- 09h	Set session parameters; parameters vary by vendor (see #2121)
- 0Ah	Get info on sessions currently connected
- 0Bh	Lock current presentation space
- 0Ch	Unlock previously locked presentation space
- 0Dh	Return copy of operator info area (OIA) of current presentation space
- 0Eh	get attribute byte for given position in the current presentation space
- 0Fh	copy string of characters to the current presentation space
- 10h	workstation control functions
- 11h	storage manager functions, intended primarily for BASIC applications
-	(not implemented by Rabbit)
- 12h	set delay period in half-second intervals
- 14h	get info on level of workstation support used
- 15h	reset session parameters to default values
- 16h	get detailed info on the current session
- 17h	start host notification to application on presentation sp or OIA update
- 18h	check host update when host notification enabled
- 19h	stop host notification
- 1Eh	search field within current presentation space for string
- 1Fh	get first positionof a selected field in the current presentation space
- 20h	get length of specified field
- 21h	copy string into a specified field
- 22h	copy specified field into a user-defined buffer
- 23h	create alternate presentation space (IBM only), don't use with BASIC
- 24h	switch to alternate presentation space (IBM only), not with BASIC
- 25h	display cursor in specified area (IBM only), don't use with BASIC
- 26h	display alternate presentation space (IBM only), don't use with BASIC
- 27h	delete alternate presentation space (IBM only), don't use with BASIC
- 28h	set cursor
- 29h	start Close Intercept
- 2Ah	query Close Intercept
- 2Bh	stop Close Intercept
- 32h	start intercepting keystrokes to allow filtering
- 33h	get keystrokes after turning on interception
- 34h	notify operator when keystroke rejected by filter subroutine
- 35h	stop intercepting keystrokes
- 5Ah	send file
- 5Bh	receive file
- 5Ch	run a program (not implemented by Rabbit)
- 5Dh	execute DOS command (not implemented by Rabbit)
- 63h	change presentation space position to PC display row/col or vice versa
- 65h	connect to Window Services
- 66h	disconnect from Window Services
- 67h	set/query window coordinates
- 68h	set/query window status
- 69h	change presentation space name
- 78h	connect Structured Fields
- 79h	disconnect Structured Fields
- 7Ah	query size of communications buffer
- 7Bh	allocate communications buffer
- 7Ch	free communications buffer
- 7Dh	get request completion state
- 7Eh	read Structured Fields
- 7Fh	write Structured Fields
- FFh	Get info on DCA implementation
-
-(Table 2120)
-Values for LLAPI function number:
- 80h	initialize LLAPI (internal call)
- 83h	set Session ID (one-character ID)
- 84h	read Session ID (one-character ID)
- 85h	lock 327x keyboard
- 86h	unlock 327x keyboard
- 87h	wait for Clear to Send
- 88h	type ASCII character
- 89h	type 327x key
- 8Ah	read keyboard lock state
- 8Fh	force screen update
- 90h	view session
- 91h	relinquish (suspend foreground until background becomes idle)
- 92h	poke screen character
- 93h	poke translated character
- 94h	peek screen character
- 95h	peek translated character
- 96h	set cursor position
- 97h	send scan code (Rabbit only)
- 98h	synchronize (returns after keystroke queue empty)
- 99h	type PC key (Rabbit only)
-
-(Table 2121)
-Values for HLLAPI Function 09h Session Parameters:
- ASCII		??? (Rabbit only)
- ATTRIB		return attributes in hex
- NOATTRIB	return attributes as blanks
- CONPHYS	make physical connection
- CONLOG		only make logical connection
- EAB		copy extended attribute bytes along with data
- NOEAB		copy data only
- ESC=n		set escape character to "n" (default '@')
- EOT=n		set end of string character (default 00h)
- FPAUSE		full-duration pause
- FTNOWAIT	return immediately from functions 5Ah and 5Bh (Rabbit only)
- FTWAIT		wait for file transfer to complete (Rabbit only)
- IPAUSE		interruptable pause
- RABESC		??? (Rabbit only)
- NORABESC	??? (Rabbit only)
- SCANCODE	??? (Rabbit only)
- STRLEN		use explicit string lengths
- STREOT		use terminated strings
- SRCHALL	search entire presentation space
- SRCHFROM	search from specified offset
- SRCHFRWD	search forward from position 1
- SRCHBKWD	search backward from last position in presentation space
- TIMEOUT=n	??? (Rabbit only)
- TWAIT		wait specified time for keyboard ready
- LWAIT		wait until keyboard ready
- NWAIT		no wait
- TRON		enable tracing
- TROFF		disable tracing
- AUTORESET	send reset before sending keys with function 03h
- NORESET	don't send reset
- QUIET		don't display messages sent with INT 21/AH=09h
- NOQUIET	allow messages to be displayed
- TIMEOUT=n	set timeout in 30-second intervals, 0 = wait until ^Break
- XLATE		translate extended attribute bytes
- NOXLATE	don't translate
- NEWRET		use HLLAPI v3.0 return code conventions
- OLDRET		use HLLAPI v2.0 return code conventions
-
-(Table 2122)
-Values for Windows HLLAPI return code:
- 00h	successful
- 01h	Presentation Space not connected/requested size unavailable
- 02h	invalid function or parameter error/invalid block ID
- 03h	file transfer complete
- 04h	file transfer complete (segmented)/Presentation Space busy
- 05h	inhibited or keyboard locked
- 06h	data truncated
- 07h	invalid Presentation Space position
- 08h	operation not available
- 09h	system error
- 0Ah	blocking error
- 0Bh	resource not available
- 0Ch	session stopped
- 14h	undefined key combination
- 15h	OIA updated
- 16h	Presentation Space updated
- 17h	both Presentation Space and OIA updated
- 18h	no such field
- 19h	no keystrokes available
- 1Ah	Presentation Space or Operator Information Area changed
- 1Bh	file transfer aborted
- 1Ch	zero-length field
- 1Eh	cursor type invalid
- 1Fh	keystroke overflow
- 20h	another application is already connected
- 22h	message sent to host cancelled
- 23h	transmission from host cancelled
- 24h	lost contact with host
- 25h	function successful
- 26h	function incomplete
- 27h	a DDM session is already connected
- 28h	disconnected, but asynchronous requests still pending
- 29h	buffer already in use
- 2Ah	no matching request found
-12Dh	invalid function number
-12Eh	file not found
-131h	access denied
-134h	out of memory
-136h	environment invalid
-137h	format invalid
-270Eh (9998) invalid Presentation Space ID
-270Fh (9999) invalid row or column code
----Windows HLLAPI extensions---
-F000h	asynchronous call already in progress
-F001h	invalid asynchronous task ID
-F002h	blocking call cancelled
-F003h	underlying subsystem not started
-F004h	unsupported application version
---------V-7F0105-----------------------------
-INT 7F - HDILOAD.EXE - 8514/A VIDEO CONTROLLER INTERFACE
-	AX = 0105h
-Return: CF set on error
-	CF clear if successful
-	    CX:DX -> array of FAR pointers to entry points (see #2123)
-Note:	most functions are invoked by pushing the DWORD parameter block pointer
-	  and then performing a FAR call via the appropriate vector of the
-	  entry point array
-SeeAlso: AX=0104h,AX=ABCDh
-
-(Table 2123)
-Values for HDILOAD function number: (do FAR call via entry_points+4*function)
- 08h	HOPEN
- 09h	HSMX
- 10h	HINT
- 13h	HLDPAL
- 15h	HBBW
- 17h	HBBR
- 18h	HBBCHN
- 19h	HBBC
- 1Dh	HQMODE
- 20h	HRECT
- 22h	HCLOSE
- 30h	HINIT
- 31h	HSYNC
- 39h	HSPAL
- 3Ah	HRPAL
---------N-7F02-------------------------------
-INT 7F - Alloy NTNX, MW386 - RELEASE SEMAPHORE
-	AH = 02h
-	DS:DX -> ASCIZ semaphore name (max 64 bytes)
-Return: AL = status (see #2117)
-	AH = semaphore owner if status=02h
-SeeAlso: AH=00h,AH=01h,AH=42h
---------N-7F02-------------------------------
-INT 7F - G8BPQ v4.00+ - HOST MODE - SEND FRAME
-	AH = 02h
-	AL = stream number (01h-40h)
-	CX = length of frame
-	ES:SI -> frame to be sent
-SeeAlso: AH=03h"G8BPQ",AH=07h"G8BPQ",AH=0Ah"G8BPQ"
---------f-7F0200-----------------------------
-INT 7F - Btrieve Multi-User - GIVE UP TIME???
-	AX = 0200h
-SeeAlso: INT 2F/AX=AB01h,INT 2F/AX=AB02h,INT 7B"Btrieve"
---------N-7F03-------------------------------
-INT 7F - Alloy ANSK, NTNX, MW386 - GET USER NUMBER
-	AH = 03h
-Return: AL = user number
-	AH = machine number (MW386)
-Note:	this function call is the recommended method for a CPU-bound process to
-	  prevent its priority from being lowered
-SeeAlso: AH=04h,AH=05h,AH=A1h
---------N-7F03-------------------------------
-INT 7F - G8BPQ v4.00+ - HOST MODE - RECEIVE FRAME
-	AH = 03h
-	AL = stream number (01h-40h)
-	ES:DI -> buffer for frame (must be large enough for a full frame; 350
-		  bytes is usually sufficient)
-Return:	BX = number of pending frames (0000h if returned frame was last avail)
-	CX = length of received frame
-SeeAlso: AH=02h"G8BPQ",AH=07h"G8BPQ",AH=0Bh"G8BPQ"
---------N-7F04-------------------------------
-INT 7F - Alloy NTNX, MW386 - GET NUMBER OF USERS
-	AH = 04h
-Return: AL = total number of users on currrent machine (MW386)
-	AL = number of slaves on system (NTNX)
-SeeAlso: AH=03h
---------N-7F04-------------------------------
-INT 7F - G8BPQ v4.00+ - HOST MODE - GET STREAM STATUS
-	AH = 04h
-	AL = stream number (01h-40h)
-Return: CX = state (0000h disconnected, 0001h connected)
-	DX = delta state (0000h no change, 0001h changed since last check)
-SeeAlso: AH=02h"G8BPQ",AH=05h"G8BPQ"
---------N-7F05-------------------------------
-INT 7F - Alloy NTNX (Host) - LOCK/UNLOCK SYSTEM, SPOOLER CONTROL
-	AH = 05h
-	AL = function
-	    00h lock system (disable slave services)
-	    01h unlock system
-	    02h enable spooler
-	    03h disable spooler
-	    04h enable slave timer update
-	    05h disable slave timer update
-	    06h enable form feeds
-	    07h disable form feeds
-SeeAlso: INT 17/AH=A4h
---------N-7F05-------------------------------
-INT 7F - Alloy NTNX (Slave), MW386 - GET USER PARAMETERS
-	AH = 05h
-	DX:DI -> buffer for user information record (see #2124)
-Notes:	MW386 provides this function for backward compatibility only, and sets
-	  many of the fields to zero because they are meaningless under MW386
-	this function has no effect when called by the host (user 0)
-SeeAlso: AH=03h
-
-Format of Alloy user information record:
-Offset	Size	Description	(Table 2124)
- 00h	WORD	segment of video RAM
- 02h	WORD	segment of secondary copy of video RAM
- 04h	WORD	offset of screen update flag (see INT 10/AH=8Bh)
-		flag nonzero if update needed
- 06h	WORD	video NMI enable port
-		(not used by MW386, set to 0000h)
- 08h	WORD	video NMI disable port
-		(not used by MW386, set to 0000h)
- 0Ah	BYTE	processor type
-		00h 8088
-		01h V20
-		02h 8086
-		03h V30
-		06h 80386
- 0Bh	WORD	multitasking flag (00h = single tasking, 01h = multitasking)
-		(not used by MW386, set to 0000h)
- 0Dh	WORD	offset of terminal driver
-		(not used by MW386, set to 0000h)
- 0Fh	BYTE	port for console I/O
-		(not used by MW386, set to 0000h)
- 10h	WORD	offset of processor communication busy flag
-		bit 7 set when slave communicating with host
- 12h	WORD	pointer to FAR NX system call
-		(not used by MW386, set to 0000h)
- 14h	WORD	offset of 16-byte user configuration record (see AH=38h)
- 16h	WORD	offset of command/status word
- 18h	WORD	offset of screen valid flag (see INT 10/AH=93h)
-		nonzero if screen must be repainted
- 1Ah	WORD	offset of screen repaint flag
- 1Ch	WORD	pointer to NEAR NX system call
-		(not used by MW386, set to 0000h)
- 1Eh	WORD	offset for intercept flags
-		(not used by MW386, set to 0000h)
-		intercept flag = FFh if MS-DOS intercepts should be disabled
- 20h	WORD	offset of terminal lock flag (see INT 10/AH=92h)
-		lock flag = FFh if backgrnd screen updates should be suspended
- 22h 26 BYTEs	reserved
---------N-7F05-------------------------------
-INT 7F - G8BPQ v4.00+ - HOST MODE - ACKNOWLEDGE STREAM STATUS CHANGE
-	AH = 05h
-	AL = stream number (01h-40h)
-Note:	this function must be called in order to receive a report of another
-	  status change
-SeeAlso: AH=04h"G8BPQ"
---------N-7F06-------------------------------
-INT 7F - Alloy NTNX (Host) - GET SHARED DRIVE INFO
-	AH = 06h
-	AL = drive number (1=A:, 2=B:, etc)
-	ES:DI -> drive info record (see #2125)
-Return: AX = status
-	    0000h successful
-		ES:DI buffer filled
-	    0001h not shared drive
-
-Format of Alloy drive info record:
-Offset	Size	Description	(Table 2125)
- 00h	WORD	segment of drive IO-REQUEST structure (MS-DOS DPB)
- 02h	WORD	segment of allocation map (owner table)
-		one byte per FAT entry, containing user ID owning that entry
- 04h	WORD	segment of master FAT for drive (copy of FAT on disk)
- 06h	WORD	pointer to configuration file
- 08h	WORD	total number of clusters
- 0Ah	WORD	bytes per sector
- 0Ch	WORD	sectors per cluster
- 0Eh	BYTE	FAT type (0Ch = 12-bit, 10h = 16-bit)
---------N-7F06-------------------------------
-INT 7F - Alloy NTNX (Slave) - ALLOCATE FREE CLUSTER ON SHARED DRIVE
-	AH = 06h
-	DL = drive number (1=A:,2=B:,etc)
-	CX = number of clusters to allocate
-Return: AH = status
-	    00h successful
-		CX = number of clusters still free
-	    10h invalid shared drive request
-		CL = first and second shared drives
-	    11h invalid cluster count (must be 01h-FFh)
---------N-7F06-------------------------------
-INT 7F - G8BPQ v4.00+ - HOST MODE - SESSION CONTROL
-	AH = 06h
-	AL = stream number (01h-40h)
-	CX = subfunction
-	    0000h connect to node
-		DL bit 0: use BBS callsign instead of Node Call
-	    0001h connect to node
-		use BBS Call if APPLMASK=1
-	    0002h disconnect
-	    0003h return user to node
-SeeAlso: AH=01h"G8BPQ",AH=04h"G8BPQ"
---------N-7F07-------------------------------
-INT 7F - Alloy NTNX, MW386 - GET LIST OF SHARED DRIVES
-	AH = 07h
-Return: ES:DI -> shared drive list (see #2126)
-Note:	MW386 considers all fixed disks to be shared drives; only C and D will
-	  be returned as shared
-
-Format of Alloy shared drive list:
-Offset	Size	Description	(Table 2126)
- 00h	BYTE	string length
- 01h	BYTE	number of shared drives
- 02h  N BYTEs	one byte per shared drive
---------N-7F07-------------------------------
-INT 7F - G8BPQ v4.00+ - HOST MODE - GET BUFFER COUNTS FOR STREAM
-	AH = 07h
-	AL = stream number (01h-40h)
-Return: BX = number of pending receive frames
-	CX = number of unacknowledged sent frames
-	DX = number of buffers available
-SeeAlso: AH=02h"G8BPQ",AH=03h"G8BPQ"
---------N-7F08-------------------------------
-INT 7F - Alloy NTNX (Host) - GET INTERRUPT VECTORS
-	AH = 08h
-	CL = function
-	    00h get original interrupt vector
-	    01h get Network Executive interrrupt
-	AL = interrupt number
-	DX:SI -> DWORD to hold interrupt vector
-Return: AL = status
-	    00h successful
-	    01h interrupt vector not used by network executive
-	    02h invalid subfunction
-Note:	the network executive uses interrupts 02h,08h,09h,0Fh,10h,13h,16h-19h,
-	  1Ch,20h,28h,2Ah,2Fh,5Bh,67h,7Fh,ECh, and F0h-FFh
-SeeAlso: AH=09h/CL=03h,INT 21/AH=35h
---------N-7F08--CL02-------------------------
-INT 7F - Alloy NTNX - SET MESSAGE DISPLAY TIMEOUT
-	AH = 08h
-	CL = 02h
-	DX = timeout in seconds
-Return: AL = status
-	    00h successful
-	    02h invalid subfunction
---------N-7F08-------------------------------
-INT 7F - G8BPQ v4.00+ - HOST MODE - PORT CONTROL/INFORMATION
-	AH = 08h
-	AL = stream number (01h-40h)
-Return: ES:DI -> 10-byte buffer containing blank-padded callsign
-	---v4.05+ ---
-	AL = radio port to which channel is connected (level 2)
-	AH = session type (see #2127)
-	BX = L2 paclen for session
-	CX = maximum frame size
-	DX = L4 window size or 0000h if not L4 circuit
-Program: the G8BPQ AX25 Networking Package is amateur packet radio software by
-	  John Wiseman which allows a PC to act as a node in an AX.25 network
-SeeAlso: AH=01h"G8BPQ",AH=02h"G8BPQ",AH=03h"G8BPQ",AH=0Ah"G8BPQ"
-
-Bitfields for G8BPQ session type:
-Bit(s)	Description	(Table 2127)
- 0	L2LINK
- 1	SESSION
- 2	UPLINK
- 3	DOWNLIND
- 5	BPQHOST
---------T-7F09-------------------------------
-INT 7F - MultiLink Advanced - SET TASK PRIORITY
-	AH = 09h
-	AL = priority (0-7)
-Note:	the installation check consists of ensuring that the interrupt vector
-	  is not pointing at segment 0000h, then checking whether the byte
-	  at offset 0000h in the interrupt handler's segment is E9h
-Index:	installation check;MultiLink Advanced
---------N-7F09-------------------------------
-INT 7F - G8BPQ - proposed addition - GET NODE/APPLICATION CALLSIGN AND ALIAS
-	AH = 09h
-	AL = application
-	    00h node
-	    01h BBS
-	    02h HOST
-	    03h SYSOP
-	BL = what to get (00h callsign, 01h application name)
-	ES:SI -> buffer for callsign/name string
-Return: CX = length of returned string
-SeeAlso: AH=00h"G8BPQ",AH=01h"G8BPQ",AH=0Ch"G8BPQ"
---------N-7F09-------------------------------
-INT 7F - Alloy NTNX - ENABLE/DISABLE MUD FILE CHECKING
-	AH = 09h
-	CL = function
-	    00h enable checking of RTNX.MUD file
-	    01h disable RTNX.MUD checking
---------N-7F09--CL02-------------------------
-INT 7F - Alloy NTNX - SWITCH HOST TO DEDICATED MODE
-	AH = 09h
-	CL = 02h
-Note:	in dedicated mode, the host will only poll for I/O requests from the
-	  slave processors, and not provide workstation services
---------N-7F09--CL03-------------------------
-INT 7F - Alloy NTNX,MW386 - GET ALTERNATE INTERRUPT
-	AH = 09h
-	CL = 03h
-	AL = default interrupt number (67h,7Fh,etc)
-Return: CL = actual interrupt which handles specified interrupt's calls
-SeeAlso: AH=08h
---------N-7F0A--CL00-------------------------
-INT 7F - Alloy NTNX - GET SYSTEM FLAGS
-	AH = 0Ah
-	CL = 00h
-	ES:DI -> buffer for system flags (see #2128)
-Return: ES:DI buffer filled
-Notes:	on a slave, only the NX_Busy flag is returned
-	all three flags are at fixed positions, so this function only needs to
-	  be called once
-	an interrupt handler should only perform DOS or device accesses when
-	  all three flags are 00h
-
-Format of Alloy system flags:
-Offset	Size	Description	(Table 2128)
- 00h	DWORD	pointer to NX_Busy flag (nonzero when communicating with users)
- 04h	DWORD	pointer to device driver busy flag
- 08h	DWORD	pointer to InTimer flag
---------N-7F0A-------------------------------
-INT 7F - G8BPQ v4.00+ - HOST MODE - TRANSMIT RAW (KISS) FRAME
-	AH = 0Ah
-	AL = radio port
-	ES:SI -> buffer containing data to be sent
-	CX = number of bytes to send
-SeeAlso: AH=02h"G8BPQ",AH=08h"G8BPQ",AH=0Bh"G8BPQ"
---------N-7F0B--CL02-------------------------
-INT 7F - Alloy NTNX (Host) - SET/RESET GRAPHICS DOS ON SLAVE
-	AH = 0Bh
-	CL = 02h
-	AL = slave ID number
-	CH = DOS to activate
-	    00h graphics DOS
-	    01h character DOS
-Return: AL = status
-	    00h successful
-	    01h nothing done, proper DOS type already loaded
---------N-7F0B-------------------------------
-INT 7F - G8BPQ v4.00+ - HOST MODE - RECEIVE TRACE (RAW DATA) FRAME
-	AH = 0Bh
-	ES:DI -> buffer for received data (see #2129)
-Return: CX = number of bytes received
-Note:	the specified buffer must be large enough to receive a full frame
-SeeAlso: AH=03h"G8BPQ",AH=08h"G8BPQ",AH=0Ah"G8BPQ"
-
-Format of G8BPQ received data:
-Offset	Size	Description	(Table 2129)
- 00h	WORD	internal control information
- 02h	BYTE	port number (bit 7 set if transmitted frame)
- 03h	WORD	frame length including this header
- 05h	var	user data
---------N-7F0C-------------------------------
-INT 7F - G8BPQ v4.00+ - HOST MODE - UPDATE SWITCH INFORMATION
-	AH = 0Ch
-	DX = function
-	    0001h update beacon text
-		CX = length of data
-		ES:SI -> data to be sent in beacons
-SeeAlso: AH=09h"G8BPQ"
---------N-7F0F-------------------------------
-INT 7F - G8BPQ v4.00+ - HOST MODE - GET TIME MARKER
-	AH = 0Fh
-Return: AX = time marker (clock ticks modulo 64K)
-Program: the G8BPQ AX25 Networking Package is amateur packet radio software by
-	  John Wiseman which allows a PC to act as a node in an AX.25 network
-SeeAlso: AH=01h"G8BPQ",INT 1A/AH=00h
---------N-7F10--CL00-------------------------
-INT 7F - Alloy NTNX, MW386 - CHANNEL CONTROL - OPEN CHANNEL
-	AH = 10h
-	CL = 00h
-	AL = channel number
-	DX:DI -> channel buffer
-Return: AL = status (00h-03h,0Dh) (see #2130)
-Note:	may not be invoked from within a hardware interrupt handler
-SeeAlso: AH=10h/CL=01h,AH=10h/CL=04h,AH=14h/CL=02h
-
-(Table 2130)
-Values for Alloy function status:
- 00h	successful
- 01h	busy
- 02h	channel range error (not 00h-3Fh)
- 03h	invalid subfunction
- 0Ah	channel not open
- 0Ch	channel already locked
- 0Dh	unable to open
---------N-7F10--CL01-------------------------
-INT 7F - Alloy NTNX, MW386 - CHANNEL CONTROL - CLOSE CHANNEL
-	AH = 10h
-	CL = 01h
-	AL = channel number
-Return: AL = status (00h-03h,0Ah) (see #2130)
-Note:	may not be invoked from within a hardware interrupt handler
-SeeAlso: AH=10h/CL=00h,AH=10h/CL=05h
---------N-7F10--CL02-------------------------
-INT 7F - Alloy NTNX, MW386 - CHANNEL CONTROL - LOCK CHANNEL
-	AH = 10h
-	CL = 02h
-	AL = channel number
-Return: AL = status (00h-03h,0Ah,0Ch) (see #2130)
-Note:	may not be invoked from within a hardware interrupt handler
-SeeAlso: AH=10h/CL=03h,AH=10h/CL=06h,AH=10h/CL=08h
---------N-7F10--CL03-------------------------
-INT 7F - Alloy NTNX, MW386 - CHANNEL CONTROL - UNLOCK CHANNEL
-	AH = 10h
-	CL = 03h
-	AL = channel number
-Return: AL = status (00h-03h,0Ah) (see #2130)
-Notes:	should only be used on channels locked with AH=10h/CL=02h, not on those
-	  locked by receipt of a datagram
-	may not be invoked from within a hardware interrupt handler
-SeeAlso: AH=10h/CL=02h,AH=10h/CL=04h,AH=10h/CL=09h
---------N-7F10--CL04-------------------------
-INT 7F - Alloy NTNX, MW386 - CHANNEL CONTROL - RELEASE BUFFER
-	AH = 10h
-	CL = 04h
-	AL = channel number
-Return: AL = status (00h-03h) (see #2130)
-Notes:	unlocks buffer after received datagram has been processed
-	may not be invoked from within a hardware interrupt handler
-SeeAlso: AH=10h/CL=00h
---------N-7F10--CL05-------------------------
-INT 7F - Alloy NTNX, MW386 - CHANNEL CONTROL - CLOSE ALL CHANNELS
-	AH = 10h
-	CL = 05h
-Return: AL = status (00h-03h) (see #2130)
-Notes:	clears all pending datagrams and clears buffer pointers before closing
-	  the channels
-	may not be invoked from within a hardware interrupt handler
-SeeAlso: AH=10h/CL=01h
---------N-7F10--CL06-------------------------
-INT 7F - Alloy NTNX, MW386 - CHANNEL CONTROL - LOCK ALL OPEN CHANNELS
-	AH = 10h
-	CL = 06h
-Return: AL = status (00h-03h) (see #2130)
-Note:	may not be invoked from within a hardware interrupt handler
-SeeAlso: AH=10h/CL=02h,AH=10h/CL=08h
---------N-7F10--CL07-------------------------
-INT 7F - Alloy NTNX, MW386 - CHANNEL CONTROL - UNLOCK ALL LOCKED IDLE CHANNELS
-	AH = 10h
-	CL = 07h
-Return: AL = status (00h-03h) (see #2130)
-Notes:	unlocks all locked channels which have no pending datagrams
-	may not be invoked from within a hardware interrupt handler
-SeeAlso: AH=10h/CL=03h,AH=10h/CL=09h
---------N-7F10--CL08-------------------------
-INT 7F - Alloy NTNX, MW386 - CHANNEL CONTROL - LOCK MULTIPLE CHANNELS
-	AH = 10h
-	CL = 08h
-	DX = maximum channel number to lock
-Return: AL = status (00h-03h) (see #2130)
-Notes:	locks channels numbered 00h through the value in DX
-	may not be invoked from within a hardware interrupt handler
-SeeAlso: AH=10h/CL=02h,AH=10h/CL=06h,AH=10h/CL=09h
---------N-7F10--CL09-------------------------
-INT 7F - Alloy NTNX, MW386 - CHANNEL CONTROL - UNLOCK MULTIPLE CHANNELS
-	AH = 10h
-	CL = 09h
-	DX = maximum channel number to unlock
-Return: AL = status (00h-03h) (see #2130)
-Notes:	unlocks channels numbered 00h through the value in DX
-	may not be invoked from within a hardware interrupt handler
-SeeAlso: AH=10h/CL=03h,AH=10h/CL=07h,AH=10h/CL=08h
---------N-7F11-------------------------------
-INT 7F - Alloy NTNX, MW386 - SEND DATAGRAM
-	AH = 11h
-	DX:SI -> request block (see #2132)
-Return: AL = status (see #2131)
-Note:	if wildcard channel FFh used, actual channel number will be filled in
-SeeAlso: AH=12h
-
-(Table 2131)
-Values for Alloy function status:
- 00h	successful
- 01h	busy
- 02h	channel range error (not 00h-3Fh)
- 03h	invalid subfunction
- 0Ah	packet too large (or <2 bytes if NTNX)
- 0Bh	can't send packet to itself
- 0Ch	invalid number of destinations
- 0Dh	destination channel number out of range
- 0Eh	destination user is busy
- 0Fh	destination user has locked channel
- 10h	channel not open
- 11h	no datagram server on destination (NTNX)
-
-Format of Alloy request block:
-Offset	Size	Description	(Table 2132)
- 00h	DWORD	pointer to packet to send
- 04h	WORD	packet size in bytes (1-4096)
- 06h	BYTE	number of destinations for packet (max 1Fh)
- 07h 31 BYTEs	destination user IDs (FFh = broadcast to all except sender)
- 26h 31 BYTEs	destination channels (FFh = first available channel)
- 45h 31 BYTEs	return destination statuses
---------N-7F12-------------------------------
-INT 7F - Alloy NTNX, MW386 - ACKNOWLEDGE DATAGRAM
-	AH = 12h
-	AL = channel number being acknowledged
-	DI:DX = 32-bit status to return to sender
-Return: AL = status (see #2133)
-Note:	also unlocks the channel, allowing the next datagram to be received
-SeeAlso: AH=11h,AH=15h/CL=04h
-
-(Table 2133)
-Values for Alloy function status:
- 00h	successful
- 01h	busy
- 02h	channel range error (not 00h-3Fh)
- 03h	invalid subfunction
- 0Ah	channel not open
- 0Bh	no message in channel
- 0Ch	destination slave busy--retry (NTNX)
- 0Dh	destination user not active
- 0Eh	destination slave not active (NTNX)
- 0Fh	destination disabled datagram service
---------V-7F1234-----------------------------
-INT 7F - TIGA Communications Driver v2.05 - UNINSTALL
-	AX = 1234h
-SeeAlso: AX=4321h
---------N-7F13--CL00-------------------------
-INT 7F - Alloy NTNX, MW386 - RESET USER DATAGRAMS
-	AH = 13h
-	CL = 00h
-Note:	clears all pending datagrams and removes all channels opened in NTNX
-	  compatibility mode
---------N-7F14--CL00-------------------------
-INT 7F - Alloy NTNX, MW386 -  SET RECEIVE ISR
-	AH = 14h
-	CL = 00h
-	DX:DI -> application FAR receive service routine (see #2134)
-Return: AL = status (00h-03h) (see #2133)
-SeeAlso: AH=14h/CL=01h,AH=14h/CL=03h
-
-(Table 2134)
-Values Alloy receive service routine is called with:
-	DH = sender ID
-	DL = channel with datagram
-	interrupts disabled
-Return: AL = response code
-	    00h leave buffer locked, set channel status, and repeat call later
-	    01h release channel buffer
-	    02h change buffer pointer to DX:DI
-	AH,CX,DX,DI,SI may be destroyed
---------N-7F14--CL01-------------------------
-INT 7F - Alloy NTNX, MW386 - SET ACKNOWLEDGE ISR
-	AH = 14h
-	CL = 01h
-	DX:DI -> application FAR acknowledge service routine (see #2135)
-Return: AL = status (00h-03h) (see #2133)
-Note:	the service routine will be called as soon as an acknowledgment arrives
-SeeAlso: AH=12h,AH=14h/CL=00h,AH=14h/CL=04h,AH=15h/CL=04h
-
-(Table 2135)
-Values Alloy acknowledge service routine is called with:
-	DS:SI -> acknowledge structure (see #2139)
-Return: AL = response code
-	    00h application busy, network executive should call again later
-	    01h acknowledge accepted
-	AH,DX,SI may be destroyed
---------N-7F14--CL02-------------------------
-INT 7F - Alloy NTNX, MW386 - SET CHANNEL BUFFER POINTER
-	AH = 14h
-	CL = 02h
-	AL = channel number
-	DX:DI -> receive buffer
-Return: AL = status (00h-03h) (see #2133)
-Note:	may be called from within a receive ISR or when a datagram is pending
-SeeAlso: AH=10h/CL=00h,AH=14h/CL=00h
---------N-7F14--CL03-------------------------
-INT 7F - Alloy NTNX, MW386 - GET RECEIVE ISR
-	AH = 14h
-	CL = 03h
-Return: DX:DI -> current receive ISR
-SeeAlso: AH=14h/CL=00h,AH=14h/CL=04h
---------N-7F14--CL04-------------------------
-INT 7F - Alloy NTNX, MW386 - GET ACKNOWLEDGE ISR
-	AH = 14h
-	CL = 04h
-Return: DX:DI -> current acknowledge ISR
-SeeAlso: AH=14h/CL=01h,AH=14h/CL=03h
---------N-7F14--CL05-------------------------
-INT 7F - Alloy NTNX (Host), MW386 - GET BUSY POINTER
-	AH = 14h
-	CL = 05h
-	DX:DI -> buffer for busy structure (see #2136)
-Return: DX:DI buffer filled
-
-Format of Alloy busy structure:
-Offset	Size	Description	(Table 2136)
- 00h	DWORD	pointer to busy flag byte
- 04h	WORD	fixed port address (FF00h)
---------N-7F15--CL00-------------------------
-INT 7F - Alloy NTNX, MW386 - GET CHANNEL STATUS
-	AH = 15h
-	CL = 00h
-	AL = channel number
-	DX:DI -> status structure (see #2137)
-Return: AL = status (00h-03h) (see #2133)
-SeeAlso: AH=15h/CL=01h
-
-Format of Alloy channel status structure:
-Offset	Size	Description	(Table 2137)
- 00h	BYTE	channel status
-		bit 0: channel open
-		bit 1: channel buffer contains received data
-		bit 7: channel locked
- 01h	BYTE	sender ID
---------N-7F15--CL01-------------------------
-INT 7F - Alloy NTNX, MW386 - GET NEXT FULL CHANNEL
-	AH = 15h
-	CL = 01h
-	DX:DI -> full-channel structure (see #2138)
-Return: AL = status
-	    00h successful
-	    01h busy
-	    0Ah no datagrams available
-Note:	MW386 v1.0 returns the lowest channel with a datagram; newer versions
-	  and NTNX return the oldest datagram
-SeeAlso: AH=15h/CL=00h
-
-Format of Alloy full-channel structure:
-Offset	Size	Description	(Table 2138)
- 00h	BYTE	number of channel with oldest datagram
- 01h	BYTE	sender ID
---------N-7F15--CL02-------------------------
-INT 7F - Alloy NTNX, MW386 - GET MAXIMUM NUMBER OF CHANNELS
-	AH = 15h
-	CL = 02h
-Return: AH = number of channels available (40h for MW386)
-Note:	the application may always assume at least 32 channels available
-SeeAlso: AH=15h/CL=03h
---------N-7F15--CL03-------------------------
-INT 7F - Alloy NTNX, MW386 - GET MAXIMUM PACKET SIZE
-	AH = 15h
-	CL = 03h
-	DX:DI -> WORD for return value
-Return: buffer WORD filled with maximum packet size (4096 for MW386)
-SeeAlso: AH=15h/CL=02h
---------N-7F15--CL04-------------------------
-INT 7F - Alloy NTNX, MW386 - GET AND CLEAR ACKNOWLEDGE STATUS
-	AH = 15h
-	CL = 04h
-	DX:DI -> status structure (see #2139)
-Return: AL = status
-	    00h successful
-		DX:DI structure filled
-	    01h busy
-	    0Ah no acknowledgement has arrived
-SeeAlso: AH=12h,AH=14h/CL=01h
-
-Format of Alloy status structure:
-Offset	Size	Description	(Table 2139)
- 00h	BYTE	sender ID
- 01h	BYTE	channel number
- 02h  4 BYTEs	receiver status (see #2133)
---------N-7F16-------------------------------
-INT 7F - Alloy NTNX, MW386 - DIRECT MEMORY TRANSFER
-	AH = 16h
-	DX:SI -> transfer structure (see #2140)
-Return: AL = status
-	    00h successful
-	    0Ah source or destination out of range
-	    0Bh transfer kernal busy--try again
-Notes:	this call transfers memory contents directly between users; both source
-	  and destination user IDs may differ from the caller's ID
-	no segment wrap is allowed
-
-Format of Alloy transfer structure:
-Offset	Size	Description	(Table 2140)
- 00h	WORD	bytes to transfer
- 02h	BYTE	source ID
-		FEh = caller
- 03h	DWORD	source address
- 07h	BYTE	destination ID
-		FFh = all slaves except caller
-		FEh = caller
- 08h	DWORD	destination address
---------N-7F21-------------------------------
-INT 7F - Alloy NTNX, MW386 - SEND MESSAGE OR COMMAND TO USER(S)
-	AH = 21h
-	AL = sender's user ID
-	DS:DX -> control packet (see #2141)
-Note:	messages or commands are ignored if disabled by the destination user
-SeeAlso: AH=22h
-
-Format of Alloy control packet:
-Offset	Size	Description	(Table 2141)
- 00h	BYTE	packet type
-		00h message
-		01h NTNX command
-		02h MW386 command
- 01h	BYTE	destination user ID or 'A' for all users
- 02h 62 BYTEs	ASCIZ message (packet type 00h)
-		BIOS keycodes terminated by NUL byte (type 01h) or word (02h)
-Note:	a maximum of 16 keycodes will be processed for NTNX and MW386 commands
---------N-7F22-------------------------------
-INT 7F - Alloy NTNX - GET MESSAGE
-	AH = 22h
-Return: pending messages displayed on user's screen
-SeeAlso: AH=21h
---------N-7F24-------------------------------
-INT 7F - Alloy NTNX, MW386 - ATTACH OR RELEASE DRIVE FOR LOW-LEVEL WRITE ACCESS
-	AH = 24h
-	CL = function
-	    00h attach
-	    01h release
-	CH = drive (0=A:,1=B:,etc)
-Return: AX = status (see #2142)
-Note:	only drives on the current machine may be attached
-
-(Table 2142)
-Values for Alloy function status:
- 00h	successful
- 01h	invalid request
- 02h	already attached
- 03h	not attached
- 04h	lock table full
---------N-7F24-------------------------------
-INT 7F - Alloy NTNX - ATTACH/RELEASE HOST PROCESSOR
-	AH = 24h
-	CL = function
-	    02h attach host
-	    03h release host
-Return: AX = status (see #2142)
-Note:	the host processor may be attached in order to perform I/O via the host
---------N-7F25--CL00-------------------------
-INT 7F - Alloy ANSK, NTNX, MW386 - GET NETWORK EXECUTIVE VERSION
-	AH = 25h
-	CL = 00h
-Return: AH = version suffix letter
-	CH = major version number
-	CL = minor version number
-SeeAlso: AH=25h/CL=01h
---------N-7F25--CL01-------------------------
-INT 7F - Alloy ANSK, NTNX, MW386 - GET NETWORK EXECUTIVE TYPE
-	AH = 25h
-	CL = 01h
-Return: CL = executive type (see #2143)
-SeeAlso: AH=25h/CL=00h
-
-(Table 2143)
-Values for Alloy network executive type:
- 00h	RTNX
- 01h	ATNX
- 02h	NTNX
- 03h	BTNX
- 04h	MW386
- 05h	ANSK
-----------7F2525-----------------------------
-INT 7F - TIGA Communications Driver v2.05 - ???
-	AX = 2525h
-	BX = ???
-Return: ???
-SeeAlso: AX=4321h,AX=5555h
---------N-7F26--CL00-------------------------
-INT 7F - Alloy NTNX, MW386 - GET NTNX FILE MODE
-	AH = 26h
-	CL = 00h
-Return: AX = file mode bits (see #2144)
-Note:	MW386 does not support file modes, and always returns AX=001Fh
-SeeAlso: AH=26h,AH=26h/CL=06h
-
-Bitfields for Alloy file mode bits:
-Bit(s)	Description	(Table 2144)
- 0	directory protection enabled
- 1	extended open enabled
- 2	flush on every disk write
- 3	flush on every disk write in locked interval
- 4	flush on reads from simultaneously opened file
---------N-7F26-------------------------------
-INT 7F - Alloy NTNX - SET FILE I/O CHECKING LEVEL
-	AH = 26h
-	CL = check type to set/reset
-	    01h directory protection
-	    02h extended open
-	    03h flush on every disk write
-	    04h flush on disk write if any lock set during write
-	    05h flush on all reads if file written
-	AL = new state (00h off, 01h on)
-SeeAlso: AH=26h/CL=00h,AH=26h/CL=06h
---------N-7F26--CL06-------------------------
-INT 7F - Alloy NTNX - CANCEL FLUSH ON WRITE
-	AH = 26h
-	CL = 06h
-Note:	cancels flags set by AH=26h/CL=03h and AH=26h/CL=04h
-SeeAlso: AH=26h/CL=00h
---------N-7F30-------------------------------
-INT 7F - Alloy MW386 - GET PORT INFORMATION
-	AH = 30h
-	CX = MW386 port number
-Return: AL = result
-	    FFh if port not found
-	    else driver unit number
-		BL = port mode
-		BH = port type
-		    02h remote
-		DH = owner's machine ID
-		DL = owner's user ID
-SeeAlso: INT 17/AH=8Bh
---------N-7F31-------------------------------
-INT 7F - Alloy MW386 v1.x only - CHECK PORT ASSIGNMENT
-	AH = 31h
-	???
-Return: ???
---------N-7F37-------------------------------
-INT 7F - Alloy NTNX (Host) - GET SEMAPHORE TABLE
-	AH = 37h
-Return: ES:AX -> semaphore table
---------N-7F37-------------------------------
-INT 7F - Alloy ANSK, NTNX (Slave) - DUMP STRING TO TERMINAL
-	AH = 37h
-	DS:DX -> ASCIZ string to display
-Note:	if the string is empty, a terminal update will be forced
---------N-7F38-------------------------------
-INT 7F - Alloy NTNX (Slave), MW386 - SET NEW TERMINAL DRIVER
-	AH = 38h
-	AL = new terminal driver number
-	    FFh dummy driver
-	    FEh current driver
-	    FDh load new driver
-		DS:SI -> new driver
-SeeAlso: AH=39h
---------N-7F39-------------------------------
-INT 7F - Alloy MW386 - SET TERMINAL DRIVER FOR ANOTHER USER
-	AH = 39h
-	AL = new terminal driver number
-	    FFh dummy driver
-	    FEh current driver
-	    FDh load new driver
-		DS:SI -> new driver
-	DL = user number (FFh = caller)
-	DH = machine number if DL <> FFh
-Return: CF set if invalid user number
-	CF clear if successful
-Notes:	only available to supervisors
-	the new driver number will not take effect until the user is rebooted
-SeeAlso: AH=38h
---------N-7F3A-------------------------------
-INT 7F - Alloy MW386 - GET TERMINAL PARAMETERS
-	AH = 3Ah
-	DL = user number (FFh = caller)
-	DH = machine number
-Return: CF clear if successful
-	    AH = terminal driver number
-	    AL = baud rate (00h = 38400, 01h = 19200, etc)
-	    CL = parity (00h none, 01h even, 02h odd)
-	    CH = handshaking (00h none, 01h XON/XOFF, 02h DTR/DSR, 03h XPC)
-	CF set if invalid user number
-SeeAlso: AH=3Bh
---------N-7F3B-------------------------------
-INT 7F - Alloy MW386 - SET TERMINAL PARAMETERS
-	AH = 3Bh
-	AL = baud rate (00h = 38400, 01h = 19200, etc)
-	CL = parity (00h none, 01h even, 02h odd)
-	CH = handshaking (00h none, 01h XON/XOFF, 02h DTR/DSR, 03h XPC)
-	DL = user number (FFh = caller)
-	DH = machine number for user
-Return: CF set if invalid user number
-Notes:	only available to supervisors
-	the new parameters will take effect immediately if the user's terminal
-	  has not been started, else AH=3Dh must be called to post the changes
-SeeAlso: AH=3Ah,AH=3Dh
---------N-7F3C-------------------------------
-INT 7F - Alloy MW386 - ENABLE/DISABLE AUTOBAUD DETECT
-	AH = 3Ch
-	AL = new state (00h disabled, 01h enabled)
-	DL = user number (FFh = caller)
-	DH = machine number for user
-Return: CF set if invalid user number
-Note:	only available to supervisors
-SeeAlso: AH=3Dh
---------N-7F3D-------------------------------
-INT 7F - Alloy MW386 - POST TERMINAL CONFIGURATION CHANGES
-	AH = 3Dh
-Note:	should be called whenever a program changes the terminal type or its
-	  parameters
-SeeAlso: AH=3Bh
---------N-7F41-------------------------------
-INT 7F - Alloy NTNX - LOCK FILE FOR USER
-	AH = 41h
-	AL = user ID
-	DS:DX -> ASCIZ filename
-Return: AL = status (see #2145)
-Note:	requests exclusive read/write access to file
-SeeAlso: AH=00h,AH=41h"MW386",AH=42h"NTNX"
-
-(Table 2145)
-Values for Alloy function status:
- 00h	successful
- 01h	invalid function
- 02h	already locked
- 03h	unable to lock
- 04h	lock table full or semaphore space exhausted
---------N-7F41-------------------------------
-INT 7F - Alloy MW386 - LOCK SEMAPHORE FOR USER
-	AH = 41h
-	AL = user ID
-	DS:DX -> ASCIZ semaphore name
-Return: AL = status (see #2145)
-SeeAlso: AH=00h,AH=42h"MW386"
---------s-7F4331BHC1-------------------------
-INT 7F U - Voyetra - AAPISG - API
-	AX = 4150h ('AP')
-	BH = C1h
-	BL = function (00h-13h)
-	    00h initialize (fails except first time called)
-	???
-Return: AX = status???
-	    0000h successful	
-	    0001h failed
-Program: AAPISG is a driver by Voyetra for the Aztech Sound Galaxy sound board
-BUG:	the function range check uses JL instead of JB, so it will cause a
-	  crash if BL >= 80h on entry
-SeeAlso: AX=4331h,AX=564Dh,AX=5658h
---------N-7F42-------------------------------
-INT 7F - Alloy NTNX - UNLOCK FILE FOR USER
-	AH = 42h
-	AL = user ID
-	DS:DX -> ASCIZ filename
-Return: AL = status (see #2145)
-SeeAlso: AH=00h,AH=41h"NTNX",AH=42h"MW386"
---------N-7F42-------------------------------
-INT 7F - Alloy MW386 - UNLOCK SEMAPHORE FOR USER
-	AH = 42h
-	AL = user ID
-	DS:DX -> ASCIZ semaphore name
-Return: AL = status
-	    00h successful
-	    01h invalid function
-	    03h unable to unlock semaphore
-SeeAlso: AH=02h,AH=41h"MW386",AH=42h"NTNX"
-----------7F4321-----------------------------
-INT 7F - TIGA Communications Driver v2.05 - INSTALLATION CHECK
-	AX = 4321h
-Return: AX = 0000h if installed
-Note:	INT 7F is the default, but may be overridden
-SeeAlso: AH=01h"TIGA",AX=1234h,AX=2525h,AX=4321h,AX=5555h
---------s-7F4331BHC1-------------------------
-INT 7F U - Voyetra - VAPISG - API
-	AX = 4331h ('C1')
-	BH = C1h
-	BL = function (00h-7Ah)
-	???
-Return: ???
-Program: VAPISG is a MIDI driver by Voyetra for the Aztech Sound Galaxy
-	  sound board
-SeeAlso: AX=4150h,AX=564Dh,AX=5658h
---------N-7F4E-------------------------------
-INT 7F - Alloy MW386 v2+ - SET ERROR MODE
-	AH = 4Eh
-	AL = error mode flags
-	    bit 0: display critical disk errors
-	    bit 1: display sharing errors
-	DX = 4E58h ("NX")
-Return: AL = status
-	    00h successful
-SeeAlso: AH=4Fh
---------N-7F4F-------------------------------
-INT 7F - Alloy MW386 v2+ - SET FCB MODE
-	AH = 4Fh
-	AL = FCB mode
-	    02h read/write compatibility
-	    42h read/write shared
-	DX = 4E58h ("NX")
-Return: AL = status
-	    00h successful
---------V-7F5555-----------------------------
-INT 7F - TIGA Communications Driver v2.05 - ???
-	AX = 5555h
-	BX = ???
-Return: ???
-SeeAlso: AX=4321h
---------s-7F564DBHC1-------------------------
-INT 7F U - Voyetra Multimedia Player - VMP.EXE API
-	AX = 564Dh ('VM')
-	BH = C1h
-	BL = function (00h-1Bh)
-	    00h ???
-		Return: CF clear
-			AX = 0000h
-	???
-Return: AX = FFFFh if invalid function
-	???
-SeeAlso: AX=4331h,AX=5658h
---------s-7F564DBHC1-------------------------
-INT 7F U - Voyetra - VAPISG - API
-	AX = 5658h ('VX')
-	BH = C1h
-	BL = function (00h-1Bh)
-	???
-Return: ???
-Program: VAPISG is a MIDI driver by Voyetra for the Aztech Sound Galaxy
-	  sound board
-SeeAlso: AX=4331h,AX=564Dh
---------N-7F81-------------------------------
-INT 7F - Alloy NTNX - ATTACH DEVICE FOR USER
-	AH = 81h
-	AL = user ID
-	DS:DX -> ASCIZ device name
-SeeAlso: AH=82h
---------N-7F82-------------------------------
-INT 7F - Alloy NTNX - RELEASE DEVICE FOR USER
-	AH = 82h
-	AL = user ID
-	DS:DX -> ASCIZ device name
-SeeAlso: AH=81h
---------N-7FA0-------------------------------
-INT 7F - Alloy MW386 - GET USER NAME
-	AH = A0h
-	DL = user number (FFh = caller)
-	DH = machine number for user
-	ES:DI -> 17-byte buffer for ASCIZ user name
-Return: CF set if invalid user number
-SeeAlso: AH=03h,AH=A1h
---------N-7FA1-------------------------------
-INT 7F - Alloy MW386 - GET MACHINE, USER, AND PROCESS NUMBER
-	AH = A1h
-Return: AL = process number
-	DL = user number
-	DH = machine number
-SeeAlso: AH=03h,AH=A0h,AH=A2h
---------N-7FA2-------------------------------
-INT 7F - Alloy MW386 - GET USER PRIVILEGE LEVEL
-	AH = A2h
-	DL = user number (FFh = caller)
-	DH = machine number for user
-Return: CF clear if successful
-	    AL = privilege level
-		00h supervisor
-		01h high
-		02h medium
-		03h low
-	CF set if invalid user number
-SeeAlso: AH=A1h,AH=A3h
---------N-7FA3-------------------------------
-INT 7F - Alloy MW386 - GET USER LOGIN STATE
-	AH = A3h
-	DL = user number
-	DH = machine number for user
-Return: CF clear if successful
-	    AL = login state
-		00h never logged in
-		01h currently logged out
-		03h currently logged in
-	CF set if invalid user number or user not active
-SeeAlso: AH=A2h
---------N-7FA4-------------------------------
-INT 7F - Alloy MW386 - VERIFY USER PASSWORD
-	AH = A4h
-	DS:DX -> ASCIZ password (null-padded to 16 bytes)
-Return: AL = status
-	    00h	 accepted
-	    else invalid password
---------N-7FA500-----------------------------
-INT 7F - Alloy MW386 - GET USER STATUS
-	AX = A500h
-	DI = machine number and user number
-Return: CF clear if successful
-	    BX = user flags
-		bit 5: allow messages
-	    CL = scan code for task manager hotkey
-	    CH = scan code for spooler hotkey
-	    DL = scan code for task swapper hotkey
-	    DH = modifier key status
-	CF set if invalid user number
-SeeAlso: AX=A501h
-Index:	hotkeys;Alloy MW386
---------N-7FA501-----------------------------
-INT 7F - Alloy MW386 - SET USER STATUS
-	AX = A501h
-	BX = user flags (see AX=A500h)
-	CL = scan code for task manager hotkey
-	CH = scan code for spooler hotkey
-	DL = scan code for task swapper hotkey
-	DH = modifier key status
-	DI = machine number and user number
-Return: CF set if invalid user number
-Note:	must have supervisor privilege to set another user's status
-SeeAlso: AX=A500h
-Index:	hotkeys;Alloy MW386
---------V-7FABCDBX0000-----------------------
-INT 7F - IBM 8516 Touch Screen Device Driver - GET API ENTRY
-	AX = ABCDh
-	BX = 0000h
-Return: AX = total number of functions available
-	ES:BX -> entry point array (see #2146)
-SeeAlso: AX=0104h,AX=0105h
-
-(Table 2146)
-Values for 8516 Touch Screen function number:
- 00h	check initialization and reset (see #2147)
- 14h	set user-defined subroutine (see #2148)
-Notes:	each driver function takes two stack parameters using Pascal calling
-	  conventions: address of parameter block and address of results buffer
-	all pointers are FAR pointers
-	on return, AX contains the status of the call:
-	    AX = 0000h successful
-		 0001h invalid input
-		 0002h interface error
-		 0003h unable to perform function
-
-Format of 8516 Touch Screen Function 00h parameter block:
-Offset	Size	Description	(Table 2147)
- 00h	WORD	0000h (function number)
-Note:	this function should be called before any other device driver functions
-
-Format of 8516 Touch Screen Function 00h results buffer:
-Offset	Size	Description	(Table 2148)
- 00h	WORD	touch screen status
-		0000h unavailable
-		0001h uncalibrated
-		FFFFh available
- 02h	WORD	aux mouse status (0000h not present, FFFFh present)
-Notes:	the following driver parameters will have been reset to zero:
-	  touchdown counter, liftoff counter, position at last touch, position
-	  at last lift, int call mask, select on count, select off count,
-	  pos select on count, pos select off count.
-	the following driver parameters will have been reset as listed:
-	  mouse emulation mode: left on
-	  thresholds: 46 on screen, 96 push harder, 80 push release
-	  x, y hysteresis: 400
-	  data repeat rate: 40/sec
-	  select mechanism: push-harder - first-touch
-	  coordinate origin: upper left corner
-	  filter frequency: medium
-	  data block mask: all enabled
-	  click lock: on
---------N-7FB0-------------------------------
-INT 7F - Alloy NTNX, MW386 - RELEASE ALL SEMAPHORES FOR USER
-	AH = B0h
-	AL = user number
-	DS = code segment
-Note:	MW386 ignores AL and DS; it releases all semaphores locked using INT 67
-	  or INT 7F locking functions
-SeeAlso: AH=B1h,AH=B2h,AH=B3h,AH=B4h
---------N-7FB1--SF00-------------------------
-INT 7F - Alloy NTNX, MW386 - RELEASE NORMAL SEMAPHORES FOR USER
-	AH = B1h subfn 00h
-	AL = (bits 7-5) 000
-	     (bits 4-0) user ID
-Note:	MW386 ignores AL; it releases all semaphores locked using INT 67 or
-	  INT 7F locking functions
-SeeAlso: AH=B0h,AH=B2h,AH=B3h,AH=B4h
---------N-7FB2--SF01-------------------------
-INT 7F - Alloy NTNX - RELEASE MESSAGES FOR USER
-	AH = B2h subfn 01h
-	AL = (bits 7-5) 001
-	     (bits 4-0) user ID
-SeeAlso: AH=B0h,AH=B1h,AH=B3h,AH=B4h
---------N-7FB3--SF02-------------------------
-INT 7F - Alloy NTNX - RELEASE FILES FOR USER
-	AH = B3h subfn 02h
-	AL = (bits 7-5) 010
-	     (bits 4-0) user ID
-SeeAlso: AH=B0h,AH=B1h,AH=B2h,AH=B4h
---------N-7FB4-------------------------------
-INT 7F - Alloy NTNX - RELEASE DEVICES FOR USER
-	AH = B4h
-	AL = user ID
-SeeAlso: AH=B0h,AH=B1h,AH=B2h,AH=B3h
---------N-7FC3-------------------------------
-INT 7F - Alloy MW386 - WRITE BYTE TO TERMINAL AUX PORT
-	AH = C3h
-	AL = byte to write
-Return: CF clear if successful
-	CF set on error
-SeeAlso: AH=C6h
---------N-7FC5-------------------------------
-INT 7F - Alloy MW386 - CHANGE CONSOLE MODE
-	AH = C5h
-	AL = new console mode
-	    00h keyboard indirect
-	    01h keyboard direct
-	    02h data handshake enforced
-	    03h no data handshake
-Return: CF clear if successful
-	    AL = prior console mode
-	CF set on error (caller is not remote user)
-Note:	modes 2 and 3 may be used for input through the console port; no video
-	  output should be performed in these modes
---------N-7FC6-------------------------------
-INT 7F - Alloy MW386 - WRITE BYTE TO CONSOLE PORT
-	AH = C6h
-	AL = byte to write
-Return: CF clear if successful
-	CF set on error (caller is not remote user)
-Note:	any terminal driver data translation will be bypassed
-SeeAlso: AH=C3h,AH=C7h
---------N-7FC7-------------------------------
-INT 7F - Alloy MW386 - READ CONSOLE DATA BYTE
-	AH = C7h
-Return: CF clear if successful
-	    AL = byte read
-	CF set on error (no data available or caller is not remote user)
-Note:	used to read data after placing console in mode 2 or 3 (see AH=C5h)
-SeeAlso: AH=C5h,AH=C6h,AH=C8h
---------N-7FC8-------------------------------
-INT 7F - Alloy MW386 - READ CONSOLE DATA INTO BUFFER
-	AH = C8h
-	AL = maximum bytes to read
-	ES:DI -> buffer for console data
-Return: CF clear if successful
-	    CX = number of bytes read
-	CF set on error (caller is not remote user)
-SeeAlso: AH=C7h
---------N-7FCF-------------------------------
-INT 7F - Alloy NTNX - REBOOT USER PROCESSOR
-	AH = CFh
-	DS:DX -> ASCIZ string containing user number to be reset
-SeeAlso: AH=D6h
---------N-7FD6-------------------------------
-INT 7F - Alloy MW386 - RESET NETWORK EXECUTIVE
-	AH = D6h
-	DS:DX -> reset packet (see #2149)
-Return: never if successful
-Note:	all users will be shut down immediately if successful
-SeeAlso: AH=CFh
-
-Format of Alloy MW386 reset packet:
-Offset	Size	Description	(Table 2149)
- 00h	DWORD	reset code (60606060h)
- 04h 16 BYTEs	ASCIZ supervisor password padded with nulls
---------N-7FD7-------------------------------
-INT 7F - Alloy MW386 - POST EVENT
-	AH = D7h
-	AL = user number (if local event)
-	DX = event number
---------N-7FD8-------------------------------
-INT 7F - Alloy MW386 - FLUSH DISK BUFFERS
-	AH = D8h
-Return: CF set on error
-Note:	forces all disk buffers to be written out immediately
-SeeAlso: INT 21/AH=0Dh,INT 21/AX=5D01h,INT 2F/AX=1120h
---------N-7FDB-------------------------------
-INT 7F - Alloy MW386 v2+ - GET MW386 INVOCATION DRIVE
-	AH = DBh
-Return: AL = drive from which MW386 was started (2=C:,3=D:,etc)
---------N-7FE0-------------------------------
-INT 7F - Alloy MW386 - CREATE DOS TASK
-	AH = E0h
-	AL = memory size (00h=128K, 01h=256K, 02h=384K, 03h=512K, 04h=640K)
-	DS:DX -> ASCIZ task name (max 16 bytes)
-Return: CF clear if successful
-	    AL = task create ID
-	CF set on error
-Note:	only foreground DOS tasks can use this function
-SeeAlso: AH=E1h,AH=E2h,AH=E3h,AH=E6h,AH=E7h
---------N-7FE1-------------------------------
-INT 7F - Alloy MW386 - GET DOS TASK PID FROM CREATE ID
-	AH = E1h
-	AL = create ID (from AH=E0h)
-Return: AL = DOS process number
-	CL = memory size (00h=128K, 01h=256K, 02h=384K, 03h=512K, 04h=640K)
-Note:	this function should not be called immediately after creating a new
-	  DOS task, since the new task is being initialized by a concurrent
-	  process
-SeeAlso: AH=E0h,AH=E2h
---------N-7FE2-------------------------------
-INT 7F - Alloy MW386 - SWITCH TO NEW DOS TASK
-	AH = E2h
-	AL = DOS process number (from AH=E1h)
-Return: CF set on error (invalid process number or caller not foreground task)
-Notes:	specified task becomes the foreground task and current task is placed
-	  in the background
-	may only be called by a foreground task
-SeeAlso: AH=E0h,AH=E1h
---------N-7FE3-------------------------------
-INT 7F - Alloy MW386 - CHANGE NAME OF DOS TASK
-	AH = E3h
-	DS:DX -> ASCIZ task name
----v1.x---
-	AL = user number
----v2+---
-	BH = user number
-	BL = task number
-Return: CF clear if successful
-	CF set on error (invalid process number)
-SeeAlso: AH=E0h,AH=E4h,AH=E5h
---------N-7FE4-------------------------------
-INT 7F - Alloy MW386 - GET TASK NAME FROM PROCESS NUMBER
-	AH = E4h
-	ES:DI -> buffer for task name
----v1.x---
-	AL = user number
----v2+---
-	BH = user number
-	BL = task number
-Return: CF clear if successful
-	    CL = memory size (00h=128K, 01h=256K, 02h=384K, 03h=512K, 04h=640K)
-	    DX = task flags
-		bit 7: MS-DOS process
-	    ES:DI buffer filled
-	CF set on error (invalid process number)
-SeeAlso: AH=E3h,AH=E5h
---------N-7FE5-------------------------------
-INT 7F - Alloy MW386 - GET PROCESS NUMBER FROM TASK NAME
-	AH = E5h
-	DS:DX -> ASCIZ task name
-	BH = user number
-Return: CF clear if successful
-	    AL = DOS process number
-	    CL = memory size (00h=128K, 01h=256K, 02h=384K, 03h=512K, 04h=640K)
-	CF set on error (no match for name)
-SeeAlso: AH=E3h,AH=E4h
---------N-7FE6-------------------------------
-INT 7F - Alloy MW386 - GET NUMBER OF AVAILABLE USER TASKS
-	AH = E6h
-Return: AX = number of processes available to current user
-SeeAlso: AH=E0h
---------N-7FE7-------------------------------
-INT 7F - Alloy MW386 - REMOVE DOS TASK
-	AH = E7h
-	AL = DOS process number
-Return:	CF clear if successful
-	CF set on error (invalid process number or first process)
-Note:	can only be called by a foreground task
-SeeAlso: AH=E0h
---------N-7FE8-------------------------------
-INT 7F - Alloy MW386 - DOS TASK DELAY
-	AH = E8h
-	CX = delay time in milliseconds
-Note:	a delay of 0 may be used to surrender the current time slice
-SeeAlso: INT 15/AX=1000h,INT 1A/AX=FF01h,INT 21/AH=EEh"DoubleDOS"
-SeeAlso: INT 2F/AX=1680h
---------N-7FF0-------------------------------
-INT 7F - Alloy MW386 - RESTRICT DIRECTORY TO GROUP
-	AH = F0h
-	AL = group number
-	DS:DX -> ASCIZ directory name
-Return: CF clear if successful
-	    AX = status
-		0002h directory not found
-		0003h directory not found
-		0005h directory in use, cannot be restricted
-		02xxh restricted to group xxh
-	CF set on error
-Note:	the restriction on the directory may be removed by calling this
-	  function with group 0, then using AH=F1h to assign the directory to
-	  group 0
-SeeAlso: AH=F1h,AH=F2h,AH=F3h
---------N-7FF1-------------------------------
-INT 7F - Alloy MW386 - ASSIGN DIRECTORY TO GROUP
-	AH = F1h
-	AL = group number
-	DS:DX -> ASCIZ directory name
-Notes:	performs permanent assignment to a group; no immediate action is taken
-	  unless the directory has been restricted with AH=F0h
-	may be used to restrict a nonexistent directory
-SeeAlso: AH=F0h
---------N-7FF2-------------------------------
-INT 7F - Alloy MW386 - READ RESTRICTED DIRECTORY ENTRY
-	AH = F2h
-	CX = entry number
-	ES:DI -> 64-byte buffer
-Return: CF clear if successful
-	    buffer filled with 63-byte directory info and 1-byte group number
-	CF set on error (invalid entry)
-SeeAlso: AH=F0h,AH=F3h
---------N-7FF3-------------------------------
-INT 7F - Alloy MW386 - READ RESTRICTED DIRECTORY ENTRY FOR GROUP
-	AH = F3h
-	AL = group number
-	CX = entry number
-	ES:DI -> 64-byte buffer
-Return: CF clear if successful
-	    CX = next entry number
-	    buffer filled with 63-byte directory info and 1-byte group number
-	CF set on error (no more matching entries)
-Note:	like AH=F2h, but only returns directories belonging to the specified
-	  group
-SeeAlso: AH=F2h
---------N-7FF8-------------------------------
-INT 7F - Alloy MW386 - ASSIGN USER TO GROUP
-	AH = F8h
-	AL = group number
-	DL = user number
-	DH = machine number (currently 00h)
-Return: CF clear if successful
-	CF set on error (user already in maximum number of groups)
-Note:	each user is allowed eight group assignments
-SeeAlso: AH=F9h,AH=FAh
---------N-7FF9-------------------------------
-INT 7F - Alloy MW386 - REMOVE USER FROM GROUP
-	AH = F9h
-	AL = group number
-	DL = user number
-	DH = machine number (currently 00h)
-Return: CF clear if successful
-	CF set if failed
-SeeAlso: AH=F8h,AH=FAh
---------N-7FFA-------------------------------
-INT 7F - Alloy MW386 - GET USER GROUP LIST
-	AH = FAh
-	DL = user number
-	DH = machine number (currently 00h)
-	ES:DI -> 16-byte buffer for group list
-Return: CX = number of groups
-	ES:DI buffer filled with group numbers
-SeeAlso: AH=F8h,AH=F9h
---------N-7FFB-------------------------------
-INT 7F - Alloy MW386 - ASSIGN GROUP NAME
-	AH = FBh
-	CL = group number
-	ES:DI -> ASCIZ group name (max 17 bytes)
-SeeAlso: AH=FCh
---------N-7FFC-------------------------------
-INT 7F - Alloy MW386 - GET GROUP NAME
-	AH = FCh
-	CL = group number
-	ES:DI -> 17-byte buffer for ASCIZ name
-Return: ES:DI buffer filled
-Note:	if the group has not been named, "(unnamed)" is returned
-SeeAlso: AH=FBh
+SeeAlso: AX=5857h/BL=57h,AX=5857h/BL=5Ah
 --------!---Section--------------------------

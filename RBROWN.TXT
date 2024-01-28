@@ -1,19 +1,19 @@
 Public Domain/Freeware/Shareware by Ralf Brown:
 
 The MSDOS Interrupt List
-	A comprehensive listing of nearly 6400 functions available through
+	A comprehensive listing of over 6550 functions available through
 	interrupt calls on IBM PCs and compatibles.  Includes both
 	documented and undocumented functions.
-	Current version: INTER42A (release 42, 8/7/94)
-			 INTER42B
-			 INTER42C
-			 INTER42D (conversion and utility programs)
+	Current version: INTER43A (release 43, 11/6/94)
+			 INTER43B
+			 INTER43C
+			 INTER43D (conversion and utility programs)
 
 DVINT
 	An extract of the MSDOS Interrupt List containing the DESQview
 	and QEMM API calls.  Updated whenever there have been significant
  	additions to the DESQview/QEMM calls in the Interrupt List.
-	Current version: DVINT40 (4/3/94)
+	Current version: DVINT43 (11/6/94)
 
 RBcomm
 	A DESQview-aware communications program which sports seamless DSZ,
@@ -79,6 +79,11 @@ DVdevload
 	  has a serious interaction with 4DOS/NDOS that can lead to system
 	  crashes.
 
+RBspeed
+	Switch the CPU speed of an Intel Pentium motherboard using the
+	"Neptune" chipset.  Public Domain.
+	Current version: RBSPEED1 (v1.00 9/8/94)
+
 SPTURBO
 	An integrated environment for Borland's Sprint word processor and
 	Turbo C, Turbo Pascal, Turbo Assembler, Turbo Debugger, and CDECL.
@@ -117,7 +122,7 @@ On the Internet, by standard anonymous FTP from FTP.CS.CMU.EDU [128.2.206.173].
 If connected to AFS, you can simply perform standard Unix/VMS/whatever
 	directory listing and file copies from the above directory.
 
-On FIDOnet, from Soundingboard BBS 1:129/26 1-412-621-4604 14.4k HST, file req.
+On FIDOnet, from Soundingboard BBS 1:129/26 1-412-621-4604 28.8k HST, file req.
 	My programs are kept in file area 8 for those wishing to download
 	manually.
 

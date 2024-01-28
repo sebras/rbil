@@ -1,5 +1,5 @@
 [This file was originally provided by Robin Walker.  --Ralf]
-Last Update: 7/31/94
+Last Update: 11/6/94
 
 Format of BIOS Data Segment at segment 40h:
 		{items in curly braces not documented by IBM}
@@ -738,8 +738,27 @@ Offset	Size	Description
  14h	BYTEs	array of mode values to which this profile is to pertain
 	BYTE	FFh end of array
 
+Format of System ROM:
+ Address     ByteSize	Description
+ F000h:6000h  32768	IBM PC ROM BASIC
+ F000h:E000h   8192	original IBM PC ROM BIOS
+ F000h:E739h	.	original IBM PC INT 14 handler
+ F000h:E82Eh	.	original IBM PC INT 16 handler
+ F000h:EC59h	.	original IBM PC INT 13 handler
+ F000h:EFD2h	.	original IBM PC INT 17 handler
+ F000h:F065h	.	original IBM PC INT 10 handler
+ F000h:F841h	.	original IBM PC INT 12 handler
+ F000h:F84Dh	.	original IBM PC INT 11 handler
+ F000h:F859h	.	original IBM PC INT 15 handler
+ F000h:FE6Eh	.	original IBM PC INT 1A handler
+ FFFFh:0000h      5	reset jump 
+ FFFFh:0005h	  8	ASCII BIOS date
+ FFFFh:000Dh	  1	??? (generally unused or used to fix ROM checksum)
+ FFFFh:000Eh	  1	machine type code (see INT 15h/AH=C0h)
+ FFFFh:0010h  65520	HMA (when A20 enabled)
+
 -----------CONTRIBUTORS----------------------
 Wim Osterholt	<wim@djo.wtm.tudelft.nl> or Wim Osterholt 2:512/56
 	EHD floppy = 'KEGAN 4.0M Floppy Drive Controller.',
 		     'ACME FX4-K7tb2 v:2.5 11/5/91'
-
+Stanley Appel   <appel@stack.urc.tue.nl>

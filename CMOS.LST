@@ -1,4 +1,5 @@
               CMOS Memory Map v1.23 June, 1994
+[Last Edit: 11/6/94]
 
 Compiled from multiple sources by Padgett Peterson
 Corrections/additions/comments to: padgett@tccslr.dnet.mmc.com
@@ -93,13 +94,13 @@ of which are read/write and two of which are read only.
 The format of the ten clock data registers (bytes 00h-09h) is:
 
  00h Seconds       (BCD 00-59, Hex 00-3B) Note: Bit 7 is read only      
- 01h Second Alarm  (BCD 00-59, Hex 00-3B)      
- 02h Minutes       (BCD 00-59, Hex 00-3B))         
- 03h Minute Alarm  (BCD 00-59, Hex 00-3B)       
+ 01h Second Alarm  (BCD 00-59, Hex 00-3B; "don't care" if C0-FF)
+ 02h Minutes       (BCD 00-59, Hex 00-3B)
+ 03h Minute Alarm  (BCD 00-59, Hex 00-3B; "don't care" if C0-FF))       
  04h Hours         (BCD 00-23, Hex 00-17 if 24 hr mode)
                    (BCD 01-12, Hex 01-0C if 12 hr am)
                    (BCD 81-92. Hex 81-8C if 12 hr pm)         
- 05h Hour Alarm    (same as hours)     
+ 05h Hour Alarm    (same as hours; "don't care" if C0-FF))     
  06h Day of Week   (01-07 Sunday=1)    
  07h Date of Month (BCD 01-31, Hex 01-1F)    
  08h Month         (BCD 01-12, Hex 01-0C)         

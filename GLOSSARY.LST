@@ -1,5 +1,5 @@
 GLOSSARY
-Last Change 8/7/94.
+Last Change 11/6/94.
 
 A20
 	(Address line 20) The 80286 and higher CPUs allow addresses in
@@ -407,6 +407,9 @@ FTP
 from one machine to another on a TCP/IP (Internet) network.  Also the
 program of the same name with which a user may transfer files.
 
+Gather-Write
+	see Scatter/Gather
+
 Handle
 	A short identifier, usually a small integer or a pointer, for
 some other object which is maintained or controlled by the operating
@@ -732,6 +735,15 @@ keyboard, but these are normally translated by the keyboard controller into
 the scan codes used by the original keyboard before they become visible to
 programs.
 
+Scatter/Gather
+	A technique in which the contiguous data of a disk sector or sectors
+is transferred to or from multiple non-contiguous areas of memory.  When
+reading into multiple areas of memory, this is called a scatter-read; the
+opposing operation is called gather-write.
+
+Scatter-Read
+	see Scatter/Gather
+
 SCSI
 	(Small Computer Systems Interface) A system-independent
 expansion bus typically used to connect hard disks, tape drives, and
@@ -882,12 +894,27 @@ system to each program being run.  Such a virtualized environment is
 called a virtual machine.  See also Virtual-86 Mode, Virtual DOS
 Machine.
 
+virus
+	A program which attaches itself to other programs for the purpose
+of duplicating itself.  Viruses often (but not always) contain harmful
+code which is triggered by some event, after a certain number of
+reproductions, or on a specific date.  See also worm.
+
 VM
 	see Virtual Machine
 
 VxD
 	A virtual device driver for Windows 3.0 or 3.1.  See also
 device driver.
+
+WORM
+	(Write Once, Read Many)  A storage medium which may be written
+exactly once, but may not be altered once data is stored.
+
+worm
+	A program which duplicates itself, typically across networks.
+In contrast to a virus, a worm does not attach itself to other programs,
+but can reproduce itself independently.  See also virus.
 
 Write-Through
 	One of two main types of caches, the write-through cache immediately

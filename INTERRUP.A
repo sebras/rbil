@@ -1,22 +1,22 @@
-Interrupt List		Release 42			Last change 8/7/94
+Interrupt List		Release 43			Last change 11/6/94
 This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994 Ralf Brown
 --------!---FILELIST-------------------------
 Please redistribute the following files unmodified as a group, in a trio of
-archives named INTER42A through INTER42C (preferably the original authenticated
+archives named INTER43A through INTER43C (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
 	INTERRUP.A	INT 00 through INT 13	  \
 	INTERRUP.B	INT 14 through INT 15/7F   \
 	INTERRUP.C	INT 15/80 through INT 1F    \  
-	INTERRUP.D	INT 20 through INT 21/44     \	 total 1577 pages at
+	INTERRUP.D	INT 20 through INT 21/44     \	 total 1620 pages at
 	INTERRUP.E	INT 21/45 through INT 21/BF   \	 60 lines per page,
-	INTERRUP.F	INT 21/C0 through INT 2C       > 1679 with INTPRINT -p
-	INTERRUP.G	INT 2D through INT 2F/7F      /	 (6475 entries)
-	INTERRUP.H	INT 2F/80 through INT 2F/FF  /	 (2214 tables)
+	INTERRUP.F	INT 21/C0 through INT 2D       > 1726 with INTPRINT -p
+	INTERRUP.G	INT 2E through INT 2F/7F      /	 (6565 entries)
+	INTERRUP.H	INT 2F/80 through INT 2F/FF  /	 (2431 tables)
 	INTERRUP.I	INT 30 through INT 60	    /
 	INTERRUP.J	INT 61 through INT 67	   /
-	INTERRUP.K	INT 68 through INT 7F	  /
-	INTERRUP.L	INT 80 through INT FF    /
+	INTERRUP.K	INT 68 through INT 7E	  /
+	INTERRUP.L	INT 7F through INT FF	 /
 	INTERRUP.PRI	a brief introduction to interrupts
 	INTPRINT.COM	a simple formatter that also generates a list summary
 	INTPRINT.DOC	instructions for INTPRINT
@@ -25,10 +25,11 @@ PKZIP archives):
 	CMOS.LST	a description of the CMOS RAM data bytes
 	GLOSSARY.LST	a glossary of terms, abbreviations, and acronyms
 	MEMORY.LST	format of the BIOS data area
+	OPCODES.LST	a listing of recent and undocumented CPU instructions
 	PORTS.LST	a listing of I/O ports
 	CATEGORY.KEY	descriptions of divider-line category letters
 	COMBINE.BAT	combine the pieces of the list into a single file
-The following files should be distributed in an archive called INTER42D:
+The following files should be distributed in an archive called INTER43D:
 	INT.*		invoke interrupts from commandline
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
 	INT2HLP.BAT	Perl script to convert list into QuickHelp database
@@ -1218,7 +1219,7 @@ Values for video mode:
      = G 100x75	 8x8   800x600	256/256K  .   A000 Diamond Speedstar 24X
      = G 100x37	 8x16  800x600	256/256K  .   A000 Cirrus CL-GD5420/5422/5426
  5Dh = T 100x75	 8x8	  .	  .	  .	.  NEL Electronics BIOS
-     = G  80x25  8x14  640x350	 64K	  .	.  STB Lightspeed ET4000/W32P
+     = G  80x25	 8x14  640x350	 64K	  .	.  STB Lightspeed ET4000/W32P
      = G    .	  .    640x480	256	  .	.  Logix, ATI Prism Elite
      = G    .	  .    640x480	256	  .	.  Maxxon, SEFCO TVGA, Imtec
      = G  80x30	 8x16  640x480	256/256K  .   A000 Zymos Poach, Hi Res 512
@@ -1239,7 +1240,7 @@ Values for video mode:
      = G 100x75	 8x8   800x600	256	  .	.  Genoa 6400
      = G 100x75	 8x8   800x600	256/256K  .   A000 Zymos Poach, Trident 8900
      = G 100x75	 8x8   800x600	256/256K  .   A000 Hi Res 512
- 5Fh = G  80x25  8x16  640x400	 64K	  .	.  STB Lightspeed ET4000/W32P
+ 5Fh = G  80x25	 8x16  640x400	 64K	  .	.  STB Lightspeed ET4000/W32P
      = G    .	  .    640x480	256	  .	.  Paradise VGA
      = G    .	  .    640x480	256	  .	.  AST VGA Plus, NCR 77C22
      = G    .	  .    640x480	256	  .	.  Compaq VGA, Dell VGA
@@ -1352,7 +1353,7 @@ Values for video mode:
      = G 160x60	 8x16 1280x960	 16/256K  .   A000 WD90C [1]
      = G 160x60	 8x16 1280x960	 16/256K  .   A000 Diamond Speedstar 24X [1]
      = G 160x64	 8x16 1280x1024	 16/256K  .   A000 Cirrus CL-GD 5422/5426 [1]
- 6Dh = G  80x25  8x14  640x350	 64K	  .	.  STB Lightspeed ET4000/W32P
+ 6Dh = G  80x25	 8x14  640x350	 64K	  .	.  STB Lightspeed ET4000/W32P
      = G 160x64	 8x16 1280x1024 256/256K  .   A000 Cirrus CL-GD 5422/5426 [1]
  6Eh = G  40x25	 8x8   320x200	 64K	  .   A000 Cirrus CL-GD 5422/5426
  6Fh = G  40x25	 8x8   320x200	 16M	  .   A000 Cirrus CL-GD 5422/5426
@@ -1464,9 +1465,9 @@ Notes:
       installation check for HERKULES.COM is the signature "Herkules" two bytes
       beyond the INT 10 handler
 [12] The Realtek RTVGA BIOS v3.C10 crashes when attempting to switch into modes
-	21h or 27h; this version of the BIOS also sets the BIOS data area
-	incorrectly for extended text modes, resulting in scrolling after only
-	24 lines (the VMODE.EXE	utility does set the data area correctly)
+      21h or 27h; this version of the BIOS also sets the BIOS data area
+      incorrectly for extended text modes, resulting in scrolling after only
+      24 lines (the VMODE.EXE	utility does set the data area correctly)
 [13] The Tandy 1000SL/TL BIOS does not actually support this mode
 Index:	video modes
 Index:	installation check|HERKULES
@@ -1521,7 +1522,7 @@ Values for Everex video mode:
  71h = G  80x30	 8x16  640x480	32K	  .	.  .	      Viewpoint TC
  76h = G  64x30	 8x16  512x480	16M	  .	.  .	      Viewpoint TC
  77h = G  80x30	 8x16  640x480	16M	  .	.  .	      Viewpoint TC
-Index:	video modes
+Index:	video modes;Everex
 --------V-10007E-----------------------------
 INT 10 - VIDEO - Paradise VGA, AT&T VDC600 - SET SPECIAL MODE
 	AX = 007Eh
@@ -1533,7 +1534,7 @@ Return: BH = 7Eh if successful (Paradise VGA)
 	AL = 7Eh if successful (AT&T VDC600)
 Desc:	specify a display mode by resolution rather than mode number
 SeeAlso: AH=00h,AX=0070h,AX=007Fh,AX=6F05h,AH=FFh"GO32"
-Index:	video modes
+Index:	video modes;Paradise|video modes;AT&T
 --------V-10007FBH00-------------------------
 INT 10 - VIDEO - Paradise VGA, AT&T VDC600 - SET VGA OPERATION
 	AX = 007Fh
@@ -1663,7 +1664,7 @@ Notes:	buggy on EGA systems--BIOS remaps cursor shape in 43 line modes, but
 	  next character cell on the right
 BUG:	AMI 386 BIOS and AST Premier 386 BIOS will lock up the system if AL
 	  is not equal to the current video mode
-SeeAlso: AH=03h,AX=CD05h,AH=12h/BL=34h
+SeeAlso: AH=03h,AX=CD05h,AH=12h/BL=34h,#2288
 
 Bitfields for cursor start and options:
 Bit(s)	Description	(Table 0012)
@@ -1768,7 +1769,10 @@ INT 10 - VIDEO - SCROLL UP WINDOW
 	CH,CL = row,column of window's upper left corner
 	DH,DL = row,column of window's lower right corner
 Note:	affects only the currently active page (see AH=05h)
-Warning: some implementations have a bug which destroys BP
+BUGS:	some implementations (including the original IBM PC) have a bug which
+	  destroys BP
+	the Trident TVGA8900CL (BIOS dated 9/8/92) clears DS to 0000h when
+	  scrolling in an SVGA mode (800x600 or higher)
 SeeAlso: AH=07h,AH=72h,AH=73h,AX=7F07h,INT 50/AX=0014h
 --------V-1007-------------------------------
 INT 10 - VIDEO - SCROLL DOWN WINDOW
@@ -1778,7 +1782,10 @@ INT 10 - VIDEO - SCROLL DOWN WINDOW
 	CH,CL = row,column of window's upper left corner
 	DH,DL = row,column of window's lower right corner
 Note:	affects only the currently active page (see AH=05h)
-Warning: some implementations have a bug which destroys BP
+BUGS:	some implementations (including the original IBM PC) have a bug which
+	  destroys BP
+	the Trident TVGA8900CL (BIOS dated 9/8/92) clears DS to 0000h when
+	  scrolling in an SVGA mode (800x600 or higher)
 SeeAlso: AH=06h,AH=72h,AH=73h,INT 50/AX=0014h
 --------V-1008-------------------------------
 INT 10 - VIDEO - READ CHARACTER AND ATTRIBUTE AT CURSOR POSITION
@@ -2158,7 +2165,7 @@ Note:	the Tseng HiColor BIOS extensions are supported by:
 	  Cardinal Technologies		VGA732
 	  Orchid ProDesigner IIs	Genoa 7900
 SeeAlso: AH=00h,AX=10E0h,AX=10F1h,AX=10F2h
-Index:	video modes
+Index:	video modes;Tseng Hi-Color
 --------V-1010F1-----------------------------
 INT 10 - VIDEO - Tseng ET-4000 BIOS - GET DAC TYPE
 	AX = 10F1h
@@ -3459,13 +3466,13 @@ INT 10 - VIDEO - SET GRAPHICS MODE (Hercules GRAFIX)
 	AH = 40h
 Desc:	switch the Hercules Graphics Card into graphics mode (720x348)
 SeeAlso: AH=00h,AH=41h
-Index:	video modes
+Index:	video modes;Hercules
 --------V-1041-------------------------------
 INT 10 - VIDEO - SET TEXT MODE (Hercules GRAFIX)
 	AH = 41h
 Desc:	switch the Hercules Graphics Card into text mode
 SeeAlso: AH=00h,AH=40h
-Index:	video modes
+Index:	video modes;Hercules
 --------V-1042-------------------------------
 INT 10 - VIDEO - CLEAR CURRENT PAGE (Hercules GRAFIX)
 	AH = 42h
@@ -3982,7 +3989,7 @@ Values for VESA video mode:
  119h	1280x1024x32K
  11Ah	1280x1024x64K
  11Bh	1280x1024x16M
-Index:	video modes
+Index:	video modes;VESA
 
 (Table 0069)
 Values for S3 OEM video mode:
@@ -3992,12 +3999,14 @@ Values for S3 OEM video mode:
  204h	1024x768x16
  205h	1024x768x256
  206h	1280x960x16
+ 207h	1152x864x256 (Diamond Stealth 64)
  208h	1280x1024x16
+ 20Ah	1152x864x64K (Diamond Stealth 64)
  211h	640x480x64K (Diamond Stealth 24)
  212h	640x480x16M (Diamond Stealth 24)
  301h	640x480x32K
 Note:	these modes are only available on video cards using S3's VESA driver
-Index:	video modes
+Index:	video modes;S3
 --------V-104F03-----------------------------
 INT 10 - VESA SuperVGA BIOS - GET CURRENT VIDEO MODE
 	AX = 4F03h
@@ -4094,6 +4103,56 @@ INT 10 - VESA SuperVGA BIOS v1.2+ - GET/SET DAC PALETTE CONTROL
 Return: AL = 4Fh if function supported
 	AH = status
 	BH = current number of bits per primary (06h = standard VGA)
+--------p-104F10BL00-------------------------
+INT 10 - VESA VBE/PM (Power Management) v1.0+ - GET CAPABILITIES
+	AX = 4F10h
+	BL = 00h
+	ES:DI = 0000h:0000h (reserved for future use)
+Return: AL = 4Fh if function supported (installed)
+	AH = call status
+	    00h successful
+	    else failed
+	---if successful---
+	BL = VBE/PM version (bits 7-4: major, bits 3-0: minor)
+	BH = supported states (see #0071)
+	ES:DI unchanged
+Index:	installation check;VESA VBE/Power Management
+SeeAlso: AX=4F10h/BL=01h,AX=4F10h/BL=02h
+
+Bitfields for VESA VBE/PM supported power states:
+Bit(s)	Description	(Table 0071)
+ 0	standby
+ 1	suspend
+ 2	off
+ 3	(reduced on???)
+--------p-104F10BL01-------------------------
+INT 10 - VESA VBE/PM (Power Management) v1.0+ - SET DISPLAY POWER STATE
+	AX = 4F10h
+	BL = 01h
+	BH = new state (see #0072)
+Return: AL = 4Fh if function supported
+	AH = call status
+	    00h successful
+	    else failed
+SeeAlso: AX=4F10h/BL=00h,AX=4F10h/BL=02h,AX=A00Ch
+
+(Table 0072)
+Values for VESA VBE/PM power state:
+ 00h	On
+ 01h	standby
+ 02h	suspend
+ 04h	Off
+ 08h	reduced On
+--------p-104F10BL02-------------------------
+INT 10 - VESA VBE/PM (Power Management) v1.0+ - GET DISPLAY POWER STATE
+	AX = 4F10h
+	BL = 02h
+Return: AL = 4Fh if function supported
+	AH = call status
+	    00h successful
+	       BH = current power state (see #0072)
+	    else failed
+SeeAlso: AX=4F10h/BL=00h,AX=4F10h/BL=01h
 --------s-104F13-----------------------------
 INT 10 - VESA Audio Interface - API
 	AX = 4F13h
@@ -4225,14 +4284,14 @@ INT 10 - VIDEO - ATI EGA/VGA Wonder Super Switch - INSTALLATION CHECK
 	AX = 5555h
 Return: AX = AAAAh    if installed
 	BX:CX -> ??? routine in SMS.COM resident portion
-	      -> data area (see #0071) in VCONFIG
+	      -> data area (see #0073) in VCONFIG
 Program: Super Switch (SMS.COM) is a video mode switch program supplied with
 	  ATI EGA Wonder. It also maps video mode 08h to 27h or 23h.
 SeeAlso: INT 10/AH=00h,INT 14/AX=AA01h,INT 2F/AX=6400h
 Index:	screen saver;ATI Wonder SMS.COM
 
 Format of ATI Super Switch data area:
-Offset	Size	Description	(Table 0071)
+Offset	Size	Description	(Table 0073)
  00h	DWORD	original INT 09 vector
  04h	DWORD	original INT 10 vector
  08h	DWORD	original INT 1C vector
@@ -4242,13 +4301,13 @@ Offset	Size	Description	(Table 0071)
 INT 10 - Chips & Technologies Extended BIOS - RETURN 82C45X CHIP INFORMATION
 	AX = 5F00h
 Return: AL = 5Fh function supported
-	    BL = chip type (see #0072)
+	    BL = chip type (see #0074)
 	    BH = video memory size (00h 256KB, 01h 512KB, 02h 1MB)
-	    CX = miscellaneous information (see #0073)
+	    CX = miscellaneous information (see #0075)
 SeeAlso: AX=5F01h
 
 Bitfields for Chips&Technologies chip type:
-Bit(s)	Description	(Table 0072)
+Bit(s)	Description	(Table 0074)
  7-4	chip type
 	0000: 82c451
 	0001: 82c452
@@ -4261,7 +4320,7 @@ Bit(s)	Description	(Table 0072)
  3-0	revision number
 
 Bitfields for Chips&Technologies miscellaneous information:
-Bit(s)	Description	(Table 0073)
+Bit(s)	Description	(Table 0075)
  0	DAC size (0=6-bit, 1=8-bit)
  1	system type (0=PC/AT, 1=PS/2)
  2	extended text modes supported by BIOS
@@ -4291,14 +4350,14 @@ SeeAlso: AX=5F01h"RTVGA"
 --------V-105F01-----------------------------
 INT 10 - Chips & Technologies Extended BIOS - SET PREPROGRAMMED EMULATION
 	AX = 5F01h
-	BL = emulation type (see #0074)
+	BL = emulation type (see #0076)
 Return: AL = 5Fh if function supported
 	    AH = status
 		00h unsuccessful
 		01h successful
 SeeAlso: AX=5F00h,AX=5F02h,AH=FFh"Oak"
 
-(Table 0074)
+(Table 0076)
 Values for Chips&Technologies emulation type:
  00h,01h reserved
  02h	CGA
@@ -4344,9 +4403,9 @@ INT 10 - Chips & Technologies Extended BIOS - SET POWER-ON VIDEO CONDITIONS
 	BL = configuration
 	    00h power-up display mode
 		CL = display mode
-		CH = mode (see #0075)
+		CH = mode (see #0077)
 	    01h power-up emulation mode
-		CL = emulation mode (see #0074)
+		CL = emulation mode (see #0076)
 		CH = permanence (00h reset after next boot, 01h until changed)
 Return: AL = 5Fh if function supported
 	    AH = status
@@ -4355,7 +4414,7 @@ Return: AL = 5Fh if function supported
 SeeAlso: AX=5F02h,AX=5F03h/BL=01h,AX=5F90h
 
 Bitfields for Chips&Technologies display mode:
-Bit(s)	Description	(Table 0075)
+Bit(s)	Description	(Table 0077)
  1-0	scanlines (00 = 200, 01 = 350, 10 = 400)
  7	persistence (0 reset on next boot, 1 until changed)
 --------V-105F03BL01-------------------------
@@ -4377,7 +4436,7 @@ INT 10 - Chips & Technologies Extended BIOS - SAVE/RESTORE SUPERVGA STATE
 	    90h determine size of save buffer
 	    91h save state
 	    92h restore state
-	CX = state mask (see #0076)
+	CX = state mask (see #0078)
 	ES:BX -> save buffer (subfunctions 91h,92h only)
 Return: AL = 5Fh if function supported
 	    ---subfunction 90h---
@@ -4387,7 +4446,7 @@ Return: AL = 5Fh if function supported
 SeeAlso: AH=1Ch,AX=5F03h
 
 Bitfields for Chips&Technologies state mask:
-Bit(s)	Description	(Table 0076)
+Bit(s)	Description	(Table 0078)
  0	video hardware
  1	BIOS data state
  2	DAC state
@@ -4397,7 +4456,7 @@ INT 10 - HUNTER 16 - SET GRAPHICS FONT
 	AH = 60h
 	AL = new font
 	    bit 7    output characters in reverse video
-	    bits 0-6 font number (see #0090 at AH=77h)
+	    bits 0-6 font number (see #0092 at AH=77h)
 Return: BH = cell width			
 	BL = cell height
 Desc:	select the font to use for output in mode 6; this can be used to mix
@@ -4446,7 +4505,7 @@ SeeAlso: AH=64h,AX=6500h
 --------V-1066------------------------------------
 INT 10 - HUNTER 16 - SPLIT DISPLAY
 	AH = 66h
-	AL = control bits (see #0077)
+	AL = control bits (see #0079)
 	BH = top row of lower section of LCD (0..7)
 	BL = top row of lower section of the virtual screen (0..24)
 Desc:	split the LCD screen horizontally into two parts; each part may be 
@@ -4455,7 +4514,7 @@ Note:	the Hunter 16 has a 240x64 LCD display which serves as a window into
 	  a 640x200 virtual screen
 
 Bitfields for HUNTER 16 control bits:
-Bit(s)	Description	(Table 0077)
+Bit(s)	Description	(Table 0079)
  0-1	01: no split, 10: allow split
  2	allow scrolling the upper part
  3	allow scrolling the lower part 
@@ -4518,13 +4577,13 @@ SeeAlso: AX=6F01h,AX=6F02h,AX=6F03h,AX=6F04h,AX=6F05h
 --------V-106F01-----------------------------
 INT 10 - VIDEO - Video7 VGA,VEGA VGA,HP Ext BIOS - GET MONITOR INFO
 	AX = 6F01h
-Return: AL = monitor type code (HP,VEGA VGA only) (see #0078)
-	AH = status register information (see #0079)
+Return: AL = monitor type code (HP,VEGA VGA only) (see #0080)
+	AH = status register information (see #0081)
 	CL = current value of Extended Control register (HP Ext BIOS, and only
 		if AL=41h)
 Note:	bits 0-3 are the same as the EGA/VGA status register bits 0-3
 
-(Table 0078)
+(Table 0080)
 Values for monitor type code (HP Extended BIOS):
  00h	non-HP card with ROM and possibly its own INT 10h driver
  41h	MultiMode video display adapter
@@ -4534,7 +4593,7 @@ Values for monitor type code (HP Extended BIOS):
  51h	reserved
 
 Bitfields for status register information:
-Bit(s)	Description	(Table 0079)
+Bit(s)	Description	(Table 0081)
  0	display enable
 	0 = display enabled
 	1 = vertical or horizontal retrace in progress
@@ -4549,7 +4608,7 @@ Bit(s)	Description	(Table 0079)
 --------V-106F02-----------------------------
 INT 10 - VIDEO - HP Vectra EXTENDED BIOS - SET MONITOR INFO
 	AX = 6F02h
-	BL = new value for extended control register (see #0080)
+	BL = new value for extended control register (see #0082)
 Return: nothing
 Notes:	this function is only valid when an HP MultiMode Video Display Adapter
 	  is installed
@@ -4557,7 +4616,7 @@ Notes:	this function is only valid when an HP MultiMode Video Display Adapter
 SeeAlso: AX=6F01h,AX=6F03h
 
 Bitfields for HP Vectra extended control register:
-Bit(s)	Description	(Table 0080)
+Bit(s)	Description	(Table 0082)
  0	screen resolution (0 = 200 lines, 1 = 400 lines)
  1	underline enable (if set, 'blue' of fg color = underl)
  2	font (0 = Standard-8, 1 = HP-Roman-8)
@@ -4569,7 +4628,7 @@ Bit(s)	Description	(Table 0080)
 INT 10 - VIDEO - HP Vectra EXTENDED BIOS - MODIFY MONITOR INFO
 	AX = 6F03h
 	BH = exclude mask (set bits are not modified)
-	BL = new values for bits indicated by BH (see #0080)
+	BL = new values for bits indicated by BH (see #0082)
 Return: nothing
 Note:	this function is only valid when an HP MultiMode Video Display Adapter
 	  is installed
@@ -4577,21 +4636,21 @@ SeeAlso: AX=6F01h,AX=6F02h
 --------V-106F04-----------------------------
 INT 10 - VIDEO - Video7 VGA,VEGA VGA,HP Vectra - GET MODE AND SCREEN RESOLUTION
 	AX = 6F04h
-Return: AL = current video mode (see #0081)
+Return: AL = current video mode (see #0083)
 	BX = horizontal columns (text) or pixels (graphics)
 	CX = vertical columns (text) or pixels (graphics)
 SeeAlso: AX=6F05h
 --------V-106F05-----------------------------
 INT 10 - VIDEO - Video7 VGA, VEGA EXTENDED EGA/VGA - SET VIDEO MODE
 	AX = 6F05h
-	BL = mode (see #0081)
+	BL = mode (see #0083)
 Notes:	also supported by the HP Vectra Extended BIOS
 	on the HP Vectra, this function rather than AH=00h must be used to
 	  return to an IBM-standard mode after setting an HP-specified mode
 	  from 08h to 0Fh.
 SeeAlso: AH=00h,AX=0070h,AX=007Eh,AX=6F04h
 
-(Table 0081)
+(Table 0083)
 Values for Video7/VEGA video mode:
      text/ text pixel	pixel	colors disply scrn  system
      grph resol	 box  resolution       pages  addr
@@ -4638,7 +4697,7 @@ Values for Video7/VEGA video mode:
  78h = G    .	  .    720x540	256gray	  .	.  Video7 VGA
  79h = G    .	  .    800x600	256gray	  .	.  (future)
 SeeAlso: AH=00h,AX=0070h,AX=007Eh,AX=6F04h
-Index:	video modes
+Index:	video modes;Video 7|video modes;VEGA|video modes;Headland
 --------V-106F06-----------------------------
 INT 10 - VIDEO - Video7 VGA,VEGA VGA - SELECT AUTOSWITCH MODE
 	AX = 6F06h
@@ -4669,14 +4728,14 @@ SeeAlso: AH=71h
 --------V-1070------------------------------------
 INT 10 - HUNTER 16 - DRAW ELLIPSE/CIRCLE
 	AH = 70h
-	DS:BX -> control block (see #0082)
+	DS:BX -> control block (see #0084)
 Desc:	Draws a circle or ellipse. Only valid in graphics modes.
 Note:	the Husky Hunter 16 is an 8088-based ruggedized laptop.	 Other family
 	  members are the Husky Hunter, Husky Hunter 16/80, and Husky Hawk.
 SeeAlso: AH=71h"HUNTER"
 
 Format of HUNTER 16 control block:
-Offset	Size	Description	(Table 0082)
+Offset	Size	Description	(Table 0084)
  00h	WORD	center X co-ordinate
  02h	BYTE	center Y co-ordinate
  03h	WORD	radius in pixels
@@ -4688,15 +4747,15 @@ INT 10 - Everex Extended Video BIOS - RETURN EMULATION STATUS
 	AX = 7000h
 	BX = 0000h
 Return: AL = 70h if Trident-based Everex card
-	CL = monitor type (see #0083)
-	CH = feature bits (see #0084)
+	CL = monitor type (see #0085)
+	CH = feature bits (see #0086)
 	DX = video board info
-	    bits 4-15: board ID model (see #0085)
+	    bits 4-15: board ID model (see #0087)
 	    bits 0-3:  board ID revision
 	DI = BCD BIOS version number
 SeeAlso: AX=5F01h,AH=FF"Oak"
 
-(Table 0083)
+(Table 0085)
 Values for Everex monitor type:
  00h	mono
  01h	CGA
@@ -4709,7 +4768,7 @@ Values for Everex monitor type:
  08h	super multifrequency
 
 Bitfields for Everex feature bits:
-Bit(s)	Description	(Table 0084)
+Bit(s)	Description	(Table 0086)
  7-6	memory size
 	00 = 256K
 	01 = 512K
@@ -4719,7 +4778,7 @@ Bit(s)	Description	(Table 0084)
  4	VGA protect enabled
  0	6845 emulation
 
-(Table 0085)
+(Table 0087)
 Values for board model for Trident-based Everex cards:
  0236h	Ultragraphics II
  0620h	Vision VGA
@@ -4738,14 +4797,14 @@ INT 10 - Everex Extended Video BIOS - GET SUPPORTED MODE INFO
 	AX = 7000h
 	BX = 0005h
 	CL = maximum number of modes to get info for
-	CH = mode type to get info for (see #0086)
+	CH = mode type to get info for (see #0088)
 	DL = monitor type to get info for
-	ES:DI -> buffer for mode info (see #0087)
+	ES:DI -> buffer for mode info (see #0089)
 Return: CL = total number of modes fitting criteria
 	CH = size of each info record
 SeeAlso: AX=7000h/BX=0000h,AX=7000h/BX=0004h
 
-(Table 0086)
+(Table 0088)
 Values for Everex mode type:
  00h	all modes
  01h	monochrome text modes
@@ -4756,10 +4815,10 @@ Values for Everex mode type:
  06h	256-color graphics modes
 
 Format of Everex mode information record:
-Offset	Size	Description	(Table 0087)
+Offset	Size	Description	(Table 0089)
  00h	BYTE	mode number (bit 7 set if extended mode)
- 01h	BYTE	mode type (see #0086)
- 02h	BYTE	info bits (see #0088)
+ 01h	BYTE	mode type (see #0088)
+ 02h	BYTE	info bits (see #0090)
  03h	BYTE	font height
  04h	BYTE	text columns on screen
  05h	BYTE	text rows on screen
@@ -4769,7 +4828,7 @@ Offset	Size	Description	(Table 0087)
 		     3-0 bits per pixel
 
 Bitfields for Everex info bits:
-Bit(s)	Description	(Table 0088)
+Bit(s)	Description	(Table 0090)
  7,6	reserved
  5	monochrome mode
  4	interlaced display
@@ -4785,12 +4844,12 @@ SeeAlso: AH=70h"TANDY"
 --------V-1071------------------------------------
 INT 10 - HUNTER 16 - DRAW LINE/BOX
 	AH = 71h
-	DS:BX -> control block (see #0089)
+	DS:BX -> control block (see #0091)
 Desc:	Draws a line or box. Only valid in graphics modes.
 SeeAlso: AH=70h"HUNTER"
 
 Format of HUNTER 16 control block:
-Offset	Size	Description	(Table 0089)
+Offset	Size	Description	(Table 0091)
  00h	WORD	left edge X co-ordinate
  02h	BYTE	lower edge Y co-ordinate
  03h	WORD	right edge X co-ordinate
@@ -4867,10 +4926,10 @@ SeeAlso: AH=74h,AH=75h
 --------V-1077------------------------------------
 INT 10 - HUNTER 16 - GET GRAPHICS FONT
 	AH = 77h
-Return: AL = font number (see #0090)
+Return: AL = font number (see #0092)
 SeeAlso: AH=60h"HUNTER",AH=73h"HUNTER"
 
-(Table 0090)
+(Table 0092)
 Values for HUNTER 16 graphics font number:
  00h	 7x7  in a  8x8	 cell 
  01h	 5x7  in a  6x8	 cell
@@ -4892,7 +4951,7 @@ Return: AL <> 7Fh if not supported
 	AL = 7Fh if supported
 	    AH = status
 		00h successful
-		    ES:DI -> info structure (see #0091)
+		    ES:DI -> info structure (see #0093)
 		01h failed
 Program: the SOLLEX (Smos videO controLLer EXtensions) SuperVGA functions are
 	  an extension to the VESA SuperVGA BIOS Extensions (see AX=4F00h) by
@@ -4901,14 +4960,14 @@ Program: the SOLLEX (Smos videO controLLer EXtensions) SuperVGA functions are
 SeeAlso: AX=4F00h
 
 Format of SOLLEX SuperVGA info structure:
-Offset	Size	Description	(Table 0091)
+Offset	Size	Description	(Table 0093)
  00h	DWORD	pointer to VESA function dispatch table
  04h	DWORD	pointer to SOLLEX function dispatch table
  08h	DWORD	pointer to VESA SuperVGA info (see #0063 at AX=4F00h)
  0Ch	DWORD	pointer to mode info structure table, consisting of
-		  alternating ResInfo (see #0092) and VESA mode information
+		  alternating ResInfo (see #0094) and VESA mode information
 		  (see #0064 at AX=4F01h) blocks, terminated with an FFFFh word
- 10h	DWORD	pointer to font info structure table (see #0093)
+ 10h	DWORD	pointer to font info structure table (see #0095)
  14h	WORD	high resolution crystal frequency in Hz (0000h = not present)
  16h	DWORD	pointer to ASCIZ ID string
  1Ah	DWORD	pointer to timeout reset table
@@ -4937,23 +4996,23 @@ Note:	all DWORD pointers initially require segment fixups; if the segment
 	  may be assumed to be correct
 
 Format of SOLLEX SuperVGA ResInfo:
-Offset	Size	Description	(Table 0092)
+Offset	Size	Description	(Table 0094)
  00h	WORD	16-bit mode number
  02h	WORD	adapter type (00h VGA, 01h EGA, 02h CGA, 03h MDA)
- 04h	WORD	display info (see #0096)
+ 04h	WORD	display info (see #0098)
  06h	DWORD	pointer to video parameter table
  0Ah	BYTE	replacement entry in master Video Parameter
  0Bh	BYTE	mode requested for mode set by BIOS
  0Ch	DWORD	pointer to LoadReg table
- 10h	BYTE	index into table of clock values (see #0094)
+ 10h	BYTE	index into table of clock values (see #0096)
 
 Format of SOLLEX SuperVGA font info table [array] entry:
-Offset	Size	Description	(Table 0093)
+Offset	Size	Description	(Table 0095)
  00h	BYTE	required font height
  01h	BYTE	parameter to load text mode font
  02h	BYTE	parameter to load graphics mode font
 
-(Table 0094)
+(Table 0096)
 Values for SOLLEX SuperVGA clock value index:
  00h	25 MHz
  01h	28 MHz
@@ -4996,7 +5055,7 @@ SeeAlso: AX=7F00h/BX=4000h,AX=7F00h/BX=4001h
 INT 10 - SOLLEX SuperVGA - ADAPTER CONTROL - SET ADAPTER
 	AX = 7F01h
 	BL = 00h
-	CX = adapter request (see #0095)
+	CX = adapter request (see #0097)
 Return:	AL <> 7Fh if not supported
 	AL = 7Fh if supported
 	    AH = status
@@ -5006,7 +5065,7 @@ Note:	initializes video hardware to a particular standard
 SeeAlso: AX=7F00h,AX=7F01h/BL=01h,AX=7F01h/BL=02h
 
 Bitfields for SOLLEX SuperVGA adapter request:
-Bit(s)	Description	(Table 0095)
+Bit(s)	Description	(Table 0097)
  1-0	adapter type (00 VGA, 01 EGA, 10 CGA, 11 MDA)
  2	reserved
  4-3	change displays (00 none, 01 analog 10 digital 11 panel)
@@ -5023,12 +5082,12 @@ Return: AL <> 7Fh if not supported
 	    AH = status
 		00h successful
 		01h failed
-	    BX = adapter type (see #0095)
-	    DX = display type (see #0096)
+	    BX = adapter type (see #0097)
+	    DX = display type (see #0098)
 SeeAlso: AX=7F00h,AX=7F01h/BL=00h,AX=7F01h/BL=02h
 
 Bitfields for SOLLEX SuperVGA display type:
-Bit(s)	Description	(Table 0096)
+Bit(s)	Description	(Table 0098)
  15-9	reserved
  8	alternate display active
  7	Enhanced Color Display monitor active
@@ -5042,7 +5101,7 @@ Bit(s)	Description	(Table 0096)
 INT 10 - SOLLEX SuperVGA - ADAPTER CONTROL - DETERMINE ADAPTER SUPPORT
 	AX = 7F01h
 	BL = 02h
-	CX = adapter request (see #0095)
+	CX = adapter request (see #0097)
 Return: AL <> 7Fh if not supported
 	AL = 7Fh if supported
 	    AH = status
@@ -5053,7 +5112,7 @@ SeeAlso: AX=7F00h,AX=7F01h/BL=00h
 INT 10 - SOLLEX SuperVGA - DISPLAY OUTPUT CONTROL - SET DISPLAY OUTPUT
 	AX = 7F02h
 	BL = 00h
-	CX = display output setting (see #0097)
+	CX = display output setting (see #0099)
 Return: AL <> 7Fh if not supported
 	AL = 7Fh if supported
 	    AH = status
@@ -5062,7 +5121,7 @@ Return: AL <> 7Fh if not supported
 SeeAlso: AX=7F00h,AX=7F02h/BL=00h
 
 Bitfields for SOLLEX SuperVGA display output setting:
-Bit(s)	Description	(Table 0097)
+Bit(s)	Description	(Table 0099)
  0	CRTC control in 2,1 valid
  1	enable digital output
  2	enable analog output
@@ -5080,13 +5139,13 @@ Return: AL <> 7Fh if not supported
 	AL = 7Fh if supported
 	    AH = status
 		00h successful
-		    BX = display output setting (see #0097)
-		    CX = displays attached (see #0098)
+		    BX = display output setting (see #0099)
+		    CX = displays attached (see #0100)
 		01h failed
 SeeAlso: AX=7F00h,AX=7F02h/BL=00h
 
 Bitfields for SOLLEX SuperVGA displays attached:
-Bit(s)	Description	(Table 0098)
+Bit(s)	Description	(Table 0100)
  0	PS/2 display on analog output
  1	multi-frequency monitor on analog output
  2	LCD panel attached
@@ -5194,7 +5253,7 @@ SeeAlso: AX=7F00h,AX=7F04h/BL=02h
 --------V-107F05-----------------------------
 INT 10 - SOLLEX SuperVGA - LOAD REGISTER
 	AX = 7F05h
-	ES:DI -> register value table (see #0099)
+	ES:DI -> register value table (see #0101)
 Return: AL <> 7Fh if not supported
 	AL = 7Fh if supported
 	    AH = status
@@ -5203,7 +5262,7 @@ Return: AL <> 7Fh if not supported
 SeeAlso: AH=F1h,AH=F3h,AH=F5h
 
 Format of SOLLEX SuperVGA register value table:
-Offset	Size	Description	(Table 0099)
+Offset	Size	Description	(Table 0101)
  00h	WORD	base I/O register (FFFFh = end of list)
  02h 2N BYTEs	pairs of values to be written to the base I/O register as an
 		  index value and the following register as a data byte
@@ -5315,11 +5374,11 @@ SeeAlso: AH=91h
 --------N-1091-------------------------------
 INT 10 - Alloy MW386 - GET PHYSICAL WORKSTATION ADAPTER TYPE
 	AH = 91h
-Return: AL = video adapter type (see #0100)
+Return: AL = video adapter type (see #0102)
 Note:	types less than 80h do not imply that the current user is on the host
 SeeAlso: AH=90h
 
-(Table 0100)
+(Table 0102)
 Values for Alloy MW386 video adapter type:
  00h	monochrome
  01h	Hercules monochrome graphics
@@ -5348,7 +5407,7 @@ Program: CU Writer is a public-domain Thai-English word processor from
 	  Chulalongkorn University, Bangkok
 SeeAlso: AH=80h"CU Writer",AH=B0h
 --------p-10A0-------------------------------
-INT 10 - VESA VBE/PM - Display Power Management Signalling API
+INT 10 - ATI Mach64 BIOS - Display Power Management Signalling API???
 	AH = A0h
 	AL = function (00h-13h)
 	???
@@ -5356,8 +5415,9 @@ Return: AH = status
 	    00h successful
 	    01h failed
 	???
+SeeAlso: AX=4F10h/BL=00h
 --------p-10A00C-----------------------------
-INT 10 - VESA VBE/PM - SET SLEEP MODE
+INT 10 - ATI Mach64 BIOS - SET SLEEP MODE
 	AX = A00Ch
 	CL = new state
 	    01h standby
@@ -5366,7 +5426,7 @@ INT 10 - VESA VBE/PM - SET SLEEP MODE
 Return: AH = status
 	    00h successful
 	    01h failed
-SeeAlso: AX=4F00h
+SeeAlso: AX=4F00h,AX=4F10h/BL=01h
 --------A-10B0-------------------------------
 INT 10 - CU Writer v1.4 - PUT PIXEL
 	AH = B0h
@@ -5429,16 +5489,16 @@ INT 10 - VIDEO - Compaq Extensions - GET ENVIRONMENT
 	BX = 0000h
 Return: BH = active monitor
 	    (00h = external, 01h = internal, 03h both, 04h neither)
-	BL = master mode (see #0101)
+	BL = master mode (see #0103)
 	CH = ASIC type and version
 	    00h (reserved, very early Compaq VGCs)
 	    31h if QVision VGA
-	CL = switchable VDU modes supported (see #0102)
-	DH = internal monitor type (see #0103)
-	DL = external monitor type (see #0103)
+	CL = switchable VDU modes supported (see #0104)
+	DH = internal monitor type (see #0105)
+	DL = external monitor type (see #0105)
 SeeAlso: AX=1A00h,AX=BF00h,AX=BF01h,AX=BF02h,AX=BF11h
 
-(Table 0101)
+(Table 0103)
 Values for Compaq video master mode:
  00h	switchable VDU not present
  04h	CGA
@@ -5449,7 +5509,7 @@ Values for Compaq video master mode:
  0Ah	TFT (active-matrix) VGA
 
 Bitfields for Compaq switchable VDU modes support:
-Bit(s)	Description	(Table 0102)
+Bit(s)	Description	(Table 0104)
  0	CGA supported
  1,2	reserved (1)
  3	MDA supported
@@ -5458,7 +5518,7 @@ Bit(s)	Description	(Table 0102)
  6	640x480x256 mode available
  7	8-bit DAC mode available
 
-(Table 0103)
+(Table 0105)
 Values for Compaq monitor type:
  00h	none
  01h	dual-mode monitor
@@ -5586,7 +5646,7 @@ INT 10 - VIDEO - Compaq Extensions - GET EXTENDED ENVIRONMENT
 Return: AL = BFh if supported
 	    CF clear
 	    ES:BX -> ASCII signature "COMPAQ"
-	    ES:DI -> advanced functionality table (see #0104)
+	    ES:DI -> advanced functionality table (see #0106)
 Notes:	supported by at least the QVision board and the LTE Lite and ProSignia
 	  ROM BIOSes
 	the QVision documentation (October 1993) states that the signature
@@ -5595,7 +5655,7 @@ Notes:	supported by at least the QVision board and the LTE Lite and ProSignia
 SeeAlso: AX=1A00h,AX=BF03h
 
 Bitfields for Compaq advanced video functionality:
-Bit(s)	Description	(Table 0104)
+Bit(s)	Description	(Table 0106)
  31	future graphics extensions (reserved, set to 0)
  30-16	reserved
  15-12	available video memory in 256K blocks, less one (0000 = 256K, etc.)
@@ -5611,7 +5671,7 @@ Bit(s)	Description	(Table 0104)
 INT 10 - VIDEO - Compaq Extensions - NEW ACTIVE MONITOR
 	AX = BF12h
 	BH reserved
-	BL = function mask (see #0105)
+	BL = function mask (see #0107)
 Return: CF clear
 Notes:	this function is a NOP if the VGA subsystem is inactive or the current
 	  Display Combination Code is 10h or higher
@@ -5620,7 +5680,7 @@ Notes:	this function is a NOP if the VGA subsystem is inactive or the current
 SeeAlso: AX=BF01h,AX=BF02h
 
 Bitfields for function mask:
-Bit(s)	Description	(Table 0105)
+Bit(s)	Description	(Table 0107)
  7	command mode
 	if set, bits 1 and 0 make the monitor active when set
 	if clear, bits 1 and 0 toggle the monitor's state when set
@@ -5800,25 +5860,25 @@ SeeAlso: AX=1000h,AX=1002h,AX=CD00h,AX=CD03h
 INT 10 - VIDEO - UltraVision - GET ULTRAVISION PALETTE (EGA,VGA)
 	AX = CD02h
 Return: CL = palette table number
-	DS:DX -> 17-byte palette register list (see #0106)
-	DS:SI -> current font names table (see #0107,#0108)
+	DS:DX -> 17-byte palette register list (see #0108)
+	DS:SI -> current font names table (see #0109,#0110)
 Note:	only the font names are valid on monochrome EGA systems
 SeeAlso: AX=1009h,AX=CD00h
 
 Format of UltraVision palette register list:
-Offset	Size	Description	(Table 0106)
+Offset	Size	Description	(Table 0108)
  00h 16 BYTEs	colors for palette registers 00h through 0Fh
  10h	BYTE	border color
 
 Format of UltraVision v2+ current font names table:
-Offset	Size	standard EGA	HiRes EGA	VGA	(Table 0107)
+Offset	Size	standard EGA	HiRes EGA	VGA	(Table 0109)
  00h  8 BYTEs	N/A		F19 font	F20 font
  08h  8 BYTEs	F14 font	F14 font	F14 font
  10h  8 BYTEs	N/A		F11 font	F10 font
  18h  8 BYTEs	F8 font		F8 font		F8 font
 
 Format of UltraVision v1.x current font names table:
-Offset	Size	HiRes EGA	(Table 0108)
+Offset	Size	HiRes EGA	(Table 0110)
  00h  8 BYTEs	F19/F14 font
  08h  8 BYTEs	F11/F8 font
 --------V-10CD03-----------------------------
@@ -5832,10 +5892,10 @@ SeeAlso: AX=CD01h
 --------V-10CD04-----------------------------
 INT 10 - VIDEO - UltraVision - GET UltraVision TEXT MODE (EGA,VGA)
 	AX = CD04h
-Return: AL = mode number (see #0109)
+Return: AL = mode number (see #0111)
 SeeAlso: AH=0Fh,AX=CC00h,AH=CDh
 
-(Table 0109)
+(Table 0111)
 Values for UltraVision video mode number:
  11h	80x25
  12h	80x43, 80x50
@@ -5857,7 +5917,7 @@ Values for UltraVision video mode number:
  3Ah	120x63
  3Bh	132x36
  3Ch	132x60
-Index:	video modes
+Index:	video modes;UltraVision
 --------V-10CD05-----------------------------
 INT 10 - VIDEO - UltraVision - SET CURSOR TYPE (EGA,VGA)
 	AX = CD05h
@@ -5876,7 +5936,7 @@ SeeAlso: AH=03h,AX=CD05h
 --------V-10CD07-----------------------------
 INT 10 - VIDEO - UltraVision v1.2+ - SET UNDERLINE STATUS (EGA,VGA)
 	AX = CD07h
-	CL = hardware underline status (see #0110)
+	CL = hardware underline status (see #0112)
 	BL = foreground color for normal text (FFh = current)
 	BH = foreground color for bright text (FFh = current)
 Return: CL = hardware underline status
@@ -5891,7 +5951,7 @@ Notes:	when underline or strikeout is enabled in color text modes, the
 	  strikeout without color remapping
 SeeAlso: AX=CD08h
 
-(Table 0110)
+(Table 0112)
 Values for hardware underline status:
  00h	off (color systems only)
  01h	underline below characters
@@ -5899,7 +5959,7 @@ Values for hardware underline status:
 --------V-10CD08-----------------------------
 INT 10 - VIDEO - UltraVision v1.2+ - GET UNDERLINE STATUS (EGA,VGA)
 	AX = CD08h
-Return: CL = hardware underline status (see #0110)
+Return: CL = hardware underline status (see #0112)
 	BL = foreground color for normal text
 	BH = foreground color for bright text
 Note:	only CL is valid on monochrome EGA systems
@@ -5920,7 +5980,7 @@ SeeAlso: AX=1100h
 --------V-10CD-------------------------------
 INT 10 - VIDEO - UltraVision - SET ULTRAVISION TEXT MODE (EGA,VGA)
 	AH = CDh
-	AL = text mode number (see #0109)
+	AL = text mode number (see #0111)
 Return: AX = CDCDh if invalid mode
 SeeAlso: AX=CD04h
 --------A-10D0-------------------------------
@@ -5966,13 +6026,13 @@ INT 10 - EGA Register Interface Library - READ ONE REGISTER
 	AH = F0h
 	BL = register number
 	BH = 00h
-	DX = group index (see #0111)
+	DX = group index (see #0113)
 Return: BL = data
 Note:	the RIL is provided by EGA.SYS, the Microsoft Mouse driver, the OS/2
 	  compatibility box, and others
 SeeAlso: AH=F1h,AH=F2h,INT 2F/AX=BC00h
 
-(Table 0111)
+(Table 0113)
 Values for group index:
  Pointer/data chips
  00h	CRT Controller (25 reg) 3B4h mono modes, 3D4h color modes
@@ -5987,7 +6047,7 @@ Values for group index:
 --------V-10F1-------------------------------
 INT 10 - EGA Register Interface Library - WRITE ONE REGISTER
 	AH = F1h
-	DX = group index (see #0111)
+	DX = group index (see #0113)
 	    if single register:
 		BL = value to write
 	    otherwise
@@ -6002,7 +6062,7 @@ INT 10 - EGA Register Interface Library - READ REGISTER RANGE
 	AH = F2h
 	CH = starting register number
 	CL = number of registers (>1)
-	DX = group index (00h,08h,10h,18h) (see #0111)
+	DX = group index (00h,08h,10h,18h) (see #0113)
 	ES:BX -> buffer, CL bytes
 Note:	the RIL is provided by EGA.SYS, the Microsoft Mouse driver, the OS/2
 	  compatibility box, and others
@@ -6012,7 +6072,7 @@ INT 10 - EGA Register Interface Library - WRITE REGISTER RANGE
 	AH = F3h
 	CH = starting register
 	CL = number of registers (>1)
-	DX = group index (00h,08h,10h,18h) (see #0111)
+	DX = group index (00h,08h,10h,18h) (see #0113)
 	ES:BX -> buffer, CL bytes
 Note:	the RIL is provided by EGA.SYS, the Microsoft Mouse driver, the OS/2
 	  compatibility box, and others
@@ -6021,14 +6081,14 @@ SeeAlso: AX=7F05h,AH=F1h,AH=F2h
 INT 10 - EGA Register Interface Library - READ REGISTER SET
 	AH = F4h
 	CX = number of registers to read (>1)
-	ES:BX -> table of register records (see #0112)
+	ES:BX -> table of register records (see #0114)
 Return: register values in table filled in
 Note:	the RIL is provided by EGA.SYS, the Microsoft Mouse driver, the OS/2
 	  compatibility box, and others
 SeeAlso: AH=F0h,AH=F2h,AH=F5h
 
 Format of EGA RIL entries in table of register records:
-Offset	Size	Description	(Table 0112)
+Offset	Size	Description	(Table 0114)
  00h	WORD	group index
 		Pointer/data chips
 		   00h CRTC (3B4h mono modes, 3D4h color modes)
@@ -6046,7 +6106,7 @@ Offset	Size	Description	(Table 0112)
 INT 10 - EGA Register Interface Library - WRITE REGISTER SET
 	AH = F5h
 	CX = number of registers to write (>1)
-	ES:BX -> table of records (see #0112)
+	ES:BX -> table of records (see #0114)
 Note:	the RIL is provided by EGA.SYS, the Microsoft Mouse driver, the OS/2
 	  compatibility box, and others
 SeeAlso: AX=7F05h,AH=F1h,AH=F3h,AH=F4h
@@ -6129,12 +6189,12 @@ SeeAlso: AH=93h,AH=FEh
 --------E-10FF-------------------------------
 INT 10 - DJ GO32.EXE 80386+ DOS extender - VIDEO EXTENSIONS
 	AH = FFh
-	AL = video mode (see #0113)
+	AL = video mode (see #0115)
 Program: GO32.EXE is a DOS extender included as part of the 80386 port of the
 	  GNU C/C++ compiler by DJ Delorie and distributed as DJGPP
 SeeAlso: AH=00h,INT 21/AH=FFh"GO32"
 
-(Table 0113)
+(Table 0115)
 Values for GO32 video mode number:
  00h	80x25 text
  01h	default text
@@ -6145,7 +6205,7 @@ Values for GO32 video mode number:
  06h	CXxDX graphics
  07h	biggest non-interlaced graphics
  08h	biggest graphics
-Index:	video modes
+Index:	video modes;GO32
 --------V-10FF-------------------------------
 INT 10 - VIDEO - Oak VGA BIOS v1.02+ - SET EMULATION
 	AH = FFh
@@ -6182,13 +6242,13 @@ Note:	not all V86 monitors allow the AC flag to be set, such as Turbo
 	  Debugger 386
 --------B-11---------------------------------
 INT 11 - BIOS - GET EQUIPMENT LIST
-Return: (E)AX = BIOS equipment list word (see #0114)
+Return: (E)AX = BIOS equipment list word (see #0116)
 Note:	since older BIOSes do not know of the existence of EAX, the high word
 	  of EAX should be cleared before this call if any of the high bits
 	  will be tested
 
 Bitfields for BIOS equipment list:
-Bit(s)	Description	(Table 0114)
+Bit(s)	Description	(Table 0116)
  0	floppy disk(s) installed (see 6-7)
  1	80x87 coprocessor installed
  3-2	number of 16K banks of RAM on motherboard (PC only)
@@ -6225,8 +6285,8 @@ SeeAlso: INT 12
 --------d-11----SI6A6A-----------------------
 INT 11 - Columbia Data Products Standard Device Level Protocol (SDLP) 1.6
 	SI = 6A6Ah
-	AH = command (see #0115)
-	AL = SCSI Addressing (see #0116)
+	AH = command (see #0117)
+	AL = SCSI Addressing (see #0118)
 Return: CF clear if successful
 	    DI = 6A6Ah if AH=01h on entry (maybe for all functions???)
 	    AH = ??? for command 01h
@@ -6234,7 +6294,7 @@ Return: CF clear if successful
 	    AL = error code
 SeeAlso: INT 21/AX=4402h"ASPI"
 
-(Table 0115)
+(Table 0117)
 Values for SDLP command:
  00h	SDLP initialization
  01h	SDLP System Identify
@@ -6263,7 +6323,7 @@ Values for SDLP command:
  FFh	execute SCSI command
 
 Bitfields for SDLP SCSI addressing:
-Bit(s)	Description	(Table 0116)
+Bit(s)	Description	(Table 0118)
  7-6	Host Adapter
  5-3	SCSI Target ID
  2-0	SCSI Target LUN (logical unit number)
@@ -6288,7 +6348,7 @@ Return: CF clear if successful
 	    AH = ???
 	CF set on error
 	    AL = error code
-SeeAlso: AX=0225h/BX=6900h,AX=0252h/BX=6904h
+SeeAlso: AX=0225h/BX=6900h,AX=0225h/BX=6904h
 Index:	screen saver;Blank-It
 --------V-110225BX6902-----------------------
 INT 11 - Blank-It Screen Blanker - ENABLE THE SOFTWARE
@@ -6297,7 +6357,7 @@ INT 11 - Blank-It Screen Blanker - ENABLE THE SOFTWARE
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
-SeeAlso: AX=0225h/BX=6900h,AX=0252h/BX=6903h
+SeeAlso: AX=0225h/BX=6900h,AX=0225h/BX=6903h
 Index:	screen saver;Blank-It
 --------V-110225BX6903-----------------------
 INT 11 - Blank-It Screen Blanker - DISABLE THE SOFTWARE
@@ -6306,7 +6366,7 @@ INT 11 - Blank-It Screen Blanker - DISABLE THE SOFTWARE
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
-SeeAlso: AX=0225h/BX=6900h,AX=0252h/BX=6902h
+SeeAlso: AX=0225h/BX=6900h,AX=0225h/BX=6902h
 Index:	screen saver;Blank-It
 --------V-110225BX6904-----------------------
 INT 11 - Blank-It Screen Blanker - GET BLANKING TIMEOUT
@@ -6316,7 +6376,7 @@ Return: CF clear if successful
 	    BX = timeout (see BX=6901h)
 	CF set on error
 	    AL = error code
-SeeAlso: AX=0225h/BX=6900h,AX=0252h/BX=6901h
+SeeAlso: AX=0225h/BX=6900h,AX=0225h/BX=6901h
 Index:	screen saver;Blank-It
 --------V-110225BX6905-----------------------
 INT 11 - Blank-It Screen Blanker - ENABLE WINDOWS COMPATIBILITY MODE
@@ -6325,7 +6385,7 @@ INT 11 - Blank-It Screen Blanker - ENABLE WINDOWS COMPATIBILITY MODE
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
-SeeAlso: AX=0225h/BX=6900h,AX=0252h/BX=6906h
+SeeAlso: AX=0225h/BX=6900h,AX=0225h/BX=6906h
 Index:	screen saver;Blank-It
 --------V-110225BX6906-----------------------
 INT 11 - Blank-It Screen Blanker - DISABLE WINDOWS COMPATIBILITY MODE
@@ -6336,7 +6396,7 @@ Return: CF clear if successful
 	    AL = error code
 Program: Blank-It is a resident screen blanker by Rhode Island Soft Systems,
 	  Inc.
-SeeAlso: AX=0225h/BX=6900h,AX=0252h/BX=6905h
+SeeAlso: AX=0225h/BX=6900h,AX=0225h/BX=6905h
 Index:	screen saver;Blank-It
 --------V-110225BX6907-----------------------
 INT 11 - Blank-It Screen Blanker - UNBLANK THE SCREEN
@@ -6345,7 +6405,7 @@ INT 11 - Blank-It Screen Blanker - UNBLANK THE SCREEN
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
-SeeAlso: AX=0225h/BX=6900h,AX=0252h/BX=6908h
+SeeAlso: AX=0225h/BX=6900h,AX=0225h/BX=6908h
 Index:	screen saver;Blank-It
 --------V-110225BX6908-----------------------
 INT 11 - Blank-It Screen Blanker - BLANK THE SCREEN
@@ -6354,13 +6414,13 @@ INT 11 - Blank-It Screen Blanker - BLANK THE SCREEN
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
-SeeAlso: AX=0225h/BX=6900h,AX=0252h/BX=6907h
+SeeAlso: AX=0225h/BX=6900h,AX=0225h/BX=6907h
 Index:	screen saver;Blank-It
 --------V-110225BX6909-----------------------
 INT 11 - Blank-It Screen Blanker - SET HOTKEY FOR MANUAL BLANKING
 	AX = 0225h
 	BX = 6909h
-	CL = key scan code (see #0117)
+	CL = key scan code (see #0119)
 Return: CF clear if successful
 	CF set on error
 	    AL = error code
@@ -6369,7 +6429,7 @@ Program: Blank-It is a resident screen blanker by Rhode Island Soft Systems,
 SeeAlso: AX=0225h/BX=6900h
 Index:	screen saver;Blank-It|hotkeys;Blank-It
 
-(Table 0117)
+(Table 0119)
 Values for Blank-It hotkey scan code:
  00h	No hot key
  1Dh	Left CTRL
@@ -6481,7 +6541,7 @@ SeeAlso: INT 14/AH=04h"FOSSIL"
 INT 11 - WD7000 SDLP interface - EXECUTE GENERIC SCSI COMMAND
 	AH = FFh
 	SI = 6A6Ah
-	AL = SCSI Addressing (see #0118)
+	AL = SCSI Addressing (see #0120)
 	CX = bytes of data to be transmitted (max FFF0h)
 	DH = 00h
 	DL = length of SCSI Command Descriptor Block
@@ -6497,7 +6557,7 @@ Note:	because of busmaster operations with WD7000FASST avoid accessing
 SeeAlso: INT 21/AX=4402h"ASPI",INT 2F/AX=7F01h
 
 Bitfields for SDLP SCSI addressing:
-Bit(s)	Description	(Table 0118)
+Bit(s)	Description	(Table 0120)
  2-0	SCSI Target LUN (logical unit number)
  5-3	SCSI Target ID
  7	write flag, set for write operations, clear otherwise
@@ -6581,7 +6641,7 @@ INT 12 - Back&Forth v1.62+ - API
 		Return: AX = version * 100 (v1.71 = 00ABh)
 	    07h ???
 	    08h get open tasks (undoc)
-		ES:DI -> task info buffer (see #0119)
+		ES:DI -> task info buffer (see #0121)
 		Return: AX = number of open tasks (max 20)
 	    09h ???
 Program: Back & Forth is a task switcher by Progressive Solutions, Inc.
@@ -6589,7 +6649,7 @@ SeeAlso: INT 11/AX=FFFEh
 Index:	installation check;BACK&FORTH
 
 Format of Back&Forth task info buffer:
-Offset	Size	Description	(Table 0119)
+Offset	Size	Description	(Table 0121)
  00h 21 BYTEs	ASCIZ task name
  15h	BYTE	hotkey shift state (as for INT 16/AH=02h)
  16h	WORD	hotkey scan code
@@ -6599,10 +6659,13 @@ Index:	hotkeys;Back&Forth
 INT 13 - DISK - RESET DISK SYSTEM
 	AH = 00h
 	DL = drive (if bit 7 is set both hard disks and floppy disks reset)
-Return: AH = status (see #0120)
+Return: AH = status (see #0122)
 	CF clear if successful (returned AH=00h)
 	CF set on error
 Note:	forces controller to recalibrate drive heads (seek to track 0)
+	for PS/2 35SX, 35LS, 40SX and L40SX, as well as many other systems,
+	  both the master drive and the slave drive respond to the Reset
+	  function that is issued to either drive
 SeeAlso: AH=0Dh,AH=11h,INT 21/AH=0Dh,INT 4E"TI Professional"
 --------B-1301-------------------------------
 INT 13 - DISK - GET STATUS OF LAST OPERATION
@@ -6610,11 +6673,11 @@ INT 13 - DISK - GET STATUS OF LAST OPERATION
 	DL = drive (bit 7 set for hard disk)
 Return: CF clear if successful (returned status 00h)
 	CF set on error
-	AH = status of previous operation (see #0120)
+	AH = status of previous operation (see #0122)
 Note:	some BIOSes return the status in AL; the PS/2 Model 30/286 returns the
 	  status in both AH and AL
 
-(Table 0120)
+(Table 0122)
 Values for disk operation status:
  00h	successful completion
  01h	invalid function in AH or invalid parameter
@@ -6657,7 +6720,7 @@ INT 13 - DISK - READ SECTOR(S) INTO MEMORY
 Return: CF set on error
 	    if AH = 11h (corrected ECC error), AL = burst length
 	CF clear if successful
-	AH = status (see #0120)
+	AH = status (see #0122)
 	AL = number of sectors transferred
 Notes:	errors on a floppy may be due to the motor failing to spin up quickly
 	  enough; the read should be retried at least three times, resetting
@@ -6682,7 +6745,7 @@ INT 13 - DISK - WRITE DISK SECTOR(S)
 	ES:BX -> data buffer
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0120)
+	AH = status (see #0122)
 	AL = number of sectors transferred
 Notes:	errors on a floppy may be due to the motor failing to spin up quickly
 	  enough; the write should be retried at least three times, resetting
@@ -6707,7 +6770,7 @@ INT 13 - DISK - VERIFY DISK SECTOR(S)
 	ES:BX -> data buffer (PC,XT,AT with BIOS prior to 11/15/85)
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0120)
+	AH = status (see #0122)
 	AL = number of sectors verified
 Notes:	errors on a floppy may be due to the motor failing to spin up quickly
 	  enough; the write should be retried at least three times, resetting
@@ -6729,17 +6792,17 @@ INT 13 - FLOPPY - FORMAT TRACK
 	CH = track number
 	DH = head number
 	DL = drive number
-	ES:BX -> address field buffer (see #0121)
+	ES:BX -> address field buffer (see #0123)
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0120)
+	AH = status (see #0122)
 Notes:	on AT or higher, call AH=17h first
 	the number of sectors per track is read from the diskette parameter
 	  table pointed at by INT 1E
 SeeAlso: AH=05h"FIXED",AH=17h,AH=18h,INT 1E
 
 Format of floppy format address field buffer entry (one per sector in track):
-Offset	Size	Description	(Table 0121)
+Offset	Size	Description	(Table 0123)
  00h	BYTE	track number
  01h	BYTE	head number (0-based)
  02h	BYTE	sector number
@@ -6762,7 +6825,7 @@ INT 13 - FIXED DISK - FORMAT TRACK
 	DL = drive
 Return: CF set on error
 	CF clear if successful
-	AH = status code (see #0120)
+	AH = status code (see #0122)
 Notes:	AWARD AT BIOS and AMI 386sx BIOS have been extended to handle more
 	  than 1024 cylinders by placing bits 10 and 11 of the cylinder number
 	  into bits 6 and 7 of DH
@@ -6778,10 +6841,10 @@ SeeAlso: AH=05h"FLOPPY",AH=06h"FIXED",AH=07h"FIXED",AH=0Fh,AH=18h,AH=1Ah
 INT 13 - Future Domain SCSI BIOS - SEND SCSI MODE SELECT COMMAND
 	AH = 05h
 	DL = hard drive ID
-	ES:BX -> mode select data (see #0122)
+	ES:BX -> mode select data (see #0124)
 Return: CF set on error
 	CF clear if successful
-	AH = status code (see #0120)
+	AH = status code (see #0122)
 Notes:	this function can be called before AH=07h"SCSI" or AH=06h"SCSI" to
 	  format a SCSI disk with the desired parameters
 	the mode select data below is from the SCSI-1 specification
@@ -6790,7 +6853,7 @@ Notes:	this function can be called before AH=07h"SCSI" or AH=06h"SCSI" to
 SeeAlso: AH=06h"SCSI",AH=07h"SCSI",INT 4F/AX=8100h
 
 Format of Future Domain SCSI mode select data:
-Offset	Size	Description	(Table 0122)
+Offset	Size	Description	(Table 0124)
  00h	BYTE	number of bytes of remaining data (12 + vendor unique length)
  01h	BYTE	reserved (0)
  02h	BYTE	medium type (0 for hard disk)
@@ -6811,17 +6874,18 @@ INT 13 - 2M - FORMAT TRACK
 	ES:BX -> boot sector of future 2M diskette
 Return:	CF set on error
 	CF clear if successful
-	AH = status (see #0120)
+	AH = status (see #0122)
 Program: 2M is a TSR developed by Ciriaco Garcia de Celis to support
 	  non standard diskettes with 820-902/1476-1558K (5.25 DD/HD)
-	  and 984-1066/1804-1886K (3.5 DD/HD)
+	  and 984-1066/1804-1886K/3608-3772K (3.5 DD/HD/ED)
 Notes:	it is not necessary to call AH=17h/AH=18h first (will be ignored)
-	the boot sector can be obtained from an already-formatted 2M diskette
-	  (by calling AH=02h with head number 80h for 2M v2+)
-	the installation check for 2M must search for a "CiriSOFT:2M:1.3"
-	  signature string or similar (recomended ":2M:" substring) in the
-	  CiriSOFT TSR interface
 	the diskette format must always begin on cylinder 0 head 0
+	the boot sector can be obtained from an already-formatted 2M diskette
+	  (by calling AH=02h with head number 00h in 2M v1.x and with head
+	  number 80h for 2M v2+)
+	the installation check for 2M must search for a "CiriSOFT:2M:1.3" or
+	  "CiriSOFT:2MX:3.0" or similar (recomended ":2M:" or ":2MX:"
+	  substrings) in CiriSOFT TSR interface
 	since 2M v2.0, the BOOT sector is emulated using the first physical
 	  sector of FAT2; the second-sixth physical sectors of FAT2 in HD or ED
 	  diskettes store the SuperBOOT code. To skip the FAT2 emulation (using
@@ -6834,7 +6898,7 @@ Notes:	it is not necessary to call AH=17h/AH=18h first (will be ignored)
 	  necessary to write the full track before formatting (except track 0
 	  side 0) to complete the format and skip future CRC errors on read; in
 	  track 0 side 1 the head used must be 81h instead 1. Diskcopy programs
-	  may do a format-write-verify secuential phases to improve performance
+	  may do a format-write-verify sequential phases to improve performance
 SeeAlso: AH=05h"FLOPPY",INT 2F"CiriSOFT TSR interface"
 --------B-1306-------------------------------
 INT 13 - FIXED DISK - FORMAT TRACK AND SET BAD SECTOR FLAGS (XT,PORT)
@@ -6844,7 +6908,7 @@ INT 13 - FIXED DISK - FORMAT TRACK AND SET BAD SECTOR FLAGS (XT,PORT)
 	CL = sector number
 	DH = head
 	DL = drive
-Return: AH = status code (see #0120)
+Return: AH = status code (see #0122)
 Note:	AWARD AT BIOS and AMI 386sx BIOS have been extended to handle more
 	  than 1024 cylinders by placing bits 10 and 11 of the cylinder number
 	  into bits 6 and 7 of DH
@@ -6855,11 +6919,11 @@ INT 13 - Future Domain SCSI BIOS - FORMAT DRIVE WITH BAD SECTOR MAPPING
 	AL = interleave
 	     (0 = default, 1 = consecutive sectors, 2 - 255 = vendor unique)
 	DL = hard drive ID
-	DH = defect list info (see #0123)
-	ES:BX -> defect table A, B or C (see #0124,#0125,#0126)
+	DH = defect list info (see #0125)
+	ES:BX -> defect table A, B or C (see #0126,#0127,#0128)
 Return: CF set on error
 	CF clear if successful
-	AH = status code (see #0120)
+	AH = status code (see #0122)
 Notes:	block addresses must be in ascending order (for table B, cylinder is
 	  most significant, byte from index least significant; for table C,
 	  cylinder is most significant, sector number least significant)
@@ -6872,7 +6936,7 @@ Notes:	block addresses must be in ascending order (for table B, cylinder is
 SeeAlso: AH=05h"SCSI",AH=06h"FIXED",AH=07h"SCSI"
 
 Bitfields for Future Domain SCSI defect list info:
-Bit(s)	Description	(Table 0123)
+Bit(s)	Description	(Table 0125)
  7-5	drive LUN
  4	defect list is available
  3	defect list is complete (erase drive's defect list)
@@ -6881,7 +6945,7 @@ Bit(s)	Description	(Table 0123)
 	 101=use defect table C)
 
 Format of Future Domain SCSI defect table A:
-Offset	Size	Description	(Table 0124)
+Offset	Size	Description	(Table 0126)
  00h	WORD	number of bytes remaining in table
  02h	BYTE	reserved (0)
  03h	BYTE	reserved (0)
@@ -6889,30 +6953,30 @@ Offset	Size	Description	(Table 0124)
  06h  4 DWORDs	(big-endian) defect block addresses
 
 Format of Future Domain SCSI defect table B:
-Offset	Size	Description	(Table 0125)
+Offset	Size	Description	(Table 0127)
  00h	WORD	number of bytes remaining in table
  02h	BYTE	reserved (0)
  03h	BYTE	reserved (0)
  04h	WORD	(big-endian) defect list length (8*number of defects)
- 06h 8N BYTEs	defect list [array] (see #0127)
+ 06h 8N BYTEs	defect list [array] (see #0129)
 
 Format of Future Domain SCSI defect table C:
-Offset	Size	Description	(Table 0126)
+Offset	Size	Description	(Table 0128)
  00h	WORD	number of bytes remaining in table
  02h	BYTE	reserved (0)
  03h	BYTE	reserved (0)
  04h	WORD	(big-endian) defect list length (8*number of defects)
- 06h 8N BYTEs	defect list [array] (see #0127)
+ 06h 8N BYTEs	defect list [array] (see #0129)
 
 Format of Future Domain SCSI defect list entry:
-Offset	Size	Description	(Table 0127)
+Offset	Size	Description	(Table 0129)
  00h  3 BYTEs	(big-endian) cylinder number of defect
  03h	BYTE	head number of defect
  04h	DWORD	(big-endian) defect bytes from index
 --------d-1306-------------------------------
 INT 13 - Adaptec AHA-154xA/Bustek BT-542 BIOS - IDENTIFY SCSI DEVICES
 	AH = 06h
-Return: AH = status code (see #0120)
+Return: AH = status code (see #0122)
 	CF clear if successful
 	    AL = first drive supported
 		(80h nonconcurrent operation, 81h concurrent operation)
@@ -6930,7 +6994,7 @@ INT 13 - FIXED DISK - FORMAT DRIVE STARTING AT GIVEN TRACK (XT,PORT)
 	CL = sector number
 	DH = head
 	DL = drive
-Return: AH = status code (see #0120)
+Return: AH = status code (see #0122)
 Note:	AWARD AT BIOS and AMI 386sx BIOS have been extended to handle more
 	  than 1024 cylinders by placing bits 10 and 11 of the cylinder number
 	  into bits 6 and 7 of DH
@@ -6943,17 +7007,17 @@ INT 13 - Future Domain SCSI BIOS - FORMAT DRIVE
 	DL = hard drive ID
 Return: CF set on error
 	CF clear if successful
-	AH = status code (see #0120)
+	AH = status code (see #0122)
 SeeAlso: AH=05h"SCSI",AH=06h"SCSI",AH=07h"FIXED"
 --------B-1308-------------------------------
 INT 13 - DISK - GET DRIVE PARAMETERS (PC,XT286,CONV,PS,ESDI,SCSI)
 	AH = 08h
 	DL = drive (bit 7 set for hard disk)
 Return: CF set on error
-	    AH = status (07h) (see #0120)
+	    AH = status (07h) (see #0122)
 	CF clear if successful
 	    AH = 00h
-	    BL = drive type (AT/PS2 floppies only) (see #0128)
+	    BL = drive type (AT/PS2 floppies only) (see #0130)
 	    CH = low eight bits of maximum cylinder number
 	    CL = maximum sector number (bits 5-0)
 		 high two bits of maximum cylinder number (bits 7-6)
@@ -6973,7 +7037,7 @@ Notes:	may return successful even though specified drive is greater than the
 	  drives
 SeeAlso: AH=06h"Adaptec",AH=13h"SyQuest",AH=15h,INT 1E,INT 41
 
-(Table 0128)
+(Table 0130)
 Values for diskette drive type:
  01h	360K
  02h	1.2M
@@ -6988,7 +7052,7 @@ INT 13 - HARD DISK - INITIALIZE CONTROLLER WITH DRIVE PARAMETERS (AT,PS)
 	DL = drive (80h for first, 81h for second)
 Return: CF clear if successful
 	CF set on error
-	AH = status (see #0120)
+	AH = status (see #0122)
 Notes:	on the PC and XT, this function uses the parameter table pointed at by
 	  INT 41
 	on the AT and later, this function uses the parameter table pointed at
@@ -7007,7 +7071,7 @@ INT 13 - HARD DISK - READ LONG SECTOR(S) (AT and later)
 	ES:BX -> data buffer
 Return: CF clear if successful
 	CF set on error
-	AH = status (see #0120)
+	AH = status (see #0122)
 	AL = number of sectors transferred
 Notes:	this function reads in four to seven bytes of error-correcting code
 	  along with each sector's worth of information
@@ -7027,7 +7091,7 @@ INT 13 - HARD DISK - WRITE LONG SECTOR(S) (AT and later)
 	ES:BX -> data buffer
 Return: CF clear if successful
 	CF set on error
-	AH = status (see #0120)
+	AH = status (see #0122)
 	AL = number of sectors transferred
 Notes:	each sector's worth of data must be followed by four to seven bytes of
 	  error-correction information
@@ -7043,7 +7107,7 @@ INT 13 - HARD DISK - SEEK TO CYLINDER
 	DL = drive number (80h = first, 81h = second hard disk)
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0120)
+	AH = status (see #0122)
 SeeAlso: AH=00h,AH=02h,AH=0Ah
 --------d-130D-------------------------------
 INT 13 - HARD DISK - RESET HARD DISKS
@@ -7051,9 +7115,12 @@ INT 13 - HARD DISK - RESET HARD DISKS
 	DL = drive number (80h = first, 81h = second hard disk)
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0120)
+	AH = status (see #0122)
 Notes:	reinitializes the hard disk controller, resets the specified drive's
 	  parameters, and recalibrates the drive's heads (seek to track 0)
+	for PS/2 35SX, 35LS, 40SX and L40SX, as well as many other systems,
+	  both the master drive and the slave drive respond to the Reset
+	  function that is issued to either drive
 	not for PS/2 ESDI drives
 SeeAlso: AH=00h,INT 21/AH=0Dh
 --------B-130E-------------------------------
@@ -7063,7 +7130,7 @@ INT 13 - HARD DISK - READ SECTOR BUFFER (XT only)
 	ES:BX -> buffer
 Return: CF set on error
 	CF clear if successful
-	AH = status code (see #0120)
+	AH = status code (see #0122)
 Notes:	transfers controller's sector buffer.  No data is read from the drive
 	used for diagnostics only on PS/2 systems
 SeeAlso: AH=0Ah
@@ -7074,7 +7141,7 @@ INT 13 - HARD DISK - WRITE SECTOR BUFFER (XT only)
 	ES:BX -> buffer
 Return: CF set on error
 	CF clear if successful
-	AH = status code (see #0120)
+	AH = status code (see #0122)
 Notes:	does not write data to the drive
 	should be called before formatting to initialize an XT-type
 	  controller's sector buffer
@@ -7086,14 +7153,14 @@ INT 13 - HARD DISK - CHECK IF DRIVE READY
 	DL = drive number (80h = first, 81h = second hard disk)
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0120 at AH=01h)
+	AH = status (see #0122 at AH=01h)
 --------B-1311-------------------------------
 INT 13 - HARD DISK - RECALIBRATE DRIVE
 	AH = 11h
 	DL = drive number (80h = first, 81h = second hard disk)
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0120 at AH=01h)
+	AH = status (see #0122 at AH=01h)
 Note:	causes hard disk controller to seek the specified drive to cylinder 0
 SeeAlso: AH=00h,AH=0Ch,AH=19h"FIXED DISK"
 --------B-1312-------------------------------
@@ -7102,7 +7169,7 @@ INT 13 - HARD DISK - CONTROLLER RAM DIAGNOSTIC (XT,PS)
 	DL = drive number (80h = first, 81h = second hard disk)
 Return: CF set on error
 	CF clear if successful
-	AH = status code (see #0120 at AH=01h)
+	AH = status code (see #0122 at AH=01h)
 	AL = 00h
 SeeAlso: AH=13h,AH=14h
 --------d-1312-------------------------------
@@ -7111,7 +7178,7 @@ INT 13 - Future Domain SCSI CONTROLLER - STOP SCSI DISK
 	DL = hard drive ID
 Return: CF set on error
 	CF clear if successful
-	AH = status code (see #0120 at AH=01h)
+	AH = status code (see #0122 at AH=01h)
 Notes:	available at least on the TMC-870 8-bit SCSI controller BIOS v6.0A
 	if the given drive is a SCSI device, the SCSI Stop Unit command is sent
 	  and either "Disk prepared for shipping" or "Disk Stop command failed"
@@ -7141,7 +7208,7 @@ INT 13 - HARD DISK - DRIVE DIAGNOSTIC (XT,PS)
 	DL = drive number (80h = first, 81h = second hard disk)
 Return: CF set on error
 	CF clear if successful
-	AH = status code (see #0120 at AH=01h)
+	AH = status code (see #0122 at AH=01h)
 	AL = 00h
 SeeAlso: AH=12h"HARD DISK",AH=14h"HARD DISK"
 --------d-1313-------------------------------
@@ -7149,10 +7216,10 @@ INT 13 - SyQuest - READ DRIVE PARAMATERS (for DOS 5+)
 	AH = 13h
 	DL = drive ID (bit 7 set for hard disks)
 Return: CF set on error
-	    AH = status (07h) (see #0120 at AH=01h)
+	    AH = status (07h) (see #0122 at AH=01h)
 	CF clear if successful
 	    AH = 00h
-	    BL = drive type (AT/PS2 floppies only) (see #0128)
+	    BL = drive type (AT/PS2 floppies only) (see #0130)
 	    CH = low eight bits of maximum cylinder number
 	    CL = maximum sector number (bits 5-0)
 		 high two bits of maximum cylinder number (bits 7-6)
@@ -7170,7 +7237,7 @@ INT 13 - HARD DISK - CONTROLLER INTERNAL DIAGNOSTIC
 	AH = 14h
 Return: CF set on error
 	CF clear if successful
-	AH = status code (see #0120 at AH=01h)
+	AH = status code (see #0122 at AH=01h)
 	AL = 00h
 SeeAlso: AH=12h,AH=13h
 --------B-1315-------------------------------
@@ -7185,7 +7252,7 @@ Return: CF clear if successful
 		03h hard disk
 		    CX:DX = number of 512-byte sectors
 	CF set on error
-	    AH = status (see #0120 at AH=01h)
+	    AH = status (see #0122 at AH=01h)
 Note:	SyQuest can report type 01h or 02h for 'hard disks', since its media
 	  is removable
 SeeAlso: AH=08h,AH=16h,AH=17h,AH=19h"SCSI"
@@ -7216,7 +7283,7 @@ INT 13 - FLOPPY DISK - SET DISK TYPE FOR FORMAT (AT,PS)
 	DL = drive number
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0120 at AH=01h)
+	AH = status (see #0122 at AH=01h)
 Note:	this function does not handle 1.44M drives; use AH=18h instead
 SeeAlso: AH=15h,AH=18h
 --------d-131700-----------------------------
@@ -7224,11 +7291,11 @@ INT 13 - Future Domain SCSI CONTROLLER - GET INQUIRY INFO FROM SCSI DEVICE
 	AX = 1700h
 	CL = length of buffer
 	DL = hard drive ID
-	ES:BX -> buffer for info (see #0129)
+	ES:BX -> buffer for info (see #0131)
 Return: CF clear if successful
 	    CH = number of bytes returned in buffer???
 	CF set on error
-	    AH = status code (see #0120 at AH=01h)
+	    AH = status code (see #0122 at AH=01h)
 Notes:	this function is not available with 8-bit controller ROM versions < 7.0
 	information block bytes 5-n are vendor-specific in older SCSI devices
 	the TMC-950 does not support any Future Domain BIOS calls; instead,
@@ -7236,18 +7303,18 @@ Notes:	this function is not available with 8-bit controller ROM versions < 7.0
 SeeAlso: AH=18h"SCSI",AH=1Bh"SCSI"
 
 Format of Future Domain SCSI inquiry information block:
-Offset	Size	Description	(Table 0129)
+Offset	Size	Description	(Table 0131)
  00h	BYTE	device type
-		bits 0-4: peripheral device type (see #0130)
-		bits 5-7: peripheral qualifier (see #0131)
+		bits 0-4: peripheral device type (see #0132)
+		bits 5-7: peripheral qualifier (see #0133)
  01h	BYTE	device type modifier
 		bits 0-6: device type modifier
 		bit 7: removable medium
- 02h	BYTE	SCSI version (see #0132)
- 03h	BYTE	data format/capabilities (see #0133)
+ 02h	BYTE	SCSI version (see #0134)
+ 03h	BYTE	data format/capabilities (see #0135)
  04h	BYTE	additional data length (total remaining bytes)
  05h  2 BYTEs	reserved
- 07h	BYTE	device capabilities (see #0134)
+ 07h	BYTE	device capabilities (see #0136)
  08h  8 BYTEs	vendor identification (space-padded ASCII)
  10h  8 BYTEs	product identification (space-padded ASCII)
  20h  4 BYTEs	product revision level (space-padded ASCII)
@@ -7255,7 +7322,7 @@ Offset	Size	Description	(Table 0129)
  38h 40 BYTEs	reserved
  60h	var	vendor specific parameters
 
-(Table 0130)
+(Table 0132)
 Values for Future Domain SCSI peripheral device type:
  00h	direct-access device (e.g., magnetic disk)
  01h	sequential-access device (e.g., magnetic tape)
@@ -7272,7 +7339,7 @@ Values for Future Domain SCSI peripheral device type:
  0Ch-1Eh reserved
  1Fh	unknown or no device type
 
-(Table 0131)
+(Table 0133)
 Values for Future Domain SCSI peripheral qualifier:
  000b	device is currently connected to this logical unit and available
  001b	target is capable of supporting the specified peripheral, but the
@@ -7282,7 +7349,7 @@ Values for Future Domain SCSI peripheral qualifier:
  1xxb	vendor specific
 
 Bitfields for Future Domain SCSI version:
-Bit(s)	Description	(Table 0132)
+Bit(s)	Description	(Table 0134)
  0-2	ANSI-approved version
 	000 device might or might not comply to ANSI standard
 	001 device complies to ANSI SCSI-1
@@ -7292,7 +7359,7 @@ Bit(s)	Description	(Table 0132)
  6-7	ISO version
 
 Bitfields for Future Domain SCSI data format/capabilities:
-Bit(s)	Description	(Table 0133)
+Bit(s)	Description	(Table 0135)
  0-2	response data format
 	000 information block is as specified in SCSI-1
 	001 information block is as specified in CCS
@@ -7303,7 +7370,7 @@ Bit(s)	Description	(Table 0133)
  7	asynchronous event notification supported
 
 Bitfields for Future Domain SCSI device capabilities:
-Bit(s)	Description	(Table 0134)
+Bit(s)	Description	(Table 0136)
  0	device responds to RESET with a hard RESET
  1	tagged command queuing supported
  2	reserved
@@ -7331,10 +7398,10 @@ INT 13 - Future Domain SCSI BIOS - GET SCSI CONTROLLER INFORMATION
 	AH = 18h
 	DL = hard drive ID
 Return: CF set on error
-	    AH = status code (see #0120 at AH=01h)
+	    AH = status code (see #0122 at AH=01h)
 	CF clear if successful
 	    AX = 4321h (magic number)
-	    CX = controller family code (see #0135)
+	    CX = controller family code (see #0137)
 	    ---if family code=0200h
 		DH = number of exclusively ROM-controlled SCSI devices
 		DL = canonical SCSI device number for specified drive
@@ -7350,7 +7417,7 @@ Notes:	also sets an internal flag (non-resettable) which prevents some
 	  it provides a full CAM implementation (see INT 4F/AX=8100h)
 SeeAlso: AH=05h"SCSI",AX=1700h"SCSI",AH=1Bh"SCSI",INT 4F/AX=8100h
 
-(Table 0135)
+(Table 0137)
 Values for Future Domain SCSI controller family code:
  0200h	TMC-1680/? (ROM 3.0)
  0203h	TMC-1650/1660/1670/1680 (ROM 2.0)
@@ -7363,14 +7430,14 @@ INT 13 - FIXED DISK - PARK HEADS ON ESDI DRIVE (XT286,PS)
 	DL = drive
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0120 at AH=01h)
+	AH = status (see #0122 at AH=01h)
 SeeAlso: AH=11h
 --------d-1319-------------------------------
 INT 13 - Future Domain SCSI CONTROLLER - REINITIALIZE DRIVE
 	AH = 19h
 	DL = hard drive ID
 Return: CF set on error
-	    AH = status code (see #0120 at AH=01h)
+	    AH = status code (see #0122 at AH=01h)
 	CF clear if successful
 	    AH = disk type (03h = fixed disk)
 	    CX:DX = number of 512-byte sectors
@@ -7388,18 +7455,18 @@ SeeAlso: AH=15h,AH=1Ah,INT 4F/AX=8100h
 INT 13 - ESDI FIXED DISK - FORMAT UNIT (PS)
 	AH = 1Ah
 	AL = defect table entry count
-	CL = format modifiers (see #0136)
+	CL = format modifiers (see #0138)
 	DL = drive (80h,81h)
-	ES:BX -> defect table (see #0137), ignored if AL=00h
+	ES:BX -> defect table (see #0139), ignored if AL=00h
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0120 at AH=01h)
+	AH = status (see #0122 at AH=01h)
 Note:	if periodic interrupt selected, INT 15/AH=0Fh is called after each
 	  cylinder is formatted
 SeeAlso: AH=07h,INT 15/AH=0Fh
 
 Bitfields for ESDI format modifiers:
-Bit(s)	Description	(Table 0136)
+Bit(s)	Description	(Table 0138)
  4	generate periodic interrupt
  3	perform surface analysis
  2	update secondary defect map
@@ -7407,7 +7474,7 @@ Bit(s)	Description	(Table 0136)
  0	ignore primary defect map
 
 Format of defect table entry [array]:
-Offset	Size	Description	(Table 0137)
+Offset	Size	Description	(Table 0139)
  00h  3 BYTEs	relative sector address (little-endian)
  03h	BYTE	flags and defect count
 		bit 7: last logical sector on track
@@ -7423,7 +7490,7 @@ INT 13 - Future Domain SCSI CONTROLLER - GET SCSI PARTIAL MEDIUM CAPACITY
 	DH = head
 	DL = hard drive ID
 Return: CF set on error
-	AH = status code (see #0120 at AH=01h)
+	AH = status code (see #0122 at AH=01h)
 	CX:DX = logical block number of last quickly-accessible block after
 		given block
 Notes:	sends SCSI Read Capacity command with the PMI bit set to obtain the
@@ -7454,9 +7521,9 @@ INT 13 - Future Domain SCSI CONTROLLER - GET POINTER TO SCSI DISK INFO BLOCK
 	AH = 1Bh
 	DL = hard drive ID
 Return: CF set on error
-	    AH = status code (see #0120 at AH=01h)
+	    AH = status code (see #0122 at AH=01h)
 	CF clear if successful
-	    ES:BX -> SCSI disk information block (see #0138)
+	    ES:BX -> SCSI disk information block (see #0140)
 Notes:	also sets a non-resettable flag which prevents some controller messages
 	  from being displayed
 	the TMC-950 does not support any Future Domain BIOS calls; instead,
@@ -7464,8 +7531,8 @@ Notes:	also sets a non-resettable flag which prevents some controller messages
 SeeAlso: AH=18h"SCSI",AH=1Ch"SCSI"
 
 Format of Future Domain SCSI disk information block:
-Offset	Size	Description	(Table 0138)
- 00h	BYTE	drive physical information (see #0139)
+Offset	Size	Description	(Table 0140)
+ 00h	BYTE	drive physical information (see #0141)
  01h	WORD	translated number of cylinders
  03h	BYTE	translated number of heads
  04h	BYTE	translated number of sectors per track (17, 34, or 63)
@@ -7481,7 +7548,7 @@ Offset	Size	Description	(Table 0138)
  15h	DWORD	translated number of sectors on device
 
 Bitfields for Future Domain SCSI device physical information:
-Bit(s)	Description	(Table 0139)
+Bit(s)	Description	(Table 0141)
  0	???
  1	device uses parity
  2	256 bytes per sector instead of 512
@@ -7493,7 +7560,7 @@ INT 13 - Future Domain SCSI CONTROLLER - GET POINTER TO FREE CONTROLLER RAM
 	AH = 1Ch
 	DL = hard drive ID (any valid SCSI hard disk)
 Return: CF set on error
-	    AH = status code (see #0120 at AH=01h)
+	    AH = status code (see #0122 at AH=01h)
 	CF clear if successful
 	    ES:BX -> first byte of free RAM on controller
 Notes:	the Future Domain TMC-870 contains 1024 bytes of RAM at offsets 1800h
@@ -7515,25 +7582,25 @@ Note:	these functions perform a controller command 0612h without DMA
 INT 13 U - ESDI FIXED DISK - GET COMMAND COMPLETION STATUS
 	AX = 1C08h
 	DL = drive (80h,81h)
-	ES:BX -> buffer for Command Complete Status Block (see #0140)
+	ES:BX -> buffer for Command Complete Status Block (see #0142)
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0120 at AH=01h)
+	AH = status (see #0122 at AH=01h)
 SeeAlso: AX=1C09h,AX=1C0Ah
 
 Format of ESDI Command Complete Status Block:
-Offset	Size	Description	(Table 0140)
+Offset	Size	Description	(Table 0142)
  00h	BYTE	07h
  01h	BYTE	size of block in words (07h)
- 02h	BYTE	command error code (see #0141)
- 03h	BYTE	command status code (see #0142)
- 04h	BYTE	device error code, group 1 (see #0143)
- 05h	BYTE	device error flags, group 2 (see #0144)
+ 02h	BYTE	command error code (see #0143)
+ 03h	BYTE	command status code (see #0144)
+ 04h	BYTE	device error code, group 1 (see #0145)
+ 05h	BYTE	device error flags, group 2 (see #0146)
  06h	WORD	number of unprocessed sectors due to abnormal termination
  08h	DWORD	last Relative Sector Address processed by command
  0Ch	WORD	number of sectors corrected by ECC codes
 
-(Table 0141)
+(Table 0143)
 Values for ESDI command error code:
  00h	successful
  01h	parameter invalid
@@ -7557,23 +7624,23 @@ Values for ESDI command error code:
  13h	invalid device
  FFh	device error
 
-(Table 0142)
+(Table 0144)
 Values for ESDI command status code:
  01h	successful
  03h	successful after ECC
  05h	successful after retries
  06h	format partially completed
  07h	successful after ECC and retries
- 08h	command completed with warning (see #0141)
+ 08h	command completed with warning (see #0143)
  09h	abort complete
  0Ah	reset complete
  0Bh	data transfer ready (no status block)
- 0Ch	command completed with failure (see #0143,#0144)
+ 0Ch	command completed with failure (see #0145,#0146)
  0Dh	DMA error
- 0Eh	command block error (see #0141)
+ 0Eh	command block error (see #0143)
  0Fh	bad attention code
 
-(Table 0143)
+(Table 0145)
 Values for ESDI device error code, group 1:
  00h	successful
  01h	seek fault detected by device
@@ -7607,7 +7674,7 @@ Values for ESDI device error code, group 1:
  86h	timeout while awaiting DMA completion
 
 Bitfields for ESDI device error flags, group 2:
-Bit(s)	Description	(Table 0144)
+Bit(s)	Description	(Table 0146)
  7-5	unused
  4	ready
  3	selected
@@ -7618,36 +7685,36 @@ Bit(s)	Description	(Table 0144)
 INT 13 U - ESDI FIXED DISK - GET DEVICE STATUS
 	AX = 1C09h
 	DL = drive (80h,81h)
-	ES:BX -> buffer for Device Status Block (see #0145)
+	ES:BX -> buffer for Device Status Block (see #0147)
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0120 at AH=01h)
+	AH = status (see #0122 at AH=01h)
 SeeAlso: AX=1C08h,AX=1C0Ah
 
 Format of ESDI Device Status Block:
-Offset	Size	Description	(Table 0145)
+Offset	Size	Description	(Table 0147)
  00h	BYTE	08h
  01h	BYTE	number of words in block (09h)
  02h	BYTE	error flags
  03h	BYTE	unused
- 04h	BYTE	command error code (see #0141)
- 05h	BYTE	command status code (see #0142)
+ 04h	BYTE	command error code (see #0143)
+ 05h	BYTE	command status code (see #0144)
  06h	WORD	ESDI standard status
  08h  5 WORDs	ESDI vendor-specific status codes
 --------d-131C0A-----------------------------
 INT 13 U - ESDI FIXED DISK - GET DEVICE CONFIGURATION
 	AX = 1C0Ah
 	DL = drive (80h,81h)
-	ES:BX -> buffer for Drive Configuration Status Block (see #0146)
+	ES:BX -> buffer for Drive Configuration Status Block (see #0148)
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0120 at AH=01h)
+	AH = status (see #0122 at AH=01h)
 Note:	device configuration format can be found in IBM ESDI Fixed Disk Drive
 	  Adapter/A Technical Reference
 SeeAlso: AX=1C08h,AX=1C0Bh,AX=1C0Ch
 
 Format of ESDI Drive Configuration Status Block:
-Offset	Size	Description	(Table 0146)
+Offset	Size	Description	(Table 0148)
  00h	BYTE	09h
  01h	BYTE	number of words in block (06h)
  02h	BYTE	flags
@@ -7659,14 +7726,14 @@ Offset	Size	Description	(Table 0146)
 --------d-131C0B-----------------------------
 INT 13 U - ESDI FIXED DISK - GET ADAPTER CONFIGURATION
 	AX = 1C0Bh
-	ES:BX -> buffer for Controller Configuration Status Block (see #0147)
+	ES:BX -> buffer for Controller Configuration Status Block (see #0149)
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0120 at AH=01h)
+	AH = status (see #0122 at AH=01h)
 SeeAlso: AX=1C0Ch
 
 Format of ESDI Controller Configuration Status Block:
-Offset	Size	Description	(Table 0147)
+Offset	Size	Description	(Table 0149)
  00h	BYTE	E9h
  01h	BYTE	number of words in block (06h)
  02h	WORD	unused (0000h)
@@ -7675,14 +7742,14 @@ Offset	Size	Description	(Table 0147)
 --------d-131C0C-----------------------------
 INT 13 U - ESDI FIXED DISK - GET POS INFORMATION
 	AX = 1C0Ch
-	ES:BX -> buffer for POS Information Status Block (see #0148)
+	ES:BX -> buffer for POS Information Status Block (see #0150)
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0120 at AH=01h)
+	AH = status (see #0122 at AH=01h)
 SeeAlso: AX=1C0Bh
 
 Format of ESDI POS Information Status Block:
-Offset	Size	Description	(Table 0148)
+Offset	Size	Description	(Table 0150)
  00h	BYTE	EAh
  01h	BYTE	number of words in block (05h)
  02h	WORD	magic value FFDDh
@@ -7710,7 +7777,7 @@ INT 13 U - ESDI FIXED DISK - TRANSLATE RBA TO ABA
 	ES:BX -> ABA number
 Return: CF set on error
 	CF clear if successful
-	AH = status (see #0120 at AH=01h)
+	AH = status (see #0122 at AH=01h)
 Note:	ABA (absolute block address) format can be found in IBM ESDI Adapter
 	  Technical Reference by using its Device Configuration Status Block
 --------d-131C0F-----------------------------
@@ -7735,22 +7802,22 @@ INT 13 - IBMCACHE.SYS - CACHE STATUS
 	AL = subfunction
 	    01h get status record
 		DL = drive???
-		Return: ES:BX -> status record (see #0149)
+		Return: ES:BX -> status record (see #0151)
 			CF set on error
 			    AH = error code
 	    02h set cache status
-		ES:BX -> status record (see #0149)
+		ES:BX -> status record (see #0151)
 		DL = drive???
 		Return: CF set on error
 
 Format of IBMCACHE.SYS status record:
-Offset	Size	Description	(Table 0149)
+Offset	Size	Description	(Table 0151)
  00h	DWORD	total number of read requests
  04h	DWORD	total number of hits
  08h	DWORD	number of physical disk reads
  0Ch	DWORD	total number of sectors requested by physical disk reads
  10h  6 BYTEs	???
- 16h	DWORD	pointer to start of error list (see #0150)
+ 16h	DWORD	pointer to start of error list (see #0152)
  1Ah	DWORD	pointer to end of error list
  1Eh	WORD	???
  20h	BYTE	using extended memory if nonzero
@@ -7760,7 +7827,7 @@ Offset	Size	Description	(Table 0149)
  28h	WORD	sectors per page
 
 Format of IBMCACHE.SYS error list:
-Offset	Size	Description	(Table 0150)
+Offset	Size	Description	(Table 0152)
  00h	DWORD	relative block address of bad page
  04h	BYTE	drive
  05h	BYTE	sector bit-map
@@ -7794,7 +7861,7 @@ INT 13 U - Compaq DESKPRO/i - GET CURRENT MEDIA FORMAT
 	AH = 20h
 	DL = drive number (00h,01h)
 Return: CF clear if successful
-	    AL = media type (see #0151)
+	    AL = media type (see #0153)
 	CF set on error
 	    AH = error code
 		31h no such drive
@@ -7802,7 +7869,7 @@ Return: CF clear if successful
 Note:	this function is supported by the 3/8/93 ROM BIOS, but only partially
 	  (AL is always 00h when successful) by the 8/3/93 version
 
-(Table 0151)
+(Table 0153)
 Values for Compaq diskette media type:
  03h	720K
  04h	1.44M
@@ -7823,7 +7890,7 @@ Desc:	flush any dirty buffers for the specified drive(s) and then discard
 	  those sector buffers
 SeeAlso: AH=21h"QUICKCACHE",AH=22h"QUICKCACHE",AH=28h
 --------d-1321-------------------------------
-INT 13 U - PS/1 HARD DISK - READ MULTIPLE DISK SECTORS
+INT 13 - HARD DISK - PS/1 and newer PS/2 - READ MULTIPLE DISK SECTORS
 	AH = 21h
 	AL = number of sectors to write
 	CH = low byte of 12-bit cylinder number
@@ -7834,12 +7901,14 @@ INT 13 U - PS/1 HARD DISK - READ MULTIPLE DISK SECTORS
 Return: CF clear if successful
 	    ES:BX buffer filled
 	CF set on error
-	AH = status (see #0120 at AH=01h)
+	AH = status (see #0122 at AH=01h)
 Desc:	read from the disk using the Multiple Block mode available on newer
 	  IDE drives and some hard disk controllers, which generates an
 	  interrupt only after the end of transferring a group of sectors
 	  rather than after each sector
-Note:	must call AH=24h"PS/1" before using this function
+Notes:	must call AH=24h"PS/1" before using this function
+	input values in CL and DH are not range-checked
+	the byte at address 0040h:0074h is set to the status of the operation
 SeeAlso: AH=02h,AH=22h"PS/1",AH=23h"PS/1",AH=24h"PS/1"
 --------c-1321-------------------------------
 INT 13 u - QUICKCACHE II v4.20 - FLUSH CACHE
@@ -7848,7 +7917,7 @@ Return: AX = status (0000h successful)
 Desc:	immediately write all dirty sectors back to disk
 SeeAlso: AH=25h"QUICKCACHE",AH=2Eh,AH=2Fh
 --------d-1322-------------------------------
-INT 13 U - PS/1 HARD DISK - WRITE MULTIPLE DISK SECTORS
+INT 13 - HARD DISK - PS/1 and newer PS/2 - WRITE MULTIPLE DISK SECTORS
 	AH = 22h
 	AL = number of sectors to write
 	CH = low byte of 12-bit cylinder number
@@ -7858,12 +7927,14 @@ INT 13 U - PS/1 HARD DISK - WRITE MULTIPLE DISK SECTORS
 	ES:BX -> buffer containing data to be written
 Return: CF clear if successful
 	CF set on error
-	AH = status (see #0120 at AH=01h)
+	AH = status (see #0122 at AH=01h)
 Desc:	write to the disk using the Multiple Block mode available on newer
 	  IDE drives and some hard disk controllers, which generates an
 	  interrupt only after the end of transferring a group of sectors
 	  rather than after each sector
-Note:	must call AH=24h"PS/1" before using this function
+Notes:	must call AH=24h"PS/1" before using this function
+	input values in CL and DH are not range-checked
+	the byte at address 0040h:0074h is set to the status of the operation
 SeeAlso: AH=03h,AH=21h"PS/1",AH=23h"PS/1",AH=24h"PS/1"
 --------c-1322-------------------------------
 INT 13 u - QUICKCACHE II v4.20 - ENABLE/DISABLE CACHE
@@ -7873,17 +7944,17 @@ Return: AX = status (0000h successful)
 Note:	enables/disables caching of all drives
 SeeAlso: AH=2Ch,AH=2Dh,AH=32h,AH=33h,AH=A3h,AH=A4h
 --------d-1323-------------------------------
-INT 13 U - PS/1 HARD DISK - SET CONTROLLER FEATURES REGISTER
+INT 13 U - HARD DISK - PS/1 and newer PS/2 - SET CONTROLLER FEATURES REGISTER
 	AH = 23h
-	AL = feature number (see #0152)
+	AL = feature number (see #0154)
 	DL = drive number (80h,81h)
 	???
 Return: CF clear if successful
 	CF set on error
-	AH = status (see #0120 at AH=01h)
+	AH = status (see #0122 at AH=01h)
 SeeAlso: AH=21h"PS/1",AH=22h"PS/1",AH=24h"PS/1",AH=25h"PS/1"
 
-(Table 0152)
+(Table 0154)
 Values for PS/1 hard disk feature number:
  01h	select 8-bit data transfers instead of 16-bit
  02h	enable write cache
@@ -7908,17 +7979,21 @@ INT 13 U - QUICKCACHE II v4.20 - GET ??? ADDRESS
 Return: AX = status (0000h successful)
 	ES = segment of ??? data
 --------d-1324-------------------------------
-INT 13 U - PS/1 HARD DISK - SET MULTIPLE BLOCKS
+INT 13 - HARD DISK - PS/1 and newer PS/2 - SET MULTIPLE MODE
 	AH = 24h
 	AL = number of sectors per block (2,4,8,16)
 	DL = drive number (80h,81h)
-	???
 Return: CF clear if successful
 	CF set onerror
-	AH = status (see #0120 at AH=01h)
+	AH = status (see #0122 at AH=01h)
 Desc:	specify how many sectors the controller should transfer as a group
 	  between operation-complete interrupts when using the Read Multiple
 	  and Write Multiple functions (AH=21h,AH=22h)
+Notes:	set the number of sectors to 0 to disable multiple-transfer mode
+	the maximum value for the block size depends on the fixed disk
+	  drive type.  The value is stored in byte 15h of the fixed disk
+	  drive parameter table that is created by POST.
+	the byte at address 0040h:0074h is set to status of operation.
 SeeAlso: AH=21h"PS/1",AH=22h"PS/1",AH=23h"PS/1",AH=25h"PS/1"
 --------c-1324-------------------------------
 INT 13 u - QUICKCACHE II v4.20 - SET SECTORS
@@ -7930,12 +8005,82 @@ Return: AX = status
 	    8000h cache cannot be resized while enabled
 SeeAlso: AH=36h
 --------d-1325-------------------------------
-INT 13 - PS/1 HARD DISK - GET DRIVE INFORMATION
+INT 13 - HARD DISK - PS/1 and newer PS/2 - IDENTIFY DRIVE
 	AH = 25h
-	???
-Return: ???
+	DL = drive number (80h,81h)
+	ES:BX-> 512 byte buffer for reply packet
+Return:	CF clear if successful
+	CF set on error
+	AH = status (see #0122 at AH=01h)
+	buffer filled with ATA/IDE-style drive information block
 Desc:	retrieves the 256 words of drive data stored on an IDE hard disk
+Note:	the byte at address 0040h:0074h is set to the status of the operation
 SeeAlso: AH=23h"PS/1"
+
+Format of drive information block:
+Offset	Size	Description	(Table 0155)
+ 00h	WORD	general drive configuration (see #0156)
+ 02h	WORD	number of cylinders
+ 04h	WORD	reserved
+ 06h	WORD	number of heads
+ 08h	WORD	number of unformatted bytes per track
+ 0Ah	WORD	number of unformatted bytes per sector
+ 0Ch	WORD	number of sectors per track
+ 0Eh  6 BYTEs	vendor unique
+ 14h 20 BYTEs	serial number in ASCII, 0000h=not specified)
+ 28h	WORD	buffer type
+ 2Ah	WORD	buffer size in 512 byte increments (0000h=not specified)
+ 2Ch	WORD	number of ECC bytes passed on Read/Write Long cmds
+		0000h = not specified
+ 2Eh  8 BYTEs	firmware revision in ASCII, 0000h=not specified
+ 36h 40 BYTEs	model number in ASCII, 0000h=not specified
+ 5Eh	WORD	bits 15-8  Vendor Unique
+		bits 7-0  00h = Read/Write Multiple commands not implemented
+			  xxh = Maximum number of sectors that can be
+			  transferred per interrupt on Read and Write
+			  Multiple commands
+ 60h	WORD	0000h = cannot perform doubleword I/O
+		0001h = can perform doubleword I/O
+ 62h	WORD	capabilities
+		bit 15-9  0=reserved
+		bit 8  1=DMA Supported
+		bit 7-0	 Vendor Unique
+ 64h	WORD	reserved
+ 66h	WORD	bits 15-8 PIO data transfer cycle timing mode
+		bits 7-0  Vendor Unique
+ 68h	WORD	bits 15-8 DMA data transfer cycle timing mode
+		bits 7-0  Vendor Unique
+ 6Ah	WORD	bits 15-1 reserved
+		bit 0	1=the fields reported in tranlation mode are valid
+			0=the fields reported in translation mode may be valid
+ 6Ch	WORD	number of current cylinders
+ 6Eh	WORD	number of current heads
+ 70h	WORD	number of current sectors per track
+ 72h	DWORD	current capacity in sectors
+ 76h	WORD	reserved
+ 78h 136 BYTEs	not defined by ATA spec 2.6
+100h 64 BYTEs	vendor unique
+140h 96 BYTEs	reserved
+Note:	the above description is as in the ATA (AT Attachment) Specification.
+
+Bitfields for general drive configuration:
+Bit(s)	Description	(Table 0156)
+ 15	0   reserved for non-magnetic drives
+ 14	format speed tolerance gap required
+ 13	track offset option available
+ 12	data strobe offset option available
+ 11	rotational speed tolerance is > 0.5%
+ 10	disk transfer rate > 10 Mbs
+ 9	disk transfer rate > 5Mbs but <= 10Mbs
+ 8	disk transfer rate <= 5Mbs
+ 7	removable cartridge drive
+ 6	fixed drive
+ 5	spindle motor control option implemented
+ 4	head switch time > 15 usec
+ 3	not MFM encoded
+ 2	soft sectored
+ 1	hard sectored
+ 0	reserved (0)
 --------c-1325-------------------------------
 INT 13 u - QUICKCACHE II v4.20 - SET FLUSH INTERVAL
 	AH = 25h
@@ -8023,8 +8168,8 @@ SeeAlso: AH=21h"QUICKCACHE"
 INT 13 u - QUICKCACHE II v4.20 - GET INFO
 	AH = 30h
 	AL = what to get
-	    00h system info (see #0153)
-	    01h drive info (see #0154)
+	    00h system info (see #0157)
+	    01h drive info (see #0158)
 	    02h access frequency (array of 30 words)
 	    03h drive index
 		(array of 32 bytes indicating BIOS drive for DOS drive)
@@ -8034,7 +8179,7 @@ Program: QUICKCACHE II is a shareware disk cache by P.R. Glassel and
 	  Associates, Inc.
 
 Format of QUICKCACHE II system info:
-Offset	Size	Description	(Table 0153)
+Offset	Size	Description	(Table 0157)
  00h	BYTE	flag: cache enabled
  01h	BYTE	flag: buffered writes enabled
  02h	BYTE	flag: buffered reads enabled
@@ -8060,7 +8205,7 @@ Offset	Size	Description	(Table 0153)
  1Dh	BYTE	reserved (padding)
 
 Format of QUICKCACHE II drive info [16-element array, one element]:
-Offset	Size	Description	(Table 0154)
+Offset	Size	Description	(Table 0158)
  00h	BYTE	DOS drive number
  01h	BYTE	BIOS drive number
  02h	BYTE	maximum sector number
@@ -8195,6 +8340,25 @@ INT 13 U - QUICKCACHE II v4.20 - SET "sticky_max"
 	AH = 40h
 	AL = new value for "sticky_max"
 Return: AX = status (0000h successful)
+SeeAlso: AH=41h"QUICKCACHE"
+--------d-1341--BX55AA-----------------------
+INT 13 - Phoenix Enhanced Disk Drive Specification - INSTALLATION CHECK
+	AH = 41h
+	BX = 55AAh
+	DL = drive (80h-FFh)
+Return: CF clear if successful
+	CF set on error
+	BX = AA55h if installed
+	   AH = major version of extensions (20h = 2.0)
+	   AL = internal use
+	   CX = API support bitmap (see #0159)
+	   DH = extension version
+SeeAlso: AH=48h
+
+Bitfields for Enhanced Disk Drive Spec API support bitmap:
+Bit(s)	Description	(Table 0159)
+ 2	extended drive parameter table is valid (see #0160,#0162)
+ 3-15	reserved (0)
 --------c-1341-------------------------------
 INT 13 U - QUICKCACHE II v4.20 - SAVE/RESTORE ???
 	AH = 41h
@@ -8205,6 +8369,7 @@ INT 13 U - QUICKCACHE II v4.20 - SAVE/RESTORE ???
 Return: AX = status (0000h successful, 8000h failed)
 Program: QUICKCACHE II is a shareware disk cache by P.R. Glassel and
 	  Associates, Inc.
+SeeAlso: AH=40h"QUICKCACHE"
 --------N-134257DX1234-----------------------
 INT 13 U - Beame&Whiteside BWLPD - INSTALLATION CHECK
 	AX = 4257h ("BW")
@@ -8212,6 +8377,83 @@ INT 13 U - Beame&Whiteside BWLPD - INSTALLATION CHECK
 Return: BX = 414Ch if installed
 Program: BWLPD is the printer daemon from the BW-NFS package
 SeeAlso: INT 62/AH=00h"ETHDEV"
+--------d-1348-------------------------------
+INT 13 - Phoenix Enhanced Disk Drive Specification - GET DRIVE PARAMETERS
+	AH = 48h
+	DL = drive (80h-FFh)
+	DS:SI -> buffer for drive parameters (see #0160)
+Return: CF clear if successful
+	    DS:SI buffer filled
+	CF set on error
+SeeAlso: AH=41h
+
+Format of Enhanced Disk Drive Spec drive parameters:
+Offset	Size	Description	(Table 0160)
+ 00h	WORD	001Eh (size of buffer)
+ 02h	WORD	information flags
+ 04h	DWORD	number of cylinders on drive
+ 08h	DWORD	number of heads on drive
+ 0Ch	DWORD	number of sectors per track
+ 10h	QWORD	total number of sectors on drive
+ 18h	WORD	bytes per sector
+ 1Ah	DWORD	-> configuration parameters (see #0162)
+		FFFFh:FFFFh if not available
+SeeAlso: #1725
+
+Format of Enhanced Disk Drive Spec translated drive parameter table:
+Offset	Size	Description	(Table 0161)
+ 00h	WORD	number of cylinders
+ 02h	BYTE	number of heads
+ 03h	BYTE	A0h (signature indicating translated table)
+ 04h	BYTE	number of physical sectors per track
+ 05h	WORD	starting write precompensation cylinder number
+ 07h	BYTE	reserved
+ 08h	BYTE	control byte (see #1727 at INT 41)
+ 09h	WORD	number of physical cylinders
+ 0Bh	BYTE	number of physical heads
+ 0Ch	WORD	cylinder number of landing zone
+ 0Eh	BYTE	number of logical sectors per track
+ 0Fh	BYTE	checksum
+SeeAlso: #0162,#1725
+
+Format of Enhanced Disk Drive Spec fixed disk parameter table extension:
+Offset	Size	Description	(Table 0162)
+ 00h	WORD	physical I/O port base address
+ 02h	WORD	disk-drive control port address
+ 04h	BYTE	flags
+		bit 7: reserved (1)
+		bit 6: LBA enabled
+		bit 5: reserved (1)
+		bit 4: drive is slave
+		bit 3-0 reserved (0)
+ 05h	BYTE	proprietary information
+		bits 7-4 reserved (0)
+		bits 3-0: Phoenix proprietary (used by BIOS)
+ 06h	BYTE	IRQ (bits 3-0; bits 7-4 reserved and must be 0)
+ 07h	BYTE	sector count for multi-sector transfers
+ 08h	BYTE	DMA control
+		bits 7-4: DMA type
+		bits 3-0: DMA channel
+ 09h	BYTE	programmed I/O control
+		bits 7-4: reserved (0)
+		bits 3-0: PIO type (1,2, or 3)
+ 0Ah	WORD	drive options (see #0163)
+ 0Ch  2 BYTEs	reserved (0)
+ 0Eh	BYTE	extension revision level (high nybble=major, low nybble=minor)
+		(currently 10h)
+ 0Fh	BYTE	2's complement checksum of bytes 00h-0Eh
+
+Bitfields for drive options:
+Bit(s)	Description	(Table 0163)
+ 0	fast PIO enabled
+ 1	fast DMA access enabled
+ 2	block PIO (multi-sector transfers) enabled
+ 3	CHS translation enabled
+ 4	LBA translation enabled
+ 5	removable media
+ 6	CD-ROM
+ 7	32-bit transfer mode
+ 15-8	reserved
 --------v-135342CX0001-----------------------
 INT 13 - ScanBoot - INSTALLATION CHECK
 	AX = 5342h ("SB")
@@ -8241,12 +8483,12 @@ INT 13 - Seagate ST01/ST02 - RESERVED
 --------d-135503-----------------------------
 INT 13 - Seagate ST01/ST01 - Set Device Type Qualifier (DTQ)
 	AX = 5503h
-	DH = DTQ byte (see #0155)
+	DH = DTQ byte (see #0164)
 	DL = drive ID (80h, 81h, ...)
 Return:	nothing
 
 Bitfields for DTQ byte:
-Bit(s)	Description	(Table 0155)
+Bit(s)	Description	(Table 0164)
  7	reserved
  6	SCSI drive attached
  5	reserved
@@ -8322,14 +8564,14 @@ INT 13 - SyQuest - Generic SCSI pass through
 	AH = 59h
 	CX = HOST_ID, 0-based
 	DX = 80h
-	ES:BX pointer to SCSI structure (see #0156)
+	ES:BX pointer to SCSI structure (see #0165)
 Return: CF clear
 	AH = 95h
 SeeAlso: AH=12h"SyQuest",AH=13h"SyQuest",AH=1Fh"SyQuest"
 
 Format of SyQuest SCSI structure:
-Offset	Size	Description	(Table 0156)
- 00h	WORD	opcode (see #0157)
+Offset	Size	Description	(Table 0165)
+ 00h	WORD	opcode (see #0166)
  02h	BYTE	target's SCSI ID
  03h	BYTE	target's logical unit number
  04h	BYTE	data direction (00h no data xfer, 01h data in, FFh data out)
@@ -8348,7 +8590,7 @@ Offset	Size	Description	(Table 0156)
  14h	DWORD	-> data buffer
 Note:	The handler does not perform a 'Request Sense' command if there was an error
 
-(Table 0157)
+(Table 0166)
 Values for SCSI opcode:
  00h	verify interface
 	clears carry flag and returns if function is available
@@ -8387,7 +8629,7 @@ Note:	intercepted by PC-Cache (v5.1 only)
 --------c-137B00-----------------------------
 INT 13 - NOW! v3.05 - GET INFORMATION
 	AX = 7B00h
-	CX:DX -> 1F8h-byte buffer for information record (see #0158)
+	CX:DX -> 1F8h-byte buffer for information record (see #0167)
 Return: AX = 0000h
 	BX = segment of main resident code
 	ES = ???
@@ -8395,7 +8637,7 @@ Program: NOW! is a disk cache by Vertisoft Systems, Inc.
 SeeAlso: AX=7B02h,AH=EFh
 
 Format of NOW! information record:
-Offset	Size	Description	(Table 0158)
+Offset	Size	Description	(Table 0167)
  00h 80 BYTEs	name of directory from which NOW! was started
  50h 424 BYTEs	???
  81h  ? BYTEs	array of bytes for ???
@@ -8415,7 +8657,7 @@ SeeAlso: AX=7B00h
 INT 13 - NOW! v3.05 - SET INFORMATION
 	AX = 7B02h
 	BX = segment of ??? (10h above a PSP)
-	CX:DX -> 1F8h-byte information record (see #0158)
+	CX:DX -> 1F8h-byte information record (see #0167)
 Return: ???
 Program: NOW! is a disk cache by Vertisoft Systems, Inc.
 Note:	NOW! grabs the INT 24h value from the PSP reached via the segment in
@@ -8465,8 +8707,8 @@ INT 13 - FAST! v4.02+ - API
 	AH = 80h
 	CX = 6572h
 	DX = 1970h
-	ES:BX -> request packet (see #0160)
-	AL = function number (see #0159)
+	ES:BX -> request packet (see #0169)
+	AL = function number (see #0168)
 Return: AH = status (except function 06h)
 	    00h if successful
 	    01h invalid function
@@ -8479,7 +8721,7 @@ Program: FAST! is a disk cache by Future Computing Systems and marketed by BLOC
 SeeAlso: AX=8001h,AX=8006h,AX=8007h
 Index:	hotkeys;FAST!
 
-(Table 0159)
+(Table 0168)
 Values for FAST! function:
  01h	get cache information (see separate entry)
  04h	disable cache
@@ -8503,11 +8745,11 @@ Values for FAST! function:
  17h	(v5.00d+) increase cache size to maximum
 
 Format of FAST! request packet:
-Offset	Size	Description	(Table 0160)
- 00h	DWORD	pointer to 19-byte signature string (see #0161)
+Offset	Size	Description	(Table 0169)
+ 00h	DWORD	pointer to 19-byte signature string (see #0170)
  04h	DWORD	pointer to buffer for data (if needed by function)
 
-(Table 0161)
+(Table 0170)
 Values for FAST! v4.04-v5.03 signature string:
  13h 07h 06h 08h 11h 18h 0Fh 0Eh 02h 18h 13h 08h 0Bh 08h 01h 00h 04h 08h 15h
 --------c-138001CX6572-----------------------
@@ -8515,17 +8757,17 @@ INT 13 - FAST! v4.02+ - GET CACHE INFORMATION
 	AX = 8001h
 	CX = 6572h
 	DX = 1970h
-	ES:BX -> request packet (see #0162)
+	ES:BX -> request packet (see #0171)
 Return: AH = 00h if successful
 SeeAlso: AH=80h,AX=8006h
 
 Format of FAST! request packet:
-Offset	Size	Description	(Table 0162)
- 00h	DWORD	-> 19-byte signature string (see #0161)
- 04h	DWORD	-> buffer for cache information (see #0163)
+Offset	Size	Description	(Table 0171)
+ 00h	DWORD	-> 19-byte signature string (see #0170)
+ 04h	DWORD	-> buffer for cache information (see #0172)
 
 Format of FAST! cache information (v5.00-5.03):
-Offset	Size	Description	(Table 0163)
+Offset	Size	Description	(Table 0172)
  00h	WORD	binary version number of FAST! (v5.00 = 01F4h)
  02h	BYTE	revision letter (61h = X.XXa, 62h = X.XXb, etc.)
  03h	BYTE	FAST! variant
@@ -8537,7 +8779,7 @@ Offset	Size	Description	(Table 0163)
  14h	DWORD	total number of writes (only counted when staging enabled)
  18h	DWORD	number of physical disk writes (only when staging enabled)
  1Ch	DWORD	number of write errors while flushing cache
- 20h	WORD	flags1 (see #0164)
+ 20h	WORD	flags1 (see #0173)
  22h	WORD	flags
 		bit 0: ???
 		bit 1: staged writes enabled
@@ -8569,7 +8811,7 @@ Offset	Size	Description	(Table 0163)
  52h	WORD	???
 
 Bitfields for FAST! flags1:
-Bit(s)	Description	(Table 0164)
+Bit(s)	Description	(Table 0173)
  0	beep on flush
  3	hotkeys enabled
  4	mouse idle check enabled
@@ -8580,26 +8822,26 @@ INT 13 - FAST! v4.02+ - INSTALLATION CHECK
 	AX = 8006h
 	CX = 6572h
 	DX = 1970h
-	ES:BX -> request packet (see #0165)
+	ES:BX -> request packet (see #0174)
 Return: AX = 1965h if installed
 SeeAlso: AH=80h,AX=8001h,AX=8007h
 
 Format of FAST! request packet:
-Offset	Size	Description	(Table 0165)
- 00h	DWORD	-> 19-byte signature string (see #0161)
+Offset	Size	Description	(Table 0174)
+ 00h	DWORD	-> 19-byte signature string (see #0170)
 --------c-138007CX6572-----------------------
 INT 13 - FAST! v4.02+ - UNHOOK INTERRUPTS
 	AX = 8007h
 	CX = 6572h
 	DX = 1970h
-	ES:BX -> request packet (see #0166)
+	ES:BX -> request packet (see #0175)
 Return: AX = 1965h if installed
 SeeAlso: AH=80h,AX=8006h
 Index:	uninstall;FAST!
 
 Format of FAST! request packet:
-Offset	Size	Description	(Table 0166)
- 00h	DWORD	-> 19-byte signature string (see #0161)
+Offset	Size	Description	(Table 0175)
+ 00h	DWORD	-> 19-byte signature string (see #0170)
 --------c-1381--SI4358-----------------------
 INT 13 - Super PC-Kwik v3.20+ - ???
 	AH = 81h
@@ -8865,7 +9107,7 @@ INT 13 CU - Super PC-Kwik v5.10+ - PROGRAM LOAD NOTIFICATION
 	AH = A6h
 	SI = 4358h
 	DS:DX -> ASCIZ program name
-	ES:BX -> EXEC data block (see #0706 at INT 21/AH=4Bh)
+	ES:BX -> EXEC data block (see #0728 at INT 21/AH=4Bh)
 Return: ???
 Note:	called and used internally by Super PC-Kwik when a program is loaded
 	  with INT 21/AX=4B00h

@@ -1,21 +1,21 @@
-Interrupt List		Release 42			   Last change 8/7/94
+Interrupt List		Release 43			   Last change 11/6/94
 
 Please redistribute the following files unmodified as a group, in a trio of
-archives named INTER42A through INTER42C (preferably the original authenticated
+archives named INTER43A through INTER43C (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	this file
-	INTERRUP.A	INT 00 through INT 13     \
+	INTERRUP.A	INT 00 through INT 13	  \
 	INTERRUP.B	INT 14 through INT 15/7F   \
 	INTERRUP.C	INT 15/80 through INT 1F    \  
-	INTERRUP.D	INT 20 through INT 21/44     \   total 1577 pages at
-	INTERRUP.E	INT 21/45 through INT 21/BF   \  60 lines per page,
-	INTERRUP.F	INT 21/C0 through INT 2C       > 1679 with INTPRINT -p
-	INTERRUP.G	INT 2D through INT 2F/7F      /  (6475 entries)
-	INTERRUP.H	INT 2F/80 through INT 2F/FF  /	 (2214 tables)
+	INTERRUP.D	INT 20 through INT 21/44     \	 total 1620 pages at
+	INTERRUP.E	INT 21/45 through INT 21/BF   \	 60 lines per page,
+	INTERRUP.F	INT 21/C0 through INT 2D       > 1726 with INTPRINT -p
+	INTERRUP.G	INT 2E through INT 2F/7F      /	 (6565 entries)
+	INTERRUP.H	INT 2F/80 through INT 2F/FF  /	 (2431 tables)
 	INTERRUP.I	INT 30 through INT 60	    /
 	INTERRUP.J	INT 61 through INT 67	   /
-	INTERRUP.K	INT 68 through INT 7F	  /
-	INTERRUP.L	INT 80 through INT FF    /
+	INTERRUP.K	INT 68 through INT 7E	  /
+	INTERRUP.L	INT 7F through INT FF	 /
 	INTERRUP.PRI	a brief primer on interrupts
 	INTPRINT.COM	a simple formatter that also generates a list summary
 	INTPRINT.DOC	instructions for INTPRINT
@@ -24,10 +24,11 @@ PKZIP archives):
 	CMOS.LST	a description of the CMOS RAM data bytes
 	GLOSSARY.LST	a glossary of terms, abbreviations, and acronyms
 	MEMORY.LST	format of the BIOS data area
+	OPCODES.LST	a listing of recent and undocumented CPU instructions
 	PORTS.LST	a listing of I/O ports
 	CATEGORY.KEY	descriptions of divider-line category letters
 	COMBINE.BAT	combine the pieces of the list into a single file
-The following files should be distributed in an archive called INTER42D:
+The following files should be distributed in an archive called INTER43D:
 	INT.*		invoke interrupts from commandline
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
 	INT2HLP.BAT	Perl script to convert list into QuickHelp database
@@ -40,7 +41,7 @@ The following files should be distributed in an archive called INTER42D:
 	INTPRINT.C	source code for INTPRINT
 	RB2NG.*		convert list into Norton Guides database
 
-Concatenate INTERRUP.A, .B, .C, .D, .E, .F, .G, .H, .I, .J, and .K with
+Concatenate INTERRUP.A, .B, .C, .D, .E, .F, .G, .H, .I, .J, .K, and .L with
 COMBINE.BAT to create an interrupt list file identical to my master copy.
 
 Use INTPRINT to generate a one-line-per-call summary file and/or a file
@@ -86,8 +87,8 @@ whether or not it works the same way).	Information marked with "???" is
 known to be incomplete or guesswork.
 --------!---AVAILABILITY---------------------
 If the list is three or more months old by the time you get it, there
-is probably a newer release out already (R43 is planned for late October,
-R44 for early January 1995).  Each release supersedes all previous versions, so
+is probably a newer release out already (R44 is planned for early January 1995,
+R45 for early March).  Each release supersedes all previous versions, so
 there is no need to keep old versions.
 
 The newest release of this list is available in these places (please do not
@@ -200,7 +201,7 @@ This list is the result of the time and effort of a large number of people:
  3/88 Ralf Brown       ralf@telerama.lm.com	      DESQview API
  4/88 Richard Marks    rmarks@KSP.Unisys.COM	      undoc dir search fields
  5/88 Robert Goldsmith rpg@mitre.org		      AT&T DEB adapter
- 7/88 Gary E. Miller   GEM@cup.portal.com	      Paradise VGA
+ 7/88 Gary E. Miller   gem@rellim.com		      Paradise VGA
  8/88 John Lefor       johnlef@microsoft.com	      XMS spec
  9/88 Dan Lanciani     ddl@harvard.harvard.edu	      miscellaneous
  9/88 Howard Johnson   Howard_Reed_Johnson@cup.portal.com  NetWare overview
@@ -313,7 +314,7 @@ This list is the result of the time and effort of a large number of people:
  8/91 Michael A Shiels mshiels@masnet.uucp	      NPC NCSI, KBUF, Telebit
  9/91 Ralf Brown       ralf@telerama.lm.com	      QEMM API
  9/91 Holger Veit      veit@du9ds3.uni-duisburg.de    Optima 1024 VGA zoom
- 9/91 Gary E. Miller   GEM@cup.portal.com	      Rabbit LLAPI
+ 9/91 Gary E. Miller   gem@rellim.com		      Rabbit LLAPI
 10/91 Michael A Shiels mshiels@masnet.uucp	      FTP Packet Driver 1.10
 10/91 Marcus Groeber   2:241/5609.1		      DR DOS
 11/91 Fridrik Skulason frisk@complex.is		      more virus install checks
@@ -337,7 +338,7 @@ This list is the result of the time and effort of a large number of people:
  1/92 Michael A Shiels mshiels@masnet.uucp	      Win3 INT 2F/40, misc
  2/92 Michael A Shiels mshiels@masnet.uucp	      miscellany
  2/92 Dan Bodoh	       danb@bunt.sps.mot.com	      DVSIXDI
- 2/92 Gary E. Miller   GEM@cup.portal.com	      more Btrieve API
+ 2/92 Gary E. Miller   gem@rellim.com		      more Btrieve API
  2/92 Ralf Brown       ralf@telerama.lm.com	      TKERNEL private API
  2/92 Ralf Brown       ralf@telerama.lm.com	      PC Paint Plus 2.0
  2/92 Tamura Jones     2:512/36.7		      Windows3 VTD.386, misc
@@ -394,7 +395,7 @@ This list is the result of the time and effort of a large number of people:
 12/92 Tim Farley       tim@magee.mhs.compuserve.com   SilverNET,DECnet,NetWare4
 12/92 Bent Lynggaard   lynggaard@risoe.dk	      misc video
 12/28 Kyle Rogers      70650.3316@compuserve.com      DOS LAN Requester
-12/92 Gary E. Miller   GEM@cup.portal.com	      WD90C video chipset
+12/92 Gary E. Miller   gem@rellim.com		      WD90C video chipset
  1/93 Frank Klemm      pfk@rz.uni-jena.de	      Diamond Speedstar 24X
  2/93 Geoff Chappell   cix.compulink.co.uk!geoffc     var. undoc DOS behavior
  2/93 Dr. David Bailey Salford, England		      DBOS API
@@ -443,13 +444,13 @@ This list is the result of the time and effort of a large number of people:
  8/93 John Howells     100031.353@compuserve.com      EMS,XMS,VCPI,DPMI bugs
  8/93 Tim Farley       tim@magee.mhs.compuserve.com   PCMCIA Socket Services
  8/93 Dan Bodoh	       danb@bunt.sps.mot.com	      DESQview internal data
- 9/93 Gary E. Miller   GEM@cup.portal.com	      Diamond Stealth 24X
+ 9/93 Gary E. Miller   gem@rellim.com		      Diamond Stealth 24X
  9/93 Frank Vorstenbosch  prompt@hacktic.nl	      more Kingswood API, misc
  9/93 Phil Rea	       PhilRea@sound.demon.co.uk      TopWare Network OS
  9/93 Andreas Westfeld westfeld@freia.inf.tu-dresden.de Olivetti Quaderno
  9/93 Alexi Lookin     alexi@riaph.irkutsk.su	      Avance Logic, C&T video
  9/93 Inbar Raz	       2:401:100.1		      Juko UNIQUE UX, misc
- 9/93 Gary E. Miller   GEM@cup.portal.com	      Phar Lap 386|DOS-Ext.
+ 9/93 Gary E. Miller   gem@rellim.com		      Phar Lap 386|DOS-Ext.
 10/93 Ralf Brown       ralf@telerama.lm.com	      Compaq ROMs
 10/93 Paolo Borsalino  100042.1206@CompuServe.COM     VSAFE
 10/93 Marco Savegnago  MC2365@mclink.it		      MBBIOS updates, G8BPQ
@@ -486,12 +487,26 @@ This list is the result of the time and effort of a large number of people:
  5/94 Wilbert van Leijen wilbert@dragons.nest.nl      ODIHLP, misc
  6/94 Wolfgang Spraul  100024.1540@CompuServe.COM     Seagate ST01/ST02 BIOS
  6/94 Wolfgang Spraul  100024.1540@CompuServe.COM     SyQuest BIOS
- 7/94						      Compaq QVision
+ 7/94		!!!				      Compaq QVision
  7/94 Dmitry S. Kohmanyuk  dk@farm.cs.kiev.ua	      JAM compressor
  7/94 Thomas Brugger   fd1@aixterm1.urz.uni-heidelberg.de  more misc NetWare
  7/94 Mark T. Vitt     70053.2236@compuserve.com      SDA/DTA interaction, misc
- 8/94						      HP Ext. BIOS, misc
- 8/94						      K3PLUS API
+ 8/94 Jean F. Larvoire HP6300_Q2@hpgnd.grenoble.hp.com	HP Ext. BIOS, misc
+ 8/94 Matthias Paul    MPAUL@heino.ibh.rwth-aachen.de K3PLUS API
+ 8/94 George A. Reznik gar@spcs.ms.kiev.ua	      LZSAPI (Stacker 4)
+ 8/94 Kristofer Sweger 72713.1241@compuserve.com      ANSIPLUS
+ 9/94 Wolfgang Lierz   Wolfgang.Lierz@gmd.de	      miscellaneous
+ 9/94 Mojmir Strhan    strhan@simultan.ch	      WPS and REBOOT VxDs
+ 9/94 Alex V. Korsunov avk@netserv2.free.net	      CPU stepping codes
+ 9/94 Tim Farley       TIM@magee.mhs.compuserve.com   "PS/1" harddisk/ATA info
+ 9/94 Tim Farley       TIM@magee.mhs.compuserve.com   Intel SL Enh. APM BIOS
+ 9/94 Mojmir Strhan    strhan@simultan.ch	      more VxDs IDs, misc
+ 9/94 George L. Fulk   fulkgl@VNET.IBM.COM	      PSP fields, "DOSOpen2"
+ 9/94 Emily Markowicz  70252.2621@compuserve.com      many typo corrections
+10/94 Masashi Fukuda   TAB01645@niftyserve.or.jp      C&T PC/CHIP SuperState
+10/94 M.w. Pieters     aj132@Freenet.HSC.Colorado.EDU DimVGA 3.4, ObjectKernel
+10/94 Delman Lee       delman@mipg.upenn.edu	      Phoenix Enh. Disk Drive
+10/94 Gary E. Miller   gem@rellim.com		      VESA VBE/Power Management
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -583,17 +598,21 @@ Also contributing:
  Wonyong Koh <f7wyk@chem.krict.re.kr>, Igor V. Krasikov <kiv@kiv.kiev.ua>,
  Andreas Groegel <groegeas@minnie.informatik.uni-stuttgart.de>,
  Wolfgang Lorenz <100112.220@CompuServe.COM>, michael_rothman@VNET.IBM.COM,
- Thomas Brugger <fd1@aixfile1.urz.uni-heidelberg.de>,
  Yinrong Huang <HUANGY@SLUVCA.SLU.EDU>, David.Bourgin@babbage.imag.fr,
  Christoph Fischer <Fisher@rz.uni-karlsruhe.de>, Peter_Schuette@ks.fido.de,
  David Perry <davep@demon.csd.unsw.EDU.AU>,Yury Semenov <yury@petre.odessa.ua>,
  Bill Potvin II <70540.120@compuserve.com>, Jordi Mas <jordi@qdeck.com>,
  Chad Robinson <crobinso@vaxc.stevens-tech.edu>, Tom Yohe <stampede@oar.net>,
  <Alexey_Kulentsov@p6.f216.n5020.z2.gate.phantom.msk.su>,
- Martin Trnovec <umertrno@savba.savba.sk>,
- Aaron Martin <71726.2543@compuserve.com>,
- Michael Holin <holin@am.heim1.tu-clausthal.de>,
- Andreas Groegel <groegeas@minnie.informatik.uni-stuttgart.de>
+ Martin Trnovec <umertrno@savba.savba.sk>, Alexander Lepetyuk 2:463/11.44,
+ Aaron Martin <71726.2543@compuserve.com>, Tony Hundt <THUNDT@bb-elec.com>,
+ Michael Holin <holin@am.heim1.tu-clausthal.de>, Wade Bowmer 3:712/505.0,
+ Andreas Groegel <groegeas@minnie.informatik.uni-stuttgart.de>,
+ Andreas Kinzler <akinzler@com.rhein-main.de>, Marcus Better 2:201/2120.1,
+ Patrick Swayne <PATS@internet.megatrends.com>, Jaap Keuter 2:283/512.0,
+ Pancrazio DE MAURO via fausto baldi <balf@dsi.unimi.it>,
+ Markku Tapani Leini| <matale@utu.fi>, 
+ Robert Misiak <72343.2115@compuserve.com>
 --------!---BIBLIOGRAPHY---------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -1098,7 +1117,7 @@ Husky Hunter 16 BIOS from the _Husky_Hunter_16_User_Guide_, 2nd edition (Sept
 Additional ASPI information from Brian Sawert's ASCILOOK utility, published
 in the March 1994 Dr. Dobb's Journal.  Added by Ralf Brown, 3/26/94.
 
-Novell XQL INT 7Bh from XQL C interface source of 7/89.  Added by Ralf Brown,
+Novell XQL INT 7Bh from XQL C interface source of 7/89.	 Added by Ralf Brown,
 3/94.
 
 Various PS/1 and DOS/V calls were found in Frank van Gilluwe's book
@@ -1119,6 +1138,22 @@ Added by Ralf Brown, 8/94.
 
 K3PLUS API from the K3API.DOC file v2.04 for K3PLUS.  Added by Ralf Brown,
 8/7/94.
+
+QEMM port-trapping API extracted from the QEMM v7.5 manual.  Added by
+Ralf Brown, 10/22/94.
+
+IBM 8514/A and XGA Adapter Interface calls extracted from Richard F. Ferraro's
+_Programmer's_Guide_to_the_EGA,_VGA,_and_Super_VGA_Cards_, third edition.
+Added by Ralf Brown, 10/94.
+
+Enhanced Disk Drive Specification calls and tables from Phoenix Technologies'
+_Enhanced_Disk_Drive_Specification_,_Version_1.0_, dated January 25, 1994.
+Added 10/94.
+
+VSWITCHD VxD API from "Q&A MSDOS" column by Jeff Prosise in the September 1994
+_Microsoft_System_Journal_.  SHELL VxD API from "Windows Questions and
+Answers", _Windows/DOS_Developer's_Journal_, August 1994.  POSTMSG VxD API
+from "Q&A MSDOS", _Microsoft_Systems_Journal_, November 1994.  Added 11/5/94.
 --------!---ADDRESSES------------------------
 The following have provided API reference and other materials at no charge:
 
@@ -1418,11 +1453,6 @@ Peabody, MA 01960
 Voice:	(508) 535-7510
 FAX:	(508) 535-7512
 
-Eric Isaacson Software		(ZIPKEY)
-416 East University Ave.
-Bloomington, IN 47401-4739
-Voice:	(812) 339-1811
-
 ESaSS B.V.			(TBSCANX, ThunderByte, STACKMAN)
 Thunderbyte PC Immunizer Division
 P.O. Box 1380
@@ -1513,6 +1543,11 @@ Inset Systems			(Inset)
 Brookfield, CT 06804
 	inset.com
 
+Eric Isaacson Software		(ZIPKEY)
+416 East University Ave.
+Bloomington, IN 47401-4739
+Voice:	(812) 339-1811
+
 Isogon Corporation		(NewSpace)
 330 Seventh Avenue
 New York, NY 10001
@@ -1526,6 +1561,14 @@ JP Software			(4DOS)
 P.O. Box 1470
 E. Arlington, MA 02174
 Voice:	(617) 646-3975
+
+Robert Juhasz			(XFS)
+Auf der Suehle 14		[4/94]
+33102 Paderborn
+Germany
+FAX:	+49 5251 55764
+Email:	robertj@lwfws1.uni-paderborn.de
+CIS:	100045,2433
 
 KANSYS, Inc.			(AutoBraille)
 1016 Ohio			[12/91]
@@ -1799,6 +1842,9 @@ What they're saying about this list:
    without this file, which is widely-known as "Ralf Brown's Interrupt
    List". Ask about it. You will find it."
 	Robert Curtis Davis, TBONES07.DOC.
+
+  "It's the finest mess 'o Purina Geek Chow that I've seen in a coon's age."
+	--Ethan Dicks
 --------!---CONTACT_INFO---------------------
 If you know of any information not in the list, or which is stated incorrectly,
 please let me know!  This list would be a pale shadow of its current self if it
@@ -1824,7 +1870,7 @@ Snail mail:
 	   (Letters which enclose a Self-Addressed Stamped Envelope [or self-
 	    addressed envelope and international return coupon] or e-mail
 	    address will be given priority.  This address will remain valid
-	    until at least May 1, 1995.)
+	    until at least November 1, 1995.)
 
 I reply to all e-mail submissions and inquiries.  If you do not receive a reply
 within a reasonable time, send your message again, giving a better return path
