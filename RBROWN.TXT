@@ -1,19 +1,19 @@
 Public Domain/Freeware/Shareware by Ralf Brown:
 
 The MSDOS Interrupt List
-	A comprehensive listing of over 6100 functions available through
+	A comprehensive listing of over 6250 functions available through
 	interrupt calls on IBM PCs and compatibles.  Includes both
 	documented and undocumented functions.
-	Current version: INTER39A (release 39, 2/6/94)
-			 INTER39B
-			 INTER39C
-			 INTER39D (conversion and utility programs)
+	Current version: INTER40A (release 40, 4/3/94)
+			 INTER40B
+			 INTER40C
+			 INTER40D (conversion and utility programs)
 
 DVINT
 	An extract of the MSDOS Interrupt List containing the DESQview
 	and QEMM API calls.  Updated whenever there have been significant
  	additions to the DESQview/QEMM calls in the Interrupt List.
-	Current version: DVINT36 (8/1/93)
+	Current version: DVINT40 (4/3/94)
 
 RBcomm
 	A DESQview-aware communications program which sports seamless DSZ,

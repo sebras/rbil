@@ -1,5 +1,5 @@
-[This file was provided by Wim Osterholt (2:512/56.198).]
-Last Change: 2/6/94
+[This file was provided by Wim Osterholt (2:512/56 or wim@djo.wtm.tudelft.nl).]
+Last Change: 4/3/94
 
 
 
@@ -193,12 +193,18 @@ Last Change: 2/6/94
 		  0081,0000  enable range compare CC0 0-8M    CC1 disable
 
 -------------------------------------------------------------------------------
+0022-0023 ----	???
+
+0022	w	index for accesses to next port
+0023	r/w	???
+
+-------------------------------------------------------------------------------
 0038-003F ----	PC radio by CoZet Info Systems
 		The I/O address range is dipswitch selectable from:
 		   038-03F and 0B0-0BF
-		   078-07F and 0F9-0FF
+		   078-07F and 0F0-0FF
 		   138-13F and 1B0-1BF
-		   178-17F and 1F9-1FF
+		   178-17F and 1F0-1FF
 		   238-23F and 2B0-2BF
 		   278-27F and 2F0-2FF
 		   338-33F and 3B0-3BF
@@ -461,16 +467,20 @@ Last Change: 2/6/94
 		      Compaq  Places byte in output port in output buffer. use
 			      this command only when the output buffer is empty
 		 D1	dbl   write output port. next byte written  to 0060
-			      will be written to the 8041 output port
+			      will be written to the 8042 output port; the
+			      original IBM AT and many compatibles use bit 1 of
+			      the output port to control the A20 gate
 		      Compaq  The system speed bits are not set by this command
 			      use commands A1-A6 (!) for speed functions.
 		 D2	AWARD Enhanced Command: write keyboard output buffer
 		 D3	AWARD Enhanced Command: write pointing device out.buf.
 		 D4	AWARD Enhanced Command: write to auxiliary device
-		 DD	sngl  disable address line A20. default in Real Mode
-		 DF	sngl  enable address line A20
+		 DD	sngl  disable address line A20 (HP Vectra only???)
+			      default in Real Mode
+		 DF	sngl  enable address line A20 (HP Vectra only???)
 		 E0	read  read test inputs. bit0 = T0 and bit1 = T1
-		 Exx	AWARD Enhanced Command: active output port
+		      Compaq  T0=keyboard clock stream	 T1=KB data stream
+		 Exxx	AWARD Enhanced Command: active output port
 		 ED   Compaq  This is a two part command to control the state
 			      of the NumLock CpasLock and ScrollLock LEDs
 			      The second byte contains the state to set LEDs.
@@ -495,6 +505,12 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 006A	w	HP-Vectra  clear processing, done
 
 006C-006F	HP-HIL	(Human Interface Link = async. serial inputs 0-7)
+
+-------------------------------------------------------------------------------
+0065	  ----	???
+
+0065	r/w	???
+		bit 2: A20 gate control (set = A20 enabled, clear = disabled)
 
 -------------------------------------------------------------------------------
 0070-007F ----	CMOS RAM/RTC (Real Time Clock  MC146818)
@@ -697,6 +713,10 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 		 3B  H cylinders parking zone
 		 3C  sectors
 
+0074	w	secondary CMOS RAM index (Compaq)
+
+0076	r/w	secondary CMOS RAM (Compaq)
+
 0078		HP-Vectra  Hard Reset: NMI enable/disable
 		 bit 7 = 0  disable & clear hard reset from HP-HIL controller
 		       = 1  enable hard reset from HP-HIL controller chip
@@ -706,9 +726,9 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 0078-007F ----	PC radio by CoZet Info Systems
 		The I/O address range is dipswitch selectable from:
 		   038-03F and 0B0-0BF
-		   078-07F and 0F9-0FF
+		   078-07F and 0F0-0FF
 		   138-13F and 1B0-1BF
-		   178-17F and 1F9-1FF
+		   178-17F and 1F0-1FF
 		   238-23F and 2B0-2BF
 		   278-27F and 2F0-2FF
 		   338-33F and 3B0-3BF
@@ -798,9 +818,9 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 00B0-00BF ----	PC radio by CoZet Info Systems
 		The I/O address range is dipswitch selectable from:
 		   038-03F and 0B0-0BF
-		   078-07F and 0F9-0FF
+		   078-07F and 0F0-0FF
 		   138-13F and 1B0-1BF
-		   178-17F and 1F9-1FF
+		   178-17F and 1F0-1FF
 		   238-23F and 2B0-2BF
 		   278-27F and 2F0-2FF
 		   338-33F and 3B0-3BF
@@ -905,9 +925,9 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 00F9-00FF ----	PC radio by CoZet Info Systems
 		The I/O address range is dipswitch selectable from:
 		   038-03F and 0B0-0BF
-		   078-07F and 0F9-0FF
+		   078-07F and 0F0-0FF
 		   138-13F and 1B0-1BF
-		   178-17F and 1F9-1FF
+		   178-17F and 1F0-1FF
 		   238-23F and 2B0-2BF
 		   278-27F and 2F0-2FF
 		   338-33F and 3B0-3BF
@@ -950,19 +970,19 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 
 -------------------------------------------------------------------------------
 0130-0133 ----	Adaptec 154xB/154xC SCSI adapter.
-		alternate address at 0134, 0230, 0234 ,0330 and 0334
+		alternate address at 0134, 0230, 0234, 0330 and 0334
 
 -------------------------------------------------------------------------------
 0134-0137 ----	Adaptec 154xB/154xC SCSI adapter.
-		alternate address at 0130, 0230, 0234 ,0330 and 0334
+		alternate address at 0130, 0230, 0234, 0330 and 0334
 
 -------------------------------------------------------------------------------
 0138-013F ----	PC radio by CoZet Info Systems
 		The I/O address range is dipswitch selectable from:
 		   038-03F and 0B0-0BF
-		   078-07F and 0F9-0FF
+		   078-07F and 0F0-0FF
 		   138-13F and 1B0-1BF
-		   178-17F and 1F9-1FF
+		   178-17F and 1F0-1FF
 		   238-23F and 2B0-2BF
 		   278-27F and 2F0-2FF
 		   338-33F and 3B0-3BF
@@ -985,9 +1005,9 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 0178-017F ----	PC radio by CoZet Info Systems
 		The I/O address range is dipswitch selectable from:
 		   038-03F and 0B0-0BF
-		   078-07F and 0F9-0FF
+		   078-07F and 0F0-0FF
 		   138-13F and 1B0-1BF
-		   178-17F and 1F9-1FF
+		   178-17F and 1F0-1FF
 		   238-23F and 2B0-2BF
 		   278-27F and 2F0-2FF
 		   338-33F and 3B0-3BF
@@ -1066,7 +1086,7 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 		 50	 format track
 		 EC	 identify drive		(IDE)
 		 97 E3	 idle			(IDE)
-		 95 E1	 idle immediatete	(IDE)
+		 95 E1	 idle immediate		(IDE)
 		 91	 initialize drive parameters
 		 1x	 recalibrate
 		 E4	 read buffer		(IDE)
@@ -1102,12 +1122,18 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 		 F5-FF	 vendor unique		(IDE)
 
 -------------------------------------------------------------------------------
+01F8	  ----	???
+
+01F8	r/w	???
+		bit 0: A20 gate control (set = A20 enabled, clear = disabled)
+
+-------------------------------------------------------------------------------
 01F9-01FF ----	PC radio by CoZet Info Systems
 		The I/O address range is dipswitch selectable from:
 		   038-03F and 0B0-0BF
-		   078-07F and 0F9-0FF
+		   078-07F and 0F0-0FF
 		   138-13F and 1B0-1BF
-		   178-17F and 1F9-1FF
+		   178-17F and 1F0-1FF
 		   238-23F and 2B0-2BF
 		   278-27F and 2F0-2FF
 		   338-33F and 3B0-3BF
@@ -1131,6 +1157,13 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 		 bit 0	A joystick X coordinate	   / A paddle coordinate
 
 	w	fire joysticks four one-shots
+
+-------------------------------------------------------------------------------
+0200-02FF ----	Sunshine uPW48, programmer for EPROM version CPU's 8748/8749
+		(4 bit DIP switch installable in the range 20x-2Fx)
+0200-0203	adresses of the 8255 on the uPW48
+0208-020B	adresses of ??? on the uPW48 (all showing zeros)
+
 
 -------------------------------------------------------------------------------
 0210-0217 ----	Expansion unit (XT)
@@ -1178,7 +1211,7 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 
 -------------------------------------------------------------------------------
 0234-0237 ----	Adaptec 154xB/154xC SCSI adapter.
-		alternate address at 0130, 0134, 0230 ,0330 and 0334
+		alternate address at 0130, 0134, 0230, 0330 and 0334
 
 -------------------------------------------------------------------------------
 0240-0257 ----	RTC (alternate Real Time Clock for XT)	 (1st at 0340-0357)
@@ -1193,6 +1226,12 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 0278	w	data port
 0279	r/w	status port
 027A	r/w	control port
+
+-------------------------------------------------------------------------------
+02A0-02A7 ----	Sunshine EW-901BN, EW-904BN
+		EPROM writer card (release 1986) for EPROMs up to 27512
+02A0-02A3	adresses of the 8255 on the EW-90xBN
+
 
 -------------------------------------------------------------------------------
 02A2-02A3 ----	MSM58321RS clock
@@ -1220,10 +1259,19 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 02E3		data aquisition (adapter 0)
 
 -------------------------------------------------------------------------------
-02E8-02EF ----	serial port, same as 02F8, 03E8, and 03F8
+02E8	  ----	S3 86C928 video controller (ELSA Winner 1000)
 
 -------------------------------------------------------------------------------
-02F8-02FF ----	serial port, same as 02E8, 02F8, and 03F8
+02E8-02EF ----	serial port, same as 02F8, 03E8 and 03F8
+
+-------------------------------------------------------------------------------
+02E8-02EF ----	used by ATI Mach32 video cards (e.g. Graphics Ultra+)
+
+-------------------------------------------------------------------------------
+02EA	  ----	S3 86C928 video controller (ELSA Winner 1000)
+
+-------------------------------------------------------------------------------
+02F8-02FF ----	serial port, same as 02E8, 03E8 and 03F8
 
 02F8	w	transmitter holding register
 02F8	r	receiver buffer register
@@ -1240,11 +1288,20 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 0300-0301 ---- Soundblaster 16 ASP MPU-Midi
 
 -------------------------------------------------------------------------------
+0300-0303 ---- Panasonic 52x CD-ROM SCSI Miniport
+	Alternate addresses at 0320, 0340, 0360, and 0380
+
+-------------------------------------------------------------------------------
 0300-031F ----	prototype cards
 		Periscope hardware debugger
 
 -------------------------------------------------------------------------------
 0300-030F ----	Philips CD-ROM player CM50
+
+-------------------------------------------------------------------------------
+0300-030F ----	CompaQ Tape drive adapter. alternate address at 0100
+
+-------------------------------------------------------------------------------
 0310-031F ----	Philips CD-ROM player CM50
 
 -------------------------------------------------------------------------------
@@ -1283,7 +1340,7 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 
 -------------------------------------------------------------------------------
 0334-0337 ----	Adaptec 154xB/154xC SCSI adapter.
-		alternate address at 0130, 0134, 0230 ,0234 and 0330
+		alternate address at 0130, 0134, 0230, 0234 and 0330
 
 -------------------------------------------------------------------------------
 0338	  ----	AdLib soundblaster card
@@ -1370,6 +1427,11 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 0388-038B ---- Soundblaster 16 ASP FM-Chip
 
 -------------------------------------------------------------------------------
+0390-0397 ----	Sunshine EW-901B, EW-904B
+		EPROM writer card for EPROMs up to 27512
+0390-0393	adresses of the 8255 on the EW-90xB
+
+-------------------------------------------------------------------------------
 0390-039F ----	Cluster adapter (AT)
 
 0390-0393	(adapter 0)	(XT)
@@ -1432,16 +1494,14 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 03B9		reserved for color select register on color adapter
 
 03BA	r	CRT status register	 EGA/VGA: input status 1 register
-		 bit 7-4 reserved
-		 bit 3	 black/white video
-		 bit 2-1 reserved
-		 bit 0	 horizontal drive
-
 		 bit 7	 (MSD says) if this bit changes within 8000h reads then
 		  bit 6-4 = 000 = adapter is Hercules or compatible
 			    001 = adapter is Hercules+
 			    101 = adapter is Hercules InColor
 				  else: adapter is unknown
+		 bit 3	 black/white video
+		 bit 2-1 reserved
+		 bit 0	 horizontal drive
 
 03BA	w	EGA/VGA feature control register
 
@@ -1475,6 +1535,11 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 			 1  enables upper 32K of graphics mode buffer
 		 bit 0 = 0  prevents graphics mode
 			 1  allows graphics mode
+
+-------------------------------------------------------------------------------
+03C0-03C7 ----	Sunshine EW-901, EW-901A, EW-904, EW-904A
+		EPROM writer card for EPROMs up to 27512
+03C0-03C3	adresses of the 8255 on the EW-90x
 
 -------------------------------------------------------------------------------
 03C0-03CF ----	EGA  (1st Enhanced Graphics Adapter)	alternate at 02C0
@@ -1557,7 +1622,7 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 03DF		CRT/CPU page register  PCjr only
 
 -------------------------------------------------------------------------------
-03E8-03EF ----	serial port, same as 02E8, 02F8, and 03F8
+03E8-03EF ----	serial port, same as 02E8, 02F8 and 03F8
 
 -------------------------------------------------------------------------------
 03F0-03F7 ----	FDC 1  (1st Floppy Disk Controller 8272)  same as 0370
@@ -1676,7 +1741,7 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 			 = 11  reserved
 
 -------------------------------------------------------------------------------
-03F8-03FF ----	serial port (8250,8251,16450,16550), same as 02E8,02F8,and 03F8
+03F8-03FF ----	serial port (8250,8251,16450,16550), same as 02E8,02F8 and 03E8
 
 03F8	w	serial port, transmitter holding register, which contains the
 		character to be sent. Bit 0 is sent first.
@@ -1967,7 +2032,14 @@ only)
 		 bit 1
 		 bit 0 = 1  will lock up your machine!
 
-	r	 =04	    (always reads back this value)
+	r	 bit 7 = 0  if screen enabled always these values
+		 bit 6 = 0
+		 bit 5 = 0
+		 bit 4 = 0
+		 bit 3 = 0
+		 bit 2 = 1
+		 bit 1 = 0
+		 bit 0 = 0
 
 -------------------------------------------------------------------------------
 0620-0627 ----	PC network (adapter 1)
@@ -1996,6 +2068,9 @@ only)
 0C00	r/w	page register to write to SRAM or I/O
 
 -------------------------------------------------------------------------------
+0C7C		bit 7-4 (Compaq)
+
+-------------------------------------------------------------------------------
 0C80-0C83 ----	system board ID registers
 
 -------------------------------------------------------------------------------
@@ -2013,6 +2088,9 @@ only)
 
 -------------------------------------------------------------------------------
 2390-2393 ----	cluster (adapter 4)
+
+-------------------------------------------------------------------------------
+27C6	r/w	LCD timeout in minutes (Compaq LTE Lite)
 
 -------------------------------------------------------------------------------
 3220-3227 ----	serial port 3, description same as 03F8

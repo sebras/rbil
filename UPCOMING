@@ -1,0 +1,17 @@
+Planned enhancements:
+
+INTER41 will add a new keyword Range: which will look something like
+Range:	AH=C0h to AH=FFh, selected by commandline switch
+and will replace the existing Note: entries
+
+INTER42 will start phasing in finer-grained cross-references when tables
+are involved.  Instead of referencing the entry containing the table,
+the table itself will be referenced by number.  This will look something
+like
+		... (see #0768)
+
+Format of ...:
+Offset	Size	Description	(Table 0768)
+ 00h	...
+
+

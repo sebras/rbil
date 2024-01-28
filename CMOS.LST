@@ -1,5 +1,5 @@
 
-              CMOS Memory Map v1.21 January, 1994
+              CMOS Memory Map v1.22 February, 1994
 
 Compiled from multiple sources by Padgett Peterson
 Corrections/additions/comments to: padgett@tccslr.dnet.mmc.com
@@ -12,12 +12,6 @@ Found: Algorithm used by IBM in calculating CRC checksums for PS/2
        (see bytes 32h-33h). Complex (recursive part is 12 lines of
        assembly) and not yet validated for every model.
 
-Information Wanted: In calculating/writing information to the CMOS
-       in a PS/2, The IBM BIOS ORs the actual location with 80h (the 
-       floppy disk drive byte at 10h is addressed as 90h). Since the 
-       CMOS addresses wrap, this winds up at the same place (10h) on
-       all PS/2s checked thusfar. Anyone know why IBM does this ?
-      
 
 			Background
 
@@ -61,6 +55,12 @@ an OUT to port 70h is executed with the address of the byte to be read and
 an IN from port 71h will then retrieve the requested information. The 
 following BASIC fragment will read 128 CMOS bytes and print them to the 
 screen in 8 rows of 16 values.
+
+CMOS RAM space has an upper limit of 128 bytes because of the structure
+of port 70: only bits 0-6 are used for addressing, bit 7 is used to 
+enable (0) or disable (1) Non-Maskable Interrupts (NMI) and explains why
+IBM uses 80h OR <address> to read/write data & follows with  a "throw-away"
+call.
 
 Note that if the CMOS only has 64 bytes available, addressing will 
 generally wrap and addresses from 40h-7Fh will mirror 00h-3Fh. Output will 
@@ -530,6 +530,7 @@ is "user defined" and parameters are stored elsewhere in the CMOS.
 
 Revision History
 
+v1.22   Feb,  1994      Added NMI mask note
 v1.21   Jan,  1994      Added note for PS/2 checksum found
 v1.20	Sept, 1993      PHOENIX data from Wim Osterholt added
                         additional AMI data from Howie (hjh@gwd.dst.gov.au)

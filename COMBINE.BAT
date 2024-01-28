@@ -1,2 +1,14 @@
-copy interrup.a+interrup.b+interrup.c+interrup.d+interrup.e interrup.lst
-copy interrup.lst+interrup.f+interrup.g+interrup.h+interrup.i+interrup.j interrup.lst
+@echo off
+for %%a in (a b c d e f g h i j k) do if not exist interrup.%%a goto missing
+echo Combining the pieces of the interrupt list
+echo.
+copy interrup.a interrup.lst >nul
+for %%a in (b c d e f g h i j k) do copy /b interrup.lst+interrup.%%a interrup.lst >nul
+echo The interrupt list has now been combined into INTERRUP.LST
+goto end
+
+:missing
+echo Some sections of the interrupt list are missing.
+goto end
+
+:end

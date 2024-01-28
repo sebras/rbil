@@ -7,7 +7,7 @@ list?  Want the list split up by subject and thoroughly indexed?  Try
        A Programmer's Reference to BIOS, DOS, and Third-Party Calls
        (second edition)
      Ralf Brown and Jim Kyle
-     1200 pages
+     1210 pages
      Addison-Wesley
      ISBN 0-201-62485-0
      $39.95
@@ -15,9 +15,16 @@ list?  Want the list split up by subject and thoroughly indexed?  Try
 Corresponds to the non-networking portions of INTER36 with a few of the
 additions from INTER37.  Available Now.
 
-The companion book Network Interrupts (~700 pages, ISBN 0-201-62644-6, $29.95)
-should be available in February 1994.  It corresponds to the networking
-portions of INTER37 with a few of the additions from INTER38.
+The companion book Network Interrupts is now available.  It corresponds
+to the networking portions of INTER37 with a few of the additions from
+INTER38.
+
+     Network Interrupts: A Programmer's Reference to Network APIs
+     Ralf Brown and Jim Kyle
+     730 pages
+     Addison-Wesley 1994
+     ISBN 0-201-6644-6
+     $29.95
 
 -------
 
@@ -35,8 +42,8 @@ INTER26.
      Undocumented DOS:
        A Programmer's Guide to Reserved MS-DOS Functions and Data Structures
        (second edition)
-     Andrew Schulman, Raymond J. Michels, Jim Kyle, Tim Paterson, David
-       Maxey, and Ralf Brown
+     Andrew Schulman, Ralf Brown, David Maxey, Raymond J. Michels, and
+       Jim Kyle
 
      880 pages, 7-3/8" x 9-1/8"
      Addison-Wesley
@@ -65,19 +72,19 @@ I'm just letting people know of value-added versions of the list.
 
 -------
 
-The newest Addison-Wesley catalog lists the following books which may
-be of interest:
+The following books may also be of interest:
 
 	DOS Internals
 	Geoff Chappell
-	608 pages + 1.44M disk, $39.95
+	740 pages + 1.44M disk, $39.95
+	Addison-Wesley
 	ISBN 0-201-60835-9
-	"available November 1993"
 
 	The Undocumented PC: A Programmer's Guide to I/O, CPUs, and
 	  Fixed Memory Areas
 	Frank van Gilluwe
 	656 pages + 1.44M disk, $44.95
+	Addison-Wesley
 	ISBN 0-201-62277-7
 	"available November 1993"
 
