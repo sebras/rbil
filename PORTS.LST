@@ -1,15 +1,17 @@
 [This file was provided by Wim Osterholt (2:512/56.198).]
-Last Change: 8/1/93
+Last Change: 2/6/94
 
 
 
-		XT, AT and PS/2  I/O port addresses
+		XT, AT and PS/2	 I/O port addresses
 
       Do NOT consider this information as complete and accurate.
       If you want to do harware programming check ALWAYS the
       appropriate data sheets. Be aware that erroneously programming
       can put your hardware or your data at risk. 
 
+      There is a memory mapped address in use for I/O functions of which I
+      think it should be mentioned here. See at the end of this list.
 
 -------------------------------------------------------------------------------
 0000-001F ----	DMA 1	(first Direct Memory Access controller 8237)
@@ -80,18 +82,14 @@ Last Change: 8/1/93
 000E	w	DMA clear mask register
 000F	w	DMA write mask register
 
-
 -------------------------------------------------------------------------------
 0010-001F ----	DMA controller (8237) on PS/2 model 60 & 80
-
 
 -------------------------------------------------------------------------------
 0018	w	PS/2 extended function register
 
-
 -------------------------------------------------------------------------------
 001A		PS/2 extended function execute
-
 
 -------------------------------------------------------------------------------
 0020-003F ----	PIC 1	(Programmable Interrupt Controller 8259)
@@ -194,24 +192,38 @@ Last Change: 8/1/93
 		  00C1,40E1  enable range compare CC0 0-4M    CC1 4M-6M
 		  0081,0000  enable range compare CC0 0-8M    CC1 disable
 
+-------------------------------------------------------------------------------
+0038-003F ----	PC radio by CoZet Info Systems
+		The I/O address range is dipswitch selectable from:
+		   038-03F and 0B0-0BF
+		   078-07F and 0F9-0FF
+		   138-13F and 1B0-1BF
+		   178-17F and 1F9-1FF
+		   238-23F and 2B0-2BF
+		   278-27F and 2F0-2FF
+		   338-33F and 3B0-3BF
+		   378-37F and 3F0-3FF
+		All of these addresses show a readout of FF in initial state.
+		Once started, all of the addresses show	 FB, whatever might
+		happen.
 
 -------------------------------------------------------------------------------
 0040-005F ----	PIT  (Programmable Interrupt Timer  8253, 8254)
 		 XT & AT uses 40-43    PS/2 uses 40, 42,43,44, 47
 
-0040	r/w	PIT  counter 0, counter divisor       (XT, AT, PS/2)
+0040	r/w	PIT  counter 0, counter divisor	      (XT, AT, PS/2)
 0041	r/w	PIT  counter 1, RAM refresh counter   (XT, AT)
 0042	r/w	PIT  counter 2, cassette & speaker    (XT, AT, PS/2)
 
 0043	r/w	PIT  mode port, control word register for counters 0-2
 		 bit 7-6 = 00  counter 0 select
-			 = 01  counter 1 select   (not PS/2)
+			 = 01  counter 1 select	  (not PS/2)
 			 = 10  counter 2 select
 		 bit 5-4 = 00  counter latch command
 			 = 01  read/write counter bits 0-7 only
 			 = 10  read/write counter bits 8-15 only
 			 = 11  read/write counter bits 0-7 first, then 8-15
-		 bit 3-0 = 000 mode 0 select
+		 bit 3-1 = 000 mode 0 select
 			 = 001 mode 1 select - programmable one shot
 			 = x10 mode 2 select - rate generator
 			 = x11 mode 3 select - square wave generator
@@ -240,14 +252,23 @@ Last Change: 8/1/93
 
 -------------------------------------------------------------------------------
 0060-006F ----	Keyboard controller (8041, 8042)  (or PPI (8255) on XT)
-		 XT uses 60-63,  AT uses 60-64
+		 XT uses 60-63,	 AT uses 60-64
 
 		 AT keyboard controller input port bit definitions
-		  bit 7   = 0  keyboard inhibited
-		  bit 6   = 0  CGA, else MDA
-		  bit 5   = 0  manufacturing jumper installed
-		  bit 4   = 0  system RAM 512K, else 640K
+		  bit 7	  = 0  keyboard inhibited
+		  bit 6	  = 0  CGA, else MDA
+		  bit 5	  = 0  manufacturing jumper installed
+		  bit 4	  = 0  system RAM 512K, else 640K
 		  bit 3-0      reserved
+
+		 AT keyboard controller input port bit definitions by Compaq
+		  bit 7	  = 0  security lock is locked
+		  bit 6	  = 0  Compaq dual-scan display, 1=non-Compaq display
+		  bit 5	  = 0  system board dip switch 5 is ON
+		  bit 4	  = 0  auto speed selected, 1=high speed selected
+		  bit 3	  = 0  slow (4MHz), 1 = fast (8MHz)
+		  bit 2	  = 0  80287 installed, 1= no NDP installed
+		  bit 1-0      reserved
 
 		 AT keyboard controller output port bit definitions
 		  bit 7 =    keyboard data output
@@ -355,10 +376,37 @@ Last Change: 8/1/93
 		 bit 1 = 1 input buffer full (input 60/64 has data for 8042)
 		 bit 0 = 1 output buffer full (output 60 has data for system)
 
+0064	r	 KB controller read status by Compaq
+		 bit 7 = 1 parity error detected (11-bit format only). If an
+			   error is detected, a Resend command is sent to the
+			   keyboard once only, as an attempt to recover.
+		 bit 6 = 1 receive timeout. transmission didn't finish in 2mS.
+		 bit 5 = 1 transmission timeout error
+			    bit 5,6,7  cause
+				1 0 0  No clock
+				1 1 0  Clock OK, no response
+				1 0 1  Clock OK, parity error
+		 bit 4 = 0 security lock engaged
+		 bit 3 = 1 data in OUTPUT register is command
+			 0 data in OUTPUT register is data
+		 bit 2 = 0 system flag status 0=power up or reset 1=soft reset
+		 bit 1 = 1 input buffer full (output 60/64 has data)
+		 bit 0 = 0 no new data in buffer (input 60 has data)
+
 0064	w	KB controller input buffer (ISA, EISA)
 		KB controller commands (data goes to port 0060):
 		 20	read  read byte zero of internal RAM, this is the
 			      last KB command send to 8041
+		      Compaq  Put current command byte on port 0060
+				command structure:
+				bit 7	reserved
+				bit 6 = 1 convert KB codes to 8086 scan codes
+				bit 5 = 0 use 11-bit codes, 1=use 8086 codes
+				bit 4 = 0 enable keyboard, 1=disable keyboard
+				bit 3 = 1 ignore security lock state
+				bit 2	  this bit goes into bit2 status reg.
+				bit 1 = 0 reserved
+				bit 0 = 1 generate int. when output buffer full
 		 21-3F	read  reads the byte specified in the lower 5 bits of
 			      the command in the 8041's internal RAM
 		 60-7F	dbl   writes the data byte to the address specified in
@@ -374,35 +422,71 @@ Last Change: 8/1/93
 			       bit1 = 0 reserved
 			       bit0 =	enableoutput buffer full interrupt
 
+		 60   Compaq  Load new command (60 to [64], command to [60])
+		 A1   Compaq  unknown speedfunction ??
+		 A2   Compaq  unknown speedfunction ??
+		 A3   Compaq  Enable system speed control
+		 A4   Compaq  Toggle speed
+		 A5   Compaq  Special reed. the 8042 places the real values
+			      of port 2 except for bits 4 and 5 wich are given
+			      a new definition in the output buffer. No output
+			      buffer full is generated.
+				if bit 5 = 0, a 9-bit keyboard is in use
+				if bit 5 = 1, an 11-bit keyboard is in use
+				if bit 4 = 0, outp-buff-full interrupt disabled
+				if bit 4 = 1, output-buffer-full int. enabled
+		 A6   Compaq  unknown speedfunction ??
 		 AA	sngl  initiate self-test. will return 55 to data port
+		      Compaq  Initializes ports 1 and 2, disables the keyboard
+			      and clears the buffer pointers. It then places
+			      55 in the output buffer.
 		 AB	sngl  initiate interface test. result values:
 			       0 = no error
 			       1 = keyboard clock line stuck low
 			       2 = keyboard clock line stuck high
 			       3 = keyboard data line is stuck low
 			       4 = keyboard data line stuck high
+		      Compaq   5 = Compaq diagnostic feature
 		 AC	read  diagnostic dump. the contents of the 8041 RAM,
 			      output port, input port, status word are send.
-		 AD	sngl  disable keyboard
-		 AE	sngl  enable keyboard
+		 AD	sngl  disable keyboard (sets bit 4 of commmand byte)
+		 AE	sngl  enable keyboard  (resets bit 4 of commmand byte)
 		 AF	AWARD Enhanced Command: read keyboard version
 		 C0	read  read input port
+		      Compaq  Places status of input port in output buffer. use
+			      this command only when the output buffer is empty
 		 C1	AWARD Enhanced Command: poll input port Low nibble
 		 C2	AWARD Enhanced Command: poll input port High nibble
 		 D0	read  read output port
+		      Compaq  Places byte in output port in output buffer. use
+			      this command only when the output buffer is empty
 		 D1	dbl   write output port. next byte written  to 0060
 			      will be written to the 8041 output port
+		      Compaq  The system speed bits are not set by this command
+			      use commands A1-A6 (!) for speed functions.
 		 D2	AWARD Enhanced Command: write keyboard output buffer
 		 D3	AWARD Enhanced Command: write pointing device out.buf.
 		 D4	AWARD Enhanced Command: write to auxiliary device
 		 DD	sngl  disable address line A20. default in Real Mode
 		 DF	sngl  enable address line A20
 		 E0	read  read test inputs. bit0 = T0 and bit1 = T1
-		 Exxx	AWARD Enhanced Command: active output port
+		 Exx	AWARD Enhanced Command: active output port
+		 ED   Compaq  This is a two part command to control the state
+			      of the NumLock CpasLock and ScrollLock LEDs
+			      The second byte contains the state to set LEDs.
+				bit 7-3	   reserved. should be set to 0.
+				bit 2 = 0  Caps Lock LED off
+				bit 1 = 0  Num Lock LED off
+				bit 0 = 0  Scroll Lock LED off
 		 F0-FF	sngl  pulse output port low for 6 microseconds.
 			      bits 0-3 contain the mask for the bits to be
-			      pulsed. a bit is pulsed if it's mask bit is
-			      zero.
+			      pulsed. a bit is pulsed if its mask bit is zero.
+			      bit0=system reset. Don't set to zero. Pulse only!
+
+general note:	 Keyboard controllers are widely different from each other.
+		 You cannot generally exchange them between different machines.
+note on Award:	 Derived from Award's Enhanced KB controller advertising sheet.
+note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 
 0065	r	communications port (Olivetti M24)
 
@@ -411,7 +495,6 @@ Last Change: 8/1/93
 006A	w	HP-Vectra  clear processing, done
 
 006C-006F	HP-HIL	(Human Interface Link = async. serial inputs 0-7)
-
 
 -------------------------------------------------------------------------------
 0070-007F ----	CMOS RAM/RTC (Real Time Clock  MC146818)
@@ -549,7 +632,7 @@ Last Change: 8/1/93
 		       bit 5 = 1  System Boot Up Sequence  C:, A:
 		       bit 4 = 1  System Boot Up Speed is high
 		       bit 3 = 1  Cache Memory enabled
-		       bit 2 = 1  Internal Cache Memory  <1>
+		       bit 2 = 1  Internal Cache Memory	 <1>
 		       bit 1-0	  reserved
 		2E    CMOS MSB checksum over 10-2D
 		2F    CMOS LSB checksum over 10-2D
@@ -564,9 +647,9 @@ Last Change: 8/1/93
 		3D/3E word to 82335 MCR memory config register at
 			[22](Phoenix)
 		3D     bit3	 base memsize 512/640  (Phoenix)
-		3E     bit7 = 1  relocate enable       (Phoenix)
-		       bit1 = 1  shadow video enable   (Phoenix)
-		       bit0 = 1  shadow BIOS enable    (Phoenix)
+		3E     bit7 = 1	 relocate enable       (Phoenix)
+		       bit1 = 1	 shadow video enable   (Phoenix)
+		       bit0 = 1	 shadow BIOS enable    (Phoenix)
 
 
 		User Definable Drive Parameters are also stored in CMOS RAM:
@@ -619,6 +702,20 @@ Last Change: 8/1/93
 		       = 1  enable hard reset from HP-HIL controller chip
 		 bit 6-0    reserved
 
+-------------------------------------------------------------------------------
+0078-007F ----	PC radio by CoZet Info Systems
+		The I/O address range is dipswitch selectable from:
+		   038-03F and 0B0-0BF
+		   078-07F and 0F9-0FF
+		   138-13F and 1B0-1BF
+		   178-17F and 1F9-1FF
+		   238-23F and 2B0-2BF
+		   278-27F and 2F0-2FF
+		   338-33F and 3B0-3BF
+		   378-37F and 3F0-3FF
+		All of these addresses show a readout of FF in initial state.
+		Once started, all of the addresses show	 FB, whatever might
+		happen.
 
 -------------------------------------------------------------------------------
 007C-007D ----	HP-Vectra  PIC 3   (Programmable Interrupt Controller 8259)
@@ -627,10 +724,8 @@ Last Change: 8/1/93
 007C	r/w	HP-Vectra  PIC 3  see at 0020  PIC 1
 007D	r/w	HP-Vectra  PIC 3  see at 0021  PIC 1
 
-
 -------------------------------------------------------------------------------
 0080	w	Manufacturing Diagnostics port
-
 
 -------------------------------------------------------------------------------
 0080-008F ----	DMA page registers   (74612)
@@ -683,7 +778,6 @@ Last Change: 8/1/93
 
 0097		reserved
 
-
 -------------------------------------------------------------------------------
 00A0-00AF ----	PIC 2	(Programmable Interrupt Controller 8259)
 
@@ -700,10 +794,23 @@ Last Change: 8/1/93
 		 bit 1 = 0  enable redirect cascade
 		 bit 0 = 0  enable real-time clock interrupt
 
+-------------------------------------------------------------------------------
+00B0-00BF ----	PC radio by CoZet Info Systems
+		The I/O address range is dipswitch selectable from:
+		   038-03F and 0B0-0BF
+		   078-07F and 0F9-0FF
+		   138-13F and 1B0-1BF
+		   178-17F and 1F9-1FF
+		   238-23F and 2B0-2BF
+		   278-27F and 2F0-2FF
+		   338-33F and 3B0-3BF
+		   378-37F and 3F0-3FF
+		All of these addresses show a readout of FF in initial state.
+		Once started, all of the addresses show	 FB, whatever might
+		happen.
 
 -------------------------------------------------------------------------------
 00C0	  ----	TI  SN746496 programmable tone/noise generator	PCjr
-
 
 -------------------------------------------------------------------------------
 00C0-00DF ----	DMA 2	(second Direct Memory Access controller 8237)
@@ -779,7 +886,6 @@ Last Change: 8/1/93
 
 00E0		split address register, memory encoding registers PS/2m80 only
 
-
 -------------------------------------------------------------------------------
 00F0-00F5 ----	PCjr Disk Controller
 
@@ -788,7 +894,6 @@ Last Change: 8/1/93
 00F4		disk controller status register
 00F5		disk controller data port
 
-
 -------------------------------------------------------------------------------
 00F0-00FF ----	coprocessor (8087..80387)
 
@@ -796,6 +901,23 @@ Last Change: 8/1/93
 00F1		math coprocessor reset
 00F8-00FF	math coprocessor
 
+-------------------------------------------------------------------------------
+00F9-00FF ----	PC radio by CoZet Info Systems
+		The I/O address range is dipswitch selectable from:
+		   038-03F and 0B0-0BF
+		   078-07F and 0F9-0FF
+		   138-13F and 1B0-1BF
+		   178-17F and 1F9-1FF
+		   238-23F and 2B0-2BF
+		   278-27F and 2F0-2FF
+		   338-33F and 3B0-3BF
+		   378-37F and 3F0-3FF
+		All of these addresses show a readout of FF in initial state.
+		Once started, all of the addresses show	 FB, whatever might
+		happen.
+
+-------------------------------------------------------------------------------
+0100-010F ----	CompaQ Tape drive adapter. alternate address at 0300
 
 -------------------------------------------------------------------------------
 0100-0107 ----	PS/2 POS (Programmable Option Select)
@@ -815,18 +937,73 @@ Last Change: 8/1/93
 0106	r/w	POS register 6	Low subaddress extension
 0107	r/w	POS register 7	High subaddress extension
 
+-------------------------------------------------------------------------------
+0108-010F ----	8 digit LED info panel on IBM PS/2
+
+010F	w	leftmost character on display
+010E	w	second character
+....	w
+0108	w	eighth character
+
+-------------------------------------------------------------------------------
+0130-013F ----	CompaQ SCSI adapter. alternate address at 0330
+
+-------------------------------------------------------------------------------
+0130-0133 ----	Adaptec 154xB/154xC SCSI adapter.
+		alternate address at 0134, 0230, 0234 ,0330 and 0334
+
+-------------------------------------------------------------------------------
+0134-0137 ----	Adaptec 154xB/154xC SCSI adapter.
+		alternate address at 0130, 0230, 0234 ,0330 and 0334
+
+-------------------------------------------------------------------------------
+0138-013F ----	PC radio by CoZet Info Systems
+		The I/O address range is dipswitch selectable from:
+		   038-03F and 0B0-0BF
+		   078-07F and 0F9-0FF
+		   138-13F and 1B0-1BF
+		   178-17F and 1F9-1FF
+		   238-23F and 2B0-2BF
+		   278-27F and 2F0-2FF
+		   338-33F and 3B0-3BF
+		   378-37F and 3F0-3FF
+		All of these addresses show a readout of FF in initial state.
+		Once started, all of the addresses show	 FB, whatever might
+		happen.
 
 -------------------------------------------------------------------------------
 0140-014F ----	SCSI (alternate Small Computer System Interface) adapter
 		(1st at 0340-034F)
 
-
 -------------------------------------------------------------------------------
 0140-0157 ----	RTC (alternate Real Time Clock for XT)	 (1st at 0340-0357)
 
-
 -------------------------------------------------------------------------------
 0170-0177 ----	HDC 2	(2nd Fixed Disk Controller)   same as 01Fx (ISA, EISA)
+
+-------------------------------------------------------------------------------
+0178-017F ----	PC radio by CoZet Info Systems
+		The I/O address range is dipswitch selectable from:
+		   038-03F and 0B0-0BF
+		   078-07F and 0F9-0FF
+		   138-13F and 1B0-1BF
+		   178-17F and 1F9-1FF
+		   238-23F and 2B0-2BF
+		   278-27F and 2F0-2FF
+		   338-33F and 3B0-3BF
+		   378-37F and 3F0-3FF
+		All of these addresses show a readout of FF in initial state.
+		Once started, all of the addresses show	 FB, whatever might
+		happen.
+
+-------------------------------------------------------------------------------
+01E8-01EF ----	System Control. Laptop chipset: Headland HL21 & Acer M5105
+
+01ED	r/w	select internal register. Data to/from 01EF
+01EE	r
+01EF	r/w	reg.
+		5  = 1000xxxx  for low CPU clock speed (4MHz on Morse/Mitac)
+		   = 0xxxxxxx  for high CPU clock speed (16MHz on Morse/Mitac)
 
 -------------------------------------------------------------------------------
 01F0-01F7 ----	HDC 1	(1st Fixed Disk Controller)   same as 017x (ISA, EISA)
@@ -842,19 +1019,19 @@ Last Change: 8/1/93
 			 = 100	ECC circuitry error
 			 = 101	controlling microprocessor error
 		 operation mode:
-		  bit 7  = 1  bad block detected
+		  bit 7	 = 1  bad block detected
 			 = 0  block OK
-		  bit 6  = 1  uncorrectable ECC error
+		  bit 6	 = 1  uncorrectable ECC error
 			 = 0  no error
-		  bit 5       reserved
-		  bit 4  = 1  ID found
+		  bit 5	      reserved
+		  bit 4	 = 1  ID found
 			 = 0  ID not found
-		  bit 3       reserved
-		  bit 2  = 1  command completed
+		  bit 3	      reserved
+		  bit 2	 = 1  command completed
 			 = 0  command aborted
-		  bit 1  = 1  track 000 not found
+		  bit 1	 = 1  track 000 not found
 			 = 0  track 000 found
-		  bit 0  = 1  DAM not found
+		  bit 0	 = 1  DAM not found
 			 = 0  DAM found (CP-3022 always 0)
 
 01F1	w	WPC/4  (Write Precompensation Cylinder divided by 4)
@@ -887,7 +1064,7 @@ Last Change: 8/1/93
 		 98 E5	 check power mode	(IDE)
 		 90	 execute drive diagnostics
 		 50	 format track
-		 EC	 identify drive 	(IDE)
+		 EC	 identify drive		(IDE)
 		 97 E3	 idle			(IDE)
 		 95 E1	 idle immediatete	(IDE)
 		 91	 initialize drive parameters
@@ -895,7 +1072,7 @@ Last Change: 8/1/93
 		 E4	 read buffer		(IDE)
 		 C8	 read DMA with retry	(IDE)
 		 C9	 read DMA without retry (IDE)
-		 C4	 read multiplec 	(IDE)
+		 C4	 read multiplec		(IDE)
 		 20	 read sectors with retry
 		 21	 read sectors without retry
 		 22	 read long with retry
@@ -905,13 +1082,13 @@ Last Change: 8/1/93
 		 7x	 seek
 		 EF	 set features		(IDE)
 		 C6	 set multiple mode	(IDE)
-		 99 E6	 set sleep mode 	(IDE)
+		 99 E6	 set sleep mode		(IDE)
 		 96 E2	 standby		(IDE)
 		 94 E0	 standby immediate	(IDE)
 		 E8	 write buffer		(IDE)
 		 CA	 write DMA with retry	(IDE)
 		 CB	 write DMA with retry	(IDE)
-		 C5	 write multiple 	(IDE)
+		 C5	 write multiple		(IDE)
 		 E9	 write same		(IDE)
 		 30	 write sectors with retry
 		 31	 write sectors without retry
@@ -924,6 +1101,20 @@ Last Change: 8/1/93
 		 F0-F4	 EATA standard		(IDE)
 		 F5-FF	 vendor unique		(IDE)
 
+-------------------------------------------------------------------------------
+01F9-01FF ----	PC radio by CoZet Info Systems
+		The I/O address range is dipswitch selectable from:
+		   038-03F and 0B0-0BF
+		   078-07F and 0F9-0FF
+		   138-13F and 1B0-1BF
+		   178-17F and 1F9-1FF
+		   238-23F and 2B0-2BF
+		   278-27F and 2F0-2FF
+		   338-33F and 3B0-3BF
+		   378-37F and 3F0-3FF
+		All of these addresses show a readout of FF in initial state.
+		Once started, all of the addresses show	 FB, whatever might
+		happen.
 
 -------------------------------------------------------------------------------
 0200-020F ----	Game port reserved I/O address space  
@@ -934,13 +1125,12 @@ Last Change: 8/1/93
 		 bit 6	status B joystick button 1 / C paddle button
 		 bit 5	status A joystick button 2 / B paddle button
 		 bit 4	status A joystick button 1 / A paddle button
-		 bit 3	B joystick Y coordinate    / D paddle coordinate
-		 bit 2	B joystick X coordinate    / C paddle coordinate
-		 bit 1	A joystick Y coordinate    / B paddle coordinate
-		 bit 0	A joystick X coordinate    / A paddle coordinate
+		 bit 3	B joystick Y coordinate	   / D paddle coordinate
+		 bit 2	B joystick X coordinate	   / C paddle coordinate
+		 bit 1	A joystick Y coordinate	   / B paddle coordinate
+		 bit 0	A joystick X coordinate	   / A paddle coordinate
 
 	w	fire joysticks four one-shots
-
 
 -------------------------------------------------------------------------------
 0210-0217 ----	Expansion unit (XT)
@@ -955,6 +1145,40 @@ Last Change: 8/1/93
 	r	read data   (receiver card port)
 0215	r	High byte of address, then Low byte   (receiver card port)
 
+-------------------------------------------------------------------------------
+0220-0227 ----	Soundblaster PRO and SSB 16 ASP
+
+-------------------------------------------------------------------------------
+0220-022F ----	Soundblaster PRO 2.0
+
+-------------------------------------------------------------------------------
+0220-022F ----	Soundblaster PRO 4.0
+0220	r	left FM status port
+0220	w	left FM music register address port (index)
+0221	r/w	left FM music data port
+0222	r	right FM status port
+0222	w	right FM music register address port (index)
+0223	r/w	right FM music data port
+0224	w	mixer register address port (index)
+0225	r/w	mixer data port
+0226	w	DSP reset
+0228	r	FM music status port
+0228	w	FM music register address port (index)
+0229	w	FM music data port
+022A	r	DSP read data (voice I/O and Midi)
+022C	w	DSP write data / write command
+022C	r	DSP write buffer status (bit 7)
+022E	r	DSP data available status (bit 7)
+
+		The FM music is accessible on 0388/0389 for compatibility.
+
+-------------------------------------------------------------------------------
+0230-0233 ----	Adaptec 154xB/154xC SCSI adapter.
+		alternate address at 0130, 0134, 0230, 0330 and 0334
+
+-------------------------------------------------------------------------------
+0234-0237 ----	Adaptec 154xB/154xC SCSI adapter.
+		alternate address at 0130, 0134, 0230 ,0330 and 0334
 
 -------------------------------------------------------------------------------
 0240-0257 ----	RTC (alternate Real Time Clock for XT)	 (1st at 0340-0357)
@@ -963,7 +1187,6 @@ Last Change: 8/1/93
 -------------------------------------------------------------------------------
 0258-025F ----	Intel Above Board
 
-
 -------------------------------------------------------------------------------
 0278-027E ----	parallel printer port, same as 0378 and 03BC
 
@@ -971,18 +1194,17 @@ Last Change: 8/1/93
 0279	r/w	status port
 027A	r/w	control port
 
-
 -------------------------------------------------------------------------------
 02A2-02A3 ----	MSM58321RS clock
 
+-------------------------------------------------------------------------------
+02B0-02BF ----	Trantor SCSI adapter
 
 -------------------------------------------------------------------------------
 02B0-02DF ----	alternate EGA,	primary EGA at 03C0
 
-
 -------------------------------------------------------------------------------
 02C0-02Cx ----	AST-clock
-
 
 -------------------------------------------------------------------------------
 02E0-02EF ----	GPIB (General Purpose Interface Bus, IEEE 488 interface)
@@ -992,22 +1214,20 @@ Last Change: 8/1/93
 02E3
 
 -------------------------------------------------------------------------------
-02E0-02EF ----	data aquisition  (AT)
+02E0-02EF ----	data aquisition	 (AT)
 
 02E2		data aquisition (adapter 0)
 02E3		data aquisition (adapter 0)
 
+-------------------------------------------------------------------------------
+02E8-02EF ----	serial port, same as 02F8, 03E8, and 03F8
 
 -------------------------------------------------------------------------------
-02E8-02EF ----	serial port, same as 02F8
-
-
--------------------------------------------------------------------------------
-02F8-02FF ----	serial port, same as 0378 and 03F8
+02F8-02FF ----	serial port, same as 02E8, 02F8, and 03F8
 
 02F8	w	transmitter holding register
 02F8	r	receiver buffer register
-	r/w	divisor latch, low byte   when DLAB=1
+	r/w	divisor latch, low byte	  when DLAB=1
 02F9	r/w	divisor latch, high byte  when DLAB=1
 	r/w	interrupt enable register when DLAB=0
 02FA	r	interrupt identification register
@@ -1016,15 +1236,16 @@ Last Change: 8/1/93
 02FD	r	line status register
 02FF	r/w	scratch register
 
+-------------------------------------------------------------------------------
+0300-0301 ---- Soundblaster 16 ASP MPU-Midi
 
 -------------------------------------------------------------------------------
 0300-031F ----	prototype cards
 		Periscope hardware debugger
 
-
 -------------------------------------------------------------------------------
-0300-030F ----	Philips CR-ROM player CM50
-0310-031F ----	Philips CR-ROM player CM50
+0300-030F ----	Philips CD-ROM player CM50
+0310-031F ----	Philips CD-ROM player CM50
 
 -------------------------------------------------------------------------------
 0320-0323 ----	XT HDC 1   (Hard Disk Controller)
@@ -1047,24 +1268,32 @@ Last Change: 8/1/93
 0328-032B ----	XT HDC 3   (Hard Disk Controller)
 032C-032F ----	XT HDC 4   (Hard Disk Controller)
 
-
 -------------------------------------------------------------------------------
 0330-0331 ----	MIDI interface
 
+-------------------------------------------------------------------------------
+0330-0333 ----	Adaptec 154xB/154xC SCSI adapter. default address.
+		alternate address at 0130, 0134, 0230, 0234 and 0334
+
+-------------------------------------------------------------------------------
+0330-033F ----	CompaQ SCSI adapter. alternate address at 0130
+
+-------------------------------------------------------------------------------
+0330-033F ----	Philips CD-ROM player CM50
+
+-------------------------------------------------------------------------------
+0334-0337 ----	Adaptec 154xB/154xC SCSI adapter.
+		alternate address at 0130, 0134, 0230 ,0234 and 0330
 
 -------------------------------------------------------------------------------
 0338	  ----	AdLib soundblaster card
 
-
 -------------------------------------------------------------------------------
-0330-033F ----	Philips CR-ROM player CM50
-0340-034F ----	Philips CR-ROM player CM50
-
+0340-034F ----	Philips CD-ROM player CM50
 
 -------------------------------------------------------------------------------
 0340-034F ----	SCSI (1st Small Computer System Interface) adapter
 		(alternate at 0140-014F)
-
 
 -------------------------------------------------------------------------------
 0340-0357 ----	RTC (1st Real Time Clock for XT), (alternate at 0240-0257)
@@ -1072,8 +1301,8 @@ Last Change: 8/1/93
 
 0340	r/w	0.01 seconds  0-99
 0341	r/w	0.1 seconds   0-99
-0342	r/w	seconds       0-59
-0343	r/w	minutes       0-59
+0342	r/w	seconds	      0-59
+0343	r/w	minutes	      0-59
 0343	r/w	hours	      0-23
 0345	r/w	day of week   1-7
 0346	r/w	day of month  1-31
@@ -1095,15 +1324,12 @@ Last Change: 8/1/93
 0356
 0357
 
-
 -------------------------------------------------------------------------------
 0348-0357 ----	DCA 3278
-
 
 -------------------------------------------------------------------------------
 0360-036F ----	PC network (AT)
 0360-0367 ----	PC network (XT only)
-
 
 -------------------------------------------------------------------------------
 0370-0377 ----	FDC 2  (2nd Floppy Disk Controller 8272)  same as 03F0
@@ -1115,14 +1341,12 @@ Last Change: 8/1/93
 0377	r	diskette controller DIR (Digital Input Register)
 0377	w	select register for diskette data transfer rate
 
-
 -------------------------------------------------------------------------------
 0378-037A ----	parallel printer port, same as 0278 and 03BC
 
 0378	w	data port
 0379	r/w	status port
 037A	r/w	control port
-
 
 -------------------------------------------------------------------------------
 0380-038F ----	2nd Binary Synchronous Data Link Control adapter (see 03A0)
@@ -1141,12 +1365,14 @@ Last Change: 8/1/93
 038B	r/w	 on board 8273 receiver interrupt status
 038C	r/w	 on board 8273 data
 
+-------------------------------------------------------------------------------
+0388-0389 ---- Soundblaster PRO FM-Chip
+0388-038B ---- Soundblaster 16 ASP FM-Chip
 
 -------------------------------------------------------------------------------
 0390-039F ----	Cluster adapter (AT)
 
 0390-0393	(adapter 0)	(XT)
-
 
 -------------------------------------------------------------------------------
 03A0-03AF ----	1st SDLC (Binary Synchronous Data Link Control adapter)
@@ -1161,7 +1387,6 @@ Last Change: 8/1/93
 0387	r/w	 on board 8253 mode register
 0388	r/w	 on board 8251 data
 0389	r/w	 on board 8251 command/mode/status register
-
 
 -------------------------------------------------------------------------------
 03B0-03BF ----	MDA  (Monochrome Display Adapter based on 6845)
@@ -1212,10 +1437,15 @@ Last Change: 8/1/93
 		 bit 2-1 reserved
 		 bit 0	 horizontal drive
 
+		 bit 7	 (MSD says) if this bit changes within 8000h reads then
+		  bit 6-4 = 000 = adapter is Hercules or compatible
+			    001 = adapter is Hercules+
+			    101 = adapter is Hercules InColor
+				  else: adapter is unknown
+
 03BA	w	EGA/VGA feature control register
 
 03BB		reserved for light pen strobe reset
-
 
 -------------------------------------------------------------------------------
 03BC-03BF ----	parallel printer port, same as 0278 and 0378
@@ -1237,7 +1467,6 @@ Last Change: 8/1/93
 		 bit 2 = 0  initialize printer
 		 bit 1 = 1  automatic line feed
 		 bit 0 = 1  strobe
-
 
 -------------------------------------------------------------------------------
 03BF	r/w	Hercules configuration switch register
@@ -1273,7 +1502,6 @@ Last Change: 8/1/93
 03CF	w	EGA	GDC data register
 	r/w	VGA	other graphics register
 
-
 -------------------------------------------------------------------------------
 03D0-03DF ----	CGA   (Color Graphics Adapter)
 
@@ -1304,14 +1532,12 @@ Last Change: 8/1/93
 		 bit 5	 = 0 active color set: red, green brown
 			 = 1 active color set: cyan, magenta, white
 		 bit 4	     intense colors in graphics, background colors text
-		 bit 3	     intense border in 40*25, intense background
-320*200
-			     intense foreground in 640*200
+		 bit 3	     intense border in 40*25, intense background in
+			     320*200, intense foreground in 640*200
 		 bit 2	     red border in 40*25, red background in 320*200,
 			     red foreground in 640*200
 		 bit 1	     green border in 40*25, green background in
-320*200,
-			     green foreground in 640*200
+			     320*200, green foreground in 640*200
 		 bit 0	     blue border in 40*25, blue background in 320*200,
 			     blue foreground in 640*200
 
@@ -1330,10 +1556,8 @@ Last Change: 8/1/93
 
 03DF		CRT/CPU page register  PCjr only
 
-
 -------------------------------------------------------------------------------
-03E8-03EF ----	serial port, same as 03F8
-
+03E8-03EF ----	serial port, same as 02E8, 02F8, and 03F8
 
 -------------------------------------------------------------------------------
 03F0-03F7 ----	FDC 1  (1st Floppy Disk Controller 8272)  same as 0370
@@ -1451,9 +1675,8 @@ Last Change: 8/1/93
 			 = 10  250 Kb/S mode
 			 = 11  reserved
 
-
 -------------------------------------------------------------------------------
-03F8-03FF ----	serial port (8250, 8251, 16450, 16550), same as 02F8 and 0378
+03F8-03FF ----	serial port (8250,8251,16450,16550), same as 02E8,02F8,and 03F8
 
 03F8	w	serial port, transmitter holding register, which contains the
 		character to be sent. Bit 0 is sent first.
@@ -1595,7 +1818,6 @@ Last Change: 8/1/93
 			 6000-6FFF	slot 6 EISA
 			 7000-7FFF	slot 7 EISA
 
-
 -------------------------------------------------------------------------------
 0401-04D6 ----	used by EISA systems only
 
@@ -1636,7 +1858,6 @@ Last Change: 8/1/93
 			 = 11 16-bit I/O, count by bytes
 		 bit 1-0      DMA channel select
 
-
 -------------------------------------------------------------------------------
 0461	r/w	Extended NMI status/control register
 		 bit 7 = 1  NMI pending from fail-safe timer (read only)
@@ -1676,7 +1897,6 @@ only)
 		 bit 1 = 0  slot 10 had control last
 		 bit 0 = 0  slot 9  had control last
 
-
 -------------------------------------------------------------------------------
 0481	r/w	DMA channel 2 address byte 3 (high)
 0482	r/w	DMA channel 3 address byte 3 (high)
@@ -1689,7 +1909,6 @@ only)
 04C6	r/w	DMA channel 5 word count byte 2 (high)
 04CA	r/w	DMA channel 6 word count byte 2 (high)
 04CE	r/w	DMA channel 7 word count byte 2 (high)
-
 
 -------------------------------------------------------------------------------
 04D0	w	IRQ 0-7 interrupt edge/level registers
@@ -1737,47 +1956,50 @@ only)
 			 = 11 16-bit I/O, count by bytes
 		 bit 1-0      DMA channel select
 
+-------------------------------------------------------------------------------
+0601	w	System control. Laptop chipset: Headland HL21 & Acer M5105
+		 bit 7 = 1  power led on
+		 bit 6 = 1  LCD backlight off
+		 bit 5
+		 bit 4
+		 bit 3
+		 bit 2 = 1  video chips disabled, screen blanked.
+		 bit 1
+		 bit 0 = 1  will lock up your machine!
+
+	r	 =04	    (always reads back this value)
 
 -------------------------------------------------------------------------------
 0620-0627 ----	PC network (adapter 1)
 0628-062F ----	PC network (adapter 2)
 
-
 -------------------------------------------------------------------------------
 06E2-06E3 ----	data aquisition (adapter 1)
 
-
 -------------------------------------------------------------------------------
 0790-0793 ----	cluster (adapter 1)
-
 
 -------------------------------------------------------------------------------
 0800-08FF ----	I/O port access registers for extended CMOS RAM or SRAM
 		(256 bytes at a time)
 		Sometimes plain text can be seen here.
 
-
 -------------------------------------------------------------------------------
 0A20-0A23 ----	Token Ring (adapter 1)
 0A24-0A27 ----	Token Ring (adapter 2)
-
 
 -------------------------------------------------------------------------------
 0AE2-0AE3 ----	cluster (adapter 2)
 0B90-0B93 ----	cluster (adapter 2)
 
-
 -------------------------------------------------------------------------------
 0C00	r/w	page register to write to SRAM or I/O
-
 
 -------------------------------------------------------------------------------
 0C80-0C83 ----	system board ID registers
 
-
 -------------------------------------------------------------------------------
 1390-1393 ----	cluster (adapter 3)
-
 
 -------------------------------------------------------------------------------
 2100-210F ----	IBM XGA (eXtended Graphics Adapter  8514/A)
@@ -1787,17 +2009,14 @@ only)
 2140-214F ----	IBM XGA (eXtended Graphics Adapter  8514/A)
 2150-215F ----	IBM XGA (eXtended Graphics Adapter  8514/A)
 2160-216F ----	IBM XGA (eXtended Graphics Adapter  8514/A)
-2150-217F ----	IBM XGA (eXtended Graphics Adapter  8514/A)
-
+2170-217F ----	IBM XGA (eXtended Graphics Adapter  8514/A)
 
 -------------------------------------------------------------------------------
 2390-2393 ----	cluster (adapter 4)
 
-
 -------------------------------------------------------------------------------
 3220-3227 ----	serial port 3, description same as 03F8
 3228-322F ----	serial port 4, description same as 03F8
-
 
 -------------------------------------------------------------------------------
 3540-354F ----	IBM SCSI (Small Computer System Interface) adapter
@@ -1805,49 +2024,40 @@ only)
 3560-356F ----	IBM SCSI (Small Computer System Interface) adapter
 3570-357F ----	IBM SCSI (Small Computer System Interface) adapter
 
-
 -------------------------------------------------------------------------------
 4220-4227 ----	serial port, description same as 03F8
 4228-422F ----	serial port, description same as 03F8
-
 
 -------------------------------------------------------------------------------
 42E0-42EF ----	GPIB (General Purpose Interface Bus, IEEE 488 interface)
 
 42E1	r/w	GPIB (adapter 2)
 
-
 -------------------------------------------------------------------------------
 5220-5227 ----	serial port, description same as 03F8
 5228-522F ----	serial port, description same as 03F8
-
 
 -------------------------------------------------------------------------------
 62E0-62EF ----	GPIB (General Purpose Interface Bus, IEEE 488 interface)
 
 62E1	r/w	GPIB (adapter 3)
 
-
 -------------------------------------------------------------------------------
 82E0-82EF ----	GPIB (General Purpose Interface Bus, IEEE 488 interface)
 
 82E1	r/w	GPIB (adapter 4)
 
-
 -------------------------------------------------------------------------------
 82F8-82FF ----	serial port, description same as 03F8
 83F8-83FF ----	serial port, description same as 03F8
 
-
 -------------------------------------------------------------------------------
 A220	  ????	soundblaster support in AMI Hi-Flex BIOS  ????
-
 
 -------------------------------------------------------------------------------
 A2E0-A2EF ----	GPIB (General Purpose Interface Bus, IEEE 488 interface)
 
 A2E1	r/w	GPIB (adapter 5)
-
 
 -------------------------------------------------------------------------------
 AFFF	r/w	plane 0-3 system latch (video register)
@@ -1856,27 +2066,49 @@ AFFF	r/w	plane 0-3 system latch (video register)
 B220-B227 ----	serial port, description same as 03F8
 B228-B22F ----	serial port, description same as 03F8
 
-
 -------------------------------------------------------------------------------
 C220-C227 ----	serial port, description same as 03F8
 C228-C22F ----	serial port, description same as 03F8
 
-
 -------------------------------------------------------------------------------
 D220-D227 ----	serial port, description same as 03F8
 D228-D22F ----	serial port, description same as 03F8
-
 
 -------------------------------------------------------------------------------
 C2E0-C2EF ----	GPIB (General Purpose Interface Bus, IEEE 488 interface)
 
 C2E1	r/w	GPIB (adapter 6)
 
-
 -------------------------------------------------------------------------------
 E2E0-E2EF ----	GPIB (General Purpose Interface Bus, IEEE 488 interface)
 
 E2E1	r/w	GPIB (adapter 7)
 
+
+-------------------------------------------------------------------------------
+
+MEMORY-MAPPED ADDRESSES
+
+-------------------------------------------------------------------------------
+80C00000  Compaq Deskpro 386 system memory board register
+
+80C00000 w	RAM relocation register
+		bit 7-2	   Reserved, always write 1's.
+		bit 1 = 0  Write-protect 128-Kbyte RAM at FE0000.
+		      = 1  Do not write-protect RAM at FE0000.
+		bit 0 = 0  Relocate 128-Kbyte block at FE0000 to address 0E0000
+		      = 1  128-Kbyte RAM is addressed only at FE0000.
+
+80C00000 r	Diagnostics register
+		bit 7	= 0  memory expansion board is installed
+		bit 6	= 0  second 1 MB of system memory board is installed
+		bit 5-4 = 00 base memory set to 640 KB
+			  01 invalid
+			  10 base memory set to 512 KB
+			  11 base memory set to 256 KB
+		bit 3	= 0  parity error in byte 3
+		bit 2	= 0  parity error in byte 2
+		bit 1	= 0  parity error in byte 1
+		bit 0	= 0  parity error in byte 0 (in 32-bit double word)
 
 -------------------------------------------------------------------------------

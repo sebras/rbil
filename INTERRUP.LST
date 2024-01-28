@@ -1,16 +1,16 @@
-Interrupt List		Release 38			Last change 12/05/93
-This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
+Interrupt List		Release 39			Last change 2/6/94
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994 Ralf Brown
 --------!---FILELIST-------------------------
 Please redistribute the following files unmodified as a group, in a trio of
-archives named INTER38A through INTER38C (preferably the original authenticated
+archives named INTER39A through INTER39C (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
-	INTERRUP.A	INT 00 through INT 14/7F \
-	INTERRUP.B	INT 14/80 through INT 15  \
-	INTERRUP.C	INT 16 through INT 21/41   \   total 1410 pages at
+	INTERRUP.A	INT 00 through INT 14/0F \
+	INTERRUP.B	INT 14/10 through INT 15  \
+	INTERRUP.C	INT 16 through INT 21/41   \   total 1449 pages at
 	INTERRUP.D	INT 21/42 through INT 21/7F \  60 lines per page,
-	INTERRUP.E	INT 21/80 through INT 21/FF  \ 1513 with INTPRINT -p
-	INTERRUP.F	INT 22 through INT 2F/7F     / (5946 entries)
+	INTERRUP.E	INT 21/80 through INT 21/FF  \ 1553 with INTPRINT -p
+	INTERRUP.F	INT 22 through INT 2F/7F     / (6153 entries)
 	INTERRUP.G	INT 2F/80 through INT 2F/FF /
 	INTERRUP.H	INT 30 through INT 60	   /
 	INTERRUP.I	INT 61 through INT 68	  /
@@ -24,7 +24,7 @@ PKZIP archives):
 	MEMORY.LST	format of the BIOS data area
 	PORTS.LST	a listing of I/O ports
 	COMBINE.BAT	combine the pieces of the list into a single file
-The following files should be distributed in an archive called INTER38D:
+The following files should be distributed in an archive called INTER39D:
 	INT.COM		invoke interrupts from commandline
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
 	INT2HLP.BAT	Perl script to convert list into QuickHelp database
@@ -479,7 +479,14 @@ Notes:	the TOPS and PCnet adapters use this interrupt request line by default
 SeeAlso: INT 52"DESQview",INT 5A"DoubleDOS",INT 71,INT 7A"GO32"
 --------H-0A---------------------------------
 INT 0A - IRQ2 - Tandy 1000-series HARD DISK
-Note:	may be masked by setting bit 2 on I/O port 21h
+Notes:	this interrupt may be masked by setting bit 2 on I/O port 21h
+	the Tandy 1000, 1000A, and 1000HD use IRQ2 for the hard disk; the
+	  1000EX, HX, RLX, RLX-HD, RLX-B, RLX-HD-B use IRQ5 instead; the
+	  1000RL, RL-HD, SL, SL/2, TL, TL/2, and TL/3 are jumper-selectable
+	  for either IRQ2 or IRQ5 (default IRQ5); the 1000SX and TX are
+	  DIP-switch selectable for IRQ2 or IRQ5 (default IRQ2); the RSX and
+	  RSX-HD use IRQ14.  Tandy systems which use IRQ2 for the hard disk
+	  interrupt use IRQ5 for vertical retrace.
 SeeAlso: INT 52"DESQview",INT 5A"DoubleDOS",INT 71
 --------H-0A---------------------------------
 INT 0A - IRQ2 - ROLAND MPU MIDI INTERFACE
@@ -590,12 +597,22 @@ INT 0D - IRQ5 - FIXED DISK (PC,XT), LPT2 (AT), reserved (PS/2)
 Notes:	under DESQview, only the INT 15h vector and BASIC segment address (the
 	  word at 0000h:0510h) may be assumed to be valid for the handler's
 	  process
+	the Tandy 1000, 1000A, and 1000HD use IRQ2 for the hard disk; the
+	  1000EX, HX, RLX, RLX-HD, RLX-B, RLX-HD-B use IRQ5 instead; the
+	  1000RL, RL-HD, SL, SL/2, TL, TL/2, and TL/3 are jumper-selectable
+	  for either IRQ2 or IRQ5 (default IRQ5); the 1000SX and TX are
+	  DIP-switch selectable for IRQ2 or IRQ5 (default IRQ2); the RSX and
+	  RSX-HD use IRQ14.  Tandy systems which use IRQ2 for the hard disk
+	  interrupt use IRQ5 for vertical retrace.
 	may be masked by setting bit 5 on I/O port 21h
 SeeAlso: INT 0E"IRQ6",INT 0F"IRQ7",INT 55"DESQview",INT 5D"DoubleDOS"
 SeeAlso: INT 7D"GO32"
 --------H-0D---------------------------------
 INT 0D - IRQ5 - Tandy 1000 60 Hz RAM REFRESH
-Desc:	used to ensure that the dynamic RAM retains its contents
+Desc:	used to ensure that the dynamic RAM retains its contents in earlier
+	  1000-series models; later models use normal DMA for RAM refresh
+	  (some early models have no DMA unless it is added via an expansion
+	  card)
 SeeAlso: INT 55
 --------h-0D---------------------------------
 INT 0D - HP 95LX - INFRARED INTERRUPT
@@ -726,19 +743,19 @@ Bitfields for ATI additional feature flags:
 Values for video mode:
       text/ text pixel	 pixel	colors	disply	scrn  system
       grph resol  box	resoltn		pages	addr
- 00h = T   40x25  8x8		16gray	   8	B800 CGA,PCjr
+ 00h = T   40x25  8x8		16gray	   8	B800 CGA,PCjr,Tandy
      = T   40x25  8x14		16gray	   8	B800 EGA
      = T   40x25  8x16		  16	   8	B800 MCGA
      = T   40x25  9x16		  16	   8	B800 VGA
- 01h = T   40x25  8x8		  16	   8	B800 CGA,PCjr
+ 01h = T   40x25  8x8		  16	   8	B800 CGA,PCjr,Tandy
      = T   40x25  8x14		  16	   8	B800 EGA
      = T   40x25  8x16		  16	   8	B800 MCGA
      = T   40x25  9x16		  16	   8	B800 VGA
- 02h = T   80x25  8x8		16gray	   4	B800 CGA,PCjr
+ 02h = T   80x25  8x8		16gray	   4	B800 CGA,PCjr,Tandy
      = T   80x25  8x14		16gray	   4	B800 EGA
      = T   80x25  8x16		  16	   4	B800 MCGA
      = T   80x25  9x16		  16	   4	B800 VGA
- 03h = T   80x25  8x8		  16	   4	B800 CGA,PCjr
+ 03h = T   80x25  8x8		  16	   4	B800 CGA,PCjr,Tandy
      = T   80x25  8x14		  16	   4	B800 EGA
      = T   80x25  8x16		  16	   4	B800 MCGA
      = T   80x25  9x16		  16	   4	B800 VGA
@@ -753,10 +770,10 @@ Values for video mode:
      = G   20x25  8x8	160x200	  16		     PCjr, Tandy 1000
      = G   90x43  8x8	720x352	 mono		B000 Hercules + MSHERC.COM
      = G   90x45  8x8		 mono		B000 Hercules + HERKULES [11]
- 09h = G   40x25  8x8	320x200	  16		     PCjr
+ 09h = G   40x25  8x8	320x200	  16		     PCjr, Tandy 1000
  0Ah = G   80x25  8x8	640x200	   4		     PCjr, Tandy 1000
  0Bh =	 reserved (used internally by EGA BIOS)
-     = G		640x200	  16		     Tandy 1000 SL/TL
+     = G   80x25  8x8	640x200	  16		     Tandy 1000 SL/TL [13]
  0Ch =	 reserved (used internally by EGA BIOS)
  0Dh = G   40x25  8x8	320x200	  16	   8	A000 EGA,VGA
  0Eh = G   80x25  8x8	640x200	  16	   4	A000 EGA,VGA
@@ -1059,7 +1076,7 @@ Values for video mode:
      = T  132x43  7x9		  16		     AT&T VDC600
      = T  132x43  9x9  1188x387	 16/256k	B800 WD90C
      = T  132x43  9x9  1188x387	 16/256k	B800 Diamond Speedstar 24X
-     = T  132x43  9x9  1188x387	 16/256k	B800 Diamond Stealth 24X
+     = T  132x43  9x9  1188x387	 16/256k	B800 Diamond Stealth 24
      = T  132x43  8x8  1056x350	 16/256k	     Cirrus CL-GD5420/5422/5426
      = T  132x50  8x8		  16		A000 NCR 77C22 [9]
      = G  100x42  8x14	800x600	  16		A000 ATI EGA Wonder, VGA Wonder
@@ -1078,7 +1095,7 @@ Values for video mode:
      = T  132x25  8x16		  16		A000 NCR 77C22 [9]
      = T  132x25  9x16 1188x400	 16/256k	B800 WD90C
      = T  132x25  9x16 1188x400	 16/256k	B800 Diamond Speedstar 24X
-     = T  132x25  9x16 1188x400	 16/256k	B800 Diamond Stealth 24X
+     = T  132x25  9x16 1188x400	 16/256k	B800 Diamond Stealth 24
      = T  132x25  8x14 1056x350	 16/256k	     Cirrus CL-GD5420/5422/5426
      = T  132x43  8x11		 16/256k	B800 Trident TVGA 8800/8900
      = G   94x29  8x14	752x410			     Lava Chrome II EGA
@@ -1397,6 +1414,7 @@ Notes:
 	21h or 27h; this version of the BIOS also sets the BIOS data area
 	incorrectly for extended text modes, resulting in scrolling after only
 	24 lines (the VMODE.EXE	utility does set the data area correctly)
+[13] The Tandy 1000SL/TL BIOS does not actually support this mode
 Index:	video modes
 Index:	installation check|HERKULES
 --------V-100070-----------------------------
@@ -1634,6 +1652,19 @@ Desc:	determine the current position and status of the light pen (if
 Notes:	on a CGA, returned column numbers are always multiples of 2 (320-
 	  column modes) or 4 (640-column modes)
 	returned row numbers are only accurate to two lines
+--------V-1004------------------------------------
+INT 10 - HUNTER 16 - GET CURSOR ADDRESS
+	AH = 04h
+	BH = page
+Return: DH = row (0..24)
+	DL = column (0..79)
+	CH = cursor pixel Y-address (0..199)
+	CL = cursor pixel X-address (0..639)
+Notes:	the Husky Hunter 16 is an 8088-based ruggedized laptop.	 Other family
+	  members are the Husky Hunter, Husky Hunter 16/80, and Husky Hawk.
+	pixel coordinates are for the lower left corner of the character cell
+	  containing the cursor
+SeeAlso: AH=60h"HUNTER"
 --------V-1005-------------------------------
 INT 10 - VIDEO -  SELECT ACTIVE DISPLAY PAGE
 	AH = 05h
@@ -1643,7 +1674,7 @@ Note:	to determine whether the requested page actually exists, use AH=0Fh
 	  to query the current page after making this call
 SeeAlso: AH=0Fh,AH=43h,AH=45h
 --------V-1005-------------------------------
-INT 10 - VIDEO - PCjr - MANIPULATE CRT/CPU PAGE REGISTERS
+INT 10 - VIDEO - PCjr, Tandy 1000 - MANIPULATE CRT/CPU PAGE REGISTERS
 	AH = 05h
 	AL = subfunction
 	    80h read CRT and CPU page registers
@@ -1738,7 +1769,7 @@ INT 10 - VIDEO - WRITE CHARACTER ONLY AT CURSOR POSITION
 	AH = 0Ah
 	AL = character to display
 	BH = page number (00h to number of pages - 1) (see AH=00h)
-	BL = attribute (PCjr only) or color (graphics mode)
+	BL = attribute (PCjr, Tandy 1000 only) or color (graphics mode)
 	     if bit 7 set in graphics mode, character is xor'ed onto screen
 	CX = number of times to write character
 Notes:	all characters are displayed, including CR, LF, and BS
@@ -1873,7 +1904,7 @@ INT 10 - VIDEO - Eagle PC2 BIOS Rev. C - SET SCROLL SPEED
 	    01h slow (scrolling only moves characters during vertical retrace)
 Return: AH = previous speed
 --------V-101000-----------------------------
-INT 10 - VIDEO - SET SINGLE PALETTE REGISTER (PCjr,EGA,MCGA,VGA)
+INT 10 - VIDEO - SET SINGLE PALETTE REGISTER (PCjr,Tandy,EGA,MCGA,VGA)
 	AX = 1000h
 	BL = palette register number (00h-0Fh)
 	   = attribute register number (undocumented)
@@ -1889,7 +1920,7 @@ Notes:	on MCGA, only BX = 0712h is supported
 	  determines the outcome
 SeeAlso: AX=1002h,AX=1007h,AX=CD01h
 --------V-101001-----------------------------
-INT 10 - VIDEO - SET BORDER (OVERSCAN) COLOR (PCjr,EGA,VGA)
+INT 10 - VIDEO - SET BORDER (OVERSCAN) COLOR (PCjr,Tandy,EGA,VGA)
 	AX = 1001h
 	BH = border color (00h-3Fh)
 BUG:	the original IBM VGA BIOS incorrectly updates the parameter save area
@@ -1899,7 +1930,7 @@ Note:	under UltraVision, the palette locking status (see AX=CD01h)
 	  determines the outcome
 SeeAlso: AX=1002h,AX=1008h,AX=CD01h
 --------V-101002-----------------------------
-INT 10 - VIDEO - SET ALL PALETTE REGISTERS (PCjr,EGA,VGA)
+INT 10 - VIDEO - SET ALL PALETTE REGISTERS (PCjr,Tandy,EGA,VGA)
 	AX = 1002h
 	ES:DX -> palette register list
 Note:	under UltraVision, the palette locking status (see AX=CD01h)
@@ -1922,6 +1953,8 @@ Notes:	although there is no function to get the current status on adapters
 	  VGA, use AH=1Bh and check offset 2Dh of the returned data
 	when configured for a monochrome display, the Boca Research Multi-EGA
 	  with ROM v M1.1 Type D has its screen disrupted if BH is not clear
+	this call is reported to be "Get Cursor Position" on the Tandy
+	  1000SL/TL
 SeeAlso: AH=08h,AH=1Bh
 --------V-101007-----------------------------
 INT 10 - VIDEO - GET INDIVIDUAL PALETTE REGISTER (VGA,UltraVision v2+)
@@ -2041,7 +2074,11 @@ INT 10 - VIDEO - Tseng ET-4000 BIOS - SET HiColor GRAPHICS MODE
 	    3Eh = 640x480x16M (Genoa 7900)
 	    FFh Tseng 24-bit color mode
 		BH = mode
+		    2Dh = 640x480
 		    2Eh = 640x480x16M
+		    2Fh = 640x400
+		    30h = 800x600
+		    38h = 1024x768??? (Tseng ET4000/W32i)
 Return: AL = 10h if supported
 	AH = status
 	    00h if successful
@@ -2062,21 +2099,37 @@ Return: AL = 10h if supported
 	BL = type of digital/analog converter
 	    00h normal VGA DAC
 	    01h Sierra SC1148x HiColor DAC
-	    02h new Sierra DAC
+	    ---Diamond SpeedStar 24---
+	    02h new Sierra SS24 DAC (24-bit)
+	    ---generic Tseng BIOS v8+ ---
+	    02h Sierra Mark2 (15-bit) or Mark3 (15/16-bit) DAC
+	    03h ATT20c490/1/2 (15/16/24-bit)
+	    04h AcuMos ADAC1 (15/16/24-bit)
+	    05h unknown 15/16/24-bit DAC
+	    06h Cirrus Internal 15/16/24-bit (CL-GD54xx series adapters)
+	    07h Diamond SS2410 (15/24-bit)
+	    08h unknown 15/16/24-bit DAC
+	    09h unknown 15/16/24-bit DAC
 	   else other HiColor DAC
 Desc:	determine which type of digital-to-analog converter is installed on the
 	  display board
 SeeAlso: AX=10F0h,AX=10F2h
---------V-1010F2BL00-------------------------
-INT 10 u - VIDEO - Tseng ET-4000 BIOS - CHECK IF IN HiColor MODE
+--------V-1010F2-----------------------------
+INT 10 u - VIDEO - Tseng ET-4000 BIOS - CHECK IF HiColor MODE/SET HiColor MODE
 	AX = 10F2h
-	BL = 00h
+	BL = function
+	    00h get current HiColor mode
+	    01h set 15-bit HiColor mode
+	    02h set 16-bit HiColor mode
 Return: AX = 0010h if supported
 	BL = video mode type
-	    00h normal
-	    else HiColor mode
+	    00h not in HiColor mode
+	    01h 15-bit RGB mode
+	    02h 16-bit RGB mode
+	    03h 24-bit RGB mode
 Desc:	determine whether the display is in a graphics mode with 15 or more
 	  bits per pixel color resolution
+Note:	set (BL=01h/02h) only works if already in a HiColor mode
 SeeAlso: AH=0Fh,AX=10F0h,AX=10F1h
 --------V-1011-------------------------------
 INT 10 - BIOS Window Extension v1.1 - GET WINDOW COORDINATES
@@ -3408,23 +3461,183 @@ Desc:	fill a convex polygonal area bounded by a contiguous line of the
 	  opposite color with the border color
 Note:	the first fill makes the figure solid, the second erases it
 SeeAlso: AH=4Ah
+--------V-104E00-----------------------------
+INT 10 - VESA XGA BIOS Extensions - GET XGA ENVIRONMENT INFORMATION
+	AX = 4E00h
+	ES:DI -> 256-byte buffer for XGA information (see below)
+Return: AL = 4Eh if function supported
+	    AH = status
+		00h successful
+		else error code
+Desc:	determine whether VESA XGA extensions are present and the capabilities
+	  supported by the display adapter
+SeeAlso: AX=4E01h,AX=4E02h,AX=4F00h
+Index:	installation check;VESA XGA
+
+Format of XGA information buffer:
+Offset	Size	Description
+ 00h  4 BYTEs	signature ("VESA")
+ 04h	WORD	VESA version number
+ 06h	DWORD	pointer to ASCIZ OEM string
+ 0Ah	DWORD	environment flags
+		bits 0-1 system bus (00 = MCA, 01 = ISA, 10 = EISA)
+		bit 2	 bus mastering available
+		bits 3-31 reserved
+ 0Eh	WORD	number of XGA adapters installed (other VESA XGA functions
+		  require a handle indicating which adapter to use)
+ 10h 240 BYTEs	reserved
+--------V-104E01----------------------------
+INT 10 - VESA XGA BIOS Extensions - RETURN XGA SUBSYSTEM INFORMATION
+	AX = 4E01h
+	DX = XGA handle (0 to number of XGAs-1)
+	ES:DI -> 256-byte buffer for subsystem information (see below)
+Return: AL = 4Eh if function supported
+	AH = status
+	    00h	 function successful
+	    else error code
+SeeAlso: AX=4E00h,AX=4E02h
+
+Format of subsystem information:
+Offset	Size	Description
+ 00h	DWORD	pointer to null-terminated board OEM string
+ 04h	DWORD	capabilities
+		bits 0-1  board bus architecture: 0=MCA, 1=ISA, 3=EISA
+		bits 2-3  reserved
+		bits 4-6  DMA Channel assigned for acquiring bus mastership
+			  (only for ISA bus systems)
+		bit  7	  DMA Channel Status (ISA only). enabled if set
+		bits 8-31 reserved
+ 08h	DWORD	pointer to 8KB XGA ROM (or NULL)
+ 0Ch	DWORD	pointer to the XGA memory mapped registers
+ 10h	WORD	base address of XGA I/O registers (21x0h)
+ 12h	DWORD	pointer to start of physical video memory
+		(A000h:0000h or B000h:0000h)
+ 16h	DWORD	physical address of 4MB aperture (or NULL if none)
+ 1Ah	DWORD	physical address of 1MB aperture (or NULL if none)
+ 1Eh	DWORD	physical address of 64KB aperture (or NULL if not enabled)
+ 22h	DWORD	physical address of OEM aperture (or NULL if none)
+ 26h	WORD	size of OEM aperture in 64KByte units
+ 28h	DWORD	pointer to list of video modes
+		The list is a series of WORDs terminated by FFFFh
+ 2Ch	WORD	number of 64KB blocks on the board
+ 2Eh	DWORD	XGA manufactor ID
+		byte 0 POS data index 1
+		byte 1 is index 2
+		byte 2 is 21xAh index 75h
+ 32h 206 BYTEs reserved
+--------V-104E02-----------------------------------
+INT 10 - VESA XGA BIOS Extensions - RETURN XGA MODE INFORMATION
+	AX = 4E02h
+	CX = Video mode
+	DX = XGA handle
+	ES:DI -> 256 byte buffer
+Return: AL = 4Eh if function supported
+	AH = status
+	    00h	 function successful
+	    else error code
+SeeAlso: AX=4E00h,AX=4E01h
+
+Format of mode information:
+Offset	Size	Description
+ 00h	WORD	attributes of the mode
+		bit 0	set if mode is supported
+		bit 1	reserved
+		bit 2	output is supported by the BIOS
+		bit 3	reserved
+		bit 4	if set this is a graphics mode (VGA registers
+			inactive, XGA active), if clear this is a text mode
+			(VGA registers active, XGA inactive)
+ 02h	WORD	bytes per logical scanline
+ 04h	WORD	horizontal resolution in pixels
+ 06h	WORD	vertical resolution in scanlines
+ 08h	BYTE	character Width in pixels
+ 09h	BYTE	character Height in pixels
+ 0Ah	BYTE	number of planes
+ 0Bh	BYTE	bits per pixels
+ 0Ch	BYTE	memory model
+		00h Text Mode
+		01h CGA graphics
+		02h Hercules graphics
+		03h 4-planar graphics
+		04h Packed Pixel
+		05h Non-chain 4, 256 color
+		06h Direct Color
+		07h YUV-24
+ 0Dh	BYTE	number of Image Pages
+ 0Eh	BYTE	number of Red bits
+ 0Fh	BYTE	bit position of Red bit field
+ 10h	BYTE	number of Green bits
+ 11h	BYTE	bit position of Green bit field
+ 12h	BYTE	number of Blue bits
+ 13h	BYTE	bit position of Blue bit field
+ 14h	BYTE	number of Reserved bits
+ 15h	BYTE	bit position of Reserved bit field
+ 16h 235 BYTEs	reserved
+--------V-104E03-----------------------------------
+INT 10 - VESA XGA BIOS Extensions - SET XGA VIDEO MODE
+	AX = 4E03h
+	BX = video mode
+	CX = other command flags
+	     bit 0  If clear the feature connector is set to the default state
+	DX = XGA handle
+	ES:DI -> 256 byte buffer
+Return: AL = 4Eh if function supported
+	AH = status
+	    00h	 function successful
+	    else error code
+SeeAlso: AH=00h,AX=4E04h,AX=4F02h
+--------V-104E04-----------------------------------
+INT 10 - VESA XGA BIOS Extensions - RETURN CURRENT VIDEO MODE
+	AX = 4E04h
+	DX = XGA handle
+Return: AL = 4Eh if function supported
+	AH = status
+	    00h	 function successful
+		BX??? = current mode
+	    else error code
+SeeAlso: AH=0Fh,AX=4E03h,AX=4F03h
+--------V-104E05-----------------------------------
+INT 10 - VESA XGA BIOS Extensions - SET FEATURE CONNECTOR STATE
+	AX = 4E05h
+	BX = Feature Connector State (see below)
+	DX = XGA handle
+Return: AL = 4Eh if function supported
+	AH = status
+	    00h	 function successful
+	    else error code
+SeeAlso: AX=4E00h,AX=4E06h
+
+Bitfields for Feature Connector State:
+ bit 0	Feature Connector is enabled
+ bit 1	Feature Connector is in Output Mode rather than Input Mode
+ bits 2-15 reserved (0)
+--------V-104E06-----------------------------------
+INT 10 - VESA XGA BIOS Extensions - RETURN FEATURE CONNECTOR STATE
+	AX = 4E06h
+	DX = XGA handle
+Return: AL = 4Eh if function supported
+	AH = status
+	    00h	 function successful
+	    else error code
+	BX = Feature Connector State (see AX=4E05h)
+SeeAlso: AX=4E00h,AX=4E05h
 --------V-104F00-----------------------------
 INT 10 - VESA SuperVGA BIOS - GET SuperVGA INFORMATION
 	AX = 4F00h
 	ES:DI -> 256-byte buffer for SuperVGA information (see below)
-Return: AL = 4Fh function supported
+Return: AL = 4Fh if function supported
 	AH = status
 	    00h successful
 		ES:DI buffer filled
 	    01h failed
 Desc:	determine whether VESA BIOS extensions are present and the capabilities
 	  supported by the display adapter
-SeeAlso: AX=4F01h,AX=7F00h
-Index:	installation check;VESA
+SeeAlso: AX=4E00h,AX=4F01h,AX=7F00h
+Index:	installation check;VESA SuperVGA
 
 Format of SuperVGA information:
 Offset	Size	Description
- 00h  4 BYTEs	signature ('VESA')
+ 00h  4 BYTEs	signature ("VESA")
  04h	WORD	VESA version number
  06h	DWORD	pointer to OEM name
 		"761295520" for ATI
@@ -3516,7 +3729,7 @@ Return: AL = 4Fh function supported
 	AH = status
 	    00h successful
 	    01h failed
-SeeAlso: AX=4F01h,AX=4F03h
+SeeAlso: AX=4E03h,AX=4F01h,AX=4F03h
 
 Values for VESA video mode:
  00h-FFh OEM video modes (see AH=00h)
@@ -3559,8 +3772,8 @@ Values for S3 OEM video mode:
  205h	1024x768x256
  206h	1280x960x16
  208h	1280x1024x16
- 211h	640x480x64K (Diamond Stealth 24X)
- 212h	640x480x16M (Diamond Stealth 24X)
+ 211h	640x480x64K (Diamond Stealth 24)
+ 212h	640x480x16M (Diamond Stealth 24)
  301h	640x480x32K
 Index:	video modes
 --------V-104F03-----------------------------
@@ -3569,9 +3782,9 @@ INT 10 - VESA SuperVGA BIOS - GET CURRENT VIDEO MODE
 Return: AL = 4Fh function supported
 	AH = status
 	    00h successful
+		BX = video mode (see AX=4F02h)
 	    01h failed
-	BX = video mode (see AX=4F02h)
-SeeAlso: AX=4F02h
+SeeAlso: AH=0Fh,AX=4E04h,AX=4F02h
 --------V-104F04-----------------------------
 INT 10 - VESA SuperVGA BIOS - SAVE/RESTORE SuperVGA VIDEO STATE
 	AX = 4F04h
@@ -3656,6 +3869,10 @@ INT 10 - VESA SuperVGA BIOS v1.2+ - GET/SET DAC PALETTE CONTROL
 Return: AL = 4Fh if function supported
 	AH = status
 	BH = current number of bits per primary (06h = standard VGA)
+----------104F13-----------------------------
+INT 10 - VESA Audio Interface - API
+	AX = 4F13h
+	??? details not yet available
 --------V-104FFF-----------------------------
 INT 10 - VESA SuperVGA BIOS - Everex - TURN VESA ON/OFF
 	AX = 4FFFh
@@ -3932,6 +4149,70 @@ Bitfields for state mask:
  bit 1	BIOS data state
  bit 2	DAC state
  bit 15 type (0 all state info, 1 SuperVGA state only)
+--------V-1060------------------------------------
+INT 10 - HUNTER 16 - SET GRAPHICS FONT
+	AH = 60h
+	AL = new font
+	    bit 7    output characters in reverse video
+	    bits 0-6 font number (see AH=77h)
+Return: BH = cell width			
+	BL = cell height
+Desc:	select the font to use for output in mode 6; this can be used to mix
+	  fonts on the screen
+Note:	the Husky Hunter 16 is an 8088-based ruggedized laptop.	 Other family
+	  members are the Husky Hunter, Husky Hunter 16/80, and Husky Hawk.
+SeeAlso: AH=04h"HUNTER",AH=73h"HUNTER",AH=77h"HUNTER"
+--------V-1061------------------------------------
+INT 10 - HUNTER 16 - MOVE CURSOR TO GRAPHICS CO-ORDINATES
+	AH = 61h
+	CX = column
+	DX = row
+Note:	this function is only valid in graphics modes
+SeeAlso: AH=62h
+--------V-1062------------------------------------
+INT 10 - HUNTER 16 - GET CURSOR POSITION IN GRAPHICS CO-ORDINATES
+	AH = 62h
+Return: CX = column
+	DX = row
+Note:	this function is only valid in graphics modes
+SeeAlso: AH=61h
+--------V-1063------------------------------------
+INT 10 - HUNTER 16 - SET CONTRAST
+	AH = 63h
+	AL = contrast (0..127)
+Desc:	set the LCD screen contrast to improve visibility
+SeeAlso: AH=64h,AH=75h
+--------V-1064------------------------------------
+INT 10 - HUNTER 16 - SET BACKLIGHT LEVEL
+	AH = 64h
+	AL = level (0..15)
+Desc:	set the LCD backlight level to improve visibility in bad lighting
+SeeAlso: AH=63h,AH=65h,AH=74h,AH=78h"HUNTER",INT 15/AH=74h
+--------V-106500----------------------------------
+INT 10 - HUNTER 16 - GET BACKLIGHT TIMEOUT
+	AX = 6500h
+Return: BX = timeout in seconds (0-300)
+Desc:	returns the time after which the backlight will turn off
+SeeAlso: AH=63h,AH=64h,AX=6501h,INT 15/AH=74h
+--------V-106501----------------------------------
+INT 10 - HUNTER 16 - SET BACKLIGHT TIMEOUT
+	AX = 6501h
+	BX = timeout in seconds (0-300)
+Desc:	set the idle time after which the backlight will turn off
+SeeAlso: AH=64h,AX=6500h
+--------V-1066------------------------------------
+INT 10 - HUNTER 16 - SPLIT DISPLAY
+	AH = 66h
+	AL = control bits
+	    bits 0-1  01: no split, 10: allow split
+	    bit 2  allow scrolling the upper part
+	    bit 3  allow scrolling the lower part 
+	BH = top row of lower section of LCD (0..7)
+	BL = top row of lower section of the virtual screen (0..24)
+Desc:	split the LCD screen horizontally into two parts; each part may be 
+	  individually scrollable or fixed.
+Note:	the Hunter 16 has a 240x64 LCD display which serves as a window into
+	  a 640x200 virtual screen
 --------V-106A00BX0000-----------------------
 INT 10 - Direct Graphics Interface Standard (DGIS) - INQUIRE AVAILABLE DEVICES
 	AX = 6A00h
@@ -4134,6 +4415,23 @@ Return: AX:BX -> WORD containing green plane's offset
 	AX:DX -> WORD containing segment of red (offset 0) and blue (offset
 			4000) planes
 SeeAlso: AH=71h
+--------V-1070------------------------------------
+INT 10 - HUNTER 16 - DRAW ELLIPSE/CIRCLE
+	AH = 70h
+	DS:BX -> control block (see below)
+Desc:	Draws a circle or ellipse. Only valid in graphics modes.
+Note:	the Husky Hunter 16 is an 8088-based ruggedized laptop.	 Other family
+	  members are the Husky Hunter, Husky Hunter 16/80, and Husky Hawk.
+SeeAlso: AH=71h"HUNTER"
+
+Format of control block:
+Offset	Size	Description
+ 00h	WORD	center X co-ordinate
+ 02h	BYTE	center Y co-ordinate
+ 03h	WORD	radius in pixels
+ 05h	BYTE	color (00h white, 01h black, FFh invert)
+ 06h	BYTE	aspect ratio x:x (1-127)
+ 07h	BYTE	aspect ratio y:y (1-127)
 --------V-107000BX0000-----------------------
 INT 10 - Everex Extended Video BIOS - RETURN EMULATION STATUS
 	AX = 7000h
@@ -4228,7 +4526,23 @@ INT 10 - VIDEO - TANDY 2000 only - GET ADDRESS OF INCRAM
 	AH = 71h
 Return: AX:BX -> WORD containing segment address of INCRAM
 	AX:CX -> WORD containing offset of INCRAM
-SeeAlso: AH=70h
+SeeAlso: AH=70h"TANDY"
+--------V-1071------------------------------------
+INT 10 - HUNTER 16 - DRAW LINE/BOX
+	AH = 71h
+	DS:BX -> control block (see below)
+Desc:	Draws a line or box. Only valid in graphics modes.
+SeeAlso: AH=70h"HUNTER"
+
+Format of control block:
+Offset	Size	Description
+ 00h	WORD	left edge X co-ordinate
+ 02h	BYTE	lower edge Y co-ordinate
+ 03h	WORD	right edge X co-ordinate
+ 05h	BYTE	upper edge Y co-ordinate
+ 06h	BYTE	color (00h white, 01h black, FFh invert)
+ 07h	BYTE	type (00h line, 01h box)
+ 08h	BYTE	if non-zero (and type is BOX) fill with color
 --------V-1072-------------------------------
 INT 10 - VIDEO - TANDY 2000 only - SCROLL RIGHT PART OR ALL OF SCREEN
 	AH = 72h
@@ -4236,7 +4550,21 @@ INT 10 - VIDEO - TANDY 2000 only - SCROLL RIGHT PART OR ALL OF SCREEN
 	BH = new attributes for blanked columns at left
 	CH,CL = row, column of upper left corner of scroll area
 	DH,DL = row, column of lower right corner of scroll area
-SeeAlso: AH=06h,AH=07h,AH=73h,INT 15/AH=12h/BH=05h
+SeeAlso: AH=06h,AH=07h,AH=73h"TANDY",INT 15/AH=12h/BH=05h
+--------V-1072------------------------------------
+INT 10 - HUNTER 16 - SELECT TEXT-MODE INVERSE VIDEO MECHANISM
+	AH = 72h
+	AL = mechanism to use
+	    00h do not use inverse video
+	    01h emulate MDA. Display attribute 07h is normal video and 70h is
+		inverse video.
+	    02h use inverse video if background is non-black.
+	    03h use inverse video for high intensity text.
+	    04h use inverse video for text with background intensity greater
+		than foreground intensity.
+	    05h use inverse video for text with background color other than
+		black or high intensity foreground.
+SeeAlso: AH=70h"HUNTER",AH=71h"HUNTER"
 --------V-1073-------------------------------
 INT 10 - VIDEO - TANDY 2000 only - SCROLL LEFT PART OR ALL OF SCREEN
 	AH = 73h
@@ -4244,7 +4572,63 @@ INT 10 - VIDEO - TANDY 2000 only - SCROLL LEFT PART OR ALL OF SCREEN
 	BH = new attributes for blanked columns at right
 	CH,CL = row, column of upper left corner of scroll area
 	DH,DL = row, column of lower right corner of scroll area
-SeeAlso: AH=06h,AH=07h,AH=72h,INT 15/AH=12h/BH=05h
+SeeAlso: AH=06h,AH=07h,AH=72h"TANDY",INT 15/AH=12h/BH=05h
+--------V-1073------------------------------------
+INT 10 - HUNTER 16 - SELECT TEXT FONT
+	AH = 73h
+	AL = new font
+	      00h  7x7 in a 8x8 cell
+	      01h  5x7 in a 6x8 cell
+	      06h  3x5 in a 4x6 cell
+Retuen: BH = cell width
+	BL = cell height
+SeeAlso: AH=60h"HUNTER",AH=77h"HUNTER"
+--------V-1074------------------------------------
+INT 10 - HUNTER 16 - SET LCD WINDOWS POSITION
+	AH = 74h
+	DH = row (0..24)
+	DL = column (0..79)
+Desc:	set the position in the virtual screen being displayed in the LCD
+	  screen. If Split Screen (INT 10/AH=66h) is used, this call sets the
+	  position for the window which has the cursor.
+SeeAlso: AH=66h"HUNTER",AH=75h,AH=76h
+--------V-1075------------------------------------
+INT 10 - HUNTER 16 - SET ZOOM
+	AH = 75h
+	AL = new Zoom state (00h off, nonzero on)
+SeeAlso: AH=74h,AH=76h
+--------V-1076------------------------------------
+INT 10 - HUNTER 16 - LOOKING KEYS
+	AH = 76h
+	AL = Action
+	     00h home the window
+	     01h move up one line
+	     02h move down one line
+	     03h move left one character
+	     04h move right one character
+	     05h flip window to other side of virtual screen
+Desc:	moves the displayed screen around the virtual screen
+SeeAlso: AH=74h,AH=75h
+--------V-1077------------------------------------
+INT 10 - HUNTER 16 - GET GRAPHICS FONT
+	AH = 77h
+Return: AL = font number (see below)
+SeeAlso: AH=60h"HUNTER",AH=73h"HUNTER"
+
+Values for graphics font number:
+ 00h	 7x7  in a  8x8	 cell 
+ 01h	 5x7  in a  6x8	 cell
+ 02h	 7x9  in a  8x10 cell
+ 03h	14x9  in a 16x10 cell
+ 04h	 7x18 in a  8x20 cell
+ 05h	14x18 in a 16x20 cell
+ 06h	 3x5  in a  4x6	 cell
+Note:	size is X * Y
+--------V-1078------------------------------------
+INT 10 - HUNTER 16 - TURN BACKLIGHT ON/OFF
+	AH = 78h 
+	AL = new state of backlight (00h on, 01h off)
+SeeAlso: AH=64h,INT 15/AH=74h
 --------V-107F00-----------------------------
 INT 10 - SOLLEX SuperVGA - GET EXTENSIONS INFO
 	AX = 7F00h
@@ -4768,12 +5152,17 @@ Return: BH = active monitor
 	    05h = EGA
 	    07h = MDA
 	    08h = switchable LCD controller present
+	    09h = plasma VGA
 	CH = 00h (reserved)
+	   = 31h if QVision VGA
 	CL = switchable VDU mode supported
-	    bit	 0   = CGA supported
+	    bit	0    = CGA supported
 	    bits 1,2 = reserved (1)
-	    bit	 3   = MDA supported
-	    bits 4-7 = reserved (1)
+	    bit	3    = MDA supported
+	    bit 4    = BitBLT engine available
+	    bit 5    = 132-column support availble
+	    bit 6    = 640x480x256 mode available
+	    bit 7    = 8-bit DAC mode available
 	DH = internal monitor type (see below)
 	DL = external monitor type (see below)
 SeeAlso: AH=1Ah,AX=BF00h,AX=BF01h,AX=BF02h
@@ -4781,12 +5170,17 @@ SeeAlso: AH=1Ah,AX=BF00h,AX=BF01h,AX=BF02h
 Values for monitor type:
  00h	none
  01h	dual-mode monitor
- 02h	5153 RGB monitor
+ 02h	5153 RGB monitor (RGBI 16-color)
  03h	Compaq Color monitor
- 04h	640x400 flat panel
+ 04h	640x400 flat panel (Plasma CGA)
  05h	VGC monochrome
  06h	VGC color
- 07h	LCD VGA
+ 07h	8-level mono LCD VGA
+ 08h	16-level mono plasma VGA
+ 09h	4-level mono LCD CGA
+ 0Ah	16-level mono LCD VGA
+ 0Bh	active-matrix color VGA
+ 0Ch	active-matrix mono VGA
 --------b-10BF04-----------------------------
 INT 10 - VIDEO - Compaq Extensions - SET MODE SWITCH DELAY
 	AX = BF04h
@@ -4950,6 +5344,56 @@ INT 10 - CU Writer v1.4 - TEXT MENU
 	???
 Return: ???
 SeeAlso: AH=C0h,AH=C1h,AH=C3h,AH=D0h
+----------10CB00-----------------------------
+INT 10 - UNCHAIN - SAVE CURRENT VGA REGISTERS
+	AX = CB00h
+Note:	combined with AX=CB06h, this function permits the use of video mode
+	  13h together with the VGA's unchained mode
+SeeAlso: AX=CB06h,AX=CBFFh
+----------10CB01-----------------------------
+INT 10 - UNCHAIN - UPDATE PAGE 1 OFFSET
+	AX = CB01h
+	BX = offset of page 1
+Desc:	inform UNCHAIN of the location of video page 1 in video memory; the
+	  default is 0000h
+SeeAlso: AX=CB02h,AX=CB03h,AX=CB04h,AX=CBFFh
+----------10CB02-----------------------------
+INT 10 - UNCHAIN - UPDATE PAGE 2 OFFSET
+	AX = CB02h
+	BX = offset of page 2
+Desc:	inform UNCHAIN of the location of video page 2 in video memory; the
+	  default is 3E80h (16000, for 320x200)
+SeeAlso: AX=CB00h,AX=CB01h,AX=CB03h,AX=CB04h
+----------10CB03-----------------------------
+INT 10 - UNCHAIN - UPDATE PAGE 3 OFFSET
+	AX = CB03h
+	BX = offset of page 3
+Desc:	inform UNCHAIN of the location of video page 3 in video memory; the
+	  default is 7D00h (32000, for 320x200)
+SeeAlso: AX=CB01h,AX=CB02h,AX=CB04h
+----------10CB04-----------------------------
+INT 10 - UNCHAIN - UPDATE PAGE 4 OFFSET
+	AX = CB04h
+	BX = offset of page 4
+Desc:	inform UNCHAIN of the location of video page 4 in video memory; the
+	  default is BB80h (48000, for 320x200)
+SeeAlso: AX=CB01h,AX=CB02h,AX=CB03h,AX=CB05h
+----------10CB05-----------------------------
+INT 10 - UNCHAIN - SAVE PALETTE
+	AX = CB05h
+SeeAlso: AX=CB00h,AX=CB06h
+----------10CB06-----------------------------
+INT 10 - UNCHAIN - RESTORE VGA REGISTERS
+	AX = CB06h
+SeeAlso: AX=CB00h,AX=CB05h,AX=CBFFh
+----------10CBFF-----------------------------
+INT 10 - UNCHAIN - INSTALLATION CHECK
+	AX = CBFFh
+Return: AX = CCBBh if installed
+Program: UNCHAIN is a TSR by Colin Buckley which permits use of Borland
+	  development tools with Mode X video in the absence of a second
+	  monitor
+SeeAlso: AX=CB00h,AX=CB01h,AX=CB06h
 --------V-10CC00SI0000-----------------------
 INT 10 - VIDEO - UltraVision - GET STATUS (INSTALLATION CHECK)
 	AX = CC00h
@@ -5398,7 +5842,8 @@ Bitfields for BIOS equipment list:
 	10 80x25 color
 	11 80x25 monochrome
  bits 6-7 number of floppies installed less 1 (if bit 0 set)
- bit 8	DMA support installed (PCjr, some Tandy 1000s, 1400LT)
+ bit 8	DMA support installed (PCjr, Tandy 1400LT)
+	DMA support *not* installed (Tandy 1000's)
  bits 9-11 number of serial ports installed
  bit 12	game port installed
  bit 13	serial printer attached (PCjr)
@@ -8416,7 +8861,7 @@ Return: AH = RS232 status bits (see AH=03h)
 	ZF set if no characters queued
 	ZF clear if character available
 	    AL = next character
-SeeAlso: AH=03h,AH=08h"PC-MOS",AH=09h"Digiboard"
+SeeAlso: AH=03h,AH=08h"PC-MOS",AH=09h"Digiboard",AH=14h"Digiboard"
 --------S-1408-------------------------------
 INT 14 - MBBIOS - NON-DESTRUCTIVE READ
 	AH = 08h
@@ -8515,7 +8960,7 @@ Return: AX = status (see AH=03h)
 	DI updated
 Note:	the PACCOM version of MBBIOS does not use CX or ES:DI; instead, ES
 	  contains the segment of a buffer containing the packet to be sent,
-	  which by default will be freed once the packet has been sent.  Use
+	  which by default will be freed once the packet has been sent.	 Use
 	  AH=0Ch"MBBIOS" to allocate the buffer.
 SeeAlso: AH=01h,AH=0Bh"MBBIOS",AH=0Ch"MBBIOS",AH=19h"FOSSIL"
 
@@ -8739,6 +9184,9 @@ Return: AH = return code (00h-02h,06h) (see AH=00h/DX=FFFFh)
 Program: Connection Manager by Softwarehouse Corp. permits the sharing of
 	  serial ports over an IPX or NetBIOS-based network
 SeeAlso: AH=08h/DX=FFFFh,AH=0Ah/DX=FFFFh
+--------!------------------------------------
+Interrupt List, part 2 of 10
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994 Ralf Brown
 --------S-1410-------------------------------
 INT 14 - FOSSIL - EXTENDED ^C/^K CHECKING AND TRANSMIT ON/OFF
 	AH = 10h
@@ -8828,7 +9276,7 @@ INT 14 - Digiboard DigiCHANNEL PC/X* - GET TRANSMIT BUFFER FREE SPACE
 	AH = 12h
 	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
 Return: AX = number of bytes free
-SeeAlso: AH=0Ah"Digiboard"
+SeeAlso: AH=0Ah"Digiboard",AH=14h"Digiboard"
 --------S-1412-------------------------------
 INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - GET CURRENT PORT PARAMETERS
 	AH = 12h
@@ -8872,6 +9320,11 @@ Return: AX = number of bytes actually sent
 	ZF clear if successful
 	ZF set on timeout
 SeeAlso: AH=01h,AH=15h"PC-MOS"
+--------S-1414-------------------------------
+INT 14 - Digiboard - GET NUMBER OF BOARDS INSTALLED
+	AH = 14h
+Return: AX = number of boards installed
+SeeAlso: AH=08h"Digiboard",AH=15h"Digiboard"
 --------S-1415-------------------------------
 INT 14 - FOSSIL - WRITE CHARACTER TO SCREEN USING BIOS SUPPORT ROUTINES
 	AH = 15h
@@ -8887,6 +9340,15 @@ INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - INPUT STRING
 Return: AX = number of characters actually read
 	ZF set on timeout (no data available)
 SeeAlso: AH=02h,AH=14h"PC-MOS",AH=16h"PC-MOS"
+--------S-1415-------------------------------
+INT 14 - Digiboard - ENABLE/DISABLE MEMORY
+	AH = 15h
+	AL = new state (00h disabled, 01h enabled)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AH=14h"Digiboard",AH=16h"Digiboard"
 --------S-1416-------------------------------
 INT 14 - FOSSIL - INSERT/DELETE FUNCTION FROM TIMER TICK CHAIN
 	AH = 16h
@@ -8899,17 +9361,25 @@ Return: AX = status
 	    0001h unsuccessful
 SeeAlso: AH=07h"FOSSIL"
 --------S-1416-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - LINK TO ANOTHER SERIAL DRIVER
+	AH = 16h
+	ES:BX -> calling driver's INT 14 entry point
+Return: nothing
+Program: PC-MOS/386 v5.01 is a multitasking, multiuser MS-DOS 5.0-compatible
+	  operating system by The Software Link, Inc.
+--------S-1416-------------------------------
 INT 14 - Digiboard DigiCHANNEL PC/X* - CCB COMMAND
 	AH = 16h
-	AL = CCB command number (see below)
+	AL = CCB command number (see below) (see also following entries)
 	BL = byte 2
 	BH = byte 3
 	CL = byte 1 (for all channel functions except 4Eh and 4Fh)
 	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
 Return: AH = status
 	    00h successful
+	    80h error
 	    FFh error
-SeeAlso: AH=18h"Digiboard"
+SeeAlso: AX=1646h,AH=18h"Digiboard"
 
 Values for CCB command number:
  40h	Set Receive Mid Water Mark
@@ -8933,13 +9403,122 @@ Values for CCB command number:
  52h	Receive Pause
  53h	Special Character Interrupt
  54h	RS-422 Enable
---------S-1416-------------------------------
-INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - LINK TO ANOTHER SERIAL DRIVER
-	AH = 16h
-	ES:BX -> calling driver's INT 14 entry point
-Return: nothing
-Program: PC-MOS/386 v5.01 is a multitasking, multiuser MS-DOS 5.0-compatible
-	  operating system by The Software Link, Inc.
+--------S-141646-----------------------------
+INT 14 - Digiboard - CCB COMMAND - SET INTERRUPT TO HOST MASK
+	AX = 1646h
+	BL = bits to set
+	BH = bits to clear
+	CL = byte 1
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AH=16h"Digiboard",AX=1647h
+--------S-141647-----------------------------
+INT 14 - Digiboard - CCB COMMAND - SET BAUD/DATABITS/STOPBITS/PARITY
+	AX = 1647h
+	BL = baud
+	BH = datatype
+	CL = byte 1
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AH=16h"Digiboard",AX=1646h,AX=1649h
+--------S-141649-----------------------------
+INT 14 - Digiboard - CCB COMMAND - SET MODEM LINES
+	AX = 1649h
+	BL = bits to set
+	BH = bits to clear
+	CL = byte 1
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AH=16h"Digiboard",AX=1647h
+--------S-14164A-----------------------------
+INT 14 - Digiboard - CCB COMMAND - SET BREAK COUNT
+	AX = 164Ah
+	BL = break count
+	CL = byte 1
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AH=16h"Digiboard",AX=1649h,AX=164Bh
+--------S-14164B-----------------------------
+INT 14 - Digiboard - CCB COMMAND - SET HANDSHAKE
+	AX = 164Bh
+	BL = bits to set
+	BH = bits to clear
+	CL = byte 1
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AH=16h"Digiboard",AX=1649h,AX=164Ch
+--------S-14164C-----------------------------
+INT 14 - Digiboard - CCB COMMAND - SET XON/XOFF CHARACTERS
+	AX = 164Ch
+	BL = XON character
+	BH = XOFF character
+	CL = byte 1
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AH=16h"Digiboard",AX=164Bh,AX=164Dh
+--------S-14164D-----------------------------
+INT 14 - Digiboard - CCB COMMAND - SET TRANSMIT MID-WATER MARK
+	AX = 164Dh
+	BX = new mid-water mark
+	CL = byte 1
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AH=16h"Digiboard",AX=164Ch,AX=164Eh,AX=164Fh
+--------S-14164E-----------------------------
+INT 14 - Digiboard - CCB COMMAND - IRQ POLLING TIMER TO HOST
+	AX = 164Eh
+	BL = ticks
+	BH = ???
+	CL = mode
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AH=16h"Digiboard",AX=164Dh
+--------S-14164F-----------------------------
+INT 14 - Digiboard - CCB COMMAND - BUFFER SET ALL
+	AX = 164Fh
+	BL = size
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AH=16h"Digiboard",AX=164Dh
+--------S-141653-----------------------------
+INT 14 - Digiboard - CCB COMMAND - SPECIAL CHARACTER INTERRUPT
+	AX = 1653h
+	BL = enable/disable
+	BH = special character
+	CL = byte 1
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AH=16h"Digiboard",AX=1646h
 --------S-1417-------------------------------
 INT 14 - FOSSIL - REBOOT SYSTEM
 	AH = 17h
@@ -9115,6 +9694,40 @@ Values for bps rate:
  06h	4800
  07h	9600
  08h	19200
+--------S-101E------------------------------------
+INT 10 - HUNTER 16 - READ COMMS PARAMETERS
+	AH = 1Eh
+	CX = channel number (00h COM1, 01h COM2, ...)
+	DS:BX -> buffer for communications parameters (see below)
+Return: DS:BX buffer filled
+Note:	the Husky Hunter 16 is an 8088-based ruggedized laptop.	 Other family
+	  members are the Husky Hunter, Husky Hunter 16/80, and Husky Hawk.
+SeeAlso: AH=20h"HUNTER"
+
+Format of communications parameters:
+Offset	Size	Description
+ 00h	BYTE	communications type (00h IBM, nonzero Husky)
+ 01h	BYTE	port number (00h COM1, 01h COM2)
+ 02h	BYTE	baud rate (00h 110 bps, 01h 150, 02h 300, 03h 600, 04h 1200,
+		05h 2400, 06h 4800, 07h 9600, 08h 19200, 09h 38400)
+ 03h	BYTE	data bits (01h seven, 02h eight)
+ 04h	BYTE	parity (00h none, 01h odd, 02h even)
+ 05h	BYTE	stop bits (00h one, 01h two)
+ 06h	BYTE	handshake
+		bits 0-1  0: RTS off, 1: RTS hold, 2: RTS true
+		bit    2  DTR enabled
+		bit    4  CTS enabled
+		bit    5  DSR enabled
+		bit    6  DCD enabled
+ 07h	BYTE	handshake protocol (00h none, 01h Xon/Xoff, 02h HWK3780)
+ 08h	BYTE	Nulls after CR (0-20)
+ 09h	BYTE	LF (00h off, 01h on)
+ 0Ah	BYTE	Serig. 0..7Fh: Ignore this character
+		       80h: Serig off
+ 0Bh	BYTE	echo (00h off, 01h on)
+ 0Ch	BYTE	transmit timeout in seconds (1-60) or 00h to disable
+ 0Dh	BYTE	receive timeout in seconds (1-60) or 00h to disable
+ 0Eh  5 BYTEs	reserved
 --------S-141F-------------------------------
 INT 14 - X00 FOSSIL - EXTENDED SERIAL PORT STATUS/CONTROL
 	AH = 1Fh
@@ -9169,6 +9782,15 @@ INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - CHECK OUTPUT QUEUE
 	DX = port number
 Return: AX = number of bytes in output buffer
 SeeAlso: AH=0Ah"PC-MOS"
+--------S-1020------------------------------------
+INT 10 - HUNTER 16 - SELECT COMMS PARAMETERS
+	AH = 20h
+	CX = channel number (00h COM1, 01h COM2, ...)
+	DS:BX -> buffer with communications parameter (see AH=1Eh"HUNTER")
+Return: AX = status
+	    0000h successful
+	    0001h invalid parameter
+SeeAlso: AH=1Eh"HUNTER",AH=21h"HUNTER"
 --------S-1421-------------------------------
 INT 14 - X00 FOSSIL - STUFF RECEIVE BUFFER
 	AH = 21h
@@ -9213,6 +9835,17 @@ INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - OUTPUT CHARACTER, WITH TIMEOUT
 Program: PC-MOS/386 v5.01 is a multitasking, multiuser MS-DOS 5.0-compatible
 	  operating system by The Software Link, Inc.
 SeeAlso: AH=01h,AH=0Eh"PC/MOS",AH=22h"PC-MOS"
+--------S-1021------------------------------------
+INT 10 - HUNTER 16 - EXTENDED CONTROL
+	AH = 21h
+	AL = command
+	    01h force transmission of buffer
+	    02h clear transmit buffer
+	    03h clear receive buffer
+	DX = port (00h COM1, 01h COM2)
+Return: AH = extended status
+Desc:	executes the command on the selected port
+SeeAlso: AH=1Eh"HUNTER",AH=20h"HUNTER",AH=22h"HUNTER",AH=24h"HUNTER"
 --------S-1422-------------------------------
 INT 14 - Alloy MW386 v2+ - RELEASE LOGICAL COMMUNICATIONS PORT
 	AH = 22h
@@ -9245,6 +9878,15 @@ Return: AH = port status (see AH=03h bits 0..6)
 Program: PC-MOS/386 v5.01 is a multitasking, multiuser MS-DOS 5.0-compatible
 	  operating system by The Software Link, Inc.
 SeeAlso: AH=02h,AH=0Fh"PC-MOS",AH=21h"PC-MOS"
+--------S-1022------------------------------------
+INT 10 - HUNTER 16 - EXTENDED STATUS
+	AH = 22h
+	DX = port (00h COM1, 01h COM2)
+Return: AH = extended status
+	BX = number of characters in input buffer
+	CX = number of characters in output buffer
+Desc:	returns the most recent Extended Status code for the port
+SeeAlso: AH=21h"HUNTER"
 --------S-1423-------------------------------
 INT 14 - Alloy MW386 v2+ - GET PORT NUMBER FROM LOGICAL PORT ID
 	AH = 23h
@@ -9276,6 +9918,13 @@ INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - DECLARE PORT OWNERSHIP
 	BX = TCB segment/selector address of owner task
 Return: nothing
 SeeAlso: AH=0Dh"PC-MOS"
+--------S-1023------------------------------------
+INT 10 - HUNTER 16 - CONTROL HANDSHAKE LINES
+	AH = 23h
+	BH = handshake line to set (00h RTS, 01h DTR)
+	BL = new level (00h low, 01h high)
+Desc:	sets the handshake lines of COM1 to the desired level
+SeeAlso: AH=21h"HUNTER",AH=24h"HUNTER"
 --------S-1424-------------------------------
 INT 14 - Alloy MW386 v2+ - CHANGE PHYSICAL PORT PARAMETERS
 	AH = 24h
@@ -9330,6 +9979,11 @@ INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - ???
 Return: ???
 Program: PC-MOS/386 v5.01 is a multitasking, multiuser MS-DOS 5.0-compatible
 	  operating system by The Software Link, Inc.
+--------S-1024------------------------------------
+INT 10 - HUNTER 16 - CONTROL CTS HANDSHAKING
+	AH = 24h
+	AL = new CTS handshake state for COM1 (00h disabled, 01h enabled)
+SeeAlso: AH=23h"HUNTER",AH=25h"HUNTER",AH=26h"HUNTER"
 --------S-1425-------------------------------
 INT 14 - MultiDOS Plus - CLEAR BUFFERS
 	AH = 25h
@@ -9343,6 +9997,21 @@ Return: AH = status
 	    41h no such port
 	    42h monitor mode not active
 SeeAlso: AH=20h"MultiDOS",AH=24h"MultiDOS"
+--------S-1025------------------------------------
+INT 10 - HUNTER 16 - CONTROL RS232 DRIVERS
+	AH = 25h
+	AL = new state of RS232 drivers (00h off, 01h on)
+Note:	this function can be used to save power by turning off the RS232 
+	  drivers.  It can also be used to turn on the RS232 drivers before
+	  connecting to a remote system to avoid "garbage" while the drivers
+	  turn on.
+SeeAlso: AH=23h"HUNTER",AH=24h"HUNTER",AH=26h"HUNTER"
+--------S-1026------------------------------------
+INT 10 - HUNTER 16 - CONTROL RI POWER UP
+	AH = 26h
+	AL = 00h enable RI power up
+	    else disable RI power up
+Desc:	control whether the Ring Indicator handshake can power up the Hunter
 --------S-1427-------------------------------
 INT 14 - MultiDOS Plus - GET BUFFER CHARACTER COUNT
 	AH = 27h
@@ -9352,6 +10021,72 @@ Return: AH = status
 	    41h no such port
 	    42h monitor mode not active
 	AL = number of characters in receive buffer
+--------S-1027------------------------------------
+INT 10 - HUNTER 16 - GET INSTALLED PROTOCOLS COUNT
+	AH = 27h
+	AL = number of extended protocols installed (since last call)
+Return: AL = total number installed, including new ones
+Desc:	Returns the number of extended communication protocols installed
+SeeAlso: AH=25h"HUNTER",AH=28h"HUNTER"
+--------S-1028------------------------------------
+INT 10 - HUNTER 16 - GET PROTOCOL NAME
+	AH = 28h
+	AL = protocol handle
+	DS:BX -> 8 character buffer for protocol name
+Return:	AH = status
+	    00h successful
+		DS:BX buffer filled with the protocol name
+	    FFh failed
+SeeAlso: AH=27h"HUNTER",AH=29h"HUNTER"
+--------S-1029------------------------------------
+INT 10 - HUNTER 16 - GET PROTOCOL HANDLE
+	AH = 29h
+	DS:BX -> buffer containing the protocol name
+Return: AH = status 
+	    00h successful
+		AL = handle
+	    FFh failed
+SeeAlso: AH=28h"HUNTER",AH=2Ah"HUNTER"
+--------S-102A------------------------------------
+INT 10 - HUNTER 16 - EXTENDED PROTOCOL MENU
+	AH = 2Ah
+	AL = protocol handle
+Return: AH = status
+	    00h successful
+	    FFh failed
+	AL = menu handle
+SeeAlso: AH=29h"HUNTER",AH=2Bh"HUNTER"
+--------S-102B------------------------------------
+INT 10 - HUNTER 16 - GET EXTENDED PROTOCOL PARAMETERS
+	AH = 2Bh
+	AL = protocol handle
+	DS:BX -> buffer for extended protocol parameters
+Return: AH = status	
+	    00h successful
+		DS:BX buffer filled with extended parameters
+	    FFh failed
+SeeAlso: AH=2Ah"HUNTER"
+--------S-102C00----------------------------------
+INT 10 - HUNTER 16 - GET DTR
+	AX = 2C00h
+Return: AH = 00h
+	BL = current state
+	    00h	 normal DTR operation
+	    else DTR is forced high
+Desc:	Indicates whether the DTR signal on COM1 is forced high
+Note:	the Husky Hunter 16 is an 8088-based ruggedized laptop.	 Other family
+	  members are the Husky Hunter, Husky Hunter 16/80, and Husky Hawk.
+SeeAlso: AH=2Ch"SET DTR"
+--------S-102C------------------------------------
+INT 10 - HUNTER 16 - SET DTR
+	AH = 2Ch
+	AL nonzero
+	BL = new state
+	    00h	 normal operation
+	    else force DTR high
+Return: AH = 00h
+Desc:	determine whether the DTR signal on COM1 should be forced high
+SeeAlso: AX=2C00h
 --------S-1456-------------------------------
 INT 14 U - BWCOM14 - INSTALLATION CHECK
 	AH = 56h
@@ -9414,9 +10149,6 @@ Return: AX = 1954h
 	DH = 00h failed
 	     01h successful
 SeeAlso: AH=7Eh
---------!------------------------------------
-Interrupt List, part 2 of 10
-This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
 --------S-1480-------------------------------
 INT 14 - COMMUNICATIONS FOSSIL
 	AH = 80h
@@ -10498,14 +11230,20 @@ INT 14 - TelAPI - INSTALLATION CHECK
 Return: AL = FFh if installed
 	AH = 00h for Novell TELAPI.EXE
 SeeAlso: AH=E6h
---------S-14FF02-----------------------------
-INT 14 - IBM/Yale EBIOS SERIAL I/O - BUFFERED READ
-	AX = FF02h
-	CX = length
+--------S-14FF01-----------------------------
+INT 14 - IBM/Yale EBIOS SERIAL I/O - SET SEND BUFFER
+	AX = FF01h
+	CX = length of buffer (0000h to cancel buffer assignment)
 	DX = port (00h-03h)
-	ES:BX -> buffer
-Return: CX = number of characters read
-SeeAlso: AH=18h,AH=83h"COURIERS",AH=A5h"BAPI",AH=FCh
+	ES:BX -> send buffer
+SeeAlso: AH=18h,AH=83h"COURIERS",AH=A5h"BAPI",AH=FCh,AX=FF02h
+--------S-14FF02-----------------------------
+INT 14 - IBM/Yale EBIOS SERIAL I/O - SET RECEIVE BUFFER
+	AX = FF02h
+	CX = length of buffer (0000h to cancel buffer assignment)
+	DX = port (00h-03h)
+	ES:BX -> receive buffer
+SeeAlso: AH=18h,AH=83h"COURIERS",AH=A5h"BAPI",AH=FCh,AX=FF03h
 --------t-15---------------------------------
 INT 15 - Microsoft TSR Specification
 	No additional information available at this time.
@@ -11645,7 +12383,7 @@ Notes:	if another tone is already playing, the new tone does not start until
 	in DV 2.00, the lowest tone allowed is 20 Hz
 	if CX = 0, the current note is cancelled; if BX = 0 as well, all queued
 	  notes are also cancelled
-SeeAlso: INT 16/AH=73h
+SeeAlso: AH=82h"HUNTER",INT 16/AH=73h
 --------Q-15101A-----------------------------
 INT 15 - TopView - "OSTACK" - SWITCH TO TASK'S INTERNAL STACK
 	AX = 101Ah
@@ -14703,6 +15441,295 @@ INT 15 C - Omniview Multitasker - EXIT NOTIFICATION
 Note:	called by OmniView to notify programs loaded before OmniView of state
 	  changes inside OmniView
 SeeAlso: AX=5400h,INT 2F/AX=DE03h
+--------b-1560------------------------------------
+INT 15 - HUNTER 16 - SET SYSTEM CLOCK SPEED
+	AH = 60h
+	AL = new speed
+	    00h normal (8 MHz)
+	    01h Slow Mode 1 (4 MHz)
+	    02h Slow Mode 2 (2 MHz)
+Note:	the Husky Hunter 16 is an 8088-based ruggedized laptop.	 Other family
+	  members are the Husky Hunter, Husky Hunter 16/80, and Husky Hawk.
+SeeAlso: AX=6301h
+--------b-1561------------------------------------
+INT 15 - HUNTER 16 - GET POWER LEVEL
+	AH = 61h
+Return: AH = percentage of full power left (0..100)
+Desc:	determine how much battery power is left
+SeeAlso: AH=62h,AH=66h,AH=73h"HUNTER"
+--------b-1562------------------------------------
+INT 15 - HUNTER 16 - SET LOW POWER THRESHOLD
+	AH = 62h
+	AL = level (00h 5%, 01h 10%, ... 12h 95%)
+	BX = interval between power low warnings in seconds (1..600)
+Return: AH = Status
+Desc:	set the level (relative to full power) when power-low warnings begin
+	  and the interval between the warnings
+SeeAlso: AH=61h,AH=65h,AH=66h
+--------b-156300----------------------------------
+INT 15 - HUNTER 16 - GET IDLE TIMEOUT
+	AX = 6300h
+Return: AH = status
+	BX = timeout in seconds (0-3600)
+Desc:	get the idle timeout value, the interval without keyboard or
+	   communications activity before the system shuts down
+SeeAlso: AX=6301h
+--------b-156301----------------------------------
+INT 15 - HUNTER 16 - SET IDLE TIMEOUT
+	AX = 6301h
+	BX = timeout in seconds (0-3600)
+Desc:	sets the idle timeout value, the interval without keyboard or
+	  communications activity before the system shuts down
+SeeAlso: AX=6300h
+--------b-1564------------------------------------
+INT 15 - HUNTER 16 - CONTROL RESUME MODE
+	AH = 64h
+	AL = new state
+	    00h disable Resume mode
+	    01h enable Resume mode
+Return: AH = status
+Desc:	turn Resume mode on or off. In Resume mode the system starts in
+	  the application that was running when it shut down as if nothing 
+	  had happened.
+SeeAlso: AH=67h,AH=68h,AH=69h
+--------b-1565------------------------------------
+INT 15 - HUNTER 16 - AUTHORISE CHARGING
+	AH = 65h
+	AL = charging level
+	    01h charging not allowed
+	    02h charging allowed until power down
+	    03h charging allowed until batteries changed or fail.
+		Ask user if charging is still allowed on next poweron
+	    04h charging allowed indefinitely
+	BX = 0203h
+	CX = 0405h
+	DX = 0607h
+Return: AH = status
+SeeAlso: AH=66h,AH=68h
+--------b-1566------------------------------------
+INT 15 - HUNTER 16 - SET BATTERY LEVEL
+	AH = 66h
+	AL = level in percent of maximum (0..100)
+Return: AH = status
+SeeAlso: AH=61h,AH=65h
+--------b-1567------------------------------------
+INT 15 - HUNTER 16 - CONTROL STOP MODE
+	AH = 67h
+	AL = mode when waiting for input
+	    00h use STOP mode (allows communication)
+	    01h use HALT mode (disallows communication)
+Return: AH = status
+Desc:	select the power save mode to use when waiting for input
+SeeAlso: AH=69h
+--------b-1568------------------------------------
+INT 15 - HUNTER 16 - REQUEST POWER DOWN
+	AH = 68h
+Desc:	turns off the Hunter 16 if power down is allowed (see AH=69h)
+SeeAlso: AH=69h
+--------b-1569------------------------------------
+INT 15 - HUNTER 16 - CONTROL POWER DOWN AVAILABILITY
+	AH = 69h
+	AL = mode
+	    00h inhibit power down
+	    01h allow power down
+Return: AH = status
+SeeAlso: AH=67h,AH=68h,AH=6Ah
+--------b-156A------------------------------------
+INT 15 - HUNTER 16 - CONTROL SLOW MODE
+	AH = 6Ah
+	AL = mode
+	    00h inhibit Slow mode
+	    01h allow Slow mode
+Return: AH = status
+SeeAlso: AH=69h
+--------b-156B------------------------------------
+INT 15 - HUNTER 16 - GET ROM BIOS VERSION
+	AH = 6Bh
+Return: BH = version number (ASCII)
+	BL = release number (ASCII)
+	CH = minor release number (ASCII)
+	CL = minor release number (ASCII)
+SeeAlso: AH=6Ch
+--------b-156C------------------------------------
+INT 15 - HUNTER 16 - GET SERIAL NUMBER
+	AH = 6Ch
+Return: BL:CX = BCD serial number
+Note:	when shipped, all Hunter 16s have the same Serial Number, but a
+	  different number can be stored (see AH=72h)
+SeeAlso: AH=6Bh,AH=72h
+--------b-156D------------------------------------
+INT 15 - HUNTER 16 - GET EVENT DETAIL
+	AH = 6Dh
+Return: AH = 00h if successful
+	CX:BX = event flags bit 0..31 (see below)
+Note:	this function allows testing for events
+SeeAlso: AH=6Eh,AH=6Fh
+
+Bitfields for events:
+ bit 0	PWR button pressed
+ bit 1	error on COM1
+ bit 2	error on COM2
+ bit 3	data received on COM1
+ bit 4	data received on COM2
+ bit 5	RTC Alarm
+ bit 6	RI received
+--------b-156E------------------------------------
+INT 15 - HUNTER 16 - ENABLE/TRAP EVENT
+	AH = 6Eh
+	AL = Software Interrupt
+	      00h  do not trap event
+	      else trap as software interrupt number AL
+	BH = event number (see AH=6Dh)
+	BL = enable mask
+	    00h disable event
+	    01h enable event
+Return: AH = 00h if successful
+SeeAlso: AH=6Dh,AH=6Fh
+--------b-156F------------------------------------
+INT 15 - HUNTER 16 - ACKNOWLEDGE EVENT
+	AH = 6Fh
+	AL = event number (see AH=6Dh)
+Return: AH = 00h if successful
+Desc:	Acknowledges the event, so the next similar event can be detected 
+SeeAlso: AH=6Dh"HUNTER",AH=6Eh
+----------157000-----------------------------
+INT 15 - Tandy 1000SL/TL - READ FROM EEPROM
+	AX = 7000h
+	BL = number of word to read (00h-3Fh)
+Return: CF clear if function supported
+	    DX = contents of EEPROM word
+Note:	newer Tandy 1000-series machines use EEPROM instead of CMOS RAM in
+	  the clock chip to store system configuration information
+SeeAlso: AX=7001h
+----------157001-----------------------------
+INT 15 - Tandy 1000SL/TL - WRITE TO EEPROM
+	AX = 7001h
+	BL = number of word to read (00h-3Fh)
+	DX = new value for EEPROM word
+Return: CF clear if function supported
+Note:	the EEPROMs are normally written only by the system setup program;
+	  changing the values can badly mess up a Tandy
+SeeAlso: AX=7000h
+--------b-1570------------------------------------
+INT 15 - HUNTER 16 - CONTROL SOUND
+	AH = 70h
+	AL = new state
+	    00h disable sound
+	    else enable sound
+Note:	the Husky Hunter 16 is an 8088-based ruggedized laptop.	 Other family
+	  members are the Husky Hunter, Husky Hunter 16/80, and Husky Hawk.
+--------b-1571------------------------------------
+INT 15 - HUNTER 16 - SELECT POWER UP KEYS
+	AH = 71h
+	BL = column
+	BH = row
+	AL = column switch (00h disable, 01h enable)
+	CL = row switch (00h disable, 01h enable)
+Return: AH = status
+SeeAlso: AH=7Bh,AH=88h
+--------b-157200----------------------------------
+INT 15 - HUNTER 16 - RESET SERIAL NUMBER
+	AX = 7200h
+Return: AH = 00h if successful
+Desc:	reset the serial number to the default serial number present when the
+	  Hunter 16 was shipped
+SeeAlso: AH=6Ch,AH=72h
+--------b-1572------------------------------------
+INT 15 - HUNTER 16 - REDIRECT SERIAL NUMBER
+	AH = 72h
+	AL nonzero
+	DS:BX -> new serial number (6 ASCII digits)
+Return: AH = 00h if successful
+Desc:	install a new serial number
+SeeAlso: AH=6Ch,AX=7200h
+--------b-1573------------------------------------
+INT 15 - HUNTER 16 - GET ORACLE GT POWER LEVEL
+	AH = 73h
+	AL = drive (0: A:, 1: B:)
+Return: AH = status
+	    00h successful
+	    FFh Oracle GT drive not connected
+	AL = power level in percent of maximum (0..100)
+Desc:	get the power remaining in the Oracle GT batteries
+SeeAlso: AH=61h
+--------b-1574------------------------------------
+INT 15 - HUNTER 16 - SET BACKLIGHT POWER UP STATE
+	AH = 74h
+	AL = new level
+	    01h off
+	    02h unchanged
+	    03h change level
+		BL = desired level (00h-7Fh)
+Return: AH = status
+Desc:	select the backlight level to use when the Hunter is next turned on
+SeeAlso: AH=64h,AH=75h,INT 10/AH=64h,INT 10/AH=78h
+--------b-1575------------------------------------
+INT 15 - HUNTER 16 - SET CONTRAST POWER UP STATE
+	AH = 75h
+	AL = new level
+	    01h off
+	    02h unchanged
+	    03h change level
+		BL = desired level (00h-7Fh)
+Return: AH = status
+Desc:	select the LCD contrast level to use when the Hunter is next turned on
+SeeAlso: AH=63h,AH=74h
+--------b-1576------------------------------------
+INT 15 - HUNTER 16 - CONTROL POWER SAVE
+	AH = 76h
+	BX = Control
+	     bit 0 power save enabled
+	     bit 1 inhibit power save when waiting for COM1 data
+	     bit 2 inhibit power save when waiting for COM2 data
+	     bit 3 inhibit power save when waiting for data from barcode wand
+	     bit 4 inhibit power up on timer tick
+SeeAlso: AH=74h
+--------b-1579------------------------------------
+INT 15 - HUNTER 16 - REDIRECT LPT1
+	AH = 79h
+	AL = port to which to redirect (00h COM1, 01h COM2)
+--------b-157A------------------------------------
+INT 15 - HUNTER 16 - INVOKE HOT KEY
+	AH = 7Ah
+Desc:	this function has the same effect as pressing the HOT key
+SeeAlso: AH=7Bh
+--------b-157B------------------------------------
+INT 15 - HUNTER 16 - CONTROL HOT KEY
+	AH = 7Bh
+	AL = 00h prevent HOT key
+	    else allow HOT key
+Desc:	Allow or prevent the HOT key function which is used to examine and
+	  change the Hunter setup
+SeeAlso: AH=71h,AH=7Ah,AH=7Ch
+--------b-157C------------------------------------
+INT 15 - HUNTER 16 - CONTROL HOT KEY POWER OPTION
+	AH = 7Ch
+	AL = 00h prevent HOT key power option
+	    else allow HOT key power option
+Desc:	allow or prevent changing the power options
+SeeAlso: AH=7Bh,AH=7Dh
+--------b-157D------------------------------------
+INT 15 - HUNTER 16 - OVERRIDE LOW POWER TURN OFF
+	AH = 7Dh
+	AL = 00h turn off after 10 warnings
+	    else never turn off
+Desc:	specify whether the Hunter 16 turns off after 10 low power warnings
+SeeAlso: AH=7Ch
+--------b-157E------------------------------------
+INT 15 - HUNTER 16 - CONTROL BATTERY CHANGE FACILITIES (APM)
+	AH = 7Eh
+	AL = 00h do not prompt
+	    else prompt
+Desc:	select whether the user is prompted for the battery state if the
+	  battery cap has been off when the system is turned on
+SeeAlso: AH=7Fh
+--------b-157F------------------------------------
+INT 15 - HUNTER 16 - SET BATTERY TYPE (APM)
+	AH = 7Fh
+	AL = battery type
+	    00h	 non-rechargeable
+	    else rechargeable
+SeeAlso: AH=7Eh
 --------B-1580-------------------------------
 INT 15 C - OS HOOK - DEVICE OPEN (AT,XT286,PS)
 	AH = 80h
@@ -14719,6 +15746,15 @@ Note:	this function should be hooked by a multitasker which wishes to keep
 	  track of device ownership; the default BIOS handler merely returns
 	  successfully
 SeeAlso: AH=81h,AH=82h
+--------b-1580------------------------------------
+INT 15 - HUNTER 16 - GET/SET BATTERY CAPACITY (APM)
+	AH = 80h
+	AL = function
+	    00h get
+		Return: AL = capacity (500mA + AL * 50mA, max 40 = 2500mA)
+	    else set
+		BL = battery capacity (same as AL above)
+SeeAlso: AH=61h"HUNTER",AH=81h"HUNTER"
 --------B-1581-------------------------------
 INT 15 C - OS HOOK - DEVICE CLOSE
 	AH = 81h
@@ -14733,6 +15769,12 @@ Note:	this function should be hooked by a multitasker which wishes to keep
 	  track of device ownership; the default BIOS handler merely returns
 	  successfully
 SeeAlso: AH=80h,AH=82h
+--------b-1581------------------------------------
+INT 15 - HUNTER 16 - CONTROL POWER OUTPUT
+	AH = 81h
+	AL = new state of power output (00h off, nonzero on)
+Desc:	turn the +5V low power output on or off
+SeeAlso: AH=80h"HUNTER"
 --------B-1582-------------------------------
 INT 15 C - OS HOOK - PROGRAM TERMINATION
 	AH = 82h
@@ -14747,6 +15789,38 @@ Notes:	closes all devices opened by the given process ID with function 80h
 	  track of device ownership; the default BIOS handler merely returns
 	  successfully
 SeeAlso: AH=80h,AH=81h
+--------b-1582------------------------------------
+INT 15 - HUNTER 16 - SOUND OUTPUT
+	AH = 82h
+	DX = length (duration in seconds = DX * 666670 / frequency)
+	BX = pitch (see below)
+Desc:	Sound the tone specified in BX for the duration in DX
+SeeAlso: AX=1019h
+
+Values for pitch:
+BX(dec)	 Note	Frequency	BX(dec)	 Note	Frequency
+  425	G	1568.000	 1515	A	 440.000
+  451	F#	1479.503	 1605	G#	 415.307
+  477	F	1396.900	 1701	G	 392.000
+  506	E	1318.500	 1802	F#	 369.998
+  536	D#	1244.523	 1909	F	 349.230
+  568	D	1174.700	 2022	E	 329.630
+  601	C#	1108.749	 2143	D#	 311.127
+  637	C	1046.500	 2270	D	 293.660
+  675	B	 958.770	 2405	C#	 277.183
+  715	A#	 932.329	 2548	MID C	 261.630
+  758	A	 880.000	 2700	B	 246.940
+  803	G#	 830.609	 2860	A#	 233.081
+  850	G	 783.990	 3030	A	 220.000
+  901	F#	 739.990	 3210	G#	 207.654
+  954	F	 698.460	 3401	G	 196.000
+ 1011	E	 659.260	 3604	F#	 184.996
+ 1071	D#	 622.257	 3818	F	 174.610
+ 1135	D	 587.330	 4045	E	 164.810
+ 1203	C#	 554.365	 4286	D#	 155.560
+ 1274	C	 523.250	 4540	D	 146.830
+ 1350	B	 493.880	 4668	C#	 142.827
+ 1430	A#	 466.162	 4803	C	 138.810
 --------B-1583-------------------------------
 INT 15 - BIOS - SET EVENT WAIT INTERVAL (AT,PS50+)
 	AH = 83h
@@ -14765,6 +15839,12 @@ Notes:	the resolution of the wait period is 977 microseconds on most systems
 	  real-time clock chip which is available on INT 70
 	IBM AT 1/10/84 BIOS ignores AL and always performs subfunction 00h
 SeeAlso: AH=41h,AH=86h,INT 70
+--------b-1583------------------------------------
+INT 15 - HUNTER 16 - CONTROL SCREEN SYNCHRONISATION
+	AH = 83h
+	AL = state of LCD window (00h disabled, nonzero enabled)
+Desc:	Enable/disable the facility where the displayed window tracks the
+	  cursor output to keep the focus visible
 --------B-1584-------------------------------
 INT 15 - BIOS - JOYSTICK SUPPORT (XT after 11/8/82,AT,XT286,PS)
 	AH = 84h
@@ -14784,11 +15864,24 @@ Return: CF set on error
 Notes:	if no game port is installed, subfunction 0000h returns AL=00h (all
 	  switches open) and subfunction 0001h returns AX=BX=CX=DX=0000h
 	a 250kOhm joystick typically returns 0000h-01A0h
+--------b-158400----------------------------------
+INT 15 - HUNTER 16 - GET DISKETTE PORT
+	AX = 8400h
+	BH = Drive (0: A:, 1: B:)
+Return: AL = Port (0: COM1, >0: COM2)
+Desc:	return the COM port used for the floppy drive
+SeeAlso: AX=8401h
+--------b-158401----------------------------------
+INT 15 - HUNTER 16 - SET DISKETTE PORT
+	AX = 8401h
+	BH = Drive (0: A:, 1: B:)
+	BL = Port (0: COM1, >0: COM2)
+Desc:	set the COM port used for the floppy drive
+SeeAlso: AX=8400h
 --------B-1585-------------------------------
 INT 15 C - OS HOOK - SysRq KEY ACTIVITY (AT,PS)
 	AH = 85h
-	AL = 00h SysRq key pressed
-	   = 01h SysRq key released
+	AL = SysRq key action (00h pressed, 01h released)
 	CF clear
 Return: CF clear if successful
 	    AH = 00h
@@ -14798,6 +15891,17 @@ Notes:	called by keyboard decode routine
 	the default handler simply returns successfully; programs which wish
 	  to monitor the SysRq key must hook this call
 SeeAlso: INT 09
+--------b-158500----------------------------------
+INT 15 - HUNTER 16 - RESTORE POWER MENU (APM)
+	AX = 8500h
+Desc:	restore the standard power menu
+SeeAlso: AX=8501h"HUNTER"
+--------b-158501----------------------------------
+INT 15 - HUNTER 16 - SET POWER MENU (APM)
+	AX = 8501h
+	BL = user software interrupt number
+Desc:	install an alternate power menu routine
+SeeAlso: AX=8500h"HUNTER"
 --------B-1586-------------------------------
 INT 15 - BIOS - WAIT (AT,PS)
 	AH = 86h
@@ -14809,6 +15913,15 @@ Note:	the resolution of the wait period is 977 microseconds on most systems
 	  because most BIOSes use the 1/1024 second fast interrupt from the AT
 	  real-time clock chip which is available on INT 70
 SeeAlso: AH=41h,AH=83h,INT 1A/AX=FF01h,INT 70
+--------b-1586------------------------------------
+INT 15 - HUNTER 16 - GET/SET SCREEN ATTRIBUTE TABLE
+	AH = 86h
+	AL = function (00h get, nonzero set)
+	BX = 1234h
+	DS:SI -> 256-byte Attribute buffer
+Note:	In text modes each character has its attribute byte XOR'd with the
+	  corresponding byte in the attribute table.  If the attribute is 15,
+	  15 is XOR'd with Table[15]
 --------B-1587-------------------------------
 INT 15 - SYSTEM - COPY EXTENDED MEMORY
 	AH = 87h
@@ -14840,6 +15953,15 @@ Offset	Size	Description
  1Ah  3 BYTEs	24-bit linear destination address, low byte first
  1Dh	BYTE	destination segment access rights (93h)
  1Eh 18 BYTEs	zeros
+--------b-1587------------------------------------
+INT 15 - HUNTER 16 - SET INT 72h VECTOR
+	AH = 87h
+	DS:DX = new service routine
+Desc:	set the INT 72h vector which is called in 2 cases:
+	  - when the machine is about to turn off or reboot, INT 72h is called
+	    with AH=0
+	  - when the machine is powering up INT 72h is called with AH=01h
+Note:	the actual INT 72h vector must also be changed with INT 21/AH=25h
 --------B-1588-------------------------------
 INT 15 - SYSTEM - GET EXTENDED MEMORY SIZE (286+)
 	AH = 88h
@@ -14858,6 +15980,13 @@ Notes:	TSRs which wish to allocate extended memory to themselves often hook
 	  unreliable unless one first checks whether it is supported through
 	  a mechanism other than calling the function and testing CF
 SeeAlso: AH=87h,AH=C7h
+--------b-1588------------------------------------
+INT 15 - HUNTER 16 - GET POWER UP KEYS
+	AH = 88h
+Return: AH = 00h
+	BX = column
+	CL = row
+SeeAlso: AH=71h
 --------B-1589-------------------------------
 INT 15 - SYSTEM - SWITCH TO PROTECTED MODE
 	AH = 89h
@@ -14882,6 +16011,83 @@ Notes:	BL and BH must be multiples of 8
 	  function is called from because execution continues with the address
 	  following the interrupt call
 SeeAlso: AH=87h,AH=88h,INT 67/AX=DE0Ch
+--------b-158900----------------------------------
+INT 15 - HUNTER 16 - GET POWER MODE
+	AX = 8900h
+Return: AH = 00h
+	BL = current power mode
+	    00h Standard Power Mode (SPM)
+	    01h Advanced Power Mode (APM)
+SeeAlso: AX=8901h
+--------b-158901----------------------------------
+INT 15 - HUNTER 16 - SET POWER MODE
+	AX = 8901h
+	BL = new mode
+	    00h Standard Power Mode (SPM)
+	    01h Advanced Power Mode (APM)
+Return: AH = 00h
+SeeAlso: AX=8900h
+--------b-158A------------------------------------
+INT 15 - HUNTER 16 - CONTROL POWER INPUT (SPM)
+	AH = 8Ah
+	AL = new state of Power Input (00h disabled, nonzero enabled)
+	SI = 1234h
+	DI = 5678h
+Return: AH = status
+	    00h success
+	    FFh failure
+Desc:	Enable or disable Power Input. When Power Input is disabled the AC
+	  adaptor will neither charge the batteries nor supply power to the
+	  Hunter 16. Disable Power Input if using Alkaline batteries.
+--------b-158B------------------------------------
+INT 15 - HUNTER 16 - GET/SET CHARGER TEMPERATURE OVERRIDE
+	AH = 8Bh
+	AL = function
+	    00h get
+		Return:	BH = Maximum charging temperature
+				Temp = -20 + (n * 0.63) degrees Centigrade
+			BL = Minimum charging temperature
+	    else set
+		BH = maximum charging temperature (as above)
+		BL = minimum charging temperature (as above)
+Return: AH = status
+	    00h success
+	    FFh failure 
+Desc:	get/set the temperature interval within which the charger should 
+	  operate
+--------b-158C------------------------------------
+INT 15 - HUNTER 16 - GET/SET POWER SAVE ENTRY FLAG
+	AH = 8Ch
+	AL = function
+	    00h get
+		Return: BX = which operations disable power save (see below)
+	    else set
+		BX = which operations should disable power save (see below)
+SeeAlso: AH=8Dh
+
+Bitfields for operations disablign power save:
+ bit 0	INT 10h prevents power save
+ bit 1	INT 13h prevents power save
+ bit 2	INT 14h prevents power save
+ bit 3	INT 15h prevents power save
+ bit 4	INT 1Ah prevents power save
+ bit 5	INT 21h prevents power save
+ bit 6	direct write to video RAM prevents power save
+ bit 7	access to 8250 UART prevents power save
+ bit 8	access to 8253 (Sound) prevents power save
+--------b-158D------------------------------------
+INT 15 - HUNTER 16 - GET/SET BOOST CHARGE (SPM)
+	AH = 8Dh
+	AL = function
+	    00h get
+		Return: AL = Fast Charge state (00h prevented, else allowed)
+	    nonzero set
+		BH = Fast Charge state (00h prevent, nonzero allow)
+Return: AH = status
+	    00h success
+	    FFh failure
+Desc:	control whether Fast Charging (200ma rather than 70ma) is allowed
+SeeAlso: AH=8Ch
 --------B-1590-------------------------------
 INT 15 - OS HOOK - DEVICE BUSY (AT,PS)
 	AH = 90h
@@ -15240,7 +16446,14 @@ Notes:	the 1/10/86 XT BIOS returns an incorrect value for the feature byte
 	the configuration table is at F000h:E6F5h in 100% compatible BIOSes
 	Dell machines contain the signature "DELL" or "Dell" at absolute FE076h
 	  and a model byte at absolute address FE845h
-	Tandy 1000 machines contain 21h in the byte at F000h:C000h
+	Hewlett-Packard machines contain the signature "HP" at F000h:00F8h and
+	  a product identifier at F000h:00FAh (see below)
+	Compaq machines can be identified by the signature string "COMPAQ" at
+	  F000h:FFEAh, and is preceded by additional information (see below)
+	Tandy 1000 machines contain 21h in the byte at F000h:C000h and FFh in
+	  the byte at FFFFh:000Eh; Tandy 1000SL/TL machines only provide the
+	  first three data bytes (model/submodel/revision) in the returned
+	  table
 	some AST machines contain the string "COPYRIGHT AST RESEARCH" one byte
 	  past the end of the configuration table
 	the Phoenix 386 BIOS contains a second version and date string
@@ -15310,6 +16523,8 @@ Model  Submdl  Rev	BIOS date	System
  FFh	*	*	04/24/81	PC (original)
  FFh	*	*	10/19/81	PC (some bugfixes)
  FFh	*	*	10/27/82	PC (HD, 640K, EGA support)
+ FFh	00h	rev	  ???		Tandy 1000SL
+ FFh	01h	rev	  ???		Tandy 1000TL
  FFh	46h	***	  ???		Olivetti M15
  FEh	*	*	08/16/82	PC XT
  FEh	*	*	11/08/82	PC XT and Portable
@@ -15498,6 +16713,31 @@ Values for Dell model byte:
  0Eh	Dell 316LT
  0Fh	Dell 320LX
  11h	Dell 425E
+
+Format of Compaq product information:
+Address		Size	Description
+F000h:FFE4h	BYTE	product family code (first byte)
+F000h:FFE4h	BYTE	Point release number
+F000h:FFE4h	BYTE	ROM version code
+F000h:FFE4h	BYTE	product family code (second byte)
+F000h:FFE8h	WORD	BIOS type code
+
+Bitfields for Hewlett-Packard product identifier:
+ bits 4-0	machine code
+		0 original Vectra
+		1 ES/12
+		2 RS/20
+		3 Portable/CS
+		4 ES
+		5 CS
+		6 RS/16
+		other reserved
+ bits 7-5	CPU type
+		0 = 80286
+		1 = 8088
+		2 = 8086
+		3 = 80386
+		other reserved
 --------B-15C1-------------------------------
 INT 15 - SYSTEM - RETURN EXTENDED-BIOS DATA-AREA SEGMENT ADDRESS (PS)
 	AH = C1h
@@ -17264,7 +18504,9 @@ INT 15 - Tandy??? - ???
 Return: DL = 00h if successful???
 Note:	the section of code in 386MAX which calls these functions also checks
 	  whether the ROM BIOS has both Tandy and Phoenix Technologies
-	  signatures if these calls fail
+	  signatures if these calls fail; the Tandy 1000SL/TL BIOS does not
+	  support this function, however, returning the usual CF set/AH=86h for
+	  "unsupported function".
 --------b-15E4-------------------------------
 INT 15 - Compaq ROM BIOS 03/08/93 and newer - ???
 	AH = E4h
@@ -17327,7 +18569,7 @@ Return: CF clear if hardware already initialised
 	CF set if hardware not initialised yet
 --------!------------------------------------
 Interrupt List, part 3 of 10
-This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994 Ralf Brown
 --------B-1600-------------------------------
 INT 16 - KEYBOARD - GET KEYSTROKE
 	AH = 00h
@@ -17384,7 +18626,7 @@ INT 16 - KEYBOARD - SET TYPEMATIC RATE AND DELAY
 			BH = delay (see above)
 Note:	use INT 16/AH=09h to determine whether some of the subfunctions are
 	  supported
-SeeAlso: INT 16/AH=09h
+SeeAlso: INT 16/AH=09h,AH=29h"HUNTER",AH=2Ah"HUNTER"
 --------B-1604-------------------------------
 INT 16 - KEYBOARD - SET KEYCLICK (PCjr only)
 	AH = 04h
@@ -17511,6 +18753,16 @@ Return: AH = BIOS scan code (see AH=10h for details)
 	AL = ASCII character
 Note:	use AH=09h to determine whether this function is supported
 SeeAlso: AH=00h,AH=09h,AH=10h,AH=21h,AH=22h
+--------b-1620------------------------------------
+INT 16 - HUNTER 16 - SET TEMPORARY SHIFT
+	AH = 20h
+	AL = Shift Status
+	    bit 4 Scroll Lock on
+	    bit 5 Num Lock on
+	    bit 6 Caps Lock on
+Notes:	the Husky Hunter 16 is an 8088-based ruggedized laptop.	 Other family
+	  members are the Husky Hunter, Husky Hunter 16/80, and Husky Hawk.
+	the user can override the specified settings by pressing the keys
 --------B-1621-------------------------------
 INT 16 - KEYBOARD - CHECK FOR 122-KEY KEYSTROKE (122-key kbd support only)
 	AH = 21h
@@ -17522,6 +18774,14 @@ Notes:	use AH=09h to determine whether this function is supported
 	some versions of the IBM BIOS Technical Reference erroneously report
 	  that CF is returned instead of ZF
 SeeAlso: AH=01h,AH=09h,AH=11h,AH=20h,AH=21h
+--------b-1621------------------------------------
+INT 16 - HUNTER 16 - CONTROL SHIFT KEYS
+	AH = 21h
+	AL = shift keys to control (see AH=02h shift states)
+	BL = shift state for disabled keys
+Note:	If a bit in AL is set the key is disabled and set to the state of the
+	  corresponding bit in BL
+SeeAlso: AH=20h"HUNTER",AH=22h"HUNTER"
 --------B-1622-------------------------------
 INT 16 - KEYBOARD - GET 122-KEY SHIFT STATUS (122-key kbd support only)
 	AH = 22h
@@ -17529,6 +18789,136 @@ Return: AL = shift flags 1 (see AH=12h)
 	AH = shift flags 2 (see AH=12h)
 Note:	use AH=09h to determine whether this function is supported
 SeeAlso: AH=02h,AH=09h,AH=12h,AH=20h,AH=21h
+--------b-1622------------------------------------
+INT 16 - HUNTER 16 - CONTROL CTRL-ALT-DEL
+	AH = 22h
+	AL = new Ctrl-Alt-Del state (00h enabled, nonzero disabled)
+	BX = 0708h
+	CX = 0910h
+	DX = 1112h
+Return: AL = 00h if successful
+SeeAlso: AH=21h"HUNTER",AH=23h"HUNTER",AH=2Ah
+--------b-1623------------------------------------
+INT 16 - HUNTER 16 - CONTROL EMERGENCY BREAKOUT
+	AH = 23h
+	AL = new state of breakout (00h enabled, nonzero disabled)
+	BX = 0708h   
+	CX = 0910h
+	DX = 1112h
+Return: AL = 00h if successful
+Desc:	Enables or disables the emergency breakout feature, where the
+	  Hunter 16 at power on checks whether the X and P keys are pressed.
+	  If so the machine will boot rather than continue the running program
+SeeAlso: AH=22h"HUNTER"
+--------b-1624------------------------------------
+INT 16 - HUNTER 16 - REDEFINE KEY CODES
+	AH = 24h
+	AL = Matrix Code (see below)
+	BL = new Key code
+Return: AL = status (00h successful, nonzero failed)
+SeeAlso: AH=2Bh,AH=2Ch
+
+Values for Matrix Code:
+ Code  Key		Code	Key		Code	Key
+ 00h   Esc key		1Eh	Space		3Bh	L
+ 01h   1		21h	0		3Ch	,
+ 02h   Q		22h	-		3Eh	Right shift
+ 03h   Tab		23h	'		42h	8
+ 04h   Num Lock		24h	Keypad 4	43h	7
+ 05h   \		25h	Enter		44h	U
+ 08h   LShift		26h	Keypad 7	45h	I
+ 09h   Ctrl		27h	.		46h	J
+ 0Ah   "Paw" key	28h	Keypad 1	47h	K
+ 0Bh   2		29h	Keypad 0	48h	M
+ 0Ch   W		2Ch	=		49h	N 
+ 0Dh   A		2Dh	Backspace	4Ah	/
+ 0Eh   S		2Eh	Keypad 8	4Dh	6
+ 0Fh   Z		2Fh	Keypad 9	4Eh	5
+ 11h   Alt		30h	Keypad 5	4Fh	T
+ 16h   4		31h	Keypad 6	50h	Y
+ 17h   3		32h	Keypad 2	51h	G
+ 18h   E		33h	Keypad 3	52h	H
+ 19h   R		34h	Keypad .	53h	B
+ 1Ah   D		37h	9		54h	V
+ 1Bh   F		38h	O		55h	#
+ 1Ch   X		39h	P		58h	Pwr
+ 1Dh   C		3Ah	;		59h	Shift Pwr
+--------b-1625------------------------------------
+INT 16 - HUNTER 16 - RESET KEYBOARD
+	AH = 25h
+Return: AL = 00h
+Desc:	restores the standard keyboard layout after any remapping
+SeeAlso: AH=24h,AH=2Bh,AH=2Ch
+--------b-1626------------------------------------
+INT 16 - HUNTER 16 - CONTROL KEYCLICK
+	AH = 26h
+	AL = new state of keyclicks (00h disabled, 01h enabled)
+Return: AL = 00h
+SeeAlso: AH=2Ah
+--------b-1627------------------------------------
+INT 16 - HUNTER 16 - CONTROL SCREEN DUMP AREA
+	AH = 27h
+	AL = what to dump
+	    00h whole (virtual) window
+	    01h LCD window only
+Return: AL = 00h
+Desc:	control whether printscren dumps the whole 80x25 screen or only the
+	  part displayed in the LCD window
+Note:	the Hunter 16 has a 240x64 LCD display which serves as a window into
+	  a 640x200 virtual screen
+--------b-1629------------------------------------
+INT 16 - HUNTER 16 - GET KEY REPEAT
+	AH = 29h
+Return: BL = Typematic rate (characters per second) (see below)
+	BH = delay (00h = 250ms, 01h = 500ms, 02h = 750ms, 03h = 1s)
+SeeAlso: AH=03h,AH=2Ah
+
+Values for Typematic rate:
+ 00h	30.0	 08h	15.0	 10h	7.5	 18h	3.7
+ 01h	26.7	 09h	13.3	 11h	6.7	 19h	3.3
+ 02h	24.0	 0Ah	12.0	 12h	6.0	 1Ah	3.0
+ 03h	21.8	 0Bh	10.9	 13h	5.5	 1Bh	2.7
+ 04h	20.0	 0Ch	10.0	 14h	5.0	 1Ch	2.5
+ 05h	18.5	 0Dh	 9.2	 15h	4.6	 1Dh	2.3
+ 06h	17.1	 0Eh	 8.6	 16h	4.3	 1Eh	2.1
+ 07h	16.0	 0Fh	 8.0	 17h	4.0	 1Fh	2.0
+SeeAlso: AH=2Ah
+--------b-162A------------------------------------
+INT 16 - HUNTER 16 - CONTROL KEY REPEAT
+	AH = 2Ah
+	AL = new state of keyboard autorepeat (00h disabled, 01h enabled)
+SeeAlso: AH=03h,AH=26h,AH=29h,AH=2Bh
+--------b-162B------------------------------------
+INT 16 - HUNTER 16 - REDEFINE KEY SCAN CODES
+	AH = 2Bh
+	AL = which key table to redefine
+	    00h unshifted
+	    01h shifted
+	    02h Numlock
+	BH = standard scan code of key (00h-80h)
+	BL = new scan code
+Desc:	redefine the generated scan code from BH to BL
+SeeAlso: AH=24h,AH=2Ah,AH=2Ch
+--------b-162C------------------------------------
+INT 16 - HUNTER 16 - REDEFINE PAW KEY CODES
+	AH = 2Ch
+	AL = Matrix code of key (see AH=29h)
+	BL = new key code
+Return: AL = status (00h success, nonzero failed)
+Desc:	redefine the key code generated by holding the PAW key down and
+	  pressing the key in AL
+SeeAlso: AH=24h,AH=2Bh
+--------b-162D------------------------------------
+INT 16 - HUNTER 16 - CONTROL BREAK KEYS
+	AH = 2Dh
+	AL = enabled break keys
+	    bit 0 Ctrl-C
+	    bit 1 Ctrl-Break
+	BX = 0708h
+	CX = 0910h
+	DX = 1112h
+Return: AL = status (00h success, FFh failed)
+SeeAlso: AH=21h"HUNTER"
 --------U-164252-----------------------------
 INT 16 - TEXTCAP 2.0 - INSTALLATION CHECK
 	AX = 4252h
@@ -18039,6 +19429,14 @@ Return: AX = EEFFh if installed
 Program: JORJ is a shareware dictionary with phonetic lookup by Jorj Software
 	  Co.
 Index:	hotkeys;JORJ
+--------m-16B0B1-----------------------------
+INT 16 - VGARAM v1.00 - INSTALLATION CHECK
+	AX = B0B1h
+	ES:DI -> 6 byte signature "VGARAM"
+Return: AX = B1B0h if installed,
+	DS:BX -> VGARAM Status byte: 0 = OFF, 1 = ON
+Program: VGARAM is a utility by Brett Warthen which makes VGA memory which is
+	  not used in text modes available for DOS
 --------K-16CA--BX736B-----------------------
 INT 16 - CtrlAlt Associates STACKEY.COM v3.00 - API
 	AH = CAh
@@ -18121,18 +19519,21 @@ INT 16 - BORLAND TURBO LIGHTNING - API
 		Return: AX = 5205h
 			CH = major version
 			CL = minor version
-	    01h ???
-	    02h get resident CS
-		Return: AX = code segment of resident portion
+	    01h identical to function 00h???
+	    02h get resident data segment
+		Return: AX = data segment of resident portion
 	    03h get resident ???
 		Return: AX = offset of some buffer in resident code seg
-	    04h ???
-	    05h set ???
-		AL = 0 to 0Ch
+	    04h redefine auxiliary dictionary
+		DS:SI -> counted filename string
+		Return: AL = result code
+	    05h select active environment
+		AL = environment (00h to 0Ch)
 		Return: AX = status
 			    0000h if OK
-			    0001h if out of range.
-	    06h ???
+			    0001h if out of range
+	    06h toggle AutoProof???
+		AL = state (00h off, 01h on)
 	    07h ???
 	    08h ???
 		AL = char???
@@ -18144,18 +19545,25 @@ INT 16 - BORLAND TURBO LIGHTNING - API
 		CX = ???
 		DX = ???
 		Return: AX = ???
-	    0Bh ???
-		DS:SI -> ???
+	    0Bh check dictionary integrity???
+		DS:SI -> counted dictionary filename string
 		Return: AX = 0, 40h, 80h
-	    0Ch ???
-		DS:SI -> ???
+	    0Ch spellcheck string (disk dictionary, possibly RAM dict as well)
+		DS:SI -> counted string to check
 		Return: AH = 0
-			AL = ???
+			AL = result code
+			   00h string found in dictionary
+			   20h string begins more than one word
+			   40h string not found
 	    0Dh set ???
 		(sets an internal flag)
-	    0Eh ???
-		DS:SI -> ???
-		Return: AX = 0, 1 or 2.
+	    0Eh spellcheck string (RAM dictionary only)
+		DS:SI -> counted string to check
+		Return: AH = 00h
+			AL = result code
+			    00h string found in dictionary
+			    01h string not found
+			    02h ???
 	    0Fh ???
 	    10h ???
 Notes:	AX in general returns an error code from most functions.
@@ -19590,6 +20998,18 @@ INT 17 - INSET - INSTALLATION CHECK
 	CX = 07C3h (1987d)
 Return: CX = 07C2h (1986d) if installed
 Program: INSET is a text/graphics integration program
+--------b-170200BX5050-----------------------
+INT 17 - Advanced Parallel Port BIOS - INSTALLATION CHECK
+	AX = 0200h
+	BX = 5050h ('PP')
+	CH = 45h   ('E')
+	DX = printer port number (00h-02h)
+Return: AH = 00h      \
+	AL = 45h       If Advanced BIOS Installed
+	CX = 5050h    /
+	DX:BX -> far entry point to Advanced BIOS
+Program: The Advanced Parallel Port BIOS provides support for parallel
+	  port peripherals using the enhanced modes of the IEEE 1284.
 --------P-1703-------------------------------
 INT 17 U - Emulaser ELTSR - INSTALL INTERRUPT HANDLERS
 	AH = 03h
@@ -20671,6 +22091,153 @@ Return: ???
 Notes:	details are not available at this time
 	text video RAM is located at segments A000h (characters) and A200h
 	  (attributes)
+----------185350BX4849-----------------------
+INT 18 - SPHINX C-- - WB.COM - API
+	AX = 5350h ('SP')
+	BX = 4849h ('HI')
+	CX = 4E58h ('NX')
+	DH = function
+	    01h set ???
+		DL = ???
+	    02h get ???
+		Return: DL = ???
+	    03h get ???
+		Return: ES:DI -> ??? data buffer
+	    06h ???
+Return: AX = 7370h ('sp') if installed
+	BX = 6869h ('hi') if installed
+	CX = 6E78h ('nx') if installed
+Program: SPHINX C-- is a shareware compiler by Peter Cellik for a language
+	  which is a cross between C and assembler; WB.COM is the driver which
+	  launches the WorkBench
+--------s-186900-----------------------------
+INT 18 - Gravis Ultra Sound YEA_GUS.EXE - GET STATUS
+	AX = 6900h
+Return: AX = amount of DRAM on card or 0000h if GUS not available
+Program: YEA_GUS is a driver for the Graphics Ultra Sound which hooks INT 18h
+	  and then shells out the the program requiring its services
+SeeAlso: AX=6901h,AX=690Ah,AX=690Bh
+--------s-186901-----------------------------
+INT 18 - Gravis Ultra Sound YEA_GUS.EXE - RESET
+	AX = 6901h
+	BX = number of active voices (14-32)
+Return: nothing
+SeeAlso: AX=6900h
+--------s-186902-----------------------------
+INT 18 - Gravis Ultra Sound YEA_GUS.EXE - SET VOLUME FOR SPECIFIC VOICE
+	AX = 6902h
+	BX = voice number (00h-1Fh)
+	CX = linear volume (0000h-01FFh)
+Return: nothing
+SeeAlso: AX=6900h,AX=6903h,AX=6904h,AX=6909h,AX=690Ah
+--------s-186903-----------------------------
+INT 18 - Gravis Ultra Sound YEA_GUS.EXE - SET FREQUENCY FOR VOICE
+	AX = 6903h
+	BX = voice number (00h-1Fh)
+	CX = frequency in Hz (0-44100)
+Return: nothing
+SeeAlso: AX=6902h,AX=6904h
+--------s-186904-----------------------------
+INT 18 - Gravis Ultra Sound YEA_GUS.EXE - SET LEFT/RIGHT BALANCE
+	AX = 6904h
+	BX = voice number (00h-1Fh)
+	CX = balance (0 = left, 7 = even, 15 = right)
+Return: nothing
+SeeAlso: AX=6902h,AX=6903h
+--------s-186905-----------------------------
+INT 18 - Gravis Ultra Sound YEA_GUS.EXE - PLAY MUSIC
+	AX = 6905h
+	BL = voice number
+	BH = sample type (0 = 8-bit, 1 = 16-bit)
+	CL = looping type (0 = none, 1 = forward, 2 = back and forth)
+	CH:DI = 20-bit starting address for voice data
+	DL:SI = 20-bit address for loop start
+	DH:BP = 20-bit address for loop end
+SeeAlso: AX=6903h,AX=6906h,AX=690Bh
+--------s-186906-----------------------------
+INT 18 - Gravis Ultra Sound YEA_GUS.EXE - LOAD SOUND DATA
+	AX = 6906h
+	BL = data format (1 = twos-complement, 0 = not)
+	BH = sample type (0 = 8-bit, 1 = 16-bit)
+	CX = number of bytes to send
+	ES:SI -> buffer containing data
+	DL:DI = 20-bit address of GUS DRAM at which to load sound data
+SeeAlso: AX=6900h,AX=6905h,AX=690Ch
+--------s-186907-----------------------------
+INT 18 - Gravis Ultra Sound YEA_GUS.EXE - STOP VOICE
+	AX = 6907h
+	BX = voice number (00h-1Fh)
+Return: nothing
+SeeAlso: AX=6908h,AX=690Dh
+--------s-186908-----------------------------
+INT 18 - Gravis Ultra Sound YEA_GUS.EXE - SET VOICE END
+	AX = 6908h
+	BX = voice number (00h-1Fh)
+	CL:DX = 20-bit ending address
+Return: nothing
+SeeAlso: AX=690Bh
+--------s-186909-----------------------------
+INT 18 - Gravis Ultra Sound YEA_GUS.EXE - RAMP VOLUME
+	AX = 6909h
+	BL = voice number (00h-1Fh)
+	BH = looping type (0 = none, 1 = forward, 2 = back and forth)
+	CX = starting volume
+	DX = ending volume
+	DI:SI = time
+Return: nothing
+SeeAlso: AX=6902h,AX=690Ah
+--------s-18690A-----------------------------
+INT 18 - Gravis Ultra Sound YEA_GUS.EXE - GET VOLUME
+	AX = 690Ah
+	BX = voice number (00h-1Fh)
+Return: AX = current non-linear volume for voice
+SeeAlso: AX=6902h,AX=6909h
+--------s-18690B-----------------------------
+INT 18 - Gravis Ultra Sound YEA_GUS.EXE - GET POSITION
+	AX = 690Bh
+	BX = voice number
+Return: BX:AX = 20-bit address at which voice is playing
+SeeAlso: AX=6900h,AX=6905h,AX=6908h
+--------s-18690C-----------------------------
+INT 18 - Gravis Ultra Sound YEA_GUS.EXE - SAVE SOUND DATA
+	AX = 690Ch
+	BL = data format (1 = twos-complement, 0 = not)
+	BH = sample type (0 = 8-bit, 1 = 16-bit)
+	CX = number of bytes to get
+	ES:SI -> buffer for retrieved data
+	DL:DI = 20-bit address in GUS DRAM from which to read voice data
+Return: nothing
+SeeAlso: AX=6906h
+--------s-18690D-----------------------------
+INT 18 - Gravis Ultra Sound YEA_GUS.EXE - RESTART VOICE
+	AX = 690Dh
+	BX = voice
+	CX = sample type (0 = 8-bit, 1 = 16-bit)
+	DX = looping type (0 = none, 1 = forward, 2 = back and forth)
+Return: CX = balance value
+SeeAlso: AX=6907h,AX=6908h
+--------s-188000-----------------------------
+INT 18 - Gravis Ultra Sound EURO_MOD.EXE - INITIALIZE
+	AX = 8000h
+Program: EURO_MOD is a .MOD file player for the Gravis Ultra Sound which hooks
+	  INT 18h and then shells out to the program requiring its services
+SeeAlso: AX=8001h,AX=8004h
+--------s-188001-----------------------------
+INT 18 - Gravis Ultra Sound EURO_MOD.EXE - LOAD .MOD FILE
+	AX = 8001h
+	BX:CX -> ASCIZ filename
+SeeAlso: AX=8000h,AX=8002h
+--------s-188002-----------------------------
+INT 18 - Gravis Ultra Sound EURO_MOD.EXE - PLAY .MOD FILE
+	AX = 8002h
+SeeAlso: AX=8002h,AX=8003h
+--------s-188003-----------------------------
+INT 18 - Gravis Ultra Sound EURO_MOD.EXE - STOP PLAYING
+	AX = 8003h
+--------s-188004-----------------------------
+INT 18 - Gravis Ultra Sound EURO_MOD.EXE - SHUTDOWN
+	AX = 8004h
+SeeAlso: AX=8000h,AX=8003h
 --------B-19---------------------------------
 INT 19 - SYSTEM - BOOTSTRAP LOADER
 Desc:	This interrupt reboots the system without clearing memory or restoring
@@ -21150,14 +22717,17 @@ INT 1A - Tandy 2500, Tandy 1000L series - DIGITAL SOUND???
 	AH = 7Fh
 	???
 Return: ???
+Note:	this function is not supported by the Tandy 1000SL/TL BIOS
 SeeAlso: AH=80h,AH=83h,AH=85h
 --------s-1A80-------------------------------
-INT 1A - PCjr - SET UP SOUND MULTIPLEXOR
+INT 1A - PCjr, Tandy 2500???, Tandy 1000SL/TL - SET UP SOUND MULTIPLEXOR
 	AH = 80h
 	AL = 00h source is 8253 channel 2
 	     01h source is cassette input
 	     02h source is I/O channel "Audio IN"
 	     03h source is sound generator chip
+Note:	although documented in the 1000TL Technical Reference, the 1000TL
+	  BIOS has just an IRET for this call
 SeeAlso: AH=7Fh,AH=83h
 --------X-1A80-------------------------------
 INT 1A - PCMCIA Socket Services - GET NUMBER OF ADAPTERS
@@ -21245,7 +22815,26 @@ Bitfields for current card status:
 --------s-1A8100-----------------------------
 INT 1A - Tandy 2500, Tandy 1000L series - DIGITAL SOUND - INSTALLATION CHECK
 	AX = 8100h
-Return: AH > 80h if supported
+Return: AL > 80h if supported
+	AX = 00C4h if supported (1000SL/TL)
+	    CF set if sound chip is busy
+	    CF clear  if sound chip is free
+Note:	the value of CF is not definitive; call this function until CF is
+	  clear on return, then call AH=84h"Tandy"
+--------s-1A82-------------------------------
+INT 1A - Tandy 2500???, Tandy 1000SL/TL - DIGITAL SOUND - RECORD SOUND
+	AH = 82h
+	ES:BX -> buffer for sound samples
+	CX = length of buffer
+	DX = transfer rate (1-4095, 1 is fastest)
+Return: AH = 00h
+	CF set if sound busy
+	CF clear if sound chip free
+Note:	the value in DX should be 1/10 the corresponding value for
+	  INT 1A/AH=83h on the 1000TL, 1/11.5 on the 1000SL.  Call
+	  INT 1A/AX=8100h and INT 1A/AH=84h before invoking this function.
+	The BIOS issues an INT 15/AX=91FBh when the input is complete
+	DMA across a 64K boundary is masked by the BIOS
 --------X-1A82-------------------------------
 INT 1A - PCMCIA Socket Services - REGISTER CARD TECHNOLOGY CALLBACK
 	AH = 82h
@@ -21320,18 +22909,21 @@ Return: AL = current card status (see AH=81h"PCMCIA")
 --------s-1A83-------------------------------
 INT 1A - Tandy 2500, Tandy 1000L series - START PLAYING DIGITAL SOUND
 	AH = 83h
-	AL = volume (0=lowest, 7=highest)
+	AL = volume (0=silence, 7=highest)
 	CX = number of bytes to play
 	DX = time between sound samples (multiples of 273 nanoseconds)
-	ES:BX -> sound data (array of 8-bit PCM samples)
-Return: ???
+	    only bits 11-0 used
+	ES:BX -> sound data (array of 8-bit unsigned PCM samples)
+Return: AH = 00h
+	CF set if sound is busy
+	CF clear if sound chip is free
 Notes:	this call returns immediately while the sound plays in the
-	  background
-	The sound data pointed to by ES:BX probably shouldn't cross a 64k
-	  boundary.  The BIOS appears to call INT 15/AX=91FBh when the sound
-	  device underflows to allow another INT 1A/AH=83h for seamless
-	  playing of long sounds.
-SeeAlso: AH=84h,INT 15/AH=91h
+	  background; the sound chip is clocked at 3.57 MHz, with the low 12
+	  bits of DX specifying the clock divisor
+	The BIOS appears to call INT 15/AX=91FBh when the sound device
+	  underflows to allow another INT 1A/AH=83h for seamless playing of
+	  long sounds.
+SeeAlso: AH=84h"Tandy",INT 15/AH=91h
 --------X-1A83-------------------------------
 INT 1A - PCMCIA Socket Services - GET SOCKET SERVICES VERSION NUMBER
 	AH = 83h
@@ -21350,7 +22942,8 @@ SeeAlso: AH=80h"PCMCIA"
 INT 1A - Tandy 2500, Tandy 1000L series - STOP PLAYING DIGITAL SOUND
 	AH = 84h
 Return: ???
-SeeAlso: AH=83h,AH=85h
+Note:	the BIOS will call INT 15/AX=91FBh when the sound has stopped playing
+SeeAlso: AH=83h"Tandy",AH=85h"Tandy"
 --------X-1A84-------------------------------
 INT 1A - PCMCIA Socket Services - INQUIRE ADAPTER
 	AH = 84h
@@ -21387,7 +22980,8 @@ INT 1A - Tandy 2500, Tandy 1000L series - DIGITAL SOUND???
 	AH = 85h
 	???
 Return: ???
-SeeAlso: AH=7Fh,AH=83h
+Note:	this function is not supported by the Tandy 1000SL/TL BIOS
+SeeAlso: AH=7Fh,AH=83h"Tandy"
 --------X-1A85-------------------------------
 INT 1A - PCMCIA Socket Services - GET ADAPTER
 	AH = 85h
@@ -21991,6 +23585,7 @@ Return: AX = status
 	    0003h destination buffer too small
 	    0004h incompressible data
 	    0005h bad compressed data format
+	BP destroyed (MS-DOS 6.2)
 Note:	MRCI driver may chain to a previous driver
 
 Format of MRCREQUEST structure:
@@ -22892,6 +24487,7 @@ Notes:	(DOS 3.1+) file opened for read/write in compatibility mode
 	  in and all other bytes cleared
 	not supported by MS Windows 3.0 DOSX.EXE DOS extender
 	DR-DOS checks password attached with AX=4303h
+BUG:	APPEND for DOS 3.3+ corrupts DX if the file is not found
 SeeAlso: AH=10h,AH=16h,AH=3Dh,4303h
 
 Format of File Control Block:
@@ -23292,6 +24888,7 @@ Notes:	not supported by MS Windows 3.0 DOSX.EXE DOS extender
 	MS-DOS returns nonsense if the FCB record number field is set to a very
 	  large positive number, and status FFh if negative; DR-DOS returns the
 	  correct file size in both cases
+BUG:	APPEND for DOS 3.3+ corrupts DX if the file is not found
 SeeAlso: AH=42h
 --------D-2124-------------------------------
 INT 21 - DOS 1+ - SET RANDOM RECORD NUMBER FOR FCB
@@ -24506,11 +26103,11 @@ Offset	Size	Description
  38h	DWORD	DOS 3+ pointer to previous PSP (default FFFFFFFFh in 3.x)
 		used by SHARE in DOS 3.3
  3Ch	BYTE	apparently unused by DOS versions <= 6.00
- 3Dh	BYTE	apparently used by some versions of APPEND
+ 3Dh	BYTE	(APPEND) TrueName flag (see INT 2F/AX=B711h)
  3Eh	BYTE	(Novell NetWare) flag: next byte initialized if CEh
  3Fh	BYTE	(Novell NetWare) Novell task number if previous byte is CEh
  40h  2 BYTEs	DOS 5+ version to return on INT 21/AH=30h
- 42h	WORD	(MSWin3) selector of next PSP (PDB) in linked list
+ 42h	WORD	(MSWindows3) selector of next PSP (PDB) in linked list
 		Windows keeps a linked list of Windows programs only
  44h  4 BYTEs	unused by DOS versions <= 6.00
  48h	BYTE	(MSWindows3) bit 0 set if non-Windows application (WINOLDAP)
@@ -24518,15 +26115,15 @@ Offset	Size	Description
  50h  3 BYTEs	DOS 2+ service request (INT 21/RETF instructions)
  53h  2 BYTEs	unused in DOS versions <= 6.00
  55h  7 BYTEs	unused in DOS versions <= 6.00; can be used to make first FCB
-		into an extended FCB
+		  into an extended FCB
  5Ch 16 BYTEs	first default FCB, filled in from first commandline argument
 		overwrites second FCB if opened
  6Ch 16 BYTEs	second default FCB, filled in from second commandline argument
-		overwrites beginning of commandline if opened
+		  overwrites beginning of commandline if opened
  7Ch  4 BYTEs	unused
  80h 128 BYTEs	commandline / default DTA
 		command tail is BYTE for length of tail, N BYTEs for the tail,
-		followed by a BYTE containing 0Dh
+		  followed by a BYTE containing 0Dh
 Notes:	in DOS v3+, the limit on simultaneously open files may be increased by
 	  allocating memory for a new open file table, filling it with FFh,
 	  copying the first 20 bytes from the default table, and adjusting the
@@ -24535,7 +26132,8 @@ Notes:	in DOS v3+, the limit on simultaneously open files may be increased by
 	  EXEC).
 	network redirectors based on the original MS-Net implementation use
 	  values of 80h-FEh in the open file table to indicate remote files;
-	  Novell NetWare reportedly also uses values of 80h-FEh
+	  Novell NetWare also uses values from FEh down to 80h or one more than
+	  FILES= (whichever is greater) to indicate remote files
 	MS-DOS 5.00 incorrectly fills the FCB fields when loading a program
 	  high; the first FCB is empty and the second contains the first
 	  parameter
@@ -25733,7 +27331,7 @@ Notes:	all directories in the given path except the last must exist
 	  it is not possible to make that directory the current directory
 	  because the path would exceed 64 characters
 	under the FlashTek X-32 DOS extender, the pointer is in DS:EDX
-SeeAlso: AH=3Ah,AH=3Bh,AH=6Dh,AH=E2h/SF=0Ah,INT 2F/AX=1103h
+SeeAlso: AH=3Ah,AH=3Bh,AH=6Dh,AH=71h,AH=E2h/SF=0Ah,INT 2F/AX=1103h
 --------D-213A-------------------------------
 INT 21 - DOS 2+ - "RMDIR" - REMOVE SUBDIRECTORY
 	AH = 3Ah
@@ -25744,7 +27342,7 @@ Return: CF clear if successful
 	    AX = error code (03h,05h,06h,10h) (see AH=59h)
 Notes:	directory must be empty (contain only '.' and '..' entries)
 	under the FlashTek X-32 DOS extender, the pointer is in DS:EDX
-SeeAlso: AH=39h,AH=3Bh,AH=E2h/SF=0Bh,INT 2F/AX=1101h
+SeeAlso: AH=39h,AH=3Bh,AH=71h,AH=E2h/SF=0Bh,INT 2F/AX=1101h
 --------D-213B-------------------------------
 INT 21 - DOS 2+ - "CHDIR" - SET CURRENT DIRECTORY
 	AH = 3Bh
@@ -25758,7 +27356,7 @@ Notes:	if new directory name includes a drive letter, the default drive is
 	changing the current directory also changes the directory in which
 	  FCB file calls operate
 	under the FlashTek X-32 DOS extender, the pointer is in DS:EDX
-SeeAlso: AH=47h,INT 2F/AX=1105h
+SeeAlso: AH=47h,AH=71h,INT 2F/AX=1105h
 --------D-213C-------------------------------
 INT 21 - DOS 2+ - "CREAT" - CREATE OR TRUNCATE FILE
 	AH = 3Ch
@@ -26304,7 +27902,8 @@ Notes:	(DOS 3.1+) wildcards are allowed if invoked via AX=5D00h, in which case
 	  is currently open
 	under the FlashTek X-32 DOS extender, the pointer is in DS:EDX
 BUG:	DR-DOS 3.41 crashes if called via AX=5D00h
-SeeAlso: AH=13h,AX=4301h,AX=4380h,AX=5D00h,AH=60h,AX=F244h,INT 2F/AX=1113h
+SeeAlso: AH=13h,AX=4301h,AX=4380h,AX=5D00h,AH=60h,AH=71h,AX=F244h
+SeeAlso: INT 2F/AX=1113h
 --------y-214101DXFFFE-----------------------
 INT 21 - SoftLogic Data Guardian - ???
 	AX = 4101h
@@ -26314,7 +27913,7 @@ Note:	resident code sets several internal variables on this call
 SeeAlso: AH=3Fh"NB.SYS",INT 16/AX=FFA3h/BX=0000h
 --------!------------------------------------
 Interrupt List, part 4 of 10
-This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994 Ralf Brown
 --------D-2142-------------------------------
 INT 21 - DOS 2+ - "LSEEK" - SET CURRENT FILE POSITION
 	AH = 42h
@@ -26359,7 +27958,7 @@ Return: CF clear if successful
 Notes:	under the FlashTek X-32 DOS extender, the filename pointer is in DS:EDX
 	under DR-DOS 3.41 and 5.0, attempts to change the subdirectory bit are
 	  simply ignored without an error
-SeeAlso: AX=4301h,AX=4310h,AH=B6h,INT 2F/AX=110Fh
+SeeAlso: AX=4301h,AX=4310h,AH=71h,AH=B6h,INT 2F/AX=110Fh
 --------D-214301-----------------------------
 INT 21 - DOS 2+ - "CHMOD" - SET FILE ATTRIBUTES
 	AX = 4301h
@@ -26381,7 +27980,7 @@ Notes:	will not change volume label or directory attribute bits, but will
 	DOS 5.0 SHARE will close the file if it is currently open in sharing-
 	  compatibility mode, otherwise a sharing violation critical error is
 	  generated if the file is currently open
-SeeAlso: AX=4300h,AX=4311h,INT 2F/AX=110Eh
+SeeAlso: AX=4300h,AX=4311h,AH=71h,INT 2F/AX=110Eh
 
 Bitfields for file attributes:
  bit 7	shareable (Novell NetWare)
@@ -26393,6 +27992,11 @@ Bitfields for file attributes:
  bit 2	system
  bit 1	hidden
  bit 0	read-only
+--------D-214302-----------------------------
+INT 21 - DOS 7 (Chicago) - GET VOLUME INFORMATION
+	AX = 4302h
+	details not yet available
+SeeAlso: AH=71h,AH=72h
 --------O-214302-----------------------------
 INT 21 - DR-DOS 3.41+ internal - GET ACCESS RIGHTS
 	AX = 4302h
@@ -26434,7 +28038,7 @@ Bitfields for access rights:
 INT 21 - DR-DOS 3.41+ internal - SET ACCESS RIGHTS AND PASSWORD
 	AX = 4303h
 	CX = access rights
-	     bits 11-0: access rights (see AX=4302h)
+	     bits 11-0: access rights (see AX=4302h"DR-DOS")
 	     bit 15: new password is to be set
 	DS:DX -> ASCIZ pathname
 	[DTA] = new password if CX bit 15 is set (blank-padded to 8 characters)
@@ -26446,7 +28050,7 @@ Notes:	if the file is already protected, the old password must be added after
 	this function is documented in DR-DOS 6.0 and corresponds to the
 	  "Get/Set File Attributes" function, subfunction 3, documented in
 	  Concurrent DOS.
-SeeAlso: AH=0Fh,AH=17h,AX=4302h,AX=4305h,AX=4454h
+SeeAlso: AH=0Fh,AH=17h,AX=4302h"DR-DOS",AX=4305h,AX=4454h
 --------O-214304-----------------------------
 INT 21 U - DR-DOS 5.0-6.0 internal - GET ENCRYPTED PASSWORD
 	AX = 4304h
@@ -27176,15 +28780,33 @@ Offset	Size	Description
 INT 21 - Advanced SCSI Programming Interface (ASPI) - INTERFACE
 	AX = 4402h
 	BX = file handle for device "SCSIMGR$"
-	CX = 0004h
-	DS:DX -> buffer for function address
+	CX = 0004h or 0005h (see notes)
+	DS:DX -> buffer for result (see below), set to zeros before call
 Return: CF clear if successful
-	    AX = 0004h
+	    AX = 0004h or 0005h (see notes)
 	CF set on error
 	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
-Note:	the function address is called with the address of a SCSI Request
+Note:	the variant of the call requesting five bytes is an UNDOCUMENTED
+	  extension supported by Adaptec's ASPI2DOS.SYS, ASPI4DOS.SYS, and
+	  ASPI7DOS.SYS; if made of a host manager which does not support the
+	  variant, only four bytes will be returned.  If the variant is
+	  supported, Adaptec's WINASPI.DLL assumes that the host manager is
+	  an "advanced" one which operates in either real or protected mode
+	  (and thus does not require a DPMI INT 31/AX=0301h call to be invoked
+	  from protected mode).	 Support of the five-byte variant also appears
+	  to imply that an advanced ASPI host manager uses no temporary storage
+	  space except the SRB and the stack, and that it is fully reentrant.
+	if called with a standard request for four bytes, even Adaptec's
+	  advanced drivers return only the requested four bytes containing the
+	  ASPI entry point address
+	the function address is called with the address of a SCSI Request
 	  Block on the stack and the caller must clean up the stack
 SeeAlso: AX=440Ch"ASPITAPE",INT 11/AH=FFh"WD7000"
+
+Format of IOCTL result:
+Offset	Size	Description
+ 00h	DWORD	function address
+ 04h	BYTE	number of SCSI host adapters supported by host manager
 
 Format of SCSI Request Block (64 bytes):
 Offset	Size	Description
@@ -28689,6 +30311,28 @@ Offset	Size	Description
 		(return) 4F4Bh ("OK") if successful, else unchanged
  05h  5 BYTEs	padding
 --------d-214404-----------------------------
+INT 21 - DBLSPACE.BIN 6.2 - IOCTL - GET ??? FOR SPECIFIED DRIVE
+	AX = 4404h
+	BL = drive number (00h = default, 01h = A:, etc)
+	CX = size of DSPACKET structure (ignored in DOS 6.2)
+	DS:DX -> DSPACKET structure (see below)
+Return: CF clear if IOCTL successful -- check DSPACKET for actual status
+	    AX = number of bytes actually transferred
+	CF set on error
+	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+SeeAlso: AX=4405h"DBLSPACE",INT 2F/AX=4A11h/BX=0000h
+
+Format of DSPACKET structure:
+Offset	Size	Description
+ 00h	WORD	signature 444Dh ("DM")
+ 02h	BYTE	command code
+		53h ('S') get ??? for specified drive
+ 03h	WORD	result code
+		(return) 4F4Bh ("OK") if successful, else unchanged
+ 05h	DWORD	(return) pointer to 96-byte ??? data
+ 09h	DWORD	(return) pointer to ??? data
+ 0Dh  3 BYTEs	reserved
+--------d-214404-----------------------------
 INT 21 U - xDISK v3.31 - CONFIGURE
 	AX = 4404h
 	BL = drive number (00h = default, 01h = A:, etc)
@@ -29262,6 +30906,13 @@ Offset	Size	Description
  00h	BYTE	special-function field (must be zero)
  01h	BYTE	disk-access flag, nonzero if access allowed by driver
 
+Format of parameter block for function52h:
+ 00h	BYTE	(call) unused???
+		(return) 00h if flast/ATA drive but no card inserted
+			unchanged otherwise
+Note:	the absense of a flash card should be tested by checking the DOS error
+	  code rather than the returned byte
+
 Format of parameter block for function 68h:
 Offset	Size	Description
  00h	BYTE	01h for default media type, 00h for any other media type
@@ -29610,7 +31261,7 @@ Return: CF clear if successful
 Notes:	the returned path does not include a drive or the initial backslash
 	many Microsoft products for Windows rely on AX being 0100h on success
 	under the FlashTek X-32 DOS extender, the buffer pointer is in DS:ESI
-SeeAlso: AH=19h,AH=3Bh,INT 15/AX=DE25h
+SeeAlso: AH=19h,AH=3Bh,AH=71h,INT 15/AX=DE25h
 --------D-2148-------------------------------
 INT 21 - DOS 2+ - ALLOCATE MEMORY
 	AH = 48h
@@ -30658,7 +32309,7 @@ BUGS:	under DOS 3.x and 4.x, the second and subsequent calls to this function
 	  searches are performed by CREATE (AH=3Ch), OPEN (AH=3Dh), UNLINK
 	  (AH=41h), and RENAME (AH=56h)
 	DR-DOS 3.41 and 5.0 return the Directory attribute for the volume label
-SeeAlso: AH=11h,AH=4Fh,AX=4301h,INT 2F/AX=111Bh,INT 2F/AX=B711h
+SeeAlso: AH=11h,AH=4Fh,AX=4301h,AH=71h,INT 2F/AX=111Bh,INT 2F/AX=B711h
 
 Format of FindFirst data block:
 Offset	Size	Description
@@ -30710,7 +32361,7 @@ Return: CF clear if successful
 Note:	under Novell DOS 7, if the FindFirst call (AH=4Eh) had CX=0088h, then
 	  the next matching deleted file will be returned
 BUG:	DR-DOS 3.41 and 5.0 return the Directory attribute for the volume label
-SeeAlso: AH=12h,AH=4Eh
+SeeAlso: AH=12h,AH=4Eh,AH=71h,AH=72h
 --------D-2150-------------------------------
 INT 21 - DOS 2+ internal - SET CURRENT PROCESS ID (SET PSP ADDRESS)
 	AH = 50h
@@ -31897,7 +33548,7 @@ Notes:	allows move between directories on same logical volume
 BUG:	under DR-DOS 3.41, this function will generate a new directory entry
 	  with the new name (including any wildcards) which can only be removed
 	  with a sector editor when invoked via AX=5D00h
-SeeAlso: AH=17h,AX=4301h,AH=60h,AX=5D00h
+SeeAlso: AH=17h,AX=4301h,AX=5D00h,AH=60h,AH=71h
 --------D-215700-----------------------------
 INT 21 - DOS 2+ - GET FILE'S DATE AND TIME
 	AX = 5700h
@@ -33685,7 +35336,7 @@ Return: AX = error code
 Format of NetMessageBufferSend parameter structure:
 Offset	Size	Description
  00h	DWORD	-> recipient name (name for specific user, name* for domain
-			name wide, * for broadcast)
+			wide name, * for broadcast)
  04h	DWORD	-> buffer
  08h	WORD	length of buffer
 --------N-215F41-----------------------------
@@ -35483,7 +37134,7 @@ Return: CF set on error
 		3 file replaced
 Note:	the PC LAN Program only supports DL=01h, DL=10h/sharing=compatibility,
 	  and DL=12h
-SeeAlso: AH=3Ch,AH=3Dh,AX=6C01h
+SeeAlso: AH=3Ch,AH=3Dh,AX=6C01h,AH=71h
 --------O-216C01-----------------------------
 INT 21 U - OS/2 v2.0 - "DosOpen2"
 	AX = 6C01h
@@ -35614,6 +37265,39 @@ Return: AX = 0070h
 	SI = 0070h
 	DI = 0070h
 SeeAlso: AX=7070h/BX=6060h,AX=8080h
+--------D-2171-------------------------------
+INT 21 - DOS 7 (Chicago) - LONG FILENAME FUNCTIONS
+	AH = 71h
+	AL = function
+	    39h create directory
+	    3Ah remove directory
+	    3Bh set current directory
+	    41h delete file
+	    43h get file attributes (BL=00h), set file attributes (BL=01h)
+	    47h get current directory
+	    4Eh find first file
+	    4Fh find next file
+	    56h move (rename) file
+	    6Ch create/open file
+Return: CF set on error
+	    AX = error code
+		7100h if function not supported
+	CF clear if successful
+	    other registers as for corresponding "old" DOS function
+Notes:	if error 7100h is returned, the old-style function should be called
+	AX=714Eh returns a "search handle" which must be passed to AX=714Fh;
+	  when the search is complete, AH=72h must be called to terminate
+	  the search
+SeeAlso: AH=39h,AH=3Ah,AH=3Bh,AH=41h,AH=43h,AH=47h,AH=4Eh,AH=4Fh,AH=56h,AH=6Ch
+SeeAlso: AH=72h
+--------D-2172-------------------------------
+INT 21 - DOS 7 (Chicago) - "FindClose" - TERMINATE DIRECTORY SEARCH
+	AH = 72h
+	details not yet available
+Note:	this function must be called after starting a search with AX=714Eh,
+	  to indicate that the search handle returned by that function will
+	  no longer be used
+SeeAlso: AH=4Eh,AH=71h
 --------v-2176-------------------------------
 INT 21 - VIRUS - "Klaeren"/"Hate" - INSTALLATION CHECK
 	AH = 76h
@@ -35644,7 +37328,7 @@ Return: AH = 80h if resident
 SeeAlso: AX=7700h,AH=83h"VIRUS"
 --------!------------------------------------
 Interrupt List, part 5 of 10
-This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994 Ralf Brown
 --------D-2180-------------------------------
 INT 21 - European MS-DOS 4.0 - "AEXEC" - EXECUTE PROGRAM IN BACKGROUND
 	AH = 80h
@@ -37157,6 +38841,7 @@ Notes:	this function is supported by NetWare 4.0+, Banyan VINES, and Alloy
 	  NTNX
 	station number only unique for those PCs connected to same semaphore
 	  service
+SeeAlso: AH=F2h"NetWare"
 --------d-21DC-------------------------------
 INT 21 - PCMag PCMANAGE/DCOMPRES - TURN ON/OFF
 	AH = DCh
@@ -41966,7 +43651,7 @@ Fnc/Subfn
 11h/0Ah	Get Printer Queue
 11h/xxh	print spooling (see AX=E0xxh"NetWare")
 12h	Get Volume Info with Number (see AH=DAh"NetWare")
-13h	Get Station Number (see AH=???h"NetWare")
+13h	Get Station Number (see AH=DCh"NetWare")
 14h	Get File Server Date and Time (see AH=E7h"NetWare")
 15h/xxh	broadcast services (see AX=E1xxh"NetWare")
 16h/0Fh	Rename Directory
@@ -43382,7 +45067,7 @@ Return: CX = 0006h if resident
 SeeAlso: AX=FFFFh,INT 6B"VIRUS"
 --------!------------------------------------
 Interrupt List, part 6 of 10
-This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994 Ralf Brown
 --------D-22---------------------------------
 INT 22 - DOS 1+ - PROGRAM TERMINATION ADDRESS
 Desc:	this vector specifies the address of the routine which is to be given
@@ -43522,10 +45207,13 @@ Return: CF clear if successful
 		 02h bad address mark
 		 01h bad command
 	    AL = error code (same as passed to INT 24 in DI)
-	    AX = 0207h if more than 64K sectors on drive
+	    AX = 0207h if more than 64K sectors on drive -- use new-style call
 	may destroy all other registers except segment registers
 Notes:	original flags are left on stack, and must be popped by caller
 	this call bypasses the DOS filesystem
+	examination of CPWIN386.CPL indicates that if this call fails with
+	  error 0408h on an old-style (<32M) call, one should retry the
+	  call with the high bit of the drive number in AL set
 BUGS:	DOS 3.1 through 3.3 set the word at ES:[BP+1Eh] to FFFFh if AL is an
 	  invalid drive number
 	DR-DOS 3.41 will return with a jump instead of RETF, leaving the
@@ -43613,11 +45301,14 @@ Return: CF clear if successful
 		 02h bad address mark
 		 01h bad command
 	    AL = error code (same as passed to INT 24 in DI)
-	    AX = 0207h if more than 64K sectors on drive
+	    AX = 0207h if more than 64K sectors on drive -- use new-style call
 	may destroy all other registers except segment registers
 Notes:	original flags are left on stack, and must be popped by caller
 	this call bypasses the DOS filesystem, though DOS 5+ invalidates any
 	  disk buffers referencing sectors which are written with this call
+	examination of CPWIN386.CPL indicates that if this call fails with
+	  error 0408h on an old-style (<32M) call, one should retry the
+	  call with the high bit of the drive number in AL set
 BUGS:	DOS 3.1 through 3.3 set the word at ES:[BP+1Eh] to FFFFh if AL is an
 	  invalid drive number
 	DR-DOS 3.41 will return with a jump instead of RETF, leaving the
@@ -44602,6 +46293,9 @@ Signatures known to be in use:
  'CoveSoft' 'Burnout+'	shareware screen saver Burnout Plus
  'Crynwr  ' 'SPELLER '	TSR spelling-checker
  'CSJewell' 'Modula3L'	Curtis Jewell's Modula-3 compiler (non-TSR)
+ 'DAISYCHA' 'INDRIVER'	Advanced Parallel Port daisy chain driver (vendor name
+			in product description field, if desired)
+			(see also INT 2D/AL=DCh)
  'ECLIPSE ' 'PLUMP   '	Eclipse Software's printer and plotter spooler
  'GraySoft' 'GIPC    '	GraySoft's Inter-Process Communications driver
  'heathh  ' 'Monitor '
@@ -44748,6 +46442,19 @@ Return: CF clear if successful
 	    DX:AX = size of compressed file
 	CF set on error (not dPressed file)
 SeeAlso: AL=10h"dLite",AL=11h"dLite"
+--------b-2D--DC-----------------------------
+INT 2D C - DAISY.SYS - BROADCAST: CHAIN RESCANNED
+	AL = DCh
+	AH = AMIS multiplex number for signature 'DAISYCHA' 'INDRIVER'
+	DL = LPT Port Rescanned
+Program: DAISY.SYS is a daisy chain manager for parallel port peripherals
+	  conforming to the Advanced Parallel Port Committee's daisy chain
+	  specification.
+Desc:	This Broadcast is sent whenever daisy chain IDs are reassigned to
+	  warn parallel port device drivers that their daisy chain ID may
+	  have been changed.
+Note:	This function is a callout from DAISY.SYS, NOT a call into DAISY.SYS
+SeeAlso: INT 17/AX=0200h"Advanced Parallel Port"
 --------l-2E---------------------------------
 INT 2E U - DOS 2+ - PASS COMMAND TO COMMAND INTERPRETER FOR EXECUTION
 	DS:SI -> commandline to execute (see below)
@@ -45698,9 +47405,9 @@ Notes:	this function is called by the DOS 3.1+ kernel
 	  redirector
 	the PC Network 1.00 redirector (renamed to PC LAN Program in 1.1-1.3)
 	  only supports AL=00h-27h
---------d-2F1100-----------------------------
+--------d-2F1100SFDADA-----------------------
 INT 2F - MSCDEX (MS CD-ROM Extensions) - INSTALLATION CHECK
-	AX = 1100h
+	AX = 1100h subfn DADAh
 	STACK: WORD DADAh
 Return: AL = status
 	    00h not installed, OK to install
@@ -45708,7 +47415,15 @@ Return: AL = status
 	    01h not installed, not OK to install
 		STACK unchanged
 	    FFh installed
-		STACK: WORD ADADh
+		STACK: WORD	ADADh if MSCDEX installed
+				DADBh if Lotus CD/Networker installed
+Note:	although MSCDEX sets the stack word to ADADh on return, any value other
+	  than DADAh is considered to mean that MSCDEX is already installed;
+	  Lotus CD/Networker v4+ uses this feature to fool MSCDEX into
+	  thinking it is already installed when it is in fact CD/Networker
+	  that is installed
+Index:	installation check;Lotus CD/Networker
+Index:	Lotus CD/Networker;installation check
 --------N-2F1101-----------------------------
 INT 2F CU - NETWORK REDIRECTOR - REMOVE REMOTE DIRECTORY
 	AX = 1101h
@@ -45759,7 +47474,6 @@ INT 2F CU - NETWORK REDIRECTOR - CHDIR
 	AX = 1105h
 	SS = DOS DS
 	SDA first filename pointer -> fully-qualified directory name
-	SS:BX -> fully-qualified directory name
 	SDA CDS pointer -> current directory structure for drive with dir
 Return: CF set on error
 	    AX = DOS error code (see INT 21/AH=59h)
@@ -46085,6 +47799,7 @@ SeeAlso: AX=1119h,AX=111Bh,INT 21/AH=4Fh
 INT 2F CU - NETWORK REDIRECTOR - CLOSE ALL REMOTE FILES FOR PROCESS (ABORT)
 	AX = 111Dh
 	SS = DOS DS
+	SDA PSP segment field = PSP of terminating process
 Return: nothing
 Notes:	used when a process is aborted; the process being terminated is
 	  indicated by the "sharing PSP" field in the SDA (offset 1Ah/1Ch)
@@ -46166,13 +47881,16 @@ Return: CF set on error
 	    AL = DOS error code (see INT 21/AH=59h)
 	CF clear if successful
 	    DX:AX = new file position
-Note:	this function is called by the DOS 3.1+ kernel
+Note:	this function is called by the DOS 3.1+ kernel, but only when seeking
+	  from the end of a file opened with sharing modes set in such a
+	  manner that another process is able to change the size of the file
+	  while it is already open
 SeeAlso: AX=1228h,INT 21/AH=42h
 --------N-2F1122-----------------------------
 INT 2F CU - NETWORK REDIRECTOR - PROCESS TERMINATION HOOK
 	AX = 1122h
 	SS = DOS DS
-	???
+	DS = PSP of process about to terminate
 Return: ???
 Note:	this function is called by the DOS 3.1+ kernel
 --------N-2F1123-----------------------------
@@ -48942,14 +50660,14 @@ INT 2F C - Windows 3.x - SWITCHING DOS TO BACKGROUND
 	AX = 4005h
 Note:	called by Windows when the DOS box is about to be placed in the
 	  background and the video driver should save any necessary state
-	  information
+	  information (this may be called only in Standard mode)
 SeeAlso: AX=4001h,AX=4006h
 --------W-2F4006-----------------------------
 INT 2F C - Windows 3.x - SWITCHING DOS TO FOREGROUND
 	AX = 4006h
 Note:	called by Windows when the DOS box is about to be placed in the
 	  foreground and the video driver should restore any necessary state
-	  information
+	  information (this may be called only in Standard mode)
 SeeAlso: AX=4002h,AX=4005h
 --------W-2F4007-----------------------------
 INT 2F - Windows 3.x - ENABLE VDD TRAPPING OF VIDEO REGISTERS
@@ -49924,10 +51642,12 @@ SeeAlso: AX=4A10h/BX=0000h
 INT 2F - SMARTDRV v4.00+ - GET DEVICE DRIVER FOR DRIVE
 	AX = 4A10h
 	BX = 0007h
-	BP = drive number
+	BP = drive number (00h=A:)
 Return: DL = ???
 	ES:DI -> device driver header for drive
 Note:	this function is also supported by PC-Cache v8.0.
+	this call is reported to always return the driver header of the
+	  standard block driver (A:-C:+) for SmartDrive v5.00 from MS-DOS 6.2
 SeeAlso: AX=4A10h/BX=0000h,AX=4A11h/BX=0003h,AX=4A11h/BX=0004h
 --------c-2F4A10BX0008-----------------------
 INT 2F - SMARTDRV v4.20+ - GET/SET FLUSH BEFORE PROMPT, CD-ROM SUPPORT
@@ -49971,7 +51691,7 @@ INT 2F - DBLSPACE.BIN - "GetVersion" - INSTALLATION CHECK
 	BX = 0000h
 Return: AX = 0000h (successful)
 	BX = 444Dh ("DM")
-	CL = first drive letter used by DBLSPACE (0=A:)
+	CL = first drive letter used by DBLSPACE (41h ['A'] = A:)
 	CH = number of drive letters used by DBLSPACE
 	DX = internal DBLSPACE.BIN version number (bits 14-0)
 		bit 15 set if DBLSPACE.BIN has not yet been relocated to final
@@ -49988,9 +51708,15 @@ INT 2F - DBLSPACE.BIN - "GetDriveMapping" - GET DRIVE MAPPING
 	DL = drive number (0=A:)
 Return: AX = status (see also below)
 	    0000h successful
-		BL = host drive (bit 7 set if specified drive is compressed)
+		if DL was compressed drive,
+		    BL = host drive (bit 7 set if drive is compressed)
+		else if DL was host drive,
+		    BL = compressed drive
+		else
+		    BL = specified drive (if available for DoubleSpace)
 		BH = DoubleSpace sequence number
 	    other error code (0101h) (see below)
+		apparently never returned for the MS-DOS 6.2 DoubleSpace
 Note:	the compressed volume file for the specified compressed drive is
 	  host:\DBLSPACE.sequence
 SeeAlso: AX=4A11h/BX=0000h
@@ -50104,7 +51830,30 @@ Return: AX = status (see also AX=4A11h/BX=0001h)
 	    0000h successful
 		CL = number of DISK_UNIT structures allocated
 			(see AX=4A11h/BX=0005h)
+		CH = DoubleGuard enabled-checks bitflags in bits 6-0 (DOS 6.2)
+Note:	the DoubleGuard checks are enabled or disabled as a block by the
+	  DoubleGuard= line in DBLSPACE.INI; they may be individually set with
+	  the CheckSum= line.
 SeeAlso: AX=4A11h/BX=0000h,AX=4A11h/BX=0008h
+--------d-2F4A11BX000A-----------------------
+INT 2F - DBLSPACE.BIN 6.2 - SET AUTOMOUNT DRIVES
+	AX = 4A11h
+	BX = 000Ah
+	CX:DX = bitmask of drives on which to enable AutoMount
+		(DX bit 0 = A:, CX bit 0 = P:, etc.)
+Return: AX = 0000h if supported
+	    CX:DX = old mask or 0000h:0000h on error
+	BX destroyed
+SeeAlso: AX=4A11h/BX=000Bh
+--------d-2F4A11BX000B-----------------------
+INT 2F - DBLSPACE.BIN 6.2 - GET AUTOMOUNT DRIVES
+	AX = 4A11h
+	BX = 000Bh
+Return: AX = 0000h if supported
+	    CX:DX = mask of drives with AutoMount enabled
+		0000h:0000h on error
+	BX destroyed
+SeeAlso: AX=4A11h/BX=000Ah
 --------d-2F4A11BXFFFE-----------------------
 INT 2F U - DBLSPACE.BIN - RELOCATE
 	AX = 4A11h
@@ -50831,6 +52580,7 @@ INT 2F - INTERLNK - CHECK IF REDIRECTED DRIVE
 	AX = 5601h
 	DX = FFFFh
 	BH = drive number (0=A:)
+	BL = 00h
 Return: (as for AL=00h if redirected drive)
 SeeAlso: AX=5600h
 --------R-2F5602DXFFFF-----------------------
@@ -51691,7 +53441,7 @@ Return: AL = FFh if installed
 	    CX = configured sockets (14h)
 	    DS:SI -> data table ???
 	    ES:DI -> IPX far call handler
-Notes:	for IPX/SPX this call reportedly returns DS:DI pointing to the table
+Notes:	for IPX/SPX this call reportedly returns DS:SI pointing to the table
 	  of pointers to service events queue head and tail
 	this function is also supported by IPXODI
 SeeAlso: AX=7AFFh/BX=0001h
@@ -51757,7 +53507,7 @@ Return: ???
 Note:	called by PC/370, an IBM 370 emulator by Donald S. Higgins
 --------!------------------------------------
 Interrupt List, part 7 of 10
-This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994 Ralf Brown
 --------N-2F8000-----------------------------
 INT 2F - EASY-NET - INSTALLATION CHECK
 	AX = 8000h
@@ -52596,7 +54346,7 @@ Return: AX = first available paragraph past end of resident portion???
 	CX destroyed
 SeeAlso: AX=9000h
 --------e-2F92-------------------------------
-INT 2F - Couriers LAN E-Mail - API
+INT 2F - Network Courier E-Mail - API
 	AH = 92h
 	AL = function
 	    00h installation check
@@ -52606,8 +54356,12 @@ INT 2F - Couriers LAN E-Mail - API
 	    04h ???
 	    05h ???
 Return: ???
-SeeAlso: AH=9Ch
-Index:	installation check;Couriers LAN E-Mail|uninstall;Couriers LAN E-Mail
+Program: The Network Courier is an electronic mail package by Consumers
+	  Software of Vancouver, BC which was bought by Microsoft in 1991 and
+	  renamed Microsoft Mail v3.0.
+SeeAlso: AX=9400h,AX=9401h,AX=9402h,AH=9Ch
+Index:	installation check;Network Courier E-Mail
+Index:	uninstall;Network Courier E-Mail
 --------R-2F9200-----------------------------
 INT 2F U - PC Tools v8.0 DRIVEMAP - BUG
 	AX = 9200h
@@ -52823,7 +54577,8 @@ INT 2F - MICRO.EXE - INSTALLATION CHECK
 	AX = 9400h
 Return: AL = 07h or 08h if installed
 Program: MICRO.EXE is a TSR of the Microsoft Mail part of Workgroup Connection
-SeeAlso: AX=9401h,AX=9402h,AX=9403h,AX=9404h,INT 21/AH=3Fh"WORKGRP.SYS"
+SeeAlso: AH=92h"Network Courier",AX=9401h,AX=9402h,AX=9403h,AX=9404h
+SeeAlso: INT 21/AH=3Fh"WORKGRP.SYS"
 --------e-2F9401-----------------------------
 INT 2F - MICRO.EXE - SET ??? FLAG
 	AX = 9401h
@@ -52847,13 +54602,16 @@ Note:	if the specified name is identical to the name of the program file
 	  it is left unchanged
 SeeAlso: AX=9400h,AX=9403h
 --------e-2F9C-------------------------------
-INT 2F - Couriers LAN E-Mail OPERATOR.EXE - API
+INT 2F - Network Courier E-Mail OPERATOR.EXE - API
 	AH = 9Ch
 	AL = subfunction
 	    01h uninstall
 Return: ???
+Program: The Network Courier is an electronic mail package by Consumers
+	  Software of Vancouver, BC which was bought by Microsoft in 1991 and
+	  renamed Microsoft Mail v3.0.
 SeeAlso: AH=92h
-Index:	uninstall;Couriers LAN E-Mail OPERATOR.EXE
+Index:	uninstall;Network Courier E-Mail OPERATOR.EXE
 --------G-2F9E00-----------------------------
 INT 2F U - INTMON v2.1 - INSTALLATION CHECK
 	AX = 9E00h
@@ -53347,13 +55105,15 @@ SeeAlso: AX=B702h
 INT 2F - DOS 4+ APPEND - SET RETURN FOUND NAME STATE
 	AX = B711h
 Note:	if the next INT 21h call (and ONLY the next) is function 3Dh, 43h, or
-	6Ch (also 4B03h and 4Eh if /X active), the fully qualified filename is
-	written over top of the filename passed to the INT 21h call.  The
-	application must provide a sufficiently large buffer.  This state is
-	reset after the next INT 21h call processed by APPEND.
+	  6Ch (also 4B03h and 4Eh if /X active), the fully qualified filename
+	  is written over top of the filename passed to the INT 21h call.  The
+	  application must provide a sufficiently large buffer.	 This state is
+	  reset after the next INT 21h call processed by APPEND.
+	APPEND uses the byte at offset 3Dh in the PSP (see INT 21/AH=26h) to
+	  store the flag telling it to overwrite the filename
 BUG:	DOS 4.0 APPEND reportedly overwrites DS:DX instead of DS:SI for
 	  INT 21/AH=6Ch
-SeeAlso: INT 21/AH=4Eh
+SeeAlso: INT 21/AH=26h,INT 21/AH=4Eh
 --------N-2FB800-----------------------------
 INT 2F - network - INSTALLATION CHECK
 	AX = B800h
@@ -56723,17 +58483,17 @@ INT 2F - ZyXEL ZFAX - UNINSTALL
 	AX = DA01h
 Return: AL = 00h Success
 	     01h Failure
-SeeAlso: AX=DA00h
+SeeAlso: AX=DA00h,AX=DB01h
 --------F-2FDA02-----------------------------
 INT 2F - ZyXEL ZFAX - DISABLE
 	AX = DA02h
 Return: AL = 00h
-SeeAlso: AX=DA03h
+SeeAlso: AX=DA03h,AX=DB02h
 --------F-2FDA03-----------------------------
 INT 2F - ZyXEL ZFAX - ENABLE
 	AX = DA03h
 Return: AL = 00h
-SeeAlso: AX=DA02h
+SeeAlso: AX=DA02h,AX=DB03h
 --------G-2FDA55-----------------------------
 INT 2F U - TRAP.COM - INSTALLATION CHECK
 	AX = DA55h
@@ -56754,12 +58514,282 @@ Return: AX = 00FFh if installed
 Program: BWSNMP is part of the BW-NFS package
 SeeAlso: INT 62"BW-TCP"
 --------F-2FDB00-----------------------------
-INT 2F - ZyXEL ZFAX v2.0-2.23 - INSTALLATION CHECK
+INT 2F - ZyXEL ZFAX v2+ - INSTALLATION CHECK
 	AX = DB00h
-Return:	AL = 5Bh installed
+Return:	AL = 5Bh if installed (v2.x)
+	    ES:BX -> ???
+	AX = 00DBh if installed (v3)
+	    ES:BX -> ZFAX configuration table (see below)
 Program: ZFAX is the bundled FAX software which comes with the ZyXEL model
 	  fax modems.
-SeeAlso: AX=CBDCh,AX=DA01h,AX=DA02h,AX=DA03h
+SeeAlso: AX=CBDCh,AX=DA00h,AX=DB01h,AX=DB02h,AX=DB03h
+
+Format of ZFAX Configuration Table:
+Offset	Size	Description
+ 00h	WORD	version number (0300h for v3.0)
+ 02h	BYTE	reserved
+ 03h 70 BYTEs	ZFAX working path
+ 49h 128 BYTEs	path to external editor
+ C9h 128 BYTEs	path to external terminal emulator
+149h 128 BYTEs	path to Ring Shell
+1C9h 128 BYTEs	path to DOS Shell
+249h 128 BYTEs	path to Data Shell
+2C9h 70 BYTEs	path to Chinese font
+30Fh	BYTE	printer type (see below)
+310h	BYTE	printer port (00h = LPT1, etc.)
+311h	BYTE	type of graphics adapter
+		(00h auto-detect, 01h VGA, 02h EGA, 03h CGA, 04h Hercules)
+312h	BYTE	display type
+		(00h auto-detect, 01h LCD, 02h color, 03h mono)
+313h	BYTE	scan code for ZFAX hotkey
+314h	BYTE	shift mask for ZFAX hotkey
+315h	BYTE	tone/pulse dialing (00h tone, 01h pulse)
+316h	BYTE	Caller ID (00h disabled, 01h enabled)
+317h	BYTE	Distinctive Ring (00h disabled, 01h enabled)
+318h	BYTE	normal ring answer type (see below)
+319h	BYTE	Ring 1 answer type (see below)
+31Ah	BYTE	Ring 2 answer type (see below)
+31Bh	BYTE	Ring 3 answer type (see below)
+31Ch	BYTE	COM port for modem
+31Dh	BYTE	speaker volume (00h-07h)
+31Eh	BYTE	modem dial timer, seconds
+31Fh	WORD	user-defined COM port I/O address
+321h	BYTE	user-defined COM port IRQ number
+322h 81 BYTEs	dial prefix string
+373h 79 BYTEs	dial postfix string
+3C2h	BYTE	ring count until automatic answer
+3C3h	BYTE	retry count on busy signal
+3C4h	BYTE	redial delay in seconds
+3C5h	WORD	system password
+3C7h	BYTE	reserved
+3C8h	BYTE	voice file compression format
+		00h CELP at 9600bps
+		01h two-bit ADPCM at 19200bps
+		03h three-bit ADPCM at 28800bps
+3C9h	BYTE	voice system: DTMF 0 action (see below)
+3CAh	BYTE	voice system: DTMF 1 action
+3CBh	BYTE	voice system: DTMF 2 action
+3CCh	BYTE	voice system: DTMF 3 action
+3CDh	BYTE	voice system: DTMF 4 action
+3CEh	BYTE	voice system: DTMF 5 action
+3CFh	BYTE	voice system: DTMF 6 action
+3D0h	BYTE	voice system: DTMF 7 action
+3D1h	BYTE	voice system: DTMF 8 action
+3D2h	BYTE	voice system: DTMF 9 action
+3D3h	WORD	reserved
+3D5h 25 BYTEs	local FAX ID to display on page header
+3EEh 20 BYTEs	local FAX ID sent to remote FAX
+402h	BYTE	FAX page size
+		00h A4 (210x297mm)
+		01h B4 (250x353mm)
+		02h A3 (297x420mm)
+403h	BYTE	FAX resolution
+		00h normal (3.85 pixels/mm)
+		01h high (7.7 pixels/mm)
+404h	BYTE	FAX coding scheme
+		00h 1-D, modified Huffman coding
+		01h 2-D, modified READ coding
+405h	BYTE	left margin for text in millimeters
+406h	BYTE	vertical insertion for text in mm (0-20)
+407h	BYTE	horizontal insertion in mm (0-20)
+408h	BYTE	maximum text lines per page
+409h	BYTE	text type (00h ASCII, 01h WordStar-formatted)
+40Ah	BYTE	PCX image resize (00h disabled, 01h enabled)
+40Bh	BYTE	AutoPrint (00h disabled, 01h enabled)
+40Ch	BYTE	cover page (00h disabled, 01h enabled)
+40Dh 81 BYTEs	cover page logo filename
+45Eh 65 BYTEs	cover page sender name
+49Fh	BYTE	print capture (00h disabled, 01h enabled)
+4A0h	BYTE	send immediately (00h disabled, 01h enabled)
+4A1h	BYTE	print capture printer port
+4A2h	BYTE	print capture timer in seconds
+4A3h	BYTE	scan code for print capture hotkey
+4A4h	BYTE	shift mask for print capture hotkey
+4A5h	BYTE	DataShell type
+		00h internal Zmodem, 01h Data Shell, 02h disable
+4A6h	BYTE	video I/O type
+		00h auto-detect, 01h use BIOS, 02h direct writes
+4A7h	BYTE	call transfer digits
+4A8h	WORD	voice recorder maximum time in seconds (0-999)
+
+Values for printer type:
+ 00h	EPSON FX (9 pins)
+ 01h	EPSON LQ (24 pins)
+ 02h	HP Laser Jet II, letter size
+ 03h	HP Laser Jet II, legal size
+ 04h	HP Laser Jet II, A4 size
+ 05h	HP Laser Jet III, letter size
+ 06h	HP Laser Jet III, legal size
+ 07h	HP Laser Jet III, A4 size
+
+Values for Ring Answer Type:
+ 00h	voice system
+ 01h	FAX only
+ 02h	Data Shell
+ 03h	Ring Shell
+ 04h	DOS Shell
+ 05h	ignore
+
+Values for DTMF action:
+ 00h	none
+ 01h	page operator
+ 02h	FaxBack
+ 03h	announcement
+ 04h	call transfer
+ 05h	receive FAX
+ 06h	receive data
+ 07h	voice mailbox
+ 08h	DOS Shell Out
+ 09h	Data Shell Out
+--------F-2FDB01-----------------------------
+INT 2F - ZyXEL ZFAX v2+ - UNINSTALL
+	AX = DB01h
+Return: AX = status
+	    0000h successful
+	    0001h ZFAX is busy
+	    0002h another program resident above ZFAX
+Note:	this function unhooks the vectors taken by the ZFAX TSR if they have
+	  not been hooked by other TSRs and releases the TSR's memory
+	ZFAX v2.x crashes the contributor's machine when this function is
+	  called
+SeeAlso: AX=DA01h,AX=DB00h
+--------F-2FDB02-----------------------------
+INT 2F - ZyXEL ZFAX v2.x - DISABLE
+	AX = DB02h
+Return: AL = 00h
+SeeAlso: AX=DA02h,AX=DB00h,AX=DB03h
+--------F-2FDB03-----------------------------
+INT 2F - ZyXEL ZFAX v2.x - ENABLE
+	AX = DB03h
+Return: AL = 00h
+SeeAlso: AX=DA03h,AX=DB00h,AX=DB02h
+--------F-2FDB10-----------------------------
+INT 2F - ZyXEL ZFAX v3 - EXECUTE ZFAX MAIN MENU
+	AX = DB10h
+--------F-2FDB11-----------------------------
+INT 2F - ZyXEL ZFAX v3 - SEND FAX
+	AX = DB11h
+	DS:SI -> filename including path
+	DS:BX -> remote FAX number
+Return:	AX = status (see below)
+SeeAlso: AX=DB12h,AX=DB13h,AX=DB14h,AX=DB20h,AX=DB21h
+
+Values for ZFAX status:
+ 00h	OK
+ 01h	invalid DOS function
+ 02h	file not found
+ 03h	path not found
+ 04h	no file handle available
+ 05h	access denied by DOS
+ 06h	invalid handle
+ 07h	disk full
+ 10h	printer error
+ 11h	no graphics font
+ 12h	no ZFAX font
+ 20h	DCD dropped while sending
+ 21h	not ZyXEL modem
+ 22h	busy
+ 23h	no response from COM port
+ 24h	no carrier
+ 25h	no dial tone
+ 26h	no answer
+ 27h	no response
+ 28h	failed to send FAX
+ 30h	user aborted
+ 40h	critical error on disk
+ 50h	parameter error
+--------F-2FDB12-----------------------------
+INT 2F - ZyXEL ZFAX v3 - PRINT FAX
+	AX = DB12h
+	DS:SI -> filename, including path
+Return: AX = status
+SeeAlso: AX=DB11h,AX=DB13h,AX=DB14h
+--------F-2FDB13-----------------------------
+INT 2F - ZyXEL ZFAX v3 - CONVERT FAX
+	AX = DB13h
+	DS:SI -> source filename, including path
+	DS:BX -> destination filename, including path
+	CX = destination file format
+		00h FAX, 01h PCX, 02h TIFF, 03h PRN
+Return: AX = status
+SeeAlso: AX=DB11h,AX=DB12h,AX=DB14h,AX=DB22h
+--------F-2FDB14-----------------------------
+INT 2F - ZyXEL ZFAX v3 - VIEW FAX
+	AX = DB14h
+	DS:SI -> source filename, including path
+Return: AX = status
+SeeAlso: AX=DB11h,AX=DB12h,AX=DB14h
+--------F-2FDB20-----------------------------
+INT 2F - ZyXEL ZFAX v3 - POLL FAX
+	AX = DB20h
+	DS:SI -> remote FAX number
+Return: AX = status
+SeeAlso: AX=DB11h,AX=DB21h
+--------F-2FDB21-----------------------------
+INT 2F - ZyXEL ZFAX v3 - SEND VOICE
+	AX = DB21h
+	DS:SI -> filename including path
+	DS:BX -> remote phone number
+Return:	AX = status
+SeeAlso: AX=DB11h,AX=DB20h,AX=DB22h,AX=DB23h,AX=DB24h
+--------F-2FDB22-----------------------------
+INT 2F - ZyXEL ZFAX v3 - CONVERT VOICE FILE
+	AX = DB22h
+	DS:SI -> source filename, including path
+	DS:BX -> destination filename, including path
+	CX = destination format
+	    00h two-bit ADPCM, 01h three-bit ADPCM, 02h VOC
+Return:	AX = status
+SeeAlso: AX=DB13h,AX=DB20h,AX=DB21h,AX=DB23h
+--------F-2FDB23-----------------------------
+INT 2F - ZyXEL ZFAX v3 - RECORD VOICE FILE
+	AX = DB23h
+	DS:SI -> destination filename, including path
+	CX = recording channel (0 = telephone line, 1 = microphone/speaker)
+	DX = voice file format
+	    00h CELP, 01h two-bit ADPCM, 02h three-bit ADPCM
+Return: AX = status
+SeeAlso: AX=DB21h,AX=DB22h,AX=DB24h
+--------F-2FDB24-----------------------------
+INT 2F - ZyXEL ZFAX v3 - PLAY VOICE FILE
+	AX = DB24h
+	DS:SI -> name of voice file, including path
+	CX = playback channel (0 = telephone line, 1 = microphone/speaker)
+Return: AX = status
+SeeAlso: AX=DB21h,AX=DB22h,AX=DB24h
+--------F-2FDB25-----------------------------
+INT 2F - ZyXEL ZFAX v3 - ANSWER MODEM WITH VOICE SYSTEM
+	AX = DB25h
+Return: AX = status
+SeeAlso: AX=DB21h,AX=DB22h,AX=DB26h,AX=DB27h,AX=DB28h
+--------F-2FDB26-----------------------------
+INT 2F - ZyXEL ZFAX v3 - DIAL PHONE
+	AX = DB26h
+	DS:SI -> remote phone number
+Return: AX = status
+SeeAlso: AX=DB25h
+--------F-2FDB27-----------------------------
+INT 2F - ZyXEL ZFAX v3 - RECEIVE FAX - ANSWER MODEM AND SET TO FAX MODE
+	AX = DB27h
+Return: AX = status
+SeeAlso: AX=DB25h,AX=DB28h
+--------F-2FDB28-----------------------------
+INT 2F - ZyXEL ZFAX v3 - RECEIVE FAX DATA - ANSWER MODEM IN MULTI-AUDIO MODE
+	AX = DB28h
+Return: AX = status
+SeeAlso: AX=DB25h,AX=DB27h,AX=DB31h
+--------F-2FDB31-----------------------------
+INT 2F - ZyXEL ZFAX v3 - SEND DATA - DIAL NUMBER AND UPLOAD FILE WITH ZMODEM
+	AX = DB31h
+	DS:SI -> source file name, including path
+	DS:BX -> remote data number
+Return: AX = status
+SeeAlso: AX=DB00h,AX=DB28h
+--------F-2FDB40-----------------------------
+INT 2F - ZyXEL ZFAX v3 - INTERNAL TERMINAL
+	AX = DB40h
+Return: AX = status
+SeeAlso: AX=DB00h
 --------K-2FDC00-----------------------------
 INT 2F - GOLD.COM - INSTALLATION CHECK
 	AX = DC00h
@@ -56816,6 +58846,33 @@ Offset	Size	Description
  12h	BYTE	number of interrupts hooked
  13h  5 BYTEs	interrupt numbers hooked by program
  18h  8 BYTEs	reserved
+----------2FDD-------------------------------
+INT 2F - MIXFIX.EXE - API
+	AH = DDh
+	AL = function
+	    00h installation check
+		Return: AX = 00DDh if installed
+			    BX = version (BH = major, BL = minor)
+	    41h/61h get From: address
+		Return: AX = 0001h
+			ES:BX -> ASCIZ 4d address of mail sender ("1:2/3.4")
+	    49h/69h get To: address
+		Return: AX = 0001h
+			ES:BX -> ASCIZ 4d address of recipient ("1:2/3.4")
+	    4Ah/6Ah get subject of mail
+		Return: AX = 0001h
+			ES:BX -> ASCIZ subject of handled mail
+	    4Dh/6Dh get mail name
+		Return: AX = 0001h
+			ES:BX -> ASCIZ full name of current mail file
+	    4Eh/6Eh get From: field
+		Return: AX = 0001h
+			ES:BX -> ASCIZ From: field of mail (mail sender's name)
+Program: MIXFIX by "KIV without Co" is a FidoNet mail robot which may execute
+	  other programs for mail handling.  The called programs may use the
+	  services described here to retrieve information about the mail being
+	  handled.
+Index: installation check;MIXFIX.EXE
 --------d-2FDD--BX7844-----------------------
 INT 2F - xDISK v3.32+ - INSTALLATION CHECK
 	AH = DDh
@@ -59148,7 +61205,7 @@ Return: AL = type (00h complete version, 01h simple version)
 SeeAlso: AX=FF16h,AX=FF18h
 --------!------------------------------------
 Interrupt List, part 8 of 10
-This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994 Ralf Brown
 --------D-30---------------------------------
 INT 30 - (NOT A VECTOR!) - DOS 1+ - FAR JMP instruction for CP/M-style calls
    the CALL 5 entry point does a FAR jump to here
@@ -59780,8 +61837,8 @@ Return: CF clear
 	CL = processor type (02h=80286, 03h=80386, 04h=80486)
 	DH = curr value of virtual master interrupt controller base interrupt
 	DL = curr value of virtual slave interrupt controller base interrupt
-BUG:	the Windows NT March 1993 beta reports version 0090h (0.144); this has
-	  been fixed in the final release
+BUG:	Windows NT versions from the March 1993 beta to at least the Final
+	  release with fixes to CSD002 report version 0090h (0.144)
 SeeAlso: AX=0401h,INT 21/AX=250Ch,INT 2F/AX=1687h,INT 67/AX=DE0Ah
 --------E-310401-----------------------------
 INT 31 P - DPMI 1.0+ - GET DPMI CAPABILITIES
@@ -61885,18 +63942,105 @@ Offset	Size	Description
  01h	DWORD	pointer to data in either I/O processor or Tube processor
  05h	DWORD	number of bytes to be transferred
  09h	DWORD	transfer address
---------G-4112-------------------------------
-INT 41 P - MS Windows debugging kernel - "OutputDebugString"
-	AH = 12h
-	???
-Return: ???
-SeeAlso: AH=50h
---------G-4150-------------------------------
+--------G-410000-----------------------------
+INT 41 CPU - MS Windows debugging kernel - OUTPUT CHARACTER FOR USER
+	AX = 0000h
+	DS:DX -> character
+Note:	the kernel calls this function when it wants the user program to
+	  output a character
+SeeAlso: AX=0001h
+--------G-410001-----------------------------
+INT 41 CPU - MS Windows debugging kernel - INPUT CHARACTER
+	AX = 0001h
+Return: AL = character	
+Note:	the kernel calls this function when it needs to input a character
+SeeAlso: AX=0000h
+--------G-41000D-----------------------------
+INT 41 CPU - MS Windows debugging kernel - TASK GOING OUT
+	AX = 000Dh
+SeeAlso: AX=000Eh
+--------G-41000E-----------------------------
+INT 41 CPU - MS Windows debugging kernel - TASK COMING IN
+	AX = 000Eh
+SeeAlso: AX=000Dh
+--------G-410012-----------------------------
+INT 41 CPU - MS Windows debugging kernel - "OutputDebugString"
+	AX = 0012h
+	DS:SI -> string (Windows 3.0)
+	ES:SI -> string (Windows 3.1)
+Return: nothing???
+Note:	this function is called by the kernel when it wants to output a
+	  string through the debugger
+SeeAlso: AH=50h,INT 68/AH=47h
+--------G-41004F-----------------------------
+INT 41 CPU - MS Windows debugging kernel - DEBUGGER INSTALLATION CHECK
+	AX = 004Fh
+Return: AX = F386h if debugger is present
+--------G-410050-----------------------------
 INT 41 P - MS Windows debugging kernel - "DefineDebugSegment"
-	AH = 50h
+	AX = 0050h
+	BX = segment number in executable (0-based)
+	CX = selector
+	DX = instance handle
+	SI = segment flags (0=code, 1=data)
+	ES:DI -> module name of owner
+Return: ???
+SeeAlso: AX=0012h,AX=004Fh
+--------G-410051-----------------------------
+INT 41 CPU - MS Windows debugging kernel - MOVE SEGMENT
+	AX = 0051h
 	???
 Return: ???
-SeeAlso: AH=12h
+SeeAlso: AX=050h,AX=0052h
+--------G-410052-----------------------------
+INT 41 CPU - MS Windows debugging kernel - FREE SEGMENT
+	AX = 0052h
+	BX = freed selector
+SeeAlso: AX=0050h,AX=0051h,AX=005Ch
+--------G-410059-----------------------------
+INT 41 CPU - MS Windows debugging kernel - LOAD TASK
+	AX = 0059h
+	???:BX = CS:IP of new task's starting point
+--------G-41005C-----------------------------
+INT 41 CPU - MS Windows debugging kernel - FREE INITIAL SEGMENT
+	AX = 005Ch
+	BX = freed selector
+Note:	called only when KERNEL starts, once for CS and once for the DS alias
+	  to CS
+SeeAlso: AX=0052h
+--------G-410060-----------------------------
+INT 41 CPU - MS Windows debugging kernel -  END OF SEGMENT LOAD
+	AX = 0060h
+	???
+Return: ???
+SeeAlso: AX=0061h
+--------G-410061-----------------------------
+INT 41 CPU - MS Windows debugging kernel - END OF SEGMENT DISCARD
+	AX = 0061h
+	???
+Return: ???
+SeeAlso: AX=0060h
+--------G-410062-----------------------------
+INT 41 CPU - MS Windows debugging kernel - APPLICATION TERMINATING
+	AX = 0062h
+STACK:	BYTE	exit code
+Return: ???
+	STACK unchanged???
+SeeAlso: AX=0064h
+--------G-410063-----------------------------
+INT 41 CPU - MS Windows debugging kernel - ASYNCHRONOUS STOP (Ctrl-Alt-SysReq)
+	AX = 0063h
+--------G-410064-----------------------------
+INT 41 CPU - MS Windows debugging kernel - DLL LOADED
+	AX = 0064h
+	CX:BX = DLL entry point CS:IP
+	SI = module handle
+SeeAlso: AX=0062h,AX=0065h
+--------G-410065-----------------------------
+INT 41 CPU - MS Windows debugging kernel - MODULE REMOVED
+	AX = 0065h
+	ES = module handle
+SeeAlso: AX=0064h
 --------V-42---------------------------------
 INT 42 - VIDEO - RELOCATED DEFAULT INT 10 VIDEO SERVICES (EGA,VGA)
 SeeAlso: INT 10
@@ -63294,6 +65438,11 @@ SeeAlso: INT 50"DESQview",INT 58"DESQview"
 --------H-54---------------------------------
 INT 54 - IRQ4 relocated by IBM 3278 emulation control program, OS/2 v1.x
 SeeAlso: INT 51"IBM 3278",INT 51"OS/2"
+----------545400-----------------------------
+INT 54 U - Toshiba PCMCIA2 - INSTALLATION CHECK
+	AX = 5400h
+Return: AX = 0054h if installed
+	    CX:DX -> INT function handler
 --------H-55---------------------------------
 INT 55 - IRQ5 relocated by DESQview
 Note:	this is the default location for older versions; see INT 50"DESQview"
@@ -66990,7 +69139,7 @@ INT 60 - FTP Packet Driver - Crynwr Software - AUTOSELECT TRANSCEIVER
 Return: ???
 --------!------------------------------------
 Interrupt List, part 9 of 10
-This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994 Ralf Brown
 --------*-61---------------------------------
 INT 61 - reserved for user interrupt
 --------b-61---------------------------------
@@ -72623,6 +74772,11 @@ Return: CF set
 INT 66 - PenDOS - PMOUSE - ALTERNATE API
 	AH = function (58h-5Fh)
 Note:	these functions exactly duplicate AH=50h-57h
+----------66AA02-----------------------------
+INT 66 - HelpTSR v2.10 - INSTALLATION CHECK
+	AX = AA02h
+Return: ES:DI -> 7 byte signature "HelpTSR" if resident
+Program: HelpTSR is a resident viewer by David Jurgens for HelpPC
 --------n-66C5-------------------------------
 INT 66 - PenDOS - VLOAD - API
 	AH = C5h
@@ -75408,6 +77562,13 @@ INT 68 - APPC/PC - PASSTHROUGH
 	DS:DX -> control block (format depends on application subsystem)
 Return: control block updated
 SeeAlso: AH=FFh
+----------6847-------------------------------
+INT 68 - MS Windows debugging kernel - OUTPUT STRING
+	AH = 47h
+	ES:SI -> string
+Notes:	output a string (to inform a debugger of some events)
+	KERNEL outputs "Windows Kernel Entry\r\n" on startup
+SeeAlso: INT 41/AX=0012h
 --------N-68FA-------------------------------
 INT 68 - APPC/PC - ENABLE/DISABLE APPC
 	AH = FAh
@@ -75477,7 +77638,7 @@ INT 68 - APPC/PC - SET PASSTHROUGH
 SeeAlso: AH=07h
 --------!------------------------------------
 Interrupt List, part 10 of 10
-This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994 Ralf Brown
 --------b-69---------------------------------
 INT 69 - Zenith AT BIOS - ???
    called by INT 09 handler
@@ -76060,12 +78221,13 @@ Return: CX = number of bytes written
 Program: NASI is Novell's NetWare Asynchronous Services Interface which runs
 	  on workstations; NACS is the NetWare Asynchronous Communications
 	  Services module which runs on servers
-Notes:	this function is also supported by TelAPI and NPC NCSI; for TelAPI,
-	  nonzero values in AL specify a connection ID
-	this function is also supported by Connection Manager CLIENT.EXE; it
-	  provides the signature string "NCSI" three bytes past the interrupt
-	  handler, and returns CF set/AL=FFh if called while an INT 6B call is
-	  already in progress
+Notes:	one installation check consists of testing for the signature string
+	  "NCSI" three bytes past the interrupt handler; see also AH=02h
+	this function is also supported by TelAPI, NPC NCSI, and Connection
+	  Manager CLIENT.EXE; for TelAPI, nonzero values in AL specify a
+	  connection ID
+	Connection Manager returns CF set/AL=FFh if called while an INT 6B
+	  call is already in progress
 SeeAlso: AX=0100h,AH=18h,INT 14/AH=19h,INT 14/AH=E3h
 --------S-6B0100-----------------------------
 INT 6B - Novell NASI/NACS, Ungermann-Bass Net One SERIAL I/O - BUFFERED READ
@@ -76122,12 +78284,14 @@ Return: CF clear if successful
 	???
 Note:	this function is also supported by TelAPI
 SeeAlso: AX=0700h,AH=12h,AH=1Fh
---------S-6B11-------------------------------
+--------S-6B11--DX0001-----------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - ALLOCATE A VIRTUAL CIRCUIT
 	AH = 11h
-	???
+	DX = 0001h
+	AL = 00h
+	ES:BX -> service name string (8 characters, blank-padded)
 Return: CF clear if successful
-	    AL = virtual circuit number??? (01h for Novell TELAPI.EXE)
+	    AL = virtual circuit number allocated (01h for Novell TELAPI.EXE)
 	    CL = ??? (01h for Novell TELAPI.EXE)
 	    CH = ??? (01h for Novell TELAPI.EXE)
 	CF set on error
@@ -76166,16 +78330,32 @@ INT 6B - NPC NCSI EXTENDED SERIAL I/O - SET/RETRIEVE VIRTUAL CIRCUIT CONFIG
 	AH = 15h
 	AL = virtual circuit number
 	CL = direction (00h get, nonzero set)
-	ES:BX -> buffer for/containing virtual circuit configuration
-Return: ???
+	ES:BX -> buffer for/containing virtual circuit config (see below)
+Return: ES:BX buffer filled
 Note:	this function is also supported by TelAPI
-SeeAlso: AH=13h,AH=14h
+SeeAlso: AH=13h"NCSI",AH=14h"NCSI"
+
+Format of virtual circuit configuration:
+Offset	Size	Description
+ 00h	WORD	buffer length
+ 02h	WORD	port ID
+ 04h	WORD	receive rate
+ 06h	WORD	receive word length
+ 08h	WORD	receive stop bits
+ 0Ah	WORD	receive parity
+ 0Ch	WORD	transmit rate
+ 0Eh	WORD	transmit word length
+ 10h	WORD	transmit stop bits
+ 12h	WORD	transmit parity
+ 14h	WORD	DTR
+ 16h	WORD	RTS
 --------S-6B16-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - LOG AND/OR INITIALIZE VIRTUAL CIRCUIT
 	AH = 16h
-	???
+	AL = virtual circuit number
+	CL = ??? switch (00h, ???)
 Return: CF clear if successful
-	    AL = virtual circuit number???
+	    AL = virtual circuit number
 	CF set on error
 	    ???
 Note:	this function is also supported by TelAPI, which always returns CF
@@ -76184,7 +78364,7 @@ SeeAlso: AH=11h,AH=12h,AH=17h
 --------S-6B17-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - DISCONNECT A VIRTUAL CIRCUIT
 	AH = 17h
-	AL = virtual circuit number???
+	AL = virtual circuit number
 Return: CF clear if successful
 	CF set on error
 	???
@@ -76195,7 +78375,8 @@ SeeAlso: AH=11h,AH=16h
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - WRITE DATA ON A VIRTUAL CIRCUIT
 	AH = 18h
 	AL = virtual circuit number
-	???
+	CX = number of characters to send
+	ES:BX -> buffer containing characters to be sent
 Return: CF clear if successful
 	CF set on error
 	???
@@ -76206,8 +78387,10 @@ SeeAlso: AX=0000h,AH=12h,AH=19h
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - READ DATA ON A VIRTUAL CIRCUIT
 	AH = 19h
 	AL = virtual circuit number
-	???
-Return: ???
+	CX = number of characters to read
+	ES:BX -> buffer for received characters
+Return: CX = 0000h if failed
+	CX = nonzero (possibly number of characters received) if successful
 Note:	this function is also supported by TelAPI
 SeeAlso: AX=0100h,AH=12h,AH=18h
 --------S-6B1A-------------------------------
@@ -76223,11 +78406,11 @@ INT 6B - NPC NCSI EXTENDED SERIAL I/O - TRANSMIT STATUS
 Return: ???
 SeeAlso: AH=12h,AH=1Ah
 --------S-6B1C-------------------------------
-INT 6B - NPC NCSI EXTENDED SERIAL I/O - RECEIVE BUFFER CONTROL
+INT 6B - NPC NCSI EXTENDED SERIAL I/O - CLEAR RECEIVE BUFFER
 	AH = 1Ch
-	???
-Return: ???
-SeeAlso: AH=1Dh,AH=1Eh
+	AL = circuit number
+Return: nothing
+SeeAlso: AH=1Dh"NCSI",AH=1Eh"NCSI"
 --------S-6B1D-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - TRANSMIT BUFFER CONTROL
 	AH = 1Dh
@@ -76257,9 +78440,22 @@ Note:	CLIENT.EXE returns CF set/AL=F9h if AH is not 00h to 21h on entry
 --------S-6B21-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - QUERY NAME SERVICE
 	AH = 21h
-	???
-Return: ???
-SeeAlso: AH=14h
+	AL = virtual circuit number
+	CL = ??? (00h or 01h)
+	ES:BX -> buffer for service name structure (see below)
+Return: CF clear if successful
+	    ES:BX buffer filled
+	CF set on error
+Note:	a program should call this function after allocating a virtual circuit
+	  and check that the general name matches the requested service
+SeeAlso: AH=14h"NCSI"
+
+Format of service name structure:
+Offset	Size	Description
+ 00h	WORD	buffer length
+ 02h  8 BYTEs	service name
+ 0Ah  8 BYTEs	general name
+ 12h  8 BYTEs	specific name
 ----------6B6B-------------------------------
 INT 6B - Tandy SCHOOLMATE PLUS - API
 	AH = 6Bh
@@ -76306,7 +78502,7 @@ Format of signature area:
 Offset	Size	Description
  -5	BYTE	major version number
  -4	BYTE	minor version number
- -3   3 BYTEs	signature (ASCII "SCH")
+ -3   3 BYTEs	signature (ASCII "DLL")
 --------N-6E---------------------------------
 INT 6E - DECnet DOS - DECnet NETWORK PROCESS API
 Notes:	this is the main DECnet DOS access, and is described in Digital manual
@@ -77709,7 +79905,7 @@ Return: AX = status
 		BX = X coordinate
 		CX = Y coordinate
 	    0004h button pick
-	        BX = button number
+		BX = button number
 	    0005h button and coordinates
 		BX = button number
 		CX = X coordinate
@@ -79308,6 +81504,12 @@ Offset	Size	Description
  -08h	DWORD	pointer to previous INT 7D handler
  -04h	DWORD	pointer to ??? data
  00h		HyperPAD INT 7D handler
+----------7D---------------------------------
+INT 7D - IBM DOS 6.1 E.EXE - ???
+Note:	E.EXE checks whether this interrupt is in use (not 0000h:0000h),
+	  and if it is used, attempts to load E55VGA.EX instead of the 
+	  default E.EX overlay.	 However, E55VGA.EX is not included in
+	  IBM DOS 6.1.
 ----------7D00-------------------------------
 INT 7D - SCSILink - RESET SCSI BUS
 	AH = 00h
@@ -81333,40 +83535,161 @@ Note:	this vector and INT 81 through INT ED are modified but not restored by
 	  Direct Access v4.0, and may be left dangling by other programs
 	  written with the same version of compiled BASIC
 SeeAlso: INT 81"BASIC"
+--------s-80----BL00-------------------------
+INT 80 - SBSIM - "STARTSND" - START SOUND ON SPECIFIED DRIVER
+	BL = 00h
+	BH = driver number (01h = FM, 02h=DDBV, 03h=memvoice, 05h=MIDI)
+Return: AX = initialization result (see below)
+Program: SBSIM is Creative Labs' SoundBlaster Simplified Interface Module,
+	  which provides access to multiple drivers for the SoundBlaster
+	  board through a single interface
+Note:	SBSIM may use any interrupt in the range 80h to BFh; the installation
+	  check consists of testing for the signature "SBSIM" at offset 103h
+	  in the interrupt handler's segment.
+SeeAlso: INT 80/BL=01h"SBSIM",INT 80/BL=02h"SBSIM",INT 80/BL=03h"SBSIM"
+SeeAlso: INT 80/BX=0000h"SBSIM"
+
+Values for error code:
+ 01h	busy--currently in use
+ 02h	bad driver specified
+ 03h	invalid function
+ 04h	voice process already active
+ 05h	couldn't start CT-VOICE
+ 06h	couldn't start CTVDSK
+ 07h	invalid SBSIM handle
+ 08h	buffer not initialized yet
+ 09h	bad filename
+ 0Ah	bad file handle
+ 0Bh	driver not started yet
+ 0Ch	XMS driver not installed
+ 0Dh	no free SBSIM handles
+ 0Eh	bad file type
+ 0Fh	couldn't free XMS block
+ 10h	invalid source selected
+ 11h	get pan position failed
+ 12h	set pan position failed
+ 13h	set volume failed
+ 14h	couldn't start fade/pan
+ 15h	couldn't stop fade/pan
+ 16h	couldn't pause fade/pan
+ 17h	not a fade/pan operation
+ 18h	bad mode for fade/pan
+ 19h	couldn't start fade/pan
+ 1Ah	source not fading/panning
+ 1Bh	FM or MIDI already playing
+ 1Ch	bad MIDI mapper format
+--------s-80----BL01-------------------------
+INT 80 - SBSIM - "PLAYSND" - PLAY MUSIC/VOICE ON SELECTED DRIVER
+	BL = 01h
+	BH = driver number (01h = FM, 02h=DDBV, 03h=memvoice, 05h=MIDI)
+Return: AX = result
+SeeAlso: INT 80/BL=00h"SBSIM",INT 80/BL=02h"SBSIM",INT 80/BL=04h"SBSIM"
+--------s-80----BL02-------------------------
+INT 80 - SBSIM - "STOPSND" - STOP MUSIC/VOICE ON SELECTED DRIVER
+	BL = 02h
+	BH = driver number (01h = FM, 02h=DDBV, 03h=memvoice, 05h=MIDI)
+Return: nothing
+SeeAlso: INT 80/BL=00h"SBSIM",INT 80/BL=01h"SBSIM",INT 80/BL=03h"SBSIM"
+--------s-80----BL03-------------------------
+INT 80 - SBSIM - "PAUSESND" - TEMPORARILY PAUSE PLAYBACK ON SELECTED DRIVER
+	BL = 03h
+	BH = driver number (01h = FM, 02h=DDBV, 03h=memvoice, 05h=MIDI)
+Return: nothing
+SeeAlso: INT 80/BL=00h"SBSIM",INT 80/BL=02h"SBSIM",INT 80/BL=04h"SBSIM"
+SeeAlso: INT 80/BL=05h
+--------s-80----BL04-------------------------
+INT 80 - SBSIM - "RESUMESND" - RESTART PLAYBACK ON SELECTED DRIVER
+	BL = 04h
+	BH = driver number (01h = FM, 02h=DDBV, 03h=memvoice, 05h=MIDI)
+Return: nothing
+SeeAlso: INT 80/BL=00h"SBSIM",INT 80/BL=03h"SBSIM",INT 80/BL=05h"SBSIM"
+--------s-80----BL05-------------------------
+INT 80 - SBSIM - "GETSNDSTAT" - GET DRIVER'S STATUS
+	BL = 05h
+	BH = driver number (01h = FM, 02h=DDBV, 03h=memvoice, 05h=MIDI)
+Return: AX = status
+SeeAlso: INT 80/BL=00h"SBSIM",INT 80/BL=01h"SBSIM",INT 80/BL=03h"SBSIM"
 --------s-80----BX0000-----------------------
 INT 80 - SoundBlaster SBFM driver - GET VERSION
 	BX = 0000h
 Return: ???
 Note:	SBFM installs at a free interrupt in the range 80h through BFh
-SeeAlso: BX=0008h,INT 2F/AX=FBFBh
+SeeAlso: BX=0008h"SBFM",INT 2F/AX=FBFBh
+--------s-80----BX0000-----------------------
+INT 80 - SBSIM - "QUERYVERSION" - GET VERSION
+	BX = 0000h
+Return: AX = version (AH = major, AL = minor)
+Program: SBSIM is Creative Labs' SoundBlaster Simplified Interface Module,
+	  which provides access to multiple drivers for the SoundBlaster
+	  board through a single interface
+Note:	SBSIM may use any interrupt in the range 80h to BFh; the installation
+	  check consists of testing for the signature "SBSIM" at offset 103h
+	  in the interrupt handler's segment.
+SeeAlso: BX=0001h"SBSIM",BX=0005h"SBSIM",INT 80/BL=00h"SBSIM"
+Index:	installation check;SBSIM|installation check;SoundBlaster
 --------s-80----BX0001-----------------------
 INT 80 - SoundBlaster SBFM driver - SET MUSIC STATUS BYTE ADDRESS
 	BX = 0001h
 	DX:AX -> music status byte
-SeeAlso: BX=0000h,BX=0002h,BX=0003h
+SeeAlso: BX=0000h"SBFM",BX=0002h"SBFM",BX=0003h"SBFM"
+--------s-80----BX0001-----------------------
+INT 80 - SBSIM - "QUERYDRIVERS" - CHECK DRIVERS INSTALLED
+	BX = 0001h
+Return: AX = bit flags for loaded drivers (see below)
+SeeAlso: BX=0000h"SBSIM",BX=0002h"SBSIM",BX=0005h"SBSIM",INT 80/BL=00h"SBSIM"
+
+Bitfields for loaded drivers:
+ bit 0	FM
+ bit 1	double disk-buffered voice driver (DDBV)
+ bit 2	memory voice driver
+ bit 3	auxiliary driver (mixer)
+ bit 4	MIDI
 --------s-80----BX0002-----------------------
 INT 80 - SoundBlaster SBFM driver - SET INSTRUMENT TABLE
 	BX = 0002h
 	CX = number of instruments
 	DX:AX -> instrument table
-SeeAlso: BX=0000h,BX=0001h,BX=0005h
+SeeAlso: BX=0000h"SBFM",BX=0001h"SBFM",BX=0005h"SBFM"
+--------s-80----BX0002-----------------------
+INT 80 - SBSIM - GETADDRESS" - GET SELECTED DRIVER'S ENTRY POINT
+	BX = 0002h
+	AX = driver (00h = FM,01h = DDBV,02h = memvoice,03h = mixer,04h = MIDI)
+Return: CF clear if successful
+	    DX:AX = entry point
+	CF set on error
+SeeAlso: BX=0000h"SBSIM",BX=0001h"SBSIM",BX=0005h"SBSIM",INT 80/BL=00h"SBSIM"
 --------s-80----BX0003-----------------------
 INT 80 - SoundBlaster SBFM driver - SET SYSTEM CLOCK RATE
 	BX = 0003h
 	AX = clock rate divisor (1193180 / desired frequency in Hertz)
 	    FFFFh to restore to 18.2 Hz
-SeeAlso: BX=0000h,BX=0001h,BX=0004h
+SeeAlso: BX=0000h"SBFM",BX=0001h"SBFM",BX=0004h"SBFM"
 --------s-80----BX0004-----------------------
 INT 80 - SoundBlaster SBFM driver - SET DRIVER CLOCK RATE
 	BX = 0004h
 	AX = driver clock rate divisor (1193180 / frequency in Hertz)
 Note:	default frequency is 96 Hz
-SeeAlso: BX=0000h,BX=0003h
+SeeAlso: BX=0000h"SBFM",BX=0003h"SBFM"
 --------s-80----BX0005-----------------------
 INT 80 - SoundBlaster SBFM driver - TRANSPOSE MUSIC
 	BX = 0005h
 	AX = semi-tone offset
-SeeAlso: BX=0000h,BX=0002h,BX=0006h
+SeeAlso: BX=0000h"SBFM",BX=0002h"SBFM",BX=0006h"SBFM"
+--------s-80----BX0005-----------------------
+INT 80 - SBSIM - "GETBUFFERINFO" - GET DRIVER'S BUFFER ADDRESS
+	BX = 0005h
+	AX = driver (00h = FM, 01h = DDB Voice, 04h = MIDI)
+Return: CF clear if successful
+	    DX:AX -> buffer
+	    CX = buffer size in K
+	CF set on error
+Program: SBSIM is Creative Labs' SoundBlaster Simplified Interface Module,
+	  which provides access to multiple drivers for the SoundBlaster
+	  board through a single interface
+Note:	SBSIM may use any interrupt in the range 80h to BFh; the installation
+	  check consists of testing for the signature "SBSIM" at offset 103h
+	  in the interrupt handler's segment.
+SeeAlso: BX=0000h"SBSIM",BX=0001h"SBSIM",BX=0002h"SBSIM",INT 80/BL=00h"SBSIM"
 --------s-80----BX0006-----------------------
 INT 80 - SoundBlaster SBFM driver - PLAY MUSIC
 	BX = 0006h
@@ -81374,40 +83697,64 @@ INT 80 - SoundBlaster SBFM driver - PLAY MUSIC
 Return: AX = status
 	    0000h successful
 	    0001h music already active
-SeeAlso: BX=0000h,BX=0007h,BX=000Ah,INT 1A/AX=FF04h
+SeeAlso: BX=0000h"SBFM",BX=0007h"SBFM",BX=000Ah"SBFM",INT 1A/AX=FF04h
 --------s-80----BX0007-----------------------
 INT 80 - SoundBlaster SBFM driver - STOP MUSIC
 	BX = 0007h
 Return: AX = status
 	    0000h successful
 	    0001h music not active
-SeeAlso: BX=0000h,BX=0006h,BX=0009h,INT 1A/AX=FF05h
+SeeAlso: BX=0000h"SBFM",BX=0006h"SBFM",BX=0009h"SBFM",INT 1A/AX=FF05h
 --------s-80----BX0008-----------------------
 INT 80 - SoundBlaster SBFM driver - RESET DRIVER
 	BX = 0008h
 Return: AX = status
 	    0000h successful
 	    0001h music is active
-SeeAlso: BX=0000h
+SeeAlso: BX=0000h"SBFM"
 --------s-80----BX0009-----------------------
 INT 80 - SoundBlaster SBFM driver - PAUSE MUSIC
 	BX = 0009h
 Return: AX = status
 	    0000h successful
 	    0001h no music active
-SeeAlso: BX=0000h,BX=0007h,BX=000Ah,INT 1A/AX=FF01h
+SeeAlso: BX=0000h"SBFM",BX=0007h"SBFM",BX=000Ah"SBFM",INT 1A/AX=FF01h
 --------s-80----BX000A-----------------------
 INT 80 - SoundBlaster SBFM driver - RESUME MUSIC
 	BX = 000Ah
 Return: AX = status
 	    0000h successful
 	    0001h no music paused
-SeeAlso: BX=0000h,BX=0006h,BX=0009h
+SeeAlso: BX=0000h"SBFM",BX=0006h"SBFM",BX=0009h"SBFM"
 --------s-80----BX000B-----------------------
 INT 80 - SoundBlaster SBFM driver - SET USER-DEF TRAP FOR SYSTEM-EXCLUSIVE CMDS
 	BX = 000Bh
 	DX:AX -> trap routine
-SeeAlso: BX=0000h
+SeeAlso: BX=0000h"SBFM"
+--------s-80----BX0400-----------------------
+INT 80 - SBSIM - "GETVOLUME" - GET SOURCE'S VOLUME
+	BX = 0400h
+	AX = sound source (see below)
+Return: CF clear if successful
+	    AX = volume
+	CF set on error
+	    AX = error code (see INT 80/BL=00h)
+SeeAlso: BX=0401h"SBSIM"
+
+Values for sound source:
+ 00h	master volume
+ 01h	voice
+ 02h	FM
+ 03h	CD
+ 04h	line in
+ 05h	microphone
+--------s-80----BX0401-----------------------
+INT 80 - SBSIM - "SETVOLUME" - SET SOURCE'S VOLUME
+	BX = 0401h
+	AX = sound source (see INT 80/BX=0400h)
+	DX = new volume
+Return: AX = result (0000h = success) (see also INT 80/BL=00h)
+SeeAlso: BX=0400h"SBSIM"
 --------N-8001-------------------------------
 INT 80 - QPC Software PKTINT.COM - INITIALIZE
 	AH = 01h
@@ -84405,6 +86752,7 @@ SeeAlso: AH=06h
 INT F8 - reserved for user interrupt
 --------h-F8---------------------------------
 INT F8 - TANDY??? - 100 HZ INTERRUPT
+Note:	this vector is not used on the Tandy 1000TL
 SeeAlso: INT FA"USART"
 --------T-F8---------------------------------
 INT F8 - DoubleDOS - ???
@@ -84416,6 +86764,7 @@ INT F9 - DoubleDOS - ???
 INT FA - reserved for user interrupt
 --------h-FA---------------------------------
 INT FA - TANDY??? - SERIAL PORT USART INTERRUPT
+Note:	this vector is not used on the Tandy 1000TL
 SeeAlso: INT F8"100 HZ",INT FB"USART"
 --------T-FA---------------------------------
 INT FA - DoubleDOS - TURN OFF TIMESHARING
@@ -84513,17 +86862,32 @@ SeeAlso: INT 40"Z100"
 INT FF U - QEMM-386.SYS v6.0+ - internal
 Notes:	requires that a byte in the conventional-memory stub be set to the
 	  desired function number (00h through 0Ch)
+
+Functions supported by QEMM:
+ 00h	reflect back to Virtual86-mode interrupt handler (default)
+ 01h	???
+ 02h	access DR7???
+ 03h	QPI upcall (see INT 67/AH=3Fh)
+ 04h	???
+ 05h	???
+ 06h	INT 15/AH=87h
+ 07h	EMS services (see INT 67/AH=40h-5Dh)
+ 08h	???
+ 09h	QEMM exception handler
+ 0Ah	XMS services (see INT 2F/AX=4310h)
+ 0Bh	Virtual DMA Services (see INT 4B/AX=8102h)
+ 0Ch	???
 --------v-FF---------------------------------
 INT FF - VIRUS - "Violetta" - ???
 Note:	used but not chained by virus
 SeeAlso: INT E0"VIRUS",INT F1"VIRUS"
 --------!---FILELIST-------------------------
 Please redistribute the following files unmodified as a group, in a trio of
-archives named INTER38A through INTER38C (preferably the original authenticated
+archives named INTER39A through INTER39C (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
-	INTERRUP.A	INT 00 through INT 14/7F
-	INTERRUP.B	INT 14/80 through INT 15
+	INTERRUP.A	INT 00 through INT 14/0F
+	INTERRUP.B	INT 14/10 through INT 15
 	INTERRUP.C	INT 16 through INT 21/41
 	INTERRUP.D	INT 21/42 through INT 21/7F
 	INTERRUP.E	INT 21/80 through INT 21/FF
@@ -84541,7 +86905,7 @@ PKZIP archives):
 	MEMORY.LST	format of the BIOS data area
 	PORTS.LST	a listing of I/O ports
 	COMBINE.BAT	combine the pieces of the list into a single file
-The following files should be distributed in an archive called INTER37D:
+The following files should be distributed in an archive called INTER39D:
 	INT.COM		invoke interrupts from commandline
 	INT2HLP.BAT	Perl script to convert list into QuickHelp database
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
@@ -84552,7 +86916,7 @@ The following files should be distributed in an archive called INTER37D:
 	INTLIST.ICO	Windows icon for INTERVUE
 	INTPRINT.C	source code for INTPRINT
 	RB2NG.*		convert list into Norton Guides database
-This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994 Ralf Brown
 --------!---CONTACT_INFO---------------------
 Internet: ralf@telerama.lm.com	!!NOTE NEW DOMAIN NAME!!
 UUCP: {uunet,harvard}!telerama.lm.com!ralf

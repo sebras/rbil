@@ -1,5 +1,5 @@
 GLOSSARY
-Last Change 10/24/93.
+Last Change 2/6/94.
 
 A20
 	(Address line 20) The 80286 and higher CPUs allow addresses in
@@ -126,7 +126,7 @@ Callout
 	A call made by the operating system, operating environment, or
 an application program on various events, which may be intercepted by
 other software which is interested in the current state of the system.
-See also External Device Interface.  See also Callback.
+See also Callback, External Device Interface.
 
 CAS
 	see Communicating Applications Specification
@@ -294,6 +294,13 @@ controller to indicate that the interrupt has been handled by software
 and that new interrupts of the same or lower priority may now be signalled
 by the interrupt controller.
 
+ESDI
+	(Enhanced Small Device Interface) A disk drive interface type
+which was briefly popular before IDE took over.  An ESDI drive can
+transfer data between the drive and controller at 10, 15, or 20
+megabits per second, which is faster than an MFM or RLL controller but
+slower than what is possible with an IDE or SCSI drive.  See also IDE.
+
 Expanded Memory Specification
 	A specification devised by Lotus, Intel, and Microsoft for
 accessing more than one megabyte of memory by bank-switching additional
@@ -303,6 +310,11 @@ Extended BIOS Data Area
 	A block of memory, typically the 1K at the top of conventional
 memory, which is used to store additional data for use by the BIOS which
 does not fit into the 256-byte data area at segment 0040h.
+
+Extended File Control Block
+	A DOS File Control Block which has had an additional seven
+bytes prepended to permit control of file attributes (which are stored
+in the appendage).  See also FCB.
 
 Extended Memory
 	Memory beyond the one megabyte address which is available only
@@ -393,6 +405,12 @@ megabyte as the 8088 and 8086 do.  See also A20, INT 2Fh Functions
 HMA
 	see High Memory Area
 
+IDE
+	(Integrated Drive Electronics) A type of disk drive interface
+which essentially extends the PC's expansion bus all the way to the
+drive and places the drive controller on the disk drive itself.  See
+also ESDI.
+
 IFS
 	see Installable File System
 
@@ -401,6 +419,14 @@ Installable File System
 be used by DOS.  In most ways, an IFS is very similar to a networked
 drive, although an IFS would typically be local rather than remote.
 See also INT 21h Function 52h.
+
+IP
+	(Internet Protocol) The lower level (transport layer) of the
+TCP/IP protocol suite.  See also TCP, TCP/IP.
+
+IPC
+	(Inter-Process Communication) Any one of numerous methods for
+allowing two or more separate processes to exchange data.
 
 IPX
 	(Internetwork Packet Exchange) A low-level layer of Novell's
@@ -440,6 +466,10 @@ LPT
 MCB
 	see Memory Control Block
 
+MCGA
+	(Multi-Color Graphics Array) The low-end color adapter offered
+in IBM's early PS/2 series machines.
+
 MDA
 	(Monochrome Display Adapter) A text-only video adapter introduced
 together with the original IBM PC.  See also CGA, HGC.
@@ -472,6 +502,11 @@ architects of MSDOS 2.0.
 
 NCB
 	see Network Control Block
+
+NDIS
+	(Network Driver Interface Specification) A hardware-independent
+network interface developed by Microsoft and 3com.  See also Packet
+Driver, TCP/IP.
 
 NetBIOS
 	One of a number of low-level device-independent network
@@ -512,8 +547,17 @@ such as EEPROM or bubble memory.
 NVRAM
 	see Non-Volatile RAM
 
+ODI
+	(Open Data-link Interface) A hardware-independent network
+interface developed by Novell, Inc.  See also NDIS, Packet Driver.
+
 Open File Table
 	see Job File Table
+
+Packet Driver
+	Any one of the numerous drivers conforming to FTP Software's
+Packet Driver Specification, which provides a hardware-independent
+network interface.  See also NDIS, ODI.
 
 Park
 	To move a hard disk's read/write heads to a position in which
@@ -595,6 +639,12 @@ minimum and maximum distances between one bits (flux transitions).  The
 variant normally called RLL is RLL-2,7; RLL-1,7 and RLL-3,9 are also in
 use.  MFM is in effect RLL-1,3.  See also FM, MFM.
 
+SCSI
+	(Small Computer Systems Interface) A system-independent
+expansion bus typically used to connect hard disks, tape drives, and
+CD-ROMs to a computer.  A host adapter connects the SCSI bus to the
+computer's own bus.  See also ESDI, IDE.
+
 SDA
 	see Swappable Data Area
 
@@ -621,6 +671,14 @@ System File Table
 maintain the state of an open file for the DOS 2+ handle functions,
 just as an FCB maintains the state for DOS 1.x functions.  See also INT
 21h Function 52h.
+
+TCP
+	(Transmission Control Protocol) A higher level (session layer)
+of the TCP/IP protocol suite.  See also IP, TCP/IP.
+
+TCP/IP
+	The protocol suite originally developed by DARPA for use on its
+ARPAnet network, which is now known as the Internet.  See also IP, TCP.
 
 TSR
 	(Terminate and Stay Resident) A program which remains in memory

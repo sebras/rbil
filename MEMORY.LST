@@ -1,5 +1,5 @@
 [This file was originally provided by Robin Walker.  --Ralf]
-Last Update: 10/13/93
+Last Update: 2/6/94
 
 Format of BIOS Data Segment at segment 40h:
 		{items in curly braces not documented by IBM}
@@ -44,8 +44,10 @@ Offset	Size	Description
 		    bit 1: real-time clock installed
  13h	WORD	Base memory size in kbytes (0-640)
  15h	BYTE	[AT] {Manufacturing test scratch pad}
+		[Compaq Deskpro 386] previous scan code
  16h	BYTE	[AT] {Manufacturing test scratch pad}
 		[PS/2 Mod 30] {BIOS control flags}
+		[Compaq Deskpro 386] keyclick loudness (00h-7Fh)
  17h	BYTE	Keyboard status flags 1:
 		    bit 7 =1 INSert active
 		    bit 6 =1 Caps Lock active

@@ -1,5 +1,5 @@
 Interrupt List, part 8 of 10
-This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994 Ralf Brown
 --------D-30---------------------------------
 INT 30 - (NOT A VECTOR!) - DOS 1+ - FAR JMP instruction for CP/M-style calls
    the CALL 5 entry point does a FAR jump to here
@@ -631,8 +631,8 @@ Return: CF clear
 	CL = processor type (02h=80286, 03h=80386, 04h=80486)
 	DH = curr value of virtual master interrupt controller base interrupt
 	DL = curr value of virtual slave interrupt controller base interrupt
-BUG:	the Windows NT March 1993 beta reports version 0090h (0.144); this has
-	  been fixed in the final release
+BUG:	Windows NT versions from the March 1993 beta to at least the Final
+	  release with fixes to CSD002 report version 0090h (0.144)
 SeeAlso: AX=0401h,INT 21/AX=250Ch,INT 2F/AX=1687h,INT 67/AX=DE0Ah
 --------E-310401-----------------------------
 INT 31 P - DPMI 1.0+ - GET DPMI CAPABILITIES
@@ -2736,18 +2736,105 @@ Offset	Size	Description
  01h	DWORD	pointer to data in either I/O processor or Tube processor
  05h	DWORD	number of bytes to be transferred
  09h	DWORD	transfer address
---------G-4112-------------------------------
-INT 41 P - MS Windows debugging kernel - "OutputDebugString"
-	AH = 12h
-	???
-Return: ???
-SeeAlso: AH=50h
---------G-4150-------------------------------
+--------G-410000-----------------------------
+INT 41 CPU - MS Windows debugging kernel - OUTPUT CHARACTER FOR USER
+	AX = 0000h
+	DS:DX -> character
+Note:	the kernel calls this function when it wants the user program to
+	  output a character
+SeeAlso: AX=0001h
+--------G-410001-----------------------------
+INT 41 CPU - MS Windows debugging kernel - INPUT CHARACTER
+	AX = 0001h
+Return: AL = character	
+Note:	the kernel calls this function when it needs to input a character
+SeeAlso: AX=0000h
+--------G-41000D-----------------------------
+INT 41 CPU - MS Windows debugging kernel - TASK GOING OUT
+	AX = 000Dh
+SeeAlso: AX=000Eh
+--------G-41000E-----------------------------
+INT 41 CPU - MS Windows debugging kernel - TASK COMING IN
+	AX = 000Eh
+SeeAlso: AX=000Dh
+--------G-410012-----------------------------
+INT 41 CPU - MS Windows debugging kernel - "OutputDebugString"
+	AX = 0012h
+	DS:SI -> string (Windows 3.0)
+	ES:SI -> string (Windows 3.1)
+Return: nothing???
+Note:	this function is called by the kernel when it wants to output a
+	  string through the debugger
+SeeAlso: AH=50h,INT 68/AH=47h
+--------G-41004F-----------------------------
+INT 41 CPU - MS Windows debugging kernel - DEBUGGER INSTALLATION CHECK
+	AX = 004Fh
+Return: AX = F386h if debugger is present
+--------G-410050-----------------------------
 INT 41 P - MS Windows debugging kernel - "DefineDebugSegment"
-	AH = 50h
+	AX = 0050h
+	BX = segment number in executable (0-based)
+	CX = selector
+	DX = instance handle
+	SI = segment flags (0=code, 1=data)
+	ES:DI -> module name of owner
+Return: ???
+SeeAlso: AX=0012h,AX=004Fh
+--------G-410051-----------------------------
+INT 41 CPU - MS Windows debugging kernel - MOVE SEGMENT
+	AX = 0051h
 	???
 Return: ???
-SeeAlso: AH=12h
+SeeAlso: AX=050h,AX=0052h
+--------G-410052-----------------------------
+INT 41 CPU - MS Windows debugging kernel - FREE SEGMENT
+	AX = 0052h
+	BX = freed selector
+SeeAlso: AX=0050h,AX=0051h,AX=005Ch
+--------G-410059-----------------------------
+INT 41 CPU - MS Windows debugging kernel - LOAD TASK
+	AX = 0059h
+	???:BX = CS:IP of new task's starting point
+--------G-41005C-----------------------------
+INT 41 CPU - MS Windows debugging kernel - FREE INITIAL SEGMENT
+	AX = 005Ch
+	BX = freed selector
+Note:	called only when KERNEL starts, once for CS and once for the DS alias
+	  to CS
+SeeAlso: AX=0052h
+--------G-410060-----------------------------
+INT 41 CPU - MS Windows debugging kernel -  END OF SEGMENT LOAD
+	AX = 0060h
+	???
+Return: ???
+SeeAlso: AX=0061h
+--------G-410061-----------------------------
+INT 41 CPU - MS Windows debugging kernel - END OF SEGMENT DISCARD
+	AX = 0061h
+	???
+Return: ???
+SeeAlso: AX=0060h
+--------G-410062-----------------------------
+INT 41 CPU - MS Windows debugging kernel - APPLICATION TERMINATING
+	AX = 0062h
+STACK:	BYTE	exit code
+Return: ???
+	STACK unchanged???
+SeeAlso: AX=0064h
+--------G-410063-----------------------------
+INT 41 CPU - MS Windows debugging kernel - ASYNCHRONOUS STOP (Ctrl-Alt-SysReq)
+	AX = 0063h
+--------G-410064-----------------------------
+INT 41 CPU - MS Windows debugging kernel - DLL LOADED
+	AX = 0064h
+	CX:BX = DLL entry point CS:IP
+	SI = module handle
+SeeAlso: AX=0062h,AX=0065h
+--------G-410065-----------------------------
+INT 41 CPU - MS Windows debugging kernel - MODULE REMOVED
+	AX = 0065h
+	ES = module handle
+SeeAlso: AX=0064h
 --------V-42---------------------------------
 INT 42 - VIDEO - RELOCATED DEFAULT INT 10 VIDEO SERVICES (EGA,VGA)
 SeeAlso: INT 10
@@ -4145,6 +4232,11 @@ SeeAlso: INT 50"DESQview",INT 58"DESQview"
 --------H-54---------------------------------
 INT 54 - IRQ4 relocated by IBM 3278 emulation control program, OS/2 v1.x
 SeeAlso: INT 51"IBM 3278",INT 51"OS/2"
+----------545400-----------------------------
+INT 54 U - Toshiba PCMCIA2 - INSTALLATION CHECK
+	AX = 5400h
+Return: AX = 0054h if installed
+	    CX:DX -> INT function handler
 --------H-55---------------------------------
 INT 55 - IRQ5 relocated by DESQview
 Note:	this is the default location for older versions; see INT 50"DESQview"

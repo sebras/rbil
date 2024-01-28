@@ -1,5 +1,5 @@
 Interrupt List, part 4 of 10
-This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994 Ralf Brown
 --------D-2142-------------------------------
 INT 21 - DOS 2+ - "LSEEK" - SET CURRENT FILE POSITION
 	AH = 42h
@@ -44,7 +44,7 @@ Return: CF clear if successful
 Notes:	under the FlashTek X-32 DOS extender, the filename pointer is in DS:EDX
 	under DR-DOS 3.41 and 5.0, attempts to change the subdirectory bit are
 	  simply ignored without an error
-SeeAlso: AX=4301h,AX=4310h,AH=B6h,INT 2F/AX=110Fh
+SeeAlso: AX=4301h,AX=4310h,AH=71h,AH=B6h,INT 2F/AX=110Fh
 --------D-214301-----------------------------
 INT 21 - DOS 2+ - "CHMOD" - SET FILE ATTRIBUTES
 	AX = 4301h
@@ -66,7 +66,7 @@ Notes:	will not change volume label or directory attribute bits, but will
 	DOS 5.0 SHARE will close the file if it is currently open in sharing-
 	  compatibility mode, otherwise a sharing violation critical error is
 	  generated if the file is currently open
-SeeAlso: AX=4300h,AX=4311h,INT 2F/AX=110Eh
+SeeAlso: AX=4300h,AX=4311h,AH=71h,INT 2F/AX=110Eh
 
 Bitfields for file attributes:
  bit 7	shareable (Novell NetWare)
@@ -78,6 +78,11 @@ Bitfields for file attributes:
  bit 2	system
  bit 1	hidden
  bit 0	read-only
+--------D-214302-----------------------------
+INT 21 - DOS 7 (Chicago) - GET VOLUME INFORMATION
+	AX = 4302h
+	details not yet available
+SeeAlso: AH=71h,AH=72h
 --------O-214302-----------------------------
 INT 21 - DR-DOS 3.41+ internal - GET ACCESS RIGHTS
 	AX = 4302h
@@ -119,7 +124,7 @@ Bitfields for access rights:
 INT 21 - DR-DOS 3.41+ internal - SET ACCESS RIGHTS AND PASSWORD
 	AX = 4303h
 	CX = access rights
-	     bits 11-0: access rights (see AX=4302h)
+	     bits 11-0: access rights (see AX=4302h"DR-DOS")
 	     bit 15: new password is to be set
 	DS:DX -> ASCIZ pathname
 	[DTA] = new password if CX bit 15 is set (blank-padded to 8 characters)
@@ -131,7 +136,7 @@ Notes:	if the file is already protected, the old password must be added after
 	this function is documented in DR-DOS 6.0 and corresponds to the
 	  "Get/Set File Attributes" function, subfunction 3, documented in
 	  Concurrent DOS.
-SeeAlso: AH=0Fh,AH=17h,AX=4302h,AX=4305h,AX=4454h
+SeeAlso: AH=0Fh,AH=17h,AX=4302h"DR-DOS",AX=4305h,AX=4454h
 --------O-214304-----------------------------
 INT 21 U - DR-DOS 5.0-6.0 internal - GET ENCRYPTED PASSWORD
 	AX = 4304h
@@ -861,15 +866,33 @@ Offset	Size	Description
 INT 21 - Advanced SCSI Programming Interface (ASPI) - INTERFACE
 	AX = 4402h
 	BX = file handle for device "SCSIMGR$"
-	CX = 0004h
-	DS:DX -> buffer for function address
+	CX = 0004h or 0005h (see notes)
+	DS:DX -> buffer for result (see below), set to zeros before call
 Return: CF clear if successful
-	    AX = 0004h
+	    AX = 0004h or 0005h (see notes)
 	CF set on error
 	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
-Note:	the function address is called with the address of a SCSI Request
+Note:	the variant of the call requesting five bytes is an UNDOCUMENTED
+	  extension supported by Adaptec's ASPI2DOS.SYS, ASPI4DOS.SYS, and
+	  ASPI7DOS.SYS; if made of a host manager which does not support the
+	  variant, only four bytes will be returned.  If the variant is
+	  supported, Adaptec's WINASPI.DLL assumes that the host manager is
+	  an "advanced" one which operates in either real or protected mode
+	  (and thus does not require a DPMI INT 31/AX=0301h call to be invoked
+	  from protected mode).	 Support of the five-byte variant also appears
+	  to imply that an advanced ASPI host manager uses no temporary storage
+	  space except the SRB and the stack, and that it is fully reentrant.
+	if called with a standard request for four bytes, even Adaptec's
+	  advanced drivers return only the requested four bytes containing the
+	  ASPI entry point address
+	the function address is called with the address of a SCSI Request
 	  Block on the stack and the caller must clean up the stack
 SeeAlso: AX=440Ch"ASPITAPE",INT 11/AH=FFh"WD7000"
+
+Format of IOCTL result:
+Offset	Size	Description
+ 00h	DWORD	function address
+ 04h	BYTE	number of SCSI host adapters supported by host manager
 
 Format of SCSI Request Block (64 bytes):
 Offset	Size	Description
@@ -2374,6 +2397,28 @@ Offset	Size	Description
 		(return) 4F4Bh ("OK") if successful, else unchanged
  05h  5 BYTEs	padding
 --------d-214404-----------------------------
+INT 21 - DBLSPACE.BIN 6.2 - IOCTL - GET ??? FOR SPECIFIED DRIVE
+	AX = 4404h
+	BL = drive number (00h = default, 01h = A:, etc)
+	CX = size of DSPACKET structure (ignored in DOS 6.2)
+	DS:DX -> DSPACKET structure (see below)
+Return: CF clear if IOCTL successful -- check DSPACKET for actual status
+	    AX = number of bytes actually transferred
+	CF set on error
+	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+SeeAlso: AX=4405h"DBLSPACE",INT 2F/AX=4A11h/BX=0000h
+
+Format of DSPACKET structure:
+Offset	Size	Description
+ 00h	WORD	signature 444Dh ("DM")
+ 02h	BYTE	command code
+		53h ('S') get ??? for specified drive
+ 03h	WORD	result code
+		(return) 4F4Bh ("OK") if successful, else unchanged
+ 05h	DWORD	(return) pointer to 96-byte ??? data
+ 09h	DWORD	(return) pointer to ??? data
+ 0Dh  3 BYTEs	reserved
+--------d-214404-----------------------------
 INT 21 U - xDISK v3.31 - CONFIGURE
 	AX = 4404h
 	BL = drive number (00h = default, 01h = A:, etc)
@@ -2947,6 +2992,13 @@ Offset	Size	Description
  00h	BYTE	special-function field (must be zero)
  01h	BYTE	disk-access flag, nonzero if access allowed by driver
 
+Format of parameter block for function52h:
+ 00h	BYTE	(call) unused???
+		(return) 00h if flast/ATA drive but no card inserted
+			unchanged otherwise
+Note:	the absense of a flash card should be tested by checking the DOS error
+	  code rather than the returned byte
+
 Format of parameter block for function 68h:
 Offset	Size	Description
  00h	BYTE	01h for default media type, 00h for any other media type
@@ -3295,7 +3347,7 @@ Return: CF clear if successful
 Notes:	the returned path does not include a drive or the initial backslash
 	many Microsoft products for Windows rely on AX being 0100h on success
 	under the FlashTek X-32 DOS extender, the buffer pointer is in DS:ESI
-SeeAlso: AH=19h,AH=3Bh,INT 15/AX=DE25h
+SeeAlso: AH=19h,AH=3Bh,AH=71h,INT 15/AX=DE25h
 --------D-2148-------------------------------
 INT 21 - DOS 2+ - ALLOCATE MEMORY
 	AH = 48h
@@ -4343,7 +4395,7 @@ BUGS:	under DOS 3.x and 4.x, the second and subsequent calls to this function
 	  searches are performed by CREATE (AH=3Ch), OPEN (AH=3Dh), UNLINK
 	  (AH=41h), and RENAME (AH=56h)
 	DR-DOS 3.41 and 5.0 return the Directory attribute for the volume label
-SeeAlso: AH=11h,AH=4Fh,AX=4301h,INT 2F/AX=111Bh,INT 2F/AX=B711h
+SeeAlso: AH=11h,AH=4Fh,AX=4301h,AH=71h,INT 2F/AX=111Bh,INT 2F/AX=B711h
 
 Format of FindFirst data block:
 Offset	Size	Description
@@ -4395,7 +4447,7 @@ Return: CF clear if successful
 Note:	under Novell DOS 7, if the FindFirst call (AH=4Eh) had CX=0088h, then
 	  the next matching deleted file will be returned
 BUG:	DR-DOS 3.41 and 5.0 return the Directory attribute for the volume label
-SeeAlso: AH=12h,AH=4Eh
+SeeAlso: AH=12h,AH=4Eh,AH=71h,AH=72h
 --------D-2150-------------------------------
 INT 21 - DOS 2+ internal - SET CURRENT PROCESS ID (SET PSP ADDRESS)
 	AH = 50h
@@ -5582,7 +5634,7 @@ Notes:	allows move between directories on same logical volume
 BUG:	under DR-DOS 3.41, this function will generate a new directory entry
 	  with the new name (including any wildcards) which can only be removed
 	  with a sector editor when invoked via AX=5D00h
-SeeAlso: AH=17h,AX=4301h,AH=60h,AX=5D00h
+SeeAlso: AH=17h,AX=4301h,AX=5D00h,AH=60h,AH=71h
 --------D-215700-----------------------------
 INT 21 - DOS 2+ - GET FILE'S DATE AND TIME
 	AX = 5700h
@@ -7370,7 +7422,7 @@ Return: AX = error code
 Format of NetMessageBufferSend parameter structure:
 Offset	Size	Description
  00h	DWORD	-> recipient name (name for specific user, name* for domain
-			name wide, * for broadcast)
+			wide name, * for broadcast)
  04h	DWORD	-> buffer
  08h	WORD	length of buffer
 --------N-215F41-----------------------------
@@ -9168,7 +9220,7 @@ Return: CF set on error
 		3 file replaced
 Note:	the PC LAN Program only supports DL=01h, DL=10h/sharing=compatibility,
 	  and DL=12h
-SeeAlso: AH=3Ch,AH=3Dh,AX=6C01h
+SeeAlso: AH=3Ch,AH=3Dh,AX=6C01h,AH=71h
 --------O-216C01-----------------------------
 INT 21 U - OS/2 v2.0 - "DosOpen2"
 	AX = 6C01h
@@ -9299,6 +9351,39 @@ Return: AX = 0070h
 	SI = 0070h
 	DI = 0070h
 SeeAlso: AX=7070h/BX=6060h,AX=8080h
+--------D-2171-------------------------------
+INT 21 - DOS 7 (Chicago) - LONG FILENAME FUNCTIONS
+	AH = 71h
+	AL = function
+	    39h create directory
+	    3Ah remove directory
+	    3Bh set current directory
+	    41h delete file
+	    43h get file attributes (BL=00h), set file attributes (BL=01h)
+	    47h get current directory
+	    4Eh find first file
+	    4Fh find next file
+	    56h move (rename) file
+	    6Ch create/open file
+Return: CF set on error
+	    AX = error code
+		7100h if function not supported
+	CF clear if successful
+	    other registers as for corresponding "old" DOS function
+Notes:	if error 7100h is returned, the old-style function should be called
+	AX=714Eh returns a "search handle" which must be passed to AX=714Fh;
+	  when the search is complete, AH=72h must be called to terminate
+	  the search
+SeeAlso: AH=39h,AH=3Ah,AH=3Bh,AH=41h,AH=43h,AH=47h,AH=4Eh,AH=4Fh,AH=56h,AH=6Ch
+SeeAlso: AH=72h
+--------D-2172-------------------------------
+INT 21 - DOS 7 (Chicago) - "FindClose" - TERMINATE DIRECTORY SEARCH
+	AH = 72h
+	details not yet available
+Note:	this function must be called after starting a search with AX=714Eh,
+	  to indicate that the search handle returned by that function will
+	  no longer be used
+SeeAlso: AH=4Eh,AH=71h
 --------v-2176-------------------------------
 INT 21 - VIRUS - "Klaeren"/"Hate" - INSTALLATION CHECK
 	AH = 76h

@@ -1,5 +1,5 @@
 Interrupt List, part 7 of 10
-This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994 Ralf Brown
 --------N-2F8000-----------------------------
 INT 2F - EASY-NET - INSTALLATION CHECK
 	AX = 8000h
@@ -838,7 +838,7 @@ Return: AX = first available paragraph past end of resident portion???
 	CX destroyed
 SeeAlso: AX=9000h
 --------e-2F92-------------------------------
-INT 2F - Couriers LAN E-Mail - API
+INT 2F - Network Courier E-Mail - API
 	AH = 92h
 	AL = function
 	    00h installation check
@@ -848,8 +848,12 @@ INT 2F - Couriers LAN E-Mail - API
 	    04h ???
 	    05h ???
 Return: ???
-SeeAlso: AH=9Ch
-Index:	installation check;Couriers LAN E-Mail|uninstall;Couriers LAN E-Mail
+Program: The Network Courier is an electronic mail package by Consumers
+	  Software of Vancouver, BC which was bought by Microsoft in 1991 and
+	  renamed Microsoft Mail v3.0.
+SeeAlso: AX=9400h,AX=9401h,AX=9402h,AH=9Ch
+Index:	installation check;Network Courier E-Mail
+Index:	uninstall;Network Courier E-Mail
 --------R-2F9200-----------------------------
 INT 2F U - PC Tools v8.0 DRIVEMAP - BUG
 	AX = 9200h
@@ -1065,7 +1069,8 @@ INT 2F - MICRO.EXE - INSTALLATION CHECK
 	AX = 9400h
 Return: AL = 07h or 08h if installed
 Program: MICRO.EXE is a TSR of the Microsoft Mail part of Workgroup Connection
-SeeAlso: AX=9401h,AX=9402h,AX=9403h,AX=9404h,INT 21/AH=3Fh"WORKGRP.SYS"
+SeeAlso: AH=92h"Network Courier",AX=9401h,AX=9402h,AX=9403h,AX=9404h
+SeeAlso: INT 21/AH=3Fh"WORKGRP.SYS"
 --------e-2F9401-----------------------------
 INT 2F - MICRO.EXE - SET ??? FLAG
 	AX = 9401h
@@ -1089,13 +1094,16 @@ Note:	if the specified name is identical to the name of the program file
 	  it is left unchanged
 SeeAlso: AX=9400h,AX=9403h
 --------e-2F9C-------------------------------
-INT 2F - Couriers LAN E-Mail OPERATOR.EXE - API
+INT 2F - Network Courier E-Mail OPERATOR.EXE - API
 	AH = 9Ch
 	AL = subfunction
 	    01h uninstall
 Return: ???
+Program: The Network Courier is an electronic mail package by Consumers
+	  Software of Vancouver, BC which was bought by Microsoft in 1991 and
+	  renamed Microsoft Mail v3.0.
 SeeAlso: AH=92h
-Index:	uninstall;Couriers LAN E-Mail OPERATOR.EXE
+Index:	uninstall;Network Courier E-Mail OPERATOR.EXE
 --------G-2F9E00-----------------------------
 INT 2F U - INTMON v2.1 - INSTALLATION CHECK
 	AX = 9E00h
@@ -1589,13 +1597,15 @@ SeeAlso: AX=B702h
 INT 2F - DOS 4+ APPEND - SET RETURN FOUND NAME STATE
 	AX = B711h
 Note:	if the next INT 21h call (and ONLY the next) is function 3Dh, 43h, or
-	6Ch (also 4B03h and 4Eh if /X active), the fully qualified filename is
-	written over top of the filename passed to the INT 21h call.  The
-	application must provide a sufficiently large buffer.  This state is
-	reset after the next INT 21h call processed by APPEND.
+	  6Ch (also 4B03h and 4Eh if /X active), the fully qualified filename
+	  is written over top of the filename passed to the INT 21h call.  The
+	  application must provide a sufficiently large buffer.	 This state is
+	  reset after the next INT 21h call processed by APPEND.
+	APPEND uses the byte at offset 3Dh in the PSP (see INT 21/AH=26h) to
+	  store the flag telling it to overwrite the filename
 BUG:	DOS 4.0 APPEND reportedly overwrites DS:DX instead of DS:SI for
 	  INT 21/AH=6Ch
-SeeAlso: INT 21/AH=4Eh
+SeeAlso: INT 21/AH=26h,INT 21/AH=4Eh
 --------N-2FB800-----------------------------
 INT 2F - network - INSTALLATION CHECK
 	AX = B800h
@@ -4965,17 +4975,17 @@ INT 2F - ZyXEL ZFAX - UNINSTALL
 	AX = DA01h
 Return: AL = 00h Success
 	     01h Failure
-SeeAlso: AX=DA00h
+SeeAlso: AX=DA00h,AX=DB01h
 --------F-2FDA02-----------------------------
 INT 2F - ZyXEL ZFAX - DISABLE
 	AX = DA02h
 Return: AL = 00h
-SeeAlso: AX=DA03h
+SeeAlso: AX=DA03h,AX=DB02h
 --------F-2FDA03-----------------------------
 INT 2F - ZyXEL ZFAX - ENABLE
 	AX = DA03h
 Return: AL = 00h
-SeeAlso: AX=DA02h
+SeeAlso: AX=DA02h,AX=DB03h
 --------G-2FDA55-----------------------------
 INT 2F U - TRAP.COM - INSTALLATION CHECK
 	AX = DA55h
@@ -4996,12 +5006,282 @@ Return: AX = 00FFh if installed
 Program: BWSNMP is part of the BW-NFS package
 SeeAlso: INT 62"BW-TCP"
 --------F-2FDB00-----------------------------
-INT 2F - ZyXEL ZFAX v2.0-2.23 - INSTALLATION CHECK
+INT 2F - ZyXEL ZFAX v2+ - INSTALLATION CHECK
 	AX = DB00h
-Return:	AL = 5Bh installed
+Return:	AL = 5Bh if installed (v2.x)
+	    ES:BX -> ???
+	AX = 00DBh if installed (v3)
+	    ES:BX -> ZFAX configuration table (see below)
 Program: ZFAX is the bundled FAX software which comes with the ZyXEL model
 	  fax modems.
-SeeAlso: AX=CBDCh,AX=DA01h,AX=DA02h,AX=DA03h
+SeeAlso: AX=CBDCh,AX=DA00h,AX=DB01h,AX=DB02h,AX=DB03h
+
+Format of ZFAX Configuration Table:
+Offset	Size	Description
+ 00h	WORD	version number (0300h for v3.0)
+ 02h	BYTE	reserved
+ 03h 70 BYTEs	ZFAX working path
+ 49h 128 BYTEs	path to external editor
+ C9h 128 BYTEs	path to external terminal emulator
+149h 128 BYTEs	path to Ring Shell
+1C9h 128 BYTEs	path to DOS Shell
+249h 128 BYTEs	path to Data Shell
+2C9h 70 BYTEs	path to Chinese font
+30Fh	BYTE	printer type (see below)
+310h	BYTE	printer port (00h = LPT1, etc.)
+311h	BYTE	type of graphics adapter
+		(00h auto-detect, 01h VGA, 02h EGA, 03h CGA, 04h Hercules)
+312h	BYTE	display type
+		(00h auto-detect, 01h LCD, 02h color, 03h mono)
+313h	BYTE	scan code for ZFAX hotkey
+314h	BYTE	shift mask for ZFAX hotkey
+315h	BYTE	tone/pulse dialing (00h tone, 01h pulse)
+316h	BYTE	Caller ID (00h disabled, 01h enabled)
+317h	BYTE	Distinctive Ring (00h disabled, 01h enabled)
+318h	BYTE	normal ring answer type (see below)
+319h	BYTE	Ring 1 answer type (see below)
+31Ah	BYTE	Ring 2 answer type (see below)
+31Bh	BYTE	Ring 3 answer type (see below)
+31Ch	BYTE	COM port for modem
+31Dh	BYTE	speaker volume (00h-07h)
+31Eh	BYTE	modem dial timer, seconds
+31Fh	WORD	user-defined COM port I/O address
+321h	BYTE	user-defined COM port IRQ number
+322h 81 BYTEs	dial prefix string
+373h 79 BYTEs	dial postfix string
+3C2h	BYTE	ring count until automatic answer
+3C3h	BYTE	retry count on busy signal
+3C4h	BYTE	redial delay in seconds
+3C5h	WORD	system password
+3C7h	BYTE	reserved
+3C8h	BYTE	voice file compression format
+		00h CELP at 9600bps
+		01h two-bit ADPCM at 19200bps
+		03h three-bit ADPCM at 28800bps
+3C9h	BYTE	voice system: DTMF 0 action (see below)
+3CAh	BYTE	voice system: DTMF 1 action
+3CBh	BYTE	voice system: DTMF 2 action
+3CCh	BYTE	voice system: DTMF 3 action
+3CDh	BYTE	voice system: DTMF 4 action
+3CEh	BYTE	voice system: DTMF 5 action
+3CFh	BYTE	voice system: DTMF 6 action
+3D0h	BYTE	voice system: DTMF 7 action
+3D1h	BYTE	voice system: DTMF 8 action
+3D2h	BYTE	voice system: DTMF 9 action
+3D3h	WORD	reserved
+3D5h 25 BYTEs	local FAX ID to display on page header
+3EEh 20 BYTEs	local FAX ID sent to remote FAX
+402h	BYTE	FAX page size
+		00h A4 (210x297mm)
+		01h B4 (250x353mm)
+		02h A3 (297x420mm)
+403h	BYTE	FAX resolution
+		00h normal (3.85 pixels/mm)
+		01h high (7.7 pixels/mm)
+404h	BYTE	FAX coding scheme
+		00h 1-D, modified Huffman coding
+		01h 2-D, modified READ coding
+405h	BYTE	left margin for text in millimeters
+406h	BYTE	vertical insertion for text in mm (0-20)
+407h	BYTE	horizontal insertion in mm (0-20)
+408h	BYTE	maximum text lines per page
+409h	BYTE	text type (00h ASCII, 01h WordStar-formatted)
+40Ah	BYTE	PCX image resize (00h disabled, 01h enabled)
+40Bh	BYTE	AutoPrint (00h disabled, 01h enabled)
+40Ch	BYTE	cover page (00h disabled, 01h enabled)
+40Dh 81 BYTEs	cover page logo filename
+45Eh 65 BYTEs	cover page sender name
+49Fh	BYTE	print capture (00h disabled, 01h enabled)
+4A0h	BYTE	send immediately (00h disabled, 01h enabled)
+4A1h	BYTE	print capture printer port
+4A2h	BYTE	print capture timer in seconds
+4A3h	BYTE	scan code for print capture hotkey
+4A4h	BYTE	shift mask for print capture hotkey
+4A5h	BYTE	DataShell type
+		00h internal Zmodem, 01h Data Shell, 02h disable
+4A6h	BYTE	video I/O type
+		00h auto-detect, 01h use BIOS, 02h direct writes
+4A7h	BYTE	call transfer digits
+4A8h	WORD	voice recorder maximum time in seconds (0-999)
+
+Values for printer type:
+ 00h	EPSON FX (9 pins)
+ 01h	EPSON LQ (24 pins)
+ 02h	HP Laser Jet II, letter size
+ 03h	HP Laser Jet II, legal size
+ 04h	HP Laser Jet II, A4 size
+ 05h	HP Laser Jet III, letter size
+ 06h	HP Laser Jet III, legal size
+ 07h	HP Laser Jet III, A4 size
+
+Values for Ring Answer Type:
+ 00h	voice system
+ 01h	FAX only
+ 02h	Data Shell
+ 03h	Ring Shell
+ 04h	DOS Shell
+ 05h	ignore
+
+Values for DTMF action:
+ 00h	none
+ 01h	page operator
+ 02h	FaxBack
+ 03h	announcement
+ 04h	call transfer
+ 05h	receive FAX
+ 06h	receive data
+ 07h	voice mailbox
+ 08h	DOS Shell Out
+ 09h	Data Shell Out
+--------F-2FDB01-----------------------------
+INT 2F - ZyXEL ZFAX v2+ - UNINSTALL
+	AX = DB01h
+Return: AX = status
+	    0000h successful
+	    0001h ZFAX is busy
+	    0002h another program resident above ZFAX
+Note:	this function unhooks the vectors taken by the ZFAX TSR if they have
+	  not been hooked by other TSRs and releases the TSR's memory
+	ZFAX v2.x crashes the contributor's machine when this function is
+	  called
+SeeAlso: AX=DA01h,AX=DB00h
+--------F-2FDB02-----------------------------
+INT 2F - ZyXEL ZFAX v2.x - DISABLE
+	AX = DB02h
+Return: AL = 00h
+SeeAlso: AX=DA02h,AX=DB00h,AX=DB03h
+--------F-2FDB03-----------------------------
+INT 2F - ZyXEL ZFAX v2.x - ENABLE
+	AX = DB03h
+Return: AL = 00h
+SeeAlso: AX=DA03h,AX=DB00h,AX=DB02h
+--------F-2FDB10-----------------------------
+INT 2F - ZyXEL ZFAX v3 - EXECUTE ZFAX MAIN MENU
+	AX = DB10h
+--------F-2FDB11-----------------------------
+INT 2F - ZyXEL ZFAX v3 - SEND FAX
+	AX = DB11h
+	DS:SI -> filename including path
+	DS:BX -> remote FAX number
+Return:	AX = status (see below)
+SeeAlso: AX=DB12h,AX=DB13h,AX=DB14h,AX=DB20h,AX=DB21h
+
+Values for ZFAX status:
+ 00h	OK
+ 01h	invalid DOS function
+ 02h	file not found
+ 03h	path not found
+ 04h	no file handle available
+ 05h	access denied by DOS
+ 06h	invalid handle
+ 07h	disk full
+ 10h	printer error
+ 11h	no graphics font
+ 12h	no ZFAX font
+ 20h	DCD dropped while sending
+ 21h	not ZyXEL modem
+ 22h	busy
+ 23h	no response from COM port
+ 24h	no carrier
+ 25h	no dial tone
+ 26h	no answer
+ 27h	no response
+ 28h	failed to send FAX
+ 30h	user aborted
+ 40h	critical error on disk
+ 50h	parameter error
+--------F-2FDB12-----------------------------
+INT 2F - ZyXEL ZFAX v3 - PRINT FAX
+	AX = DB12h
+	DS:SI -> filename, including path
+Return: AX = status
+SeeAlso: AX=DB11h,AX=DB13h,AX=DB14h
+--------F-2FDB13-----------------------------
+INT 2F - ZyXEL ZFAX v3 - CONVERT FAX
+	AX = DB13h
+	DS:SI -> source filename, including path
+	DS:BX -> destination filename, including path
+	CX = destination file format
+		00h FAX, 01h PCX, 02h TIFF, 03h PRN
+Return: AX = status
+SeeAlso: AX=DB11h,AX=DB12h,AX=DB14h,AX=DB22h
+--------F-2FDB14-----------------------------
+INT 2F - ZyXEL ZFAX v3 - VIEW FAX
+	AX = DB14h
+	DS:SI -> source filename, including path
+Return: AX = status
+SeeAlso: AX=DB11h,AX=DB12h,AX=DB14h
+--------F-2FDB20-----------------------------
+INT 2F - ZyXEL ZFAX v3 - POLL FAX
+	AX = DB20h
+	DS:SI -> remote FAX number
+Return: AX = status
+SeeAlso: AX=DB11h,AX=DB21h
+--------F-2FDB21-----------------------------
+INT 2F - ZyXEL ZFAX v3 - SEND VOICE
+	AX = DB21h
+	DS:SI -> filename including path
+	DS:BX -> remote phone number
+Return:	AX = status
+SeeAlso: AX=DB11h,AX=DB20h,AX=DB22h,AX=DB23h,AX=DB24h
+--------F-2FDB22-----------------------------
+INT 2F - ZyXEL ZFAX v3 - CONVERT VOICE FILE
+	AX = DB22h
+	DS:SI -> source filename, including path
+	DS:BX -> destination filename, including path
+	CX = destination format
+	    00h two-bit ADPCM, 01h three-bit ADPCM, 02h VOC
+Return:	AX = status
+SeeAlso: AX=DB13h,AX=DB20h,AX=DB21h,AX=DB23h
+--------F-2FDB23-----------------------------
+INT 2F - ZyXEL ZFAX v3 - RECORD VOICE FILE
+	AX = DB23h
+	DS:SI -> destination filename, including path
+	CX = recording channel (0 = telephone line, 1 = microphone/speaker)
+	DX = voice file format
+	    00h CELP, 01h two-bit ADPCM, 02h three-bit ADPCM
+Return: AX = status
+SeeAlso: AX=DB21h,AX=DB22h,AX=DB24h
+--------F-2FDB24-----------------------------
+INT 2F - ZyXEL ZFAX v3 - PLAY VOICE FILE
+	AX = DB24h
+	DS:SI -> name of voice file, including path
+	CX = playback channel (0 = telephone line, 1 = microphone/speaker)
+Return: AX = status
+SeeAlso: AX=DB21h,AX=DB22h,AX=DB24h
+--------F-2FDB25-----------------------------
+INT 2F - ZyXEL ZFAX v3 - ANSWER MODEM WITH VOICE SYSTEM
+	AX = DB25h
+Return: AX = status
+SeeAlso: AX=DB21h,AX=DB22h,AX=DB26h,AX=DB27h,AX=DB28h
+--------F-2FDB26-----------------------------
+INT 2F - ZyXEL ZFAX v3 - DIAL PHONE
+	AX = DB26h
+	DS:SI -> remote phone number
+Return: AX = status
+SeeAlso: AX=DB25h
+--------F-2FDB27-----------------------------
+INT 2F - ZyXEL ZFAX v3 - RECEIVE FAX - ANSWER MODEM AND SET TO FAX MODE
+	AX = DB27h
+Return: AX = status
+SeeAlso: AX=DB25h,AX=DB28h
+--------F-2FDB28-----------------------------
+INT 2F - ZyXEL ZFAX v3 - RECEIVE FAX DATA - ANSWER MODEM IN MULTI-AUDIO MODE
+	AX = DB28h
+Return: AX = status
+SeeAlso: AX=DB25h,AX=DB27h,AX=DB31h
+--------F-2FDB31-----------------------------
+INT 2F - ZyXEL ZFAX v3 - SEND DATA - DIAL NUMBER AND UPLOAD FILE WITH ZMODEM
+	AX = DB31h
+	DS:SI -> source file name, including path
+	DS:BX -> remote data number
+Return: AX = status
+SeeAlso: AX=DB00h,AX=DB28h
+--------F-2FDB40-----------------------------
+INT 2F - ZyXEL ZFAX v3 - INTERNAL TERMINAL
+	AX = DB40h
+Return: AX = status
+SeeAlso: AX=DB00h
 --------K-2FDC00-----------------------------
 INT 2F - GOLD.COM - INSTALLATION CHECK
 	AX = DC00h
@@ -5058,6 +5338,33 @@ Offset	Size	Description
  12h	BYTE	number of interrupts hooked
  13h  5 BYTEs	interrupt numbers hooked by program
  18h  8 BYTEs	reserved
+----------2FDD-------------------------------
+INT 2F - MIXFIX.EXE - API
+	AH = DDh
+	AL = function
+	    00h installation check
+		Return: AX = 00DDh if installed
+			    BX = version (BH = major, BL = minor)
+	    41h/61h get From: address
+		Return: AX = 0001h
+			ES:BX -> ASCIZ 4d address of mail sender ("1:2/3.4")
+	    49h/69h get To: address
+		Return: AX = 0001h
+			ES:BX -> ASCIZ 4d address of recipient ("1:2/3.4")
+	    4Ah/6Ah get subject of mail
+		Return: AX = 0001h
+			ES:BX -> ASCIZ subject of handled mail
+	    4Dh/6Dh get mail name
+		Return: AX = 0001h
+			ES:BX -> ASCIZ full name of current mail file
+	    4Eh/6Eh get From: field
+		Return: AX = 0001h
+			ES:BX -> ASCIZ From: field of mail (mail sender's name)
+Program: MIXFIX by "KIV without Co" is a FidoNet mail robot which may execute
+	  other programs for mail handling.  The called programs may use the
+	  services described here to retrieve information about the mail being
+	  handled.
+Index: installation check;MIXFIX.EXE
 --------d-2FDD--BX7844-----------------------
 INT 2F - xDISK v3.32+ - INSTALLATION CHECK
 	AH = DDh

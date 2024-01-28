@@ -1,5 +1,5 @@
 Interrupt List, part 5 of 10
-This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994 Ralf Brown
 --------D-2180-------------------------------
 INT 21 - European MS-DOS 4.0 - "AEXEC" - EXECUTE PROGRAM IN BACKGROUND
 	AH = 80h
@@ -1512,6 +1512,7 @@ Notes:	this function is supported by NetWare 4.0+, Banyan VINES, and Alloy
 	  NTNX
 	station number only unique for those PCs connected to same semaphore
 	  service
+SeeAlso: AH=F2h"NetWare"
 --------d-21DC-------------------------------
 INT 21 - PCMag PCMANAGE/DCOMPRES - TURN ON/OFF
 	AH = DCh
@@ -6321,7 +6322,7 @@ Fnc/Subfn
 11h/0Ah	Get Printer Queue
 11h/xxh	print spooling (see AX=E0xxh"NetWare")
 12h	Get Volume Info with Number (see AH=DAh"NetWare")
-13h	Get Station Number (see AH=???h"NetWare")
+13h	Get Station Number (see AH=DCh"NetWare")
 14h	Get File Server Date and Time (see AH=E7h"NetWare")
 15h/xxh	broadcast services (see AX=E1xxh"NetWare")
 16h/0Fh	Rename Directory

@@ -1,5 +1,5 @@
 Interrupt List, part 6 of 10
-This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994 Ralf Brown
 --------D-22---------------------------------
 INT 22 - DOS 1+ - PROGRAM TERMINATION ADDRESS
 Desc:	this vector specifies the address of the routine which is to be given
@@ -139,10 +139,13 @@ Return: CF clear if successful
 		 02h bad address mark
 		 01h bad command
 	    AL = error code (same as passed to INT 24 in DI)
-	    AX = 0207h if more than 64K sectors on drive
+	    AX = 0207h if more than 64K sectors on drive -- use new-style call
 	may destroy all other registers except segment registers
 Notes:	original flags are left on stack, and must be popped by caller
 	this call bypasses the DOS filesystem
+	examination of CPWIN386.CPL indicates that if this call fails with
+	  error 0408h on an old-style (<32M) call, one should retry the
+	  call with the high bit of the drive number in AL set
 BUGS:	DOS 3.1 through 3.3 set the word at ES:[BP+1Eh] to FFFFh if AL is an
 	  invalid drive number
 	DR-DOS 3.41 will return with a jump instead of RETF, leaving the
@@ -230,11 +233,14 @@ Return: CF clear if successful
 		 02h bad address mark
 		 01h bad command
 	    AL = error code (same as passed to INT 24 in DI)
-	    AX = 0207h if more than 64K sectors on drive
+	    AX = 0207h if more than 64K sectors on drive -- use new-style call
 	may destroy all other registers except segment registers
 Notes:	original flags are left on stack, and must be popped by caller
 	this call bypasses the DOS filesystem, though DOS 5+ invalidates any
 	  disk buffers referencing sectors which are written with this call
+	examination of CPWIN386.CPL indicates that if this call fails with
+	  error 0408h on an old-style (<32M) call, one should retry the
+	  call with the high bit of the drive number in AL set
 BUGS:	DOS 3.1 through 3.3 set the word at ES:[BP+1Eh] to FFFFh if AL is an
 	  invalid drive number
 	DR-DOS 3.41 will return with a jump instead of RETF, leaving the
@@ -1219,6 +1225,9 @@ Signatures known to be in use:
  'CoveSoft' 'Burnout+'	shareware screen saver Burnout Plus
  'Crynwr  ' 'SPELLER '	TSR spelling-checker
  'CSJewell' 'Modula3L'	Curtis Jewell's Modula-3 compiler (non-TSR)
+ 'DAISYCHA' 'INDRIVER'	Advanced Parallel Port daisy chain driver (vendor name
+			in product description field, if desired)
+			(see also INT 2D/AL=DCh)
  'ECLIPSE ' 'PLUMP   '	Eclipse Software's printer and plotter spooler
  'GraySoft' 'GIPC    '	GraySoft's Inter-Process Communications driver
  'heathh  ' 'Monitor '
@@ -1365,6 +1374,19 @@ Return: CF clear if successful
 	    DX:AX = size of compressed file
 	CF set on error (not dPressed file)
 SeeAlso: AL=10h"dLite",AL=11h"dLite"
+--------b-2D--DC-----------------------------
+INT 2D C - DAISY.SYS - BROADCAST: CHAIN RESCANNED
+	AL = DCh
+	AH = AMIS multiplex number for signature 'DAISYCHA' 'INDRIVER'
+	DL = LPT Port Rescanned
+Program: DAISY.SYS is a daisy chain manager for parallel port peripherals
+	  conforming to the Advanced Parallel Port Committee's daisy chain
+	  specification.
+Desc:	This Broadcast is sent whenever daisy chain IDs are reassigned to
+	  warn parallel port device drivers that their daisy chain ID may
+	  have been changed.
+Note:	This function is a callout from DAISY.SYS, NOT a call into DAISY.SYS
+SeeAlso: INT 17/AX=0200h"Advanced Parallel Port"
 --------l-2E---------------------------------
 INT 2E U - DOS 2+ - PASS COMMAND TO COMMAND INTERPRETER FOR EXECUTION
 	DS:SI -> commandline to execute (see below)
@@ -2315,9 +2337,9 @@ Notes:	this function is called by the DOS 3.1+ kernel
 	  redirector
 	the PC Network 1.00 redirector (renamed to PC LAN Program in 1.1-1.3)
 	  only supports AL=00h-27h
---------d-2F1100-----------------------------
+--------d-2F1100SFDADA-----------------------
 INT 2F - MSCDEX (MS CD-ROM Extensions) - INSTALLATION CHECK
-	AX = 1100h
+	AX = 1100h subfn DADAh
 	STACK: WORD DADAh
 Return: AL = status
 	    00h not installed, OK to install
@@ -2325,7 +2347,15 @@ Return: AL = status
 	    01h not installed, not OK to install
 		STACK unchanged
 	    FFh installed
-		STACK: WORD ADADh
+		STACK: WORD	ADADh if MSCDEX installed
+				DADBh if Lotus CD/Networker installed
+Note:	although MSCDEX sets the stack word to ADADh on return, any value other
+	  than DADAh is considered to mean that MSCDEX is already installed;
+	  Lotus CD/Networker v4+ uses this feature to fool MSCDEX into
+	  thinking it is already installed when it is in fact CD/Networker
+	  that is installed
+Index:	installation check;Lotus CD/Networker
+Index:	Lotus CD/Networker;installation check
 --------N-2F1101-----------------------------
 INT 2F CU - NETWORK REDIRECTOR - REMOVE REMOTE DIRECTORY
 	AX = 1101h
@@ -2376,7 +2406,6 @@ INT 2F CU - NETWORK REDIRECTOR - CHDIR
 	AX = 1105h
 	SS = DOS DS
 	SDA first filename pointer -> fully-qualified directory name
-	SS:BX -> fully-qualified directory name
 	SDA CDS pointer -> current directory structure for drive with dir
 Return: CF set on error
 	    AX = DOS error code (see INT 21/AH=59h)
@@ -2702,6 +2731,7 @@ SeeAlso: AX=1119h,AX=111Bh,INT 21/AH=4Fh
 INT 2F CU - NETWORK REDIRECTOR - CLOSE ALL REMOTE FILES FOR PROCESS (ABORT)
 	AX = 111Dh
 	SS = DOS DS
+	SDA PSP segment field = PSP of terminating process
 Return: nothing
 Notes:	used when a process is aborted; the process being terminated is
 	  indicated by the "sharing PSP" field in the SDA (offset 1Ah/1Ch)
@@ -2783,13 +2813,16 @@ Return: CF set on error
 	    AL = DOS error code (see INT 21/AH=59h)
 	CF clear if successful
 	    DX:AX = new file position
-Note:	this function is called by the DOS 3.1+ kernel
+Note:	this function is called by the DOS 3.1+ kernel, but only when seeking
+	  from the end of a file opened with sharing modes set in such a
+	  manner that another process is able to change the size of the file
+	  while it is already open
 SeeAlso: AX=1228h,INT 21/AH=42h
 --------N-2F1122-----------------------------
 INT 2F CU - NETWORK REDIRECTOR - PROCESS TERMINATION HOOK
 	AX = 1122h
 	SS = DOS DS
-	???
+	DS = PSP of process about to terminate
 Return: ???
 Note:	this function is called by the DOS 3.1+ kernel
 --------N-2F1123-----------------------------
@@ -5559,14 +5592,14 @@ INT 2F C - Windows 3.x - SWITCHING DOS TO BACKGROUND
 	AX = 4005h
 Note:	called by Windows when the DOS box is about to be placed in the
 	  background and the video driver should save any necessary state
-	  information
+	  information (this may be called only in Standard mode)
 SeeAlso: AX=4001h,AX=4006h
 --------W-2F4006-----------------------------
 INT 2F C - Windows 3.x - SWITCHING DOS TO FOREGROUND
 	AX = 4006h
 Note:	called by Windows when the DOS box is about to be placed in the
 	  foreground and the video driver should restore any necessary state
-	  information
+	  information (this may be called only in Standard mode)
 SeeAlso: AX=4002h,AX=4005h
 --------W-2F4007-----------------------------
 INT 2F - Windows 3.x - ENABLE VDD TRAPPING OF VIDEO REGISTERS
@@ -6541,10 +6574,12 @@ SeeAlso: AX=4A10h/BX=0000h
 INT 2F - SMARTDRV v4.00+ - GET DEVICE DRIVER FOR DRIVE
 	AX = 4A10h
 	BX = 0007h
-	BP = drive number
+	BP = drive number (00h=A:)
 Return: DL = ???
 	ES:DI -> device driver header for drive
 Note:	this function is also supported by PC-Cache v8.0.
+	this call is reported to always return the driver header of the
+	  standard block driver (A:-C:+) for SmartDrive v5.00 from MS-DOS 6.2
 SeeAlso: AX=4A10h/BX=0000h,AX=4A11h/BX=0003h,AX=4A11h/BX=0004h
 --------c-2F4A10BX0008-----------------------
 INT 2F - SMARTDRV v4.20+ - GET/SET FLUSH BEFORE PROMPT, CD-ROM SUPPORT
@@ -6588,7 +6623,7 @@ INT 2F - DBLSPACE.BIN - "GetVersion" - INSTALLATION CHECK
 	BX = 0000h
 Return: AX = 0000h (successful)
 	BX = 444Dh ("DM")
-	CL = first drive letter used by DBLSPACE (0=A:)
+	CL = first drive letter used by DBLSPACE (41h ['A'] = A:)
 	CH = number of drive letters used by DBLSPACE
 	DX = internal DBLSPACE.BIN version number (bits 14-0)
 		bit 15 set if DBLSPACE.BIN has not yet been relocated to final
@@ -6605,9 +6640,15 @@ INT 2F - DBLSPACE.BIN - "GetDriveMapping" - GET DRIVE MAPPING
 	DL = drive number (0=A:)
 Return: AX = status (see also below)
 	    0000h successful
-		BL = host drive (bit 7 set if specified drive is compressed)
+		if DL was compressed drive,
+		    BL = host drive (bit 7 set if drive is compressed)
+		else if DL was host drive,
+		    BL = compressed drive
+		else
+		    BL = specified drive (if available for DoubleSpace)
 		BH = DoubleSpace sequence number
 	    other error code (0101h) (see below)
+		apparently never returned for the MS-DOS 6.2 DoubleSpace
 Note:	the compressed volume file for the specified compressed drive is
 	  host:\DBLSPACE.sequence
 SeeAlso: AX=4A11h/BX=0000h
@@ -6721,7 +6762,30 @@ Return: AX = status (see also AX=4A11h/BX=0001h)
 	    0000h successful
 		CL = number of DISK_UNIT structures allocated
 			(see AX=4A11h/BX=0005h)
+		CH = DoubleGuard enabled-checks bitflags in bits 6-0 (DOS 6.2)
+Note:	the DoubleGuard checks are enabled or disabled as a block by the
+	  DoubleGuard= line in DBLSPACE.INI; they may be individually set with
+	  the CheckSum= line.
 SeeAlso: AX=4A11h/BX=0000h,AX=4A11h/BX=0008h
+--------d-2F4A11BX000A-----------------------
+INT 2F - DBLSPACE.BIN 6.2 - SET AUTOMOUNT DRIVES
+	AX = 4A11h
+	BX = 000Ah
+	CX:DX = bitmask of drives on which to enable AutoMount
+		(DX bit 0 = A:, CX bit 0 = P:, etc.)
+Return: AX = 0000h if supported
+	    CX:DX = old mask or 0000h:0000h on error
+	BX destroyed
+SeeAlso: AX=4A11h/BX=000Bh
+--------d-2F4A11BX000B-----------------------
+INT 2F - DBLSPACE.BIN 6.2 - GET AUTOMOUNT DRIVES
+	AX = 4A11h
+	BX = 000Bh
+Return: AX = 0000h if supported
+	    CX:DX = mask of drives with AutoMount enabled
+		0000h:0000h on error
+	BX destroyed
+SeeAlso: AX=4A11h/BX=000Ah
 --------d-2F4A11BXFFFE-----------------------
 INT 2F U - DBLSPACE.BIN - RELOCATE
 	AX = 4A11h
@@ -7448,6 +7512,7 @@ INT 2F - INTERLNK - CHECK IF REDIRECTED DRIVE
 	AX = 5601h
 	DX = FFFFh
 	BH = drive number (0=A:)
+	BL = 00h
 Return: (as for AL=00h if redirected drive)
 SeeAlso: AX=5600h
 --------R-2F5602DXFFFF-----------------------
@@ -8308,7 +8373,7 @@ Return: AL = FFh if installed
 	    CX = configured sockets (14h)
 	    DS:SI -> data table ???
 	    ES:DI -> IPX far call handler
-Notes:	for IPX/SPX this call reportedly returns DS:DI pointing to the table
+Notes:	for IPX/SPX this call reportedly returns DS:SI pointing to the table
 	  of pointers to service events queue head and tail
 	this function is also supported by IPXODI
 SeeAlso: AX=7AFFh/BX=0001h

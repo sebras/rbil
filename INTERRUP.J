@@ -1,5 +1,5 @@
 Interrupt List, part 10 of 10
-This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994 Ralf Brown
 --------b-69---------------------------------
 INT 69 - Zenith AT BIOS - ???
    called by INT 09 handler
@@ -582,12 +582,13 @@ Return: CX = number of bytes written
 Program: NASI is Novell's NetWare Asynchronous Services Interface which runs
 	  on workstations; NACS is the NetWare Asynchronous Communications
 	  Services module which runs on servers
-Notes:	this function is also supported by TelAPI and NPC NCSI; for TelAPI,
-	  nonzero values in AL specify a connection ID
-	this function is also supported by Connection Manager CLIENT.EXE; it
-	  provides the signature string "NCSI" three bytes past the interrupt
-	  handler, and returns CF set/AL=FFh if called while an INT 6B call is
-	  already in progress
+Notes:	one installation check consists of testing for the signature string
+	  "NCSI" three bytes past the interrupt handler; see also AH=02h
+	this function is also supported by TelAPI, NPC NCSI, and Connection
+	  Manager CLIENT.EXE; for TelAPI, nonzero values in AL specify a
+	  connection ID
+	Connection Manager returns CF set/AL=FFh if called while an INT 6B
+	  call is already in progress
 SeeAlso: AX=0100h,AH=18h,INT 14/AH=19h,INT 14/AH=E3h
 --------S-6B0100-----------------------------
 INT 6B - Novell NASI/NACS, Ungermann-Bass Net One SERIAL I/O - BUFFERED READ
@@ -644,12 +645,14 @@ Return: CF clear if successful
 	???
 Note:	this function is also supported by TelAPI
 SeeAlso: AX=0700h,AH=12h,AH=1Fh
---------S-6B11-------------------------------
+--------S-6B11--DX0001-----------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - ALLOCATE A VIRTUAL CIRCUIT
 	AH = 11h
-	???
+	DX = 0001h
+	AL = 00h
+	ES:BX -> service name string (8 characters, blank-padded)
 Return: CF clear if successful
-	    AL = virtual circuit number??? (01h for Novell TELAPI.EXE)
+	    AL = virtual circuit number allocated (01h for Novell TELAPI.EXE)
 	    CL = ??? (01h for Novell TELAPI.EXE)
 	    CH = ??? (01h for Novell TELAPI.EXE)
 	CF set on error
@@ -688,16 +691,32 @@ INT 6B - NPC NCSI EXTENDED SERIAL I/O - SET/RETRIEVE VIRTUAL CIRCUIT CONFIG
 	AH = 15h
 	AL = virtual circuit number
 	CL = direction (00h get, nonzero set)
-	ES:BX -> buffer for/containing virtual circuit configuration
-Return: ???
+	ES:BX -> buffer for/containing virtual circuit config (see below)
+Return: ES:BX buffer filled
 Note:	this function is also supported by TelAPI
-SeeAlso: AH=13h,AH=14h
+SeeAlso: AH=13h"NCSI",AH=14h"NCSI"
+
+Format of virtual circuit configuration:
+Offset	Size	Description
+ 00h	WORD	buffer length
+ 02h	WORD	port ID
+ 04h	WORD	receive rate
+ 06h	WORD	receive word length
+ 08h	WORD	receive stop bits
+ 0Ah	WORD	receive parity
+ 0Ch	WORD	transmit rate
+ 0Eh	WORD	transmit word length
+ 10h	WORD	transmit stop bits
+ 12h	WORD	transmit parity
+ 14h	WORD	DTR
+ 16h	WORD	RTS
 --------S-6B16-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - LOG AND/OR INITIALIZE VIRTUAL CIRCUIT
 	AH = 16h
-	???
+	AL = virtual circuit number
+	CL = ??? switch (00h, ???)
 Return: CF clear if successful
-	    AL = virtual circuit number???
+	    AL = virtual circuit number
 	CF set on error
 	    ???
 Note:	this function is also supported by TelAPI, which always returns CF
@@ -706,7 +725,7 @@ SeeAlso: AH=11h,AH=12h,AH=17h
 --------S-6B17-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - DISCONNECT A VIRTUAL CIRCUIT
 	AH = 17h
-	AL = virtual circuit number???
+	AL = virtual circuit number
 Return: CF clear if successful
 	CF set on error
 	???
@@ -717,7 +736,8 @@ SeeAlso: AH=11h,AH=16h
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - WRITE DATA ON A VIRTUAL CIRCUIT
 	AH = 18h
 	AL = virtual circuit number
-	???
+	CX = number of characters to send
+	ES:BX -> buffer containing characters to be sent
 Return: CF clear if successful
 	CF set on error
 	???
@@ -728,8 +748,10 @@ SeeAlso: AX=0000h,AH=12h,AH=19h
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - READ DATA ON A VIRTUAL CIRCUIT
 	AH = 19h
 	AL = virtual circuit number
-	???
-Return: ???
+	CX = number of characters to read
+	ES:BX -> buffer for received characters
+Return: CX = 0000h if failed
+	CX = nonzero (possibly number of characters received) if successful
 Note:	this function is also supported by TelAPI
 SeeAlso: AX=0100h,AH=12h,AH=18h
 --------S-6B1A-------------------------------
@@ -745,11 +767,11 @@ INT 6B - NPC NCSI EXTENDED SERIAL I/O - TRANSMIT STATUS
 Return: ???
 SeeAlso: AH=12h,AH=1Ah
 --------S-6B1C-------------------------------
-INT 6B - NPC NCSI EXTENDED SERIAL I/O - RECEIVE BUFFER CONTROL
+INT 6B - NPC NCSI EXTENDED SERIAL I/O - CLEAR RECEIVE BUFFER
 	AH = 1Ch
-	???
-Return: ???
-SeeAlso: AH=1Dh,AH=1Eh
+	AL = circuit number
+Return: nothing
+SeeAlso: AH=1Dh"NCSI",AH=1Eh"NCSI"
 --------S-6B1D-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - TRANSMIT BUFFER CONTROL
 	AH = 1Dh
@@ -779,9 +801,22 @@ Note:	CLIENT.EXE returns CF set/AL=F9h if AH is not 00h to 21h on entry
 --------S-6B21-------------------------------
 INT 6B - NPC NCSI EXTENDED SERIAL I/O - QUERY NAME SERVICE
 	AH = 21h
-	???
-Return: ???
-SeeAlso: AH=14h
+	AL = virtual circuit number
+	CL = ??? (00h or 01h)
+	ES:BX -> buffer for service name structure (see below)
+Return: CF clear if successful
+	    ES:BX buffer filled
+	CF set on error
+Note:	a program should call this function after allocating a virtual circuit
+	  and check that the general name matches the requested service
+SeeAlso: AH=14h"NCSI"
+
+Format of service name structure:
+Offset	Size	Description
+ 00h	WORD	buffer length
+ 02h  8 BYTEs	service name
+ 0Ah  8 BYTEs	general name
+ 12h  8 BYTEs	specific name
 ----------6B6B-------------------------------
 INT 6B - Tandy SCHOOLMATE PLUS - API
 	AH = 6Bh
@@ -828,7 +863,7 @@ Format of signature area:
 Offset	Size	Description
  -5	BYTE	major version number
  -4	BYTE	minor version number
- -3   3 BYTEs	signature (ASCII "SCH")
+ -3   3 BYTEs	signature (ASCII "DLL")
 --------N-6E---------------------------------
 INT 6E - DECnet DOS - DECnet NETWORK PROCESS API
 Notes:	this is the main DECnet DOS access, and is described in Digital manual
@@ -2231,7 +2266,7 @@ Return: AX = status
 		BX = X coordinate
 		CX = Y coordinate
 	    0004h button pick
-	        BX = button number
+		BX = button number
 	    0005h button and coordinates
 		BX = button number
 		CX = X coordinate
@@ -3830,6 +3865,12 @@ Offset	Size	Description
  -08h	DWORD	pointer to previous INT 7D handler
  -04h	DWORD	pointer to ??? data
  00h		HyperPAD INT 7D handler
+----------7D---------------------------------
+INT 7D - IBM DOS 6.1 E.EXE - ???
+Note:	E.EXE checks whether this interrupt is in use (not 0000h:0000h),
+	  and if it is used, attempts to load E55VGA.EX instead of the 
+	  default E.EX overlay.	 However, E55VGA.EX is not included in
+	  IBM DOS 6.1.
 ----------7D00-------------------------------
 INT 7D - SCSILink - RESET SCSI BUS
 	AH = 00h
@@ -5855,40 +5896,161 @@ Note:	this vector and INT 81 through INT ED are modified but not restored by
 	  Direct Access v4.0, and may be left dangling by other programs
 	  written with the same version of compiled BASIC
 SeeAlso: INT 81"BASIC"
+--------s-80----BL00-------------------------
+INT 80 - SBSIM - "STARTSND" - START SOUND ON SPECIFIED DRIVER
+	BL = 00h
+	BH = driver number (01h = FM, 02h=DDBV, 03h=memvoice, 05h=MIDI)
+Return: AX = initialization result (see below)
+Program: SBSIM is Creative Labs' SoundBlaster Simplified Interface Module,
+	  which provides access to multiple drivers for the SoundBlaster
+	  board through a single interface
+Note:	SBSIM may use any interrupt in the range 80h to BFh; the installation
+	  check consists of testing for the signature "SBSIM" at offset 103h
+	  in the interrupt handler's segment.
+SeeAlso: INT 80/BL=01h"SBSIM",INT 80/BL=02h"SBSIM",INT 80/BL=03h"SBSIM"
+SeeAlso: INT 80/BX=0000h"SBSIM"
+
+Values for error code:
+ 01h	busy--currently in use
+ 02h	bad driver specified
+ 03h	invalid function
+ 04h	voice process already active
+ 05h	couldn't start CT-VOICE
+ 06h	couldn't start CTVDSK
+ 07h	invalid SBSIM handle
+ 08h	buffer not initialized yet
+ 09h	bad filename
+ 0Ah	bad file handle
+ 0Bh	driver not started yet
+ 0Ch	XMS driver not installed
+ 0Dh	no free SBSIM handles
+ 0Eh	bad file type
+ 0Fh	couldn't free XMS block
+ 10h	invalid source selected
+ 11h	get pan position failed
+ 12h	set pan position failed
+ 13h	set volume failed
+ 14h	couldn't start fade/pan
+ 15h	couldn't stop fade/pan
+ 16h	couldn't pause fade/pan
+ 17h	not a fade/pan operation
+ 18h	bad mode for fade/pan
+ 19h	couldn't start fade/pan
+ 1Ah	source not fading/panning
+ 1Bh	FM or MIDI already playing
+ 1Ch	bad MIDI mapper format
+--------s-80----BL01-------------------------
+INT 80 - SBSIM - "PLAYSND" - PLAY MUSIC/VOICE ON SELECTED DRIVER
+	BL = 01h
+	BH = driver number (01h = FM, 02h=DDBV, 03h=memvoice, 05h=MIDI)
+Return: AX = result
+SeeAlso: INT 80/BL=00h"SBSIM",INT 80/BL=02h"SBSIM",INT 80/BL=04h"SBSIM"
+--------s-80----BL02-------------------------
+INT 80 - SBSIM - "STOPSND" - STOP MUSIC/VOICE ON SELECTED DRIVER
+	BL = 02h
+	BH = driver number (01h = FM, 02h=DDBV, 03h=memvoice, 05h=MIDI)
+Return: nothing
+SeeAlso: INT 80/BL=00h"SBSIM",INT 80/BL=01h"SBSIM",INT 80/BL=03h"SBSIM"
+--------s-80----BL03-------------------------
+INT 80 - SBSIM - "PAUSESND" - TEMPORARILY PAUSE PLAYBACK ON SELECTED DRIVER
+	BL = 03h
+	BH = driver number (01h = FM, 02h=DDBV, 03h=memvoice, 05h=MIDI)
+Return: nothing
+SeeAlso: INT 80/BL=00h"SBSIM",INT 80/BL=02h"SBSIM",INT 80/BL=04h"SBSIM"
+SeeAlso: INT 80/BL=05h
+--------s-80----BL04-------------------------
+INT 80 - SBSIM - "RESUMESND" - RESTART PLAYBACK ON SELECTED DRIVER
+	BL = 04h
+	BH = driver number (01h = FM, 02h=DDBV, 03h=memvoice, 05h=MIDI)
+Return: nothing
+SeeAlso: INT 80/BL=00h"SBSIM",INT 80/BL=03h"SBSIM",INT 80/BL=05h"SBSIM"
+--------s-80----BL05-------------------------
+INT 80 - SBSIM - "GETSNDSTAT" - GET DRIVER'S STATUS
+	BL = 05h
+	BH = driver number (01h = FM, 02h=DDBV, 03h=memvoice, 05h=MIDI)
+Return: AX = status
+SeeAlso: INT 80/BL=00h"SBSIM",INT 80/BL=01h"SBSIM",INT 80/BL=03h"SBSIM"
 --------s-80----BX0000-----------------------
 INT 80 - SoundBlaster SBFM driver - GET VERSION
 	BX = 0000h
 Return: ???
 Note:	SBFM installs at a free interrupt in the range 80h through BFh
-SeeAlso: BX=0008h,INT 2F/AX=FBFBh
+SeeAlso: BX=0008h"SBFM",INT 2F/AX=FBFBh
+--------s-80----BX0000-----------------------
+INT 80 - SBSIM - "QUERYVERSION" - GET VERSION
+	BX = 0000h
+Return: AX = version (AH = major, AL = minor)
+Program: SBSIM is Creative Labs' SoundBlaster Simplified Interface Module,
+	  which provides access to multiple drivers for the SoundBlaster
+	  board through a single interface
+Note:	SBSIM may use any interrupt in the range 80h to BFh; the installation
+	  check consists of testing for the signature "SBSIM" at offset 103h
+	  in the interrupt handler's segment.
+SeeAlso: BX=0001h"SBSIM",BX=0005h"SBSIM",INT 80/BL=00h"SBSIM"
+Index:	installation check;SBSIM|installation check;SoundBlaster
 --------s-80----BX0001-----------------------
 INT 80 - SoundBlaster SBFM driver - SET MUSIC STATUS BYTE ADDRESS
 	BX = 0001h
 	DX:AX -> music status byte
-SeeAlso: BX=0000h,BX=0002h,BX=0003h
+SeeAlso: BX=0000h"SBFM",BX=0002h"SBFM",BX=0003h"SBFM"
+--------s-80----BX0001-----------------------
+INT 80 - SBSIM - "QUERYDRIVERS" - CHECK DRIVERS INSTALLED
+	BX = 0001h
+Return: AX = bit flags for loaded drivers (see below)
+SeeAlso: BX=0000h"SBSIM",BX=0002h"SBSIM",BX=0005h"SBSIM",INT 80/BL=00h"SBSIM"
+
+Bitfields for loaded drivers:
+ bit 0	FM
+ bit 1	double disk-buffered voice driver (DDBV)
+ bit 2	memory voice driver
+ bit 3	auxiliary driver (mixer)
+ bit 4	MIDI
 --------s-80----BX0002-----------------------
 INT 80 - SoundBlaster SBFM driver - SET INSTRUMENT TABLE
 	BX = 0002h
 	CX = number of instruments
 	DX:AX -> instrument table
-SeeAlso: BX=0000h,BX=0001h,BX=0005h
+SeeAlso: BX=0000h"SBFM",BX=0001h"SBFM",BX=0005h"SBFM"
+--------s-80----BX0002-----------------------
+INT 80 - SBSIM - GETADDRESS" - GET SELECTED DRIVER'S ENTRY POINT
+	BX = 0002h
+	AX = driver (00h = FM,01h = DDBV,02h = memvoice,03h = mixer,04h = MIDI)
+Return: CF clear if successful
+	    DX:AX = entry point
+	CF set on error
+SeeAlso: BX=0000h"SBSIM",BX=0001h"SBSIM",BX=0005h"SBSIM",INT 80/BL=00h"SBSIM"
 --------s-80----BX0003-----------------------
 INT 80 - SoundBlaster SBFM driver - SET SYSTEM CLOCK RATE
 	BX = 0003h
 	AX = clock rate divisor (1193180 / desired frequency in Hertz)
 	    FFFFh to restore to 18.2 Hz
-SeeAlso: BX=0000h,BX=0001h,BX=0004h
+SeeAlso: BX=0000h"SBFM",BX=0001h"SBFM",BX=0004h"SBFM"
 --------s-80----BX0004-----------------------
 INT 80 - SoundBlaster SBFM driver - SET DRIVER CLOCK RATE
 	BX = 0004h
 	AX = driver clock rate divisor (1193180 / frequency in Hertz)
 Note:	default frequency is 96 Hz
-SeeAlso: BX=0000h,BX=0003h
+SeeAlso: BX=0000h"SBFM",BX=0003h"SBFM"
 --------s-80----BX0005-----------------------
 INT 80 - SoundBlaster SBFM driver - TRANSPOSE MUSIC
 	BX = 0005h
 	AX = semi-tone offset
-SeeAlso: BX=0000h,BX=0002h,BX=0006h
+SeeAlso: BX=0000h"SBFM",BX=0002h"SBFM",BX=0006h"SBFM"
+--------s-80----BX0005-----------------------
+INT 80 - SBSIM - "GETBUFFERINFO" - GET DRIVER'S BUFFER ADDRESS
+	BX = 0005h
+	AX = driver (00h = FM, 01h = DDB Voice, 04h = MIDI)
+Return: CF clear if successful
+	    DX:AX -> buffer
+	    CX = buffer size in K
+	CF set on error
+Program: SBSIM is Creative Labs' SoundBlaster Simplified Interface Module,
+	  which provides access to multiple drivers for the SoundBlaster
+	  board through a single interface
+Note:	SBSIM may use any interrupt in the range 80h to BFh; the installation
+	  check consists of testing for the signature "SBSIM" at offset 103h
+	  in the interrupt handler's segment.
+SeeAlso: BX=0000h"SBSIM",BX=0001h"SBSIM",BX=0002h"SBSIM",INT 80/BL=00h"SBSIM"
 --------s-80----BX0006-----------------------
 INT 80 - SoundBlaster SBFM driver - PLAY MUSIC
 	BX = 0006h
@@ -5896,40 +6058,64 @@ INT 80 - SoundBlaster SBFM driver - PLAY MUSIC
 Return: AX = status
 	    0000h successful
 	    0001h music already active
-SeeAlso: BX=0000h,BX=0007h,BX=000Ah,INT 1A/AX=FF04h
+SeeAlso: BX=0000h"SBFM",BX=0007h"SBFM",BX=000Ah"SBFM",INT 1A/AX=FF04h
 --------s-80----BX0007-----------------------
 INT 80 - SoundBlaster SBFM driver - STOP MUSIC
 	BX = 0007h
 Return: AX = status
 	    0000h successful
 	    0001h music not active
-SeeAlso: BX=0000h,BX=0006h,BX=0009h,INT 1A/AX=FF05h
+SeeAlso: BX=0000h"SBFM",BX=0006h"SBFM",BX=0009h"SBFM",INT 1A/AX=FF05h
 --------s-80----BX0008-----------------------
 INT 80 - SoundBlaster SBFM driver - RESET DRIVER
 	BX = 0008h
 Return: AX = status
 	    0000h successful
 	    0001h music is active
-SeeAlso: BX=0000h
+SeeAlso: BX=0000h"SBFM"
 --------s-80----BX0009-----------------------
 INT 80 - SoundBlaster SBFM driver - PAUSE MUSIC
 	BX = 0009h
 Return: AX = status
 	    0000h successful
 	    0001h no music active
-SeeAlso: BX=0000h,BX=0007h,BX=000Ah,INT 1A/AX=FF01h
+SeeAlso: BX=0000h"SBFM",BX=0007h"SBFM",BX=000Ah"SBFM",INT 1A/AX=FF01h
 --------s-80----BX000A-----------------------
 INT 80 - SoundBlaster SBFM driver - RESUME MUSIC
 	BX = 000Ah
 Return: AX = status
 	    0000h successful
 	    0001h no music paused
-SeeAlso: BX=0000h,BX=0006h,BX=0009h
+SeeAlso: BX=0000h"SBFM",BX=0006h"SBFM",BX=0009h"SBFM"
 --------s-80----BX000B-----------------------
 INT 80 - SoundBlaster SBFM driver - SET USER-DEF TRAP FOR SYSTEM-EXCLUSIVE CMDS
 	BX = 000Bh
 	DX:AX -> trap routine
-SeeAlso: BX=0000h
+SeeAlso: BX=0000h"SBFM"
+--------s-80----BX0400-----------------------
+INT 80 - SBSIM - "GETVOLUME" - GET SOURCE'S VOLUME
+	BX = 0400h
+	AX = sound source (see below)
+Return: CF clear if successful
+	    AX = volume
+	CF set on error
+	    AX = error code (see INT 80/BL=00h)
+SeeAlso: BX=0401h"SBSIM"
+
+Values for sound source:
+ 00h	master volume
+ 01h	voice
+ 02h	FM
+ 03h	CD
+ 04h	line in
+ 05h	microphone
+--------s-80----BX0401-----------------------
+INT 80 - SBSIM - "SETVOLUME" - SET SOURCE'S VOLUME
+	BX = 0401h
+	AX = sound source (see INT 80/BX=0400h)
+	DX = new volume
+Return: AX = result (0000h = success) (see also INT 80/BL=00h)
+SeeAlso: BX=0400h"SBSIM"
 --------N-8001-------------------------------
 INT 80 - QPC Software PKTINT.COM - INITIALIZE
 	AH = 01h
@@ -8927,6 +9113,7 @@ SeeAlso: AH=06h
 INT F8 - reserved for user interrupt
 --------h-F8---------------------------------
 INT F8 - TANDY??? - 100 HZ INTERRUPT
+Note:	this vector is not used on the Tandy 1000TL
 SeeAlso: INT FA"USART"
 --------T-F8---------------------------------
 INT F8 - DoubleDOS - ???
@@ -8938,6 +9125,7 @@ INT F9 - DoubleDOS - ???
 INT FA - reserved for user interrupt
 --------h-FA---------------------------------
 INT FA - TANDY??? - SERIAL PORT USART INTERRUPT
+Note:	this vector is not used on the Tandy 1000TL
 SeeAlso: INT F8"100 HZ",INT FB"USART"
 --------T-FA---------------------------------
 INT FA - DoubleDOS - TURN OFF TIMESHARING
@@ -9035,17 +9223,32 @@ SeeAlso: INT 40"Z100"
 INT FF U - QEMM-386.SYS v6.0+ - internal
 Notes:	requires that a byte in the conventional-memory stub be set to the
 	  desired function number (00h through 0Ch)
+
+Functions supported by QEMM:
+ 00h	reflect back to Virtual86-mode interrupt handler (default)
+ 01h	???
+ 02h	access DR7???
+ 03h	QPI upcall (see INT 67/AH=3Fh)
+ 04h	???
+ 05h	???
+ 06h	INT 15/AH=87h
+ 07h	EMS services (see INT 67/AH=40h-5Dh)
+ 08h	???
+ 09h	QEMM exception handler
+ 0Ah	XMS services (see INT 2F/AX=4310h)
+ 0Bh	Virtual DMA Services (see INT 4B/AX=8102h)
+ 0Ch	???
 --------v-FF---------------------------------
 INT FF - VIRUS - "Violetta" - ???
 Note:	used but not chained by virus
 SeeAlso: INT E0"VIRUS",INT F1"VIRUS"
 --------!---FILELIST-------------------------
 Please redistribute the following files unmodified as a group, in a trio of
-archives named INTER38A through INTER38C (preferably the original authenticated
+archives named INTER39A through INTER39C (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
-	INTERRUP.A	INT 00 through INT 14/7F
-	INTERRUP.B	INT 14/80 through INT 15
+	INTERRUP.A	INT 00 through INT 14/0F
+	INTERRUP.B	INT 14/10 through INT 15
 	INTERRUP.C	INT 16 through INT 21/41
 	INTERRUP.D	INT 21/42 through INT 21/7F
 	INTERRUP.E	INT 21/80 through INT 21/FF
@@ -9063,7 +9266,7 @@ PKZIP archives):
 	MEMORY.LST	format of the BIOS data area
 	PORTS.LST	a listing of I/O ports
 	COMBINE.BAT	combine the pieces of the list into a single file
-The following files should be distributed in an archive called INTER37D:
+The following files should be distributed in an archive called INTER39D:
 	INT.COM		invoke interrupts from commandline
 	INT2HLP.BAT	Perl script to convert list into QuickHelp database
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
@@ -9074,7 +9277,7 @@ The following files should be distributed in an archive called INTER37D:
 	INTLIST.ICO	Windows icon for INTERVUE
 	INTPRINT.C	source code for INTPRINT
 	RB2NG.*		convert list into Norton Guides database
-This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994 Ralf Brown
 --------!---CONTACT_INFO---------------------
 Internet: ralf@telerama.lm.com	!!NOTE NEW DOMAIN NAME!!
 UUCP: {uunet,harvard}!telerama.lm.com!ralf

@@ -1,5 +1,5 @@
 Interrupt List, part 9 of 10
-This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994 Ralf Brown
 --------*-61---------------------------------
 INT 61 - reserved for user interrupt
 --------b-61---------------------------------
@@ -5632,6 +5632,11 @@ Return: CF set
 INT 66 - PenDOS - PMOUSE - ALTERNATE API
 	AH = function (58h-5Fh)
 Note:	these functions exactly duplicate AH=50h-57h
+----------66AA02-----------------------------
+INT 66 - HelpTSR v2.10 - INSTALLATION CHECK
+	AX = AA02h
+Return: ES:DI -> 7 byte signature "HelpTSR" if resident
+Program: HelpTSR is a resident viewer by David Jurgens for HelpPC
 --------n-66C5-------------------------------
 INT 66 - PenDOS - VLOAD - API
 	AH = C5h
@@ -8417,6 +8422,13 @@ INT 68 - APPC/PC - PASSTHROUGH
 	DS:DX -> control block (format depends on application subsystem)
 Return: control block updated
 SeeAlso: AH=FFh
+----------6847-------------------------------
+INT 68 - MS Windows debugging kernel - OUTPUT STRING
+	AH = 47h
+	ES:SI -> string
+Notes:	output a string (to inform a debugger of some events)
+	KERNEL outputs "Windows Kernel Entry\r\n" on startup
+SeeAlso: INT 41/AX=0012h
 --------N-68FA-------------------------------
 INT 68 - APPC/PC - ENABLE/DISABLE APPC
 	AH = FAh

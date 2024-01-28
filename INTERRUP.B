@@ -1,5 +1,967 @@
 Interrupt List, part 2 of 10
-This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994 Ralf Brown
+--------S-1410-------------------------------
+INT 14 - FOSSIL - EXTENDED ^C/^K CHECKING AND TRANSMIT ON/OFF
+	AH = 10h
+	AL = bit mask
+	    bit 0: enable/disable ^C/^K checking
+	    bit 1: enable/disable the transmitter
+	DX = port number
+SeeAlso: AH=0Fh"FOSSIL"
+--------S-1410-------------------------------
+INT 14 - Digiboard DigiCHANNEL PC/X* - CLEAR RECEIVE BUFFER
+	AH = 10h
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    FFh error
+SeeAlso: AH=09h"Digiboard",AH=11h"Digiboard"
+--------S-1410-------------------------------
+INT 14 - MBBIOS PACCOM support - SET CRC WAIT
+	AH = 10h
+	AL = new setting in clock ticks (should be at least 5 character times)
+Desc:	specify the time from start of last character to dropping RTS
+SeeAlso: AH=0Dh"MBBIOS",AH=0Fh"MBBIOS"
+--------N-1410--DXFFFF-----------------------
+INT 14 - Connection Manager - QUERY SERVICE NAMES
+	AH = 10h
+	DX = FFFFh
+	CL = subfunction
+	    00h search first
+	    01h search next
+	ES:DI -> pattern buffer (see below)
+Return: AH = return code (00h,01h,03h,06h) (see also AH=00h/DX=FFFFh)
+	    01h no (more) matching names
+	    03h invalid request
+	ES:DI buffer filled with reply buffer (see below) containing matched
+		  name if AH=00h
+Program: Connection Manager by Softwarehouse Corp. permits the sharing of
+	  serial ports over an IPX or NetBIOS-based network
+Desc:	obtain the names of groups and lines available for connection requests,
+	  and the names of active Connection Servers
+SeeAlso: AH=04h/DX=FFFFh,AH=0Bh/DX=FFFFh
+
+Format of pattern/reply buffer:
+Offset	Size	Description
+ 00h	WORD	length of pattern (30h or 32h)
+ 02h 16 BYTEs	server pattern or name
+ 12h 16 BYTEs	group pattern or name
+ 22h 16 BYTEs	line pattern or name
+ 23h	BYTE	(optional) ???
+ 24h	BYTE	(optional, returned) current line status
+		00h available
+		01h out of service
+		02h currently allocated to a connection
+Note:	pattern may include '?' wildcard to match any character
+--------S-1411-------------------------------
+INT 14 - FOSSIL - SET CURRENT CURSOR LOCATION
+	AH = 11h
+	DH = row
+	DL = column
+Note:	this is the same as INT 10/AH=02h
+SeeAlso: AH=12h"FOSSIL"
+--------S-1411-------------------------------
+INT 14 - Digiboard DigiCHANNEL PC/X* - CLEAR TRANSMIT BUFFER
+	AH = 11h
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    FFh error
+SeeAlso: AH=09h"Digiboard",AH=10h"Digiboard"
+--------S-1411-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - DISABLE PORT
+	AH = 11h
+	DX = port number
+Return: AL = status
+	    00h successful
+	    01h IRQ for port is shared
+	    02h IRQ was reserved
+SeeAlso: AH=04h,AH=05h,AH=12h"PC-MOS"
+--------S-1412-------------------------------
+INT 14 - FOSSIL - READ CURRENT CURSOR LOCATION
+	AH = 12h
+Return: DH = row
+	DL = column
+Note:	this is the same as INT 10/AH=03h
+SeeAlso: AH=11h"FOSSIL"
+--------S-1412-------------------------------
+INT 14 - Digiboard DigiCHANNEL PC/X* - GET TRANSMIT BUFFER FREE SPACE
+	AH = 12h
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AX = number of bytes free
+SeeAlso: AH=0Ah"Digiboard",AH=14h"Digiboard"
+--------S-1412-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - GET CURRENT PORT PARAMETERS
+	AH = 12h
+	DX = port number
+Return: AH = status
+	    FFh port number invalid
+	AL = line parameters (see AH=00h)
+	AH = flow control configuration (see AH=05h"PC-MOS")
+	CX:BX = bps rate
+	DL = XOFF character or 00h for none
+	DH = XON character or 00h for none
+--------S-1413-------------------------------
+INT 14 - FOSSIL - SINGLE CHARACTER ANSI WRITE TO SCREEN
+	AH = 13h
+	AL = character
+Note:	should not be called if it is unsafe to call DOS
+SeeAlso: AH=15h
+--------S-1413-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - REGISTER A PORT WITH A TERMINAL
+	AH = 13h
+	DX = port number
+Return: AH = status
+	    FFh port number invalid
+	    else
+		ES:BX -> BYTE flag (00h buffer empty, FFh buffer contains data)
+SeeAlso: AH=17h"PC-MOS"
+--------S-1414-------------------------------
+INT 14 - FOSSIL - ENABLE OR DISABLE WATCHDOG PROCESSING
+	AH = 14h
+	AL = 01h enable watchdog
+	     00h disable watchdog
+	DX = port number
+--------S-1414-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - OUTPUT STRING
+	AH = 14h
+	CX = number of characters in string
+	DX = port number
+	ES:BX -> string to be sent
+	SI = timeout in timer ticks or 0000h for default
+Return: AX = number of bytes actually sent
+	ZF clear if successful
+	ZF set on timeout
+SeeAlso: AH=01h,AH=15h"PC-MOS"
+--------S-1414-------------------------------
+INT 14 - Digiboard - GET NUMBER OF BOARDS INSTALLED
+	AH = 14h
+Return: AX = number of boards installed
+SeeAlso: AH=08h"Digiboard",AH=15h"Digiboard"
+--------S-1415-------------------------------
+INT 14 - FOSSIL - WRITE CHARACTER TO SCREEN USING BIOS SUPPORT ROUTINES
+	AH = 15h
+	AL = character
+SeeAlso: AH=13h"FOSSIL"
+--------S-1415-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - INPUT STRING
+	AH = 15h
+	CX = size of buffer
+	DX = port number
+	ES:BX -> buffer for received characters
+	SI = timeout in clock ticks or 0000h for default
+Return: AX = number of characters actually read
+	ZF set on timeout (no data available)
+SeeAlso: AH=02h,AH=14h"PC-MOS",AH=16h"PC-MOS"
+--------S-1415-------------------------------
+INT 14 - Digiboard - ENABLE/DISABLE MEMORY
+	AH = 15h
+	AL = new state (00h disabled, 01h enabled)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AH=14h"Digiboard",AH=16h"Digiboard"
+--------S-1416-------------------------------
+INT 14 - FOSSIL - INSERT/DELETE FUNCTION FROM TIMER TICK CHAIN
+	AH = 16h
+	AL = function
+	    00h = delete
+	    01h = add
+	ES:DX -> routine to call
+Return: AX = status
+	    0000h successful
+	    0001h unsuccessful
+SeeAlso: AH=07h"FOSSIL"
+--------S-1416-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - LINK TO ANOTHER SERIAL DRIVER
+	AH = 16h
+	ES:BX -> calling driver's INT 14 entry point
+Return: nothing
+Program: PC-MOS/386 v5.01 is a multitasking, multiuser MS-DOS 5.0-compatible
+	  operating system by The Software Link, Inc.
+--------S-1416-------------------------------
+INT 14 - Digiboard DigiCHANNEL PC/X* - CCB COMMAND
+	AH = 16h
+	AL = CCB command number (see below) (see also following entries)
+	BL = byte 2
+	BH = byte 3
+	CL = byte 1 (for all channel functions except 4Eh and 4Fh)
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AX=1646h,AH=18h"Digiboard"
+
+Values for CCB command number:
+ 40h	Set Receive Mid Water Mark
+ 41h	Set Receive High Water Mark
+ 42h	Flush Receive Buffer
+ 43h	Flush Transmit Buffer
+ 44h	Transmit Pause
+ 45h	Transmit Resume
+ 46h	Set Interrupt to Host Mask
+ 47h	Set Baud, Data, Stop and Parity
+ 48h	Send Break
+ 49h	Set Modem Lines
+ 4Ah	Set Break Count
+ 4Bh	Set Handshake
+ 4Ch	Set Xon/Xoff Characters
+ 4Dh	Set Transmit Mid Water Mark
+ 4Eh	IRQ Polling Timer to Host
+ 4Fh	Buffer Set All
+ 50h	Port On
+ 51h	Port Off
+ 52h	Receive Pause
+ 53h	Special Character Interrupt
+ 54h	RS-422 Enable
+--------S-141646-----------------------------
+INT 14 - Digiboard - CCB COMMAND - SET INTERRUPT TO HOST MASK
+	AX = 1646h
+	BL = bits to set
+	BH = bits to clear
+	CL = byte 1
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AH=16h"Digiboard",AX=1647h
+--------S-141647-----------------------------
+INT 14 - Digiboard - CCB COMMAND - SET BAUD/DATABITS/STOPBITS/PARITY
+	AX = 1647h
+	BL = baud
+	BH = datatype
+	CL = byte 1
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AH=16h"Digiboard",AX=1646h,AX=1649h
+--------S-141649-----------------------------
+INT 14 - Digiboard - CCB COMMAND - SET MODEM LINES
+	AX = 1649h
+	BL = bits to set
+	BH = bits to clear
+	CL = byte 1
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AH=16h"Digiboard",AX=1647h
+--------S-14164A-----------------------------
+INT 14 - Digiboard - CCB COMMAND - SET BREAK COUNT
+	AX = 164Ah
+	BL = break count
+	CL = byte 1
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AH=16h"Digiboard",AX=1649h,AX=164Bh
+--------S-14164B-----------------------------
+INT 14 - Digiboard - CCB COMMAND - SET HANDSHAKE
+	AX = 164Bh
+	BL = bits to set
+	BH = bits to clear
+	CL = byte 1
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AH=16h"Digiboard",AX=1649h,AX=164Ch
+--------S-14164C-----------------------------
+INT 14 - Digiboard - CCB COMMAND - SET XON/XOFF CHARACTERS
+	AX = 164Ch
+	BL = XON character
+	BH = XOFF character
+	CL = byte 1
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AH=16h"Digiboard",AX=164Bh,AX=164Dh
+--------S-14164D-----------------------------
+INT 14 - Digiboard - CCB COMMAND - SET TRANSMIT MID-WATER MARK
+	AX = 164Dh
+	BX = new mid-water mark
+	CL = byte 1
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AH=16h"Digiboard",AX=164Ch,AX=164Eh,AX=164Fh
+--------S-14164E-----------------------------
+INT 14 - Digiboard - CCB COMMAND - IRQ POLLING TIMER TO HOST
+	AX = 164Eh
+	BL = ticks
+	BH = ???
+	CL = mode
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AH=16h"Digiboard",AX=164Dh
+--------S-14164F-----------------------------
+INT 14 - Digiboard - CCB COMMAND - BUFFER SET ALL
+	AX = 164Fh
+	BL = size
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AH=16h"Digiboard",AX=164Dh
+--------S-141653-----------------------------
+INT 14 - Digiboard - CCB COMMAND - SPECIAL CHARACTER INTERRUPT
+	AX = 1653h
+	BL = enable/disable
+	BH = special character
+	CL = byte 1
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h error
+	    FFh error
+SeeAlso: AH=16h"Digiboard",AX=1646h
+--------S-1417-------------------------------
+INT 14 - FOSSIL - REBOOT SYSTEM
+	AH = 17h
+	AL = method
+	    00h = cold boot
+	    01h = warm boot
+SeeAlso: INT 19
+--------S-1417-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - WRITE MODEM CONTROL REGISTER
+	AH = 17h
+	AL = new value for UART's modem control register
+	DX = port number
+Return: nothing
+--------S-1418-------------------------------
+INT 14 - FOSSIL - READ BLOCK
+	AH = 18h
+	CX = maximum number of characters to transfer
+	DX = port number
+	ES:DI -> user buffer
+Return: AX = number of characters transferred
+SeeAlso: AH=19h"FOSSIL",AH=83h"COURIERS",AX=FF02h,INT 6B/AX=0100h
+--------S-1418-------------------------------
+INT 14 - Digiboard DigiCHANNEL PC/X* - SEND BIOS COMMAND
+	AH = 18h
+	ES:BX -> 16-byte command string
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    80h timeout
+	AL = mailbox status
+	    00h no errors
+	    8Xh BIOS error
+	ES:BX buffer filled in with mailbox string
+	ZF clear if no errors
+	ZF set if either status byte contains an error code
+SeeAlso: AH=16h"Digiboard"
+--------S-1418-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - GET DRIVER DESCRIPTION
+	AH = 18h
+	DX = port number
+Return: DS:BX -> 40-byte buffer containing a string identifying the serial
+		driver
+SeeAlso: AH=06h"PC-MOS"
+--------S-1419-------------------------------
+INT 14 - FOSSIL - WRITE BLOCK
+	AH = 19h
+	CX = maximum number of characters to transfer
+	DX = port number
+	ES:DI -> user buffer
+Return: AX = number of characters transferred
+SeeAlso: AH=18h"FOSSIL",AH=86h,INT 6B/AX=0000h
+--------S-1419-------------------------------
+INT 14 - Digiboard DigiCHANNEL PC/X* - SPECIAL CHARACTER INTERRUPT
+	AH = 19h
+	BL = flag
+	    00h disable special character interrupt
+	    FFh enable interrupt
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: AH = status
+	    00h successful
+	    FFh failed
+SeeAlso: AH=1Ah"Digiboard"
+--------S-1419-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - SELECTIVE BUFFER FLUSH
+	AH = 19h
+	AL = what to flush
+		bit 0: input buffer
+		bit 1: output buffer
+	DX = port number
+Return: nothing
+SeeAlso: AH=09h"PC-MOS"
+--------S-141A-------------------------------
+INT 14 - FOSSIL - BREAK BEGIN OR END
+	AH = 1Ah
+	AL = 00h stop sending 'break'
+	     01h start sending 'break'
+	DX = port number
+SeeAlso: AH=06h"FOSSIL",AH=8Ah,AH=FAh
+--------S-141A-------------------------------
+INT 14 - Digiboard DigiCHANNEL PC/X - SPECIAL CHARACTER FLAG/COUNTER
+	AH = 1Ah
+	BX = subfunction
+	    00h return pointer to special character flag byte
+	    01h return pointer to special character counter word
+	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
+Return: ES:BX -> special character flag or counter
+Notes:	flag is FFh if one or more special characters are in the receive
+	  buffer; it is 00h and the counter is invalid if no special characters
+	  are in the receive buffer
+	counter (if valid) contains the number of characters in the receive
+	  buffer up to and including the last-received special character
+--------S-141B-------------------------------
+INT 14 - FOSSIL - RETURN INFORMATION ABOUT THE DRIVER
+	AH = 1Bh
+	DX = port number
+	CX = size of user buffer
+	ES:DI -> user buffer for driver info (see below)
+Return: AX = number of characters transferred
+	CX = 3058h ("0X") (X00 FOSSIL only)
+	DX = 2030h (" 0") (X00 FOSSIL only)
+
+Format of driver info:
+Offset	Size	Description
+ 00h	WORD	size of structure in bytes
+ 02h	BYTE	FOSSIL spec driver conforms to
+ 03h	BYTE	revision level of this specific driver
+ 04h	DWORD	pointer to ASCIZ identification string
+ 08h	WORD	size of the input buffer
+ 0Ah	WORD	number of bytes left in buffer
+ 0Ch	WORD	size of the output buffer
+ 0Eh	WORD	number of bytes left in buffer
+ 10h	BYTE	width of screen
+ 11h	BYTE	length of screen
+ 12h	BYTE	actual baud rate, computer to modem
+--------S-141C-------------------------------
+INT 14 - X00 FOSSIL - ACTIVATE PORT
+	AH = 1Ch
+	DX = port number
+Return: AX = 1954h if successful
+	BL = maximum function number supported (not including 7Eh and above)
+	BH = revision of FOSSIL specification supported
+Note:	this is a duplicate of AH=04h, so that AH=04h may be made compatible
+	  with the PS/2 BIOS in a future release
+SeeAlso: AH=04h"FOSSIL",AH=1Dh
+--------S-141D-------------------------------
+INT 14 - X00 FOSSIL - DEACTIVATE PORT
+	AH = 1Dh
+	DX = port number
+Return: none
+Notes:	this is a duplicate of AH=05h, so that AH=05h may be made compatible
+	  with the PS/2 BIOS in a future release
+	ignored if the port was never activated with AH=04h or AH=1Ch
+SeeAlso: AH=05h"FOSSIL",AH=1Ch
+--------S-141E-------------------------------
+INT 14 - X00 FOSSIL - EXTENDED LINE CONTROL INITIALIZATION
+	AH = 1Eh
+	AL = break status
+	    00h if break
+	    01h if no break
+	BH = parity (see below)
+	BL = number of stop bits
+	    00h one stop bit
+	    01h two stop bits (1.5 if 5 bit word length)
+	CH = word length (see below)
+	CL = bps rate (see below)
+	DX = port number
+Return: AX = port status code (see AH=00h)
+Notes:	this function is intended to exactly emulate the PS/2 BIOS AH=04h call
+	if the port was locked at X00 load time, the appropriate parameters are
+	  ignored
+SeeAlso: AH=00h,AH=04h"SERIAL I/O"
+
+Values for parity:
+ 00h	no parity
+ 01h	odd parity
+ 02h	even parity
+ 03h	stick parity odd
+ 04h	stick parity even
+
+Values for word length:
+ 00h	5 bits
+ 01h	6 bits
+ 02h	7 bits
+ 03h	8 bits
+
+Values for bps rate:
+ 00h	110
+ 01h	150
+ 02h	300
+ 03h	600
+ 04h	1200
+ 05h	2400
+ 06h	4800
+ 07h	9600
+ 08h	19200
+--------S-101E------------------------------------
+INT 10 - HUNTER 16 - READ COMMS PARAMETERS
+	AH = 1Eh
+	CX = channel number (00h COM1, 01h COM2, ...)
+	DS:BX -> buffer for communications parameters (see below)
+Return: DS:BX buffer filled
+Note:	the Husky Hunter 16 is an 8088-based ruggedized laptop.	 Other family
+	  members are the Husky Hunter, Husky Hunter 16/80, and Husky Hawk.
+SeeAlso: AH=20h"HUNTER"
+
+Format of communications parameters:
+Offset	Size	Description
+ 00h	BYTE	communications type (00h IBM, nonzero Husky)
+ 01h	BYTE	port number (00h COM1, 01h COM2)
+ 02h	BYTE	baud rate (00h 110 bps, 01h 150, 02h 300, 03h 600, 04h 1200,
+		05h 2400, 06h 4800, 07h 9600, 08h 19200, 09h 38400)
+ 03h	BYTE	data bits (01h seven, 02h eight)
+ 04h	BYTE	parity (00h none, 01h odd, 02h even)
+ 05h	BYTE	stop bits (00h one, 01h two)
+ 06h	BYTE	handshake
+		bits 0-1  0: RTS off, 1: RTS hold, 2: RTS true
+		bit    2  DTR enabled
+		bit    4  CTS enabled
+		bit    5  DSR enabled
+		bit    6  DCD enabled
+ 07h	BYTE	handshake protocol (00h none, 01h Xon/Xoff, 02h HWK3780)
+ 08h	BYTE	Nulls after CR (0-20)
+ 09h	BYTE	LF (00h off, 01h on)
+ 0Ah	BYTE	Serig. 0..7Fh: Ignore this character
+		       80h: Serig off
+ 0Bh	BYTE	echo (00h off, 01h on)
+ 0Ch	BYTE	transmit timeout in seconds (1-60) or 00h to disable
+ 0Dh	BYTE	receive timeout in seconds (1-60) or 00h to disable
+ 0Eh  5 BYTEs	reserved
+--------S-141F-------------------------------
+INT 14 - X00 FOSSIL - EXTENDED SERIAL PORT STATUS/CONTROL
+	AH = 1Fh
+	AL = 00h read modem control register
+	      Return: BL = modem control register (see below)
+		      AH = status
+	AL = 01h write modem control register
+	      BL = modem control register (see below)
+	      Return: AX = status
+	DX = port number
+Notes:	this function is intended to exactly emulate the PS/2 BIOS AH=05h call
+	X00 forces BL bit 3 set (interrupts cannot be disabled)
+SeeAlso: AH=00h,AH=05h"SERIAL I/O"
+
+Bitfields for modem control register:
+ bit 0	data terminal ready
+ bit 1	request to send
+ bit 2	OUT1
+ bit 3	OUT2 (interrupts) enabled
+ bit 4	LOOP
+ bits 5-7 reserved
+--------S-1420-------------------------------
+INT 14 - X00 FOSSIL - DESTRUCTIVE READ WITH NO WAIT
+	AH = 20h
+	DX = port number
+Return: AH = 00h if character was available
+	    AL = next character (removed from receive buffer)
+	AX = FFFFh if no character available
+SeeAlso: AH=0Ch,AH=21h"X00"
+--------S-1420-------------------------------
+INT 14 - Alloy MW386 - ATTACH LOGICAL COMMUNICATIONS PORT TO PHYSICAL PORT
+	AH = 20h
+	AL = logical port (01h COM1, 02h COM2)
+	DX = physical port number
+Return: AX = status
+	    0000h successful
+	    FFFFh failed
+SeeAlso: AH=21h"Alloy",AH=22h"Alloy",AH=23h"Alloy",INT 17/AH=8Bh"Alloy"
+--------S-1420-------------------------------
+INT 14 - MultiDOS Plus - INITIALIZE PORT
+	AH = 20h
+	AL = port parameters (see AH=00h"SERIAL")
+	DX = port number (0-3)
+Return: AH = status
+	    00h successful
+	    41h no such port
+	    64h monitor mode already active
+SeeAlso: AH=00h"SERIAL",AH=04h"MultiDOS",AH=21h"MultiDOS",AH=23h"MultiDOS"
+--------S-1420-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - CHECK OUTPUT QUEUE
+	AH = 20h
+	DX = port number
+Return: AX = number of bytes in output buffer
+SeeAlso: AH=0Ah"PC-MOS"
+--------S-1020------------------------------------
+INT 10 - HUNTER 16 - SELECT COMMS PARAMETERS
+	AH = 20h
+	CX = channel number (00h COM1, 01h COM2, ...)
+	DS:BX -> buffer with communications parameter (see AH=1Eh"HUNTER")
+Return: AX = status
+	    0000h successful
+	    0001h invalid parameter
+SeeAlso: AH=1Eh"HUNTER",AH=21h"HUNTER"
+--------S-1421-------------------------------
+INT 14 - X00 FOSSIL - STUFF RECEIVE BUFFER
+	AH = 21h
+	AL = character
+	DX = port number
+Notes:	the given character is inserted at the end of the receive buffer as if
+	  it had just arrived from the serial port; all normal receive
+	  processing (XON/XOFF, ^C/^K) is performed on the character
+	fully re-entrant
+SeeAlso: AH=20h"X00"
+--------S-1421-------------------------------
+INT 14 - Alloy MW386 v1.x only - RELEASE PHYSICAL COMMUNICATIONS PORT
+	AH = 21h
+	DX = physical port number
+Return: AX = status
+	    0000h successful
+	    FFFFh failed
+SeeAlso: AH=20h"Alloy",AH=22h"Alloy"
+--------S-1421-------------------------------
+INT 14 - MultiDOS Plus - TRANSMIT CHARACTER
+	AH = 21h
+	AL = character to send
+	DX = port number
+Return: AH = status (see below)
+Note:	monitor mode must have been turned on with AH=24h before calling
+SeeAlso: AH=20h"MultiDOS",AH=22h"MultiDOS",AH=24h"MultiDOS"
+
+Values for status:
+ 00h	successful
+ 39h	no DSR or CTS
+ 3Ch	no DSR
+ 3Bh	no CTS
+ 41h	no such port
+ 42h	monitor mode not active
+ 97h	timed out
+--------S-1421-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - OUTPUT CHARACTER, WITH TIMEOUT
+	AH = 21h
+	AL = char to send
+	DX = port number
+	SI = timeout in timer ticks (0000h = default)
+Program: PC-MOS/386 v5.01 is a multitasking, multiuser MS-DOS 5.0-compatible
+	  operating system by The Software Link, Inc.
+SeeAlso: AH=01h,AH=0Eh"PC/MOS",AH=22h"PC-MOS"
+--------S-1021------------------------------------
+INT 10 - HUNTER 16 - EXTENDED CONTROL
+	AH = 21h
+	AL = command
+	    01h force transmission of buffer
+	    02h clear transmit buffer
+	    03h clear receive buffer
+	DX = port (00h COM1, 01h COM2)
+Return: AH = extended status
+Desc:	executes the command on the selected port
+SeeAlso: AH=1Eh"HUNTER",AH=20h"HUNTER",AH=22h"HUNTER",AH=24h"HUNTER"
+--------S-1422-------------------------------
+INT 14 - Alloy MW386 v2+ - RELEASE LOGICAL COMMUNICATIONS PORT
+	AH = 22h
+	AL = logical port (01h COM1, 02h COM2)
+Return: AX = status (0000h successful)
+SeeAlso: AH=20h"Alloy",AH=21h"Alloy"
+--------S-1422-------------------------------
+INT 14 - MultiDOS Plus - RECEIVE CHARACTER
+	AH = 22h
+	DX = port number
+Return: AH = status (see also AH=21h"MultiDOS")
+	    00h successful
+		AL = character
+	    3Dh framing and parity error
+	    3Eh overrun error
+	    3Fh framing error
+	    40h parity error
+	    96h ring buffer overflow
+Note:	if no character is available, this function waits until a character
+	  arrives or an implementation-dependent timeout elapses
+SeeAlso: AH=20h"MultiDOS",AH=21h"MultiDOS",AH=27h
+--------S-1422-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - RECEIVE CHARACTER, WITH TIMEOUT
+	AH = 22h
+	DX = port number
+	SI = timeout in timer ticks (0000h = default)
+Return: AH = port status (see AH=03h bits 0..6)
+	     bit 7 = 1 indicates time-out
+	AL = character received
+Program: PC-MOS/386 v5.01 is a multitasking, multiuser MS-DOS 5.0-compatible
+	  operating system by The Software Link, Inc.
+SeeAlso: AH=02h,AH=0Fh"PC-MOS",AH=21h"PC-MOS"
+--------S-1022------------------------------------
+INT 10 - HUNTER 16 - EXTENDED STATUS
+	AH = 22h
+	DX = port (00h COM1, 01h COM2)
+Return: AH = extended status
+	BX = number of characters in input buffer
+	CX = number of characters in output buffer
+Desc:	returns the most recent Extended Status code for the port
+SeeAlso: AH=21h"HUNTER"
+--------S-1423-------------------------------
+INT 14 - Alloy MW386 v2+ - GET PORT NUMBER FROM LOGICAL PORT ID
+	AH = 23h
+	AL = logical port (01h COM1, 02h COM2)
+	DH = user ID
+	DL = process ID (DH,DL both FFh for current task)
+Return: AL = MW386 port mode (see below)
+	CX = MW386 port number
+	DH = owner's user ID
+	DL = owner's task ID
+SeeAlso: AH=20h"Alloy",INT 17/AH=8Bh"Alloy"
+
+Bitfields for MW386 port mode:
+ bit 0	port is shared (spooler only)
+ bit 1	port is spooled instead of direct (spooler only)
+ bit 2	port is assigned as logical COM device, not in spooler
+ bit 3	port is free
+--------S-1423-------------------------------
+INT 14 - MultiDOS Plus - GET PORT STATUS
+	AH = 23h
+	DX = port number
+Return: AH = line status (see AH=03h)
+	AL = modem status (see AH=03h)
+SeeAlso: AH=03h,AH=07h"MultiDOS",AH=20h"MultiDOS"
+--------S-1423-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - DECLARE PORT OWNERSHIP
+	AH = 23h
+	DX = port number
+	BX = TCB segment/selector address of owner task
+Return: nothing
+SeeAlso: AH=0Dh"PC-MOS"
+--------S-1023------------------------------------
+INT 10 - HUNTER 16 - CONTROL HANDSHAKE LINES
+	AH = 23h
+	BH = handshake line to set (00h RTS, 01h DTR)
+	BL = new level (00h low, 01h high)
+Desc:	sets the handshake lines of COM1 to the desired level
+SeeAlso: AH=21h"HUNTER",AH=24h"HUNTER"
+--------S-1424-------------------------------
+INT 14 - Alloy MW386 v2+ - CHANGE PHYSICAL PORT PARAMETERS
+	AH = 24h
+	CX = physical I/O port number
+	DS:DX -> configuration table (see below)
+Return: AH = 00h
+Note:	invalid port numbers are merely ignored
+SeeAlso: INT 17/AH=96h
+
+Format of configuration table:
+Offset	Size	Description
+ 00h	BYTE	baud rate (see below)
+ 01h	BYTE	data bits (00h=5, 01h=6, 02h=7, 03h=8)
+ 02h	BYTE	parity (00h none, 01h odd, 02h even)
+ 03h	BYTE	stop bits (00h=1, 01h=2)
+ 04h	BYTE	receive flow control
+		00h none, 01h XON/XOFF, 02h DTR/DSR, 03h XPC, 04h RTS/CTS
+ 05h	BYTE	transmit flow control (as for receive)
+
+Values for baud rate:
+ 00h	38400
+ 01h	19200
+ 02h	9600
+ 03h	7200
+ 04h	4800
+ 05h	3600
+ 06h	2400
+ 07h	2000
+ 08h	1200
+ 09h	600
+ 0Ah	300
+ 0Bh	150
+ 0Ch	134.5
+--------S-1424-------------------------------
+INT 14 - MultiDOS Plus - SET MONITOR MODE
+	AH = 24h
+	AL = port status storage
+	    00h single status for entire receive buffer
+	    01h separate status kept for each byte in receive buffer
+	DX = port number
+Return: AH = status
+	    00h successful
+	    3Ah invalid status storage specified
+	    41h no such port
+	    64h monitor mode already active
+Note:	in monitor mode, MultiDOS redirects all BIOS video output to a serial
+	  port
+SeeAlso: AH=20h"MultiDOS",AH=25h
+--------S-1424-------------------------------
+INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - ???
+	AH = 24h
+Return: ???
+Program: PC-MOS/386 v5.01 is a multitasking, multiuser MS-DOS 5.0-compatible
+	  operating system by The Software Link, Inc.
+--------S-1024------------------------------------
+INT 10 - HUNTER 16 - CONTROL CTS HANDSHAKING
+	AH = 24h
+	AL = new CTS handshake state for COM1 (00h disabled, 01h enabled)
+SeeAlso: AH=23h"HUNTER",AH=25h"HUNTER",AH=26h"HUNTER"
+--------S-1425-------------------------------
+INT 14 - MultiDOS Plus - CLEAR BUFFERS
+	AH = 25h
+	AL = function
+	    00h only clear buffers
+	    01h clear buffers and deactivate
+	DX = port number
+Return: AH = status
+	    00h successful
+	    3Ah invalid function
+	    41h no such port
+	    42h monitor mode not active
+SeeAlso: AH=20h"MultiDOS",AH=24h"MultiDOS"
+--------S-1025------------------------------------
+INT 10 - HUNTER 16 - CONTROL RS232 DRIVERS
+	AH = 25h
+	AL = new state of RS232 drivers (00h off, 01h on)
+Note:	this function can be used to save power by turning off the RS232 
+	  drivers.  It can also be used to turn on the RS232 drivers before
+	  connecting to a remote system to avoid "garbage" while the drivers
+	  turn on.
+SeeAlso: AH=23h"HUNTER",AH=24h"HUNTER",AH=26h"HUNTER"
+--------S-1026------------------------------------
+INT 10 - HUNTER 16 - CONTROL RI POWER UP
+	AH = 26h
+	AL = 00h enable RI power up
+	    else disable RI power up
+Desc:	control whether the Ring Indicator handshake can power up the Hunter
+--------S-1427-------------------------------
+INT 14 - MultiDOS Plus - GET BUFFER CHARACTER COUNT
+	AH = 27h
+	DX = port number
+Return: AH = status
+	    00h successful
+	    41h no such port
+	    42h monitor mode not active
+	AL = number of characters in receive buffer
+--------S-1027------------------------------------
+INT 10 - HUNTER 16 - GET INSTALLED PROTOCOLS COUNT
+	AH = 27h
+	AL = number of extended protocols installed (since last call)
+Return: AL = total number installed, including new ones
+Desc:	Returns the number of extended communication protocols installed
+SeeAlso: AH=25h"HUNTER",AH=28h"HUNTER"
+--------S-1028------------------------------------
+INT 10 - HUNTER 16 - GET PROTOCOL NAME
+	AH = 28h
+	AL = protocol handle
+	DS:BX -> 8 character buffer for protocol name
+Return:	AH = status
+	    00h successful
+		DS:BX buffer filled with the protocol name
+	    FFh failed
+SeeAlso: AH=27h"HUNTER",AH=29h"HUNTER"
+--------S-1029------------------------------------
+INT 10 - HUNTER 16 - GET PROTOCOL HANDLE
+	AH = 29h
+	DS:BX -> buffer containing the protocol name
+Return: AH = status 
+	    00h successful
+		AL = handle
+	    FFh failed
+SeeAlso: AH=28h"HUNTER",AH=2Ah"HUNTER"
+--------S-102A------------------------------------
+INT 10 - HUNTER 16 - EXTENDED PROTOCOL MENU
+	AH = 2Ah
+	AL = protocol handle
+Return: AH = status
+	    00h successful
+	    FFh failed
+	AL = menu handle
+SeeAlso: AH=29h"HUNTER",AH=2Bh"HUNTER"
+--------S-102B------------------------------------
+INT 10 - HUNTER 16 - GET EXTENDED PROTOCOL PARAMETERS
+	AH = 2Bh
+	AL = protocol handle
+	DS:BX -> buffer for extended protocol parameters
+Return: AH = status	
+	    00h successful
+		DS:BX buffer filled with extended parameters
+	    FFh failed
+SeeAlso: AH=2Ah"HUNTER"
+--------S-102C00----------------------------------
+INT 10 - HUNTER 16 - GET DTR
+	AX = 2C00h
+Return: AH = 00h
+	BL = current state
+	    00h	 normal DTR operation
+	    else DTR is forced high
+Desc:	Indicates whether the DTR signal on COM1 is forced high
+Note:	the Husky Hunter 16 is an 8088-based ruggedized laptop.	 Other family
+	  members are the Husky Hunter, Husky Hunter 16/80, and Husky Hawk.
+SeeAlso: AH=2Ch"SET DTR"
+--------S-102C------------------------------------
+INT 10 - HUNTER 16 - SET DTR
+	AH = 2Ch
+	AL nonzero
+	BL = new state
+	    00h	 normal operation
+	    else force DTR high
+Return: AH = 00h
+Desc:	determine whether the DTR signal on COM1 should be forced high
+SeeAlso: AX=2C00h
+--------S-1456-------------------------------
+INT 14 U - BWCOM14 - INSTALLATION CHECK
+	AH = 56h
+Return: CX = 0001h if installed
+Program: BWCOM14 is a network serial port emulator (simulating a Hayes modem
+	  connected to the serial port) distributed as part of the
+	  Beame&Whiteside BW-NFS package
+SeeAlso: AH=57h,AH=58h
+--------S-1457-------------------------------
+INT 14 U - BWCOM14 - INITIALIZE
+	AH = 57h
+	DL = port number
+Return: AL = initialization status (00h successful, 01h already initialized)
+	CX = port status (0001h port redirected, 0002h and FFFFh failed)
+Note:	after this call, all invocations of INT 14/AH=00h-03h for the specified
+	  port will be handled by BWCOM14 until AH=58h is called
+SeeAlso: AH=00h"SERIAL",AH=56h,AH=58h
+--------S-1458-------------------------------
+INT 14 U - BWCOM14 - SHUTDOWN
+	AH = 58h
+Return: CX = status (0001h successful, 0002h not initialized)
+Note:	after this call, BWCOM14 will no longer redirect the COM port
+SeeAlso: AH=56h,AH=57h
+--------N-146F--BXFFFE-----------------------
+INT 14 U - Connection Manager - ???
+	AH = 6Fh
+	BX = FFFEh
+	???
+Return: ???
+Program: Connection Manager by Softwarehouse Corp. permits the sharing of
+	  serial ports over an IPX or NetBIOS-based network
+--------N-146F--BXFFFF-----------------------
+INT 14 - Connection Manager - INSTALLATION CHECK
+	AH = 6Fh
+	BX = FFFFh
+Return: DX:BX -> Connection Manager Communication Table if installed
+	BX = FFFFh if not installed
+SeeAlso: AH=0Dh/DX=FFFFh
+--------S-147E-------------------------------
+INT 14 - FOSSIL - INSTALL AN EXTERNAL APPLICATION FUNCTION
+	AH = 7Eh
+	AL = code assigned to external application (80h-BFh)
+	    80h reserved for communications FOSSIL
+	    81h video FOSSIL
+	    82h reserved for keyboard FOSSIL
+	    83h reserved for system FOSSIL
+	ES:DX -> entry point
+Return: AX = 1954h
+	BL = code assigned to application (same as input AL)
+	DH = 00h failed
+	     01h successful
+SeeAlso: AH=7Fh,AH=80h"FOSSIL",AX=8100h,AH=82h"FOSSIL",AH=83h"FOSSIL"
+--------S-147F-------------------------------
+INT 14 - FOSSIL - REMOVE AN EXTERNAL APPLICATION FUNCTION
+	AH = 7Fh
+	AL = code assigned to external application
+	ES:DX -> entry point
+Return: AX = 1954h
+	BL = code assigned to application (same as input AL)
+	DH = 00h failed
+	     01h successful
+SeeAlso: AH=7Eh
 --------S-1480-------------------------------
 INT 14 - COMMUNICATIONS FOSSIL
 	AH = 80h
@@ -1081,14 +2043,20 @@ INT 14 - TelAPI - INSTALLATION CHECK
 Return: AL = FFh if installed
 	AH = 00h for Novell TELAPI.EXE
 SeeAlso: AH=E6h
---------S-14FF02-----------------------------
-INT 14 - IBM/Yale EBIOS SERIAL I/O - BUFFERED READ
-	AX = FF02h
-	CX = length
+--------S-14FF01-----------------------------
+INT 14 - IBM/Yale EBIOS SERIAL I/O - SET SEND BUFFER
+	AX = FF01h
+	CX = length of buffer (0000h to cancel buffer assignment)
 	DX = port (00h-03h)
-	ES:BX -> buffer
-Return: CX = number of characters read
-SeeAlso: AH=18h,AH=83h"COURIERS",AH=A5h"BAPI",AH=FCh
+	ES:BX -> send buffer
+SeeAlso: AH=18h,AH=83h"COURIERS",AH=A5h"BAPI",AH=FCh,AX=FF02h
+--------S-14FF02-----------------------------
+INT 14 - IBM/Yale EBIOS SERIAL I/O - SET RECEIVE BUFFER
+	AX = FF02h
+	CX = length of buffer (0000h to cancel buffer assignment)
+	DX = port (00h-03h)
+	ES:BX -> receive buffer
+SeeAlso: AH=18h,AH=83h"COURIERS",AH=A5h"BAPI",AH=FCh,AX=FF03h
 --------t-15---------------------------------
 INT 15 - Microsoft TSR Specification
 	No additional information available at this time.
@@ -2228,7 +3196,7 @@ Notes:	if another tone is already playing, the new tone does not start until
 	in DV 2.00, the lowest tone allowed is 20 Hz
 	if CX = 0, the current note is cancelled; if BX = 0 as well, all queued
 	  notes are also cancelled
-SeeAlso: INT 16/AH=73h
+SeeAlso: AH=82h"HUNTER",INT 16/AH=73h
 --------Q-15101A-----------------------------
 INT 15 - TopView - "OSTACK" - SWITCH TO TASK'S INTERNAL STACK
 	AX = 101Ah
@@ -5286,6 +6254,295 @@ INT 15 C - Omniview Multitasker - EXIT NOTIFICATION
 Note:	called by OmniView to notify programs loaded before OmniView of state
 	  changes inside OmniView
 SeeAlso: AX=5400h,INT 2F/AX=DE03h
+--------b-1560------------------------------------
+INT 15 - HUNTER 16 - SET SYSTEM CLOCK SPEED
+	AH = 60h
+	AL = new speed
+	    00h normal (8 MHz)
+	    01h Slow Mode 1 (4 MHz)
+	    02h Slow Mode 2 (2 MHz)
+Note:	the Husky Hunter 16 is an 8088-based ruggedized laptop.	 Other family
+	  members are the Husky Hunter, Husky Hunter 16/80, and Husky Hawk.
+SeeAlso: AX=6301h
+--------b-1561------------------------------------
+INT 15 - HUNTER 16 - GET POWER LEVEL
+	AH = 61h
+Return: AH = percentage of full power left (0..100)
+Desc:	determine how much battery power is left
+SeeAlso: AH=62h,AH=66h,AH=73h"HUNTER"
+--------b-1562------------------------------------
+INT 15 - HUNTER 16 - SET LOW POWER THRESHOLD
+	AH = 62h
+	AL = level (00h 5%, 01h 10%, ... 12h 95%)
+	BX = interval between power low warnings in seconds (1..600)
+Return: AH = Status
+Desc:	set the level (relative to full power) when power-low warnings begin
+	  and the interval between the warnings
+SeeAlso: AH=61h,AH=65h,AH=66h
+--------b-156300----------------------------------
+INT 15 - HUNTER 16 - GET IDLE TIMEOUT
+	AX = 6300h
+Return: AH = status
+	BX = timeout in seconds (0-3600)
+Desc:	get the idle timeout value, the interval without keyboard or
+	   communications activity before the system shuts down
+SeeAlso: AX=6301h
+--------b-156301----------------------------------
+INT 15 - HUNTER 16 - SET IDLE TIMEOUT
+	AX = 6301h
+	BX = timeout in seconds (0-3600)
+Desc:	sets the idle timeout value, the interval without keyboard or
+	  communications activity before the system shuts down
+SeeAlso: AX=6300h
+--------b-1564------------------------------------
+INT 15 - HUNTER 16 - CONTROL RESUME MODE
+	AH = 64h
+	AL = new state
+	    00h disable Resume mode
+	    01h enable Resume mode
+Return: AH = status
+Desc:	turn Resume mode on or off. In Resume mode the system starts in
+	  the application that was running when it shut down as if nothing 
+	  had happened.
+SeeAlso: AH=67h,AH=68h,AH=69h
+--------b-1565------------------------------------
+INT 15 - HUNTER 16 - AUTHORISE CHARGING
+	AH = 65h
+	AL = charging level
+	    01h charging not allowed
+	    02h charging allowed until power down
+	    03h charging allowed until batteries changed or fail.
+		Ask user if charging is still allowed on next poweron
+	    04h charging allowed indefinitely
+	BX = 0203h
+	CX = 0405h
+	DX = 0607h
+Return: AH = status
+SeeAlso: AH=66h,AH=68h
+--------b-1566------------------------------------
+INT 15 - HUNTER 16 - SET BATTERY LEVEL
+	AH = 66h
+	AL = level in percent of maximum (0..100)
+Return: AH = status
+SeeAlso: AH=61h,AH=65h
+--------b-1567------------------------------------
+INT 15 - HUNTER 16 - CONTROL STOP MODE
+	AH = 67h
+	AL = mode when waiting for input
+	    00h use STOP mode (allows communication)
+	    01h use HALT mode (disallows communication)
+Return: AH = status
+Desc:	select the power save mode to use when waiting for input
+SeeAlso: AH=69h
+--------b-1568------------------------------------
+INT 15 - HUNTER 16 - REQUEST POWER DOWN
+	AH = 68h
+Desc:	turns off the Hunter 16 if power down is allowed (see AH=69h)
+SeeAlso: AH=69h
+--------b-1569------------------------------------
+INT 15 - HUNTER 16 - CONTROL POWER DOWN AVAILABILITY
+	AH = 69h
+	AL = mode
+	    00h inhibit power down
+	    01h allow power down
+Return: AH = status
+SeeAlso: AH=67h,AH=68h,AH=6Ah
+--------b-156A------------------------------------
+INT 15 - HUNTER 16 - CONTROL SLOW MODE
+	AH = 6Ah
+	AL = mode
+	    00h inhibit Slow mode
+	    01h allow Slow mode
+Return: AH = status
+SeeAlso: AH=69h
+--------b-156B------------------------------------
+INT 15 - HUNTER 16 - GET ROM BIOS VERSION
+	AH = 6Bh
+Return: BH = version number (ASCII)
+	BL = release number (ASCII)
+	CH = minor release number (ASCII)
+	CL = minor release number (ASCII)
+SeeAlso: AH=6Ch
+--------b-156C------------------------------------
+INT 15 - HUNTER 16 - GET SERIAL NUMBER
+	AH = 6Ch
+Return: BL:CX = BCD serial number
+Note:	when shipped, all Hunter 16s have the same Serial Number, but a
+	  different number can be stored (see AH=72h)
+SeeAlso: AH=6Bh,AH=72h
+--------b-156D------------------------------------
+INT 15 - HUNTER 16 - GET EVENT DETAIL
+	AH = 6Dh
+Return: AH = 00h if successful
+	CX:BX = event flags bit 0..31 (see below)
+Note:	this function allows testing for events
+SeeAlso: AH=6Eh,AH=6Fh
+
+Bitfields for events:
+ bit 0	PWR button pressed
+ bit 1	error on COM1
+ bit 2	error on COM2
+ bit 3	data received on COM1
+ bit 4	data received on COM2
+ bit 5	RTC Alarm
+ bit 6	RI received
+--------b-156E------------------------------------
+INT 15 - HUNTER 16 - ENABLE/TRAP EVENT
+	AH = 6Eh
+	AL = Software Interrupt
+	      00h  do not trap event
+	      else trap as software interrupt number AL
+	BH = event number (see AH=6Dh)
+	BL = enable mask
+	    00h disable event
+	    01h enable event
+Return: AH = 00h if successful
+SeeAlso: AH=6Dh,AH=6Fh
+--------b-156F------------------------------------
+INT 15 - HUNTER 16 - ACKNOWLEDGE EVENT
+	AH = 6Fh
+	AL = event number (see AH=6Dh)
+Return: AH = 00h if successful
+Desc:	Acknowledges the event, so the next similar event can be detected 
+SeeAlso: AH=6Dh"HUNTER",AH=6Eh
+----------157000-----------------------------
+INT 15 - Tandy 1000SL/TL - READ FROM EEPROM
+	AX = 7000h
+	BL = number of word to read (00h-3Fh)
+Return: CF clear if function supported
+	    DX = contents of EEPROM word
+Note:	newer Tandy 1000-series machines use EEPROM instead of CMOS RAM in
+	  the clock chip to store system configuration information
+SeeAlso: AX=7001h
+----------157001-----------------------------
+INT 15 - Tandy 1000SL/TL - WRITE TO EEPROM
+	AX = 7001h
+	BL = number of word to read (00h-3Fh)
+	DX = new value for EEPROM word
+Return: CF clear if function supported
+Note:	the EEPROMs are normally written only by the system setup program;
+	  changing the values can badly mess up a Tandy
+SeeAlso: AX=7000h
+--------b-1570------------------------------------
+INT 15 - HUNTER 16 - CONTROL SOUND
+	AH = 70h
+	AL = new state
+	    00h disable sound
+	    else enable sound
+Note:	the Husky Hunter 16 is an 8088-based ruggedized laptop.	 Other family
+	  members are the Husky Hunter, Husky Hunter 16/80, and Husky Hawk.
+--------b-1571------------------------------------
+INT 15 - HUNTER 16 - SELECT POWER UP KEYS
+	AH = 71h
+	BL = column
+	BH = row
+	AL = column switch (00h disable, 01h enable)
+	CL = row switch (00h disable, 01h enable)
+Return: AH = status
+SeeAlso: AH=7Bh,AH=88h
+--------b-157200----------------------------------
+INT 15 - HUNTER 16 - RESET SERIAL NUMBER
+	AX = 7200h
+Return: AH = 00h if successful
+Desc:	reset the serial number to the default serial number present when the
+	  Hunter 16 was shipped
+SeeAlso: AH=6Ch,AH=72h
+--------b-1572------------------------------------
+INT 15 - HUNTER 16 - REDIRECT SERIAL NUMBER
+	AH = 72h
+	AL nonzero
+	DS:BX -> new serial number (6 ASCII digits)
+Return: AH = 00h if successful
+Desc:	install a new serial number
+SeeAlso: AH=6Ch,AX=7200h
+--------b-1573------------------------------------
+INT 15 - HUNTER 16 - GET ORACLE GT POWER LEVEL
+	AH = 73h
+	AL = drive (0: A:, 1: B:)
+Return: AH = status
+	    00h successful
+	    FFh Oracle GT drive not connected
+	AL = power level in percent of maximum (0..100)
+Desc:	get the power remaining in the Oracle GT batteries
+SeeAlso: AH=61h
+--------b-1574------------------------------------
+INT 15 - HUNTER 16 - SET BACKLIGHT POWER UP STATE
+	AH = 74h
+	AL = new level
+	    01h off
+	    02h unchanged
+	    03h change level
+		BL = desired level (00h-7Fh)
+Return: AH = status
+Desc:	select the backlight level to use when the Hunter is next turned on
+SeeAlso: AH=64h,AH=75h,INT 10/AH=64h,INT 10/AH=78h
+--------b-1575------------------------------------
+INT 15 - HUNTER 16 - SET CONTRAST POWER UP STATE
+	AH = 75h
+	AL = new level
+	    01h off
+	    02h unchanged
+	    03h change level
+		BL = desired level (00h-7Fh)
+Return: AH = status
+Desc:	select the LCD contrast level to use when the Hunter is next turned on
+SeeAlso: AH=63h,AH=74h
+--------b-1576------------------------------------
+INT 15 - HUNTER 16 - CONTROL POWER SAVE
+	AH = 76h
+	BX = Control
+	     bit 0 power save enabled
+	     bit 1 inhibit power save when waiting for COM1 data
+	     bit 2 inhibit power save when waiting for COM2 data
+	     bit 3 inhibit power save when waiting for data from barcode wand
+	     bit 4 inhibit power up on timer tick
+SeeAlso: AH=74h
+--------b-1579------------------------------------
+INT 15 - HUNTER 16 - REDIRECT LPT1
+	AH = 79h
+	AL = port to which to redirect (00h COM1, 01h COM2)
+--------b-157A------------------------------------
+INT 15 - HUNTER 16 - INVOKE HOT KEY
+	AH = 7Ah
+Desc:	this function has the same effect as pressing the HOT key
+SeeAlso: AH=7Bh
+--------b-157B------------------------------------
+INT 15 - HUNTER 16 - CONTROL HOT KEY
+	AH = 7Bh
+	AL = 00h prevent HOT key
+	    else allow HOT key
+Desc:	Allow or prevent the HOT key function which is used to examine and
+	  change the Hunter setup
+SeeAlso: AH=71h,AH=7Ah,AH=7Ch
+--------b-157C------------------------------------
+INT 15 - HUNTER 16 - CONTROL HOT KEY POWER OPTION
+	AH = 7Ch
+	AL = 00h prevent HOT key power option
+	    else allow HOT key power option
+Desc:	allow or prevent changing the power options
+SeeAlso: AH=7Bh,AH=7Dh
+--------b-157D------------------------------------
+INT 15 - HUNTER 16 - OVERRIDE LOW POWER TURN OFF
+	AH = 7Dh
+	AL = 00h turn off after 10 warnings
+	    else never turn off
+Desc:	specify whether the Hunter 16 turns off after 10 low power warnings
+SeeAlso: AH=7Ch
+--------b-157E------------------------------------
+INT 15 - HUNTER 16 - CONTROL BATTERY CHANGE FACILITIES (APM)
+	AH = 7Eh
+	AL = 00h do not prompt
+	    else prompt
+Desc:	select whether the user is prompted for the battery state if the
+	  battery cap has been off when the system is turned on
+SeeAlso: AH=7Fh
+--------b-157F------------------------------------
+INT 15 - HUNTER 16 - SET BATTERY TYPE (APM)
+	AH = 7Fh
+	AL = battery type
+	    00h	 non-rechargeable
+	    else rechargeable
+SeeAlso: AH=7Eh
 --------B-1580-------------------------------
 INT 15 C - OS HOOK - DEVICE OPEN (AT,XT286,PS)
 	AH = 80h
@@ -5302,6 +6559,15 @@ Note:	this function should be hooked by a multitasker which wishes to keep
 	  track of device ownership; the default BIOS handler merely returns
 	  successfully
 SeeAlso: AH=81h,AH=82h
+--------b-1580------------------------------------
+INT 15 - HUNTER 16 - GET/SET BATTERY CAPACITY (APM)
+	AH = 80h
+	AL = function
+	    00h get
+		Return: AL = capacity (500mA + AL * 50mA, max 40 = 2500mA)
+	    else set
+		BL = battery capacity (same as AL above)
+SeeAlso: AH=61h"HUNTER",AH=81h"HUNTER"
 --------B-1581-------------------------------
 INT 15 C - OS HOOK - DEVICE CLOSE
 	AH = 81h
@@ -5316,6 +6582,12 @@ Note:	this function should be hooked by a multitasker which wishes to keep
 	  track of device ownership; the default BIOS handler merely returns
 	  successfully
 SeeAlso: AH=80h,AH=82h
+--------b-1581------------------------------------
+INT 15 - HUNTER 16 - CONTROL POWER OUTPUT
+	AH = 81h
+	AL = new state of power output (00h off, nonzero on)
+Desc:	turn the +5V low power output on or off
+SeeAlso: AH=80h"HUNTER"
 --------B-1582-------------------------------
 INT 15 C - OS HOOK - PROGRAM TERMINATION
 	AH = 82h
@@ -5330,6 +6602,38 @@ Notes:	closes all devices opened by the given process ID with function 80h
 	  track of device ownership; the default BIOS handler merely returns
 	  successfully
 SeeAlso: AH=80h,AH=81h
+--------b-1582------------------------------------
+INT 15 - HUNTER 16 - SOUND OUTPUT
+	AH = 82h
+	DX = length (duration in seconds = DX * 666670 / frequency)
+	BX = pitch (see below)
+Desc:	Sound the tone specified in BX for the duration in DX
+SeeAlso: AX=1019h
+
+Values for pitch:
+BX(dec)	 Note	Frequency	BX(dec)	 Note	Frequency
+  425	G	1568.000	 1515	A	 440.000
+  451	F#	1479.503	 1605	G#	 415.307
+  477	F	1396.900	 1701	G	 392.000
+  506	E	1318.500	 1802	F#	 369.998
+  536	D#	1244.523	 1909	F	 349.230
+  568	D	1174.700	 2022	E	 329.630
+  601	C#	1108.749	 2143	D#	 311.127
+  637	C	1046.500	 2270	D	 293.660
+  675	B	 958.770	 2405	C#	 277.183
+  715	A#	 932.329	 2548	MID C	 261.630
+  758	A	 880.000	 2700	B	 246.940
+  803	G#	 830.609	 2860	A#	 233.081
+  850	G	 783.990	 3030	A	 220.000
+  901	F#	 739.990	 3210	G#	 207.654
+  954	F	 698.460	 3401	G	 196.000
+ 1011	E	 659.260	 3604	F#	 184.996
+ 1071	D#	 622.257	 3818	F	 174.610
+ 1135	D	 587.330	 4045	E	 164.810
+ 1203	C#	 554.365	 4286	D#	 155.560
+ 1274	C	 523.250	 4540	D	 146.830
+ 1350	B	 493.880	 4668	C#	 142.827
+ 1430	A#	 466.162	 4803	C	 138.810
 --------B-1583-------------------------------
 INT 15 - BIOS - SET EVENT WAIT INTERVAL (AT,PS50+)
 	AH = 83h
@@ -5348,6 +6652,12 @@ Notes:	the resolution of the wait period is 977 microseconds on most systems
 	  real-time clock chip which is available on INT 70
 	IBM AT 1/10/84 BIOS ignores AL and always performs subfunction 00h
 SeeAlso: AH=41h,AH=86h,INT 70
+--------b-1583------------------------------------
+INT 15 - HUNTER 16 - CONTROL SCREEN SYNCHRONISATION
+	AH = 83h
+	AL = state of LCD window (00h disabled, nonzero enabled)
+Desc:	Enable/disable the facility where the displayed window tracks the
+	  cursor output to keep the focus visible
 --------B-1584-------------------------------
 INT 15 - BIOS - JOYSTICK SUPPORT (XT after 11/8/82,AT,XT286,PS)
 	AH = 84h
@@ -5367,11 +6677,24 @@ Return: CF set on error
 Notes:	if no game port is installed, subfunction 0000h returns AL=00h (all
 	  switches open) and subfunction 0001h returns AX=BX=CX=DX=0000h
 	a 250kOhm joystick typically returns 0000h-01A0h
+--------b-158400----------------------------------
+INT 15 - HUNTER 16 - GET DISKETTE PORT
+	AX = 8400h
+	BH = Drive (0: A:, 1: B:)
+Return: AL = Port (0: COM1, >0: COM2)
+Desc:	return the COM port used for the floppy drive
+SeeAlso: AX=8401h
+--------b-158401----------------------------------
+INT 15 - HUNTER 16 - SET DISKETTE PORT
+	AX = 8401h
+	BH = Drive (0: A:, 1: B:)
+	BL = Port (0: COM1, >0: COM2)
+Desc:	set the COM port used for the floppy drive
+SeeAlso: AX=8400h
 --------B-1585-------------------------------
 INT 15 C - OS HOOK - SysRq KEY ACTIVITY (AT,PS)
 	AH = 85h
-	AL = 00h SysRq key pressed
-	   = 01h SysRq key released
+	AL = SysRq key action (00h pressed, 01h released)
 	CF clear
 Return: CF clear if successful
 	    AH = 00h
@@ -5381,6 +6704,17 @@ Notes:	called by keyboard decode routine
 	the default handler simply returns successfully; programs which wish
 	  to monitor the SysRq key must hook this call
 SeeAlso: INT 09
+--------b-158500----------------------------------
+INT 15 - HUNTER 16 - RESTORE POWER MENU (APM)
+	AX = 8500h
+Desc:	restore the standard power menu
+SeeAlso: AX=8501h"HUNTER"
+--------b-158501----------------------------------
+INT 15 - HUNTER 16 - SET POWER MENU (APM)
+	AX = 8501h
+	BL = user software interrupt number
+Desc:	install an alternate power menu routine
+SeeAlso: AX=8500h"HUNTER"
 --------B-1586-------------------------------
 INT 15 - BIOS - WAIT (AT,PS)
 	AH = 86h
@@ -5392,6 +6726,15 @@ Note:	the resolution of the wait period is 977 microseconds on most systems
 	  because most BIOSes use the 1/1024 second fast interrupt from the AT
 	  real-time clock chip which is available on INT 70
 SeeAlso: AH=41h,AH=83h,INT 1A/AX=FF01h,INT 70
+--------b-1586------------------------------------
+INT 15 - HUNTER 16 - GET/SET SCREEN ATTRIBUTE TABLE
+	AH = 86h
+	AL = function (00h get, nonzero set)
+	BX = 1234h
+	DS:SI -> 256-byte Attribute buffer
+Note:	In text modes each character has its attribute byte XOR'd with the
+	  corresponding byte in the attribute table.  If the attribute is 15,
+	  15 is XOR'd with Table[15]
 --------B-1587-------------------------------
 INT 15 - SYSTEM - COPY EXTENDED MEMORY
 	AH = 87h
@@ -5423,6 +6766,15 @@ Offset	Size	Description
  1Ah  3 BYTEs	24-bit linear destination address, low byte first
  1Dh	BYTE	destination segment access rights (93h)
  1Eh 18 BYTEs	zeros
+--------b-1587------------------------------------
+INT 15 - HUNTER 16 - SET INT 72h VECTOR
+	AH = 87h
+	DS:DX = new service routine
+Desc:	set the INT 72h vector which is called in 2 cases:
+	  - when the machine is about to turn off or reboot, INT 72h is called
+	    with AH=0
+	  - when the machine is powering up INT 72h is called with AH=01h
+Note:	the actual INT 72h vector must also be changed with INT 21/AH=25h
 --------B-1588-------------------------------
 INT 15 - SYSTEM - GET EXTENDED MEMORY SIZE (286+)
 	AH = 88h
@@ -5441,6 +6793,13 @@ Notes:	TSRs which wish to allocate extended memory to themselves often hook
 	  unreliable unless one first checks whether it is supported through
 	  a mechanism other than calling the function and testing CF
 SeeAlso: AH=87h,AH=C7h
+--------b-1588------------------------------------
+INT 15 - HUNTER 16 - GET POWER UP KEYS
+	AH = 88h
+Return: AH = 00h
+	BX = column
+	CL = row
+SeeAlso: AH=71h
 --------B-1589-------------------------------
 INT 15 - SYSTEM - SWITCH TO PROTECTED MODE
 	AH = 89h
@@ -5465,6 +6824,83 @@ Notes:	BL and BH must be multiples of 8
 	  function is called from because execution continues with the address
 	  following the interrupt call
 SeeAlso: AH=87h,AH=88h,INT 67/AX=DE0Ch
+--------b-158900----------------------------------
+INT 15 - HUNTER 16 - GET POWER MODE
+	AX = 8900h
+Return: AH = 00h
+	BL = current power mode
+	    00h Standard Power Mode (SPM)
+	    01h Advanced Power Mode (APM)
+SeeAlso: AX=8901h
+--------b-158901----------------------------------
+INT 15 - HUNTER 16 - SET POWER MODE
+	AX = 8901h
+	BL = new mode
+	    00h Standard Power Mode (SPM)
+	    01h Advanced Power Mode (APM)
+Return: AH = 00h
+SeeAlso: AX=8900h
+--------b-158A------------------------------------
+INT 15 - HUNTER 16 - CONTROL POWER INPUT (SPM)
+	AH = 8Ah
+	AL = new state of Power Input (00h disabled, nonzero enabled)
+	SI = 1234h
+	DI = 5678h
+Return: AH = status
+	    00h success
+	    FFh failure
+Desc:	Enable or disable Power Input. When Power Input is disabled the AC
+	  adaptor will neither charge the batteries nor supply power to the
+	  Hunter 16. Disable Power Input if using Alkaline batteries.
+--------b-158B------------------------------------
+INT 15 - HUNTER 16 - GET/SET CHARGER TEMPERATURE OVERRIDE
+	AH = 8Bh
+	AL = function
+	    00h get
+		Return:	BH = Maximum charging temperature
+				Temp = -20 + (n * 0.63) degrees Centigrade
+			BL = Minimum charging temperature
+	    else set
+		BH = maximum charging temperature (as above)
+		BL = minimum charging temperature (as above)
+Return: AH = status
+	    00h success
+	    FFh failure 
+Desc:	get/set the temperature interval within which the charger should 
+	  operate
+--------b-158C------------------------------------
+INT 15 - HUNTER 16 - GET/SET POWER SAVE ENTRY FLAG
+	AH = 8Ch
+	AL = function
+	    00h get
+		Return: BX = which operations disable power save (see below)
+	    else set
+		BX = which operations should disable power save (see below)
+SeeAlso: AH=8Dh
+
+Bitfields for operations disablign power save:
+ bit 0	INT 10h prevents power save
+ bit 1	INT 13h prevents power save
+ bit 2	INT 14h prevents power save
+ bit 3	INT 15h prevents power save
+ bit 4	INT 1Ah prevents power save
+ bit 5	INT 21h prevents power save
+ bit 6	direct write to video RAM prevents power save
+ bit 7	access to 8250 UART prevents power save
+ bit 8	access to 8253 (Sound) prevents power save
+--------b-158D------------------------------------
+INT 15 - HUNTER 16 - GET/SET BOOST CHARGE (SPM)
+	AH = 8Dh
+	AL = function
+	    00h get
+		Return: AL = Fast Charge state (00h prevented, else allowed)
+	    nonzero set
+		BH = Fast Charge state (00h prevent, nonzero allow)
+Return: AH = status
+	    00h success
+	    FFh failure
+Desc:	control whether Fast Charging (200ma rather than 70ma) is allowed
+SeeAlso: AH=8Ch
 --------B-1590-------------------------------
 INT 15 - OS HOOK - DEVICE BUSY (AT,PS)
 	AH = 90h
@@ -5823,7 +7259,14 @@ Notes:	the 1/10/86 XT BIOS returns an incorrect value for the feature byte
 	the configuration table is at F000h:E6F5h in 100% compatible BIOSes
 	Dell machines contain the signature "DELL" or "Dell" at absolute FE076h
 	  and a model byte at absolute address FE845h
-	Tandy 1000 machines contain 21h in the byte at F000h:C000h
+	Hewlett-Packard machines contain the signature "HP" at F000h:00F8h and
+	  a product identifier at F000h:00FAh (see below)
+	Compaq machines can be identified by the signature string "COMPAQ" at
+	  F000h:FFEAh, and is preceded by additional information (see below)
+	Tandy 1000 machines contain 21h in the byte at F000h:C000h and FFh in
+	  the byte at FFFFh:000Eh; Tandy 1000SL/TL machines only provide the
+	  first three data bytes (model/submodel/revision) in the returned
+	  table
 	some AST machines contain the string "COPYRIGHT AST RESEARCH" one byte
 	  past the end of the configuration table
 	the Phoenix 386 BIOS contains a second version and date string
@@ -5893,6 +7336,8 @@ Model  Submdl  Rev	BIOS date	System
  FFh	*	*	04/24/81	PC (original)
  FFh	*	*	10/19/81	PC (some bugfixes)
  FFh	*	*	10/27/82	PC (HD, 640K, EGA support)
+ FFh	00h	rev	  ???		Tandy 1000SL
+ FFh	01h	rev	  ???		Tandy 1000TL
  FFh	46h	***	  ???		Olivetti M15
  FEh	*	*	08/16/82	PC XT
  FEh	*	*	11/08/82	PC XT and Portable
@@ -6081,6 +7526,31 @@ Values for Dell model byte:
  0Eh	Dell 316LT
  0Fh	Dell 320LX
  11h	Dell 425E
+
+Format of Compaq product information:
+Address		Size	Description
+F000h:FFE4h	BYTE	product family code (first byte)
+F000h:FFE4h	BYTE	Point release number
+F000h:FFE4h	BYTE	ROM version code
+F000h:FFE4h	BYTE	product family code (second byte)
+F000h:FFE8h	WORD	BIOS type code
+
+Bitfields for Hewlett-Packard product identifier:
+ bits 4-0	machine code
+		0 original Vectra
+		1 ES/12
+		2 RS/20
+		3 Portable/CS
+		4 ES
+		5 CS
+		6 RS/16
+		other reserved
+ bits 7-5	CPU type
+		0 = 80286
+		1 = 8088
+		2 = 8086
+		3 = 80386
+		other reserved
 --------B-15C1-------------------------------
 INT 15 - SYSTEM - RETURN EXTENDED-BIOS DATA-AREA SEGMENT ADDRESS (PS)
 	AH = C1h
@@ -7847,7 +9317,9 @@ INT 15 - Tandy??? - ???
 Return: DL = 00h if successful???
 Note:	the section of code in 386MAX which calls these functions also checks
 	  whether the ROM BIOS has both Tandy and Phoenix Technologies
-	  signatures if these calls fail
+	  signatures if these calls fail; the Tandy 1000SL/TL BIOS does not
+	  support this function, however, returning the usual CF set/AH=86h for
+	  "unsupported function".
 --------b-15E4-------------------------------
 INT 15 - Compaq ROM BIOS 03/08/93 and newer - ???
 	AH = E4h

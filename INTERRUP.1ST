@@ -1,19 +1,19 @@
-Interrupt List		Release 38			Last change 12/5/93
+Interrupt List		Release 39			 Last change 2/6/94
 
 Please redistribute the following files unmodified as a group, in a trio of
-archives named INTER38A through INTER38C (preferably the original authenticated
+archives named INTER39A through INTER39C (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	this file
-	INTERRUP.A	INT 00 through INT 13	 \
-	INTERRUP.B	INT 14 through INT 15     \
-	INTERRUP.C	INT 16 through INT 21/41   \   total 1410 pages at
+	INTERRUP.A	INT 00 through INT 14/0F \
+	INTERRUP.B	INT 14/10 through INT 15  \
+	INTERRUP.C	INT 16 through INT 21/41   \   total 1449 pages at
 	INTERRUP.D	INT 21/42 through INT 21/7F \  60 lines per page,
-	INTERRUP.E	INT 21/80 through INT 21/FF  \ 1513 with INTPRINT -p
-	INTERRUP.F	INT 22 through INT 2F/7F     / (5946 entries)
+	INTERRUP.E	INT 21/80 through INT 21/FF  \ 1553 with INTPRINT -p
+	INTERRUP.F	INT 22 through INT 2F/7F     / (6153 entries)
 	INTERRUP.G	INT 2F/C0 through INT 2F/FF /
 	INTERRUP.H	INT 30 through INT 60      /
-	INTERRUP.I	INT 61 through INT 67	  /
-	INTERRUP.J	INT 68 through INT FF	 /
+	INTERRUP.I	INT 61 through INT 68	  /
+	INTERRUP.J	INT 69 through INT FF	 /
 	INTERRUP.PRI	a brief primer on interrupts
 	INTPRINT.COM	a simple formatter that also generates a list summary
 	INTPRINT.DOC	instructions for INTPRINT
@@ -23,7 +23,7 @@ PKZIP archives):
 	MEMORY.LST	format of the BIOS data area
 	PORTS.LST	a listing of I/O ports
 	COMBINE.BAT	combine the pieces of the list into a single file
-The following files should be distributed in an archive called INTER38D:
+The following files should be distributed in an archive called INTER39D:
 	INT.COM		invoke interrupts from commandline
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
 	INT2HLP.BAT	Perl script to convert list into QuickHelp database
@@ -81,12 +81,12 @@ whether or not it works the same way).	Information marked with "???" is
 known to be incomplete or guesswork.
 --------!---AVAILABILITY---------------------
 If the list is more than three months old by the time you get it, there
-is probably a newer release out already (R38 is planned for early December,
-R39 for early February).  Each release supersedes all previous versions, so
+is probably a newer release out already (R40 is planned for early April,
+R41 for early June).  Each release supersedes all previous versions, so
 there is no need to keep old versions.
 
 The newest release of this list is available in these places (please do not
-ask me to email it, at 900K compressed it is much too large for that):
+ask me to email it, at over one meg compressed it is much too large for that):
 
 On the Internet, by standard anonymous FTP from FTP.CS.CMU.EDU [128.2.206.173].
 	Change directly to directory /afs/cs.cmu.edu/user/ralf/pub and get the
@@ -200,7 +200,7 @@ This list is the result of the time and effort of a large number of people:
  8/88 John Lefor       johnlef@microsoft.com	      XMS spec
  9/88 Dan Lanciani     ddl@harvard.harvard.edu	      miscellaneous
  9/88 Howard Johnson   Howard_Reed_Johnson@cup.portal.com  NetWare overview
- 9/88 Finn Thoegerson  via mcvax!daimi!fab	      10-NET, miscellaneous
+ 9/88 Finn Thoegerson  via jesperf@daimi.aau.dk	      10-NET, miscellaneous
  9/88 Michael Shiels   mshiels@watmath.waterloo.edu   FOSSIL spec
  9/88 Ralf Brown       ralf@telerama.lm.com           Microsoft CD-ROM API
 10/88 Michael Shiels   mshiels@ziebmef.uucp	      ATI VIP INT 10h
@@ -282,7 +282,7 @@ This list is the result of the time and effort of a large number of people:
  1/91 Michael A Shiels mshiels@masnet.uucp	      DPMI 1.0 func names
  2/91 Michael A Shiels mshiels@masnet.uucp	      miscellaneous
  3/91 Jan-Pascal van Best BEST@rulwinwst.LeidenUniv.nl	NetWare IPX/SPX INT 7A
- 3/91 Jeroen Pluimers  2:281/521		      TBSCANX
+ 3/91 Jeroen Pluimers  jeroenp@dragons.nest.nl	      TBSCANX
  3/91 Ralf Brown       ralf@telerama.lm.com           PC Tools API
  4/91 David H. Bennett 74635.1671@compuserve.com      ELRES API
  4/91 Michael A Shiels mshiels@masnet.uucp	      Interconnections Inc. TES
@@ -436,12 +436,12 @@ This list is the result of the time and effort of a large number of people:
  7/93 Ralf Brown       ralf@telerama.lm.com   	      386MAX v7.00/QEMM v7.01
  7/93 Joe Souza	       Webcorp, Sausalito, CA	      WEB API
  7/93 Michael Hung   mhkhung@electrical.watstar.uwaterloo.edu  PharLap 386/DOSX
- 8/93 John Howells     10031.353@compuserve.com	      EMS,XMS,VCPI,DPMI bugs
+ 8/93 John Howells     100031.353@compuserve.com      EMS,XMS,VCPI,DPMI bugs
  8/93 Tim Farley       tim@magee.mhs.compuserve.com   PCMCIA Socket Services
  8/93 Dan Bodoh        danb@bunt.sps.mot.com	      DESQview internal data
  9/93 Gary E. Miller   GEM@cup.portal.com	      Diamond Stealth 24X
  9/93 Frank Vorstenbosch  prompt@hacktic.nl	      more Kingswood API, misc
- 9/93 Phil Rea	       2:253/410		      TopWare Network OS
+ 9/93 Phil Rea	       PhilRea@sound.demon.co.uk      TopWare Network OS
  9/93 Andreas Westfeld westfeld@freia.inf.tu-dresden.de Olivetti Quaderno
  9/93 Alexi Lookin     alexi@riaph.irkutsk.su	      Avance Logic, C&T video
  9/93 Inbar Raz	       2:401:100.1		      Juko UNIQUE UX, misc
@@ -452,11 +452,22 @@ This list is the result of the time and effort of a large number of people:
 11/93 Wim Osterholt    2:512/56.198		      Cirrus Logic BIOS 3.02
 11/93 Dmitry S. Kohmanyuk  dk@farm.cs.kiev.ua	      CS_TSR specification
 12/93 Alex Novgorodcev san@riaph.irkutsk.su	      AutoCAD Dev Interface
+12/93 Christian Kaiser  100065.2574@compuserve.com    Windows debugging kernel
+12/93 Colin Buckley    colin.buckley@CANREM.COM	      UNCHAIN
+12/93 Jeffrey L. Hayes IO91624@MAINE.maine.edu	      Tandy BIOS calls
+12/93 Finn Thoegersen  via jesperf@daimi.aau.dk	      VESA XGA BIOS Extensions
+ 1/94 David A. Mair    100137.264@COMPUSERVE.COM      NASI INT 6B calls
+ 1/94 Bill Hawkins     73650.167@compuserve.com	      Adv. Par. Port DAISY.SYS
+ 1/94 Inbar Raz	       2:401:100.1		      VGARAM,HelpTSR,Lightning
+ 1/94 James E Beersman <jeb962t@nic.smsu.edu>	      HP and Compaq info
+ 2/94 Peter van den Boogert <P.C.vdnBoogert@kub.nl>   ZFAX v2.x, v3.01
+ 2/94 Jesper Rene Frandsen <jesperf@daimi.aau.dk>     VESA XGA BIOS,misc video
+ 2/94 Jesper Rene Frandsen <jesperf@daimi.aau.dk>     Husky Hunter 16 BIOS
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
  Shalom Krischer <actnyc!srk@uunet.UU.NET>, Greg Pasquariello <moss!picuxa!gp>,
- Rich Goldschmidt <rlgvax!golds>, Marty Leisner <Leisner.Henr801c@Xerox.COM>,
+ Rich Goldschmidt <rlgvax!golds>, Marty Leisner <leisner@sdsp.mc.xerox.com>,
  Dave Guggisberg <daveg@cv.hp.com>,Jonathan Story <jonathan@jspc.wimsey.bc.ca>,
  Thomas Hundt <hundt@flash.bellcore.com>, Brad Templeton <brad@looking.on.ca>,
  John Werner <aptr@tut.cc.rochester.edu>, Pete Fales <att!ttrde!pfales>,
@@ -540,9 +551,10 @@ Also contributing:
  Pybe Faber <postdo@duttncb.tn.tudeflt.nl> (shared acct),
  Zhaoyuan Zhang (via Youjun Luo <luo@informatik.uni-wuerzburg.d400.de>),
  Holger Genz (via volker@bsd-home.iam.uni-bonn.de),
- Wonyong Koh <f7wyk@chem.krict.re.kr>,
+ Wonyong Koh <f7wyk@chem.krict.re.kr>, Igor V. Krasikov <kiv@kiv.kiev.ua>,
  Andreas Groegel <groegeas@minnie.informatik.uni-stuttgart.de>,
- Peter van den Boogert <P.C.vdnBoogert@kub.nl>
+ Peter van den Boogert <P.C.vdnBoogert@kub.nl>,
+ Wolfgang Lorenz <100112.220@CompuServe.COM>
 --------!---BIBLIOGRAPHY---------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -1015,7 +1027,8 @@ Connection Manager API extracted from _The_Connection_Manager_User's_Guide_,
 Third Edition, February 1993.  Added by Ralf Brown, 10/18/93.
 
 NetWare multiplexor (INT 21/AH=F2h) calls from November 1993 _Dr._Dobb's_
-_Journal_ and Novell's SC3X04.EXE (available from NOVLIB and ftp.novell.com).
+_Journal_ "Undocumented Corner" (Pawel Szczerbina, "The NetWare Core Protocol
+(NCP)") and Novell's SC3X04.EXE (available from NOVLIB and ftp.novell.com).
 Added by Ralf Brown, 10/26/93.
 
 Additional Microsoft Mouse driver details from Microsoft Knowledge Base
@@ -1025,8 +1038,23 @@ Ralf Brown, 10/26/93.
 HLLAPI return codes extracted from Microsoft's _Windows_HLLAPI_Specification_,
 version 1.0 (10/6/92).  Added by Ralf Brown, 10/31/93.
 
-Chicago VxD identifiers from "Undocumented Corner", Dr. Dobb's Journal December
-1993.  Added by Ralf Brown, 11/19/93.
+Chicago VxD identifiers from "Undocumented Corner", _Dr._Dobb's_Journal_
+December 1993.  Added by Ralf Brown, 11/19/93.
+
+SBSIM (SoundBlaster Simplified Interface Module) API extracted from file
+SBSIMDMO.C, distributed along with the other files for _SoundBlaster:_The_
+_Official_Book_.  Added by Ralf Brown, 1/22/94.
+
+Windows debugging kernel calls from _Undocumented_Windows_ and _Windows_
+_Internals_.  Added 1/22/94.
+
+YEA_GUS.EXE and EURO_MOD.EXE APIs from the SPHINX C-- v0.189 example files
+GUS.H-- and GUSMOD.H--.  Added by Ralf Brown, 1/31/94.
+
+ZFAX v3 API from the ZFAX v3.01 manual, Appendix D.  Added 2/3/94.
+
+Husky Hunter 16 BIOS from the _Husky_Hunter_16_User_Guide_, 2nd edition (Sept
+1991).  Added 2/4/94.
 --------!---ADDRESSES------------------------
 The following have provided API reference and other materials at no charge:
 
@@ -1374,6 +1402,14 @@ P.O. Box #3013			[2/92]
 Vancouver, B.C. Canada
 V6B 3X5
 
+Husky Computer Limited		(Husky Hunter 16 BIOS)
+Eden Road			[9/91]
+Walsgrave Triangle Business Park
+Coventry CV2 2TB
+England
+Voice:  +44 203 604040
+FAX:    +44 203 603060
+
 Information Modes		($25 Network)
 P.O. Drawer F
 Denton, TX 76202
@@ -1653,6 +1689,8 @@ SK-PASSPORT is a trademark of SysKonnect, Inc.
 PostScript is a trademark of Adobe, Inc.
 Hayes is a trademark of Hayes Microcomputer Products Inc.
 SpaceManager is a trademark of Vertisoft Systems, Inc.
+Husky, Hunter, Hunter 16, Hawk, 8/16, Sidebox and Oracle GT are trademarks
+	of Husky Computers Limited.
 Various other names are trademarks or registered trademarks of their respective
     holders
 --------!---QUOTES---------------------------

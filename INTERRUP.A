@@ -1,16 +1,16 @@
-Interrupt List		Release 38			Last change 12/05/93
-This compilation is Copyright (c) 1989,1990,1991,1992,1993 Ralf Brown
+Interrupt List		Release 39			Last change 2/6/94
+This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994 Ralf Brown
 --------!---FILELIST-------------------------
 Please redistribute the following files unmodified as a group, in a trio of
-archives named INTER38A through INTER38C (preferably the original authenticated
+archives named INTER39A through INTER39C (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
-	INTERRUP.A	INT 00 through INT 14/7F \
-	INTERRUP.B	INT 14/80 through INT 15  \
-	INTERRUP.C	INT 16 through INT 21/41   \   total 1410 pages at
+	INTERRUP.A	INT 00 through INT 14/0F \
+	INTERRUP.B	INT 14/10 through INT 15  \
+	INTERRUP.C	INT 16 through INT 21/41   \   total 1449 pages at
 	INTERRUP.D	INT 21/42 through INT 21/7F \  60 lines per page,
-	INTERRUP.E	INT 21/80 through INT 21/FF  \ 1513 with INTPRINT -p
-	INTERRUP.F	INT 22 through INT 2F/7F     / (5946 entries)
+	INTERRUP.E	INT 21/80 through INT 21/FF  \ 1553 with INTPRINT -p
+	INTERRUP.F	INT 22 through INT 2F/7F     / (6153 entries)
 	INTERRUP.G	INT 2F/80 through INT 2F/FF /
 	INTERRUP.H	INT 30 through INT 60	   /
 	INTERRUP.I	INT 61 through INT 68	  /
@@ -24,7 +24,7 @@ PKZIP archives):
 	MEMORY.LST	format of the BIOS data area
 	PORTS.LST	a listing of I/O ports
 	COMBINE.BAT	combine the pieces of the list into a single file
-The following files should be distributed in an archive called INTER38D:
+The following files should be distributed in an archive called INTER39D:
 	INT.COM		invoke interrupts from commandline
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
 	INT2HLP.BAT	Perl script to convert list into QuickHelp database
@@ -479,7 +479,14 @@ Notes:	the TOPS and PCnet adapters use this interrupt request line by default
 SeeAlso: INT 52"DESQview",INT 5A"DoubleDOS",INT 71,INT 7A"GO32"
 --------H-0A---------------------------------
 INT 0A - IRQ2 - Tandy 1000-series HARD DISK
-Note:	may be masked by setting bit 2 on I/O port 21h
+Notes:	this interrupt may be masked by setting bit 2 on I/O port 21h
+	the Tandy 1000, 1000A, and 1000HD use IRQ2 for the hard disk; the
+	  1000EX, HX, RLX, RLX-HD, RLX-B, RLX-HD-B use IRQ5 instead; the
+	  1000RL, RL-HD, SL, SL/2, TL, TL/2, and TL/3 are jumper-selectable
+	  for either IRQ2 or IRQ5 (default IRQ5); the 1000SX and TX are
+	  DIP-switch selectable for IRQ2 or IRQ5 (default IRQ2); the RSX and
+	  RSX-HD use IRQ14.  Tandy systems which use IRQ2 for the hard disk
+	  interrupt use IRQ5 for vertical retrace.
 SeeAlso: INT 52"DESQview",INT 5A"DoubleDOS",INT 71
 --------H-0A---------------------------------
 INT 0A - IRQ2 - ROLAND MPU MIDI INTERFACE
@@ -590,12 +597,22 @@ INT 0D - IRQ5 - FIXED DISK (PC,XT), LPT2 (AT), reserved (PS/2)
 Notes:	under DESQview, only the INT 15h vector and BASIC segment address (the
 	  word at 0000h:0510h) may be assumed to be valid for the handler's
 	  process
+	the Tandy 1000, 1000A, and 1000HD use IRQ2 for the hard disk; the
+	  1000EX, HX, RLX, RLX-HD, RLX-B, RLX-HD-B use IRQ5 instead; the
+	  1000RL, RL-HD, SL, SL/2, TL, TL/2, and TL/3 are jumper-selectable
+	  for either IRQ2 or IRQ5 (default IRQ5); the 1000SX and TX are
+	  DIP-switch selectable for IRQ2 or IRQ5 (default IRQ2); the RSX and
+	  RSX-HD use IRQ14.  Tandy systems which use IRQ2 for the hard disk
+	  interrupt use IRQ5 for vertical retrace.
 	may be masked by setting bit 5 on I/O port 21h
 SeeAlso: INT 0E"IRQ6",INT 0F"IRQ7",INT 55"DESQview",INT 5D"DoubleDOS"
 SeeAlso: INT 7D"GO32"
 --------H-0D---------------------------------
 INT 0D - IRQ5 - Tandy 1000 60 Hz RAM REFRESH
-Desc:	used to ensure that the dynamic RAM retains its contents
+Desc:	used to ensure that the dynamic RAM retains its contents in earlier
+	  1000-series models; later models use normal DMA for RAM refresh
+	  (some early models have no DMA unless it is added via an expansion
+	  card)
 SeeAlso: INT 55
 --------h-0D---------------------------------
 INT 0D - HP 95LX - INFRARED INTERRUPT
@@ -726,19 +743,19 @@ Bitfields for ATI additional feature flags:
 Values for video mode:
       text/ text pixel	 pixel	colors	disply	scrn  system
       grph resol  box	resoltn		pages	addr
- 00h = T   40x25  8x8		16gray	   8	B800 CGA,PCjr
+ 00h = T   40x25  8x8		16gray	   8	B800 CGA,PCjr,Tandy
      = T   40x25  8x14		16gray	   8	B800 EGA
      = T   40x25  8x16		  16	   8	B800 MCGA
      = T   40x25  9x16		  16	   8	B800 VGA
- 01h = T   40x25  8x8		  16	   8	B800 CGA,PCjr
+ 01h = T   40x25  8x8		  16	   8	B800 CGA,PCjr,Tandy
      = T   40x25  8x14		  16	   8	B800 EGA
      = T   40x25  8x16		  16	   8	B800 MCGA
      = T   40x25  9x16		  16	   8	B800 VGA
- 02h = T   80x25  8x8		16gray	   4	B800 CGA,PCjr
+ 02h = T   80x25  8x8		16gray	   4	B800 CGA,PCjr,Tandy
      = T   80x25  8x14		16gray	   4	B800 EGA
      = T   80x25  8x16		  16	   4	B800 MCGA
      = T   80x25  9x16		  16	   4	B800 VGA
- 03h = T   80x25  8x8		  16	   4	B800 CGA,PCjr
+ 03h = T   80x25  8x8		  16	   4	B800 CGA,PCjr,Tandy
      = T   80x25  8x14		  16	   4	B800 EGA
      = T   80x25  8x16		  16	   4	B800 MCGA
      = T   80x25  9x16		  16	   4	B800 VGA
@@ -753,10 +770,10 @@ Values for video mode:
      = G   20x25  8x8	160x200	  16		     PCjr, Tandy 1000
      = G   90x43  8x8	720x352	 mono		B000 Hercules + MSHERC.COM
      = G   90x45  8x8		 mono		B000 Hercules + HERKULES [11]
- 09h = G   40x25  8x8	320x200	  16		     PCjr
+ 09h = G   40x25  8x8	320x200	  16		     PCjr, Tandy 1000
  0Ah = G   80x25  8x8	640x200	   4		     PCjr, Tandy 1000
  0Bh =	 reserved (used internally by EGA BIOS)
-     = G		640x200	  16		     Tandy 1000 SL/TL
+     = G   80x25  8x8	640x200	  16		     Tandy 1000 SL/TL [13]
  0Ch =	 reserved (used internally by EGA BIOS)
  0Dh = G   40x25  8x8	320x200	  16	   8	A000 EGA,VGA
  0Eh = G   80x25  8x8	640x200	  16	   4	A000 EGA,VGA
@@ -1059,7 +1076,7 @@ Values for video mode:
      = T  132x43  7x9		  16		     AT&T VDC600
      = T  132x43  9x9  1188x387	 16/256k	B800 WD90C
      = T  132x43  9x9  1188x387	 16/256k	B800 Diamond Speedstar 24X
-     = T  132x43  9x9  1188x387	 16/256k	B800 Diamond Stealth 24X
+     = T  132x43  9x9  1188x387	 16/256k	B800 Diamond Stealth 24
      = T  132x43  8x8  1056x350	 16/256k	     Cirrus CL-GD5420/5422/5426
      = T  132x50  8x8		  16		A000 NCR 77C22 [9]
      = G  100x42  8x14	800x600	  16		A000 ATI EGA Wonder, VGA Wonder
@@ -1078,7 +1095,7 @@ Values for video mode:
      = T  132x25  8x16		  16		A000 NCR 77C22 [9]
      = T  132x25  9x16 1188x400	 16/256k	B800 WD90C
      = T  132x25  9x16 1188x400	 16/256k	B800 Diamond Speedstar 24X
-     = T  132x25  9x16 1188x400	 16/256k	B800 Diamond Stealth 24X
+     = T  132x25  9x16 1188x400	 16/256k	B800 Diamond Stealth 24
      = T  132x25  8x14 1056x350	 16/256k	     Cirrus CL-GD5420/5422/5426
      = T  132x43  8x11		 16/256k	B800 Trident TVGA 8800/8900
      = G   94x29  8x14	752x410			     Lava Chrome II EGA
@@ -1397,6 +1414,7 @@ Notes:
 	21h or 27h; this version of the BIOS also sets the BIOS data area
 	incorrectly for extended text modes, resulting in scrolling after only
 	24 lines (the VMODE.EXE	utility does set the data area correctly)
+[13] The Tandy 1000SL/TL BIOS does not actually support this mode
 Index:	video modes
 Index:	installation check|HERKULES
 --------V-100070-----------------------------
@@ -1634,6 +1652,19 @@ Desc:	determine the current position and status of the light pen (if
 Notes:	on a CGA, returned column numbers are always multiples of 2 (320-
 	  column modes) or 4 (640-column modes)
 	returned row numbers are only accurate to two lines
+--------V-1004------------------------------------
+INT 10 - HUNTER 16 - GET CURSOR ADDRESS
+	AH = 04h
+	BH = page
+Return: DH = row (0..24)
+	DL = column (0..79)
+	CH = cursor pixel Y-address (0..199)
+	CL = cursor pixel X-address (0..639)
+Notes:	the Husky Hunter 16 is an 8088-based ruggedized laptop.	 Other family
+	  members are the Husky Hunter, Husky Hunter 16/80, and Husky Hawk.
+	pixel coordinates are for the lower left corner of the character cell
+	  containing the cursor
+SeeAlso: AH=60h"HUNTER"
 --------V-1005-------------------------------
 INT 10 - VIDEO -  SELECT ACTIVE DISPLAY PAGE
 	AH = 05h
@@ -1643,7 +1674,7 @@ Note:	to determine whether the requested page actually exists, use AH=0Fh
 	  to query the current page after making this call
 SeeAlso: AH=0Fh,AH=43h,AH=45h
 --------V-1005-------------------------------
-INT 10 - VIDEO - PCjr - MANIPULATE CRT/CPU PAGE REGISTERS
+INT 10 - VIDEO - PCjr, Tandy 1000 - MANIPULATE CRT/CPU PAGE REGISTERS
 	AH = 05h
 	AL = subfunction
 	    80h read CRT and CPU page registers
@@ -1738,7 +1769,7 @@ INT 10 - VIDEO - WRITE CHARACTER ONLY AT CURSOR POSITION
 	AH = 0Ah
 	AL = character to display
 	BH = page number (00h to number of pages - 1) (see AH=00h)
-	BL = attribute (PCjr only) or color (graphics mode)
+	BL = attribute (PCjr, Tandy 1000 only) or color (graphics mode)
 	     if bit 7 set in graphics mode, character is xor'ed onto screen
 	CX = number of times to write character
 Notes:	all characters are displayed, including CR, LF, and BS
@@ -1873,7 +1904,7 @@ INT 10 - VIDEO - Eagle PC2 BIOS Rev. C - SET SCROLL SPEED
 	    01h slow (scrolling only moves characters during vertical retrace)
 Return: AH = previous speed
 --------V-101000-----------------------------
-INT 10 - VIDEO - SET SINGLE PALETTE REGISTER (PCjr,EGA,MCGA,VGA)
+INT 10 - VIDEO - SET SINGLE PALETTE REGISTER (PCjr,Tandy,EGA,MCGA,VGA)
 	AX = 1000h
 	BL = palette register number (00h-0Fh)
 	   = attribute register number (undocumented)
@@ -1889,7 +1920,7 @@ Notes:	on MCGA, only BX = 0712h is supported
 	  determines the outcome
 SeeAlso: AX=1002h,AX=1007h,AX=CD01h
 --------V-101001-----------------------------
-INT 10 - VIDEO - SET BORDER (OVERSCAN) COLOR (PCjr,EGA,VGA)
+INT 10 - VIDEO - SET BORDER (OVERSCAN) COLOR (PCjr,Tandy,EGA,VGA)
 	AX = 1001h
 	BH = border color (00h-3Fh)
 BUG:	the original IBM VGA BIOS incorrectly updates the parameter save area
@@ -1899,7 +1930,7 @@ Note:	under UltraVision, the palette locking status (see AX=CD01h)
 	  determines the outcome
 SeeAlso: AX=1002h,AX=1008h,AX=CD01h
 --------V-101002-----------------------------
-INT 10 - VIDEO - SET ALL PALETTE REGISTERS (PCjr,EGA,VGA)
+INT 10 - VIDEO - SET ALL PALETTE REGISTERS (PCjr,Tandy,EGA,VGA)
 	AX = 1002h
 	ES:DX -> palette register list
 Note:	under UltraVision, the palette locking status (see AX=CD01h)
@@ -1922,6 +1953,8 @@ Notes:	although there is no function to get the current status on adapters
 	  VGA, use AH=1Bh and check offset 2Dh of the returned data
 	when configured for a monochrome display, the Boca Research Multi-EGA
 	  with ROM v M1.1 Type D has its screen disrupted if BH is not clear
+	this call is reported to be "Get Cursor Position" on the Tandy
+	  1000SL/TL
 SeeAlso: AH=08h,AH=1Bh
 --------V-101007-----------------------------
 INT 10 - VIDEO - GET INDIVIDUAL PALETTE REGISTER (VGA,UltraVision v2+)
@@ -2041,7 +2074,11 @@ INT 10 - VIDEO - Tseng ET-4000 BIOS - SET HiColor GRAPHICS MODE
 	    3Eh = 640x480x16M (Genoa 7900)
 	    FFh Tseng 24-bit color mode
 		BH = mode
+		    2Dh = 640x480
 		    2Eh = 640x480x16M
+		    2Fh = 640x400
+		    30h = 800x600
+		    38h = 1024x768??? (Tseng ET4000/W32i)
 Return: AL = 10h if supported
 	AH = status
 	    00h if successful
@@ -2062,21 +2099,37 @@ Return: AL = 10h if supported
 	BL = type of digital/analog converter
 	    00h normal VGA DAC
 	    01h Sierra SC1148x HiColor DAC
-	    02h new Sierra DAC
+	    ---Diamond SpeedStar 24---
+	    02h new Sierra SS24 DAC (24-bit)
+	    ---generic Tseng BIOS v8+ ---
+	    02h Sierra Mark2 (15-bit) or Mark3 (15/16-bit) DAC
+	    03h ATT20c490/1/2 (15/16/24-bit)
+	    04h AcuMos ADAC1 (15/16/24-bit)
+	    05h unknown 15/16/24-bit DAC
+	    06h Cirrus Internal 15/16/24-bit (CL-GD54xx series adapters)
+	    07h Diamond SS2410 (15/24-bit)
+	    08h unknown 15/16/24-bit DAC
+	    09h unknown 15/16/24-bit DAC
 	   else other HiColor DAC
 Desc:	determine which type of digital-to-analog converter is installed on the
 	  display board
 SeeAlso: AX=10F0h,AX=10F2h
---------V-1010F2BL00-------------------------
-INT 10 u - VIDEO - Tseng ET-4000 BIOS - CHECK IF IN HiColor MODE
+--------V-1010F2-----------------------------
+INT 10 u - VIDEO - Tseng ET-4000 BIOS - CHECK IF HiColor MODE/SET HiColor MODE
 	AX = 10F2h
-	BL = 00h
+	BL = function
+	    00h get current HiColor mode
+	    01h set 15-bit HiColor mode
+	    02h set 16-bit HiColor mode
 Return: AX = 0010h if supported
 	BL = video mode type
-	    00h normal
-	    else HiColor mode
+	    00h not in HiColor mode
+	    01h 15-bit RGB mode
+	    02h 16-bit RGB mode
+	    03h 24-bit RGB mode
 Desc:	determine whether the display is in a graphics mode with 15 or more
 	  bits per pixel color resolution
+Note:	set (BL=01h/02h) only works if already in a HiColor mode
 SeeAlso: AH=0Fh,AX=10F0h,AX=10F1h
 --------V-1011-------------------------------
 INT 10 - BIOS Window Extension v1.1 - GET WINDOW COORDINATES
@@ -3408,23 +3461,183 @@ Desc:	fill a convex polygonal area bounded by a contiguous line of the
 	  opposite color with the border color
 Note:	the first fill makes the figure solid, the second erases it
 SeeAlso: AH=4Ah
+--------V-104E00-----------------------------
+INT 10 - VESA XGA BIOS Extensions - GET XGA ENVIRONMENT INFORMATION
+	AX = 4E00h
+	ES:DI -> 256-byte buffer for XGA information (see below)
+Return: AL = 4Eh if function supported
+	    AH = status
+		00h successful
+		else error code
+Desc:	determine whether VESA XGA extensions are present and the capabilities
+	  supported by the display adapter
+SeeAlso: AX=4E01h,AX=4E02h,AX=4F00h
+Index:	installation check;VESA XGA
+
+Format of XGA information buffer:
+Offset	Size	Description
+ 00h  4 BYTEs	signature ("VESA")
+ 04h	WORD	VESA version number
+ 06h	DWORD	pointer to ASCIZ OEM string
+ 0Ah	DWORD	environment flags
+		bits 0-1 system bus (00 = MCA, 01 = ISA, 10 = EISA)
+		bit 2	 bus mastering available
+		bits 3-31 reserved
+ 0Eh	WORD	number of XGA adapters installed (other VESA XGA functions
+		  require a handle indicating which adapter to use)
+ 10h 240 BYTEs	reserved
+--------V-104E01----------------------------
+INT 10 - VESA XGA BIOS Extensions - RETURN XGA SUBSYSTEM INFORMATION
+	AX = 4E01h
+	DX = XGA handle (0 to number of XGAs-1)
+	ES:DI -> 256-byte buffer for subsystem information (see below)
+Return: AL = 4Eh if function supported
+	AH = status
+	    00h	 function successful
+	    else error code
+SeeAlso: AX=4E00h,AX=4E02h
+
+Format of subsystem information:
+Offset	Size	Description
+ 00h	DWORD	pointer to null-terminated board OEM string
+ 04h	DWORD	capabilities
+		bits 0-1  board bus architecture: 0=MCA, 1=ISA, 3=EISA
+		bits 2-3  reserved
+		bits 4-6  DMA Channel assigned for acquiring bus mastership
+			  (only for ISA bus systems)
+		bit  7	  DMA Channel Status (ISA only). enabled if set
+		bits 8-31 reserved
+ 08h	DWORD	pointer to 8KB XGA ROM (or NULL)
+ 0Ch	DWORD	pointer to the XGA memory mapped registers
+ 10h	WORD	base address of XGA I/O registers (21x0h)
+ 12h	DWORD	pointer to start of physical video memory
+		(A000h:0000h or B000h:0000h)
+ 16h	DWORD	physical address of 4MB aperture (or NULL if none)
+ 1Ah	DWORD	physical address of 1MB aperture (or NULL if none)
+ 1Eh	DWORD	physical address of 64KB aperture (or NULL if not enabled)
+ 22h	DWORD	physical address of OEM aperture (or NULL if none)
+ 26h	WORD	size of OEM aperture in 64KByte units
+ 28h	DWORD	pointer to list of video modes
+		The list is a series of WORDs terminated by FFFFh
+ 2Ch	WORD	number of 64KB blocks on the board
+ 2Eh	DWORD	XGA manufactor ID
+		byte 0 POS data index 1
+		byte 1 is index 2
+		byte 2 is 21xAh index 75h
+ 32h 206 BYTEs reserved
+--------V-104E02-----------------------------------
+INT 10 - VESA XGA BIOS Extensions - RETURN XGA MODE INFORMATION
+	AX = 4E02h
+	CX = Video mode
+	DX = XGA handle
+	ES:DI -> 256 byte buffer
+Return: AL = 4Eh if function supported
+	AH = status
+	    00h	 function successful
+	    else error code
+SeeAlso: AX=4E00h,AX=4E01h
+
+Format of mode information:
+Offset	Size	Description
+ 00h	WORD	attributes of the mode
+		bit 0	set if mode is supported
+		bit 1	reserved
+		bit 2	output is supported by the BIOS
+		bit 3	reserved
+		bit 4	if set this is a graphics mode (VGA registers
+			inactive, XGA active), if clear this is a text mode
+			(VGA registers active, XGA inactive)
+ 02h	WORD	bytes per logical scanline
+ 04h	WORD	horizontal resolution in pixels
+ 06h	WORD	vertical resolution in scanlines
+ 08h	BYTE	character Width in pixels
+ 09h	BYTE	character Height in pixels
+ 0Ah	BYTE	number of planes
+ 0Bh	BYTE	bits per pixels
+ 0Ch	BYTE	memory model
+		00h Text Mode
+		01h CGA graphics
+		02h Hercules graphics
+		03h 4-planar graphics
+		04h Packed Pixel
+		05h Non-chain 4, 256 color
+		06h Direct Color
+		07h YUV-24
+ 0Dh	BYTE	number of Image Pages
+ 0Eh	BYTE	number of Red bits
+ 0Fh	BYTE	bit position of Red bit field
+ 10h	BYTE	number of Green bits
+ 11h	BYTE	bit position of Green bit field
+ 12h	BYTE	number of Blue bits
+ 13h	BYTE	bit position of Blue bit field
+ 14h	BYTE	number of Reserved bits
+ 15h	BYTE	bit position of Reserved bit field
+ 16h 235 BYTEs	reserved
+--------V-104E03-----------------------------------
+INT 10 - VESA XGA BIOS Extensions - SET XGA VIDEO MODE
+	AX = 4E03h
+	BX = video mode
+	CX = other command flags
+	     bit 0  If clear the feature connector is set to the default state
+	DX = XGA handle
+	ES:DI -> 256 byte buffer
+Return: AL = 4Eh if function supported
+	AH = status
+	    00h	 function successful
+	    else error code
+SeeAlso: AH=00h,AX=4E04h,AX=4F02h
+--------V-104E04-----------------------------------
+INT 10 - VESA XGA BIOS Extensions - RETURN CURRENT VIDEO MODE
+	AX = 4E04h
+	DX = XGA handle
+Return: AL = 4Eh if function supported
+	AH = status
+	    00h	 function successful
+		BX??? = current mode
+	    else error code
+SeeAlso: AH=0Fh,AX=4E03h,AX=4F03h
+--------V-104E05-----------------------------------
+INT 10 - VESA XGA BIOS Extensions - SET FEATURE CONNECTOR STATE
+	AX = 4E05h
+	BX = Feature Connector State (see below)
+	DX = XGA handle
+Return: AL = 4Eh if function supported
+	AH = status
+	    00h	 function successful
+	    else error code
+SeeAlso: AX=4E00h,AX=4E06h
+
+Bitfields for Feature Connector State:
+ bit 0	Feature Connector is enabled
+ bit 1	Feature Connector is in Output Mode rather than Input Mode
+ bits 2-15 reserved (0)
+--------V-104E06-----------------------------------
+INT 10 - VESA XGA BIOS Extensions - RETURN FEATURE CONNECTOR STATE
+	AX = 4E06h
+	DX = XGA handle
+Return: AL = 4Eh if function supported
+	AH = status
+	    00h	 function successful
+	    else error code
+	BX = Feature Connector State (see AX=4E05h)
+SeeAlso: AX=4E00h,AX=4E05h
 --------V-104F00-----------------------------
 INT 10 - VESA SuperVGA BIOS - GET SuperVGA INFORMATION
 	AX = 4F00h
 	ES:DI -> 256-byte buffer for SuperVGA information (see below)
-Return: AL = 4Fh function supported
+Return: AL = 4Fh if function supported
 	AH = status
 	    00h successful
 		ES:DI buffer filled
 	    01h failed
 Desc:	determine whether VESA BIOS extensions are present and the capabilities
 	  supported by the display adapter
-SeeAlso: AX=4F01h,AX=7F00h
-Index:	installation check;VESA
+SeeAlso: AX=4E00h,AX=4F01h,AX=7F00h
+Index:	installation check;VESA SuperVGA
 
 Format of SuperVGA information:
 Offset	Size	Description
- 00h  4 BYTEs	signature ('VESA')
+ 00h  4 BYTEs	signature ("VESA")
  04h	WORD	VESA version number
  06h	DWORD	pointer to OEM name
 		"761295520" for ATI
@@ -3516,7 +3729,7 @@ Return: AL = 4Fh function supported
 	AH = status
 	    00h successful
 	    01h failed
-SeeAlso: AX=4F01h,AX=4F03h
+SeeAlso: AX=4E03h,AX=4F01h,AX=4F03h
 
 Values for VESA video mode:
  00h-FFh OEM video modes (see AH=00h)
@@ -3559,8 +3772,8 @@ Values for S3 OEM video mode:
  205h	1024x768x256
  206h	1280x960x16
  208h	1280x1024x16
- 211h	640x480x64K (Diamond Stealth 24X)
- 212h	640x480x16M (Diamond Stealth 24X)
+ 211h	640x480x64K (Diamond Stealth 24)
+ 212h	640x480x16M (Diamond Stealth 24)
  301h	640x480x32K
 Index:	video modes
 --------V-104F03-----------------------------
@@ -3569,9 +3782,9 @@ INT 10 - VESA SuperVGA BIOS - GET CURRENT VIDEO MODE
 Return: AL = 4Fh function supported
 	AH = status
 	    00h successful
+		BX = video mode (see AX=4F02h)
 	    01h failed
-	BX = video mode (see AX=4F02h)
-SeeAlso: AX=4F02h
+SeeAlso: AH=0Fh,AX=4E04h,AX=4F02h
 --------V-104F04-----------------------------
 INT 10 - VESA SuperVGA BIOS - SAVE/RESTORE SuperVGA VIDEO STATE
 	AX = 4F04h
@@ -3656,6 +3869,10 @@ INT 10 - VESA SuperVGA BIOS v1.2+ - GET/SET DAC PALETTE CONTROL
 Return: AL = 4Fh if function supported
 	AH = status
 	BH = current number of bits per primary (06h = standard VGA)
+----------104F13-----------------------------
+INT 10 - VESA Audio Interface - API
+	AX = 4F13h
+	??? details not yet available
 --------V-104FFF-----------------------------
 INT 10 - VESA SuperVGA BIOS - Everex - TURN VESA ON/OFF
 	AX = 4FFFh
@@ -3932,6 +4149,70 @@ Bitfields for state mask:
  bit 1	BIOS data state
  bit 2	DAC state
  bit 15 type (0 all state info, 1 SuperVGA state only)
+--------V-1060------------------------------------
+INT 10 - HUNTER 16 - SET GRAPHICS FONT
+	AH = 60h
+	AL = new font
+	    bit 7    output characters in reverse video
+	    bits 0-6 font number (see AH=77h)
+Return: BH = cell width			
+	BL = cell height
+Desc:	select the font to use for output in mode 6; this can be used to mix
+	  fonts on the screen
+Note:	the Husky Hunter 16 is an 8088-based ruggedized laptop.	 Other family
+	  members are the Husky Hunter, Husky Hunter 16/80, and Husky Hawk.
+SeeAlso: AH=04h"HUNTER",AH=73h"HUNTER",AH=77h"HUNTER"
+--------V-1061------------------------------------
+INT 10 - HUNTER 16 - MOVE CURSOR TO GRAPHICS CO-ORDINATES
+	AH = 61h
+	CX = column
+	DX = row
+Note:	this function is only valid in graphics modes
+SeeAlso: AH=62h
+--------V-1062------------------------------------
+INT 10 - HUNTER 16 - GET CURSOR POSITION IN GRAPHICS CO-ORDINATES
+	AH = 62h
+Return: CX = column
+	DX = row
+Note:	this function is only valid in graphics modes
+SeeAlso: AH=61h
+--------V-1063------------------------------------
+INT 10 - HUNTER 16 - SET CONTRAST
+	AH = 63h
+	AL = contrast (0..127)
+Desc:	set the LCD screen contrast to improve visibility
+SeeAlso: AH=64h,AH=75h
+--------V-1064------------------------------------
+INT 10 - HUNTER 16 - SET BACKLIGHT LEVEL
+	AH = 64h
+	AL = level (0..15)
+Desc:	set the LCD backlight level to improve visibility in bad lighting
+SeeAlso: AH=63h,AH=65h,AH=74h,AH=78h"HUNTER",INT 15/AH=74h
+--------V-106500----------------------------------
+INT 10 - HUNTER 16 - GET BACKLIGHT TIMEOUT
+	AX = 6500h
+Return: BX = timeout in seconds (0-300)
+Desc:	returns the time after which the backlight will turn off
+SeeAlso: AH=63h,AH=64h,AX=6501h,INT 15/AH=74h
+--------V-106501----------------------------------
+INT 10 - HUNTER 16 - SET BACKLIGHT TIMEOUT
+	AX = 6501h
+	BX = timeout in seconds (0-300)
+Desc:	set the idle time after which the backlight will turn off
+SeeAlso: AH=64h,AX=6500h
+--------V-1066------------------------------------
+INT 10 - HUNTER 16 - SPLIT DISPLAY
+	AH = 66h
+	AL = control bits
+	    bits 0-1  01: no split, 10: allow split
+	    bit 2  allow scrolling the upper part
+	    bit 3  allow scrolling the lower part 
+	BH = top row of lower section of LCD (0..7)
+	BL = top row of lower section of the virtual screen (0..24)
+Desc:	split the LCD screen horizontally into two parts; each part may be 
+	  individually scrollable or fixed.
+Note:	the Hunter 16 has a 240x64 LCD display which serves as a window into
+	  a 640x200 virtual screen
 --------V-106A00BX0000-----------------------
 INT 10 - Direct Graphics Interface Standard (DGIS) - INQUIRE AVAILABLE DEVICES
 	AX = 6A00h
@@ -4134,6 +4415,23 @@ Return: AX:BX -> WORD containing green plane's offset
 	AX:DX -> WORD containing segment of red (offset 0) and blue (offset
 			4000) planes
 SeeAlso: AH=71h
+--------V-1070------------------------------------
+INT 10 - HUNTER 16 - DRAW ELLIPSE/CIRCLE
+	AH = 70h
+	DS:BX -> control block (see below)
+Desc:	Draws a circle or ellipse. Only valid in graphics modes.
+Note:	the Husky Hunter 16 is an 8088-based ruggedized laptop.	 Other family
+	  members are the Husky Hunter, Husky Hunter 16/80, and Husky Hawk.
+SeeAlso: AH=71h"HUNTER"
+
+Format of control block:
+Offset	Size	Description
+ 00h	WORD	center X co-ordinate
+ 02h	BYTE	center Y co-ordinate
+ 03h	WORD	radius in pixels
+ 05h	BYTE	color (00h white, 01h black, FFh invert)
+ 06h	BYTE	aspect ratio x:x (1-127)
+ 07h	BYTE	aspect ratio y:y (1-127)
 --------V-107000BX0000-----------------------
 INT 10 - Everex Extended Video BIOS - RETURN EMULATION STATUS
 	AX = 7000h
@@ -4228,7 +4526,23 @@ INT 10 - VIDEO - TANDY 2000 only - GET ADDRESS OF INCRAM
 	AH = 71h
 Return: AX:BX -> WORD containing segment address of INCRAM
 	AX:CX -> WORD containing offset of INCRAM
-SeeAlso: AH=70h
+SeeAlso: AH=70h"TANDY"
+--------V-1071------------------------------------
+INT 10 - HUNTER 16 - DRAW LINE/BOX
+	AH = 71h
+	DS:BX -> control block (see below)
+Desc:	Draws a line or box. Only valid in graphics modes.
+SeeAlso: AH=70h"HUNTER"
+
+Format of control block:
+Offset	Size	Description
+ 00h	WORD	left edge X co-ordinate
+ 02h	BYTE	lower edge Y co-ordinate
+ 03h	WORD	right edge X co-ordinate
+ 05h	BYTE	upper edge Y co-ordinate
+ 06h	BYTE	color (00h white, 01h black, FFh invert)
+ 07h	BYTE	type (00h line, 01h box)
+ 08h	BYTE	if non-zero (and type is BOX) fill with color
 --------V-1072-------------------------------
 INT 10 - VIDEO - TANDY 2000 only - SCROLL RIGHT PART OR ALL OF SCREEN
 	AH = 72h
@@ -4236,7 +4550,21 @@ INT 10 - VIDEO - TANDY 2000 only - SCROLL RIGHT PART OR ALL OF SCREEN
 	BH = new attributes for blanked columns at left
 	CH,CL = row, column of upper left corner of scroll area
 	DH,DL = row, column of lower right corner of scroll area
-SeeAlso: AH=06h,AH=07h,AH=73h,INT 15/AH=12h/BH=05h
+SeeAlso: AH=06h,AH=07h,AH=73h"TANDY",INT 15/AH=12h/BH=05h
+--------V-1072------------------------------------
+INT 10 - HUNTER 16 - SELECT TEXT-MODE INVERSE VIDEO MECHANISM
+	AH = 72h
+	AL = mechanism to use
+	    00h do not use inverse video
+	    01h emulate MDA. Display attribute 07h is normal video and 70h is
+		inverse video.
+	    02h use inverse video if background is non-black.
+	    03h use inverse video for high intensity text.
+	    04h use inverse video for text with background intensity greater
+		than foreground intensity.
+	    05h use inverse video for text with background color other than
+		black or high intensity foreground.
+SeeAlso: AH=70h"HUNTER",AH=71h"HUNTER"
 --------V-1073-------------------------------
 INT 10 - VIDEO - TANDY 2000 only - SCROLL LEFT PART OR ALL OF SCREEN
 	AH = 73h
@@ -4244,7 +4572,63 @@ INT 10 - VIDEO - TANDY 2000 only - SCROLL LEFT PART OR ALL OF SCREEN
 	BH = new attributes for blanked columns at right
 	CH,CL = row, column of upper left corner of scroll area
 	DH,DL = row, column of lower right corner of scroll area
-SeeAlso: AH=06h,AH=07h,AH=72h,INT 15/AH=12h/BH=05h
+SeeAlso: AH=06h,AH=07h,AH=72h"TANDY",INT 15/AH=12h/BH=05h
+--------V-1073------------------------------------
+INT 10 - HUNTER 16 - SELECT TEXT FONT
+	AH = 73h
+	AL = new font
+	      00h  7x7 in a 8x8 cell
+	      01h  5x7 in a 6x8 cell
+	      06h  3x5 in a 4x6 cell
+Retuen: BH = cell width
+	BL = cell height
+SeeAlso: AH=60h"HUNTER",AH=77h"HUNTER"
+--------V-1074------------------------------------
+INT 10 - HUNTER 16 - SET LCD WINDOWS POSITION
+	AH = 74h
+	DH = row (0..24)
+	DL = column (0..79)
+Desc:	set the position in the virtual screen being displayed in the LCD
+	  screen. If Split Screen (INT 10/AH=66h) is used, this call sets the
+	  position for the window which has the cursor.
+SeeAlso: AH=66h"HUNTER",AH=75h,AH=76h
+--------V-1075------------------------------------
+INT 10 - HUNTER 16 - SET ZOOM
+	AH = 75h
+	AL = new Zoom state (00h off, nonzero on)
+SeeAlso: AH=74h,AH=76h
+--------V-1076------------------------------------
+INT 10 - HUNTER 16 - LOOKING KEYS
+	AH = 76h
+	AL = Action
+	     00h home the window
+	     01h move up one line
+	     02h move down one line
+	     03h move left one character
+	     04h move right one character
+	     05h flip window to other side of virtual screen
+Desc:	moves the displayed screen around the virtual screen
+SeeAlso: AH=74h,AH=75h
+--------V-1077------------------------------------
+INT 10 - HUNTER 16 - GET GRAPHICS FONT
+	AH = 77h
+Return: AL = font number (see below)
+SeeAlso: AH=60h"HUNTER",AH=73h"HUNTER"
+
+Values for graphics font number:
+ 00h	 7x7  in a  8x8	 cell 
+ 01h	 5x7  in a  6x8	 cell
+ 02h	 7x9  in a  8x10 cell
+ 03h	14x9  in a 16x10 cell
+ 04h	 7x18 in a  8x20 cell
+ 05h	14x18 in a 16x20 cell
+ 06h	 3x5  in a  4x6	 cell
+Note:	size is X * Y
+--------V-1078------------------------------------
+INT 10 - HUNTER 16 - TURN BACKLIGHT ON/OFF
+	AH = 78h 
+	AL = new state of backlight (00h on, 01h off)
+SeeAlso: AH=64h,INT 15/AH=74h
 --------V-107F00-----------------------------
 INT 10 - SOLLEX SuperVGA - GET EXTENSIONS INFO
 	AX = 7F00h
@@ -4768,12 +5152,17 @@ Return: BH = active monitor
 	    05h = EGA
 	    07h = MDA
 	    08h = switchable LCD controller present
+	    09h = plasma VGA
 	CH = 00h (reserved)
+	   = 31h if QVision VGA
 	CL = switchable VDU mode supported
-	    bit	 0   = CGA supported
+	    bit	0    = CGA supported
 	    bits 1,2 = reserved (1)
-	    bit	 3   = MDA supported
-	    bits 4-7 = reserved (1)
+	    bit	3    = MDA supported
+	    bit 4    = BitBLT engine available
+	    bit 5    = 132-column support availble
+	    bit 6    = 640x480x256 mode available
+	    bit 7    = 8-bit DAC mode available
 	DH = internal monitor type (see below)
 	DL = external monitor type (see below)
 SeeAlso: AH=1Ah,AX=BF00h,AX=BF01h,AX=BF02h
@@ -4781,12 +5170,17 @@ SeeAlso: AH=1Ah,AX=BF00h,AX=BF01h,AX=BF02h
 Values for monitor type:
  00h	none
  01h	dual-mode monitor
- 02h	5153 RGB monitor
+ 02h	5153 RGB monitor (RGBI 16-color)
  03h	Compaq Color monitor
- 04h	640x400 flat panel
+ 04h	640x400 flat panel (Plasma CGA)
  05h	VGC monochrome
  06h	VGC color
- 07h	LCD VGA
+ 07h	8-level mono LCD VGA
+ 08h	16-level mono plasma VGA
+ 09h	4-level mono LCD CGA
+ 0Ah	16-level mono LCD VGA
+ 0Bh	active-matrix color VGA
+ 0Ch	active-matrix mono VGA
 --------b-10BF04-----------------------------
 INT 10 - VIDEO - Compaq Extensions - SET MODE SWITCH DELAY
 	AX = BF04h
@@ -4950,6 +5344,56 @@ INT 10 - CU Writer v1.4 - TEXT MENU
 	???
 Return: ???
 SeeAlso: AH=C0h,AH=C1h,AH=C3h,AH=D0h
+----------10CB00-----------------------------
+INT 10 - UNCHAIN - SAVE CURRENT VGA REGISTERS
+	AX = CB00h
+Note:	combined with AX=CB06h, this function permits the use of video mode
+	  13h together with the VGA's unchained mode
+SeeAlso: AX=CB06h,AX=CBFFh
+----------10CB01-----------------------------
+INT 10 - UNCHAIN - UPDATE PAGE 1 OFFSET
+	AX = CB01h
+	BX = offset of page 1
+Desc:	inform UNCHAIN of the location of video page 1 in video memory; the
+	  default is 0000h
+SeeAlso: AX=CB02h,AX=CB03h,AX=CB04h,AX=CBFFh
+----------10CB02-----------------------------
+INT 10 - UNCHAIN - UPDATE PAGE 2 OFFSET
+	AX = CB02h
+	BX = offset of page 2
+Desc:	inform UNCHAIN of the location of video page 2 in video memory; the
+	  default is 3E80h (16000, for 320x200)
+SeeAlso: AX=CB00h,AX=CB01h,AX=CB03h,AX=CB04h
+----------10CB03-----------------------------
+INT 10 - UNCHAIN - UPDATE PAGE 3 OFFSET
+	AX = CB03h
+	BX = offset of page 3
+Desc:	inform UNCHAIN of the location of video page 3 in video memory; the
+	  default is 7D00h (32000, for 320x200)
+SeeAlso: AX=CB01h,AX=CB02h,AX=CB04h
+----------10CB04-----------------------------
+INT 10 - UNCHAIN - UPDATE PAGE 4 OFFSET
+	AX = CB04h
+	BX = offset of page 4
+Desc:	inform UNCHAIN of the location of video page 4 in video memory; the
+	  default is BB80h (48000, for 320x200)
+SeeAlso: AX=CB01h,AX=CB02h,AX=CB03h,AX=CB05h
+----------10CB05-----------------------------
+INT 10 - UNCHAIN - SAVE PALETTE
+	AX = CB05h
+SeeAlso: AX=CB00h,AX=CB06h
+----------10CB06-----------------------------
+INT 10 - UNCHAIN - RESTORE VGA REGISTERS
+	AX = CB06h
+SeeAlso: AX=CB00h,AX=CB05h,AX=CBFFh
+----------10CBFF-----------------------------
+INT 10 - UNCHAIN - INSTALLATION CHECK
+	AX = CBFFh
+Return: AX = CCBBh if installed
+Program: UNCHAIN is a TSR by Colin Buckley which permits use of Borland
+	  development tools with Mode X video in the absence of a second
+	  monitor
+SeeAlso: AX=CB00h,AX=CB01h,AX=CB06h
 --------V-10CC00SI0000-----------------------
 INT 10 - VIDEO - UltraVision - GET STATUS (INSTALLATION CHECK)
 	AX = CC00h
@@ -5398,7 +5842,8 @@ Bitfields for BIOS equipment list:
 	10 80x25 color
 	11 80x25 monochrome
  bits 6-7 number of floppies installed less 1 (if bit 0 set)
- bit 8	DMA support installed (PCjr, some Tandy 1000s, 1400LT)
+ bit 8	DMA support installed (PCjr, Tandy 1400LT)
+	DMA support *not* installed (Tandy 1000's)
  bits 9-11 number of serial ports installed
  bit 12	game port installed
  bit 13	serial printer attached (PCjr)
@@ -8416,7 +8861,7 @@ Return: AH = RS232 status bits (see AH=03h)
 	ZF set if no characters queued
 	ZF clear if character available
 	    AL = next character
-SeeAlso: AH=03h,AH=08h"PC-MOS",AH=09h"Digiboard"
+SeeAlso: AH=03h,AH=08h"PC-MOS",AH=09h"Digiboard",AH=14h"Digiboard"
 --------S-1408-------------------------------
 INT 14 - MBBIOS - NON-DESTRUCTIVE READ
 	AH = 08h
@@ -8515,7 +8960,7 @@ Return: AX = status (see AH=03h)
 	DI updated
 Note:	the PACCOM version of MBBIOS does not use CX or ES:DI; instead, ES
 	  contains the segment of a buffer containing the packet to be sent,
-	  which by default will be freed once the packet has been sent.  Use
+	  which by default will be freed once the packet has been sent.	 Use
 	  AH=0Ch"MBBIOS" to allocate the buffer.
 SeeAlso: AH=01h,AH=0Bh"MBBIOS",AH=0Ch"MBBIOS",AH=19h"FOSSIL"
 
@@ -8739,679 +9184,4 @@ Return: AH = return code (00h-02h,06h) (see AH=00h/DX=FFFFh)
 Program: Connection Manager by Softwarehouse Corp. permits the sharing of
 	  serial ports over an IPX or NetBIOS-based network
 SeeAlso: AH=08h/DX=FFFFh,AH=0Ah/DX=FFFFh
---------S-1410-------------------------------
-INT 14 - FOSSIL - EXTENDED ^C/^K CHECKING AND TRANSMIT ON/OFF
-	AH = 10h
-	AL = bit mask
-	    bit 0: enable/disable ^C/^K checking
-	    bit 1: enable/disable the transmitter
-	DX = port number
-SeeAlso: AH=0Fh"FOSSIL"
---------S-1410-------------------------------
-INT 14 - Digiboard DigiCHANNEL PC/X* - CLEAR RECEIVE BUFFER
-	AH = 10h
-	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
-Return: AH = status
-	    00h successful
-	    FFh error
-SeeAlso: AH=09h"Digiboard",AH=11h"Digiboard"
---------S-1410-------------------------------
-INT 14 - MBBIOS PACCOM support - SET CRC WAIT
-	AH = 10h
-	AL = new setting in clock ticks (should be at least 5 character times)
-Desc:	specify the time from start of last character to dropping RTS
-SeeAlso: AH=0Dh"MBBIOS",AH=0Fh"MBBIOS"
---------N-1410--DXFFFF-----------------------
-INT 14 - Connection Manager - QUERY SERVICE NAMES
-	AH = 10h
-	DX = FFFFh
-	CL = subfunction
-	    00h search first
-	    01h search next
-	ES:DI -> pattern buffer (see below)
-Return: AH = return code (00h,01h,03h,06h) (see also AH=00h/DX=FFFFh)
-	    01h no (more) matching names
-	    03h invalid request
-	ES:DI buffer filled with reply buffer (see below) containing matched
-		  name if AH=00h
-Program: Connection Manager by Softwarehouse Corp. permits the sharing of
-	  serial ports over an IPX or NetBIOS-based network
-Desc:	obtain the names of groups and lines available for connection requests,
-	  and the names of active Connection Servers
-SeeAlso: AH=04h/DX=FFFFh,AH=0Bh/DX=FFFFh
-
-Format of pattern/reply buffer:
-Offset	Size	Description
- 00h	WORD	length of pattern (30h or 32h)
- 02h 16 BYTEs	server pattern or name
- 12h 16 BYTEs	group pattern or name
- 22h 16 BYTEs	line pattern or name
- 23h	BYTE	(optional) ???
- 24h	BYTE	(optional, returned) current line status
-		00h available
-		01h out of service
-		02h currently allocated to a connection
-Note:	pattern may include '?' wildcard to match any character
---------S-1411-------------------------------
-INT 14 - FOSSIL - SET CURRENT CURSOR LOCATION
-	AH = 11h
-	DH = row
-	DL = column
-Note:	this is the same as INT 10/AH=02h
-SeeAlso: AH=12h"FOSSIL"
---------S-1411-------------------------------
-INT 14 - Digiboard DigiCHANNEL PC/X* - CLEAR TRANSMIT BUFFER
-	AH = 11h
-	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
-Return: AH = status
-	    00h successful
-	    FFh error
-SeeAlso: AH=09h"Digiboard",AH=10h"Digiboard"
---------S-1411-------------------------------
-INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - DISABLE PORT
-	AH = 11h
-	DX = port number
-Return: AL = status
-	    00h successful
-	    01h IRQ for port is shared
-	    02h IRQ was reserved
-SeeAlso: AH=04h,AH=05h,AH=12h"PC-MOS"
---------S-1412-------------------------------
-INT 14 - FOSSIL - READ CURRENT CURSOR LOCATION
-	AH = 12h
-Return: DH = row
-	DL = column
-Note:	this is the same as INT 10/AH=03h
-SeeAlso: AH=11h"FOSSIL"
---------S-1412-------------------------------
-INT 14 - Digiboard DigiCHANNEL PC/X* - GET TRANSMIT BUFFER FREE SPACE
-	AH = 12h
-	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
-Return: AX = number of bytes free
-SeeAlso: AH=0Ah"Digiboard"
---------S-1412-------------------------------
-INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - GET CURRENT PORT PARAMETERS
-	AH = 12h
-	DX = port number
-Return: AH = status
-	    FFh port number invalid
-	AL = line parameters (see AH=00h)
-	AH = flow control configuration (see AH=05h"PC-MOS")
-	CX:BX = bps rate
-	DL = XOFF character or 00h for none
-	DH = XON character or 00h for none
---------S-1413-------------------------------
-INT 14 - FOSSIL - SINGLE CHARACTER ANSI WRITE TO SCREEN
-	AH = 13h
-	AL = character
-Note:	should not be called if it is unsafe to call DOS
-SeeAlso: AH=15h
---------S-1413-------------------------------
-INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - REGISTER A PORT WITH A TERMINAL
-	AH = 13h
-	DX = port number
-Return: AH = status
-	    FFh port number invalid
-	    else
-		ES:BX -> BYTE flag (00h buffer empty, FFh buffer contains data)
-SeeAlso: AH=17h"PC-MOS"
---------S-1414-------------------------------
-INT 14 - FOSSIL - ENABLE OR DISABLE WATCHDOG PROCESSING
-	AH = 14h
-	AL = 01h enable watchdog
-	     00h disable watchdog
-	DX = port number
---------S-1414-------------------------------
-INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - OUTPUT STRING
-	AH = 14h
-	CX = number of characters in string
-	DX = port number
-	ES:BX -> string to be sent
-	SI = timeout in timer ticks or 0000h for default
-Return: AX = number of bytes actually sent
-	ZF clear if successful
-	ZF set on timeout
-SeeAlso: AH=01h,AH=15h"PC-MOS"
---------S-1415-------------------------------
-INT 14 - FOSSIL - WRITE CHARACTER TO SCREEN USING BIOS SUPPORT ROUTINES
-	AH = 15h
-	AL = character
-SeeAlso: AH=13h"FOSSIL"
---------S-1415-------------------------------
-INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - INPUT STRING
-	AH = 15h
-	CX = size of buffer
-	DX = port number
-	ES:BX -> buffer for received characters
-	SI = timeout in clock ticks or 0000h for default
-Return: AX = number of characters actually read
-	ZF set on timeout (no data available)
-SeeAlso: AH=02h,AH=14h"PC-MOS",AH=16h"PC-MOS"
---------S-1416-------------------------------
-INT 14 - FOSSIL - INSERT/DELETE FUNCTION FROM TIMER TICK CHAIN
-	AH = 16h
-	AL = function
-	    00h = delete
-	    01h = add
-	ES:DX -> routine to call
-Return: AX = status
-	    0000h successful
-	    0001h unsuccessful
-SeeAlso: AH=07h"FOSSIL"
---------S-1416-------------------------------
-INT 14 - Digiboard DigiCHANNEL PC/X* - CCB COMMAND
-	AH = 16h
-	AL = CCB command number (see below)
-	BL = byte 2
-	BH = byte 3
-	CL = byte 1 (for all channel functions except 4Eh and 4Fh)
-	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
-Return: AH = status
-	    00h successful
-	    FFh error
-SeeAlso: AH=18h"Digiboard"
-
-Values for CCB command number:
- 40h	Set Receive Mid Water Mark
- 41h	Set Receive High Water Mark
- 42h	Flush Receive Buffer
- 43h	Flush Transmit Buffer
- 44h	Transmit Pause
- 45h	Transmit Resume
- 46h	Set Interrupt to Host Mask
- 47h	Set Baud, Data, Stop and Parity
- 48h	Send Break
- 49h	Set Modem Lines
- 4Ah	Set Break Count
- 4Bh	Set Handshake
- 4Ch	Set Xon/Xoff Characters
- 4Dh	Set Transmit Mid Water Mark
- 4Eh	IRQ Polling Timer to Host
- 4Fh	Buffer Set All
- 50h	Port On
- 51h	Port Off
- 52h	Receive Pause
- 53h	Special Character Interrupt
- 54h	RS-422 Enable
---------S-1416-------------------------------
-INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - LINK TO ANOTHER SERIAL DRIVER
-	AH = 16h
-	ES:BX -> calling driver's INT 14 entry point
-Return: nothing
-Program: PC-MOS/386 v5.01 is a multitasking, multiuser MS-DOS 5.0-compatible
-	  operating system by The Software Link, Inc.
---------S-1417-------------------------------
-INT 14 - FOSSIL - REBOOT SYSTEM
-	AH = 17h
-	AL = method
-	    00h = cold boot
-	    01h = warm boot
-SeeAlso: INT 19
---------S-1417-------------------------------
-INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - WRITE MODEM CONTROL REGISTER
-	AH = 17h
-	AL = new value for UART's modem control register
-	DX = port number
-Return: nothing
---------S-1418-------------------------------
-INT 14 - FOSSIL - READ BLOCK
-	AH = 18h
-	CX = maximum number of characters to transfer
-	DX = port number
-	ES:DI -> user buffer
-Return: AX = number of characters transferred
-SeeAlso: AH=19h"FOSSIL",AH=83h"COURIERS",AX=FF02h,INT 6B/AX=0100h
---------S-1418-------------------------------
-INT 14 - Digiboard DigiCHANNEL PC/X* - SEND BIOS COMMAND
-	AH = 18h
-	ES:BX -> 16-byte command string
-	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
-Return: AH = status
-	    00h successful
-	    80h timeout
-	AL = mailbox status
-	    00h no errors
-	    8Xh BIOS error
-	ES:BX buffer filled in with mailbox string
-	ZF clear if no errors
-	ZF set if either status byte contains an error code
-SeeAlso: AH=16h"Digiboard"
---------S-1418-------------------------------
-INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - GET DRIVER DESCRIPTION
-	AH = 18h
-	DX = port number
-Return: DS:BX -> 40-byte buffer containing a string identifying the serial
-		driver
-SeeAlso: AH=06h"PC-MOS"
---------S-1419-------------------------------
-INT 14 - FOSSIL - WRITE BLOCK
-	AH = 19h
-	CX = maximum number of characters to transfer
-	DX = port number
-	ES:DI -> user buffer
-Return: AX = number of characters transferred
-SeeAlso: AH=18h"FOSSIL",AH=86h,INT 6B/AX=0000h
---------S-1419-------------------------------
-INT 14 - Digiboard DigiCHANNEL PC/X* - SPECIAL CHARACTER INTERRUPT
-	AH = 19h
-	BL = flag
-	    00h disable special character interrupt
-	    FFh enable interrupt
-	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
-Return: AH = status
-	    00h successful
-	    FFh failed
-SeeAlso: AH=1Ah"Digiboard"
---------S-1419-------------------------------
-INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - SELECTIVE BUFFER FLUSH
-	AH = 19h
-	AL = what to flush
-		bit 0: input buffer
-		bit 1: output buffer
-	DX = port number
-Return: nothing
-SeeAlso: AH=09h"PC-MOS"
---------S-141A-------------------------------
-INT 14 - FOSSIL - BREAK BEGIN OR END
-	AH = 1Ah
-	AL = 00h stop sending 'break'
-	     01h start sending 'break'
-	DX = port number
-SeeAlso: AH=06h"FOSSIL",AH=8Ah,AH=FAh
---------S-141A-------------------------------
-INT 14 - Digiboard DigiCHANNEL PC/X - SPECIAL CHARACTER FLAG/COUNTER
-	AH = 1Ah
-	BX = subfunction
-	    00h return pointer to special character flag byte
-	    01h return pointer to special character counter word
-	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
-Return: ES:BX -> special character flag or counter
-Notes:	flag is FFh if one or more special characters are in the receive
-	  buffer; it is 00h and the counter is invalid if no special characters
-	  are in the receive buffer
-	counter (if valid) contains the number of characters in the receive
-	  buffer up to and including the last-received special character
---------S-141B-------------------------------
-INT 14 - FOSSIL - RETURN INFORMATION ABOUT THE DRIVER
-	AH = 1Bh
-	DX = port number
-	CX = size of user buffer
-	ES:DI -> user buffer for driver info (see below)
-Return: AX = number of characters transferred
-	CX = 3058h ("0X") (X00 FOSSIL only)
-	DX = 2030h (" 0") (X00 FOSSIL only)
-
-Format of driver info:
-Offset	Size	Description
- 00h	WORD	size of structure in bytes
- 02h	BYTE	FOSSIL spec driver conforms to
- 03h	BYTE	revision level of this specific driver
- 04h	DWORD	pointer to ASCIZ identification string
- 08h	WORD	size of the input buffer
- 0Ah	WORD	number of bytes left in buffer
- 0Ch	WORD	size of the output buffer
- 0Eh	WORD	number of bytes left in buffer
- 10h	BYTE	width of screen
- 11h	BYTE	length of screen
- 12h	BYTE	actual baud rate, computer to modem
---------S-141C-------------------------------
-INT 14 - X00 FOSSIL - ACTIVATE PORT
-	AH = 1Ch
-	DX = port number
-Return: AX = 1954h if successful
-	BL = maximum function number supported (not including 7Eh and above)
-	BH = revision of FOSSIL specification supported
-Note:	this is a duplicate of AH=04h, so that AH=04h may be made compatible
-	  with the PS/2 BIOS in a future release
-SeeAlso: AH=04h"FOSSIL",AH=1Dh
---------S-141D-------------------------------
-INT 14 - X00 FOSSIL - DEACTIVATE PORT
-	AH = 1Dh
-	DX = port number
-Return: none
-Notes:	this is a duplicate of AH=05h, so that AH=05h may be made compatible
-	  with the PS/2 BIOS in a future release
-	ignored if the port was never activated with AH=04h or AH=1Ch
-SeeAlso: AH=05h"FOSSIL",AH=1Ch
---------S-141E-------------------------------
-INT 14 - X00 FOSSIL - EXTENDED LINE CONTROL INITIALIZATION
-	AH = 1Eh
-	AL = break status
-	    00h if break
-	    01h if no break
-	BH = parity (see below)
-	BL = number of stop bits
-	    00h one stop bit
-	    01h two stop bits (1.5 if 5 bit word length)
-	CH = word length (see below)
-	CL = bps rate (see below)
-	DX = port number
-Return: AX = port status code (see AH=00h)
-Notes:	this function is intended to exactly emulate the PS/2 BIOS AH=04h call
-	if the port was locked at X00 load time, the appropriate parameters are
-	  ignored
-SeeAlso: AH=00h,AH=04h"SERIAL I/O"
-
-Values for parity:
- 00h	no parity
- 01h	odd parity
- 02h	even parity
- 03h	stick parity odd
- 04h	stick parity even
-
-Values for word length:
- 00h	5 bits
- 01h	6 bits
- 02h	7 bits
- 03h	8 bits
-
-Values for bps rate:
- 00h	110
- 01h	150
- 02h	300
- 03h	600
- 04h	1200
- 05h	2400
- 06h	4800
- 07h	9600
- 08h	19200
---------S-141F-------------------------------
-INT 14 - X00 FOSSIL - EXTENDED SERIAL PORT STATUS/CONTROL
-	AH = 1Fh
-	AL = 00h read modem control register
-	      Return: BL = modem control register (see below)
-		      AH = status
-	AL = 01h write modem control register
-	      BL = modem control register (see below)
-	      Return: AX = status
-	DX = port number
-Notes:	this function is intended to exactly emulate the PS/2 BIOS AH=05h call
-	X00 forces BL bit 3 set (interrupts cannot be disabled)
-SeeAlso: AH=00h,AH=05h"SERIAL I/O"
-
-Bitfields for modem control register:
- bit 0	data terminal ready
- bit 1	request to send
- bit 2	OUT1
- bit 3	OUT2 (interrupts) enabled
- bit 4	LOOP
- bits 5-7 reserved
---------S-1420-------------------------------
-INT 14 - X00 FOSSIL - DESTRUCTIVE READ WITH NO WAIT
-	AH = 20h
-	DX = port number
-Return: AH = 00h if character was available
-	    AL = next character (removed from receive buffer)
-	AX = FFFFh if no character available
-SeeAlso: AH=0Ch,AH=21h"X00"
---------S-1420-------------------------------
-INT 14 - Alloy MW386 - ATTACH LOGICAL COMMUNICATIONS PORT TO PHYSICAL PORT
-	AH = 20h
-	AL = logical port (01h COM1, 02h COM2)
-	DX = physical port number
-Return: AX = status
-	    0000h successful
-	    FFFFh failed
-SeeAlso: AH=21h"Alloy",AH=22h"Alloy",AH=23h"Alloy",INT 17/AH=8Bh"Alloy"
---------S-1420-------------------------------
-INT 14 - MultiDOS Plus - INITIALIZE PORT
-	AH = 20h
-	AL = port parameters (see AH=00h"SERIAL")
-	DX = port number (0-3)
-Return: AH = status
-	    00h successful
-	    41h no such port
-	    64h monitor mode already active
-SeeAlso: AH=00h"SERIAL",AH=04h"MultiDOS",AH=21h"MultiDOS",AH=23h"MultiDOS"
---------S-1420-------------------------------
-INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - CHECK OUTPUT QUEUE
-	AH = 20h
-	DX = port number
-Return: AX = number of bytes in output buffer
-SeeAlso: AH=0Ah"PC-MOS"
---------S-1421-------------------------------
-INT 14 - X00 FOSSIL - STUFF RECEIVE BUFFER
-	AH = 21h
-	AL = character
-	DX = port number
-Notes:	the given character is inserted at the end of the receive buffer as if
-	  it had just arrived from the serial port; all normal receive
-	  processing (XON/XOFF, ^C/^K) is performed on the character
-	fully re-entrant
-SeeAlso: AH=20h"X00"
---------S-1421-------------------------------
-INT 14 - Alloy MW386 v1.x only - RELEASE PHYSICAL COMMUNICATIONS PORT
-	AH = 21h
-	DX = physical port number
-Return: AX = status
-	    0000h successful
-	    FFFFh failed
-SeeAlso: AH=20h"Alloy",AH=22h"Alloy"
---------S-1421-------------------------------
-INT 14 - MultiDOS Plus - TRANSMIT CHARACTER
-	AH = 21h
-	AL = character to send
-	DX = port number
-Return: AH = status (see below)
-Note:	monitor mode must have been turned on with AH=24h before calling
-SeeAlso: AH=20h"MultiDOS",AH=22h"MultiDOS",AH=24h"MultiDOS"
-
-Values for status:
- 00h	successful
- 39h	no DSR or CTS
- 3Ch	no DSR
- 3Bh	no CTS
- 41h	no such port
- 42h	monitor mode not active
- 97h	timed out
---------S-1421-------------------------------
-INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - OUTPUT CHARACTER, WITH TIMEOUT
-	AH = 21h
-	AL = char to send
-	DX = port number
-	SI = timeout in timer ticks (0000h = default)
-Program: PC-MOS/386 v5.01 is a multitasking, multiuser MS-DOS 5.0-compatible
-	  operating system by The Software Link, Inc.
-SeeAlso: AH=01h,AH=0Eh"PC/MOS",AH=22h"PC-MOS"
---------S-1422-------------------------------
-INT 14 - Alloy MW386 v2+ - RELEASE LOGICAL COMMUNICATIONS PORT
-	AH = 22h
-	AL = logical port (01h COM1, 02h COM2)
-Return: AX = status (0000h successful)
-SeeAlso: AH=20h"Alloy",AH=21h"Alloy"
---------S-1422-------------------------------
-INT 14 - MultiDOS Plus - RECEIVE CHARACTER
-	AH = 22h
-	DX = port number
-Return: AH = status (see also AH=21h"MultiDOS")
-	    00h successful
-		AL = character
-	    3Dh framing and parity error
-	    3Eh overrun error
-	    3Fh framing error
-	    40h parity error
-	    96h ring buffer overflow
-Note:	if no character is available, this function waits until a character
-	  arrives or an implementation-dependent timeout elapses
-SeeAlso: AH=20h"MultiDOS",AH=21h"MultiDOS",AH=27h
---------S-1422-------------------------------
-INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - RECEIVE CHARACTER, WITH TIMEOUT
-	AH = 22h
-	DX = port number
-	SI = timeout in timer ticks (0000h = default)
-Return: AH = port status (see AH=03h bits 0..6)
-	     bit 7 = 1 indicates time-out
-	AL = character received
-Program: PC-MOS/386 v5.01 is a multitasking, multiuser MS-DOS 5.0-compatible
-	  operating system by The Software Link, Inc.
-SeeAlso: AH=02h,AH=0Fh"PC-MOS",AH=21h"PC-MOS"
---------S-1423-------------------------------
-INT 14 - Alloy MW386 v2+ - GET PORT NUMBER FROM LOGICAL PORT ID
-	AH = 23h
-	AL = logical port (01h COM1, 02h COM2)
-	DH = user ID
-	DL = process ID (DH,DL both FFh for current task)
-Return: AL = MW386 port mode (see below)
-	CX = MW386 port number
-	DH = owner's user ID
-	DL = owner's task ID
-SeeAlso: AH=20h"Alloy",INT 17/AH=8Bh"Alloy"
-
-Bitfields for MW386 port mode:
- bit 0	port is shared (spooler only)
- bit 1	port is spooled instead of direct (spooler only)
- bit 2	port is assigned as logical COM device, not in spooler
- bit 3	port is free
---------S-1423-------------------------------
-INT 14 - MultiDOS Plus - GET PORT STATUS
-	AH = 23h
-	DX = port number
-Return: AH = line status (see AH=03h)
-	AL = modem status (see AH=03h)
-SeeAlso: AH=03h,AH=07h"MultiDOS",AH=20h"MultiDOS"
---------S-1423-------------------------------
-INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - DECLARE PORT OWNERSHIP
-	AH = 23h
-	DX = port number
-	BX = TCB segment/selector address of owner task
-Return: nothing
-SeeAlso: AH=0Dh"PC-MOS"
---------S-1424-------------------------------
-INT 14 - Alloy MW386 v2+ - CHANGE PHYSICAL PORT PARAMETERS
-	AH = 24h
-	CX = physical I/O port number
-	DS:DX -> configuration table (see below)
-Return: AH = 00h
-Note:	invalid port numbers are merely ignored
-SeeAlso: INT 17/AH=96h
-
-Format of configuration table:
-Offset	Size	Description
- 00h	BYTE	baud rate (see below)
- 01h	BYTE	data bits (00h=5, 01h=6, 02h=7, 03h=8)
- 02h	BYTE	parity (00h none, 01h odd, 02h even)
- 03h	BYTE	stop bits (00h=1, 01h=2)
- 04h	BYTE	receive flow control
-		00h none, 01h XON/XOFF, 02h DTR/DSR, 03h XPC, 04h RTS/CTS
- 05h	BYTE	transmit flow control (as for receive)
-
-Values for baud rate:
- 00h	38400
- 01h	19200
- 02h	9600
- 03h	7200
- 04h	4800
- 05h	3600
- 06h	2400
- 07h	2000
- 08h	1200
- 09h	600
- 0Ah	300
- 0Bh	150
- 0Ch	134.5
---------S-1424-------------------------------
-INT 14 - MultiDOS Plus - SET MONITOR MODE
-	AH = 24h
-	AL = port status storage
-	    00h single status for entire receive buffer
-	    01h separate status kept for each byte in receive buffer
-	DX = port number
-Return: AH = status
-	    00h successful
-	    3Ah invalid status storage specified
-	    41h no such port
-	    64h monitor mode already active
-Note:	in monitor mode, MultiDOS redirects all BIOS video output to a serial
-	  port
-SeeAlso: AH=20h"MultiDOS",AH=25h
---------S-1424-------------------------------
-INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - ???
-	AH = 24h
-Return: ???
-Program: PC-MOS/386 v5.01 is a multitasking, multiuser MS-DOS 5.0-compatible
-	  operating system by The Software Link, Inc.
---------S-1425-------------------------------
-INT 14 - MultiDOS Plus - CLEAR BUFFERS
-	AH = 25h
-	AL = function
-	    00h only clear buffers
-	    01h clear buffers and deactivate
-	DX = port number
-Return: AH = status
-	    00h successful
-	    3Ah invalid function
-	    41h no such port
-	    42h monitor mode not active
-SeeAlso: AH=20h"MultiDOS",AH=24h"MultiDOS"
---------S-1427-------------------------------
-INT 14 - MultiDOS Plus - GET BUFFER CHARACTER COUNT
-	AH = 27h
-	DX = port number
-Return: AH = status
-	    00h successful
-	    41h no such port
-	    42h monitor mode not active
-	AL = number of characters in receive buffer
---------S-1456-------------------------------
-INT 14 U - BWCOM14 - INSTALLATION CHECK
-	AH = 56h
-Return: CX = 0001h if installed
-Program: BWCOM14 is a network serial port emulator (simulating a Hayes modem
-	  connected to the serial port) distributed as part of the
-	  Beame&Whiteside BW-NFS package
-SeeAlso: AH=57h,AH=58h
---------S-1457-------------------------------
-INT 14 U - BWCOM14 - INITIALIZE
-	AH = 57h
-	DL = port number
-Return: AL = initialization status (00h successful, 01h already initialized)
-	CX = port status (0001h port redirected, 0002h and FFFFh failed)
-Note:	after this call, all invocations of INT 14/AH=00h-03h for the specified
-	  port will be handled by BWCOM14 until AH=58h is called
-SeeAlso: AH=00h"SERIAL",AH=56h,AH=58h
---------S-1458-------------------------------
-INT 14 U - BWCOM14 - SHUTDOWN
-	AH = 58h
-Return: CX = status (0001h successful, 0002h not initialized)
-Note:	after this call, BWCOM14 will no longer redirect the COM port
-SeeAlso: AH=56h,AH=57h
---------N-146F--BXFFFE-----------------------
-INT 14 U - Connection Manager - ???
-	AH = 6Fh
-	BX = FFFEh
-	???
-Return: ???
-Program: Connection Manager by Softwarehouse Corp. permits the sharing of
-	  serial ports over an IPX or NetBIOS-based network
---------N-146F--BXFFFF-----------------------
-INT 14 - Connection Manager - INSTALLATION CHECK
-	AH = 6Fh
-	BX = FFFFh
-Return: DX:BX -> Connection Manager Communication Table if installed
-	BX = FFFFh if not installed
-SeeAlso: AH=0Dh/DX=FFFFh
---------S-147E-------------------------------
-INT 14 - FOSSIL - INSTALL AN EXTERNAL APPLICATION FUNCTION
-	AH = 7Eh
-	AL = code assigned to external application (80h-BFh)
-	    80h reserved for communications FOSSIL
-	    81h video FOSSIL
-	    82h reserved for keyboard FOSSIL
-	    83h reserved for system FOSSIL
-	ES:DX -> entry point
-Return: AX = 1954h
-	BL = code assigned to application (same as input AL)
-	DH = 00h failed
-	     01h successful
-SeeAlso: AH=7Fh,AH=80h"FOSSIL",AX=8100h,AH=82h"FOSSIL",AH=83h"FOSSIL"
---------S-147F-------------------------------
-INT 14 - FOSSIL - REMOVE AN EXTERNAL APPLICATION FUNCTION
-	AH = 7Fh
-	AL = code assigned to external application
-	ES:DX -> entry point
-Return: AX = 1954h
-	BL = code assigned to application (same as input AL)
-	DH = 00h failed
-	     01h successful
-SeeAlso: AH=7Eh
 --------!------------------------------------
