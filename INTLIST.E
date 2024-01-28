@@ -2,16 +2,19 @@
 /*	EEL code file for editing the Interrupt List		*/
 /*								*/
 /*	Written by Ralf Brown					*/
-/*	LastEdit:  6 Feb 92					*/
+/*	LastEdit: 12 Sep 92					*/
 /*								*/
 /*  This EEL file adds the following keybindings:		*/
+/*    Shf-Alt-D add a Desc: section to the current entry	*/
 /*	Alt-N	add a new note to current entry or data struct  */
-/*	Alt-S	insert SeeAlso: at start of line		*/
+/*	Alt-P	add a Program: section to the current entry	*/
 /*	Alt-R	insert Return: at start of line			*/
+/*	Alt-S	insert SeeAlso: at start of line		*/
 /*	F11	insert a blank separator line			*/
 /*	^F11	create Format of: header			*/
-/*	+F11	create Values for: header			*/
+/*	Shf-F11	create Values for: header			*/
 /*	Alt-F11 create Call with: header			*/
+/*	Alt-F12	create Bitmask of: header			*/
 /*	F12	add the interrupt number to the separator line	*/
 /*		preceding the current entry			*/
 /*	^F12	jump to a specified entry			*/
@@ -34,6 +37,25 @@ int empty_line()
 }
 
 /*=============================================================*/
+/*=============================================================*/
+
+int is_separator_line()
+{
+   return (empty_line() || parse_string(1,"--------",NULL)) ;
+}
+
+/*=============================================================*/
+/* search in the specified direction (1 = forward, -1 = back)  */
+/* for the next entry separator line			       */
+/*=============================================================*/
+
+int to_separator_line(dir)
+int dir ;
+{
+   return search(dir,"\n--------") ;
+}
+
+/*=============================================================*/
 /* Add "SeeAlso: " to the beginning of the current line unless */
 /* it is already present				       */
 /*=============================================================*/
@@ -50,14 +72,78 @@ command see_also() on intlist_tab[ALT('s')]
 }
 
 /*=============================================================*/
+/* Add a Desc: section if the current entry does not already   */
+/* have one; if there is already a Desc: section, move to the  */
+/* start of it						       */
 /*=============================================================*/
 
-int is_separator_line()
+command desc() on intlist_tab[ALT('D')]
 {
-   if (empty_line() || parse_string(1,"--------",NULL))
-      return 1 ;
-   else 
-      return 0 ;
+   int start = point ;
+
+   if (to_separator_line(-1))		/* find previous separator line */
+      {
+      point++ ;				/* skip the newline */
+      nl_forward() ;			/* advance to first line of entry */
+      while (!is_separator_line() && !empty_line() &&
+	     !parse_string(1,"Notes*:\t",NULL) &&
+	     !parse_string(1,"SeeAlso: ",NULL) &&
+	     !parse_string(1,"BUGS*:\t",NULL) &&
+	     !parse_string(1,"Program: ",NULL))
+	 {
+	 if (parse_string(1,"Desc:\t",NULL))
+	    {
+	    point += 6 ;		/* skip the Desc: */
+	    return ;			/* we're done */
+	    }
+	 if (!nl_forward())		/* hit end of file? */
+	    break ;
+	 }
+      stuff("Desc:\t\n") ;
+      point-- ;				/* back up over inserted newline */
+      }
+   else
+      {
+      point = start ;
+      say("Not in an interrupt entry") ;
+      }
+}
+
+/*=============================================================*/
+/* Add a "Program: " section to the current entry if it does   */
+/* not have one; otherwise, move to the beginning of the       */
+/* Program: section					       */
+/*=============================================================*/
+
+command program() on intlist_tab[ALT('p')]
+{
+   int start = point ;
+
+   if (to_separator_line(-1))		/* find previous separator line */
+      {
+      point++ ;				/* skip the newline */
+      nl_forward() ;			/* advance to first line of entry */
+      while (!is_separator_line() && !empty_line() &&
+	     !parse_string(1,"Notes*:\t",NULL) &&
+	     !parse_string(1,"SeeAlso: ",NULL) &&
+	     !parse_string(1,"BUGS*:\t",NULL))
+	 {
+	 if (parse_string(1,"Program: ",NULL))
+	    {
+	    point += 9 ;		/* skip the Program: */
+	    return ;			/* we're done */
+	    }
+	 if (!nl_forward())		/* hit end of file? */
+	    break ;
+	 }
+      stuff("Program: \n") ;
+      point-- ;				/* back up over inserted newline */
+      }
+   else
+      {
+      point = start ;
+      say("Not in an interrupt entry") ;
+      }
 }
 
 /*=============================================================*/
@@ -78,8 +164,8 @@ command note() on intlist_tab[ALT('n')]
    point++ ;				/* skip the newline */
    nl_forward() ;			/* advance a line */
    while (!is_separator_line() && !parse_string(1,"Notes*:\t",NULL) &&
-          !parse_string(1,"SeeAlso:",NULL))
-      if (!nl_forward())
+          !parse_string(1,"SeeAlso:",NULL) && !parse_string(1,"BUGS*:\t",NULL))
+      if (!nl_forward())		/* hit end of file? */
 	 break ;
    len = parse_string(1,"Notes*:\t",NULL) ;
    if (len == 0) /* no notes section */
@@ -136,10 +222,17 @@ command separator_line() on intlist_tab[FKEY(11)]
 
 command structure_header() on intlist_tab[FCTRL(11)]
 {
+   int start = point ;
+
    to_begin_line() ;
-   stuff("Format of ") ;
-   to_end_line() ;
-   stuff(":\nOffset\tSize\tDescription\n 00h\t") ;
+   if (parse_string(1,"Format of ",NULL) == 0)
+      {
+      stuff("Format of ") ;
+      to_end_line() ;
+      stuff(":\nOffset\tSize\tDescription\n 00h\t") ;
+      }
+   else
+      point = start ;
 }
 
 /*=============================================================*/
@@ -183,13 +276,34 @@ command call_with_header() on intlist_tab[FALT(11)]
 }
 
 /*=============================================================*/
+/* Turn the current line into the header of a "Bitmask of"     */
+/* section						       */
+/*=============================================================*/
+
+command bitmask_of_header() on intlist_tab[FALT(12)]
+{
+   int start = point ;
+   
+   to_begin_line() ;
+   if (parse_string(1,"Bitmask of ",NULL) == 0)
+      {
+      stuff("Bitmask of ") ;
+      to_end_line() ;
+      stuff(":\n") ;
+      }
+   else
+      point = start ;
+}
+
+/*=============================================================*/
 /*=============================================================*/
 
 char grab_entry_number(func_num)
 char *func_num ;
 {
    char c ;
-   
+   int i ;
+
    strcpy(func_num,"------------") ;	/* 12 dashes */
    point++ ;				/* go to first char of separator line */
    nl_forward() ;			/* go to first line of entry */
@@ -208,17 +322,35 @@ char *func_num ;
       if (c != 'L')
 	 {
 	 grab(point,point+((c=='X')?4:2),func_num+2) ;
+	 point += ((c=='X')?4:2) ;
 	 func_num[(c=='H')?4:6] = '-' ;	/* grab() stuck a NUL into the string */
-	 nl_forward() ;			/* skip to third line of entry */
 	 }
       else /* c == 'L' */
 	 {
-	 func_num[6] = 'A' ;
-	 func_num[7] = 'L' ;
-	 grab(point,point+2,func_num+8) ;
-	 func_num[10] = '-' ;		/* grab() stuck a NUL into the string */
-	 return 1 ;
+	 func_num[4] = curchar() ;
+	 point++ ;
+	 func_num[5] = curchar() ;
+	 point ++ ;
 	 }
+      point++ ;
+      if (parse_string(1,"[ \t]*subfn [0-9A-F][0-9A-F]+h",NULL))
+	 {
+	 re_search(1,"[ \t]*subfn ") ;
+	 func_num[6] = 'S' ;
+	 func_num[7] = 'F' ;
+	 for (i = 0 ; i < 4 ; i++)
+	    {
+	    c = curchar() ;
+	    if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'F'))
+	       {
+	       func_num[8+i] = c ;
+	       point++ ;
+	       }
+	    else
+	       break ;
+	    }
+	 }
+      nl_forward() ;			/* skip to third line of entry */
       }
    if (parse_string(1,"[ \t]*[BCDES][HILPSX] = [0-9A-F][0-9A-F]+h",NULL))
       {
@@ -248,7 +380,7 @@ int number_one_int()
    char func_num[13] ;			/* 2->int, 4->AX, 6->extra reg, NUL */
    int oldpoint ;
    
-   while (search(-1,"\n--------"))	/* find previous separator line */
+   while (to_separator_line(-1))	/* find previous separator line */
       {
       oldpoint = point ;
       if (grab_entry_number(func_num))	/* does it belong to an intlist entry? */
@@ -364,15 +496,15 @@ char *entry_name, *id, *extra_string ;
       if (entry_name[0] == '/')
 	 entry_name++ ;
       }
-   else if (search(-1,"\n----------"))
+   else if (to_separator_line(-1))
       {
       id[0] = character(point+11) ;
       id[1] = character(point+12) ;
       }
    point = start ;
-   if (entry_name[0] == 'A' && (entry_name[1] == 'X' || entry_name[1] == 'H'))
+   c = entry_name[1] ;
+   if (entry_name[0] == 'A' && (c == 'X' || c == 'H' || c == 'L'))
       {
-      c = entry_name[1] ;
       entry_name += 2 ;
       while (entry_name[0] == ' ' || entry_name[0] == '\t')
 	 entry_name++ ;
@@ -380,8 +512,11 @@ char *entry_name, *id, *extra_string ;
 	 entry_name++ ;
       while (entry_name[0] == ' ' || entry_name[0] == '\t')
 	 entry_name++ ;
-      id[2] = entry_name[0] ;
-      id[3] = entry_name[1] ;
+      if (c != 'L')
+	 {
+         id[2] = entry_name[0] ;
+         id[3] = entry_name[1] ;
+	 }
       if (c == 'X')
 	 {
 	 id[4] = entry_name[2] ;
@@ -389,13 +524,20 @@ char *entry_name, *id, *extra_string ;
 	 entry_name += 4 ;
 	 }
       else
+	 {
+	 if (c == 'L')
+	    {
+	    id[2] = entry_name[0] ;
+	    id[3] = entry_name[1] ;
+	    }
 	 entry_name += 2 ;
+	 }
       if (entry_name[0] == 'H')
 	 entry_name++ ;
       if (entry_name[0] == '/')
 	 entry_name++ ;
       }
-   if (index("ABCDES",entry_name[0]) && index("HILPSX",entry_name[1]))
+   if (index("ABCDES",entry_name[0]) && index("HILPSXF",entry_name[1]))
       {
       id[6] = entry_name[0] ;
       c = id[7] = entry_name[1] ;
@@ -408,7 +550,7 @@ char *entry_name, *id, *extra_string ;
 	 entry_name++ ;
       id[8] = entry_name[0] ;
       id[9] = entry_name[1] ;
-      if (c != 'H' && c != 'L')
+      if (c != 'H' && c != 'L' && (c != 'F' || entry_name[2] != 'h'))
 	 {
 	 id[10] = entry_name[2] ;
 	 id[11] = entry_name[3] ;
@@ -487,7 +629,7 @@ int *first_entry ;
    ah = hex2_to_int(entry[2],entry[3]) ;
    while (1)
       {
-      if (!search(1,"\n---------"))
+      if (!to_separator_line(1))
 	 return 0 ;	/* failed if hit end of file */
       if (character(point+1) != entry[0] || character(point+2) != entry[1])
 	 return 0 ;	/* failed if no longer on same interrupt */
@@ -507,7 +649,7 @@ int *first_entry ;
    al = hex2_to_int(entry[4],entry[5]) ;
    while (1)
       {
-      if (!search(1,"\n---------"))
+      if (!to_separator_line(1))
 	 return 0 ;	/* failed if hit end of file */
       if (character(point+1) != entry[0] || character(point+2) != entry[1])
 	 return 0 ;	/* failed if no longer on same interrupt */
@@ -569,7 +711,7 @@ char *entry_name ;
    
    parse_int_name(entry_name,int_id,extra_string) ;
    int_num = hex2_to_int(int_id[0],int_id[1]) ;
-   if (search(-1,"\n----------"))
+   if (to_separator_line(-1))
       {
       if (character(point+11) == '-')
 	 curr_int = -1 ;
@@ -651,7 +793,7 @@ command intlist_mode()
    auto_indent = 0 ;
    margin_right = 79 ;
    want_backups = 1 ;
-   undo_size = 100000 ;      /* less than default 500,000 */
+   undo_size = 100000 ;     /* less than default 500,000 since list is so big */
 }
 
 when_loading()
@@ -659,7 +801,7 @@ when_loading()
    char *curbuf ;
 
    want_backups = want_backups.default = 1 ;
-   strcpy(backup_name,"%pbak/%b%e") ;
+   strcpy(backup_name,"%pbak/%b%e") ;		/* put backups in BAK subdir */
    one_window() ;
    intlist_mode() ;
    if (exist("interrup.1st"))

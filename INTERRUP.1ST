@@ -1,21 +1,22 @@
-Interrupt List		Release 31			Last change 7/12/92
+Interrupt List		Release 32			Last change 9/13/92
 
 Please redistribute the following files unmodified as a group, in a pair of
-archives named INTER31A and INTER31B (preferably the original authenticated
+archives named INTER32A and INTER32B (preferably the original authenticated
 PKZIP archives):
         INTERRUP.1ST	this file
 	INTERRUP.A	INT 00 through INT 14   \
-	INTERRUP.B	INT 15 through INT 1F    \   total 879 pages at
+	INTERRUP.B	INT 15 through INT 1F	 \   total 1005 pages at
 	INTERRUP.C	INT 20 thru INT 21/7F     \  60 lines per page,
-	INTERRUP.D	INT 21/80 thru INT 2F/7F   > 942 with INTPRINT -p
-	INTERRUP.E      INT 2F/80 thru INT 3F     /  (4077 entries)
+	INTERRUP.D	INT 21/80 thru INT 2F/7F   > 1078 with INTPRINT -p
+	INTERRUP.E	INT 2F/80 thru INT 3F	  /  (4401 entries)
 	INTERRUP.F	INT 40 through INT 67	 /
 	INTERRUP.G	INT 68 through INT FF   /
         INTERRUP.PRI	a brief primer on interrupts
 	INTPRINT.COM	a simple formatter that also generates a list summary
 	INTPRINT.DOC	instructions for INTPRINT
+	GLOSSARY.LST	a glossary of terms, abbreviations, and acronyms
 	MEMORY.LST	format of the BIOS data area
-The following files should be distributed in an archive called INTER31C:
+The following files should be distributed in an archive called INTER32C:
 	INT.COM		invoke interrupts from commandline
         INT2GUID.*      convert list into TurboPower GUIDE or POPHELP database
 	INT2HLP.BAT	Perl script to convert list into QuickHelp database
@@ -36,9 +37,9 @@ Note: in addition to the archives mentioned above, you may also find other
 archives named INTERrrx containing additional files generated from the
 original distribution for your convenience.  These other archives are
 maintained by other people, so please do not ask me any questions about them
-(all I'll do is refer you to one of the people listed below).  The only
-additional distribution I am currently aware of contains a ready-made Quick
-Help database (compiled by Brad Willcott <bxw@ccadfa.cc.adfa.oz.au>).
+(all I'll do is refer you to the creator).  The only additional distribution
+I am currently aware of contains a ready-made Quick Help database (compiled
+by Brad Willcott <bxw@ccadfa.cc.adfa.oz.au>).
 ---------------------------------------------
 	NOTICE		NOTICE		NOTICE		NOTICE
 
@@ -68,32 +69,22 @@ works the same way in your version of the software (and please let me know
 whether or not it works the same way).  Information marked with "???" is
 known to be incomplete or guesswork.
 ---------------------------------------------
-In March 1991, Dan Lanciani claimed the following copyright on the
-July 1987 version of the interrupt list:
-
-(c) Copyright 1987 Daniel D. Lanciani.  All rights reserved.
-Redistribution and use are freely permitted provided that the above
-copyright notice and this paragraph are included in any copy or
-partial copy.  THIS INFORMATION IS PROVIDED ``AS IS'' AND WITHOUT
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION,
-THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
-PARTICULAR PURPOSE.
-
-INT 0A"Tandy", INT 0D"Tandy", INT 10/AH=70h-73h, INT 86"NetBIOS",
-INT F8"TANDY", INT FA"TANDY", and INT FB"TANDY" have been completely
-rewritten.  All other information contained in the July 1987 version
-on which the above copyright was claimed has been removed and replaced
+In March 1991, Dan Lanciani claimed copyright on the July 1987 version of
+the interrupt list.  INT 0A"Tandy", INT 0D"Tandy", INT 10/AH=70h-73h,
+INT 86"NetBIOS", INT F8"TANDY", INT FA"TANDY", and INT FB"TANDY" have been
+completely rewritten.  All other information contained in the July 1987
+version on which the copyright was claimed has been removed and replaced
 with independently-obtained new versions.  Any similarities between
 the July 1987 entries and their replacements are due solely to the
 nature of the information or the use of identical reference materials.
 ---------------------------------------------
 If the list is more than three months old by the time you get it, there
-is probably a newer release out already (R32 is planned for late September,
-R33 for early December).  Each release supercedes all previous versions, so
+is probably a newer release out already (R33 is planned for mid-December,
+R34 for late February).  Each release supersedes all previous versions, so
 there is no need to keep old versions.
 
 The newest release of this list is available in these places (please do not
-ask me to email it, at 700K compressed it is much too large for that):
+ask me to email it, at over 700K compressed it is much too large for that):
 
 On the Internet, by standard anonymous FTP from CS.CMU.EDU [128.2.222.173].
 	Change directly to directory /afs/cs.cmu.edu/user/ralf/pub and get the
@@ -109,11 +100,6 @@ On FIDOnet, from SoundingBoard BBS 1:129/26 1-412-621-4604 9600/14.4k HST/V32
 	as files INTERrrA.ZIP, INTERrrB.ZIP, and INTERrrC.ZIP (rr stands for
 	the release number), in file area #8.  First-time callers may download.
 	File Requests.
-
-The list is also posted to USEnet in comp.binaries.ibm.pc about twice a year,
-concurrently with a new release of the list.  Since comp.binaries.ibm.pc is
-archived, you will be able to find a fairly recent release in the various UUCP
-archives.
 
 Alternate Distribution Points (the list will typically be available here
 within twelve hours of release):
@@ -149,6 +135,11 @@ BITnet: you may retrieve the copy on WSMR-SIMTEL20.ARMY.MIL via the following
 FIDO:	boards belonging to the PDN (Programmer's Distribution Network) system
 CompuServe: in the IBM Programming Forum (GO IBMPRO), Library 5, as INTrrA.*
 	and INTrrB.*
+
+The list is also posted to USEnet in comp.binaries.ibm.pc about twice a year,
+concurrently with a new release of the list.  Since comp.binaries.ibm.pc is
+archived, you will be able to find a fairly recent release in the various UUCP
+archives.
 ---------------------------------------------
 Key to system abbreviations
 (unless otherwise indicated, a function is available on all systems)
@@ -364,9 +355,26 @@ This list is the result of the time and effort of a large number of people:
  6/92 Dan Fandrich     shad04@ccu.umanitoba.ca	      BitFax scheduler
  6/92 Tamura Jones     2:512/36.7		      more New EXE, AD-DOS.COM
  6/92 Tim Farley       tim@magee.mhs.compuserve.com   LANtastic v4.1
- 6/92 Francis Turner FTURNER@madge.MHS.CompuServe.COM  AX (Japanese AT) calls
+ 6/92 Francis Turner FTURNER@madge.MHS.CompuServe.COM AX (Japanese AT) calls
  6/92 John Fa'atuai    FROTZ.NOVELL@sjfsmtp.novell.com DR Multiuser DOS
  6/92 Andy Hakim       cosc16to@menudo.uh.edu	      Smooth Mouse Driver
+ 7/92 Michael A Shiels mshiels@masnet.uucp	      License Server API,misc
+ 7/92 Tim Farley       tim@magee.mhs.compuserve.com   Novell Netware shell
+ 7/92 Carlos M. de Sousa Antunes L31546@beta.ist.pt   MS Mouse driver
+ 7/92 Ralf Brown       ralf+@cs.cmu.edu 	      DESQview/X socket API
+ 8/92 Jacob Rieper     73377.1220@compuserve.com      SETDRVER, more DR-DOS
+ 8/92 Richard A Plinston  Auckland, New Zealand	      Europ.DOS4.0,DR DOS Plus
+ 8/92 Richard A Plinston  Auckland, New Zealand	      Acorn BBC Master 512
+ 8/92 Serge Pachkovsky ps@comcen.nsk.su		      PC-MOS/386 v3.0
+ 8/92 Aki Korhonen     aki@cruzio.santa-cruz.ca.us    Seagate disk BIIOS
+ 8/92 Chris Hall       CAH17@phx.cam.ac.uk	      misc
+ 8/92 Michael A Shiels mshiels@masnet.uucp	      MTEZ XpressFax
+ 8/92 Patrick Ibbetson ibbetson@nes.nersc.gov	      NEL Electronics BIOS
+ 9/92 Patrick Ibbetson ibbetson@nes.nersc.gov	      SCREENR, Cirrus chipsets
+ 9/92 Tamura Jones     2:512/36.7		      FlashTek X-32VM
+ 9/92 Ben Myers	       0003571400@mcimail.com	      more NCR 77C22 chip modes
+ 9/92 Dan Fandrich     shad04@ccu.umanitoba.ca	      more Future Domain SCSI
+ 9/92 Michael A Shiels mshiels@masnet.uucp	      PC/TCP syscall names
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -378,7 +386,7 @@ Also contributing:
  David Herron <david@gonzo.twg.com>, Otto J. Makela <otto@jyu.fi>,
  Risto Lankinen via Markku Savela <msa@clinet.fi>, Darryl Gregorash 1:140/86,
  Skule Johansen <skule.johansen@avh.unit.no>, Bob Fehrenbach,
- David Dyck <dcd@tc.fluke.COM>, Jacob Rieper <73377.1220@CompuServe.COM>,
+ David Dyck <dcd@tc.fluke.COM>, Sylvan Butler <sbutler@hpbsl82.boi.hp.com>,
  Mark Davis <mad@merit.edu>, Sergio Fogel <fogel@haifasc3.vnet.ibm.com>,
  James P. Kiely <kiely%lownlab@harvard.harvard.edu>, Kevin Gillett 1:153/160,
  W.F. Schroeder <schroeder.pad@sni-usa.com>, <zlatuska@UDEL.EDU>,
@@ -425,11 +433,13 @@ Also contributing:
  Janos Haide <JHAIDE.NOVELL@sjfsmtp.novell.com>, Stan Brown <brown@ncoast.org>,
  Morten Welinder <terra@diku.dk>, Jim Peterson <jpeterso@vtssi.vt.edu>,
  Serge Krupa <krupa@eig.unige.ch>, Tom Rawson <75300.210@compuserve.com>,
- Chris Hall <CAH17@phx.cam.ac.uk>, Patrick Ibbetson <ibbetson@nes.nersc.gov>,
- Edwin Cleton 2:512/1007.2, Aki Korhonen <aki@cruzio.santa-cruz.ca.us>,
+ Edwin Cleton 2:512/1007.2, Martin Wilde 2:247/352.2, Ed Palmer 1:140/1,
  Carlos Rioja <CarlosRioja@cpd.uva.es>,Torbj|rn Lindgren <tl@etek.chalmers.se>,
  Jens Bleuel <100064.1757@CompuServe.COM>, <David_Markun@crd.lotus.com>,
- Dmitry Ablov <abl@ablov.comrel.msk.su>, Gianni Alb¢re (Taranto, Italy)
+ Dmitry Ablov <abl@ablov.comrel.msk.su>, Gianni Alb¢re (Taranto, Italy),
+ Nigel Bree <nigel@mwc.com>, Bob Aitchison via 76244.726@compuserve.com,
+ Serge Pachkovsky <ps@comcen.nsk.su>,
+ Francis Turner <FTURNER@madge.MHS.CompuServe.COM>
 ---------------------------------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -805,6 +815,20 @@ Additional partition types from a public domain list by Sean Goggin
 <sean@u36.kwnet.on.ca>.  Added 5/22/92.
 
 XMS 3.0 calls were found in XMS30.TXT on the CompuServer MSLANG forum.
+
+Vanderaart PC Thuis Shell calls extracted from the premiere (June/July 1990)
+issue of PC Thuis Power magazine, column "Voorheen Methode Vanderaart" by
+John Vanderaart.  Added 7/24/92.
+
+Additional video modes extracted from the VPIC v5.0 configuration files.
+Added by Ralf Brown, 8/7/92.
+
+Details on the NetWare API found in Novell's _NetWare_System_Calls--DOS_,
+Volume I and Volume II (item numbers 100-000571-002 and 100-000572-002,
+1989).  Added by Ralf Brown, 9/92.
+
+SNAP.EXE v3.2 API culled from the SNAP source code.  Added by Ralf Brown,
+9/10/92.
 ---------------------------------------------
 The following have provided API reference materials at no charge:
 
@@ -953,8 +977,8 @@ Huntington, NY 11743
 Voice: (516)-462-0440
 
 EasyNet Systems Inc.		(EasyNet ShareLan)
-4283 Village Centre Court
-Mississauga, Ontario L4Z 1S2	[as of April 1988]
+4283 Village Centre Court	[as of 4/88]
+Mississauga, Ontario L4Z 1S2
 Voice: (416) 273-6410
 
 Eicon Technology Corporation
@@ -1061,10 +1085,22 @@ Faculty of Nuclear Science and Physical Engineering
 Pargue, Czechoslovakia
 BITNET: HORAC@CSEARN
 
+Nu-Mega Technologies, Inc.	(Soft-ICE)
+P.O. Box 7780			[8/92]
+Nashua, NH 03060-7780
+Voice: (603) 889-2386
+FAX:   (603) 889-1135
+
 Offe Enterprises		(VUIMAGE)
 1163 E. Ogden Ave. #705-131
 Naperville, IL 60563
 Voice: (708) 357-6679
+
+PC Thuis BV			(PC Thuis Power magazine)
+Spaarne 55
+2011 CE HAARLEM
+The Netherlands
+Voice: 023 - 366814
 
 Personics Corporation		(UltraVision)
 63 Great Road
@@ -1150,7 +1186,8 @@ Corona and Cordata are trademarks of Cordata Computer
 Logitech is a trademark of Logitech, Inc.
 Turbo C and Turbo Pascal are registered trademarks of Borland International
 Tandy 1000 is a registered trademark of Tandy Corp.
-DESQview, QEMM-386, and QRAM are trademarks of Quarterdeck Office Systems
+DESQview, DESQview/X, QEMM-386, and QRAM are trademarks of Quarterdeck Office
+	Systems
 TaskView and OmniView are trademarks of Sunny Hill Software
 10-Net is a trademark of Fox Research, Inc.
 Mouse Systems is a trademark of Mouse Systems Corp.
@@ -1159,8 +1196,9 @@ TesSeRact is a trademark of the TesSeRact Development Team.
 PC Tools is a trademark of Central Point Software, Inc.
 HALO'88 is a trademark of Media Cybernetics.
 Banyan is a registered trademark of Banyan Systems, Inc.
-StreetTalk, VINES, and Banyan Network Server are trademarks of Banyan Sys, Inc.
-386/DOS-Extender is a trademark of Phar Lap Software, Inc.
+StreetTalk, VINES, and Banyan Network Server are trademarks of Banyan Systems,
+	Inc.
+286/DOS-Extender and 386/DOS-Extender are trademarks of Phar Lap Software, Inc.
 Carbon Copy Plus is a trademark of Meridian Technology, Inc.
 GIF is a trademark of Compuserve, Inc.
 VUIMAGE is a trademark of Offe Enterprises.
@@ -1178,7 +1216,7 @@ What they're saying about this list:
    IBM PC.  A great thing to have on your hard disk if you don't have
    a Ray Duncan or Peter Norton book handy."
       _Turbo_Technix_, July/August 1988, p. 157.
-[and that was about the 1/30/88 version, which is only one-twelfth the size
+[and that was about the 1/30/88 version, which was only one-fifteenth the size
  of the current version....]
 
   "An enormous listing of DOS and BIOS interrupt calls, many undocumented
@@ -1207,12 +1245,13 @@ Address e-mail to:
 
 Snail mail:
 	Ralf Brown
-	School of Computer Science
-	Carnegie Mellon University
-	Pittsburgh, PA 15213-3890
+        Suite 26
+	813 Copeland Way
+	Pittsburgh, PA 15232
 	   (Letters which enclose a Self-Addressed Stamped Envelope [or self-
 	    addressed envelope and international return coupon] or e-mail
-	    address will be given priority.)
+	    address will be given priority.  This address will remain valid
+	    until November 1, 1993.)
 
 I reply to all e-mail submissions and inquiries.  If you do not receive a reply
 within a reasonable time, send your message again, giving a better return path

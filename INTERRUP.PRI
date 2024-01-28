@@ -3,8 +3,7 @@
 
                           by Ralf Brown
                               12/87
-                           Updated 6/88
-			   Updated 4/90
+		     Updated 6/88, 4/90, 9/92
 
 
 What is an interrupt?
@@ -39,7 +38,7 @@ Why so many different interrupts?
 
    Other processors also have software interrupts, though they 
    often use different names, such as the Motorola 68000 family 
-   TRAP instruction, the Intel 8080 RST (ReSeT) instruction, or 
+   TRAP instruction, the Intel 8080 RST (ReSTart) instruction, or
    many mainframes' SVC (SuperVisor Call). 
 
    Since a program can invoke an interrupt by number rather than 

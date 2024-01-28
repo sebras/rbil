@@ -1,5 +1,5 @@
 [This file was provided by Robin Walker.  --Ralf]
-Last Update: 4/25/92
+Last Update: 8/24/92
 
 Format of BIOS Data Segment at segment 40h:
 		{items in curly braces not documented by IBM}
@@ -291,6 +291,8 @@ Offset	Size	Description
  A4h	DWORD	[PS/2 Mod 30] Saved Fixed Disk Interrupt Vector
  A8h	DWORD	Video: EGA/MCGA/VGA ptr to Video Save Pointer Table (see below)
  ACh-AFh	reserved
+ B0h	BYTE	(Phoenix 386 BIOS 1.10 10a) loop count for delaying when
+		  beeping due to full keyboard buffer
  B0h	DWORD	ptr to 3363 Optical disk driver or BIOS entry point.
 		    When 3363 BIOS present, the signature "OPTIC ",00h occurs 3
 		    bytes beyond this entry point.

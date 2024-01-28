@@ -1,18 +1,18 @@
 Public Domain/Freeware/Shareware by Ralf Brown:
 
 The MSDOS Interrupt List
-	A comprehensive listing of more than 4070 functions available
+	A comprehensive listing of more than 4400 functions available
 	through interrupt calls on IBM PCs and compatibles.  Includes both
 	documented and undocumented functions.
-	Current version: INTER31A (release 31, 7/12/92)
-			 INTER31B
-			 INTER31C (conversion programs)
+	Current version: INTER32A (release 32, 9/13/92)
+			 INTER32B
+			 INTER32C (conversion programs)
 
 DVINT
 	An extract of the MSDOS Interrupt List containing the DESQview
 	and QEMM API calls.  Updated whenever there have been significant
  	additions to the DESQview/QEMM calls in the Interrupt List.
-	Current version: DVINT31 (7/12/92)
+	Current version: DVINT32 (9/13/92)
 
 RBcomm
 	A DESQview-aware communications program which sports seamless DSZ,
@@ -22,6 +22,8 @@ RBcomm
 	65K with DSZ, 45K without.  While it works under plain DOS, 
 	additional features are available under DESQview.
 	Current version: RBCOMM33 (v3.31 2/3/91)
+	Note: a limited-distribution pre-beta of version 3.4 is available
+	      on SoundingBoard and CS.CMU.EDU *only*.
 
 SPAWNO
 	A replacement for the Turbo C and Microsoft C spawn..() functions
@@ -29,7 +31,7 @@ SPAWNO
 	memory while the spawned program executes, leaving less than 300
 	bytes in memory.  Also includes a variant for Turbo Pascal v4.0 or
 	higher.
-	Current version: SPAWNO41 (v4.10 4/26/92)
+	Current version: SPWNO411 (v4.11 5/02/92)
 	Price: libraries free, full source code $100.
 
 RBkeyswap
@@ -45,7 +47,7 @@ AMISLIB
 	simultaneously, and TSRs can be as small as 128 bytes resident,
 	1.4K on disk.  One of the sample TSRs is a popup which accesses
 	DOS.
-	Current version: AMISL083 (v0.83 5/02/92)
+	Current version: AMISL083 (v0.90 9/12/92)
 
 DV-GLUE
 	DESQview API bindings for Turbo C.
@@ -69,7 +71,12 @@ DVdevload
 	Load device drivers only in those DESQview windows which need the
 	services of the driver, reducing the pre-DESQview overhead and thus
 	permitting larger DESQview windows.
-	Current version: DVDEVL10 (v1.00 8/11/91)
+	Current version: DVDEVL11 (v1.10 8/22/92)
+	Note: as of DESQview 2.40, Quarterdeck's DEVICE.COM is able to install
+	  drivers into the device chain in the same manner as DVdevload;
+	  however, DEVICE uses nearly eight times as much memory as DVdevload
+	  and has a serious bug that can lead to system crashes in version
+	  2.4x.
 
 SPTURBO
 	An integrated environment for Borland's Sprint word processor and

@@ -1,5 +1,4 @@
----------------------------------------------
-Interrupt List, part 2 of 7
+Interrupt List, part 2 of 8
 This compilation is Copyright (c) 1989,1990,1991,1992 Ralf Brown
 ----------15---------------------------------
 INT 15 - Microsoft TSR Specification
@@ -470,8 +469,9 @@ Return: after other processes run
 Note:	under DESQview, if the process issuing this call has hooked INT 08h,
 	  the current time-slice is set to expire at the next clock tick rather
 	  than immediately
-SeeAlso: AH=00h"MultiDOS",AX=5305h,INT 21/AH=EEh"DoubleDOS",INT 2F/AX=1680h
-SeeAlso: INT 60/DI=0106h,INT 62/AH=01h,INT 7A/BX=000Ah,INT 7F/AH=E8h
+SeeAlso: AH=00h"MultiDOS",AX=5305h,INT 21/AH=89h,INT 21/AH=EEh"DoubleDOS"
+SeeAlso: INT 2F/AX=1680h,INT 60/DI=0106h,INT 62/AH=01h,INT 7A/BX=000Ah
+SeeAlso: INT 7F/AH=E8h
 ----------151001-----------------------------
 INT 15 - TopView - "GETMEM" - ALLOCATE "SYSTEM" MEMORY
 	AX = 1001h
@@ -531,7 +531,22 @@ INT 15 - TopView - "ISOBJ" - VERIFY OBJECT HANDLE
 	ES:DI = possible object handle
 Return: BX = FFFFh if ES:DI is a valid object handle
 	     0000h if ES:DI is not
+Note:	under DESQview versions prior to 2.50, an object handle is always a
+	  pointer to the object; for versions 2.50 and up, only task handles
+	  are always pointers (other handles may consist of an object number
+	  and offset into DESQview's common memory)
 SeeAlso: AX=DE14h,AX=DE2Bh
+
+Format of object:
+Offset	Size	Description
+ 00h	WORD	offset in common memory of previous object of same type
+ 02h	WORD	offset in common memory of next object of same type
+ 04h	WORD	signature FEDCh (DV 2.42-)
+ 		signature FEDCh or object number (DV 2.50+)
+ 06h	WORD	object type
+ 08h	DWORD	object handle to return to caller
+ 0Ch	DWORD	canonicalized object address (segment = common memory)
+ 	...	varies by object type and DESQview version
 ----------151017-----------------------------
 INT 15 - TopView - UNIMPLEMENTED IN DV 2.x
 	AX = 1017h
@@ -595,7 +610,7 @@ Return: indicated task will not get any CPU time until restarted with AX=101Eh
 Note:	once a task has been stopped, additional "STOP"s are ignored
 BUG:	in DV 2.00, this function is ignored unless the indicated task is the
 	  current task
-SeeAlso: AX=101Eh,AX=102Bh,AH=12h"VMiX"
+SeeAlso: AX=101Eh,AX=102Bh,AH=12h"VMiX",INT 21/AH=81h
 ----------15101E-----------------------------
 INT 15 - TopView - "START" - START TASK
 	AX = 101Eh
@@ -603,7 +618,7 @@ INT 15 - TopView - "START" - START TASK
 	     (== handle of main window for that task)
 Return: indicated task is started up again
 Note:	once a task has been started, additional "START"s are ignored
-SeeAlso: AX=101Dh,AX=102Bh
+SeeAlso: AX=101Dh,AX=102Bh,INT 21/AH=82h
 ----------15101F-----------------------------
 INT 15 - TopView - "DISPEROR" - POP-UP ERROR WINDOW
 	AX = 101Fh
@@ -697,14 +712,15 @@ INT 15 - DESQview v2.00+ (TopView???) - "POSTTASK" - AWAKEN TASK
 Return: nothing
 Note:	forces a task which is waiting on its objectq to continue by placing
 	  the handle for the task on the objectq
-SeeAlso: AX=101Dh,AX=101Eh
+SeeAlso: AX=101Dh,AX=101Eh,INT 21/AH=82h
 ----------15102C-----------------------------
-INT 15 - DESQview v2.00+ (TopView???) - START NEW APPLICATION IN NEW PROCESS
+INT 15 - DESQview v2.00+ - "NEWPROC" - START NEW APPLICATION IN NEW PROCESS
 	AX = 102Ch
 	ES:DI -> contents of .PIF/.DVP file (see below)
 	BX = size of .PIF/.DVP info
 Return: BX = segment of object handle for new task
 	     0000h on error
+SeeAlso: AX=DE24h,INT 21/AH=4Bh
 
 Format of .PIF/.DVP file:
 Offset	Size	Description
@@ -788,27 +804,42 @@ Offset	Size	Description
 18Ch	BYTE	protection level for 386 machines
 18Dh 19 BYTEs	reserved (0) for regular DESQview
 ---information unique to DESQview/X 1.0---
-18Dh	BYTE	flags5
-		bit 0: unused (0)
+18Dh	BYTE	X flags
+		bit 0: (XNEWPROC) use DOS client layer (DOS-to-X)
+		       (NEWPROC) inherit DOS client layer usage
 		bit 1: don't display DOS window
-		bit 2: don't wait for windows to open
+		bit 2: don't display wait message when opening window
 		bits 3-7: unused (0)
 18Eh	BYTE	X keyboard behavior (0-3)
-18Fh	BYTE	01h = uses scalable fonts
-190h 10 BYTEs	unused (0)
-19Ah	WORD???	sum of all record size fields in records starting at 1A0h
-19Ch  4 BYTEs   signature "XDVP"
-1A0h  N BYTEs   variable length records
-		Offset	Size	Description
-		 00h	BYTE	length of following record, 00h if end of file
-		 01h	BYTE	always 0??? (or length may be WORD)
-		 02h	BYTE	record type
-				01h Script filename, up to 64 characters
-				05h Starting... values: ASCII copy of fields
-				    as typed into DVPMAN, separated by commas:
-				    	starting row, starting column, starting
-					height, starting width
-		 03h  N BYTEs	ASCII data
+18Fh	BYTE	font scaling
+		00h fixed fonts
+		01h scalable fonts
+190h 10 BYTEs	reserved (0)
+19Ah	WORD	length of data follownig XDVP signature
+19Ch  4 BYTEs	signature "XDVP"
+1A0h  N BYTEs	list of variable length records (see below)
+
+Format of variable length record:
+Offset	Size	Description
+ 00h	WORD	length of following record, 0000h if end of record list
+ 02h	BYTE	record type
+		01h script filename, up to 64 characters
+		02h command-line parameters (allows >64 characters on cmdline)
+		03h environment inheritance
+		04h environment string
+		05h starting window position
+---types 01h,02h,04h---
+ 03h  N BYTEs	ASCII data
+---type 03h---
+ 03h	BYTE	inheritance
+ 		00h do not inherit
+		01h inherit environment
+---type 05h---
+ 03h  N BYTEs	ASCII copy of fields as typed into DVPMAN, separated by commas:
+	    	starting row, starting column, starting height, starting width
+Note:	if there are multiple occurrences of record types 01h, 02h, or 03h,
+	  only the last instance of each type is used; multiple occurrences of
+	  type 04h are concatenated
 ----------15102D-----------------------------
 INT 15 - DESQview v2.00+ - "KMOUSE" - KEYBOARD MOUSE CONTROL
 	AX = 102Dh
@@ -908,6 +939,7 @@ Return: DWORD on top of stack is object handle
 Note:	BL=0Ch,0Dh returns 00000000h if the object is not open (keyboard,
 	  mailbox, panel, pointer, and timer objects) or is an orphan (task,
 	  window)
+SeeAlso: AH=12h/BH=02h,AH=12h/BH=80h
 ----------1512--BH01-------------------------
 INT 15 - TopView - SEND MESSAGE - "NEW" - CREATE NEW OBJECT
 	AH = 12h
@@ -945,7 +977,7 @@ Notes:	if a new task is created, it is started with
 	  of the screen but not automatically redrawn
 	new keyboards are closed, and have all object bits cleared except for
 	  the hardware cursor bit
-SeeAlso: AH=12h/BH=02h
+SeeAlso: AH=12h/BH=02h,AH=12h/BH=81h
 ----------1512--BH02-------------------------
 INT 15 - TopView - SEND MESSAGE - "FREE" - FREE AN OBJECT
 	AH = 12h
@@ -967,7 +999,7 @@ Notes:	when a window is freed, its keyboard and pointer objects are freed;
 	if the keyboard being freed is the default keyboard for a task, this
 	  call is equivalent to CLOSE
 	panel and pointer objects are automatically closed if open
-SeeAlso: AH=12h/BH=01h,AH=12h/BH=0Dh
+SeeAlso: AH=12h/BH=01h,AH=12h/BH=0Dh,AH=12h/BH=82h
 ----------1512--BH03-------------------------
 INT 15 - TopView - SEND MESSAGE - "ADDR" - GET HANDLE OF MESSAGE SENDER
 	AH = 12h
@@ -977,7 +1009,7 @@ INT 15 - TopView - SEND MESSAGE - "ADDR" - GET HANDLE OF MESSAGE SENDER
 	    02h sender of last msg read from mailbox (task's handle on stack)
 	    03h sender of last msg read from current task's mailbox
 Return: DWORD on stack is task handle of message sender
-SeeAlso: AH=12h/BH=00h
+SeeAlso: AH=12h/BH=00h,AH=12h/BH=83h
 ----------1512--BH03-------------------------
 INT 15 - DESQview v2.26+ - "CONNECT" - CONNECT TWO WINDOWS
 	AH = 12h
@@ -990,6 +1022,7 @@ Return: ???
 Notes:	when two windows are connected, both will move if the user moves either
 	multiple windows may be attached to a single window, but each window
 	  may only be attached to one window at a time
+SeeAlso: AH=12h/BH=83h
 ----------1512--BX0300-----------------------
 INT 15 - TopView - SEND MESSAGE - "DIR" - GET PANEL FILE DIRECTORY
 	AH = 12h
@@ -998,6 +1031,7 @@ INT 15 - TopView - SEND MESSAGE - "DIR" - GET PANEL FILE DIRECTORY
 Return: STACK: DWORD length of directory (always multiple of 14 bytes)
 	       DWORD address of directory
 Note:	a null string is returned if the object is not open
+SeeAlso: AH=12h/BX=0400h"APPLY",AH=12h/BH=83h
 
 Format of panel file:
 Offset	Size	Description
@@ -1029,7 +1063,7 @@ Notes:	reading starts at the current logical cursor position; the cursor is
 	  be reused by the next READ or READN of a window
 	window stream opcodes D8h and D9h determine whether the read returns
 	  characters or attributes
-SeeAlso: AH=12h/BH=05h"WINDOW",AH=12h/BH=12h
+SeeAlso: AH=12h/BH=05h"WINDOW",AH=12h/BH=12h,AH=12h/BH=84h
 ----------1512--BH04-------------------------
 INT 15 - TopView - SEND MESSAGE - "READ" - GET NEXT RECORD FROM OBJECT
 	AH = 12h
@@ -1055,7 +1089,7 @@ Notes:	for a keyboard in keystroke mode, the input buffer is a single byte
 	  by the field table header for the window the keyboard is attached to
 	keyboard input buffers and mailbox message buffers may be invalidated
 	  by the next READ, ERASE, CLOSE, or FREE message to the same object
-SeeAlso: AH=12h/BH=05h"OBJECT"
+SeeAlso: AH=12h/BH=05h"OBJECT",AH=12h/BH=84h
 
 Format of pointer message:
 Offset	Size	Description
@@ -1073,6 +1107,7 @@ INT 15 - TopView - SEND MESSAGE - "READ" - WAIT FOR TIMER TO EXPIRE
 	STACK: DWORD timer's handle
 Return: after timer expires
 	STACK: DWORD time in 1/100 sec after midnight when timer expired
+SeeAlso: AH=12h/BH=0Ah,AH=12h/BH=84h
 ----------1512--BX0400-----------------------
 INT 15 - TopView - SEND MESSAGE - "APPLY" - WRITE PANEL TO WINDOW
 	AH = 12h
@@ -1099,6 +1134,7 @@ Notes:	status of APPLY may be checked with STATUS message
 	  returned; either the window's current open keyboard or a
 	  newly-created keyboard object.  The caller should read that keyboard
 	  to obtain input from the panel.
+SeeAlso: AH=12h/BH=84h
 ----------1512--BH05------------------------
 INT 15 - TopView - SEND MESSAGE - "WRITE" - WRITE TO OBJECT
 	AH = 12h
@@ -1128,7 +1164,7 @@ Notes:	under DV 2.2+, failed mailbox writes may return CF set (see AX=DE15h)
 	the data and status written to a keyboard object must match the format
 	  returned by the keyboard object in the current mode
 	the pointer position is scaled according to the current scaling factors
-SeeAlso: AH=12h/BH=04h
+SeeAlso: AH=12h/BH=04h,AH=12h/BH=85h
 ----------1512--BH05-------------------------
 INT 15 - TopView - SEND MESSAGE - "WRITE" - WRITE STRING TO WINDOW
 	AH = 12h
@@ -1149,6 +1185,7 @@ Return: indicated actions performed
 	   byte is less than 20h; otherwise, it is written to the window
 	STACK:	DWORD handle of new window if window stream opcode E6h
 		else nothing
+SeeAlso: AH=12h/BH=04h,AH=12h/BH=85h
 
 Data Structure:
 	MAGIC  DB  1Bh
@@ -1758,14 +1795,20 @@ INT 15 - DESQview 2.20+ - SEND MESSAGE - "SETPRI" - SET PRIORITY WITHIN OBJECTQ
 	BL = object
 	    00h object handle in DWORD on top of stack
 		mailbox, keyboard, pointer, or timer
+		(DV 2.50+) window
+	    01h (DV 2.50+) current task's window
 	    04h given task's keyboard (task's handle on top of stack)
 	    05h current task's default keyboard
-	STACK: DWORD new priority of object in task's OBJECTQ 
+	STACK: DWORD new priority of object in task's OBJECTQ
+			(new priority of task if window handle)
 Notes:	initially all objects have the same default value.  Should only make 
 	  relative adjustments to this default value.
 	when changing priorities, all objects already on the objectq are
 	  reordered
-SeeAlso: AH=12h/BH=07h
+	for window handles, only the non-blocked task(s) with the highest
+	  priority receive CPU time under DESQview 2.50-2.52; the default
+	  priority is 0Ah
+SeeAlso: AH=12h/BH=07h,AH=12h/BH=87h
 ----------1512--BH07-------------------------
 INT 15 - DESQview 2.20+ - SEND MESSAGE - "GETPRI" - GET PRIORITY WITHIN OBJECTQ
 	AH = 12h
@@ -1773,6 +1816,8 @@ INT 15 - DESQview 2.20+ - SEND MESSAGE - "GETPRI" - GET PRIORITY WITHIN OBJECTQ
 	BL = object
 	    00h object handle in DWORD on top of stack
 		mailbox, keyboard, pointer, or timer
+		(DV 2.50+) window
+	    01h (DV 2.50+) current task's window
 	    04h given task's keyboard (task's handle on top of stack)
 	    05h current task's default keyboard
 Return: STACK: DWORD object priority
@@ -1811,6 +1856,7 @@ INT 15 - TopView - SEND MESSAGE - "LEN" - GET OBJECT LENGTH
 	    00h handle in DWORD on top of stack
 		window: get chars/line
 		timer: get 1/100 seconds remaining before timer expires
+		mailbox: (DV/X) get number of bytes queued to mailbox
 	    01h get number of chars/line in current task's default window
 	    0Ch (DV 2.26+) get chars/line in window owning handle on top of stk
 	    0Dh (DV 2.26+) get chars/line in parent task's window
@@ -2109,7 +2155,7 @@ INT 15 - TopView - SEND MESSAGE - "SETNAME" - ASSIGN NAME TO MAILBOX
 	    03h use current task's default mailbox
 	STACK: DWORD length of name
 	       DWORD address of name
-SeeAlso: AX=DE0Eh
+SeeAlso: AH=12h/BH=12h"GETNAME",AX=DE0Eh
 ----------1512--BX1100-----------------------
 INT 15 - TopView - SEND MESSAGE - "SETSCALE" - SET POINTER SCALE FACTOR
 	AH = 12h
@@ -2140,6 +2186,20 @@ Notes:	reading starts at the current logical cursor position; the cursor is
 	window stream opcodes D8h and D9h determine whether the read returns
 	  characters or attributes
 SeeAlso: AH=12h/BH=04h"WINDOW",AH=12h/BH=05h"WINDOW"
+----------1512--BH12-------------------------
+INT 15 - DESQview 2.50+ - SEND MESSAGE - "GETNAME" - GET NAME OF MAILBOX
+	AH = 12h
+	BH = 12h
+	BL = mailbox for which to retrieve name
+	    00h DWORD on top of stack is mailbox handle
+	    02h use given task's mailbox (task's handle on top of stack)
+	    03h use current task's default mailbox
+	STACK: DWORD length of buffer for name
+	       DWORD pointer to buffer
+Return: STACK: DWORD length of returned name (or size of buffer, if less)
+Program: DESQview 2.5x is distributed as part of DESQview/X 1.0x
+Note:	the returned name is not NUL-terminated
+SeeAlso: AH=12h/BH=11h"SETNAME",AX=DE0Eh
 ----------1512--BX1200-----------------------
 INT 15 - TopView - SEND MESSAGE - "GETSCALE" - GET POINTER SCALE FACTOR
 	AH = 12h
@@ -2158,6 +2218,25 @@ INT 15 - TopView - SEND MESSAGE - "REDRAW" - REDRAW WINDOW
 	    0Ch (DV 2.26+) redraw window of task owning handle on top of stack
 	    0Dh (DV 2.26+) redraw default window of parent of current task
 SeeAlso: AH=12h/BH=05h"WINDOW",AH=12h/BH=0Eh
+----------1512--BH13-------------------------
+INT 15 - DESQview 2.50+ - SEND MESSAGE - "READINTO" - GET NEXT MAIL MESSAGE
+	AH = 12h
+	BH = 13h
+	BL = mailbox from which to read
+	    00h DWORD on top of stack is mailbox handle
+	    02h use given task's mailbox (task's handle on top of stack)
+	    03h use current task's default mailbox
+	STACK: DWORD size of buffer in bytes
+	       DWORD pointer to buffer
+Return: STACK: DWORD number of bytes read
+Program: DESQview 2.5x is distributed as part of DESQview/X 1.0x
+Notes:	this call blocks if no input is available, but will return less than
+	  the requested number of bytes if some (but insufficient) data is
+	  available
+	use this call instead of AH=12h/BH=04h if the mailbox has flag bits
+	  4 or 5 set, as common memory may be exhausted by that call when
+	  attempting to read the next message
+SeeAlso: AH=12h/BH=04h"READ",AH=12h/BH=05h,AH=12h/BH=16h
 ----------1512--BX1300-----------------------
 INT 15 - TopView - SEND MESSAGE - "SETICON" - SPECIFY POINTER ICON
 	AH = 12h
@@ -2220,11 +2299,18 @@ INT 15 - DESQview v2.20+ - SEND MESSAGE - "SETFLAGS" - SET OBJECT FLAGS
 			bit 0: all mail messages in common memory
 			bit 1: allow write even if closed
 			bit 2: don't erase messages when mailbox closed
+			bit 4: (DV/X) append messages with like status and
+				sender (stream-oriented mail)
+			bit 5: (DV/X) store mail in expanded memory (pool
+				grows as needed)
+			bit 6: (DV/X) make mailbox into non-owned mailbox
 		if keyboard:
 			bit 5: exclusive input when keyboard in use for input
 Return: nothing
 Notes:	only available if the API level has been set to at least 2.20
 	equivalent to performing SUBFROM and ADDTO calls on the object
+	if a mailbox has bits 4 or 5 set, you must use "READINTO" rather than
+	  "READ" (see AH=12h/BX=1300h"READINTO") to retrieve messages
 SeeAlso: AH=12h/BH=0Ah,AH=12h/BH=0Bh,AH=12h/BH=16h
 ----------1512--BH16-------------------------
 INT 15 - DESQview v2.20+ - SEND MESSAGE - "GETFLAGS" - GET OBJECT FLAGS
@@ -2237,9 +2323,11 @@ INT 15 - DESQview v2.20+ - SEND MESSAGE - "GETFLAGS" - GET OBJECT FLAGS
 	    03h mailbox for current task
 	    04h keyboard for task whose handle is on top of stack
 	    05h keyboard for current task
-Return: STACK: DWORD current control flags
-Note:	only available if the API level has been set to at least 2.20
-SeeAlso: AH=12h/BH=0Ah,AH=12h/BH=0Bh,AH=12h/BH=15h
+Return: STACK: DWORD current control flags (see AH=12h/BH=15h)
+Notes:	only available if the API level has been set to at least 2.20
+	if a mailbox has bits 4 or 5 set, you must use "READINTO" rather than
+	  "READ" (see AH=12h/BH=13h"READINTO") to retrieve messages
+SeeAlso: AH=12h/BH=0Ah,AH=12h/BH=0Bh,AH=12h/BH=13h"READINTO",AH=12h/BH=15h
 ----------1512--BH17-------------------------
 INT 15 - DESQview v2.42-2.52 - BUG
 	AH = 12h
@@ -2254,6 +2342,195 @@ INT 15 - DESQview v2.42-2.52 - BUG
 Notes:	due to a fencepost error, message 17h is accepted for mailboxes,
 	  keyboards, and pointers, but causes a random branch
 	DESQview v2.50-2.52 are distributed as part of DESQview/X v1.02
+----------1512--BH80-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 80h
+Note:	this function is identical to AH=12h/BH=00h, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL:
+	  	00h no error
+		01h invalid values
+		02h alias invalid
+		03h handle valid but wrong type
+		04h invalid handle
+SeeAlso: AH=12h/BH=00h
+----------1512--BH81-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 81h
+Note:	this function is identical to AH=12h/BH=01h, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL (see AH=12h/BH=80h)
+SeeAlso: AH=12h/BH=01h
+----------1512--BH82-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 82h
+Note:	this function is identical to AH=12h/BH=02h, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL (see AH=12h/BH=80h)
+SeeAlso: AH=12h/BH=02h
+----------1512--BH83-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 83h
+Note:	this function is identical to AH=12h/BH=03h, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL (see AH=12h/BH=80h)
+SeeAlso: AH=12h/BH=03h,AH=12h/BX=0300h
+----------1512--BH84-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 84h
+Note:	this function is identical to AH=12h/BH=04h, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL (see AH=12h/BH=80h)
+SeeAlso: AH=12h/BH=04h,AH=12h/BX=0400h
+----------1512--BH85-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 85h
+Note:	this function is identical to AH=12h/BH=05h, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL (see AH=12h/BH=80h)
+SeeAlso: AH=12h/BH=05h
+----------1512--BH86-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 86h
+Note:	this function is identical to AH=12h/BH=06h, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL (see AH=12h/BH=80h)
+SeeAlso: AH=12h/BH=06h
+----------1512--BH87-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 87h
+Note:	this function is identical to AH=12h/BH=07h, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL (see AH=12h/BH=80h)
+SeeAlso: AH=12h/BH=07h
+----------1512--BH88-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 88h
+Note:	this function is identical to AH=12h/BH=08h, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL (see AH=12h/BH=80h)
+SeeAlso: AH=12h/BH=08h
+----------1512--BH89-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 89h
+Note:	this function is identical to AH=12h/BH=09h, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL (see AH=12h/BH=80h)
+SeeAlso: AH=12h/BH=09h
+----------1512--BH8A-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 8Ah
+Note:	this function is identical to AH=12h/BH=0Ah, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL (see AH=12h/BH=80h)
+SeeAlso: AH=12h/BH=0Ah
+----------1512--BH8B-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 8Bh
+Note:	this function is identical to AH=12h/BH=0Bh, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL (see AH=12h/BH=80h)
+SeeAlso: AH=12h/BH=0Bh
+----------1512--BH8C-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 8Ch
+Note:	this function is identical to AH=12h/BH=0Ch, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL (see AH=12h/BH=80h)
+SeeAlso: AH=12h/BH=0Ch
+----------1512--BH8D-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 8Dh
+Note:	this function is identical to AH=12h/BH=0Dh, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL (see AH=12h/BH=80h)
+SeeAlso: AH=12h/BH=0Dh
+----------1512--BH8E-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 8Eh
+Note:	this function is identical to AH=12h/BH=0Eh, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL (see AH=12h/BH=80h)
+SeeAlso: AH=12h/BH=0Eh
+----------1512--BH8F-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 8Fh
+Note:	this function is identical to AH=12h/BH=0Fh, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL (see AH=12h/BH=80h)
+SeeAlso: AH=12h/BH=0Fh
+----------1512--BH90-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 90h
+Note:	this function is identical to AH=12h/BH=10h, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL (see AH=12h/BH=80h)
+SeeAlso: AH=12h/BH=10h
+----------1512--BH91-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 91h
+Note:	this function is identical to AH=12h/BH=11h, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL (see AH=12h/BH=80h)
+SeeAlso: AH=12h/BH=11h,AH=12h/BX=1100h
+----------1512--BH92-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 92h
+Note:	this function is identical to AH=12h/BH=12h, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL (see AH=12h/BH=80h)
+SeeAlso: AH=12h/BH=12h,AH=12h/BX=1200h
+----------1512--BH93-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 93h
+Note:	this function is identical to AH=12h/BH=13h, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL (see AH=12h/BH=80h)
+SeeAlso: AH=12h/BH=13h
+----------1512--BH94-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 94h
+Note:	this function is identical to AH=12h/BH=14h, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL (see AH=12h/BH=80h)
+SeeAlso: AH=12h/BH=14h
+----------1512--BH95-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 95h
+Note:	this function is identical to AH=12h/BH=15h, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL (see AH=12h/BH=80h)
+SeeAlso: AH=12h/BH=15h
+----------1512--BH96-------------------------
+INT 15 - DESQview v2.50+ - SEND MESSAGE WITH ERROR RECOVERY
+	AH = 12h
+	BH = 96h
+Note:	this function is identical to AH=12h/BH=16h, except that DESQview will
+	  not pop up a "Programming Error" window, instead returning an error
+	  code in AL (see AH=12h/BH=80h)
+SeeAlso: AH=12h/BH=16h
 ----------1513-------------------------------
 INT 15 - VMiX - WAKE PROCESS
 	AH = 13h
@@ -2469,7 +2746,7 @@ Return: AH = status
 	    02h invalid semaphore number
 	    03h caller already owns semaphore
 	    04h out of string space
-Notes:	(see notes for AH=01h"MultiDOS")
+Notes:	(see AH=01h"MultiDOS")
 	equivalent to AH=1Ah followed by AH=01h
 SeeAlso: AH=01h"MultiDOS",AH=1Ah"MultiDOS",AH=1Ch"MultiDOS",AH=1Dh"MultiDOS"
 ----------151C-------------------------------
@@ -2486,7 +2763,7 @@ Return: AH = status
 	    01h not semaphore owner
 	    02h invalid semaphore number
 	    04h out of string space
-Notes:	(see notes for AH=02h"MultiDOS")
+Notes:	(see AH=02h"MultiDOS")
 	equivalent to AH=1Ah followed by AH=02h
 SeeAlso: AH=02h"MultiDOS",AH=1Ah"MultiDOS",AH=1Bh"MultiDOS",AH=1Dh"MultiDOS"
 ----------151D-------------------------------
@@ -2504,7 +2781,7 @@ Return; AH = status
 	    02h invalid semaphore number
 	    03h caller owns semaphore
 	    04h out of string space
-Notes:	(see notes for AH=10h"MultiDOS")
+Notes:	(see AH=10h"MultiDOS")
 	equivalent to AH=1Ah followed by AH=10h
 SeeAlso: AH=10h"MultiDOS",AH=1Ah"MultiDOS",AH=1Bh"MultiDOS",AH=1Ch"MultiDOS"
 ----------151E-------------------------------
@@ -2590,22 +2867,32 @@ Return: CF set on error
 	   ES:DI -> error log
 Note:	the log is a series of words, the first byte of which identifies the
 	  error code and the second the device.
+----------1522-------------------------------
+INT 15 U - SYSTEM - LOCATE ROM BASIC (later PS/2's only)
+	AH = 22h
+Return: CF set on error
+	    AH = status
+	CF clear on success:
+	    ES -> segment of ROM BASIC
 ----------152400-----------------------------
 INT 15 - Qualitas 386MAX v6.01 - TURN ON ???
 	AX = 2400h
 Return: CF clear
 	AH = 00h
+SeeAlso: AX=2401h,AX=2402h
 ----------152401-----------------------------
 INT 15 - Qualitas 386MAX v6.01 - TURN OFF ???
 	AX = 2401h
 Return: CF clear
 	AH = 00h
+SeeAlso: AX=2400h,AX=2402h
 ----------152402-----------------------------
 INT 15 - Qualitas 386MAX v6.01 - GET STATE OF ???
 	AX = 2402h
 Return: CF clear
 	AH = 00h
 	AL = current state (00h off, 01h on)
+SeeAlso: AX=2400h,AX=2401h
 ----------152403-----------------------------
 INT 15 - Qualitas 386MAX v6.01 - GET ???
 	AX = 2403h
@@ -2661,10 +2948,13 @@ INT 15 - SYSTEM - WAIT ON EXTERNAL EVENT (CONVERTIBLE)
 	DX = I/O port address if AL bit 4 set
 	ES:DI -> user byte if AL bit 4 clear
 ----------1542-------------------------------
-INT 15 - SYSTEM - REQUEST POWER OFF (CONVERTIBLE)
+INT 15 - SYSTEM - REQUEST POWER OFF (CONVERTIBLE,HP 95LX)
 	AH = 42h
 	AL = 00h to use system profile
 	     01h to force suspend regardless of system profile
+Note:	the HP 95LX apparently suspends regardless of the value in AL; on
+	  power-up, execution will resume following the instruction calling
+	  this function
 SeeAlso: AH=44h
 ----------154280-----------------------------
 INT 15 - Compaq SLT/286 - ENTER STANDBY
@@ -2752,6 +3042,18 @@ Return: CF clear if successful
 	    AH = 01h input is out of range
 	       = 02h - No modem present
 SeeAlso: AX=4600h,INT 77
+----------154900-----------------------------
+INT 15 - Far East MSDOS - GET DOS TYPE
+	AX = 4900h
+Return: CF clear if successful
+	    AH = 00h
+	    BL = type of DOS running
+	        00h DOS/V
+		01h DOS/J or DOS/K (early IBM Japan versions of MSDOS)
+	CF set on error
+	    AH = 86h (function not supported)
+Note:	in practice, DOS/J returns AH=86h; AX DOS does not support this call
+SeeAlso: INT 21/AH=30h
 ----------154DD4-----------------------------
 INT 15 - HP 95LX - INSTALLATION CHECK
 	AX = 4DD4h
@@ -2793,7 +3095,7 @@ Return: CF clear if successful
 	    AL = minor version (BCD)
 	    BX = 504Dh ("PM")
 	    CX = flags
-	        bit 0: 16-bit protected mode interface supported
+		bit 0: 16-bit protected mode interface supported
 		bit 1: 32-bit protected mode interface supported
 		bit 2: CPU idle call reduces processor speed
 		bit 3: BIOS power management disabled
@@ -3004,19 +3306,19 @@ INT 15 - Advanced Power Management Specification - GET POWER STATUS
 	BX = 0001h
 Return: CF clear if successful
 	    BH = AC line status
-	        00h off-line
+		00h off-line
 		01h on-line
 		FFh unknown
 		other reserved
 	    BL = battery status
-	        00h high
+		00h high
 		01h low
 		02h critical
 		03h charging
 		FFh unknown
 		other reserved
 	    CL = remaining battery life
-	        00h-64h (0-100) percentage of full charge
+		00h-64h (0-100) percentage of full charge
 		FFh unknown
 	CF set on error
 	    AH = error code (09h) (see AX=5300h)
@@ -3027,7 +3329,7 @@ INT 15 - Advanced Power Management Specification - GET POWER MANAGEMENT EVENT
 	AX = 530Bh
 Return: CF clear if successful
 	    BX = event code
-	        0001h system stand-by request
+		0001h system stand-by request
 		0002h system suspend request
 		0003h normal resume system notification
 		0004h critical resume system notification
@@ -3054,35 +3356,35 @@ INT 15 - Omniview Multitasker - INSTALLATION NOTIFICATION
 	DI:DX -> dispatcher entry point
 Note:	called by OmniView to notify programs loaded before OmniView of state
 	  changes inside OmniView
-SeeAlso: AX=5407h
+SeeAlso: AX=5407h,INT 2F/AX=DE00h
 ----------155401-----------------------------
 INT 15 - Omniview Multitasker - PROCESS CREATION
 	AX = 5401h
 	ES:BX = process handle
 Note:	called by OmniView to notify programs loaded before OmniView of state
 	  changes inside OmniView
-SeeAlso: AX=5402h
+SeeAlso: AX=5402h,INT 2F/AX=DE04h
 ----------155402-----------------------------
 INT 15 - Omniview Multitasker - PROCESS DESTRUCTION
 	AX = 5402h
 	ES:DX = process handle
 Note:	called by OmniView to notify programs loaded before OmniView of state
 	  changes inside OmniView
-SeeAlso: AX=5401h
+SeeAlso: AX=5401h,INT 2F/AX=DE05h
 ----------155403-----------------------------
 INT 15 - Omniview Multitasker - SAVE
 	AX = 5403h
 	ES:DX = process swapping out
 Note:	called by OmniView to notify programs loaded before OmniView of state
 	  changes inside OmniView
-SeeAlso: AX=5404h
+SeeAlso: AX=5404h,INT 2F/AX=DE08h
 ----------155404-----------------------------
 INT 15 - Omniview Multitasker - RESTORE
 	AX = 5404h
 	ES:DX = process swapping in
 Note:	called by OmniView to notify programs loaded before OmniView of state
 	  changes inside OmniView
-SeeAlso: AX=5403h
+SeeAlso: AX=5403h,INT 2F/AX=DE09h
 ----------155405-----------------------------
 INT 15 - Omniview Multitasker - SWITCHING TO BACKGROUND
 	AX = 5405h
@@ -3102,7 +3404,7 @@ INT 15 - Omniview Multitasker - EXIT NOTIFICATION
 	AX = 5407h
 Note:	called by OmniView to notify programs loaded before OmniView of state
 	  changes inside OmniView
-SeeAlso: AX=5400h
+SeeAlso: AX=5400h,INT 2F/AX=DE03h
 ----------1580-------------------------------
 INT 15 - OS HOOK - DEVICE OPEN (AT,XT286,PS)
 	AH = 80h
@@ -3332,21 +3634,73 @@ INT 15 - Rational Systems DOS/16M - ???
 	AX = BF01h
 	???
 Return: ???
-Note:	under DESQview/X 1.02 DVDOS4GX.DVR, this call is identical to AX=BF02h
-SeeAlso: AX=BF02h
+Notes:	under DESQview/X 1.02 DVDOS4GX.DVR, this call is identical to AX=BF02h
+	called by DOS/4GW
+SeeAlso: AX=BF00h,AX=BF02h
 ----------15BF02DX0000-----------------------
 INT 15 - Rational Systems DOS/16M - INSTALLATION CHECK
 	AX = BF02h
 	DX = 0000h
 Return: DX = nonzero if installed
 	    DX:SI -> XBRK structure (see below)
-SeeAlso: AX=BFDEh/BX=0000h
-SeeAlso: INT 21/AX=FF00h,INT 2F/AH=A1h,INT 2F/AX=F100h,INT 2F/AX=FBA1h
+Note:	this function is also supported by DOS/4G
+SeeAlso: AX=BF01h,AX=BFDCh,AX=BFDEh/BX=0000h
+SeeAlso: INT 21/AH=FFh/DH=0Eh,INT 2F/AH=A1h,INT 2F/AX=F100h,INT 2F/AX=FBA1h
 
 Format of XBRK structure:
 Offset	Size	Description
- 00h	DWORD	linear address of last available byte + 1 ???
- 	???
+ 00h	DWORD	linear address of first available byte
+ 04h	DWORD	linear address of last available byte + 1 ???
+ 08h	DWORD	real-mode address of XBRK structure???
+ 0Ch	DWORD	???
+ 10h  2 BYTEs	???
+ 12h	WORD	segment of ???
+ 14h  8 BYTEs	???
+ 1Ch 512 BYTEs	protected-mode IDT
+21Ch  N BYTEs	protected-mode GDT
+----------15BF03-----------------------------
+INT 15 - Rational Systems DOS/4GW - UNINSTALL???
+	AX = BF03h
+	BX = PSP segment of extender
+	???
+Return: ???
+Note:	if BX is not the PSP segment of the extender, it passes the call down
+	  the INT 15 chain; this allows nested instances of the extender
+SeeAlso: AX=BF06h
+----------15BF04-----------------------------
+INT 15 - Rational Systems DOS/4GW - ???
+	AX = BF04h
+	BX = PSP segment of extender
+Return: nothing???
+Notes:	if BX is not the PSP segment of the extender, it passes the call down
+	  the INT 15 chain; this allows nested instances of the extender
+	grabs INT 2Fh and installs handlers for INT 2F/AX=1605h-1607h
+SeeAlso: INT 2F/AX=1607h/BX=22C0h
+----------15BF05-----------------------------
+INT 15 - Rational Systems DOS/4GW - INITIALIZE PROTECTED-MODE INTERFACE
+	AX = BF05h
+	BX = PSP segment of extender
+Return: nothing???
+Notes:	if BX is not the PSP segment of the extender, it passes the call down
+	  the INT 15 chain; this allows nested instances of the extender
+	calls INT 67/AX=DE01h if ???
+----------15BF06-----------------------------
+INT 15 - Rational Systems DOS/4GW - ???
+	AX = BF06h
+	BX = PSP segment of extender
+	???
+Return: ???
+Note:	if BX is not the PSP segment of the extender, it passes the call down
+	  the INT 15 chain; this allows nested instances of the extender
+SeeAlso: AX=BF03h
+----------15BFDCDX0000-----------------------
+INT 15 - Rational Systems DOS/4GW - INSTALLATION CHECK
+	AX = BFDCh
+	DX = 0000h
+	SI = 0000h
+Return: DX = nonzero if installed
+	    DX:SI -> XBRK structure (see AX=BF02h)
+SeeAlso: AX=BF02h
 ----------15BFDEBX0000-----------------------
 INT 15 - DESQview/X - DVDOS4GX.DVR - INSTALLATION CHECK
 	AX = BFDEh
@@ -3376,11 +3730,12 @@ Return: BX = 0000h (success)
 	CX:DX -> ???
 SeeAlso: AX=BFDEh/BX=0000h,AX=BFDEh/BX=0002h
 ----------15BFDEBX0004-----------------------
-INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - GET ???
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - ???
 	AX = BFDEh
 	BX = 0004h
+	CL = ???
 Return: BX = 0000h (success)
-	CX:DX -> ???
+	CX:DX -> XBRK structure (see AX=BF02h)
 SeeAlso: AX=BFDEh/BX=0000h
 ----------15BFDEBX0005-----------------------
 INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - ???
@@ -3391,6 +3746,7 @@ Return: BX = 0000h (success)
 	AX = old value of ???
 	DS:SI -> ??? (if AX nonzero on return)
 	ES:DI -> ??? (if AX zero on return)
+Note:	called by DOS4GW.EXE
 SeeAlso: AX=BFDEh/BX=0000h
 ----------15BFDEBX0006-----------------------
 INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - GET ???
@@ -3411,7 +3767,7 @@ SeeAlso: AX=BFDEh/BX=0000h,AX=BFDEh/BX=0006h
 INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - ???
 	AX = BFDEh
 	BX = 0008h
-	CX = ???
+	CX = segment of ???
 	DS = ???
 Return: BX = status
 	    0000h successful
@@ -3419,6 +3775,7 @@ Return: BX = status
 		DX = ??? (0603h) if AL=C0h
 	    0001h failed
 	    	AX = 0000h
+Note:	called by DOS4GW.EXE
 SeeAlso: AX=BFDEh/BX=0000h
 ----------15BFDEBX0009-----------------------
 INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - GET PROTECTED MODE PROGRAM LOADER
@@ -3433,13 +3790,15 @@ INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - DECREMENT ???
 	BX = 000Ah
 Return: BX = 0000h (success)
 	AX = new value of ??? counter
-Note:	also resets a variety of values if the counter goes negative
+Notes:	also resets a variety of values if the counter goes negative
+	called by DOS4GW.EXE
 SeeAlso: AX=BFDEh/BX=0000h,AX=BFDEh/BX=000Bh
 ----------15BFDEBX000B-----------------------
 INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - INCREMENT ???
 	AX = BFDEh
 	BX = 000Bh
 Return:	AX = new value of ??? counter
+Note:	called by DOS4GW.EXE
 SeeAlso: AX=BFDEh/BX=0000h,AX=BFDEh/BX=000Ah
 ----------15BFDEBX000C-----------------------
 INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - ???
@@ -3696,6 +4055,7 @@ Model  Submdl  Rev	BIOS date	System
  F8h	???	???	  ???		PS/2 Model 95 (25 MHz 486SX)
  F8h	???	???	  ???		PS/2 Model 90 (25 MHz 486SX + 487SX)
  F8h	???	???	  ???		PS/2 Model 95 (25 MHz 486SX + 487SX)
+ E1h	???	???	  ???		??? (checked for by DOS4GW.EXE)
  9Ah	*	*	  ???		Compaq XT/Compaq Plus
  30h	???	???	  ???		Sperry PC
  2Dh	*	*	  ???		Compaq PC/Compaq Deskpro
@@ -3869,13 +4229,13 @@ INT 15 U - PS/2 Model 95 - ???
 Return: ???
 ----------15C9-------------------------------
 INT 15 U - newer PS/2; various BIOSes - GET CPU TYPE AND MASK REVISION
-        AH = C9h
+	AH = C9h
 	AL = 10h (may be required on some non-PS BIOSes)
 Return: AH = 00h
 	CH = CPU type
 	    03h 80386
-            04h 80486
-        CL = mask revision
+	    04h 80486
+	CL = mask revision
 	    23h 386SX
 Notes:	the BIOS must save DX at startup in order to be able to support this
 	  call; PS/2 Models 56, 57, 90, and 95 are known to support it
@@ -4125,13 +4485,14 @@ INT 15 - DESQview v2.00+ - "FINDMAIL" - FIND MAILBOX BY NAME
 Return: BX = 0000h not found
 	     0001h found
 		DS:SI = object handle
-SeeAlso: AH=12h/BH=11h
+SeeAlso: AH=12h/BH=11h,AH=12h/BX=1200h"GETNAME"
 
 Special mailbox names:
  "COM1" ... "COM4"	RBcomm using COM1 ... COM4
  "DESQview/X Help Engine"
- "DESQview/X Network Server"
- "DESQview X Server0"
+ "DESQview/X Network Server"  Network Manager
+ "DESQview X Server0"	X-Windows server
+ "DESQview X Server7"	X-Windows printing service
  "INBOX"		DESQview/X LPD requests
  "OUTBOX"		DESQview/X LPD responses
  "WAITBOX"		semaphore to synchronize DESQview/X LPD communications
@@ -4223,7 +4584,7 @@ Notes:	mapping contexts determine conventional-memory addressability; setting
 	  programs.
 	caller need not be running under DESQview
 	this API call may be made from a hardware interrupt handler
-SeeAlso: AX=1117h,INT 2F/AX=1685h
+SeeAlso: AX=1117h,AX=DE21h,INT 2F/AX=1685h
 ----------15DE18-----------------------------
 INT 15 - DESQview v2.20+ - internal - ???
 	AX = DE18h
@@ -4300,6 +4661,7 @@ INT 15 - DESQview v2.26+ - "DISPATCHINT" - INTERRUPT ANOTHER TASK
 	AX = DE20h
 	BX = segment of handle of task to interupt
 	DX:CX -> FAR interrupt routine
+	BP,SI,DI,DS,ES as required by interrupt routine
 Return: nothing
 Notes:	unlike "PGMINT" (AX=1021h), DISPATCHINT may be applied to the task
 	  making the DISPATCHINT call
@@ -4309,14 +4671,20 @@ Notes:	unlike "PGMINT" (AX=1021h), DISPATCHINT may be applied to the task
 	  values, using the task's internal stack (see AX=101Ah); only SS:SP
 	  needs to be preserved
 	this API call may be made from within a hardware interrupt handler
-SeeAlso: AX=1021h
-----------15DE21BX0000-----------------------
+SeeAlso: AX=1021h,AX=DE2Ah
+----------15DE21-----------------------------
 INT 15 - DESQview v2.26+ - "ASSERTVIR" - CONTROL 386 SCREEN VIRTUALIZATION
 	AX = DE21h
-	BX = 0000h turn off
-	     nonzero turn on
+	BX = new state
+	    0000h turn off
+	    nonzero turn on
 Return: BX = old state of virtualization
-Note:	this API call may be made from within a hardware interrupt handler
+Notes:	this API call may be made from within a hardware interrupt handler
+	under DV 2.40 and 2.42, this call appears to have no effect and always
+	  returns a nonzero value in BX which appears to be the offset within
+	  the DV common memory segment of the caller's task object; it may
+	  only have an effect within a hardware interrupt handler
+SeeAlso: AX=1117h,AX=DE17h
 ----------15DE22-----------------------------
 INT 15 - DESQview v2.26+ - "PROCESSMEM" - GET TASK MEMORY STATUS
 	AX = DE22h
@@ -4334,38 +4702,62 @@ Notes:	if the task handle is a child task, the returned values will be for the
 	  unchanged, because the memory usage cannot be determined
 SeeAlso: AX=DE04h,AX=DE05h,AX=DE06h
 ----------15DE23-----------------------------
-INT 15 - DESQview v2.31+ - ???
+INT 15 U - DESQview v2.31+ - ???
 	AX = DE23h
 	BX = ??? IRQ number on first PIC?
 	CX = ??? IRQ number on second PIC?
 Return: ???
 Note:	called by QEMM 6.00+
 ----------15DE24-----------------------------
-INT 15 - DESQview v2.40+ - ???
+INT 15 - DESQview v2.40+ - "XNEWPROC" - START NEW APPLICATION
 	AX = DE24h
-Return: BX = ??? (0000h for v2.40)
+	BX = length of .DVP data
+	CX = length of ??? string
+	DS:SI -> ??? string
+	ES:DI -> .DVP data (see AX=102Ch)
+Return: BX = segment of task handle??? or 0000h on error
+Note:	this call is similar to AX=102Ch except that it can interpret the
+	  extended DVP data
+SeeAlso: AX=102Ch
 ----------15DE25-----------------------------
-INT 15 - DESQview v2.40+ - ???
+INT 15 - DESQview v2.40+ - "GETDVPATH" - GET DESQview DIRECTORY
 	AX = DE25h
-	???
-Return: nothing
+	ES:DI -> 67-byte buffer for ASCIZ directory name
+Return: ES:DI buffer filled with directory from which DESQview was started
+BUG:	DV 2.42 does not place a terminating NUL at the end of the directory
+	  name, so if the buffer is not cleared to zeros before the call,
+	  there is no way to tell where the directory name ends.  This bug
+	  has been fixed in DV 2.52 (DV/X 1.02)
+SeeAlso: AX=DE2Eh,INT 21/AH=47h
 ----------15DE26-----------------------------
-INT 15 - DESQview v2.40+ - GET ???
+INT 15 - DESQview v2.40+ - "GETFOREGROUND" - GET KEYBOARD FOCUS
 	AX = DE26h
-Return: BX = segment of handle for X server???
+Return: BX = segment of handle for task with keyboard focus
+Note:	under DESQview/X, the X server always has the keyboard focus unless a
+	  "direct" window is active
+SeeAlso: AX=DE2Fh,INT 2F/AX=DE0Ah
 ----------15DE27-----------------------------
-INT 15 - DESQview v2.50+ - ???
+INT 15 - DESQview v2.50+ - "ADDINSTANCEDATA" - ADD PER-TASK SAVE/RESTORE AREA
 	AX = DE27h
-	BX = ??? (0000h,0001h)
-	ES:DI -> ???
+	BX = type
+	    0000h process
+	    0001h task
+	ES:DI -> list of Instance Item Structures (see below)
 Return: CF clear if successful
 	    AX = ???
 	    BX = ???
 	CF set on error
 	    AX = ???
 Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+SeeAlso: INT 2F/AX=DE08h,INT 2F/AX=DE09h
+
+Format of Instance Item Structure [one element of list]:
+Offset	Size	Description
+ 00h	WORD	length of data area DESQview should save and restore on context
+ 		switches (0000h = end of list)
+ 02h	DWORD	pointer to area to be saved/restored
 ----------15DE28-----------------------------
-INT 15 - DESQview v2.50+ - ???
+INT 15 U - DESQview v2.50+ - ???
 	AX = DE28h
 	BX = segment of ??? or 0000h for default
 	???
@@ -4373,7 +4765,7 @@ Return: ???
 Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
 SeeAlso: AX=DE2Ah
 ----------15DE29BX0000-----------------------
-INT 15 - DESQview v2.50+ - ???
+INT 15 U - DESQview v2.50+ - ???
 	AX = DE29h
 	BX = 0000h
 	???
@@ -4382,7 +4774,7 @@ Return: CF clear if successful
 	CF set on error
 Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
 ----------15DE29BX0001-----------------------
-INT 15 - DESQview v2.50+ - ???
+INT 15 U - DESQview v2.50+ - ???
 	AX = DE29h
 	BX = 0001h
 	DX = segment of window handle
@@ -4392,7 +4784,7 @@ Return: CF clear if successful
 	CF set on error
 Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
 ----------15DE29BX0002-----------------------
-INT 15 - DESQview v2.50+ - ???
+INT 15 U - DESQview v2.50+ - ???
 	AX = DE29h
 	BX = 0002h
 	DX = segment of window handle
@@ -4402,7 +4794,7 @@ Return: CF clear if successful
 	CF set on error
 Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
 ----------15DE29BX0003-----------------------
-INT 15 - DESQview v2.50+ - ???
+INT 15 U - DESQview v2.50+ - ???
 	AX = DE29h
 	BX = 0003h
 	DX = segment of window handle
@@ -4411,7 +4803,7 @@ Return: CF clear if successful
 	CF set on error
 Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
 ----------15DE29BX0004-----------------------
-INT 15 - DESQview v2.50+ - GET DISPLAY NAME
+INT 15 U - DESQview v2.50+ - GET DISPLAY NAME
 	AX = DE29h
 	BX = 0004h
 	CX = size of buffer in bytes
@@ -4424,7 +4816,7 @@ Return: CF clear if successful
 Notes:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
 	the name ":0" refers to the local display
 ----------15DE29BX0005-----------------------
-INT 15 - DESQview v2.50+ - ???
+INT 15 U - DESQview v2.50+ - ???
 	AX = DE29h
 	BX = 0005h
 	???
@@ -4433,80 +4825,547 @@ Return: CF clear if successful
 	CF set on error
 Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
 ----------15DE2A-----------------------------
-INT 15 - DESQview v2.50+ - ???
+INT 15 - DESQview v2.50+ - "DISPATCHINTAFTERDOS" - INTERRUPT ANOTHER TASK
 	AX = DE2Ah
-	BX = segment of ??? or 0000h for default
-	???
-Return: ???
-Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
-SeeAlso: AX=DE28h,AX=DE2Bh
+	BX = segment of handle for task to interrupt or 0000h for caller
+	DX:CX -> interrupt routine
+	BP,SI,DI,DS,ES as required by interrupt routine
+Return: nothing
+Notes:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+	this call is the same as AX=DE20h except that it will delay
+	  interrupting the specified task until after it has exited DOS
+SeeAlso: AX=1021h,AX=DE20h
 ----------15DE2B-----------------------------
-INT 15 - DESQview v2.50+ - TRAVERSE OBJECT LIST
+INT 15 - DESQview v2.50+ - "OBJNEXT" - TRAVERSE OBJECT LIST
 	AX = DE2Bh
-	ES:DI -> object
+	ES:DI -> starting object
+		0000h:0000h for first object in list???
 Return: AX = status
 	    0000h successful
-	        ES:DI -> next object of same type in circular linked list
+		ES:DI -> next object of same type (window/non-window)
 	    0001h failed (ES:DI was not a valid handle)
-Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+Notes:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+	there are two separate lists, one for window/task objects and one
+	  for all other objects
 SeeAlso: AX=1016h,AX=DE2Ah,AX=DE2Ch
-----------15DE2C-----------------------------
-INT 15 - DESQview v2.50+ - GET WINDOW INFORMATION???
+----------15DE2CDX0100-----------------------
+INT 15 - DESQview v2.50+ - "WININFO" - GET WINDOW INFORMATION
 	AX = DE2Ch
-	DX = 0100h
+	DX = window information format version (0100h for DESQview 2.5x)
 	BX = segment of window handle or 0000h for default
-	ES:DI -> buffer for info (see below)
-Return: AX = status???
+	ES:DI -> buffer for window information (see below)
+Return: AX = status
 	    0000h successful
 Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
-SeeAlso: AX=DE2Bh
+SeeAlso: AX=1000h,AX=DE01h,AX=DE2Bh
 
 Format of window information:
 Offset	Size	Description
  00h	BYTE	task flag: 00h window, 01h task
- 01h	BYTE	process number if task
- 02h	WORD	segment of owner's handle
- 04h	WORD	mapping context???
+ 01h	BYTE	process number if owner task
+ 		00h if non-owner task
+ 02h	WORD	segment of owner's handle, 0000h if orphaned
+ 04h	WORD	mapping context
  06h	BYTE	status
- 		00h waiting
-		01h idle
-		04h pausing
-		0Ah slicing
-		0Bh exit DOS
- 07h	BYTE	???
- 08h	BYTE	01h if DESQview task???
- 09h  2 BYTEs	???
+ 		00h "Waiting" waiting for input
+		01h "Idle" keyboard poll limit reached
+		03h same as 01h
+		04h "Pausing" INT 15/AX=1000h pause called
+		04h direct: user did something to allow task switch
+		05h "ModeChg" video mode about to be changed
+		06h "ModeNtf" notify that video mode changed
+		07h "MoniCh" requested change to other monitor
+		08h "StartPgm" control relinquished to start new process
+		09h "MgrCan" made window manager CANCEL command
+		0Ah "Slicing" time slice expired
+		0Bh "Exit DOS" notify on DOS calls
+		0Ch "Enter DOS" process is re-entering DOS
+		0Dh "Terminate" INT 21/AH=4Ch or task freed
+		0Eh "BrkNxt" Control-Break pressed
+		0Fh "MgrCol" keyboard focus taken away
+		10h "PgmInt" interrupted by API call from another task
+		11h "BldOpen" call to INT 15/AX=DE01h
+ 07h	BYTE	unused
+ 08h	WORD	status bits
+ 		bit 0: DESQview process
+		bit 1: process swapped out
+		bit 2: process is resized direct window (suspended)
+		bit 3: process suspended itself
+		bit 4: user suspended process
+		bit 5: process is being created
+		bit 6: task is freeing another task
+ 0Ah	BYTE	01h if foreground-only window
 ----------15DE2D-----------------------------
-INT 15 - DESQview v2.50+ - GET/SET ??? FUNCTION
+INT 15 U - DESQview v2.50+ - GET/SET SOCKET HANDLER
 	AX = DE2Dh
 	CX = direction
-	    FFFFh set ??? function
-	        DX:BX -> FAR function for ???
-			must contain data storage for a WORD three bytes past
-			the function entry point and a DWORD five bytes past
-			the start
-	    other get ??? function
-Return: DX:BX -> function if CX<>FFFFh on entry
-Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+	    FFFFh set socket handler
+		DX:BX -> FAR function for socket interface
+			must be of the format described under INT 63"DESQview"
+	    other get socket handler
+	    	Return: DX:BX -> socket handler
+Notes:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+	the "set" subfunction is normally called only by SOCKET.DVR
 SeeAlso: AX=DE2Eh,INT 63"DESQview"
 ----------15DE2E-----------------------------
-INT 15 - DESQview v2.50+ - ???
+INT 15 U - DESQview v2.50+ - SOCKET API
 	AX = DE2Eh
-	DX:BX = ??? or 0000h:0000h for default
-Return: CX = ???
-	DX:BX = ???
-Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
-SeeAlso: AX=DE2Dh
----------------------------------------------
-INT 15 - DESQview v2.50+ - ???
+	DX:BX -> socket record or 0000h:0000h to create a new socket record
+Return: CX = size of socket record in bytes
+	DX:BX -> socket record which was used
+Notes:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+	socket records are allocated from common memory
+	for Unix compatibility, each socket and connection on a socket is
+	  allocated a DOS file handle (referencing an SFT for NUL) which is
+	  used on various calls to specify which of possibly multiple
+	  connections is to be operated upon
+SeeAlso: AX=DE2Dh,INT 63"DESQview"
+
+Format of socket record:
+Offset	Size	Description
+ 00h	WORD	signature F0ADh
+ 02h	WORD	function number
+ 		0000h initialize socket???
+		0001h "gethostname"
+		0002h "ioctl" check for input
+		0003h "sleep" delay for specified period
+		0004h "htons" convert word to network (big-endian) byte order
+		0005h "select"
+		0006h "bsd_close"/"so_close" close socket
+		0007h NOP
+		0008h "connect" initiate connection on socket
+		0009h "recv"/"recvfrom" read from socket
+		000Ah "socket"
+		000Bh ???
+		000Ch "gethostbyname"
+		000Dh "send"/"sendto" write to socket
+		000Eh ??? (does something to all connections for process)
+		000Fh "getpid" get process identifier
+		0010h "gettimeofday"
+		0011h "bind" assign name to socket
+		0012h "listen" listen for connections on socket
+		0013h "accept" accept connection on socket
+		0014h connect to X server
+		0015h "gethostbyaddr" get host information for an address
+		0016h "getprotobyname"
+		0017h "getprotobynumber"
+		0018h "getservbyname"
+		0019h "getservbyport"
+		001Ah "getsockname" determine name bound to socket
+		001Bh "getpeername" get name of connected peer
+		001Ch "getsockopt"/"setsockopt"
+		001Dh "so_exit"  close all sockets for calling process
+		001Eh "issock" determine whether file handle references socket
+		001Fh "so_attach" reattach previously detached socket
+		0020h "so_detach" temporarily detach socket
+		0021h get DESQview directory
+		0022h "NewProc" start new application (see AX=102Ch)
+		0023h "so_linkup"
+		0024h canonicalize filename
+ 		0025h indirect INT 15h call
+		0026h Network Manager interface
+		0027h "so_unlink"    close connection from "so_linkup"
+		0028h "raisepriority"
+		0029h "lowerpriority"
+		002Ah ???
+ 		FFFFh "NetExit" (appears to be a NOP)
+ 04h	WORD	returned error code (see below)
+ 06h	WORD	maximum message size??? (usually 0400h)
+ 08h	WORD	PSP segment to use or 0000h if socket not valid
+ 0Ah	WORD	scratch space (JFT size)
+ 0Ch	DWORD	scratch space (JFT address)
+ 10h	DWORD	mailbox handle (initialized by function 0000h)
+ 14h	DWORD	timer object handle (initialized by function 0000h)
+---function 0000h---
+ 18h	WORD	(return) ???
+---function 0001h---
+ 18h	WORD	(return) status???
+ 1Ah 128 BYTEs	(return) ASCIZ hostname (empty string if not on network)
+ 9Ah	WORD	maximum length of hostname to return
+---function 0002h---
+ 18h	WORD	(return) status
+ 1Ah	WORD	socket's file handle
+ 1Ch	WORD	IOCTL function
+ 		05h "FIONREAD" determine available input
+		06h "FIONBIO" set blocking state of socket
+ 1Eh	WORD	(return, subfn 05h) number of bytes available for reading
+ 		(call, subfn 06h) 0000h blocking, nonzero nonblocking
+---function 0003h---
+ 18h  2 BYTEs	unused
+ 1Ah	WORD	delay time in seconds
+---function 0004h---
+ 18h	WORD	(return) result in network (big-endian) byte order
+ 1Ah	WORD	value to convert to network byte order
+---function 0005h---
+ 18h	WORD	(return) number of handles meeting the specified conditions???
+ 1Ah	WORD	number of file handles in each bitset???
+ 1Ch	DWORD	bitset of socket handles to check for readability???
+ 20h	DWORD	bitset of socket handles to check for writability???
+ 24h  	DWORD	bitset of socket handles to check for errors???
+ 28h	WORD	timeout in ??? or 0000h to block until some socket ready
+ 2Ah	DWORD	???
+ 2Eh	DWORD	???
+---function 0006h---
+ 18h	WORD	(return) status: 0000h if successful, FFFFh on error
+ 1Ah	WORD	socket's file handle
+---function 0008h---
+ 18h	WORD	(return) status: 0000h if successful, FFFFh on error
+ 1Ah	WORD	socket's file handle
+ 1Ch	WORD	0001h if socket name specified, 0000h if not
+ 1Eh	WORD	length of socket name
+ 20h  N BYTEs	name of socket to which to connect
+---function 0009h---
+ 18h	WORD	(return) number of bytes actually read, 0000h if connection
+ 			closed, or FFFFh on error
+ 1Ah	WORD	socket's file handle
+ 1Ch	WORD	number of bytes to read
+ 1Eh	WORD	flags
+ 20h	WORD	0000h if no source address desired
+ 		0001h if source address is to be stored (datagram sockets)
+ 22h	WORD	length of source address
+ 24h 110 BYTEs	source address
+ 92h 1K BYTEs	buffer for data to be read
+---function 000Ah---
+ 18h	WORD	(return) socket's file handle or FFFFh on error
+ 1Ah	WORD	address family (0001h,0002h)
+ 1Ch	WORD	socket type
+ 1Eh	WORD	protocol
+---function 000Bh---
+ 18h	WORD	(return) 0001h if ??? or FFFFh on error
+ 1Ah	WORD	socket's file handle
+ 1Eh	WORD	(call) ???
+---function 000Ch---
+ 18h 128 BYTEs	buffer containing ASCIZ hostname
+ 		special case if empty string or "unix"
+ 98h	???	'struct hostent' ???
+ A2h	???	(return) ???
+---function 000Dh---
+ 18h	WORD	(return) number of bytes actually written or FFFFh on error
+ 1Ah	WORD	socket's file handle
+ 1Ch	WORD	number of bytes to write
+ 1Eh	WORD	number of bytes to follow in subsequent writes???
+ 20h	WORD	flags
+ 22h	WORD	0000h if no destination specified, 0001h if destination present
+ 24h	WORD	???
+ 26h	WORD	length of destination address
+ 28h 110 BYTEs	destination address
+ 96h 1K BYTEs	buffer containing data to be written
+---function 000Eh---
+ no additional fields
+---function 000Fh---
+ 18h	DWORD	(return) DESQview task handle of calling process
+---function 0010h---
+ 18h	DWORD	(return) current time
+ 1Ch	DWORD	(return) ???
+---function 0011h---
+ 18h	WORD	(return) status: 0000h if successful, FFFFh on error
+ 1Ah	WORD	socket's file handle
+ 1Ch	WORD	length of name
+ 1Eh  N BYTEs	buffer for socket name
+---function 0012h---
+ 18h	WORD	(return) status: 0000h if successful, FFFFh on error
+ 1Ah	WORD	socket's file handle
+ 1Ch	WORD	maximum backlog of pending connections allowed on socket
+---function 0013h---
+ 18h	WORD	(return) file handle for new connection or FFFFh on error
+ 1Ah	WORD	listen()ing socket's file handle
+ 1Ch	WORD	(call) length of buffer for connecting entity's address
+ 		(return) actual length of address
+ 1Eh  N BYTEs	buffer for connecting entity's address
+---function 0014h---
+ 18h	WORD	(return) socket's file handle or FFFFh on error
+ 1Ah  4 BYTEs	(return) ???
+ 1Eh	WORD	(return) ???
+ 20h	WORD	(return) ???
+ 22h 256 BYTEs	ASCIZ X display name
+122h	???
+---function 0015h---
+ 18h	WORD	(call) type of address??? (test for 0001h seen)
+ 1Ah	WORD	(call) length of buffer for host address
+ 1Ch 110 BYTEs	buffer containing host address
+ 8Ah	WORD	(return) offset of official host name???
+ 8Ch	WORD	(return) offset of alias list???
+ 8Eh	WORD	(return) address type???
+ 90h	WORD	(return) length of an address in bytes???
+ 92h	WORD	(return) offset of address???
+ 9Ah  N BYTEs	(return) ??? buffer for hostname, alias list, and host address
+---function 0016h---
+ 18h	???	buffer for protocol name???
+ 98h	???
+---function 0017h---
+ 18h	WORD	(call) protocol number???
+ 1Ah	WORD	(return) ??? or 0001h
+---function 0018h---
+ 18h 128 BYTEs	buffer containing ???
+ 98h 128 BYTEs	buffer containing ???
+118h	WORD	(return) ???
+---function 0019h---
+ 18h	WORD	length of name???
+ 1Ah 128 BYTEs	buffer for name???
+ 9Ah	WORD	(return) ???
+---function 001Ah---
+ 18h	WORD	(return) 0000h if successful, FFFFh on error
+ 1Ah	WORD	socket's file handle
+ 1Ch	WORD	(call) length of buffer for socket name
+ 		(return) actual length of socket name
+ 1Eh  N BYTEs	buffer for socket name
+---function 001Bh---
+ 18h	WORD	(return) status: 0000h if successful, FFFFh on error
+ 1Ah	WORD	socket's file handle
+ 1Ch	WORD	(call) size of buffer for name
+ 		(return) actual size of name
+ 1Eh  N BYTEs	buffer for peer's name
+---function 001Ch---
+ 18h	WORD	(return) status: 0000h if successful, FFFFh on error
+ 1Ah	WORD	direction: 0000h to get, 0001h to set
+ 1Ch	WORD	socket's file handle
+ 1Eh	WORD	option level
+ 20h	WORD	option name
+ 22h	WORD	(call) length of buffer for option value
+ 		(return) actual length of option value
+ 24h  N BYTEs	buffer for option value
+---function 001Dh---
+ no additional fields
+---function 001Eh---
+ 18h	WORD	(return) status: 0000h ??? or 0001h ???
+ 1Ah	WORD	file handle which may or may not be a socket
+---function 001Fh---
+ 18h	WORD	(return) file handle or FFFFh on error
+ 1Ah	DWORD	(call) pointer to Socket Context Record (see below) of a
+ 			previously detached socket
+---function 0020h---
+ 18h	WORD	(return) status: 0000h if successful or FFFFh on error
+ 1Ah	WORD	socket's file handle
+ 1Ch	DWORD	(return) pointer to Socket Context Record (see below) for
+ 			the file handle
+---function 0021h---
+ 18h 64 BYTEs	buffer for DESQview startup directory (see AX=DE25h)
+---function 0022h---
+ 18h	DWORD	(return) task handle of new application
+ 1Ch	WORD	size of .DVP data
+ 1Eh 129 BYTEs	ASCIZ ???
+ 9Fh  N BYTEs	.DVP data (see AX=102Ch)
+---function 0023h---
+ 18h	WORD	(return) ??? or FFFFh on error
+ 1Ah	WORD	socket's file handle???
+---function 0024h---
+ 18h	WORD	(return) DOS error code (see INT 21/AH=59h)
+ 			0000h if successful
+ 1Ah 129 BYTEs	ASCIZ filename/pathname
+11Bh 129 BYTEs	ASCIZ canonicalized filename/pathname (see INT 21/AH=60h)
+---function 0025h---
+ 18h	WORD	value of AX
+ 1Ah	WORD	value of BX
+ 1Ch	WORD	(call) value of CX for call if AH value other than 12h
+ 		(call) number of stack parameters if AH value is 12h
+		(return) returned CX for calls other than INT 15/AH=12h
+ 1Eh	WORD	value of DX
+ 20h	WORD	value of DI
+ 22h	WORD	value of SI
+ 24h	WORD	value of DS
+ 26h	WORD	value of ES
+ 28h	WORD	(return) value of FLAGS after call
+ 2Ah  N DWORDs	(call) stack parameters for INT 15/AH=12h call
+ 		(return) stack results from INT 15/AH=12h call
+---function 0026h---
+ 18h	WORD	(call) subfunction
+ 			0004h "so_exit"???
+ 			0005h "gethostbyname"
+			0006h "gethostname"
+			0009h "socket"
+			000Dh "gethostbyaddr"
+			000Fh "getprotobyname"
+			0010h get protocol name for protocol number
+			0011h "getservbyname"
+			0012h "getservbyport"
+			0013h "getsockname"???
+			0016h ???
+			0017h kill Network Manager
+			0018h "getpeername"???
+			0019h ??? (called by socket function 0000h)
+			001Ah ???
+			001Bh "so_linkup"
+			001Dh get network services
+ 			001Fh "getpwuid"
+			0020h "getpwnam"
+			0021h "getpwvar"
+			0022h "crypt"
+			0023h "so_unlink"
+			0024h "getlogin"
+			0028h "sethostent"
+			0029h "gethostent"
+			002Ah "soaddhost"
+			002Bh "soupdatehost"
+			002Ch "sodeletehost"
+			002Dh "setservent"
+			002Eh "getservent"
+			002Fh "setpwent"
+			0030h "getpwent"
+			0031h ???
+			0032h ???
+			0033h ???
+			0034h get IP network number
+			0035h ??? (pops up Network Manager window)
+			0037h ???
+			0038h get machine name and IP address
+			0039h ???
+ 		(return) status???
+ 1Ah	WORD	(call) size of parameter data
+ 		(return) size of returned data
+ 1Ch  N BYTEs	(call) parameter data required by call (see below)
+ 		(return) result data (see below)
+---function 0027h---
+ 18h	WORD	(return) status: 0000h if successful, FFFFh on error
+ 1Ah	WORD	socket's file handle
+---functions 0028h,0029h---
+ 18h	WORD	(call) file handle for which to set priority low/high
+ 			FFFFh to change calling task's priority
+---function 002Ah---
+ no additional fields
+
+Format of Function 0026h/Subfunction 000Fh data:
+Offset	Size	Description
+ 00h  8 BYTEs	(return) ???
+
+Format of Function 0026h/Subfunction 0010h data:
+Offset	Size	Description
+ 00h  2 BYTEs	(return) ???
+ 02h	WORD	(return) protocol number
+ 04h	WORD	(call) protocol number for which to get name
+ 06h	WORD	(return) ???
+ 08h	var	(return) ASCIZ protocol name
+ N	var	(return) ASCIZ protocol name
+
+Format of Function 0026h/Subfunction 0011h data:
+Offset	Size	Description
+ 00h  8 BYTEs	???
+ 08h	var	(return) ASCIZ protocol name
+	var	(return) ASCIZ ??? name
+	var	(return) ASCIZ ??? name
+
+Format of Function 0026h/Subfunction 0012h data:
+Offset	Size	Description
+ 00h  8 BYTEs	(return) ???
+
+Format of Function 0026h/Subfunction 0013h data:
+Offset	Size	Description
+ 00h 116 BYTEs	(return) ???
+
+Format of Function 0026h/Subfunction 0016h data:
+Offset	Size	Description
+ 00h  4 BYTEs	(return) ???
+
+Format of Function 0026h/Subfunction 0018h data:
+Offset	Size	Description
+ 00h 116 BYTEs	(return) ???
+
+Format of Function 0026h/Subfunction 0019h data:
+Offset	Size	Description
+ 00h  4 BYTEs	(return) ???
+ 04h	DWORD	(return) task handle of ???
+
+Format of Function 0026h/Subfunction 001Ah data:
+Offset	Size	Description
+ 00h 38 BYTEs	(return) ???
+
+Format of Function 0026h/Subfunction 001Bh data:
+Offset	Size	Description
+ 00h 10 BYTEs	(return) ???
+
+Format of Function 0026h/Subfunction 001Dh return data [array]:
+Offset	Size	Description
+ 00h  	WORD	??? or FFFFh if end of array
+ 02h  7 BYTEs	???
+ 09h 27 BYTEs	ASCIZ name of service
+
+Format of Function 0026h/Subfunction 0024h return data:
+Offset	Size	Description
+ 00h	var	ASCIZ username
+
+Format of Function 0026h/Subfunction 0030h data:
+Offset	Size	Description
+ 00h	WORD	(call) UID or 0000h for current user
+ 		(return) ???
+ 02h	WORD	(return) UID
+ 04h  6 BYTEs	(return) ???
+ 0Ah	var	(return) ASCIZ username
+ 	var	(return) ASCIZ encrypted password
+	var	(return) ASCIZ initial ("home") directory
+
+Format of Function 0026h/Subfunction 0034h data:
+Offset	Size	Description
+ 00h  1-3 BYTEs	IP network number of caller's machine (low byte first)
+
+Format of Function 0026h/Subfunction 0038h return data:
+Offset	Size	Description
+ 00h	BYTE	???
+ 01h  4 BYTEs	IP address
+ 05h	var	ASCIZ machine name
+ 	???
+
+Values for error code:
+ 0000h successful
+ 0009h "BADF" bad file handle
+ 000Ch "ENOMEM" out of memory
+ 000Eh "EFAULT" bad address
+ 0016h "EINVAL" invalid argument
+ 0018h "EMFILE" too many open files
+ 0020h "EPIPE" ??? broken pipe
+ 0023h "EWOULDBLOCK" operation cannot be completed at this time
+ 0024h "EINPROGRESS" operation now in progress
+ 0026h "ENOTSOCK" socket invalid
+ 0028h "EMSGSIZE" message too long to send atomically
+ 002Ch "ESOCKTNOSUPPORT" socket type not supported
+ 002Fh "EAFNOSUPPORT" address family not supp. by protocol fam.
+ 0031h "EDOM" argument too large
+ 0038h "EISCONN" socket is already connected
+ 0039h "ENOTCONN" socket is not connected
+
+Format of Socket Context Record:
+Offset	Size	Description
+ 00h	DWORD	pointer to next Socket Context Record, 0000h:0000h if last
+ 04h	WORD	SFT index for socket, 00FFh if not connected, FFFFh if detached
+ 06h	WORD	PSP segment of owner or 0000h
+ 08h	WORD	mapping context of owning window
+ 0Ah  2 BYTEs	???
+ 0Ch	WORD	address family
+ 0Eh 	WORD	socket type
+ 10h	WORD	protocol
+ 12h	WORD	socket state
+ 		0001h created
+		0002h bound
+ 		0003h listening???
+ 		0005h connected
+ 14h	DWORD	timer object handle
+ 18h	DWORD	object handle (mailbox???)
+ 1Ch	DWORD	object handle of parent of above object or 0000h:0000h
+ 20h	DWORD	pointer to ??? or 0000h
+ 24h  6 BYTEs	???
+ 2Ah	WORD	file handle for socket or FFFFh
+ 2Ch  2 BYTEs	???
+ 2Eh	WORD	nonzero if socket nonblocking
+---network connections only---
+ 30h  2 BYTEs	???
+ 32h	WORD	???
+ 34h  4 BYTEs	IP address of remote (big-endian)
+ 38h  6 BYTEs	???
+----------15DE2F-----------------------------
+INT 15 - DESQview v2.50+ - "VIDEONOTIFY" - HAS DIRECT WINDOW BEEN ACTIVE?
 	AX = DE2Fh
-Return: BL = ??? (00h,01h)
-Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+Return: BX = status
+	    0001h keyboard focus has been given to a direct window since the
+	    	last call
+	    0000h if not
+Notes:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+	Quarterdeck states that this call will not be available under future
+	  versions of DESQview Classic
 ----------15DE30-----------------------------
-INT 15 - DESQview v2.50+ - GET DESQview/X VERSION
+INT 15 - DESQview v2.50+ - "GETDVXVERSION" - GET DESQview/X VERSION
 	AX = DE30h
 Return: BX = version (BH=major, BL=minor) or 0000h if not DESQview/X
-Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+Notes:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+	you must first check the DESQview version to verify that it is 2.50 or
+	  greater
 SeeAlso: INT 21/AH=2Bh/CX=4445h
 ----------15E00F-----------------------------
 INT 15 - Compaq Systempro - MULTIPROCESSOR DISPATCH
@@ -5137,7 +5996,7 @@ Return: AX = CAFFh if installed
 Note:	EGAPAL is a TSR supplied with STACKEY which makes EGA palette settings
 	  permanent across mode switches
 SeeAlso: AX=CA00h/BX=7670h
-----------16CA--BX7670-----------------------
+----------16CA00BX7670-----------------------
 INT 16 - CtrlAlt Associates VGAPAL.COM v1.00 - INSTALLATION CHECK
 	AX = CA00h
 	BX = 7670h ("vp")
@@ -5258,10 +6117,10 @@ INT 16 - Compaq 80286s - SET CPU SPEED LIMIT (OVERRIDE JUMPER)
 SeeAlso: AH=F0h,AH=F1h
 ----------16F398-----------------------------
 INT 16 U - NORTON GUIDES - INSTALLATION CHECK
-        AX = F398h
+	AX = F398h
 Return: AX = 6A73h ("js")
-        BH = scan code of current hot key
-        BL = ASCII code of current hot key
+	BH = scan code of current hot key
+	BL = ASCII code of current hot key
 Note:	NG.EXE was written by John Socha
 ----------16F400-----------------------------
 INT 16 - Compaq Systempro - CACHE CONTROLLER STATUS
@@ -7150,15 +8009,19 @@ INT 18 - NEC PC-9800 series - KEYBOARD - GET SHIFT STATUS
 	AH = 02h
 Return: AL = shift flags
 SeeAlso: AH=00h,AH=02h,AH=03h,AH=04h,INT 16/AH=02h
-----------18---------------------------------
-INT 18 - NEC PC-9800 series - KEYBOARD
-	AH = function
-	    03h initialize keyboard
-	    04h key pressed
+----------1803-------------------------------
+INT 18 - NEC PC-9800 series - KEYBOARD - INITIALIZE
+	AH = 03h
+	???
+Return: ???
+SeeAlso: AH=00h,AH=04h
+----------1804-------------------------------
+INT 18 - NEC PC-9800 series - KEYBOARD - KEY PRESSED
+	AH = 04h
 	???
 Return: ???
 Note:	details are not available at this time
-SeeAlso: INT 16/AH=00h,INT 16/AH=01h,INT 16/AH=02h
+SeeAlso: AH=00h,AH=02h,INT 16/AH=00h,INT 16/AH=01h,INT 16/AH=02h
 ----------18---------------------------------
 INT 18 - NEC PC-9800 series - VIDEO
 	AH = function
@@ -7252,8 +8115,9 @@ Values for operating system indicator:
  07h Advanced Unix
  08h AIX bootable partition, SplitDrive
  09h AIX data partition
- 09h Coherent
+ 09h Coherent filesystem
  0Ah OPUS
+ 0Ah Coherent swap partition
  10h OPUS
  40h VENIX 80286
  50h Disk Manager, read-only partition
@@ -7418,200 +8282,228 @@ Notes:	WordPerfect 5.0 will call this interrupt at start up to determine if a
 			BX = 0 or segment address of buffer with key codes
 	See the "WordPerfect 5.0 Developer's Toolkit" for further information.
 SeeAlso: INT 16/AX=5500h
-----------1A---------------------------------
-INT 1A - SNAP.EXE - API
-	AH = function (60h-64h,69h-78h) (see individual entries below)
-	AL = number of words on stack (00h-09h or FFh; FFh is same as 00h)
-	STACK: appropriate arguments
-Return: AX = status
-	    0000h successful
-	    FFFFh failed (invalid function/parameter)
-	STACK unchanged
 ----------1A6108-----------------------------
-INT 1A - SNAP.EXE - ???
+INT 1A - SNAP.EXE 3.2+ - "SNAP_SENDWITHREPLY" - SEND MSG AND GET REPLY
 	AX = 6108h
-	STACK:	WORD	index of ??? (0000h-0009h)
-		DWORD	pointer to ???
-		WORD	???
-		DWORD	pointer to ???
-		WORD	???
-		WORD	???
-Return: ???
+	STACK:	WORD	conversation ID (0000h-0009h)
+		DWORD	pointer to message buffer
+		WORD	length of message
+		DWORD	pointer to reply buffer
+		WORD	length of reply buffer
+		WORD	0000h (use default "Cparams" structure)
+Return: AX = status (see below)
 	STACK unchanged
-Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
-	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+Program: SNAP.EXE is a TSR written by IBM and Carnegie Mellon University
+	  which implements the Simple Network Application Protocol
+SeeAlso: AX=6205h
+
+Values for status:
+ 0000h successful
+ F830h "SNAP_ABORTED"
+ FC04h "SNAP_SERVERDIED"
+ FC05h "SNAP_RESEND"
+ FC06h "SNAP_SELECTFAILED"
+ FC07h "SNAP_WRONGVERSION"
+ FC08h "SNAP_INVALIDACK"
+ FC09h "SNAP_TIMEOUT"
+ FC0Ah "SNAP_SERVERREJECT"
+ FC0Bh "SNAP_NOREPLYDUE"
+ FC0Ch "SNAP_NOAUTHENTICATE"/"SNAP_GUARDIAN_ERROR"
+ FC0Dh "SNAP_NOINIT"
+ FC0Eh "SNAP_SOCKETERROR"
+ FC0Fh "SNAP_BUFFERLIMIT"
+ FC10h "SNAP_INVALIDCID"
+ FC11h "SNAP_INVALIDOP"
+ FC12h "SNAP_XMITFAIL"
+ FC13h "SNAP_NOMORERETRIES"
+ FC14h "SNAP_BADPARMS"
+ FC15h "SNAP_NOMEMORY"
+ FC16h "SNAP_NOMORECONVS"
+ FFFFh failed (invalid function/parameter)
 ----------1A6205-----------------------------
-INT 1A - SNAP.EXE - ???
+INT 1A - SNAP.EXE 3.2+ - "SNAP_SENDNOREPLY" - SEND MSG, DON'T AWAIT REPLY
 	AX = 6205h
-	STACK:	WORD	index of ??? (0000h-0009h)
-		DWORD	pointer to ???
-		WORD	???
-		WORD	???
-Return: ???
+	STACK:	WORD	conversation ID (0000h-0009h)
+		DWORD	pointer to message
+		WORD	length of message
+		WORD	0000h (use default "Cparms" structure)
+Return: AX = status (see AX=6108h)
 	STACK unchanged
-Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
-	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+SeeAlso: AX=6108h
 ----------1A6308-----------------------------
-INT 1A - SNAP.EXE - ???
+INT 1A - SNAP.EXE 3.2+ - "SNAP_BEGINCONV" - BEGIN CONVERSATION
 	AX = 6308h
-	STACK:	8 WORDs	???
+	STACK:	WORD	offset of ASCIZ "guardian"
+		WORD	offset of ASCIZ hostname
+		WORD	offset of ASCIZ server name
+		WORD	offset of ASCIZ userid
+		WORD	offset of ASCIZ password
+		WORD	offset of password length
+		WORD	offset of password type
+		WORD	offset of "Cparms" structure (see below)
 Return: ???
 	STACK unchanged
-Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
-	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+Note:	all stacked offsets are within the SNAP data segment (use AX=6A01h
+	  to allocate a buffer)
+SeeAlso: AX=6405h,AX=7202h
+
+Format of Cparms structure:
+Offset	Size	Description
+ 00h	WORD	retry delay in seconds
+ 02h	WORD	timeout delay in seconds
+ 04h	WORD	maximum buffer size
+ 06h	WORD	encryption level
 ----------1A6405-----------------------------
-INT 1A - SNAP.EXE - ???
+INT 1A - SNAP.EXE 3.2+ - "SNAP_ENDCONV" - END CONVERSATION
 	AX = 6405h
-	STACK:	5 WORDs	???
-Return: ???
+	STACK:	WORD	conversation ID (0000h-0009h)
+		DWORD	pointer to message buffer
+		WORD	length of message
+		WORD	0000h (use default "Cparms" structure)
+Return: AX = status (see AX=6108h)
 	STACK unchanged
-Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
-	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+Program: SNAP.EXE is a TSR written by IBM and Carnegie Mellon University
+	  which implements the Simple Network Application Protocol
+SeeAlso: AX=6308h
 ----------1A6900-----------------------------
-INT 1A - SNAP.EXE - GET RESIDENT DATA SEGMENT
+INT 1A - SNAP.EXE 3.2+ - "SNAP_DATASEG" - GET RESIDENT DATA SEGMENT
 	AX = 6900h
 Return: AX = value used for DS by resident code
-Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
-	  Mellon University customized version of FTP, Inc.'s PC/TCP.
-SeeAlso: AX=6F01h
+SeeAlso: AX=6A01h,AX=6F01h
 ----------1A6A01-----------------------------
-INT 1A - SNAP.EXE - ???
+INT 1A - SNAP.EXE 3.2+ - "SNAP_ALLOC" - ALLOCATE BUFFER IN SNAP DATA SEGMENT
 	AX = 6A01h
-	STACK:	WORD	???
-Return: AX = ???
-	???
+	STACK:	WORD	number of bytes to allocate
+Return: AX = offset of allocated buffer or 0000h if out of memory
 	STACK unchanged
-Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
-	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+Program: SNAP.EXE is a TSR written by IBM and Carnegie Mellon University
+	  which implements the Simple Network Application Protocol
+SeeAlso: AX=6B01h
 ----------1A6B01-----------------------------
-INT 1A - SNAP.EXE - SET ???
+INT 1A - SNAP.EXE 3.2+ - "SNAP_FREE" - DEALLOCATE BUFFER IN SNAP DATA SEGMENT
 	AX = 6B01h
-	STACK:	WORD	offset within ??? of ???
+	STACK:	WORD	offset within SNAP data segment of previously allocated
+			buffer
 Return:	STACK unchanged
-Notes:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
-	  Mellon University customized version of FTP, Inc.'s PC/TCP.
-	this call is a NOP if the specified offset is 0000h
+Note:	this call is a NOP if the specified offset is 0000h
+SeeAlso: AX=6A01h
 ----------1A6C04-----------------------------
-INT 1A - SNAP.EXE - SET ???
+INT 1A - SNAP.EXE 3.2+ - "SNAP_COPYTO" - COPY DATA TO RESIDENT SNAP PACKAGE
 	AX = 6C04h
-	STACK:	WORD	offset within ??? of destination (nonzero)
+	STACK:	WORD	offset within SNAP data segment of dest (nonzero)
 		WORD	segment of source buffer
 		WORD	offset of source buffer
 		WORD	number of bytes to copy
 Return: AX = offset of byte after last one copied to destination
 	STACK unchanged
-Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
-	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+Program: SNAP.EXE is a TSR written by IBM and Carnegie Mellon University
+	  which implements the Simple Network Application Protocol
 SeeAlso: AX=6D04h
 ----------1A6D04-----------------------------
-INT 1A - SNAP.EXE - GET ???
+INT 1A - SNAP.EXE 3.2+ - "SNAP_COPYFROM" - COPY DATA FROM RESIDENT SNAP PACKAGE
 	AX = 6D04h
-	STACK:	WORD	offset within ??? of source
+	STACK:	WORD	offset within SNAP data segment of source buffer
 		WORD	segment of destination buffer
 		WORD	offset of destination buffer
 		WORD	number of bytes to copy
 Return: AX = offset of byte after last one copied from source
 	buffer filled
 	STACK unchanged
-Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
-	  Mellon University customized version of FTP, Inc.'s PC/TCP.
 SeeAlso: AX=6C04h
 ----------1A6E01-----------------------------
-INT 1A - SNAP.EXE - SET ???
+INT 1A - SNAP.EXE 3.2+ - "SNAP_SETDEBUG" - SET ???
 	AX = 6E01h
 	STACK:	WORD	new value for ???
 Return:	AX = old value of ???
 	STACK unchanged
-Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
-	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+Program: SNAP.EXE is a TSR written by IBM and Carnegie Mellon University
+	  which implements the Simple Network Application Protocol
 ----------1A6F01-----------------------------
-INT 1A - SNAP.EXE - INSTALLATION CHECK
+INT 1A - SNAP.EXE 3.2+ - "SNAP_CHKINSTALL" - INSTALLATION CHECK
 	AX = 6F01h
 	STACK: WORD 0000h
 Return: AX = status
 	    0000h SNAP is resident
 	    other SNAP not present
 	STACK unchanged
-Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
-	  Mellon University customized version of FTP, Inc.'s PC/TCP, and is
+Program: SNAP.EXE is a TSR written by IBM and Carnegie Mellon University
+	  which implements the Simple Network Application Protocol, and is
 	  required by PCVENUS (a network shell).  The combination of SNAP and
 	  PCVENUS allows the use of the Andrew File System as one or more
 	  networked drives.
 SeeAlso: AX=6900h,AX=7400h
 ----------1A7002-----------------------------
-INT 1A - SNAP.EXE - SET ???
+INT 1A - SNAP.EXE 3.2+ - "SNAP_SETANCHOR"
 	AX = 7002h
-	STACK:	WORD	index of ??? (0000h-0009h)
-		WORD	new value for ???
+	STACK:	WORD	anchor number (0000h-0009h)
+		WORD	new value for the anchor
 Return: AX = status
 	    0000h successful
 	    FFFFh failed (top word on stack not in range 00h-09h)
 	STACK unchanged
-Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
-	  Mellon University customized version of FTP, Inc.'s PC/TCP.
 SeeAlso: AX=7101h
 ----------1A7101-----------------------------
-INT 1A - SNAP.EXE - GET ???
+INT 1A - SNAP.EXE 3.2+ - "SNAP_GETANCHOR"
 	AX = 7101h
-	STACK:	WORD	index of ??? (0000h-0009h)
-Return:	AX = ???
+	STACK:	WORD	anchor number (0000h-0009h)
+Return:	AX = anchor's value
 	STACK unchanged
-Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
-	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+Program: SNAP.EXE is a TSR written by IBM and Carnegie Mellon University
+	  which implements the Simple Network Application Protocol
 SeeAlso: AX=7002h
 ----------1A7202-----------------------------
-INT 1A - SNAP.EXE - ???
+INT 1A - SNAP.EXE 3.2+ - "SNAP_SETCONVPARMS" - SET CONVERSATION PARAMETERS
 	AX = 7202h
-	STACK:	WORD	index of ??? (0000h-0009h)
-		WORD	offset within resident data segment of ???
-Return:	AX = ???
+	STACK:	WORD	conversation ID (0000h-0009h)
+		WORD	offset within resident data segment of "Cparms"
+			structure (see AX=6308h)
+Return:	AX = status???
 	STACK unchanged
-Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
-	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+SeeAlso: AX=6308h
 ----------1A7302-----------------------------
-INT 1A - SNAP.EXE - ???
+INT 1A - SNAP.EXE 3.2+ - "SNAP_CLIENTVERSION" - ???
 	AX = 7302h
-	STACK:	WORD	index of ??? (0000h-0009h)
+	STACK:	WORD	conversation ID (0000h-0009h)
 		WORD	offset within resident data segment of ???
 Return:	AX = ???
 	???
 	STACK unchanged
-Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
-	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+SeeAlso: AX=7400h
 ----------1A7400-----------------------------
-INT 1A - SNAP.EXE - GET VERSION
+INT 1A - SNAP.EXE 3.2+ - "SNAP_VERSION" - GET VERSION
 	AX = 7400h
 Return: AX = version (AH=major, AL=minor)
-Notes:	this call is only valid if SNAP is installed
-   	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
-	  Mellon University customized version of FTP, Inc.'s PC/TCP.
-SeeAlso: INT 1A/AX=6F01h
+Note:	this call is only valid if SNAP is installed
+SeeAlso: AX=7302h,INT 1A/AX=6F01h
 ----------1A75-------------------------------
-INT 1A - SNAP.EXE - ???
+INT 1A - SNAP.EXE 3.2+ - "SNAP_NOP" - ???
 	AH = 75h
 	AL = ???
 Return: AX = ??? (0000h)
-Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
-	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+Program: SNAP.EXE is a TSR written by IBM and Carnegie Mellon University
+	  which implements the Simple Network Application Protocol
+----------1A76-------------------------------
+INT 1A - SNAP.EXE 3.2+ - "SNAP_802_5" - ???
+	AH = 76h
+	AL = ???
+Return: AX = ???
 ----------1A77-------------------------------
-INT 1A - SNAP.EXE - ???
+INT 1A - SNAP.EXE 3.4 - ???
 	AH = 77h
 	AL = ??? (at least 01h)
 	STACK:	WORD	???
 		???
 Return: ???
 	STACK unchanged
-Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
-	  Mellon University customized version of FTP, Inc.'s PC/TCP.
 ----------1A7802-----------------------------
-INT 1A - SNAP.EXE - ???
+INT 1A - SNAP.EXE 3.4 - ???
 	AX = 7802h
 	STACK:	WORD	???
 		WORD	???
 Return: ???
 	STACK unchanged
-Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
-	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+Program: SNAP.EXE is a TSR written by IBM and Carnegie Mellon University
+	  which implements the Simple Network Application Protocol
 ----------1A7F-------------------------------
 INT 1A - Tandy 2500, Tandy 1000L series - DIGITAL SOUND???
 	AH = 7Fh
@@ -7886,3 +8778,4 @@ INT 1F - SYSTEM DATA - 8x8 GRAPHICS FONT
 Note:	graphics data for characters 00h-7Fh stored at F000h:FA6Eh in 100%
 	  compatible BIOSes
 SeeAlso: INT 10/AX=5000h,INT 43
+---------------------------------------------

@@ -1,0 +1,544 @@
+GLOSSARY
+Last Change 9/13/92.
+
+A20
+	(Address line 20) The 80286 and higher CPUs allow addresses in
+real mode to extend slightly beyond the one megabyte mark, which causes
+an incompatibility with some older programs which expect such addresses
+to wrap back to the beginning of the address space.  For complete
+compatibility with the 8088, newer machines thus contain circuitry
+which permits the twenty-first address line (A20) to be disabled.  The
+CPU then effectively has only twenty address lines in real mode, just
+as the 8088 does, and addresses which would extend beyond the one
+megabyte mark wrap to the beginning of the address space.  See also
+High Memory Area, Real Mode.
+
+ABIOS
+	(Advanced BIOS) The IBM XT/286 and PS/2 models with 80286 or
+higher processors contain two separate BIOSes.  The ABIOS is a
+protected-mode BIOS which is used by OS/2.  For machines without an
+ABIOS, such as the IBM AT, OS/2 loads the equivalent of the ABIOS from
+disk.  see also CBIOS
+
+API
+	(Application Program[ming] Interface) The defined set of calls
+which a program may make to interact with or request services of the
+operating system or environment under which it is running.  Because the
+inputs and outputs of the calls are well-defined, a program using the
+API can continue using the identical calls even if the internal
+organization of the program providing the API changes.
+
+APL
+	(A Programming Language) An interactive, mathematically-
+oriented language which is well-suited to manipulating matrices.
+Originally using greek letters and numerous special symbols, thus
+requiring a special display, versions are now available which use
+keywords in place of the special symbols.
+
+ASCIZ
+	A NUL-terminated ASCII string.  The ASCIZ string "ABC" consists
+of the four bytes 41h, 42h, 43h, and 00h.
+
+AVATAR
+	(Advanced Video Attribute Terminal Assembler and Recreator) A
+set of control codes which may be used to affect the output of
+characters to the screen on systems equipped with an appropriate
+driver.  Similar in intent to ANSI sequences, AVATAR has shorter
+command sequences and provides additional PC-specific functionality.
+AVATAR is primarily used by the Opus and Maximus bulletin board systems
+(it was designed by one of the developers of the Opus system).
+
+BASIC
+	(Beginner's All-purpose Symbolic Instruction Code) A
+programming language originally designed as a means of teaching
+FORTRAN.  There are many variations of BASIC with differing
+capabilities; the majority are interpreted but compiled BASIC is
+becoming more popular.  All genuine IBM personal computers (including
+the latest PS/2 models) come equipped with a cassette-based BASIC
+interpreter in ROM.
+
+BCD
+	(Binary Coded Decimal) A method of data storage where two
+decimal digits are stored in each byte, one in the upper four bits and
+the other in the lower four bits.  Since only the values 0 through 9
+are used in each half of a byte, BCD values can be read as decimal
+numbers on a hexadecimal display of memory or a file.
+
+Big-Endian
+	One of the two major ways of organizing multi-byte numeric
+values in memory.  A big-endian layout places the most significant byte
+of the value in the lowest (first) memory location, i.e. 12345678h is
+stored as 12h 34h 56h 78h.  Motorola processors are big-endian.  Compare
+Little-Endian.
+
+BIOS
+	(Basic Input/Output System) A set of standardized calls giving
+low-level access to the hardware.  The BIOS is the lowest software
+layer above the actual hardware and serves to insulate programs (and
+operating systems) which use it from the details of accessing the
+hardware directly.
+
+BIOS Parameter Block
+	The BIOS Parameter Block stores the low-level layout of a
+drive.  See also INT 21h Function 53h.
+
+Boot
+	To start up the computer or operating system. The term "boot"
+is a contraction of "bootstrap", which in turn comes from the
+expression "to lift oneself by one's boot straps."  The ROM BIOS on IBM
+PCs and compatibles reads in the first sector of the disk, which
+contains a short (less than 500 bytes) program that reads in a portion
+of the operating system, which in turn reads in the remainder of the
+operating system.
+
+Boot Drive
+	The disk drive from which the operating system was booted.  See
+also Boot.
+
+BPB
+	see BIOS Parameter Block
+
+Breakpoint
+	When debugging, a memory location which when accessed causes a
+break in the normal flow of execution and the invocation of the
+debugger.  Used to let a program run at full speed until a certain
+instruction is reached or (less frequently) a particular data item is
+accessed or changed.
+
+Cache
+	Caching is a method of increasing performance by keeping
+frequently-used data in a location which is more quickly accessed. The
+most common caches are disk caches (store disk sectors in RAM) and RAM
+caches (store portions of main memory in special high-speed RAM which
+may be accessed as fast as the CPU is capable of accessing memory).
+
+CAS
+	see Communicating Applications Specification
+
+CBIOS
+	(Compatibility BIOS) The IBM XT/286 and PS/2 models with 80286
+or higher processors contain two separate BIOSes.  The CBIOS is a
+real-mode BIOS which is compatible with the earlier products in the IBM
+PC family and PS/2 models with 8086 processors.  see also ABIOS
+
+CDS
+	see Current Directory Structure
+
+CGA
+	(Color/Graphics Adapter) One of the two video display boards
+introduced together with the original IBM PC. see also MDA
+
+Clock Tick
+	1/18.2 second, or approximately 55 milliseconds.  This is the
+rate at which the IBM PC's system clock is updated.
+
+CMOS
+	(Complementary Metal-Oxide-Silicon) A type of integrated
+circuit design known for its low power consumption.
+
+Communicating Applications Specification
+	DCA and Intel's standard programmatic interface for sending and
+receiving FAXes via any of a number of internal FAX boards.
+
+CP/M
+	(Control Program for Microcomputers) An early operating system
+for micros based on the 8-bit Intel 8080 CPU (and later the compatible
+8085 and Zilog Z80 CPUs).  MSDOS version 1.0 was essentially a clone of
+CP/M for the Intel 8086.
+
+CP/M-86
+	One of the three operating systems offered by IBM for its
+original PC (the other two were MSDOS and the UCSD p-System).  It has
+since evolved into DR-DOS version 6.
+
+CPU
+	(Central Processing Unit) The microprocessor which executes
+programs on your computer.
+
+Current Directory Structure
+	The data record used by DOS to keep track of the current
+directory on a drive; whether the drive is valid, network, SUBSTituted,
+or JOINed; and other pertinent information.  See also INT 21h Function
+52h.
+
+Cylinder
+	The set of concentric tracks of data located at the same
+position on each data-bearing surface of the disk. A double-sided
+floppy will contain two tracks per cylinder.
+
+DCC
+	(Display Combination Code) A number which indicates both the
+type of display adapter board and the type of monitor attached to the
+video board.
+
+Device Driver
+	An interface module between the device-independent portions of
+the operating system and an actual hardware device which converts
+device-independent requests into the actual sequence of device
+operations to perform the requested action.  IO.SYS contains the
+standard, built-in MSDOS device drivers such as CON, COM1, AUX, PRN,
+etc.  See also INT 21h Function 52h and INT 2Fh Function 0802h.
+
+Device Driver Request Header
+	The data structure passed to a device driver which contains the
+command to be executed, its parameters, and space for a returned status
+and data values.  See INT 2Fh Function 0802h.
+
+Direct Memory Access
+	A method whereby peripherals may transfer data into or out of
+main memory without the involvement of the CPU.
+
+Disk Transfer Address
+	The Disk Transfer Address indicates where functions which do
+not take an explicit data address will read or store data.  Although
+the name implies that only disk accesses use this address, other
+functions use it as well.  See INT 21h Function 4Eh for an example of
+the DTA's use.
+
+DLL
+	see Dynamic Link Library
+
+DMA
+	see Direct Memory Access
+
+DOS Parameter List
+	The DOS Parameter List is used to pass arguments to SHARE and
+network functions.  See also INT 21h Function 5D00h.
+
+DPB
+	see Drive Paramter Block
+
+DPL
+	see DOS Parameter List
+
+Drive Parameter Block
+	The DOS Drive Parameter Block stores the description of the
+media layout for a logical drive, as well as some housekeeping
+information.  See also INT 21h Function 1Fh and INT 21h Function 32h.
+
+DTA
+	see Disk Transfer Address
+
+DWORD
+	Doubleword; four bytes.  Commonly used to hold a 32-bit
+segment:offset or selector:offset address.
+
+Dynamic Link Library
+	A collection of subroutines which are linked with a program at
+the time it is loaded into memory rather than permanently placed in the
+executable.  This has the advantage of allowing a single copy of the
+subroutine library to reside on disk or in memory even when it is used
+by many programs.  It also permits all programs using the DLL to be
+updated without recompiling simply by installing a new version of the
+library.
+
+EMS
+	see Expanded Memory Specification
+
+Expanded Memory Specification
+	A specification devised by Lotus, Intel, and Microsoft for
+accessing more than one megabyte of memory by bank-switching additional
+memory into the one megabyte real mode address space.
+
+Extended Memory
+	Memory beyond the one megabyte address which is available only
+on 80286 and higher machines.  Except for a small portion (the High
+Memory Area), extended memory is only accessible from protected mode.
+
+Extended Memory Specification
+	A specification devised by Microsoft which allows multiple
+programs to share extended (above 1 megabyte) memory and noncontiguous
+memory above 640K.  See also Upper Memory Block.
+
+FAT
+	see File Allocation Table
+
+FCB
+	see File Control Block
+
+File Allocation Table
+	The File Allocation Table of a disk, which records the clusters
+that are in use.
+
+File Control Block
+	A data record in the calling program's address space which is
+used by DOS 1.x functions to record the state of an open file.  See
+also INT 21h Function 13h.
+
+File Handle
+	A small positive integer used to identify the previously-opened
+file on which a program wishes to perform an operation.
+
+Flush
+	To force the copying of any data still stored in temporary
+buffers to its final destination.
+
+Handle
+	A short identifier, usually a small integer or a pointer, for
+some other object which is maintained or controlled by the operating
+system or environment; a particular handle may be valid system-wide or
+may have meaning only for a particular process.  See also File Handle.
+
+High Memory Area
+	The first 65520 bytes (64K less 16 bytes) of extended memory.
+This area is accessible from real mode on the 80286 and higher
+processors because these processors do not wrap addresses at one
+megabyte as the 8088 and 8086 do.  See also A20, INT 2Fh Functions
+4A01h.
+
+HMA
+	see High Memory Area
+
+IFS
+	see Installable File System
+
+Installable File System
+	An Installable File System which allows non-DOS format media to
+be used by DOS.  In most ways, an IFS is very similar to a networked
+drive, although an IFS would typically be local rather than remote.
+See also INT 21h Function 52h.
+
+IPX
+	(Internetwork Packet Exchange) A low-level layer of Novell's
+	NetWare networking software.
+
+ISA
+	(Industry-Standard Architecture) The expansion bus used by the
+IBM PC/AT.  See also EISA.
+
+JFT
+	see Job File Table
+
+Job File Table
+	The Job File Table (also called Open File Table) stored in a
+program's PSP which translates handles into SFT numbers.  See also INT
+21h Function 26h.
+
+List of Lists
+	An internal DOS table of lists and other tables through which
+most DOS-internal data structures may be reached.  See INT 21h Function
+52h.
+
+Little-Endian
+	One of the two major ways of organizing multi-byte numeric
+values in memory.  A little-endian layout places the least significant
+byte of the value in the lowest (first) memory location, i.e. 12345678h
+is stored as 78h 56h 34h 12h.  Intel processors are little-endian.
+Compare Big-Endian.
+
+LPT
+	Abbreviation for Line PrinTer.
+
+MCB
+	see Memory Control Block
+
+Memory Control Block
+	The data structure containing the length and owner (among other
+things) of a portion of the memory managed by DOS.  See INT 21h
+Function 52h.
+
+Mickey
+	The smallest increment of motion a mouse can sense.
+
+Multitasking
+	Any of a number of methods by which multiple programs may
+execute concurrently, with rapid switching between the programs giving
+the appearance that all are executing simultaneously.
+
+MZ
+	The letters M and Z appear in numerous places in DOS (memory
+control blocks, .EXE header, etc.); the conventional explanation is
+that these are the initials of Mark Zbikowski, one of the principal
+architects of MSDOS 2.0.
+
+NCB
+	see Network Control Block
+
+NetBIOS
+	One of a number of low-level device-independent network
+interfaces; the other major interfaces are Novell's IPX and the
+Internet's IP (Internet Protocol, the lower-level portion of TCP/IP).
+
+Network Control Block
+	A Network Control Block used to pass requests to NetBIOS and
+receive status information from the NetBIOS handler.
+
+Network Redirector
+	A program which permits access to network devices (disks,
+printers, etc.) using the MSDOS kernel network redirector interface.
+See also Network Shell, Redirector Interface.
+
+Network Shell
+	A program which permits access to network devices (disks,
+printers, etc.) by intercepting DOS calls before they reach the DOS
+kernel and handling those operating on network devices while passing
+through actions on local devices.  See also Network Redirector.
+
+Non-Volatile RAM
+	Memory which can be modified like normal RAM but does not lose
+its contents when the system's power is turned off. This memory may be
+powered by a battery when the system power if off, or it may be a type
+of memory which does not need electricity to maintain its contents,
+such as EEPROM or bubble memory.
+
+NVRAM
+	see Non-Volatile RAM
+
+Open File Table
+	see Job File Table
+
+Park
+	To move a hard disk's read/write heads to a position in which
+it is safe to turn off the power and transport the disk drive.  Many
+drives also lock the heads into position when they are parked,
+providing additional protection from sudden movement.
+
+Pel
+	see Pixel
+
+Pixel
+	A picture element, the smallest addressable unit of a graphical
+display.
+
+Post
+	Make known, either generally or to a specific handler, that a
+particular event of interest has occurred.
+
+POST
+	see Power-On Self-Test
+
+Power-On Self-Test
+	A brief examination of the system's functionality performed
+each time the system is turned on.
+
+Program Segment Prefix
+	The Program Segment Prefix is a 256-byte data area prepended to
+a program when it is loaded.  It contains the command line that the
+program was invoked with, and a variety of housekeeping information for
+DOS.  See also INT 21h Function 26h.
+
+Protected Mode
+	One of the operating modes of the 80286 and higher Intel
+processors, in which addresses used by programs no longer correspond to
+physical addresses and the CPU enforces various protection mechanisms
+designed to prevent one program from disrupting other programs or the
+operating system.  See also Real Mode, Virtual-86 Mode.
+
+PSP
+	see Program Segment Prefix
+
+PWORD
+	Six bytes.  Used to hold an 80386 protected-mode "far" address,
+consisting of a segment selector and a 32-bit offset.  See also DWORD,
+QWORD.
+
+QWORD
+	(quad-word) Eight bytes.  See also DWORD, PWORD.
+
+Real Mode
+	One of the operating modes of the 80286 and higher Intel
+processors, and the only operating mode of the 8088, 8086, 80186, and
+80188 processors.  In this mode, all addresses used by programs
+correspond directly to real physical addresses (thus the full name,
+Real Address Mode) and there are no CPU-imposed protections between
+programs.  See also Protected Mode, Virtual-86 Mode.
+
+Redirector Interface
+	The set of device-independent INT 2Fh function calls invoked by
+the MSDOS kernel to operate on devices it recognizes as network
+devices.  These function calls provide a lower-level interface than the
+INT 21h calls made to DOS, allowing a program intercepting these
+functions to be simpler than one intercepting INT 21h calls.  See INT
+2Fh Functions 1100h through 1130h.
+
+SDA
+	see Swappable Data Area
+
+Sector
+	The smallest addressable unit of data on a disk; under MS-DOS,
+this is normally 512 bytes.  See also Track.
+
+SFT
+	see System File Table
+
+Swappable Data Area
+	The portion of the DOS data segment containing all of the
+variables used internally by DOS to record the state of a function call
+in progress.  See also INT 21h Function 5D06h and INT 21h Function
+5D0Bh.
+
+System File Table
+	A System File Table is a DOS-internal data structure used to
+maintain the state of an open file for the DOS 2+ handle functions,
+just as an FCB maintains the state for DOS 1.x functions.  See also INT
+21h Function 52h.
+
+TSR
+	(Terminate and Stay Resident) A program which remains in memory
+after terminating in order to provide services to other programs or the
+user.  The name comes from the name of the DOS function call used to
+remain in memory after termination.
+
+Track
+	One of multiple concentric circular rings of data on a single
+data-bearing surface of a disk.  Tracks at the same location on
+different surfaces form a cylinder.
+
+UMB
+	see Upper Memory Block
+
+Upper Memory Block
+	A noncontiguous section of allocatable memory located between
+the 640K and 1024K addresses.  See also INT 21h Function 52h.
+
+V86
+	see Virtual-86 Mode
+
+VDM
+	see Virtual DOS Machine
+
+VDS
+	see Virtual DMA Specification
+
+VGA
+	(Video Graphics Array) The video adapter introduced with the
+IBM PS/2 series of computers.
+
+Virtual-86 Mode
+	One of the operating modes of the 80386 and 80486 processors in
+which user programs run as if the CPU were in Real Mode, while
+providing the protection and address-mapping capabilities of Protected
+Mode to a supervisor program which oversees the virtual machine on
+which the user programs are running.  This mode is called Virtual-86
+because one or more virtual 8086 environments are run on a single CPU.
+See also Protected Mode, Real Mode, Virtual Machine.
+
+Virtual DMA Specification
+	A set of interrupt calls which permit the use of DMA even on
+systems running in protected or Virtual-86 mode with their address
+remapping, or systems such as Micro Channel PS/2s with multiple bus
+masters independently performing DMA operations.
+
+Virtual DOS Machine
+	A special type of virtual machine provided by OS/2 version 2.0,
+in which a copy of MS-DOS or an MS-DOS compatible operating system (or
+even an incompatible 8086 operating system) is run and appears to have
+full control of the system.  See also Virtual Machine, INT 21h Function
+64h.
+
+Virtual Machine
+	One method for multitasking programs is to virtualize the CPU
+and other hardware, giving the appearance of sole possession of the
+system to each program being run.  Such a virtualized environment is
+called a virtual machine.  See also Virtual-86 Mode, Virtual DOS
+Machine.
+
+VM
+	see Virtual Machine
+
+VxD
+	A virtual device driver for Windows 3.0 or 3.1.  See also
+device driver.
+
+XMS
+	see Extended Memory Specification
