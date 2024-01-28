@@ -1,3 +1,4 @@
+---------------------------------------------
 Interrupt List, part 7 of 7
 This compilation is Copyright (c) 1989,1990,1991,1992 Ralf Brown
 ----------68---------------------------------
@@ -1692,6 +1693,9 @@ INT 78 - AutoCAD 10 ADI for Plotters
 	    0008h return pen to pen carrier??? (called before change-pen cmd)
 Return: ???
 SeeAlso: INT 7A"AutoCAD",INT 7B"AutoCAD"
+----------78---------------------------------
+INT 78 - ADP-60 IDE controller - ORIGINAL INT 13
+SeeAlso: INT 79"ADP-60"
 ----------7800-------------------------------
 INT 78 - TARGA.DEV - CMC International SCSI device driver - SET I/O PORT
 	AH = 00h
@@ -1885,6 +1889,9 @@ SeeAlso: INT 29
 INT 79 - DJGPP GO32 DOS EXTENDER - RELOCATED IRQ1
 Note:	this vector is overwritten when GO32 starts but is not restored
 SeeAlso: INT 09,INT 78"GO32",INT 7A"GO32"
+----------79---------------------------------
+INT 79 U - ADP-60 IDE adapter - ???
+SeeAlso: INT 78"ADP-60"
 ----------790001-----------------------------
 INT 79 U - AutoCAD Device Interface - DIGITIZER - INITIALIZE
 	AX = 0001h
@@ -1931,9 +1938,9 @@ SeeAlso: INT 60/AX=01FFh
 INT 7A - Novell NetWare - LOW-LEVEL API - Notes
 Note:	this interrupt is used for IPX/SPX access in NetWare versions through
 	  2.0a; in later versions, you should use INT 2F/AX=7A00h to get an
-	  entry point.	For both INT 7A and the FAR entry point, BX contains
-	  the function number; IPX is sometimes called internally with BX bit
-	  15 set.
+	  entry point even though INT 7A still exists.  For both INT 7A and
+	  the FAR entry point, BX contains the function number; IPX is
+	  sometimes called internally with BX bit 15 set.
 SeeAlso: INT 2F/AX=7A00h,INT 64"Novell",INT 7A/BX=0000h
 ----------7A---------------------------------
 INT 7A - DJGPP GO32 DOS EXTENDER - RELOCATED IRQ2
@@ -4434,19 +4441,19 @@ INT 86 - NetBIOS - ORIGINAL INT 18
 Note:	some implementations of NetBIOS reportedly relocate INT 18 here
 SeeAlso: INT 18
 ----------86---------------------------------
-INT 86 - used by IBM ROM BASIC while in interpreter
+INT 86 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------86---------------------------------
 INT 86 - APL*PLUS/PC - Terminate APL session and return to DOS
 ----------87---------------------------------
-INT 87 - used by IBM ROM BASIC while in interpreter
+INT 87 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------87---------------------------------
 INT 87 - APL*PLUS/PC - ????
 ----------88---------------------------------
-INT 88 - used by IBM ROM BASIC while in interpreter
+INT 88 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------88----AL00-------------------------
@@ -4569,11 +4576,11 @@ Return: CF set if name ill-formed or already in use
 Note:	forces the name into the workspace and makes it immune from outswapping
 SeeAlso: AL=F9h,AL=FEh,INT C8"APL"
 ----------89---------------------------------
-INT 89 - used by IBM ROM BASIC while in interpreter
+INT 89 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------8A---------------------------------
-INT 8A - used by IBM ROM BASIC while in interpreter
+INT 8A - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------8A---------------------------------
@@ -4581,7 +4588,7 @@ INT 8A - APL*PLUS/PC - PRINT SCREEN
 Note:	same as INT 05
 SeeAlso: INT 05,INT 8C"APL",INT CA"APL"
 ----------8B---------------------------------
-INT 8B - used by IBM ROM BASIC while in interpreter
+INT 8B - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------8B---------------------------------
@@ -4589,7 +4596,7 @@ INT 8B - APL*PLUS/PC - BEEP
 Note:	same as printing a ^G via INT 21/AH=02h
 SeeAlso: INT 21/AH=02h,INT CB"APL"
 ----------8C---------------------------------
-INT 8C - used by IBM ROM BASIC while in interpreter
+INT 8C - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------8C---------------------------------
@@ -4599,31 +4606,31 @@ INT 8C - APL*PLUS/PC - CLEAR SCREEN MEMORY
 	    0001h save attributes
 SeeAlso: INT CC"APL"
 ----------8D---------------------------------
-INT 8D - used by IBM ROM BASIC while in interpreter
+INT 8D - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------8E---------------------------------
-INT 8E - used by IBM ROM BASIC while in interpreter
+INT 8E - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------8F---------------------------------
-INT 8F - used by IBM ROM BASIC while in interpreter
+INT 8F - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------90---------------------------------
-INT 90 - used by IBM ROM BASIC while in interpreter
+INT 90 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------90---------------------------------
 INT 90 - APL*PLUS/PC - USED BY PORT 10 PRINTER DRIVER
 ----------91---------------------------------
-INT 91 - used by IBM ROM BASIC while in interpreter
+INT 91 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------91---------------------------------
 INT 91 - IBM TOKEN RING ADAPTER - ???
 ----------92---------------------------------
-INT 92 - used by IBM ROM BASIC while in interpreter
+INT 92 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------92---------------------------------
@@ -4927,83 +4934,83 @@ Return: AX = 0012h if installed
 	ES:DX -> '$'-terminated driver information string
 SeeAlso: AX=E102h
 ----------93---------------------------------
-INT 93 - used by IBM ROM BASIC while in interpreter
+INT 93 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------93---------------------------------
 INT 93 - IBM TOKEN RING ADAPTER - ???
 ----------94---------------------------------
-INT 94 - used by IBM ROM BASIC while in interpreter
+INT 94 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------95---------------------------------
-INT 95 - used by IBM ROM BASIC while in interpreter
+INT 95 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------95---------------------------------
 INT 95 - APL*PLUS/PC - DETERMINE R= SPACE
 Note:	use only when the R= option is invoked on entering APL
 ----------96---------------------------------
-INT 96 - used by IBM ROM BASIC while in interpreter
+INT 96 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------97---------------------------------
-INT 97 - used by IBM ROM BASIC while in interpreter
+INT 97 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------98---------------------------------
-INT 98 - used by IBM ROM BASIC while in interpreter
+INT 98 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------99---------------------------------
-INT 99 - used by IBM ROM BASIC while in interpreter
+INT 99 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------9A---------------------------------
-INT 9A - used by IBM ROM BASIC while in interpreter
+INT 9A - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------9B---------------------------------
-INT 9B - used by IBM ROM BASIC while in interpreter
+INT 9B - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------9C---------------------------------
-INT 9C - used by IBM ROM BASIC while in interpreter
+INT 9C - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------9D---------------------------------
-INT 9D - used by IBM ROM BASIC while in interpreter
+INT 9D - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------9E---------------------------------
-INT 9E - used by IBM ROM BASIC while in interpreter
+INT 9E - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------9F---------------------------------
-INT 9F - used by IBM ROM BASIC while in interpreter
+INT 9F - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------A0---------------------------------
-INT A0 - used by IBM ROM BASIC while in interpreter
+INT A0 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------A0---------------------------------
 INT A0 - APL*PLUS/PC - USED BY APL/GSS*CGI GRAPHICS INTERFACE
 SeeAlso: INT 59
 ----------A1---------------------------------
-INT A1 - used by IBM ROM BASIC while in interpreter
+INT A1 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------A2---------------------------------
-INT A2 - used by IBM ROM BASIC while in interpreter
+INT A2 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------A3---------------------------------
-INT A3 - used by IBM ROM BASIC while in interpreter
+INT A3 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------A4---------------------------------
-INT A4 - used by IBM ROM BASIC while in interpreter
+INT A4 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------A4---------------------------------
@@ -5012,63 +5019,63 @@ INT A4 U - Right Hand Man API
 Note: Right-Hand Man is a TSR desk-top utility, and only hooks this interrupt
 	while popped up
 ----------A5---------------------------------
-INT A5 - used by IBM ROM BASIC while in interpreter
+INT A5 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------A6---------------------------------
-INT A6 - used by IBM ROM BASIC while in interpreter
+INT A6 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------A7---------------------------------
-INT A7 - used by IBM ROM BASIC while in interpreter
+INT A7 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------A8---------------------------------
-INT A8 - used by IBM ROM BASIC while in interpreter
+INT A8 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------A9---------------------------------
-INT A9 - used by IBM ROM BASIC while in interpreter
+INT A9 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------AA---------------------------------
-INT AA - used by IBM ROM BASIC while in interpreter
+INT AA - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------AB---------------------------------
-INT AB - used by IBM ROM BASIC while in interpreter
+INT AB - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------AC---------------------------------
-INT AC - used by IBM ROM BASIC while in interpreter
+INT AC - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------AD---------------------------------
-INT AD - used by IBM ROM BASIC while in interpreter
+INT AD - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------AE---------------------------------
-INT AE - used by IBM ROM BASIC while in interpreter
+INT AE - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------AF---------------------------------
-INT AF - used by IBM ROM BASIC while in interpreter
+INT AF - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------B0---------------------------------
-INT B0 - used by IBM ROM BASIC while in interpreter
+INT B0 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------B1---------------------------------
-INT B1 - used by IBM ROM BASIC while in interpreter
+INT B1 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------B2---------------------------------
-INT B2 - used by IBM ROM BASIC while in interpreter
+INT B2 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------B3---------------------------------
-INT B3 - used by IBM ROM BASIC while in interpreter
+INT B3 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------B370-------------------------------
@@ -5256,79 +5263,94 @@ Return: CF clear if successful
 	    AL = FFh
 	    DX = 03E9h
 ----------B4---------------------------------
-INT B4 - used by IBM ROM BASIC while in interpreter
+INT B4 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
+----------B4---------------------------------
+INT B4 - STACKMAN - REQUEST NEW STACK
+Return: SS:SP -> new stack
+Note:	the installation check consists of testing for the string "STACKXXX" at
+	  offset 0Ah from the interrupt handler
+SeeAlso: INT 2F/AX=C9FFh,INT B5"STACKMAN"
 ----------B5---------------------------------
-INT B5 - used by IBM ROM BASIC while in interpreter
+INT B5 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
+----------B5---------------------------------
+INT B5 - STACKMAN - RESTORE ORIGINAL STACK
+	SS:SP -> stack returned by INT B4
+Return: SS:SP restored to value before INT B4
+SeeAlso: INT 2F/AX=C9FFh,INT B4"STACKMAN"
 ----------B6---------------------------------
-INT B6 - used by IBM ROM BASIC while in interpreter
+INT B6 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------B7---------------------------------
-INT B7 - used by IBM ROM BASIC while in interpreter
+INT B7 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------B8---------------------------------
-INT B8 - used by IBM ROM BASIC while in interpreter
+INT B8 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------B9---------------------------------
-INT B9 - used by IBM ROM BASIC while in interpreter
+INT B9 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------BA---------------------------------
-INT BA - used by IBM ROM BASIC while in interpreter
+INT BA - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------BB---------------------------------
-INT BB - used by IBM ROM BASIC while in interpreter
+INT BB - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------BC---------------------------------
-INT BC - used by IBM ROM BASIC while in interpreter
+INT BC - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------BD---------------------------------
-INT BD - used by IBM ROM BASIC while in interpreter
+INT BD - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------BE---------------------------------
-INT BE - used by IBM ROM BASIC while in interpreter
+INT BE - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
+----------BE---------------------------------
+INT BE - DESQview/X - ???
+Note:	points at an IRET
+SeeAlso: INT 15/AX=BFDEh/BX=0006h,INT 63"DESQview"
 ----------BF---------------------------------
-INT BF - used by IBM ROM BASIC while in interpreter
+INT BF - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------C0---------------------------------
-INT C0 - used by IBM ROM BASIC while in interpreter
+INT C0 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------C1---------------------------------
-INT C1 - used by IBM ROM BASIC while in interpreter
+INT C1 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------C2---------------------------------
-INT C2 - used by IBM ROM BASIC while in interpreter
+INT C2 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------C3---------------------------------
-INT C3 - used by IBM ROM BASIC while in interpreter
+INT C3 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------C4---------------------------------
-INT C4 - used by IBM ROM BASIC while in interpreter
+INT C4 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------C5---------------------------------
-INT C5 - used by IBM ROM BASIC while in interpreter
+INT C5 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------C6---------------------------------
-INT C6 - used by IBM ROM BASIC while in interpreter
+INT C6 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------C6---------------------------------
@@ -5337,7 +5359,7 @@ Note:	STSC moved its interrupts from 86h-8Ch to C6h-CCh, but did not delete
 	  the older interrupts
 SeeAlso: INT 86"APL"
 ----------C7---------------------------------
-INT C7 - used by IBM ROM BASIC while in interpreter
+INT C7 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------C7---------------------------------
@@ -5346,7 +5368,7 @@ Note:	STSC moved its interrupts from 86h-8Ch to C6h-CCh, but did not delete
 	  the older interrupts
 SeeAlso: INT 87"APL"
 ----------C8---------------------------------
-INT C8 - used by IBM ROM BASIC while in interpreter
+INT C8 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------C8---------------------------------
@@ -5355,7 +5377,7 @@ Note:	STSC moved its interrupts from 86h-8Ch to C6h-CCh, but did not delete
 	  the older interrupts
 SeeAlso: INT 88"APL"
 ----------C9---------------------------------
-INT C9 - used by IBM ROM BASIC while in interpreter
+INT C9 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------C9---------------------------------
@@ -5364,7 +5386,7 @@ Note:	STSC moved its interrupts from 86h-8Ch to C6h-CCh, but did not delete
 	  the older interrupts
 SeeAlso: INT 89"APL"
 ----------CA---------------------------------
-INT CA - used by IBM ROM BASIC while in interpreter
+INT CA - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------CA---------------------------------
@@ -5373,7 +5395,7 @@ Note:	STSC moved its interrupts from 86h-8Ch to C6h-CCh, but did not delete
 	  the older interrupts
 SeeAlso: INT 8A"APL"
 ----------CB---------------------------------
-INT CB - used by IBM ROM BASIC while in interpreter
+INT CB - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------CB---------------------------------
@@ -5383,7 +5405,7 @@ Notes:	STSC moved its interrupts from 86h-8Ch to C6h-CCh, but did not delete
 	same as printing a ^G via INT 21/AH=02h
 SeeAlso: INT 8B"APL"
 ----------CC---------------------------------
-INT CC - used by IBM ROM BASIC while in interpreter
+INT CC - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------CC---------------------------------
@@ -5395,26 +5417,26 @@ Note:	STSC moved its interrupts from 86h-8Ch to C6h-CCh, but did not delete
 	  the older interrupts
 SeeAlso: INT 8C"APL"
 ----------CD---------------------------------
-INT CD - used by IBM ROM BASIC while in interpreter
+INT CD - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------CD---------------------------------
 INT CD - STSC APL*PLUS/PC - MAY BE USED IN FUTURE RELEASES
 ----------CE---------------------------------
-INT CE - used by IBM ROM BASIC while in interpreter
+INT CE - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------CE---------------------------------
 INT CE - STSC APL*PLUS/PC - MAY BE USED IN FUTURE RELEASES
 ----------CF---------------------------------
-INT CF - used by IBM ROM BASIC while in interpreter
+INT CF - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------CF---------------------------------
 INT CF - APL*PLUS/PC - DEFAULT LOW-RESOLUTION TIMER FOR QUAD MF FUNCTION
 SeeAlso: INT E0"APL"
 ----------D0---------------------------------
-INT D0 - used by IBM ROM BASIC while in interpreter
+INT D0 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------D0---------------------------------
@@ -5425,25 +5447,25 @@ Notes:	NJFRERAM is a resident free-memory display utility by Mike "Nifty
 	  James" Blaszczak
 	if NJFRERAM is installed, this vector points at the signature "NJ"
 ----------D1---------------------------------
-INT D1 - used by IBM ROM BASIC while in interpreter
+INT D1 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------D1---------------------------------
 INT D1 - STSC APL*PLUS/PC - MAY BE USED IN FUTURE RELEASES
 ----------D2---------------------------------
-INT D2 - used by IBM ROM BASIC while in interpreter
+INT D2 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------D2---------------------------------
 INT D2 - STSC APL*PLUS/PC - MAY BE USED IN FUTURE RELEASES
 ----------D3---------------------------------
-INT D3 - used by IBM ROM BASIC while in interpreter
+INT D3 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------D3---------------------------------
 INT D3 - STSC APL*PLUS/PC - MAY BE USED IN FUTURE RELEASES
 ----------D4---------------------------------
-INT D4 - used by IBM ROM BASIC while in interpreter
+INT D4 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------D4---------------------------------
@@ -5451,43 +5473,43 @@ INT D4 - STSC APL*PLUS/PC - MAY BE USED IN FUTURE RELEASES
 ----------D4---------------------------------
 INT D4 - PC-MOS/386 - API
 ----------D5---------------------------------
-INT D5 - used by IBM ROM BASIC while in interpreter
+INT D5 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------D5---------------------------------
 INT D5 - STSC APL*PLUS/PC - MAY BE USED IN FUTURE RELEASES
 ----------D6---------------------------------
-INT D6 - used by IBM ROM BASIC while in interpreter
+INT D6 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------D6---------------------------------
 INT D6 - STSC APL*PLUS/PC - MAY BE USED IN FUTURE RELEASES
 ----------D7---------------------------------
-INT D7 - used by IBM ROM BASIC while in interpreter
+INT D7 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------D7---------------------------------
 INT D7 - STSC APL*PLUS/PC - MAY BE USED IN FUTURE RELEASES
 ----------D8---------------------------------
-INT D8 - used by IBM ROM BASIC while in interpreter
+INT D8 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------D8---------------------------------
 INT D8 - STSC APL*PLUS/PC - MAY BE USED IN FUTURE RELEASES
 ----------D9---------------------------------
-INT D9 - used by IBM ROM BASIC while in interpreter
+INT D9 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------D9---------------------------------
 INT D9 - STSC APL*PLUS/PC - MAY BE USED IN FUTURE RELEASES
 ----------DA---------------------------------
-INT DA - used by IBM ROM BASIC while in interpreter
+INT DA - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------DA---------------------------------
 INT DA - STSC APL*PLUS/PC - MAY BE USED IN FUTURE RELEASES
 ----------DB---------------------------------
-INT DB - used by IBM ROM BASIC while in interpreter
+INT DB - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------DB---------------------------------
@@ -5496,13 +5518,13 @@ INT DB - STSC APL*PLUS/PC - MAY BE USED IN FUTURE RELEASES
 INT DC - PC/370 v4.1- - API
 SeeAlso: INT 60"PC/370"
 ----------DC---------------------------------
-INT DC - used by IBM ROM BASIC while in interpreter
+INT DC - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------DC---------------------------------
 INT DC - STSC APL*PLUS/PC - MAY BE USED IN FUTURE RELEASES
 ----------DD---------------------------------
-INT DD - used by IBM ROM BASIC while in interpreter
+INT DD - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------DD---------------------------------
@@ -5517,7 +5539,7 @@ INT DD - STSC APL*PLUS/PC v9.0 - PLACE KEYSTROKE EVENTS IN INPUT BUFFER
 	    4100h + N = extended ASCII keystroke N (N = 03h to 84h)
 SeeAlso: INT 16/AH=05h
 ----------DE---------------------------------
-INT DE - used by IBM ROM BASIC while in interpreter
+INT DE - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------DE---------------------------------
@@ -5526,14 +5548,14 @@ Note:	appears to be the same as INT 16
 ----------DF---------------------------------
 INT DF - Victor 9000 - SuperBIOS
 ----------DF---------------------------------
-INT DF - used by IBM ROM BASIC while in interpreter
+INT DF - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------DF---------------------------------
 INT DF - APL*PLUS/PC - SAME AS INT 10
 SeeAlso: INT 10
 ----------E0---------------------------------
-INT E0 - used by IBM ROM BASIC while in interpreter
+INT E0 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------E0---------------------------------
@@ -5552,7 +5574,7 @@ Note:	several functions are covered in more detail in following entries
 SeeAlso: INT 21/AX=4459h
 
 Values for function number:
- 00h	terminate calling process
+ 00h	terminate calling process (see also INT 21/AH=00h)
  02h	write character to default console (see also INT 21/AH=02h)
  03h	read character from default AUX (see also INT 21/AH=03h)
  05h	write character to default list device (see also INT 21/AH=05h)
@@ -5602,10 +5624,10 @@ Values for function number:
  33h	set DMA address segment
  34h	get DMA buffer address
  35h	CP/M-86 allocate maximum memory
- 36h	allocate maximum memory segment absoute
- 37h	CP/M-86 allocate memory segment
+ 36h	allocate maximum memory segment absolute
+ 37h	CP/M-86 allocate memory segment (see also INT 21/AH=48h)
  38h	allocate memory segment absolute
- 39h	CP/M-86 free specified memory segment
+ 39h	CP/M-86 free specified memory segment (see also INT 21/AH=49h)
  3Ah	CP/M-86 free all memory
  3Bh	load .CMD file into memory
  40h	(DR-NET) log on a server
@@ -5623,10 +5645,10 @@ Values for function number:
  4Ch	(DR-NET) get-set long timeout
  4Dh	(DR-NET) get parameter table
  50h	(DR-NET) get network information
- 53h	get current time
- 54h	set current time
- 55h	get binary system date
- 56h	set system date
+ 53h	get current time (see also INT 21/AH=2Ch)
+ 54h	set current time (see also INT 21/AH=2Dh)
+ 55h	get binary system date (see also INT 21/AH=2Ah)
+ 56h	set system date (see also INT 21/AH=2Bh)
  57h	allocate system flag
  58h	deallocate system flag
  59h	reserve memory in global area
@@ -5707,18 +5729,96 @@ Values for function number:
  BBh	execute XIOS service
  BDh	(DR Multiuser DOS) delay
  FFh	return 80386 to native mode
+
+DR Multiuser DOS Error Return Codes:
+ 00h no error
+ 01h system call not implmented
+ 02h illegal system call number
+ 03h cannot find memory
+ 04h illegal flag number
+ 05h flag overrun
+ 06h flag underrun
+ 07h no unused Queue Descriptors
+ 08h no free queue buffer
+ 09h cannot find queue
+ 0Ah queue in use
+ 0Ch no free Process Descriptors
+ 0Dh no queue access
+ 0Eh empty queue
+ 0Fh full queue
+ 10h CLI queue missing
+ 11h no 8087 in system
+ 12h no unused Memory Descriptors
+ 13h illegal console number
+ 14h no Process Descriptor match
+ 15h no console match
+ 16h no CLI process
+ 17h illegal disk number
+ 18h illegal filename
+ 19h illegal filetype
+ 1Ah character not ready
+ 1Bh illegal Memory Descriptor
+ 1Ch bad return from BDOS load
+ 1Dh bad return from BDOS read
+ 1Eh bad return from BDOS open
+ 1Fh null command
+ 20h not owner of resource
+ 21h no CSEG in load file
+ 22h process Descriptor exists on Thread Root
+ 23h could not terminate process
+ 24h cannot attach to process
+ 25h illegal list device number
+ 26h illegal password
+ 28h external termination occurred
+ 29h fixup error upon load
+ 2Ah flag set ignored
+ 2Bh illegal auxilliary device number
+----------E0----CL03-------------------------
+INT E0 - DR Multiuser DOS - "A_READ" - READ CHARACTER FROM AUX DEVICE
+	CL = 03h
+Return:	AL = ASCII character
+Notes:	A_READ reads the next 8-bit character from the logical auxilliary
+	  input device (AUXn:); control is not returned to the calling
+	  process until a character has been read. 
+	if another process owns AUX, this call blocks until the device becomes
+	  available
+SeeAlso: INT 21/AH=03h,INT E0/CL=04h,INT E0/CL=07h,INT E0/CL=A5h,INT E0/CL=ACh
+----------E0----CL04-------------------------
+INT E0 - DR Multiuser DOS - "A_WRITE" - WRITE CHARACTER TO AUX DEVICE
+	CL = 04h
+	DL = ASCII character
+Return:	nothing
+Note:	if another process owns AUX, this call blocks until the device becomes
+	  available
+SeeAlso: INT 21/AH=04h,INT E0/CL=03h,INT E0/CL=08h,INT E0/CL=A5h,INT E0/CL=ADh
+----------E0----CL07-------------------------
+INT E0 - DR Multiuser DOS - "A_STATIN" - GET INPUT STATUS OF AUX DEVICE 
+	CL = 07h
+Return:	AL = status
+	    00h not ready
+	    FFh character available
+SeeAlso: INT E0/CL=03h,INT E0/CL=08h
+----------E0----CL08-------------------------
+INT E0 - DR Multiuser DOS - "A_STATOUT" - GET OUTPUT STATUS OF AUX DEVICE
+	CL = 08h
+Return:	AL = status
+	    00h not ready
+	    FFh ready for output
+SeeAlso: INT E0/CL=04h,INT E0/CL=07h
 ----------E0----CL59-------------------------
-INT E0 - Concurrent CP/M, DR Multiuser DOS - RESERVE MEMORY IN GLOBAL AREA
+INT E0 - ConcCP/M,DR Multiuser DOS - "S_MEMORY" - RESERVE MEMORY IN GLOBAL AREA
 	CL = 59h
 	DX = size in bytes
 Return: AX = FFFFh if failed
 	AX = other if successful
 	    ES:BX -> reserved memory
 ----------E0----CL86-------------------------
-INT E0 - Concurrent CP/M, DR Multiuser DOS - CREATE MESSAGE QUEUE
+INT E0 - ConcCP/M,DR Multiuser DOS - "Q_MAKE" - CREATE MESSAGE QUEUE
 	CL = 86h
-	DS???:DX -> queue descriptor (see below)
+	DS:DX -> queue descriptor (see below)
 Return: AX = status
+	    0000h success
+	    FFFFh failure
 	CX = error code
 SeeAlso: INT E0/CL=87h
 
@@ -5732,10 +5832,12 @@ Offset	Size	Description
  12h  4 WORDs	internal use, initialize to zeros
  1Ah	WORD	offset in system area of buffer for messages
 ----------E0----CL87-------------------------
-INT E0 - Concurrent CP/M, DR Multiuser DOS - OPEN MESSAGE QUEUE
+INT E0 - ConcCP/M,DR Multiuser DOS - "Q_OPEN" - OPEN MESSAGE QUEUE
 	CL = 87h
-	DS???:DX -> queue parameter block (see below)
+	DS:DX -> queue parameter block (see below)
 Return: AX = status
+	    0000h success
+	    FFFFh failure
 	CX = error code
 SeeAlso: INT E0/CL=86h,INT E0/CL=89h
 
@@ -5747,64 +5849,239 @@ Offset	Size	Description
  06h	WORD	offset of queue message buffer
  08h  8 BYTEs	queue name
 ----------E0----CL89-------------------------
-INT E0 - Concurrent CP/M, DR Multiuser DOS - READ MESSAGE QUEUE
+INT E0 - ConcCP/M,DR Multiuser DOS - "Q_READ" - READ MESSAGE QUEUE
 	CL = 89h
-	DS???:DX -> queue parameter block (see INT E0/CL=87h)
+	DS:DX -> queue parameter block (see INT E0/CL=87h)
 Return: AX = status
+	    0000h success
+	    FFFFh failure
 	CX = error code
 SeeAlso: INT E0/CL=87h,INT E0/CL=8Ah,INT E0/CL=8Bh
 ----------E0----CL8A-------------------------
-INT E0 - Concurrent CP/M, DR Multiuser DOS - CONDITIONALLY READ MESSAGE QUEUE
+INT E0 - ConcCP/M,DR Multiuser DOS - "Q_CREAD" - CONDITIONALLY READ MSG QUEUE
 	CL = 8Ah
-	DS???:DX -> queue parameter block (see INT E0/CL=87h)
+	DS:DX -> queue parameter block (see INT E0/CL=87h)
 Return: AX = status
+	    0000h success
+	    FFFFh failure
 	CX = error code
 SeeAlso: INT E0/CL=87h,INT E0/CL=89h,INT E0/CL=8Ch
 ----------E0----CL8B-------------------------
-INT E0 - Concurrent CP/M, DR Multiuser DOS - WRITE MESSAGE QUEUE
+INT E0 - ConcCP/M,DR Multiuser DOS - "Q_WRITE" - WRITE MESSAGE QUEUE
 	CL = 8Bh
-	DS???:DX -> queue parameter block (see INT E0/CL=87h)
+	DS:DX -> queue parameter block (see INT E0/CL=87h)
 Return: AX = status
+	    0000h success
+	    FFFFh failure
 	CX = error code
 SeeAlso: INT E0/CL=89h,INT E0/CL=8Ch
 ----------E0----CL8B-------------------------
-INT E0 - Concurrent CP/M, DR Multiuser DOS - CONDITIONALLY WRITE MESSAGE QUEUE
+INT E0 - ConcCP/M,DR Multiuser DOS - "Q_CWRITE" - CONDITIONALLY WRITE MSG QUEUE
 	CL = 8Bh
-	DS???:DX -> queue parameter block (see INT E0/CL=87h)
+	DS:DX -> queue parameter block (see INT E0/CL=87h)
 Return: AX = status
+	    0000h success
+	    FFFFh failure
 	CX = error code
 SeeAlso: INT E0/CL=8Ah,INT E0/CL=8Bh
 ----------E0----CL8E-------------------------
-INT E0 - Concurrent CP/M, DR Multiuser DOS - DISPATCH
+INT E0 - ConcCP/M,DR Multiuser DOS - "P_DISPATCH" - CALL DISPATCHER
 	CL = 8Eh
+	DX = FFFFh (optional) to force dispatch
 Return: nothing
+Note:	if DX=FFFFh, a dispatch is forced even if no other process is ready
+SeeAlso: INT E0/CL=91h
 ----------E0----CL91-------------------------
-INT E0 - Concurrent CP/M, DR Multiuser DOS - SET PROCESS PRIORITY
+INT E0 - ConcCP/M,DR Multiuser DOS - "P_PRIORITY" - SET PROCESS PRIORITY
 	CL = 91h
-	DL = new priority
+	DL = new priority (00h highest to FFh lowest)
+Note:	sets priority of calling process; transient processes are initialized
+	  to priority C8h
+SeeAlso: INT E0/CL=8Eh
 ----------E0----CL93-------------------------
-INT E0 - Concurrent CP/M, DR Multiuser DOS - DETACH FROM DEFAULT CONSOLE
+INT E0 - ConcCP/M,DR Multiuser DOS - "C_DETACH" - DETACH FROM DEFAULT CONSOLE
 	CL = 93h
 Return: AX = status
+	    0000h successfully detached
+	    FFFFh detach failed
+----------E0----CLA5-------------------------
+INT E0 - DR Multiuser DOS - "A_ATTACH" - ATTACH AUX DEVICE
+	CL = A5h
+Desc:	attaches the default auxiliary device to the calling process unless
+	  it is already attached to another process, in which case the call
+	  blocks until the device becomes available
+Note:	this call should be used before attempting to read or write from
+	  the AUX device; however, the I/O calls internally call this function
+	  to ensure device ownership
+SeeAlso: INT E0/CL=03h,INT E0/CL=04h,INT E0/CL=A6h,INT E0/CL=A7h,INT E0/CL=A8h
+SeeAlso: INT E0/CL=ACh,INT E0/CL=ADh,INT E0/CL=B0h
+----------E0----CLA6-------------------------
+INT E0 - DR Multiuser DOS - "A_DETACH" - DETACH FROM AUX DEVICE
+	CL = A6h
+Return: AX = status
+	    0000h successfully detached
+	    FFFFh detach failed
+	CX = error code
+SeeAlso: INT E0/CL=A5h,INT E0/CL=A7h
+----------E0----CLA7-------------------------
+INT E0 - DR Multiuser DOS - "A_CATTACH" - CONDITIONALLY ATTACH TO AUX DEVICE
+	CL = A7h
+Return: AX = status
+	    0000h attached
+	    FFFFh unable to attach
+Desc:	attaches the default auxiliary device to the calling process if it is
+	  available
+Note:	does not block if the device is already in use
+SeeAlso: INT E0/CL=A5h,INT E0/CL=A6h,INT E0/CL=A8h,INT E0/CL=B0h
+----------E0----CLA8-------------------------
+INT E0 - DR Multiuser DOS - "A_SET" - SET DEFAULT AUX DEVICE NUMBER
+	CL = A8h
+	DL = auxiliary device number
+Return: AX = status
+	    0000h successful
+	    FFFFh failed
+	CX = error code
+SeeAlso: INT E0/CL=A5h,INT E0/CL=A9h
+----------E0----CLA9-------------------------
+INT E0 - DR Multiuser DOS - "A_GET" - GET DEFAULT AUX DEVICE NUMBER
+	CL = A9h
+Return: AL = current default auxiliary device number
+SeeAlso: INT E0/CL=A8h
+----------E0----CLAC-------------------------
+INT E0 - DR Multiuser DOS - "A_READBLK" - READ STRING FROM AUX DEVICE
+	CL = ACh
+	DS:DX -> character control block (CHCB) (see below)
+Return: AX = number of characters read
+Desc:	read characters from the default auxiliary (AUXn:) device into a buffer
+	  until the buffer is full or the device is no longer ready
+Notes:	if the device is initially not ready, blocks until at least one
+	  character has been read
+	if another process owns AUX, this call blocks until the device becomes
+	  available
+SeeAlso: INT E0/CL=03h,INT E0/CL=A5h,INT E0/CL=ADh
+
+Format of character control block (CHCB):
+Offset	Size	Description
+ 00h	DWORD	pointer to character buffer
+ 04h	WORD	length of character buffer
+----------E0----CLAD-------------------------
+INT E0 - DR Multiuser DOS - "A_WRITEBLK" - WRITE STRING TO AUX DEVICE
+	CL = ADh
+	DS:DX -> character control block (see INT E0/CL=ACh)
+Return: AX = number of characters written
+Note:	does not return until at least one character has been written
+SeeAlso: INT E0/CL=04h,INT E0/CL=A5h,INT E0/CL=ACh
+----------E0----CLB0-------------------------
+INT E0 - DR Multiuser DOS - "A_CONFIG" - GET/SET AUX DEVICE PARAMETERS
+	CL = B0h
+	DX:DX -> AUX device parameter block (see below)
+Return: AX = status
+	    0000h successful
+	    	parameter block updated
+	    FFFFh failed
+	    	CX = error code
+SeeAlso: INT E0/CL=A5h,INT E0/CL=B1h
+
+Format of AUX device parameter block:
+Offset	Size	Description
+ 00h	BYTE	function (00h get, 01h set)
+ 01h	BYTE	baud rate (see below) FFh = don't change/unknown
+ 02h	BYTE	parity
+ 		00h none
+		01h odd
+		02h none
+		03h even
+		04h stick parity bit
+		FFh don't change/unknown
+ 03h	BYTE	stop bits (00h one, 01h 1.5, 02h two, FFh unknown/don't change)
+ 04h	BYTE	data bits (05h-08h or FFh unknown/don't change)
+ 05h	BYTE	handshake (00h none, 01h DTS/DSR, 02h RTS/CTS, 04h XON/XOFF,
+ 		FFh unknown/don't change)
+ 06h	BYTE	XON character, FFh unknown/don't change
+ 07h	BYTE	XOFF character, FFh unknown/don't change
+
+Values for baud rate:
+ 00h = 50 baud
+ 01h = 62.5 baud
+ 02h = 75 baud
+ 03h = 110 baud
+ 04h = 134.5 baud
+ 05h = 150 baud
+ 06h = 200 baud
+ 07h = 300 baud
+ 08h = 600 baud
+ 09h = 1200 baud
+ 0Ah = 1800 baud
+ 0Bh = 2000 baud
+ 0Ch = 2400 baud
+ 0Dh = 3600 baud
+ 0Eh = 4800 baud
+ 0Fh = 7200 baud
+ 10h = 9600 baud
+ 11h = 19200 baud
+ 12h = 38400 baud
+ 13h = 56000 baud
+ 14h = 76800 baud
+ 15h = 115200 baud
+----------E0----CLB1-------------------------
+INT E0 - DR Multiuser DOS - "A_CONTROL" - GET/SET AUX CONTROL PARAMETERS
+	CL = B1h
+	DS:DX -> AUX device control block (see below)
+Return: AX = status
+	    0000h successful
+		control block updated
+	    FFFFh failed
+		CX = error code
+SeeAlso: INT E0/CL=B0h,INT E0/CL=B2h
+
+Format of AUX device control block:
+Offset	Size	Description
+ 00h	BYTE	function (00h get, 01h set)
+ 01h	BYTE	DTR state (00h low, 01h high, FFh unknown/don't change)
+ 02h	BYTE	RTS state (00h low, 01h high, FFh unknown/don't change)
+ 03h	BYTE	DSR state (00h low, 01h high, FFh unknown/don't change)
+ 04h	BYTE	CTS state (00h low, 01h high, FFh unknown/don't change)
+ 05h	BYTE	DCD state (00h low, 01h high, FFh unknown/don't change)
+ 06h	BYTE	RI state (00h inactive, 01h active, FFh unknown/don't change)
+----------E0----CLB2-------------------------
+INT E0 - DR Multiuser DOS - "A_BREAK" - SEND BREAK TO AUX DEVICE
+	CL = B2h
+	DX = duration of break in system ticks (0001h-FFFFh)
+Return: AX = status
+	    0000h successful
+	    	break signal completed
+	    FFFFh failed
+	        CX = error code
+Note:	if the AUX device is currently owned by another process, this call will
+	  block until the device becomes available
+SeeAlso: INT E0/CL=A5h,INT E0/CL=B1h
 ----------E0----CLBD-------------------------
-INT E0 - DR Multiuser DOS - DELAY
+INT E0 - DR Multiuser DOS - "P_DELAY" - DELAY EXECUTION
 	CL = BDh
-	DX = delay in ???
+	DX = delay in system ticks
+Return: after the delay elapses
+Notes:	the length of a system tick is installation-dependent (typically
+	  1/50 or 1/60 second); the length may be determined by reading the
+	  TICKSPERSEC value from the system data segment
+	the actual delay before the process is rescheduled to run may be up to
+	  one tick longer than requested; the delay between rescheduling and
+	  actual execution cannot be predicted if higher-priority processes
+	  are awaiting a turn at the CPU
 ----------E1---------------------------------
-INT E1 - used by IBM ROM BASIC while in interpreter
+INT E1 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------E1---------------------------------
 INT E1 - PC Cluster Disk Server Information
 SeeAlso: INT E2
 ----------E2---------------------------------
-INT E2 - used by IBM ROM BASIC while in interpreter
+INT E2 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------E2---------------------------------
 INT E2 - PC Cluster Program
 ----------E3---------------------------------
-INT E3 - used by IBM ROM BASIC while in interpreter
+INT E3 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------E40005-----------------------------
@@ -5817,39 +6094,39 @@ INT E4 - Logitech Modula v2.0 - MonitorExit
 	AX = 0006h
 SeeAlso: AX=0005h
 ----------E4---------------------------------
-INT E4 - used by IBM ROM BASIC while in interpreter
+INT E4 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------E5---------------------------------
-INT E5 - used by IBM ROM BASIC while in interpreter
+INT E5 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------E6---------------------------------
-INT E6 - used by IBM ROM BASIC while in interpreter
+INT E6 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------E7---------------------------------
-INT E7 - used by IBM ROM BASIC while in interpreter
+INT E7 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------E8---------------------------------
-INT E8 - used by IBM ROM BASIC while in interpreter
+INT E8 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------E9---------------------------------
-INT E9 - used by IBM ROM BASIC while in interpreter
+INT E9 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------EA---------------------------------
-INT EA - used by IBM ROM BASIC while in interpreter
+INT EA - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------EB---------------------------------
-INT EB - used by IBM ROM BASIC while in interpreter
+INT EB - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------EC---------------------------------
-INT EC - used by IBM ROM BASIC while in interpreter
+INT EC - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------EC---------------------------------
@@ -5866,11 +6143,11 @@ Notes:	this is the interface from applications to the runtime system by Exact
 	the interrupt handler removes the return address and flags placed on
 	  the stack by the INT EC, then jumps to the appropriate function
 ----------ED---------------------------------
-INT ED - used by IBM ROM BASIC while in interpreter
+INT ED - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------EE---------------------------------
-INT EE - used by IBM ROM BASIC while in interpreter
+INT EE - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC, but pointed at IRET by BASIC.COM/BASICA.COM
 	BASIC.COM/BASICA.COM do not restore vector on termination
 ----------EF---------------------------------
@@ -6092,7 +6369,7 @@ INT FF - Z100 - WARM BOOT
 SeeAlso: INT 40"Z100"
 ---------------------------------------------
 Please redistribute the following files unmodified as a group, in a pair of
-archives named INTER30A and INTER30B (preferably the original authenticated
+archives named INTER31A and INTER31B (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
 	INTERRUP.A	INT 00 through INT 14
@@ -6107,7 +6384,7 @@ PKZIP archives):
 	INTPRINT.DOC	instructions for INTPRINT
 	INTPRINT.C	source code for INTPRINT
 	MEMORY.LST	format of the BIOS data area
-The following files should be distributed in an archive called INTER30C:
+The following files should be distributed in an archive called INTER31C:
 	INT.COM		invoke interrupts from commandline
 	INT2HLP.BAT	Perl script to convert list into QuickHelp database
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database

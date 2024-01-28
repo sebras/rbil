@@ -1,22 +1,22 @@
-Interrupt List		Release 30			Last change 4/26/92
+Interrupt List		Release 31			Last change 7/12/92
 This compilation is Copyright (c) 1989, 1990, 1991, 1992 Ralf Brown
 ---------------------------------------------
 Please redistribute the following files unmodified as a group, in a pair of
-archives named INTER30A and INTER30B (preferably the original authenticated
+archives named INTER31A and INTER31B (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
 	INTERRUP.A	INT 00 through INT 14   \
-	INTERRUP.B	INT 15 through INT 1F    \   total 802 pages at
+	INTERRUP.B	INT 15 through INT 1F    \   total 879 pages at
 	INTERRUP.C	INT 20 thru INT 21/7F     \  60 lines per page,
-	INTERRUP.D	INT 21/80 thru INT 2F/7F   > 859 with INTPRINT -p
-	INTERRUP.E      INT 2F/80 thru INT 3F     /  (3655 entries)
+	INTERRUP.D	INT 21/80 thru INT 2F/7F   > 941 with INTPRINT -p
+	INTERRUP.E      INT 2F/80 thru INT 3F     /  (4077 entries)
 	INTERRUP.F	INT 40 through INT 67	 /
 	INTERRUP.G	INT 68 through INT FF   /
 	INTERRUP.PRI	a brief introduction to interrupts
 	INTPRINT.COM	a simple formatter that also generates a list summary
 	INTPRINT.DOC	instructions for INTPRINT
 	MEMORY.LST	format of the BIOS data area
-The following files should be distributed in an archive called INTER30C:
+The following files should be distributed in an archive called INTER31C:
 	INT.COM		invoke interrupts from commandline
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
 	INT2HLP.BAT	Perl script to convert list into QuickHelp database
@@ -457,6 +457,7 @@ Notes:	IBM standard modes do not clear the screen if the high bit of AL is set
 	the installation check for Paradise adapters is the signature "VGA=" at
 	  C000h:007Dh
 SeeAlso: AX=0070h,AX=007Eh,AX=10F0h,AX=6F05h,AH=FFh"GO32",INT 5F/AH=00h
+SeeAlso: INT 62/AX=0001h
 
 Values for video mode:
       text/ text pixel	 pixel	colors	disply	scrn  system
@@ -642,6 +643,7 @@ Values for video mode:
  4Dh = T  120x25				     VEGA VGA
  4Eh = T  120x43				     VEGA VGA
  4Fh = T  132x25				     VEGA VGA
+     = T  132x60				     some Oak Tech VGA
  50h = G   80x30  8x16	640x480	  16		     Paradise EGA-480
      = T   80x30  8x16		 16/256k	B800 Trident TVGA 8800/8900
      = T   80x34				     Lava Chrome II EGA
@@ -1086,7 +1088,7 @@ Notes:	for monochrome displays, a foreground of 1 with background 0 is
 	  underlined 
 	the blink bit may be reprogrammed to enable intense background colors
 	  using AX=1003h or by programming the CRT controller
-SeeAlso: AH=09h,AX=1003h
+SeeAlso: AH=09h,AX=1003h,AX=5001h
 ----------1009-------------------------------
 INT 10 - VIDEO - WRITE CHARACTER AND ATTRIBUTE AT CURSOR POSITION
 	AH = 09h
@@ -1200,6 +1202,20 @@ Offset	Size	Description
  02h	WORD	starting column???
  04h	WORD	ending column???
 	???
+----------100F--SIF123-----------------------
+INT 10 - FRIEZE v7.41+ - INSTALLATION CHECK
+	AH = 0Fh
+	SI = F123h
+	DI = 321Fh
+Return: AH = number of character columns
+	AL = display mode (see AH=00h)
+	BH = active page (see AH=05h)
+	SI = DI = F345h if installed
+Notes:	if mode was set with bit 7 set ("no blanking"), the returned mode will
+	  also have bit 7 set
+	EGA, VGA, and UltraVision return either AL=03h (color) or AL=07h
+	  (monochrome) in all extended-row text modes
+SeeAlso: AH=0Fh"VIDEO",AH=4Bh"FRIEZE"
 ----------1010-------------------------------
 INT 10 - BIOS Window Extension v1.1 - SET WINDOW COORDINATES
 	AH = 10h
@@ -1500,8 +1516,9 @@ INT 10 - VIDEO - GET FONT INFORMATION (EGA, MCGA, VGA)
 	    11h (UltraVision v2+) 8x20 font (VGA) or 8x19 font (autosync EGA)
 	    12h (UltraVision v2+) 8x10 font (VGA) or 8x11 font (autosync EGA)
 Return: ES:BP = specified pointer
-	CX    = bytes/character
-	DL    = character rows on screen - 1
+	CX    = bytes/character of on-screen font (not the requested font!)
+	DL    = character rows on screen - 1 (VGA)
+	      = character rows on screen (EGA)
 Note:	for UltraVision v2+, the 9xN alternate fonts follow the corresponding
 	  8xN font at ES:BP+256N
 SeeAlso: AX=1100h,AX=1120h,INT 1F,INT 43
@@ -2055,6 +2072,12 @@ INT 10 - FRIEZE v7.0+ - API
 		ES:BX -> ASCIZ filename from which to read
 	    02h save window
 		ES:BX -> ASCIZ filename to which to write
+	    03h (v7.41) set ???
+	    	AL = ???
+	    04h (v7.41) set ???
+	    	AL = ???
+	    06h (v7.41) ???
+	    	AL = ???
 	    07h set window size
 		ES:BX -> four-WORD structure with Xmin, Ymin, Xmax, Ymax
 	    09h set patterns
@@ -2063,10 +2086,26 @@ INT 10 - FRIEZE v7.0+ - API
 		ES:BX -> 16-BYTE buffer for color correspondences
 	    0Bh set mode
 		AL = mode
+	    0Ch (v7.41) ???
+	    	AL = ???
+		    00h ??? (calls original INT 05)
+		    else ???
+	    0Dh (v7.41) ???
+	    	AL = ???
+		    00h ??? (calls original INT 05)
+		    else ???
+	    0Eh (v7.41) ???
+	    	???
 	    0Fh get window
 		ES:BX -> four-WORD buffer for Xmin, Ymin, Xmax, Ymax
 	    10h set print options
 		ES:BX -> printer options in same format as FRIEZE cmdline
+	    11h (v7.41) ???
+	    	???
+	    12h (v7.41) ???
+	    	???
+	    13h (v7.41) ???
+	    	???
 	    14h get version
 		Return: AH = major version (00h if FRIEZE version before 7)
 			AL = minor version
@@ -2077,6 +2116,11 @@ INT 10 - FRIEZE v7.0+ - API
 	    17h get printer resolution
 		ES:BX -> 12-WORD table for six horizontal/vertical resol pairs
 	    18h reserved (v8.0 only)
+	    50h (v7.41) get ???
+	    	Return: AX = ???
+	    51h (v7.41) get ???
+	    	Return: ES = ??? (seen 2348h)
+			AX = ??? (seen 8432h)
 Return: AX = status
 	    00h successful
 	    01h user aborted printout with ESC
@@ -2091,6 +2135,7 @@ Return: AX = status
 	    0Ah invalid function
 	    0Bh can't create file
 	    0Ch wrong video mode
+SeeAlso: AH=0Fh/SI=F123h
 
 Format of parameter table:
 Offset	Size	Description
@@ -2180,7 +2225,7 @@ Offset	Size	Description
  0Ah	WORD	start segment of window B
  0Ch	DWORD	-> FAR window positioning function (equivalent to AX=4F05h)
  10h	WORD	bytes per scan line
----remainder is optional for VESA modes, needed for OEM modes---
+---remainder is optional for VESA modes in v1.0/1.1, needed for OEM modes---
  12h	WORD	width in pixels
  14h	WORD	height in pixels
  16h	BYTE	width of character cell in pixels
@@ -2194,10 +2239,25 @@ Offset	Size	Description
 		02h HGC graphics
 		03h 16-color (EGA) graphics
 		04h packed pixel graphics
-		05h "sequ 256" graphics
-		06h-0Fh reserved for VESA
-		10h-FFh OEM memory model
+		05h "sequ 256" (non-chain 4) graphics
+		06h direct color (HiColor, 24-bit color)
+		07h YUV
+		08h-0Fh reserved for VESA
+		10h-FFh OEM memory models
  1Ch	BYTE	size of bank in K
+ 1Dh	BYTE	number of image pages
+ 1Eh	BYTE	reserved (0)
+---VBE v1.2+---
+ 1Fh	BYTE	red mask size
+ 20h	BYTE	red field position
+ 21h	BYTE	green mask size
+ 22h	BYTE	green field size
+ 23h	BYTE	blue mask size
+ 24h	BYTE	blue field size
+ 25h	BYTE	reserved mask size
+ 26h	BYTE	reserved mask position
+ 27h	BYTE	direct color mode info
+ 28h	BYTE	reserved (0)
 ----------104F02-----------------------------
 INT 10 - VESA SuperVGA BIOS - SET SuperVGA VIDEO MODE
 	AX = 4F02h
@@ -2224,6 +2284,22 @@ Values for VESA video mode:
  10Ah	132x43 text
  10Bh	132x50 text
  10Ch	132x60 text
+---VBE v1.2---
+ 10Dh	320x200x32K
+ 10Eh	320x200x64K
+ 10Fh	320x200x16M
+ 110h	640x480x32K
+ 111h	640x480x64K
+ 112h	640x480x16M
+ 113h	800x600x32K
+ 114h	800x600x64K
+ 115h	800x600x16M
+ 116h	1024x768x32K
+ 117h	1024x768x64K
+ 118h	1024x768x16M
+ 119h	1280x1024x32K
+ 11Ah	1280x1024x64K
+ 11Bh	1280x1024x16M
 ----------104F03-----------------------------
 INT 10 - VESA SuperVGA BIOS - GET CURRENT VIDEO MODE
 	AX = 4F03h
@@ -2306,6 +2382,16 @@ Return: AL = 4Fh if function supported
 Note:	this function is valid in text modes, provided that values are
 	  multiplied by the character cell width/height
 SeeAlso: AX=4F01h,AX=4F05h,AX=4F06h
+----------104F08-----------------------------
+INT 10 - VESA SuperVGA BIOS v1.2+ - GET/SET DAC PALETTE CONTROL
+	AX = 4F08h
+	BL = function
+	    00h set DAC palette width
+	    	BH = desired number of bits per primary color
+	    01h get DAC palette width
+Return: AL = 4Fh if function supported
+	AH = status
+	BH = current number of bits per primary (06h = standard VGA)
 ----------104FFF-----------------------------
 INT 10 - VESA SuperVGA BIOS - Everex - TURN VESA ON/OFF
 	AX = 4FFFh
@@ -2318,12 +2404,24 @@ Return: BX = 1954h if installed
 	    AL = 00 if inactive, nonzero if active
 Note:	SCROLOCK is a utility supplied with System Enhancement Associates' ARC
 SeeAlso: AH=51h
+----------105000-----------------------------
+INT 10 - VIDEO - AX PC - SET SCREEN COUNTRY CODE
+	AX = 5000h
+	BX = country code
+		0001h USA (English), 0051h Japan
+Return: AL = status
+	    00h successful
+	    01h bad country code
+	    02h other error
+SeeAlso: AX=5001h,INT 16/AX=5000h
 ----------105001-----------------------------
 INT 10 - VIDEO - AX PC - GET SCREEN COUNTRY CODE
 	AX = 5001h
-Return: BX = 0053h Japan
-	   = other not Japan
-SeeAlso: AH=00h,INT 21/AH=38h
+Return: AL = status
+	    00h successful
+		BX = country code
+	    02h error
+SeeAlso: AH=00h,AX=5000h,INT 16/AX=5001h,INT 21/AH=38h
 ----------1051-------------------------------
 INT 10 - SCROLOCK.COM - ENABLE/DISABLE
 	AH = 51h
@@ -2332,6 +2430,34 @@ INT 10 - SCROLOCK.COM - ENABLE/DISABLE
 	    nonzero enable
 Note:	SCROLOCK is a utility supplied with System Enhancement Associates' ARC
 SeeAlso: AH=50h"SCROLOCK"
+----------105100-----------------------------
+INT 10 - VIDEO - AX PC - REGISTER EXTERNAL CHARACTER
+	AX = 5100h
+	BH = character width in bits (10h)
+	BL = character height (10h)
+	DX = character code (DH = F0h-F3h, DL=40h-7Eh,80h-FCh)
+	ES:BP -> character bitmap
+Return: AL = status (00h successful, 01h failed)
+SeeAlso: AX=5101h,INT 1F
+----------105101-----------------------------
+INT 10 - VIDEO - AX PC - READ CHARACTER
+	AX = 5101h
+	BH = character width in bits
+	BL = character height
+	DX = character code (DH = 00h if 8-bit character)
+	ES:BP -> buffer for character bitmap
+Return: AL = status (00h successful, 01h failed)
+SeeAlso: AH=09h,AX=5100h
+----------105200-----------------------------
+INT 10 - VIDEO - AX PC - SET VIRTUAL TEXT RAM BUFFER
+	AX = 5200h
+	BX = segment of buffer
+SeeAlso: AX=5201h
+----------105201-----------------------------
+INT 10 - VIDEO - AX PC - GET VIRTUAL TEXT RAM BUFFER
+	AX = 5201h
+Return: BX = segment of buffer or 0000h if failed
+SeeAlso: AX=8300h,AH=FEh
 ----------1053-------------------------------
 INT 10 - Show Partner F/X v3.6 - START PRESENTATION
 	AH = 53h
@@ -2970,6 +3096,19 @@ Return: DS = segment in DESQview for data structure
 Note:	this function is probably meant for internal use only, due to the magic
 	  value required in DX
 SeeAlso: AH=81h
+----------108200-----------------------------
+INT 10 - VIDEO - AX PC - GET/SET SCROLL MODE
+	AX = 8200h
+	BL = new scroll mode or FFh to get current mode
+	    00h dynamic, 01h software
+Return: AL = scroll mode (current mode if BL=FFh, previous mode otherwise)
+SeeAlso: AH=06h,AH=07h
+----------108300-----------------------------
+INT 10 - VIDEO - AX PC - GET VIDEO RAM ADDRESS
+	AX = 8300h
+Return: AX = offset of video RAM
+	ES:BX -> virtual text RAM buffer
+SeeAlso: AX=5201h
 ----------108B-------------------------------
 INT 10 - Alloy MW386 - FORCE WORKSTATION SCREEN UPDATE
 	AH = 8Bh
@@ -3425,7 +3564,7 @@ Notes:	if no multitasker or RSIS-compliant environment is installed, ES:DI is
 	TopView requires a call to AH=FFh to notify it that the screen has
 	  changed; DESQview will check for changes itself until the first call
 	  to AH=FFh
-SeeAlso: AH=05h,AH=FFh,INT 15/AX=1024h,INT 21/AH=2Bh"DESQview"
+SeeAlso: AH=05h,AX=5201h,AH=FFh,INT 15/AX=1024h,INT 21/AH=2Bh"DESQview"
 ----------10FF-------------------------------
 INT 10 - TopView - UPDATE SCREEN FROM SHADOW BUFFER
 	AH = FFh
@@ -3553,7 +3692,7 @@ INT 12 - BIOS - GET MEMORY SIZE
 Return:	AX = kilobytes of contiguous memory starting at absolute address 00000h
 Note:	this call returns the contents of the word at 0040h:0013h; in PC and
 	  XT, this value is set from the switches on the motherboard
-SeeAlso: INT 11
+SeeAlso: INT 11,INT 2F/AX=4A06h
 ----------12----CX1806-----------------------
 INT 12 - KEYBUI v2.0+ - INSTALLATION CHECK
 	CX = 1806h
@@ -4015,8 +4154,9 @@ Return: CF set on error
 	    BL = SCSI device number for specified drive
 	    CX = 040Ah (magic number???)
 Note:	also sets an internal flag (non-resettable) which prevents some
-	  controller messages from being displayed and allows writes to
-	  removable devices
+	  controller messages from being displayed, allows writes to
+	  removable devices, and enables the INT 13 interface for more than
+	  one drive (i.e. DL >= 81h)
 SeeAlso: AH=1Bh"SCSI"
 ----------1319-------------------------------
 INT 13 - FIXED DISK - PARK HEADS (XT286,PS)
@@ -4575,9 +4715,10 @@ SeeAlso: AH=05h"FOSSIL",AH=81h"COMM-DRV",AH=82h"COURIERS"
 INT 14 - MBBIOS - INITIALIZE PORT
 	AH = 00h
 	AL = port parameters
-	    bits 7-5 data rate (110,150,300,600,1200,2400,4800,9600 bps)
-	     or if the high speed option is set
-	    bits 7-5 data rate (9600,14400,19200,28800,38400,57600,115200,330400 bps)
+	    bits 7-5 data rate
+	    		(normally 110,150,300,600,1200,2400,4800,9600 bps;
+			9600,14400,19200,28800,38400,57600,115200,330400 bps
+			if the high-speed option is set)
 	    bits 4-3 parity (00 or 10 = none, 01 = odd, 11 = even)
 	    bit 2    stop bits (set = 2, clear = 1)
 	    bits 1-0 data bits (00 = 5, 01 = 6, 10 = 7, 11 = 8)
@@ -5999,4 +6140,3 @@ INT 14 - IBM/Yale EBIOS SERIAL I/O - BUFFERED READ
 	ES:BX -> buffer
 Return: CX = number of characters read
 SeeAlso: AH=18h,AH=83h"COURIERS",AH=A5h"BAPI",AH=FCh
----------------------------------------------

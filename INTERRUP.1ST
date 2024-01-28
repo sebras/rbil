@@ -1,21 +1,21 @@
-Interrupt List		Release 30			Last change 4/26/92
+Interrupt List		Release 31			Last change 7/12/92
 
 Please redistribute the following files unmodified as a group, in a pair of
-archives named INTER30A and INTER30B (preferably the original authenticated
+archives named INTER31A and INTER31B (preferably the original authenticated
 PKZIP archives):
         INTERRUP.1ST	this file
 	INTERRUP.A	INT 00 through INT 14   \
-	INTERRUP.B	INT 15 through INT 1F    \   total 802 pages at
+	INTERRUP.B	INT 15 through INT 1F    \   total 879 pages at
 	INTERRUP.C	INT 20 thru INT 21/7F     \  60 lines per page,
-	INTERRUP.D	INT 21/80 thru INT 2F/7F   > 859 with INTPRINT -p
-	INTERRUP.E      INT 2F/80 thru INT 3F     /  (3655 entries)
+	INTERRUP.D	INT 21/80 thru INT 2F/7F   > 942 with INTPRINT -p
+	INTERRUP.E      INT 2F/80 thru INT 3F     /  (4077 entries)
 	INTERRUP.F	INT 40 through INT 67	 /
 	INTERRUP.G	INT 68 through INT FF   /
         INTERRUP.PRI	a brief primer on interrupts
 	INTPRINT.COM	a simple formatter that also generates a list summary
 	INTPRINT.DOC	instructions for INTPRINT
 	MEMORY.LST	format of the BIOS data area
-The following files should be distributed in an archive called INTER30C:
+The following files should be distributed in an archive called INTER31C:
 	INT.COM		invoke interrupts from commandline
         INT2GUID.*      convert list into TurboPower GUIDE or POPHELP database
 	INT2HLP.BAT	Perl script to convert list into QuickHelp database
@@ -79,7 +79,7 @@ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION,
 THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 PARTICULAR PURPOSE.
 
-INT 0A"Tandy", INT 0D"Tandy", INT 10/AH=70h-73h, and INT 86"NetBIOS",
+INT 0A"Tandy", INT 0D"Tandy", INT 10/AH=70h-73h, INT 86"NetBIOS",
 INT F8"TANDY", INT FA"TANDY", and INT FB"TANDY" have been completely
 rewritten.  All other information contained in the July 1987 version
 on which the above copyright was claimed has been removed and replaced
@@ -88,12 +88,12 @@ the July 1987 entries and their replacements are due solely to the
 nature of the information or the use of identical reference materials.
 ---------------------------------------------
 If the list is more than three months old by the time you get it, there
-is probably a newer release out already (R31 is planned for early July,
-R32 for late September).  Each release supercedes all previous versions, so
+is probably a newer release out already (R32 is planned for late September,
+R33 for early December).  Each release supercedes all previous versions, so
 there is no need to keep old versions.
 
 The newest release of this list is available in these places (please do not
-ask me to email it, it is just too large for that):
+ask me to email it, at 700K compressed it is much too large for that):
 
 On the Internet, by standard anonymous FTP from CS.CMU.EDU [128.2.222.173].
 	Change directly to directory /afs/cs.cmu.edu/user/ralf/pub and get the
@@ -105,7 +105,7 @@ On the Internet, by standard anonymous FTP from CS.CMU.EDU [128.2.222.173].
 	downtime.  If you get an "access denied" type error, try again in a
 	few hours.
 
-On FIDOnet, from SoundingBoard BBS 1:129/26 1-412-621-4604 2400/9600/14.4 HST
+On FIDOnet, from SoundingBoard BBS 1:129/26 1-412-621-4604 9600/14.4k HST/V32
 	as files INTERrrA.ZIP, INTERrrB.ZIP, and INTERrrC.ZIP (rr stands for
 	the release number), in file area #8.  First-time callers may download.
 	File Requests.
@@ -115,12 +115,18 @@ concurrently with a new release of the list.  Since comp.binaries.ibm.pc is
 archived, you will be able to find a fairly recent release in the various UUCP
 archives.
 
-Secondary Distribution Points (the list will be available here within a day or
-so of release):
-Internet: on WSMR-SIMTEL20.ARMY.MIL [26.2.0.74] as files INTERrrA.ZIP and
-	INTERrrB.ZIP in	directory PD1:<MSDOS.INFO>, where rr stands for the
-	release number.  Note that you must use a binary-transfer mode ("tenex"
-	or "type L 8" for most people) to successfully FTP the files.
+Alternate Distribution Points (the list will typically be available here
+within twelve hours of release):
+Internet: on WSMR-SIMTEL20.ARMY.MIL [192.88.110.20] as files INTERrrA.ZIP,
+	INTERrrB.ZIP and INTERrrC.ZIP in directory PD1:<MSDOS.INFO>, where rr
+	stands for the release number.  Note that you must use a binary
+	transfer mode ("tenex" or "type L 8" for most people) to successfully
+	FTP the files.	SIMTEL20 also has a number of mirror sites which
+	contain all of the files but may be a few days behind in updates.
+	These include oak.oakland.edu [141.210.10.117], wuarchive.wustl.edu
+	[128.252.135.4], ftp.uu.net [137.39.1.9], nic.funet.fi
+	[128.214.6.100], src.doc.ic.ac.uk [146.169.3.7] and archie.au
+	[139.130.4.6].
 FIDO:	SyncPoint BBS 1:261/1008 1-301-529-2584 File Requests.
 
 Additional Distribution Points:
@@ -167,9 +173,10 @@ Key to system abbreviations
 	VGA	Video Graphics Array
 	MCGA	Multi-Color Graphics Array
 	TopView TopView/DESQview/TaskView/OmniView/other compatibles
+	ConcCP/M Concurrent CP/M by Digital Research, now DR MultiUser DOS
 ---------------------------------------------
-This list is the result of the time and effort of a large number of people,
-among them
+This list is the result of the time and effort of a large number of people:
+
  1/85 Janet Jack  (original list)
  1/85 J. Weaver Jr.
  2/85 John Cooper
@@ -178,7 +185,7 @@ among them
  4/85 Jim Kyle	       76703.762@compuserve.com
  8/85 John Ruschmeyer  moncol!john@princeton.edu
  8/85 Bill Frolik      bill@hpcvlx.cv.hp.com
- 8/85 Ross M. Greenberg c-rossgr@microsoft.com
+ 8/85 Ross M. Greenberg 72461.3212@compuserve.com
 
    87 Mike Morearty    mikemo@microsoft.com	  \   early 1987
       Ed Nather        nather@emx.utexas.edu	   >  several undocumented DOS
@@ -283,7 +290,7 @@ among them
  1/91 Michael A Shiels mshiels@masnet.uucp	      more AppleTalk, misc
  1/91 Michael A Shiels mshiels@masnet.uucp	      DPMI 1.0 func names
  2/91 Michael A Shiels mshiels@masnet.uucp	      miscellaneous
- 3/91 Jan-Pascal van Best  best@rulcri.LeidenUniv.nl  NetWare IPX/SPX INT 7A
+ 3/91 Jan-Pascal van Best BEST@rulwinwst.LeidenUniv.nl  NetWare IPX/SPX INT 7A
  3/91 Jeroen Pluimers  2:281/521		      TBSCANX
  3/91 Ralf Brown       ralf@cs.cmu.edu		      PC Tools API
  4/91 David H. Bennett 74635.1671@compuserve.com      ELRES API
@@ -325,10 +332,10 @@ among them
  1/92 Frank Vorstenbosch akcs.kingswood@hpcvbbs.cv.hp.com  Kingswood TSR API
  1/92 Jacob Rieper     73377.1220@compuserve.com      DR-DOS 6.0 TaskMAX
  1/92 Fridrik Skulason frisk@complex.is		      more viruses, std names
- 1/92 Tim Farley       72717.2253@compuserve.com      Microsoft EMM386.EXE
+ 1/92 Tim Farley       tim@magee.mhs.compuserve.com   Microsoft EMM386.EXE
  1/92 Alexi Lookin  Sergey.Bychkow@kvant.Glas.Apc.Org NetWare TBMI 2.0
  1/92 Ralf Brown       ralf@cs.cmu.edu		      more QEMM API
- 1/92 Tim Farley       72717.2253@compuserve.com      more PS/x model IDs
+ 1/92 Tim Farley       tim@magee.mhs.compuserve.com   more PS/x model IDs
  1/92 Kevin Gillett    1:153/101		      SOLLEX SuperVGA extnsions
  1/92 Michael A Shiels mshiels@masnet.uucp            B.Antoine ST-01 SCSI.SYS
  1/92 Michael A Shiels mshiels@masnet.uucp            ASPI,ASPITAPE,Canon SI3
@@ -345,12 +352,21 @@ among them
  3/92 Joseph Gil       yogi@cs.ubc.ca		      HP 95LX
  3/92 Ralf Brown       ralf+@cs.cmu.edu 	      386MAX 6.0 API
  3/92 Fyodor Evseev    Ted@ppicnit.perm.su	      AutoCAD Digitizer ADI
- 3/92 Tim Farley       72717.2253@compuserve.com      Advanced Power Management
+ 3/92 Tim Farley       tim@magee.mhs.compuserve.com   Advanced Power Management
  4/92 Tamura Jones     2:512/36.7		      PGS1600.DEV
  4/92 Andrew Rossmann  andyross@infopls.chi.il.us     SMARTDRV v4.00, QEMM
  4/92 Tamura Jones     2:512/36.7		      METZTSR.COM
  4/92 Tamura Jones     2:512/36.7		      Vanderaart txtwin,DR MDOS
  4/92 Dan Bodoh	       bodoh@xraylith.wisc.edu	      DESQview/X .DVP file
+ 5/92 William Peavy    70042.2310@CompuServe.COM      Borland FP shortcuts
+ 5/92 Ralf Brown       ralf+@cs.cmu.edu		      FGDRIVER v1.10
+ 5/92 Tim Farley       tim@magee.mhs.compuserve.com   Vedit VSWAP, NG.EXE
+ 6/92 Dan Fandrich     shad04@ccu.umanitoba.ca	      BitFax scheduler
+ 6/92 Tamura Jones     2:512/36.7		      more New EXE, AD-DOS.COM
+ 6/92 Tim Farley       tim@magee.mhs.compuserve.com   LANtastic v4.1
+ 6/92 Francis Turner FTURNER@madge.MHS.CompuServe.COM  AX (Japanese AT) calls
+ 6/92 John Fa'atuai    FROTZ.NOVELL@sjfsmtp.novell.com DR Multiuser DOS
+ 6/92 Andy Hakim       cosc16to@menudo.uh.edu	      Smooth Mouse Driver
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -373,15 +389,15 @@ Also contributing:
  Mark Scase <coa44@keele.ac.uk>, Erik Liljencrantz <d88-eli@nada.kth.se>,
  Mark Seiffert <marks%%mgse@rex.cs.tulane.edu>, Lewis Paper (Minnesota),
  Marco Lumachi <RARCHI06@IMIPOLI.BITNET>, Michael Dickson <mcd@ccsitn.att.com>,
- Andrew Torda <torda@igc.ethz.ch>, Madis Kaal 2:490/30, David G. Thomas,
+ Andrew Torda <torda@igc.ethz.ch>, Madis Kaal 2:490/30 <mast@ce.ttu.ew.su>,
  Paul Williamson <pwilliamson@drzeus.qualcomm.com>, Jan Ceuleers 2:295/27,
  James Birdsall <jwbirdsa@amc.com>, Joe Morris <jcmorris@MWUNIX.MITRE.ORG>,
- Edwin Floyd <76067.747@CompuServe.COM>, James West 1:140/26,
- Simon Phipps <sphipps@cix.compulink.co.uk>, John Fa'atuai <frotz@dri.com>,
+ Edwin Floyd <76067.747@CompuServe.COM>, James West 1:140/26, David G. Thomas,
+ Simon Phipps <sphipps@cix.compulink.co.uk>, Frank Klemm <pfk@rz.uni-jena.de>,
  Glen Kriekenbeck <glenk@East.Sun.COM>, Dave Andrews <bilver!dandrews@aii.com>,
  John P. Vias <72260.1601@CompuServe.COM>, Brian Leeming (Surrey, England),
  Naota Kimura <abcscnuk@csuna.csun.edu>,George W. Pogue <gwp@trsvax.tandy.com>,
- William L. Peavy <70042.2310@compuserve.com>, Dmitry Stefankov (Moscow, USSR),
+ Dmitry Stefankov (Moscow, USSR), Michael L. Kaufman <kaufman@eecs.nwu.edu>,
  Michael D. Lawler <mdlawler@bsu-cs.bsu.edu>, Norbert Juffa (Karlsruhe, FRG),
  Chris Blum <76625.1041@compuserve.com>,David Fink <73700.3076@compuserve.com>,
  Klaus Hartnegg <hartnegg@sun1.ruf.uni-freiburg.de>, Thomas Lukka 2:227/16,
@@ -394,12 +410,12 @@ Also contributing:
  Michael S. Stratoti <tmstrato@king.mcs.drexel.edu>, Marc Scholtis 2:281/701.2,
  Geoff Chappell <uunet!cix.compulink.co.uk!geoffc>, Sean Lin (Midland, MI),
  Claude Marche <marche@lri.lri.fr>, Bent Lynggaard <lynggaard@risoe.dk>,
- Drake Koefoed (Eugene, OR), Michael L. Kaufman <kaufman@eecs.nwu.edu>,
+ Drake Koefoed (Eugene, OR), Rehn-Lieh Lin <rllin@paradise.ccl.itri.org.tw>,
  Mark T Garlanger <garlangr@ecn.purdue.edu>, J. B. Gill <JBG@arlan.byu.edu>,
  Frank Behrens (Dresden, Germany), Bruce Gingery 1:310/5.1, John Navas,
  Johan Zwiekhorst 2:292/100, Klaus Fischer 2:243/64, Steve Grant (New Jersey),
  Jeff Pipkins <pipkins@cpqhou.se.hou.compaq.com>, Wim Osterholt (Netherlands),
- Brett Warthen <73270.405@compuserve.com>, THOMAS DWYER <tomiii@mtu.edu>,
+ Brett Warthen <73270.405@compuserve.com>, Thomas Dwyer <tomiii@mtu.edu>,
  Brian.McGuinness@nirvonics.com, Mitch Davis 3:634/384.6, Steve Halko 1:365/12,
  noesis@ucscb.UCSC.EDU, Timo Salmi <ts@uwasa.fi>, Jack Alvrus (Florida),
  Eberhard Mattes <mattes@azu.informatik.uni-stuttgart.de>, Pete Peterson,
@@ -408,8 +424,12 @@ Also contributing:
  Heath Ian Hunnicutt <heathh@cco.caltech.edu>, Stefan Gustafsson <sg@diab.se>,
  Janos Haide <JHAIDE.NOVELL@sjfsmtp.novell.com>, Stan Brown <brown@ncoast.org>,
  Morten Welinder <terra@diku.dk>, Jim Peterson <jpeterso@vtssi.vt.edu>,
- Serge Krupa <krupa@eig.unige.ch>,
- Rehn-Lieh Lin <rllin@paradise.ccl.itri.org.tw>
+ Serge Krupa <krupa@eig.unige.ch>, Tom Rawson <75300.210@compuserve.com>,
+ Chris Hall <CAH17@phx.cam.ac.uk>, Patrick Ibbetson <ibbetson@nes.nersc.gov>,
+ Edwin Cleton 2:512/1007.2, Aki Korhonen <aki@cruzio.santa-cruz.ca.us>,
+ Carlos Rioja <CarlosRioja@cpd.uva.es>,Torbj|rn Lindgren <tl@etek.chalmers.se>,
+ Jens Bleuel <100064.1757@CompuServe.COM>, <David_Markun@crd.lotus.com>,
+ Dmitry Ablov <abl@ablov.comrel.msk.su>, Gianni Alb¢re (Taranto, Italy)
 ---------------------------------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -777,6 +797,14 @@ Added 4/18/92.
 
 Vanderaart text-windows API found in J. Vanderaart,"The Golden Btriever", LAN
 Magazine, July 1990, p. 85.  Added 4/18/92.
+
+SuperVGA v1.2 info from _Super_VGA_BIOS_Extension_, standard #VS911022,
+October 22, 1991.  Added 5/6/92.
+
+Additional partition types from a public domain list by Sean Goggin
+<sean@u36.kwnet.on.ca>.  Added 5/22/92.
+
+XMS 3.0 calls were found in XMS30.TXT on the CompuServer MSLANG forum.
 ---------------------------------------------
 The following have provided API reference materials at no charge:
 
@@ -945,7 +973,7 @@ Eric Isaacson Software		(ZIPKEY)
 Bloomington, IN 47401-4739
 Voice: (812) 339-1811
 
-ESaSS B.V.			(TBSCANX, ThunderByte)
+ESaSS B.V.			(TBSCANX, ThunderByte, STACKMAN)
 Thunderbyte PC Immunizer Division
 P.O. Box 1380
 6501 BJ Nijmegen
@@ -1077,6 +1105,13 @@ Ermekeilstr. 28
 W-5300 Bonn 1
 Germany
 
+Ted Gruber Software		(FGDRIVER)
+P.O. Box 13408
+Las Vegas, NV 89112
+Voice: (702) 735-1980
+BBS:   (702) 796-7134
+FAX:   (702) 735-4603
+
 George A. Theall		(RECALL)
 TifaWARE
 506 South 41st St., #3M
@@ -1143,8 +1178,14 @@ What they're saying about this list:
    IBM PC.  A great thing to have on your hard disk if you don't have
    a Ray Duncan or Peter Norton book handy."
       _Turbo_Technix_, July/August 1988, p. 157.
-[and that was about the 1/30/88 version, which is less than one-tenth the size
+[and that was about the 1/30/88 version, which is only one-twelfth the size
  of the current version....]
+
+  "An enormous listing of DOS and BIOS interrupt calls, many undocumented
+   and program-specific.  Quite simply, some of Snooper's reports wouldn't
+   be there without it.  Very useful in that it reports bugs and
+   incompatibilities books rarely mention.  And it's free!"
+      John P. Vias, SNOOPER.DOC v1.07.	
 ---------------------------------------------
 If you know of any information not in the list, or which is stated incorrectly,
 please let me know!  This list would be a pale shadow of its current self if it

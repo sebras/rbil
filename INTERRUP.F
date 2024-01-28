@@ -1,3 +1,4 @@
+---------------------------------------------
 Interrupt List, part 6 of 7
 This compilation is Copyright (c) 1989,1990,1991,1992 Ralf Brown
 ----------40---------------------------------
@@ -1749,12 +1750,14 @@ INT 60 - JPI TopSPEED Modula-2 v1 - PROCEDURE ENTRY TRAP
 SeeAlso: INT 61"JPI"
 ----------60---------------------------------
 INT 60 - FTP Packet Driver - PC/TCP Packet Driver Specification
-   The handler for the interrupt will start with a 3-byte jump instruction, 
-   followed by the ASCIZ string "PKT DRVR".  To find the interrupt being used
-   by the driver, an application should scan through interrupt vectors 60h to
-   80h (20h through FFh for v1.10+ of the specification) until it finds one
-   with the "PKT DRVR" string.	AH values of 80h to FFh have been reserved
-   for user-defined additions.
+Notes:	The handler for the interrupt will start with a 3-byte jump 
+	  instruction, followed by the ASCIZ string "PKT DRVR" (the
+	  terminating NUL is significant).
+	To find the interrupt being used by the driver, an application should
+	  scan through interrupt vectors 60h to 80h (20h through FFh for
+	  v1.10+ of the specification) until it finds one with the "PKT DRVR"
+	  string.
+	AH values of 80h to FFh have been reserved for user-defined additions.
 ----------60----DI0100-----------------------
 INT 60 u - HP 95LX System Manager - WAIT FOR EVENT
 	DI = 0100h
@@ -4370,11 +4373,6 @@ SeeAlso: INT 0F"HP 95LX",INT 60"HP 95LX"
 INT 61 - JPI TopSPEED Modula-2 v1 - PROCEDURE EXIT TRAP
 SeeAlso: INT 61"JPI"
 ----------61---------------------------------
-INT 61 - FTP Software PC/TCP - TCP/IP TSR System Call interface
-	AH = system call number
-Return: AL = basic error
-	AH = suberror number
-----------61---------------------------------
 INT 61 - Adaptec and OMTI controllers - DRIVE 0 DATA
 Note:	this vector stores the second four bytes of the parameter table for
 	  hard disk 0
@@ -4387,6 +4385,68 @@ SeeAlso: INT 67"Sangoma"
 INT 61 - VIRUS - "SEMTEX"/"Screen Trasher" - INT 21h SUBSTITUTE
 Note:	the virus copies the original INT 21h vector into INT 61h
 SeeAlso: INT 21h,INT 60"VIRUS",INT 6B"VIRUS"
+----------61---------------------------------
+INT 61 - FTP Software PC/TCP - TCP/IP TSR System Call interface
+	AH = system call number (see separate entries below)
+Return: CF clear if successful
+	CF set on error
+	    AL = basic error
+	        04h invalid handle???
+		12h invalid subfunction
+		18h invalid system call
+		1Bh kernel busy, try again later
+	    AH = suberror number
+Notes:	the installation check consists of testing for the signature "TCPTSR"
+	  three bytes beyond the start of the interrupt handler
+	INT 61 is the default; PC/TCP v2.05 may be configured to use any
+	  interrupt from 20h through E0h
+BUG:	the SLIP kernel for v2.05 bounds-checks the wrong register, so values
+	  greater than 54h in AH may crash the system.  Other kernels may have
+	  this bug as well.
+SeeAlso: INT 61/AH=00h"PC/TCP",INT 61/AH=2Ah,INT 61/AH=54h
+----------6100-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - GET DEBUG INFORMATION
+	AH = 00h
+	DS:SI -> 216-byte buffer for network debugging information (see below)
+Return: CF clear
+	AX = 0000h
+	buffer filled
+SeeAlso: INT 61"PC/TCP",INT 61/AH=2Ah"PC/TCP"
+
+Format of network debugging information:
+Offset	Size	Description
+ 00h	DWORD	number of interrupts
+ 04h	DWORD	receive buffer low-water mark
+ 08h	DWORD	transmit buffer low-water mark
+ 0Ch	DWORD	number of packets received
+ 10h	DWORD	number of packets transmitted
+ 14h	DWORD	total receive errors
+ 18h	DWORD	total transmit errors
+ 1Ch  4 BYTEs	???
+ 20h	DWORD	receive resets
+ 24h	DWORD	transmit resets
+ 28h	DWORD	number of "runts" received
+ 2Ch	DWORD	number of alignment errors on received packets
+ 30h	DWORD	number of CRC errors on received packets
+ 34h	DWORD	number of parity errors on received packets
+ 38h	DWORD	number of receive overflow errors
+ 3Ch	DWORD	number of oversized packets received
+ 40h	DWORD	number of packets lost due to lack of buffers
+ 44h	DWORD	receive timeouts
+ 48h 32 BYTEs	???
+ 68h	DWORD	number of transmit collisions
+ 6Ch	DWORD	number of transmit timeouts
+ 70h	DWORD	number of transmit underflows
+ 74h	DWORD	number of lost "crs" on transmit
+ 78h	DWORD	number of times heartbeat failed on transmit
+ 7Ch 24 BYTEs	???
+ 94h	WORD	free packet buffers
+ 96h	WORD	total packet buffers
+ 98h	WORD	minimum number of packet buffers free since kernel started
+ 9Ah 24 BYTEs	???
+ B2h	DWORD	pointer to TCP connection list???
+ B6h	DWORD	pointer to IP routing table???
+ BAh 30 BYTEs	???
 ----------610000-----------------------------
 INT 61 - OPTIMA 1024 VGA-Sync - ZOOM DISPLAY
 	AX = 0000h
@@ -5509,6 +5569,558 @@ INT 61 - Banyan VINES - GET REVISION NUMBER
 Return: AX = 0000h installed
 	    DS:DX buffer contains revision number as
 		10000d * major_ver + 100d * minor_ver + patch_revision
+----------6105-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 05h
+	BX = connection handle???
+Return: CF clear if successful
+	    DX:AX = ???
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+Notes:	the installation check consists of testing for the signature "TCPTSR"
+	  three bytes beyond the start of the interrupt handler
+	INT 61 is the default; PC/TCP v2.05 may be configured to use any
+	  interrupt from 20h through E0h
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=06h
+----------6106-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - GET INTERFACE STATISTICS
+	AH = 06h
+	BX = connection handle???
+	DS:SI -> 38-byte buffer (see below)
+Return: CF clear if successful
+	    buffer filled
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=05h
+
+Format of buffer:
+Offset	Size	Description
+ 00h	WORD	???
+ 02h	WORD	???
+ 04h	WORD	???
+ 06h	DWORD	IP address of interface, high byte first
+ 0Ah	DWORD	subnet mask
+ 0Eh	WORD	??? (apparently always 0001h)
+ 10h	DWORD	total packets received
+ 14h	DWORD	total packets sent
+ 18h	DWORD	receive errors
+ 1Ch	DWORD	send errors
+ 20h	WORD	??? (apparently always 0006h)
+ 22h	DWORD	pointer to ???
+----------6107-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 07h
+	BX = connection handle???
+Return: CF clear if successful
+	    AX = ???
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------6108-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 08h
+	BX = connection handle???
+Return: CF clear if successful
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------6109-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ??? ALL
+	AH = 09h
+Return: CF clear
+Notes:	performs function 08h on every connection handle???
+	the installation check consists of testing for the signature "TCPTSR"
+	  three bytes beyond the start of the interrupt handler
+	INT 61 is the default; PC/TCP v2.05 may be configured to use any
+	  interrupt from 20h through E0h
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------610C-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - GET CONNECTION??? STATISTICS
+	AH = 0Ch
+	BX = connection handle???
+	    FFFCh for kernel ICMP statistics
+	    FFFDh for kernel UDP statistics
+	    FFFEh for kernel IP statistics
+	    FFFFh for kernel TCP statistics
+	DS:DX -> 64-byte buffer
+Return: CF clear if successful
+	    buffer filled
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+
+Format of handle statistics:
+Offset	Size	Description
+ 00h  4 BYTEs	unused
+ 04h	DWORD	???
+ 08h  8 BYTEs	unused
+ 10h	DWORD	???
+ 14h	DWORD	???
+ 18h 12 BYTEs	unused
+ 24h	DWORD	???
+ 28h 24 BYTEs	unused
+
+Format of kernel TCP statistics:
+Offset	Size	Description
+ 00h 16 BYTEs	unused
+ 10h	DWORD	bytes sent
+ 14h	DWORD	bytes received
+ 18h  8 BYTEs	unused
+ 20h	DWORD	packets sent
+ 24h	DWORD	packets received
+ 28h	DWORD	bad checksums
+ 2Ch	DWORD	protocol errors
+ 30h	DWORD	timeouts
+ 34h	DWORD	resets
+ 38h	DWORD	duplicate packets
+ 3Ch	DWORD	retransmits
+
+Format of kernel IP statistics:
+Offset	Size	Description
+ 00h  8 BYTEs	unused
+ 08h	DWORD	??? errors
+ 0Ch	DWORD	??? errors
+ 10h	DWORD	???
+ 14h	DWORD	??? errors
+ 18h	DWORD	security errors
+ 1Ch	DWORD	??? errors
+ 20h	DWORD	packets sent
+ 24h	DWORD	packets received
+ 28h	DWORD	bad checksums
+ 2Ch	DWORD	protocol errors
+ 30h	DWORD	timeouts
+ 34h	DWORD	errors
+ 38h	DWORD	fragments
+ 3Ch
+
+Format of kernel UDP statistics:
+Offset	Size	Description
+ 00h 32 BYTEs	unused
+ 20h	DWORD	packets sent
+ 24h	DWORD	packets received
+ 28h	DWORD	bad checksums
+ 2Ch	DWORD	port not listening errors
+ 30h  4 BYTEs	unused
+ 34h	DWORD	truncated receives
+ 38h  8 BYTEs	unused
+
+Format of kernel ICMP statistics:
+Offset	Size	Description
+ 00h	DWORD	"TimeEx" sent
+ 04h	DWORD	"TimeEx" received
+ 08h	DWORD	"ParamProb" sent
+ 0Ch	DWORD	"ParamProb" received
+ 10h	DWORD	redirects received
+ 14h	DWORD	source quenches received
+ 18h	DWORD	???
+ 1Ch	DWORD	???
+ 20h	DWORD	packets sent
+ 24h	DWORD	packets received
+ 28h	DWORD	bad packets received
+ 2Ch	DWORD	"DestUn" received
+ 30h	DWORD	packet send errors
+ 34h	DWORD	"DestUn" sent
+ 38h	DWORD	???
+ 3Ch	DWORD	???
+----------610D-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - CHECK IF CONNECTION HANDLE??? VALID
+	AH = 0Dh
+	BX = connection handle???
+Return: CF clear if valid
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------610E-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 0Eh
+	BX = ???
+	DS:DX -> ???
+	ES:DI -> ???
+Return: CF clear
+	???
+Notes:	the installation check consists of testing for the signature "TCPTSR"
+	  three bytes beyond the start of the interrupt handler
+	INT 61 is the default; PC/TCP v2.05 may be configured to use any
+	  interrupt from 20h through E0h
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------610F-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - GET VERSION
+	AH = 0Fh
+Return: CF clear
+	    AX = version (AH = major, AL = minor)
+	    BX = patch level
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------6110-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - UNINSTALL
+	AH = 10h
+Return: CF clear if successful
+	CF set on error???
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------6111-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 11h
+Return: CF clear
+	AX = ???
+Note:	clears location whose value is returned in AX and decrements another if
+	  it is not already zero
+SeeAlso: INT 61"PC/TCP",INT 61/AH=12h
+----------6112-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 12h
+Return: CF clear
+	AX = ???
+Note:	sets location whose value is returned in AX to 0001h and performs other
+	  actions if another location is nonzero; these two locations are the
+	  same ones used by AH=11h
+SeeAlso: INT 61"PC/TCP",INT 61/AH=11h
+----------6113-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 13h
+	BX = connection handle??? or FFFFh
+	DX = subfunction
+	    0000h ??? (returns error 0016h)
+	    0001h ???
+	    0002h ???
+	    0003h ???
+	    0004h ???
+	    0005h ???
+	DS:SI -> result buffer???
+Return: CF clear if successful
+	    AX = connection handle???
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+Note:	invokes AH=22h if BX=FFFFh on entry; also invokes AH=19h in various
+	  cases
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=23h
+----------6114-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - NO LONGER SUPPORTED
+	AH = 14h
+	BX = connection handle???
+Return: CF set
+	    AX = 0018h (see INT 61"PC/TCP")
+Note:	displays error message "Illegal system call!  Please upgrade your
+	  PCserver software" to standard output
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------6116-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - GET ???
+	AH = 16h
+	BX = connection handle???
+	DS:DX -> 9-byte buffer for ???
+Return: CF clear if successful
+	    ???
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------6117-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 17h
+Return: CF clear if successful
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------6118-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 18h
+	BX = connection handle???
+Return: CF clear if successful
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------6119-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 19h
+	BX = connection handle???
+Return: CF clear if successful
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------611A-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 1Ah
+	BX = connection handle???
+	CX = ???
+	DX = ???
+	DS:SI -> ???
+Return: CF clear if successful
+	    AX = ???
+	    DX = ???
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+Notes:	the installation check consists of testing for the signature "TCPTSR"
+	  three bytes beyond the start of the interrupt handler
+	INT 61 is the default; PC/TCP v2.05 may be configured to use any
+	  interrupt from 20h through E0h
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------611B-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 1Bh
+	BX = connection handle???
+	CX = ???
+	DX = ???
+	DS:SI -> ???
+	ES:DI -> ???
+Return: CF clear if successful
+	    CX = ???
+	    DX = ???
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------611C-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 1Ch
+	BX = connection handle???
+	CX = ???
+	DX = ???
+	DS:SI -> ???
+	ES:DI -> ???
+Return: CF clear if successful
+	    AX = ???
+	    DX = ???
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------611D-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 1Dh
+	BX = connection handle???
+	CX = ???
+	DX = ???
+	DS:SI -> ???
+	ES:DI -> 9-byte buffer containing ???
+Return: CF clear if successful
+	    CX = ???
+	    DX = ???
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------611E-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 1Eh
+	BX = connection handle???
+Return: CF clear if successful
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------611F-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 1Fh
+	BX = connection handle???
+	CX = ???
+	DS:SI -> ???
+	ES:DI -> ???
+Return: CF clear if successful
+	    DS:DX -> ???
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------6120-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 20h
+	BX = connection handle???
+	CX = ???
+	DS:DX -> ???
+	SI = ???
+	DI = ???
+Return: CF clear if successful
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------6121-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 21h
+	BX = connection handle???
+	CX = ???
+	DS:DX -> ???
+	SI = ???
+	DI = ???
+Return: CF clear if successful
+	    DS:DX -> ???
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------6122-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 22h
+	BX = connection handle???
+Return: CF clear if successful
+	    AX = ???
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------6123-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 23h
+	BX = connection handle??? or FFFFh
+	DX = subfunction???
+	DS:SI -> ???
+Return: CF clear if successful
+	    AX = ???
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP",INT 61/AH=13h
+----------6124-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 24h
+	???
+Return: ???
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------6125-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 25h
+	BX = ???
+	CX = ???
+	DX = ???
+	DS:SI -> ???
+Return: CF clear if successful
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------6126-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 26h
+	BX = ???
+	CX = ???
+	DX = ???
+	DS:SI -> ???
+Return: CF clear if successful
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------6127-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 27h
+	BX = ???
+	CX = ???
+	DX = ???
+	DS:SI -> ???
+Return: CF clear if successful
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------6128-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 28h
+	BX = connection handle???
+	CX = ???
+Return: CF clear if successful
+	    ???
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------6129-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 29h
+Return: CF clear if successful
+	    AX = ???
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------612A-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - GET CONFIGURATION INFORMATION
+	AH = 2Ah
+	DS:SI -> 26-byte buffer for configuration information (see below)
+Return: CF clear
+	AX = 0000h
+	buffer filled
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+
+Format of configuration information:
+Offset	Size	Description
+ 00h	BYTE	maximum TCP connections available
+ 01h	BYTE	maximum UDP connections available
+ 02h	BYTE	maximum IP connections available
+ 03h	BYTE	???
+ 04h	BYTE	number of TCP connections currently in use
+ 05h	BYTE	number of UDP connections currently in use
+ 06h	BYTE	number of IP connections currently in use
+ 07h	BYTE	???
+ 08h	WORD	number of local network descriptors active
+ 0Ah	WORD	number of global network descriptors active
+ 0Ch	BYTE	???
+ 0Dh	BYTE	???
+ 0Eh	WORD	???
+ 10h	WORD	???
+ 12h	DWORD	???
+ 16h	DWORD	IP broadcast address
+----------612B-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 2Bh
+	BX = connection handle???
+	CX = ???
+	DX = ???
+	DS:SI -> ???
+	ES:DI -> ???
+Return: CF clear if successful
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------6130-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 30h
+	BX = ???
+	CX = ???
+	DX = ???
+Return: CF clear if successful
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------61---------------------------------
+INT 61 U - PC/TCP kernel v2.05 - NOP for SLIP kernel
+	AH = function (31h-33h)
+----------6150-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 50h
+	DS:DX -> 127-byte buffer containing ???
+Return: CF clear if successful
+	    DX:AX -> ???
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------6151-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 51h
+	CX = size of destination buffer
+	DS:DX -> 127-byte buffer containing ???
+	ES:DI -> destination buffer or 0000h:0000h
+Return: CF clear if successful
+	    DX:AX -> ???
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------6152-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 52h
+	CX = size of destination buffer
+	DS:DX -> 127-byte buffer containing ???
+	ES:DI -> destination buffer or 0000h:0000h
+Return: CF clear if successful
+	    DX:AX -> ???
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------6153-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 53h
+	DS:DX -> 127-byte buffer containing ???
+Return: CF clear if successful
+	    DX:AX -> ???
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
+----------6154-------------------------------
+INT 61 U - PC/TCP kernel v2.05 - ???
+	AH = 54h
+	CX = size of destination buffer
+	DS:DX -> 127-byte buffer containing ???
+	ES:DI -> destination buffer or 0000h:0000h
+Return: CF clear if successful
+	    DX:AX -> ???
+	CF set on error
+	    AX = error code (see INT 61"PC/TCP")
+BUG:	the SLIP kernel for v2.05 bounds-checks the wrong register, so values
+	  greater than 54h in AH may crash the system.  Other kernels may have
+	  this bug as well.
+SeeAlso: INT 61"PC/TCP",INT 61/AH=00h"PC/TCP"
 ----------62---------------------------------
 INT 62 - reserved for user interrupt
 ----------62---------------------------------
@@ -5529,11 +6141,1266 @@ Return: ???
 Note:	the installation check consists of testing for the string "DBLIBRARY"
 	  2 bytes past the interrupt handler
 SeeAlso: AH=08h"SQL"
+----------620000-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETMODE" - GET CURRENT VIDEO MODE NUMBER
+	AX = 0000h
+	ES:BX -> ???
+Return: AX = current video mode number
+Notes:	FGDRIVER is the external video driver for the shareware
+	  Fastgraph/Light by Ted Gruber Software
+	the installation check consists of testing for the signature "FG" ten
+	  bytes beyond the start of the interrupt handler
+SeeAlso: AX=0001h,AX=0006h
+----------620001-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_SETMODE" - SELECT VIDEO MODE AND INITIALIZE
+	AX = 0001h
+	BX = new video mode or FFFFh for current mode
+	ES:DX -> ???
+Notes:	video modes are the same as the BIOS video modes except for
+		0Bh Hercules graphics 720x348
+		0Ch Hercules graphics 320x200
+		15h VGA graphics 320x400x256
+		16h VGA graphics 320x240x256
+		17h VGA graphics 320x480x256
+	this call resets the active video page to page 0000h, the clipping
+	  region to the entire screen, text rows to 25, etc.
+SeeAlso: AX=0000h,AX=0002h,INT 10/AH=00h
+----------620002-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_TESTMODE" - CHECK IF VIDEO MODE AVAILABLE
+	AX = 0002h
+	BX = desired video mode (00h-17h)
+	CX = required number of video pages (ignore memory size if <= 0)
+Return: AX = status
+	    0000h mode not available with requested number of pages
+	    0001h mode is available
+SeeAlso: AX=0001h,AX=0003h,AX=0004h,AX=0005h
+----------620003-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_BESTMODE" - GET BEST VIDEO MODE GIVEN RESOLUTN
+	AX = 0003h
+	BX = horizontal resolution
+	CX = vertical resolution
+	DX = number of video pages required (both physical and virtual)
+Return: AX = proposed video mode number or FFFFh if no matching video mode
+SeeAlso: AX=0002h,AX=0004h
+----------620004-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_AUTOMODE" - GET VIDEO MODE WITH MOST FEATURES
+	AX = 0004h
+Return: AX = proposed video mode number
+Note:	FGDRIVER is the external video driver for the shareware
+	  Fastgraph/Light by Ted Gruber Software
+SeeAlso: AX=0002h,AX=0003h,AX=0005h
+----------620005-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_EGACHECK" - GET INFO ABOUT ACTIVE EGA DISPLAY
+	AX = 0005h
+Return: AX = number of 64K banks of video memory, or 0000h if no EGA or EGA
+		without an Enhanced Color Display
+SeeAlso: AX=0002h,AX=0003h
+----------620006-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_RESET" - ERASE SCREEN AND RESTORE SCREEN ATTR
+	AX = 0006h
+Notes:	this call is ignored in graphics modes
+	the screen attributes are only restored if ANSI.SYS is loaded
+SeeAlso: AX=0000h
+----------620007-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_CURSOR" - SPECIFY WHETHER TEXT CURSR IS VISIBLE
+	AX = 0007h
+	BX = new state (0000h invisible, 0001h visible)
+Note:	this call is ignored in text modes
+----------620008-----------------------------
+INT 62 - FGDRIVER v1.10 - UNUSED
+	AX = 0008h to 0009h
+Return: AX = 0000h
+----------62000A-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETMAXX" - GET MAXIMUM COLUMN IN SCREEN SPACE
+	AX = 000Ah
+Return: AX = maximum X coordinate in screen space
+		(or character space if in text mode)
+SeeAlso: AX=000Bh,AX=0045h
+----------62000B-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETMAXY" - GET MAXIMUM ROW IN SCREEN SPACE
+	AX = 000Bh
+Return: AX = maximum Y coordinate in screen space
+		(or character space if in text mode)
+SeeAlso: AX=000Ah,AX=0045h
+----------62000C-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_XALPHA" - CONVERT SCREEN COLUMN TO CHAR COLUMN
+	AX = 000Ch
+	BX = screen space column
+Return: AX = character space column containing specified coordinate
+SeeAlso: AX=000Dh,AX=000Eh
+----------62000D-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_YALPHA" - CONVERT SCREEN ROW TO CHARACTER ROW
+	AX = 000Dh
+	BX = screen space row
+Return: AX = character space row containing specified coordinate
+SeeAlso: AX=000Ch,AX=000Fh
+----------62000E-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_XCONVERT" - CONVERT CHAR COLUMN TO SCREEN COL
+	AX = 000Eh
+	BX = character space column
+Return: AX = screen space column of leftmost pixel in specified character col
+SeeAlso: AX=000Ch,AX=000Fh
+----------62000F-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_YCONVERT" - CONVERT CHARACTER ROW TO SCREEN ROW
+	AX = 000Fh
+	BX = character space row
+Return: AX = screen space row of topmost pixel in specified character row
+SeeAlso: AX=000Dh,AX=000Eh
+----------620010-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETLINES" - GET TEXT ROWS FOR CURR VIDEO MODE
+	AX = 0010h
+Return: AX = number of text rows on screen in current video mode
+SeeAlso: AX=0011h
+----------620011-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_SETLINES" - SET TEXT ROWS ON SCREEN
+	AX = 0011h
+	BX = new screen size (25, 43, 50)
+SeeAlso: AX=0010h
+----------620012-----------------------------
+INT 62 - FGDRIVER v1.10 - UNUSED
+	AX = 0012h to 0013h
+Return: AX = 0000h
+----------620014-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_DEFCOLOR" - ASSIGN COLOR VALUE TO COLOR INDEX
+	AX = 0014h
+	BX = color index (0000h-00FFh)
+	CX = new color value (0 to maximum color value for current video mode)
+Note:	this call is ignored in text modes and 256-color graphics modes
+SeeAlso: AX=0015h,AX=0016h,AX=001Dh
+----------620015-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETCOLOR" - GET CURRENT TEXT ATTRIBUTE
+	AX = 0015h
+Return: AX = current text attribute or color index (graphics modes)
+Note:	FGDRIVER is the external video driver for the shareware
+	  Fastgraph/Light by Ted Gruber Software
+SeeAlso: AX=0019h,AX=001Ah
+----------620016-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETINDEX" - GET COLOR VALUE FOR COLOR INDEX
+	AX = 0016h
+	BX = color index (0000h to 00FFh)
+Return: AX = color value for specified color index
+Note:	this call returns the value passed to it in text and 256-color
+	  graphics modes
+SeeAlso: AX=0014h,AX=001Ch
+----------620017-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_PALETTE" - SET PALETTE / SET VIDEO DAC REGISTER
+	AX = 0017h
+---CGA 4-color graphics---
+	BX = CGA paletee number
+	CX = background color
+---CGA 2-color graphics---
+	BX ignored
+	CX = foreground color
+---16-color graphics---
+	BX = palette register number
+	CX = palette value
+---256-color graphics---
+	BX = DAC register number
+	CX =  DAC value
+Notes:	ignored in text modes and Hercules graphics modes
+	few EGA/VGA adapters correctly set the foreground color in CGA mode 6
+SeeAlso: AX=0018h,AX=001Dh
+----------620018-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_PALETTES" - SET ALL PALETTE REGISTERS
+	AX = 0018h
+	ES:BX -> array of 16 WORDs containing values for palette registers
+		(or first 16 DAC registers in 256-color modes)
+Note:	ignored in text modes, CGA and Hercules graphics modes
+SeeAlso: AX=0017h
+----------620019-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_SETATTR" - SET TEXT-MODE CHARACTER ATTRIBUTE
+	AX = 0019h
+	BX = foreground
+	CX = background
+	DX = blink (0000h nonblinking, 0001h blink)
+Note:	this call is ignored in graphics modes
+SeeAlso: AX=0015h,AX=001Ah,AX=0037h
+----------62001A-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_SETCOLOR" - SET CURRENT COLOR
+	AX = 001Ah
+	BX = new color index (or text attribute in text modes)
+SeeAlso: AX=0015h,AX=0019h
+----------62001B-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_SETRGB" - SET VIDEO DAC REGISTER CONTENTS
+	AX = 001Bh
+	BX = palette or DAC register number
+	CX = red color component
+	DX = green component
+	SI = blue component
+Notes:	the register number may be negative for Tandy, PCjr, and 200-line
+	  EGA graphics modes to specify an intense color
+	this call has no effect in text, CGA graphics, and Hercules graphics
+	  modes
+SeeAlso: AX=001Ch,AX=00A5h
+----------62001C-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETRGB" - GET VIDEO DAC REGISTER CONTENTS
+	AX = 001Ch
+	ES:BX -> variable pointer record (see below)
+	CX = DAC register number
+Return: variables updated
+Note:	this call is ignored in text modes and CGA/EGA video modes (since
+	  they do not use DAC registers)
+SeeAlso: AX=001Bh,AX=001Dh,AX=00A4h
+
+Format of variable pointer record:
+Offset	Size	Description
+ 00h	WORD	segment of WORD buffer for red component of DAC register
+ 02h	WORD	offset of WORD buffer for red component
+ 04h	WORD	segment of WORD buffer for green component of DAC register
+ 06h	WORD	offset of WORD buffer for green component
+ 08h	WORD	segment of WORD buffer for blue component of DAC register
+ 0Ah	WORD	offset of WORD buffer for blue component
+----------62001D-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_MAPRGB" - MAP COLOR COMPONENTS INTO PALETTE VAL
+	AX = 001Dh
+	BX = red component
+	CX = green component
+	DX = blue component
+Return: AX = mode-specific palette value corresponding to specified components
+Note:	only meaningful in 16-color graphics modes
+SeeAlso: AX=0015h,AX=0017h
+----------62001E-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_ERASE" - CLEAR THE ACTIVE VIDEO PAGE
+	AX = 001Eh
+Note:	sets each pixel to 0 in graphics modes, each character cell to a blank
+	  with a gray foreground attribute in text modes
+----------62001F-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_POINT" - DISPLAY A PIXEL
+	AX = 001Fh
+	BX = column
+	CX = row
+Note:	this call is ignored in text modes
+SeeAlso: AX=0020h
+----------620020-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETPIXEL" - GET COLOR OF SPECIFIED PIXEL
+	AX = 0020h
+	BX = column in screen space
+	CX = row in screen space
+Return: AX = color value of pixel (0 to num_colors-1)
+	    0000h in text modes
+SeeAlso: AX=001Fh
+----------620021-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETXPOS" - GET GRAPHICS CURSOR COLUMN
+	AX = 0021h
+Return: AX = screen space X coordinate of graphics cursor position
+SeeAlso: AX=0022h,AX=0023h,AX=0024h
+----------620022-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETXPOS" - GET GRAPHICS CURSOR ROW
+	AX = 0022h
+Return: AX = screen space Y coordinate of graphics cursor position
+SeeAlso: AX=0021h,AX=0023h,AX=0024h
+----------620023-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_MOVE" - SET GRAPHICS CURSOR POSITION
+	AX = 0023h
+	BX = new column
+	CX = new row
+Note:	this call is ignored in text modes
+SeeAlso: AX=0021h,AX=0022h,AX=0024h
+----------620024-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_MOVEREL" - ADJUST GRAPHICS CURSOR POSITION
+	AX = 0024h
+	BX = column offset
+	CX = row offset
+Note:	this call is ignored in text modes
+SeeAlso: AX=0021h,AX=0022h,AX=0023h
+----------620025-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_DRAW" - DRAW SOLID LINE TO ABSOLUTE POSITION
+	AX = 0025h
+	BX = endpoint column
+	CX = endpoint row
+Notes:	this call is ignored in text modes
+	the starting point is the current graphics cursor position; the cursor
+	  position is updated
+SeeAlso: AX=0026h,AX=0027h
+----------620026-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_DRAWREL" - DRAW SOLID LINE TO RELATIVE POSITION
+	AX = 0026h
+	BX = endpoint column offset
+	CX = endpoint row offset
+Notes:	this call is ignored in text modes
+	the starting point is the current graphics cursor position; the cursor
+	  position is updated
+SeeAlso: AX=0025h,AX=0028h
+----------620027-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_DASH" - DRAW DASHED LINE TO ABSOLUTE POSITION
+	AX = 0027h
+	BX = endpoint column
+	CX = endpoint row
+	DX = dash pattern (set bits cause drawn pixels)
+Notes:	this call is ignored in text modes
+	the starting point is the current graphics cursor position; the cursor
+	  position is updated
+SeeAlso: AX=0025h,AX=0028h
+----------620028-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_DASHREL" - DRAW DASHED LINE TO RELATVE POSITION
+	AX = 0028h
+	BX = endpoint column offset
+	CX = endpoint row offset
+	DX = dash pattern (set bits cause drawn pixels)
+Notes:	this call is ignored in text modes
+	the starting point is the current graphics cursor position; the cursor
+	  position is updated
+SeeAlso: AX=0026h,AX=0027h
+----------620029-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_SETCLIP" - SET CLIPPING REGION
+	AX = 0029h
+	BX = left edge of clipping region
+	CX = right edge of clipping region
+	DX = top edge of clipping region
+	SI = bottom edge of clipping region
+SeeAlso: AX=004Ah,AX=004Ch,AX=0052h,AX=0054h
+----------62002A-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_RECT" - DRAW UNFILLED RECTANGLE IN SCREEN SPACE
+	AX = 002Ah
+	BX = left edge column
+	CX = right edge column
+	DX = top edge row
+	SI = bottom edge row
+SeeAlso: AX=002Bh,AX=002Ch,AX=002Eh,AX=00A2h
+----------62002B-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_CLPRECT" - DRAW FILLED RECTANGLE IN SCREEN SPCE
+	AX = 002Bh
+	BX = screen space column of left edge
+	CX = screen space column of right edge
+	DX = screen space row of top edge
+	SI = screen space row of bottom edge
+Note:	this call is ignored in text modes
+SeeAlso: AX=002Ah,AX=002Ch,AX=00A2h
+----------62002C-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_DRECT" - DRAW DITHERED RECTANGLE IN SCRN SPACE
+	AX = 002Ch
+	BX = screen space column of left edge
+	CX = screen space column of right edge
+	DX = screen space row of top edge
+	SI = screen space row of bottom edge
+	ES:DI -> dithering matrix (video-mode dependent)
+Note:	this call is ignored in text modes
+SeeAlso: AX=002Bh,AX=00A2h
+----------62002D-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_ELLIPSE" - DRAW UNFILLED ELLIPSE IN SCRN SPACE
+	AX = 002Dh
+	BX = horizontal semi-axis length in screen space units
+	CX = vertical semi-axis length in screen space units
+Notes:	this call is ignored in text modes
+	the ellipse is centered at the current graphics cursor position
+SeeAlso: AX=002Ah,AX=002Eh,AX=00A2h
+----------62002E-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_POLYGON" - DRAW AN UNFILLED POLYGON
+	AX = 002Eh
+	CX = number of vertices in polygon
+	ES:BX -> variable pointer record (see below)
+SeeAlso: AX=002Dh,AX=0030h,AX=00A2h
+
+Format of variable pointer record:
+Offset	Size	Description
+ 00h	WORD	segment of WORD array containing vertex columns
+ 02h	WORD	offset of WORD array containing vertex columns
+ 04h	WORD	segment of WORD array containing vertex rows
+ 06h	WORD	offset of WORD array containing vertex rows
+----------62002F-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_PAINT" - FLOOD CLOSED REGION WITH COLOR
+	AX = 002Fh
+	BX = column
+	CX = row
+Notes:	fills an arbitrary closed region around the specified point with the
+	  current color; the screen edges are not considered region boundaries
+	ignored in text modes
+----------620030-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_CIRCLE" - DRAW UNFILLED CIRCLE
+	AX = 0030h
+	BX = radius in horizontal screen space units (> 0)
+Notes:	the circle is drawn in screen space, centered at the current graphics
+	  cursor position
+	this call is ignored in text modes
+SeeAlso: AX=00A2h
+----------620031-----------------------------
+INT 62 - FGDRIVER v1.10 - UNUSED
+	AX = 0031h
+Return: AX = 0000h
+----------620032-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_TEXT" - DISPLAY STRING OF CHARACTERS
+	AX = 0032h
+	CX = length of string
+	ES:BX -> string
+Notes:	the string is displayed staring at the text cursor position using the
+	  current text attribute (text modes) or color index (graphics modes)
+	the text cursor position is updated after this call
+SeeAlso: AX=001Ah,AX=0033h,AX=0035h,AX=0036h
+----------620033-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_LOCATE" - SET TEXT-MODE CURSOR POSITION
+	AX = 0033h
+	BX = row
+	CX = column
+Note:	there are only eight text cursors shared by successive groups of
+	  eight video pages (pages 0, 8, 16, ... share one cursor, 1, 9, ...
+	  share the second, etc)
+SeeAlso: AX=0034h
+----------620034-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_WHERE" - GET CURRENT CURSOR POSITION
+	AX = 0034h
+	ES:BX -> variable pointers (see below)
+Return: indicated variables filled with cursor row and column for active
+	  display
+Note:	FGDRIVER is the external video driver for the shareware
+	  Fastgraph/Light by Ted Gruber Software
+SeeAlso: AX=0033h
+
+Format of variable pointers:
+Offset	Size	Description
+ 00h	WORD	segment of WORD buffer for cursor row
+ 02h	WORD	offset of WORD buffer for cursor row
+ 04h	WORD	segment WORD buffer for cursor column
+ 06h	WORD	offset WORD buffer for cursor column
+----------620035-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_CHGATTR" - APPLY CURRENT TEXT ATTRIB TO CHARS
+	AX = 0035h
+	BX = number of characters to recolor
+Notes:	this call is ignored in graphics modes
+	starting at the current text cursor position, the specified number of
+	  characters have their attributes to the current text attribute
+SeeAlso: AX=0036h
+----------620036-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_CHGTEXT" - DISPLAY STRING AT CURSOR POSITION
+	AX = 0036h
+	CX = length of string
+	ES:BX -> string to be displayed
+Return: text cursor updated
+Note:	this call is ignored in graphics modes
+SeeAlso: AX=0032h,AX=0035h
+----------620037-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETATTR" - GET CHARACTER ATTRIB FOR POSITION
+	AX = 0037h
+	BX = row
+	CX = column
+Return: AX = character attribute at specified location on active video page
+Note:	this call is ignored in graphics modes
+SeeAlso: AX=0019h,AX=0038h
+----------620038-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETCHAR" - GET CHARACTER FOR SCREEN POSITION
+	AX = 0038h
+	BX = row
+	CX = column
+Return: AX = character at specified location on active video page
+Note:	this call is ignored in graphics modes
+SeeAlso: AX=0037h
+----------620039-----------------------------
+INT 62 - FGDRIVER v1.10 - UNUSED
+	AX = 0039h to 003Bh
+Return: AX = 0000h
+----------62003C-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETPAGE" - GET ACTIVE VIDEO PAGE NUMBER
+	AX = 003Ch
+Return: AX = active video page (0000h-003Fh)
+SeeAlso: AX=003Dh,AX=003Eh,AX=0040h
+----------62003D-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_SETPAGE" - SET ACTIVE VIDEO PAGE
+	AX = 003Dh
+	BX = new video page (0000h to 003Fh)
+Note:	the specified page must be a physical or virtual page
+SeeAlso: AX=0001h,AX=003Ch,AX=003Fh,AX=0041h
+----------62003E-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETVPAGE" - GET VISIBLE VIDEO PAGE NUMBER
+	AX = 003Eh
+Return: AX = visible video page (0000h-003Fh)
+SeeAlso: AX=003Ch,AX=003Fh,AX=0040h
+----------62003F-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_SETVPAGE" - SET VISIBLE VIDEO PAGE
+	AX = 003Fh
+	BX = new video page (0000h to 003Fh)
+Note:	the specified page must be a physical or virtual page
+SeeAlso: AX=0001h,AX=003Dh,AX=003Eh,AX=0041h
+----------620040-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETHPAGE" - GET CURRENT HIDDEN VIDEO PAGE NUM
+	AX = 0040h
+Return: AX = current hidden video page number (0000h-003Fh)
+SeeAlso: AX=003Ch,AX=003Eh,AX=0041h
+----------620041-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_SETHPAGE" - SET HIDDEN VIDEO PAGE
+	AX = 0041h
+	BX = new hidden page (0000h to 003Fh)
+Note:	specified page must be a physical page or a virtual page
+SeeAlso: AX=003Dh,AX=003Fh,AX=0040h
+----------620042-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_ALLOCATE" - CREATE VIRTUAL VIDEO PAGE
+	AX = 0042h
+	BX = page number (0000h-003Fh)
+Return: AX = status
+	    0000h successful
+	    0001h specified page is a physical or logical page
+	    0007h virtual page created, but memory control blocks corrupted
+	    0008h not enough memory
+Notes:	FGDRIVER is the external video driver for the shareware
+	  Fastgraph/Light by Ted Gruber Software
+	the amount of memory required by the virtual video page depends on the
+	  current video mode
+SeeAlso: AX=0043h,AX=009Dh,AX=009Fh
+----------620043-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_FREEPAGE" - FREE VIRTUAL OR LOGICAL VIDEO PAGE
+	AX = 0043h
+	BX = page number (0000h-003Fh)
+Return: AX = status
+	    0000h successful
+	    0001h specified page is a physical page
+	    0007h virtual page released, but memory control blocks corrupted
+	    0009h attempt to free a page which was never created
+SeeAlso: AX=0042h,AX=009Dh,AX=009Eh,AX=009Fh
+----------620044-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETADDR" - GET SEGMENT OF ACTIVE VIDEO PAGE
+	AX = 0044h
+Return: AX = segment of active video page
+----------620045-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_RESIZE" - SET GRAPHICS MODE VIDEO PAGE SIZE
+	AX = 0045h
+	BX = new page width in pixels
+	CX = new page height in pixels
+Notes:	the visible page must be set to 0000h before making this call
+	mouse, joysticks, expanded memory, and extended memory must be
+	  reinitialized after this call
+SeeAlso: AX=000Ah,AX=000Bh,AX=0075h,AX=007Ah,AX=00A0h,AX=00A1h
+----------620046-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETMAP" - STORE IMAGE AS MODE-INDEPENDNT BITMAP
+	AX = 0046h
+	ES:BX -> buffer for video mode-independent bitmap
+	CX = width of bitmap in bytes
+	DX = height of bitmap in pixel rows
+Return: each bit in bitmap is set if corresponding pixel is of the current
+	  color, cleared otherwise
+Note:	this call is ignored in text modes
+SeeAlso: AX=0047h,AX=0048h
+----------620047-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_DRAWMAP" - DISPLAY MODE-INDEPENDENT BIT MAP
+	AX = 0047h
+	ES:BX -> bitmap (each set bit is pixel drawn in current color)
+	CX = width of bitmap in bytes
+	DX = height of bitmap in pixel rows
+SeeAlso: AX=0046h,AX=004Ah,AX=004Dh,AX=0052h
+----------620048-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETIMAGE" - STORE IMAGE AS BITMAP
+	AX = 0048h
+	ES:BX -> buffer for video mode-specific bitmap
+	CX = width of bitmap in bytes
+	DX = height of bitmap in pixel rows
+SeeAlso: AX=0046h,AX=0049h,AX=0062h
+----------620049-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_DRWIMAGE" - DISPLAY BITMAPPED IMAGE
+	AX = 0049h
+	ES:BX -> video mode-specific bitmap
+	CX = width of bitmap in bytes
+	DX = height of bitmap in pixel rows
+Note:	the image will be drawn with its lower left corner at the current
+	  cursor position (either text or graphics)	
+SeeAlso: AX=0048h,AX=004Ah,AX=0062h
+----------62004A-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_CLPIMAGE" - DISPLAY CLIPPED IMAGE (BITMAP)
+	AX = 004Ah
+	ES:BX -> mode-specific bitmap
+	CX = width of bit map in bytes
+	DX = height of bit map in pixel rows
+Notes:	this call is ignored in text modes
+	the image is drawn with its lower left corner at the current graphics
+	  cursor position
+	the current clipping region is used, extended to a byte boundary
+SeeAlso: AX=0029h,AX=0047h,AX=0049h,AX=004Ch,AX=0052h
+----------62004B-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_REVIMAGE" - DISPLAY REVERSED IMAGE (BITMAP)
+	AX = 004Bh
+	ES:BX -> mode-specific bitmap
+	CX = width of bitmap in bytes
+	DX = height of bitmap in pixel rows
+Notes:	this call is ignored in text modes
+	the image is drawn with its lower left corner at the current graphics
+	  cursor position
+SeeAlso: AX=004Ah,AX=004Ch
+----------62004C-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_FLPIMAGE" - DISPLAY INV CLIPPED IMAGE (BITMAP)
+	AX = 004Ch
+	ES:BX -> mode-specific bitmap
+	CX = width of bit map in bytes
+	DX = height of bit map in pixel rows
+Notes:	this call is ignored in text modes
+	the image is drawn with its lower left corner at the current graphics
+	  cursor position
+	the current clipping region is used, extended to a byte boundary
+SeeAlso: AX=0029h,AX=004Ah
+----------62004D-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_DISPLAY" - DISPLAY IMAGE (STD PIXEL RUN FORMAT)
+	AX = 004Dh
+	ES:BX -> pixel run map (pairs of bytes: color index, count)
+	CX = number of pixel runs to display
+	DX = width of image in pixels (> 0)
+Notes:	this call is ignored in text modes
+	the image is displayed with its lower left corner at the current
+	  graphics cursor position
+SeeAlso: AX=0047h,AX=004Eh,AX=004Fh,AX=0050h,AX=0060h
+----------62004E-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_DISPLAY" - DISPLAY IMAGE (PACKED PIXEL RUN FMT)
+	AX = 004Eh
+	ES:BX -> pixel run map (trios of bytes: colors, count1, count2; colors
+		contains the color for the first run in its high nybble and the
+		color for the second run in its low nybble)
+	CX = number of pixel runs to display
+	DX = width of image in pixels (> 0)
+Notes:	this call is ignored in text modes
+	the image is displayed with its lower left corner at the current
+	  graphics cursor position
+SeeAlso: AX=004Dh,AX=004Fh,AX=0050h,AX=0060h
+----------62004F-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_DISPFILE" - DISPLAY STORED IMAGE
+	AX = 004Fh
+	ES:BX -> ASCIZ filename
+	CX = image width in pixels (> 0)
+	DX = image format
+	    0000h Fastgraph standard pixel run format
+	    0001h packed pixel run format
+Notes:	this call is ignored in text modes
+	the image is displayed with its lower left corner at the current
+	  graphics cursor position
+SeeAlso: AX=004Dh,AX=004Eh,AX=0050h,AX=0060h
+----------620050-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_PATTERN" - SPECIFY DISPLAY PATTERN FOR COLOR
+	AX = 0050h
+	BX = index of pattern to define
+	CX = number of predefined display pattern
+Notes:	when displaying a pixel run map, Fastgraph uses the pattern associated
+	  with each color index rather than displaying the actual color
+	this call has no effect in text and 256-color graphics modes
+SeeAlso: AX=004Dh,AX=004Eh,AX=004Fh
+----------620051-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_DRAWMASK" - DISPLAY IMAGE (MASKING MAP)
+	AX = 0051h
+	ES:BX -> array containing image stores as a masking map (see below)
+	CX = number of pixel runs in masking map
+	DX = width of masking map in pixels
+Notes:	this call is ignored in text modes and in native EGA and VGA graphics
+	  modes
+	the image is drawn with its lower left corner at the current graphics
+	  cursor position
+SeeAlso: AX=0052h
+
+Format of masking map:
+Offset	Size	Description
+ 00h	BYTE	length of first "protect" run (pixels remain unchanged)
+ 01h	BYTE	length of first "zero" run (pixels set to background color)
+ 02h	BYTE	length of second "protect" run
+ 03h	BYTE	length of second "zero" run
+ 	...
+----------620052-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_CLIPMASK" - DISPLAY CLIPPED IMAGE (MASKING MAP)
+	AX = 0052h
+	ES:BX -> array containing image stored as a masking map (see AX=0051h)
+	CX = number of pixel runs in masking map
+	DX = width of masking map in pixels
+Notes:	this call is ignored in text modes and in native EGA and VGA graphics
+	  modes
+	the image is drawn with its lower left corner at the current graphics
+	  cursor position
+SeeAlso: AX=0029h,AX=004Ah,AX=0051h,AX=0053h,AX=0054h
+----------620053-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_REVMASK" - DISPLAY REVERSED IMAGE (MASKING MAP)
+	AX = 0053h
+	ES:BX -> array containing image stored as a masking map (see AX=0051h)
+	CX = number of pixel runs in masking map
+	DX = width of masking map in pixels
+Notes:	this call is ignored in text modes and in native EGA and VGA graphics
+	  modes
+	the image is drawn with its lower left corner at the current graphics
+	  cursor position
+SeeAlso: AX=0052h,AX=0054h
+----------620054-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_FLIPMASK" - DISPLAY INV CLIPPED IMAGE (MASKMAP)
+	AX = 0054h
+	ES:BX -> array containing image stored as a masking map (see AX=0051h)
+	CX = number of pixel runs in masking map
+	DX = width of masking map in pixels
+Notes:	this call is ignored in text modes and in native EGA and VGA graphics
+	  modes
+	the image is drawn with its lower left corner at the current graphics
+	  cursor position
+SeeAlso: AX=0029h,AX=0052h,AX=0053h
+----------620055-----------------------------
+INT 62 - FGDRIVER v1.10 - UNUSED
+	AX = 0055h to 0059h
+Return: AX = 0000h
+----------62005A-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_SAVE" - COPY REGION FROM VISIBLE TO HIDDEN PAGE
+	AX = 005Ah
+	BX = left edge column
+	CX = right edge column
+	DX = top edge row
+	SI = bottom edge row
+Note:	left and right edges are adjusted to byte boundaries if necessary
+SeeAlso: AX=005Bh
+----------62005B-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_RESTORE" - COPY REGION FROM HIDDEN TO VIS PAGE
+	AX = 005Bh
+	BX = left edge column
+	CX = right edge column
+	DX = top edge row
+	SI = bottom edge row
+Note:	left and right edges are adjusted to byte boundaries if necessary
+SeeAlso: AX=005Ah,AX=0064h
+----------62005C-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_TRANSFER" - COPY REGION
+	AX = 005Ch
+	CX = source video page
+	DX = destination video page
+	ES:BX -> copy record (see below)
+Note:	source and destination regions must not overlap if on the same page
+SeeAlso: AX=005Dh,AX=005Fh
+
+Format of copy record:
+Offset	Size	Description
+ 00h	WORD	left edge column of source region
+ 02h	WORD	right edge column of source region
+ 04h	WORD	top edge row of source region
+ 06h	WORD	bottom edge row of source region
+ 08h	WORD	left edge of destination
+ 0Ah	WORD	bottom edge of destination
+----------62005D-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_TCXFER" - COPY REGION EXCLUDING TRANSPARENT
+	AX = 005Dh
+	CX = source video page
+	DX = destination video page
+	ES:BX -> copy record (see AX=005Ch)
+Notes:	pixels which are in any of the colors defined as transparent with
+	  AX=005Eh are left unchanged in the destination region
+	source and destination regions must not overlap if on the same page
+	this call is ignored in text modes
+SeeAlso: AX=005Ch,AX=005Eh
+----------62005E-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_TCMASK" - SET TRANSPARENT COLORS
+	AX = 005Eh
+	BX = colors to consider transparent (bit 0 = color 0, etc)
+Notes:	this call is ignored in text modes
+	the specified colors are considered transparent by AX=005Dh
+SeeAlso: AX=005Dh
+----------62005F-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_COPYPAGE" - TRANSFER VIDEO PAGE CONTENTS
+	AX = 005Fh
+	BX = source page number (0000h-003Fh)
+	CX = destination page number (0000h-003Fh)
+Note:	if both source and destination pages are logical pages, they must both
+	  be located in the same type (conventional, EMS, XMS) of memory
+SeeAlso: AX=005Ch,AX=009Dh,AX=009Eh,AX=009Fh
+----------620060-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_DISPPCX" - DISPLAY PCX FILE
+	AX = 0060h
+	ES:BX -> ASCIZ filename
+	CX = flags
+	    bit 0: use current palette rather than PCX file's palette
+	    bits 1-15: reserved (0)
+Return: AX = status
+	    0000h success
+	    0001h file not found
+	    0002h file is not a valid PCX file
+Notes:	this call is ignored in text modes and Hercules low-resolution graphics
+	the image is displayed with its upper left corner at the current
+	  graphics cursor position
+SeeAlso: AX=004Dh,AX=004Eh,AX=004Fh,AX=0061h
+----------620061-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_MAKEPCX" - CREATE PCX FILE FROM SCREEN WINDOW
+	AX = 0061h
+	BX = left edge in screen space units
+	CX = right edge in screen space units
+	DX = top edge in screen space units
+	SI = bottom edge in screen space units
+	ES:DI -> ASCIZ filename of PCX file to create
+Return: AX = status
+	    0000h successful
+	    0001h file not created
+Notes:	the PCX file is created from the specified region of the active video
+	  page; the left and right edges are adjusted to a byte boundary if
+	  necessary
+	if the specified file already exists, it is overwritten
+	this call is ignored in text and Hercules low-resolution graphics modes
+SeeAlso: AX=0060h
+----------620062-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_IMAGESIZ" - DETERMINE IMAGE STORAGE REQUIREMENT
+	AX = 0062h
+	BX = image width in pixels
+	CX = image height in pixels
+Return: DX:AX = size in bytes of mode-specific bitmap for current video mode
+SeeAlso: AX=0048h
+----------620063-----------------------------
+INT 62 - FGDRIVER v1.10 - UNUSED
+	AX = 0063h
+Return: AX = 0000h
+----------620064-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_FADEIN" - FADE IN HIDDEN PAGE
+	AX = 0064h
+	BX = delay (0000h = fastest possible fade-in)
+Notes:	the current hidden page is copied to the current visible page in small
+	  random sections to produce a fade-in effect
+	this call is ignored in text modes
+SeeAlso: AX=005Bh,AX=0065h
+----------620065-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_FADEOUT" - FADE OUT TO CURRENT COLOR
+	AX = 0065h
+	BX = delay (0000h = fastest possible fade-out)
+Notes:	this call is ignored in text modes
+	the current visible page is filled with pixels of the current color in
+	  small random sections to give a fade-out effect
+SeeAlso: AX=0064h
+----------620066-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_PAN" - SET SCREEN ORIGIN
+	AX = 0066h
+	BX = new column for screen origin
+	CX = new row for screen origin
+SeeAlso: AX=0067h
+----------620067-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_SCROLL" - VERTICALLY SCROLL SCREEN REGION
+	AX = 0067h
+	BX = left edge column
+	CX = right edge column
+	DX = top edge row
+	SI = bottom edge row
+	DI = number of pixels by which to scroll (positive scrolls up,
+		negative scrolls down)
+	ES = type of scroll
+	    0000h circular (rows scrolled off are copied to vacated rows)
+	    else vacated rows are filled with the current color
+Notes:	in graphics modes, the left and right edges are adjusted to byte
+	  boundaries if necessary
+	circular scrolling uses part of the hidden page as a workspace
+SeeAlso: AX=0066h
+----------620068-----------------------------
+INT 62 - FGDRIVER v1.10 - UNUSED
+	AX = 0068h to 006Ch
+Return: AX = 0000h
+----------62006D-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_WAITKEY" - FLUSH KEYBOARD BUFFER AND AWAIT KEY
+	AX = 006Dh
+Return: after next key pressed
+SeeAlso: AX=006Eh,AX=006Fh,AX=0096h
+----------62006E-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETKEY" - GET NEXT KEYSTROKE
+	AX = 006Eh
+	ES:BX -> variable pointer record (see below)
+Return: (after next keystroke if no typeahead) variables updated
+SeeAlso: AX=006Dh,AX=006Fh,AX=0070h
+
+Format of variable pointer record:
+Offset	Size	Description
+ 00h	WORD	segment of BYTE buffer for ASCII keycode
+ 02h	WORD	offset of BYTE buffer for ASCII keycode
+ 04h	WORD	segment of BYTE buffer for extended keycode
+ 06h	WORD	offset of BYTE buffer for extended keycode
+----------62006F-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_INTKEY" - GET KEYSTROKE, NO WAIT
+	AX = 006Fh
+	ES:BX -> variable pointer record (see below)
+Return: variables updated
+Note:	if the keyboard buffer is empty, both the ASCII and extended keycodes
+	  are set to 00h
+SeeAlso: AX=006Dh,AX=006Eh,AX=0070h,AX=0079h
+
+Format of variable pointer record:
+Offset	Size	Description
+ 00h	WORD	segment of BYTE buffer for ASCII keycode
+ 02h	WORD	offset of BYTE buffer for ASCII keycode
+ 04h	WORD	segment of BYTE buffer for extended keycode
+ 06h	WORD	offset of BYTE buffer for extended keycode
+----------620070-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_CAPSLOCK" - GET STATE OF CAPSLOCK KEY
+	AX = 0070h
+Return: AX = CapsLock state (0000h off, 0001h on)
+SeeAlso: AX=006Eh,AX=006Fh,AX=0071h,AX=0072h,AX=0074h
+----------620071-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_SETCAPS" - SET STATE OF CAPSLOCK KEY
+	AX = 0071h
+	BX = new state (0000h off, 0001h on)
+SeeAlso: AX=0070h,AX=0073h
+----------620072-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_NUMLOCK" - GET STATE OF NUMLOCK KEY
+	AX = 0072h
+Return: AX = NumLock state (0000h off, 0001h on)
+SeeAlso: AX=0070h,AX=0074h
+----------620073-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_SETNUM" - SET STATE OF NUMLOCK KEY
+	AX = 0073h
+	BX = new state (0000h off, 0001h on)
+SeeAlso: AX=0071h,AX=0072h
+----------620074-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_SCRLOCK" - GET STATE OF SCROLL LOCK KEY
+	AX = 0074h
+Return: AX = ScrollLock state (0000h off, 0001h on)
+SeeAlso: AX=0070h,AX=0072h
+----------620075-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_INITJOY" - INITIALIZE JOYSTICK USE
+	AX = 0075h
+	BX = joystick number (0001h or 0002h)
+Return: AX = status
+	    0000h successful
+	    FFFFh joystick not connected or no game port
+Note:	Fastgraph assumes that the requested joystick is centered at the time
+	  this function is called
+SeeAlso: AX=0076h,AX=0077h,AX=0078h,AX=0079h
+----------620076-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETXJOY" - GET HORIZONTAL POSITION OF JOYSTICK
+	AX = 0076h
+	BX = joystick number (0001h or 0002h)
+Return: AX = horizontal position of joystick
+	    FFFFh if joystick uninitialized or not present
+Notes:	the actual coordinates are processor- and joystick-dependent
+	you must call AX=0075h before this function
+SeeAlso: AX=0075h,AX=0077h,AX=0078h
+----------620077-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETYJOY" - GET VERTICAL POSITION OF JOYSTICK
+	AX = 0077h
+	BX = joystick number (0001h or 0002h)
+Return: AX = vertical position of joystick
+	    FFFFh if joystick uninitialized or not present
+Notes:	the actual coordinates are processor- and joystick-dependent
+	you must call AX=0075h before this function
+SeeAlso: AX=0075h,AX=0076h,AX=0078h
+----------620078-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_BUTTON" - GET JOYSTICK BUTTON STATE
+	AX = 0078h
+	BX = joystick number (0001h or 0002h)
+Return: AX = button states
+	    bit 0: top button pressed
+	    bit 1: bottom button pressed
+SeeAlso: AX=0075h,AX=0076h,AX=0077h,AX=0079h
+----------620079-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_INTJOY" - GET KEYCODES CORRESP TO JOYSTICK POS
+	AX = 0079h
+	CX = joystick number (0001h or 0002h)
+	ES:BX -> variable pointer record (see below)
+Notes:	if the indicated joystick has not been initialized with AX=0075h, both
+	  the button code and joystick position will be set to 00h
+	if either button is pressed, a button code of 0Dh is returned;
+	  otherwise, a button code of 00h is returned
+SeeAlso: AX=006Fh,AX=0075h,AX=0078h
+
+Format of variable pointer record:
+Offset	Size	Description
+ 00h	WORD	segment of BYTE buffer for button code
+ 02h	WORD	offset of BYTE buffer for button code
+ 04h	WORD	segment of BYTE buffer for joystick position
+ 06h	WORD	offset of BYTE buffer for joystick position
+----------62007A-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_MOUSEINI" - INITIALIZE MOUSE SUPPORT
+	AX = 007Ah
+Return: AX = status
+	    0002h two-button mouse
+	    0003h three-button mouse
+	    FFFFh initialization failed
+Note:	after this call, the mouse cursor is invisible
+SeeAlso: AX=007Bh,AX=007Ch,AX=007Eh,AX=0080h,INT 33/AX=0000h
+----------62007B-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_MOUSEVIS" - SET MOUSE CURSOR VISIBILITY
+	AX = 007Bh
+	BX = new state (0000h invisible, 0001h visible)
+SeeAlso: AX=007Ah,AX=007Eh,INT 33/AX=0001h,INT 33/AX=0002h
+----------62007C-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_MOUSEBUT" - GET MOUSE BUTTON PRESS/RELEASE CNTS
+	AX = 007Ch
+	CX = mouse button (1 = left press, 2 = right press, 3 = middle press,
+			  -1=left release, -2=right release, -3=middle release)
+	ES:BX -> variable pointer record (see below)
+Return: variables updated
+Note:	returns the count of presses or releases since the last call to this
+	  function; if the count is zero, row and col will also be zero
+SeeAlso: AX=007Ah,INT 33/AX=0005h,INT 33/AX=0006h
+
+Format of variable pointer record:
+Offset	Size	Description
+ 00h	WORD	segment of WORD buffer for press/release count
+ 02h	WORD	offset of WORD buffer for press/release count
+ 04h	WORD	segment of WORD buffer for screen space col of last press/rls
+ 06h	WORD	offset of WORD buffer for screen space col of last press/rels
+ 08h	WORD	segment of WORD buffer for screen space row of last press/rls
+ 0Ah	WORD	offset of WORD buffer for screen space row of last press/rls
+----------62007D-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_MOUSEPOS" - GET CURRENT MOUSE POSITION
+	AX = 007Dh
+	ES:BX -> variable pointer record (see below)
+SeeAlso: AX=007Ah,AX=0081h
+
+Format of variable pointer record:
+Offset	Size	Description
+ 00h	WORD	segment of WORD buffer for mouse column
+ 02h	WORD	offset of WORD buffer for mouse column
+ 04h	WORD	segment of WORD buffer for mouse row
+ 06h	WORD	offset of WORD buffer for mouse row
+ 08h	WORD	segment of WORD buffer for button status
+ 0Ah	WORD	offset of WORD buffer for button status
+Note:	button status: bit 0 = left button, bit 1 = right, bit 2 = middle
+----------62007E-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_MOUSECUR" - SPECIFY TEXT-MODE MOUSE CURSOR
+	AX = 007Eh
+	BX = screen mask
+	CX = cursor mask
+Note:	this call is ignored in graphics modes
+SeeAlso: AX=007Ah,AX=007Fh,INT 33/AX=000Ah
+----------62007F-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_MOUSEPTR" - SPECIFY GRAPH-MODE MOUSE CURSOR
+	AX = 007Fh
+	ES:BX -> masks (16-byte screen mask followed by 16-byte cursor mask)
+	CX = X offset of hot spot from upper left corner
+	DX = Y offset of hot spot from upper left corner
+Note:	this call is ignored in text modes
+SeeAlso: AX=007Ah,AX=007Eh,INT 33/AX=0009h
+----------620080-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_MOUSELIM" - SPECIFY MOUSE CURSOR LIMITS
+	AX = 0080h
+	BX = left-most position allowed for mouse cursor
+	CX = right-most position allowed
+	DX = top-most position allowed
+	SI = bottom-most position allowed
+SeeAlso: AX=007Ah,AX=0081h,INT 33/AX=0007h,INT 33/AX=0008h
+----------620081-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_MOUSEMOV" - SET MOUSE CURSOR POSITION
+	AX = 0081h
+	BX = new column
+	CX = new row
+Note:	will not move the mouse cursor outside the bounding box specified with
+	  AX=0080h
+SeeAlso: AX=007Ah,AX=007Dh,AX=0080h,INT 33/AX=0004h
+----------620082-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_MOUSESPD" - SET MOUSE CURSOR SPEED
+	AX = 0082h
+	BX = horizontal mickeys per eight pixels of movement (default 16)
+	CX = vertical mickeys per eight pixels of movement (default 16)
+SeeAlso: INT 33/AX=000Fh,INT 33/AX=001Ah
+----------620083-----------------------------
+INT 62 - FGDRIVER v1.10 - UNUSED
+	AX = 0083h to 0087h
+Return: AX = 0000h
+----------620088-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_SOUND" - MAKE SOUND FOR SPECIFIED DURATION
+	AX = 0088h
+	BX = frequency in Hertz (18-32767)
+	CX = duration in clock ticks (0000h or negative for continuous sound)
+Note:	ignored if asynchronous sound (AX=0089h,AX=008Bh,AX=008Dh) is in
+	  progress
+SeeAlso: AX=0089h,AX=008Ah,AX=008Eh,AX=0090h
+----------620089-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_SOUNDS" - PLAY SOUNDS IN BACKGROUND
+	AX = 0089h
+	CX = number of times to cycle through sound list
+	ES:BX -> sounds array (see below)
+Note:	ignored if asynchronous sound (AX=0089h,AX=008Bh,AX=008Dh) is in
+	  progress
+SeeAlso: AX=0088h,AX=008Eh,AX=008Fh
+
+Format of sounds array element:
+Offset	Size	Description
+ 00h	WORD	frequency of sound in Hertz (0000h ends array)
+ 02h	WORD	duration of sound in clock ticks
+----------62008A-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_VOICE" - START SOUND
+	AX = 008Ah
+	BX = channel on TI sound chip
+		1-3 = channels 1-3, 4 = channel 4 with periodic noise,
+		5 = channel 4 with white noise
+	CX = frequency in Hz (18-32767 for channels 1-3; 0=512 Hz, 1=1024 Hz, 
+		2=2048 Hz for channels 4 and 5)
+	DX = volume
+	SI = duration in clock ticks (continuous if <= 0)
+Notes:	FGDRIVER is the external video driver for the shareware
+	  Fastgraph/Light by Ted Gruber Software
+	only available on PCjr and Tandy 1000
+SeeAlso: AX=0088h,AX=008Bh,AX=008Ch
+----------62008B-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_VOICES" - PLAY SOUNDS IN BACKGROUND
+	AX = 008Bh
+	ES:BX -> tone array (see below)
+	CX = number of times to repeat tone array
+Notes:	FGDRIVER is the external video driver for the shareware
+	  Fastgraph/Light by Ted Gruber Software
+	only available on PCjr and Tandy 1000
+SeeAlso: AX=008Ah,AX=008Dh,AX=008Eh,AX=008Fh,AX=0091h
+
+Format of tone array element:
+Offset	Size	Description
+ 00h	WORD	channel number (0000h terminates array)
+ 02h	WORD	frequency
+ 04h	WORD	volume
+ 06h	WORD	duration in 1/72.8 seconds
+----------62008C-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_MUSIC" - PLAY SERIES OF NOTES
+	AX = 008Ch
+	ES:BX -> '$'-terminated music string in BASIC PLAY format
+Return: after music completed
+Note:	ignored if asynchronous sound (AX=0089h,AX=008Bh,AX=008Dh) is in
+	  progress
+SeeAlso: AX=008Ah,AX=008Dh
+----------62008D-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_MUSICB" - PLAY SERIES OF NOTES IN BACKGROUND
+	AX = 008Dh
+	CX = number of repetitions (negative = continuous play)
+	ES:BX -> '$'-terminated music string in BASIC PLAY format
+Note:	ignored if asynchronous sound (AX=0089h,AX=008Bh,AX=008Dh) is in
+	  progress
+SeeAlso: AX=008Bh,AX=008Ch,AX=008Eh,AX=008Fh,AX=0091h
+----------62008E-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_HUSH" - STOP ASYNCHRONOUS SOUND IMMEDIATELY
+	AX = 008Eh
+Note:	immediately stops any sounds started with "FG_MUSICB", "FG_SOUNDS",
+	  or AX=008Bh; ignored if no asynchronous sound is playing
+SeeAlso: AX=0088h,AX=008Bh,AX=008Fh,AX=0090h,AX=0091h
+----------62008F-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_HUSHNEXT" - STOP ASYNCHRONOUS SOUND
+	AX = 008Fh
+Note:	stops any sounds started with "FG_MUSICB", "FG_SOUNDS", or AX=008Bh
+	  after the current repetition completes; ignored unless asynchronous
+	  sound is continuous
+SeeAlso: AX=008Bh,AX=008Eh,AX=0090h
+----------620090-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_QUIET" - STOP CONTINUOUS SYNCHRONOUS SOUND
+	AX = 0090h
+Note:	this call has no effect if there is no continuous sound playing
+SeeAlso: AX=008Eh,AX=008Fh,AX=0091h
+----------620091-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_PLAYING" - DETERMINE WHETHER ASYNC SOUND ACTIVE
+	AX = 0091h
+Return: AX = sound state (0 = no asynchronous sound, 1 = async sound playing)
+SeeAlso: AX=008Bh,AX=008Dh,AX=0090h
+----------620092-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_RESUME" - RESTART ASYNCHRONOUS SOUND
+	AX = 0092h
+SeeAlso: AX=008Eh,AX=008Fh,AX=0090h
+----------620093-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_SUSPEND" - TEMPORARILY STOP ASYNCHRONOUS SOUND
+	AX = 0093h
+Notes:	this call has no effect if there is no asynchronous sound in progress
+	the program must not exit while sound is suspended
+SeeAlso: AX=0092h
+----------620094-----------------------------
+INT 62 - FGDRIVER v1.10 - UNUSED
+	AX = 0094h to 0095h
+Return: AX = 0000h
+----------620096-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_WAITFOR" - DELAY FOR SPECIFIED DURATION
+	AX = 0096h
+	BX = duration in clock ticks
+Return: after delay elapses
+SeeAlso: AX=006Dh,AX=0097h
+----------620097-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_STALL" - PAUSE FOR SPECIFIED DURATION
+	AX = 0097h
+	BX = duration in processor-dependent delay units (see AX=0098h)
+Return: after delay elapses
+SeeAlso: AX=0096h,AX=0098h
+----------620098-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_MEASURE" - GET DELAY UNITS PER CLOCK TICK
+	AX = 0098h
+Return: AX = delay units per clock tick (processor-dependent)
+Note:	delay units are used by "FG_STALL" (AX=0097h)
+SeeAlso: AX=0097h
+----------620099-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETCLOCK" - GET CLOCK TICKS SINCE MIDNIGHT
+	AX = 0099h
+Return: DX:AX = number of clock ticks since midnight
+Note:	FGDRIVER is the external video driver for the shareware
+	  Fastgraph/Light by Ted Gruber Software
+----------62009A-----------------------------
+INT 62 - FGDRIVER v1.10 - UNUSED
+	AX = 009Ah
+Return: AX = 0000h
+----------62009B-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_MEMAVAIL" - QUERY AMOUNT OF FREE MEMORY
+	AX = 009Bh
+Return: DX:AX = number of bytes of conventional memory available
+SeeAlso: AX=009Dh
+----------62009C-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_SETFUNC" - SET LOGICAL OPERATION FOR VIDEO OPS
+	AX = 009Ch
+	BX = operation
+	    0000h replacement
+	    0001h AND
+	    0002h OR
+	    0003h XOR
+Note:	only available in native EGA/VGA graphics mode (0Dh to 12h)
+----------62009D-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_ALLOCCMS" - CREATE LOGICAL VIDEO PAGE (CONVMEM)
+	AX = 009Dh
+	BX = page number (0001h-003Fh)
+Return: AX = status
+	    0000h successful
+	    FFFCh insufficient memory
+	    FFFDh page already created, or exists as physical or virtual page
+	    FFFEh invalid page number
+Note:	the only operation which is allowed on logical pages is AX=005Fh
+SeeAlso: AX=0043h,AX=005Fh,AX=009Bh,AX=009Eh,AX=009Fh
+----------62009E-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_ALLOCEMS" - CREATE LOGICAL VIDEO PAGE (EMS)
+	AX = 009Eh
+	BX = page number (0001h-003Fh)
+Return: AX = status
+	    0000h successful
+	    FFFCh insufficient memory
+	    FFFDh page already created, or exists as physical or virtual page
+	    FFFEh invalid page number
+	    FFFFh memory manager not initialized
+Notes:	must first call AX=00A0h
+	the only operation which is allowed on logical pages is AX=005Fh
+SeeAlso: AX=0043h,AX=005Fh,AX=009Dh,AX=009Fh,AX=00A0h
+----------62009F-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_ALLOCXMS" - CREATE LOGICAL VIDEO PAGE (XMS)
+	AX = 009Fh
+	BX = page number (0001h-003Fh)
+Return: AX = status (see AX=009Eh)
+Notes:	must first call AX=00A1h
+	the only operation which is allowed on logical pages is AX=005Fh
+SeeAlso: AX=0043h,AX=005Fh,AX=009Dh,AX=009Eh,AX=00A1h
+----------6200A0-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_INITEMS" - INITIALIZE EXPANDED MEMORY USE
+	AX = 00A0h
+Return: AX = status
+	    0000h successful
+	    FFFFh expanded memory manager inaccessible or not installed
+SeeAlso: AX=009Eh,AX=00A1h
+----------6200A1-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_INITXMS" - INITIALIZE EXTENDED MEMORY USE
+	AX = 00A1h
+Return: AX = status
+	    0000h successful
+	    FFFFh extended memory manager inaccessible or not installed
+SeeAlso: AX=009Fh,AX=00A0h
+----------6200A2-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_BOX" - DRAW UNFILLED RECTANGLE
+	AX = 00A2h
+	BX = left column
+	CX = right column
+	DX = top row
+	SI = bottom row
+Notes:	FGDRIVER is the external video driver for the shareware
+	  Fastgraph/Light by Ted Gruber Software
+	the rectangle is drawn in screen space, respecting the clipping region,
+	  width edges of the width specified with AX=00A3h (default = 1 is set
+	  by "FG_SETMODE")
+	this function has no effect in text modes
+SeeAlso: AX=002Bh,AX=002Ch,AX=002Eh,AX=0030h,AX=00A3h
+----------6200A3-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_BOXDEPTH" - SET RECTANGLE BORDER WIDTH
+	AX = 00A3h
+	BX = width of left and right edges in pixels (> 0)
+	CX = width of top and bottom edges in pixels (> 0)
+SeeAlso: AX=00A2h
+----------6200A4-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_GETDACS" - GET VIDEO DAC CONTENTS
+	AX = 00A4h
+	CX = number of DAC registers to return (0001h to 0100h)
+	DX = starting DAC register number (0000h to 00FFh)
+	ES:BX -> buffer for DAC red/green/blue triples
+Note:	the register number wraps back to zero after FFh
+SeeAlso: AX=001Ch,AX=00A5h
+----------6200A5-----------------------------
+INT 62 u - FGDRIVER v1.10 - "FG_SETDACS" - SET VIDEO DAC CONTENTS
+	AX = 00A5h
+	CX = number of DAC registers to set (0001h to 0100h)
+	DX = starting DAC register number (0000h to 00FFh)
+	ES:BX -> buffer containing DAC red/green/blue triples
+Notes:	the register number wraps back to zero after FFh
+	this call has no effect in text modes or graphics modes below 11h
+SeeAlso: AX=001Bh,AX=00A4h
 ----------6201-------------------------------
 INT 62 - Cswitch - GIVE UP REST OF TIME-SLICE
 	AH = 01h
 Note:	Cswitch is a set of multitasking functions by Herb Rose
-SeeAlso: AH=05h,AH=06h
+SeeAlso: AH=05h,AH=06h,INT 15/AX=1000h
 ----------6202-------------------------------
 INT 62 - Cswitch - WAIT FOR SEMAPHORE
 	AH = 02h
@@ -5730,6 +7597,30 @@ INT 63 - 4+Power FLOPPY CONTROLLER - ORIGINAL INT 13/40
    has been moved there) and places the old value here
 ----------63---------------------------------
 INT 63 - Kofax KF9X00 image manipulation card interface
+----------63---------------------------------
+INT 63 - DESQview/X - ???
+Notes:	parameters are passed by patching!! data field immediately following
+	  the entry point, as detailed below
+	the installation check consists of testing for the string "dvxunix"
+	  (yes, lowercase) at offset 9 from the interrupt handler start
+SeeAlso: INT BE"DESQview"
+
+Format of interrupt handler entry:
+Offset	Size	Description
+ 00h  3 BYTEs	near jump or short jump + NOP to actual interrupt handler
+ 03h	WORD	offset from following pointer for initial top of local stack
+ 05h	DWORD	pointer to argument/stack block (see below)
+ 09h  7 BYTEs	signature "dvxunix"
+
+Format of argument/stack block:
+Offset	Size	Description
+ 00h	WORD	signature F0ADh
+ 02h	WORD	function number (0000h-002Ah or FFFFh)
+ 04h  4 BYTEs	???
+ 08h	WORD	PSP segment to use or 0000h for current PSP
+ 0Ah	WORD	scratch space (JFT size)
+ 0Ch	DWORD	scratch space (JFT address)
+ 10h	???
 ----------64---------------------------------
 INT 64 - reserved for user interrupt
 ----------64---------------------------------
@@ -5931,6 +7822,80 @@ INT 66 - Microsoft Windows VITD.386 Virtual Interval Timer
 Note:	This Windows 3.x Virtual Device Driver implements a virtual timer
 	  which will expire and call INT 66.  This timer can be used to
 	  calculate elapsed execution time etc.
+----------6601-------------------------------
+INT 66 - BitFax Scheduler - SET MODE???
+	AH = 01h
+SeeAlso: AH=02h
+----------6602-------------------------------
+INT 66 - BitFax Scheduler - SET MODE???
+	AH = 02h
+SeeAlso: AH=01h
+----------6603-------------------------------
+INT 66 - BitFax Scheduler - SCHEDULE FAX TRANSMISSIONS
+	AH = 03h
+	???
+Return: ???
+SeeAlso: AH=05h
+----------6604-------------------------------
+INT 66 - BitFax Scheduler - GET STATUS???
+	AH = 04h
+Return: AX = ??? (0000h or 0001h)
+	DX = BitSched version???  (for versions >= 3.00)
+	    9796h (ver. 3.00)
+	    97E6h (ver. 3.02)
+	    92D0h (ver. 3.04.06)
+	    9510h (ver. 3.06.02)
+SeeAlso: AH=06h,AX=3345h,INT 2F/AX=8000h"FaxBIOS"
+----------6605-------------------------------
+INT 66 - BitFax Scheduler - CONVERT FILE AND SEND FAX
+	AH = 05h
+	BX:CX -> command block (see below)
+	???
+Return: ???
+SeeAlso: AH=03h
+
+Format of command block:
+Offset	Size	Description
+ 00h 18 BYTEs	configuration bytes???
+ 12h	BYTEs	ASCIZ temporary file name to place converted fax
+ 52h	BYTEs	ASCIZ directory containing BitFax executables
+ 92h	BYTEs	ASCIZ telephone number
+ C2h	BYTE	00h don't send cover page
+		01h send cover page
+ C3h 15 BYTEs	configuration bytes???
+ E2h	BYTEs	ASCIZ path of BITFAX.TRA file (containing additional
+		configuration information???)
+122h	BYTEs	configuration bytes???
+12Ch	BYTE	00h don't send cover page
+		01h send cover page
+12Dh  7 BYTEs	configuration bytes???
+134h	BYTEs	ASCIZ path of file to send
+174h	BYTEs	more configuration bytes???
+	???
+----------6606-------------------------------
+INT 66 - BitFax Scheduler - SET MODE???
+	AH = 06h
+Return: DX = BitSched version??? (same as AH=04h)
+SeeAlso: AH=04h
+----------660688-----------------------------
+INT 66 - John W. Ratcliff (The IBM Digitized Sound Package)
+	AX = 0688h
+	???
+Return: ???
+SeeAlso: AX=0689h
+----------660689-----------------------------
+INT 66 - John W. Ratcliff (The IBM Digitized Sound Package)
+	AX = 0689h
+	???
+Return: ???
+SeeAlso: AX=0688h
+----------663345-----------------------------
+INT 66 - BitFax Scheduler - REMOVE TSR FROM MEMORY
+	AX = 3345h
+Return: AX = FFFFh error removing TSR
+Note:	the installation check consists of checking for the signature
+	  "BitFax Scheduler" beginning two bytes past the interrupt handler
+SeeAlso: AH=04h,INT 2F/AH=2Ah,INT 2F/AX=CB00h
 ----------66FFFBBXFFFB-----------------------
 INT 66 - MicroHelp Stay-Res Plus - ???
 	AX = FFFBh
@@ -5956,25 +7921,6 @@ INT 66 - MicroHelp Stay-Res Plus - FIND PROGRAM NAME
 	BX = FFF0h
 Return: DI = offset of program name in interrupt handler segment
 SeeAlso: AX=FFFBh,AX=FFFEh,INT 2D"AMIS"
-----------660688-----------------------------
-INT 66 - John W. Ratcliff (The IBM Digitized Sound Package)
-	AX = 0688h
-	???
-Return: ???
-SeeAlso: AX=0689h
-----------660689-----------------------------
-INT 66 - John W. Ratcliff (The IBM Digitized Sound Package)
-	AX = 0689h
-	???
-Return: ???
-SeeAlso: AX=0688h
-----------663345-----------------------------
-INT 66 - BitFax Scheduler - REMOVE TSR FROM MEMORY
-	AX = 3345h
-Return: AX = FFFFh error removing TSR
-Note:	the installation check consists of checking for the signature
-	  "BitFax Scheduler" beginning two bytes past the interrupt handler
-SeeAlso: INT 2F/AH=2Ah,INT 2F/AX=CB00h
 ----------67---------------------------------
 INT 67 - Adaptec controllers - DRIVE 1 DATA
 Note:	this vector stores the last four bytes of the parameter table for
@@ -6071,18 +8017,20 @@ Call QEMM entry point with:
 		Notes:	the official docs only state that the version is
 			  returned in BX
 			MICEMM returns AX=0001h, BX unchanged
-	AH = 04h set AUTO/ON mode???
+	AH = 04h allocate 4K page and set AUTO/ON mode
 		Return: CF clear if successful
 			    DX = page number of a 4K page
 			CF set if unable to allocate page
 		Note:	QEMM mode unchanged if not AUTO/OFF
-	AH = 05h set AUTO/OFF mode???
+	AH = 05h free 4K page and turn QEMM off
 		DX = page number returned by function 04h
 		Return: CF clear
 		Note:	QEMM mode unchanged if not AUTO/ON
-	AH = 06h set mapping context???
-		DX = page table number???
+	AH = 06h make new mapping context???
+		DX = page number of 4K page to hold page table
 		Return: CF clear
+		Note:	copies page table into given page and then sets ???
+			  page table entry to point at copy
 	AH = 07h get mapping context???
 		Return: CF clear
 			DX = page table number???
@@ -6102,13 +8050,13 @@ Call QEMM entry point with:
 		CX = first page number??? (must be 0100h to allocate HMA)
 		DX = EMS handle???
 		Return: AH = 00h
-	AH = 0Ch get ???
+	AH = 0Ch get available memory
 		Return: CF clear
 			BX = 0001h
-			CX = ???
+			CX = total 4K pages???
 			DX = number of 4K pages free
-	AH = 0Dh ???
-		AL = zero/nonzero ???
+	AH = 0Dh ??? (related to callbacks)
+		AL = 00h/01h/02h ???
 		Return: CF clear
 	AH = 0Eh set ??? callbacks
 		DS:BX -> FAR routine for ???
@@ -6119,9 +8067,12 @@ Call QEMM entry point with:
 			  other handler read the value of BX.  BH and BL
 			  appear to be separate values.
 	AH = 0Fh unmap 4K pages???
-		CX = first page number (must be 0100h to free HMA)
-		DX = number of pages??? (must be 0010h to free HMA)
-		Return: AL = 00h/01h if ???
+		CX = first page number
+		DX = number of pages
+		Return: CF clear
+			AL = 00h/01h if ???
+		Note:	if CX=0100h and DX=0010h, the HMA is remapped to
+			  simulate a disabled A20
 	AX = 1000h get protected-mode interface
 		DS:SI -> 16-byte buffer for two GDT entries
 		ES:DI -> buffer for 4K page table
@@ -6135,13 +8086,19 @@ Call QEMM entry point with:
 	AX = 1001h get CPU debug registers
 		ES:DI -> buffer for debug registers (8 DWORDs)
 		Return: CF clear
-			BL = ???
+			BL = INT01 handling (see function 1002h)
 			ES:DI buffer filled
 	AX = 1002h set CPU debug registers
-		BL = ???
+		BL = INT01 handling
+		    00h  reflect all debugging exceptions as V86-mode INT 01's
+		    else convert debugging exceptions other than single-step
+		    	   into V86-mode INT 03's, single-step to INT 01's
 		ES:DI -> buffer containing debug registers (8 DWORDs)
 		Return: CF clear
-		Note:	identical to INT 67/AX=DE09h if BL=01h
+		Notes:	identical to INT 67/AX=DE09h if BL=01h
+			the INT01 handling flag is set to 01h by the general-
+			  protection violation handler for certain privileged
+			  instructions
 	AX = 1003h get machine status word CR0
 		Return: CF clear
 			EAX = contents of CR0
@@ -6193,7 +8150,8 @@ Call QEMM entry point with:
 		will switch to virtual86 mode with interrupts disabled, all
 		  segment registers loaded, and EAX destroyed.
 	AH = 11h get memory type map
-		AL = zero/nonzero ???
+		AL = zero/nonzero ??? (set by QEMM.COM but apparently ignored
+			by QEMM 6.00)
 		ES:DI -> 256-byte buffer for memory types
 		Return: CF clear
 			BL = ???
@@ -6220,6 +8178,11 @@ Call QEMM entry point with:
 		Return: CF clear
 			CX = ??? (0000h or 1000h)
 	AX = 1302h ???
+		BL = ???
+		BH = ???
+		CX = ???
+		SI = offset of ???
+		DI = offset of ???
 		???
 		Return: CF clear
 			???
@@ -6240,8 +8203,8 @@ Call QEMM entry point with:
 		Return: CF clear
 		Note:	disables certain interrupts at the two 8259 PICs during
 			  execution (see AX=130Ch)
-	AX = 1306h set critical section counter address???
-		ES:BX -> WORD QEMM critical section counter??? or 0000h:0000h
+	AX = 1306h set DESQview critical section counter address
+		ES:BX -> WORD DESQview critical section counter or 0000h:0000h
 		Return: CF clear
 		Note:	also sets pointer in low-memory part of QEMM to current
 			  value of INT 15 if ES:BX not 0000h:0000h
@@ -6288,6 +8251,8 @@ Call QEMM entry point with:
 	AX = 1311h set ???
 		BL = ???
 		Return: CF clear
+	AX = 1312h (v6.02) NOP???
+		Note:	called by DV 2.42, but appears to be a NOP in QEMM 6.02
 	AX = 1400h ???
 		ES:DI -> ??? data structure (at least 24 bytes)
 		BL = ???
@@ -6324,7 +8289,7 @@ Call QEMM entry point with:
 		 02h	WORD	segment of ??? (word at X:0124h set to this)
 		 04h	WORD	number of paragraphs of ???
 		 06h  3 WORDs	??? (copied to X:0000h)
-		 0Ch
+		 0Ch  	WORD	???
 	AX = 1403h add ??? to list and ??? (execute func 1406h)
 		ES:DI -> ??? structure added to end of ??? list
 			(at least 31 bytes, DWORD at offset 06h used for
@@ -6358,7 +8323,7 @@ Call QEMM entry point with:
 	AX = 140Bh ???
 		BX = ???
 		Return: CF clear
-			SI = ???
+			SI = segment of 256-byte buffer???
 	AH = 15h ???
 		ES:BX -> ??? or 0000h:0000h
 		Return: CF clear
@@ -6433,7 +8398,7 @@ Call QEMM entry point with:
 			CX = length of data pointed at by DS:DX
 			DS:DX -> ???
 			Return: CF clear
-		    07h BUG: QEMM 6.00 will accept this and branch randomly
+		    07h BUG: QEMM 6.00-6.03 accept this and branch randomly
 		    else Return: CF set
 	AH = 1Ch protected-mode hardware interrupt handlers ???
 		AL = subfunction
@@ -6527,6 +8492,15 @@ Call QEMM entry point with:
 						 DS:SI + ECX > 1M)
 		    else
 			Return: CF set
+	---QEMM v6.03 only---
+	AH = 22h DESQview/X support???
+		AL = subfunction
+		    00h get ???
+		    	Return: CF clear
+				ES:DI -> ???
+		    01h set ???
+		    	ES:DI -> ??? or 0000h:0000h
+			Return: ???
 	other
 		Return: CF set
 
@@ -7205,7 +9179,19 @@ Return: AH = 00h successful
 	    DI -> first unused page table entry in buffer
 	    EBX -> protected mode entry point in code segment
 	AH = nonzero  failed
+Note:	protected mode entry point may be called with AX=DE00h-DE05h and
+	  AX=DE0Ch (in each case, all other registers as appropriate for
+	  the function)
 SeeAlso: INT 67/AH=3Fh
+
+QEMM v6.03 protected mode entry point may also be called with:
+	AX = DF00h ???
+		???
+		Return: ???
+	AX = DF01h ???
+		???
+		Return: ???
+
 ----------67DE02-----------------------------
 INT 67 - Virtual Control Program Interface - GET MAX PHYSICAL MEMORY ADDRESS
 	AX = DE02h
@@ -7363,4 +9349,3 @@ Call API entry point with:
 		 (using INT 21/AH=09h)
 	AH = 05h print available report
 		 (the one shown when running EMM386 from the DOS prompt)
----------------------------------------------

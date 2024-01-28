@@ -19,6 +19,9 @@
 /*		     smarter page breaks				*/
 /*   v2.02  2/18/92  bugfix & isxdigit suggested by Aaron West		*/
 /*   v2.10  3/14/92  updated to handle extra flags in headings		*/
+/*   v2.11  5/23/92  bugfix pointed out by Joe White			*/
+/*   v2.20  6/12/92  added -F based on code by Richard Brittain 	*/
+/*		     added -H and Panasonic printer def by Lewis Paper	*/
 /************************************************************************/
 /* Recompiling:								*/
 /*   Turbo C / Borland C++						*/
@@ -29,28 +32,32 @@
 #include <string.h>
 #include <ctype.h>
 
-#define VERSION "2.10"
-
-#define MAXLINE 81   /* at most 80 chars per line (plus newline) */
-#define MAXPAGE 200  /* at most 200 lines per page */
-
-#ifndef FALSE
-#define FALSE 0
-#endif
-#ifndef TRUE
-#define TRUE !FALSE
-#endif
+#define VERSION "2.20"
 
 #ifdef __TURBOC__
 #  define PROTOTYPES
 #  include <stdlib.h>
-int _Cdecl isatty(int handle) ;
-void _setenvp(void) {} /* don't need the environment, so don't include it */
-/*int isspace(char c) { return (c == ' ' || c == '\t') ; }*/
+   int _Cdecl isatty(int handle) ;
+   void _setenvp(void) {} /* don't need the environment, so don't include it */
 #else
-/*#define PROTOTYPES  /* uncomment if compiler supports ANSI-style prototypes */
-#define NEED_STRNICMP /* comment out if library contains strnicmp() */
-#define NEED_ISXDIGIT /* comment out if library contains isxdigit() */
+
+/* not Turbo C / Borland C, so set configuration #defines */
+#if 0  /* set to 1 if compiler supports ANSI-style prototypes, 0 otherwise */
+#define PROTOTYPES
+#endif
+#if 1  /* set to 0 if library contains strnicmp(), 1 otherwise */
+#define NEED_STRNICMP
+#endif
+#if 1  /* set to 0 if library contains isxdigit(), 1 otherwise */
+#define NEED_ISXDIGIT
+#endif
+#if 0  /* set to 0 if library contains strdup(), 1 otherwise */
+#define NEED_STRDUP
+#endif
+#if 1  /* set to 0 if library contains strupr(), 1 otherwise */
+#define NEED_STRUPR
+#endif
+
 #define _Cdecl
 
 char *itoa(num,buf,radix)   /* not everybody has the same itoa() as TurboC */
@@ -77,6 +84,18 @@ int radix ;
    return buf ;
 }
 #endif /* __TURBOC__ */
+
+#ifndef FALSE
+#define FALSE 0
+#endif
+#ifndef TRUE
+#define TRUE !FALSE
+#endif
+
+#define MAXLINE 81   /* at most 80 chars per line (plus newline) */
+#define MAXPAGE 200  /* at most 200 lines per page */
+
+#define start_of_entry(s) (strncmp(s,"INT ",4) == 0)
 
 /***********************************************/
 
@@ -110,13 +129,29 @@ typedef struct _printer_def
    int *flag ;			/* flag to set when using this printer definition */
    } PRINTER_DEF ;
 
+struct filter_list
+   {
+   struct filter_list *next ;
+   char *str ;
+   } ;
+
+typedef struct _header
+   {
+   int part ;
+   int first_on_page ; /* TRUE if a new entry starts at the top of the page */
+   char desc[24] ;
+   } HEADER ;
+
 /***********************************************/
 
 #ifdef PROTOTYPES
 void usage(void) ;
 void fatal(char *msg) ;
+void get_raw_line(char *buf,int size) ;
+int unwanted_section(char *buf) ;
 void get_line(char *buf,int size) ;
 void indent_line(FILE *fp) ;
+void indent_to(int where,FILE *fp) ;
 void put_line(FILE *fp, int len) ;
 void HPPCL_put_line(FILE *fp, int len) ;
 void fputcstr(cstr *s, FILE *fp) ;
@@ -127,8 +162,12 @@ void fill_buffer(int lines, int lines_per_page) ;
 int find_page_break(int lines) ;
 void summarize(FILE *summary, int line, int pages_printed) ;
 void start_format(char *line) ;
+struct filter_list *add_filter_info(struct filter_list *list,char *str) ;
+void build_filter_lists(char *file) ;
 void print_line(char *line) ;
-void print_buffer(int first, int last, int lines_per_page, int total_lines, int use_FF) ;
+void make_description(char *desc,int line) ;
+char *determine_heading(int last) ;
+void print_buffer(int last, int lines_per_page, int total_lines, int use_FF) ;
 void select_printer(char *name) ;
 void display_printers(void) ;
 int _Cdecl main(int argc, char **argv) ;
@@ -155,6 +194,8 @@ int multi_file = FALSE ;	/* printing multipart interrupt list? */
 int out_of_files = FALSE ;	/* hit end of last file for multipart printing? */
 int do_summary = FALSE ;	/* create a one-line-per-call summary? */
 int do_formats = FALSE ;	/* create a separate file with data structures? */
+int do_filter = FALSE ;		/* using a filtering file? */
+int do_headers = FALSE ;	/* add page headings? */
 int IBM_chars = FALSE ;		/* printer can handle IBM graphics characters */
 int boldface = FALSE ;		/* boldface titles and Return:/Notes: ? */
 int printer_bold = FALSE ;	/* boldface using printer control sequences? */
@@ -167,6 +208,12 @@ PRINTER_DEF *printer = NULL ;
 
 int first_page = 0 ;
 int last_page = 9999 ;
+
+struct filter_list *includes = NULL ;
+struct filter_list *excludes = NULL ;
+
+HEADER header_first = { 0, FALSE, "" } ;
+HEADER header_last = { 0, FALSE, "" } ;
 
 /***********************************************/
 
@@ -185,7 +232,7 @@ PRINTER_DEF printers[] =
        put_line,
        NULL,
      },
-     { "Epson FX80",
+     { "Epson FX80, 12 cpi",
        CSTR("\033M"), CSTR(""),
        CSTR("\033l\004"), CSTR("\033l\007"), CSTR("\033l\014"),
        CSTR(""),
@@ -195,6 +242,19 @@ PRINTER_DEF printers[] =
        60,
        0,
        87,	/* 96 - left margin - 1 right margin */
+       put_line,
+       NULL,
+     },
+     { "Panasonic KX-P1124i / 10 cpi Epson",
+       CSTR(""), CSTR(""),
+       CSTR(""), CSTR(""), CSTR(""),
+       CSTR(""),
+       CSTR(""), CSTR(""),
+       CSTR("\033E"), CSTR("\033F"),
+       -1,
+       60,
+       0,
+       79,
        put_line,
        NULL,
      },
@@ -224,7 +284,7 @@ PRINTER_DEF printers[] =
        CSTR("\033&a4c4L"), CSTR("\033&a8c8L"), CSTR("\033&a12c12L"),
        CSTR(""),
        CSTR("\033E"),CSTR(""),
-       CSTR("\033(S3B"),CSTR("\033(S0B"),
+       CSTR("\033(s3B"),CSTR("\033(s0B"),
        0,
        54,
        60,
@@ -262,6 +322,47 @@ unsigned int len ;
 }
 #endif /* NEED_STRNICMP */
 
+#ifdef NEED_STRUPR
+#ifdef PROTOTYPES
+char *strupr(char *s)
+#else
+char *strupr(s)
+char *s ;
+#endif /* PROTOTYPES */
+{
+   char *orig_s = s ;
+   char c ;
+   
+   if (s)
+      while (*s)
+	 {
+	 c = *s ;      
+	 *s++ = (islower(c) ? toupper(c) : c) ;
+	 }
+   return orig_s ;
+}
+#endif /* NEED_STRUPR */
+
+#ifdef NEED_STRDUP
+#ifdef PROTOTYPES
+char *strdup(char *s)
+#else
+char *strdup(s)
+char *s ;
+#endif /* PROTOTYPES */
+{
+   char *copy ;
+      
+   if (s)
+      copy = (char *)malloc(strlen(s)+1) ;
+   else
+      copy = NULL ;   
+   if (copy)
+      strcpy(copy,s) ;
+   return copy ;
+}
+#endif /* NEED_STRDUP */
+
 #ifdef NEED_ISXDIGIT
 #ifdef PROTOTYPES
 int isxdigit(int c)
@@ -278,29 +379,27 @@ int c ;
 
 void usage()
 {
-   fputs("INTPRINT v", stderr) ;
-   fputs(VERSION, stderr) ;
-   fputs(" by Ralf Brown.  Donated to the Public Domain.\n\n",stderr) ;
-   fputs("Usage: intprint [options] intlist [>|>>]output\n",stderr) ;
+   fputs("\nUsage: intprint [options] intlist [>|>>]output\n",stderr) ;
    fputs("Options:\n",stderr) ;
-   fputs("\t-Pname\tassume printer 'name' (-P? lists supported printers)\n",stderr) ;
+   fputs("\t-b\tboldface title lines and Return:/Note:\n",stderr) ;
+   fputs("\t-B\tboldface using printer control codes instead of overprinting\n",stderr) ;
+   fputs("\t-d\t(duplex) print even/odd pages with different indents\n",stderr) ;
+   fputs("\t-e\tassume 'elite' mode (96 chars per line) for default printer\n",stderr) ;
+   fputs("\t-ffile\twrite all data structure formats to 'file'\n",stderr) ;
+   fputs("\t-Ffile\tprint only entries matching filtering info in 'file'\n",stderr);
+   fputs("\t-H\tadd page headers\n",stderr) ;
+   fputs("\t-iN\tindent output N spaces (overridden by some printers)\n",stderr) ;
+   fputs("\t-I\tprinter supports IBM graphics characters\n",stderr) ;
    fputs("\t-lN\tprint N lines per page (default depends on printer)\n",stderr) ;
    fputs("\t-LN\tassume N lines on a page, use linefeeds if > #lines printed\n",stderr) ;
    fputs("\t-m\tlist is in multiple parts starting with the named file\n",stderr) ;
-   fputs("\t-d\t(duplex) print even/odd pages with different indents\n",stderr) ;
-   fputs("\t-p\tadd page numbers\n",stderr) ;
-/*   fputs("\t-h\tadd page headers\n",stderr) ; */
    fputs("\t-nN\tassume N pages have been printed from previous parts\n",stderr) ;
+   fputs("\t-p\tadd page numbers\n",stderr) ;
+   fputs("\t-Pname\tassume printer 'name' (-P? lists supported printers)\n",stderr) ;
    fputs("\t-rN:M\tprint only pages N through M\n",stderr) ;
-   fputs("\t-wN\tscan N lines from bottom of page for good place to break\n",stderr) ;
-   fputs("\t-e\tassume 'elite' mode (96 chars per line) for default printer\n",stderr) ;
-   fputs("\t-iN\tindent output N spaces (overridden by some printers)\n",stderr) ;
-   fputs("\t-b\tboldface title lines and Return:/Note:\n",stderr) ;
-   fputs("\t-B\tboldface using printer control codes instead of overprinting\n",stderr) ;
-   fputs("\t-tN\tselect typeface N for the chosen printer\n",stderr) ;
-   fputs("\t-I\tprinter supports IBM graphics characters\n",stderr) ;
    fputs("\t-sfile\twrite a one-line-per-function summary to 'file'\n",stderr) ;
-   fputs("\t-ffile\twrite all data structures to 'file'\n",stderr) ;
+   fputs("\t-tN\tselect typeface N for the chosen printer\n",stderr) ;
+   fputs("\t-wN\tscan N lines from bottom of page for good place to break\n",stderr) ;
    exit(1) ;
 }
 
@@ -327,6 +426,17 @@ FILE *fp ;
       ind -= 8 ;
       }
    while (ind-- > 0)
+      fputc(' ', fp) ;
+}
+
+/***********************************************/
+
+void indent_to(where,fp)
+int where ;
+FILE *fp ;
+{
+   indent_line(fp) ;
+   while (where-- > 0)
       fputc(' ', fp) ;
 }
 
@@ -384,10 +494,12 @@ int section_start(line)
 char *line ;
 {
    if (strncmp(line,"Return:",7) == 0 ||
+       strncmp(line,"Desc:",5) == 0 ||
        strncmp(line,"Note:",5) == 0 ||
        strncmp(line,"Notes:",6) == 0 ||
        strncmp(line,"SeeAlso:",8) == 0 ||
-       strncmp(line,"BUG:",4) == 0)
+       strncmp(line,"BUG:",4) == 0 ||
+       strncmp(line,"Program:",8) == 0)
       return 1 ;
    return 0 ;
 }
@@ -403,7 +515,7 @@ FILE *fp ;
 
    if (boldface)
       {
-      if (strncmp(line,"INT ",4) == 0 || strncmp(line,"Format of ",10) == 0 ||
+      if (start_of_entry(line) || strncmp(line,"Format of ",10) == 0 ||
 	  strncmp(line,"Values ",7) == 0)
 	 {
 	 indent_line(fp) ;
@@ -468,7 +580,7 @@ FILE *fp ;
 
 /***********************************************/
 
-void get_line(buf,size)
+void get_raw_line(buf,size)
 char *buf ;
 int size ;
 {
@@ -504,6 +616,87 @@ int size ;
       last = 0 ;
    if (buf[last] == '\n')
       buf[last] = '\0' ;  /* strip the newline */
+}
+
+/***********************************************/
+
+int unwanted_section(buf)
+char *buf ;
+{
+   int unwanted = FALSE ;
+   int found ;
+   char str[MAXLINE] ;
+   struct filter_list *p ;
+   
+   if (start_of_entry(buf)) /* is it an interrupt entry? */
+      {
+      strncpy(str,buf,sizeof str) ;
+      str[sizeof str - 1] = '\0' ;
+      (void) strupr(str) ;
+      /* set 'unwanted' to TRUE if *any* exclude string matches */
+      for (p = excludes ; p ; p = p->next)
+	 {
+	 if (p->str && strstr(str, p->str) != NULL)
+	    {
+	    unwanted = TRUE ;
+	    break ;
+	    }
+	 }
+      /* if still wanted, set to TRUE if *no* include string matches */
+      if (!unwanted)
+	 {
+	 found = FALSE ;
+	 for (p = includes ; p ; p = p->next)
+	    {
+	    if (p->str && strstr(str, p->str) != NULL)
+	       {
+	       found = TRUE ;
+	       break ; 
+	       }
+	    }
+	 if (!found)
+	    unwanted = TRUE ;
+	 }
+      }
+   return unwanted ;
+}
+
+/***********************************************/
+
+void get_line(buf,size)
+char *buf ;
+int size ;
+{
+   static char next_line[MAXLINE] ;
+   static int readahead = FALSE ;
+
+   /* get the next line from the file, skipping unwanted entries */
+   if (readahead)
+      {
+      strncpy(buf,next_line,size) ;
+      buf[size-1] = '\0' ;
+      readahead = FALSE ;
+      }
+   else
+      {
+      get_raw_line(buf,size) ;
+      strncpy(next_line,buf,sizeof next_line);
+      next_line[sizeof next_line - 1] = '\0' ;
+      /* if we read a divider line, we have to look ahead */
+      while (do_filter && next_line[0] && divider_line(next_line))
+	 {
+	 strncpy(buf,next_line,size) ; /* we may be returning the divider */
+	 buf[size-1] = '\0' ;
+	 get_raw_line(next_line,sizeof next_line) ;
+	 if (unwanted_section(next_line))
+	    {
+	    while (!divider_line(next_line))
+	       get_raw_line(next_line,sizeof next_line) ;
+	    }
+	 else /* section is wanted, so return divider and then next line */
+	    readahead = TRUE ;
+	 }
+      }
 }
 
 /***********************************************/
@@ -552,7 +745,7 @@ int line, pages_printed ;
    int len ;
 
    s = buffer[line] ;
-   if (strncmp(s, "INT ", 4) == 0)   /* start of an entry? */
+   if (start_of_entry(s))
       {
       summary_line[3] = summary_line[0] = ' ' ;
       summary_line[1] = s[4] ;	 /* output interrupt number */
@@ -616,7 +809,7 @@ int line, pages_printed ;
 	 len += strlen(num) ;
 	 summary_line[len++] = ' ' ;
 	 }
-      s = buffer[line] + 7 ;    /* find function description */
+      s = buffer[line] + 7 ;	/* find function description */
       if (*s && *s != '-')	/* does the heading contain flags? */
 	 {
 	 while (*s && !isspace(*s))
@@ -635,7 +828,7 @@ int line, pages_printed ;
       while (len < max_descrip && *s)
 	 summary_line[len++] = *s++ ;
       summary_line[len] = '\0' ;
-      if (do_summary)
+      if (do_summary && summary)
 	 output_line(summary_line,summary) ;
       }
 }
@@ -688,14 +881,143 @@ char *line ;
 
 /***********************************************/
 
-void print_buffer(first,last,lines_per_page,total_lines,use_FF)
-int first, last, lines_per_page, total_lines ;
+void make_description(desc,line)
+char *desc ;
+int line ;
+{
+   summarize(NULL,line,0) ;
+   memcpy(desc,"INT ", 4) ;
+   desc += 4 ;
+   *desc++ = summary_line[1] ;
+   *desc++ = summary_line[2] ;
+   if (summary_line[4] != '-')
+      {
+      memcpy(desc,", AH=", 5) ;
+      desc += 5 ;
+      *desc++ = summary_line[4] ;
+      *desc++ = summary_line[5] ;
+      if (summary_line[7] != '-')
+	 {
+	 memcpy(desc,", AL=", 5) ;
+	 desc += 5 ;
+	 *desc++ = summary_line[7] ;
+	 *desc++ = summary_line[8] ;
+	 }
+      }   
+   *desc = '\0' ;
+}
+
+/***********************************************/
+
+char *determine_heading(last)
+int last ;
+{
+   int i ;
+   char *heading ;
+   char num[10] ;
+   
+   if (start_of_entry(buffer[0]))
+      {
+      make_description(header_first.desc,0) ;
+      header_first.part = 1 ;
+      header_first.first_on_page = TRUE ;
+      }
+   else if (header_last.part == 0)  /* very first entry? */
+      {
+      for (i = 0 ; i < last ; i++)
+	 if (start_of_entry(buffer[i]))
+	    {
+	    make_description(header_first.desc,i) ;
+	    header_first.part = 1 ;
+	    header_first.first_on_page = TRUE ;
+	    break ;
+	    }
+      }
+   else
+      {
+      strcpy(header_first.desc,header_last.desc) ;
+      header_first.part = header_last.part + 1 ;
+      header_first.first_on_page = FALSE ;
+      }
+   /* assume entry spans entire page */
+   strcpy(header_last.desc,header_first.desc) ;
+   header_last.part = header_first.part ;
+   header_last.first_on_page = header_first.first_on_page ;
+   /* find last entry on page */
+   if (header_first.part > 0)
+      {
+      if ((heading = calloc(1,MAXLINE)) == NULL)
+         return NULL ;
+      for (i = last-1 ; i > 0 ; i--)
+	 if (start_of_entry(buffer[i]))
+	    {
+	    make_description(header_last.desc,i) ;
+	    header_last.part = 1 ;
+	    header_last.first_on_page = FALSE ;
+	    break ;
+	    }
+      strcpy(heading,header_first.desc) ;
+      if (header_first.part > 1)
+	 {
+	 strcat(heading," (Part ") ;
+	 itoa(header_first.part,num,10) ;
+	 strcat(heading,num) ;
+	 strcat(heading,")") ;
+	 }
+      if (strcmp(header_first.desc,header_last.desc) != 0 ||
+	  header_first.part != header_last.part)
+	 {
+	 strcat(heading," to ") ;
+	 strcat(heading,header_last.desc) ;
+	 if (header_last.part > 1)
+	    {
+	    strcat(heading," (Part ") ;
+	    itoa(header_last.part,num,10) ;
+	    strcat(heading,num) ;
+	    strcat(heading,")") ;
+	    }
+	 }
+      return heading ; 
+      }
+   else /* no headings yet */
+      return NULL ;
+}
+
+/***********************************************/
+
+void print_buffer(last,lines_per_page,total_lines,use_FF)
+int last, lines_per_page, total_lines ;
 int use_FF ;
 {
-   int i, ind ;
+   int i ;
 
    pages_printed++ ;
-   for (i = first ; i < last ; i++)
+   if (do_headers)
+      {
+      char *heading ;
+      
+      if ((heading = determine_heading(last)) != NULL)
+	 {
+         indent_to(40-strlen(heading)/2,outfile) ;
+	 if (boldface)
+	    if (printer_bold)
+	       {
+	       fputcstr(&printer->bold_on,outfile) ;
+	       fputs(heading,outfile) ;
+	       fputcstr(&printer->bold_off,outfile) ;
+	       }
+	    else
+	       {
+	       fputs(heading,outfile) ;
+	       fputc('\r',outfile) ;
+	       indent_to(40-strlen(heading)/2,outfile) ;
+	       fputs(heading,outfile) ;
+	       }
+	 free(heading) ;
+	 }
+      fputs("\n\n",outfile) ;
+      }
+   for (i = 0 ; i < last ; i++)
       {
       if (pages_printed >= first_page && pages_printed <= last_page)
 	 print_line(buffer[i]) ;
@@ -708,11 +1030,9 @@ int use_FF ;
       {
       if (page_numbers)
 	 {
-	 for (i = last - first ; i < lines_per_page - 1 ; i++)
+	 for (i = last ; i < lines_per_page - 1 ; i++)
 	    fputc('\n', outfile) ;
-	 indent_line(outfile) ;
-	 for (ind = 0 ; ind < 38 ; ind++) /* normal indent + 38 spaces */
-	    fputc(' ', outfile) ;
+	 indent_to(38,outfile) ;
 	 fputs("- ", outfile) ;
 	 itoa(pages_printed, num, 10) ;
 	 fputs(num, outfile) ;
@@ -721,7 +1041,7 @@ int use_FF ;
       if (use_FF)
 	 fputc('\f', outfile) ;
       else
-	 for (i = page_numbers?lines_per_page:(last-first) ; i<total_lines ; i++)
+	 for (i = page_numbers?lines_per_page:last ; i<total_lines ; i++)
 	    fputc('\n', outfile) ;
       if (duplex)
 	 {
@@ -777,6 +1097,78 @@ char *name ;
 
 /***********************************************/
 
+struct filter_list *add_filter_info(list,str)
+struct filter_list *list ;
+char *str ;
+{
+   struct filter_list *new ;
+   
+   if ((new = (struct filter_list *)calloc(1,sizeof(struct filter_list))) != NULL)
+      {
+      new->next = list ;
+      new->str = strupr(strdup(str)) ;
+      if (new->str == NULL)
+	 new = NULL ;
+      }
+   if (new == NULL)
+      {
+      fputs("Error: out of memory\n",stderr) ;
+      exit(1) ;
+      }
+   return new ;
+}
+
+/***********************************************/
+
+void build_filter_lists(file)
+char *file ;
+{
+   FILE *fp ;
+   char buf[MAXLINE] ;
+   int len ;
+   
+   if ((fp = fopen(file,"r")) == NULL)
+      {
+      fputs("Warning: unable to open filtering file, will print entire list.\n",stderr) ;
+      do_filter = FALSE ;
+      }
+   else /* OK, file is open, so start reading */
+      {
+      while (!feof(fp))
+	 {
+	 buf[0] = '\0' ;
+	 if (fgets(buf, sizeof(buf), fp) == NULL)
+	    {
+	    if (!feof(fp)) /* was it an error other than EOF? */
+	       fputs("Warning: error reading filtering data, filtering may be incomplete.\n",stderr) ;
+	    break ;
+	    }
+	 len = strlen(buf) ;
+	 if (len > 0 && buf[len-1] == '\n')
+	    buf[--len] = '\0' ;
+	 if (len > 1)
+	    {
+	    switch (buf[0])
+	       {
+	       case '+':
+		  includes = add_filter_info(includes,buf+1) ;
+		  break ;
+	       case '-':
+		  excludes = add_filter_info(excludes,buf+1) ;
+		  break ;
+	       case '#':		/* comment lines */
+	       default:
+		  break ;
+	       }
+	    }
+	 }
+      fclose(fp) ;
+      do_filter = TRUE ;
+      }
+}
+
+/***********************************************/
+
 int _Cdecl main(argc,argv)
 int argc ;
 char *argv[] ;
@@ -789,33 +1181,18 @@ char *argv[] ;
    char *typeface = NULL ;
    char *summary_file = NULL ;
    char *formats_file = NULL ;
+   char *filter_file = NULL ;
    char *last_page_num ;
    
+   fputs("INTPRINT v", stderr) ;
+   fputs(VERSION, stderr) ;
+   fputs(" by Ralf Brown and others.  Donated to the Public Domain.\n",stderr) ;
    if (argc == 1 && isatty(0))
       usage() ;	  /* give help if invoked with no args and keybd input */
    while (argc >= 2 && argv[1][0] == '-')
       {
       switch (argv[1][1])
 	 {
-	 case 'e':
-	    indent = 8 ;
-	    page_width = 87 ;  /* 96 - indent - 1 right margin */
-	    break ;
-	 case 'P':
-	    if (argv[1][2] == '?')
-	       display_printers() ;
-	    else
-	       select_printer(argv[1]+2) ;
-	    break ;
-	 case 'I':
-	    IBM_chars = TRUE ;
-	    break ;
-	 case 'p':
-	    page_numbers = TRUE ;
-	    break ;
-	 case 'h':   /* page headers */
-	    /* nothing yet */
-	    break ;
 	 case 'B':
 	    printer_bold = TRUE ;
 	    /* fall through to -b */
@@ -825,11 +1202,45 @@ char *argv[] ;
 	 case 'd':
 	    duplex = TRUE ;
 	    break ;
+	 case 'e':
+	    indent = 8 ;
+	    page_width = 87 ;  /* 96 - indent - 1 right margin */
+	    break ;
+	 case 'f':
+	    formats_file = argv[1]+2 ;
+	    break ;
+	 case 'F':
+	    filter_file = argv[1]+2 ;
+	    break ;
+	 case 'H':   /* page headers */
+	    do_headers = TRUE ;
+	    break ;
+	 case 'i':
+	    indent = atoi(argv[1]+2) ;
+	    break ;
+	 case 'I':
+	    IBM_chars = TRUE ;
+	    break ;
+	 case 'l':
+	    lines_per_page = atoi(argv[1]+2) ;
+	    break ;
+	 case 'L':
+	    total_lines = atoi(argv[1]+2) ;
+	    break ;
 	 case 'm':
 	    multi_file = TRUE ;
 	    break ;
 	 case 'n':
 	    pages_printed = atoi(argv[1]+2) ;
+	    break ;
+	 case 'P':
+	    if (argv[1][2] == '?')
+	       display_printers() ;
+	    else
+	       select_printer(argv[1]+2) ;
+	    break ;
+	 case 'p':
+	    page_numbers = TRUE ;
 	    break ;
 	 case 'r':
 	    first_page = atoi(argv[1]+2) ;
@@ -838,26 +1249,14 @@ char *argv[] ;
 	    if (last_page == 0)
 	       last_page = 9999 ;
 	    break ;
-	 case 'i':
-	    indent = atoi(argv[1]+2) ;
-	    break ;
 	 case 's':
 	    summary_file = argv[1]+2 ;
 	    break ;
-	 case 'f':
-	    formats_file = argv[1]+2 ;
+	 case 't':
+	    typeface = argv[1]+2 ;
 	    break ;
 	 case 'w':
 	    widow_length = atoi(argv[1]+2) ;
-	    break ;
-	 case 'l':
-	    lines_per_page = atoi(argv[1]+2) ;
-	    break ;
-	 case 'L':
-	    total_lines = atoi(argv[1]+2) ;
-	    break ;
-	 case 't':
-	    typeface = argv[1]+2 ;
 	    break ;
 	 default:
 	    usage() ;
@@ -893,6 +1292,9 @@ char *argv[] ;
 	 do_formats = TRUE ;
       else
 	 fputs("unable to open formats file\n", stderr) ;
+   /* initialize filtering data, if specified */
+   if (filter_file && *filter_file)
+      build_filter_lists(filter_file) ;
    if (total_lines <= lines_per_page)
       {
       total_lines = lines_per_page ;
@@ -1003,15 +1405,23 @@ char *argv[] ;
       body_lines = lines_per_page - 2 ;
    else
       body_lines = lines_per_page ;
+   if (do_headers)
+      body_lines -= 2 ;
    last_line = 0 ;
    while (!feof(infile) && !out_of_files)
       {
       fill_buffer(last_line,body_lines) ;
       last_line = find_page_break(body_lines) ;
-      print_buffer(0,last_line,lines_per_page,total_lines,use_FF) ;
+      print_buffer(last_line,lines_per_page,total_lines,use_FF) ;
       }
    if (last_line < body_lines)
-      print_buffer(last_line,body_lines,lines_per_page,total_lines,use_FF) ;
+      {
+      int i ;
+      
+      for (i = last_line ; i < body_lines ; i++)
+	 strcpy(buffer[i-last_line], buffer[i]) ;
+      print_buffer(body_lines-last_line,lines_per_page,total_lines,use_FF) ;
+      }
    /* reset the printer */
    fputcstr(&printer->term1,outfile) ;
    fputcstr(&printer->term2,outfile) ;

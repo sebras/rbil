@@ -1,3 +1,4 @@
+---------------------------------------------
 Interrupt List, part 5 of 7
 This compilation is Copyright (c) 1989,1990,1991,1992 Ralf Brown
 ----------2F8000-----------------------------
@@ -42,7 +43,7 @@ INT 2F - FaxBIOS interface - COMMAND SUBMISSION
 Return: AL = FFh if submitted OK
 	CX = result code (see below)
 Note:	FaxBIOS may use any multiplex number from 80h through FFh
-SeeAlso: AX=8000h"FaxBIOS"
+SeeAlso: AX=8000h"FaxBIOS",AX=CBDDh
 
 Values for function number:
  0001h	SYS_LOGIN
@@ -680,6 +681,14 @@ Return: AX = status
 	    2000h parameter out of range
 	    other RESPLAY not installed
 SeeAlso: AX=8200h
+----------2F86-------------------------------
+INT 2F U - ???
+	AH = 86h
+	AL = function (at least 06h and 07h)
+	???
+Return: ???
+Note:	called by Codeview for Windows
+SeeAlso: AH=44h
 ----------2F8900-----------------------------
 INT 2F - WHOA!.COM - INSTALLATION CHECK
 	AX = 8900h
@@ -1207,15 +1216,21 @@ INT 2F - Network - GET NetBIOS NAME NUMBER OF MACHINE NAME
 Return: CH = NetBIOS name number of the machine name
 SeeAlso: INT 21/AX=5E00h
 ----------2FB808-----------------------------
-INT 2F - Network - ???
-	AX = B808h
-	???
-Return: ???
+INT 2F U - Network - RELINK KEYBOARD HANDLER
+	AX = B908h
+	ES:BX -> INT 09 handler RECEIVER should call after it finishes INT 09
+Notes:	this call replaces the address to which RECEIVER.COM chains on an
+	  INT 09 without preserving the original value.	 This allows a prior
+	  handler to unlink, but does not allow a new handler to be added
+	  such that RECEIVER gets the INT 09 first unless it completely takes
+	  over INT 09 and never chains.
+	called by DOS 3.2 KEYBxx.COM
+SeeAlso: AX=B908h
 ----------2FB809-----------------------------
-INT 2F - LANtastic Network - VERSION CHECK
+INT 2F - LANtastic Network, NetWare Lite - VERSION CHECK
 	AX = B809h
 Return: AH = major version
-	AL = minor version
+	AL = minor version (decimal)
 ----------2FB900-----------------------------
 INT 2F - PC Network RECEIVER.COM - INSTALLATION CHECK
 	AX = B900h
@@ -1263,6 +1278,7 @@ Note:	this call replaces the address to which RECEIVER.COM chains on an
 	  INT 09 without preserving the original value.	 This allows a prior
 	  handler to unlink, but does not allow a new handler to be added
 	  such that RECEIVER gets the INT 09 first.
+SeeAlso: AX=B808h
 ----------2FBC00-----------------------------
 INT 2F - Windows 3.0, DOS 5.0 EGA.SYS - INSTALLATION CHECK
 	AX = BC00h
@@ -1390,6 +1406,17 @@ Return: AX = status
 	    0000h successful???
 Note:	called by TBSCANX
 SeeAlso: AX=CA00h
+----------2FC9FF-----------------------------
+INT 2F - STACKMAN - INSTALLATION BROADCAST
+	AX = C9FFh
+	BL = BCD version number
+	CX = number of stacks
+	DX = stack size in bytes
+Notes:	called by STACKMAN when it goes resident to inform interested TSRs that
+	  its API is available
+	the installation check consists of testing for the string "STACKXXX" at
+	  offset 0Ah from the INT B4 handler
+SeeAlso: INT B4"STACKMAN",INT B5"STACKMAN"
 ----------2FCA00BX5442-----------------------
 INT 2F - TBSCANX - INSTALLATION CHECK
 	AX = CA00h
@@ -1412,7 +1439,7 @@ Return: AH = BCD version number (v2.2+)
 	BX = EMS handle, 0000h if not using EMS
 ---v2.3+---
 	BX = segment of swap area, 0000h if not swapped
-	DX = EMS handle, FFFFh if not using EMS
+	DX = EMS or XMS handle (XMS handle if BX=0000h), FFFFh if not using EMS
 SeeAlso: AX=CA02h
 ----------2FCA02-----------------------------
 INT 2F - TBSCANX - SET STATE
@@ -1457,7 +1484,7 @@ Return: AL = 00h not installed, OK to install
 	     01h not installed, not OK to install
 	     FFh installed
 Note:	AH = CBh is the default identifier, but may be reconfigured
-SeeAlso: AH=2Ah,AX=8000h"FaxBIOS",AX=CB0Eh
+SeeAlso: AH=2Ah,AX=8000h"FaxBIOS",AX=CB0Eh,AX=CBDCh
 ----------2FCB01-----------------------------
 INT 2F - Communicating Applications Specification - SUBMIT A TASK
 	AX = CB01h
@@ -2071,6 +2098,27 @@ INT 2F - Intel SatisFAXtion CASMGR - ???
 	AX = CB82h
 	???
 Return: ???
+----------2FCBDC-----------------------------
+INT 2F - Comwave Microfax Specification - GET STATUS ARRAY
+	AX = CBDCh
+	BL = 56h
+	BH = line number (starts with 1)
+	CX:DX -> 32-byte status buffer or 80 character string
+Return: AX = number of cards installed, or FFFFh on error
+Program: Comwave manufacturers the Microfax line of fax cards which are a high-
+	  performance multi-card FAX solution for OEMs.
+Note:	defaults to AH=CBh but can be changed
+SeeAlso: AX=CBDDh,AX=DA00h
+----------2FCBDD-----------------------------
+INT 2F - Comwave Microfax Specification - COMMAND SUBMISSION
+	AX = CBDDh
+	BL = 56h
+	BH = ?
+	CX:DX -> command to execute
+Return: AX = status
+	    0000h success
+	    FFFFh on error
+SeeAlso: AH=2Ah,AX=CBDCh,AX=80FBh
 ----------2FCC--SI5453-----------------------
 INT 2F U - Qualitas Qcach v4.00
 	AH = CCh
@@ -2334,6 +2382,18 @@ Note:	ZWmous is a shareware TSR by Zen Wu which permits the use of a mouse
 	  with many non-mouse applications by entering the letter under the
 	  mouse cursor on button presses
 SeeAlso: INT 33/AX=0003h
+----------2FD000-----------------------------
+INT 2F - Lotus CD/Networker - INSTALLATION CHECK
+	AX = D000h
+Return: AL = FF if CD/Networker TSR is loaded
+	BX = 4D44h ("MD") signature
+	CX = Windows mode word (from INT 2F/AX=1600h) at time of TSR load
+	DX = bitmap identifying all loaded CD/Networker TSRs.
+Notes:	INT 2F/AH=D0h is used by CD/Networker to communicate between a
+	  resident redirector TSR and a transient program that controls the
+	  TSR's CD-ROM drive emulation (volume attachments, caching, etc).
+	At present there is only one CD/Networker TSR; the bitmap always = 4.
+SeeAlso: AX=D002h"Lotus",INT 2F/AX=1500h"CD-ROM"
 ----------2FD001-----------------------------
 INT 2F - MDEBUG display driver - INITIALIZE DRIVER
 	AX = D001h
@@ -2358,6 +2418,15 @@ Return: CF set on error
 Note:	MDEBUG calls this function only once every popup session before
 	  displaying its windows.
 SeeAlso: AX=D000h,AX=D003h
+----------2FD002BX4D44-----------------------
+INT 2F - Multiplex - Lotus CD/Networker GET DATA AREA
+	AX = D002h
+	BX = 4D44h
+	DX = bitmap identifying one loaded CD/Networker TSR
+Return: ES:DI -> data area owned by TSR
+Note:	the format of the data area changes with each minor revision, so it
+	  cannot be counted on
+SeeAlso: AX=D000h"Lotus"
 ----------2FD003-----------------------------
 INT 2F - MDEBUG display driver - RESTORE GRAPHIC DATA
 	AX = D003h
@@ -2650,9 +2719,8 @@ Return: AL = FFh installed
 	    BX = 4D45h ("ME")
 	    CX = 4D44h ("MD")
 	    DX = 5652h ("VR")
-Notes:	QEMM/QRAM/VIDRAM/MANIFEST will search for a free AH value from D2h
+Notes:	QEMM/QRAM/VIDRAM/MANIFEST/etc will search for a free AH value from D2h
 	  through FFh, then C0h through D1h
-	QEMM and QRAM both responded the same
 	for AL <> 0, if the BX/CX/DX values don't match a the identifier of a
 	  Quarterdeck product, it just chains to the previous INT 2F handler
 ----------2FD201BX4849-----------------------
@@ -2692,6 +2760,16 @@ INT 2F U - Quarterdeck - MANIFEST v1.0+ - INSTALLATION CHECK
 Return: BX = 5354h ("ST")
 Note:	QEMM/QRAM/VIDRAM/MANIFEST will search for a free AH value from D2h
 	  through FFh, then C0h through D1h
+----------2FD201BX4D45-----------------------
+INT 2F U - Quarterdeck - DVDOS4GX.DVR - ???
+	AX = D201h
+	BX = 4D45h ("ME")
+	CX = 5155h ("QU")
+	DX = 5044h ("PD")
+Return: ???
+Notes:	AH=D2h is the default; use the Quarterdeck installation check described
+	  under AX=D200h
+	called by QEMM 6.03
 ----------2FD201BX5145-----------------------
 INT 2F U - Quarterdeck - QEMM v5.0+ - INSTALLATION CHECK
 	AX = D201h
@@ -2866,6 +2944,30 @@ Offset	Size	Description
 		bit 1: program is in safe code, so flash the heart character
  11h	WORD	position of heartbeat on screen, normally 009Eh (last column
 		of second line)
+----------2FD600-----------------------------
+INT 2F U - VEDIT VSWAP - INSTALLATION CHECK
+	AX = D600h
+Return: AL = D6h if installed
+Note:	VSWAP is the resident portion of VEDIT's "swapper" capability.
+      	VEDIT is a programmer's text editor by Greenview Data.
+SeeAlso: AX=D601h,AX=D602h
+----------2FD601-----------------------------
+INT 2F U - VEDIT VSWAP - ???
+	AX = D601h
+	BL = subfunction number???
+Return: BL = return code ???
+	ES = resident portion's data??? segment
+	DX = resident portion's code segment
+SeeAlso: AX=D600h"VSWAP"
+----------2FD602-----------------------------
+INT 2F U - VEDIT VSWAP - EXEC PROGRAM WITH SWAP
+	AX = D602h
+	other registers set as for INT 21/AX=4B00h
+Return: CF set on error
+	    AL = error code
+		82h = failure due to ???
+	CF clear on success
+SeeAlso: AX=D600h"VSWAP",INT 21/AX=4Bh"EXEC"
 ----------2FD701-----------------------------
 INT 2F - BANYAN VINES v4+ - GET BANV INTERRUPT NUMBER
 	AX = D701h
@@ -2897,6 +2999,49 @@ INT 2F U - BANYAN VINES v4+ - Streettalk Directory Assistance interface
         ???
 Return: ???
 SeeAlso: AX=D703h,INT 61/AX=0007h"Banyan"
+----------2FD800-----------------------------
+INT 2F - Novell NetWare Lite - CLIENT.EXE - INSTALLATION CHECK
+	AX = D800h
+Return:	AL = FFh if installed
+	    DX = version number??? (0100h in 1.00)
+	    BX = data segment of resident copy???
+	    ES:DI = FAR entry point for API routines
+		    Load BX = function number and call for various
+		    functions.	Functions 00h - 10h supported in 1.00.
+SeeAlso: AX=7A00h,AX=D880h
+----------2FD880-----------------------------
+INT 2F - Novell NetWare Lite - SERVER.EXE - INSTALLATION CHECK
+	AX = D880h
+Return:	AL = FFh if installed
+	    DX = version number??? (0100h in 1.00)
+	    BX = Data segment of resident copy???
+	    CL = 01h if SERVER is active
+	       = 00h if SERVER is disabled
+SeeAlso: AX=7A00h,AX=D800h
+----------2FDA00-----------------------------
+INT 2F - ZyXEL ZFAX - INSTALLATION CHECK
+	AX = DA00h
+Return: AH = enabled state (00h = enabled, 01h = disabled)
+	AL = 5Ah installed
+Note:	ZFAX is the bundled FAX software which comes with the ZyXEL model
+	  fax modems.
+SeeAlso: AX=CBDCh,AX=DA01h,AX=DA02h,AX=DA03h
+----------2FDA01-----------------------------
+INT 2F - ZyXEL ZFAX - UNINSTALL
+	AX = DA01h
+Return: AL = 00h Success
+	     01h Failure
+SeeAlso: AX=DA00h
+----------2FDA02-----------------------------
+INT 2F - ZyXEL ZFAX - DISABLE
+	AX = DA02h
+Return: AL = 00h
+SeeAlso: AX=DA03h
+----------2FDA03-----------------------------
+INT 2F - ZyXEL ZFAX - ENABLE
+	AX = DA03h
+Return: AL = 00h
+SeeAlso: AX=DA02h
 ----------2FDA55-----------------------------
 INT 2F U - TRAP.COM - INSTALLATION CHECK
 	AX = DA55h
@@ -5681,18 +5826,20 @@ Notes:	to use mouse on a Hercules-compatible monographics card in graphics
 	  and then call this function.  Logitech drivers v5.01 and v6.00
 	  reportedly do not correctly use Hercules graphics in dual-monitor
 	  systems, while version 4.10 does.
-	the Logitech mouse driver contains the signature string "LOGITECH"
-SeeAlso: AX=0021h,INT 74
+	the Logitech mouse driver contains the signature string "LOGITECH" 
+	  three bytes past the interrupt handler; many of the Logitech mouse
+	  utilities check for this signature.
+SeeAlso: AX=0021h,INT 62/AX=007Ah,INT 74
 ----------330001-----------------------------
 INT 33 - MS MOUSE - SHOW MOUSE CURSOR
 	AX = 0001h
-SeeAlso: AX=0002h,INT 16/AX=FFFEh
+SeeAlso: AX=0002h,INT 16/AX=FFFEh,INT 62/AX=007Bh
 ----------330002-----------------------------
 INT 33 - MS MOUSE - HIDE MOUSE CURSOR
 	AX = 0002h
 Note:	multiple calls to hide the cursor will require multiple calls to
 	  function 01h to unhide it.
-SeeAlso: AX=0001h,AX=0010h,INT 16/AX=FFFFh
+SeeAlso: AX=0001h,AX=0010h,INT 16/AX=FFFFh,INT 62/AX=007Bh
 ----------330003-----------------------------
 INT 33 - MS MOUSE - RETURN POSITION AND BUTTON STATUS
 	AX = 0003h
@@ -5711,7 +5858,7 @@ INT 33 - MS MOUSE - POSITION MOUSE CURSOR
 Note:	the row and column are truncated to the next lower multiple of the cell
 	  size; however, some versions of the Microsoft documentation
 	  incorrectly state that the coordinates are rounded
-SeeAlso: AX=0003h
+SeeAlso: AX=0003h,INT 62/AX=0081h
 ----------330005-----------------------------
 INT 33 - MS MOUSE - RETURN BUTTON PRESS DATA
 	AX = 0005h
@@ -5726,7 +5873,7 @@ Return: AX = button states
 	BX = number of times specified button has been pressed since last call
 	CX = column at time specified button was last pressed
 	DX = row at time specified button was last pressed
-SeeAlso: AX=0006h
+SeeAlso: AX=0006h,INT 62/AX=007Ch
 ----------330006-----------------------------
 INT 33 - MS MOUSE - RETURN BUTTON RELEASE DATA
 	AX = 0006h
@@ -5741,19 +5888,19 @@ Return: AX = button states
 	BX = number of times specified button has been released since last call
 	CX = column at time specified button was last released
 	DX = row at time specified button was last released
-SeeAlso: AX=0005h
+SeeAlso: AX=0005h,INT 62/AX=007Ch
 ----------330007-----------------------------
 INT 33 - MS MOUSE - DEFINE HORIZONTAL CURSOR RANGE
 	AX = 0007h
 	CX = minimum column
 	DX = maximum column
-SeeAlso: AX=0008h,AX=0010h
+SeeAlso: AX=0008h,AX=0010h,INT 62/AX=0080h
 ----------330008-----------------------------
 INT 33 - MS MOUSE - DEFINE VERTICAL CURSOR RANGE
 	AX = 0008h
 	CX = minimum row
 	DX = maximum row
-SeeAlso: AX=0007h,AX=0010h
+SeeAlso: AX=0007h,AX=0010h,INT 62/AX=0080h
 ----------330009-----------------------------
 INT 33 - MS MOUSE - DEFINE GRAPHICS CURSOR
 	AX = 0009h
@@ -5764,7 +5911,7 @@ INT 33 - MS MOUSE - DEFINE GRAPHICS CURSOR
 		16 words cursor mask
 		    each word defines the sixteen pixels of a row, low bit
 		    rightmost
-SeeAlso: AX=000Ah,AX=0012h
+SeeAlso: AX=000Ah,AX=0012h,INT 62/AX=007Fh
 ----------33000A-----------------------------
 INT 33 - MS MOUSE - DEFINE TEXT CURSOR
 	AX = 000Ah
@@ -5778,7 +5925,7 @@ INT 33 - MS MOUSE - DEFINE TEXT CURSOR
 Note:	when the software cursor is selected, the char/attribute data at the
 	  current screen position is ANDed with the screen mask and then XORed
 	  with the cursor mask
-SeeAlso: AX=0009h
+SeeAlso: AX=0009h,INT 62/AX=007Eh
 ----------33000B-----------------------------
 INT 33 - MS MOUSE - READ MOTION COUNTERS
 	AX = 000Bh
@@ -5823,15 +5970,32 @@ INT 33 - MS MOUSE - DEFINE MICKEY/PIXEL RATIO
 	AX = 000Fh
 	CX = number of mickeys per 8 pixels horizontally (default 8)
 	DX = number of mickeys per 8 pixels vertically (default 16)
-SeeAlso: AX=0013h,AX=001Ah
+SeeAlso: AX=0013h,AX=001Ah,INT 62/AX=0082h
 ----------330010-----------------------------
 INT 33 - MS MOUSE - DEFINE SCREEN REGION FOR UPDATING
 	AX = 0010h
 	CX,DX = X,Y coordinates of upper left corner
 	SI,DI = X,Y coordinates of lower right corner
-Note:	mouse cursor is hidden during updating, and needs to be explicitly
-	  turned on again
-SeeAlso: AX=0001h,AX=0002h,AX=0007h
+Note:	mouse cursor is hidden in the specified region, and needs to be
+	  explicitly turned on again
+SeeAlso: AX=0001h,AX=0002h,AX=0007h,AX=0010h"Genius MOUSE"
+----------330010-----------------------------
+INT 33 - Genius MOUSE - DEFINE SCREEN REGION FOR UPDATING
+	AX = 0010h
+	ES:DX -> update region list (see below)
+Notes:	mouse cursor is hidden in the specified region, and needs to be
+	  explicitly turned on again
+	this version of the call is described in an August 1988 version of the
+	  Genius Mouse programmer's reference; it has presumably been changed
+	  to conform to the Microsoft version shown above
+SeeAlso: AX=0001h,AX=0002h,AX=0007h,AX=0010h"MS MOUSE"
+
+Format of update region list:
+Offset	Size	Description
+ 00h	WORD	left-most column
+ 02h	WORD	top-most row
+ 04h	WORD	right-most column
+ 06h	WORD	bottom-most row
 ----------330012-----------------------------
 INT 33 - MS MOUSE - SET LARGE GRAPHICS CURSOR BLOCK
 	AX = 0012h
@@ -5917,7 +6081,7 @@ INT 33 - MS MOUSE - SET MOUSE SENSITIVITY
 	BX = horizontal speed \
 	CX = vertical speed   / (see AX=000Fh)
 	DX = double speed threshold (see AX=0013h)
-SeeAlso: AX=0013h,AX=001Bh
+SeeAlso: AX=0013h,AX=001Bh,INT 62/AX=0082h
 ----------33001B-----------------------------
 INT 33 - MS MOUSE - RETURN MOUSE SENSITIVITY
 	AX = 001Bh
@@ -5950,8 +6114,8 @@ SeeAlso: AX=001Dh
 ----------33001F-----------------------------
 INT 33 - MS MOUSE - DISABLE MOUSE DRIVER
 	AX = 001Fh
-Return: AX = 001Fh successful
-	     FFFFh unsuccessful
+Return: AX = 001Fh unsuccessful
+	     FFFFh successful
 	ES:BX = vector for INT 33h before mouse driver was first installed
 Note:	restores vectors for Int 10h and Int 71h (8086) or Int 74h (286/386)
 	if you restore Int 33h to ES:BX, driver will be completely disabled
@@ -5959,6 +6123,8 @@ SeeAlso: AX=0020h
 ----------330020-----------------------------
 INT 33 - MS MOUSE - ENABLE MOUSE DRIVER
 	AX = 0020h
+Return: AX = 0020h unsuccessful (or driver not installed)
+	     FFFFh successful
 Note:	restores vectors for Int 10h and Int 71h (8086) or Int 74h (286/386)
 	  which were removed by function 1Fh
 SeeAlso: AX=001Fh
@@ -5993,7 +6159,7 @@ Return:	BX = language (see AX=0022h)
 Note:	the US version of the driver always returns zero 
 SeeAlso: AX=0022h
 ----------330024-----------------------------
-INT 33 - MS MOUSE - GET SOFTWARE VERSION AND MOUSE TYPE
+INT 33 - MS MOUSE v7.00+ - GET SOFTWARE VERSION AND MOUSE TYPE
 	AX = 0024h
 Return: AX = FFFFh on error
 	otherwise,
@@ -6002,23 +6168,185 @@ Return: AX = FFFFh on error
 	    CH = type (1=bus, 2=serial, 3=InPort, 4=PS/2, 5=HP)
 	    CL = interrupt (0=PS/2, 2=IRQ2, 3=IRQ3,...,7=IRQ7)
 SeeAlso: AX=004Dh
+----------330025-----------------------------
+INT 33 - MS MOUSE v8.10+ - GET ???
+	AX = 0025h
+Return: AL = ???
+	BX = ???
+	CX = ???
+	DX = ???
 ----------330026-----------------------------
-INT 33 - MS MOUSE - ???
+INT 33 - MS MOUSE v8.10+ - GET ???
 	AX = 0026h
+Return: BX = ???
+	CX = ???
+	DX = ???
 Note:	called by the newest Microsoft applications
+----------330027-----------------------------
+INT 33 - MS MOUSE v8.10+ - GET ???
+	AX = 0027h
+Return: AX = ???
+	BX = ???
+	CX = horizontal mickeys moved since last call
+	DX = vertical mickeys moved since last call
+----------330028-----------------------------
+INT 33 - MS MOUSE v8.10+ - ???
+	AX = 0028h
+	CX = ???
+	    0000h reset to default???
+	    other
+	    	DX = ???
+		Return: CL = 00h
+----------330029-----------------------------
+INT 33 - MS MOUSE v8.10+ - GET SUPPORTED VIDEO MODES???
+	AX = 0029h
+	CX = last video mode???
+	    0000h get first
+	    other get next supported mode after mode CX
+Return: CX = first/next video mode
+	ES:DX = 0000h:0000h
+----------33002A-----------------------------
+INT 33 - MS MOUSE v8.10+ - GET ???
+	AX = 002Ah
+Return: AX = ???
+	BX = ???
+	CX = ???
+	DX = ???
+----------33002B-----------------------------
+INT 33 - MS MOUSE v8.10+ - SET ACCELERATION PROFILES
+	AX = 002Bh
+	BX = active acceleration profile (0001h-0004h or FFFFh for current)
+	ES:SI -> buffer containing acceleration profile data (see below)
+Return: ???
+SeeAlso: AX=002Ch"v8.10",AX=002Dh,AX=0033h
+
+Format of acceleration profile data:
+Offset	Size	Description
+ 00h	BYTE	length of acceleration profile 1
+ 01h	BYTE	length of acceleration profile 2
+ 02h	BYTE	length of acceleration profile 3
+ 03h	BYTE	length of acceleration profile 4
+ 04h 32 BYTEs	threshold speeds for acceleration profile 1
+ 24h 32 BYTEs	threshold speeds for acceleration profile 2
+ 44h 32 BYTEs	threshold speeds for acceleration profile 3
+ 64h 32 BYTEs	threshold speeds for acceleration profile 4
+ 84h 32 BYTEs	speedup factor for acceleration profile 1
+		(10h = 1.0, 14h = 1.25, 20h = 2.0, etc)
+ A4h 32 BYTEs	speedup factor for acceleration profile 2
+		(10h = 1.0, 14h = 1.25, 20h = 2.0, etc)
+ C4h 32 BYTEs	speedup factor for acceleration profile 3
+		(10h = 1.0, 14h = 1.25, 20h = 2.0, etc)
+ E4h 32 BYTEs	speedup factor for acceleration profile 4
+		(10h = 1.0, 14h = 1.25, 20h = 2.0, etc)
+104h 16 BYTEs	name of acceleration profile 1 (blank-padded)
+114h 16 BYTEs	name of acceleration profile 2 (blank-padded)
+124h 16 BYTEs	name of acceleration profile 3 (blank-padded)
+134h 16 BYTEs	name of acceleration profile 4 (blank-padded)
+Note:	unused bytes in the threshold speed fields are filled with 7Fh and
+	  unused bytes in the speedup factor fields are filled with 10h
 ----------33002C-----------------------------
-INT 33 - MS MOUSE - SET ACCELERATION PROFILES
+INT 33 - MS MOUSE v??? - SET ACCELERATION PROFILES
 	AX = 002Ch
 	ES:DX -> name of file containing profiles
 Note:	see MOUSEPRO.FIL for an example set of acceleration profiles
-SeeAlso: AX=0013h,AX=002Dh
+SeeAlso: AX=0013h,AX=002Dh,AX=002Eh
+----------33002C-----------------------------
+INT 33 - MS MOUSE v8.10+ - GET ACCELERATION PROFILES
+	AX = 002Ch
+Return: AX = 0000h
+	BX = currently-active acceleration profile
+	ES:SI -> acceleration profile data (see AX=002Bh)
+SeeAlso: AX=002Bh,AX=0033h
 ----------33002D-----------------------------
-INT 33 - MS MOUSE - SELECT ACCELERATION PROFILE
+INT 33 - MS MOUSE v8.10+ - SELECT ACCELERATION PROFILE
 	AX = 002Dh
-	BX = acceleration level (01h to 04h)
-Note:	acceleration of FFFFh appears to be legal as well, since it is used
-	  by the MS Control Panel v7.04
-SeeAlso: AX=0013h,AX=002Ch
+	BX = acceleration level (0001h to 0004h or FFFFh for current)
+Return: AX = status
+	    0000h successful
+	    	ES:SI -> 16-byte blank-padded name of acceleration profile
+	    FFFEh invalid acceleration level
+	    	ES:SI destroyed
+	BX = active acceleration level
+SeeAlso: AX=0013h,AX=002Bh,AX=002Ch,AX=002Eh
+----------33002E-----------------------------
+INT 33 - MS MOUSE v8.10+ - SET ACCELERATION PROFILE NAMES
+	AX = 002Eh
+	BL = flag (if nonzero, fill ES:SI buffer with default names on return)
+	ES:SI -> 64-byte buffer for profile names (16 bytes per name)
+Return: AX = 0000h
+	ES:SI buffer filled with default names if BL nonzero on entry
+Note:	not supported by Logitech driver v6.10
+SeeAlso: AX=002Ch,AX=002Dh,AX=012Eh,AX=022Eh
+----------33002F-----------------------------
+INT 33 - MS MOUSE v8.10+ - ???
+	AX = 002Fh
+	???
+Return: ???
+Note:	invoked by mouse driver v8.20 on being called with INT 2F/AX=530Bh
+SeeAlso: INT 2F/AH=53h
+----------330030-----------------------------
+INT 33 - MS MOUSE v8.10+ - ???
+	AX = 0030h
+	CX = ???
+	    0000h ???
+	    other ???
+Return: ???
+----------330031-----------------------------
+INT 33 - MS MOUSE v8.10+ - GET ???
+	AX = 0031h
+Return: AX = ???
+	BX = ???
+	CX = ???
+	DX = ???
+----------330032-----------------------------
+INT 33 - MS MOUSE v8.10+ - GET ???
+	AX = 0032h
+Return: AX = ??? (FFFFh)
+	BX = ??? (0000h)
+	CX = ??? (E000h)
+	DX = ??? (0000h)
+----------330033-----------------------------
+INT 33 - MS MOUSE v8.10+ - GET ACCELERATION PROFILE DATA
+	AX = 0033h
+	CX = size of buffer
+	    0000h get required buffer size
+	        Return: AX = 0000h
+			CX = required size (0154h for Logitech v6.10, 0159h
+				for MS v8.10-8.20)
+	    other
+	    	ES:DX -> buffer of CX bytes
+		Return: AX = 0000h
+			ES:DX buffer filled (see below)
+SeeAlso: AX=002Bh
+
+Format of data buffer:
+Offset	Size	Description
+ 00h 16 BYTEs	???
+ 10h 324 BYTEs	acceleration profile data (see AX=002Bh)
+154h  5 BYTEs	??? (Microsoft driver, but not Logitech)
+----------330034-----------------------------
+INT 33 - MS MOUSE v8.10+ - GET INITIALIZATION FILE
+	AX = 0034h
+Return: ES:DX -> ASCIZ initialization (.INI) file name
+----------330035-----------------------------
+INT 33 - MS MOUSE v8.10+ - LCD SCREEN LARGE POINTER SUPPORT
+	AX = 0035h
+	BX = function
+	    FFFFh get current settings
+	    	Return: AX = 0000h
+			BH = style (see below)
+			BL = size (see below)
+			CH = threshold
+			CL = active flag (00h disabled, 01h enabled)
+			DX = delay
+	    other
+	    	BH = style (00h normal, 01h reverse, 02h transparent)
+		BL = size (00h small "1", 01h medium "1.5", 02h large "2")
+		CH = threshold (00h-64h)
+		CL = active flag (00h disable size change, 01h enable)
+		DX = delay (0000h-0064h)
+		Return: AX = 0000h
+Note:	not supported by Logitech driver v6.10
 ----------330042-----------------------------
 INT 33 - PCMOUSE - GET MSMOUSE STORAGE REQUIREMENTS
 	AX = 0042h
@@ -6026,13 +6354,22 @@ Return: AX = FFFFh successful
 		BX = buffer size in bytes for functions 50h and 52h
 	   = 0000h MSMOUSE not installed
 	   = 0042h functions 42h, 50h, and 52h not supported
-SeeAlso: AX=0015h,AX=0050h
+SeeAlso: AX=0015h,AX=0050h,AX=0052h
 ----------330043-----------------------------
-INT 33 - Mouse Systems MOUSE DRIVER v7.01 - ???
+INT 33 - Mouse Systems MOUSE DRIVER v7.01 - CONFIGURE MOUSE???
 	AX = 0043h
-	CX:BX -> ??? (10 bytes of data)
+	CX:BX -> ??? buffer (see below)
 	DL = ???
 Return: ???
+Note:	also calls routines for INT 33/AX=0053h and INT 33/AX=004Fh
+
+Format of buffer:
+Offset	Size	Description
+ 00h	WORD	I/O port address
+ 02h  	BYTE	???
+ 03h	BYTE	interrupt number
+ 04h	BYTE	interrupt mask for interrupt controller
+ 05h  5 BYTEs	???
 ----------330044CXCDEF-----------------------
 INT 33 - Mouse Systems MOUSE DRIVER v7.01 - TOGGLE ???
 	AX = 0044h
@@ -6046,17 +6383,24 @@ INT 33 - Mouse Systems MOUSE DRIVER v7.01 - TOGGLE ???
 Return: AX = new state of ???
 SeeAlso: AX=0044h
 ----------330047-----------------------------
-INT 33 - Mouse Systems MOUSE DRIVER v7.01 - ???
+INT 33 - Mouse Systems MOUSE DRIVER v7.01 - SET BUTTON ASSIGNMENTS???
 	AX = 0047h
-	ES:BX -> ???
+	ES:BX -> button assignments (3 bytes, combinations of "L", "M", "R")
 Return: ???
+SeeAlso: AX=0067h
 ----------330048BXCDEF-----------------------
 INT 33 - Mouse Systems MOUSE DRIVER v7.01 - GET ???
 	AX = 0048h
 	BX = CDEFh
 Return: CX = ???
 	BH = ???
-	BL = ???
+	BL = ??? (if 50h, driver is using PS/2 pointing device BIOS interface)
+---------------------------------------------
+INT 33 - Z-NIX MOUSE DRIVER v7.04d - INSTALLATION CHECK
+	AX = 004Bh
+Return: ES:DI -> signature/description string if installed
+Note:	the signature string in v7.04d is
+	  "Z-NIX;BUS,AUX,Serial 3-byte and 5-byte Mouse Driver;ZMOUSE;v7.04d"
 ----------33004CBXCDEF-----------------------
 INT 33 - Mouse Systems MOUSE DRIVER v7.01 - SET ??? FLAG
 	AX = 004Ch
@@ -6069,34 +6413,37 @@ Return: ES:DI -> copyright message "Copyright 1983 Microsoft ***"
 Note:	also supported by Kraft mouse driver
 SeeAlso: AX=0024h,AX=006Dh
 ----------33004F-----------------------------
-INT 33 - Mouse Systems MOUSE DRIVER v7.01 - ???
+INT 33 - Mouse Systems MOUSE DRIVER v7.01 - ENABLE MOUSE
 	AX = 004Fh
-	???
-Return: ???
+Return: nothing
+SeeAlso: AX=0043h,AX=0053h
 ----------330050-----------------------------
 INT 33 - PCMOUSE - SAVE MSMOUSE STATE
 	AX = 0050h
-	BX = buffer size
+	BX = buffer size (ignored by some driver versions)
 	ES:DX -> buffer
 Return: AX = FFFFh if successful
+Note:	the buffer must be large enough to hold the entire state, or following
+	  data will be overwritten by state data in versions which ignore BX;
+	  use INT 33/AX=0042h to get the required size
 SeeAlso: AX=0042h,AX=0052h
 ----------330052-----------------------------
 INT 33 - PCMOUSE - RESTORE MSMOUSE STATE
 	AX = 0052h
-	BX = buffer size
+	BX = buffer size (ignored by some driver versions)
 	ES:DX -> buffer
 Return: AX = FFFFh if successful
 SeeAlso: AX=0050h
 ----------330053-----------------------------
-INT 33 - Mouse Systems MOUSE DRIVER v7.01 - ???
+INT 33 - Mouse Systems MOUSE DRIVER v7.01 - DISABLE MOUSE
 	AX = 0053h
-	???
-Return: ???
+Return: nothing
+SeeAlso: AX=0043h,AX=004Fh
 ----------330054CXCDEF-----------------------
 INT 33 - Mouse Systems MOUSE DRIVER v7.01 - ???
 	AX = 0054h
 	CX = CDEFh
-	BX = ???
+	BX = ??? (NOP if <= 0000h)
 Return: ???
 ----------330055-----------------------------
 INT 33 - Kraft Mouse - GET ???
@@ -6113,17 +6460,23 @@ Return: AX = CS of driver
 ----------33005A-----------------------------
 INT 33 - Mouse Systems MOUSE DRIVER v7.01 - ???
 	AX = 005Ah
+	CX = number of WORDs to copy (max 0014h, but not range-checked)
+	DX:SI -> buffer containing ??? (CX words)
+	DX:BX -> buffer containing ??? (9*14h words, only first CX of each 14h
+					used)
 	???
-Return: ???
+Return: CF clear
+	???
 ----------330061BXCDEF-----------------------
 INT 33 - Mouse Systems MOUSE DRIVER v7.01 - ???
 	AX = 0061h
 	BX = CDEFh
 Return: CX = ???
 ----------330067-----------------------------
-INT 33 - Mouse Systems MOUSE DRIVER v7.01 - ???
+INT 33 - Mouse Systems MOUSE DRIVER v7.01 - GET MOUSE BUTTONS???
 	AX = 0067h           
-Return: BL = ???
+Return: BL = number of buttons???
+SeeAlso: AX=0047h
 ----------33006CBXCDEF-----------------------
 INT 33 - Mouse Systems MOUSE DRIVER v7.01 - ???
 	AX = 006Ch
@@ -6136,11 +6489,15 @@ Return: ES:DI -> Microsoft version number of resident driver
 Note:	also supported by Mouse Systems and Kraft mouse drivers
 SeeAlso: AX=004Dh,AX=266Ch
 ----------330070BXABCD-----------------------
-INT 33 - Mouse Systems MOUSE DRIVER - INSTALLATION CHECK
+INT 33 - Mouse Systems MOUSE DRIVER - POPUP.COM - INSTALLATION CHECK
 	AX = 0070h
 	BX = ABCDh
 Return: AX = ABCDh if installed
 	    BX:CX -> data structure (see below)
+Notes:	the v7.01 POPUP.COM and menu drivers also check for the signature
+	  CDh ABh BAh DCh at offset -2Ch from the interrupt handler
+	if POPUP is not loaded, the returned data structure contains the proper
+	  signature at offset 00h, but not at offset 08h
 
 Format of data structure:
 Offset	Size	Description
@@ -6161,49 +6518,130 @@ INT 33 - Mouse Systems MOUSE DRIVER v7.01 - ???
 	BX = ABCDh
 Return: ???
 ----------330073BXCDEF-----------------------
-INT 33 - Mouse Systems MOUSE DRIVER v7.01 - ???
+INT 33 - Mouse Systems MOUSE DRIVER v7.01 - GET BUTTON ASSIGNMENTS???
 	AX = 0073h
 	BX = CDEFh
-	DS:DX -> ??? (3 bytes of data)
-Return: CX = ???
+	ES:DX -> buffer for button assignments??? (3 bytes of data)
+Return: CX = number of buttons???
+Note:	the default return buffer is "LMR"
+SeeAlso: AX=0067h
+----------33012E-----------------------------
+INT 33 - MS MOUSE v8.10+ - ???
+	AX = 012Eh
+	BL = ???
+Return: AX = 0000h
+Note:	not supported by Logitech driver v6.10
+SeeAlso: AX=002Eh,AX=022Eh
+----------33022E-----------------------------
+INT 33 - MS MOUSE v8.10+ - ???
+	AX = 022Eh
+	BL = ???
+Return: AX = 0000h
+Note:	not supported by Logitech driver v6.10
+SeeAlso: AX=002Eh,AX=012Eh
+----------33136C-----------------------------
+INT 33 - LOGITECH MOUSE v6.10+ - ???
+	AX = 136Ch
+	BX = ???
+Return: AX = ???
+	BX = ???
+----------33146C-----------------------------
+INT 33 - LOGITECH MOUSE v6.10+ - GET/SET ???
+	AX = 146Ch
+	BL = function
+	    00h set ???
+	    	BH = new value (zero/nonzero to clear/set)
+	    else get ???
+	    	Return: ???
+----------33156C-----------------------------
+INT 33 - LOGITECH MOUSE v6.10+ - GET SIGNATURE AND VERSION STRINGS
+	AX = 156Ch
+Return: ES:DI -> signature "LOGITECH MOUSE DRIVER"
+	ES:SI -> version string, terminated with CRLF
+----------33166C-----------------------------
+INT 33 - LOGITECH MOUSE v6.10+ - ???
+	AX = 166Ch
+	BL = ???
+	    00h ???
+	    01h ???
+	    other ???
+	    	BH = new value of ???
+		Return: AX = FFFFh
+----------33176C-----------------------------
+INT 33 - LOGITECH MOUSE v6.10+ - ???
+	AX = 176Ch
+	???
+Return: ???
+----------33186C-----------------------------
+INT 33 - LOGITECH MOUSE v6.10+ - ???
+	AX = 186Ch
+	???
+Return: ???
+----------33196C-----------------------------
+INT 33 - LOGITECH MOUSE v6.10+ - ???
+	AX = 196Ch
+	???
+Return: ???
+----------331A6C-----------------------------
+INT 33 - LOGITECH MOUSE v6.10+ - GET ???
+	AX = 1A6Ch
+Return: AX = FFFFh
+	BX = ???
+	CX = ???
+SeeAlso: AX=1B6Ch
+----------331B6C-----------------------------
+INT 33 - LOGITECH MOUSE v6.10+ - SET ???
+	AX = 1B6Ch
+	BX = new value for ??? (0000h-0003h)
+Return: AX = FFFFh
+SeeAlso: AX=1A6Ch
+----------331C6C-----------------------------
+INT 33 - LOGITECH MOUSE v6.10+ - ???
+	AX = 1C6Ch
+	BX = ???
+		<42h ???
+		=42h ???
+		>42h ???
+			ES:DI -> ???
+			Return: AX = ???
 ----------331D6C-----------------------------
-INT 33 - LOGITECH - GET COMPASS PARAMETER
+INT 33 - LOGITECH MOUSE - GET COMPASS PARAMETER
 	AX = 1D6Ch
 Return: BX = direction (0=north, 1=south, 2=east, 3=west)
 SeeAlso: AX=1E6Ch
 ----------331E6C-----------------------------
-INT 33 - LOGITECH - SET COMPASS PARAMETER
+INT 33 - LOGITECH MOUSE - SET COMPASS PARAMETER
 	AX = 1E6Ch
 	BX = direction (0=north, 1=south, 2=east, 3=west)
 SeeAlso: AX=1D6Ch
 ----------331F6C-----------------------------
-INT 33 - LOGITECH - GET BALLISTICS INFORMATION
+INT 33 - LOGITECH MOUSE - GET BALLISTICS INFORMATION
 	AX = 1F6Ch
 Return: BX = 0=off, 1=on
 	CX = 1=low, 2=high
 SeeAlso: AX=002Ch,AX=236Ch
 ----------33206C-----------------------------
-INT 33 - LOGITECH - SET LEFT OR RIGHT PARAMETER
+INT 33 - LOGITECH MOUSE - SET LEFT OR RIGHT PARAMETER
 	AX = 206Ch
 	BX = parameter (00h = right, FFh = left)
 SeeAlso: AX=216Ch
 ----------33216C-----------------------------
-INT 33 - LOGITECH - GET LEFT OR RIGHT PARAMETER
+INT 33 - LOGITECH MOUSE - GET LEFT OR RIGHT PARAMETER
 	AX = 216Ch
 Return: BX = parameter (00h = right, FFh = left)
 SeeAlso: AX=206Ch
 ----------33226C-----------------------------
-INT 33 - LOGITECH - REMOVE DRIVER FROM MEMORY
+INT 33 - LOGITECH MOUSE - REMOVE DRIVER FROM MEMORY
 	AX = 226Ch
 Note:	this only frees memory; does not restore hooked interrupts
 ----------33236C-----------------------------
-INT 33 - LOGITECH - SET BALLISTICS INFORMATION
+INT 33 - LOGITECH MOUSE - SET BALLISTICS INFORMATION
 	AX = 236Ch
 	BX = 0=off, 1=on
 	CX = 1=low, 2=high
 SeeAlso: AX=002Ch,AX=1F6Ch
 ----------33246C-----------------------------
-INT 33 - LOGITECH - GET PARAMETERS AND RESET SERIAL MOUSE
+INT 33 - LOGITECH MOUSE - GET PARAMETERS AND RESET SERIAL MOUSE
 	AX = 246Ch
 	ES:DX -> parameter table buffer (see below)
 Return: AX = FFFFh if driver installed for serial mouse
@@ -6220,7 +6658,7 @@ Offset	Size	Description
  0Ch	WORD	physical buttons
  0Eh	WORD	logical buttons
 ----------33256CBX00h -----------------------
-INT 33 - LOGITECH - SET PARAMETERS
+INT 33 - LOGITECH MOUSE - SET PARAMETERS
 	AX = 256Ch
 	BX = 00h set baud rate (serial mouse only)
 		CX = rate (0=1200, 1=2400, 2=4800, 3=9600)
@@ -6243,16 +6681,98 @@ INT 33 - LOGITECH - SET PARAMETERS
 Return: AX = FFFFh if driver installed for serial mouse
 SeeAlso: AX=246Ch,AX=276Ch
 ----------33266C-----------------------------
-INT 33 - LOGITECH - GET VERSION???
+INT 33 - LOGITECH MOUSE - GET VERSION???
 	AX = 266Ch
 Return: BX = 'SS'
 	CH = '4'  major version number
 	CL = '1'  minor version number
 SeeAlso: AX=006Dh
 ----------33276C-----------------------------
-INT 33 - LOGITECH - ??? Tries MMSeries, Baud 2400
+INT 33 - LOGITECH MOUSE - ??? Tries MMSeries, Baud 2400
 	AX = 276Ch
 SeeAlso: AX=256Ch
+----------333000-----------------------------
+INT 33 - Smooth Mouse Driver, PrecisePoint - INSTALLATION CHECK
+	AX = 3000h
+Return: AX = FFFFh if installed
+	    BX = version number (BH = major, BL = minor)
+Program: SMD is a programmer's library by Andy Hakim which provides a
+	  graphics-style mouse cursor in text mode.  PrecisePoint is an
+	  SMD-based TSR which replaces the block mouse cursor in text
+	  applications.
+SeeAlso: AX=0000h,AX=3001h,AX=3003h
+----------333001-----------------------------
+INT 33 - Smooth Mouse Driver, PrecisePoint - ENABLE SMOOTH MOUSE
+	AX = 3001h
+Return: AX = status (0000h = disabled, 0001h = enabled)
+Note:	SMD remains disabled if running under Desqview or in graphics mode
+SeeAlso: AX=0001h,AX=0002h,AX=3002h
+----------333001-----------------------------
+INT 33 - Smooth Mouse Driver, PrecisePoint - DISABLE SMOOTH MOUSE
+	AX = 3002h
+Return: AX = status (0000h = disabled, 0001h = enabled)
+SeeAlso: AX=0001h,AX=0002h,AX=3000h,AX=3001h
+----------333003-----------------------------
+INT 33 - Smooth Mouse Driver, PrecisePoint - GET INFORMATION
+	AX = 3003h
+	BL = data structure selector
+	    00h Primary Bitmap (used for 25 line mode)
+	    01h Secondary Bitmap (used for 43/50 line modes)
+	    02h Sacrifice Character Map
+	    03h Program Information
+Return: ES:DI -> selected data structure
+SeeAlso: AX=3000h
+
+Format of Primary/Secondary Bitmap [SMD_BITMAP_STRUCT]
+Offset	Size	Description
+ 00h	BYTE	vertical size of bitmap (00h - 10h)
+ 01h	BYTE	horizontal size of bitmap (00h - 10h)
+ 02h	BYTE	vertical hotspot position (00h - 10h)
+ 03h	BYTE	horizontal hotspot position (00h - 10h)
+ 04h 16 WORDs	cursor bitmap data
+ 14h 16 WORDs	screen bitmap data
+ 
+Format of Sacrifice Character Map [SMD_SMAP_STRUCT]
+Offset	Size	Description
+ 00h	BYTE	bytes are character values (00h-FFh) used in place of the
+ 01h	BYTE	actual character for the corresponding position on the screen
+ 02h	BYTE	     +--------------+	  occupied by part or all of the mouse
+ 03h	BYTE	     | 0h | 1h | 2h |	  cursor
+ 04h	BYTE	     |----+----+----|
+ 05h	BYTE	     | 3h | 4h | 5h |
+ 06h	BYTE	     |----+----+----|
+ 07h	BYTE	     | 6h | 7h | 8h |
+ 08h	BYTE	     +--------------+
+
+Format of Program Information [SMD_INFO_STRUCT]
+Offset	Size	Description
+ 00h	WORD	segment of old interrupt 33h handler
+ 02h	WORD	offset of old interrupt 33h handler
+ 04h	WORD	PSP of SMD
+ 06h	BYTE	ENABLE/DISABLE manual setting status
+ 07h	BYTE	ENABLE/DISABLE internal usage status
+----------333004-----------------------------
+INT 33 - Smooth Mouse Driver, PrecisePoint - RESERVED FUTURE EXPANSION
+	AX = 3004
+SeeAlso: AX=3000h
+----------333005-----------------------------
+INT 33 - Smooth Mouse Driver, PrecisePoint - RESERVED FUTURE EXPANSION
+	AX = 3005
+SeeAlso: AX=3000h
+----------334F00-----------------------------
+INT 33 - LOGITECH MOUSE v6.10+ - GET ???
+	AX = 4F00h
+Return: AX = 004Fh if supported
+	BX = ???
+	ES:DI -> ???
+SeeAlso: AX=4F01h
+----------334F01-----------------------------
+INT 33 - LOGITECH MOUSE v6.10+ - ???
+	AX = 4F01h
+	ES = ???
+Return: AX = 004Fh if supported
+	ES:DI -> ???
+SeeAlso: AX=4F00h
 ----------34---------------------------------
 INT 34 - FLOATING POINT EMULATION - OPCODE D8h
 Note:	the floating-point emulators in Borland and Microsoft languages and
@@ -6315,29 +6835,40 @@ SeeAlso: INT 3C,INT 3E
 ----------3E---------------------------------
 INT 3E - FLOATING POINT EMULATION - Borland LANGUAGES "SHORTCUT" CALL
 Note:	the two bytes following the INT 3E instruction are the subcode and
-	  a NOP (90h)
+	  a NOP (90h), except for subcodes DCh and DEh, where the second byte
+	  is a register count (01h-08h)
 SeeAlso: INT 3D
 
 Subcode		Function
- DCh	load 8086 stack with 8087 registers
- DEh	load 8087 registers from 8086 stack
+ DCh	load 8086 stack with 8087 registers; overwrites the 10*N bytes at the
+ 	  top of the stack prior to the INT 3E with the 8087 register contents
+ DEh	load 8087 registers from top of 8086 stack; ST0 is furthest from top
+ 	  of 8086 stack
  E0h	round TOS and R1 to single precision, compare, pop twice
+ 	  returns AX=8087 status word, FLAGS=8087 condition bits
  E2h	round TOS and R1 to double precision, compare, pop twice
-	Note: apparently buggy in TPas5.5, actually rounding to single prec.
+ 	  returns AX=8087 status word, FLAGS=8087 condition bits
+	Note: buggy in TPas5.5, because it sets the 8087 precision control
+	  field to the undocumented value 01h; this results in actually
+	  rounding to single precision
  E4h	compare TOS/R1 with two POP's
+ 	  returns FLAGS=8087 condition bits
  E6h	compare TOS/R1 with POP
+ 	  returns FLAGS=8087 condition bits
  E8h	FTST (check TOS value)
+ 	  returns FLAGS=8087 condition bits
  EAh	FXAM (check TOS value)
- ECh	sine
- EEh	cosine
- F0h	tangent
- F2h	arctangent
- F4h	Ln (FLDLN2 to TOS)
- F6h	Log2 (FLDLG2 to TOS)
- F8h	Log10 (FLDLG10 to TOS
- FAh	Exp (FLDL2E to TOS)
- FCh	TOS = 2**TOS
- FEh	TOS = 10**TOS
+ 	  returns AX=8087 status word
+ ECh	sine(ST0)
+ EEh	cosine(ST0)
+ F0h	tangent(ST0)
+ F2h	arctangent(ST0)
+ F4h	ST0 = ln(ST0)
+ F6h	ST0 = log2(ST0)
+ F8h	ST0 = log10(ST0)
+ FAh	ST0 = e**ST0
+ FCh	ST0 = 2**ST0
+ FEh	ST0 = 10**ST0
 ----------3F---------------------------------
 INT 3F - Overlay manager interrupt (Microsoft LINK.EXE, Borland TLINK VROOMM)
 Note:	INT 3F is the default, and may be overridden while linking
@@ -6345,4 +6876,3 @@ SeeAlso: INT FE"OVERLAY"
 ----------3F---------------------------------
 INT 3F - Microsoft Dynamic Link Library manager
 SeeAlso: INT 21/AH=4Bh
----------------------------------------------

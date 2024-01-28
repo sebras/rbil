@@ -1,3 +1,4 @@
+---------------------------------------------
 Interrupt List, part 2 of 7
 This compilation is Copyright (c) 1989,1990,1991,1992 Ralf Brown
 ----------15---------------------------------
@@ -470,7 +471,7 @@ Note:	under DESQview, if the process issuing this call has hooked INT 08h,
 	  the current time-slice is set to expire at the next clock tick rather
 	  than immediately
 SeeAlso: AH=00h"MultiDOS",AX=5305h,INT 21/AH=EEh"DoubleDOS",INT 2F/AX=1680h
-SeeAlso: INT 60/DI=0106h,INT 7A/BX=000Ah,INT 7F/AH=E8h
+SeeAlso: INT 60/DI=0106h,INT 62/AH=01h,INT 7A/BX=000Ah,INT 7F/AH=E8h
 ----------151001-----------------------------
 INT 15 - TopView - "GETMEM" - ALLOCATE "SYSTEM" MEMORY
 	AX = 1001h
@@ -530,7 +531,7 @@ INT 15 - TopView - "ISOBJ" - VERIFY OBJECT HANDLE
 	ES:DI = possible object handle
 Return: BX = FFFFh if ES:DI is a valid object handle
 	     0000h if ES:DI is not
-SeeAlso: AX=DE14h
+SeeAlso: AX=DE14h,AX=DE2Bh
 ----------151017-----------------------------
 INT 15 - TopView - UNIMPLEMENTED IN DV 2.x
 	AX = 1017h
@@ -2239,6 +2240,20 @@ INT 15 - DESQview v2.20+ - SEND MESSAGE - "GETFLAGS" - GET OBJECT FLAGS
 Return: STACK: DWORD current control flags
 Note:	only available if the API level has been set to at least 2.20
 SeeAlso: AH=12h/BH=0Ah,AH=12h/BH=0Bh,AH=12h/BH=15h
+----------1512--BH17-------------------------
+INT 15 - DESQview v2.42-2.52 - BUG
+	AH = 12h
+	BH = 17h
+	BL = object
+	    00h DWORD on top of stack
+		mailbox, keyboard, or pointer only
+	    02h mailbox for task whose handle is on top of stack
+	    03h mailbox for current task
+	    04h keyboard for task whose handle is on top of stack
+	    05h keyboard for current task
+Notes:	due to a fencepost error, message 17h is accepted for mailboxes,
+	  keyboards, and pointers, but causes a random branch
+	DESQview v2.50-2.52 are distributed as part of DESQview/X v1.02
 ----------1513-------------------------------
 INT 15 - VMiX - WAKE PROCESS
 	AH = 13h
@@ -3267,6 +3282,7 @@ INT 15 - OS HOOK - DEVICE BUSY (AT,PS)
 	    03h PS/2 pointing device
 	    21h waiting for keyboard input (Phoenix BIOS)
 	    80h network
+	    FBh digital sound (Tandy)
 	    FCh disk reset (PS)
 	    FDh diskette motor start
 	    FEh printer
@@ -3285,7 +3301,7 @@ Notes:	type codes are allocated as follows:
 	this function should be hooked by a multitasker to allow other tasks
 	  to execute while the BIOS is waiting for I/O completion; the default
 	  handler merely returns with AH=00h and CF clear
-SeeAlso: AH=91h
+SeeAlso: AH=91h,INT 13/AH=00h,INT 17/AH=00h,INT 1A/AH=83h
 ----------1591-------------------------------
 INT 15 - OS HOOK - DEVICE POST (AT,PS)
 	AH = 91h
@@ -3304,13 +3320,242 @@ Return: CF clear
 	BYTE 0040h:00B0h set to ??? (43 on my 386/33)
 Note:	reads system timer channel 0 twice, then does calculations on returned
 	  values
+----------15BF00-----------------------------
+INT 15 - Rational Systems DOS/16M - ???
+	AX = BF00h
+	???
+Return: ???
+Note:	under DESQview/X 1.02 DVDOS4GX.DVR, this call is identical to AX=BF02h
+SeeAlso: AX=BF02h
+----------15BF01-----------------------------
+INT 15 - Rational Systems DOS/16M - ???
+	AX = BF01h
+	???
+Return: ???
+Note:	under DESQview/X 1.02 DVDOS4GX.DVR, this call is identical to AX=BF02h
+SeeAlso: AX=BF02h
 ----------15BF02DX0000-----------------------
 INT 15 - Rational Systems DOS/16M - INSTALLATION CHECK
 	AX = BF02h
 	DX = 0000h
 Return: DX = nonzero if installed
-	    DX:SI -> XBRK structure
+	    DX:SI -> XBRK structure (see below)
+SeeAlso: AX=BFDEh/BX=0000h
 SeeAlso: INT 21/AX=FF00h,INT 2F/AH=A1h,INT 2F/AX=F100h,INT 2F/AX=FBA1h
+
+Format of XBRK structure:
+Offset	Size	Description
+ 00h	DWORD	linear address of last available byte + 1 ???
+ 	???
+----------15BFDEBX0000-----------------------
+INT 15 - DESQview/X - DVDOS4GX.DVR - INSTALLATION CHECK
+	AX = BFDEh
+	BX = 0000h
+Return: AX = ??? (0003h)
+	BX = FFFFh
+SeeAlso: AX=BF02h
+----------15BFDEBX0001-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - GET PROCESS MANAGER NAME
+	AX = BFDEh
+	BX = 0001h
+Return: BX = 0000h (success)
+	CX:DX -> name of process manager executable
+SeeAlso: AX=BFDEh/BX=0000h
+----------15BFDEBX0002-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - SET ???
+	AX = BFDEh
+	BX = 0002h
+	CX:DX -> ???
+Return: BX = 0000h (success)
+SeeAlso: AX=BFDEh/BX=0000h,AX=BFDEh/BX=0003h
+----------15BFDEBX0003-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - GET ???
+	AX = BFDEh
+	BX = 0003h
+Return: BX = 0000h (success)
+	CX:DX -> ???
+SeeAlso: AX=BFDEh/BX=0000h,AX=BFDEh/BX=0002h
+----------15BFDEBX0004-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - GET ???
+	AX = BFDEh
+	BX = 0004h
+Return: BX = 0000h (success)
+	CX:DX -> ???
+SeeAlso: AX=BFDEh/BX=0000h
+----------15BFDEBX0005-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - ???
+	AX = BFDEh
+	BX = 0005h
+	CX = new value for ???
+Return: BX = 0000h (success)
+	AX = old value of ???
+	DS:SI -> ??? (if AX nonzero on return)
+	ES:DI -> ??? (if AX zero on return)
+SeeAlso: AX=BFDEh/BX=0000h
+----------15BFDEBX0006-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - GET ???
+	AX = BFDEh
+	BX = 0006h
+Return: BX = 0000h (success)
+	AH = interrupt number??? (BEh)
+	CX:DX = ???
+SeeAlso: AX=BFDEh/BX=0000h,AX=BFDEh/BX=0007h,INT BE"DESQview"
+----------15BFDEBX0007-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - SET ???
+	AX = BFDEh
+	BX = 0007h
+	CX:DX = ???
+Return: BX = 0000h (success)
+SeeAlso: AX=BFDEh/BX=0000h,AX=BFDEh/BX=0006h
+----------15BFDEBX0008-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - ???
+	AX = BFDEh
+	BX = 0008h
+	CX = ???
+	DS = ???
+Return: BX = status
+	    0000h successful
+	    	AL = ??? (80h or C0h)
+		DX = ??? (0603h) if AL=C0h
+	    0001h failed
+	    	AX = 0000h
+SeeAlso: AX=BFDEh/BX=0000h
+----------15BFDEBX0009-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - GET PROTECTED MODE PROGRAM LOADER
+	AX = BFDEh
+	BX = 0009h
+Return: BX = 0000h (success)
+	CX:DX -> full pathname to LOAD32.EXP
+SeeAlso: AX=BFDEh/BX=0000h
+----------15BFDEBX000A-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - DECREMENT ???
+	AX = BFDEh
+	BX = 000Ah
+Return: BX = 0000h (success)
+	AX = new value of ??? counter
+Note:	also resets a variety of values if the counter goes negative
+SeeAlso: AX=BFDEh/BX=0000h,AX=BFDEh/BX=000Bh
+----------15BFDEBX000B-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - INCREMENT ???
+	AX = BFDEh
+	BX = 000Bh
+Return:	AX = new value of ??? counter
+SeeAlso: AX=BFDEh/BX=0000h,AX=BFDEh/BX=000Ah
+----------15BFDEBX000C-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - ???
+	AX = BFDEh
+	BX = 000Ch
+	CL = ???
+	    00h
+	    nonzero
+Return: ???
+SeeAlso: AX=BFDEh/BX=0000h
+----------15BFDEBX000D-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - ???
+	AX = BFDEh
+	BX = 000Dh
+	???
+Return: ???
+SeeAlso: AX=BFDEh/BX=0000h
+----------15BFDEBX000E-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - ???
+	AX = BFDEh
+	BX = 000Eh
+	DX:CX -> ???
+Return: AX = segment of handle for calling task
+	BX = ??? (probably destroyed)
+	DX:CX -> ???
+SeeAlso: AX=BFDEh/BX=0000h,AX=BFDEh/BX=000Fh,AX=BFDEh/BX=0013h
+----------15BFDEBX000F-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - ???
+	AX = BFDEh
+	BX = 000Fh
+Return: AX = segment of handle for calling task
+	BX = ??? (probably destroyed)
+	DX:CX -> ???
+Note:	identical to AX=BFDEh/BX=000Eh with CX:DX = 0000h:0000h
+SeeAlso: AX=BFDEh/BX=000Eh,AX=BFDEh/BX=0010h
+----------15BFDEBX0010-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - GET TASK HANDLE
+	AX = BFDEh
+	BX = 0010h
+Return: AX = segment of caller's task handle
+	BX destroyed
+SeeAlso: AX=BFDEh/BX=000Fh
+----------15BFDEBX0011-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - GET ???
+	AX = BFDEh
+	BX = 0011h
+Return: CX = code segment of DVDOS4GX.DVR
+	BX = ??? (0004h)
+SeeAlso: AX=BFDEh/BX=0000h
+----------15BFDEBX0012-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - GET ???
+	AX = BFDEh
+	BX = 0012h
+Return: DX = code segment of DVDOS4GX.DVR
+	BX = ??? (012Ch)
+	CX = ??? (0006h)
+SeeAlso: AX=BFDEh/BX=0000h
+----------15BFDEBX0013-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - GET ???
+	AX = BFDEh
+	BX = 0013h
+Return: DX:CX -> ???
+SeeAlso: AX=BFDEh/BX=000Eh
+----------15BFDEBX0014-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - LOCK ??? MAILBOX
+	AX = BFDEh
+	BX = 0014h
+	CX = index of ??? mailbox
+		(0000h-0004h valid, but no range checking done)
+Return: AX,BX destroyed
+SeeAlso: AX=BFDEh/BX=0015h,AX=BFDEh/BX=0017h
+----------15BFDEBX0015-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - UNLOCK ??? MAILBOX
+	AX = BFDEh
+	BX = 0015h
+	CX = index of ??? mailbox
+		(0000h-0004h valid, but no range checking done)
+Return: AX,BX destroyed
+SeeAlso: AX=BFDEh/BX=0014h,AX=BFDEh/BX=0016h
+----------15BFDEBX0016-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - CHECK IF ??? MAILBOX OWNED
+	AX = BFDEh
+	BX = 0016h
+	CX = index of ??? mailbox
+		(0000h-0004h valid, but no range checking done)
+Return: AX = status
+	    0000h no one owns mailbox
+	    0001h mailbox has an owner
+	BX destroyed
+SeeAlso: AX=BFDEh/BX=0015h,AX=BFDEh/BX=0017h
+----------15BFDEBX0017-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - GET ??? MAILBOX OWNER
+	AX = BFDEh
+	BX = 0017h
+	CX = index of ??? mailbox
+		(0000h-0004h valid, but no range checking done)
+Return: AX = segment of mailbox owner's handle
+	BX = segment of caller's task handle
+SeeAlso: AX=BFDEh/BX=0015h,AX=BFDEh/BX=0016h
+----------15BFDEBXFFFD-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - GET ???
+	AX = BFDEh
+	BX = FFFDh
+Return: CX:DX = ???
+SeeAlso: AX=BFDEh/BX=FFFEh
+----------15BFDEBXFFFE-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - SET ???
+	AX = BFDEh
+	BX = FFFEh
+	CX:DX = ???
+SeeAlso: AX=BFDEh/BX=FFFDh
+----------15BFDEBXFFFF-----------------------
+INT 15 - DESQview/X 1.02 - DVDOS4GX.DVR - NOP
+	AX = BFDEh
+	BX = FFFFh
+SeeAlso: AX=BFDEh/BX=0000h
 ----------15C0-------------------------------
 INT 15 - SYSTEM - GET CONFIGURATION (XT after 1/10/86,AT mdl 3x9,CONV,XT286,PS)
 	AH = C0h
@@ -3565,7 +3810,7 @@ Return: CF set on error
 ----------15C207-----------------------------
 INT 15 - SYSTEM - POINTING DEVICE BIOS INTERFACE (PS) - SET DEVICE HANDLER ADDR
 	AX = C207h
-	ES:BX = user device handler
+	ES:BX -> FAR user device handler
 Return: CF set on error
 	    AH = status (see AX=C200h)
 SeeAlso: INT 33/AX=000Ch
@@ -3768,6 +4013,7 @@ INT 15 - DESQview - GET PROGRAM NAME
 	AX = DE00h
 Return: AX = offset into DESQVIEW.DVO of program most recently selected from
 		the "Switch Windows" menu (see below)
+Note:	always returns AX=0000h under DESQview/X
 SeeAlso: AX=DE07h
 
 Format of program entry in DESQVIEW.DVO:
@@ -3785,7 +4031,8 @@ Offset	Size	Description
 INT 15 - DESQview - UPDATE "OPEN WINDOW" MENU
 	AX = DE01h
 Return: nothing
-Note:	reads DESQVIEW.DVO, disables Open menu if file not in current directory
+Notes:	reads DESQVIEW.DVO, disables Open menu if file not in current directory
+	NOP for DESQview/X
 ----------15DE02-----------------------------
 INT 15 - DESQview 1.x only - SET ??? FLAG FOR CURRENT WINDOW
 	AX = DE02h
@@ -3879,6 +4126,15 @@ Return: BX = 0000h not found
 	     0001h found
 		DS:SI = object handle
 SeeAlso: AH=12h/BH=11h
+
+Special mailbox names:
+ "COM1" ... "COM4"	RBcomm using COM1 ... COM4
+ "DESQview/X Help Engine"
+ "DESQview/X Network Server"
+ "DESQview X Server0"
+ "INBOX"		DESQview/X LPD requests
+ "OUTBOX"		DESQview/X LPD responses
+ "WAITBOX"		semaphore to synchronize DESQview/X LPD communications
 ----------15DE0F-----------------------------
 INT 15 - DESQview v2.00+ - ENABLE DESQview EXTENSIONS
 	AX = DE0Fh
@@ -4085,18 +4341,173 @@ INT 15 - DESQview v2.31+ - ???
 Return: ???
 Note:	called by QEMM 6.00+
 ----------15DE24-----------------------------
-INT 15 - DESQview v2.40 - ???
+INT 15 - DESQview v2.40+ - ???
 	AX = DE24h
 Return: BX = ??? (0000h for v2.40)
 ----------15DE25-----------------------------
-INT 15 - DESQview v2.40 - ???
+INT 15 - DESQview v2.40+ - ???
 	AX = DE25h
 	???
 Return: nothing
 ----------15DE26-----------------------------
-INT 15 - DESQview v2.40 - GET ???
+INT 15 - DESQview v2.40+ - GET ???
 	AX = DE26h
-Return: BX = segment of handle for ??? (current window?)
+Return: BX = segment of handle for X server???
+----------15DE27-----------------------------
+INT 15 - DESQview v2.50+ - ???
+	AX = DE27h
+	BX = ??? (0000h,0001h)
+	ES:DI -> ???
+Return: CF clear if successful
+	    AX = ???
+	    BX = ???
+	CF set on error
+	    AX = ???
+Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+----------15DE28-----------------------------
+INT 15 - DESQview v2.50+ - ???
+	AX = DE28h
+	BX = segment of ??? or 0000h for default
+	???
+Return: ???
+Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+SeeAlso: AX=DE2Ah
+----------15DE29BX0000-----------------------
+INT 15 - DESQview v2.50+ - ???
+	AX = DE29h
+	BX = 0000h
+	???
+Return: CF clear if successful
+	    ???
+	CF set on error
+Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+----------15DE29BX0001-----------------------
+INT 15 - DESQview v2.50+ - ???
+	AX = DE29h
+	BX = 0001h
+	DX = segment of window handle
+Return: CF clear if successful
+	    AX = ???
+	    DX = ???
+	CF set on error
+Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+----------15DE29BX0002-----------------------
+INT 15 - DESQview v2.50+ - ???
+	AX = DE29h
+	BX = 0002h
+	DX = segment of window handle
+Return: CF clear if successful
+	    AX = ???
+	    DX = ???
+	CF set on error
+Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+----------15DE29BX0003-----------------------
+INT 15 - DESQview v2.50+ - ???
+	AX = DE29h
+	BX = 0003h
+	DX = segment of window handle
+Return: CF clear if successful
+	    ???
+	CF set on error
+Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+----------15DE29BX0004-----------------------
+INT 15 - DESQview v2.50+ - GET DISPLAY NAME
+	AX = DE29h
+	BX = 0004h
+	CX = size of buffer in bytes
+	DX = segment of window handle
+	ES:DI -> buffer for display name
+Return: CF clear if successful
+	    buffer filled with ASCIZ display name (truncated if necessary) or
+	      null string if no display
+	CF set on error
+Notes:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+	the name ":0" refers to the local display
+----------15DE29BX0005-----------------------
+INT 15 - DESQview v2.50+ - ???
+	AX = DE29h
+	BX = 0005h
+	???
+Return: CF clear if successful
+	    ???
+	CF set on error
+Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+----------15DE2A-----------------------------
+INT 15 - DESQview v2.50+ - ???
+	AX = DE2Ah
+	BX = segment of ??? or 0000h for default
+	???
+Return: ???
+Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+SeeAlso: AX=DE28h,AX=DE2Bh
+----------15DE2B-----------------------------
+INT 15 - DESQview v2.50+ - TRAVERSE OBJECT LIST
+	AX = DE2Bh
+	ES:DI -> object
+Return: AX = status
+	    0000h successful
+	        ES:DI -> next object of same type in circular linked list
+	    0001h failed (ES:DI was not a valid handle)
+Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+SeeAlso: AX=1016h,AX=DE2Ah,AX=DE2Ch
+----------15DE2C-----------------------------
+INT 15 - DESQview v2.50+ - GET WINDOW INFORMATION???
+	AX = DE2Ch
+	DX = 0100h
+	BX = segment of window handle or 0000h for default
+	ES:DI -> buffer for info (see below)
+Return: AX = status???
+	    0000h successful
+Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+SeeAlso: AX=DE2Bh
+
+Format of window information:
+Offset	Size	Description
+ 00h	BYTE	task flag: 00h window, 01h task
+ 01h	BYTE	process number if task
+ 02h	WORD	segment of owner's handle
+ 04h	WORD	mapping context???
+ 06h	BYTE	status
+ 		00h waiting
+		01h idle
+		04h pausing
+		0Ah slicing
+		0Bh exit DOS
+ 07h	BYTE	???
+ 08h	BYTE	01h if DESQview task???
+ 09h  2 BYTEs	???
+----------15DE2D-----------------------------
+INT 15 - DESQview v2.50+ - GET/SET ??? FUNCTION
+	AX = DE2Dh
+	CX = direction
+	    FFFFh set ??? function
+	        DX:BX -> FAR function for ???
+			must contain data storage for a WORD three bytes past
+			the function entry point and a DWORD five bytes past
+			the start
+	    other get ??? function
+Return: DX:BX -> function if CX<>FFFFh on entry
+Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+SeeAlso: AX=DE2Eh,INT 63"DESQview"
+----------15DE2E-----------------------------
+INT 15 - DESQview v2.50+ - ???
+	AX = DE2Eh
+	DX:BX = ??? or 0000h:0000h for default
+Return: CX = ???
+	DX:BX = ???
+Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+SeeAlso: AX=DE2Dh
+---------------------------------------------
+INT 15 - DESQview v2.50+ - ???
+	AX = DE2Fh
+Return: BL = ??? (00h,01h)
+Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+----------15DE30-----------------------------
+INT 15 - DESQview v2.50+ - GET DESQview/X VERSION
+	AX = DE30h
+Return: BX = version (BH=major, BL=minor) or 0000h if not DESQview/X
+Note:	DESQview 2.50-2.52 are distributed as part of DESQview/X v1.0x.
+SeeAlso: INT 21/AH=2Bh/CX=4445h
 ----------15E00F-----------------------------
 INT 15 - Compaq Systempro - MULTIPROCESSOR DISPATCH
 	AX = E00Fh
@@ -4211,6 +4622,20 @@ Note:	under DESQview, the following "keystrokes" invoke the following
 		38FEh or FE00h	close the current window
 		38FFh or FF00h	pop up DESQview learn menu
 SeeAlso: AH=00h,AH=71h,AH=FFh,INT 15/AX=DE10h
+----------1605-------------------------------
+INT 16 - KEYBOARD - SELECT KEYBOARD LAYOUT (PCjr only)
+	AH = 05h
+	AL = function
+	    01h set keyboard layout to French
+	    02h set keyboard layout to German
+	    03h set keyboard layout to Italian
+	    04h set keyboard layout to Spanish
+	    05h set keyboard layout to UK
+	    80h check if function supported
+	    	Return: AL <> 80h if supported
+Return: ???
+Note:	called by DOS 3.2 KEYBxx.COM
+SeeAlso: AH=92h,AH=A2h
 ----------1609-------------------------------
 INT 16 - KEYBOARD - GET KEYBOARD FUNCTIONALITY
 	AH = 09h
@@ -4279,7 +4704,7 @@ Return: AL = shift flags 1 (same as returned by AH=02h)
 		0: left Ctrl key pressed
 Notes:	AL bit 3 set only for left Alt key on many machines
 	AH bits 7 through 4 always clear on a Compaq SLT/286
-SeeAlso: AH=02h,AH=22h
+SeeAlso: AH=02h,AH=22h,AH=51h
 ----------1620-------------------------------
 INT 16 - KEYBOARD - GET 122-KEY KEYSTROKE???
 	AH = 20h
@@ -4419,6 +4844,30 @@ Return: AX = 4D00h if EMAIL installed on specified port
 Note:	DH=02h will only be returned once per XGET; subsequent calls will
 	  return DH=00h
 SeeAlso: AX=4500h,INT 17/AX=2408h
+----------165000-----------------------------
+INT 16 - KEYBOARD - AX PC - SET KEYBOARD COUNTRY CODE
+	AX = 5000h
+	BX = country code
+	    0001h USA (English), 0051h Japan
+Return: AL = status
+	    00h successful
+	    01h bad country code
+	    02h other error
+SeeAlso: AX=5001h,INT 10/AX=5000h,INT 17/AX=5000h
+----------165001-----------------------------
+INT 16 - KEYBOARD - AX PC - GET KEYBOARD COUNTRY CODE
+	AX = 5001h
+Return: AL = status
+	    00h successful
+	    	BX = country code
+	    02h error
+SeeAlso: AX=5000h,INT 10/AX=5001h,INT 17/AX=5001h
+----------1651-------------------------------
+INT 16 - KEYBOARD - AX PC - READ SHIFT KEY STATUS
+	AH = 51h
+Return: AL = standard shift key states (see AH=12h)
+	AH = Kana lock (00h off, 01h on)
+SeeAlso: AH=02h,AH=12h,AH=22h
 ----------165500-----------------------------
 INT 16 - Microsoft Word internal - MICROSOFT WORD COOPERATION WITH TSR
 	AX = 5500h
@@ -4627,6 +5076,12 @@ Offset	Size	Description
  03h	BYTE	trigger time, minute
  04h	BYTE	trigger time, hour
  05h	WORD	offset of command to be executed
+----------1692-------------------------------
+INT 16 - ???
+	AH = 92h
+Return: AH <= 80h if ???
+Note:	called by DOS 3.2 KEYBxx.COM and DOS 5.0 KEYB.COM
+SeeAlso: AH=05h"PCjr",AH=A2h
 ----------1699-------------------------------
 INT 16 - SCOUT v5.4 - GET ???
 	AH = 99h
@@ -4640,6 +5095,12 @@ INT 16 - SCOUT v5.4 - INSTALLATION CHECK
 Return: AX = ABCDh if installed
 Note:	Scout is a memory-resident file manager by New-Ware
 SeeAlso: AH=99h
+----------16A2-------------------------------
+INT 16 - ???
+	AH = A2h
+Return: AH <= 80h if ???
+Note:	this function is called by DOS 5.0 KEYB.COM
+SeeAlso: AH=92h
 ----------16AA-------------------------------
 INT 16 - PTxxx.COM - (xxx=CGA,EGA,VGA,HER...) CALL GATE FOR GRAPHICS
 	AH = AAh
@@ -4696,6 +5157,53 @@ Note:	the returned TSR list provides support for communication among TSRs
 	  built with TurboPower's Turbo Professional and Object Professional
 	  libraries for Turbo Pascal
 SeeAlso: AX=F0F0h
+----------16ED--BHED-------------------------
+INT 16 - BORLAND TURBO LIGHTNING - API
+	AH = EDh
+	BH = EDh
+	BL = function
+	    00h installation check
+		Return: AX = 5205h
+			CH = major version
+			CL = minor version
+	    01h ???
+	    02h get resident CS
+		Return: AX = code segment of resident portion
+	    03h get resident ???
+		Return: AX = offset of some buffer in resident code seg
+	    04h ???
+	    05h set ???
+		AL = 0 to 0Ch
+		Return: AX = status
+			    0000h if OK
+			    0001h if out of range.
+	    06h ???
+	    07h ???
+	    08h ???
+		AL = char???
+		CX = ???
+		DX = ???
+		Return: AX = 0, 1 or 2
+	    09h ???
+	    0Ah ???
+		CX = ???
+		DX = ???
+		Return: AX = ???
+	    0Bh ???
+		DS:SI -> ???
+		Return: AX = 0, 40h, 80h
+	    0Ch ???
+		DS:SI -> ???
+		Return: AH = 0
+			AL = ???
+	    0Dh set ???
+		(sets an internal flag)
+	    0Eh ???
+		DS:SI -> ???
+		Return: AX = 0, 1 or 2.
+	    0Fh ???
+	    10h ???
+Notes:	AX in general returns an error code from most functions.
 ----------16F0-------------------------------
 INT 16 - Compaq 386 - SET CPU SPEED
 	AH = F0h
@@ -4748,6 +5256,13 @@ INT 16 - Compaq 80286s - SET CPU SPEED LIMIT (OVERRIDE JUMPER)
 	AL = 00h limit is 6 Mhz
 	   = 01h limit is 8 Mhz/6 Mhz
 SeeAlso: AH=F0h,AH=F1h
+----------16F398-----------------------------
+INT 16 U - NORTON GUIDES - INSTALLATION CHECK
+        AX = F398h
+Return: AX = 6A73h ("js")
+        BH = scan code of current hot key
+        BL = ASCII code of current hot key
+Note:	NG.EXE was written by John Socha
 ----------16F400-----------------------------
 INT 16 - Compaq Systempro - CACHE CONTROLLER STATUS
 	AX = F400h
@@ -5778,7 +6293,7 @@ Return: AH = printer status
 		2: unused
 		1: unused
 		0: timeout
-SeeAlso: AH=F1h,INT 16/AX=FFE3h,INT 1A/AH=11h"NEC"
+SeeAlso: AH=84h"AX",AH=F1h,INT 16/AX=FFE3h,INT 1A/AH=11h"NEC"
 ----------1701-------------------------------
 INT 17 - PRINTER - INITIALIZE PORT
 	AH = 01h
@@ -5945,20 +6460,38 @@ Return: AL = status (see also AX=2400h)
 	    03h transmission error
 	    06h remote breaks connection
 SeeAlso: AX=240Ah,AX=240Bh
+----------175000-----------------------------
+INT 17 - AX (Japanese AT) PRINTER - SET PRINTER COUNTRY CODE
+	AX = 5000h
+	BX = country code
+	    0001h USA (English), 0051h Japan
+Return: AL = status
+	    00h successful
+	    01h bad country code
+	    02h other error
+SeeAlso: AX=5001h,AH=51h,INT 10/AX=5000h,INT 16/AX=5000h
+----------175001-----------------------------
+INT 17 - AX (Japanese AT) PRINTER - GET PRINTER COUNTRY CODE
+	AX = 5001h
+Return: AL = status
+	    00h successful
+	    	BX = country code
+	    02h error
+SeeAlso: AX=5000h,AH=51h,INT 10/AX=5001h,INT 16/AX=5001h
 ----------1751-------------------------------
-INT 17 - AX (Japanese AT) PRINTER - JIS/Shift-JIS CONVERSION
+INT 17 - AX (Japanese AT) PRINTER - JIS to Shift-JIS CONVERSION
 	AH = 51h
-	???
-Return: ???
+	DX = 2-byte JIS code
+Return: DX = shift-JIS value or 0000h on error
 Note:	one of AH=51h and AH=52h converts from JIS (Japanese Industry Standard)
 	  characters to Shift-JIS characters, and the other performs the
 	  opposite conversion
-SeeAlso: AH=52h
+SeeAlso: AX=5000h,AH=52h
 ----------1752-------------------------------
-INT 17 - AX (Japanese AT) PRINTER - JIS/Shift-JIS CONVERSION
+INT 17 - AX (Japanese AT) PRINTER - Shift-JIS to JIS CONVERSION
 	AH = 52h
-	???
-Return: ???
+	DX = 2-byte shift-JIS code
+Return: DX = JIS code or 0000h on error
 Note:	one of AH=51h and AH=52h converts from JIS (Japanese Industry Standard)
 	  characters to Shift-JIS characters, and the other performs the
 	  opposite conversion
@@ -6033,6 +6566,18 @@ INT 17 - Alloy NTNX, MW386 - GENERATE PRINT BREAK
 		    04h-07h = COM1-COM4
 Note:	closes spool file and tells spooler to queue the print job (LPT1 only
 	  under MW386 in NTNX compatibility mode)
+----------1784-------------------------------
+INT 17 - AX (Japanese AT) PRINTER - OUTPUT CHARACTER WITHOUT CONVERSION
+	AH = 84h
+	AL = character
+	DX = printer number
+Return: AH = printer status (see AH=00h)
+SeeAlso: AH=00h,AH=85h
+----------1785-------------------------------
+INT 17 - AX (Japanese AT) PRINTER - ENABLE/DISABLE CHARACTER CONVERSION
+	AH = 85h
+	AL = new state (00h enabled, 01h disabled)
+SeeAlso: AH=84h"AX"
 ----------1787-------------------------------
 INT 17 - Alloy NTNX - SET INDOS POINTER
 	AH = 87h
@@ -6697,28 +7242,46 @@ Offset	Size	Description
 Values for operating system indicator:
  00h empty
  01h DOS 12-bit FAT
- 02h XENIX file system
+ 02h XENIX root file system
  03h XENIX /usr file system (obsolete)
  04h DOS 16-bit FAT
  05h DOS 3.3+ extended partition
- 06h DOS Large File System
- 07h QNX, OS/2 HPFS
+ 06h DOS 3.31+ Large File System
+ 07h QNX
+ 07h OS/2 HPFS
+ 07h Advanced Unix
  08h AIX bootable partition, SplitDrive
  09h AIX data partition
+ 09h Coherent
+ 0Ah OPUS
+ 10h OPUS
+ 40h VENIX 80286
  50h Disk Manager, read-only partition
+ 51h Novell???
  51h Disk Manager, read/write partition
  52h CP/M
+ 52h Microport System V/386
  56h GoldenBow VFeature
  61h SpeedStor
- 63h SysV/386, 386/ix
+ 63h Unix SysV/386, 386/ix
+ 63h Mach, MtXinu BSD 4.3 on Mach
+ 63h GNU HURD
  64h Novell NetWare
  75h PC/IX
- 80h Minix v1.3 and below
- 81h Minix v1.5+
+ 80h Minix v1.1 - 1.4a
+ 81h Minix v1.4b+
+ 81h Linux
+ 82h Linux Swap partition (planned)
+ 93h Amoeba file system
+ 94h Amoeba bad block table
+ B7h BSDI file system (secondarily swap)
+ B8h BSDI swap partition (secondarily file system)
  C6h DR-DOS 6.0 LOGIN.EXE-secured partition
- DBh CP/M
+ DBh CP/M, Concurrent CP/M, Concurrent DOS
+ DBh CTOS (Convergent Technologies OS)
  E1h SpeedStor 12-bit FAT extended partition
  E4h SpeedStor 16-bit FAT extended partition
+ F2h DOS 3.3+ secondary
  FEh LANstep
  FFh Xenix bad block table
 ----------1A00-------------------------------
@@ -6855,6 +7418,206 @@ Notes:	WordPerfect 5.0 will call this interrupt at start up to determine if a
 			BX = 0 or segment address of buffer with key codes
 	See the "WordPerfect 5.0 Developer's Toolkit" for further information.
 SeeAlso: INT 16/AX=5500h
+----------1A---------------------------------
+INT 1A - SNAP.EXE - API
+	AH = function (60h-64h,69h-78h) (see individual entries below)
+	AL = number of words on stack (00h-09h or FFh; FFh is same as 00h)
+	STACK: appropriate arguments
+Return: AX = status
+	    0000h successful
+	    FFFFh failed (invalid function/parameter)
+	STACK unchanged
+----------1A6108-----------------------------
+INT 1A - SNAP.EXE - ???
+	AX = 6108h
+	STACK:	WORD	index of ??? (0000h-0009h)
+		DWORD	pointer to ???
+		WORD	???
+		DWORD	pointer to ???
+		WORD	???
+		WORD	???
+Return: ???
+	STACK unchanged
+Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
+	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+----------1A6205-----------------------------
+INT 1A - SNAP.EXE - ???
+	AX = 6205h
+	STACK:	WORD	index of ??? (0000h-0009h)
+		DWORD	pointer to ???
+		WORD	???
+		WORD	???
+Return: ???
+	STACK unchanged
+Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
+	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+----------1A6308-----------------------------
+INT 1A - SNAP.EXE - ???
+	AX = 6308h
+	STACK:	8 WORDs	???
+Return: ???
+	STACK unchanged
+Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
+	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+----------1A6405-----------------------------
+INT 1A - SNAP.EXE - ???
+	AX = 6405h
+	STACK:	5 WORDs	???
+Return: ???
+	STACK unchanged
+Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
+	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+----------1A6900-----------------------------
+INT 1A - SNAP.EXE - GET RESIDENT DATA SEGMENT
+	AX = 6900h
+Return: AX = value used for DS by resident code
+Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
+	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+SeeAlso: AX=6F01h
+----------1A6A01-----------------------------
+INT 1A - SNAP.EXE - ???
+	AX = 6A01h
+	STACK:	WORD	???
+Return: AX = ???
+	???
+	STACK unchanged
+Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
+	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+----------1A6B01-----------------------------
+INT 1A - SNAP.EXE - SET ???
+	AX = 6B01h
+	STACK:	WORD	offset within ??? of ???
+Return:	STACK unchanged
+Notes:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
+	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+	this call is a NOP if the specified offset is 0000h
+----------1A6C04-----------------------------
+INT 1A - SNAP.EXE - SET ???
+	AX = 6C04h
+	STACK:	WORD	offset within ??? of destination (nonzero)
+		WORD	segment of source buffer
+		WORD	offset of source buffer
+		WORD	number of bytes to copy
+Return: AX = offset of byte after last one copied to destination
+	STACK unchanged
+Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
+	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+SeeAlso: AX=6D04h
+----------1A6D04-----------------------------
+INT 1A - SNAP.EXE - GET ???
+	AX = 6D04h
+	STACK:	WORD	offset within ??? of source
+		WORD	segment of destination buffer
+		WORD	offset of destination buffer
+		WORD	number of bytes to copy
+Return: AX = offset of byte after last one copied from source
+	buffer filled
+	STACK unchanged
+Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
+	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+SeeAlso: AX=6C04h
+----------1A6E01-----------------------------
+INT 1A - SNAP.EXE - SET ???
+	AX = 6E01h
+	STACK:	WORD	new value for ???
+Return:	AX = old value of ???
+	STACK unchanged
+Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
+	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+----------1A6F01-----------------------------
+INT 1A - SNAP.EXE - INSTALLATION CHECK
+	AX = 6F01h
+	STACK: WORD 0000h
+Return: AX = status
+	    0000h SNAP is resident
+	    other SNAP not present
+	STACK unchanged
+Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
+	  Mellon University customized version of FTP, Inc.'s PC/TCP, and is
+	  required by PCVENUS (a network shell).  The combination of SNAP and
+	  PCVENUS allows the use of the Andrew File System as one or more
+	  networked drives.
+SeeAlso: AX=6900h,AX=7400h
+----------1A7002-----------------------------
+INT 1A - SNAP.EXE - SET ???
+	AX = 7002h
+	STACK:	WORD	index of ??? (0000h-0009h)
+		WORD	new value for ???
+Return: AX = status
+	    0000h successful
+	    FFFFh failed (top word on stack not in range 00h-09h)
+	STACK unchanged
+Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
+	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+SeeAlso: AX=7101h
+----------1A7101-----------------------------
+INT 1A - SNAP.EXE - GET ???
+	AX = 7101h
+	STACK:	WORD	index of ??? (0000h-0009h)
+Return:	AX = ???
+	STACK unchanged
+Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
+	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+SeeAlso: AX=7002h
+----------1A7202-----------------------------
+INT 1A - SNAP.EXE - ???
+	AX = 7202h
+	STACK:	WORD	index of ??? (0000h-0009h)
+		WORD	offset within resident data segment of ???
+Return:	AX = ???
+	STACK unchanged
+Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
+	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+----------1A7302-----------------------------
+INT 1A - SNAP.EXE - ???
+	AX = 7302h
+	STACK:	WORD	index of ??? (0000h-0009h)
+		WORD	offset within resident data segment of ???
+Return:	AX = ???
+	???
+	STACK unchanged
+Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
+	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+----------1A7400-----------------------------
+INT 1A - SNAP.EXE - GET VERSION
+	AX = 7400h
+Return: AX = version (AH=major, AL=minor)
+Notes:	this call is only valid if SNAP is installed
+   	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
+	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+SeeAlso: INT 1A/AX=6F01h
+----------1A75-------------------------------
+INT 1A - SNAP.EXE - ???
+	AH = 75h
+	AL = ???
+Return: AX = ??? (0000h)
+Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
+	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+----------1A77-------------------------------
+INT 1A - SNAP.EXE - ???
+	AH = 77h
+	AL = ??? (at least 01h)
+	STACK:	WORD	???
+		???
+Return: ???
+	STACK unchanged
+Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
+	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+----------1A7802-----------------------------
+INT 1A - SNAP.EXE - ???
+	AX = 7802h
+	STACK:	WORD	???
+		WORD	???
+Return: ???
+	STACK unchanged
+Note:	SNAP.EXE is a program written by IBM&CMU included with the Carnegie
+	  Mellon University customized version of FTP, Inc.'s PC/TCP.
+----------1A7F-------------------------------
+INT 1A - Tandy 2500, Tandy 1000L series - DIGITAL SOUND???
+	AH = 7Fh
+	???
+Return: ???
+SeeAlso: AH=80h,AH=83h,AH=85h
 ----------1A80-------------------------------
 INT 1A - PCjr - SET UP SOUND MULTIPLEXOR
 	AH = 80h
@@ -6862,10 +7625,37 @@ INT 1A - PCjr - SET UP SOUND MULTIPLEXOR
 	     01h source is cassette input
 	     02h source is I/O channel "Audio IN"
 	     03h source is sound generator chip
+SeeAlso: AH=7Fh,AH=83h
 ----------1A8100-----------------------------
-INT 1A - Tandy 2500, Tandy 1000L series - DIGITAL SOUND
+INT 1A - Tandy 2500, Tandy 1000L series - DIGITAL SOUND - INSTALLATION CHECK
 	AX = 8100h
 Return: AH > 80h if supported
+----------1A83-------------------------------
+INT 1A - Tandy 2500, Tandy 1000L series - START PLAYING DIGITAL SOUND
+	AH = 83h
+	AL = volume (0=lowest, 7=highest)
+	CX = number of bytes to play
+	DX = time between sound samples (multiples of 273 nanoseconds)
+	ES:BX -> sound data (array of 8-bit PCM samples)
+Return: ???
+Notes:	this call returns immediately while the sound plays in the
+	  background
+	The sound data pointed to by ES:BX probably shouldn't cross a 64k
+	  boundary.  The BIOS appears to call INT 15/AX=91FBh when the sound
+	  device underflows to allow another INT 1A/AH=83h for seamless
+	  playing of long sounds.
+SeeAlso: AH=84h,INT 15/AH=91h
+----------1A84-------------------------------
+INT 1A - Tandy 2500, Tandy 1000L series - STOP PLAYING DIGITAL SOUND
+	AH = 84h
+Return: ???
+SeeAlso: AH=83h,AH=85h
+----------1A85-------------------------------
+INT 1A - Tandy 2500, Tandy 1000L series - DIGITAL SOUND???
+	AH = 85h
+	???
+Return: ???
+SeeAlso: AH=7Fh,AH=83h
 ----------1AA0-------------------------------
 INT 1A - Disk Spool II v2.07 - INSTALLATION CHECK
 	AH = A0h
@@ -7095,4 +7885,4 @@ INT 1F - SYSTEM DATA - 8x8 GRAPHICS FONT
    points at 1024 bytes of graphics data, 8 bytes for each character 80h-FFh
 Note:	graphics data for characters 00h-7Fh stored at F000h:FA6Eh in 100%
 	  compatible BIOSes
----------------------------------------------
+SeeAlso: INT 10/AX=5000h,INT 43

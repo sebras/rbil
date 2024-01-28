@@ -1,3 +1,4 @@
+---------------------------------------------
 Interrupt List, part 3 of 7
 This compilation is Copyright (c) 1989,1990,1991,1992 Ralf Brown
 ----------20---------------------------------
@@ -54,7 +55,7 @@ INT 21 - DOS 1+ - READ CHARACTER FROM STDAUX
 Return: AL = character read
 Notes:	keyboard checked for ^C/^Break, and INT 23 executed if detected
 	STDAUX is usually the first serial port
-SeeAlso: AH=04h,INT 14/AH=02h
+SeeAlso: AH=04h,INT 14/AH=02h,INT E0/CL=03h
 ----------2104-------------------------------
 INT 21 - DOS 1+ - WRITE CHARACTER TO STDAUX
 	AH = 04h
@@ -62,7 +63,7 @@ INT 21 - DOS 1+ - WRITE CHARACTER TO STDAUX
 Notes:	keyboard checked for ^C/^Break, and INT 23 executed if detected
 	STDAUX is usually the first serial port
 	if STDAUX is busy, this function will wait until it becomes free
-SeeAlso: AH=03h,INT 14/AH=01h
+SeeAlso: AH=03h,INT 14/AH=01h,INT E0/CL=04h
 ----------2105-------------------------------
 INT 21 - DOS 1+ - WRITE CHARACTER TO PRINTER
 	AH = 05h
@@ -1061,7 +1062,9 @@ Offset	Size	Description
 		used by SHARE in DOS 3.3
  3Ch  4 BYTEs	unused by DOS versions <= 5.00
  40h  2 BYTEs	DOS 5.0 version to return on INT 21/AH=30h
- 42h 14 BYTEs	unused by DOS versions <= 5.00
+ 42h  6 BYTEs	unused by DOS versions <= 5.00
+ 48h	BYTE	(MSWindows3) bit 0 set if non-Windows application
+ 49h  7 BYTEs	unused by DOS versions <= 5.00
  50h  3 BYTEs	DOS 2+ service request (INT 21/RETF instructions)
  53h  9 BYTEs	unused in DOS versions <= 5.00
  5Ch 16 BYTEs	first default FCB, filled in from first commandline argument
@@ -1163,7 +1166,7 @@ Return: CX = year (1980-2099)
 	DL = day
 ---DOS 1.10+---
 	AL = day of week (00h=Sunday)
-SeeAlso: AH=2Bh"DOS",AH=2Ch,AH=E7h,INT 1A/AH=04h
+SeeAlso: AH=2Bh"DOS",AH=2Ch,AH=E7h,INT 1A/AH=04h,INT 2F/AX=120Dh
 ----------212B-------------------------------
 INT 21 - DOS 1+ - SET SYSTEM DATE
 	AH = 2Bh
@@ -1213,7 +1216,7 @@ INT 21 - DESQview - INSTALLATION CHECK
 Return: AL = FFh if DESQview not installed
 Note:	in DESQview v1.x, there were no subfunctions; this call only identified
 	whether or not DESQview was loaded
-SeeAlso: INT 10/AH=FEh,INT 10/AH=FFh,INT 15/AX=1024h
+SeeAlso: INT 10/AH=FEh,INT 10/AH=FFh,INT 15/AX=1024h,INT 15/AX=DE30h
 ----------212B--CX454C-----------------------
 INT 21 - ELRES v1.1 - INSTALLATION CHECK
 	AH = 2Bh
@@ -1546,6 +1549,7 @@ Note:	on most systems, the resolution of the system clock is about 5/100sec,
 	  so returned times generally do not increment by 1
 	on some systems, DL may always return 00h
 SeeAlso: AH=2Ah,AH=2Dh,AH=E7h,INT 1A/AH=00h,INT 1A/AH=02h,INT 1A/AH=FEh
+SeeAlso: INT 2F/AX=120Dh
 ----------212D-------------------------------
 INT 21 - DOS 1+ - SET SYSTEM TIME
 	AH = 2Dh
@@ -1719,8 +1723,8 @@ INT 21 - DOS 2+ - EXTENDED BREAK CHECKING
 	    01h set state of extended ^C/^Break checking
 		DL = 00h off, check only on character I/O functions
 		     01h on, check on all DOS functions
-Note:	under DOS 3.1+, this function does not use any of the DOS-internal
-	  stacks and is thus fully reentrant
+Note:	under DOS 3.1+, this function does not use any of the DOS-internal and
+	  may thus be called at any time
 SeeAlso: AX=3302h
 ----------213302-----------------------------
 INT 21 - DOS 3.x+ internal - GET AND SET EXTENDED CONTROL-BREAK CHECKING STATE
@@ -1728,8 +1732,8 @@ INT 21 - DOS 3.x+ internal - GET AND SET EXTENDED CONTROL-BREAK CHECKING STATE
 	DL = new state
 	     00h for OFF or 01h for ON
 Return: DL = old state of extended BREAK checking
-Note:	this function does not use any of the DOS-internal stacks and is thus
-	  fully reentrant
+Note:	this function does not use any of the DOS-internal stacks and may thus
+	  be called at any time
 SeeAlso: AH=33h
 ----------213305-----------------------------
 INT 21 - DOS 4+ - GET BOOT DRIVE
@@ -1749,11 +1753,24 @@ Return:	BL = major version
 	    bit 4: DOS in in HMA
 Notes:	this function always returns the true version number, unlike AH=30h,
 	  whose return value may be changed with SETVER
+	because of the conflict from the CBIS PowerLAN redirector (see next
+	  entry), programs should check whether BH is less than 100 (64h)
+	  and BL is at least 5 before accepting the returned BX as the true
+	  version number; however, even this is not entirely reliable when
+	  that redirector is loaded
 	fully reentrant
 BUG:	DR-DOS 5.0 returns CF set/AX=0001h for INT 21/AH=33h subfunctions
 	  other than 00h-02h and 05h, while MS-DOS returns AL=FFh for invalid
 	  subfunctions
 SeeAlso: AH=30h
+----------213306-----------------------------
+INT 21 - CBIS POWERLAN - NETWORK REDIRECTOR - ???
+	AX = 3306h
+Return: AX = 3306h
+	BL = ??? (usually 00h)
+	BH = ??? (usually 00h or FFh)
+Note:	unknown function, is in conflict with DOS 5.0 version call
+SeeAlso: AX=3306h"DOS"
 ----------21330F-----------------------------
 INT 21 - VIRUS - "Burghofer" - INSTALLATION CHECK
 	AX = 330Fh
@@ -1818,9 +1835,12 @@ Return: AL = status
 	    00h successful
 		DL = current switch character
 	    FFh unsupported subfunction
+Desc:	Determine the character which is used to introduce command switches.
+	  This setting is ignored by DOS commands in version 4.0 and higher,
+	  but is honored by many third-party programs.
 Notes:	documented in some OEM versions of some releases of DOS
 	supported by OS/2 compatibility box
-	always returns AL=2Fh for DOS 5.0
+	always returns DL=2Fh for DOS 5.0
 SeeAlso: AX=3701h
 ----------213701-----------------------------
 INT 21 - DOS 2+ - "SWITCHAR" - SET SWITCH CHARACTER
@@ -2168,6 +2188,67 @@ Offset	Size	Description
 		supported)
 ---status for command 04h---
  01h	BYTE	handle to use when referring to the just-set breakpoint
+----------213F-------------------------------
+INT 21 - PC/TCP IPCUST.SYS - READ CONFIGURATION DATA
+	AH = 3Fh
+	BX = handle for character device "$IPCUST"
+	CX = number of bytes to read
+	DS:DX -> buffer for configuration data (see below)
+Return: CF clear if successful
+	    AX = number of bytes actually read
+	CF set on error
+	    AX = error code (05h,06h) (see AH=59h)
+Notes:	if less than the entire data is read or written, the next read/write
+	  continues where the previous one ended; IOCTL calls AX=4402h and
+	  AX=4403h both reset the location at which the next operation starts
+	  to zero
+	the data pointer is also reset to zero if the previous read or write
+	  reached or exceeded the end of the data, when the current function
+	  is read and the previous was write, or vice versa
+SeeAlso: AH=40h"IPCUST",AX=4402h"IPCUST"
+
+Format of configuration data:
+Offset	Size	Description
+ 00h 12 BYTEs	IPCUST.SYS device driver header
+ 12h	BYTE	???
+ 13h	BYTE	???
+ 14h	WORD	???
+ 16h	BYTE	bit flags
+ 		bit 0: send BS rather than DEL for BackSpace key
+		bit 1: wrap long lines
+ 17h	BYTE	???
+ 18h 64 BYTEs	ASCIZ hostname
+ 58h 64 BYTEs	ASCIZ domain name
+ 		(fully qualified domain name is hostname.domain-name)
+ 98h 16 BYTEs	ASCIZ username
+ A8h 64 BYTEs	ASCIZ full name
+ E8h 64 BYTEs	ASCIZ office address
+128h 32 BYTEs	ASCIZ phone number
+148h	WORD	offset from GMT in minutes
+14Ah  4 BYTEs	ASCIZ timezone name
+14Eh	WORD	number of time servers
+150h  ? DWORDs	IP addresses for time servers (big-endian)
+	???
+164h	WORD	number of old-style name servers
+166h  3 DWORDs	IP addresses for name servers (big-endian)
+172h	WORD	number of domain name servers
+174h  3 DWORDs	IP addresses for domain name servers (big-endian)
+180h	DWORD	IP address of default gateway (big-endian)
+184h	DWORD	IP address of log server (big-endian)
+188h	DWORD	IP address of cookie server (big-endian)
+18Ch	DWORD	IP address of lpr server (big-endian)
+190h	DWORD	IP address of imagen print server
+194h 54 BYTEs	???
+1E8h	WORD	TCP default window size in bytes
+1EAh	WORD	TCP low window size
+1ECh 64 BYTEs	ASCIZ host tabel filename
+22Ch  2 BYTEs	???
+22Eh 80 BYTEs	ASCIZ mail relay host name
+27Eh	BYTE	???
+27Fh	BYTE	??? bit flags
+280h 44 BYTEs	???
+2ACh	WORD	???
+2AEh 202 BYTEs	???
 ----------2140-------------------------------
 INT 21 - DOS 2+ - "WRITE" - WRITE TO FILE OR DEVICE
 	AH = 40h
@@ -2258,6 +2339,24 @@ Offset	Size	Description
 		04h)
 ---command code 06h---
  01h	WORD	base address of hardware debugger board
+----------2140-------------------------------
+INT 21 - PC/TCP IPCUST.SYS - WRITE CONFIGURATION DATA
+	AH = 40h
+	BX = handle for character device "$IPCUST"
+	CX = number of bytes to write
+	DS:DX -> buffer for configuration data (AH=3Fh"IPCUST")
+Return: CF clear if successful
+	    AX = number of bytes actually written
+	CF set on error
+	    AX = error code (05h,06h) (see AH=59h)
+Notes:	if less than the entire data is read or written, the next read/write
+	  continues where the previous one ended; IOCTL calls AX=4402h and
+	  AX=4403h both reset the location at which the next operation starts
+	  to zero
+	the data pointer is also reset to zero if the previous read or write
+	  reached or exceeded the end of the data, when the current function
+	  is read and the previous was write, or vice versa
+SeeAlso: AH=3Fh"IPCUST",AX=4402h"IPCUST"
 ----------214000BX0002-----------------------
 INT 21 - FARTBELL.EXE - INSTALLATION CHECK
 	AX = 4000h
@@ -2360,7 +2459,11 @@ Return: CF clear if successful
 	    AX destroyed
 	CF set on error
 	    AX = error code (01h,02h,03h,05h) (see AH=59h)
-Notes:	will not change volume label or directory attributes
+Notes:	will not change volume label or directory attribute bits, but will
+	  change the other attribute bits of a directory (the directory
+	  bit must be cleared to successfully change the other attributes of a
+	  directory, but the directory will not be changed to a normal file as
+	  a result)
 	MSDOS 4.01 reportedly closes the file if it is currently open
 SeeAlso: AX=4300h,INT 2F/AX=110Eh
 ----------214302-----------------------------
@@ -2377,6 +2480,8 @@ Return: CF clear if successful
 	    AX = CX (DR-DOS 5.0)
 	CF set on error
 	    AX = error code
+Desc:	Determine which operations the calling program may perform on a
+	  specified file without being required to provide a password.
 SeeAlso: AX=4303h
 ----------214303-----------------------------
 INT 21 - DR-DOS 3.41+ internal - SET ACCESS RIGHTS AND PASSWORD
@@ -3137,7 +3242,7 @@ Offset	Size	Description
 		12h SCSI Inquire
 		19h erase
 		1Bh load/unload media
- 01h	BYTE	flags		!!!
+ 01h	BYTE	flags
  		bits 4-0: vary by function
 		bits 7-5: logical unit number
  02h	BYTE	"adr_1"
@@ -3487,6 +3592,21 @@ Offset	Size	Description
  12h	WORD	vertical dots per inch
  14h	WORD	graphics buffer bits per pixel
  16h	WORD	monitor bits per pixel
+----------214402-----------------------------
+INT 21 - PC/TCP IPCUST.SYS - RESET CONFIGURATION DATA READ POINTER
+	AX = 4402h
+	BX = file handle referencing device "$IPCUST"
+	CX, DS:DX ignored
+Return: CF clear if successful
+	    AX destroyed
+	CF set on error
+	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+Note:	there are a total of 378h bytes of configuration data for IPCUST.SYS
+	  version 2.05.  If less than the entire data is read or written,
+	  the next read/write continues where the previous one ended; this
+	  call and AX=4403h both reset the location at which the next
+	  operation starts to zero
+SeeAlso: AH=3Fh"IPCUST",AH=40h"IPCUST",AX=4403h"IPCUST"
 ----------214403-----------------------------
 INT 21 - DOS 2+ - IOCTL - WRITE TO CHARACTER DEVICE CONTROL CHANNEL
 	AX = 4403h
@@ -3680,6 +3800,21 @@ Note:	PGS1600.DEV is a device driver for the Cornerstone Technology PG1600
 	  display adapter, which provides a 1600x1200 monochrome display as
 	  well as one of two emulations, MDA or CGA.
 SeeAlso: AX=4402h"PGS1600"
+----------214403-----------------------------
+INT 21 - PC/TCP IPCUST.SYS - RESET CONFIGURATION DATA READ POINTER
+	AX = 4403h
+	BX = file handle referencing device "$IPCUST"
+	CX, DS:DX ignored
+Return: CF clear if successful
+	    AX destroyed
+	CF set on error
+	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+Note:	there are a total of 378h bytes of configuration data for IPCUST.SYS
+	  version 2.05.  If less than the entire data is read or written,
+	  the next read/write continues where the previous one ended; this
+	  call and AX=4402h both reset the location at which the next
+	  operation starts to zero
+SeeAlso: AH=3Fh"IPCUST",AH=40h"IPCUST",AX=4402h"IPCUST"
 ----------214404-----------------------------
 INT 21 - DOS 2+ - IOCTL - READ FROM BLOCK DEVICE CONTROL CHANNEL
 	AX = 4404h
@@ -4189,6 +4324,7 @@ SeeAlso: AX=4412h/BX=FFFFh
 INT 21 U - DR-DOS 5.0 - SET GLOBAL PASSWORD
 	AX = 4414h
 	DS:DX -> password string (blank-padded to 8 characters)
+Desc:	Specify the master password for accessing files.
 Note:	this call is identical to AX=4454h
 SeeAlso: AX=4454h
 ----------214414BXFFFF-----------------------
@@ -4227,19 +4363,20 @@ Return: CF set if not DR DOS
 Notes:	the DR-DOS version is stored in the environment variable VER
 SeeAlso: AX=4412h,AX=4451h,AX=4459h
 ----------214454-----------------------------
-INT 21 U - DR-DOS 3.41+ internal - SET GLOBAL PASSWORD
+INT 21 U - DR-DOS 3.41+ - SET GLOBAL PASSWORD
 	AX = 4454h
 	DS:DX -> password string (blank-padded to 8 characters)
+Desc:	Specify the master password for accessing files.
 SeeAlso: AX=4303h,AX=4414h
 ----------214456-----------------------------
-INT 21 U - DR-DOS 5.0+ internal - ???
+INT 21 U - DR-DOS 5.0+ - ???
 	AX = 4456h
 	DL = flag
 	    bit 0: ???
 Return: AL = ???
 Note:	This was seen called by COMMAND.COM of DR-DOS 6.0
 ----------214457-----------------------------
-INT 21 U - DR-DOS 5.0+ internal - ???
+INT 21 U - DR-DOS 5.0+ - ???
 	AX = 4457h
 	DH = subfunction
 	    00h ???
@@ -4358,7 +4495,8 @@ Return: CF clear if successful
 	CF set on error
 	    AX = error code (07h,08h) (see AH=59h)
 	    BX = size of largest available block
-Notes:	DOS 3.30 coalesces free blocks while scanning for a block to allocate
+Notes:	DOS 2.1-5.0 coalesces free blocks while scanning for a block to
+	  allocate
 	.COM programs are initially allocated the largest available memory
 	  block, and should free some memory with AH=49h before attempting any
 	  allocations
@@ -4372,8 +4510,8 @@ Return: CF clear if successful
 	    AX = error code (07h,09h) (see AH=59h)
 Notes:	apparently never returns an error 07h, despite official docs; DOS 3.30
 	  code contains only an error 09h exit
-	DOS 3.30 does not coalesce adjacent free blocks when a block is freed,
-	  only when a block is allocated or resized
+	DOS 2.1-5.0 does not coalesce adjacent free blocks when a block is
+	  freed, only when a block is allocated or resized
 SeeAlso: AH=48h,AH=4Ah
 ----------214A-------------------------------
 INT 21 - DOS 2+ - RESIZE MEMORY BLOCK
@@ -4384,11 +4522,10 @@ Return: CF clear if successful
 	CF set on error
 	    AX = error code (07h,08h,09h) (see AH=59h)
 	    BX = maximum paragraphs available for specified memory block
-Notes:	under PCDOS 2.1 and 3.1 and MSDOS 3.2 and 3.3, if there is insufficient
-	  memory to expand the block as much as requested, the block will be
-	  made as large as possible
-	DOS 3.30 coalesces any free blocks immediately following the block to
-	  be resized
+Notes:	under DOS 2.1-5.0, if there is insufficient memory to expand the block
+	  as much as requested, the block will be made as large as possible
+	DOS 2.1-5.0 coalesces any free blocks immediately following the block
+	  to be resized
 SeeAlso: AH=48h,AH=49h
 ----------214B-------------------------------
 INT 21 - DOS 2+ - "EXEC" - LOAD AND/OR EXECUTE PROGRAM
@@ -4417,8 +4554,11 @@ Notes:	DOS 2.x destroys all registers, including SS:SP
 	  memory allocated by the caller
 	function 01h has been documented for DOS 5+, but was undocumented in
 	  prior versions
+	some versions (such as DR-DOS 6.0) check the parameters and parameter
+	  block and return an error if an invalid value (such as an offset of
+	  FFFFh) is found
 BUG:	DOS 2.00 assumes that DS points at the current program's PSP
-SeeAlso: AX=4B05h,AH=4Ch,AH=4Dh,INT 2E
+SeeAlso: AX=4B05h,AH=4Ch,AH=4Dh,AH=64h"OS/2",INT 2E
 
 Format of EXEC parameter block for AL=00h,01h,04h:
 Offset	Size	Description
@@ -4450,8 +4590,13 @@ Offset	Size	Description
  10h	WORD	initial SP
  12h	WORD	checksum (one's complement of sum of all words in executable)
  14h	DWORD	initial CS:IP relative to start of executable
- 18h	WORD	offset within header of relocation table
+ 18h	WORD	offset within header of relocation table (40h for New EXE)
  1Ah	WORD	overlay number (normally 0000h = main program)
+---new executable---
+ 1Ch  4 BYTEs	???
+ 20h	WORD	behavior bits
+ 22h 26	BYTEs	reserved for additional behavior info
+ 3Ch	DWORD	offset of new executable header within disk file
 ---Borland TLINK---
  1Ch  2 BYTEs	??? (apparently always 01h 00h)
  1Eh	BYTE	signature FBh
@@ -4476,9 +4621,6 @@ Offset	Size	Description
  1Ch	var	optional information
 ---
   N   N DWORDs	relocation items
----new executable only---
- 3Ch	DWORD	offset of new executable header if offset of relocation table
-		is 40h or greater
 Notes:	if word at offset 02h is 4, it should be treated as 00h, since pre-1.10
 	  versions of the MS linker set it that way
 	if both minimum and maximum allocation (offset 0Ah/0Ch) are zero, the
@@ -4489,7 +4631,7 @@ Format of new executable header:
 Offset	Size	Description
  00h  2 BYTEs	"NE" (4Eh 45h) signature
  02h  2 BYTEs	linker version (major, then minor)
- 04h	WORD	offset to entry table (see below)
+ 04h	WORD	offset from start of this header to entry table (see below)
  06h	WORD	length of entry table in bytes
  08h	DWORD	file load CRC (0 in Borland's TPW)
  0Ch	BYTE	program flags
@@ -4511,20 +4653,29 @@ Offset	Size	Description
 		    011 uses Windows/P.M. API
 		bit 3: is a Family Application (OS/2)
 		bit 5: 0=executable, 1=errors in image
+		bit 6: non-conforming program (valid stack is not maintained)
 		bit 7: DLL or driver rather than application
+			(SS:SP info invalid, CS:IP points at FAR init routine 
+			 called with AX=module handle which returns AX=0000h
+			 on failure, AX nonzero on successful initialization)
  0Eh	WORD	auto data segment index
  10h	WORD	initial local heap size
- 12h	WORD	initial stack size
- 14h	DWORD	program entry point (CS:IP)
- 18h	DWORD	initial stack pointer (SS:SP)
+ 12h	WORD	initial stack size (added to data seg, 0000h if SS != DS)
+ 14h	DWORD	program entry point (CS:IP), "CS" is index into segment table
+ 18h	DWORD	initial stack pointer (SS:SP), "SS" is segment index
+ 		if SS=automatic data segment and SP=0000h, the stack pointer is
+		  set to the top of the automatic data segment, just below the
+		  local heap
  1Ch	WORD	segment count
  1Eh	WORD	module reference count
- 20h	WORD	length of nonresident names table
+ 20h	WORD	length of nonresident names table in bytes
  22h	WORD	offset from start of this header to segment table (see below)
  24h	WORD	offset from start of this header to resource table
  26h	WORD	offset from start of this header to resident names table
  28h	WORD	offset from start of this header to module reference table
  2Ah	WORD	offset from start of this header to imported names table
+ 		(array of counted strings, terminated with a string of length
+		 00h)
  2Ch	DWORD	offset from start of file to nonresident names table
  30h	WORD	count of moveable entry point listed in entry table
  32h	WORD	file alignment size shift count
@@ -4553,9 +4704,9 @@ Offset	Size	Description
  02h	WORD	Microsoft debug info version number
  04h	DWORD	Codeview header offset
 
-Format of segment table record:
+Format of new executable segment table record:
  00h	WORD	offset in file (shift left by alignment shift to get byte offs)
- 02h	WORD	length of image in file
+ 02h	WORD	length of image in file (0000h = 64K)
  04h	WORD	attributes
 		bit 0: data segment rather than code segment
 		bit 1: unused???
@@ -4564,13 +4715,14 @@ Format of segment table record:
 		bit 4: movable
 		bit 5: sharable
 		bit 6: preloaded rather than demand-loaded
-		bit 7: execute-only
+		bit 7: execute-only (code) or read-only (data)
 		bit 8: relocations (directly following code for this segment)
-		bit 9: debug info
+		bit 9: debug info present
 		bits 10,11: 80286 DPL bits
 		bit 12:	    discardable
 		bits 13-15: discard priority
- 06h	WORD	size to allocate
+ 06h	WORD	number of bytes to allocate for segment (0000h = 64K)
+Note:	the first segment table entry is entry number 1
 
 Format of new executable entry table item (list):
 Offset	Size	Description
@@ -4602,7 +4754,73 @@ Offset	Size	Description
 		 04h	WORD	target address segment
 		 06h	WORD	target address offset
 		 
-Linear Executable (enhanced mode executable) header:
+Format of new executable resource data:
+Offset	Size	Description
+ 00h	WORD	alignment shift count for resource data
+ 02h  N RECORDs resources
+ 	Format of resource record:
+ 	Offset	Size	Description
+	 00h	WORD	type ID
+	 		0000h if end of resource records
+			>= 8000h if integer type
+			else offset from start of resource table to type string
+	 02h	WORD	number of resources of this type
+	 04h	DWORD	reserved for runtime use
+	 08h  N Resources (see below)
+Note:	resource type and name strings are stored immediately following the
+	  resource table, and are not null-terminated
+
+Format of new executable resource entry:
+Offset	Size	Description
+ 00h	WORD	offset in alignment units from start of file to contents of
+ 		the resource data
+ 02h	WORD	length of resource image in bytes
+ 04h	WORD	flags
+ 		bit 4: moveable
+		bit 5: shareable
+		bit 6: preloaded
+ 06h	WORD	resource ID
+		>= 8000h if integer resource
+		else offset from start of resource table to resource string
+ 08h	DWORD	reserved for runtime use
+Notes:	resource type and name strings are stored immediately following the
+	  resource table, and are not null-terminated
+	strings are counted strings, with a string of length 0 indicating the
+	  end of the resource table
+
+Format of new executable module reference table [one bundle of entries]:
+Offset	Size	Description
+ 00h	BYTE	number of records in this bundle (00h if end of table)
+ 01h	BYTE	segment indicator
+ 		00h unused
+		FFh movable segment, segment number is in entry
+		else segment number of fixed segment
+ 02h  N RECORDs
+	Format of segment record
+	Offset	Size	Description
+	 00h	BYTE	flags
+	 		bit 0: entry is exported
+			bit 1: entry uses global (shared) data
+			bits 7-3: number of parameter words
+	---fixed segment---
+	 01h	WORD	offset
+	---moveable segment---
+	 01h  2 BYTEs	INT 3F instruction (CDh 3Fh)
+	 03h	BYTE	segment number
+	 05h	WORD	offset
+Note:	table entries are numbered starting from 1
+
+Format of new executable resident/nonresident name table entry:
+Offset	Size	Description
+ 00h	BYTE	length of string (00h if end of table)
+ 01h  N BYTEs	ASCII text of string
+ N+1	WORD	ordinal number (index into entry table)
+Notes:	the first string in the resident name table is the module name; the
+	  first entry in the nonresident name table is the module description
+	the strings are case-sensitive; if the executable was linked with
+	  /IGNORECASE, all strings are in uppercase
+
+Format of Linear Executable (enhanced mode executable) header:
 Offset	Size	Description
  00h  2 BYTEs	"LE" (4Ch 45h) signature
  02h	BYTE	byte order (00h = little-endian, nonzero = big-endian)
@@ -5066,7 +5284,7 @@ Notes:	DOS uses the current PSP address to determine which processes own files
 	under DOS 2.x, this function cannot be invoked inside an INT 28h
 	  handler without setting the Critical Error flag
 	under DOS 3+, this function does not use any of the DOS-internal stacks
-	  and is thus fully reentrant
+	  and may thus be called at any time, even during another INT 21h call
 	supported by OS/2 compatibility box
 	not documented for DOS 2.x-4.x, but newly documented for 5.0.
 SeeAlso: AH=26h,AH=51h,AH=62h
@@ -5079,7 +5297,7 @@ Notes:	DOS uses the current PSP address to determine which processes own files
 	under DOS 2.x, this function cannot be invoked inside an INT 28h
 	  handler without setting the Critical Error flag
 	under DOS 3+, this function does not use any of the DOS-internal stacks
-	  and is thus fully reentrant
+	  and may thus be called at any time, even during another INT 21h call
 	supported by OS/2 compatibility box
 	identical to the documented AH=62h
 	undocumented for DOS 2.x-4.x, but newly documented for 5.0.
@@ -5197,9 +5415,9 @@ Offset	Size	Description
 		null-terminated if less than 8 characters
 Notes:	the next MCB is at segment (current + size + 1)
 	under DOS 3.1+, the first memory block is the DOS data segment,
-	  containing installable drivers, buffers, etc.
-	under DOS 4.x it is divided into subsegments, each with its own memory
-	  control block (see below), the first of which is at offset 0000h
+	  containing installable drivers, buffers, etc.  Under DOS 4+ it is
+	  divided into subsegments, each with its own memory control block
+	  (see below), the first of which is at offset 0000h.
 	for DOS 5.0, blocks owned by DOS may have either "SC" or "SD" in bytes
 	  08h and 09h.	"SC" is system code or locked-out inter-UMB memory,
 	  "SD" is system data, device drivers, etc.
@@ -5314,7 +5532,7 @@ Offset	Size	Description
 			  SI:AX = size
 		Return: CF set on error
 			    AL = DOS error code (21h) (see AH=59h)
-		Note: only called if file is marked as remote
+		Note: not called if file is marked as remote
 		Note: SHARE assumes SS=DOS DS, directly accesses DOS internals
 -20h	DWORD	pointer to FAR routine to unlock region of file
 		call with BX = file handle
@@ -5322,7 +5540,7 @@ Offset	Size	Description
 			  SI:AX = size
 		Return: CF set on error
 			    AL = DOS error code (21h) (see AH=59h)
-		Note: only called if file is marked as remote
+		Note: not called if file is marked as remote
 		Note: SHARE assumes SS=DOS DS, directly accesses DOS internals
 -1Ch	DWORD	pointer to FAR routine to check if file region is locked
 		call with ES:DI -> system file table entry for file
@@ -6994,6 +7212,7 @@ SeeAlso: AX=5F00h,INT 2F/AX=111Eh
 INT 21 - DOS 3.1+ network, Banyan VINES, PC-NFS - GET REDIRECTION LIST ENTRY
 	AX = 5F02h
 	BX = redirection list index
+	CX = 0000h (LANtastic)
 	DS:SI -> 16-byte buffer for ASCIZ device name
 	ES:DI -> 128-byte buffer for ASCIZ network name
 Return: CF clear if successful
@@ -7010,14 +7229,16 @@ Return: CF clear if successful
 	    AX = error code (01h,12h) (see AH=59h)
 Notes:	this function is passed through to INT 2F/AX=111Eh
 	error code 12h is returned if BX is greater than the size of the list
+	also supported by Banyan VINES, PC-NFS, and LANtastic
 SeeAlso: AX=5F03h,INT 2F/AX=111Eh
 ----------215F03-----------------------------
-INT 21 - DOS 3.1+ network, Banyan VINES - REDIRECT DEVICE
+INT 21 - DOS 3.1+ network, Banyan VINES, LANtastic - REDIRECT DEVICE
 	AX = 5F03h
 	BL = device type
 	    03h printer
 	    04h disk drive
 	CX = user data to save
+		0000h for LANtastic
 	DS:SI -> ASCIZ local device name (16 bytes max)
 	ES:DI -> ASCIZ network name + ASCIZ password (128 bytes max total)
 Return: CF clear if successful
@@ -7029,7 +7250,7 @@ Note:	if device type is disk drive, DS:SI must point at either a null string
 	  redirecting a local drive
 SeeAlso: AX=5F02h,AX=5F04h,INT 2F/AX=111Eh
 ----------215F04-----------------------------
-INT 21 - DOS 3.1+ network, Banyan VINES - CANCEL REDIRECTION
+INT 21 - DOS 3.1+ network, Banyan VINES, LANtastic - CANCEL REDIRECTION
 	AX = 5F04h
 	DS:SI -> ASCIZ device name or path
 Return: CF clear if successful
@@ -7318,18 +7539,21 @@ Return: CF clear if successful
 	    DL = adapter number (v3+)
 	CF set on error
 	    AX = error code
-	BX = next login entry index (BX-1 is current index)
+Note:	the login entry index corresponds to the value BX used in AX=5F83h
+SeeAlso: AX=58F3h
 ----------215F81-----------------------------
 INT 21 - LANtastic - LOGIN TO SERVER
 	AX = 5F81h
 	ES:DI -> ASCIZ login path followed immediately by ASCIZ password
 	BL = adapter number
 	    FFh try all valid adapters
-	    00h-03h try only specified adapter
+	    00h-07h try only specified adapter
 Return: CF clear if successful
 	CF set on error
 	    AX = error code
-Note:	login path is of form "\\machine\username"
+Notes:	login path is of form "\\machine\username"
+	if no password is used, the string at ES:DI must be terminated with
+	  three NULs for compatibility with LANtastic v3.0.
 SeeAlso: AX=5F82h,AX=5F84h
 ----------215F82-----------------------------
 INT 21 - LANtastic - LOGOUT FROM SERVER
@@ -7338,7 +7562,7 @@ INT 21 - LANtastic - LOGOUT FROM SERVER
 Return: CF clear if successful
 	CF set on error
 	    AX = error code
-SeeAlso: AX=5F81h
+SeeAlso: AX=5F81h,AX=5F88h,AX=5FCBh
 ----------215F83-----------------------------
 INT 21 - LANtastic - GET USERNAME ENTRY
 	AX = 5F83h
@@ -7348,7 +7572,8 @@ Return: CF clear if successful
 	    DL = adapter number (v3+)
 	CF set on error
 	    AX = error code
-	BX = next login entry index (BX-1 is current index)
+Note:	the login entry index corresponds to the value BX used in AX=5F80h
+SeeAlso: AX=5F80h
 ----------215F84-----------------------------
 INT 21 - LANtastic - GET INACTIVE SERVER ENTRY
 	AX = 5F84h
@@ -7367,7 +7592,8 @@ INT 21 - LANtastic - CHANGE PASSWORD
 Return: CF clear if successful
 	CF set on error
 	    AX = error code
-Note:	must be logged into the named machine
+Notes:	must be logged into the named machine
+	this function is illegal for group accounts
 ----------215F86-----------------------------
 INT 21 - LANtastic - DISABLE ACCOUNT
 	AX = 5F86h
@@ -7390,7 +7616,7 @@ Note:	must be logged into the specified machine
 
 Format of user account structure:
 Offset	Size	Description
- 00h 16 BYTEs	blank-padded username
+ 00h 16 BYTEs	blank-padded username (zero-padded for v4.x)
  10h 16 BYTEs	reserved (00h)
  20h 32 BYTEs	user description
  40h	BYTE	privilege bits
@@ -7400,6 +7626,7 @@ Offset	Size	Description
 		    4: bypass mail protection
 		    3: allow audit entry creation
 		    2: system manager
+		    0: user cannot change password
  41h	BYTE	maximum concurrent users
  42h 42 BYTEs	bit map for disallowed half hours, beginning on Sunday
 		(bit set if half-hour not an allowed time)
@@ -7408,7 +7635,21 @@ Offset	Size	Description
  72h  2 WORDs	account expiration date (MSDOS-format year/month:day)
  76h  2 WORDs	password expiration date (0 = none)
  7Ah	BYTE	number of days to extend password after change (1-31)
+ 		00h if no extension required
+---v3.x---
  7Bh  5 BYTEs	reserved
+---v4.x---
+ 7Bh	BYTE	storage for first letter of user name when deleted (first
+ 		character is changed to 00h when deleting account)
+ 7Ch	BYTE	extended privileges
+ 7Dh  3 BYTEs	reserved
+----------215F88-----------------------------
+INT 21 - LANtastic v4.0+ - LOGOUT FROM ALL SERVERS
+	AX = 5F88h
+Return:	CF clear if successful
+	CF set on error
+	    AX = error code
+SeeAlso: AX=5F82h
 ----------215F97-----------------------------
 INT 21 - LANtastic - COPY FILE
 	AX = 5F97h
@@ -7416,7 +7657,7 @@ INT 21 - LANtastic - COPY FILE
 	SI = source file handle
 	DI = destination file handle
 Return: CF clear if successful
-	    AX:DX = number of bytes copied
+	    DX:AX = number of bytes copied
 	CF set on error
 	    AX = error code
 Note:	copy is performed by server
@@ -7427,6 +7668,7 @@ INT 21 - LANtastic - SEND UNSOLICITED MESSAGE
 Return: CF clear if successful
 	CF set on error
 	    AX = error code
+Note:	v4.1- return no errors
 SeeAlso: AX=5F99h
 
 Format of message buffer:
@@ -7460,7 +7702,7 @@ Return: CF clear if successful
 		    2: pop up message automatically (v3+)
 	CF set on error
 	    AX = error code
-SeeAlso: AX=5F9Bh,AX=5F9Ch
+SeeAlso: AX=5F9Bh,AX=5F9Ch,AX=5F9Dh
 ----------215F9B-----------------------------
 INT 21 - LANtastic - SET MESSAGE PROCESSING FLAG
 	AX = 5F9Bh
@@ -7469,7 +7711,7 @@ INT 21 - LANtastic - SET MESSAGE PROCESSING FLAG
 Return: CF clear if successful
 	CF set on error
 	    AX = error code
-SeeAlso: AX=5F9Ah
+SeeAlso: AX=5F9Ah,AX=5F9Eh
 ----------215F9C-----------------------------
 INT 21 - LANtastic v3+ - POP UP LAST RECEIVED MESSAGE
 	AX = 5F9Ch
@@ -7478,8 +7720,22 @@ INT 21 - LANtastic v3+ - POP UP LAST RECEIVED MESSAGE
 Return:	CF clear if successful
 	CF set on error
 	    AX = error code (0Bh)
-Note:	the original screen contents are restored when the message is removed
+Notes:	the original screen contents are restored when the message is removed
+	the message will not appear, and an error will be returned, if the
+	  screen is in a graphics mode
 SeeAlso: AX=5F9Ah
+----------215F9D-----------------------------
+INT 21 - LANtastic v4.1+ - GET REDIRECTOR CONTROL BITS
+	AX = 5F9Dh
+Return:	DL = redirector control bits
+		bit 7: set to notify on print job completion
+SeeAlso: AX=5F9Ah,AX=5F9Eh
+----------215F9E-----------------------------
+INT 21 - LANtastic v4.1+ - SET REDIRECTOR CONTROL BITS
+	AX = 5F9Eh
+	DL = redirector control bits (see AH = 5F9Dh)
+Return: nothing
+SeeAlso: AX=5F9Bh,AX=5F9Dh
 ----------215FA0-----------------------------
 INT 21 - LANtastic - GET QUEUE ENTRY
 	AX = 5FA0h
@@ -7515,6 +7771,8 @@ Offset	Size	Description
  06h	BYTE	output control
 		bit 6: don't delete (for mail)
 		bit 5: mail file contains voice mail (v3+)
+		bit 4: mail message has been read
+		bit 3: response has been requested for this mail
  07h	WORD	number of copies
  09h	DWORD	sequence number of queue entry
  0Dh 48 BYTEs	pathname of spooled file
@@ -7532,9 +7790,12 @@ INT 21 - LANtastic - SET QUEUE ENTRY
 Return: CF clear if successful
 	CF set on error
 	    AX = error code
-Note:	the only queue entry fields which may be changed are output control,
+Notes:	the only queue entry fields which may be changed are output control,
 	  number of copies, destination device, and comment
-SeeAlso: AX=5FA0h,AX=5FA2h
+	the handle in BX is that from a create or open (INT 21/AH=3Ch,3Dh)
+	  call on the file "\\server\\@MAIL" or "\\server\@name" (for
+	  printer queue entries)
+SeeAlso: AX=5FA0h,AX=5FA2h,AX=5FA9h
 ----------215FA2-----------------------------
 INT 21 - LANtastic - CONTROL QUEUE
 	AX = 5FA2h
@@ -7554,7 +7815,7 @@ INT 21 - LANtastic - CONTROL QUEUE
 	    00h-02h LPT1-LPT3
 	    03h,04h COM1,COM2
 	    other	all printers
-	ES:DI -> ASCIZ computer name
+	ES:DI -> ASCIZ server name in form "\\machine"
 Return: CF clear if successful
 	CF set on error
 	    AX = error code
@@ -7568,6 +7829,7 @@ Return: CF clear if successful
 	CF set on error
 	    AX = error code
 	BX = next physical printer number
+Note:	you must be logged in to the specified server
 
 Format of printer status:
 Offset	Size	Description
@@ -7612,11 +7874,24 @@ SeeAlso: AX=5FA4h
 INT 21 - LANtastic - CREATE USER AUDIT ENTRY
 	AX = 5FA7h
 	DS:DX -> ASCIZ reason code (max 8 bytes)
-	DS:SI -> ASCIZ variable reason code (max 128 bytes)
+	DS:SI -> ASCIZ variable reason string (max 128 bytes)
 	ES:DI -> ASCIZ machine name in form "\\machine"
 Return: CF clear if successful
 	CF set on error
 	    AX = error code
+Note:	you must be logged in to the specified server and have the "U"
+	  privilege to execute this call
+----------215FA9-----------------------------
+INT 21 - LANtastic v4.1+ - SET EXTENDED QUEUE ENTRY
+	AX = 5FA9h
+	BX = handle of opened queue entry
+	DS:SI -> queue entry (see AX=5FA0h)
+Return: CF clear if successful
+	CF set on error
+	    AX = error code
+Note:	functions exactly the same as AX=5FA1h except the spooled filename is
+	  also set.  This call supports	direct despooling.
+SeeAlso: AX=5FA1h
 ----------215FB0-----------------------------
 INT 21 - LANtastic - GET ACTIVE USER INFORMATION
 	AX = 5FB0h
@@ -7634,6 +7909,7 @@ Offset	Size	Description
  02h	BYTE	login state
 		bit 0: fully logged in
 		    1: remote program load login
+		    2: user has system manager privileges
 		    3: user can create audit entries
 		    4: bypass mail protection
 		    5: treat as local process
@@ -7644,6 +7920,9 @@ Offset	Size	Description
  09h  3 BYTEs	number of server requests (24-bit unsigned)
  0Ch 16 BYTEs	name of user who is logged in
  1Ch 16 BYTEs	name of remote logged in machine
+ 2Ch	BYTE	extended privileges (v4+???)
+ 		bit 0: user cannot change his password
+ 2Dh	WORD	time left in minutes (0000h = unlimited) (v4+???)
 
 Values for last command:
  00h	login
@@ -7687,6 +7966,18 @@ Values for last command:
  25h	get logical print stream info
  26h	set logical print stream info
  27h	get user's account record
+---v4+---
+ 28h	request server shutdown
+ 29h	cancel server shutdown
+ 2Ah	stuff server's keyboard
+ 2Bh	write then commit data to disk
+ 2Ch	set extended queue entry
+ 2Dh	terminate user from server
+ 2Eh	enable/disable logins
+ 2Fh	flush server caches
+ 30h	change username
+ 31h	get extended queue entry
+	(same as get queue, but can return named fields blanked)
 ----------215FB1-----------------------------
 INT 21 - LANtastic - GET SHARED DIRECTORY INFORMATION
 	AX = 5FB1h
@@ -7695,17 +7986,18 @@ INT 21 - LANtastic - GET SHARED DIRECTORY INFORMATION
 		 "\\machine\shared-resource"
 Return: CF clear if successful
 	    CX = access control list privilege bits for requesting user
-		bit 5: allow attribute changing
-		    6: allow physical access to device
-		    7: allow program execution
-		    8: allow file renaming
-		    9: allow directory deletion
-		   10: allow file deletion
-		   11: allow file/directory lookups
-		   12: allow directory creation
-		   13: allow file creation
-		   14: allow open for write and writing
-		   15: allow open for read and reading
+	        bit 4: (I) allow expansion of indirect files
+		    5: (A) allow attribute changing
+		    6: (P) allow physical access to device
+		    7: (E) allow program execution
+		    8: (N) allow file renaming
+		    9: (K) allow directory deletion
+		   10: (D) allow file deletion
+		   11: (L) allow file/directory lookups
+		   12: (M) allow directory creation
+		   13: (C) allow file creation
+		   14: (W) allow open for write and writing
+		   15: (R) allow open for read and reading
 	CF set on error
 	    AX = error code
 ----------215FB2-----------------------------
@@ -7748,6 +8040,30 @@ INT 21 - LANtastic v3+ - GET INDIRECT FILE CONTENTS
 Return: CF clear if successful
 	CF set on error
 	    AX = error code
+----------215FB6-----------------------------
+INT 21 - LANtastic v4.1+ - SET AUTO-LOGIN DEFAULTS
+	AX = 5FB6h
+	ES:DI -> pointer to ASCIZ default user name, immediately followed by
+		ASCIZ password
+	BL = adapter number to use for default login attempt
+	    FFh try all valid adapters
+	    00h-05h try adapter 0-5 explicitly
+Return: CF clear if successful
+	CF set on error
+	    AX = error code
+Notes:	call with ES:DI -> two nulls to disable auto-login
+SeeAlso: AX=5FB7h
+----------215FB7-----------------------------
+INT 21 - LANtastic v4.1+ - GET AUTO-LOGIN DEFAULTS
+	AX = 5FB7h
+	ES:DI -> pointer to 16-byte buffer to store ASCIZ auto-login user name
+Return: CF clear if successful
+	    DL = adapter number used for default login attempt
+		FFh all valid adapters will be tried
+		00h-05h specified adapter will be tried explicitly
+	CF set on error
+	    AX = error code
+SeeAlso: AX=5F81h,AX=5FB6h
 ----------215FC0-----------------------------
 INT 21 - LANtastic - GET TIME FROM SERVER
 	AX = 5FC0h
@@ -7766,6 +8082,78 @@ Offset	Size	Description
  05h	BYTE	hour
  06h	BYTE	hundredths of second
  07h	BYTE	second
+----------215FC8-----------------------------
+INT 21 - LANtastic v4.0+ - SCHEDULE SERVER SHUTDOWN
+	AX = 5FC8h
+	ES:DI -> ASCIZ server name in form "\\machine"
+	DS:SI -> ASCIZ reason string (80 characters)
+	CX = number of minutes until shutdown (0 = immediate)
+	DX = option flags (see below)
+	    bit 0: auto reboot
+		1: do not notify users
+		2: halt after shutdown
+		3: shutdown due to power fail (used by UPS)
+	    bits 4-7: reserved
+	    bits 8-14: user definable
+	    bit 15: reserved
+Return: CF clear if successful
+	CF set on error
+	    AX = error code
+SeeAlso: AH=5FC9h
+----------215FC9-----------------------------
+INT 21 - LANtastic v4.0+ - CANCEL SERVER SHUTDOWN
+	AX = 5FC9h
+	ES:DI -> ASCIZ server name in form "\\machine"
+Return: CF clear if successful
+	CF set on error
+	    AX = error code
+Note:	you must have the "S" privilege to use this call
+SeeAlso: AH=5FC8h
+----------215FCA-----------------------------
+INT 21 - LANtastic v4.0+ - STUFF SERVER KEYBOARD BUFFER
+	AX = 5FCAh
+	ES:DI -> ASCIZ server name in form "\\machine"
+	DS:SI -> ASCIZ string to stuff (128 bytes)
+Return: CF clear if successful
+	CF set on error
+	    AX = error code
+Note:	you must have the "S" privilege to use this call
+	maximum number of characters that can be stuffed is determined by the
+	  server's RUN BUFFER SIZE.
+----------215FCB-----------------------------
+INT 21 - LANtastic v4.1+ - TERMINATE USER
+	AX = 5FCBh
+	ES:DI -> ASCIZ server name in form "\\machine"
+	DS:SI -> blank-padded username.	 A null char = wildcard.
+	DS:DX -> blank-padded machine name.  A null char = wildcard.
+	CX = minutes until termination (0 = immediate)
+Return: CF clear if successful
+	CF set on error
+	    AX = error code
+Note:	you must have the "S" privilege to use this call
+	you cannot log yourself out using this call
+SeeAlso: AX=5F82h
+----------215FCC-----------------------------
+INT 21 - LANtastic v4.1+ - GET/SET SERVER CONTROL BITS
+	AX = 5FCCh
+	ES:DI -> ASCIZ server name in form "\\machine"
+	CX = bit values (value of bits you want to set)	 See below.
+	DX = bit mask (bits you are interested in, 0 = get only)  See 
+below.
+Return: CF clear if successful
+	    CX = control bits after call
+		bit 0: disable logins
+	CF set on error
+	    AX = error code
+Note:	you must have the "S" privilege to SET, anyone can GET.
+----------215FCD-----------------------------
+INT 21 - LANtastic v4.1+ - FLUSH SERVER CACHES
+	AX = 5FCDh
+	ES:DI -> ASCIZ server name in form "\\machine"
+Return: CF clear if successful
+	CF set on error
+	    AX = error code
+Note:	you must have the "S" privilege to use this call.
 ----------215FD0-----------------------------
 INT 21 - LANtastic - GET REDIRECTED PRINTER TIMEOUT
 	AX = 5FD0h
@@ -7790,11 +8178,14 @@ Return: CF clear if successful
 	    ES:BX -> current FAR service routine
 	CF set on error
 	    AX = error code
-SeeAlso: AX=5FE1h
+Note:	the service routine is called by the LANtastic redirector whenever DOS
+	  may safely be called, permitting external TSRs and drivers to hook
+	  into LANtastic's DOS busy flag checking
+SeeAlso: AX=5FE1h,INT 28,INT 2A/AH=84h
 ----------215FE1-----------------------------
 INT 21 - LANtastic - SET DOS SERVICE VECTOR
 	AX = 5FE1h
-	ES:BX -> FAR routine to call for DOS service
+	ES:BX -> FAR routine to call when DOS services are available
 Return: CF clear if successful
 	CF set on error
 	    AX = error code
@@ -7873,7 +8264,7 @@ INT 21 - DOS 3+ - GET CURRENT PSP ADDRESS
 	AH = 62h
 Return: BX = segment of PSP for current process
 Notes:	under DOS 3+, this function does not use any of the DOS-internal stacks
-	  and is thus fully reentrant
+	  and may thus be called at any time, even during another INT 21h call
 	the current PSP is not necessarily the caller's PSP
 	identical to the undocumented AH=51h
 SeeAlso: AH=50h,AH=51h
@@ -7948,6 +8339,19 @@ Notes:	called by DOS 3.3+ PRINT.COM
 	does not use any of the DOS-internal stacks and is thus fully
 	  reentrant
 SeeAlso: AH=01h,AH=08h,AH=0Ah,AX=5D06h
+----------2164--BX0000-----------------------
+INT 21 - OS/2 v2.0 Virtual DOS Machine - GET/SET TASK TITLE
+	AH = 64h
+	BX = 0000h
+	CX = 636Ch
+	DX = function
+	    0000h enable automatic title switch on INT 21/AH=4Bh
+	    0001h set session title
+	    	ES:DI -> new ASCIZ title or "" to restore original title
+	    0002h get session title
+	    	ES:DI -> buffer for current title
+	    	Return: buffer filled (single 00h if title never changed)
+SeeAlso: INT 15/AH=12h/BH=05h,INT 21/AH=4Bh
 ----------2165-------------------------------
 INT 21 - DOS 3.3+ - GET EXTENDED COUNTRY INFORMATION
 	AH = 65h
@@ -8127,7 +8531,7 @@ Return: CF clear if successful
 	      and the file's directory entry is updated
 	CF set on error
 	    AX = error code (see AH=59h)
-SeeAlso: AX=5D01h,INT 2F/AX=1107h
+SeeAlso: AX=5D01h,AH=6Ah,INT 2F/AX=1107h
 ----------2169-------------------------------
 INT 21 U - DOS 4.0 internal - GET/SET DISK SERIAL NUMBER
 	AH = 69h
@@ -8166,11 +8570,16 @@ INT 21 - VIRUS - "Rape-747" - INSTALLATION CHECK
 Return: AX = 0666h if resident
 SeeAlso: AX=58CCh,AH=76h"VIRUS"
 ----------216A-------------------------------
-INT 21 U - DOS 4+ internal - ???
+INT 21 U - DOS 4+ - COMMIT FILE
 	AH = 6Ah
-	???
-Return: ???
-Note:	may be equivalent to INT 21/AH=48h
+	BX = file handle
+Return: CF clear if successful
+	    AH = 68h
+	CF set on error
+	    AX = error code (06h) (see AH=59h)
+Note:	identical to AH=68h in DOS 5.0; not known whether this is the case in
+	  DOS 4.x
+SeeAlso: AH=68h
 ----------216B-------------------------------
 INT 21 U - DOS 4.0 internal - ???
 	AH = 6Bh
@@ -8313,4 +8722,3 @@ INT 21 - VIRUS - "Squeaker" - INSTALLATION CHECK
 	AH = 7Fh
 Return: AH = 80h if resident
 SeeAlso: AX=7700h,AH=83h"VIRUS"
----------------------------------------------
