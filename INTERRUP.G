@@ -15,19 +15,35 @@ Return: AL = FFh if installed
 Program: TurboNET is a NetBIOS-based file redirector and server; a
 	  demonstration version may be downloaded from Nanosoft's BBS
 SeeAlso: AX=8100h
-----------2F8000-----------------------------
-INT 2F - ASCII v2.00 - INSTALLATION CHECK
+--------t-2F8000-----------------------------
+INT 2F - CS_TSR specification - TSR INSTALLATION CHECK
 	AX = 8000h
-	DS:SI -> 4-byte signature (11h 43h 53h 10h)
+	DS:SI -> 4-byte CS_TSR signature (11h 43h 53h 10h)
 Return: AL = status
+	    00h no CS_TSR-compliant TSRs installed
 	    01h installed, but signature did not match
 	    FFh installed, signature matches
-		ES:DI -> resident copy of signature (may be followed by data)
-Program: ASCII is a popup ASCII table by Nick Zaikin, Jr.
-Note:	the interface used by this program appears to be a general-purpose
-	  interface which may be shared by multiple programs, so other programs
-	  may also support this call with differing signatures
-SeeAlso: AX=8001h"ASCII",AX=8002h"ASCII"
+		ES:DI -> resident process block (see below) of last installed
+			  TSR (if DS:SI pointed at signature on entry)
+Program: the CS_TSR specification is a standardized TSR interface by Compact
+	  Soft group in Kiev, Ukraine
+Desc:	determine whether any CS_TSR-compliant TSRs are installed on the
+	  selected multiplex number
+Note:	AH=80h is the default, but any multiplex number from 80h to FFh may be
+	  used
+SeeAlso: AX=8001h"CS_TSR",AX=8002h"CS_TSR",AX=8003h"CS_TSR"
+
+Format of process block:
+Offset	Size	Description
+ 00h  4 BYTEs	CS_TSR signature 11h 43h 53h 10h
+ 04h	BYTE	INT 2F multiplex number
+ 05h	WORD	virtual process handle (unique among loaded TSRs)
+ 07h  2 BYTEs	version (binary minor version, then major version)
+ 09h	WORD	PSP segment of TSR
+ 0Bh	DWORD	pointer to ASCIZ program name
+ 0Fh  3 BYTEs	program creation date (day, month, year)
+ 12h  3 BYTEs	process start time (seconds, minutes, hours)
+ 15h  3 BYTEs	process start date (day, month, year)
 --------F-2F8000DX0000-----------------------
 INT 2F - FaxBIOS interface - INSTALLATION CHECK
 	AX = 8000h
@@ -47,24 +63,46 @@ Return: AH = status
 	    00h successful
 	    01h error (TurboNET busy)
 Note:	makes NetBIOS calls
-----------2F8001-----------------------------
-INT 2F - ASCII v2.00 - INSTALLATION VERIFICATION
+--------t-2F8001-----------------------------
+INT 2F - CS_TSR specification - GET HANDLE (TSR-SPECIFIC INSTALLATION CHECK)
 	AX = 8001h
-	DS:SI -> ASCIZ signature string "ASCII 2.00 by Nick Zaikin Jr."
-Return: BX = 0000h if signature did not match
-	   = instance number??? if signature matched
-	       ES:DI -> ??? (same as returned by AX=8000h)
-Note:	the interface used by this program appears to be a general-purpose
-	  interface which may be shared by multiple programs, so other programs
-	  may also support this call with differing signatures
-SeeAlso: AX=8000h"ASCII",AX=8002h"ASCII"
-----------2F8002-----------------------------
-INT 2F - ASCII v2.00 - ???
+	DS:SI -> ASCIZ signature string for desired TSR (see below)
+Return: BX = process handle or 0000h if specified TSR not installed
+	ES:DI -> process block for TSR (see AX=8000h"CS_TSR") if BX<>0000h
+Note:	A widely-available copy of ASCII billing itself as "ASCII 2.OO by
+	  Nick Zaikin Jr." is in fact a hacked copy of the Compact Soft
+	  ASCII v4.23 which is identical except for the changed attribution
+	  and version (in fact, some instances of "4.23" were missed); the
+	  hacked copy requires the signature string
+	  "ASCII 2.OO by Nick Zaikin Jr." instead of the unhacked version's
+	  simple signature "ASCII"
+SeeAlso: AX=8000h"CS_TSR",AX=8002h"CS_TSR"
+
+Values for signature strings:
+ "ASCII"	ASCII, a popup ASCII table with character input
+ "Halculator"	HALC, a 32-bit RPN WYSIWIH calculator with undo and ptr support
+ "AntiTurbo"	AT!, an intelligent system slow-down utility
+--------t-2F8002-----------------------------
+INT 2F - CS_TSR specification - GET PROCESS BLOCK BY PROCESS HANDLE
 	AX = 8002h
-	BX = instance number??? (value returned by AX=8001h)
-Return: ES:DI -> ??? (same as returned by AX=8000h) if instance number matches
-	call chained if instance number did not match
-SeeAlso: AX=8000h"ASCII",AX=8001h"ASCII"
+	BX = process handle for TSR (see AX=8001h"CS_TSR")
+Return: ES:DI -> process block for specified TSR (see AX=8000h"CS_TSR")
+		unchanged if no match for process handle
+Note:	This function is used to allocate a process handle when the TSR
+	  installs itself, by setting ES:DI to point at something other than
+	  a CS_TSR process block's signature string and iterating through the
+	  possible process handles (0001h to FFFFh) until ES:DI is returned
+	  unchanged
+SeeAlso: AX=8000h"CS_TSR",AX=8001h"CS_TSR",AX=8003h"CS_TSR"
+--------t-2F8003-----------------------------
+INT 2F - CS_TSR specification - CUSTOM SUBFUNCTION
+	AX = 8003h
+	BX = process handle for TSR (see AX=8001h"CS_TSR")
+	other registers vary by TSR
+Return: vary by TSR, unchanged if not supported
+Program: the CS_TSR specification is a standardized TSR interface by Compact
+	  Soft group in Kiev, Ukraine
+SeeAlso: AX=8000h"CS_TSR",AX=8001h"CS_TSR",AX=8002h"CS_TSR"
 --------F-2F80FB-----------------------------
 INT 2F - FaxBIOS interface - COMMAND SUBMISSION
 	AX = 80FBh
@@ -235,7 +273,7 @@ Values for result code:
  0614h	person is already in the group
  0615h	person is not in the group & cannot be removed
  0616h	a graphics file to be created already exists
- 0617h	a grphics file to be read is empty
+ 0617h	a graphics file to be read is empty
  0618h	GRAPH_CREATE_PAGE called before GRAPH_END_PAGE
  0619h	graph read or write attempted without goto or create
  061Ah	graph page contains no data
@@ -1026,8 +1064,7 @@ Index:	screen saver;InnerMission
 INT 2F - MICRO.EXE - INSTALLATION CHECK
 	AX = 9400h
 Return: AL = 07h or 08h if installed
-Program: MICRO.EXE is a TSR of the Microsoft Mail part of Workgroup Connection,
-	  bundled with MS-DOS 6.0
+Program: MICRO.EXE is a TSR of the Microsoft Mail part of Workgroup Connection
 SeeAlso: AX=9401h,AX=9402h,AX=9403h,AX=9404h,INT 21/AH=3Fh"WORKGRP.SYS"
 --------e-2F9401-----------------------------
 INT 2F - MICRO.EXE - SET ??? FLAG
@@ -1085,7 +1122,7 @@ INT 2F U - INTMON v2.1 - HOOK INTERRUPT???
 	AX = 9E03h
 	BH = interrupt number???
 Return: ???
-Note:	if AH > 03h on entry, INTMON 2.1 returns immediately
+Note:	if AL > 03h on entry, INTMON 2.1 returns immediately
 SeeAlso: AX=9E00h,AX=9E01h
 --------G-2F9F00-----------------------------
 INT 2F U - INTCFG v2.1 - INSTALLATION CHECK
@@ -1160,7 +1197,7 @@ Return: AL = 52h ("R") if installed
 Note:	older versions of Right Hand Man (from which Team evolved) store the
 	  signature "RH" at offset 103h in the INT 2F handler's segment
 SeeAlso: INT A4"Right Hand Man"
-----------2FA900-----------------------------
+--------U-2FA900-----------------------------
 INT 2F - METZTSR.COM - INSTALLATION CHECK
 	AX = A900h
 	CF set
@@ -1172,7 +1209,7 @@ Notes:	METZTSR.COM prevents METZ applications (such as the MAGIC screen
 	the default multiplex number is A9h, but may be set to any value from
 	  80h to FFh with a commandline switch
 SeeAlso: AX=A901h,AX=A902h
-----------2FA901-----------------------------
+--------U-2FA901-----------------------------
 INT 2F - METZTSR.COM - GET TIME OF LAST KEYBOARD ACTIVITY
 	AX = A901h
 	CF set
@@ -1180,7 +1217,7 @@ Return: CF clear if successful
 	    AX:DX = BIOS time at which INT 09 was last invoked
 	CF set if not present
 SeeAlso: INT 09,INT 1A/AH=00h
-----------2FA902-----------------------------
+--------U-2FA902-----------------------------
 INT 2F - METZTSR.COM - SET METZ Ctrl-Alt-Del FLAG
 	AX = A902h
 	BL = new value
@@ -1191,7 +1228,7 @@ Return: CF clear if successful
 	    AX = 97FFh
 	CF set if not resident
 SeeAlso: AX=A903h
-----------2FA903-----------------------------
+--------U-2FA903-----------------------------
 INT 2F - METZTSR.COM - GET METZ Ctrl-Alt-Del FLAG
 	AX = A903h
 	CF set
@@ -1255,7 +1292,7 @@ Return: CF clear if successful
 	CF set on error (unsupported code page)
 	    AX = 0000h
 SeeAlso: AX=AD02h
-----------2FAD01-----------------------------
+--------O-2FAD01-----------------------------
 INT 2F U - DR-DOS 3.41,5.0 KEYB - GET CONFIGURATION
 	AX = AD01h
 Return: BX = current code page
@@ -1661,7 +1698,7 @@ Notes:	this call replaces the address to which the network software chains on
 	  handler to unlink, but does not allow a new handler to be added
 	  such that the network gets the INT 09 first unless the new handler
 	  completely takes over INT 09 and never chains.
-	called by DOS 3.2 KEYBxx.COM
+	this function is called by the DOS 3.2 KEYBxx.COM
 SeeAlso: AX=B908h
 --------N-2FB809-----------------------------
 INT 2F - LANtastic Network, NetWare Lite - VERSION CHECK
@@ -1759,7 +1796,7 @@ INT 2F - PC Network RECEIVER.COM - GET RECEIVER.COM INT 2F HANDLER ADDRESS
 	AX = B901h
 Return: AL = ???
 	ES:BX -> RECEIVER.COM INT 2F handler
-Note:	allows more efficient execution by letting the caller bypass any other
+Desc:	allows more efficient execution by letting the caller bypass any other
 	  INT 2F handlers which have been added since RECEIVER.COM was
 	  installed
 --------N-2FB903-----------------------------
@@ -1913,8 +1950,9 @@ Call LSL entry point with:
 		ES:SI -> buffer for entry point record (see below)
 		Return: ES:SI buffer filled
 	BX = 0003h "Request MLID API entry point"
-		Return: ES:SI -> MLID API entry point
-			     (call with BX=function 00h-10h, not range-checked)
+		Return: ES:SI -> MLID (Multiple Link Interface Driver) API
+				  entry point (call with BX=function 00h-10h,
+				  not range-checked)
 Notes:	LSL v1.10 executes BX=0003h for all other values of BX
 	see "Novell LAN Driver Developer's Guide, Volume III" for details of
 	  function 0001h
@@ -2382,7 +2420,7 @@ Note:	AH=C0h is the default multiplex number; if this is already in use,
 	  After Dark will try successive values up to AH=FFh
 SeeAlso: AX=C001h,AX=C003h,AX=C005h,AX=C007h,AX=C009h,AX=C020h
 Index:	screen saver;AD-DOS
-----------2FC000-----------------------------
+--------U-2FC000-----------------------------
 INT 2F U - WANG_ER.COM - INSTALLATION CHECK
 	AX = C000h
 Return: AL = FFh if installed
@@ -2393,7 +2431,7 @@ Note:	AH=C0h is the default; WANG_ER scans all multiplex numbers from C0h to
 	  FFh for a free spot on installation.	The installation check is
 	  completed by comparing the resident code with the copy in the
 	  transient program
-----------2FC000-----------------------------
+--------i-2FC000-----------------------------
 INT 2F - ASPIHOOK.SYS - INSTALLATION CHECK
 	AX = C000h
 Return: AL = FFh if multiplex number in use
@@ -2403,6 +2441,64 @@ Program: ASPIHOOK is a device driver for monitoring SCSI activity through an
 	  activity monitor from Spirit of Performance, Inc.
 Note:	AH=C0h is the default; ASPIHOOK searches for a free multiplex number
 	  between C0h and FFh on which to install itself
+SeeAlso: AX=C000h"PMEASURE"
+--------i-2FC000-----------------------------
+INT 2F - PMEASURE.EXE - INSTALLATION CHECK
+	AX = C000h
+Return: AL = FFh if multiplex number in use
+	    ES:DI -> ASCIZ signature "PMEASURE.EXE" if PMEASURE.EXE installed
+Program: PMEASURE.EXE is a TSR for monitoring system hardware activity which
+	  is part of the Personal Measure system activity monitor from Spirit
+	  of Performance, Inc.
+Notes:	AH=C0h is the default; PMEASURE.EXE searches for a free multiplex
+	  number between C0h and FFh on which to install itself. If
+	  ASPIHOOK.SYS is already installed, PMEASURE.EXE uses the next higher
+	  free multiplex number.
+SeeAlso: AX=C000h"ASPIHOOK"
+--------c-2FC000-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - INSTALLATION CHECK
+	AX = C000h
+Return: AL = FFh if installed
+	    SI = signature value 20D6h
+	    DI = signature value 8761h
+	    ES:BX -> configuration table (see below)
+	    CX = ??? (0300h)
+	    DX = ??? (0020h)
+Program: PCACHE is the resident print spooler portion of PrintCache by
+	  LaserTools; it may use either memory or disk space to spool output
+Note:	AH=C0h is the default, and may be set to any value from C0h to FFh
+	  with a commandline switch
+SeeAlso: AX=0100h/SI=20D6h,AX=C001h"PCACHE"
+
+Format of configuration table:
+Offset	Size	Description
+ 00h 26 BYTEs	ASCIZ signature string "TORQ Configuration Table: "
+ 1Ah  2 BYTEs	???
+ 1Ch	DWORD	-> data table (see below)
+ 20h  4 BYTEs	ASCIZ version string ("3.1" for v3.1)
+ 24h  5 BYTEs	???
+ 29h 12 BYTEs	ASCIZ version date string ("Aug 31 1993" for v3.1)
+ 35h	WORD	buffered port type (01h = LPT, 02h = COM)
+ 37h	WORD	buffered port BIOS port number
+ 39h  5 BYTEs	ASCIZ buffered port name ("LPTn" or "COMn")
+ 3Eh	WORD	physical port type (01h = LPT, 02h = COM)
+ 40h	WORD	physical port BIOS port number
+ 42h  5 BYTEs	ASCIZ physical port name ("LPTn" or "COMn")
+ 47h	BYTE	port driver IRQ
+ 48h 21 BYTEs	???
+ 5Dh	WORD	buffer size in K
+ 5Fh 27 BYTEs	???
+ 7Ah	BYTE	popup hotkey shift states (see INT 16/AH=02h)
+ 7Bh	BYTE	popup hotkey scan code (see INT 09h"IRQ1")
+ 7Ch  4 BYTEs	???
+ 80h 20 BYTEs	ASCIZ printer type name
+	???
+
+Format of data table:
+Offset	Size	Description
+ 00h  2 BYTEs	???
+ 02h	DWORD	-> ??? entry point
+	???
 --------M-2FC001-----------------------------
 INT 2F - QMR - REQUEST HARDWARE RESET
 	AX = C001h
@@ -2418,6 +2514,15 @@ Return: AL = 00h if successful
 	    ES = AD-DOS TSR Code Segment
 SeeAlso: AX=C000h"AD-DOS"
 Index:	screen saver;AD-DOS
+--------c-2FC001-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - GET ENTRY POINTS
+	AX = C001h
+Return: AL = FFh if installed
+	    ES:BX -> ???
+	    ES:DX -> ???
+	    ES:SI -> ???
+	    ES:DI -> ??? (equivalent to AX=C002h)
+SeeAlso: AX=C000h"PCACHE",AX=C002h"PCACHE"
 --------V-2FC002-----------------------------
 INT 2F - AD-DOS - CHECK FOR NEW INPUT
 	AX = C002h
@@ -2435,6 +2540,14 @@ Return: ES = QMR code segment
 	AL destroyed
 Desc:	this call temporarily disables QMR
 SeeAlso: AX=C000h"QMR",AX=C003h"QMR"
+--------c-2FC002-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - GET BUFFER SIZE
+	AX = C002h
+Return: AX = ??? in K
+	BX = size of print buffer in K
+Program: PCACHE is the resident print spooler portion of PrintCache by
+	  LaserTools; it may use either memory or disk space to spool output
+SeeAlso: AX=C000h"PCACHE"
 --------V-2FC003-----------------------------
 INT 2F - AD-DOS - SET MINUTES TO WAIT
 	AX = C003h
@@ -2454,20 +2567,41 @@ Return: ES = QMR code segment
 	AL destroyed
 Desc:	this call enables QMR after it has been disabled
 SeeAlso: AX=C000h"QMR",AX=C002h"QMR"
+--------c-2FC003-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - SET ??? FLAG
+	AX = C003h
+Return: BX destroyed
+SeeAlso: AX=C004h"PCACHE"
 --------V-2FC004-----------------------------
 INT 2F - AD-DOS - GET MINUTES TO WAIT
 	AX = C004h
 Return: AL = 00h if successful
 	    BX = minutes to wait before blanking screen
-SeeAlso: AX=C000h"AD-DOS",AX=C003h
+SeeAlso: AX=C000h"AD-DOS",AX=C003h"AD-DOS"
 Index:	screen saver;AD-DOS
+--------c-2FC004-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - CLEAR ??? FLAG
+	AX = C004h
+Return: BX destroyed
+SeeAlso: AX=C003h"PCACHE"
 --------V-2FC005-----------------------------
 INT 2F - AD-DOS - SET BLANKER STATUS
 	AX = C005h
 	BX = new state (0000h inactive, 0001h active) (default 0001h)
 Return: AL = 00h if successful
-SeeAlso: AX=C006h
+SeeAlso: AX=C006h"AD-DOS"
 Index:	screen saver;AD-DOS
+--------c-2FC005-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - ???
+	AX = C005h
+	???
+Return: BX destroyed
+	???
+Program: PCACHE is the resident print spooler portion of PrintCache by
+	  LaserTools; it may use either memory or disk space to spool output
+Note:	AH=C0h is the default, and may be set to any value from C0h to FFh
+	  with a commandline switch
+SeeAlso: AX=C000h"PCACHE"
 --------V-2FC006-----------------------------
 INT 2F - AD-DOS - GET BLANKER STATUS
 	AX = C006h
@@ -2477,16 +2611,32 @@ Program: AD-DOS is the DOS version of the After Dark screen blanker for
 	  MS Windows
 Note:	AH=C0h is the default multiplex number; if this is already in use,
 	  After Dark will try successive values up to AH=FFh
-SeeAlso: AX=C000h"AD-DOS",AX=C005h
+SeeAlso: AX=C000h"AD-DOS",AX=C005h"AD-DOS"
 Index:	screen saver;AD-DOS
+--------c-2FC006-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - ???
+	AX = C006h
+	???
+Return: BX destroyed
+	???
+Note:	this function appears to be identical to AX=C007h
+SeeAlso: AX=C000h"PCACHE",AX=C007h"PCACHE"
 --------V-2FC007-----------------------------
 INT 2F - AD-DOS - SET HOT KEY
 	AX = C007h
 	BX = hot key
 	CL = hot key shift status
 Return: AL = 00h if successful
-SeeAlso: AX=C008h
+SeeAlso: AX=C008h"AD-DOS"
 Index:	screen saver;AD-DOS
+--------c-2FC007-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - ???
+	AX = C007h
+	???
+Return: BX destroyed
+	???
+Note:	this function appears to be identical to AX=C006h
+SeeAlso: AX=C000h"PCACHE",AX=C006h"PCACHE"
 --------V-2FC008-----------------------------
 INT 2F - AD-DOS - GET CURRENT HOT KEY
 	AX = C008h
@@ -2495,8 +2645,13 @@ Return: AX = status
 		BX = Hot Key
 		CL = Hot Key Shift Status
 	    0008h otherwise
-SeeAlso: AX=C000h"AD-DOS",AX=C007h
+SeeAlso: AX=C000h"AD-DOS",AX=C007h"AD-DOS"
 Index:	screen saver;AD-DOS
+--------c-2FC008-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - CLEAR ??? FLAG
+	AX = C008h
+Return: BX destroyed
+SeeAlso: AX=C000h"PCACHE",AX=C009h"PCACHE"
 --------V-2FC009-----------------------------
 INT 2F - AD-DOS - UNBLANK MONITOR
 	AX = C009h
@@ -2507,6 +2662,15 @@ Notes:	AH=C0h is the default multiplex number; if this is already in use,
 	  After Dark will try successive values up to AH=FFh
 	this function works by simulating keyboard activity
 Index:	screen saver;AD-DOS
+--------c-2FC009-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - SET ??? FLAG
+	AX = C009h
+Return: BX destroyed
+Program: PCACHE is the resident print spooler portion of PrintCache by
+	  LaserTools; it may use either memory or disk space to spool output
+Note:	AH=C0h is the default, and may be set to any value from C0h to FFh
+	  with a commandline switch
+SeeAlso: AX=C000h"PCACHE",AX=C008h"PCACHE"
 --------V-2FC00A-----------------------------
 INT 2F - AD-DOS - ???
 	AX = C00Ah
@@ -2516,6 +2680,18 @@ Return: AX = status
 		BL = ??
 	    000Ah failed
 Index:	screen saver;AD-DOS
+--------c-2FC00A-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - ???
+	AX = C00Ah
+	???
+Return: AH = bit flags
+	    bit 5: ???
+	AL = bit flags
+	    bit 4: ???
+	    bit 3: ???
+	BX destroyed
+	???
+SeeAlso: AX=C000h"PCACHE"
 --------V-2FC00B-----------------------------
 INT 2F - AD-DOS - ???
 	AX = C00Bh
@@ -2523,6 +2699,11 @@ Return: AX = status
 	    0000h successful
 	    000Bh failed
 Index:	screen saver;AD-DOS
+--------c-2FC00B-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - NOP
+	AX = C00Bh
+Return: BX destroyed
+SeeAlso: AX=C000h"PCACHE"
 --------V-2FC00C-----------------------------
 INT 2F - AD-DOS - SET ??? INTERNAL FLAG TO 01h
 	AX = C00Ch
@@ -2534,19 +2715,156 @@ Program: AD-DOS is the DOS version of the After Dark screen blanker for
 Note:	AH=C0h is the default multiplex number; if this is already in use,
 	  After Dark will try successive values up to AH=FFh
 Index:	screen saver;AD-DOS
+--------c-2FC00C-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - GET ???
+	AX = C00Ch
+Return: AX = ??? (0000h)
+	BX = ??? (0000h)
+	CX = ??? (0100h)
+	DL = ???
+	DH = ???
+SeeAlso: AX=C000h"PCACHE"
+--------c-2FC00D-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - SET ???
+	AX = C00Dh
+	DL = ???
+Return: BX destroyed
+Program: PCACHE is the resident print spooler portion of PrintCache by
+	  LaserTools; it may use either memory or disk space to spool output
+Note:	AH=C0h is the default, and may be set to any value from C0h to FFh
+	  with a commandline switch
+SeeAlso: AX=C000h"PCACHE"
 --------V-2FC00E-----------------------------
 INT 2F - AD-DOS - SET PASSWORD STATUS
 	AX = C00Eh
 	BX = new state (0000h disabled, 0001h enabled)
 Return: ???
-SeeAlso: AX=C000h"AD-DOS",AX=C00Fh
+SeeAlso: AX=C000h"AD-DOS",AX=C00Fh"AD-DOS"
 Index:	screen saver;AD-DOS
+--------c-2FC00E-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - INSTALL ???
+	AX = C00Eh
+	ES:DX -> ???
+Return: BX destroyed
+Note:	ES:DX is stored internally if the variable is currently 0000h:0000h,
+	  but ignored if already set; a counter is incremented
+SeeAlso: AX=C000h"PCACHE",AX=C00Fh"PCACHE"
 --------V-2FC00F-----------------------------
 INT 2F - AD-DOS - GET PASSWORD STATUS
 	AX = C00Fh
 Return: BX = current state (0000h disabled, 0001h enabled)
-SeeAlso: AX=C00Eh
+SeeAlso: AX=C00Eh"AD-DOS"
 Index:	screen saver;AD-DOS
+--------c-2FC00F-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - REMOVE ???
+	AX = C00Fh
+Return: BX destroyed
+Note:	this function decrements the counter used by AX=C00Eh, and clears the
+	  internal pointer variable to 0000h:0000h when it reaches zero
+SeeAlso: AX=C000h"PCACHE",AX=C00Eh"PCACHE"
+--------c-2FC010-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - GET ???
+	AX = C010h
+	CX = index of ??? table (00h-02h, others treated as 00h)
+	SI = offset into data table
+Return:	AL = byte at specified offset into table
+	BX destroyed
+SeeAlso: AX=C000h"PCACHE"
+--------c-2FC011-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - GET ???
+	AX = C011h
+Return: AX = ??? (0007h)
+	BX = ??? (0001h)
+	CH = ???
+	CL = ???
+SeeAlso: AX=C000h"PCACHE"
+--------c-2FC012-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - GET ???
+	AX = C012h
+Return: AX = ???
+	BX = ???
+	CX = ???
+	DX = ???
+SeeAlso: AX=C000h"PCACHE"
+--------c-2FC013-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - ???
+	AX = C013h
+	???
+Return: BX destroyed
+	???
+Program: PCACHE is the resident print spooler portion of PrintCache by
+	  LaserTools; it may use either memory or disk space to spool output
+Note:	AH=C0h is the default, and may be set to any value from C0h to FFh
+	  with a commandline switch
+SeeAlso: AX=C000h"PCACHE"
+--------c-2FC014-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - ???
+	AX = C014h
+	???
+Return: BX destroyed
+	???
+SeeAlso: AX=C000h"PCACHE"
+--------c-2FC015-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - ???
+	AX = C015h
+	???
+Return: BX destroyed
+	???
+SeeAlso: AX=C000h"PCACHE"
+--------c-2FC016-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - INCREMENT ???
+	AX = C016h
+Return: BX destroyed
+SeeAlso: AX=C000h"PCACHE",AX=C017h"PCACHE"
+--------c-2FC017-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - DECREMENT ???
+	AX = C017h
+Return: BX destroyed
+SeeAlso: AX=C000h"PCACHE",AX=C016h"PCACH"
+--------c-2FC018-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - ???
+	AX = C018h
+	???
+Return: BX destroyed
+	???
+Note:	the first instruction of this function is an indirect jump which points
+	  at a RET by default
+SeeAlso: AX=C000h"PCACHE",AX=C019h"PCACHE"
+--------c-2FC019-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - ???
+	AX = C019h
+	???
+Return: BX destroyed
+	???
+Note:	the first instruction of this function is an indirect jump which points
+	  at a RET by default
+SeeAlso: AX=C000h"PCACHE",AX=C018h"PCACHE"
+--------c-2FC01A-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - CLEAR ??? FLAG
+	AX = C01Ah
+Return: BX destroyed
+SeeAlso: AX=C000h"PCACHE",AX=C01Bh"PCACHE"
+--------c-2FC01B-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - SET ??? FLAG
+	AX = C01Bh
+Return: BX destroyed
+SeeAlso: AX=C000h"PCACHE",AX=C01Ah"PCACHE"
+--------c-2FC01C-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - ???
+	AX = C01Ch
+	???
+Return: AX = ???
+	BX destroyed
+SeeAlso: AX=C000h"PCACHE"
+--------c-2FC01D-----------------------------
+INT 2F U - PrintCache v3.1 PCACHE.EXE - NOP
+	AX = C01Dh-C01Fh
+Return: BX destroyed
+Program: PCACHE is the resident print spooler portion of PrintCache by
+	  LaserTools; it may use either memory or disk space to spool output
+Note:	AH=C0h is the default, and may be set to any value from C0h to FFh
+	  with a commandline switch
+SeeAlso: AX=C000h"PCACHE"
 --------V-2FC020-----------------------------
 INT 2F - AD-DOS - GET AND RESET VxD API STATUS
 	AX = C020h
@@ -2665,25 +2983,25 @@ Values for SpaceManager program identifier:
  9001h	SELECTC (SelectCompress)
  9002h	SUPERX (SuperExchange)
  9003h	FORTUNE (FortuneTeller)
---------d-2FC301DX9003-----------------------
+--------d-2FC301-----------------------------
 INT 2F U - SpaceManager - ???
 	AX = C301h
 	DX = program identifier (9000h,9001h,9003h) (see AX=C300h)
 	???
 Return: ???
---------d-2FC302DX9003-----------------------
+--------d-2FC302-----------------------------
 INT 2F U - SpaceManager - ENABLE PROGRAM
 	AX = C302h
 	DX = program identifier (9000h,9001h,9003h) (see AX=C300h)
 Return: AX destroyed
 SeeAlso: AX=C303h,AX=C306h
---------d-2FC303DX9003-----------------------
+--------d-2FC303-----------------------------
 INT 2F U - SpaceManager - DISABLE PROGRAM
 	AX = C303h
 	DX = program identifier (9000h,9001h,9003h) (see AX=C300h)
 Return: AX destroyed
 SeeAlso: AX=C302h,AX=C306h
---------d-2FC304DX9003-----------------------
+--------d-2FC304-----------------------------
 INT 2F U - SpaceManager - GET PER-DRIVE ENABLEMENT TABLE
 	AX = C304h
 	DX = program identifier (9000h,9001h,9003h) (see AX=C300h)
@@ -2700,7 +3018,7 @@ INT 2F U - SpaceManager - ???
 	DX = program identifier (9000h,9001h) (see AX=C300h)
 	???
 Return: ???
---------d-2FC306DX9003-----------------------
+--------d-2FC306-----------------------------
 INT 2F U - SpaceManager - CHECK WHETHER PROGRAM ENABLED
 	AX = C306h
 	DX = program identifier (9000h,9001h,9003h) (see AX=C300h)
@@ -2747,7 +3065,7 @@ Return: AX = status
 	    0000h successful???
 Note:	called by TBSCANX
 SeeAlso: AX=CA00h
-----------2FC9FF-----------------------------
+--------r-2FC9FF-----------------------------
 INT 2F C - StackMan - INSTALLATION BROADCAST
 	AX = C9FFh
 	BL = BCD version number
@@ -2762,7 +3080,7 @@ Notes:	called by StackMan when it goes resident to inform interested TSRs that
 	  offset 0Ah from the INT B4 handler
 SeeAlso: INT B4"StackMan",INT B5"StackMan"
 Index:	installation check;STACKMAN|broadcasts;STACKMAN installation
-----------2FCA-------------------------------
+--------F-2FCA-------------------------------
 INT 2F - FAXPLUS - FAX TSR
 	AH = CAh
 	???
@@ -2859,7 +3177,7 @@ INT 2F - Communicating Applications Specification - SUBMIT A TASK
 	AX = CB01h
 	DS:DX -> ASCIZ name of task control file
 Return: AX >= 0: event handle
-	   < 0: error code
+	AX < 0: error code
 Note:	files needed for an event must be kept until task is complete or error
 SeeAlso: AX=CB0Bh,AX=CB15h
 
@@ -2937,7 +3255,7 @@ Error codes (AH = class, AL = subcode, value passed back is 2's complement):
 INT 2F - Communicating Applications Specification - ABORT CURRENT EVENT
 	AX = CB02h
 Return: AX >= 0: event handle of aborted event
-	   < 0: error code (see AX=CB01h)
+	AX < 0: error code (see AX=CB01h)
 Note:	termination could take up to 30 seconds
 SeeAlso: AX=CB08h,AX=CB10h
 --------F-2FCB05-----------------------------
@@ -2961,7 +3279,7 @@ INT 2F - Communicating Applications Specification - FIND FIRST QUEUE ENTRY
 	    02h log queue
 Return: AX = 0000h successful
 	    BX = event handle for found event
-	   < 0	   error code (see AX=CB01h)
+	AX < 0	   error code (see AX=CB01h)
 SeeAlso: AX=CB06h,AX=CB07h
 --------F-2FCB06-----------------------------
 INT 2F - Communicating Applications Specification - FIND NEXT QUEUE ENTRY
@@ -2972,7 +3290,7 @@ INT 2F - Communicating Applications Specification - FIND NEXT QUEUE ENTRY
 	    02h log queue
 Return: AX = 0000h successful
 	    BX = event handle for found event
-	   < 0	   error code (see AX=CB01h)
+	AX < 0	   error code (see AX=CB01h)
 Note:	direction of search is same as preceding FIND FIRST call
 SeeAlso: AX=CB05h
 --------F-2FCB07-----------------------------
@@ -2990,7 +3308,7 @@ INT 2F - Communicating Applications Specification - OPEN FILE
 	    04h group file in log queue (v1.2+)
 Return: AX = 0000h successful
 	    BX = DOS file handle for requested file
-	   < 0	   error code (see AX=CB01h)
+	AX < 0	   error code (see AX=CB01h)
 Note:	the returned file handle has been opened in read-only mode and should
 	  be closed with INT 21/AH=3Eh after use
 SeeAlso: AX=CB01h,AX=CB05h,AX=CB14h
@@ -3009,7 +3327,7 @@ INT 2F - Communicating Applications Specification - DELETE FILE
 		recommended, to maintain integrity of log) and corresponding
 		group file if it exists
 Return: AX = 0000h successful
-	   < 0	   error code (see AX=CB01h)\
+	AX < 0	   error code (see AX=CB01h)\
 SeeAlso: AX=CB02h,AX=CB09h
 --------F-2FCB09-----------------------------
 INT 2F - Communicating Applications Specification - DELETE ALL FILES IN Q
@@ -3021,7 +3339,7 @@ INT 2F - Communicating Applications Specification - DELETE ALL FILES IN Q
 	    02h delete all control files in log queue, including all group
 		files
 Return: AX = 0000h successful
-	   < 0	   error code (see AX=CB01h)
+	AX < 0	   error code (see AX=CB01h)
 SeeAlso: AX=CB08h
 --------F-2FCB0A-----------------------------
 INT 2F - Communicating Applications Specification - GET EVENT DATE
@@ -3035,7 +3353,7 @@ Return: AX = 0000h successful
 		CX = year
 		DH = month
 		DL = day
-	   < 0	   error code (see AX=CB01h)
+	AX < 0	   error code (see AX=CB01h)
 SeeAlso: AX=CB0Bh,AX=CB0Ch
 --------F-2FCB0B-----------------------------
 INT 2F - Communicating Applications Specification - SET TASK DATE
@@ -3045,7 +3363,7 @@ INT 2F - Communicating Applications Specification - SET TASK DATE
 	DH = month
 	DL = day
 Return: AX = 0000h successful
-	   < 0	   error code (see AX=CB01h)
+	AX < 0	   error code (see AX=CB01h)
 Note:	setting a task's date and time to before the current date and time
 	  causes it to execute immediately
 SeeAlso: AX=CB01h,AX=CB0Ah,AX=CB0Dh
@@ -3062,7 +3380,7 @@ Return: AX = 0000h successful
 		CL = minute
 		DH = second
 		DL = 00h
-	   < 0	   error code (see AX=CB01h)
+	AX < 0	   error code (see AX=CB01h)
 SeeAlso: AX=CB0Ah,AX=CB0Dh
 --------F-2FCB0D-----------------------------
 INT 2F - Communicating Applications Specification - SET TASK TIME
@@ -3073,7 +3391,7 @@ INT 2F - Communicating Applications Specification - SET TASK TIME
 	DH = second
 	DL unused
 Return: AX = 0000h successful
-	   < 0	   error code (see AX=CB01h)
+	AX < 0	   error code (see AX=CB01h)
 Note:	setting a task's date and time to before the current date and time
 	  causes it to execute immediately
 SeeAlso: AX=CB0Bh,AX=CB0Ch,AX=CB10h
@@ -3083,7 +3401,7 @@ INT 2F - Communicating Applications Specification - GET EXTERNAL DATA BLOCK
 	DS:DX -> 256-byte buffer
 Return: AX = 0000h successful
 		buffer filled
-	   < 0	   error code (see AX=CB01h)
+	AX < 0	   error code (see AX=CB01h)
 
 Format of external data block:
 Offset	Size	Description
@@ -3103,8 +3421,8 @@ INT 2F - Communicating Applications Specification - GET/SET AUTORECEIVE
 	    01h set autoreceive state
 		DH = number of rings before answer, 00h = never
 Return: AX = 0000h autoreceive disabled
-	   = N	   number of rings before answer
-	   < 0	   error code (see AX=CB01h)
+	AX = N	   number of rings before answer
+	AX < 0	   error code (see AX=CB01h)
 --------F-2FCB10-----------------------------
 INT 2F - Communicating Applications Specification - GET CURRENT EVENT STATUS
 	AX = CB10h
@@ -3113,7 +3431,7 @@ Return: AX = 0000h successful
 		BX = event handle of current event or negative error code if
 			no current event
 		buffer filled
-	   < 0	   error code (see AX=CB01h)
+	AX < 0	   error code (see AX=CB01h)
 SeeAlso: AX=CB02h,AX=CB0Dh
 
 Format of status area:
@@ -4131,7 +4449,7 @@ INT 2F - MDEBUG command driver - USER DEFINED FUNCTIONS
 	AL = 80h-FFh
 Note:	these functions are reserved for user defined features (e.g.
 	  communication between the transient und resident parts of the driver)
-----------2FD200-----------------------------
+--------U-2FD200-----------------------------
 INT 2F - PCL-838.EXE - INSTALLATION CHECK
 	AX = D200h
 Return: AL = FFh if installed??? (documented as AX = return value)
@@ -4158,7 +4476,7 @@ Notes:	AH=D2h is the default multiplex number for the Quarterdeck RPCI
 	  Quarterdeck product, it just chains to the previous INT 2F handler
 SeeAlso: AX=D201h/BX=4849h,AX=D201h/BX=4D41h,AX=D201h/BX=4D45h
 SeeAlso: AX=D201h/BX=5145h,AX=D201h/BX=5649h
-----------2FD201-----------------------------
+--------U-2FD201-----------------------------
 INT 2F - PCL-838.EXE - UNINSTALL
 	AX = D201h
 Return: AX = return value
@@ -4283,7 +4601,7 @@ Offset	Size	Description
  01h	WORD	mappable segment count
  03h  N WORD	mappable segments
 	WORD	offset to previously saved map???
-----------2FD202-----------------------------
+--------U-2FD202-----------------------------
 INT 2F - PCL-838.EXE - EXECUTE PCL838 COMMANDS
 	AX = D202h
 	CX:BX -> parameter table
@@ -4338,7 +4656,8 @@ INT 2F - 4DOS.COM v2.1+ - API
 	    01h (internal, v2.1-3.03) terminate current copy of 4DOS
 		Return: nothing
 		(internal, v4.0) ???
-		Return: ES:BX -> data area (see below)
+		Return: AX = 44DDh
+			ES:BX -> data area (see below)
 	    02h ???
 		DX = ???
 	---v2.1-3.03 only---
@@ -4420,14 +4739,14 @@ Offset	Size	Description
 		bit 1: program is in safe code, so flash the heart character
  11h	WORD	position of heartbeat on screen, normally 009Eh (last column
 		of second line)
-----------2FD600-----------------------------
+--------T-2FD600-----------------------------
 INT 2F U - VEDIT VSWAP - INSTALLATION CHECK
 	AX = D600h
 Return: AL = D6h if installed
 Program: VSWAP is the resident portion of VEDIT's "swapper" capability; VEDIT
 	  is a programmer's text editor by Greenview Data.
 SeeAlso: AX=D601h,AX=D602h
-----------2FD601-----------------------------
+--------T-2FD601-----------------------------
 INT 2F U - VEDIT VSWAP - ???
 	AX = D601h
 	BL = subfunction number???
@@ -4435,7 +4754,7 @@ Return: BL = return code ???
 	ES = resident portion's data??? segment
 	DX = resident portion's code segment
 SeeAlso: AX=D600h"VSWAP"
-----------2FD602-----------------------------
+--------T-2FD602-----------------------------
 INT 2F U - VEDIT VSWAP - EXEC PROGRAM WITH SWAP
 	AX = D602h
 	other registers set as for INT 21/AX=4B00h
@@ -4590,7 +4909,7 @@ Return: AL = FFh if installed
 	    CL = current state (00h SERVER is disabled, 01h SERVER is active)
 	    ES:DI -> private API entry point (see below)
 	    SI = ??? (offset of configuration info?)
-SeeAlso: AX=7A00h,AX=D800h
+SeeAlso: AX=7A00h,AX=D800h,INT 2A/AX=D852h
 
 Call SERVER API entry point with:
 	BX = function
@@ -4636,9 +4955,11 @@ INT 2F - ZyXEL ZFAX - INSTALLATION CHECK
 	AX = DA00h
 Return: AH = enabled state (00h = enabled, 01h = disabled)
 	AL = 5Ah installed
-Note:	ZFAX is the bundled FAX software which comes with the ZyXEL model
+Program: ZFAX is the bundled FAX software which comes with the ZyXEL model
 	  fax modems.
-SeeAlso: AX=CBDCh,AX=DA01h,AX=DA02h,AX=DA03h
+Note:	This function, and the other DAxxh functions, may apply only to version
+	  1 of the software; see AX=DB00h for the version 2 installation check
+SeeAlso: AX=CBDCh,AX=DA01h,AX=DA02h,AX=DA03h,AX=DB00h
 --------F-2FDA01-----------------------------
 INT 2F - ZyXEL ZFAX - UNINSTALL
 	AX = DA01h
@@ -4674,6 +4995,13 @@ Return: AX = 00FFh if installed
 	    BX:CX -> MIB table
 Program: BWSNMP is part of the BW-NFS package
 SeeAlso: INT 62"BW-TCP"
+--------F-2FDB00-----------------------------
+INT 2F - ZyXEL ZFAX v2.0-2.23 - INSTALLATION CHECK
+	AX = DB00h
+Return:	AL = 5Bh installed
+Program: ZFAX is the bundled FAX software which comes with the ZyXEL model
+	  fax modems.
+SeeAlso: AX=CBDCh,AX=DA01h,AX=DA02h,AX=DA03h
 --------K-2FDC00-----------------------------
 INT 2F - GOLD.COM - INSTALLATION CHECK
 	AX = DC00h
@@ -4767,7 +5095,7 @@ Offset	Size	Description
  15h	BYTE	FAT entry size: 00h 12-bit, FFh 16-bit
  16h	WORD	count of open files in RAM disk
  18h	BYTE	unused
---------Q-2FDE00BX4445-----------------------
+--------Q-2FDE00BX4456-----------------------
 INT 2F - DESQview v2.26+ External Device Interface - INSTALLATION CHECK
 	AX = DE00h
 	BX = 4456h ("DV")
@@ -5259,6 +5587,15 @@ Note:	E3h is the default function number, but can be set to any value from
 	  C0h to FFh
 SeeAlso: AX=E100h,AX=E301h,AX=E302h,AX=E303h,AX=E304h,AX=E305h,AX=E306h
 SeeAlso: AX=E307h,INT 66"Newkey"
+--------V-2FE300-----------------------------
+INT 2F - Blank - INSTALLATION CHECK
+	AX = E300h
+Return: AL = FFh if installed
+	    ES = resident code segment
+Program: Blank is a shareware screen blanker by Yonah Schmeidler
+Note:	AH=E3h is the default, which may be reconfigured by the installation
+	  program in the registered version
+Index:	screen saver;Blank
 --------K-2FE301-----------------------------
 INT 2F U - ANARKEY.COM v2+ - GET ???
 	AX = E301h
@@ -5793,7 +6130,7 @@ INT 2F - WINX - EXECUTE COMMAND
 Return: AX = FFFFh if WINX is busy processing a different request
 	   = 0000h if successful
 SeeAlso: AX=F200h,AX=F202h
-----------2FF400-----------------------------
+--------G-2FF400-----------------------------
 INT 2F - FINDIRQ.COM - INSTALLATION CHECK
 	AX = F400h
 Return: AL = 01h if installed
@@ -5801,7 +6138,7 @@ Program: FINDIRQ is a program by Rick Knoblaugh published in the 9/28/93 issue
 	  of PC Magazine; when run as a TSR it can determine which IRQs are
 	  used only when a device is active
 SeeAlso: AX=F401h
-----------2FF401CX5121-----------------------
+--------G-2FF401CX5121-----------------------
 INT 2F - FINDIRQ.COM - GET HOOKED INTERRUPTS
 	AX = F401h
 	CX = 5121h ('Q!')
@@ -6226,7 +6563,7 @@ INT 2F PU - Borland C++ 3.0 DPMILOAD.EXE - UNUSED
 --------E-2FFB42BX000C-----------------------
 INT 2F PU - Borland C++ 3.0 DPMILOAD.EXE - FREE DESCRIPTORS FOR MEMORY BLOCK???
 	AX = FB42h
-	BX = 000Ch ???
+	BX = 000Ch
 	ES:SI -> memory block info ??? (see AX=FB42h/BX=0002h"3.0")
 Return: DX = status???
 SeeAlso: AX=FB42h/BX=000Fh
@@ -6987,10 +7324,68 @@ INT 2F - Topware Network Operating System - INSTALLATION CHECK
 Return: AL = 00h not installed, OK to install
 	   = 01h not installed, not OK to install
 	   = FFh installed
-SeeAlso: AX=FF01h,INT 21/AH=FFh"Topware",INT 7A"Topware"
+SeeAlso: AX=FF01h,AX=FF02h,AX=FF10h,INT 21/AX=FF02h,INT 7A"Topware"
 --------N-2FFF01-----------------------------
 INT 2F - Topware Network Operating System - GET VERSION
 	AX = FF01h
 Return: AX = version
+SeeAlso: AX=FF00h,AX=FF02h
+--------N-2FFF02-----------------------------
+INT 2F - TopWare Network OS v5.10+ - GET TopNet VERSION STRING
+	AX = FF02h
+Return: ES:BX -> version string
+SeeAlso: AX=FF00h,AX=FF01h
+--------N-2FFF10-----------------------------
+INT 2F - TopWare Network OS v5.10+ - TopTerm - INSTALLATION CHECK
+	AX = FF10h
+Return: AL = status (00h not installed, 01h installed)
+SeeAlso: AX=FF00h,AX=FF11h,AX=FF12h,AX=FF13h
+--------N-2FFF11-----------------------------
+INT 2F - TopWare Network OS v5.10+ - TopTerm - ENABLE KEYBOARD SERVICE
+	AX = FF11h
+Note:	this function is only available on workstations, not on the server
+SeeAlso: AX=FF10h,AX=FF12h
+--------N-2FFF12-----------------------------
+INT 2F - TopWare Network OS v5.10+ - TopTerm - DISABLE KEYBOARD SERVICE
+	AX = FF12h
+Note:	this function is only available on workstations, not on the server
+SeeAlso: AX=FF10h,AX=FF11h
+--------N-2FFF13-----------------------------
+INT 2F - TopWare Network OS v5.10+ - TopTerm - SET INSTALLATION FLAG
+	AX = FF13h
+	CL = new state (00h off, 01h on)
+SeeAlso: AX=FF10h
+--------N-2FFF14-----------------------------
+INT 2F - TopWare Network OS v5.10+ - START BACKGROUND RECEIVE VIDEO DATA
+	AX = FF14h
+Note:	this function is only available on workstations, not on the server
+SeeAlso: AX=FF10h,AX=FF15h
+--------N-2FFF15-----------------------------
+INT 2F - TopWare Network OS v5.10+ - END BACKGROUND RECEIVE VIDEO DATA
+	AX = FF15h
+Note:	this function is only available on workstations, not on the server
+SeeAlso: AX=FF10h,AX=FF14h
+--------N-2FFF16-----------------------------
+INT 2F - TopWare Network OS v5.10+ - SET CONTROL NUMBER OF "SHOW" SCREEN
+	AX = FF16h
+	BL = which to set (00h TopShow, FFh TopTerm)
+	CX = destination screen
+	    0000h all stations
+	    0000h-00FFh (TopTerm only) send to group CL
+	    8001h-80FEh send to station CL
+SeeAlso: AX=FF18h
+--------N-2FFF18-----------------------------
+INT 2F - TopWare Network OS v5.10+ - SEND FULL SCREEN OF DATA FOR TopShow
+	AX = FF18h
+SeeAlso: AX=FF00h,AX=FF16h,AX=FF27h
+--------N-2FFF23-----------------------------
+INT 2F - TopWare Network OS v5.10+ - CLOSE SPOOL FILES AND START PRINTING
+	AX = FF23h
 SeeAlso: AX=FF00h
+--------N-2FFF27-----------------------------
+INT 2F - TopWare Network OS v5.10+ - GET "SHOW" TYPE
+	AX = FF27h
+Return: AL = type (00h complete version, 01h simple version)
+	BL = "show" functions flag (00h disabled, 01h enabled)
+SeeAlso: AX=FF16h,AX=FF18h
 --------!------------------------------------

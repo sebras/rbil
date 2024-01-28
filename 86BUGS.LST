@@ -33,6 +33,10 @@ AAD:	    OPCODE: d5,0a     OPCODE VARIANT
 	    systems in those ranges. For example by coding d5,10 we
 	    achieve an instruction that performs: AL = AH * 16d + AL.
 
+	    Note: the variant is not supported on all 80x86-compatible
+	    CPUs, notably the NEC V-series, because some hard-code the
+	    divisor at 0Ah
+
 AAM:	    OPCODE: d4,0a     OPCODE VARIANT
 
 	    This instruction regularly performs the following action:

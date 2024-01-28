@@ -537,8 +537,13 @@ Offset	Size	Description
 100h 256 BYTEs	3270 buffer code to ASCII translate table
 200h 256 BYTEs	3270 buffer code to EBCDIC translate table
 300h 256 BYTEs	EBCDIC to 3270 buffer code translate table
+--------N-21B3-------------------------------
+INT 21 U - Novell NetWare - DOS Requester v1.03 - ???
+	AH = B3h
+	???
+Return: ???
 --------N-21B4-------------------------------
-INT 21 U - Novell Netware - "AttachHandle"
+INT 21 U - Novell NetWare - "AttachHandle"
 	AH = B4h
 	DS:SI -> input buffer (see below)
 Return: AX = handle or return code
@@ -931,7 +936,7 @@ Return: AL = status
 Desc:	attempt to lock all physical records listed in the log table
 Notes:	this function is supported by NetWare 4.6+, Advanced NetWare 1.0+, and
 	  Alloy NTNX
-	status FFh will be retuend if one or more physical records have been
+	status FFh will be returned if one or more physical records have been
 	  exclusively locked by another process
 SeeAlso: AH=BFh,AH=C3h,AH=D1h
 --------v-21C2-------------------------------
@@ -1347,7 +1352,7 @@ INT 21 - Novell NetWare - SYNCHRONIZATION SERVICES - LOCK LOGICAL RECORD SET
 		0000h no wait
 Return: AL = status (see AH=CBh)
 Desc:	attempt to lock all logical record names listed in the log table
-Notes:	this function is supported by NetWare 4.6+, Advanced Netware 1.0+,
+Notes:	this function is supported by NetWare 4.6+, Advanced NetWare 1.0+,
 	  Banyan VINES, and Alloy NTNX
 	status FFh will be returned if one or more logical records have been
 	  exclusively locked by another process
@@ -2769,7 +2774,7 @@ Offset	Size	Description
  03h	BYTE	directory handle
  04h	DWORD	(big-endian) date and time of creation
  08h	DWORD	(big-endian) object ID of owner
- 0Ch	BYTE	maximum directory rightes (see AH=E2h/SF=03h)
+ 0Ch	BYTE	maximum directory rights (see AH=E2h/SF=03h)
  0Dh	BYTE	length of directory path
  0Eh  N BYTEs	directory path
 
@@ -2920,7 +2925,7 @@ Format of reply buffer:
 Offset	Size	Description
  00h	WORD	(call) 0000h (no data returned)
 --------N-21E3--SF0C-------------------------
-INT 21 U - Novell Netware - VERIFY NETWORK SERIAL NUMBER
+INT 21 U - Novell NetWare - VERIFY NETWORK SERIAL NUMBER
 	AH = E3h subfn 0Ch
 	DS:SI -> request buffer (see below)
 	ES:DI -> reply buffer (see below)
@@ -3098,7 +3103,7 @@ Offset	Size	Description
  45h	BYTE	internetwork bridge version
  46h 60 BYTEs	reserved
 --------N-21E3--SF12-------------------------
-INT 21 - Novell NetWare - GET SERIAL NUMBER
+INT 21 - Novell NetWare - GET NETWORK SERIAL NUMBER
 	AH = E3h subfn 12h
 	AL = 00h
 	BX = CX = DX = 0000h
@@ -3108,7 +3113,7 @@ Return: AL = status
 	    00h successful
 Desc:	return the serial number and application number for the software
 	  installed on the file server
-Notes:	this function is supported by Advanced Netware 2.1+
+Notes:	this function is supported by Advanced NetWare 2.1+
 	reportedly, the workstation crashes if AL,BX,CX, and DX are not all
 	  zero
 SeeAlso: AH=E3h/SF=0Ch,AH=E3h/SF=11h
@@ -3121,8 +3126,8 @@ offset	 size	description
 Format of reply buffer:
 offset	 size	description
  00h	 WORD	(call) 0006h (size of following results buffer)
- 02h   4 BYTEs	(big-endian) Netware software serial number
- 06h   2 BYTEs	(big-endian) Netware software application number
+ 02h   4 BYTEs	(big-endian) NetWare server serial number
+ 06h   2 BYTEs	(big-endian) NetWare application serial number
 --------N-21E3--SF13-------------------------
 INT 21 - Novell NetWare - CONNECTION SERVICES - GET INTERNET ADDRESS
 	AH = E3h subfn 13h
@@ -3858,7 +3863,7 @@ Offset	Size	Description
  00h	WORD	0008h (length of following data)
  02h	BYTE	47h (subfunction "Scan Bindery Object Trustee Paths")
  03h	BYTE	volume number (00h-1Fh)
- 04h	WORD	(big-endian) last sequence number (00h on first call)
+ 04h	WORD	(big-endian) last sequence number (FFFFh on first call)
  06h	DWORD	(big-endian) object ID
 
 Format of reply buffer:
@@ -3867,7 +3872,7 @@ Offset	Size	Description
  02h	WORD	(big-endian) next sequence number
  04h	DWORD	(big-endian) object ID
  08h	BYTE	trustee directory rights (see AH=E2h/SF=03h)
- 09h	BYTE	length fo trustee path
+ 09h	BYTE	length of trustee path
  0Ah  N BYTEs	trustee path
 --------N-21E3--SF64-------------------------
 INT 21 - Novell NetWare - QUEUE SERVICES - CREATE QUEUE
@@ -5744,7 +5749,6 @@ Notes:	this function was added in NetWare 4.0, but was removed some time prior
 	  to Advanced NetWare 2.15, and is no longer listed in current Novell
 	  documentation
 	on success, NetWare sets AL to zero; on errors it restores AL
-Return: AL = error code
 --------T-21E5-------------------------------
 INT 21 - DoubleDOS - OTHER PROGRAM STATUS
 	AH = E5h
@@ -6283,10 +6287,7 @@ SeeAlso: AH=F1h"VIRUS",AX=F2AAh
 --------N-21F2-------------------------------
 INT 21 u - Novell NetWare v3.01+ shell interface - MULTIPLEXOR
 	AH = F2h
-	AL = function
-	    15h broadcast services (see AH=E1h"NetWare")
-	    16h file/directory services (see AH=E2h"NetWare")
-	    17h connection control (see AH=E3h"NetWare")
+	AL = function (see below)
 	CX = length of request buffer in bytes
 	DX = length of reply buffer in bytes
 	DS:SI -> request buffer (contents vary by function)
@@ -6294,12 +6295,208 @@ INT 21 u - Novell NetWare v3.01+ shell interface - MULTIPLEXOR
 Return: AL = status
 	reply buffer filled as appropriate for function
 Note:	this is a multiplexor providing a "raw" interface to the underlying
-	  Netware Core Protocol.  Many functions which were accessed via a
-	  separate AH function in older versions can also be accessed here
-	  (the function number in AL is added to CCh to get the old function
-	  number which is desired), but some NetWare 3.x calls appear to be
-	  available only here.
+	  NetWare Core Protocol.  Many functions which were accessed via a
+	  separate AH function in older versions can also be accessed here,
+	  but some NetWare 3.x calls appear to be available only here.
 SeeAlso: AX=F244h
+
+Values for NetWare Core Protocol functions:
+Fnc/Subfn
+01h	File Set Lock
+02h	File Release Lock
+03h	Log File (see AH=EBh"NetWare")
+04h	Lock File Set (see AH=CBh"NetWare")
+05h	Release File (see AH=CCh,AH=ECh"NetWare")
+06h	Release File Set (see AH=CDh"NetWare")
+07h	Clear File (see AH=CEh,AH=EDh"NetWare")
+08h	Clear File Set (see AH=CFh"NetWare")
+09h	Log Logical Record (see AH=D0h"NetWare")
+0Ah	Lock Logical Record Set (see AH=D1h"NetWare")
+0Bh	Clear Logical Record (see AH=D4h"NetWare")
+0Ch	Release Logical Record (see AH=D2h"NetWare")
+0Dh	Release Logical Record Set (see AH=D3h"NetWare")
+0Eh	Clear Logical Record Set (see AH=D5h"NetWare")
+0Fh	Allocate Resource (see AH=D8h"NetWare")
+10h	Deallocate Resource (see AH=D9h"NetWare")
+11h/0Ah	Get Printer Queue
+11h/xxh	print spooling (see AX=E0xxh"NetWare")
+12h	Get Volume Info with Number (see AH=DAh"NetWare")
+13h	Get Station Number (see AH=???h"NetWare")
+14h	Get File Server Date and Time (see AH=E7h"NetWare")
+15h/xxh	broadcast services (see AX=E1xxh"NetWare")
+16h/0Fh	Rename Directory
+16h/1Bh	Scan Salvagable Files
+16h/1Ch	Recover Salvagable File
+16h/1Dh	Purge Salvagable File
+16h/1Eh	Scan Dir Entry
+16h/1Fh	Get Dir ENtry
+16h/20h	Scan Volume for Restrictions
+16h/21h	Add User Disk Space Restriction (see AX=F216h/SF=21h)
+16h/22h	Clear Volume Restrictions
+16h/23h	Scan Dir Restrictions
+16h/24h	Set Directory Disk Space Restriction (see AX=F216h/SF=24h)
+16h/25h	Set Entry
+16h/26h	Scan File or Directory For Extended Trustees (see AX=F216h/SF=26h)
+16h/27h	Add Extended Trustee to Directory or File (see AX=F216h/SF=27h)
+16h/28h	Scan File Physical
+16h/29h	Get Object Disk Restrictions (see AX=F216h/SF=29h)
+16h/2Ah	Get Effective Rights
+16h/2Bh	Delete Trustee
+16h/2Ch	Get Volume Usage
+16h/2Dh	Get Dir Info
+16h/2Eh	Move Entry
+16h/2Fh	Fill Name Space Buffer
+16h/30h	Get Name Space Entry
+16h/31h	Open Data Stream
+16h/32h	Get Object Effective Rights
+16h/33h	Get Extended Volume Info
+16h/F3h	Map Directory Number to Path
+16h/xxh file/directory services (see AX=E2xxh"NetWare")
+17h/17h	Get Encryption Key
+17h/18h	Login Object Encrypted
+17h/1Ch	Get Connection Information (see AX=F217h/SF=1Ch)
+17h/1Fh	Get Connection List from Object
+17h/48h	Get Bindery Object Access Level
+17h/49h	Is Station a Manager?
+17h/4Ah	Verify Bindery Object Password Encrypted
+17h/4Bh	Change Bindery Object Password Encrypted
+17h/4Ch	Get Relation of an Object
+17h/D2h Clear Connection Number (Logout Station) (see AX=F217h/SF=D2h)
+17h/EBh	Get Connection's Open Files (see AX=F217h/SF=EBh)
+17h/ECh	Get Connections Using a File (see AX=F217h/SF=ECh)
+17h/EEh	Get Physical Record Locks by File (see AX=F217h/SF=EEh)
+17h/F2h Get Semaphore Information (see AX=F217h/SF=F2h)
+17h/F3h Map Directory Number to Path (see AX=F217h/SF=F3h)
+17h/F4h	Convert Path to Directory Entry (see AX=F217h/SF=F4h)
+17h/xxh	connection control (see AX=E3xxh"NetWare")
+18h	End of Job (see AH=D6h"NetWare")
+19h	Logout (see AH=D7h"NetWare")
+1Ah	Log Physical Record (see AH=BCh"NetWare")
+1Bh	Lock Physical Record Set (see AH=C2h"NetWare")
+1Ch	Release Physical Record (see AH=BDh"NetWare")
+1Dh	Release Physical Record Set (see AH=C3h"NetWare")
+1Eh	Clear Physical Record (see AH=BEh"NetWare")
+1Fh	Clear Physical Record Set (see AH=C4h"NetWare")
+20h/xxh	semaphore services (see AX=C5xxh"NetWare")
+21h	Negotiate Buffer
+22h/00h	TTS Is Available (see AX=C702h"NetWare")
+22h/01h	TTS Begin Transaction (see AX=C700h"NetWare")
+22h/02h	TTS End Transaction (see AX=C701h"NetWare")
+22h/03h	TTS Abort Transaction (see AX=C703h"NetWare")
+22h/04h	TTS Transaction Status (see AX=C704h"NetWare")
+22h/05h	TTS Get Application Thresholds (see AX=C705h"NetWare")
+22h/06h	TTS Set Application Thresholds (see AX=C706h"NetWare")
+22h/07h	TTS Get Workstation Thresholds (see AX=C707h"NetWare")
+22h/08h	TTS Set Workstation Thresholds (see AX=C708h"NetWare")
+22h/09h	TTS Get Control Flags
+22h/0Ah	TTS Set Control Flags
+23h/01h	AFP Create Directory
+23h/02h	AFP Create File
+23h/03h	AFP Delete
+23h/04h	AFP Get Entry ID From Name
+23h/05h	AFP Get FIle Infomration
+23h/06h	AFP Get Entry ID From NetWare Handle
+23h/07h	AFP Rename
+23h/08h	AFP Open File Fork
+23h/09h	AFP Set File Information
+23h/0Ah	AFP Scan File Information
+23h/0Bh	AFP Alloc Temporary Dir Handle
+23h/0Ch	AFP Get Entry ID From Path Name
+3Dh	Commit File
+3Eh	File Search Initialize (FindFirst)
+3Fh	File Search Continue (FindNext)
+40h	Search File
+42h	File Close
+43h	File Create
+44h	Erase Files
+45h	File Rename
+46h	Set File Attributes
+47h	Get File Size
+48h	File Read
+49h	File Write
+4Ah	File Server Copy (see AH=F3h"NetWare")
+4Bh	Set File Time and Date
+4Ch	File Open
+4Dh	Create New File
+4Eh	Allow Task Access to File
+4Fh	Set Extended File Attributes (see AH=B6h"NetWare")
+55h	Get File Bit Map
+57h/03h	Scan NS Entry Info
+57h/06h	Get NS Entry Info (see AX=F257h/SF=06h)
+57h/07h	Set NS Entry DOS Info
+57h/0Ch	Allocate Temp NS Dir Handle
+57h/13h	Read NS Info
+57h/16h	Get Directory Base
+57h/17h	Get NS Info
+57h/19h	Write NS Info
+57h/1Ah	Read Extended NS Info
+57h/1Bh	Write Extended NS Infor
+57h/1Ch	Get NS Path
+58h/01h	Get Volume Audit Statistics
+58h/02h	Add Audit Property
+58h/03h	Login as Volume Auditor
+58h/04h Change Auditor Password
+58h/05h Check Audit Access
+58h/06h	Remove Audit Property
+58h/07h	Disable Auditing on Volume
+58h/08h	Enable Auditing on Volume
+58h/09h	Is User Audited?
+58h/0Ah	Read Auditing Bit Map
+58h/0Bh	Read Audit Config Header
+58h/0Dh	Logout as Volume Auditor
+58h/0Eh	Reset Auditing File
+58h/0Fh	Reset Audit History File
+58h/10h	Write Auditing Bit Map
+58h/11h	Write Audit Config Header
+58h/13h	Get Auditing Flags
+58h/14h	Close Old Auditing File
+58h/15h	Delete Old Auditing File
+58h/16h	Check Audit Level Two Access
+5Ah/01h	Get DM Info
+61h	Negotiate LIP Buffer
+65h	Packet Burst Connection
+7Bh/01h	Get Cache Information
+7Bh/02h	Get File Server Information
+7Bh/03h	Get NetWare File Systems Information
+7Bh/04h	Get User Information
+7Bh/05h	Get Packet Burst Information
+7Bh/06h	Get IPX/SPX Information
+7Bh/07h	Get Garbage Collection Information
+7Bh/08h	Get CPU Information
+7Bh/09h	Get Volume Switch Information
+7Bh/0Ah	Get NLM Loaded List
+7Bh/0Bh	Get NLM Information
+7Bh/0Ch	Get Directory Cache Information
+7Bh/0Dh	Get OS Version Information
+7Bh/0Eh	Get Active Connection List by Type
+7Bh/0Fh	Get NLM's Resource Tag List
+7Bh/14h	Get Active LAN Board List
+7Bh/15h	Get LAN Configuration Information
+7Bh/16h	Get LAN Common Counters Information
+7Bh/17h	Get LAN Custom Counters Information
+7Bh/18h	Get LAN Config Strings
+7Bh/19h	Get LSL Informatino
+7Bh/1Ah	Get LSL Logical Board Statistics
+7Bh/1Eh	Get Media Manager Object Information
+7Bh/1Fh	Get Media Manager Object List
+7Bh/20h	Get Media Manager Object Children List
+7Bh/21h	Get Volume Segment List
+7Bh/28h	Get Active Protocol Stacks
+7Bh/29h	Get Protocol Stack Configuration Information
+7Bh/2Ah	Get Protocol Stack Statistics Information
+7Bh/2Bh	Get Protocol Stack Custom Information
+7Bh/2Ch	Get Protocol Stack Numbers By Media Number
+7Bh/2Dh	Get Protocol Stack Numbers By LAN Board Number
+7Bh/2Eh	Get Media Name by Media Number
+7Bh/2Fh	Get Loaded Media Number List
+7Bh/32h	Get General Router and SAP Information
+7Bh/33h	Get Network Router Information
+7Bh/34h	Get Network Routers Information
+7Bh/35h	Get Known Networks Information
+7Bh/36h	Get Server Information
+7Bh/38h	Get Known Servers Information
+7Bh/3Ch	Get Server Set Commands Information
+7Bh/3Dh	Get Server Set Categories
 --------T-21F2-------------------------------
 INT 21 - DoubleDOS - SEND CHARACTER TO KEYBOARD BUFFER OF OTHER JOB
 	AH = F2h
@@ -6308,6 +6505,336 @@ Return: AL = 00h successful
 	     01h buffer full (128 characters)
 SeeAlso: AH=E2h"DoubleDOS",AH=F1h"DoubleDOS",AH=F3h"DoubleDOS"
 SeeAlso: AH=F8h"DoubleDOS"
+--------N-21F216SF21-------------------------
+INT 21 - Novell NetWare v3+ - ADD USER DISK SPACE RESTRICTION
+	AX = F216h subfn 21h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see below)
+	ES:DI -> reply buffer (ignored)
+Return: AL = status
+SeeAlso: AX=F216h/SF=24h
+
+Format of request buffer:
+Offset	Size	Description
+ 00h	WORD	000Ah (length of following data)
+ 02h	BYTE	21h (subfunction "Add User Disk Space Restriction")
+ 03h	BYTE	volume number
+ 04h	DWORD	(big-endian) object ID
+ 08h	DWORD	(big-endian) disk space limit in 4K blocks
+		00000000h to 40000000h
+--------N-21F216SF24-------------------------
+INT 21 - Novell NetWare v3+ - SET DIRECTORY DISK SPACE RESTRICTION
+	AX = F216h subfn 24h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see below)
+	ES:DI -> reply buffer (ignored)
+Return: AL = status
+SeeAlso: AX=F216h/SF=21h
+
+Format of request buffer:
+Offset	Size	Description
+ 00h	WORD	0006h (length of following data)
+ 02h	BYTE	24h (subfunction "Set Directory Disk Space Restriction")
+ 03h	BYTE	directory handle
+ 04h	DWORD	(big-endian) disk space limit in 4K blocks
+		00000000h to remove restriction, negative to set to 0 blocks
+--------N-21F216SF26-------------------------
+INT 21 - Novell NetWare v3+ - SCAN FILE OR DIRECTORY FOR EXTENDED TRUSTEES
+	AX = F216h subfn 26h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see below)
+	ES:DI -> reply buffer (see below)
+Return: AL = status
+Desc:	get up to 20 extended trustee entries per call for a file or directory
+
+Format of request buffer:
+Offset	Size	Description
+ 00h	WORD	length of following data
+ 02h	BYTE	26h (subfunc "Scan File or Directory For Extended Trustees")
+ 03h	BYTE	directory handle
+ 04h	BYTE	sequence number
+		00h for first call, increment by number of returned entries
+ 05h	BYTE	length of path
+ 06h  N BYTEs	pathname
+
+Format of reply buffer:
+Offset	Size	Description
+ 00h	BYTE	number of entries returned (max 20)
+ 01h 20 DWORDs	(big-endian) list of object IDs
+ 51h 20 WORDs	list of associated trustee rights
+--------N-21F216SF27-------------------------
+INT 21 - Novell NetWare v3+ - ADD EXTENDED TRUSTEE TO DIRECTORY OR FILE
+	AX = F216h subfn 27h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see below)
+	ES:DI -> reply buffer (ignored)
+Return: AL = status
+
+Format of request buffer:
+Offset	Size	Description
+ 00h	WORD	length of following data
+ 02h	BYTE	27h (subfunction "Add Extended Trustee to Directory or File")
+ 03h	BYTE	directory handle
+ 04h	DWORD	(big-endian) object ID
+ 08h	WORD	trustee rights (see below)
+ 0Ah	BYTE	path length
+ 0Bh  N BYTEs	path name
+
+Bitfields for trustee rights:
+ bit 0:	read
+ bit 1: write
+ bit 3: create
+ bit 4: delete
+ bit 5: access
+ bit 6: file
+ bit 7: modify
+ bit 8: supervisor
+--------N-21F216SF29-------------------------
+INT 21 - Novell NetWare v3+ - GET OBJECT DISK RESTRICTIONS
+	AX = F216h subfn 29h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see below)
+	ES:DI -> reply buffer (see below)
+Return: AL = status
+	reply buffer filled
+Note:	this function returns successfully, showing no restriction, if an
+	  invalid object ID is specified
+SeeAlso: AX=F216h/SF=24h
+
+Format of request buffer:
+Offset	Size	Description
+ 00h	WORD	0006h (length of following data)
+ 02h	BYTE	21h (subfunction "Get Object Disk Restrictions")
+ 03h	BYTE	volume number
+ 04h	DWORD	(big-endian) object ID
+
+Format of reply buffer:
+Offset	Size	Description
+ 00h	DWORD	disk space limit
+ 04h	DWORD	disk space currently in use by object
+--------N-21F217SF1C-------------------------
+INT 21 - Novell NetWare v3+ - GET CONNECTION INFORMATION
+	AX = F217h subfn 1Ch
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see below)
+	ES:DI -> reply buffer (see below)
+Return: AL = status
+	reply buffer filled
+
+Format of request buffer:
+Offset	Size	Description
+ 00h	WORD	0005h (length of following data)
+ 02h	BYTE	1Ch (subfunction "Get Connection Information")
+ 03h	DWORD	target connection number
+Note:	connection numbers greater than the maximum supported by the server
+	  can cause ABENDs
+
+Format of reply buffer:
+Offset	Size	Description
+ 00h	DWORD	(big-endian) unique user ID, 00000000h if no one logged in
+ 04h	WORD	(big-endian) user type
+ 06h 48 BYTEs	user name
+ 36h  7 BYTEs	login time (see below)
+ 3Dh	BYTE	reserved
+--------N-21F217SFD2-------------------------
+INT 21 - Novell NetWare v3+ - CLEAR CONNECTION NUMBER (LOGOUT STATION)
+	AX = F217h subfn D2h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see below)
+	ES:DI -> reply buffer (ignored)
+Return: AL = status
+	reply buffer filled
+
+Format of request buffer:
+Offset	Size	Description
+ 00h	WORD	0002h (length of following data)
+ 02h	BYTE	D2h (subfunction "Clear Connection Number")
+ 03h	BYTE	connection number
+--------N-21F217SFEB-------------------------
+INT 21 - Novell NetWare v3+ - GET CONNECTION'S OPEN FILES
+	AX = F217h subfn EBh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see below)
+	ES:DI -> reply buffer (see below)
+Return: AL = status
+	reply buffer filled
+
+Format of request buffer:
+Offset	Size	Description
+ 00h	WORD	0005h (length of following data)
+ 02h	BYTE	EBh (subfunction "Get Connection's Open Files")
+ 03h	WORD	target connection number
+ 05h	WORD	last record seen (set to 0000h for first call)
+Note:	connection numbers greater than the maximum supported by the server
+	  can cause ABENDs
+
+Format of reply buffer:
+Offset	Size	Description
+ 00h	WORD	next request record
+ 02h	WORD	number of records returned (max 28)
+ 04h 29N BYTEs	records
+		Offset	Size	Description
+		 00h	WORD	task number
+		 02h	BYTE	lock type
+		 03h	BYTE	access control
+		 04h	BYTE	lock flag
+		 05h	BYTE	volume number
+		 06h	DWORD	parent directory entry number
+		 0Ah	DWORD	directory entry number
+		 0Eh	BYTE	reserved
+		 0Fh	BYTE	data stream type
+		 10h	BYTE	file name length
+		 11h 12 BYTEs	file name
+--------N-21F217SFEC-------------------------
+INT 21 - Novell NetWare v3+ - GET CONNECTIONS USING A FILE
+	AX = F217h subfn ECh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see below)
+	ES:DI -> reply buffer (see below)
+Return: AL = status
+	reply buffer filled
+
+Format of request buffer:
+Offset	Size	Description
+ 00h	WORD	0009h (length of following data)
+ 02h	BYTE	ECh (subfunction "Get Connections Using a File")
+ 03h	BYTE	data stream type
+ 04h	BYTE	volume number
+ 05h	DWORD	directory entry number
+ 09h	WORD	last record seen (0000h for first call)
+
+Format of reply buffer:
+Offset	Size	Description
+ 00h	WORD	next request record
+ 02h	WORD	use count
+ 04h	WORD	open count
+ 06h	WORD	number of times open for reading
+ 08h	WORD	number of times open for writing
+ 0Ah	WORD	Deny Read count
+ 0Ch	WORD	Deny Write count
+ 0Eh	BYTE	flag: locked
+ 0Fh	BYTE	data stream type
+ 10h	WORD	number of records returned (max 70)
+ 12h 7N BYTEs	returned records
+		Offset	Size	Description
+		 00h	WORD	connection number
+		 02h	WORD	task number
+		 04h	BYTE	lock type
+		 05h	BYTE	access flag
+		 06h	BYTE	lock flag
+--------N-21F217SFEE-------------------------
+INT 21 - Novell NetWare v3+ - GET PHYSICAL RECORD LOCKS BY FILE
+	AX = F217h subfn EEh
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see below)
+	ES:DI -> reply buffer (see below)
+Return: AL = status
+	reply buffer filled
+
+Format of request buffer:
+Offset	Size	Description
+ 00h	WORD	0009h (length of following data)
+ 02h	BYTE	EEh (subfunction "Get Physical Record Locks by File")
+ 03h	BYTE	data stream number
+ 04h	BYTE	volume number
+ 05h	DWORD	directory entry number
+ 09h	WORD	last record seen (0000h for first call)
+
+Format of reply buffer:
+Offset	Size	Description
+ 00h	WORD	next request record
+ 02h	WORD	number of locks
+ 04h 17N BYTEs	lock records, one per lock
+		Offset	Size	Description
+		 00h	WORD	logged count
+		 02h	WORD	number of shareable locks
+		 04h	DWORD	start offset of record
+		 08h	DWORD	end offset of record
+		 0Ch	WORD	logical connection number
+		 0Eh	WORD	task number
+		 10h	BYTE	lock type
+--------N-21F217SFF2-------------------------
+INT 21 - Novell NetWare v3+ - GET SEMAPHORE INFORMATION
+	AX = F217h subfn F2h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see below)
+	ES:DI -> reply buffer (see below)
+Return: AL = status
+	reply buffer filled
+
+Format of request buffer:
+Offset	Size	Description
+ 00h	WORD	length of following data (max 84h)
+ 02h	BYTE	F2h (subfunction "Get Semaphore Information")
+ 03h	WORD	last record seen (0000h on first call)
+ 05h	BYTE	length of semaphore name (max 128)
+ 06h  N BYTEs	semaphore name
+
+Format of reply buffer:
+Offset	Size	Description
+ 00h	WORD	next request record
+ 02h	WORD	open count
+ 04h	BYTE	value of semaphore
+ 05h	WORD	number of records returned
+ 07h 2N WORDs	list of logical connection number/task number pairs
+--------N-21F217SFF3-------------------------
+INT 21 - Novell NetWare v3+ - MAP DIRECTORY NUMBER TO PATH
+	AX = F217h subfn F3h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see below)
+	ES:DI -> reply buffer (see below)
+Return: AL = status
+	reply buffer filled
+SeeAlso: AX=F217h/SF=F4h
+
+Format of request buffer:
+Offset	Size	Description
+ 00h	WORD	0007h (length of following data)
+ 02h	BYTE	F3h (subfunction "Map Directory Number to Path")
+ 03h	BYTE	volume number
+ 04h	DWORD	directory entry number
+ 08h	BYTE	name space type
+
+Format of reply buffer:
+Offset	Size	Description
+ 00h	BYTE	directory path length
+ 01h  N BYTEs	directory path (NetWare style, separated by length descriptors
+		rather than slashes or backslashes)
+--------N-21F217SFF4-------------------------
+INT 21 - Novell NetWare v3+ - CONVERT PATH TO DIRECTORY ENTRY
+	AX = F217h subfn F4h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see below)
+	ES:DI -> reply buffer (see below)
+Return: AL = status
+	reply buffer filled
+SeeAlso: AX=F217h/SF=F3h
+
+Format of request buffer:
+Offset	Size	Description
+ 00h	WORD	length of following data
+ 02h	BYTE	F4h (subfunction "Convert Path to Directory Entry")
+ 03h	BYTE	directory handle or 00h for none
+ 04h	BYTE	length of directory path
+ 05h  N BYTEs	directory path (must be fully qualified if no handle specified)
+
+Format of reply buffer:
+Offset	Size	Description
+ 00h	BYTE	(return) volume number
+ 01h	DWORD	(return) directory entry number
 --------N-21F244-----------------------------
 INT 21 - Novell NetWare - FILE SERVICES - ERASE FILES
 	AX = F244h
@@ -6329,6 +6856,34 @@ Offset	Size	Description
  01h	BYTE	search attributes (see AX=4301h)
  02h	BYTE	length of filespec
  03h  N BYTEs	ASCIZ filespec (may include wildcards)
+--------N-21F257SF06-------------------------
+INT 21 - Novell NetWare v3+ - GET NAME SPACE INFORMATION FOR FILE OR DIRECTORY
+	AX = F257h subfn 06h
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see below)
+	ES:DI -> reply buffer (see below)
+Return: AL = status
+	reply buffer filled
+
+Format of request buffer:
+Offset	Size	Description
+ 00h	BYTE	06h (subfunction "Get NS Entry Info")
+ 01h	BYTE	name space
+ 02h	BYTE	destination name space
+ 03h	WORD	search attributes
+ 05h	DWORD	return information mask (should be 00000200h)
+ 09h	BYTE	volume number
+ 0Ah	DWORD	directory handle
+ 0Eh	BYTE	handle flag (should be FFh)
+ 0Fh	BYTE	number of path components
+ 10h  N BYTEs	list of path components (each a counted string)
+
+Format of reply buffer:
+Offset	Size	Description
+ 00h 72 BYTEs	reserved
+ 48h	DWORD	creator's name space number
+ 4Ch 257 BYTEs	reserved
 --------v-21F2AA-----------------------------
 INT 21 - VIRUS - "PcVrsDs" - INSTALLATION CHECK
 	AX = F2AAh
@@ -7099,6 +7654,70 @@ INT 21 - TopWare Network OS v5.10+ - CALL TopLook FUNCTION
 	CL = screen mode (see AX=FF8Dh)
 Return: AL = status (00h successful, nonzero failed)
 SeeAlso: AX=FF8Dh
+--------N-21FFD6-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET KEYCARD SERIAL NUMBER AND MAX USERS
+	AX = FFD6h
+	ES:BX -> 12-byte buffer for keycard serial number
+Return: CX = maximum number of users
+	ES:BX buffer filled
+--------N-21FFD7-----------------------------
+INT 21 - TopWare Network OS v5.10+ - GET NETWORK PROTECTION ATTRIBUTES STATUS
+	AX = FFD7h
+Return: AL = status (00h disabled, 01h enabled)
+--------N-21FFE3DL00-------------------------
+INT 21 - TopWare Network OS v5.10+ - INITIATE ACCESS TO SPECIFIC PACKET TYPE
+	AX = FFE3h
+	DL = 00h
+	BX = packet type for Ethernet header (IP = 0800h, ARP = 0806h, etc.)
+	ES:DI -> receive routine (see below)
+Return: CF clear if successful
+	    AX = handle number
+	CF set on error
+	    DH = error code (03h,05h,09h,0Ah,11h) (see below)
+SeeAlso: AX=FFE3h/DL=01h
+
+Values for error code:
+ 01h	invalid handle
+ 03h	no interfaces of the specified type found
+ 05h	bad packet type
+ 09h	insufficient space
+ 0Ah	type already being accessed
+ 0Ch	unable to send packet (usually hardware error)
+ 11h	invalid function
+
+Receive routine is called with:
+	AX = function
+	    0000h request packet buffer
+		CX = packet size
+		Return: ES:DI -> buffer or 0000h:0000h to discard packet
+	    0001h packet copied
+		CX = packet size
+		DS:SI -> copied packet (same as returned ES:DI above)
+--------N-21FFE3DL01-------------------------
+INT 21 - TopWare Network OS v5.10+ - END ACCESS TO SPECIFIC PACKET TYPE
+	AX = FFE3h
+	DL = 01h
+	BX = handle returned by AX=FFE3h/DL=00h
+Return: CF clear if successful
+	CF set on error
+	    DH = error code (01h,11h) (see AX=FFE3h/DL=00h)
+Note:	the specified access handle will no longer be valid after this call
+SeeAlso: AX=FFE3h/DL=00h
+--------N-21FFE3DL02-------------------------
+INT 21 - TopWare Network OS v5.10+ - SEND PACKET
+	AX = FFE3h
+	DL = 02h
+	CX = length of data buffer
+	DS:SI -> buffer containing data
+Return: CF clear if successful
+	CF set on error
+	    DH = error code (0Ch,11h) (see AX=FFE3h/DL=00h)
+--------N-21FFE3DL03-------------------------
+INT 21 - TopWare Network OS v5.10+ - GET LOCAL NETWORK INTERFACE ADDRESS
+	AX = FFE3h
+	DL = 03h
+	ES:DI -> 6-byte buffer for address
+SeeAlso: AX=FFE3h/DL=00h
 --------v-21FFFE-----------------------------
 INT 21 - VIRUS - "08/15"/"Many Fingers" - INSTALLATION CHECK
 	AX = FFFEh

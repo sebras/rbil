@@ -13,10 +13,10 @@ list?  Want the list split up by subject and thoroughly indexed?  Try
      $39.95
 
 Corresponds to the non-networking portions of INTER36 with a few of the
-additions from INTER37.  Available some time in November.
+additions from INTER37.  Available January 1994.
 
-The companion book Network Interrupts (500+ pages, ISBN 0-201-62644-6, $29.95)
-should be available in December or January 1994.
+The companion book Network Interrupts (600 pages, ISBN 0-201-62644-6, $29.95)
+should be available in February 1994.
 
 -------
 

@@ -91,7 +91,7 @@ INT 16 - KEYBOARD - SELECT KEYBOARD LAYOUT (PCjr only)
 	    80h check if function supported
 		Return: AL <> 80h if supported
 Return: ???
-Note:	called by DOS 3.2 KEYBxx.COM
+Note:	this function is called by the DOS 3.2 KEYBxx.COM
 SeeAlso: AH=92h,AH=A2h
 --------B-1609-------------------------------
 INT 16 - KEYBOARD - GET KEYBOARD FUNCTIONALITY
@@ -353,7 +353,7 @@ INT 16 - KEYBOARD - AX PC - READ SHIFT KEY STATUS
 Return: AL = standard shift key states (see AH=12h)
 	AH = Kana lock (00h off, 01h on)
 SeeAlso: AH=02h,AH=12h,AH=22h
-----------165453BX5242-----------------------
+--------t-165453BX5242-----------------------
 INT 16 - TSRBONES - INSTALLATION CHECK
 	AX = 5453h ('TS')
 	BX = 5242h ('RB')
@@ -377,6 +377,20 @@ Notes:	during startup, Microsoft Word tries to communicate with any TSRs
 	if the return is not 4D53h, Word installs its own INT 09 and INT 16
 	  handlers; otherwise it assumes that the TSR will handle the keyboard
 SeeAlso: INT 1A/AX=3601h
+--------A-1655FEDX0000-----------------------
+INT 16 CU - Microsoft QBASIC internal - MICROSOFT COOPERATION WITH TSR???
+	AX = 55FEh
+	DX = 0000h
+	ES:BX -> ??? function
+	ES:CX -> ??? structure
+Return: AX = result
+	    4D4Bh only the INT 1B handler will be installed.
+	    <> 4D4Bh handlers for INT 08, INT 09, INT 16, INT 1B, and
+		  INT 1C are installed
+Notes:	The pointer in ES:CX seems to point at a structure defining a callback
+	  function when new keyboard keys are pressed. If a TSR returns
+	  AX=4D4Bh, QBASIC will stop (with IRQ's and interrupts enabled).
+SeeAlso: INT 16/AX=5500h,INT 1A/AX=3601h
 --------U-1655FF-----------------------------
 INT 16 - Swap Utilities - ???
 	AX = 55FFh
@@ -388,7 +402,7 @@ Note:	present in SWAPSH and SWAPDT v1.77j, distributed with PC Tools v7, as
 	  well as the Trusted Access SCRNBLNK.COM; this may be part of the
 	  standard TesSeRact library
 SeeAlso: INT 2F/AX=5453h
-----------165758BX4858-----------------------
+--------c-165758BX4858-----------------------
 INT 16 U - Netroom CACHECLK - INSTALLATION CHECK
 	AX = 5758h
 	BX = 4858h ('HX')
@@ -408,7 +422,7 @@ INT 16 U - Netroom ??? - ???
 	BX = 5754h
 	???
 Return: ???
-----------165758BX5754-----------------------
+----------165758BX5755-----------------------
 INT 16 U - Netroom ??? - ???
 	AX = 5758h
 	BX = 5755h
@@ -419,7 +433,7 @@ INT 16 U - Netroom ??? - INSTALLATION CHECK
 	AX = 5758h
 	BX = 5756h
 Return: BX <> 5756h if installed
-----------165758BX5858-----------------------
+--------m-165758BX5858-----------------------
 INT 16 U - Netroom PRENET - GET OLD INTERRUPT VECTORS
 	AX = 5758h
 	BX = 5858h
@@ -429,7 +443,7 @@ Note:	the installation check consists of calling this function and comparing
 	  BX against 5858h on return; if it has changed, PRENET is installed
 SeeAlso: AX=5758h/BX=5859h
 Index:	installation check;Netroom PRENET
-----------165758BX5859-----------------------
+--------m-165758BX5859-----------------------
 INT 16 U - Netroom POSTNET - GET OLD INTERRUPT VECTORS
 	AX = 5758h
 	BX = 5859h
@@ -454,7 +468,7 @@ Return: DX nonzero if installed
 	    BX = CS of resident code
 	    DX = PSP segment of resident code
 	    DS:SI -> ASCIZ identification string "CPoint Talk"
-----------166A6B-----------------------------
+--------i-166A6B-----------------------------
 INT 16 U - FastJuice - DISABLE/UNLOAD???
 	AX = 6A6Bh
 Return: ???
@@ -520,7 +534,7 @@ Format of tone array entries:
 Offset	Size	Description
  00h	WORD	divisor for timer channel 2
  02h	WORD	duration in clock ticks
-----------167463-----------------------------
+--------i-167463-----------------------------
 INT 16 U - FastJuice - INSTALLATION CHECK
 	AX = 7463h ("tc")
 Return: AX = 5443h ("TC") if installed
@@ -658,7 +672,7 @@ Offset	Size	Description
 INT 16 - ???
 	AH = 92h
 Return: AH <= 80h if ???
-Note:	called by DOS 3.2 KEYBxx.COM and DOS 5+ KEYB.COM
+Note:	this function is called by the DOS 3.2 KEYBxx.COM and DOS 5+ KEYB.COM
 SeeAlso: AH=05h"PCjr",AH=A2h
 --------U-1699-------------------------------
 INT 16 - SCOUT v5.4 - GET ???
@@ -677,7 +691,7 @@ SeeAlso: AH=99h
 INT 16 - ???
 	AH = A2h
 Return: AH <= 80h if ???
-Note:	this function is called by DOS 5+ KEYB.COM
+Note:	this function is this function is called by the DOS 5+ KEYB.COM
 SeeAlso: AH=92h
 --------V-16AA-------------------------------
 INT 16 - PTxxx.COM - (xxx=CGA,EGA,VGA,HER...) CALL GATE FOR GRAPHICS
@@ -687,7 +701,7 @@ Return: Graphics performed
 Note:	PT stands for Paint Tools which is a graphics library for Turbo Pascal,
 	  Modula 2 and others from DataBiten in Sweden. The library is
 	  installed as a memory resident driver.
-----------16AABBBXEEFF-----------------------
+--------U-16AABBBXEEFF-----------------------
 INT 16 U - JORJ v4.3 - INSTALLATION CHECK
 	AX = AABBh
 	BX = EEFFh
@@ -737,7 +751,7 @@ Return: AX = CAFFh if installed
 Program: VGAPAL is a TSR supplied with STACKEY which makes VGA palette settings
 	  permanent across mode switches
 SeeAlso: AX=CA00h/BX=6570h
-----------16D724CX00CB-----------------------
+--------U-16D724CX00CB-----------------------
 INT 16 U - APCAL v3.20 - GET ???
 	AX = D724h
 	CX = 00CBh
@@ -747,7 +761,7 @@ Return: AX = 0000h
 Program: APCAL is an optionally-resident shareware appointment calendar by
 	  Gamma Software
 SeeAlso: AX=D724h/CX=00CCh,AX=D724h/CX=00CDh
-----------16D724CX00CC-----------------------
+--------U-16D724CX00CC-----------------------
 INT 16 U - APCAL v3.20 - GET ???
 	AX = D724h
 	CX = 00CCh
@@ -755,7 +769,7 @@ Return: AX = 0000h
 	BX = 0000h
 	DX:CX -> ??? (apparently an internal data area)
 SeeAlso: AX=D724h/CX=00CBh,AX=D724h/CX=00CDh
-----------16D724CX00CD-----------------------
+--------U-16D724CX00CD-----------------------
 INT 16 U - APCAL v3.20 - GET ???
 	AX = D724h
 	CX = 00CDh
@@ -818,7 +832,7 @@ INT 16 - BORLAND TURBO LIGHTNING - API
 	    10h ???
 Notes:	AX in general returns an error code from most functions.
 Index:	installation check;Turbo Lightning
-----------16EF-------------------------------
+--------U-16EF-------------------------------
 INT 16 - CALCULATOR - INSTALLATION CHECK
 	AH = EFh
 Return: AX = 0088h if installed
@@ -905,13 +919,15 @@ INT 16 - Compaq Systempro and higher - DISABLE CACHE CONTROLLER
 Return: AX = E202h
 SeeAlso: AX=F400h,AX=F401h
 --------v-16FA00DX5945-----------------------
-INT 16 U - PC Tools v8+ VSAFE, VWATCH - INSTALLATION CHECK???
+INT 16 U - PC Tools v8+ VSAFE, VWATCH - INSTALLATION CHECK
 	AX = FA00h
 	DX = 5945h
 Return: CF clear
 	DI = 4559h
-	BX = ??? (2F00h or FFFFh) (VSAFE only)
-SeeAlso: INT 13/AH=FAh,INT 21/AH=FAh"VDEFEND",INT 2F/AX=6282h
+	BX = BIOS hotkey scancode (default 2F00h) (VSAFE only)
+		FFFFh if disabled
+Note:	MS-DOS 6.0 bundles VSAFE and VWATCH as part of its virus protection
+SeeAlso: AX=FA05h,INT 13/AH=FAh,INT 21/AH=FAh"VDEFEND",INT 2F/AX=6282h
 --------v-16FA01DX5945-----------------------
 INT 16 U - PC Tools v8+ VSAFE, VWATCH - UNINSTALL
 	AX = FA01h
@@ -920,61 +936,91 @@ Return: CF clear if successful
 	DI = 4559h
 SeeAlso: AX=FA00h
 --------v-16FA02DX5945-----------------------
-INT 16 U - PC Tools v8+ VSAFE, VWATCH - ???
+INT 16 U - PC Tools v8+ VSAFE, VWATCH - GET/SET OPTIONS
 	AX = FA02h
 	DX = 5945h
-	BL = ???
+	BL = new parameter flags (see below)
 Return: CF clear
 	DI = 4559h
-	CL = old value of ???
+	CL = old value of parameter flags
+
+Bitfields for parameter flags:
+ bit 7	Protect executable files
+ bit 6	Protect FD boot sector
+ bit 5	Protect HD boot sector
+ bit 4	Boot sector viruses
+ bit 3	Check executable files
+ bit 2	General write protect
+ bit 1	Resident
+ bit 0	HD Low level format
 --------v-16FA03DX5945-----------------------
-INT 16 U - PC Tools v8+ VSAFE, VWATCH - ???
+INT 16 U - PC Tools v8+ VSAFE, VWATCH - GET ???
 	AX = FA03h
 	DX = 5945h
 Return: CF clear
 	DI = 4559h
 	AX = 0002h
 --------v-16FA04DX5945-----------------------
-INT 16 U - PC Tools v8+ VSAFE - GET ???
+INT 16 U - PC Tools v8+ VSAFE - GET HOTKEY DISABLE FLAG
 	AX = FA04h
 	DX = 5945h
 Return: CF clear
 	DI = 4559h
-	BL = ???
-Note:	this function is a NOP under VWATCH
-SeeAlso: AX=FA05h
+	BL = hotkey disable flag (nonzero if hotkey disabled)
+Note:	this function is a NOP under VWATCH, merely returning CF clear/DI=4559h
+SeeAlso: AX=FA00h,AX=FA05h
 --------v-16FA05DX5945-----------------------
-INT 16 U - PC Tools v8+ VSAFE - SET ???
+INT 16 U - PC Tools v8+ VSAFE - SET HOTKEY DISABLE FLAG
 	AX = FA05h
 	DX = 5945h
-	BL = ???
+	BL = new value of hotkey disable flag (nonzero to disable hotkey)
 Return: CF clear
 	DI = 4559h
-Note:	this function is a NOP under VWATCH
-SeeAlso: AX=FA04h
+Note:	this function is a NOP under VWATCH, merely returning CF clear/DI=4559h
+SeeAlso: AX=FA00h,AX=FA04h
 --------v-16FA06DX5945-----------------------
-INT 16 U - PC Tools v8+ VSAFE, VWATCH - GET ???
+INT 16 U - PC Tools v8+ VSAFE, VWATCH - GET NETWORK DRIVES TEST FLAG
 	AX = FA06h
 	DX = 5945h
 Return: CF clear
 	DI = 4559h
-	BL = ???
+	BL = test status
+	    00h don't monitor network drives (default for VWATCH v2.1)
+	    FFh monitor network drives (default for VSAFE v2.0)
+	CL = ??? (only VSAFE 2.0)
 SeeAlso: AX=FA07h
 --------v-16FA07DX5945-----------------------
-INT 16 U - PC Tools v8+ VSAFE, VWATCH - SET ???
+INT 16 U - PC Tools v8+ VSAFE, VWATCH - SET NETWORK DRIVES TEST FLAG
 	AX = FA07h
 	DX = 5945h
-	BL = ???
+	BL = new state
+	    00h don't monitor
+	    01h monitor network drives
 Return: CF clear
 	DI = 4559h
+Note:	VWATCH v2.1 (from PC Tools 9.0) returns CF set instead
+SeeAlso: AX=FA00h,AX=FA06h
+--------v-16FA08DX5945-----------------------
+INT 16 U - PC Tools v9+ VWATCH v2.1 - ???
+	AX = FA08h
+	DX = 5945h
+Return: CF clear
+	DI = 4559h
+	AX = ??? (0002h)
+	BX = version (BH=major, BL=two-digit minor)
+Note:	this function is not supported by the PC Tools 9.0 VSAFE v2.0
 SeeAlso: AX=FA00h,AX=FA06h
 --------U-16FE55-----------------------------
-INT 16 U - PC Tools v8+ DATAMON, DRIVEMAP, CPSCHED, CPTASK - ???
+INT 16 U - PC Tools v8+ programs - GET ???
 	AX = FE55h
-	CX = segment of resident CPTASK or 0000h???
-	DX = ???
-	???
-Return: DX:AX -> ???
+	CX = segment of resident program or 0000h for last loaded
+	DX = 0000h
+Return: DX = resident code segment (unchanged if CX=0000h on entry)
+	AX = ??? or 0000h
+Note:	this call is supported by CPSCHED, CPTASK, DATAMON, DPROTECT, DRIVEMAP,
+	  and DSKLIGHT beginning in PC Tools v8.0; programs other than CPTASK
+	  seem to hook it merely to return the same AX as the CPTASK loaded
+	  prior to them returned
 --------U-16FEA4-----------------------------
 INT 16 U - PC Tools v7+ CPSCHED/DESKTOP - RESET ???
 	AX = FEA4h
@@ -1041,28 +1087,37 @@ Notes:	the default interrupts are 60h for keyboard and 61h for Zoom interrupt;
 	not all vendors include the Tseng TSR which supports these functions
 SeeAlso: INT 60"OPTIMA"
 Index:	hotkeys;OPTIMA 1024 VGA
---------d-16FF70-----------------------------
-INT 16 U - PC Tools v8+ DRIVEMAP - API
+--------d-16FF70BX0000-----------------------
+INT 16 U - PC Tools v8+ DRIVEMAP - INSTALLATION CHECK
 	AX = FF70h
-	BX = function (0000h-0002h)
-	    0000h installation check
-		CX = 4C69h ('Li')
-		DX = 6E6Bh ('nk')
-		Return: AX = 0000h
-			CX = 4350h ('CP')
-			DH = major version
-			DL = minor version
-	    0001h ???
-		DL = ???
-		Return: AX = ???
-			DH = ???
-	    0002h ???
-		BX = ???
-		DX = ???
-		Return: AX = ??? or FFFEh/FFFFh on error
-			DL = ???
-BUG:	this call will branch to random locations for BX values other than
-	  those listed above for v8.0 because a) the incorrect register is
+	BX = 0000h
+	CX = 4C69h ('Li')
+	DX = 6E6Bh ('nk')
+Return: AX = 0000h
+	CX = 4350h ('CP')
+	DH = major version
+	DL = minor version
+Program: DRIVEMAP is a redirector which allows drives on computers connected
+	  over the parallel or serial ports to appear as local drives
+SeeAlso: AX=FF70h/BX=0001h,AX=FF70h/BX=0002h
+--------d-16FF70BX0001-----------------------
+INT 16 U - PC Tools v8+ DRIVEMAP - ???
+	AX = FF70h
+	BX = 0001h
+	DL = ???
+Return: AX = ???
+	DH = ???
+SeeAlso: AX=FF70h/BX=0000h,AX=FF70h/BX=0002h
+--------d-16FF70BX0002-----------------------
+INT 16 U - PC Tools v8+ DRIVEMAP - ???
+	AX = FF70h
+	BX = 0002h
+	CX = ???
+	DX = ???
+Return: AX = ??? or FFFEh/FFFFh on error
+	DL = ???
+BUG:	DRIVEMAP will branch to random locations for BX values other than
+	  those listed above for v8.0-9.0 because a) the incorrect register is
 	  range-tested, resulting in BX=0003h-5CD6h being accepted as valid
 	  function numbers, and b) the conditional which branches on invalid
 	  function numbers jumps to the following instruction, becoming a NOP
@@ -1081,7 +1136,7 @@ INT 16 U - PC Tools v8+ CPTASK - GET ???
 	AX = FF80h
 	BX = 0001h
 	???
-Return: DX:SI -> task list???
+Return: DX:SI -> task list??? (ten entries of 70h bytes in v9.0)
 	BX = ??? (PSP segment of resident code???)
 --------T-16FF80BX0002-----------------------
 INT 16 U - PC Tools v8+ CPTASK - GET ???
@@ -1089,17 +1144,23 @@ INT 16 U - PC Tools v8+ CPTASK - GET ???
 	BX = 0002h
 Return: DX:SI -> ???
 --------T-16FF80BX0003-----------------------
-INT 16 U - PC Tools v8+ CPTASK - GET ???
+INT 16 U - PC Tools v8+ CPTASK - GET ??? FLAGS
 	AX = FF80h
 	BX = 0003h
-Return: AX = ???
+Return: AX = flags
+	    bit 10: ???
+	    bit 13: ???
+	    bit 14: ???
+	    bit 15: ???
+SeeAlso: AX=FF80h/BX=0004h,AX=FF80h/BX=0006h
 --------T-16FF80BX0004-----------------------
 INT 16 U - PC Tools v8+ CPTASK - SET ???
 	AX = FF80h
 	BX = 0004h
 	CX = new value of ???
 Return: ???
-Note:	this function also sets the ??? flag
+Note:	this function also sets bit 14 of the flags word returned by
+	  AX=FF80h/BX=0003h
 --------T-16FF80BX0005-----------------------
 INT 16 U - PC Tools v8+ CPTASK - GET NUMBER OF ACTIVE TASKS???
 	AX = FF80h
@@ -1110,6 +1171,7 @@ INT 16 U - PC Tools v8+ CPTASK - GET AND CLEAR ??? FLAG
 	AX = FF80h
 	BX = 0006h
 Return: AX = old state (0000h clear, 0001h set)
+Note:	the tested flag is bit 13 of the flags returned by AX=FF80h/BX=0003h
 --------T-16FF80BX0007-----------------------
 INT 16 U - PC Tools v8+ CPTASK - ???
 	AX = FF80h
@@ -1129,13 +1191,28 @@ INT 16 U - PC Tools v8+ CPTASK - GET ???
 	BX = 0009h
 Return: CL = ???
 	CH = ??? (01h or 02h)
+--------T-16FF80BX000A-----------------------
+INT 16 U - PC Tools v9+ CPTASK - SET ???
+	AX = FF80h
+	BX = 000Ah
+	DS:SI -> 128-byte buffer containing ???
+--------T-16FF80BX000B-----------------------
+INT 16 U - PC Tools v9+ CPTASK - SET ???
+	AX = FF80h
+	BX = 000Bh
+	DX = index of ??? task (1-10)
+--------T-16FF80BX000C-----------------------
+INT 16 U - PC Tools v9+ CPTASK - SET IDLE??? DELAY
+	AX = FF80h
+	BX = 000Ch
+	CX = new delay time in minutes
 --------T-16FF80BX4350-----------------------
-INT 16 U - PC Tools v8+ CPTASK - ???
+INT 16 U - PC Tools v8+ CPTASK - UNINSTALL
 	AX = FF80h
 	BX = 4350h ('CP')
 	CX = 5354h ('ST')
-	???
-Return: ???
+Return: never returns; terminates all tasks and exits to program originally
+	  calling CPTASK
 --------U-16FF90-----------------------------
 INT 16 U - PC Tools v8+ DESKTOP - ???
 	AX = FF90h
@@ -1210,12 +1287,12 @@ INT 16 U - PC Tools v7+ DESKTOP - UNUSED
 Return: ???
 Note:	sounds triple-length beep
 --------T-16FF9C-----------------------------
-INT 16 U - PC Tools v8+ CPTASK - ???
+INT 16 U - PC Tools v8+ CPTASK - SET/CLEAR ??? POINTER
 	AX = FF9Ch
-	BL = ??? (00h,01h,02h)
-	???
-Return: ???
-Note:	sounds triple-length beep
+	BL = function
+	    00h set ??? pointer
+		DS:SI -> ???
+	    01h clear pointer to 0000h:0000h
 ----------16FF9D-----------------------------
 INT 16 U - PC Tools v8+ CPTASK, VSAFE - ???
 	AX = FF9Dh
@@ -1247,7 +1324,7 @@ Return: ???
 Note:	calls AX=FFC7h (remove window) and AX=FFFDh
 SeeAlso: AX=FFA1h,AX=FFC7h,AX=FFFDh
 --------y-16FFA3BX0000-----------------------
-INT 16 U - PC Tools v7+ DATAMON - INSTALLATION CHECK
+INT 16 U - PC Tools v7-8 DATAMON, v9+ DPROTECT - INSTALLATION CHECK
 	AX = FFA3h
 	BX = 0000h
 	CX = 0000h
@@ -1256,21 +1333,21 @@ Return: AX = segment of resident code
 	CX = 5555h
 SeeAlso: INT 21/AH=3Fh"NB.SYS",INT 21/AX=4101h
 --------y-16FFA3BX0001-----------------------
-INT 16 U - PC Tools v7+ DATAMON - GET ???
+INT 16 U - PC Tools v7-8 DATAMON, v9+ DPROTECT - GET ???
 	AX = FFA3h
 	BX = 0001h
 	CX = 0001h
 Return: AX:BX -> ???
 	CX = BX
 --------y-16FFA3BX0002-----------------------
-INT 16 U - PC Tools v7+ DATAMON - GET ???
+INT 16 U - PC Tools v7-8 DATAMON, v9+ DPROTECT - GET ???
 	AX = FFA3h
 	BX = 0002h
 	CX = 0002h
 Return: AX = ??? (0 or 1)
 	CX = BX = AX
 --------y-16FFA3BX0003-----------------------
-INT 16 U - PC Tools v7+ DATAMON - GET ???
+INT 16 U - PC Tools v7-8 DATAMON, v9+ DPROTECT - GET ???
 	AX = FFA3h
 	BX = 0003h
 	CX = 0003h
@@ -1294,8 +1371,19 @@ INT 16 U - PC Tools v7+ DATAMON - SET PSP SEGMENT ???
 	BX = 0006h
 	CX = 0006h
 	DX = current PSP segment as known to DOS??? or 0000h
+----------16FFA3BXFFA3-----------------------
+INT 16 U - PC Tools v9 DSKLIGHT - INSTALLATION CHECK
+	AX = FFA3h
+	BX = FFA3h
+	CX = FFA3h
+Return: BX = CX = 5555h if installed
+	    AX = resident code segment
+Program: DSKLIGHT is a TSR included with PC Tools v9+ which displays a disk-
+	  access indicator on the screen; in v7 and v8, this function was
+	  provided by DATAMON
+Note:	DSKLIGHT chains to the previous handler if BX or CX is not FFA3h
 --------U-16FFA4-----------------------------
-INT 16 U - PC Tools v7+ DESKTOP - ???
+INT 16 U - PC Tools v7-8 DESKTOP - ???
 	AX = FFA4h
 Return: ???
 Notes:	available even when not popped up
@@ -1352,16 +1440,16 @@ INT 16 - PC-Cache v6+ - FLUSH CACHE
 	CX = FFFFh
 SeeAlso: AX=FFA5h/CX=CCCCh,AX=FFA5h/CX=DDDDh,INT 13/AH=A1h
 --------U-16FFA6-----------------------------
-INT 16 U - PC Tools v6.0+ DESKTOP API - GET ???
+INT 16 U - PC Tools v6.0-8.0 DESKTOP - GET ???
 	AX = FFA6h
 Return: DS:SI -> ???
 Note:	available only when popped up
 --------U-16FFA7-----------------------------
-INT 16 U - PC Tools v6.0+ DESKTOP API - GET ??? PATH
+INT 16 U - PC Tools v6.0-8.0 DESKTOP - GET ??? PATH
 	AX = FFA7h
 Return: DS:SI -> ASCIZ path (directory from which PCTools was run???)
 --------U-16FFA8-----------------------------
-INT 16 U - PC Tools v6.0+ DESKTOP API - ???
+INT 16 U - PC Tools v6.0-8.0 DESKTOP - ???
 	AX = FFA8h
 	DS:SI -> three consecutive ASCIZ strings for ??? (max 256 bytes total)
 	???
@@ -1369,62 +1457,62 @@ Return: ???
 Notes:	available only when popped up
 	strings copied into internal buffer, among other actions
 --------U-16FFA9-----------------------------
-INT 16 U - PC Tools v6.0+ DESKTOP API - GET VERSION STRING
+INT 16 U - PC Tools v6.0-8.0 DESKTOP - GET VERSION STRING
 	AX = FFA9h
 Return: DS:SI -> version string
 --------U-16FFAA-----------------------------
-INT 16 U - PC Tools v6.0+ DESKTOP API - ???
+INT 16 U - PC Tools v6.0-8.0 DESKTOP - ???
 	AX = FFAAh
 	???
 Return: ???
 Note:	available only when popped up
 --------U-16FFAB-----------------------------
-INT 16 U - PC Tools v6.0+ DESKTOP API - GET EDITOR SETTINGS???
+INT 16 U - PC Tools v6.0-8.0 DESKTOP - GET EDITOR SETTINGS???
 	AX = FFABh
 Return: DS:SI -> editor setting strings???
 --------U-16FFAC-----------------------------
-INT 16 U - PC Tools v6.0+ DESKTOP API - SET ???
+INT 16 U - PC Tools v6.0-8.0 DESKTOP - SET ???
 	AX = FFACh
 	DL = ???
 Note:	available only when popped up
 --------U-16FFAD-----------------------------
-INT 16 U - PC Tools v6.0+ DESKTOP API - SET ???
+INT 16 U - PC Tools v6.0-8.0 DESKTOP - SET ???
 	AX = FFADh
 	DL = ???
 --------U-16FFAE-----------------------------
-INT 16 U - PC Tools v6.0+ DESKTOP API - GET ???
+INT 16 U - PC Tools v6.0-8.0 DESKTOP - GET ???
 	AX = FFAEh
 Return: AL = ???
 --------U-16FFAF-----------------------------
-INT 16 U - PC Tools v6.0+ DESKTOP API - SET ???
+INT 16 U - PC Tools v6.0-8.0 DESKTOP - SET ???
 	AX = FFAFh
 	DL = ???
 --------U-16FFB0-----------------------------
-INT 16 U - PC Tools v6.0+ DESKTOP API - SET ???
+INT 16 U - PC Tools v6.0-8.0 DESKTOP - SET ???
 	AX = FFB0h
 	BL = ???
 --------U-16FFB1-----------------------------
-INT 16 U - PC Tools v6.0+ DESKTOP API - ???
+INT 16 U - PC Tools v6.0-8.0 DESKTOP - ???
 	AX = FFB1h
 	???
 Return: ???
 --------U-16FFB2-----------------------------
-INT 16 U - PC Tools v5.5+ DESKTOP API - GET ???
+INT 16 U - PC Tools v5.5-8.0 DESKTOP - GET ???
 	AX = FFB2h
 Return: DS:SI -> ???
 --------U-16FFB3-----------------------------
-INT 16 U - PC Tools v5.5+ DESKTOP API - ???
+INT 16 U - PC Tools v5.5-8.0 DESKTOP - ???
 	AX = FFB3h
 	???
 Return: ???
 Note:	available only when popped up
 --------U-16FFB4-----------------------------
-INT 16 U - PC Tools v5.5+ DESKTOP API - SET ??? FLAG
+INT 16 U - PC Tools v5.5-8.0 DESKTOP - SET ??? FLAG
 	AX = FFB4h
 Note:	available only when popped up
 SeeAlso: AX=FFBBh
 --------U-16FFB5-----------------------------
-INT 16 U - PC Tools v5.5+ DESKTOP API - GET/SET WINDOW PARAMETERS
+INT 16 U - PC Tools v5.5-8.0 DESKTOP - GET/SET WINDOW PARAMETERS
 	AX = FFB5h
 	BX = window specifier (000Fh to 0019h) (see below)
 	DX = 0000h get, nonzero = set
@@ -1453,12 +1541,12 @@ Note:	if running in monochrome mode, character attributes at offsets 04h to
 	  06h are stored unchanged, but attributes other than 07h, 0Fh, or 70h
 	  are changed to 07h on reading
 --------U-16FFB6-----------------------------
-INT 16 U - PC Tools v5.5+ DESKTOP API - GET ???
+INT 16 U - PC Tools v5.5-8.0 DESKTOP - GET ???
 	AX = FFB6h
 Return: AH = ???
 	AL = ???
 --------U-16FFB7-----------------------------
-INT 16 U - PC Tools v5.5+ DESKTOP API - GET/SET ???
+INT 16 U - PC Tools v5.5-8.0 DESKTOP - GET/SET ???
 	AX = FFB7h
 	BX = direction
 	    0000h copy to buffer
@@ -1467,7 +1555,7 @@ INT 16 U - PC Tools v5.5+ DESKTOP API - GET/SET ???
 Return: data copied
 Note:	available only when popped up under v6.0+
 --------U-16FFB8-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - GET/SET???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - GET/SET???
 	AX = FFB8h
 	BH = subfunction
 	    00h get
@@ -1482,7 +1570,7 @@ INT 16 U - PC Tools v5.1+ DESKTOP API - GET/SET???
 		Return: AL = old value replaced by CL (v6.0+)
 			AH = old value replaced by CH (v6.0+)
 --------U-16FFB9-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ???
 	AX = FFB9h
 	???
 Return: AX = ???
@@ -1490,46 +1578,46 @@ Return: AX = ???
 	DS:SI -> ???
 	ES:DI -> ???
 --------U-16FFBA-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ???
 	AX = FFBAh
 	???
 Return: AX = ???
 Note:	available only when popped up
 --------U-16FFBB-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - CLEAR ??? FLAG
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - CLEAR ??? FLAG
 	AX = FFBBh
 Note:	available only when popped up
 SeeAlso: AX=FFB4h
 --------U-16FFBC-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - RESTORE ORIGINAL SCREEN???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - RESTORE ORIGINAL SCREEN???
 	AX = FFBCh
 --------U-16FFBD-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ??? DATABASE INDEXING MESSAGES
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ??? DATABASE INDEXING MESSAGES
 	AX = FFBDh
 	???
 Return: ???
 --------U-16FFBE-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ???
 	AX = FFBEh
 	???
 Return: ???
 Note:	available only when popped up
 --------U-16FFBF-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ???
 	AX = FFBFh
 	BX = DOS file handle to write on
 	???
 Return: ???
 Note:	available only when popped up
 --------U-16FFC0-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ???
 	AX = FFC0h
 	???
 Return: AX = 0000h if successful
 	AX = FFFFh on error
 Note:	available only when popped up
 --------U-16FFC1-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ???
 	AX = FFC1h
 	BL = ???
 	ES:DI -> data structure (see below)
@@ -1554,7 +1642,7 @@ Offset	Size	Description
  11h	WORD	???
 	???
 --------U-16FFC2-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ???
 	AX = FFC2h
 	BL = ???
 	ES:DI -> data structure (see AX=FFC1h)
@@ -1566,7 +1654,7 @@ Return: AH = ???
 Note:	available only when popped up
 SeeAlso: AX=FFC1h,AX=FFC3h
 --------U-16FFC3-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ???
 	AX = FFC3h
 	BL = ???
 	ES:DI -> data structure (see AX=FFC1h)
@@ -1578,7 +1666,7 @@ Return: AH = ???
 Note:	available only when popped up
 SeeAlso: AX=FFC1h,AX=FFC2h
 --------U-16FFC4-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - GET ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - GET ???
 	AX = FFC4h
 Return: AL = ???
 	BX = segment of scratch space???
@@ -1587,7 +1675,7 @@ Return: AL = ???
 	ES:BP -> ???
 Note:	available only when popped up in versions prior to 6.0
 --------U-16FFC5-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - CHECK WHETHER DESKTOP LOADED RESIDENT
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - CHECK WHETHER DESKTOP LOADED RESIDENT
 	AX = FFC5h
 Return: BL = nonzero if loaded resident
 	   = 00h if nonresident
@@ -1595,21 +1683,21 @@ Note:	available only when popped up; should call AX=FFEFh first to ensure
 	  that DESKTOP is active
 SeeAlso: AX=FFEFh,AX=FFF3h
 --------U-16FFC6-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - SET ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - SET ???
 	AX = FFC6h
 	BL = new value for ???
 --------U-16FFC7-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - REMOVE WINDOW
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - REMOVE WINDOW
 	AX = FFC7h
 	???
 Return: ???
 --------U-16FFC8-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - GET ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - GET ???
 	AX = FFC8h
 Return: DS:SI -> ???
 Note:	valid only while popped up
 --------U-16FFC9-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - COPY DATA TO CLIPBOARD
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - COPY DATA TO CLIPBOARD
 	AX = FFC9h
 	DS:SI -> characters to store in clipboard
 	CX = size in bytes
@@ -1617,20 +1705,20 @@ Return: CF set on error
 Notes:	available only when popped up
 	while copying, bytes of 00h and 0Ah are skipped
 --------U-16FFCA-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - SET ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - SET ???
 	AX = FFCAh
 	DX = ???
 Return: AX destroyed
 Note:	available only when popped up
 --------U-16FFCB-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - SELECT WINDOW PARAMETERS???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - SELECT WINDOW PARAMETERS???
 	AX = FFCBh
 	DX = window specifier???
 Return: AX destroyed
 Note:	available only when popped up
 SeeAlso: AX=FFB5h
 --------U-16FFCC-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - DISPLAY ASCIZ STRING CENTERED IN WINDOW
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - DISPLAY ASCIZ STRING CENTERED IN WINDOW
 	AX = FFCCh
 	DS:SI -> ASCIZ string
 Return: AX = ???
@@ -1638,28 +1726,28 @@ Return: AX = ???
 	ES:DI -> address past last character displayed (v5.1/5.5)
 	      -> ??? on menu bar (v6.0)
 --------U-16FFCD-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ???
 	AX = FFCDh
 	DS:DX -> ???
 Return: ???
 Note:	available only when popped up
 --------U-16FFCE-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - SET ??? DELAYS
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - SET ??? DELAYS
 	AX = FFCEh
 	CX = ???
 Return: nothing???
 --------U-16FFCF-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - CLOSE PRINTER/PRINT FILE
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - CLOSE PRINTER/PRINT FILE
 	AX = FFCFh
 Note:	available only when popped up
 --------U-16FFD0-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - PREPARE TO PRINT???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - PREPARE TO PRINT???
 	AX = FFD0h
 	???
 Return: ???
 Note:	available only when popped up
 --------U-16FFD1-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - DISPLAY PRINT OPTIONS MENU
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - DISPLAY PRINT OPTIONS MENU
 	AX = FFD1h
 Return: BX = number of copies
 	DX = destination
@@ -1672,19 +1760,19 @@ Return: BX = number of copies
 	    06h disk file
 Note:	available only when popped up
 --------U-16FFD2-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ???
 	AX = FFD2h
 	BX = ???
 Return: BL = ???
 Note:	available only when popped up
 --------U-16FFD3-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ???
 	AX = FFD3h
 	DS:SI -> 92-byte data record for ???
 Return: ???
 SeeAlso: AX=FED3h
 --------U-16FFD4BH3C-------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - CREATE/OPEN/DELETE FILE
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - CREATE/OPEN/DELETE FILE
 	AX = FFD4h
 	BH = 3Ch create file (with no attributes)
 	     3Dh open file
@@ -1700,13 +1788,13 @@ Note:	operation is attempted in (in order) the directory from which the
 	  desktop was started/run???, the directory specified with the
 	  filename, X:\PCTOOLS\, and X:\
 --------U-16FFD5-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ???
 	AX = FFD5h
 	???
 Return: ???
 Note:	available only when popped up
 --------U-16FFD6-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ???
 	AX = FFD6h
 	BX = ???
 	CX = ???
@@ -1715,13 +1803,13 @@ INT 16 U - PC Tools v5.1+ DESKTOP API - ???
 Return: ???
 Note:	available only when popped up
 --------U-16FFD7-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ???
 	AX = FFD7h
 	???
 Return: BL = ???
 Note:	available only when popped up
 --------U-16FFD8-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - SAFE CREATE FILE
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - SAFE CREATE FILE
 	AX = FFD8h
 	DS:BX -> ASCIZ filename
 Return: BX = file handle
@@ -1729,22 +1817,22 @@ Return: BX = file handle
 Note:	pops up confirmation menu if file already exists
 	only available when popped up???
 --------U-16FFD9-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - GET ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - GET ???
 	AX = FFD9h
 Return: AX = ???
 Note:	available only when popped up
 --------U-16FFDA-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - GET NAME OF LAST FILE OPENED
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - GET NAME OF LAST FILE OPENED
 	AX = FFDAh
 	DS:SI -> ??? (v5.1/5.5 only)
 Return: DS:SI -> filename
 --------U-16FFDB-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - SET ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - SET ???
 	AX = FFDBh
 	BL = ???
 Note:	available only when popped up
 --------U-16FFDC-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - UNHOOK
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - UNHOOK
 	AX = FFDCh
 Return: interrupt vectors 09h, 10h (v6.0+), 16h, 1Ch, and 21h restored to
 	  original values
@@ -1838,7 +1926,7 @@ Return: CX = 5555h if PCRUN active
 	DX = 5555h
 Note:	also clears flag set by AX=FFDDh/BX=000Ah
 --------U-16FFDE-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - DISPLAY POPUP MENU
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - DISPLAY POPUP MENU
 	AX = FFDEh
 	DS:DX -> menu description (must be on a paragraph boundary)
 Return: AX = ???
@@ -1846,40 +1934,40 @@ Return: AX = ???
 Note:	available only when popped up
 SeeAlso: AX=FFEEh
 --------U-16FFDF-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ???
 	AX = FFDFh
 	???
 Return: ???
 --------U-16FFE0-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ???
 	AX = FFE0h
 	CX = ???
 	DX = ???
 Note:	available only when popped up
 --------U-16FFE1-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - BEEP
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - BEEP
 	AX = FFE1h
 --------U-16FFE2-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ???
 	AX = FFE2h
 	DX = ???
 Return: ???
 Note:	available only when popped up
 --------U-16FFE3-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - PRINT CHARACTER
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - PRINT CHARACTER
 	AX = FFE3h
 	BL = character to print to currently open printer or print file
 Return: CF set on error
 Note:	available only when popped up
 SeeAlso: INT 17/AH=00h
 --------U-16FFE4-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ???
 	AX = FFE4h
 	DX = segment of ???
 Return: ???
 Note:	available only when popped up
 --------U-16FFE5-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - POP UP FILE SELECTION MENU
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - POP UP FILE SELECTION MENU
 	AX = FFE5h
 	DS:SI -> ASCIZ wildcard filespec followed by ASCIZ menu title
 	DX = segment of window parameters???
@@ -1889,43 +1977,43 @@ Return: AX = DOS file handle for file
 Note:	available only when popped up
 SeeAlso: AX=FFDAh
 --------U-16FFE6-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - CHECK FOR AND GET KEYSTROKE
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - CHECK FOR AND GET KEYSTROKE
 	AX = FFE6h
 Return: AX = 0000h if no key available
 	     else  BIOS keycode
 Notes:	available only when popped up
 	invokes INT 28 idle interrupt before checking for key
 --------U-16FFE7-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ???
 	AX = FFE7h
 	BX = segment of ???
 Return: ???
 Note:	available only when popped up
 --------U-16FFE8-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - DISPLAY NUMBER
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - DISPLAY NUMBER
 	AX = FFE8h
 	CX = number
 	DH = attribute
 	DS:SI -> destination for ASCII number
 Return: DS:SI buffer filled in with alternating characters and attributes
 --------U-16FFE9-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - GET FILE LIST???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - GET FILE LIST???
 	AX = FFE9h
 Return: BX = segment of file/directory list (14 bytes per file, NUL-padded)
 Note:	available only when popped up
 --------U-16FFEA-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - DISPLAY COUNTED STRING
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - DISPLAY COUNTED STRING
 	AX = FFEAh
 	DS:SI -> counted string (count byte followed by string)
 Return: ???
 Note:	available only when popped up
 --------U-16FFEB-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ???
 	AX = FFEBh
 	???
 Return: ???
 --------U-16FFEC-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - GET KEY
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - GET KEY
 	AX = FFECh
 	DS:SI -> FAR routine to ???
 	BX = ???
@@ -1937,12 +2025,12 @@ Notes:	available only when popped up
 	F10 is hotkey to Desktop menu
 Index:	hotkeys;PC Tools DESKTOP
 --------U-16FFED-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - GET ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - GET ???
 	AX = FFEDh
 Return: AX = ???
 Note:	available only when popped up
 --------U-16FFEE-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - DEFINE PULLDOWN MENUS
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - DEFINE PULLDOWN MENUS
 	AX = FFEEh
 	DS:SI -> pulldown menu system description (see below)
 Return: AX destroyed
@@ -1977,7 +2065,7 @@ Offset	Size	Description
  01h	BYTE	width of menu
  02h  N BYTEs	counted strings, one for each line in menu
 --------U-16FFEFCX0000-----------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - INSTALLATION CHECK
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - INSTALLATION CHECK
 	AX = FFEFh
 	CX = 0000h
 Return: CX = ABCDh if PC Tools DESKTOP.EXE installed
@@ -1985,20 +2073,20 @@ Return: CX = ABCDh if PC Tools DESKTOP.EXE installed
 	    AX = ??? (v5.1/5.5 only)
 SeeAlso: AX=FEEFh,AX=FFC5h,AX=FFF3h
 --------U-16FFF0-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - SET ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - SET ???
 	AX = FFF0h
 	DX = ???
 Return: AX destroyed
 Note:	available only when popped up
 --------U-16FFF1BX0000-----------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ALTERNATE INSTALLATION CHECK
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ALTERNATE INSTALLATION CHECK
 	AX = FFF1h
 	BX = 0000h  leave ??? flag as is
 	    nonzero set ??? flag
 Return: CX = 5555h if installed
 	DX = 5555h
 --------U-16FFF2-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - DISPLAY HELP LINE
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - DISPLAY HELP LINE
 	AX = FFF2h
 	DS:SI -> ASCIZ function key label string (each label preceded by '[')
 		or help text
@@ -2007,21 +2095,21 @@ Notes:	available only when popped up
 	if the specified string does not start with '[', it is displayed
 	  centered on the bottom line, else the function key labels are shown
 --------U-16FFF3-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - PREPARE TO UNLOAD RESIDENT DESKTOP
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - PREPARE TO UNLOAD RESIDENT DESKTOP
 	AX = FFF3h
 Note:	releases any EMS being used; restores video mode, page, and cursor
 	  shape; and restores interrupt vectors
 SeeAlso: AX=FFC5h,AX=FFEFh
 Index:	uninstall;PC Tools DESKTOP
 --------U-16FFF4-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - ???
 	AX = FFF4h
 	???
 Return: ???
 Note:	available only when popped up
 SeeAlso: AX=FFF6h
 --------U-16FFF5-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - GET SCREEN ATTRIBUTE ARRAY
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - GET SCREEN ATTRIBUTE ARRAY
 	AX = FFF5h
 Return: ES:BX -> screen attributes data structure (see below)
 	AL = ??? (v6.0+)
@@ -2036,7 +2124,7 @@ Offset	Size	Description
  08h 15 BYTEs	???
  17h	BYTE	attribute for message boxes
 --------U-16FFF6-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - INVOKE NOTEPAD EDITOR
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - INVOKE NOTEPAD EDITOR
 	AX = FFF6h
 	DS = segment of editor buffer structure (see below)
 	BX = ???
@@ -2053,7 +2141,7 @@ Offset	Size	Description
  06h 10 BYTEs	???
  10h  N BYTEs	ASCIZ name of file being edited
 --------U-16FFF7-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - PROCESS MENU BAR ENTRY???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - PROCESS MENU BAR ENTRY???
 	AX = FFF7h
 	DS:SI -> ???
 	???
@@ -2062,18 +2150,18 @@ Notes:	available only when popped up
 	performs input processing on the menu bar set up with AX=FFEEh
 SeeAlso: AX=FFEEh,AX=FFFBh
 --------U-16FFF8-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - DRAW EMPTY WINDOW
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - DRAW EMPTY WINDOW
 	AX = FFF8h
 	DS:0000h -> window parameters structure (see AX=FFB5h)
 	DS:BX -> DWORD to store address of ??? on screen
 Return: ???
 --------U-16FFF9-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - DEFINE SCREEN REFRESH ROUTINE
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - DEFINE SCREEN REFRESH ROUTINE
 	AX = FFF9h
 	ES:BX -> FAR routine to redisplay the utility's window
 Note:	available only when popped up
 --------U-16FFFA-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - DEFINE STANDARD PULLDOWN MENUS
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - DEFINE STANDARD PULLDOWN MENUS
 	AX = FFFAh
 Notes:	available only when popped up
 	adds the "Window" option to the "Desktop" option which is the only one
@@ -2081,14 +2169,14 @@ Notes:	available only when popped up
 	  additional menu items are added between "Desktop" and "Window"
 SeeAlso: AX=FFEEh,AX=FFFBh
 --------U-16FFFB-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - PROCESS STANDARD MENU BAR
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - PROCESS STANDARD MENU BAR
 	AX = FFFBh
 Return: ???
 Notes:	available only when popped up
 	performs input processing on the standard menu bar set up with AX=FFFAh
 SeeAlso: AX=FFF7h
 --------U-16FFFC-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - GET HOTKEYS AND KEYBOARD VECTOR
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - GET HOTKEYS AND KEYBOARD VECTOR
 	AX = FFFCh
 Return: ES:BX -> hotkey table (see below)
 	DS:DX = original INT 09 vector
@@ -2100,17 +2188,17 @@ Offset	Size	Description
  04h  2 BYTEs	scancode/shift state for clipboard copy key
  06h  2 BYTEs	scancode/shift state for screen autodial key
 --------U-16FFFD-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - COPY ???
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - COPY ???
 	AX = FFFDh
 Return: AX destroyed
 Note:	copies 4000 bytes from ??? to ??? under certain circumstances
 SeeAlso: AX=FF91h,AX=FF92h
 --------M-16FFFE-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - SHOW MOUSE CURSOR
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - SHOW MOUSE CURSOR
 	AX = FFFEh
 SeeAlso: AX=FFFFh,INT 33/AX=0001h
 --------M-16FFFF-----------------------------
-INT 16 U - PC Tools v5.1+ DESKTOP API - HIDE MOUSE CURSOR
+INT 16 U - PC Tools v5.1-8.0 DESKTOP - HIDE MOUSE CURSOR
 	AX = FFFFh
 SeeAlso: AX=FFFEh,INT 33/AX=0002h
 --------P-17----DX0ABC-----------------------
@@ -2644,21 +2732,23 @@ INT 17 - Alloy NTNX, MW386 - REMOVE PRINTER FROM SPOOLER
 	AH = 88h
 	AL = mode
 	    00h NTNX compatibility
-		DX = NTNX printer number
-		    00h host LPT1
-		    01h host LPT2
-		    02h host LPT3
-		    03h host LPT4
-		    04h host COM1
-		    05h host COM2
-		    06h user's logical COM2
-		    07h user's terminal AUX port
-		    08h user's logical COM1 (MW386 only)
+		DX = NTNX printer number (see below)
 	    01h MW386
 		DX = MW386 printer number
 Return: AH = status (see AH=81h)
 Note:	removes specified printer from the spooler's list of printers
 SeeAlso: AH=89h,AH=8Bh
+
+Values for NTNX printer number:
+ 00h	host LPT1
+ 01h	host LPT2
+ 02h	host LPT3
+ 03h	host LPT4
+ 04h	host COM1
+ 05h	host COM2
+ 06h	user's logical COM2
+ 07h	user's terminal AUX port
+ 08h	user's logical COM1 (MW386 only)
 --------N-1789-------------------------------
 INT 17 - Alloy NTNX, MW386 - ADD PRINTER TO SPOOLER
 	AH = 89h
@@ -2697,9 +2787,9 @@ SeeAlso: AH=88h,AH=8Bh
 INT 17 - Alloy NTNX,MW386 - RESET SPOOLER
 	AH = 8Dh
 	AL = 00h
+Return: AL = status (see AH=81h)
 Notes:	clears all buffers and resets spooler to boot-up values
 	MW386 supports this function for compatibility only; it is a NOP
-Return: AL = status (see AH=81h)
 --------N-178E-------------------------------
 INT 17 - Alloy NTNX - GET INT 28 ENTRY POINT
 	AH = 8Eh
@@ -3180,7 +3270,7 @@ Return: AX = status
 	    0000h printer not ready (see also AH=02h)
 	    other printing started
 SeeAlso: AH=F1h
-----------17FF--BX0000-----------------------
+--------c-17FF--BX0000-----------------------
 INT 17 U - PC-MOS/386 v5.01 - PRINT SPOOLER - CLOSE SPOOL FILE
 	AH = FFh
 	BX = 0000h
@@ -3196,7 +3286,7 @@ SeeAlso: AH=01h,AH=03h"PC-MOS"
 INT 18 - DISKLESS BOOT HOOK (START CASSETTE BASIC)
 Desc:	called when there is no bootable disk available to the system
 Notes:	only PCs produced by IBM contain BASIC in ROM, so the action is
-	  unpredicatable on compatibles; this interrupt often reboots the
+	  unpredictable on compatibles; this interrupt often reboots the
 	  system, and often has no effect at all
 	network cards with their own BIOS can hook this interrupt to allow
 	  a diskless boot off the network (even when a hard disk is present
@@ -3332,6 +3422,7 @@ Values for operating system indicator:
  0Ah	OPUS
  0Ah	Coherent swap partition
  10h	OPUS
+ 18h	AST special Windows swap file
  24h	NEC MS-DOS 3.x
  40h	VENIX 80286
  50h	Disk Manager, read-only partition
@@ -4668,7 +4759,7 @@ Notes:	this function may require up to 1024 byte of stack; it will not enable
 	all devices sharing the same Class Code may be enumerated by
 	  incrementing SI from 0 until error 86h is returned
 SeeAlso: AX=B183h
---------X-1AB102-----------------------------
+--------X-1AB106-----------------------------
 INT 1A - Intel PCI BIOS v2.0c - PCI BUS-SPECIFIC OPERATIONS
 	AX = B106h
 	BL = bus number
@@ -4883,7 +4974,7 @@ Notes:	this call is identical to AH=A0h
 	this function is also supported by Vertisoft's Emulaser utility ELSPL,
 	  as that is a licensed version of Disk Spool II
 SeeAlso: AH=A0h,AH=ABh,AH=D0h
-----------1ACCCCBXCCCC-----------------------
+--------U-1ACCCCBXCCCC-----------------------
 INT 1A U - DATEFIX - INSTALLATION CHECK
 	AX = CCCCh
 	BX = CCCCh
@@ -5339,14 +5430,17 @@ INT 21 - DOS 1+ - DIRECT CONSOLE INPUT
 	AH = 06h
 	DL = FFh
 Return: ZF set if no character available
+	    AL = 00h
 	ZF clear if character available
 	    AL = character read
 Notes:	^C/^Break are NOT checked
 	if the returned character is 00h, the user pressed a key with an
 	  extended keycode, which will be returned by the next call of this
 	  function
-	reads from standard input, which is always the keyboard under DOS 1.x,
-	  but may be redirected under DOS 2+
+	this function reads from standard input, which is always the keyboard
+	  under DOS 1.x, but may be redirected under DOS 2+
+	although the return of AL=00h when no characters are available is not
+	  documented, some programs rely on this behavior
 SeeAlso: AH=0Bh
 --------D-2107-------------------------------
 INT 21 - DOS 1+ - DIRECT CHARACTER INPUT, WITHOUT ECHO
@@ -5433,9 +5527,10 @@ SeeAlso: AH=01h,AH=06h"INPUT",AH=07h,AH=08h,AH=0Ah
 --------D-210D-------------------------------
 INT 21 - DOS 1+ - DISK RESET
 	AH = 0Dh
-Notes:	writes all modified disk buffers to disk, but does not update directory
-	  information (that is only done when files are closed or a SYNC call
-	  is issued)
+Return: (DOS 6 only) CF clear (earlier versions preserve CF)
+Notes:	This function writes all modified disk buffers to disk, but does not
+	  update the directory information (that is only done when files are
+	  closed or a SYNC call is issued)
 SeeAlso: AX=5D01h,INT 13/AH=00h,INT 2F/AX=1120h
 --------v-210D20-----------------------------
 INT 21 - VIRUS - "Crazy Imp" - INSTALLATION CHECK
@@ -5955,7 +6050,7 @@ Notes:	this function modifies both the real-mode low-memory interrupt
 --------E-212507-----------------------------
 INT 21 P - Phar Lap 386/DOS-Extender - SET REAL- & PROTECTED-MODE INT VECTORS
 	AX = 2507h
-	CL = interrupt numbern
+	CL = interrupt number
 	DS:EDX = CS:EIP of protected-mode interrupt handler
 	EBX = CS:IP of real-mode interrupt handler
 Return: CF clear
@@ -6347,13 +6442,15 @@ Offset	Size	Description
  40h	DWORD	size in pages of swap file
  44h	DWORD	number of system pages allocated with EMS calls
  48h	DWORD	minimum number of conventional memory pages
- 4Ch	DWORD	maximum size in bytes to which swap file can be increased
- 50h	DWORD	"vmflags" bit 0 = 1 if page fault in progress
+ 4Ch	DWORD	maximum size in pages to which swap file can be increased
+ 50h	DWORD	"vmflags"
+		bit 0 = 1 if page fault in progress
 ---v4.0+ ---
- 54h  8 BYTEs	???
+ 54h	DWORD	number of physical pages guaranteed to be free
+ 58h	DWORD	number of free physical pages currently available
  5Ch	DWORD	size in pages of largest free block of memory (including disk
-		swap space)
- 60h  4 BYTEs	???
+		  swap space)
+ 60h	DWORD	reserved
 --------E-212521-----------------------------
 INT 21 P - Phar Lap 386/DOS-Extender VMM - LIMIT PROGRAM'S EXTENDED MEM USAGE
 	AX = 2521h
@@ -6377,12 +6474,16 @@ INT 21 P - Phar Lap 386/DOS-Ext VMM v2.2+ - SPECIFY OUT-OF-SWAP-SPACE HANDLER
 	AX = 2523h
 	???
 Return: ???
+Note:	this function takes a DWORD pointer and a DWORD pointer to a DWORD
+	  pointer as arguments
 SeeAlso: AX=2522h
 --------E-212524-----------------------------
 INT 21 P - Phar Lap 386/DOS-Ext VMM v2.2+ - INSTALL PAGE-REPLACEMENT HANDLERS
 	AX = 2524h
 	???
 Return: ???
+Note:	this function takes three DWORD pointers and three DWORD pointers to
+	  DWORD pointers as arguments
 --------E-212525-----------------------------
 INT 21 P - Phar Lap 386/DOS-Extender VMM - LIMIT PROGRAM'S CONVENT'L MEM USAGE
 	AX = 2525h
@@ -6400,15 +6501,140 @@ INT 21 P - Phar Lap 386/DOS-Extender - GET CONFIGURATION INFORMATION
 	AX = 2526h
 	???
 Return: ???
-Note:	details not available at this time
+Notes:	details are not yet available
+	this function takes a pointer to the configuration buffer (see below)
+	  and a poitner to a BYTE as arguments
 
 Format of configuration buffer:
 Offset	Size	Description
- 00h	DWORD	flags 1
-		bit 24: set if -NESTDPMI specified
-		bit 25: set if -NONESTDPMI specified
-		bit 26: set if -NODPMI specified
-		bit 27: set if -NOPCDWEITEK specified
+ 00h	DWORD	flags 1 (see below)
+ 04h	DWORD	flags 2 (unused through v5.0)
+ 08h	DWORD	flags 3 (unused through v5.0)
+ 0Ch	DWORD	386|DOS-Extender major version
+ 10h	DWORD	386|DOS-Extender minor version
+ 14h	DWORD	first letter of text after minor version number in version str
+ 18h	DWORD	beta flag (00h normal release, 01h beta release)
+ 1Ch	DWORD	processor (3 = 386, 4 = 486)
+ 20h	DWORD	coprocessor (4 = none, 6 = 287, 7 = 387/486)
+ 24h	DWORD	Weitek coprocessor flag (0 = none, 1 = present)
+ 28h	DWORD	machine type (0 = IBM PC compatible, 1 = NEC 9800 series)
+ 2Ch	DWORD	machine class
+		IBM: bus type (0=ISA, 1=MCA, 2=XT, 3=EISA)
+		NEC: 0=normal mode, 1=high-res mode
+ 30h	DWORD	VCPI flag (0 = none, 1 = present)
+ 34h	DWORD	-WEITEK/-1167 switch (0 = AUTO, 1 = ON, 2 = OFF)
+ 38h	DWORD	-MINREAL setting
+ 3Ch	DWORD	-MAXREAL setting
+ 40h	DWORD	-MINIBUF setting
+ 44h	DWORD	-MAXIBUF setting
+ 48h	DWORD	size in bytes of DOS call data buffer
+ 4Ch	DWORD	number of interrupt stacks (-NISTACK)
+ 50h	DWORD	interrupt stack size (-ISTKSIZE)
+ 54h	DWORD	-REALBREAK setting
+ 58h	DWORD	-CALLBUFS
+ 5Ch	DWORD	-HWIVEC
+ 60h	DWORD	-PRIVEC
+ 64h	DWORD	-INTMAP
+ 68h	DWORD	-PRIMAP
+ 6Ch	DWORD	VCPI: master 8259 interrupt vector base (IRQ0 mapping)
+ 70h	DWORD	VCPI: slave 8259 interrupt vector base (IRQ8 mapping)
+ 74h	DWORD	BIOS print screen interrupt vector (0 if NEC)
+ 78h	DWORD	-EXTLOW setting
+ 7Ch	DWORD	-EXTHIGH setting
+ 80h	DWORD	lowest physical extended-memory address allocatable
+ 84h	DWORD	highest physical extended-memory address allocatable + 1
+ 88h	DWORD	special memory's physical base address (00000000h if none)
+ 8Ch	DWORD	special memory size in bytes (00000000h if none)
+ 90h	DWORD	-MAXVCPIMEM setting
+ 94h	DWORD	-VSCAN
+ 98h	DWORD	-SWAPCHK (0 = OFF, 1 = ON, 2 = FORCE, 3 = MAX)
+ 9Ch	DWORD	-CODESIZE setting
+ A0h	DWORD	minimum swap file size (-MINSWFSIZE)
+ A4h	DWORD	maximum swap fiel size (-MAXSWFSIZE)
+ A8h	DWORD	page replacement policy (0 = LFU, 1 = NUR)
+ ACh	DWORD	number of GDT entries (-NGDTENT)
+ B0h	DWORD	number of LDT entries (-NLDTENT)
+ B4h	DWORD	program's privilege level (0-3)
+---386|DOS-Extender v3.0+ ---
+ B8h	DWORD	-LOCKSTACK setting
+ BCh	DWORD	-MAXEXTMEM
+ C0h	DWORD	-MAXXMSMEM
+ C4h	DWORD	-MAXPGMMEM
+ C8h	DWORD	-DATATHRESHOLD
+ CCh	DWORD	virtual memory manager flag (0 = not present, 1 = present)
+ D0h	DWORD	Cyrix coprocessor flag (0 = no Cyrix EMC387, 1 = present)
+ D4h	DWORD	-CYRIX setting (0 = AUTO, 1 = ON, 2 = OFF)
+ D8h	DWORD	DPMI flag (0 = not present, 1 = present)
+ DCh	DWORD	DPMI major version
+ E0h	DWORD	DPMI minor version
+ E4h	DWORD	DPMI capabilities flags
+		bit 0: paging supported
+		bit 1: physical device mapping
+		bit 2: conventional memory mapping
+		bit 3: exceptions restartable
+ E8h	DWORD	VCPI major version
+ ECh	DWORD	VCPI minor version
+ F0h	WORD	VCPI: IRQ0-7 physical base interrupt vector
+ F2h	WORD	VCPI: IRQ8-15 physical base interrupt vector
+ F4h	DWORD	XMS flag (0 = none, 1 = present)
+ F8h	DWORD	XMS major version
+ FCh	DWORD	XMS minor version
+100h	WORD	application's CS selector
+102h	WORD	application's DS selector
+104h	WORD	application's PSP selector
+106h	WORD	application's environment selector
+108h	WORD	selector mapping entire first megabyte
+10Ah	WORD	selector mapping text video memory
+10Ch	WORD	selector mapping video memory (text for IBM, graphics for NEC)
+10Eh	WORD	selector mapping Weitek address space, 0000h if not present
+110h	WORD	selector mapping Cyrix EMC387 address space, 0000h if none
+112h	WORD	reserved (0)
+114h	DWORD	real-mode FAR entry point to call to switch to protected mode
+		  with no saved context
+118h	DWORD	size of LDT in bytes
+---386|DOS-Extender v5.0+ ---
+11Ch	DWORD	Windows flag (0 = not present, 1 = Windows present)
+120h	DWORD	Windows major version
+124h	DWORD	Windows minor version
+128h	DWORD	Windows mode (0 = real/standard, 1 = enhanced)
+12Ch	DWORD	OS/2 flag (0 = not present, 1 = OS/2 present)
+130h	DWORD	OS/2 major version
+134h	DWORD	OS/2 minor version
+138h 50 DWORDs	reserved (0)
+
+Bitfields for flags 1:
+ bit 0	-NOPAGE specified
+ bit 1	-A20 specified
+ bit 2	-VDISK specified
+ bit 3	-XT specified
+ bit 4	-AT specified
+ bit 5	-MCA specified
+ bit 6	-EISA specified
+ bit 7	-NORMRES specified (NEC only)
+ bit 8	-HIGHRES specified (NEC only)
+ bit 9	set if -SWFGROW1ST, clear if -NOSWFGROW1ST
+ bit 10	-NOVM specified
+ bit 11	-SAVEREGS specified
+ bit 12	unused (clear)
+ bit 13	-NOVCPI specified
+ bit 14	-NOMUL specified
+ bit 15	-NOBMCHK specified
+ bit 16	-NOSPCLMEM or -NOBIM
+ bit 17	-NOPGEXP specified
+ bit 18	-SWAPDEFDISK specified
+---v3.0+ ---
+ bit 19	-SAVEINTS specified
+ bit 20	-NOLOAD specified
+ bit 21	-PAGELOG specified
+ bit 22	-OPENDENY specified
+ bit 23	-ERRATA17 specified
+---v4.1+ ---
+ bit 24	-NESTDPMI specified
+ bit 25	-NONESTDPMI specified
+ bit 26	-NODPMI specified
+ bit 27	-NOPCDWEITEK specified
+---v4.2+ ---
+ bit 28	-WININT21 specified
 --------E-212527-----------------------------
 INT 21 P - Phar Lap 386/DOS-Extender VMM - EN/DISABLE STATE SAVE ON INTERRUPTS
 	AX = 2527h
@@ -6447,10 +6673,22 @@ SeeAlso: AX=252Ah
 
 Format of parameter block:
 Offset	Size	Description
- 00h 28 BYTEs	???
+ 00h	DWORD	initial EIP
+ 04h	WORD	initial CS
+ 06h	DWORD	initial ESP
+ 0Ah	WORD	initial SS
+ 0Ch  4 WORDs	initial DS, ES, FS, GS
+ 14h	DWORD	minimum size in bytes of program segment
+ 18h	DWORD	bytes of additional memory allocated
  1Ch	DWORD	flags
 		bit 0: child linked with -UNPRIVILEGED
-		bits 1-31 reserved
+		---v6.0+ ---
+		bit 1: child is PE file instead of .EXP
+		bit 2: loaded file is a DLL
+		bits 3-31 reserved
+---v6.0+ ---
+ 20h	DWORD	module handles (PE files only)
+ 24h  7 DWORDs	reserved (0)
 --------E-21252A-----------------------------
 INT 21 P - Phar Lap 386/DOS-Extender VMM - NEW LOAD PROGRAM FOR DEBUG
 	AX = 252Ah
@@ -6491,8 +6729,50 @@ Values for memory error code:
  05h	-MAXPGMMEM exceeded
  06h	insufficient low memory to REALBREAK value
  07h	insufficient low memory for PSP and environment
+--------E-21252BBL00-------------------------
+INT 21 Pu - Phar Lap 386/DOS-Extender - CREATE UNMAPPED PAGES
+	AX = 252Bh
+	BL = 00h
+	???
+Return: ???
+--------E-21252BBL01-------------------------
+INT 21 Pu - Phar Lap 386/DOS-Extender - CREATE ALLOCATED PAGES
+	AX = 252Bh
+	BL = 01h
+	???
+Return: ???
+--------E-21252BBL02-------------------------
+INT 21 Pu - Phar Lap 386/DOS-Extender - CREATE PHYSICAL DEVICE PAGES
+	AX = 252Bh
+	BL = 02h
+	???
+Return: ???
+--------E-21252BBL03-------------------------
+INT 21 Pu - Phar Lap 386/DOS-Extender - MAP DATA FILE
+	AX = 252Bh
+	BL = 03h
+	???
+Return: ???
+SeeAlso: AX=252Bh/BL=0Bh
+--------E-21252BBL04-------------------------
+INT 21 Pu - Phar Lap 386/DOS-Extender - GET PAGE TYPES
+	AX = 252Bh
+	BL = 04h
+	???
+Return: ???
+Note:	returns one word per page
+
+Bitfields for page information:
+ bits 3-0	page type
+	0 unmapped
+	1 allocated
+	2 physical device page
+ bit 4	locked
+ bit 5	swapped to disk
+ bit 6	mapped to read-only data file
+ bit 7	mapped to read/write data file
 --------E-21252B-----------------------------
-INT 21 P - FlashTek X-32VM - VIRTUAL MEMORY MANAGEMENT - PAGE LOCKING
+INT 21 P - Phar Lap 386/DOS-Extender - VIRTUAL MEMORY MANAGEMENT - PAGE LOCKING
 	AX = 252Bh
 	BH = function
 	    05h lock pages
@@ -6505,7 +6785,14 @@ INT 21 P - FlashTek X-32VM - VIRTUAL MEMORY MANAGEMENT - PAGE LOCKING
 	EDX = size of memory region in bytes
 Return: CF clear if successful
 	CF set on error
-Note:	if X-32 is not using virtual memory, this function always succeeds
+Note:	this function is also supported by FlashTek X-32VM; if X-32 is not
+	  using virtual memory, this function always succeeds
+--------E-21252B-----------------------------
+INT 21 Pu - Phar Lap 386/DOS-Extender - FREE PHYSICAL PAGES
+	AX = 252Bh
+	BL = function (07h,08h)
+	???
+Return: ???
 --------E-21252BBH09-------------------------
 INT 21 P - Phar Lap 386/DOS-Extender v4.1 - GET PAGETABLE ENTRY/PAGE TABLE INFO
 	AX = 252Bh
@@ -6541,7 +6828,7 @@ Return: CF clear if successful
 		0082h running under DPMI
 SeeAlso: AX=252Bh/BH=09h
 --------E-21252BBH0B-------------------------
-INT 21 P - Phar Lap 386/DOS-Extender v4.1 - MAP DATA FILE AT FILE OFFSET
+INT 21 P - Phar Lap 386/DOS-Extender v4.1+ - MAP DATA FILE AT FILE OFFSET
 	AX = 252Bh
 	BH = 0Bh
 	BL = subfunction
@@ -6561,7 +6848,7 @@ Return: CF clear if successful
 		0009h invalid address
 		0081h invalid parameters or 386|VMM not present
 		0086h all 386|VMM file handles already in use
-SeeAlso: AX=252Bh/BH=09h
+SeeAlso: AX=252Bh/BH=03h,AX=252Bh/BH=09h
 
 Format of mapping structure:
 Offset	Size	Description
@@ -6599,8 +6886,9 @@ Format of VMM parameter buffer:
 Offset	Size	Description
  00h	DWORD	flags
 		bit 0: page fault logging enabled
-		bit 1: SWAPEXEC switch
-		bit 2: zero allocated memory
+		---v5.0+ ---
+		bit 1: swap extender to disk during DOS EXEC call
+		bit 2: don't zero allocated memory
  04h	DWORD	scan period for page aging, in milliseconds
  08h	DWORD	maximum size (in bytes) to check on each page scan
  0Ch 52 BYTEs	unused
@@ -6770,6 +7058,33 @@ Notes:	this call will always fail under DPMI because it is not possible to
 	this call can normally be used only by programs running in ring 0
 	  because the processor does not allow an interrupt to be vectored to
 	  a less privileged ring
+--------E-21253F-----------------------------
+INT 21 Pu - Phar Lap 386/DOS-Extenderr v6.0+ - ALLOCATE LDT DESCRIPTOR
+	AX = 253Fh
+	BX = LDT descriptor to allocate (0000h for any)
+	???
+Return: ???
+--------E-212540-----------------------------
+INT 21 Pu - Phar Lap 386/DOS-Extenderr v6.0+ - FORCE ALIAS OF SEGMENT
+	AX = 2540h
+	???
+Return: ???
+--------E-212544-----------------------------
+INT 21 Pu - Phar Lap 386/DOS-Extenderr v6.0+ - FREE DLL
+	AX = 2544h
+	???
+Return: ???
+--------E-212545-----------------------------
+INT 21 Pu - Phar Lap 386/DOS-Extenderr v6.0+ - GET/SET PROCEDURE ADDRESS
+	AX = 2545h
+	ECX = direction (00h get, 01h set)
+	???
+Return: ???
+--------E-212546-----------------------------
+INT 21 Pu - Phar Lap 386/DOS-Extenderr v6.0+ - GET MODULE HANDLE
+	AX = 2546h
+	???
+Return: ???
 --------E-2125C0-----------------------------
 INT 21 P - Phar Lap 386/DOS-Extender - ALLOCATE MS-DOS MEMORY BLOCK
 	AX = 25C0h
@@ -6815,13 +7130,15 @@ INT 21 P - Phar Lap 386/DOS-Extender - EXECUTE PROGRAM
 Return: CF clear if successful
 	    all registers unchanged
 	CF set on error
-	    EAX = error code
-		01h function code in AL is invalid ???
-		02h file not found or path invalid
-		05h access denied
-		08h insufficient memory to load program
-		0Ah environment invalid
-		0Bh invalid file format
+	    EAX = error code (see below)
+
+Values for error code:
+ 01h function code in AL is invalid ???
+ 02h file not found or path invalid
+ 05h access denied
+ 08h insufficient memory to load program
+ 0Ah environment invalid
+ 0Bh invalid file format
 
 Format of parameter block:
 Offset	Size	Description
@@ -6863,7 +7180,7 @@ Offset	Size	Description
  3Ch	BYTE	apparently unused by DOS versions <= 6.00
  3Dh	BYTE	apparently used by some versions of APPEND
  3Eh	BYTE	(Novell NetWare) flag: next byte initialized if CEh
- 3Fh	BYTE	(Novell Netware) Novell task number if previous byte is CEh
+ 3Fh	BYTE	(Novell NetWare) Novell task number if previous byte is CEh
  40h  2 BYTEs	DOS 5+ version to return on INT 21/AH=30h
  42h	WORD	(MSWin3) selector of next PSP (PDB) in linked list
 		Windows keeps a linked list of Windows programs only
@@ -7068,7 +7385,7 @@ Offset	Size	Description
  00h	WORD	number of return codes which can be stored by following buffer
  02h	WORD	current position in buffer (treated as a ring)
  04h  N BYTEs	ELRES buffer
-----------212B01CX444D-----------------------
+--------m-212B01CX444D-----------------------
 INT 21 - Quarterdeck DOS-UP.SYS v2.00 - INSTALLATION CHECK
 	AX = 2B01h
 	CX = 444Dh ('DM')
@@ -7440,7 +7757,7 @@ Notes:	the OS/2 v1.x Compatibility Box returns major version 0Ah (10)
 SeeAlso: AX=3000h/BX=3000h,AX=3306h,AX=4452h,AH=87h,INT 15/AX=4900h
 SeeAlso: INT 2F/AX=122Fh,INT 2F/AX=E002h
 
-Values for MS-DOS OEM number:
+Values for DOS OEM number:
  00h	IBM
  01h	Compaq
  02h	MS Packaged Product
@@ -7457,6 +7774,8 @@ Values for MS-DOS OEM number:
  4Dh	Hewlett-Packard
  66h	PhysTechSoft (PTS-DOS)
  99h	General Software's Embedded DOS
+ EEh	DR-DOS
+ EFh	Novell DOS
  FFh	Microsoft, Phoenix
 --------E-2130-------------------------------
 INT 21 - Phar Lap 386/DOS-Extender, Intel Code Builder - INSTALLATION CHECK
@@ -7496,7 +7815,7 @@ Return: AX = PC-MOS version
 Program: PC-MOS/386 is a multitasking/multiuser MS-DOS-compatible operating
 	  system by The Software Link, Inc.
 SeeAlso: AH=30h,INT 38/AH=02h,INT 38/AH=10h
-----------213022-----------------------------
+--------G-213022-----------------------------
 INT 21 - StopPrg v2.0 - INSTALLATION CHECK
 	AX = 3022h
 Return: AX = DOS version (see AH=30h)
@@ -7598,7 +7917,7 @@ INT 21 - DOS 2+ - EXTENDED BREAK CHECKING
 		DL = 00h off, check only on character I/O functions
 		     01h on, check on all DOS functions
 Note:	under DOS 3.1+ and DR-DOS, this function does not use any of the
-	  DOS-internal and may thus be called at any time
+	  DOS-internal stacks and may thus be called at any time
 SeeAlso: AX=3302h
 --------D-213302-----------------------------
 INT 21 - DOS 3.x+ internal - GET AND SET EXTENDED CONTROL-BREAK CHECKING STATE
@@ -7993,7 +8312,7 @@ Note:	this function is not supported by the Borland DPMI host, but no error
 	  INT 31/AX=0300h
 SeeAlso: AH=65h,INT 10/AX=5001h,INT 2F/AX=110Ch,INT 2F/AX=1404h
 
-Format of PC-DOS 2.x country info:
+Format of DOS 2.00-2.10 country info:
 Offset	Size	Description
  00h	WORD	date format  0 = USA	mm dd yy
 			     1 = Europe dd mm yy
@@ -8006,7 +8325,7 @@ Offset	Size	Description
  07h	BYTE	00h
  08h 24 BYTEs	reserved
 
-Format of MS-DOS 2.x,DOS 3+ country info:
+Format of DOS 2.11+ country info:
 Offset	Size	Description
  00h	WORD	date format (see above)
  02h  5 BYTEs	ASCIZ currency symbol string
@@ -8393,8 +8712,9 @@ Return: CF clear if successful
 	    AX = number of bytes actually read (0 if at EOF before call)
 	CF set on error
 	    AX = error code (05h,06h) (see AH=59h)
-Program: WORKGRP.SYS is distributed with MS-DOS 6.0 to permit communication
-	  with PCs running Windows for Workgroups or LAN Manager
+Program: WORKGRP.SYS is the portion of Microsoft's Workgroup Connection which
+	  permits communication with PCs running Windows for Workgroups or
+	  LAN Manager
 SeeAlso: AX=4402h"WORKGRP.SYS",INT 2F/AX=9400h
 --------N-213F-------------------------------
 INT 21 - BW-TCP - GET DRIVER INFO

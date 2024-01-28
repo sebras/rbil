@@ -501,8 +501,8 @@ INT 31 P - DPMI 0.9+ - CALL REAL MODE PROCEDURE WITH FAR RETURN FRAME
 		   reserved, must be 0 (DPMI 1.0+)
 	    others must be 0
 	CX = number of words to copy from protected mode to real mode stack
-	ES:DI / ES:EDI = selector:offset of real mode call structure
-			(see INT 31/AX=0300h)
+	ES:(E)DI = selector:offset of real mode call structure
+		  (see INT 31/AX=0300h)
 Return: CF clear if successful
 	    real mode call structure modified (all fields except SS:SP, CS:IP
 	      filled with return values from real mode interrupt)
@@ -524,8 +524,8 @@ INT 31 P - DPMI 0.9+ - CALL REAL MODE PROCEDURE WITH IRET FRAME
 		   reserved, must be 0 (DPMI 1.0+)
 	    others must be 0
 	CX = number of words to copy from protected mode to real mode stack
-	ES:DI / ES:EDI = selector:offset of real mode call structure
-			(see INT 31/AX=0300h)
+	ES:(E)DI = selector:offset of real mode call structure
+		  (see INT 31/AX=0300h)
 Return: CF clear if successful
 	    real mode call structure modified (all fields except SS:SP, CS:IP
 	      filled with return values from real mode interrupt)
@@ -544,9 +544,8 @@ SeeAlso: AX=0300h
 --------E-310303-----------------------------
 INT 31 P - DPMI 0.9+ - ALLOCATE REAL MODE CALLBACK ADDRESS
 	AX = 0303h
-	DS:SI / DS:ESI = selector:offset of procedure to call
-	ES:DI / ES:EDI = selector:offset of real mode call structure
-			(see AX=0300h)
+	DS:(E)SI = selector:offset of procedure to call
+	ES:(E)DI = selector:offset of real mode call structure (see AX=0300h)
 Return: CF clear if successful
 	    CX:DX = segment:offset of real mode call address
 	CF set on error
@@ -556,15 +555,17 @@ Notes:	the real mode call structure is static, causing reentrancy problems;
 	the called procedure must modify the real mode CS:IP before returning
 	values are returned to real mode by modifying the real mode call struc
 	DPMI hosts must provide at least 16 callbacks per client
+	the limited DPMI host built into Phar Lap's 286|DOS-Extender v2.5 does
+	  not support this function
 SeeAlso: AX=0304h,AX=0C00h
 
 Values callback procedure is called with:
-	DS:SI / DS:ESI = selector:offset of real mode SS:SP
-	ES:DI / ES:EDI = selector:offset of real mode call structure
-	SS:SP / SS:ESP = locked protected mode API stack
+	DS:(E)SI = selector:offset of real mode SS:SP
+	ES:(E)DI = selector:offset of real mode call structure
+	SS:(E)SP = locked protected mode API stack
 	interrupts disabled
 Return: (with IRET)
-	ES:DI / ES:EDI = selector:offset of real mode call structure to restore
+	ES:(E)DI = selector:offset of real mode call structure to restore
 --------E-310304-----------------------------
 INT 31 P - DPMI 0.9+ - FREE REAL MODE CALLBACK ADDRESS
 	AX = 0304h
@@ -572,6 +573,8 @@ INT 31 P - DPMI 0.9+ - FREE REAL MODE CALLBACK ADDRESS
 Return: CF clear if successful
 	CF set on error
 	    AX = error code (DPMI 1.0+) (8024h) (see AX=0000h)
+Note:	the limited DPMI host built into Phar Lap's 286|DOS-Extender v2.5 does
+	  not support this function
 SeeAlso: AX=0303h
 --------E-310305-----------------------------
 INT 31 P - DPMI 0.9+ - GET STATE SAVE/RESTORE ADDRESSES
@@ -579,7 +582,7 @@ INT 31 P - DPMI 0.9+ - GET STATE SAVE/RESTORE ADDRESSES
 Return: CF clear
 	AX = size in bytes of state buffer
 	BX:CX = real mode address of procedure to save/restore state
-	SI:DI / SI:EDI = protected mode procedure to save/restore state
+	SI:(E)DI = protected mode procedure to save/restore state
 Notes:	the buffer size will be zero if it is not necessary to preserve state
 	16-bit programs should call SI:DI, 32-bit programs should call SI:EDI
 	this function is only needed if using the raw mode switch service
@@ -589,14 +592,14 @@ Values to call state-save procedures with:
 	AL = direction
 	    00h save state
 	    01h restore state
-	ES:DI / ES:EDI -> state buffer
+	ES:(E)DI -> state buffer
 Return: all registers preserved
 --------E-310306-----------------------------
 INT 31 P - DPMI 0.9+ - GET RAW MODE SWITCH ADDRESSES
 	AX = 0306h
 Return: CF clear
 	BX:CX -> procedure to switch from real to protected mode
-	SI:DI / SI:EDI -> procedure to switch from protected to real mode
+	SI:(E)DI -> procedure to switch from protected to real mode
 Notes:	16-bit programs should jump to SI:DI, 32-bit programs should use SI:EDI
 	the caller must save and restore the state of the task with AX=0305h
 	not supported by MS Windows 3.0 in Standard mode
@@ -606,9 +609,8 @@ Values to JUMP at mode-switch procedures with:
 	AX = new DS
 	CX = new ES
 	DX = new SS
-	BX / EBX = new SP / ESP
-	SI = new CS
-	DI / EDI = new IP / EIP
+	(E)BX = new (E)SP
+	SI:(E)DI = new CS:(E)IP
 Notes:	BP/EBP is preserved across the call, but AX/EAX, BX/EBX, CX/ECX,
 	  DX/EDX, SI/ESI, and DI/EDI will be undefined; FS and GS will be 0000h
 	interrupts will stay disabled during the entire mode switch if they
@@ -662,7 +664,7 @@ Offset	Size	Description
 --------E-310500-----------------------------
 INT 31 P - DPMI 0.9+ - GET FREE MEMORY INFORMATION
 	AX = 0500h
-	ES:DI / ES:EDI -> buffer for memory information (see below)
+	ES:(E)DI -> buffer for memory information (see below)
 Return: CF clear
 Notes:	16-bit programs use ES:DI, 32-bit programs use ES:EDI
 	this function must be considered advisory because other applications
@@ -671,6 +673,8 @@ Notes:	16-bit programs use ES:DI, 32-bit programs use ES:EDI
 	  FFFFFFFFh
 	DPMI 1.0+ supports this function solely for backward compatibility; use
 	  AX=050Bh instead
+	the limited DPMI host built into Phar Lap's 286|DOS-Extender v2.5 only
+	  returns the first field in the memory information record
 SeeAlso: AX=0501h,AX=0604h
 
 Format of memory information:
@@ -930,7 +934,7 @@ Return: CF clear if successful
 BUG:	the Borland C++ 3.1 DPMILOAD returns with CF clear but BX and CX
 	  unchanged
 --------E-310700-----------------------------
-INT 31 P - DPMI 0.9+ - MARK PAGES AS PAGING CANDIDATES
+INT 31 Pu - DPMI 0.9+ - MARK PAGES AS PAGING CANDIDATES
 	AX = 0700h
 	BX:CX = starting linear page number
 	SI:DI = number of pages to mark as paging candidates
@@ -940,7 +944,7 @@ Note:	although marked as reserved in versions 0.9 and 1.0 of the DPMI
 	  PROGMAN, and KERNEL
 SeeAlso: AX=0701h,AX=0702h
 --------E-310701-----------------------------
-INT 31 P - DPMI 0.9+ - DISCARD PAGES
+INT 31 Pu - DPMI 0.9+ - DISCARD PAGES
 	AX = 0701h
 	BX:CX = starting linear page number
 	SI:DI = number of pages to discard
@@ -1030,9 +1034,9 @@ SeeAlso: AX=0900h,AX=0901h
 --------E-310A00-----------------------------
 INT 31 P - DPMI 0.9+ - GET VENDOR SPECIFIC API ENTRY POINT
 	AX = 0A00h
-	DS:SI / DS:ESI -> case-sensitive ASCIZ vendor name or identifier
+	DS:(E)SI -> case-sensitive ASCIZ vendor name or identifier
 Return: CF clear if successful
-	    ES:DI / ES:EDI -> FAR extended API entry point
+	    ES:(E)DI -> FAR extended API entry point
 	    DS, FS, GS, EAX, EBX, ECX, EDX, ESI, EBP destroyed
 	CF set on error
 	    AX = error code (DPMI 1.0+) (8001h) (see AX=0000h)
@@ -1208,14 +1212,14 @@ Return: CF clear if successful
 	    AX = error code (8026h) (see AX=0000h)
 Note:	supported by 386MAX v6.01, which otherwise only supports DPMI 0.9
 SeeAlso: AX=0E00h
-----------3157-------------------------------
+--------E-3157-------------------------------
 INT 31 - Netroom3 DPMI.EXE v3.00 - ???
 	AH = 57h
 	AL = subfunction (at least 02h,03h,04h,05h,07h,08h,09h,0Ah)
 	???
 Return: ???
 SeeAlso: INT 2C/AX=0000h"RM386"
-----------315702-----------------------------
+--------E-315702-----------------------------
 INT 31 - Netroom3 DPMI.EXE v3.00 - SWITCH TO PROTECTED MODE
 	AX = 5702h
 	DX = PSP segment of caller
@@ -1251,17 +1255,17 @@ Notes:	to use mouse on a Hercules-compatible monographics card in graphics
 	  utilities check for this signature.
 SeeAlso: AX=0011h,AX=0021h,AX=002Fh,INT 62/AX=007Ah,INT 74
 --------M-330001-----------------------------
-INT 33 - MS MOUSE - SHOW MOUSE CURSOR
+INT 33 - MS MOUSE v1.0+ - SHOW MOUSE CURSOR
 	AX = 0001h
 SeeAlso: AX=0002h,INT 16/AX=FFFEh,INT 62/AX=007Bh
 --------M-330002-----------------------------
-INT 33 - MS MOUSE - HIDE MOUSE CURSOR
+INT 33 - MS MOUSE v1.0+ - HIDE MOUSE CURSOR
 	AX = 0002h
 Note:	multiple calls to hide the cursor will require multiple calls to
 	  function 01h to unhide it.
 SeeAlso: AX=0001h,AX=0010h,INT 16/AX=FFFFh,INT 62/AX=007Bh
 --------M-330003-----------------------------
-INT 33 - MS MOUSE - RETURN POSITION AND BUTTON STATUS
+INT 33 - MS MOUSE v1.0+ - RETURN POSITION AND BUTTON STATUS
 	AX = 0003h
 Return: BX = button status
 	   bit 0  left button pressed if 1
@@ -1269,18 +1273,21 @@ Return: BX = button status
 	   bit 2  middle button pressed if 1 (Mouse Systems/Logitech mouse)
 	CX = column
 	DX = row
+Note:	in text modes, all coordinates are specified as multiples of the cell
+	  size, typically 8x8 pixels
 SeeAlso: AX=0004h,AX=000Bh,INT 2F/AX=D000h"ZWmous"
 --------M-330004-----------------------------
-INT 33 - MS MOUSE - POSITION MOUSE CURSOR
+INT 33 - MS MOUSE v1.0+ - POSITION MOUSE CURSOR
 	AX = 0004h
 	CX = column
 	DX = row
 Note:	the row and column are truncated to the next lower multiple of the cell
-	  size; however, some versions of the Microsoft documentation
-	  incorrectly state that the coordinates are rounded
+	  size (typically 8x8 in text modes); however, some versions of the
+	  Microsoft documentation incorrectly state that the coordinates are
+	  rounded
 SeeAlso: AX=0003h,INT 62/AX=0081h
 --------M-330005-----------------------------
-INT 33 - MS MOUSE - RETURN BUTTON PRESS DATA
+INT 33 - MS MOUSE v1.0+ - RETURN BUTTON PRESS DATA
 	AX = 0005h
 	BX = button
 	    0000h left
@@ -1295,7 +1302,7 @@ Return: AX = button states
 	DX = row at time specified button was last pressed
 SeeAlso: AX=0006h,INT 62/AX=007Ch
 --------M-330006-----------------------------
-INT 33 - MS MOUSE - RETURN BUTTON RELEASE DATA
+INT 33 - MS MOUSE v1.0+ - RETURN BUTTON RELEASE DATA
 	AX = 0006h
 	BX = button
 	    0000h left
@@ -1310,19 +1317,23 @@ Return: AX = button states
 	DX = row at time specified button was last released
 SeeAlso: AX=0005h,INT 62/AX=007Ch
 --------M-330007-----------------------------
-INT 33 - MS MOUSE - DEFINE HORIZONTAL CURSOR RANGE
+INT 33 - MS MOUSE v1.0+ - DEFINE HORIZONTAL CURSOR RANGE
 	AX = 0007h
 	CX = minimum column
 	DX = maximum column
+Note:	in text modes, the minimum and maximum columns are truncated to the
+	  next lower multiple of the cell size, typically 8x8 pixels
 SeeAlso: AX=0008h,AX=0010h,AX=0031h,INT 62/AX=0080h
 --------M-330008-----------------------------
-INT 33 - MS MOUSE - DEFINE VERTICAL CURSOR RANGE
+INT 33 - MS MOUSE v1.0+ - DEFINE VERTICAL CURSOR RANGE
 	AX = 0008h
 	CX = minimum row
 	DX = maximum row
+Note:	in text modes, the minimum and maximum rows are truncated to the
+	  next lower multiple of the cell size, typically 8x8 pixels
 SeeAlso: AX=0007h,AX=0010h,AX=0031h,INT 62/AX=0080h
 --------M-330009-----------------------------
-INT 33 - MS MOUSE - DEFINE GRAPHICS CURSOR
+INT 33 - MS MOUSE v3.0+ - DEFINE GRAPHICS CURSOR
 	AX = 0009h
 	BX = column of cursor hot spot in bitmap (-16 to 16)
 	CX = row of cursor hot spot (-16 to 16)
@@ -1330,10 +1341,18 @@ INT 33 - MS MOUSE - DEFINE GRAPHICS CURSOR
 		16 words screen mask
 		16 words cursor mask
 		    each word defines the sixteen pixels of a row, low bit
-		    rightmost
+		      rightmost
+Notes:	in graphics modes, the screen contents around the current mouse cursor
+	  position are ANDed with the screen mask and then XORed with the
+	  cursor mask
+	the Microsoft mouse driver v7.04 and v8.20 uses only BL and CL, so the
+	  hot spot row/column should be limited to -128..127
+	Microsoft KnowledgeBase article Q19850 states that the high bit is
+	  right-most, but that statement is contradicted by all other available
+	  documentation
 SeeAlso: AX=000Ah,AX=0012h,AX=002Ah,INT 62/AX=007Fh
 --------M-33000A-----------------------------
-INT 33 - MS MOUSE - DEFINE TEXT CURSOR
+INT 33 - MS MOUSE v3.0+ - DEFINE TEXT CURSOR
 	AX = 000Ah
 	BX = hardware/software text cursor
 	    0000h software
@@ -1342,12 +1361,12 @@ INT 33 - MS MOUSE - DEFINE TEXT CURSOR
 	    0001h hardware
 		CX = start scan line
 		DX = end scan line
-Note:	when the software cursor is selected, the char/attribute data at the
-	  current screen position is ANDed with the screen mask and then XORed
-	  with the cursor mask
+Note:	when the software cursor is selected, the character/attribute data at
+	  the current screen position is ANDed with the screen mask and then
+	  XORed with the cursor mask
 SeeAlso: AX=0009h,INT 62/AX=007Eh
 --------M-33000B-----------------------------
-INT 33 - MS MOUSE - READ MOTION COUNTERS
+INT 33 - MS MOUSE v1.0+ - READ MOTION COUNTERS
 	AX = 000Bh
 Return: CX = number of mickeys mouse moved horizontally since last call
 	DX = number of mickeys mouse moved vertically
@@ -1355,16 +1374,9 @@ Notes:	a mickey is the smallest increment the mouse can sense
 	positive values indicate down/right
 SeeAlso: AX=0003h,AX=001Bh,AX=0027h
 --------M-33000C-----------------------------
-INT 33 - MS MOUSE - DEFINE INTERRUPT SUBROUTINE PARAMETERS
+INT 33 - MS MOUSE v1.0+ - DEFINE INTERRUPT SUBROUTINE PARAMETERS
 	AX = 000Ch
-	CX = call mask
-	     bit 0 call if mouse moves
-	     bit 1 call if left button pressed
-	     bit 2 call if left button released
-	     bit 3 call if right button pressed
-	     bit 4 call if right button released
-	     bit 5 call if middle button pressed (Mouse Systems/Logitech mouse)
-	     bit 6 call if middle button released (Mouse Sys/Logitech mouse)
+	CX = call mask (see below)
 	ES:DX -> FAR routine
 Notes:	when the subroutine is called, it is passed the following values:
 	  AX = condition mask (same bit assignments as call mask)
@@ -1373,26 +1385,38 @@ Notes:	when the subroutine is called, it is passed the following values:
 	  DX = cursor row
 	  SI = horizontal mickey count
 	  DI = vertical mickey count
-	some versions of the Microsoft documentation incorrectly state that CX
+	in text modes, the row and column will be reported as a multiple of
+	  the cell size, typically 8x8 pixels
+BUG:	some versions of the Microsoft documentation incorrectly state that CX
 	  bit 0 means call if mouse cursor moves, and swap the meanings of SI
 	  and DI
 SeeAlso: AX=0018h
+
+Bitfields for call mask:
+ bit 0	call if mouse moves
+ bit 1	call if left button pressed
+ bit 2	call if left button released
+ bit 3	call if right button pressed
+ bit 4	call if right button released
+ bit 5	call if middle button pressed (Mouse Systems/Logitech mouse)
+ bit 6	call if middle button released (Mouse Sys/Logitech mouse)
+ bits 7-15 unused
 --------M-33000D-----------------------------
-INT 33 - MS MOUSE - LIGHT PEN EMULATION ON
+INT 33 - MS MOUSE v1.0+ - LIGHT PEN EMULATION ON
 	AX = 000Dh
 SeeAlso: AX=000Eh,INT 10/AH=04h
 --------M-33000E-----------------------------
-INT 33 - MS MOUSE - LIGHT PEN EMULATION OFF
+INT 33 - MS MOUSE v1.0+ - LIGHT PEN EMULATION OFF
 	AX = 000Eh
 SeeAlso: AX=000Dh
 --------M-33000F-----------------------------
-INT 33 - MS MOUSE - DEFINE MICKEY/PIXEL RATIO
+INT 33 - MS MOUSE v1.0+ - DEFINE MICKEY/PIXEL RATIO
 	AX = 000Fh
 	CX = number of mickeys per 8 pixels horizontally (default 8)
 	DX = number of mickeys per 8 pixels vertically (default 16)
 SeeAlso: AX=0013h,AX=001Ah,INT 62/AX=0082h
 --------M-330010-----------------------------
-INT 33 - MS MOUSE - DEFINE SCREEN REGION FOR UPDATING
+INT 33 - MS MOUSE v1.0+ - DEFINE SCREEN REGION FOR UPDATING
 	AX = 0010h
 	CX,DX = X,Y coordinates of upper left corner
 	SI,DI = X,Y coordinates of lower right corner
@@ -1434,13 +1458,13 @@ INT 33 - MS MOUSE - SET LARGE GRAPHICS CURSOR BLOCK
 Return: AX = FFFFh if successful
 SeeAlso: AX=0009h,AX=002Ah,AX=0035h
 --------M-330013-----------------------------
-INT 33 - MS MOUSE - DEFINE DOUBLE-SPEED THRESHOLD
+INT 33 - MS MOUSE v5.0+ - DEFINE DOUBLE-SPEED THRESHOLD
 	AX = 0013h
 	DX = threshold speed in mickeys/second, 0000h = default of 64/second
 Note:	if speed exceeds threshold, the cursor's on-screen motion is doubled
 SeeAlso: AX=000Fh,AX=001Bh,AX=002Ch
 --------M-330014-----------------------------
-INT 33 - MS MOUSE - EXCHANGE INTERRUPT SUBROUTINES
+INT 33 - MS MOUSE v3.0+ - EXCHANGE INTERRUPT SUBROUTINES
 	AX = 0014h
 	CX = call mask (see AX=000Ch)
 	ES:DX -> FAR routine
@@ -1448,42 +1472,43 @@ Return: CX = call mask of previous interrupt routine
 	ES:DX = FAR address of previous interrupt routine
 SeeAlso: AX=000Ch,AX=0018h
 --------M-330015-----------------------------
-INT 33 - MS MOUSE - RETURN DRIVER STORAGE REQUIREMENTS
+INT 33 - MS MOUSE v6.0+ - RETURN DRIVER STORAGE REQUIREMENTS
 	AX = 0015h
 Return: BX = size of buffer needed to store driver state
 SeeAlso: AX=0016h,AX=0017h,AX=0042h
 --------M-330016-----------------------------
-INT 33 - MS MOUSE - SAVE DRIVER STATE
+INT 33 - MS MOUSE v6.0+ - SAVE DRIVER STATE
 	AX = 0016h
 	BX = size of buffer (see AX=0015h)
 	ES:DX -> buffer for driver state
-Note:	although not documented, many drivers appear to require BX on input
+Note:	although not documented (since the Microsoft driver does not use it),
+	  many drivers appear to require BX on input
 SeeAlso: AX=0015h,AX=0017h
 --------M-330017-----------------------------
-INT 33 - MS MOUSE - RESTORE DRIVER STATE
+INT 33 - MS MOUSE v6.0+ - RESTORE DRIVER STATE
 	AX = 0017h
 	BX = size of buffer (see AX=0015h)
 	ES:DX -> buffer containing saved state
-Notes:	although not documented, many drivers appear to require BX on input
+Notes:	although not documented (since the Microsoft driver does not use it),
+	  many drivers appear to require BX on input
 	some mouse drivers range-check the values in the saved state based on
 	  the current video mode; thus, the video mode should be restored
 	  before the mouse driver's state is restored
 SeeAlso: AX=0015h,AX=0016h
 --------M-330018-----------------------------
-INT 33 - MS MOUSE - SET ALTERNATE MOUSE USER HANDLER
+INT 33 - MS MOUSE v6.0+ - SET ALTERNATE MOUSE USER HANDLER
 	AX = 0018h
 	CX = call mask (see below)
-	ES:DX -> FAR routine
-Return: AX = 0018h if successful
-	   = FFFFh on error
-Notes:	when the subroutine is called, it is passed the following values:
-	  AX = condition mask (same bit assignments as call mask)
-	  BX = button state
-	  CX = cursor column
-	  DX = cursor row
-	  SI = horizontal mickey count
-	  DI = vertical mickey count
-	up to three handlers can be defined by separate calls to this function
+	ES:DX -> FAR routine to be invoked on mouse events (see below)
+Return: AX = status
+	    0018h if successful
+	    FFFFh on error
+Notes:	up to three handlers can be defined by separate calls to this function,
+	  each with a different combination of shift states in the call mask;
+	  calling this function again with a call mask of 0000h undefines the
+	  specified handler (official documentation); specifying the same
+	  call mask and an address of 0000h:0000h undefines the handler (real
+	  life)
 	some versions of the documentation erroneously reverse the order of
 	  the bits in the call mask
 SeeAlso: AX=000Ch,AX=0014h,AX=0019h
@@ -1497,8 +1522,20 @@ Bitfields for call mask:
  bit 5	call if shift button pressed during event
  bit 6	call if ctrl key pressed during event
  bit 7	call if alt key pressed during event
+Note:	at least one of bits 5-7 must be set
+
+User handler called with:
+	AX = condition mask (same bit assignments as call mask)
+	BX = button state
+	CX = cursor column
+	DX = cursor row
+	SI = horizontal mickey count
+	DI = vertical mickey count
+Return: registers preserved
+Note:	in text modes, the row and column will be reported as a multiple of
+	  the cell size, typically 8x8 pixels
 --------M-330019-----------------------------
-INT 33 - MS MOUSE - RETURN USER ALTERNATE INTERRUPT VECTOR
+INT 33 - MS MOUSE v6.0+ - RETURN USER ALTERNATE INTERRUPT VECTOR
 	AX = 0019h
 	CX = call mask (see AX=0018h)
 Return: BX:DX = user interrupt vector
@@ -1507,21 +1544,21 @@ Note:	attempts to find a user event handler (defined by function 18h)
 	  whose call mask matches CX
 SeeAlso: AX=0018h
 --------M-33001A-----------------------------
-INT 33 - MS MOUSE - SET MOUSE SENSITIVITY
+INT 33 - MS MOUSE v6.0+ - SET MOUSE SENSITIVITY
 	AX = 001Ah
 	BX = horizontal speed \
 	CX = vertical speed   / (see AX=000Fh)
 	DX = double speed threshold (see AX=0013h)
 SeeAlso: AX=0013h,AX=001Bh,INT 62/AX=0082h
 --------M-33001B-----------------------------
-INT 33 - MS MOUSE - RETURN MOUSE SENSITIVITY
+INT 33 - MS MOUSE v6.0+ - RETURN MOUSE SENSITIVITY
 	AX = 001Bh
 Return: BX = horizontal speed
 	CX = vertical speed
 	DX = double speed threshold
 SeeAlso: AX=000Bh,AX=001Ah
 --------M-33001C-----------------------------
-INT 33 - MS MOUSE - SET INTERRUPT RATE
+INT 33 - MS MOUSE v6.0+ - SET INTERRUPT RATE
 	AX = 001Ch
 	BX = rate
 	    00h no interrupts allowed
@@ -1532,45 +1569,48 @@ INT 33 - MS MOUSE - SET INTERRUPT RATE
 Notes:	only available on InPort mouse
 	values greater than 4 may cause unpredictable driver behavior
 --------M-33001D-----------------------------
-INT 33 - MS MOUSE - DEFINE DISPLAY PAGE NUMBER
+INT 33 - MS MOUSE v6.0+ - DEFINE DISPLAY PAGE NUMBER
 	AX = 001Dh
 	BX = display page number
 Note:	the cursor will be displayed on the specified page
 SeeAlso: AX=001Eh
 --------M-33001E-----------------------------
-INT 33 - MS MOUSE - RETURN DISPLAY PAGE NUMBER
+INT 33 - MS MOUSE v6.0+ - RETURN DISPLAY PAGE NUMBER
 	AX = 001Eh
 Return: BX = display page number
 SeeAlso: AX=001Dh
 --------M-33001F-----------------------------
-INT 33 - MS MOUSE - DISABLE MOUSE DRIVER
+INT 33 - MS MOUSE v6.0+ - DISABLE MOUSE DRIVER
 	AX = 001Fh
-Return: AX = 001Fh unsuccessful
-	     FFFFh successful
-	ES:BX = vector for INT 33 before mouse driver was first installed
+Return: AX = status
+	    001Fh successful
+		ES:BX = INT 33 vector before mouse driver was first installed
+	    FFFFh unsuccessful
 Notes:	restores vectors for INT 10 and INT 71 (8086) or INT 74 (286/386)
 	if you restore INT 33 to ES:BX, driver will be completely disabled
 	many drivers return AX=001Fh even though the driver has been disabled
 SeeAlso: AX=0020h
 --------M-330020-----------------------------
-INT 33 - MS MOUSE - ENABLE MOUSE DRIVER
+INT 33 - MS MOUSE v6.0+ - ENABLE MOUSE DRIVER
 	AX = 0020h
-Return: AX = 0020h unsuccessful (or driver not installed)
-	     FFFFh successful
+Return: AX = status
+	    0020h successful
+	    FFFFh unsuccessful
 Notes:	restores vectors for INT 10h and INT 71h (8086) or INT 74h (286/386)
 	  which were removed by function 1Fh
-	many drivers return AX=0020h even though the driver has been enabled
+	Microsoft's documentation states that no value is returned
 SeeAlso: AX=001Fh
 --------M-330021-----------------------------
-INT 33 - MS MOUSE - SOFTWARE RESET
+INT 33 - MS MOUSE v6.0+ - SOFTWARE RESET
 	AX = 0021h
-Return: AX = FFFFh if mouse driver installed
+Return: AX = status
+	    FFFFh if mouse driver installed
 		BX = number of buttons (FFFFh = two buttons)
-	     0021h if mouse driver not installed
-Note:	identical to funtion 00h, but does not reset the mouse
+	    0021h if mouse driver not installed
+Note:	this call is identical to funtion 00h, but does not reset the mouse
 SeeAlso: AX=0000h
 --------M-330022-----------------------------
-INT 33 - MS MOUSE - SET LANGUAGE FOR MESSAGES
+INT 33 - MS MOUSE v6.0+ - SET LANGUAGE FOR MESSAGES
 	AX = 0022h
 	BX = language (see below)
 Note:	only available on international versions of the driver; US versions
@@ -1588,7 +1628,7 @@ Values for language:
  07h	Portugese
  08h	Italian
 --------M-330023-----------------------------
-INT 33 - MS MOUSE - GET LANGUAGE FOR MESSAGES
+INT 33 - MS MOUSE v6.0+ - GET LANGUAGE FOR MESSAGES
 	AX = 0023h
 Return: BX = language (see AX=0022h)
 Note:	the US version of the driver always returns zero
@@ -1611,7 +1651,7 @@ Return: AX = general information
 	    bit 14: driver is newer integrated type
 	    bits 13,12: current cursor type
 			00 software text cursor
-			01 hardware text cursor
+			01 hardware text cursor (CRT Controller's cursor)
 			1X graphics cursor
 	    bits 11-8: interrupt rate (see AX=001Ch)
 	    bits 7-0:  count of currently-active Mouse Display Drivers (MDD),
@@ -1622,9 +1662,11 @@ Return: AX = general information
 --------M-330026-----------------------------
 INT 33 - MS MOUSE v6.26+ - GET MAXIMUM VIRTUAL COORDINATES
 	AX = 0026h
-Return: BX = mouse-disabled flag
+Return: BX = mouse-disabled flag (0000h mouse enabled, nonzero disabled)
 	CX = maximum virtual X (for current video mode)
 	DX = maximum virtual Y
+Note:	for driver versions before 7.05, this call returns the currently-set
+	  maximum coordinates; v7.05+ returns the absolute maximum coordinates
 SeeAlso: AX=0031h
 --------M-330026-----------------------------
 INT 33 - Genius Mouse 9.06 - ???
@@ -1645,7 +1687,9 @@ INT 33 - MS MOUSE v7.0+ - SET VIDEO MODE
 	DH = Y font size (00h = default)
 	DL = X font size (00h = default)
 Return: CL = status (00h = successful)
-Note:	DX is ignored unless the selected video mode supports font size control
+Notes:	DX is ignored unless the selected video mode supports font size control
+	when CX=0000h, an internal flag that had been set by a previous call
+	  is cleared; this is required before a mouse reset
 SeeAlso: AX=0029h,INT 10/AH=00h
 --------M-330029-----------------------------
 INT 33 - MS MOUSE v7.0+ - ENUMERATE VIDEO MODES
@@ -1848,7 +1892,7 @@ Return: AX = FFFFh successful
 Note:	this function is also supported by the Genius Mouse 9.06 driver
 SeeAlso: AX=0015h,AX=0050h,AX=0052h
 --------M-330043-----------------------------
-INT 33 - Mouse Systems MOUSE DRIVER v7.01 - CONFIGURE MOUSE???
+INT 33 - Mouse Systems MOUSE DRIVER v7.01+ - CONFIGURE MOUSE???
 	AX = 0043h
 	CX:BX -> ??? buffer (see below)
 	DL = ???
@@ -1864,28 +1908,28 @@ Offset	Size	Description
  04h	BYTE	interrupt mask for interrupt controller
  05h  5 BYTEs	???
 --------M-330044CXCDEF-----------------------
-INT 33 - Mouse Systems MOUSE DRIVER v7.01 - TOGGLE ???
+INT 33 - Mouse Systems MOUSE DRIVER v7.01+ - TOGGLE IGNORE ACCELERATION CMDS
 	AX = 0044h
 	CX = CDEFh
-Return: AX = new state of ???
+Return: AX = new state of "Ignore Application Acceleration Commands" flag
 Note:	this function is also supported by the Genius Mouse 9.06 driver
 SeeAlso: AX=0045h
 --------M-330045CXCDEF-----------------------
-INT 33 - Mouse Systems MOUSE DRIVER v7.01 - TOGGLE ???
+INT 33 - Mouse Systems MOUSE DRIVER v7.01+ - TOGGLE RESOLUTION DOUBLING
 	AX = 0045h
 	CX = CDEFh
-Return: AX = new state of ???
+Return: AX = new state of resolution doubling flag
 Note:	this function is also supported by the Genius Mouse 9.06 driver
 SeeAlso: AX=0044h
 --------M-330047-----------------------------
-INT 33 - Mouse Systems MOUSE DRIVER v7.01 - SET BUTTON ASSIGNMENTS
+INT 33 - Mouse Systems MOUSE DRIVER v7.01+ - SET BUTTON ASSIGNMENTS
 	AX = 0047h
 	ES:BX -> button assignments (3 bytes, combinations of "L", "M", "R")
 Return: ???
 Note:	also supported by Genius Mouse 9.06 driver
 SeeAlso: AX=0067h
 --------M-330048BXCDEF-----------------------
-INT 33 - Mouse Systems MOUSE DRIVER v7.01 - GET ???
+INT 33 - Mouse Systems MOUSE DRIVER v7.01+ - GET ???
 	AX = 0048h
 	BX = CDEFh
 Return: CX = ???
@@ -1899,7 +1943,7 @@ Return: ES:DI -> signature/description string if installed
 Note:	the signature string in v7.04d is
 	  "Z-NIX;BUS,AUX,Serial 3-byte and 5-byte Mouse Driver;ZMOUSE;v7.04d"
 --------M-33004CBXCDEF-----------------------
-INT 33 - Mouse Systems MOUSE DRIVER v7.01 - SET ??? FLAG
+INT 33 - Mouse Systems MOUSE DRIVER v7.01+ - SET ??? FLAG
 	AX = 004Ch
 	BX = CDEFh
 Note:	also supported by Genius Mouse 9.06
@@ -1913,9 +1957,9 @@ Notes:	also supported by Logitech, Kraft, Genius Mouse, and Mouse Systems
 	in the Genius Mouse 9.06 driver, the ASCIZ signature "KYE" immediately
 	  follows the above copyright message (KYE Corp. manufactures the
 	  driver)
-SeeAlso: AX=0024h,AX=006Dh
+SeeAlso: AX=0024h,AX=006Dh,AX=0666h
 --------M-33004F-----------------------------
-INT 33 - Mouse Systems MOUSE DRIVER v7.01 - ENABLE MOUSE
+INT 33 - Mouse Systems MOUSE DRIVER v7.01+ - ENABLE MOUSE
 	AX = 004Fh
 Return: nothing
 Note:	also supported by Genius Mouse 9.06
@@ -1940,16 +1984,16 @@ Return: AX = FFFFh if successful
 Note:	also supported by Genius Mouse 9.06 driver
 SeeAlso: AX=0050h
 --------M-330053-----------------------------
-INT 33 - Mouse Systems MOUSE DRIVER v7.01 - DISABLE MOUSE
+INT 33 - Mouse Systems MOUSE DRIVER v7.01+ - DISABLE MOUSE
 	AX = 0053h
 Return: nothing
 Note:	also supported by Genius Mouse 9.06
 SeeAlso: AX=0043h,AX=004Fh
 --------M-330054CXCDEF-----------------------
-INT 33 - Mouse Systems MOUSE DRIVER v7.01 - SELECT ULTRARES ACCELERATION LEVEL
+INT 33 - Mouse Systems MOUSE DRIVER v7.01+ - SELECT ULTRARES ACCELERATION LEVEL
 	AX = 0054h
 	CX = CDEFh
-	BX = ??? (NOP if <= 0000h)
+	BX = new acceleration level (0-9)
 Return: ???
 Note:	this function is also supported by the Genius Mouse 9.06 driver
 SeeAlso: AX=005Ah
@@ -1960,14 +2004,14 @@ Return: CX = ???
 	DX = ???
 	ES = ???
 --------M-330058-----------------------------
-INT 33 - Mouse Systems MOUSE DRIVER v7.01 - ???
+INT 33 - Mouse Systems MOUSE DRIVER v7.01+ - ???
 	AX = 0058h
 Return: AX = CS of driver
 	CX:BX = original INT 33 vector
 	DX = ???
 Note:	this function is also supported by the Genius Mouse 9.06 driver
 --------M-33005A-----------------------------
-INT 33 - Mouse Systems MOUSE DRIVER v7.01 - SET ULTRARES ACCELERATIONS
+INT 33 - Mouse Systems MOUSE DRIVER v7.01+ - SET ULTRARES ACCELERATIONS
 	AX = 005Ah
 	CX = number of WORDs to copy (max 0014h, but not range-checked)
 	DX:SI -> buffer containing thresholds??? (CX words)
@@ -1979,19 +2023,30 @@ Return: CF clear
 Note:	this function is also supported by Genius Mouse 9.06
 SeeAlso: AX=0054h
 --------M-330061BXCDEF-----------------------
-INT 33 - Mouse Systems MOUSE DRIVER v7.01 - ???
+INT 33 - Mouse Systems MOUSE DRIVER v7.01+ - ???
 	AX = 0061h
 	BX = CDEFh
 Return: CX = ???
 Note:	also supported by Genius Mouse 9.06
 --------M-330067-----------------------------
-INT 33 - Mouse Systems MOUSE DRIVER v7.01 - GET MOUSE BUTTONS???
+INT 33 - Mouse Systems MOUSE DRIVER v7.01+ - GET MOUSE BUTTONS???
 	AX = 0067h
 Return: BL = number of buttons???
 Note:	also supported by Genius Mouse 9.06
 SeeAlso: AX=0047h
+--------M-33006C-----------------------------
+INT 33 U - TRUEDOX Model 300M MOUSE.COM v4.01 - GET/SET ???
+	AX = 006Ch
+	BX = IRQ??? (0003h or 0004h), or 0000h to get current values only
+	CL = ???
+	DX = ???
+Return: BX = current or new ???
+	DX = ???
+Note:	this is the mouse driver for the Dell Dimension series of computers, by
+	  TRUEDOX Technology Corporation
+SeeAlso: AX=00A1h,AX=0666h
 --------M-33006CBXCDEF-----------------------
-INT 33 - Mouse Systems MOUSE DRIVER v7.01 - CLEAR ??? FLAG
+INT 33 - Mouse Systems MOUSE DRIVER v7.01+ - CLEAR ??? FLAG
 	AX = 006Ch
 	BX = CDEFh
 Note:	also supported by Genius Mouse 9.06
@@ -2007,6 +2062,8 @@ Notes:	also supported by Logitech, Mouse Systems, Kraft, and Genius mouse
 	  functions from 0025h through 002Dh supported by the MS 7.00 driver
 	  (the Genius Mouse driver supports function 0026h, but it differs
 	  from the Microsoft function)
+	the TRUEDOX 4.01 driver reports its version as 6.26 through this call,
+	  but as 6.24 through AX=0024h
 SeeAlso: AX=0024h,AX=004Dh,AX=266Ch
 
 Format of Microsoft version number:
@@ -2039,13 +2096,13 @@ Offset	Size	Description
  0Ah	WORD	segment of ???
 	???
 --------M-330072BXABCD-----------------------
-INT 33 - Mouse Systems MOUSE DRIVER v7.01 - ???
+INT 33 - Mouse Systems MOUSE DRIVER v7.01+ - ???
 	AX = 0072h
 	BX = ABCDh
 Return: ???
 Note:	this function is also supported by the Genius Mouse 9.06 driver
 --------M-330073BXCDEF-----------------------
-INT 33 - Mouse Systems MOUSE DRIVER v7.01 - GET BUTTON ASSIGNMENTS
+INT 33 - Mouse Systems MOUSE DRIVER v7.01+ - GET BUTTON ASSIGNMENTS
 	AX = 0073h
 	BX = CDEFh
 	ES:DX -> 3-byte buffer for button assignments
@@ -2053,6 +2110,21 @@ Return: CX = number of buttons???
 	ES:DX buffer filled (default is "LMR")
 Note:	also supported by Genius Mouse 9.06
 SeeAlso: AX=0067h
+--------M-3300A1-----------------------------
+INT 33 U - TRUEDOX Model 300M MOUSE.COM v4.01 - ???
+	AX = 00A1h
+	???
+Return: ???
+Note:	this is the mouse driver for the Dell Dimension series of computers, by
+	  TRUEDOX Technology Corporation
+SeeAlso: AX=006Ch"TRUEDOX",AX=00A6h,AX=0666h
+--------M-3300A6-----------------------------
+INT 33 U - TRUEDOX Model 300M MOUSE.COM v4.01 - ???
+	AX = 00A6h
+	BL = ???
+Note:	this is the mouse driver for the Dell Dimension series of computers, by
+	  TRUEDOX Technology Corporation
+SeeAlso: AX=00A6h,AX=0666h
 --------M-33012E-----------------------------
 INT 33 - MS MOUSE v8.10+ - ???
 	AX = 012Eh
@@ -2067,6 +2139,13 @@ INT 33 - MS MOUSE v8.10+ - ???
 Return: AX = 0000h
 Note:	not supported by Logitech driver v6.10
 SeeAlso: AX=002Eh,AX=012Eh
+--------M-330666-----------------------------
+INT 33 U - TRUEDOX Model 300M MOUSE.COM v4.01 - ???
+	AX = 0666h
+Return: DX:AX -> ASCII sig "Copyright 1987-1992 TRUEDOX Technology Corporation"
+Note:	this is the mouse driver for the Dell Dimension series of computers, by
+	  TRUEDOX Technology Corporation
+SeeAlso: AX=004Dh,AX=00A6h,AX=0666h
 --------M-33136C-----------------------------
 INT 33 - LOGITECH MOUSE v6.10+ - ???
 	AX = 136Ch
@@ -2946,7 +3025,7 @@ Note:	the second WD1002-27X controller in a system uses the low byte to
 	  the first controller uses offsets 74h-77h in the BIOS data area
 	  (see MEMORY.LST) to store data
 SeeAlso: INT 47"SuperBIOS"
-----------48---------------------------------
+--------V-48---------------------------------
 INT 48 U - Compaq UILIB.EXE - API
 	AX = function (see below)
 	BX = call type (0002h) (see AX=1A70h)
@@ -2980,7 +3059,7 @@ Values for function:
  1130h	12A0h	1400h	1540h	1660h	17C0h	1900h	1A60h
  1140h	12B0h	1410h	1550h	1664h	17D0h	1909h	1A70h
  1150h	12C0h	1420h	1560h	1670h	17E0h	1910h	1A80h
-----------481A70-----------------------------
+--------V-481A70-----------------------------
 INT 48 U - Compaq UILIB.EXE - INSTALLATION CHECK
 	AX = 1A70h
 	BX = call type (see below)
@@ -3006,12 +3085,12 @@ Offset	Size	Description
 --------h-49---------------------------------
 INT 49 - Z100 - Slave 8259 - S100 vectored line 1
 SeeAlso: INT 48"Z100",INT 4A"Z100"
-----------49---------------------------------
+--------V-49---------------------------------
 INT 49 - Texas Instruments PC - VIDEO I/O???
 	apparently provides direct video display on the TI Professional PC
 --------N-49---------------------------------
 INT 49 - Watstar PC Network data pointer 2
-SeeAlso: INT 49"Watstar"
+SeeAlso: INT 48"Watstar"
 --------O-49---------------------------------
 INT 49 - Acorn BBC Master 512 - "OSASCI" - WRITE CHARACTER TO CUR OUTPUT STREAM
 	AL = character to be written
@@ -4170,7 +4249,7 @@ INT 5B - used by Alloy NTNX
 --------N-5B---------------------------------
 INT 5B - ISOLAN Multi Protocol Software
 	ES:BX -> Transfer Control Block
-Return: AL - status
+Return: AL = status
 Note:	this software interface allows multiple protocols/software packages
 	  to access a BICC 411x network card
 
@@ -4197,7 +4276,7 @@ Offset	Type	Description
  3Ah  8 BYTEs	reserved
  42h	BYTE	command code extension
  43h	WORD	Blue Book MAC type
-----------5B5254DL04-------------------------
+--------U-5B5254DL04-------------------------
 INT 5B U - SitBack v3.02R - GET ???
 	AX = 5254h
 	DL = 04h
@@ -4205,7 +4284,7 @@ Return: ES:BX -> ??? in resident portion
 Program: SitBack is a background file backup utility by SitBack Technologies,
 	  Inc. which initiates backups whenever the system is idle
 SeeAlso: AX=8485h/DL=71h,AX=8485h/DL=72h
-----------5B8485DL70-------------------------
+--------U-5B8485DL70-------------------------
 INT 5B U - SitBack v3.02R - INSTALLATION CHECK
 	AX = 8485h
 	DL = 70h
@@ -4214,7 +4293,7 @@ Return: CX = 8485h if installed
 Program: SitBack is a background file backup utility by SitBack Technologies,
 	  Inc. which initiates backups whenever the system is idle
 SeeAlso: AX=5254h/DL=04h,AX=8485h/DL=78h
-----------5B8485DL71-------------------------
+--------U-5B8485DL71-------------------------
 INT 5B U - SitBack v3.02R - SET ??? FLAG AND GET ??? ADDRESS
 	AX = 8485h
 	DL = 71h
@@ -4222,33 +4301,33 @@ Return: ES:BX -> FAR entry point to ???
 Note:	the flag which is modified is located at the address returned by
 	   AX=5254h/DL=04h
 SeeAlso: AX=8485h/DL=72h
-----------5B8485DL72-------------------------
+--------U-5B8485DL72-------------------------
 INT 5B U - SitBack v3.02R - CLEAR ??? FLAG
 	AX = 8485h
 	DL = 72h
 Note:	the flag which is modified is located at the address returned by
 	   AX=5254h/DL=04h
 SeeAlso: AX=8485h/DL=71h
-----------5B8485DL73-------------------------
+--------U-5B8485DL73-------------------------
 INT 5B U - SitBack v3.02R - ???
 	AX = 8485h
 	DL = 73h
 	???
 Return: ???
-----------5B8485DL74-------------------------
+--------U-5B8485DL74-------------------------
 INT 5B U - SitBack v3.02R - ???
 	AX = 8485h
 	DL = 74h
 	???
 Return: ???
-----------5B8485DL75-------------------------
+--------U-5B8485DL75-------------------------
 INT 5B U - SitBack v3.02R - ???
 	AX = 8485h
 	DL = 75h
 	CX = ???
 Return: ???
 SeeAlso: AX=8485h/DL=76h
-----------5B8485DL76-------------------------
+--------U-5B8485DL76-------------------------
 INT 5B U - SitBack v3.02R - ???
 	AX = 8485h
 	DL = 76h
@@ -4256,18 +4335,18 @@ INT 5B U - SitBack v3.02R - ???
 Return: ???
 Note:	conditionally calls the code for AX=8485h/DL=75h
 SeeAlso: AX=8485h/DL=75h
-----------5B8485DL77-------------------------
+--------U-5B8485DL77-------------------------
 INT 5B U - SitBack v3.02R - SET ??? FLAG
 	AX = 8485h
 	DL = 77h
-----------5B8485DL78-------------------------
+--------U-5B8485DL78-------------------------
 INT 5B U - SitBack v3.02R - GET RESIDENT DATA SEGMENT
 	AX = 8485h
 	DL = 78h
 Return: CX = 5342h if supported
 	    ES = AX = segment of TSR data
 SeeAlso: AX=8485h/DL=70h,AX=8485h/DL=79h
-----------5B8485DL79-------------------------
+--------U-5B8485DL79-------------------------
 INT 5B U - SitBack v3.02R - GET DTA
 	AX = 8485h
 	DL = 79h
@@ -4275,7 +4354,7 @@ Return: CX = 5342h if supported
 	    ES:BX -> DTA set by last INT 21/AH=1Ah
 Note:	this function is provided by SBOS.EXE rather than SB.EXE
 SeeAlso: INT 21/AH=1Ah
-----------5B8485DL7A-------------------------
+--------U-5B8485DL7A-------------------------
 INT 5B U - SitBack v3.02R - TOGGLE ???
 	AX = 8485h
 	DL = 7Ah
@@ -4292,7 +4371,11 @@ SeeAlso: INT 0C
 INT 5C - NetBIOS INTERFACE
 	ES:BX -> network control block (NCB) (see below)
 Return: AL = status (see below)
-Note:	Sytek PCnet card uses DMA 3.
+Program: NetBIOS was developed by Sytek, Inc. in 1984 as a high-level
+	  programming interface to the IBM PC Network; the first implementation
+	  was a ROM BIOS extension on Sytek's PCnet LAN adapter card, but many
+	  current networks support NetBIOS as the session layer.
+Note:	The Sytek PCnet card uses DMA 3.
 SeeAlso: INT 2A/AH=01h,INT 2A/AH=04h,INT 5B
 
 Values for NetBIOS status:
@@ -4405,8 +4488,8 @@ Values for command code field in NCB (OR with 80h for non-waiting call):
  7Ch	UngermannBass RcvRaw
  7Dh	UngermannBass SendNmc2
  7Fh	Beame&Whiteside BWNB installation check (returns with return code and
-	completion code both set to 03h, while invalid functions return only
-	return code field set to 03h)
+	  completion code both set to 03h, while invalid functions return only
+	  return code field set to 03h)
 
 Format of structure "name":
 Offset	Size	Description
@@ -4801,4 +4884,2959 @@ INT 5F - HP 95LX GRAPHICS PRIMITIVES - WRITE TEXT
 	AL = rotate flag (if nonzero, rotate 90 degrees counter-clockwise)
 	DX,CX = row,column of first character's top left corner
 	ES:DI -> ASCIZ text
+--------*-60---------------------------------
+INT 60 - reserved for user interrupt
+--------v-60---------------------------------
+INT 60 - VIRUS - "Zero Bug" - INSTALLATION CHECK
+   The "Zero Bug" virus hooks this vector.  It considers itself installed if
+   offset 103h of the handler's segment contains the bytes "ZE"
+SeeAlso: INT 32,INT 44"VIRUS",INT 61"SEMTEX"
+--------d-60---------------------------------
+INT 60 - Adaptec and OMTI controllers - DRIVE 0 DATA
+SeeAlso: INT 61"Adaptec",INT 62"Adaptec",INT 63"Adaptec",INT 64"Adaptec"
+Notes:	this vector stores the first four bytes of the parameter table for
+	  hard disk 0
+	these vectors are used by the following Adaptec controllers:
+	    ACB 2370 A/B/C, ACB 2372 A/B/C, ACB 2333 A/B, 2322B-8, 2322B-16
+	these vectors are NOT used by the following Adaptec controllers:
+	    ACB 2310, ACB 2312, ACB 2320D, ACB 2322D
+--------b-60---------------------------------
+INT 60 - Atari Portfolio - USER INTERFACE FUNCTIONS
+   supplies a number of subfunctions which perform such functions as drawing
+   boxes and menus, and provide input line editing
+SeeAlso: INT 61"Atari"
+--------V-60---------------------------------
+INT 60 - Nabbit v2.0 - (NOT A VECTOR!) - INSTALLATION CHECK
+Program: Nabbit is a shareware resident screen data grabber by RSE Inc.
+Note:	Nabbit searches INT 60 through INT 66 for a vector which points at
+	  its ASCIZ signature string "iG" (69h 47h 00h), and uses the first
+	  free vector in that range it is it not already installed
+--------V-60---------------------------------
+INT 60 U - Buffit v3.0 - (NOT A VECTOR!) - INSTALLATION CHECK
+Program: Buffit is a shareware scrollback utility by D.T. Hamilton
+Notes:	Buffit searches INT 60 through INT 6F for a vector which points at
+	  the ASCII signature "Buffit  ", and uses the first free vector in
+	  that range if it is not already installed
+	there is a private entry point immediately following the signature
+	  string, i.e. eight bytes beyond the address pointed at by the
+	  interrupt
+
+Call private entry point with:
+	AH = function
+	    00h get information and hotkey state
+	    01h get information and toggle hotkey state
+Return: AH = new hotkey state (00h enabled, 01h disabled)
+	AL = hotkey scan code
+	BH = hotkey shift states
+	BL = ??? (01h)
+	CX = segment of resident code
+	DH = niterrupt number used for signature pointer
+	DL = ??? (00h)
+	SI = INT 09 handler offset
+	DI = INT 21 handler offset
+Index:	hotkeys;Buffit
+--------r-60---------------------------------
+INT 60 - PC-IPC API
+	STACK:	DWORD	pointer to parameter block (see below)
+Return: STACK:	unchanged
+Program: PC-IPC is a shareware TSR by Donnelly Software Engineering which
+	  allows communication between independent programs
+Note:	INT 60 is the default, any interrupt vector may be used by specifying
+	  the vector on the commandline
+
+Format of parameter block:
+Offset	Size	Description
+ 00h	WORD	caller's ID
+ 02h	WORD	to ID
+ 04h	WORD	command code (see below)
+ 06h	WORD	returned status (see below)
+ 08h	WORD	returned error code (see below)
+ 0Ah	WORD	size of data
+ 0Ch	DWORD	pointer to data buffer
+
+Values for command code:
+ 01h "IPC_CMND_INQUIRE"	 inquire current status
+		set status field, writes WORD to data buffer containing free
+		  message space in bytes, and sets the "size" field to the
+		  number of messages waiting
+ 02h "IPC_CMND_ENABLE"	reenable PC-IPC
+		ignored unless called with the same ID that disabled PC-IPC
+ 03h "IPC_CMND_DISABLE" disable PC-IPC
+ 04h "IPC_CMND_INSTALL" reset PC-IPC
+ 06h "IPC_CMND_RDATA"	read data
+		returns first message in data buffer, sets "size" to message
+		  length and "to ID" field to sender's ID
+		if no messages available, bit 4 of status is cleared and "size"
+		  is set to zero
+ 07h "IPC_CMND_SDATA"	send data
+ 08h "IPC_CMND_REQID"	require user ID
+		create a new recognized ID and return in "caller's ID" field
+ 09h "IPC_CMND_DELID"	cancel user ID
+		delete caller's ID from pool of recognized IDs
+ 0Ah "IPC_CMND_RDATAW"	read data, wait if no messages available
+ 0Bh "IPC_CMND_VERS"	get PC-IPC version
+		string representing version returned in data buffer, "size"
+		  field set to length of string
+
+Bitfields for returned status:
+ bit 0	unused
+ bit 1	IPC enabled
+ bit 2	IPC installed
+ bit 3	error
+ bit 4	message(s) available
+
+Values for error code:
+ 00h	no error
+ 01h	invalid command or parameter
+ 02h	only process 0 can install/reset IPC
+ 03h	process can not install/reset IPC
+ 04h	IPC is not enabled
+ 05h	process can not disable IPC
+ 06h	invalid destination process ID
+ 07h	invalid sending process ID
+ 08h	invalid data destination
+ 09h	no more process IDs available
+ 0Ah	can not relinquish that process ID
+ 0Bh	message space is full
+ 0Ch	IPC is not installed
+--------R-60---------------------------------
+INT 60 - Tangram Arbiter - API
+Notes:	Arbiter may use any interrupt from 60h to 66h (parameterized)
+	identified by string "@ARB_API" immediately following a short jump at
+	  the interrupt handler address
+	Arbiter makes a PC disk look like a slow disk over an SNA link to an
+	  IBM mainframe
+--------N-60---------------------------------
+INT 60 - Excelan LAN Workplace for DOS 3.5 - API
+	ES:BX -> request packet
+Return: request packet updated
+Notes:	this interrupt is also supported by Beame&Whiteside's BWLWP35 shim,
+	  which was used in creating this description
+	the installation check consists of testing for the WORD 4142h ('AB')
+	  immediately preceding the interrupt handler
+BUG:	because BWLWP35 range-checks only the low byte of the function number,
+	  and has a fencepost error even in that test, functions 000Bh and
+	  XX01h-XX0Bh (XX nonzero) branch to random locations
+SeeAlso: INT 2F/AX=7A40h
+
+Format of request packet:
+Offset	Size	Description
+ 00h 12 BYTEs	???
+ 0Ch	WORD	(return) error code (see below)
+ 0Eh	DWORD	-> FAR function for ???
+ 12h	WORD	function number
+		0001h ???
+		0002h NOP
+		0003h NOP
+		0004h NOP
+		0005h ???
+		0006h get ??? record
+		0007h NOP
+		0008h reset ???
+		0009h NOP
+		000Ah set ???
+	???
+---function 01h---
+ 20h	BYTE	(call) subfunction (32h-3Bh)
+		3Bh non-blocking I/O request (will be tested every clock tick)
+ 21h	BYTE	(return) error code
+		00h successful
+		09h invalid connection number
+		2Ah bad connection type
+		45h ???
+---function 01h, subfunction 32h---
+ 3Ah	WORD	(call) connection type (01h stream, 02h datagram)
+---function 01h, subfunction 34h---
+ 26h	WORD	(call) ???
+ 28h	WORD	(call) ???
+ 2Ah	WORD	(call) ???
+---function 01h, subfunction 35h---
+ 1Ah	WORD	(call) connection number???
+ 26h	WORD	(return) ???
+---function 01h, subfunction 36h---
+ 1Ah	WORD	(call) connection number???
+ 38h	WORD	???
+---function 01h, subfunction 37h---
+ 24h	WORD	(return) ???
+ 26h	WORD	(return) ???
+---function 01h, subfunction 38h---
+ 1Ah	WORD	(call) connection number???
+---function 01h, subfunction 3Ah---
+ 22h	WORD	(call) ???
+		667Eh ???
+		667Fh ???
+ 24h	BYTE	(call 667Eh) ???
+ 24h	WORD	(return 667Fh) ???
+---function 01h, subfunction 3Bh---
+ 0Eh	DWORD	(call) -> function to invoke for I/O or 0000h:0000h
+		function called with AX = 0000h
+				     STACK: DWORD -> request packet
+					    WORD 0000h
+			should return STACK unchanged
+ 1Ah	WORD	(call) connection number???
+ 21h	BYTE	(return) set to 01h when I/O becomes possible
+ 22h	BYTE	(call) direction (00h write, 01h read)
+ 34h	DWORD	(return) -> next pending request packet
+---function 05h---
+ 1Eh	WORD	(call) ???
+ 20h	WORD	(call) ???
+ 34h	DWORD	(call) -> ???
+---function 06h---
+ 16h	DWORD	(call) -> buffer for ??? record (see below)
+ 1Ah	WORD	(call) number of bytes to copy
+ 22h	WORD	(return) number of bytes transferred
+---function 08h---
+ 14h	WORD	(return) ??? (0001h)
+---function 0Ah---
+ 16h	DWORD	(call) -> WORD ???
+ 1Ch	WORD	(call) must be 000Ah for BWLWP35
+
+Values for error code:
+ 0000h	successful
+ 002Dh	invalid function
+ 0050h	???
+
+Format of ??? record:
+Offset	Size	Description
+ 00h	WORD	offset of ???
+ 02h  4 BYTEs	???
+ 06h	DWORD	IP address (big-endian)
+ 0Ah  6 BYTEs	physical address (big-endian)
+	???
+--------G-60---------------------------------
+INT 60 U - INTRSPY/CMDSPY API
+Program: INTRSPY is a script-driven debugger included with the book
+	  _Undocumented_DOS_.
+Notes:	INTRSPY will hook the first available interrupt in the range 60h-67h.
+	The installation check is to
+	  a) determine that the handler is an IRET instruction
+	  b) the signature 0Dh "INTRSPY vN.NN" immediately precedes the handler
+	  If INTRSPY is installed, the DWORD immediately after the IRET stores
+	  its entry point.
+Index:	installation check;INTRSPY
+
+Call INTRSPY entry point with:
+	AH = function
+	    00h ???
+	    01h set current directory (for use in reporting)
+		ES:DI -> counted string containing directory name (max 79 char)
+	    02h set name of script file
+		ES:DI -> counted string containing file name (max 79 chars)
+	    03h set script arguments
+		ES:DI -> counted string containing arguments (max 79 chars)
+	    04h get directory set with function 01h
+		ES:DI -> 80-byte buffer for directory name
+	    05h get name of script file
+		ES:DI -> 80-byte buffer for script filename
+	    06h get script arguments
+		ES:DI -> 80-byte buffer for script arguments
+	    07h get ???
+		CL = 00h-15h specifies what to get
+		ES:DI -> WORD to be set with desired value on return
+	    08h get ???
+		ES:DI -> WORD to be set with returned value
+	    09h get ???
+		ES:DI -> WORD to be set with returned value
+	    0Bh store code for interrupt handler???
+		ES:DI -> data
+		CX = number of bytes
+	    0Ch ???
+		ES:DI -> ???
+	    0Dh get ???
+		ES:DI -> BYTE to be set with returned value
+	    0Eh set ??? flag
+	    0Fh clear ??? flag
+	    10h ???
+		Return: AL = 04h or 05h if failed
+	    11h ???
+		Return: AL = 05h if failed
+	    12h get ???
+		ES:DI -> buffer
+		Return: CX = number of bytes returned in buffer
+	    13h ???
+Return: AH = 00h
+	AL = status
+	    00h successful
+	    01h invalid function
+	    02h ???
+	    03h ???
+	    04h ???
+	    05h ???
+--------u-60---------------------------------
+INT 60 U - PC/370 v4.2 - ???
+	???
+Return: ???
+Program: PC/370 is an IBM 370 emulator by Donald S. Higgins
+Note:	this is the default interrupt, however the documentation includes
+	  instructions for patching the system for another interrupt
+SeeAlso: INT 2F/AX=7F24h,INT DC"PC/370"
+--------r-60---------------------------------
+INT 60 - JPI TopSPEED Modula-2 v1 - PROCEDURE ENTRY TRAP
+SeeAlso: INT 61"JPI"
+--------N-60---------------------------------
+INT 60 - FTP Packet Driver - PC/TCP Packet Driver Specification
+Notes:	The handler for the interrupt will start with a 3-byte jump
+	  instruction, followed by the ASCIZ string "PKT DRVR" (the
+	  terminating NUL is significant).
+	To find the interrupt being used by the driver, an application should
+	  scan through interrupt vectors 60h to 80h (20h through FFh for
+	  v1.10+ of the specification) until it finds one with the "PKT DRVR"
+	  string.
+	AH values of 80h to FFh have been reserved for user-defined additions.
+--------b-60----DI0100-----------------------
+INT 60 u - HP 95LX System Manager - WAIT FOR EVENT
+	DI = 0100h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to event record (see below)
+Return: event record filled
+	STACK unchanged
+Note:	this call will timeout after about 500ms
+SeeAlso: INT 15/AX=4DD4h,INT 60/DI=0101h,INT 61"HP 95LX",INT 62"HP 95LX"
+
+Values for event type:
+ 00h	no events
+ 01h	keystroke available
+ 02h	Ctrl-Break
+ 03h	reactivation (always follows deactivation event)
+ 04h	about to deactivate (sleep)
+	next get-event call will not return until reactivated
+ 05h	forced application termination
+ 06h	1-2-3 bridge service request (only given to 1-2-3)
+ 07h	request to grow
+ 08h	request to shrink
+ 09h	application's alarm expired
+ 0Ah	daily chance to set an alarm
+ 0Bh	system date or time has been changed
+
+Format of event record:
+Offset	Size	Description
+ 00h	WORD	event type (see above)
+ 02h	WORD	ASCII code page 850 translation of keystroke
+		or grow/shrink amount in paragraphs or 0000h if error
+		or alarm expiration data
+ 04h	BYTE	scan code from BIOS
+ 05h	BYTE	shift key states at time keystroke is retrieved
+ 06h	WORD	LICS translation of keystroke
+ 08h	BYTE	function key number (1-2-3 only)
+ 09h	DWORD	pointer to 1-2-3 bridge record (see INT 60/DI=0104h)
+		or pointer to time change structure (see below)
+Note:	if the System Manager is awaiting the conclusion of a bridge service
+	  or grow/shrink call and the event type field is set to FFFFh on
+	  entry, the SysMgr will resume
+
+Format of time change structure:
+Offset	Size	Description
+ 00h	WORD	old year
+ 02h	BYTE	old month
+ 03h	BYTE	old date
+ 04h	BYTE	old day
+ 05h	BYTE	old hour
+ 06h	BYTE	old minute
+ 07h	BYTE	old second
+ 08h	BYTE	old hundredth of a second
+ 09h  9 BYTEs	new time in same format as old time
+--------b-60----DI0101-----------------------
+INT 60 u - HP 95LX System Manager - CHECK FOR EVENT
+	DI = 0101h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD pointer to event record (INT 60/DI=0100h)
+Return: event record filled
+	STACK unchanged
+Note:	this call returns immediately if no event is available
+SeeAlso: INT 60/DI=0100h
+--------b-60----DI0102-----------------------
+INT 60 u - HP 95LX System Manager - "SH_STATUS"
+	DI = 0102h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+--------b-60----DI0104-----------------------
+INT 60 u - HP 95LX System Manager - LOTUS 1-2-3 BRIDGE SERVICES
+	DI = 0104h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD pointer to bridge record (see below)
+Return: ???
+	STACK unchanged
+
+Values for function code:
+ 00h	test
+ 01h	get range
+ 02h	"GETRANGE_ADDR"
+ 03h	"SETRANGE_ADDR"
+ 04h	"GETRANGE_DATA"
+ 05h	"SETRANGE_DATA"
+ 06h	recalculate
+ 07h	get cursor
+ 08h	set cursor
+ 09h	redisplay
+ 0Ah	cell type
+ 0Bh	"CALCTYPE"
+
+Format of bridge record:
+Offset	Size	Description
+ 00h	WORD	function code (see above)
+ 02h	WORD	return code from 1-2-3
+ 04h 16 BYTEs	ASCII range name
+ 14h	WORD	start column of range
+ 16h	WORD	start row of range
+ 18h	WORD	end column of range
+ 1Ah	WORD	end row of range
+ 1Ch	WORD	order in which data is placed in buffer
+ 1Eh	WORD	buffer size
+ 20h	WORD	offset within bridge record's segment of buffer for cell data
+--------b-60----DI0105-----------------------
+INT 60 u - HP 95LX System Manager - FLUSH KEYBOARD BUFFER
+	DI = 0105h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+--------b-60----DI0106-----------------------
+INT 60 u - HP 95LX System Manager - YIELD CPU
+	DI = 0106h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD pointer to ???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 15/AX=1000h,INT 2F/AX=1680h
+--------b-60----DI0107-----------------------
+INT 60 u - HP 95LX System Manager - "NO_FINI" - REFUSE TERMINATION REQUEST
+	DI = 0107h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD pointer to ???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 15/AX=4DD4h,INT 61"HP 95LX",INT 62"HP 95LX"
+--------b-60----DI0200-----------------------
+INT 60 u - HP 95LX System Manager - SETUP MENU
+	DI = 0200h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to menu data (see below)
+		DWORD	pointer to ???
+		WORD	number of items on menu???
+		WORD	???
+		DWORD	pointer to ???
+		WORD	???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 15/AX=4DD4h,INT 60/DI=0201h,INT 60/DI=0203h,INT 60/DI=0205h
+
+Format of menu data:
+Offset	Size	Description
+ 00h 80 BYTEs	first line of menu text
+ 50h 80 BYTEs	second line of menu text
+ A0h 80 BYTEs	third line of menu text
+ F0h	WORD	number of keywords
+ F2h	WORD	index of currently highlighted keyword or FFFFh
+ F4h	WORD	single prompt on top line if nonzero
+ F6h 20 BYTEs	which line each of 20 keywords is located on
+10Ah 20 BYTEs	offset of each of 20 keywords within its line
+11Eh 20 BYTEs	length of each of 20 keywords
+132h 20 BYTEs	first letter of each of 20 keywords
+146h 20 WORDs	offsets of long prompts for each of 20 keywords
+--------b-60----DI0201-----------------------
+INT 60 u - HP 95LX System Manager - DISPLAY OR REDISPLAY MENU
+	DI = 0201h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to menu data (see INT 60/DI=0200h)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0200h,INT 60/DI=0202h,INT 60/DI=0206h
+--------b-60----DI0202-----------------------
+INT 60 u - HP 95LX System Manager - "MENU_ON" - ENABLE PROCESSING OF MENU
+	DI = 0202h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to menu data (see INT 60/DI=0200h)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0200h,INT 60/DI=0201h,INT 60/DI=0203h
+--------b-60----DI0203-----------------------
+INT 60 u - HP 95LX System Manager - REMOVE MENU
+	DI = 0203h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to menu data (see INT 60/DI=0200h)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0201h,INT 60/DI=0202h,INT 60/DI=0204h,INT 60/DI=0208h
+--------b-60----DI0204-----------------------
+INT 60 u - HP 95LX System Manager - LET SYSTEM MANAGER HANDLE MENU KEYSTROKE
+	DI = 0204h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to menu data (see INT 60/DI=0200h)
+		WORD	keystroke
+		DWORD	pointer to WORD to receive selection number
+Return: buffer for selection number filled with index of selected menu item or
+	  FFFFh if no final selection yet
+	STACK unchanged
+SeeAlso: INT 60/DI=0200h,INT 60/DI=0202h,INT 60/DI=0207h
+--------b-60----DI0205-----------------------
+INT 60 u - HP 95LX System Manager - INITIALIZE FILE SELECTION MENU
+	DI = 0205h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to file menu structure (see below)
+		DWORD	pointer to edit record (see INT 60/DI=0400h)
+		DWORD	pointer to wildcard filespec for initial file list
+		WORD	row???
+		WORD	column???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0200h,INT 60/DI=0206h,INT 60/DI=0208h
+
+Format of file menu structure:
+Offset	Size	Description
+ 00h	DWORD	pointer to ASCIZ base directory name
+ 04h	DWORD	pointer to ASCIZ file pattern (wildcard filespec)
+ 08h	DWORD	pointer to file list workspace, at least 1024 bytes (see below)
+ 0Ch	WORD	size of file list workspace in bytes
+ 0Eh	WORD	starting row (-3 is topmost, 0 is first non-"reserved" line)
+ 10h	WORD	starting column
+ 12h	WORD	number of lines
+ 14h	WORD	number of columns
+ 16h	WORD	number of files displayed on each line
+---the remaining fields are initialized by the System Manager---
+ 18h	WORD	0000h if first edit character, else multiline
+ 1Ah	WORD	number of files in file list
+ 1Ch	WORD	max files workspace has room for
+ 1Eh	WORD	file at top of list
+ 20h	WORD	index of file to highlight
+ 22h	WORD	index of file to unhighlight
+ 24h	WORD	current focus (01h FMENU, 02h EDIT)
+
+Format of file list workspace entry:
+Offset	Size	Description
+ 00h	BYTE	file attributes
+ 01h	WORD	file time (see INT 21/AX=5700h)
+ 03h	WORD	file date (see INT 21/AX=5700h)
+ 05h	DWORD	file size
+ 09h 13 BYTEs	ASCIZ filename
+--------b-60----DI0206-----------------------
+INT 60 u - HP 95LX System Manager - DISPLAY/REDISPLAY FILE SELECTION MENU
+	DI = 0206h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to file menu structure (see INT 60/DI=0205h)
+		DWORD	pointer to edit record (see INT 60/DI=0400h)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0205h
+--------b-60----DI0207-----------------------
+INT 60 u - HP 95LX System Manager - LET SYSMGR PROCESS FILE SEL MENU KEYSTROKE
+	DI = 0207h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to file menu structure (see INT 60/DI=0205h)
+		DWORD	pointer to edit record (see INT 60/DI=0400h)
+		WORD	keystroke
+Return: AX = status
+	    0000h keystroke processed, call INT 60/DI=0206h to refresh menu
+	    0001h redisplay application area before refreshing menu
+	    0002h user confirmed selection, filename is in edit record's buffer
+	    0003h user aborted menu
+	    FFFBh bad filename
+	    FFFCh bad directory
+	    FFFDh bad drive
+	    FFFEh unknown keystroke
+	    FFFFh keystroke known but invalid in current context
+	STACK unchanged
+SeeAlso: INT 60/DI=0205h,INT 60/DI=0208h
+--------b-60----DI0208-----------------------
+INT 60 u - HP 95LX System Manager - REMOVE FILE SELECTION MENU
+	DI = 0208h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to file menu structure (see INT 60/DI=0205h)
+		DWORD	pointer to edit record (see INT 60/DI=0400h)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 15/AX=4DD4h,INT 60/DI=0205h,INT 60/DI=0206h
+--------b-60----DI0300-----------------------
+INT 60 u - HP 95LX System Manager - DISPLAY STRING
+	DI = 0300h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	starting row (-3 is topmost, 0 is first user line)
+		WORD	starting column
+		DWORD	pointer to string
+		WORD	length of string
+		WORD	display style: 0000h normal, 0001h reverse video
+		WORD	"OSTYLE"
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0F03h,INT 60/DI=1005h
+--------b-60----DI0301-----------------------
+INT 60 u - HP 95LX System Manager - CLEAR PORTION OF SCREEN
+	DI = 0301h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	starting row (-3 is topmost, 0 is first user line)
+		WORD	starting column
+		WORD	number of rows
+		WORD	number of columns
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0302h,INT 60/DI=1005h
+--------b-60----DI0302-----------------------
+INT 60 u - HP 95LX System Manager - SCROLL PORTION OF SCREEN
+	DI = 0302h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	starting row???
+		WORD	starting column???
+		WORD	height of scroll region???
+		WORD	width of scroll region???
+		WORD	number of lines to scroll region???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0301h
+--------b-60----DI0303-----------------------
+INT 60 u - HP 95LX System Manager - SCREEN SERVICE "M_XCHG"
+	DI = 0303h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+		WORD	???
+		WORD	???
+		WORD	???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI0304-----------------------
+INT 60 u - HP 95LX System Manager - SCREEN SERVICE "M_CHRATTR"
+	DI = 0304h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI0305-----------------------
+INT 60 u - HP 95LX System Manager - SCREEN SERVICE "M_CHRRVRT"
+	DI = 0305h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+		WORD	???
+		DWORD	pointer to ???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI0307-----------------------
+INT 60 u - HP 95LX System Manager - SCREEN SERVICE "M_CHRINV"
+	DI = 0307h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+		WORD	???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI0308-----------------------
+INT 60 u - HP 95LX System Manager - SCREEN SERVICE "M_ROWS_COLS"
+	DI = 0308h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+--------b-60----DI0309-----------------------
+INT 60 u - HP 95LX System Manager - SET SCREEN (VIDEO???) MODE
+	DI = 0309h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	new mode
+Return: ???
+	STACK unchanged
+--------b-60----DI030A-----------------------
+INT 60 u - HP 95LX System Manager - GET SCREEN (VIDEO???) MODE
+	DI = 030Ah
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+--------b-60----DI030B-----------------------
+INT 60 u - HP 95LX System Manager - SET CURSOR POSITION
+	DI = 030Bh
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	row (-3 is topmost, 0 is first non-reserved line)
+		WORD	column
+Return: ???
+	STACK unchanged
+Note:	cursor is hidden if the specified position is not on the physical
+	  display
+SeeAlso: INT 10/AH=02h,INT 15/AX=4DD4h,INT 61"HP 95LX",INT 62"HP 95LX"
+--------b-60----DI0400-----------------------
+INT 60 u - HP 95LX System Manager - "EDIT_INIT"
+	DI = 0400h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to edit record (see below)
+		DWORD	pointer to string to be edited
+		WORD	initial length of string being edited
+		WORD	maximum length of edited string
+		WORD	row of edit field
+		WORD	leftmost column of edit field
+Return: ???
+	STACK unchanged
+
+Format of edit record:
+Offset	Size	Description
+ 00h	WORD	current length of edit buffer
+ 02h	BYTE	flag for special processing on first character
+ 03h	BYTE	flags
+		bit 0: tab handling
+ 04h	WORD	editing in prompt window?
+ 06h	DWORD	pointer to top line of prompt window message
+ 0Ah	WORD	length of top line of prompt
+ 0Ch	DWORD	pointer to second line of prompt window message
+ 10h	WORD	length of second line of prompt
+ 12h 80 BYTEs	workspace for editing
+ 62h  2 WORDs	line array needed for multi-line editing
+ 66h 36 BYTEs	multi-line edit record (see below)
+ 8Ah	WORD	displayable columns
+
+Format of multi-line edit record:
+Offset	Size	Description
+ 00h	DWORD	pointer to user-supplied edit buffer
+ 04h	WORD	length of edit buffer
+ 06h	WORD	current cursor position
+ 08h	WORD	starting row of edit area (-3 is topmost, 0 is first user line)
+ 0Ah	WORD	starting column of edit area
+ 0Ch	WORD	height of edit area
+ 0Eh	WORD	width of edit area
+ 10h	WORD	current top row (-3 is topmost, 0 is first user line)
+ 12h	WORD	number of rows displayable
+ 14h	BYTE	cursor column
+ 15h	BYTE	01h if buffer has been modified
+ 16h	BYTE	first displayable column (ticker fields only)
+ 17h	BYTE	01h if wordwrap enabled, FFh if ticker field
+ 18h	DWORD	pointer to array of line starts (at least one bigger than edit
+		  area is high)
+ 1Ch	BYTE	currently marking?
+ 1Dh	BYTE	flag
+ 1Eh	WORD	offset of mark start
+ 20h	WORD	offset of mark end (inclusive)
+ 22h	WORD	displayable columns
+--------b-60----DI0401-----------------------
+INT 60 u - HP 95LX System Manager - EDIT ON TOP LINE
+	DI = 0401h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to edit record (see INT 60/DI=0400h)
+		DWORD	pointer to string to edit
+		WORD	initial length of string being edited
+		WORD	maximum length of edited string
+		DWORD	pointer to first line of prompt
+		WORD	length of first line
+		DWORD	pointer to second line of prompt
+		WORD	length of second line
+Return: ???
+	STACK unchanged
+--------b-60----DI0402-----------------------
+INT 60 u - HP 95LX System Manager - DISPLAY OR REDISPLAY EDIT FIELD
+	DI = 0402h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to edit record (see INT 60/DI=0400h)
+Return: ???
+	STACK unchanged
+--------b-60----DI0403-----------------------
+INT 60 u - HP 95LX System Manager - LET SYSTEM MANAGER PROCESS EDITING KEYSTROK
+	DI = 0403h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to edit record (see INT 60/DI=0400h)
+		WORD	keystroke
+		DWORD	pointer to WORD buffer for result code
+Return: result code buffer filled with 0001h if editing complete
+	STACK unchanged
+--------b-60----DI0404-----------------------
+INT 60 u - HP 95LX System Manager - "MDIT_INI"
+	DI = 0404h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		WORD	???
+		WORD	???
+		WORD	???
+		WORD	???
+		DWORD	pointer to ???
+		WORD	???
+		WORD	???
+		WORD	???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI0405-----------------------
+INT 60 u - HP 95LX System Manager - "MDIT_DIS"
+	DI = 0405h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI0406-----------------------
+INT 60 u - HP 95LX System Manager - "MDIT_KEY"
+	DI = 0406h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI0407-----------------------
+INT 60 u - HP 95LX System Manager - "MDIT_FIL"
+	DI = 0407h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI0408-----------------------
+INT 60 u - HP 95LX System Manager - "MDIT_MARK"
+	DI = 0408h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI0409-----------------------
+INT 60 u - HP 95LX System Manager - "MDIT_UNMARK"
+	DI = 0409h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI040A-----------------------
+INT 60 u - HP 95LX System Manager - "MDIT_CUTMARK"
+	DI = 040Ah
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI040B-----------------------
+INT 60 u - HP 95LX System Manager - "MDIT_INS_STR"
+	DI = 040Bh
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+		WORD	???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 15/AX=4DD4h,INT 61"HP 95LX",INT 62"HP 95LX"
+--------b-60----DI0500-----------------------
+INT 60 u - HP 95LX System Manager - OPEN FILE
+	DI = 0500h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to file state record (see below)
+		DWORD	pointer to filename
+		WORD	length of filename
+		WORD	???
+		WORD	suppress buffering if nonzero
+Return: AX = status
+	STACK unchanged
+SeeAlso: INT 60/DI=0501h,INT 60/DI=0502h,INT 60/DI=0508h
+
+Format of file state record:
+Offset	Size	Description
+ 00h	WORD	DOS file handle
+ 02h	WORD	flags
+		bit 0: buffer contents valid
+		bit 1: buffer is dirty and must be written
+		bit 2: unbuffered I/O
+		bit 3: file is a character device
+ 04h	DWORD	current DOS physical file offset (FFFFFFFFh if unknown)
+ 08h	DWORD	DOS file offset of start of buffer
+ 0Ch	DWORD	effective file offset as seen by caller
+ 10h	WORD	number of bytes in file buffer
+---buffered I/O only---
+ 12h 512 BYTEs	file buffer
+--------b-60----DI0501-----------------------
+INT 60 u - HP 95LX System Manager - OPEN FILE IN READ-ONLY MODE
+	DI = 0501h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to file state record (see INT 60/DI=0500h)
+		DWORD	pointer to filename
+		WORD	length of filename
+		WORD	???
+		WORD	suppress buffering if nonzero
+Return: AX = status
+	STACK unchanged
+SeeAlso: INT 60/DI=0500h
+--------b-60----DI0502-----------------------
+INT 60 u - HP 95LX System Manager - CREATE NEW FILE
+	DI = 0502h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to file state record (see INT 60/DI=0500h)
+		DWORD	pointer to filename
+		WORD	length of filename
+		WORD	???
+		WORD	suppress buffering if nonzero
+Return: AX = status
+	STACK unchanged
+SeeAlso: INT 60/DI=0500h,INT 60/DI=0503h
+--------b-60----DI0503-----------------------
+INT 60 u - HP 95LX System Manager - CREATE OR TRUNCATE FILE
+	DI = 0503h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to file state record (see INT 60/DI=0500h)
+		DWORD	pointer to filename
+		WORD	length of filename
+		WORD	???
+		WORD	suppress buffering if nonzero
+Return: AX = status
+	STACK unchanged
+SeeAlso: INT 60/DI=0502h
+--------b-60----DI0504-----------------------
+INT 60 u - HP 95LX System Manager - READ FROM FILE
+	DI = 0504h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to file state record (see INT 60/DI=0500h)
+		DWORD	pointer to data buffer
+		WORD	number of bytes to read
+		DWORD	pointer to WORD in which to return actual bytes read
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0505h
+--------b-60----DI0505-----------------------
+INT 60 - HP 95LX System Manager - WRITE TO FILE
+	DI = 0505h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to file state record (see INT 60/DI=0500h)
+		DWORD	pointer to data
+		WORD	length of data
+Return: AX = status
+	STACK unchanged
+SeeAlso: INT 60/DI=0504h
+--------b-60----DI0506-----------------------
+INT 60 u - HP 95LX System Manager - SET FILE POSITION
+	DI = 0506h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to file state record (see INT 60/DI=0500h)
+		WORD	???
+		WORD	???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0507h
+--------b-60----DI0507-----------------------
+INT 60 u - HP 95LX System Manager - GET FILE POSITION
+	DI = 0507h "M_TELL"
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to file state record (see INT 60/DI=0500h)
+		DWORD	pointer to DWORD buffer for file position???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0506h
+--------b-60----DI0508-----------------------
+INT 60 u - HP 95LX System Manager - CLOSE FILE
+	DI = 0508h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to file state record (see INT 60/DI=0500h)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0500h
+--------b-60----DI0509-----------------------
+INT 60 u - HP 95LX System Manager - FILE SERVICE "M_SETPAT"
+	DI = 0509h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+		WORD	???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI050A-----------------------
+INT 60 u - HP 95LX System Manager - FILE SERVICE "M_MATCH"
+	DI = 050Ah
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+
+Format of pattern match control block:
+Offset	Size	Description
+ 00h 43 BYTEs	FindFirst data block (see INT 21/AH=4Eh)
+ 2Bh 80 BYTEs	full path name
+ 7Bh	BYTE	offset of last component of filename
+ 7Ch	BYTE	DOS function number (4Eh or 4Fh)
+--------b-60----DI050B-----------------------
+INT 60 u - HP 95LX System Manager - IDENTIFY FILENAME REFERENT
+	DI = 050Bh
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		WORD	???
+		WORD	???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+
+Values returned:
+ 0000h nonexistent
+ 0001h file
+ 0002h directory
+ 0003h character device
+--------b-60----DI050C-----------------------
+INT 60 u - HP 95LX System Manager - DELETE FILE
+	DI = 050Ch "M_DELETE"
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		WORD	???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI050D-----------------------
+INT 60 u - HP 95LX System Manager - RENAME FILE
+	DI = 050Dh
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		WORD	???
+		WORD	???
+		DWORD	pointer to ???
+		WORD	???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI050E-----------------------
+INT 60 u - HP 95LX System Manager - FILE SERVICE "M_GETDIR"
+	DI = 050Eh
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI050F-----------------------
+INT 60 u - HP 95LX System Manager - FILE SERVICE "M_SETDIR"
+	DI = 050Fh
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI0510-----------------------
+INT 60 u - HP 95LX System Manager - FILE SERVICE "M_VOLUME"
+	DI = 0510h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI0511-----------------------
+INT 60 u - HP 95LX System Manager - MAKE A SUBDIRECTORY
+	DI = 0511h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		WORD	???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI0512-----------------------
+INT 60 u - HP 95LX System Manager - REMOVE A SUBDIRECTORY
+	DI = 0512h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		WORD	???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI0513-----------------------
+INT 60 u - HP 95LX System Manager - GET DEFAULT DRIVE
+	DI = 0513h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ??? buffer for current drive
+Return: ???
+	STACK unchanged
+--------b-60----DI0514-----------------------
+INT 60 u - HP 95LX System Manager - SET DEFAULT DRIVE
+	DI = 0514h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	new drive
+Return: ???
+	STACK unchanged
+--------b-60----DI0515-----------------------
+INT 60 u - HP 95LX System Manager - FILE SERVICE "M_FDATE"
+	DI = 0515h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI0516-----------------------
+INT 60 u - HP 95LX System Manager - FILE SERVICE "M_GET_SYSDIR"
+	DI = 0516h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI0517-----------------------
+INT 60 u - HP 95LX System Manager - GET FILE ATTRIBUTES
+	DI = 0517h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		WORD	???
+		WORD	???
+		DWORD	pointer to ??? buffer for file's attributes???
+Return: ???
+	STACK unchanged
+--------b-60----DI0518-----------------------
+INT 60 u - HP 95LX System Manager - SET FILE ATTRIBUTES
+	DI = 0518h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		WORD	???
+		WORD	???
+		WORD	new attributes???
+Return: ???
+	STACK unchanged
+--------b-60----DI0519-----------------------
+INT 60 u - HP 95LX System Manager - FILE SERVICE "M_COMMON_OPEN"
+	DI = 0519h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+		WORD	???
+		WORD	???
+		WORD	???
+		WORD	???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI051A-----------------------
+INT 60 u - HP 95LX System Manager - FILE SERVICE "M_COPYDT"
+	DI = 051Ah
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI051B-----------------------
+INT 60 u - HP 95LX System Manager - FILE SERVICE "M_GETFDT"
+	DI = 051Bh
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI051C-----------------------
+INT 60 u - HP 95LX System Manager - FILE SERVICE "M_PUTFDT"
+	DI = 051Ch
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI0600-----------------------
+INT 60 u - HP 95LX System Manager - PROCESS INITIALIZING
+	DI = 0600h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 15/AX=4DD4h,INT 60/DI=0601h,INT 61"HP 95LX"
+--------b-60----DI0601-----------------------
+INT 60 u - HP 95LX System Manager - PROCESS TERMINATION
+	DI = 0601h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: never
+	STACK unchanged
+SeeAlso: INT 21/AH=4Ch,INT 60/DI=0600h
+--------b-60----DI0602-----------------------
+INT 60 u - HP 95LX System Manager - "M_LOCK" - PREVENT TASK SWITCHES
+	DI = 0602h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 15/AX=101Bh,INT 60/DI=0603h
+--------b-60----DI0603-----------------------
+INT 60 u - HP 95LX System Manager - "M_UNLOCK" - ALLOW TASK SWITCHES
+	DI = 0603h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 15/AX=101Ch,INT 60/DI=0602h
+--------b-60----DI0604-----------------------
+INT 60 u - HP 95LX System Manager - "M_SPAWN"
+	DI = 0604h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		WORD	???
+		WORD	???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI0605-----------------------
+INT 60 u - HP 95LX System Manager - "M_APPCOUNT"
+	DI = 0605h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+--------b-60----DI0606-----------------------
+INT 60 u - HP 95LX System Manager - "M_REBOOT"
+	DI = 0606h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+--------b-60----DI0607-----------------------
+INT 60 u - HP 95LX System Manager - "M_SPAWNARG"
+	DI = 0607h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		WORD	???
+		DWORD	pointer to ???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI0608-----------------------
+INT 60 u - HP 95LX System Manager - "M_REG_APP_NAME"
+	DI = 0608h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI0609-----------------------
+INT 60 u - HP 95LX System Manager - "M_APP_NAME"
+	DI = 0609h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: DX:AX -> ???
+	STACK unchanged
+SeeAlso: INT 15/AX=4DD4h,INT 61"HP 95LX",INT 62"HP 95LX"
+--------b-60----DI0700-----------------------
+INT 60 u - HP 95LX System Manager - OPEN CLIPBOARD
+	DI = 0700h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0701h,INT 60/DI=0702h
+
+Values for error code:
+ 0000h	successful
+ FFF8h	transfer request out of bounds
+ FFF9h	no such representation
+ FFFAh	no representation open
+ FFFBh	a representation is already open
+ FFFCh	representation already exists
+ FFFDh	heap allocation failure
+ FFFEh	clipboard not open
+ FFFFh	clipboard access denied
+--------b-60----DI0701-----------------------
+INT 60 u - HP 95LX System Manager - CLOSE CLIPBOARD
+	DI = 0701h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0700h,INT 60/DI=0702h
+--------b-60----DI0702-----------------------
+INT 60 u - HP 95LX System Manager - RESET CLIPBOARD
+	DI = 0702h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0700h
+--------b-60----DI0704-----------------------
+INT 60 u - HP 95LX System Manager - "M_NEW_REP" - START A NEW REPRESENTATION???
+	DI = 0704h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0705h,INT 60/DI=0706h,INT 60/DI=0707h
+--------b-60----DI0705-----------------------
+INT 60 u - HP 95LX System Manager - CLIPBOARD SERVICE "M_FINI_REP"
+	DI = 0705h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0704h
+--------b-60----DI0706-----------------------
+INT 60 u - HP 95LX System Manager - CLIPBOARD SERVICE "M_REP_NAME"
+	DI = 0706h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0704h,INT 60/DI=0707h
+--------b-60----DI0707-----------------------
+INT 60 u - HP 95LX System Manager - CLIPBOARD SERVICE "M_REP_INDEX"
+	DI = 0707h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0704h,INT 60/DI=0706h
+--------b-60----DI0708-----------------------
+INT 60 u - HP 95LX System Manager - WRITE TO CLIPBOARD
+	DI = 0708h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to data to be written???
+		WORD	length of data???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0709h
+--------b-60----DI0709-----------------------
+INT 60 u - HP 95LX System Manager - READ FROM CLIPBOARD
+	DI = 0709h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+		WORD	???
+		DWORD	pointer to buffer for data???
+		WORD	length of buffer???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0708h
+--------b-60----DI0800-----------------------
+INT 60 u - HP 95LX System Manager - BEEP
+	DI = 0800h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0801h,INT 60/DI=0802h,INT 60/DI=0803h
+--------b-60----DI0801-----------------------
+INT 60 u - HP 95LX System Manager - SOUND SERVICE "M_THUD"
+	DI = 0801h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0800h,INT 60/DI=0802h,INT 60/DI=0803h
+--------b-60----DI0802-----------------------
+INT 60 u - HP 95LX System Manager - MAKE A SOUND PATTERN
+	DI = 0802h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	pattern number (00h-06h)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0800h,INT 60/DI=0801h,INT 60/DI=0803h
+--------b-60----DI0803-----------------------
+INT 60 u - HP 95LX System Manager - TURN OFF SOUND
+	DI = 0803h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0800h,INT 60/DI=0801h,INT 60/DI=0802h
+--------b-60----DI0900-----------------------
+INT 60 - HP 95LX System Manager - ALLOCATE REGULAR MEMORY BLOCK
+	DI = 0900h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	size of block in bytes
+Return: AX -> memory block
+	STACK unchanged
+Note:	System Manager-compliant applications are always small-model (64K code,
+	  64K data)
+SeeAlso: INT 15/AX=4DD4h,INT 60/DI=0902h,INT 60/DI=0903h
+--------b-60----DI0902-----------------------
+INT 60 u - HP 95LX System Manager - FREE REGULAR MEMORY BLOCK
+	DI = 0902h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	offset of memory block???
+Return: ???
+	STACK unchanged
+Note:	System Manager-compliant applications are always small-model (64K code,
+	  64K data)
+SeeAlso: INT 60/DI=0900h,INT 60/DI=0904h
+--------b-60----DI0903-----------------------
+INT 60 u - HP 95LX System Manager - ALLOCATE LARGE MEMORY BLOCK
+	DI = 0903h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	size of block in bytes???
+Return: AX -> memory block???
+	STACK unchanged
+SeeAlso: INT 60/DI=0900h,INT 60/DI=0904h
+--------b-60----DI0904-----------------------
+INT 60 u - HP 95LX System Manager - FREE LARGE MEMORY BLOCK
+	DI = 0904h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	segment of memory block???
+Return: AX -> ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0902h,INT 60/DI=0903h
+--------b-60----DI0B00-----------------------
+INT 60 u - HP 95LX System Manager - CLOCK/CALENDAR SERVICE "M_DTINFO"
+	DI = 0B00h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI0B01-----------------------
+INT 60 u - HP 95LX System Manager - CLOCK/CALENDAR SERVICE "M_GETDTM"
+	DI = 0B01h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI0B02-----------------------
+INT 60 u - HP 95LX System Manager - CLOCK/CALENDAR SERVICE "M_SETDTM"
+	DI = 0B02h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI0B03-----------------------
+INT 60 u - HP 95LX System Manager - CLOCK/CALENDAR SERVICE "M_XALARM"
+	DI = 0B03h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI0B04-----------------------
+INT 60 u - HP 95LX System Manager - CLOCK/CALENDAR SERVICE "M_ALARM"
+	DI = 0B04h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to alarm record???
+		WORD	???
+Return: ???
+	STACK unchanged
+
+Format of alarm record:
+Offset	Size	Description
+ 00h	BYTE	hour
+ 01h	BYTE	minute
+ 02h	BYTE	second
+ 03h	BYTE	unused padding
+ 04h	WORD	rescheduling interval, in seconds
+ 06h	BYTE	are seconds significant?
+ 07h	BYTE	alarm sound
+ 08h 40 BYTEs	message displayed when alarm activates
+ 30h	BYTE	task ID of owner
+ 31h	BYTE	application's own use for sub-class
+ 32h  4 BYTEs	application's own use for private data
+--------b-60----DI0B05-----------------------
+INT 60 u - HP 95LX System Manager - CLOCK/CALENDAR SERVICE "M_START_SW"
+	DI = 0B05h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI0B06-----------------------
+INT 60 u - HP 95LX System Manager - CLOCK/CALENDAR SERVICE "M_GET_SW"
+	DI = 0B06h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI0B07-----------------------
+INT 60 u - HP 95LX System Manager - CLOCK/CALENDAR SERVICE "M_STOP_SW"
+	DI = 0B07h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI0B08-----------------------
+INT 60 u - HP 95LX System Manager - "M_TELLTIME" - DISPLAY TIMESTAMP
+	DI = 0B08h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	timestamp format (see below)
+		WORD	row (-3 is topmost, 0 is first non-reserved line)
+		WORD	column
+Return: ???
+	STACK unchanged
+
+Bitfields for timestamp format:
+ bits 1-0  timestamp components
+	00 date only
+	01 time only
+	10 date and time
+	11 day and date
+ bit 4	supply am/pm
+ bit 5	supply seconds
+ bit 6	show year
+ bit 7	four-digit year
+--------b-60----DI0B09-----------------------
+INT 60 u - HP 95LX System Manager - CLOCK/CALENDAR SERVICE "M_GET_SETTINGS"
+	DI = 0B09h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0B0Ah,INT 60/DI=0B0Fh
+
+Format of system settings:
+Offset	Size	Description
+ 00h	WORD	country code
+ 02h	WORD	speaker volume (00h-03h or FFh for off)
+ 04h	WORD	contrast level (00h-0Fh)
+ 06h	WORD	week start (00h Sunday, 01h Monday)
+ 08h	WORD	punctuation format
+		code	decimal arg	thousands
+		00h	.	,	,
+		01h	,	.	.
+		02h	.	;	;
+		03h	,	;	.
+		04h	.	,	" "
+		05h	,	.	" "
+		06h	.	;	" "
+		07h	,	;	" "
+ 0Ah	WORD	two-character language code (only 5355h = "US" byte-swapped)
+ 0Ch	WORD	current date format (see below)
+ 0Eh	WORD	current time format (see below)
+ 10h	WORD	collating sequence
+		00h numbers first, 01h letters first, 02h ASCII
+ 12h 80 BYTEs	name of picture file
+ 62h 30 BYTEs	name
+ 80h 30 BYTEs	title
+ 9Eh 28 BYTEs	company name
+ BAh	WORD	number of languages
+ BCh  6 BYTEs	available languages
+ C2h 66 BYTEs	language menu
+104h  2 BYTEs	ASCIZ date separator
+106h  2 BYTEs	ASCIZ time separator
+108h	BYTE	date order
+109h	BYTE	use 24 hour time?
+10Ah 16 BYTEs	currency string
+11Ah	WORD	currency string position (00h prefix, 01h suffix)
+11Ch	WORD	keyboard (see below)
+11Eh	WORD	printer baud rate
+		00h 300, 01h 1200, 02h 2400, 03h 4800, 04h 9600, 05h 19200
+120h	WORD	printer driver code
+		00h Epson FX80, 01h HP Laserjet, 02h IBM ProPrinter
+122h	WORD	printer interface (00h COM1, 01h COM2, 02h IR, 03h LPT1)
+124h	WORD	system manager interrupt (60h by default)
+126h	WORD	code page (01h CP850, 02h CP437)
+128h	WORD	active exit key
+12Ah	WORD	active menu key
+12Ch	WORD	active CHAR key toggle
+12Eh  6 BYTEs	alarm
+
+Values for current date format:
+ 00h	dd-mmm-yy
+ 01h	dd-mmm
+ 02h	mmm-yy
+ 03h	mm/dd/yy
+ 04h	dd/mm/yy
+ 05h	dd.mm.yy
+ 06h	yy-mm-dd
+ 07h	mm/dd
+ 08h	dd/mm
+ 09h	dd.mm
+ 0Ah	mm-dd
+
+Values for current time format:
+ 00h	HH:MM:SS am/pm
+ 01h	HH:MM am/pm
+ 02h	HH:MM:SS
+ 03h	HH.MM.SS
+ 04h	HH,MM,SS
+ 05h	HHhMMmSSs
+ 06h	HH:MM
+ 07h	HH.MM
+ 08h	HH,MM
+ 09h	HHhMMm
+
+Values for keyboard:
+ 0001h	Belgium
+ 0002h	French Canadian
+ 0004h	Denmark
+ 0008h	Finland
+ 0010h	French
+ 0020h	Finland
+ 0040h	Italy
+ 0080h	Netherlands
+ 0100h	Norway
+ 0200h	Portugal
+ 0400h	Spain
+ 0800h	Sweden
+ 1000h	Swiss French
+ 2000h	Swiss German
+ 4000h	United Kingdom
+ 8000h	USA
+--------b-60----DI0B0A-----------------------
+INT 60 u - HP 95LX System Manager - CLOCK/CALENDAR SERVICE "M_SET_SETTINGS"
+	DI = 0B0Ah
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0B09h
+--------b-60----DI0B0B-----------------------
+INT 60 u - HP 95LX System Manager - CLOCK/CALENDAR SERVICE "M_START_TIMER"
+	DI = 0B0Bh
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0B0Ch,INT 60/DI=0B0Dh
+--------b-60----DI0B0C-----------------------
+INT 60 u - HP 95LX System Manager - CLOCK/CALENDAR SERVICE "M_STOP_TIMER"
+	DI = 0B0Ch
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0B0Bh,INT 60/DI=0B0Dh
+--------b-60----DI0B0D-----------------------
+INT 60 u - HP 95LX System Manager - CLOCK/CALENDAR SERVICE "M_GET_TIMER"
+	DI = 0B0Dh
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0B0Bh,INT 60/DI=0B0Ch
+--------b-60----DI0B0E-----------------------
+INT 60 u - HP 95LX System Manager - CLOCK/CALENDAR SERVICE "M_TELL_ANYTIME"
+	DI = 0B0Eh
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+		WORD	???
+		WORD	???
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+Return: DX:AX -> ???
+	STACK unchanged
+--------b-60----DI0B0F-----------------------
+INT 60 u - HP 95LX System Manager - CLOCK/CALENDAR SERVCE "M_GET_SETTINGS_ADDR"
+	DI = 0B0Fh
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: DX:AX -> system settings record (see INT 60/DI=0B09h)
+	STACK unchanged
+SeeAlso: INT 60/DI=0B09h
+--------b-60----DI0B10-----------------------
+INT 60 u - HP 95LX System Manager - PARSE DATE SPECIFICATION
+	DI = 0B10h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI0B11-----------------------
+INT 60 u - HP 95LX System Manager - PARSE TIME SPECIFICATION
+	DI = 0B11h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI0B12-----------------------
+INT 60 u - HP 95LX System Manager - SET DATE PARSING RULE
+	DI = 0B12h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	new parsing rule (see below)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0B13h
+
+Values for new parsing rule:
+ 01h	day-month-year
+ 02h	month-day-year
+ 03h	year-month-day
+ 04h	"DMYO"
+ 05h	"MDYO"
+ OR with 08h to get any year
+--------b-60----DI0B13-----------------------
+INT 60 u - HP 95LX System Manager - SET TIME PARSING RULE
+	DI = 0B13h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	new parsing rule (see below)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0B12h
+
+Values for new parsing rule:
+ 01h	HH:MM:SS (am/pm)
+ 02h	HH:MM:SS (24hr)
+ 03h	HHMM:SS (24hr)
+ 04h	HH:MM:SS.hh (24hr)
+ 05h	HH:MM (am/pm)
+ 06h	HH:MM (24hr)
+ 07h	HHMM (24hr)
+--------b-60----DI0B14-----------------------
+INT 60 u - HP 95LX System Manager - CLOCK/CALENDAR SERVICE "M_POST_TIME"
+	DI = 0B14h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+--------b-60----DI0B15-----------------------
+INT 60 u - HP 95LX System Manager - CLOCK/CALENDAR SERVICE "M_DAY_TRIGGER"
+	DI = 0B15h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 15/AX=4DD4h,INT 61"HP 95LX",INT 62"HP 95LX"
+--------b-60----DI0C00-----------------------
+INT 60 u - HP 95LX System Manager - OPEN PRINTER
+	DI = 0C00h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0C01h,INT 60/DI=0C02h,INT 60/DI=0C03h
+--------b-60----DI0C01-----------------------
+INT 60 u - HP 95LX System Manager - CLOSE PRINTER
+	DI = 0C01h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+Note:	relinquishes control of printer
+SeeAlso: INT 60/DI=0C00h
+--------b-60----DI0C02-----------------------
+INT 60 u - HP 95LX System Manager - WRITE TO PRINTER
+	DI = 0C02h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to data to be written
+		WORD	length of data
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0C00h
+--------b-60----DI0C03-----------------------
+INT 60 u - HP 95LX System Manager - INITIALIZE PRINTER
+	DI = 0C03h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0C00h
+--------b-60----DI0C04-----------------------
+INT 60 u - HP 95LX System Manager - "M_TRANS_PRINTER"
+	DI = 0C04h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI0C05-----------------------
+INT 60 u - HP 95LX System Manager - "M_FALL_PRINTER"
+	DI = 0C05h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 15/AX=4DD4h,INT 61"HP 95LX",INT 62"HP 95LX"
+--------b-60----DI0E00-----------------------
+INT 60 u - HP 95LX System Manager - COMMUNICATIONS SERVICE "M_COMM_INIT"
+	DI = 0E00h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0E01h,INT 60/DI=0E02h
+
+Values for error code:
+ 0000h	successful
+ FFF1h	"E_BUSY"
+ FFF2h	timeout
+ FFF3h	framing error
+ FFF4h	parity error
+ FFF5h	overrun error
+ FFF6h	"E_EMPTY"
+ FFF7h	"E_CONECT"
+ FFF8h	not open
+ FFF9h	out of memory
+ FFFAh	buffer overflow
+ FFFBh	"E_NOFIT"
+ FFFCh	unsupported
+ FFFDh	"E_IVOPR"
+ FFFEh	"E_IVCHN"
+ FFFFh	"E_REOPEN"
+--------b-60----DI0E01-----------------------
+INT 60 u - HP 95LX System Manager - OPEN COMMUNICATIONS CHANNEL
+	DI = 0E01h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to WORD buffer for comm channel handle
+		WORD	communications line number (01h-04h)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0E00h,INT 60/DI=0E02h
+--------b-60----DI0E02-----------------------
+INT 60 u - HP 95LX System Manager - CLOSE COMMUNICATIONS CHANNEL
+	DI = 0E02h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	comm channel handle
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0E00h,INT 60/DI=0E01h
+--------b-60----DI0E03-----------------------
+INT 60 u - HP 95LX System Manager - "M_COMM_GETMDM"
+	DI = 0E03h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI0E04-----------------------
+INT 60 u - HP 95LX System Manager - "M_COMM_ANSWER"
+	DI = 0E04h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI0E05-----------------------
+INT 60 u - HP 95LX System Manager - "M_COMM_DIAL"
+	DI = 0E05h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI0E06-----------------------
+INT 60 u - HP 95LX System Manager - RESET COMMUNICATIONS CHANNEL
+	DI = 0E06h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	comm channel handle
+		WORD	reset options (see below)
+Return: ???
+	STACK unchanged
+
+Bitfields for reset options:
+ bit 0	reset line
+ bit 1	flush transmit buffer
+ bit 2	flush receive buffer
+ bit 3	reset modem
+ bit 4	reset receiver's ^S state
+ bit 5	reset transmitter's ^S state
+--------b-60----DI0E07-----------------------
+INT 60 u - HP 95LX System Manager - "M_COMM_HANGUP"
+	DI = 0E07h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI0E08-----------------------
+INT 60 u - HP 95LX System Manager - SEND DATA OVER COMM CHANNEL
+	DI = 0E08h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	comm channel handle
+		DWORD	pointer to data to be sent
+		WORD	option flags
+			bit 0: send partial buffer
+			bit 1: turn on receiver after sending
+		DWORD	pointer to WORD containing length of data to be sent
+Return: length WORD updated to contain number of bytes actually sent???
+	STACK unchanged
+SeeAlso: INT 60/DI=0E09h,INT 60/DI=0E0Bh
+--------b-60----DI0E09-----------------------
+INT 60 u - HP 95LX System Manager - QUERY COMM CHANNEL TRANSMIT QUEUE
+	DI = 0E09h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+		DWORD	pointer to ??? WORD
+		DWORD	pointer to ??? WORD
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0E0Ah
+--------b-60----DI0E0A-----------------------
+INT 60 u - HP 95LX System Manager - QUERY COMM CHANNEL RECEIVE QUEUE
+	DI = 0E0Ah
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	comm channel handle
+		DWORD	pointer to WORD to get receive buffer size
+		DWORD	pointer to WORD to get free bytes in receive buffer
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0E09h,INT 60/DI=0E0Bh
+--------b-60----DI0E0B-----------------------
+INT 60 u - HP 95LX System Manager - RECEIVE DATA FROM COMM CHANNEL
+	DI = 0E0Bh
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	comm channel handle
+		DWORD	pointer to data buffer
+		DWORD	pointer to WORD (input) length of data buffer
+					(output) number of bytes received
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0E08h,INT 60/DI=0E0Ah
+--------b-60----DI0E0C-----------------------
+INT 60 u - HP 95LX System Manager - "M_COMM_HAZCMD"
+	DI = 0E0Ch
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+		DWORD	pointer to ???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI0E0D-----------------------
+INT 60 u - HP 95LX System Manager - "M_COMM_COMAND"
+	DI = 0E0Dh
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+		DWORD	pointer to ???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI0E0E-----------------------
+INT 60 u - HP 95LX System Manager - "M_COMM_BREAK"
+	DI = 0E0Eh
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI0E0F-----------------------
+INT 60 u - HP 95LX System Manager - "M_COMM_FRCXON"
+	DI = 0E0Fh
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI0E10-----------------------
+INT 60 u - HP 95LX System Manager - "M_COMM_FRCXOF"
+	DI = 0E10h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI0E11-----------------------
+INT 60 u - HP 95LX System Manager - "M_COMM_SETDTR"
+	DI = 0E11h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI0E12-----------------------
+INT 60 u - HP 95LX System Manager - "M_COMM_XMITNG"
+	DI = 0E12h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI0E13-----------------------
+INT 60 u - HP 95LX System Manager - "M_COMM_STATUS"
+	DI = 0E13h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI0E14-----------------------
+INT 60 u - HP 95LX System Manager - SET COMMUNICATIONS SETTINGS
+	DI = 0E14h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	comm channel handle
+		DWORD	pointer to comm settings (see below)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0E15h
+
+Format of comm settings:
+Offset	Size	Description
+ 00h	BYTE	dial type ('T' tone, 'P' pulse)
+ 01h	WORD	baud rate divisor (115200/baud_rate)
+ 03h	BYTE	parity (00h none, 08h odd, 18h even, 28h mark, 38h space)
+ 04h	BYTE	stop bits (00h one, 04h two)
+ 05h	BYTE	data bits - 5
+ 06h	BYTE	software handshake
+		01h none, 02h XOFF/XON, 04h XOFF/any, 08h ENQ/ACK
+ 07h	BYTE	infrared (01h off, 02h on)
+ 08h	BYTE	duplex (01h half, 02h full)
+ 09h	BYTE	echo (01h echo, 02h no echo)
+--------b-60----DI0E15-----------------------
+INT 60 u - HP 95LX System Manager - GET COMMUNICATIONS SETTINGS
+	DI = 0E15h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+		DWORD	pointer to buffer for settings (see INT 60/DI=0E14h)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0E14h
+--------b-60----DI0E16-----------------------
+INT 60 u - HP 95LX System Manager - "M_COMM_CNFGUR"
+	DI = 0E16h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+		WORD	???
+		WORD	???
+		WORD	???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI0E17-----------------------
+INT 60 u - HP 95LX System Manager - "M_COMM_QRYERR"
+	DI = 0E17h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 15/AX=4DD4h,INT 61"HP 95LX",INT 62"HP 95LX"
+--------b-60----DI0F00-----------------------
+INT 60 u - HP 95LX System Manager - "M_ERRMSG"
+	DI = 0F00h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+		DWORD	pointer to ???
+		WORD	???
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI0F01-----------------------
+INT 60 u - HP 95LX System Manager - DRAW STANDARD TITLE BOX
+	DI = 0F01h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ASCIZ title string
+Return: ???
+	STACK unchanged
+--------b-60----DI0F02-----------------------
+INT 60 u - HP 95LX System Manager - "SHOWNAME"
+	DI = 0F02h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI0F03-----------------------
+INT 60 u - HP 95LX System Manager - DISPLAY TWO-LINE MESSAGE BOX
+	DI = 0F03h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to first line of message
+		WORD	length of first line
+		DWORD	pointer to second line of message
+		WORD	length of second line
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0300h,INT 60/DI=0F04h,INT 60/DI=0F09h
+--------b-60----DI0F04-----------------------
+INT 60 u - HP 95LX System Manager - REMOVE MESSAGE BOX
+	DI = 0F04h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0F03h,INT 60/DI=0F09h
+--------b-60----DI0F05-----------------------
+INT 60 u - HP 95LX System Manager - "M_COM_TIMER_ADDR"
+	DI = 0F05h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: DX:AX -> ???
+	STACK unchanged
+--------b-60----DI0F06-----------------------
+INT 60 u - HP 95LX System Manager - "M_COM_TIMER_COUNT_ADDR"
+	DI = 0F06h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: DX:AX -> ???
+	STACK unchanged
+--------b-60----DI0F07-----------------------
+INT 60 u - HP 95LX System Manager - "M_SYS_RSRC_ADDR"
+	DI = 0F07h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: DX:AX -> ???
+	STACK unchanged
+--------b-60----DI0F08-----------------------
+INT 60 u - HP 95LX System Manager - "M_BIOS_OUTSTR"
+	DI = 0F08h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		???
+Return: ???
+	STACK unchanged
+--------b-60----DI0F09-----------------------
+INT 60 u - HP 95LX System Manager - DISPLAY THREE-LINE MESSAGE BOX
+	DI = 0F09h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to first line of message
+		WORD	length of first line
+		DWORD	pointer to second line of message
+		WORD	length of second line
+		DWORD	pointer to third line of message
+		WORD	length of third line
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0F03h,INT 60/DI=0F04h
+--------b-60----DI0F0A-----------------------
+INT 60 u - HP 95LX System Manager - DISABLE MACROS
+	DI = 0F0Ah
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0F0Bh
+--------b-60----DI0F0B-----------------------
+INT 60 u - HP 95LX System Manager - ENABLE MACROS
+	DI = 0F0Bh
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 60/DI=0F0Ah
+--------b-60----DI0F0C-----------------------
+INT 60 u - HP 95LX System Manager - "M_DATE_TIME_SEPS"
+	DI = 0F0Ch
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		???
+Return: ???
+	STACK unchanged
+--------b-60----DI0F0D-----------------------
+INT 60 u - HP 95LX System Manager - "M_FORM_FT"
+	DI = 0F0Dh
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: DX:AX -> ???
+	STACK unchanged
+--------b-60----DI0F0E-----------------------
+INT 60 u - HP 95LX System Manager - "M_RAM_IV_INFO"
+	DI = 0F0Eh
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: DX:AX -> ???
+	STACK unchanged
+SeeAlso: INT 15/AX=4DD4h,INT 61"HP 95LX",INT 62"HP 95LX"
+--------b-60----DI1005-----------------------
+INT 60 u - HP 95LX System Manager - "M_DIRTY_SYNC" - FORCE SCREEN UPDATE
+	DI = 1005h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+SeeAlso: INT 10/AH=FFh,INT 60/DI=0300h,INT 60/DI=0301h
+--------b-60----DI1200-----------------------
+INT 60 u - HP 95LX System Manager - RESOURCE SERVICE "MAP_RESOURCE_FILE"
+	DI = 1200h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI1201-----------------------
+INT 60 u - HP 95LX System Manager - "GET_RESOURCE_PTR"
+	DI = 1201h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		WORD	???
+Return: DX:AX -> ???
+	STACK unchanged
+SeeAlso: INT 15/AX=4DD4h,INT 61"HP 95LX",INT 62"HP 95LX"
+--------b-60----DI1202-----------------------
+INT 60 u - HP 95LX System Manager - "GET_RSRC_TAB_PTR"
+	DI = 1202h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: DX:AX -> ???
+	STACK unchanged
+--------b-60----DI1203-----------------------
+INT 60 u - HP 95LX System Manager - "INIT_SYSMGR_RSRCS"
+	DI = 1203h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: ???
+	STACK unchanged
+--------b-60----DI1300-----------------------
+INT 60 u - HP 95LX System Manager - INITIALIZE HELP SYSTEM
+	DI = 1300h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		DWORD	pointer to ???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI1301-----------------------
+INT 60 u - HP 95LX System Manager - DISPLAY HELP
+	DI = 1301h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+--------b-60----DI1302-----------------------
+INT 60 u - HP 95LX System Manager - "M_HELP_KEY"
+	DI = 1302h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI1303-----------------------
+INT 60 u - HP 95LX System Manager - "M_HELP_TERM"
+	DI = 1303h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 15/AX=4DD4h,INT 61"HP 95LX",INT 62"HP 95LX"
+--------b-60----DI1400-----------------------
+INT 60 u - HP 95LX System Manager - "M_ColInit"
+	DI = 1400h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+Return: AX = ???
+	STACK unchanged
+--------b-60----DI1401-----------------------
+INT 60 u - HP 95LX System Manager - "M_ColCpStr"
+	DI = 1401h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		WORD	???
+		DWORD	pointer to ???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI1402-----------------------
+INT 60 u - HP 95LX System Manager - "M_ColLicsStr"
+	DI = 1402h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		???
+Return: ???
+	STACK unchanged
+--------b-60----DI1403-----------------------
+INT 60 u - HP 95LX System Manager - "M_ColLicsChar"
+	DI = 1403h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		???
+Return: ???
+	STACK unchanged
+--------b-60----DI1404-----------------------
+INT 60 u - HP 95LX System Manager - "M_ColToLower"
+	DI = 1404h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI1405-----------------------
+INT 60 u - HP 95LX System Manager - "M_ColCpSearch"
+	DI = 1405h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		WORD	???
+		DWORD	pointer to ???
+		WORD	???
+		WORD	???
+Return: ???
+	STACK unchanged
+--------b-60----DI1406-----------------------
+INT 60 u - HP 95LX System Manager - "M_ColToUpper"
+	DI = 1406h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		DWORD	pointer to ???
+		WORD	???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 15/AX=4DD4h,INT 61"HP 95LX",INT 62"HP 95LX"
+--------b-60----DI1500-----------------------
+INT 60 u - HP 95LX System Manager - "GrDispInit"
+	DI = 1500h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		???
+Return: ???
+	STACK unchanged
+--------b-60----DI1501-----------------------
+INT 60 u - HP 95LX System Manager - "GrDispClear"
+	DI = 1501h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		???
+Return: ???
+	STACK unchanged
+--------b-60----DI1502-----------------------
+INT 60 u - HP 95LX System Manager - "GrDispDot"
+	DI = 1502h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		???
+Return: ???
+	STACK unchanged
+--------b-60----DI1503-----------------------
+INT 60 u - HP 95LX System Manager - "GrDispDraw"
+	DI = 1503h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		???
+Return: ???
+	STACK unchanged
+--------b-60----DI1504-----------------------
+INT 60 u - HP 95LX System Manager - "GrDispFill"
+	DI = 1504h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		???
+Return: ???
+	STACK unchanged
+--------b-60----DI1505-----------------------
+INT 60 u - HP 95LX System Manager - "GrDispRead"
+	DI = 1505h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		???
+Return: ???
+	STACK unchanged
+--------b-60----DI1506-----------------------
+INT 60 u - HP 95LX System Manager - "GrDispString"
+	DI = 1506h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		???
+Return: ???
+	STACK unchanged
+--------b-60----DI1507-----------------------
+INT 60 u - HP 95LX System Manager - "GrDispPan"
+	DI = 1507h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		???
+Return: ???
+	STACK unchanged
+--------b-60----DI1508-----------------------
+INT 60 u - HP 95LX System Manager - "GrDispZoom"
+	DI = 1508h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		???
+Return: ???
+	STACK unchanged
+--------b-60----DI1509-----------------------
+INT 60 u - HP 95LX System Manager - "GrDispSave"
+	DI = 1509h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		???
+Return: ???
+	STACK unchanged
+--------b-60----DI150A-----------------------
+INT 60 u - HP 95LX System Manager - "GrDispRestore"
+	DI = 150Ah
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		???
+Return: ???
+	STACK unchanged
+--------b-60----DI150B-----------------------
+INT 60 u - HP 95LX System Manager - "GrDispCorner"
+	DI = 150Bh
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 15/AX=4DD4h,INT 61"HP 95LX",INT 62"HP 95LX"
+--------b-60----DI1604-----------------------
+INT 60 u - HP 95LX System Manager - "CP_TO_LICS"
+	DI = 1604h
+	STACK:	2 WORDs unused dummies (for calls from high level languages)
+		???
+Return: ???
+	STACK unchanged
+SeeAlso: INT 15/AX=4DD4h,INT 61"HP 95LX",INT 62"HP 95LX"
+--------G-6000-------------------------------
+INT 60 - SYS_PROF.EXE - PROFILER STATUS
+	AH = 00h
+Return: AX = 0000h    profiling is off
+	    otherwise profiling is on
+Note:	SYS_PROF.EXE is the TSR portion of a profiler from Micro Cornucopia #47
+SeeAlso: AH=01h"SYS_PROF",02h"SYS_PROF"
+--------G-6000-------------------------------
+INT 60 - MDEBUG - GET STATUS
+	AH = 00h
+	DS:SI -> password or a null byte
+Return: AX = return code
+	    FFFEh password is invalid
+	    FFFDh display mode is invalid
+	   else successful
+		ES = value of the monitor register SE
+		DI = value of the monitor register OF
+		CH = monitor color
+		CL = interpreter color
+		BH = monitor start line
+		BL = interpreter start line
+		AH = makecode of the hotkey
+		AL = ASCII code of the hotkey
+		DL = status of special keys (only SHIFT, ALT, CTRL) for the
+			hotkey (coded as for the keyboard flag at 0040h:0017h)
+		DH = basic process number for the communication with drivers
+			process number for the display driver, DH+1 = process
+			number for the command driver(s)
+	DS:SI -> MDEBUG identification table
+Program: MDEBUG is a shareware memory-resident debugging tool by Bernd
+	  Schemmer, including a memory monitor, an interpreter, and a
+	  disassembler
+Notes:	MDEBUG uses INT 60 by default, but may be directed to any of INT 60
+	  through INT 67; the interrupt handler is preceded by the signature
+	  "USERINT" and is not chained
+	if DS:SI points at a null byte, MDEBUG will prompt for a password if
+	  passwords are active; enough stack space must be provided for an
+	  INT 10h call (which MDEBUG uses while prompting for the password)
+SeeAlso: AH=02h"MDEBUG"
+Index:	hotkeys;MDEBUG
+
+Format of MDEBUG identification table:
+Offset	Size	Description
+ -2	WORD	entry offset
+ 00h	WORD	CS of MDEBUG
+ 02h	DWORD	old INT 08h vector
+ 06h	DWORD	old INT 09h vector
+ 0Ah	DWORD	address INT 16h routine used by MDEBUG
+ 0Eh	BYTE	length of version string
+ 0Fh  N BYTEs	version string
+--------G-6001-------------------------------
+INT 60 - MDEBUG - GET ADDRESS OF THE HELP REGISTERS
+	AH = 01h
+	DS:SI -> password or a null byte
+Return: AX = return code
+	    FFFEh password is invalid
+	    FFFDh display mode is invalid
+	   else successful
+		ES:DI point to the help registers of MDEBUG
+	       ES:DI-02h  -> R0 (WORD)
+	       ES:DI	  -> R1 (WORD)
+	       ES:DI+02h  -> R2 (WORD)
+	       ES:DI+04h  -> R3 (WORD)
+	       ...
+	       ES:DI+0Eh  -> R8 (WORD)
+--------G-6001-------------------------------
+INT 60 - SYS_PROF.EXE - TURN PROFILING OFF
+	AH = 01h
+Note:	SYS_PROF.EXE is the TSR portion of a profiler from Micro Cornucopia #47
+SeeAlso: AH=00h"SYS_PROF",02h"SYS_PROF"
+--------N-6001FF-----------------------------
+INT 60 - FTP Packet Driver - BASIC FUNC - GET DRIVER INFO
+	AX = 01FFh
+	BX = handle returned by function 02h
+Return: CF set on error
+	    DH = error code (see below)
+	CF clear if successful
+	    BX = version
+	    CH = network interface class (see below)
+	    DX = interface type (see below)
+	    CL = number
+	    DS:SI -> name
+	    AL = driver functions supported
+		01h basic
+		02h basic and extended
+		05h basic and high-performance
+		06h basic, high-performance, and extended
+		FFh not installed
+Note:	the handle in BX is optional for drivers written to v1.07 or later of
+	  the packet driver specification
+
+Values for error code:
+ 01h "BAD_HANDLE"	invalid handle number
+ 02h "NO_CLASS"		no interfaces of the specified class found
+ 03h "NO_TYPE"		no interfaces of the specified type found
+ 04h "NO_NUMBER"	no interfaces of the specified number found
+ 05h "BAD_TYPE"		bad packet type
+ 06h "NO_MULTICAST"	interface does not support multicast messages
+ 07h "CANT_TERMINATE"	this packet driver cannot terminate
+ 08h "BAD_MODE"		invalid receiver mode
+ 09h "NO_SPACE"		insufficient space
+ 0Ah "TYPE_INUSE"	type accessed but never released
+ 0Bh "BAD_COMMAND"	bad command
+ 0Ch "CANT_SEND"	packet could not be sent
+ 0Dh "CANT_SET"		hardware address could not be changed
+ 0Eh "BAD_ADDRESS"	hardware address has a bad length or format
+ 0Fh "CANT_RESET"	could not reset interface
+
+Values for Network Interface classes/types:
+    Class 01h  Ethernet/IEEE 802.3
+	01h 3COM 3C500/3C501
+	02h 3COM 3C505
+	03h MICOM-Interlan NI5010
+	04h BICC Data Networks 4110
+	05h BICC Data Networks 4117
+	06h MICOM-Interlan NP600
+	08h Ungermann-Bass PC-NIC
+	09h Univation NC-516
+	0Ah TRW PC-2000
+	0Bh MICOM-Interlan NI5210
+	0Ch 3COM 3C503
+	0Dh 3COM 3C523
+	0Eh Western Digital WD8003
+	0Fh Spider Systems S4
+	10h Torus Frame Level
+	11h 10Net Communications
+	12h Gateway PC-bus
+	13h Gateway AT-bus
+	14h Gateway MCA-bus
+	15h IMC PCnic
+	16h IMC PCnic II
+	17h IMC PCnic 8-bit
+	18h Tigan Communications
+	19h Micromatic Research
+	1Ah Clarkson "Multiplexor"
+	1Bh D-Link 8-bit
+	1Ch D-Link 16-bit
+	1Dh D-Link PS/2
+	1Eh Research Machines 8
+	1Fh Research Machines 16
+	20h Research Machines MCA
+	21h Radix Microsystems EXM1 16-bit
+	22h Interlan Ni9210
+	23h Interlan Ni6510
+	24h Vestra LANMASTER 16-bit
+	25h Vestra LANMASTER 8-bit
+	26h Allied Telesis PC/XT/AT
+	27h Allied Telesis NEC PC-98
+	28h Allied Telesis Fujitsu FMR
+	29h Ungermann-Bass NIC/PS2
+	2Ah Tiara LANCard/E AT
+	2Bh Tiara LANCard/E MC
+	2Ch Tiara LANCard/E TP
+	2Dh Spider Communications SpiderComm 8
+	2Eh Spider Communications SpiderComm 16
+	2Fh AT&T Starlan NAU
+	30h AT&T Starlan-10 NAU
+	31h AT&T Ethernet NAU
+	32h Intel smart card
+	33h Xircom Packet Adapter
+	34h Aquila Ethernet
+	35h Novell NE1000
+	36h Novell NE2000
+	37h SMC PC-510
+	38h AT&T Fiber NAU
+	39h NDIS to Packet Driver adapter
+	3Ah Racal-InterLan ES3210
+	3Bh General Systems ISDN simulated Ethernet
+	3Ch Hewlett-Packard
+	3Dh IMC EtherNic-8
+	3Eh IMC EtherNic-16
+	3Fh IMC EtherNic-MCA
+	40h NetWorth EtherNext
+	41h Dataco Scanet
+	42h DEC DEPCA
+	43h C-Net
+	44h Gandalf LANLine
+	45h Apricot built-in
+	46h David Systems Ether-T
+	47h ODI to Packet Driver adapter
+	48h AMD Am21110-16
+	49h Intel ICD Network controller family
+	4Ah Intel ICD PCL2
+	4Bh Intel ICD PCL2A
+	4Ch AT&T LANPacer
+	4Dh AT&T LANPacer+
+	4Eh AT&T EVB
+	4Fh AT&T StarStation
+	50h SLIP simulated ethernet
+	51h Racal-Interlan NIA310
+	52h Racal-Interlan NISE
+	53h Racal-Interlan NISE30
+	54h Racal-Interlan NI6610
+	55h Ethernet over IP/UDP
+	56h ICL EtherTeam 16
+	57h David Systems
+	58h NCR WaveLAN
+	59h Thomas Contrad TC5045
+	5Ah Russ Nelson's Parallel Port driver
+	5Bh Intell EtherExpress 16
+	5Ch IBMTOKEN
+	5Dh Zenith Z-Note
+	5Eh 3Com 3C509
+	5Fh Mylex LNE390
+	60h Madge Smart Ringnode
+	61h Novell NE2100
+	62h Allied Telesis 1500
+	63h Allied Telesis 1700
+	64h Fujitsu EtherCoupler
+    Class 02h  ProNET-10
+	01h Proteon p1300
+	02h Proteon p1800
+    Class 03h  IEEE 802.5/ProNet-4 (without expanded RIFs)
+	01h IBM Token-Ring Adapter
+	02h Proteon p1340
+	03h Proteon p1344
+	04h Gateway PC-bus
+	05h Gateway AT-bus
+	06h Gateway MCA-bus
+	07h Madge board
+	39h NDIS to Packet Driver adapter
+	47h ODI to Packet Driver adapter
+    Class 04h  Omninet
+    Class 05h  Appletalk
+	01h ATALK.SYS adapter
+    Class 06h  Serial Line
+	01h Clarkson 8250-SLIP
+	02h Clarkson "Multiplexor"
+	03h Eicon Technologies
+    Class 07h  StarLAN (subsumed by Ethernet class)
+    Class 08h  ARCnet
+	01h Datapoint RIM
+    Class 09h  AX.25
+	01h Ottawa PI card
+	02h Eicon Technologies
+    Class 0Ah  KISS
+    Class 0Bh  IEEE 802.3 with 802.2 headers
+	types same as for class 01h
+    Class 0Ch  FDDI with 802.2 headers
+	01h Western Digital
+	02h Frontier Technology
+    Class 0Dh  Internet X.25
+	01h Western Digital
+	02h Frontier Technology
+	03h Emerging Technologies
+	04h The Software Forge
+	05h Link Data Intelligent X.25
+	06h Eicon Technologies
+    Class 0Eh  N.T. LANSTAR (encapsulating DIX Ethernet)
+	01h NT LANSTAR/8
+	02h NT LANSTAR/MC
+    Class 0Fh  SLFP (MIT serial specification)
+	01h MERIT
+    Class 10h  PPP (Point-to-Point Protocol)
+	01h 8250/16550 UART
+	02h Niwot Networks synch
+	03h Eicon Technologies
+    Class 11h  802.5 with expanded RIFs
+	types same as for class 3
+    Class 12h  reserved for LCP/NCPs
+Note: class and type numbers are cleared through FTP Software
+--------G-6002-------------------------------
+INT 60 - MDEBUG - SET STATUS
+	AH = 02h
+	DS:SI -> password or a null byte
+	ES = new value for the register SE
+	DI = new value for the register OF
+	CH = new monitor color if nonzero
+	CL = new interpreter color if nonzero
+	BH = new monitor start line if nonzero
+	BL = new interpreter start line if nonzero
+	AL = new ASCII code for the hotkey ('A'..'Z', 'a'..'z') if nonzero
+	DL = new status of the special keys (SHIFT, ALT, CTRL) for the hotkey
+	    if nonzero
+	DH = if nonzero, new basic process number for communication with the
+	    drivers (DH = multiplex number for the display driver,
+	    DH+1 = multiplex number for the command driver or drivers)
+Return: AX = return code
+	    FFFFh call not allowed
+	    FFFEh password is invalid
+	    FFFDh display mode is invalid
+	    0000h successful, status changed
+	   else AL = error reasons (see below)
+Note:	the values of the registers SE and OF are always changed, the other
+	  values are only changed if they are valid
+SeeAlso: AH=00h"MDEBUG"
+Index:	hotkeys;MDEBUG
+
+Bitfields for error reasons:
+ bit 0	invalid monitor start line
+ bit 1	invalid interpreter start line
+ bit 2	invalid hotkey
+ bit 3	invalid process number
+ bits 4-7 reserved
+--------N-6002-------------------------------
+INT 60 - FTP Packet Driver - BASIC FUNC - ACCESS TYPE
+	AH = 02h
+	AL = interface class
+	BX = interface type
+	DL = interface number
+	DS:SI -> type
+	CX = length of type (0000h for all packets)
+	ES:DI -> receiver
+Return: CF set on error
+	    DH = error code (see AX=01FFh)
+	CF clear if successful
+	    AX = handle
+SeeAlso: AH=03h"FTP"
+
+Receiver is called with:
+	AX = subfunction
+	    00h get packet buffer
+		DX = lookahead length (v1.10+)
+		DS:SI -> lookahead buffer if DX nonzero (v1.10+)
+		DI = error flags (class dependent) (v1.10+)
+		Return: ES:DI -> packet buffer
+				0000h:0000h means throw away packet
+			CX = size of buffer (v1.10+), may be smaller than
+				incoming data
+	    01h copy completed
+		DS:SI -> buffer
+		CX = bytes actually copied (v1.10+)
+	BX = handle
+	CX = buffer length
+when a packet is received
+--------G-6002-------------------------------
+INT 60 - SYS_PROF.EXE - TURN PROFILING ON
+	AH = 02h
+Note:	SYS_PROF.EXE is the TSR portion of a profiler from Micro Cornucopia #47
+SeeAlso: AH=00h"SYS_PROF",01h"SYS_PROF"
+--------G-6003-------------------------------
+INT 60 - MDEBUG - POP UP
+	AH = 03h
+	DS:SI -> password or a null byte
+	ES -> new value for the register SE
+	DI -> new value for the register OF
+Return: AX = return code
+	    FFFFh call not allowed
+	    FFFEh password is invalid
+	    FFFDh display mode is invalid
+	   else successful
+SeeAlso: AH=04h"MDEBUG"
+--------N-6003-------------------------------
+INT 60 - FTP Packet Driver - BASIC FUNC - RELEASE TYPE
+	AH = 03h
+	BX = handle
+Return: CF set on error
+	   DH = error code (see AX=01FFh)
+	CF clear if successful
+SeeAlso: AH=02h"FTP"
+--------G-6003-------------------------------
+INT 60 - SYS_PROF.EXE - GET ADDRESS OF PROFILING TABLE
+	AH = 03h
+Return: ES:BX -> profiling table
+Note:	SYS_PROF.EXE is the TSR portion of a profiler from Micro Cornucopia #47
+SeeAlso: AH=04h"SYS_PROF"
+--------N-6004-------------------------------
+INT 60 - FTP Packet Driver - BASIC FUNC - SEND PACKET
+	AH = 04h
+	DS:SI -> buffer
+	CX = length
+Return: CF set on error
+	    DH = error code (see AX=01FFh)
+	CF clear if successful
+Note:	the buffer may be modified immediately upon return from this call
+SeeAlso: AH=0Bh
+--------G-6004-------------------------------
+INT 60 - MDEBUG - POP UP
+	AH = 04h
+	DS:SI -> password or a null byte
+Return: AX = return code
+	    FFFFh call not allowed
+	    FFFEh password is invalid
+	    FFFDh display mode is invalid
+	   else successful
+SeeAlso: AH=03h"MDEBUG",AH=07h"MDEBUG"
+--------G-6004-------------------------------
+INT 60 - SYS_PROF.EXE - CLEAR PROFILING TABLE
+	AH = 04h
+Note:	SYS_PROF.EXE is the TSR portion of a profiler from Micro Cornucopia #47
+SeeAlso: AH=03h"SYS_PROF"
+--------N-6005-------------------------------
+INT 60 - FTP Packet Driver - BASIC FUNC - TERMINATE DRIVER FOR HANDLE
+	AH = 05h
+	BX = handle (optional for v1.10+)
+Return: CF set on error
+	   DH = error code (see AX=01FFh)
+	CF clear if successful
+--------G-6005-------------------------------
+INT 60 - MDEBUG - GET AND SET MDEBUG FLAGS
+	AH = 05h
+	DS:SI -> password or a null byte
+	BL = new value for the semaphor of MDEBUG
+	     00h  enable popup of MDEBUG
+	     else disable popup of MDEBUG
+Return: AX = return code
+	    FFFEh password is invalid
+	    FFFDh display mode is invalid
+	   else successful
+		BL = old value of the semaphor of MDEBUG
+		BH = old value of the INT 08h semaphor
+		    (this semaphor is always reset after this function)
+--------N-6006-------------------------------
+INT 60 - FTP Packet Driver - BASIC FUNC - GET ADDRESS
+	AH = 06h
+	BX = handle (optional for v1.10+)
+	ES:DI -> buffer
+	CX = length
+Return: CF set on error
+	    DH = error code (see AX=01FFh)
+	CF clear if successful
+	    CX = length
+Note:	copies the local net address associated with the handle into the buffer
+--------G-6006-------------------------------
+INT 60 - MDEBUG - GET PASSWORD STATUS
+	AH = 06h
+Return: AL = status
+	    00h password inactive
+	    01h password active
+--------N-6007-------------------------------
+INT 60 - FTP Packet Driver - BASIC FUNC - RESET INTERFACE
+	AH = 07h
+	BX = handle (optional for v1.10+)
+Return: CF set on error
+	    DH = error code (see AX=01FFh)
+	CF clear if successful
+--------G-6007-------------------------------
+INT 60 - MDEBUG v1.70+ - GET ACTIVE PART OF MDEBUG
+	AH = 07h
+Return: AL = active part for the next popup session of MDEBUG:
+	    bit 0: the next popup session will start in the interpreter rather
+			than in the monitor
+	    bit 1: the next popup session will sart in the online-help
+SeeAlso: AH=03h"MDEBUG",AH=04h"MDEBUG"
+--------G-6008-------------------------------
+INT 60 - MDEBUG - UNUSED
+	AH = 08h-FFh
+Return: AX = FFFCh
+--------N-600A-------------------------------
+INT 60 - FTP Packet Driver 1.09+ - HIGH-PERF FUNC - GET PARAMETERS
+	AH = 0Ah
+Return: CF set on error
+	    DH = error code (0Bh) (see AX=01FFh)
+	CF clear if successful
+	    ES:DI -> parameter table (see below)
+
+Format of parameter table:
+Offset	Size	Description
+ 00h	BYTE	major revision of packet driver spec driver conforms to
+ 01h	BYTE	minor revision of packet driver spec
+ 02h	BYTE	length of this structure in bytes
+ 03h	BYTE	length of a MAC-layer address
+ 04h	WORD	maximum transfer unit, including MAC headers
+ 06h	WORD	buffer size for multicast addr
+ 08h	WORD	number of receive buffers (one less than back-to-back MTU rcvs)
+ 0Ah	WORD	number of transmit buffers
+ 0Ch	WORD	interrupt number to hook for post-EOI processing, 00h=none
+--------N-600B-------------------------------
+INT 60 - FTP Packet Driver 1.09 - HIGH-PERF FUNC - ASYNCHRONOUS SEND PACKET
+	AH = 0Bh
+	DS:SI -> buffer
+	CX = length of buffer
+	ES:DI -> FAR function to call when buffer becomes available
+Return: CF set on error
+	    DH = error code (0Bh,0Ch) (see AX=01FFh)
+	CF clear if successful
+Notes:	unlike function 04h, the buffer is not available for modification as
+	  soon as the call returns; the buffer may be queued by the driver and
+	  not processed until later
+	this function has been dropped from v1.10+ of the specification and
+	  replaced by function 0Ch
+SeeAlso: AH=04h"Packet Driver",AH=0Ch"Packet Driver"
+
+Completion function called with:
+	AX = result
+	    00h copy OK
+	    nonzero error
+	ES:DI -> buffer passed to INT 60/AH=0Bh call
+--------N-600C-------------------------------
+INT 60 - FTP Packet Driver 1.10+ - HIGH-PERF FUNC - ASYNCHRONOUS SEND PACKET
+	AH = 0Ch
+	ES:DI -> pointer to IOCB
+Return: CF set on error
+	    DH = error code (see AX=01FFh)
+	CF clear if successful
+SeeAlso: AH=04h"Packet Driver",AH=0Bh"Packet Driver"
+
+Format of IOCB:
+Offset	Size	Description
+ 00h	DWORD	pointer to buffer
+ 04h	WORD	length of buffer
+ 06h	BYTE	flags
+		bit 0: packet driver is finished with IOCB
+		bit 1: application requests upcall when driver completes
+ 07h	DWORD	function address for upcall
+ 0Bh  4 BYTEs	future gather write
+ 0Fh	BYTE	???
+ 10h  8 BYTEs	private driver workspace
+
+Completion function called with:
+	ES:DI -> IOCB passed to INT 60/AH=0Ch
+--------N-600C-------------------------------
+INT 60 - Banyan VINES, 3com - GET STATION ADDRESS
+	AH = 0Ch
+Return: AL = status
+	    00h successful
+		ES:SI -> 6-byte station address
+	    02h semaphore service is unavailable
+--------N-600D-------------------------------
+INT 60 - FTP Packet Driver 1.10+ - HIGH-PERF FUNC - DROP PACKET FROM QUEUE
+	AH = 0Dh
+	ES:DI -> IOCB
+Return: CF set on error
+	    DH = error code (see AX=01FFh)
+	CF clear if successful
+SeeAlso: AH=0Ch"Packet Driver"
+--------N-6011-------------------------------
+INT 60 - 3com, 10NET, Banyan VINES - LOCK AND WAIT
+	AH = 11h
+	AL = drive number or 0
+	DX = number of seconds to wait
+	ES:SI = Ethernet address or 0
+	DS:BX -> 31-byte ASCIZ semaphore name
+Return: AL = status (see below)
+SeeAlso: AH=12h,AH=13h
+
+Values for status:
+ 00h	successful
+ 01h	timeout
+ 02h	server not responding
+ 03h	invalid semaphore name
+ 04h	semaphore list is full
+ 05h	invalid drive ID
+ 06h	invalid Ethernet address
+ 07h	not logged in
+ 08h	write to network failed
+ 09h	semaphore already logged for this CPU
+--------N-6012-------------------------------
+INT 60 - 3com, 10NET, Banyan VINES - LOCK
+	AH = 12h
+	AL = drive number or 00h
+	ES:SI = Ethernet address or 0000h:0000h
+	DS:BX -> 31-byte ASCIZ semaphore name
+Return: AL = status (see also AH=11h)
+	    01h semaphore currently locked by another PC
+Note:	unlike function 11h, this function returns immediately
+SeeAlso: AH=11h,AH=13h
+--------N-6013-------------------------------
+INT 60 - 3com, 10NET, Banyan VINES - UNLOCK
+	AH = 13h
+	AL = drive number or 00h
+	ES:SI = Ethernet address or 0000h:0000h
+	DS:BX -> 31-byte ASCIZ semaphore name
+Return: AL = status (see also AH=11h)
+	    01h semaphore not locked
+SeeAlso: AH=11h,AH=12h
+--------N-6014-------------------------------
+INT 60 - FTP Packet Driver - EXTENDED FUNC - SET RECEIVE MODE
+	AH = 14h
+	BX = handle (optional for v1.10+)
+	CX = mode
+	    01h turn off receiver
+	    02h receive only packets sent to this interface
+	    03h mode 2 plus broadcast packets
+	    04h mode 3 plus limited multicast packets
+	    05h mode 3 plus all multicast packets
+	    06h all packets
+	    07h raw mode for serial line only (v1.10+)
+Return: CF set on error
+	   DH = error code (01h,08h) (see AX=01FFh)
+	CF clear if successful
+SeeAlso: AH=15h
+--------N-6015-------------------------------
+INT 60 - FTP Packet Driver - EXTENDED FUNC - GET RECEIVE MODE
+	AH = 15h
+	BX = handle (optional for v1.10+)
+Return: CF set on error
+	    DH = error code (01h) (see AX=01FFh)
+	CF clear if successful
+	    AX = mode
+SeeAlso: AH=14h
+--------N-6016-------------------------------
+INT 60 - FTP Packet Driver - EXTENDED FUNC - SET MULTICAST LIST
+	AH = 16h
+	ES:DI -> multicast list
+	CX = length of list in bytes
+Return: CF set on error
+	    DH = error code (06h,09h,0Eh) (see AX=01FFh)
+	CF clear if successful
+SeeAlso: AH=17h
+--------N-6017-------------------------------
+INT 60 - FTP Packet Driver - EXTENDED FUNC - GET MULTICAST LIST
+	AH = 17h
+Return: CF set on error
+	    DH = error code (06h,09h) (see AX=01FFh)
+	CF clear if successful
+	    ES:DI -> multicast addresses (do not modify)
+	    CX = bytes of multicast addresses currently in use
+SeeAlso: AH=16h
+--------N-6018-------------------------------
+INT 60 - FTP Packet Driver - EXTENDED FUNC - GET STATISTICS
+	AH = 18h
+	BX = handle (optional for v1.10+)
+Return: CF set on error
+	    DH = error code (01h) (see AX=01FFh)
+	CF clear if successful
+	    DS:SI -> statistics (see below)
+
+Format of statistics:
+Offset	Size	Description
+ 00h	DWORD	packets in
+ 04h	DWORD	packets out
+ 08h	DWORD	bytes in
+ 0Ch	DWORD	bytes out
+ 10h	DWORD	errors in
+ 14h	DWORD	errors out
+ 18h	DWORD	packets dropped
+--------N-6019-------------------------------
+INT 60 - FTP Packet Driver - EXTENDED FUNC - SET NETWORK ADDRESS
+	AH = 19h
+	ES:DI -> address
+	CX = length of address
+Return: CF set on error
+	    DH = error code (0Dh,0Eh) (see AX=01FFh)
+	CF clear if successful
+	    CX = length
+--------N-601A-------------------------------
+INT 60 - FTP Packet Driver v1.10+ - EXTENDED FUNC - SEND RAW BYTES
+	AH = 1Ah
+	DS:SI -> buffer
+	CX = length of buffer
+Return: CF set on error
+	    DH = error code (see AX=01FFh)
+	CF clear if successful
+SeeAlso: AH=1Ch
+--------N-601B-------------------------------
+INT 60 - FTP Packet Driver v1.10+ - EXTENDED FUNC - FLUSH RAW BYTES RECEIVED
+	AH = 1Bh
+Return: CF set on error
+	    DH = error code (see AX=01FFh)
+	CF clear if successful
+SeeAlso: AH=1Ch
+--------N-601C-------------------------------
+INT 60 - FTP Packet Driver v1.10+ - EXTENDED FUNC - FETCH RAW BYTES RECEIVED
+	AH = 1Ch
+	DS:SI -> buffer
+	CX = length of buffer
+	DX = timeout in clock ticks
+Return: CF set on error
+	    DH = error code (see AX=01FFh)
+	CF clear if successful
+	    CX = number of bytes transferred to buffer
+SeeAlso: AH=1Ah,AH=1Bh
+--------a-60AD-------------------------------
+INT 60 - AccessDOS - API
+	AH = ADh
+	AL = function
+	    E1h ???
+		Return: AX = ???
+	    E2h get configuration
+		Return: BX:AX -> configuration data
+Program: AccessDOS is a public domain TSR developed at The Trace Research and
+	  Development Center which provides extensions for keyboard, mouse,
+	  and sound access by the visually, hearing, or motor-control
+	  impaired.
+Note:	INT 60 is the default vector; AccessDOS will use the first 0000h:0000h
+	  vector in the range 60h through 66h.
+--------N-60E9-------------------------------
+INT 60 - FTP Packet Driver - Crynwr Software - AUTOSELECT TRANSCEIVER
+	AH = E9h
+	???
+Return: ???
 --------!------------------------------------

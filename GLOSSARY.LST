@@ -1,5 +1,5 @@
 GLOSSARY
-Last Change 7/13/93.
+Last Change 10/24/93.
 
 A20
 	(Address line 20) The 80286 and higher CPUs allow addresses in
@@ -635,6 +635,14 @@ different surfaces form a cylinder.
 
 UMB
 	see Upper Memory Block
+
+UNC
+	(Universal Naming Convention) The standard way of describing
+network servers and their directories under MS-DOS and Windows NT.  A
+name in UNC format consists of two backslashes followed by the server
+name, optionally followed by another backslash and a list of
+backslash-separated fields; for example
+\\SERVER1\SHARED-DIR\SUBDIR1\SUBDIR2\FILENAME.EXT.
 
 Upper Memory Block
 	A noncontiguous section of allocatable memory located between

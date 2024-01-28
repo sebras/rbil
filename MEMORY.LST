@@ -1,5 +1,5 @@
 [This file was originally provided by Robin Walker.  --Ralf]
-Last Update: 9/24/93
+Last Update: 10/13/93
 
 Format of BIOS Data Segment at segment 40h:
 		{items in curly braces not documented by IBM}
@@ -360,6 +360,10 @@ Offset	Size	Description
  B0h 16 BYTEs	(1988 Phoenix 386 BIOS 1.10 03) drive parameters for hard disk
 		type 48 (see INT 41,INT 46)
  B4h	WORD	reserved
+ B5h	BYTE	(Dell 4xxDE)
+		bit 2: ??? (related to disk drives)
+		bit 5: page tables set to allow Weitek addressing in real mode
+		bit 6: Weitek math coprocessor present
  B6h  3 BYTEs	reserved for POST?
  B9h  7 BYTEs	???
  C0h 16 BYTEs	(1988 Phoenix 386 BIOS 1.10 03) drive parameters for hard disk
@@ -378,9 +382,10 @@ Offset	Size	Description
  DBh	BYTE	[Digiboard MV/4] master 8259 mask (used by VGA init only)
  DCh	BYTE	[Digiboard MV/4] slave 8259 mask (used by VGA init only)
  E0h-EFh	[Phoenix 386 BIOS] drive parameter table for first hard disk
-		if configurable "type 47"
+		  if configurable "type 47"
  EAh	WORD	[Omti controller] segment of extended BIOS data area???
 		drive parameter tables stored in specified segment
+ ECh	WORD	(Dell 4xxDE BIOS A11) loop count for delays
  F0h-FFh	reserved for user
 100h	BYTE	Print Screen Status byte
 10Eh	BYTE	state of BREAK at start of BASICA.COM execution

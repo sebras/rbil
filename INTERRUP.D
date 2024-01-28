@@ -197,13 +197,13 @@ Return: CF clear if successful
 	    AX = error code (01h,02h,03h,05h) (see AH=59h)
 Note:	the filename may be a directory but must be on a VINES file service
 SeeAlso: AX=4301h,AX=4305h,AX=4310h,INT 2F/AX=110Eh
-----------214380-----------------------------
+--------O-214380-----------------------------
 INT 21 - Novell DOS 7 - UNDELETE PENDING DELETE FILE
 	AX = 4380h
 	???
 Return: ???
 SeeAlso: AH=41h,AX=4381h
-----------214381-----------------------------
+--------O-214381-----------------------------
 INT 21 - Novell DOS 7 - PURGE PENDING DELETE FILE
 	AX = 4381h
 	???
@@ -661,7 +661,7 @@ Return: AX = status code
 Note:	only functions 00h and 01h are always available; the remaining
 	  functions are only enabled if the proper commandline switch is given
 --------c-214402-----------------------------
-INT 21 - SMARTDRV.SYS - IOCTL - GET CACHE STATUS
+INT 21 - SMARTDRV.SYS v3.x only - IOCTL - GET CACHE STATUS
 	AX = 4402h
 	BX = file handle for device "SMARTAAR"
 	CX = number of bytes to read (min 28h)
@@ -1256,21 +1256,22 @@ Call 386MAX API (via OUT DX,AL) with:
 		AL = ??? (00h or nonzero)
 		Return: AH = status (00h OK, A4h not possible at this time)
 		Note:	if AL=00h, this function always returns success
-	AH = 09h toggle ??? flags
-		BX = bitmask of bits of ??? flags (word at state+10h) to toggle
+	AH = 09h toggle Bit Flags 1 flags
+		BX = bitmask of bit flags 1's flags to toggle (see above)
 		Return: AH = 00h (successful)
 		Note:	enables A20 first
-	AH = 0Ah toggle ??? flags
-		BX = bitmask of bits of ??? (word at state+32h) to toggle
+	AH = 0Ah toggle system configuration flags
+		BX = bitmask of system configuration flags to toggle
+			  (see above)
 		Return: AH = 00h (successful)
 		Notes:	enabled A20 first
 			does ??? if bit 3 on after specified bits are toggled
-	AH = 0Bh toggle ??? flags
-		BX = bitmask of bits of ??? (word at state+34h) to toggle
+	AH = 0Bh toggle debugging flags 1
+		BX = bitmask of debugging flags 1's bits to toggle (see above)
 		Return: AH = 00h (successful)
 		Note:	enables A20 first
-	AH = 0Ch toggle ??? flags
-		BX = bitmask of bits of ??? (word at state+40h) to toggle
+	AH = 0Ch toggle feature flags 3
+		BX = bitmask of feature flags 3's bits to toggle (see above)
 		Return: AH = 00h (successful)
 		Note:	enables A20 first
 	AH = 0Dh specify 386MAX high-memory location
@@ -1545,8 +1546,9 @@ Return: CF clear if successful
 	    AX = number of bytes actually read
 	CF set on error
 	    AX = error code
-Program: WORKGRP.SYS is distributed with MS-DOS 6.0 to permit communication
-	  with PCs running Windows for Workgroups or LAN Manager
+Program: WORKGRP.SYS is the portion of Microsoft's Workgroup Connection which
+	  permits communication with PCs running Windows for Workgroups or
+	  LAN Manager
 SeeAlso: AH=3Fh"WORKGRP.SYS"
 
 Format of entry point record:
@@ -1829,7 +1831,7 @@ Offset	Size	Description
 Note:	the addresses in the new dispatch table are copied into an internal
 	  jump table which may be reset by calling the function pointed at by
 	  offset 12h
-----------214402-----------------------------
+--------n-214402-----------------------------
 INT 21 U - PenDOS PENDEV.SYS - GET ENTRY POINTS
 	AX = 4402h
 	BX = file handle for device "$$PENDOS" or "$$PD_REG"
@@ -1872,6 +1874,71 @@ Return: CF clear if successful
 	CF set on error (AX out of range)
 Note:	resets the jump at the specified entry point to its default target,
 	  which simply returns
+--------N-214402-----------------------------
+INT 21 U - LAN Manager - TCPDRV.DOS - API
+	AX = 4402h
+	BX = file handle referencing device "TCPDRV$"
+	CX = 0019h
+	DS:DX -> buffer containing request block
+Return: CF clear if successful
+	    buffer filled
+	CF set on error
+	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+Program: TCPDRV.DOS is the low-level device driver supporting LAN Manager's
+	  TCP/IP protocol stack
+
+Format of request block:
+Offset	Size	Description
+ 00h	BYTE	(call) function number
+		00h initialize ???
+		06h get ???
+		07h get ???
+ 01h	BYTE	(call) 00h
+		(return) error code if error, unchanged if successful
+ 02h	WORD	signature 4354h ('CT')
+---function 00h---
+ 04h	DWORD	(call) pointer to ??? FAR function
+		function is called with ES:BX -> device driver request used to
+		  invoke this function
+ 08h  4 BYTEs	???
+ 0Ch	DWORD	(call) pointer to ??? record, WORD at offset 22h is read
+ 10h	DWORD	(return) -> ??? buffer if 0000h:0000h on call
+---function 06h---
+ 04h  4 BYTEs	???
+ 08h	DWORD	(return) pointer to ???
+---function 07h---
+ 04h	DWORD	(return) pointer to ??? record
+--------y-214402-----------------------------
+INT 21 U - PC Tools 9 CPRLOW.EXE - GET CODE AND DATA ADDRESSES
+	AX = 4402h
+	BX = file handle referencing device "RECLOWLD"
+	DS:DX -> buffer for address list (see below)
+	CX ignored
+Return: CF clear if successful
+	    buffer filled
+	CF set on error
+	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
+
+Format of address list:
+Offset	Size	Description
+ 00h	WORD	segment of CPRLOW code
+ 02h	WORD	offset in code segment of ??? entry point
+		(switches into protected mode)
+ 04h	WORD	offset in code segment of jump array (see below)
+ 06h	WORD	segment of copy of interrupt vector table at CPRLOW load time
+Note:	neither the entry point nor the jump array is valid until after a
+	  CPR /LOAD, because CPR.EXE installs the code into CPRLOW at runtime.
+
+Format of jump array:
+Offset	Size	Description
+ 00h  3 BYTEs	initialize CPRLOW interrupt hooks
+ 03h  3 BYTEs	reset timers and enable CPR (hotkey enable)
+ 06h  3 BYTEs	disable CPR (hotkey disable)
+ 09h  3 BYTEs	clear ??? flag, hotkey disable, and ???
+ 0Ch  3 BYTEs	initialize delay loop counter (destroys AX,BX,CX,DX)
+ 0Fh  3 BYTEs	disable CPR completely (commandline /DISABLE)
+ 12h  3 BYTEs	enable ??? if CPR enabled by both cmdline and hotkey
+ 15h  3 BYTEs	enable CPR (commandline /ENABLE)
 --------D-214403-----------------------------
 INT 21 - DOS 2+ - IOCTL - WRITE TO CHARACTER DEVICE CONTROL CHANNEL
 	AX = 4403h
@@ -1890,7 +1957,7 @@ Notes:	format of data is driver-specific (see below for some specific cases)
 SeeAlso: AX=4400h,AX=4402h,AX=4405h,INT 2F/AX=122Bh,INT 2F/AX=D44Dh
 SeeAlso: INT 2F/AX=D44Fh
 --------c-214403-----------------------------
-INT 21 - SMARTDRV.SYS - IOCTL - CACHE CONTROL
+INT 21 - SMARTDRV.SYS v3.x only - IOCTL - CACHE CONTROL
 	AX = 4403h
 	BX = handle for device "SMARTAAR"
 	CX = number of bytes to write
@@ -2128,7 +2195,7 @@ Offset	Size	Description
 		0000h get entry points
 		0001h get ???
  02h	DWORD	address of buffer for returned data
-----------214403SF01-------------------------
+--------m-214403SF01-------------------------
 INT 21 U - Qualitas 386MAX v6.01+ - TURN 386MAX OFF
 	AX = 4403h subfn 01h
 	BX = handle for device "386MAX$$"
@@ -2141,7 +2208,7 @@ Return: DS:DX -> BYTE status (00h = successful)
 	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
 Note:	this function will fail if any EMS or UMBs are in use
 SeeAlso: AX=4403h/SF=02h,AX=4403h/SF=03h,AX=4403h/SF=05h
-----------214403SF02-------------------------
+--------m-214403SF02-------------------------
 INT 21 U - Qualitas 386MAX v6.01+ - TURN 386MAX ON
 	AX = 4403h subfn 02h
 	BX = handle for device "386MAX$$"
@@ -2167,7 +2234,7 @@ Note:	the first byte of the buffer must be either 01h, 02h, or 03h
 	  (specifying the version of the state record) and the buffer must
 	  contain CX bytes AFTER the initial byte
 SeeAlso: AX=4402h"386MAX"
-----------214403SF05-------------------------
+--------m-214403SF05-------------------------
 INT 21 U - Qualitas 386MAX v7.00+ - LIMIT AUTOMATIC ACTIVATION TO STD EMS CALLS
 	AX = 4403h subfn 05h
 	BX = handle for device "386MAX$$"
@@ -2180,7 +2247,7 @@ Return: CF clear if successful
 Desc:	specifies that 386MAX will only shift from AUTO to ON mode on standard
 	  EMS calls INT 67/AH=40h-5Dh
 SeeAlso: AX=4403h/SF=02h,AX=4403h/SF=03h,AX=4403h/SF=06h
-----------214403SF06-------------------------
+--------m-214403SF06-------------------------
 INT 21 U - Qualitas 386MAX v7.00+ - ALLOW AUTOMATIC ACTIVATION ON ANY INT 67
 	AX = 4403h subfn 06h
 	BX = handle for device "386MAX$$"
@@ -2193,7 +2260,7 @@ Return: CF clear if successful
 Desc:	specified that 386MAX should shift from AUTO to ON mode on any INT 67
 	  call other than INT 67/AH=3Fh
 SeeAlso: AX=4403h/SF=01h,AX=4403h/SF=03h,AX=4403h/SF=05h
-----------214403-----------------------------
+--------n-214403-----------------------------
 INT 21 U - PenDOS PENDEV.SYS - ???
 	AX = 4403h
 	BX = file handle for device "$$PENDOS" or "$$PD_REG"
@@ -2319,7 +2386,7 @@ Return: CF clear if successful
 	    AX = error code (01h,05h,06h,0Dh) (see AH=59h)
 Program: xDISK is a shareware resizeable EMS RAMdisk by FM de Monasterio
 SeeAlso: AX=4405h"xDISK",INT 2F/AH=DDh"xDISK"
-----------214404-----------------------------
+--------c-214404-----------------------------
 INT 21 - COMBI-disk v1.13 - GET DATA RECORD
 	AX = 4404h
 	BL = drive number (00h = default, 01h = A:, etc)
@@ -2845,11 +2912,11 @@ Offset	Size	Description
 		  bit 0=0: format/verify track
 			1: format status call (DOS 3.2+), don't actually format
 		  bits 1-7 reserved, must be zero
-		on return (DOS 4.x):
-		  bit 0: set if specified tracks, sectors/track supported
-		  bit 1: set if function not supported by BIOS
-		  bit 2: set if specified tracks, sectors/track not supported
-		  bit 3: set if no disk in drive
+		value on return (DOS 3.3+):
+		  00h	specified tracks, sectors/track supported by BIOS
+		  01h	function not supported by BIOS
+		  02h	specified tracks, sectors/track not allowed for drive
+		  03h	no disk in drive
  01h	WORD	number of disk head
  03h	WORD	number of disk cylinder
 
@@ -2859,11 +2926,11 @@ Offset	Size	Description
 		  bit 0=0: verify single track
 			1: verify multiple tracks
 		  bits 1-7 reserved, must be zero
-		on return (DOS 4.x):
-		  bit 0: set if specified tracks, sectors/track supported
-		  bit 1: set if function not supported by BIOS
-		  bit 2: set if specified tracks, sectors/track not supported
-		  bit 3: set if no disk in drive
+		value on return (DOS 3.3+):
+		  00h	specified tracks, sectors/track supported by BIOS
+		  01h	function not supported by BIOS
+		  02h	specified tracks, sectors/track not allowed for drive
+		  03h	no disk in drive
  01h	WORD	number of disk head
  03h	WORD	number of disk cylinder
  05h	WORD	number of tracks to verify (equivalent to 255 or fewer sectors)
@@ -3253,7 +3320,7 @@ INT 21 - DOS 2+ - FREE MEMORY
 Return: CF clear if successful
 	CF set on error
 	    AX = error code (07h,09h) (see AH=59h)
-Notes:	apparently never returns an error 07h, despite official docs; DOS 3.30
+Notes:	apparently never returns an error 07h, despite official docs; DOS 2.1+
 	  code contains only an error 09h exit
 	DOS 2.1-6.0 does not coalesce adjacent free blocks when a block is
 	  freed, only when a block is allocated or resized
@@ -3702,7 +3769,7 @@ Offset	Size	Description
  40h	DWORD	offset of object table (see below)
  44h	DWORD	object table entries
  48h	DWORD	object page map table offset
- 4CH	DWORD	object iterate data map offset
+ 4Ch	DWORD	object iterate data map offset
  50h	DWORD	resource table offset
  54h	DWORD	resource table entries
  58h	DWORD	resident names table offset
@@ -4383,7 +4450,7 @@ Offset	Size	Description
  -12	WORD	(DOS 3.1+) sharing retry count (see AX=440Bh)
  -10	WORD	(DOS 3.1+) sharing retry delay (see AX=440Bh)
  -8	DWORD	(DOS 3+) pointer to current disk buffer
- -4	WORD	(DOS 3+) pointer in DOS code segment of unread CON input
+ -4	WORD	(DOS 3+) pointer in DOS data segment of unread CON input
 		when CON is read via a handle, DOS reads an entire line,
 		  and returns the requested portion, buffering the rest
 		  for the next read.  0000h indicates no unread input
@@ -5597,7 +5664,7 @@ Offset	Size	Description
  05h	WORD	size of value
  07h	var	reference string
 	var	value
-----------215702-----------------------------
+--------O-215702-----------------------------
 INT 21 - OS/2 v1.1+ Family API - DosQFileInfo
 	AX = 5702h
 	BX = file handle
@@ -5608,7 +5675,7 @@ Return: CF clear if successful
 	CF set on error
 	    AX = error code
 SeeAlso: AX=5702h/BX=FFFFh,AX=5703h"OS/2"
-----------215702BXFFFF-----------------------
+--------O-215702BXFFFF-----------------------
 INT 21 - OS/2 v1.1+ Compatibility Box Family API - DosQPathInfo
 	AX = 5702h
 	BX = FFFFh
@@ -5644,7 +5711,7 @@ Notes:	if CX=0000h on entry, ES:DI is ignored and no data is actually
 	the default DOS 4 behavior is to return a trivial EAP list consisting
 	  of the single word 0000h (no EAP structures) if CX>=0002h on entry
 SeeAlso: AX=5702h,AX=5704h,AH=6Eh,INT 2F/AX=112Dh
-----------215703-----------------------------
+--------O-215703-----------------------------
 INT 21 - OS/2 v1.1+ Family API - DosSetFileInfo
 	AX = 5703h
 	BX = file handle
@@ -5655,7 +5722,7 @@ Return: CF clear if successful
 	CF set on error
 	    AX = error code
 SeeAlso: AX=5702h"OS/2",AX=5703h/BX=FFFFh
-----------215703BXFFFF-----------------------
+--------O-215703BXFFFF-----------------------
 INT 21 - OS/2 v1.1+ Family API - DosSetPathInfo
 	AX = 5703h
 	BX = FFFFh
@@ -7192,14 +7259,18 @@ Offset	Size	Description
  10h	DWORD	address of in buffer
  14h	DWORD	address of pipe name
 --------N-215F38-----------------------------
-INT 21 u - Named Pipes - LOCAL DosWaitNmPipe
+INT 21 u - Named Pipes - LOCAL DosWaitNmPipe - AWAIT AVAIL. OF PIPE INSTANCE
 	AX = 5F38h
 	DS:DX -> pipe name
 	BX:CX = timeout value
 Return: CF clear if successful
 	CF set if error
 	    AX = error code
-Note:	this function was introduced by LAN Manager but is also supported by
+Notes:	when a client gets a return code of ERROR_PIPE_BUSY on attempting to
+	  open a pipe, it should issue this call to wait until the pipe
+	  instance becomes available again; on return from this call, the
+	  client must attempt to open the pipe once again
+	this function was introduced by LAN Manager but is also supported by
 	  the Novell DOS Named Pipe Extender, Banyan VINES, OS/2 Virtual DOS
 	  Machines, and others
 SeeAlso: AX=5F37h,AX=5F39h
@@ -7253,9 +7324,9 @@ SeeAlso: AX=5F3Ch
 
 Format of handle_info_1 structure:
 Offset	Size	Description
- 00h	DWORD	number of milliseconds which workstations collects data before
+ 00h	DWORD	number of milliseconds which workstation collects data before
 		it sends the data to the named pipe
- 04h	DWORD	number of characters which workstations collects before it
+ 04h	DWORD	number of characters which workstation collects before it
 		sends the data to the named pipe
 --------N-215F3C-----------------------------
 INT 21 u - LAN Manager Enhanced DOS - NetHandleGetInfo
@@ -7426,7 +7497,7 @@ INT 21 u - LAN Manager Enhanced DOS - LOCAL NetWkstaGetInfo
 	AX = 5F44h
 	BX = information level (00h, 01h, or 0Ah)
 	CX = buffer size
-	ES:DI = buffer in which to store info
+	ES:DI -> buffer in which to store info
 Return: AX = error code
 	DX = amount of buffer used (or required)
 SeeAlso: AX=5F45h,AX=5F49h
@@ -7917,7 +7988,7 @@ Return: CF clear if successful
 	    AX = error code
 SeeAlso: AX=5F9Bh,AX=5F9Ch,AX=5F9Dh
 --------N-215F9B-----------------------------
-INT 21 - LANtastic - SET MESSAGE PROCESSING FLAG
+INT 21 - LANtastic - SET MESSAGE PROCESSING FLAGS
 	AX = 5F9Bh
 	DL = bits describing processing for received unsolicited messages
 	     (see AX=5F9Ah)
@@ -7946,7 +8017,7 @@ SeeAlso: AX=5F9Ah,AX=5F9Eh
 --------N-215F9E-----------------------------
 INT 21 - LANtastic v4.1+ - SET REDIRECTOR CONTROL BITS
 	AX = 5F9Eh
-	DL = redirector control bits (see AH = 5F9Dh)
+	DL = redirector control bits (see AX=5F9Dh)
 Return: nothing
 SeeAlso: AX=5F9Bh,AX=5F9Dh
 --------N-215FA0-----------------------------
@@ -8587,7 +8658,7 @@ INT 21 - DOS 3.2+ internal - SET DEVICE DRIVER LOOKAHEAD FLAG
 	    nonzero don't call driver function 5
 Return: nothing (MS-DOS)
 	CF set, AX=error code??? (DR-DOS 5.0, which does not support this call)
-Notes:	called by DOS 3.3+ PRINT.COM
+Notes:	this function is called by the DOS 3.3+ PRINT.COM
 	under MS-DOS, this function does not use any of the DOS-internal stacks
 	  and may thus be called at any time, even during another DOS call
 SeeAlso: AH=01h,AH=08h,AH=0Ah,AX=5D06h
@@ -9077,7 +9148,7 @@ INT 21 - DOS 4+ - EXTENDED OPEN/CREATE
 	    bit 2: system
 	    bit 1: hidden
 	    bit 0: readonly
-	DL = action if file exists/does not exists
+	DL = action if file exists/does not exist
 	    bits 7-4 action if file does not exist
 		    0000 fail
 		    0001 create
@@ -9148,12 +9219,12 @@ INT 21 U - DOS 5+ ROM - GET ROM SCAN START ADDRESS
 	AX = 6F00h
 Return: BX = current ROM scan starting segment
 SeeAlso: AH=6Dh,AX=6F01h,AX=6F02h
-----------216F01-----------------------------
+--------D-216F01-----------------------------
 INT 21 U - DOS 5+ ROM - SET ROM SCAN START ADDRESS
 	AX = 6F01h
 	BX = new ROM scan starting address
 SeeAlso: AX=6F00h,AX=6F03h
-----------216F02-----------------------------
+--------D-216F02-----------------------------
 INT 21 U - DOS 5+ ROM - GET EXCLUSION REGION LIST
 	AX = 6F02h
 	ES:BX -> buffer for exclusion region list (see below)
@@ -9164,7 +9235,7 @@ Format of exclusion region list:
 Offset	Size	Description
  00h	WORD	number of entries
  02h 2N WORDs	start/end segments of N excluded regions
-----------216F03-----------------------------
+--------D-216F03-----------------------------
 INT 21 U - DOS 5+ ROM - SET EXCLUSION REGION LIST
 	AX = 6F03h
 	DS:DX -> new exclusion region list (see AX=6F02h)
@@ -9238,7 +9309,7 @@ INT 21 - VIRUS - "Growing Block" - INSTALLATION CHECK
 	AX = 7700h
 Return: AX = 0920h if resident
 SeeAlso: AH=76h,AH=7Fh
-----------217734-----------------------------
+--------V-217734-----------------------------
 INT 21 U - SCROLLit v1.7 - INSTALLATION CHECK
 	AX = 7734h
 Return: DX = 3477h if installed

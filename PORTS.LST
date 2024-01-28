@@ -1350,14 +1350,12 @@ Last Change: 8/1/93
 
 03F1	r	diskette controller status B (PS/2)
 		 bit 7-6  reserved
-		 bit 5	  drive select
+		 bit 5	  drive select (0=A:, 1=B:)
 		 bit 4	  write data
 		 bit 3	  read data
 		 bit 2	  write enable
 		 bit 1	  motor enable 1
 		 bit 0	  motor enable 0
-
-floppy drive select (0=A 1=B .. )
 
 03F2	w	diskette controller DOR (Digital Output Register)
 		 bit 7-6    reserved PS/2
@@ -1473,7 +1471,7 @@ floppy drive select (0=A 1=B .. )
 		 bit 1 = 1  transmitter-holding-register empty interrupt enable
 		 bit 0 = 1  received-data-avail.int. enable (and 16550 timeout)
 
-	      - 16550 will interrupt if data axists in the FIFO and isn't read
+	      - 16550 will interrupt if data exists in the FIFO and isn't read
 		within the time it takes to receive four bytes or if no data is
 		received within the time it takes to receive four bytes
 
@@ -1511,7 +1509,7 @@ floppy drive select (0=A 1=B .. )
 		 bit 1	 = 1  clear RCVR FIFO
 		 bit 0	 = 1  enable clear XMIT and RCVR FIFO queues
 
-	      - bit 0 must be set in ordewr to write to other FCR bits
+	      - bit 0 must be set in order to write to other FCR bits
 	      - bit 1 when set	the RCVR FIFO is cleared and this bit is reset
 		 the receiver shift register is not cleared
 	      - bit 2 when set	the XMIT FIFO is cleared and this bit is reset
