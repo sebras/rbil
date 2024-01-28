@@ -1,5 +1,5 @@
-Bibliography			Release 59		Last change 30aug98
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
+Bibliography			Release 60		Last change 03jan99
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
 --------!---BIBLIOGRAPHY---------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -948,6 +948,17 @@ CL-PD6729 info from "CL-PD6729 PCI-to-PCMCIA Host Adapter",
 http://www.cirrus.com/ftp/pubs/pd6729db.pdf.
 Transcribed by Teppo Lehtonen, added 28aug98.
 
+Intel 82595FX info from "82595FX ISA Bus High-Integration Ethernet Controller",
+http://www.intel.com/design/network/datashts/281732.htm.
+Transcribed by Teppo Lehtonen, 9/98, added 01jan99.
+
+Adaptec AHA-154x info from "AHA-1540A/1542A User's Manual", dated 1989.
+Added 01jan99.
+
+Philips SAA7110/7110A info from "SAA7110/SAA7110A One Chip Front-end 1 (OCF1)",
+http://www.semiconductors.philips.com/acrobat/2007.pdf.	 Transcription by
+Roger Scudder, 10/98.  Added 01jan98.
+
 C&T 64200 info from "64200 (Wingine) High Performance Windows Engine",
 ftp://ftp.chips.com/pub/pdf/64200.pdf.	(to be added)
 
@@ -959,10 +970,6 @@ Intel 82439TX (430TX) info from "Intel 430TX PCIset: 82439TX System Controller
 
 Intel 82371AB (PIIX4) info from "",
 http://www.intel.com/design/pcisets/datashts/290562.htm.  (to be added)
-
-Intel 82595FX info from "82595FX ISA Bus High-Integration Ethernet Controller",
-http://www.intel.com/design/network/datashts/281732.htm.  (to be added)
-[p.14-30]
 
 Intel 82595TX info from "82595TX ISA/PCMCIA High-Integration Ethernet
 Controller", http://www.intel.com/design/network/datashts/281630.htm. [p.16-34]
@@ -996,10 +1003,6 @@ ftp://ftp.opti.com/pub/chipsets/system/825/db046_10.pdf. (to be added)
 OPTi "FireFly" (82C852) data from "FireFly 82C852 16-bit PC Card Controller:
 Preliminary Data Book", Revision 1.0, 6jun96; available as
 ftp://ftp.opti.com/pub/chipsets/system/852/pd018_10.pdf. (to be added)
-
-Philips SAA7110/7110A info from "SAA7110/SAA7110A One Chip Front-end 1 (OCF1)",
-http://www.semiconductors.philips.com/acrobat/2007.pdf.	 Transcription by
-Roger Scudder.	(to be added)
 
 Philips SAA7111 info from "SAA7111 Video Input Processor (VIP)",
 http://www.semiconductors.philips.com/acrobat/2211.pdf.
@@ -1242,13 +1245,12 @@ http://www.cirrus.com/ftp/pubs/4952.pdf (to be added)
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER59A through INTER59D (preferably the original
+quartet of archives named INTER60A through INTER60D (preferably the original
 authenticated PKZIP archives), the utility programs in a fifth archive
-called INTER59E.ZIP, and the hypertext conversion programs in two additional
-archives named INTER59F.ZIP and INTER59G.ZIP.
+called INTER60E.ZIP, and the hypertext conversion programs in two additional
+archives named INTER60F.ZIP and INTER60G.ZIP.
 
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
 --------!---CONTACT_INFO---------------------
 Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
 FIDO: Ralf Brown 1:129/26.1
-CIS:  >INTERNET:ralf@pobox.com

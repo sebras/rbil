@@ -8,13 +8,13 @@ The x86/MSDOS Interrupt List
 	documented and undocumented functions, plus lists of I/O port, CMOS,
 	and memory locations, far-call entry points, model-specific
 	registers, and system-management mode state save areas.
-	Current version: INTER59A (release 59, 30aug98)
-			 INTER59B
-			 INTER59C
-			 INTER59D
-			 INTER59E (utility programs)
-			 INTER59F (WinHelp-related programs)
-			 INTER59G (other hypertext conversion programs)
+	Current version: INTER60A (release 60, 03jan99)
+			 INTER60B
+			 INTER60C
+			 INTER60D
+			 INTER60E (utility programs)
+			 INTER60F (WinHelp-related programs)
+			 INTER60G (other hypertext conversion programs)
 
 DVINT
 	An extract of the MSDOS Interrupt List containing the DESQview
@@ -48,7 +48,7 @@ RBpci
 	(updates for new chips which are sent to the author will be
 	included in the following release).  Includes full source code
 	for the program.
-	Current version: RBPCI117 (v1.17, 18aug98)
+	Current version: RBPCI118 (v1.18, 03jan99)
 
 SPAWNO
 	A replacement for the Turbo C and Microsoft C spawn..() functions
@@ -479,10 +479,10 @@ Files on SimTel and mirrors:
 	ftp://ftp.simtel.net/pub/simtelnet/msdos/modem/rbcom346.zip
 
 Files at Garbo:
-	ftp://garbo.uwasa.fi/pc/programming/inter57a.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter57b.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter57c.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter57d.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter57e.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter57f.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter57g.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter60a.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter60b.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter60c.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter60d.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter60e.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter60f.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter60g.zip

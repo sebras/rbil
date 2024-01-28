@@ -1,16 +1,11 @@
-It doesn't look like I'll manage to clear out my queue of submissions
-anytime soon....  If you've sent in any contributions which don't
-appear in this release but which I've acknowledged, they are still on
-my queue and will appear in the future.
+As usual, I still have a queue of unprocessed submissions....  If
+you've sent in any contributions which don't appear in this release but
+which I've acknowledged, they are still on my queue and will appear in
+the future.
 
-Still on the queue: the final bits of the documented REAL/32 API, more
-OpenDOS info, the rest of the TI Professional info, lots of chipset
-info (see NEEDHELP.TXT), ....
+Still on the queue: more OpenDOS info, the rest of the TI Professional
+info, lots of chipset info (see NEEDHELP.TXT), ....
 
-Since the interrupt list proper has now grown beyond the size that can
-be accomodated by four 360K archives, I am allowing the first four
-archives to grow to 720K each from the current 360K per archive,
-beginning with archive D.
 
 UPCOMING CHANGES
 ================
@@ -20,6 +15,21 @@ None planned at this time.
 
 WHAT'S NEW
 ==========
+
+INTER60
+-------
+updated files:
+	OPCODES.LST
+
+updated programs:
+	INT2WHLP can now handle the new five-character table numbers
+
+new info:
+	Econet, VESA VBE/AF, Matrox VESA-OEM functions, more Soft-ICE backdoor
+	commands, XBIOS, EZ-Drive, Adaptec AIC-7xxx and AHA-152x ports,
+	GEM/ViewMAX, WinTel API, TrLit API, VHRBIOS.SYS, Philips SAA7110(A),
+	Intel 82595FX
+
 
 INTER59
 -------
@@ -62,24 +72,4 @@ new info:
 	Chips&Technologies POST codes, VGA BIOS, keyboard controller, etc.
 	WindowsNT NTOS function numbers
 	more Win95 updates
-
-
-INTER56
--------
-new files:
-	I2C.LST
-	NEEDHELP.TXT
-
-updated files:
-	PCICFG10.ZIP
-
-new info:
-	S3 memory-mapped I/O
-	VPX 3220A video decoder
-	SDRAM Serial Presence Detect
-	VESA DDC monitor EDID codes
-	MS-DOS 7 file-sharing behavior
-        more Novell DOS notes
-	more KEYB.COM internals
-	more REAL/32 calls and structures
 

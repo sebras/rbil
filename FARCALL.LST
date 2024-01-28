@@ -1,5 +1,5 @@
-FAR CALL Interface List		Release 59		Last change 30aug98
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
+FAR CALL Interface List		Release 60		Last change 03jan99
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
 
 =============================================
 >CALL 0000h:0000h - Sample Entry
@@ -784,17 +784,17 @@ Call Plug-and-Play BIOS entry point with:
 			0057h Write GP Non-Volatile Storage data (see #F0058)
 			0058h-005Fh reserved for future use
 			---BIOS Boot Specification---
-			0060h Get Version and Installation Check (see #F0067)
-			0061h Get IPL Device Count (see #F0068)
-			0062h Get Boot Priority and IPL Table (see #F0069)
-			0063h Set Boot Priority (see #F0070)
-			0064h Get IPL Device from Last Boot (see #F0071)
-			0065h Get Boot First (see #F0072)
-			0066h Set Boot First (see #F0073)
+			0060h Get Version and Installation Check (see #F0074)
+			0061h Get IPL Device Count (see #F0075)
+			0062h Get Boot Priority and IPL Table (see #F0076)
+			0063h Set Boot Priority (see #F0077)
+			0064h Get IPL Device from Last Boot (see #F0078)
+			0065h Get Boot First (see #F0079)
+			0066h Set Boot First (see #F0080)
 			0067h-006Fh reserved
 		var	function arguments
 		WORD	PnP BIOS writable segment/selector
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 Notes:	the caller must provide at least 1024 bytes of stack space for use by
 	  the Plug-and-Play BIOS
 	this API is bi-modal; all calls are available in both real mode and
@@ -808,7 +808,7 @@ Call Plug-and-Play BIOS function 00h with:
 		DWORD	-> BYTE in which to return number of device nodes
 		DWORD	-> WORD in which to return size of largest device node
 		WORD	PnP BIOS writable segment/selector
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 Note:	the large-model C declaration is
 	  int (*entry)(int, unsigned char *, unsigned int *, unsigned int);
 
@@ -822,7 +822,7 @@ Call Plug-and-Play BIOS function 01h with:
 			bit 1: get static config (values for next boot)
 			bit 0: get current (dynamic) configuration
 		WORD	PnP BIOS writable segment/selector
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 Notes:	the large-model C declaration is
 	  int (*entry)(int, unsigned char *, DEV_NODE *, unsigned int,
 		unsigned int);
@@ -838,7 +838,7 @@ Call Plug-and-Play BIOS function 02h with:
 			bit 1: set static config (values for next boot)
 			bit 0: set current (dynamic) configuration
 		WORD	PnP BIOS writable segment/selector
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 Notes:	the large-model C declaration is
 	  int (*entry)(int, unsigned char *, DEV_NODE *, unsigned int,
 		unsigned int);
@@ -849,7 +849,7 @@ Call Plug-and-Play BIOS function 03h with:
 	STACK:	WORD	0003h (function "Get Event")
 		DWORD	-> WORD buffer for event message identifier (see #F0030)
 		WORD	PnP BIOS writable segment/selector
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 Note:	the large-model C declaration is
 	  int (*entry)(int, unsigned int *, unsigned int);
 
@@ -870,7 +870,7 @@ Call Plug-and-Play BIOS function 04h with:
 	STACK:	WORD	0004h (function "Send Message")
 		WORD	message identifier (see #F0032)
 		WORD	PnP BIOS writable segment/selector
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 Note:	the large-model C declaration is
 	  int (*entry)(int, unsigned int, unsigned int);
 SeeAlso: #F0031,#F0033
@@ -892,7 +892,7 @@ Call Plug-and-Play BIOS function 05h with:
 	STACK:	WORD	0005h (function "Get Docking Station Information")
 		DWORD	-> buffer for docking station info (see #F0036)
 		WORD	PnP BIOS writable segment/selector
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 Note:	the large-model C declaration is
 	  int (*entry)(int, unsigned char *, unsigned int);
 SeeAlso: #F0031,#F0034
@@ -914,7 +914,7 @@ Call Plug-and-Play BIOS function 07h with:
 				  boot device selection
 		DWORD	-> preferred resource allocation or -> END_TAG if none
 		WORD	PnP BIOS writable segment/selector
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 Note:	the large-model C declaration is
 	  int (*entry)(int, int, unsigned long, unsigned long, unsigned long,
 		int, int, char *, unsigned int);
@@ -932,7 +932,7 @@ Call Plug-and-Play BIOS function 08h with:
 		DWORD	-> WORD buffer for physical unit number
 		DWORD	-> buffer for preferred resource allocation
 		WORD	PnP BIOS writable segment/selector
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 Note:	the large-model C declaration is
 	  int (*entry)(int, int, unsigned long *, unsigned long *,
 		unsigned long *, unsigned int *, char *, unsigned int);
@@ -959,7 +959,7 @@ Call Plug-and-Play BIOS function 09h with:
 		DWORD	-> block of statically-allocated resources as described
 			  in the Plug-and-Play ISA Spec
 		WORD	PnP BIOS writable segment/selector
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 Notes:	the large-model C declaration is
 	  int (*entry)(int, unsigned char *, unsigned int);
 	if the returned status is 008Dh, the Plug-and-Play BIOS supports
@@ -973,7 +973,7 @@ Call Plug-and-Play BIOS function 0Ah with:
 		DWORD	-> buffer for statically-allocated resources as
 			  described in the Plug-and-Play ISA Spec
 		WORD	PnP BIOS writable segment/selector
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 Notes:	the large-model C declaration is
 	  int (*entry)(int, unsigned char *, unsigned int);
 	if the returned status is 008Dh, the Plug-and-Play BIOS supports
@@ -987,7 +987,7 @@ Call Plug-and-Play BIOS function 0Bh with:
 		DWORD	-> WORD buffer for size of data buffer
 		DWORD	-> buffer for storing APM ID table (see #F0040)
 		WORD	PnP BIOS writable segment/selector
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 Desc:	copies the Advanced Power Management v1.1 device identifier table to
 	  Plug-and-Play device identifier mappings
 Note:	the large-model C declaration is
@@ -1006,7 +1006,7 @@ Call Plug-and-Play BIOS function 40h with:
 			  Structure")
 		DWORD	-> buffer for configuration structure (see #F0042)
 		WORD	PnP BIOS writable segment/selector
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 Note:	the large-model C declaration is
 	  int (*entry)(int, unsigned char *, unsigned int);
 
@@ -1027,7 +1027,7 @@ Call Plug-and-Play BIOS function 41h with:
 		DWORD	-> DWORD buffer for physical base address of NV storage
 			  (if memory-mapped, else 00000000h)
 		WORD	PnP BIOS writable segment/selector
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 Note:	the large-model C declaration is
 	  int (*entry)(int, unsigned int *, unsigned int *, unsigned long *,
 		  unsigned int);
@@ -1041,7 +1041,7 @@ Call Plug-and-Play BIOS function 42h with:
 		WORD	read/writable selector for ESCD if memory-mapped and
 			  called in protected mode (ignored otherwise)
 		WORD	PnP BIOS writable segment/selector
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 Notes:	the large-model C declaration is
 	  int (*entry)(int, unsigned char *, unsigned int, unsigned int);
 	if an ESCD selector is required, the caller must construct a 16-bit
@@ -1055,7 +1055,7 @@ Call Plug-and-Play BIOS function 43h with:
 		WORD	read/writable selector for ESCD if memory-mapped and
 			  called in protected mode (ignored otherwise)
 		WORD	PnP BIOS writable segment/selector
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 Notes:	the large-model C declaration is
 	  int (*entry)(int, unsigned char *, unsigned int, unsigned int);
 	if an ESCD selector is required, the caller must construct a 16-bit
@@ -1070,7 +1070,7 @@ Call Desktop Management Specification function 50h with:
 		DWORD	-> DWORD to receive DMI storage base address
 		DWORD	-> WORD to receive DMI storage size
 		WORD	BIOS selector
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 Notes:	the large-model C declaration is
 	  short (*entry)(int, unsigned char *, unsigned short *,
 			unsigned short *, unsigned long *, unsigned short *,
@@ -1087,9 +1087,9 @@ Call Desktop Management Specification function 51h with:
 		DWORD	-> buffer for DMI structure
 		WORD	DMI read/write data selector
 		WORD	PnP BIOS read/write selector
-Return: AX = status (see #F0074) 
+Return: AX = status (see #F0081) 
 Notes:	the large-model c declaration is
-	  short (*entry)(int, unsigned short *, unsigned char *, unsigned short,
+	  short (*entry)(int, unsigned short *,unsigned char *, unsigned short,
 			unsigned short) ;
 	structure number 0000h will return the first SMBIOS structure; the
 	  variable is updated with the number of the next structure after each
@@ -1109,7 +1109,7 @@ Call System Management BIOS function 52h with:
 		BYTE	padding
 		WORD	DMI read/write data selector
 		WORD	PnP BIOS read/write selector
-Return:	AX = status (see #F0074)
+Return:	AX = status (see #F0081)
 SeeAlso: #F0025,#F0047,#F0051
 
 Format of DMI data buffer for SMBIOS function 52h:
@@ -1152,7 +1152,7 @@ Call System Management BIOS function 53h with:
 		DWORD	-> SMBIOS change structure (see #F0052)
 		WORD	DMI read/write data selector
 		WORD	PnP BIOS read/write selector
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 SeeAlso: #F0025,#F0048,#F0053
 
 Format of SMBIOS change structure:
@@ -1186,7 +1186,7 @@ Call System Management BIOS function 54h with:
 		BYTE	padding
 		WORD	DMI read/write data selector
 		WORD	PnP BIOS read/write selector
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 SeeAlso: #F0025,#F0051,#F0056
 
 (Table F0054)
@@ -1224,7 +1224,7 @@ Call System Management BIOS function 55h with:
 				  non-volatile storage (00000000h if PMode
 				  mapping not required)
 		WORD	PnP BIOS read/write selector
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 	GPNV handle var set to handle of next GPNV area or FFFFh if no more
 SeeAlso: #F0025,#F0053,#F0057
 
@@ -1237,7 +1237,7 @@ Call System Management BIOS function 56h with:
 		DWORD	-> WORD lock value or FFFFh to ignore
 		WORD	GPNV storage selector
 		WORD	PnP BIOS read/write selector
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 	lock value set to value of the current lock if it was not FFFFh on
 	  entry and locking is supported
 SeeAlso: #F0025,#F0056,#F0058
@@ -1251,7 +1251,7 @@ Call System Management BIOS function 57h with:
 			  FFFFh for a forced write
 		WORD	GPNV storage selector
 		WORD	PnP BIOS read/write selector
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 SeeAlso: #F0025,#F0057
 
 Format of SMBIOS data structure:
@@ -1275,7 +1275,8 @@ Offset	Size	Description	(Table F0059)
  08h	BYTE	string number of BIOS release date
  09h	BYTE	size of BIOS ROM (stored as one less than number of 64K units)
  0Ah	QWORD	BIOS characteristics (see #F0061)
- 12h	var	optional space for BIOS characteristics extension (see #F0062)
+ 12h	var	optional space for BIOS characteristics extension
+		  (see #F0062,#F0063)
 		(size of optional space is implied by header's length field)
  var	var	free-form ASCIZ strings (max 64 bytes per string)
 ---type 01h---
@@ -1283,10 +1284,10 @@ Offset	Size	Description	(Table F0059)
  05h	BYTE	string number of product name
  06h	BYTE	string number of version number
  07h	BYTE	string number of serial number
- 08h 16 BYTEs	universal unique ID number (UUID)
+ 08h 16 BYTEs	(v2.1+) universal unique ID number (UUID)
 		all-FFh if not currently set
 		all-00h if not present
- 18h	BYTE	type of last wake-up event (see #F0063)
+ 18h	BYTE	(v2.1+) type of last wake-up event (see #F0064)
 ---type 02h---
  04h	BYTE	string number of manufacturer name
  05h	BYTE	string number of product name
@@ -1296,18 +1297,83 @@ Offset	Size	Description	(Table F0059)
  04h	BYTE	string number of manufacturer name
  05h	BYTE	chassis type
 		bit 7: chassis lock present
-		bits 6-0: (see #F0064)
+		bits 6-0: (see #F0065)
  06h	BYTE	string number of version number
  07h	BYTE	string number of serial number
  08h	BYTE	string number of asset tag number
- 09h	BYTE	enclosure state at last boot (see #F0065)
- 0Ah	BYTE	power supply state at last boot
- 0Bh	BYTE	thermal state at last boot
- 0Ch	BYTE	physical security status at last boot (see #F0066)
+ 09h	BYTE	(v2.1+) enclosure state at last boot (see #F0066)
+ 0Ah	BYTE	(v2.1+) power supply state at last boot
+ 0Bh	BYTE	(v2.1+) thermal state at last boot
+ 0Ch	BYTE	(v2.1+) physical security status at last boot (see #F0067)
+ 0Dh	DWORD	(v2.3+) OEM/BIOS-specific information
 ---type 04h---
-!!!phoenix\smbios22.pdf p.32
+ 04h	BYTE	string number of socket designation
+ 05h	BYTE	processor type (see #F0068)
+ 06h	BYTE	processor family (see #F0069)
+ 07h	BYTE	string number of processor manufacturer
+ 08h	QWORD	processor identification data (see #F0070)
+ 10h	BYTE	string number of processor version string
+ 11h	BYTE	voltage (see #F0071)
+ 12h	WORD	external clock frequency in MHz (0000h if unknown)
+ 14h	WORD	maximum internal processor speed in MHz (0000h if unknown)
+ 16h	WORD	current internal processor speed in MHz (0000h if unknown)
+ 18h	BYTE	processor status (see #F0072)
+ 19h	BYTE	processor upgrade (see #F0073)
+ 1Ah	WORD	(v2.1+) handle of L1 cache information structure, or FFFFh
+ 1Ch	WORD	(v2.1+) handle of L2 cache information structure, or FFFFh
+ 1Eh	WORD	(v2.1+) handle of L3 cache information structure, or FFFFh
+---type 05h---
+ 04h	BYTE	error-detection method
+ 05h	BYTE	error-correction capability
+ 06h	BYTE	supported memory interleave
+ 07h	BYTE	current memory interleave
+ 08h	BYTE	maximum memory module size (00h=1M, 01h=2M, 02h=4M, etc.)
+ 09h	WORD	supported memory speeds
+ 0Bh	WORD	supported memory types
+ 0Dh	BYTE	voltages supported by memory modules
+		bits 7-3: reserved (0)
+		bit 2: 2.9V
+		bit 1: 3.3V
+		bit 0: 5.0V
+ 0Eh	BYTE	number of memory slots
+ 0Fh  N WORDs	handles of memory information structures for each slot
+	BYTE	(v2.1+) enabled error-correction capabilities
+!!!ftp://download.intel.com/ial/wfm/smbios.pdf p.39
+---type 06h---
+ 04h	BYTE	string number for socket designation
+ 05h	BYTE	bank connections
+ 06h	BYTE	current memory speed in ns (00h = unknown)
+ 07h	WORD	current memory type
+ 09h	BYTE	installed size
+ 0Ah	BYTE	enabled size
+ 0Bh	BYTE	error status
+		bits 7-3: reserved (0)
+		bit 2: get error status info from event log (bits 1-0 reserved)
+		bit 1: correctable errors encountered
+		bit 0: uncorrectable errors encountered, some or all of module
+			  disabled
+---type 07h---
+ 04h	BYTE	string number of socket designation
+ 05h	WORD	cache configuration
+ 07h	WORD	maximum cache size
+ 09h	WORD	installed cache size
+ 0Bh	WORD	supported SRAM type(s)
+ 0Dh	WORD	current SRAM type
+ 0Fh	BYTE	(v2.1+) cache speed in ns (00h = unknown)
+ 10h	BYTE	(v2.1+) error correction type
+ 11h	BYTE	(v2.1+) system cache type
+ 12h	BYTE	(v2.1+) cache associativity
+---type 08h---
 ------
  var	WORD	0000h end-of-structure marker
+		(if strings are present, only a single byte of 00h is needed,
+		  because the terminating NUL of the last string forms the
+		  first	byte of the end-of-structure marker)
+Note:	structures can have new fields added in successive revisions of the
+	  SMBIOS specification, so applications should use the actual length
+	  field given in the SMBIOS structure; as of SMBIOS v2.3, structure
+	  types also have a minimum length to enable the addition of optional
+	  fields
 SeeAlso: #F0049
 
 (Table F0060)
@@ -1333,14 +1399,20 @@ Values for SMBIOS structure type:
  14h	memory device mapped addresses
  15h	built-in pointing device information
  16h	portable battery
- 17h	system reset
- 18h	hardware security
- 19h	system power controls
- 1Ah	voltage probe
- 1Bh	cooling device
- 1Ch	temperature probe
- 1Dh	electrical current probe
- 1Eh	out-of-band remote access
+ 17h	(v2.2+) system reset
+ 18h	(v2.2+) hardware security
+ 19h	(v2.2+) system power controls
+ 1Ah	(v2.2+) voltage probe
+ 1Bh	(v2.2+) cooling device
+ 1Ch	(v2.2+) temperature probe
+ 1Dh	(v2.2+) electrical current probe
+ 1Eh	(v2.2+) out-of-band remote access
+ 1Fh	(v2.3+) Boot Integrity Services (BIS) entry point
+ 20h	(v2.3+) system boot information
+ 21h	(v2.3+) 64-bit memory error information
+ 22h	(v2.3+) management device attributes
+ 23h	(v2.3+) management device component
+ 24h	(v2.3+) management device threshold information
  7Eh	inactive structure
  7Fh	end of structure table indicator
 SeeAlso: #F0059
@@ -1381,9 +1453,9 @@ Bit(s)	Description	(Table F0061)
  3	BIOS characteristics not supported
  2	characteristics unknown
  1-0	reserved
-SeeAlso: #F0059,#F0062
+SeeAlso: #F0059,#F0062,#F0063
 
-Bitfields for SMBIOS BIOS v2.1+ characteristics extension:
+Bitfields for SMBIOS v2.1+ BIOS characteristics extension byte 1:
 Bit(s)	Description	(Table F0062)
  7	Smart Battery supported
  6	supports booting from IEEE 1394 device
@@ -1393,9 +1465,15 @@ Bit(s)	Description	(Table F0062)
  2	supports AGP
  1	supports legacy USB
  0	supports ACPI
-SeeAlso: #F0059,#F0061
+SeeAlso: #F0059,#F0061,#F0063
 
-(Table F0063)
+Bitfields for SMBIOS v2.3+ BIOS characteristics extension byte 2:
+Bit(s)	Description	(Table F0063)
+ 7-1	reserved for future versions
+ 0	supports BIOS Boot Specification (see #F0074)
+SeeAlso: #F0059,#F0061,#F0062
+
+(Table F0064)
 Values for SMBIOS wake-up type:
  00h	reserved
  01h	other
@@ -1405,9 +1483,10 @@ Values for SMBIOS wake-up type:
  05h	LAN remote
  06h	power switch
  07h	PCI PME#
+ 08h	AC power restored
 SeeAlso: #F0059
 
-(Table F0064)
+(Table F0065)
 Values for SMBIOS Chassis Type:
  01h	other
  02h	chassis type not known
@@ -1433,9 +1512,9 @@ Values for SMBIOS Chassis Type:
  16h	RAID chassis
  17h	rack-mount
  18h	sealed-case PC
-SeeAlso: #F0059,#F0065,#F0066
+SeeAlso: #F0059,#F0066,#F0067
 
-(Table F0065)
+(Table F0066)
 Values for SMBIOS system enclosure/chassis state:
  01h	other
  02h	state not known
@@ -1443,96 +1522,202 @@ Values for SMBIOS system enclosure/chassis state:
  04h	warning
  05h	critical
  06h	non-recoverable
-SeeAlso: #F0059,#F0064,#F0066
+SeeAlso: #F0059,#F0065,#F0067
 
-(Table F0066)
+(Table F0067)
 Values for SMBIOS system enclosure/chassis security status:
  01h	other
  02h	not known
  03h	none
  04h	external interface locked out
  05h	external interface enabled
-SeeAlso: #F0059,#F0064,#F0065
+SeeAlso: #F0059,#F0065,#F0066
 
-(Table F0067)
+(Table F0068)
+Values for SMBIOS processor type:
+ 01h	other
+ 02h	unknown processor type
+ 03h	central processor
+ 04h	math processor
+ 05h	digital signal processor (DSP)
+ 06h	video processor
+SeeAlso: #F0059,#F0069,#F0070,#F0071
+
+(Table F0069)
+Values for SMBIOS processor family:
+ 01h	other
+ 02h	unknown processor family
+ 03h	8086
+ 04h	80286
+ 05h	80386
+ 06h	80486
+ 07h	8087
+ 08h	80287
+ 09h	80387
+ 0Ah	80487
+ 0Bh	Pentium
+ 0Ch	Pentium Pro
+ 0Dh	Pentium II
+ 0Eh	Pentium-MMX
+ 0Fh	Celeron
+ 10h	Pentium II-Xeon
+ 11h	reserved for future Pentium (probably Pentium III)
+ 12h	Cyrix M1 family
+ 13h-18h reserved for future M1 versions
+ 19h	AMD K5 family
+ 1Ah-1Fh reserved for future K5 versions
+ 20h	PowerPC family
+ 21h	PowerPC 601
+ 22h	PowerPC 603
+ 23h	PowerPC 603+
+ 24h	PowerPC 604
+ 30h	DEC Alpha family (Pentium Pro for some v2.0 implementations)
+ 40h	MIPS family
+ 50h	Sun SPARC family
+ 60h	Motorola 68040 family
+ 61h	68xxx
+ 62h	68000
+ 63h	68010
+ 64h	68020
+ 65h	68030
+ 70h	Hobbit family
+ 80h	Weitek
+ 90h	Hewlett-Packard PA-RISC family
+ A0h	NEC V30 family
+ B0h	
+SeeAlso: #F0059,#F0068
+
+Bitfields for SMBIOS processor identification data:
+Bit(s)	Description	(Table F0070)
+---x86 supporting CPUID---
+ 63-32	EDX returned by CPUID with EAX=1
+ 31-0	EAX returned by CPUID with EAX=1
+---x86 not supporting CPUID---
+ 63-16	reserved
+ 15-0	contents of DX at CPU reset
+SeeAlso: #F0059,#F0068
+
+Bitfields for SMBIOS processor voltage:
+Bit(s)	Description	(Table F0071)
+ 7	=0 legacy mode
+	=1 new mode
+---bit7=0---
+ 6-3	reserved (0)
+ 2	supports 2.9V
+ 1	supports 3.3V
+ 0	supports 5.0V
+---bit7=1---
+ 6-0	current CPU voltage * 10 (12h = 1.8V)
+SeeAlso: #F0059,#F0068,#F0072
+
+Bitfields for SMBIOS processor status:
+Bit(s)	Description	(Table F0072)
+ 7	reserved (0)
+ 6	CPU socket is populated
+ 5-3	reserved (0)
+ 2-0	CPU status
+	000 unknown
+	001 CPU enabled
+	010 CPU disabled by user (via BIOS setup)
+	011 CPU disabled by BIOS (POST error)
+	100 CPU idle
+	101 reserved
+	110 reserved
+	111 other
+SeeAlso: #F0059,#F0068,#F0071
+
+(Table F0073)
+Values for SMBIOS processor upgrade:
+ 01h	other
+ 02h	unknown processor upgrade
+ 03h	daughter board
+ 04h	ZIF socket
+ 05h	replaceable piggyback
+ 06h	none
+ 07h	LIF socket
+ 08h	Slot 1
+ 09h	Slot 2
+SeeAlso: #F0059,#F0068
+
+(Table F0074)
 Call BIOS Boot Specification function 60h with:
 	STACK:	WORD	0060h (function "Get Version and Installation Check")
 		DWORD	-> WORD buffer for BIOS Boot Spec version number (BCD)
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 	   0081h if BIOS Boot not available
 Note:	the large-model C declaration is
 	  int (*entry)(int, int *) ;
-SeeAlso: #F0068,#F0069,#F0070,#F0071
+SeeAlso: #F0075,#F0076,#F0077,#F0078
 
-(Table F0068)
+(Table F0075)
 Call BIOS Boot Specification function 61h "Get IPL Device Count" with:
 	STACK:	WORD	0061h (function "Get IPL Device Count")
 		DWORD	-> WORD buffer for number of IPL devices in system
 		DWORD	-> WORD buffer for max. number of IPL devices supported
 		DWORD	-> WORD buffer for size of an IPL table entry
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 Note:	the large-model C declaration is
 	  int (*entry)(int, unsigned int *, unsigned int *, unsigned int *) ;
-SeeAlso: #F0067,#F0069,#F0070,#F0071
+SeeAlso: #F0074,#F0076,#F0077,#F0078
 
-(Table F0069)
+(Table F0076)
 Call BIOS Boot Specification function 62h with:
 	STACK:	WORD	0062h (function "Get Boot Priority and IPL Table")
 		DWORD	-> buffer for copy of boot priority stored in NVRAM
 		DWORD	-> buffer for IPL table
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 Notes:	the large-model C declaration is
 	  int (*entry)(int, unsigned char *, unsigned char *) ;
 	the size of the boot priority buffer must be at least MaxIPL bytes
-	  (see #F0068), of which the first CurrentIPL bytes are valid, with
+	  (see #F0075), of which the first CurrentIPL bytes are valid, with
 	  the lowest-valued byte indicating the device which should attempt
 	  booting first, the next lowest second, etc.
 	the size of the IPL table buffer must be at least MaxIPL + IPLsize
-	  bytes (see #F0068)
-SeeAlso: #F0067,#F0068,#F0070,#F0071
+	  bytes (see #F0075)
+SeeAlso: #F0074,#F0075,#F0077,#F0078
 
-(Table F0070)
+(Table F0077)
 Call BIOS Boot Specification function 63h "Set Boot Priority" with:
 	STACK:	WORD	0063h (function "Set Boot Priority")
-		DWORD	-> buffer containing new boot priority list (see #F0069)
-Return: AX = status (see #F0074)
+		DWORD	-> buffer containing new boot priority list (see #F0076)
+Return: AX = status (see #F0081)
 Note:	the large-model C declaration is
 	  int (*entry)(int, unsigned char *) ;
-SeeAlso: #F0067,#F0068,#F0069,#F0071
+SeeAlso: #F0074,#F0075,#F0076,#F0078
 
-(Table F0071)
+(Table F0078)
 Call BIOS Boot Specification function 64h with:
 	STACK:	WORD	0064h (function "Get IPL Device from Last Boot")
 		DWORD	-> WORD buffer for index in IPL table of boot device
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 Note:	the large-model C declaration is
 	  int (*entry)(int, unsigned int *) ;
-SeeAlso: #F0067,#F0068,#F0069,#F0070,#F0072
+SeeAlso: #F0074,#F0075,#F0076,#F0077,#F0079
 
-(Table F0072)
+(Table F0079)
 Call BIOS Boot Specification function 65h "Get Boot First" with:
 	STACK:	WORD	0065h (function "Get Boot First")
 		DWORD	-> WORD buffer for index in IPL table of current
 			  first boot device
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 Notes:	the large-model C declaration is
 	  int (*entry)(int, unsigned int *) ;
 	the boot-first device will attempt booting before the boot-priority
 	  list is considered
-SeeAlso: #F0067,#F0068,#F0069,#F0070,#F0073
+SeeAlso: #F0074,#F0075,#F0076,#F0077,#F0080
 
-(Table F0073)
+(Table F0080)
 Call BIOS Boot Specification function 66h "Set Boot First" with:
 	STACK:	WORD	0066h (function "Set Boot First")
 		DWORD	-> WORD containing index in IPL table of new device
 			  from which to attempt booting first before
 			  considering the boot priority list
-Return: AX = status (see #F0074)
+Return: AX = status (see #F0081)
 Note:	the large-model C declaration is
 	  int (*entry)(int, 
-SeeAlso: #F0067,#F0068,#F0069,#F0070,#F0072
+SeeAlso: #F0074,#F0075,#F0076,#F0077,#F0079
 
-(Table F0074)
+(Table F0081)
 Values for Plug-and-Play function status code:
  0000h	successful
  0001h	boot device resource configuration not saved to nonvolatile memory
@@ -1563,10 +1748,10 @@ Values for Plug-and-Play function status code:
  0090h	locking not supported for the GPNV handle
  0091h	GPNV already locked
  0092h	invalid GPNV lock value
-SeeAlso: #01220
+SeeAlso: #01243
 
 Format of Option ROM header:
-Offset	Size	Description	(Table F0075)
+Offset	Size	Description	(Table F0082)
  00h	WORD	AA55h signature
  02h	BYTE	length of option ROM in 512-byte pages (should be multiple 4)
  03h  4 BYTEs	standard initialization entry point
@@ -1575,7 +1760,7 @@ Offset	Size	Description	(Table F0075)
  1Ah	WORD	offset to PnP Expansion Header
 
 Format of Expansion Header:
-Offset	Size	Description	(Table F0076)
+Offset	Size	Description	(Table F0083)
  00h  4 BYTEs	signature ("$PnP" for Plug-and-Play expansion header)
  04h	BYTE	structure version number
  05h	BYTE	length of entire header in paragraphs
@@ -1587,23 +1772,23 @@ Offset	Size	Description	(Table F0076)
  0Ah	DWORD	Plug-and-Play device identifier
  0Eh	WORD	offset of manufacturer ID string in Option ROM or 0000h
  10h	WORD	offset of product name string in Option ROM or 0000h
- 12h  3 BYTEs	device type code (see #F0078)
+ 12h  3 BYTEs	device type code (see #F0085)
 		byte 0: base type (general kind of device)
 		byte 1: device subtype
 		byte 2: device programming interface
- 15h	BYTE	device indicator flags (see #F0077)
+ 15h	BYTE	device indicator flags (see #F0084)
  16h	WORD	Boot Connection Vector offset (real/protected mode) or 0000h
-		(see #F0082)
+		(see #F0089)
  18h	WORD	Disconnect Vector offset (real/protected mode) or 0000h
 		far-called by system BIOS is boot attempt failed
  1Ah	WORD	bootstrap entry point (real/protected mode) or 0000h
  1Ch	WORD	reserved (0)
  1Eh	WORD	Static Resource Information offset (real/prot mode) or 0000h
 		should be used only by non-PnP devices to make them PnP-aware
-		  (see #F0083)
+		  (see #F0090)
 
 Bitfields for Plug-and-Play device indicator flags:
-Bit(s)	Description	(Table F0077)
+Bit(s)	Description	(Table F0084)
  7	supports Device Driver Initialization model
  6	may be shadowed in RAM
  5	may be read cached
@@ -1612,16 +1797,16 @@ Bit(s)	Description	(Table F0077)
  2	device is Initial Program Load (IPL, i.e. boot) device
  1	device is Input device
  0	device is Display device
-SeeAlso: #F0078
+SeeAlso: #F0085
 
-(Table F0078)
+(Table F0085)
 Values for Plug-and-Play device type code:
 Type	Subtype		Description
  00h	---	reserved
  01h	---	mass storage
 	00h	  SCSI controller
 	01h	  IDE controller
-			programming interface (see #F0080)
+			programming interface (see #F0087)
 	02h	  floppy controller (NEC 765-compatible)
 	03h	  IPI controller
 	04h	  RAID controller
@@ -1691,9 +1876,9 @@ Type	Subtype		Description
 			programming interface 10h = OpenHCI Host Controller
 	04h	  Fiber Channel
 	80h	  other
-SeeAlso: #F0077,#F0079,#00857
+SeeAlso: #F0084,#F0086,#00878
 
-(Table F0079)
+(Table F0086)
 Values for Plug-and-Play generic EISA device ID:
  PNP0xxx	system devices
  PNP00xx	  interrupt controller
@@ -1788,19 +1973,19 @@ Values for Plug-and-Play generic EISA device ID:
  PNPB02F		joystick/game port
  ACPI0001	three-wire serial memory device
  ACPI0002	two-wire serial memory device
-SeeAlso: #F0078,#F0081
+SeeAlso: #F0085,#F0088
 
 Bitfields for Plug-and-Play IDE programming interface:
-Bit(s)	Description	(Table F0080)
+Bit(s)	Description	(Table F0087)
  7	bus mastering (read-only)
  6-4	reserved (read-only)
  3	secondary IDE mode bit is writable (read-only)
  2	secondary IDE mode (0 = legacy, 1 = native)
  1	primary IDE mode bit is writable (read-only)
  0	primary IDE mode (0 = legacy, 1 = native)
-SeeAlso: #F0078
+SeeAlso: #F0085
 
-(Table F0081)
+(Table F0088)
 Values for data tags:
  22h	IRQ descriptor, no flags
  23h	IRQ descriptor, with flags
@@ -1811,9 +1996,9 @@ Values for data tags:
  47h	I/O port descriptor
  4Bh	fixed-location I/O port descriptor
  78h	"END_TAG" end of resource descriptors
-SeeAlso: #F0079
+SeeAlso: #F0086
 
-(Table F0082)
+(Table F0089)
 Values Boot Connection Vector is called with:
 	AX = which vectors to hook
 	   bit 2: connect as IPL (INT 13)
@@ -1822,16 +2007,16 @@ Values Boot Connection Vector is called with:
 	ES:DI -> system BIOS PnP Installation Check Structure
 	BX = Card Select Number for this card (ISA bus only)
 	DX = read data port (ISA only) or FFFFh
-SeeAlso: #F0083
+SeeAlso: #F0090
 
-(Table F0083)
+(Table F0090)
 Values Static Resource Information vector is called with:
 	ES:DI -> buffer for device's static resource config info (at least 1024
 		  bytes)
-SeeAlso: #F0082
+SeeAlso: #F0089
 
 Format of Plug-and-Play System Device Node:
-Offset	Size	Description	(Table F0084)
+Offset	Size	Description	(Table F0091)
  00h	WORD	size of device node in bytes
  02h	BYTE	device node number/handle
  03h	DWORD	EISA product identifier
@@ -1856,7 +2041,7 @@ Offset	Size	Description	(Table F0084)
 --------m-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - POST Memory Manager Specification (PMM) v1.0
 InstallCheck:	scan paragraph boundaries E000h to FFFFh for signature string
-	  "$PMM" followed by a valid PMM header structure (see #F0085)
+	  "$PMM" followed by a valid PMM header structure (see #F0092)
 Note:	the PMM is only available at system boot -- between the completion
 	  of the memory check and the call to INT 19; this includes Option
 	  ROM initialization and Plug-and-Play Boot Connection Vectors, but
@@ -1864,22 +2049,22 @@ Note:	the PMM is only available at system boot -- between the completion
 SeeAlso: INT 2F/AX=4300h,INT 67/AH=40h
 
 Format of POST Memory Manager Specification structure:
-Offset	Size	Description	(Table F0085)
+Offset	Size	Description	(Table F0092)
  00h  4 BYTEs	signature "$PMM"
  04h	BYTE	structure version number (01h)
  05h	BYTE	length of structure in bytes
  06h	BYTE	checksum of structure (value needed to force byte-wise sum
 		of entire structure to be 00h)
- 07h	DWORD	-> PMM entry point (real mode only) (see #F0086)
+ 07h	DWORD	-> PMM entry point (real mode only) (see #F0093)
  0Bh  5 BYTEs	reserved (0)
 SeeAlso: #F0024
 
-(Table F0086)
+(Table F0093)
 Call POST Memory Manager Specification entry point with:
 	STACK:	WORD	function number
-			0000h pmmAllocate (see #F0087)
-			0001h pmmFind (see #F0088)
-			0002h pmmDeallocate (see #F0089)
+			0000h pmmAllocate (see #F0094)
+			0001h pmmFind (see #F0095)
+			0002h pmmDeallocate (see #F0096)
 		additional parameters vary by function
 Notes:	PMM calls use standard large-model C-language calling conventions
 	the caller must provide at least 256 bytes of stack space; BIOSes
@@ -1889,7 +2074,7 @@ Notes:	PMM calls use standard large-model C-language calling conventions
 	  Option ROM's code to provide sufficient stack space when calling
 	  the PMM)
 
-(Table F0087)
+(Table F0094)
 Call PMM "pmmAllocate" entry point with:
 	STACK:	WORD	0000h (function "pmmAllocate")
 		DWORD	length of memory block, in paragraphs
@@ -1913,25 +2098,25 @@ Notes:	at least one of bits 0 and 1 must be set in the option flags; both
 	  whose highest bit is set or highest six bits are all clear are
 	  reserved for the BIOS, and the BIOS may flag attempts to use such
 	  reserved handles
-SeeAlso: #F0086,#F0088,#F0089
+SeeAlso: #F0093,#F0095,#F0096
 
-(Table F0088)
+(Table F0095)
 Call PMM "pmmFind" entry point with:
 	STACK:	WORD	0001h (function "pmmFind")
 		DWORD	handle to be found
 Return: DX:AX = 32-bit physical address of allocated memory block, or
 	      00000000h if handle is not in use
 Desc:	get the address of the memory block associated with the given handle
-SeeAlso: #F0086,#F0087,#F0089
+SeeAlso: #F0093,#F0094,#F0096
 
-(Table F0089)
+(Table F0096)
 Call PMM "pmmDeallocate" entry point with:
 	STACK:	WORD	0002h (function "pmmDeallocate")
 		DWORD	physical address of block (as returned by pmmAllocate)
 Return: DX:AX = FFFFFFFFh on error
 Notes:	the memory block is cleared to all zeros by the PMM
 	invalid functions (0003h-FFFFh) return DX:AX = FFFFFFFFh
-SeeAlso: #F0086,#F0087,#F0088
+SeeAlso: #F0093,#F0094,#F0095
 --------b-@xxxxxxxx--------------------------
 CALL xxxxh:xxxxh - BIOS Boot Specification (BBS)
 InstallCheck:	perform Plug-and-Play installation check, then call PnP
@@ -1976,17 +2161,15 @@ CALL xxxxh:xxxxh -
 InstallCheck:	
 SeeAlso: 
 --------!---Admin----------------------------
-Highest Table Number = F0089
+Highest Table Number = F0096
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER59A through INTER59D (preferably the original
+quartet of archives named INTER60A through INTER60D (preferably the original
 authenticated PKZIP archives), and the utility and hypertext conversion
-programs in three additional archives called INTER59E.ZIP to INTER59G.ZIP
+programs in three additional archives called INTER60E.ZIP to INTER60G.ZIP
 
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
 --------!---CONTACT_INFO---------------------
 Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
 FIDO: Ralf Brown 1:129/26.1
-	or post a message to me in the DR_DEBUG echo (I probably won't see it
-	unless you address it to me)

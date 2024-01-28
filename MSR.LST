@@ -1,5 +1,5 @@
-MODEL-SPECIFIC REGISTERS	Release 59		Last change 30aug98
-Copyright (c) 1996,1997,1998 Ralf Brown
+MODEL-SPECIFIC REGISTERS	Release 60		Last change 03jan99
+Copyright (c) 1996,1997,1998,1999 Ralf Brown
 
 --------!---Note-----------------------------
 Note:	except where mentioned otherwise, Pentium information also applies to
@@ -392,8 +392,11 @@ Values for Pentium/6x86MX Event Counter event type:
  1Dh	I/O cycle
  1Eh	non-cacheable memory references
  1Fh	pipeline stalled by Address Generation Interlock
- 20h	reserved
- 21h	reserved
+ 20h	source/destination conflict
+ 21h	(undoc) decoding stalls (could only decode one instruction in a
+	  particular clock cycle, and that instruction was potentially
+	  pairable; i.e. if the following instruction could have executed in
+	  the V pipe, it didn't because it wasn't decoded in time)
  22h	floating-point operations
  23h	Breakpoint 0 match
  24h	Breakpoint 1 match
@@ -590,7 +593,7 @@ MSR 00000054h - Pentium Pro - ???
 MSR 00000079h - Pentium Pro, PentiumII - BIOS UPDATE TRIGGER
 Size:	32 bits
 Access:	Write
-Desc:	writing the linear address of a microcode update block (see #00512)
+Desc:	writing the linear address of a microcode update block (see #00533)
 	  to this MSR cause the CPU to initiate a microcode load
 SeeAlso: INT 15/AX=D042h/BL=01h,MSR 0000008Bh
 ----------S00000082--------------------------
@@ -1455,7 +1458,7 @@ Bit(s)	Description	(Table R0053)
  5	enable Power Interrupt
  4	enable Flush Snooping
  3	enable Snoop Input
- 2	address line A20 mask (see also #02729,#P0415)
+ 2	address line A20 mask (see also #02753,#P0415)
  1	enable cache parity checking
  0	Cache Parity Error occurred
 SeeAlso: #R0054,#R0055
@@ -1769,14 +1772,11 @@ Highest Table Number = R0061
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER59A through INTER59D (preferably the original
+quartet of archives named INTER60A through INTER60D (preferably the original
 authenticated PKZIP archives), and the utility and hypertext conversion
-programs in three additional archives called INTER59E.ZIP to INTER59G.ZIP.
+programs in three additional archives called INTER60E.ZIP to INTER60G.ZIP.
 
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
 --------!---CONTACT_INFO---------------------
 Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
 FIDO: Ralf Brown 1:129/26.1
-	or post a message to me in the DR_DEBUG echo (I probably won't see it
-	unless you address it to me)
-CIS:  >INTERNET:ralf@pobox.com

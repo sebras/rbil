@@ -1,4 +1,4 @@
-OPCODE LIST			Release 59		Last change 30aug98
+OPCODE LIST			Release 60		Last change 03jan99
 
 ------------------  OPCODE.LST	----------------------------
 This is DOC 'bout undocument command and document command
@@ -7,26 +7,33 @@ Chips specific stuffs.
  -----------------------------------------------------------
  (C) (P) Potemkin's Hackers Group 1994...1998
  -----------------------------------------------------------
-Revision 3.81	PRELIMINARY			 20 Jul 1998
+Revision 4.00	PRELIMINARY			27 Sep 1998
  -----------------------------------------------------------
-All Your messages send to ->
-E-mail: phg@dialup.ptt.ru
-	So, usually I change E-mails like socks, but this
-	one is stable and working
--------------------------------------------------------------
+Latest versions available on Web:
+	http://www.chat.ru/~phg
+Our contact E-mail:
+	avp@gdev.msk.ru
+ICQ:
+	17806489
+ ------------------------------------------------------------
+[New In revision 3.90]
+  o  Update steppings
+  o  Update Katmai Info
+  o  Some reformating :)
+  -----------------------------------------------------------
 [New In revision 3.81]
   o  Update steppings
   o  Add Vendor-specified instruction times
   o  Add some new info in appendix G.
   o  Some bugfixes
--------------------------------------------------------------
+  -----------------------------------------------------------
 [New In revision 3.80]
   o  Cyrix EMMX instructions
   o  AMD 3D instructions
   o  IA-MMX2 codes
   o  News in CPUID
   o  Update Steppings
---------------------------------------------------------------
+  ------------------------------------------------------------
 [New In revision 3.51]
   o  Some new Merced Instructions  (IA-32 and IA-64)
   o  Some Katmai instructions (IA MMX-2)
@@ -9287,21 +9294,30 @@ Pentium	 Pro (P6)	      06h	0xh ; Engineering Sample 133MHz 0.6mkm
   ------------------------------------------------------------
 Pentium II	    C0	      06h	33h
 		    C1	      06h	34h
-(P6L,Klamath)	    dA0	      06h	50h
+(P6L,Klamath) dA0/mdA0/mmdA0  06h	50h
 		    dA1	      06h	51h
+	      dB0/mdB0/mmdB0  06h	52h
 		   mdB0	      06h	52h
 		  mmdB0			52h
   ------------------------------------------------------------
 OverDrive for		      16h	3xh
 Socket 8  (P6T)
   ------------------------------------------------------------
+Pentium II Xeon	    B0	       06h	52h
+  ------------------------------------------------------------
 Celeron		    dA0	       06h	50h
 		    dA1	       06h	51h
+		    dB0	       06h	52h
+		    mA0	       06h	60h	(128KB cache)
+  ------------------------------------------------------------
+Pentium II	    TdB0       16h	32h
+Overdrive
   ------------------------------------------------------------
 
 Note: For detection Cyrix's chips refer to APPENDIX A1.
-Note: Then Intel Pentium and higher chips, included APIC and setup as
-      dual processor, wheys id code changed from 0xxxh to 2xxxh.
+Note: Then Intel Pentium and higher chips, sometimes include build-in APIC
+      and setup such chips on motherbard as second CPU, change id code
+      from 0xxxh to 2xxxh.
 
 --------------------------------------------
 APPENDIX C0
@@ -9851,13 +9867,31 @@ SS	=2^(SS)
 
 Note:
       <No comments> this code are for 8086 and all other processors
-      NECs  : for NEC/Sony V20/V30/V40/V50 and all clones and upgrades
-      186+  : for 186/188 and higher
-      286+  : for 80286 and higher
-      386+  : for 80386 and higher
-      486+  : for i486 and higher
-      Pentium : for Pentiym
+      NEC V20+	   : for NEC V-seria only
+      186+	   : for 186/188 and higher
+      286+	   : for 80286 and higher
+      386+	   : for 80386 and higher
+      486+	   : for i486 and higher
+      Cyrix M5+	   : for Cyrix only (Cx486S and higher)
+      Pentium+	   : for Pentium
+      Pentium Pro+ : for Pentium Pro and higher
+      Pentium II+  : for Pentium II  and higher
+      MMX	   : Intel MMX
+      AMD 3D	   : AMD 3D MMX Extensions
+      Cyrix EMMX   : Cyrix Extended MMX
+      KNI/MMX2	   : Katmai New Instructions/Intel MMX2
       <specified> : specified
+
+	mem8	- Memory Operand 8 bit
+	mem	- Memory operand 16/32 or more bit
+	m64	- Memory operand 64-bit
+
+	reg8	- Register 8 bit
+	reg	- Register 16/32 bit
+	mm	- MMX register	Integer (64-bit)
+	xmm	- MMX2 register F.P	(128-bit)
+	imm8	- Immediate 8 bit
+	imm	- Immediate 16/32 bit
 
 	----------------------- [TABLE00]: ---------------------------
 
@@ -9876,9 +9910,9 @@ Note:
 0C	OR	AL,imm8
 0D	OR	AX,imm
 0E	PUSH	CS
-0F	POP	CS	; 8088 non CMOS versions
-	>>>  TABLE 01	; NECs & 286+
-	Invalid Opcode	; 186/188
+0F	POP	CS				; 8088 non CMOS versions
+	>>>  TABLE 01				; NECs & 286+
+	Invalid Opcode				; 186/188
 
 10	ADC	mem8,reg8
 11	ADC	mem,reg
@@ -9965,22 +9999,22 @@ Note:
 5E	POP	SI
 5F	POP	DI
 
-60	PUSHA			;NECs & 186+
-61	POPA			;NECs & 186+
-62	BOUND	reg,mem		;NECs & 186+
-63	ARPL	reg,mem		;286+ PM
-64	FS:	segment prefix	;386+
-65	GS:	segment prefix	;386+
-66	Memory access size prefix	;386+
-67	Operands size prefix		;386+
-68	PUSH	imm		;NECs & 186+
-69	IMUL	reg,imm,mem	;NECs & 186+
-6A	PUSH	imm8		;NECs & 186+
-6B	IMUL	reg,imm8,mem	;NECs & 186+
-6C	INSB			;186+
-6D	INS			;186+
-6E	OUTSB			;186+
-6F	OUTS			;186+
+60	PUSHA					; NECs & 186+
+61	POPA					; NECs & 186+
+62	BOUND	reg,mem				; NECs & 186+
+63	ARPL	reg,mem				; 286+ PM
+64	FS:	segment prefix			; 386+
+65	GS:	segment prefix			; 386+
+66	Memory access size prefix		; 386+
+67	Operands size prefix			; 386+
+68	PUSH	imm				; NECs & 186+
+69	IMUL	reg,imm,mem			; NECs & 186+
+6A	PUSH	imm8				; NECs & 186+
+6B	IMUL	reg,imm8,mem			; NECs & 186+
+6C	INSB					; 186+
+6D	INS					; 186+
+6E	OUTSB					; 186+
+6F	OUTS					; 186+
 
 70	JO	rel8
 71	JNO	rel8
@@ -10025,15 +10059,15 @@ Note:
 96	XCHG	AX,SI
 97	XCHG	AX,DI
 98	CBW
-66 98	CWDE		;386+
+66 98	CWDE					; 386+
 99	CWD
-66 99	CDQ		;386+
+66 99	CDQ					; 386+
 9A	CALL	FAR	seg:offs
 9B	WAIT/FWAIT
 9C	PUSHF
-66 9C	PUSHFD		; 386+
+66 9C	PUSHFD					; 386+
 9D	POPF
-66 9D	POPFD		; 386+
+66 9D	POPFD					; 386+
 9E	SAHF
 9F	LAHF
 
@@ -10079,8 +10113,8 @@ C4	LES	reg,mem
 C5	LDS	reg,mem
 C6	code extention [10]
 C7	code extention [11]
-C8	ENTER	imm,imm8	;NECs & 186+
-C9	LEAVE			;NECs & 186+
+C8	ENTER	imm,imm8			; NECs & 186+
+C9	LEAVE					; NECs & 186+
 CA	RET	FAR	imm
 CB	RET	FAR
 CC	INT	3
@@ -10092,18 +10126,18 @@ D0	code extention	[12]
 D1	code extention	[13]
 D2	code extention	[14]
 D3	code extention	[15]
-D4	AAM	imm8		 ; Note: NECs w/o imm8 but D4 0A only
-D5	AAD	imm8		 ; Note: NECs w/o imm8 but D4 0A only
-D6	SETALC			 ;286+
+D4	AAM	imm8				; NECs w/o imm8 but D4 0A only
+D5	AAD	imm8				; NECs w/o imm8 but D4 0A only
+D6	SETALC					; 286+
 D7	XLAT
-D8-DF	ESC	imm6,mem	 ; Note: Refer to future part
-				 ; Cooprocessor commands.
+D8-DF	ESC	imm6,mem			; Note: Refer to Appendix F1
+						; (Cooprocessor commands).
 
 E0	LOOPNZ	rel8
 E1	LOOPZ	rel8
 E2	LOOP	rel8
 E3	JCXZ	rel8
-66 E3	JECXZ	rel8		 ; 386+
+66 E3	JECXZ	rel8				; 386+
 E4	IN	AL,imm8
 E5	IN	AX,imm8
 E6	OUT	imm8,AL
@@ -10118,9 +10152,10 @@ EE	OUT	DX,AL
 EF	OUT	DX,AX
 
 F0	LOCK	prefix
-F1	SMI			 ; AMD Am386/486DXLV
+F1	SMI					; AMD Am386/486DXLV
 F2	REPNZ
-F3	REP/REPZ
+F3	REP/REPZ				; Used in KNI/MMX2 as
+						; Modificator !!!!!!
 F4	HLT
 F5	CMC
 F6	code extention [16]
@@ -10137,314 +10172,327 @@ FF	code extention [19]
 	----------------------- [TABLE 01]: ---------------------------
 Note: First Byte of Operation is 0Fh
 
-00	Extended Opcode 20				; 286+
-01	Extended Opcode 21				; 286+
-02	LAR	reg,mem					; 286+
-03	LSL	reg,mem					; 286+
-04	LOADALL			 ; Alternative 286	; 286 only
-05	LOADALL			 ; 286			; 286 only
-05	SYSCALL			 ; AMD K6
-06	CLTS						; 286+
-07	LOADALL		 ; i386,486			; 386-486, Never Pentium
-	RES3		 ; AMD Am386zXLV
-	RES4		 ; AMD Am486DXLV
-	ICERET		 ; IBM 386SLC,486SLC,486SLC2
-	SYSRET		 ; AMD K6
-08	INVD						; 486+
-09	WBINVD						; 486+
+00	Extended Opcode 20			; 286+
+01	Extended Opcode 21			; 286+
+02	LAR	reg,mem				; 286+
+03	LSL	reg,mem				; 286+
+04	LOADALL					; 286 only
+05	LOADALL					; 286 only
+05	SYSCALL					; AMD K6
+06	CLTS					; 286+
+07	LOADALL					; 386,486, None Pentium+
+	RES3					; AMD Am386zXLV
+	RES4					; AMD Am486DXLV
+	ICERET					; IBM 386SLC,486SLC,486SLC2
+	SYSRET					; AMD K6
+08	INVD					; 486+
+09	WBINVD					; 486+
 0A	Reserved, INT 6
-0B	UD2		; all, but documented on Pentium Pro only
+0B	UD2					; all, but documented on
+						; Pentium Pro only
 0C
-0D	code extention [25]	; AMD 3D
-0E	FEMMS			; AMD 3D
-0F	>>> TABLE 02
-10	UMOV	mem8,reg8	; Really different op. space	; 386-486,Never Pentium
-				; on AMD Amz86zXLV, never P6, Cx5x86+
-	TEST1	mem8,CL		; NEC V20+
-	MOVSS	???		; IA-MMX2
-	MOVUPS	???		; IA-MMX2
-11	UMOV	mem,reg		; see 0Fh,10h
-	TEST1	mem,CL		; NEC V20+
-	MOVSS	???		; IA-MMX2
-	MOVLPS	???		; IA-MMX2
-12	UMOV	reg8,mem8	; see 0Fh,10h
-	CLEAR1	mem8,CL		; NEC V20+
-	MOVLPS	???		; IA-MMX2
-13	UMOV	reg,mem		; see 0Fh,10h
-	CLEAR1	mem,CL		; NEC V20+
-	MOVLPS	???		; IA-MMX2
-14	SET1	mem8,CL		; NEC V20+
-	UNPCKLPS ???		; IA-MMX2
-15	SET1	mem,CL		; NEC V20+
-	UNPCKHPS ???		; IA-MMX2
-16	NOT1	mem8,CL		; NEC V20+
-	MOVHPS	???		; IA-MMX2
-17	NOT1	mem,CL		; NEC V20+
-	MOVHPS	???		; IA-MMX2
-18	TEST1	mem8,imm8 ; NEC V20+
-	code extension [26]	; IA-MMX2
-19	TEST1	mem,imm8  ; NEC V20+
-1A	CLEAR1	mem8,imm8 ; NEC V20+
-1B	CLEAR1	mem,imm8  ; NEC V20+
-1C	SET1	mem8,imm8 ; NEC V20+
-1D	SET1	mem,imm8  ; NEC V20+
-1E	NOT1	mem8,imm8 ; NEC V20+
-1F	NOT1	mem,imm8  ; NEC V20+
+0D	code extention [25]			; AMD 3D
+0E	FEMMS					; AMD 3D
+0F	>>> TABLE 02				; AMD 3D
 
-20	MOV	reg32,CRn	; 386+
-	ADD4S			; NEC V20+
-21	MOV	reg32,DRn	; 386+
-22	MOV	CRn,reg32	; 386+
-	SUB4S			; NEC V20+
-23	MOV	DRn,reg32	; 386+
-24	MOV	reg32,TRn	; 386-486 only (Pentium never have TRs)
+10	UMOV	mem8,reg8			; Really different op. space
+						; 386-486, Never Pentium+
+						; on AMD Amz86zXLV,never Cx5x86+
+	TEST1	mem8,CL				; NEC V20+
+	MOVSS	xmm,xmm/mem			; KNI/MMX2	(F3 0F 10)
+	MOVUPS	xmm,xmm/mem			; KNI/MMX2
+11	UMOV	mem,reg				; see 0Fh,10h
+	TEST1	mem,CL				; NEC V20+
+	MOVSS	xmm/mem,xmm			; KNI/MMX2	(F3 0F 11)
+	MOVUPS	xmm/mem,xmm			; KNI/MMX2
+12	UMOV	reg8,mem8			; see 0Fh,10h
+	CLEAR1	mem8,CL				; NEC V20+
+	MOVLPS	xmm,xmm/mem			; KNI/MMX2
+13	UMOV	reg,mem				; see 0Fh,10h
+	CLEAR1	mem,CL				; NEC V20+
+	MOVLPS	xmm/mem,xmm			; KNI/MMX2
+14	SET1	mem8,CL				; NEC V20+
+	UNPCKLPS xmm,xmm/mem			; KNI/MMX2
+15	SET1	mem,CL				; NEC V20+
+	UNPCKHPS xmm,xmm/mem			; KNI/MMX2
+16	NOT1	mem8,CL				; NEC V20+
+	MOVHPS	xmm,xmm/mem			; KNI/MMX2
+17	NOT1	mem,CL				; NEC V20+
+	MOVHPS	xmm/mem,xmm			; KNI/MMX2
+18	TEST1	mem8,imm8			; NEC V20+
+	code extension [26]			; KNI/MMX2
+19	TEST1	mem,imm8			; NEC V20+
+1A	CLEAR1	mem8,imm8			; NEC V20+
+1B	CLEAR1	mem,imm8			; NEC V20+
+1C	SET1	mem8,imm8			; NEC V20+
+1D	SET1	mem,imm8			; NEC V20+
+1E	NOT1	mem8,imm8			; NEC V20+
+1F	NOT1	mem,imm8			; NEC V20+
+
+20	MOV	reg32,CRn			; 386+
+	ADD4S					; NEC V20+
+21	MOV	reg32,DRn			; 386+
+22	MOV	CRn,reg32			; 386+
+	SUB4S					; NEC V20+
+23	MOV	DRn,reg32			; 386+
+24	MOV	reg32,TRn			; 386-486 only, and Cyrix
 25
-26	MOV	TRn,reg32	; 386-486 only
-	CMPS4S			; NEC V20+
+26	MOV	TRn,reg32			; 386-486 only, and Cyrix
+	CMPS4S					; NEC V20+
 27
-28	ROL4	mem8		; NEC V20+
-	MOVAPS	 ???		; IA-MMX2
-29	MOVAPS	 ???		; IA-MMX2
-2A	ROL4	mem8		; NEC V20+
-	CVTPI2PS  ???		; IA-MMX2
-	CVTSI2SS  ???		; IA-MMX2
-2B	MOVNTPS	  ???		; IA-MMX2
-2C	CVTTPS2PI ???		; IA-MMX2
-	CVTTSS2SI ???		; IA-MMX2
-2D	CVTPS2PI  ???		; IA-MMX2
-	CVTSS2SI  ???		; IA-MMX2
-2E	UCOMISS	  ???		; IA-MMX2
-2F	COMISS	  ???		; IA-MMX2
+28	ROL4	  mem8				; NEC V20+
+	MOVAPS	  xmm,xmm/mem			; KNI/MMX2
+29	MOVAPS	  xmm/mem,xmm			; KNI/MMX2
+2A	ROL4	  mem8				; NEC V20+
+	CVTPI2PS  xmm,mm/mem			; KNI/MMX2
+	CVTSI2SS  xmm,r32/mem			; KNI/MMX2	(F3 0F 2A)
+2B	MOVNTPS	  xmm/mem,xmm			; KNI/MMX2
+2C	CVTTPS2PI mm,xmm/mem			; KNI/MMX2
+	CVTTSS2SI r32,xmm/mem			; KNI/MMX2	(F3 0F 2C)
+2D	CVTPS2PI  mm,xmm/mem			; KNI/MMX2
+	CVTSS2SI  r32,xmm/mem			; KNI/MMX2	(F3 0F 2D)
+2E	UCOMISS	  xmm,xmm/mem			; KNI/MMX2
+2F	COMISS	  xmm,xmm/mem			; KNI/MMX2
 
-30	WRMSR			; Pentium, IBM 386SLC,486SLC/SLC2
-31	RDTSC			; Pentium
-	INS	reg8,reg8	; NEC V20+   ; Note: NECINS
-32	RDMSR			; Pentium, IBM 386SLC,486SLC/SLC2
-33	EXT	reg8,reg8	; NEC V20+
-	RDPMC			; P6
-34	SYSENTER		; Pentium II
-35	SYSEXIT			; Pentium II
-36	RDSHR	reg/mem32	; Cx6x86MX  (SMM only)
-37	WRSHR	reg/mem32	; Cx6x86MX  (SMM only)
+30	WRMSR					; Pentium+, IBM 386SLC,486SLC/SLC2
+31	RDTSC					; Pentium+
+	INS	reg8,reg8			; NEC V20+   ; Note: NECINS
+32	RDMSR					; Pentium, IBM 386SLC,486SLC/SLC2
+33	EXT	reg8,reg8			; NEC V20+
+	RDPMC					; Pentium Pro+
+34	SYSENTER				; Pentium II+
+35	SYSEXIT					; Pentium II+
+36	RDSHR	reg/mem32			; Cx6x86MX  (SMM only)
+37	WRSHR	reg/mem32			; Cx6x86MX  (SMM only)
+38
+39
+3A
+3B
+3C
+3D
+3E
+3F
 
-40	CMOVO	reg,mem	  ; P6
-41	CMOVNO	reg,mem	  ; P6
-42	CMOVC	reg,mem	  ; P6
-43	CMOVNC	reg,mem	  ; P6
-44	CMOVZ	reg,mem	  ; P6
-45	CMOVNZ	reg,mem	  ; P6
-46	CMOVA	reg,mem	  ; P6
-47	CMOVNA	reg,mem	  ; P6
-48	CMOVS	reg,mem	  ; P6
-49	CMOVNS	reg,mem	  ; P6
-4A	CMOVP	reg,mem	  ; P6
-4B	CMOVNP	reg,mem	  ; P6
-4C	CMOVL	reg,mem	  ; P6
-4D	CMOVNL	reg,mem	  ; P6
-4E	CMOVNG	reg,mem	  ; P6
-4F	CMOVG	reg,mem	  ; P6
+40	CMOVO	reg,mem				; Pentium Pro+
+41	CMOVNO	reg,mem				; Pentium Pro+
+42	CMOVC	reg,mem				; Pentium Pro+
+43	CMOVNC	reg,mem				; Pentium Pro+
+44	CMOVZ	reg,mem				; Pentium Pro+
+45	CMOVNZ	reg,mem				; Pentium Pro+
+46	CMOVA	reg,mem				; Pentium Pro+
+47	CMOVNA	reg,mem				; Pentium Pro+
+48	CMOVS	reg,mem				; Pentium Pro+
+49	CMOVNS	reg,mem				; Pentium Pro+
+4A	CMOVP	reg,mem				; Pentium Pro+
+4B	CMOVNP	reg,mem				; Pentium Pro+
+4C	CMOVL	reg,mem				; Pentium Pro+
+4D	CMOVNL	reg,mem				; Pentium Pro+
+4E	CMOVNG	reg,mem				; Pentium Pro+
+4F	CMOVG	reg,mem				; Pentium Pro+
 
-50	PAVEB		mm,mm/m64	; Cyrix EMMX
-	MOVMSKPS	???		; IA-MMX2
-51	PADDSIW		mm,mm/m64	; Cyrix EMMX
-	SQRTPS		???		; IA-MMX2
-	SQRTSS		???		; IA-MMX2
-52	PMAGW		mm,mm/m64	; Cyrix EMMX
-	PSQRTPS		???		; IA-MMX2
-	PSQRTSS		???		; IA-MMX2
-53	RCPPS		???		; IA-MMX2
-	RCPSS		???		; IA-MMX2
-54	PDISTIB		mm,m64		; Cyrix EMMX
-	ANDPS		???		; IA-MMX2
-55	PSUBSIW		mm,mm/m64	; Cyrix EMMX
-	ANDNPS		???		; IA-MMX2
-56	ORPS		???		; IA-MMX2
-57	XORPS		???		; IA-MMX2
-58	PMVZB		mm,m64		; Cyrix EMMX
-	ADDPS		???		; IA-MMX2
-	ADDSS		???		; IA-MMX2
-59	PMULHRW		mm,mm/m64	; Cyrix EMMX
-	MULPS		???		; IA-MMX2
-	MULSS		???		; IA-MMX2
-5A	PMVNZB		mm,m64		; Cyrix EMMX
-5B	PMVLZB		mm,m64		; Cyrix EMMX
-5C	PMVGEZB		mm,m64		; Cyrix EMMX
-	SUBPS		???		; IA-MMX2
-	SUBSS		???		; IA-MMX2
-5D	PMULHRIW	mm,mm/m64	; Cyrix EMMX
-	MINPS		???		; IA-MMX2
-	MINSS		???		; IA-MMX2
-5E	PMACHRIW	mm,m64		; Cyrix EMMX
-	DIVPS		???		; IA-MMX2
-	DIVSS		???		; IA-MMX2
-5F	MAXPS		???		; IA-MMX2
-	MAXSS		???		; IA-MMX2
+50	PAVEB		mm,mm/m64		; Cyrix EMMX
+	MOVMSKPS	r32,xmm			; KNI/MMX2
+51	PADDSIW		mm,mm/m64		; Cyrix EMMX
+	SQRTPS		xmm,xmm/mem		; KNI/MMX2
+	SQRTSS		xmm,xmm/mem		; KNI/MMX2	(F3 0F 51)
+52	PMAGW		mm,mm/m64		; Cyrix EMMX
+	PSQRTPS		xmm,xmm/mem		; KNI/MMX2
+	PSQRTSS		xmm,xmm/mem		; KNI/MMX2	(F3 0F 52)
+53	RCPPS		xmm,xmm/mem		; KNI/MMX2
+	RCPSS		xmm,xmm/mem		; KNI/MMX2	(F3 0F 53)
+54	PDISTIB		mm,m64			; Cyrix EMMX
+	ANDPS		xmm,xmm/mem		; KNI/MMX2
+55	PSUBSIW		mm,mm/m64		; Cyrix EMMX
+	ANDNPS		xmm,xmm/mem		; KNI/MMX2
+56	ORPS		xmm,xmm/mem		; KNI/MMX2
+57	XORPS		xmm,xmm/mem		; KNI/MMX2
+58	PMVZB		mm,m64			; Cyrix EMMX
+	ADDPS		xmm,xmm/mem		; KNI/MMX2
+	ADDSS		xmm,xmm/mem		; KNI/MMX2	(F3 0F 58)
+59	PMULHRW		mm,mm/m64		; Cyrix EMMX
+	MULPS		xmm,xmm/mem		; KNI/MMX2
+	MULSS		xmm,xmm/mem		; KNI/MMX2	(F3 0F 59)
+5A	PMVNZB		mm,m64			; Cyrix EMMX
+5B	PMVLZB		mm,m64			; Cyrix EMMX
+5C	PMVGEZB		mm,m64			; Cyrix EMMX
+	SUBPS		xmm,xmm/mem		; KNI/MMX2
+	SUBSS		xmm,xmm/mem		; KNI/MMX2	(F3 0F 5C)
+5D	PMULHRIW	mm,mm/m64		; Cyrix EMMX
+	MINPS		xmm,xmm/mem		; KNI/MMX2
+	MINSS		xmm,xmm/mem		; KNI/MMX2	(F3 0F 5D)
+5E	PMACHRIW	mm,m64			; Cyrix EMMX
+	DIVPS		xmm,xmm/mem		; KNI/MMX2
+	DIVSS		xmm,xmm/mem		; KNI/MMX2	(F3 0F 5E)
+5F	MAXPS		xmm,xmm/mem		; KNI/MMX2
+	MAXSS		xmm,xmm/mem		; KNI/MMX2	(F3 0F 5F)
 
-60	PUNPCKLBW	mm,mm/m32	; MMX
-61	PUNPCKLWD	mm,mm/m32	; MMX
-62	PUNPCKLDQ	mm,mm/m32	; MMX
-63	PACKSSWB	mm,mm/m64	; MMX
-64	PCMPGTB		mm,mm/m64	; MMX
-65	PCMPGTW		mm,mm/m64	; MMX
-66	PCMPGTD		mm,mm/m64	; MMX
-67	PACKUSWB	mm,mm/m64	; MMX
-68	PUNPCKHBW	mm,mm/m64	; MMX
-69	PUNPCKHWD	mm,mm/m64	; MMX
-6A	PUNPCKHDQ	mm,mm/m64	; MMX
-6B	PACKSSDW	mm,mm/m64	; MMX
+60	PUNPCKLBW	mm,mm/m32		; MMX
+61	PUNPCKLWD	mm,mm/m32		; MMX
+62	PUNPCKLDQ	mm,mm/m32		; MMX
+63	PACKSSWB	mm,mm/m64		; MMX
+64	PCMPGTB		mm,mm/m64		; MMX
+65	PCMPGTW		mm,mm/m64		; MMX
+66	PCMPGTD		mm,mm/m64		; MMX
+67	PACKUSWB	mm,mm/m64		; MMX
+68	PUNPCKHBW	mm,mm/m64		; MMX
+69	PUNPCKHWD	mm,mm/m64		; MMX
+6A	PUNPCKHDQ	mm,mm/m64		; MMX
+6B	PACKSSDW	mm,mm/m64		; MMX
 6C
 6D
-6E	MOVD		mm,r/m32	; MMX
-6F	MOVD		mm,mm/m64	; MMX
+6E	MOVD		mm,r/m32		; MMX
+6F	MOVD		mm,mm/m64		; MMX
 
-70	PSHUF		???		; IA-MMX2
-71	code extention [24]		; MMX
-72	code extention [25]		; MMX
-73	code extention [26]		; MMX
-74	PCMPEQB		mm,mm/m64	; MMX
-75	PCMPEQW		mm,mm/m64	; MMX
-76	PCMPEQD		mm,mm/m64	; MMX
-77	EMMS				; MMX
-78	SVDC	mem,sreg  ; Cyrix M5+
-79	RSDC	sreg,mem  ; Cyrix M5+
-7A	SVLDT	mem	  ; Cyrix M5+
-7B	RSLDT	mem	  ; Cyrix M5+
-7C	SVTS	mem	  ; Cyrix M5+
-7D	RSTS	mem	  ; Cyrix M5+
-7E	SMINT		  ; Cyrix M6+
-7E	MOVD	r/m32,mm		; MMX
-7F	MOVD	mm/m64,mm		; MMX
+70	PSHUF		mm,mm/mem,i8		; KNI/MMX2
+71	code extention [24]			; MMX
+72	code extention [25]			; MMX
+73	code extention [26]			; MMX
+74	PCMPEQB		mm,mm/m64		; MMX
+75	PCMPEQW		mm,mm/m64		; MMX
+76	PCMPEQD		mm,mm/m64		; MMX
+77	EMMS					; MMX
+78	SVDC	mem,sreg			; Cyrix M5+ (SMM only)
+79	RSDC	sreg,mem			; Cyrix M5+ (SMM only)
+7A	SVLDT	mem				; Cyrix M5+ (SMM only)
+7B	RSLDT	mem				; Cyrix M5+ (SMM only)
+7C	SVTS	mem				; Cyrix M5+ (SMM only)
+7D	RSTS	mem				; Cyrix M5+ (SMM only)
+7E	SMINT					; Cyrix M6+
+7E	MOVD	r/m32,mm			; MMX
+7F	MOVD	mm/m64,mm			; MMX
 
-80	JO	rel16	; 386+
-81	JNO	rel16	; 386+
-82	JC	rel16	; 386+
-83	JNC	rel16	; 386+
-84	JZ	rel16	; 386+
-85	JNZ	rel16	; 386+
-86	JNA	rel16	; 386+
-87	JA	rel16	; 386+
-88	JS	rel16	; 386+
-89	JNS	rel16	; 386+
-8A	JP	rel16	; 386+
-8B	JNP	rel16	; 386+
-8C	JL	rel16	; 386+
-8D	JNL	rel16	; 386+
-8E	JNG	rel16	; 386+
-8F	JG	rel16	; 386+
+80	JO	rel16				; 386+
+81	JNO	rel16				; 386+
+82	JC	rel16				; 386+
+83	JNC	rel16				; 386+
+84	JZ	rel16				; 386+
+85	JNZ	rel16				; 386+
+86	JNA	rel16				; 386+
+87	JA	rel16				; 386+
+88	JS	rel16				; 386+
+89	JNS	rel16				; 386+
+8A	JP	rel16				; 386+
+8B	JNP	rel16				; 386+
+8C	JL	rel16				; 386+
+8D	JNL	rel16				; 386+
+8E	JNG	rel16				; 386+
+8F	JG	rel16				; 386+
 
-90	SETO	mem8	; 386+
-91	SETNO	mem8	; 386+
-92	SETC	mem8	; 386+
-93	SETNC	mem8	; 386+
-94	SETZ	mem8	; 386+
-95	SETNZ	mem8	; 386+
-96	SETNA	mem8	; 386+
-97	SETA	mem8	; 386+
-98	SETS	mem8	; 386+
-99	SETNS	mem8	; 386+
-9A	SETP	mem8	; 386+
-9B	SETNP	mem8	; 386+
-9C	SETL	mem8	; 386+
-9D	SETNL	mem8	; 386+
-9E	SETNG	mem8	; 386+
-9F	SETG	mem8	; 386+
+90	SETO	mem8				; 386+
+91	SETNO	mem8				; 386+
+92	SETC	mem8				; 386+
+93	SETNC	mem8				; 386+
+94	SETZ	mem8				; 386+
+95	SETNZ	mem8				; 386+
+96	SETNA	mem8				; 386+
+97	SETA	mem8				; 386+
+98	SETS	mem8				; 386+
+99	SETNS	mem8				; 386+
+9A	SETP	mem8				; 386+
+9B	SETNP	mem8				; 386+
+9C	SETL	mem8				; 386+
+9D	SETNL	mem8				; 386+
+9E	SETNG	mem8				; 386+
+9F	SETG	mem8				; 386+
 
-A0	PUSH	FS	; 386+
-A1	POP	FS	; 386+
-A2	CPUID		; 486 SL enhanced,Pentium,UMC,i386CX,P6,M1,K5
-A3	BT	mem,reg	; 386+
-A4	SHLD	mem,reg,imm	;386+
-A5	SHLD	mem,reg,CL	;386+
-A6	XBTS	reg,mem,AX,CL	; Intel (!!!) 80386 steps A0-B0
-	CMPXCHG	mem8,reg8	; Intel (!!!) 80486 steps A0-B0
-A7	IBTS	mem,AX,CL,reg	; Intel (!!!) 80386 steps A0-B0
-	CMPXCHG mem,reg		; Intel (!!!) 80486 steps A0-B0
-A8	PUSH	GS	; 386+
-A9	POP	GS	; 386+
-AA	RSM		; i486 SL Enhanced, i386CX, Pentium etc
-AB	BTS	mem,reg ; 386+
-AC	SHRD	mem,reg,imm	;386+
-AD	SHRD	mem,reg,CL	;386+
+A0	PUSH	FS				; 386+
+A1	POP	FS				; 386+
+A2	CPUID					; 486 SL enhanced, Pentium+
+						; UMC,i386CX,Cyrix M1+,AMD K5+,
+						; Some NexGen, IDT
+A3	BT	mem,reg				; 386+
+A4	SHLD	mem,reg,imm			; 386+
+A5	SHLD	mem,reg,CL			; 386+
+A6	XBTS	reg,mem,AX,CL			; Intel (!!!) 80386 steps A0-B0
+	CMPXCHG	mem8,reg8			; Intel (!!!) 80486 steps A0-B0
+A7	IBTS	mem,AX,CL,reg			; Intel (!!!) 80386 steps A0-B0
+	CMPXCHG mem,reg				; Intel (!!!) 80486 steps A0-B0
+A8	PUSH	GS				; 386+
+A9	POP	GS				; 386+
+AA	RSM					; i486 SL Enhanced, i386CX
+						; Intel Pentium+, etc
+AB	BTS	mem,reg				; 386+
+AC	SHRD	mem,reg,imm			; 386+
+AD	SHRD	mem,reg,CL			; 386+
 AE	code extention [24]
-AF	IMUL	reg,mem	; 386+
+AF	IMUL	reg,mem				; 386+
 
-B0	CMPXCHG mem8,reg8	; 486+ (Intel B1+ step only)
-B1	CMPXCHG mem,reg		; 486+ (Intel B1+ step only)
-B2	LSS	reg,mem		; 386+
-B3	BTR	mem,reg		; 386+
-B4	LFS	reg,mem		; 386+
-B5	LGS	reg,mem		; 386+
-B6	MOVZX	reg,mem8	; 386+
-B7	MOVZX	reg32,mem	; 386+
+B0	CMPXCHG mem8,reg8			; 486+ (Intel B1+ step only)
+B1	CMPXCHG mem,reg				; 486+ (Intel B1+ step only)
+B2	LSS	reg,mem				; 386+
+B3	BTR	mem,reg				; 386+
+B4	LFS	reg,mem				; 386+
+B5	LGS	reg,mem				; 386+
+B6	MOVZX	reg,mem8			; 386+
+B7	MOVZX	reg32,mem			; 386+
 B8
-B9	UD2			; one more Undefined Opcode-2
+B9	UD2					; one more Undefined Opcode-2
 BA	code extention [22]
-BB	BTC	mem,reg		; 386+
-BC	BSF	reg,mem		; 386+
-BD	BSR	reg,mem		; 386+
-BE	MOVSX	reg,mem8	; 386+
-BF	MOVSX	reg32,mem	; 386+
+BB	BTC	mem,reg				; 386+
+BC	BSF	reg,mem				; 386+
+BD	BSR	reg,mem				; 386+
+BE	MOVSX	reg,mem8			; 386+
+BF	MOVSX	reg32,mem			; 386+
 
-C0	XADD	mem8,reg8	; 486+
-C1	XADD	mem,reg		; 486+
-C2	CMPxPS	????		; IA-MMX2
-	CMPxSS	????		; IA-MMX2
+C0	XADD	mem8,reg8			; 486+
+C1	XADD	mem,reg				; 486+
+C2	code extension [27]			; KNI/MMX2
 C3
-C4	PINSRW	???		; IA-MMX2
-C5	PEXTRW	???		; IA-MMX2
-C6	SHUFPS	???		; IA-MMX2
+C4	PINSRW	mm,r32/mem,i8			; KNI/MMX2
+C5	PEXTRW	r32,mm,i8			; KNI/MMX2
+C6	SHUFPS	xmm,xmm/mem,i8			; KNI/MMX2
 C7	code extention [23]
-C8	BSWAP	EAX		; 486+
-C9	BSWAP	ECX		; 486+
-CA	BSWAP	EDX		; 486+
-CB	BSWAP	EBX		; 486+
-CC	BSWAP	ESP		; 486+
-CD	BSWAP	EBP		; 486+
-CE	BSWAP	ESI		; 486+
-CF	BSWAP	EDI		; 486+
+C8	BSWAP	EAX				; 486+
+C9	BSWAP	ECX				; 486+
+CA	BSWAP	EDX				; 486+
+CB	BSWAP	EBX				; 486+
+CC	BSWAP	ESP				; 486+
+CD	BSWAP	EBP				; 486+
+CE	BSWAP	ESI				; 486+
+CF	BSWAP	EDI				; 486+
 
 D0
-D1	PSRLW	mm,mm/m64	; MMX
-D2	PSRLD	mm,mm/m64	; MMX
-D3	PSRLQ	mm,mm/m64	; MMX
+D1	PSRLW	mm,mm/m64			; MMX
+D2	PSRLD	mm,mm/m64			; MMX
+D3	PSRLQ	mm,mm/m64			; MMX
 D4
-D5	PMULLW	mm,mm/m64	; MMX
+D5	PMULLW	mm,mm/m64			; MMX
 D6
-D7	PMOVMSKB ???		; IA-MMX2
+D7	PMOVMSKB r32/m32,mm			; KNI/MMX2
 D8
 D9
-DA	PMINUB	 ???		; IA-MMX2
+DA	PMINUB	mm,mm/mem			; KNI/MMX2
 DB
 DC
 DD
-DE	PMAXSB	???		; IA-MMX2
-DF	PMAXSW	???		; IA-MMX2
+DE	PMAXSB	mm,mm/m64			; KNI/MMX2
+DF	PMAXSW	mm,mm/m64			; KNI/MMX2
 
-E0	PAVGB	???		; IA-MMX2
-E1	PSRAW	mm,mm/m64	; MMX
-E2	PSRAD	mm,mm/m64	; MMX
-E3	PAVGW	???		; IA-MMX2
-E4	PMULHUW ???		; IA-MMX2
-E5	PMULHW	mm,mm/m64	; MMX
+E0	PAVGB	mm,mm/m64			; KNI/MMX2
+E1	PSRAW	mm,mm/m64			; MMX
+E2	PSRAD	mm,mm/m64			; MMX
+E3	PAVGW	mm,mm/m64			; KNI/MMX2
+E4	PMULHUW mm,mm/m64			; KNI/MMX2
+E5	PMULHW	mm,mm/m64			; MMX
 E6
-E7	MOVNTQ	???		; IA-MMX2
+E7	MOVNTQ	mem,mm				; KNI/MMX2
 E8
 E9
-EA
+EA	PMINSW	mm,mm/m64			; KNI/MMX2
 EB
 EC
 ED
-EE
+EE	PMAXSW	mm,mm/m64			; KNI/MMX2
 EF
 
 F0
-F1	PSLLW	  mm,mm/m64	; MMX
-F2	PSLLD	  mm,mm/m64	; MMX
-F3	PSLLQ	  mm,mm/m64	; MMX
+F1	PSLLW	  mm,mm/m64			; MMX
+F2	PSLLD	  mm,mm/m64			; MMX
+F3	PSLLQ	  mm,mm/m64			; MMX
 F4
-F5	PMULADDWD mm,mm/m64	; MMX
-F6	PSADBW	  ???		; IA-MMX2
-F7	MASKMOVQ  ???		; IA-MMX2
+F5	PMULADDWD mm,mm/m64			; MMX
+F6	PSADBW	  mm,mm/m64			; KNI/MMX2
+F7	MASKMOVQ  mm,mm/m64			; KNI/MMX2
 F8
 F9
 FA
@@ -10452,33 +10500,33 @@ FB
 FC
 FD
 FE
-FF	UD			; AMD Am5k86+  and all other CPUs
-FF	OIO			; Cyrix Cx6x86+ and all other CPUs
-FF	BRKEM	imm8		; NEC V20+
+FF	UD					; AMD Am5k86+  and all other CPUs
+FF	OIO					; Cyrix Cx6x86+ and all other CPUs
+FF	BRKEM	imm8				; NEC V20+
 
 	---------------------- [TABLE 02] --------------------------
 First bytes is 0Fh,0Fh
 (In Table 02 marked only valid opcodes)
 
-0D	PI2FD	mm,mm/m64	; AMD 3D
-1D	PF2ID	mm,mm/m64	; AMD 3D
-90	PFCMPGE	mm,mm/m64	; AMD 3D
-94	PFMIN	mm,mm/m64	; AMD 3D
-96	PFRCP	mm,mm/m64	; AMD 3D
-97	PFRSQRT mm,mm/m64	; AMD 3D
-9A	PFSUB	mm,mm/m64	; AMD 3D
-9E	PFADD	mm,mm/m64	; AMD 3D
-A0	PFCMPGT mm,mm/m64	; AMD 3D
-A4	PFMAX	mm,mm/m64	; AMD 3D
-A6	PFRCPIT1 mm,mm/m64	; AMD 3D
-A7	PFRSQIT1 mm,mm/m64	; AMD 3D
-AA	PFSUBR	mm,mm/m64	; AMD 3D
-AE	PFACC	mm,mm/m64	; AMD 3D
-B0	PFCMPEQ mm,mm/m64	; AMD 3D
-B4	PFMUL	mm,mm/m64	; AMD 3D
-B6	PFRCPIT2 mm,mm/m64	; AMD 3D
-B7	PMULHRW mm,mm/m64	; AMD 3D
-BF	PAVGUSB	mm,mm/m64	; AMD 3D
+0D	PI2FD	mm,mm/m64			; AMD 3D
+1D	PF2ID	mm,mm/m64			; AMD 3D
+90	PFCMPGE	mm,mm/m64			; AMD 3D
+94	PFMIN	mm,mm/m64			; AMD 3D
+96	PFRCP	mm,mm/m64			; AMD 3D
+97	PFRSQRT mm,mm/m64			; AMD 3D
+9A	PFSUB	mm,mm/m64			; AMD 3D
+9E	PFADD	mm,mm/m64			; AMD 3D
+A0	PFCMPGT mm,mm/m64			; AMD 3D
+A4	PFMAX	mm,mm/m64			; AMD 3D
+A6	PFRCPIT1 mm,mm/m64			; AMD 3D
+A7	PFRSQIT1 mm,mm/m64			; AMD 3D
+AA	PFSUBR	mm,mm/m64			; AMD 3D
+AE	PFACC	mm,mm/m64			; AMD 3D
+B0	PFCMPEQ mm,mm/m64			; AMD 3D
+B4	PFMUL	mm,mm/m64			; AMD 3D
+B6	PFRCPIT2 mm,mm/m64			; AMD 3D
+B7	PMULHRW mm,mm/m64			; AMD 3D
+BF	PAVGUSB	mm,mm/m64			; AMD 3D
 
   **************************************************
 CODE EXTENTIONS:
@@ -10535,12 +10583,12 @@ Code Extention # 4
 Field
 OOO	Operation
 000	ADD	mem,simm8
-001	OR	mem,simm8	; 386+
+001	OR	mem,simm8			; 386+
 010	ADC	mem,simm8
 011	SBB	mem,simm8
-100	AND	mem,simm8	; 386+
+100	AND	mem,simm8			; 386+
 101	SUB	mem,simm8
-110	XOR	mem,simm8	; 388+
+110	XOR	mem,simm8			; 388+
 111	CMP	mem,simm8
 
 Code Extention # 5
@@ -10551,8 +10599,8 @@ OOO	Operation
 001	MOV	mem,CS
 010	MOV	mem,SS
 011	MOV	mem,DS
-100	MOV	mem,FS	; 386+
-101	MOV	mem,GS	; 386+
+100	MOV	mem,FS				; 386+
+101	MOV	mem,GS				; 386+
 110
 111
 
@@ -10561,11 +10609,11 @@ Code Extention # 6
 Field
 OOO	Operation
 000	MOV	ES,mem
-001	MOV	CS,mem	; Non CMOS version of 8086/8088 only
+001	MOV	CS,mem				; Non CMOS version of 8086/8088 only
 010	MOV	SS,mem
 011	MOV	DS,mem
-100	MOV	FS,mem	; 386+
-101	MOV	GS,mem	; 386+
+100	MOV	FS,mem				; 386+
+101	MOV	GS,mem				; 386+
 110
 111
 
@@ -10587,27 +10635,27 @@ Code Extention # 8
 (First byte(s) = C0h)
 Field
 OOO	Operation
-000	ROL	mem8,imm8 ; 186+
-001	ROR	mem8,imm8 ; 186+
-010	RCL	mem8,imm8 ; 186+
-011	RCR	mem8,imm8 ; 186+
-100	SHL	mem8,imm8 ; 186+
-101	SHR	mem8,imm8 ; 186+
-110	SAL	mem8,imm8 ; 186+
-111	SAR	mem8,imm8 ; 186+
+000	ROL	mem8,imm8			; 186+
+001	ROR	mem8,imm8			; 186+
+010	RCL	mem8,imm8			; 186+
+011	RCR	mem8,imm8			; 186+
+100	SHL	mem8,imm8			; 186+
+101	SHR	mem8,imm8			; 186+
+110	SAL	mem8,imm8			; 186+
+111	SAR	mem8,imm8			; 186+
 
 Code Extention # 9
 (First byte(s) = C1h)
 Field
 OOO	Operation
-000	ROL	mem,imm8 ; 186+
-001	ROR	mem,imm8 ; 186+
-010	RCL	mem,imm8 ; 186+
-011	RCR	mem,imm8 ; 186+
-100	SHL	mem,imm8 ; 186+
-101	SHR	mem,imm8 ; 186+
-110	SAL	mem,imm8 ; 186+
-111	SAR	mem,imm8 ; 186+
+000	ROL	mem,imm8			; 186+
+001	ROR	mem,imm8			; 186+
+010	RCL	mem,imm8			; 186+
+011	RCR	mem,imm8			; 186+
+100	SHL	mem,imm8			; 186+
+101	SHR	mem,imm8			; 186+
+110	SAL	mem,imm8			; 186+
+111	SAR	mem,imm8			; 186+
 
 Code Extention # 10
 (First byte(s) = C6h)
@@ -10747,12 +10795,12 @@ Code Extention # 20
 (First byte(s) = 0FH,00H)
 Field
 OOO	Operation
-000	SLDT	mem	; 286+
-001	STR	mem	; 286+
-010	LLDT	mem	; 286+
-011	LTR	mem	; 286+
-100	VERR	mem	; 286+
-101	VERW	mem	; 286+
+000	SLDT	mem				; 286+
+001	STR	mem				; 286+
+010	LLDT	mem				; 286+
+011	LTR	mem				; 286+
+100	VERR	mem				; 286+
+101	VERW	mem				; 286+
 110
 111
 
@@ -10760,14 +10808,14 @@ Code Extention # 21
 (First byte(s) = 0Fh,01h)
 Field
 OOO	Operation
-000	SGDT	mem	; 286+
-001	SIDT	mem	; 286+
-010	LGDT	mem	; 286+
-011	LIDT	mem	; 286+
-100	SMSW	mem	; 286+
+000	SGDT	mem				; 286+
+001	SIDT	mem				; 286+
+010	LGDT	mem				; 286+
+011	LIDT	mem				; 286+
+100	SMSW	mem				; 286+
 101
-110	LMSW	mem	; 286+
-111	INVLPG	mem	; 486+
+110	LMSW	mem				; 286+
+111	INVLPG	mem				; 486+
 
 Code Extention # 22
 (First byte(s) = 0Fh,BAh)
@@ -10777,17 +10825,17 @@ OOO	Operation
 001
 010
 011
-100	BT	mem,imm8 ; 386+
-101	BTS	mem,imm8 ; 386+
-110	BTR	mem,imm8 ; 386+
-111	BTC	mem,imm8 ; 386+
+100	BT	mem,imm8			; 386+
+101	BTS	mem,imm8			; 386+
+110	BTR	mem,imm8			; 386+
+111	BTC	mem,imm8			; 386+
 
 Code Extention # 23
 (First byte(s) = 0Fh,C7h)
 Field
 OOO	Operation
 000
-001	CMPXCHG8B  mem	; Pentium
+001	CMPXCHG8B  mem				; Pentium
 010
 011
 100
@@ -10799,21 +10847,21 @@ Code Extention # 24
 (First byte(s) = 0Fh,AEh)
 Field
 OOO	Operation
-000	FXSAVE	mem512b	; IA MMX-2
-001	FXRSTOR	mem512b	; IA MMX-2
-010	LDMXCSR ???	; IA MMX-2
-011	STMXCSR ???	; IA MMX-2
+000	FXSAVE	mem512b				; KNI/MMX2
+001	FXRSTOR	mem512b				; KNI/MMX2
+010	LDMXCSR mem				; KNI/MMX2
+011	STMXCSR mem				; KNI/MMX2
 100
 101
 110
-111    SFENCE  ???	; IA MMX-2
+111    SFENCE					; KNI/MMX2	(0F AE FF)
 
 Code Extention # 25
 (First byte(s) = 0Fh,0Dh)
 Field
 OOO	Operation
-000	PREFETCH	; AMD 3D
-001	PREFETCHW	; AMD 3D
+000	PREFETCH				; AMD 3D
+001	PREFETCHW				; AMD 3D
 010
 011
 100
@@ -10825,14 +10873,31 @@ Code Extention # 26
 (First byte(s) = 0Fh,18h)
 Field
 OOO	Operation
-000	PREFETCHNTA ???	; IA-MMX2
-001	PREFETCHT0  ???	; IA-MMX2
-010	PREFETCHT1  ???	; IA-MMX2
-011	PREFETCHT2  ??? ; IA-MMX2
+000	PREFETCHNTA mem				; KNI/MMX2
+001	PREFETCHT0  mem				; KNI/MMX2
+010	PREFETCHT1  mem				; KNI/MMX2
+011	PREFETCHT2  mem				; KNI/MMX2
 100
 101
 110
 111
+
+Code Extension # 27
+(First byte(s) = (F3h)	0Fh,C2h)		; KNI/MMX2 All extension
+.
+Instruction have unusuall x86 format:
+<0Fh> <C2h> <Postbyte> [<Memory>] <Nextbyte>
+<F3h> <0Fh> <C2h> <Postbyte> [<Memory>] <Nextbyte>
+.
+Next byte	   (w/o F3h Prefix)		  (with F3 prefix)
+00		CMPEQPS	   xmm,xmm/mem		CMPEQSS	   xmm,xmm/mem
+01		CMPLTPS	   xmm,xmm/mem		CMPLTSS	   xmm,xmm/mem
+02		CMPLEPS	   xmm,xmm/mem		CMPLESS	   xmm,xmm/mem
+03		CMPUNORDPS xmm,xmm/mem		CMPUNORDSS xmm,xmm/mem
+04		CMPNEPS	   xmm,xmm/mem		CMPNESS	   xmm,xmm/mem
+05		CMPNLTPS   xmm,xmm/mem		CMPNLTSS   xmm,xmm/mem
+06		CMPNLEPS   xmm,xmm/mem		CMPNLESS   xmm,xmm/mem
+07		CMPORDPS   xmm,xmm/mem		CMPORDSS   xmm,xmm/mem
 
 ------------------------------------------------
 APPENDIX  F1  FLOATING POINT OPCODES
@@ -13387,10 +13452,10 @@ Note:	See ICEBP/ICERET for More Information
 ----------------------------------------------------------
 APPENDIX Y0  -	Vendor Instruction Time for Intel 8088 CPU
 
-AAA					4
-AAD					60
-AAM					83
-AAS					4
+AAA					    4
+AAD					    60
+AAM					    83
+AAS					    4
 ADC	AL,imm8				    4
 ADC	AX,imm16			    4
 ADC	r/m8,imm8			    4/17+EA
@@ -13417,15 +13482,15 @@ AND	r/m8,r8				    3/16+EA
 AND	r/m16,r16			    3/24+EA
 AND	r8,r/m8				    3/9+EA
 AND	r16,r/m16			    3/13+EA
-CALL	rel16				   19(23)
-CALL	r/m16				   16(24)/21(29)+EA
-CALL	ptr16:16			   28(36)
-CALL	m16:16				   37(57)+EA
-CBW					2
-CLC					2
-CLD					2
-CLI					2
-CMC					2
+CALL	rel16				    19(23)
+CALL	r/m16				    16(24)/21(29)+EA
+CALL	ptr16:16			    28(36)
+CALL	m16:16				    37(57)+EA
+CBW					    2
+CLC					    2
+CLD					    2
+CLI					    2
+CMC					    2
 CMP	AL,imm8				    4
 CMP	AX,imm16			    4
 CMP	r/m8,imm8			    4/10+EA
@@ -13435,48 +13500,48 @@ CMP	r/m8,r8				    3/9+EA
 CMP	r/m16,r16			    3/13+EA
 CMP	r8,r/m8				    3/9+EA
 CMP	r16,r/m16			    3/13+EA
-CMPSB					22
-CMPSW					30
-CWD					5
-DAA					4
-DAS					4
+CMPSB					    22
+CMPSW					    30
+CWD					    5
+DAA					    4
+DAS					    4
 DEC	r/m8				    3/15+EA
 DEC	r/m16				    2/23+EA
 DEC	r16				    2
 DIV	r/m8				    80-90/(86-96)+EA
 DIV	r/m16				    144-162/(154-172)+EA
-HLT					2
-IDIV	r/m8				   101-112/(107-118)+EA
-IDIV	r/m16				   165-184/(175-194)+EA
-IMUL	r/m8				   80-98/(86-104)+EA
-IMUL	r/m16				   128-154/(138-164)+EA
-IN	AL,imm8				     10
-IN	AX,imm8				     14
-IN	AL,DX				     8
-IN	AX,DX				     12
+HLT					    2
+IDIV	r/m8				    101-112/(107-118)+EA
+IDIV	r/m16				    165-184/(175-194)+EA
+IMUL	r/m8				    80-98/(86-104)+EA
+IMUL	r/m16				    128-154/(138-164)+EA
+IN	AL,imm8				    10
+IN	AX,imm8				    14
+IN	AL,DX				    8
+IN	AX,DX				    12
 INC	r/m8				    3/15+EA
 INC	r/m16				    2/23+EA
 INC	r16				    2
 INT	3				    53(72)
 INT	imm8				    51(71)
-INTO					53(73) or 4
-IRET					32(44)
+INTO					    53(73) or 4
+IRET					    32(44)
 Jcc	rel8				    4 or 16
-JCXZ	rel8				   6 or 18
+JCXZ	rel8				    6 or 18
 JMP	rel8				    15
 JMP	rel16				    15
 JMP	r/m16				    11/18+EA
 JMP	ptr16:16			    15
 JMP	m16:16				    24+EA
-LAHF					4
+LAHF					    4
 LDS	r16,m16:16			    24+EA
 LES	r16,m16:16			    24+EA
 LEA	r16,m				    2+EA
-LODSB					12
-LODSW					16
-LOOP	rel8				   5 or 17
-LOOPE	rel8				  6 or 18
-LOOPNE	rel8				 5 or 19
+LODSB					    12
+LODSW					    16
+LOOP	rel8				    5 or 17
+LOOPE	rel8				    6 or 18
+LOOPNE	rel8				    5 or 19
 MOV	r/m8,r8				    2/9+EA
 MOV	r/m16,r16			    2/13+EA
 MOV	r8,r/m8				    2/8+EA
@@ -13491,23 +13556,23 @@ MOV	r8,imm8				    4
 MOV	r16,imm16			    4
 MOV	r/m8,imm8			    4/10+EA
 MOV	r/m16,imm16			    4/14+EA
-MOVSB					18
-MOVSW					26
+MOVSB					    18
+MOVSW					    26
 MUL	r/m8				    70-77/(76-83)+EA
 MUL	r/m16				    118-133/(128-143)+EA
 NEG	r/m8				    3/16+EA
 NEG	r/m16				    3/24+EA
-NOP					3
+NOP					    3
 NOT	r/m8				    3/16+EA
 NOT	r/m16				    3/24+EA
-OR	AL,imm8				     4
-OR	AX,imm16			     4
-OR	r/m8,imm8			     4/17+EA
-OR	r/m16,imm16			     4/25+EA
-OR	r/m8,r8				     3/16+EA
-OR	r/m16,r16			     3/24+EA
-OR	r8,r/m8				     3/9+EA
-OR	r16,r/m16			     3/13+EA
+OR	AL,imm8				    4
+OR	AX,imm16			    4
+OR	r/m8,imm8			    4/17+EA
+OR	r/m16,imm16			    4/25+EA
+OR	r/m8,r8				    3/16+EA
+OR	r/m16,r16			    3/24+EA
+OR	r8,r/m8				    3/9+EA
+OR	r16,r/m16			    3/13+EA
 OUT	imm8,AL				    10
 OUT	imm8,AX				    14
 OUT	DX,AL				    8
@@ -13515,11 +13580,11 @@ OUT	DX,AX				    12
 POP	m16				    25+EA
 POP	r16				    12
 POP	sreg				    12
-POPF					12
-PUSH	r/m16				   15/24+EA
-PUSH	r16				   15
-PUSH	sreg				   14
-PUSHF					14
+POPF					    12
+PUSH	r/m16				    15/24+EA
+PUSH	r16				    15
+PUSH	sreg				    14
+PUSHF					    14
 RCL	r/m8,1				    2/15+EA
 RCL	r/m16,1				    2/23+EA
 RCL	r/m8,CL				    8+4*bit/20+EA+4*bit
@@ -13542,19 +13607,19 @@ REP	LODSB				    n/a
 REP	LODSW				    n/a
 REP	STOSB				    9+10*reps
 REP	STOSW				    9+14*reps
-REPE	CMPSB				   9+17*reps
-REPE	CMPSW				   9+25*reps
-REPE	SCASB				   9+15*reps
-REPE	SCASW				   9+19*reps
-REPNE	CMPSB				  9+17*reps
-REPNE	CMPSW				  9+25*reps
-REPNE	SCASB				  9+15*reps
-REPNE	SCASW				  9+19*reps
+REPE	CMPSB				    9+17*reps
+REPE	CMPSW				    9+25*reps
+REPE	SCASB				    9+15*reps
+REPE	SCASW				    9+19*reps
+REPNE	CMPSB				    9+17*reps
+REPNE	CMPSW				    9+25*reps
+REPNE	SCASB				    9+15*reps
+REPNE	SCASW				    9+19*reps
 RET	(near)				    20
-RET	imm16	(near)			      24
+RET	imm16	(near)			    24
 RET	(far)				    32
-RET	imm16	(far)			      31
-SAHF					4
+RET	imm16	(far)			    31
+SAHF					    4
 SAL	r/m8,1				    2/15+EA
 SAL	r/m16,1				    2/23+EA
 SAL	r/m8,CL				    8+4*bit/20+EA+4*bit
@@ -13580,14 +13645,14 @@ SBB	r/m8,r8				    3/16+EA
 SBB	r/m16,r16			    3/24+EA
 SBB	r8,r/m8				    3/9+EA
 SBB	r16,r/m16			    3/16+EA
-SCASB					15
-SCASW					19
-SETALC					n/a
-STC					2
-STD					2
-STI					2
-STOSB					11
-STOSW					15
+SCASB					    15
+SCASW					    19
+SETALC					    n/a
+STC					    2
+STD					    2
+STI					    2
+STOSB					    11
+STOSW					    15
 SUB	AL,imm8				    4
 SUB	AX,imm16			    4
 SUB	r/m8,imm8			    4/17+EA
@@ -13597,17 +13662,17 @@ SUB	r/m8,r8				    3/16+EA
 SUB	r/m16,r16			    3/24+EA
 SUB	r8,r/m8				    3/9+EA
 SUB	r16,r/m16			    3/13+EA
-TEST	AL,imm8				   4
-TEST	AX,imm16			   4
-TEST	r/m8,imm8			   5/11+EA
-TEST	r/m16,imm16			   5/11+EA
-TEST	r/m8,r8				   3/9+EA
-TEST	r/m16,r16			   3/13+EA
-WAIT					3+5*number_of_wait_cycles
-XCHG	AX,r16				   3
-XCHG	r/m8,r8				   4/17+EA
-XCHG	r/m16,r16			   4/25+EA
-XLAT					11
+TEST	AL,imm8				    4
+TEST	AX,imm16			    4
+TEST	r/m8,imm8			    5/11+EA
+TEST	r/m16,imm16			    5/11+EA
+TEST	r/m8,r8				    3/9+EA
+TEST	r/m16,r16			    3/13+EA
+WAIT					    3+5*number_of_wait_cycles
+XCHG	AX,r16				    3
+XCHG	r/m8,r8				    4/17+EA
+XCHG	r/m16,r16			    4/25+EA
+XLAT					    11
 XOR	AL,imm8				    4
 XOR	AX,imm16			    4
 XOR	r/m8,imm8			    4/17+EA
@@ -13621,12 +13686,12 @@ XOR	r16,r/m16			    3/13+EA
 ----------------------------------------------------------
 APPENDIX Y1  -	Vendor Instruction Time for Intel i80186 CPU
 
-AAA					8
-AAD					15
+AAA					    8
+AAD					    15
 AAD	imm8				    15 ?? (n/a)
-AAM					19
+AAM					    19
 AAM	imm8				    19 ?? (n/a)
-AAS					7
+AAS					    7
 ADC	AL,imm8				    3
 ADC	AX,imm16			    4
 ADC	r/m8,imm8			    4/16
@@ -13651,16 +13716,16 @@ AND	r/m8,r8				    3/15
 AND	r/m16,r16			    3/15
 AND	r8,r/m8				    3/10
 AND	r16,r/m16			    3/10
-BOUND	r16,m16&16			  33-35
-CALL	rel16				   15
-CALL	r/m16				   13/19
-CALL	ptr16:16			   23
-CALL	m16:16				   38
-CBW					2
-CLC					2
-CLD					2
-CLI					2
-CMC					2
+BOUND	r16,m16&16			    33-35
+CALL	rel16				    15
+CALL	r/m16				    13/19
+CALL	ptr16:16			    23
+CALL	m16:16				    38
+CBW					    2
+CLC					    2
+CLD					    2
+CLI					    2
+CMC					    2
 CMP	AL,imm8				    3
 CMP	AX,imm16			    4
 CMP	r/m8,imm8			    3/10
@@ -13669,59 +13734,59 @@ CMP	r/m8,r8				    3/10
 CMP	r/m16,r16			    3/10
 CMP	r8,r/m8				    3/10
 CMP	r16,r/m16			    3/10
-CMPSB					22
-CMPSW					22
-CWD					4
-DAA					4
-DAS					4
+CMPSB					    22
+CMPSW					    22
+CWD					    4
+DAA					    4
+DAS					    4
 DEC	r/m8				    3/15
 DEC	r/m16				    3/15
 DEC	r16				    3
 DIV	r/m8				    29/35
 DIV	r/m16				    38/44
 ESC	imm4,r/m			    n/a
-ENTER	imm16,0				  15
-ENTER	imm16,1				  25
-ENTER	imm16,imm8			  22+16*(level-1)
-HLT					2
-IDIV	r/m8				   44-52/50-58
-IDIV	r/m16				   53-61/59-67
-IMUL	r/m8				   25-28/31-34
-IMUL	r/m16				   34-47/40-43
-IMUL	r16,imm8			   22-25/29-32 (~)
-IMUL	r16,imm16			   22-25/29-32 (~)
-IMUL	r16,r/m16,imm8			   22-25/29-32 (~)
-IMUL	r16,r/m16,imm16			   22-25/29-32 (~)
-IN	AL,imm8				     10
-IN	AX,imm8				     10
-IN	AL,DX				     8
-IN	AX,DX				     8
+ENTER	imm16,0				    15
+ENTER	imm16,1				    25
+ENTER	imm16,imm8			    22+16*(level-1)
+HLT					    2
+IDIV	r/m8				    44-52/50-58
+IDIV	r/m16				    53-61/59-67
+IMUL	r/m8				    25-28/31-34
+IMUL	r/m16				    34-47/40-43
+IMUL	r16,imm8			    22-25/29-32 (~)
+IMUL	r16,imm16			    22-25/29-32 (~)
+IMUL	r16,r/m16,imm8			    22-25/29-32 (~)
+IMUL	r16,r/m16,imm16			    22-25/29-32 (~)
+IN	AL,imm8				    10
+IN	AX,imm8				    10
+IN	AL,DX				    8
+IN	AX,DX				    8
 INC	r/m8				    3/15
 INC	r/m16				    3/15
 INC	r16				    3
-INSB					14
-INSW					14
+INSB					    14
+INSW					    14
 INT	3				    45
 INT	imm8				    47
-INTO					4 or 48
-IRET					28
+INTO					    4 or 48
+IRET					    28
 Jcc	rel8				    4 or 13
-JCXZ	rel8				   5 or 15
+JCXZ	rel8				    5 or 15
 JMP	rel8				    14
 JMP	rel16				    14
 JMP	r/m16				    11/17
 JMP	ptr16:16			    14
 JMP	m16:16				    26
-LAHF					2
+LAHF					    2
 LDS	r16,m16:16			    18
 LES	r16,m16:16			    18
 LEA	r16,m				    6
-LEAVE					8
-LODSB					12
-LODSW					12
-LOOP	rel8				   6 or 16
-LOOPE	rel8				  6 or 16
-LOOPNE	rel8				 6 or 16
+LEAVE					    8
+LODSB					    12
+LODSW					    12
+LOOP	rel8				    6 or 16
+LOOPE	rel8				    6 or 16
+LOOPNE	rel8				    6 or 16
 MOV	r/m8,r8				    2/12
 MOV	r/m16,r16			    2/12
 MOV	r8,r/m8				    2/9
@@ -13736,41 +13801,41 @@ MOV	r8,imm8				    3
 MOV	r16,imm16			    4
 MOV	r/m8,imm8			    3/12
 MOV	r/m16,imm16			    4/13
-MOVSB					14
-MOVSW					14
+MOVSB					    14
+MOVSW					    14
 MUL	r/m8				    26-28/32-34
 MUL	r/m16				    35-37/41-43
 NEG	r/m8				    3/10
 NEG	r/m16				    3/10
-NOP					3
+NOP					    3
 NOT	r/m8				    3/10
 NOT	r/m16				    3/10
-OR	AL,imm8				     3
-OR	AX,imm16			     4
-OR	r/m8,imm8			     4/16
-OR	r/m16,imm16			     4/16
-OR	r/m8,r8				     3/15
-OR	r/m16,r16			     3/15
-OR	r8,r/m8				     3/10
-OR	r16,r/m16			     3/10
+OR	AL,imm8				    3
+OR	AX,imm16			    4
+OR	r/m8,imm8			    4/16
+OR	r/m16,imm16			    4/16
+OR	r/m8,r8				    3/15
+OR	r/m16,r16			    3/15
+OR	r8,r/m8				    3/10
+OR	r16,r/m16			    3/10
 OUT	imm8,AL				    9
 OUT	imm8,AX				    9
 OUT	DX,AL				    7
 OUT	DX,AX				    7
-OUTSB					14
-OUTSW					14
+OUTSB					    14
+OUTSW					    14
 POP	m16				    20
 POP	r16				    10
 POP	sreg				    8
-POPA					51
-POPF					8
-PUSH	r/m16				   10/16
-PUSH	r16				   10
-PUSH	imm8				   10
-PUSH	imm16				   10
-PUSH	sreg				   9
-PUSHA					36
-PUSHF					9
+POPA					    51
+POPF					    8
+PUSH	r/m16				    10/16
+PUSH	r16				    10
+PUSH	imm8				    10
+PUSH	imm16				    10
+PUSH	sreg				    9
+PUSHA					    36
+PUSHF					    9
 RCL	r/m8,1				    2/15
 RCL	r/m16,1				    2/15
 RCL	r/m8,CL				    5+n/17+n
@@ -13797,9 +13862,9 @@ ROR	r/m8,imm8			    5+n/17+n
 ROR	r/m16,imm8			    5+n/17+n
 RET	(near)				    16
 RET	(far)				    22
-RET	imm16	(near)			      18
-RET	imm16	(far)			      25
-SAHF					3
+RET	imm16	(near)			    18
+RET	imm16	(far)			    25
+SAHF					    3
 SAL	r/m8,1				    2/15
 SAL	r/m16,1				    2/15
 SAL	r/m8,CL				    5+n/17+n
@@ -13832,14 +13897,14 @@ SBB	r/m8,r8				    3/15
 SBB	r/m16,r16			    3/15
 SBB	r8,r/m8				    3/10
 SBB	r16,r/m16			    3/10
-SCASB					15
-SCASW					15
-SETALC					n/a
-STC					2
-STD					2
-STI					2
-STOSB					10
-STOSW					10
+SCASB					    15
+SCASW					    15
+SETALC					    n/a
+STC					    2
+STD					    2
+STI					    2
+STOSB					    10
+STOSW					    10
 SUB	AL,imm8				    3
 SUB	AX,imm16			    4
 SUB	r/m8,imm8			    4/16
@@ -13848,17 +13913,17 @@ SUB	r/m8,r8				    3/15
 SUB	r/m16,r16			    3/15
 SUB	r8,r/m8				    3/10
 SUB	r16,r/m16			    3/10
-TEST	AL,imm8				   3
-TEST	AX,imm16			   4
-TEST	r/m8,imm8			   4/10
-TEST	r/m16,imm16			   4/10
-TEST	r/m8,r8				   3/10
-TEST	r/m16,r16			   3/10
-WAIT					6 (min)
-XCHG	AX,r16				   3
-XCHG	r/m8,r8				   4/17
-XCHG	r/m16,r16			   4/17
-XLAT					11
+TEST	AL,imm8				    3
+TEST	AX,imm16			    4
+TEST	r/m8,imm8			    4/10
+TEST	r/m16,imm16			    4/10
+TEST	r/m8,r8				    3/10
+TEST	r/m16,r16			    3/10
+WAIT					    6 (min)
+XCHG	AX,r16				    3
+XCHG	r/m8,r8				    4/17
+XCHG	r/m16,r16			    4/17
+XLAT					    11
 XOR	AL,imm8				    3
 XOR	AX,imm16			    4
 XOR	r/m8,imm8			    4/16
@@ -13872,12 +13937,12 @@ XOR	r16,r/m16			    3/10
 ----------------------------------------------------------
 APPENDIX Y2  -	Vendor Instruction Time for NEC V20 CPU
 
-AAA					3
-AAD					7
+AAA					    3
+AAD					    7
 AAD	imm8				    7
-AAM					15
+AAM					    15
 AAM	imm8				    15
-AAS					3
+AAS					    3
 ADC	AL,imm8				    4
 ADC	AX,imm16			    4
 ADC	r/m8,imm8			    4/18
@@ -13902,16 +13967,16 @@ AND	r/m8,r8				    2/15
 AND	r/m16,r16			    2/24
 AND	r8,r/m8				    2/11
 AND	r16,r/m16			    2/15
-BOUND	r16,m16&16			  18-23/73-76
-CALL	rel16				   16-20
-CALL	r/m16				   14-18/23-31
-CALL	ptr16:16			   21-29
-CALL	m16:16				   31-47
-CBW					2
-CLC					2
-CLD					2
-CLI					2
-CMC					2
+BOUND	r16,m16&16			    18-23/73-76
+CALL	rel16				    16-20
+CALL	r/m16				    14-18/23-31
+CALL	ptr16:16			    21-29
+CALL	m16:16				    31-47
+CBW					    2
+CLC					    2
+CLD					    2
+CLI					    2
+CMC					    2
 CMP	AL,imm8				    4
 CMP	AX,imm16			    4
 CMP	r/m8,imm8			    4/13
@@ -13920,57 +13985,57 @@ CMP	r/m8,r8				    2/11
 CMP	r/m16,r16			    2/15
 CMP	r8,r/m8				    2/11
 CMP	r16,r/m16			    2/15
-CMPSB					7+14n !!
-CMPSW					7+14n !!
-CWD					4-5
-DAA					3
-DAS					7
+CMPSB					    7+14n !!
+CMPSW					    7+14n !!
+CWD					    4-5
+DAA					    3
+DAS					    7
 DEC	r/m8				    2/16
 DEC	r/m16				    2/24
 DEC	r16				    2
 DIV	r/m8				    19/25
 DIV	r/m16				    25/35
 ESC	imm4,r/m			    n/a
-ENTER	imm16,0				  16
-ENTER	imm16,1				  23 ??
-ENTER	imm16,imm8			  23+16*(level-1)
-HLT					2
-IDIV	r/m8				   29/35
-IDIV	r/m16				   43/53
-IMUL	r/m8				   33/39
-IMUL	r/m16				   47/57
-IMUL	r16,r/m16,imm8			   28-34/34-44
-IMUL	r16,r/m16,imm16			   36-42/46-52
-IN	AL,imm8				     9
-IN	AX,imm8				     13
-IN	AL,DX				     8
-IN	AX,DX				     12
+ENTER	imm16,0				    16
+ENTER	imm16,1				    23 ??
+ENTER	imm16,imm8			    23+16*(level-1)
+HLT					    2
+IDIV	r/m8				    29/35
+IDIV	r/m16				    43/53
+IMUL	r/m8				    33/39
+IMUL	r/m16				    47/57
+IMUL	r16,r/m16,imm8			    28-34/34-44
+IMUL	r16,r/m16,imm16			    36-42/46-52
+IN	AL,imm8				    9
+IN	AX,imm8				    13
+IN	AL,DX				    8
+IN	AX,DX				    12
 INC	r/m8				    2/16
 INC	r/m16				    2/24
 INC	r16				    2
-INSB					9+8n !!
-INSW					9+8n !!
+INSB					    9+8n !!
+INSW					    9+8n !!
 INT	3				    38-50
 INT	imm8				    38-50
-INTO					3 or 52
-IRET					27-39
+INTO					    3 or 52
+IRET					    27-39
 Jcc	rel8				    4 or 14
-JCXZ	rel8				   5 or 13
+JCXZ	rel8				    5 or 13
 JMP	rel8				    12
 JMP	rel16				    13
 JMP	r/m16				    11/20-24
 JMP	ptr16:16			    15
 JMP	m16:16				    27-35
-LAHF					2
+LAHF					    2
 LDS	r16,m16:16			    18-26
 LES	r16,m16:16			    18-26
 LEA	r16,m				    4
-LEAVE					6/10
-LODSB					7+9n !!
-LODSW					7+9n !!
-LOOP	rel8				   5 or 13
-LOOPE	rel8				  5 or 14
-LOOPNE	rel8				 5 or 14
+LEAVE					    6/10
+LODSB					    7+9n !!
+LODSW					    7+9n !!
+LOOP	rel8				    5 or 13
+LOOPE	rel8				    5 or 14
+LOOPNE	rel8				    5 or 14
 MOV	r/m8,r8				    2/9
 MOV	r/m16,r16			    2/13
 MOV	r8,r/m8				    2/11
@@ -13985,41 +14050,41 @@ MOV	r8,imm8				    4
 MOV	r16,imm16			    4
 MOV	r/m8,imm8			    4/11
 MOV	r/m16,imm16			    4/15
-MOVSB					11+8n !!
-MOVSW					11+8n !!
+MOVSB					    11+8n !!
+MOVSW					    11+8n !!
 MUL	r/m8				    21/27
 MUL	r/m16				    30/36
 NEG	r/m8				    2/16
 NEG	r/m16				    2/24
-NOP					3
+NOP					    3
 NOT	r/m8				    2/16
 NOT	r/m16				    2/24
-OR	AL,imm8				     4
-OR	AX,imm16			     4
-OR	r/m8,imm8			     4/18
-OR	r/m16,imm16			     4/26
-OR	r/m8,r8				     2/15
-OR	r/m16,r16			     2/24
-OR	r8,r/m8				     2/11
-OR	r16,r/m16			     2/15
+OR	AL,imm8				    4
+OR	AX,imm16			    4
+OR	r/m8,imm8			    4/18
+OR	r/m16,imm16			    4/26
+OR	r/m8,r8				    2/15
+OR	r/m16,r16			    2/24
+OR	r8,r/m8				    2/11
+OR	r16,r/m16			    2/15
 OUT	imm8,AL				    8
 OUT	imm8,AX				    12
 OUT	DX,AL				    8
 OUT	DX,AX				    12
-OUTSB					9+8n !!
-OUTSW					9+8n !!
+OUTSB					    9+8n !!
+OUTSW					    9+8n !!
 POP	m16				    17-25
 POP	r16				    8-12
 POP	sreg				    8-12
-POPA					43-75
-POPF					8-12
-PUSH	r/m16				   8-12/18-26
-PUSH	r16				   8-12
-PUSH	imm8				   7
-PUSH	imm16				   12
-PUSH	sreg				   8-12
-PUSHA					35-67
-PUSHF					8-12
+POPA					    43-75
+POPF					    8-12
+PUSH	r/m16				    8-12/18-26
+PUSH	r16				    8-12
+PUSH	imm8				    7
+PUSH	imm16				    12
+PUSH	sreg				    8-12
+PUSHA					    35-67
+PUSHF					    8-12
 RCL	r/m8,1				    2/2-4
 RCL	r/m16,1				    2/2-4
 RCL	r/m8,CL				    7+n/19+n
@@ -14046,9 +14111,9 @@ ROR	r/m8,imm8			    2/16
 ROR	r/m16,imm8			    2/24
 RET	(near)				    15-19
 RET	(far)				    21-29
-RET	imm16	(near)			      20-24
-RET	imm16	(far)			      24-32
-SAHF					3
+RET	imm16	(near)			    20-24
+RET	imm16	(far)			    24-32
+SAHF					    3
 SAL	r/m8,1				    2/16
 SAL	r/m16,1				    2/24
 SAL	r/m8,CL				    7+n/19+n
@@ -14081,14 +14146,14 @@ SBB	r/m8,r8				    2/15
 SBB	r/m16,r16			    2/24
 SBB	r8,r/m8				    2/11
 SBB	r16,r/m16			    2/15
-SCASB					7+10n !!
-SCASW					7+10n!!
-SETALC					n/a
-STC					2
-STD					2
-STI					2
-STOSB					7+4n !!
-STOSW					7+4n !!
+SCASB					    7+10n !!
+SCASW					    7+10n!!
+SETALC					    n/a
+STC					    2
+STD					    2
+STI					    2
+STOSB					    7+4n !!
+STOSW					    7+4n !!
 SUB	AL,imm8				    4
 SUB	AX,imm16			    4
 SUB	r/m8,imm8			    4/18
@@ -14097,17 +14162,17 @@ SUB	r/m8,r8				    2/15
 SUB	r/m16,r16			    2/24
 SUB	r8,r/m8				    2/11
 SUB	r16,r/m16			    2/15
-TEST	AL,imm8				   4
-TEST	AX,imm16			   4
-TEST	r/m8,imm8			   4/11
-TEST	r/m16,imm16			   4/15
-TEST	r/m8,r8				   2/10
-TEST	r/m16,r16			   2/14
-WAIT					2+5n (n = number of times POLL pin sampled)
-XCHG	AX,r16				   2
-XCHG	r/m8,r8				   3/16
-XCHG	r/m16,r16			   3/24
-XLAT					9
+TEST	AL,imm8				    4
+TEST	AX,imm16			    4
+TEST	r/m8,imm8			    4/11
+TEST	r/m16,imm16			    4/15
+TEST	r/m8,r8				    2/10
+TEST	r/m16,r16			    2/14
+WAIT					    2+5n (n = number of times POLL pin sampled)
+XCHG	AX,r16				    2
+XCHG	r/m8,r8				    3/16
+XCHG	r/m16,r16			    3/24
+XLAT					    9
 XOR	AL,imm8				    4
 XOR	AX,imm16			    4
 XOR	r/m8,imm8			    4/18
@@ -14121,12 +14186,12 @@ XOR	r16,r/m16			    2/15
 ----------------------------------------------------------
 APPENDIX Y3  -	Vendor Instruction Time for Intel i286 CPU
 
-AAA					3
-AAD					14
+AAA					    3
+AAD					    14
 AAD	imm8				    n/a
-AAM					16
+AAM					    16
 AAM	imm8				    n/a
-AAS					3
+AAS					    3
 ADC	AL,imm8				    3
 ADC	AX,imm16			    3
 ADC	r/m8,imm8			    3/7+EA
@@ -14151,16 +14216,16 @@ AND	r/m8,r8				    2/7+EA
 AND	r/m16,r16			    2/7+EA
 AND	r8,r/m8				    2/7+EA
 AND	r16,r/m16			    2/7+EA
-ARPL	r/m16,r16			   10/11+EA
-BOUND	r16,m16&16			  13+EA
-CALL	rel16				   7+m
-CALL	r/m16				   7+m/11+m
-CALL	ptr16:16			   13+m
-CALL	ptr16:16	(PM, direct segment)	  26+m
-CALL	ptr16:16	(PM, via call gate, same p41+m
-CALL	ptr16:16	(PM, via call gate, more p82+m
-CALL	ptr16:16	(PM, via call gate, more p86+4*param+m
-CALL	m16:16				   16+m
+ARPL	r/m16,r16			    10/11+EA
+BOUND	r16,m16&16			    13+EA
+CALL	rel16				    7+m
+CALL	r/m16				    7+m/11+m
+CALL	ptr16:16			    13+m
+CALL	ptr16:16	(PM, direct segment)	   26+m
+CALL	ptr16:16	(PM, via call gate, same p 41+m
+CALL	ptr16:16	(PM, via call gate, more p 82+m
+CALL	ptr16:16	(PM, via call gate, more p 86+4*param+m
+CALL	m16:16				    16+m
 CALL	m16:16	(PM, direct segment)	    29+m
 CALL	m16:16	(PM, via gate, same priveleg44+m
 CALL	m16:16	(PM, via gate, more priveleg83+m
@@ -17302,3 +17367,4 @@ Thanx for  Urri, Stas, Afo, Kernel.3,Den96
 Special Thanks for  AX (MISA).
 ------------------------------------------------------------
 Sorry, But EOF
+

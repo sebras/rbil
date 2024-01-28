@@ -1,5 +1,5 @@
-I2C-BUS DEVICES			Release 59		Last Change 30aug98
-Copyright (c) 1997,1998 Ralf Brown
+I2C-BUS DEVICES			Release 60		Last Change 03jan99
+Copyright (c) 1997,1998,1999 Ralf Brown
 
 --------!---Note-----------------------------
 Notes:	An I2C device uses two consecutive subaddresses; the low bit indicates
@@ -19,7 +19,7 @@ Notes:	An I2C device uses two consecutive subaddresses; the low bit indicates
 	  (see MEM A000h:FF00h"S3").  On the Zoran ZR36057 used by the
 	  Miro DC-30, the I2C bus is accessed by bit-banging memory-mapped
 	  register 17 (at offset 0x44).	 On the Cirrus Logic GD7556, extended
-	  sequencer register 8 is used (see #P0650).
+	  sequencer register 8 is used (see #P0677).
 	maximum data rates on the I2C bus are also device-dependent; typical
 	  maximum rates are 80 kHz (DIMMs), 100 kHz (VPX3220A), and 400 kHz.
 	in DDC (Dislay Data Channel) 2B, the monitor's EDID info appears to be
@@ -1771,7 +1771,7 @@ Bit(s)	Description	(Table I0045)
 	01 one 3.58 MHz (on Pin32)
 	10 one 3.58 MHz (on Pin33)
 	11 3.58 MHz on Pin32 and 4.4 MHz on Pin33
-SeeAlso: #I0070,#I85
+SeeAlso: #I0105,#I85
 
 Bitfields for TDA8366 Status 1 (read-only):
 Bit(s)	Description	(Table I0046)
@@ -1780,8 +1780,8 @@ Bit(s)	Description	(Table I0046)
  5	"STS" S-VHS input signal present
  4	"SL" Phase 1 is locked
  3	"XPR" X-ray protection: overvoltage detected
- 2-0	color decoder mode (see #I0087)
-SeeAlso: #I0069,#I0086
+ 2-0	color decoder mode (see #I0122)
+SeeAlso: #I0104,#I0121
 
 (Table I0047)
 Values for TDA8366 color decoder mode:
@@ -1793,7 +1793,7 @@ Values for TDA8366 color decoder mode:
  101b	force PAL 3.58 MHz (crystal on Pin32) 
  110b	force PAL 3.58 MHz (crystal on Pin33) 
  111b	reserved
-SeeAlso: #I0085,#I0070
+SeeAlso: #I0120,#I0105
 --------V-I8A01------------------------------
 I2C 8Ah/01h - Philips TDA8366 - DECODER MODE / STATUS 2
 SeeAlso: I2C 8Ah/00h"TDA8366",I2C 8Ah/02h"TDA8366"
@@ -1810,10 +1810,10 @@ Bit(s)	Description	(Table I0048)
 	0 standby
 	1 normal
  3	disable synchronization mode
- 2-0	color decoder mode (see #I0087)
+ 2-0	color decoder mode (see #I0122)
 Note:	when bits 7-6 are changed, a new frequency is only set when not
 	  currently synchronized
-SeeAlso: #I0069,#I0071,#I0086
+SeeAlso: #I0104,#I0106,#I0121
 
 Bitfields for TDA8366 Status 2 (read-only):
 Bit(s)	Description	(Table I0049)
@@ -1827,7 +1827,7 @@ Bit(s)	Description	(Table I0049)
 	10 in window but below reference
 	11 in window but above reference
  1-0	reserved
-SeeAlso: #I0085,#I0070
+SeeAlso: #I0120,#I0105
 Note:	!!!philips\2086.pdf p.14
 --------V-I8A02------------------------------
 I2C 8Ah/02h - Philips TDA8366 - HUE (COLOR) CONTROL
@@ -1839,7 +1839,7 @@ Bitfields for TDA8366 Hue Control:
 Bit(s)	Description	(Table I0050)
  7-6	reserved
  5-0	hue
-SeeAlso: #I0070,#I0072
+SeeAlso: #I0105,#I0107
 --------V-I8A03------------------------------
 I2C 8Ah/03h - Philips TDA8366 - HORIZONTAL SHIFT
 Access:	Write-Only
@@ -1849,7 +1849,7 @@ Bitfields for TDA8366 Horizontal Shift:
 Bit(s)	Description	(Table I0051)
  7-6	reserved
  5-0	horizontal shift value
-SeeAlso: #I0071,#I0073
+SeeAlso: #I0106,#I0108
 --------V-I8A04------------------------------
 I2C 8Ah/04h - Philips TDA8366 - EAST-WEST WIDTH
 Size:	6 bits
@@ -1882,7 +1882,7 @@ Bit(s)	Description	(Table I0052)
 	=1 switched to search window
  6	reserved
  5-0	vertical slope
-SeeAlso: #I0072,#I0074
+SeeAlso: #I0107,#I0109
 --------V-I8A09------------------------------
 I2C 8Ah/09h - Philips TDA8366 - VERTICAL AMPLITUDE
 Access:	Write-Only
@@ -1894,7 +1894,7 @@ Bit(s)	Description	(Table I0053)
  6	"LBM" force long blanking mode to 50 Hz standard
 	=0 adapt to either 50 or 60 Hz
  5-0	vertical amplitude
-SeeAlso: #I0073,#I0075
+SeeAlso: #I0108,#I0110
 --------V-I8A0A------------------------------
 I2C 8Ah/0Ah - Philips TDA8366 - S-CORRECTION
 Access:	Write-Only
@@ -1905,7 +1905,7 @@ Bit(s)	Description	(Table I0054)
  7	"HCO" enable EHT tracking on East-West as well as vertical
  6	"EVG" enable vertical guard (RGB blanking)
  5-0	S-correction value
-SeeAlso: #I0074,#I0076
+SeeAlso: #I0109,#I0111
 --------V-I8A0B------------------------------
 I2C 8Ah/0Bh - Philips TDA8366 - VERTICAL SHIFT
 Access:	Write-Only
@@ -1916,7 +1916,7 @@ Bit(s)	Description	(Table I0055)
  7	"SBL" enable service blanking mode
  6	"PRD" trigger overvoltage protection mode
  5-0	vertical shift value
-SeeAlso: #I0075,#I0077
+SeeAlso: #I0110,#I0112
 --------V-I8A0C------------------------------
 I2C 8Ah/0Ch - Philips TDA8366 - WHITE POINT (RED)
 Desc:	the TDA8366 is an I2C-bus controlled PAL/NTSC TV Processor
@@ -1931,7 +1931,7 @@ Bit(s)	Description	(Table I0056)
 	10 expand
 	11 expand and lift
  5-0	white point (red) value
-SeeAlso: #I0076,#I0078
+SeeAlso: #I0111,#I0113
 --------V-I8A0D------------------------------
 I2C 8Ah/0Dh - Philips TDA8366 - WHITE POINT (GREEN)
 Access:	Write-Only
@@ -1946,7 +1946,7 @@ Bit(s)	Description	(Table I0057)
 	=0 Y/C
 	=1 CVBS
  5-0	white point (green) value
-SeeAlso: #I0077,#I0079
+SeeAlso: #I0112,#I0114
 --------V-I8A0E------------------------------
 I2C 8Ah/0Eh - Philips TDA8366 - WHITE POINT (BLUE)
 Access:	Write-Only
@@ -1957,7 +1957,7 @@ Bit(s)	Description	(Table I0058)
  7	"MAT" force PAL matrix, instead of adapting to video standard
  6	"PHL" allow color crystal PLL to free-run
  5-0	whilte point (blue) value
-SeeAlso: #I0078,#I0080
+SeeAlso: #I0113,#I0115
 --------V-I8A0F------------------------------
 I2C 8Ah/0Fh - Philips TDA8366 - PEAKING
 Access:	Write-Only
@@ -1970,7 +1970,7 @@ Bit(s)	Description	(Table I0059)
  3-0	peaking value
 Note:	[*] the weights given for bits 7-4 are as in the official
 	  documentation; bit 4 may actually be 20ns
-SeeAlso: #I0079,#I0081
+SeeAlso: #I0114,#I0116
 --------V-I8A10------------------------------
 I2C 8Ah/10h - ITT VDP 31xxB - Output Pin Configuration
 --------V-I8A10------------------------------
@@ -1983,7 +1983,7 @@ Bit(s)	Description	(Table I0060)
  7	"RBL" RGB blanking is active
  6	"COR" enable noise coring (peaking)
  5-0	brightness value
-SeeAlso: #I0080,#I0082,#I0083
+SeeAlso: #I0115,#I0117,#I0118
 --------V-I8A11------------------------------
 I2C 8Ah/11h - ITT VDP 31xxB - Picture Frame Color
 --------V-I8A11------------------------------
@@ -1996,7 +1996,7 @@ Bit(s)	Description	(Table I0061)
  7	"IE1" enable fast blanking
  6	reserved
  5-0	saturation value
-SeeAlso: #I0081,#I0083,#I0084
+SeeAlso: #I0116,#I0118,#I0119
 --------V-I8A12------------------------------
 I2C 8Ah/12h - ITT VDP 3108 - ???
 --------V-I8A12------------------------------
@@ -2009,7 +2009,7 @@ Bit(s)	Description	(Table I0062)
  7	"AFW" enlarge AFC window to 240 kHz
  6	"IFS" reduce IF sensitivity
  5-0	contrast value
-SeeAlso: #I0082,#I0084
+SeeAlso: #I0117,#I0119
 --------V-I8A13------------------------------
 I2C 8Ah/13h - ITT VDP 3108 - White Drive Measurement Control
 --------V-I8A13------------------------------
@@ -2411,147 +2411,565 @@ Values for ITT VDP 31xxB Fast Processor register:
  F9h	crystal oscillator center adjust (line-locked mode)
 --------V-I9C00------------------------------
 I2C 9Ch/00h - Philips SAA7110(A) ONE-CHIP FRONT-END - INCREMENT DELAY
+Access:	Write-Only
 Range:	I2C addresses 9Ch or 9Eh, determined by external pin
+Notes:	Values will always be negative as determined by internal sign bit.
+	valid decimal multiplier range 50 Hz mode = -1 to -236(max.)
+	valid decimal multiplier range 60 Hz mode = -1 to -195(max.)
+	step size = 4/LLC
+Example: mode	bit value  multiplier  delay
+	 50 Hz	3Dh	   -236	       -944 (max. value for 50 Hz)
 SeeAlso: I2C 9Eh
+--------V-I9C00------------------------------
+I2C 9Ch/00h - Philips SAA7110(A) ONE-CHIP FRONT-END - VERSION STATUS BYTE
+Access:	Read-Only
+Notes:	Transmitted if STATUS BYTE SELECT = 0 (refer to I2C 9Ch/0Dh)
+	  or after RESET which sets status byte select to 0
+	Bits 7-0 are used to indicate the IC version
+Range:	I2C addresses 9Ch or 9Eh, determined by external pin
+SeeAlso: I2C 9Ch/01h"STATUS",I2C 9Ch/0Dh
 --------V-I9C01------------------------------
 I2C 9Ch/01h - Philips SAA7110(A) ONE-CHIP FRONT-END - HSY BEGIN 50 Hz
-	!!! details to follow
-SeeAlso: I2C 9Eh
+Access:	Write-Only
+Desc:	allows programming of the horizontal synchronization signal at the
+	  beginning of its high period in 50 Hz mode.
+Notes:	valid decimal multiplier range +191 to -64
+	step size = 2/LLC
+Example: bit value  multiplier	delay
+	 BFh	    +191	-382
+	 C0h	    -64		+128
+SeeAlso: I2C 9Ch/02h,I2C 9Eh
+--------V-I9C01------------------------------
+I2C 9Ch/01h - Philips SAA7110(A) ONE-CHIP FRONT-END - STATUS BYTE FUNCTION
+Access:	Read-Only
+Note:	transmitted if STATUS BYTE SELECT = 1 (refer to I2C 9Ch/0Dh)
+Range:	I2C addresses 9Ch or 9Eh, determined by external pin
+SeeAlso: I2C 9Ch/00h"VERSION",I2C 9Ch/0Dh
+
+Bitfields for Status Byte Function:
+Bit(s)	Description	 (Table I0069)	(Table I0070)
+ 7	horizontal time constant status (=0 TV, =1 VCR)
+ 6	locked horizontal frequency status (=0 locked, =1 unlocked)
+ 5	detected field frequency ID bit (=0 50 Hz, =1 60 Hz)
+ 4	active luminance gain value is limited (maximum or minimum)
+ 3	reserved (must be set to LOW)
+ 2	white peak loop status (=0 inactive, =1 active)
+ 1	line alternating colour burst detected (PAL or SECAM)
+ 0	any colour signal detected
 --------V-I9C02------------------------------
 I2C 9Ch/02h - Philips SAA7110(A) ONE-CHIP FRONT-END - HSY STOP 50 Hz
-SeeAlso: I2C 9Eh
+Access:	Write-Only
+Desc:	allows programming of the horizontal synchronization signal at the end
+	  of its high period in 50 Hz mode.
+Notes:	refer to I2C 9Ch/01h notes and example
+SeeAlso: I2C 9Ch/01h,I2C 9Eh
 --------V-I9C03------------------------------
 I2C 9Ch/03h - Philips SAA7110(A) ONE-CHIP FRONT-END - HLC BEGIN 50 Hz
-SeeAlso: I2C 9Eh
+Access:	Write-Only
+Desc:	allows programming of the horizontal clamping signal at the beginning
+	  of its high period in 50 Hz mode.
+Notes:	valid decimal multiplier range +127 to -128
+	step size = 2/LLC
+Example: bit value  multiplier	delay
+	 7Fh	    +127	-254
+	 80h	    -128	+256
+SeeAlso: I2C 9Ch/04h,I2C 9Ch/01h,I2C 9Eh
 --------V-I9C04------------------------------
 I2C 9Ch/04h - Philips SAA7110(A) ONE-CHIP FRONT-END - HLC STOP 50 Hz
-SeeAlso: I2C 9Eh
+Access:	Write-Only
+Desc:	allows programming of the horizontal clamping signal at the end of its
+	  high period in 50 Hz mode.
+Notes:	refer to: I2C 9Ch/03h notes and example
+SeeAlso: I2C 9Ch/03h,I2C 9Eh
 --------V-I9C05------------------------------
 I2C 9Ch/05h - Philips SAA7110(A) ONE-CHIP FRONT-END - HSY AFTER PHI1 50Hz
+Access:	Write-Only
+Note:	Valid decimal multiplier range +117 to -118
+	step size = 8/LLC
+Example: bit value  multiplier	delay
+	 75h	    +117	-32   micro seconds (max. negative value)
+	 8Ah	    -118	+31.7 micro seconds (max. positive value)
 SeeAlso: I2C 9Eh
 --------V-I9C06------------------------------
 I2C 9Ch/06h - Philips SAA7110(A) ONE-CHIP FRONT-END - LUMINANCE CONTROL
-SeeAlso: I2C 9Eh
+Access:	Write-Only
+SeeAlso: I2C 9Eh,I2C 9Ch/07h
+
+Bitfields for Luminance Control:
+Bit(s)	Description	(Table I0071)
+ 7	chrominance trap bypass (=0 CVBS mode, =1 S-Video mode)
+ 6	prefilter
+ 5-4	aperture bandpass; centre frequency
+	     (50 Hz)  (60 Hz)
+	00   4.6 MHz  3.8 MHz
+	01   4.3 MHz  3.4 MHz
+	10   3.0 MHz  2.5 MHz
+	11   3.2 MHz  2.7 MHz
+ 3-2	corner correction
+	00   0(off)
+	01   1
+	10   2
+	11   3
+ 1-0	aperture factor
+	00   0(off)
+	01   0.25
+	10   0.5
+	11   1.0
 --------V-I9C07------------------------------
 I2C 9Ch/07h - Philips SAA7110(A) ONE-CHIP FRONT-END - HUE CONTROL
-SeeAlso: I2C 9Eh
+Access:	Write-Only
+SeeAlso: I2C 9Eh,I2C 9Ch/06h,I2C 9Ch/09h
 --------V-I9C08------------------------------
 I2C 9Ch/08h - Philips SAA7110(A) ONE-CHIP FRONT-END - COLOR KILLER THRESH QUAM
-SeeAlso: I2C 9Eh
+Access:	Write-Only
+Notes:	Control number 1 - QUAM (PAL/NTSC)
+SeeAlso: I2C 9Eh,I2C 9Ch/09h
 --------V-I9C09------------------------------
 I2C 9Ch/09h - Philips SAA7110(A) ONE-CHIP FRONT-END - COLOR KILLER THRESH SECAM
-SeeAlso: I2C 9Eh
+Access:	Write-Only
+Notes:	Control number 2 - SECAM
+SeeAlso: I2C 9Eh,I2C 9Ch/08h
 --------V-I9C0A------------------------------
 I2C 9Ch/0Ah - Philips SAA7110(A) ONE-CHIP FRONT-END - PAL SWITCH SENSITIVITY
-SeeAlso: I2C 9Eh
+Access:	Write-Only
+Notes:	Valid values - FFh = LOW, 80h = MEDIUM, 00h = HIGH
+	HIGH means immediate sequence correction.
+SeeAlso: I2C 9Eh,I2C 9Ch/0Bh
 --------V-I9C0B------------------------------
 I2C 9Ch/0Bh - Philips SAA7110(A) ONE-CHIP FRONT-END - SECAM SWITCH SENSITIVITY
-SeeAlso: I2C 9Eh
+Access:	Write-Only
+Note:	refer to IC2 9Ch/0Ah
+SeeAlso: I2C 9Eh,I2C 9Ch/0Ah
 --------V-I9C0C------------------------------
 I2C 9Ch/0Ch - Philips SAA7110(A) ONE-CHIP FRONT-END - GAIN CONTROL CHROMINANCE
+Access:	Write-Only
 SeeAlso: I2C 9Eh
+
+Bitfields for Gain Control Chrominance:
+Bit(s)	description   (Table I0072)	(Table I0073)
+ 7	force colour on
+ 6-5	AGC loop filter
+	00 slow
+	01 medium
+	10 fast
+	11 chrominance gain frozen
+ 4-0	reserved (must be set to LOW)
 --------V-I9C0D------------------------------
 I2C 9Ch/0Dh - Philips SAA7110(A) ONE-CHIP FRONT-END - STANDARD/MODE CONTROL
+Access:	Write-Only
+Note:	Reset to 7Dh after RESET = 0 or power-on
+	  (refer to I2C 9Dh/00h and 9Dh/01h)
 SeeAlso: I2C 9Eh
+
+Bitfields for SAA7110(A) Standard/Mode Control:
+Bit(s)	Description (Table I0074)	(Table I0075)
+ 7	TV/VCR mode (=0 TV, =1 VCR)
+ 6-4	reserved (must be set to LOW)
+ 3	real time outputs mode
+	0 PLIN switched to output pin 39
+	1 ODD  switched to output pin 40
+ 2	HREF position select
+	0 position HREF as SAA7191
+	1 normal HREF position
+ 1	status byte select (refer to transmitter I2C 9Dh and 9Fh)
+	0 version status byte (refer to: I2C 9Dh/00h)
+	1 function status byte (refer to: I2C 9Dh/01h)
+ 0	SECAM mode
 --------V-I9C0E------------------------------
 I2C 9Ch/0Eh - Philips SAA7110(A) ONE-CHIP FRONT-END - I/O AND CLOCK CONTROL
-SeeAlso: I2C 9Eh
+Access:	Write-Only
+Notes:	reset to 00h after RESET = 0  or power-on
+	  (refer to I2C 9Dh/00h and 9Dh/01h)
+	all reserved bits must be set to LOW
+SeeAlso: I2C 9Eh,I2C 9Dh/00h
+
+Bitfields for I/O and Clock Control:
+Bit(s)	Description (Table I0076)	(Table I0077)
+ 7	horizontal PLL clock
+	0 closed
+	1 open
+ 6-5	reserved
+ 4	HS, HREF and VS output enable
+ 3	YUV-bus output enable (refer to: I2C 9Ch/10h bit 0 and 9Ch/31h bit 3)
+ 2	Select chrominance input
+	0 controlled by chrominance trap bypass (refer to: I2C 9Ch/06h bit 7)
+	1 second input channel
+ 1	reserved
+ 0	general purpose switch
+	0 switches pin 64 (general purpose switch output) directly
+	1 VBLKA = 0  (refer to: I2C 9Ch/31h bit 1)
 --------V-I9C0F------------------------------
 I2C 9Ch/0Fh - Philips SAA7110(A) ONE-CHIP FRONT-END - CONTROL #1
+Access:	Write-Only
 SeeAlso: I2C 9Eh
+
+Bitfields for Control Number 1:
+Bit(s)	Description    (Table I0078)	(Table I0079)
+ 7	automatic field detection (if not set, field state controled by bit 6)
+ 6	field select
+	0  50 Hz, 625 lines
+	1  60 Hz, 525 lines
+ 5	SECAM cross colour reduction
+ 4	enable sync (HSY) and clamp (HCL) pulses
+ 3	reserved (must be set to LOW)
+ 2-0	lminance delay compensation (steps in 2/LLC)
+	000  0 steps
+	011  3 steps
+	100 -4 steps
 --------V-I9C10------------------------------
 I2C 9Ch/10h - Philips SAA7110(A) ONE-CHIP FRONT-END - CONTROL #2
+Access:	Write-Only
 SeeAlso: I2C 9Eh
+
+Bitfields for Control Number 2:
+Bit(s)	Description    (Table I0080)	(Table I0081)
+ 7-3	reserved (must be set to LOW)
+ 2-1	vertical noise reduction mode
+	00  normal
+	01  search
+	10  free running
+	11  bypass vertical noise reduction
+ 0	HREF select
+	0  HREF matched to YUV output
+	1  HREF matched to CVBS output
 --------V-I9C11------------------------------
 I2C 9Ch/11h - Philips SAA7110(A) ONE-CHIP FRONT-END - CHROMINANCE GAIN REFERENCE
+Access:	Write-Only
+Notes:	CCIR-level for PAL = 59h
+	CCIR-level for NTSC = 2Ch
 SeeAlso: I2C 9Eh
 --------V-I9C12------------------------------
 I2C 9Ch/12h - Philips SAA7110(A) ONE-CHIP FRONT-END - CHROMINANCE SATURATION
+Access:	Write-Only
+Notes:	1.999 maximum = 7Fh
+	1 CCIR-level = 40h
+	colour off = 00h
+	-1 inverse chrominance = C0h
+	-2 inverse chrominance = 80h
 SeeAlso: I2C 9Eh
 --------V-I9C13------------------------------
 I2C 9Ch/13h - Philips SAA7110(A) ONE-CHIP FRONT-END - LUMINANCE CONTRAST
+Access:	Write-Only
+Notes:	1.999 maximum = 7Fh
+	70 CCIR-level = 46h
+	1 = 40h
+	luminance off = 00h
+	-1 inverse chrominance = C0h
+	-2 inverse chrominance = 80h
 SeeAlso: I2C 9Eh
 --------V-I9C14------------------------------
 I2C 9Ch/14h - Philips SAA7110(A) ONE-CHIP FRONT-END - HSY BEGIN 60 Hz
+Access:	Write-Only
+Desc:	allows programming of the horizontal synchronization signal at the
+	  beginning of its high period in 60 Hz mode.
+Notes:	valid decimal multiplier range +191 to -64
+	valid delay time range (step size = 2/LLC) -382 to +128
 SeeAlso: I2C 9Eh
 --------V-I9C15------------------------------
 I2C 9Ch/15h - Philips SAA7110(A) ONE-CHIP FRONT-END - HSY STOP 60 Hz
+Access:	Write-Only
+Desc:	allows programming of the horizontal synchronization signal at the end
+	  of its high period in 60 Hz mode.
+Notes:	valid decimal multiplier range +191 to -64
+	valid delay time range (step size = 2/LLC) -382 to +128
 SeeAlso: I2C 9Eh
 --------V-I9C16------------------------------
 I2C 9Ch/16h - Philips SAA7110(A) ONE-CHIP FRONT-END - HCL BEGIN 60 Hz
+Access:	Write-Only
+Desc:	allows programming of the horizontal clamping signal at the beginning
+	  of its high period in 60 Hz mode.
+Notes:	valid decimal multiplier range +127 to -128
+	valid delay time range (step size = 2/LLC) -254 to +256
 SeeAlso: I2C 9Eh
 --------V-I9C17------------------------------
 I2C 9Ch/17h - Philips SAA7110(A) ONE-CHIP FRONT-END - HCL STOP 60 Hz
+Access:	Write-Only
+Desc:	allows programming of the horizontal clamping signal at the end of its
+	  high period in 60 Hz mode.
+Notes:	valid decimal multiplier range +127 to -128
+	valid delay time range (step size = 2/LLC) -254 to +256
 SeeAlso: I2C 9Eh
 --------V-I9C18------------------------------
 I2C 9Ch/18h - Philips SAA7110(A) ONE-CHIP FRONT-END - HSY AFTER PHI1 60 Hz
+Access:	Write-Only
+Note:	Valid range for decimal multiplier is +97 thru -97 giving a
+	  max. negative delay time value of -32 and a max. positive delay
+	  time value of +31.7 respectivly
 SeeAlso: I2C 9Eh
 --------V-I9C19------------------------------
 I2C 9Ch/19h - Philips SAA7110(A) ONE-CHIP FRONT-END - LUMINANCE BRIGHTNESS
+Access:	Write-Only
+Notes:	Offset values to note: high = FFh, CCIR-level = 8Bh, dark = 00h
 SeeAlso: I2C 9Eh
 --------V-I9C20------------------------------
 I2C 9Ch/20h - Philips SAA7110(A) ONE-CHIP FRONT-END - ANALOG CONTROL #1
+Access:	Write-Only
 SeeAlso: I2C 9Eh
+
+Bitfields for Analog Control #1:
+Bit(s)	Description	 (Table I0082)	(Table I0083)
+ 7	disable analog input 4
+ 6	disable analog input 3
+ 5	disable analog input 2
+ 4-3	Analog function
+	00  bypass amplifier and anti-alias filter
+	01    "	       "      "	     "	      "
+	10  select amplifier
+	11  select amplifier and anti-alias filter
+ 2	select analog input 4
+ 1	select analog input 3
+ 0	select analog input 2
+SeeAlso: #I0084
 --------V-I9C21------------------------------
 I2C 9Ch/21h - Philips SAA7110(A) ONE-CHIP FRONT-END - ANALOG CONTROL #2
+Access:	Write-Only
 SeeAlso: I2C 9Eh
+
+Bitfields for Analog Control #2:
+Bit(s)	Description	 (Table I0084)	(Table I0085)
+ 7	Vertical blanking control off
+ 6	MUXC channel 34
+	0 MX34 controls analog MUX3
+	1 MUXC controls analog MUX3
+ 5-4	Analog MUX2 control
+	00  adder mode
+	01  Ch 2 ON,  Ch 4 OFF
+	10  Ch 2 OFF, Ch 4 ON
+	11  both channels OFF
+ 3	MUXC channel 24
+	0 MX24 controls analog MUX2
+	1 MUXC controls analog MUX2
+ 2	Channel 4 reference select
+	0 automatic clamping
+	1 reference level
+ 1	Channel 3 reference select
+	0 automatic clamping
+	1 reference level
+ 0	Channel 2 reference select
+	0 automatic clamping
+	1 reference level
+SeeAlso: #I0082
 --------V-I9C22------------------------------
 I2C 9Ch/22h - Philips SAA7110(A) ONE-CHIP FRONT-END - MIXER CONTROL #1
+Access:	Write-Only
 SeeAlso: I2C 9Eh
+
+Bitfields for Mixer Control #1:
+Bit(s)	Description	 (Table I0088)	(Table I0087)
+ 7-6	automatic gain control
+	00 OFF
+	01 channel 2
+	10 channel 3
+	11 channel 4
+ 5	Chrominance select
+	0 ADC 3 to CHR
+	1 ADC 2 to CHR
+ 4	Luminance select
+	0 ADC 2 to CVBS
+	1 ADC 3 to CVBS
+ 3	fast digital multiplexing channel 2/3 active
+	0 normal CHR channel setting
+	1 used only for testing - do not use
+ 2	clamping function test
+	0 normal clamping mode
+	1 used only for testing - do not use
+ 1-0	analog MUX3 control
+	00  adder mode
+	01  Ch 3 ON,  Ch 4 OFF
+	10  Ch 3 OFF, Ch 4 ON
+	11  both channels OFF
 --------V-I9C23------------------------------
 I2C 9Ch/23h - Philips SAA7110(A) ONE-CHIP FRONT-END - CLAMPING LEVEL CONTROL 21
+Access:	Write-Only
 SeeAlso: I2C 9Eh
 --------V-I9C24------------------------------
 I2C 9Ch/24h - Philips SAA7110(A) ONE-CHIP FRONT-END - CLAMPING LEVEL CONTROL 22
+Access:	Write-Only
 SeeAlso: I2C 9Eh
 --------V-I9C25------------------------------
 I2C 9Ch/25h - Philips SAA7110(A) ONE-CHIP FRONT-END - CLAMPING LEVEL CONTROL 31
+Access:	Write-Only
 SeeAlso: I2C 9Eh
 --------V-I9C26------------------------------
 I2C 9Ch/26h - Philips SAA7110(A) ONE-CHIP FRONT-END - CLAMPING LEVEL CONTROL 32
+Access:	Write-Only
 SeeAlso: I2C 9Eh
 --------V-I9C27------------------------------
 I2C 9Ch/27h - Philips SAA7110(A) ONE-CHIP FRONT-END - GAIN CONTROL ANALOG #1
+Access:	Write-Only
 SeeAlso: I2C 9Eh
+
+Bitfields for Gain Control Analog #1:
+Bit(s)	Description	 (Table I0088)	(Table I0089)
+ 7	automatic gain control integration hold
+ 6	AGC integration mode (=0 difference value, =1 fix value)
+ 5-0	static gain control channel 2
+	 decimal	gain
+	multiplier  (.19 dB step)
+	0	      -2.82 dB
+	15	       0.0 dB
+	31	       3.0 dB
+	47	       6.0 dB
+	63	       9.0 dB
 --------V-I9C28------------------------------
 I2C 9Ch/28h - Philips SAA7110(A) ONE-CHIP FRONT-END - WHITE PEAK CONTROL
+Access:	Write-Only
+Note:	decimal white peak level valid values range from 128 to 254 with the
+	  value 255 meaning "white peak conrol OFF"
 SeeAlso: I2C 9Eh
 --------V-I9C29------------------------------
 I2C 9Ch/29h - Philips SAA7110(A) ONE-CHIP FRONT-END - SYNC BOTTOM CONTROL
+Access:	Write-Only
+Note:	sync bottom control level valid values range 1 to 254
 SeeAlso: I2C 9Eh
 --------V-I9C2A------------------------------
 I2C 9Ch/2Ah - Philips SAA7110(A) ONE-CHIP FRONT-END - GAIN CONTROL ANALOG #2
+Access:	Write-Only
 SeeAlso: I2C 9Eh
+
+Bitfields for Gain Control Analog #2:
+Bit(s)	Description	 (Table I0090)	(Table I0091)
+ 7-6	integration factor white peak
+	00  fast selection
+	01  -
+	10  -
+	11  slow selection
+ 5-0	(refer to: I2C 9Ch/27h bits 5-0)
 --------V-I9C2B------------------------------
 I2C 9Ch/2Bh - Philips SAA7110(A) ONE-CHIP FRONT-END - GAIN CONTROL ANALOG #3
+Access:	Write-Only
 SeeAlso: I2C 9Eh
+
+Bitfields for Gain Control Analog #3:
+Bit(s)	Description	 (Table I0092)	(Table I0093)
+ 7-6	Integration factor normal gain (refer to: I2C 9Ch/2Ah bits 7-6)
+ 5-0	(refer to: I2C 9Ch/27h bits 5-0)
 --------V-I9C2C------------------------------
 I2C 9Ch/2Ch - Philips SAA7110(A) ONE-CHIP FRONT-END - MIXER CONTROL #2
+Access:	Write-Only
+Note:	Reserved bits 2,3 and 6 must be set to LOW
 SeeAlso: I2C 9Eh
+
+Bitfields for Mixer Control #2:
+Bit(s)	Description	 (Table I0094)	(Table I0095)
+ 7	Clamping level select channel 4 (=0 CLL2n, =1 CLL3n)
+ 6	reserved
+ 5	Clamping level select channel 3 (=0 CLL31, =1 CLL32)
+ 4	Clamping level select channel 2 (=0 CLL21, =1 CLL22)
+ 3	reserved
+ 2	reserved
+ 1	Two's complement channel 3
+ 0	Two's complement channel 2
 --------V-I9C2D------------------------------
 I2C 9Ch/2Dh - Philips SAA7110(A) ONE-CHIP FRONT-END - INTEGRATION VALUE GAIN
+Access:	Write-Only
+Note:	decimal integration value gain - valid values range 1 to 255
 SeeAlso: I2C 9Eh
 --------V-I9C2E------------------------------
 I2C 9Ch/2Eh - Philips SAA7110(A) ONE-CHIP FRONT-END - VERTICAL BLANKING PULSE SET
+Access:	Write-Only
+Notes:	valid decimal multiplier for 60 Hz = 0 to 131(max)
+	valid decimal multiplier for 50 Hz = 0 to 156(max)
 SeeAlso: I2C 9Eh
 --------V-I9C2F------------------------------
-I2C 9Ch/2Fh - Philips SAA7110(A) ONE-CHIP FRONT-END - VERTICAL BLANKING PULSE RESET
+I2C 9Ch/2Fh - Philips SAA7110(A) ONE-CHIP FRONT-END - VERT BLANKING PULSE RESET
+Access:	Write-Only
 SeeAlso: I2C 9Eh
 --------V-I9C30------------------------------
 I2C 9Ch/30h - Philips SAA7110(A) ONE-CHIP FRONT-END - ADCs GAIN CONTROL
+Access:	Write-Only
 SeeAlso: I2C 9Eh
+
+Bitfields for ADCs Gain Control:
+bit(s)	Description	 (Table I0096)	(Table I0097)
+ 7	reserved (must be set to LOW)
+ 6	white peak mode select
+	0  difference value integration
+	1  fix value integration
+ 5	select gain ADC channel 3 (0=fix via I2C-bus, 1=automatic via loop)
+ 4-3	fix gain ADC channel 3
+	00     0 dB
+	01  0.05 dB
+	10  0.10 dB
+	11  0.15 dB
+ 2	select gain ADC channel 2 (0=fix via I2C-bus, 1=automatic via loop)
+ 1-0	fix gain ADC channel 2
+	00     0 dB
+	01  0.05 dB
+	10  0.10 dB
+	11  0.15 dB
 --------V-I9C31------------------------------
 I2C 9Ch/31h - Philips SAA7110(A) ONE-CHIP FRONT-END - MIXER CONTROL #3
+Access:	Write-Only
+Notes:	Reset to 00h after RESET = 0 or power-on
+	  (refer to: I2C 9Dh/00h and 9Dh/01h)
+	The AFCCS bit is not included in the SAA7110A due to advanced
+	  anti-alias filter characteristic.
 SeeAlso: I2C 9Eh
+
+Bitfields for Mixer Control #3:
+Bit(s)	Description	 (Table I0098)	(Table I0099)
+ 7-6	Analog test select (AOUT connected to:)
+	00  ground
+	01  input AD2
+	10  input AD3
+	11  channel 4
+ 5	white peak slow up integration select
+	0  slow up by using 1 value in H (line)
+	1  slow up by using 1 value in V (field)
+ 4	white peak slow up integration enable
+	0  Hold in white peak mode
+	1  slow up using method selected at bit 5
+ 3	DMSD-SQP bypassed
+	0  DMSD data to YUV output (normal)
+	1  A/D data to YUV output (for testing only, do not use)
+ 2	AFCCS bit
+ 1	pin function switch  (refer to I2C 9Ch/0Eh bit 0)
+	0  GPSW (general purpose switch) active
+	1  VBLK (vertical blanking) test output active
+ 0	pulses IO control (HCL and HSY)
+	0  to input pins
+	1  to output pins
 --------V-I9C32------------------------------
-I2C 9Ch/32h - Philips SAA7110(A) ONE-CHIP FRONT-END - INTEGRATION VALUE WHITE PEAK
+I2C 9Ch/32h - Philips SAA7110(A) ONE-CHIP FRONT-END - INTEGR. VALUE WHITE PEAK
+Access:	Write-Only
+Notes:	decimal integration value white peak - valid values are 1 to 127(max)
 SeeAlso: I2C 9Eh
 --------V-I9C33------------------------------
 I2C 9Ch/33h - Philips SAA7110(A) ONE-CHIP FRONT-END - MIXER CONTROL #4
+Access:	Write-Only
 SeeAlso: I2C 9Eh
+
+Bitfields for Mixer Control #4:
+Bit(s)	Description	 (Table I0100)	(Table I0101)
+ 7	output format (0 = 4.1.1 format, 1 = 4.2.2 format)
+ 6	reserved (0)
+ 5	sign bit UV data
+	0  UV output unipolar
+	1  UV output two's complement
+ 4	reserved (0)
+ 3	clock select AD3
+	0  LLC for testing only, (do not use)
+	1  LLC/2 (normal)
+ 2	clock select AD2
+	0  LLC for testing only, (do not use)
+	1  LLC/2 (normal)
+ 1-0	reserved (0)
 --------V-I9C34------------------------------
 I2C 9Ch/34h - Philips SAA7110(A) ONE-CHIP FRONT-END - GAIN UPDATE LEVEL
+Access:	Write-Only
+Note:	gain update level uses control bits 5-0,
+	  MUXC phase delay uses control bits 7-6
 SeeAlso: I2C 9Eh
+
+Bitfields for MUXC Phase Delay/Gain Update Level:
+Bit(s)	Description	 (Table I0102)	(Table I0103)
+7-6	MUXC phase delay
+	00  no phase delay
+	01  1 LLC cycle
+	10  2 LLC cycle
+	11  3 LLC cycle
+5-0	gain update level
 --------V-I9E--------------------------------
 I2C 9Eh - Philips SAA7110(A) ONE-CHIP FRONT-END
 Range:	I2C addresses 9Ch or 9Eh, determined by external pin
@@ -2597,7 +3015,7 @@ Notes:	the I2C specification defines bus addresses Axh for use by memory
 SeeAlso: INT 15/AX=53B0h/BH=01h
 
 Format of SDRAM Serial Presence Detect Data:
-Offset	Size	Description	(Table I0069)
+Offset	Size	Description	(Table I0104)
  00h	BYTE	number of bytes used by module manufacturer (00h = undefined)
  01h	BYTE	total size of serial EEPROM
 		00h = "RFU", 01h-0Dh = 2**N bytes (2 - 8192)
@@ -2664,14 +3082,14 @@ Offset	Size	Description	(Table I0069)
  7Fh	BYTE	Intel specification details for 100 MHz support
 
 Bitfields for SDRAM SPD row/column address bits:
-Bit(s)	Description	(Table I0070)
+Bit(s)	Description	(Table I0105)
  3-0	number of row or column address bits for bank 1 (and bank 2 if present
 	  and same size as bank 1) (see #I0049)
  7-4	number of row or column address bits for bank 2 if present and
 	  different from bank 1
 SeeAlso: #I0047
 
-(Table I0071)
+(Table I0106)
 Values for SDRAM SPD row/column address bits:
  00h	undefined
  01h	1 or 16
@@ -2683,7 +3101,7 @@ Values for SDRAM SPD row/column address bits:
  0Fh	15
 SeeAlso: #I0048
 
-(Table I0072)
+(Table I0107)
 Values for SDRAM module signal voltage interface:
  00h	TTL / 5.0 Volts
  01h	LVTTL
@@ -2694,7 +3112,7 @@ Values for SDRAM module signal voltage interface:
  FFh	new table
 SeeAlso: #I0047	
 
-(Table I0073)
+(Table I0108)
 Values for DIMM module ECC configuration type:
  00h	none
  01h	parity
@@ -2703,7 +3121,7 @@ Values for DIMM module ECC configuration type:
 SeeAlso: #I0047
 
 Bitfields for DIMM module refresh rate and type:
-Bit(s)	Description	(Table I0074)
+Bit(s)	Description	(Table I0109)
  7	self-refreshing
  6-0	rate
 	00h normal (15.625 us)
@@ -2716,14 +3134,14 @@ Bit(s)	Description	(Table I0074)
 SeeAlso: #I0047
 
 Bitfields for primary/error-checking SDRAM data width:
-Bit(s)	Description	(Table I0075)
+Bit(s)	Description	(Table I0110)
  7	second bank has double width
 	(=0 if only one bank, or second bank is same size)
  6-0	data width in bits (00h = undefined)
 SeeAlso: #I0047
 
 Bitfields for SDRAM supported burst lengths:
-Bit(s)	Description	(Table I0076)
+Bit(s)	Description	(Table I0111)
  0	burst length of 1 is supported
  1	burst length 2
  2	burst length 4
@@ -2733,7 +3151,7 @@ Bit(s)	Description	(Table I0076)
 SeeAlso: #I0047
 
 Bitfields for SDRAM supported CAS latencies:
-Bit(s)	Description	(Table I0077)
+Bit(s)	Description	(Table I0112)
  0	CAS latency of 1 is supported
  1	latency 2 supported
 ...
@@ -2742,7 +3160,7 @@ Bit(s)	Description	(Table I0077)
 SeeAlso: #I0047,#I0056
 
 Bitfields for SDRAM supported CS / WE latencies:
-Bit(s)	Description	(Table I0078)
+Bit(s)	Description	(Table I0113)
  0	CS / WE latency of 1 is supported
  1	latency 2 supported
 ...
@@ -2751,7 +3169,7 @@ Bit(s)	Description	(Table I0078)
 SeeAlso: #I0047,#I0055
 
 Bitfields for SDRAM module attributes:
-Bit(s)	Description	(Table I0079)
+Bit(s)	Description	(Table I0114)
  0	buffered addres/control inputs (Ax, RAS, CAS, WE, CKE, S)
  1	registered address/control inputs (Ax, RAS, CAS, WE, CKE, S)
  2	on-card PLL for clock
@@ -2763,7 +3181,7 @@ Bit(s)	Description	(Table I0079)
 SeeAlso: #I0047
 
 Bitfields for general SDRAM device attributes:
-Bit(s)	Description	(Table I0080)
+Bit(s)	Description	(Table I0115)
  0	supports early RAS# precharge
  1	supports AutoPrecharge
  2	supports Precharge All
@@ -2774,7 +3192,7 @@ Bit(s)	Description	(Table I0080)
 SeeAlso: #I0047
 
 Bitfields for DIMM row density:
-Bit(s)	Description	(Table I0081)
+Bit(s)	Description	(Table I0116)
  0	4 MByte
  1	8 MB
  2	16 MB
@@ -2788,7 +3206,7 @@ Note:	if the module contains multiple rows of varying sizes, multiple bits
 SeeAlso: #I0047
 
 Bitfields for Intel specification details for 100 MHz DIMM support:
-Bit(s)	Description	(Table I0082)
+Bit(s)	Description	(Table I0117)
  0	supports Intel-defined "Concurrent AutoPrecharge"
  1	supports CAS latency = 2 
  2	supports CAS latency = 3
@@ -2833,7 +3251,7 @@ Notes:	Freq is the 16 * (desired frequency in MHz + IF frequency), assuming
 Index:	TSA5505T;TSA5512;TSA5515T;FI1236MK2
 
 Bitfields for Philips TSA5523M Tuner band:
-Bit(s)	Description	(Table I0083)
+Bit(s)	Description	(Table I0118)
  7-0	open-collector control bits
 	each bit turns on one NPN transistor
  2-0	(TSA5522) band-switch
@@ -2873,7 +3291,7 @@ I2C C0h - Philips TSA5523M Frequency Synthesizer - STATUS
 Range:	I2C addresses C0h, C2h, C4h, or C6h, selectable by external pin
 
 Bitfields for TSA5523M status:
-Bit(s)	Description	(Table I0084)
+Bit(s)	Description	(Table I0119)
  7	Power-On Reset flag (cleared after first read)
  6	PLL is phase-locked
  5	digital level of P2 (requires that open-collector control bit 2 = 0)
@@ -2896,7 +3314,7 @@ I2C C2h/00h - Philips FI1236MK2 Tuner - TUNER STATUS
 Access:	Read
 
 Bitfields for ??? Tuner status:
-Bit(s)	Description	(Table I0085)
+Bit(s)	Description	(Table I0120)
  1	tuner is locked onto TV signal
 --------V-IE0--------------------------------
 I2C E0h - TDA8443A - I2C-bus controlled YUV/RGB switch
@@ -2939,7 +3357,7 @@ Note:	the address to which the CS4922 responds must be programmed via the
 	  with a microprogram by sending data over I2C (see #I0065)
 
 Format of Crystal Semiconductor microprogram data:
-Offset	Size	Description	(Table I0086)
+Offset	Size	Description	(Table I0121)
  00h	WORD	starting address in RAM
 		high three bits ignored; bit 12 indicates program/data memory
 		the CS4920A contains 4K words of program RAM, 2K words data
@@ -2992,7 +3410,7 @@ Desc:	specify the I2C bus address to which the CS4952 responds (see #I0066)
 Note:	the power-up default is 00h
 
 Bitfields for CS4952/CS4953 I2C bus address:
-Bit(s)	Description	(Table I0087)
+Bit(s)	Description	(Table I0122)
  7	unused???
  6-0	high seven bits of I2C address to which the chip should respond
 --------V-Ixx10------------------------------
@@ -3044,16 +3462,15 @@ Note:	the power-up default address is 00h (see I2C xxh/0Fh"CS4952")
 --------!---BIBLIOGRAPHY---------------------
 [see BIBLIO.LST]
 --------!---Admin----------------------------
-Highest Table Number = I0087
+Highest Table Number = I0104
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER59A through INTER59D (preferably the original
+quartet of archives named INTER60A through INTER60D (preferably the original
 authenticated PKZIP archives), and the utility and hypertext programs in a trio
-of additional archives called INTER59E.ZIP to INTER59G.ZIP.
+of additional archives called INTER60E.ZIP to INTER60G.ZIP.
 
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
 --------!---CONTACT_INFO---------------------
 Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
 FIDO: Ralf Brown 1:129/26.1
-CIS:  >INTERNET:ralf@pobox.com

@@ -1,5 +1,5 @@
-PORTS LIST			Release 59		Last change 30aug98
-Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998 Ralf Brown
+PORTS LIST			Release 60		Last change 03jan99
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999 Ralf Brown
 [This file originally by Wim Osterholt <wim@djo.wtm.tudelft.nl>,
  though it has grown considerably since.]
 
@@ -324,7 +324,7 @@ SeeAlso: PORT 0022h"82443BX"
 	bit 0:	Arbiter Disable
 --------p-P0022------------------------------
 PORT 0022 - Intel 82443BX - "PM2_CTL" ACPI Power Control 2 Register
-SeeAlso: PORT 0022h"82439TX",#01121 at INT 1A/AX=B10Ah/SF=8086h
+SeeAlso: PORT 0022h"82439TX",#01142 at INT 1A/AX=B10Ah/SF=8086h
 
 0022  RW  ACPI Power Control Register 2
 	bits 7-1: reserved
@@ -791,10 +791,10 @@ Values for Intel 82374 register index:
  4Eh	peripheral Chip Select A (see #P0044)
  4Fh	peripheral Chip Select B (see #P0045)
  50h-53h EISA ID registers
- 57h	scatter/gather relocate base address (see also #01054)
+ 57h	scatter/gather relocate base address (see also #01075)
 	(specifies bits 15-0 if S/G port addresses [low byte always 10h-3Fh])
  59h	APIC base address relocation
- 60h-63h PCI IRQn# route control (see also #01055)
+ 60h-63h PCI IRQn# route control (see also #01076)
  64h	general-purpose chip select low address 0
  65h	general-purpose chip select high address 0
  66h	general-purpose chip select mask register 0
@@ -1777,7 +1777,7 @@ Bit(s)	Description	(Table P0094)
 	10 PORT 03BCh-03BEh (not for EPP mode)
 	11 reserved
  0	enable parallel port
-SeeAlso: #P0088,#P0095,#P0892,PORT 0678h"ECP"
+SeeAlso: #P0088,#P0095,#P0920,PORT 0678h"ECP"
 
 Bitfields for Intel 82091AA parallel port power managment register:
 Bit(s)	Description	(Table P0095)
@@ -6042,7 +6042,7 @@ Bit(s)	Description	(Table P0324)
 	110 = reserved
 	111 = clear wake-up source (write to clear)
  7-5	reserved
- 4-0	SMI source (see #00650)
+ 4-0	SMI source (see #00671)
 SeeAlso: #P0294
 
 (Table P0325)
@@ -6864,12 +6864,17 @@ Notes:	The I/O address range is dipswitch selectable from:
 	Once started, all of the addresses show	 FB, whatever might happen.
 ----------P0040005F--------------------------
 PORT 0040-005F - PIT - PROGRAMMABLE INTERVAL TIMER (8253, 8254)
-Note:	XT & AT use ports 40h-43h; PS/2 uses ports 40h, 42h-44h, and 47h
+Notes:	XT & AT use ports 40h-43h; PS/2 uses ports 40h, 42h-44h, and 47h
+	the counter chip is driven with a 1.193 MHz clock (1/4 of the
+	original PC's 4.77 MHz CPU clock)
 SeeAlso: PORT 0044h,PORT 0048h
 
 0040  RW  PIT  counter 0, counter divisor	      (XT, AT, PS/2)
+	Used to keep the system time; the default divisor of (1)0000h
+	produces the 18.2Hz clock tick.
 0041  RW  PIT  counter 1, RAM refresh counter	(XT, AT)
-			don't set below 3 on PCs (default 12h)
+	don't set below 3 on PCs (default 12h), and don't mess with this
+	counter at all unless you really know what you're doing....
 0042  RW  PIT  counter 2, cassette & speaker	(XT, AT, PS/2)
 	During normal operation mode (8253) 40h-42h set the counter values on
 	write and get the current counter value on read. In 16bit modes two
@@ -7758,7 +7763,7 @@ PORT 0078 - Intel 82378IB ("Saturn"/"Neptune" chipsets) - BIOS COUNT-DOWN TIMER
 Notes:	the BIOS uses this port for certain fine timings; presumably it is
 	  independent of processor speed (it appears to decrement at 1 MHz)
 	the address at which this port appears may be set via the 82378's
-	  PCI configuration space word at offset 0080h (see #01043), or the
+	  PCI configuration space word at offset 0080h (see #01064), or the
 	  timer may be disabled entirely
 SeeAlso: PORT 0075h
 
@@ -9282,7 +9287,7 @@ Notes:	used to pass data between the operating system and the System
 	writes to this port can cause an SMI; reads can cause STPCLK# to be
 	  asserted (putting the CPU in sleep mode)
 	supported by 82420EX, 82371, and other Intel chipsets
-SeeAlso: PORT 00B3h,#01058
+SeeAlso: PORT 00B3h,#01079
 
 00B2  RW  control
 ----------P00B3------------------------------
@@ -9617,14 +9622,14 @@ SeeAlso: #P0493
 
 Bitfields for Chips&Technologies 64200 "Wingine" setup register:
 Bit(s)	Description	(Table P0493)
- 7	enable access to extended registers (see #P0735)
+ 7	enable access to extended registers (see #P0762)
 Note:	on some C&T graphics chips, this register can be made read-only
-	  via XR70 (see #P0735)
+	  via XR70 (see #P0762)
 SeeAlso: #P0492
 ----------P0100010F--------------------------
 PORT 0100-010F - CompaQ Tape drive adapter. alternate address at 0300
-----------P102	Chi--------------------------
-PORT 102 - Chips & Technologies 64310 - GLOBAL ENABLE REGISTER
+----------P0102------------------------------
+PORT 0102 - Chips & Technologies 64310 - GLOBAL ENABLE REGISTER
 SeeAlso: PORT 0106"Chips"
 
 0102  RW  global enable register (see #P0494)
@@ -9673,10 +9678,10 @@ SeeAlso: PORT 0100h"3COM",PORT 0110h"3COM"
 ----------P0130013F--------------------------
 PORT 0130-013F - CompaQ SCSI adapter. alternate address at 0330
 ----------P01300133--------------------------
-PORT 0130-0133 - Adaptec 154xB/154xC SCSI adapter.
+PORT 0130-0133 - Adaptec 154xB/154xC SCSI adapter
 Range:	four ports at any of 0130, 0134, 0230, 0234, 0330 (default) or 0334
 ----------P01340137--------------------------
-PORT 0134-0137 - Adaptec 154xB/154xC SCSI adapter.
+PORT 0134-0137 - Adaptec 154xB/154xC SCSI adapter
 Range:	four ports at any of 0130, 0134, 0230, 0234, 0330 (default) or 0334
 ----------P0138013F--------------------------
 PORT 0138-013F - PC radio by CoZet Info Systems

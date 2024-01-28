@@ -1,4 +1,4 @@
-CMOS-Memory Map			Release 59		Last change 30aug98
+CMOS-Memory Map			Release 60		Last change 03jan99
 
 Compiled from multiple sources by Padgett Peterson
 Corrections/additions/comments to: padgett@tccslr.dnet.mmc.com
@@ -336,7 +336,7 @@ Bit(s)	Description	(Table C0012)
  1	BIOS Password Enabled (supervisor)
  0	0 = Password controls BIOS Setup Only
 	1 = Password required to enter System
-SeeAlso: #C0081
+SeeAlso: #C0083
 
 Code snippet by Jens Rehsack:
    FUNCTION CalcPossiblePassword( PasswordValue: WORD ): STRING[8];
@@ -598,7 +598,7 @@ CMOS 1Ch - MCA - SLOT 1 ADAPTER CARD ID
 CMOS 1Ch - AMI - First Hard Disk user defined: # of Cylinders, High Byte
 ----------R1C--------------------------------
 CMOS 1Ch - PHOENIX - MSB of Word to 82335 RC1 roll compare register
-----------R1C--------------------------------
+--------y-R1C--------------------------------
 CMOS 1Ch,1Dh - AWARD - Password
 Note:	Stored as a checksum using the following algorithm:
 	    initialize 16-bit checksum to zero
@@ -630,7 +630,7 @@ Bit(s)	Description	(Table C0023)
 		(this is the default).
 ----------R1D--------------------------------
 CMOS 1Dh - PHOENIX - LSB of Word to 82335 RC2 roll compare register
-----------R1D--------------------------------
+--------y-R1D--------------------------------
 CMOS 1Dh - AWARD - MSB of password checksum (see byte 1Ch)
 ----------R1D--------------------------------
 CMOS 1Dh - Quadtel HT 12 BIOS - first user def. drive: # of cylinders low byte
@@ -1118,15 +1118,15 @@ Bit(s)	Description	(Table C0044)
  3-0	WinBIOS/AMIBIOS setup color options
 ----------R37--------------------------------
 CMOS 37h - Quadtel HT12 BIOS 03.05.03 - EXTENDED MEMORY (high byte)
-----------R373A------------------------------
+--------y-R373A------------------------------
 CMOS 37h-3Ah - AMI 1990 Hyundai super-NB368S notebook - PASSWORD
 Desc:	encoded password, max 4 bytes.
 ----------R38--------------------------------
 CMOS 38h - PHOENIX - Second user defined hard disk (type 48) Write Precomp. LSB
 Note:	used only when PS/2 style password is NOT in effect.
-----------R383D------------------------------
+--------y-R383D------------------------------
 CMOS 38h-3Dh - AMI - Encrypted Password
-----------R383F------------------------------
+--------y-R383F------------------------------
 CMOS 38h-3Fh - ??? IBM PS/2 - Encrypted Password
 Note:	Initialized to 00h in all bytes. Will accept from 1-7 scan codes. 
 ----------R39--------------------------------
@@ -1240,7 +1240,7 @@ CMOS 3Fh - AWARD - ???
  64 bytes, addresses will wrap so that requests for bytes 40h-7Fh will 
  return the same values as 00h-3Fh.
 
-----------R40--------------------------------
+--------p-R40--------------------------------
 CMOS 40h - AMI 1990 Hyundai super-NB368S notebook - POWER-SAVE CONFIGURATION
 
 Bitfields for Hyundai power-save configuration:
@@ -1351,6 +1351,11 @@ SeeAlso: #C0059
 CMOS 47h-50h - ???
 ----------R484F------------------------------
 CMOS 48h-4Fh - AWARD - ??? unused ???  Defaults to all FFh's.
+--------y-R484F------------------------------
+CMOS 48h-4Fh - PhoenixBIOS A486 v1.01.E - USER PASSWORD
+Desc:	stores scan-codes for the password in the first seven bytes, and the
+	  low byte of the password checksum in the eighth byte
+SeeAlso: CMOS 50h"A486 v1.01.E"
 ----------R48--------------------------------
 CMOS 48h - AMI (Saturn) - EXTERNAL CACHE
 
@@ -1423,7 +1428,7 @@ CMOS 4Dh - AMI (Saturn) - RESERVED
 ----------R4D--------------------------------
 CMOS 4Dh - AMI (PicoPower) - MIDDLE BIOS
 Note:	Middle BIOS is enabled if bit 1 set
-----------R4D--------------------------------
+--------y-R4D--------------------------------
 CMOS 4Dh - AWARD - USER PASSWORD
 SeeAlso: CMOS 4Eh"AWARD",CMOS 1Ch"AWARD"
 ----------R4E--------------------------------
@@ -1441,11 +1446,16 @@ Bitfields for AMI (PicoPower) Turbo Bus video:
 Bit(s)	Description	(Table C0068)
  2	memory enabled
  1	I/O enabled
-----------R4E--------------------------------
+--------y-R4E--------------------------------
 CMOS 4Eh - AWARD - USER PASSWORD
 SeeAlso: CMOS 4Dh"AWARD",CMOS 1Ch"AWARD"
 ----------R50--------------------------------
 CMOS 50h - AWARD - PCI Bus Slot 1 Latency Timer 0-255 (default: 0)
+--------y-R5057------------------------------
+CMOS 50h-57h - PhoenixBIOS A486 v1.01.E - ADMIN PASSWORD
+Desc:	stores scan-codes for the password in the first seven bytes, and the
+	  low byte of the password checksum in the eighth byte
+SeeAlso: CMOS 48h"A486 v1.01.E"
 ----------R51--------------------------------
 CMOS 51h - AMI - MEMORY ACCESS CONTROL
 
@@ -1494,15 +1504,36 @@ Bit(s)	Description	(Table C0072)
 	01 = B-PIRQ2
 	10 = C-PIRQ3
 	11 = D-PIRQ0
+--------p-R53--------------------------------
+CMOS 53h - AWARD v4.51PG APM - APM FUNCTION CONFIGURATION FOR ATX POWER SUPPLY
+SeeAlso: CMOS 54h"v4.51PG"
+
+Bitfields for AWARD v4.51PG ATX Power Supply Configuration #1:
+Bit(s)	Description	(Table C0073)
+ 7	power button override enabled
+ 6-2	???
+ 1	VGA is active monitor
+ 0	???
+SeeAlso: #C0074
 ----------R547F------------------------------
 CMOS 54h-7Fh - ???
 ----------R54--------------------------------
 CMOS 54h - AWARD - PCI Bus Slot 3 Latency Timer 0-255 (default: 0)
+--------p-R54--------------------------------
+CMOS 54h - AWARD v4.51PG APM - APM FUNCTION CONFIGURATION FOR ATX POWER SUPPLY
+SeeAlso: CMOS 53h"v4.51PG"
+
+Bitfields for AWARD v4.51PG ATX Power Supply Configuration #2:
+Bit(s)	Description	(Table C0074)
+ 7-2	???
+ 1	enable Resume on Ring 
+ 0	enable Resume on Alarm
+SeeAlso: #C0073
 ----------R55--------------------------------
 CMOS 55h - AWARD - PCI Bus Setup
 
 Bitfields for AWARD PCI bus setup:
-Bit(s)	Description	(Table C0073)
+Bit(s)	Description	(Table C0075)
  7	PIRQ2# Interrupt Triggering
 	0 = Edge Sensitive,
 	1 = Level Sensitive
@@ -1512,44 +1543,60 @@ Bit(s)	Description	(Table C0073)
 	01 = B-PIRQ3
 	10 = C-PIRQ0
 	11 = D-PIRQ1
+--------p-R55--------------------------------
+CMOS 55h - AWARD v4.51PG - APM - POWER-ON DAY OF MONTH (Resume by Alarm)
+Note:	value is binary, rather than BCD as for most calendar functions
+SeeAlso: CMOS 56h"v4.51PG",CMOS 57h"v4.51PG"
 ----------R56--------------------------------
 CMOS 56h - AWARD - ??? reserved for PCI Bus Slot 4 Latency Timer ???
+--------p-R56--------------------------------
+CMOS 56h - AWARD v4.51PG - APM - POWER-ON HOUR (Resume by Alarm)
+Note:	value is binary, rather than BCD as for most calendar functions
+SeeAlso: CMOS 55h"v4.51PG",CMOS 57h"v4.51PG"
 ----------R57--------------------------------
 CMOS 57h - AWARD - PCI Bus Setup
 
 Bitfields for AWARD PCI bus setup:
-Bit(s)	Description	(Table C0074)
+Bit(s)	Description	(Table C0076)
  7	PIRQ3# Interrupt Triggering
 	0 = Edge Sensitive,
 	1 = Level Sensitive
  6-0	???not used	Default: all 1's
+--------p-R57--------------------------------
+CMOS 57h - AWARD v4.51PG - APM - POWER-ON MINUTE (Resume by Alarm)
+Note:	value is binary, rather than BCD as for most calendar functions
+SeeAlso: CMOS 56h"v4.51PG",CMOS 58h"v4.51PG"
 ----------R58--------------------------------
 CMOS 58h - AWARD - ??? reserved for PCI Bus Slot 5 Latency Timer ???
 
 Bitfields for AWARD PCI bus slot 5 latency timer:
-Bit(s)	Description	(Table C0075)
+Bit(s)	Description	(Table C0077)
  3	onboard CMD IDE Mode 3
+--------p-R58--------------------------------
+CMOS 58h - AWARD v4.51PG - APM - POWER-ON SECOND (Resume by Alarm)
+Note:	value is binary, rather than BCD as for most calendar functions
+SeeAlso: CMOS 55h"v4.51PG",CMOS 57h"v4.51PG"
 ----------R59--------------------------------
 CMOS 59h - AWARD - ??? reserved for PCI Bus Setup ???
 ----------R5A--------------------------------
 CMOS 5Ah - AWARD - PCI Bus IRQ Setup 1
 
 Bitfields for AWARD PCI bus IRQ setup 1:
-Bit(s)	Description	(Table C0076)
+Bit(s)	Description	(Table C0078)
  4-7	PIRQ1# Interrupt Line (0=none, Bh=IRQ11, etc)
  0-3	PIRQ0# Interrupt Line	  "	     "	      "
 ----------R5B--------------------------------
 CMOS 5Bh - AWARD - PCI Bus IRQ Setup 2
 
 Bitfields for AWARD PCI bus IRQ setup 2:
-Bit(s)	Description	(Table C0077)
+Bit(s)	Description	(Table C0079)
  4-7	PIRQ3# Interrupt Line (0=none, Bh=IRQ11, etc)
  0-3	PIRQ2# Interrupt Line	  "	     "	      "
 ----------R5C--------------------------------
 CMOS 5Ch - AMI (PicoPower) - LOW-SPEED CLOCK
 
 Bitfields for AMI (PicoPower) low-speed clock select:
-Bit(s)	Description	(Table C0078)
+Bit(s)	Description	(Table C0080)
  2-0	low-speed clock divisor
 	000  /1
 	001  /2
@@ -1557,18 +1604,18 @@ Bit(s)	Description	(Table C0078)
 ----------R5C5F------------------------------
 CMOS 5Ch-5Fh - AWARD - ??? unused ???
 Note:	Defaults to all FFh's.
-----------R5D--------------------------------
+--------p-R5D--------------------------------
 CMOS 5Dh - AMI (PicoPower) - DOZE MODE
 
 Bitfields for AMI (PicoPower) doze mode control:
-Bit(s)	Description	(Table C0079)
+Bit(s)	Description	(Table C0081)
  7	APM enabled
- 6-4	doze mode CPU clock speed (see #C0080)
+ 6-4	doze mode CPU clock speed (see #C0082)
  3	hotkey setup enabled
- 2-0	"sleep mode" CPU CLK speed (see #C0080)
-SeeAlso: #C0082
+ 2-0	"sleep mode" CPU CLK speed (see #C0082)
+SeeAlso: #C0084
 
-(Table C0080)
+(Table C0082)
 Values for AMI (PicoPower) CPU clock speeds:
  000	MAX
  001	MAX/2
@@ -1577,7 +1624,7 @@ Values for AMI (PicoPower) CPU clock speeds:
  100	MAX/16
  101	MAX/32
  110	MAX/64
-SeeAlso: #C0079,#C0082
+SeeAlso: #C0081,#C0084
 ----------R5E--------------------------------
 CMOS 5Eh - AMI 1990 Hyundai super-NB368S notebook - ???
 	00h when values from bios defaults
@@ -1587,14 +1634,14 @@ CMOS 5Eh - AWARD v4.50G - ?
 SeeAlso: CMOS 5Fh"AWARD"
 
 Bitfields for AWARD register 5Eh:
-Bit(s)	Description	(Table C0081)
+Bit(s)	Description	(Table C0083)
  0	user password enabled
 SeeAlso: #C0012
-----------R5E5F------------------------------
-CMOS 5Eh-5Fh - AMI (PicoPower) - CPU SPEEDS
+--------p-R5E--------------------------------
+CMOS 5Eh - AMI (PicoPower) - CPU SPEEDS
 
 Bitfields for AMI (PicoPower) CPU speeds:
-Bit(s)	Description	(Table C0082)
+Bit(s)	Description	(Table C0084)
  7	suspend warning beeps enabled
  6-4	"full on" CPU CLK speed
 	000 MAX
@@ -1605,12 +1652,12 @@ Bit(s)	Description	(Table C0082)
 	00 disabled
 	01 Auto
 	10 enabled
-SeeAlso: #C0079
-----------R5F--------------------------------
+SeeAlso: #C0081
+--------p-R5F--------------------------------
 CMOS 5Fh - AMI (PicoPower) - POWER MANAGEMENT TIMEOUTS
 
 Bitfields for AMI (PicoPower) power management timeouts:
-Bit(s)	Description	(Table C0083)
+Bit(s)	Description	(Table C0085)
  7	enable battery-low beeps
  5-3	SUSPEND timeout
 	000  disabled
@@ -1627,15 +1674,15 @@ Bit(s)	Description	(Table C0083)
 	101  4 seconds
 	110  8 seconds
 	111  16 seconds
-SeeAlso: #C0085
-----------R5F--------------------------------
+SeeAlso: #C0087
+--------y-R5F--------------------------------
 CMOS 5Fh - AWARD v4.50G - USER PASSWORD CHECKSUM
 SeeAlso: CMOS 5Eh"AWARD"
-----------R60--------------------------------
+--------p-R60--------------------------------
 CMOS 60h - AWARD - POWER MANAGEMENT
 
 Bitfields for AWARD power management:
-Bit(s)	Description	(Table C0084)
+Bit(s)	Description	(Table C0086)
  7	???
  6	Video Off Method
 	1  = V/H SYNC + Blank (default)
@@ -1652,11 +1699,11 @@ Bit(s)	Description	(Table C0084)
 	01  Disabled (default)
 	10  Minimum Power Savings (40 Minutes for all events)
 	11  Maximum Power Savings (20 Seconds for all events)
-----------R60--------------------------------
+--------p-R60--------------------------------
 CMOS 60h - AMI (PicoPower) - SLEEP TIMEOUT
 
 Bitfields for AMI (PicoPower) sleep timeout:
-Bit(s)	Description	(Table C0085)
+Bit(s)	Description	(Table C0087)
  5-3	SLEEP timeout
 	000  disabled
 	001  1 minute
@@ -1666,14 +1713,14 @@ Bit(s)	Description	(Table C0085)
 	101  6 minutes
 	110  8 minutes
 	111  12 minutes
-SeeAlso: #C0083,#C0087
+SeeAlso: #C0085,#C0089
 ----------R6077------------------------------
 CMOS 60h-77h - AMI WinBIOS - PCI chipset-specific setup information
-----------R61--------------------------------
+--------p-R61--------------------------------
 CMOS 61h - AWARD - POWER MANAGEMENT
 
 Bitfields for AWARD power management:
-Bit(s)	Description	(Table C0086)
+Bit(s)	Description	(Table C0088)
  7	PM Event on HDD Ports Activity (1=enable)
  6	PM Event on LPT Port Activity (1=enable)
  5	PM Event on COM Port Activity (1=enable)
@@ -1688,18 +1735,18 @@ CMOS 62h - AMI 1990 Hyundai super-NB368S notebook - ???
 ----------R62--------------------------------
 CMOS 62h - AMI (Neptune) - number of last PCI bus in system
 SeeAlso: INT 1A/AX=B101h
-----------R62--------------------------------
+--------p-R62--------------------------------
 CMOS 62h - AMI (PicoPower) - HARD-DISK POWERDOWN
 
 Bitfields for AMI (PicoPower) hard-disk powerdown timeout:
-Bit(s)	Description	(Table C0087)
+Bit(s)	Description	(Table C0089)
  3-0	hard-disk timeout in minutes (0000 = disabled)
-SeeAlso: #C0085
-----------R62--------------------------------
+SeeAlso: #C0087
+--------p-R62--------------------------------
 CMOS 62h - AWARD - POWER MANAGEMENT
 
 Bitfields for AWARD power management:
-Bit(s)	Description	(Table C0088)
+Bit(s)	Description	(Table C0090)
  7-4	Standby Mode Setting (for User Defined)
 	0   Disabled
 	1   20 Seconds
@@ -1716,24 +1763,24 @@ Bit(s)	Description	(Table C0088)
 CMOS 62h - AWARD v4.51pg - BIT FLAGS
 
 Bitfields for AWARD v4.51pg CMOS 62h:
-Bit(s)	Description	(Table C0089)
+Bit(s)	Description	(Table C0091)
  0	user password is enabled
-----------R63--------------------------------
+--------p-R63--------------------------------
 CMOS 63h - AWARD - POWER MANAGEMENT
 
 Bitfields for AWARD power management:
-Bit(s)	Description	(Table C0090)
+Bit(s)	Description	(Table C0092)
  7	Disable PM Event on IRQ3 Activity (COM2) (1=disable)
  6	PM Event on VGA Activity (1=enable)
  5	??? (Defaults to 1)
  4	PM Event on PCI/ISA Master Activity (1=enable)
  0-3	Suspend Mode Setting (for User Defined)
 	(See Standby Mode above)
-----------R63--------------------------------
+--------p-R63--------------------------------
 CMOS 63h - AMI (PicoPower) - BATTERY-LOW ACTIONS
 
 Bitfields for AMI (PicoPower) battery-low actions:
-Bit(s)	Description	(Table C0091)
+Bit(s)	Description	(Table C0093)
  5-3	battery-very-low action
 	000  MAX
 	001  MAX/2
@@ -1746,11 +1793,11 @@ Bit(s)	Description	(Table C0091)
  2-0	battery-low action (same as battery-very-low action)
 ----------R64--------------------------------
 CMOS 64h - AMI 1990 Hyundai super-NB368S notebook - ???
-----------R64--------------------------------
+--------p-R64--------------------------------
 CMOS 64h - AMI (PicoPower) - BATTERY POWER
 
 Bitfields for AMI (PicoPower) battery power:
-Bit(s)	Description	(Table C0092)
+Bit(s)	Description	(Table C0094)
  6	extended battery debounce enabled
  4-3	resume with modem ring
 	00 disabled
@@ -1762,11 +1809,12 @@ Bit(s)	Description	(Table C0092)
 	00 15 usec
 	01 120 usec (1/8 normal)
 	10 self
-----------R64--------------------------------
-CMOS 64h - AWARD - POWER MANAGEMENT - IRQ activity events
+--------p-R64--------------------------------
+CMOS 64h - AWARD - POWER MANAGEMENT - IRQ activity events #1
+SeeAlso: CMOS 65h"AWARD"
 
 Bitfields for AWARD power management IRQ activity events:
-Bit(s)	Description	(Table C0093)
+Bit(s)	Description	(Table C0095)
  7	Disable PM Event on IRQ11 Activity (1=disable)
  6	Disable PM Event on IRQ10 Activity (1=disable)
  5	Disable PM Event on IRQ9 Activity (IRQ2 Redir) (1=disable)
@@ -1775,11 +1823,12 @@ Bit(s)	Description	(Table C0093)
  2	Disable PM Event on IRQ6 Activity (Floppy) (1=disable)
  1	Disable PM Event on IRQ5 Activity (LPT2) (1=disable)
  0	Disable PM Event on IRQ4 Activity (COM1) (1=disable)
-----------R65--------------------------------
-CMOS 65h - AWARD - POWER MANAGEMENT
+--------p-R65--------------------------------
+CMOS 65h - AWARD - POWER MANAGEMENT - IRQ activity events #2
+SeeAlso: CMOS 64h"AWARD"
 
 Bitfields for AWARD power management:
-Bit(s)	Description	(Table C0094)
+Bit(s)	Description	(Table C0096)
  7-4	??? may be unused.  Defaults to all 1's
  3	Disable PM Event on IRQ15 Activity (1=disable)
  2	Disable PM Event on IRQ14 Activity (Hard Disk) (1=disable)
@@ -1789,13 +1838,13 @@ Bit(s)	Description	(Table C0094)
 CMOS 65h - AMI (PicoPower) - PC PIN STAGGER
 
 Bitfields for AMI (PicoPower) PC pin stagger:
-Bit(s)	Description	(Table C0095)
+Bit(s)	Description	(Table C0097)
  7-6	PC pin stagger period
 	00  immediate
 	01  4 msec
 	10  16 msec
 	11  64 msec
-----------R66--------------------------------
+--------p-R66--------------------------------
 CMOS 66h - AMI 1990 Hyundai super-NB368S notebook - DOZE MODE TIMEOUT
 Note:	doze mode timeout 00-0F, from table (0,12 -14 sec)
 ----------R6679------------------------------
@@ -1838,7 +1887,7 @@ CMOS 7Eh - AMD-645 Clock - MONTH ALARM
 Desc:	on an AMD-645, this byte specifies the month of the year on which
 	  the alarm will activate
 SeeAlso: CMOS 01h,CMOS 03h,CMOS 05h,CMOS 7Dh
-----------R7E7F------------------------------
+--------p-R7E7F------------------------------
 CMOS 7Eh-7Fh - AMI WinBIOS - used as scratch RAM by power management code
 ----------R7F--------------------------------
 CMOS 7Fh - AMD-645 Clock - CENTURY
@@ -1918,7 +1967,7 @@ CMOS_DATA	DB   128 DUP (?)
 	    Alexey Podrezov
 	    28.08.1996
 --------!---Admin----------------------------
-Highest Table Number = C0095
+Highest Table Number = C0097
 --------!---History--------------------------
 Revision History
 
@@ -1936,8 +1985,4 @@ v1.0	June, 1993	First release: Motorola MC 146818,  PC-AT & AMI
 			"Hi-Flex" information baselined
 --------!---CONTACT_INFO---------------------
 Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
-UUCP: {uunet,harvard}!pobox.com!ralf
 FIDO: Ralf Brown 1:129/26.1
-	or post a message to me in the DR_DEBUG echo (I probably won't see it
-	unless you address it to me)
-CIS:  >INTERNET:ralf@pobox.com
