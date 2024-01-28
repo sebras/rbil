@@ -1,5 +1,958 @@
-Interrupt List, part 3 of 12
+Interrupt List, part 3 of 13
 This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+--------J-1550-------------------------------
+INT 15 - DOS/V - FONT SUBSYSTEM ACCESS
+	AH = 50h
+	AL = which function address to retrieve
+	    00h "read font" function
+	    01h "write font" function
+	BL = 00h
+	BH = character size (00h single-byte, 01h double-byte)
+	DH = width of character cell
+	DL = height of character cell
+	BP = code page (see #0356)
+Return: CF clear if successful
+	    AH = 00h
+	    ES:BX -> requested function's address
+	CF set on error
+	    AH = error code (see #0357)
+SeeAlso: AH=49h
+
+(Table 0356)
+Values for DOS/V code page:
+ 0	default
+ 437	US English
+ 932	Japanese
+ 934	Korea
+ 936	China
+ 938	Taiwan
+
+(Table 0357)
+Values for DOS/V error code:
+ 01h	invalid font type in BH
+ 02h	BL not zero
+ 03h	invalid font size
+ 04h	invalid code page
+ 80h	unsupported function (PC)
+ 86h	unsupported function (XT)
+--------T-1550-------------------------------
+INT 15 - VMIX v2.???+ - "sys_vm_page" - SET NEW VIRTUAL PAGE TABLE
+	AH = 50h
+	BX = segment of page directory table
+	CX = page number of page table
+SeeAlso: AH=10h"VMiX",AH=51h"VMiX",AH=52h"VMiX"
+--------T-1551-------------------------------
+INT 15 - VMiX v2.???+ - "sys_vm_func" - EXECUTE FUNCTION IN PROTECTED MODE
+	AH = 51h
+	STACK:	DWORD	selector:offset of function
+Return: registers as returned by function
+Note:	executes function with privilege level 0 (highest privilege)
+SeeAlso: AH=10h"VMiX",AH=52h"VMiX"
+--------B-155101-----------------------------
+INT 15 - SYSTEM - later PS/2s - EXPANSION UNIT, RETURN CONFIGURATION NUMBER
+	AX = 5101h
+Return: CF set if successful
+	    AH = 00h
+	    AL = current configuration number
+		00h system unit only
+		FFh configuration not recognized
+	    BX = status flag
+		bits 0-14: reserved
+		bit 15: additional data is available (location TBD)
+	CF clear on error
+	    AH = status
+		01h expansion unit is not present
+		86h function not supported
+Note:	CF convention is the reverse of the standard convention for this
+	  interrupt.  (Perhaps a typo in the IBM BIOS Tech Ref?)
+--------T-1552-------------------------------
+INT 15 - VMiX v2.???+ - "sys_vm_init" - INITIALIZE PROTECTED-MODE ENVIRONMENT
+	AH = 52h
+SeeAlso: AH=50h"VMiX",AH=51h"VMiX"
+----------1552-------------------------------
+INT 15 C - IBM/MS INT 13 Extensions - MEDIA EJECT INTERCEPT
+	AH = 52h
+	DL = drive number
+Return: CF clear if OK to eject media
+	    AH = 00h
+	CF set if ejection disallowed
+	    AH = error code (B1h,B3h) (see #0140)
+Note:	called by the IBM/MS INT 13 Extensions driver/BIOS when an ejection
+	  request is made
+SeeAlso: INT 13/AH=46h"INT 13 Extensions"
+--------p-155300-----------------------------
+INT 15 - Advanced Power Management Specification - INSTALLATION CHECK
+	AX = 5300h
+	BX = device ID of system BIOS (0000h)
+Return: CF clear if successful
+	    AH = major version (BCD)
+	    AL = minor version (BCD)
+	    BX = 504Dh ("PM")
+	    CX = flags (see #0358)
+	CF set on error
+	    AH = error code (06h,86h) (see #0359)
+
+Bitfields for APM flags:
+Bit(s)	Description	(Table 0358)
+ 0	16-bit protected mode interface supported
+ 1	32-bit protected mode interface supported
+ 2	CPU idle call reduces processor speed
+ 3	BIOS power management disabled
+ 4	BIOS power management disengaged (APM v1.1)
+ 5-7	reserved
+
+(Table 0359)
+Values for APM error code:
+ 01h	power management functionality disabled
+ 02h	interface connection already in effect
+ 03h	interface not connected
+ 04h	real-mode interface not connected
+ 05h	16-bit protected-mode interface already connected
+ 06h	16-bit protected-mode interface not supported
+ 07h	32-bit protected-mode interface already connected
+ 08h	32-bit protected-mode interface not supported
+ 09h	unrecognized device ID
+ 0Ah	invalid parameter value in CX
+ 0Bh-1Fh reserved for other interface and general errors
+ 20h-3Fh reserved for CPU errors
+ 40h-5Fh reserved for device errors
+ 60h	can't enter requested state
+ 61h-7Fh reserved for other system errors
+ 80h	no power management events pending
+ 81h-85h reserved for other power management event errors
+ 86h	APM not present
+ 87h-9Fh reserved for other power management event errors
+--------p-155301-----------------------------
+INT 15 - Advanced Power Management Specification - CONNECT REAL-MODE INTERFACE
+	AX = 5301h
+	BX = device ID of system BIOS (0000h)
+Return: CF clear if successful
+	CF set on error
+	    AH = error code (02h,05h,07h,09h) (see #0359)
+SeeAlso: AX=5302h,AX=5303h,AX=5304h
+--------p-155302-----------------------------
+INT 15 R - Advanced Power Management Spec - CONNECT 16-BIT PROTMODE INTERFACE
+	AX = 5302h
+	BX = device ID of system BIOS (0000h)
+Return: CF clear if successful
+	    AX = real-mode segment base address of protected-mode 16-bit code
+		segment
+	    BX = offset of entry point
+	    CX = real-mode segment base address of protected-mode 16-bit data
+		segment
+	    ---APM v1.1---
+	    SI = APM BIOS code segment length
+	    DI = APM BIOS data segment length
+	CF set on error
+	    AH = error code (02h,05h,06h,07h,09h) (see #0359)
+Notes:	the caller must initialize two consecutive descriptors with the
+	  returned segment base addresses; these descriptors must be valid
+	  whenever the protected-mode interface is called, and will have
+	  their limits arbitrarily set to 64K.
+	the protected mode interface is invoked by making a far call with the
+	  same register values as for INT 15; it must be invoked while CPL=0,
+	  the code segment descriptor must have a DPL of 0, the stack must be
+	  in a 16-bit segment and have enough room for BIOS use and possible
+	  interrupts, and the current I/O permission bit map must allow access
+	  to the I/O ports used for power management.
+	functions 00h-03h are not available from protected mode
+SeeAlso: AX=5301h,AX=5303h,AX=5304h
+--------p-155303-----------------------------
+INT 15 - Advanced Power Management Spec - CONNECT 32-BIT PROTMODE INTERFACE
+	AX = 5303h
+	BX = device ID of system BIOS (0000h)
+Return: CF clear if successful
+	    AX = real-mode segment base address of protected-mode 32-bit code
+		segment
+	    EBX = offset of entry point
+	    CX = real-mode segment base address of protected-mode 16-bit code
+		segment
+	    DX = real-mode segment base address of protected-mode 16-bit data
+		segment
+	    ---APM v1.1---
+	    SI = APM BIOS code segment length
+	    DI = APM BIOS data segment length
+	CF set on error
+	    AH = error code (02h,05h,07h,08h,09h) (see #0359)
+Notes:	the caller must initialize three consecutive descriptors with the
+	  returned segment base addresses for 32-bit code, 16-bit code, and
+	  16-bit data, respectively; these descriptors must be valid whenever
+	  the protected-mode interface is called, and will have their limits
+	  arbitrarily set to 64K.
+	the protected mode interface is invoked by making a far call to the
+	  32-bit code segment with the same register values as for INT 15; it
+	  must be invoked while CPL=0, the code segment descriptor must have a
+	  DPL of 0, the stack must be in a 32-bit segment and have enough room
+	  for BIOS use and possible interrupts, and the current I/O permission
+	  bit map must allow access to the I/O ports used for power management.
+	functions 00h-03h are not available from protected mode
+SeeAlso: AX=5301h,AX=5302h,AX=5304h
+--------p-155304-----------------------------
+INT 15 - Advanced Power Management Specification - DISCONNECT INTERFACE
+	AX = 5304h
+	BX = device ID of system BIOS (0000h)
+Return: CF clear if successful
+	CF set on error
+	    AH = error code (03h,09h) (see #0359)
+SeeAlso: AX=5301h,AX=5302h,AX=5303h
+--------p-155305-----------------------------
+INT 15 - Advanced Power Management Specification - CPU IDLE
+	AX = 5305h
+Return: CF clear if successful (after system leaves idle state)
+	CF set on error
+	    AH = error code (03h,0Bh) (see #0359)
+Notes:	call when the system is idle and should be suspended until the next
+	  system event or interrupt
+	should not be called from within a hardware interrupt handler to avoid
+	  reentrance problems
+	if an interrupt causes the system to resume normal processing, the
+	  interrupt may or may not have been handled when the BIOS returns
+	  from this call; thus, the caller should allow interrupts on return
+	interrupt handlers may not retain control if the BIOS allows
+	  interrupts while in idle mode even if they are able to determine
+	  that they were called from idle mode
+	the caller should issue this call continuously in a loop until it needs
+	  to perform some processing of its own
+SeeAlso: AX=1000h,AX=5306h,INT 2F/AX=1680h
+--------p-155306-----------------------------
+INT 15 - Advanced Power Management Specification - CPU BUSY
+	AX = 5306h
+Return: CF clear if successful
+	CF set on error
+	    AH = error code (03h,0Bh) (see #0359)
+Notes:	called to ensure that the system runs at full speed even on systems
+	  where the BIOS is unable to recognize increased activity (especially
+	  if interrupts are hooked by other programs and not chained to the
+	  BIOS)
+	this call may be made even when the system is already running at full
+	  speed, but it will create unnecessary overhead
+	should not be called from within a hardware interrupt handler to avoid
+	  reentrance problems
+SeeAlso: AX=5305h
+--------p-155307-----------------------------
+INT 15 - Advanced Power Management Specification - SET POWER STATE
+	AX = 5307h
+	BX = device ID (see #0360)
+	CX = system state ID (see #0361)
+Return: CF clear if successful
+	CF set on error
+	    AH = error code (01h,03h,09h,0Ah,0Bh,60h) (see #0359)
+Note:	should not be called from within a hardware interrupt handler to avoid
+	  reentrance problems
+SeeAlso: AX=530Ch
+
+(Table 0360)
+Values for APM device IDs:
+ 0000h	system BIOS
+ 0001h	all devices for which the system BIOS manages power
+ 01xxh	display (01FFh for all attached display devices)
+ 02xxh	secondary storage (02FFh for all attached secondary storage devices)
+ 03xxh	parallel ports (03FFh for all attached parallel ports)
+ 04xxh	serial ports (04FFh for all attached serial ports)
+---APM v1.1---
+ 05xxh	network adapters (05FFh for all attached network adapters)
+ 06xxh	PCMCIA sockets (06FFh for all)
+ 0700h-DFFFh reserved
+ Exxxh	OEM-defined power device IDs
+ F000h-FFFFh reserved
+
+(Table 0361)
+Values for system state ID:
+ 0000h	ready (not supported for device ID 0001h)
+ 0001h	stand-by
+ 0002h	suspend
+ 0003h	off (not supported for device ID 0001h)
+---APM v1.1---
+ 0004h	last request processing notification (only for device ID 0001h)
+ 0005h	last request rejected (only for device ID 0001h)
+ 0006h-001Fh reserved system states
+ 0020h-003Fh OEM-defined system states
+ 0040h-007Fh OEM-defined device states
+ 0080h-FFFFh reserved device states
+--------p-155307CX0001-----------------------
+INT 15 - Advanced Power Management Specification - SYSTEM STAND-BY
+	AX = 5307h
+	CX = 0001h
+	BX = 0001h (device ID for all power-managed devices)
+Return: CF clear
+Notes:	puts the entire system into stand-by mode; normally called in response
+	  to a System Stand-by Request notification after any necessary
+	  processing, but may also be invoked at the caller's discretion
+	should not be called from within a hardware interrupt handler to avoid
+	  reentrance problems
+	the stand-by state is typically exited on an interrupt
+SeeAlso: AX=4280h,AX=5307h/CX=0002h/BX=0001h,AX=530Bh
+--------p-155307CX0002-----------------------
+INT 15 - Advanced Power Management Specification - SUSPEND SYSTEM
+	AX = 5307h
+	CX = 0002h
+	BX = 0001h (device ID for all power-managed devices)
+Return: after system is resumed
+	CF clear
+Notes:	puts the entire system into a low-power suspended state; normally
+	  called in response to a Suspend System Request notification after
+	  any necessary processing, but may also be invoked at the caller's
+	  discretion
+	should not be called from within a hardware interrupt handler to avoid
+	  reentrance problems
+	the caller may need to update its date and time values because the
+	  system could have been suspended for a long period of time
+SeeAlso: AX=5307h/CX=0001h/BX=0001h,AX=530Bh
+--------p-155308-----------------------------
+INT 15 - Advanced Power Management Spec - ENABLE/DISABLE POWER MANAGEMENT
+	AX = 5308h
+	BX = device ID for all devices power-managed by APM
+	    0001h (APM v1.1)
+	    FFFFh (APM v1.0)
+	CX = new state
+	    0000h disabled
+	    0001h enabled
+Return: CF clear if successful
+	CF set on error
+	    AH = error code (01h,03h,09h,0Ah,0Bh) (see #0359)
+Notes:	when power management is disabled, the system BIOS will not
+	  automatically power down devices, enter stand-by or suspended mode,
+	  or perform any power-saving actions in response to AX=5305h calls
+	should not be called from within a hardware interrupt handler to avoid
+	  reentrance problems
+SeeAlso: AX=5309h,AX=530Dh,AX=530Fh
+--------p-155309-----------------------------
+INT 15 - Advanced Power Management Specification - RESTORE POWER-ON DEFAULTS
+	AX = 5309h
+	BX = device ID for all devices power-managed by APM
+	    0001h (APM v1.1)
+	    FFFFh (APM v1.0)
+Return: CF clear if successful
+	CF set on error
+	    AH = error code (09h) (see #0359)
+Note:	should not be called from within a hardware interrupt handler to avoid
+	  reentrance problems
+SeeAlso: AX=5308h
+--------p-15530ABX0001-----------------------
+INT 15 - Advanced Power Management Specification - GET POWER STATUS
+	AX = 530Ah
+	BX = 0001h (device ID for all devices power-managed by APM)
+Return: CF clear if successful
+	    BH = AC line status
+		00h off-line
+		01h on-line
+		02h on backup power (APM v1.1)
+		FFh unknown
+		other reserved
+	    BL = battery status (see #0362)
+	    CH = battery flag (APM v1.1) (see #0363)
+	    CL = remaining battery life, percentage
+		00h-64h (0-100) percentage of full charge
+		FFh unknown
+	    DX = remaining battery life, time (APM v1.1) (see #0364)
+	CF set on error
+	    AH = error code (09h) (see #0359)
+Note:	should not be called from within a hardware interrupt handler to avoid
+	  reentrance problems
+
+(Table 0362)
+Values for APM v1.0+ battery status:
+ 00h	high
+ 01h	low
+ 02h	critical
+ 03h	charging
+ FFh	unknown
+ other	reserved
+
+Bitfields for APM v1.1 battery flag:
+Bit(s)	Description	(Table 0363)
+ 0	high
+ 1	low
+ 2	critical
+ 3	charging
+ 4-6	reserved
+ 7	no system battery
+Note:	all bits set (FFh) if unknown
+
+Bitfields for APM v1.1 remaining battery life:
+Bit(s)	Description	(Table 0364)
+ 15	time units: 0=seconds, 1=minutes
+ 14-0	battery life in minutes or seconds
+Note:	all bits set (FFFFh) if unknown
+--------p-15530B-----------------------------
+INT 15 - Advanced Power Management Specification - GET POWER MANAGEMENT EVENT
+	AX = 530Bh
+Return: CF clear if successful
+	    BX = event code (see #0365)
+	CF set on error
+	    AH = error code (03h,0Bh,80h) (see #0359)
+Notes:	although power management events are often asynchronous, notification
+	  will not be made until polled via this call to permit software to
+	  only receive event notification when it is prepared to process
+	  power management events; since these events are not very time-
+	  critical, it should be sufficient to poll once or twice per second
+	the critical resume notification is made after the system resumes
+	  from an emergency suspension; normally, the system BIOS only notifies
+	  its partner that it wishes to suspend and relies on the partner to
+	  actually request the suspension, but no notification is made on an
+	  emergency suspension
+	should not be called from within a hardware interrupt handler to avoid
+	  reentrance problems
+SeeAlso: AX=5307h,AX=5307h/BX=0001h/CX=0001h,AX=5307h/BX=0001h/CX=0002h
+
+(Table 0365)
+Values for APM event code:
+ 0001h	system stand-by request
+ 0002h	system suspend request
+ 0003h	normal resume system notification
+ 0004h	critical resume system notification
+ 0005h	battery low notification
+---APM v1.1---
+ 0006h	power status change notification
+ 0007h	update time notification
+ 0008h	critical system suspend notification
+ 0009h	user system standby request notification
+ 000Ah	user system suspend request notification
+ 000Bh	system standby resume notification
+ 000Ch-00FFh reserved system events
+ 01xxh	reserved device events
+ 02xxh	OEM-defined APM events
+ 0300h-FFFFh reserved
+--------p-15530C-----------------------------
+INT 15 - Advanced Power Management v1.1 - GET POWER STATE
+	AX = 530Ch
+	BX = device ID (see #0360)
+Return: CF clear if successful
+	    BX = system state ID (see #0361)
+	CF set on error
+	    AH = error code (01h,09h) (see #0359)
+SeeAlso: AX=5307h
+--------p-15530D-----------------------------
+INT 15 - Advanced Power Management v1.1 - EN/DISABLE DEVICE POWER MANAGEMENT
+	AX = 530Dh
+	BX = device ID (see #0360)
+	CX = function
+	    0000h disable power management
+	    0001h enable power management
+Return: CF clear if successful
+	CF set on error
+	    AH = error code (01h,03h,09h,0Ah,0Bh) (see #0359)
+SeeAlso: AX=5308h,AX=530Fh
+--------p-15530E-----------------------------
+INT 15 - Advanced Power Management v1.1 - DRIVER VERSION
+	AX = 530Eh
+	BX = device ID of system BIOS (0000h)
+	CH = APM driver major version (BCD)
+	CL = APM driver minor version (BCD)
+Return: CF clear if successful
+	    AH = APM connection major version (BCD)
+	    AL = APM connection minor version (BCD)
+	CF set on error
+	    AH = error code (03h,09h,0Bh) (see #0359)
+SeeAlso: AX=5300h
+--------p-15530F-----------------------------
+INT 15 - Advanced Power Management v1.1 - ENGAGE/DISENGAGE POWER MANAGEMENT
+	AX = 530Fh
+	BX = device ID (see #0360)
+	CX = function
+	    0000h disengage power management
+	    0001h engage power management
+Return: CF clear if successful
+	CF set on error
+	    AH = error code (01h,09h) (see #0359)
+Note:	unlike AX=5308h, this call does not affect the functioning of the APM
+	  BIOS
+SeeAlso: AX=5308h,AX=530Dh
+--------p-155380BH00-------------------------
+INT 15 - APM SL Enhanced v1.0 - GET SUSPEND/GLOBAL STANDBY MODE
+	AX = 5380h
+	BH = 00h
+Return: CF clear if successful
+	    AL = 82360SL Auto Power Off Timer High Count (APWR_TMRH)
+	    BL = sustdbymode (see #0366)
+SeeAlso: AX=5380h/BH=01h,AX=5380h/BH=02h,AX=5380h/BH=7Fh
+
+Bitfields for APM SL sustdbymode:
+Bit(s)	Description	(Table 0366)
+ 2	???
+ 1	Auto Power Off Timer Enable (APWR_TMR_EN)
+ 0	???
+--------p-155380BH01-------------------------
+INT 15 - APM SL Enhanced v1.0 - SET SUSPEND/GLOBAL STANDBY MODE
+	AX = 5380h
+	BH = 01h
+	BL = sustdbymode (see #0366)
+Return: CF clear if successful
+SeeAlso: AX=5380h/BH=00h,AX=5380h/BH=7Fh
+--------p-155380BH02-------------------------
+INT 15 - APM SL Enhanced v1.0 - GET GLOBAL STANDBY TIMER
+	AX = 5380h
+	BH = 02h
+Return: CF clear if successful
+	SI:DI = timer count in seconds (actually 1.024 seconds)
+Desc:	reads the value of 82360SL GSTDBY_TMRH & GSTDBY_TMRL registers
+SeeAlso: AX=5380h/BH=00h,AX=5380h/BH=03h,AX=5380h/BH=04h,AX=5380h/BH=7Fh
+--------p-155380BH03-------------------------
+INT 15 - APM SL Enhanced v1.0 - SET GLOBAL STANDBY TIMER
+	AX = 5380h
+	BH = 03h
+	SI:DI = timer count in seconds (actually 1.024 seconds)
+Return: CF clear if successful
+Desc:	sets the value of 82360SL GSTDBY_TMRH & GSTDBY_TMRL registers
+Note:	the maximum timer count is 268431 seconds
+SeeAlso: AX=5380h/BH=02h,AX=5380h/BH=7Fh
+--------p-155380BH04-------------------------
+INT 15 - APM SL Enhanced v1.0 - GET AUTO POWER OFF TIMER
+	AX = 5380h
+	BH = 04h
+Return: CF clear if successful
+	SI:DI = timer count in seconds (actually 1.024 seconds)
+Desc:	reads the value of 82360SL APWR_TMRH & APWR_TMRL registers
+SeeAlso: AX=5380h/BH=02h,AX=5380h/BH=05h,AX=5380h/BH=06h,AX=5380h/BH=7Fh
+--------p-155380BH05-------------------------
+INT 15 - APM SL Enhanced v1.0 - SET AUTO POWER OFF TIMER
+	AX = 5380h
+	BH = 05h
+	SI:DI = timer count in seconds (actually 1.024 seconds)
+Return: CF clear if successful
+Desc:	sets the value of 82360SL APWR_TMRH & APWR_TMRL registers
+Note:	the maximum timer count is 134213 seconds
+SeeAlso: AX=5380h/BH=04h,AX=5380h/BH=7Fh
+--------p-155380BH06-------------------------
+INT 15 - APM SL Enhanced v1.0 - GET RESUME CONDITION
+	AX = 5380h
+	BH = 06h
+Return: CF clear if successful
+	    BL = resume condition (see #0367)
+Desc:	reads the value of 82360SL RESUME_MASK register
+SeeAlso: AX=5380h/BH=04h,AX=5380h/BH=07h,AX=5380h/BH=08h,AX=5380h/BH=7Fh
+
+Bitfields for APM SL resume condition:
+Bit(s)	Description	(Table 0367)
+ 7-2	reserved (0)
+ 1	alarm enabled (resume on CMOS alarm)
+ 0	ring enabled
+--------p-155380BH07-------------------------
+INT 15 - APM SL Enhanced v1.0 - SET RESUME CONDITION
+	AX = 5380h
+	BH = 07h
+	BL = resume condition (see #0367)
+Return: CF clear if successful
+Desc:	sets the value of 82360SL RESUME_MASK register
+SeeAlso: AX=5380h/BH=06h,AX=5380h/BH=7Fh
+--------p-155380BH08-------------------------
+INT 15 - APM SL Enhanced v1.0 - GET CALENDAR EVENT TIME
+	AX = 5380h
+	BH = 08h
+Return: CF clear if successful
+	    CH = hours
+	    CL = minutes
+	    SI = seconds
+	CF set on error
+	    AH = error code (see #0368)
+Desc:	gets calendar event time from CMOS ram
+SeeAlso: AX=5380h/BH=06h,AX=5380h/BH=09h,AX=5380h/BH=0Ah,AX=5380h/BH=7Fh
+
+(Table 0368)
+Values for APM SL error code:
+ 02h	no alarm set
+ 03h	no battery
+--------p-155380BH09-------------------------
+INT 15 - APM SL Enhanced v1.0 - SET CALENDAR EVENT TIME
+	AX = 5380h
+	BH = 09h
+	CH = hours
+	CL = minutes
+	SI = seconds
+Return: CF clear if successful
+	CF set on error
+	    AH = error code (see #0368)
+Desc:	sets calendar event time in CMOS ram, enables Alarm resume
+SeeAlso: AX=5380h/BH=08h,AX=5380h/BH=7Fh
+--------p-155380BH0A-------------------------
+INT 15 - APM SL Enhanced v1.0 - GET CALENDAR EVENT DATE
+	AX = 5380h
+	BH = 0Ah
+Return: CF clear if successful
+	    SI = century
+	    DI = year
+	    CH = month
+	    CL = day
+	CF set on error
+	    AH = error code (see #0368)
+Desc:	reads calendar event date from Extended CMOS ram
+SeeAlso: AX=5380h/BH=08h,AX=5380h/BH=0Bh,AX=5380h/BH=0Ch,AX=5380h/BH=7Fh
+--------p-155380BH0B-------------------------
+INT 15 - APM SL Enhanced v1.0 - SET CALENDAR EVENT DATE
+	AX = 5380h
+	BH = 0Bh
+	SI = century
+	DI = year
+	CH = month
+	CL = day
+Return: CF clear if successful
+	CF set on error
+	    AH = error code (see #0368)
+Desc:	sets calendar event date in Extended CMOS ram
+SeeAlso: AX=5380h/BH=0Ah,AX=5380h/BH=7Fh
+--------p-155380BH0C-------------------------
+INT 15 - APM SL Enhanced v1.0 - GET CPU SPEED MODE
+	AX = 5380h
+	BH = 0Ch
+Return: CF clear if successful
+	CL = CPU clock divider (1,2,4 or 8)
+	BL = autocpumode ???
+Desc:	reads bits 4-5 of CPUPWRMODE register
+SeeAlso: AX=5380h/BH=0Ah,AX=5380h/BH=0Dh,AX=5380h/BH=7Fh
+--------p-155380BH0D-------------------------
+INT 15 - APM SL Enhanced v1.0 - SET CPU SPEED MODE
+	AX = 5380h
+	BH = 0Dh
+	CL = CPU clock divider (1,2,4 or 8)
+	BL = autocpumode ???
+Return: CF clear if successful
+Desc:	writes bits 4-5 of CPUPWRMODE register
+SeeAlso: AX=5380h/BH=0Ch,AX=5380h/BH=7Eh,AX=5380h/BH=7Fh
+--------p-155380BH7E-------------------------
+INT 15 - APM SL Enhanced v1.0 - SL HW PARAMETER
+	AX = 5380h
+	BH = 7Eh
+Return:	AL = ???
+	    03h on A-Step 386SL BIOSes
+	    12h on later steps
+	BX = Control port (00B0h)
+SeeAlso: AX=5380h/BH=00h,AX=5380h/BH=7Fh
+--------p-155380BH7F-------------------------
+INT 15 - Advanced Power Management v1.1 - OEM APM INSTALLATION CHECK
+	AX = 5380h
+	BH = 7Fh
+Return: CF clear if successful
+	    BX = OEM identifier
+	    all other registers OEM-defined
+	    ---Intel SL Enhanced Option BIOS---
+	    BX = 534Ch ('SL')
+	    CL = 4Fh ('O')
+	    AL = version (10h = 1.0)
+	    ---HP APM BIOS---
+	    BX = 4850h ('HP')
+	    CX = version (0001h)
+	CF set on error
+	    AH = error code (03h) (see #0359)
+SeeAlso: AX=5380h/BH=00h
+--------p-155380-----------------------------
+INT 15 - Advanced Power Management v1.1 - OEM APM FUNCTIONS
+	AX = 5380h
+	BH <> 7Fh
+	all other registers OEM-defined
+Return: OEM-defined
+SeeAlso: AX=5380h/BH=7Fh
+--------X-1553B0BH00-------------------------
+INT 15 - Intel System Management Bus - RESERVED
+	AX = 53B0h
+	BH = 00h
+Program: the SMBus is a variant of ACCESS.bus being used by Intel and Duracell
+	  for the Smart Battery proposal, but designed to be generic enough to
+	  handle other devices besides batteries
+--------X-1553B0BH01-------------------------
+INT 15 - Intel System Management Bus - INSTALLATION CHECK
+	AX = 53B0h
+	BH = 01h
+	BL = 72h ('r')
+	CX = 6164h ('ad')
+Return: CF clear if installed
+	    AH = SMBus BIOS Interface Specification major version (01h)
+	    AL = SMBus BIOS Interface Specification minor version (00h)
+	    BL = number of SMBus devices present
+	    CX = 6941h ('iA')
+	    DX = vendor-specified SMBus hardware code
+		0000h means undefined hardware type
+	CF set if error
+	    AH = Error code 0Ah, 86h (see #2673)
+Note:	this function is only supported in INT 15h mode
+SeeAlso: AX=53B0h/BH=02h,AX=53B0h/BH=03h,AX=53B0h/BH=04h,AX=53B0h/BH=06h
+
+(Table 2673)
+Values for Intel System Management Bus error codes:
+ 00h	SMBus OK
+ 01h	SMBus connect failed
+ 02h	SMBus already connected (see also #2674)
+ 03h	SMBus disconnect failed
+ 04h	SMBus not connected
+ 05h	SMBus INT 15 interface disabled
+ 06h	SMBus device address request out of range
+ 07h	SMBus unknown failure
+ 08h	SMBus message list empty
+ 09h	SMBus message list overflow
+ 0Ah	SMBus invalid signature
+ 10h	SMBus device address not acknowledged
+ 11h	SMBus device error detected
+ 12h	SMBus device command access denied
+ 13h	SMBus unknown error
+ 14h	SMBus transaction pending
+ 15h	SMBus no transaction pending
+ 16h	SMBus request does not match pending transaction
+ 17h	SMBus device access denied
+ 18h	SMBus timeout
+ 19h	SMBus protocol not supported
+ 1Ah	SMBus busy
+ 1Bh	SMBus SMI detected
+ 80h	SMBus OK (previously unreported SMI occurred)
+ 86h	SMBus not supported
+
+(Table 2674)
+Values for Intel System Management Bus Already Connected sub-error codes:
+ 01h	real mode connect already established
+ 02h	16-bit PMode connect already established
+ 03h	32-bit PMode connect already established
+SeeAlso: #2673
+--------X-1553B0BH02-------------------------
+INT 15 - Intel System Management Bus - REAL MODE CONNECT
+	AX = 53B0h
+	BH = 02h
+	CX = 6941h ('iA')
+Return: CF clear if successful
+	    AX = SMBus Real mode code segment
+	    BX = offset of entry point into SMBus BIOS Interface
+	    CX = SMBus Real mode data segment
+	CF set if error
+	    AH = error code (01h,02h,0Ah,86h) (see #2673)
+	    AL = sub-error code if error code is 02h (see #2674)
+Desc:	connect to SMBus interface; once connected, all SMBus calls are made
+	  to the supplied entry point instead of INT 15 (with registers
+	  identical to those described here for INT 15)
+Notes:	Support for this function is optional
+	this function is only supported in INT 15 mode when implemented
+SeeAlso: AX=53B0h/BH=01h,AX=53B0h/BH=03h,AX=53B0h/BH=04h,AX=53B0h/BH=05h
+--------X-1553B0BH03-------------------------
+INT 15 - Intel System Management Bus - 16-BIT PROTECTED-MODE CONNECT
+	AX = 53B0h
+	BH = 03h
+	CX = 6941h ('iA')
+Return: CF clear if successful
+	    AX = SMBus 16-bit code segment (real mode base address)
+	    BX = offset of entry point into SMBus BIOS Interface
+	    CX = SMBus 16-bit data segment (real mode base address)
+	    SI = code segment length in bytes
+	    DI = data segment length in bytes
+	CF set if error
+	    AH = error code (01h,02h,0Ah,86h) (see #2673)
+	    AL = sub-error code if error code is 02h (see #2674)
+Desc:	connect to SMBus interface; once connected, all SMBus calls are made
+	  to the supplied entry point instead of INT 15 (with registers
+	  identical to those described here for INT 15)
+Notes:	before calling the entry point, two descriptors must be initialized
+	  in the GDT or LDT.  They must be consecutiveand be in the order of
+	  code, then data.  At the time	of the call, the descriptors must be
+	  valid and have CPL=0.
+	the code descriptor must be ring-0 privilege
+	this function is only supported in INT 15 mode
+SeeAlso: AX=53B0h/BH=01h,AX=53B0h/BH=02h,AX=53B0h/BH=04h,AX=53B0h/BH=05h
+--------X-1553B0BH04-------------------------
+INT 15 - Intel System Management Bus - 32-BIT PROTECTED-MODE CONNECT
+	AX = 53B0h
+	BH = 04h
+	CX = 6941h ('iA')
+Return: CF clear if successful
+	    AX = SMBus 32-bit code segment (real mode base address)
+	    EBX = offset of entry point into SMBus BIOS Interface
+	    CX = SMBus 16-bit code segment (real mode base address)
+	    DX = SMBus data segment (real mode base address)
+	    SI = code segment length in bytes
+	    DI = data segment length in bytes
+	CF set if error
+	    AH = error code (01h,02h,0Ah,86h) (see #2673)
+	    AL = sub-error code if error code is 02h (see #2674)
+Desc:	connect to SMBus interface; once connected, all SMBus calls are made
+	  to the supplied entry point instead of INT 15 (with registers
+	  identical to those described here for INT 15)
+Notes:	before calling the entry point, two descriptors must be initialized in
+	  the GDT or LDT.  They must be consecutive and be in the order of
+	  32-bit code, 16-bit code, then data.	At the time of the call, the
+	  descriptors must be valid and have CPL=0.
+	the code descriptors must be ring-0 privilege
+	this function is only supported in INT 15 mode
+SeeAlso: AX=53B0h/BH=01h,AX=53B0h/BH=02h,AX=53B0h/BH=03h,AX=53B0h/BH=05h
+--------X-1553B0BH05-------------------------
+INT 15 - Intel System Management Bus - DISCONNECT
+	AX = 53B0h
+	BH = 05h
+	CX = 6941h ('iA')
+Return: CF clear if successful
+	    AH = 00h (SMBus OK)
+	CF set if error
+	    AH = error code (03h,04h,05h,0Ah,86h) (see #2673)
+Note:	this function is supported in connected mode (far CALL entry point)
+	  only
+SeeAlso: AX=53B0h/BH=01h,AX=53B0h/BH=02h,AX=53B0h/BH=03h,AX=53B0h/BH=04h
+--------X-1553B0BH06-------------------------
+INT 15 - Intel System Management Bus - DEVICE ADDRESS
+	AX = 53B0h
+	BH = 06h
+	BL = position in list to report
+	CH = 6941h ('iA')
+Return: CF clear if successful
+	    AH = 00h (SMBus OK)
+	    BH = number of SMBus devices
+	    BL = SMBus Device Address of device at position BL in list
+	CF set if error
+	    AH = error code (06h,0Ah,86h) (see #2673)
+Desc:	retrieves already assigned SMBus device addresses
+Note:	this function is supported in INT 15h mode only
+--------X-1553B0BH07-------------------------
+INT 15 - Intel System Management Bus - CRITICAL MESSAGES
+	AX = 53B0h
+	BH = 07h
+	CX = 6941h ('iA')
+Return: CF clear if successful
+	    AH = 00h (SMBus OK)
+	    AL = device address
+	    BX = device message
+	CF set if error
+	    AH = error code (05h,07h,08h,09h,0Ah,86h) (see #2673)
+Desc:	retrieves oldest queued critical message from an SMBus device to the
+	  host
+Notes:	up to five messages are queued; if the queue is full, messages will be
+	  lost and error 09h returned
+	this function is supported in INT 15h mode only
+--------X-1553B0BH08-------------------------
+INT 15 - Intel System Management Bus - RESERVED
+	AX = 53B0h
+	BH = 08h-0Fh
+--------X-1553B0BH10-------------------------
+INT 15 - Intel System Management Bus - REQUEST
+	AX = 53B0h
+	BH = 10h
+	BL = protocol (see #2675)
+	CH = device address
+	CL = device command
+	DH = MSB Data or block length (for BlockWrite)
+	DL = LSB Data or first byte of block (for BlockWrite)
+Return: CF clear if successful
+	    AH = 00h or 80h (SMBus OK)
+		 (80h indicates a previously unreported SMI took place)
+	CF set if error
+	    AH = error code (05h,10h,11h,12h,13h,14h,17h,19h,1Ah,86h)
+		  (see #2673)
+Desc:	request access to a device on the SMBus
+SeeAlso: AX=53B0h/BH=11h, AX=53B0h/BH=13h
+
+(Table 2675)
+Values for Intel System Management Bus protocol codes:
+ 00h	Quick Command
+ 01h	Send Byte
+ 02h	Receive Byte
+ 03h	Write Byte
+ 04h	Read Byte
+ 05h	Write Word
+ 06h	Read Word
+ 07h	Block Write
+ 08h	Block Read
+ 09h	Process Call
+ 0Ah-FFh reserved
+--------X-1553B0BH11-------------------------
+INT 15 - Intel System Management Bus - REQUEST CONTINUATION
+	AX = 53B0h
+	BH = 11h
+	BL = protocol (see #2675)
+	CH = device address
+	CL = number of valid bytes in DX (1 or 2)
+	DH = MSB Data (CL = 1 or 2)
+	DL = LSB Data (CL = 2)
+Return: CF clear if successful
+	    AH = 00h (SMBus OK)
+	    CL = SMBus status
+		00h SMBus hardware not ready for more data
+		01h SMBus hardware ready for 2 more data bytes
+	CF set if error
+	    AH = error code (05h,11h,13h,15h,16h,18h,1Bh,86h) (see #2673)
+Desc:	continue WriteBlock protocol started with function 10h
+SeeAlso: AX=53B0h/BH=10h, AX=53B0h/BH=13h
+--------X-1553B0BH12-------------------------
+INT 15 - Intel System Management Bus - REQUEST ABORT
+	AX = 53B0h
+	BH = 12h
+	BL = protocol (see #2675)
+	CH = device address
+	CL = device command
+Return: CF clear if successful
+	    AH = 00h (SMBus OK)
+	CF set if error
+	    AH = error code (05h,13h,15h,16h,86h) (see #2673)
+Desc:	stop the currently pending SMBus request; usually used to terminate
+	  a request after an SMI Detected error
+--------X-1553B0BH13-------------------------
+INT 15 - Intel System Management Bus - REQUEST DATA AND STATUS
+	AX = 53B0h
+	BH = 13h
+	BL = protocol (see #2675)
+	CH = device address
+	CL = device command
+Return: CF clear if successful
+	    AH = 00h (SMBus OK)
+	    CH = status
+		00h no data pending, transaction complete
+		01h no data pending, transaction continues
+		02h data pending
+	    CL = number of valid bytes in DX (0-2)
+	    DH = MSB data
+	    DL = LSB data
+	CF set if error
+	    AH = error code (05h,10h,11h,13h,15h,16h,18h,1Bh,86h) (see #2673)
+Desc:	determine when a transaction is complete, gather data returned by read
+	  transactions
+Note:	for Block Read protocol (08h), first call returns block	length in DH
+	  and the first byte of the block in DL
+--------T-155400-----------------------------
+INT 15 C - Omniview Multitasker - INSTALLATION NOTIFICATION
+	AX = 5400h
+	ES:BX -> device information tables
+	DI:DX -> dispatcher entry point
+Note:	called by OmniView to notify programs loaded before OmniView of state
+	  changes inside OmniView
+SeeAlso: AX=5407h,INT 2F/AX=DE00h
+--------T-155401-----------------------------
+INT 15 C - Omniview Multitasker - PROCESS CREATION
+	AX = 5401h
+	ES:BX = process handle
+Note:	called by OmniView to notify programs loaded before OmniView of state
+	  changes inside OmniView
+SeeAlso: AX=5402h,INT 2F/AX=DE04h
+--------T-155402-----------------------------
+INT 15 C - Omniview Multitasker - PROCESS DESTRUCTION
+	AX = 5402h
+	ES:DX = process handle
+Note:	called by OmniView to notify programs loaded before OmniView of state
+	  changes inside OmniView
+SeeAlso: AX=5401h,INT 2F/AX=DE05h
+--------T-155403-----------------------------
+INT 15 C - Omniview Multitasker - SAVE
+	AX = 5403h
+	ES:DX = process swapping out
+Note:	called by OmniView to notify programs loaded before OmniView of state
+	  changes inside OmniView
+SeeAlso: AX=5404h,INT 2F/AX=DE08h
+--------T-155404-----------------------------
+INT 15 C - Omniview Multitasker - RESTORE
+	AX = 5404h
+	ES:DX = process swapping in
+Note:	called by OmniView to notify programs loaded before OmniView of state
+	  changes inside OmniView
+SeeAlso: AX=5403h,INT 2F/AX=DE09h
+--------T-155405-----------------------------
+INT 15 C - Omniview Multitasker - SWITCHING TO BACKGROUND
+	AX = 5405h
+	ES:DX = process swapping in
+Note:	called by OmniView to notify programs loaded before OmniView of state
+	  changes inside OmniView
+SeeAlso: AX=5406h
+--------T-155406-----------------------------
+INT 15 C - Omniview Multitasker - SWITCHING TO FOREGROUND
+	AX = 5406h
+	ES:DX = process swapping in
+Note:	called by OmniView to notify programs loaded before OmniView of state
+	  changes inside OmniView
+SeeAlso: AX=5405h
+--------T-155407-----------------------------
+INT 15 C - Omniview Multitasker - EXIT NOTIFICATION
+	AX = 5407h
+Note:	called by OmniView to notify programs loaded before OmniView of state
+	  changes inside OmniView
+SeeAlso: AX=5400h,INT 2F/AX=DE03h
 --------b-1560------------------------------------
 INT 15 - HUNTER 16 - SET SYSTEM CLOCK SPEED
 	AH = 60h
@@ -63,7 +1016,7 @@ INT 15 U HP 100LX/200LX - SET ANNOUNCIATORS POSITION
 	AL = position (20h = left, 60h = right)
 Note:	The announciators are the indicator symbols for the Shift and Fn keys
 	  in the bottom line
-SeeAlso: INT 16/AH=02h
+SeeAlso: AH=62h"HP",INT 16/AH=02h
 --------b-1562------------------------------------
 INT 15 - HUNTER 16 - SET LOW POWER THRESHOLD
 	AH = 62h
@@ -73,6 +1026,11 @@ Return: AH = Status
 Desc:	set the level (relative to full power) when power-low warnings begin
 	  and the interval between the warnings
 SeeAlso: AH=61h,AH=65h,AH=66h
+--------b-1562-------------------------------
+INT 15 U HP 100LX/200LX - SET DISPLAY CONTRAST
+	AH = 62h
+	BL = contrast (00h-1Fh, 1Fh is the darkest)
+SeeAlso: AH=61h"HP"
 --------b-156300----------------------------------
 INT 15 - HUNTER 16 - GET IDLE TIMEOUT
 	AX = 6300h
@@ -96,7 +1054,7 @@ INT 15 - HUNTER 16 - CONTROL RESUME MODE
 	    01h enable Resume mode
 Return: AH = status
 Desc:	turn Resume mode on or off. In Resume mode the system starts in
-	  the application that was running when it shut down as if nothing 
+	  the application that was running when it shut down as if nothing
 	  had happened.
 SeeAlso: AH=67h,AH=68h,AH=69h
 --------b-1565------------------------------------
@@ -198,7 +1156,7 @@ INT 15 - HUNTER 16 - ACKNOWLEDGE EVENT
 	AH = 6Fh
 	AL = event number (see AH=6Dh)
 Return: AH = 00h if successful
-Desc:	Acknowledges the event, so the next similar event can be detected 
+Desc:	Acknowledges the event, so the next similar event can be detected
 SeeAlso: AH=6Dh"HUNTER",AH=6Eh
 ----------157000-----------------------------
 INT 15 - Tandy 1000SL/TL - READ FROM EEPROM
@@ -613,7 +1571,7 @@ Notes:	TSRs which wish to allocate extended memory to themselves often hook
 	not all BIOSes correctly return the carry flag, making this call
 	  unreliable unless one first checks whether it is supported through
 	  a mechanism other than calling the function and testing CF
-SeeAlso: AH=87h,AH=C7h
+SeeAlso: AH=87h,AH=C7h,AX=DA88h
 --------b-1588------------------------------------
 INT 15 - HUNTER 16 - GET POWER UP KEYS
 	AH = 88h
@@ -715,8 +1673,8 @@ INT 15 - HUNTER 16 - GET/SET CHARGER TEMPERATURE OVERRIDE
 		BL = minimum charging temperature (as above)
 Return: AH = status
 	    00h success
-	    FFh failure 
-Desc:	get/set the temperature interval within which the charger should 
+	    FFh failure
+Desc:	get/set the temperature interval within which the charger should
 	  operate
 --------b-158C------------------------------------
 INT 15 - HUNTER 16 - GET/SET POWER SAVE ENTRY FLAG
@@ -803,9 +1761,10 @@ Return: AX = 0000h
 	CF clear
 Desc:	sets bit 7 of CMOS RAM location 37h and updates the CMOS checksum in
 	  locations 3Eh and 3Fh
-Note:	in the examined version of the BIOS, nonzero values in AL cause it to
+Notes:	in the examined version of the BIOS, nonzero values in AL cause it to
 	  drop through to checking the next possible value of AH, i.e. only
 	  subfunction 00h is supported
+	also supported by Dell XPS P90, which also uses an AMI BIOS
 --------n-15BA10-----------------------------
 INT 15 - HP OmniShare - Pen Driver - REPORT PEN CONTROL AREA EVENT
 	AX = BA10h
@@ -1505,8 +2464,10 @@ Model  Submdl  Rev	BIOS date	System
  F8h	???	???	  ???		PS/2 Model 95 (25 MHz 486SX)
  F8h	???	???	  ???		PS/2 Model 90 (25 MHz 486SX + 487SX)
  F8h	???	???	  ???		PS/2 Model 95 (25 MHz 486SX + 487SX)
+ E4h	???	???	  ???		Triumph Adler PC/XT
  E1h	???	???	  ???		??? (checked for by DOS4GW.EXE)
  E1h	00h	00h	  ???		PS/2 Model 55-5530 Laptop
+ D9h	???	???	  ???		Peacock XT
  9Ah	*	*	  ???		Compaq XT/Compaq Plus
  30h	???	???	  ???		Sperry PC
  2Dh	*	*	  ???		Compaq PC/Compaq Deskpro
@@ -1645,14 +2606,21 @@ model prodID   version	  date		product number	  /hdd
  FCh	9Eh *	V1.20	12/25x93   Toshiba T3400     /120
  FCh	9Eh *	V1.30	03/22x94   Toshiba T3400     /250
  FCh	9Eh *		../..x..   Toshiba T3400CT
+ FCh	BAh	V1.30	02/16x95   Toshiba T2150CDS/CDT
+ FCh	BBh	V1.30	01/25x95   Toshiba T2100/CS/CT
+ FCh	BCh ???		../..x..   Toshiba T2450CT
+ FCh	BEh		../..x..   Toshiba T4850CT
  FCh	???		../.. ..   Toshiba T1900S
  FCh	???		../.. ..   Toshiba T1900CT
+ FCh	???		../.. ..   Toshiba T4900CT
 Note:	BIOS version numbers and dates may vary, esp. due to harddisk and
 	  flash BIOS upgrades
 	the 8-bit ASCII graphics character in the "date" column above
 	  has been substituted by "x" because it depends on code page
-	[*] These models have monochrome and color versions which can only be
-	  distinguished with INT 42/AX=7503h
+	[*] These models have monochrome and color versions which can be
+	  distinguished with INT 42/AX=7503h; as that call is no longer
+	  supported on the T21xx series, use the product number at F000h:E000h
+	  instead (see #0393)
 SeeAlso: #0388
 --------B-15C1-------------------------------
 INT 15 - SYSTEM - RETURN EXTENDED-BIOS DATA-AREA SEGMENT ADDRESS (PS)
@@ -1908,6 +2876,7 @@ Return: CF clear if successful
 Notes:	the BIOS must save DX at startup in order to be able to support this
 	  call; PS/2 Models 56, 57, 90, and 95 are known to support it
 	the PS/2 BIOS merely reads CMOS locations 190h (type) and 191h (rev)
+SeeAlso: AX=DA92h
 
 (Table 0401)
 Values for CPU type:
@@ -2451,16 +3420,287 @@ Note:	these functions are identical to AX=D820h to D826h, except that they
 INT 15 U - AMI PCI BIOS v1.00.05.AX1 - ???
 	AH = DAh
 	AL = function (00h-08h,12h,14h,15h,19h,88h-8Eh,92h,99h)
+	other registers vary by function
+Return: CF clear if successful
+	    varies by function
+	CF set on error
+	    AH = error code (86h unsupported [sub]function)
+Note:	functions not listed above always return CF set and AH=86h; in the
+	  examined BIOS, functions 02h-04h,06h-07h,89h-8Bh, and 8Dh also
+	  always return CF set and AH=86h
+SeeAlso: AX=DA00h,AX=DA01h,AX=DA88h,AX=DA99h,AX=DB00h
+--------b-15DA00-----------------------------
+INT 15 U - AMI PCI BIOS - ???
+	AX = DA00h
+	CL = subfunction
+	    00h ???
+	    01h ???
+	    02h get ???
 	???
-Return: ???
-SeeAlso: AH=DBh
-----------15DB-------------------------------
-INT 15 U - AMI PCI BIOS v1.00.05.AX1 - ???
-	AH = DBh
-	AL = function (00h-04h)
+Return: CF clear if successful
+	    ???
+	CF set on error
+	    AH = error code (86h unsupported subfunction)
+Note:	in the v1.00.05.AX1 BIOS, subfunctions 00h and 01h always return
+	  failure
+SeeAlso: AX=DA01h
+--------b-15DA01-----------------------------
+INT 15 U - AMI PCI BIOS - CPU SPEED CONTROL
+	AX = DA01h
+	CL = subfunction (00h-02h)
+	    00h set low CPU speed
+	    01h set high CPU speed
+	    02h get current CPU speed
+Return: CF clear if successful
+	    AH = current/new CPU speed (00h low, 01h high)
+	    AL = ??? (00h)
+	CF set on error
+	    AH = error code (86h unsupported subfunction)
+Notes:	in the v1.00.05.AX1 BIOS, subfunctions 00h and 01h are NOPs in both
+	  protected and V86 modes due to a test of MSW bit 0
+	setting the CPU speed also generates the same audible signals generated
+	  when manually switching speeds with Ctrl-Alt-Gray- and Ctrl-Alt-Gray+
+BUG:	the BIOS apparently intends to return CF set if ???, but fails to use
+	  a different exit path in that case, resulting in CF clear
+----------15DA05-----------------------------
+INT 15 U - AMI PCI BIOS - GET ??? AND BIOS REVISION STRINGS
+	AX = DA05h
+	ES:SI -> 8-byte buffer for ??? and BIOS revision strings
+Return: CF clear
+	ES:SI buffer filled
+	AL = 00h
+Note:	for BIOS v1.00.05.AX1, the ??? string is "IDNO" and the BIOS revision
+	  string is "AX1 "
+SeeAlso: AX=DA15h,AX=DB04h
+----------15DA08-----------------------------
+INT 15 U - AMI PCI BIOS - ???
+	AX = DA08h
 	???
-Return: ???
-SeeAlso: AH=DAh
+Return: CF clear if successful
+	    ???
+	CF set on error
+	    AH = error code (86h unsupported subfunction)
+Note:	in the examined v1.00.05.AX1 BIOS, this call always returns failure
+----------15DA12-----------------------------
+INT 15 U - AMI PCI BIOS - v1.00.05.AX1 - ???
+	AX = DA12h
+	CL = subfunction
+	    00h ???
+	    01h	???
+	    02h get ???
+	    03h ???
+	    04h ???
+	???
+Return: CF clear if successful
+	    ???
+	CF set on error
+	    AH = error code (86h unsupported subfunction)
+Desc:	??? performs various manipulations on system chipset registers
+Notes:	subfunctions 00h and 01h are NOPs in protected and V86 modes due to
+	  a test of MSW bit 0
+	subfunctions 00h-02h always return success
+----------15DA14-----------------------------
+INT 15 U - AMI PCI BIOS - GET/SET ???
+	AX = DA14h
+	CL = subfunction
+	    00h read
+	    01h write
+		DH = new value for ??? (00h-02h)
+	DL = index of ??? (00h-03h, but not range-checked)
+	???
+Return: CF clear if successful
+	    DH = current value of ??? if reading
+	CF set on error
+	    AH = error code (86h unsupported subfunction)
+Note:	the values for indexes 00h and 01h are stored in CMOS RAM location 19h,
+	  and the values for 02h and 03h are stored in location 36h
+BUG:	the v1.00.05.AX1 BIOS range-checks DH on subfunction 00h instead of
+	  subfunction 01h, even though DH is never used by subfunction 00h
+----------15DA15-----------------------------
+INT 15 U - AMI PCI BIOS - GET ??? AND BIOS REVISION STRINGS
+	AX = DA15h
+	ES:DI -> 8-byte buffer for ??? and BIOS revision strings
+Return: CF clear
+	ES:DI buffer filled
+	AL = 00h
+Note:	for BIOS v1.00.05.AX1, the ??? string is "IDNO" and the BIOS revision
+	  string is "AX1 "
+SeeAlso: AX=DA05h,AX=DB04h
+----------15DA19-----------------------------
+INT 15 U - AMI PCI BIOS - GET/SET ???
+	AX = DA19h
+	CL = subfunction
+	    00h get first ???
+	    01h get second ???
+	    02h set first ???
+		BX = ???
+		DX = ???
+	    03h set second ???
+		BX = ???
+		DX = ???
+Return: CF clear if successful
+	    AX = 0000h
+	    BX,DX = ??? (subfunctions 00h and 01h only)
+	CF set on error
+	    AH = error code (86h unsupported subfunction)
+Note:	the first ??? is stored in CMOS RAM locations 1Bh-1Eh, the second in
+	  locations 1Fh-22h in the v1.00.05.AX1 BIOS
+----------15DA88-----------------------------
+INT 15 U - AMI PCI BIOS - GET EXTENDED MEMORY??? SIZE
+	AX = DA88h
+Return: CF clear (successful)
+	AX = 0000h
+	CL:BX = ??? size in KBytes
+Note:	returned CL:BX = 00FC00h (15K) on a 16MB RAM machine
+SeeAlso: AH=88h
+----------15DA8C-----------------------------
+INT 15 U - AMI PCI BIOS - GET BIOS AND CHIPSET??? VERSION
+	AX = DA8Ch
+	CL = subfunction
+	    00h get BIOS version string
+		ES:DI -> 12-byte buffer for version string
+	    01h get ???
+		BL = what to retrieve (00h,01h)
+		ES:DI -> 12-byte buffer for chipset info???
+Return: CF clear if successful
+	    ES:DI buffer filled
+	CF set on error
+	    AH = error code (86h unsupported subfunction)
+Notes:	the v1.00.05.AX1 BIOS returns "1.00.05.AX1 " as its version string
+	subfunction 01h returns five bytes read from the chipset registers
+	  at C000h-C004h (BL=00h) or C200h-C204h (BL=01h), padded to 12 bytes
+	  with NULs.  On my machine, the results were 86h 80h A3h 04h 46h and
+	  86h 80h 84h 04h 0Fh, respectively
+SeeAlso: AX=DB04h
+----------15DA8E-----------------------------
+INT 15 U - AMI PCI BIOS - ???
+	AX = DA8Eh
+	???
+Return: CF clear if successful
+	    ???
+	CF set on error
+	    AH = error code (86h unsupported subfunction)
+Note:	in the	v1.00.05.AX1 BIOS, this call always returns failure
+----------15DA92-----------------------------
+INT 15 U - AMI PCI BIOS - GET CPU TYPE
+	AX = DA92h
+Return: CF clear (successful)
+	AL = CPU stepping (see also #0402 at INT 15/AH=C9h)
+	AH = CPU model
+	BL = CPU family (05h = Pentium, etc.)
+	CX = ??? (0040h,0050h,0060h,0066h
+	EAX high word destroyed
+SeeAlso: AH=C9h
+----------15DA99-----------------------------
+INT 15 U - AMI PCI BIOS - GET/SET ??? FLAG
+	AX = DA99h
+	CL = subfunction
+	    00h check if ???
+	    01h set ??? flag
+	    02h clear ??? flag
+Return: CF clear if successful
+	    AH = ??? (00h,01h)
+	    AL = 00h
+	CF set on error
+	    AH = error code (86h unsupported subfunction)
+Note:	the flag is stored in bit 0 of CMOS RAM location 2Ch for BIOS
+	  v1.00.05.AX1
+--------b-15DB00-----------------------------
+INT 15 U - AMI BIOS - Flash ROM - ???
+	AX = DB00h
+	DS:SI -> ???
+	ES:DI -> ???
+Return: CF clear if successful
+	CF set on error
+	    AH = status (86h if not implemented)
+Note:	used by FMUP.EXE, Intel's Flash Memory Update utility
+SeeAlso: AH=DAh,AX=DB01h,AX=DB04h
+--------b-15DB01-----------------------------
+INT 15 U - AMI BIOS - Flash ROM - GET BIOS SUBSYSTEM INFORMATION
+	AX = DB01h
+	CL = BIOS subsystem information identifier (see #2618)
+Return: CF clear if successful
+	    AX = 0000h
+	    ES:DI -> 56-byte record describing subsystem (see #2619)
+	CF set on error
+	    AH = status (01h,86h)
+	    AL = 00h
+Note:	used by FMUP.EXE, Intel's Flash Memory Update utility
+SeeAlso: AX=DB00h,AX=DB02h
+
+(Table 2618)
+Values for AMI BIOS v1.00.05.AX1 subsystem identifier:
+ 00h	recovery code
+ 01h	system BIOS
+ 02h	PCI configuration data
+ 03h	logo data area
+ 04h	system BIOS/Language
+SeeAlso: #2619
+
+Format of AMI BIOS v1.00.05.AX1 subsystem information:
+Offset	Size	Description	(Table 2619)
+ 00h	BYTE	subsystem identifier (see #2618)
+ 01h	WORD	???
+ 03h	WORD	???
+ 05h	BYTE	flag??? (zero/nonzero)
+ 06h	BYTE	???
+ 07h	BYTE	???
+ 08h 24 BYTEs	subsystem name
+ 20h	BYTE	subsystem identifier???
+ 21h	BYTE	flag??? (00h or FFh)
+ 22h  6 BYTEs	???
+ 28h 16 BYTEs	version string???
+--------b-15DB02-----------------------------
+INT 15 U - AMI BIOS - Flash ROM - GET SIZE OF ??? CODE
+	AX = DB02h
+Return: CF clear
+	AX = 0000h
+	BX = size of ??? in bytes
+Note:	used by FMUP.EXE, Intel's Flash Memory Update utility
+SeeAlso: AX=DB00h,AX=DB03h
+--------b-15DB03-----------------------------
+INT 15 U - AMI BIOS - Flash ROM - GET ??? CODE
+	AX = DB03h
+	DS:SI -> ???
+	ES:DI -> buffer for ??? code
+	BX = ???
+	DX = ???
+Return: CF clear if successful
+	    AH = ???
+	    BX = ???
+	    DX = ???
+	CF set on error
+	    AH = error code
+Notes:	the entry point for the copied code (which is fully relocatable) is
+	  the very first byte (see #2620)
+	used by FMUP.EXE, Intel's Flash Memory Update utility
+SeeAlso: AX=DB00h,AX=DB02h
+
+(Table 2620)
+Call AMI BIOS ??? code with:
+	AL = function
+	    00h
+	    01h
+	    02h perform cold reboot
+	DS:SI -> ???
+	ES:DI -> ???
+Return: AH = status
+	    00h successful
+	    01h invalid function
+	    02h ???
+	    03h ???
+	    04h ???
+Note:	DS:SI and ES:DI are ignored for function 02h
+--------b-15DB04-----------------------------
+INT 15 U - AMI BIOS - Flash ROM - GET BIOS REVISION
+	AX = DB04h
+Return: CF clear
+	BL:BH:DL:DH = BIOS revision string ('AX1 ' for v1.00.05.AX1)
+	CL = BIOS major version??? (01h)
+	CH = BIOS minor version??? (00h)
+	AL = ??? (02h)
+Note:	used by FMUP.EXE, Intel's Flash Memory Update utility
+SeeAlso: AX=DA05h,AX=DA15h,AX=DA8Ch,AX=DB00h,AX=DB03h
 --------Q-15DE00-----------------------------
 INT 15 - DESQview - GET PROGRAM NAME
 	AX = DE00h
@@ -3624,6 +4864,14 @@ Return: CF clear
 	CX = extended memory in K (read from CMOS locations 17h and 18h)
 	DX = ???
 Note:	also supported by 3/8/93 DESKPRO/i and 7/26/93 LTE Lite 386 ROM BIOS
+SeeAlso: AX=E802h"Compaq"
+--------b-15E801-----------------------------
+INT 15 - Dell XPS P90 - DISPLAY MEMORY FOR >64M CONFIGURATIONS
+	AX = E801h
+Return: AX = extended memory size in K??? (max 3C00h = 15MB)
+	BX = extended memory size in 64K blocks???
+Note:	supported by the A03 level (6/14/94) and later XPS P90 BIOSes
+SeeAlso: AX=E820h"Dell"
 --------b-15E802-----------------------------
 INT 15 - Compaq Contura - GET ???
 	AX = E802h
@@ -3633,6 +4881,24 @@ Return: CF clear
 	CX = 0000h
 Note:	this function is also supported by the LTE Lite 25c, 25E, and 486; not
 	  supported by LTE Lite 20 and 25.
+SeeAlso: AX=E801h"Compaq"
+--------b-15E820-----------------------------
+INT 15 - Dell XPS P90 - GET MEMORY MAP
+	AX = E820h
+	EDX = 534D4150h ('SMAP')
+	EBX = ??? or 00000000h for default
+	ECX = number of bytes to copy
+	ES:DI -> buffer for result
+Return: CF clear if successful
+	    ES:DI buffer filled
+	    EBX = next offset from which to copy or 00000000h if all done
+	    high word of ECX may be cleared
+	CF set on error
+	    AH = error code (86h) (see #0372 at INT 15/AH=80h)
+Notes:	supported by the A03 level (6/14/94) and later XPS P90 BIOSes
+	a maximum of 20 bytes will be transferred at one time, even if ECX is
+	  higher
+SeeAlso: AX=E801h"Dell"
 --------m-15F200CX454D-----------------------
 INT 15 - Tandon memory mapper - Tandon MAPPER HARDWARE INITIALISATION CHECK ???
 	AX = F200h
@@ -3783,8 +5049,10 @@ SeeAlso: AH=09h
 Values for keyboard ID:
  0000h	no keyboard attached
  41ABh	Japanese "G" keyboard (translate mode)
+	MF2 Keyboard (usually in translate mode)
  54ABh	Japanese "P" keyboard (translate mode)
  83ABh	Japanese "G" keyboard (pass-through mode)
+	MF2 Keyboard (pass-through mode)
  84ABh	Japanese "P" keyboard (pass-through mode)
  90ABh	old Japanese "G" keyboard
  91ABh	old Japanese "P" keyboard
@@ -3958,7 +5226,7 @@ SeeAlso: AH=21h"HUNTER",AH=23h"HUNTER",AH=2Ah
 INT 16 - HUNTER 16 - CONTROL EMERGENCY BREAKOUT
 	AH = 23h
 	AL = new state of breakout (00h enabled, nonzero disabled)
-	BX = 0708h   
+	BX = 0708h
 	CX = 0910h
 	DX = 1112h
 Return: AL = 00h if successful
@@ -3987,7 +5255,7 @@ Values for HUNTER 16 Matrix Code:
  09h   Ctrl		27h	.		46h	J
  0Ah   "Paw" key	28h	Keypad 1	47h	K
  0Bh   2		29h	Keypad 0	48h	M
- 0Ch   W		2Ch	=		49h	N 
+ 0Ch   W		2Ch	=		49h	N
  0Dh   A		2Dh	Backspace	4Ah	/
  0Eh   S		2Eh	Keypad 8	4Dh	6
  0Fh   Z		2Fh	Keypad 9	4Eh	5
@@ -4601,7 +5869,7 @@ SeeAlso: #0005,#0459
 --------b-166F08-----------------------------
 INT 16 - HP Vectra EX-BIOS - "F16_KBD" - GET KEYBOARD INFORMATION
 	AX = 6F08h
-Return: AH = status 
+Return: AH = status
 	   00h successful
 	   02h unsupported (non-HIL, i.e. standard, keyboard)
 	BH = HP-HIL address (HP Vectra AT only???)
@@ -4615,36 +5883,36 @@ SeeAlso: AX=6F05h,AX=6F09h,INT 6F/AH=0Ah"SF_INQUIRE_FIRST"
 
 (Table 0461)
 Values for HP HIL keyboard language code:
- 00h	reserved					      
- 01h	Arabic-French					      
- 02h	Kanji						      
- 03h	Swiss-French					      
- 04h	Portugese					      
- 05h	Arabic						      
- 06h	Hebrew						      
- 07h	Canadian-English				      
- 08h	Turkish						      
- 09h	Greek						      
- 0Ah	Thai						      
- 0Bh	Italian						      
- 0Ch	Hangul (Korean)					      
- 0Dh	Dutch						      
- 0Eh	Swedish						      
- 0Fh	German						      
- 10h	Chinese (PRC)	      
- 11h	Chinese (Taiwan)      
- 12h	Swiss (French ii)     
- 13h	Spanish		      
- 14h	Swiss (German ii)     
- 15h	Belgian (Flemish)     
- 16h	Finish		      
- 17h	United Kingdom	      
- 18h	French-Canadian	      
- 19h	French-German	      
- 1Ah	Norwegian	      
- 1Bh	French		      
- 1Ch	Danish		      
- 1Dh	Katakana	      
+ 00h	reserved
+ 01h	Arabic-French
+ 02h	Kanji
+ 03h	Swiss-French
+ 04h	Portugese
+ 05h	Arabic
+ 06h	Hebrew
+ 07h	Canadian-English
+ 08h	Turkish
+ 09h	Greek
+ 0Ah	Thai
+ 0Bh	Italian
+ 0Ch	Hangul (Korean)
+ 0Dh	Dutch
+ 0Eh	Swedish
+ 0Fh	German
+ 10h	Chinese (PRC)
+ 11h	Chinese (Taiwan)
+ 12h	Swiss (French ii)
+ 13h	Spanish
+ 14h	Swiss (German ii)
+ 15h	Belgian (Flemish)
+ 16h	Finish
+ 17h	United Kingdom
+ 18h	French-Canadian
+ 19h	French-German
+ 1Ah	Norwegian
+ 1Bh	French
+ 1Ch	Danish
+ 1Dh	Katakana
  1Eh	Latin American Spanish
  1Fh	United States-American
  20h-FEh reserved
@@ -5206,27 +6474,141 @@ INT 16 U - APCAL v3.20 - GET ???
 	CX = 00CDh
 Return: AX = ??? (5345h seen)
 SeeAlso: AX=D724h/CX=00CBh,AX=D724h/CX=00CCh
+--------v-16DD--------------------------
+INT 16 - VIRUS - "Frumble" - INSTALLATION CHECK
+	AH = DDh
+Return: AL = DDh if resident
+SeeAlso: INT 13/AX=FD50h,INT 21/AX=0B56h
 ----------16DFDF-----------------------------
 INT 16 U - Corel PowerSCSI - FDAUDIO.COM - INSTALLATION CHECK
 	AX = DFDFh
 Return: ES:DI -> ASCII signature "FDAUDIO/CD" followed by ASCII date, i.e.
 	  "06/18/93" if installed
-----------16E0-------------------------------
-INT 16 - AMI BIOS - Flash ROM
-	AH = E0h
-	AL = subfunction
-	    00h get version ???
-	    01h type set save requirement ???
-	    02h get type set status ???
-	    04h lower voltage ???
-	    05h raise voltage ???
-	    06h write protect ???
-	    07h Flash ROM write enable ???
-Notes:	the "Meningitis" virus uses this API when attacking a system equipped
+----------16E000-----------------------------
+INT 16 - AMI BIOS - BIOS-FLASH Interface - GET VERSION NUMBER
+	AX = E000h
+Return: CF clear if successful
+	    AL = FAh
+	    BX = version number (BCD) (0200h = v2.00)
+	CF set on error (not implemented)
+Notes:	this interface is available on AMI BIOSes built from AMI core version
+	  8/8/93 (HiFlex BIOS) or 11/15/93 (WinBIOS) or later
+	the "Meningitis" virus uses this API when attacking a system equipped
 	  with an AMI BIOS; it is supposedly able to write itself into the
 	  Flash ROM and thus make itself part of the BIOS
-	this API is not supported by AMI Pentium BIOS 1.00.05.AX1 on a Flash
-	  ROM-equipped Gateway 2000 machine
+SeeAlso: AX=E001h,AX=E004h,AX=E006h,AX=E008h,AX=E00Ah,AX=E00Bh,AX=E0FFh
+----------16E001-----------------------------
+INT 16 - AMI BIOS - BIOS-FLASH Interface - GET CHIPSET SAVE/RESTORE SIZE
+	AX = E001h
+Return: CF clear if successful
+	    AL = FAh
+	    BX = number of bytes required to save chipset configuration
+	CF set on error
+SeeAlso: AX=E000h,AX=E002h,AX=E003h
+----------16E002-----------------------------
+INT 16 - AMI BIOS - BIOS-FLASH Interface - SAVE CHIPSET STATUS & PREPARE CHPSET
+	AX = E002h
+	ES:DI -> buffer for storing chipset status
+Return: CF clear if successful
+	    AL = FAh
+	CF set on error
+SeeAlso: AX=E000h,AX=E001h,AX=E003h
+----------16E003-----------------------------
+INT 16 - AMI BIOS - BIOS-FLASH Interface -  RESTORE CHIPSET STATUS
+	AX = E003h
+	ES:DI -> buffer in which chipset status was previously stored
+Return: CF clear if successful
+	    AL = FAh
+	CF set on error
+SeeAlso: AX=E000h,AX=E001h,AX=E002h
+----------16E004-----------------------------
+INT 16 - AMI BIOS - BIOS-FLASH Interface - LOWER PROGRAMMING VOLTAGE Vpp
+	AX = E004h
+Return: CF clear if successful
+	    AL = FAh
+	CF set on error
+Note:	this function does not return until the voltage level stabilizes
+SeeAlso: AX=E000h,AX=E005h,AX=E006h
+----------16E005-----------------------------
+INT 16 - AMI BIOS - BIOS-FLASH Interface - RAISE PROGRAMMING VOLTAGE Vpp
+	AX = E005h
+Return: CF clear if successful
+	    AL = FAh
+	CF set on error
+Note:	this function does not return until the voltage level stabilizes
+SeeAlso: AX=E000h,AX=E004h,AX=E007h
+----------16E006-----------------------------
+INT 16 - AMI BIOS - BIOS-FLASH Interface - FLASH WRITE PROTECT
+	AX = E006h
+Return: CF clear if successful
+	    AL = FAh
+	CF set on error
+Note:	this function performs any delay required to allow the Flash ROM to
+	  stabilize in the write-protected state
+SeeAlso: AX=E000h,AX=E004h,AX=E007h
+----------16E007-----------------------------
+INT 16 - AMI BIOS - BIOS-FLASH Interface - FLASH WRITE ENABLE
+	AX = E007h
+Return: CF clear if successful
+	    AL = FAh
+	CF set on error
+Note:	this function performs any delay required to allow the Flash ROM to
+	  stabilize in the write-enabled state
+SeeAlso: AX=E000h,AX=E005h,AX=E006h,AX=E008h
+----------16E008-----------------------------
+INT 16 - AMI BIOS - BIOS-FLASH Interface - FLASH SELECT
+	AX = E008h
+Return: CF clear if successful
+	    AL = FAh
+	CF set on error
+Desc:	select the Flash ROM if the system contains both EPROM and Flash ROM
+Note:	this function performs any delay required to allow the Flash ROM to
+	  stabilize in the selected state; if no EPROM is present, this
+	  function always returns successfully
+SeeAlso: AX=E000h,AX=E007h,AX=E009h
+----------16E009-----------------------------
+INT 16 - AMI BIOS - BIOS-FLASH Interface - FLASH DE-SELECT
+	AX = E009h
+Return: CF clear if successful
+	    AL = FAh
+	CF set on error
+Desc:	select the EPROM if the system contains both EPROM and Flash ROM
+Note:	this function performs any delay required to allow the Flash ROM to
+	  stabilize in the de-selected state; if no EPROM is present, this
+	  function always returns successfully
+SeeAlso: AX=E000h,AX=E006h,AX=E008h
+----------16E00A-----------------------------
+INT 16 - AMI BIOS - BIOS-FLASH Interface - VERIFY ALLOCATED MEMORY
+	AX = E00Ah
+	BX = number of paragraphs
+	ES = starting segment of memory
+Return: CF clear if successful
+	    AL = FAh
+	CF set on error
+Desc:	determine whether the specified memory may be used for flash
+	  programming
+Note:	always returns error if BX is zero on entry
+SeeAlso: AX=E000h,AX=E00Bh
+----------16E00B-----------------------------
+INT 16 - AMI BIOS - BIOS-FLASH Interface - SAVE INTERNAL CACHE STATUS
+	AX = E00Bh
+	ES:DI -> buffer for internal cache status (minimum 4Kbytes)
+Return: CF clear if successful
+	    AL = FAh
+	CF set on error
+Note:	always returns error if the hardware does not contain internal
+	  cache or this call is made in protected mode
+SeeAlso: AX=E000h,AX=E00Ah,AX=E00Ch
+----------16E00C-----------------------------
+INT 16 - AMI BIOS - BIOS-FLASH Interface - RESTORE INTERNAL CACHE STATUS
+	AX = E00Ch
+	ES:DI -> buffer containing internal cache status (minimum 4Kbytes)
+Return: CF clear if successful
+	    AL = FAh
+	CF set on error
+Note:	always returns error if the hardware does not contain internal
+	  cache or this call is made in protected mode
+SeeAlso: AX=E000h,AX=E00Bh
 --------t-16E0E0-----------------------------
 INT 16 - TurboPower TSRs - ALTERNATE INSTALLATION CHECK
 	AX = E0E0h
@@ -5236,6 +6618,11 @@ Note:	the returned TSR list provides support for communication among TSRs
 	  built with TurboPower's Turbo Professional and Object Professional
 	  libraries for Turbo Pascal
 SeeAlso: AX=F0F0h
+----------16E0FF-----------------------------
+INT 16 - AMI BIOS - BIOS-FLASH Interface - GENERATE CPU RESET
+	AX = E0FFh
+Return: never
+SeeAlso: AX=E000h,INT 14/AH=17h"FOSSIL"
 --------U-16ED--BHED-------------------------
 INT 16 - BORLAND TURBO LIGHTNING - API
 	AH = EDh
@@ -5306,6 +6693,8 @@ INT 16 - Compaq 386 and newer - SET CPU SPEED
 	AL = speed code (see #0472)
 	if AL=09h,
 	    CX = speed value, 1 (slowest) to 50 (full), 3 ~= 8088
+Note:	also supported by some versions of AMI BIOS dated June 1992 or later;
+	  speed codes 0 or 1 are used for Low Speed, 2 for High Speed
 SeeAlso: AH=F1h,AH=F3h
 
 (Table 0472)
@@ -5343,6 +6732,7 @@ INT 16 - Compaq 386 and newer - READ CURRENT CPU SPEED
 	AH = F1h
 Return: AL = speed code (see #0472)
 	if AL = 09h, CX = speed code
+Note:	also supported by some versions of AMI BIOS dated June 1992 or later
 SeeAlso: AH=F0h,AH=F3h
 --------b-16F2-------------------------------
 INT 16 - Compaq 386 and newer - DETERMINE ATTACHED KEYBOARD TYPE
@@ -5373,16 +6763,32 @@ Return: AH = E2h
 	    00h not present
 	    01h enabled
 	    02h disabled
+	CX = cache memory size
+	    bit 15:	cache size information is NOT valid
+	    bits 14-0:	cache memory size in kilobytes
+	DH = cache write technology
+	    bit 7:	cache write information is NOT valid
+	    bits 6-1:	reserved (0)
+	    bit 0:	0 = Write-through caching
+			1 = Write-back caching
+	DL = cache type
+	    bit 7:	cache type information is NOT valid
+	    bits 6-1:	reserved (0)
+	    bit 0:	0 = Direct mapped
+			1 = Two-way set-associative
+Note:	also supported by some versions of AMI BIOS dated June 1992 or later
 SeeAlso: AX=F401h,AX=F402h
 --------b-16F401-----------------------------
 INT 16 - Compaq Systempro and higher - ENABLE CACHE CONTROLLER
 	AX = F401h
 Return: AX = E201h
+Note:	also supported by some versions of AMI BIOS dated June 1992 or later
 SeeAlso: AX=F400h,AX=F402h
 --------b-16F402-----------------------------
 INT 16 - Compaq Systempro and higher - DISABLE CACHE CONTROLLER
 	AX = F402h
 Return: AX = E202h
+Note:	also supported by some versions of AMI BIOS dated June 1992 or later
 SeeAlso: AX=F400h,AX=F401h
 --------v-16FA00DX5945-----------------------
 INT 16 U - PC Tools v8+ VSAFE, VWATCH - INSTALLATION CHECK
@@ -8555,1175 +9961,4 @@ Notes:	WordPerfect 5.0 will call this interrupt at start up to determine if a
 			BX = 0 or segment address of buffer with key codes
 	See the "WordPerfect 5.0 Developer's Toolkit" for further information.
 SeeAlso: INT 16/AX=5500h
---------N-1A6108-----------------------------
-INT 1A - SNAP.EXE 3.2+ - "SNAP_SENDWITHREPLY" - SEND MSG AND GET REPLY
-	AX = 6108h
-	STACK:	WORD	conversation ID (0000h-0009h)
-		DWORD	pointer to message buffer
-		WORD	length of message
-		DWORD	pointer to reply buffer
-		WORD	length of reply buffer
-		WORD	0000h (use default "Cparams" structure)
-Return: AX = status (see #0505)
-	STACK unchanged
-Program: SNAP.EXE is a TSR written by IBM and Carnegie Mellon University
-	  which implements the Simple Network Application Protocol
-SeeAlso: AX=6205h
-
-(Table 0505)
-Values for SNAP.EXE status:
- 0000h	successful
- F830h	"SNAP_ABORTED"
- FC04h	"SNAP_SERVERDIED"
- FC05h	"SNAP_RESEND"
- FC06h	"SNAP_SELECTFAILED"
- FC07h	"SNAP_WRONGVERSION"
- FC08h	"SNAP_INVALIDACK"
- FC09h	"SNAP_TIMEOUT"
- FC0Ah	"SNAP_SERVERREJECT"
- FC0Bh	"SNAP_NOREPLYDUE"
- FC0Ch	"SNAP_NOAUTHENTICATE"/"SNAP_GUARDIAN_ERROR"
- FC0Dh	"SNAP_NOINIT"
- FC0Eh	"SNAP_SOCKETERROR"
- FC0Fh	"SNAP_BUFFERLIMIT"
- FC10h	"SNAP_INVALIDCID"
- FC11h	"SNAP_INVALIDOP"
- FC12h	"SNAP_XMITFAIL"
- FC13h	"SNAP_NOMORERETRIES"
- FC14h	"SNAP_BADPARMS"
- FC15h	"SNAP_NOMEMORY"
- FC16h	"SNAP_NOMORECONVS"
- FFFFh	failed (invalid function/parameter)
---------N-1A6205-----------------------------
-INT 1A - SNAP.EXE 3.2+ - "SNAP_SENDNOREPLY" - SEND MSG, DON'T AWAIT REPLY
-	AX = 6205h
-	STACK:	WORD	conversation ID (0000h-0009h)
-		DWORD	pointer to message
-		WORD	length of message
-		WORD	0000h (use default "Cparms" structure)
-Return: AX = status (see #0505)
-	STACK unchanged
-SeeAlso: AX=6108h
---------N-1A6308-----------------------------
-INT 1A - SNAP.EXE 3.2+ - "SNAP_BEGINCONV" - BEGIN CONVERSATION
-	AX = 6308h
-	STACK:	WORD	offset of ASCIZ "guardian"
-		WORD	offset of ASCIZ hostname
-		WORD	offset of ASCIZ server name
-		WORD	offset of ASCIZ userid
-		WORD	offset of ASCIZ password
-		WORD	offset of password length
-		WORD	offset of password type
-		WORD	offset of "Cparms" structure (see #0506)
-Return: ???
-	STACK unchanged
-Note:	all stacked offsets are within the SNAP data segment (use AX=6A01h
-	  to allocate a buffer)
-SeeAlso: AX=6405h,AX=7202h
-
-Format of SNAP.EXE Cparms structure:
-Offset	Size	Description	(Table 0506)
- 00h	WORD	retry delay in seconds
- 02h	WORD	timeout delay in seconds
- 04h	WORD	maximum buffer size
- 06h	WORD	encryption level
---------N-1A6405-----------------------------
-INT 1A - SNAP.EXE 3.2+ - "SNAP_ENDCONV" - END CONVERSATION
-	AX = 6405h
-	STACK:	WORD	conversation ID (0000h-0009h)
-		DWORD	pointer to message buffer
-		WORD	length of message
-		WORD	0000h (use default "Cparms" structure)
-Return: AX = status (see #0505)
-	STACK unchanged
-Program: SNAP.EXE is a TSR written by IBM and Carnegie Mellon University
-	  which implements the Simple Network Application Protocol
-SeeAlso: AX=6308h
---------N-1A6900-----------------------------
-INT 1A - SNAP.EXE 3.2+ - "SNAP_DATASEG" - GET RESIDENT DATA SEGMENT
-	AX = 6900h
-Return: AX = value used for DS by resident code
-SeeAlso: AX=6A01h,AX=6F01h
---------N-1A6A01-----------------------------
-INT 1A - SNAP.EXE 3.2+ - "SNAP_ALLOC" - ALLOCATE BUFFER IN SNAP DATA SEGMENT
-	AX = 6A01h
-	STACK:	WORD	number of bytes to allocate
-Return: AX = offset of allocated buffer or 0000h if out of memory
-	STACK unchanged
-Program: SNAP.EXE is a TSR written by IBM and Carnegie Mellon University
-	  which implements the Simple Network Application Protocol
-SeeAlso: AX=6B01h
---------N-1A6B01-----------------------------
-INT 1A - SNAP.EXE 3.2+ - "SNAP_FREE" - DEALLOCATE BUFFER IN SNAP DATA SEGMENT
-	AX = 6B01h
-	STACK:	WORD	offset within SNAP data segment of previously allocated
-			buffer
-Return: STACK unchanged
-Note:	this call is a NOP if the specified offset is 0000h
-SeeAlso: AX=6A01h
---------N-1A6C04-----------------------------
-INT 1A - SNAP.EXE 3.2+ - "SNAP_COPYTO" - COPY DATA TO RESIDENT SNAP PACKAGE
-	AX = 6C04h
-	STACK:	WORD	offset within SNAP data segment of dest (nonzero)
-		WORD	segment of source buffer
-		WORD	offset of source buffer
-		WORD	number of bytes to copy
-Return: AX = offset of byte after last one copied to destination
-	STACK unchanged
-Program: SNAP.EXE is a TSR written by IBM and Carnegie Mellon University
-	  which implements the Simple Network Application Protocol
-SeeAlso: AX=6D04h
---------N-1A6D04-----------------------------
-INT 1A - SNAP.EXE 3.2+ - "SNAP_COPYFROM" - COPY DATA FROM RESIDENT SNAP PACKAGE
-	AX = 6D04h
-	STACK:	WORD	offset within SNAP data segment of source buffer
-		WORD	segment of destination buffer
-		WORD	offset of destination buffer
-		WORD	number of bytes to copy
-Return: AX = offset of byte after last one copied from source
-	buffer filled
-	STACK unchanged
-SeeAlso: AX=6C04h
---------N-1A6E01-----------------------------
-INT 1A - SNAP.EXE 3.2+ - "SNAP_SETDEBUG" - SET ???
-	AX = 6E01h
-	STACK:	WORD	new value for ???
-Return: AX = old value of ???
-	STACK unchanged
-Program: SNAP.EXE is a TSR written by IBM and Carnegie Mellon University
-	  which implements the Simple Network Application Protocol
---------N-1A6F01-----------------------------
-INT 1A - SNAP.EXE 3.2+ - "SNAP_CHKINSTALL" - INSTALLATION CHECK
-	AX = 6F01h
-	STACK: WORD 0000h
-Return: AX = status
-	    0000h SNAP is resident
-	    other SNAP not present
-	STACK unchanged
-Program: SNAP.EXE is a TSR written by IBM and Carnegie Mellon University
-	  which implements the Simple Network Application Protocol, and is
-	  required by PCVENUS (a network shell).  The combination of SNAP and
-	  PCVENUS allows the use of the Andrew File System as one or more
-	  networked drives.
-SeeAlso: AX=6900h,AX=7400h
---------N-1A7002-----------------------------
-INT 1A - SNAP.EXE 3.2+ - "SNAP_SETANCHOR"
-	AX = 7002h
-	STACK:	WORD	anchor number (0000h-0009h)
-		WORD	new value for the anchor
-Return: AX = status
-	    0000h successful
-	    FFFFh failed (top word on stack not in range 00h-09h)
-	STACK unchanged
-SeeAlso: AX=7101h
---------N-1A7101-----------------------------
-INT 1A - SNAP.EXE 3.2+ - "SNAP_GETANCHOR"
-	AX = 7101h
-	STACK:	WORD	anchor number (0000h-0009h)
-Return: AX = anchor's value
-	STACK unchanged
-Program: SNAP.EXE is a TSR written by IBM and Carnegie Mellon University
-	  which implements the Simple Network Application Protocol
-SeeAlso: AX=7002h
---------N-1A7202-----------------------------
-INT 1A - SNAP.EXE 3.2+ - "SNAP_SETCONVPARMS" - SET CONVERSATION PARAMETERS
-	AX = 7202h
-	STACK:	WORD	conversation ID (0000h-0009h)
-		WORD	offset within resident data segment of "Cparms"
-			  structure (see #0506)
-Return: AX = status???
-	STACK unchanged
-SeeAlso: AX=6308h
---------N-1A7302-----------------------------
-INT 1A - SNAP.EXE 3.2+ - "SNAP_CLIENTVERSION" - ???
-	AX = 7302h
-	STACK:	WORD	conversation ID (0000h-0009h)
-		WORD	offset within resident data segment of ???
-Return: AX = ???
-	???
-	STACK unchanged
-SeeAlso: AX=7400h
---------N-1A7400-----------------------------
-INT 1A - SNAP.EXE 3.2+ - "SNAP_VERSION" - GET VERSION
-	AX = 7400h
-Return: AX = version (AH=major, AL=minor)
-Note:	this call is only valid if SNAP is installed
-SeeAlso: AX=7302h,INT 1A/AX=6F01h
---------N-1A75-------------------------------
-INT 1A - SNAP.EXE 3.2+ - "SNAP_NOP" - ???
-	AH = 75h
-	AL = ???
-Return: AX = ??? (0000h)
-Program: SNAP.EXE is a TSR written by IBM and Carnegie Mellon University
-	  which implements the Simple Network Application Protocol
---------N-1A76-------------------------------
-INT 1A - SNAP.EXE 3.2+ - "SNAP_802_5" - ???
-	AH = 76h
-	AL = ???
-Return: AX = ???
---------N-1A77-------------------------------
-INT 1A - SNAP.EXE 3.4 - ???
-	AH = 77h
-	AL = ??? (at least 01h)
-	STACK:	WORD	???
-		???
-Return: ???
-	STACK unchanged
---------N-1A7802-----------------------------
-INT 1A - SNAP.EXE 3.4 - ???
-	AX = 7802h
-	STACK:	WORD	???
-		WORD	???
-Return: ???
-	STACK unchanged
-Program: SNAP.EXE is a TSR written by IBM and Carnegie Mellon University
-	  which implements the Simple Network Application Protocol
---------s-1A7F-------------------------------
-INT 1A - Tandy 2500, Tandy 1000L series - DIGITAL SOUND???
-	AH = 7Fh
-	???
-Return: ???
-Note:	this function is not supported by the Tandy 1000SL/TL BIOS
-SeeAlso: AH=80h,AH=83h,AH=85h
---------s-1A80-------------------------------
-INT 1A - PCjr, Tandy 2500???, Tandy 1000SL/TL - SET UP SOUND MULTIPLEXOR
-	AH = 80h
-	AL = 00h source is 8253 channel 2
-	     01h source is cassette input
-	     02h source is I/O channel "Audio IN"
-	     03h source is sound generator chip
-Note:	although documented in the 1000TL Technical Reference, the 1000TL
-	  BIOS has just an IRET for this call
-SeeAlso: AH=7Fh,AH=83h
---------X-1A80-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - GET NUMBER OF ADAPTERS
-	AH = 80h
-Return: CF clear if successful
-	    CX = 5353h ('SS') if Socket Services installed
-		AL = number of adapters present (0-16)
-	    AH destroyed
-	CF set on error
-	    AH = error code (see #0507)
-SeeAlso: AH=83h"PCMCIA"
-
-(Table 0507)
-Values for PCMCIA error codes:
- 01h	"BAD_ADAPTER" nonexistent adapter
- 02h	"BAD_ATTRIBUTE" invalid attribute specified
- 03h	"BAD_BASE" invalid system memory base address
- 04h	"BAD_EDC" invalid EDC generator specified
- 05h	"BAD_INDICATOR" invalid indicator specified
- 06h	"BAD_IRQ" invalid IRQ channel specified
- 07h	"BAD_OFFSET" invalid PCMCIA card offset specified
- 08h	"BAD_PAGE" invalid page specified
- 09h	"BAD_READ" unable to complete request
- 0Ah	"BAD_SIZE" invalid window size specified
- 0Bh	"BAD_SOCKET" nonexistent socket specified
- 0Ch	"BAD_TECHNOLOGY" unsupported Card Technology for writes
- 0Dh	"BAD_TYPE" unavailable window type specified
- 0Eh	"BAD_VCC" invalid Vcc power level index specified
- 0Fh	"BAD_VPP" invalid Vpp1 or Vpp2 power level index specified
- 10h	"BAD_WAIT" invalid number of wait states specified
- 11h	"BAD_WINDOW" nonexistent window specified
- 12h	"BAD_WRITE" unable to complete request
- 13h	"NO_ADAPTERS" no adapters installed, but Socket Services is present
- 14h	"NO_CARD" no card in socket
---------X-1A81-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - REGISTER STATUS CHANGE CALLBACK
-	AH = 81h
-	DS:DX -> callback routine (see #0508) or 0000h:0000h to disable
-Return: CF clear if successful
-	    AH destroyed
-	CF set on error
-	    AH = error code (see #0507)
-Note:	the callback will be invoked on any socket changes whose notification
-	  has not been disabled with the status change enable mask; it may be
-	  invoked either while processing a hardware interrupt from the adapter
-	  or while processing the following Socket Services request
-SeeAlso: AH=80h"PCMCIA",AH=82h"PCMCIA"
-
-(Table 0508)
-Values PCMCIA callback routine is invoked with:
-	AL = adapter number
-	BH = status change interrupt enable mask (see #0509)
-	BL = socket number
-	DH = current socket status (see #0510)
-	DL = current card status (see #0511)
-Return: all registers preserved
-Notes:	the callback may be invoked during a hardware interrupt, and may not
-	  call on Socket Services
-	the callback will be invoked once for each socket with a status change
-
-Bitfields for PCMCIA status change interrupt enable mask:
-Bit(s)	Description	(Table 0509)
- 7	card detect change
- 6	ready change
- 5	battery warning change
- 4	battery dead change
- 3	insertion request
- 2	ejection request
- 1-0	reserved (0)
-
-Bitfields for PCMCIA current socket status:
-Bit(s)	Description	(Table 0510)
- 7	card changed
- 6	reserved (0)
- 5	card insertion complete
- 4	card ejection complete
- 3	card insertion request pending
- 2	card ejection request pending
- 1	card locked
- 0	reserved (0)
-
-Bitfields for PCMCIA current card status:
-Bit(s)	Description	(Table 0511)
- 7	card detect
- 6	ready
- 5	battery voltage detect 2 (battery warning)
- 4	battery voltage detect 1 (battery dead)
- 3-1	reserved (0)
- 0	write protected
---------s-1A8100-----------------------------
-INT 1A - Tandy 2500, Tandy 1000L series - DIGITAL SOUND - INSTALLATION CHECK
-	AX = 8100h
-Return: AL > 80h if supported
-	AX = 00C4h if supported (1000SL/TL)
-	    CF set if sound chip is busy
-	    CF clear  if sound chip is free
-Note:	the value of CF is not definitive; call this function until CF is
-	  clear on return, then call AH=84h"Tandy"
---------s-1A82-------------------------------
-INT 1A - Tandy 2500???, Tandy 1000SL/TL - DIGITAL SOUND - RECORD SOUND
-	AH = 82h
-	ES:BX -> buffer for sound samples
-	CX = length of buffer
-	DX = transfer rate (1-4095, 1 is fastest)
-Return: AH = 00h
-	CF set if sound busy
-	CF clear if sound chip free
-Note:	the value in DX should be 1/10 the corresponding value for
-	  INT 1A/AH=83h on the 1000TL, 1/11.5 on the 1000SL.  Call
-	  INT 1A/AX=8100h and INT 1A/AH=84h before invoking this function.
-	The BIOS issues an INT 15/AX=91FBh when the input is complete
-	DMA across a 64K boundary is masked by the BIOS
---------X-1A82-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - REGISTER CARD TECHNOLOGY CALLBACK
-	AH = 82h
-	DS:DX -> callback routine (see #0512) or 0000h:0000h
-Return: CF clear if successful
-	    AH destroyed
-	CF set on error
-	    AH = error code (see #0507)
-Note:	the callback is invoked on a Write Multiple request with an unsupported
-	  card technology type
-SeeAlso: AH=81h"PCMCIA",AH=94h
-
-(Table 0512)
-Values PCMCIA callback routine is invoked with:
-	ES:AX -> Low-Level Socket Services Routines (see #0514)
-	BH = socket attributes (see #0513)
-	CX = number of bytes or words to write
-	DS:SI -> data buffer to be written
-	DX:DI -> 26-bit linear card address
-	BP = card technology type
-Return: CF clear if successful
-	CF set on error
-	    AH = error code (07h,0Ch,12h,14h) (see #0507)
-
-Bitfields for PCMCIA socket attributes:
-Bit(s)	Description	(Table 0513)
- 7-4	reserved (0)
- 3	packed buffer
- 2	even bytes only (only valid if 1 set)
- 1	data width (clear = byte, set = word)
- 0	memory type (clear = common, set = attribute)
-
-Format of PCMCIA Low-Level Socket Services Routines:
-Offset	Size	Description	(Table 0514)
- 00h	WORD	offset of Write Many routine (see #0515)
- 02h	WORD	offset of Write One routine (see #0516)
- 04h	WORD	offset of Read One routine (see #0517)
- 06h	WORD	offset of Increment Offset routine (see #0518)
- 08h	WORD	offset of Set Offset routine (see #0519)
- 0Ah	WORD	offset of Get Status routine (see #0520)
-
-(Table 0515)
-Call Write Many routine with:
-	BH = socket attributes (see #0513)
-	CX = number of bytes or words to write
-	DS:SI -> data to be written
-Return: CF clear if successful
-	CF set on error
-
-(Table 0516)
-Call Write One routine with:
-	AL/AX = data to be written
-	BH = socket attributes (see #0513)
-Return: CF clear if successful
-	CF set on error
-
-(Table 0517)
-Call Read One routine with:
-	BH = socket attributes (see #0513)
-Return: CF clear if successful
-	    AL/AX = data read
-	CF set on error
-
-(Table 0518)
-Call Increment Offset routine with:
-	BH = socket attributes (see #0513)
-Return: CF clear if successful
-	CF set on error
-
-(Table 0519)
-Call Set Offset routine with:
-	DX:DI = new offset address
-Return: CF clear if successful
-	CF set on error
-
-(Table 0520)
-Call Get Status routine with:
-	nothing
-Return: AL = current card status (see #0511)
---------s-1A83-------------------------------
-INT 1A - Tandy 2500, Tandy 1000L series - START PLAYING DIGITAL SOUND
-	AH = 83h
-	AL = volume (0=silence, 7=highest)
-	CX = number of bytes to play
-	DX = time between sound samples (multiples of 273 nanoseconds)
-	    only bits 11-0 used
-	ES:BX -> sound data (array of 8-bit unsigned PCM samples)
-Return: AH = 00h
-	CF set if sound is busy
-	CF clear if sound chip is free
-Notes:	this call returns immediately while the sound plays in the
-	  background; the sound chip is clocked at 3.57 MHz, with the low 12
-	  bits of DX specifying the clock divisor
-	The BIOS appears to call INT 15/AX=91FBh when the sound device
-	  underflows to allow another INT 1A/AH=83h for seamless playing of
-	  long sounds.
-SeeAlso: AH=84h"Tandy",INT 15/AH=91h
---------X-1A83-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - GET SOCKET SERVICES VERSION NUMBER
-	AH = 83h
-	AL = adapter number
-Return: CF clear if successful
-	    AX = Socket Services version (BCD)
-	    BX = implementation version (BCD)
-	    CX = 5353h ("SS")
-	    DS:SI -> ASCIZ implementor description
-	CF set on error
-	    AH = error code (01h) (see #0507)
-Note:	the current version (from the Revision A.00 documentation) of Socket
-	  Services is 1.00 (AX=0100h)
-SeeAlso: AH=80h"PCMCIA"
---------s-1A84-------------------------------
-INT 1A - Tandy 2500, Tandy 1000L series - STOP PLAYING DIGITAL SOUND
-	AH = 84h
-Return: ???
-Note:	the BIOS will call INT 15/AX=91FBh when the sound has stopped playing
-SeeAlso: AH=83h"Tandy",AH=85h"Tandy"
---------X-1A84-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - INQUIRE ADAPTER
-	AH = 84h
-	AL = adapter number
-Return: CF clear if successful
-	    AH destroyed
-	    BH = number of windows
-	    BL = number of sockets (1-16)
-	    CX = number of EDCs
-	    DH = capabilities (see #0521)
-	    DL = status change interrupt used (only if DH bit 3 set)(see #0522)
-	CF set on error
-	    AH = error code (01h) (see #0507)
-SeeAlso: AH=80h"PCMCIA",AH=85h"PCMCIA",AH=87h
-
-Bitfields for PCMCIA capabilities:
-Bit(s)	Description	(Table 0521)
- 7-6	reserved (0)
- 5	status change interrupt is hardware shareable
- 4	status change interrupt is software shareable
- 3	status change interrupt
- 2	data bus width is per-socket rather than per-window
- 1	power management is per-adapter rather than per-socket
- 0	indicators are per-adapter rather than per-socket
-
-(Table 0522)
-Values for PCMCIA status change interrupt usage:
- 00h-0Fh IRQ level
- 10h	NMI
- 11h	I/O check
- 12h	bus error
- 13h	vendor specific
- 14h-FFh reserved
---------s-1A85-------------------------------
-INT 1A - Tandy 2500, Tandy 1000L series - DIGITAL SOUND???
-	AH = 85h
-	???
-Return: ???
-Note:	this function is not supported by the Tandy 1000SL/TL BIOS
-SeeAlso: AH=7Fh,AH=83h"Tandy"
---------X-1A85-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - GET ADAPTER
-	AH = 85h
-	AL = adapter number
-Return: CF clear if successful
-	    AH destroyed
-	    DH = adapter attributes (see #0523)
-	CF set on error
-	    AH = error code (01h) (see #0507)
-SeeAlso: AH=84h"PCMCIA",AH=86h
-
-Bitfields for PCMCIA adapter attributes:
-Bit(s)	Description	(Table 0523)
- 7-5	reserved (0)
- 4	hardware share status change
- 3	software share status change
- 2	enable status change interrupts
- 1	adapter preserves state information during reduced power consumption
- 0	attempting to reduce power consumption
---------X-1A86-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - SET ADAPTER
-	AH = 86h
-	AL = adapter number
-	DH = new adapter attributes (see #0523)
-Return: CF clear if successful
-	    AH destroyed
-	CF set on error
-	    AH = error code (01h) (see #0507)
-SeeAlso: AH=84h"PCMCIA",AH=85h"PCMCIA"
---------X-1A87-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - INQUIRE WINDOW
-	AH = 87h
-	AL = adapter number
-	BH = window number
-Return: CF clear if successful
-	    AH destroyed
-	    BL = capabilities (see #0524)
-	    CX = bitmap of assignable sockets
-	    DH = EISA A15-A12 address lines (in bits 7-4, bits 3-0 = 0)
-	    DL = supported access speeds (see #0525)
-	    DS:SI -> Memory Window Characteristics table (see #0526)
-	    DS:DI -> I/O Window Characteristics table (see #0527)
-	CF set on error
-	    AH = error code (01h,11h) (see #0507)
-SeeAlso: AH=84h"PCMCIA",AH=88h,AH=89h,AH=8Ch
-
-Bitfields for PCMCIA window capabilities:
-Bit(s)	Description	(Table 0524)
- 7-5	reserved (0)
- 4	separate enable for EISA comon space
- 3	EISA I/O mappable
- 2	I/O space
- 1	attribute memory
- 0	common memory
-
-Bitfields for PCMCIA supported access speeds:
-Bit(s)	Description	(Table 0525)
- 7	reserved (0)
- 6	600 ns
- 5	300 ns
- 4	250 ns
- 3	200 ns
- 2	150 ns
- 1	100 ns
- 0	WAIT line monitoring
-
-Format of PCMCIA Memory Window Characteristics table:
-Offset	Size	Description	(Table 0526)
- 00h	WORD	window capabilities (see #0528)
- 02h	WORD	minimum base address in 4K pages
- 04h	WORD	maximum base address in 4K pages
- 06h	WORD	minimum window size in 4K pages
- 08h	WORD	maximum window size in 4K pages
- 0Ah	WORD	window size granularity (4K units)
- 0Ch	WORD	required base address alignment (4K units)
- 0Eh	WORD	required card offset alignment (4K units)
-
-Format of PCMCIA I/O Window Characteristics table:
-Offset	Size	Description	(Table 0527)
- 00h	WORD	window capabilities (see #0528)
- 02h	WORD	minimum base address in bytes
- 04h	WORD	maximum base address in bytes
- 06h	WORD	minimum window size in bytes
- 08h	WORD	maximum window size in bytes
- 0Ah	WORD	window size granularity (bytes)
-
-Bitfields for PCMCIA window capabilities:
-Bit(s)	Description	(Table 0528)
- 0	programmable base address
- 1	programmable window size
- 2	window disable/enable supported
- 3	8-data bus
- 4	16-data bus
- 5	base address alignment on size boundary required
- 6	power-of-two size granularity
----memory windows---
- 7	card offset must be aligned on size boundary
- 8	paging hardware available
- 9	paging hardware shared
- 10	page disable/enable supported
- 11-15	reserved (0)
----I/O windows---
- 7-15	reserved (0)
---------X-1A88-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - GET WINDOW
-	AH = 88h
-	AL = adapter number
-	BH = window number
-Return: CF clear if successful
-	    AH destroyed
-	    BL = socket number (0-16) (0 = not assigned)
-	    CX = window size (bytes for I/O window, 4K units for memory window)
-	    DH = window attributes (see #0529)
-	    DL = access speed (only one bit set) (see #0525)
-	    SI = window base address (bytes if I/O, 4K units if memory)
-	    DI = card offset address (memory only, 4K units)
-	CF set on error
-	    AH = error code (01h,11h) (see #0507)
-SeeAlso: AH=87h,AH=89h,AH=8Ah
-
-Bitfields for PCMCIA window attributes:
-Bit(s)	Description	(Table 0529)
- 0	memory-mapped rather than I/O-mapped
- 1	attribute memory rather than common (memory-mapped)
-	EISA mapped (I/O)
- 2	enabled
- 3	16-data path
- 4	subdivided into pages (memory-mapped only)
- 5	non-specific access slot enable (EISA-mapped only)
- 6-7	reserved (0)
---------X-1A89-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - SET WINDOW
-	AH = 89h
-	AL = adapter number
-	BH = window number
-	BL = socket number
-	CX = window size (bytes if I/O window, 4K units if memory window)
-	DH = window attributes (see #0529)
-	DL = access speed (only one bit set) (see #0525)
-	SI = window base address (bytes if I/O, 4K units if memory window)
-	DI = card offset addrress (memory only, 4K units)
-Return: CF clear if successful
-	    AH destroyed
-	CF set on error
-	    AH = error code (01h,03h,07h,08h,0Ah,0Bh,0Dh,10h,11h) (see #0507)
-SeeAlso: AH=87h,AH=88h,AH=8Bh
---------X-1A8A-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - GET PAGE
-	AH = 8Ah
-	AL = adapter number
-	BH = window number
-	BL = page number
-Return: CF clear if successful
-	    AH destroyed
-	    DX = page attributes (see #0530)
-	    DI = memory card offset (4K units)
-	CF set on error
-	    AH = error code (01h,08h,11h) (see #0507)
-Notes:	this function is only valid for memory-mapped windows
-	the socket being operated on is implied by the previous AH=89h call
-SeeAlso: AH=88h,AH=8Bh
-
-Bitfields for PCMCIA page attributes:
-Bit(s)	Description	(Table 0530)
- 0	page enabled
- 15-1	reserved (0)
---------X-1A8B-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - SET PAGE
-	AH = 8Bh
-	AL = adapter number
-	BH = window number
-	BL = page number
-	DX = page attributes (see #0530)
-	DI = memory card offset (4K units)
-Return: CF clear if successful
-	    AH destroyed
-	CF set on error
-	    AH = error code (01h,02h,07h,08h,11h) (see #0507)
-Notes:	this function is only valid for memory-mapped windows
-	the socket being operated on is implied by the previous AH=89h call
-SeeAlso: AH=89h,AH=8Ah
---------X-1A8C-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - INQUIRE SOCKET
-	AH = 8Ch
-	AL = adapter number
-	BL = socket number (01h to maximum supported by adapter)
-Return: CF clear if successful
-	    AH destroyed
-	    DH = capabilities (see #0531)
-	    DL = hardware indicators (see #0532)
-	    DS:SI -> Socket Characteristics table (see #0533)
-	    DS:DI -> Power Management table (see #0535)
-	CF set on error
-	    AH = error code (01h,0Bh) (see #0507)
-SeeAlso: AH=87h,AH=8Dh,AH=8Eh
-
-Bitfields for PCMCIA socket capabilities:
-Bit(s)	Description	(Table 0531)
- 0	card change
- 1	card lock
- 2	insert card (motor control)
- 3	eject card (motor control)
- 4-7	reserved (0)
-
-Bitfields for PCMCIA socket hardware indicators:
-Bit(s)	Description	(Table 0532)
- 0	busy status
- 1	write-protected
- 2	battery status
- 3	card lock status
- 4	XIP status (eXecute-In-Place)
- 5-7	reserved (0)
-
-Format of PCMCIA Socket Characteristics table:
-Offset	Size	Description	(Table 0533)
- 00h	WORD	supported card types (see #0534)
- 02h	WORD	steerable IRQ levels (bit 0 = IRQ0 to bit 15 = IRQ15)
- 04h	WORD	additional steerable IRQ levels
-		bit 0: NMI
-		bit 1: I/O check
-		bit 2: bus error
-		bit 3: vendor-unique
-		bits 4-7 reserved (0)
-
-Bitfields for supported card types:
-Bit(s)	Description	(Table 0534)
- 0	memory card
- 1	I/O card
- 2-7	reserved (0)
-
-Format of PCMCIA Power Management table:
-Offset	Size	Description	(Table 0535)
- 00h	WORD	number of entries in table (0 if power management not avail)
- 02h 2N BYTEs	power levels
-		byte 0: voltage in 0.1V units
-		byte 1: power supply
-			bit 7: Vcc
-			bit 6: Vpp1
-			bit 5: Vpp2
---------X-1A8D-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - GET SOCKET
-	AH = 8Dh
-	AL = adapter number
-	BL = socket number (01h to maximum supported by adapter)
-Return: CF clear if successful
-	    AH destroyed
-	    BH = status change interrupt enable mask (see #0509)
-	    CH = Vcc level (lower nybble) (see #0535)
-	    CL = Vpp1 level (upper nybble) and Vpp2 level (lower nybble)
-	    DH = current socket status (see #0510)
-	    DL = indicators (see #0532)
-	    SI = card type (see #0536)
-	    DI = IRQ level steering (I/O only) (see #0537)
-	CF set on error
-	    AH = error code (01h,0Bh) (see #0507)
-SeeAlso: AH=8Ch,AH=8Eh
-
-Bitfields for PCMCIA card type:
-Bit(s)	Description	(Table 0536)
- 0	memory
- 1	I/O
- 2-15	reserved (0)
-
-Bitfields for PCMCIA I/O level steering:
-Bit(s)	Description	(Table 0537)
- 15	interrupt steering enabled
- 14-5	reserved (0)
- 4-0	IRQ level (0-15=IRQ,16=NMI,17=I/O check,18=bus error,19=vendor)
---------X-1A8E-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - SET SOCKET
-	AH = 8Eh
-	AL = adapter number
-	BL = socket number (01h to maximum supported by adapter)
-	BH = status change interrupt enable mask (see #0509)
-	CL = Vpp1 level (upper nybble) and Vpp2 level (lower nybble)
-	DH = current socket status (see #0510)
-	DL = indicators (see #0532)
-	SI = card type (see #0536)
-	DI = IRQ level steering (I/O only) (see #0537)
-Return: CF clear if successful
-	    AH destroyed
-	CF set on error
-	    AH = error code (01h,02h,05h,06h,0Bh,0Eh,0Fh) (see #0507)
-SeeAlso: AH=8Ch,AH=8Dh
---------X-1A8F-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - GET CARD
-	AH = 8Fh
-	AL = adapter number
-	BL = socket number (01h to maximum supported by adapter)
-Return: CF clear if successful
-	    AH destroyed
-	    DL = current card status (see #0511)
-	CF set on error
-	    AH = error code (01h,0Bh) (see #0507)
-SeeAlso: AH=8Dh,AH=90h
---------X-1A90-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - RESET CARD
-	AH = 90h
-	AL = adapter number
-	BL = socket number (01h to maximum supported by adapter)
-Return: CF clear if successful
-	    AH destroyed
-	CF set on error
-	    AH = error code (01h,0Bh,14h) (see #0507)
-Note:	toggles RESET pin of the specified card, but does not wait after
-	  toggling the pin; it is the caller's responsibility to avoid
-	  accessing the card before it is ready again
---------X-1A91-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - READ ONE
-	AH = 91h
-	AL = adapter number
-	BL = socket number (01h to maximum supported by adapter)
-	BH = attributes (see #0538)
-	DX:SI = card address
-Return: CF clear if successful
-	    AH destroyed
-	    CL/CX = value read
-	CF set on error
-	    AH = error code (01h,07h,09h,0Bh,14h) (see #0507)
-	    CX may be destroyed
-Note:	this function is only valid for I/O-mapped sockets
-SeeAlso: AH=92h,AH=93h,INT 21/AX=440Dh"IOCTL"
-
-Bitfields for PCMCIA attributes:
-Bit(s)	Description	(Table 0538)
- 2	even bytes only
- 1	word rather than byte
- 0	attribute memory instead of common memory
---------X-1A92-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - WRITE ONE
-	AH = 92h
-	AL = adapter number
-	BL = socket number (01h to maximum supported by adapter)
-	BH = attributes (see #0538)
-	CL/CX = value to write
-	DX:SI = card address
-Return: CF clear if successful
-	    AH destroyed
-	CF set on error
-	    AH = error code (01h,07h,0Bh,12h,14h) (see #0507)
-Note:	this function is only valid for I/O-mapped sockets; it also does not
-	  implement Card Technology handling--use AH=94h when writing to
-	  non-RAM technologies
-SeeAlso: AH=91h,AH=94h,INT 21/AX=440Dh"IOCTL"
---------X-1A93-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - READ MULTIPLE
-	AH = 93h
-	AL = adapter number
-	BL = socket number (01h to maximum supported by adapter)
-	BH = attributes (see #0538)
-	CX = number of bytes or words to read
-	DX:SI = card address
-	DS:DI -> data buffer to be filled
-Return: CF clear if successful
-	    AH destroyed
-	CF set on error
-	    AH = error code (01h,07h,09h,0Bh,14h) (see #0507)
-Note:	this function is only available on I/O-mapped sockets
-SeeAlso: AH=91h,AH=94h,INT 21/AX=440Dh"IOCTL"
---------X-1A94-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - WRITE MULTIPLE
-	AH = 94h
-	AL = adapter number
-	BL = socket number (01h to maximum supported by adapter)
-	BH = attributes (see #0538)
-	CX = number of bytes or words to read
-	DX:DI = card address
-	DS:SI -> buffer containing data
-	BP = Card Technology type (0000h = RAM)
-Return: CF clear if successful
-	    AH destroyed
-	CF set on error
-	    AH = error code (01h,07h,0Bh,0Ch,12h,14h) (see #0507)
-Notes:	this function is only available on I/O-mapped sockets
-	Socket Services calls the Card Technology callback (see #0512) for
-	  any card technology it does not directly support
-SeeAlso: AH=82h"PCMCIA",AH=92h,AH=93h,INT 21/AX=440Dh"IOCTL"
---------X-1A95-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - INQUIRE ERROR DETECTION CODE
-	AH = 95h
-	AL = adapter number
-	BH = EDC generator number
-Return: CF clear if successful
-	    AH destroyed
-	    CX = bitmap of assignable sockets
-	    DH = EDC capabilities (see #0539)
-	    DL = supported EDC types (see #0540)
-	CF set on error
-	    AH = error code (01h,04h) (see #0507)
-SeeAlso: AH=96h,AH=9Ch
-
-Bitfields for EDC capabilities:
-Bit(s)	Description	(Table 0539)
- 0	unidirectional only generation
- 1	bidirectional only generation
- 2	register-based (I/O-mapped) support
- 3	memory-mapped support
- 4	pausable
- 5-7	reserved (0)
-
-Bitfields for supported EDC types:
-Bit(s)	Description	(Table 0540)
- 0	8-checksum
- 1	16-CRC-SDLC
- 2-7	reserved (0)
---------X-1A96-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - GET ERROR DETECTION CODE
-	AH = 96h
-	AL = adapter number
-	BH = EDC generator number
-Return: CF clear if successful
-	    AH destroyed
-	    BL = socket number
-	    DH = EDC attributes (see #0541)
-	    DL = EDC type (see #0540) (only one bit set)
-	CF set on error
-	    AH = error code (01h,04h) (see #0507)
-SeeAlso: AH=95h,AH=97h,AH=9Ch
-
-Bitfields for EDC attributes:
-Bit(s)	Description	(Table 0541)
- 0	unidirectional only
- 1	(if 0 set) clear=read, set=write
- 2-7	reserved (0)
---------X-1A97-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - SET ERROR DETECTION CODE
-	AH = 97h
-	AL = adapter number
-	BH = EDC generator
-	BL = socket number
-	DH = EDC attributes (see #0541)
-	DL = EDC type (see #0540) (only one bit may be set)
-Return: CF clear if successful
-	    AH destroyed
-	CF set on error
-	    AH = error code (01h,02h,04h,0Bh) (see #0507)
-SeeAlso: AH=96h,AH=9Ch
---------X-1A98-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - START ERROR DETECTION CODE
-	AH = 98h
-	AL = adapter number
-	BH = EDC generator
-Return: CF clear if successful
-	    AH destroyed
-	CF set on error
-	    AH = error code (01h,04h) (see #0507)
-SeeAlso: AH=96h,AH=99h,AH=9Bh,AH=9Ch
---------X-1A99-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - PAUSE ERROR DETECTION CODE
-	AH = 99h
-	AL = adapter number
-	BH = EDC generator
-Return: CF clear if successful
-	    AH destroyed
-	CF set on error
-	    AH = error code (01h,04h) (see #0507)
-SeeAlso: AH=9Ah
---------X-1A9A-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - RESUME ERROR DETECTION CODE
-	AH = 9Ah
-	AL = adapter number
-	BH = EDC generator
-Return: CF clear if successful
-	    AH destroyed
-	CF set on error
-	    AH = error code (01h,04h) (see #0507)
-SeeAlso: AH=99h,AH=98h
---------X-1A9B-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - STOP ERROR DETECTION CODE
-	AH = 9Bh
-	AL = adapter number
-	BH = EDC generator
-Return: CF clear if successful
-	    AH destroyed
-	CF set on error
-	    AH = error code (see #0507)
-SeeAlso: AH=98h,AH=99h,AH=9Ch
---------X-1A9C-------------------------------
-INT 1A - PCMCIA Socket Services v1.00 - READ ERROR DETECTION CODE
-	AH = 9Ch
-	AL = adapter number
-	BH = EDC generator
-Return: CF clear if successful
-	    AH destroyed
-	    DL/DX = computed checksum or CRC
-	CF set on error
-	    AH = error code (01h,04h) (see #0507)
-SeeAlso: AH=95h,AH=96h,AH=98h,AH=99h,AH=9Bh
---------X-1A9D-------------------------------
-INT 1A - Intel PCMCIA ExCA Card Services - API
-	AH = 9Dh
-	AL = subfunction (see #0542)
-	???
-Return: ???
-Note:	this API is supported by recent versions of the AMI BIOS
-
-(Table 0542)
-Values for PCMCIA ExCA Card Services subfunction number:
- 00h	Client Services: Get Number of Sockets
- 01h	Advanced Client Utilities: Initialize
- 02h	Client Services: Register Client
- 03h	Client Services: Deregister Client
- 04h	Advanced Client Utilities: Enumerate Clients
- 05h	Client Services: Register SCB
- 06h	Client Services: Deregister SCB
- 07h	Advanced Client Utilities: Register MTD
- 08h	Advanced Client Utilities: Deregister MTD
- 09h	Advanced Client Utilities: Enumerate MTD
- 0Ah	Client Services: Get Status
- 0Bh	Client Services: Reset Card
- 0Ch	Client Utilities: Get First Tuple
- 0Dh	Client Utilities: Get Next Tuple
- 0Eh	Client Utilities: Determine First Region
- 0Fh	Client Utilities: Determine Next Region
- 10h	Client Utilities: Get First Region
- 11h	Client Utilities: Get Next Region
- 12h	Client Utilities: Get First Partition
- 13h	Client Utilities: Get Next Partition
- 14h	Bulk Memory Services: Open Region
- 15h	Bulk Memory Services: Read Memory
- 16h	Bulk Memory Services: Write Memory
- 17h	Bulk Memory Services: Copy Memory
- 18h	Bulk Memory Services: Erase Memory
- 19h	Resource Management: Request I/O
- 1Ah	Resource Management: Release I/O
- 1Bh	Resource Management: Request Memory
- 1Ch	Client Services: Modify Window
- 1Dh	Resource Management: Release Memory
- 1Eh	Client Services: Map Mem Page
- 1Fh	Advanced Client Utilities: Return SS Entry
- 20h	Advanced Client Utilities: Map Log to Phy
- 21h	Advanced Client Utilities: Map Log Phy to Log
- 22h	Resource Management: Request IRQ
- 23h	Resource Management: Release IRQ
- 24h	Bulk Memory Services: Close Region
---------X-1A9E-------------------------------
-INT 1A - PCMCIA Socket Services v2.1 - ???
-	AH = 9Eh
-	???
-Return: CF clear if successful
-	CF set on error
-	    AH = error code (01h,18h)
-	???
---------X-1A9F-------------------------------
-INT 1A - PCMCIA Socket Services v2.1 - ???
-	AH = 9Fh
-	???
-Return: CF clear if successful
-	CF set on error
-	    AH = error code (01h,18h)
-	???
-SeeAlso: AH=9Eh,AH=A0h"PCMCIA",AH=AEh"PCMCIA"
---------c-1AA0-------------------------------
-INT 1A U - Disk Spool II v2.07+ - INSTALLATION CHECK
-	AH = A0h
-Return: AH = B0h if installed
-	    AL = pending INT 1A/AH=D0h subfunction if nonzero???
-	    ES = code segment
-	    ES:BX -> name of current spool file
-	    ES:SI -> current despool file
-	    CL = despooler state (00h disabled, 41h enabled)
-	    CH = spooler state (00h disabled, 41h enabled)
-	    DL = despooler activity
-		00h currently active printing a file
-		41h standing by
-	    DH = 00h ???
-	       = 41h ???
-	    DI = 0000h ???
-		 0001h ???
-Program: Disk Spool II is a shareware disk-based print spooler by Budget
-	  Software Company
-Note:	this function is also supported by Vertisoft's Emulaser utility ELSPL,
-	  as that is a licensed version of Disk Spool II
-SeeAlso: AH=ABh,AH=C0h,AH=D0h,AH=E1h
---------X-1AA0-------------------------------
-INT 1A - PCMCIA Socket Services v2.1 - ???
-	AH = A0h
-	???
-Return: CF clear if successful
-	CF set on error
-	    AH = error code (01h,18h)
-	???
-SeeAlso: AH=9Fh,AH=AEh
---------c-1AAB-------------------------------
-INT 1A U - Disk Spool II v1.83 - INSTALLATION CHECK
-	AH = ABh
-Return: AH = BAh if installed
-	    AL = pending INT 1A/AH=ADh subfunction if nonzero???
-	    ES = code segment
-	    ES:BX -> name of current spool file
-	    ES:SI -> current despool file
-	    CL = despooler state (00h disabled, 41h enabled)
-	    CH = spooler state (00h disabled, 41h enabled)
-	    DL = despooler activity
-		00h currently active printing a file
-		41h standing by
-	    DH = 00h ???
-	       = 41h ???
-	    DI = 0000h ???
-		 0001h ???
-Program: Disk Spool II is a shareware disk-based print spooler by Budget
-	  Software Company
-SeeAlso: AH=A0h,AH=ACh,AH=ADh,AH=E1h
---------c-1AAC-------------------------------
-INT 1A U - Disk Spool II v1.83 - INSTALLATION CHECK
-	AH = ACh
-Return: (see AH=ABh)
-Note:	this function is identical to AH=ABh
-SeeAlso: AH=A0h,AH=ABh,AH=ADh
---------c-1AAD-------------------------------
-INT 1A U - Disk Spool II v1.83 - FUNCTION CALLS
-	AH = ADh
-	AL = function code (see #0543)
-Return: AH = 00h if successful
-SeeAlso: AH=ABh
-
-(Table 0543)
-Values for Disk Spool function code:
- 02h	enable spooler only
- 03h	enable the despooler
- 04h	disable the despooler
- 08h	inhibit popup menu
- 09h	enable popup menu
- 0Ah	???
- 0Bh	disable the spooler
- 0Ch	start despooler after last successfully printed document???
- 0Dh	start despooler at the exact point where it last left off???
- 0Eh	pop up the menu
- 0Fh	???
- 11h	???
- 14h	???
- 15h	???
- 16h	???
- 17h	???
- 18h	???
- 19h	???
- 20h	clear file pointed to by the despooler???
- 21h	???
- 22h	???
- 23h	???
- 30h	???
---------X-1AAE-------------------------------
-INT 1A - PCMCIA Socket Services v2.1 - API
-	AH = AEh
-	SI = function
-	    0002h ???
-	    0100h ???
-	    0101h ???
-	    8000h ???
-	    8001h ???
-	details not yet available
-Return: CF clear if successful
-	CF set on error
-	    AH = error code
-		02h ???
-		0Bh ???
-		11h ???
-		15h invalid function
-		17h ???
---------X-1AAF-------------------------------
-INT 1A - PCMCIA v2 - API
-	AH = AFh
-	details not yet available
 --------!---Section--------------------------

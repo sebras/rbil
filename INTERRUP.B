@@ -1,5 +1,176 @@
-Interrupt List, part 2 of 12
+Interrupt List, part 2 of 13
 This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+--------c-1330-------------------------------
+INT 13 u - QUICKCACHE II v4.20 - GET INFO
+	AH = 30h
+	AL = what to get
+	    00h system info (see #0175)
+	    01h drive info (see #0176)
+	    02h access frequency (array of 30 words)
+	    03h drive index
+		(array of 32 bytes indicating BIOS drive for DOS drive)
+	DS:DX -> buffer for info
+Return: AX = status (0000h successful, 8000h invalid info specifier)
+Program: QUICKCACHE II is a shareware disk cache by P.R. Glassel and
+	  Associates, Inc.
+
+Format of QUICKCACHE II system info:
+Offset	Size	Description	(Table 0175)
+ 00h	BYTE	flag: cache enabled
+ 01h	BYTE	flag: buffered writes enabled
+ 02h	BYTE	flag: buffered reads enabled
+ 03h	BYTE	flag: sounds enabled
+ 04h	BYTE	flag: autodismount enabled
+ 05h	BYTE	???
+ 06h	BYTE	flag: ???
+ 07h	BYTE	flag: ???
+ 08h	BYTE	flag: "em_assigned"
+ 09h	BYTE	flag: emulated EMS
+ 0Ah	BYTE	single sector bonus
+ 0Bh	BYTE	"sticky_max"
+ 0Ch	BYTE	write sector bonus
+ 0Dh	BYTE	bonus threshold
+ 0Eh	WORD	flush interval
+ 10h	WORD	flush count
+ 12h	WORD	reserve pool size
+ 14h	WORD	remaining space in reserve pool
+ 16h	WORD	required free memory
+ 18h	WORD	total cache sectors
+ 1Ah	WORD	dirty cache sectors
+ 1Ch	BYTE	trace buffer size
+ 1Dh	BYTE	reserved (padding)
+
+Format of QUICKCACHE II drive info [16-element array, one element]:
+Offset	Size	Description	(Table 0176)
+ 00h	BYTE	DOS drive number
+ 01h	BYTE	BIOS drive number
+ 02h	BYTE	maximum sector number
+ 03h	BYTE	maximum head number
+ 04h	BYTE	read buffer size
+ 05h	BYTE	write buffer size
+ 06h	BYTE	last status
+ 07h	BYTE	flag: enabled
+ 08h	BYTE	flag: buffered write enabled
+ 09h	BYTE	flag: buffered read enabled
+ 0Ah	BYTE	flag: in use (drive info is valid)
+ 0Bh	BYTE	flag: cylinder flush
+ 0Ch	BYTE	reserved (padding)
+ 0Dh	BYTE	sectors per track
+ 0Eh	WORD	sector size
+ 10h	WORD	sectors assigned
+ 12h	WORD	dirty sectors
+ 14h	WORD	reserved sectors
+ 16h	WORD	number of read errors
+ 18h	WORD	number of write errors
+ 1Ah	DWORD	"rio_count"
+ 1Eh	DWORD	number of cache misses
+ 22h	DWORD	"wio_count"
+ 26h	DWORD	"dio_count"
+--------c-1331-------------------------------
+INT 13 U - QUICKCACHE II v4.20 - RESERVE MEMORY
+	AH = 31h
+	BX = number of paragraphs of conventional memory to reserve for apps
+Return: AX = status (0000h successful)
+--------c-1332-------------------------------
+INT 13 U - QUICKCACHE II v4.20 - ENABLE CACHING FOR SPECIFIC DRIVE
+	AH = 32h
+	AL = drive number (00h=A:)
+Return: AX = status (0000h successful)
+SeeAlso: AH=22h"QUICKCACHE",AH=33h
+--------c-1333-------------------------------
+INT 13 U - QUICKCACHE II v4.20 - DISABLE CACHING FOR SPECIFIC DRIVE
+	AH = 33h
+	AL = drive number (00h=A:)
+Return: AX = status (0000h successful)
+SeeAlso: AH=22h"QUICKCACHE",AH=32h
+--------c-1334-------------------------------
+INT 13 U - QUICKCACHE II v4.20 - SECTOR LOCKING
+	AH = 34h
+	AL = function
+	    00h end sector locking/unlocking
+	    01h lock all accessed sectors into cache
+	    02h unlock all accessed sectors and discard from cache
+Return: AX = status (0000h successful)
+SeeAlso: AH=20h"QUICKCACHE",AH=35h
+--------c-1335-------------------------------
+INT 13 U - QUICKCACHE II v4.20 - SET LOCK POOL SIZE
+	AH = 35h
+	BX = number of sectors in lock pool
+Return: AX = status (0000h successful)
+Desc:	specify the number of cache sector buffers which may be dedicated to
+	  data locked into the cache
+SeeAlso: AH=34h
+--------c-1336-------------------------------
+INT 13 U - QUICKCACHE II v4.20 - SET TRACE BUFFER SIZE
+	AH = 36h
+	AL = new size of trace buffer
+Return: AX = status (0000h successful)
+Note:	called with AL=05h during an INT 13/AH=24h"QUICKCACHE" call
+SeeAlso: AH=24h"QUICKCACHE"
+--------c-1337-------------------------------
+INT 13 U - QUICKCACHE II v4.20 - SET BUFFERED READS FOR SPECIFIC DRIVE
+	AH = 37h
+	AL = new state (00h disabled, else enabled)
+	DL = drive number (00h = A:)
+Return: AX = status (0000h successful)
+SeeAlso: AH=2Dh,AH=38h
+--------c-1338-------------------------------
+INT 13 U - QUICKCACHE II v4.20 - SET BUFFERED WRITES FOR SPECIFIC DRIVE
+	AH = 38h
+	AL = new state (00h disabled, else enabled)
+	DL = drive number (00h = A:)
+Return: AX = status (0000h successful)
+SeeAlso: AH=2Ch,AH=37h
+--------c-1339-------------------------------
+INT 13 U - QUICKCACHE II v4.20 - SET READ BUFFER SIZE FOR SPECIFIC DRIVE
+	AH = 39h
+	AL = new size of read buffer
+	DL = drive number (00h = A:)
+Return: AX = status (0000h successful)
+Program: QUICKCACHE II is a shareware disk cache by P.R. Glassel and
+	  Associates, Inc.
+SeeAlso: AH=2Ah,AH=3Ah
+--------c-133A-------------------------------
+INT 13 U - QUICKCACHE II v4.20 - SET WRITE BUFFER SIZE FOR SPECIFIC DRIVE
+	AH = 3Ah
+	AL = new size of write buffer
+	DL = drive number (00h = A:)
+Return: AX = status (0000h successful)
+SeeAlso: AH=2Ah,AH=39h
+--------c-133B-------------------------------
+INT 13 U - QUICKCACHE II v4.20 - ENABLE/DISABLE ???
+	AH = 3Bh
+	AL = new state of ??? (01h enabled, else disabled)
+Return: AX = status (0000h successful)
+Note:	is affected by the flag reported at offset 05h of the system info
+	  returned by AH=30h, and sets the flag at offset 06h
+SeeAlso: AH=3Ch
+--------c-133C-------------------------------
+INT 13 U - QUICKCACHE II v4.20 - ENABLE/DISABLE ???
+	AH = 3Ch
+	AL = new state of ??? (01h enabled, else disabled)
+Return: AX = status (0000h successful)
+Note:	is affected by the flag reported at offset 05h of the system info
+	  returned by AH=30h, and sets the flag at offset 07h
+SeeAlso: AH=3Bh
+--------c-133D-------------------------------
+INT 13 U - QUICKCACHE II v4.20 - ENABLE/DISABLE CYLINDER FLUSH FOR DRIVE
+	AH = 3Dh
+	AL = new state (01h enabled, else disabled)
+	DL = drive number (00h = A:)
+Return: AX = status (0000h successful)
+--------c-133E-------------------------------
+INT 13 U - QUICKCACHE II v4.20 - SET SINGLE-SECTOR BONUS
+	AH = 3Eh
+	AL = new value for bonus
+Return: AX = status (0000h successful)
+Desc:	specify the bonus score to give to single-sector transfers in order to
+	  keep those sectors in the cache longer
+--------c-133F-------------------------------
+INT 13 U - QUICKCACHE II v4.20 - SET BONUS THRESHOLD
+	AH = 3Fh
+	AL = new value for bonus threshold
+Return: AX = status (0000h successful)
 --------c-1340-------------------------------
 INT 13 U - QUICKCACHE II v4.20 - SET "sticky_max"
 	AH = 40h
@@ -243,6 +414,11 @@ Return: CF clear if media has not changed
 	    AH = 06h (see #0140)
 Note:	unlike AH=16h, any drive number may be specified
 SeeAlso: AH=16h,AH=41h"INT 13 Ext",AH=46h
+--------v-135001------------------------
+INT 13 - VIRUS - "Andropinis" - INSTALLATION CHECK
+	AX = 5001h
+Return: AX = 0150h if resident
+SeeAlso: AX=FD50h"VIRUS",INT 21/AX=0B56h
 --------v-135342CX0001-----------------------
 INT 13 - ScanBoot - INSTALLATION CHECK
 	AX = 5342h ("SB")
@@ -283,7 +459,7 @@ Bit(s)	Description	(Table 0185)
  5	reserved
  4	selected drive is ST225N/NP (Paired)
  3	selected drive is ST225N
- 2	Host Adapter checks parity on the selected drive 
+ 2	Host Adapter checks parity on the selected drive
  1	selected drive has been installed
  0	Seagate installation software present
 --------d-135504-----------------------------
@@ -315,7 +491,7 @@ INT 13 - Seagate ST01/ST02 - PARK HEADS
 	DL = drive ID (80h, 81h, ...)
 	DH = subfunction
 	    00h park heads (SCSI Stop command)
-	    01h un-park heads (SCSI Start command)	  
+	    01h un-park heads (SCSI Start command)
 Return:	nothing
 --------d-135506-----------------------------
 INT 13 - Seagate ST01/ST02 - SCSI Bus Parity
@@ -383,7 +559,7 @@ Note:	The handler does not perform a 'Request Sense' command if there was an err
 Values for SCSI opcode:
  00h	verify interface
 	clears carry flag and returns if function is available
- 01h	returns the ID of the INT 13h Handler in a NULL terminated string of 
+ 01h	returns the ID of the INT 13h Handler in a NULL terminated string of
 	length less than 40 byte including the terminator.
 	The string is stored in the buffer pointed by p_buf.
  02h	device mapping info. The caller provides a one byte buffer.
@@ -1057,6 +1233,11 @@ Return: varies by function
 Note:	this API is identical to the ones on INT 16/AH=FAh and INT 21/AH=FAh,
 	  so it is listed in its entirety under INT 16/AX=FA00h and following
 SeeAlso: INT 16/AX=FA00h
+--------v-13FD50------------------------
+INT 13 - VIRUS - "Predator" - INSTALLATION CHECK
+	AX = FD50h
+Return: AX = 50FDh if resident
+SeeAlso: AX=5001h"VIRUS",INT 16/AH=DDh"VIRUS"
 --------d-13FE-------------------------------
 INT 13 - SWBIOS - GET EXTENDED CYLINDER COUNT
 	AH = FEh
@@ -1773,15 +1954,13 @@ Program: PC-MOS/386 v5.01 is a multitasking, multiuser MS-DOS 5.0-compatible
 	  operating system by The Software Link, Inc.
 SeeAlso: AH=18h"PC-MOS"
 --------N-1406-------------------------------
-INT 14 - TelAPI - WRITE???
+INT 14 - TelAPI - WRITE BLOCK
 	AH = 06h
-	CX = number of characters to write???
+	CX = number of characters to write
 	DX = port number
-	ES:DI -> buffer containing data???
+	ES:DI -> buffer containing data
 Return: AX = number of characters actually sent??? (negative on error)
 	CX = ???
-Note:	under Novell TELAPI.EXE v4.01, this function and AH=07h are implemented
-	  with identical code
 SeeAlso: AH=07h"TelAPI",AH=E0h"TelAPI"
 --------N-1406--DXFFFF-----------------------
 INT 14 - Connection Manager - SEND CHARACTER BLOCK
@@ -1823,15 +2002,13 @@ INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - SEND RS-232 BREAK
 	DX = port number
 Return: nothing
 --------N-1407-------------------------------
-INT 14 - TelAPI - WRITE???
+INT 14 - TelAPI - READ BLOCK
 	AH = 07h
-	CX = number of characters to write???
+	CX = number of characters to read
 	DX = port number
-	ES:DI -> buffer containing data???
-Return: AX = number of characters actually sent??? (negative on error)
+	ES:DI -> buffer for data
+Return: AX = number of characters actually read??? (negative on error)
 	CX = ???
-Note:	under Novell TELAPI.EXE v4.01, this function and AH=06h are implemented
-	  with identical code
 SeeAlso: AH=06h"TelAPI",AH=E0h"TelAPI"
 --------N-1407--DXFFFF-----------------------
 INT 14 - Connection Manager - RECEIVE CHARACTER BLOCK
@@ -2539,7 +2716,7 @@ INT 14 - FOSSIL - REBOOT SYSTEM
 	AL = method
 	    00h = cold boot
 	    01h = warm boot
-SeeAlso: INT 19,INT 60/DI=0606h
+SeeAlso: INT 16/AX=E0FFh,INT 19,INT 60/DI=0606h
 --------S-1417-------------------------------
 INT 14 - PC-MOS/386 v5.01 $serial.sys v5.04 - WRITE MODEM CONTROL REGISTER
 	AH = 17h
@@ -3029,7 +3206,7 @@ SeeAlso: AH=20h"MultiDOS",AH=24h"MultiDOS"
 INT 14 - HUNTER 16 - CONTROL RS232 DRIVERS
 	AH = 25h
 	AL = new state of RS232 drivers (00h off, 01h on)
-Note:	this function can be used to save power by turning off the RS232 
+Note:	this function can be used to save power by turning off the RS232
 	  drivers.  It can also be used to turn on the RS232 drivers before
 	  connecting to a remote system to avoid "garbage" while the drivers
 	  turn on.
@@ -3070,7 +3247,7 @@ SeeAlso: AH=27h"HUNTER",AH=29h"HUNTER"
 INT 14 - HUNTER 16 - GET PROTOCOL HANDLE
 	AH = 29h
 	DS:BX -> buffer containing the protocol name
-Return: AH = status 
+Return: AH = status
 	    00h successful
 		AL = handle
 	    FFh failed
@@ -3089,7 +3266,7 @@ INT 14 - HUNTER 16 - GET EXTENDED PROTOCOL PARAMETERS
 	AH = 2Bh
 	AL = protocol handle
 	DS:BX -> buffer for extended protocol parameters
-Return: AH = status	
+Return: AH = status
 	    00h successful
 		DS:BX buffer filled with extended parameters
 	    FFh failed
@@ -4520,16 +4697,31 @@ Return: AH = return code (00h,03h,09h-0Bh) (see #0289)
 	CX = configuration item value (see above)
 SeeAlso: AH=B2h
 --------N-14E0-------------------------------
-INT 14 - TelAPI - ???
+INT 14 - TelAPI - "telopen" - CREATE TELNET CONNECTION (BLOCKING)
 	AH = E0h
-	BX = ???
-	CX:DX = ???
-	DS:DI -> ???
-	ES:SI -> ???
-Return: AX = status (0000h,FF37h,etc.)
-	ES:SI -> ??? if ???
-	???
-SeeAlso: AH=ECh,AX=FF00h
+	BX = port number to connect with (default 0017h used if <= 0)
+	CX:DX = Internet address of remote host
+	DS:DI -> 2-byte remote host (session) identifier
+	ES:SI -> 1700-byte buffer for Telnet state record
+	    0000h:0000h to use TelAPI internally-allocated space
+Return: AX = status (0000h-0009h,FED3h,FF37h,FFBDh,FFC0h,FFCDh) (see #2621)
+	ES:SI buffer filled with state record
+	ES:SI -> internally-allocated state record in some versions
+Note:	the remote host identifier may be used to refer to this connection
+SeeAlso: AH=E1h,AH=ECh,AX=FF00h
+
+(Table 2621)
+Values for TelAPI status:
+ 0000h-7FFFh	successful (session number)
+ FED3h	(-301)	no session allocated, or out of TelAPI data space
+ FF37h	(-201)	all sessions in use
+ FFBDh	(-67)	unknown hostname
+ FFC0h	(-64)	host not functioning
+ FFC3h	(-61)	connection attempt refused
+ FFC4h	(-60)	connection attempt timed out
+ FFC8h	(-56)	socket already connected
+ FFCDh	(-51)	network is unreachable
+ FFDDh	(-35)	operation would block
 --------S-14E000-----------------------------
 INT 14 - MX5 Extended FOSSIL - GET MNP STATUS BLOCK
 	AX = E000h
@@ -4614,102 +4806,191 @@ INT 14 - MX5 Extended FOSSIL - WAIT SPECIFIED NUMBER OF TICKS
 Return: nothing
 SeeAlso: AX=E006h
 --------N-14E1-------------------------------
-INT 14 - TelAPI - ???
+INT 14 - TelAPI - "telclose" - TERMINATE TELNET CONNECTION
 	AH = E1h
 	BX = connection ID
-	???
-Return: AX = status (0000h,FFF7h,maybe others)
-	???
-SeeAlso: AH=E6h,AX=FF00h
+Return: AX = status (0000h,FFF7h,maybe others) (see #2621)
+Note:	flushes and releases all buffers and data space used by the connection
+SeeAlso: AH=E0h,AH=E6h,AX=FF00h
 --------N-14E2-------------------------------
-INT 14 - TelAPI - BUFFERED READ
+INT 14 - TelAPI - "telread" - BUFFERED READ
 	AH = E2h
-	BX = connection ID
+	BX = connection ID (see AH=E0h"TelAPI")
 	CX = length of buffer in bytes
 	ES:SI -> buffer for data
-Return: AX = number of characters actually read??? (negative on error)
-SeeAlso: AH=E6h,AX=FF00h,INT 6B/AH=01h
+Return: AX > 0000h number of characters actually read
+	AX = 0000h host has closed connection
+	AX < 0000h error code (see #2621)
+Note:	translates CRLF into local EOL if the connection is in ASCII mode,
+	  negotiates various Telnet options, and immediately executes several
+	  different Telnet action commands
+SeeAlso: AH=E3h,AH=E6h,AX=FF00h,INT 6B/AH=01h
 --------N-14E3-------------------------------
-INT 14 - TelAPI - BUFFERED WRITE
+INT 14 - TelAPI - "telwrite" - BUFFERED WRITE
 	AH = E3h
 	BX = connection ID
 	CX = length of buffer in bytes
 	ES:SI -> buffer containing data
-Return: AX = number of characters actually written??? (negative on error)
-SeeAlso: AH=07h"TelAPI",AH=E6h,AX=FF00h,INT 6B/AH=00h
+Return: AX > 0000h number of characters actually written
+	AX < 0000h error code (see #2621)
+Note:	translates local EOL into CRLF if the connection is in ASCII mode,
+	  sends the appropriate Telnet commands for the characters selected
+	  for IP, AYT, AO, EC, EL, and Break
+SeeAlso: AH=07h"TelAPI",AH=E2h,AH=E6h,AX=FF00h,INT 6B/AH=00h
 --------N-14E4-------------------------------
-INT 14 - TelAPI - CONNECTION CONTROL???
+INT 14 - TelAPI - "telioctl" - CONNECTION CONTROL
 	AH = E4h
-	BX = connection ID
-	CX = ???
-	ES:SI -> 10-byte buffer containing ???
-Return: ???
+	BX = connection ID (see AH=E0h"TelAPI")
+	CX = Telnet command/option identifier (see #2628)
+	ES:SI -> buffer containing command/option argument (see #2627)
+Return: AX = status (0000h, etc.) (see #2621)
+Desc:	start filter control, initiate Telnet option negotiation, or get filter
+	  control status
 SeeAlso: AH=A9h,AH=E6h,AX=FF00h,INT 6B/AX=0600h
+
+Format of TelAPI Telnet command/option argument:
+Offset	Size	Description	(Table 2627)
+ 00h  5 WORD	numeric arguments
+ 0Ah	DWORD	-> ASCIZ string
+SeeAlso: #2628
+
+(Table 2628)
+Values for TelAPI Telnet command/option identifier:
+ 01h	ASCII		args: none
+ 02h	BINARY		args: none
+ 03h	LOCALECHO	args: none		client echos data
+ 04h	REMOTEECHO	args: none		server echos data
+ 05h	SGA		args: none		Suppress Go-Ahead signal
+ 07h	CHARMODE	args: none		no line-buffering
+ 08h	LINEMODE	args: -> erase-line ch	perform line-buffering
+ 09h	RECVEOL		args: EOL type
+ 0Ah	SENDEOL		args: EOL type
+ 0Bh	EOR		args: none		enable end-of-record sequence
+ 0Dh	BREAK		args: -> break char
+ 0Eh	VERBOSE		args: verbosity		display Telnet negotiations?
+ 0Fh	AYT		args: -> AYT escape ch
+ 10h	AO		args: -> AO escape char
+ 11h	IP		args: -> IP escape char
+ 12h	EC		args: -> escape char
+ 13h	EL		args: -> escape char
+ 14h	STATUS		args: type; returns data in structure
+ 18h	TERMTYPE	args: -> terminal type
+ 19h	ATTACHPORT	args: port number ; returns session number
+ 1Bh	TRANSMIT_EOR	args: EOR enabled	append EOR to every telwrite?
+SeeAlso: #2627
 --------N-14E5-------------------------------
-INT 14 - TelAPI - ???
+INT 14 - TelAPI - "telreset" - RESET ALL CONNECTIONS
 	AH = E5h
-Return: AX = status???
-SeeAlso: AH=E6h,AX=FF00h
+Return: AX = status (0000h,other) (see also #2621)
+	    FFFFh unable to reset
+Desc:	close all sessions and reset TelAPI to defaults
+SeeAlso: AH=E1h,AH=E6h,AX=FF00h
 --------N-14E6-------------------------------
-INT 14 - TelAPI - ???
+INT 14 - TelAPI - "telunload" - UNINSTALL
 	AH = E6h
-Return: AX = status???
+Return: AX = status
+	    0000h successful
+	    FFFFh unable to uninstall
 Notes:	TelAPI also supports the NASI/NACS and NCSI APIs on INT 6B
 	this function invokes AH=E5h internally
-SeeAlso: AX=FF00h,INT 6B/AH=00h,INT 6B/AH=10h
+SeeAlso: AH=E5h,AX=FF00h,INT 6B/AH=00h,INT 6B/AH=10h
 --------N-14E7-------------------------------
-INT 14 - TelAPI - GET ???
+INT 14 - TelAPI - "tellist" - GET TELNET SESSION LIST
 	AH = E7h
-	ES:SI -> 20-byte buffer for ???
+	ES:SI -> 10-word buffer for session list
 Return: AX = 0000h (successful)
 	ES:SI buffer filled
-SeeAlso: AX=FF00h
+Desc:	determine, for each of the ten allowable sessions, whether the session
+	  is currently available
+Note:	each word in the buffer is filled with either 0000h to indicate that
+	 the corresponding sesion is unavailable, or 0001h if available
+SeeAlso: AH=E0h,AH=E5h,AX=FF00h
 --------N-14E8-------------------------------
-INT 14 - TelAPI - SET ???
+INT 14 - TelAPI - "telattach" - ATTACH COM PORT TO/FROM TELNET SESSION
 	AH = E8h
-	BX = connection ID
-	CL = new value for ???
+	BX = connection ID (see AH=E0h"TelAPI")
+	CX = serial port number (0000h-0003h = COM1-COM4)
 	DX = ??? (ignored by Novell TELAPI v4.01)
-Return: AX = status (0000h,FFFFh)
-SeeAlso: AX=FF00h
+Return: AX = status
+	    0000h successful
+	    FFFFh failed
+SeeAlso: AH=E0h,AH=E9h,AX=FF00h
 --------N-14E9-------------------------------
-INT 14 - TelAPI - ???
+INT 14 - TelAPI - "telportosn" - GET SESSION NUMBER FOR COM PORT
 	AH = E9h
-	DX = ???
-Return: ???
-SeeAlso: AX=FF00h
+	DX = serial port number (0000h-0003h = COM1-COM4)
+Return: AX >= 0000h session number
+	AX < 0000h error code (see #2621)
+SeeAlso: AH=E0h,AH=E8h,AH=EAh,AX=FF00h
 --------N-14EA-------------------------------
-INT 14 - TelAPI - GET CONNECTION INFO???
+INT 14 - TelAPI - "telstatus" - GET TELNET CONNECTION STATUS INFORMATION
 	AH = EAh
-	BX = connection ID
-	ES:SI -> buffer for info???
+	BX = connection ID (see AH=E0h"TelAPI")
+	ES:SI -> buffer for status info (see #2629)
 Return: AX = status (0000h,FFFFh,etc.)
-SeeAlso: AX=FF00h
+SeeAlso: AH=E9h,AH=EBh,AX=FF00h
+
+Format of TelAPI Telnet connection status information:
+Offset	Size	Description	(Table 2629)
+ 00h  4 BYTEs	remote host IP address
+ 04h 20 BYTEs	reserved
+ 18h	WORD	local port number
+ 1Ah	BYTE	connection mode (00h = ASCII, 01h = Binary)
+ 1Bh	BYTE	echo flag (00h local, 01h remote)
+ 1Ch	BYTE	SGA flag (00h will, 01h won't)
+ 1Dh	BYTE	EOR negotation flag (00h do negotiate, 01h don't)
+ 1Eh	BYTE	buffering (00h line mode, 01h character mode)
+ 1Fh	BYTE	reserved
+ 20h	BYTE	verbose flag (00h no, 01h verbose mode)
+ 21h	BYTE	received EOL (00h no xlat, 01h CR, 02h LF, 03h CRLF)
+ 22h	BYTE	sent EOL (00h no translation, 01h CR, 02h LF)
+ 23h	BYTE	break character
+ 24h	BYTE	IP escape character
+ 25h	BYTE	AO escape character
+ 26h	BYTE	AYT escape character
+ 27h	BYTE	EC escape character
+ 28h	BYTE	EL escape character
+ 29h 41 BYTEs	ASCIZ Telnet-negotiated terminal type
+ 52h  9 BYTEs	session ID
+SeeAlso: #2630
 --------N-14EB-------------------------------
-INT 14 - TelAPI - GET ???
+INT 14 - TelAPI - "telname" - GET AVAILABLE/INUSE STATUS FOR ALL SESSIONS
 	AH = EBh
-	ES:SI -> buffer for ???
+	ES:SI -> buffer for session statuses (see #2630)
 Return: ES:SI buffer filled
-SeeAlso: AX=FF00h
+SeeAlso: AH=E9h,AH=EAh,AX=FF00h
+
+Format of TelAPI session status information [array]:
+Offset	Size	Description	(Table 2630)
+ 00h	BYTE	session state (00h available, 01h connected)
+ 01h  9 BYTEs	session ID if connected
+ 0Ah	WORD	attached COM port if connected, FFFFh if not
+SeeAlso: #2629
 --------N-14EC-------------------------------
-INT 14 - TelAPI - ???
+INT 14 - TelAPI - "telnblkopen" - CREATE TELNET CONNECTION (NON-BLOCKING)
 	AH = ECh
-	BX = ???
-	CX:DX = ???
-	DS:DI -> ???
-	ES:SI -> ???
-Return: AX = status (0000h,FF37h,etc.)
-	ES:SI -> ??? if ???
-	???
-Note:	this function is not supported by the Microdyne TelAPI v3.7
-SeeAlso: AH=E0h"TelAPI",AX=FF00h
+	BX = port number to connect with (default 0017h used if <= 0)
+	CX:DX = Internet address of remote host
+	DS:DI -> 2-byte remote host (connection) identifier
+	ES:SI -> 1700-byte buffer for Telnet state record
+	    0000h:0000h to use TelAPI internally-allocated space
+Return: AX = status (0000h-0009h,FED3h,FF37h,FFBDh,FFC0h,FFCDh) (see #2621)
+	ES:SI buffer filled with state record
+	ES:SI -> internally-allocated state record in some versions
+Notes:	the remote host identifier may be used to refer to this connection
+	this function returns immediately; use AH=EDh to check whether the
+	  connection has been established yet
+	this function is not supported by the Microdyne TelAPI v3.7
+SeeAlso: AH=E0h"TelAPI",AH=EDh,AX=FF00h
 --------N-14ED-------------------------------
-INT 14 - TelAPI - ???
+INT 14 - TelAPI - "telpoll" - POLL TELNET SESSION FOR CONNECTION COMPLETION
 	AH = EDh
-	BX = connection ID
-Return: AX = status (0000h,FFFFh,etc.)
+	BX = connection ID (see AH=ECh)
+Return: AX = status (0000h,0001h,FFFFh,etc.) (see also #2621)
+	    0000h session now connected
+	    0001h connection still in progress
 Note:	this function is not supported by the Microdyne TelAPI v3.7
-SeeAlso: AX=FF00h
+SeeAlso: AH=EDh,AX=FF00h
 --------a-14F0F0-----------------------------
 INT 14 - ASAP v1.0 - ???
 	AX = F0F0h
@@ -4765,10 +5046,10 @@ INT 14 - IBM/Yale EBIOS SERIAL I/O - READ STATUS
 	AX = FD02h
 Return: CX = number of characters available
 --------N-14FF00-----------------------------
-INT 14 - TelAPI - INSTALLATION CHECK
+INT 14 - TelAPI - "telcheck" - INSTALLATION CHECK
 	AX = FF00h
-Return: AL = FFh if installed
-	AH = 00h for Novell TELAPI.EXE
+Return: AX = 00FFh if installed
+	    BX = version number * 100 (decimal)
 SeeAlso: AH=E6h,AX=F4FFh
 --------S-14FF01-----------------------------
 INT 14 - IBM/Yale EBIOS SERIAL I/O - SET SEND BUFFER
@@ -7838,7 +8119,7 @@ Bit(s)	Description	(Table 0342)
  0	all mail messages in common memory
  1	allow write even if closed
  2	don't erase messages when mailbox closed
- 4	(DV/X) append messages with like status and sender (stream-oriented 
+ 4	(DV/X) append messages with like status and sender (stream-oriented
 	  mail)
  5	(DV/X) store mail in expanded memory (pool grows as needed)
  6	(DV/X) make mailbox into non-owned mailbox
@@ -8403,13 +8684,13 @@ Return: AX = current state
 	    other TCB of task that disabled multitasking
 SeeAlso: AH=0Dh"MultiDOS",AH=13h"MultiDOS"
 --------c-152000-----------------------------
-INT 15 U - DOS 3+ PRINT.COM - DISABLE CRITICAL REGION FLAG
+INT 15 U - DOS 3.0+ PRINT.COM - DISABLE CRITICAL REGION FLAG
 	AX = 2000h
 Desc:	stop setting user flag on entry to PRINT critical region
 Note:	also supported by PC Network v1.00 RECEIVER.COM
 SeeAlso: AX=2001h
 --------c-152001-----------------------------
-INT 15 U - DOS 3+ PRINT.COM - SET CRITICAL REGION FLAG
+INT 15 U - DOS 3.0+ PRINT.COM - SET CRITICAL REGION FLAG
 	AX = 2001h
 	ES:BX -> byte which is to be incremented while in a DOS call
 Desc:	specify a user flag which PRINT should set to let an interested
@@ -8501,7 +8782,7 @@ Return: CF clear if successful
 	    AH = status
 		01h keyboard controller is in secure mode
 		86h function not supported
-Note:	also supported by Qualitas 386MAX v6.01+
+Note:	also supported by AMI PCI BIOS and Qualitas 386MAX v6.01+
 SeeAlso: AX=2401h,AX=2402h,AX=2403h
 --------b-152401-----------------------------
 INT 15 - SYSTEM - later PS/2s - ENABLE A20 GATE
@@ -8512,7 +8793,7 @@ Return: CF clear if successful
 	    AH = status
 		01h keyboard controller is in secure mode
 		86h function not supported
-Note:	also supported by Qualitas 386MAX v6.01+
+Note:	also supported by AMI PCI BIOS and Qualitas 386MAX v6.01+
 SeeAlso: AX=2400h,AX=2402h
 --------b-152402-----------------------------
 INT 15 - SYSTEM - later PS/2s - GET A20 GATE STATUS
@@ -8524,7 +8805,7 @@ Return: CF clear if successful
 	    AH = status
 		01h keyboard controller is in secure mode
 		86h function not supported
-Note:	also supported by Qualitas 386MAX v6.01+
+Note:	also supported by AMI PCI BIOS and Qualitas 386MAX v6.01+
 SeeAlso: AX=2400h,AX=2401h
 --------b-152403-----------------------------
 INT 15 - SYSTEM - later PS/2s - QUERY A20 GATE SUPPORT
@@ -8762,7 +9043,7 @@ Bitfields for Olivetti Quaderno LCD colon flags:
 Bit(s)	Description	(Table 0353)
  0	left colon on
  1	right colon on
- 2-7	unused	
+ 2-7	unused
 --------b-1544C7-----------------------------
 INT 15 - Olivetti Quaderno - WRITE LCD
 	AX = 44C7h
@@ -8926,707 +9207,15 @@ Return: CF set
 	   AL = hardware scan code
 	CF clear
 	   scan code should be ignored
-Note:	called by INT 09 handler to translate scan codes; the INT 09 code does
+Notes:	called by INT 09 handler to translate scan codes; the INT 09 code does
 	  not examine the scan code it reads from the keyboard until after
 	  this function returns.  This permits software to rearrange the
 	  keyboard; for example, swapping the CapsLock and Control keys, or
 	  turning the right Shift key into Enter.
+	DOS 6 KEYB.COM will not pass through this function if Ctrl-Alt-Del is
+	  pressed and a SmartDrive v4-compatible cache is installed which has
+	  dirty cache buffers; some other disk caches such as HyperDisk
+	  operate similarly in order to prevent loss of cached data which has
+	  not yet been written to disk
 SeeAlso: INT 09,INT 15/AH=C0h
---------J-1550-------------------------------
-INT 15 - DOS/V - FONT SUBSYSTEM ACCESS
-	AH = 50h
-	AL = which function address to retrieve
-	    00h "read font" function
-	    01h "write font" function
-	BL = 00h
-	BH = character size (00h single-byte, 01h double-byte)
-	DH = width of character cell
-	DL = height of character cell
-	BP = code page (see #0356)
-Return: CF clear if successful
-	    AH = 00h
-	    ES:BX -> requested function's address
-	CF set on error
-	    AH = error code (see #0357)
-SeeAlso: AH=49h
-
-(Table 0356)
-Values for DOS/V code page:
- 0	default
- 437	US English
- 932	Japanese
- 934	Korea
- 936	China
- 938	Taiwan
-
-(Table 0357)
-Values for DOS/V error code:
- 01h	invalid font type in BH
- 02h	BL not zero
- 03h	invalid font size
- 04h	invalid code page
- 80h	unsupported function (PC)
- 86h	unsupported function (XT)
---------T-1550-------------------------------
-INT 15 - VMIX v2.???+ - "sys_vm_page" - SET NEW VIRTUAL PAGE TABLE
-	AH = 50h
-	BX = segment of page directory table
-	CX = page number of page table
-SeeAlso: AH=10h"VMiX",AH=51h"VMiX",AH=52h"VMiX"
---------T-1551-------------------------------
-INT 15 - VMiX v2.???+ - "sys_vm_func" - EXECUTE FUNCTION IN PROTECTED MODE
-	AH = 51h
-	STACK:	DWORD	selector:offset of function
-Return: registers as returned by function
-Note:	executes function with privilege level 0 (highest privilege)
-SeeAlso: AH=10h"VMiX",AH=52h"VMiX"
---------B-155101-----------------------------
-INT 15 - SYSTEM - later PS/2s - EXPANSION UNIT, RETURN CONFIGURATION NUMBER
-	AX = 5101h
-Return: CF set if successful
-	    AH = 00h
-	    AL = current configuration number
-		00h system unit only
-		FFh configuration not recognized
-	    BX = status flag
-		bits 0-14: reserved
-		bit 15: additional data is available (location TBD)
-	CF clear on error
-	    AH = status
-		01h expansion unit is not present
-		86h function not supported
-Note:	CF convention is the reverse of the standard convention for this
-	  interrupt.  (Perhaps a typo in the IBM BIOS Tech Ref?)
---------T-1552-------------------------------
-INT 15 - VMiX v2.???+ - "sys_vm_init" - INITIALIZE PROTECTED-MODE ENVIRONMENT
-	AH = 52h
-SeeAlso: AH=50h"VMiX",AH=51h"VMiX"
-----------1552-------------------------------
-INT 15 C - IBM/MS INT 13 Extensions - MEDIA EJECT INTERCEPT
-	AH = 52h
-	DL = drive number
-Return: CF clear if OK to eject media
-	    AH = 00h
-	CF set if ejection disallowed
-	    AH = error code (B1h,B3h) (see #0140)
-Note:	called by the IBM/MS INT 13 Extensions driver/BIOS when an ejection
-	  request is made
-SeeAlso: INT 13/AH=46h"INT 13 Extensions"
---------p-155300-----------------------------
-INT 15 - Advanced Power Management Specification - INSTALLATION CHECK
-	AX = 5300h
-	BX = device ID of system BIOS (0000h)
-Return: CF clear if successful
-	    AH = major version (BCD)
-	    AL = minor version (BCD)
-	    BX = 504Dh ("PM")
-	    CX = flags (see #0358)
-	CF set on error
-	    AH = error code (06h,86h) (see #0359)
-
-Bitfields for APM flags:
-Bit(s)	Description	(Table 0358)
- 0	16-bit protected mode interface supported
- 1	32-bit protected mode interface supported
- 2	CPU idle call reduces processor speed
- 3	BIOS power management disabled
- 4	BIOS power management disengaged (APM v1.1)
- 5-7	reserved
-
-(Table 0359)
-Values for APM error code:
- 01h	power management functionality disabled
- 02h	interface connection already in effect
- 03h	interface not connected
- 04h	real-mode interface not connected
- 05h	16-bit protected-mode interface already connected
- 06h	16-bit protected-mode interface not supported
- 07h	32-bit protected-mode interface already connected
- 08h	32-bit protected-mode interface not supported
- 09h	unrecognized device ID
- 0Ah	invalid parameter value in CX
- 0Bh-1Fh reserved for other interface and general errors
- 20h-3Fh reserved for CPU errors
- 40h-5Fh reserved for device errors
- 60h	can't enter requested state
- 61h-7Fh reserved for other system errors
- 80h	no power management events pending
- 81h-85h reserved for other power management event errors
- 86h	APM not present
- 87h-9Fh reserved for other power management event errors
---------p-155301-----------------------------
-INT 15 - Advanced Power Management Specification - CONNECT REAL-MODE INTERFACE
-	AX = 5301h
-	BX = device ID of system BIOS (0000h)
-Return: CF clear if successful
-	CF set on error
-	    AH = error code (02h,05h,07h,09h) (see #0359)
-SeeAlso: AX=5302h,AX=5303h,AX=5304h
---------p-155302-----------------------------
-INT 15 R - Advanced Power Management Spec - CONNECT 16-BIT PROTMODE INTERFACE
-	AX = 5302h
-	BX = device ID of system BIOS (0000h)
-Return: CF clear if successful
-	    AX = real-mode segment base address of protected-mode 16-bit code
-		segment
-	    BX = offset of entry point
-	    CX = real-mode segment base address of protected-mode 16-bit data
-		segment
-	    ---APM v1.1---
-	    SI = APM BIOS code segment length
-	    DI = APM BIOS data segment length
-	CF set on error
-	    AH = error code (02h,05h,06h,07h,09h) (see #0359)
-Notes:	the caller must initialize two consecutive descriptors with the
-	  returned segment base addresses; these descriptors must be valid
-	  whenever the protected-mode interface is called, and will have
-	  their limits arbitrarily set to 64K.
-	the protected mode interface is invoked by making a far call with the
-	  same register values as for INT 15; it must be invoked while CPL=0,
-	  the code segment descriptor must have a DPL of 0, the stack must be
-	  in a 16-bit segment and have enough room for BIOS use and possible
-	  interrupts, and the current I/O permission bit map must allow access
-	  to the I/O ports used for power management.
-	functions 00h-03h are not available from protected mode
-SeeAlso: AX=5301h,AX=5303h,AX=5304h
---------p-155303-----------------------------
-INT 15 - Advanced Power Management Spec - CONNECT 32-BIT PROTMODE INTERFACE
-	AX = 5303h
-	BX = device ID of system BIOS (0000h)
-Return: CF clear if successful
-	    AX = real-mode segment base address of protected-mode 32-bit code
-		segment
-	    EBX = offset of entry point
-	    CX = real-mode segment base address of protected-mode 16-bit code
-		segment
-	    DX = real-mode segment base address of protected-mode 16-bit data
-		segment
-	    ---APM v1.1---
-	    SI = APM BIOS code segment length
-	    DI = APM BIOS data segment length
-	CF set on error
-	    AH = error code (02h,05h,07h,08h,09h) (see #0359)
-Notes:	the caller must initialize three consecutive descriptors with the
-	  returned segment base addresses for 32-bit code, 16-bit code, and
-	  16-bit data, respectively; these descriptors must be valid whenever
-	  the protected-mode interface is called, and will have their limits
-	  arbitrarily set to 64K.
-	the protected mode interface is invoked by making a far call to the
-	  32-bit code segment with the same register values as for INT 15; it
-	  must be invoked while CPL=0, the code segment descriptor must have a
-	  DPL of 0, the stack must be in a 32-bit segment and have enough room
-	  for BIOS use and possible interrupts, and the current I/O permission
-	  bit map must allow access to the I/O ports used for power management.
-	functions 00h-03h are not available from protected mode
-SeeAlso: AX=5301h,AX=5302h,AX=5304h
---------p-155304-----------------------------
-INT 15 - Advanced Power Management Specification - DISCONNECT INTERFACE
-	AX = 5304h
-	BX = device ID of system BIOS (0000h)
-Return: CF clear if successful
-	CF set on error
-	    AH = error code (03h,09h) (see #0359)
-SeeAlso: AX=5301h,AX=5302h,AX=5303h
---------p-155305-----------------------------
-INT 15 - Advanced Power Management Specification - CPU IDLE
-	AX = 5305h
-Return: CF clear if successful (after system leaves idle state)
-	CF set on error
-	    AH = error code (03h,0Bh) (see #0359)
-Notes:	call when the system is idle and should be suspended until the next
-	  system event or interrupt
-	should not be called from within a hardware interrupt handler to avoid
-	  reentrance problems
-	if an interrupt causes the system to resume normal processing, the
-	  interrupt may or may not have been handled when the BIOS returns
-	  from this call; thus, the caller should allow interrupts on return
-	interrupt handlers may not retain control if the BIOS allows
-	  interrupts while in idle mode even if they are able to determine
-	  that they were called from idle mode
-	the caller should issue this call continuously in a loop until it needs
-	  to perform some processing of its own
-SeeAlso: AX=1000h,AX=5306h,INT 2F/AX=1680h
---------p-155306-----------------------------
-INT 15 - Advanced Power Management Specification - CPU BUSY
-	AX = 5306h
-Return: CF clear if successful
-	CF set on error
-	    AH = error code (03h,0Bh) (see #0359)
-Notes:	called to ensure that the system runs at full speed even on systems
-	  where the BIOS is unable to recognize increased activity (especially
-	  if interrupts are hooked by other programs and not chained to the
-	  BIOS)
-	this call may be made even when the system is already running at full
-	  speed, but it will create unnecessary overhead
-	should not be called from within a hardware interrupt handler to avoid
-	  reentrance problems
-SeeAlso: AX=5305h
---------p-155307-----------------------------
-INT 15 - Advanced Power Management Specification - SET POWER STATE
-	AX = 5307h
-	BX = device ID (see #0360)
-	CX = system state ID (see #0361)
-Return: CF clear if successful
-	CF set on error
-	    AH = error code (01h,03h,09h,0Ah,0Bh,60h) (see #0359)
-Note:	should not be called from within a hardware interrupt handler to avoid
-	  reentrance problems
-SeeAlso: AX=530Ch
-
-(Table 0360)
-Values for APM device IDs:
- 0000h	system BIOS
- 0001h	all devices for which the system BIOS manages power
- 01xxh	display (01FFh for all attached display devices)
- 02xxh	secondary storage (02FFh for all attached secondary storage devices)
- 03xxh	parallel ports (03FFh for all attached parallel ports)
- 04xxh	serial ports (04FFh for all attached serial ports)
----APM v1.1---
- 05xxh	network adapters (05FFh for all attached network adapters)
- 06xxh	PCMCIA sockets (06FFh for all)
- 0700h-DFFFh reserved
- Exxxh	OEM-defined power device IDs
- F000h-FFFFh reserved
-
-(Table 0361)
-Values for system state ID:
- 0000h	ready (not supported for device ID 0001h)
- 0001h	stand-by
- 0002h	suspend
- 0003h	off (not supported for device ID 0001h)
----APM v1.1---
- 0004h	last request processing notification (only for device ID 0001h)
- 0005h	last request rejected (only for device ID 0001h)
- 0006h-001Fh reserved system states
- 0020h-003Fh OEM-defined system states
- 0040h-007Fh OEM-defined device states
- 0080h-FFFFh reserved device states
---------p-155307CX0001-----------------------
-INT 15 - Advanced Power Management Specification - SYSTEM STAND-BY
-	AX = 5307h
-	CX = 0001h
-	BX = 0001h (device ID for all power-managed devices)
-Return: CF clear
-Notes:	puts the entire system into stand-by mode; normally called in response
-	  to a System Stand-by Request notification after any necessary
-	  processing, but may also be invoked at the caller's discretion
-	should not be called from within a hardware interrupt handler to avoid
-	  reentrance problems
-	the stand-by state is typically exited on an interrupt
-SeeAlso: AX=4280h,AX=5307h/CX=0002h/BX=0001h,AX=530Bh
---------p-155307CX0002-----------------------
-INT 15 - Advanced Power Management Specification - SUSPEND SYSTEM
-	AX = 5307h
-	CX = 0002h
-	BX = 0001h (device ID for all power-managed devices)
-Return: after system is resumed
-	CF clear
-Notes:	puts the entire system into a low-power suspended state; normally
-	  called in response to a Suspend System Request notification after
-	  any necessary processing, but may also be invoked at the caller's
-	  discretion
-	should not be called from within a hardware interrupt handler to avoid
-	  reentrance problems
-	the caller may need to update its date and time values because the
-	  system could have been suspended for a long period of time
-SeeAlso: AX=5307h/CX=0001h/BX=0001h,AX=530Bh
---------p-155308-----------------------------
-INT 15 - Advanced Power Management Spec - ENABLE/DISABLE POWER MANAGEMENT
-	AX = 5308h
-	BX = device ID for all devices power-managed by APM
-	    0001h (APM v1.1)
-	    FFFFh (APM v1.0)
-	CX = new state
-	    0000h disabled
-	    0001h enabled
-Return: CF clear if successful
-	CF set on error
-	    AH = error code (01h,03h,09h,0Ah,0Bh) (see #0359)
-Notes:	when power management is disabled, the system BIOS will not
-	  automatically power down devices, enter stand-by or suspended mode,
-	  or perform any power-saving actions in response to AX=5305h calls
-	should not be called from within a hardware interrupt handler to avoid
-	  reentrance problems
-SeeAlso: AX=5309h,AX=530Dh,AX=530Fh
---------p-155309-----------------------------
-INT 15 - Advanced Power Management Specification - RESTORE POWER-ON DEFAULTS
-	AX = 5309h
-	BX = device ID for all devices power-managed by APM
-	    0001h (APM v1.1)
-	    FFFFh (APM v1.0)
-Return: CF clear if successful
-	CF set on error
-	    AH = error code (09h) (see #0359)
-Note:	should not be called from within a hardware interrupt handler to avoid
-	  reentrance problems
-SeeAlso: AX=5308h
---------p-15530ABX0001-----------------------
-INT 15 - Advanced Power Management Specification - GET POWER STATUS
-	AX = 530Ah
-	BX = 0001h (device ID for all devices power-managed by APM)
-Return: CF clear if successful
-	    BH = AC line status
-		00h off-line
-		01h on-line
-		02h on backup power (APM v1.1)
-		FFh unknown
-		other reserved
-	    BL = battery status (see #0362)
-	    CH = battery flag (APM v1.1) (see #0363)
-	    CL = remaining battery life, percentage
-		00h-64h (0-100) percentage of full charge
-		FFh unknown
-	    DX = remaining battery life, time (APM v1.1) (see #0364)
-	CF set on error
-	    AH = error code (09h) (see #0359)
-Note:	should not be called from within a hardware interrupt handler to avoid
-	  reentrance problems
-
-(Table 0362)
-Values for APM v1.0+ battery status:
- 00h	high
- 01h	low
- 02h	critical
- 03h	charging
- FFh	unknown
- other	reserved
-
-Bitfields for APM v1.1 battery flag:
-Bit(s)	Description	(Table 0363)
- 0	high
- 1	low
- 2	critical
- 3	charging
- 4-6	reserved
- 7	no system battery
-Note:	all bits set (FFh) if unknown
-
-Bitfields for APM v1.1 remaining battery life:
-Bit(s)	Description	(Table 0364)
- 15	time units: 0=seconds, 1=minutes
- 14-0	battery life in minutes or seconds
-Note:	all bits set (FFFFh) if unknown
---------p-15530B-----------------------------
-INT 15 - Advanced Power Management Specification - GET POWER MANAGEMENT EVENT
-	AX = 530Bh
-Return: CF clear if successful
-	    BX = event code (see #0365)
-	CF set on error
-	    AH = error code (03h,0Bh,80h) (see #0359)
-Notes:	although power management events are often asynchronous, notification
-	  will not be made until polled via this call to permit software to
-	  only receive event notification when it is prepared to process
-	  power management events; since these events are not very time-
-	  critical, it should be sufficient to poll once or twice per second
-	the critical resume notification is made after the system resumes
-	  from an emergency suspension; normally, the system BIOS only notifies
-	  its partner that it wishes to suspend and relies on the partner to
-	  actually request the suspension, but no notification is made on an
-	  emergency suspension
-	should not be called from within a hardware interrupt handler to avoid
-	  reentrance problems
-SeeAlso: AX=5307h,AX=5307h/BX=0001h/CX=0001h,AX=5307h/BX=0001h/CX=0002h
-
-(Table 0365)
-Values for APM event code:
- 0001h	system stand-by request
- 0002h	system suspend request
- 0003h	normal resume system notification
- 0004h	critical resume system notification
- 0005h	battery low notification
----APM v1.1---
- 0006h	power status change notification
- 0007h	update time notification
- 0008h	critical system suspend notification
- 0009h	user system standby request notification
- 000Ah	user system suspend request notification
- 000Bh	system standby resume notification
- 000Ch-00FFh reserved system events
- 01xxh	reserved device events
- 02xxh	OEM-defined APM events
- 0300h-FFFFh reserved
---------p-15530C-----------------------------
-INT 15 - Advanced Power Management v1.1 - GET POWER STATE
-	AX = 530Ch
-	BX = device ID (see #0360)
-Return: CF clear if successful
-	    BX = system state ID (see #0361)
-	CF set on error
-	    AH = error code (01h,09h) (see #0359)
-SeeAlso: AX=5307h
---------p-15530D-----------------------------
-INT 15 - Advanced Power Management v1.1 - EN/DISABLE DEVICE POWER MANAGEMENT
-	AX = 530Dh
-	BX = device ID (see #0360)
-	CX = function
-	    0000h disable power management
-	    0001h enable power management
-Return: CF clear if successful
-	CF set on error
-	    AH = error code (01h,03h,09h,0Ah,0Bh) (see #0359)
-SeeAlso: AX=5308h,AX=530Fh
---------p-15530E-----------------------------
-INT 15 - Advanced Power Management v1.1 - DRIVER VERSION
-	AX = 530Eh
-	BX = device ID of system BIOS (0000h)
-	CH = APM driver major version (BCD)
-	CL = APM driver minor version (BCD)
-Return: CF clear if successful
-	    AH = APM connection major version (BCD)
-	    AL = APM connection minor version (BCD)
-	CF set on error
-	    AH = error code (03h,09h,0Bh) (see #0359)
-SeeAlso: AX=5300h
---------p-15530F-----------------------------
-INT 15 - Advanced Power Management v1.1 - ENGAGE/DISENGAGE POWER MANAGEMENT
-	AX = 530Fh
-	BX = device ID (see #0360)
-	CX = function
-	    0000h disengage power management
-	    0001h engage power management
-Return: CF clear if successful
-	CF set on error
-	    AH = error code (01h,09h) (see #0359)
-Note:	unlike AX=5308h, this call does not affect the functioning of the APM
-	  BIOS
-SeeAlso: AX=5308h,AX=530Dh
---------p-155380BH00-------------------------
-INT 15 - APM SL Enhanced v1.0 - GET SUSPEND/GLOBAL STANDBY MODE
-	AX = 5380h
-	BH = 00h
-Return: CF clear if successful
-	    AL = 82360SL Auto Power Off Timer High Count (APWR_TMRH)
-	    BL = sustdbymode (see #0366)
-SeeAlso: AX=5380h/BH=01h,AX=5380h/BH=02h,AX=5380h/BH=7Fh
-
-Bitfields for APM SL sustdbymode:
-Bit(s)	Description	(Table 0366)
- 2	???
- 1	Auto Power Off Timer Enable (APWR_TMR_EN)
- 0	???
---------p-155380BH01-------------------------
-INT 15 - APM SL Enhanced v1.0 - SET SUSPEND/GLOBAL STANDBY MODE
-	AX = 5380h
-	BH = 01h
-	BL = sustdbymode (see #0366)
-Return: CF clear if successful
-SeeAlso: AX=5380h/BH=00h,AX=5380h/BH=7Fh
---------p-155380BH02-------------------------
-INT 15 - APM SL Enhanced v1.0 - GET GLOBAL STANDBY TIMER
-	AX = 5380h
-	BH = 02h
-Return: CF clear if successful
-	SI:DI = timer count in seconds (actually 1.024 seconds)
-Desc:	reads the value of 82360SL GSTDBY_TMRH & GSTDBY_TMRL registers
-SeeAlso: AX=5380h/BH=00h,AX=5380h/BH=03h,AX=5380h/BH=04h,AX=5380h/BH=7Fh
---------p-155380BH03-------------------------
-INT 15 - APM SL Enhanced v1.0 - SET GLOBAL STANDBY TIMER
-	AX = 5380h
-	BH = 03h
-	SI:DI = timer count in seconds (actually 1.024 seconds)
-Return: CF clear if successful
-Desc:	sets the value of 82360SL GSTDBY_TMRH & GSTDBY_TMRL registers
-Note:	the maximum timer count is 268431 seconds
-SeeAlso: AX=5380h/BH=02h,AX=5380h/BH=7Fh
---------p-155380BH04-------------------------
-INT 15 - APM SL Enhanced v1.0 - GET AUTO POWER OFF TIMER
-	AX = 5380h
-	BH = 04h
-Return: CF clear if successful
-	SI:DI = timer count in seconds (actually 1.024 seconds)
-Desc:	reads the value of 82360SL APWR_TMRH & APWR_TMRL registers
-SeeAlso: AX=5380h/BH=02h,AX=5380h/BH=05h,AX=5380h/BH=06h,AX=5380h/BH=7Fh
---------p-155380BH05-------------------------
-INT 15 - APM SL Enhanced v1.0 - SET AUTO POWER OFF TIMER
-	AX = 5380h
-	BH = 05h
-	SI:DI = timer count in seconds (actually 1.024 seconds)
-Return: CF clear if successful
-Desc:	sets the value of 82360SL APWR_TMRH & APWR_TMRL registers
-Note:	the maximum timer count is 134213 seconds
-SeeAlso: AX=5380h/BH=04h,AX=5380h/BH=7Fh
---------p-155380BH06-------------------------
-INT 15 - APM SL Enhanced v1.0 - GET RESUME CONDITION
-	AX = 5380h
-	BH = 06h
-Return: CF clear if successful
-	    BL = resume condition (see #0367)
-Desc:	reads the value of 82360SL RESUME_MASK register
-SeeAlso: AX=5380h/BH=04h,AX=5380h/BH=07h,AX=5380h/BH=08h,AX=5380h/BH=7Fh
-
-Bitfields for APM SL resume condition:
-Bit(s)	Description	(Table 0367)
- 7-2	reserved (0)
- 1	alarm enabled (resume on CMOS alarm)
- 0	ring enabled
---------p-155380BH07-------------------------
-INT 15 - APM SL Enhanced v1.0 - SET RESUME CONDITION
-	AX = 5380h
-	BH = 07h
-	BL = resume condition (see #0367)
-Return: CF clear if successful
-Desc:	sets the value of 82360SL RESUME_MASK register
-SeeAlso: AX=5380h/BH=06h,AX=5380h/BH=7Fh
---------p-155380BH08-------------------------
-INT 15 - APM SL Enhanced v1.0 - GET CALENDAR EVENT TIME
-	AX = 5380h
-	BH = 08h
-Return: CF clear if successful
-	    CH = hours
-	    CL = minutes
-	    SI = seconds
-	CF set on error
-	    AH = error code (see #0368)
-Desc:	gets calendar event time from CMOS ram
-SeeAlso: AX=5380h/BH=06h,AX=5380h/BH=09h,AX=5380h/BH=0Ah,AX=5380h/BH=7Fh
-
-(Table 0368)
-Values for APM SL error code:
- 02h	no alarm set
- 03h	no battery
---------p-155380BH09-------------------------
-INT 15 - APM SL Enhanced v1.0 - SET CALENDAR EVENT TIME
-	AX = 5380h
-	BH = 09h
-	CH = hours
-	CL = minutes
-	SI = seconds
-Return: CF clear if successful
-	CF set on error
-	    AH = error code (see #0368)
-Desc:	sets calendar event time in CMOS ram, enables Alarm resume
-SeeAlso: AX=5380h/BH=08h,AX=5380h/BH=7Fh
---------p-155380BH0A-------------------------
-INT 15 - APM SL Enhanced v1.0 - GET CALENDAR EVENT DATE
-	AX = 5380h
-	BH = 0Ah
-Return: CF clear if successful
-	    SI = century
-	    DI = year
-	    CH = month
-	    CL = day
-	CF set on error
-	    AH = error code (see #0368)
-Desc:	reads calendar event date from Extended CMOS ram
-SeeAlso: AX=5380h/BH=08h,AX=5380h/BH=0Bh,AX=5380h/BH=0Ch,AX=5380h/BH=7Fh
---------p-155380BH0B-------------------------
-INT 15 - APM SL Enhanced v1.0 - SET CALENDAR EVENT DATE
-	AX = 5380h
-	BH = 0Bh
-	SI = century
-	DI = year
-	CH = month
-	CL = day
-Return: CF clear if successful
-	CF set on error
-	    AH = error code (see #0368)
-Desc:	sets calendar event date in Extended CMOS ram
-SeeAlso: AX=5380h/BH=0Ah,AX=5380h/BH=7Fh
---------p-155380BH0C-------------------------
-INT 15 - APM SL Enhanced v1.0 - GET CPU SPEED MODE
-	AX = 5380h
-	BH = 0Ch
-Return: CF clear if successful
-	CL = CPU clock divider (1,2,4 or 8)
-	BL = autocpumode ???
-Desc:	reads bits 4-5 of CPUPWRMODE register
-SeeAlso: AX=5380h/BH=0Ah,AX=5380h/BH=0Dh,AX=5380h/BH=7Fh
---------p-155380BH0D-------------------------
-INT 15 - APM SL Enhanced v1.0 - SET CPU SPEED MODE
-	AX = 5380h
-	BH = 0Dh
-	CL = CPU clock divider (1,2,4 or 8)
-	BL = autocpumode ???
-Return: CF clear if successful
-Desc:	writes bits 4-5 of CPUPWRMODE register
-SeeAlso: AX=5380h/BH=0Ch,AX=5380h/BH=7Eh,AX=5380h/BH=7Fh
---------p-155380BH7E-------------------------
-INT 15 - APM SL Enhanced v1.0 - SL HW PARAMETER
-	AX = 5380h
-	BH = 7Eh
-Return:	AL = ???
-	    03h on A-Step 386SL BIOSes
-	    12h on later steps
-	BX = Control port (00B0h)
-SeeAlso: AX=5380h/BH=00h,AX=5380h/BH=7Fh
---------p-155380BH7F-------------------------
-INT 15 - Advanced Power Management v1.1 - OEM APM INSTALLATION CHECK
-	AX = 5380h
-	BH = 7Fh
-Return: CF clear if successful
-	    BX = OEM identifier
-	    all other registers OEM-defined
-	    ---Intel SL Enhanced Option BIOS---
-	    BX = 534Ch ('SL')
-	    CL = 4Fh ('O')
-	    AL = version (10h = 1.0)
-	    ---HP APM BIOS---
-	    BX = 4850h ('HP')
-	    CX = version (0001h)
-	CF set on error
-	    AH = error code (03h) (see #0359)
-SeeAlso: AX=5380h/BH=00h
---------p-155380-----------------------------
-INT 15 - Advanced Power Management v1.1 - OEM APM FUNCTIONS
-	AX = 5380h
-	BH <> 7Fh
-	all other registers OEM-defined
-Return: OEM-defined
-SeeAlso: AX=5380h/BH=7Fh
---------T-155400-----------------------------
-INT 15 C - Omniview Multitasker - INSTALLATION NOTIFICATION
-	AX = 5400h
-	ES:BX -> device information tables
-	DI:DX -> dispatcher entry point
-Note:	called by OmniView to notify programs loaded before OmniView of state
-	  changes inside OmniView
-SeeAlso: AX=5407h,INT 2F/AX=DE00h
---------T-155401-----------------------------
-INT 15 C - Omniview Multitasker - PROCESS CREATION
-	AX = 5401h
-	ES:BX = process handle
-Note:	called by OmniView to notify programs loaded before OmniView of state
-	  changes inside OmniView
-SeeAlso: AX=5402h,INT 2F/AX=DE04h
---------T-155402-----------------------------
-INT 15 C - Omniview Multitasker - PROCESS DESTRUCTION
-	AX = 5402h
-	ES:DX = process handle
-Note:	called by OmniView to notify programs loaded before OmniView of state
-	  changes inside OmniView
-SeeAlso: AX=5401h,INT 2F/AX=DE05h
---------T-155403-----------------------------
-INT 15 C - Omniview Multitasker - SAVE
-	AX = 5403h
-	ES:DX = process swapping out
-Note:	called by OmniView to notify programs loaded before OmniView of state
-	  changes inside OmniView
-SeeAlso: AX=5404h,INT 2F/AX=DE08h
---------T-155404-----------------------------
-INT 15 C - Omniview Multitasker - RESTORE
-	AX = 5404h
-	ES:DX = process swapping in
-Note:	called by OmniView to notify programs loaded before OmniView of state
-	  changes inside OmniView
-SeeAlso: AX=5403h,INT 2F/AX=DE09h
---------T-155405-----------------------------
-INT 15 C - Omniview Multitasker - SWITCHING TO BACKGROUND
-	AX = 5405h
-	ES:DX = process swapping in
-Note:	called by OmniView to notify programs loaded before OmniView of state
-	  changes inside OmniView
-SeeAlso: AX=5406h
---------T-155406-----------------------------
-INT 15 C - Omniview Multitasker - SWITCHING TO FOREGROUND
-	AX = 5406h
-	ES:DX = process swapping in
-Note:	called by OmniView to notify programs loaded before OmniView of state
-	  changes inside OmniView
-SeeAlso: AX=5405h
---------T-155407-----------------------------
-INT 15 C - Omniview Multitasker - EXIT NOTIFICATION
-	AX = 5407h
-Note:	called by OmniView to notify programs loaded before OmniView of state
-	  changes inside OmniView
-SeeAlso: AX=5400h,INT 2F/AX=DE03h
 --------!---Section--------------------------

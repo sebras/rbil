@@ -1,5 +1,5 @@
 [This file was provided by Wim Osterholt (2:512/56 or wim@djo.wtm.tudelft.nl).]
-Last Change: 3/26/95
+Last Change: 6/04/95
 
 
 		XT, AT and PS/2	 I/O port addresses
@@ -204,10 +204,10 @@ Last Change: 3/26/95
 		    10 internal bus
 		    11 external bus
 
-0023    r       configuration status register
+0023	r	configuration status register
 		bit 7: 82360 configuration is open
 
-0024    w       82360 configuration index
+0024	w	82360 configuration index
 0025	r/w	82360 configuration data
 
 -------------------------------------------------------------------------------
@@ -272,6 +272,18 @@ Last Change: 3/26/95
 
 0026	w	index for data port
 0027	r/w	power management data
+
+-------------------------------------------------------------------------------
+002E-002F ----	Dell Enhanced Parallel Port
+
+002E	w	index for data port
+002F	r/w	EPP command data
+
+		index 00, bit 0: ???
+		index 02, bit 7: port in bidirectional mode
+		index 04, bits 0 and 2: ECP/EPP mode control
+
+		SeeAlso: 015C, 026E, 0398
 
 -------------------------------------------------------------------------------
 0038-003F ----	PC radio by CoZet Info Systems
@@ -378,7 +390,7 @@ Last Change: 3/26/95
 		  bit 0 = system reset
 
 		 HP Vectra command byte bit definitions
-		  bit 7	= reserved (0)
+		  bit 7 = reserved (0)
 		  bit 6 = scancode conversion mode (1 = PC/XT, 0 = PC/AT)
 		  bit 5 = unused
 		  bit 4 = disable keyboard (unless bit 3 set)
@@ -411,6 +423,7 @@ Last Change: 3/26/95
 				bit 2 = CapsLk, bit 1 = NumLk, bit 0 = ScrlLk
 		 EE	sngl  diagnostic echo. returns EE.
 		 EF	sngl  NOP (No OPeration). reserved for future use
+		 EF+26	      [Cherry MF2] read 256 bytes of chipcard data
 		 F0	dbl   get/set scan code set
 				00h get current set
 				01h scancode set 1 (except Type 2 ctrlr)
@@ -724,9 +737,9 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 0070-007F ----	CMOS RAM/RTC (Real Time Clock  MC146818)
 
 0070	w	CMOS RAM index register port (ISA, EISA)
-		 bit 7	 = 1  NMI disabled
-			 = 0  NMI enabled
-		 bit 6-0      CMOS RAM index (64 bytes, sometimes 128 bytes)
+		 bit 7	= 1  NMI disabled
+			= 0  NMI enabled
+		 bit 6-0     CMOS RAM index (64 bytes, sometimes 128 bytes)
 
 		any write to 0070 should be followed by an action to 0071
 		or the RTC wil be left in an unknown state.
@@ -744,96 +757,106 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 		08    month in BCD
 		09    year  in BCD (00-99)
 		0A    status register A
-		       bit 7 = 1  update in progress
-		       bit 6-4 divider that identifies the time-based
+			bit 7 = 1  update in progress
+			bit 6-4 divider that identifies the time-based
 				frequency
-		       bit 3-0 rate selection output  frequency and int. rate
+			bit 3-0 rate selection output  frequency and int. rate
 		0B    status register B
-		       bit 7 = 0  run
-			     = 1  halt
-		       bit 6 = 1  enable periodic interrupt
-		       bit 5 = 1  enable alarm interrupt
-		       bit 4 = 1  enable update-ended interrupt
-		       bit 3 = 1  enable square wave interrupt
-		       bit 2 = 1  calendar is in binary format
-			     = 0  calendar is in BCD format
-		       bit 1 = 1  24-hour mode
-			     = 0  12-hour mode
-		       bit 0 = 1  enable daylight savings time. only in USA.
-				  useless in Europe. Some DOS versions clear
-				  this bit when you use the DAT/TIME command.
+			bit 7 = 0  run
+			      = 1  halt
+			bit 6 = 1  enable periodic interrupt
+			bit 5 = 1  enable alarm interrupt
+			bit 4 = 1  enable update-ended interrupt
+			bit 3 = 1  enable square wave interrupt
+			bit 2 = 1  calendar is in binary format
+			      = 0  calendar is in BCD format
+			bit 1 = 1  24-hour mode
+			      = 0  12-hour mode
+			bit 0 = 1  enable daylight savings time. only in USA.
+				   useless in Europe. Some DOS versions clear
+				   this bit when you use the DAT/TIME command.
 		0C    status register C
-		       bit 7 =	  interrupt request flag
-		       bit 6 =	  peridoc interrupt flag
-		       bit 5 =	  alarm interrupt flag
-		       bit 4 =	  update interrupt flag
-		       bit 3-0	  reserved
+			bit 7 =	  interrupt request flag
+			bit 6 =	  peridoc interrupt flag
+			bit 5 =	  alarm interrupt flag
+			bit 4 =	  update interrupt flag
+			bit 3-0	  reserved
 		0D    status register D
-		       bit 7 = 1  Real-Time Clock has power
-		       bit 6-0	  reserved
+			bit 7 = 1  Real-Time Clock has power
+			bit 6-0	  reserved
 		0E    diagnostics status byte
-		       bit 7 = 0  RTC lost power
-		       bit 6 = 1  CMOS RAM checksum bad
-		       bit 5 = 1  invalid configuration information at POST
-		       bit 4 = 1  memory size error at POST
-		       bit 3 = 1  fixed disk/adapter failed initialization
-		       bit 2 = 1  CMOS RAM time found invalid
-		       bit 1 = 1  adapters do not match configuration (EISA)
-		       bit 0 = 1  time out reading an adapter ID (EISA)
+			bit 7 = 0  RTC lost power
+			bit 6 = 1  CMOS RAM checksum bad
+			bit 5 = 1  invalid configuration information at POST
+			bit 4 = 1  memory size error at POST
+			bit 3 = 1  fixed disk/adapter failed initialization
+			bit 2 = 1  CMOS RAM time found invalid
+			bit 1 = 1  adapters do not match configuration (EISA)
+			bit 0 = 1  time out reading an adapter ID (EISA)
 		0F    shutdown status byte
-		       00 = normal execution of POST
-		       01 = chip set initialization for real mode reentry
-		       04 = jump to bootstrap code
-		       05 = issue an EOI an JMP to Dword ptr at 40:67
-		       06 = JMP to Dword ptrv at 40:67 without EOI
-		       07 = return to INT15/87 (block move)
-		       08 = return to POST memory test
-		       09 = return to INT15/87 (block move)
-		       0A = JMP to Dword ptr at 40:67 without EOI
-		       0B = return IRETS through 40:67
+			00 = normal execution of POST
+			01 = chip set initialization for real mode reentry
+			04 = jump to bootstrap code
+			05 = issue an EOI an JMP to Dword ptr at 40:67
+			06 = JMP to Dword ptrv at 40:67 without EOI
+			07 = return to INT15/87 (block move)
+			08 = return to POST memory test
+			09 = return to INT15/87 (block move)
+			0A = JMP to Dword ptr at 40:67 without EOI
+			0B = return IRETS through 40:67
 		10    diskette drive type for A: and B:
-		       bit 7-4	drive type of drive 0
-		       bit 3-0	drive type of drive 1
-			       = 0000	   no drive
-			       = 0001	   360K
-			       = 0010	   1M2
-			       = 0011	   720K
-			       = 0100	   1M44
-			       = 0101-1111 reserved
+			bit 7-4	drive type of drive 0
+			bit 3-0	drive type of drive 1
+				= 0000	    no drive
+				= 0001	    360K
+				= 0010	    1M2
+				= 0011	    720K
+				= 0100	    1M44
+				= 0101-1111 reserved
 		11    reserved / AMI Extended CMOS setup (AMI Hi-Flex BIOS)
-		       bit 7   = 1     Typematic Rate Programming
-		       bit 6-5 = 00    Typematic Rate Delay 250 mSec
-		       bit 4-0 = 00011 Typematic Rate 21.8 Chars/Sec
+			bit 7   = 1     Typematic Rate Programming
+			bit 6-5 = 00    Typematic Rate Delay 250 mSec
+			bit 4-0 = 00011 Typematic Rate 21.8 Chars/Sec
+		11    AMI 1990 Hyundai super-NB386S notebook
+			bit 0	= 1  NumLock ON at boot time
+		11    Quadtel HT12 BIOS 03.05.03
+			bit 7	= 1  640K RAM present
+			bit 6	= extension type (=CPU's Machine Status Word)
+			bit 3-2	 NumLock state at boot time
+				= 00 Auto
+				= 01 NumLock on
+				= 10 Numlock off
+			bit 0	= 1  384K RAM relocated to top of memory
 		12    fixed disk drive type for drive 0 and drive 1
-		       bit 7-4	drive type of drive 0
-		       bit 3-0	drive type of drive 1
+			bit 7-4	drive type of drive 0
+			bit 3-0	drive type of drive 1
 				if either of the nibbles equals 0F, then bytes
 				19 an 1A are valid
 		13    reserved / AMI Extended CMOS setup (AMI Hi-Flex BIOS)
-		       bit 7 = 1  Mouse Support Option
-		       bit 6 = 1  Above 1 MB Memory Test disable
-		       bit 5 = 1  Memory Test Tick Sound disable
-		       bit 4 = 1  Memory Parity Error Check enable
-		       bit 3 = 1  Hit <ESC> Message Display disabled
-		       bit 2 = 1  Hard Disk Type 47 Data Area at address 0:300
-		       bit 1 = 1  Wait For <F1> If Any Error enabled
-		       bit 0 = 1  System Boot Up Num Lock is On
+			bit 7 = 1  Mouse Support Option
+			bit 6 = 1  Above 1 MB Memory Test disable
+			bit 5 = 1  Memory Test Tick Sound disable
+			bit 4 = 1  Memory Parity Error Check enable
+			bit 3 = 1  Hit <ESC> Message Display disabled
+			bit 2 = 1  Hard Disk Type 47 Data Area at address 0:300
+			bit 1 = 1  Wait For <F1> If Any Error enabled
+			bit 0 = 1  System Boot Up Num Lock is On
 		14    equipment byte
-		       bit 7-6	 diskette drives installed
-			       = 00  1 drive installed
-			       = 01  2 drives installed
-			       = 10  reserved
-			       = 11  reserved
-		       bit 5-4	 primary display
-			       = 00  adapter card with option ROM 
-			       = 01  40*25 color
-			       = 10  80*25 color
-			       = 11  monochrome
-		       bit 3-2	 reserved
-		       bit 1   = 1  coprocessor installed (non-Weitek)
-		       bit 0	    diskette drive avaliable for boot
-		15    LSB of systemn base memory in Kb
-		16    MSB of systemn base memory in Kb
+			bit 7-6	 diskette drives installed
+				= 00  1 drive installed
+				= 01  2 drives installed
+				= 10  reserved
+				= 11  reserved
+			bit 5-4	 primary display
+				= 00  adapter card with option ROM 
+				= 01  40*25 color
+				= 10  80*25 color
+				= 11  monochrome
+			bit 3-2	 reserved
+			bit 1	= 1  coprocessor installed (non-Weitek)
+			bit 0	     diskette drive avaliable for boot
+		15    LSB of system base memory in Kb
+		16    MSB of system base memory in Kb
 		17    LSB of total extended memory in Kb
 		18    MSB of total extended memory in Kb
 		19    drive C extension byte
@@ -845,36 +868,103 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 			(Phoenix)
 		28    HP-Vectra checksum over 29-2D
 		29-2D reserved
-		29/2A word to Intel 82335 CC0 compare register at
-			[28](Phoenix)
+		29/2A word to Intel 82335 CC0 compare register at [28]
+			(Phoenix)
 		2B/2C word send to 82335 CC1 compare register at [2A]
 			(Phoenix)
 		2D    AMI Extended CMOS setup (AMI Hi-Flex BIOS)
 		      (Phoenix BIOS checks for the values AA or CC)
-		       bit 7 = 1  Weitek Processor Absent
-		       bit 6 = 1  Floppy Drive Seek At Boot disabled
-		       bit 5 = 1  System Boot Up Sequence  C:, A:
-		       bit 4 = 1  System Boot Up Speed is high
-		       bit 3 = 1  Cache Memory enabled
-		       bit 2 = 1  Internal Cache Memory	 <1>
-		       bit 1-0	  reserved
+			bit 7 = 1  Weitek Processor Absent
+			bit 6 = 1  Floppy Drive Seek At Boot disabled
+			bit 5 = 1  System Boot Up Sequence  C:, A:
+				  (A;,C:  AMI 1990 Hyundai NB368S notebook)
+			bit 4 = 1  System Boot Up Speed is high
+			bit 3 = 1  Cache Memory enabled
+			bit 2 = 1  Internal Cache Memory	 <1>
+			bit 1-0	   reserved
 		2E    CMOS MSB checksum over 10-2D
 		2F    CMOS LSB checksum over 10-2D
 		30    LSB of extended memory found above 1Mb at POST
 		31    MSB of extended memory found above 1Mb at POST
 		32    date century in BCD
 		33    information flags
-		       bit4 = bit4 from CPU register CR0   (Phoenix)
+			bit7 = 1 on AMI 1990 Hyundai super-NB386S notebook
+			bit4 = bit4 from CPU register CR0   (Phoenix)
 			      this bit is only known as INTEL RESERVED
+		33    Quadtel HT12 BIOS 03.05.03
+			bit 7 = 1  640K RAM present
+			bit 6 = extension type (=CPU's Machine Status Word)
+			bit 1 = 1  print welcome message
 		34-3F reserved	
-		34     bit4 bit5 (Phoenix BIOS)
-		3D/3E word to 82335 MCR memory config register at
-			[22](Phoenix)
+		34	bit 7-6	  password check AMI 1990 Hyundai notebook
+				= 00 no check
+				= 01 at setup only
+				= 10 always
+				= 11 reserved (acts like always)
+			bit4 bit5 (Phoenix BIOS)
+		35    AMI 1990 Hyundai super-NB368S notebook
+			bit 3-1 = 000  shadow disabled
+				= 011  video BIOS shadowed
+				= 100  main BIOS shadowed
+				= 111  both
+			bit 0	= 1    coprocessor enabled
+		36-37 extended memory	Quadtel HT12 BIOS 03.05.03
+		36    AMI 1990 Hyundai super-NB368S notebook
+			bit 7	= 1 LCD, 0 CRT at boot time
+			bit 6	= 1 reversed, 0 normal video mode
+			bit 5	= 1 external, 0 internal keyboard
+			bit 4-3 = 00  cpu speed high
+				  01  cpu speed medium
+				  10  cpu speed low
+			bit 2-1	  harddisk vendor 1,2,3,4
+			bit 0	= 1 relocation enabled, 0 disabled
+		37-3A AMI 1990 Hyundai super-NB368S notebook
+			encoded password, max 4 bytes.
+		3C-3D Quadtel HT12 BIOS 03.05.03
+			total memory
+		3D/3E word to 82335 MCR memory config register at [22]
+			(Phoenix)
 		3D     bit3	 base memsize 512/640  (Phoenix)
 		3E     bit7 = 1	 relocate enable       (Phoenix)
 		       bit1 = 1	 shadow video enable   (Phoenix)
 		       bit0 = 1	 shadow BIOS enable    (Phoenix)
-
+		3E    Quadtel HT12 BIOS 03.05.03
+			bit 2 = 1  system error occurred ?? (timer/RTC)
+			bit 0 = 0  extended system configuration loaded
+			      = 1  checksum error
+		3E    AMI 1990 Hyundai super-NB368S notebook
+			Hbyte additional checksum
+		3F    AMI 1990 Hyundai super-NB368S notebook
+			Lbyte additional checksum
+		40    AMI 1990 Hyundai super-NB368S notebook
+			bit 7 = 1  power save enabled
+			bit 6-0 HD power save wait, units of 1 minute (0-20)
+		42-4C AMI 1990 Hyundai super-NB368S notebook
+			???
+		54-57 AMI 1990 Hyundai super-NB368S notebook
+			???
+		5C-5D AMI 1990 Hyundai super-NB368S notebook
+			???
+		5E    AMI 1990 Hyundai super-NB368S notebook
+			00 when values from bios defaults
+			34 when values from power up defaults
+		60-61 AMI 1990 Hyundai super-NB368S notebook
+			???
+		62    AMI 1990 Hyundai super-NB368S notebook
+			FF when values from bios defaults
+			FE when values from power up defaults
+		64    AMI 1990 Hyundai super-NB368S notebook
+			???
+		66    AMI 1990 Hyundai super-NB368S notebook
+			doze mode timeout 00-0F, from table (0,12 -14 sec)
+		67    AMI 1990 Hyundai super-NB368S notebook
+			sleep mode timeout 00-0F, units of 1 second
+		68    AMI 1990 Hyundai super-NB368S notebook
+			suspend mode timeout 01-0F, units of 5 minutes
+		69    AMI 1990 Hyundai super-NB368S notebook
+			LCD mode timeout 01-0F, units of 1 minute
+		6A    AMI 1990 Hyundai super-NB368S notebook
+			???
 
 		User Definable Drive Parameters are also stored in CMOS RAM:
 
@@ -921,10 +1011,28 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 		 3B  H cylinders parking zone
 		 3C  sectors
 
+		Quadtel HT 12 BIOS first user definable drive
+		 1D L cylinders
+		 1E Lnibble = H cylinders, Hnibble = heads
+		 1F L Write Precompensation Cylinder
+		 20 Lnibble`= H WPC, Hnibble = H Landing Zone
+		 21 L Landing Zone
+		 22 Sectors/Track
+
+		Quadtel HT 12 BIOS second user definable drive
+		 23 L cylinders
+		 24 Lnibble = H cylinders, Hnibble = heads
+		 25 L Write Precompensation Cylinder
+		 26 Lnibble = H WPC, Hnibble = H Landing Zone
+		 27 L Landing Zone
+		 28 Sectors/Track
+
 - - - - - - - - ---------------------------------------------------------------
 0073	  ----	Intel Pentium motherboard ("Neptune" chipset)
 
 0073	r/w	bit 7: ???
+		bit 6: ???
+		bit 3: ???
 
 - - - - - - - - ---------------------------------------------------------------
 0074-0076	secondary CMOS (Compaq), NVRAM (IBM) access
@@ -934,7 +1042,7 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 0076	r/w	secondary CMOS RAM (IBM NVRAM) data byte
 
 		Note:	NVRAM may be 2K, 8K, or 16K
-		See also CMOS.LST
+		SeeAlso: CMOS.LST
 
 - - - - - - - - ---------------------------------------------------------------
 0078		HP-Vectra  Hard Reset: NMI enable/disable
@@ -1141,10 +1249,10 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 00E7	r/w	error trace
 
 -------------------------------------------------------------------------------
-00EC-00ED ----  Compaq LTE Elite
+00EC-00ED ----	Compaq LTE Elite
 
 -------------------------------------------------------------------------------
-00EF	  ----  Hyunday Super-NB386S (AMD386sx with Intel chipset)
+00EF	  ----	Hyunday Super-NB386S (AMD386sx with Intel chipset)
 
 		Warning: any access to this port causes a cold reset on this
 		  machine!
@@ -1167,10 +1275,10 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 00FC	r/w	opcode transfer
 
 -------------------------------------------------------------------------------
-00F9	  ----  Compaq LTE Elite
+00F9	  ----	Compaq LTE Elite
 
 -------------------------------------------------------------------------------
-00FB	  ----  Compaq LTE Elite
+00FB	  ----	Compaq LTE Elite
 
 -------------------------------------------------------------------------------
 00F9-00FF ----	PC radio by CoZet Info Systems
@@ -1186,6 +1294,14 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 		All of these addresses show a readout of FF in initial state.
 		Once started, all of the addresses show	 FB, whatever might
 		happen.
+
+-------------------------------------------------------------------------------
+0100	  ----  3COM 3C509 Ethernet card - ID port
+
+		Note: this port is present only on the 3C509, not on any
+		other 3COM card
+
+		See also: 0110, 0120
 
 -------------------------------------------------------------------------------
 0100-010F ----	CompaQ Tape drive adapter. alternate address at 0300
@@ -1215,6 +1331,22 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 010E	w	second character
 ....	w
 0108	w	eighth character
+
+-------------------------------------------------------------------------------
+0110	  ----  3COM 3C509 Ethernet card - ID port (alternate address)
+
+		Note: this port is present only on the 3C509, not on any
+		other 3COM card
+
+		See also: 0100, 0120
+
+-------------------------------------------------------------------------------
+0120	  ----  3COM 3C509 Ethernet card - ID port (alternate address)
+
+		Note: this port is present only on the 3C509, not on any
+		other 3COM card
+
+		See also: 0100, 0110
 
 -------------------------------------------------------------------------------
 0130-013F ----	CompaQ SCSI adapter. alternate address at 0330
@@ -1248,6 +1380,14 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 
 -------------------------------------------------------------------------------
 0140-0157 ----	RTC (alternate Real Time Clock for XT)	 (1st at 0340-0357)
+
+-------------------------------------------------------------------------------
+015C-015D ----	Dell Enhanced Parallel Port
+
+015C	w	index for data port
+015D	r/w	EPP command data
+
+		SeeAlso: 002E, 026E, 0398
 
 -------------------------------------------------------------------------------
 015F	  ----	ARTEC Handyscanner A400Z.  alternate address at 35F.
@@ -1288,7 +1428,7 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 		   bits 2-0 = size
 			   (undefined,512K,640K,1024K,2560K,2048K,4096K,undef.)
 		14h ???
-		   bit 2: 384K extended memory in 1024K system
+		   bit 2: 384K RAM of first 1024K relocated to top of memory
 
 -------------------------------------------------------------------------------
 01F0-01F7 ----	HDC 1	(1st Fixed Disk Controller)   same as 017x (ISA, EISA)
@@ -1441,7 +1581,7 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 	configurable, may be set to 0208, 0218, 0258, 0268, 02A8, 02B8, 02E8
 
 -------------------------------------------------------------------------------
-020C-020F ----  AIMS LAB PC Radio
+020C-020F ----	AIMS LAB PC Radio
 
 	configurable to 020C or 030C
 
@@ -1523,13 +1663,13 @@ SeeAlso: 0388-0389
 		alternate address at 0130, 0134, 0230, 0330 and 0334
 
 -------------------------------------------------------------------------------
-0238-023x ----  Bus Mouse Port (secondary address)
+0238-023x ----	Bus Mouse Port (secondary address)
 
 		secondary address for bus mice from MS and Logitech, and the
 		  ATI video adapter mouse
 
 -------------------------------------------------------------------------------
-023C-023x ----  Bus Mouse Port (primary address)
+023C-023x ----	Bus Mouse Port (primary address)
 
 		primary address for bus mice from MS and Logitech, and the
 		  ATI video adapter mouse
@@ -1630,6 +1770,14 @@ SeeAlso: 0340-034F, 0746
 
 	base address configurable, may be set to 0208, 0218, 0258, 0268, 02A8,
 	  02B8, or 02E8
+
+-------------------------------------------------------------------------------
+026E-026F ----	Dell Enhanced Parallel Port
+
+026E	w	index for data port
+026F	r/w	EPP command data
+
+		SeeAlso: 002E, 015C, 0398
 
 -------------------------------------------------------------------------------
 0278-027E ----	parallel printer port, same as 0378 and 03BC
@@ -1741,7 +1889,7 @@ SeeAlso: 0340-034F, 0746
 		Periscope hardware debugger
 
 -------------------------------------------------------------------------------
-030C-030F ----  AIMS LAB PC Radio
+030C-030F ----	AIMS LAB PC Radio
 
 	configurable to 020C or 030C
 
@@ -1984,7 +2132,7 @@ SeeAlso: 0240-024F, 0746
 	   0270-027F and 0370-037F
 
 -------------------------------------------------------------------------------
-035A-035B ----  Adaptec AH1520 jumper settings
+035A-035B ----	Adaptec AH1520 jumper settings
 
 035A	r	bit 7:	  SCSI parity disabled
 		bits 6-5: DMA channel
@@ -2018,7 +2166,7 @@ Note:	cards based on this IEEE 802.3 networking chipset can use any range
 
 Page 0	r					w
 
-00	Command	reg.			CR	Command reg.		CR
+00	Command reg.			CR	Command reg.		CR
 01	current local DMA address 0	CLDA0	page start reg.		PSTART
 02	current local DMA address 1	CLDA1	page stop reg.		PSTOP
 03	boundary pointer		BNRY	boundary pointer	BNRY
@@ -2026,13 +2174,13 @@ Page 0	r					w
 05	number of collisions reg.	NCR	Tx byte count reg.0	TBCR0 
 06	FIFO					Tx byte count reg.1	TBCR1
 07	interrupt status reg.		ISR	interrupt status reg.	ISR
-08	current remote DMA address 0	CRDA0	remote start addr.reg.0	RSAR0
-09	current remote DMA address 1	CRDA1	remote start addr.reg.1	RSAR1
-0A	reserved				remote byte count reg.0	RBCR0
-0B	reserved				remote byte count reg.1	RBCR1
+08	current remote DMA address 0	CRDA0	remote start addr.reg.0 RSAR0
+09	current remote DMA address 1	CRDA1	remote start addr.reg.1 RSAR1
+0A	reserved				remote byte count reg.0 RBCR0
+0B	reserved				remote byte count reg.1 RBCR1
 0C	receive status reg.		RSR	Rx configuration reg.	RCR
 0D	tally counter 0 (frame errors)	CNTR0	Tx configuration reg.	TCR
-0E	tally counter 1 (CRC errors)	CNTR1	data configuration reg.	DCR
+0E	tally counter 1 (CRC errors)	CNTR1	data configuration reg. DCR
 0F	tally counter 2 (missed pkt)	CNTR2	interrupt mask reg.	IMR
 
 Page 1	r/w
@@ -2045,14 +2193,14 @@ Page 1	r/w
 05	physical address reg.4	PAR4		
 06	physical address reg.5	PAR5		
 07	current page reg.	CURR			
-08	multicast address reg.0	MAR0		
-09	multicast address reg.1	MAR1		
-0A	multicast address reg.2	MAR2		
-0B	multicast address reg.3	MAR3		
-0C	multicast address reg.4	MAR4		
-0D	multicast address reg.5	MAR5		
-0E	multicast address reg.6	MAR6		
-0F	multicast address reg.7	MAR7		
+08	multicast address reg.0 MAR0		
+09	multicast address reg.1 MAR1		
+0A	multicast address reg.2 MAR2		
+0B	multicast address reg.3 MAR3		
+0C	multicast address reg.4 MAR4		
+0D	multicast address reg.5 MAR5		
+0E	multicast address reg.6 MAR6		
+0F	multicast address reg.7 MAR7		
 
 Page 2	r					w
 	diagnostics page - should never be modfied under normal operation.
@@ -2117,6 +2265,8 @@ Page 3	r					w
 0379	r/w	status port
 037A	r/w	control port
 
+037B		bit 7: shadow RAM on/off (UniRAM adapter,according to c't 7/90)
+
 -------------------------------------------------------------------------------
 0380-038F ----	2nd Binary Synchronous Data Link Control adapter (see 03A0)
 
@@ -2170,6 +2320,14 @@ SeeAlso: 0220-0223
 0390-0393	(adapter 0)	(XT)
 
 -------------------------------------------------------------------------------
+0398-0399 ----	Dell Enhanced Parallel Port
+
+0398	w	index for data port
+0399	r/w	EPP command data
+
+		SeeAlso: 002E, 015C, 026E
+
+-------------------------------------------------------------------------------
 03A0-03AF ----	1st SDLC (Binary Synchronous Data Link Control adapter)
 
 03A0	r/w	 on board 8255 port A, internal/external sense
@@ -2190,9 +2348,10 @@ SeeAlso: 0220-0223
 03B1		same as 03B5
 03B2		same as 03B4
 03B3		same as 03B5
-03B4	w	MDA CRT index register	 (EGA/VGA)
+03B4	w	MDA CRT index register	 (MDA/EGA/VGA)
 		selects which register (0-11h) is to be accessed through 3B5
-03B5	r/w	MDA CRT data register	 (EGA/VGA)
+		Note: this port is read/write on some VGAs
+03B5	r/w	MDA CRT data register	 (MDA/EGA/VGA)
 		selected by port 3B4. registers C-F may be read
 		 00  horizontal total
 		 01  horizontal displayed
@@ -2210,40 +2369,48 @@ SeeAlso: 0220-0223
 		 0D  start address low
 		 0E  cursor location high
 		 0F  cursor location low
-		 10  light pen high
-		 11  light pen low
+		 10  light pen high (MDA/CGA only)
+		 11  light pen low (MDA/CGA only)
 03B6		same as 03B4
 03B7		same as 03B5
 03B8	r/w	MDA mode control register
-		 bit 7 not used
+		 bit 7 not used by MDA, page number on HGC
 		 bit 6 not used
-		 bit 5 enable blink
+		 bit 5 enable blink (0 = intense background, 1 = blink)
 		 bit 4 not used
 		 bit 3 video enable
 		 bit 2 not used
-		 bit 1 not used
-		 bit 0 high resolution mode
+		 bit 1 not used by MDA, graphics enable for HGC
+		 bit 0 high resolution mode (always set on MDA)
 
 03B9		reserved for color select register on color adapter
+03B9	w	MDA/HGC: set lightpen flipflop (value written is ignored)
 
 03BA	r	CRT status register	 EGA/VGA: input status 1 register
-		 bit 7	 (MSD says) if this bit changes within 8000h reads then
+		 bit 7	HGC: vertical sync pulse in progress
+			(MSD says) if this bit changes within 8000h reads then
 		  bit 6-4 = 000 = adapter is Hercules or compatible
 			    001 = adapter is Hercules+
 			    101 = adapter is Hercules InColor
 				  else: adapter is unknown
-		 bit 3	 black/white video
-		 bit 2-1 reserved
-		 bit 0	 horizontal drive
+		  bit 6-4 = 111 on MDA and some HGC clones
+		 bit 3	pixel stream (0=currently black, 1=currently white)
+		 bit 2-1 reserved on MDA
+		 bit 2	HGC: lightpen flipflop set
+		 bit 1	hGC: lightpen input stream
+		 bit 0	horizontal drive enabled
 
 03BA	w	EGA/VGA feature control register
 
-03BB		reserved for light pen strobe reset
+03BB	w	light pen strobe reset (on any value)
 
 -------------------------------------------------------------------------------
 03BC-03BF ----	parallel printer port, same as 0278 and 0378
 
 03BC	w	data port
+03BC	r	bidirectional port: input from connector
+		unidirectional port: last value written to port
+
 03BD	r/w	status port
 		 bit 7 = 0  busy
 		 bit 6 = 0  acknowledge
@@ -2255,14 +2422,17 @@ SeeAlso: 0220-0223
 
 03BE	r/w	control port
 		 bit 7-5    reserved
+		 bit 7	    see 037B bit 7
+		 bit 5 = 1  enable bidirectional port
+				(PS/2 also requires enabling via port 0102h)
 		 bit 4 = 1  enable IRQ
-		 bit 3 = 1  select printer
-		 bit 2 = 0  initialize printer
+		 bit 3 = 1  select printer (SLCT IN line)
+		 bit 2 = 0  initialize printer (-RESET line)
 		 bit 1 = 1  automatic line feed
 		 bit 0 = 1  strobe
 
 -------------------------------------------------------------------------------
-03BF	r/w	Hercules configuration switch register
+03BF	w	Hercules configuration switch register
 		 bit 7-2
 		 bit 1 = 0  disables upper 32K of graphics mode buffer
 			 1  enables upper 32K of graphics mode buffer
@@ -2422,7 +2592,7 @@ SeeAlso: 0220-0223
 		 bit 0	  motor enable 0
 
 03F1	r	diskette controller status B (PS/2 model 30)
-		 bit 7	  -DRV2	second drive installed
+		 bit 7	  -DRV2 second drive installed
 		 bit 6	  -DS1
 		 bit 5	  -DS0
 		 bit 4	  write data F/F
@@ -2542,7 +2712,7 @@ SeeAlso: 0220-0223
 						0   0	0   0	0 HDS DS1 DS0
 		 recalibrate		2	0   0	0   0	0   1	1   1
 						0   0	0   0	0   0 DS1 DS0
-		 sense interrupt status	1	0   0	0   0	1   0	0   0
+		 sense interrupt status 1	0   0	0   0	1   0	0   0
 		 write deleted data	9	MT MFM	0   0	1   0	0   1
 						0   0	0   0	0 HDS DS1 DS0
 		 read ID		2	0  MFM	0   0	1   0	1   0
@@ -2659,7 +2829,7 @@ SeeAlso: 0220-0223
 				(also 16550(A) timeout interrupt)
 
 	      - 16550(A) will interrupt with a timeout if data exists in the
-	        FIFO and isn't read within the time it takes to receive four
+		FIFO and isn't read within the time it takes to receive four
 		bytes or if no data is received within the time it takes to
 		receive four bytes
 
@@ -2705,7 +2875,7 @@ SeeAlso: 0220-0223
 	      - bit 2 when set	the XMIT FIFO is cleared and this bit is reset
 		 the transmit shift register is not cleared
 	      - due to a hardware bug, 16550 FIFOs don't work correctly (this
-	        was fixed in the 16550A)
+		was fixed in the 16550A)
 
 03FB	r/w	line control register
 		 bit 7 = 1  divisor latch access bit (DLAB)
@@ -2999,7 +3169,7 @@ only)
 
 06E8	w	horizontal displayed
 
-	See also 02E8-02EF, 0AE8, 96E8, 9AE8
+	SeeAlso: 02E8-02EF, 0AE8, 96E8, 9AE8
 
 -------------------------------------------------------------------------------
 0746	  ----	Gravis Ultra Sound by Advanced Gravis
@@ -3057,8 +3227,12 @@ SeeAlso: 0240-024F, 0340-034F
 -------------------------------------------------------------------------------
 0CF8	  ----	Intel Pentium motherboard ("Neptune" chipset)
 
+		SeeAlso: C008
+
 -------------------------------------------------------------------------------
 0CFA	  ----	Intel Pentium motherboard ("Neptune" chipset)
+
+		SeeAlso: C008
 
 -------------------------------------------------------------------------------
 0EE8	  ----	S3 86C928 video controller (ELSA Winner 1000)
@@ -3103,7 +3277,7 @@ SeeAlso: 0240-024F, 0340-034F
 
 1C65	r/???	bit 6: operating on battery power
 
-		See also: 2065
+		SeeAlso: 2065
 
 -------------------------------------------------------------------------------
 1C80-1C8F ----	VESA XGA Video in EISA slot 1
@@ -3133,7 +3307,7 @@ SeeAlso: 0240-024F, 0340-034F
 
 2065	w	??? (84h seen)
 
-		See also: 1C65, 2465
+		SeeAlso: 1C65, 2465
 
 -------------------------------------------------------------------------------
 2100-210F ----	IBM XGA (eXtended Graphics Adapter  8514/A) (first installed)
@@ -3240,7 +3414,7 @@ Note:	this port is for the first XGA in the system; 211x-217x are used for
 	r	current battery power level
 		(166 fully-charged, 130 = LowBat1)
 
-		See also: 1C65, 2065
+		SeeAlso: 1C65, 2065
 
 -------------------------------------------------------------------------------
 27C6	r/w	LCD timeout in minutes (Compaq LTE Lite)
@@ -3587,7 +3761,12 @@ BEE8-BEEF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
 BEE8	w	multi-function control
 
 -------------------------------------------------------------------------------
+C000-C004 ----	Intel Pentium motherboard ("Neptune" chipset)
+
+-------------------------------------------------------------------------------
 C008	  ----	Intel Pentium motherboard ("Neptune" chipset)
+
+		SeeAlso: 0CF8,0CFA
 
 -------------------------------------------------------------------------------
 C050	  ----	Intel Pentium motherboard ("Neptune" chipset)
@@ -3599,9 +3778,27 @@ C052	  ----	Intel Pentium motherboard ("Neptune" chipset)
 
 C052	r/???	bits 6,7: ???
 
+		SeeAlso: 0CF8,0CFA
+
+-------------------------------------------------------------------------------
+C059	  ----	Intel Pentium motherboard ("Neptune" chipset)
+
+-------------------------------------------------------------------------------
+C065	  ----	Intel "Neptune" chipset - MEMORY SIZE???
+
+	r	system memory in MB??? (10h on a 16MB machine)
+
+		SeeAlso: INT 15/AX=DA88h
+
+-------------------------------------------------------------------------------
+C200-C204 ----	Intel Pentium motherboard ("Neptune" chipset)
+
 -------------------------------------------------------------------------------
 C220-C227 ----	serial port, description same as 03F8
 C228-C22F ----	serial port, description same as 03F8
+
+-------------------------------------------------------------------------------
+C244	  ----	Intel Pentium motherboard ("Neptune" chipset)
 
 -------------------------------------------------------------------------------
 C2E0-C2EF ----	GPIB (General Purpose Interface Bus, IEEE 488 interface)

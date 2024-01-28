@@ -6,11 +6,12 @@ The MSDOS Interrupt List
 	A comprehensive listing of over 7050 functions available through
 	interrupt calls on IBM PCs and compatibles.  Includes both
 	documented and undocumented functions.
-	Current version: INTER45A (release 45, 3/26/95)
-			 INTER45B
-			 INTER45C
-			 INTER45D
-			 INTER45E (conversion and utility programs)
+	Current version: INTER46A (release 46, 6/4/95)
+			 INTER46B
+			 INTER46C
+			 INTER46D
+			 INTER46E (conversion and utility programs)
+			 INTER46F (WinHelp-related programs)
 
 DVINT
 	An extract of the MSDOS Interrupt List containing the DESQview

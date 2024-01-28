@@ -1,4 +1,4 @@
-FAR CALL Interface List		Release 45		Last Change 3/26/95
+FAR CALL Interface List		Release 46		Last Change 6/04/95
 This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
 
 =============================================
@@ -29,7 +29,7 @@ InstallCheck:	MS-DOS v1.25 must be installed
 Note:	does not return extended keystrokes
 SeeAlso: @0060h:0000h,@0060h:0006h,@0060h:0027h
 
-(Table 0001)
+(Table F001)
 Call entry point with:
 	nothing
 Return: ZF set if no key
@@ -44,7 +44,7 @@ Notes:	if an extended keystroke is available, only the low byte is returned,
 	  the ambiguity that might be caused by returning the 00h high byte
 SeeAlso: @0060h:0000h,@0060h:0003h,@0060h:0027h
 
-(Table 0002)
+(Table F002)
 Call entry point with:
 	nothing
 Return: AL = keystroke
@@ -56,7 +56,7 @@ Note:	this entry point supports most of the ANSI.SYS control sequences,
 	  plus several additional escape sequences
 SeeAlso: @0060h:0000h,@0060h:0003h,@0060h:000Ch
 
-(Table 0003)
+(Table F003)
 Call entry point with:
 	AL = character to output
 Return: flags modified
@@ -67,7 +67,7 @@ Note:	this entry point is able, if set by configuration (see @0060h:0039h),
 	  to strip linefeed characters following carriage returns
 SeeAlso: @0060h:0000h,@0060h:0009h
 
-(Table 0004)
+(Table F004)
 Call entry point with:
 	AL = character to be printed
 Return: flags modified
@@ -80,7 +80,7 @@ Note:	if the configured AUX: device is a parallel port, this call always
 	  to arrive on a serial port
 SeeAlso: @0060h:0000h
 
-(Table 0005)
+(Table F005)
 Call entry point with:
 	nothing
 Return: AL = received character
@@ -91,7 +91,7 @@ Note:	if the port is busy, this function waits until the port becomes
 	  available or the user presses Esc or Ctrl-Break
 SeeAlso: @0060h:0000h
 
-(Table 0006)
+(Table F006)
 Call entry point with:
 	AL = character to output
 Return: flags modified
@@ -100,7 +100,7 @@ CALL 0060h:0015h - Eagle MS-DOS v1.25 IO.SYS - READ ABSOLUTE SECTOR(S)
 InstallCheck:	MS-DOS v1.25 must be installed
 SeeAlso: @0060h:0000h,@0060h:0018h,@0060h:001Bh
 
-(Table 0007)
+(Table F007)
 Call entry point with:
 	AL = drive table number
 	ES:BX -> buffer
@@ -120,7 +120,7 @@ CALL 0060h:0018h - Eagle MS-DOS v1.25 IO.SYS - WRITE ABSOLUTE SECTOR(S)
 InstallCheck:	MS-DOS v1.25 must be installed
 SeeAlso: @0060h:0000h,@0060h:0015h,@0060h:001Bh
 
-(Table 0008)
+(Table F008)
 Call entry point with:
 	AL = drive table number
 	ES:BX -> data to be written
@@ -140,7 +140,7 @@ CALL 0060h:001Bh - Eagle MS-DOS v1.25 IO.SYS - DETERMINE DISK FORMAT
 InstallCheck:	MS-DOS v1.25 must be installed
 SeeAlso: @0060h:0000h,@0060h:0015h,@0060h:002Ah
 
-(Table 0009)
+(Table F009)
 Call entry point with:
 	AL = DOS drive number
 Return: CF clear if successful
@@ -157,7 +157,7 @@ CALL 0060h:001Eh - Eagle MS-DOS v1.25 IO.SYS - SET DAY COUNT
 InstallCheck:	MS-DOS v1.25 must be installed
 SeeAlso: @0060h:0000h,@0060h:0021h,@0060h:0024h
 
-(Table 0010)
+(Table F010)
 Call entry point with:
 	AX = day count
 Return: nothing
@@ -166,7 +166,7 @@ CALL 0060h:0021h - Eagle MS-DOS v1.25 IO.SYS - SET SYSTEM TIME
 InstallCheck:	MS-DOS v1.25 must be installed
 SeeAlso: @0060h:0000h,@0060h:001Eh,@0060h:0024h
 
-(Table 0011)
+(Table F011)
 Call entry point with:
 	CH = hours
 	CL = minutes
@@ -178,7 +178,7 @@ CALL 0060h:0024h - Eagle MS-DOS v1.25 IO.SYS - READ SYSTEM TIME
 InstallCheck:	MS-DOS v1.25 must be installed
 SeeAlso: @0060h:0000h,@0060h:001Eh,@0060h:0021h
 
-(Table 0012)
+(Table F012)
 Call entry point with:
 	nothing
 Return: AX = day count
@@ -191,7 +191,7 @@ CALL 0060h:0027h - Eagle MS-DOS v1.25 IO.SYS - CLEAR KEYBOARD BUFFER
 InstallCheck:	MS-DOS v1.25 must be installed
 SeeAlso: @0060h:0000h,@0060h:0003h,@0060h:0006h
 
-(Table 0013)
+(Table F013)
 Call entry point with:
 	nothing
 Return: ZF set
@@ -200,7 +200,7 @@ CALL 0060h:002Ah - Eagle MS-DOS v1.25 IO.SYS - SEARCH FOR NEXT DISK FORMAT
 InstallCheck:	MS-DOS v1.25 must be installed
 SeeAlso: @0060h:0000h,@0060h:001Bh
 
-(Table 0014)
+(Table F014)
 Call entry point with:
 	AL = drive table number
 Return: AL = next drive table number with matching disk sector size and media
@@ -262,7 +262,7 @@ SeeAlso: INT 7A/AX=0001h
 ---------------------------------------------
 CALL xxxxh:xxxxh - BIOS32 Service Directory
 InstallCheck:	scan paragraph boundaries E000h to FFFFh for signature string
-	"_32_", followed by a valid header structure (see below)
+	"_32_", followed by a valid header structure (see #F015)
 Notes:	an alternate PCI BIOS entry point may be found (if supported) by
 	  requesting the entry point for the API with identifier "$PCI"
 	an alternate entry point for INT 1A/AH=B4h may be found (if
@@ -270,12 +270,14 @@ Notes:	an alternate PCI BIOS entry point may be found (if supported) by
 	  "$ACF"
 
 Format of BIOS32 Service Directory header structure:
-Offset	Size	Description	(Table 0015)
+Offset	Size	Description	(Table F015)
  00h  4 BYTEs	signature "_32_"
- 04h	WORD	offset (within ROM containing this header) of BSD entry point
-	(full details not yet available)
+ 04h	DWORD	physical address of BSD entry point (see #F016)
+ 08h	WORD	version number??? (high byte = major, low byte = minor)
+ 0Ah	BYTE	checksum (8-bit sum of all bytes in structure, including this
+		  one, should equal zero)
 
-(Table 0016)
+(Table F016)
 Call BIOS32 Service Directory entry point with:
 	EBX = function
 	    00000000h get service entry point
@@ -296,6 +298,7 @@ Notes:	the BSD handler assumes that it is running in a 32-bit code segment
 	  including the value B1h or B4h in AH (AMI BIOS v1.00.05.AX1 returns
 	  the same entry point for both interfaces and uses AH to distinguish
 	  which API is desired)
+SeeAlso: #F015
 ---------------------------------------------
 CALL xxxxh:xxxxh - Borland TKERNEL
 InstallCheck:	see INT 2F/AX=FBA1h/BX=0082h
@@ -398,6 +401,10 @@ SeeAlso: INT 21/AH=3Fh"IFSHLP"
 CALL xxxxh:xxxxh - Interrupt Sharing Protocol
 InstallCheck:	see INT 2D"AMIS"
 SeeAlso: INT 2D"AMIS"
+---------------------------------------------
+CALL xxxxh:xxxxh - Intel System Management Bus BIOS
+InstallCheck:	see INT 15/AX=53B0h/BH=01h,INT 15/AX=53B0h/BH=02h
+SeeAlso: INT 15/AX=53B0h/BH=01h,INT 15/AX=53B0h/BH=05h
 ---------------------------------------------
 CALL xxxxh:xxxxh - INTRSPY v1.0 only
 InstallCheck:	see INT 60"INTRSPY"
@@ -550,10 +557,11 @@ SeeAlso: INT 2F/AX=ED03h
 CALL xxxxh:xxxxh - Plug-and-Play BIOS v1.0A
 InstallCheck:	scan paragraph boundaries F000h to FFFFh for signature string
 	  "$PnP" followed by a valid Plug-and-Play header structure
+	  (see #F017)
 SeeAlso: @xxxxh:xxxxh"BIOS32 Service Directory",INT 1A/AH=B4h
 
 Format of Plug-and-Play Installation Structure:
-Offset	Size	Description	(Table 0017)
+Offset	Size	Description	(Table F017)
  00h  4 BYTEs	signature "$PnP"
  04h	BYTE	Plug-and-Play version (major in high nybble, BCD minor in low)
 		10h for current specification
@@ -576,7 +584,7 @@ Offset	Size	Description	(Table 0017)
  1Bh	WORD	real mode data segment
  1Dh	DWORD	16-bit protected mode data segment base address
 
-(Table 0018)
+(Table F018)
 Call Plug-and-Play BIOS entry point with:
 	STACK:	WORD	function number
 			0000h Get Number of System Device Nodes
@@ -604,7 +612,7 @@ Notes:	the caller must provide at least 1024 bytes of stack space for use by
 	  16-bit protected mode (if calling from 32-bit protected mode, care
 	  must be taken to ensure proper alignment of the stack arguments)
 
-(Table 0019)
+(Table F019)
 Call Plug-and-Play BIOS function 00h with:
 	STACK:	WORD	0000h (function "Get Number of System Device Nodes")
 		DWORD	-> BYTE in which to return number of device nodes
@@ -614,7 +622,7 @@ Return: AX = status
 Note:	the large-model C declaration is
 	  int (*entry)(int, unsigned char *, unsigned int *, unsigned int);
 
-(Table 0020)
+(Table F020)
 Call Plug-and-Play BIOS function 01h with:
 	STACK:	WORD	0001h (function "Get System Device Node")
 		DWORD	-> BYTE containing node number or handle
@@ -630,7 +638,7 @@ Notes:	the large-model C declaration is
 		unsigned int);
 	exactly one of the two defined bits in the control flag must be set
 
-(Table 0021)
+(Table F021)
 Call Plug-and-Play BIOS function 02h with:
 	STACK:	WORD	0002h (function "Set System Device Node")
 		DWORD	-> BYTE containing node number or handle
@@ -646,16 +654,16 @@ Notes:	the large-model C declaration is
 		unsigned int);
 	exactly one of the two defined bits in the control flag must be set
 
-(Table 0022)
+(Table F022)
 Call Plug-and-Play BIOS function 03h with:
 	STACK:	WORD	0003h (function "Get Event")
-		DWORD	-> WORD buffer for event message identifier (see below)
+		DWORD	-> WORD buffer for event message identifier (see #F023)
 		WORD	PnP BIOS writable segment/selector
 Return: AX = status
 Note:	the large-model C declaration is
 	  int (*entry)(int, unsigned int *, unsigned int);
 
-(Table 0023)
+(Table F023)
 Values for PnP Event Identifier:
  0001h	"ABOUT_TO_CHANGE_CONFIG" preliminary notification of changes, including
 	  docking and undocking
@@ -667,16 +675,17 @@ Values for PnP Event Identifier:
  8000h-FFFEh OEM-defined events
  FFFFh	"UNKNOWN_SYSTEM_EVENT"
 
-(Table 0024)
+(Table F024)
 Call Plug-and-Play BIOS function 04h with:
 	STACK:	WORD	0004h (function "Send Message")
-		WORD	message identifier (see below)
+		WORD	message identifier (see #F025)
 		WORD	PnP BIOS writable segment/selector
 Return: AX = status
 Note:	the large-model C declaration is
 	  int (*entry)(int, unsigned int, unsigned int);
+SeeAlso: #F024,#F026
 
-(Table 0025)
+(Table F025)
 Values for PnP Message Identifier:
  0000h	"OK"
  0001h	"ABORT" action which caused an ABOUT_TO_X message
@@ -688,16 +697,17 @@ Values for PnP Message Identifier:
  0044h-007Fh reserved for future Control Messages
  8000h-FFFFh OEM-defined messages
 
-(Table 0026)
+(Table F026)
 Call Plug-and-Play BIOS function 05h with:
 	STACK:	WORD	0005h (function "Get Docking Station Information")
-		DWORD	-> buffer for docking station info (see below)
+		DWORD	-> buffer for docking station info (see #F029)
 		WORD	PnP BIOS writable segment/selector
 Return: AX = status
 Note:	the large-model C declaration is
 	  int (*entry)(int, unsigned char *, unsigned int);
+SeeAlso: #F024,#F027
 
-(Table 0027)
+(Table F027)
 Call Plug-and-Play BIOS function 07h with:
 	STACK:	WORD	0007h (function "Select Primary Boot Devices")
 		WORD	type of primary boot device
@@ -719,7 +729,7 @@ Note:	the large-model C declaration is
 	  int (*entry)(int, int, unsigned long, unsigned long, unsigned long,
 		int, int, char *, unsigned int);
 
-(Table 0028)
+(Table F028)
 Call Plug-and-Play BIOS function 08h with:
 	STACK:	WORD	0008h (function "Get Primary Boot Devices")
 		WORD	type of primary boot device
@@ -738,7 +748,7 @@ Note:	the large-model C declaration is
 		unsigned long *, unsigned int *, char *, unsigned int);
 
 Format of Plug-and-Play Docking Station Information:
-Offset	Size	Description	(Table 0029)
+Offset	Size	Description	(Table F029)
  00h	DWORD	docking station location identifier (EISA device ID format)
 		FFFFFFFFh if unknown or no product identifier
  04h	DWORD	serial number or 00000000h
@@ -752,7 +762,7 @@ Offset	Size	Description	(Table 0029)
 		bit 0: docking station provides support for controlling
 		      sequence of docking/undocking
 
-(Table 0030)
+(Table F030)
 Call Plug-and-Play BIOS function 09h with:
 	STACK:	WORD	0009h (function "Set Statically Allocated Resource
 			  Information")
@@ -766,7 +776,7 @@ Notes:	the large-model C declaration is
 	  ESCD, and the caller should thus use functions 41h to 43h instead
 	  of 09h and 0Ah
 
-(Table 0031)
+(Table F031)
 Call Plug-and-Play BIOS function 0Ah with:
 	STACK:	WORD	000Ah (function "Get Statically Allocated Resource
 			  Information")
@@ -780,12 +790,12 @@ Notes:	the large-model C declaration is
 	  ESCD, and the caller should thus use functions 41h to 43h instead
 	  of 09h and 0Ah
 
-(Table 0032)
+(Table F032)
 Call Plug-and-Play BIOS function 0Bh with:
 	STACK:	WORD	000Bh (function "Get APM ID Table")
 			  Information")
 		DWORD	-> WORD buffer for size of data buffer
-		DWORD	-> buffer for storing APM ID table (see below)
+		DWORD	-> buffer for storing APM ID table (see #F033)
 		WORD	PnP BIOS writable segment/selector
 Return: AX = status
 Desc:	copies the Advanced Power Management v1.1 device identifier table to
@@ -795,28 +805,28 @@ Note:	the large-model C declaration is
 SeeAlso: INT 15/AX=5300h
 
 Format of Plug-and-Play APM ID Table:
-Offset	Size	Description	(Table 0033)
+Offset	Size	Description	(Table F033)
  00h	DWORD	Plug-and-Play device identifier
  04h	WORD	APM v1.1+ identifier
 
-(Table 0034)
+(Table F034)
 Call Plug-and-Play BIOS function 40h with:
 	STACK:	WORD	0040h (function "Get Plug-and-Play ISA Configuration
 			  Structure")
-		DWORD	-> buffer for configuration structure (see below)
+		DWORD	-> buffer for configuration structure (see #F035)
 		WORD	PnP BIOS writable segment/selector
 Return: AX = status
 Note:	the large-model C declaration is
 	  int (*entry)(int, unsigned char *, unsigned int);
 
 Format of Plug-and-Play ISA Configuration Structure:
-Offset	Size	Description	(Table 0035)
+Offset	Size	Description	(Table F035)
  00h	BYTE	structure revision level (01h)
  01h	BYTE	total Card Select Numbers (CSNs) assigned
  02h	WORD	ISA Read Data Port
  04h	WORD	reserved (0)
 
-(Table 0036)
+(Table F036)
 Call Plug-and-Play BIOS function 41h with:
 	STACK:	WORD	0041h (function "Get Extended System Configuration
 			  Information")
@@ -831,7 +841,7 @@ Note:	the large-model C declaration is
 		  unsigned int);
 SeeAlso: INT 1A/AX=B401h
 
-(Table 0037)
+(Table F037)
 Call Plug-and-Play BIOS function 42h with:
 	STACK:	WORD	0042h (function "Read Extended System Configuration
 			  Data")
@@ -845,7 +855,7 @@ Notes:	the large-model C declaration is
 	if an ESCD selector is required, the caller must construct a 16-bit
 	  data segment selector with a limit of 64K
 
-(Table 0038)
+(Table F038)
 Call Plug-and-Play BIOS function 43h with:
 	STACK:	WORD	0043h (function "Write Extended System Configuration
 			  Data")
@@ -859,7 +869,7 @@ Notes:	the large-model C declaration is
 	if an ESCD selector is required, the caller must construct a 16-bit
 	  data segment selector with a limit of 64K
 
-(Table 0039)
+(Table F039)
 Values for Plug-and-Play function status code:
  0000h	successful
  0001h	boot device resource configuration not saved to nonvolatile memory
@@ -885,7 +895,7 @@ Values for Plug-and-Play function status code:
  008Fh	hardware error
 
 Format of Option ROM header:
-Offset	Size	Description	(Table 0040)
+Offset	Size	Description	(Table F040)
  00h	WORD	AA55h signature
  02h	BYTE	length of option ROM in 512-byte pages (should be multiple 4)
  03h  4 BYTEs	standard initialization entry point
@@ -894,7 +904,7 @@ Offset	Size	Description	(Table 0040)
  1Ah	WORD	offset to PnP Expansion Header
 
 Format of Expansion Header:
-Offset	Size	Description	(Table 0041)
+Offset	Size	Description	(Table F041)
  00h  4 BYTEs	signature ("$PnP" for Plug-and-Play expansion header)
  04h	BYTE	structure version number
  05h	BYTE	length of entire header in paragraphs
@@ -906,23 +916,23 @@ Offset	Size	Description	(Table 0041)
  0Ah	DWORD	Plug-and-Play device identifier
  0Eh	WORD	offset of manufacturer ID string in Option ROM or 0000h
  10h	WORD	offset of product name string in Option ROM or 0000h
- 12h  3 BYTEs	device type code (see below)
+ 12h  3 BYTEs	device type code (see #F043)
 		byte 0: base type (general kind of device)
 		byte 1: device subtype
 		byte 2: device programming interface
- 15h	BYTE	device indicator flags (see below)
+ 15h	BYTE	device indicator flags (see #F042)
  16h	WORD	Boot Connection Vector offset (real/protected mode) or 0000h
-		(see below)
+		(see #F046)
  18h	WORD	Disconnect Vector offset (real/protected mode) or 0000h
 		far-called by system BIOS is boot attempt failed
  1Ah	WORD	bootstrap entry point (real/protected mode) or 0000h
  1Ch	WORD	reserved (0)
  1Eh	WORD	Static Resource Information offset (real/prot mode) or 0000h
 		should be used only by non-PnP devices to make them PnP-aware
-		  (see below)
+		  (see #F047)
 
 Bitfields for Plug-and-Play device indicator flags:
-Bit(s)	Description	(Table 0042)
+Bit(s)	Description	(Table F042)
  7	supports Device Driver Initialization model
  6	may be shadowed in RAM
  5	may be read cached
@@ -931,8 +941,9 @@ Bit(s)	Description	(Table 0042)
  2	device is Initial Program Load (IPL, i.e. boot) device
  1	device is Input device
  0	device is Display device
+SeeAlso: #F043
 
-(Table 0043)
+(Table F043)
 Values for Plug-and-Play device type code:
 Type	Subtype		Description
  00h	---	reserved
@@ -990,8 +1001,9 @@ Type	Subtype		Description
 	00h	  386-based
 	01h	  486-based
 	02h	  Pentium-based
+SeeAlso: #F042,#F044
 
-(Table 0044)
+(Table F044)
 Values for Plug-and-Play generic EISA device ID:
  PNP0xxx	system devices
  PNP00xx	  interrupt controller
@@ -1013,8 +1025,9 @@ Values for Plug-and-Play generic EISA device ID:
  PNP9xxx	modem
  PNPAxxx	SCSI controller/proprietary CD-ROM controller
  PNPBxxx	sound/video/multimedia
+SeeAlso: #F043,#F045
 
-(Table 0045)
+(Table F045)
 Values for data tags:
  22h	IRQ descriptor, no flags
  23h	IRQ descriptor, with flags
@@ -1025,8 +1038,9 @@ Values for data tags:
  47h	I/O port descriptor
  4Bh	fixed-location I/O port descriptor
  78h	"END_TAG" end of resource descriptors
+SeeAlso: #F044
 
-(Table 0046)
+(Table F046)
 Values Boot Connection Vector is called with:
 	AX = which vectors to hook
 	   bit 2: connect as IPL (INT 13)
@@ -1035,14 +1049,16 @@ Values Boot Connection Vector is called with:
 	ES:DI -> system BIOS PnP Installation Check Structure
 	BX = Card Select Number for this card (ISA bus only)
 	DX = read data port (ISA only) or FFFFh
+SeeAlso: #F047
 
-(Table 0047)
+(Table F047)
 Values Static Resource Information vector is called with:
 	ES:DI -> buffer for device's static resource config info (at least 1024
 		  bytes)
+SeeAlso: #F046
 
 Format of Plug-and-Play System Device Node:
-Offset	Size	Description	(Table 0048)
+Offset	Size	Description	(Table F048)
  00h	WORD	size of device node in bytes
  02h	BYTE	device node number/handle
  03h	DWORD	EISA product identifier
@@ -1106,13 +1122,13 @@ SeeAlso:
 ---------------------------------------------
 
 --------!---Admin----------------------------
-Highest Table Number = 0048
+Highest Table Number = F048
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER45A through INTER45D (preferably the original
+quartet of archives named INTER46A through INTER46D (preferably the original
 authenticated PKZIP archives), and the utility programs in a fifth archive
-called INTER45E.ZIP
+called INTER46E.ZIP
 
 This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
 --------!---CONTACT_INFO---------------------

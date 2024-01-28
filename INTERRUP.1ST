@@ -1,21 +1,22 @@
-Interrupt List		Release 45			   Last change 3/26/95
+Interrupt List		Release 46			   Last change 6/04/95
 
 Please redistribute the following files unmodified as a group, in a quartet of
-archives named INTER45A through INTER45D (preferably the original authenticated
+archives named INTER46A through INTER46D (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	this file
-	INTERRUP.A	INT 00 through INT 13/3F  \
-	INTERRUP.B	INT 13/40 through INT 15/5F\
-	INTERRUP.C	INT 15/60 through INT 1A/AF \  
-	INTERRUP.D	INT 1A/B0 through INT 21/44  \	 total 1755 pages at
-	INTERRUP.E	INT 21/45 through INT 21/BF   \	 60 lines per page,
-	INTERRUP.F	INT 21/C0 through INT 2D       > 1869 with INTPRINT -p
-	INTERRUP.G	INT 2E through INT 2F/79      /	 (7056 entries)
-	INTERRUP.H	INT 2F/7A through INT 2F/FD  /	 (2617 tables)
-	INTERRUP.I	INT 2F/FE through INT 60    /
-	INTERRUP.J	INT 61 through INT 67	   /
-	INTERRUP.K	INT 68 through INT 7E	  /
-	INTERRUP.L	INT 7F through INT FF	 /
+	INTERRUP.A	INT 00 through INT 13/2F  \
+	INTERRUP.B	INT 13/30 through INT 15/4F\
+	INTERRUP.C	INT 15/50 through INT 1A/5F \  
+	INTERRUP.D	INT 1A/60 through INT 21/43  \	 total 1835 pages at
+	INTERRUP.E	INT 21/44 through INT 21/62   \	 60 lines per page,
+	INTERRUP.F	INT 21/63 through INT 25       > 1957 with INTPRINT -p
+	INTERRUP.G	INT 26 through INT 2F/4A      /	 (7319 entries)
+	INTERRUP.H	INT 2F/4B through INT 2F/DF  /	 (2709 tables)
+	INTERRUP.I	INT 2F/E0 through INT 5F    /
+	INTERRUP.J	INT 60 through INT 61	   /
+	INTERRUP.K	INT 62 through INT 6E	  /
+	INTERRUP.L	INT 6F through INT 7F	 /
+	INTERRUP.M	INT 80 through INT FF   /
 	INTERRUP.PRI	a brief primer on interrupts
 	INTPRINT.COM	a simple formatter that also generates a list summary
 	INTPRINT.DOC	instructions for INTPRINT
@@ -29,20 +30,25 @@ PKZIP archives):
 	PORTS.LST	a listing of I/O ports
 	CATEGORY.KEY	descriptions of divider-line category letters
 	COMBINE.BAT	combine the pieces of the list into a single file
-The following files should be distributed in an archive called INTER45E:
+The following files should be distributed in an archive called INTER46E:
 	86BUGSnn.ZIP	programs to test for CPU bugs
 	INT.*		invoke interrupts from commandline
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
+	INT2HLP.ZIP	convert list into QuickHelp database
 	INT2QH.*	convert list into QuickHelp database
-	INT2WHLP.*	convert list into Windows Help database
-	INTERVUE.EXE	indexed interrupt list browser
 	INTHELP.*	convert list into TurboPower GUIDE database
 	INTHLP??.ZIP	Interrupt Helper viewer for the interrupt list
 	INTLIST.E	Epsilon extension for handling list
-	INTLIST.ICO	Windows icon for INTERVUE
 	INTPRINT.C	source code for INTPRINT
+	INTSM*.ZIP	Interrupt Summary viewer for the interrupt list
+	RB2NG???.ZIP	convert list into Norton Guides database
+	INTERVUE.EXE	indexed interrupt list browser
+	INTLIST.ICO	Windows icon for INTERVUE
 	IV.BAT		wrapper for INTERVUE
-	RB2NGnnn.*	convert list into Norton Guides database
+Finally, the following files should be distributed in an archive INTER46F:
+	INT2WHLP.ZIP	convert list into Windows Help database
+	HINTSRCH.ZIP	WinHelp DLL for full-text searches of interrupt list
+	WH_ED*.ZIP	WinHelp-file editor
 
 Concatenate INTERRUP.A, .B, .C, .D, .E, .F, .G, .H, .I, .J, .K, and .L with
 COMBINE.BAT to create an interrupt list file identical to my master copy.
@@ -484,7 +490,7 @@ This list is the result of the time and effort of a large number of people:
  3/94 Clinton Warren   CIW@MACOLA.usa.com	      Novell XQL
  3/94 Reidar Gresseth  gresseth@unixg.ubc.ca	      Explosiv API
  4/94 Uwe Zimmermann   u.zimmermann@genie.geis.com    Adv.Power Management v1.1
- 4/94 Thomas Brugger   fd1@aixfile1.urz.uni-heidelberg.de  miscellaneous
+ 4/94 Thomas Brugger   fd1@aixfile1.urz.uni-heidelberg.de  NetWare VLMs & more
  5/94 Wolfgang Lierz   Wolfgang.Lierz@gmd.de	      Toshiba laptops,misc
  5/94 Jan Beulich      Jan_Beulich@Novell.COM	      DPMS v1.0
  5/94 Ralf Brown       ralf@telerama.lm.com	      Novell DOS 7 EMM386.EXE
@@ -514,7 +520,7 @@ This list is the result of the time and effort of a large number of people:
 10/94 M.w. Pieters     aj132@Freenet.HSC.Colorado.EDU DimVGA 3.4, ObjectKernel
 10/94 Delman Lee       delman@mipg.upenn.edu	      Phoenix Enh. Disk Drive
 10/94 Gary E. Miller   gem@rellim.com		      VESA VBE/Power Management
-11/94 Andreas Groegel lax71240@servus.rus.uni-stuttgart.de VESA Audio Interface
+11/94 Andreas Groegel  ag@studbox.uni-stuttgart.de    VESA Audio Interface
 11/94 Wolfgang Lierz   Wolfgang.Lierz@gmd.de	      HP 100LX/200LX
 11/94 Mojmir Strhan    strhan@simultan.ch	      MSG.COM, PC Mag WINGO
 11/94 Tim Farley       TIM@magee.mhs.compuserve.com   Award CMOS, PCMCIA ExCA
@@ -539,6 +545,15 @@ This list is the result of the time and effort of a large number of people:
  3/95 Wolfgang Lierz   Wolfgang.Lierz@gmd.de	      Stacker 4, Stac Anywhere
  3/95 Norman L. DeForest af380@cfn.cs.dal.ca	      TI Professional PC
  3/95 Norman L. DeForest af380@cfn.cs.dal.ca	      miscellaneous
+ 3/95 Gerard Mannig    mannig@world-net.sct.fr	      AMI BIOS-FLASH interface
+ 4/95 Ralf Brown       ralf@telerama.lm.com	      AMI BIOS INT 15 extensns
+ 4/95 Tim Farley       TIM@magee.mhs.compuserve.com   PCMCIA Socket Serv. 2.1
+ 4/95 Matthias Paul    MPAUL@ibh.rwth-aachen.de       miscellaneous
+ 5/95 Peter Charles Tonoli 071836@edna.cc.swin.edu.au CauseWay
+ 5/95 Stanley Appel    appel@stack.urc.tue.nl	      DOS32, virus inst.checks
+ 5/95 Tim Farley       TIM@magee.mhs.compuserve.com   Intel SMBus
+ 5/95 Stanley Appel    appel@stack.urc.tue.nl	      DIGPAK, MIDPAK
+ 5/95 Wolfgang Lierz   Wolfgang.Lierz@gmd.de	      C&T chips, LapLink RemAcc
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -573,7 +588,7 @@ Also contributing:
  Michael L. Kaufman <kaufman@eecs.nwu.edu>, John Jurewicz 76004.2311,
  Michael D. Lawler <mdlawler@bsu-cs.bsu.edu>, Norbert Juffa (Karlsruhe, FRG),
  Chris Blum <76625.1041@compuserve.com>,David Fink <73700.3076@compuserve.com>,
- Klaus Hartnegg <hartnegg@sun1.ruf.uni-freiburg.de>, Thomas Lukka 2:227/16,
+ Klaus Hartnegg <hartnegg@ruf.uni-freiburg.de>, Thomas Lukka 2:227/16,
  Norbert Sommer <100016.1241@compuserve.com>, John.Brennen@VI.RI.CMU.EDU,
  Paul van Keep <75170.1045@compuserve.COM>,John B. Thiel <jbthiel@cse.ogi.edu>,
  Ken Medellin via <76702,1071@compuserve.com>, Bob Green <bob@inmos.co.uk>,
@@ -650,12 +665,16 @@ Also contributing:
  Kris Heidenstrom <Kris.Heidenstrom@actrix.gen.nz>, bill.dickson@dscmail.com,
  Dave Stephenson <bb683@freenet.toronto.on.ca>, Fernando ? <fido@fing.edu.uy>,
  Michael Heier <100427.2105@compuserve.com>, Robert Raymond CIS 74601.354,
- Gerard Mannig <mannig@world-net.sct.fr>, Joe C. <u8123027@cc.nctu.edu.tw>,
+ Joe C. <u8123027@cc.nctu.edu.tw>, Dan Miller <derelict@netcom.com>,
  Niels Kristian Bech Jensen <nkbj@kemi.aau.dk>,Alex Zinin <zinin@icl.kazan.su>,
  Ralf D. Kloth <kloth@sunwan.mpik-tueb.mpg.de>, eckertw@worms-emh4.army.mil,
- Giorgio Caimi <caimi@zeus.csr.unibo.it>,
- Jaroslaw Rafa <sfrafa@lfs.cyf-kr.edu.pl>,
- Axel C. Frinke <frinke@athene.informatik.uni-bonn.de>
+ Giorgio Caimi <caimi@zeus.csr.unibo.it>, Bob Longnecker <blong@mav.com>,
+ Jaroslaw Rafa <sfrafa@lfs.cyf-kr.edu.pl>, Mojmir Strhan <strhan@simultan.ch>,
+ Axel C. Frinke <frinke@athene.informatik.uni-bonn.de>,
+ Julian Nicholls <julian@aladdin.co.uk>,
+ Jun-ichiro ITOH <itojun@csl.sony.co.jp>,
+ Vincent Lyonel <vincentl@cc.ec-lyon.fr>, George Lefterov <george@virbus.bg>,
+ Pascal Moulart <100572.1021@compuserve.com>, John Murphy <murf@perftech.com>,
 --------!---BIBLIOGRAPHY---------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -1226,6 +1245,20 @@ _Guide_ Third edition (April 1987, for Release 1.2).  Added 3/17/95.
 
 QRIP API extracted from QRIPTECH.TXT in RIPCPP10.ZIP (C++ class library for
 using QRIP/TSR).  Added 3/17/95.
+
+AMI BIOS-FLASH interface from "AMIFLASH - Flash Implementation Guide",
+available as FLASH110.ZIP on American Megatrends' BBS and FTP sites.
+Added 3/31/95.
+
+Many Windows VxD function numbers extracted from PharLap's PHARLAPX header
+file PHAR386.H.  Added by Ralf Brown 4/14/95.
+
+PHARLAPX VxD API extracted from PharLap's
+ftp.pharlap.com:/pub/286dosx/pharlapx.zip.  Added by Ralf Brown, 4/14/95.
+
+Intel SMBus info from _Intel_System_Management_Bus_BIOS_Interface_
+_Specification_, _Revision_1.0_, February 15, 1995, by Intel Architecture
+Labs.  Added 5/14/95.
 --------!---ADDRESSES------------------------
 The following have provided API reference and other materials at no charge:
 
@@ -1273,6 +1306,12 @@ Long Island City, NY 11101
 Voice: (718) 392-3100
 FAX:   (718) 392-4212
 BBS:   (718) 392-4054
+
+Intel Architecture Labs		(SMBus and other specs)
+Voice: (800) 627-8686
+FAX:   (916) 356-6100
+       (916) 356-3551 (international)
+Email: IAL_Support@ccm.hf.intel.com
 
 Intel Literature		(DOS Protected-Mode Interface)
 3065 Bowers Avenue
@@ -1336,6 +1375,7 @@ Provo, UT 84601
 Voice: (800) 453-1267
        (801) 379-5900
 FTP:	ftp.novell.com, sjf-lwp.novell.com
+WWW:	http://occam.sjf.novell.com:8080/
 
 Phar Lap Software, Inc.		(Virtual Control Program Interface)
 60 Aberdeen Avenue
@@ -1403,6 +1443,10 @@ Other addresses:
 J.M. Allen Creations		(PRINDIR)
 115 Lynn Street			[8/92]
 Fremont, OH 43420
+
+American Megatrends, Inc.	(AMIBIOS, BIOS-FLASH)
+Voice:	(800) 828-9264		[1994]
+FTP:	american.megatrends.com
 
 A.N.D. Technologies		(PSPS)
 P.O. Box 64811			[5/93]

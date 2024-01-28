@@ -1,5 +1,5 @@
 GLOSSARY
-Last Change 11/6/94.
+Last Change 6/04/95.
 
 A20
 	(Address line 20) The 80286 and higher CPUs allow addresses in
@@ -171,7 +171,7 @@ CP/M for the Intel 8086.
 CP/M-86
 	One of the three operating systems offered by IBM for its
 original PC (the other two were MSDOS and the UCSD p-System).  It has
-since evolved into DR-DOS version 6.
+since evolved into DR-DOS version 6 and Novell DOS 7.
 
 CPU
 	(Central Processing Unit) The microprocessor which executes
@@ -251,6 +251,11 @@ DOS Protected-Mode Interface
 allocate memory, invoke real-mode software, etc.  See also Virtual Control
 Program Interface.
 
+DOS Protected-Mode Services
+	An API designed by Novell (and first released with Novell DOS 7) which
+allows TSRs to store most of themselves outside of the first megabyte of
+memory.
+
 DPB
 	see Drive Paramter Block
 
@@ -259,6 +264,9 @@ DPL
 
 DPMI
 	see DOS Protected-Mode Interface
+
+DPMS
+	see DOS Protected-Mode Services
 
 DRAM
 	(Dynamic Random Access Memory) RAM memory which essentially consists

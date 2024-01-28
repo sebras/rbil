@@ -1,22 +1,23 @@
-Interrupt List		Release 45			Last change 3/26/95
+Interrupt List		Release 46			Last change 6/04/95
 This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
 --------!---FILELIST-------------------------
 Please redistribute the following files unmodified as a group, in a quartet of
-archives named INTER45A through INTER45D (preferably the original authenticated
+archives named INTER46A through INTER46D (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
-	INTERRUP.A	INT 00 through INT 13/3F  \
-	INTERRUP.B	INT 13/40 through INT 15/5F\
-	INTERRUP.C	INT 15/60 through INT 1A/AF \  
-	INTERRUP.D	INT 1A/B0 through INT 21/44  \	 total 1755 pages at
-	INTERRUP.E	INT 21/45 through INT 21/BF   \	 60 lines per page,
-	INTERRUP.F	INT 21/C0 through INT 2D       > 1869 with INTPRINT -p
-	INTERRUP.G	INT 2E through INT 2F/79      /	 (7056 entries)
-	INTERRUP.H	INT 2F/7A through INT 2F/FD  /	 (2617 tables)
-	INTERRUP.I	INT 2F/FE through INT 60    /
-	INTERRUP.J	INT 61 through INT 67	   /
-	INTERRUP.K	INT 68 through INT 7E	  /
-	INTERRUP.L	INT 7F through INT FF	 /
+	INTERRUP.A	INT 00 through INT 13/2F  \
+	INTERRUP.B	INT 13/30 through INT 15/4F\
+	INTERRUP.C	INT 15/50 through INT 1A/5F \  
+	INTERRUP.D	INT 1A/60 through INT 21/43  \	 total 1835 pages at
+	INTERRUP.E	INT 21/44 through INT 21/62   \	 60 lines per page,
+	INTERRUP.F	INT 21/63 through INT 25       > 1957 with INTPRINT -p
+	INTERRUP.G	INT 26 through INT 2F/4A      /	 (7319 entries)
+	INTERRUP.H	INT 2F/4B through INT 2F/DF  /	 (2709 tables)
+	INTERRUP.I	INT 2F/E0 through INT 5F    /
+	INTERRUP.J	INT 60 through INT 61	   /
+	INTERRUP.K	INT 62 through INT 6E	  /
+	INTERRUP.L	INT 6F through INT 7F	 /
+	INTERRUP.M	INT 80 through INT FF   /
 	INTERRUP.PRI	a brief introduction to interrupts
 	INTPRINT.COM	a simple formatter that also generates a list summary
 	INTPRINT.DOC	instructions for INTPRINT
@@ -30,20 +31,24 @@ PKZIP archives):
 	PORTS.LST	a listing of I/O ports
 	CATEGORY.KEY	descriptions of divider-line category letters
 	COMBINE.BAT	combine the pieces of the list into a single file
-The following files should be distributed in an archive called INTER45E:
+The following files should be distributed in an archive called INTER46E:
 	86BUGSnn.ZIP	programs to test for CPU bugs
 	INT.*		invoke interrupts from commandline
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
+	INT2HLP.ZIP	convert list into QuickHelp database
 	INT2QH.*	program to convert list into QuickHelp database
-	INT2WHLP.*	convert list into Windows Help database
-	INTERVUE.EXE	indexed interrupt list browser
 	INTHLP??.ZIP	Interrupt Helper viewer for the interrupt list
 	INTHELP.*	convert list into TurboPower GUIDE database
 	INTLIST.E	Epsilon extension for handling list
-	INTLIST.ICO	Windows icon for INTERVUE
 	INTPRINT.C	source code for INTPRINT
+	RB2NG???.ZIP	convert list into Norton Guides database
+	INTERVUE.EXE	indexed interrupt list browser
+	INTLIST.ICO	Windows icon for INTERVUE
 	IV.BAT		wrapper for INTERVUE
-	RB2NGnnn.*	convert list into Norton Guides database
+Finally, the following should be distributed in an archive called INTER46F:
+	INT2WHLP.ZIP	convert list into Windows Help database
+	HINTSRCH.ZIP	WinHelp DLL for full-text searches of interrupt list
+	WH_ED*.ZIP	WinHelp-file editor
 --------!---CONTACT_INFO---------------------
 If you notice any mistakes or omissions, please let me know!  It is only with
 YOUR help that the list can continue to grow at the current rate.  Please send
@@ -442,7 +447,7 @@ SeeAlso: INT 2F/AX=A901h,INT 4A"TI Professional",INT 51"DESQview"
 SeeAlso: INT 59"DoubleDOS",INT 79"GO32"
 
 (Table 0005)
-Values for keyboard scan code:
+Values for keyboard make/break (scan) code:
  01h	Esc		 31h	N
  02h	1 !		 32h	M
  03h	2 @		 33h	, <		 63h	F16
@@ -478,22 +483,40 @@ Values for keyboard scan code:
  21h	F		 51h	PgDn
  22h	G		 52h	Ins
  23h	H		 53h	Del
- 24h	J		 54h	SysReq
- 25h	K
+ 24h	J		 54h	SysReq		---non-key codes---
+ 25h	K					 00h	kbd buffer full
  26h	L		 56h	left \| (102-key)
- 27h	; :		 57h	F11
- 28h	' "		 58h	F12		 AAh	self-test complete
- 29h	` ~					 E0h	prefix code
- 2Ah	Left Shift	 5Ah	PA1		 E1h	prefix code
- 2Bh	\ |		 5Bh	F13		 EEh	ECHO
- 2Ch	Z		 5Ch	F14		 F0h	prefix code (key break)
- 2Dh	X		 5Dh	F15		 FAh	ACK 
- 2Eh	C					 FDh	diagnostic failure
+ 27h	; :		 57h	F11		 AAh	self-test complete
+ 28h	' "		 58h	F12		 E0h	prefix code
+ 29h	` ~					 E1h	prefix code
+ 2Ah	Left Shift	 5Ah	PA1		 EEh	ECHO
+ 2Bh	\ |		 5Bh	F13 (LWin)	 F0h	prefix code (key break)
+ 2Ch	Z		 5Ch	F14 (RWin)	 FAh	ACK
+ 2Dh	X		 5Dh	F15 (Menu)	 FCh	diag failure (MF-kbd)
+ 2Eh	C					 FDh	diag failure (AT-kbd)
  2Fh	V					 FEh	RESEND
  30h	B					 FFh	kbd error/buffer full
 Notes:	scan codes 56h-E1h are only available on the extended (101/102-key)
-	  keyboard and Host Connected (122-key) keyboard; scan codes 5Ah-76h
-	  are only available on the 122-key keyboard
+	  keyboard and Host Connected (122-key) keyboard; scan codes 5Bh-5Dh
+	  are only available on the 122-key keyboard and the Microsoft Natural
+	  Keyboard; scan codes 5Eh-76h are only available on the 122-key
+	  keyboard
+	in the default configuration, break codes are the make scan codes with
+	  the high bit set; make codes 60h,61h,70h, etc. are not available
+	  because the corresponding break codes conflict with prefix codes
+	  (code 2Ah is available because the self-test result code AAh is only
+	  sent on keyboard initialization).  An alternate keyboard
+	  configuration can be enabled on AT and later systems with enhanced
+	  keyboards, in which break codes are the same as make codes, but
+	  prefixed with an F0h scan code
+	prefix code E0h indicates that the following make/break code is for a
+	  "gray" duplicate to a key which existed on the original PC keyboard;
+	  prefix code E1h indicates that the following make code has no
+	  corresponding break code (currently only the Pause key generates no
+	  break code)
+	the Microsoft Natural Keyboard sends make codes 5Bh, 5Ch, and 5Dh
+	  (all with an E0h prefix) for the Left Windows, Right Windows, and
+	  Menu keys on the bottom row
 	the SysReq key is often labeled SysRq
 SeeAlso: #0460
 --------C-09---------------------------------
@@ -1601,7 +1624,7 @@ Return: AL = 7Fh if successful (AT&T VDC600)
 	CH = total video RAM size in 64k byte units
 	CL = video RAM used by the current mode
 Note:	under Novell DOS 7 TaskMgr Multitasker, this call always returns 0K
-	  video memory in BX
+	  video memory in CX
 SeeAlso: AX=007Fh/BH=00h,AX=007Fh/BH=01h
 --------V-10007F-----------------------------
 INT 10 - VIDEO - Paradise VGA, AT&T VDC600 - EXTENDED FUNCTIONS
@@ -2074,6 +2097,7 @@ SeeAlso: AX=1002h,AX=1008h,AX=CD01h
 INT 10 - VIDEO - SET ALL PALETTE REGISTERS (PCjr,Tandy,EGA,VGA)
 	AX = 1002h
 	ES:DX -> palette register list (see #0017)
+	BH = 00h to avoid problems on some adapters
 Note:	under UltraVision, the palette locking status (see AX=CD01h)
 	  determines the outcome
 SeeAlso: AX=1000h,AX=1001h,AX=1009h,AX=CD01h
@@ -2160,6 +2184,8 @@ INT 10 - VIDEO - READ INDIVIDUAL DAC REGISTER (VGA/MCGA)
 Return: DH = red value
 	CH = green value
 	CL = blue value
+	AX destroyed by some BIOSes
+	      (e.g. Tseng ET4000 BIOS v8.00n always returns AX=00C9h)
 SeeAlso: AX=1010h,AX=1017h
 --------V-101017-----------------------------
 INT 10 - VIDEO - READ BLOCK OF DAC REGISTERS (VGA/MCGA)
@@ -2487,6 +2513,10 @@ Return: BH = video state
 Note:	one possible check for the presence of an EGA or later display card
 	  is to call this function with BH=FFh; if not present, BH will be
 	  unchanged on return
+	another installation check is used by Athena Digital's HGCIBM, which
+	  sets CX to FFFFh on calling and checks whether it has been changed
+	  on return
+Index:	installation check;EGA
 
 Bitfields for feature connector bits:
 Bit(s)	Description	(Table 0021)
@@ -2632,6 +2662,13 @@ INT 10 - VIDEO - ALTERNATE FUNCTION SELECT (PS, VGA) - VIDEO REFRESH CONTROL
 Return: AL = 12h if function supported
 Desc:	specify whether the contents of video memory should be displayed on
 	  the screen; disabling refresh effectively blanks the screen
+Note:	when display refresh is disabled, the entire screen displays the color
+	  specified by the DAC color register 00h; thus to actually blank the
+	  screen, the application must first ensure that that register has been
+	  set to black
+BUG:	GEM/VIEWMAX ET3000 and ET4000 drivers dated 6/23/88 do not correctly
+	  reenable refresh after the screen has been blanked due to inactivity,
+	  resulting in a total loss of video synchronization
 SeeAlso: AX=BF05h
 --------V-1012--BL37-------------------------
 INT 10 - VIDEO - XGA - MAINFRAME INTERACTIVE SUPPORT
@@ -3122,7 +3159,7 @@ INT 10 - VIDEO - DOS/V - GET/SET FONT PATTERN
 	    01h set font pattern
 	BX = 0000h
 	CL = character size in bytes (01h,02h)
-	CH = 00h 
+	CH = 00h
 	DH = character width in pixels
 	DL = character height in pixels
 	ES:DI -> buffer for/containing font image
@@ -3143,11 +3180,13 @@ INT 10 - VIDEO - GET DISPLAY COMBINATION CODE (PS,VGA/MCGA)
 Return: AL = 1Ah if function was supported
 	    BL = active display code (see #0036)
 	    BH = alternate display code (see #0036)
-Note:	this function is supported on the ATI EGA Wonder with certain
+Notes:	this function is commonly used to check for the presence of a VGA
+	this function is supported on the ATI EGA Wonder with certain
 	  undocumented configuration switch settings, even though the EGA
 	  Wonder does not support VGA graphics; to distinguish this case,
 	  call AX=1C00h with CX nonzero, which the EGA Wonder does not support
 SeeAlso: AH=12h/BL=35h,AX=1A01h,AH=1Bh
+Index:	installation check;VGA
 
 (Table 0036)
 Values for display combination code:
@@ -3921,7 +3960,7 @@ Return: AL = 4Eh if function supported
 	BX = Feature Connector State (see #0062)
 SeeAlso: AX=4E00h,AX=4E05h
 --------V-104F00-----------------------------
-INT 10 - VESA SuperVGA BIOS - GET SuperVGA INFORMATION
+INT 10 - VESA SuperVGA BIOS (VBE) - GET SuperVGA INFORMATION
 	AX = 4F00h
 	ES:DI -> buffer for SuperVGA information (see #0063)
 Return: AL = 4Fh if function supported
@@ -3929,6 +3968,9 @@ Return: AL = 4Fh if function supported
 	    00h successful
 		ES:DI buffer filled
 	    01h failed
+	    ---VBE v2.0---
+	    02h function not supported by current hardware configuration
+	    03h function invalid in current video mode
 Desc:	determine whether VESA BIOS extensions are present and the capabilities
 	  supported by the display adapter
 SeeAlso: AX=4E00h,AX=4F01h,AX=7F00h,AX=A00Ch
@@ -3936,7 +3978,9 @@ Index:	installation check;VESA SuperVGA
 
 Format of SuperVGA information:
 Offset	Size	Description	(Table 0063)
- 00h  4 BYTEs	signature ("VESA")
+ 00h  4 BYTEs	(ret) signature ("VESA")
+		(call) VESA 2.0 request signature ("VBE2"), required to receive
+		  version 2.0 info
  04h	WORD	VESA version number (one-digit minor version)
  06h	DWORD	pointer to OEM name
 		"761295520" for ATI
@@ -3960,12 +4004,16 @@ Notes:	the list of supported video modes is stored in the reserved portion of
 	the 1.1 VESA document specifies 242 reserved bytes at the end, so the
 	  buffer should be 262 bytes to ensure that it is not overrun; for
 	  v2.0, the buffer should be 512 bytes
+	the S3 specific video modes will most likely follow the FFFFH
+	  terminator at the end of the standard modes.	A search must then
+	  be made to find them, FFFFH will also terminate this second list
 
 Bitfields for VESA capabilities:
 Bit(s)	Description	(Table 0064)
  0	DAC can be switched into 8-bit mode
  1	non-VGA controller
  2	programmed DAC with blank bit
+ 3-31	reserved
 --------V-104F01-----------------------------
 INT 10 - VESA SuperVGA BIOS - GET SuperVGA MODE INFORMATION
 	AX = 4F01h
@@ -4012,6 +4060,8 @@ Offset	Size	Description	(Table 0065)
  25h	BYTE	reserved mask size
  26h	BYTE	reserved mask position
  27h	BYTE	direct color mode info
+		bit 0: color ramp is programmable
+		bit 1: bytes in reserved field may be used by application
 ---VBE v2.0 ---
  28h	DWORD	physical address of linear video buffer
  2Ch	DWORD	pointer to start of offscreen memory
@@ -4093,6 +4143,11 @@ Values for VESA video mode:
  119h	1280x1024x32K
  11Ah	1280x1024x64K
  11Bh	1280x1024x16M
+---VBE 2.0---
+81FFh	special full-memory access mode
+Note:	the special mode 81FFh preserves the contents of the video memory and
+	  gives access to all of the memory; VESA recommends that the special
+	  mode be a packed-pixel mode
 SeeAlso: #0009,#0070
 Index:	video modes;VESA
 
@@ -4120,6 +4175,8 @@ Return: AL = 4Fh if function supported
 	AH = status
 	    00h successful
 		BX = video mode (see #0069,#0070)
+		    bit 14: linear frame buffer enabled (VBE v2.0+)
+		    bit 15: don't clear video memory
 	    01h failed
 SeeAlso: AH=0Fh,AX=4E04h,AX=4F02h
 --------V-104F04-----------------------------
@@ -4245,10 +4302,13 @@ Return: AL = 4Fh if function supported
 	    01h failed
 	BH = current number of bits per primary (06h = standard VGA)
 --------V-104F09-----------------------------
-INT 10 - VESA SuperVGA BIOS v2.0+ - SET PALETTE ENTRIES
+INT 10 - VESA SuperVGA BIOS v2.0+ - GET/SET PALETTE ENTRIES
 	AX = 4F09h
 	BL = function
 	    00h set palette
+	    01h get palette
+	    02h set secondary palette data
+	    03h get secondary palette data
 	    80h set palette during vertical retrace
 	CX = number of entries to change
 	DX = starting palette index
@@ -4457,7 +4517,7 @@ Offset	Size	Description	(Table 0080)
 		11h compression (see also #0081)
 		12h driver state
 		13h get current pos
-		14h sample rate	      
+		14h sample rate
 		15h set preference
 		16h get DMA,IRQ
 		17h get IO address
@@ -4497,7 +4557,7 @@ Values for type of compression:
  02h	ALAW play
  03h	ULAW play
  11h	IMA record
- 12h	ALAW record 
+ 12h	ALAW record
  13h	ULAW record
 
 Format of MIDI Info Structure:
@@ -4811,7 +4871,7 @@ Offset	Size	Description	(Table 0089)
  0Ch	WORD	screen saver state, 0=off, 1=on
  0Eh	WORD	blanking interval in clock ticks
 --------V-105F00-----------------------------
-INT 10 - Chips & Technologies Extended BIOS - RETURN 82C45X CHIP INFORMATION
+INT 10 - Chips & Technologies Extended BIOS - RETURN CHIP INFORMATION
 	AX = 5F00h
 Return: AL = 5Fh function supported
 	    BL = chip type (see #0090)
@@ -4830,6 +4890,8 @@ Bit(s)	Description	(Table 0090)
 	0110: 82c457
 	0111: F65520
 	1000: F65530
+	1100: F65535/F65545 ???
+	1101: F65540
  3-0	revision number
 
 Bitfields for Chips&Technologies miscellaneous information:
@@ -4942,6 +5004,36 @@ Return: AL = 5Fh if function supported
 		00h unsuccessful
 		01h successful
 SeeAlso: AX=5F02h,AX=5F03h/BL=00h,AX=5F90h
+--------V-105F10-----------------------------
+INT 10 - Chips & Technologies Extended BIOS - ???
+	AX = 5F10h
+	DX = ???
+Return: DX = ???
+--------V-105F50-----------------------------
+INT 10 - Chips & Technologies Extended BIOS - GET LAPTOP DISPLAY STATUS
+	AX = 5F50h
+Return: DL = display status (see #2710)
+Note:	this call can be used on Toshiba laptops since ~1995 instead of
+	  INT 42/AX=7503h which is no longer supported with the F655xx chips
+SeeAlso: INT 42/AX=7503h
+
+Bitfields for display status:
+Bit(s)	Description	(Table 2710)
+ 7-4	always 0 ???
+ 3	1: both displays active (bit 1 also set)
+ 2	1: normal (monochrome display only), 0: inverse or color
+ 1	1: internal display active, 0: external only
+ 0	always set ???
+--------V-105F51-----------------------------
+INT 10 - Chips & Technologies Extended BIOS - SET DISPLAY STATUS ???
+	AX = 5F51h
+	BX = ???
+Return: nothing
+--------V-105F5E-----------------------------
+INT 10 - Chips & Technologies Extended BIOS - SET ???
+	AX = 5F5Eh
+	BL = 00h or 01h
+Return: nothing
 --------V-105F-------------------------------
 INT 10 - Chips & Technologies Extended BIOS - SAVE/RESTORE SUPERVGA STATE
 	AH = 5Fh
@@ -4970,7 +5062,7 @@ INT 10 - HUNTER 16 - SET GRAPHICS FONT
 	AL = new font
 	    bit 7    output characters in reverse video
 	    bits 0-6 font number (see #0108 at AH=77h)
-Return: BH = cell width			
+Return: BH = cell width
 	BL = cell height
 Desc:	select the font to use for output in mode 6; this can be used to mix
 	  fonts on the screen
@@ -5021,7 +5113,7 @@ INT 10 - HUNTER 16 - SPLIT DISPLAY
 	AL = control bits (see #0095)
 	BH = top row of lower section of LCD (0..7)
 	BL = top row of lower section of the virtual screen (0..24)
-Desc:	split the LCD screen horizontally into two parts; each part may be 
+Desc:	split the LCD screen horizontally into two parts; each part may be
 	  individually scrollable or fixed.
 Note:	the Hunter 16 has a 240x64 LCD display which serves as a window into
 	  a 640x200 virtual screen
@@ -5030,7 +5122,7 @@ Bitfields for HUNTER 16 control bits:
 Bit(s)	Description	(Table 0095)
  0-1	01: no split, 10: allow split
  2	allow scrolling the upper part
- 3	allow scrolling the lower part 
+ 3	allow scrolling the lower part
 --------V-106A00BX0000-----------------------
 INT 10 - Direct Graphics Interface Standard (DGIS) - INQUIRE AVAILABLE DEVICES
 	AX = 6A00h
@@ -5456,7 +5548,7 @@ SeeAlso: AH=60h"HUNTER",AH=73h"HUNTER"
 
 (Table 0108)
 Values for HUNTER 16 graphics font number:
- 00h	 7x7  in a  8x8	 cell 
+ 00h	 7x7  in a  8x8	 cell
  01h	 5x7  in a  6x8	 cell
  02h	 7x9  in a  8x10 cell
  03h	14x9  in a 16x10 cell
@@ -5466,9 +5558,13 @@ Values for HUNTER 16 graphics font number:
 Note:	size is X * Y
 --------V-1078------------------------------------
 INT 10 - HUNTER 16 - TURN BACKLIGHT ON/OFF
-	AH = 78h 
+	AH = 78h
 	AL = new state of backlight (00h on, 01h off)
 SeeAlso: AH=64h,INT 15/AH=74h
+--------V-107F-------------------------------
+INT 10 - Paradise SVGA - WD90C24 INSTALLATION CHECK
+	AH = 7Fh
+Return: AX = 1234h if WD90C24 chip installed
 --------V-107F00-----------------------------
 INT 10 - SOLLEX SuperVGA - GET EXTENSIONS INFO
 	AX = 7F00h
@@ -5941,6 +6037,13 @@ Return: AH = status
 	    01h failed
 	???
 SeeAlso: AX=4F10h/BL=00h
+--------V-10A004-----------------------------
+INT 10 - PhoenixVIEW/LC - VIDEO DISPLAY TYPE
+	AX = A004h
+	???
+Return: ???
+Desc:	configure display parameters
+SeeAlso: AX=A01Bh"PhoenixVIEW/LC"
 --------p-10A00C-----------------------------
 INT 10 - ATI Mach64 BIOS - SET SLEEP MODE
 	AX = A00Ch
@@ -5952,6 +6055,13 @@ Return: AH = status
 	    00h successful
 	    01h failed
 SeeAlso: AX=4F00h,AX=4F10h/BL=01h
+--------V-10A01B-----------------------------
+INT 10 - PhoenixVIEW/LC - CRT MONITOR DETECTION
+	AX = A01Bh
+	???
+Return: ???
+Desc:	determine whether an external display is currently attached
+SeeAlso: AX=A004h"PhoenixVIEW/LC"
 --------A-10B0-------------------------------
 INT 10 - CU Writer v1.4 - PUT PIXEL
 	AH = B0h
@@ -5995,6 +6105,12 @@ INT 10 U - Compaq QVision - ???
 Return: ???
 Note:	called by Compaq's MTX132.COM, which places the QVision in 132-column
 	  mode
+--------V-10BF--CX0000-----------------------
+INT 10 - Athena Digital HGCIBM.COM - INSTALLATION CHECK
+	AH = BFh
+	CX = 0000h (???)
+Return: CX = 0202h
+	DL = ??? (internal data, possibly version number)
 --------b-10BF00-----------------------------
 INT 10 - VIDEO - Compaq Extensions - SELECT EXTERNAL MONITOR
 	AX = BF00h
@@ -6177,13 +6293,10 @@ INT 10 - VIDEO - Compaq Extensions - GET EXTENDED ENVIRONMENT
 	AX = BF11h
 Return: AL = BFh if supported
 	    CF clear
-	    ES:BX -> ASCII signature "COMPAQ"
-	    ES:DI -> advanced functionality table (see #0122)
-Notes:	supported by at least the QVision board and the LTE Lite and ProSignia
+	    ES:DI -> ASCII signature "COMPAQ"
+	    ES:SI -> advanced functionality table (see #0122)
+Note:	supported by at least the QVision board and the LTE Lite and ProSignia
 	  ROM BIOSes
-	the QVision documentation (October 1993) states that the signature
-	  pointer is in ES:DI and the table pointer in ES:SI -- can someone
-	  check on this?
 SeeAlso: AX=1A00h,AX=BF03h
 
 Bitfields for Compaq advanced video functionality:
@@ -6345,7 +6458,7 @@ INT 10 - VIDEO - UltraVision - GET STATUS (INSTALLATION CHECK)
 	SI = magic value 0000h (if checking version)
 Return: CX = product signature
 	    ABCDh UltraVision
-	    5546h ('UF') UltraFont 
+	    5546h ('UF') UltraFont
 	AL = Ultravision extensions
 	    00h enabled
 	    FFh disabled
@@ -6576,9 +6689,11 @@ Return: DL = video adapter type
 	    00h original Hercules
 	    01h Hercules Plus
 	    02h Hercules InColor???
+	    FFh not a Hercules-compatible card
 	DH = memory mode byte
-	    01h "half" mode
-	    03h "full" mode
+	    00h "half" mode
+	    01h "full" mode
+	    FFh not a Hercules-compatible card
 Program: MSHERC.COM is a support program for the Microsoft Quick languages
 	  which makes their graphics libraries compatible with a Hercules card
 	  by adding video modes 08h and 88h, and supporting text in the new
@@ -6586,7 +6701,10 @@ Program: MSHERC.COM is a support program for the Microsoft Quick languages
 Notes:	while in mode 08h or 88h, INT 10 supports the Hercules card much like
 	  a CGA.
 	MSHERC performs an installation check by setting DL=FFh and testing
-	  whether it has been changed on return
+	  whether it has been changed on return, which causes it to reinstall
+	  itself when no HGC is present (or HGC emulation has temporarily been
+	  disabled); a better installation check would be to use DX=80FFh and
+	  check whether DX has been changed
 	reportedly returns DH=00h on some not-entirely-Hercules-compatible
 	  cards
 Index:	installation check;MSHERC
@@ -7188,7 +7306,7 @@ INT 12 C - CPI-standard virus - "FRIEND" CHECK
 	DX = 554Eh
 Return: if friendly (not to be infected)
 	    CX:DX -> ASCIZ identity code (changes yearly)
-SeeAlso: AX=EC00h"VIRUS",INT 21/AX=0B56h
+SeeAlso: AX=EC00h"VIRUS",INT 13/AX=5001h,INT 21/AX=0B56h
 --------T-12FFFECXFFFE-----------------------
 INT 12 - Back&Forth v1.62+ - API
 	AX = FFFEh
@@ -7929,7 +8047,7 @@ Return: CF set on error
 	    DL = number of drives
 	    ES:DI -> drive parameter table (floppies only)
 Notes:	the return values are identical to the standard INT 13/AH=08h, but the
-	  number of drives is not limited to 2, so 
+	  number of drives is not limited to 2, so
 	scanning all possible drive numbers with the Read DASD Type call
 	  (AH=15h) should generally be preferred to determine the number of
 	  drives attached to the system.
@@ -8866,175 +8984,4 @@ Return: AX = status (0000h successful)
 Desc:	immediately flush up to "flushcount" dirty sectors to disk as if the
 	  flush interval had expired
 SeeAlso: AH=21h"QUICKCACHE"
---------c-1330-------------------------------
-INT 13 u - QUICKCACHE II v4.20 - GET INFO
-	AH = 30h
-	AL = what to get
-	    00h system info (see #0175)
-	    01h drive info (see #0176)
-	    02h access frequency (array of 30 words)
-	    03h drive index
-		(array of 32 bytes indicating BIOS drive for DOS drive)
-	DS:DX -> buffer for info
-Return: AX = status (0000h successful, 8000h invalid info specifier)
-Program: QUICKCACHE II is a shareware disk cache by P.R. Glassel and
-	  Associates, Inc.
-
-Format of QUICKCACHE II system info:
-Offset	Size	Description	(Table 0175)
- 00h	BYTE	flag: cache enabled
- 01h	BYTE	flag: buffered writes enabled
- 02h	BYTE	flag: buffered reads enabled
- 03h	BYTE	flag: sounds enabled
- 04h	BYTE	flag: autodismount enabled
- 05h	BYTE	???
- 06h	BYTE	flag: ???
- 07h	BYTE	flag: ???
- 08h	BYTE	flag: "em_assigned"
- 09h	BYTE	flag: emulated EMS
- 0Ah	BYTE	single sector bonus
- 0Bh	BYTE	"sticky_max"
- 0Ch	BYTE	write sector bonus
- 0Dh	BYTE	bonus threshold
- 0Eh	WORD	flush interval
- 10h	WORD	flush count
- 12h	WORD	reserve pool size
- 14h	WORD	remaining space in reserve pool
- 16h	WORD	required free memory
- 18h	WORD	total cache sectors
- 1Ah	WORD	dirty cache sectors
- 1Ch	BYTE	trace buffer size
- 1Dh	BYTE	reserved (padding)
-
-Format of QUICKCACHE II drive info [16-element array, one element]:
-Offset	Size	Description	(Table 0176)
- 00h	BYTE	DOS drive number
- 01h	BYTE	BIOS drive number
- 02h	BYTE	maximum sector number
- 03h	BYTE	maximum head number
- 04h	BYTE	read buffer size
- 05h	BYTE	write buffer size
- 06h	BYTE	last status
- 07h	BYTE	flag: enabled
- 08h	BYTE	flag: buffered write enabled
- 09h	BYTE	flag: buffered read enabled
- 0Ah	BYTE	flag: in use (drive info is valid)
- 0Bh	BYTE	flag: cylinder flush
- 0Ch	BYTE	reserved (padding)
- 0Dh	BYTE	sectors per track
- 0Eh	WORD	sector size
- 10h	WORD	sectors assigned
- 12h	WORD	dirty sectors
- 14h	WORD	reserved sectors
- 16h	WORD	number of read errors
- 18h	WORD	number of write errors
- 1Ah	DWORD	"rio_count"
- 1Eh	DWORD	number of cache misses
- 22h	DWORD	"wio_count"
- 26h	DWORD	"dio_count"
---------c-1331-------------------------------
-INT 13 U - QUICKCACHE II v4.20 - RESERVE MEMORY
-	AH = 31h
-	BX = number of paragraphs of conventional memory to reserve for apps
-Return: AX = status (0000h successful)
---------c-1332-------------------------------
-INT 13 U - QUICKCACHE II v4.20 - ENABLE CACHING FOR SPECIFIC DRIVE
-	AH = 32h
-	AL = drive number (00h=A:)
-Return: AX = status (0000h successful)
-SeeAlso: AH=22h"QUICKCACHE",AH=33h
---------c-1333-------------------------------
-INT 13 U - QUICKCACHE II v4.20 - DISABLE CACHING FOR SPECIFIC DRIVE
-	AH = 33h
-	AL = drive number (00h=A:)
-Return: AX = status (0000h successful)
-SeeAlso: AH=22h"QUICKCACHE",AH=32h
---------c-1334-------------------------------
-INT 13 U - QUICKCACHE II v4.20 - SECTOR LOCKING
-	AH = 34h
-	AL = function
-	    00h end sector locking/unlocking
-	    01h lock all accessed sectors into cache
-	    02h unlock all accessed sectors and discard from cache
-Return: AX = status (0000h successful)
-SeeAlso: AH=20h"QUICKCACHE",AH=35h
---------c-1335-------------------------------
-INT 13 U - QUICKCACHE II v4.20 - SET LOCK POOL SIZE
-	AH = 35h
-	BX = number of sectors in lock pool
-Return: AX = status (0000h successful)
-Desc:	specify the number of cache sector buffers which may be dedicated to
-	  data locked into the cache
-SeeAlso: AH=34h
---------c-1336-------------------------------
-INT 13 U - QUICKCACHE II v4.20 - SET TRACE BUFFER SIZE
-	AH = 36h
-	AL = new size of trace buffer
-Return: AX = status (0000h successful)
-Note:	called with AL=05h during an INT 13/AH=24h"QUICKCACHE" call
-SeeAlso: AH=24h"QUICKCACHE"
---------c-1337-------------------------------
-INT 13 U - QUICKCACHE II v4.20 - SET BUFFERED READS FOR SPECIFIC DRIVE
-	AH = 37h
-	AL = new state (00h disabled, else enabled)
-	DL = drive number (00h = A:)
-Return: AX = status (0000h successful)
-SeeAlso: AH=2Dh,AH=38h
---------c-1338-------------------------------
-INT 13 U - QUICKCACHE II v4.20 - SET BUFFERED WRITES FOR SPECIFIC DRIVE
-	AH = 38h
-	AL = new state (00h disabled, else enabled)
-	DL = drive number (00h = A:)
-Return: AX = status (0000h successful)
-SeeAlso: AH=2Ch,AH=37h
---------c-1339-------------------------------
-INT 13 U - QUICKCACHE II v4.20 - SET READ BUFFER SIZE FOR SPECIFIC DRIVE
-	AH = 39h
-	AL = new size of read buffer
-	DL = drive number (00h = A:)
-Return: AX = status (0000h successful)
-Program: QUICKCACHE II is a shareware disk cache by P.R. Glassel and
-	  Associates, Inc.
-SeeAlso: AH=2Ah,AH=3Ah
---------c-133A-------------------------------
-INT 13 U - QUICKCACHE II v4.20 - SET WRITE BUFFER SIZE FOR SPECIFIC DRIVE
-	AH = 3Ah
-	AL = new size of write buffer
-	DL = drive number (00h = A:)
-Return: AX = status (0000h successful)
-SeeAlso: AH=2Ah,AH=39h
---------c-133B-------------------------------
-INT 13 U - QUICKCACHE II v4.20 - ENABLE/DISABLE ???
-	AH = 3Bh
-	AL = new state of ??? (01h enabled, else disabled)
-Return: AX = status (0000h successful)
-Note:	is affected by the flag reported at offset 05h of the system info
-	  returned by AH=30h, and sets the flag at offset 06h
-SeeAlso: AH=3Ch
---------c-133C-------------------------------
-INT 13 U - QUICKCACHE II v4.20 - ENABLE/DISABLE ???
-	AH = 3Ch
-	AL = new state of ??? (01h enabled, else disabled)
-Return: AX = status (0000h successful)
-Note:	is affected by the flag reported at offset 05h of the system info
-	  returned by AH=30h, and sets the flag at offset 07h
-SeeAlso: AH=3Bh
---------c-133D-------------------------------
-INT 13 U - QUICKCACHE II v4.20 - ENABLE/DISABLE CYLINDER FLUSH FOR DRIVE
-	AH = 3Dh
-	AL = new state (01h enabled, else disabled)
-	DL = drive number (00h = A:)
-Return: AX = status (0000h successful)
---------c-133E-------------------------------
-INT 13 U - QUICKCACHE II v4.20 - SET SINGLE-SECTOR BONUS
-	AH = 3Eh
-	AL = new value for bonus
-Return: AX = status (0000h successful)
-Desc:	specify the bonus score to give to single-sector transfers in order to
-	  keep those sectors in the cache longer
---------c-133F-------------------------------
-INT 13 U - QUICKCACHE II v4.20 - SET BONUS THRESHOLD
-	AH = 3Fh
-	AL = new value for bonus threshold
-Return: AX = status (0000h successful)
 --------!---Section--------------------------
