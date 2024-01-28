@@ -1509,6 +1509,25 @@ Note:	use only when the R= option is invoked on entering APL
 INT 96 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
 	BASIC.COM/BASICA.COM do not restore vector on termination
+--------U-96---------------------------------
+INT 96 U - KILL.COM, QKILL.COM - POP UP
+Program: KILL.COM is a TSR utility that allows you to terminate programs
+	 by calling INT 21/AH=4Ch or reboot the computer (author unknown);
+	 QKILL.COM is a modification of KILL.COM by Solar Designer that
+	 supports QEMM's Quick Boot feature
+Notes:	This interrupt is intercepted but not chained by KILL.COM; it is never
+	  called by KILL.COM itself. It points into the middle of KILL.COM's
+	  INT 09 handler and assumes specific values have been placed on the
+	  stack (thus it can't be called as an interrupt).
+	To invoke KILL, use the following code:
+		pushf
+		push cs
+		push offset $+0Dh
+		push ax
+		push es
+		push 0
+		pop  es
+		jmp  dword ptr es:[96h*4]
 --------r-97---------------------------------
 INT 97 - IBM ROM BASIC - used while in interpreter
 Notes:	called by ROM BASIC
@@ -3837,7 +3856,8 @@ Return: AX = AA55h if installed
 	    CX = patchlevel
 Notes:	check for the BIOS date string "02/25/93" at F000:FFF5 before
 	  calling this function.  In addition, the segment address of this
-	  vector should be F000h
+	  vector should be F000h (for existing versions of DOSemu, the
+	  vector is F000h:0E60h)
 SeeAlso: AH=FFh
 --------O-E601-------------------------------
 INT E6 - Linux DOSEMU - REGISTER DUMP
@@ -4798,14 +4818,14 @@ INT FF - PC/FORTH - GRAPHICS API
 	SS:SP -> FORTH return stack
 	details of parameters not available
 --------!---Admin----------------------------
-Highest Table Number = 3218
+Highest Table Number = 3242
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER50A through INTER50D (preferably the original
+quartet of archives named INTER51A through INTER51D (preferably the original
 authenticated PKZIP archives), the utility programs in a fifth archive
-called INTER50E.ZIP, and the WinHelp-related programs in a sixth archive
-named INTER50F.ZIP.
+called INTER51E.ZIP, and the WinHelp-related programs in a sixth archive
+named INTER51F.ZIP.
 
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------!---CONTACT_INFO---------------------

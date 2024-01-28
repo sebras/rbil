@@ -1,19 +1,19 @@
-Interrupt List		Release 50			Last change 5/12/96
+Interrupt List		Release 51			Last change 7/28/96
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------!---FILELIST-------------------------
 Please redistribute the following files unmodified as a group, in a quartet of
-archives named INTER50A through INTER50D (preferably the original authenticated
+archives named INTER51A through INTER51D (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	this file
 	INTERRUP.A	INT 00 through INT 13/0F  \
 	INTERRUP.B	INT 13/10 through INT 15/12\
 	INTERRUP.C	INT 15/13 through INT 16/FF \  
 	INTERRUP.D	INT 17 through INT 21/3E     \
-	INTERRUP.E	INT 21/3F through INT 21/5E   \	  total 2064 pages at
+	INTERRUP.E	INT 21/3F through INT 21/5E   \	  total 2072 pages at
 	INTERRUP.F	INT 21/5F through INT 21/E2    \  60 lines per page,
-	INTERRUP.G	INT 21/E3 through INT 21/F1	\ 2197 with INTPRINT -p
-	INTERRUP.H	INT 21/F2 through INT 21/FE	 >(7998 entries)
-	INTERRUP.I	INT 21/FF through INT 2F/42	/ (3214 tables)
+	INTERRUP.G	INT 21/E3 through INT 21/F1	\ 2205 with INTPRINT -p
+	INTERRUP.H	INT 21/F2 through INT 21/FE	 >(8015 entries)
+	INTERRUP.I	INT 21/FF through INT 2F/42	/ (3225 tables)
 	INTERRUP.J	INT 2F/43 through INT 2F/CA    /
 	INTERRUP.K	INT 2F/CB through INT 4A      /
 	INTERRUP.L	INT 4B through INT 61	     /
@@ -33,8 +33,9 @@ PKZIP archives):
 	OPCODES.LST	a listing of recent and undocumented CPU instructions
 	PORTS.LST	a listing of I/O ports
 	CATEGORY.KEY	descriptions of divider-line category letters
-	COMBINE.BAT	combine the pieces of the list into a single file
-The following files should be distributed in an archive called INTER50E:
+	COMBINE.COM	combine the pieces of the list into a single file
+	COMBINE.DOC	documentation for COMBINE
+The following files should be distributed in an archive called INTER51E:
 	86BUGSnn.ZIP	programs to test for CPU bugs
 	INT.*		invoke interrupts from commandline
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
@@ -47,12 +48,12 @@ The following files should be distributed in an archive called INTER50E:
 	INTSUM??.ZIP	interrupt list browser (Interrupt Summary)
 	IVIEW.ZIP	another interrupt list browser
 	RB2NG???.ZIP	convert list into Norton Guides database
-Finally, the following files should be distributed in an archive INTER50F:
+Finally, the following files should be distributed in an archive INTER51F:
 	INT2WHLP.ZIP	convert list into Windows Help database
 	HINTSRCH.ZIP	WinHelp DLL for full-text searches of interrupt list
 	WH_ED*.ZIP	WinHelp-file editor
 
-Concatenate INTERRUP.A, .B, ..., .N with COMBINE.BAT to create an interrupt
+Concatenate INTERRUP.A, .B, ..., .N with COMBINE.COM to create an interrupt
 list file identical to my master copy.
 
 Use INTPRINT to generate a one-line-per-call summary file and/or a file
@@ -101,8 +102,8 @@ whether or not it works the same way).	Information marked with "???" is
 known to be incomplete or guesswork.
 --------!---AVAILABILITY---------------------
 If the list is three or more months old by the time you get it, there
-is probably a newer release out already (R49 is planned for early January 1996,
-R50 for early March).  Each release supersedes all previous versions, so
+is probably a newer release out already (R52 is planned for early October 1996,
+R53 for early December).  Each release supersedes all previous versions, so
 there is no need to keep old versions.
 
 The newest release of this list is available in these places (please do not
@@ -426,7 +427,7 @@ This list is the result of the time and effort of a large number of people:
  3/93 Richard Talon    71005.1523@CompuServe.COM      XVIEW hypertext viewer
  3/93 Tamura Jones     2:512/36.7		      IBMSND driver
  3/93 Grant Echols     76247.2232@CompuServe.COM      undoc Novell NetWare
- 3/93 George L. Fulk   fulkgl@vnet.IBM.COM	      OS/2 2.x VDMs, FAPI
+ 3/93 George L. Fulk   fulkgl@austin.ibm.com	      OS/2 2.x VDMs, FAPI
  3/93 Andrew Schulman  76320.302@CompuServe.COM	      Novell DPMS
  3/93 Dan Fandrich     ubc-cs!merlin!fch!dan	      more Future Domain SCSI
  3/93 Konstantin Kisurin  kkk@toi.kiev.ua	      more 386MAX
@@ -520,7 +521,7 @@ This list is the result of the time and effort of a large number of people:
  9/94 Tim Farley       TIM@magee.mhs.compuserve.com   "PS/1" harddisk/ATA info
  9/94 Tim Farley       TIM@magee.mhs.compuserve.com   Intel SL Enh. APM BIOS
  9/94 Mojmir Strhan    strhan@simultan.ch	      more VxDs IDs, misc
- 9/94 George L. Fulk   fulkgl@VNET.IBM.COM	      PSP fields, "DOSOpen2"
+ 9/94 George L. Fulk   fulkgl@austin.ibm.com	      PSP fields, "DOSOpen2"
  9/94 Emily Markowicz  70252.2621@compuserve.com      many typo corrections
 10/94 Masashi Fukuda   TAB01645@niftyserve.or.jp      C&T PC/CHIP SuperState
 10/94 M.w. Pieters     aj132@Freenet.HSC.Colorado.EDU DimVGA 3.4, ObjectKernel
@@ -579,7 +580,7 @@ This list is the result of the time and effort of a large number of people:
  9/95 Alexander I. Bobkov via root@k35.cit.spb.su     MODAL PC
 10/95 Matthias Paul    MPAUL@ibh.rwth-aachen.de       K3PLUS, miscellaneous
 10/95 Matthias Paul    MPAUL@ibh.rwth-aachen.de       WinDOS
-11/95 Christophe Vallat meba95@ucfma.univ-bpclermont.fr virus checks, 21/7160
+11/95 Christophe Vallat                               virus checks, 21/7160
 11/95 Peter van den Boogert  2:285/414.1	      ZFax v4.01
 11/95 Matthias Paul    MPAUL@ibh.rwth-aachen.de       BSC/SDLC ports, misc
 12/95 George Lefterov  george@virbus.bg		      Q87 v4+ API
@@ -587,12 +588,18 @@ This list is the result of the time and effort of a large number of people:
  1/96 Michael Devore				      CauseWay v1.3 DOS ext.
  2/96 Frank Kintrup    nico@uni-paderborn.de	      Windows95 long filenames
  2/96 Robert Thrun	(Langley Part, Maryland)      Tandy 2000 BIOS
+ 2/96 Wim Kosten       wkosten@mail.HZeeland.nl	      ATAPI
  3/96 Matthias Paul    MPAUL@ibh.rwth-aachen.de       format of .CPI files
  3/96 Lesha Bogdanow   boga@pts.mipt.ru		      AWDFLASH/Asustek Flash
  4/96 Antti Barck      proff@iki.fi		      Cx5x86 config registers
  4/96 Adam Seychell    s921880@minyos.its.rmit.EDU.AU DOS32 v3.2
  4/96 Rob	       WlkngOwl@unix.asb.com	      NOISE.SYS v0.53 API
  5/96 James Lin	       linja@acf2.NYU.EDU	      AMI Flash BIOS interface
+ 5/96 Pino Navato      2:335/225.18		      misc
+ 5/96 Christophe Vallat                               virus checks, Iomega
+ 5/96 Solar Designer   solar@sun1.ideal.ru	      Player's Tool, ShowGFX
+ 6/96 George Fulk      fulkgl@austin.ibm.com	      OS/2, misc
+ 7/96 Jens Rehsack				      PCMCIA v2
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -720,10 +727,14 @@ Also contributing:
  David Cary <cary@agora.rdrop.com>, Nir Sofer <nir@netvision.net.il>,
  Keith Hamilton <100654.2000@compuserve.com>, Colin Hill <chill@rmi.net>,
  <Marcus.Wirth@frankfurt.netsurf.de>, David Cary <cary@agora.rdrop.com>,
- Peter Rindfuss <RINDFUSS-S@medea.wz-berlin.de>, Pino Navato 2:335/225.18,
+ Peter Rindfuss <RINDFUSS-S@medea.wz-berlin.de>,
  Pierre Duhem <100256.1731@compuserve.com>,Robert Dixon <r.dixon@dem.csiro.au>,
  Bob Jackman <Bob@salford-software.com>, Erich Stefan Boleyn <erich@uruk.org>,
  Jan Slater <slater@platinum.nb.net>, Alfredo Raul Pena <apena@VNET.IBM.COM>,
+ Tom Shinnick <tshinnic@io.com>, Gil Megidish <gmegidis@ort.org.il>,
+ Kim Bastin <muskb@lure.latrobe.edu.au>,
+ Marc Ferran <100702.1215@CompuServe.COM>, Hale Landis <landis@sugs.tware.com>,
+ Volker Schmidt <100.78304@germanynet.de>
 --------!---ADDRESSES------------------------
 The following have provided API reference and other materials at no charge:
 

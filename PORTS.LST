@@ -1,4 +1,4 @@
-PORT LIST			Release 50		Last change 5/12/96
+PORT LIST			Release 51		Last change 7/28/96
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 [This file originally by Wim Osterholt (2:512/56 or wim@djo.wtm.tudelft.nl).]
 
@@ -1608,8 +1608,7 @@ PORT 0078 - HP-Vectra - HARD RESET: NMI ENABLE/DISABLE
 ----------P0078------------------------------
 PORT 0078 - Intel 82378IB ("Saturn"/"Neptune" chipsets) - BIOS COUNT-DOWN TIMER
 Notes:	the BIOS uses this port for certain fine timings; presumably it is
-	  independent of processor speed (it appears to decrement at about
-	  300 kHz on my Pentium/90)
+	  independent of processor speed (it appears to decrement at 1 MHz)
 	the address at which this port appears may be set via the 82378's
 	  PCI configuration space word at offset 0080h (see #0611), or the
 	  timer may be disabled entirely
@@ -1908,6 +1907,8 @@ PORT 00E0-00E7 - MICROCHANNEL
 00E4  RW  error trace
 00E5  RW  error trace
 00E7  RW  error trace
+---------------------------------------------
+PORT 00E0-00EF - IBM PS/1 CLOCK
 ----------P00E1------------------------------
 PORT 00E1 - STB PowerMEG - ???
 Desc:	the STB PowerMEG is a memory expansion card capable of providing EMS
@@ -2191,6 +2192,7 @@ Command	 Spec	Type	Proto	Description			class:
  98h E5h IDE	opt	nondata	check power mode		  1
  99h E6h IDE	opt	nondata	set sleep mode			  1
  9Ah	 IDE	vendor	vend	vendor unique 1
+ A1h     ATAPI	opt	PIOin	ATAPI Identify			(see #P233)
  C0h-C3h IDE	vendor	vend	vendor unique 2
  C4h	 IDE	opt	PIOin	read multiple			  1
  C5h	 IDE	opt	PIOout	write multiple			  3
@@ -2286,6 +2288,7 @@ Offset	Size	Description	(Table P087)
  8Eh 58 WORDs	reserved (0)
 100h 32 WORDs	vendor-specific
 140h 96 WORDs	reserved (0)
+SeeAlso: #P233
 
 Bitfields for IDE capabilities:
 Bit(s)	Description	(Table P088)
@@ -2295,6 +2298,71 @@ Bit(s)	Description	(Table P088)
  9	LBA mode supported
  8	DMA supported
 SeeAlso: #P087
+
+Format of ATAPI Identify Information:
+Offset	Size	Description	(Table P233)
+ 00h	WORD	general configuration (see #P234)
+ 14h 10 WORDs	serial number
+		no serial number if first word is 0000h
+		else blank-padded ASCII serial number
+ 28h  3 WORDs	vendor-specific
+ 2Eh  4	WORDs	firmware revision
+		no revision number if first word is 0000h
+		else blank-padded ASCII revision number
+ 36h 20	WORDs	model number
+		no model number if first word is 0000h
+		else blank-padded ASCII model string
+ 5Eh	WORD	vendor-specific
+ 60h	WORD	reserved (0)
+ 62h	WORD	capabilities (see #P088)
+ 64h	WORD	security mode???
+ 66h	WORD	PIO data transfer cycle timing
+ 68h	WORD	single-word DMA data transfer cycle timing
+ 6Ah	WORD	field validity
+		bit 0: offsets 6Ch-73h valid
+		bit 1: offsets 80h-8Dh valid
+ 6Ch	WORD	??? logical cylinders in current translation mode
+ 6Eh	WORD	??? logical heads in current translation mode
+ 70h	WORD	??? logical sectors per track in current translation mode
+ 72h  2	WORDs	??? current capacity in sectors
+ 76h	WORD	??? multiple-sector count for read/write multiple command
+ 78h  2	WORDs	??? total number of user-addressable sectors (LBA mode)
+ 7Ch	WORD	single-word DMA transfer modes
+		low byte is bitmap of supported modes (bit 0 = mode 0, etc.)
+		high bytes is bitmap of active mode (bit 8 = mode 0, etc.)
+ 7Eh	WORD	multiword DMA transfer
+		low byte is bitmap of supported modes (bit 0 = mode 0, etc.)
+		high bytes is bitmap of active mode (bit 8 = mode 0, etc.)
+ 80h	WORD	supported flow control PIO transfer modes
+ 82h	WORD	minimum multiword DMA transfer cycle time
+ 84h	WORD	recommended multiword DMA cycle time
+ 86h	WORD	minimum non-flow-control PIO transfer cycle time
+ 88h	WORD	minimum PIO transfer cycle time with IORDY
+ 8Ah  2 WORDs	reserved for future PIO modes (0)
+ 8Eh	WORD	typical time for release when processing overlapped CMD in
+		  microseconds
+ 90h	WORD	???
+ 92h	WORD	major ATAPI version number
+ 94h	WORD	minor ATAPI version number
+ 96h 54 WORDs	reserved (0)
+100h 32 WORDs	vendor-specific
+140h 96 WORDs	reserved (0)
+SeeAlso: #P087
+
+Bitfields for ATAPI General Configuration:
+Bit(s)	Description	(Table P234)
+ 15-14	device type
+ 13	reserved
+ 12	device present
+ 7	device is removable
+ 6-5	CMD DMA Request type
+	00 microprocessor DRQ
+	01 interrupt DRQ
+	10 accelerated DRQ
+	11 reserved
+ 4-2	reserved
+ 1-0	CMD packet size (00 = 12 bytes, 01 = 16 bytes)
+SeeAlso: #P233
 ----------P01F8------------------------------
 PORT 01F8 - ???
 
@@ -3816,9 +3884,9 @@ Values for mono video adapter CRT data register index:
 	       clones in emulation, not with ET4000)
  10h R-	native VGA with bit7=1 in end horizontal blanking (03h) and ET4000:
 	       start vertical retrace
- 10h R- MCGA at 3D5h only: mode control status register
+ 10h R- MCGA at 3D5h only: mode control status register (see #P222)
  10h -W EGA, VGA: start vertical retrace
- 10h -W MCGA at 3D5h only: mode control register
+ 10h -W MCGA at 3D5h only: mode control register (see #P223)
  11h R- light pen low (MDA/CGA/EGA only, some HGC, few VGA
 	       clones in emulation, not with ET4000)
  11h R- native VGA with bit7=1 in end horizontal blanking (03h):
@@ -3834,17 +3902,18 @@ Values for mono video adapter CRT data register index:
 	       bit4=0: (MCGA also) clear vertical interrupt
 		   =1:		   no effect
 	       bit3-0: (MCGA also) vertical retrace end
- 11h RW MCGA at 3D5h only: interrupt control register
+ 11h RW MCGA at 3D5h only: interrupt control register (see #P224)
  12h	EGA, VGA: vertical display end register
- 12h RW MCGA at 3D5h only: character generator/sync pol. register
- 12h R- MCGA at 3D5h only: display sense register
-	       (with bit7=1 in 11h only)
+ 12h RW MCGA at 3D5h only: character generator/sync polarity register
+	      (see #P225)
+ 12h R- MCGA at 3D5h only: display sense register (see #P167)
+		(with bit7=1 in 11h only)
  13h	EGA, VGA: row offset register
 	       logical screen line width in
 		byte mode : bytes/(line/2)
 		word mode : bytes/(line/4)
 		dword mode: bytes/(line/8)
- 13h -W MCGA at 3D5h only: character font pointer register
+ 13h -W MCGA at 3D5h only: character font pointer register (see #P167)
  14h	EGA, VGA: underline location register
 	       bit7=0: reserved
 	       bit6  : VGA: 0=word-mode, 1=dword-mode (see 17h, bit6)
@@ -3852,7 +3921,7 @@ Values for mono video adapter CRT data register index:
 			    1=address counter clock/4 (see 17h, bit3)
 	       bit4-0: horizontal underline row scan
  14h -W MCGA at 3D5h only: number of characters to load during
-	       vretrace period
+	       vretrace period (see #P167)
  14h -W HGC+,InColor: xMode register
  15h	EGA, VGA: start vertical blanking-1
  15h -W HGC+,InColor: underscore register
@@ -3885,23 +3954,23 @@ Values for mono video adapter CRT data register index:
  1Fh	ET3000 only: y-zoom start & end high register
  20h	ET3000 only: zoom start address register low
  21h	ET3000 only: zoom start address register medium
- 23h	ET3000 only: extended start address (see 33h)
- 24h	ET3000 only: compatibility register (see 34h)
- 25h	ET3000 only: overflow high register (see 35h, 07h)
- 2Eh R? S3 Trio64V: ??? (high)
- 2Fh R? S3 Trio64V: ??? (low)
- 30h RW	S3: chip ID/revision
- 31h RW	S3: memory configuration
+ 23h	ET3000 only: extended start address (see register 33h)
+ 24h	ET3000 only: compatibility register (see register 34h)
+ 25h	ET3000 only: overflow high register (see registers 35h, 07h)
+ 2Dh R- S3: extended Chip ID (always 88h???)
+ 2Eh R- S3 7xx/866/x68: new chip ID
+ 2Fh R- S3 7xx/866/x68: chipset revision
+ 30h RW	S3: chip ID/revision (see #P226)
+ 31h RW	S3: memory configuration (see #P227)
  32h	ET4000: RAS/CAS configuration ('key' protected) (see #P139)
- 32h RW S3: backward compatibility 1
-	bit 4: ???
+ 32h RW S3: backward compatibility 1 (see #P228)
  33h	ET4000: extended start address
 	      This register is often used to decide between ET4000
 	      and ET3000, when bit3-0 can be reread after write.
 	       bit7-4 : reserved
 	       bit3-2 : cursor address bit 17-16
 	       bit1-0 : linear start address bits 17-16
- 33h RW S3: backward compatibility 2
+ 33h RW S3: backward compatibility 2 (see #P229)
  34h	ET4000: 6845 compatibility control register ('key' protected)
 	  (see #P140)
  34h RW S3: backward compatibility 3
@@ -3919,8 +3988,8 @@ Values for mono video adapter CRT data register index:
  3Bh RW S3: Data Transfer Execute position
  3Ch RW S3: Interlace Retrace start
  40h RW S3: System Configuration
-	bit 0: ???
- 41h    S3 Trio64V: ???
+	bit 0: enable access to 8514/A-compatible registers at PORT x2E8h
+ 41h    S3: BIOS Flag register
  42h RW S3: mode control
  43h RW S3: extended mode
  45h RW S3: hardware graphics cursor mode
@@ -3928,23 +3997,28 @@ Values for mono video adapter CRT data register index:
  48h-49h RW S3: hardware cursor origin Y
  4Ah RW S3: hardware graphics cursor foreground stack
  4Bh RW S3: hardware graphics cursor background stack
- 4Ch-4Dh RW S3: hardware graphics cursor start address
+ 4Ch-4Dh RW S3: hardware graphics cursor map start address
  4Eh RW S3: hardware cursor pattern start X
  4Fh RW S3: hardware cursor pattern start Y
- 50h RW S3 Trio64V: ???
- 52h RW S3 Trio64V: ???
-		bits 7-6 seem to be sync polarities (see #P159)
- 53h RW S3 Trio64V: ???
- 54h RW S3 Trio64V: ???
- 55h RW S3 Trio64V: ???
- 58h RW S3 Trio64V: ???
- 59h RW S3 Trio64V: ??? (high)
- 5Ah RW S3 Trio64V: ??? (low)
- 5Ch RW S3 Trio64V: ???
+ 50h RW S3 801+: Extended System Control 1
+ 51h RW S3 801+: Extended System Control 2
+ 52h RW S3 801+: Extended BIOS Flag 1
+		bits 7-6 are sync polarities (see #P159) for Diamond cards
+ 53h RW S3 801+: Extended Memory Control 1
+ 54h RW S3 801+: Extended Memory Control 2
+ 55h RW S3 801+: Extended Video DAC Control
+ 56h RW S3 801+: External Sync Control 1
+ 57h RW S3 801+: External Sync Control 2
+ 58h RW S3 801+: Linear Address Window Control
+ 59h RW S3 801+: Linear Address Window Position (high)
+ 5Ah RW S3 801+: Linear Address Window Position (low)
+ 5Bh RW S3 801+: Extended BIOS Flag 2
+ 5Ch RW S3 801+: General Output Port
 	bit 0: ???
 	bit 1: ???
- 5Dh RW S3 Trio64V: ???
- 5Eh RW S3 Trio64V: ???
+ 5Dh RW S3 801+: Extended Horizontal Overlow
+ 5Eh RW S3 801+: Extended Vertical Overflow
+ 5Fh RW S3 928/964: Bus Grant Termination Position
  60h RW S3 864/964: extended memory control 3
  61h RW S3 864/964: extended memory control 4
  62h RW S3 864/964: extended memory control 5
@@ -4109,6 +4183,60 @@ Bit(s)	Description	(Table P143)
  2	bus read data latch control
  1-0	display memory data bus width
 SeeAlso: #P135,#P142
+
+(Table P226)
+Values for S3 chip ID/Revision register "CR30":
+ 81h	86c911
+ 82h	86c911A/924
+ 90h	86c928 (original)
+...
+ A0h	86c801/805 A-step or B-step
+...  !!!
+ B0h	86c928 PCI
+ C0h	Vision864
+ C1h	Vision864P
+ D0h	Vision964
+ D1h	Vision964P
+ E0h	Trio32/64, 86c866, 86c868, 86c968; actual ID and revision stored in
+	  PORT 03B5h registers 2Eh and 2Fh
+ E1h	Trio32/64, 86c866, 86c868, 86c968; actual ID and revision stored in
+	  PORT 03B5h registers 2Eh and 2Fh
+SeeAlso: #P227
+
+Bitfields for S3 "CR31" memory configuration register:
+Bit(s)	Description	(Table P227)
+ 0	enable base-address offset (turn on bank-switched operation)
+ 1	two-page screen image (enables 2048-pixel wide screen)
+ 2	VGA 16-bit memory bus (clear for 8-bit memory bus)
+ 3	video memory above 256K accessible
+ 5-4	display start address, bits 17&16.  See also registers 51h and 69h
+ 6	enable page-mode memory access for text-mode font access
+ 7	(except 864/964) enable BIOS ROM address space C6800h-C7FFFh
+SeeAlso: #P226,#P228
+
+Bitfields for S3 "CR32" Backwards Compatibility 1 register:
+Bit(s)	Description	(Table P228)
+ 1-0	character clock period
+	00 IBM-compatible, 8 or 9 dots
+	01 7 dots
+	10 9 dits
+ 2	force full character clock for horizontal timing (CGA/HGC emulation),
+	  rather than 1/2 dot clock rate
+ 3	backward-compatible modes (set for MDA/CGA/EGA/HGC)
+ 6	fix VGA screen page using display start address bits 16&17 (see #P227)
+ 7	(928,964) tri-state serial output pins SC, SOE0, and SXNR
+SeeAlso: #P227,#P229
+
+Bitfields for S3 "CR33" Backwards Compatibility 2 register:
+Bit(s)	Description	(Table P229)
+ 1	disable VDE protection (PORT 03D4h register 11h bit 7 will not act
+	  on PORT 03D4h register 7h bits 1 and 6)
+ 3	VCLK is inverted DCLK rather than inverted DCLK/2
+ 4	disable writes to RamDAC
+ 5	blank signal does not include border area, is same as display enable
+ 6	lock palette/overscan registers
+ 7	override CGA "enable video" at PORT 03D8h bit 3
+SeeAlso: #P228
 ----------P03BC03BF--------------------------
 PORT 03BC-03BF - PARALLEL PRINTER PORT (MDA's LPT1)
 Range:	PORT 0278h, PORT 0378h, or PORT 03BCh
@@ -4236,7 +4364,7 @@ PORT 03C0-03CF - EGA  (1st Enhanced Graphics Adapter)	alternate at 02C0
 		 index (0..255) for following read accesses to 3C9h.
 		 Don't write to 3C9h while in read mode. Next access to
 		 03C8h will stop pending mode immediatly.
-03C7   W  (CEG-Color VGA w/ Edun Labs RAMDACs)
+03C7   W  (CEG-Color VGA w/ Edsun Labs RAMDACs)
 		 Enable and set Countinous Edge Graphics Mode:
 		 Consecutive write the following three key sequences in read
 		 mode (!) to 3C9h register DEh : 'CEG', 'EDS', 'UNx' (x see
@@ -4716,9 +4844,9 @@ PORT 03D0-03DF - CGA   (Color Graphics Adapter)
 	selected by port 03D4h. registers 0C-0F may be read
 	  (see also PORT 03B5h)
 	MCGA, native EGA and VGA use very different defaults from those
-	  mentioned for the other adapters (for additional notes and
-	  registers 00h-0Fh and EGA, VGAs 10h-18h and ET4000 32h-37h see
-	  PORT 03B5h)
+	  mentioned for the other adapters; for additional notes and
+	  registers 00h-0Fh and EGA/VGA registers 10h-18h and ET4000
+	  registers 32h-37h see PORT 03B5h (see #P135)
 	registers 10h-11h on CGA, EGA, VGA and 12h-14h on EGA, VGA are
 	  conflictive with MCGA (see #P167)
 03D6   W  same as 03D4
@@ -4766,44 +4894,10 @@ PORT 03D0-03DF - CGA   (Color Graphics Adapter)
 
 (Table P167)
 Values for MCGA (only) CRT Controller register index:
- 10h W	mode control register (defaults 18h, 1Ah, 19h)
-	bit 7 = 1: suppress hsync/vsync
-	bit 6 = 0: reserved
-	bit 5	 : reserved
-	bit 4 = 1: dot clock rate
-	bit 3 = 1: refresh calculations in 80x25 modes
-	bit 2	 : reserved
-	bit 1 = 1: videomode 11h active
-	bit 0 = 1: videomode 13h active
- 10h R	mode control status register
-	bit 7	 : status bit0 CGA mode control register
-	bit 6	 : reserved
-	bit 5 =1 clockrate 640 pixel, =0: clockrate/2 320 pixel
-	bit 4 =1 : clock rate is 25,175Mhz
-	bit 3 =1 : currently in textmode
-	bit 2 =1 : double-scan activated
-	bit 1 =1 : videomode 11h active
-	bit 0 =1 : videomode 13h active
- 11h	interrupt control register (default 30h)
-	bit 7 =1 : set output driver to tristate
-		=0: for reading of character generator reg (12h)
-		=1: for reading of display sense register (12h)
-	bit 6	 : read only: intr generated by memory controller
-	bit 5 =0 : requested intr ok to handle
-	bit 4 =0 : free interrupt latch register
-	bit 3-0	 : reserved
- 12h	character generator/sync polarity register
-	(default 46h in all modes, except 04h in mode 11h)
-	bit 7 =1 : character generator active
-	bit 6 =1 : load codepage during display
-	      =0 : load codepage during retrace
-	bit 5	 : codepage number (0,1)
-	bit 4 =1 : 512 characters active
-	      =0 : 256 characters active
-	bit 3 =0 : reserved
-	bit 2 =1 : enable hsync/vsync
-	bit 1 =1 : positive vsync polarity
-	bit 0 =1 : positive hsync polarity
+ 10h  W mode control register (defaults 18h, 1Ah, 19h) (see #P222)
+ 10h R	mode control status register (see #P223)
+ 11h	interrupt control register (default 30h) (see #P224)
+ 12h	character generator/sync polarity register (see #P225)
  12h R	display sense register (11h, bit7=1)
 	bit 7-2	 : not used
 	bit 1-0	 : pins 11 & 12 in monitor cable
@@ -4815,6 +4909,56 @@ Values for MCGA (only) CRT Controller register index:
 	only 00h, 10h, 20h, 30h (default 00h) are allowed here
 	  for textmode fonts at A0000, A2000, A4000, A6000
  14h W	number of characters to load during vert. retrace period (default FFh)
+SeeAlso: #P135
+
+Bitfields for MCGA (only) CRT mode control register:
+Bit(s)	Description	(Table P222)
+ 7	suppress hsync/vsync
+ 6	reserved (0)
+ 5	reserved
+ 4	dot clock rate
+ 3	refresh calculations in 80x25 modes
+ 2	reserved
+ 1	videomode 11h active
+ 0	videomode 13h active
+SeeAlso: #P167,#P223
+
+Bitfields for MCGA (only) CRT mode control status register:
+Bit(s)	Description	(Table P223)
+ 7	status bit0 CGA mode control register
+ 6	reserved
+ 5	clockrate 640 pixel, =0: clockrate/2 320 pixel
+ 4	clock rate is 25,175Mhz
+ 3	currently in textmode
+ 2	double-scan activated
+ 1	videomode 11h active
+ 0	videomode 13h active
+SeeAlso: #P167,#P222
+
+Bitfields for MCGA (only) CRT interrupt control register:
+Bit(s)	Description	(Table P224)
+ 7	set output driver to tristate
+	=0: for reading of character generator reg (12h)
+	=1: for reading of display sense register (12h)
+ 6   R  intr generated by memory controller
+ 5	=0 requested intr ok to handle
+ 4	=0 free interrupt latch register
+ 3-0	reserved
+SeeAlso: #P167
+
+Bitfields for MCGA (only) CRT character generator/sync polarity register:
+Bit(s)	Description	(Table P225)
+ 7	character generator active
+ 6	=1 load codepage during display
+	=0 load codepage during retrace
+ 5	codepage number (0,1)
+ 4	512 characters active
+ 3	reserved (0)
+ 2	enable hsync/vsync
+ 1	positive vsync polarity
+ 0	positive hsync polarity
+Note:	default 46h in all modes, except 04h in mode 11h)
+SeeAlso: #P167
 
 Bitfields for CGA mode control register:
 Bit(s)	Description	(Table P168)
@@ -5683,7 +5827,7 @@ PORT 06E8 - S3 86C928 video controller (ELSA Winner 1000)
 PORT 06E8-06EF - 8514/A and compatible video cards (e.g. ATI Graphics Ultra)
 SeeAlso: PORT 02E8h-02EFh,PORT 0AE8h,PORT 96E8h,PORT 9AE8h
 
-06E8   W  CRT control: horizontal displayed
+06E8w  W  CRT control: horizontal displayed
 ----------P0746------------------------------
 PORT 0746 - Gravis Ultra Sound by Advanced Gravis
 SeeAlso: PORT 0240h-024Fh,PORT 0340h-034Fh
@@ -5721,7 +5865,7 @@ PORT 0AE8 - S3 86C928 video controller (ELSA Winner 1000)
 ----------P0AE80AEF--------------------------
 PORT 0AE8-0AEF - 8514/A and compatible video cards (e.g. ATI Graphics Ultra)
 
-0AE8   W  CRT control: horizontal sync start
+0AE8w  W  CRT control: horizontal sync start
 ----------P0B900B93--------------------------
 PORT 0B90-0B93 - cluster (adapter 2)
 ----------P0C00------------------------------
@@ -5815,7 +5959,7 @@ PORT 0EE8 - S3 86C928 video controller (ELSA Winner 1000)
 --------V-P0EE80EEF--------------------------
 PORT 0EE8-0EEF - 8514/A and compatible video cards (e.g. ATI Graphics Ultra)
 
-0EE8   W  CRT control: horizontal sync width
+0EE8w  W  CRT control: horizontal sync width
 ----------P0F400F43--------------------------
 PORT 0F40-0F43 - Gravis Ultra Sound Daughter Card by Advanced Gravis
 Range:	dipswitch selectable from PORT 0530h-0533h, PORT 0604h-0607h,
@@ -5828,7 +5972,7 @@ PORT 1000-10FF - available for EISA slot 1
 ----------P12E812EF--------------------------
 PORT 12E8-12EF - 8514/A and compatible video cards (e.g. ATI Graphics Ultra)
 
-12E8   W  CRT control: vertical total
+12E8w  W  CRT control: vertical total
 ----------P13901393--------------------------
 PORT 1390-1393 - cluster (adapter 3)
 --------X-P140014FF--------------------------
@@ -5836,13 +5980,13 @@ PORT 1400-14FF - available for EISA slot 1
 ----------P16E816EF--------------------------
 PORT 16E8-16EF - 8514/A and compatible video cards (e.g. ATI Graphics Ultra)
 
-16E8   W  CRT control: vertical displayed
+16E8w  W  CRT control: vertical displayed
 --------X-P180018FF--------------------------
 PORT 1800-18FF - available for EISA slot 1
 ----------P1AE81AEF--------------------------
 PORT 1AE8-1AEF - 8514/A and compatible video cards (e.g. ATI Graphics Ultra)
 
-1AE8   W  CRT control: vertical sync start
+1AE8w  W  CRT control: vertical sync start
 --------X-P1C001CFF--------------------------
 PORT 1C00-1CFF - available for EISA slot 1
 ----------P1C65------------------------------
@@ -5886,7 +6030,7 @@ PORT 1C85 - Compaq Qvision EISA - Virtual Controller ID
 --------V-P1EE81EEF--------------------------
 PORT 1EE8-1EEF - 8514/A and compatible video cards (e.g. ATI Graphics Ultra)
 
-1EE8   W  CRT control: vertical sync width
+1EE8w  W  CRT control: vertical sync width
 --------X-P200020FF--------------------------
 PORT 2000-20FF - available for EISA slot 2
 ----------P2065------------------------------
@@ -6059,7 +6203,7 @@ Values for ET4000/W32(i) CRTC-B/Sprite data register index:
 ----------P22E822EF--------------------------
 PORT 22E8-22EF - 8514/A and compatible video cards (e.g. ATI Graphics Ultra)
 
-22E8   W  CRT control: display control
+22E8w  W  CRT control: display control
 ----------P23902393--------------------------
 PORT 2390-2393 - cluster (adapter 4)
 --------V-P23C023CF--------------------------
@@ -6167,6 +6311,7 @@ PORT 42E0-42EF - GPIB (General Purpose Interface Bus, IEEE 488 interface)
 42E1  RW  GPIB (adapter 2)
 --------V-P42E8------------------------------
 PORT 42E8 - 8514/A and hardware-compatible video cards
+Note:	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 
 42E8w R	  Misc. control: Subsystem Status
 42E8w  W  Misc. control: Subsystem Control (see #P212)
@@ -6174,13 +6319,14 @@ PORT 42E8 - 8514/A and hardware-compatible video cards
 Bitfields for 8514/A Subsystem Control Register:
 Bit(s)	Description	(Table P212)
  15-14	GP_RESET
-	00 no change
+      W	00 no change
 	01 normal operation
 	02 reset graphics processor and FIFO
- 11	enable interrupt when processor idle
- 10	enable interrupt on invalid I/O
- 9	enable interrupt if inside scissors region
- 8	enable vertical blanking interval interrupt
+ 11   W	enable interrupt when processor idle
+ 10   W	enable interrupt on invalid I/O
+ 9    W	enable interrupt if inside scissors region
+ 8    W	enable vertical blanking interval interrupt
+ 6-4 R  monitor ID
  3	acknowledge idle interrupt (and clear)
  2	acknowledge invalid I/O interrupt (and clear)
  1	acknowledge inside-scissors interrupt (and clear)
@@ -6191,7 +6337,7 @@ PORT 4400-44FF - available for EISA slot 4
 PORT 46E8 - VGA video adapter enable
 Note:	IBM uses this port for adapter-card VGAs only, and port 03C3 for
 	  motherboard VGA only (see 03C3 for details)
-SeeAlso: PORT 03C3h
+SeeAlso: PORT 03C3h,PORT 46E8h"8514/A"
 
 46E8  rW  Misc. control: enable flags / select ROM page (8514/A) (see #P213)
 
@@ -6203,8 +6349,17 @@ Bit(s)	Description	(Table P213)
  2-0	unused or vendor-specific
 --------V-P46E8------------------------------
 PORT 46E8 - 8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+Note:	this register is readable on the C&T 82c480 chipset
+SeeAlso: PORT 46E8h"VGA"
 
-46E8   W  ROM page select
+46E8w  W  ROM page select (see #P232)
+
+Bitfields for 8514/A ROM page select register:
+Bit(s)	Description	(Table P232)
+ 2-0	select which 4K page of 32K ROM to map at segment C700h
+ 3	enable VGA
+ 4	select VGA setup mode
+ 15-5	reserved (0)
 --------V-P46EE------------------------------
 PORT 46EE - ATI Mach32 - ???
 
@@ -6213,10 +6368,20 @@ PORT 46EE - ATI Mach32 - ???
 PORT 4800-48FF - available for EISA slot 4
 --------V-P4AE84AEF--------------------------
 PORT 4AE8-4AEF - 8514/A and compatible video cards - CRT CONTROL
-Note:	supported by ATI Mach8 and Mach32 chipsets, most S3 chipsets
+Notes:	supported by ATI Mach8 and Mach32 chipsets
+	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 
-4AE8   W  CRT control: Advanced function control
+4AE8w  W  CRT control: Advanced function control (see also #P230)
 	(02h = VGA mode, 03h = 480-line mode, 07h = 768-line mode)
+
+Bitfields for S3 8514/A-compatible Advanced Function Control register:
+Bit(s)	Description	(Table P230)
+ 0	enable enhanced functions
+ 1	reserved (1)
+ 2	(911-928) screen size (1 = 800x600 or 1024x768, 0=640x480)
+ 4	(928+) enable linear addressing
+ 5	(928+) enable memory-mapped I/O
+ 6	(928 only) enable Write Posting
 --------V-P4AEE------------------------------
 PORT 4AEE - ATI Mach32 - ???
 
@@ -6239,6 +6404,12 @@ PORT 5000-50FF - available for EISA slot 5
 PORT 5220-5227 - serial port, description same as 03F8
 --------S-P5228522F--------------------------
 PORT 5228-522F - serial port, description same as 03F8
+--------V-P52E852E9--------------------------
+PORT 52E8-52E9 - C&T 82c480 - EXTENDED CONFIGURATION REGISTER 0
+Note:	the 82c480 is an 8514/A-compatible video chipset
+SeeAlso: PORT 56E8h"C&T",PORT 5AE8h"C&T",PORT 5EE8h"C&T"
+
+52E8w RW  Extended Configuration Register 0
 --------V-P52EE------------------------------
 PORT 52EE - ATI Mach32 - ROM LOCATION???
 Note:	ATI video BIOS sets this port according to the segment address of the
@@ -6247,8 +6418,20 @@ Note:	ATI video BIOS sets this port according to the segment address of the
 52EE  RW  ???
 --------X-P540054FF--------------------------
 PORT 5400-54FF - available for EISA slot 5
+--------V-P56E856E9--------------------------
+PORT 56E8-56E9 - C&T 82c480 - EXTENDED CONFIGURATION REGISTER 1
+Note:	the 82c480 is an 8514/A-compatible video chipset
+SeeAlso: PORT 52E8h"C&T",PORT 5AE8h"C&T",PORT 5EE8h"C&T"
+
+56E8w RW  Extended Configuration Register 1
 --------X-P580058FF--------------------------
 PORT 5800-58FF - available for EISA slot 5
+--------V-P56E856E9--------------------------
+PORT 5AE8-5AE9 - C&T 82c480 - EXTENDED CONFIGURATION REGISTER 2
+Note:	the 82c480 is an 8514/A-compatible video chipset
+SeeAlso: PORT 52E8h"C&T",PORT 56E8h"C&T",PORT 5EE8h"C&T"
+
+5AE8w RW  Extended Configuration Register 2
 --------V-P5AEE------------------------------
 PORT 5AEE - ATI Mach32 - ???
 
@@ -6277,6 +6460,12 @@ SeeAlso: PORT 1C80h-1C83h
 PORT 5C84 - EISA CONFIGURATION FLAGS (board in slot 5)
 
 5C84  RW  configuration flags (see #P210)
+--------V-P5EE85EE9--------------------------
+PORT 5EE8-5EE9 - C&T 82c480 - EXTENDED CONFIGURATION REGISTER 3
+Note:	the 82c480 is an 8514/A-compatible video chipset
+SeeAlso: PORT 52E8h"C&T",PORT 56E8h"C&T",PORT 5AE8h"C&T"
+
+5EE8w RW  Extended Configuration Register 3
 --------X-P600060FF--------------------------
 PORT 6000-60FF - available for EISA slot 6
 ----------P62E062EF--------------------------
@@ -6422,10 +6611,11 @@ PORT 82E0-82EF - GPIB (General Purpose Interface Bus, IEEE 488 interface)
 82E1  RW  GPIB (adapter 4)
 --------V-P82E882EF--------------------------
 PORT 82E8-82EF - 8514/A and compatible video cards - DRAWING CONTROL
-Note:	supported by ATI Mach8 and Mach32 chipsets, most S3 chipsets
+Notes:	supported by ATI Mach8 and Mach32 chipsets
+	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 SeeAlso: PORT 86E8h
 
-82E8   W  drawing control: current Y position
+82E8w  W  drawing control: current Y position
 --------S-P82F882FF--------------------------
 PORT 82F8-82FF - serial port, description same as 03F8
 --------V-P83C083CF--------------------------
@@ -6440,18 +6630,21 @@ PORT 83F8-83FF - serial port, description same as 03F8
 PORT 8400-84FF - available for EISA slot 8
 --------V-P86E886EF--------------------------
 PORT 86E8-86EF - 8514/A and compatible video cards - DRAWING CONTROL
-Note:	supported by ATI Mach8 and Mach32 chipsets, most S3 chipsets
+Notes:	supported by ATI Mach8 and Mach32 chipsets
+	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 SeeAlso: PORT 82E8h,PORT 8AE8h
 
-86E8   W  drawing control: current X position
+86E8w  W  drawing control: current X position
 --------X-P880088FF--------------------------
 PORT 8800-88FF - available for EISA slot 8
 --------V-P8AE88AEF--------------------------
 PORT 8AE8-8AEF - 8514/A and compatible video cards - DRAWING CONTROL
-Note:	supported by ATI Mach8 and Mach32 chipsets, most S3 chipsets
+Notes:	supported by ATI Mach8 and Mach32 chipsets
+	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 SeeAlso: PORT 82E8h,PORT 86E8h
 
-8AE8   W  drawing control: destination Y position / axial step constant
+8AE8w  W  drawing control: destination Y position / axial step constant
+Note:	this port may be read on S3 chipsets
 --------X-P8C008CFF--------------------------
 PORT 8C00-8CFF - available for EISA slot 8
 --------X-P8C808C83--------------------------
@@ -6463,9 +6656,10 @@ PORT 8C84 - EISA CONFIGURATION FLAGS (board in slot 8)
 8C84  RW  configuration flags (see #P210)
 --------V-P8EE88EEF--------------------------
 PORT 8EE8-8EEF - 8514/A and compatible video cards - DRAWING CONTROL
-Note:	supported by ATI Mach8 and Mach32 chipsets, most S3 chipsets
+Notes:	supported by ATI Mach8 and Mach32 chipsets
+	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 
-8EE8   W  drawing control: destination X position / axial step constant
+8EE8w  W  drawing control: destination X position / axial step constant
 --------V-P8EEE------------------------------
 PORT 8EEE - ATI Mach32 - READ EXTENDED GRAPHICS CONFIGURATION
 SeeAlso: PORT 72EEh
@@ -6475,22 +6669,25 @@ SeeAlso: PORT 72EEh
 PORT 9000-90FF - available for EISA slot 9
 --------V-P92E892EF--------------------------
 PORT 92E8-92EF - 8514/A and compatible video cards - DRAWING CONTROL
-Note:	supported by ATI Mach8 and Mach32 chipsets, most S3 chipsets
+Notes:	supported by ATI Mach8 and Mach32 chipsets
+	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 
-92E8   W  drawing control: Bresenham error term
+92E8w  W  drawing control: Bresenham error term
 --------X-P940094FF--------------------------
 PORT 9400-94FF - available for EISA slot 9
 --------V-P96E896EF--------------------------
 PORT 96E8-96EF - 8514/A and hardware-compatible video cards - DRAWING CONTROL
-Note:	supported by ATI Mach8 and Mach32 chipsets, most S3 chipsets
+Notes:	supported by ATI Mach8 and Mach32 chipsets
+	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 
-96E8  R	  enter WD Enhanced Mode
-96E8   W  drawing control: major axis pixel count
+96E8w R	  enter WD Enhanced Mode
+96E8w  W  drawing control: major axis pixel count
 --------X-P980098FF--------------------------
 PORT 9800-98FF - available for EISA slot 9
 --------V-P9AE89AE9--------------------------
 PORT 9AE8-9AE9 - 8514/A Graphics Processor Status
-Note:	supported by ATI Mach8 and Mach32 chipsets, most S3 chipsets
+Notes:	supported by ATI Mach8 and Mach32 chipsets
+	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 
 9AE8w R	  drawing control: graphic processor status (see #P216)
 9AE8w  W  drawing control: command register (see #P217)
@@ -6554,9 +6751,10 @@ PORT 9C84 - EISA CONFIGURATION FLAGS (board in slot 9)
 9C84  RW  configuration flags (see #P210)
 --------V-P9EE8------------------------------
 PORT 9EE8 - 8514/A and compatible video cards - SHORT STROKE
-Note:	supported by ATI Mach8 and Mach32 chipsets, most S3 chipsets
+Notes:	supported by ATI Mach8 and Mach32 chipsets
+	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 
-9EE8   W  short line vector transfer
+9EE8w  W  short line vector transfer
 --------S-PA220------------------------------
 PORT A220 - soundblaster support in AMI Hi-Flex BIOS  ????
 ----------PA2E0A2EF--------------------------
@@ -6565,10 +6763,11 @@ PORT A2E0-A2EF - GPIB (General Purpose Interface Bus, IEEE 488 interface)
 A2E1  RW  GPIB (adapter 5)
 --------V-PA2E8A2EF--------------------------
 PORT A2E8-A2EF - 8514/A and compatible video cards - DRAWING CONTROL
-Note:	supported by ATI Mach8 and Mach32 chipsets, most S3 chipsets
+Notes:	supported by ATI Mach8 and Mach32 chipsets
+	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 SeeAlso: PORT A6E8h
 
-A2E8   W  drawing control: background color
+A2E8w  W  drawing control: background color
 --------V-PA2EEA2EF--------------------------
 PORT A2EE-A2EF - ATI Mach8/Mach32 - LINE DRAW OPTIONS
 SeeAlso: PORT 8EEEh,PORT CEEEh
@@ -6595,22 +6794,25 @@ Bit(s)	Description	(Table P219)
  1	polyline draw
 --------V-PA6E8A6EF--------------------------
 PORT A6E8-A6EF - 8514/A and compatible video cards - DRAWING CONTROL
-Note:	supported by ATI Mach8 and Mach32 chipsets, most S3 chipsets
+Notes:	supported by ATI Mach8 and Mach32 chipsets
+	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 SeeAlso: PORT A2E8h
 
-A6E8   W  drawing control: foreground color
+A6E8w  W  drawing control: foreground color
 --------V-PAAE8AAEF--------------------------
 PORT AAE8-AAEF - 8514/A and compatible video cards - WRITE MASK
-Note:	supported by ATI Mach8 and Mach32 chipsets, most S3 chipsets
+Notes:	supported by ATI Mach8 and Mach32 chipsets
+	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 SeeAlso: PORT AEE8h
 
-AAE8   W  drawing control: write mask
+AAE8w  W  drawing control: write mask
 --------V-PAEE8AEEF--------------------------
 PORT AEE8-AEEF - 8514/A and compatible video cards - READ MASK
-Note:	supported by ATI Mach8 and Mach32 chipsets, most S3 chipsets
+Notes:	supported by ATI Mach8 and Mach32 chipsets
+	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 SeeAlso: PORT AAE8h
 
-AEE8   W  drawing control: read mask
+AEE8w  W  drawing control: read mask
 --------V-PAFFF------------------------------
 PORT AFFF - VIDEO REGISTER
 
@@ -6620,39 +6822,46 @@ PORT B220-B227 - serial port, description same as 03F8
 --------S-PB228B22F--------------------------
 PORT B228-B22F - serial port, description same as 03F8
 --------V-PB2E8B2EF--------------------------
-PORT B2E8-B2EF - 8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+PORT B2E8-B2EF - 8514/A and compatible video cards - COLOR COMPARE
+Notes:	supported by ATI Graphics Ultra
+	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 
-B2E8   W  drawing control: color compare
+B2E8w  W  drawing control: color compare
 --------V-PB2EE------------------------------
 PORT B2EE - ATI Mach32 - ???
 
 B2EEw RW  ???
 --------V-PB6E8B6EF--------------------------
 PORT B6E8-B6EF - 8514/A and compatible video cards - BACKGROUND MIX
-Note:	supported by ATI Mach8 and Mach32 chipsets, most S3 chipsets
+Notes:	supported by ATI Mach8 and Mach32 chipsets
+	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 SeeAlso: PORT BAE8h
 
-B6E8   W  drawing control: background mix
+B6E8w  W  drawing control: background mix
 --------V-PB6EE------------------------------
 PORT B6EE - ATI Mach32 - ???
 
 B6EEw RW  ???
 --------V-PBAE8BAEF--------------------------
 PORT BAE8-BAEF - 8514/A and compatible video cards - FOREGROUND MIX
-Note:	supported by ATI Mach8 and Mach32 chipsets, most S3 chipsets
+Notes:	supported by ATI Mach8 and Mach32 chipsets
+	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 SeeAlso: PORT B6E8h
 
-BAE8   W  drawing control: foreground mix
+BAE8w  W  drawing control: foreground mix
 --------V-PBAEE------------------------------
 PORT BAEE - ATI Mach32 - ???
 
 BAEEw RW  ???
 --------V-PBEE8BEEF--------------------------
 PORT BEE8-BEEF - 8514/A and compatible video cards - MULTIFUNCTION CONTROL
-Note:	supported by ATI Mach8 and Mach32 chipsets, most S3 chipsets
+Notes:	supported by ATI Mach8 and Mach32 chipsets
+	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 
-BEE8   W  drawing control: multi-function control (index) (see #P!!!)
-BEE9  ?W  data register
+BEE8w  W  drawing control: multi-function control
+	  (index in bits 15-12, data in bits 11-0) (see #P220)
+BEE8w R   (S3) value of register specified by current value of multi-function
+	  index 0Fh
 
 (Table P220)
 Values for index into 8514/A multi-function drawing control registers:
@@ -6661,9 +6870,30 @@ Values for index into 8514/A multi-function drawing control registers:
  02h RW left scissors
  03h RW bottom scissors
  04h RW right scissors
+ 05h -W memory control register
+ 08h -W fixed pattern low
+ 09h -W fixed pattern high
  0Ah RW data manipulation control
 ---S3 chipsets---
- 0Eh	???
+ 0Dh RW (S3 864/964) miscellaneous 2
+ 0Eh RW (S3 801+) miscellaneous
+ 0Fh -W (S3 801/805/928) read register select (see #P231)
+
+(Table P231)
+Values for S3 multifunction read select register:
+ 00h	PORT BEE8h register 00h 
+ 01h	PORT BEE8h register 01h 
+ 02h	PORT BEE8h register 02h 
+ 03h	PORT BEE8h register 03h 
+ 04h	PORT BEE8h register 04h 
+ 05h	PORT BEE8h register 0Ah 
+ 06h	PORT BEE8h register 0Eh 
+ 07h	PORT 9AE8h (bits 11-0 only)
+---S3 864/964 only---
+ 08h	PORT 42E8h (bits 11-0 only)
+ 09h	PORT 46E8h
+ 0Ah	PORT BEE8h register 0Dh
+SeeAlso: #P220
 ----------PC000C004--------------------------
 PORT C000-C004 - Intel Pentium mboard ("Neptune" chipset)
 SeeAlso: PORT C050h,PORT C200h-C204h,INT 15/AX=DA8Ch,#0597 at INT 1A/AX=B10Ah
@@ -6800,9 +7030,12 @@ PORT E2E0-E2EF - GPIB (General Purpose Interface Bus, IEEE 488 interface)
 
 E2E1  RW  GPIB (adapter 7)
 --------V-PE2E8E2EF--------------------------
-PORT E2E8-E2EF - 8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+PORT E2E8-E2EF - 8514/A and compatible video cards - PIXEL DATA TRANSFER
+Notes:	supported by ATI Graphics Ultra
+	supported by S3 chipsets when PORT 03D4h register 40h bit 0 is set
 
-E2E8   W  drawing control: pixel data transfer
+E2E8w  W  drawing control: pixel data transfer
+E2EAw rW  drawing control: pixel data transfer (S3 801+) for 32-bit transfers
 --------V-PE2EEE2EF--------------------------
 PORT E2EE-E2EF - ATI Mach8/Mach32 - SCISSORS REGION (BOTTOM)
 SeeAlso: PORT DAEEh"SCISSORS",PORT DEEEh"SCISSORS",PORT E6EEh"SCISSORS"
@@ -6854,13 +7087,13 @@ by MindShare, Inc. (Addison-Wesley 1995, ISBN 0-201-40995-X).]
 [Some S3 and additional ATI Mach8/Mach32 info from Richard F. Ferraro's
 _Programmer's_Guide_to_the_EGA,_VGA,_and_Super_VGA_Cards_, third edition.]
 --------!---Admin----------------------------
-Highest Table Number = P221
+Highest Table Number = P234
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER50A through INTER50D (preferably the original
+quartet of archives named INTER51A through INTER51D (preferably the original
 authenticated PKZIP archives), and the utility programs in a two additional
-archives called INTER50E.ZIP and INTER50F.ZIP
+archives called INTER51E.ZIP and INTER51F.ZIP
 
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------!---CONTACT_INFO---------------------

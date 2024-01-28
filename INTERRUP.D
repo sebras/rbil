@@ -1720,6 +1720,11 @@ Notes:	Usually, the BIOS will try to read sector 1, head 0, track 0 from drive
 	  system in the same was as under bare DOS; under Windows Standard
 	  mode, INT 19 will successfully perform a cold reboot as it appears
 	  to have been redirected to a MOV AL,0FEh/OUT 64h,AL sequence
+BUG:	when loading the remainder of the DOS system files fails, various
+	  versions of IBMBIO.COM/IO.SYS incorrectly restore INT 1E before
+	  calling INT 19, assuming that the boot sector had stored the
+	  contents of INT 1E at DS:SI instead of on the stack as it actually
+	  does
 SeeAlso: INT 14/AH=17h,INT 18,INT 49"Tandy 2000",INT 5B"PC Cluster"
 
 Format of VDISK header block (at beginning of INT 19 handler's segment):
@@ -1765,12 +1770,19 @@ Values for operating system indicator:
  07h	OS/2 HPFS
  07h	Windows NT NTFS
  07h	Advanced Unix
+ 08h	OS/2 (v1.0-1.3 only)
  08h	AIX bootable partition, SplitDrive
+ 08h	Commodore DOS
+ 08h	DELL partition spanning multiple drives
  09h	AIX data partition
  09h	Coherent filesystem
  0Ah	OS/2 Boot Manager
  0Ah	OPUS
  0Ah	Coherent swap partition
+ 0Bh	Windows 95 with 32-bit FAT
+ 0Ch	Windows 95 with 32-bit FAT (LBA mode)
+ 0Eh	reserved by Microsoft for logical-block-addressable VFAT
+ 0Fh	reserved by Microsoft for logical-block-addressable VFAT
  10h	OPUS
  11h	OS/2 Boot Manager hidden 12-bit FAT partition
  12h	Compaq Diagnostics partition
@@ -1779,49 +1791,88 @@ Values for operating system indicator:
  16h	OS/2 Boot Manager hidden over-32M 16-bit FAT partition
  17h	OS/2 Boot Manager hidden HPFS partition
  18h	AST special Windows swap file
+ 21h	officially listed as reserved
+ 23h	officially listed as reserved
  24h	NEC MS-DOS 3.x
+ 26h	officially listed as reserved
+ 31h	officially listed as reserved
+ 33h	officially listed as reserved
+ 34h	officially listed as reserved
+ 36h	officially listed as reserved
  3Ch	PowerQuest PartitionMagic recovery partition
  40h	VENIX 80286
+ 41h	Personal RISC Boot
  42h	SFS (Secure File System) by Peter Gutmann
- 50h	Disk Manager, read-only partition
- 51h	Disk Manager, read/write partition
- 51h	Novell???
+ 50h	OnTrack Disk Manager, read-only partition
+ 51h	OnTrack Disk Manager, read/write partition
+ 51h	NOVEL
  52h	CP/M
  52h	Microport System V/386
+ 53h	OnTrack Disk Manager, write-only partition???
+ 54h	OnTrack Disk Manager (DDO)
  56h	GoldenBow VFeature
  61h	SpeedStor
  63h	Unix SysV/386, 386/ix
  63h	Mach, MtXinu BSD 4.3 on Mach
  63h	GNU HURD
- 64h	Novell NetWare
+ 64h	Novell NetWare 286
  65h	Novell NetWare (3.11)
+ 67h	Novell
+ 68h	Novell
+ 69h	Novell
  70h	DiskSecure Multi-Boot
+ 71h	officially listed as reserved
+ 73h	officially listed as reserved
+ 74h	officially listed as reserved
  75h	PC/IX
+ 76h	officially listed as reserved
  80h	Minix v1.1 - 1.4a
  81h	Minix v1.4b+
  81h	Linux
  81h	Mitac Advanced Disk Manager
  82h	Linux Swap partition
+ 82h	Prime
  83h	Linux native file system (ext2fs/xiafs)
  84h	OS/2-renumbered type 04h partition (related to hiding DOS C: drive)
+ 86h	officially listed as reserved
+ 87h	HPFS Fault-Tolerant mirrored partition
  93h	Amoeba file system
  94h	Amoeba bad block table
+ A1h	officially listed as reserved
+ A3h	officially listed as reserved
+ A4h	officially listed as reserved
  A5h	FreeBSD, BSD/386
+ A6h	officially listed as reserved
+ B1h	officially listed as reserved
+ B3h	officially listed as reserved
+ B4h	officially listed as reserved
+ B6h	officially listed as reserved
  B7h	BSDI file system (secondarily swap)
  B8h	BSDI swap partition (secondarily file system)
  C1h	DR DOS 6.0 LOGIN.EXE-secured 12-bit FAT partition
  C4h	DR DOS 6.0 LOGIN.EXE-secured 16-bit FAT partition
  C6h	DR DOS 6.0 LOGIN.EXE-secured Huge partition
  C7h	Syrinx Boot
+ D8h	CP/M-86
  DBh	CP/M, Concurrent CP/M, Concurrent DOS
  DBh	CTOS (Convergent Technologies OS)
  E1h	SpeedStor 12-bit FAT extended partition
  E3h	DOS read-only
+ E3h	Storage Dimensions
  E4h	SpeedStor 16-bit FAT extended partition
- F2h	DOS 3.3+ secondary
+ E5h	officially listed as reserved
+ E6h	officially listed as reserved
+ F1h	Storage Dimensions
+ F2h	DOS 3.3+ secondary partition
+ F3h	officially listed as reserved
  F4h	SpeedStor
+ F4h	Storage Dimensions
+ F6h	officially listed as reserved
  FEh	LANstep
+ FEh	IBM PS/2 IML
  FFh	Xenix bad block table
+Note:	for partition type 07h, one should inspect the partition boot record
+	  for the actual file system type
 SeeAlso: #0544
 --------B-1A00-------------------------------
 INT 1A - TIME - GET SYSTEM TIME
@@ -3311,8 +3362,262 @@ SeeAlso: AH=9Eh
 --------X-1AAF-------------------------------
 INT 1A - PCMCIA v2 - API
 	AH = AFh
-	details not yet available
+	AL = function
+	    00h close memory
+	    01h copy memory
+	    02h deregister client
+	    03h get client information (see #3236)
+	    04h get configuration information (see #3237)
+	    05h get first partition
+	    06h get first region
+	    07h get first tuple
+	    08h get next partition
+	    09h get next region
+	    0Ah get next tuple
+	    0Bh	get Card Services information (see #3222)
+	    0Ch get status
+	    0Dh	get tuple data
+	    0Eh	get first client (see #3223)
+	    0Fh get/register Erase Queue
+	    10h	register client
+	    11h reset function
+	    12h map logical socket
+	    13h map logical window
+	    14h map memory page
+	    15h map physical socket
+	    16h map physical window
+	    17h modify window
+	    18h open memory
+	    19h read memory
+	    1Ah register MTD
+	    1Bh release I/O
+	    1Ch release IRQ
+	    1Dh release window
+	    1Eh release configuration
+	    1Fh request I/O
+	    20h request IRQ
+	    21h reqeust window
+	    22h request socket mask
+	    23h return SS entry
+	    24h write memory
+	    25h deregister Erase Queue
+	    26h check Erase Queue
+	    27h modify configuration
+	    28h register timer
+	    29h set region
+	    2Ah get next client
+	    2Bh validate CIS
+	    2Ch request exclusive access
+	    2Dh release exclusive access
+	    2Eh get event mask
+	    2Fh release socket mask
+	    30h request configuration
+	    31h set event mask
+	    32h add Socket Service
+	    33h replace Socket Service
+	    34h vendor-specific
+	    35h adjust resource information
+	    36h access configuration register
+	    37h get first window
+	    38h get next window
+	    39h get memory page
+	    3Ah request DMA
+	    3Bh release DMA
+	further details not yet available
+Return: ??? = result code (see #3224)
 SeeAlso: AH=AEh
+
+(Table 3224)
+Values for PCMCIA Card Services result codes:
+ 00h	successful
+ 01h	invalid adapter number
+ 02h	bad value for attribute field
+ 03h	bad value for base system memory address
+ 04h	invalid EDC generator specified
+ 05h	(reserved for historical reasons)
+ 06h	invalid IRQ level specified
+ 07h	invalid PC Card memory array offset
+ 08h	invalid page number specified
+ 09h	unable to complete read request
+ 0Ah	invalid size specified
+ 0Bh	invalid socket number
+ 0Ch	(reserved for historical reasons)
+ 0Dh	invalid window or interface type
+ 0Eh	invalid Vcc power level specified
+ 0Fh	invalid Vpp1 or Vpp2 power level specified
+ 10h	(reserved for historical reasons)
+ 11h	invalid window number
+ 12h	unable to complete write request
+ 13h	(reserved for historical reasons)
+ 14h	no PC Card in socket
+ 15h	service not supported by implementation
+ 16h	unsupported processor mode
+ 17h	specified speed not available
+ 18h	busy -- retry later
+ 19h	undefined error (general failure)
+ 1Ah	storage medium write protected
+ 1Bh	argument length in (E)CX is invalid
+ 1Ch	bad value(s) in argument packet
+ 1Dh	configuration has already been locked
+ 1Eh	requested resource already in use
+ 1Fh	no more items of requested type available
+ 20h	out of resources
+ 21h	invalid client handle
+ 22h	unsupported client version
+
+(Table 3225)
+Values for Card Services Callback Event codes:
+ 01h	battery dead
+ 02h	battery low
+ 03h	card locked
+ 04h	card has become ready
+ 05h	card removed
+ 06h	card unlocked
+ 07h	motorized ejection complete
+ 08h	ejection requested
+ 09h	insertion complete
+ 0Ah	insertion requested
+ 0Bh	power management: resume
+ 0Ch	power management: suspend
+ 0Dh	exclusive access granted
+ 0Eh	exclusive access requested
+ 0Fh	perform physical reset
+ 10h	physical reset requested
+ 11h	card has been reset
+ 12h	MTD request (read/write/etc)
+ 14h	request for client info
+ 15h	timer has expired
+ 16h	Socket Service was modified
+ 17h	write-protected
+ 18h	attention requested
+ 40h	card insertion
+ 80h	reset complete
+ 81h	erase complete
+ 82h	registration complete
+
+Format of Card Services Information:
+Offset	Size	Description	(Table 3222)
+ 00h	WORD	length of information record in bytes
+ 02h	WORD	signature
+ 04h	WORD	number of sockets
+ 06h	WORD	revision level
+ 08h	WORD	Card Services level
+ 0Ah	WORD	offset of vendor string
+ 0Ch	WORD	length of vendor string
+ 0Eh	WORD	number of functions
+ 10h 255 BYTEs	vendor string
+SeeAlso: #3236
+
+Format of Card Services Client structure:
+Offset	Size	Description	(Table 3223)
+ 00h	WORD	PCMCIA socket number
+ 02h	WORD	client attributes
+
+Format of Cards Services Client Information:
+Offset	Size	Description	(Table 3236)
+ 00h	WORD	maximum length of data in bytes (180)
+ 02h	WORD	(ret) length of returned data
+ 04h	WORD	attributes (see #3235)
+ 06h	WORD	revision level (BCD)
+ 08h	WORD	Card Services level (BCD)
+ 0Ah	WORD	revision date (DOS packed date format) (see #0972) 
+ 0Ch	WORD	offset to name
+ 0Eh	WORD	length of name
+ 10h	WORD	offset to vendor string
+ 12h	WORD	length of vendor string
+ 14h 80 BYTEs	buffer for name
+ 64h 80 BYTEs	buffer for vendor string
+SeeAlso: #3222,#3237
+
+Bitfields for Card Services client attributes:
+Bit(s)	Description	(Table 3235)
+ 0	memory client
+ 1	MTD client
+ 2	I/O client
+ 3	all clients can share this card
+ 4	only one client can use this card at a time
+SeeAlso: #3236
+
+Format of Card Services configuration information:
+Offset	Size	Description	(Table 3237)
+ 00h	WORD	0000h
+ 02h	WORD	attributes (see #3238)
+ 04h	BYTE	Vcc value
+ 05h	BYTE	Vpp1 value
+ 06h	BYTE	Vpp2 value
+ 07h	BYTE	interface type (see #3239)
+ 08h	DWORD	base address of configuration registers
+ 0Ch	BYTE	card's Status register setting (if present)
+ 0Dh	BYTE	card's Pin register setting (if present)
+ 0Eh	BYTE	card's Socket/Copy register setting (if present)
+ 0Fh	BYTE	card's Option register setting (if present)
+ 10h	BYTE	bitmap of present card configuration registers
+ 11h	BYTE	first device type
+ 12h	BYTE	function code
+ 13h	BYTE	SysInit mask
+ 14h	WORD	manufacturer code
+ 16h	WORD	manufacturer information
+ 18h	BYTE	valie card register values
+ 19h	BYTE	IRQ number assigned to PC Card
+ 1Ah	WORD	IRQ attributes (see #3241)
+ 1Ch	WORD	base port address (for I/O range 1)
+ 1Eh	BYTE	number of contiguous ports (for I/O range 1)
+ 1Fh	BYTE	bitmap of port attributes (for I/O range 1)
+ 20h	WORD	base port address (for I/O range 2)
+ 22h	BYTE	number of contiguous ports (for I/O range 2)
+ 23h	BYTE	bitmap of port attributes (for I/O range 2)
+ 24h	BYTE	number of I/O address lines decoded (16-bit PC Card only)
+ 25h	BYTE	extended status register setting (if present)
+ 26h	BYTE	bitmap of DMA attributes (note: value at call is used to set!)
+ 27h	BYTE	assigned DMA channel
+ 28h	BYTE	number of I/O windows in use on logical socket
+ 29h	BYTE	number of memory windows in use on logical socket
+SeeAlso: #3235
+
+Bitfields for Card Services Configuration attributes:
+Bit(s)	Description	(Table 3238)
+ 0	exclusive
+ 1	IRQ active
+ 2	CardBus card
+ 3-5	reserved (0)
+ 6	DMA channel is active
+ 7	reserved (0)
+ 8	valid client
+ 9	overwrite voltage value
+ 10-15	reserved (0)
+SeeAlso: #3237
+
+Bitfields for Card Services Configuration interface type:
+Bit(s)	Description	(Table 3239)
+ 0	memory interface
+ 1	I/O and memory interface
+ 2	CardBus interface
+ 3-7	reserved (0)
+SeeAlso: #3237
+
+Bitfields for Card Services Configuration registers:
+Bit(s)	Description	(Table 3240)
+ 0	option value is value
+ 1	status value
+ 2	pin-replacement value
+ 3	copy value
+ 4	extended status value
+ 5-7	reserved (0)
+SeeAlso: #3237
+
+Bitfields for Card Services Configuration IRQ attributes:
+Bit(s)	Description	(Table 3241)
+ 1-0	sharing
+	00 no sharing
+	01 time-multiplex sharing
+	10 dynamic sharing
+	11 reserved
+ 2	force pulse mode
+ 3	first used together
+ 4-7	reserved
+ 8	pulse IRQ has been assigned
+ 9-15	reserved
+SeeAlso: #3237
 --------X-1AB000-----------------------------
 INT 1A U - HP 100LX/200LX - PCMCIA - ???
 	AX = B000h
@@ -3917,7 +4222,7 @@ Values for PCI vendor ID:
  1137h	Cisco Systems Inc
  1138h	Ziatech Corporation
  1139h	Dynamic Pictures Inc
- 113Ah	FWB Inc 
+ 113Ah	FWB Inc
  113Ch	Cyclone Micro
  113Dh	Leading Edge Products Inc
  113Eh	Sanyo Electric Co
@@ -4121,7 +4426,7 @@ Offset	Size	Description	(Table 0609)
  61h	BYTE	size of second DRAM bank (second two SIMM slots) in MB
  62h  4 BYTEs	???
 		(on a system with four 4M SIMMs, 60h-65h contain
-	 	  08h 08h 10h 10h 10h 10h; two 4M/two 8M SIMMs contains
+		  08h 08h 10h 10h 10h 10h; two 4M/two 8M SIMMs contains
 		  08h 10h 18h 18h 18h 18h)
  65h	BYTE	memory size in megabytes
  66h  2 BYTEs	??? (set to same value as 65h)
@@ -4172,7 +4477,7 @@ Offset	Size	Description	(Table 0610)
 Note:	the above field names are those given by EduWARE's PCI Configuration
 	  Manager v1.2
 SeeAlso: #0609,#0612
- 
+
 Format of PCI Configuration data for Intel 82378 ISA Bridge:
 Offset	Size	Description	(Table 0611)
  00h 64 BYTEs	header (see #0597)
@@ -6075,7 +6380,8 @@ INT 21 - DOS 1+ - WRITE STRING TO STANDARD OUTPUT
 	AH = 09h
 	DS:DX -> '$'-terminated string
 Return: AL = 24h (the '$' terminating the string, despite official docs which
-		state that nothing is returned) (at least DOS 2.1-5.0)
+		state that nothing is returned) (at least DOS 2.1-5.0 and
+		NWDOS)
 Notes:	^C/^Break are checked, and INT 23 is called if either pressed
 	standard output is always the screen under DOS 1.x, but may be
 	  redirected under DOS 2+
@@ -6161,7 +6467,7 @@ Notes:	under Novell NetWare, the return value is always 32, the number of
 	DOS 1.x supports a maximum of 16 drives, 2.x a maximum of 63 drives,
 	  and 3+ a maximum of 26 drives
 	under Novell DOS 7, this function returns the correct LASTDRIVE value
-	  even when the undocumented LASTDRIVE=32 directive was used in
+	  even when the undocumented LASTDRIVE=27..32 directive was used in
 	  CONFIG.SYS
 SeeAlso: AH=19h,AH=3Bh,AH=DBh
 --------v-210E--DLAD-------------------------
@@ -6188,7 +6494,7 @@ SeeAlso: AH=0Eh/DL=ADh,AH=0Eh/DL=AEh,INT 13/AX=A759h
 --------D-210F-------------------------------
 INT 21 - DOS 1+ - OPEN FILE USING FCB
 	AH = 0Fh
-	DS:DX -> unopened File Control Block (see #0662)
+	DS:DX -> unopened File Control Block (see #0662,#3226)
 Return: AL = status
 	    00h successful
 	    FFh file not found or access denied
@@ -6202,10 +6508,8 @@ SeeAlso: AH=10h,AH=16h,AH=3Dh,AX=4303h
 
 Format of File Control Block:
 Offset	Size	Description	(Table 0662)
- -7	BYTE	extended FCB if FFh
- -6   5 BYTEs	reserved
- -1	BYTE	file attribute if extended FCB
  00h	BYTE	drive number (0 = default, 1 = A, etc)
+		FFh is not allowed (signals extended FCB, see #3226)
  01h  8 BYTEs	blank-padded file name
  09h  3 BYTEs	blank-padded file extension
  0Ch	WORD	current block number
@@ -6217,8 +6521,15 @@ Offset	Size	Description	(Table 0662)
  20h	BYTE	record within current block
  21h	DWORD	random access record number (if record size is > 64 bytes, high
 		  byte is omitted)
-Note:	to use an extended FCB, you must specify the address of the FFh flag at
-	  offset -7, rather than the address of the drive number field
+SeeAlso: #3226
+
+Format of Extended File Control Block (XFCB):
+Offset	Size	Description	(Table 3226)
+ 00h	BYTE	FFh signature for extended FCB
+ 01h  5 BYTEs	reserved
+ 06h	BYTE	file attribute if extended FCB
+ 07h 36 BYTEs	standard FCB (all offsets are shifted by seven bytes)
+SeeAlso: #0622
 
 Format of FCB reserved field for DOS 1.0:
 Offset	Size	Description	(Table 0663)
@@ -6279,6 +6590,7 @@ Offset	Size	Description	(Table 0666)
  1Fh	BYTE	number of directory entry within sector
 Note:	if FCB opened on character device, DWORD at 1Ah is set to the address
 	  of the device driver header, then the BYTE at 1Ah is overwritten.
+SeeAlso: #0953
 
 Format of FCB reserved field for DOS 5.0:
 Offset	Size	Description	(Table 0667)
@@ -6298,7 +6610,7 @@ Offset	Size	Description	(Table 0667)
  1Ah	WORD	network handle
  1Ch	DWORD	network ID
 ---SHARE not loaded, local device---
- 1Ah	DWORD	pointer to device driver header
+ 1Ah	DWORD	pointer to device driver header (see #0953)
  1Eh  2 BYTEs	unused???
 ---SHARE not loaded, local file---
  1Ah	BYTE	extra info
@@ -6330,10 +6642,10 @@ Return: AL = status
 	    FFh no matching filename, or bad FCB
 Notes:	the type of the returned FCB depends on whether the input FCB was a
 	  normal or an extended FCB
-	the data returned in the DTA is actually the drive number (or extended
-	  FCB header and drive number) followed by the file's directory entry
-	  (see #0668); this format happens to be compatible with an unopened
-	  FCB
+	the data returned in the DTA (disk transfer area) is actually the
+	  drive number (or extended FCB header and drive number) followed by
+	  the file's directory entry (see #0668); this format happens to be
+	  compatible with an unopened FCB
 	for extended FCBs with search attribute 08h, the volume label (if any)
 	  will be returned even if the current directory is not the root dir.
 	DOS 3.0+ also allows the '*' wildcard
@@ -6353,20 +6665,52 @@ Offset	Size	Description	(Table 0668)
  00h  8 BYTEs	blank-padded filename
  08h  3 BYTEs	blank-padded file extension
  0Bh	BYTE	attributes
- 0Ch 10 BYTEs	reserved
-		used by DR DOS to store file password
+ 0Ch 10 BYTEs	(MS-DOS 1.0-6.22) reserved
+		(DR-DOS) used to store file password
+		(MS-DOS 7/Windows95) additional file times (see #3234)
  16h	WORD	time of creation or last update (see #0971 at AX=5700h)
  18h	WORD	date of creation or last update (see #0972 at AX=5700h)
  1Ah	WORD	starting cluster number (see also AX=440Dh/CX=0871h)
  1Ch	DWORD	file size
-SeeAlso: #1909,#1910
+SeeAlso: #3233,#1909,#1910
+
+Format of MS-DOS 7/Windows95 additional file times:
+Offset	Size	Description	(Table 3234)
+ 00h	BYTE	reserved
+ 01h	BYTE	10-millisecond units past creation time below
+ 02h	WORD	file creation time
+ 04h	WORD	file creation date
+ 06h	WORD	last-access date
+ 08h	WORD	reserved??? (0000h)
+Note:	this data is stored beginning at offset 0Ch in a standard directory
+	  entry
+SeeAlso: #0668
+
+Format of MS-DOS 7/Windows95 long-filename directory entry:
+Offset	Size	Description	(Table 3233)
+ 00h	BYTE	LFN record sequence (bit 6 set if last record for file)
+ 01h 10 BYTEs	long filename, first part
+ 0Bh	BYTE	0Fh (otherwise impossible file attribute, used as signature)
+ 0Ch  3 BYTEs	reserved??? (00h 00h 00h)
+ 0Fh	BYTE	checksum for short filename
+ 10h 10 BYTEs	long filename, second part
+ 1Ah	WORD	first cluster number (always 0000h for LFN records)
+ 1Ch  4 BYTEs	long filename, third part
+Notes:	long-filename entries are always stored in the directory just prior
+	  to the short-name entry for a file
+	multiple LFN records are used if the long filename does not fit into
+	  a single record
+	the short-filename checksum byte is computed by adding up the
+	  eleven bytes of the short filename, rotating the intermediate
+	  sum right one bit before adding the next character
+SeeAlso: #0668
 --------D-2112-------------------------------
 INT 21 - DOS 1+ - FIND NEXT MATCHING FILE USING FCB
 	AH = 12h
 	DS:DX -> unopened FCB (see #0662)
 Return: AL = status
 	    00h successful
-		[DTA] = unopened FCB
+		Disk Transfer Area filled with unopened FCB
 	    FFh no more matching filenames
 Note:	(see AH=11h)
 	assumes that successful FindFirst executed on search FCB before call
@@ -6401,7 +6745,7 @@ Return: AL = status
 	    01h end of file (no data)
 	    02h segment wrap in DTA
 	    03h end of file, partial record read
-	[DTA] = record read from file
+	Disk Tranfer Area filled with record read from file
 Notes:	reads a record of the size specified in the FCB beginning at the
 	  current file position, then updates the current block and current
 	  record fields in the FCB
@@ -6412,7 +6756,7 @@ SeeAlso: AH=0Fh,AH=15h,AH=1Ah,AH=3Fh,INT 2F/AX=1108h
 INT 21 - DOS 1+ - SEQUENTIAL WRITE TO FCB FILE
 	AH = 15h
 	DS:DX -> opened FCB (see #0662)
-	[DTA] = record to write
+	Disk Tranfer Area contains record to be written
 Return: AL = status
 	    00h successful
 	    01h disk full
@@ -6490,8 +6834,11 @@ Return: AL = sectors per cluster (allocation unit)
 	CX = bytes per sector
 	DX = total number of clusters
 	DS:BX -> media ID byte (see #0669)
-Note:	under DOS 1.x, DS:BX points at an actual copy of the FAT; later
+Notes:	under DOS 1.x, DS:BX points at an actual copy of the FAT; later
 	  versions return a pointer to a copy of the FAT's ID byte
+	this function may not be properly supported on CD-ROMs and other
+	  installable file systems (use AX=4402h"CD-ROM" for CD-ROMs
+	  instead)
 SeeAlso: AH=1Ch,AH=36h
 
 (Table 0669)
@@ -6519,6 +6866,9 @@ Notes:	under DOS 1.x, DS:BX points at an actual copy of the FAT; later
 	  versions return a pointer to a copy of the FAT's ID byte
 	on a DBLSPACE drive, the total number of clusters is based on the
 	  estimated compression ratio
+	this function may not be properly supported on CD-ROMs and other
+	  installable file systems (use AX=4402h"CD-ROM" for CD-ROMs
+	  instead)
 SeeAlso: AH=1Bh,AH=36h
 --------D-211D-------------------------------
 INT 21 - DOS 1+ - NULL FUNCTION FOR CP/M COMPATIBILITY
@@ -6584,7 +6934,7 @@ Return: AL = status
 	    01h end of file, no data read
 	    02h segment wrap in DTA, no data read
 	    03h end of file, partial record read
-	[DTA] = record read from file
+	Disk Tranfer Area filled with record read from file
 Notes:	the record is read from the current file position as specified by the
 	  random record and record size fields of the FCB
 	the file position is not updated after reading the record
@@ -6595,7 +6945,7 @@ SeeAlso: AH=14h,AH=22h,AH=27h,AH=3Fh
 INT 21 - DOS 1+ - WRITE RANDOM RECORD TO FCB FILE
 	AH = 22h
 	DS:DX -> opened FCB (see #0662)
-	[DTA] = record to write
+	Disk Transfer Area contains record to be written
 Return: AL = status
 	    00h successful
 	    01h disk full
@@ -7852,6 +8202,8 @@ Offset	Size	Description	(Table 0691)
  38h	DWORD	DOS 3+ pointer to previous PSP (default FFFFFFFFh in 3.x)
 		used by SHARE in DOS 3.3
  3Ch	BYTE	DOS 4+ (DBCS) interim console flag (see AX=6301h)
+		Novell DOS 7 DBCS interim flag as set with AX=6301h
+		(possibly also used by Far East MS-DOS 3.2-3.3)
  3Dh	BYTE	(APPEND) TrueName flag (see INT 2F/AX=B711h)
  3Eh	BYTE	(Novell NetWare) flag: next byte initialized if CEh
 		(OS/2) capabilities flag
@@ -7902,11 +8254,14 @@ Notes:	in DOS v3+, the limit on simultaneously open files may be increased by
 	Novell NetWare updates the fields at offsets 3Eh and 3Fh without
 	  checking that a legal PSP segment is current; see AH=50h for further
 	  discussion
-	for Windows95, the command tail may be more than 126 characters; in
-	  that case, the length byte will be set to 7Fh (with an 0Dh in the
-	  127th position at offset FFh), and the first 126 characters will be
-	  stored in the PSP, with the remainder in the environment variable
-	  CMDLINE.
+	for 4DOS and Windows95, the command tail may be more than 126
+	  characters; in that case, the length byte will be set to 7Fh (with
+	  an 0Dh in the	 127th position at offset FFh), and the first 126
+	  characters will be stored in the PSP, with the remainder (Windows95)
+	  or the entire command line (4DOS) in the environment variable
+	  CMDLINE; under at least some versions of 4DOS, the byte at offset
+	  FFh is *not* set to 0Dh, so there is no terminating carriage
+	  return in the PSP's command tail.
 
 Format of environment block:
 Offset	Size	Description	(Table 0692)
@@ -7929,7 +8284,7 @@ Return: AL = status
 	    01h end of file, no data read
 	    02h segment wrap in DTA, no data read
 	    03h end of file, partial read
-	[DTA] = records read from file
+	Disk Transfer Area filled with records read from file
 	CX = number of records read (return AL = 00h or 03h)
 Notes:	read begins at current file position as specified in FCB; the file
 	  position is updated after reading
@@ -7940,7 +8295,7 @@ INT 21 - DOS 1+ - RANDOM BLOCK WRITE TO FCB FILE
 	AH = 28h
 	CX = number of records to write
 	DS:DX -> opened FCB (see #0662)
-	[DTA] = records to write
+	Disk Transfer Area contains records to be written
 Return: AL = status
 	    00h successful
 	    01h disk full or file read-only
@@ -8075,6 +8430,31 @@ Offset	Size	Description	(Table 0694)
  00h	WORD	number of return codes which can be stored by following buffer
  02h	WORD	current position in buffer (treated as a ring)
  04h  N BYTEs	ELRES buffer
+--------l-212B00CX5643-----------------------
+INT 21 - The Volkov Commander - GET POINTER TO LEFT PANEL DATA STRUCTURE
+	AX = 2B00h
+	CX = 5643h ('VC')
+	DX = 4F4Dh ('OM')
+Return: AL = 0
+	ES:BX -> left panel data structure
+Program: Volcov Commander is a shell for MS-DOS by Vsevolod V. Volkov
+SeeAlso: AX=2B01h/CX=5643h,AX=2B02h/CX=5643h
+--------l-212B01CX5643-----------------------
+INT 21 - The Volkov Commander - GET POINTER TO RIGHT PANEL DATA STRUCTURE
+	AX = 2B01h
+	CX = 5643h ('VC')
+	DX = 4F4Dh ('OM')
+Return: AL = 0
+	ES:BX -> right panel data structure
+SeeAlso: AX=2B00h/CX=5643h,AX=2B02h/CX=5643h
+--------l-212B02CX5643-----------------------
+INT 21 - The Volkov Commander - GET POINTER TO GLOBAL VARIABLES
+	AX = 2B02h
+	CX = 5643h ('VC')
+	DX = 4F4Dh ('OM')
+Return: AL = 0
+	ES:BX -> global variables
+SeeAlso: AX=2B00h/CX=5643h,AX=2B01h/CX=5643h
 --------m-212B01CX444D-----------------------
 INT 21 - Quarterdeck DOS-UP.SYS v2.00 - INSTALLATION CHECK
 	AX = 2B01h
@@ -8645,6 +9025,9 @@ Notes:	the value in DX only affects the memory block containing the PSP;
 	  for DOS 2.x and 06h for DOS 3.0+
 	most TSRs can save some memory by releasing their environment block
 	  before terminating (see #0691 at AH=26h,AH=49h)
+	any open files remain open, so one should close any files which will
+	  not be used before going resident; to access a file which is left
+	  open from the TSR, one must switch PSP segments first (see AH=50h)
 SeeAlso: AH=00h,AH=4Ch,AH=4Dh,INT 20,INT 22,INT 27
 --------D-2132-------------------------------
 INT 21 - DOS 2+ - GET DOS DRIVE PARAMETER BLOCK FOR SPECIFIC DRIVE
@@ -8682,7 +9065,7 @@ Offset	Size	Description	(Table 0708)
 		16-bit FAT if greater than 0FF6h, else 12-bit FAT
  0Fh	BYTE	number of sectors per FAT
  10h	WORD	sector number of first directory sector
- 12h	DWORD	address of device driver header
+ 12h	DWORD	address of device driver header (see #0953)
  16h	BYTE	media ID byte (see #0669)
  17h	BYTE	00h if disk accessed, FFh if not
  18h	DWORD	pointer to next DPB
@@ -8696,7 +9079,7 @@ Offset	Size	Description	(Table 0708)
 ---DOS 4.0-6.0---
  0Fh	WORD	number of sectors per FAT
  11h	WORD	sector number of first directory sector
- 13h	DWORD	address of device driver header
+ 13h	DWORD	address of device driver header (see #0953)
  17h	BYTE	media ID byte (see #0669)
  18h	BYTE	00h if disk accessed, FFh if not
  19h	DWORD	pointer to next DPB
@@ -8733,20 +9116,20 @@ SeeAlso: AH=33h
 INT 21 - DOS 4.0+ - UNUSED
 	AX = 3303h
 Return: nothing
-Note:	this function and AX=3304h were apparently intended to support a
-	  code-page switching flag for OS/2 compatibility (OS/2 allows a file
-	  to have a code page as an attribute); however, this function has
-	  always been a NOP in public releases of DOS.	See _DOS_Internals_
+Note:	this function and AX=3304h were intended to support a code-page
+	  switching flag for OS/2 compatibility (OS/2 allows a file to have
+	  a code page as an attribute); however, this function has always
+	  been a NOP in public releases of DOS and OS/2.  See _DOS_Internals_
 	  Chapter 2 for more information
 SeeAlso: AX=3304h
 --------D-213304-----------------------------
 INT 21 - DOS 4.0+ - UNUSED
 	AX = 3304h
 Return: nothing
-Note:	this function and AX=3303h were apparently intended to support a
-	  code-page switching flag for OS/2 compatibility (OS/2 allows a file
-	  to have a code page as an attribute); however, this function has
-	  always been a NOP in public releases of DOS.	See _DOS_Internals_
+Note:	this function and AX=3303h were intended to support a code-page
+	  switching flag for OS/2 compatibility (OS/2 allows a file to have
+	  a code page as an attribute); however, this function has always
+	  been a NOP in public releases of DOS and OS/2.  See _DOS_Internals_
 	  Chapter 2 for more information
 SeeAlso: AX=3303h
 --------D-213305-----------------------------
@@ -8780,11 +9163,12 @@ Notes:	this function always returns the true version number, unlike AH=30h,
 	the Windows NT DOS box returns BX=3205h (version 5.50)
 	Novell DOS 7 returns IBM v6.00, which some software displays as
 	  IBM DOS v6.10 (because of the version mismatch in true IBM DOS
-	  mentioned for INT 21/AH=30h)
+	  mentioned for INT 21/AH=30h); versions through Update 15 all
+	  return revision code 00h
 BUG:	DR DOS 5.0 and 6.0 return CF set/AX=0001h for INT 21/AH=33h
 	  subfunctions other than 00h-02h and 05h, while MS-DOS returns AL=FFh
 	  for invalid subfunctions
-SeeAlso: AH=30h,INT 2F/AX=122Fh
+SeeAlso: AH=30h,INT 2F/AX=122Fh,INT 2F/AX=E000h"SETDRVER"
 --------N-213306-----------------------------
 INT 21 - CBIS network - NETWORK REDIRECTOR - ???
 	AX = 3306h
@@ -8953,7 +9337,9 @@ Notes:	free space on drive in bytes is AX * BX * CX
 	"lost clusters" are considered to be in use
 	according to Dave Williams' MS-DOS reference, the value in DX is
 	  incorrect for non-default drives after ASSIGN is run
-SeeAlso: AH=1Bh,AH=1Ch
+	this function does not return proper results on CD-ROMs;
+	  use AX=4402h"CD-ROM" instead
+SeeAlso: AH=1Bh,AH=1Ch,AX=4402h"CD-ROM"
 --------D-213700-----------------------------
 INT 21 - DOS 2+ - "SWITCHAR" - GET SWITCH CHARACTER
 	AX = 3700h
@@ -9341,9 +9727,9 @@ Bit(s)	Description	(Table 0715)
  3	reserved (0)
  6-4	sharing mode (DOS 3.0+) (see #0716)
 	000 compatibility mode
-	001 "DENYALL" prohiboth read and write access by others
-	010 "DENYWRITE" prohiwrite access by others
-	011 "DENYREAD" prohiread access by others
+	001 "DENYALL" prohibit both read and write access by others
+	010 "DENYWRITE" prohibit write access by others
+	011 "DENYREAD" prohibit read access by others
 	100 "DENYNONE" allow full access by others
 	111 network FCB (only available during server call)
  7	inheritance

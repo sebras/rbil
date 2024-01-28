@@ -3505,7 +3505,12 @@ INT 21 - VIRUS - "Jerusalem-G", "Pregnant" - INSTALLATION CHECK
 	AH = EEh
 Return: AX = 0300h if "Jerusalem-G" resident
 	AL = 05h if "Pregnant" resident
-SeeAlso: AH=DDh"VIRUS",AX=EC59h,AH=EFh"VIRUS"
+SeeAlso: AH=DDh"VIRUS",AX=EC59h,AX=EEE7h"VIRUS"
+--------v-21EEE7-----------------------------
+INT 21 - VIRUS - "GingerBread" - INSTALLATION CHECK
+	AX = EEE7h
+Return: AX = D703h if installed
+SeeAlso: AH=EEh"VIRUS",AH=EFh"VIRUS"
 --------v-21EF-------------------------------
 INT 21 - VIRUS - "Mabuhay"/"June 12th" - INSTALLATION CHECK
 	AH = EFh
@@ -3609,7 +3614,7 @@ SeeAlso: AH=E0h"DoubleDOS"
 INT 21 - VIRUS - "Frere Jacques" - INSTALLATION CHECK
 	AH = F0h
 Return: AX = 0300h if resident
-SeeAlso: AH=EEh"VIRUS",AH=F1h"VIRUS"
+SeeAlso: AH=EEh"VIRUS",AX=F078h"VIRUS"
 --------N-21F000-----------------------------
 INT 21 - Novell NetWare - WORKSTATION - SET PREFERRED CONNECTION ID
 	AX = F000h
@@ -3654,6 +3659,11 @@ Notes:	this function is supported by Advanced NetWare 2.0+
 	  script executed; it is set to 00h if the workstation is not logged in
 	  and when it detaches from its primary file server
 SeeAlso: AH=D6h,AX=EF03h,AX=F000h,AX=F002h,AX=F004h
+--------v-21F078-----------------------------
+INT 21 - VIRUS - "Burgler/H" - INSTALLATION CHECK
+	AX = F078h
+Return: AX = 0000h if installed
+SeeAlso: AH=F0h"VIRUS",AH=F1h"VIRUS"
 --------N-21F1-------------------------------
 INT 21 - Novell NetWare - CONNECTION SERVICES - FILE SERVER CONNECTION
 	AH = F1h

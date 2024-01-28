@@ -1,4 +1,4 @@
-GLOSSARY			Release 50		Last change 5/12/96
+GLOSSARY			Release 51		Last change 7/28/96
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 
 A20
@@ -147,7 +147,9 @@ introduced together with the original IBM PC.  See also HGC, MDA.
 
 Clock Tick
 	1/18.2 second, or approximately 55 milliseconds.  This is the
-rate at which the IBM PC's system clock is updated.
+rate at which the IBM PC's system clock is updated, derived by dividing
+1.19 MHz (1/4 of the original PC's 4.77 MHz CPU clock) by 65536 (the
+highest divisor possible on the 8253/8254 timer chip).
 
 CMOS
 	(Complementary Metal-Oxide-Silicon) A type of integrated
@@ -327,10 +329,10 @@ slower than what is possible with an IDE or SCSI drive.  See also IDE.
 Exception
 	A signal by the CPU that some error condition has been encountered
 that it can not deal with without a program's intervention.  The most commonly
-encountered exceptions on Intel processors are Exceptions 12 and 13, which
-are stack and general problems, respectively.  Exception 13 is typically
-caused by a memory access which wraps from the end of a segment back to
-the beginning.
+encountered exceptions on Intel processors are Exceptions 12 and 13 (decimal,
+how Intel specifies exception numbers), which are stack and general problems,
+respectively.  Exception 13 is typically caused by a memory access which wraps
+from the end of a segment back to the beginning.
 
 Expanded Memory Specification
 	A specification devised by Lotus, Intel, and Microsoft for
@@ -643,7 +645,7 @@ Page Fault
 generated when a program accesses a page of virtual memory which is not
 located in RAM at the time.  The operating system's response is to load in
 the required page, possibly writing some other page out to disk in order
-to make room.  See also INT 0E.
+to make room.  See also INT 0E in INTERRUP.LST.
 
 Page Register
 	A peripheral register or I/O port used to extend the addressing

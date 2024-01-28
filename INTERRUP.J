@@ -1139,7 +1139,7 @@ INT 2F - F-PROT v2.x - VIRSTOP - INSTALLATION CHECK
 Return: AX = 5346h if installed
 	    BX = version???
 	    DS:SI -> ASCIZ name of file containing virus signatures
-	    DS:DI -> 80-byte buffer for ??? 
+	    DS:DI -> 80-byte buffer for ???
 --------W-2F4680-----------------------------
 INT 2F U - MS Windows v3.0 - INSTALLATION CHECK
 	AX = 4680h
@@ -1424,6 +1424,9 @@ INT 2F - SMARTDRV v4.00+ - STATUS
 	    02h turn off read cache
 	    03h turn on write cache
 	    04h turn off write cache
+	    ---NWCACHE---
+	    05h ???
+	    06h ???
 Return: AX = BABEh if OK
 	DL = status (see #2029)
 	DL = FFh if drive does not exist
@@ -1476,7 +1479,7 @@ INT 2F - SMARTDRV v4.00+ - GET DEVICE DRIVER FOR DRIVE
 	BX = 0007h
 	BP = drive number (00h=A:)
 Return: DL = unit number within device driver
-	ES:DI -> device driver header for drive
+	ES:DI -> device driver header for drive (see #0953)
 Note:	this function is also supported by PC-Cache v8.0.
 	this call is reported to always return the driver header of the
 	  standard block driver (A:-C:+) for SmartDrive v5.00 from MS-DOS 6.2
@@ -1837,7 +1840,40 @@ Format of DBLSPACE entry point record:
 Offset	Size	Description	(Table 2042)
  00h	DWORD	pointer to FAR function for ???
  04h  5 BYTEs	FAR JUMP instruction to ???
-----------2F4A33-----------------------------
+----------2F4A15BX0000-----------------------
+INT 2F - MS EMM386.EXE v4.46+ - INSTALL I/O VIRTUALIZATION HANDLER
+	AX = 4A15h
+	BX = 0000h (function number)
+	DX = starting I/O address
+	EDX high word = ending I/O address
+	CX = number of ports to trap
+	DS:SI -> I/O dispatch table (see #3220)
+	DI = size of client's code and data
+Return: CF clear if successful
+	CF set on error
+Notes:	this interface is only available in virtual-86 mode; the I/O handlers
+	  will be called in protected mode
+	only ports 0100h-FFFFh may be trapped; EMM386 reserved ports 0000h-
+	  00FFh
+
+Format of EMM386 I/O dispatch table [array]:
+Offset	Size	Description	(Table 3220)
+ 00h	WORD	I/O port offset (added to DX to get actual port number)
+ 02h	WORD	offset of I/O handler for port (see #3221)
+
+(Table 3221)
+Values EMM386 I/O dispatch function is called with:
+	CX = Ring0 code selector for I/O handler's segment
+	DS = Ring0 data selector for I/O handler's segment (alias of CS)
+	EDX = faulting I/O address
+	ECX = direction (00000008h for byte output, 00000000h for byte input)
+	EAX = data in/out
+Return: (via FAR RET)
+	CF clear if I/O access successfully virtualized
+	CF set if access not virtualized (default handler will be called to
+	      perform the I/O)
+SeeAlso: #3220
+--------D-2F4A33-----------------------------
 INT 2F - Windows95 - CHECK MS-DOS VERSION 7
 	AX = 4A33h
 Return: AX = 0000h for MS-DOS 7.00+
@@ -2787,12 +2823,50 @@ INT 2F - INTERLNK - GET ???
 	DX = magic value FFFFh
 Return: CX = ???
 SeeAlso: AX=5600h
-----------2F57-------------------------------
-INT 2F U - ???
-	AH = 57h
-	???
-Return: ???
-Note:	reportedly used by Iomega Corp.
+--------d-2F5700-----------------------------
+INT 2F U - IOMEGA DRIVERS - INSTALLATION CHECK
+	AX = 5700h
+	BX = program ID??? (0201h used by GUEST.EXE)
+	DX = 496Fh ('Io')
+Return: AL = status
+	    00h not installed
+	    FFh installed
+SeeAlso: AX=5701h,AX=5710h,AX=5711h,AX=5712h
+--------d-2F5700-----------------------------
+INT 2F U - IOMEGA DRIVERS - ???
+	AX = 5701h
+	BX = program ID??? (0201h used by GUEST.EXE)
+	DX = 496Fh ('Io')
+Return: AX = 0001h
+SeeAlso: AX=5700h,AX=5710h,AX=5711h,AX=5712h
+--------d-2F5700-----------------------------
+INT 2F U - IOMEGA DRIVERS - GET DRIVER INFORMATION???
+	AX = 5710h
+	BX = program ID??? (0201h used by GUEST.EXE)
+	DX = 496Fh ('Io')
+Return: AX = ??? (BX ORed with ???)
+	BX = ??? (internal variable)
+	CX = ??? (internal variable)
+	DX = ??? (CX ORed with ???)
+SeeAlso: AX=5700h,AX=5701h,AX=5711h,AX=5712h
+--------d-2F5700-----------------------------
+INT 2F U - IOMEGA DRIVERS - LOCK MEDIA IN DRIVE
+	AX = 5711h
+	BX = program ID??? (0201h used by GUEST.EXE)
+	DX = 496Fh ('Io')
+Return: CF clear if successful (storage medium in drive)
+	    AX = new lock count
+	CF set on error (drive empty)
+SeeAlso: AX=5700h,AX=5701h,AX=5710h,AX=5712h
+--------d-2F5700-----------------------------
+INT 2F U - IOMEGA DRIVERS - UNLOCK MEDIA IN DRIVE / EJECT
+	AX = 5712h
+	BX = program ID??? (0201h used by GUEST.EXE)
+	DX = 496Fh ('Io')
+Return: AX = new lock count (00h = unlocked)
+Note:	if the lock count was already zero, the storage medium is ejected
+	  from the drive
+SeeAlso: AX=5700h,AX=5701h,AX=5710h,AX=5711h
 --------c-2F5758BX4858-----------------------
 INT 2F U - Helix Multimedia Cloaking - CACHECLK - INSTALLATION CHECK
 	AX = 5758h
@@ -3070,11 +3144,12 @@ Offset	Size	Description	(Table 2081)
  16h	BYTE	00h
  17h	BYTE	configuration format version (currently 00h or 01h)
  18h	WORD	offset of drive configuration data
+SeeAlso: #0953
 --------d-2F7201-----------------------------
 INT 2F - SRDISK v2.02 - GET CODE/DATA SEGMENT
 	AX = 7201h
 Return: AL = FFh if installed
-	    ES = segment of device driver header
+	    ES = segment of device driver header (see #2081)
 Program: SRDISK is a freeware resizeable RAMdisk by Marko Kohtala
 SeeAlso: AX=7200h
 --------N-2F7A00-----------------------------
@@ -3458,7 +3533,7 @@ Offset	Size	Description	(Table 2088)
  16h	WORD	GSegSize
  18h	WORD	SSegSize
  1Ah	BYTE	VLMName[9] ASCIZ
-Note:	this information is shown in VLM /d under the dashed line. There are 
+Note:	this information is shown in VLM /d under the dashed line. There are
 	  as many 35-byte blocks as modules loaded
 SeeAlso: #2087
 
@@ -3553,7 +3628,7 @@ Func	Description/Registers
  0Fh	Conn Get Num Connections
 	Return: AX = status (0000h if successful)
 		DX = number of connections
-		CX = segment of connection table 
+		CX = segment of connection table
 		    first entry in table (See #2092)
 
 Format of VLM connection statistics:
@@ -3600,10 +3675,10 @@ Offset	Size	Description	(Table 2092)
  14h	BYTE	NCP Sequence				       bh=0Ch
  15h	WORD	Connection Number			       bh=0Dh
  17h	BYTE	???					       none
- 18h	WORD	Transport VLMid 21(IPXNCP) 22(TCPNCP)	       bh=0Fh	  
+ 18h	WORD	Transport VLMid 21(IPXNCP) 22(TCPNCP)	       bh=0Fh
  1Ah	BYTE	Node Address[4]				       bh=11h
  1Eh	BYTE	Network[6]				       bh=11h
- 24h	BYTE	Socket[2]				       bh=11h  
+ 24h	BYTE	Socket[2]				       bh=11h
  26h	BYTE	Local Target[6]				       bh=11h
  2Ch	WORD	Round Trip Time				       bh=11h
  2Eh	WORD	???					       none
@@ -6009,6 +6084,36 @@ Return: AX = 0000h
 Note:	the examined version of the driver returns CF set for any AL other
 	  than 00h or 03h
 SeeAlso: AX=9800h
+--------l-2F9900-----------------------------
+INT 2F U - DOS Navigator II - INSTALLATION CHECK
+	AX = 9900h
+Return:	BX = 4E44h ('ND') if installed
+	    AX = number of DOS Navigator executions
+	    CL = child process exit code
+	    DX = version number (2141h for version II 1.41)
+Notes:	old versions of DOS Navigator II always returned AH=1, while newer
+	  ones return AH=0 and store AL in the DN.FLG file
+Program: DOS Navigator is a multi-window shell for MS-DOS by RIT S.R.L.
+	  DOS Navigator(TM) is a registered trademark of RIT S.R.L.
+SeeAlso: AX=9901h,AX=9902h,AX=9903h
+--------l-2F9901-----------------------------
+INT 2F U - DOS Navigator II - RETURN POINTER TO COMMAND LINE
+	AX = 9901h
+Return: ES:BX -> command line (terminated with 0Dh)
+	AX = ES
+SeeAlso: AX=9900h,AX=9902h,AX=9903h
+--------l-2F9902-----------------------------
+INT 2F U - DOS Navigator II - SET 'TRUE' EXIT CODE OF DN.PRG
+	AX = 9902h
+	CL = exit code
+Return: AX destroyed
+SeeAlso: AX=9900h,AX=9901h,AX=9903h
+--------l-2F9903-----------------------------
+INT 2F U - DOS Navigator II - SPECIFY HOW TO EXECUTE COMMANDS
+	AX = 9903h
+	CL = 1 to use INT 2E
+	CL <> 1 to use INT 21/AH=4Bh
+SeeAlso: AX=9900h,AX=9901h,AX=9902h
 --------e-2F9C-------------------------------
 INT 2F - Network Courier E-Mail OPERATOR.EXE - API
 	AH = 9Ch
@@ -6161,12 +6266,28 @@ Return: CF clear if successful
 	    AX = 0000h if Ctrl-Alt-Del not allowed
 	CF set if not resident
 SeeAlso: AX=A902h
+--------U-2FAA-------------------------------
+INT 2F - Player's Tool 3.996b+ - UNINSTALL
+	AH = AAh
+Return: AL = status
+	    00h unloaded successfully
+	    01h unable to unload: in DOS shell
+Program: Player's Tool is a game cheater by Dima Yakunin & Andy Robinson
+SeeAlso: AH=ABh"Player's Tool",AH=ACh"Player's Tool",INT 10/AH=AAh
 --------U-2FAA00-----------------------------
 INT 2F - VIDCLOCK.COM - INSTALLATION CHECK
 	AX = AA00h
 Return: AL = 00h not installed
 	     FFh installed
 Program: VIDCLOCK.COM is a memory-resident clock by Thomas G. Hanlin III
+--------U-2FAB-------------------------------
+INT 2F - Player's Tool 3.996b+ - INSTALLATION CHECK
+	AH = ABh
+Return: BH = FFh if installed
+	    BL = DOS shell state
+		01h in DOS shell
+		00h not in DOS shell
+SeeAlso: AH=AAh"Player's Tool",AH=ACh"Player's Tool",INT 10/AH=ABh
 --------f-2FAB00-----------------------------
 INT 2F - Btrieve Multi-User - INSTALLATION CHECK
 	AX = AB00h
@@ -6253,6 +6374,11 @@ Return: AX = 5253h ('SR' byte-swapped) if installed
 	CF clear if successful
 	CF set on error
 SeeAlso: AX=AB00h"MODAL",AX=AB04h,AX=AB05h,AX=AB06h
+--------U-2FAC-------------------------------
+INT 2F u - Player's Tool 3.996b+ - POP UP
+	AH = ACh
+Return: AX = 1001h
+SeeAlso: AH=AAh"Player's Tool",AH=ABh"Player's Tool"
 --------V-2FAC00-----------------------------
 INT 2F - DOS 4.01+ GRAPHICS.COM - INSTALLATION CHECK
 	AX = AC00h
@@ -7021,7 +7147,7 @@ SeeAlso: AX=AF00h"WinDOS",AX=AF0Dh
 --------O-2FAF0F-----------------------------
 INT 2F - WinDOS v2.11 - GET HISTORY SEGMENT
 	AX = AF0Fh
-Return: AX = segment of buffer for input history, or 0000h if none 
+Return: AX = segment of buffer for input history, or 0000h if none
 SeeAlso: AX=AF00h"WinDOS",AX=AF10h"WinDOS"
 --------O-2FAF10-----------------------------
 INT 2F - WinDOS v2.11 - SET HISTORY SEGMENT

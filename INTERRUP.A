@@ -1,19 +1,19 @@
-Interrupt List		Release 50			Last change 5/12/96
+Interrupt List		Release 51			Last change 7/28/96
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------!---FILELIST-------------------------
 Please redistribute the following files unmodified as a group, in a quartet of
-archives named INTER50A through INTER50D (preferably the original authenticated
+archives named INTER51A through INTER51D (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
 	INTERRUP.A	INT 00 through INT 13/0F  \
 	INTERRUP.B	INT 13/10 through INT 15/12\
-	INTERRUP.C	INT 15/13 through INT 16/FF \  
+	INTERRUP.C	INT 15/13 through INT 16/FF \
 	INTERRUP.D	INT 17 through INT 21/3E     \
-	INTERRUP.E	INT 21/3F through INT 21/5E   \	  total 2064 pages at
+	INTERRUP.E	INT 21/3F through INT 21/5E   \	  total 2075 pages at
 	INTERRUP.F	INT 21/5F through INT 21/E2    \  60 lines per page,
-	INTERRUP.G	INT 21/E3 through INT 21/F1	\ 2197 with INTPRINT -p
-	INTERRUP.H	INT 21/F2 through INT 21/FE	 >(7998 entries)
-	INTERRUP.I	INT 21/FF through INT 2F/42	/ (3214 tables)
+	INTERRUP.G	INT 21/E3 through INT 21/F1	\ 2208 with INTPRINT -p
+	INTERRUP.H	INT 21/F2 through INT 21/FE	 >(8018 entries)
+	INTERRUP.I	INT 21/FF through INT 2F/42	/ (3235 tables)
 	INTERRUP.J	INT 2F/43 through INT 2F/CA    /
 	INTERRUP.K	INT 2F/CB through INT 4A      /
 	INTERRUP.L	INT 4B through INT 61	     /
@@ -33,8 +33,9 @@ PKZIP archives):
 	OPCODES.LST	a listing of recent and undocumented CPU instructions
 	PORTS.LST	a listing of I/O ports
 	CATEGORY.KEY	descriptions of divider-line category letters
-	COMBINE.BAT	combine the pieces of the list into a single file
-The following files should be distributed in an archive called INTER50E:
+	COMBINE.COM	combine the pieces of the list into a single file
+	COMBINE.DOC	documentation for COMBINE
+The following files should be distributed in an archive called INTER51E:
 	86BUGSnn.ZIP	programs to test for CPU bugs
 	INT.*		invoke interrupts from commandline
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
@@ -47,7 +48,7 @@ The following files should be distributed in an archive called INTER50E:
 	INTSUM??.ZIP	interrupt list browser (Interrupt Summary)
 	IVIEW.ZIP	another interrupt list browser
 	RB2NG???.ZIP	convert list into Norton Guides database
-Finally, the following should be distributed in an archive called INTER50F:
+Finally, the following should be distributed in an archive called INTER51F:
 	INT2WHLP.ZIP	convert list into Windows Help database
 	HINTSRCH.ZIP	WinHelp DLL for full-text searches of interrupt list
 	WH_ED*.ZIP	WinHelp-file editor
@@ -349,6 +350,10 @@ Notes:	normally invoked by the INT 09 handler when PrtSc key is pressed, but
 	  01h PrtSc in progress
 	  FFh last PrtSc encountered error
 	default handler is at F000h:FF54h in IBM PC and 100%-compatible BIOSes
+	since the BOUND instruction also calls INT 05h, but returns control
+	  to the BOUND instruction, a failed BOUND check will cause an infinite
+	  loop of PrtScreens unless the INT 05 handler is aware of the problem
+	  and checks whether the interrupt was invoked by a BOUND instruction
 BUG:	some old BIOSes/applications appear to destroy BP on return
 SeeAlso: INT 10/AH=12h/BL=20h,INT 4A"Tandy 2000",INT 5E"TI Professional"
 SeeAlso: INT 80"Phar Lap"
@@ -882,12 +887,12 @@ Values for video mode:
  08h = T 132x25	 8x8  1056x200	 16	  .   B800 ATI EGA/VGA Wonder [2]
      = T 132x25	 8x8  1056x200	mono	  .   B000 ATI EGA/VGA Wonder [2]
      = G  20x25	 8x8   160x200	 16	  .	.  PCjr, Tandy 1000
-     = G  80x25  8x16  640x400  color	  .	.  Tandy 2000
+     = G  80x25	 8x16  640x400	color	  .	.  Tandy 2000
      = G  90x43	 8x8   720x348	mono	  .   B000 Hercules + MSHERC.COM
      = G  90x45	 8x8   720x360	mono	  .   B000 Hercules + HERKULES [11]
      = G  90x29	 8x12  720x348	mono	  .	.  Hercules + HERCBIOS [15]
  09h = G  40x25	 8x8   320x200	 16	  .	.  PCjr, Tandy 1000
-     = G  80x25  8x16  640x400  mono	  .	.  Tandy 2000
+     = G  80x25	 8x16  640x400	mono	  .	.  Tandy 2000
      = G  90x43	 8x8   720x348	mono	  .	.  Hercules + HERCBIOS [15]
  0Ah = G  80x25	 8x8   640x200	  4	  .	.  PCjr, Tandy 1000
  0Bh =	 reserved				   (EGA BIOS internal use)
@@ -1146,11 +1151,15 @@ Values for video mode:
  49h = T 132x44	 8x8	  .	mono	  .	.  Genoa 6400
      = T 132x44	 9x8	  .	mono	  .	.  Genoa SuperEGA BIOS 3.0+
      = G  80x30	 8x16  640x480	  .	  .	.  Lava Chrome II EGA
+     = G  80x30	 8x16  640x480	  .	  .   A000 Diamond Stealth64 Video 2xx1
+ 4Bh = G 100x37	 8x16  800x600	  .	  .   A000 Diamond Stealth64 Video 2xx1
  4Dh = T 120x25	  .	  .	  .	  .	.  VEGA VGA
      = G    .	  .    512x480	 16M	  .	.  Compaq QVision 1024/1280
+     = G 128x48	 8x16 1024x768	  .	  .   A000 Diamond Stealth64 Video 2xx1
  4Eh = T 120x43	  .	  .	  .	  .	.  VEGA VGA
      = T  80x60	 8x8	  .	 16/256K  .   B800 Oak OTI-067/OTI-077 [8]
      = G    .	  .    640x400	 16M	  .	.  Compaq QVision 1024/1280
+     = G 144x54	 8x16 1152x864	  .	  .   A000 Diamond Stealth64 Video 2xx1
  4Fh = T 132x25	  .	  .	  .	  .	.  VEGA VGA
      = T 132x60	  .	  .	  .	  .	.  some Oak Tech VGA [8]
      = G    .	  .    640x480	 16M	  .	.  Compaq QVision 1280
@@ -1218,6 +1227,7 @@ Values for video mode:
      = T 132x43	 9x9  1188x387	 16/256K  .   B800 WD90C
      = T 132x43	 9x9  1188x387	 16/256K  .   B800 Diamond Speedstar 24X
      = T 132x43	 9x9  1188x387	 16/256K  .   B800 Diamond Stealth 24
+     = T 132x43	 8x8	  .	  .	  .   B800 Diamond Stealth64 Video 2xx1
      = T 132x43	 8x8  1056x350	 16/256K  .	.  Cirrus CL-GD5420/5422/5426
      = T 132x50	 8x8	  .	 16	  .   A000 NCR 77C22 [9]
      = G 100x42	 8x14  800x600	 16	  .   A000 ATI EGA Wonder, VGA Wonder
@@ -1237,6 +1247,7 @@ Values for video mode:
      = T 132x25	 9x16 1188x400	 16/256K  .   B800 WD90C
      = T 132x25	 9x16 1188x400	 16/256K  .   B800 Diamond Speedstar 24X
      = T 132x25	 9x16 1188x400	 16/256K  .   B800 Diamond Stealth 24
+     = T 132x25	 8x16	  .	  .	  .   B800 Diamond Stealth64 Video 2xx1
      = T 132x25	 8x14 1056x350	 16/256K  .	.  Cirrus CL-GD5420/5422/5426
      = T 132x43	 8x11	  .	 16/256K  .   B800 Trident TVGA 8800/8900
      = G  94x29	 8x14  752x410	  .	  .	.  Lava Chrome II EGA
@@ -1361,6 +1372,7 @@ Values for video mode:
      = G 128x48	 8x16 1024x768	256/256K  .   A000 WD90C
      = G 128x48	 8x16 1024x768	256/256K  .   A000 Diamond Speedstar 24X
      = G 128x48	 8x16 1024x768	256/256K  .   A000 Cirrus CL-GD5420/5422/5426
+     = G 144x54	 8x16 1152x864	  .	  .   A000 Diamond Stealth64 Video 2xx1
  61h = T 132x29	 8x12	  .	 16/64	  8   B800 Quadram Ultra VGA
      = T 132x29	 8x8	  .	 16	  .	.  Genoa 6400
      = T 132x29	 8x8	  .	 16	  .	.  Genoa SuperEGA BIOS 3.0+
@@ -1369,12 +1381,14 @@ Values for video mode:
      = G    .	  .    ???x400	  .	  .	.  Corona/Cordata BIOS 4.10+
      = G  80x25	 8x16  640x400	256	  .   A000 ATI VGA Wonder,VGA Wonder+
      = G  80x25	 8x16  640x400	256	  .   A000 ATI Ultra 8514A,ATI XL
+     = G  80x25	 8x16  640x400	  .	  .   A000 Diamond Stealth64 Video 2xx1
      = G  80x30	 8x16  640x480	256	  1   A000 Ahead A, Ahead B (512K)
      = G    .	  .    720x540	  .	  .	.  VEGA VGA
      = G    .	  .    720x540	 16	  .	.  Tatung VGA
      = G    .	  .    720x540	 16	  .	.  Video7 V-RAM VGA
      = G  96x64	 8x16  768x1024	 16/256K  .   A000 Trident TVGA 88/8900 512K
      = G 128x48	 8x16 1024x768	256	  .   A000 NCR 77C22 [1,9]
+     = G 144x54	 8x16 1152x864	  .	  .   A000 Diamond Stealth64 Video 2xx1
  62h = T 132x32	 8x11	  .	 16/64	  6   B800 Quadram Ultra VGA
      = T 132x32	 8x12	  .	 16	  .	.  Genoa 6400
      = T 132x32	 8x11	  .	 16	  .	.  Genoa SuperEGA BIOS 3.0+
@@ -1423,8 +1437,10 @@ Values for video mode:
      = G    .	  .    800x600	32K	  .   A000 Cirrus CL-GD 5422/5426
      = G 128x48	 8x16 1024x768	  4	  .   A000 ATI VGA Wonder
      = G 160x64	 8x16 1280x1024	 16	  .   A000 NCR 77C22 [1,9]
+ 68h = G  80x25	 8x16  640x400	  .	  .   A000 Diamond Stealth64 Video 2xx1
  69h = T 132x50	 8x8  1056x400	 16/256K  .   B800 WD90C
      = T 132x50	 8x8	  .	 16	  .   B800 Diamond Speedstar 24X
+     = G  80x30	 8x16  640x480	  .	  .   A000 Diamond Stealth64 Video 2xx1
      = G    .	  .    720x540	256	  .	.  Video7 V-RAM VGA
  6Ah = G    .	  .    800x600	 16	  .   A000 VESA standard interface
      = G 100x75	 8x8   800x600	 16	  .	.  Genoa 6400
@@ -1435,31 +1451,39 @@ Values for video mode:
      = G    .	  .    800x600	 16	  .	.  Epson LT-386SX in CRT Mode
      = G    .	  .    800x600	 16	  .	.  Compuadd 316SL in CRT Mode
      = G 100x37	 8x16  800x600	 16/256K  .   A000 Cirrus CL-GD5420/5422/5426
+     = G 100x37	 8x16  800x600	 16	  .   A000 Diamond Stealth64 Video 2xx1
      = G 100x42	 8x14  800x600	  .	  .   A000 ATI VGA Wonder (undoc)
      = G    .	  .    800x600	 16	  .	.  Chips&Technologies chipset
      = G 160x64	 8x16 1280x1024 256	  .   A000 NCR 77C22 [1,9]
  6Bh = T 100x37	 8x16	  .	 16	  .	.  Genoa 6400
      = T 100x37	 8x16	  .	  .	  .	.  NEL Electronics BIOS
+     = G 100x37	 8x16  800x600	  .	  .   A000 Diamond Stealth64 Video 2xx1
  6Ch = G  80x30	 8x16  640x480	 16M	  .   A000 Trident 8900CL/BIOS C04
      = G 100x75	 8x8   800x600	256	  .	.  Genoa 6400
+     = G 128x48	 8x16 1024x768	  2	  .   A000 Diamond Stealth64 Video 2xx1
      = G 160x60	 8x16 1280x960	 16/256K  .   A000 WD90C [1]
      = G 160x60	 8x16 1280x960	 16/256K  .   A000 Diamond Speedstar 24X [1]
      = G 160x64	 8x16 1280x1024	 16/256K  .   A000 Cirrus CL-GD 5422/5426 [1]
  6Dh = G  80x25	 8x14  640x350	 64K	  .	.  STB Lightspeed ET4000/W32P
+     = G 128x48	 8x16 1024x768	  .	  .   A000 Diamond Stealth64 Video 2xx1
      = G 160x64	 8x16 1280x1024 256/256K  .   A000 Cirrus CL-GD 5422/5426 [1]
  6Eh = G  40x25	 8x8   320x200	 64K	  .   A000 Cirrus CL-GD 5422/5426
+     = G 160x64	 8x16 1280x1024	  2	  .   A000 Diamond Stealth64 Video 2xx1
  6Fh = G  40x25	 8x8   320x200	 16M	  .   A000 Cirrus CL-GD 5422/5426
+     = G 160x64	 8x16 1280x1024	  .	  .   A000 Diamond Stealth64 Video 2xx1
  70h =	extended mode set (see AX=0070h)	.  Everex Micro Enhancer EGA
      = T  40x25	 8x8	  .	 16	  8   B800 Quadram (CGA double scan)
      = T  40x25	 8x8   (CGA dblscan)	  .	.  Genoa SuperEGA BIOS 3.0+
      = G    .	  .    360x480	256	  .	.  Cirrus 510/520/5320 chips
      = G  90x28	 8x14  720x392	 16	  1   A000 Ahead B
+     = G  80x30	 8x16  640x480	  .	  .   A000 Diamond Stealth64 Video 2xx1
      = G    .	  .    800x600	 16	  .	.  C&T chipset, Cardinal
      = G    .	  .   1024x480	256	  .	.  Trident 8900C BIOS C3.0
  71h = T  80x25	 8x8	  .	 16	  8   B800 Quadram (CGA double scan)
      = T  80x25	 8x8   (CGA dblscan)	  .	.  Genoa SuperEGA BIOS 3.0+
      = G    .	  .    528x400	256	  .	.  Cirrus 510/520 chipset
      = G  80x30	 8x16  640x480	 16M	  .   A000 Cirrus CL-GD 5422/5426
+     = G  80x30	 8x16  640x480	  .	  .   A000 Diamond Stealth64 Video 2xx1
      = G 100x35	 8x16  800x600	 16/64	  .   A000 NSI Smart EGA+
      = G 100x75	 8x8   800x600	 16	  1   A000 Ahead B (same as 6Ah)
      = G    .	  .    960x720	 16	  .	.  C&T chipset, Cardinal
@@ -1469,6 +1493,7 @@ Values for video mode:
      = T  80x60	 8x8	  .	 16	  .   B800 Genoa SuperEGA BIOS 3.0+
      = G    .	  .    528x480	256	  .	.  Cirrus 510/520 chipset
      = G  80x25	 8x19  640x480	 16	  1   A000 DOS/V w/ any VGA
+     = G  80x30	 8x16  640x480	  .	  .   A000 Diamond Stealth64 Video 2xx1
      = G    .	  .    640x480	32K	  .   A000 ATI
      = G    .	  .    640x480	16M	  .   A000 WD90C
      = G    .	  .    640x480	16M	  .   A000 Diamond Speedstar 24X
@@ -1476,25 +1501,30 @@ Values for video mode:
  73h = G  80x60	 8x8   640x480	 16	  .   A000 Quadram Ultra VGA
      = G  80x60	 8x8   640x480	 16	  .	.  Genoa 6400
      = G  80x60	 8x8   640x480	 16	  .	.  Genoa SuperEGA BIOS 3.0+
+     = G 100x37	 8x16  800x600	  .	  .   A000 Diamond Stealth64 Video 2xx1
      = T  80x25	 8x19  640x475	 16	  1   none DOS/V, emulated in VGA graph
  74h = T  80x66	 8x8	  .	 16	  .   B800 Quadram Ultra VGA
      = T  80x66	 8x8	  .	 16	  .   B800 Genoa 6400
      = T  80x66	 8x8	  .	 16	  .   B800 Genoa SuperEGA BIOS 3.0+
      = G    .	  .    640x400	  2	  .   B800 Toshiba 3100 AT&T mode
      = G  80x30	 8x16  640x480	 32K	  .   A000 Trident 8900C/BIOS C03
+     = G 100x37	 8x16  800x600	  .	  .   A000 Diamond Stealth64 Video 2xx1
      = G 128x48	 8x16 1024x768	 16	  1   A000 Ahead A, Ahead B (512K)
      = G    .	  .   1024x768	 64K	  .   A000 Cirrus CL-GD 5422/5426 [1]
  75h = G  80x30	 8x16  640x480	 64K	  .   A000 Trident 8900C/BIOS C03
      = G  80x66	  .    640x528	 16???	  .   A000 Quadram Ultra VGA
      = G  80x66	  .    640x528	 16	  .	.  Genoa SuperEGA BIOS 3.0+
+     = G 100x37	 8x16  800x600	  .	  .   A000 Diamond Stealth64 Video 2xx1
      = G 128x48	 8x16 1024x768	  4	  1   A000 Ahead B
  76h = T  94x29	 8x14	  .	 16	  .   B800 Quadram Ultra VGA
      = T  94x29	 8x14	  .	  .	  .	.  Genoa SuperEGA BIOS 3.0+
      = G 100x75	 8x8   800x600	 32K	  .   A000 Trident 8900C/BIOS C03
      = G 128x48	 8x16 1024x768	  2	  1   A000 Ahead B
+     = G 128x48	 8x16 1024x768	  .	  .   A000 Diamond Stealth64 Video 2xx1
  77h = G  94x29	  .    752x410	 16???	  .   A000 Quadram Ultra VGA
      = G  94x29	  .    752x410	 16	  .	.  Genoa SuperEGA BIOS 3.0+
      = G 100x75	 8x8   800x600	 64K	  .   A000 Trident 8900C/BIOS C03
+     = G 128x48	 8x16 1024x768	  .	  .   A000 Diamond Stealth64 Video 2xx1
  78h = T 100x37	 8x16	  .	 16	  .	.  Genoa 6400
      = T 100x75	 8x8	  .	 16	  .   B800 Quadram Ultra VGA
      = T 100x75	 8x8	  .	  .	  .	.  Genoa SuperEGA BIOS 3.0+
@@ -1513,6 +1543,7 @@ Values for video mode:
      = G    .	  .    912x480	 16	  .	.  Genoa SuperEGA BIOS 3.0+
  7Ch = G    .	  .    512x512	 16	  .	.  Genoa
      = G    .	  .    800x600	256	  .	.  C&T 82C453 chipset
+     = G 200x75	 8x16 1600x1200	  . [16]  .   A000 Diamond Stealth64 Video 2xx1
  7Dh = G  64x32	 8x16  512x512	256	  .	.  Genoa
  7Eh =	special mode set (see AX=007Eh)		.  Paradise VGA, AT&T VDC600
      = G  80x25	 8x16  640x400	256	  .	.  Genoa 6400
@@ -1570,6 +1601,9 @@ Notes:
       Tutelman) may be changed by a command-line switch; the 90x43
       character-cell mode's number is always one higher than the 90x29 mode
       (whose default is mode 08h)
+[16] Stealth64 Video 2001-series BIOS v1.03 reports 76 lines for mode 7Ch,
+      resulting in incorrect scrolling for TTY output (scrolling occurs only
+      after the end of the 76th line, which is not displayed)
 Index:	video modes
 Index:	installation check;HERKULES|installation check;HERCULES.COM
 --------V-100070-----------------------------
@@ -6265,6 +6299,20 @@ INT 10 - PhoenixVIEW/LC - CRT MONITOR DETECTION
 Return: ???
 Desc:	determine whether an external display is currently attached
 SeeAlso: AX=A004h"PhoenixVIEW/LC"
+--------U-10AA-------------------------------
+INT 10 OU - Player's Tool 3.0 - UNINSTALL
+	AH = AAh
+Return: ???
+Notes: this call has been removed in PT 3.996b
+Program: Player's Tool is a game cheater by Dmitry Yakunin & Andy Robinson
+SeeAlso: AH=ABh,INT 2F/AH=AAh
+--------U-10AB-------------------------------
+INT 10 OU - Player's Tool 3.0 - INSTALLATION CHECK
+	AH = ABh
+Return: BH = FFh
+	???
+Notes: this call has been removed in PT 3.996b
+SeeAlso: AH=AAh,INT 2F/AH=ABh
 --------A-10B0-------------------------------
 INT 10 - CU Writer v1.4 - PUT PIXEL
 	AH = B0h
@@ -6688,6 +6736,11 @@ INT 10 - VIDEO - UltraVision - ENABLE EXTENSIONS
 Note:	should be followed immediately by mode set to restore previous
 	  UltraVision state
 SeeAlso: AX=CC01h
+--------U-10CCAB-----------------------------
+INT 10 - HiFont - INSTALLATION CHECK
+	AX = CCABh
+Return: AX = ABCCh
+Program: HiFont is a 8x19 font driver for standard VGA by Solar Designer
 --------V-10CD00-----------------------------
 INT 10 - VIDEO - UltraVision - LOAD ULTRAVISION PALETTE (color EGA,VGA)
 	AX = CD00h
@@ -7763,8 +7816,10 @@ Notes:	errors on a floppy may be due to the motor failing to spin up quickly
 	AWARD AT BIOS and AMI 386sx BIOS have been extended to handle more
 	  than 1024 cylinders by placing bits 10 and 11 of the cylinder number
 	  into bits 6 and 7 of DH
+	under Windows95, a volume must be locked (see INT 21/AX=440Dh/CX=084Bh)
+	  in order to perform direct accesses such as INT 13h reads and writes
 SeeAlso: AH=03h,AH=0Ah,AH=06h"V10DISK.SYS",AH=21h"PS/1",AH=42h"IBM"
-SeeAlso: INT 4D/AH=02h
+SeeAlso: INT 21/AX=440Dh/CX=084Bh,INT 4D/AH=02h
 --------B-1303-------------------------------
 INT 13 - DISK - WRITE DISK SECTOR(S)
 	AH = 03h
@@ -8107,6 +8162,8 @@ Notes:	may return successful even though specified drive is greater than the
 	  drives
 	for BIOSes which reserve the last cylinder for testing purposes, the
 	  cylinder count is automatically decremented
+	on PS/1s with IBM ROM DOS 4, nonexistent drives return CF clear,
+	  BX=CX=0000h, and ES:DI = 0000h:0000h
 SeeAlso: AH=06h"Adaptec",AH=13h"SyQuest",AH=48h,AH=15h,INT 1E,INT 41
 
 (Table 0150)

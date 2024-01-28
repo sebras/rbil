@@ -129,7 +129,7 @@ SeeAlso: AH=40h"IPCUST",AX=4402h"IPCUST",AX=4402h"FTPSOFT"
 
 Format of PC/TCP configuration data:
 Offset	Size	Description	(Table 0723)
- 00h 12 BYTEs	IPCUST.SYS device driver header
+ 00h 12 BYTEs	IPCUST.SYS device driver header (see #0953)
  12h	BYTE	???
  13h	BYTE	???
  14h	WORD	???
@@ -562,7 +562,7 @@ SeeAlso: AX=3DFFh,AX=4243h
 INT 21 - VIRUS - "Invader" - INSTALLATION CHECK
 	AX = 4243h
 Return: AX = 5678h if resident
-SeeAlso: AX=4203h,AX=4B04h
+SeeAlso: AX=4203h,AX=44A0h,AX=4B04h
 --------D-214300-----------------------------
 INT 21 - DOS 2+ - GET FILE ATTRIBUTES
 	AX = 4300h
@@ -1350,7 +1350,7 @@ Format of CD-ROM control block:
 Offset	Size	Description	(Table 0759)
  00h	BYTE	data being requested (see #0758)
 ---function 00h---
- 01h	DWORD	device driver header address (see also AH=52h)
+ 01h	DWORD	device driver header address (see also AH=52h,#0953)
 ---function 01h---
  01h	BYTE	addressing mode
 		00h HSG
@@ -4180,6 +4180,9 @@ Offset	Size	Description	(Table 0870)
  05h	WORD	number of first sector to read/write
  07h	WORD	number of sectors
  09h	DWORD	transfer address
+Note:	under Windows95, a volume must be locked (see AX=440Dh/CX=084Bh) in
+	  order to perform direct accesses such as track reads and writes
+	  with this IOCTL function
 
 Format of parameter block for function 42h:
 Offset	Size	Description	(Table 0871)
@@ -4409,7 +4412,7 @@ INT 21 - MS-DOS 7.0 - GENERIC IOCTL - ENUMERATE OPEN FILES
 	DI = enumeration type (0000h all files, 0001h unmovable files)
 Return: CF set on error
 	    AX = error code (01h,02h,12h,etc.) (see #0980 at AH=59h)
-	        0012h if file index is out of range
+		0012h if file index is out of range
 	CF clear if successful
 	    AX = file open mode (BX from AX=6C00h or AX=716Ch)
 	    CX = file type (see #0885)
@@ -4679,7 +4682,7 @@ Bit(s)	Description	(Table 0890)
  2-5	unused
  7	whose buffer: 0=application, 1=COMMAND.COM
 --------O-214457-----------------------------
-INT 21 U - DR DOS 5.0+ - SHARE/HILOAD CONTROL
+INT 21 U - DR DOS 5.0-6.0 - SHARE/HILOAD CONTROL
 	AX = 4457h
 	DH = subfunction
 	    00h enable/disable SHARE
@@ -4805,6 +4808,11 @@ INT 21 - DR MultiUser DOS 5.0 - API
 Notes:	DR DOS 5.0 and Novell DOS 7 return CF set and AX=0001h
 	this API is also available on INT E0
 SeeAlso: AX=4452h,INT E0"CP/M"
+--------v-2144A0-----------------------------
+INT 21 - VIRUS - "Horns" - INSTALLATION CHECK
+	AX = 44A0h
+Return: AH = FFh if installed
+SeeAlso: AX=4243h"VIRUS",AX=4B04h"VIRUS"
 --------N-2144E0-----------------------------
 INT 21 U - Sun PC-NFS - API???
 	AX = 44E0h
@@ -5855,6 +5863,10 @@ INT 21 - VIRUS - "Plastique-2576"/"AntiCad-2576" - ???
 	???
 Return: ???
 SeeAlso: AX=4B50h
+--------O-214B80-----------------------------
+INT 21 - DR-DOS v3.41 - EXEC KERNEL FILE WITHOUT RETURN???
+	AX = 4B80h
+	(details to follow in INTER52) !!!
 --------v-214B87-----------------------------
 INT 21 - VIRUS - "Shirley" - INSTALLATION CHECK
 	AX = 4B87h
@@ -5969,11 +5981,12 @@ Notes:	the word in which DOS stores the return code is cleared after being
 	  executed as ERRORLEVEL
 	this call should not be used if the child was started with AX=4B04h;
 	  use AH=8Ah instead
-	the following sequence will close a Virtual DOS Machine under OS/2 2.0:
-	  MOV	AH,4Dh
-	  INT	21h
-	  HLT
-	  DB	02h,0FDh
+	the following sequence will close a Virtual DOS Machine under OS/2 2.0
+	  through OS/2 Merlin (but may change in the future):
+	    MOV	AH,4Dh
+	    INT	21h
+	    HLT
+	    DB	02h,0FDh
 	  This sequence is the only way to close a specific VDM which was
 	  booted from floppy or a disk image.
 SeeAlso: AH=4Bh,AH=4Ch,AH=8Ah
@@ -5985,7 +5998,7 @@ INT 21 - DOS 2+ - "FINDFIRST" - FIND FIRST MATCHING FILE
 	    0088h (Novell DOS 7) find first deleted file
 	DS:DX -> ASCIZ file specification (may include path and wildcards)
 Return: CF clear if successful
-	    [DTA] = FindFirst data block (see #0933)
+	    Disk Transfer Area filled with FindFirst data block (see #0933)
 	CF set on error
 	    AX = error code (02h,03h,12h) (see #0980 at AH=59h)
 Notes:	for search attributes other than 08h, all files with at MOST the
@@ -6037,6 +6050,17 @@ Offset	Size	Description	(Table 0933)
  0Dh	WORD	entry count within directory
  0Fh	WORD	cluster number of start of parent directory
  11h  4 BYTEs	reserved
+---OS/2 MVDM---
+ 00h	WORD	"OS2_BMP_handle"
+ 02h	WORD	"OS2_LastEnt"
+ 04h	DWORD	"OS2_Checksum"
+ 08h	BYTE	"OS2_usi_flag"
+ 09h	DWORD	used by DOS emulator for second pass for volume-label searches
+ 0Dh	WORD	(ret) "DOS_LastEnt" entry count within directory
+ 0Fh	BYTE	OS/2 Processed-FindFirst flag
+		00h FindFirst processed by DOS
+		42h FindFirst processed by OS/2
+ 10h  5 BYTEs	reserved for future use
 ---all versions, documented fields---
  15h	BYTE	attribute of file found
  16h	WORD	file time (see #0971 at AX=5700h)
@@ -6053,12 +6077,18 @@ Program: WILDUNIX.COM is a resident Unix-style wildcard expander by Steve
 --------D-214F-------------------------------
 INT 21 - DOS 2+ - "FINDNEXT" - FIND NEXT MATCHING FILE
 	AH = 4Fh
-	[DTA] = data block from previous FindFirst or FindNext call
+	Disk Transfer Area contains data block from previous FindFirst or
+	  FindNext call
 Return: CF clear if successful
+	    Disk Transfer Area updated
 	CF set on error
 	    AX = error code (12h) (see #0980 at AH=59h)
-Note:	under Novell DOS 7, if the FindFirst call (AH=4Eh) had CX=0088h, then
+Notes:	under Novell DOS 7, if the FindFirst call (AH=4Eh) had CX=0088h, then
 	  the next matching deleted file will be returned
+	since the entire state of a FindFirst/FindNext sequence is contained
+	  in the data block in the DTA, other disk operations such as renaming,
+	  moving, deleting, or creating files can cause inaccurate directory
+	  searches, such as finding the same file twice
 BUG:	DR DOS 3.41 and 5.0 return the Directory attribute for the volume label
 SeeAlso: AH=12h,AH=4Eh,AX=714Fh,AX=71A1h
 --------D-2150-------------------------------
@@ -6115,6 +6145,9 @@ Notes:	partially supported by OS/2 v1.1 compatibility box (however, most
 	  DOS-UP.SYS is to test whether the list-of-lists segment is greater
 	  than the segment of the first memory block; a better check for
 	  DOS-UP.SYS is INT 21/AX=2B01h/CX=444Dh
+	because not all DOS workalikes support all fields in the List of Lists,
+	  applications should ensure that pointers are neither 0000h:0000h
+	  nor FFFFh:FFFFh before using them
 SeeAlso: INT 2F/AX=1203h
 
 Format of List of Lists:
@@ -6740,7 +6773,7 @@ Offset	Size	Description	(Table 0953)
  0Bh  7 BYTEs	normally unused; sometimes contains signature to indicate
 		  specific drivers:
 		"$PCMATA"   PCMCIA driver PCMATA.SYS (see AX=440Dh)
-                "AHADDVR"   Adaptec SCSI disk driver ASPIDISK.SYS
+		"AHADDVR"   Adaptec SCSI disk driver ASPIDISK.SYS
 		"DBLSPAC"   MS DoubleSpace or DriveSpace
 		"DSKREET"   NortonUtils v5+ Diskreet (see INT 2F/AX=FE00h)
 		"GFS	"   LapLink III device driver DD.BIN
@@ -7285,6 +7318,7 @@ Notes:	for DOS 3.0+, the cluster at which to start searching is set to 0000h
 	  at startup because it computes the internally-used shift count by
 	  shifting this value right until the carry flag is set; since this
 	  will never happen when the field is zero, MS-DOS hangs
+	not supported by Windows NT 3.1
 
 Format of BIOS Parameter Block:
 Offset	Size	Description	(Table 0970)
@@ -7393,7 +7427,7 @@ INT 21 - VIRUS - "PS-MPC.Gold" - INSTALLATION CHECK
 Return: AX = 5053h  ('PS') if resident
 SeeAlso: AX=33E0h"VIRUS",AX=6303h"VIRUS"
 --------D-215700-----------------------------
-INT 21 - DOS 2+ - GET FILE'S DATE AND TIME
+INT 21 - DOS 2+ - GET FILE'S LAST-WRITTEN DATE AND TIME
 	AX = 5700h
 	BX = file handle
 Return: CF clear if successful
@@ -7417,7 +7451,7 @@ Bit(s)	Description	(Table 0972)
  8-5	month
  4-0	day
 --------D-215701-----------------------------
-INT 21 - DOS 2+ - SET FILE'S DATE AND TIME
+INT 21 - DOS 2+ - SET FILE'S LAST-WRITTEN DATE AND TIME
 	AX = 5701h
 	BX = file handle
 	CX = new time (see #0971)
@@ -7425,7 +7459,7 @@ INT 21 - DOS 2+ - SET FILE'S DATE AND TIME
 Return: CF clear if successful
 	CF set on error
 	    AX = error code (01h,06h) (see #0980)
-SeeAlso: AX=5700h
+SeeAlso: AX=5700h,AX=5705h"Windows95",AX=5707h"Windows95"
 --------D-215702-----------------------------
 INT 21 - DOS 4.x only - GET EXTENDED ATTRIBUTES FOR FILE
 	AX = 5702h
@@ -7441,7 +7475,8 @@ Desc:	get the current value of one or more extended attributes
 Notes:	if CX=0000h on entry, ES:DI is ignored and no data is actually
 	  returned, only the amount of data which is available
 	the default DOS 4 behavior is to return a single word of 0000h (no
-	  structures) in the result buffer if CX>=0002h on entry
+	  structures) in the result buffer if CX>=0002h on entry; this
+	  functionality was apparently never released to the public
 SeeAlso: AX=5703h,AX=5704h,AH=6Eh,INT 2F/AX=112Dh
 
 Format of EAP (extended attribute properties) list:
@@ -7488,11 +7523,70 @@ INT 21 - OS/2 v1.1+ Family API - DosQFileInfo
 	BX = file handle
 	CX = size of buffer for information
 	DX = level of information
-	ES:DI -> buffer for information
+	    0001h standard file information (see #3227)
+	    0002h Query EA Size (see #3227)
+	    0003h Query EAs from List (see #3228)
+	    0004h Query All EAs (see #3228)
+	ES:DI -> buffer for information (see #3227,#3228)
 Return: CF clear if successful
 	CF set on error
 	    AX = error code
-SeeAlso: AX=5702h/BX=FFFFh,AX=5703h"OS/2"
+SeeAlso: AX=5702h/BX=FFFFh,AX=5703h"OS/2",AH=6Dh"OS/2"
+
+Format of OS/2 DosQFileInfo:
+Offset	Size	Description	(Table 3227)
+ 00h	WORD	creation date
+ 02h	WORD	creation time
+ 04h	WORD	last access date
+ 06h	WORD	last access time
+ 08h	WORD	last write date
+ 0Ah	WORD	last write time
+ 0Ch	DWORD	file size in bytes
+ 10h	DWORD	allocated space in bytes
+ 14h	WORD	file attributes
+---level 2 only---
+ 16h	DWORD	size of Extended Attributes in byte
+SeeAlso: #3228,#3229
+
+Format of OS/2 DosQFileInfo, EAOP structure:
+Offset	Size	Description	(Table 3228)
+ 00h	DWORD	pointer to general EA list (see #3231)
+ 04h	DWORD	pointer to buffer for full EA list, with length field set
+ 08h	DWORD	(ret) error
+Note:	for info level 3, the first pointer must contain the address of a
+	  list of the Extended Attributes to be retrieved; for info level 4,
+	  it should be 0000h:0000h
+SeeAlso: #3227,#3229
+
+Format of OS/2 DosQFileInfo, General EA List:
+Offset	Size	Description	(Table 3231)
+ 00h	DWORD	(call) total size of list in bytes (including this field)
+		(ret) number of bytes actually used (including this field)
+ 04h	var	Extended Attribute entries (see #3232) [packed arrray]
+
+Format of OS/2 DosQFileInfo, General EA entry:
+Offset	Size	Description	(Table 3232)
+ 00h	BYTE	length of Extended Attribute name (excluding terminating NUL)
+ 01h  N BYTEs	EA name
+	BYTE	00h
+SeeAlso: #3231
+
+Format of OS/2 DosQFileInfo, Full EA List:
+Offset	Size	Description	(Table 3229)
+ 00h	DWORD	(call) total size of list in bytes (including this field)
+		(ret) number of bytes actually used (including this field)
+ 04h	var	Extended Attribute data (see #3230) [packed array]
+SeeAlso: #3227,#3228
+
+Format of OS/2 Extended Attribute data (struct FEA):
+Offset	Size	Description	(Table 3230)
+ 00h	BYTE	flags
+		bit 7: critical EA
+ 01h	BYTE	length of Extended Attribute name (excluding terminating NUL)
+ 02h	WORD	length of Extended Attribute value
+ 04h  N BYTEs	EA name
+	BYTE	00h
+      M BYTEs	EA value
 --------O-215702BXFFFF-----------------------
 INT 21 - OS/2 v1.1+ Compatibility Box Family API - DosQPathInfo
 	AX = 5702h
@@ -7527,7 +7621,8 @@ Desc:	get a list of the extended attributes which are defined for the
 Notes:	if CX=0000h on entry, ES:DI is ignored and no data is actually
 	  returned, only the amount of data which is available
 	the default DOS 4 behavior is to return a trivial EAP list consisting
-	  of the single word 0000h (no EAP structures) if CX>=0002h on entry
+	  of the single word 0000h (no EAP structures) if CX>=0002h on entry;
+	  this functionality was apparently never released to the public
 SeeAlso: AX=5702h,AX=5704h,AH=6Eh,INT 2F/AX=112Dh
 --------O-215703-----------------------------
 INT 21 - OS/2 v1.1+ Family API - DosSetFileInfo
@@ -7560,7 +7655,8 @@ INT 21 - DOS 4.x only - SET EXTENDED ATTRIBUTES
 Return: CF clear if successful
 	CF set on error
 	    AX = error code (see #0980)
-Note:	the default DOS 4 behavior is to do nothing and return successfully
+Note:	the default DOS 4 behavior is to do nothing and return successfully;
+	  this functionality was apparently never released to the public
 SeeAlso: AX=5702h,AX=5703h,INT 2F/AX=112Dh
 --------D-215704-----------------------------
 INT 21 - MS-DOS 7/Windows95 - GET LAST ACCESS DATE AND TIME

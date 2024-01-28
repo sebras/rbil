@@ -470,7 +470,9 @@ Return: CF clear if successful
 		01h keyboard controller is in secure mode
 		86h function not supported
 Note:	also supported by AMI PCI BIOS and Qualitas 386MAX v6.01+
-SeeAlso: AX=2401h,AX=2402h,AX=2403h
+BUG:	AMI BIOS v1.00.03.AV0M never reports an error on failure to disable
+	  the A20 gate; it simply writes 0 to PORT 0092h
+SeeAlso: AX=2401h,AX=2402h,AX=2403h,PORT 0092h
 --------b-152401-----------------------------
 INT 15 - SYSTEM - later PS/2s - ENABLE A20 GATE
 	AX = 2401h
@@ -481,7 +483,7 @@ Return: CF clear if successful
 		01h keyboard controller is in secure mode
 		86h function not supported
 Note:	also supported by AMI PCI BIOS and Qualitas 386MAX v6.01+
-SeeAlso: AX=2400h,AX=2402h
+SeeAlso: AX=2400h,AX=2402h,PORT 0092h
 --------b-152402-----------------------------
 INT 15 - SYSTEM - later PS/2s - GET A20 GATE STATUS
 	AX = 2402h
@@ -489,7 +491,7 @@ Return: CF clear if successful
 	    AH = 00h
 	    AL = current state (00h disabled, 01h enabled)
 	    CX = ??? (set to 0000h-000Bh or FFFFh by AMI BIOS v1.00.03.AV0M)
-	        FFFFh if keyboard controller does not become ready within C000h
+		FFFFh if keyboard controller does not become ready within C000h
 			 read attempts
 	CF set on error
 	    AH = status
@@ -1883,7 +1885,7 @@ Values for Intel System Management Bus Smart Battery command codes:
  3Ch-3Fh		manufacturer-specific
 Note:	bits 7-6 are reserved for addressing multiple batteries in a future
 	  version of the specification
-SeeAlso: #0387 
+SeeAlso: #0387
 
 Bitfields for Smart Battery battery characteristics:
 Bit(s)	Description	(Table 0389)
@@ -2890,6 +2892,13 @@ Notes:	in the examined version of the BIOS, nonzero values in AL cause it to
 	  subfunction 00h is supported
 	also supported by Dell XPS P90 and IBM PS/PV 6384, which also use
 	  AMI BIOSes
+----------15B001CX5354-----------------------
+INT 15 - Stac ??? - INSTALLATION CHECK
+	AX = B001h
+	CX = 5354h ('ST')
+	DX = 4143h ('AC')
+Return: AX = 4F4Bh ('OK') if installed
+Note:	this function is called by Novell DOS 7 NWCACHE v1.01
 --------n-15BA10-----------------------------
 INT 15 - HP OmniShare - Pen Driver - REPORT PEN CONTROL AREA EVENT
 	AX = BA10h
@@ -3418,7 +3427,7 @@ Model  Submdl  Rev	BIOS date	System
  FEh	A6h	???	  ???		Quadram Quad386
  FDh	*	*	06/01/83	PCjr
  FCh	*	*	01/10/84	AT models 068,099 6 MHz 20MB
- FCh    *       *       02/25/93        Linux DOSEMU (all versions)
+ FCh	*	*	02/25/93	Linux DOSEMU (all versions)
  FCh	00h	00h	  ???		PC3270/AT
  FCh	00h	01h	06/10/85	AT model  239	  6 MHz 30MB
  FCh	00h	> 01h	  ???		7531/2 Industrial AT
@@ -3676,16 +3685,16 @@ SeeAlso: #0414,#0415
 
 (Table 0418)
 Values for Toshiba product ID:
-model prodID   version	  date		product number	  /hdd
+model prodID   version	  date	   product number
  FEh	29h		../..)..   Toshiba T1000LE
  FEh	2Ah		../..*..   Toshiba T1000XE
  FEh	2Bh		../..+..   Toshiba T1000SE
- FEh	2Ch		../..,..   Toshiba T1000      -
- FEh	2Dh		../..-..   Toshiba T1200F     -
- FEh	2Dh	V4.00	12/26-87   Toshiba T1200H    /20
+ FEh	2Ch		../..,..   Toshiba T1000
+ FEh	2Dh		../..-..   Toshiba T1200F
+ FEh	2Dh	V4.00	12/26-87   Toshiba T1200H
  FEh	2Eh		../.....   Toshiba T1100+
  FCh	22h		../.."..   Toshiba T8500
- FCh	26h		01/15&88   Toshiba T5200     /100
+ FCh	26h		01/15&88   Toshiba T5200
  FCh	27h		../..'..   Toshiba T5100
  FCh	28h		../..(..   Toshiba T2000
  FCh	2Ah		12/26*89   Toshiba T1200XE
@@ -3693,63 +3702,81 @@ model prodID   version	  date		product number	  /hdd
  FCh	2Ch		../..,..   Toshiba T3100e
  FCh	2Dh		../..-..   Toshiba T3200
  FCh	2Fh		../../..   Toshiba T3100
- FCh	34h		../..4..   Toshiba T100X
+ FCh	34h	V1.50	02/04494   Toshiba T100X
  FCh	38h		../..8..   Toshiba T2000SXe
- FCh	39h	V1.20	09/16991   Toshiba T2200SX   /60
- FCh	39h	V1.40	10/01992   Toshiba T2200SX   /120 (upgraded)
- FCh	3Ch	V1.50	01/28<91   Toshiba T2000SX   /40
+ FCh	39h	V1.20	09/16991   Toshiba T2200SX
+ FCh	39h	V1.40	10/01992   Toshiba T2200SX
+ FCh	3Ch	V1.50	01/28<91   Toshiba T2000SX
  FCh	3Dh		../..=..   Toshiba T3200SXC
  FCh	3Eh		../..>..   Toshiba T3100SX
  FCh	3Fh		../..?..   Toshiba T3200SX
  FCh	40h		../..@..   Toshiba T4500C
- FCh	41h		04/05A92   Toshiba T4500     ("T4500SXC" ?)
+ FCh	41h	V1.20	04/05A92   Toshiba T4500     ("T4500SXC" ???)
  FCh	45h	V3.20	04/14E92   Toshiba T4400SX   ("C" or "SXC" on cover)
  FCh	45h		01/13E93   Toshiba T4400SXC
  FCh	46h *		../..F..   Toshiba T6400
  FCh	46h *		../..F..   Toshiba T6400C
- FCh	5Fh		../.._..   Toshiba T3300SL
+ FCh	5Fh	V1.40	01/18_94   Toshiba T3300SL
  FCh	69h		../..i..   Toshiba T1900C
- FCh	6Ah		../..j..   Toshiba T1900
- FCh	6Dh		../..m..   Toshiba T1850C
+ FCh	6Ah	V1.30	05/19j93   Toshiba T1900
+ FCh	???		../.. ..   Toshiba T1900CT
+ FCh	???		../.. ..   Toshiba T1900S
+ FCh	6Dh	V1.10	12/25m92   Toshiba T1850C
  FCh	6Eh	V1.00	08/19n92   Toshiba T1850
- FCh	6Eh		12/25n92   Toshiba T1850
- FCh	6Fh		07/17o92   Toshiba T1800
+ FCh	6Eh	V1.10	12/25n92   Toshiba T1850
+ FCh	6Fh	V1.00	07/17o92   Toshiba T1800
+ FCh	6Fh	V1.10	12/25o92   Toshiba T1800
  FCh	7Eh	V1.30	06/17~93   Toshiba T4600C
- FCh	7Fh		../..x..   Toshiba T4600
- FCh	8Ah		../..x..   Toshiba T6600C
- FCh	91h		../..x..   Toshiba T2400CS
+ FCh	7Fh	V1.40	11/10x94   Toshiba T4600
+ FCh	8Ah	V1.30	10/22x93   Toshiba T6600C
  FCh	91h	V1.20	07/15x94   Toshiba T2400CT
- FCh	92h		../..x..   Toshiba T3600CT
- FCh	96h *		../..x..   Toshiba T200
- FCh	96h *		../..x..   Toshiba T200CS
+ FCh	91h	V5.00	07/28x95   Toshiba T2400CS/CT
+ FCh	92h	V5.00	07/28x95   Toshiba T3600CT
+ FCh	96h *	V1.40	12/08x94   Toshiba T200
+ FCh	96h *	V1.50	12/08x94   Toshiba T200CS	(T200)
  FCh	97h		../..x..   Toshiba T4800CT
- FCh	98h *	V1.10	12/22x93   Toshiba T1910     /120 /320
- FCh	98h *		../..x..   Toshiba T1910CS
+ FCh	98h *	V1.10	12/22x93   Toshiba T1910
+ FCh	98h *	V2.40	07/12x94   Toshiba T1910/CS	(T19XX)
  FCh	99h		../..x..   Toshiba T4700CS
  FCh	9Bh	V2.30	01/31x94   Toshiba T4700CT
- FCh	9Bh	V2.50	03/22x94   Toshiba T4700CT   /320
- FCh	9Ch	V1.30	01/11x94   Toshiba T1950CT   /320
- FCh	9Dh *		../..x..   Toshiba T1950
- FCh	9Dh *		../..x..   Toshiba T1950CS
- FCh	9Eh *	V1.20	12/25x93   Toshiba T3400     /120
- FCh	9Eh *	V1.30	03/22x94   Toshiba T3400     /250
- FCh	9Eh *		../..x..   Toshiba T3400CT
+ FCh	9Bh	V2.50	03/22x94   Toshiba T4700CT
+ FCh	9Bh	V5.00	07/28x95   Toshiba T4700CT
+ FCh	9Ch	V1.30	01/11x94   Toshiba T1950CT
+ FCh	9Ch	V2.50	07/22x94   Toshiba T1950CT	(T19XX)
+ FCh	9Dh *	V2.40	07/12x94   Toshiba T1950/CS	(T19XX)
+ FCh	9Eh *	V1.20	12/25x93   Toshiba T3400
+ FCh	9Eh *	V1.30	03/22x94   Toshiba T3400/CT
+ FCh	B5h **	V5.10	08/25x95   Toshiba T2110/CS	(T21XX)
+ FCh	B5h	V5.10	08/25x95   Toshiba T2130CS/CT	(T21XX)
  FCh	BAh	V1.30	02/16x95   Toshiba T2150CDS/CDT
- FCh	BBh	V1.30	01/25x95   Toshiba T2100/CS/CT
- FCh    BCh     V1.20   12/05x94   Toshiba T2450CT
- FCh	BEh		../..x..   Toshiba T4850CT
- FCh    CAh     V5.10   08/18x95   Toshiba 400CDT
- FCh	???		../.. ..   Toshiba T1900S
- FCh	???		../.. ..   Toshiba T1900CT
- FCh	???		../.. ..   Toshiba T4900CT
-Note:	BIOS version numbers and dates may vary, esp. due to harddisk and
-	  flash BIOS upgrades
-	the 8-bit ASCII graphics character in the "date" column above
-	  has been substituted by "x" because it depends on code page
+ FCh	BAh	V5.00	07/27x95   Toshiba T2150CDS/CDT (T2150)
+ FCh	BBh **	V1.30	01/25x95   Toshiba T2100/CS/CT
+ FCh	BBh **	V5.00	07/27x95   Toshiba T2100/CS/CT
+ FCh	BCh	V1.20	12/05x94   Toshiba T2450CT
+ FCh	BCh	V5.00	07/28x95   Toshiba T2450CT
+ FCh	BEh	V5.00	07/28x95   Toshiba T4850CT
+ FCh	C6h	V5.30	11/30x95   Toshiba 410CS/CDT
+ FCh	CAh	V5.10	08/18x95   Toshiba 400CS/CDT
+ FCh	CAh	V5.40	12/18x95   Toshiba 400CS/CDT
+ FCh	CBh	V5.10	09/01x95   Toshiba 610CT
+ FCh	CCh		../.. ..   Toshiba 700CS/CT
+ FCh	CFh	V5.00	08/07x95   Toshiba T4900CT
+ FCh	???		../.. ..   Toshiba 100CS
+ FCh	???		../.. ..   Toshiba 700CS/CT
+ FCh	???		../.. ..   Toshiba 710CDT
+ FCh	???		../.. ..   Toshiba 720CDT
+Note:	the 8-bit ASCII graphics character in the "date" column above
+	  has been substituted by "x" if larger than 80h
+	BIOS version numbers and dates may vary, esp. due to harddisk and
+	  (flash) BIOS upgrades; all BIOS versions 5.xx are flash updates
+	  for Windows 95, the product number may indicate the series only
+	  (T21XX) or does no longer contain the exact type suffix (CS/CT)
 	[*] These models have monochrome and color versions which can be
-	  distinguished with INT 42/AX=7503h; as that call is no longer
-	  supported on the T21xx series, use the product number at F000h:E000h
-	  instead (see #0417)
+	  distinguished with INT 42/AX=7503h (WD90C24 chipset)
+	[**] These models have monochrome and color versions which can be
+	  distinguished with INT 10/AX=5F50h (CT655xx chipset)
+	models not found here like T21x5 are variants with other software
+	  bundlings only
 SeeAlso: #0412
 --------B-15C1-------------------------------
 INT 15 - SYSTEM - RETURN EXTENDED-BIOS DATA-AREA SEGMENT ADDRESS (PS)
@@ -4165,7 +4192,7 @@ Return: CF clear if successful
 	CF set on error
 	AH = status
 	    00h successful
-	        EBX:ECX = signature "INTELPEP"
+		EBX:ECX = signature "INTELPEP"
 		EDX = BIOS update loader version
 		SI = number of 2K update blocks which can be recorded in NVRAM
 	    86h not implemented
@@ -4988,24 +5015,24 @@ SeeAlso: AH=DAh,AX=DB01h,AX=DB04h
 
 Format of AMI BIOS Flash ROM parameter block:
 Offset	Size	Description	(Table 0440)
- 00h 32 BYTEs   ASCIZ description of the file's contents
- 20h	BYTE    Logical area type (see #0441)
- 21h	DWORD   logical area size (overall size of area)
- 25h	BYTE    flag: load from file (FF=yes, 00=no)
- 26h	BYTE    flag: reboot after update (FF=yes, 00=no)
- 27h	BYTE    flag: update entire image (FF=yes, 00=no)
- 28h 24	BYTEs   ASCIZ logical area name (cooresponds to offset 20)
-                "System BIOS"
+ 00h 32 BYTEs	ASCIZ description of the file's contents
+ 20h	BYTE	Logical area type (see #0441)
+ 21h	DWORD	logical area size (overall size of area)
+ 25h	BYTE	flag: load from file (FF=yes, 00=no)
+ 26h	BYTE	flag: reboot after update (FF=yes, 00=no)
+ 27h	BYTE	flag: update entire image (FF=yes, 00=no)
+ 28h 24	BYTEs	ASCIZ logical area name (cooresponds to offset 20)
+		"System BIOS"
 		"Logo Data Area", etc.
- 40h 15 BYTEs   ASCIZ time stamp string: MM/DD/YY-HH:MM
- 4Fh	BYTE    checksum for this header (sum of all bytes except this one)
+ 40h 15 BYTEs	ASCIZ time stamp string: MM/DD/YY-HH:MM
+ 4Fh	BYTE	checksum for this header (sum of all bytes except this one)
 		if checksum would be 00h,01h, or FFh, it is set to 2Ah
- 50h	DWORD   this file's starting address (offset in image)
- 54h	DWORD   size of image chunk in this file
- 58h	BYTE    logical area type - same as offset 20h
- 59h    BYTE    flag: last file in chain (FF=yes, 00=no)
- 5Ah  6 BYTEs   ASCIZ signature "FLASH"
- 60h 16 BYTEs   ASCIZ filename of next file in chain
+ 50h	DWORD	this file's starting address (offset in image)
+ 54h	DWORD	size of image chunk in this file
+ 58h	BYTE	logical area type - same as offset 20h
+ 59h	BYTE	flag: last file in chain (FF=yes, 00=no)
+ 5Ah  6 BYTEs	ASCIZ signature "FLASH"
+ 60h 16 BYTEs	ASCIZ filename of next file in chain
  70h 16 BYTEs	ASCIZ BIOS reserved string (usually version #)
 Notes:	this block is identical in format to the 128-byte header on an AMI
 	  BIOS Update file
@@ -5022,7 +5049,7 @@ Return: CF clear if successful
 	    ES:DI -> 56-byte record describing subsystem (see #0442)
 	CF set on error
 	    AH = status
-	        01h nonexistent subsystem
+		01h nonexistent subsystem
 		86h function not supported
 	    AL = 00h
 Note:	used by FMUP.EXE, Intel's Flash Memory Update utility
@@ -5133,12 +5160,12 @@ INT 15 U - AMI BIOS - Flash ROM - GET BIOS REVISION
 	AX = DB04h
 Return: CF clear if supported
 	    BL:BH:DL:DH = BIOS revision string
-	        (e.g. 'AX1 ' for v1.00.05.AX1, 'AV0M' for v1.00.03.AV0M)
+		(e.g. 'AX1 ' for v1.00.05.AX1, 'AV0M' for v1.00.03.AV0M)
 	    CL = flag: DH valid?
-	        00h ignore DH; ignore DL as well if 20h (space)
+		00h ignore DH; ignore DL as well if 20h (space)
 		01h ignore DH if 20h (space)
 	    CH = BIOS status
-	        00h normal mode
+		00h normal mode
 		01h ROM recovery mode
 	    AL = ??? (02h)
 Note:	used by FMUP.EXE, Intel's Flash Memory Update utility
@@ -6456,7 +6483,8 @@ SeeAlso: INT 16/AH=09h,AH=29h"HUNTER",AH=2Ah"HUNTER"
 INT 16 - Tandy 2000 - KEYBOARD - FLUSH KEYBOARD BUFFER
 	AH = 04h
 Note:	this interrupt is identical to INT 51 on the Tandy 2000
-SeeAlso: INT 16/AH=00h,INT 16/AH=02h,INT 16/AH=04h,INT 51"Tandy 2000"
+SeeAlso: INT 16/AH=00h,INT 16/AH=02h,INT 16/AH=05h"Tandy 2000"
+SeeAlso: INT 51"Tandy 2000"
 --------B-1604-------------------------------
 INT 16 - KEYBOARD - SET KEYCLICK (PCjr only)
 	AH = 04h
@@ -6480,12 +6508,6 @@ Note:	Applications which try to set a new loudness, but are unsure of the
 	  loudness first, and then call this function again with AL=01h or
 	  AL=00h
 SeeAlso: AH=03h,AH=04h"KEYBOARD",AX=AF4Dh
---------b-1604-------------------------------
-INT 16 - Tandy 2000 - KEYBOARD - RESET KEYBOARD
-	AH = 04h
-Desc:	reset the keyboard and flush the keyboard buffer
-Note:	this interrupt is identical to INT 51 on the Tandy 2000
-SeeAlso: INT 16/AH=00h,INT 16/AH=02h,INT 16/AH=03h,INT 51"Tandy 2000"
 --------B-1605-------------------------------
 INT 16 - KEYBOARD - STORE KEYSTROKE IN KEYBOARD BUFFER (AT/PS w enh keybd only)
 	AH = 05h
@@ -6528,6 +6550,12 @@ Return: ???
 	AH destroyed by many BIOSes
 Note:	this function is called by the DOS 3.2 KEYBxx.COM
 SeeAlso: AH=92h,AH=A2h,AX=AF4Dh
+--------b-1605-------------------------------
+INT 16 - Tandy 2000 - KEYBOARD - RESET KEYBOARD
+	AH = 05h
+Desc:	reset the keyboard and flush the keyboard buffer
+Note:	this interrupt is identical to INT 51 on the Tandy 2000
+SeeAlso: INT 16/AH=00h,INT 16/AH=02h,INT 16/AH=03h,INT 51"Tandy 2000"
 --------B-1609-------------------------------
 INT 16 - KEYBOARD - GET KEYBOARD FUNCTIONALITY
 	AH = 09h
@@ -6702,9 +6730,9 @@ Return: AX = K3 version
 	ES:SI -> next keystroke
 	ES:DI -> last keystroke in buffer
 	CX = number of keystrokes in buffer
-Program: K3PLUS is an enhancement by Matthias Paul and Axel C. Frinke of the
-	  K3 extended German keyboard driver by Martin Gerdes published in c't
-	  magazine in 1988
+Program: K3PLUS is an extended keyboard driver by Matthias Paul and Axel C.
+	  Frinke, originally based on the K3 extended German keyboard driver
+	  by Martin Gerdes published in c't magazine in 1988
 Note:	this function was normally unsupported under K3PLUS v6.00-v6.22 and
 	  is no longer supported by v6.30+; use AX=AF20h instead
 SeeAlso: AH=25h"K3",AX=AF20h,INT 2F/AX=D44Fh/BX=0000h,INT 2F/AX=ED58h
@@ -7693,6 +7721,12 @@ INT 16 - MAKEY.COM - INSTALLATION CHECK
 	AH = 80h
 Return: AX = 1954h if installed
 Program: MAKEY is a utility by System Enhancement Associates
+--------K-1687-------------------------------
+INT 16 - DK.COM v1.03 - INSTALLATION CHECK
+	AH = 87h
+Return: AX = 4A57h ('JW') if installed
+Program: DK.COM is the resident part of a small keyboard macro utility
+	  by Digital Mechanics.
 --------U-168765BX4321-----------------------
 INT 16 - AT.COM version 8/26/87 - API
 	AX = 8765h
@@ -7774,9 +7808,9 @@ Return: AX = K3 version (same as returned in BX by AX=AF4Dh)
 	ES:SI -> next keystroke
 	ES:DI -> last keystroke in buffer
 	CX = number of keystrokes in buffer
-Program: K3PLUS is an enhancement by Matthias Paul and Axel C. Frinke of the
-	  K3 extended German keyboard driver by Martin Gerdes published in c't
-	  magazine in 1988
+Program: K3PLUS is an extended keyboard driver by Matthias Paul and Axel C.
+	  Frinke, originally based on the K3 extended German keyboard driver
+	  by Martin Gerdes published in c't magazine in 1988
 Note:	this function replaces the identical function AH=20h"K3"
 SeeAlso: AH=20h"K3",AX=AF25h,AX=AF4Dh,AX=AF50h,INT 2F/AX=ED58h
 --------K-16AF25BX4B33-----------------------
@@ -7799,9 +7833,9 @@ Return: AL = 50h if installed
 	    BX = K3 version
 	    DX = API version
 	    ES:CX -> K3 structure (version-dependent) (see #0501)
-Program: K3PLUS is an enhancement by Matthias Paul and Axel C. Frinke of the
-	  K3 extended German keyboard driver by Martin Gerdes published in c't
-	  magazine in 1988
+Program: K3PLUS is an extended keyboard driver by Matthias Paul and Axel C.
+	  Frinke, originally based on the K3 extended German keyboard driver
+	  by Martin Gerdes published in c't magazine in 1988
 SeeAlso: AX=AF20h,AX=AF50h,AX=AF80h,AX=AF83h,INT 2F/AX=D44Fh/BX=0000h
 SeeAlso: INT 2F/AX=ED58h
 Index:	installation check;K3PLUS
@@ -7944,9 +7978,9 @@ Return: AL = status
 	    00h not supported
 	    83h if successful
 		ES:CX -> original INT 10 handler
-Program: K3PLUS is an enhancement by Matthias Paul and Axel C. Frinke of the
-	  K3 extended German keyboard driver by Martin Gerdes published in c't
-	  magazine in 1988
+Program: K3PLUS is an extended keyboard driver by Matthias Paul and Axel C.
+	  Frinke, originally based on the K3 extended German keyboard driver
+	  by Martin Gerdes published in c't magazine in 1988
 SeeAlso: AX=AF4Dh,AX=AF50h,AX=AF80h,AX=AF81h,INT 2F/AX=ED58h
 --------m-16B0B1-----------------------------
 INT 16 - VGARAM v1.00 - INSTALLATION CHECK

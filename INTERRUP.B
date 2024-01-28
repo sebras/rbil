@@ -1283,7 +1283,7 @@ Offset	Size	Description	(Table 0180)
  04h	DWORD	-> transfer buffer
  08h	QWORD	starting absolute block number
 		(for non-LBA devices, compute as
-		  (Cylinder*NumHeads + SelectedHead) * SectorPerTrack + 
+		  (Cylinder*NumHeads + SelectedHead) * SectorPerTrack +
 		  SelectedSector - 1
 --------N-134257DX1234-----------------------
 INT 13 U - Beame&Whiteside BWLPD - INSTALLATION CHECK
@@ -2389,7 +2389,7 @@ Note:	this function is also supported by the NOW! disk cache, and presumably
 	the cylinder offset is reset to 0 by all INT 13 called except AH=EEh
 	  and AH=EFh
 SeeAlso: AX=7B00h
---------V-13F2-------------------------------
+--------v-13F2-------------------------------
 INT 13 - VIRUS - "Neuroquila" - INSTALLATION CHECK
 	AH = F2h
 Return: CF ??? if installed
@@ -4571,7 +4571,7 @@ Bitfields for I1541 channel number and mode:
 Bit(s)	Description	(Table 0257)
  7-4	mode
 	0110 read/write
-	1110 close channel	
+	1110 close channel
 	1111 open channel
  3-0	channel number
 --------t-144006-----------------------------
@@ -4596,7 +4596,7 @@ INT 14 - I1541 - SEND SECONDARY ADDRESS FOR TALK
 Return: CF clear if successful
 	CF set on error
 	    AL = error number (see also #0256)
-	        40h turn around time-out
+		40h turn around time-out
 SeeAlso: AX=4007h,AX=4009h
 --------t-144009-----------------------------
 INT 14 - I1541 - SEND UNTALK SIGNAL
@@ -4626,10 +4626,10 @@ Return: CF clear if successful
 		01h received byte is the last
 	CF set on error
 	    AL = error number
-	        80h EOI response required
-	        81h talker not ready
-	        82h clock not set
-	        83h clock not released
+		80h EOI response required
+		81h talker not ready
+		82h clock not set
+		83h clock not released
 	    CL = 00h
 SeeAlso: AX=4000h,AX=400Ah
 --------t-14400C-----------------------------

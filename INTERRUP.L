@@ -5207,6 +5207,8 @@ Program: AccessDOS is a public domain TSR developed at The Trace Research and
 	  and sound access by the visually, hearing, or motor-control
 	  impaired.
 Range:	INT 60 to INT 66, selected by scanning for 0000h:0000h vector
+Note:	the installation check is to test for the signature "ACCESSv1.00"
+	  beginning three bytes past the start of the interrupt handler
 --------N-60E9-------------------------------
 INT 60 - FTP Packet Driver - Crynwr Software - AUTOSELECT TRANSCEIVER
 	AH = E9h

@@ -1591,6 +1591,17 @@ INT 2F U - LapLink Quick Connect v6 - API
 			    FFFFh incomplete, stub remains in memory
 Return: CX = 534Bh (except function 0002h)
 Index:	uninstall;LapLink Quick Connect
+--------K-2FD3D3BH00-------------------------
+INT 2F - KDRIVE v2.x - INSTALLATION CHECK
+	AX = D3D3h
+	BH = 00h
+Return: BX = 3D3Dh if installed
+	CF clear if installed
+	    AX = driver ID??? (returns 0087h for KDRIVE.EXE and 0880h for
+		  KDRIVOS2.EXE in one examined version)
+Program: KDRIVE is a shareware extended German keyboard driver by Martin
+	  Austermeier, originally based on K3 by Martin Gerdes as published
+	  in c't magazine 7/1988
 --------l-2FD44D-----------------------------
 INT 2F - 4DOS.COM v2.1+ - API
 	AX = D44Dh
@@ -2910,8 +2921,9 @@ INT 2F - SETDRVER.COM v2.10+ - INSTALLATION CHECK
 Return: AX = 4A52h ("JR") if present
 Program: SETDRVER is a public domain TSR by Jacob Rieper which sets the
 	  apparent DOS version analogously to MS-DOS SETVER
-Note:	this installation check differs from the usual one of returning AL=FFh
-SeeAlso: AX=E001h,INT 21/AH=52h
+Notes:	this installation check differs from the usual one of returning AL=FFh
+	the SETDRVER API is fully emulated by Matthias Paul's FREEVER
+SeeAlso: AX=E000h/DX=4D50h,AX=E001h,INT 21/AH=52h
 --------j-2FE000-----------------------------
 INT 2F - KAOSHIDE - INSTALLATION CHECK
 	AX = E000h
@@ -2920,6 +2932,21 @@ Program: KAOSHIDE ('Hidden Kaos') is a PD joke TSR which randomly capitalizes
 	  alphabetic keys, written by Philip Maland. Although not a virus,
 	  v2.0 uses some viral-like techniques to hide itself from
 	  memory-reports by reducing DOS memory size.
+--------U-2FE000DX4D50-----------------------
+INT 2F - FREEVER v1.0+ - INSTALLATION CHECK
+	AX = E000h
+	DX = 4D50h ('MP')
+Return: AL = FFh if installed
+	    AH = AMIS INT 2Dh multiplex ID
+	    CX = FREEVER version (CH=major, CL=minor)
+	    DX:DI -> AMIS-compliant signature (see #1856)
+		(vendor ID is "M. Paul ", program name is "FREEVER ")
+Program: FREEVER is an AMIS-conformant freeware DOS version-faking TSR similar
+	  to SETVER for any DOS-compatible OS, written by Matthias Paul
+Note:	FREEVER emulates INT 21/AH=30h, INT 21/AX=3306h, INT 21/AX=4412h,
+	  INT 21/AX=4452h, and SETDRVER's API on INT 2F/AX=E00xh, as well as
+	  providing an AMIS API on INT 2Dh
+SeeAlso: AX=E000h"SETDRVER",INT 21/AH=30h,INT 21/AX=3306h,INT 21/AX=4452h
 --------K-2FE000DX5354-----------------------
 INT 2F - StuffIt v3.21+ - INSTALLATION CHECK
 	AX = E000h
@@ -3161,7 +3188,7 @@ INT 2F - INT16.COM - INSTALLATION CHECK
 	AX = E337h
 Return: AX = 0013h if installed
 Program: INT16.COM is an INT16 keyboard BIOS replacement for
-          INT 16/AH=00h-02h,10h-12h (based on K3) written by Martin Gerdes
+	  INT 16/AH=00h-02h,10h-12h (based on K3) written by Martin Gerdes
 	  and published in c't 05/1990.
 SeeAlso: AX=ED58h
 --------l-2FE44D-----------------------------
@@ -3213,6 +3240,13 @@ Notes:	the keystrokes are the exact values to return from subsequent calls to
 	this function is also supported by ANSIPLUS v3.01+ and K3PLUS v6.20+,
 	  which emulate the 4DOS and NDOS keystack
 SeeAlso: AX=E44Fh/BX=0000h,INT 16/AH=00h,INT 21/AX=4403h
+--------U-2FE600-----------------------------
+INT 2F - Virtual 486 - INSTALLATION CHECK
+	AX = E600h
+	CL = 30h
+	BX = C0DEh
+Return: BX = DEC0h if installed
+Program: Virtual 486 is a 80486 CPU emulator for an 80386 by Solar Designer
 --------f-2FE77EBX0000-----------------------
 INT 2F - CTDEMN - INSTALLATION CHECK
 	AX = E77Eh
@@ -3794,7 +3828,7 @@ INT 2F - Multiplex - ??? - INSTALLATION CHECK???
 	DX = ??? (0102h)
 	SI = ??? (5ACCh)
 	DI = ??? (0632h)
-Return: ???	
+Return: ???
 Note:	called by WinEmacs at startup
 ----------2FFA00-----------------------------
 INT 2F - Multiplex - ??? - INSTALLATION CHECK???
@@ -3804,7 +3838,7 @@ INT 2F - Multiplex - ??? - INSTALLATION CHECK???
 	DX = ??? (00FFh)
 	SI = ??? (5AA6h)
 	DI = ??? (0620h)
-Return: ???	
+Return: ???
 Note:	called by Matlab at startup
 --------*-2FFB-------------------------------
 INT 2F - Multiplex - RESERVED BY BORLAND INTERNATIONAL
@@ -4786,7 +4820,7 @@ INT 2F - KS/KEYSTKCT.EXE - INSTALLATION CHECK
 Return: AX = 0093h if installed
 	    ES = resident code segment
 	    ES:CX -> internal "putbuf" routine
-Program: KS/KEYSTKCT.EXE is a key stacking utility (4DOS KEYSTACK.SYS 
+Program: KS/KEYSTKCT.EXE is a key stacking utility (4DOS KEYSTACK.SYS
 	  look-alike) by Martin Gerdes, published in c't 11/1991, which can be
 	  loaded as a device driver or as a TSR. It does not emulate 4DOS
 	  KSTACK API
@@ -6346,7 +6380,7 @@ INT 31 - DOS32 v3.2+ - SET UP A DOS32 LOADABLE LIBRARY
 	EDX -> library ASCIZ path\filename
 	EBX = number of bytes to seek from beginning of file
 Return: CF clear if successful
-            EAX = size of memory block required to store library
+	    EAX = size of memory block required to store library
 	    EBX = size of library file
 	CF set on error
 	    AL = error code.
@@ -6358,7 +6392,7 @@ INT 31 - DOS32 v3.2+ - LOAD LIBRARY FILE
 	AX = EE11h
 	EDX -> near pointer of memory block to store library
 Return: CF clear if successful
-            EDX = near pointer to the dynamic library public
+	    EDX = near pointer to the dynamic library public
 	CF set on error
 Note:	must first successfuly call function AX=EE10h before calling this
 	  function
@@ -6960,7 +6994,7 @@ Values for NOISE.SYS error codes:
  FEh	subfunction is disabled in the current build
  FFh	successful
 --------y-326E00-----------------------------
-INT 32 - NOISE.SYS v0.53 - INSTALLATION CHECK
+INT 32 - NOISE.SYS v0.53+ - INSTALLATION CHECK
 	AX = 6E00h
 Return:	AL = installation status
 	    00h not installed
@@ -6968,12 +7002,29 @@ Return:	AL = installation status
 		CX = version (ie, 0123h = Version 1.2.3)
 		DX:DI -> signature string
 --------y-326E01-----------------------------
-INT 32 - NOISE.SYS v0.53 - GET ENTRY POINT
+INT 32 - NOISE.SYS v0.53+ - GET ENTRY POINT
 	AX = 6E01h
 Return:	AL = FFh
 	DX:DI -> far call hook
+----------326E04-----------------------------
+INT 32 - NOISE.SYS v0.55+ - GET INTERRUPT HOOK LIST
+	AX = 6E04h
+Return: AL = status
+	    00h = unimplemented
+	    04h = DX:BX -> interrupt hook list
+	    FEh = subfunction disabled
+Note:	the hook list array ends with API interrupt (usually 32h, although
+	  it will differ if the API is installed at another interrupt)
+----------326E06-----------------------------
+INT 32 - NOISE.SYS v0.55+ - GET DEVICE DRIVER HEADER
+	AX = 6E06h
+Return: AL = number of device drivers in NOISE.SYS chain
+	    02h = default (for RANDOM and URANDOM devices)
+	AH = AMIS device driver flags (set to 00h for now)
+	DX:BX -> first device in chain (see #0953)
+SeeAlso: INT 2D/AL=06h
 --------y-326E10-----------------------------
-INT 32 - NOISE.SYS v0.53 - STATUS CHECK
+INT 32 - NOISE.SYS v0.53+ - STATUS CHECK
 	AX = 6E10h
 Return: CF set on error
 	    AL = error code (FDh) (see #2357)
@@ -6988,7 +7039,7 @@ Note:	this subfunction is a convenient way to check the driver if any
 	  fresh bytes are waiting in the output pool.
 SeeAlso: INT 32/AH=6Eh,AX=6E00h,AX=6E11h
 --------y-326E11-----------------------------
-INT 32 - NOISE.SYS v0.53 - GET ENTROPY ESTIMATE
+INT 32 - NOISE.SYS v0.53+ - GET ENTROPY ESTIMATE
 	AX = 6E11h
 Return: CF set on error
 	    AL = error code (00h,FDh,FEh) (see #2357)
@@ -7000,15 +7051,19 @@ Note:  the estimated number of fresh random bits is equal to
 	  (EAX >> FRACBITS) + ((EAX & ((1 << FRACBITS)-1) / (1 << FRACBITS))
 SeeAlso: AH=6Eh,AX=6E00h
 --------y-326E12-----------------------------
-INT 32 - NOISE.SYS v0.53 - ADD SAMPLE FROM FAST TIMER
+INT 32 - NOISE.SYS v0.53+ - ADD SAMPLE FROM FAST TIMER
 	AX = 6E12h
 Return: CF set on error
 	    AL = error code (FCh,FDh,FEh) (see #2357)
 	CF clear if successful
 	    CX = number of random bytes waiting
+Note:	subfunctions 12h and 13h are meant for applications or devices
+	  which are able to gather entropy from other sources which are
+	  not polled by NOISE.SYS (for example, a communications driver
+	  could use this call to sample packet arrival times).
 SeeAlso: AX=6E00h,AX=6E10h,AX=6E13h
 --------y-326E13-----------------------------
-INT 32 - NOISE.SYS v0.53 - ADD 16-BIT SAMPLE TO RANDOM POOL
+INT 32 - NOISE.SYS v0.53+ - ADD 16-BIT SAMPLE TO RANDOM POOL
 	AX = 6E13h
 	DX = sample
 Return: CF set on error
@@ -7017,18 +7072,36 @@ Return: CF set on error
 	    CX = number of random bytes waiting
 SeeAlso: AX=6E00h,AX=6E11h
 --------y-326E14-----------------------------
-INT 32 - NOISE.SYS v0.53 - GET FLAGS
+INT 32 - NOISE.SYS v0.53+ - GET FLAGS
 	AX = 6E14h
-Return: ???
+Return: BX = flags (see #3219)
+	CX = mask of settable flags in BX
 SeeAlso: AX=6E00h,AX=6E15h
+
+Bitfields for NOISE.SYS flags:
+Bit(s)	Description	(Table 3219)
+ 0	MS Windows active
+ 1-5	reserved
+ 6	clock drift sampling
+ 7	video retrace drift sampling
+ 8	network access sampling (not implemented yet in 0.53)
+ 9	CD-ROM access sampling (not implemented yet in 0.53)
+ 10	DOS spinner
+ 11	DOS process start/end and miscellaneous process activity sampling
+ 12	mouse movement/button sampling
+ 13	disk sampling (INT 13)
+ 14	keystroke timings
+ 15	reserved for hardware RNG
 --------y-326E15-----------------------------
-INT 32 - NOISE.SYS v0.53 - SET FLAGS
+INT 32 - NOISE.SYS v0.53+ - SET FLAGS
 	AX = 6E15h
-	???
-Return: ???
+	BX = flags (see #3219)
+Return: BX = new flags
+Note:	flags which AX=6E14h indicates are not settable should be masked off
+	  by ANDing with the CX returned by AX=6E14h
 SeeAlso: AX=6E00h,AX=6E14h
 --------y-326E16-----------------------------
-INT 32 - NOISE.SYS v0.53 - READ URANDOM BYTES
+INT 32 - NOISE.SYS v0.53+ - READ URANDOM BYTES
 	AX = 6E16h
 	CX = number of bytes
 	ES:DI -> buffer
@@ -7038,7 +7111,7 @@ Return: CF set on error
 	    CX = number of random bytes read
 SeeAlso: AX=6E00h,AX=6E12h,AX=6E17h
 --------y-326E17-----------------------------
-INT 32 - NOISE.SYS v0.53 - READ RANDOM BYTES
+INT 32 - NOISE.SYS v0.53+ - READ RANDOM BYTES
 	AX = 6E17h
 	CX = number of bytes
 	ES:DI -> buffer
@@ -7047,6 +7120,25 @@ Return: CF set on error
 	CF clear if successful
 	    CX = number of random bytes read
 SeeAlso: AX=6E00h,AX=6E16h
+----------326E18-----------------------------
+INT 32 - NOISE.SYS v0.6+ - READ CONTROL RECORD
+	AX = 6E18h
+	CX = buffer size
+	ES:DI -> buffer
+Return: AL = status
+	    00h unimplemented (before v0.6)
+	    FEh subfunction is disabled
+	    FFh successful
+		CX = number of bytes read
+Note:	the control record corresponds to the IOCTL Read record for the RANDOM
+	  device
+----------326E19-----------------------------
+INT 32 - NOISE.SYS - RESERVED FOR FUTURE USE
+	AH = 6Eh
+	AL = 19h to 3Fh
+Return: AL = 00h
+Note:	these functions are reserved for future use; user additions to the
+	  the driver should use subfunctions 40h to FFh.
 --------M-330000-----------------------------
 INT 33 - MS MOUSE - RESET DRIVER AND READ STATUS
 	AX = 0000h

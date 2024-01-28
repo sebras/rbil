@@ -2780,7 +2780,7 @@ SeeAlso: AX=00CDh,AX=00CFh,AX=00D4h,AX=00D6h
 --------V-6200D1-----------------------------
 INT 62 u - FGDRIVER v4.02 - "FG_VBDEFINE" - CREATE VIRTUAL BUFFER
 	AX = 00D1h
-	ES:BX -> memory block for virtual buffer 
+	ES:BX -> memory block for virtual buffer
 	CX = buffer width in pixels
 	DX = buffer height in pixels
 Return: AX = virtual buffer handle
@@ -2843,7 +2843,7 @@ SeeAlso: AX=00CFh,AX=00D0h,AX=00D4h,AX=00D7h
 INT 62 u - FGDRIVER v4.02 - "FG_VBTCCOPY" - COPY RECTANGLE BETWEEN VIRTUAL BUFS
 	AX = 00D7h
 	ES:BX -> variable record (see #2685)
-	CX = source virtual buffer's handle 
+	CX = source virtual buffer's handle
 	DX = destination virtual buffer's handle
 Desc:	copy rectangle from one virtual buffer to another with transparent
 	  colors

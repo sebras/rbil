@@ -830,7 +830,6 @@ Return: CF clear if successful
 	CF set on error
 	    AH = status (see #1836)
 	    AL = error code (same as passed to INT 24 in DI)
-	    AX = 0207h if more than 64K sectors on drive -- use new-style call
 	may destroy all other registers except segment registers
 Notes:	original flags are left on stack, and must be popped by caller
 	this call bypasses the DOS filesystem
@@ -1067,6 +1066,13 @@ Notes:	automatically called when writing to a device with bit 4 of its device
 	the default handler under DESQview 2.2 understands the <Esc>[2J
 	  screen-clearing sequence, calls INT 10/AH=0Eh for all others
 SeeAlso: INT 21/AH=52h,INT 2F/AX=0802h,INT 79
+--------U-29E60D-----------------------------
+INT 29 - ShowGFX - INSTALLATION CHECK
+	AX = E60Dh
+	CL = 0Eh
+	DX = C0DEh
+Return: DX = DEC0h
+Program: ShowGFX is a PCBoard graphics driver by Solar Designer
 --------N-2A00-------------------------------
 INT 2A - NETWORK - INSTALLATION CHECK
 	AH = 00h
@@ -2079,7 +2085,7 @@ Notes:	programs should not use fixed multiplex numbers; rather, a program
 	  uninstall code required), and 04h (return value 04h).	 TSRs that
 	  provide hotkeys with which the user can activate them must also
 	  implement function 05h.  TSRs which provide DOS device drivers must
-	  also implement function 06h.  The absolute minimum fully-compliant
+	  also implement function 06h.	The absolute minimum fully-compliant
 	  implementation has an overhead of 64 bytes (80 bytes with function
 	  05h) plus 22 bytes per hooked interrupt (for the interrupt sharing
 	  protocol header and hook list entry).
@@ -2168,27 +2174,28 @@ Values for AMIS signatures known to be in use:
  'J. Berry' 'RATSR   '	RemoteAccess Network Manager workstation module
  'JWB	  ' 'RAMLIGHT'	James Birdsall's on-screen RAMdisk activity indicator
  'M Better' 'iHPFS   '	Marcus Better's HPFS filesystem driver for DOS
+ 'M. Paul ' 'FREEVER '  DOS version-faking TSR by Matthias Paul
  'Nildram ' 'ST	     '	Screen Thief graphics screen grabber
- 'Pino Nav' 'ALTMENU '  activate any program's menu bar by pressing Alt key
+ 'Pino Nav' 'ALTMENU '	activate any program's menu bar by pressing Alt key
  'Pino Nav' 'Keybit  '	Pino Navato's KEYBIT Lite Italian keyboard driver v4+
  'PowrQuot' 'CAPRILOG'
  'PowrQuot' 'CAPRITSR'
  'PowrQuot' 'CAPRIWIN'
  'R-Ware  ' 'dLite   '	run-time data decompression TSR
- 'Ralf B  ' 'disaXXYY'  RBdisabl -- disable key scancode XX w/ shift states YY
- 'Ralf B  ' 'DUALVGA '  dual-VGA support, screen blanker, and DPMS driver
+ 'Ralf B  ' 'disaXXYY'	RBdisabl -- disable key scancode XX w/ shift states YY
+ 'Ralf B  ' 'DUALVGA '	dual-VGA support, screen blanker, and DPMS driver
  'Ralf B  ' 'FASTMOUS'	example TSR included with sample AMIS library code
- 'Ralf B  ' 'NoBreak '  disable Ctrl-@, Ctrl-C, and Ctrl-Break keys
+ 'Ralf B  ' 'NoBreak '	disable Ctrl-@, Ctrl-C, and Ctrl-Break keys
  'Ralf B  ' 'NOLPT n '	example TSR -- turn LPTn into bit-bucket
  'Ralf B  ' 'NOTE    '	example TSR -- popup note-taker
- 'Ralf B  ' 'RBclock '  RBclock -- on-screen real-time clock
- 'Ralf B  ' 'RBclockE'  RBclock -- on-screen elapsed-time clock
- 'Ralf B  ' 'RBdvorak'  Dvorak keyboard mapping w/ opt Esc/~, LCtrl/CapsLk swap
- 'Ralf B  ' 'RBkcount'  display count of keystrokes on screen
+ 'Ralf B  ' 'RBclock '	RBclock -- on-screen real-time clock
+ 'Ralf B  ' 'RBclockE'	RBclock -- on-screen elapsed-time clock
+ 'Ralf B  ' 'RBdvorak'	Dvorak keyboard mapping w/ opt Esc/~, LCtrl/CapsLk swap
+ 'Ralf B  ' 'RBkcount'	display count of keystrokes on screen
  'Ralf B  ' 'RBkeyswp'	RBkeyswap v3.0+ -- swap Esc/~ and LCtrl/CapsLock keys
- 'Ralf B  ' 'RBnoboot'  disable Ctrl-Alt-Del key combination
- 'Ralf B  ' 'ShftCaps'  require Shift-CapsLock to turn on CapsLock
- 'Ralf B  ' 'ShftNumL'  require Shift-NumLock to turn off NumLock
+ 'Ralf B  ' 'RBnoboot'	disable Ctrl-Alt-Del key combination
+ 'Ralf B  ' 'ShftCaps'	require Shift-CapsLock to turn on CapsLock
+ 'Ralf B  ' 'ShftNumL'	require Shift-NumLock to turn off NumLock
  'Ralf B  ' 'SWITCHAR'	example TSR -- add switchar() support removed from DOS5
  'Ralf B  ' 'VGABLANK'	VGA-only screen blanker
  'Sally IS' 'Mdisk   '	removeable, resizeable RAMdisk
@@ -2229,9 +2236,9 @@ Return: AL = status
 		BX = segment of memory block with resident code
 	    05h not safe to remove now, try again later
 	    06h disabled, but can not be removed from memory
-	          because loaded from CONFIG.SYS
+		  because loaded from CONFIG.SYS
 	    07h safe to remove, but no resident device-driver
-		  uninstaller.  Caller must unlink device
+		  uninstaller.	Caller must unlink device
 		  drivers from DOS device chain as well as
 		  unhooking interrupts and freeing memory
 		BX = segment of memory block with resident code
@@ -2404,7 +2411,7 @@ INT 2D - AMIS v3.6 - GET DEVICE-DRIVER INFORMATION
 	AH = multiplex number for program
 Return: AL = number of device driver headers supplied by prog.
 	AH = device-driver flags (see #1863)
-	DX:BX -> first device driver header
+	DX:BX -> first device driver header (see #0953)
 Program: AMIS is the Alternate Multiplex Interrupt Specification promulgated
 	  by Ralf Brown
 Notes:	if AL=00h, AH,BX,DX are meaningless and may be destroyed
@@ -2577,23 +2584,23 @@ Offset	Size	Description	(Table 1870)
  88h	WORD	track program index of top list item
 --------K-2D--10-----------------------------
 INT 2D - KEYBIT Lite v5+ - GET POINTER TO STATUS BYTE
-        AL = 10h
-        AH = AMIS multiplex number for KEYBIT Lite
+	AL = 10h
+	AH = AMIS multiplex number for KEYBIT Lite
 Return: DX:BX -> status byte (see #1871)
 Program: KEYBIT Lite is an enhanced Italian keyboard driver by Pino Navato.
 SeeAlso: INT 2D"AMIS"
 
 Bitfields for KEYBIT Lite status byte:
-Bit(s)  Description     (Table 1871)	(Table 1872)
- 7      KEYBIT Lite active
- 6      E-mail support active
- 5-0    reserved
-Notes:  E-mail support is one of the original features of KEYBIT Lite.  It is
-          the automatic conversion of the 8-bits ASCII chars produced by some
-          keys available on Italian keyboards to couples of 7-bits chars.
-        Message editors should always enable e-mail support, they should also
-          restore its original status before exiting.
-        The user can change both status bits by hotkeys.
+Bit(s)	Description	(Table 1871)	(Table 1872)
+ 7	KEYBIT Lite active
+ 6	E-mail support active
+ 5-0	reserved
+Notes:	E-mail support is one of the original features of KEYBIT Lite.	It is
+	  the automatic conversion of the 8-bits ASCII chars produced by some
+	  keys available on Italian keyboards to couples of 7-bits chars.
+	Message editors should always enable e-mail support, they should also
+	  restore its original status before exiting.
+	The user can change both status bits by hotkeys.
 --------K-2D--10-----------------------------
 INT 2D - ALTMENU - GET POINTER TO KEY CODE
 	AL = 10h
@@ -2652,6 +2659,20 @@ INT 2D - CDTSR - DISABLE POPUP
 	AH = AMIS multiplex number for CDTSR
 Return: nothing
 SeeAlso: INT 2D/AL=10h"CDTSR",INT 2D/AL=11h"CDTSR",INT 2D/AL=13h"CDTSR"
+--------U-2D--12-----------------------------
+INT 2D - FREEVER - GET ORIGINAL DOS VERSION INFO
+	AL = 12h
+	AH = AMIS multiplex number for FREEVER
+Return: AL = FFh if successful
+	    BH = major DOS version
+	    BL = minor DOS version
+	    CH = DOS version flag
+	    CL = OEM number
+	    DH = major DR DOS version number (FFh if unknown)
+	    DL = minor DR DOS version number (FFh if unknown)
+Program: FREEVER is an AMIS-conformant freeware DOS version-faking TSR similar
+	  to SETVER for any DOS-compatible OS, written by Matthias Paul
+SeeAlso: INT 2D/AL=13h"FREEVER",INT 2D/AL=14h"FREEVER",INT 2D/AL=17h"FREEVER"
 --------s-2D--13-----------------------------
 INT 2D - CDTSR - ENABLE POPUP
 	AL = 13h
@@ -2659,6 +2680,48 @@ INT 2D - CDTSR - ENABLE POPUP
 Return: nothing
 Program: CDTSR is a resident audio CD player by Colin Hill
 SeeAlso: INT 2D/AL=10h"CDTSR",INT 2D/AL=11h"CDTSR",INT 2D/AL=12h"CDTSR"
+--------U-2D--13-----------------------------
+INT 2D - FREEVER - SET VERSION NUMBERS
+	AL = 13h
+	AH = AMIS multiplex number for FREEVER
+	BH = new major DOS version
+	BL = new minor DOS version
+	CH = new DOS version flag
+	CL = new DOS revision number
+	DH = new OEM number
+SeeAlso: INT 2D/AL=12h"FREEVER",INT 2D/AL=15h"FREEVER",INT 2D/AL=17h"FREEVER"
+--------U-2D--14-----------------------------
+INT 2D - FREEVER - ENABLE TSR
+	AL = 14h
+	AH = AMIS multiplex number for FREEVER
+Return: AL = FFh if successful
+SeeAlso: INT 2D/AL=12h"FREEVER",INT 2D/AL=15h"FREEVER",INT 2D/AL=16h"FREEVER"
+--------U-2D--14-----------------------------
+INT 2D - FREEVER - DISABLE TSR
+	AL = 15h
+	AH = AMIS multiplex number for FREEVER
+Return: AL = FFh if successful
+SeeAlso: INT 2D/AL=12h"FREEVER",INT 2D/AL=14h"FREEVER",INT 2D/AL=16h"FREEVER"
+--------U-2D--16-----------------------------
+INT 2D - FREEVER - GET TSR STATUS
+	AL = 16h
+	AH = AMIS multiplex number for FREEVER
+Return: AL = FFh if successful
+	    BL = status
+		01h resident and active
+		02h resident and inactive
+SeeAlso: INT 2D/AL=12h"FREEVER",INT 2D/AL=15h"FREEVER",INT 2D/AL=17h"FREEVER"
+--------U-2D--17-----------------------------
+INT 2D - FREEVER - GET TaskMAX STATUS AT INSTALLATION
+	AL = 17h
+	AH = AMIS multiplex number for FREEVER
+Return: AL = FFh if successful
+	    BL = status
+		00h if TaskMAX not loaded before SETDRVER
+		FFh if TaskMAX was loaded before SETDRVER
+Program: FREEVER is an AMIS-conformant freeware DOS version-faking TSR similar
+	  to SETVER for any DOS-compatible OS, written by Matthias Paul
+SeeAlso: INT 2D/AL=12h"FREEVER",INT 2D/AL=14h"FREEVER",INT 2D/AL=16h"FREEVER"
 --------U-2D--20-----------------------------
 INT 2D - DTown Utilities v1.40+ - GET POP-UP HANDLER ADDRESS
 	AL = 20h
@@ -3060,7 +3123,7 @@ INT 2F - DOS 3.3+ PRINT - GET PRINTER DEVICE
 	AX = 0106h
 Return: CF set if files in print queue
 	    AX = error code 0008h (queue full)
-	    DS:SI -> device driver header
+	    DS:SI -> device driver header (see #0953)
 	CF clear if print queue empty
 	    AX = 0000h
 Desc:	determine which device, if any, PRINT is currently using for output
@@ -3184,7 +3247,7 @@ Return: AL = status
 	    FFh installed
 Desc:	determine whether the internal support code used by DRIVER.SYS is
 	  present; it is always present in DOS 3.2+
-Note:	supported by DR DOS 5.0
+Note:	supported by DR DOS 5.0 and Novell DOS 7
 --------D-2F0801-----------------------------
 INT 2F U - DRIVER.SYS support - ADD NEW BLOCK DEVICE
 	AX = 0801h
@@ -3194,7 +3257,7 @@ Notes:	moves down internal list of drive data tables, copying and modifying
 	  the drive description flags word for tables referencing same physical
 	  drive
 	the data table is appended to the chain of tables
-	supported by DR DOS 5.0
+	supported by DR DOS 5.0 and Novell DOS 7
 SeeAlso: AX=0803h
 --------D-2F0802-----------------------------
 INT 2F U - DRIVER.SYS support - EXECUTE DEVICE DRIVER REQUEST
@@ -3211,6 +3274,7 @@ Notes:	supported by DR DOS 5.0
 	this call reportedly leaves one word on the stack under MS-DOS 6.2,
 	  so the stack pointer should be saved and restored around the call
 	  to this function
+	supported by Novell DOS 7
 SeeAlso: AX=0800h,AX=0801h,AX=0803h,AX=1510h,INT 21/AH=52h,INT 21/AH=99h
 SeeAlso: INT 21/AH=9Ah
 
@@ -3355,7 +3419,7 @@ Offset	Size	Description	(Table 1884)
 		00h (STARLITE) MAC Bind request
  0Fh	WORD	copy of DS at time of IOCTL call (apparently unused in DOS 3.3)
 		SI contents (European MS-DOS 4.0)
- 11h	WORD	offset of device driver header
+ 11h	WORD	offset of device driver header (see #0953)
 		DI contents (European MS-DOS 4.0)
  13h	DWORD	pointer to parameter block from INT 21/AX=440Ch or AX=440Dh
 ---command codes 80h,82h---
@@ -3519,7 +3583,8 @@ Offset	Size	Description	(Table 1887)
 INT 2F U - DOS 4.0+ DRIVER.SYS support - GET DRIVE DATA TABLE LIST
 	AX = 0803h
 Return: DS:DI -> first drive data table in list (see #1888,#1889,#1890)
-Note:	not available under DR DOS 5.0
+Note:	not available under DR DOS 5.0, but supported by Novell DOS 7 (using
+	  the MS-DOS 4+ data table format)
 SeeAlso: AX=0801h
 
 Format of DOS 3.30 drive data table:
@@ -4625,7 +4690,7 @@ Note:	can be called only from within DOS
 INT 2F U - DOS 3.0+ internal - INVOKE CRITICAL ERROR
 	AX = 1206h
 	DI = error code
-	BP:SI -> device driver header
+	BP:SI -> device driver header (see #0953)
 	SS = DOS DS (must be using a DOS internal stack)
 	STACK: WORD value to be passed to INT 24 in AX
 Return: AL = 0-3 for Abort, Retry, Ignore, Fail
@@ -5207,6 +5272,34 @@ Notes:	this functionality is provided by EMM386, and partially supported by
 	  HIDOS.SYS
 	BL specifies which program handles the call, BH is the function number
 SeeAlso: AX=D201h/BX=4849h
+--------O-2F12FFBX0000-----------------------
+INT 2F U - Novell DOS 7 - GET ???
+	AX = 12FFh
+	BX = 0000h
+Return: AX = 0000h if supported
+	DX = ??? (internal data)
+SeeAlso: AX=12FFh/BX=0001h
+--------O-2F12FFBX0001-----------------------
+INT 2F U - Novell DOS 7 - SET ???
+	AX = 12FFh
+	BX = 0001h
+	DX = new value for ???
+Return: AX = 0000h if supported
+SeeAlso: AX=12FFh/BX=0000h
+--------O-2F12FFBX0002-----------------------
+INT 2F U - Novell DOS 7 - GET ??? SIZE
+	AX = 12FFh
+	BX = 0002h
+Return: AX = 0000h if supported
+	DX = size of/required-for ??? in paragraphs
+SeeAlso: AX=12FFh/BX=0003h
+--------O-2F12FFBX0003-----------------------
+INT 2F U - Novell DOS 7 - SET ???
+	AX = 12FFh
+	BX = 0003h
+	DX = new value for ???
+Return: AX = 0000h if supported
+SeeAlso: AX=12FFh/BX=0002h
 --------O-2F12FFBX0007-----------------------
 INT 2F U - Novell DOS 7 - SCRIPT.EXE - GET ???
 	AX = 12FFh
@@ -5219,6 +5312,14 @@ Return: CF clear if installed
 	    DX = PSP segment of resident code???
 	    SI = ??? (4AFAh)
 	    ES = resident code segment
+--------O-2F12FFBX0009-----------------------
+INT 2F U - Novell DOS 7 - SET ???
+	AX = 12FFh
+	BX = 0009h
+	DX = new value for ???
+Return: ???
+Note:	the DX value is stored at offset 66h in SYSVARS and offset 18h in
+	  the Novell DOS 7 internal variable table
 --------m-2F12FFBX0106-----------------------
 INT 2F U - Novell DOS 7 - EMM386.EXE - GET VERSION???
 	AX = 12FFh
@@ -5588,8 +5689,9 @@ INT 2F - CD-ROM - GET DRIVE DEVICE LIST
 	ES:BX -> buffer to hold drive letter list (5 bytes per drive letter)
 Return: buffer filled, for each drive letter
 	  BYTE	subunit number in driver
-	  DWORD address of device driver header
+	  DWORD address of device driver header (see #0953)
 Note:	reportedly returns AX=0000h and an invalid address under Windows95
+SeeAlso: AX=1510h
 --------d-2F1502-----------------------------
 INT 2F - CD-ROM - GET COPYRIGHT FILE NAME
 	AX = 1502h
@@ -5727,28 +5829,29 @@ Note:	this function was not supported by Novell DOS 7 NWCDEX prior to the
 
 Format of CD-ROM directory entry (direct copy):
 Offset	Size	Description	(Table 1909)
- 00h	BYTE  length of directory entry
- 01h	BYTE  length of XAR in Logical Block Numbers
- 02h	DWORD LBN of data, Intel (little-endian) format
- 06h	DWORD LBN of data, Motorola (big-endian) format
- 0Ah	DWORD length of file, Intel format
- 0Eh	DWORD length of file, Motorola format
+ 00h	BYTE	length of directory entry
+ 01h	BYTE	length of XAR in Logical Block Numbers
+ 02h	DWORD	LBN of data, Intel (little-endian) format
+ 06h	DWORD	LBN of data, Motorola (big-endian) format
+ 0Ah	DWORD	length of file, Intel format
+ 0Eh	DWORD	length of file, Motorola format
 ---High Sierra---
- 12h  6 BYTEs date and time
- 18h	BYTE  bit flags
- 19h	BYTE  reserved
+ 12h  6 BYTEs	date and time
+ 18h	BYTE	bit flags
+ 19h	BYTE	reserved
 ---ISO 9660---
- 12h  7 BYTEs date and time
- 19h	BYTE  bit flags
+ 12h  7 BYTEs	date and time
+		(seventh byte is offset from GMT in 15-minute increments)
+ 19h	BYTE	bit flags
 ---both formats---
- 1Ah	BYTE  interleave size
- 1Bh	BYTE  interleave skip factor
- 1Ch	WORD  volume set sequence number, Intel format
- 1Eh	WORD  volume set sequence number, Motorola format
- 20h	BYTE  length of file name
- 21h  N BYTEs file name
-	BYTE (optional) padding if filename is odd length
-      N BYTEs system data
+ 1Ah	BYTE	interleave size
+ 1Bh	BYTE	interleave skip factor
+ 1Ch	WORD	volume set sequence number, Intel format
+ 1Eh	WORD	volume set sequence number, Motorola format
+ 20h	BYTE	length of file name
+ 21h  N BYTEs	file name
+	BYTE	(optional) padding if filename is odd length
+      N BYTEs	system data
 SeeAlso: #1910,#0668
 
 Format of CD-ROM directory entry (canonicalized):
@@ -5877,7 +5980,7 @@ Notes:	the Windows enhanced mode loader and Microsoft 286 DOS extender will
 	  CX=FFFFh and other registers are unchanged on return
 	Novell DOS v7.0 (Update 8 - Update 11) TASKMGR in multitasking mode
 	  uses this broadcast, even if TASKMGR.INI sets WinPresent= to OFF
-	Micrsoft's EMM386.EXE for DOS 5+ when installed with the NOEMS option
+	Microsoft's EMM386.EXE for DOS 5+ when installed with the NOEMS option
 	  changes its driver name from EMMQXXX0 to EMMXXXX0 while Windows is
 	  active
 SeeAlso: AX=1606h,AX=1608h,AX=4B05h
@@ -5926,7 +6029,7 @@ INT 2F - MS Windows - WINDOWS ENHANCED MODE & 286 DOSX EXIT BROADCAST
 Notes:	if the init broadcast fails (AX=1605h returned CX <> 0), then this
 	  broadcast will be issued immediately.
 	this call will be issued in real mode
-	Novell DOS v7.0 (Update 8 - Update 10) TASKMGR in multitasking mode
+	Novell DOS v7.0 (Update 8 - Update 15) TASKMGR in multitasking mode
 	  uses this broadcast, even if TASKMGR.INI sets WinPresent= to OFF
 SeeAlso: AX=1605h,AX=1609h
 --------W-2F1607-----------------------------
@@ -6299,6 +6402,7 @@ Value	Name   CallOut V86 PM	Description
  00FDh	FAKEIDE		N  N	(Chicago)
  0102h	CV1		N  N	Microsoft C/C++ 7.00+ CodeView for Windows
  0200h	VIPX		Y  Y	NetWare Virtual IPX Driver
+ 0200h  VTEMPD			dummy template driver by Ray Patch
  0201h	VNWLSERV	N  N	NetWare Lite 1.1 Server (SERVER.EXE)
  0202h	WINICE		Y  Y	SoftICE/W
  0203h	VCLIENT		N  Y	NetWare Lite 1.1+ Client
@@ -7695,7 +7799,7 @@ INT 2F U - IBM ROM-DOS v4.0 - GET ??? STRING
 	DS:DX -> buffer for ???
 Return: AL = status
 	    FFh if successful
-	        DS:DX buffer filled (see note)
+		DS:DX buffer filled (see note)
 	    81h on error
 Note:	the first byte of the buffer is unchanged; depending on a byte in
 	  IBMBIO.COM, the remainder of the buffer is filled with either
@@ -7967,7 +8071,7 @@ INT 2F - ANSIPLUS v4.02+ - GET/SET ANSIPLUS SMOOTH SCROLLING RATE
 	BL = function
 	    00h get scrolling rate
 	    01h set scrolling rate
-	        BH = new minimum scrolling rate in scan lines per retrace
+		BH = new minimum scrolling rate in scan lines per retrace
 Return: BH = smooth scrolling rate
 SeeAlso: AX=1AA3h,AX=1AA5h
 --------V-2F1AA5-----------------------------

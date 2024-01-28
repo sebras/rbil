@@ -6,13 +6,10 @@ INT 21 u - Novell NetWare v3.01+ shell interface - MULTIPLEXOR
 	AL = function (see #1391)
 	    (subfunction stored in various places in the request packet,
 	    depending on function number; see individual entries)
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	    (0000h if no reply packet)
-	DS:SI -> request packet fragment list (see #1413)
-	ES:DI -> reply packet fragment list (see #1413)
-	    (ignored if DX=0000h)
+	CX = length of request buffer
+	DX = length of reply buffer (0000h if no reply packet)
+	DS:SI -> request buffer
+	ES:DI -> reply buffer (ignored if DX=0000h)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled as appropriate for function
 Note:	this is a multiplexor providing a "raw" interface to the underlying
@@ -437,6 +434,7 @@ INT 21 - Novell NetWare - LOG FILE (OLD)
 	CX = connection handle
 	DX = 0000h (no reply packet)
 	DS:SI -> request packet fragment list (see #1413,#1766 at AX=F269h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F204h,AX=F269h,AH=EBh"NetWare"
 --------N-21F204-----------------------------
@@ -446,6 +444,7 @@ INT 21 - Novell NetWare - LOCK FILE SET (OLD)
 	CX = connection handle
 	DX = 0000h (no reply packet)
 	DS:SI -> request packet fragment list (see #1413,#1392)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F203h,AX=F26Ah,AH=CBh"NetWare"
 
@@ -459,6 +458,7 @@ INT 21 - Novell NetWare - CLEAR FILE
 	CX = connection handle
 	DX = 0000h (no reply packet)
 	DS:SI -> request packet fragment list (see #1413,#1393)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=CEh,AH=EDh"NetWare",AH=F2h"NetWare",AX=F208h
 
@@ -475,6 +475,7 @@ INT 21 - Novell NetWare - CLEAR FILE SET
 	CX = connection handle
 	DX = 0000h (no reply packet)
 	DS:SI -> request packet fragment list (see #1413,#1394)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=CFh"NetWare",AH=F2h"NetWare",AX=F207h
 
@@ -489,6 +490,7 @@ INT 21 - Novell NetWare - LOCK LOGICAL RECORD SET (OLD)
 	CX = connection handle
 	DX = 0000h (no reply packet)
 	DS:SI -> request packet fragment list (see #1413,#1768 at AX=F26Ch)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F204h,AX=F26Ch,AH=D1h"NetWare"
 --------N-21F20B-----------------------------
@@ -498,6 +500,7 @@ INT 21 - Novell NetWare - CLEAR LOGICAL RECORD
 	CX = connection handle
 	DX = 0000h (no reply packet)
 	DS:SI -> request packet fragment list (see #1413,#1395)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=D4h"NetWare",AH=F2h"NetWare",AX=F207h,AX=F20Eh
 
@@ -513,6 +516,7 @@ INT 21 - Novell NetWare - CLEAR LOGICAL RECORD SET
 	CX = connection handle
 	DX = 0000h (no reply packet)
 	DS:SI -> request packet fragment list (see #1413,#1396)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=D5h"NetWare",AH=F2h"NetWare",AX=F207h,AX=F20Bh
 
@@ -635,6 +639,7 @@ INT 21 - Novell NetWare - DISABLE BROADCASTS
 	DX = 0000h (no reply packet)
 	DS:SI -> request packet fragment list
 		(see #1413,#1117 at AH=E1h/SF=02h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E1h/SF=02h,AX=F215h/SF=01h,AX=F215h/SF=03h
 --------N-21F215SF03-------------------------
@@ -645,6 +650,7 @@ INT 21 - Novell NetWare - ENABLE BROADCASTS
 	DX = 0000h (no reply packet)
 	DS:SI -> request packet fragment list
 		(see #1413,#1118 at AH=E1h/SF=03h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E1h/SF=03h,AX=F215h/SF=01h,AX=F215h/SF=02h
 --------N-21F215SF08-------------------------
@@ -675,6 +681,7 @@ INT 21 - Novell NetWare - BROADCAST TO CONSOLE
 	DX = 0000h (no reply buffer)
 	DS:SI -> request packet fragment list
 		(see #1413,#1131 at INT 21/AH=E1h/SF=09h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 Note:	requires Access Control rights to the target directory or its parent
 SeeAlso: AH=E1h/SF=09h,AH=F2h"NetWare",AX=F215h/SF=08h
@@ -703,33 +710,28 @@ SeeAlso: #1405,#1116
 --------N-21F216SF00-------------------------
 INT 21 - Novell NetWare - SET DIRECTORY HANDLE
 	AX = F216h subfn 00h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1134 at AH=E2h/SF=00h)
+	CX = length of request buffer in bytes
+	DX = 0000h (no reply buffer)
+	DS:SI -> request buffer (see #1134 at AH=E2h/SF=00h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=00h,AX=F216h/SF=01h
 --------N-21F216SF01-------------------------
 INT 21 - Novell NetWare - GET DIRECTORY PATH
 	AX = F216h subfn 01h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1136 at AH=E2h/SF=01h)
-	ES:DI -> reply packet fragment list (see #1413,#1137)
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #1136 at AH=E2h/SF=01h)
+	ES:DI -> reply buffer (see #1137)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=01h,AX=F216h/SF=00h
 --------N-21F216SF02-------------------------
 INT 21 - Novell NetWare - SCAN DIRECTORY INFORMATION
 	AX = F216h subfn 02h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1138 at AH=E2h/SF=02h)
-	ES:DI -> reply packet fragment list (see #1413,#1407)
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #1138 at AH=E2h/SF=02h)
+	ES:DI -> reply buffer (see #1407)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=02h,AX=F216h/SF=01h,AX=F216h/SF=03h
 
@@ -745,12 +747,10 @@ SeeAlso: #1138,#1139 at AH=E2h/SF=02h
 --------N-21F216SF03-------------------------
 INT 21 - Novell NetWare - GET EFFECTIVE DIRECTORY RIGHTS (OLD)
 	AX = F216h subfn 03h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1141 at AH=E2h/SF=03h)
-	ES:DI -> reply packet fragment list (see #1413,#1408)
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #1141 at AH=E2h/SF=03h)
+	ES:DI -> reply buffer (see #1408)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=E2h/SF=03h,AX=F216h/SF=02h,AX=F216h/SF=04h,AX=F257h/SF=1Dh
 
@@ -761,22 +761,19 @@ SeeAlso: #1141,#1142 at AH=E2h/SF=03h
 --------N-21F216SF04-------------------------
 INT 21 - Novell NetWare - MODIFY MAXIMUM RIGHTS MASK
 	AX = F216h subfn 04h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request buffer in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1144 at AH=E2h/SF=04h)
+	DS:SI -> request packet	(see #1144 at AH=E2h/SF=04h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=04h,AX=F216h/SF=03h,AX=F216h/SF=05h
 --------N-21F216SF05-------------------------
 INT 21 - Novell NetWare - GET VOLUME NUMBER
 	AX = F216h subfn 05h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1146 at AH=E2h/SF=05h)
-	ES:DI -> reply packet fragment list (see #1413,#1409)
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #1146 at AH=E2h/SF=05h)
+	ES:DI -> reply buffer (see #1409)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=05h,AX=F216h/SF=02h,AX=F216h/SF=06h
 
@@ -787,12 +784,10 @@ SeeAlso: #1146 at AH=E2h/SF=05h
 --------N-21F216SF06-------------------------
 INT 21 - Novell NetWare - GET VOLUME NAME
 	AX = F216h subfn 06h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1148 at AH=E2h/SF=06h)
-	ES:DI -> reply packet fragment list (see #1413,#1410)
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #1148 at AH=E2h/SF=06h)
+	ES:DI -> reply buffer (see #1410)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=06h,AX=F216h/SF=05h,AX=F216h/SF=0Ah
 
@@ -802,32 +797,28 @@ SeeAlso: #1148,#1149 at AH=E2h/SF=06h
 --------N-21F216SF0A-------------------------
 INT 21 - Novell NetWare - CREATE DIRECTORY
 	AX = F216h subfn 0Ah
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request buffer in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1150 at AH=E2h/SF=0Ah)
+	DS:SI -> request packet (see #1150 at AH=E2h/SF=0Ah)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=39h,AH=F2h"Novell",AH=E2h/SF=0Ah,AX=F216h/SF=0Bh
 --------N-21F216SF0B-------------------------
 INT 21 - Novell NetWare - DELETE DIRECTORY
 	AX = F216h subfn 0Bh
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request buffer in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1152 at AH=E2h/SF=0Bh)
+	DS:SI -> request packet (see #1152 at AH=E2h/SF=0Bh)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=3Ah,AH=F2h"Novell",AH=E2h/SF=0Bh,AX=F216h/SF=0Ah
 --------N-21F216SF0C-------------------------
 INT 21 - Novell NetWare - SCAN DIRECTORY FOR TRUSTEES
 	AX = F216h subfn 0Ch
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1153 at AH=E2h/SF=0Ch)
-	ES:DI -> reply packet fragment list (see #1413,#1411)
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request buffer (see #1153 at AH=E2h/SF=0Ch)
+	ES:DI -> reply buffer (see #1411)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=0Ch,AX=F216h/SF=0Dh
 
@@ -843,53 +834,47 @@ SeeAlso: #1153 at AH=E2h/SF=0Ch
 --------N-21F216SF0D-------------------------
 INT 21 - Novell NetWare - ADD TRUSTEE TO DIRECTORY
 	AX = F216h subfn 0Dh
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request buffer in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1155 at AH=E2h/SF=0Dh)
+	DS:SI -> request packet	(see #1155 at AH=E2h/SF=0Dh)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 Note:	requires Access Control rights to the target directory or its parent
 SeeAlso: AH=F2h"NetWare",AH=E2h/SF=0Dh,AX=F216h/SF=0Ch,AX=F216h/SF=0Eh
 --------N-21F216SF0E-------------------------
 INT 21 - Novell NetWare - DELETE TRUSTEE FROM DIRECTORY
 	AX = F216h subfn 0Eh
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request buffer in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1156 at AH=E2h/SF=0Eh)
+	DS:SI -> request packet	(see #1156 at AH=E2h/SF=0Eh)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=0Eh,AX=F216h/SF=0Ch,AX=F216h/SF=0Dh
 --------N-21F216SF0F-------------------------
 INT 21 - Novell NetWare - RENAME DIRECTORY
 	AX = F216h subfn 0Fh
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request buffer in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1158 at AH=E2h/SF=0Fh)
+	DS:SI -> request packet (see #1158 at AH=E2h/SF=0Fh)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=0Fh,AX=F216h/SF=0Ah
 --------N-21F216SF10-------------------------
 INT 21 - Novell NetWare - PURGE ERASED FILES (OLD)
 	AX = F216h subfn 10h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request buffer in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1159 at AH=E2h/SF=10h)
+	DS:SI -> request packet (see #1159 at AH=E2h/SF=10h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=10h,AX=F216h/SF=11h
 --------N-21F216SF11-------------------------
 INT 21 - Novell NetWare - RECOVER ERASED FILE (OLD)
 	AX = F216h subfn 11h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1161 at AH=E2h/SF=11h)
-	ES:DI -> reply packet fragment list (see #1413,#1412)
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1161 at AH=E2h/SF=11h)
+	ES:DI -> reply buffer (see #1412)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=11h,AX=F216h/SF=10h
 
@@ -901,12 +886,10 @@ SeeAlso: #1161,#1162 at AH=E2h/SF=11h
 --------N-21F216SF12-------------------------
 INT 21 - Novell NetWare - ALLOCATE PERMANENT DIRECTORY HANDLE
 	AX = F216h subfn 12h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1163 at AH=E2h/SF=12h)
-	ES:DI -> reply packet fragment list (see #1413,#1414)
+	CX = length of request buffer in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1163 at AH=E2h/SF=12h)
+	ES:DI -> reply buffer (see #1414)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=16h,AH=E2h/SF=12h
 
@@ -923,32 +906,28 @@ SeeAlso: #1163,#1167,#1413
 --------N-21F216SF13-------------------------
 INT 21 - Novell NetWare - ALLOCATE TEMPORARY DIRECTORY HANDLE
 	AX = F216h subfn 13h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-	      (see #1413,#1165 at AH=E2h/SF=13h)
+	DS:SI -> request packet (see #1165 at AH=E2h/SF=13h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=12h,AX=F216h/SF=16h,AH=E2h/SF=13h
 --------N-21F216SF14-------------------------
 INT 21 - Novell NetWare - DEALLOCATE DIRECTORY HANDLE
 	AX = F216h subfn 14h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1166 at AH=E2h/SF=14h)
+	DS:SI -> request packet	(see #1166 at AH=E2h/SF=14h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=14h,AX=F216h/SF=13h,AX=F216h/SF=16h
 --------N-21F216SF15-------------------------
 INT 21 - Novell NetWare - GET VOLUME INFO WITH HANDLE
 	AX = F216h subfn 15h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1168 at AH=E2h/SF=15h)
-	ES:DI -> reply packet fragment list (see #1413,#1415)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1168 at AH=E2h/SF=15h)
+	ES:DI -> reply buffer (see #1415)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=15h,AX=F212h,AX=F216h/SF=13h
 
@@ -965,22 +944,19 @@ SeeAlso: #1168 at AH=E2h/SF=15h
 --------N-21F216SF16-------------------------
 INT 21 - Novell NetWare v2+ - ALLOCATE SPECIAL TEMPORARY DIRECTORY HANDLE
 	AX = F216h subfn 16h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1170 at AH=E2h/SF=16h)
+	DS:SI -> request packet (see #1170 at AH=E2h/SF=16h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=12h,AX=F216h/SF=13h,AH=E2h/SF=16h
 --------N-21F216SF17-------------------------
 INT 21 - Novell NetWare - SAVE DIRECTORY HANDLE
 	AX = F216h subfn 17h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1171 at AH=E2h/SF=1Ah)
-	ES:DI -> reply packet fragment list (see #1413,#1416)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1171 at AH=E2h/SF=17h)
+	ES:DI -> reply buffer (see #1416)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=17h,AX=F216h/SF=18h
 
@@ -991,12 +967,10 @@ SeeAlso: #1171,#1172,#1417
 --------N-21F216SF18-------------------------
 INT 21 - Novell NetWare - RESTORE DIRECTORY HANDLE
 	AX = F216h subfn 18h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1173 at AH=E2h/SF=1Ah)
-	ES:DI -> reply packet fragment list (see #1413,#1417)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1173 at AH=E2h/SF=18h)
+	ES:DI -> reply buffer (see #1417)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=18h,AX=F216h/SF=17h
 
@@ -1008,22 +982,19 @@ SeeAlso: #1174,#1416
 --------N-21F216SF19-------------------------
 INT 21 - Novell NetWare - SET DIRECTORY INFORMATION
 	AX = F216h subfn 19h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1175 at AH=E2h/SF=19h)
+	DS:SI -> request packet	(see #1175 at AH=E2h/SF=19h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=19h,AX=F216h/SF=17h
 --------N-21F216SF1A-------------------------
 INT 21 - Novell NetWare - GET PATH NAME OF VOLUME-DIRECTORY NUMBER PAIR
 	AX = F216h subfn 1Ah
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1177 at AH=E2h/SF=1Ah)
-	ES:DI -> reply packet fragment list (see #1413,#1418)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1177 at AH=E2h/SF=1Ah)
+	ES:DI -> reply buffer (see #1418)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=1Ah,AX=F216h/SF=0Eh
 
@@ -1034,11 +1005,10 @@ SeeAlso: #1177,#1178 at AH=E2h/SF=1Ah
 --------N-21F216SF1B-------------------------
 INT 21 - Novell NetWare - SCAN SALVAGEABLE FILES (OLD)
 	AX = F216h subfn 1Bh
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list (see #1413,#1419)
-	ES:DI -> reply packet fragment list (see #1413,#1420)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1419)
+	ES:DI -> reply buffer (see #1420)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=1Ch,AX=F216h/SF=1Dh,AX=F257h/SF=10h
 
@@ -1079,10 +1049,10 @@ SeeAlso: #1419,#1694
 --------N-21F216SF1C-------------------------
 INT 21 - Novell NetWare - RECOVER SALVAGEABLE FILE (OLD)
 	AX = F216h subfn 1Ch
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list (see #1413,#1421)
+	DS:SI -> request packet (see #1421)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=1Bh,AX=F216h/SF=1Dh,AX=F257h/SF=11h
 
@@ -1100,10 +1070,10 @@ SeeAlso: #1695
 --------N-21F216SF1D-------------------------
 INT 21 - Novell NetWare - PURGE SALVAGEABLE FILE (OLD)
 	AX = F216h subfn 1Dh
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list (see #1413,#1422)
+	DS:SI -> request packet (see #1422)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=1Bh,AX=F216h/SF=1Ch,AX=F257h/SF=12h
 
@@ -1117,11 +1087,10 @@ Offset	Size	Description	(Table 1422)
 --------N-21F216SF1E-------------------------
 INT 21 - Novell NetWare - SCAN A DIRECTORY
 	AX = F216h subfn 1Eh
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list (see #1413,#1423)
-	ES:DI -> reply packet fragment list (see #1413,#1424)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1423)
+	ES:DI -> reply buffer (see #1424)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E2h/SF=02h,AX=F216h/SF=1Fh
 
@@ -1174,11 +1143,10 @@ SeeAlso: #1423
 --------N-21F216SF1F-------------------------
 INT 21 - Novell NetWare - GET DIRECTORY ENTRY
 	AX = F216h subfn 1Fh
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list (see #1413,#1425)
-	ES:DI -> reply packet fragment list (see #1413)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1425)
+	ES:DI -> reply buffer
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=1Eh
 
@@ -1190,11 +1158,10 @@ Offset	Size	Description	(Table 1425)
 --------N-21F216SF20-------------------------
 INT 21 - Novell NetWare - SCAN VOLUME'S USER DISK RESTRICTIONS
 	AX = F216h subfn 20h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list (see #1413,#1426)
-	ES:DI -> reply packet fragment list (see #1413,#1427)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1426)
+	ES:DI -> reply buffer (see #1427)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=23h,AX=F216h/SF=29h
 
@@ -1217,9 +1184,9 @@ SeeAlso: #1426
 --------N-21F216SF21-------------------------
 INT 21 - Novell NetWare v3+ - ADD USER DISK SPACE RESTRICTION
 	AX = F216h subfn 21h
-	CX = length of request buffer in bytes
+	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1428)
+	DS:SI -> request packet (see #1428)
 	ES:DI -> reply buffer (ignored)
 Return: AL = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AX=F216h/SF=20h,AX=F216h/SF=22h,AX=F216h/SF=24h
@@ -1235,11 +1202,10 @@ Offset	Size	Description	(Table 1428)
 --------N-21F216SF22-------------------------
 INT 21 - Novell NetWare - REMOVE USER DISK SPACE RESTRICTIONS
 	AX = F216h subfn 22h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list (see #1413,#1429)
-	ES:DI -> reply packet fragment list (see #1413)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1429)
+	ES:DI -> reply buffer
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=20h,AX=F216h/SF=21h,AX=F216h/SF=23h
 
@@ -1251,11 +1217,10 @@ Offset	Size	Description	(Table 1429)
 --------N-21F216SF23-------------------------
 INT 21 - Novell NetWare - SCAN DIRECTORY SPACE RESTRICTIONS
 	AX = F216h subfn 23h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list (see #1413,#1430)
-	ES:DI -> reply packet fragment list (see #1413,#1431)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1430)
+	ES:DI -> reply buffer (see #1431)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=20h,AX=F216h/SF=21h,AX=F216h/SF=22h
 
@@ -1295,10 +1260,10 @@ Offset	Size	Description	(Table 1432)
 --------N-21F216SF25-------------------------
 INT 21 - Novell NetWare - SET DIRECTORY/FILE INFORMATION
 	AX = F216h subfn 25h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list (see #1413,#1433)
+	DS:SI -> request packet (see #1433)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=02h
 
@@ -1335,11 +1300,10 @@ Offset	Size	Description	(Table 1433)
 --------N-21F216SF26-------------------------
 INT 21 - Novell NetWare v3+ - SCAN FILE OR DIRECTORY FOR EXTENDED TRUSTEES
 	AX = F216h subfn 26h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list (see #1413,#1434)
-	ES:DI -> reply packet fragment list (see #1413,#1435)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1434)
+	ES:DI -> reply buffer (see #1435)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 Desc:	get up to 20 extended trustee entries per call for a file or directory
 
@@ -1363,10 +1327,10 @@ SeeAlso: #1435
 --------N-21F216SF27-------------------------
 INT 21 - Novell NetWare v3+ - ADD EXTENDED TRUSTEE TO DIRECTORY OR FILE
 	AX = F216h subfn 27h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list (see #1413,#1436)
+	DS:SI -> request packet (see #1436)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 
 Format of NetWare "Add Extended Trustee to Directory or File" request buffer:
@@ -1392,11 +1356,10 @@ Bit(s)	Description	(Table 1437)
 --------N-21F216SF28-------------------------
 INT 21 - Novell NetWare - SCAN DIRECTORY DISK SPACE
 	AX = F216h subfn 28h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list (see #1413,#1438)
-	ES:DI -> reply packet fragment list (see #1413,#1439)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1438)
+	ES:DI -> reply buffer (see #1439)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=02h,AX=F216h/SF=20h
 
@@ -1444,11 +1407,10 @@ SeeAlso: #1438
 --------N-21F216SF29-------------------------
 INT 21 - Novell NetWare v3+ - GET OBJECT DISK USAGE AND RESTRICTIONS
 	AX = F216h subfn 29h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list (see #1413,#1440)
-	ES:DI -> reply packet fragment list (see #1413,#1441)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1440)
+	ES:DI -> reply buffer (see #1441)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 Note:	this function returns successfully, showing no restriction, if an
@@ -1471,11 +1433,10 @@ SeeAlso: #1440
 --------N-21F216SF2A-------------------------
 INT 21 - Novell NetWare - GET EFFECTIVE RIGHTS
 	AX = F216h subfn 2Ah
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list (see #1413,#1442)
-	ES:DI -> reply packet fragment list (see #1413)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1442)
+	ES:DI -> reply buffer (see #1443)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=32h
 
@@ -1487,10 +1448,10 @@ Offset	Size	Description	(Table 1442)
 --------N-21F216SF2B-------------------------
 INT 21 - Novell NetWare - REMOVE EXTENDED TRUSTEE FROM DIR OR FILE
 	AX = F216h subfn 2Bh
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list (see #1413,#1443)
+	DS:SI -> request packet (see #1413,#1443)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=26h,AX=F216h/SF=27h
 
@@ -1506,11 +1467,10 @@ Offset	Size	Description	(Table 1443)
 --------N-21F216SF2C-------------------------
 INT 21 - Novell NetWare - GET VOLUME USAGE
 	AX = F216h subfn 2Ch
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list (see #1413,#1444)
-	ES:DI -> reply packet fragment list (see #1413)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1444)
+	ES:DI -> reply buffer (see #1445)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=20h,AX=F216h/SF=29h
 
@@ -1522,11 +1482,10 @@ Offset	Size	Description	(Table 1444)
 --------N-21F216SF2D-------------------------
 INT 21 - Novell NetWare - GET DIRECTORY INFORMATION
 	AX = F216h subfn 2Dh
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list (see #1413,#1445)
-	ES:DI -> reply packet fragment list (see #1413,#1446)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1445)
+	ES:DI -> reply buffer (see #1446)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=2Ch,AX=F216h/SF=2Eh
 
@@ -1551,10 +1510,10 @@ SeeAlso: #1445
 --------N-21F216SF2E-------------------------
 INT 21 - Novell NetWare - RENAME OR MOVE
 	AX = F216h subfn 2Eh
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list (see #1413,#1447)
+	DS:SI -> request packet (see #1447)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=34h,AX=F223h/SF=07h,AX=F245h
 
@@ -1572,11 +1531,10 @@ Offset	Size	Description	(Table 1447)
 --------N-21F216SF2F-------------------------
 INT 21 - Novell NetWare - GET NAME SPACE INFORMATION
 	AX = F216h subfn 2Fh
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list (see #1413,#1448)
-	ES:DI -> reply packet fragment list (see #1413,#1449)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1448)
+	ES:DI -> reply buffer (see #1449)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=30h,AX=F257h/SF=18h
 
@@ -1605,11 +1563,10 @@ SeeAlso: #1448
 --------N-21F216SF30-------------------------
 INT 21 - Novell NetWare - GET NAME SPACE DIRECTORY ENTRY
 	AX = F216h subfn 30h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list (see #1413,#1450)
-	ES:DI -> reply packet fragment list (see #1413,#1451)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1450)
+	ES:DI -> reply buffer (see #1451)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=2Fh
 
@@ -1661,11 +1618,10 @@ SeeAlso: #1450
 --------N-21F216SF31-------------------------
 INT 21 - Novell NetWare - OPEN DATA STREAM
 	AX = F216h subfn 31h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list (see #1413,#1452)
-	ES:DI -> reply packet fragment list (see #1413,#1453)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1452)
+	ES:DI -> reply buffer (see #1453)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F216h/SF=30h
 
@@ -1688,9 +1644,9 @@ SeeAlso: #1452
 --------N-21F216SF32-------------------------
 INT 21 - Novell NetWare v2.2+ - GET OBJECT EFFECTIVE RIGHTS
 	AX = F216h subfn 32h
-	CX = length of request buffer in bytes
+	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1454)
+	DS:SI -> request packet (see #1454)
 	ES:DI -> reply buffer (see #1455)
 Return: AL = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
@@ -1713,9 +1669,9 @@ SeeAlso: #1454
 --------N-21F216SF33-------------------------
 INT 21 - Novell NetWare v2.2+ - GET EXTENDED VOLUME INFORMATION
 	AX = F216h subfn 33h
-	CX = length of request buffer in bytes
+	CX = length of request packet in bytes
 	DX = length of reply buffer in bytes
-	DS:SI -> request buffer (see #1456)
+	DS:SI -> request packet (see #1456)
 	ES:DI -> reply buffer (see #1457)
 Return: AL = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
@@ -1776,11 +1732,10 @@ SeeAlso: #1456
 --------N-21F217SF01-------------------------
 INT 21 - Novell NetWare - CHANGE USER PASSWORD (OLD)
 	AX = F217h subfn 01h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-	      (see #1413,#1185 at AH=E3h/SF=01h)
+	DS:SI -> request packet (see #1185 at AH=E3h/SF=01h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 Note:	this function requires an object of type USER, unlike the newer
 	  password changing function AX=F217h/SF=40h
@@ -1788,12 +1743,10 @@ SeeAlso: AH=F2h"Novell",AH=E3h/SF=01h,AX=F217h/SF=02h,AX=F217h/SF=40h
 --------N-21F217SF02-------------------------
 INT 21 - Novell NetWare - GET USER CONNECTION LIST (OLD)
 	AX = F217h subfn 02h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-	      (see #1413,#1186 at AH=E3h/SF=02h)
-	ES:DI -> reply packet fragment list (see #1413,#1458)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1186 at AH=E3h/SF=02h)
+	ES:DI -> reply buffer (see #1458)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=02h,AX=F217h/SF=01h,AX=F217h/SF=0Ch
 
@@ -1806,12 +1759,10 @@ SeeAlso: #1186
 --------N-21F217SF0C-------------------------
 INT 21 - Novell NetWare - VERIFY SERIALIZATION
 	AX = F217h subfn 0Ch
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1190 at AH=E3h/SF=0Ch)
-	ES:DI -> reply packet fragment list (see #1413,#1459)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1190 at AH=E3h/SF=0Ch)
+	ES:DI -> reply buffer (see #1459)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=0Ch,AX=F217h/SF=12h
 
@@ -1822,12 +1773,10 @@ SeeAlso: #1190
 --------N-21F217SF0E-------------------------
 INT 21 - Novell NetWare - GET DISK UTILIZATION
 	AX = F217h subfn 0Eh
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1194 at AH=E3h/SF=0Eh)
-	ES:DI -> reply packet fragment list (see #1413,#1460)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1194 at AH=E3h/SF=0Eh)
+	ES:DI -> reply buffer (see #1460)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=0Eh,AX=F217h/SF=D6h
 
@@ -1842,12 +1791,10 @@ SeeAlso: #1194 at AH=E3h/SF=0Eh
 --------N-21F217SF0F-------------------------
 INT 21 - Novell NetWare - SCAN FILE INFORMATION
 	AX = F217h subfn 0Fh
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1197 at AH=E3h/SF=0Fh)
-	ES:DI -> reply packet fragment list (see #1413,#1461)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1197 at AH=E3h/SF=0Fh)
+	ES:DI -> reply buffer (see #1461)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=0Fh,AX=F217h/SF=10h
 
@@ -1868,22 +1815,19 @@ SeeAlso: #1197 at AH=E3h/SF=0Fh
 --------N-21F217SF10-------------------------
 INT 21 - Novell NetWare - SET FILE INFORMATION
 	AX = F217h subfn 10h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1199 at AH=E3h/SF=10h)
+	DS:SI -> request packet	(see #1199 at AH=E3h/SF=10h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=10h,AX=F217h/SF=0Fh
 --------N-21F217SF11-------------------------
 INT 21 - Novell NetWare - GET FILE SERVER INFORMATION
 	AX = F217h subfn 11h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1201 at AH=E3h/SF=11h)
-	ES:DI -> reply packet fragment list (see #1413,#1462)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1201 at AH=E3h/SF=11h)
+	ES:DI -> reply buffer (see #1462)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=11h,AX=F217h/SF=F1h
 
@@ -1915,12 +1859,10 @@ SeeAlso: #1201
 --------N-21F217SF12-------------------------
 INT 21 - Novell NetWare - GET NETWORK SERIAL NUMBER
 	AX = F217h subfn 12h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1203 at AH=E3h/SF=12h)
-	ES:DI -> reply packet fragment list (see #1413,#1463)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1203 at AH=E3h/SF=12h)
+	ES:DI -> reply buffer (see #1463)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=12h,AX=F217h/SF=0Ch
 
@@ -1932,12 +1874,10 @@ SeeAlso: #1203 at AH=E3h/SF=12h
 --------N-21F217SF13-------------------------
 INT 21 - Novell NetWare - GET INTERNET ADDRESS (OLD)
 	AX = F217h subfn 13h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1205 at AH=E3h/SF=13h)
-	ES:DI -> reply packet fragment list (see #1413,#1464)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1205 at AH=E3h/SF=13h)
+	ES:DI -> reply buffer (see #1464)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=13h,AX=F217h/SF=1Ah
 
@@ -1950,23 +1890,20 @@ SeeAlso: #1205 at AH=E3h/SF=13h,#1470
 --------N-21F217SF14-------------------------
 INT 21 - Novell NetWare - LOGIN OBJECT
 	AX = F217h subfn 14h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1207 at AH=E3h/SF=14h)
+	DS:SI -> request packet	(see #1207 at AH=E3h/SF=14h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=14h,AX=F216h/SF=18h,AX=F217h/SF=CCh
 SeeAlso: AX=F258h/SF=03h,AX=F268h/SF=39h
 --------N-21F217SF15-------------------------
 INT 21 - Novell NetWare - GET OBJECT CONNECTION LIST (OLD)
 	AX = F217h subfn 15h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1209 at AH=E3h/SF=15h)
-	ES:DI -> reply packet fragment list (see #1413,#1465)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1209 at AH=E3h/SF=15h)
+	ES:DI -> reply buffer (see #1465)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=15h,AX=F217h/SF=1Bh
 
@@ -1978,11 +1915,10 @@ SeeAlso: #1209
 --------N-21F217SF16-------------------------
 INT 21 - Novell NetWare - GET CONNECTION INFORMATION (OLD)
 	AX = F217h subfn 16h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list (see #1413,#1466)
-	ES:DI -> reply packet fragment list (see #1413,#1467)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1466)
+	ES:DI -> reply buffer (see #1467)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=1Ch,AX=F217h/SF=1Fh
@@ -2007,11 +1943,10 @@ SeeAlso: #1466
 --------N-21F217SF17-------------------------
 INT 21 - Novell NetWare - GET ENCRYPTION KEY
 	AX = F217h subfn 17h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list (see #1413,#1468)
-	ES:DI -> reply packet fragment list (see #1413)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1468)
+	ES:DI -> reply buffer
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=18h,AX=F217h/SF=4Ah,AX=F217h/SF=4Bh
 
@@ -2023,11 +1958,10 @@ Offset	Size	Description	(Table 1468)
 --------N-21F217SF18-------------------------
 INT 21 - Novell NetWare - LOGIN OBJECT ENCRYPTED
 	AX = F217h subfn 18h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list (see #1413,#1469)
-	ES:DI -> reply packet fragment list (see #1413)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1469)
+	ES:DI -> reply buffer
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=14h,AX=F217h/SF=17h
 
@@ -2039,11 +1973,10 @@ Offset	Size	Description	(Table 1469)
 --------N-21F217SF1A-------------------------
 INT 21 - Novell NetWare - GET INTERNET ADDRESS
 	AX = F217h subfn 1Ah
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list (see #1413,#1470)
-	ES:DI -> reply packet fragment list (see #1413,#1471)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1470)
+	ES:DI -> reply buffer (see #1471)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=13h
 
@@ -2054,7 +1987,7 @@ Offset	Size	Description	(Table 1470)
  03h	DWORD	target connection ID
 SeeAlso: #1471
 
-Format of NetWare "Get Internet Address" request packet:
+Format of NetWare "Get Internet Address" reply packet:
 Offset	Size	Description	(Table 1471)
  00h  4 BYTEs	network number
  04h  6 BYTEs	physical node address
@@ -2067,11 +2000,10 @@ SeeAlso: #1470
 --------N-21F217SF1B-------------------------
 INT 21 - Novell NetWare - GET OBJECT CONNECTION LIST
 	AX = F217h subfn 1Bh
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list (see #1413,#1472)
-	ES:DI -> reply packet fragment list (see #1413,#1473)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1472)
+	ES:DI -> reply buffer (see #1473)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=15h
 
@@ -2095,11 +2027,10 @@ SeeAlso: #1472
 --------N-21F217SF1C-------------------------
 INT 21 - Novell NetWare v3+ - GET CONNECTION INFORMATION
 	AX = F217h subfn 1Ch
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list (see #1413,#1474)
-	ES:DI -> reply packet fragment list (see #1413,#1475)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1474)
+	ES:DI -> reply buffer (see #1475)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 	reply buffer filled
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=16h,AX=F217h/SF=1Fh
@@ -2177,42 +2108,37 @@ SeeAlso: #1478
 --------N-21F217SF32-------------------------
 INT 21 - Novell NetWare - CREATE BINDERY OBJECT
 	AX = F217h subfn 32h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1215 at AH=E3h/SF=32h)
+	DS:SI -> request packet	(see #1215 at AH=E3h/SF=32h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=32h,AX=F217h/SF=33h,AX=F217h/SF=34h
 --------N-21F217SF33-------------------------
 INT 21 - Novell NetWare - DELETE BINDERY OBJECT
 	AX = F217h subfn 33h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1217 at AH=E3h/SF=33h)
+	DS:SI -> request packet	(see #1217 at AH=E3h/SF=33h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=33h,AX=F217h/SF=32h,AX=F217h/SF=34h
 --------N-21F217SF34-------------------------
 INT 21 - Novell NetWare - RENAME BINDERY OBJECT
 	AX = F217h subfn 34h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1218 at AH=E3h/SF=34h)
+	DS:SI -> request packet	(see #1218 at AH=E3h/SF=34h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=34h,AX=F217h/SF=32h,AX=F217h/SF=33h
 --------N-21F217SF35-------------------------
 INT 21 - Novell NetWare - GET BINDERY OBJECT ID
 	AX = F217h subfn 35h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1219 at AH=E3h/SF=35h)
-	ES:DI -> reply packet fragment list (see #1413,#1480)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1219 at AH=E3h/SF=35h)
+	ES:DI -> reply buffer (see #1480)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=35h,AX=F217h/SF=36h,AX=F217h/SF=45h
 
@@ -2225,12 +2151,10 @@ SeeAlso: #1219 at AH=E3h/SF=35h
 --------N-21F217SF36-------------------------
 INT 21 - Novell NetWare - GET BINDERY OBJECT NAME
 	AX = F217h subfn 36h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1222 at AH=E3h/SF=36h)
-	ES:DI -> reply packet fragment list (see #1413,#1481)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1222 at AH=E3h/SF=36h)
+	ES:DI -> reply buffer (see #1481)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=36h,AX=F217h/SF=35h,AX=F217h/SF=37h
 
@@ -2243,12 +2167,10 @@ SeeAlso: #1222 at AH=E3h/SF=36h
 --------N-21F217SF37-------------------------
 INT 21 - Novell NetWare - SCAN BINDERY OBJECT
 	AX = F217h subfn 37h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1224 at AH=E3h/SF=37h)
-	ES:DI -> reply packet fragment list (see #1413,#1482)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1224 at AH=E3h/SF=37h)
+	ES:DI -> reply buffer (see #1482)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=37h,AX=F217h/SF=3Ch
 
@@ -2259,52 +2181,46 @@ SeeAlso: #1224
 --------N-21F217SF38-------------------------
 INT 21 - Novell NetWare - CHANGE BINDERY OBJECT SECURITY
 	AX = F217h subfn 38h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply buffer)
-	DS:SI -> request packet fragment list
-		(see #1413,#1226 at AH=E3h/SF=38h)
+	DS:SI -> request packet	(see #1226 at AH=E3h/SF=38h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=38h,AX=F217h/SF=32h
 --------N-21F217SF39-------------------------
 INT 21 - Novell NetWare - CREATE PROPERTY
 	AX = F217h subfn 39h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1228 at AH=E3h/SF=39h)
+	DS:SI -> request packet	(see #1228 at AH=E3h/SF=39h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=39h,AX=F217h/SF=3Ah
 --------N-21F217SF3A-------------------------
 INT 21 - Novell NetWare - DELETE PROPERTY
 	AX = F217h subfn 3Ah
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1230 at AH=E3h/SF=3Ah)
+	DS:SI -> request packet	(see #1230 at AH=E3h/SF=3Ah)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=3Ah,AX=F217h/SF=39h,AX=F217h/SF=3Bh
 --------N-21F217SF3B-------------------------
 INT 21 - Novell NetWare - CHANGE PROPERTY SECURITY
 	AX = F217h subfn 3Bh
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply buffer)
-	DS:SI -> request packet fragment list
-		(see #1413,#1232 at AH=E3h/SF=3Bh)
+	DS:SI -> request packet	(see #1232 at AH=E3h/SF=3Bh)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=3Bh
 --------N-21F217SF3C-------------------------
 INT 21 - Novell NetWare - SCAN PROPERTY
 	AX = F217h subfn 3Ch
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1233 at AH=E3h/SF=3Ch)
-	ES:DI -> reply packet fragment list (see #1413,#1483)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1233 at AH=E3h/SF=3Ch)
+	ES:DI -> reply buffer (see #1483)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=3Ch,AX=F217h/SF=39h,AX=F217h/SF=3Dh
 
@@ -2315,12 +2231,10 @@ SeeAlso: #1233
 --------N-21F217SF3D-------------------------
 INT 21 - Novell NetWare - READ PROPERTY VALUE
 	AX = F217h subfn 3Dh
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1236 at AH=E3h/SF=3Dh)
-	ES:DI -> reply packet fragment list (see #1413,#1484)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1236 at AH=E3h/SF=3Dh)
+	ES:DI -> reply buffer (see #1484)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=3Dh,AX=F217h/SF=39h,AX=F217h/SF=3Eh
 
@@ -2331,93 +2245,83 @@ SeeAlso: #1236
 --------N-21F217SF3E-------------------------
 INT 21 - Novell NetWare - WRITE PROPERTY VALUE
 	AX = F217h subfn 3Eh
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1238 at AH=E3h/SF=3Eh)
+	DS:SI -> request packet	(see #1238 at AH=E3h/SF=3Eh)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=3Eh,AX=F217h/SF=39h,AX=F217h/SF=3Dh
 --------N-21F217SF3F-------------------------
 INT 21 - Novell NetWare - VERIFY BINDERY OBJECT PASSWORD
 	AX = F217h subfn 3Fh
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1241 at AH=E3h/SF=3Fh)
+	DS:SI -> request packet	(see #1241 at AH=E3h/SF=3Fh)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=3Fh,AX=F217h/SF=40h
 --------N-21F217SF40-------------------------
 INT 21 - Novell NetWare - CHANGE BINDERY OBJECT PASSWORD
 	AX = F217h subfn 40h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply buffer)
-	DS:SI -> request packet fragment list
-		(see #1413,#1242 at AH=E3h/SF=40h)
+	DS:SI -> request packet (see #1242 at AH=E3h/SF=40h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=40h,AX=F217h/SF=3Fh
 --------N-21F217SF41-------------------------
 INT 21 - Novell NetWare v2.2+ - ADD OBJECT TO SET
 	AX = F217h subfn 41h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1245 at AH=E3h/SF=41h)
+	DS:SI -> request packet	(see #1245 at AH=E3h/SF=41h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 Desc:	add a member to an object's group property
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=41h,AX=F217h/SF=42h,AX=F217h/SF=43h
 --------N-21F217SF42-------------------------
 INT 21 - Novell NetWare - DELETE BINDERY OBJECT FROM SET
 	AX = F217h subfn 42h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1246 at AH=E3h/SF=42h)
+	DS:SI -> request packet	(see #1246 at AH=E3h/SF=42h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=42h,AX=F217h/SF=41h,AX=F217h/SF=43h
 --------N-21F217SF43-------------------------
 INT 21 - Novell NetWare - IS BINDERY OBJECT IN SET?
 	AX = F217h subfn 43h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment
-		list (see #1413,#1248 at AH=E3h/SF=43h)
+	DS:SI -> request packet (see #1248 at AH=E3h/SF=43h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=43h,AX=F217h/SF=41h,,AX=F217h/SF=42h
 --------N-21F217SF44-------------------------
 INT 21 - Novell NetWare - CLOSE BINDERY
 	AX = F217h subfn 44h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1249 at AH=E3h/SF=44h)
+	DS:SI -> request packet	(see #1249 at AH=E3h/SF=44h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=44h,AX=F217h/SF=45h
 --------N-21F217SF45-------------------------
 INT 21 - Novell NetWare - OPEN BINDERY
 	AX = F217h subfn 45h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1250 at AH=E3h/SF=45h)
+	DS:SI -> request packet	(see #1250 at AH=E3h/SF=45h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=45h,AX=F217h/SF=44h
 --------N-21F217SF46-------------------------
 INT 21 - Novell NetWare - GET BINDERY ACCESS LEVEL
 	AX = F217h subfn 46h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1251 at AH=E3h/SF=46h)
-	ES:DI -> reply packet fragment list (see #1413,#1485)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1251 at AH=E3h/SF=46h)
+	ES:DI -> reply buffer (see #1485)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=46h,AX=F217h/SF=45h
 
@@ -2429,12 +2333,10 @@ SeeAlso: #1251,#1252 at AH=E3h/SF=46h
 --------N-21F217SF47-------------------------
 INT 21 - Novell NetWare - SCAN BINDERY OBJECT TRUSTEE PATHS
 	AX = F217h subfn 47h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1253 at AH=E3h/SF=47h)
-	ES:DI -> reply packet fragment list (see #1413,#1486)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1253 at AH=E3h/SF=47h)
+	ES:DI -> reply buffer (see #1486)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=47h,AX=F216h/SF=0Ch,AX=F217h/SF=48h
 
@@ -2449,12 +2351,10 @@ SeeAlso: #1253,#1254 at AH=E3h/SF=47h
 --------N-21F217SF48-------------------------
 INT 21 - Novell NetWare - GET BINDERY OBJECT ACCESS LEVEL
 	AX = F217h subfn 48h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1256 at AH=E3h/SF=48h)
-	ES:DI -> reply packet fragment list (see #1413,#1488)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1487)
+	ES:DI -> reply buffer (see #1488)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=45h,AX=F217h/SF=46h
 
@@ -2472,10 +2372,10 @@ SeeAlso: #1487
 --------N-21F217SF49-------------------------
 INT 21 - Novell NetWare - IS STATION A MANAGER?
 	AX = F217h subfn 49h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list (see #1413,#1489)
+	DS:SI -> request packet (see #1489)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=43h
 
@@ -2487,10 +2387,10 @@ Offset	Size	Description	(Table 1489)
 --------N-21F217SF4A-------------------------
 INT 21 - Novell NetWare - KEYED VERIFY BINDERY OBJECT PASSWORD
 	AX = F217h subfn 4Ah
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list (see #1413,#1490)
+	DS:SI -> request packet (see #1490)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=4Bh
 
@@ -2506,10 +2406,10 @@ SeeAlso: #1491
 --------N-21F217SF4B-------------------------
 INT 21 - Novell NetWare - KEYED CHANGE BINDERY OBJECT PASSWORD
 	AX = F217h subfn 4Bh
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list (see #1413,#1491)
+	DS:SI -> request packet (see #1491)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=4Ah
 
@@ -2527,11 +2427,10 @@ SeeAlso: #1242
 --------N-21F217SF4C-------------------------
 INT 21 - Novell NetWare - LIST RELATIONS OF AN OBJECT
 	AX = F217h subfn 4Ch
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list (see #1413,#1492)
-	ES:DI -> reply packet fragment list (see #1413,#1493)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1492)
+	ES:DI -> reply buffer (see #1493)
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AX=F217h/SF=39h
 
@@ -2555,12 +2454,11 @@ SeeAlso: #1492
 --------N-21F217SF64-------------------------
 INT 21 - Novell NetWare v2.1+ - CREATE QUEUE
 	AX = F217h subfn 64h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
-	DX = number of fragments in reply packet (max 5)
-	DS:SI -> request packet fragment list
-		(see #1413,#1256 at AH=E3h/SF=64h)
-	ES:DI -> reply packet fragment list (see #1413,#1494)
+	CX = length of request packet in bytes
+	DX = length of reply buffer in bytes
+	DS:SI -> request packet (see #1256 at AH=E3h/SF=64h)
+	ES:DI -> reply buffer (see #1494)
+!!!
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=64h,AX=F217h/SF=65h,AX=F217h/SF=66h
 
@@ -2571,11 +2469,10 @@ SeeAlso: #1256,#1257
 --------N-21F217SF65-------------------------
 INT 21 - Novell NetWare v2.1+ - DESTROY QUEUE
 	AX = F217h subfn 65h
-	BX = number of fragments in request packet (max 5)
-	CX = connection handle
+	CX = length of request packet in bytes
 	DX = 0000h (no reply packet)
-	DS:SI -> request packet fragment list
-		(see #1413,#1258 at AH=E3h/SF=65h)
+	DS:SI -> request packet (see #1258 at AH=E3h/SF=65h)
+	ES:DI ignored
 Return: AX = status (see #2085 at INT 2F/AX=7A20h/BX=0000h)
 SeeAlso: AH=F2h"Novell",AH=E3h/SF=65h,AX=F217h/SF=64h,AX=F217h/SF=66h
 --------N-21F217SF66-------------------------
@@ -5812,7 +5709,7 @@ Offset	Size	Description	(Table 1671)
 		01h replace
 		03h create
  05h	BYTE	reserved
-SeeAlso: #1670 
+SeeAlso: #1670
 
 Format of NetWare Handle/Path structure:
 Offset	Size	Description	(Table 1672)
@@ -6306,7 +6203,7 @@ Format of NetWare "Get Name Spaces Loaded" reply packet:
 Offset	Size	Description	(Table 1706)
  00h	WORD	number of namespace elements
  02h	WORD	number of namespace elements loaded
- 04h  N BYTEs	loaded name spaces (each byte contains number of one loaded 
+ 04h  N BYTEs	loaded name spaces (each byte contains number of one loaded
 		  name space)
 SeeAlso: #1705
 --------N-21F257SF19-------------------------
@@ -7470,7 +7367,7 @@ Offset	Size	Description	(Table 1782)
  7Ch	WORD	"notMyNetwork"
  7Eh	DWORD	number of NetBIOS packets propagated
  82h	DWORD	total number of packets serviced
- 86h	DWORD	total number of packets routed 
+ 86h	DWORD	total number of packets routed
 SeeAlso: #1781
 --------N-21F27BSF04-------------------------
 INT 21 - Novell NetWare v4+ - GET USER INFORMATION
@@ -7775,7 +7672,7 @@ Offset	Size	Description	(Table 1794)
  0Ch	DWORD	flags
  10h	DWORD	NLM type (see #1795)
  14h	DWORD	parent identifier
- 18h	DWORD	major version	
+ 18h	DWORD	major version
  1Ch	DWORD	minor version
  20h	DWORD	revision
  24h	DWORD	year

@@ -1,5 +1,5 @@
 This is the fifth of six archives containing the MS-DOS Interrupt List,
-Release 50.
+Release 51.
 
 This archive contains programs to convert the MS-DOS interrupt list
 into hypertext databases for a number of popular hypertext help systems
@@ -23,9 +23,9 @@ INTERVUE, while offering additional functionality.  IVIEW is designed
 to conserve disk space by not requiring any additional index files and
 by itself being as compact as possible (under 2K!).
 
-In addition, the source code for INTPRINT, INT.COM, and the Epsilon
-extension code I use while editing the list are included in this
-archive.
+In addition, the source code for COMBINE, INTPRINT, INT.COM, and the
+Epsilon extension code I use while editing the list are included in
+this archive.
 
 Not included here because it is rather large and is distributed
 separately by the author, is IL2HDK by Ron Loewy, a conversion program
@@ -35,24 +35,13 @@ WinHelp, QuickHelp, Borland THELP, OS/2 IPF, POPHELP, and DESQview/X
 help. At the time of this writing, the current version was 3.5
 (IL2HDK35).
 
-I have removed INT2HLP.BAT, L2WH.ZIP, and WINHELP.ZIP from the
-distribution, since the first is a slow (and old) Perl script to
-generate a Windows Help file, the second is a slow AWK script to
-generate a Windows Help file, and the third is a slow AWK script
-processing the output of INT2HLP.BAT.  Since there is another WinHelp
-generator (in a separate archive of this distribution) and IL2HDK is
-also available, I decided to remove those three in order to reduce the
-size of the archive.
-
-Similarly, I have removed NGCONVER.ZIP because it duplicates RB2NG
-but appears to have less functionality.
-
 	     Ralf Brown
 
 
 Files in this archive:
       README.5
       86BUGS04.ZIP
+      COMBINE.ASM
       INT.C
       INT.COM
       INT2GUID.ZIP

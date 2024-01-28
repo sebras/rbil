@@ -1691,8 +1691,9 @@ Return: CF set on error
 		03h malformed path or invalid drive letter
 	    ES:DI buffer unchanged
 	CF clear if successful
-	    AH = 00h
-	    AL = destroyed (00h or 5Ch or last char of current dir on drive)
+	    AH = 00h or 3Ah (DOS 6.1/6.2 for character device)
+	    AL = destroyed (00h or 2Fh or 5Ch or last character of current
+		  directory on drive)
 	    buffer filled with qualified name of form D:\PATH\FILE.EXT or
 	      \\MACHINE\PATH\FILE.EXT
 Desc:	determine the canonical name of the specified filename or path,
@@ -1742,7 +1743,7 @@ Notes:	the input path need not actually exist
 	  MSCDEX with the /S switch returns a canonical name with embedded
 	  blanks.  Novell DOS 7 NWCDEX as of the 11/16/94 update returns the
 	  same canonical path as MSCDEX; earlier revisions returned
-	  "Cdex.D:\path", where "D" is the CD-ROM drive letter
+	  "Cdex.   D:\path", where "D" is the CD-ROM drive letter
 SeeAlso: AX=5FB3h,AX=7160h/CX=0000h,INT 2F/AX=1123h,INT 2F/AX=1221h
 --------D-2161-------------------------------
 INT 21 - DOS 3.0+ - UNUSED (RESERVED FOR NETWORK USE)
@@ -1754,15 +1755,21 @@ INT 21 U - OS/2 v1.x FAPI - OS/2 FILE SYSTEM JOIN/SUBST
 	AH = 61h
 	BP = 6467h ("dg")
 	AL = function
-	    00h list
+	    00h list (i.e. get)
 	    01h add
 	    02h delete
 	BX = drive number
 	CX = size of buffer
 	SI = type (0002h JOIN, 0003h SUBST)
 	ES:DI -> buffer
-Return: ???
+Return: CF clear if successful
+	    AX = 0000h
+	    ES:DI buffer filled, if appropriate
+	CF set on error
+	    AX = error code
 Notes:	used by JOIN and SUBST to communicate with the OS/2 file system
+	for function 00h (list), the ES:DI buffer is filled with the ASCIZ
+	  JOIN/SUBST path or an empty string if the drive is not JOINed/SUBSTed
 	also supported by OS/2 v2.0+ Virtual DOS Machines
 --------D-2162-------------------------------
 INT 21 - DOS 3.0+ - GET CURRENT PSP ADDRESS
@@ -1773,6 +1780,15 @@ Notes:	this function does not use any of the DOS-internal stacks and may
 	the current PSP is not necessarily the caller's PSP
 	identical to the undocumented AH=51h
 SeeAlso: AH=50h,AH=51h
+--------U-216262SI1994-----------------------
+INT 21 - ENVLOCK - INSTALLATION CHECK
+	AX = 6262h
+	SI = 1994h
+Return: AX = 1994h if installed
+	    ES = ENVLOCK's resident segment
+Notes:	to deactivate ENVLOCK, zero out the byte at ES:[0102h]
+Program: ENVLOCK is a TSR by Alexander Yanovsky (aka PC Hawk) that forces
+	  other TSRs to deallocate their environment when they stay resident
 --------D-216300-----------------------------
 INT 21 - DOS 2.25 only - GET LEAD BYTE TABLE ADDRESS
 	AX = 6300h
@@ -1792,29 +1808,23 @@ Offset	Size	Description	(Table 1049)
 	...
   N   2 BYTEs	00h,00h end flag
 --------D-216300-----------------------------
-INT 21 - Far East DOS 3.2+ - GET DOUBLE BYTE CHARACTER SET LEAD-BYTE TABLE
+INT 21 - DOS 3.2+ - GET DOUBLE BYTE CHARACTER SET LEAD-BYTE TABLE
 	AX = 6300h
 Return: AL = error code
 	    00h successful
-		DS:SI -> DBCS table (see #1050)
+		DS:SI -> DBCS table (see #1049)
 		all other registers except CS:IP and SS:SP destroyed
 	    FFh not supported
 Notes:	probably identical to AH=63h/AL=00h for DOS 2.25
 	the US version of MS-DOS 3.30 treats this as an unused function,
-	  setting AL=00h and returning immediately
+	  setting AL=00h and returning immediately, WITHOUT setting DS:SI;
+	  only the Far East versions of MS-DOS 3.2 and 3.3 supported this call
 	the US version of DOS 4.0+ accepts this function, but returns an empty
 	  list
 	IBM DOS 6.1 SYS.COM assumes that CF is set on error
 SeeAlso: AX=6300h"DOS 2.25"
-
-Format of DBCS table:
-Offset	Size	Description	(Table 1050)
- 00h  2 BYTEs	low/high ends of a range of leading byte of double-byte chars
- 02h  2 BYTEs	low/high ends of a range of leading byte of double-byte chars
-	...
-  N   2 BYTEs	00h,00h end flag
 --------D-216301-----------------------------
-INT 21 - DOS 2.25, Far East DOS 3.2+ - SET KOREAN (HANGEUL) INPUT MODE
+INT 21 - DOS 2.25, DOS 3.2+ - SET KOREAN (HANGEUL) INPUT MODE
 	AX = 6301h
 	DL = new mode
 	    00h return only full characters on DOS keyboard input functions
@@ -1822,10 +1832,13 @@ INT 21 - DOS 2.25, Far East DOS 3.2+ - SET KOREAN (HANGEUL) INPUT MODE
 Return: AL = status
 	    00h successful
 	    FFh invalid mode
-Note:	Novell DOS 7 simply stores DL in the caller's PSP (see #0691 at AH=26h)
+Notes:	Novell DOS 7 simply stores DL in the caller's PSP (see #0691 at AH=26h)
+	the US version of MS-DOS 3.30 treats this as an unused function,
+	  setting AL=00h and returning immediately; only the Far East versions
+	  of MS-DOS 3.2 and 3.3 supported this call
 SeeAlso: AH=07h,AH=08h,AH=0Bh,AH=63h,AX=6302h
 --------D-216302-----------------------------
-INT 21 - DOS 2.25, Far East DOS 3.2+ - GET KOREAN (HANGEUL) INPUT MODE
+INT 21 - DOS 2.25, DOS 3.2+ - GET KOREAN (HANGEUL) INPUT MODE
 	AX = 6302h
 Return: AL = status
 	    00h successful
@@ -1833,9 +1846,12 @@ Return: AL = status
 		    00h return only full characters (clears interim flag)
 		    01h return partial characters (sets interim flag)
 	    FFh not supported
-Note:	Novell DOS 7 simply reads the value out of the caller's PSP, so it
+Notes:	Novell DOS 7 simply reads the value out of the caller's PSP, so it
 	  can return values other than 00h or 01h if the last call to AX=6301h
 	  used another value
+	the US version of MS-DOS 3.30 treats this as an unused function,
+	  setting AL=00h and returning immediately, WITHOUT setting DL; only
+	  the Far East versions of MS-DOS 3.2 and 3.3 supported this call
 SeeAlso: AH=07h,AH=08h,AH=0Bh,AH=63h,AX=6301h
 --------v-216303------------------------
 INT 21 - VIRUS - "DOS IDLE" - INSTALLATION CHECK
@@ -2092,7 +2108,7 @@ Return: CF set on error
 	    CX = size of country information returned
 	    ES:DI -> country information
 Notes:	AL=05h appears to return same info for all countries and codepages; it
-	  has been documented for DOS 5+, but was undocumented in ealier
+	  has been documented for DOS 5+, but was undocumented in earlier
 	  versions
 	NLSFUNC must be installed to get info for countries other than the
 	  default
@@ -2422,10 +2438,10 @@ Offset	Size	Description	(Table 1069)
 
 (Table 1070)
 Values for filesystem type:
- "FAT12   "	12-bit FAT
- "FAT16   "	16-bit FAT
- "CDROM   "	High-Sierra CD-ROM filesystem
- "CD001   "	ISO 9660 CD-ROM filesystem
+ "FAT12	  "	12-bit FAT
+ "FAT16	  "	16-bit FAT
+ "CDROM	  "	High-Sierra CD-ROM filesystem
+ "CD001	  "	ISO 9660 CD-ROM filesystem
  "CDAUDIO "	audio CD
 SeeAlso: #1069
 --------O-2169-------------------------------
@@ -2587,7 +2603,7 @@ INT 21 U - DOS 5+ ROM - FIND FIRST ROM PROGRAM
 	AH = 6Dh
 	DS:DX -> ASCIZ program name (may contain wildcrds)
 Return: CF clear if found
-	    [DTA] = ROM search structure (see #1074)
+	    Disk Transfer Area filled with ROM search structure (see #1074)
 	CF set if not found
 	    AX = error code
 		0002h name not found in ROM
@@ -2609,8 +2625,13 @@ INT 21 U - OS/2 v1.x FAPI - "DosMkDir2"
 	AH = 6Dh
 	???
 Return: ???
+Desc:	create a new directory, with extended attribute information
 Note:	also supported by OS/2 v2.0+ Virtual DOS Machines
-SeeAlso: AH=39h
+BUG:	does not work under OS/2 v2.0 because MVDM does not translate the
+	  real-mode segment pointer in the Extended Attribute structure
+	  (see #3228) into a protected-mode selector; use AH=39h followed by
+	  AX=5703h instead
+SeeAlso: AH=39h,AX=5702h"OS/2",AX=5703h"OS/2"
 --------O-216D-------------------------------
 INT 21 U - Novell DOS 7 - NOP
 	AH = 6Dh
@@ -2620,26 +2641,37 @@ Note:	this function invokes the same code as other NOP functions such as
 --------D-216E-------------------------------
 INT 21 U - DOS 5+ ROM - FIND NEXT ROM PROGRAM
 	AH = 6Eh
-	[DTA] = result of previous FindFirst ROM (see AH=6Dh)
+	Disk Transfer Area contains result of previous FindFirst ROM
+	  (see AH=6Dh)
 Return: CF clear if found
-	    [DTA] = updated ROM search structure (see #1074)
+	    Disk Transfer Area filled with updated ROM search structure
+	      (see #1074)
 	CF set if not found
 	    AX = 0012h (no more matches)
 SeeAlso: AH=4Fh,AH=6Dh
 --------O-216E-------------------------------
-INT 21 U - OS/2 v1.x FAPI - "DosENumAttrib"
+INT 21 U - OS/2 v1.x FAPI - "DosEnumAttrib"
 	AH = 6Eh
-	???
-Return: ???
+	DS:SI -> parameter packet (see #3242)
+Return: CF clear if successful
+	    AX = 0000h
+	    DS:SI buffer updated
+	CF set on error
+	    AX = error code
 Note:	also supported by OS/2 v2.0+ Virtual DOS Machines
 SeeAlso: AX=5703h,AH=6Fh"OS/2",INT 2F/AX=112Dh
---------O-216F-------------------------------
-INT 21 U - OS/2 v1.x FAPI - "DosQMaxEASize" - GET MAXIMUM SIZE OF EXTENDED ATTR
-	AH = 6Fh
-	???
-Return: ???
-Note:	also supported by OS/2 v2.0+ Virtual DOS Machines
-SeeAlso: AX=5703h,AX=6C01h,AH=6Eh"OS/2"
+
+Format of OS/2 DosEnumAttrib parameter packet:
+Offset	Size	Description	(Table 3242)
+ 00h	DWORD	reserved (0)
+ 04h	DWORD	info level (always 00000001h)
+ 08h	DWORD	(call) number of entries requested
+		(ret) actual number of entries returned
+ 0Ch	DWORD	length of buffer
+ 10h	DWORD	pointer to buffer for results
+ 14h	DWORD	number of first entry to return
+ 18h	DWORD	-> file handle or ASCIZ pathname
+ 1Ch	WORD	flag: 00h = previous field is file handle, 01h = pathname
 --------D-216F00-----------------------------
 INT 21 U - DOS 5+ ROM - GET ROM SCAN START ADDRESS
 	AX = 6F00h
@@ -2647,6 +2679,17 @@ Return: CF clear
 	AL = 00h
 	BX = current ROM scan starting segment
 SeeAlso: AH=6Dh,AX=6F01h,AX=6F02h
+--------O-216F00-----------------------------
+INT 21 U - OS/2 v1.x FAPI - "DosQMaxEASize" - GET MAXIMUM SIZE OF EXTENDED ATTR
+	AX = 6F00h
+	DS:SI -> DWORD buffer for maximum size of an extended attribute
+Return: CF clear if successful
+	    AX = 0000h
+	    buffer filled
+	CF set on error
+	    AX = error code
+Note:	also supported by OS/2 v2.0+ Virtual DOS Machines
+SeeAlso: AX=5703h,AX=6C01h,AH=6Eh"OS/2"
 --------D-216F01-----------------------------
 INT 21 U - DOS 5+ ROM - SET ROM SCAN START ADDRESS
 	AX = 6F01h
@@ -2826,7 +2869,7 @@ INT 21 - Windows95 - LONG FILENAME - DELETE FILE
 	AX = 7141h
 	DS:DX -> ASCIZ long name of file to delete
 	SI = wildcard and attributes flag
-		0000h wildcards are not allows, and search attributes are
+		0000h wildcards are not allowed, and search attributes are
 			ignored
 		0001h wildcards are allowed, and only files with matching
 			names and attributes are deleted
@@ -3044,7 +3087,7 @@ Return: CF clear if successful
 		0003h file replaced
 	CF set on error
 	    AX = error code (see #0980)
-	        7100h if function not supported
+		7100h if function not supported
 SeeAlso: AX=6C00h,AX=7141h,AX=7156h,AX=71A9h
 
 Bitfields for Windows95 long-name open action:
@@ -3239,7 +3282,7 @@ Return: CF clear if successful
 		0003h file replaced
 	CF set on error
 	    AX = error code (see #0980)
-	        7100h if function not supported
+		7100h if function not supported
 Note:	for use by real-mode servers only
 SeeAlso: AX=6C00h,AX=716Ch
 --------D-2171AABH00-------------------------
@@ -3251,7 +3294,7 @@ INT 21 - Windows95 - LONG FILENAME - CREATE SUBST
 Return: CF clear if successful
 	CF set on error
 	    AX = error code (see #0980)
-	        7100h if function not supported
+		7100h if function not supported
 SeeAlso: AX=71AAh/BH=01h,AX=71AAh/BH=02h,INT 2F/AX=1000h,#0950
 --------D-2171AABH01-------------------------
 INT 21 - Windows95 - LONG FILENAME - TERMINATE SUBST
@@ -3261,7 +3304,7 @@ INT 21 - Windows95 - LONG FILENAME - TERMINATE SUBST
 Return: CF clear if successful
 	CF set on error
 	    AX = error code (see #0980)
-	        7100h if function not supported
+		7100h if function not supported
 Note:	the specified drive number may not be 00h (default), and presumably not
 	  the current drive either
 SeeAlso: AX=71AAh/BH=00h,AX=71AAh/BH=02h,INT 2F/AX=1000h,#0950
@@ -3275,13 +3318,16 @@ Return: CF clear if successful
 	    DS:DX buffer filled
 	CF set on error
 	    AX = error code (see #0980)
-	        7100h if function not supported
+		7100h if function not supported
 Note:	the specified drive number may not be 00h (default drive)
 SeeAlso: AX=71AAh/BH=00h,AX=71AAh/BH=01h,INT 2F/AX=1000h,#0950
 --------D-2172-------------------------------
-INT 21 - MS-DOS 7 (Windows95) - ???
+INT 21 - "Chicago" - LFN-FindClose
 	AH = 72h
 	details not available
+Note:	this function was present in beta versions of Windows95, but is
+	  probably not present in the release version
+SeeAlso: AX=71A1h
 --------D-2173-------------------------------
 INT 21 - MS-DOS 7 (Windows95) - DRIVE LOCKING ???
 	AH = 73h
@@ -3341,9 +3387,14 @@ SeeAlso: AX=5454h"VIRUS",AX=7700h,AX=7BCFh,AH=7Fh"VIRUS"
 INT 21 - VIRUS - "Tai-Pan.666"/"Doom II Death" - INSTALLATION CHECK
 	AX = 7BCFh
 Return: AX = 7BCFh if resident
-SeeAlso: AX=7BCEh"VIRUS",AH=7Fh"VIRUS"
+SeeAlso: AX=7BCEh"VIRUS",AH=7Dh"VIRUS"
+--------v-217D-------------------------------
+INT 21 - VIRUS - "OffSpring" - INSTALLATION CHECK
+	AH = 7Dh
+Return: AH = FAh if installed
+SeeAlso: AX=7BCFh"VIRUS",AX=7Fh"VIRUS"
 --------v-217F-------------------------------
-INT 21 - VIRUS - "Squeaker" - INSTALLATION CHECK
+INT 21 - VIRUS - "Squeaker","ASeXual" - INSTALLATION CHECK
 	AH = 7Fh
 Return: AH = 80h if resident
 SeeAlso: AX=7BCEh,AH=83h"VIRUS"
@@ -3888,11 +3939,16 @@ INT 21 - VIRUS - "600" or "Voronezh"-family - INSTALLATION CHECK
 	AH = ABh
 Return: AX = 5555h if resident
 SeeAlso: AX=AA03h,AX=ABCDh,AX=BBBBh"VIRUS"
+--------v-21ABCD-----------------------------
+INT 21 - VIRUS - Major BBS - INSTALLATION CHECK
+	AX = ABCDh
+Return: AX = 1234h if installed
+SeeAlso: AH=ABh"VIRUS",AX=ABCDh"SuperVirus"
 --------v-21ABCD------------------------
 INT 21 - VIRUS - "SuperVirus 2" - INSTALLATION CHECK
 	AX = ABCDh
 Return: AX = DCBAh if resident
-SeeAlso: AH=ABh"VIRUS",AX=BBBBh"VIRUS"
+SeeAlso: AX=ABCDh"VIRUS",AX=BBBBh"VIRUS"
 --------I-21AF-------------------------------
 INT 21 - Attachmate Extra! - GET TRANSLATE TABLE ADDRESS
 	AH = AFh
