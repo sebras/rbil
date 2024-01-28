@@ -1,5 +1,5 @@
 [This file was provided by Robin Walker.  --Ralf]
-Last Update: 1/29/92
+Last Update: 4/25/92
 
 Format of BIOS Data Segment at segment 40h:
 		{items in curly braces not documented by IBM}
@@ -188,6 +188,7 @@ Offset	Size	Description
 		    this byte is x3h or x9h, otherwise emulates 200-line CGA in
 		    400-line double scan. VGA resets this byte to x9h after the
 		    mode set.
+		    See also note for next byte.
  89h	BYTE	Video MCGA/VGA mode-set option control:
 		    bits 7 and 4:
 			0 0  350-line mode requested
@@ -212,6 +213,17 @@ Offset	Size	Description
 		    bit 1:  =1 if gray scale summing enabled, =0 if disabled
 		    bit 0:  [VGA] =1 if VGA active, =0 if not
 			    [MCGA] reserved, zero
+		Note: the Tseng ET4000 BIOS v3.00 uses bits 6-4 of 88h and
+			bits 6-5 of 89h to specify graphics-mode refresh
+			rates as follows
+				88h/6		640x480:  1 for 72Hz, 0 for 60Hz
+				88h/5+89h/6	800x600:  00  60Hz
+							  01  56Hz
+							  11  72Hz
+				88h/4+89h/5	1024x768: 00  interlaced
+							  01  60Hz
+							  10  72Hz???
+							  11  70Hz
  8Ah	BYTE	Video [MCGA/VGA]: index into Display Combination Code table
  8Bh	BYTE	Diskette media control [not XT]:
 		    bits 7-6: Last data rate set by controller:
@@ -250,7 +262,7 @@ Offset	Size	Description
  93h	BYTE	Diskette drive 1 media state at start of operation
  94h	BYTE	Diskette drive 0 current track number
  95h	BYTE	Diskette drive 1 current track number
- 96h	BYTE	Keyboard status byte 3
+ 96h	BYTE	Keyboard status byte 1
 		    bit 7 =1 read-ID in progress
 		    bit 6 =1 last code read was first of two ID codes
 		    bit 5 =1 force Num Lock if read-ID and enhanced keyboard
@@ -289,8 +301,18 @@ Offset	Size	Description
  B6h  3 BYTEs	reserved for POST?
  B9h  7 BYTEs	???
  C0h 14 BYTEs	reserved
- CEh	WORD	count of days since last boot?
+ CEh	WORD	count of days since last boot???
  D0h-EFh	reserved
+ D0h	BYTE	[Digiboard MV/4] length of data table
+ D1h	BYTE	[Digiboard MV/4] product ID
+ D2h	WORD	[Digiboard MV/4] base address found
+ D4h	BYTE	[Digiboard MV/4] ports
+ D5h	BYTE	[Digiboard MV/4] IRQ
+ D6h	WORD	[Digiboard MV/4] keyboards found
+ D8h	WORD	[Digiboard MV/4] mice found
+ DAh	BYTE	[Digiboard MV/4] current port (used by VGA initialization only)
+ DBh	BYTE	[Digiboard MV/4] master 8259 mask (used by VGA init only)
+ DCh	BYTE	[Digiboard MV/4] slave 8259 mask (used by VGA init only)
  F0h-FFh	reserved for user
 100h	BYTE	Print Screen Status byte
 10Eh	BYTE	state of BREAK at start of BASICA.COM execution

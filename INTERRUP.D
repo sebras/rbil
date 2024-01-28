@@ -1,7 +1,7 @@
-Interrupt List, part 4 of 6
+Interrupt List, part 4 of 7
 This compilation is Copyright (c) 1989,1990,1991,1992 Ralf Brown
 ----------2180-------------------------------
-INT 21 - European MSDOS 4.0 - EXECUTE PROGRAM IN BACKGROUND
+INT 21 U - European MSDOS 4.0 - EXECUTE PROGRAM IN BACKGROUND
 	AH = 80h
 	DS:DX -> ASCIZ full program name
 	ES:BX -> parameter block (as for AX=4B00h)
@@ -10,23 +10,24 @@ Return: CF clear if successful
 	CF set on error
 	    AX = error code (see AH=59h)
 Note:	this function is called by the DETACH command
+SeeAlso: AX=8700h
 ----------218080-----------------------------
 INT 21 - PCW Weather Card interface - UNINSTALL PCW.COM AND FREE MEMORY
 	AX = 8080h
 Return: ???
 SeeAlso: AX=7070h/BX=7070h
 ----------2181-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 81h
 	???
 Return: ???
 ----------2182-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 82h
 	???
 Return: ???
 ----------2183-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 83h
 	???
 Return: ???
@@ -36,7 +37,7 @@ INT 21 - VIRUS - "SVC" - INSTALLATION CHECK
 Return: DX = 1990h if resident
 SeeAlso: AH=76h,AH=84h"VIRUS"
 ----------2184-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 84h
 	???
 Return: ???
@@ -47,17 +48,17 @@ Return: DX = 1990h if resident
 	    BH = version number (major in high nybble, minor in low)
 SeeAlso: AH=83h"VIRUS",AH=89h"VIRUS"
 ----------2185-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 85h
 	???
 Return: ???
 ----------2186-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 86h
 	???
 Return: ???
 ----------218700-----------------------------
-INT 21 - European DOS 4.0 - GET PID???
+INT 21 U - European DOS 4.0 - GET PID???
 	AX = 8700h
 Return: AX = PID if AL nonzero
 	BX = ???
@@ -65,14 +66,14 @@ Return: AX = PID if AL nonzero
 Notes:	called by MS C v5.1 getpid() function
 	this function apparently must return AX=0001h for INT 21/AH=80h to
 	  succeed
-SeeAlso: AH=62h
+SeeAlso: AH=62h,AH=80h
 ----------2188-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 88h
 	???
 Return: ???
 ----------2189-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 89h
 	???
 Return: ???
@@ -83,37 +84,37 @@ INT 21 - VIRUS - "Vriest" - INSTALLATION CHECK
 Return: AX = 0123h if resident
 SeeAlso: AH=84h"VIRUS",AH=90h"VIRUS"
 ----------218A-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 8Ah
 	???
 Return: ???
 ----------218B-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 8Bh
 	???
 Return: ???
 ----------218C-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 8Ch
 	???
 Return: ???
 ----------218D-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 8Dh
 	???
 Return: ???
 ----------218E-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 8Eh
 	???
 Return: ???
 ----------218F-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 8Fh
 	???
 Return: ???
 ----------2190-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 90h
 	???
 Return: ???
@@ -123,37 +124,37 @@ INT 21 - VIRUS - "Carioca" - INSTALLATION CHECK
 Return: AH = 01h if resident
 SeeAlso: AH=89h"VIRUS",AX=9753h"VIRUS"
 ----------2191-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 91h
 	???
 Return: ???
 ----------2192-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 92h
 	???
 Return: ???
 ----------2193-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 93h
 	???
 Return: ???
 ----------2194-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 94h
 	???
 Return: ???
 ----------2195-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 95h
 	???
 Return: ???
 ----------2196-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 96h
 	???
 Return: ???
 ----------2197-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 97h
 	???
 Return: ???
@@ -163,17 +164,17 @@ INT 21 - VIRUS - "Nina" - INSTALLATION CHECK
 Return: never (executes original program) if virus resident
 SeeAlso: AH=90h"VIRUS",AX=A1D5h"VIRUS"
 ----------2198-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 98h
 	???
 Return: ???
 ----------2199-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 99h
 	???
 Return: ???
 ----------219A-------------------------------
-INT 21 - European MSDOS 4.0 - ???
+INT 21 U - European MSDOS 4.0 - ???
 	AH = 9Ah
 	???
 Return: ???
@@ -878,10 +879,13 @@ INT 21 - Novell NetWare 4.0, Alloy NTNX - SET ERROR MODE
 	    02h return error code in AL, mapped to standard DOS error codes
 Return: AL = previous error mode
 ----------21DD-------------------------------
-INT 21 - VIRUS - "Jerusalem"-family - ???
+INT 21 - VIRUS - "Jerusalem"-family - RELOCATE VIRUS???
 	AH = DDh
-	???
-Return: ???
+	CX = number of bytes to copy
+	DS:SI -> source of copy
+	ES:DI -> destination of copy
+Return: does not return normally; return address is caller's CS:0100h with
+	  AX = ???
 SeeAlso: AH=E0h"VIRUS",AH=EEh"VIRUS"
 ----------21DE-------------------------------
 INT 21 - Novell NetWare 4.0 - SET BROADCAST MODE
@@ -1259,11 +1263,10 @@ INT 21 - Novell NetWare 4.0 - COPY FILE TO FILE (FCB)
 	ES:DI -> destination FCB
 Return: AL = error code
 ----------21E6-------------------------------
-INT 21 - OS/286, OS/386 - ISSUE REAL PROCEDURE SIGNAL FROM PROTECTED MODE
+INT 21 P - OS/286, OS/386 - ISSUE REAL PROCEDURE SIGNAL FROM PROTECTED MODE
 	AH = E6h
 	???
 Return: ???
-Note:	protected mode only???
 SeeAlso: AX=E2h"OS/286"
 ----------21E7-------------------------------
 INT 21 - Novell NetWare 4.0, Banyan VINES - GET FILE SERVER DATE AND TIME
@@ -1339,7 +1342,7 @@ Notes:	disabling Ctrl-PrtSc will allow the program to intercept the keystroke;
 SeeAlso: AH=E1h"DoubleDOS",AH=E2h"DoubleDOS",AH=E3h"DoubleDOS"
 SeeAlso: AH=F8h"DoubleDOS"
 ----------21E9-------------------------------
-INT 21 - OS/286, OS/386 - CHANGE SEGMENTS
+INT 21 P - OS/286, OS/386 - CHANGE SEGMENTS
 	AH = E9h
 	AL = function
 	    01h change code segment parameters
@@ -1348,7 +1351,6 @@ INT 21 - OS/286, OS/386 - CHANGE SEGMENTS
 	    06h change segment base address
 	???
 Return: ???
-Note:	protected mode only???
 SeeAlso: AH=E7h"OS/286",AH=E8h"OS/286",AH=EAh"OS/286",AH=EDh"OS/286"
 SeeAlso: INT 31/AX=0007h,INT 31/AX=0008h
 ----------21E9-------------------------------
@@ -1813,7 +1815,7 @@ SeeAlso: AH=F7h"VIRUS",AX=FB0Ah
 INT 21 - VIRUS - "dBASE" - INSTALLATION CHECK
 	AX = FB0Ah
 Return: AX = 0AFBh if resident
-SeeAlso: AH=FBh"VIRUS",AH=FDh"VIRUS"
+SeeAlso: AH=FBh"VIRUS",AH=FCh"VIRUS"
 ----------21FC-------------------------------
 INT 21 - DOS v??? - OEM FUNCTION
 	AH = FCh
@@ -1825,6 +1827,11 @@ Return: ES = segment of virtual screen
 Notes:	screen address can change if task-switching is on!!
 	identical to AH=ECh
 SeeAlso: AH=ECh"DoubleDOS",INT FC"DoubleDOS"
+----------21FC-------------------------------
+INT 21 - VIRUS - "Troi" - INSTALLATION CHECK
+	AH = FCh
+Return: AL = A5h if resident
+SeeAlso: AH=FB0Ah"VIRUS",AH=FDh"VIRUS"
 ----------21FD-------------------------------
 INT 21 - DOS v??? - OEM FUNCTION
 	AH = FDh
@@ -1833,7 +1840,7 @@ SeeAlso: AH=FCh"OEM",AH=FEh"DOS"
 INT 21 - VIRUS - "Border" - INSTALLATION CHECK
 	AH = FDh
 Return: AH = 13h if resident
-SeeAlso: AH=FB0Ah,AH=FEh"VIRUS"
+SeeAlso: AH=FCh"VIRUS",AH=FEh"VIRUS"
 ----------21FE-------------------------------
 INT 21 - DOS v??? - OEM FUNCTION
 	AH = FEh
@@ -1925,23 +1932,28 @@ INT 21 - VIRUS - "Sunday", "Tumen 0.5", "Hero" - INSTALLATION CHECK
 	AH = FFh
 Return: AH = 00h if "Tumen 0.5" or "Hero" resident
 	AX = 0400h if "Sunday" resident
-SeeAlso: AX=FEDCh"VIRUS",AX=FF0Fh"VIRUS"
+SeeAlso: AX=FEDCh"VIRUS",AX=FF0Fh
+----------21FF00DX0078-----------------------
+INT 21 - Rational Systems DOS/4G - INSTALLATION CHECK
+	AX = FF00h
+	DX = 0078h
+Return: AL <> 00h if installed
+	    GS = segment of kernel if nonzero
+SeeAlso: INT 15/AX=BF02h
 ----------21FF0F-----------------------------
 INT 21 - FLU_SHOT+ v1.83 - INSTALLATION CHECK
 	AX = FF0Fh
 Return: AX = 0101h if resident
-Note:	FLU_SHOT+ is an antivirus/antitrojan program by Ross M. Greenberg and
+Notes:	FLU_SHOT+ is an antivirus/antitrojan program by Ross M. Greenberg and
 	  Software Concepts Design
-----------21FF0F-----------------------------
-INT 21 - VIRUS - "PSQR/1720" - INSTALLATION CHECK
-	AX = FF0Fh
-Return: AX = 0101h if resident
+	the "PSQR/1720" virus calls this function to determine whether
+	  FLU_SHOT+ is present
 SeeAlso: AH=FFh"VIRUS",AX=FF10h
 ----------21FF10-----------------------------
 INT 21 - VIRUS - "Twins" - INSTALLATION CHECK
 	AX = FF10h
 Return: AL = 07h if resident
-SeeAlso: AX=FF0Fh"VIRUS",AX=FFFEh
+SeeAlso: AX=FF0Fh,AX=FFFEh
 ----------21FFFE-----------------------------
 INT 21 - VIRUS - "08/15"/"Many Fingers" - INSTALLATION CHECK
 	AX = FFFEh
@@ -2410,7 +2422,7 @@ Note:	STARLITE is an architecture by General Software for a series of MS-DOS
 INT 2D - DOS 2+ - RESERVED
 Note:	this vector is not used in DOS versions <= 5.00, and points at an IRET
 ----------2D---------------------------------
-INT 2D - [proposed (v3.2.1)] - ALTERNATE MULTIPLEX INTERRUPT
+INT 2D - ALTERNATE MULTIPLEX INTERRUPT SPECIFICATION (AMIS) [proposal v3.4]
 	AH = multiplex number
 	AL = function
 	    00h installation check
@@ -2424,11 +2436,22 @@ INT 2D - [proposed (v3.2.1)] - ALTERNATE MULTIPLEX INTERRUPT
 			    DX:BX -> entry point for bypassing interrupt chain
 			AL = 00h if all API calls via INT 2D
 	    02h uninstall
+	    	DX:BX = return address for successful uninstall (may be
+			ignored by TSR)
 		Return: AL = status
 			    00h not implemented
 			    01h unsuccessful
 			    02h can not uninstall yet, will do so when able
-			    FFh successful (if handler ever returns from call)
+			    03h safe to remove, but no resident uninstaller
+			    	(TSR still enabled)
+			    	BX = segment of memory block with resident code
+			    04h safe to remove, but no resident uninstaller
+			    	(TSR now disabled)
+			    	BX = segment of memory block with resident code
+			    05h not safe to remove now, try again later
+			    FFh successful
+			return at DX:BX with AX destroyed if successful and
+			  TSR honors specific return address
 	    03h request pop-up
 		Return: AL = status
 			    00h not implemented or TSR is not a pop-up
@@ -2448,7 +2471,30 @@ INT 2D - [proposed (v3.2.1)] - ALTERNATE MULTIPLEX INTERRUPT
 				    0001h TSR unloaded
 				    0002h-00FFh reserved
 				    0100h-FFFFh application-dependent
-	    04h-0Fh reserved for future enhancements
+	    04h determine chained interrupts
+	    	BL = interrupt number (except 2Dh)
+		Return: AL = status
+			    00h not implemented
+			    01h unable to determine
+			    02h interrupt hooked
+			    03h interrupt hooked, address returned
+			    	DX:BX -> TSR's interrupt BL handler
+			    04h list of hooked interrupts returned
+			    	DX:BX -> interrupt hook list (see below)
+			    FFh interrupt not hooked
+		Notes:	since INT 2D is known to be hooked, the resident code
+			  need not test for BL=2Dh (to minimize its size), and
+			  the return value is therefore undefined in that case.
+			BL is ignored if the TSR returns AL=04h; in that case,
+			  the caller needs to scan the return list rather than
+			  making additional calls to this function.  If the
+			  return is not 00h or 04h, then the caller must cycle
+			  through the remaining interrupt numbers it wishes to
+			  check.
+			return values 01h thru 03h are disparaged and may be
+			  removed from future versions of the specification;
+			  they are included for compatibility with version 3.3
+	    05h-0Fh reserved for future enhancements
 		Return: AL = 00h (not implemented)
 	    other  application-dependent
 Notes:	programs should not use fixed multiplex numbers; rather, a program
@@ -2460,6 +2506,12 @@ Notes:	programs should not use fixed multiplex numbers; rather, a program
 	  installed, it should use the first free multiplex number.
 	functions other than 00h are not valid unless a program is installed
 	  on the selected multiplex number
+	to be considered fully compliant with version 3.4 of the specification,
+	  programs must implement at least functions 00h, 02h (no resident
+	  uninstall code required), and 04h (return value 04h).  The absolute
+	  minimum implementation has an overhead of 64 bytes plus 22 bytes per
+	  hooked interrupt (for the interrupt sharing protocol header and hook
+	  list entry).
 	the signature string and description may be used by memory mappers
 	  to display the installed programs
 	users of this proposal should adhere to the IBM interrupt sharing
@@ -2468,8 +2520,9 @@ Notes:	programs should not use fixed multiplex numbers; rather, a program
 	  following this proposal should be removable, though they need not
 	  keep the code for removing themselves resident; it is acceptable
 	  for a separate program to perform the removal.
-	the interrupt number is tentative and may need to be changed before
-	  this proposal is finalized
+	A sample implementation including example TSRs and utility programs
+	  may be found in a separate package distributed as AMISLnnn.ZIP
+	  (AMISL081.ZIP as of this writing).
 	Please let me know if you choose to follow this proposal.  A list of
 	  the private API calls you use would be appreciated, as well.
 SeeAlso: INT 2F
@@ -2482,10 +2535,17 @@ Offset	Size	Description
 Note:	it is not necessary to reserve a full 64 bytes for the description,
 	  just enough to store the actual ASCIZ string
 
+Format of interrupt hook list [array]:
+Offset	Size	Description
+ 00h	BYTE	interrupt number (last entry in array is 2Dh)
+ 01h	WORD	offset within hook list's segment of the interrupt handler
+ 		this will point at the initial short jump of the interrupt
+		sharing protocol header (see below)
+
 Format of interrupt sharing protocol interrupt handler entry point:
 Offset	Size	Description
  00h  2 BYTEs	short jump to actual start of interrupt handler, immediately
-		following this data block
+		following this data block (EBh 10h)
  02h	DWORD	address of next handler in chain
  06h	WORD	signature 424Bh
  08h	BYTE	EOI flag
@@ -2496,9 +2556,15 @@ Offset	Size	Description
  0Bh  7 BYTEs	reserved (0)
 
 Signatures known to be in use:
- 'TifaWARE' 'RECALL  '	George A. Theall's public domain commandline editor
-			and history TSR (v1.2+)
-	    'EATMEM  '	restrict available memory for testing programs (v1.1+)
+ 'heathh  ' 'Monitor '
+ 'Ralf B  ' 'FASTMOUS'  example TSR included with sample AMIS library code
+ 'Ralf B  ' 'NOLPT n '  example TSR -- turn LPTn into bit-bucket
+ 'Ralf B  ' 'NOTE    '  example TSR -- popup note-taker
+ 'Ralf B  ' 'SWITCHAR'  example TSR -- add switchar() support removed from DOS5
+ 'Ralf B  ' 'VGABLANK'  example TSR -- VGA-only screen blanker
+ 'TifaWARE' 'EATMEM  '	George A. Theall's public domain memory restrictor for
+ 			testing programs (v1.1+)
+	    'RECALL  '	public domain commandline editor and history (v1.2+)
 ----------2E---------------------------------
 INT 2E - DOS 2+ - PASS COMMAND TO COMMAND INTERPRETER FOR EXECUTION
 	DS:SI -> commandline to execute (see below)
@@ -2595,7 +2661,7 @@ Offset	Size	Description
  01h	DWORD	original vector
  05h	WORD	offset of interrupt handler in TSR's code segment
 ----------2F00-------------------------------
-INT 2F - Multiplex - DOS 2.x PRINT.COM - ???
+INT 2F U - DOS 2.x PRINT.COM - ???
 	AH = 00h
 	???
 Return: ???
@@ -2604,11 +2670,11 @@ Notes:	DOS 2.x PRINT.COM does not chain to previous INT 2F handler
 	  files in the queue in AH
 SeeAlso: AH=01h
 ----------2F0080-----------------------------
-INT 2F - Multiplex - DOS 3.1+ PRINT.COM - GIVE PRINT A TIME SLICE
+INT 2F - DOS 3.1+ PRINT.COM - GIVE PRINT A TIME SLICE
 	AX = 0080h
 Return: after PRINT executes
 ----------2F01-------------------------------
-INT 2F - Multiplex - DOS 2.x PRINT.COM - ???
+INT 2F U - DOS 2.x PRINT.COM - ???
 	AH = 01h
 	???
 Return: ???
@@ -2617,7 +2683,7 @@ Notes:	DOS 2.x PRINT.COM does not chain to previous INT 2F handler
 	  files in the queue in AH
 SeeAlso: AH=00h
 ----------2F0100-----------------------------
-INT 2F - Multiplex - DOS 3+ PRINT.COM - INSTALLATION CHECK
+INT 2F - DOS 3+ PRINT.COM - INSTALLATION CHECK
 	AX = 0100h
 Return: AL = status
 	    00h not installed
@@ -2625,7 +2691,7 @@ Return: AL = status
 	    FFh installed
 SeeAlso: AX=0101h
 ----------2F0101-----------------------------
-INT 2F - Multiplex - DOS 3+ PRINT.COM - SUBMIT FILE FOR PRINTING
+INT 2F - DOS 3+ PRINT.COM - SUBMIT FILE FOR PRINTING
 	AX = 0101h
 	DS:DX -> submit packet (see below)
 Return: CF clear if successful
@@ -2649,7 +2715,7 @@ Offset	Size	Description
  00h	BYTE	level (must be 00h)
  01h	DWORD	pointer to ASCIZ filename (no wildcards)
 ----------2F0102-----------------------------
-INT 2F - Multiplex - DOS 3+ PRINT.COM - REMOVE FILE FROM PRINT QUEUE
+INT 2F - DOS 3+ PRINT.COM - REMOVE FILE FROM PRINT QUEUE
 	AX = 0102h
 	DS:DX -> ASCIZ filename (wildcards allowed)
 Return: CF clear if successful
@@ -2657,14 +2723,14 @@ Return: CF clear if successful
 	    AX = error code (see AX=0101h)
 SeeAlso: AX=0101h,AX=0103h
 ----------2F0103-----------------------------
-INT 2F - Multiplex - DOS 3+ PRINT.COM - CANCEL ALL FILES IN PRINT QUEUE
+INT 2F - DOS 3+ PRINT.COM - CANCEL ALL FILES IN PRINT QUEUE
 	AX = 0103h
 Return: CF clear if successful
 	CF set on error
 	    AX = error code (see AX=0101h)
 SeeAlso: AX=0102h
 ----------2F0104-----------------------------
-INT 2F - Multiplex - DOS 3+ PRINT.COM - FREEZE PRINT QUEUE TO READ JOB STATUS
+INT 2F - DOS 3+ PRINT.COM - FREEZE PRINT QUEUE TO READ JOB STATUS
 	AX = 0104h
 Return: CF clear if successful
 	    DX = error count
@@ -2677,14 +2743,14 @@ Notes:	the print queue is an array of 64-byte ASCIZ filenames terminated by
 	  from changing while the filenames are being read
 SeeAlso: AX=0101h,AX=0105h
 ----------2F0105-----------------------------
-INT 2F - Multiplex - DOS 3+ PRINT.COM - RESTART PRINT QUEUE AFTER STATUS READ
+INT 2F - DOS 3+ PRINT.COM - RESTART PRINT QUEUE AFTER STATUS READ
 	AX = 0105h
 Return: CF clear if successful
 	CF set on error
 	    AX = error code (see AX=0101h)
 SeeAlso: AX=0104h
 ----------2F0106-----------------------------
-INT 2F - Multiplex - DOS 3.3+ PRINT.COM - GET PRINTER DEVICE
+INT 2F - DOS 3.3+ PRINT.COM - GET PRINTER DEVICE
 	AX = 0106h
 Return: CF set if files in print queue
 	    AX = error code 0008h (queue full)
@@ -2694,43 +2760,43 @@ Return: CF set if files in print queue
 Note:	documented for DOS 5+, but not documented for prior versions
 SeeAlso: AX=0104h
 ----------2F0200-----------------------------
-INT 2F - PC LAN PROGRAM REDIR/REDIRIFS internal - INSTALLATION CHECK
+INT 2F U - PC LAN PROGRAM REDIR/REDIRIFS internal - INSTALLATION CHECK
 	AX = 0200h
 Return: AL = FFh if installed
 ----------2F0201-----------------------------
-INT 2F - PC LAN PROGRAM REDIR/REDIRIFS internal - ???
+INT 2F U - PC LAN PROGRAM REDIR/REDIRIFS internal - ???
 	AX = 0201h
 Return: nothing???
 Notes:	called by DOS 3.3+ PRINT.COM
 	AX=0202h appears to be the opposite function
 SeeAlso: AX=0202h
 ----------2F0202-----------------------------
-INT 2F - PC LAN PROGRAM REDIR/REDIRIFS internal - ???
+INT 2F U - PC LAN PROGRAM REDIR/REDIRIFS internal - ???
 	AX = 0202h
 	???
 Return: nothing???
 Note:	called by DOS 3.3+ PRINT.COM
 SeeAlso: AX=0201h
 ----------2F0203-----------------------------
-INT 2F - PC LAN PROGRAM REDIR/REDIRIFS internal - ???
+INT 2F U - PC LAN PROGRAM REDIR/REDIRIFS internal - ???
 	AX = 0203h
 Return: nothing???
 Notes:	called by DOS 3.3+ PRINT.COM
 	AX=0204h appears to be the opposite function
 SeeAlso: AX=0204h
 ----------2F0204-----------------------------
-INT 2F - PC LAN PROGRAM REDIR/REDIRIFS internal - ???
+INT 2F U - PC LAN PROGRAM REDIR/REDIRIFS internal - ???
 	AX = 0204h
 	???
 Return: nothing???
 Note:	called by DOS 3.3 PRINT.COM
 ----------2F---------------------------------
-INT 2F - PC LAN PROGRAM REDIR/REDIRIFS internal - ???
+INT 2F U - PC LAN PROGRAM REDIR/REDIRIFS internal - ???
 	AX = 02xxh
 	???
 Return: ???
 ----------2F0500-----------------------------
-INT 2F - DOS 3+ CRITICAL ERROR HANDLER - INSTALLATION CHECK
+INT 2F U - DOS 3+ CRITICAL ERROR HANDLER - INSTALLATION CHECK
 	AX = 0500h
 Return: AL = 00h not installed, OK to install
 	     01h not installed, can't install
@@ -2739,7 +2805,7 @@ Note:	this set of functions allows a user program to partially or completely
 	  override the default critical error handler's message in COMMAND.COM
 SeeAlso: AH=05h,INT 24
 ----------2F05-------------------------------
-INT 2F - DOS 3+ CRITICAL ERROR HANDLER - EXPAND ERROR INTO STRING
+INT 2F U - DOS 3+ CRITICAL ERROR HANDLER - EXPAND ERROR INTO STRING
 	AH = 05h
 ---DOS 3.x---
 	AL = extended error code (not zero)
@@ -2768,21 +2834,21 @@ Note:	ASSIGN is not a TSR in DR-DOS 5.0; it is internally replaced by SUBST
 	  (see INT 21/AX=2152h)
 SeeAlso: AX=0601h,INT 21/AX=2152h
 ----------2F0601-----------------------------
-INT 2F - DOS v3.0+ ASSIGN - GET DRIVE ASSIGNMENT TABLE
+INT 2F U - DOS v3.0+ ASSIGN - GET DRIVE ASSIGNMENT TABLE
 	AX = 0601h
 Return: ES = segment of ASSIGN work area and assignment table
 Note:	under DOS 3+, the 26 bytes starting at ES:0103h specify which drive
 	  each of A: to Z: is mapped to.  Initially set to 01h 02h 03h....
 SeeAlso: AX=0600h
 ----------2F0800-----------------------------
-INT 2F - Multiplex - DRIVER.SYS support - INSTALLATION CHECK
+INT 2F U - DRIVER.SYS support - INSTALLATION CHECK
 	AX = 0800h
 Return:	AL = 00h not installed, OK to install
 	     01h not installed, not OK to install
 	     FFh installed
 Note:	supported by DR-DOS 5.0
 ----------2F0801-----------------------------
-INT 2F - Multiplex - DRIVER.SYS support - ADD NEW BLOCK DEVICE
+INT 2F U - DRIVER.SYS support - ADD NEW BLOCK DEVICE
 	AX = 0801h
 	DS:DI -> drive data table (see AX=0803h)
 Notes:	moves down internal list of drive data tables, copying and modifying
@@ -2792,7 +2858,7 @@ Notes:	moves down internal list of drive data tables, copying and modifying
 	supported by DR-DOS 5.0
 SeeAlso: AX=0803h
 ----------2F0802-----------------------------
-INT 2F - Multiplex - DRIVER.SYS support - EXECUTE DEVICE DRIVER REQUEST
+INT 2F U - DRIVER.SYS support - EXECUTE DEVICE DRIVER REQUEST
 	AX = 0802h
 	ES:BX -> device driver request header (see below)
 Return: request header updated as per requested operation
@@ -2962,7 +3028,7 @@ Values for error code:
 	0Eh (CD-ROM) media unavailable
 	0Fh invalid disk change
 ----------2F0803-----------------------------
-INT 2F - Multiplex - DOS 4+ DRIVER.SYS support - GET DRIVE DATA TABLE LIST
+INT 2F U - DOS 4+ DRIVER.SYS support - GET DRIVE DATA TABLE LIST
 	AX = 0803h
 Return: DS:DI -> first drive data table in list
 Note:	not available under DR-DOS 5.0
@@ -3097,7 +3163,7 @@ Offset	Size	Description
  5Bh  8 BYTEs	filesystem type ("FAT12	  " or "FAT16	")
  63h	BYTE	terminating null for filesystem type???
 ----------2F1000-----------------------------
-INT 2F - Multiplex - SHARE - INSTALLATION CHECK
+INT 2F - SHARE - INSTALLATION CHECK
 	AX = 1000h
 Return: AL = 00h  not installed, OK to install
 	     01h  not installed, not OK to install
@@ -3114,13 +3180,13 @@ Notes:	supported by OS/2 v1.3+ compatibility box, which always returns AL=FFh
 	DOS 5.0 chains to the previous handler if AL <> 00h on entry
 SeeAlso: AX=1080h,INT 21/AH=52h
 ----------2F1040-----------------------------
-INT 2F - Multiplex - DOS 4 only SHARE internal - ???
+INT 2F U - DOS 4 only SHARE internal - ???
 	AX = 1040h
 	???
 Return: AL = FFh???
 SeeAlso: AX=1000h
 ----------2F1080-----------------------------
-INT 2F - Multiplex - DOS 4 only SHARE internal - TURN ON FILE SHARING CHECKS
+INT 2F U - DOS 4 only SHARE internal - TURN ON FILE SHARING CHECKS
 	AX = 1080h
 Return: AL = status
 	    F0h successful
@@ -3130,7 +3196,7 @@ Note:	DOS 4.x SHARE has dual functions: FCB support for large (>32M) media
 	  be used to disable the sharing code.
 SeeAlso: AX=1000h,AX=1081h
 ----------2F1081-----------------------------
-INT 2F - Multiplex - DOS 4 only SHARE internal - TURN OFF FILE SHARING CHECKS
+INT 2F U - DOS 4 only SHARE internal - TURN OFF FILE SHARING CHECKS
 	AX = 1081h
 Return: AL = status
 	    F0h successful
@@ -3138,12 +3204,12 @@ Return: AL = status
 Note:	(see AX=1080h)
 SeeAlso: AX=1000h,AX=1080h
 ----------2F10FF-----------------------------
-INT 2F - Multiplex - DR-DOS 5.0 - ???
+INT 2F U - Multiplex - DR-DOS 5.0 - ???
 	AX = 10FFh
 	ES:BX -> ???
 Note:	sets pointer in kernel
 ----------2F1100-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - INSTALLATION CHECK
+INT 2F - NETWORK REDIRECTOR - INSTALLATION CHECK
 	AX = 1100h
 Return: AL = 00h  not installed, OK to install
 	     01h  not installed, not OK to install
@@ -3153,7 +3219,7 @@ Notes:	called by DOS 3.1+ kernel
 	  PC LAN Program redirector; DOS 5.0 moves the calls back into the
 	  redirector
 ----------2F1100-----------------------------
-INT 2F - Multiplex - MSCDEX (MS CD-ROM Extensions) - INSTALLATION CHECK
+INT 2F - MSCDEX (MS CD-ROM Extensions) - INSTALLATION CHECK
 	AX = 1100h
 	STACK: WORD DADAh
 Return: AL = 00h not installed, OK to install
@@ -3163,7 +3229,7 @@ Return: AL = 00h not installed, OK to install
 	   = FFh installed
 		STACK: WORD ADADh
 ----------2F1101-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - REMOVE REMOTE DIRECTORY
+INT 2F U - NETWORK REDIRECTOR - REMOVE REMOTE DIRECTORY
 	AX = 1101h
 	SS = DOS DS
 	SDA first filename pointer -> fully-qualified directory name
@@ -3174,7 +3240,7 @@ Return: CF set on error
 Note:	called by DOS 3.1+ kernel
 SeeAlso: AX=1103h,AX=1105h,INT 21/AH=3Ah,INT 21/AH=60h
 ----------2F1102-----------------------------
-INT 2F - Multiplex - DOS 4.x only IFSFUNC.EXE - REMOVE REMOTE DIRECTORY
+INT 2F U - IFSFUNC.EXE (DOS 4.x only) - REMOVE REMOTE DIRECTORY
 	AX = 1102h
 	SS = DOS DS
 	SDA first filename pointer -> fully-qualified directory name
@@ -3185,7 +3251,7 @@ Return: CF set on error
 Note:	appears to be identical to AX=1101h
 SeeAlso: AX=1101h
 ----------2F1103-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - MAKE REMOTE DIRECTORY
+INT 2F U - NETWORK REDIRECTOR - MAKE REMOTE DIRECTORY
 	AX = 1103h
 	SS = DOS DS
 	SDA first filename pointer -> fully-qualified directory name
@@ -3196,7 +3262,7 @@ Return: CF set on error
 Note:	called by DOS 3.1+ kernel
 SeeAlso: AX=1101h,AX=1105h,INT 21/AH=39h,INT 21/AH=60h
 ----------2F1104-----------------------------
-INT 2F - Multiplex - DOS 4.x only IFSFUNC.EXE - MAKE REMOTE DIRECTORY
+INT 2F U - IFSFUNC.EXE (DOS 4.x only) - MAKE REMOTE DIRECTORY
 	AX = 1104h
 	SS = DOS DS
 	SDA first filename pointer -> fully-qualified directory name
@@ -3207,7 +3273,7 @@ Return: CF set on error
 Note:	appears to be identical to AX=1103h
 SeeAlso: AX=1103h
 ----------2F1105-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - CHDIR
+INT 2F U - NETWORK REDIRECTOR - CHDIR
 	AX = 1105h
 	SS = DOS DS
 	SDA first filename pointer -> fully-qualified directory name
@@ -3221,7 +3287,7 @@ Notes:	called by DOS 3.1+ kernel
 	  the current directory is the root
 SeeAlso: AX=1101h,AX=1103h,INT 21/AH=3Bh,INT 21/AH=60h
 ----------2F1106-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - CLOSE REMOTE FILE
+INT 2F U - NETWORK REDIRECTOR - CLOSE REMOTE FILE
 	AX = 1106h
 	ES:DI -> SFT
 	    SFT DPB field -> DPB of drive containing file
@@ -3232,7 +3298,7 @@ Return: CF set on error
 Note:	called by DOS 3.1+ kernel
 SeeAlso: AX=1201h,AX=1227h,INT 21/AH=3Eh
 ----------2F1107-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - COMMIT REMOTE FILE
+INT 2F U - NETWORK REDIRECTOR - COMMIT REMOTE FILE
 	AX = 1107h
 	ES:DI -> SFT
 	    SFT DPB field -> DPB of drive containing file
@@ -3244,7 +3310,7 @@ Return: CF set on error
 Note:	called by DOS 3.1+ kernel
 SeeAlso: INT 21/AH=68h,INT 21/AX=5D01h
 ----------2F1108-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - READ FROM REMOTE FILE
+INT 2F U - NETWORK REDIRECTOR - READ FROM REMOTE FILE
 	AX = 1108h
 	ES:DI -> SFT
 	    SFT DPB field -> DPB of drive containing file
@@ -3259,7 +3325,7 @@ Return: CF set on error
 Note:	called by DOS 3.1+ kernel
 SeeAlso: AX=1109h,AX=1229h,INT 21/AH=3Fh,INT 21/AX=5D06h
 ----------2F1109-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - WRITE TO REMOTE FILE
+INT 2F U - NETWORK REDIRECTOR - WRITE TO REMOTE FILE
 	AX = 1109h
 	ES:DI -> SFT
 	    SFT DPB field -> DPB of drive containing file
@@ -3274,7 +3340,7 @@ Return: CF set on error
 Note:	called by DOS 3.1+ kernel
 SeeAlso: AX=1107h,AX=1108h,INT 21/AH=40h,INT 21/AX=5D06h
 ----------2F110A-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - LOCK REGION OF FILE
+INT 2F U - NETWORK REDIRECTOR (DOS 3.x only) - LOCK REGION OF FILE
 	AX = 110Ah
 	BX = file handle
 	CX:DX = starting offset
@@ -3286,11 +3352,31 @@ INT 2F - Multiplex - NETWORK REDIRECTOR - LOCK REGION OF FILE
 Return: CF set on error
 	   AL = DOS error code (see INT 21/AH=59h)
 	STACK unchanged
-Notes:	called by DOS 3.1+ kernel
+Notes:	called by DOS 3.10-3.31 kernel
 	the redirector is expected to resolve lock conflicts
 SeeAlso: AX=110Bh,INT 21/AH=5Ch
+----------2F110A-----------------------------
+INT 2F U - NETWORK REDIRECTOR (DOS 4+) - LOCK/UNLOCK REGION OF FILE
+	AX = 110Ah
+	BL = function
+	    00h lock
+	    01h unlock
+	DS:DX -> parameter block (see below)
+	ES:DI -> SFT
+	    SFT DPB field -> DPB of drive containing file
+	SS = DOS DS
+Return: CF set on error
+	   AL = DOS error code (see INT 21/AH=59h)
+Notes:	called by DOS 4.0+ kernel
+	the redirector is expected to resolve lock conflicts
+SeeAlso: AX=110Bh,INT 21/AH=5Ch
+
+Format of parameter block:
+Offset	Size	Description
+ 00h	DWORD	start offset
+ 04h	DWORD	size of region
 ----------2F110B-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR (DOS 3.x only) - UNLOCK REGION OF FILE
+INT 2F U - NETWORK REDIRECTOR (DOS 3.x only) - UNLOCK REGION OF FILE
 	AX = 110Bh
 	BX = file handle
 	CX:DX = starting offset
@@ -3301,10 +3387,10 @@ INT 2F - Multiplex - NETWORK REDIRECTOR (DOS 3.x only) - UNLOCK REGION OF FILE
 Return: CF set on error
 	   AL = DOS error code (see INT 21/AH=59h)
 	STACK unchanged
-Note:	called by DOS 3.x kernel; DOS 4.0+ calls AX=110Ah instead
+Note:	called by DOS 3.1-3.31 kernel; DOS 4.0+ calls AX=110Ah instead
 SeeAlso: AX=110Ah,INT 21/AH=5Ch
 ----------2F110C-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - GET DISK SPACE
+INT 2F U - NETWORK REDIRECTOR - GET DISK SPACE
 	AX = 110Ch
 	ES:DI -> current directory structure for desired drive
 Return: AL = sectors per cluster
@@ -3315,7 +3401,7 @@ Return: AL = sectors per cluster
 Note:	called by DOS 3.1+ kernel
 SeeAlso: INT 21/AH=36h
 ----------2F110D-----------------------------
-INT 2F - Multiplex - DOS 4.x only IFSFUNC.EXE - ???
+INT 2F U - IFSFUNC.EXE (DOS 4.x only) - ???
 	AX = 110Dh
 	SDA first filename pointer -> name of file
 	???
@@ -3323,7 +3409,7 @@ Return: ???
 Note:	appears to be similar to AX=110Fh
 SeeAlso: AX=110Fh
 ----------2F110E-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - SET REMOTE FILE'S ATTRIBUTES
+INT 2F U - NETWORK REDIRECTOR - SET REMOTE FILE'S ATTRIBUTES
 	AX = 110Eh
 	SS = DOS DS
 	SDA first filename pointer -> fully-qualified name of file
@@ -3336,7 +3422,7 @@ Return: CF set on error
 Note:	called by DOS 3.1+ kernel
 SeeAlso: AX=110Fh,INT 21/AX=4301h,INT 21/AH=60h
 ----------2F110F-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - GET REMOTE FILE'S ATTRIBUTES AND SIZE
+INT 2F U - NETWORK REDIRECTOR - GET REMOTE FILE'S ATTRIBUTES AND SIZE
 	AX = 110Fh
 	SS = DOS DS
 	SDA first filename pointer -> fully-qualified name of file
@@ -3349,7 +3435,7 @@ Return: CF set on error
 Note:	called by DOS 3.1+ kernel
 SeeAlso: AX=110Eh,INT 21/AX=4300h,INT 21/AH=60h
 ----------2F1110-----------------------------
-INT 2F - Multiplex - DOS 4.x only IFSFUNC.EXE - ???
+INT 2F U - IFSFUNC.EXE (DOS 4.x only) - ???
 	AX = 1110h
 	SDA first filename pointer -> name of file
 	???
@@ -3357,7 +3443,7 @@ Return: ???
 Note:	appears to be similar to AX=110Eh
 SeeAlso: AX=110Eh
 ----------2F1111-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - RENAME REMOTE FILE
+INT 2F U - NETWORK REDIRECTOR - RENAME REMOTE FILE
 	AX = 1111h
 	SS = DS = DOS DS
 	SDA first filename pointer = offset of fully-qualified old name
@@ -3369,7 +3455,7 @@ Return: CF set on error
 Note:	called by DOS 3.1+ kernel
 SeeAlso: INT 21/AH=56h,INT 21/AH=60h
 ----------2F1112-----------------------------
-INT 2F - Multiplex - DOS 4.x only IFSFUNC.EXE - ???
+INT 2F U - IFSFUNC.EXE (DOS 4.x only) - ???
 	AX = 1112h
 	SS = DS = DOS DS
 	SDA first filename pointer -> name of file
@@ -3377,7 +3463,7 @@ INT 2F - Multiplex - DOS 4.x only IFSFUNC.EXE - ???
 Return: ???
 SeeAlso: AX=1111h
 ----------2F1113-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - DELETE REMOTE FILE
+INT 2F U - NETWORK REDIRECTOR - DELETE REMOTE FILE
 	AX = 1113h
 	SS = DS = DOS DS
 	SDA first filename pointer -> fully-qualified filename in DOS DS
@@ -3389,14 +3475,14 @@ Notes:	called by DOS 3.1+ kernel
 	the filespec may contain wildcards
 SeeAlso: INT 21/AH=41h,INT 21/AH=60h
 ----------2F1114-----------------------------
-INT 2F - Multiplex - DOS 4.x only IFSFUNC.EXE - ???
+INT 2F U - IFSFUNC.EXE (DOS 4.x only) - ???
 	AX = 1114h
 	SDA first filename pointer -> name of file
 	???
 Return: ???
 SeeAlso: AX=1113h
 ----------2F1115-----------------------------
-INT 2F - Multiplex - DOS 4.x only IFSFUNC.EXE - ???
+INT 2F U - IFSFUNC.EXE (DOS 4.x only) - ???
 	AX = 1115h
 	SS = DOS DS
 	ES:DI -> SFT ???
@@ -3404,7 +3490,7 @@ INT 2F - Multiplex - DOS 4.x only IFSFUNC.EXE - ???
 Return: ???
 SeeAlso: AX=112Eh
 ----------2F1116-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - OPEN EXISTING REMOTE FILE
+INT 2F U - NETWORK REDIRECTOR - OPEN EXISTING REMOTE FILE
 	AX = 1116h
 	ES:DI -> uninitialized SFT
 	SS = DOS DS
@@ -3418,7 +3504,7 @@ Return: CF set on error
 Note:	called by DOS 3.1+ kernel
 SeeAlso: AX=1106h,AX=1117h,AX=1118h,AX=112Eh,INT 21/AH=3Dh,INT 21/AH=60h
 ----------2F1117-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - CREATE/TRUNCATE REMOTE FILE
+INT 2F U - NETWORK REDIRECTOR - CREATE/TRUNCATE REMOTE FILE
 	AX = 1117h
 	ES:DI -> uninitialized SFT
 	SS = DOS DS
@@ -3435,7 +3521,7 @@ Return: CF set on error
 Note:	called by DOS 3.1+ kernel
 SeeAlso: AX=1106h,AX=1116h,AX=1118h,AX=112Eh,INT 21/AH=3Ch,INT 21/AH=60h
 ----------2F1118-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - CREATE/TRUNCATE FILE WITHOUT CDS
+INT 2F U - NETWORK REDIRECTOR - CREATE/TRUNCATE FILE WITHOUT CDS
 	AX = 1118h
 	ES:DI -> uninitialized SFT
 	SS = DOS DS
@@ -3449,7 +3535,7 @@ Note:	called by DOS 3.1+ kernel when creating a file on a drive for which the
 	  SDA CDS pointer has offset FFFFh
 SeeAlso: AX=1106h,AX=1116h,AX=1117h,AX=112Eh,INT 21/AH=60h
 ----------2F1119-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - FIND FIRST FILE WITHOUT CDS
+INT 2F U - NETWORK REDIRECTOR - FIND FIRST FILE WITHOUT CDS
 	AX = 1119h
 	SS = DS = DOS DS
 	[DTA] = uninitialized 21-byte findfirst search data (see INT 21/AH=4Eh)
@@ -3464,13 +3550,13 @@ Return: CF set on error
 Notes:	called by DOS 3.1+ kernel
 	DOS 4.x IFSFUNC returns CF set, AX=0003h	
 ----------2F111A-----------------------------
-INT 2F - Multiplex - DOS 4.x only IFSFUNC.EXE - ???
+INT 2F U - IFSFUNC.EXE (DOS 4.x only) - ???
 	AX = 111Ah
 	???
 Return: CF set
 	    AX = error code (03h for DOS 4.01 IFSFUNC)
 ----------2F111B-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - FINDFIRST
+INT 2F U - NETWORK REDIRECTOR - FINDFIRST
 	AX = 111Bh
 	SS = DS = DOS DS
 	[DTA] = uninitialized 21-byte findfirst search data (see INT 21/AH=4Eh)
@@ -3486,7 +3572,7 @@ Return: CF set on error
 Note:	called by DOS 3.1+ kernel
 SeeAlso: AX=111Ch,INT 21/AH=4Eh,INT 21/AH=60h
 ----------2F111C-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - FINDNEXT
+INT 2F U - NETWORK REDIRECTOR - FINDNEXT
 	AX = 111Ch
 	SS = DS = DOS DS
 	[DTA] = 21-byte findfirst search data (see INT 21/AH=4Eh)
@@ -3499,7 +3585,7 @@ Return: CF set on error
 Note:	called by DOS 3.1+ kernel
 SeeAlso: AX=111Bh,INT 21/AH=4Fh
 ----------2F111D-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - CLOSE ALL REMOTE FILES FOR PROCESS
+INT 2F U - NETWORK REDIRECTOR - CLOSE ALL REMOTE FILES FOR PROCESS
 	AX = 111Dh
 	DS???
 	SS = DOS DS
@@ -3507,7 +3593,7 @@ Return: ???
 Notes:	called by DOS 3.1+ kernel
 	closes all FCBs opened by process
 ----------2F111E-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - DO REDIRECTION
+INT 2F U - NETWORK REDIRECTOR - DO REDIRECTION
 	AX = 111Eh
 	SS = DOS DS
 	STACK: WORD function to execute
@@ -3547,7 +3633,7 @@ Note:	called by DOS 3.1+ kernel
 SeeAlso: INT 21/AX=5F00h,INT 21/AX=5F01h,INT 21/AX=5F02h,INT 21/AX=5F03h
 SeeAlso: INT 21/AX=5F04h,INT 21/AX=5F05h,INT 21/AX=5F06h
 ----------2F111F-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - PRINTER SETUP
+INT 2F U - NETWORK REDIRECTOR - PRINTER SETUP
 	AX = 111Fh
 	STACK: WORD function
 		5E02h  set printer setup
@@ -3560,7 +3646,7 @@ Return: CF set on error
 Note:	called by DOS 3.1+ kernel
 SeeAlso: INT 21/AX=5E02h,INT 21/AX=5E03h,INT 21/AX=5E04h,INT 21/AX=5E05h
 ----------2F1120-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - FLUSH ALL DISK BUFFERS
+INT 2F U - NETWORK REDIRECTOR - FLUSH ALL DISK BUFFERS
 	AX = 1120h
 	DS = DOS DS
 	???
@@ -3569,7 +3655,7 @@ Notes:	called by DOS 3.1+ kernel
 	uses CDS array pointer and LASTDRIVE= entries in DOS list of lists
 SeeAlso: INT 21/AH=0Dh,INT 21/AX=5D01h
 ----------2F1121-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - SEEK FROM END OF REMOTE FILE
+INT 2F U - NETWORK REDIRECTOR - SEEK FROM END OF REMOTE FILE
 	AX = 1121h
 	CX:DX = offset (in bytes) from end
 	ES:DI -> SFT
@@ -3582,14 +3668,14 @@ Return: CF set on error
 Note:	called by DOS 3.1+ kernel
 SeeAlso: AX=1228h,INT 21/AH=42h
 ----------2F1122-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - PROCESS TERMINATION HOOK
+INT 2F U - NETWORK REDIRECTOR - PROCESS TERMINATION HOOK
 	AX = 1122h
 	SS = DOS DS
 	???
 Return: ???
 Note:	called by DOS 3.1+ kernel
 ----------2F1123-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - QUALIFY REMOTE FILENAME
+INT 2F U - NETWORK REDIRECTOR - QUALIFY REMOTE FILENAME
 	AX = 1123h
 	DS:SI -> ASCIZ filename to canonicalize
 	ES:DI -> 128-byte buffer for qualified name
@@ -3600,7 +3686,7 @@ Notes:	called by MSDOS 3.1+ kernel, but not called by DRDOS 5.0 unless the
 	  AX=5D00h server call); if this fails, DOS resolves the name locally
 SeeAlso: AX=1221h,INT 21/AH=60h
 ----------2F1124-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - PRINTER OFF???
+INT 2F U - NETWORK REDIRECTOR - PRINTER OFF???
 	AX = 1124h
 	ES:DI -> SFT
 	SS = DOS DS
@@ -3609,7 +3695,7 @@ Return: CX = ???
 Note:	called by DOS 3.1+ kernel if AX=1126h returns CF set
 SeeAlso: AX=1126h
 ----------2F1125-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - REDIRECTED PRINTER MODE
+INT 2F U - NETWORK REDIRECTOR - REDIRECTED PRINTER MODE
 	AX = 1125h
 	STACK: WORD subfunction
 		5D07h get print stream state
@@ -3623,7 +3709,7 @@ Return: CF set on error
 Note:	called by DOS 3.1+ kernel
 SeeAlso: INT 21/AX=5D07h,INT 21/AX=5D08h,INT 21/AX=5D09h
 ----------2F1126-----------------------------
-INT 2F - Multiplex - NETWORK REDIRECTOR - PRINTER ON/OFF???
+INT 2F U - NETWORK REDIRECTOR - PRINTER ON/OFF???
 	AX = 1126h
 	ES:DI -> SFT for file handle 4???
 	SS = DOS DS???
@@ -3634,29 +3720,29 @@ Notes:	called by DOS 3.1+ kernel
 	  bit 11 of the device information word in the SFT set
 SeeAlso: AX=1124h
 ----------2F1127-----------------------------
-INT 2F - Multiplex - DOS 4.x only IFSFUNC.EXE - UNUSED
+INT 2F U - IFSFUNC.EXE (DOS 4.x only) - UNUSED
 	AX = 1127h
 Return: CF set
 	    AX = 0001h (invalid function) (see INT 21/AH=59h)
 ----------2F1128-----------------------------
-INT 2F - Multiplex - DOS 4.x only IFSFUNC.EXE - UNUSED
+INT 2F U - IFSFUNC.EXE (DOS 4.x only) - UNUSED
 	AX = 1128h
 Return: CF set
 	    AX = 0001h (invalid function) (see INT 21/AH=59h)
 ----------2F1129-----------------------------
-INT 2F - Multiplex - DOS 4.x only IFSFUNC.EXE - UNUSED
+INT 2F U - IFSFUNC.EXE (DOS 4.x only) - UNUSED
 	AX = 1129h
 Return: CF set
 	    AX = 0001h (invalid function) (see INT 21/AH=59h)
 ----------2F112A-----------------------------
-INT 2F - Multiplex - DOS 4.x only IFSFUNC.EXE - ???
+INT 2F U - IFSFUNC.EXE (DOS 4.x only) - ???
 	AX = 112Ah
 	DS = DOS DS
 	???
 Return: ???
 Note:	does something to each IFS driver
 ----------2F112B-----------------------------
-INT 2F - Multiplex - DOS 4.x only IFSFUNC.EXE - GENERIC IOCTL???
+INT 2F U - IFSFUNC.EXE (DOS 4.x only) - GENERIC IOCTL???
 	AX = 112Bh
 	SS = DOS DS
 	CX = function/category
@@ -3668,14 +3754,14 @@ Return: CF set on error
 	CF clear if successful
 Note:	called by DOS 4.0 kernel
 ----------2F112C-----------------------------
-INT 2F - Multiplex - DOS 4.x only IFSFUNC.EXE - ???
+INT 2F U - IFSFUNC.EXE (DOS 4.x only) - ???
 	AX = 112Ch
 	SS = DOS DS
 	SDA current SFT pointer -> SFT for file
 	???
 Return: CF set on error
 ----------2F112D-----------------------------
-INT 2F - Multiplex - DOS 4.x only IFSFUNC.EXE - ???
+INT 2F U - IFSFUNC.EXE (DOS 4.x only) - ???
 	AX = 112Dh
 	BL = subfunction (value of AL on INT 21)
 	    04h truncate open file to zero length
@@ -3689,7 +3775,7 @@ Return: DS = DOS DS
 Note:	called by DOS 4.0 kernel on INT 21/AX=5702h,INT 21/AX=5703h,
 	  INT 21/AX=5704h
 ----------2F112E-----------------------------
-INT 2F - Multiplex - DOS 4+ - EXTENDED OPEN/CREATE FILE
+INT 2F U - NETWORK REDIRECTOR (DOS 4+) - EXTENDED OPEN/CREATE FILE
 	AX = 112Eh
 	SS = DS = DOS DS
 	ES:DI -> uninitialized SFT for file
@@ -3710,7 +3796,7 @@ Return: CF set on error
 Note:	called by DOS 4.0 kernel
 SeeAlso: AX=1115h,AX=1116h,AX=1117h,INT 21/AX=6C00h
 ----------2F112F-----------------------------
-INT 2F - Multiplex - DOS 4.x only IFSFUNC.EXE - ???
+INT 2F U - IFSFUNC.EXE (DOS 4.x only) - ???
 	AX = 112Fh
 	SS = DOS DS
 	STACK: WORD function in low byte
@@ -3731,7 +3817,7 @@ Return: CF set on error
 Note:	called by DOS 4.0 kernel
 SeeAlso: INT 21/AH=6Bh
 ----------2F1130-----------------------------
-INT 2F - Multiplex - DOS 4.x only IFSFUNC.EXE - GET IFSFUNC SEGMENT
+INT 2F U - IFSFUNC.EXE (DOS 4.x only) - GET IFSFUNC SEGMENT
 	AX = 1130h
 Return: ES = CS of resident IFSFUNC
 ----------2F1186-----------------------------
@@ -3755,11 +3841,11 @@ INT 2F - LAN Manager Enhanced DOS API - DosWriteAsynchNmPipe
 Return: ???
 SeeAlso: AX=1186h,INT 21/AX=5F3Ah
 ----------2F1200-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - INSTALLATION CHECK
+INT 2F U - DOS 3+ internal - INSTALLATION CHECK
 	AX = 1200h
 Return: AL = FFh (for compatibility with other INT 2F functions)
 ----------2F1201-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - CLOSE CURRENT FILE
+INT 2F U - DOS 3+ internal - CLOSE CURRENT FILE
 	AX = 1201h
 	SS = DOS DS
 	SDA current SFT pointer -> SFT of file to close
@@ -3769,17 +3855,17 @@ Return: CF set on error
 	ES:DI -> SFT for file
 SeeAlso: AX=1106h,AX=1227h,INT 21/AH=3Eh
 ----------2F1202-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - GET INTERRUPT ADDRESS
+INT 2F U - DOS 3+ internal - GET INTERRUPT ADDRESS
 	AX = 1202h
 	STACK: WORD vector number
 Return: ES:BX -> interrupt vector
 	STACK unchanged
 ----------2F1203-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - GET DOS DATA SEGMENT
+INT 2F U - DOS 3+ internal - GET DOS DATA SEGMENT
 	AX = 1203h
 Return: DS = segment of IBMDOS.COM/MSDOS.SYS
 ----------2F1204-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - NORMALIZE PATH SEPARATOR
+INT 2F U - DOS 3+ internal - NORMALIZE PATH SEPARATOR
 	AX = 1204h
 	STACK: WORD character to normalize
 Return: AL = normalized character (forward slash turned to backslash, all
@@ -3787,13 +3873,13 @@ Return: AL = normalized character (forward slash turned to backslash, all
 	ZF set if path separator
 	STACK unchanged
 ----------2F1205-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - OUTPUT CHARACTER TO STANDARD OUTPUT
+INT 2F U - DOS 3+ internal - OUTPUT CHARACTER TO STANDARD OUTPUT
 	AX = 1205h
 	STACK: WORD character to output
 Return: STACK unchanged
 Note:	can be called only from within DOS
 ----------2F1206-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - INVOKE CRITICAL ERROR
+INT 2F U - DOS 3+ internal - INVOKE CRITICAL ERROR
 	AX = 1206h
 	DI = error code
 	BP:SI -> device driver header
@@ -3803,7 +3889,7 @@ Return: AL = 0-3 for Abort, Retry, Ignore, Fail
 	STACK unchanged
 SeeAlso: INT 24
 ----------2F1207-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - MAKE DISK BUFFER MOST-RECENTLY USED
+INT 2F U - DOS 3+ internal - MAKE DISK BUFFER MOST-RECENTLY USED
 	AX = 1207h
 	DS:DI -> disk buffer
 Return: nothing
@@ -3811,7 +3897,7 @@ Notes:	can be called only from within DOS
 	buffer is moved to end of buffer list (least-recently used is first)
 SeeAlso: AX=120Fh
 ----------2F1208-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - DECREMENT SFT REFERENCE COUNT
+INT 2F U - DOS 3+ internal - DECREMENT SFT REFERENCE COUNT
 	AX = 1208h
 	ES:DI -> SFT
 Return: AX = original value of reference count
@@ -3819,14 +3905,14 @@ Note:	if the reference count was 1, it is set to FFFFh (since 0 indicates
 	  that the SFT is not in use).	It is the caller's responsibility to
 	  set the reference count to zero after cleaning up.
 ----------2F1209-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - FLUSH AND FREE DISK BUFFER
+INT 2F U - DOS 3+ internal - FLUSH AND FREE DISK BUFFER
 	AX = 1209h
 	DS:DI -> disk buffer
 Return: disk buffer marked unused, contents written to disk if buffer dirty
 Note:	can be called only from within DOS
 SeeAlso: AX=120Eh,AX=1215h
 ----------2F120A-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - PERFORM CRITICAL ERROR INTERRUPT
+INT 2F U - DOS 3+ internal - PERFORM CRITICAL ERROR INTERRUPT
 	AX = 120Ah
 	DS = SS = DOS DS
 	STACK: WORD extended error code
@@ -3838,7 +3924,7 @@ Notes:	can only be called during a DOS function call, as it uses various
 	reportedly sets current DPB's first root directory sector to 1
 SeeAlso: INT 24
 ----------2F120B-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - SIGNAL SHARING VIOLATION TO USER
+INT 2F U - DOS 3+ internal - SIGNAL SHARING VIOLATION TO USER
 	AX = 120Bh
 	ES:DI -> system file table entry for previous open of file
 	STACK: WORD extended error code (should be 20h--sharing violation)
@@ -3852,7 +3938,7 @@ Notes:	can only be called during a DOS function call
 	invokes INT 24 if SFT file opened via FCB or in compatibility mode with
 	  inheritance allowed
 ----------2F120C-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - OPEN DEVICE AND SET SFT OWNER???
+INT 2F U - DOS 3+ internal - OPEN DEVICE AND SET SFT OWNER???
 	AX = 120Ch
 	SDA current SFT pointer -> SFT for file
 	DS = SS = DOS DS
@@ -3862,21 +3948,21 @@ Notes:	invoked "device open" call on device driver for SFT
 	  via FCB
 	called by network redirectors
 ----------2F120D-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - GET DATE AND TIME
+INT 2F U - DOS 3+ internal - GET DATE AND TIME
 	AX = 120Dh
 	SS = DOS DS
 Return: AX = current date in packed format (see INT 21/AX=5700h)
 	DX = current time in packed format (see INT 21/AX=5700h)
 SeeAlso: INT 21/AH=2Ah,INT 21/AH=2Ch
 ----------2F120E-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - MARK ALL DISK BUFFERS UNREFERENCED
+INT 2F U - DOS 3+ internal - MARK ALL DISK BUFFERS UNREFERENCED
 	AX = 120Eh
 	SS = DOS DS
 Return: DS:DI -> first disk buffer
 Note:	clears "referenced" flag on all disk buffers
 SeeAlso: AX=1209h,AX=1210h,INT 21/AH=0Dh
 ----------2F120F-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - MAKE BUFFER MOST RECENTLY USED
+INT 2F U - DOS 3+ internal - MAKE BUFFER MOST RECENTLY USED
 	AX = 120Fh
 	DS:DI -> disk buffer
 	SS = DOS DS
@@ -3884,7 +3970,7 @@ Return: DS:DI -> next buffer in buffer list
 Note:	indicated buffer moved to end of chain
 SeeAlso: AX=1207h
 ----------2F1210-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - FIND UNREFERENCED DISK BUFFER
+INT 2F U - DOS 3+ internal - FIND UNREFERENCED DISK BUFFER
 	AX = 1210h
 	DS:DI -> first disk buffer to check
 Return: ZF clear if found
@@ -3892,7 +3978,7 @@ Return: ZF clear if found
 	ZF set if not found
 SeeAlso: AX=120Eh
 ----------2F1211-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - NORMALIZE ASCIZ FILENAME
+INT 2F U - DOS 3+ internal - NORMALIZE ASCIZ FILENAME
 	AX = 1211h
 	DS:SI -> ASCIZ filename to normalize
 	ES:DI -> buffer for normalized filename
@@ -3900,25 +3986,25 @@ Return: destination buffer filled with uppercase filename, with slashes turned
 	to backslashes
 SeeAlso: AX=121Eh,AX=1221h
 ----------2F1212-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - GET LENGTH OF ASCIZ STRING
+INT 2F U - DOS 3+ internal - GET LENGTH OF ASCIZ STRING
 	AX = 1212h
 	ES:DI -> ASCIZ string
 Return: CX = length of string
 SeeAlso: AX=1225h
 ----------2F1213-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - UPPERCASE CHARACTER
+INT 2F U - DOS 3+ internal - UPPERCASE CHARACTER
 	AX = 1213h
 	STACK: WORD character to convert to uppercase
 Return: AL = uppercase character
 	STACK unchanged
 ----------2F1214-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - COMPARE FAR POINTERS
+INT 2F U - DOS 3+ internal - COMPARE FAR POINTERS
 	AX = 1214h
 	DS:SI = first pointer
 	ES:DI = second pointer
 Return: ZF set if pointers are equal, ZF clear if not equal
 ----------2F1215-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - FLUSH BUFFER
+INT 2F U - DOS 3+ internal - FLUSH BUFFER
 	AX = 1215h
 	DS:DI -> disk buffer
 	SS = DOS DS
@@ -3929,7 +4015,7 @@ Return: STACK unchanged
 Note:	can be called only from within DOS
 SeeAlso: AX=1209h
 ----------2F1216-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - GET ADDRESS OF SYSTEM FILE TABLE
+INT 2F U - DOS 3+ internal - GET ADDRESS OF SYSTEM FILE TABLE
 	AX = 1216h
 	BX = system file table entry number
 Return: CF clear if successful
@@ -3937,7 +4023,7 @@ Return: CF clear if successful
 	CF set if BX greater than FILES=
 SeeAlso: AX=1220h
 ----------2F1217-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - GET CURRENT DIRECTRY STRUCTURE FOR DRIVE
+INT 2F U - DOS 3+ internal - GET CURRENT DIRECTRY STRUCTURE FOR DRIVE
 	AX = 1217h
 	SS = DOS DS
 	STACK: WORD drive (0 = A:, 1 = B:, etc)
@@ -3948,12 +4034,12 @@ Return: CF set on error
 	STACK unchanged
 SeeAlso: AX=1219h
 ----------2F1218-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - GET CALLER'S REGISTERS
+INT 2F U - DOS 3+ internal - GET CALLER'S REGISTERS
 	AX = 1218h
 Return: DS:SI -> saved caller's AX,BX,CX,DX,SI,DI,BP,DS,ES (on stack)
 Note:	only valid while within DOS
 ----------2F1219-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - SET DRIVE???
+INT 2F U - DOS 3+ internal - SET DRIVE???
 	AX = 1219h
 	SS = DOS DS
 	STACK: WORD drive (0 = default, 1 = A:, etc)
@@ -3964,21 +4050,21 @@ Notes:	calls AX=1217h
 	  (INT 21/AX=5D00h)
 SeeAlso: AX=1217h,AX=121Fh
 ----------2F121A-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - GET FILE'S DRIVE
+INT 2F U - DOS 3+ internal - GET FILE'S DRIVE
 	AX = 121Ah
 	DS:SI -> filename
 Return: AL = drive (0 = default, 1 = A:, etc, FFh = invalid)
 	DS:SI -> filename without leading X: (if present)
 SeeAlso: INT 21/AH=19h,INT 21/AH=60h
 ----------2F121B-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - SET YEAR/LENGTH OF FEBRUARY
+INT 2F U - DOS 3+ internal - SET YEAR/LENGTH OF FEBRUARY
 	AX = 121Bh
 	CL = year - 1980
 Return: AL = number of days in February
 Note:	requires DS to be set to the DOS code segment
 SeeAlso: INT 21/AH=2Bh
 ----------2F121C-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - CHECKSUM MEMORY
+INT 2F U - DOS 3+ internal - CHECKSUM MEMORY
 	AX = 121Ch
 	DS:SI -> start of memory to checksum
 	CX = number of bytes
@@ -3990,7 +4076,7 @@ Return: AX, CX destroyed
 Note:	used by DOS to determine day count since 1/1/80 given a date
 SeeAlso: AX=121Dh
 ----------2F121D-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - SUM MEMORY
+INT 2F U - DOS 3+ internal - SUM MEMORY
 	AX = 121Dh
 	DS:SI -> memory to add up
 	CX = 0000h
@@ -4002,21 +4088,21 @@ Return: AL = byte which exceeded limit
 Note:	used by DOS to determine year or month given day count since 1/1/80
 SeeAlso: AX=121Ch
 ----------2F121E-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - COMPARE FILENAMES
+INT 2F U - DOS 3+ internal - COMPARE FILENAMES
 	AX = 121Eh
 	DS:SI -> first ASCIZ filename
 	ES:DI -> second ASCIZ filename
 Return: ZF set if filenames equivalent, ZF clear if not
 SeeAlso: AX=1211h,AX=1221h
 ----------2F121F-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - BUILD CURRENT DIRECTORY STRUCTURE
+INT 2F U - DOS 3+ internal - BUILD CURRENT DIRECTORY STRUCTURE
 	AX = 121Fh
 	SS = DOS DS
 	STACK: WORD drive letter
 Return: ES:DI -> current directory structure (will be overwritten by next call)
 	STACK unchanged
 ----------2F1220-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - GET JOB FILE TABLE ENTRY
+INT 2F U - DOS 3+ internal - GET JOB FILE TABLE ENTRY
 	AX = 1220h
 	BX = file handle
 Return: CF set on error
@@ -4027,7 +4113,7 @@ Note:	the byte pointed at by ES:DI contains the number of the SFT for the
 	  file handle, or FFh if the handle is not open
 SeeAlso: AX=1216h,AX=1229h
 ----------2F1221-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - CANONICALIZE FILE NAME
+INT 2F U - DOS 3+ internal - CANONICALIZE FILE NAME
 	AX = 1221h
 	DS:SI -> file name to be fully qualified
 	ES:DI -> 128-byte buffer for resulting canonical file name
@@ -4036,7 +4122,7 @@ Return: (see INT 21/AH=60h)
 Note:	identical to INT 21/AH=60h
 SeeAlso: AX=1123h,INT 21/AH=60h
 ----------2F1222-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - SET EXTENDED ERROR INFO
+INT 2F U - DOS 3+ internal - SET EXTENDED ERROR INFO
 	AX = 1222h
 	SS = DOS data segment
 	SS:SI -> 4-byte records
@@ -4050,7 +4136,7 @@ Return: SI destroyed
 Note:	can be called only from within DOS
 SeeAlso: AX=122Dh,INT 21/AH=59h
 ----------2F1223-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - CHECK IF CHARACTER DEVICE
+INT 2F U - DOS 3+ internal - CHECK IF CHARACTER DEVICE
 	AX = 1223h
 	SDA+218h (DOS 3.10-3.30) = eight-character blank-padded name
 	SDA+22Bh (DOS 4.0x) = eight-character blank-padded name
@@ -4060,7 +4146,7 @@ Return: CF set if no character device by that name found
 Note:	can only be called from within DOS (assumes DS=SS=DOS DS)
 SeeAlso: INT 21/AX=5D06h,INT 21/AX=5D0Bh
 ----------2F1224-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - DELAY
+INT 2F U - DOS 3+ internal - DELAY
 	AX = 1224h
 	SS = DOS DS
 Return: after delay set by INT 21/AX=440Bh, unless in server call
@@ -4069,13 +4155,13 @@ Note:	delay is dependent on the processor speed, and is skipped entirely if
 	  inside a server call
 SeeAlso: INT 21/AX=440Bh,INT 21/AH=52h
 ----------2F1225-----------------------------
-INT 2F - Multiplex - DOS 3+ internal - GET LENGTH OF ASCIZ STRING
+INT 2F U - DOS 3+ internal - GET LENGTH OF ASCIZ STRING
 	AX = 1225h
 	DS:SI -> ASCIZ string
 Return: CX = length of string
 SeeAlso: AX=1212h
 ----------2F1226-----------------------------
-INT 2F - Multiplex - DOS 3.3+ internal - OPEN FILE
+INT 2F U - DOS 3.3+ internal - OPEN FILE
 	AX = 1226h
 	CL = access mode
 	DS:DX -> ASCIZ filename
@@ -4087,7 +4173,7 @@ Notes:	can only be called from within DOS (assumes SS=DOS DS)
 	equivalent to INT 21/AH=3Dh	
 SeeAlso: AX=1227h,INT 21/AH=3Dh
 ----------2F1227-----------------------------
-INT 2F - Multiplex - DOS 3.3+ internal - CLOSE FILE
+INT 2F U - DOS 3.3+ internal - CLOSE FILE
 	AX = 1227h
 	BX = file handle
 Return: CF set on error
@@ -4097,7 +4183,7 @@ Notes:	can only be called from within DOS (assumes SS=DOS DS)
 	equivalent to INT 21/AH=3Eh
 SeeAlso: AX=1106h,AX=1201h,AX=1226h,INT 21/AH=3Eh
 ----------2F1228BP4200-----------------------
-INT 2F - Multiplex - DOS 3.3+ internal - MOVE FILE POINTER
+INT 2F U - DOS 3.3+ internal - MOVE FILE POINTER
 	AX = 1228h
 	BP = 4200h, 4201h, 4202h (see INT 21/AH=42h)
 	BX = file handle
@@ -4110,7 +4196,7 @@ Notes:	equivalent to INT 21/AH=42h, but may only be called from inside a DOS
 	  LSEEK, and restores frame pointer
 SeeAlso: INT 21/AH=42h
 ----------2F1229-----------------------------
-INT 2F - Multiplex - DOS 3.3+ internal - READ FROM FILE
+INT 2F U - DOS 3.3+ internal - READ FROM FILE
 	AX = 1229h
 	BX = file handle
 	CX = number of bytes to read
@@ -4121,7 +4207,7 @@ Note:	equivalent to INT 21/AH=3Fh, but may only be called when already inside
 	  a DOS function call
 SeeAlso: AX=1226h,INT 21/AH=3Fh
 ----------2F122A-----------------------------
-INT 2F - Multiplex - DOS 3.3+ internal - SET FASTOPEN ENTRY POINT
+INT 2F U - DOS 3.3+ internal - SET FASTOPEN ENTRY POINT
 	AX = 122Ah
 	BX = entry point to set (0001h or 0002h)
 	DS:SI -> FASTOPEN entry point
@@ -4157,7 +4243,7 @@ PCDOS 4.01 FASTOPEN is additionally called with:
 	AL = 0Fh ???
 	AL = 10h ???
 ----------2F122B-----------------------------
-INT 2F - Multiplex - DOS 3.3+ internal - IOCTL
+INT 2F U - DOS 3.3+ internal - IOCTL
 	AX = 122Bh
 	BP = 44xxh
 	SS = DOS DS
@@ -4169,17 +4255,17 @@ Notes:	equivalent to INT 21/AH=44h, but may only be called when already inside
 	  IOCTL, and restores frame pointer
 SeeAlso: INT 21/AH=44h
 ----------2F122C-----------------------------
-INT 2F - Multiplex - DOS 3.3+ internal - GET DEVICE CHAIN
+INT 2F U - DOS 3.3+ internal - GET DEVICE CHAIN
 	AX = 122Ch
 Return: BX:AX -> header of second device driver (NUL is first) in driver chain
 SeeAlso: INT 21/AH=52h
 ----------2F122D-----------------------------
-INT 2F - Multiplex - DOS 3.3+ internal - GET EXTENDED ERROR CODE
+INT 2F U - DOS 3.3+ internal - GET EXTENDED ERROR CODE
 	AX = 122Dh
 Return: AX = current extended error code
 SeeAlso: AX=1222h,INT 21/AH=59h
 ----------2F122E-----------------------------
-INT 2F - Multiplex - DOS 4+ internal - GET OR SET ERROR TABLE ADDRESSES
+INT 2F U - DOS 4+ internal - GET OR SET ERROR TABLE ADDRESSES
 	AX = 122Eh
 	DL = subfunction
 	    00h get standard DOS error table (errors 00h-12h,50h-5Bh)
@@ -4232,13 +4318,13 @@ Notes:	this function needs to access COMMAND.COM if the messages were not
 	  the function
 	supported by DR-DOS 5.0
 ----------2F122F-----------------------------
-INT 2F - Multiplex - DOS 4+ internal - SET DOS VERSION NUMBER TO RETURN
+INT 2F U - DOS 4+ internal - SET DOS VERSION NUMBER TO RETURN
 	AX = 122Fh
 	DX = DOS version number (0000h = return true DOS version)
 Note:	not available under DR-DOS 5.0
 SeeAlso: INT 21/AH=30h
 ----------2F13-------------------------------
-INT 2F - Multiplex - DOS 3.3+ - SET DISK INTERRUPT HANDLER
+INT 2F U - DOS 3.3+ - SET DISK INTERRUPT HANDLER
 	AH = 13h
 	DS:DX -> interrupt handler disk driver calls on read/write
 	ES:BX = address to restore INT 13 to on system halt (exit from root
@@ -4271,7 +4357,7 @@ Notes:	called by DOS v3.3+ kernel
 	supported by DR-DOS 5.0
 	documented for MS-DOS 5.0, but undocumented in prior versions
 ----------2F1401-----------------------------
-INT 2F - NLSFUNC.COM - CHANGE CODE PAGE
+INT 2F U - NLSFUNC.COM - CHANGE CODE PAGE
 	AX = 1401h
 	DS:SI -> internal code page structure (see below)
 	BX = new code page
@@ -4294,7 +4380,7 @@ Offset	Size	Description
  5Bh  5 BYTEs	data to return for INT 21/AX=6506h
  60h 41 BYTEs	data to return for INT 21/AX=6501h
 ----------2F1402-----------------------------
-INT 2F - NLSFUNC.COM - GET COUNTRY INFO
+INT 2F U - NLSFUNC.COM - GET COUNTRY INFO
 	AX = 1402h
 	BP = subfunction (same as AL for INT 21/AH=65h)
 	BX = code page
@@ -4309,7 +4395,7 @@ Notes:	called by DOS v3.3+ kernel on INT 21/AH=65h
 	code page structure apparently only needed for COUNTRY.SYS pathname
 SeeAlso: AX=1403h,AX=1404h,INT 21/AH=65h
 ----------2F1403-----------------------------
-INT 2F - NLSFUNC.COM - SET COUNTRY INFO
+INT 2F U - NLSFUNC.COM - SET COUNTRY INFO
 	AX = 1403h
 	DS:SI -> internal code page structure (see AX=1401h)
 	BX = code page
@@ -4319,7 +4405,7 @@ Return: AL = status
 Note:	called by DOS v3.3+ kernel on INT 21/AH=38h
 SeeAlso: AX=1402h,AX=1404h,INT 21/AH=38h"SET"
 ----------2F1404-----------------------------
-INT 2F - NLSFUNC.COM - GET COUNTRY INFO
+INT 2F U - NLSFUNC.COM - GET COUNTRY INFO
 	AX = 1404h
 	BX = code page
 	DX = country code
@@ -4331,7 +4417,7 @@ Notes:	called by DOS v3.3+ kernel on INT 21/AH=38h
 	code page structure apparently only needed for COUNTRY.SYS pathname
 SeeAlso: AX=1402h,AX=1403h,INT 21/AH=38h"GET"
 ----------2F14FE-----------------------------
-INT 2F - DR-DOS 5.0 NLSFUNC - ???
+INT 2F U - DR-DOS 5.0 NLSFUNC - ???
 	AX = 14FEh
 	DI = ???
 	???
@@ -4340,7 +4426,7 @@ Note:	DR-DOS 5.0 NLSFUNC returns CF set and AX=0001h if AL was not 00h, FEh,
 	  or FFh on entry.
 SeeAlso: AX=14FFh
 ----------2F14FF-----------------------------
-INT 2F - DR-DOS 5.0 NLSFUNC - ???
+INT 2F U - DR-DOS 5.0 NLSFUNC - ???
 	AX = 14FFh
 	???
 Return: ???
@@ -4543,7 +4629,7 @@ INT 2F - CD-ROM v2.10+ - SEND DEVICE DRIVER REQUEST
 	CX = CD-ROM drive letter (0 = A, 1 = B, etc)
 	ES:BX -> CD-ROM device driver request header (see AX=0802h)
 ----------2F1600-----------------------------
-INT 2F - Multiplex - MS WINDOWS - WINDOWS ENHANCED MODE INSTALLATION CHECK
+INT 2F - MS WINDOWS - WINDOWS ENHANCED MODE INSTALLATION CHECK
 	AX = 1600h
 Return: AL = 00h if Windows 3.x enhanced mode or Windows/386 2.x not running
 	AL = 80h if Windows 3.x enhanced mode or Windows/386 2.x not running
@@ -4559,7 +4645,7 @@ Note:	INT 2F/AH=16h comprises an API for non-Windows programs (DOS device
 	  Windows standard mode
 SeeAlso: AX=4680h
 ----------2F1602-----------------------------
-INT 2F - Multiplex - MS WINDOWS/386 2.x - GET API ENTRY POINT
+INT 2F - MS WINDOWS/386 2.x - GET API ENTRY POINT
 	AX = 1602h
 Return: ES:DI -> Windows/386 2.x API procedure entry point
 Notes:	this interface is supported in Windows 3.x only for 2.x compatibility
@@ -4570,7 +4656,7 @@ Notes:	this interface is supported in Windows 3.x only for 2.x compatibility
 	After JUMP, at return address:
 	    BX = current VM ID.
 ----------2F1605-----------------------------
-INT 2F - Multiplex - MS WINDOWS - WINDOWS ENH MODE & 286 DOSX INIT BROADCAST
+INT 2F - MS WINDOWS - WINDOWS ENH MODE & 286 DOSX INIT BROADCAST
 	AX = 1605h
 	ES:BX = 0000h:0000h
 	DS:SI = 0000h:0000h
@@ -4620,7 +4706,7 @@ Return: CF set on error
 	CF clear if successful
 	interrupts disabled
 ----------2F1606-----------------------------
-INT 2F - Multiplex - MS WINDOWS - WINDOWS ENH MODE & 286 DOSX EXIT BROADCAST
+INT 2F - MS WINDOWS - WINDOWS ENH MODE & 286 DOSX EXIT BROADCAST
 	AX = 1606h
 	DX = flags
 	    bit 0 = 0 if Windows enhanced-mode exit
@@ -4631,7 +4717,7 @@ Notes:	if the init broadcast fails (AX=1605h returned CX <> 0), then this
 	this call will be issued in real mode
 SeeAlso: AX=1605h,AX=1609h
 ----------2F1607-----------------------------
-INT 2F - Multiplex - MS WINDOWS - VIRTUAL DEVICE CALL OUT API
+INT 2F - MS WINDOWS - VIRTUAL DEVICE CALL OUT API
 	AX = 1607h
 	BX = virtual device ID (see INT 2F/AX=1684h)
 Notes:	more of a convention than an API, this call specifies a standard
@@ -4645,7 +4731,7 @@ Notes:	more of a convention than an API, this call specifies a standard
 	  itself using the Windows API.
 SeeAlso: AX=1605h,AX=1684h
 ----------2F1608-----------------------------
-INT 2F - Multiplex - MS WINDOWS - WINDOWS ENHANCED MODE INIT COMPLETE BROADCAST
+INT 2F - MS WINDOWS - WINDOWS ENHANCED MODE INIT COMPLETE BROADCAST
 	AX = 1608h
 Notes:	called after all installable devices have been initialized
 	real-mode software may be called between the Windows enhanced-mode init
@@ -4653,13 +4739,13 @@ Notes:	called after all installable devices have been initialized
 	  situation
 SeeAlso: AX=1605h,AX=1609h
 ----------2F1609-----------------------------
-INT 2F - Multiplex - MS WINDOWS - WINDOWS ENHANCED MODE BEGIN EXIT BROADCAST
+INT 2F - MS WINDOWS - WINDOWS ENHANCED MODE BEGIN EXIT BROADCAST
 	AX = 1609h
 Note:	called at the beginning of a normal exit sequence; not made in the
 	  event of a fatal system crash
 SeeAlso: AX=1606h,AX=1608h
 ----------2F1680-----------------------------
-INT 2F - Multiplex - various - RELEASE CURRENT VIRTUAL MACHINE TIME-SLICE
+INT 2F - MS WINDOWS, DPMI, various - RELEASE CURRENT VIRTUAL MACHINE TIME-SLICE
 	AX = 1680h
 Return: AL = 00h if the call is supported
 	AL = 80h (unchanged) if the call is not supported
@@ -4672,7 +4758,7 @@ Notes:	programs can use this function in idle loops to enhance performance
 	should not be used by Windows programs
 SeeAlso: INT 15/AX=1000h
 ----------2F1681-----------------------------
-INT 2F - Multiplex - MS WINDOWS 3+ - BEGIN CRITICAL SECTION
+INT 2F - MS WINDOWS 3+ - BEGIN CRITICAL SECTION
 	AX = 1681h
 Notes:	used to prevent a task switch from occurring
 	should be followed by an INT 2F/AX=1682h call as soon as possible
@@ -4682,14 +4768,14 @@ Notes:	used to prevent a task switch from occurring
 	  and increment by hand.
 SeeAlso: AX=1682h,INT 15/AX=101Bh,INT 21/AH=34h
 ----------2F1682-----------------------------
-INT 2F - Multiplex - MS WINDOWS 3+ - END CRITICAL SECTION
+INT 2F - MS WINDOWS 3+ - END CRITICAL SECTION
 	AX = 1682h
 Notes:	not supported in Windows/386 2.x.  Get InDOS flag with INT 21/AH=34h
 	  and decrement by hand, taking care not to decrement InDOS flag
 	  through zero
 SeeAlso: AX=1681h,INT 15/AX=101Ch,INT 21/AH=34h
 ----------2F1683-----------------------------
-INT 2F - Multiplex - MS WINDOWS 3+ - GET CURRENT VIRTUAL MACHINE ID
+INT 2F - MS WINDOWS 3+ - GET CURRENT VIRTUAL MACHINE ID
 	AX = 1683h
 Return: BX = current virtual machine (VM) ID
 Notes:	Windows itself currently runs in VM 1, but this can't be relied upon
@@ -4697,7 +4783,7 @@ Notes:	Windows itself currently runs in VM 1, but this can't be relied upon
 	an ID of 0 will never be returned
 SeeAlso: AX=1684h,AX=1685h
 ----------2F1684-----------------------------
-INT 2F - Multiplex - MS WINDOWS - GET DEVICE API ENTRY POINT
+INT 2F - MS WINDOWS - GET DEVICE API ENTRY POINT
 	AX = 1684h
 	BX = virtual device (VxD) ID (see below)
 	ES:DI = 0000h:0000h
@@ -4741,8 +4827,23 @@ Values for VxD ID:
 Note:	The high bit of the VxD ID is reserved for future use. The
 	next 10 bits are the OEM # which is assigned by Microsoft. The
 	low 5 bits are the device number. 
+
+Call VTD.386 entry point with:
+	AX = 0000h get VTD version number
+	    Return: AH = major version
+	    	    AL = minor version
+	AX = 0100h get current clock tick time
+	    Return: EDX:EAX = clock tick time in 840ns units since Windows was
+	    			started
+	AX = 0101h get current system time in milliseconds
+	    Return: EAX = time in milliseconds that Windows has been running
+	AX = 0102h get current virtual machine time
+	    Return: EAX = cumulative amount of time the virtual machine has
+	    		been active, in milliseconds
+Note:	should only be called directly when TOOLHELP.DLL TimerCount() cannot
+	  be called
 ----------2F1685-----------------------------
-INT 2F - Multiplex - MS WINDOWS - SWITCH VMs AND CALLBACK
+INT 2F - MS WINDOWS - SWITCH VMs AND CALLBACK
 	AX = 1685h
 	BX = VM ID of virtual machine to switch to
 	CX = flags
@@ -4763,13 +4864,13 @@ Notes:	some DOS devices, such as networks, need to call functions in a
 	the callback procedure must preserve all registers and return with IRET
 SeeAlso: AX=1683h,INT 15/AX=1117h
 ----------2F1686-----------------------------
-INT 2F - Multiplex - DOS Protected-Mode Interface - DETECT MODE
+INT 2F - DOS Protected-Mode Interface - DETECT MODE
 	AX = 1686h
 Return: AX = 0000h if operating in protected mode under DPMI (INT 31 available)
 	AX nonzero if in real/V86 mode or no DPMI (INT 31 not available)
 SeeAlso: AX=1687h
 ----------2F1687-----------------------------
-INT 2F - Multiplex - DOS Protected-Mode Interface - INSTALLATION CHECK
+INT 2F - DOS Protected-Mode Interface - INSTALLATION CHECK
 	AX = 1687h
 Return: AX = 0000h if installed
 	    BX = flags
@@ -4803,17 +4904,17 @@ Return: CF set on error
 Note:	this entry point is only called for the initial switch to protected
 	  mode
 ----------2F1688-----------------------------
-INT 2F - Multiplex - MS Windows 3.0 - GET SELECTOR TO LDT???
+INT 2F U - MS Windows 3.0, 386MAX v6.01 - GET SELECTOR TO LDT???
 	AX = 1688h
-	???
-Return: ???
+Return: AX = status??? (0000h for 386MAX)
+	BX = selector for ???
 ----------2F1689-----------------------------
-INT 2F - Multiplex - MS Windows 3.0 - IDLE CALL???
+INT 2F U - MS Windows 3.0 - IDLE CALL???
 	AX = 1689h
 	???
 Return: ???
 ----------2F168A-----------------------------
-INT 2F - Multiplex - DPMI 0.9+ - GET VENDOR-SPECIFIC API ENTRY POINT
+INT 2F - DPMI 0.9+ - GET VENDOR-SPECIFIC API ENTRY POINT
 	AX = 168Ah
 	DS:(E)SI = selector:offset of ASCIZ vendor name
 Return: AL = status
@@ -4826,8 +4927,12 @@ Notes:	the vendor name is used to determine which entry point to return; it is
 	32-bit applications use ESI and EDI, 16-bit applications use SI and DI
 	this call is present but not documented for DPMI 0.9
 SeeAlso: INT 31/AX=0A00h
+
+Vendor names:
+ "MS-DOS"	??? and 386MAX v6.00+
+ "386MAX"	386MAX v6.00+
 ----------2F1700-----------------------------
-INT 2F - Multiplex - MS WINDOWS "WINOLDAP" - IDENTIFY WinOldAp VERSION
+INT 2F - MS WINDOWS "WINOLDAP" - IDENTIFY WinOldAp VERSION
 	AX = 1700h
 Return: AX = 1700h if this version of WINOLDAP doesn't support clipboard
 	AX <> 1700h
@@ -4839,17 +4944,17 @@ Notes:	WinOldAp (WINOLDAP.MOD) is a Microsoft Windows extension supporting
 	this installation check DOES NOT follow the format used by other
 	  software
 ----------2F1701-----------------------------
-INT 2F - Multiplex - MS WINDOWS "WINOLDAP" - OPEN CLIPBOARD
+INT 2F - MS WINDOWS "WINOLDAP" - OPEN CLIPBOARD
 	AX = 1701h
 Return:	AX <> 0	 success
 	AX = 0	 clipboard is already open
 ----------2F1702-----------------------------
-INT 2F - Multiplex - MS WINDOWS "WINOLDAP" - EMPTY CLIPBOARD
+INT 2F - MS WINDOWS "WINOLDAP" - EMPTY CLIPBOARD
 	AX = 1702h
 Return: AX <> 0	 clipboard has been emptied
 	AX = 0	 failure
 ----------2F1703-----------------------------
-INT 2F - Multiplex - MS WINDOWS "WINOLDAP" - SET CLIPBOARD DATA
+INT 2F - MS WINDOWS "WINOLDAP" - SET CLIPBOARD DATA
 	AX = 1703h
 	DX = clipboard format supported by WinOldAp:
 		01h text
@@ -4884,31 +4989,31 @@ Offset	Size	Description
  04h	WORD	Y extent
  06h	WORD	picture data
 ----------2F1704-----------------------------
-INT 2F - Multiplex - MS WINDOWS "WINOLDAP" - GET CLIPBOARD DATA SIZE
+INT 2F - MS WINDOWS "WINOLDAP" - GET CLIPBOARD DATA SIZE
 	AX = 1704h
 	DX = clipboard format supported by WinOldAp (see AX=1703h)
 Return:	 DX:AX = size of data in bytes, including any headers
 Failure: DX:AX = 0  no data in this format in the Clipboard
 ----------2F1705-----------------------------
-INT 2F - Multiplex - MS WINDOWS "WINOLDAP" - GET CLIPBOARD DATA
+INT 2F - MS WINDOWS "WINOLDAP" - GET CLIPBOARD DATA
 	AX = 1705h
 	DX = clipboard format supported by WinOldAp (see AX=1703h)
 	ES:BX -> buffer
 Return: AX <> 0	 success
 	AX = 0	 error, or no data in this format in Clipboard
 ----------2F1708-----------------------------
-INT 2F - Multiplex - MS WINDOWS "WINOLDAP" - CloseClipboard
+INT 2F - MS WINDOWS "WINOLDAP" - CloseClipboard
 	AX = 1708h
 Return: AX <> 0 success
 	AX = 0 failure
 ----------2F1709-----------------------------
-INT 2F - Multiplex - MS WINDOWS "WINOLDAP" - COMPACT CLIPBOARD
+INT 2F - MS WINDOWS "WINOLDAP" - COMPACT CLIPBOARD
 	AX = 1709h
 	SI:CX = desired size in bytes
 Return: DX:AX = number of bytes in largest block of free memory
 Note:	WinOldAp is responsible for including the size of any headers
 ----------2F170A-----------------------------
-INT 2F - Multiplex - MS WINDOWS "WINOLDAP" - GET DEVICE CAPABILITIES
+INT 2F - MS WINDOWS "WINOLDAP" - GET DEVICE CAPABILITIES
 	AX = 170Ah
 	DX = GDI information index
 	    00h device driver version
@@ -4998,12 +5103,12 @@ Return:	 AX = integer value of the desired item
 		    bit 3  supports >64K bitmap
 Note:  This function returns the device-capability bits for the given display
 ----------2F1900-----------------------------
-INT 2F - Multiplex - DOS 4.x only SHELLB.COM - INSTALLATION CHECK
+INT 2F U - DOS 4.x only SHELLB.COM - INSTALLATION CHECK
 	AX = 1900h
 Return: AL = 00h  not installed
 	     FFh  installed
 ----------2F1901BL00-------------------------
-INT 2F - Multiplex - DOS 4.x only SHELLB.COM - SHELLC.EXE INTERFACE
+INT 2F U - DOS 4.x only SHELLB.COM - SHELLC.EXE INTERFACE
 	AX = 1901h
 	BL = 00h if SHELLC transient
 	     01h if SHELLC resident
@@ -5011,7 +5116,7 @@ INT 2F - Multiplex - DOS 4.x only SHELLB.COM - SHELLC.EXE INTERFACE
 Return: ES:DI -> SHELLC.EXE workspace within SHELLB.COM
 Note:	SHELLB.COM and SHELLC.EXE are parts of the DOS 4.x shell
 ----------2F1902-----------------------------
-INT 2F - Multiplex - DOS 4.x only SHELLB.COM - COMMAND.COM INTERFACE
+INT 2F U - DOS 4.x only SHELLB.COM - COMMAND.COM INTERFACE
 	AX = 1902h
 	ES:DI -> ASCIZ full filename of current batch file, with at least the
 		 final filename element uppercased
@@ -5036,25 +5141,25 @@ Explanation: COMMAND.COM executes the result of this call in preference to
 	permits PSCs to CALL nested batch files while PSCs are still stacked
 	up for subsequent execution.
 ----------2F1903-----------------------------
-INT 2F - Multiplex - DOS 4.x only SHELLB.COM - COMMAND.COM interface
+INT 2F U - DOS 4.x only SHELLB.COM - COMMAND.COM interface
 	AX = 1903h
 	ES:DI -> ASCIZ batch file name as for AX=1902h
 Return: AL = FFh if quoted batch file name matches last SHELLB parameter
 	AL = 00h if it does not
 ----------2F1904-----------------------------
-INT 2F - Multiplex - DOS 4.x only SHELLB.COM - SHELLB transient to TSR intrface
+INT 2F U - DOS 4.x only SHELLB.COM - SHELLB transient to TSR intrface
 	AX = 1904h
 Return: ES:DI -> name of current shell batch file:
 		WORD	number of bytes of name following
 		BYTEs	(8 max) uppercase name of shell batch file
 ----------2F1A00-----------------------------
-INT 2F - Multiplex - DOS 4+ ANSI.SYS - INSTALLATION CHECK
+INT 2F - DOS 4+ ANSI.SYS - INSTALLATION CHECK
 	AX = 1A00h
 Return: AL = FFh if installed
 Notes:	AVATAR.SYS also responds to this call
 	documented for DOS 5+, but undocumented for DOS 4.x
 ----------2F1A00BX4156-----------------------
-INT 2F - Multiplex - AVATAR.SYS - INSTALLATION CHECK
+INT 2F - AVATAR.SYS - INSTALLATION CHECK
 	AX = 1A00h
 	BX = 4156h ('AV')
 	CX = 4154h ('AT')
@@ -5072,7 +5177,7 @@ Notes:	AVATAR also identifies itself as ANSI.SYS if BX, CX, or DX differ from
 	  interprets AVATAR command codes in the same way that ANSI interprets
 	  ANSI command codes
 ----------2F1A01-----------------------------
-INT 2F - Multiplex - DOS 4+ ANSI.SYS internal - GET/SET DISPLAY INFORMATION
+INT 2F U - DOS 4+ ANSI.SYS internal - GET/SET DISPLAY INFORMATION
 	AX = 1A01h
 	CL = function
 	    7Fh for GET
@@ -5085,7 +5190,7 @@ Return: CF set on error
 Note:	presumably this is the DOS IOCTL interface to ANSI.SYS
 SeeAlso: AX=1A02h,INT 21/AX=440Ch
 ----------2F1A02-----------------------------
-INT 2F - Multiplex - DOS 4+ ANSI.SYS internal - MISC REQUESTS
+INT 2F U - DOS 4+ ANSI.SYS internal - MISCELLANEOUS REQUESTS
 	AX = 1A02h
 	DS:DX -> parameter block (see below)
 Note:	DOS 5.0 chains to previous handler if AL > 02h on call
@@ -5104,7 +5209,7 @@ Offset	Size	Description
 		00h if /L not in effect
 		01h if /L in effect
 ----------2F1A21-----------------------------
-INT 2F - Multiplex - AVATAR.SYS - SET DRIVER STATE
+INT 2F - AVATAR.SYS - SET DRIVER STATE
 	AX = 1A21h (AL='!')
 	DS:SI -> command string with one or more state characters
 	CX = length of command string
@@ -5124,12 +5229,12 @@ Values of state characters:
  's'	use slow screen output
  't'	Tandy 1000 keyboard (not yet implemented)
 ----------2F1A3C-----------------------------
-INT 2F - Multiplex - AVATAR.SYS v0.11 - ???
+INT 2F U - AVATAR.SYS v0.11 - ???
 	AX = 1A3Ch
 	???
 Return: CX = 0000h
 ----------2F1A3E-----------------------------
-INT 2F - Multiplex - AVATAR.SYS v0.11 - ???
+INT 2F U - AVATAR.SYS v0.11 - ???
 	AX = 1A3Eh
 	CL = ???
 	CH = ???
@@ -5140,7 +5245,7 @@ Return: CL = ???
 	DL = ???
 	DH = ???
 ----------2F1A3F-----------------------------
-INT 2F - Multiplex - AVATAR.SYS - QUERY DRIVER STATE
+INT 2F - AVATAR.SYS - QUERY DRIVER STATE
 	AX = 1A3Fh (AL='?')
 	ES:DI -> buffer
 	CX = length of buffer in bytes
@@ -5150,7 +5255,7 @@ Note:	the returned information consists of multiple letters whose meanings
 	  are described under AX=1A21h
 SeeAlso: AX=1A21h
 ----------2F1A42BX4156-----------------------
-INT 2F - Multiplex - AVATAR Serial Dispatcher - INSTALL IRQ3 HANDLER
+INT 2F - AVATAR Serial Dispatcher - INSTALL IRQ3 HANDLER
 	AX = 1A42h
 	BX = 4156h ('AV')
 	ES:DI -> FAR handler for serial port using IRQ3
@@ -5166,7 +5271,7 @@ Notes:	the handler need not save/restore registers or signal EOI to the
 	  to earlier handlers until one returns AX=0000h
 SeeAlso: AX=1A43h,AX=1A62h
 ----------2F1A43BX4156-----------------------
-INT 2F - Multiplex - AVATAR Serial Dispatcher - INSTALL IRQ4 HANDLER
+INT 2F - AVATAR Serial Dispatcher - INSTALL IRQ4 HANDLER
 	AX = 1A43h
 	BX = 4156h ('AV')
 	ES:DI -> FAR handler for serial port using IRQ4
@@ -5177,7 +5282,7 @@ Return: AX = 1A43h if ASD not installed
 Notes:	(see AX=1A42h)
 SeeAlso: AX=1A42h,AX=1A63h
 ----------2F1A44BX4156-----------------------
-INT 2F - Multiplex - AVATAR.SYS v0.11+ - GET DATA SEGMENT
+INT 2F - AVATAR.SYS v0.11+ - GET DATA SEGMENT
 	AX = 1A44h
 	BX = 4156h ('AV')
 Return: AX = 0000h
@@ -5188,7 +5293,7 @@ Note:	AVATAR.SYS calls this function whenever it is invoked.	If each
 	  separate data segment, AVATAR.SYS becomes fully reentrant.
 SeeAlso: AX=1A21h,AX=1A3Fh
 ----------2F1A52-----------------------------
-INT 2F - Multiplex - AVATAR.SYS v0.11 - GET ???
+INT 2F U - AVATAR.SYS v0.11 - GET ???
 	AX = 1A52h
 	CX = size of buffer
 	ES:DI -> buffer
@@ -5197,39 +5302,39 @@ Note:	the maximum size of the data which may be copied is returned by
 	  AX=1A72h
 SeeAlso: AX=1A72h
 ----------2F1A53-----------------------------
-INT 2F - Multiplex - AVATAR.SYS v0.11 - ???
+INT 2F U - AVATAR.SYS v0.11 - ???
 	AX = 1A53h
 	CL = ??? (00h-05h)
 	???
 Return: ???
 ----------2F1A62BX4156-----------------------
-INT 2F - Multiplex - AVATAR Serial Dispatcher - UNINSTALL IRQ3 HANDLER
+INT 2F - AVATAR Serial Dispatcher - UNINSTALL IRQ3 HANDLER
 	AX = 1A62h
 	BX = 4156h ('AV')
 	CX = handle for IRQ routine returned by AX=1A42h
 SeeAlso: AX=1A42h,AX=1A63h
 ----------2F1A63BX4156-----------------------
-INT 2F - Multiplex - AVATAR Serial Dispatcher - UNINSTALL IRQ4 HANDLER
+INT 2F - AVATAR Serial Dispatcher - UNINSTALL IRQ4 HANDLER
 	AX = 1A63h
 	BX = 4156h ('AV')
 	CX = handle for IRQ routine returned by AX=1A43h
 SeeAlso: AX=1A43h,AX=1A62h
 ----------2F1A72-----------------------------
-INT 2F - Multiplex - AVATAR.SYS v0.11 - GET ??? SIZE
+INT 2F U - AVATAR.SYS v0.11 - GET ??? SIZE
 	AX = 1A72h
 Return: CX = maximum size of ???
 SeeAlso: AX=1A52h
 ----------2F1A7B-----------------------------
-INT 2F - Multiplex - AVATAR.SYS v0.11 - ???
+INT 2F U - AVATAR.SYS v0.11 - ???
 	AX = 1A7Bh
 Return: AX = 0000h
 	CX = 0000h
 ----------2F1A7D-----------------------------
-INT 2F - Multiplex - AVATAR.SYS v0.11 - ???
+INT 2F U - AVATAR.SYS v0.11 - ???
 	AX = 1A7Dh
 Return: AX = ???
 ----------2F1AADDX0000-----------------------
-INT 2F - Multiplex - AVATAR.SYS v0.11 - ???
+INT 2F U - AVATAR.SYS v0.11 - ???
 	AX = 1AADh
 	DX = 0000h
 	CX = subfunction (00h-0Ch)
@@ -5237,7 +5342,7 @@ INT 2F - Multiplex - AVATAR.SYS v0.11 - ???
 Return: AX = 0000h if DX was nonzero
 	???
 ----------2F1B00-----------------------------
-INT 2F - Multiplex - DOS 4+ XMA2EMS.SYS extension internal - INSTALLATION CHECK
+INT 2F U - DOS 4+ XMA2EMS.SYS extension internal - INSTALLATION CHECK
 	AX = 1B00h
 Return: AL = FFh if installed
 Note:	XMA2EMS.SYS extension is only installed if DOS has page frames to hide.
@@ -5245,7 +5350,7 @@ Note:	XMA2EMS.SYS extension is only installed if DOS has page frames to hide.
 	  which excludes the physical pages being used by DOS.
 SeeAlso: AX=1Bh"FRAME INFO"
 ----------2F1B-------------------------------
-INT 2F - Multiplex - DOS 4+ XMA2EMS.SYS extens internal - GET HIDDEN FRAME INFO
+INT 2F U - DOS 4+ XMA2EMS.SYS extension internal - GET HIDDEN FRAME INFORMATION
 	AH = 1Bh
 	AL <> 00h
 	DI = hidden physical page number
@@ -5501,7 +5606,7 @@ SeeAlso: AH=39h/BL=00h
 INT 2F - Kingswood TSR INTERFACE - INSTALLATION CHECK
 	AH = 39h
 	BL = 00h
-	AL = TSR ID number (01h-FFh, currently only 01h-0Ch used)
+	AL = TSR ID number (01h-FFh, currently only 01h-0Eh used) (see below)
 Return: AL = status
 	    00h not installed
 	    FFh installed
@@ -5511,6 +5616,22 @@ Note:	All of Kingswood Software's TSRs use this interface.  Usually the
 	  setting its owner ID to 0008h (DOS data), and filling the MCB name
 	  field with the TSR's name.
 SeeAlso: AX=3900h,AH=39h/BL=01h
+
+Values for TSR ID number:
+ 01h TSR Windows
+ 02h NOBUSY
+ 03h CD STACK
+ 04h DISK WATCH
+ 05h PUSHBP
+ 06h ALIAS
+ 07h KEYMACRO
+ 08h SLOWDOWN
+ 09h ANSIGRAB
+ 0Ah TEE
+ 0Bh FASTMOUS
+ 0Ch EXTWILD
+ 0Dh BREAKOUT
+ 0Eh STOPDISK
 
 Format of TSR modules:
 Offset	Size	Description
@@ -5531,12 +5652,12 @@ Offset	Size	Description
 INT 2F - Kingswood TSR INTERFACE - REMOVAL CHECK
 	AH = 39h
 	BL = 01h
-	AL = TSR ID number (01h-FFh)
+	AL = TSR ID number (01h-FFh) (see AH=39h/BL=00h)
 Return: AL = status
 	    00h not ready to be removed
 	    FFh resident module may be removed by deassigning the interrupts
 		hooked by the TSR and deallocating the TSR's memory block
-	AH,BX,CX,DX,ES destroyed
+	AH,BX,CX,DX,ES may be destroyed
 SeeAlso: AX=3900h,AH=39h/BL=00h
 ----------2F39-------------------------------
 INT 2F - Kingswood TSR INTERFACE - APPLICATION-SPECIFIC FUNCTION CALLS
@@ -5545,7 +5666,89 @@ INT 2F - Kingswood TSR INTERFACE - APPLICATION-SPECIFIC FUNCTION CALLS
 	AL = TSR ID number (01h-FFh)
 	CX,DX,SI,DI,DS,ES may contain parameters
 Return: as appropriate for the called function
-SeeAlso: AX=3900h
+SeeAlso: AX=3900h,AH=39h/BL=00h,AX=3901h/BL=02h
+----------2F3901BL02-------------------------
+INT 2F - Kingswood TSR Windows - OPEN WINDOW
+	AX = 3901h
+	BL = 02h
+Return: AX = error code (0000h if successful)
+Notes:	opens the next TSR window on top of any others.	 Only three
+	  TSR windows can be opened at any one time.  The three windows
+	  are all 40x11 characters, partly overlapping.
+SeeAlso: AH=39h/BL=00h,AX=3901h/BL=03h,AX=3901h/BL=05h,AX=3901h/BL=06h
+----------2F3901BL03-------------------------
+INT 2F - Kingswood TSR Windows - HIDE WINDOWS
+	AX = 3901h
+	BL = 03h
+Return: AX = error code (0000h if successful)
+Notes:	Hide any visible TSR windows from view.
+SeeAlso: AH=39h/BL=00h,AX=3901h/BL=02h,AX=3901h/BL=05h
+----------2F3901BL04-------------------------
+INT 2F - Kingswood TSR Windows - SHOW WINDOWS
+	AX = 3901h
+	BL = 04h
+Return: AX = error code (0000h if successful)
+Notes:	Re-display all TSR windows after a HIDE WINDOWS call.
+SeeAlso: AH=39h/BL=00h,AX=3901h/BL=02h,AX=3901h/BL=03h
+----------2F3901BL05-------------------------
+INT 2F - Kingswood TSR Windows - CLOSE WINDOW
+	AX = 3901h
+	BL = 05h
+Return: AX = error code (0000h if successful)
+Notes:	Close the last opened TSR window.
+SeeAlso: AH=39h/BL=00h,AX=3901h/BL=02h
+----------2F3901BL06-------------------------
+INT 2F - Kingswood TSR Windows - SET WINDOW TITLE
+	AX = 3901h
+	BL = 06h
+	DS:SI -> title string
+Return: AX = error code (0000h if successful)
+SeeAlso: AH=39h/BL=00h,AX=3901h/BL=02h
+----------2F3901BL07-------------------------
+INT 2F - Kingswood TSR Windows - POSITION CURSOR
+	AX = 3901h
+	BL = 07h
+	CH = Y coordinate (0-10)
+	CL = X coordinate (0-39)
+Return: AX = error code (0000h if successful)
+Note:	the hardware cursor is always disabled when a TSR window is opened;
+	  this call only sets a text position
+SeeAlso: AH=39h/BL=00h,AX=3901h/BL=08h,AX=3901h/BL=09h
+----------2F3901BL08-------------------------
+INT 2F - Kingswood TSR Windows - DISPLAY STRING
+	AX = 3901h
+	BL = 08h
+	DS:SI -> string
+Return: AX = error code (0000h if successful)
+Notes:	The text is not clipped.
+	This routine understands Tab, NewLine and Carriage Return
+SeeAlso: AH=39h/BL=00h,AX=3901h/BL=07h
+----------2F3901BL09-------------------------
+INT 2F - Kingswood TSR Windows - SCROLL WINDOW
+	AX = 3901h
+	BL = 09h
+	CL = scroll direction: 00h up, FFh down, 00h clear window
+Return: AX = error code (0000h if successful)
+SeeAlso: AH=39h/BL=00h,AX=3901h/BL=07h
+----------2F3901BL0A-------------------------
+INT 2F - Kingswood TSR Windows - SOUND BEEPER
+	AX = 3901h
+	BL = 0Ah
+	DX = sound divisor, or 0 for silence.
+	     (divide 1843200 by required frequency to get value for DX)
+	CL = sound length in 18.2 Hz clock ticks
+Return: AX = error code (0000h if successful)
+SeeAlso: AH=39h/BL=00h
+----------2F3901BL0B-------------------------
+INT 2F - Kingswood TSR Windows - ADD OR REMOVE USER
+	AX = 3901h
+	BL = 0Bh
+	CL = number of users increment: +1 if adding a new user
+					-1 if removing a user
+Return: AX = error code (0000h if successful)
+Note:	the TSR windows resident module may only be removed when the internal
+	  user count is zero
+SeeAlso: AH=39h/BL=00h,AX=3901h/BL=02h
 ----------2F4000-----------------------------
 INT 2F - Windows 3.x (OS/2 2.x???) - GET VIRTUAL DEVICE DRIVER (VDD) CAPABLTIES
 	AX = 4000h
@@ -5740,7 +5943,7 @@ Perform a FAR call to the driver entry point with AH set to the function code
 	44h  (QEMM 5.11 only, undocumented) ???
 	88h  (QEMM 6.0, undocumented) query free extended memory
 	     Return: EAX = largest block of extended memory, in K
-	     	     ECX = ??? (00FFFFFFh)
+	     	     ECX = physical address of highest byte of memory
 		     EDX = total Kbytes of extended memory
 		     BL = status
 		         00h success
@@ -5750,7 +5953,7 @@ Perform a FAR call to the driver entry point with AH set to the function code
 	     Return: AX = 0001h success
 	     		    EDX = handle for allocated block (free with AH=0Ah)
 			= 0000h failure
-			    BL = status (80h,A0h,A1h,A2h)
+			    BL = status (80h,A0h,A1h,A2h) (see below)
 	8Eh  (QEMM 6.0, undocumented) get handle information
 	     DX = handle
 	     Return: AX = 0001h success
@@ -5758,14 +5961,13 @@ Perform a FAR call to the driver entry point with AH set to the function code
 			    CX = number of free handles left
 			    EDX = block size in K
 	     		= 0000h failure
-	     		    BL = status (A2h)
+	     		    BL = status (A2h) (see below)
 	8Fh  (QEMM 6.0, undocumented) reallocate extended memory block
 	     DX = handle
 	     EBX = new size in K
 	     Return: AX = 0001h success
 	     		= 0000h failure
 			    BL = status (A2h,ABh) (see below)
-
 Note:	HIMEM.SYS requires at least 256 bytes free stack space
 
 Format of EMM structure:
@@ -5806,19 +6008,25 @@ Error codes returned in BL:
 	B1h no UMB's are available
 	B2h UMB segment number is invalid
 ----------2F4601-----------------------------
-INT 2F - Multiplex - DOS 5.0 kernel - ???
+INT 2F U - DOS 5.0 kernel - ???
 	AX = 4601h
 Return: ???
 Note:	copies the MCB following the caller's PSP memory block into DOS data
 	  segment
 SeeAlso: AX=4602h
 ----------2F4602-----------------------------
-INT 2F - Multiplex - DOS 5.0 kernel - ???
+INT 2F U - DOS 5.0 kernel - ???
 	AX = 4602h
 Return: ???
 Note:	copies previously copied MCB from DOS data segment into MCB following
 	  caller's PSP memory block
 SeeAlso: AX=4601h
+----------2F46-------------------------------
+INT 2F U - ???
+	AH = 46h
+	AL = subfunction (03h,04h)
+Return: ???
+Note:	these two subfunctions are called by MS Windows 3.0
 ----------2F4653CX0002-----------------------
 INT 2F - F-PROT v1.x only - F-LOCK.EXE 
 	AX = 4653h
@@ -5920,7 +6128,7 @@ Return: ES:DI -> start of allocated HMA block or FFFFh:FFFFh
 Note:	this call is not valid unless DOS is loaded in the HMA (DOS=HIGH)
 SeeAlso: AX=4A01h
 ----------2F4A05-----------------------------
-INT 2F - DOS v5.0 DOSSHELL - ???
+INT 2F U - DOS v5.0 DOSSHELL - ???
 	AX = 4A05h
 	SI = function
 	    0000h reset???
@@ -5949,6 +6157,58 @@ INT 2F - DOS v5.0 DOSSHELL - ???
 Note:	DOSSHELL chains to the previous handler if SI is not one of the values
 	  listed above
 SeeAlso: AX=4B01h
+----------2F4A10-----------------------------
+INT 2F - SMARTDRV v4.00+ - API
+        AX = 4A10h
+        BX = command
+            0000h installation check and hit ratios
+                Return: AX = BABEh if installed
+                            DX:BX = cache hits
+                            DI:SI = cache misses
+                            CX = ???
+                            BP = version (4.00 = 0400h)
+            0001h reset cache
+            0002h flush buffers
+            0003h status
+                BP = drive # (0=A, 1=B, etc.)
+                DL = subfunction
+		    00h only get information
+                    01h turn on read cache
+		    02h turn off read cache
+		    03h turn on write cache
+		    04h turn off write cache
+	    	Return: AX = BABEh if OK
+                       	DL = status
+                            bit 7  not cached
+			    bit 6  write-through
+			    bit 5  ???
+			    bits 0-4 drive # (0=A, 1=B...)
+                        DL = FFh if drive does not exist
+                Note:	If the read cache is off, the drive will not be cached,
+			  but the write-cache setting is remembered.
+            0004h cache size
+                Return: AX = ???
+                        BX = largest number of elements
+                        CX = size of elements in bytes
+                        DX = number of elements under Windows
+            0005h double-buffer status
+                BP = drive # (0=A, 1=B...)
+                Return: AX = BABEh if double-buffered
+            0007h ???
+                Return: DI = random number???
+            000Ah get table pointer???
+                Return: ES:BX -> table of about 10 bytes or 5 words. Seems to
+				be words pointing to memory addresses 
+				containing info??? (see below)
+            1234h signal serious error
+                pops up a message box saying that a serious error occurred and
+                  to hit R to retry.
+SeeAlso: INT 21/AX=4402h"SMARTDRV",INT 21/AX=4403h"SMARTDRV"
+
+Format of data table:
+Offset	Size	Description
+ 00h  8 BYTEs	???
+ 08h	WORD	offset of WORD containing number of elements in cache
 ----------2F4B-------------------------------
 INT 2F - LAN Manager 2.0 DOS Enh NETWKSTA.EXE - NETWORK WORKSTATION REDIRECTOR
 	AH = 4Bh
@@ -5976,6 +6236,7 @@ Notes:	called by the task switcher
 	  point with AX=0005h (see AX=4B02h)
 	the task switcher entry point should not be saved, as it is subject to
 	  change and will be provided on any notification call
+	the Windows 3.1 Standard Mode supports this API
 SeeAlso: AX=4B02h
 
 Format of callback info structure:
@@ -6195,8 +6456,22 @@ Format of one instance data record in array:
 Offset	Size	Description
  00h	DWORD	address of instance data (end of array if 0000h:0000h)
  04h	WORD	size of instance data
+----------2F53-------------------------------
+INT 2F U - ???
+	AH = 53h
+	AL = subfunction (0Bh, maybe others???)
+Return: ???
+Note:	called by MS Windows 3.1 POWER.DRV
+SeeAlso: AH=54h
+----------2F53-------------------------------
+INT 2F U - ???
+	AH = 54h
+	AL = subfunction (00h, 01h, maybe others???)
+Return: ???
+Note:	called by MS Windows 3.1 POWER.DRV
+SeeAlso: AH=53h
 ----------2F5453-----------------------------
-INT 2F - Multiplex - TesSeRact RAM-RESIDENT PROGRAM INTERFACE
+INT 2F - TesSeRact RAM-RESIDENT PROGRAM INTERFACE
 	AX = 5453h
 	BX = subfunction
 	    00h installation check
@@ -6293,10 +6568,11 @@ INT 2F - Multiplex - TesSeRact RAM-RESIDENT PROGRAM INTERFACE
 			     nonzero invalid ID number
 	    24h - 2Fh reserved
 Notes:	Borland's THELP.COM popup help system for Turbo Pascal and Turbo C
-	  fully supports the TesSeRact API, as do the SWAP?? programs by 
-	  Innovative Data Concepts.
+	  (versions 1.x and 2.x only) fully supports the TesSeRact API, as
+	  do the SWAP?? programs by Innovative Data Concepts.
 	AVATAR.SYS supports functions 00h and 01h (only the first three fields
 	  of the user parameter block) using the name "AVATAR  "
+SeeAlso: AX=CAFEh
 
 Format of User Parameter Block:
 Offset	Size	Description
@@ -6350,7 +6626,7 @@ Offset	Size	Description
 	BYTE	interrupt number
 	WORD	offset in TesSeRact code segment of new interrupt handler
 ----------2F5500-----------------------------
-INT 2F - DOS v5.0 - COMMAND.COM INTERFACE
+INT 2F U - DOS v5.0 - COMMAND.COM INTERFACE
 	AX = 5500h
 Return: AX = 0000h
 	DS:SI -> entry point table
@@ -6361,7 +6637,7 @@ Notes:	used to access the shareable portion of COMMAND.COM, which may have
 	  most assume that the segment address of the resident portion is on
 	  the stack and are thus not of general use
 ----------2F6282-----------------------------
-INT 2F - PC Tools v7.0+ VDEFEND, DATAMON - SET ??? ADDRESS
+INT 2F U - PC Tools v7.0+ VDEFEND, DATAMON - SET ??? ADDRESS
 	AX = 6282h
 	CX:DX -> ??? or 0000h:0000h
 	DI = 0000h ???
@@ -6372,7 +6648,7 @@ Note:	if CX:DX = 0000h:0000h on entry, the ??? address is not changed
 	  (DATAMON only)
 SeeAlso: INT 21/AH=FAh"VDEFEND"
 ----------2F6284BX0000-----------------------
-INT 2F - PC Tools v7.0+ DATAMON - INSTALLATION CHECK
+INT 2F U - PC Tools v7.0+ DATAMON - INSTALLATION CHECK
 	AX = 6284h
 	BX = 0000h
 	CX = 0000h
@@ -6380,14 +6656,14 @@ Return: AX = segment of resident code
 	BX = 5555h
 	CX = 5555h
 ----------2F6284BX0001-----------------------
-INT 2F - PC Tools v7.0+ DATAMON - GET ???
+INT 2F U - PC Tools v7.0+ DATAMON - GET ???
 	AX = 6284h
 	BX = 0001h
 	CX = 0001h
 Return: AX:BX -> ???
 	CX = BX
 ----------2F6284BX0002-----------------------
-INT 2F - PC Tools v7.0+ DATAMON - GET ???
+INT 2F U - PC Tools v7.0+ DATAMON - GET ???
 	AX = 6284h
 	BX = 0002h
 	CX = 0002h
@@ -6396,7 +6672,7 @@ Return: AX = ???
 	CX = AX
 	DX = BX
 ----------2F6284BX0003-----------------------
-INT 2F - PC Tools v7.0+ DATAMON - SET ??? FLAGS
+INT 2F U - PC Tools v7.0+ DATAMON - SET ??? FLAGS
 	AX = 6284h
 	BX = 0003h
 	CX = flags
@@ -6407,12 +6683,29 @@ INT 2F - PC Tools v7.0+ DATAMON - SET ??? FLAGS
 	DX = flags
 	    bit 15: ???
 ----------2F6400-----------------------------
-INT 2F - Multiplex - SCRNSAV2.COM - INSTALLATION CHECK
+INT 2F - SCRNSAV2.COM - INSTALLATION CHECK
 	AX = 6400h
 Return: AL = 00h not installed
 	     FFh installed
 Note:	SCRNSAV2.COM is a screen saver for PS/2's with VGA by Alan Ballard
 SeeAlso: INT 10/AX=5555h
+----------2F7200-----------------------------
+INT 2F - SRDISK v1.30 - INSTALLATION CHECK
+	AX = 7200h
+Return: AL = FFh if installed
+	    ES = segment of device driver header (see below)
+Note:	SRDISK is a freeware resizeable RAMdisk by Marko Kohtala
+
+Format of device driver header:
+Offset	Size	Description
+ 00h 10 BYTEs	same as standard device driver header (see INT 21/AH=52h)
+ 0Ah	BYTE	number of subunits (drives) supported by driver
+ 0Bh  3 BYTEs	signature "SRD"
+ 0Eh  4 BYTEs	memory type string (currently only "XMS ")
+ 12h  4 BYTEs	ASCII driver version string "N.NN"
+ 16h	BYTE	00h
+ 17h	BYTE	configuration format version (currently 00h)
+ 18h	WORD	offset of drive configuration data
 ----------2F7A00-----------------------------
 INT 2F - Novell NetWare - LOW-LEVEL API (IPX) INSTALLATION CHECK
 	AX = 7A00h

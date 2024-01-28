@@ -1,27 +1,29 @@
-Interrupt List		Release 29			Last change 2/9/92
+Interrupt List		Release 30			Last change 4/26/92
 This compilation is Copyright (c) 1989, 1990, 1991, 1992 Ralf Brown
 ---------------------------------------------
 Please redistribute the following files unmodified as a group, in a pair of
-archives named INTER29A and INTER29B (preferably the original authenticated
+archives named INTER30A and INTER30B (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
 	INTERRUP.A	INT 00 through INT 14   \
-	INTERRUP.B	INT 15 through INT 1F    \  total 716 pages at
-	INTERRUP.C	INT 20 thru INT 21/7F     \ 60 lines per page,
-	INTERRUP.D	INT 21/80 thru INT 2F/7F  / 767 with INTPRINT -p
-	INTERRUP.E      INT 2F/80 thru INT 5F    /  (3232 entries)
-	INTERRUP.F	INT 60 through INT FF   /
+	INTERRUP.B	INT 15 through INT 1F    \   total 802 pages at
+	INTERRUP.C	INT 20 thru INT 21/7F     \  60 lines per page,
+	INTERRUP.D	INT 21/80 thru INT 2F/7F   > 859 with INTPRINT -p
+	INTERRUP.E      INT 2F/80 thru INT 3F     /  (3655 entries)
+	INTERRUP.F	INT 40 through INT 67	 /
+	INTERRUP.G	INT 68 through INT FF   /
 	INTERRUP.PRI	a brief introduction to interrupts
 	INTPRINT.COM	a simple formatter that also generates a list summary
 	INTPRINT.DOC	instructions for INTPRINT
-	INTPRINT.C	source code for INTPRINT
 	MEMORY.LST	format of the BIOS data area
-The following files should be distributed in an archive called INTER28C (they
-have not been updated since Release 28):
-	INT2HLP.BAT	Perl script to convert list into QuickHelp database
+The following files should be distributed in an archive called INTER30C:
+	INT.COM		invoke interrupts from commandline
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
+	INT2HLP.BAT	Perl script to convert list into QuickHelp database
 	INT2QH.*	program to convert list into QuickHelp database
 	INTHELP.*	convert list into TurboPower GUIDE database
+	INTLIST.E	Epsilon extension for handling list
+	INTPRINT.C	source code for INTPRINT
 ---------------------------------------------
 If you notice any mistakes or omissions, please let me know!  It is only with
 YOUR help that the list can continue to grow at the current rate.  Please send
@@ -34,7 +36,7 @@ that they have already been addressed.
 
 ARPA: ralf@cs.cmu.edu
 UUCP: {ucbvax,harvard}!cs.cmu.edu!ralf
-BIT:  ralf%cs.cmu.edu@cmuccvma
+BIT:  ralf%cs.cmu.edu@carnegie
 FIDO: Ralf Brown 1:129/26.1
 	or post a message to me in the DR_DEBUG echo
 CIS:  >INTERNET:ralf@cs.cmu.edu 
@@ -51,13 +53,16 @@ DISCLAIMER:  THIS MATERIAL IS PROVIDED "AS IS".	 I verify the information
 contained in this list to the best of my ability, but I cannot be held
 responsible for any problems caused by use or misuse of the information,
 especially for those functions not officially  documented.  If it is marked
-"internal", you should check it carefully to make sure it works the same
-way in your version of the software (and please let me know whether or not
-it works the same way).	 Information marked with "???" is known to be
-incomplete or guesswork.
+"internal" or undocumented, you should check it carefully to make sure it
+works the same way in your version of the software (and please let me know
+whether or not it works the same way).  Information marked with "???" is
+known to be incomplete or guesswork.
 ---------------------------------------------
 The use of -> instead of = signifies that the indicated register or register
-pair contains a pointer to the specified item, rather than the item itself
+pair contains a pointer to the specified item, rather than the item itself.
+One or more letters may follow the interrupt number; they have the following
+meanings:  U - undocumented function, u - partially documented function,
+P - available only in protected mode, R - available only in real or V86 mode
 ----------00---------------------------------
 INT 00 - CPU-generated - DIVIDE ERROR
 Notes:	generated if the divisor of a DIV or IDIV instruction is zero or the
@@ -169,7 +174,7 @@ SeeAlso: INT 0C"CPU",INT 0D"CPU"
 INT 06 - HP 95LX - SLEEP/WAKEUP
 Note:	called just before going into light or deep (shutdown) sleep and just
 	  after returning from light or deep sleep
-SeeAlso: INT 0B"HP 95LX"
+SeeAlso: INT 0B"HP 95LX",INT 15/AX=4DD4h,INT 15/AH=4Eh
 ----------07---------------------------------
 INT 07 - CPU-generated (80286+) - PROCESSOR EXTENSION NOT AVAILABLE
 Notes:	automatically called if a coprocessor instruction is encountered when
@@ -202,22 +207,23 @@ Notes:	called when multiple exceptions occur on one instruction, or an
 ----------09---------------------------------
 INT 09 - IRQ1 - KEYBOARD DATA READY
 Notes:	generated when data is received from the keyboard.  This is normally a
-	  scan code, but may also be an ACK or NAK of a command on AT-class
-	  keyboards.
+	  scan code (from either a keypress *or* a key release), but may also
+	  be an ACK or NAK of a command on AT-class keyboards.
 	may be masked by setting bit 1 on I/O port 21h
 	if the BIOS supports an enhanced (101/102-key) keyboard, it calls
 	  INT 15/AH=4Fh after reading the scan code from the keyboard and
 	  before further processing
 	the interrupt handler performs the following actions for certain
 	  special keystrokes:
-	    Ctrl-Break	 invoke INT 1B, set flag at 0040h:0071h
+	    Ctrl-Break	 clear keyboard buffer, place word 0000h in buffer,
+	    		 invoke INT 1B, and set flag at 0040h:0071h
 	    SysRq	 invoke INT 15/AH=85h
 	    Ctrl-Numlock place system in a tight wait loop until next INT 09
 	    Ctrl-Alt-Del jump to BIOS startup code (either F000h:FFF0h or the
 			   destination of the jump at that address)
 	    Shift-PrtSc	 invoke INT 05
 SeeAlso: INT 05,INT 0B"HP 95LX",INT 15/AH=4Fh,INT 15/AH=85h,INT 16,INT 1B
-SeeAlso: INT 51"DESQview",INT 59"DoubleDOS",INT 79"GO32"
+SeeAlso: INT 2F/AX=A901h,INT 51"DESQview",INT 59"DoubleDOS",INT 79"GO32"
 ----------09---------------------------------
 INT 09 - CPU-generated (80286+) - PROCESSOR EXTENSION PROTECTION ERROR
 Notes:	called if the coprocessor attempts to access memory outside a segment
@@ -229,7 +235,7 @@ Notes:	called if the coprocessor attempts to access memory outside a segment
 	  coprocessor is still busy waiting for data
 SeeAlso: INT 07"CPU"
 ----------09---------------------------------
-INT 09 - internal hardware - RESERVED BY Intel (80486 protected mode)
+INT 09 P - internal hardware - RESERVED BY Intel (80486)
 Note:	this exception has been moved to INT 0D
 SeeAlso: INT 09"MATH",INT 0D
 ----------0A---------------------------------
@@ -257,7 +263,7 @@ Note:	newer Roland cards and MIDI interfaces by other manufacturers use
 	  to IRQ2
 SeeAlso: INT 52"DESQview",INT 5A"DoubleDOS",INT 71,INT 7A"GO32"
 ----------0A---------------------------------
-INT 0A - CPU-generated (80286+ protected mode) - INVALID TASK STATE SEGMENT
+INT 0A P - CPU-generated (80286+) - INVALID TASK STATE SEGMENT
 Notes:	automatically called during a task switch if the new TSS specified by
 	  the task gate is invalid for any of the following reasons:
 		TSS limit is less than 43 (80286) or 103 (80386/80486)
@@ -281,7 +287,7 @@ Notes:	the TOPS and PCnet adapters use this interrupt request line as an
 	may be masked by setting bit 3 on I/O port 21h
 SeeAlso: INT 0C"COM1",INT 53"DESQview",INT 5B"DoubleDOS",INT 7B"GO32"
 ----------0B---------------------------------
-INT 0B - CPU-generated (80286+ protected mode) - SEGMENT NOT PRESENT
+INT 0B P - CPU-generated (80286+) - SEGMENT NOT PRESENT
 Notes:	generated when loading a segment register if the segment descriptor
 	  indicates that the segment is not currently in memory, unless the
 	  segment is an LDT (see INT 0A"CPU") or stack segment (see
@@ -292,7 +298,7 @@ SeeAlso: INT 0A"CPU",INT 0E"hardware"
 ----------0B---------------------------------
 INT 0B - HP 95LX - LOW-LEVEL KEYBOARD HANDLER
 Note:	debounces key, places the keycode in I/O register 60h, and calls INT 09
-SeeAlso: INT 09,INT 0D"HP 95LX"
+SeeAlso: INT 09,INT 0D"HP 95LX",INT 15/AX=4DD4h
 ----------0C---------------------------------
 INT 0C - IRQ4 - SERIAL COMMUNICATIONS (COM1)
 Notes:	on many PC's, COM3 shares this interrupt
@@ -355,7 +361,7 @@ INT 0D - IRQ5 - Tandy 1000 60 Hz RAM REFRESH
 SeeAlso: INT 55
 ----------0D---------------------------------
 INT 0D - HP 95LX - INFRARED INTERRUPT
-SeeAlso: INT 0B"HP 95LX",INT 0E"HP 95LX"
+SeeAlso: INT 0B"HP 95LX",INT 0E"HP 95LX",INT 15/AX=4DD4h
 ----------0D---------------------------------
 INT 0D - CPU-generated (80286+) - GENERAL PROTECTION VIOLATION
 Notes:	called in real mode when
@@ -387,7 +393,7 @@ Note:	used to implement virtual memory
 SeeAlso: INT 0B"hardware"
 ----------0E---------------------------------
 INT 0E - HP 95LX - EXTERNAL CARD INTERRUPT
-SeeAlso: INT 0D"HP 95LX",INT 0F"HP 95LX"
+SeeAlso: INT 0D"HP 95LX",INT 0F"HP 95LX",INT 15/AX=4DD4h
 ----------0F---------------------------------
 INT 0F - IRQ7 - PARALLEL PRINTER
 Notes:	generated by the LPT1 printer adapter when printer becomes ready
@@ -397,7 +403,7 @@ Notes:	generated by the LPT1 printer adapter when printer becomes ready
 SeeAlso: INT 0D"LPT2",INT 57"DESQview",INT 5F"DoubleDOS",INT 7F"GO32"
 ----------0F---------------------------------
 INT 0F - HP 95LX - REAL-TIME CLOCK
-SeeAlso: INT 0E"HP 95LX",INT 70
+SeeAlso: INT 0E"HP 95LX",INT 15/AX=4DD4h,INT 70
 ----------10---------------------------------
 INT 10 - CPU-generated (80286+) - COPROCESSOR ERROR
 Notes:	generated by the CPU when the -ERROR pin is asserted by the coprocessor
@@ -410,13 +416,13 @@ INT 10 - VIDEO - SET VIDEO MODE
 	AL = mode (see below)
 Return: AL = video mode flag (Phoenix BIOS)
 	    20h mode > 7
-	    30h modes <= 7 except mode 6
+	    30h modes 0-5 and 7
 	    3Fh mode 6
 	AL = CRT controller mode byte (Phoenix 386 BIOS v1.10)
 Notes:	IBM standard modes do not clear the screen if the high bit of AL is set
 	  (EGA or higher only)
 	the Tseng ET4000 chipset is used by the Orchid Prodesigner II, Diamond
-	  SpeedSTAR VGA, Groundhog Graphics Shadow VGA
+	  SpeedSTAR VGA, Groundhog Graphics Shadow VGA, Boca Super X VGA
 	the installation check for Ahead adapters is the signature "AHEAD" at
 	  C000h:0025h
 	the installation check for ATI adapters is the signature "761295520" at
@@ -477,13 +483,14 @@ Values for video mode:
  06h = G   80x25  8x8	640x200	   2		B800 CGA,PCjr,EGA,MCGA,VGA
  07h = T   80x25  9x14		 mono	  var	B000 MDA,Hercules,EGA
      = T   80x25  9x16		 mono		B000 VGA
- 08h = G   20x25  8x8	160x200	  16		     PCjr
+ 08h = G   20x25  8x8	160x200	  16		     PCjr, Tandy 1000
      = T  132x25  8x8		  16		B800 ATI EGA/VGA Wonder [1]
      = T  132x25  8x8		 mono		B000 ATI EGA/VGA Wonder [1]
      = G   90x43  8x8	720x352	 mono		B000 Hercules + MSHERC.COM
  09h = G   40x25  8x8	320x200	  16		     PCjr
- 0Ah = G   80x25  8x8	640x200	   4		     PCjr
+ 0Ah = G   80x25  8x8	640x200	   4		     PCjr, Tandy 1000
  0Bh =	 reserved (used internally by EGA BIOS)
+     = G		640x200	  16		     Tandy 1000 SL/TL
  0Ch =	 reserved (used internally by EGA BIOS)
  0Dh = G   40x25  8x8	320x200	  16	   8	A000 EGA,VGA
  0Eh = G   80x25  8x8	640x200	  16	   4	A000 EGA,VGA
@@ -516,7 +523,8 @@ Values for video mode:
  1Ch = G		640x480	 256		     Tecmar VGA/AD
  1Dh = G		800x600	 256		     Tecmar VGA/AD
  20h = G		240x128			B000 HP 95LX
- 21h = G   80x43  8x8	720x348	 mono		B000 DESQview 2.x+Hercules [3]
+ 21h = T  132x60                  16       2    B800 Tseng ET4000 chipset
+     = G   80x43  8x8	720x348	 mono		B000 DESQview 2.x+Hercules [3]
  22h = T  132x44  8x8				     Tseng Labs EVA
      = T  132x44  8x8		 16/256	   2	B800 Tseng ET4000 chipset
      = T  132x44  8x8				     Ahead Systems EGA2001
@@ -541,21 +549,23 @@ Values for video mode:
      = G		640x480	  16		     VEGA VGA
      = G   80x60  8x8	640x480	  16		A000 Orchid Prodesigner VGA
      = G   80x60  8x8	640x480	  16	   1	A000 Ahead B (same as 26h)
+     = G		640x480	  16		     NEC GB-1
  26h = T   80x60  8x8				     Tseng Labs EVA
      = T   80x60  8x8		 16/256	   2	B800 Tseng ET4000 chipset
-     = G   80x60  8x8	640x480			     Ahead Systems EGA2001
-     = G   80x60  8x8	640x480	  16	   1	A000 Ahead B (same as 25h)
      = T   80x60				     Allstar Peacock (VGA)
      = T   80x60		  16		     Orchid ProDesigner VGA
- 27h = G		720x512	  16		     VEGA VGA
+     = G   80x60  8x8	640x480			     Ahead Systems EGA2001
+     = G   80x60  8x8	640x480	  16	   1	A000 Ahead B (same as 25h)
+ 27h = T  132x25  8x8		 mono		B000 ATI EGA Wonder,ATI VIP
+     = G		720x512	  16		     VEGA VGA
      = G		720x512	  16		     Genoa
-     = T  132x25  8x8		 mono		B000 ATI EGA Wonder,ATI VIP
  28h = T  ???x???				     VEGA VGA
  29h = G		800x600	  16		     VEGA VGA
      = G  100x37  8x16	800x600	  16		A000 Orchid
      = G		800x600	  16		A000 STB,Genoa,Sigma
      = G		800x600	  16		     Allstar Peacock (VGA)
      = G  100x37  8x16	800x600	 16/256	   1	A000 Tseng ET3000/4000 chipset
+     = G		800x600	 ???		     EIZO MDB10
  2Ah = T  100x40				     Allstar Peacock (VGA)
      = T  100x40  8x16		  16		     Orchid Prodesigner VGA
      = T  100x40  8x15		16/256	   4	B800 Tseng ET4000 chipset
@@ -566,10 +576,10 @@ Values for video mode:
      = G   80x30  8x16	640x480 256/256k	A000 Orchid
      = G		640x480 256/256k	A000 STB,Genoa,Sigma
      = G   80x30  8x16	640x480 256/256k   1	A000 Tseng ET3000/4000 chipset
- 2Fh = G		720x512	 256		     VEGA VGA
+ 2Fh = T  160x50  8x8  1280x400	  16	   4	B800 Ahead B (Wizard/3270)
+     = G		720x512	 256		     VEGA VGA
      = G		720x512	 256		     Genoa
      = G   80x25  8x16	640x400 256/256k   1	A000 Tseng ET4000 chipset
-     = T  160x50  8x8  1280x400	  16	   4	B800 Ahead B (Wizard/3270)
  30h = G		800x600	 256		     VEGA VGA
      = G  100x37  8x16	800x600 256/256k	A000 Orchid 
      = G		800x600 256/256k	A000 STB,Genoa,Sigma
@@ -583,17 +593,18 @@ Values for video mode:
  34h = T   80x66  8x8		  16	   4	B800 Ahead B (Wizard/3270)
  36h = G		960x720	  16		     VEGA VGA
      = G		960x720	  16		     STB
-     = G		960x720	  16		     Tseng ET3000
+     = G		960x720	  16		     Tseng ET3000 only
  37h = G	       1024x768	  16		     VEGA VGA
      = G  128x48  8x16 1024x768	  16		A000 Orchid
      = G	       1024x768	  16		A000 STB,Genoa,Sigma
      = G	       1024x768	  16		     Definicon
-     = G	       1024x768	  16		     Tseng ET3000
+     = G  128x48  8x16 1024x768	  16	   1    A000 Tseng ET3000/4000
      = T  132x44  8x8		 mono		B800 ATI EGA Wonder,ATI VIP
  38h = G	       1024x768	 256		     STB VGA/EM-16 Plus (1MB)
      = G  128x48  8x16 1024x768 256/256k   1	A000 Tseng ET4000 chipset
      = G	       1024x768	 256		     Orchid ProDesigner II
  3Dh = G	       1280x1024  16		     Definicon
+     = G  128x64  8x16 1280x1024  16	   1    A000 Tseng ET4000 BIOS v3.00[6]
  3Eh = G	       1280x961	  16		     Definicon
  40h = G   80x25  8x16	640x400	   2	   1	B800 AT&T 6300, AT&T VDC600
      = G   80x25  8x16	640x400	   2	   1	B800 Compaq Portable
@@ -704,6 +715,7 @@ Values for video mode:
      = G		800x600	  16		     AST VGA Plus, Compaq VGA
      = G		800x600	  16		     Dell VGA
      = G		800x600	  16		     Hewlett-Packard D1180A
+     = G		800x600	 ???		     ELT VGA PLUS 16
      = T  132x30  9x16		 16/256k	B800 Trident TVGA 8800/8900
  59h = G  100x75  8x8	800x600	   2		A000 Paradise VGA
      = G  100x75  8x8	800x600	   2		     AT&T VDC600
@@ -717,6 +729,7 @@ Values for video mode:
      = G		640x350	 256		     Genoa 6400
      = T   80x30  8x16				B800 ATI VGA Wonder (undoc)
      = G  100x75  8x8	800x600	 16/256k	A000 Trident TVGA 8800, 8900
+     = G		800x600	 ???		     Vobis MVGA
  5Ch = G		640x400	 256		     Logix, ATI Prism Elite
      = G		640x400	 256		     Maxxon, SEFCO TVGA, Imtec
      = G   80x25  8x16	640x400	 256/256k	A000 Zymos Poach, Hi Res 512
@@ -773,6 +786,7 @@ Values for video mode:
  64h = G	       1024x768	   4		     Video7 V-RAM VGA
      = G  128x48  8x16 1024x768	 256		A000 ATI VGA Wonder Plus
      = G		800x600	  16		     MORSE VGA
+     = G		800x600	 ???		     SAMPO-Mira VGA
  65h = G	       1024x768	  16		     Video7 V-RAM VGA
      = G  128x48  8x16 1024x768	  16		A000 ATI VGA Wonder
  66h = G		640x400	 256		     Tatung VGA
@@ -805,18 +819,22 @@ Values for video mode:
      = T   80x66  8x8		  16		B800 Quadram Ultra VGA
  75h = G  128x48  8x16 1024x768	   4	   1	A000 Ahead B
      = G   80x66	640x528	  16???		A000 Quadram Ultra VGA
+     = G		640x528	  16		     Geno Super EGA Hirez+
  76h = G  128x48  8x16 1024x768	   2	   1	A000 Ahead B
      = T   94x29  8x14		  16		B800 Quadram Ultra VGA
  77h = G   94x29	752x410	  16???		A000 Quadram Ultra VGA
+     = G		752x410	  16		     Genoa Super EGA Hirez+
  78h = G		640x400	 256		     STB VGA/EM-16 Plus
      = G		640x400	 256		     Cardinal, C&T chipset
      = T  100x75  8x8		  16		B800 Quadram Ultra VGA
  79h = G		640x480	 256		     Cardinal, C&T chipset
      = G  100x75	800x600	  16???		A000 Quadram Ultra VGA
+     = G		800x600	  16		     Genoa Super EGA Hirez+
  7Ah = G		720x540	 256		     C&T chipset, Cardinal
      = T  114x60  8x8		  16		B800 Quadram Ultra VGA
  7Bh = G		800x600	 256		     C&T chipset, Cardinal
      = G  114x60	912x480	  16???		A000 Quadram Ultra VGA
+     = G		912x480	  16		     Genoa Super EGA Hirez+
  7Ch = G		512x512	  16		     Genoa
  7Dh = G		512x512	 256		     Genoa
  7Eh =	 special mode set (see AX=007Eh)	     Paradise VGA, AT&T VDC600
@@ -840,7 +858,10 @@ Notes:
       22h is page 1) even if there is no Hercules graphics board installed
 [4] ATI BIOS v4-1.00 has a text-scrolling bug in this mode
 [5] for AT&T VDC overlay modes, BL contains the DEB mode, which may be 06h,
-	  40h, or 44h
+      40h, or 44h
+[6] BIOS text support is broken in this undocumented mode; scrolling moves only
+      about 1/3 of the screen (and does even that portion incorrectly), while
+      screen clears only clear about 3/4.
 ----------100070-----------------------------
 INT 10 - VIDEO - Everex Micro Enhancer EGA/Viewpoint VGA - EXTENDED MODE SET
 	AX = 0070h
@@ -953,7 +974,7 @@ INT 10 - VIDEO - SET CURSOR POSITION
 	    0 in graphics modes
 	DH = row (00h is top)
 	DL = column (00h is left)
-SeeAlso: AH=03h,AH=05h
+SeeAlso: AH=03h,AH=05h,INT 60/DI=030Bh
 ----------1003-------------------------------
 INT 10 - VIDEO - GET CURSOR POSITION AND SIZE
 	AH = 03h
@@ -1161,7 +1182,7 @@ INT 10 - VUIMAGE DISPLAY DRIVER (v2.20 and below)
 			DH = 01h
 	    02h get first video mode's parameters
 		Return: AX = BIOS mode number
-			BX = widht in pixels
+			BX = width in pixels
 			CX = height in pixels
 			DX = number of colors
 	    03h get next video mode's parameters
@@ -1192,6 +1213,13 @@ Notes:	BWE is a TSR by John J. Seal published in May 1986 Dr. Dobb's Journal
 	when a window has been set, all output via AH=0Eh is restricted to
 	  the specified window
 SeeAlso: AH=11h"Window",AH=12h"Window"
+----------1010-------------------------------
+INT 10 - VIDEO - Eagle PC2 BIOS Rev. C - SET SCROLL SPEED
+	AH = 10h
+	AL = speed
+	    00h fast
+	    01h slow (only moves characters during vertical retrace)
+Return: AH = previous speed
 ----------101000----------------------------
 INT 10 - VIDEO - SET SINGLE PALETTE REGISTER (PCjr,EGA,MCGA,VGA)
 	AX = 1000h
@@ -1320,12 +1348,12 @@ INT 10 - VIDEO - READ BLOCK OF DAC REGISTERS (VGA/MCGA)
 Return: buffer filled with CX red, green and blue triples
 SeeAlso: AX=1012h,AX=1015h
 ----------101018-----------------------------
-INT 10 - VIDEO - undocumented - SET PEL MASK (VGA/MCGA)
+INT 10 U - VIDEO - SET PEL MASK (VGA/MCGA)
 	AX = 1018h
 	BL = new PEL value
 SeeAlso: AX=1019h
 ----------101019-----------------------------
-INT 10 - VIDEO - undocumented - READ PEL MASK (VGA/MCGA)
+INT 10 U - VIDEO - READ PEL MASK (VGA/MCGA)
 	AX = 1019h
 Return:	BL = value read
 SeeAlso: AX=1018h
@@ -1353,23 +1381,37 @@ INT 10 - VIDEO - Tseng ET-4000 BIOS - SET HiColor GRAPHICS MODE
 		2Eh = 640x480
 		2Fh = 640x400
 		30h = 800x600
-Return:	AX = 0000h if successful
-	     other on error
+Return:	AL = 10h if supported
+	AH = status
+	    00h if successful
+	    other on error
 Note:	the Tseng HiColor BIOS extensions are supported by:
 	  Diamond Computer Systems	SpeedStar HiColor VGA
 	  Everex Systems		HC VGA
 	  Focus Information Systems	2theMax 4000
 	  Cardinal Technologies		VGA732
 	  Orchid ProDesigner IIs
-SeeAlso: AX=10F1h
+SeeAlso: AX=10F1h,AX=10F2h
 ----------1010F1-----------------------------
 INT 10 - VIDEO - Tseng ET-4000 BIOS - GET DAC TYPE
 	AX = 10F1h
-Return: BL = type of digital/analog converter
+Return: AL = 10h if supported
+	BL = type of digital/analog converter
 	    00h normal VGA DAC
 	    01h Sierra SC1148x HiColor DAC
+	    02h new Sierra DAC
 	   else other HiColor DAC
-SeeAlso: AX=10F0h
+SeeAlso: AX=10F0h,AX=10F2h
+----------1010F2-----------------------------
+INT 10 - VIDEO - Tseng ET-4000 BIOS v3.00 - ???
+	AX = 10F2h
+	BL = ???
+Return: AL = 10h if supported
+	AH = status???
+	    00h ???
+	    01h ???
+	BL = ???
+SeeAlso: AX=10F0h,AX=10F1h
 ----------1011-------------------------------
 INT 10 - BIOS Window Extension v1.1 - GET WINDOW COORDINATES
 	AH = 11h
@@ -1493,6 +1535,12 @@ Notes:	installs a PrtSc routine from the video card's BIOS to replace the
 	  understand screen heights other than 25 lines
 	some adapters disable print-screen instead of enhancing it
 SeeAlso: INT 05
+----------1012--BL2E-------------------------
+INT 10 - Tseng ET-4000 BIOS v3.00 - BUG
+	AH = 12h
+	BL = 2Eh
+Note:	due to an omitted end-of-list marker, this version of the BIOS will
+	  crash the system on this function
 ----------1012--BL30-------------------------
 INT 10 - VIDEO - ALTERNATE FUNCTION SELECT (VGA) - SELECT VERTICAL RESOLUTION
 	AH = 12h
@@ -1605,6 +1653,36 @@ Offset	Size	Description
 		11h light pen (low)
  23h 20 BYTEs	default palette (values for Attribute Controller regs 00h-13h)
  37h  9 BYTEs	values for Graphics Controller registers 00h-08h
+----------1012--BL74-------------------------
+INT 10 - Tseng ET-4000 BIOS v3.00 - BUG
+	AH = 12h
+	BL = 74h
+Note:	due to an omitted end-of-list marker, this version of the BIOS will
+	  crash the system on this function
+----------1012--BL80-------------------------
+INT 10 - Tseng ET-4000 BIOS v3.00 - BUG
+	AH = 12h
+	BL = 80h
+Note:	due to an omitted end-of-list marker, this version of the BIOS will
+	  crash the system on this function
+----------1012--BLBE-------------------------
+INT 10 - Tseng ET-4000 BIOS v3.00 - BUG
+	AH = 12h
+	BL = BEh
+Note:	due to an omitted end-of-list marker, this version of the BIOS will
+	  crash the system on this function
+----------1012--BLC6-------------------------
+INT 10 - Tseng ET-4000 BIOS v3.00 - BUG
+	AH = 12h
+	BL = C6h
+Note:	due to an omitted end-of-list marker, this version of the BIOS will
+	  crash the system on this function
+----------1012--BLF0-------------------------
+INT 10 - Tseng ET-4000 BIOS v3.00 - BUG
+	AH = 12h
+	BL = F0h
+Note:	due to an omitted end-of-list marker, this version of the BIOS will
+	  crash the system on this function
 ----------1013-------------------------------
 INT 10 - VIDEO - WRITE STRING (AT and later,EGA)
 	AH = 13h
@@ -1821,6 +1899,11 @@ INT 10 - VIDEO - SAVE/RESTORE VIDEO STATE (PS50+,VGA)
 		 2 color registers and DAC state
 	      3-15 reserved
 Return: AL = 1Ch if function supported
+----------101D-------------------------------
+INT 10 - Tseng ET-4000 BIOS v3.00 - BUG
+	AH = 1Dh
+Note:	this version of the BIOS jumps to a random location on this function
+	  due to a fencepost error
 ----------103000CX0000-----------------------
 INT 10 - VIDEO - LOCATE 3270PC CONFIGURATION TABLE (INSTALLATION CHECK)
 	AX = 3000h
@@ -1869,6 +1952,22 @@ Offset	Size	Description
 		04xxh = 3270 Workstation Program v1.xx
  02h	BYTE	Control Program ID (00h)
  03h 27 BYTEs	Control Program Descriptor ("IBM 3270 PC CONTROL PROGRAM")
+----------1038-------------------------------
+INT 10 - Tinytalk Personal v1.09f - GET CONFIGURATION INFO
+	AH = 38h
+Return: ES:DI -> configuration info (see below)
+Notes:	Tinytalk is a shareware screen reader by OMS Development/Eric Bohlman
+	this call is also used as the installation check by verifying that the
+	  returned ES:DI points at valid configuration info
+SeeAlso: INT 14/AX=F0F1h,INT 2F/FB00h"AutoBraille"
+
+Format of configuration info:
+Offset	Size	Description
+ 00h  8 BYTEs	signature "TTCONFIG"
+ 08h	WORD	size of configuration data, not counting signature, this WORD,
+ 		or the following byte
+ 0Ah	BYTE	???
+ 0Bh	???	configuration data
 ----------1040-------------------------------
 INT 10 - VIDEO - SET GRAPHICS MODE (Hercules GRAFIX)
 	AH = 40h
@@ -2085,11 +2184,19 @@ Offset	Size	Description
  12h	WORD	width in pixels
  14h	WORD	height in pixels
  16h	BYTE	width of character cell in pixels
- 17h	BYTE	height if character cell in pixels
+ 17h	BYTE	height of character cell in pixels
  18h	BYTE	number of memory planes
  19h	BYTE	number of bits per pixel
  1Ah	BYTE	number of banks
  1Bh	BYTE	memory model type
+ 		00h text
+		01h CGA graphics
+		02h HGC graphics
+		03h 16-color (EGA) graphics
+		04h packed pixel graphics
+		05h "sequ 256" graphics
+		06h-0Fh reserved for VESA
+		10h-FFh OEM memory model
  1Ch	BYTE	size of bank in K
 ----------104F02-----------------------------
 INT 10 - VESA SuperVGA BIOS - SET SuperVGA VIDEO MODE
@@ -2160,7 +2267,7 @@ Return: AL = 4Fh function supported
 	AH = status
 	    00h successful
 	    01h failed
-SeeAlso: AX=4F06h,AX=4F07h,AX=7000h/BX=0004h
+SeeAlso: AX=4F01h,AX=4F06h,AX=4F07h,AX=7000h/BX=0004h
 ----------104F06-----------------------------
 INT 10 - VESA SuperVGA BIOS v1.1 - GET/SET LOGICAL SCAN LINE LENGTH
 	AX = 4F06h
@@ -2203,6 +2310,7 @@ SeeAlso: AX=4F01h,AX=4F05h,AX=4F06h
 INT 10 - VESA SuperVGA BIOS - Everex - TURN VESA ON/OFF
 	AX = 4FFFh
 	DL = new state (00h off, 01h on)
+Return: AX = 0000h if successful
 ----------1050-------------------------------
 INT 10 - SCROLOCK.COM - INSTALLATION CHECK
 	AH = 50h
@@ -2823,7 +2931,7 @@ Return: AL != 7Fh if not supported
 		01h failed
 SeeAlso: AH=06h
 ----------1080--DX4456-----------------------
-INT 10 - VIDEO (DESQview 2.0x only) - internal - SET ??? HANDLER
+INT 10 U - VIDEO (DESQview 2.0x only) - internal - SET ??? HANDLER
 	AH = 80h
 	DX = 4456h ('DV')
 	ES:DI -> FAR subroutine to be called on ???
@@ -2833,7 +2941,7 @@ Note:	this function is probably meant for internal use only, due to the magic
 	the subroutine seems to be called when the DESQview menu is accessed;
 	  on entry, AL = 03h or 04h
 ----------1081--DX4456-----------------------
-INT 10 - VIDEO (DESQview 2.0x only) - internal - GET ???
+INT 10 U - VIDEO (DESQview 2.0x only) - internal - GET ???
 	AH = 81h
 	DX = 4456h ('DV')
 Return: ES = segment of DESQview data structure for video buffer
@@ -2842,7 +2950,7 @@ Note:	this function is probably meant for internal use only, due to the magic
 	  value required in DX
 SeeAlso: AH=82h
 ----------1082--DX4456-----------------------
-INT 10 - VIDEO (DESQview 2.0x only) - internal - GET CURRENT WINDOW INFO
+INT 10 U - VIDEO (DESQview 2.0x only) - internal - GET CURRENT WINDOW INFO
 	AH = 82h
 	DX = 4456h ('DV')
 Return: DS = segment in DESQview for data structure
@@ -3400,6 +3508,27 @@ INT 11 - BNU FOSSIL - INSTALLATION CHECK
 	DX = 1954h
 Return: AX = 1954h
 	ES:DX -> entry point of driver (instead of INT 14)
+----------11FF--SI6A6A-----------------------
+INT 11 - WD7000 SDLP interface - EXECUTE GENERIC SCSI COMMAND
+	AH = FFh
+	SI = 6A6Ah
+	AL = SCSI Addressing
+	    bits 2-0 SCSI Target LUN (logical unit number)
+	    bits 5-3 SCSI Target ID
+	    bit 7    write flag, set for write operations, clear otherwise
+	CX = bytes of data to be transmitted (max FFF0h)
+	DH = 00h
+	DL = length of SCSI Command Descriptor Block
+	DS:DI -> SCSI Command Descriptor Block
+	ES:BX -> data buffer
+Return: CF set on error
+	    AL = error code
+	CF clear if successful
+Note:	because of busmaster operations with WD7000FASST avoid accessing
+	  video memory directly; check 386 memory manager for VDS support.
+	  The WD7000XTAT works with programmed IO and does not have this
+	  limitation.
+SeeAlso: INT 21/AX=4402"ASPI"
 ----------11FFFECXFFFE-----------------------
 INT 11 - BACK&FORTH (before v1.62) API
 	AX = FFFEh
@@ -3478,13 +3607,17 @@ INT 13 - DISK - RESET DISK SYSTEM
 	AH = 00h
 	DL = drive (if bit 7 is set both hard disks and floppy disks reset)
 Return: AH = status (see AH=01h)
+	CF clear if successful (returned AH=00h)
+	CF set on error
 Note:	forces controller to recalibrate drive heads (seek to track 0)
 SeeAlso: AH=0Dh,AH=11h,INT 21/AH=0Dh,INT 4E"TI Professional"
 ----------1301-------------------------------
 INT 13 - DISK - GET STATUS OF LAST OPERATION
 	AH = 01h
 	DL = drive (bit 7 set for hard disk)
-Return: AH = status of previous operation
+Return: CF clear if successful (returned status 00h)
+	CF set on error
+	AH = status of previous operation
 	    00h successful completion
 	    01h invalid function in AH or invalid parameter
 	    02h address mark not found
@@ -3653,6 +3786,7 @@ Return: CF set on error
 		02h 1.2M
 		03h 720K
 		04h 1.44M
+		06h ??? (checked by 386MAX v6.01)
 	    CH = low eight bits of maximum cylinder number
 	    CL = maximum sector number (bits 5-0)
 		 high two bits of maximum cylinder number (bits 7-6)
@@ -3859,9 +3993,9 @@ SeeAlso: AH=15h,AH=18h
 INT 13 - DISK - SET MEDIA TYPE FOR FORMAT (AT model 3x9,XT2,XT286,PS)
 	AH = 18h
 	DL = drive number
-	CH = lower 8 bits of number of tracks
+	CH = lower 8 bits of highest cylinder number (number of cylinders - 1)
 	CL = sectors per track (bits 0-5)
-	     top 2 bits of number of tracks (bits 6,7)
+	     top 2 bits of highest cylinder number (bits 6,7)
 Return: AH = status
 	    00h requested combination supported
 	    01h function not available
@@ -3922,7 +4056,7 @@ INT 13 - ESDI FIXED DISK - FORMAT UNIT (PS)
 	ES:BX -> defect table
 Return: CF set on error
 	AH = status (see AH=01h)
-Note:	if periodic interrupt selected, INT 15h/AH=0Fh is called after each
+Note:	if periodic interrupt selected, INT 15/AH=0Fh is called after each
 	  cylinder is formatted
 SeeAlso: AH=07h,INT 15/AH=0Fh
 ----------131A-------------------------------
@@ -4199,8 +4333,8 @@ INT 13 - Super PC Kwik/PC-Cache 5.x - ???
 	SI = 4358h
 	???
 Return: ???
-Note:	PC Tools PC-Cache 5.x is an OEM version of Super PC Kwik, and thus
-	  supports this call
+Note:	PC Tools PC-Cache 5.x and Qualitas Qcache 4.00 are OEM versions of
+	  Super PC Kwik, and thus support this call
 	returns immediately in PC-Cache v5.x
 ----------1382--SI4358-----------------------
 INT 13 - Super PC Kwik/PC-Cache 5.x - ???
@@ -4208,8 +4342,8 @@ INT 13 - Super PC Kwik/PC-Cache 5.x - ???
 	SI = 4358h
 	???
 Return: AL = ???
-Note:	PC Tools PC-Cache 5.x is an OEM version of Super PC Kwik, and thus
-	  supports this call
+Note:	PC Tools PC-Cache 5.x and Qualitas Qcache 4.00 are OEM versions of
+	  Super PC Kwik, and thus support this call
 SeeAlso: AH=84h
 ----------1383--SI4358-----------------------
 INT 13 - Super PC Kwik/PC-Cache 5.x - ???
@@ -4219,8 +4353,8 @@ INT 13 - Super PC Kwik/PC-Cache 5.x - ???
 	ES:BX -> ???
 	???
 Return: ???
-Note:	PC Tools PC-Cache 5.x is an OEM version of Super PC Kwik, and thus
-	  supports this call
+Note:	PC Tools PC-Cache 5.x and Qualitas Qcache 4.00 are OEM versions of
+	  Super PC Kwik, and thus support this call
 SeeAlso: AH=85h
 ----------1384--SI4358-----------------------
 INT 13 - Super PC Kwik/PC-Cache 5.x - ???
@@ -4229,8 +4363,8 @@ INT 13 - Super PC Kwik/PC-Cache 5.x - ???
 	AL = ???
 	???
 Return: AL = ???
-Note:	PC Tools PC-Cache 5.x is an OEM version of Super PC Kwik, and thus
-	  supports this call
+Note:	PC Tools PC-Cache 5.x and Qualitas Qcache 4.00 are OEM versions of
+	  Super PC Kwik, and thus support this call
 SeeAlso: AH=82h
 ----------1385--SI4358-----------------------
 INT 13 - Super PC Kwik/PC-Cache 5.x - ???
@@ -4240,9 +4374,27 @@ INT 13 - Super PC Kwik/PC-Cache 5.x - ???
 	DL = ???
 	???
 Return: ???
-Note:	PC Tools PC-Cache 5.x is an OEM version of Super PC Kwik, and thus
-	  supports this call
+Note:	PC Tools PC-Cache 5.x and Qualitas Qcache 4.00 are OEM versions of
+	  Super PC Kwik, and thus support this call
 SeeAlso: AH=83h
+----------1386--SI4358-----------------------
+INT 13 - Qualitas Qcache v4.00 - ???
+	AH = 86h
+	SI = 4358h
+	???
+Return: ???
+----------1387--SI4358-----------------------
+INT 13 - Qualitas Qcache v4.00 - ???
+	AH = 87h
+	SI = 4358h
+	???
+Return: ???
+----------1388--SI4358-----------------------
+INT 13 - Qualitas Qcache v4.00 - ???
+	AH = 88h
+	SI = 4358h
+	???
+Return: ???
 ----------138EED-----------------------------
 INT 13 - HyperDisk v4.01+ - ???
 	AX = 8EEDh
@@ -4271,15 +4423,15 @@ INT 13 - Super PC Kwik - GET RESIDENT CODE SEGMENT
 	AH = A0h
 	SI = 4358h
 Return: AX = segment of resident code
-Note:	PC Tools PC-Cache 5.x is an OEM version of Super PC Kwik, and thus
-	  supports this call
+Note:	PC Tools PC-Cache 5.x and Qualitas Qcache 4.00 are OEM versions of
+	  Super PC Kwik, and thus support this call
 SeeAlso: INT 16/AX=FFA5h/CX=1111h
 ----------13A1--SI4358-----------------------
 INT 13 - Super PC Kwik - FLUSH CACHE
 	AH = A1h
 	SI = 4358h
-Note:	PC Tools PC-Cache 5.x is an OEM version of Super PC Kwik, and thus
-	  supports this call
+Note:	PC Tools PC-Cache 5.x and Qualitas Qcache 4.00 are OEM versions of
+	  Super PC Kwik, and thus support this call
 SeeAlso: INT 16/AX=FFA5h/CX=FFFFh
 ----------13A2--SI4358-----------------------
 INT 13 - Super PC Kwik - ???
@@ -4287,15 +4439,34 @@ INT 13 - Super PC Kwik - ???
 	SI = 4358h
 	???
 Return: ???
-Note:	PC Tools PC-Cache 5.x is an OEM version of Super PC Kwik, and thus
-	  supports this call
+Note:	PC Tools PC-Cache 5.x and Qualitas Qcache 4.00 are OEM versions of
+	  Super PC Kwik, and thus support this call
 ----------13A5-------------------------------
 INT 13 - Super PC Kwik - ???
 	AH = A5h
 	SI = ???
 Return: AX = ???
 	SI = ???
-Note:	called when a program terminates but stays resident (see INT 21/AH=31h)
+Notes:	called when a program terminates but stays resident (see INT 21/AH=31h)
+	this call is not supported by Qualitas Qcache 4.00
+----------13AA--SI4358-----------------------
+INT 13 - Qualitas Qcache v4.00 - ???
+	AH = AAh
+	SI = 4358h
+	???
+Return: ???
+----------13AB--SI4358-----------------------
+INT 13 - Qualitas Qcache v4.00 - ???
+	AH = ABh
+	SI = 4358h
+	???
+Return: ???
+----------13AC--SI4358-----------------------
+INT 13 - Qualitas Qcache v4.00 - ???
+	AH = ACh
+	SI = 4358h
+	???
+Return: ???
 ----------13AD-------------------------------
 INT 13 - Priam HARD DISK CONTROLLER???
 	AH = ADh
@@ -4304,6 +4475,12 @@ Return: ???
 Note:	this call is made from Priam's EFMT.EXE (low-level formatter), probably
 	  to check the ROM type on the controller for their hard disk kits
 SeeAlso: AH=70h
+----------13AD--SI4358-----------------------
+INT 13 - Qualitas Qcache v4.00 - ???
+	AH = ADh
+	SI = 4358h
+	???
+Return: ???
 ----------13B0--SI4358-----------------------
 INT 13 - Super PC Kwik - ???
 	AH = B0h
@@ -4311,7 +4488,7 @@ INT 13 - Super PC Kwik - ???
 	???
 Return: ???
 Note:	PC Tools PC-Cache 5.x is an OEM version of Super PC Kwik, and thus
-	  supports this call
+	  supports this call; Qualitas Qcache does not support it
 ----------13EE-------------------------------
 INT 13 - SWBIOS - SET 1024 CYLINDER FLAG
 	AH = EEh
@@ -4394,6 +4571,21 @@ Return: AH = RS-232 status code bits
 	    3: always 1
 	    7: DCD - carrier detect
 SeeAlso: AH=05h"FOSSIL",AH=81h"COMM-DRV",AH=82h"COURIERS"
+----------1400-------------------------------
+INT 14 - MBBIOS - INITIALIZE PORT
+	AH = 00h
+	AL = port parameters
+	    bits 7-5 data rate (110,150,300,600,1200,2400,4800,9600 bps)
+	     or if the high speed option is set
+	    bits 7-5 data rate (9600,14400,19200,28800,38400,57600,115200,330400 bps)
+	    bits 4-3 parity (00 or 10 = none, 01 = odd, 11 = even)
+	    bit 2    stop bits (set = 2, clear = 1)
+	    bits 1-0 data bits (00 = 5, 01 = 6, 10 = 7, 11 = 8)
+	DX = port number
+Return: AH = line status (see AH=03h)
+	AL = modem status (see AH=03h)
+Note:	MBBIOS was written by H. Roy Engehausen
+SeeAlso: AH=04h"MBBIOS",AH=05h"MBBIOS"
 ----------1401-------------------------------
 INT 14 - SERIAL - WRITE CHARACTER TO PORT
 	AH = 01h
@@ -4402,7 +4594,7 @@ INT 14 - SERIAL - WRITE CHARACTER TO PORT
 Return: AH bit 7 clear if successful
 	AH bit 7 set on error
 	AH bits 6-0 = port status (see AH=03h)
-SeeAlso: AH=02h,AH=0Bh,AH=89h
+SeeAlso: AH=02h,AH=0Bh"FOSSIL",AH=89h
 ----------1402-------------------------------
 INT 14 - SERIAL - READ CHARACTER FROM PORT
 	AH = 02h
@@ -4510,6 +4702,12 @@ Return: AH = status
 	    00h successful
 	    FFh error
 SeeAlso: AH=05h"Digiboard"
+----------1404-------------------------------
+INT 14 - MBBIOS - INQUIRY
+	AH = 04h
+Return: AH = AAh
+	AL = 55h
+SeeAlso: AH=00h"MBBIOS",AH=09h"MBBIOS"
 ----------1405-------------------------------
 INT 14 - SERIAL I/O - EXTENDED COMMUNICATION PORT CONTROL (CONVERTIBLE,PS)
 	AH = 05h
@@ -4562,6 +4760,12 @@ Return: AH = status
 	    00h successful
 	    FFh error
 SeeAlso: AH=04h"Digiboard"
+----------1405-------------------------------
+INT 14 - MBBIOS - DROP DTR AND RTS
+	AH = 05h
+	DX = port number
+Return: none
+SeeAlso: AH=00h"MBBIOS",AH=06h"MBBIOS",AH=06h"FOSSIL"
 ----------1406-------------------------------
 INT 14 - FOSSIL - RAISE/LOWER DTR
 	AH = 06h
@@ -4569,7 +4773,7 @@ INT 14 - FOSSIL - RAISE/LOWER DTR
 	AL = DTR state to be set
 	    00h = lower
 	    01h = raise
-SeeAlso: AH=1Ah
+SeeAlso: AH=05h"MBBIOS",AH=1Ah
 ----------1406-------------------------------
 INT 14 - MultiDOS Plus IODRV - WRITE CHARACTER TO PORT
 	AH = 06h
@@ -4581,6 +4785,12 @@ Notes:	the port number is stored at offset BEh in the Task Control Block
 	  character can be stored
 SeeAlso: AH=01h,AH=04h"MultiDOS",AH=05h"MultiDOS",AH=21h"MultiDOS"
 SeeAlso: INT 15/AH=13h"MultiDOS"
+----------1406-------------------------------
+INT 14 - MBBIOS - RAISE DTR AND RTS
+	AH = 06h
+	DX = port number
+Return: none
+SeeAlso: AH=05h"MBBIOS",AH=07h"MBBIOS"
 ----------1407-------------------------------
 INT 14 - FOSSIL - RETURN TIMER TICK PARAMETERS
 	AH = 07h
@@ -4597,6 +4807,12 @@ Return: CL = modem status (see AH=03h)
 Note:	the port number is stored at offset BEh in the Task Control Block
 SeeAlso: AH=03h,AH=05h"MultiDOS",AH=08h"MultiDOS",AH=09h"MultiDOS"
 SeeAlso: AH=23h"MultiDOS",INT 15/AH=13h"MultiDOS"
+----------1407-------------------------------
+INT 14 - MBBIOS - SEND BREAK
+	AH = 07h
+	DX = port number
+Return: none
+SeeAlso: AH=06h"MBBIOS"
 ----------1408-------------------------------
 INT 14 - FOSSIL - FLUSH OUTPUT BUFFER WAITING TILL ALL OUTPUT IS DONE
 	AH = 08h
@@ -4621,6 +4837,13 @@ Return: AH = RS232 status bits (see AH=03h)
 	ZF clear if character available
 	    AL = next character
 SeeAlso: AH=03h,AH=09h"Digiboard"
+----------1408-------------------------------
+INT 14 - MBBIOS - NON-DESTRUCTIVE READ
+	AH = 08h
+	DX = port number
+Return: AL = character
+	AH = status (see AH=02h)
+SeeAlso: AH=0Bh"MBBIOS",AH=0Ch"FOSSIL"
 ----------1409-------------------------------
 INT 14 - FOSSIL - PURGE OUTPUT BUFFER THROWING AWAY ALL PENDING OUTPUT
 	AH = 09h
@@ -4640,6 +4863,16 @@ Return: AH = status
 	    00h successful
 	    FFh error
 SeeAlso: AH=08h"Digiboard",AH=0Ah"Digiboard",AH=10h"Digiboard"
+----------1409-------------------------------
+INT 14 - MBBIOS - GET/SET OPTIONS
+	AH = 09h
+	AL = option byte
+		00000001b - Transmit Buffering Enabled
+		00000101b - Hardware Handshaking Enabled
+		00100000b - High Speed Option Enabled
+	DX = port number???
+Return: AL = old option byte
+SeeAlso: AH=04h"MBBIOS",AH=10h"FOSSIL"
 ----------140A-------------------------------
 INT 14 - FOSSIL - PURGE INPUT BUFFER THROWING AWAY ALL PENDING INPUT
 	AH = 0Ah
@@ -4651,6 +4884,15 @@ INT 14 - Digiboard DigiCHANNEL PC/X* - INPUT QUEUE CHECK
 	DX = port number (00h-03h) (04h-43h for XAPCM232.SYS)
 Return: AX = number of characters available in buffer
 SeeAlso: AH=09h"Digiboard",AH=0Dh"Digiboard"
+----------140A-------------------------------
+INT 14 - MBBIOS - WRITE BUFFER
+	AH = 0Ah
+	CX = count
+	ES:DI -> buffer
+Return: AX = status (see AH=03h)
+	DI = is updated
+	CX = unsent character count
+SeeAlso: AH=0Bh"MBBIOS",AH=19h"FOSSIL"
 ----------140B-------------------------------
 INT 14 - FOSSIL - TRANSMIT NO WAIT
 	AH = 0Bh
@@ -4659,13 +4901,23 @@ INT 14 - FOSSIL - TRANSMIT NO WAIT
 Return: AX = 0000h character not accepted
 	   = 0001h character accepted
 SeeAlso: AH=01h
+----------140B-------------------------------
+INT 14 - MBBIOS - READ BUFFER
+	AH = 0Bh
+	CX = size of buffer
+	ES:DI -> buffer
+Return: AH = LSR
+	AL = MSR
+	CX = count of characters
+	DI = is updated
+SeeAlso: AH=08h"MBBIOS",AH=0Ah"MBBIOS",AH=18h"FOSSIL"
 ----------140C-------------------------------
 INT 14 - FOSSIL - NON-DESTRUCTIVE READ AHEAD
 	AH = 0Ch
 	DX = port number
 Return: AX = FFFFh character not available
 	AX = 00xxh character xx available
-SeeAlso: AH=20h"FOSSIL"
+SeeAlso: AH=08h"MBBIOS",AH=20h"FOSSIL"
 ----------140D-------------------------------
 INT 14 - FOSSIL - KEYBOARD READ WITHOUT WAIT
 	AH = 0Dh
@@ -4707,7 +4959,7 @@ INT 14 - FOSSIL - ENABLE/DISABLE FLOW CONTROL
 	    3: xon/xoff on receive (send xoff when buffer near full)
 	    4-7: all 1
 	DX = port number
-SeeAlso: AH=10h"FOSSIL"
+SeeAlso: AH=09h"MBBIOS",AH=10h"FOSSIL"
 ----------140F-------------------------------
 INT 14 - Digiboard DigiCHANNEL PC/X* - READ STRING
 	AH = 0Fh
@@ -5504,7 +5756,7 @@ INT 14 - COURIERS.COM - CONFIGURE PORT
 	    bit 0: enable input flow control
 	    bit 1: enable output flow control
 	    bit 2: use X.PC protocol (not yet implemented)
-SeeAlso: AH=00h,AH=8Ch,INT 7Ah"X.PC"
+SeeAlso: AH=00h,AH=8Ch,INT 7A"X.PC"
 ----------1483-------------------------------
 INT 14 - SYSTEM FOSSIL
 	AH = 83h
@@ -5699,7 +5951,7 @@ Return: DX = segment of resident code
 	   = 0000h if not installed
 Note:	ASAP (Automatic Screen Access Program) is a shareware screen reader by
 	  MicroTalk
-SeeAlso: AX=F0F0h
+SeeAlso: AX=F0F0h,INT 10/AH=38h
 ----------14F4FF-----------------------------
 INT 14 - IBM/Yale EBIOS SERIAL I/O - INSTALLATION CHECK
 	AX = F4FFh

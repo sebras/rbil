@@ -1,32 +1,35 @@
-/***********************************************************************/
-/* INTPRINT.C by Ralf Brown.  Donated to the Public Domain.	       */
-/* Please do not remove my name from any copies or derivatives.        */
-/***********************************************************************/
-/* Program History:						       */
-/*   v1.00  4/23/89  initial public release			       */
-/*		     with 4/30/89 list				       */
-/*   v1.10  5/21/89  added -I and -f				       */
-/*   v1.11  1/6/90   fixed #endif's for compilers which don't handle   */
-/*		     labels					       */
-/*   v1.20  6/8/90   added -r					       */
-/*   v1.30  7/14/90  added -b, tables now stay aligned on odd indents  */
-/*   v1.40  10/6/90  added -B based on changes by Naoto Kimura, -w     */
-/*   v1.40a 5/6/91   HP LaserJet II support by Russ Herman	       */
-/*   v1.41  7/9/91   HP PCL support by P.J.Farley III		       */
-/*   v2.00  9/1/91   modular printer definitions		       */
-/*		     printing multipart interrupt list		       */
-/*   v2.01  2/9/92   fixed summary entry for non-numeric AX= and AH=   */
-/*		     smarter page breaks			       */
-/***********************************************************************/
-/* Recompiling: 						       */
-/*   Turbo C / Borland C++					       */
-/*	tcc -mt -lt -Z -p intprint				       */
-/***********************************************************************/
+/************************************************************************/
+/* INTPRINT.C by Ralf Brown.  Donated to the Public Domain.		*/
+/* Please do not remove my name from any copies or derivatives.		*/
+/************************************************************************/
+/* Program History:							*/
+/*   v1.00  4/23/89  initial public release				*/
+/*		     with 4/30/89 list					*/
+/*   v1.10  5/21/89  added -I and -f					*/
+/*   v1.11  1/6/90   fixed #endif's for compilers which don't handle	*/
+/*		     labels						*/
+/*   v1.20  6/8/90   added -r						*/
+/*   v1.30  7/14/90  added -b, tables now stay aligned on odd indents	*/
+/*   v1.40  10/6/90  added -B based on changes by Naoto Kimura, -w	*/
+/*   v1.40a 5/6/91   HP LaserJet II support by Russ Herman		*/
+/*   v1.41  7/9/91   HP PCL support by P.J.Farley III			*/
+/*   v2.00  9/1/91   modular printer definitions			*/
+/*		     printing multipart interrupt list			*/
+/*   v2.01  2/9/92   fixed summary entry for non-numeric AX= and AH=	*/
+/*		     smarter page breaks				*/
+/*   v2.02  2/18/92  bugfix & isxdigit suggested by Aaron West		*/
+/*   v2.10  3/14/92  updated to handle extra flags in headings		*/
+/************************************************************************/
+/* Recompiling:								*/
+/*   Turbo C / Borland C++						*/
+/*	tcc -mt -lt -Z -p intprint					*/
+/************************************************************************/
 
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
-#define VERSION "2.01"
+#define VERSION "2.10"
 
 #define MAXLINE 81   /* at most 80 chars per line (plus newline) */
 #define MAXPAGE 200  /* at most 200 lines per page */
@@ -43,12 +46,12 @@
 #  include <stdlib.h>
 int _Cdecl isatty(int handle) ;
 void _setenvp(void) {} /* don't need the environment, so don't include it */
-int isspace(char c) { return (c == ' ' || c == '\t') ; }
+/*int isspace(char c) { return (c == ' ' || c == '\t') ; }*/
 #else
 /*#define PROTOTYPES  /* uncomment if compiler supports ANSI-style prototypes */
 #define NEED_STRNICMP /* comment out if library contains strnicmp() */
+#define NEED_ISXDIGIT /* comment out if library contains isxdigit() */
 #define _Cdecl
-#  include <ctype.h>
 
 char *itoa(num,buf,radix)   /* not everybody has the same itoa() as TurboC */
 int num ;		    /* minimal implementation */
@@ -89,20 +92,20 @@ typedef struct _cstr		 /* a counted string */
 
 typedef struct _printer_def
    {
-   char *name ; 		/* for selecting the appropriate printer */
+   char *name ;			/* for selecting the appropriate printer */
    cstr init1, init2 ;		/* initialization strings */
    cstr marginl, marginc, marginr ; /* margins: duplex even, non-duplex, duplex odd */
    cstr duplex_on ;		/* turn on duplex mode */
    cstr term1, term2 ;		/* cleanup strings */
    cstr bold_on, bold_off ;	/* boldface on/off */
-   int indent ; 		/* how many extra spaces to indent */
-   int lines_per_page ; 	/* how many lines to print on each page */
+   int indent ;			/* how many extra spaces to indent */
+   int lines_per_page ;		/* how many lines to print on each page */
    int page_length ;		/* how many lines on each page */
    int page_width ;		/* how many printable columns per line? */
 #ifdef PROTOTYPES
    void (*put_line)(FILE *,int) ;/* function to call to print out divider line */
 #else
-   void (*put_line)() ; 	/* function to call to print out divider line */
+   void (*put_line)() ;		/* function to call to print out divider line */
 #endif /* PROTOTYPES */
    int *flag ;			/* flag to set when using this printer definition */
    } PRINTER_DEF ;
@@ -141,18 +144,18 @@ char *input_file ;
 
 char buffer[MAXPAGE][MAXLINE] ;
 char num[6] ;
-char summary_line[MAXLINE] ;
+char summary_line[2*MAXLINE] ;
 
 int pages_printed = 0 ;
 int page_width = 0 ;		/* page width in characters, 0 = use prtdef */
 int indent = 0 ;		/* number of blanks to add at start of each line */
-int widow_length = 10 ; 	/* number of lines to scan for good place to break */
+int widow_length = 10 ;		/* number of lines to scan for good place to break */
 int page_numbers = FALSE ;	/* add page numbers to bottom of page? */
 int multi_file = FALSE ;	/* printing multipart interrupt list? */
 int out_of_files = FALSE ;	/* hit end of last file for multipart printing? */
 int do_summary = FALSE ;	/* create a one-line-per-call summary? */
 int do_formats = FALSE ;	/* create a separate file with data structures? */
-int IBM_chars = FALSE ; 	/* printer can handle IBM graphics characters */
+int IBM_chars = FALSE ;		/* printer can handle IBM graphics characters */
 int boldface = FALSE ;		/* boldface titles and Return:/Notes: ? */
 int printer_bold = FALSE ;	/* boldface using printer control sequences? */
 int echo_format = FALSE ;
@@ -250,12 +253,26 @@ unsigned int len ;
       len-- ;
       c1 = (islower(*s1) ? toupper(*s1) : *s1) ;
       c2 = (islower(*s2) ? toupper(*s2) : *s2) ;
-      if (c1 != c2 && len == 0)  /* mismatch or substrings exhausted? */
+      if (c1 != c2 || len == 0)	 /* mismatch or substrings exhausted? */
 	 return (c1 - c2) ;
+      s1++ ;
+      s2++ ;
       }
    return 0 ;  /* strings match exactly on first 'len' characters */
 }
 #endif /* NEED_STRNICMP */
+
+#ifdef NEED_ISXDIGIT
+#ifdef PROTOTYPES
+int isxdigit(int c)
+#else
+int isxdigit(c)
+int c ;
+#endif /* PROTOTYPES */
+{
+   return isdigit(c) || (strchr("ABCDEFabcdef",c) != NULL) ;
+}
+#endif /* NEED_ISXDIGIT */
 
 /***********************************************/
 
@@ -545,10 +562,13 @@ int line, pages_printed ;
       s = buffer[line+1] ;
       while (*s && isspace(*s))
 	 s++ ;
-      if (strncmp(s,"AX",2) == 0)
-	 i = 4 ;
-      else if (strncmp(s,"AH",2) == 0)
-	 i = 2 ;
+      if (*s == 'A')
+	 {
+	 if (s[1] == 'X')
+	    i = 4 ;
+	 else
+	    i = (s[1] == 'H') ? 2 : 0 ;
+	 }
       else
 	 i = 0 ;
       if (i)
@@ -558,8 +578,7 @@ int line, pages_printed ;
 	 s++ ;	/* skip the equal sign */
 	 while (*s && isspace(*s))
 	    s++ ;
-	 if (strchr("0123456789ABCDEFabcdef",*s) != NULL &&
-	     strchr("0123456789ABCDEFabcdef",s[1]) != NULL)
+	 if (isxdigit(*s) && isxdigit(s[1]))
 	    {
 	    summary_line[len++] = *s++ ;
 	    summary_line[len++] = *s++ ;
@@ -597,13 +616,23 @@ int line, pages_printed ;
 	 len += strlen(num) ;
 	 summary_line[len++] = ' ' ;
 	 }
-      s = buffer[line] + 7 ;  /* find function description */
+      s = buffer[line] + 7 ;    /* find function description */
+      if (*s && *s != '-')	/* does the heading contain flags? */
+	 {
+	 while (*s && !isspace(*s))
+	    summary_line[len++] = *s++ ;
+	 summary_line[len++] = '>' ;
+	 summary_line[len++] = ' ' ;
+	 while (*s && *s != '-')
+	    s++ ;
+	 }
       while (*s && !isspace(*s))
 	 s++ ;
       while (*s && isspace(*s))
 	 s++ ;
-      max_descrip = (page_numbers ? MAXLINE-16 : MAXLINE-12) ;
-      for (i = 0 ; i < max_descrip && *s ; i++)
+      max_descrip = (page_width > sizeof(summary_line)-1) ? 
+				   sizeof(summary_line)-1 : page_width ;
+      while (len < max_descrip && *s)
 	 summary_line[len++] = *s++ ;
       summary_line[len] = '\0' ;
       if (do_summary)
@@ -763,7 +792,7 @@ char *argv[] ;
    char *last_page_num ;
    
    if (argc == 1 && isatty(0))
-      usage() ;   /* give help if invoked with no args and keybd input */
+      usage() ;	  /* give help if invoked with no args and keybd input */
    while (argc >= 2 && argv[1][0] == '-')
       {
       switch (argv[1][1])
@@ -849,7 +878,7 @@ char *argv[] ;
       page_width = printer->page_width ;
    if (printer->flag)
       *(printer->flag) = TRUE ;
-   if (cstrlen(&printer->bold_on) == 0)  /* control sequences for bold? */
+   if (cstrlen(&printer->bold_on) == 0)	 /* control sequences for bold? */
       printer_bold = FALSE ;		/* if not, don't try to use them */
 
    /* open the summary file, if any */
@@ -931,7 +960,7 @@ char *argv[] ;
       fputcstr(&printer->marginc,outfile) ;	/* non-duplex, so center */
    /* start the summary file */
    if (do_summary && pages_printed == 0)
-      { 	  /* create header, but only on first part */
+      {		  /* create header, but only on first part */
       /* set up the printer */
       fputcstr(&printer->init1,summary) ;
       fputcstr(&printer->init2,summary) ;
@@ -953,7 +982,7 @@ char *argv[] ;
       }
    /* start the data formats file */
    if (do_formats && pages_printed == 0)
-      { 	  /* create header, but only on first part */
+      {		  /* create header, but only on first part */
       /* set up the printer */
       fputcstr(&printer->init1,formats) ;
       fputcstr(&printer->init2,formats) ;

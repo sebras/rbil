@@ -1,30 +1,32 @@
-Interrupt List		Release 29			Last change 2/9/92
+Interrupt List		Release 30			Last change 4/26/92
 
 Please redistribute the following files unmodified as a group, in a pair of
-archives named INTER29A and INTER29B (preferably the original authenticated
+archives named INTER30A and INTER30B (preferably the original authenticated
 PKZIP archives):
         INTERRUP.1ST	this file
 	INTERRUP.A	INT 00 through INT 14   \
-	INTERRUP.B	INT 15 through INT 1F    \  total 716 pages at
-	INTERRUP.C	INT 20 thru INT 21/7F     \ 60 lines per page,
-	INTERRUP.D	INT 21/80 thru INT 2F/7F  / 767 with INTPRINT -p
-	INTERRUP.E      INT 2F/80 thru INT 5F    /  (3232 entries)
-	INTERRUP.F	INT 60 through INT FF   /
+	INTERRUP.B	INT 15 through INT 1F    \   total 802 pages at
+	INTERRUP.C	INT 20 thru INT 21/7F     \  60 lines per page,
+	INTERRUP.D	INT 21/80 thru INT 2F/7F   > 859 with INTPRINT -p
+	INTERRUP.E      INT 2F/80 thru INT 3F     /  (3655 entries)
+	INTERRUP.F	INT 40 through INT 67	 /
+	INTERRUP.G	INT 68 through INT FF   /
         INTERRUP.PRI	a brief primer on interrupts
 	INTPRINT.COM	a simple formatter that also generates a list summary
 	INTPRINT.DOC	instructions for INTPRINT
-	INTPRINT.C	source code for INTPRINT
 	MEMORY.LST	format of the BIOS data area
-The following files should be distributed in an archive called INTER28C (they
-have not been updated since Release 28):
+The following files should be distributed in an archive called INTER30C:
+	INT.COM		invoke interrupts from commandline
+        INT2GUID.*      convert list into TurboPower GUIDE or POPHELP database
 	INT2HLP.BAT	Perl script to convert list into QuickHelp database
-	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
-	INT2QH.*	program to convert list into QuickHelp database
+	INT2QH.*	convert list into QuickHelp database
 	INTHELP.*	convert list into TurboPower GUIDE database
+	INTLIST.E	Epsilon extension for handling list
+	INTPRINT.C	source code for INTPRINT
 
-Concatenate INTERRUP.A, .B, .C, .D, .E, and .F with
-  COPY /B INTERRUP.A+INTERRUP.B+INTERRUP.C+INTERRUP.D+INTERRUP.E+INTERRUP.F
-	INTERRUP.LST
+Concatenate INTERRUP.A, .B, .C, .D, .E, .F, and .G with
+  COPY /B INTERRUP.A+INTERRUP.B+INTERRUP.C+INTERRUP.D+INTERRUP.E+INTERRUP.F+
+	INTERRUP.G INTERRUP.LST
 (all on one line) to create an interrupt list file identical to my master copy.
 
 Use INTPRINT to generate a one-line-per-call summary file and/or a file
@@ -34,10 +36,9 @@ Note: in addition to the archives mentioned above, you may also find other
 archives named INTERrrx containing additional files generated from the
 original distribution for your convenience.  These other archives are
 maintained by other people, so please do not ask me any questions about them
-(all I'll do is refer you to one of the people listed below).  The two
-additional distributions I am aware of contain a ready-made Quick Help
-database (compiled by Brad Willcott <bxw@ccadfa.cc.adfa.oz.au>) and 'diff'
-files from the previous release.
+(all I'll do is refer you to one of the people listed below).  The only
+additional distribution I am currently aware of contains a ready-made Quick
+Help database (compiled by Brad Willcott <bxw@ccadfa.cc.adfa.oz.au>).
 ---------------------------------------------
 	NOTICE		NOTICE		NOTICE		NOTICE
 
@@ -46,17 +47,29 @@ Permission is granted to use and redistribute the files comprising the
 interrupt listing in any way (including conversion to another format),
 provided that my name and addresses and the names of all contributers
 are preserved, as well as the information on how to obtain new releases.
+The above requirement to give credit is waived for excerpts totaling
+less than 2000 lines (although common courtesy indicates that you
+should give some form of acknowledgment).
 
-Except as noted below, individual entries are in the public domain; the
-above requirement to give credit is waived for excerpts totaling less
-than 2000 lines (although common courtesy indicates that you should give
-some form of acknowledgment).
+One of the archives in the distribution contains programs contributed by
+others; these programs are included as a service to users of the
+interrupt list and the authors retain the rights to their programs.
 
 Please send corrections/additions to me rather than distributing a
 modified version of the list, so that all may benefit from your
 contribution.
 ---------------------------------------------
-The entries for INT F8"TANDY", INT FA"TANDY", and INT FB"TANDY" are
+DISCLAIMER:  THIS MATERIAL IS PROVIDED "AS IS".  I verify the information
+contained in this list to the best of my ability, but I cannot be held
+responsible for any problems caused by use or misuse of the information,
+especially for those functions not officially documented.  If it is marked
+"internal" or undocumented, you should check it carefully to make sure it
+works the same way in your version of the software (and please let me know
+whether or not it works the same way).  Information marked with "???" is
+known to be incomplete or guesswork.
+---------------------------------------------
+In March 1991, Dan Lanciani claimed the following copyright on the
+July 1987 version of the interrupt list:
 
 (c) Copyright 1987 Daniel D. Lanciani.  All rights reserved.
 Redistribution and use are freely permitted provided that the above
@@ -65,27 +78,18 @@ partial copy.  THIS INFORMATION IS PROVIDED ``AS IS'' AND WITHOUT
 ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION,
 THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
 PARTICULAR PURPOSE.
--------
-INT 0A"Tandy", INT 0D"Tandy", INT 10/AH=70h-73h, and INT 86"NetBIOS" have been
-completely rewritten.  All other information contained in the July 1987
-version on which the above copyright was claimed in March 1991 has been
-removed and replaced with independently-obtained new versions.  Any
-similarities between the July 1987 entries and their replacements are due
-solely to the nature of the information or the use of identical reference
-materials.
----------------------------------------------
-DISCLAIMER:  THIS MATERIAL IS PROVIDED "AS IS".  I verify the information
-contained in this list to the best of my ability, but I cannot be held
-responsible for any problems caused by use or misuse of the information,
-especially for those functions not officially documented.  If it is marked
-"internal", you should check it carefully to make sure it works the same
-way in your version of the software (and please let me know whether or not
-it works the same way).  Information marked with "???" is known to be
-incomplete or guesswork.
+
+INT 0A"Tandy", INT 0D"Tandy", INT 10/AH=70h-73h, and INT 86"NetBIOS",
+INT F8"TANDY", INT FA"TANDY", and INT FB"TANDY" have been completely
+rewritten.  All other information contained in the July 1987 version
+on which the above copyright was claimed has been removed and replaced
+with independently-obtained new versions.  Any similarities between
+the July 1987 entries and their replacements are due solely to the
+nature of the information or the use of identical reference materials.
 ---------------------------------------------
 If the list is more than three months old by the time you get it, there
-is probably a newer release out already (R30 is planned for late April,
-R31 for early July).  Each release supercedes all previous versions, so
+is probably a newer release out already (R31 is planned for early July,
+R32 for late September).  Each release supercedes all previous versions, so
 there is no need to keep old versions.
 
 The newest release of this list is available in these places (please do not
@@ -251,7 +255,7 @@ among them
  8/90 G. Adam Stanislav 1:129/39		      AVATAR.SYS
  8/90 Robin Walker     rdhw@phoenix.cambridge.ac.uk   more DOS internals
  8/90 Michael A Shiels mshiels@masnet.uucp	      Quarterdeck INT 2F/AH=D2h
- 8/90		       mjm@bmbcomp.uucp		      Logitech INT 33
+ 8/90 Michel Mathieu   mjm@bmbcomp.uucp 	      Logitech INT 33
  8/90 Cornel Kaufmann  coka@bernina.ethz.ch	      Novell Netware shell 3.01
  9/90 Michael A Shiels mshiels@masnet.uucp            IBM/Yale & 3com INT 14
  9/90 Michael A Shiels mshiels@masnet.uucp	      INT 6B, Starlan INT 2A/5B
@@ -331,6 +335,22 @@ among them
  1/92 Michael A Shiels mshiels@masnet.uucp            Win3 INT 2F/40, misc
  2/92 Michael A Shiels mshiels@masnet.uucp            miscellany
  2/92 Dan Bodoh	       bodoh@xraylith.wisc.edu	      DVSIXDI
+ 2/92 Gary E. Miller   GEM@cup.portal.com	      more Btrieve API
+ 2/92 Ralf Brown       ralf+@cs.cmu.edu 	      TKERNEL private API
+ 2/92 Ralf Brown       ralf+@cs.cmu.edu		      PC Paint Plus 2.0
+ 2/92 Tamura Jones     2:512/36.7		      Windows3 VTD.386, misc
+ 3/92 Frank Vorstenbosch akcs.kingswood@hpcvbbs.cv.hp.com  more Kingswood API
+ 3/92 Michael A Shiels mshiels@masnet.uucp            MBBIOS
+ 3/92 Ralf Brown       ralf+@cs.cmu.edu 	      DPMILOAD API
+ 3/92 Joseph Gil       yogi@cs.ubc.ca		      HP 95LX
+ 3/92 Ralf Brown       ralf+@cs.cmu.edu 	      386MAX 6.0 API
+ 3/92 Fyodor Evseev    Ted@ppicnit.perm.su	      AutoCAD Digitizer ADI
+ 3/92 Tim Farley       72717.2253@compuserve.com      Advanced Power Management
+ 4/92 Tamura Jones     2:512/36.7		      PGS1600.DEV
+ 4/92 Andrew Rossmann  andyross@infopls.chi.il.us     SMARTDRV v4.00, QEMM
+ 4/92 Tamura Jones     2:512/36.7		      METZTSR.COM
+ 4/92 Tamura Jones     2:512/36.7		      Vanderaart txtwin,DR MDOS
+ 4/92 Dan Bodoh	       bodoh@xraylith.wisc.edu	      DESQview/X .DVP file
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -380,11 +400,16 @@ Also contributing:
  Johan Zwiekhorst 2:292/100, Klaus Fischer 2:243/64, Steve Grant (New Jersey),
  Jeff Pipkins <pipkins@cpqhou.se.hou.compaq.com>, Wim Osterholt (Netherlands),
  Brett Warthen <73270.405@compuserve.com>, THOMAS DWYER <tomiii@mtu.edu>,
- Brian.McGuinness@nirvonics.com, Mitch Davis 3:634/384.6,
+ Brian.McGuinness@nirvonics.com, Mitch Davis 3:634/384.6, Steve Halko 1:365/12,
  noesis@ucscb.UCSC.EDU, Timo Salmi <ts@uwasa.fi>, Jack Alvrus (Florida),
- Eberhard Mattes <mattes@azu.informatik.uni-stuttgart.de>,
+ Eberhard Mattes <mattes@azu.informatik.uni-stuttgart.de>, Pete Peterson,
  Mark Aitchison <PHYS169@csc.canterbury.ac.nz>, Guenther Thiele (Austria),
- Alex Fedorov <inex@telebox.tele.fi>
+ Alex Fedorov <inex@telebox.tele.fi>, Frank-Christian Kruegel 2:240/300.44,
+ Heath Ian Hunnicutt <heathh@cco.caltech.edu>, Stefan Gustafsson <sg@diab.se>,
+ Janos Haide <JHAIDE.NOVELL@sjfsmtp.novell.com>, Stan Brown <brown@ncoast.org>,
+ Morten Welinder <terra@diku.dk>, Jim Peterson <jpeterso@vtssi.vt.edu>,
+ Serge Krupa <krupa@eig.unige.ch>,
+ Rehn-Lieh Lin <rllin@paradise.ccl.itri.org.tw>
 ---------------------------------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -648,7 +673,7 @@ Dobb's Journal.  Added by Ralf Brown, 3/23/91.
 Some additional NetWare data structures and flag values from _NetWare_System_
 _Interface_Technical_Overview_ by Novell.  Added by Ralf Brown, 3/24/91.
 
-Alloy ANSK, NTNX, and MW386 NTNX calls summarized from information provided by
+Alloy ANSK, NTNX, and MW386 calls summarized from information provided by
 Joseph G. Souza and Frank Gladu of Alloy Computer Products, Inc.  "Alloy and
 its employees are not to be held responsible for any errors which may be
 contained in the information provided."  Added by Ralf Brown, 4/91.
@@ -722,17 +747,41 @@ _Da_Vinci_Systems_Dispatcher_Development_Toolkit_ (Revision 2), dated
 FaxBIOS calls and structures gleaned from the FaxBios sample source code
 including struct/enum .h files (dated 1 October 1991).  Added 1/8/92.
 
+TaskMAX calls extracted from Digital Research Inc.'s DR DOS 6.0 TaskMAX API
+document.  Added by Ralf Brown, 1/16/92.
+
 SOLLEX SuperVGA calls extracted from _SOLLEX_Super_VGA_Standard_ (Smos
 videO controLLer EXtensions), No. S03-SP-001-01, dated 9/23/91,
 copyright Seiko Epson Corp.  Added by Ralf Brown, 1/20/92.
 
 RSIS information was found in "RSIS: Relocated Screen Interface Specification",
 available for free from V Communications, Inc. (see below).
+
+"Strategies for Writing State-of-the-Art TSRs that exploit MS-DOS", Douglas
+Boling, Microsoft Systems Journal volume 7 number 1.
+
+Advanced Power Management calls abstracted from _Advanced_Power_Management_
+_The_Next_Generation_, Version 1.0, by Intel Corporation and Microsoft Corp.
+Added by Ralf Brown, 3/31/92.
+
+PGS1600.DEV info extracted from _PG1600_Display_Adapter,_Installation_and_
+_Reference_ First Edition, November 1987, P/N 0010216-101A by CornerStone
+Technology.  Added 4/10/92.
+
+Borland debug info header was found in Borland's _Open_Architecture_Handbook_.
+Added by Ralf Brown, 4/14/92.
+
+Several DR Multiuser DOS (Concurrent CP/M) calls found in "Multiuser DOS for
+Control Systems: Part I" by Richard Kryszak, Dr. Dobbs Journal, April 1992.
+Added 4/18/92.
+
+Vanderaart text-windows API found in J. Vanderaart,"The Golden Btriever", LAN
+Magazine, July 1990, p. 85.  Added 4/18/92.
 ---------------------------------------------
 The following have provided API reference materials at no charge:
 
 Alloy Computer Products, Inc.	(ANSK, NTNX, MW386)
-165 Forest Street
+1 Brigham Street
 Marlborough, MA 01752
 Voice: (508) 481-8500
        (800) 544-7551
@@ -753,6 +802,11 @@ Intel Literature		(DOS Protected-Mode Interface)
 Box 58065
 Santa Clara, CA 95051-8065
 Voice: (800) 548-4725
+
+International Computers		(ImageCapture)
+12021 West Bluemound Road
+Wauwatosa, WI 53226
+Voice: (414) 764-9000
 
 Microsoft Corporation		(CD-ROM Extensions)
 16011 NE 36th Way
@@ -840,6 +894,11 @@ Compaq Computer Corporation
 20555 S.H. 249
 Houston, TX 77070
 
+CTRLALT Associates		(STACKEY, EGAPAL, VGAPAL)
+Suite 133			[3/90]
+260 South Lake Ave.
+Pasadena, CA 91101
+
 Digital Research, Inc.		(GEM, DR DOS, Concurrent DOS)
 70 Garden Ct., Box DRI
 Monterey, CA 93942
@@ -900,6 +959,11 @@ P.O. Box 670			[as of 7/89]
 Adelaide St. Postal Station
 Toronto, Canada M5C 2J8
 
+Hook and Gresseth		(Explosiv)
+P.O. Box #3013			[2/92]
+Vancouver, B.C. Canada
+V6B 3X5
+
 Information Modes               ($25 Network)
 P.O. Drawer F
 Denton, TX 76202
@@ -926,6 +990,12 @@ JP Software			(4DOS)
 P.O. Box 1470
 E. Arlington, MA 02174
 Voice: (617) 646-3975
+
+KANSYS, Inc.			(AutoBraille)
+1016 Ohio			[12/91]
+Lawrence, KS 66044
+Voice: (800) 279-4880
+       (913) 843-0351
 
 Key Software Products		(The Last Byte)
 440 Ninth Avenue
@@ -956,6 +1026,12 @@ Novell, Inc.			(NetWare)
 Provo, UT 84601
 Voice: (800) 453-1267
        (801) 379-5900
+
+Alexandr Novy & Petr Horak	(REDVIEW)
+Technical University of Prague  [2/92]
+Faculty of Nuclear Science and Physical Engineering
+Pargue, Czechoslovakia
+BITNET: HORAC@CSEARN
 
 Offe Enterprises		(VUIMAGE)
 1163 E. Ogden Ave. #705-131
@@ -994,6 +1070,12 @@ STSC, Inc.			(APL*Plus/PC)
 Rockville, MD 20852		[may be outdated]
 Voice: (301) 984-5000
 Telex: 898-085
+
+TapirSoft			(TEXTCAP 2.0)
+Gisbert W. Selke		[12/91]
+Ermekeilstr. 28
+W-5300 Bonn 1
+Germany
 
 George A. Theall		(RECALL)
 TifaWARE
@@ -1052,6 +1134,7 @@ MAGic is a trademark of Microsystems Software, Inc.
 LANtastic is a trademark of Artisoft, Inc.
 ASAP is a trademark of MicroTalk.
 HRAM is a trademark of Biologic.
+ImageCapture is a trademark of International Computers.
 Various other names are trademarks or registered trademarks of their respective
     holders
 ---------------------------------------------
@@ -1060,7 +1143,7 @@ What they're saying about this list:
    IBM PC.  A great thing to have on your hard disk if you don't have
    a Ray Duncan or Peter Norton book handy."
       _Turbo_Technix_, July/August 1988, p. 157.
-[and that was about the 1/30/88 version, which is about one-tenth the size
+[and that was about the 1/30/88 version, which is less than one-tenth the size
  of the current version....]
 ---------------------------------------------
 If you know of any information not in the list, or which is stated incorrectly,
@@ -1086,9 +1169,9 @@ Snail mail:
 	School of Computer Science
 	Carnegie Mellon University
 	Pittsburgh, PA 15213-3890
-	   (Letters which enclose a Self-Addressed Stamped Envelope or e-mail
-	    address will be given priority.  An overseas air-mail letter costs
-	    two international return coupons.)
+	   (Letters which enclose a Self-Addressed Stamped Envelope [or self-
+	    addressed envelope and international return coupon] or e-mail
+	    address will be given priority.)
 
 I reply to all e-mail submissions and inquiries.  If you do not receive a reply
 within a reasonable time, send your message again, giving a better return path

@@ -1,4 +1,4 @@
-Interrupt List, part 2 of 6
+Interrupt List, part 2 of 7
 This compilation is Copyright (c) 1989,1990,1991,1992 Ralf Brown
 ----------15---------------------------------
 INT 15 - Microsoft TSR Specification
@@ -469,8 +469,8 @@ Return: after other processes run
 Note:	under DESQview, if the process issuing this call has hooked INT 08h,
 	  the current time-slice is set to expire at the next clock tick rather
 	  than immediately
-SeeAlso: AH=00h"MultiDOS",INT 21/AH=EEh"DoubleDOS",INT 2F/AX=1680h
-SeeAlso: INT 7F/AH=E8h
+SeeAlso: AH=00h"MultiDOS",AX=5305h,INT 21/AH=EEh"DoubleDOS",INT 2F/AX=1680h
+SeeAlso: INT 60/DI=0106h,INT 7A/BX=000Ah,INT 7F/AH=E8h
 ----------151001-----------------------------
 INT 15 - TopView - "GETMEM" - ALLOCATE "SYSTEM" MEMORY
 	AX = 1001h
@@ -578,12 +578,13 @@ Notes:	will not task-switch until "ENDC" (AX = 101Ch) called unless task
 	  will again be disabled)
 	suspends the caller until DOS is free
 SeeAlso: AH=0Dh"MultiDOS",AX=101Ch,AX=DE13h,AX=DE1Ch,INT 2F/AX=1681h
+SeeAlso: INT 60/DI=0602h
 ----------15101C-----------------------------
 INT 15 - TopView - "ENDC" - END CRITICAL REGION
 	AX = 101Ch
 Return: task-switching enabled
 Note:	this API call may be made from within a hardware interrupt handler
-SeeAlso: AX=101Bh,AX=DE13h,AX=DE1Bh,INT 2F/AX=1682h
+SeeAlso: AX=101Bh,AX=DE13h,AX=DE1Bh,INT 2F/AX=1682h,INT 60/DI=0603h
 ----------15101D-----------------------------
 INT 15 - TopView - "STOP" - STOP TASK
 	AX = 101Dh
@@ -784,7 +785,29 @@ Offset	Size	Description
 		bit 1: share CPU when foreground
 		bit 0: share EGA when foreground and zoomed
 18Ch	BYTE	protection level for 386 machines
-18Dh 19 BYTEs	reserved (0)
+18Dh 19 BYTEs	reserved (0) for regular DESQview
+---information unique to DESQview/X 1.0---
+18Dh	BYTE	flags5
+		bit 0: unused (0)
+		bit 1: don't display DOS window
+		bit 2: don't wait for windows to open
+		bits 3-7: unused (0)
+18Eh	BYTE	X keyboard behavior (0-3)
+18Fh	BYTE	01h = uses scalable fonts
+190h 10 BYTEs	unused (0)
+19Ah	WORD???	sum of all record size fields in records starting at 1A0h
+19Ch  4 BYTEs   signature "XDVP"
+1A0h  N BYTEs   variable length records
+		Offset	Size	Description
+		 00h	BYTE	length of following record, 00h if end of file
+		 01h	BYTE	always 0??? (or length may be WORD)
+		 02h	BYTE	record type
+				01h Script filename, up to 64 characters
+				05h Starting... values: ASCII copy of fields
+				    as typed into DVPMAN, separated by commas:
+				    	starting row, starting column, starting
+					height, starting width
+		 03h  N BYTEs	ASCII data
 ----------15102D-----------------------------
 INT 15 - DESQview v2.00+ - "KMOUSE" - KEYBOARD MOUSE CONTROL
 	AX = 102Dh
@@ -1867,7 +1890,7 @@ For pointer objects, the bits have the following significance:
 	bit 1  (DV 2.23+) send message with row=FFFFh and col=FFFFh whenever
 		pointer leaves the window
 	bit 0  send message only on button activity, not movement
-	       DV-specific, and INT 15h/AX=DE0Fh must have been called first
+	       DV-specific, and INT 15/AX=DE0Fh must have been called first
 ----------1512--BH0B-------------------------
 INT 15 - TopView - SEND MESSAGE - "SUBFROM" - WRITE ATTRIBUTES TO WINDOW
 	AH = 12h
@@ -2552,12 +2575,32 @@ Return: CF set on error
 	   ES:DI -> error log
 Note:	the log is a series of words, the first byte of which identifies the
 	  error code and the second the device.
+----------152400-----------------------------
+INT 15 - Qualitas 386MAX v6.01 - TURN ON ???
+	AX = 2400h
+Return: CF clear
+	AH = 00h
+----------152401-----------------------------
+INT 15 - Qualitas 386MAX v6.01 - TURN OFF ???
+	AX = 2401h
+Return: CF clear
+	AH = 00h
+----------152402-----------------------------
+INT 15 - Qualitas 386MAX v6.01 - GET STATE OF ???
+	AX = 2402h
+Return: CF clear
+	AH = 00h
+	AL = current state (00h off, 01h on)
 ----------152403-----------------------------
-INT 15 - ???
+INT 15 - Qualitas 386MAX v6.01 - GET ???
 	AX = 2403h
 	???
-Return: ???
-Note:	reportedly used by some PS/2 models
+Return: CF clear
+	AH = 00h
+	BX = bit flags???
+	    bit 0: ???
+	    bit 1: ???
+Note:	reportedly also used by some PS/2 models
 ----------1540-------------------------------
 INT 15 - SYSTEM - READ/MODIFY PROFILES (CONVERTIBLE)
 	AH = 40h
@@ -2614,7 +2657,7 @@ INT 15 - Compaq SLT/286 - ENTER STANDBY
 Return: AH = 42h
 	CF clear if successful
 	CF set if unable to enter standby
-SeeAlso: AX=4600h
+SeeAlso: AX=4600h,AX=5307h/BX=0001h/CX=0001h
 ----------1543-------------------------------
 INT 15 - SYSTEM - READ SYSTEM STATUS (CONVERTIBLE)
 	AH = 43h
@@ -2694,17 +2737,301 @@ Return: CF clear if successful
 	    AH = 01h input is out of range
 	       = 02h - No modem present
 SeeAlso: AX=4600h,INT 77
+----------154DD4-----------------------------
+INT 15 - HP 95LX - INSTALLATION CHECK
+	AX = 4DD4h
+Return: BX = 4850h ("HP") if HP 95LX
+	    CX = ??? (0101h)
+	    DL = ??? (00h)
+SeeAlso: INT 0B"HP 95LX",INT 0F"HP 95LX",INT 5F/AH=00h,INT 60/DI=0100h
+SeeAlso: INT 61"HP 95LX"
+----------154E-------------------------------
+INT 15 - HP 95LX - ENABLE/DISABLE LIGHT SLEEP
+	AH = 4Eh
+	AL = light sleep
+	    00h disabled
+	    01h enabled
+Note:	when light sleep is disabled, the system will continue running at full
+	  speed; when enabled, it may automatically slow to conserve batteries
+SeeAlso: INT 06"HP 95LX",INT 60/DI=0100h
 ----------154F-------------------------------
 INT 15 - OS HOOK - KEYBOARD INTERCEPT (AT model 3x9,XT2,XT286,CONV,PS)
 	AH = 4Fh
-	AL = scan code
+	AL = hardware scan code
 	CF set
 Return: CF set
-	   AL = scan code
+	   AL = hardware scan code
 	CF clear
 	   scan code should be ignored
-Note:	called by INT 9 handler to translate scan codes
-SeeAlso: INT 09
+Note:	called by INT 9 handler to translate scan codes; the INT 09 code does
+	  not examine the scan code it reads from the keyboard until after
+	  this function returns.  This permits software to rearrange the
+	  keyboard; for example, swapping the CapsLock and Control keys, or
+	  turning the right Shift key into Enter.
+SeeAlso: INT 09,INT 15/AH=C0h
+----------155300BX0000-----------------------
+INT 15 - Advanced Power Management Specification - INSTALLATION CHECK
+	AX = 5300h
+	BX = 0000h (device ID of system BIOS)
+Return: CF clear if successful
+	    AH = major version (BCD)
+	    AL = minor version (BCD)
+	    BX = 504Dh ("PM")
+	    CX = flags
+	        bit 0: 16-bit protected mode interface supported
+		bit 1: 32-bit protected mode interface supported
+		bit 2: CPU idle call reduces processor speed
+		bit 3: BIOS power management disabled
+		bits 4-7 reserved
+	CF set on error
+	    AH = error code (86h) (see below)
+
+Values for error code:
+ 01h	power management functionality disabled
+ 02h	interface connection already in effect
+ 03h	interface not connected
+ 04h	real-mode interface not connected
+ 05h	16-bit protected-mode interface already connected
+ 06h	16-bit protected-mode interface not supported
+ 07h	32-bit protected-mode interface already connected
+ 08h	32-bit protected-mode interface not supported
+ 09h	unrecognized device ID
+ 0Ah	invalid parameter value in CX
+ 0Bh-1Fh reserved for other interface and general errors
+ 20h-3Fh reserved for CPU errors
+ 40h-5Fh reserved for device errors
+ 60h	can't enter requested state
+ 61h-7Fh reserved for other system errors
+ 80h	no power management events pending
+ 81h-85h reserved for other power management event errors
+ 86h	APM not present
+ 87h-9Fh reserved for other power management event errors
+----------155301BX0000-----------------------
+INT 15 - Advanced Power Management Specification - CONNECT REAL-MODE INTERFACE
+	AX = 5301h
+	BX = 0000h (device ID of system BIOS)
+Return: CF clear if successful
+	CF set on error
+	    AH = error code (02h,09h) (see AX=5300h)
+SeeAlso: AX=5302h,AX=5303h,AX=5304h
+----------155302BX0000-----------------------
+INT 15 R - Advanced Power Management Spec - CONNECT 16-BIT PROTMODE INTERFACE
+	AX = 5302h
+	BX = 0000h (device ID of system BIOS)
+Return: CF clear if successful
+	    AX = real-mode segment base address of protected-mode 16-bit code
+	    	segment
+	    BX = offset of entry point
+	    CX = real-mode segment base address of protected-mode 16-bit data
+	    	segment
+	CF set on error
+	    AH = error code (05h,06h,09h) (see AX=5300h)
+Notes:	the caller must initialize two consecutive descriptors with the
+	  returned segment base addresses; these descriptors must be valid
+	  whenever the protected-mode interface is called, and will have
+	  their limits arbitrarily set to 64K.
+	the protected mode interface is invoked by making a far call with the
+	  same register values as for INT 15; it must be invoked while CPL=0,
+	  the code segment descriptor must have a DPL of 0, the stack must be
+	  in a 16-bit segment and have enough room for BIOS use and possible
+	  interrupts, and the current I/O permission bit map must allow access
+	  to the I/O ports used for power management.
+	functions 00h-03h are not available from protected mode
+SeeAlso: AX=5301h,AX=5303h,AX=5304h
+----------155303BX0000-----------------------
+INT 15 - Advanced Power Management Spec - CONNECT 32-BIT PROTMODE INTERFACE
+	AX = 5303h
+	BX = 0000h (device ID of system BIOS)
+Return: CF clear if successful
+	    AX = real-mode segment base address of protected-mode 32-bit code
+	    	segment
+	    EBX = offset of entry point
+	    CX = real-mode segment base address of protected-mode 16-bit code
+	    	segment
+	    DX = real-mode segment base address of protected-mode 16-bit data
+	    	segment
+	CF set on error
+	    AH = error code (07h,08h,09h) (see AX=5300h)
+Notes:	the caller must initialize three consecutive descriptors with the
+	  returned segment base addresses for 32-bit code, 16-bit code, and
+	  16-bit data, respectively; these descriptors must be valid whenever
+	  the protected-mode interface is called, and will have their limits
+	  arbitrarily set to 64K.
+	the protected mode interface is invoked by making a far call to the
+	  32-bit code segment with the same register values as for INT 15; it
+	  must be invoked while CPL=0, the code segment descriptor must have a
+	  DPL of 0, the stack must be in a 32-bit segment and have enough room
+	  for BIOS use and possible interrupts, and the current I/O permission
+	  bit map must allow access to the I/O ports used for power management.
+	functions 00h-03h are not available from protected mode
+SeeAlso: AX=5301h,AX=5302h,AX=5304h
+----------155304BX0000-----------------------
+INT 15 - Advanced Power Management Specification - DISCONNECT INTERFACE
+	AX = 5304h
+	BX = 0000h (device ID of system BIOS)
+Return: CF clear if successful
+	CF set on error
+	    AH = error code (03h,09h) (see AX=5300h)
+SeeAlso: AX=5301h,AX=5302h,AX=5303h
+----------155305-----------------------------
+INT 15 - Advanced Power Management Specification - CPU IDLE
+	AX = 5305h
+Return: after system leaves idle state
+	CF clear
+Notes:	call when the system is idle and should be suspended until the next
+	  system event or interrupt
+	should not be called from within a hardware interrupt handler to avoid
+	  reentrance problems
+	if an interrupt causes the system to resume normal processing, the
+	  interrupt may or may not have been handled when the BIOS returns
+	  from this call; thus, the caller should allow interrupts on return
+	interrupt handlers may not retain control if the BIOS allows
+	  interrupts while in idle mode even if they are able to determine
+	  that they were called from idle mode
+	the caller should issue this call continuously in a loop until it needs
+	  to perform some processing of its own
+SeeAlso: AX=1000h,AX=5306h,INT 2F/AX=1680h
+----------155306-----------------------------
+INT 15 - Advanced Power Management Specification - CPU BUSY
+	AX = 5306h
+Return: CF clear
+Notes:	called to ensure that the system runs at full speed even on systems
+	  where the BIOS is unable to recognize increased activity (especially
+	  if interrupts are hooked by other programs and not chained to the
+	  BIOS)
+	this call may be made even when the system is already running at full
+	  speed, but it will create unnecessary overhead
+	should not be called from within a hardware interrupt handler to avoid
+	  reentrance problems
+SeeAlso: AX=5305h
+----------155307-----------------------------
+INT 15 - Advanced Power Management Specification - SET POWER STATE
+	AX = 5307h
+	BX = device ID (see below)
+	CX = system state ID
+	    0000h ready (not supported for device ID 0001h)
+	    0001h stand-by
+	    0002h suspend
+	    0003h off (not supported for device ID 0001h)
+	    0004h-FFFFh reserved
+Return: CF clear if successful
+	CF set on error
+	    AH = error code (01h,09h,0Ah,60h) (see AX=5300h)
+Note:	should not be called from within a hardware interrupt handler to avoid
+	  reentrance problems
+
+Values for device IDs:
+ 0000h	system BIOS
+ 0001h	all devices for which the system BIOS manages power
+ 01xxh	display (01FFh for all attached display devices)
+ 02xxh	secondary storage (02FFh for all attached secondary storage devices)
+ 03xxh	parallel ports (03FFh for all attached parallel ports)
+ 04xxh	serial ports (04FFh for all attached serial ports)
+ 0500h-FFFFh reserved
+----------155307BX0001-----------------------
+INT 15 - Advanced Power Management Specification - SYSTEM STAND-BY
+	AX = 5307h
+	BX = 0001h
+	CX = 0001h
+Return: CF clear
+Notes:	puts the entire system into stand-by mode; normally called in response
+	  to a System Stand-by Request notification after any necessary
+	  processing, but may also be invoked at the caller's discretion
+	should not be called from within a hardware interrupt handler to avoid
+	  reentrance problems
+	the stand-by state is typically exited on an interrupt
+SeeAlso: AX=4280h,AX=5307h/BX=0001h/CX=0002h,AX=530Bh
+----------155307BX0001-----------------------
+INT 15 - Advanced Power Management Specification - SUSPEND SYSTEM
+	AX = 5307h
+	BX = 0001h
+	CX = 0002h
+Return: after system is resumed
+	CF clear
+Notes:	puts the entire system into a low-power suspended state; normally
+	  called in response to a Suspend System Request notification after
+	  any necessary processing, but may also be invoked at the caller's
+	  discretion
+	should not be called from within a hardware interrupt handler to avoid
+	  reentrance problems
+	the caller may need to update its date and time values because the
+	  system could have been suspended for a long period of time
+SeeAlso: AX=5307h/BX=0001h/CX=0001h,AX=530Bh
+----------155308BXFFFF-----------------------
+INT 15 - Advanced Power Management Spec - ENABLE/DISABLE POWER MANAGEMENT
+	AX = 5308h
+	BX = FFFFh
+	CX = new state
+	    0000h disabled
+	    0001h enabled
+Return: CF clear if successful
+	CF set on error
+	    AH = error code (01h,09h,0Ah) (see AX=5300h)
+Notes:	when power management is disabled, the system BIOS will not
+	  automatically power down devices, enter stand-by or suspended mode,
+	  or perform any power-saving actions in response to AX=5305h calls
+	should not be called from within a hardware interrupt handler to avoid
+	  reentrance problems
+SeeAlso: AX=5309h
+----------155309BXFFFF-----------------------
+INT 15 - Advanced Power Management Specification - RESTORE POWER-ON DEFAULTS
+	AX = 5309h
+	BX = FFFFh
+Return: CF clear if successful
+	CF set on error
+	    AH = error code (09h) (see AX=5300h)
+Note:	should not be called from within a hardware interrupt handler to avoid
+	  reentrance problems
+SeeAlso: AX=5308h
+----------15530ABX0001-----------------------
+INT 15 - Advanced Power Management Specification - GET POWER STATUS
+	AX = 530Ah
+	BX = 0001h
+Return: CF clear if successful
+	    BH = AC line status
+	        00h off-line
+		01h on-line
+		FFh unknown
+		other reserved
+	    BL = battery status
+	        00h high
+		01h low
+		02h critical
+		03h charging
+		FFh unknown
+		other reserved
+	    CL = remaining battery life
+	        00h-64h (0-100) percentage of full charge
+		FFh unknown
+	CF set on error
+	    AH = error code (09h) (see AX=5300h)
+Note:	should not be called from within a hardware interrupt handler to avoid
+	  reentrance problems
+----------15530B-----------------------------
+INT 15 - Advanced Power Management Specification - GET POWER MANAGEMENT EVENT
+	AX = 530Bh
+Return: CF clear if successful
+	    BX = event code
+	        0001h system stand-by request
+		0002h system suspend request
+		0003h normal resume system notification
+		0004h critical resume system notification
+		0005h battery low notification
+	CF set on error
+	    AH = error code (03h,80h) (see AX=5300h)
+Notes:	although power management events are often asynchronous, notification
+	  will not be made until polled via this call to permit software to
+	  only receive event notification when it is prepared to process
+	  power management events; since these events are not very time-
+	  critical, it should be sufficient to poll once or twice per second
+	the critical resume notification is made after the system resumes
+	  from an emergency suspension; normally, the system BIOS only notifies
+	  its partner that it wishes to suspend and relies on the partner to
+	  actually request the suspension, but no notification is made on an
+	  emergency suspension
+	should not be called from within a hardware interrupt handler to avoid
+	  reentrance problems
+SeeAlso: AX=5307h,AX=5307h/BX=0001h/CX=0001h,AX=5307h/BX=0001h/CX=0002h
 ----------155400-----------------------------
 INT 15 - Omniview Multitasker - INSTALLATION NOTIFICATION
 	AX = 5400h
@@ -2983,7 +3310,7 @@ INT 15 - Rational Systems DOS/16M - INSTALLATION CHECK
 	DX = 0000h
 Return: DX = nonzero if installed
 	    DX:SI -> XBRK structure
-SeeAlso: INT 2F/AH=A1h,INT 2F/AX=F100h,INT 2F/AX=FBA1h
+SeeAlso: INT 21/AX=FF00h,INT 2F/AH=A1h,INT 2F/AX=F100h,INT 2F/AX=FBA1h
 ----------15C0-------------------------------
 INT 15 - SYSTEM - GET CONFIGURATION (XT after 1/10/86,AT mdl 3x9,CONV,XT286,PS)
 	AH = C0h
@@ -2998,6 +3325,8 @@ Notes:	the 1/10/86 XT BIOS returns an incorrect value for the feature byte
 	Dell machines contain the signature "DELL" or "Dell" at absolute FE076h
 	  and a model byte at absolute address FE845h
 	Tandy 1000 machines contain 21h in the byte at F000h:C000h
+	some AST machines contain the string "COPYRIGHT AST RESEARCH" one byte
+	  past the end of the configuration table
 
 Format of ROM configuration table:
 Offset	Size	Description
@@ -3009,27 +3338,29 @@ Offset	Size	Description
 		bit 7 = DMA channel 3 used by hard disk BIOS
 		bit 6 = 2nd 8259 installed
 		bit 5 = Real-Time Clock installed
-		bit 4 = INT 15h/AH=4Fh called upon INT 9h
+		bit 4 = INT 15/AH=4Fh called upon INT 9h
 		bit 3 = wait for external event supported
 		bit 2 = extended BIOS area allocated (usually at top of RAM)
 		bit 1 = bus is Micro Channel instead of ISA
 		bit 0 reserved
  06h	BYTE	feature byte 2:
 		bit 7 = ???
-		bit 6 = INT 16h/AH=09h (keyboard functionality) supported
+		bit 6 = INT 16/AH=09h (keyboard functionality) supported
 		bits 5-0 = ???
  07h	BYTE	feature byte 3:
 		reserved (0)
  08h	BYTE	feature byte 4:
 		reserved (0)
  09h	BYTE	feature byte 5:
-		reserved (0)
+		reserved (0) (IBM)
+		??? (08h) (Phoenix 386 v1.10)
 ---AWARD BIOS---
  0Ah  N BYTEs	AWARD copyright notice
 ---Phoenix BIOS---
- 0Ah	BYTE	major version
- 0Bh	BYTE	minor version (BCD)
- 0Ch  4 BYTEs	ASCIZ string "PTL" (Phoenix Technologies Ltd)
+ 0Ah	BYTE	??? (00h)
+ 0Bh	BYTE	major version
+ 0Ch	BYTE	minor version (BCD)
+ 0Dh  4 BYTEs	ASCIZ string "PTL" (Phoenix Technologies Ltd)
 
 Values for model/submodel/revision:
 Model  Submdl  Rev	BIOS date	System
@@ -3040,6 +3371,7 @@ Model  Submdl  Rev	BIOS date	System
  FEh	*	*	08/16/82	PC XT
  FEh	*	*	11/08/82	PC XT and Portable
  FEh	43h	***	  ???		Olivetti M240
+ FEh	A6h	???	  ???		??? (checked for by 386MAX v6.01)
  FDh	*	*	06/01/83	PCjr
  FCh	*	*	01/10/84	AT models 068,099 6 MHz 20MB
  FCh	00h	01h	06/10/85	AT model  239	  6 MHz 30MB
@@ -3056,9 +3388,13 @@ Model  Submdl  Rev	BIOS date	System
  FCh	04h	03h	04/18/88	PS/2 Model 50Z (10 MHz/0 ws 286)
  FCh	05h	00h	02/13/87     ** PS/2 Model 60 (10 MHz 286)
  FCh	06h	???	  ???		7552 "Gearbox"
+ FCh	08h	***	  ???		Epson, unknown model
  FCh	09h	00h	  ???		PS/2 Model 25 (10 MHz 286)
  FCh	09h	02h	06/28/89	PS/2 Model 30-286
  FCh	0Bh	00h	02/16/90	PS/1 Model 2011 (10 MHz 286)
+ FCh	30h	***	  ???		Epson, unknown model
+ FCh	31h	***	  ???		Epson, unknown model
+ FCh	33h	***	  ???		Epson, unknown model
  FCh	42h	***	  ???		Olivetti M280
  FCh	45h	***	  ???		Olivetti M380 (XP 1, XP3, XP 5)
  FCh	48h	***	  ???		Olivetti M290
@@ -3118,11 +3454,13 @@ Model  Submdl  Rev	BIOS date	System
  9Ah	*	*	  ???		Compaq XT/Compaq Plus
  30h	???	???	  ???		Sperry PC
  2Dh	*	*	  ???		Compaq PC/Compaq Deskpro
-
+ ???	56h	???	  ???		Olivetti, unknown model
+ ???	74h	???	  ???		Olivetti, unknown model
     * This BIOS call is not implemented in these early versions.
       Read Model byte at F000h:FFFEh and BIOS date at F000h:FFF5h.
    ** These BIOS versions require the DASDDRVR.SYS patches.
-  *** These Olivetti machines store the submodel in the byte at F000h:FFFDh.
+  *** These Olivetti and Epson machines store the submodel in the byte at
+  	F000h:FFFDh.
 
 Values for Dell model byte:
  02h	Dell 200
@@ -3250,7 +3588,7 @@ INT 15 - SYSTEM - PROGRAMMABLE OPTION SELECT (PS50+)
 Return: CF set on error
 	DX = base POS register address (if function 00h)
 ----------15C5-------------------------------
-INT 15 - OS HOOK (undoc) - ROM BIOS TRACING CALLOUT (PS30/286,PS50Z,PS95)
+INT 15 U - OS HOOK - ROM BIOS TRACING CALLOUT (PS30/286,PS50Z,PS95)
 	AH = C5h
 	AL = interrupt being invoked
 	    01h INT 19
@@ -3270,22 +3608,22 @@ Notes:	called as the very first action of the indicated ROM BIOS interrupt
 	value of AX passed to the original interrupt handler is pushed on
 	  stack immediately prior to call
 ----------15C6-------------------------------
-INT 15 - PS/2 Model 95 - ???
+INT 15 U - PS/2 Model 95 - ???
 	AH = C6h
 	???
 Return: ???
 ----------15C7-------------------------------
-INT 15 - PS/2 Model 95 - ???
+INT 15 U - PS/2 Model 95 - ???
 	AH = C7h
 	???
 Return: ???
 ----------15C8-------------------------------
-INT 15 - PS/2 Model 95 - ???
+INT 15 U - PS/2 Model 95 - ???
 	AH = C8h
 	???
 Return: ???
 ----------15C9-------------------------------
-INT 15 - newer PS/2; various BIOSes - GET CPU TYPE AND MASK REVISION
+INT 15 U - newer PS/2; various BIOSes - GET CPU TYPE AND MASK REVISION
         AH = C9h
 	AL = 10h (may be required on some non-PS BIOSes)
 Return: AH = 00h
@@ -3298,32 +3636,32 @@ Notes:	the BIOS must save DX at startup in order to be able to support this
 	  call; PS/2 Models 56, 57, 90, and 95 are known to support it
 	the PS/2 BIOS merely reads CMOS locations 190h (type) and 191h (rev)
 ----------15CA-------------------------------
-INT 15 - PS/2 Model 95 - ???
+INT 15 U - PS/2 Model 95 - ???
 	AH = CAh
 	???
 Return: ???
 ----------15CB-------------------------------
-INT 15 - PS/2 Model 95 - ???
+INT 15 U - PS/2 Model 95 - ???
 	AH = CBh
 	???
 Return: ???
 ----------15CC-------------------------------
-INT 15 - PS/2 Model 95 - ???
+INT 15 U - PS/2 Model 95 - ???
 	AH = CCh
 	???
 Return: ???
 ----------15CD-------------------------------
-INT 15 - PS/2 Model 95 - ???
+INT 15 U - PS/2 Model 95 - ???
 	AH = CDh
 	???
 Return: ???
 ----------15CE-------------------------------
-INT 15 - PS/2 Model 95 - ???
+INT 15 U - PS/2 Model 95 - ???
 	AH = CEh
 	???
 Return: ???
 ----------15CF-------------------------------
-INT 15 - PS/2 Model 95 - ???
+INT 15 U - PS/2 Model 95 - ???
 	AH = CFh
 	???
 Return: ???
@@ -3745,6 +4083,7 @@ INT 15 - DESQview v2.31+ - ???
 	BX = ??? IRQ number on first PIC?
 	CX = ??? IRQ number on second PIC?
 Return: ???
+Note:	called by QEMM 6.00+
 ----------15DE24-----------------------------
 INT 15 - DESQview v2.40 - ???
 	AX = DE24h
@@ -3777,6 +4116,13 @@ INT 15 - Compaq Systempro - MULTIPROCESSOR AVAILABLE
 	AX = E200h
 Return: AX = 8000h if 2nd processor available
 SeeAlso: AX=E00Fh,AX=E10Eh
+----------15E4-------------------------------
+INT 15 - ???
+	AH = E4h
+	AL = subfunction
+	    21h, 89h, 8Ah, 8Bh called by 386MAX v6.01
+	DL = ???
+Return: ???
 ----------15F200CX454D-----------------------
 INT 15 - Tandon memory mapper - Tandon MAPPER HARDWARE INITIALISATION CHECK ???
 	AX = F200h
@@ -3791,17 +4137,21 @@ Return: CF clear if hardware already initialised
 ----------1600-------------------------------
 INT 16 - KEYBOARD - GET KEYSTROKE
 	AH = 00h
-Return: AH = scan code
+Return: AH = BIOS scan code
 	AL = ASCII character
-Note:	on extended keyboards, this function discards any extended keystrokes,
+Notes:	on extended keyboards, this function discards any extended keystrokes,
 	  returning only when a non-extended keystroke is available
+	the BIOS scan code is usually, but not always, the same as the hardware
+	  scan code processed by INT 09.  It is the same for ASCII keystrokes
+	  and most unshifted special keys (F-keys, arrow keys, etc.), but
+	  differs for shifted special keys.
 SeeAlso: AH=01h,AH=05h,AH=10h,AH=20h,INT 18/AH=00h
 ----------1601-------------------------------
 INT 16 - KEYBOARD - CHECK FOR KEYSTROKE
 	AH = 01h
 Return: ZF set if no keystroke available
 	ZF clear if keystroke available
-	    AH = scan code
+	    AH = BIOS scan code
 	    AL = ASCII character
 Note:	if a keystroke is present, it is not removed from the keyboard buffer;
 	  however, any extended keystrokes which are not compatible with 83/84-
@@ -3886,10 +4236,14 @@ SeeAlso: AH=09h
 ----------1610-------------------------------
 INT 16 - KEYBOARD - GET ENHANCED KEYSTROKE (enhanced kbd support only)
 	AH = 10h
-Return: AH = scan code
+Return: AH = BIOS scan code
 	AL = ASCII character
 Notes:	if no keystroke is available, this function waits until one is placed
 	  in the keyboard buffer
+	the BIOS scan code is usually, but not always, the same as the hardware
+	  scan code processed by INT 09.  It is the same for ASCII keystrokes
+	  and most unshifted special keys (F-keys, arrow keys, etc.), but
+	  differs for shifted special keys.
 	unlike AH=00h, this function does not discard extended keystrokes
 SeeAlso: AH=00h,AH=11h,AH=20h
 ----------1611-------------------------------
@@ -3897,7 +4251,7 @@ INT 16 - KEYBOARD - CHECK FOR ENHANCED KEYSTROKE (enh kbd support only)
 	AH = 11h
 Return: ZF set if no keystroke available
 	ZF clear if keystroke available
-	    AH = scan code
+	    AH = BIOS scan code
 	    AL = ASCII character
 Notes:	if a keystroke is available, it is not removed from the keyboard buffer
 	unlike AH=01h, this function does not discard extended keystrokes
@@ -3944,6 +4298,28 @@ INT 16 - KEYBOARD - GET 122-KEY SHIFT STATUS???
 Return: ??? see AH=12h
 Note:	use AH=09h to determine whether this function is supported
 SeeAlso: AH=02h,AH=12h
+----------164252-----------------------------
+INT 16 - TEXTCAP 2.0 - INSTALLATION CHECK
+	AX = 4252h
+Return: AX = 5242h if installed
+Note:	TEXTCAP 2.0 is a heavily modified (by Gisbert W. Selke) version of the
+	  PC Magazine utility CAPTURE written by Tom Kihlken
+SeeAlso: AX=4253h,AX=4254h
+----------164253-----------------------------
+INT 16 - TEXTCAP 2.0 - UNINSTALL
+	AX = 4253h
+Return: AX = segment of resident code
+Notes:	the uninstall code does not check whether interrupt vectors have been
+	  chained by other programs
+	the caller must free the main memory block (using the returned segment)
+SeeAlso: AX=4252h,AX=4254h
+----------164254-----------------------------
+INT 16 - TEXTCAP 2.0 - DUMP TEXT SCREEN TO FILE
+	AX = 4254h
+Return: AX = status
+	    4254h if screen dump will be written as soon as disk becomes idle
+	    5442h if screen dump written
+SeeAlso: AX=4252h,AX=4253h
 ----------164500-----------------------------
 INT 16 - Shamrock Software EMAIL - GET STATUS
 	AX = 4500h
@@ -4046,11 +4422,12 @@ SeeAlso: AX=4500h,INT 17/AX=2408h
 ----------165500-----------------------------
 INT 16 - Microsoft Word internal - MICROSOFT WORD COOPERATION WITH TSR
 	AX = 5500h
-Return: AX = 4D53h if keyboard TSR present
+Return: AX = 4D53h ('MS') if keyboard TSR present
 Notes:	during startup, Microsoft Word tries to communicate with any TSRs
 	  that are present through this call.
-	If the return is not 4D53h, Word installs its own INT 9h and INT 16h
-	  handlers, otherwise it assumes that the TSR will handle the keyboard.
+	if the return is not 4D53h, Word installs its own INT 09 and INT 16
+	  handlers; otherwise it assumes that the TSR will handle the keyboard
+SeeAlso: INT 1A/AX=3601h
 ----------1655FF-----------------------------
 INT 16 - Swap Utilities - ???
 	AX = 55FFh
@@ -4232,6 +4609,24 @@ INT 16 - MAKEY.COM - INSTALLATION CHECK
 	AH = 80h
 Return: AX = 1954h if installed
 Note:	MAKEY is a utility by System Enhancement Associates
+----------168765BX4321-----------------------
+INT 16 - AT.COM version 8/26/87 - API
+	AX = 8765h
+	BX = 4321h
+	CX = ??? or FFFFh
+	if CX = FFFFh
+		DX = number of event to remove or FFFFh
+Return: ES:BX -> event record array
+Note:	AT.COM is a resident scheduler by Bill Frolik
+
+Format of event record:
+Offset	Size	Description
+ 00h	BYTE	in-use flag (00h free, 01h in use, FFh end of array)
+ 01h	BYTE	day of date on which to trigger
+ 02h	BYTE	month of date on which to trigger
+ 03h	BYTE	trigger time, minute
+ 04h	BYTE	trigger time, hour
+ 05h	WORD	offset of command to be executed
 ----------1699-------------------------------
 INT 16 - SCOUT v5.4 - GET ???
 	AH = 99h
@@ -4253,6 +4648,45 @@ Return: Graphics performed
 Note:	PT stands for Paint Tools which is a graphics library for Turbo Pascal,
 	  Modula 2 and others from DataBiten in Sweden. The library is
 	  installed as a memory resident driver.
+----------16CA--BX736B-----------------------
+INT 16 - CtrlAlt Associates STACKEY.COM v3.00 - API
+	AH = CAh
+	BX = 736Bh ("sk")
+	CX = 736Bh
+	AL = function
+	    00h installation check
+	    	Return: DX = words available in keyboard buffer
+	    01h place keystroke in buffer
+	    	DX = keystroke (DH = scan code, DL = ASCII character)
+		Return: DX = words available in keyboard buffer
+			    FFFFh on error
+	    02h flush STACKEY and BIOS keyboard buffers
+Return: AX = CAFFh if installed
+	    BX = segment of resident code
+	    CX = STACKEY version (CH = major, CL = minor)
+Note:	STACKEY is a shareware keyboard-input faking TSR
+----------16CA00BX6570-----------------------
+INT 16 - CtrlAlt Associates EGAPAL.COM v1.00 - INSTALLATION CHECK
+	AX = CA00h
+	BX = 6570h ("ep")
+	CX = 6570h
+Return: AX = CAFFh if installed
+	    BX = segment of resident code
+	    CX = ??? (0090h)
+Note:	EGAPAL is a TSR supplied with STACKEY which makes EGA palette settings
+	  permanent across mode switches
+SeeAlso: AX=CA00h/BX=7670h
+----------16CA--BX7670-----------------------
+INT 16 - CtrlAlt Associates VGAPAL.COM v1.00 - INSTALLATION CHECK
+	AX = CA00h
+	BX = 7670h ("vp")
+	CX = 7670h
+Return: AX = CAFFh if installed
+	    BX = segment of resident code
+	    CX = ??? (0090h)
+Note:	VGAPAL is a TSR supplied with STACKEY which makes VGA palette settings
+	  permanent across mode switches
+SeeAlso: AX=CA00h/BX=6570h
 ----------16E0E0-----------------------------
 INT 16 - TurboPower TSRs - ALTERNATE INSTALLATION CHECK
 	AX = E0E0h
@@ -5364,6 +5798,53 @@ INT 17 - INSET - INSTALLATION CHECK
 	CX = 07C3h (1987d)
 Return: CX = 07C2h (1986d) if installed
 Note:	INSET is a text/graphics integration program
+----------1720-------------------------------
+INT 17 - PC Paint Plus 2.0 - PRINTER DRIVER
+	AH = 20h
+	AL = function number
+	    00h installation check
+	    	Return: BX = driver version number (BH=major,BL=minor)
+			CH = ??? (00h)
+			CL = ???
+			DX = ??? (0100h)
+		Note: also enables the remaining functions
+	    01h set ??? flag
+	    02h get information
+	    	CL = subfunction
+		    00h get printer type
+		    	Return: ES:DI -> ASCIZ printer name
+		    01h get paper size
+		    	DX = size index
+			Return: ES:DI -> ASCIZ paper size description
+		    02h get ???
+		    	Return: BX = ???
+		    03h get printer information???
+		    	DX = ???
+			ES:BX -> buffer for ??? (min 134 bytes)
+	    03h ???
+	    	ES:BX -> ???
+	    04h get ???
+	    	Return: ES:DI -> ???
+	    05h advance printer to next page
+	    	Note: also clears flag set by function 01h
+	    06h advance printer to next page and shut down
+	    	Note:	also clears flag set by function 01h and disables
+			  functions other than 00h
+	    07h not implemented, AX returned unchanged
+	BL = printer number???
+Return: AX = status
+	    0000h successful
+	    0001h invalid printer???
+	    0002h ???
+	    0003h invalid subfunction
+	    0005h driver disabled, must call function 00h first
+	    0009h unknown printer error
+	    000Bh printer not selected
+	    000Ch printer out of paper
+	    000Eh error while writing to serial printer
+	    000Fh ???
+	    0010h invalid function number
+	    0011h value out of range
 ----------172400-----------------------------
 INT 17 - Shamrock Software NET.24 v3.11+ - ENABLE/DISABLE API FUNCTIONS
 	AX = 2400h
@@ -6373,6 +6854,7 @@ Notes:	WordPerfect 5.0 will call this interrupt at start up to determine if a
 		Exit:	AX = 0 or key code
 			BX = 0 or segment address of buffer with key codes
 	See the "WordPerfect 5.0 Developer's Toolkit" for further information.
+SeeAlso: INT 16/AX=5500h
 ----------1A80-------------------------------
 INT 1A - PCjr - SET UP SOUND MULTIPLEXOR
 	AH = 80h
@@ -6385,41 +6867,53 @@ INT 1A - Tandy 2500, Tandy 1000L series - DIGITAL SOUND
 	AX = 8100h
 Return: AH > 80h if supported
 ----------1AA0-------------------------------
-INT 1A - Disk Spool II v??? - INSTALLATION CHECK
+INT 1A - Disk Spool II v2.07 - INSTALLATION CHECK
 	AH = A0h
-Return: AH = B0h
-	ES = code segment
-	BX -> name of current spool file
-	SI -> current despool file
-	CL = 00h despooler is disabled
-	   = 41h despooler is enabled
-	CH = 00h spooler is disabled
-	   = 41h spooler is enabled
-	DL = 00h despooler is currently active printing a file
-	   = 41h despooler is standing by
-SeeAlso: AH=D0h
+Return: AH = B0h if installed
+	    AL = pending INT 1A/AH=D0h subfunction if nonzero???
+	    ES = code segment
+	    ES:BX -> name of current spool file
+	    ES:SI -> current despool file
+	    CL = 00h despooler is disabled
+	       = 41h despooler is enabled
+	    CH = 00h spooler is disabled
+	       = 41h spooler is enabled
+	    DL = 00h despooler is currently active printing a file
+	       = 41h despooler is standing by
+	    DH = 00h ???
+	       = 41h ???
+	    DI = 0000h ???
+		 0001h ???
+Note:	Disk Spool II is a shareware disk-based print spooler by Budget
+	  Software Company
+SeeAlso: AH=ABh,AH=C0h,AH=D0h
 ----------1AAB-------------------------------
 INT 1A - Disk Spool II v1.83 - INSTALLATION CHECK
 	AH = ABh
-Return: ES = code segment
-	BX -> name of current spool file
-	SI -> current despool file
-	CL = ???
-	CH = ???
-	DL = ???
-	DH = 00h ???
-	   = 41h ???
-	AL = ???
-	AH = BAh
-	DI = 0000h ???
-	     0001h ???
-SeeAlso: AH=ACh,AH=ADh
+Return:	AH = BAh if installed
+	    AL = pending INT 1A/AH=ADh subfunction if nonzero???
+	    ES = code segment
+	    ES:BX -> name of current spool file
+	    ES:SI -> current despool file
+	    CL = 00h despooler is disabled
+	       = 41h despooler is enabled
+	    CH = 00h spooler is disabled
+	       = 41h spooler is enabled
+	    DL = 00h despooler is currently active printing a file
+	       = 41h despooler is standing by
+	    DH = 00h ???
+	       = 41h ???
+	    DI = 0000h ???
+		 0001h ???
+Note:	Disk Spool II is a shareware disk-based print spooler by Budget
+	  Software Company
+SeeAlso: AH=A0h,AH=ACh,AH=ADh
 ----------1AAC-------------------------------
 INT 1A - Disk Spool II v1.83 - INSTALLATION CHECK
 	AH = ACh
 Return: (see AH=ABh)
 Note:	this function is identical to AH=ABh
-SeeAlso: AH=ABh,AH=ADh
+SeeAlso: AH=A0h,AH=ABh,AH=ADh
 ----------1AAD-------------------------------
 INT 1A - Disk Spool II v1.83 - FUNCTION CALLS
 	AH = ADh
@@ -6431,8 +6925,8 @@ INT 1A - Disk Spool II v1.83 - FUNCTION CALLS
 	    09h enable popup menu
 	    0Ah ???
 	    0Bh disable the spooler
-	    0Ch ???
-	    0Dh ???
+	    0Ch start despooler after last successfully printed document???
+	    0Dh start despooler at the exact point where it last left off???
 	    0Eh pop up the menu
 	    0Fh ???
 	    11h ???
@@ -6442,15 +6936,21 @@ INT 1A - Disk Spool II v1.83 - FUNCTION CALLS
 	    17h ???
 	    18h ???
 	    19h ???
-	    20h ???
+	    20h clear file pointed to by the despooler???
 	    21h	???
 	    22h	???
 	    23h ???
 	    30h ???
 Return: AH = 00h if successful
 SeeAlso: AH=ABh
+----------1AC0-------------------------------
+INT 1A - Disk Spool II v2.07 - ALTERNATE INSTALLATION CHECK
+	AH = C0h
+Return: (see AH=A0h)
+Note:	this call is identical to AH=A0h
+SeeAlso: AH=A0h,AH=ABh,AH=D0h
 ----------1AD0-------------------------------
-INT 1A - Disk Spool II v??? - FUNCTION CALLS
+INT 1A - Disk Spool II v2.07 - FUNCTION CALLS
 	AH = D0h
 	AL = function code
 	    01h enable spooler and despooler
@@ -6461,12 +6961,39 @@ INT 1A - Disk Spool II v??? - FUNCTION CALLS
 	    06h clear the spool file
 	    08h inhibit the popup menu
 	    09h enable the popup menu
+	    0Ah ??? (called by Disk Spool's INT 21 handler)
 	    0Bh disable the spooler
 	    0Ch start despooler after last successfully printed document
 	    0Dh start despooler at the exact point where it last left off
 	    0Eh pop up the menu
+	    0Fh ???
+	    11h start new spool file??? (called by Disk Spool's INT 21 handler
+	    		when a program terminates)
+	    14h ???
+	    15h delete despool file and reset ???
+	    16h ??? (writes something to unknown file)
+	    17h ??? (writes something to despool file, then reads something
+	    		else and ???)
+	    18h ??? (reads something from despool file, and then ???)
+	    19h ??? (creates/truncates spool file)
 	    20h clear file pointed to by the despooler
-SeeAlso: AH=A0h
+	    21h ??? (writes something to unknown file)
+	    22h ??? (writes something to spool file if spooler/despooler using
+	    		same file)
+	    23h ??? (opens/creates unknown file, then ???)
+	    30h ???
+	    31h ???
+	    32h beep
+	    33h append CRLF to spool file???
+	    34h ???
+	    35h ???
+	    36h ???
+	    37h append CRLF to spool file and start a new spool file???
+	    38h ???
+	    51h ??? (called by Disk Spool's INT 21 handler)
+	    52h ??? (called by Disk Spool's INT 21 handler)
+	    57h ???
+SeeAlso: AH=A0h,AH=ADh
 ----------1AF7-------------------------------
 INT 1A - RighTime v1.1 - TEMPORARILY DISABLE
 	AH = F7h

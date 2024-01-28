@@ -651,6 +651,7 @@ command intlist_mode()
    auto_indent = 0 ;
    margin_right = 79 ;
    want_backups = 1 ;
+   undo_size = 100000 ;      /* less than default 500,000 */
 }
 
 when_loading()
