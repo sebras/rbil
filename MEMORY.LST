@@ -1,5 +1,5 @@
 [This file was originally provided by Robin Walker.  --Ralf]
-Last Update: 5/22/94
+Last Update: 7/31/94
 
 Format of BIOS Data Segment at segment 40h:
 		{items in curly braces not documented by IBM}
@@ -92,6 +92,7 @@ Offset	Size	Description
 		    bit 7 =1 current operation is write or format
 			  =0 current operation is read or verify
 		    bit 6    reserved
+				(DMA enabled on 82077)
 		    bits 5-4 diskette drive number selected (0-3)
 		    bit 3 =1 diskette 3 motor on (PC,XT only)
 		    bit 2 =1 diskette 2 motor on (PC,XT only)
@@ -332,6 +333,7 @@ Offset	Size	Description
 			      00=0Ch, 01=0Dh, 10=0Eh, 11=0Ah
 		    bits 3-2: {Data rate at start of operation}
 		    bits 1-0: reserved
+		 Note: EHD BIOS sets this byte to 01h and never reads it back
  8Ch	BYTE	Fixed disk controller status [not XT]
  8Dh	BYTE	Fixed disk controller Error Status [not XT]
  8Eh	BYTE	Fixed disk Interrupt Control [not XT]
@@ -346,6 +348,7 @@ Offset	Size	Description
 		    bit 2:  =1 drive 0 determined
 		    bit 1:  =1 drive 0 is multi-rate, valid if drive determined
 		    bit 0:  =1 drive 0 supports 80 tracks, always valid
+		 Note: EHD BIOS sets this byte to 01h and never alters it again
  90h	BYTE	Diskette drive 0 media state
  91h	BYTE	Diskette drive 1 media state
 		bits 7-6: Data rate
@@ -432,17 +435,54 @@ Offset	Size	Description
  CEh	WORD	count of days since last boot
  D0h-EFh	reserved
  D0h	BYTE	[Digiboard MV/4] length of data table
+ D0h	BYTE	[EHD floppy]
+		     bit 4: installation completed
+		     bits 3-0: drives 0-3
  D1h	BYTE	[Digiboard MV/4] product ID
  D2h	WORD	[Digiboard MV/4] base address found
  D4h	BYTE	[Digiboard MV/4] ports
  D5h	BYTE	[Digiboard MV/4] IRQ
+ D5h	BYTE	[EHD floppy] total number of floppy disk controllers in system
+ D6h	BYTE	[EHD floppy] AND-bits for DL to adjust port address (FFh if
+		  at 03Fxh and 7Fh if at 037xh)
  D6h	WORD	[Digiboard MV/4] keyboards found
+ D7h	BYTE	[EHD floppy] drive 0 diskette media status
+		    bits 7-6: Data rate: 00=500kbps,01=300kbps,10=250k,11=1M/S
+		    bit    5: =1 if double stepping reqd (e.g. 360kB in 1.2MB)
+		    bit    4: =1 if media established
+		    bit    3: reserved
+		    bits 2-0: on exit from BIOS, contain:
+			    000 trying 360kB in 360kB
+			    001 trying 360kB in 1.2MB
+			    010 trying 1.2MB in 1.2MB
+			    011 360kB in 360kB established
+			    100 360kB in 1.2MB established
+			    101 1.2MB in 1.2MB established
+			    110 reserved (2M8?)
+			    111 all other formats/drives
+		the value in 4D7 gets sent to 490 (diskette0 media state)
+ D8h	BYTE	[EHD floppy] drive 1 diskette media state
  D8h	WORD	[Digiboard MV/4] mice found
+ D9h	BYTE	[EHD floppy] drive 2 diskette media state
  DAh	BYTE	[Digiboard MV/4] current port (used by VGA initialization only)
+ DAh	BYTE	[EHD floppy] drive 3 diskette media state
  DBh	BYTE	[Digiboard MV/4] master 8259 mask (used by VGA init only)
+ DBh	BYTE	[EHD floppy] drive 0 needs recalibaration
  DCh	BYTE	[Digiboard MV/4] slave 8259 mask (used by VGA init only)
+ DCh	BYTE	[EHD floppy] drive 1 needs recalibaration
+ DDh	BYTE	[EHD floppy] drive 2 needs recalibaration
+ DEh	BYTE	[EHD floppy] drive 3 needs recalibaration
  E0h-EFh	[Phoenix 386 BIOS] drive parameter table for first hard disk
 		  if configurable "type 47"
+ E3h	BYTE	[EHD floppy] drive 0 diskette type (from jumpers)
+		    01h undefined by diskette change (360K)
+		    02h 1.2M
+		    03h 720K
+		    04h 1.44M
+		    05h 2.88M
+ E4h	BYTE	[EHD floppy] drive 1 diskette type (from jumpers)
+ E5h	BYTE	[EHD floppy] drive 2 diskette type (from jumpers)
+ E6h	BYTE	[EHD floppy] drive 3 diskette type (from jumpers)
  EAh	WORD	[Omti controller] segment of extended BIOS data area???
 		drive parameter tables stored in specified segment
  ECh	WORD	(Dell 4xxDE BIOS A11) loop count for delays
@@ -697,3 +737,9 @@ Offset	Size	Description
 			Table is ??? triplets ??? of BYTEs???
  14h	BYTEs	array of mode values to which this profile is to pertain
 	BYTE	FFh end of array
+
+-----------CONTRIBUTORS----------------------
+Wim Osterholt	<wim@djo.wtm.tudelft.nl> or Wim Osterholt 2:512/56
+	EHD floppy = 'KEGAN 4.0M Floppy Drive Controller.',
+		     'ACME FX4-K7tb2 v:2.5 11/5/91'
+

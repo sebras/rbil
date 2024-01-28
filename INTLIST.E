@@ -37,6 +37,11 @@
 
 keytable intlist_tab ;			/* key table for IntList mode */
 
+/* on repeated F12, how often to display number of entries processed */
+/* for fast 386, every 100; for a Pentium, at least 300 or the message */
+/* line will lag way behind the actual progress */
+#define NUMBER_INT_PROGRESS_INTERVAL 500
+
 /*=============================================================*/
 /*    Global Variables					       */
 /*=============================================================*/
@@ -557,7 +562,7 @@ command number_int() on intlist_tab[FKEY(12)]
 	 say("No prior entry.") ;
 	 break ;
 	 }
-      if (((i+1) % 100) == 0)
+      if (((i+1) % NUMBER_INT_PROGRESS_INTERVAL) == 0)
 	 say("%4d...",i+1) ;
       }
    if (iter > 1 && !hit_top)

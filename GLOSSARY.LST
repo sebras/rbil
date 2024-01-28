@@ -1,5 +1,5 @@
 GLOSSARY
-Last Change 4/2/94.
+Last Change 8/7/94.
 
 A20
 	(Address line 20) The 80286 and higher CPUs allow addresses in
@@ -113,6 +113,7 @@ frequently-used data in a location which is more quickly accessed. The
 most common caches are disk caches (store disk sectors in RAM) and RAM
 caches (store portions of main memory in special high-speed RAM which
 may be accessed as fast as the CPU is capable of accessing memory).
+See also Delayed Write, Write-Through.
 
 Callback
 	A call to a specified function made by the operating system or
@@ -151,6 +152,11 @@ rate at which the IBM PC's system clock is updated.
 CMOS
 	(Complementary Metal-Oxide-Silicon) A type of integrated
 circuit design known for its low power consumption.
+
+CMOS RAM
+	A small amount (typically 64 or 128 bytes) of memory in the system's
+real-time clock chip that is preserved by the clock's battery and is used for
+storing configuration information.  See also Real-Time Clock.
 
 Communicating Applications Specification
 	DCA and Intel's standard programmatic interface for sending and
@@ -197,7 +203,7 @@ video board.
 
 Delayed Write
 	A form of caching in which control is returned before the data is
-actually written to the storage media.  See also Cache.
+actually written to the storage media.  See also Cache, Write-Through.
 
 Device Driver
 	An interface module between the device-independent portions of
@@ -422,6 +428,15 @@ megabyte as the 8088 and 8086 do.  See also A20, INT 2Fh Functions
 HMA
 	see High Memory Area
 
+Horizontal Retrace
+	When a monitor has finished displaying a single scan line, it must
+move it electron beam(s) back to the left edge of the CRT, during which time
+it turns off the beam.  On the original CGA (and some early clones), the
+only time one could access the display memory without causing "snow" was
+during the horizontal or vertical retrace periods, as the display adapter
+was not itself accessing the display memory during those times.  See also
+Vertical Retrace.
+
 IDE
 	(Integrated Drive Electronics) A type of disk drive interface
 which essentially extends the PC's expansion bus all the way to the
@@ -586,6 +601,10 @@ Overscan Area
 be displayed and the actual edge of the area the video adapter can illuminate
 on the monitor's screen.
 
+Overscan Register
+	On a display adapter, the control register which specifies the color
+to be displayed in the overscan area.
+
 Packet Driver
 	Any one of the numerous drivers conforming to FTP Software's
 Packet Driver Specification, which provides a hardware-independent
@@ -597,6 +616,10 @@ generated when a program accesses a page of virtual memory which is not
 located in RAM at the time.  The operating system's response is to load in
 the required page, possibly writing some other page out to disk in order
 to make room.  See also INT 0E.
+
+Palette Register
+	A memory location on the video controller which specifies the actual
+	color displayed for a particular color number.
 
 Park
 	To move a hard disk's read/write heads to a position in which
@@ -660,6 +683,11 @@ correspond directly to real physical addresses (thus the full name,
 Real Address Mode) and there are no CPU-imposed protections between
 programs.  See also Protected Mode, Virtual-86 Mode.
 
+Real-Time Clock
+	A battery-powered clock which continues to maintain its time even
+while the system is powered down.  On PCs, the real-time clock contains a
+small amount of battery-powered memory (set CMOS RAM).
+
 Redirector Interface
 	The set of device-independent INT 2Fh function calls invoked by
 the MSDOS kernel to operate on devices it recognizes as network
@@ -688,6 +716,21 @@ family of encoding methods, specified with two numbers indicating the
 minimum and maximum distances between one bits (flux transitions).  The
 variant normally called RLL is RLL-2,7; RLL-1,7 and RLL-3,9 are also in
 use.  MFM is in effect RLL-1,3.  See also FM, MFM.
+
+ROM
+	(Read-Only Memory) A memory for program storage which may not be
+changed by the program as it runs.
+
+RTC
+	see Real-Time Clock
+
+Scan Code
+	The actual key number sent by the keyboard, which differs from the
+key codes seen by application programs.  The enhanced (101/102-key) keyboard
+actually sends different scan codes than the original (83/84-key) IBM
+keyboard, but these are normally translated by the keyboard controller into
+the scan codes used by the original keyboard before they become visible to
+programs.
 
 SCSI
 	(Small Computer Systems Interface) A system-independent
@@ -785,6 +828,16 @@ VDM
 VDS
 	see Virtual DMA Specification
 
+VDU
+	(Video Display Unit)  Mainframe-speak for computer monitor.
+
+Vertical Retrace
+	When a monitor has finished displaying an image by sweeping its
+electron beam(s) over the face of the CRT, it has to move the beam back up
+to the top of the display.  During the time this takes, the beam is turned
+off.  The vertical retrace interval is a good time to change the displayed
+picture for smooth animation.  See also Horizontal Retrace.
+
 VESA
 	(Video Electronics Standards Association)  An industry group
 which sets both hardware and software standards and recommendations.
@@ -836,6 +889,12 @@ VxD
 	A virtual device driver for Windows 3.0 or 3.1.  See also
 device driver.
 
+Write-Through
+	One of two main types of caches, the write-through cache immediately
+writes any new information to the medium it is caching, so that the cache
+never contains information which is not already present on the cached device.
+See also cache,
+
 XBDA
 	see Extended BIOS Data Area
 
@@ -847,6 +906,9 @@ XGA
 
 XMS
 	see Extended Memory Specification
+
+YIQ
+	see YUV
 
 YUV
 	A color specification mechanism used in NTSC-type color

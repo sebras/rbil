@@ -1,5 +1,5 @@
 [This file was provided by Wim Osterholt (2:512/56 or wim@djo.wtm.tudelft.nl).]
-Last Change: 6/5/94
+Last Change: 8/7/94
 
 
 		XT, AT and PS/2	 I/O port addresses
@@ -206,16 +206,16 @@ Last Change: 6/5/94
 		C1h CR1
 		C4h non-cacheable region 1, start address bits 31-24
 		C5h non-cacheable region 1, start address bits 23-16
-		C6h non-cacheable region 1, start addr 15-12, size (low nybble)
+		C6h non-cacheable region 1, start addr 15-12, size (low nibble)
 		C7h non-cacheable region 2, start address bits 31-24
 		C8h non-cacheable region 2, start address bits 23-16
-		C9h non-cacheable region 2, start addr 15-12, size (low nybble)
+		C9h non-cacheable region 2, start addr 15-12, size (low nibble)
 		CAh non-cacheable region 3, start address bits 31-24
 		CBh non-cacheable region 3, start address bits 23-16
-		CCh non-cacheable region 3, start addr 15-12, size (low nybble)
+		CCh non-cacheable region 3, start addr 15-12, size (low nibble)
 		CDh non-cacheable region 4, start address bits 31-24
 		CEh non-cacheable region 4, start address bits 23-16
-		CFh non-cacheable region 4, start addr 15-12, size (low nybble)
+		CFh non-cacheable region 4, start addr 15-12, size (low nibble)
 0023	r/w	cache configuration register array (indexed by port 0022h)
 
 		non-cacheable region sizes:
@@ -315,7 +315,7 @@ Last Change: 6/5/94
 004B		EISA programmable interval timer 2
 
 -------------------------------------------------------------------------------
-0060-006F ----	Keyboard controller (8041, 8042)  (or PPI (8255) on XT)
+0060-006F ----	Keyboard controller 804x (8041, 8042)  (or PPI (8255) on PC,XT)
 		 XT uses 60-63,	 AT uses 60-64
 
 		 AT keyboard controller input port bit definitions
@@ -354,7 +354,7 @@ Last Change: 6/5/94
 0060	r/w	KB controller data port or keyboard input buffer (ISA, EISA)
 		should only be read from after status port bit0 = 1
 		should only be written to if status port bit1 = 0
-		keyboard commands (data also goes to port 0060h):
+		keyboard commands (data also goes to port 0060):
 		 E6	sngl  set mouse scaling to 1:1
 		 E7	sngl  set mouse scaling to 2:1
 		 E8	dbl   set mouse resolution
@@ -401,6 +401,7 @@ Last Change: 6/5/94
 		 FF	sngl  reset mouse
 		Note:	must issue command D4h to port 64h first to access
 			  mouse functions
+
 
 0060	r	KeyBoard or KB controller data output buffer (via PPI on XT)
 
@@ -471,7 +472,7 @@ Last Change: 6/5/94
 		 bit 4 = 0 keyboard inhibit
 		 bit 3 = 1 data in input register is command
 			 0 data in input register is data
-		 bit 2 = system flag status 0=power up or reset 1=selftest OK
+		 bit 2   system flag status: 0=power up or reset  1=selftest OK
 		 bit 1 = 1 input buffer full (input 60/64 has data for 8042)
 		 bit 0 = 1 output buffer full (output 60 has data for system)
 
@@ -482,8 +483,8 @@ Last Change: 6/5/94
 		 bit 4 = 0 keyboard inhibit
 		 bit 3 = 1 data in input register is command
 			 0 data in input register is data
-		 bit 2 = system flag status 0=power up or reset 1=selftest OK
-		 bit 1 = 1 input buffer full (input 60/64 has data for 8042)
+		 bit 2   system flag status: 0=power up or reset  1=selftest OK
+		 bit 1 = 1 input buffer full (input 60/64 has data for 804x)
 		 bit 0 = 1 output buffer full (output 60 has data for system)
 
 0064	r	KB controller read status by Compaq
@@ -499,14 +500,14 @@ Last Change: 6/5/94
 		 bit 4 = 0 security lock engaged
 		 bit 3 = 1 data in OUTPUT register is command
 			 0 data in OUTPUT register is data
-		 bit 2 = 0 system flag status 0=power up or reset 1=soft reset
+		 bit 2   system flag status: 0=power up or reset  1=soft reset
 		 bit 1 = 1 input buffer full (output 60/64 has data)
 		 bit 0 = 0 no new data in buffer (input 60 has data)
 
 0064	w	KB controller input buffer (ISA, EISA)
 		KB controller commands (data goes to port 0060):
 		 20	read  read byte zero of internal RAM, this is the
-			      last KB command send to 8041
+			      last KB command send to 804x
 		      Compaq  Put current command byte on port 0060
 				command structure:
 				bit 7	reserved
@@ -518,7 +519,7 @@ Last Change: 6/5/94
 				bit 1 = 0 reserved
 				bit 0 = 1 generate int. when output buffer full
 		 21-3F	read  reads the byte specified in the lower 5 bits of
-			      the command in the 8041's internal RAM
+			      the command in the 804x's internal RAM
 		 60-7F	dbl   writes the data byte to the address specified in
 			      the 5 lower bits of the command.
 
@@ -563,7 +564,7 @@ Last Change: 6/5/94
 			       3 = keyboard data line is stuck low
 			       4 = keyboard data line stuck high
 		      Compaq   5 = Compaq diagnostic feature
-		 AC	read  diagnostic dump. the contents of the 8041 RAM,
+		 AC	read  diagnostic dump. the contents of the 804x RAM,
 			      output port, input port, status word are send.
 		 AD	sngl  disable keyboard (sets bit 4 of commmand byte)
 		 AE	sngl  enable keyboard  (resets bit 4 of commmand byte)
@@ -577,9 +578,9 @@ Last Change: 6/5/94
 		      Compaq  Places byte in output port in output buffer. use
 			      this command only when the output buffer is empty
 		 D1	dbl   write output port. next byte written  to 0060
-			      will be written to the 8042 output port; the
+			      will be written to the 804x output port; the
 			      original IBM AT and many compatibles use bit 1 of
-			      the output port to control the A20 gate
+			      the output port to control the A20 gate.
 		      Compaq  The system speed bits are not set by this command
 			      use commands A1-A6 (!) for speed functions.
 		 D2	MCA   Enhanced Command: write keyboard output buffer
@@ -839,10 +840,19 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 		 3B  H cylinders parking zone
 		 3C  sectors
 
+-------------------------------------------------------------------------------
+0073	  ----  Intel Pentium motherboard ("Neptune" chipset)
+
+0073	r/w	bit 7: ???
+
+-------------------------------------------------------------------------------
+0074-0076	secondary CMOS (Compaq)
+
 0074	w	secondary CMOS RAM index (Compaq)
 
 0076	r/w	secondary CMOS RAM (Compaq)
 
+-------------------------------------------------------------------------------
 0078		HP-Vectra  Hard Reset: NMI enable/disable
 		 bit 7 = 0  disable & clear hard reset from HP-HIL controller
 		       = 1  enable hard reset from HP-HIL controller chip
@@ -1141,6 +1151,9 @@ note on Compaq:	 Derived from the Compaq Deskpro 386 Tech. Ref. Guide.
 0140-0157 ----	RTC (alternate Real Time Clock for XT)	 (1st at 0340-0357)
 
 -------------------------------------------------------------------------------
+015F	  ----	ARTEC Handyscanner A400Z.  alternate address at 35F.
+
+-------------------------------------------------------------------------------
 0170-0177 ----	HDC 2	(2nd Fixed Disk Controller)   same as 01Fx (ISA, EISA)
 
 -------------------------------------------------------------------------------
@@ -1436,7 +1449,14 @@ SeeAlso: 0388-0389
 02E8-02EF ----	serial port, same as 02F8, 03E8 and 03F8
 
 -------------------------------------------------------------------------------
-02E8-02EF ----	used by ATI Mach32 video cards (e.g. Graphics Ultra+)
+02E8-02EF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+02E8	r	display status
+02E8	w	horizontal total
+02EA	w	DAC mask
+02EB	w	DAC read index
+02EC	w	DAC write index
+02ED	w	DAC data
 
 -------------------------------------------------------------------------------
 02EA	  ----	S3 86C928 video controller (ELSA Winner 1000)
@@ -1462,18 +1482,18 @@ SeeAlso: 0388-0389
 0300-0301 ---- Soundblaster 16 ASP MPU-Midi
 
 -------------------------------------------------------------------------------
-0300-0303 ---- Panasonic 52x CD-ROM SCSI Miniport
-	Alternate addresses at 0320, 0340, 0360, and 0380
-
--------------------------------------------------------------------------------
-0300-031F ----	prototype cards
-		Periscope hardware debugger
+0300-0303 ----	Panasonic 52x CD-ROM SCSI Miniport
+		Alternate addresses at 0320, 0340, 0360, and 0380
 
 -------------------------------------------------------------------------------
 0300-030F ----	Philips CD-ROM player CM50
 
 -------------------------------------------------------------------------------
 0300-030F ----	CompaQ Tape drive adapter. alternate address at 0100
+
+-------------------------------------------------------------------------------
+0300-031F ----	prototype cards
+		Periscope hardware debugger
 
 -------------------------------------------------------------------------------
 0310-031F ----	Philips CD-ROM player CM50
@@ -1559,14 +1579,17 @@ SeeAlso: 0388-0389
 0348-0357 ----	DCA 3278
 
 -------------------------------------------------------------------------------
+035F	  ----	ARTEC Handyscanner A400Z.  alternate address at 15F.
+
+-------------------------------------------------------------------------------
 0360-036F ----	PC network (AT)
 0360-0367 ----	PC network (XT only)
 
 -------------------------------------------------------------------------------
-0360-036F ----  National Semiconductor DP8390C/NS3249C network chipset
+0360-036F ----  National Semiconductor DP8390(1)C/NS3249C network chipset
 Note:	cards based on this IEEE 802.3 networking chipset can use any range
-	  of 16 consecutive addresses, and provide a total of four pages of
-	  sixteen register
+	of 16 consecutive addresses, and provide a total of four pages of
+	sixteen register
 
 Page 0	r					w
 
@@ -1647,12 +1670,18 @@ Page 3	r					w
 		 11 register page 3
 
 -------------------------------------------------------------------------------
-0370-0377 ----	FDC 2  (2nd Floppy Disk Controller 8272)  same as 03F0
+0370-0377 ----	FDC 2  (2nd Floppy Disk Controller)	first FDC at 03F0
+		(8272, 8272A, NEC765)
+		(82072, 82077AA for perpendicular recording at 2.8Mb)
 
+0370	r	diskette Extra High Density controller board jumpers (AT)
+0370	r	diskette controller status A (PS/2, PS/2 model 30)
+0371	r	diskette controller status B (PS/2, PS/2 model 30)
 0372	w	diskette controller DOR (Digital Output Register)
-0374	r	diskette controller status register
-0375	r/w	diskette controller data register
-0376	r/w	FIXED disk controller data register
+0374	r	diskette controller main status register
+0374	w	diskette controller datarate select register
+0375	r/w	diskette controller command/data register
+0376	r/w	(2nd FIXED disk controller data register)
 0377	r	diskette controller DIR (Digital Input Register)
 0377	w	select register for diskette data transfer rate
 
@@ -1848,6 +1877,23 @@ SeeAlso: 0220-0223
 	r/w	VGA	other graphics register
 
 -------------------------------------------------------------------------------
+03CE-03CF ----  Compaq Qvision - Functionality Level
+
+03CE	w	graphics address register (index for next port)
+03CF	r/w	other graphics register
+		Index
+		 0Ch	r	controller version
+				2Fh Advanced VGA
+				37h early QVision 1024
+				71h QVision 1280 or later QVision 1024
+		 0Dh		extended controller version
+		 0Eh		extended controller capabilities
+		 0Fh		environment info
+		 54h		available memory
+		 55h		phase-locked-loop clock
+		 56h-57h	controller capabilities
+
+-------------------------------------------------------------------------------
 03D0-03DF ----	CGA   (Color Graphics Adapter)
 
 03D0		same as 03D4
@@ -1905,20 +1951,42 @@ SeeAlso: 0220-0223
 03E8-03EF ----	serial port, same as 02E8, 02F8 and 03F8
 
 -------------------------------------------------------------------------------
-03F0-03F7 ----	FDC 1  (1st Floppy Disk Controller 8272)  same as 0370
+03F0-03F7 ----	FDC 1  (1st Floppy Disk Controller)	second FDC at 0370
+		(8272, 8272A, NEC765)
+		(82072, 82077AA for perpendicular recording at 2.8Mb)
 
-03F0		diskette controller status A (PS/2)
+03F0	r	diskette EHD controller board jumper settings (82072AA)
+		 bit 7-6      drive 3
+		 bit 5-4      drive 2
+		 bit 3-2      drive 1
+		 bit 1-0      drive 0
+			 = 00  1.2Mb
+			 = 01  720Kb
+			 = 10  2.8Mb
+			 = 11  1.4Mb
+
+03F0	r	diskette controller status A (PS/2)
 		 bit 7	 interrupt pending
-		 bit 6	 second drive installed
+		 bit 6	 -DRV2	second drive installed
 		 bit 5	 step
-		 bit 4	 track 0
+		 bit 4	 -track 0
 		 bit 3	 head 1 select
-		 bit 2	 index
-		 bit 1	 write protect
-		 bit 0	 direction
+		 bit 2	 -index
+		 bit 1	 -write protect
+		 bit 0	 +direction
+
+03F0	r	diskette controller status A (PS/2 model 30)
+		 bit 7	 interrupt pending
+		 bit 6	 DRQ
+		 bit 5	 step F/F
+		 bit 4	 -track 0
+		 bit 3	 head 1 select
+		 bit 2	 +index
+		 bit 1	 +write protect
+		 bit 0	 -direction
 
 03F1	r	diskette controller status B (PS/2)
-		 bit 7-6  reserved
+		 bit 7-6  =1 reserved
 		 bit 5	  drive select (0=A:, 1=B:)
 		 bit 4	  write data
 		 bit 3	  read data
@@ -1926,8 +1994,18 @@ SeeAlso: 0220-0223
 		 bit 1	  motor enable 1
 		 bit 0	  motor enable 0
 
+03F1	r	diskette controller status B (PS/2 model 30)
+		 bit 7	  -DRV2	second drive installed
+		 bit 6	  -DS1
+		 bit 5	  -DS0
+		 bit 4	  write data F/F
+		 bit 3	  read data F/F
+		 bit 2	  write enable F/F
+		 bit 1	  -DS3
+		 bit 0	  -DS2
+
 03F2	w	diskette controller DOR (Digital Output Register)
-		 bit 7-6    reserved PS/2
+		 bit 7-6    reserved on PS/2
 		 bit 7 = 1  drive 3 motor enable
 		 bit 6 = 1  drive 2 motor enable
 		 bit 5 = 1  drive 1 motor enable
@@ -1937,31 +2015,55 @@ SeeAlso: 0220-0223
 		       = 0  hold FDC at reset
 		 bit 1-0    drive select (0=A 1=B ..)
 
-03F4	r	diskette controller status register
-		 bit 7 = 1  data register is ready
+03F3		tape drive register (on the 82077AA)
+		 bit 7-2      reserved, tri-state
+		 bit 1-0      tape select
+			 = 00  none, drive 0 cannot be a tape drive.
+			 = 01  drive1
+			 = 10  drive2
+			 = 11  drive3
+
+03F4	r	diskette controller main status register
+		 bit 7 = 1  RQM  data register is ready
+			 0  no access is permitted
 		 bit 6 = 1  transfer is from controller to system
 			 0  transfer is from system to controller
 		 bit 5 = 1  non-DMA mode
-		 bit 4 = 1  diskette controller busy
+		 bit 4 = 1  diskette controller is busy
 		 bit 3 = 1  drive 3 busy (reserved on PS/2)
 		 bit 2 = 1  drive 2 busy (reserved on PS/2)
-		 bit 1 = 1  drive 1 busy
-		 bit 0 = 1  drive 0 busy
+		 bit 1 = 1  drive 1 busy (= drive is in seek mode)
+		 bit 0 = 1  drive 0 busy (= drive is in seek mode)
+		Note:	in non-DMA mode, all data transfers occur through
+			  port 03F5h and the status registers (bit 5 here
+			  indicates data read/write rather than than
+			  command/status read/write)
 
-03F5	r	diskette command status register 0
+03F4	w	diskette controller data rate select register
+		 bit 7   = 1  S/W reset
+		 bit 6   = 1  power down
+		 bit 5   = 0  reserved
+		 bit 4-2      write precompensation, 000 default
+		 bit 1-0      data rate select
+			 = 00  500 Kb/s (MFM)
+			 = 01  300 Kb/s (MFM)
+			 = 10  250 Kb/s (MFM)
+			 = 11  1   Mb/s (MFM)
+
+03F5	r	diskette command/data register 0 (ST0)
 		 bit 7-6      last command status
 			 = 00  command terminated successfully
 			 = 01  command terminated abnormally
 			 = 10  invalid command
 			 = 11  terminated abnormally by change in ready signal
-		 bit 5	 = 1   seek completed
+		 bit 5	 = 1  seek completed
 		 bit 4	 = 1  equipment check occurred after error
 		 bit 3	 = 1  not ready
 		 bit 2	 = 1  head number at interrupt
 		 bit 1-0 = 1  unit select (0=A 1=B .. )
 			      (on PS/2	01=A  10=B)
 
-		status register 1
+		status register 1 (ST1)
 		 bit 7	    end of cylinder; sector# greater then sectors/track
 		 bit 6 = 0
 		 bit 5 = 1  CRC error in ID or data field
@@ -1971,9 +2073,9 @@ SeeAlso: 0220-0223
 		 bit 1 = 1  write protect detected during write
 		 bit 0 = 1  ID address mark not found
 
-		status register 2
+		status register 2 (ST2)
 		 bit 7 = 0
-		 bit 6 = 1  deleted Data Eddress Mark detected
+		 bit 6 = 1  deleted Data Address Mark detected
 		 bit 5 = 1  CRC error in data
 		 bit 4 = 1  wrong cylinder detected
 		 bit 3 = 1  scan command equal condition satisfied
@@ -1981,7 +2083,7 @@ SeeAlso: 0220-0223
 		 bit 1 = 1  bad cylinder, ID not found
 		 bit 0 = 1  missing Data Address Mark 
 
-		status register 3
+		status register 3 (ST3)
 		 bit 7	    fault status signal
 		 bit 6	    write protect status
 		 bit 5	    ready status
@@ -1989,6 +2091,61 @@ SeeAlso: 0220-0223
 		 bit 3	    two sided status signal
 		 bit 2	    side select (head select)
 		 bit 1-0    unit select (0=A 1=B .. )
+
+03F5	w	diskette command register.  The commands summarized here are
+		mostly multibyte commands. This is for brief recognition only.
+
+			MFM = MFM mode selected, opposite to MF mode.
+			HDS = head select
+			DS  = drive select
+			MT  = multi track operation
+			SK  = skip deleted data address mark
+
+		   Command	     # bytes	D7  6   5   4   3   2   1   0
+		 read track		9	0  MFM  0   0   0   0   1   0
+						0   0   0   0   0 HDS DS1 DS0
+		 specify		3	0   0   0   O   O   O   1   1
+		 sense drive status	2	0   0   0   0   0   1   0   0
+						0   0   0   0   0 HDS DS1 DS0
+		 write data		9	MT MFM  0   0   0   1   0   1
+						0   0   0   0   0 HDS DS1 DS0
+		 read data		9	MT MFM SK   0   0   1   1   0
+						0   0   0   0   0 HDS DS1 DS0
+		 recalibrate		2	0   0   0   0   0   1   1   1
+						0   0   0   0   0   0 DS1 DS0
+		 sense interrupt status	1	0   0   0   0   1   0   0   0
+		 write deleted data	9	MT MFM  0   0   1   0   0   1
+						0   0   0   0   0 HDS DS1 DS0
+		 read ID		2	0  MFM  0   0   1   0   1   0
+						0   0   0   0   0 HDS DS1 DS0
+		 read deleted data	9	MT MFM SK   0   1   1   0   0
+						0   0   0   0   0 HDS DS1 DS0
+		 format track		10	0  MFM  0   0   1   1   0   1
+						0   0   0   0   0 HDS DS1 DS0
+		 dumpreg **		1	0   0   0   0   1   1   1   0
+		 seek			3	0   0   0   0   1   1   1   1
+						0   0   0   0   0 HDS DS1 DS0
+		 version **		1	0   0   0   1   0   0   0   0
+		 scan equal *		9	MT MFM SK   1   0   0   0   1
+						0   0   0   0   0 HDS DS1 DS0
+		 perpendicular mode **	2	0   0   0   1   0   0   1   0
+						0   0   0   0   0   0 WGATE GAP
+		 configure **		4	0   0   0   1   0   0   1   1
+						0   0   0   0   0   0   0   0
+		 verify			9	MT MFM SK   1   0   1   1   0
+						EC  0   0   0   0 HDS DS1 DS0
+		 scan low or equal *	9	MT MFM MK   1   1   0   0   1
+						0   0   0   0   0 HDS DS1 DS0
+		 scan high or equal *	9	MT MFM MK   1   1   1   0   1
+						0   0   0   0   0 HDS DS1 DS0
+		 relative seek **	3	1  DIR  0   0   1   1   1   1
+						0   0   0   0   0 HDS DS1 DS0
+
+		 BEWARE: not every invalid command is treated as invalid!
+		 *  Note: the scan commands aren't mentioned for the 82077AA.
+		 ** Note: EHD controller commands.
+
+03F6		reserved on FDC
 
 03F6	r/w	FIXED disk controller data register
 		 bit 7-4    reserved
@@ -2000,8 +2157,9 @@ SeeAlso: 0220-0223
 			 1  disk initialization disable
 		 bit 0	    reserved
 
-03F7	r	diskette controller DIR (Digital Input Register)
+03F7	r	diskette controller DIR (Digital Input Register, PC/AT mode)
 		 bit 7 = 1 diskette change
+		 bit 6-0   tri-state on FDC
 
 		 bit 6	   FIXED DISK write gate
 		 bit 5	   FIXED DISK head select 3 / reduced write current
@@ -2009,12 +2167,35 @@ SeeAlso: 0220-0223
 		 bit 3	   FIXED DISK head select 1
 		 bit 2	   FIXED DISK head select 0
 		 bit 1	   FIXED DISK drive 1 select
-		 bit 0	   FIXED DISK drive 0 select   conflicts with:
+		 bit 0	   FIXED DISK drive 0 select
 
-		 bit 0	   diskette high density select
+03F7	r	diskette controller DIR (Digital Input Register, PS/2 mode)
+		 bit 7   = 1 diskette change
+		 bit 6-3 = 1
+		 bit 2	     datarate select1
+		 bit 1	     datarate select0
+		 bit 0   = 0 high density select (500Kb/s, 1Mb/s)
 
-03F7	w	select register for diskette data transfer rate
-		 bit 7-2       reserved
+ conflicts with  bit 0	   FIXED DISK drive 0 select
+
+03F7	r	diskette controller DIR (Digital Input Register, PS/2 model 30)
+		 bit 7   = 0 diskette change
+		 bit 6-4 = 0
+		 bit 3	     -DMA gate from DOR register
+		 bit 2	     NOPREC from CCR register
+		 bit 1	     datarate select1
+		 bit 0	     datarate select0
+
+03F7	w	configuration control register (PC/AT, PS/2)
+		 bit 7-2       reserved, tri-state
+		 bit 1-0 = 00  500 Kb/S mode
+			 = 01  300 Kb/S mode
+			 = 10  250 Kb/S mode
+			 = 11  reserved
+
+03F7	w	configuration control register (PS/2 model 30)
+		 bit 7-3       reserved, tri-state
+		 bit 2	       NOPREC (has no function. set to 0 by hardreset)
 		 bit 1-0 = 00  500 Kb/S mode
 			 = 01  300 Kb/S mode
 			 = 10  250 Kb/S mode
@@ -2206,7 +2387,8 @@ SeeAlso: 0220-0223
 -------------------------------------------------------------------------------
 0461	r/w	Extended NMI status/control register
 		 bit 7 = 1  NMI pending from fail-safe timer (read only)
-		 bit 6 = 1  NMI pending from bus timeout NMI status (read only)
+		 bit 6 = 1  NMI pending from bus timeout NMI status (read
+only)
 		 bit 5 = 1  NMI pending (read only)
 		 bit 4	    reserved
 		 bit 3 = 1  bus timeout NMI enable (read/write)
@@ -2354,6 +2536,16 @@ SeeAlso: 0220-0223
 06E2-06E3 ----	data aquisition (adapter 1)
 
 -------------------------------------------------------------------------------
+06E8	  ----	S3 86C928 video controller (ELSA Winner 1000)
+
+-------------------------------------------------------------------------------
+06E8-06EF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+06E8	w	horizontal displayed
+
+	See also 02E8-02EF, 0AE8, 96E8, 9AE8
+
+-------------------------------------------------------------------------------
 0790-0793 ----	cluster (adapter 1)
 
 -------------------------------------------------------------------------------
@@ -2370,6 +2562,16 @@ SeeAlso: 0220-0223
 
 -------------------------------------------------------------------------------
 0AE2-0AE3 ----	cluster (adapter 2)
+
+-------------------------------------------------------------------------------
+0AE8	  ----	S3 86C928 video controller (ELSA Winner 1000)
+
+-------------------------------------------------------------------------------
+0AE8-0AEF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+0AE8	w	horizontal sync start
+
+-------------------------------------------------------------------------------
 0B90-0B93 ----	cluster (adapter 2)
 
 -------------------------------------------------------------------------------
@@ -2385,7 +2587,26 @@ SeeAlso: 0220-0223
 0C80-0C83 ----	EISA system board ID registers
 
 -------------------------------------------------------------------------------
+0CF8	  ----  Intel Pentium motherboard ("Neptune" chipset)
+
+-------------------------------------------------------------------------------
+0CFA	  ----  Intel Pentium motherboard ("Neptune" chipset)
+
+-------------------------------------------------------------------------------
+0EE8	  ----	S3 86C928 video controller (ELSA Winner 1000)
+
+-------------------------------------------------------------------------------
+0EE8-0EEF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+0EE8	w	horizontal sync width
+
+-------------------------------------------------------------------------------
 1000-10FF ----  available for EISA slot 1
+
+-------------------------------------------------------------------------------
+12E8-12EF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+12E8	w	vertical total
 
 -------------------------------------------------------------------------------
 1390-1393 ----	cluster (adapter 3)
@@ -2394,7 +2615,17 @@ SeeAlso: 0220-0223
 1400-14FF ----  available for EISA slot 1
 
 -------------------------------------------------------------------------------
+16E8-16EF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+16E8	w	vertical displayed
+
+-------------------------------------------------------------------------------
 1800-18FF ----  available for EISA slot 1
+
+-------------------------------------------------------------------------------
+1AE8-1AEF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+1AE8	w	vertical sync start
 
 -------------------------------------------------------------------------------
 1C00-1CFF ----  available for EISA slot 1
@@ -2407,6 +2638,17 @@ SeeAlso: 0220-0223
 1C85	r/w	EISA Setup control
 1C88	r/w	EISA Video Programmable Option Select 0
 1C89-1C8F r/w	EISA Video Programmable Option Select 1-7
+
+-------------------------------------------------------------------------------
+1C80-1C83	EISA board product ID (board in slot 1)
+
+-------------------------------------------------------------------------------
+1C85		Compaq Qvision EISA - Virtual Controller ID
+
+-------------------------------------------------------------------------------
+1EE8-1EEF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+1EE8	w	vertical sync width
 
 -------------------------------------------------------------------------------
 2000-20FF ----  available for EISA slot 2
@@ -2497,7 +2739,15 @@ Note:	this port is for the first XGA in the system; 211x-217x are used for
 2110-217F ----  secondary XGA adapters (see individual entries above)
 
 -------------------------------------------------------------------------------
+22E8-22EF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+22E8	w	display control
+
+-------------------------------------------------------------------------------
 2390-2393 ----	cluster (adapter 4)
+
+-------------------------------------------------------------------------------
+23C0-23CF ----  Compaq QVision - BitBLT engine
 
 -------------------------------------------------------------------------------
 2400-24FF ----  available for EISA slot 2
@@ -2509,14 +2759,23 @@ Note:	this port is for the first XGA in the system; 211x-217x are used for
 2800-28FF ----  available for EISA slot 2
 
 -------------------------------------------------------------------------------
+2C80-2C83	EISA board product ID (board in slot 2)
+
+-------------------------------------------------------------------------------
+28E9	  ----  8514/A - WD Escape Functions
+
+-------------------------------------------------------------------------------
 2C80-2C8F ----  VESA XGA Video in EISA slot 2 (see 1C80-1C8F)
 
 -------------------------------------------------------------------------------
 3000-30FF ----  available for EISA slot 3
 
 -------------------------------------------------------------------------------
-3220-3227 ----	serial port 3, description same as 03F8 (MCA)
-3228-322F ----	serial port 4, description same as 03F8 (MCA)
+3220-3227 ----	serial port 3, description same as 03F8
+3228-322F ----	serial port 4, description same as 03F8
+
+-------------------------------------------------------------------------------
+33C0-33CF ----  Compaq QVision - BitBLT engine
 
 -------------------------------------------------------------------------------
 3400-34FF ----  available for EISA slot 3
@@ -2545,6 +2804,9 @@ Note:	this port is for the first XGA in the system; 211x-217x are used for
 SeeAlso: 1C80-1C8F,2C80-2C8F,7C80-7C8F
 
 -------------------------------------------------------------------------------
+3C80-3C83	EISA board product ID (board in slot 3)
+
+-------------------------------------------------------------------------------
 4000-40FF ----  available for EISA slot 4
 
 -------------------------------------------------------------------------------
@@ -2555,6 +2817,12 @@ SeeAlso: 1C80-1C8F,2C80-2C8F,7C80-7C8F
 42E0-42EF ----	GPIB (General Purpose Interface Bus, IEEE 488 interface)
 
 42E1	r/w	GPIB (adapter 2)
+
+-------------------------------------------------------------------------------
+42E8	  ----  8514/A and hardware-compatible video cards
+
+42E8	r	Subsystem Status
+42E8	w	Subsystem Control
 
 -------------------------------------------------------------------------------
 4400-44FF ----  available for EISA slot 4
@@ -2574,10 +2842,24 @@ Note:	IBM uses this port for adapter-card VGAs only, and port 03C3 for
 SeeAlso: 03C3
 
 -------------------------------------------------------------------------------
+46E8	  ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+46E8	w	ROM page select
+
+-------------------------------------------------------------------------------
 4800-48FF ----  available for EISA slot 4
 
 -------------------------------------------------------------------------------
+4AE8-4AEF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+4AE8	w	Advanced function control
+		(02h = VGA mode, 03h = 480-line mode, 07h = 768-line mode)
+
+-------------------------------------------------------------------------------
 4C00-4CFF ----  available for EISA slot 4
+
+-------------------------------------------------------------------------------
+4C80-4C83	EISA board product ID (board in slot 4)
 
 -------------------------------------------------------------------------------
 4C80-4C8F ----  VESA XGA Video in EISA slot 4 (see 3C80-3C8F)
@@ -2612,12 +2894,18 @@ SeeAlso: 1C80-1C8F,6C80-6C8F
 SeeAlso: 2C80-2C8F,4C80-4C8F,6C80-6C8F
 
 -------------------------------------------------------------------------------
+5C80-5C83	EISA board product ID (board in slot 5)
+
+-------------------------------------------------------------------------------
 6000-60FF ----  available for EISA slot 6
 
 -------------------------------------------------------------------------------
 62E0-62EF ----	GPIB (General Purpose Interface Bus, IEEE 488 interface)
 
 62E1	r/w	GPIB (adapter 3)
+
+-------------------------------------------------------------------------------
+63C0-63CF ----  Compaq QVision - BitBLT engine
 
 -------------------------------------------------------------------------------
 6400-64FF ----  available for EISA slot 6
@@ -2627,6 +2915,9 @@ SeeAlso: 2C80-2C8F,4C80-4C8F,6C80-6C8F
 
 -------------------------------------------------------------------------------
 6C00-6CFF ----  available for EISA slot 6
+
+-------------------------------------------------------------------------------
+6C80-6C83	EISA board product ID (board in slot 6)
 
 -------------------------------------------------------------------------------
 6C80-6C8F ----  VESA XGA Video in EISA slot 1
@@ -2652,6 +2943,9 @@ SeeAlso: 1C80-1C8F,2C80-2C8F,5C80-5C8F
 7C00-7CFF ----  available for EISA slot 7
 
 -------------------------------------------------------------------------------
+7C80-7C83	EISA board product ID (board in slot 7)
+
+-------------------------------------------------------------------------------
 7C80-7C8F ----  VESA XGA Video in EISA slot 7
 
 7C80-7C83 r/w	EISA Video ID
@@ -2671,29 +2965,81 @@ SeeAlso: 1C80-1C8F, 6C80-6C8F
 82E1	r/w	GPIB (adapter 4)
 
 -------------------------------------------------------------------------------
+82E8-82EF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+82E8	w	current Y position
+
+-------------------------------------------------------------------------------
 82F8-82FF ----	serial port, description same as 03F8
 83F8-83FF ----	serial port, description same as 03F8
+
+-------------------------------------------------------------------------------
+83C0-83CF ----  Compaq QVision - Line Draw Engine
+
+-------------------------------------------------------------------------------
+83C4	  ----  Compaq Qvision EISA - Virtual Controller Select
+
+-------------------------------------------------------------------------------
+83C6-83C9 ----  Compaq Qvision EISA - DAC color registers
 
 -------------------------------------------------------------------------------
 8400-84FF ----  available for EISA slot 8
 
 -------------------------------------------------------------------------------
+86E8-86EF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+86E8	w	current X position
+
+-------------------------------------------------------------------------------
 8800-88FF ----  available for EISA slot 8
+
+-------------------------------------------------------------------------------
+8AE8-8AEF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+8AE8	w	destination Y position / axial step constant
 
 -------------------------------------------------------------------------------
 8C00-8CFF ----  available for EISA slot 8
 
 -------------------------------------------------------------------------------
+8C80-8C83	EISA board product ID (board in slot 8)
+
+-------------------------------------------------------------------------------
+8EE8-8EEF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+8EE8	w	destination X position / axial step constant
+
+-------------------------------------------------------------------------------
 9000-90FF ----  available for EISA slot 9
+
+-------------------------------------------------------------------------------
+92E8-92EF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+92E8	w	error term
 
 -------------------------------------------------------------------------------
 9400-94FF ----  available for EISA slot 9
 
 -------------------------------------------------------------------------------
+96E8-96EF ----  8514/A and hardware-compatible video cards
+
+96E8	r	Enter WD Enhanced Mode
+96E8	w	major axis pixel count
+
+-------------------------------------------------------------------------------
 9800-98FF ----  available for EISA slot 9
 
 -------------------------------------------------------------------------------
+9AE8h-9AE9h ----  8514/A Graphics Processor Status
+
+9AE8w	r	bit 9: hardware busy
+9AE8	w	command
+
+-------------------------------------------------------------------------------
 9C00-9CFF ----  available for EISA slot 9
+
+-------------------------------------------------------------------------------
+9C80-9C83	EISA board product ID (board in slot 9)
 
 -------------------------------------------------------------------------------
 A220	  ????	soundblaster support in AMI Hi-Flex BIOS  ????
@@ -2704,6 +3050,26 @@ A2E0-A2EF ----	GPIB (General Purpose Interface Bus, IEEE 488 interface)
 A2E1	r/w	GPIB (adapter 5)
 
 -------------------------------------------------------------------------------
+A2E8-A2EF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+A2E8	w	background color
+
+-------------------------------------------------------------------------------
+A6E8-A6EF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+A6E8	w	foreground color
+
+-------------------------------------------------------------------------------
+AAE8-AAEF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+AAE8	w	write mask
+
+-------------------------------------------------------------------------------
+AEE8-AEEF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+AEE8	w	read mask
+
+-------------------------------------------------------------------------------
 AFFF	r/w	plane 0-3 system latch (video register)
 
 -------------------------------------------------------------------------------
@@ -2711,12 +3077,41 @@ B220-B227 ----	serial port, description same as 03F8
 B228-B22F ----	serial port, description same as 03F8
 
 -------------------------------------------------------------------------------
-C220-C227 ----	serial port, description same as 03F8
-C228-C22F ----	serial port, description same as 03F8
+B2E8-B2EF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+B2E8	w	color compare
 
 -------------------------------------------------------------------------------
-D220-D227 ----	serial port, description same as 03F8
-D228-D22F ----	serial port, description same as 03F8
+B6E8-B6EF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+B6E8	w	background mix
+
+-------------------------------------------------------------------------------
+BAE8-BAEF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+BAE8	w	foreground mix
+
+-------------------------------------------------------------------------------
+BEE8-BEEF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+BEE8	w	multi-function control
+
+-------------------------------------------------------------------------------
+C008	  ----  Intel Pentium motherboard ("Neptune" chipset)
+
+-------------------------------------------------------------------------------
+C050	  ----  Intel Pentium motherboard ("Neptune" chipset)
+
+C050	r/w	bit 2: ???
+
+-------------------------------------------------------------------------------
+C052	  ----  Intel Pentium motherboard ("Neptune" chipset)
+
+C052	r/???	bits 6,7: ???
+
+-------------------------------------------------------------------------------
+C220-C227 ----	serial port, description same as 03F8
+C228-C22F ----	serial port, description same as 03F8
 
 -------------------------------------------------------------------------------
 C2E0-C2EF ----	GPIB (General Purpose Interface Bus, IEEE 488 interface)
@@ -2724,10 +3119,18 @@ C2E0-C2EF ----	GPIB (General Purpose Interface Bus, IEEE 488 interface)
 C2E1	r/w	GPIB (adapter 6)
 
 -------------------------------------------------------------------------------
+D220-D227 ----	serial port, description same as 03F8
+D228-D22F ----	serial port, description same as 03F8
+
+-------------------------------------------------------------------------------
 E2E0-E2EF ----	GPIB (General Purpose Interface Bus, IEEE 488 interface)
 
 E2E1	r/w	GPIB (adapter 7)
 
+-------------------------------------------------------------------------------
+E2E8-E2EF ----	8514/A and compatible video cards (e.g. ATI Graphics Ultra)
+
+E2E8	w	pixel data transfer
 
 -------------------------------------------------------------------------------
 
@@ -2765,6 +3168,7 @@ C0000000-C000FFFF	Weitek "Abacus" math coprocessor
 
 -------------CREDITS-------------------------
 Chuck Proctor <71534.2302@CompuServe.COM>
+Richard W. Watson  <73042.1420@CompuServe.COM>
 
 [Some of the information in this list was extracted from Frank van Gilluwe's
 _The_Undocumented_PC_, a must-have book for anyone programming down to the
@@ -2772,3 +3176,9 @@ _The_Undocumented_PC_, a must-have book for anyone programming down to the
 
 [Some of the information in this list from the shareware version of Dave
 Williams' DOSREF, v3.0]
+
+[8514/A hardware ports found in FractInt v18.0 source file FR8514A.ASM]
+
+[Compaq QVision info from the _COMPAQ_QVision_Graphics_System_Technical_
+_Reference_Guide_, second edition (October 1993).  Compaq part number
+073A/0693.  Much more to come!]

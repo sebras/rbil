@@ -30,6 +30,7 @@
 /*   v2.24   7/15/93 -k and infinite-length pages by Bent Lynggaard	*/
 /*   v3.00   6/4/94  -T, -V, and multi-file break section skipping	*/
 /*		     major speedups; checked for BC++3.1 compatibility	*/
+/*   v3.01   6/11/94 bugfix: crashed with -l0 -L1 on lines >=80 chars   */
 /************************************************************************/
 /* Recompiling:								*/
 /*   Turbo C / Borland C++						*/
@@ -44,7 +45,7 @@
 #include <string.h>
 #include <sys/stat.h>		/* S_IREAD, S_IWRITE */
 
-#define VERSION "3.00"
+#define VERSION "3.01"
 
 /***********************************************/
 /*    portability definitions		       */
@@ -794,7 +795,10 @@ IP_FILE *fp ;
 	    len-- ;
 	 }
       else
+	 {
+	 len = max ;
 	 new_bufpos = bufpos + len ;
+	 }
       if (len)
 	 memcpy(buf,fpbuf+bufpos,len) ;
       buf[len] = '\0' ;
@@ -1026,13 +1030,13 @@ IP_FILE *fp ;
 	       }
 	    }
 	 } /* boldface */
-      if (indent % 8)
+      if (indent & 7)  /* indenting by other than a multiple of 8 ? */
 	 {
 	 while (*line)
 	    {
 	    if (*line == '\t')
 	       {
-	       ip_write("        ",8-(pos%8),fp) ;
+	       ip_write("        ",8-(pos&7),fp) ;
 	       pos = 0 ;   /* absolute column doesn't matter, only mod 8 */
 	       }
 	    else
@@ -1588,7 +1592,7 @@ int use_FF ;
 	 i = strlen(num) ;
 	 if (!duplex)
 	    indent_to(38-i/2,outfile) ;
-	 else if ((pages_printed % 2) == 1)
+	 else if (pages_printed & 1)	    /* odd-numbered page? */
 	    indent_to(75-i/2,outfile) ;
 	 else
 	    indent_to(2,outfile) ;
@@ -1604,7 +1608,7 @@ int use_FF ;
 	    newline(outfile) ;
       if (duplex)
 	 {
-	 if ((pages_printed % 2) == 1)	/* next page even or odd? */
+	 if (pages_printed & 1)	       /* next page even or odd? */
 	    ip_putcstr(&printer->marginl, outfile) ;	/* even page */
 	 else
 	    ip_putcstr(&printer->marginr, outfile) ;	/* odd page */
@@ -2012,7 +2016,7 @@ char *argv[] ;
    if (duplex)
       {
       ip_putcstr(&printer->duplex_on,outfile) ;
-      if ((pages_printed % 2) == 1)	/* next page odd or even? */
+      if (pages_printed & 1)		  /* next page odd or even? */
 	 ip_putcstr(&printer->marginl,outfile) ;	/* even */
       else
 	 ip_putcstr(&printer->marginr,outfile) ;	/* odd */

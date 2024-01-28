@@ -1,20 +1,21 @@
-Interrupt List		Release 41			  Last change 6/5/94
+Interrupt List		Release 42			   Last change 8/7/94
 
 Please redistribute the following files unmodified as a group, in a trio of
-archives named INTER41A through INTER41C (preferably the original authenticated
+archives named INTER42A through INTER42C (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	this file
 	INTERRUP.A	INT 00 through INT 13     \
 	INTERRUP.B	INT 14 through INT 15/7F   \
-	INTERRUP.C	INT 15/80 through INT 19    \  
-	INTERRUP.D	INT 1A through INT 21/44     \   total 1551 pages at
+	INTERRUP.C	INT 15/80 through INT 1F    \  
+	INTERRUP.D	INT 20 through INT 21/44     \   total 1577 pages at
 	INTERRUP.E	INT 21/45 through INT 21/BF   \  60 lines per page,
-	INTERRUP.F	INT 21/C0 through INT 2C       > 1653 with INTPRINT -p
-	INTERRUP.G	INT 2D through INT 2F/7F      /  (6390 entries)
-	INTERRUP.H	INT 2F/80 through INT 2F/FF  /	 (2176 tables)
+	INTERRUP.F	INT 21/C0 through INT 2C       > 1679 with INTPRINT -p
+	INTERRUP.G	INT 2D through INT 2F/7F      /  (6475 entries)
+	INTERRUP.H	INT 2F/80 through INT 2F/FF  /	 (2214 tables)
 	INTERRUP.I	INT 30 through INT 60	    /
-	INTERRUP.J	INT 61 through INT 6A	   /
-	INTERRUP.K	INT 6B through INT FF	  /
+	INTERRUP.J	INT 61 through INT 67	   /
+	INTERRUP.K	INT 68 through INT 7F	  /
+	INTERRUP.L	INT 80 through INT FF    /
 	INTERRUP.PRI	a brief primer on interrupts
 	INTPRINT.COM	a simple formatter that also generates a list summary
 	INTPRINT.DOC	instructions for INTPRINT
@@ -26,7 +27,7 @@ PKZIP archives):
 	PORTS.LST	a listing of I/O ports
 	CATEGORY.KEY	descriptions of divider-line category letters
 	COMBINE.BAT	combine the pieces of the list into a single file
-The following files should be distributed in an archive called INTER41D:
+The following files should be distributed in an archive called INTER42D:
 	INT.*		invoke interrupts from commandline
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
 	INT2HLP.BAT	Perl script to convert list into QuickHelp database
@@ -85,8 +86,8 @@ whether or not it works the same way).	Information marked with "???" is
 known to be incomplete or guesswork.
 --------!---AVAILABILITY---------------------
 If the list is three or more months old by the time you get it, there
-is probably a newer release out already (R41 is planned for early June,
-R42 for early August).  Each release supersedes all previous versions, so
+is probably a newer release out already (R43 is planned for late October,
+R44 for early January 1995).  Each release supersedes all previous versions, so
 there is no need to keep old versions.
 
 The newest release of this list is available in these places (please do not
@@ -222,19 +223,19 @@ This list is the result of the time and effort of a large number of people:
  3/89 Helmut Waelder   ZRWA001@DTUZDV1.BITNET	      more DOS 4.0 calls
  4/89 Robert Seals     rds95@leah.Albany.EDU	      ATI VGA Wonder modes
  4/89 Ge van Geldorp   ge@dutlru2.tudelft.nl	      pcANYWHERE III API
- 4/89 Robin Walker     rdhw@uk.ac.cambridge.phoenix   undoc DOS 4 data struc
- 4/89 Robin Walker     rdhw@uk.ac.cambridge.phoenix   DOS 4.0 shell API
+ 4/89 Robin Walker     rdhw@cus.cam.ac.uk	      undoc DOS 4 data struc
+ 4/89 Robin Walker     rdhw@cus.cam.ac.uk	      DOS 4.0 shell API
  4/89 Ralf Brown       ralf@telerama.lm.com	      DCA/Intel CAS API
  4/89 Ralf Brown       ralf@telerama.lm.com	      Intel Image Proc Interf
- 5/89 Robin Walker     rdhw@uk.ac.cambridge.phoenix   multiplex int calls
+ 5/89 Robin Walker     rdhw@cus.cam.ac.uk	      multiplex int calls
  6/89 Peter Sawatzki   IN307@DHAFEU11.BITNET	      Video7 extended INT 10
  7/89 Wes Cowley       71441.3154@compuserve.com      SHARE.EXE hooks
- 9/89 Robin Walker     rdhw@uk.ac.cambridge.phoenix   more DOS 4 data struc
+ 9/89 Robin Walker     rdhw@cus.cam.ac.uk	      more DOS 4 data struc
  9/89 Stuart R. Kemp   cpsrk@marlin.jcu.edu.au	      Halo88
  9/89 Urs Zurbuchen    zu@bernina.ethz.ch	      Btrieve API
  9/89 Dan Lanciani     ddl@husc6.harvard.edu	      Z100, Taxan video BIOS
- 9/89 Robin Walker     rdhw@uk.ac.cambridge.phoenix   more DOS 4 data struc
-10/89 Robin Walker     rdhw@uk.ac.cambridge.phoenix   DOS 3.0 data struc
+ 9/89 Robin Walker     rdhw@cus.cam.ac.uk	      more DOS 4 data struc
+10/89 Robin Walker     rdhw@cus.cam.ac.uk	      DOS 3.0 data struc
 10/89 John DesRosiers  via Marc Bertrand 1:167/1      Ontrack INT 13 extensions
 11/89 Ge van Geldorp   ge@dutlru2.tudelft.nl	      master boot record
 11/89 Barry Burke      bburke@banyan.com	      Banyan VINES
@@ -249,12 +250,12 @@ This list is the result of the time and effort of a large number of people:
  5/90 Mike Weaver      1:264/610		      DESQview XDI
  6/90 Les Moskowitz    1:261/1008		      APL*PLUS/PC
  6/90 Ralf Brown       ralf@telerama.lm.com	      more DOS 4.0 internals
- 6/90 Robin Walker     rdhw@uk.ac.cambridge.phoenix   BIOS data segment format
+ 6/90 Robin Walker     rdhw@cus.cam.ac.uk	      BIOS data segment format
  7/90 Andrew Schulman  76320.302@CompuServe.COM	      MSWindows INT 2F/AH=16h
  7/90 Ben Myers	       0003571400@mcimail.com	      Tseng ET4000, misc
  7/90 Ralf Brown       ralf@telerama.lm.com	      DPMI 0.9 API
  8/90 G. Adam Stanislav 1:129/39		      AVATAR.SYS
- 8/90 Robin Walker     rdhw@phoenix.cambridge.ac.uk   more DOS internals
+ 8/90 Robin Walker     rdhw@cus.cam.ac.uk	      more DOS internals
  8/90 Michael A Shiels mshiels@masnet.uucp	      Quarterdeck INT 2F/AH=D2h
  8/90 Michel Mathieu   mjm@bmbcomp.uucp		      Logitech INT 33
  8/90 Cornel Kaufmann  coka@bernina.ethz.ch	      Novell Netware shell 3.01
@@ -302,7 +303,7 @@ This list is the result of the time and effort of a large number of people:
  5/91 Tamura Jones     2:512/36.7		      RESPLAY
  5/91 Michael A Shiels mas@bmbcomp.uucp		      LAN Manager DOS,INT 24
  6/91 Herwig Feichtinger (Petershausen, Germany)      Shamrock EMAIL, NET.24
- 6/91 Robin Walker     rdhw@phoenix.cambridge.ac.uk   DOS 5.0 internals
+ 6/91 Robin Walker     rdhw@cus.cam.ac.uk	      DOS 5.0 internals
  6/91 Todor Todorov    2:359/105		      misc DOS-related
  6/91 Ross Wentworth   1:102/330.2		      Turbo Pascal popup lib
  6/91 Everett Kaser    everett%hpcvra@hplabs.hp.com   HP 95LX
@@ -317,7 +318,7 @@ This list is the result of the time and effort of a large number of people:
 10/91 Marcus Groeber   2:241/5609.1		      DR DOS
 11/91 Fridrik Skulason frisk@complex.is		      more virus install checks
 11/91 Christopher J Ambler cambler@cymbal.aix.calpoly.edu  FSBBS 2.0
-12/91 Robin Walker     rdhw@phoenix.cambridge.ac.uk   new PS/2 keyboard funcs
+12/91 Robin Walker     rdhw@cus.cam.ac.uk	      new PS/2 keyboard funcs
  1/92 Krzysztof Halasa khc@inf.pm.waw.pl	      EMM386 executable header
  1/92 Michael A Shiels mshiels@masnet.uucp	      pcAnywhere IV/LAN, misc
  1/92 Michael A Shiels mshiels@masnet.uucp	      ISOLAN Multi-Protoc Sftwr
@@ -413,7 +414,7 @@ This list is the result of the time and effort of a large number of people:
  4/93 Geoff Chappell   cix.compulink.co.uk!geoffc     DOS4 ExtAttrib support
  4/93 Morten Welinder  terra@diku.dk		      miscellaneous
  4/93 Tim Farley       tim@magee.mhs.compuserve.com   PS/2 INT 15,INT 16
- 4/93 Xavier Cabelle   xavier.caballe@abaforum.es     TFPCX driver interface
+ 4/93 Xavier Caballe   xavier.caballe@abaforum.es     TFPCX driver interface
  4/93 Michael A Shiels mshiels@masnet.uucp	      more OS/2 Family API
  4/93 Chris Dunford    76703.2002@compuserve.com      Cove Software programs
  5/93 Dmitry Stefankov wizard@npi.msu.su	      more DOS 3 SDA fields
@@ -483,6 +484,14 @@ This list is the result of the time and effort of a large number of people:
  5/94 Christian Franke franke@I1.Informatik.RWTH-Aachen.DE  redirector, Win3
  5/94 Peter Claus Gutmann  pgut01@cs.aukuni.ac.nz     SFS (Secure FileSystem)
  5/94 Wilbert van Leijen wilbert@dragons.nest.nl      ODIHLP, misc
+ 6/94 Wolfgang Spraul  100024.1540@CompuServe.COM     Seagate ST01/ST02 BIOS
+ 6/94 Wolfgang Spraul  100024.1540@CompuServe.COM     SyQuest BIOS
+ 7/94						      Compaq QVision
+ 7/94 Dmitry S. Kohmanyuk  dk@farm.cs.kiev.ua	      JAM compressor
+ 7/94 Thomas Brugger   fd1@aixterm1.urz.uni-heidelberg.de  more misc NetWare
+ 7/94 Mark T. Vitt     70053.2236@compuserve.com      SDA/DTA interaction, misc
+ 8/94						      HP Ext. BIOS, misc
+ 8/94						      K3PLUS API
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -564,7 +573,7 @@ Also contributing:
  Jiri Kuchta <kuchta@dcse.fee.vutbr.cs>, Pavel Shtemenko <pasha@opi.odessa.ua>,
  Paul Ratcliffe <70630.647@compuserve.com>, Ivan Martinez 4:801/6,
  David Woolley <100121.53@compuserve.com>,Paul Vojta <vojta@math.berkeley.edu>,
- Mark T. Vitt <70053.2236@compuserve.com>, Ronald Lokker <rlokker@fys.ruu.nl>,
+ Ronald Lokker <rlokker@fys.ruu.nl>, Wolfram Joost <WOJO@TEAMWORK.SH.SUB.ORG>,
  Nico E. de Vries <nevries@aip.nl>, Riku Saikkonen <riku.saikkonen@compart.fi>,
  David J. Craig <73313.1610@compuserve.com>, Peter <d91-pbr@nada.kth.se>,
  Igor Khasilev <igor@petre.odessa.ua>, Anthony Naggs <amn@ubik.demon.co.uk>,
@@ -579,8 +588,12 @@ Also contributing:
  Christoph Fischer <Fisher@rz.uni-karlsruhe.de>, Peter_Schuette@ks.fido.de,
  David Perry <davep@demon.csd.unsw.EDU.AU>,Yury Semenov <yury@petre.odessa.ua>,
  Bill Potvin II <70540.120@compuserve.com>, Jordi Mas <jordi@qdeck.com>,
- Chad Robinson <crobinso@vaxc.stevens-tech.edu>,
- Martin Trnovec <umertrno@savba.savba.sk>
+ Chad Robinson <crobinso@vaxc.stevens-tech.edu>, Tom Yohe <stampede@oar.net>,
+ <Alexey_Kulentsov@p6.f216.n5020.z2.gate.phantom.msk.su>,
+ Martin Trnovec <umertrno@savba.savba.sk>,
+ Aaron Martin <71726.2543@compuserve.com>,
+ Michael Holin <holin@am.heim1.tu-clausthal.de>,
+ Andreas Groegel <groegeas@minnie.informatik.uni-stuttgart.de>
 --------!---BIBLIOGRAPHY---------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -1095,6 +1108,17 @@ Ralf Brown, 4/16/94.
 Various ports and miscellaneous data structure were found in Frank van
 Gilluwe's book _The_Undocumented_PC_, Addison-Wesley 1994.  ISBN 0-201-62277-7.
 Added by Ralf Brown, 6/5/94.
+
+Compaq QVision info from the _COMPAQ_QVision_Graphics_System_Technical_
+_Reference_Guide_, second edition (October 1993).  Compaq part number
+073A/0693.  Added by Ralf Brown, 7/31/94.
+
+Cloaking v1.01 info from the Cloaking(tm) Developer's Toolkit, first edition
+(October 1993), provided by Helix Software.  Helix part number N04,1093.
+Added by Ralf Brown, 8/94.
+
+K3PLUS API from the K3API.DOC file v2.04 for K3PLUS.  Added by Ralf Brown,
+8/7/94.
 --------!---ADDRESSES------------------------
 The following have provided API reference and other materials at no charge:
 
@@ -1141,6 +1165,7 @@ Helix Software Company, Inc.	(Netroom, RM386, Cloaking)
 Long Island City, NY 11101
 Voice: (718) 392-3100
 FAX:   (718) 392-4212
+BBS:   (718) 392-4054
 
 Intel Literature		(DOS Protected-Mode Interface)
 3065 Bowers Avenue
@@ -1249,7 +1274,7 @@ FAX:   (415) 331-0911
 
 Willies' Computer Software Company  (COMM-DRV)
 2470 S. Dairy Ashford, Suite 188    [5/94]
-Houton, TX 77077
+Houston, TX 77077
 Voice: (800) 966-4832
        (713) 498-4832
 --------!---ADDRESSES------------------------
@@ -1703,12 +1728,6 @@ Ross Neilson Wentworth		(RAID)
 Serendipity Software		[as of 11/88]
 1422 Elkgrove Circle, #3
 Venice, CA 90291
-
-Nick Zaikin			(ASCII)
-Joint Institute for Nuclear Research	[1/93]
-(Dubna, Moscow region)
-P.O. Box 79  Head Post Office
-Moscow 101000 Russia
 
 ZSoft Corporation		(FRIEZE)
 450 Franklin Rd. Suite 100
