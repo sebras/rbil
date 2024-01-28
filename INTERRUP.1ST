@@ -1,24 +1,25 @@
-Interrupt List		Release 49			Last change 2/11/96
+Interrupt List		Release 50			Last change 5/12/96
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------!---FILELIST-------------------------
 Please redistribute the following files unmodified as a group, in a quartet of
-archives named INTER49A through INTER49D (preferably the original authenticated
+archives named INTER50A through INTER50D (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	this file
 	INTERRUP.A	INT 00 through INT 13/0F  \
 	INTERRUP.B	INT 13/10 through INT 15/12\
 	INTERRUP.C	INT 15/13 through INT 16/FF \  
 	INTERRUP.D	INT 17 through INT 21/3E     \
-	INTERRUP.E	INT 21/3F through INT 21/5E   \	  total 2031 pages at
-	INTERRUP.F	INT 21/5F through INT 21/E6    \  60 lines per page,
-	INTERRUP.G	INT 21/E7 through INT 21/F8	\ 2164 with INTPRINT -p
-	INTERRUP.H	INT 21/F9 through INT 2F/42	 >(7873 entries)
-	INTERRUP.I	INT 2F/43 through INT 2F/CA	/ (3177 tables)
-	INTERRUP.J	INT 2F/CB through INT 4C       /
-	INTERRUP.K	INT 4D through INT 61	      /
-	INTERRUP.L	INT 62 through INT 6E	     /
-	INTERRUP.M	INT 6F through INT 7F	    /
-	INTERRUP.N	INT 80 through INT FF	   /
+	INTERRUP.E	INT 21/3F through INT 21/5E   \	  total 2064 pages at
+	INTERRUP.F	INT 21/5F through INT 21/E2    \  60 lines per page,
+	INTERRUP.G	INT 21/E3 through INT 21/F1	\ 2197 with INTPRINT -p
+	INTERRUP.H	INT 21/F2 through INT 21/FE	 >(7998 entries)
+	INTERRUP.I	INT 21/FF through INT 2F/42	/ (3214 tables)
+	INTERRUP.J	INT 2F/43 through INT 2F/CA    /
+	INTERRUP.K	INT 2F/CB through INT 4A      /
+	INTERRUP.L	INT 4B through INT 61	     /
+	INTERRUP.M	INT 62 through INT 6E	    /
+	INTERRUP.N	INT 6F through INT 7F	   /
+	INTERRUP.O	INT 80 through INT FF	  /
 	INTERRUP.PRI	a brief primer on interrupts
 	INTPRINT.COM	a simple formatter that also generates a list summary
 	INTPRINT.DOC	instructions for INTPRINT
@@ -33,7 +34,7 @@ PKZIP archives):
 	PORTS.LST	a listing of I/O ports
 	CATEGORY.KEY	descriptions of divider-line category letters
 	COMBINE.BAT	combine the pieces of the list into a single file
-The following files should be distributed in an archive called INTER49E:
+The following files should be distributed in an archive called INTER50E:
 	86BUGSnn.ZIP	programs to test for CPU bugs
 	INT.*		invoke interrupts from commandline
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
@@ -46,7 +47,7 @@ The following files should be distributed in an archive called INTER49E:
 	INTSUM??.ZIP	interrupt list browser (Interrupt Summary)
 	IVIEW.ZIP	another interrupt list browser
 	RB2NG???.ZIP	convert list into Norton Guides database
-Finally, the following files should be distributed in an archive INTER49F:
+Finally, the following files should be distributed in an archive INTER50F:
 	INT2WHLP.ZIP	convert list into Windows Help database
 	HINTSRCH.ZIP	WinHelp DLL for full-text searches of interrupt list
 	WH_ED*.ZIP	WinHelp-file editor
@@ -584,6 +585,14 @@ This list is the result of the time and effort of a large number of people:
 12/95 George Lefterov  george@virbus.bg		      Q87 v4+ API
  1/96 Ghielmeti Lepoldo Leopoldo.Ghielmetti@epfl.ch   I1541 API
  1/96 Michael Devore				      CauseWay v1.3 DOS ext.
+ 2/96 Frank Kintrup    nico@uni-paderborn.de	      Windows95 long filenames
+ 2/96 Robert Thrun	(Langley Part, Maryland)      Tandy 2000 BIOS
+ 3/96 Matthias Paul    MPAUL@ibh.rwth-aachen.de       format of .CPI files
+ 3/96 Lesha Bogdanow   boga@pts.mipt.ru		      AWDFLASH/Asustek Flash
+ 4/96 Antti Barck      proff@iki.fi		      Cx5x86 config registers
+ 4/96 Adam Seychell    s921880@minyos.its.rmit.EDU.AU DOS32 v3.2
+ 4/96 Rob	       WlkngOwl@unix.asb.com	      NOISE.SYS v0.53 API
+ 5/96 James Lin	       linja@acf2.NYU.EDU	      AMI Flash BIOS interface
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -676,7 +685,7 @@ Also contributing:
  Wolfgang Lorenz <100112.220@CompuServe.COM>, michael_rothman@VNET.IBM.COM,
  Yinrong Huang <HUANGY@SLUVCA.SLU.EDU>, David.Bourgin@babbage.imag.fr,
  Christoph Fischer <Fisher@rz.uni-karlsruhe.de>, Peter_Schuette@ks.fido.de,
- David Perry <davep@demon.csd.unsw.EDU.AU>,
+ David Perry <davep@demon.csd.unsw.EDU.AU>, H. Peter Anvin <hpa@zytor.com>,
  Bill Potvin II <70540.120@compuserve.com>, Jordi Mas <jordi@qdeck.com>,
  Chad Robinson <crobinso@vaxc.stevens-tech.edu>, Tom Yohe <stampede@oar.net>,
  <Alexey_Kulentsov@p6.f216.n5020.z2.gate.phantom.msk.su>, jaust@mindscape.com,
@@ -702,19 +711,19 @@ Also contributing:
  Jaroslaw Rafa <sfrafa@lfs.cyf-kr.edu.pl>, Mojmir Strhan <strhan@simultan.ch>,
  Axel C. Frinke <acfrinke@uni-bonn.de>, avp@iron.misa.ac.ru,
  Julian Nicholls <julian@aladdin.co.uk>, ricardo.ferreira@mpcbbs.com.br,
- Vincent Lyonel <vincentl@cc.ec-lyon.fr>,
+ Vincent Lyonel <vincentl@cc.ec-lyon.fr>, <Gabor.Somlai@ohsh.u-szeged.hu>,
  Pascal Moulart <100572.1021@compuserve.com>, John Murphy <murf@perftech.com>,
  Giacomo Amabile Catenazzi <gcatenaz@g26.ethz.ch>, Svante Frey <sfrey@kuai.se>,
  Nils <xorax@Informatik.Uni-Bremen.DE>, Rod Mathews <rodmathews@earthlink.net>,
- Pino Navato <morrone@ds.cised.unina.it>, <Gabor.Somlai@ohsh.u-szeged.hu>,
  Morten Welinder <terra@APL.FOX.CS.CMU.EDU>, Ziv Barber <ziv@aladdin.co.il>,
  Ervin Peretz <peretz@eagle.natinst.com>, Andrew <browning@werple.mira.net.au>,
  David Cary <cary@agora.rdrop.com>, Nir Sofer <nir@netvision.net.il>,
- Keith Hamilton <100654.2000@compuserve.com>, Colin Hill <CPHProg@aol.com>,
+ Keith Hamilton <100654.2000@compuserve.com>, Colin Hill <chill@rmi.net>,
  <Marcus.Wirth@frankfurt.netsurf.de>, David Cary <cary@agora.rdrop.com>,
- Peter Rindfuss <RINDFUSS-S@medea.wz-berlin.de>,
- Pierre Duhem <100256.1731@compuserve.com>,
- Bob Jackman <Bob@salford-software.com>
+ Peter Rindfuss <RINDFUSS-S@medea.wz-berlin.de>, Pino Navato 2:335/225.18,
+ Pierre Duhem <100256.1731@compuserve.com>,Robert Dixon <r.dixon@dem.csiro.au>,
+ Bob Jackman <Bob@salford-software.com>, Erich Stefan Boleyn <erich@uruk.org>,
+ Jan Slater <slater@platinum.nb.net>, Alfredo Raul Pena <apena@VNET.IBM.COM>,
 --------!---ADDRESSES------------------------
 The following have provided API reference and other materials at no charge:
 

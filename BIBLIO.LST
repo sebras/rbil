@@ -1,4 +1,4 @@
-Bibliography		Release 49			Last change 2/11/96
+Bibliography		Release 50			Last change 5/12/96
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------!---BIBLIOGRAPHY---------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
@@ -641,13 +641,19 @@ Added by Ralf Brown, 10/95.
 
 Yet more PCI vendor IDs extracted from Intel PCD Systems Engineering's
 PCI.EXE v2.2.  Added by Ralf Brown, 12/12/95.
+
+Tandy 2000 BIOS calls from _Programmer's_Reference_(for Tandy 2000),
+Catalog No. 26-5403, Copyright 1983.  Added by Ralf Brown, 4/96.
+
+More Windows95 calls from _Win95_SDK:_Programmer's_Guide_to_Win95,_MS-DOS_
+_Extensions_.  Added 5/11/96.
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER49A through INTER49D (preferably the original
+quartet of archives named INTER50A through INTER50D (preferably the original
 authenticated PKZIP archives), the utility programs in a fifth archive
-called INTER49E.ZIP, and the WinHelp-related programs in a sixth archive
-named INTER49F.ZIP.
+called INTER50E.ZIP, and the WinHelp-related programs in a sixth archive
+named INTER50F.ZIP.
 
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------!---CONTACT_INFO---------------------

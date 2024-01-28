@@ -3,16 +3,16 @@ Public Domain/Freeware/Shareware by Ralf Brown:
 (URLs for use with your favorite WWW browser are at the end of this file)
 
 The MSDOS Interrupt List
-	A comprehensive listing of more than 7800 functions available through
+	A comprehensive listing of some 8000 functions available through
 	interrupt calls on IBM PCs and compatibles.  Includes both
 	documented and undocumented functions, plus lists of I/O port, CMOS,
-	and memory locations.
-	Current version: INTER49A (release 49, 2/11/96)
-			 INTER49B
-			 INTER49C
-			 INTER49D
-			 INTER49E (conversion and utility programs)
-			 INTER49F (WinHelp-related programs)
+	and memory locations, and far-call entry points.
+	Current version: INTER50A (release 50, 5/12/96)
+			 INTER50B
+			 INTER50C
+			 INTER50D
+			 INTER50E (conversion and utility programs)
+			 INTER50F (WinHelp-related programs)
 
 DVINT
 	An extract of the MSDOS Interrupt List containing the DESQview
@@ -437,20 +437,20 @@ URLs: (still under construction)
 Home page:  http://www.pobox.com/~ralf
 
 Files on SimTel and mirrors:
-	ftp://ftp.coast.net/SimTel/msdos/info/inter48a.zip
-	ftp://ftp.coast.net/SimTel/msdos/info/inter48b.zip
-	ftp://ftp.coast.net/SimTel/msdos/info/inter48c.zip
-	ftp://ftp.coast.net/SimTel/msdos/info/inter48d.zip
-	ftp://ftp.coast.net/SimTel/msdos/info/inter48e.zip
-	ftp://ftp.coast.net/SimTel/msdos/info/inter48f.zip
-	ftp://ftp.coast.net/SimTel/msdos/desqview/dvint43.zip
-	ftp://ftp.coast.net/SimTel/msdos/desqview/dvglu172.zip
-	ftp://ftp.coast.net/SimTel/msdos/modem/rbcom346.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter50a.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter50b.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter50c.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter50d.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter50e.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/info/inter50f.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/desqview/dvint43.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/desqview/dvglu172.zip
+	ftp://ftp.simtel.net/pub/simtelnet/msdos/modem/rbcom346.zip
 
 Files at Garbo:
-	ftp://garbo.uwasa.fi/pc/programming/inter48a.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter48b.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter48c.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter48d.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter48e.zip
-	ftp://garbo.uwasa.fi/pc/programming/inter48f.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter50a.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter50b.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter50c.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter50d.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter50e.zip
+	ftp://garbo.uwasa.fi/pc/programming/inter50f.zip

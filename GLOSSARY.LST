@@ -1,4 +1,4 @@
-GLOSSARY			Release 49		Last Change 2/11/96
+GLOSSARY			Release 50		Last change 5/12/96
 Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 
 A20
@@ -614,6 +614,12 @@ NVRAM
 ODI
 	(Open Data-link Interface) A hardware-independent network
 interface developed by Novell, Inc.  See also NDIS, Packet Driver.
+
+OEM
+	(Original Equipment Manufacturer) a company which purchases
+components that are resold as part of its own products under the company's
+own brand name, e.g. a Gateway 2000-branded monitor may actually be a Mag
+or NEC monitor.
 
 Open File Table
 	see Job File Table

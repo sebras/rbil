@@ -1,4 +1,4 @@
-CMOS Memory Map		Release 49			Last change 2/11/96
+CMOS Memory Map		Release 50			Last change 5/12/96
 
 Compiled from multiple sources by Padgett Peterson
 Corrections/additions/comments to: padgett@tccslr.dnet.mmc.com
@@ -925,9 +925,19 @@ Bit(s)	Description	(Table C037)
  0	DC000h Shadow ROM (Bit 1 = On)
 SeeAlso: #C038
 ----------R34--------------------------------
+CMOS 34h - AMI - EXTENDED MEMORY >16M (low byte)
+Note:	this and the following byte contain the total extended memory in 64K
+	  blocks
+SeeAlso: CMOS 35h"AMI"
+----------R34--------------------------------
 CMOS 34h - (AMI WinBIOS) system-specific information (bits 3-1)
 ----------R343A------------------------------
 CMOS 34h-3Ah - (AWARD) ??? unused ???  Defaults to all FFh's.
+----------R35--------------------------------
+CMOS 35h - AMI - EXTENDED MEMORY >16M (high byte)
+Note:	this and the previous byte contain the total extended memory in 64K
+	  blocks
+SeeAlso: CMOS 34h"AMI"
 ----------R35--------------------------------
 CMOS 35h - AMI - SHADOWING CONTROL 2
 SeeAlso: CMOS 34"AMI"
