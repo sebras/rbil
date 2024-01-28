@@ -1,4 +1,4 @@
-			    INTPRINT v2.20
+			    INTPRINT v2.22
                             by Ralf Brown
 
 The INTPRINT program is hereby donated to the public domain, with the sincere
@@ -102,7 +102,12 @@ where the options are:
 	      NOTE: you must put the number immediately after the 'w'; no
               blanks are allowed.
 
-Options may not be combined; "-ep" is illegal and the "p" will be ignored.
+	-x    include Index: lines in formatted listing.  These lines are
+	      are excluded by default because they are intended primarily
+	      for use by hypertext converters.
+
+Options may not be merged; "-ep" is illegal and the "p" will be ignored.
+Use "-e -p" instead.
 
 The formatted result of the input file is sent to the specified output file,
 or to standard output if no output file is given.  Standard output may be
@@ -119,7 +124,10 @@ include lines, exclude lines, and comment lines.  Include lines start
 with a plus sign (+) in the first column, followed immediately by the
 desired string; exclude lines start with a minus sign (-) in the first
 column, followed immediately by the desired string.  Comment lines
-start with a hash mark (#) in the first column and are ignored.
+start with a hash mark (#) in the first column and are ignored.  A
+future version of INTPRINT will include alternate forms of include and
+exclude lines which will select based on the classification letter in
+the divider lines rather than the contents of title lines.
 
 If a filter file is specified, only entries whose title lines contain
 at least one of the include lines (ignoring uppercase/lowercase

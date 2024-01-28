@@ -1,5 +1,5 @@
 GLOSSARY
-Last Change 9/13/92.
+Last Change 3/21/93.
 
 A20
 	(Address line 20) The 80286 and higher CPUs allow addresses in
@@ -37,7 +37,9 @@ keywords in place of the special symbols.
 
 ASCIZ
 	A NUL-terminated ASCII string.  The ASCIZ string "ABC" consists
-of the four bytes 41h, 42h, 43h, and 00h.
+of the four bytes 41h, 42h, 43h, and 00h.  Unless otherwise specified,
+maximum lengths given in the interrupt list do not include the
+terminating NUL.
 
 AVATAR
 	(Advanced Video Attribute Terminal Assembler and Recreator) A
@@ -112,6 +114,20 @@ most common caches are disk caches (store disk sectors in RAM) and RAM
 caches (store portions of main memory in special high-speed RAM which
 may be accessed as fast as the CPU is capable of accessing memory).
 
+Callback
+	A call to a specified function made by the operating system or
+operating environment when a request (usually an asynchronous request)
+completes.  This permits the calling program to continue operating while
+the request is processed yet still be aware of its completion
+immediately without the need to constantly poll the request's status.
+See also Callout.
+
+Callout
+	A call made by the operating system, operating environment, or
+an application program on various events, which may be intercepted by
+other software which is interested in the current state of the system.
+See also External Device Interface.  See also Callback.
+
 CAS
 	see Communicating Applications Specification
 
@@ -119,14 +135,14 @@ CBIOS
 	(Compatibility BIOS) The IBM XT/286 and PS/2 models with 80286
 or higher processors contain two separate BIOSes.  The CBIOS is a
 real-mode BIOS which is compatible with the earlier products in the IBM
-PC family and PS/2 models with 8086 processors.  see also ABIOS
+PC family and PS/2 models with 8086 processors.  See also ABIOS.
 
 CDS
 	see Current Directory Structure
 
 CGA
 	(Color/Graphics Adapter) One of the two video display boards
-introduced together with the original IBM PC. see also MDA
+introduced together with the original IBM PC.  See also MDA.
 
 Clock Tick
 	1/18.2 second, or approximately 55 milliseconds.  This is the
@@ -166,10 +182,22 @@ Cylinder
 position on each data-bearing surface of the disk. A double-sided
 floppy will contain two tracks per cylinder.
 
+DAC
+	(Digital-to-Analog Converter) A hardware device (in its simplest
+form, nothing more than a set of interconnected resistors) which converts
+a digital number into an analog signal whose voltage is proportional to
+the value of the digital number.  VGA and later color video boards use
+DACs to convert color values into the analog signals sent to the display;
+sound boards normally use DACs as well.
+
 DCC
 	(Display Combination Code) A number which indicates both the
 type of display adapter board and the type of monitor attached to the
 video board.
+
+Delayed Write
+	A form of caching in which control is returned before the data is
+actually written to the storage media.  See also Cache.
 
 Device Driver
 	An interface module between the device-independent portions of
@@ -183,6 +211,9 @@ Device Driver Request Header
 	The data structure passed to a device driver which contains the
 command to be executed, its parameters, and space for a returned status
 and data values.  See INT 2Fh Function 0802h.
+
+DGIS
+	(Direct Graphics Interface Standard)
 
 Direct Memory Access
 	A method whereby peripherals may transfer data into or out of
@@ -201,15 +232,27 @@ DLL
 DMA
 	see Direct Memory Access
 
+DOS Extender
+	A program which allows a program to run in protected mode while still
+retaining access to real-mode MSDOS services.  See also Protected Mode.
+
 DOS Parameter List
 	The DOS Parameter List is used to pass arguments to SHARE and
 network functions.  See also INT 21h Function 5D00h.
+
+DOS Protected-Mode Interface
+	An API which provides basic services for protected-mode programs to
+allocate memory, invoke real-mode software, etc.  See also Virtual Control
+Program Interface.
 
 DPB
 	see Drive Paramter Block
 
 DPL
 	see DOS Parameter List
+
+DPMI
+	see DOS Protected-Mode Interface
 
 Drive Parameter Block
 	The DOS Drive Parameter Block stores the description of the
@@ -232,8 +275,24 @@ by many programs.  It also permits all programs using the DLL to be
 updated without recompiling simply by installing a new version of the
 library.
 
+EGA
+	(Enhanced Graphics Adapter) IBM's second color video board for the
+IBM PC family, capable of a maximum resolution of 640x350 pixels in 16
+simultaneous colors of a total of 64 possible colors.
+
+EISA
+	(Enhanced Industry-Standard Architecture) A 32-bit superset of the
+IBM AT's expansion bus (which is now known as the ISA or Industry-Standard
+Architecture bus).
+
 EMS
 	see Expanded Memory Specification
+
+EOI
+	(End of Interrupt) A particular command sent to the interrupt
+controller to indicate that the interrupt has been handled by software
+and that new interrupts of the same or lower priority may now be signalled
+by the interrupt controller.
 
 Expanded Memory Specification
 	A specification devised by Lotus, Intel, and Microsoft for
@@ -250,6 +309,11 @@ Extended Memory Specification
 programs to share extended (above 1 megabyte) memory and noncontiguous
 memory above 640K.  See also Upper Memory Block.
 
+External Device Interface
+	A series of calls made by the DESQview multitasker on various
+"interesting" events, which may be intercepted by programs which wish to
+keep track of the current system state.  See also Callout.
+
 FAT
 	see File Allocation Table
 
@@ -257,8 +321,10 @@ FCB
 	see File Control Block
 
 File Allocation Table
-	The File Allocation Table of a disk, which records the clusters
-that are in use.
+	A data structure on disk that records which clusters are free,
+which are unusable, and which have been allocated.  The clusters occupied
+by a file are linked into a list in the file allocation table, allowing
+DOS to find the contents of the file.
 
 File Control Block
 	A data record in the calling program's address space which is
@@ -272,6 +338,27 @@ file on which a program wishes to perform an operation.
 Flush
 	To force the copying of any data still stored in temporary
 buffers to its final destination.
+
+Formatting
+	Preparing a storage medium (usually magnetic media such as a
+disk or tape) for storing data.  Low-level or physical formatting
+writes all necessary housekeeping data to enable the storage device
+to read the media and may also initialize the storage units on the
+media to a known state.  High-level or logical formatting writes data
+used by the operating system, such as allocation information and
+directories onto media which has already been physically formatted.
+Formatting programs often perform both a low-level and a high-level
+format.
+
+FOSSIL
+	(Fido/Opus/Seadog Standard Interface Layer)  A standardized API
+for performing serial I/O, originally used by the Fido and Opus bulletin-
+board software and Seadog bulletin-board mailer, but now in wider use.
+
+FTP
+	(File Transfer Protocol)  The standard protocol for copying files
+from one machine to another on a TCP/IP (Internet) network.  Also the
+program of the same name with which a user may transfer files.
 
 Handle
 	A short identifier, usually a small integer or a pointer, for
@@ -373,6 +460,15 @@ Network Shell
 printers, etc.) by intercepting DOS calls before they reach the DOS
 kernel and handling those operating on network devices while passing
 through actions on local devices.  See also Network Redirector.
+
+NMI
+	see Non-Maskable Interrupt
+
+Non-Maskable Interrupt
+	An interrupt which can not be disabled by clearing the CPU's
+interrupt enable flag, unlike most normal interrupts.  Non-maskable
+interrupts are typically used to signal calamities which require
+immediate action, such as a hardware failure or imminent loss of power.
 
 Non-Volatile RAM
 	Memory which can be modified like normal RAM but does not lose
@@ -494,6 +590,9 @@ the 640K and 1024K addresses.  See also INT 21h Function 52h.
 V86
 	see Virtual-86 Mode
 
+VCPI
+	see Virtual Control Program Interface
+
 VDM
 	see Virtual DOS Machine
 
@@ -512,6 +611,10 @@ Mode to a supervisor program which oversees the virtual machine on
 which the user programs are running.  This mode is called Virtual-86
 because one or more virtual 8086 environments are run on a single CPU.
 See also Protected Mode, Real Mode, Virtual Machine.
+
+Virtual Control Program Interface
+	A simple API for protected-mode programs to allocate memory and
+switch into or out of protected mode.  See also DOS Protected-Mode Interface.
 
 Virtual DMA Specification
 	A set of interrupt calls which permit the use of DMA even on
@@ -539,6 +642,9 @@ VM
 VxD
 	A virtual device driver for Windows 3.0 or 3.1.  See also
 device driver.
+
+XDI
+	see External Device Interface
 
 XMS
 	see Extended Memory Specification

@@ -1,0 +1,17 @@
+This is your chance to get your name in print and possibly a free book
+as well!
+
+Jim Kyle and I are starting work on a second edition of PC Interrupts,
+which should be available by Christmas.  As with the first edition, all
+contributors will be listed in the book (unless someone at the publisher
+drops the list from the final manuscript again), and major contributors
+will be offered a complimentary copy of the finished book.  Due to the
+size of the interrupt list, it will actually appear as two related
+books: PC Interrupts, 2nd edition and Network Interrupts.
+
+Anyone listed as a major contributor between June 1991 and the time we
+freeze the manuscript (mid-June 1993) will be entitled to a free copy of
+either PC Interrupts or Network Interrupts (the latter if you made a
+contribution of networking calls, the former if non-networking, and your
+choice if you contributed toward both).
+

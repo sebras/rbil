@@ -20,6 +20,17 @@ Corresponds to INTER26 with the most important new material from INTER27.
 
 -------
 
+PC Interrupts is now available in Chinese.  I don't know the exact title
+(and couldn't reproduce it here), but it is a three-volume set which
+appears to be a straight translation of the Interrupt List, circa
+INTER26.
+
+   ISBN 957-652-272-2 (INT 00h-1Fh)  516 pages, NT$ 300
+   ISBN 957-652-271-4 (INT 20h-30h)  704 pages, NT$ 400
+   ISBN 957-652-261-7 (INT 31h-FFh)  488 pages, NT$ 280
+
+-------
+
      Undocumented DOS:
        A Programmer's Guide to Reserved MS-DOS Functions and Data Structures
      Andrew Schulman, Raymond J. Michels, Jim Kyle, Tim Paterson, David

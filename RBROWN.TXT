@@ -1,12 +1,12 @@
 Public Domain/Freeware/Shareware by Ralf Brown:
 
 The MSDOS Interrupt List
-	A comprehensive listing of 4500 functions available through
+	A comprehensive listing of over 4700 functions available through
 	interrupt calls on IBM PCs and compatibles.  Includes both
 	documented and undocumented functions.
-	Current version: INTER33A (release 33, 1/3/93)
-			 INTER33B
-			 INTER33C (conversion programs)
+	Current version: INTER34A (release 34, 4/3/93)
+			 INTER34B
+			 INTER34C (conversion programs)
 
 DVINT
 	An extract of the MSDOS Interrupt List containing the DESQview
@@ -21,7 +21,7 @@ RBcomm
 	a powerful macro language; dialing directory; ANSI music; and
 	more.  Runs in 65K with DSZ, 46K without.  While it works under
 	plain DOS, additional features are available under DESQview.
-	Current version: RBCOMM34 (v3.40 1/3/93)
+	Current version: RBCOM341 (v3.41 1/10/93)
 
 SPAWNO
 	A replacement for the Turbo C and Microsoft C spawn..() functions
@@ -93,13 +93,13 @@ PURGEMSG
 	Current version: PURGEMSG (v1.00, 8/4/91)
 
 Note: beginning 1/1/91, all packages are distributed in PKZIP archives with
-      authenticity verification.  Please redistribute only the original
-      archives to preserve the authenticity information.  If you receive
-      an archive dated after 1/1/91 which fails the authenticity check,
-      you should treat it with caution.  If you receive an archive which
-      passes the PKZIP v1.1 check but displays an authenticity code other
-      than NWS235, then the archive has been deliberately tampered with
-      and should be deleted IMMEDIATELY.
+      authenticity verification (v1.1 before 4/1/93, v2.0 after).  Please
+      redistribute only the original archives to preserve the authenticity
+      information.  If you receive an archive dated after 1/1/91 which fails
+      the authenticity check, you should treat it with caution.  If you
+      receive an archive which passes the PKZIP check but displays an
+      authenticity code other than NWS235, then the archive has been
+      deliberately tampered with and should be deleted IMMEDIATELY.
 
 
 -------------
@@ -112,6 +112,9 @@ On the Internet, by standard anonymous FTP from CS.CMU.EDU [128.2.222.173].
 	anonymous FTP). [DV-GLUE is not available here]
 	Don't forget to set "binary" mode!  If you are refused access to
 	the directory, try again later; a fileserver may have been down.
+	Note: since I will probably lose my account after graduating in
+	May, this directory may cease to exist and will probably not be
+	updated even if it doesn't go away.  Use SIMTEL20 instead.
 
 If connected to AFS, you can simply perform standard Unix/VMS/whatever
 	directory listing and file copies from the above directory.
@@ -221,26 +224,27 @@ Pisa, Italy		2:332/612  WolfNet Line #1	9600 HST/V32
 
 ------------------------------------------------------------------------
 
-DVNet nodes as of December 1992:
+DVNet nodes as of February 1993:
 
            USA
   ------------------------------     ---------  ------------  --------
-AK  *65'North, Fairbanks             1:355/38   907-452-1460  HSTV32
+AK  *65'North, Fairbanks             1:355/38   907-452-1460  H14V32
 AR  Phil's BBS, Walnut Ridge         1:389/10   501-886-1701  HSTV32b
-AR  The 7th Inning Stretch!, Conway  1:399/11   501-450-7010  V32b
+AR  The 7th Inning Stretch!, Conway  1:399/11   501-450-7010  ZYXV32b
+AR  CrossFire, N Little Rock         1:3821/2   501-791-2993  H16V32b
 AZ  Analog Gate, Sierra Vista        1:309/9    602-458-0451  HSTV32
-AZ  Golden Valley, Kingman           1:314/5    602-757-0385  HSTV32
+AZ  Golden Valley, Kingman           1:314/5    602-757-0385  H14V32b
 CA  Carl's Corner, San Jose          1:10/1     408-248-9704  HSTV32
 CA  Central Computer Banks, Tujunga  1:102/581  818-352-2993  HSTV32b
 CA  Imperial Terran Traders,Van Nuys 1:102/824  818-901-7568  HSTV32b
-CA  DCC BBS, Benecia                 1:161/502  707-746-5820  HSTV32
+CA  OnLine Computer Resources,Concord1:161/503  510-687-0236  HSTV32
 CA  Gandalf's, El Cajon              1:202/302  619-466-9505  HSTV32
 CA  Microline BBS, Sacramento        1:203/529  916-392-2124  HSTV32b
 CA  Memory Board, Sacramento         1:203/530  916-368-9129  HSTV32b
 CA  Stingray!, Clovis                1:205/12   209-298-9461  HST
 CA  Bertha Board, Manteca            1:208/1    209-823-0093  HST
 CO  Prgrmmrs Playhouse, Colo Springs 1:128/60   719-380-8813  HST
-CT  Treasure Island, Danbury         1:141/730  203-791-8532  HSTV32
+CT  Treasure Island, Danbury         1:141/730  203-791-8532  HSTV32b
 CT  Ascii Neighborhood, W Haven      1:141/333  203-934-9852  HST
 CT  Death's Domain, Enfield          1:142/629  203-749-6103  HSTV32
 CT  Plainfield News, Plainfield      1:327/452  203-564-8579  HST
@@ -270,6 +274,7 @@ MA  Rainbow's Edge, Westwood         1:101/1    617-551-0495  HSTV32
 MA  Pioneer Valley PCUG1, Amherst    1:321/109  413-256-1037  HST
 MA  Denis's Opus, Ayer               1:322/2    508-772-6373  HSTV32
 MA  Waystar BBS, Marlborough         1:322/14   508-481-7147  HST
+MA  The Business Card, Lawrence      1:324/121  508-682-5329  HSTV32b
 MD  Addict's Attic, Germantown       1:109/423  301-428-8998  V32
 MD  AviTechnic ,Lutherville          1:261/662  301-252-0717  HSTV32
 MI  Programmers' Attic, Will.        1:159/850  517-655-3347  HST
@@ -277,6 +282,7 @@ MI  Fast Eddies BBS, Monroe          1:2380/101 313-243-0944  HSTV32b
 MN  ICS BBS, Woodbury                1:282/4012 612-739-2013  HSTV32b
 MO  Cheswick's, St Louis             1:100/375  314-965-5296  HSTV32
 MO  Summit Forum, Holt's Summit      1:289/13   314-896-5393  HSTV32
+NC  Crossed Wires, Dudley            1:151/809  919-580-7194  HST
 NC  Psychotronic BBS, Durham         1:3641/1   919-286-7738  HSTV32
 NC  Programmer's Asstnt, Charlotte   1:379/4    704-544-0010  HST
 NH  Our BBS Yours and Mine, Derry    1:132/193  603-432-5287  HSTV32b
@@ -286,19 +292,17 @@ NJ  APFL- The BBS, Tenafly           1:2604/306 201-567-6994  HSTV32b
 NJ  Fleet Street, Somerville         1:2605/625 908-722-8962  V32
 NJ  Atrium Way, Morris Plains        1:2606/583 201-984-5555  HSTV32
 NM  Construction Net #6, Los Alamos  1:15/20    505-662-0659  HST
-NV  dBest Western Star 1, Las Vegas  1:209/1    702-253-9917  HST
 NV  $in City Bit Pit, Las Vegas      1:209/711  702-647-4427  HSTV32
 NV  Danger Zone, Reno                1:213/720  702-828-4907  HSTV32
 NY  Rivendell * TAP/1, Syracuse      1:260/1    716-646-0227  HSTV32
-NY  Ulysses System, Rome             1:260/501  315-339-5591  HSTV32
 OH  The Mountain Top, Cincinnati     1:108/107  513-921-5568  HST
 OH  Blue Byte BBS, Enon              1:110/270  513-864-1143  HST
 OH  Nerd's Nook, Rocky River         1:157/3    216-356-1772  HSTV32b
 OH  NHampton Data, Cuyahoga Falls    1:157/533  216-928-8565  HSTV32
 OH  Computer Room, Pickerington      1:226/110  614-861-8377  HSTV32
 OH  Steel Valley BBS, Girard         1:237/500  216-545-2318  HSTV32
-OH  The Outer Limits, Chillicothe    1:2220/10  614-772-5520  HSTV32b
-OH  South of the Bauder, Chillicothe 1:2220/70  614-773-2423  HSTV32b
+OH  The Outer Limits, Chillicothe    1:2220/10  614-772-5520  H16V32b
+OH  South of the Bauder, Chillicothe 1:2220/70  614-773-2423  H16V32b
 OK  Ascension, Norman                1:147/46   405-360-4261  HST
 OK  Wizard's Council, Oklahoma City  1:147/1021 405-672-4593  V32b
 OR  Bink of an Aye, Portland         1:105/42   503-297-9043  PEPV32
@@ -307,19 +311,19 @@ OR  Busker's Boneyard, Portland      1:105/14   503-771-4773  PEP
 OR  Dimension 7, Eugene              1:152/69   503-461-2219  HST
 PA  Meeting Place, Pittsburgh        1:129/45   412-682-7057  HSTV32b
 PA  The Other BBS, Harrisburg        1:270/101  717-657-2223  HST
-PA  Cheyenne BBS, Upper Darby        1:273/90   215-544-7710  HSTV32b
 PA  Walsh Microsys, Philadelphia     1:273/917  215-725-9134  HST
 PA  Optical Illusion, Allentown      1:273/603  215-797-7409  HSTV32
 PA  U.S.S. Intrepid, Spring House    1:273/703  215-641-0270  HST
+PA  Cheyenne BBS, Upper Darby        1:2614/409 215-544-7710  HSTV32b
 PR  Island Sun, Caparra Heights      1:367/15   809-783-9542  HST
 SC  Dreadnaught BBS, Columbia        1:376/50   803-731-3884  V32
 SC  Special Projects, Beech Island   1:360/13   803-827-1725  HSTV32b
-SC  Caroline Collections, Sumter     1:3647/1   803-499-4316  HSTV32b
+SC  Carolina Collections, Sumter     1:3647/1   803-499-4316  HSTV32b
 TN  EET BBS, Nashville               1:116/24   615-353-3476  HSTV32
 TX  Conch Opus, Houston              1:106/357  713-667-7213  HSTPCP
 TX  Inns of Court, Dallas            1:124/6101 214-458-2620  HSTV32
 TX  Spare Parts, Bedford             1:130/38   817-540-3527  HST
-TX  Southern Crossroads, Dallas      1:124/4115 214-556-2982  HSTV32
+TX  Southern Crossroads, Dallas      1:124/4115 817-481-8984  ZYXV32b
 TX  The Gas Company, Arlington       8:930/201  817-265-8938  HST
 TX  Wireline, Corpus Christi         1:160/40   512-241-1120  HST
 TX  Middle Earth, San Antonio        1:382/19   512-835-4848  HST
@@ -341,45 +345,57 @@ WI  County Line BBS, W Allis         1:154/100  414-476-8468  HSTV32b
 WI  Country Line #2, W Allis         1:154/101  414-476-8469  H96V32
 WI  The Inn, Chippewa Falls          1:2300/10  715-723-3552  HSTV32b
 WY  Oregon Trail XRoads, Casper      1:303/5    307-472-3615  H96V32
+WY  Black Diamond, Gillette          1:316/16   307-686-0940  H14V32b
 
            CANADA
   ------------------------------     ---------  ------------  ----------
 AB  Logical Solutions, Calgary       1:134/10   403-299-9917  HST
 AB  Information Corner, Edmonton     1:342/20   403-483-1896  HST
+BC  Express//BBS, Nanaimo            1:351/0    604-753-1145  V32b
 MB  Polar Bear Heaven Winnipeg       1:348/405  204-837-9704  HST
 NB  Atlantic Access, St John W       1:255/2    506-635-1964  HST
 ON  AFI Comm, Nepean                 1:163/115  613-829-0282  HST
 ON  Ned's Opus HST Ottawa            1:163/211  613-523-8965  HST
+ON  Alpha City BBS, Oshawa           1:229/14   416-579-6302  H14V32b
 PQ  Arcane BBS, Laval                1:167/116  514-687-9586  HST
 SK  The DataForce, Regina            1:140/72   306-585-1958  HST
 
 	   ZONE 2
  ---------------------------------   ---------  ------------- -------
-AT  Blumenkistl, Vienna  Austria     2:310/10   43-222-6040844 V32b
-CH  Orion MailBox, Widnau            2:302/903  41-71-725188   HSTV32
 DE  Median, Berlin                   2:2403/36  49-30-735148   HSTV32b
+DE  FastInfo Oldenberg, Oldenburg    2:241/2003 49-441-9509333 H16V32b
 DE  The 49er's, Wuppertal            2:241/5601 49-202-305803  HST
 DE  BoersenBox, Friedrichshafen      2:241/7201 49-7541-53191  HSTV32b
-DE  The PC Shack, Duesseldorf        2:241/4008 49-211-627033  HSTV32b
 DE  Plutonium BBS, Duesseldorf       2:242/94   49-211-620145  HSTV32b
-DK  Copenhagen Online BBS            2:231/116  45-38884312    HSTV32
+DE  HDS Computer Tecknik, Duisburg   2:2401/1   49-203-408799  ZYXV32b
 FR  The Lys Valley, Wervicq          2:322/2    33-20392225    HSTV32
 GB  Enigma Variations,Worcester      2:2/544    44-905-795002  HST
 GB  GABBS, Gosport Hants             2:251/16   44-705-524805  HSTV32b
 GB  Komputer Knowledge, Cheddington  2:252/7    44-296-668148  HSTV32
-GB  TUG II, Droitwich Worcester      2:253/157  44-905-775191  HST
 GB  Aureal,Market Harborough         2:254/153  44-858-466594  HST
-GB  Trinity I, Exeter                2:255/112  44-392-410210  2400
+GB  Dog & Duck, Hull                 2:258/32   44-0482-444650 HSTV32
 GB  Piston Popper's,Hastings         2:441/80   44-424-853361  HSTV32
+IL  Small BBS, Jerusalem                        972-2-634203   V32RE
 IT  Venus, Pavia PV                  2:331/318  39-382-575369  HSTV32
 IT  Genova 2000, Genova              2:332/201  39-10-3770080  V32
 IT  SUBALPINA's_Hub, Torino          2:334/300  39-11-6624400  HSTV32
-NL  Interface HQ, The Hague          2:281/506  31-070-3361380 V32b
-NL  Datalink, Groningen              2:512/159  31-50-735035   HSTV32b
-NL  Tradeways, Hoofddorp             2:280/414  31-02503-24677 HSTV32b
-NL  Kiss Software, Almelo            2:283/314  31-05490-27374 HSTV32b
+NL  Interface HQ, The Hague          2:281/506  31-70-3361380  V32b
+NL  Datalink NL, Groningen           2:512/159  31-50-735035   HSTV32b
+NL  TouchDown, Hoofddorp             2:280/414  31-02503-24677 HSTV32b
+NL  Kiss Software, Almelo            2:283/314  31-5490-27374  HSTV32b
 NL  Programmers Support, Helmond     2:284/114  31-4920-13558  HSTV32b
 NL  Byteline! Systems Sliedrecht     2:285/101  31-1840-15230  HSTV32b
 NL  The HEKOM Board                  2:500/281  31-3483-2361   V32b
 SE  Capital City BBS,Haninge         2:201/111  46-8-7411244   HST
 
+           ZONE 3 & 6
+  ------------------------------     ---------  ------------- -------
+ AU Marwick's MadHouse, Brisbane     3:640/820  61-7-870-2972  PEPV32
+ AU Sentry, Lane Cove NSW            3:711/401  61-2-428-4687  PEP
+ AU Sentry's Shadow, Lane Cove NSW   3:711/501  61-2-418-6682  V32
+ AU Revelstone BBS, Doveton Vic      3:632/348  61-3-741-2353  PEP
+ AU Southern Mail CBCS Croyton Vic   3:632/386  61-3-725-1621  PEP
+ AU Engineer's PitStop, Perth WA     3:690/652  61-9-3837168   V32b
+ AU Phone Box,Inglewood SA           3:681/854  61-8-3805505   V32
+ HK TAIC Maximus Kowloon             6:700/1    85-2-789-1267  PEPV32
+ TW CADs BBS, Taipei                 6:720/101  886-2-831-2460 HSTV32
