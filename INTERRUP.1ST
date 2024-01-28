@@ -1,24 +1,25 @@
-Interrupt List		Release 34			Last change 4/3/93
+Interrupt List		Release 35			Last change 6/5/93
 
 Please redistribute the following files unmodified as a group, in a pair of
-archives named INTER34A and INTER34B (preferably the original authenticated
+archives named INTER35A and INTER35B (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	this file
-	INTERRUP.A	INT 00 through INT 14	\
-	INTERRUP.B	INT 15 through INT 1A	 \   total 1111 pages at
-	INTERRUP.C	INT 1B through INT 21/5E  \  60 lines per page,
-	INTERRUP.D	INT 21/5F through INT 27   \ 1190 with INTPRINT -p
-	INTERRUP.E	INT 28 through INT 2F/BF   / (4719 entries)
-	INTERRUP.F	INT 2F/C0 thru INT 4F	  / 
-	INTERRUP.G	INT 50 through INT 67	 /
-	INTERRUP.H	INT 68 through INT FF	/
+	INTERRUP.A	INT 00 through INT 14	 \
+	INTERRUP.B	INT 15 through INT 15     \
+	INTERRUP.C	INT 16 through INT 21/35   \   total 1179 pages at
+	INTERRUP.D	INT 21/36 through INT 21/7F \  60 lines per page,
+	INTERRUP.E	INT 21/80 through INT 21/FF  > 1262 with INTPRINT -p
+	INTERRUP.F	INT 22 through INT 2F/BF    /  (5058 entries)
+	INTERRUP.G	INT 2F/C0 through INT 4F   /
+	INTERRUP.H	INT 50 through INT 66	  /
+	INTERRUP.I	INT 67 through INT FF	 /
 	INTERRUP.PRI	a brief primer on interrupts
 	INTPRINT.COM	a simple formatter that also generates a list summary
 	INTPRINT.DOC	instructions for INTPRINT
 	GLOSSARY.LST	a glossary of terms, abbreviations, and acronyms
 	MEMORY.LST	format of the BIOS data area
 	COMBINE.BAT	combine the piece of the list into a single file
-The following files should be distributed in an archive called INTER34C:
+The following files should be distributed in an archive called INTER35C:
 	INT.COM		invoke interrupts from commandline
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
 	INT2HLP.BAT	Perl script to convert list into QuickHelp database
@@ -30,11 +31,8 @@ The following files should be distributed in an archive called INTER34C:
 	INTPRINT.C	source code for INTPRINT
 	RB2NG.*		convert list into Norton Guides database
 
-Concatenate INTERRUP.A, .B, .C, .D, .E, .F, .G, and .H with
-  COPY /B INTERRUP.A+INTERRUP.B+INTERRUP.C+INTERRUP.D+INTERRUP.E+INTERRUP.F+
-	INTERRUP.G+INTERRUP.H INTERRUP.LST
-(all on one line) or with COMBINE.BAT to create an interrupt list file
-identical to my master copy.
+Concatenate INTERRUP.A, .B, .C, .D, .E, .F, .G, .H, and .I with COMBINE.BAT to
+create an interrupt list file identical to my master copy.
 
 Use INTPRINT to generate a one-line-per-call summary file and/or a file
 containing only data structure formats.	 See INTPRINT.DOC for details.
@@ -43,9 +41,11 @@ Note: in addition to the archives mentioned above, you may also find other
 archives named INTERrrx containing additional files generated from the
 original distribution for your convenience.  These other archives are
 maintained by other people, so please do not ask me any questions about them
-(all I'll do is refer you to the creator).  The only additional distribution
-I am currently aware of contains a ready-made Quick Help database (compiled
-by Brad Willcott <bxw@ccadfa.cc.adfa.oz.au>).
+(all I'll do is refer you to the creator).  The only additional distributions
+I am currently aware of contain a ready-made Quick Help database (compiled
+by Brad Willcott <bxw@ccadfa.cc.adfa.oz.au>) and a ready-made Norton Guides
+database (compiled by Michael Gallias <gallias@ph.und.ac.za> and distributed
+as RBNGrr.*).
 ---------------------------------------------
 	NOTICE		NOTICE		NOTICE		NOTICE
 
@@ -75,18 +75,9 @@ works the same way in your version of the software (and please let me know
 whether or not it works the same way).	Information marked with "???" is
 known to be incomplete or guesswork.
 ---------------------------------------------
-In March 1991, Dan Lanciani claimed copyright on the July 1987 version of
-the interrupt list.  INT 0A"Tandy", INT 0D"Tandy", INT 10/AH=70h-73h,
-INT 86"NetBIOS", INT F8"TANDY", INT FA"TANDY", and INT FB"TANDY" have been
-completely rewritten.  All other information contained in the July 1987
-version on which the copyright was claimed has been removed and replaced
-with independently-obtained new versions.  Any similarities between
-the July 1987 entries and their replacements are due solely to the
-nature of the information or the use of identical reference materials.
----------------------------------------------
 If the list is more than three months old by the time you get it, there
-is probably a newer release out already (R35 is planned for early June,
-R36 for early August).  Each release supersedes all previous versions, so
+is probably a newer release out already (R36 is planned for early August,
+R37 for early October).  Each release supersedes all previous versions, so
 there is no need to keep old versions.
 
 The newest release of this list is available in these places (please do not
@@ -98,9 +89,11 @@ On the Internet, by standard anonymous FTP from FTP.CS.CMU.EDU [128.2.206.173].
 	and in a single command because of the way CMU's anonymous FTP works.
 	Don't forget to set mode "binary" or "type L 8"!  ZIP unarchivers for
 	MSDOS and Unix are available in the "archivers" subdirectory.  Note
-	that my directory is occasionally unavailable due to fileserver
-	downtime or network problems (/afs is a distributed filesystem).  If
-	you get an "access denied" type error, try again in a few hours.
+	that I have now graduated and will probably not be able to keep this
+	directory updated much longer.  Use SIMTEL20 instead.
+
+If connected to AFS, you can simply perform standard Unix/VMS/whatever
+	directory listing and file copies from the above directory.
 
 On FIDOnet, from SoundingBoard BBS 1:129/26 1-412-621-4604 9600/14.4k HST/V32
 	as files INTERrrA.ZIP, INTERrrB.ZIP, and INTERrrC.ZIP (rr stands for
@@ -124,23 +117,23 @@ FIDO:	SyncPoint BBS 1:261/1008 1-301-529-2584 File Requests.
 Additional Distribution Points:
 BITnet: you may retrieve the copy on WSMR-SIMTEL20.ARMY.MIL via the following
 	automated mail servers:
-	(in the US) LISTSERV@RPIECS (alias VM.ECS.RPI.EDU)
+	(in the US) LISTSERV@RPITSVM (alias VM.ITS.RPI.EDU)
 		    LISTSERV@NDSUVM1 (alias VM1.NODAK.EDU)
 	(in Europe) TRICKLE@AWIWUW11 (Austria)
 		    TRICKLE@BANUFS11 (Belgium)
 		    TRICKLE@DKTC11   (Denmark)
 		    TRICKLE@FRMOP11  (France)
-		    TRICKLE@DS0RUS1I (Germany)
+		    TRICKLE@DEARN    (Germany)
 		    TRICKLE@IMIPOLI  (Italy)
 		    TRICKLE@HEARN    (Netherlands)
-		    TRICKLE@DS0RUS11 (Netherlands)
 		    TRICKLE@EB0UB011 (Spain)
+		    TRICKLE@SEARN    (Sweden)
 		    TRICKLE@TREARN   (Turkey)
-	(elsewhere) TRICKLE@USACHVM1 (Chile)
+	(elsewhere) TRICKLE@UNALCOL  (Colombia)
 		    TRICKLE@TAUNIVM  (Israel)
 FIDO:	boards belonging to the PDN (Programmer's Distribution Network) system
-CompuServe: in the IBM Programming Forum (GO IBMPRO), Library 5, as INTrrA.*
-	and INTrrB.*
+CompuServe: in the IBM Programming Forum (GO IBMPRO), Library 5, as INTrrA.*,
+	INTrrB.*, and INTrrC.*
 
 The list is also posted to USEnet in comp.binaries.ibm.pc about twice a year,
 concurrently with a new release of the list.  Since comp.binaries.ibm.pc is
@@ -189,8 +182,8 @@ This list is the result of the time and effort of a large number of people:
       Peter Holzmann   pete@octopus.com		  /   calls in another list
 
    87 Dan Lanciani     ddl@harvard.harvard.edu	      various, incl. NetBIOS
- 7/87 Ralf Brown       ralf@cs.cmu.edu		      INT 24h and DOS func 59h
-10/87 Ralf Brown       ralf@cs.cmu.edu		      become list maintainer
+ 7/87 Ralf Brown       ralf@telerama.pgh.pa.us        INT 24h and DOS func 59h
+10/87 Ralf Brown       ralf@telerama.pgh.pa.us        become list maintainer
 11/87 Dan Davison      dd@lanl.gov		      DOS 3.3 function calls
 11/87 Bill White       wwhite@jeeves.teknowledge.com  DOS 3.3
 11/87 Richard Hargrove harvard!killer!richardh	      EGA
@@ -199,7 +192,7 @@ This list is the result of the time and effort of a large number of people:
  1/88 Brad Davis       bradd@gssc.gss.com	      GSS, DGIS
  2/88 Diomidis Spinellis dds@doc.ic.ac.uk	      Herc GRAFIX Dev Toolkit
  3/88 Michael A. Moran Michael@cup.portal.com	      VGA INT 10h
- 3/88 Ralf Brown       ralf@cs.cmu.edu		      DESQview API
+ 3/88 Ralf Brown       ralf@telerama.pgh.pa.us        DESQview API
  4/88 Richard Marks    rmarks@KSP.Unisys.COM	      undoc dir search fields
  5/88 Robert Goldsmith rpg@mitre.org		      AT&T DEB adapter
  7/88 Gary E. Miller   GEM@cup.portal.com	      Paradise VGA
@@ -208,27 +201,27 @@ This list is the result of the time and effort of a large number of people:
  9/88 Howard Johnson   Howard_Reed_Johnson@cup.portal.com  NetWare overview
  9/88 Finn Thoegerson  via mcvax!daimi!fab	      10-NET, miscellaneous
  9/88 Michael Shiels   mshiels@watmath.waterloo.edu   FOSSIL spec
- 9/88 Ralf Brown       ralf@cs.cmu.edu		      Microsoft CD-ROM API
+ 9/88 Ralf Brown       ralf@telerama.pgh.pa.us        Microsoft CD-ROM API
 10/88 Michael Shiels   mshiels@ziebmef.uucp	      ATI VIP INT 10h
 		       BMB Compuscience Canada Ltd.
 10/88 Michael Shiels   mshiels@ziebmef.uucp	      FTP Driver spec
 10/88 Helmut Waelder   ZRWA001@DTUZDV1.BITNET	      data structures, misc
 10/88 Helmut Waelder   ZRWA001@DTUZDV1.BITNET	      more 10-NET functions
 10/88 Ge van Geldorp   ge@dutlru2.tudelft.nl	      Novell NetWare
-10/88 Ralf Brown       ralf@cs.cmu.edu		      INT 2F/AH=12h
+10/88 Ralf Brown       ralf@telerama.pgh.pa.us        INT 2F/AH=12h
 11/88 Clarence A Dold  dold@tsmiti.Convergent.COM     Compaq386 speed settings
-11/88 Ralf Brown       ralf@cs.cmu.edu		      TesSeRact API
+11/88 Ralf Brown       ralf@telerama.pgh.pa.us        TesSeRact API
 12/88 Ying-Kuen K. Hwang  khwang@wyse.com	      ESDI fixed disk calls
  1/89 Ari Huttunen     Ari.Huttunen@hut.fi	      additional INT 33 calls
  1/89 Duncan Murdoch   dmurdoch@watstat.waterloo.edu  undoc fields in DOS data
- 2/89 Ralf Brown       ralf@cs.cmu.edu		      VCPI API
+ 2/89 Ralf Brown       ralf@telerama.pgh.pa.us        VCPI API
  3/89 Helmut Waelder   ZRWA001@DTUZDV1.BITNET	      more DOS 4.0 calls
  4/89 Robert Seals     rds95@leah.Albany.EDU	      ATI VGA Wonder modes
  4/89 Ge van Geldorp   ge@dutlru2.tudelft.nl	      pcANYWHERE III API
  4/89 Robin Walker     rdhw@uk.ac.cambridge.phoenix   undoc DOS 4 data struc
  4/89 Robin Walker     rdhw@uk.ac.cambridge.phoenix   DOS 4.0 shell API
- 4/89 Ralf Brown       ralf@cs.cmu.edu		      DCA/Intel CAS API
- 4/89 Ralf Brown       ralf@cs.cmu.edu		      Intel Image Proc Interf
+ 4/89 Ralf Brown       ralf@telerama.pgh.pa.us        DCA/Intel CAS API
+ 4/89 Ralf Brown       ralf@telerama.pgh.pa.us        Intel Image Proc Interf
  5/89 Robin Walker     rdhw@uk.ac.cambridge.phoenix   multiplex int calls
  6/89 Peter Sawatzki   IN307@DHAFEU11.BITNET	      Video7 extended INT 10
  7/89 Wes Cowley       71441.3154@compuserve.com      SHARE.EXE hooks
@@ -240,7 +233,7 @@ This list is the result of the time and effort of a large number of people:
 10/89 Robin Walker     rdhw@uk.ac.cambridge.phoenix   DOS 3.0 data struc
 10/89 John DesRosiers  via Marc Bertrand 1:167/1      Ontrack INT 13 extensions
 11/89 Ge van Geldorp   ge@dutlru2.tudelft.nl	      master boot record
-11/89 Barry Burke      barry@banyan.com		      Banyan VINES
+11/89 Barry Burke      bburke@banyan.com	      Banyan VINES
 11/89 Christian Franke franke@informatik.rwth-aachen.de	 ATI EGA Wonder, WP5.0
  1/90 Norman Walsh     NORM@IONAACAD.BITNET	      Inset API
  1/90 Andrew Schulman  76320.302@CompuServe.COM	      Phar Lap 386/DOS extender
@@ -248,14 +241,14 @@ This list is the result of the time and effort of a large number of people:
  3/90 Roger Bowler     rbowler@cix     Fido 2:252/10  IBM 3270, Amstrad PC1512
  3/90 Mike Baszczak				      SQL Base
  4/90 Rick Wagner      rick@always.com		      PC Network RECEIVER.COM
- 4/90 Ralf Brown       ralf@cs.cmu.edu		      more DOS 3.3 internals
+ 4/90 Ralf Brown       ralf@telerama.pgh.pa.us        more DOS 3.3 internals
  5/90 Mike Weaver      1:264/610		      DESQview XDI
  6/90 Les Moskowitz    1:261/1008		      APL*PLUS/PC
- 6/90 Ralf Brown       ralf@cs.cmu.edu		      more DOS 4.0 internals
+ 6/90 Ralf Brown       ralf@telerama.pgh.pa.us        more DOS 4.0 internals
  6/90 Robin Walker     rdhw@uk.ac.cambridge.phoenix   BIOS data segment format
  7/90 Andrew Schulman  76320.302@CompuServe.COM	      MSWindows INT 2F/AH=16h
  7/90 Ben Myers	       0003571400@mcimail.com	      Tseng ET4000, misc
- 7/90 Ralf Brown       ralf@cs.cmu.edu		      DPMI 0.9 API
+ 7/90 Ralf Brown       ralf@telerama.pgh.pa.us        DPMI 0.9 API
  8/90 G. Adam Stanislav 1:129/39		      AVATAR.SYS
  8/90 Robin Walker     rdhw@phoenix.cambridge.ac.uk   more DOS internals
  8/90 Michael A Shiels mshiels@masnet.uucp	      Quarterdeck INT 2F/AH=D2h
@@ -289,7 +282,7 @@ This list is the result of the time and effort of a large number of people:
  2/91 Michael A Shiels mshiels@masnet.uucp	      miscellaneous
  3/91 Jan-Pascal van Best BEST@rulwinwst.LeidenUniv.nl	NetWare IPX/SPX INT 7A
  3/91 Jeroen Pluimers  2:281/521		      TBSCANX
- 3/91 Ralf Brown       ralf@cs.cmu.edu		      PC Tools API
+ 3/91 Ralf Brown       ralf@telerama.pgh.pa.us        PC Tools API
  4/91 David H. Bennett 74635.1671@compuserve.com      ELRES API
  4/91 Michael A Shiels mshiels@masnet.uucp	      Interconnections Inc. TES
  4/91 Manfred Young    fyoung @ BIX		      DOS, LANstep, misc
@@ -313,7 +306,7 @@ This list is the result of the time and effort of a large number of people:
  7/91 Rickard Faith    faith@cs.unc.edu		      Stacker
  7/91 Wolfgang Lierz   lierz@kmx.gmd.dbp.de	      Norton Utilities 5.0
  8/91 Michael A Shiels mshiels@masnet.uucp	      NPC NCSI, KBUF, Telebit
- 9/91 Ralf Brown       ralf@cs.cmu.edu		      QEMM API
+ 9/91 Ralf Brown       ralf@telerama.pgh.pa.us        QEMM API
  9/91 Holger Veit      veit@du9ds3.uni-duisburg.de    Optima 1024 VGA zoom
  9/91 Gary E. Miller   GEM@cup.portal.com	      Rabbit LLAPI
 10/91 Michael A Shiels mshiels@masnet.uucp	      FTP Packet Driver 1.10
@@ -321,7 +314,7 @@ This list is the result of the time and effort of a large number of people:
 11/91 Fridrik Skulason frisk@complex.is		      more virus install checks
 11/91 Christopher J Ambler chris@nike.calpoly.edu     FSBBS 2.0
 12/91 Robin Walker     rdhw@phoenix.cambridge.ac.uk   new PS/2 keyboard funcs
- 1/92 Krzysztof Halasa 2:480/16.5 (Warsaw, Poland)    EMM386 executable header
+ 1/92 Krzysztof Halasa khc@inf.pm.waw.pl	      EMM386 executable header
  1/92 Michael A Shiels mshiels@masnet.uucp	      pcAnywhere IV/LAN, misc
  1/92 Michael A Shiels mshiels@masnet.uucp	      ISOLAN Multi-Protoc Sftwr
  1/92 Michael A Shiels mshiels@masnet.uucp	      PCW Weather Card, FaxBIOS
@@ -331,7 +324,7 @@ This list is the result of the time and effort of a large number of people:
  1/92 Fridrik Skulason frisk@complex.is		      more viruses, std names
  1/92 Tim Farley       tim@magee.mhs.compuserve.com   Microsoft EMM386.EXE
  1/92 Alexi Lookin     alexi@riaph.irkutsk.su	      NetWare TBMI 2.0
- 1/92 Ralf Brown       ralf@cs.cmu.edu		      more QEMM API
+ 1/92 Ralf Brown       ralf@telerama.pgh.pa.us        more QEMM API
  1/92 Tim Farley       tim@magee.mhs.compuserve.com   more PS/x model IDs
  1/92 Kevin Gillett    1:153/101		      SOLLEX SuperVGA extnsions
  1/92 Michael A Shiels mshiels@masnet.uucp	      B.Antoine ST-01 SCSI.SYS
@@ -340,14 +333,14 @@ This list is the result of the time and effort of a large number of people:
  2/92 Michael A Shiels mshiels@masnet.uucp	      miscellany
  2/92 Dan Bodoh	       bodoh@xraylith.wisc.edu	      DVSIXDI
  2/92 Gary E. Miller   GEM@cup.portal.com	      more Btrieve API
- 2/92 Ralf Brown       ralf+@cs.cmu.edu		      TKERNEL private API
- 2/92 Ralf Brown       ralf+@cs.cmu.edu		      PC Paint Plus 2.0
+ 2/92 Ralf Brown       ralf@telerama.pgh.pa.us        TKERNEL private API
+ 2/92 Ralf Brown       ralf@telerama.pgh.pa.us        PC Paint Plus 2.0
  2/92 Tamura Jones     2:512/36.7		      Windows3 VTD.386, misc
  3/92 Frank Vorstenbosch akcs.kingswood@hpcvbbs.cv.hp.com  more Kingswood API
  3/92 Michael A Shiels mshiels@masnet.uucp	      MBBIOS
- 3/92 Ralf Brown       ralf+@cs.cmu.edu		      DPMILOAD API
+ 3/92 Ralf Brown       ralf@telerama.pgh.pa.us        DPMILOAD API
  3/92 Joseph Gil       yogi@cs.ubc.ca		      HP 95LX
- 3/92 Ralf Brown       ralf+@cs.cmu.edu		      386MAX 6.0 API
+ 3/92 Ralf Brown       ralf@telerama.pgh.pa.us        386MAX 6.0 API
  3/92 Fyodor Evseev    Ted@ppicnit.perm.su	      AutoCAD Digitizer ADI
  3/92 Tim Farley       tim@magee.mhs.compuserve.com   Advanced Power Management
  4/92 Tamura Jones     2:512/36.7		      PGS1600.DEV
@@ -356,23 +349,23 @@ This list is the result of the time and effort of a large number of people:
  4/92 Tamura Jones     2:512/36.7		      Vanderaart txtwin,DR MDOS
  4/92 Dan Bodoh	       bodoh@xraylith.wisc.edu	      DESQview/X .DVP file
  5/92 William Peavy    70042.2310@CompuServe.COM      Borland FP shortcuts
- 5/92 Ralf Brown       ralf+@cs.cmu.edu		      FGDRIVER v1.10
+ 5/92 Ralf Brown       ralf@telerama.pgh.pa.us        FGDRIVER v1.10
  5/92 Tim Farley       tim@magee.mhs.compuserve.com   Vedit VSWAP, NG.EXE
  6/92 Dan Fandrich     shad04@ccu.umanitoba.ca	      BitFax scheduler
  6/92 Tamura Jones     2:512/36.7		      more New EXE, AD-DOS.COM
  6/92 Tim Farley       tim@magee.mhs.compuserve.com   LANtastic v4.1
  6/92 Francis Turner FTURNER@madge.MHS.CompuServe.COM AX (Japanese AT) calls
- 6/92 John Fa'atuai    FROTZ.NOVELL@sjfsmtp.novell.com DR Multiuser DOS
+ 6/92 John Fa'atuai    frotz@novell.com		      DR Multiuser DOS
  6/92 Andy Hakim       cosc16to@menudo.uh.edu	      Smooth Mouse Driver
  7/92 Michael A Shiels mshiels@masnet.uucp	      License Server API,misc
  7/92 Tim Farley       tim@magee.mhs.compuserve.com   Novell Netware shell
  7/92 Carlos M. de Sousa Antunes L31546@beta.ist.pt   MS Mouse driver
- 7/92 Ralf Brown       ralf+@cs.cmu.edu		      DESQview/X socket API
+ 7/92 Ralf Brown       ralf@telerama.pgh.pa.us        DESQview/X socket API
  8/92 Jacob Rieper     73377.1220@compuserve.com      SETDRVER, more DR-DOS
  8/92 Richard A Plinston  Auckland, New Zealand	      Europ.DOS4.0,DR DOS Plus
  8/92 Richard A Plinston  Auckland, New Zealand	      Acorn BBC Master 512
  8/92 Serge Pachkovsky ps@comcen.nsk.su		      PC-MOS/386 v3.0
- 8/92 Aki Korhonen     aki@cruzio.santa-cruz.ca.us    Seagate disk BIIOS
+ 8/92 Aki Korhonen     uttsbbs!aki.korhonen@PacBell.COM  Seagate disk BIOS
  8/92 Chris Hall       CAH17@phx.cam.ac.uk	      misc
  8/92 Michael A Shiels mshiels@masnet.uucp	      MTEZ XpressFax
  8/92 Tamura Jones     2:512/36.7		      Control Hostess i/ISA
@@ -384,7 +377,7 @@ This list is the result of the time and effort of a large number of people:
  9/92 Michael A Shiels mshiels@masnet.uucp	      PC/TCP syscall names
  9/92 A. Peter Blicher Oakland, CA		      Genoa Super EGA
  9/92 Tim Farley       tim@magee.mhs.compuserve.com   misc
- 9/92 Riku Meskanen    riku@hki.icl.fi		      ArtiCom
+ 9/92 Riku Meskanen    riku@tuura.icl.fi	      ArtiCom
 10/92 Jack Ridgway     1:3632/4.13		      VMiX API
 10/92 Tim Farley       tim@magee.mhs.compuserve.com   misc
 10/92 Alexi Lookin     alexi@riaph.irkutsk.su	      more NetWare, VIDRAM
@@ -412,6 +405,18 @@ This list is the result of the time and effort of a large number of people:
  3/93 Andrew Schulman  76320.302@CompuServe.COM	      Novell DPMS
  3/93 Dan Fandrich     ubc-cs!merlin!fch!dan	      more Future Domain SCSI
  3/93 Konstantin Kisurin  kkk@ton.kiev.ua	      more 386MAX
+ 4/93 Arne Schapers				      DR-DOS details
+ 4/93 Geoff Chappell   cix.compulink.co.uk!geoffc     DOS4 ExtAttrib support
+ 4/93 Morten Welinder  terra@diku.dk		      miscellaneous
+ 4/93 Tim Farley       tim@magee.mhs.compuserve.com   PS/2 INT 15,INT 16
+ 4/93 Xavier Cabelle   xavier.caballe@abaforum.es     TFPCX driver interface
+ 4/93 Michael A Shiels mshiels@masnet.uucp	      more OS/2 Family API
+ 4/93 Chris Dunford    76703.2002@compuserve.com      Cove Software programs
+ 5/93 Dmitry Stefankov wizard@npi.msu.su	      more DOS 3 SDA fields
+ 5/93 Stephan Wolf     via werner@rsp.de	      SK-UPPS DLI API
+ 5/93 Dmitry Stefankov wizard@npi.msu.su	      Soft-ICE v2.5x
+ 5/93 Mikael Rydberg   Sweden			      Cirrus/UM587/etc vidmodes
+ 5/93 Michael A Shiels mshiels@masnet.uucp	      more BAPI,Frieze,ANSIPLUS
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -436,13 +441,14 @@ Also contributing:
  Marco Lumachi <RARCHI06@IMIPOLI.BITNET>, Michael Dickson <mcd@ccsitn.att.com>,
  Andrew Torda <torda@igc.ethz.ch>, Madis Kaal 2:490/30 <mast@ce.ttu.ew.su>,
  Paul Williamson <pwilliamson@drzeus.qualcomm.com>, Jan Ceuleers 2:295/27,
- James Birdsall <jwbirdsa@amc.com>, Joe Morris <jcmorris@MWUNIX.MITRE.ORG>,
+ James Birdsall <jwbirdsa@picarefy.picarefy.com>, 
+ Joe Morris <jcmorris@MWUNIX.MITRE.ORG>, Jim Peterson <jpeterso@vtssi.vt.edu>,
  Edwin Floyd <76067.747@CompuServe.COM>, James West 1:140/26, David G. Thomas,
  Simon Phipps <sphipps@cix.compulink.co.uk>, ecleton@bilftp.bouw.tno.nl,
  Glen Kriekenbeck <glenk@East.Sun.COM>, Dave Andrews <bilver!dandrews@aii.com>,
  John P. Vias <72260.1601@CompuServe.COM>, Brian Leeming (Surrey, England),
  Naota Kimura <abcscnuk@csuna.csun.edu>,George W. Pogue <gwp@trsvax.tandy.com>,
- Dmitry Stefankov (Moscow, USSR), Michael L. Kaufman <kaufman@eecs.nwu.edu>,
+ Michael L. Kaufman <kaufman@eecs.nwu.edu>, John Jurewicz 76004.2311,
  Michael D. Lawler <mdlawler@bsu-cs.bsu.edu>, Norbert Juffa (Karlsruhe, FRG),
  Chris Blum <76625.1041@compuserve.com>,David Fink <73700.3076@compuserve.com>,
  Klaus Hartnegg <hartnegg@sun1.ruf.uni-freiburg.de>, Thomas Lukka 2:227/16,
@@ -458,7 +464,7 @@ Also contributing:
  Mark T Garlanger <garlangr@ecn.purdue.edu>, J. B. Gill <JBG@arlan.byu.edu>,
  Frank Behrens (Dresden, Germany), Bruce Gingery 1:310/5.1, John Navas,
  Johan Zwiekhorst 2:292/100, Klaus Fischer 2:243/64, Steve Grant (New Jersey),
- Jeff Pipkins <pipkins@cpqhou.se.hou.compaq.com>, Wim Osterholt (Netherlands),
+ Jeff Pipkins <pipkins@cpqhou.se.hou.compaq.com>, Wim Osterholt 2:512/56,
  Brett Warthen <73270.405@compuserve.com>, Thomas Dwyer <tomiii@mtu.edu>,
  Brian.McGuinness@nirvonics.com, Mitch Davis 3:634/384.6, Steve Halko 1:365/12,
  noesis@ucscb.UCSC.EDU, Timo Salmi <ts@uwasa.fi>, Jack Alvrus (Florida),
@@ -467,7 +473,6 @@ Also contributing:
  Alex Fedorov <inex@telebox.tele.fi>, Frank-Christian Kruegel 2:240/300.44,
  Heath Ian Hunnicutt <heathh@cco.caltech.edu>, Stefan Gustafsson <sg@diab.se>,
  Janos Haide <JHAIDE.NOVELL@sjfsmtp.novell.com>, Stan Brown <brown@ncoast.org>,
- Morten Welinder <terra@diku.dk>, Jim Peterson <jpeterso@vtssi.vt.edu>,
  Serge Krupa <krupa@eig.unige.ch>, Tom Rawson <75300.210@compuserve.com>,
  Edwin Cleton 2:512/1007.2, Martin Wilde 2:247/352.2, Ed Palmer 1:140/1,
  Carlos Rioja <CarlosRioja@cpd.uva.es>,Torbj|rn Lindgren <tl@etek.chalmers.se>,
@@ -483,12 +488,17 @@ Also contributing:
  JLAIDMAN.STINGRAY@orca.saas.ac.cowan.EDU.AU, Ben Castricum <benc@htsa.aha.nl>,
  Harald Langhammer <100114.114@compuserve.com>, Bert Baker (Texas),
  Gino Lucrezi <lucrezi@dsiaq1.ing.univaq.it>, Yousuf Khan 1:163/215.6,
- James Berry <jfb292@ecs.southampton.ac.uk>,
- Jerzy Tarasiuk <JT@zfja-gate.fuw.edu.pl>,
+ James Berry <jfb292@ecs.southampton.ac.uk>, Everett C. Johnson 70631,16,
+ Jerzy Tarasiuk <JT@zfja-gate.fuw.edu.pl>, Roman Rutman <jbari@CCSG.TAU.AC.IL>,
+ Lutz Schroer <hmls@IDEFIX.RZ.TU-CLAUSTHAL.DE>, Per-Eric Larsson 2:203/410.15,
+ Otto-Michael Braun <omb@ahobln.br.schule.de>, Martin Winkler 2:2402/330.6,
+ Scott C. Pedigo <100020.723@CompuServe.COM>, Wilbert Van Leijen 2:281/256.14,
  Frank van der Linden <vdlinden@fwi.uva.nl>,
  Andrei Tsyganenko <ANDY@GODZILLA.UMD.EDU>,
  Paul Ratcliffe <70630.647@compuserve.com>,
- Otto-Michael Braun <omb@ahobln.br.schule.de>
+ Jiri Kuchta <kuchta@dcse.fee.vutbr.cs>,
+ Peter Singer <100024.1603@CompuServe.COM>,
+ Brian Long <BLONG@boruk.mhs.compuserve.com>
 ---------------------------------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -902,6 +912,29 @@ Added 2/24/93.
 IBMSND driver API info from "Examining PC Audio, welcome to the wild and wooly
 world of PC Sound", John W. Ratcliff, DDJ #198 (March 1993), p. 78-85.
 Added 3/93.
+
+
+UM587 chipset video modes from "IBM VGA-Compatible Video Graphics Controller
+User's Manual".  Added by Ralf Brown, 5/22/93.
+
+Cirrus Logic CL-GD 5420/5422/5426 video modes extracted from "V542X (Super VGA)
+User Manual".  Added by Ralf Brown, 5/22/93.
+
+Additional Tseng ET-3000 info extracted from "Puretek VGA Ultra Advanced
+Graphics Board Operations Guide".  Added by Ralf Brown, 5/22/93.
+
+Additional virus calls extracted from the Computer Virus Catalog maintained
+by Prof. Dr. Klaus Brunnstein <brunnstein@rz.informatik.uni-hamburg.dbp.de> at
+the University of Hamburg.  Added by Ralf Brown, 5/25/93.
+
+Software Carousel API extracted from a technical note dated 1/20/88.  Added
+6/4/93.
+
+DIET v1.43e API from DIETAPI.DOC "DIET APPLICATION INTERFACE version 1.43e"
+by Teddy Matsumoto, 11/22/91.  Added 6/4/93.
+
+xDISK v3.32+ installation check extracted from the xDISK v3.40 documentation.
+Added by Ralf Brown, 6/4/93.
 ---------------------------------------------
 The following have provided API reference materials at no charge:
 
@@ -984,6 +1017,16 @@ FAX:   (408) 286-8988
 ---------------------------------------------
 Other addresses:
 
+J.M. Allen Creations		(PRINDIR)
+115 Lynn Street			[8/92]
+Fremont, OH 43420
+
+A.N.D. Technologies		(PSPS)
+P.O. Box 64811			[5/93]
+Los Angeles, CA 90064
+Voice: (213) 848-9345
+CIS: 71011,3570
+
 Artisoft Inc.			(LANtastic)
 575 East River Rd.
 Tucson, AZ 85704
@@ -993,6 +1036,12 @@ G.T. Becker			(RighTime)
 Air System Technologies, Inc.	[4/91]
 14232 Marsh Lane, Suite 339
 Dallas, TX 75234
+
+Better Software Technology, Inc. (Switch-It)
+55 New York Ave			[1990]
+Framingham, MA 01701
+Voice: (508) 879-0744
+FAX:   (508) 872-1734
 
 Biologic			(HRAM, MIN-MEM)
 PO Box 1267			[9/91]
@@ -1008,6 +1057,11 @@ Borland International Inc.	(Turbo Pascal, Turbo C)
 1800 Green Hills Rd.
 Scotts Valley, CA 95066
 Voice: (408) 438-8400
+
+Andrzej Brzezinski		(CALCULATOR)
+308-70 Garry St.		[12/90]
+Winnipeg, Manitoba R3C 3J9
+Canada
 
 Budget Software Company		(Disk Spool II)
 P. O. Box 12282			[12/91]
@@ -1038,9 +1092,7 @@ Suite 133			[3/90]
 Pasadena, CA 91101
 
 Digital Research, Inc.		(GEM, DR DOS, Concurrent DOS)
-70 Garden Ct., Box DRI
-Monterey, CA 93942
-Voice: (408) 649-3896
+(see Novell, Inc.)
 
 Distributed Information Processing, Ltd.
 Number 2 Frederick Sanger Road
@@ -1092,6 +1144,16 @@ Voice: +31-80-787 881
 FAX:   +31-80-789 186
 BBS:   +31-85-212 395
 
+Express Consulting		(EZRECV)
+4960 Hamilton Ave. Suite 211	[7/92]
+San Jose, CA 95130
+Voice: (408) 374-7992
+FAX:   (408) 374-3115
+
+FAB Software			(Newkey)
+P.O. Box 336			[10/90]
+Wayland, MA 01778
+
 Peter Fitzsimmons		(SWELL)
 P.O. Box 670			[as of 7/89]
 Adelaide St. Postal Station
@@ -1108,6 +1170,15 @@ Geoff Friesen			(IC)
 Box 94				[10/92]
 Dauphin, Manitoba
 Canada R7N 2T9
+
+FTP Software, Inc.		(PC/TCP)
+Voice: (800) 282-4387
+
+Gamma Software			(APCAL)
+P.O. Box 8191			[2/93]
+Fort Collins, CO 80526
+Voice: (800) 747-9960
+       (303) 490-2928
 
 Hook and Gresseth		(Explosiv)
 P.O. Box #3013			[2/92]
@@ -1135,6 +1206,10 @@ Isogon Corporation		(NewSpace)
 330 Seventh Avenue
 New York, NY 10001
 Voice: (212) 967-2424
+
+Jorj Software Co.		(JORJ)
+4354 Fletcher Rd.		[5/91]
+Manchester MI 48158
 
 JP Software			(4DOS)
 P.O. Box 1470
@@ -1188,6 +1263,10 @@ Offe Enterprises		(VUIMAGE)
 Naperville, IL 60563
 Voice: (708) 357-6679
 
+P2 Enterprises			(Phantom of the Keyboard)
+P.O. Box 25			[5/91]
+Ben Lomond, CA 95005
+
 PC Thuis BV			(PC Thuis Power magazine)
 Spaarne 55
 2011 CE HAARLEM
@@ -1206,13 +1285,28 @@ Voice: (800) 833 4400
        (512) 670 0882
 BBS:   (512) 670 1809
 
+RSE, Inc.			(Nabbit)
+1157 57th Drive SE		[1/93]
+Auburn, WA 98002
+Voice: (206) 939-4105
+FAX:   (206) 989-4105
+
+SeaSide Software		(FastJuice)
+312 W. 6th Street, Suite 108	[1990]
+Corona, CA 91720
+
 Shamrock Software		(EMAIL, NET.24)
 Muenchner Strasse 26a
 W-8067 Petershausen
 Germany
 BBS:   +49 89-307 2079
 
-Softlogic Solutions, Inc.	(DoubleDOS)
+SitBack Technologies, Inc.	(SitBack)
+9290 Bond, Suite 210		[8/90]
+Overland Park, KS 66214
+Voice: (913) 894-0808
+
+Softlogic Solutions, Inc.	(DoubleDOS,Cubit,Software Carousel)
 One Perimeter Road
 Manchester, NH 03103
 
@@ -1271,6 +1365,12 @@ Serendipity Software		[as of 11/88]
 1422 Elkgrove Circle, #3
 Venice, CA 90291
 
+Nick Zaikin			(ASCII)
+Joint Institute for Nuclear Research 	[1/93]
+(Dubna, Moscow region)
+P.O. Box 79  Head Post Office
+Moscow 101000 Russia
+
 ZSoft Corporation		(FRIEZE)
 450 Franklin Rd. Suite 100
 Marietta, GA 30067
@@ -1309,6 +1409,9 @@ ASAP is a trademark of MicroTalk.
 HRAM is a trademark of Biologic.
 ImageCapture is a trademark of International Computers.
 FlashTek, X-32, and X-32VM are trademarks fo FlashTek, Inc.
+SK-UPPS is a trademark of Schneider & Koch GmbH
+SK-PASSPORT is a trademark of SysKonnect, Inc.
+PostScript is a trademark of Adobe, Inc.
 Various other names are trademarks or registered trademarks of their respective
     holders
 ---------------------------------------------
@@ -1337,17 +1440,16 @@ prevent future interrupt conflicts).
 	Ralf Brown
 
 Address e-mail to:
-	ARPA: ralf@cs.cmu.edu
-	UUCP: {ucbvax,harvard}!cs.cmu.edu!ralf
-	BIT:  ralf%cs.cmu.edu@carnegie
+	Internet: ralf@telerama.pgh.pa.us
+	UUCP: {uunet,harvard}!telerama.pgh.pa.us!ralf
 	FIDO: Ralf Brown 1:129/26.1
 		or post a message to me in the DR_DEBUG echo
-	CompuServe:   >INTERNET:ralf@cs.cmu.edu
+	CompuServe:   >INTERNET:ralf@telerama.pgh.pa.us
 
 Snail mail:
 	Ralf Brown
 	813 Copeland Way, Suite 26
-	Pittsburgh, PA 15232
+	Pittsburgh, PA 15232-2217
 	   (Letters which enclose a Self-Addressed Stamped Envelope [or self-
 	    addressed envelope and international return coupon] or e-mail
 	    address will be given priority.  This address will remain valid
@@ -1355,5 +1457,5 @@ Snail mail:
 
 I reply to all e-mail submissions and inquiries.  If you do not receive a reply
 within a reasonable time, send your message again, giving a better return path
-(on UUCP, a bang path starting at harvard or ucbvax; elsewhere, a path starting
-from the ARPA Internet).
+(on UUCP, a bang path starting at harvard or uunet; elsewhere, a path starting
+from the Internet).

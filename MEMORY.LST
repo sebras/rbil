@@ -1,5 +1,5 @@
 [This file was provided by Robin Walker.  --Ralf]
-Last Update: 8/24/92
+Last Update: 5/8/93
 
 Format of BIOS Data Segment at segment 40h:
 		{items in curly braces not documented by IBM}
@@ -22,21 +22,21 @@ Offset	Size	Description
 		    these fields.
  10h	WORD	Installed hardware:
 		    bits 15-14: number of parallel devices
-		    bit     13: [Conv] Internal modem
-		    bit     12: reserved
+		    bit	    13: [Conv] Internal modem
+		    bit	    12: reserved
 		    bits 11- 9: number of serial devices
-		    bit      8: reserved
+		    bit	     8: reserved
 		    bits  7- 6: number of diskette drives minus one
 		    bits  5- 4: Initial video mode:
 				    00b = EGA,VGA,PGA
 				    01b = 40 x 25 color
 				    10b = 80 x 25 color
 				    11b = 80 x 25 mono
-		    bit      3: reserved
-		    bit      2: [PS] =1 if pointing device
+		    bit	     3: reserved
+		    bit	     2: [PS] =1 if pointing device
 				[non-PS] reserved
-		    bit      1: =1 if math co-processor
-		    bit      0: =1 if diskette available for boot
+		    bit	     1: =1 if math co-processor
+		    bit	     0: =1 if diskette available for boot
  12h	BYTE	[Conv] POST status
 		[AT] {Manufacturing test initialisation flags}
  13h	WORD	Base memory size in kbytes (0-640)
@@ -98,6 +98,19 @@ Offset	Size	Description
 			    0Ch media type unknown
 			    10h CRC error on read
  42h  7 BYTEs	Diskette/Fixed disk status/command bytes
+    42h BYTE	XT: command byte to hard disk controller
+		AT: write precompensation cylinder number / 4
+    43h	BYTE	XT: bit 5 = drive number, bits 3-0=head number
+		AT: sector count
+    44h BYTE	XT: bits 6,7 = high bits of track, bits 5-0 = start sector-1
+		AT: starting sector
+    45h BYTE	low byte of track number
+    46h BYTE	XT: sector count
+		AT: high bits of track number
+    47h BYTE	XT: controlbyte from HD parameters (step rate,...)
+		AT: 101DHHHH, D=drive number, HHHH=head number
+    48h BYTE	XT: INT 13h subfunction number
+		AT: comand byte to hard disk controller
  49h	BYTE	Video current mode
  4Ah	WORD	Video columns on screen
  4Ch	WORD	Video page (regen buffer) size in bytes
@@ -127,11 +140,15 @@ Offset	Size	Description
 		    03h write protect error
 		    04h sector not found
 		    05h reset failed
+		    06h diskette removed
 		    07h drive parameter activity failed
 		    08h DMA overrun
 		    09h DMA data boundary error
 		    0Ah bad sector flag detected
 		    0Bh bad track detected
+		    0Ch requested diskette media type not found
+			(PS/2 or extended BIOS only)
+			unsupported track
 		    0Dh invalid number of sectors for Format
 		    0Eh control data address mark detected
 		    0Fh DMA arbitration level out of range
@@ -147,6 +164,7 @@ Offset	Size	Description
 		    FFh sense failed
  75h	BYTE	Fixed disk: number of fixed disk drives
  76h	BYTE	Fixed disk: control byte    {IBM document only for XT}
+		XT: hrad disk controller's I/O address (Western Digital)
  77h	BYTE	Fixed disk: I/O port offset {IBM document only for XT}
  78h  3 BYTEs	Parallel devices 1-3 time-out counters
  7Bh	BYTE	parallel device 4 time-out counter [non-PS]
@@ -234,6 +252,8 @@ Offset	Size	Description
  8Ch	BYTE	Fixed disk controller status [not XT]
  8Dh	BYTE	Fixed disk controller Error Status [not XT]
  8Eh	BYTE	Fixed disk Interrupt Control [not XT]
+		cleared to 00h at start of disk operation, set to FFh by IRQ14
+		handler when hard disk controller completes command
  8Fh	BYTE	Diskette controller information [not XT]:
 		    bit 7:  reserved
 		    bit 6:  =1 drive 1 determined
@@ -246,9 +266,9 @@ Offset	Size	Description
  90h	BYTE	Diskette drive 0 media state
  91h	BYTE	Diskette drive 1 media state
 		    bits 7-6: Data rate: 00=500kbps, 01=300kbps, 10=250kbps
-		    bit    5: =1 if double stepping reqd (e.g. 360kB in 1.2MB)
-		    bit    4: =1 if media established
-		    bit    3: reserved
+		    bit	   5: =1 if double stepping reqd (e.g. 360kB in 1.2MB)
+		    bit	   4: =1 if media established
+		    bit	   3: reserved
 		    bits 2-0: on exit from BIOS, contain:
 			    000 trying 360kB in 360kB
 			    001 trying 360kB in 1.2MB
@@ -291,8 +311,8 @@ Offset	Size	Description
  A4h	DWORD	[PS/2 Mod 30] Saved Fixed Disk Interrupt Vector
  A8h	DWORD	Video: EGA/MCGA/VGA ptr to Video Save Pointer Table (see below)
  ACh-AFh	reserved
- B0h	BYTE	(Phoenix 386 BIOS 1.10 10a) loop count for delaying when
-		  beeping due to full keyboard buffer
+ B0h	BYTE	(Phoenix 386 BIOS 1.10 10a) loop count for hard disk timeout
+		  and delaying when beeping due to full keyboard buffer
  B0h	DWORD	ptr to 3363 Optical disk driver or BIOS entry point.
 		    When 3363 BIOS present, the signature "OPTIC ",00h occurs 3
 		    bytes beyond this entry point.

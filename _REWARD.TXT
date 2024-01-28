@@ -13,5 +13,9 @@ Anyone listed as a major contributor between June 1991 and the time we
 freeze the manuscript (mid-June 1993) will be entitled to a free copy of
 either PC Interrupts or Network Interrupts (the latter if you made a
 contribution of networking calls, the former if non-networking, and your
-choice if you contributed toward both).
+choice if you contributed toward both).  I will be contacting those who
+are eligible for a free copy in July or August to get a mailing
+address, but feel free to send your address even before you hear from
+me (especially if your email address has changed).
+
 
