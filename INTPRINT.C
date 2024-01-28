@@ -32,8 +32,9 @@
 /*		     major speedups; checked for BC++3.1 compatibility	*/
 /*   v3.01   6/11/94 bugfix: crashed with -l0 -L1 on lines >=80 chars   */
 /*   v3.02   1/7/95  bugfix by Mark Shapiro: garbage with -B -PHP_PCL	*/
-/*   v3.03   1/14/95 changes for Borland C++ 4.x size minimization	*/ 
+/*   v3.03   1/14/95 changes for Borland C++ 4.x size minimization	*/
 /*   v3.04   3/25/95 malloc/sbrk and other bugfixes		        */
+/*   v3.10   2/11/96 category filters by Bent Lynggard			*/
 /************************************************************************/
 /* Recompiling:								*/
 /*   Turbo C / Borland C++						*/
@@ -50,7 +51,7 @@
 #include <string.h>
 #include <sys/stat.h>		/* S_IREAD, S_IWRITE */
 
-#define VERSION "3.04"
+#define VERSION "3.10"
 
 /***********************************************/
 /*    portability definitions		       */
@@ -194,21 +195,40 @@ extern int isatty(int) ;
 
 #define lengthof(x) (sizeof(x)/sizeof(x[0]))
 
-#define divider_line(line) (line[0] == '-' && memcmp(line+1,"-------",7) == 0)
 #ifdef __MSDOS__
-#define start_of_entry(s) (((int*)s)[0]==(256*'N'+'I')&&((int*)s)[1]==(256*' '+'T'))
+#define chars_to_long(a, b, c, d) \
+	(a | (((long)b)<<8) | (((long)c)<<16) | (((long)d)<<24))
+#define long_div_line chars_to_long('-','-','-','-')
+#define divider_line(line) (((long*)line)[0] == long_div_line && \
+  ((long*)line)[1] == long_div_line)
+#define start_of_entry(s) (((long*)s)[0]==chars_to_long('I','N','T',' '))
 #define index_line(l) \
-  (((int*)l)[0]==(256*'n'+'I')&&((int*)l)[1]==(256*'e'+'d')&& \
-   ((int*)l)[2]==(256*':'+'x'))
+  (((long*)l)[0]==chars_to_long('I','n','d','e')&& \
+   ((short*)l)[2]==('x'+':'*0x100))
 #else
-#define start_of_entry(s) (memcmp(s,"INT ",4) == 0)
-#define index_line(line) (line[0] == 'I' && memcmp(line+1,"ndex:",5) == 0)
+static char long_chars[] = "----INT Index:" ;
+#define divider_line(line) (((long*)line)[0] == ((long*)long_chars)[0]\
+  && ((long*)line)[1] == ((long*)long_chars)[0])
+#define start_of_entry(s) (((long*)s)[0] == ((long*)long_chars)[1])
+#define index_line(line) (((long*)line)[0] == ((long*)long_chars)[2] && \
+  ((short*)line)[2] == (short*)long_chars)[6])
 #endif
 #define section_start(line) is_keyword(line,section_start_keys,lengthof(section_start_keys))
 #define start_of_table(line) (is_keyword(line,table_start_keys,lengthof(table_start_keys)))
-   
+
 #define section_file_start(s) (s[0] == '-' && memcmp(s+1,"-------!---Section",18) == 0)
 
+
+/* category filters definitions and variables */
+#define CF_BUFFER_SIZE 26+26+9
+typedef enum {CF_EXCLUDE, CF_UNCONDITIONAL, CF_INCLUDE, CF_OVERRIDE,
+	CF_ENUM_SIZE} CF_ENUM; /* leave CF_ENUM_SIZE as the last enumetator */
+char cf_buffers[CF_ENUM_SIZE][CF_BUFFER_SIZE+1];
+char cf_current_category;
+#define CF_EXCLUDE_CHAR '<'
+#define CF_UNCONDITIONAL_CHAR '>'
+#define CF_INCLUDE_CHAR 'i'
+#define CF_OVERRIDE_CHAR 'o'
 
 /***********************************************/
 /*    stub functions to reduce executable size */
@@ -413,6 +433,7 @@ void start_format(char *line) ;
 void write_summary_header(IP_FILE *fp, char *title, int offsets, int tables) ;
 void show_offset(int line,IP_FILE *fp) ;
 void add_table(int i) ;
+void add_category_filter_info(CF_ENUM filter, char *str) ;
 FILT_LIST *add_filter_info(FILT_LIST *list,char *str) ;
 void build_filter_lists(char *file) ;
 int make_description(char *desc,int line) ;
@@ -434,7 +455,7 @@ void show_offset() ;
 /*    I/O buffers			       */
 /***********************************************/
 
-char stderr_buf[256] ;
+char stderr_buf[1] ;
 char filter_buf[256] ;
 char infile_buf[8192] ;
 char outfile_buf[8192] ;
@@ -452,7 +473,7 @@ int input_file_namelen ;
 
 char buffer[MAXPAGE][MAXLINE] ;
 unsigned long line_offsets[MAXPAGE] ;
-char num[6] ;
+char num[8] ;
 int need_summary ;
 char summary_line[2*MAXLINE] ;
 int summary_line_len ;
@@ -480,6 +501,7 @@ int duplex = FALSE ;
 int HPPCL_mode = FALSE ;
 int show_offsets = FALSE ;
 int keep_divider_lines = FALSE ;
+int exclude_only = TRUE ;
 IP_FILE *summary ;
 IP_FILE *tables ;
 IP_FILE *formats ;
@@ -681,7 +703,7 @@ char *buf ;
 int radix ;
 {
    int count = 0 ;
-   int i ; 
+   int i ;
    char tmp ;
 
    do {
@@ -872,7 +894,7 @@ IP_FILE *fp ;
 	 return -1 ;
       fp->bufpos = 0 ;
       }
-   return 0 ;	   
+   return 0 ;
 }
 
 /***********************************************/
@@ -1177,8 +1199,9 @@ IP_FILE *fp ;
 void get_raw_line(buf)
 char *buf ;
 {
+   static char progress_indicator[] = "ii\r";
    IP_FILE *in ;
-   
+
    buf[0] = '\0' ;
    if (out_of_files)
       return ;
@@ -1203,6 +1226,11 @@ char *buf ;
 	 }
       else
 	 out_of_files = TRUE ;
+   if (start_of_entry(buf) && ((short*)buf)[2] != ((short*)progress_indicator)[0])
+      {
+      ((short*)progress_indicator)[0] = ((short*)buf)[2] ;
+      ip_putlit(progress_indicator, err) ;
+      }
 }
 
 /***********************************************/
@@ -1210,34 +1238,33 @@ char *buf ;
 int unwanted_section(buf)
 char *buf ;
 {
-   int found ;
    char str[MAXLINE] ;
    FILT_LIST *p ;
 
-   if (start_of_entry(buf)) /* is it an interrupt entry? */
-      {
-      strcpy(str,buf) ;
-      (void) strupr(str) ;
-      /* section is unwanted if *any* exclude string matches */
-      for (p = excludes ; p ; p = p->next)
-	 {
-	 if (p->str && strstr(str, p->str) != NULL)
-	    return TRUE ;
-	 }
-      /* if still wanted, set to TRUE if *no* include string matches */
-      found = FALSE ;
-      for (p = includes ; p ; p = p->next)
-	 {
-	 if (p->str && strstr(str, p->str) != NULL)
-	    {
-	    found = TRUE ;
-	    break ;
-	    }
-	 }
-      if (!found)
+   strcpy(str,buf) ;
+   (void) strupr(str) ;
+   if (strchr(cf_buffers[CF_EXCLUDE], cf_current_category))
+      return TRUE ; /* section is not wanted */
+   if (exclude_only)
+      goto test_exclude ;
+      /* include the section unless it is header-excluded */
+   if (strchr(cf_buffers[CF_UNCONDITIONAL], cf_current_category))
+      return FALSE ; /* section is unconditionally wanted */
+   if (strchr(cf_buffers[CF_INCLUDE], cf_current_category))
+      goto test_exclude ; /* section is wanted if not header-excluded */
+   /* section may be wanted if an include string matches */
+   for (p = includes ; p ; p = p->next)
+      if (p->str && strstr(str, p->str) != NULL)
+	 goto test_exclude ;
+   return TRUE ; /* no include match, the entry is not wanted */
+test_exclude:
+   if (strchr(cf_buffers[CF_OVERRIDE], cf_current_category))
+      return FALSE ; /* overriding header exclutions, section wanted */
+   /* if wanted here, set to TRUE if *any* exclude string matches */
+   for (p = excludes ; p ; p = p->next)
+      if (p->str && strstr(str, p->str) != NULL)
 	 return TRUE ;
-      }
-   return FALSE ;
+   return FALSE ; /* not excluded, the section is wanted */
 }
 
 /***********************************************/
@@ -1262,21 +1289,27 @@ char *buf ;
       if (section_file_start(buf))
 	 do {
 	    get_raw_line(buf) ;
-	    } while (buf[0] && !divider_line(buf)) ;
-      if (do_filter)
+	    } while (!divider_line(buf)) ;
+      if (do_filter && divider_line(buf))
 	 {
 	 /* if we read a divider line while filtering, we have to look ahead */
 	 strcpy(next_line,buf);
-	 while (next_line[0] && divider_line(next_line))
+	 while (divider_line(next_line))
 	    {
 	    strcpy(buf,next_line) ; /* we may be returning the divider */
 	    get_raw_line(next_line) ;
-	    if (unwanted_section(next_line))
+	    if (start_of_entry(next_line)) /* is it an interrupt entry? */
 	       {
-	       while (!divider_line(next_line))
-		  get_raw_line(next_line) ;
+	       cf_current_category = buf[8]; /* save the category character */
+	       if (unwanted_section(next_line))
+	          {
+	          while (!divider_line(next_line))
+		     get_raw_line(next_line) ;
+	          }
+	       else /* section is wanted, so return divider and then next line */
+	          readahead = TRUE ;
 	       }
-	    else /* section is wanted, so return divider and then next line */
+	    else
 	       readahead = TRUE ;
 	    }
 	 }
@@ -1783,6 +1816,39 @@ char *name ;
 
 /***********************************************/
 
+void add_category_filter_info(filter, str)
+CF_ENUM filter ;
+char *str ;
+/* insert category filter characters into proper buffer, provided they do
+   not appear in other filter buffers
+*/
+{
+   static char err_msg[] =
+    "Character \"x\" appears in more than one category filter string";
+#define err_char_pos 11 /* position of x in err_msg */
+   CF_ENUM f ;
+   int i = 0, len = strlen(cf_buffers[filter]) ;
+   char c, errmsg[80] ;
+
+   while ((c = str[i++]) > ' ' && len < CF_BUFFER_SIZE)
+      {
+      for (f = filter; ; )
+	 {
+	 if ((f = (f + 1) % CF_ENUM_SIZE) == filter)
+	   break; /* all other filters checked */
+	 if (strchr(cf_buffers[f], c))
+	    {
+	    err_msg[err_char_pos] = c ;
+	    fatal(err_msg) ;
+	    }
+	 }
+	 cf_buffers[filter][len++] = c;
+      }
+#undef err_char_pos
+}
+
+/***********************************************/
+
 FILT_LIST *add_filter_info(list,str)
 FILT_LIST *list ;
 char *str ;
@@ -1807,6 +1873,8 @@ char *str ;
 void build_filter_lists(file)
 char *file ;
 {
+   static char err_msg[] = "Unknown command \"x\" in filter file";
+#define err_char_pos 17 /* position of x in err_msg */
    IP_FILE *fp ;
    char buf[MAXLINE] ;
    int len ;
@@ -1829,19 +1897,36 @@ char *file ;
 	       {
 	       case '+':
 		  includes = add_filter_info(includes,buf+1) ;
-		  break ;
+		  goto include_too ;
 	       case '-':
 		  excludes = add_filter_info(excludes,buf+1) ;
 		  break ;
-	       case '#':		/* comment lines */
-	       default:
+		   case CF_EXCLUDE_CHAR:
+		  add_category_filter_info(CF_EXCLUDE, buf+1) ;
 		  break ;
+		   case CF_UNCONDITIONAL_CHAR:
+		  add_category_filter_info(CF_UNCONDITIONAL, buf+1) ;
+		  goto include_too ;
+		   case CF_INCLUDE_CHAR:
+		  add_category_filter_info(CF_INCLUDE, buf+1) ;
+		  goto include_too ;
+		   case CF_OVERRIDE_CHAR:
+		  add_category_filter_info(CF_OVERRIDE, buf+1) ;
+		  break ;
+		   case '#':		/* comment lines */
+		  break ;
+		   default:
+		  err_msg[err_char_pos] = buf[0] ;
+		  fatal(err_msg) ;
+	 include_too:
+		  exclude_only = FALSE;
 	       }
 	    }
 	 } while (result != -1) ;
       ip_close(fp) ;
       do_filter = TRUE ;
       }
+#undef err_char_pos
 }
 
 /***********************************************/

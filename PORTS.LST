@@ -1,5 +1,5 @@
-PORT LIST			Release 48		Last Change: 10/29/95
-This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+PORT LIST			Release 49		Last Change: 2/11/96
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 [This file originally by Wim Osterholt (2:512/56 or wim@djo.wtm.tudelft.nl).]
 
 		XT, AT and PS/2	 I/O port addresses
@@ -778,6 +778,13 @@ Bit(s)	Description	(Table P039)
 ---if counter select---
  5-4	counter access
 	00  counter latch command
+		BUG:	Intel Neptune/Mercury Chipset 8237IB (SIO) needs a
+			  short delay after issueing this command, else the
+			  MSB may be outdated concerning the LSB, resulting
+			  in large measuring errors.
+			Workaround: Check for this condition by comparing
+			  results with last results and don't use errornous
+			  results.
 	01  read/write counter bits 0-7 only
 	10  read/write counter bits 8-15 only
 	11  read/write counter bits 0-7 first, then 8-15
@@ -1506,9 +1513,12 @@ PORT 0078 - HP-Vectra - HARD RESET: NMI ENABLE/DISABLE
 		bit 6-0	   reserved
 ----------P0078------------------------------
 PORT 0078 - Intel 82378IB ("Saturn"/"Neptune" chipsets) - BIOS COUNT-DOWN TIMER
-Note:  the BIOS uses this port for certain fine timings; presumably it is
-	 independent of processor speed (it appears to decrement at about
-	 300 kHz on my Pentium/90)
+Notes:	the BIOS uses this port for certain fine timings; presumably it is
+	  independent of processor speed (it appears to decrement at about
+	  300 kHz on my Pentium/90)
+	the address at which this port appears may be set via the 82378's
+	  PCI configuration space word at offset 0080h (see #3176), or the
+	  timer may be disabled entirely
 SeeAlso: PORT 0075h
 
 0078w	W  set count-down timer
@@ -2199,6 +2209,9 @@ Range:	The I/O address range is dipswitch selectable from:
 	   378-37F and 3F0-3FF
 Notes:	All of these addresses show a readout of FFh in initial state.
 	Once started, all of the addresses show	FBh, whatever might happen.
+--------d-P0200------------------------------
+PORT 0200 - Digidesign 'Session 8' HARD-DISK RECORDING SYSTEM
+SeeAlso: PORT 0300h"Digidesign"
 ----------P0200020F--------------------------
 PORT 0200-020F - Game port reserved I/O address space  
 0200-0207 - Game port, eight identical addresses on some boards
@@ -2287,6 +2300,10 @@ Note:	the FM music is accessible on 0388/0389 for compatibility.
 022C   W  DSP write data / write command
 022C  R	  DSP write buffer status (bit 7)
 022E  R	  DSP data available status (bit 7)
+----------P022B------------------------------
+PORT 022B - GI1904 Scanner Interface Adapter
+Range:	PORT 026Bh, PORT 02ABh (default), PORT 02EBh, PORT 032Bh, PORT 036Bh
+Range:	PORT 03ABh, PORT 03EBh
 ----------P022F------------------------------
 PORT 022F - mc-soundmachine, mc 03-04/1992 - SPEECH I/O
 Note:	An Adlib-compatible Covox 'voice master' & 'speech thing' compatible
@@ -2427,6 +2444,10 @@ PORT 0260-0268	-  LPT port address on the UniRAM card by German magazine c't
 ----------P02680269--------------------------
 PORT 0268-0269 - Intel 82C212B "Neat" chipset - EMS emulation control
 Range:	base address may be set to 0208, 0218, 0258, 0268, 02A8, 02B8, or 02E8
+----------P026B------------------------------
+PORT 026B - GI1904 Scanner Interface Adapter
+Range:	PORT 022Bh, PORT 02ABh (default), PORT 02EBh, PORT 032Bh, PORT 036Bh
+Range:	PORT 03ABh, PORT 03EBh
 ----------P026E026F--------------------------
 PORT 026E-026F - Dell Enhanced Parallel Port
 SeeAlso: PORT 002Eh,PORT 015Ch,PORT 0398h
@@ -2528,6 +2549,12 @@ PORT 02A2-02A3 - MSM58321RS clock
 ----------P02A802A9--------------------------
 PORT 02A8-02A9 - Intel 82C212B "Neat" chipset - EMS emulation control
 Range:	base address may be set to 0208, 0218, 0258, 0268, 02A8, 02B8, or 02E8
+----------P02AB------------------------------
+PORT 02AB - GI1904 Scanner Interface Adapter (default)
+Range:	PORT 022Bh, PORT 026Bh, PORT 02EBh, PORT 032Bh, PORT 036Bh
+Range:	PORT 03ABh, PORT 03EBh
+Note:	the GI1904 is used by many SPI 400/800dpi gray/halftone/color handy
+	  scanners by Marstek, Mustek, Conrad, V”lkner and others
 ----------P02B002BF--------------------------
 PORT 02B0-02BF - Trantor SCSI adapter
 ----------P02B002DF--------------------------
@@ -2571,6 +2598,10 @@ PORT 02E8-02EF - 8514/A and compatible video cards (e.g. ATI Graphics Ultra)
 02ED  RW  Lookup: DAC data
 ----------P02EA------------------------------
 PORT 02EA - S3 86C928 video controller (ELSA Winner 1000)
+----------P02EB------------------------------
+PORT 02EB - GI1904 Scanner Interface Adapter
+Range:	PORT 022Bh, PORT 026Bh, PORT 02ABh (default), PORT 032Bh, PORT 036Bh
+Range:	PORT 03ABh, PORT 03EBh
 ----------P02F02F8 --------------------------
 PORT 02F0-2F8  - LPT port address on the UniRAM card by German magazine c't
 		selectable from 260, 2E0, 2E8, 2F0, 3E0, 3E8.
@@ -2589,6 +2620,9 @@ PORT 02F8-02FF - serial port, same as 02E8, 03E8 and 03F8 (COM2)
 02FF  RW  scratch register
 ----------P0300------------------------------
 PORT 0300 - Award POST Diagnostic
+--------d-P0300------------------------------
+PORT 0300 - Digidesign 'Session 8' HARD-DISK RECORDING SYSTEM
+SeeAlso: PORT 0200h"Digidesign"
 ----------P03000301--------------------------
 PORT 0300-0301 - Soundblaster 16 ASP MPU-Midi
 ----------P0300????--------------------------
@@ -2637,6 +2671,10 @@ Bit(s)	Description	(Table P089)
 PORT 0324-0327 - XT HDC 2   (Hard Disk Controller)
 ----------P0328032B--------------------------
 PORT 0328-032B - XT HDC 3   (Hard Disk Controller)
+----------P032B------------------------------
+PORT 032B - GI1904 Scanner Interface Adapter
+Range:	PORT 022Bh, PORT 026Bh, PORT 02ABh (default), PORT 02EBh, PORT 036Bh
+Range:	PORT 03ABh, PORT 03EBh
 ----------P032C032F--------------------------
 PORT 032C-032F - XT HDC 4   (Hard Disk Controller)
 ----------P03300331--------------------------
@@ -3003,6 +3041,10 @@ Bit(s)	Description	(Table P104)
 	10 register page 2
 	11 register page 3
 SeeAlso: #P103 
+----------P036B------------------------------
+PORT 036B - GI1904 Scanner Interface Adapter
+Range:	PORT 022Bh, PORT 026Bh, PORT 02ABh (default), PORT 02EBh, PORT 032Bh
+Range:	PORT 03ABh, PORT 03EBh
 ----------P03700377--------------------------
 PORT 0370-0377 - FDC 2	(2nd Floppy Disk Controller)	first FDC at 03F0
 Note:	floppy disk controller is usually an 8272, 8272A, NEC765 (or
@@ -3036,21 +3078,234 @@ PORT 0378-037A - parallel printer port, same as 0278 and 03BC
 
 037B  ??  bit 7: shadow RAM on/off (UniRAM adapter,according to c't 7/90)
 ----------P0380038F--------------------------
-PORT 0380-038F - 2nd Binary Synchronous Data Link Control adapter (see 03A0)
+PORT 0380-038F - 2nd BSC (Binary Synchronous Communication) adapter
+SeeAlso:  PORT 03A0h"BSC"
+----------P0380038F--------------------------
+PORT 0380-038C - 2nd SDLC (Synchronous Data Link Control) adapter
+Notes:	Initialization of the SDLC adapter is performed in a typical 
+          sequence like this: Setup 8255 port A-C configuration by writing
+	  98h to 383h, followed by initializing 8255 port C by writing 0Dh
+	  to 382h. Reset 8273 internal registers by pulsing 8255 port B4.
+	  After this the 8253 has to be programmed to the desired values
+	  (counter 0 in mode 3). Now the 8273 is ready to be configured for
+	  the operating mode that defines the communication environment in
+	  which it will be used.
+	Note on 8273: Each 8273 protocol controllers internal register is
+	  programmed by individual set/reset commands (via 388h) in
+	  conjunction with a parameter (via 389h) that give an OR/AND mask
+	  to the internal register value.
+	  Although the 8273 is a full duplex device, there is only one
+	  command register. Thus, the command register must be used for
+	  only one command sequence at a time and the transmitter and
+	  receiver may never be simultaneously in a command phase.
+	  The system software starts the command phase by writing a command
+	  byte into the command register. If further information is required
+	  by the 8273 prior to execution of the command, the system software
+	  must write the list of parameters into the parameter register.
+SeeAlso: PORT 03A0h"SDLC"
 
-0380  RW   on board 8255 port A, internal/external sense
-0381  RW   on board 8255 port B, external modem interface
-0382  RW   on board 8255 port C, internal control and gating
-0383  RW   on board 8255 mode register
-0384  RW   on board 8253 channel square wave generator
-0385  RW   on board 8253 channel 1 inactivity time-out
-0386  RW   on board 8253 channel 2 inactivity time-out
-0387  RW   on board 8253 mode register
-0388  RW   on board 8273 read: status  write: command
-0389  RW   on board 8273 read: response	 write: parameter
-038A  RW   on board 8273 transmit interrupt status
-038B  RW   on board 8273 receiver interrupt status
-038C  RW   on board 8273 data
+0380  R    on adapter 8255(A5) port A: internal/external sensing (see #P194)
+0381   W   on adapter 8255(A5) port B: external modem interface (see #P195)
+0382  RW   on adapter 8255(A5) port C: internal control (see #P196)
+0383  ?W   on adapter 8255(A5) mode initialization
+0384  RW   on adapter 8253 (programmable counter) counter 0:
+		LSB / MSB square wave generator (input for timer 2, connected
+		  to 8255 bitC5)
+0385  RW   on adapter 8253 counter 1: LSB / MSB inactivity time-outs
+                (connected to 8255 bitA7, IRQ4 level)
+0386  RW   on adapter 8253 counter 2: LSB / MSB inactivity time-outs
+                (connected to 8255 bitA6, IRQ4 level)
+0387  ?W   on adapter 8253 mode register (see #P197)
+0388  R    on adapter 8273 status register (see #P198)
+0388   W   on adapter 8273 command register (see #P199)
+0389  R    on adapter 8273 (immediate) result register (see #P206)
+0389   W   on adapter 8273 parameter register
+	    Commands issued via PORT 0388h may need additional parameters,
+	      which have to be passed through this port (see table).
+038A  R    on adapter 8273 transmit INT status (DMA/INT)
+038A   W   on adapter 8274 reset
+038B  R    on adapter 8273 receive INT status (DMA/INT)
+038C   W   on adapter 8273 data: direct program control (DPC)
+	  scratch-pad
+
+Bitfields for SDLC 8255 port A:
+Bit(s)	Description	(Table P194)
+ 7	=1 timer 1 output active
+ 6	=1 timer 2 output active
+ 5	=1 modem status changed
+ 4	receive clock active (if pulsing)
+ 3	=0 clear to send is on from interface
+ 2	transmit clock active (if pulsing)
+ 1	=0 data carrier detect is on from interface
+ 0	=0 ring indicator is on from interface
+SeeAlso: #P195,#P196
+
+Bitfields for SDLC 8255 port B:
+Bit(s)	Description	(Table P195)
+ 7	enable IRQ 4 level interrupt
+ 6	=1 gate timer 1
+ 5	=1 gate timer 2
+ 4	=1 reset 8273
+ 3	=1 reset modem status changed logic
+ 2	=0 turn on test
+ 1	=0 turn on select standby at modem interface
+ 0	=0 turn on data signal rate select at modem interface
+SeeAlso: #P194,#P196
+
+Bitfields for SDLC 8255 port C:
+Bit(s)	Description	(Table P196)
+ 7 R-	=? not used (detection: =1 SDLC, =0 may be SDLC or BSC??)
+ 6 R-	=0 test indicate active
+ 5 R-	timer 0 output (if pulsing)
+ 4 R-	receive data (if pulsing)
+ 3 -W	=0 gate interrupts 3 and 4
+ 2 -W	=1 electronic wrap
+ 1 -W	=1 gate external clock
+ 0 -W	=1 gate internal clock
+SeeAlso: #P194,#P195
+
+Bitfields for SDLC 8253 mode register:
+Bit(s)	Description	(Table P197)
+ 7-6	SC1-SC0  00, 01, 10= select counter 0,1,2; 11=illegal
+ 5-4	RL1-RL0  00= couner latching operation
+                 01= read/load most significant byte (MSB)
+                 10= read/load least significant byte (LSB)
+		 11= read/load LSB first, then MSB
+ 3-1	M2-M0    000= mode 0
+                 001= mode 1
+		 x10= mode 2
+		 x11= mode 3
+		 100= mode 4
+		 101= mode 5
+ 0	BCD      0= binary counter 16bits
+                 1= BCD counter 4 decades
+
+Bitfields for SDLC 8273 status register:
+Bit(s)	Description	(Table P198)
+ 7	=1 command busy (CBSY)
+ 6	=1 command buffer full (CBF)
+ 5	=1 command parameter buffer full (CPBF)
+ 4	=1 command result buffer full (CRBF)
+ 3	=1 Rx interupt (RxINT)
+ 2	=1 Tx interupt (TxINT)
+ 1	=1 RxINT result available (RxIRA)
+ 0	=1 TxINT result available (TxIRA)
+SeeAlso: #P199
+
+(Table P199)
+Values for SDCL 8273 command register:
+ commands:                 parameters:  results:   result port: int:
+  A4: set one-bit delay     set mask     -             -        no
+  64: reset one-bit delay   reset mask   -             -        no
+  97: set data transfer     set mask     -             -        no
+  57: reset data transfer   reset mask   -             -        no
+  91: set operating mode    set mask     -             -        no
+  51: reset operating mode  reset mask   -             -        no
+  A0: set serial I/O mode   set mask     -             -        no
+  60: reset serial I/O mode reset mask   -             -        no
+  C0: general receive       B0,B1        RIC,R0,R1,A,C RXI/R   yes
+  C1: selective receive     B0,B1,A1,A2  RIC,RD,R1,A,C RXI/R   yes
+  C5: receive disable       -            -             -        no
+  C8: transmit frame        L0, L1, A, C TIC           TXI/R   yes
+  C9: transmit transparent  L0, L1       TIC           TXI/R   yes
+  CC: abort transmit frame  -            TIC           TXI/R   yes
+  CD: abort transmit        -            TIC           TXI/R   yes
+  22: read 8273 port A      -            port value    result   no
+  23: read 8273 port B      -            port value    result   no
+  A3: set 8273 port A bit   set mask     -             -        no
+  63: set 8273 port B bit   reset mask   -             -        no
+Notes:	B0/B1 LSB/MSB of the receiver buffer length
+	L0/L1 LSB/MSB of the Tx buffer length
+	A1/A2 receive frame address match field one/two
+	A     address fieldof received frame. In non-buffered mode, this
+              result is not provided.
+	C     control field of received frame. In non-buffered mode, this
+              result is not provided.
+        RXI/R TXI/R receive/transmit interrupt result register
+        R0/R1 LBS/MSB of the length of the frame received
+	RIC/TIC receiver/transmitter interrupt result code
+SeeAlso: #P200,#P201,#P202,#P203,#P204,#P205
+
+Bitfields for SDLC 8273 interal port A: Modem Control Input Port:
+Bit(s)	Description	(Table P200)
+ 7-5	not used
+ 4	DSR change (PA4)
+ 3	CTS change (PA3)
+ 2	Data Set Ready (PA2)
+ 1	Carrier Detect (PA1)
+ 0	Clear to Send (PA0)
+SeeAlso: #P199
+
+Bitfields for SDLC 8273 interal port B: Modem Control Output Port:
+Bit(s)	Description	(Table P201)
+ 7-6	not used
+ 5	Flag Detect (PB5)
+ 4-3	reserved
+ 2	Data Terminal Ready (PB2)
+ 1	reserved (PB1)
+ 0	Request to Send (PB0)
+SeeAlso: #P199
+
+Bitfields for SDLC 8273 internal: Operating Mode Register:
+Bit(s)	Description	(Table P202)
+ 7-6	not used
+ 5	=1 HDLC abort enable
+ 4	=1 EOP interrupt enable
+ 3	=1 enable early Tx interrupt
+ 2	=1 Buffered Mode
+ 1	=1 Two Preframe Sync Characters
+ 0	=1 Flag Stream Mode
+SeeAlso: #P199
+
+Bitfields for SDLC 8273 internal: Serial I/O Register:
+Bit(s)	Description	(Table P203)
+ 7-3	not used
+ 2	=1 Data Loopback
+ 1	=1 Clock Loopback
+ 0	=1 NRZI Mode
+SeeAlso: #P199
+
+Bitfields for SDLC 8273 internal: Data Transfer Mode Register:
+Bit(s)	Description	(Table P204)
+ 7-1	not used
+ 0	=1 Interrupt Data Transfers
+SeeAlso: #P199
+
+Bitfields for SDLC 8273 internal: One-Bit Delay Mode Register:
+Bit(s)	Description	(Table P205)
+ 7 =1	One-Bit Delay Enable
+ 6-0    not used
+SeeAlso: #P199
+
+(Table P206)
+Values for SDLC 8273 result register:
+ transmit result codes:          status after interrupt:
+  0C: early transmit interrupt    transmitter active
+  0D: frame transmit complete     idle or flags
+  0E: DMA underrun                abort
+  0F: clear to send error         abort
+  10: abort complete              idle or flags
+ receive result codes:
+  X0: A1 match / general receive  active
+  X1: A2 match                    active
+  03: CRC error                   active
+  04: abort detected              active
+  05: idle detected               disabled
+  06: EOP detected                disabled
+  07: frame less than 32 bits     active
+  08: DMA overrun                 disabled
+  09: memory buffer overflow      disabled
+  0A: carrier detect failure      disabled
+  0B: receiver interrupt overrun  disabled
+ X bits received inlast byte:
+   E: all eight bits of last byte (bit7-0)
+   0: bit0 only
+   8: bit1-0
+   4: bit2-0
+   C: bit3-0
+   2: bit4-0
+   A: bit5-0
+   6: bit6-0
 ----------P03880389--------------------------
 PORT 0388-0389 - AdLib - MONO SOUND OUTPUT
 Note:	also supported by SoundBlaster and compatibles
@@ -3199,26 +3454,150 @@ SeeAlso: PORT 002Eh,PORT 015Ch,PORT 026Eh
 0398   W  index for data port
 0399  RW  EPP command data
 ----------P03A003AF--------------------------
-PORT 03A0-03AF - 1st SDLC (Binary Synchronous Data Link Control adapter)
+PORT 03A0-03AC - 1st SDLC (Binary Synchronous Data Link Control adapter)
+SeeAlso: PORT 0380h"SDLC"
+---------------------------------------------
+PORT 03A0-03AF - 1st BSC (Binary Synchronous Communication) adapter
+Notes:	Initialization of the BSC adapter is performed in a typical
+	  sequence like this: Setup 8255 port A-C configuration by writing
+	  98h to 383h, followed by initializing 8255 port C by writing 0Dh
+	  to 382h. Reset 8251A internal registers by pulsing 8255 port B4.
+	  After this the 8253 has to be programmed to the desired values
+	  (counter 0 not used, counters 1 and 2 to mode 0). Now, the 8251A
+	  is ready to be loaded with a set of control words that define the
+	  communication environment.
+	8251A: The control words are split into two formats, mode
+	  instruction and command instruction. The mode instruction must
+	  be inserted immediately after a reset operation (via 8255 port B4
+	  or setting command instruction bit6 to 'internal reset').
+	  The required synchronization characters are next loaded into the
+	  8251A (usually 32h for BSC). All control words written to the
+	  8251A after this will load the command instruction.
+             reset -> mode instruction
+                      SYNC character 1
+                      SYNC character 2
+		      command instruction
+                      data ...
+                      command instruction
+                      data ...
+                      command instruction
+                      ...
+SeeAlso: PORT 0380h"BSC"
 
-03A0  RW   on board 8255 port A, internal/external sense
-03A1  RW   on board 8255 port B, external modem interface
-03A2  RW   on board 8255 port C, internal control and gating
-03A3  RW   on board 8255 mode register
-03A4  RW   on board 8253 counter 0 unused
-03A5  RW   on board 8253 channel 1 inactivity time-out
-03A6  RW   on board 8253 channel 2 inactivity time-out
-03A7  RW   on board 8253 mode register
-03A8  RW   on board 8251 data
-03A9  RW   on board 8251 command/mode/status register
+03A0  R    on adapter 8255(A5) port A: internal/external sensing (see #P188)
+03A1   W   on adapter 8255(A5) port B: external modem interface (see #P189)
+03A2  RW   on adapter 8255(A5) port C: internal control (see #P190)
+03A3  ?W   on adapter 8255(A5) mode initialization
+03A4  RW   on adapter 8253 (programmable counter) counter 0:
+		LSB / MSB square wave generator (unused in sync mode)
+03A5  RW   on adapter 8253 counter 1: LSB / MSB inactivity time-outs
+                (connected to 8255 bitA7, IRQ4 level)
+03A6  RW   on adapter 8253 counter 2: LSB / MSB inactivity time-outs
+                (connected to 8255 bitA6, IRQ4 level)
+03A7  ?W   on adapter 8253 mode register (see #P191)
+03A8  RW   on adapter 8251: data (see #P192)
+03A9  R    on adapter 8251: command/mode/USART status register (see #P193)
+
+Bitfields for BSC 8255 port A:
+Bit(s)	Description	(Table P188)
+ 7	=1 timer 1 output active
+ 6	=1 timer 2 output active
+ 5	=1 TxRDY active
+ 4	receive clock active (if pulsing)
+ 3	=0 clear to send is on from interface
+ 2	transmit clock active (if pulsing)
+ 1	=0 data carrier detect is on from interface
+ 0	=0 ring indicator is on from interface
+SeeAlso: #P189
+
+Bitfields for BSC 8255 port B:
+Bit(s)	Description	(Table P189)
+ 7	=1 enable IRQ 4 level interrupt (timer 1 and 2)
+ 6	=1 gate timer 1
+ 5	=1 gate timer 2
+ 4	=1 reset 8251A
+ 3	=1 not used
+ 2	=0 turn on test
+ 1	=0 turn on select standby
+ 0	=0 turn on data signal rate select
+SeeAlso: #P188,#P190
+
+Bitfields for BSC 8255 port C:
+Bit(s)	Description	(Table P190)
+ 7 R-	=0 BSC adapter (=1 may be used to detect SDLC??)
+ 6 R-	=0 test indicate active
+ 5 R-	timer 0 output (if pulsing)
+ 4 R-	receive data (if pulsing)
+ 3 -W	=0 enable timer 1 and 2 IRQ4 and receive IRQ 4
+ 2 -W	=1 electronic wrap
+ 1 -W	=1 gate external clock
+ 0 -W	=1 gate internal clock
+SeeAlso: #P188,#P189
+
+Bitfields for BSC 8253 mode register:
+Bit(s)	Description	(Table P191)
+ 7-6	SC1-SC0  00, 01, 10= select counter 0,1,2; 11=illegal
+ 5-4	RL1-RL0  00= couner latching operation
+                 01= read/load most significant byte (MSB)
+                 10= read/load least significant byte (LSB)
+                 11= read/load LSB first, then MSB
+ 3-1	M2-M0    000= mode 0 (for counter 1 and 2)
+                 001= mode 1 (not used for BSC)
+                 x10= mode 2 (not used for BSC)
+                 x11= mode 3 (not used for BSC)
+                 100= mode 4 (not used for BSC)
+                 101= mode 5 (not used for BSC)
+ 0	BCD        0= binary counter 16bits
+                   1= BCD counter 4 decades
+
+Bitfields for BSC 8251 data:
+Bit(s)	Description	(Table P192)
+---mode instruction (W)---
+ 7	=0 Double SYNC Character
+ 6	=1 SYNDET is an Input
+ 5	=1 Even Parity
+ 4	=1 Parity Enable
+ 3-2    Character Length 00=5bits, 01=6bits, 10=7bits, 11=8bits
+ 1-0    not used (always 0)
+---SYNC character 1/2 (W)---
+ string of two characters to be sync'ed at (in hunt mode).
+---command instruction (W)---
+ 7      Enter Hunt Mode
+ 6      Internal Reset
+ 5      Request to Send
+ 4      Error Reset
+ 3      Send Break Character
+ 2      Receive Enable
+ 1      Data Terminal Ready
+ 0      Transmit Enable
+---data (RW)---
+	any data
+SeeAlso: #P191,#P193
+
+Bitfields for BSC 8251 command/mode/USART status:
+Bit(s)	Description	(Table P193)
+ 7	Data Set Ready (indicated that DSR is at 0 level)
+ 6	SYNDET
+ 5	Framing Error (not used for synchronous communications)
+ 4	Overrun Error (OE flag on when Overrun Error occurs)
+ 3	Parity Error (PE flag on when a parity error occurs)
+ 2	TxEmpty
+ 1	RxRDY (causing IRQ 3 level)
+ 0	TxRDY (has not the same meaning as 8251A TxRDY output pin).
+          THIS one is NOT conditioned by CTS and TxEnable (causing IRQ 4 level)
+SeeAlso: #P192
+----------P03AB------------------------------
+PORT 03AB - GI1904 Scanner Interface Adapter
+Range:	PORT 022Bh, PORT 026Bh, PORT 02ABh (default), PORT 02EBh, PORT 032Bh
+Range:	PORT 036Bh, PORT 03EBh
 ----------P03B003BF--------------------------
 PORT 03B0-03BF - MDA  (Monochrome Display Adapter based on 6845)
 
-03B0   W  same as 03B4
+03B0  -W  same as 03B4
 03B1  RW  same as 03B5
-03B2   W  same as 03B4
+03B2  -W  same as 03B4
 03B3  RW  same as 03B5
-03B4   W  MDA CRT index register	 (MDA/mono EGA/mono VGA)
+03B4  -W  MDA CRT index register	 (MDA/mono EGA/mono VGA)
 		selects which register (0-11h) is to be accessed through 03B5h
 		Note: this port is read/write on some VGAs
 		bit7-6: (VGA) reserved (0)
@@ -3233,18 +3612,18 @@ PORT 03B0-03BF - MDA  (Monochrome Display Adapter based on 6845)
 		  emulation modes emulate the original 6845 at bit level. The
 		  default values are for MDA, HGC, CGA only, if not otherwise
 		  mentioned.
-03B6   W  same as 03B4h
+03B6  -W  same as 03B4h
 03B7  RW  same as 03B5h
 03B8  rW  MDA mode control register (see #P109)
 03B9  ?W  reserved for color select register on color adapter
-03B9   W  MDA/HGC: set lightpen flipflop (value written is ignored)
+03B9  -W  MDA/HGC: set lightpen flipflop (value written is ignored)
 		cannot be found on native mono EGA, mono VGA (without
 		  translation ROM)
-03BA  R	  CRT status register (see #P110)
+03BA  R-  CRT status register (see #P110)
 	    (EGA/VGA) input status 1 register
-03BA   W  (mono EGA/mono VGA) feature control register
+03BA  -W  (mono EGA/mono VGA) feature control register
 	    (see PORT 03DAh-W for details; VGA, see PORT 03CAh-R)
-03BB   W  light pen strobe reset (on any value)
+03BB  -W  light pen strobe reset (on any value)
 
 (Table P108)
 Values for mono video adapter CRT data register index:
@@ -3310,7 +3689,7 @@ Values for mono video adapter CRT data register index:
 	       bit4-0: maximum scan line 00..31 (height-1)
  0Ah	cursor start				  0Bh	00h   06h   06h 06h/00h
 	       bit7  : reserved
-	       bit6-5: original 6845: cursor on/off, blink intervall
+	       bit6-5: original 6845: cursor on/off, blink interval
 		       (not on all adapters, as original MDA, CGA have
 		       extra circuitrity to avoid this!!)
 	       bit6-5: native EGA: not used
@@ -3321,9 +3700,9 @@ Values for mono video adapter CRT data register index:
 	       bit7  : reserved
 	       bit6-5: EGA, VGA: cursor skew control
 	       bit4-0: end cursor row
- 0Ch	start address high			  00h	00h   00h   00h	  00h
+ 0Ch RW	start address high			  00h	00h   00h   00h	  00h
 	       bit7-6 not used by original 6845 (MDA,HGC,CGA)
- 0Dh	start address low			  00h	00h   00h   00h	  00h
+ 0Dh RW	start address low			  00h	00h   00h   00h	  00h
  0Eh RW	cursor location high			  00h	00h   00h   00h	  00h
 	       bit7-4 not used by original 6845 (MDA,HGC,CGA)
 	       bit5-4 reserved on MCGA
@@ -3338,10 +3717,6 @@ Values for mono video adapter CRT data register index:
  10h -W MCGA at 3D5h only: mode control register
  11h R- light pen low (MDA/CGA/EGA only, some HGC, few VGA
 	       clones in emulation, not with ET4000)
- 1xh	according to a info paper by Quarterdeck three extra
-	     write-only registers are available in HGC+ for controlling
-	     two extra RAMfont modes. No more info available.
-	     This might conflict with MCGA/EGA/VGA registers.
  11h R- native VGA with bit7=1 in end horizontal blanking (03h):
 	       end vertical retrace
  11h -W EGA, VGA: end vertical retrace
@@ -3374,12 +3749,17 @@ Values for mono video adapter CRT data register index:
 	       bit4-0: horizontal underline row scan
  14h -W MCGA at 3D5h only: number of characters to load during
 	       vretrace period
+ 14h -W HGC+,InColor: xMode register
  15h	EGA, VGA: start vertical blanking-1
+ 15h -W HGC+,InColor: underscore register
  16h	EGA, VGA: end vertical blanking register
 	       bit7-5 : EGA: reserved, but used on original EGA???
 	       bit4-0 : end vertical blanking
+ 16h -W HGC+,InColor: overstrike register
  17h	EGA, VGA: mode control register (see #P111)
+ 17h -W	InColor: exception register
  18h	EGA, VGA: line compare register
+ 18h -W	InColor: plane mask register
  19h	Genoa SuperEGA only: double scan control
 	       at 3B5h only in MDA, HGC emulation, but at 3D5h even in
 	       mono EGA modes.
@@ -3387,10 +3767,14 @@ Values for mono video adapter CRT data register index:
 	       bit4   : HR/VR width adjust flag for double scan mode
 	       bit3-1 : 1=test, 0=normal
 	       bit0   : double scan enable
+ 19h -W	InColor: read/write control register
+ 1Ah -W	InColor: read/write color register
+ 1Bh -W	InColor: Latch Protect register
  1Bh	ET3000 only: x-zoom start register
 	      The existence of this register is often used to decide
 	       between ET3000 and ET4000, as the ET4000 does not offer
 	       hardware-zoom features.
+ 1Ch RW	InColor: palette register
  1Ch	ET3000 only: x-zoom end register
  1Dh	ET3000 only: y-zoom start register low
  1Eh	ET3000 only: y-zoom end register low
@@ -4134,9 +4518,9 @@ Values for Compaq QVision graphics register index:
 ----------P03D003DF--------------------------
 PORT 03D0-03DF - CGA   (Color Graphics Adapter)
 
-03D0   W  same as PORT 03D4h
+03D0  -W  same as PORT 03D4h
 03D1  RW  same as PORT 03D5h
-03D2   W  same as PORT 03D4h
+03D2  -W  same as PORT 03D4h
 03D3  RW  same as PORT 03D5h
 03D4  rW  CRT (6845) index register   (CGA/MCGA/color EGA/color VGA)
 	selects which register (0-11h) is to be accessed through 03D5
@@ -4333,6 +4717,10 @@ SeeAlso: PORT 03F8h-03FFh
 ----------P03E803EF--------------------------
 PORT 03E8-03EF	-  LPT port address on the UniRAM card by German magazine c't
 Range:	selectable from 260, 2E0, 2E8, 2F0, 3E0, 3E8.
+----------P03EB------------------------------
+PORT 03EB - GI1904 Scanner Interface Adapter
+Range:	PORT 022Bh, PORT 026Bh, PORT 02ABh (default), PORT 02EBh, PORT 032Bh
+Range:	PORT 036Bh, PORT 03ABh
 ----------P03F003F7--------------------------
 PORT 03F0-03F7 - FDC 1	(1st Floppy Disk Controller)	second FDC at 0370
 Note:	floppy disk controller is usually an 8272, 8272A, NEC765 (or
@@ -4677,10 +5065,11 @@ Note:	chips overview:
 03F8  RW  divisor latch low byte (DLL) when DLAB=1 (see #P162)
 03F9  RW  divisor latch high byte (DLM) when DLAB=1 (see #P162)
 03F9  RW  interrupt enable register (IER) when DLAB=0 (see #P163)
-03FA  R	  interrupt identification register. Information about a pending
-	  interrupt is stored here. When the ID register is addressed, the
-	  highest priority interrupt is held, and no other interrupts are
-	  acknowledged until the CPU services that interrupt.
+03FA  R	  interrupt identification register (see #P164)
+	Information about a pending interrupt is stored here. When the ID
+	  register is addressed, thehighest priority interrupt is held, and
+	  no other interrupts are acknowledged until the CPU services that
+	  interrupt.
 03FA   W  16650 FIFO Control Register (FCR) (see #P165)
 03FB  RW  line control register (LCR) (see #P166)
 03FC  RW  modem control register (see #P167)
@@ -4734,6 +5123,7 @@ Bit(s)	Description	(Table P164)
  7-6	=00  reserved on 8250, 8251, 16450
 	=01  if FIFO queues enabled but unusable (16550 only)
 	=11  if FIFO queues are enabled (16550A only) (see also #P165)
+ 6-5	(used by 82510 for FIFO status???)
  5-4	reserved (0)
  3	(8250,16450) reserved (0)
 	(16550) timeout interrupt pending
@@ -4752,16 +5142,19 @@ SeeAlso: #P163
 
 Bitfields for serial port FIFO control register (FCR):
 Bit(s)	Description	(Table P165)
- 7-6	received data available interrupt trigger level
+ 7-6	received data available interrupt trigger level (16550)
 	00  1 byte
 	01  4 bytes
 	10  8 bytes
 	11 14 bytes
+ 6-5	=00  (used to enable 4 byte Rx/Tx FIFOs on 82510???)
+        =10 ???
  5-4	reserved (00)
  3	change RXRDY  TXRDY pins from mode 0 to mode 1
  2	clear XMIT FIFO
  1	clear RCVR FIFO
  0	enable clear XMIT and RCVR FIFO queues
+ 4-0    (other purpose on 82510???)
 Notes:	bit 0 must be set in order to write to other FCR bits
 	bit 1 when set	the RCVR FIFO is cleared and this bit is reset
 	  the receiver shift register is not cleared
@@ -5322,7 +5715,7 @@ PORT 2100 - XGA Video Operating Mode Register
 Note:	this port is for the first XGA in the system; 2110-2170 are used for
 	  the second through eighth XGAs
 --------V-P2101------------------------------
-PORT 2101 - XGA VIdeo Aperture Control
+PORT 2101 - XGA Video Aperture Control
 Note:	this port is for the first XGA in the system; 2111-2171 are used for
 	  the second through eighth XGAs
 --------V-P21022103--------------------------
@@ -5992,15 +6385,15 @@ by MindShare, Inc. (Addison-Wesley 1995, ISBN 0-201-40995-X).]
 
 [AMI BIOS diagnostics codes (port 0080h) from file CHECKPTS on AMI BBS.]
 --------!---Admin----------------------------
-Highest Table Number = P187
+Highest Table Number = P206
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER48A through INTER48D (preferably the original
+quartet of archives named INTER49A through INTER49D (preferably the original
 authenticated PKZIP archives), and the utility programs in a two additional
-archives called INTER48E.ZIP and INTER48F.ZIP
+archives called INTER49E.ZIP and INTER49F.ZIP
 
-This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------!---CONTACT_INFO---------------------
 Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
 UUCP: {uunet,harvard}!pobox.com!ralf
@@ -6008,3 +6401,12 @@ FIDO: Ralf Brown 1:129/26.1
 	or post a message to me in the DR_DEBUG echo (I probably won't see it
 	unless you address it to me)
 CIS:  >INTERNET:ralf@pobox.com
+
+
+!!!
+------------------------------------------------------------------------------
+22Ch, 26Ch, 2ACh, <2ECh>, 32Ch, 36Ch, 3ACh, 3ECh
+                 default
+GS-IF Scanner Interface adapter
+  (many SPI 400dpi/800dpi gray / H/T handy scanner by Marstek, Mustek and
+   others)

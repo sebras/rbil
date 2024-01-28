@@ -1,5 +1,5 @@
 Interrupt List, part 11 of 14
-This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------h-4D---------------------------------
 INT 4D - Z100 - Slave 8259 - S100 vectored line 5
 SeeAlso: INT 4C"Z100",INT 4E"Z100"
@@ -1779,7 +1779,7 @@ Call Buffit private entry point with:
 	    00h get information and hotkey state
 	    01h get information and toggle hotkey state
 Return: AH = new hotkey state (00h enabled, 01h disabled)
-	AL = hotkey scan code
+	AL = hotkey scan code (see #0005)
 	BH = hotkey shift states
 	BL = ??? (01h)
 	CX = segment of resident code

@@ -1,5 +1,5 @@
 Interrupt List, part 5 of 14
-This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------D-213F-------------------------------
 INT 21 - DOS 2+ - "READ" - READ FROM FILE OR DEVICE
 	AH = 3Fh
@@ -350,6 +350,12 @@ Return: AX = 0000h
 ---if function > 0Ch---
 Return:	AX = 0001h
 	DX = 0000h
+--------v-213F--BXFEB0-----------------------
+INT 21 - VIRUS - "KYZ/LieWait" - INSTALLATION CHECK
+	AH = 3Fh
+	BX = FEB0h
+Return: BX = 1212h if resident
+SeeAlso: AX=3032h"VIRUS",AX=4BF1h"VIRUS"
 --------D-2140-------------------------------
 INT 21 - DOS 2+ - "WRITE" - WRITE TO FILE OR DEVICE
 	AH = 40h
@@ -504,17 +510,18 @@ Return: CF clear if successful
 Notes:	(DOS 3.1+) wildcards are allowed if invoked via AX=5D00h, in which case
 	  the filespec must be canonical (as returned by AH=60h), and only
 	  files matching the attribute mask in CL are deleted
-	DR-DOS 5.0-6.0 returns error code 03h if invoked via AX=5D00h
+	DR DOS 5.0-6.0 returns error code 03h if invoked via AX=5D00h; DR DOS
+	  3.41 crashes if called via AX=5D00h with wildcards
 	DOS does not erase the file's data; it merely becomes inaccessible
 	  because the FAT chain for the file is cleared
 	deleting a file which is currently open may lead to filesystem
 	  corruption.  Unless SHARE is loaded, DOS does not close the handles
 	  referencing the deleted file, thus allowing writes to a nonexistant
 	  file.
-	under DRDOS and DR Multiuser DOS, this function will fail if the file
+	under DR DOS and DR Multiuser DOS, this function will fail if the file
 	  is currently open
 	under the FlashTek X-32 DOS extender, the pointer is in DS:EDX
-BUG:	DR-DOS 3.41 crashes if called via AX=5D00h
+BUG:	DR DOS 3.41 crashes if called via AX=5D00h
 SeeAlso: AH=13h,AX=4301h,AX=4380h,AX=5D00h,AH=60h,AH=71h,AX=F244h
 SeeAlso: INT 2F/AX=1113h
 --------y-214101DXFFFE-----------------------
@@ -562,11 +569,11 @@ INT 21 - DOS 2+ - GET FILE ATTRIBUTES
 	DS:DX -> ASCIZ filename
 Return: CF clear if successful
 	    CX = file attributes (see #0717)
-	    AX = CX (DR-DOS 5.0)
+	    AX = CX (DR DOS 5.0)
 	CF set on error
 	    AX = error code (01h,02h,03h,05h) (see #0960 at AH=59h)
 Notes:	under the FlashTek X-32 DOS extender, the filename pointer is in DS:EDX
-	under DR-DOS 3.41 and 5.0, attempts to change the subdirectory bit are
+	under DR DOS 3.41 and 5.0, attempts to change the subdirectory bit are
 	  simply ignored without an error
 BUG:	Windows for Workgroups returns error code 05h (access denied) instead
 	  of error code 02h (file not found) when attempting to get the
@@ -594,6 +601,8 @@ Notes:	will not change volume label or directory attribute bits, but will
 	DOS 5.0 SHARE will close the file if it is currently open in sharing-
 	  compatibility mode, otherwise a sharing violation critical error is
 	  generated if the file is currently open
+	DR DOS 3.41/5.0 will silently ignore attempts to change the 'directory'
+	  attribute bit
 SeeAlso: AX=4300h,AX=4311h,AH=71h,INT 2F/AX=110Eh
 
 Bitfields for file attributes:
@@ -613,30 +622,30 @@ INT 21 - DOS 7 (Chicago) - GET VOLUME INFORMATION
 	details not yet available
 SeeAlso: AH=71h,AH=72h
 --------O-214302-----------------------------
-INT 21 - DR-DOS 3.41+ internal - GET ACCESS RIGHTS
+INT 21 - DR DOS 3.41+ internal - GET ACCESS RIGHTS
 	AX = 4302h
 	DS:DX -> ASCIZ pathname
 Return: CF clear if successful
 	    CX = access rights (see #0718)
-	    AX = CX (DR-DOS 5.0)
+	    AX = CX (DR DOS 5.0)
 	CF set on error
 	    AX = error code
 Desc:	Determine which operations the calling program may perform on a
 	  specified file without being required to provide a password.
 Notes:	this protection scheme has been coordinated on all current Digital
-	  Research/Novell operating systems (DR-DOS 3.41+, DRMDOS 5.x, and
+	  Research/Novell operating systems (DR DOS 3.41+, DRMDOS 5.x, and
 	  FlexOS 2+)
-	this function is documented in DR-DOS 6.0 and corresponds to the
+	this function is documented in DR DOS 6.0 and corresponds to the
 	  "Get/Set File Attributes" function, subfunction 2, documented in
 	  Concurrent DOS.
-	only FlexOS actually uses the "execution" bits; DR-DOS 3.41+ treats
+	only FlexOS actually uses the "execution" bits; DR DOS 3.41+ treats
 	  them as "read" bits.
-	DR-DOS 3.41-5.x only use bits 0-3.  Only DR-DOS 6.0 using a
+	DR DOS 3.41-5.x only use bits 0-3.  Only DR DOS 6.0 using a
 	  DRMDOS 5.x security system allowing for users and groups uses bits
 	  4-11.
 SeeAlso: AX=4303h
 
-Bitfields for DR-DOS file access rights:
+Bitfields for DR DOS file access rights:
 Bit(s)	Description	(Table 0718)
  0	owner delete requires password
  1	owner execution requires password (FlexOS)
@@ -651,7 +660,7 @@ Bit(s)	Description	(Table 0718)
  10	world write requires password
  11	world read requires password
 --------O-214303-----------------------------
-INT 21 - DR-DOS 3.41+ internal - SET ACCESS RIGHTS AND PASSWORD
+INT 21 - DR DOS 3.41+ internal - SET ACCESS RIGHTS AND PASSWORD
 	AX = 4303h
 	CX = access rights
 	     bits 11-0: access rights (see #0718)
@@ -663,12 +672,12 @@ Return: CF clear if successful
 	    AX = error code
 Notes:	if the file is already protected, the old password must be added after
 	  the pathname, separated by a ";"
-	this function is documented in DR-DOS 6.0 and corresponds to the
+	this function is documented in DR DOS 6.0 and corresponds to the
 	  "Get/Set File Attributes" function, subfunction 3, documented in
 	  Concurrent DOS.
-SeeAlso: AH=0Fh,AH=17h,AX=4302h"DR-DOS",AX=4305h,AX=4454h
+SeeAlso: AH=0Fh,AH=17h,AX=4302h"DR DOS",AX=4305h,AX=4454h
 --------O-214304-----------------------------
-INT 21 U - DR-DOS 5.0-6.0 internal - GET ENCRYPTED PASSWORD
+INT 21 U - DR DOS 5.0-6.0 internal - GET ENCRYPTED PASSWORD
 	AX = 4304h
 	DS:DX -> ASCIZ filename
 	???
@@ -676,10 +685,10 @@ Return: CF clear if successful
 	    CX = AX = 0000h if no password assigned to file
 	CF set on error
 	    AX = error code (see #0960 at AH=59h)
-Note:	this function is only supported by DR-DOS 5.0 and 6.0 and DRMDOS 5.1
+Note:	this function is only supported by DR DOS 5.0 and 6.0 and DRMDOS 5.1
 SeeAlso: AX=4303h,AX=4305h
 --------O-214305-----------------------------
-INT 21 U - DR-DOS 5.0-6.0 internal - SET EXTENDED FILE ATTRIBUTES
+INT 21 U - DR DOS 5.0-6.0 internal - SET EXTENDED FILE ATTRIBUTES
 	AX = 4305h
 	DS:DX -> ASCIZ filename
 	???
@@ -688,10 +697,10 @@ Return: CF clear if successful
 	    AX = error code (see #0960 at AH=59h)
 Desc:	this function allows the extended attributes, and optionally the
 	  encrypted password, of a file to be set.
-Note:	this function is only supported by DR-DOS 5.0 and 6.0 and DRMDOS 5.1
+Note:	this function is only supported by DR DOS 5.0 and 6.0 and DRMDOS 5.1
 SeeAlso: AX=4304h,AX=4311h
 --------O-214306-----------------------------
-INT 21 - DR-DOS 6.0 - GET FILE OWNER
+INT 21 - DR DOS 6.0 - GET FILE OWNER
 	AX = 4306h
 	DS:DX -> ASCIZ filename
 Return: CF clear if successful
@@ -700,7 +709,7 @@ Return: CF clear if successful
 	    AX = error code (see #0960 at AH=59h)
 SeeAlso: AX=4307h
 --------O-214307-----------------------------
-INT 21 - DR-DOS 6.0 - SET FILE OWNER
+INT 21 - DR DOS 6.0 - SET FILE OWNER
 	AX = 4307h
 	CX = ??? (owner identification number?)
 	DS:DX -> ASCIZ filename
@@ -736,32 +745,38 @@ Bit(s)	Description	(Table 0719)
  5	execute-only
  4-0	unused
 --------u-214321BX0000-----------------------
-INT 21 R - Q87, Q387 - INSTALLATION CHECK
+INT 21 - Q87, Q387 - INSTALLATION CHECK
 	AX = 4321h
 	BX = 0000h
 	EAX = 87654321h (entire EAX value is required, not just AX)
 Return: EAX = 12345678h if installed
 Program: Q387 (renamed to Q87 as of v3.7) is a math coprocessor emulator from
 	  Quickware
-Note:	this function is available only in virtual-86 mode
-SeeAlso: AX=4321h/BX=0001h,AX=4321h/BX=0002h
+Note:	this function is available only in virtual-86 mode in older versions;
+	  newer versions also provide it in MS Windows 16- and 32-bit protected
+	  mode
+SeeAlso: AX=4321h/BX=0001h,AX=4321h/BX=0002h,INT 67/AX=4321h
 --------u-214321BX0001-----------------------
-INT 21 R - Q87, Q387 - ENABLE EMULATOR
+INT 21 - Q87, Q387 - ENABLE EMULATOR
 	AX = 4321h
 	BX = 0001h
 	EAX = 87654321h (entire EAX value is required, not just AX)
 Desc:	enable the emulator by setting the CPU MSW's EM bit and updating
 	  the BIOS equipment list
-Note:	this function is available only in virtual-86 mode
+Note:	this function is available only in virtual-86 mode in older versions;
+	  newer versions also provide it in MS Windows 16- and 32-bit protected
+	  mode
 SeeAlso: AX=4321h/BX=0000h,AX=4321h/BX=0002h
 --------u-214321BX0002-----------------------
-INT 21 R - Q87, Q387 - DISABLE EMULATOR
+INT 21 - Q87, Q387 - DISABLE EMULATOR
 	AX = 4321h
 	BX = 0002h
 	EAX = 87654321h (entire EAX value is required, not just AX)
 Desc:	disable the emulator by clearing the CPU MSW's EM bit and updating
 	  the BIOS equipment list
-Note:	this function is available only in virtual-86 mode
+Note:	this function is available only in virtual-86 mode in older versions;
+	  newer versions also provide it in MS Windows 16- and 32-bit protected
+	  mode
 SeeAlso: AX=4321h/BX=0000h,AX=4321h/BX=0001h
 --------O-214380-----------------------------
 INT 21 - Novell DOS 7 - UNDELETE PENDING DELETE FILE
@@ -3533,7 +3548,8 @@ Offset	Size	Description	(Table 0830)
 		0 if logical volume = physical volume
  0Ch	WORD	flag: 00h = no disk mounted, 01h = disk mounted
  0Eh	WORD	flag: 00h read/write, 01h read-only
- 10h	WORD	quick-unmount hotkey (high byte = shift state, low = scan code)
+ 10h	WORD	quick-unmount hotkey
+		(high byte = shift state, low = scan code) (see #0005)
  12h	WORD	auto-unmount time in minutes, or 0000h if already expired, or
 		FFFFh if not set
  14h	WORD	time in minutes remaining before auto-unmount
@@ -3719,6 +3735,7 @@ Offset	Size	Description	(Table 0837)
  04h	WORD	mount status (00h unmounted, 01h mounted)
 ---function 05h---
  04h	WORD	hotkey (high byte = shift state, low byte = scan code or 00h)
+		(see #0005)
 		0000h to disable hotkey
 ---function 06h---
  04h	WORD	timeout in minutes before automatic unmount
@@ -3779,7 +3796,7 @@ Return: CF clear if successful
 	    AX = error code (01h,0Fh) (see #0960 at AH=59h)
 Note:	in addition to the normal operation, if Stacker is installed, this
 	  call also sets the volume number at offset 58h in the Stacker
-	  device driver (except under DR-DOS 3.41-5.0, which do not pass
+	  device driver (except under DR DOS 3.41-5.0, which do not pass
 	  through this call to the driver; use AX=440Eh instead)
 	  (see AX=4404h"Stacker",AX=440Eh,INT 25/AX=CDCDh)
 SeeAlso: AX=4400h,AX=4404h"Stacker",AX=4409h,INT 2F/AX=122Bh
@@ -3817,7 +3834,7 @@ Return: CF clear if successful
 	    AX = error code (01h,06h) (see #0960 at AH=59h)
 Notes:	if file is remote, Novell Advanced NetWare 2.0 returns the number of
 	  the file server on which the handle is located in CX
-	DR-DOS 3.41 and 5.0 clear all bits of DX except bit 15
+	DR DOS 3.41 and 5.0 clear all bits of DX except bit 15
 SeeAlso: AX=4400h,AX=4409h,AH=52h,INT 2F/AX=122Bh
 --------D-21440B-----------------------------
 INT 21 - DOS 3.1+ - IOCTL - SET SHARING RETRY COUNT
@@ -3846,7 +3863,7 @@ Return: CF set on error
 	    DS:DX -> iteration count if CL=65h
 	    SI = returned value (European MS-DOS 4.0, OS/2 comp box)
 	    DI = returned value (European MS-DOS 4.0, OS/2 comp box)
-Note:	DR-DOS 3.41 and 5.0 return error code 16h on CL=45h,65h if the device
+Note:	DR DOS 3.41 and 5.0 return error code 16h on CL=45h,65h if the device
 	  does not support a retry counter
 SeeAlso: AX=440Dh,INT 2F/AX=0802h,INT 2F/AX=122Bh,INT 2F/AX=14FFh
 SeeAlso: INT 2F/AX=1A01h
@@ -4043,7 +4060,7 @@ Notes:	DOS 4.01 seems to ignore the high byte of the number of directory
 	  entries in the BPB for diskettes.
 	functions 46h and 66h undocumented in DOS 4.x, documented for DOS 5+
 	the DUBLDISK.SYS v2.6 driver only supports minor codes 60h and 67h
-	DR-DOS 3.41-6.0 only support minor codes 40h-42h and 60h-62h; all
+	DR DOS 3.41-6.0 only support minor codes 40h-42h and 60h-62h; all
 	  other minor codes return error code 16h
 	some PCMCIA calls reportedly appear to be dangerous for MS-DOS versions
 	  prior to 5.0
@@ -4115,7 +4132,8 @@ Offset	Size	Description	(Table 0854)
 		F8h for DUBLDISK.SYS v2.6 expanded drives
 		always 00h for other drive types
  07h 31 BYTEs	device BPB (see #0950 at AH=53h), bytes after BPB offset 1Eh
-		  omitted
+		  omitted; final six bytes only transferred on function 40h
+		  with BYTE 00h bit 0 set for MS-DOS 5.0
 ---function 40h only---
  26h	WORD	number of sectors per track (start of track layout field)
 		(maximum 63)
@@ -4148,7 +4166,9 @@ Offset	Size	Description	(Table 0857)
  00h	BYTE	reserved, must be zero (DOS <3.2)
 		  bit 0=0: format/verify track
 			1: format status call (DOS 3.2+), don't actually format
-		  bits 1-7 reserved, must be zero
+		  bit 1: format multiple tracks, require additional WORD
+			  (hard disks only)
+		  bits 2-7 reserved, must be zero
 		value on return (DOS 3.3+):
 		  00h	specified tracks, sectors/track supported by BIOS
 		  01h	function not supported by BIOS
@@ -4156,6 +4176,8 @@ Offset	Size	Description	(Table 0857)
 		  03h	no disk in drive
  01h	WORD	number of disk head
  03h	WORD	number of disk cylinder
+---BYTE 00h bit 1 set---
+ 05h	WORD	number of tracks to format
 
 Format of parameter block for function 62h:
 Offset	Size	Description	(Table 0858)
@@ -4177,7 +4199,9 @@ Offset	Size	Description	(Table 0859)
  00h	WORD	(call) info level (should be 0000h)
  02h	DWORD	disk serial number (binary)
  06h 11 BYTEs	volume label or "NO NAME    "
- 11h  8 BYTEs	filesystem type "FAT12	 " or "FAT16   " (CL=66h only)
+ 11h  8 BYTEs	filesystem type "FAT12	 " or "FAT16   "
+		  (generally CL=66h only, but MS-DOS 5.0 will write the
+		  given filesystem type to the disk)
 
 Format of parameter block for functions 47h, 67h:
 Offset	Size	Description	(Table 0860)
@@ -4269,11 +4293,11 @@ Return: CF set on error
 	CF clear if successful
 	    AL = 00h block device has only one logical drive assigned
 		 1..26 the last letter used to reference the drive (1=A:,etc)
-Notes:	DR-DOS 3.41-5.0 DRIVER.SYS does not support drive mapping and thus
+Notes:	DR DOS 3.41-5.0 DRIVER.SYS does not support drive mapping and thus
 	  always returns AL=00h
 	in addition to the normal operation, if Stacker is installed, this
 	  call also sets the volume number at offset 58h in the Stacker
-	  device driver (DR-DOS 3.41-5.0 only; use AX=4408h otherwise)
+	  device driver (DR DOS 3.41-5.0 only; use AX=4408h otherwise)
 	  (see AX=4404h"Stacker",INT 25/AX=CDCDh)
 SeeAlso: AX=4408h,AX=440Fh,INT 2F/AX=122Bh
 --------D-21440F-----------------------------
@@ -4286,7 +4310,7 @@ Return: CF set on error
 	    drive now responds to next logical drive number
 Notes:	maps logical drives to physical drives, similar to DOS's treatment of
 	  a single physical floppy drive as both A: and B:
-	DR-DOS 3.41-5.0 DRIVER.SYS does not support drive mapping and thus
+	DR DOS 3.41-5.0 DRIVER.SYS does not support drive mapping and thus
 	  always returns an error on this function
 SeeAlso: AX=440Eh,INT 2F/AX=122Bh
 --------D-214410-----------------------------
@@ -4334,12 +4358,12 @@ Program: NewSpace is a TSR by Isogon Corporation which automatically compresses
 Note:	compressed files are not accessible unless the driver is enabled
 SeeAlso: AX=4410h/BX=FFFFh
 --------O-214412-----------------------------
-INT 21 O - DR-DOS 5.0-6.0 - DETERMINE DOS TYPE
+INT 21 O - DR DOS 5.0-6.0 - DETERMINE DOS TYPE
 	AX = 4412h
 	CF set
-Return: CF set if not DR-DOS
+Return: CF set if not DR DOS
 	    AX = error code (see #0960 at AH=59h)
-	CF clear if DR-DOS
+	CF clear if DR DOS
 	    DX = AX = version code (see #0868)
 Note:	this obsolete call, which is no longer supported in Novell DOS 7, is
 	  identical to AX=4452h
@@ -4360,7 +4384,7 @@ Return: AX = code segment of NewRes (resident driver for NewSpace)
 	BX = offset of ???
 SeeAlso: AX=4412h/BX=FFFFh
 --------O-214414-----------------------------
-INT 21 OU - DR-DOS 5.0-6.0 - SET GLOBAL PASSWORD
+INT 21 OU - DR DOS 5.0-6.0 - SET GLOBAL PASSWORD
 	AX = 4414h
 	DS:DX -> password string (blank-padded to 8 characters)
 Desc:	Specify the master password for accessing files.
@@ -4374,7 +4398,7 @@ INT 21 U - NewSpace - DEBUGGING DUMP
 Return: debugging dump written to X:\NEWSPACE.SMP
 SeeAlso: AX=4413h/BX=FFFFh,AX=44FFh/BX=FFFFh
 --------O-2144-------------------------------
-INT 21 OU - DR-DOS 5.0-6.0 - HISTORY BUFFER, SHARE, AND HILOAD CONTROL
+INT 21 OU - DR DOS 5.0-6.0 - HISTORY BUFFER, SHARE, AND HILOAD CONTROL
 	AH = 44h
 	AL = 16h to 18h
 Note:	these obsolete subfunctions (which are no longer supported in Novell
@@ -4408,12 +4432,12 @@ Values for Digital Research operating system version ID:
  66h	DR Multiuser DOS 5.1
  67h	Concurrent DOS 5.1
 --------O-214452-----------------------------
-INT 21 - DR-DOS 3.41+ - DETERMINE DOS TYPE/GET DR-DOS VERSION
+INT 21 - DR DOS 3.41+ - DETERMINE DOS TYPE/GET DR DOS VERSION
 	AX = 4452h ("DR")
 	CF set
-Return: CF set if not DR-DOS
+Return: CF set if not DR DOS
 	    AX = error code (see #0960 at AH=59h)
-	CF clear if DR-DOS
+	CF clear if DR DOS
 	    AX = version code
 	    AH = single-user/multiuser nature
 		10h single-user
@@ -4421,11 +4445,11 @@ Return: CF set if not DR-DOS
 		14h multiuser
 		    AL = operating system version ID (see #0867)
 	    DX modified (see note)
-Notes:	the DR-DOS version is stored in the environment variable VER
+Notes:	the DR DOS version is stored in the environment variable VER
 	use this function if looking for single-user capabilities, AX=4451h
 	  if looking for multiuser; this call should never return multiuser
 	  values
-	in DR-DOS 3.41-6.0, DX=AX on return; for Novell DOS 7, DH=AH but DL=00h
+	in DR DOS 3.41-6.0, DX=AX on return; for Novell DOS 7, DH=AH but DL=00h
 	  (reportedly, DH=00h when booting NWDOS7 from installation disks)
 	Novell DOS 7 returns error code 0001h if SETVER 255.x is in effect for
 	  the calling program
@@ -4434,25 +4458,25 @@ SeeAlso: AX=4412h,AX=4451h,AX=4459h
 (Table 0868)
 Values for Digital Research operating system version ID:
  60h	DOS Plus
- 63h	DR-DOS 3.41
- 64h	DR-DOS 3.42
- 65h	DR-DOS 5.00
- 67h	DR-DOS 6.00
+ 63h	DR DOS 3.41
+ 64h	DR DOS 3.42
+ 65h	DR DOS 5.00
+ 67h	DR DOS 6.00
  70h	PalmDOS
- 71h	DR-DOS 6.0 March 1993 "business update"
+ 71h	DR DOS 6.0 March 1993 "business update"
  72h	Novell DOS 7.0
 --------O-214454-----------------------------
-INT 21 U - DR-DOS 3.41+ - SET GLOBAL PASSWORD
+INT 21 U - DR DOS 3.41+ - SET GLOBAL PASSWORD
 	AX = 4454h
 	DS:DX -> password string (blank-padded to 8 characters)
 Desc:	Specify the master password for accessing files.
 SeeAlso: AX=4303h,AX=4414h
 --------O-214456-----------------------------
-INT 21 U - DR-DOS 5.0+ - HISTORY BUFFER CONTROL
+INT 21 U - DR DOS 5.0+ - HISTORY BUFFER CONTROL
 	AX = 4456h
 	DL = control flags (see #0869)
 Return: AL = previous value of state flags (see #0870)
-Note:	DR-DOS 6.0 only checks bit 0 and ignores the rest of DL
+Note:	DR DOS 6.0 only checks bit 0 and ignores the rest of DL
 SeeAlso: #0871
 
 Bitfields for control flags:
@@ -4470,7 +4494,7 @@ Bit(s)	Description	(Table 0870)
  2-5	unused
  7	whose buffer: 0=application, 1=COMMAND.COM
 --------O-214457-----------------------------
-INT 21 U - DR-DOS 5.0+ - SHARE/HILOAD CONTROL
+INT 21 U - DR DOS 5.0+ - SHARE/HILOAD CONTROL
 	AX = 4457h
 	DH = subfunction
 	    00h enable/disable SHARE
@@ -4486,24 +4510,24 @@ INT 21 U - DR-DOS 5.0+ - SHARE/HILOAD CONTROL
 		Return: AX = ???
 	    other
 		Return: AX = ???
-Note:	This was seen called by COMMAND.COM of DR-DOS 6.0; it does not seem
+Note:	This was seen called by COMMAND.COM of DR DOS 6.0; it does not seem
 	  to be supported by Novell DOS 7
 SeeAlso: AX=4457h/DX=FFFFh
 --------O-214457DXFFFF-----------------------
-INT 21 U - DR-DOS 6.0 - GET SHARE STATUS
+INT 21 U - DR DOS 6.0 - GET SHARE STATUS
 	AX = 4457h
 	DX = FFFFh
 Return: AX = SHARE status
 SeeAlso: INT 2F/AX=1000h
 --------O-214458-----------------------------
-INT 21 U - DR-DOS 5.0+ internal - GET POINTER TO INTERNAL VARIABLE TABLE
+INT 21 U - DR DOS 5.0+ internal - GET POINTER TO INTERNAL VARIABLE TABLE
 	AX = 4458h
 Return: ES:BX -> internal variable table (see #0871,#0872)
-	AX = ??? (0B50h for DR-DOS 5.0, 0A56h for DR-DOS 6.0, 0FE4h for
+	AX = ??? (0B50h for DR DOS 5.0, 0A56h for DR DOS 6.0, 0FE4h for
 		  Novell DOS 7)
 SeeAlso: AX=4452h
 
-Format of DR-DOS 5.0-6.0 internal variable table:
+Format of DR DOS 5.0-6.0 internal variable table:
 Offset	Size	Description	(Table 0871)
  00h	WORD	???
  02h	WORD	segment of ???
@@ -4515,12 +4539,12 @@ Offset	Size	Description	(Table 0871)
  09h  2 BYTEs	???
  0Bh	WORD	KB of extended memory at startup
  0Dh	BYTE	number of far jump entry points
- 0Eh	WORD	segment containing far jumps to DR-DOS entry points (see #0874)
+ 0Eh	WORD	segment containing far jumps to DR DOS entry points (see #0874)
  10h	WORD	(only if kernel loaded in HMA) offset in HMA of first free HMA
 		  memory block (see #0875) or 0000h if none; segment is FFFFh
  12h	WORD	pointer to segment of environment variables set in CONFIG,
 		  or 0000h if already used
----DR-DOS 6.0---
+---DR DOS 6.0---
  14h	WORD	(only if kernel loaded in HMA) offset in HMA of first used HMA
 		memory block (see #0875) or 0000h if none; segment is FFFFh
  16h  8 BYTEs	???
@@ -4530,7 +4554,7 @@ Offset	Size	Description	(Table 0871)
  2Ah  2 BYTEs	???
  2Ch	WORD	offset in DOS data segment of far pointer to INT 2F/AX=1000h
 		  handler
-Note:	the segment used for the DR-DOS 6.0 CONFIG environment variables
+Note:	the segment used for the DR DOS 6.0 CONFIG environment variables
 	  (excluding COMSPEC, VER and OS) is only useful for programs/drivers
 	  called from CONFIG.SYS. The word is set to zero later when the area
 	  is copied to the COMMAND.COM environment space.  This allows
@@ -4549,7 +4573,7 @@ Offset	Size	Description	(Table 0873)
  02h	WORD	size of buffer in bytes
  04h	WORD	???
 
-Format of kernel entry jump table for DR-DOS 5.0-6.0:
+Format of kernel entry jump table for DR DOS 5.0-6.0:
 Offset	Size	Description	(Table 0874)
  00h  5 BYTEs	far jump to kernel entry point for CP/M CALL 5
  05h  5 BYTEs	far jump to kernel entry point for INT 20
@@ -4575,7 +4599,7 @@ Notes:	all of these entry points are indirected through this jump table
 	  returning an error code (the original handler for INT 2F returns
 	  AL=03h [fail]).
 
-Format of HMA Memory Block (DR-DOS 6.0 kernel loaded in HMA):
+Format of HMA Memory Block (DR DOS 6.0 kernel loaded in HMA):
 Offset	Size	Description	(Table 0875)
  00h	WORD	offset of next HMA Memory Block (0000h if last block)
  02h	WORD	size of this block in bytes (at least 10h)
@@ -4586,14 +4610,14 @@ Offset	Size	Description	(Table 0875)
 		03h SHARE
 		04h TaskMAX
 		05h COMMAND
- 05h	var	TSR (or system) code and data. DR-DOS TSR's, such as KEYB,
+ 05h	var	TSR (or system) code and data. DR DOS TSR's, such as KEYB,
 		  hooks interrupts using segment FFFEh instead FFFFh.
 --------O-214459-----------------------------
 INT 21 - DR MultiUser DOS 5.0 - API
 	AX = 4459h
 	CL = function (see #3145 at INT E0"CP/M")
 	DS,DX = parameters
-Notes:	DR-DOS 5.0 and Novell DOS 7 return CF set and AX=0001h
+Notes:	DR DOS 5.0 and Novell DOS 7 return CF set and AX=0001h
 	this API is also available on INT E0
 SeeAlso: AX=4452h,INT E0"CP/M"
 --------N-2144E0-----------------------------
@@ -4754,7 +4778,7 @@ Notes:	DOS 2.x destroys all registers, including SS:SP
 	for function 03h, DOS assumes that the overlay is being loaded into
 	  memory allocated by the caller
 	function 01h was undocumented prior to the release of DOS 5.0
-	some versions (such as DR-DOS 6.0) check the parameters and parameter
+	some versions (such as DR DOS 6.0) check the parameters and parameter
 	  block and return an error if an invalid value (such as an offset of
 	  FFFFh) is found
 	background programs under European MS-DOS 4.0 must use the new
@@ -4790,7 +4814,7 @@ Notes:	DOS 2.x destroys all registers, including SS:SP
 	  format executables have no PSP
 	under the FlashTek X-32 DOS extender, only function 00h is supported
 	  and the pointers are passed in DS:EDX and ES:EBX
-	DR-DOS 6 always loads .EXE-format programs with no fixups and
+	DR DOS 6 always loads .EXE-format programs with no fixups and
 	  .COM-format programs starting with 9Ch 55h (PUSHF/PUSH BP) above the
 	  64K mark to avoid the EXEPACK bug, by extending the memory block
 	  containing the program's environment; this code is disabled if the
@@ -4916,6 +4940,7 @@ Notes:	if word at offset 02h is 4, it should be treated as 00h, since pre-1.10
 	  load image described by the .EXE header; this data may be overlays,
 	  the actual executable for newer-format executables, or debugging
 	  information (see #0887,#0911)
+SeeAlso: #0883
 
 Format of ROM Module Header:
 Offset	Size	Description	(Table 0882)
@@ -4976,6 +5001,7 @@ Offset	Size	Description	(Table 0883)
  3Eh  2 BYTEs	expected Windows version (minor version first)
 Note:	this header is documented in detail in the Windows 3.1 SDK Programmer's
 	  Reference, Vol 4.
+SeeAlso: #0881
 
 Bitfields for new executable program flags:
 Bit(s)	Description	(Table 0884)
@@ -5699,18 +5725,24 @@ INT 21 - DIET v1.10+ (Overlay Mode) - EXPAND PROGRAM???
 	AX = 4BF1h
 Return: ???
 SeeAlso: AX=37D0h,AX=4BF0h
+--------v-214BF1-----------------------------
+INT 21 - VIRUS - "Jerusalem 2" - INSTALLATION CHECK
+	AX = 4BF1h
+Return: AX = 1FB4h if resident
+SeeAlso: AX=3Fh/BX=FEB0h"VIRUS",AX=4BDDh"VIRUS",AX=4BFEh"VIRUS"
 --------v-214BFE-----------------------------
 INT 21 - VIRUS - "Hitchcock", "Dark Avenger-1028", "1193" - INSTALLATION CHECK
 	AX = 4BFEh
-Return: AX = 1234h if "Hitchcock" resident
+Return: AX = 1234h if "Hitchcock" or "Storm" resident
 	AX = ABCDh if "1193"/"Copyright" resident
 	DI = 55BBh if "Dark Avenger-1028" resident
-SeeAlso: AX=4BDDh,AX=4BFFh"Justice"
+SeeAlso: AX=4BDDh,AX=4BF1h"VIRUS",AX=4BFFh"Justice"
 --------v-214BFF-----------------------------
 INT 21 - VIRUS - "USSR-707", "Justice", "Europe 92" - INSTALLATION CHECK
 	AX = 4BFFh
 Return: BL = FFh if "USSR-707" resident
 	DI = 55AAh if "Justice" resident
+	AX = 1234h if "Hitchcock.1238" resident
 	CF clear if "Europe 92" resident
 SeeAlso: AX=4BFEh,AX=4BFFh"Cascade",AX=5252h
 --------v-214BFFSI0000-----------------------
@@ -5795,7 +5827,7 @@ BUGS:	under DOS 3.x and 4.x, the second and subsequent calls to this function
 	  directory search without the volume-label bit.  Such implicit
 	  searches are performed by CREATE (AH=3Ch), OPEN (AH=3Dh), UNLINK
 	  (AH=41h), and RENAME (AH=56h)
-	DR-DOS 3.41 and 5.0 return the Directory attribute for the volume label
+	DR DOS 3.41 and 5.0 return the Directory attribute for the volume label
 SeeAlso: AH=11h,AH=4Fh,AX=4301h,AX=714Eh,AX=71A1h,AX=F257h/SF=02h
 SeeAlso: INT 2F/AX=111Bh,INT 2F/AX=B711h
 
@@ -5842,7 +5874,7 @@ Return: CF clear if successful
 	    AX = error code (12h) (see #0960 at AH=59h)
 Note:	under Novell DOS 7, if the FindFirst call (AH=4Eh) had CX=0088h, then
 	  the next matching deleted file will be returned
-BUG:	DR-DOS 3.41 and 5.0 return the Directory attribute for the volume label
+BUG:	DR DOS 3.41 and 5.0 return the Directory attribute for the volume label
 SeeAlso: AH=12h,AH=4Eh,AX=714Fh,AX=71A1h
 --------D-2150-------------------------------
 INT 21 - DOS 2+ internal - SET CURRENT PROCESS ID (SET PSP ADDRESS)
@@ -5852,7 +5884,7 @@ Notes:	DOS uses the current PSP address to determine which processes own files
 	  and memory; it corresponds to process identifiers used by other OSs
 	under DOS 2.x, this function cannot be invoked inside an INT 28h
 	  handler without setting the Critical Error flag
-	under MS-DOS 3.0+ and DR-DOS 3.41+, this function does not use any of
+	under MS-DOS 3.0+ and DR DOS 3.41+, this function does not use any of
 	  the DOS-internal stacks and may thus be called at any time, even
 	  during another INT 21h call
 	some Microsoft applications such as Quick C 2.51 use segments of 0000h
@@ -5864,6 +5896,11 @@ Notes:	DOS uses the current PSP address to determine which processes own files
 	this function is supported by the OS/2 compatibility box
 	this call was undocumented prior to the release of DOS 5.0
 SeeAlso: AH=26h,AH=51h,AH=62h
+--------v-2150FD-----------------------------
+INT 21 - VIRUS - "Predator 2" - INSTALLATION CHECK
+	AX = 50FDh
+Return: AX = FD50h if resident
+SeeAlso: AX=4BFFh"VIRUS",AX=5454h"VIRUS"
 --------D-2151-------------------------------
 INT 21 - DOS 2+ internal - GET CURRENT PROCESS ID (GET PSP ADDRESS)
 	AH = 51h
@@ -6013,7 +6050,7 @@ Offset	Size	Description	(Table 0915)
 ---DOS 2.x,3.x---
  08h  8 BYTEs	unused
 ---DOS 4.0+ ---
- 08h  8 BYTEs	ASCII program name if PSP memory block or DR-DOS UMB,
+ 08h  8 BYTEs	ASCII program name if PSP memory block or DR DOS UMB,
 		  else garbage
 		null-terminated if less than 8 characters
 Notes:	the next MCB is at segment (current + size + 1)
@@ -6024,15 +6061,15 @@ Notes:	the next MCB is at segment (current + size + 1)
 	for DOS 5+, blocks owned by DOS may have either "SC" or "SD" in bytes
 	  08h and 09h.	"SC" is system code or locked-out inter-UMB memory,
 	  "SD" is system data, device drivers, etc.
-	Some versions of DR-DOS use only seven characters of the program name,
+	Some versions of DR DOS use only seven characters of the program name,
 	  placing a NUL in the eighth byte.
 SeeAlso: #0917,#0919,#0920
 
 (Table 0916)
 Values for special flag PSP segments:
  0000h	free
- 0006h	DR-DOS XMS UMB
- 0007h	DR-DOS excluded upper memory ("hole")
+ 0006h	DR DOS XMS UMB
+ 0007h	DR DOS excluded upper memory ("hole")
  0008h	belongs to DOS
  FFF7h	386MAX v6.01+ ???
  FFFAh	386MAX UMB control block (see #0771 at AX=4402h"386MAX")
@@ -6239,7 +6276,7 @@ Offset	Size	Description	(Table 0923)
 Notes:	most of the above hooks (except -04h, -14h, -18h, and -3Ch) assume
 	  either that SS=DOS DS or SS=DS=DOS DS and directly access
 	  DOS-internal data
-	sharing hooks are not supported by DR-DOS 5-6; they appear to be
+	sharing hooks are not supported by DR DOS 5-6; they appear to be
 	  supported by Novell DOS 7, with a segment of 0000h indicating the
 	  DOS data segment
 SeeAlso: #0924,#0925
@@ -6257,7 +6294,7 @@ Offset	Size	Description	(Table 0924)
  06h	DWORD	pointer to start of system file table chain for file
  0Ah	WORD	unique sequence number
  0Ch	var	ASCIZ full pathname
-Note:	not supported by DR-DOS SHARE 1.1 and 2.0; will reportedly be
+Note:	not supported by DR DOS SHARE 1.1 and 2.0; will reportedly be
 	  supported by Novell DOS 7
 SeeAlso: #0923,#0925
 
@@ -6319,7 +6356,7 @@ Offset	Size	Description	(Table 0927)
 	 36h	WORD	??? apparently always 0000h
 SeeAlso: #0926,#0928,#0929
 
-Format of DOS 3.1-3.3x, DR-DOS 5.0-6.0 system file tables and FCB tables:
+Format of DOS 3.1-3.3x, DR DOS 5.0-6.0 system file tables and FCB tables:
 Offset	Size	Description	(Table 0928)
  00h	DWORD	pointer to next file table (offset FFFFh if last)
  04h	WORD	number of files in this table
@@ -6339,9 +6376,9 @@ Offset	Size	Description	(Table 0928)
 			  (see #0694 at AH=32h)
 	 0Bh	WORD	starting cluster of file
 	 0Dh	WORD	file time in packed format (see #0951 at AX=5700h)
-			not used for character devices in DR-DOS
+			not used for character devices in DR DOS
 	 0Fh	WORD	file date in packed format (see #0952 at AX=5700h)
-			not used for character devices in DR-DOS
+			not used for character devices in DR DOS
 	 11h	DWORD	file size
 	---system file table---
 	 15h	DWORD	current offset in file (may be larger than size of
@@ -6461,9 +6498,9 @@ Offset	Size	Description	(Table 0930)
 		  this drive, 00000000h if native DOS
  56h	WORD	available for use by IFS driver
 Notes:	the path for invalid drives is normally set to X:\, but may be empty
-	  after JOIN x: /D in DR-DOS 5.0 or NET USE x: /D in older LAN versions
+	  after JOIN x: /D in DR DOS 5.0 or NET USE x: /D in older LAN versions
 	normally, only one of bits 13&12 may be set together with bit 14, but
-	  DR-DOS 5.0 uses other combinations for bits 15-12: 0111 JOIN,
+	  DR DOS 5.0 uses other combinations for bits 15-12: 0111 JOIN,
 	  0001 SUBST, 0101 ASSIGN (see #0931)
 	Windows for Workgroups 3.11 network sets the path to the local
 	  drive and directory even for network drives; in that case the
@@ -6473,7 +6510,7 @@ Notes:	the path for invalid drives is normally set to X:\, but may be empty
 	SoftWindows on the Macintosh PowerPC sets \\E for the host drive
 SeeAlso: #0931
 
-Format of DR-DOS 5.0-6.0 current directory structure entry (array):
+Format of DR DOS 5.0-6.0 current directory structure entry (array):
 Offset	Size	Description	(Table 0931)
  00h 67 BYTEs	ASCIZ pathname of actual root directory for this logical drive
  43h	WORD	drive attributes
@@ -7088,7 +7125,7 @@ Offset	Size	Description	(Table 0950)
  1Fh	WORD	number of cylinders
  21h	BYTE	device type
  22h	WORD	device attributes (removable or not, etc)
----DR-DOS 5+ ---
+---DR DOS 5+ ---
  15h	DWORD	total number of sectors if word at 08h contains zero
  19h  6 BYTEs	reserved
 ---European MS-DOS 4.00---
@@ -7102,6 +7139,18 @@ Return: AL = verify flag
 	    00h off
 	    01h on (all disk writes verified after writing)
 SeeAlso: AH=2Eh
+--------v-2154--BX4475-----------------------
+INT 21 - VIRUS - "Dual_GtM"/"Ganeu" - INSTALLATION CHECK
+	AH = 54h
+	BX = 4475h ("Du")
+	CX = 616Ch ("al")
+Return: BX = 4774h ("Gt") and CX = 4D21h ("M!") if resident
+SeeAlso: AX=50FDh"VIRUS",AX=5454h"VIRUS"
+--------v-215454-----------------------------
+INT 21 - VIRUS - "Dudley" - INSTALLATION CHECK
+	AX = 5454h
+Return: AX = 0000h if resident
+SeeAlso: AX=50FDh"VIRUS",AH=54h/BX=4475h"VIRUS",AX=7BCEh"VIRUS"
 --------D-2155-------------------------------
 INT 21 - DOS 2+ internal - CREATE CHILD PSP
 	AH = 55h
@@ -7137,7 +7186,7 @@ Notes:	allows move between directories on same logical volume
 	  destination specs must be canonical (as returned by AH=60h).
 	  Wildcards in the destination are replaced by the corresponding char
 	  of each source file being renamed.  Under DOS 3.x, the call will fail
-	  if the destination wildcard is *.* or equivalent; under DR-DOS 5.0,
+	  if the destination wildcard is *.* or equivalent; under DR DOS 5.0,
 	  the call will fail if any wildcards are used.	 When invoked via
 	  AX=5D00h, only those files matching the attribute mask in CL are
 	  renamed.
@@ -7145,7 +7194,7 @@ Notes:	allows move between directories on same logical volume
 	  and the new-name pointer is in ES:EDI (DS must equal ES)
 	(DOS 2.x only) this function renames file by creating a new directory
 	  entry with the new name,then marking the old entry deleted
-BUG:	under DR-DOS 3.41, this function will generate a new directory entry
+BUG:	under DR DOS 3.41, this function will generate a new directory entry
 	  with the new name (including any wildcards) which can only be removed
 	  with a sector editor when invoked via AX=5D00h
 SeeAlso: AH=17h,AX=4301h,AX=5D00h,AH=60h,AH=71h,AX=F257h/SF=04h
@@ -7163,7 +7212,7 @@ Return: CF clear if successful
 	    DX = file's date (see #0952)
 	CF set on error
 	    AX = error code (01h,06h) (see #0960)
-Note:	under DR-DOS 3.41 and 5.0, this function returns 0 (no date/time) for
+Note:	under DR DOS 3.41 and 5.0, this function returns 0 (no date/time) for
 	  character devices; MS-DOS returns date and time of opening
 SeeAlso: AX=5701h
 
@@ -7427,7 +7476,7 @@ Notes:	the Set subfunction accepts any value in BL for DOS 3.x and 4.x;
 	  before terminating
 	Toshiba MS-DOS v2.11 supports subfunctions 00h and 01h, as does the
 	  TI Professional MS-DOS v2.13
-	DR-DOS 3.41 reportedly reverses subfunctions 00h and 01h
+	DR DOS 3.41 reportedly reverses subfunctions 00h and 01h
 SeeAlso: AH=48h,AH=49h,AH=4Ah,INT 2F/AX=4310h,INT 67/AH=3Fh
 
 (Table 0959)
@@ -7489,7 +7538,7 @@ Notes:	functions available under DOS 2.x map the true DOS 3.0+ error code into
 	  one supported under DOS 2.x
 	you should call this function to retrieve the true error code when an
 	  FCB or DOS 2.x call returns an error
-	under DR-DOS 5.0, this function does not use any of the DOS-internal
+	under DR DOS 5.0, this function does not use any of the DOS-internal
 	  stacks and may thus be called at any time
 SeeAlso: AH=59h/BX=0001h,AX=5D0Ah,INT 2F/AX=122Dh
 
@@ -7669,10 +7718,11 @@ BUGS:	COMPAQ DOS 3.31 hangs if the pathname is at XXXXh:0000h; it apparently
 	MS-DOS 5.00 revisions A and B and PC-DOS 5.00 revision A reportedly
 	  hang the system if the specified path is the root directory and the
 	  root directory is full (no free directory entries)
+	Mark Incley <mincley@krisalis.demon.co.uk> reports that this function
+	  hangs in DOS 6.2x if the name includes two consecutive path
+	  separators (e.g. C:\\ )
 Note:	under the FlashTek X-32 DOS extender, the path pointer is in DS:EDX
 SeeAlso: AH=3Ch,AH=5Bh
-!!! hang if two consecutive path separators (C:\\ ) in DOS 6.2x
-!!! (from Mark Incley <mincley@krisalis.demon.co.uk>)
 --------D-215B-------------------------------
 INT 21 - DOS 3.0+ - CREATE NEW FILE
 	AH = 5Bh
@@ -7704,7 +7754,7 @@ Notes:	error returned unless SHARE or network installed
 	locked regions become entirely inaccessible to other processes
 	duplicate handles created with AH=45h or AH=46h inherit locks, but
 	  handles inherited by child processes (see AH=4Bh) do not
-	under DR-DOS 3.41 and 5.0, if a process opens a file without the no-
+	under DR DOS 3.41 and 5.0, if a process opens a file without the no-
 	  inherit flag and then starts a child, any locks set by the parent
 	  are ignored, and the child will only get an error if it tries to
 	  lock an area previously locked by the parent process
@@ -7720,8 +7770,8 @@ Notes:	does not check AH.  Out of range values will crash the system
 	sharing delay loops skipped
 	a special sharing mode is enabled to handle FCBs opened across network
 	wildcards are enabled for DELETE (AH=41h) and RENAME (AH=56h) under
-	  MS-DOS; under DR-DOS 3.41, wildcards corrupt the filesystem; and
-	  under DR-DOS 5.0-6.0, the call returns error code 03h due to improper
+	  MS-DOS; under DR DOS 3.41, wildcards corrupt the filesystem; and
+	  under DR DOS 5.0-6.0, the call returns error code 03h due to improper
 	  support for the server function call (see below)
 	an extra file attribute parameter is enabled for OPEN (AH=3Dh),
 	  DELETE (AH=41h), and RENAME (AH=56h)
@@ -7729,7 +7779,7 @@ Notes:	does not check AH.  Out of range values will crash the system
 	  by AH=60h); this is apparently to prevent multi-hop file forwarding
 BUGS:	the OS/2 2.0 DOS Boot Session incorrectly maps DOS drive letters,
 	  seemingly ignoring HPFS drives
-	DR-DOS 5.0-6.0 merely recursively call INT 21 after loading the
+	DR DOS 5.0-6.0 merely recursively call INT 21 after loading the
 	  registers from the DPL, leading to problems for peer-to-peer
 	  networks
 SeeAlso: AH=3Dh,AH=41h,AH=56h,AH=60h
@@ -7761,7 +7811,7 @@ Return: CF set on error
 Notes:	flushes buffers and updates directory entries for each file which has
 	  been written to; if remote file, calls INT 2F/AX=1107h
 	the computer ID and process ID are stored but ignored under DOS 3.3
-	not supported by DR-DOS 3.41 and 5.0; returns error code 01h
+	not supported by DR DOS 3.41 and 5.0; returns error code 01h
 SeeAlso: AH=0Dh,AH=68h,INT 2F/AX=1107h
 --------D-215D02-----------------------------
 INT 21 U - DOS 3.1+ internal - SHARE.EXE - CLOSE FILE BY NAME
@@ -7775,7 +7825,7 @@ Return: CF set on error
 Notes:	error unless SHARE is loaded (calls [SysFileTable-28h])
 	  (see #0923 at AH=52h)
 	name must be canonical fully-qualified, such as returned by AH=60h
-	not supported by DR-DOS 3.41 and 5.0; returns error code 01h
+	not supported by DR DOS 3.41 and 5.0; returns error code 01h
 	not supported by Novell DOS 7
 SeeAlso: AX=5D03h,AX=5D04h,AH=3Eh,AH=60h
 --------D-215D03-----------------------------
@@ -7787,7 +7837,7 @@ Return: CF set on error
 	CF clear if successful
 Notes:	error unless SHARE is loaded (calls [SysFileTable-30h])
 	  (see #0923 at AH=52h)
-	not supported by DR-DOS 3.41 and 5.0; returns error code 01h
+	not supported by DR DOS 3.41 and 5.0; returns error code 01h
 	not supported by Novell DOS 7
 SeeAlso: AX=5D02h,AX=5D04h
 --------D-215D04-----------------------------
@@ -7800,7 +7850,7 @@ Return: CF set on error
 	CF clear if successful
 Notes:	error unless SHARE is loaded (calls [SysFileTable-2Ch])
 	   (see #0923 at AH=52h)
-	not supported by DR-DOS 3.41 and 5.0; returns error code 01h
+	not supported by DR DOS 3.41 and 5.0; returns error code 01h
 	not supported by Novell DOS 7
 SeeAlso: AX=5D02h,AX=5D03h,INT 2F/AX=111Dh
 --------D-215D05-----------------------------
@@ -7818,7 +7868,7 @@ Return: CF clear if successful
 Notes:	error unless SHARE is loaded (calls [SysFileTable-18h])
 	  (see #0923 at AH=52h)
 	names are always canonical fully-qualified, such as returned by AH=60h
-	not supported by DR-DOS 3.41 and 5.0 and Novell DOS 7, but does not
+	not supported by DR DOS 3.41 and 5.0 and Novell DOS 7, but does not
 	  return an error, instead destroying AX
 SeeAlso: AH=5Ch,AH=60h
 --------D-215D06-----------------------------
@@ -7841,7 +7891,7 @@ Notes:	the Critical Error flag is used in conjunction with the InDOS flag
 	SHARE and other DOS utilities consult the byte at offset 04h in the
 	  DOS data segment (see INT 2F/AX=1203h) to determine the SDA format
 	  in use: 00h = DOS 3.x, 01h = DOS 4.0-6.0, other = error.
-	DR-DOS 3.41+ supports this function, but the SDA format beyond the
+	DR DOS 3.41+ supports this function, but the SDA format beyond the
 	  first 18h bytes is completely different from MS-DOS
 SeeAlso: AX=5D0Bh,INT 2A/AH=80h,INT 2A/AH=81h,INT 2A/AH=82h
 
@@ -7859,7 +7909,7 @@ Offset	Size	Description	(Table 0967)
  00h	BYTE	critical error flag ("ErrorMode")
  01h	BYTE	InDOS flag (count of active INT 21 calls)
  02h	BYTE	drive on which current critical error occurred, or FFh
-		(DR-DOS sets to drive number during INT 24, 00h otherwise)
+		(DR DOS sets to drive number during INT 24, 00h otherwise)
  03h	BYTE	locus of last error
  04h	WORD	extended error code of last error
  06h	BYTE	suggested action for last error
@@ -8049,7 +8099,7 @@ Notes:	documented for DOS 5+, but undocumented in earlier versions
 	the MS-DOS Programmer's Reference incorrectly states that this call was
 	  introduced in DOS 4, and fails to mention that the ERROR structure
 	  passed to this function is a DOS parameter list.
-BUGS:	DR-DOS 3.41 and 5.0 read the value for ES from the DS field of the
+BUGS:	DR DOS 3.41 and 5.0 read the value for ES from the DS field of the
 	  DPL; fortunately, MS-DOS ignores the DS field, allowing a generic
 	  routine which sets both DS and ES fields to the same value
 	Novell DOS 7 does not save the pointer, which is always reported as

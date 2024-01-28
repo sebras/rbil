@@ -1,19 +1,9 @@
-NEW FEATURES
-============
-
-The new file TABLES.LST contains pointers to the most-commonly used and
-most-useful tables (and a few entire entries) in the interrupt list.
-Hypertext conversion program authors can use this file as an index.
-
-BIBLIO.LST has been split off from INTERRUP.1ST.
-
-
 UPCOMING CHANGES
 ================
 
 Given the average growth rates over the past few years, the interrupt
 list will require seven archive beginning with either INTER51 or INTER52
-next summer.  Therefore, unless I get feedback to the contrary, I
+this summer.  Therefore, unless I get feedback to the contrary, I
 will switch to 720K per archive from the current 360K when an additional
 archive would become necessary.
 

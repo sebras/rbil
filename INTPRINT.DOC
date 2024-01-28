@@ -1,4 +1,4 @@
-			    INTPRINT v3.03
+			    INTPRINT v3.10
 			    by Ralf Brown
 
 The INTPRINT program is hereby donated to the public domain, with the sincere
@@ -144,23 +144,26 @@ FILTER FILE:
 ------------
 
 The filter file specified with -F is a simple text file containing
-include lines, exclude lines, and comment lines.  Include lines start
-with a plus sign (+) in the first column, followed immediately by the
-desired string; exclude lines start with a minus sign (-) in the first
-column, followed immediately by the desired string.  Comment lines
-start with a hash mark (#) in the first column and are ignored.  A
-future version of INTPRINT will include alternate forms of include and
-exclude lines which will select based on the classification letter in
-the divider lines rather than the contents of title lines.
+include lines, exclude lines, and comment lines.  Both 'include' and
+'exclude' lines may be based on either a category code or a substring
+of the entry's title line.  Comment lines start with a hash mark (#) in
+the first column and are ignored.  The other valid command characters
+in the first column are:
 
-If a filter file is specified, only entries whose title lines contain
-at least one of the include lines (ignoring uppercase/lowercase
-distinctions) and none of the exclude lines are processed.  Thus, a
-filter file must contain at least one include line, or INTPRINT will
-skip all interrupt entries and print only the non-interrupt text in the
-file.
+   >  unconditionally include any entry with the specified category letter
+   <  unconditionally exclude any entry with the specified category letter
+   +  include entries containing the specified string, unless unconditionally
+      excluded
+   -  exclude entries containing the specified string, unless unconditionally
+      included
+   i  include entries with the given category letter unless specifically
+      excluded by a '-' line
+   o  override '-' line and include entry anyway if it has the given
+      category letter
 
-All spaces on include and exclude lines are significant.  Thus,
+Note that any category letters or selection strings must immediately
+follow the command character.  All spaces on '+' include and '-' exclude
+lines are significant.  Thus,
 	+ DOS
 will only match entries containing the four-letter sequence " DOS",
 while
@@ -168,10 +171,19 @@ while
 will match any entries containing the sequence "DOS", whether or not it
 is preceded by a blank.
 
+If a filter file is specified, only entries whose title lines contain at
+least one of the '+' include lines (ignoring uppercase/lowercase
+distinctions), none of the '-' exclude lines, or whose category codes
+have been selected by other include/exclude lines, are processed.  Thus,
+a filter file must contain at least one include line, or INTPRINT will
+skip all interrupt entries and print only the non-interrupt text in the
+file.
+
 ----cut here----
-# SAMPLE.FLT
-# Sample filtering file.  Extract MS-DOS calls, but exclude
-# DR-DOS-specific, DOS-extender, and non-DOS networking calls.
+# SAMPLE1.FLT
+# Sample filtering file number 1, using only title includes/excludes.
+# Extract MS-DOS calls, but exclude DR-DOS-specific, DOS-extender, and
+# non-DOS networking calls.
 # Note: a few extraneous calls are still included.
 #
 + DOS
@@ -186,9 +198,28 @@ is preceded by a blank.
 -LAN Manager
 -DECnet DOS
 #
-# end of SAMPLE.FLT
+# end of SAMPLE1.FLT
 ----cut here----
 
+----cut here----
+# SAMPLE2.FLT
+# Sample filtering file number 2, using category includes/excludes.  Extract
+# MS-DOS and DR-DOS calls, but exclude OS/2 and other operating systems.
+#
+# unconditionally include the DOS category
+>D
+# include 'other OSes' category, but remove OS/2, VMiX, PC-MOS, etc.
+iO
+-OS/2
+-VMiX
+-PC-MOS
+-STARLITE
+-WinDOS
+-Acorn BBC
+-Linux DOSEMU
+#
+# end of SAMPLE2.FLT
+----cut here----
 
 ------------------------------------------------------------------------------
 

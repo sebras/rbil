@@ -1,5 +1,5 @@
 Interrupt List, part 2 of 14
-This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------B-1310-------------------------------
 INT 13 - HARD DISK - CHECK IF DRIVE READY
 	AH = 10h
@@ -124,6 +124,8 @@ Notes:	call AH=15h first to determine whether the drive supports a change
 	  line
 	this call also clears the media-change status, so that a disk change
 	  is only reported once
+BUG:	some versions of Award 386 Modular BIOS and AMI BIOS fail to clear
+	  the media-change status
 SeeAlso: AH=15h,AH=49h
 --------B-1317-------------------------------
 INT 13 - FLOPPY DISK - SET DISK TYPE FOR FORMAT (AT,PS)
@@ -277,7 +279,7 @@ Values for Future Domain SCSI controller family code:
  040Ah	TMC-820/830/840/850/860/870/875/880/885 (ROM <= 6.0A)
  050Dh	TMC-840/841/880/881 (ROM 5.2D)
  0700h	TMC-830/850/860/875/885 (ROM 7.0)
---------B-1318--CXD2C9-----------------------
+--------d-1318--CXD2C9-----------------------
 INT 13 - XDF.COM - API
 	AH = 18h
 	CX = D2C9h ("R"+80h, "I"+80h = Roger Ivey)
@@ -4487,6 +4489,147 @@ Program: The ComShare System is a modem-sharing program for NetBIOS and
 Note:	ComShare supports the standard BIOS INT 14h calls with a slight
 	  change in the interpretation of speed values (see #0210 at AH=04h)
 SeeAlso: AH=00h,AH=04h,AX=F4FFh
+--------t-144000-----------------------------
+INT 14 - I1541 - INSTALLATION CHECK
+	AX = 4000h
+Return: AX = 1541h if installed
+	    BH = I1541 major version (BCD)
+	    BL = I1541 minor version (BCD)
+	    CX = 0000h
+--------t-144001-----------------------------
+INT 14 - I1541 - TEST IF 1541 CABLE CONNECTED
+	AX = 4001h
+Return: CF clear if connected
+	    BL = LPT number where 1541 cable is connected (1..3)
+	CF set if cable not connected
+Desc:	scan all the LPT ports searching for the adapter cable
+SeeAlso: AX=4000h
+--------t-144002-----------------------------
+INT 14 - I1541 - SELECT LPT PORT FOR OUTPUT
+	AX = 4002h
+	BL = LPT number (1..3)
+Return: CF clear if successful
+	CF set otherwise
+Desc:	force the input output routines to work on the cable placed on LPT BL
+SeeAlso: AX=4001h
+--------t-144003-----------------------------
+INT 14 - I1541 - RESET ALL DEVICES
+	AX = 4003h
+Desc:	send a reset pulse of 100ms to all CBM devices
+Note:	it is necessary to wait about 2 seconds after reset before executing
+	  other	instructions
+SeeAlso: AX=4000h,AX=4004h
+--------t-144004-----------------------------
+INT 14 - I1541 - SEND LISTEN SIGNAL
+	AX = 4004h
+	BH = device number (0..15)
+Return: CF clear if successful
+	CF set on error
+	    AL = error number (see #3172)
+SeeAlso: AX=4005h,AX=4006h
+
+(Table 3172)
+Values for I1541 error number:
+ 00h	device not present
+ 01h	listener not ready
+ 02h	missing EOI time-out
+ 03h	EOI not completed
+ 04h	data not released
+ 05h	frame error
+--------t-144005-----------------------------
+INT 14 - I1541 - SEND SECONDARY ADDRESS FOR LISTEN
+	AX = 4005h
+	BL = channel number and mode (see #3173)
+Return: CF clear if successful
+	CF set on error
+	    AL = error number (see #3172)
+SeeAlso: AX=4004h,AX=4006h
+
+Bitfields for I1541 channel number and mode:
+Bit(s)	Description	(Table 3173)
+ 7-4	mode
+	0110 read/write
+	1110 close channel	
+	1111 open channel
+ 3-0	channel number
+--------t-144006-----------------------------
+INT 14 - I1541 - SEND UNLISTEN SIGNAL
+	AX = 4006h
+Return: CF clear if successful
+	CF set on error
+	    AL = error number (see #3172)
+SeeAlso: AX=4004h,AX=4005h
+--------t-144007-----------------------------
+INT 14 - I1541 - SEND TALK SIGNAL
+	AX = 4007h
+	BH = device number (0-15)
+Return: CF clear if successful
+	CF set on error
+	    AL = error number (see #3172)
+SeeAlso: AX=4008h,AX=4009h
+--------t-144008-----------------------------
+INT 14 - I1541 - SEND SECONDARY ADDRESS FOR TALK
+	AX = 4008h
+	BL = channel number and mode (see #3173)
+Return: CF clear if successful
+	CF set on error
+	    AL = error number (see also #3172)
+	        40h turn around time-out
+SeeAlso: AX=4007h,AX=4009h
+--------t-144009-----------------------------
+INT 14 - I1541 - SEND UNTALK SIGNAL
+	AX = 4009h
+Return: CF clear if successful
+	CF set on error
+	   AL = error number (see #3172)
+SeeAlso: AX=4007h,AX=4008h
+--------t-14400A-----------------------------
+INT 14 - I1541 - SEND A BYTE TO A DEVICE
+	AX = 400Ah
+	BL = byte to send
+	CL = last-byte flag
+	    00h more bytes follow
+	    01h this is the last byte to be sent
+Return: CF clear if successful
+	CF set on error
+	    AL = error number (see #3172)
+SeeAlso: AX=4000h,AX=400Bh
+--------t-14400B-----------------------------
+INT 14 - I1541 - RECEIVE A BYTE FROM A DEVICE
+	AX = 400Bh
+Return: CF clear if successful
+	    AL = byte received
+	    CL = last-byte flag
+		00h more bytes to follow
+		01h received byte is the last
+	CF set on error
+	    AL = error number
+	        80h EOI response required
+	        81h talker not ready
+	        82h clock not set
+	        83h clock not released
+	    CL = 00h
+SeeAlso: AX=4000h,AX=400Ah
+--------t-14400C-----------------------------
+INT 14 - I1541 - WAIT
+	AX = 400Ch
+	CX = number of 838ns microticks to wait (0000h means 65536, ~55ms)
+SeeAlso: AX=4000h,AX=400Dh
+--------t-14400D-----------------------------
+INT 14 - I1541 - LONGWAIT
+	AX = 400Dh
+	DX:CX = number of 838ns microticks to wait
+	      (0000h:0000h means 4294967296, about one hour)
+Example: To wait 1s you must set DX:CX=(1s/838ns)=1193180
+SeeAlso: AX=4000h,AX=400Ch
+--------t-14400E-----------------------------
+INT 14 - I1541 - GET INFO
+	AX = 400Eh
+Return: AX = LPT port I/O address in use (0000h if no cable in use)
+	BL = LPT number (1..3) in use (00h if no cable in use)
+	CF set if the cable is auto-detectable
+	CF clear if cable could not be auto-detected or is not present
+SeeAlso: AX=4000h
 --------S-1456-------------------------------
 INT 14 U - BWCOM14 - INSTALLATION CHECK
 	AH = 56h

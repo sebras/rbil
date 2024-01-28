@@ -1,4 +1,4 @@
-CMOS Memory Map		Release 1.26			Last change 10/29/95
+CMOS Memory Map		Release 49			Last change 2/11/96
 
 Compiled from multiple sources by Padgett Peterson
 Corrections/additions/comments to: padgett@tccslr.dnet.mmc.com
@@ -157,7 +157,7 @@ Bit(s)	Description	(Table C001)
 	0000 none
 	0011 122 microseconds (minimum)
 	1111 500 milliseconds	
-	0110 976.562 microseconds (default)
+	0110 976.562 microseconds (default 1024 Hz)
 SeeAlso: #C002,#C003,#C004
 ----------R0B--------------------------------
 CMOS 0Bh - RTC - STATUS REGISTER B (read/write) 
@@ -192,7 +192,7 @@ CMOS 0Dh - RTC - STATUS REGISTER D (read only)
 Bitfields for Real-Time Clock status register D:
 Bit(s)	Description	(Table C004)
  7	Valid RAM - 1 indicates batery power good, 0 if dead or disconnected.
- 6-0	unused???
+ 6-0	unused??? (0)
 --------!------------------------------------
 		Organization of CMOS Memory - non-Clock
 
@@ -234,8 +234,7 @@ Values for Reset Code / Shutdown Status Byte:
  09h	used for INT 15/87h (block move) support
  0Ah	resume execution by jump via 40h:0067h
  0Bh	resume execution via IRET via 40h:0067h
- 0Bh	resume execution via RETF via 40h:0067h
- 0Ch	???
+ 0Ch	resume execution via RETF via 40h:0067h
  0Dh-FFh perform power-on reset
 --------!------------------------------------
 
@@ -856,12 +855,13 @@ CMOS 2Fh - IBM - Standard CMOS Checksum, Low Byte
  undefined.  On the original HP Vectra, this checksum only covers locations
  10h to 20h, with a separate checksum for bytes 29h-2Ch (see offset 28h).
 
-
 ----------R30--------------------------------
 CMOS 30h - IBM - EXTENDED MEMORY IN KB (low byte)
+SeeAlso: CMOS 17h"IBM",CMOS 31h
 ----------R31--------------------------------
 CMOS 31h - IBM - EXTENDED MEMORY IN KB (high byte) 
  (this appears to mirror the value in bytes 17h-18h.) 
+SeeAlso: CMOS 18h"IBM",CMOS 30h
 ----------R32--------------------------------
 CMOS 32h - IBM - CENTURY BYTE (BCD value for the century - currently 19h)
 ----------R32--------------------------------

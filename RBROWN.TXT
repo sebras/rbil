@@ -7,12 +7,12 @@ The MSDOS Interrupt List
 	interrupt calls on IBM PCs and compatibles.  Includes both
 	documented and undocumented functions, plus lists of I/O port, CMOS,
 	and memory locations.
-	Current version: INTER48A (release 48, 10/29/95)
-			 INTER48B
-			 INTER48C
-			 INTER48D
-			 INTER48E (conversion and utility programs)
-			 INTER48F (WinHelp-related programs)
+	Current version: INTER49A (release 49, 2/11/96)
+			 INTER49B
+			 INTER49C
+			 INTER49D
+			 INTER49E (conversion and utility programs)
+			 INTER49F (WinHelp-related programs)
 
 DVINT
 	An extract of the MSDOS Interrupt List containing the DESQview

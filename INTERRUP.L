@@ -1,5 +1,5 @@
 Interrupt List, part 12 of 14
-This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------*-62---------------------------------
 INT 62 - reserved for user interrupt
 --------d-62---------------------------------
@@ -47,6 +47,12 @@ Note:	the installation check for this vector is the same as that for the
 	  packet driver specification: scan for the signature string "PKT DRVR"
 	  three bytes past the interrupt handler
 SeeAlso: INT 60"Packet Driver",INT 61"XFS"
+----------62---------------------------------
+INT 62 - PC-DRAFT - PRIMARY DISPLAY DRIVER
+	???
+Return: ???
+Program: PC-DRAFT is a powerful CAD environment by rhv.
+SeeAlso: INT 64"PC-DRAFT",INT 65"PC-DRAFT",INT 66"PC-DRAFT",INT 67"PC-DRAFT"
 --------N-6200-------------------------------
 INT 62 - BW-TCP - HW DRIVER (ETHDEV.SYS) - GET PHYSICAL HARDWARE ADDRESS
 	AH = 00h
@@ -3924,6 +3930,12 @@ Note:	This vector is overwritten by Pdisk to install custom harddrive types.
 	  It can either destroy 4 vectors and take no memory or TSR and take
 	  up some memory.
 SeeAlso: INT 65"Pdisk"
+----------64---------------------------------
+INT 64 - PC-DRAFT - ASYNCHRONOUS DRIVER
+	???
+Return: ???
+Program: PC-DRAFT is a powerful CAD environment by rhv.
+SeeAlso: INT 62"PC-DRAFT",INT 65"PC-DRAFT",INT 66"PC-DRAFT",INT 67"PC-DRAFT"
 --------N-6401-------------------------------
 INT 64 U - BW-NFS - BWRPC - ???
 	AH = 01h
@@ -4040,6 +4052,12 @@ Desc:	The unregistered version of SD62.COM uses the low byte of this vector
 --------d-65---------------------------------
 INT 65 - Pdisk by Scott Garfinkle - Overwritten for Hard Drive information
 SeeAlso: INT 64"Pdisk",INT 66"Pdisk"
+----------65---------------------------------
+INT 65 - PC-DRAFT - SECONDARY DISPLAY DRIVER
+	???
+Return: ???
+Program: PC-DRAFT is a powerful CAD environment by rhv.
+SeeAlso: INT 62"PC-DRAFT",INT 64"PC-DRAFT",INT 66"PC-DRAFT",INT 67"PC-DRAFT"
 --------s-65---------------------------------
 INT 65 - Ad Lib SOUND.COM - INTERFACE
 	SI = function number (see also entries below)
@@ -4223,6 +4241,12 @@ BUG:	the code obviously intends to use INT F0-FE, INT 70-77, and INT 68-6F
 	  ranges in v5.4
 SeeAlso: INT 2F/AX=E300h
 Index: installation checks;Newkey|Newkey;installation check
+----------66---------------------------------
+INT 66 - PC-DRAFT - TABLET/DIGITIZER DRIVER
+	???
+Return: ???
+Program: PC-DRAFT is a powerful CAD environment by rhv.
+SeeAlso: INT 62"PC-DRAFT",INT 64"PC-DRAFT",INT 65"PC-DRAFT",INT 67"PC-DRAFT"
 --------U-66---------------------------------
 INT 66 - PC-Magazin - INCA
 	details not yet availble
@@ -4907,6 +4931,12 @@ Program: CUCKOO is a resident on-screen clock with optional hourly chime or
 Note:	this is not a vector; when loaded for the first time, CUCKOO.COM uses
 	  the last unused (0000h:0000h) vector in the range 60h-67h to store
 	  the signature value 434Ch:4F4Bh ('CLOK')
+----------67---------------------------------
+INT 67 - PC-DRAFT - KEYBOARD DRIVER
+	???
+Return: ???
+Program: PC-DRAFT is a powerful CAD environment by rhv.
+SeeAlso: INT 62"PC-DRAFT",INT 64"PC-DRAFT",INT 65"PC-DRAFT",INT 66"PC-DRAFT"
 --------N-6700-------------------------------
 INT 67 - PC-NET, Alloy NTNX - LOCK SEMAPHORE AND WAIT
 	AH = 00h
@@ -4970,6 +5000,25 @@ Values for 386MAX MEMLIMIT return code:
  07h	XMS limit set
  08h	unable to uninstall
  09h	unloaded
+--------u-672833-----------------------------
+INT 67 - Q87 v4+ - PREPARE TO UNLOAD AND GET XMS HANDLE FOR Q87 MEMORY
+	AX = 2833h
+	EAX = 29482833h (entire EAX value required)
+Return: EAX = XMS handle for memory allocated when Q87 was installed
+	EBX = status
+	    00000000h Q87 is in demo mode (countdown running);
+			  Q87 remains active
+	    00000001h Q87 is in registered mode; memory manager's IDT, GDT,
+			  and optionally CR0 (if BL <> 5Fh on entry) have
+			  been restored
+	    00000002h Q87 is in demo mode (demo time has expired);
+			  Q87 remains active
+Note:	this call is used by UNLOAD87 to release the memory used by Q87
+BUG:	v4.00-v4.03 will hang on most machines when run under bare DOS with
+	  no memory manager, because neither Q87 nor UNLOAD87 checks whether
+	  there is a valid INT 67 handler before performing an installation
+	  check via INT 67
+SeeAlso: AX=4321h,INT 21/AX=4321h/EAX=87654321h
 --------m-673F--CX5145-----------------------
 INT 67 U - QEMM-386 v4.23+ - INSTALLATION CHECK
 	AH = 3Fh
@@ -6153,6 +6202,18 @@ INT 67 - LIM EMS - GET HANDLE AND ALLOCATE MEMORY
 Return: AH = status (00h,80h,81h,84h,85h,87h,88h,89h) (see #2778)
 	DX = handle if AH=00h
 SeeAlso: AH=45h
+--------u-674321-----------------------------
+INT 67 - Q87 v4+ - INSTALLATION CHECK
+	AX = 4321h
+	EAX = 87654321h (entire EAX value required)
+Return: EAX = 12345678h if Q87 is installed
+Note:	this call requires that VCPI services be available; if they are not,
+	  this call will not be recognized
+BUG:	v4.00-v4.03 will hang on most machines when run under bare DOS with
+	  no memory manager, because neither Q87 nor UNLOAD87 checks whether
+	  there is a valid INT 67 handler before performing an installation
+	  check via INT 67
+SeeAlso: AX=2833h,INT 21/AX=4321h
 --------m-6744-------------------------------
 INT 67 - LIM EMS - MAP MEMORY
 	AH = 44h

@@ -1,5 +1,5 @@
 Interrupt List, part 13 of 14
-This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------N-6F---------------------------------
 INT 6F - Novell NetWare - PCOX API (3270 PC terminal interface)
 	AX = function
@@ -7388,7 +7388,7 @@ INT 7F - Alloy NTNX, MW386 - DIRECT MEMORY TRANSFER
 Return: AL = status
 	    00h successful
 	    0Ah source or destination out of range
-	    0Bh transfer kernal busy--try again
+	    0Bh transfer kernel busy--try again
 Notes:	this call transfers memory contents directly between users; both source
 	  and destination user IDs may differ from the caller's ID
 	no segment wrap is allowed

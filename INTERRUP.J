@@ -1,5 +1,5 @@
 Interrupt List, part 10 of 14
-This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------F-2FCB00-----------------------------
 INT 2F - Communicating Applications Specification - INSTALLATION CHECK
 	AX = CB00h
@@ -1922,7 +1922,7 @@ Call NLCACHE/NWCACHE API entry point with:
 		Return: CF set
 			AX = 0001h (invalid function)
 --------F-2FDA00-----------------------------
-INT 2F - ZyXEL ZFAX - INSTALLATION CHECK
+INT 2F - ZyXEL ZFAX v1.x - INSTALLATION CHECK
 	AX = DA00h
 Return: AH = enabled state (00h = enabled, 01h = disabled)
 	AL = 5Ah installed
@@ -1932,18 +1932,18 @@ Note:	This function, and the other DAxxh functions, may apply only to version
 	  1 of the software; see AX=DB00h for the version 2 installation check
 SeeAlso: AX=CBDCh,AX=DA01h,AX=DA02h,AX=DA03h,AX=DB00h
 --------F-2FDA01-----------------------------
-INT 2F - ZyXEL ZFAX - UNINSTALL
+INT 2F - ZyXEL ZFAX v1.x - UNINSTALL
 	AX = DA01h
 Return: AL = 00h Success
 	     01h Failure
 SeeAlso: AX=DA00h,AX=DB01h
 --------F-2FDA02-----------------------------
-INT 2F - ZyXEL ZFAX - DISABLE
+INT 2F - ZyXEL ZFAX v.1x - DISABLE
 	AX = DA02h
 Return: AL = 00h
 SeeAlso: AX=DA03h,AX=DB02h
 --------F-2FDA03-----------------------------
-INT 2F - ZyXEL ZFAX - ENABLE
+INT 2F - ZyXEL ZFAX v1.x - ENABLE
 	AX = DA03h
 Return: AL = 00h
 SeeAlso: AX=DA02h,AX=DB03h
@@ -1970,16 +1970,16 @@ SeeAlso: INT 62/AH=00h"ETHDEV"
 INT 2F - ZyXEL ZFAX v2+ - INSTALLATION CHECK
 	AX = DB00h
 Return:	AL = 5Bh if installed (v2.x)
-	    ES:BX -> ???
+	    ES:BX -> configuration table???
 	AX = 00DBh if installed (v3)
 	    ES:BX -> ZFAX configuration table (see #2244)
 Program: ZFAX is the bundled FAX software which comes with the ZyXEL model
-	  fax modems.
+	  Fax modems.
 SeeAlso: AX=CBDCh,AX=DA00h,AX=DB01h,AX=DB02h,AX=DB03h
 
 Format of ZFAX Configuration Table:
 Offset	Size	Description	(Table 2244)
- 00h	WORD	version number (0300h for v3.0)
+ 00h	WORD	table version number (0300h for v3.0-v4.01)
  02h	BYTE	reserved
  03h 70 BYTEs	ZFAX working path
  49h 128 BYTEs	path to external editor
@@ -1994,7 +1994,7 @@ Offset	Size	Description	(Table 2244)
 		(00h auto-detect, 01h VGA, 02h EGA, 03h CGA, 04h Hercules)
 312h	BYTE	display type
 		(00h auto-detect, 01h LCD, 02h color, 03h mono)
-313h	BYTE	scan code for ZFAX hotkey
+313h	BYTE	scan code for ZFAX hotkey (see #0005)
 314h	BYTE	shift mask for ZFAX hotkey
 315h	BYTE	tone/pulse dialing (00h tone, 01h pulse)
 316h	BYTE	Caller ID (00h disabled, 01h enabled)
@@ -2018,7 +2018,7 @@ Offset	Size	Description	(Table 2244)
 3C8h	BYTE	voice file compression format
 		00h CELP at 9600bps
 		01h two-bit ADPCM at 19200bps
-		03h three-bit ADPCM at 28800bps
+		02h three-bit ADPCM at 28800bps
 3C9h	BYTE	voice system: DTMF 0 action (see #2247)
 3CAh	BYTE	voice system: DTMF 1 action
 3CBh	BYTE	voice system: DTMF 2 action
@@ -2056,13 +2056,13 @@ Offset	Size	Description	(Table 2244)
 4A0h	BYTE	send immediately (00h disabled, 01h enabled)
 4A1h	BYTE	print capture printer port
 4A2h	BYTE	print capture timer in seconds
-4A3h	BYTE	scan code for print capture hotkey
+4A3h	BYTE	scan code for print capture hotkey (see #0005)
 4A4h	BYTE	shift mask for print capture hotkey
 4A5h	BYTE	DataShell type
 		00h internal Zmodem, 01h Data Shell, 02h disable
 4A6h	BYTE	video I/O type
 		00h auto-detect, 01h use BIOS, 02h direct writes
-4A7h	BYTE	call transfer digits
+4A7h	BYTE	call transfer digits (0-9)
 4A8h	WORD	voice recorder maximum time in seconds (0-999)
 
 (Table 2245)
@@ -2075,6 +2075,7 @@ Values for ZFAX printer type:
  05h	HP Laser Jet III, letter size
  06h	HP Laser Jet III, legal size
  07h	HP Laser Jet III, A4 size
+SeeAlso: #2244
 
 (Table 2246)
 Values for Ring Answer Type:
@@ -2084,6 +2085,7 @@ Values for Ring Answer Type:
  03h	Ring Shell
  04h	DOS Shell
  05h	ignore
+SeeAlso: #2244
 
 (Table 2247)
 Values for DTMF action:
@@ -2097,6 +2099,7 @@ Values for DTMF action:
  07h	voice mailbox
  08h	DOS Shell Out
  09h	Data Shell Out
+SeeAlso: #2244
 --------U-2FDB00-----------------------------
 INT 2F U - WINGO.COM - INSTALLATION CHECK
 	AX = DB00h
@@ -2122,7 +2125,7 @@ Note:	this function unhooks the vectors taken by the ZFAX TSR if they have
 	  not been hooked by other TSRs and releases the TSR's memory
 	ZFAX v2.x crashes the contributor's machine when this function is
 	  called
-SeeAlso: AX=DA01h,AX=DB00h
+SeeAlso: AX=DA01h,AX=DB00h"ZFAX",AX=DB02h"ZFAX"
 --------U-2FDB01-----------------------------
 INT 2F U - WINGO.COM - SET CALLBACK FUNCTION POINTER
 	AX = DB01h
@@ -2136,7 +2139,7 @@ SeeAlso: AX=DB05h"WINGO",AX=DB06h"WINGO"
 INT 2F - ZyXEL ZFAX v2.x - DISABLE
 	AX = DB02h
 Return: AL = 00h
-SeeAlso: AX=DA02h,AX=DB00h,AX=DB03h
+SeeAlso: AX=DA02h,AX=DB00h"ZFAX",AX=DB01h"ZFAX",AX=DB03h"ZFAX"
 --------U-2FDB02-----------------------------
 INT 2F U - WINGO.COM - RESET CALLBACK FUNCTION POINTER
 	AX = DB02h
@@ -2148,7 +2151,7 @@ SeeAlso: AX=DB05h"WINGO",AX=DB06h"WINGO"
 INT 2F - ZyXEL ZFAX v2.x - ENABLE
 	AX = DB03h
 Return: AL = 00h
-SeeAlso: AX=DA03h,AX=DB00h,AX=DB02h
+SeeAlso: AX=DA03h,AX=DB00h"ZFAX",AX=DB02h"ZFAX"
 --------U-2FDB03-----------------------------
 INT 2F U - WINGO.COM - SET ??? FLAG
 	AX = DB03h
@@ -2179,15 +2182,16 @@ Note:	uses Windows service INT 2F/AX=1685h (SWITCH VMs AND CALLBACK) to
 SeeAlso: AX=1685h, AX=DB00h"WINGO",AX=DB01h"WINGO",AX=DB02h"WINGO",
 SeeAlso: AX=DB03h"WINGO",AX=DB04h"WINGO",AX=DB05h"WINGO"
 --------F-2FDB10-----------------------------
-INT 2F - ZyXEL ZFAX v3 - EXECUTE ZFAX MAIN MENU
+INT 2F - ZyXEL ZFAX v3+ - EXECUTE ZFAX MAIN MENU
 	AX = DB10h
+SeeAlso: AX=DB00h"ZFAX",AX=DB11h"ZFAX"
 --------F-2FDB11-----------------------------
-INT 2F - ZyXEL ZFAX v3 - SEND FAX
+INT 2F - ZyXEL ZFAX v3+ - SEND FAX
 	AX = DB11h
-	DS:SI -> filename including path
+	DS:SI -> filename including path (max 128 characters)
 	DS:BX -> remote FAX number
 Return:	AX = status (see #2248)
-SeeAlso: AX=DB12h,AX=DB13h,AX=DB14h,AX=DB20h,AX=DB21h
+SeeAlso: AX=DB00h"ZFAX",AX=DB12h,AX=DB13h,AX=DB14h,AX=DB15h,AX=DB20h,AX=DB21h
 
 (Table 2248)
 Values for ZFAX status:
@@ -2215,97 +2219,145 @@ Values for ZFAX status:
  40h	critical error on disk
  50h	parameter error
 --------F-2FDB12-----------------------------
-INT 2F - ZyXEL ZFAX v3 - PRINT FAX
+INT 2F - ZyXEL ZFAX v3+ - PRINT FAX
 	AX = DB12h
-	DS:SI -> filename, including path
-Return: AX = status
+	DS:SI -> filename, including path (max 128 characters)
+Return: AX = status (see #2248)
 SeeAlso: AX=DB11h,AX=DB13h,AX=DB14h
 --------F-2FDB13-----------------------------
-INT 2F - ZyXEL ZFAX v3 - CONVERT FAX
+INT 2F - ZyXEL ZFAX v3+ - CONVERT FAX
 	AX = DB13h
-	DS:SI -> source filename, including path
-	DS:BX -> destination filename, including path
+	DS:SI -> source filename, including path (max 128 characters)
+	DS:BX -> destination filename, including path (max 80 characters)
 	CX = destination file format
 	    00h FAX, 01h PCX, 02h TIFF, 03h PRN
-Return: AX = status
+Return: AX = status (see #2248)
 SeeAlso: AX=DB11h,AX=DB12h,AX=DB14h,AX=DB22h
 --------F-2FDB14-----------------------------
-INT 2F - ZyXEL ZFAX v3 - VIEW FAX
+INT 2F - ZyXEL ZFAX v3+ - VIEW FAX
 	AX = DB14h
-	DS:SI -> source filename, including path
-Return: AX = status
+	DS:SI -> source filename, including path (max 128 characters)
+Return: AX = status (see #2248)
 SeeAlso: AX=DB11h,AX=DB12h,AX=DB14h
+--------F-2FDB15-----------------------------
+INT 2F - ZyXEL ZFAX v4.01 - SEND FAX WITH LOGO AND SIGNATURE
+	AX = DB15h
+	DS:SI -> source filename, including path (max 128 characters)
+	DS:BX -> remote FAX number
+	DS:CX -> Logo filename
+	DS:DX -> Signature filename
+Return: AX = status (see #2248)
+SeeAlso: AX=DB00h"ZFAX",AX=DB11h
+--------F-2FDB16-----------------------------
+INT 2F - ZyXEL ZFAX v4.01 - QUOTE PREVIOUS STATUS
+	AX = DB16h
+Return: DX:AX -> previous receive state transaction log (see #3171)
+	BX = type (00h incoming FAX, 01h incoming data, 02h incoming voice)
+SeeAlso: AX=DB00h"ZFAX",AX=DB11h,AX=DB17h
+
+Format of ZFAX transaction log receive state:
+Offset	Size	Description	(Table 3171)
+ 00h	WORD	year
+ 02h	WORD	date
+ 04h	WORD	time
+ 06h	WORD	extension number
+ 08h	WORD	type: 00h incoming FAX, 01h outgoing FAX, 02h voice message
+ 0Ah	WORD	status: 00h normal, 01h remote delete
+ 0Ch 125 BYTEs	filename
+ 89h 24 BYTEs	caller ID
+ A1h 20 BYTEs	FAX number
+ B5h 20 BYTEs	remote FAX ID
+ C9h	WORD	error code
+ CBh	WORD	connection direction (00h transmit, 01h receive)
+ CDh	BYTE	connection time minutes
+ CEh	BYTE	connection time seconds
+ CFh	BYTE	???
+ D0h	WORD	connection speed (24, 48, 72, 96, 12, 144)
+ D2h	WORD	connection page size (A4, B4, A3)
+ D4h	WORD	connection coding scheme (1-DN, 1-DH, 2-DN, 2-DH)
+ D6h	WORD	page count
+--------F-2FDB17-----------------------------
+INT 2F - ZyXEL ZFAX v4.01 - BEGIN RECEIVING INCOMING CALL
+	AX = DB17h
+Return: AX = status (0000h successful, 0001h unable to start at this time)
+SeeAlso: AX=DB00h"ZFAX"
+--------F-2FDB18-----------------------------
+INT 2F - ZyXEL ZFAX v4.01 - SCHEDULE CALL
+	AX = DB18h
+	DS:SI -> schedule data (see #3171)
+Return: AX = status (see #2248)
+SeeAlso: AX=DB00h"ZFAX"
 --------F-2FDB20-----------------------------
-INT 2F - ZyXEL ZFAX v3 - POLL FAX
+INT 2F - ZyXEL ZFAX v3+ - POLL FAX
 	AX = DB20h
 	DS:SI -> remote FAX number
-Return: AX = status
+Return: AX = status (see #2248)
 SeeAlso: AX=DB11h,AX=DB21h
 --------F-2FDB21-----------------------------
-INT 2F - ZyXEL ZFAX v3 - SEND VOICE
+INT 2F - ZyXEL ZFAX v3+ - SEND VOICE
 	AX = DB21h
-	DS:SI -> filename including path
+	DS:SI -> filename including path (max 128 characters)
 	DS:BX -> remote phone number
-Return:	AX = status
+Return:	AX = status (see #2248)
 SeeAlso: AX=DB11h,AX=DB20h,AX=DB22h,AX=DB23h,AX=DB24h
 --------F-2FDB22-----------------------------
-INT 2F - ZyXEL ZFAX v3 - CONVERT VOICE FILE
+INT 2F - ZyXEL ZFAX v3+ - CONVERT VOICE FILE
 	AX = DB22h
-	DS:SI -> source filename, including path
-	DS:BX -> destination filename, including path
+	DS:SI -> source filename, including path (max 128 characters)
+	DS:BX -> destination filename, including path (max 80 characters)
 	CX = destination format
 	    00h two-bit ADPCM, 01h three-bit ADPCM, 02h VOC
-Return:	AX = status
+Return:	AX = status (see #2248)
 SeeAlso: AX=DB13h,AX=DB20h,AX=DB21h,AX=DB23h
 --------F-2FDB23-----------------------------
-INT 2F - ZyXEL ZFAX v3 - RECORD VOICE FILE
+INT 2F - ZyXEL ZFAX v3+ - RECORD VOICE FILE
 	AX = DB23h
-	DS:SI -> destination filename, including path
+	DS:SI -> destination filename, including path (max 128 characters)
 	CX = recording channel (0 = telephone line, 1 = microphone/speaker)
 	DX = voice file format
 	    00h CELP, 01h two-bit ADPCM, 02h three-bit ADPCM
-Return: AX = status
+Return: AX = status (see #2248)
 SeeAlso: AX=DB21h,AX=DB22h,AX=DB24h
 --------F-2FDB24-----------------------------
-INT 2F - ZyXEL ZFAX v3 - PLAY VOICE FILE
+INT 2F - ZyXEL ZFAX v3+ - PLAY VOICE FILE
 	AX = DB24h
-	DS:SI -> name of voice file, including path
+	DS:SI -> name of voice file, including path (max 128 characters)
 	CX = playback channel (0 = telephone line, 1 = microphone/speaker)
-Return: AX = status
+Return: AX = status (see #2248)
 SeeAlso: AX=DB21h,AX=DB22h,AX=DB24h
 --------F-2FDB25-----------------------------
-INT 2F - ZyXEL ZFAX v3 - ANSWER MODEM WITH VOICE SYSTEM
+INT 2F - ZyXEL ZFAX v3+ - ANSWER MODEM WITH VOICE SYSTEM
 	AX = DB25h
-Return: AX = status
+Return: AX = status (see #2248)
 SeeAlso: AX=DB21h,AX=DB22h,AX=DB26h,AX=DB27h,AX=DB28h
 --------F-2FDB26-----------------------------
-INT 2F - ZyXEL ZFAX v3 - DIAL PHONE
+INT 2F - ZyXEL ZFAX v3+ - DIAL PHONE
 	AX = DB26h
 	DS:SI -> remote phone number
-Return: AX = status
+Return: AX = status (see #2248)
 SeeAlso: AX=DB25h
 --------F-2FDB27-----------------------------
-INT 2F - ZyXEL ZFAX v3 - RECEIVE FAX - ANSWER MODEM AND SET TO FAX MODE
+INT 2F - ZyXEL ZFAX v3+ - RECEIVE FAX - ANSWER MODEM AND SET TO FAX MODE
 	AX = DB27h
-Return: AX = status
+Return: AX = status (see #2248)
 SeeAlso: AX=DB25h,AX=DB28h
 --------F-2FDB28-----------------------------
-INT 2F - ZyXEL ZFAX v3 - RECEIVE FAX DATA - ANSWER MODEM IN MULTI-AUDIO MODE
+INT 2F - ZyXEL ZFAX v3+ - RECEIVE FAX DATA - ANSWER MODEM IN MULTI-AUDIO MODE
 	AX = DB28h
-Return: AX = status
-SeeAlso: AX=DB25h,AX=DB27h,AX=DB31h
---------F-2FDB31-----------------------------
-INT 2F - ZyXEL ZFAX v3 - SEND DATA - DIAL NUMBER AND UPLOAD FILE WITH ZMODEM
-	AX = DB31h
-	DS:SI -> source file name, including path
-	DS:BX -> remote data number
-Return: AX = status
-SeeAlso: AX=DB00h,AX=DB28h
+Return: AX = status (see #2248)
+SeeAlso: AX=DB25h,AX=DB27h,AX=DB41h
 --------F-2FDB40-----------------------------
-INT 2F - ZyXEL ZFAX v3 - INTERNAL TERMINAL
+INT 2F - ZyXEL ZFAX v3+ - INTERNAL TERMINAL
 	AX = DB40h
-Return: AX = status
+Return: AX = status (see #2248)
 SeeAlso: AX=DB00h
+--------F-2FDB41-----------------------------
+INT 2F - ZyXEL ZFAX v3+ - SEND DATA - DIAL NUMBER AND UPLOAD FILE WITH ZMODEM
+	AX = DB41h
+	DS:SI -> source file name, including path (max 128 characters)
+	DS:BX -> remote data number
+Return: AX = status (see #2248)
+SeeAlso: AX=DB00h,AX=DB28h
 --------K-2FDC00-----------------------------
 INT 2F - GOLD.COM - INSTALLATION CHECK
 	AX = DC00h
@@ -2860,6 +2912,14 @@ Program: SETDRVER is a public domain TSR by Jacob Rieper which sets the
 	  apparent DOS version analogously to MS-DOS SETVER
 Note:	this installation check differs from the usual one of returning AL=FFh
 SeeAlso: AX=E001h,INT 21/AH=52h
+--------j-2FE000-----------------------------
+INT 2F - KAOSHIDE - INSTALLATION CHECK
+	AX = E000h
+Return: AL = FFh if installed
+Program: KAOSHIDE ('Hidden Kaos') is a PD joke TSR which randomly capitalizes
+	  alphabetic keys, written by Philip Maland. Although not a virus,
+	  v2.0 uses some viral-like techniques to hide itself from
+	  memory-reports by reducing DOS memory size.
 --------K-2FE000DX5354-----------------------
 INT 2F - StuffIt v3.21+ - INSTALLATION CHECK
 	AX = E000h
@@ -2882,8 +2942,8 @@ Return: AL = FFh if successful
 	    BL = minor DOS version
 	    CH = DOS version flag
 	    CL = OEM number
-	    DH = major DR-DOS version number (FFh if unknown)
-	    DL = minor DR-DOS version number (FFh if unknown)
+	    DH = major DR DOS version number (FFh if unknown)
+	    DL = minor DR DOS version number (FFh if unknown)
 SeeAlso: AX=E003h,AX=E007h,INT 21/AH=30h
 --------U-2FE003-----------------------------
 INT 2F - SETDRVER.COM v2.10+ - RESET INTERNAL VARIABLES
@@ -3096,6 +3156,14 @@ INT 2F U - ANARKEY.COM v4.0 - GET ???
 Return: AX = ???
 	BL = ???
 SeeAlso: AX=E300h
+--------K-2FE337-----------------------------
+INT 2F - INT16.COM - INSTALLATION CHECK
+	AX = E337h
+Return: AX = 0013h if installed
+Program: INT16.COM is an INT16 keyboard BIOS replacement for
+          INT 16/AH=00h-02h,10h-12h (based on K3) written by Martin Gerdes
+	  and published in c't 05/1990.
+SeeAlso: AX=ED58h
 --------l-2FE44D-----------------------------
 INT 2F - NDOS - API
 	AX = E44Dh
@@ -3217,10 +3285,11 @@ SeeAlso: AX=ED00h,AX=ED10h
 INT 2F U - K5.COM - INSTALLATION CHECK
 	AX = ED58h
 Return: AX = 000Dh if installed
-	    BX = 9999h if driver active
+	    ES = resident code segment
+	    BX = ??? (9999h)
 	    ???
 Program: K5 is an extended keyboard driver by Martin Gerdes, based on his K3
-SeeAlso: INT 16/AX=AF20h
+SeeAlso: AX=E337h,INT 16/AX=AF20h
 --------E-2FED80-----------------------------
 INT 2F - Phar Lap 286|DOS Extender Lite v2.5 - ???
 	AX = ED80h
@@ -3229,7 +3298,7 @@ INT 2F - Phar Lap 286|DOS Extender Lite v2.5 - ???
 	DI = 4152h ("AR")
 	???
 Return: ???
-----------2FEDC8BX0000-----------------------
+--------O-2FEDC8BX0000-----------------------
 INT 2F - Novell ??? - INSTALLATION CHECK???
 	AX = EDC8h ('EDC' = Novell European Development Center)
 	BX = 0000h
@@ -3717,6 +3786,26 @@ Return: at specified address if successfully removed from memory
 Program: SuperStor is a disk-compression program by Addstor.
 Note:	returns AX=0001h if AL is not 00h or 01h
 SeeAlso: AX=1001h,AX=F800h
+----------2FFA00-----------------------------
+INT 2F - Multiplex - ??? - INSTALLATION CHECK???
+	AX = FA00h
+	BX = ??? (0408h)
+	CX = ??? (001Fh)
+	DX = ??? (0102h)
+	SI = ??? (5ACCh)
+	DI = ??? (0632h)
+Return: ???	
+Note:	called by WinEmacs at startup
+----------2FFA00-----------------------------
+INT 2F - Multiplex - ??? - INSTALLATION CHECK???
+	AX = FA00h
+	BX = ??? (03FCh)
+	CX = ??? (003Fh)
+	DX = ??? (00FFh)
+	SI = ??? (5AA6h)
+	DI = ??? (0620h)
+Return: ???	
+Note:	called by Matlab at startup
 --------*-2FFB-------------------------------
 INT 2F - Multiplex - RESERVED BY BORLAND INTERNATIONAL
 	AH = FBh
@@ -4691,6 +4780,17 @@ Call SoundBlaster speech driver entry point with:
 		data buffer (see #2288) contains:
 			BYTE  length of string
 		      N BYTEs string to speak
+--------K-2FFD12-----------------------------
+INT 2F - KS/KEYSTKCT.EXE - INSTALLATION CHECK
+	AX = FD12h
+Return: AX = 0093h if installed
+	    ES = resident code segment
+	    ES:CX -> internal "putbuf" routine
+Program: KS/KEYSTKCT.EXE is a key stacking utility (4DOS KEYSTACK.SYS 
+	  look-alike) by Martin Gerdes, published in c't 11/1991, which can be
+	  loaded as a device driver or as a TSR. It does not emulate 4DOS
+	  KSTACK API
+Note:	the default buffer size is 128 keys
 --------N-2FFE00BX4454-----------------------
 INT 2F - PC-NFS ??? - INSTALLATION CHECK
 	AX = FE00h
@@ -6295,7 +6395,7 @@ Return: AX = selector for flag address space (base 00000000h, limit 4GB)
 	ES:(E)SI = protected-mode address of DOS transfer buffer
 	EDI = system flags (see #2312)
 Program: CauseWay is a 386 DOS extender by Michael Devore and John Wildsmith
-	  for use with assembly language programs
+	  for use with Watcom C++ or assembly language programs
 Notes:	the entire transfer buffer can be addressed with a 16-bit offset in
 	  protected mode
 	CauseWay always maps selector 0040h to the BIOS data segment at
@@ -6405,7 +6505,7 @@ Return: CF clear if successful
 	    BX = selector for accessing block if requested size not FFFFh:FFFFh
 	    CX:DX = size of largest available block if requested FFFFh:FFFFh
 	CF set on error
-SeeAlso: AX=FF0Ch,AX=FF0Dh,AX=FF0Fh,AX=FF10h
+SeeAlso: AX=FF0Ch,AX=FF0Dh,AX=FF0Fh,AX=FF10h,AX=FF2Ch
 --------E-31FF0C-----------------------------
 INT 31 P - CauseWay - "GetMem32" - ALLOCATE BLOCK OF MEMORY (32-bit)
 	AX = FF0Ch
@@ -6657,7 +6757,7 @@ Return: CF clear if successful
 		0001h DOS file access error
 		0002h not a CuaseWay 3P file
 		0003h not enough memory
-SeeAlso: INT 21/AH=4Bh
+SeeAlso: AX=FF2Ah,INT 21/AH=4Bh
 
 Format of CauseWay executable:
 Offset	Size	Description	(Table 2313)
@@ -6675,6 +6775,7 @@ Offset	Size	Description	(Table 2313)
  24h	DWORD	automatic stack size in bytes if ESP entry = 00000000h
  28h	BYTE	length of name (name follows program image)
  29h 23 BYTEs	reserved
+SeeAlso: #0881,#0896 at INT 21/AH=4Bh
 
 Bitfields for CauseWay executable control flags:
 Bit(s)	Description	(Table 2314)
@@ -6719,6 +6820,94 @@ Return: nothing
 Note:	the specific buffer must be located in conventional memory; only the
 	  first 64K will be used
 SeeAlso: AX=FF25h
+--------E-31FF27-----------------------------
+INT 31 P - CauseWay v1.3 - "GetMCBSize" - GET CURRENT MCB ALLOCATION BLOCK SIZE
+	AX = FF27h
+Return: ECX = current threshold
+Desc:	determine the memory allocation size below which CauseWay will use
+	  internal MCB chains rather than allocating full 4K pages via DPMI
+SeeAlso: AX=FF00h,AX=FF28h
+--------E-31FF28-----------------------------
+INT 31 P - CauseWay v1.3 - "SetMCBSize" - SET MCB MEMORY ALLOCATION BLOCK SIZE
+	AX = FF28h
+	ECX = new threshold (0000000h to disable MCB memory allocation system)
+Return: CF clear if successful
+	    threshold unchanged (default 16K)
+	CF set on error (threshold > 64K)
+Desc:	specify the memory allocation size below which CauseWay will use
+	  internal MCB chains rather than allocating full 4K pages via DPMI
+Note:	the specified threshold will be rounded up to the next higher multiple
+	  of 4K
+SeeAlso: AX=FF00h,AX=FF27h
+--------E-31FF29-----------------------------
+INT 31 P - CauseWay v1.3 - "GetSels" - ALLOCATE MULTIPLE SELECTORS
+	AX = FF29h
+	CX = number of selectors to allocate
+Return: BX = base selector
+Desc:	allocate multiple contiguous selectors, initializing each to have a
+	  base address and limit of zero
+SeeAlso: AX=FF00h,AX=FF04h
+--------E-31FF2A-----------------------------
+INT 31 P - CauseWay v1.3 - "cwLoad" - LOAD ANOTHER CAUSEWAY PROGRAM AS OVERLAY
+	AX = FF2Ah
+	DS:EDX -> filename
+Return: CF clear if successful
+	    CX:EDX = CS:EIP of entry point
+	    BX:EAX = initial SS:ESP for program
+	    SI = PSP for overlay program
+	CF set on error
+	    AX = error code (01h file error, 02h not a 3P file, 03h no memory)
+Note:	the returned PSP can be given to "RelMem" (AX=FF0Fh) to release the
+	  overlay's memory and selectors; only selectors and memory allocated
+	  during loading will be freed by RelMem unless one switches PSPs with
+	  INT 21/AH=50h
+SeeAlso: AX=FF00h,AX=FF24h
+--------E-31FF2B-----------------------------
+INT 31 P - CauseWay v1.3 - "cwcInfo" - VALIDATE AND GET SIZE OF CWC FILE
+	AX = FF2Bh
+	BX = file handle for CWC-compressed file
+Return: CF clear if successful
+	    ECX = expanded file size
+	CF set on error (not a CWC-compressed file)
+SeeAlso: AX=FF00h,AX=FFFBh
+--------E-31FF2C-----------------------------
+INT 31 P - CauseWay v1.3 - "GetMemSO" - ALLOCATE MEMORY AND RETURN SEL:OFFSET
+	AX = FF2Ch
+	CX:DX = block size in bytes
+Return: CF clear if successful
+	   SI:DI = selector:offset of allocated memory
+	CF set on error
+Note:	unlike "GetMem" (AX=FF0Bh), this function will reuse selectors until a
+	  segment is full, rather than allocating a new selector for each
+	  memory block
+SeeAlso: AX=FF00h,AX=FF2Dh,AX=FF2Eh
+--------E-31FF2D-----------------------------
+INT 31 P - CauseWay v1.3 - "ResMemSO" - RESIZE SELECTOR:OFFSET MEMORY BLOCK
+	AX = FF2Dh
+	SI:DI = selector:offset for memory block
+	CX:DX = new size of block
+Return: CF clear if successful
+	   SI:DI = new selector:offset for memory block
+	CF set on error
+SeeAlso: AX=FF00h,AX=FF2Ch,AX=FF2Eh
+--------E-31FF2E-----------------------------
+INT 31 P - CauseWay v1.3 - "RelMemSO" - RELEASE SELECTOR:OFFSET MEMORY BLOCK
+	AX = FF2Eh
+	SI:DI = selector:offset for memory block
+SeeAlso: AX=FF00h
+--------E-31FFFB-----------------------------
+INT 31 P - Causeway v1.3 - "cwcLoad" - LOAD/EXPAND CWC-COMPRESSED FILE
+	AX = FFFBh
+	BX = source file handle
+	ES:EDI -> memory buffer into which to expand file
+Return: CF clear if successful
+	    ECX = expanded data length
+	CF set on error
+	    EAX = error code (01h file error, 02h bad data, 03h not CWC file)
+Note:	the provided file may consist of the concatenation of several CWC
+	  files; the one beginning at the current file position will be
+	  expanded
+SeeAlso: AX=FF2Bh
 --------v-32---------------------------------
 INT 32 - VIRUS - reportedly used by "Tiny" Viruses
 SeeAlso: INT 21/AX=FFFFh"VIRUS",INT 31"VIRUS",INT 44"VIRUS"
@@ -8501,7 +8690,7 @@ Note:	if the second WD1002 controller in the system finds INT 40 already in
 	  use, it uses this vector to cascade to the first controller's BIOS
 SeeAlso: INT 40"DISKETTE",INT 47"SuperBIOS"
 --------O-42---------------------------------
-INT 42 - Acorn BBS Master 512 - "OSBPUT" - WRITE SINGLE BYTE TO FILE
+INT 42 - Acorn BBC Master 512 - "OSBPUT" - WRITE SINGLE BYTE TO FILE
 	AL = byte to be written
 	BH = file handle
 Return: flags destroyed
@@ -9131,7 +9320,7 @@ Values for VDS product number:
  0001h	for Microsoft's EMM386.EXE
  0003h	for Windows 3.x WIN386.EXE
  0300h	OS/2 (all versions to date)
- 0EDCh	for DR-DOS 6.0 EMM386.SYS
+ 0EDCh	for DR DOS 6.0 EMM386.SYS
  4560h	("E`") for Qualitas' 386MAX
  4D43h	("MC") for V Communications' Memory Commander
  5145h	("QE") for Quarterdeck's QEMM-386

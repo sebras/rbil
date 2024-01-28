@@ -1,19 +1,19 @@
-Interrupt List		Release 48á			Last change 10/29/95
-This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+Interrupt List		Release 49			Last change 2/11/96
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------!---FILELIST-------------------------
 Please redistribute the following files unmodified as a group, in a quartet of
-archives named INTER48A through INTER48D (preferably the original authenticated
+archives named INTER49A through INTER49D (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	this file
 	INTERRUP.A	INT 00 through INT 13/0F  \
 	INTERRUP.B	INT 13/10 through INT 15/12\
 	INTERRUP.C	INT 15/13 through INT 16/FF \  
 	INTERRUP.D	INT 17 through INT 21/3E     \
-	INTERRUP.E	INT 21/3F through INT 21/5E   \	  total 2017 pages at
+	INTERRUP.E	INT 21/3F through INT 21/5E   \	  total 2031 pages at
 	INTERRUP.F	INT 21/5F through INT 21/E6    \  60 lines per page,
-	INTERRUP.G	INT 21/E7 through INT 21/F8	\ 2149 with INTPRINT -p
-	INTERRUP.H	INT 21/F9 through INT 2F/42	 >(7803 entries)
-	INTERRUP.I	INT 2F/43 through INT 2F/CA	/ (3170 tables)
+	INTERRUP.G	INT 21/E7 through INT 21/F8	\ 2164 with INTPRINT -p
+	INTERRUP.H	INT 21/F9 through INT 2F/42	 >(7873 entries)
+	INTERRUP.I	INT 2F/43 through INT 2F/CA	/ (3177 tables)
 	INTERRUP.J	INT 2F/CB through INT 4C       /
 	INTERRUP.K	INT 4D through INT 61	      /
 	INTERRUP.L	INT 62 through INT 6E	     /
@@ -33,7 +33,7 @@ PKZIP archives):
 	PORTS.LST	a listing of I/O ports
 	CATEGORY.KEY	descriptions of divider-line category letters
 	COMBINE.BAT	combine the pieces of the list into a single file
-The following files should be distributed in an archive called INTER48E:
+The following files should be distributed in an archive called INTER49E:
 	86BUGSnn.ZIP	programs to test for CPU bugs
 	INT.*		invoke interrupts from commandline
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
@@ -46,13 +46,13 @@ The following files should be distributed in an archive called INTER48E:
 	INTSUM??.ZIP	interrupt list browser (Interrupt Summary)
 	IVIEW.ZIP	another interrupt list browser
 	RB2NG???.ZIP	convert list into Norton Guides database
-Finally, the following files should be distributed in an archive INTER48F:
+Finally, the following files should be distributed in an archive INTER49F:
 	INT2WHLP.ZIP	convert list into Windows Help database
 	HINTSRCH.ZIP	WinHelp DLL for full-text searches of interrupt list
 	WH_ED*.ZIP	WinHelp-file editor
 
-Concatenate INTERRUP.A, .B, .C, .D, .E, .F, .G, .H, .I, .J, .K, .L, and .M with
-COMBINE.BAT to create an interrupt list file identical to my master copy.
+Concatenate INTERRUP.A, .B, ..., .N with COMBINE.BAT to create an interrupt
+list file identical to my master copy.
 
 Use INTPRINT to generate a one-line-per-call summary file and/or a file
 containing only data structure formats.	 See INTPRINT.DOC for details.
@@ -70,7 +70,7 @@ as RBNGrr.*), and a ready-made WinHelp database (compiled by Ron Loewy
 --------!---COPYRIGHT------------------------
 	NOTICE		NOTICE		NOTICE		NOTICE
 
-This compilation is (c) Copyright 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+(c) Copyright 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 Permission is granted to use and redistribute the files comprising the
 interrupt listing in any way (including conversion to another format),
 provided that my name and addresses and the names of all contributers
@@ -578,6 +578,12 @@ This list is the result of the time and effort of a large number of people:
  9/95 Alexander I. Bobkov via root@k35.cit.spb.su     MODAL PC
 10/95 Matthias Paul    MPAUL@ibh.rwth-aachen.de       K3PLUS, miscellaneous
 10/95 Matthias Paul    MPAUL@ibh.rwth-aachen.de       WinDOS
+11/95 Christophe Vallat meba95@ucfma.univ-bpclermont.fr virus checks, 21/7160
+11/95 Peter van den Boogert  2:285/414.1	      ZFax v4.01
+11/95 Matthias Paul    MPAUL@ibh.rwth-aachen.de       BSC/SDLC ports, misc
+12/95 George Lefterov  george@virbus.bg		      Q87 v4+ API
+ 1/96 Ghielmeti Lepoldo Leopoldo.Ghielmetti@epfl.ch   I1541 API
+ 1/96 Michael Devore				      CauseWay v1.3 DOS ext.
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -616,7 +622,7 @@ Also contributing:
  Norbert Sommer <100016.1241@compuserve.com>, John.Brennen@VI.RI.CMU.EDU,
  Paul van Keep <75170.1045@compuserve.COM>,John B. Thiel <jbthiel@cse.ogi.edu>,
  Ken Medellin via <76702,1071@compuserve.com>, Bob Green <bob@inmos.co.uk>,
- Leonard Erickson <70465.203@CompuServe.COM>, Robert Chafer (Salford, England),
+ Robert Chafer (Salford, England), Leonard Erickson <shadow@krypton.rain.com>,
  Carl Schelin <tcs@mailer.jhuapl.edu>,Dave Kirsch <Dave_Kirsch@mindlink.bc.ca>,
  Michael S. Stratoti <tmstrato@king.mcs.drexel.edu>, Marc Scholtis 2:281/701.2,
  Sean Lin (Midland, MI), John Villalovos <villalj@instruction.CS.ORST.EDU>,
@@ -696,7 +702,7 @@ Also contributing:
  Jaroslaw Rafa <sfrafa@lfs.cyf-kr.edu.pl>, Mojmir Strhan <strhan@simultan.ch>,
  Axel C. Frinke <acfrinke@uni-bonn.de>, avp@iron.misa.ac.ru,
  Julian Nicholls <julian@aladdin.co.uk>, ricardo.ferreira@mpcbbs.com.br,
- Vincent Lyonel <vincentl@cc.ec-lyon.fr>, George Lefterov <george@virbus.bg>,
+ Vincent Lyonel <vincentl@cc.ec-lyon.fr>,
  Pascal Moulart <100572.1021@compuserve.com>, John Murphy <murf@perftech.com>,
  Giacomo Amabile Catenazzi <gcatenaz@g26.ethz.ch>, Svante Frey <sfrey@kuai.se>,
  Nils <xorax@Informatik.Uni-Bremen.DE>, Rod Mathews <rodmathews@earthlink.net>,
@@ -706,7 +712,9 @@ Also contributing:
  David Cary <cary@agora.rdrop.com>, Nir Sofer <nir@netvision.net.il>,
  Keith Hamilton <100654.2000@compuserve.com>, Colin Hill <CPHProg@aol.com>,
  <Marcus.Wirth@frankfurt.netsurf.de>, David Cary <cary@agora.rdrop.com>,
- Peter Rindfuss <RINDFUSS-S@medea.wz-berlin.de>
+ Peter Rindfuss <RINDFUSS-S@medea.wz-berlin.de>,
+ Pierre Duhem <100256.1731@compuserve.com>,
+ Bob Jackman <Bob@salford-software.com>
 --------!---ADDRESSES------------------------
 The following have provided API reference and other materials at no charge:
 
@@ -1402,15 +1410,14 @@ Husky, Hunter, Hunter 16, Hawk, 8/16, Sidebox and Oracle GT are trademarks
 	of Husky Computers Limited.
 COMM-DRV is a trademark of Willies' Computer Software Company.
 Various other names are trademarks or registered trademarks of their respective
-    holders
+    holders, and are used solely for identification
 --------!---QUOTES---------------------------
 What they're saying about this list:
   "A cornucopia of descriptions of interrupt and function calls on the
    IBM PC.  A great thing to have on your hard disk if you don't have
    a Ray Duncan or Peter Norton book handy."
       _Turbo_Technix_, July/August 1988, p. 157.
-[and that was about the 1/30/88 version, which was only one-thirtieth the
- size of the current version....]
+[and that was about the 1/30/88 version, which was a mere 150K....]
 
   "An enormous listing of DOS and BIOS interrupt calls, many undocumented
    and program-specific.  Quite simply, some of Snooper's reports wouldn't

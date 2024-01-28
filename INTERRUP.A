@@ -1,19 +1,19 @@
-Interrupt List		Release 48			Last change 10/29/95
-This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+Interrupt List		Release 49			Last change 2/11/96
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------!---FILELIST-------------------------
 Please redistribute the following files unmodified as a group, in a quartet of
-archives named INTER48A through INTER48D (preferably the original authenticated
+archives named INTER49A through INTER49D (preferably the original authenticated
 PKZIP archives):
 	INTERRUP.1ST	the read-me file, containing credits, availability info
 	INTERRUP.A	INT 00 through INT 13/0F  \
 	INTERRUP.B	INT 13/10 through INT 15/12\
 	INTERRUP.C	INT 15/13 through INT 16/FF \  
 	INTERRUP.D	INT 17 through INT 21/3E     \
-	INTERRUP.E	INT 21/3F through INT 21/5E   \	  total 2017 pages at
+	INTERRUP.E	INT 21/3F through INT 21/5E   \	  total 2031 pages at
 	INTERRUP.F	INT 21/5F through INT 21/E6    \  60 lines per page,
-	INTERRUP.G	INT 21/E7 through INT 21/F8	\ 2149 with INTPRINT -p
-	INTERRUP.H	INT 21/F9 through INT 2F/42	 >(7803 entries)
-	INTERRUP.I	INT 2F/43 through INT 2F/CA	/ (3170 tables)
+	INTERRUP.G	INT 21/E7 through INT 21/F8	\ 2164 with INTPRINT -p
+	INTERRUP.H	INT 21/F9 through INT 2F/42	 >(7873 entries)
+	INTERRUP.I	INT 2F/43 through INT 2F/CA	/ (3177 tables)
 	INTERRUP.J	INT 2F/CB through INT 4C       /
 	INTERRUP.K	INT 4D through INT 61	      /
 	INTERRUP.L	INT 62 through INT 6E	     /
@@ -33,7 +33,7 @@ PKZIP archives):
 	PORTS.LST	a listing of I/O ports
 	CATEGORY.KEY	descriptions of divider-line category letters
 	COMBINE.BAT	combine the pieces of the list into a single file
-The following files should be distributed in an archive called INTER48E:
+The following files should be distributed in an archive called INTER49E:
 	86BUGSnn.ZIP	programs to test for CPU bugs
 	INT.*		invoke interrupts from commandline
 	INT2GUID.*	convert list into TurboPower GUIDE or POPHELP database
@@ -46,7 +46,7 @@ The following files should be distributed in an archive called INTER48E:
 	INTSUM??.ZIP	interrupt list browser (Interrupt Summary)
 	IVIEW.ZIP	another interrupt list browser
 	RB2NG???.ZIP	convert list into Norton Guides database
-Finally, the following should be distributed in an archive called INTER48F:
+Finally, the following should be distributed in an archive called INTER49F:
 	INT2WHLP.ZIP	convert list into Windows Help database
 	HINTSRCH.ZIP	WinHelp DLL for full-text searches of interrupt list
 	WH_ED*.ZIP	WinHelp-file editor
@@ -461,7 +461,7 @@ Notes:	this IRQ may be masked by setting bit 1 on I/O port 21h
 	    Ctrl-Alt-Minus (HP Vectra) reduce keyclick volume
 	    Ctrl-Alt-Minus (many clones) set clock speed to low
 	    Ctrl-Alt-SysReq (HP Vectra) generate hard reset
-	DRDOS hooks this interrupt to control the cursor shape (underscore/
+	DR DOS hooks this interrupt to control the cursor shape (underscore/
 	  half block) for overwrite/insert mode
 	DR Multiuser DOS hooks this interrupt for cursor shape control and to
 	  control whether Ctrl-Alt-Del reboots the current session or the
@@ -547,7 +547,7 @@ Notes:	scan codes 56h-E1h are only available on the extended (101/102-key)
 	  pad's Delete, End, and PgDn keys send make codes 66h-68h (F19-F21);
 	  the fourth new key, named <delta>, sends make code 73h
 	the SysReq key is often labeled SysRq
-SeeAlso: #0483
+SeeAlso: #0483 at INT 16/AX=6F07h
 --------C-09---------------------------------
 INT 09 C - CPU-generated (80286,80386) - PROCESSOR EXTENSION PROTECTION ERROR
 Desc:	called if the coprocessor attempts to access memory outside a segment
@@ -7217,6 +7217,7 @@ Values for Blank-It hotkey scan code:
  36h	Right Shift
  57h	F11
  58h	F12
+SeeAlso: #0005
 --------G-1105D7-----------------------------
 INT 11 CU - Borland C++ IDE - INSTALLED CALLOUT
 	AX = 05D7h
@@ -7491,7 +7492,7 @@ Format of Back&Forth task info buffer:
 Offset	Size	Description	(Table 0138)
  00h 21 BYTEs	ASCIZ task name
  15h	BYTE	hotkey shift state (as for INT 16/AH=02h)
- 16h	WORD	hotkey scan code
+ 16h	WORD	hotkey scan code (see also #0005)
  18h	WORD	program ID
 Index:	hotkeys;Back&Forth
 SeeAlso: #0139,#0140
@@ -7518,7 +7519,7 @@ Offset	Size	Description	(Table 0140)
  19h	DWORD	elapsed time in task (seconds)
  1Dh	WORD	task ID
  1Fh	BYTE	task hotkey keyboard flags
- 20h	WORD	task hotkey scan code
+ 20h	WORD	task hotkey scan code (see also #0005)
  22h	DWORD	time task was suspended/exited
  26h	WORD	task handle
 SeeAlso: #0138,#0139
@@ -7596,7 +7597,8 @@ Return: CF set on error
 	    if AH = 11h (corrected ECC error), AL = burst length
 	CF clear if successful
 	AH = status (see #0141)
-	AL = number of sectors transferred
+	AL = number of sectors transferred (only valid if CF set for some
+	      BIOSes)
 Notes:	errors on a floppy may be due to the motor failing to spin up quickly
 	  enough; the read should be retried at least three times, resetting
 	  the disk with AH=00h between attempts
@@ -7629,6 +7631,7 @@ Return: CF set on error
 	CF clear if successful
 	AH = status (see #0141)
 	AL = number of sectors transferred
+	      (only valid if CF set for some BIOSes)
 Notes:	errors on a floppy may be due to the motor failing to spin up quickly
 	  enough; the write should be retried at least three times, resetting
 	  the disk with AH=00h between attempts
@@ -7753,7 +7756,7 @@ Offset	Size	Description	(Table 0143)
  09h	BYTE	reserved (0)
  0Ah  3 BYTEs	(big-endian) block length (512 standard, or 256)
  0Dh	???	vendor-specific parameter bytes (optional)
---------B-13057FSI324D-----------------------
+--------d-13057FSI324D-----------------------
 INT 13 - 2M - FORMAT TRACK
 	AX = 057Fh
 	SI = 324Dh ("2M")
@@ -8046,7 +8049,7 @@ Return: CF set on error
 	CF clear if successful
 	AH = status (see #0141)
 SeeAlso: AH=00h,AH=02h,AH=0Ah,AH=47h
---------d-130D-------------------------------
+--------B-130D-------------------------------
 INT 13 - HARD DISK - RESET HARD DISKS
 	AH = 0Dh
 	DL = drive number (80h = first, 81h = second hard disk)

@@ -1,5 +1,5 @@
-FAR CALL Interface List		Release 48		Last Change 10/29/95
-This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+FAR CALL Interface List		Release 49		Last Change 2/11/96
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 
 =============================================
 >CALL 0000h:0000h - Sample Entry
@@ -1366,11 +1366,11 @@ Highest Table Number = F061
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER48A through INTER48D (preferably the original
+quartet of archives named INTER49A through INTER49D (preferably the original
 authenticated PKZIP archives), and the utility programs in a two additional
-archives called INTER48E.ZIP and INTER48F.ZIP
+archives called INTER49E.ZIP and INTER49F.ZIP
 
-This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------!---CONTACT_INFO---------------------
 Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
 UUCP: {uunet,harvard}!pobox.com!ralf

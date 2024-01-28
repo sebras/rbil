@@ -1,5 +1,5 @@
 Interrupt List, part 4 of 14
-This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------P-17----DX0ABC-----------------------
 INT 17 - PRINTER - LPTx v5.x INSTALLATION CHECK
 	DX = 0ABCh
@@ -63,7 +63,7 @@ INT 17 - INSET - INSTALLATION CHECK
 Return: CX = 07C2h (1986d) if installed
 Program: INSET is a text/graphics integration program
 --------b-170200BX5050-----------------------
-INT 17 - Advanced Parallel Port (EPP) BIOS - INSTALLATION CHECK
+INT 17 - Enhanced Parallel Port (EPP) BIOS - INSTALLATION CHECK
 	AX = 0200h
 	BX = 5050h ('PP')
 	CH = 45h   ('E')
@@ -80,7 +80,7 @@ Return: AH = status
 		ES:BX -> far entry point to EPP BIOS (see #0513,#0514)
 	    03h if installed but specified port not supported
 		CF set
-Program: The Advanced Parallel Port BIOS provides support for parallel
+Program: The Enhanced Parallel Port BIOS provides support for parallel
 	  port peripherals using the enhanced modes of the IEEE 1284.
 SeeAlso: AH=E0h
 
@@ -1804,9 +1804,9 @@ Values for operating system indicator:
  A5h	FreeBSD, BSD/386
  B7h	BSDI file system (secondarily swap)
  B8h	BSDI swap partition (secondarily file system)
- C1h	DR-DOS 6.0 LOGIN.EXE-secured 12-bit FAT partition
- C4h	DR-DOS 6.0 LOGIN.EXE-secured 16-bit FAT partition
- C6h	DR-DOS 6.0 LOGIN.EXE-secured Huge partition
+ C1h	DR DOS 6.0 LOGIN.EXE-secured 12-bit FAT partition
+ C4h	DR DOS 6.0 LOGIN.EXE-secured 16-bit FAT partition
+ C6h	DR DOS 6.0 LOGIN.EXE-secured Huge partition
  C7h	Syrinx Boot
  DBh	CP/M, Concurrent CP/M, Concurrent DOS
  DBh	CTOS (Convergent Technologies OS)
@@ -3475,7 +3475,7 @@ Return: CF clear if successful
 	all other flags (except IF) may be modified
 Note:	this function may require up to 1024 byte of stack; it will not enable
 	  interrupts if they were disabled before making the call
-SeeAlso: AX=B186h
+SeeAlso: AX=B186h,INT 2F/AX=1684h/BX=304Ch
 --------X-1AB108-----------------------------
 INT 1A - Intel PCI BIOS v2.0c - READ CONFIGURATION BYTE
 	AX = B108h
@@ -3492,7 +3492,7 @@ Notes:	this function may require up to 1024 byte of stack; it will not enable
 	  interrupts if they were disabled before making the call
 	the meanings of BL and BH on entry were exchanged between the initial
 	  drafts of the specification and final implementation
-SeeAlso: AX=B188h
+SeeAlso: AX=B109h,AX=B10Ah,AX=B188h,INT 2F/AX=1684h/BX=304Ch
 --------X-1AB109-----------------------------
 INT 1A - Intel PCI BIOS v2.0c - READ CONFIGURATION WORD
 	AX = B109h
@@ -3509,7 +3509,7 @@ Notes:	this function may require up to 1024 byte of stack; it will not enable
 	  interrupts if they were disabled before making the call
 	the meanings of BL and BH on entry were exchanged between the initial
 	  drafts of the specification and final implementation
-SeeAlso: AX=B189h
+SeeAlso: AX=B108h,AX=B10Ah,AX=B189h,INT 2F/AX=1684h/BX=304Ch
 --------X-1AB10A-----------------------------
 INT 1A - Intel PCI BIOS v2.0c - READ CONFIGURATION DWORD
 	AX = B10Ah
@@ -3526,7 +3526,7 @@ Notes:	this function may require up to 1024 byte of stack; it will not enable
 	  interrupts if they were disabled before making the call
 	the meanings of BL and BH on entry were exchanged between the initial
 	  drafts of the specification and final implementation
-SeeAlso: AX=B18Ah
+SeeAlso: AX=B108h,AX=B109h,AX=B18Ah,INT 2F/AX=1684h/BX=304Ch
 
 Format of PCI Configuration Data:
 Offset	Size	Description	(Table 0585)
@@ -3595,26 +3595,26 @@ Offset	Size	Description	(Table 0585)
 Values for PCI vendor ID:
  1000h	NCR
  1002h	ATI
- 1003h	ULSI
+ 1003h	ULSI Systems
  1004h	VLSI Technologies
  1005h	Avance Logics (ADL)
  1006h	Reply Group
- 1007h	Netframe
+ 1007h	Netframe Systems Inc.
  1008h	Epson
- 100Ah	Phoenix
+ 100Ah	Phoenix Technologies
  100Bh	National Semiconductor
  100Ch	Tseng Labs
- 100Dh	AST
+ 100Dh	AST Research
  100Eh	Weitek
- 1010h	Video Logic
+ 1010h	Video Logic Ltd
  1011h	DEC
- 1012h	Micronics
+ 1012h	Micronics Computers
  1013h	Cirrus Logic (see also #0028)
  1014h	IBM
- 1016h	ICL
- 1017h	SPEA
+ 1016h	ICL Personal Systems
+ 1017h	SPEA Software AG
  1018h	Unisys
- 1019h	EliteGroup
+ 1019h	EliteGroup Computer Sys
  101Ah	NCR
  101Bh	Vitesse
  101Ch	Western Digital
@@ -3622,8 +3622,9 @@ Values for PCI vendor ID:
  101Fh	Picturetel
  1020h	Hitachi
  1021h	Oki
- 1022h	AMD
+ 1022h	Advanced Micro Devices
  1023h	Trident
+ 1024h	Zenith Data Systems
  1025h	Acer
  1028h	Dell
  1029h	Siemens Nixdorf
@@ -3640,7 +3641,7 @@ Values for PCI vendor ID:
  1034h	Burndy
  1035h	Computers and Communications Research Lab
  1036h	Future Domain
- 1037h	Hitachi
+ 1037h	Hitachi Micro Systems
  1038h	AMP
  1039h	SIS
  103Ah	Seiko Epson
@@ -3654,7 +3655,7 @@ Values for PCI vendor ID:
  1043h	Asustek
  1044h	Distributed Processing Technology (DPT)
  1045h	OPTi
- 1046h	IPC
+ 1046h	IPC Corporation, Ltd.
  1047h	Genoa
  1048h	Elsa
  1049h	Fountain
@@ -3667,8 +3668,8 @@ Values for PCI vendor ID:
  1050h	Winbond
  1051h	Anigma
  1052h	Young
- 1054h	Hitachi
- 1055h	EFAR
+ 1054h	Hitachi, Ltd.
+ 1055h	EFAR Microsystems
  1056h	ICL
  1057h	Motorola
  1058h	Electronics and Telec. RSH
@@ -3762,7 +3763,7 @@ Values for PCI vendor ID:
  10B2h	Raytheon
  10B3h	Databook
  10B4h	STB
- 10B5h	PLX
+ 10B5h	PLX Technology
  10B7h	3com
  10B8h	Standard Microsystems Corporation (SMC)
  10B9h	Acer Labs
@@ -3862,18 +3863,71 @@ Values for PCI vendor ID:
  1119h	Vortex
  111Ah	Efficient Networks, Inc.
  111Bh	Teledyne
+ 111Ch	Tricord Systems, Inc.
+ 111Dh	Integrated Device Tech
+ 111Eh	Eldec Corporation
+ 111Fh	Precision Digital Images
+ 1120h	Emc Corporation
+ 1121h	Zilog
+ 1122h	Multi-tech Systems, Inc.
+ 1124h	Leutron Vision AG
+ 1125h	Eurocore
+ 1126h	Vigra
+ 1129h	Firmworks
+ 112Ah	Hermes Electronics Co.
+ 112Bh	Linotype - Hell AG
+ 112Dh	Ravicad
+ 112Eh	Infomedia MicroElectronics Inc
  112Fh	Imaging Technology
- 113Ch	PLX
+ 1130h	Computervision
+ 1131h	Philips Semiconductors
+ 1132h	Mitel Corp
+ 1133h	Eicon Technology Corporation
+ 1134h	Mercury Computer Systems Inc
+ 1135h	Fuji Xerox Co Ltd
+ 1136h	Momentum Data Systems
+ 1137h	Cisco Systems Inc
+ 1138h	Ziatech Corporation
+ 1139h	Dynamic Pictures Inc
+ 113Ah	FWB Inc 
+ 113Ch	Cyclone Micro
+ 113Dh	Leading Edge Products Inc
+ 113Eh	Sanyo Electric Co
+ 113Fh	Equinox Systems
+ 1140h	Intervoice Inc
+ 1141h	Crest Microsystem Inc
+ 1142h	Alliance Semiconductor Corp
+ 1143h	Netpower, Inc.
+ 1144h	Cincinnati Milacron
+ 1145h	Workbit Corp
+ 1146h	Force Computers
+ 1147h	Interface Corp.
+ 1148h	Schneider & Koch Co.
+ 1149h	Win System Corporation
+ 114Ah	Vmic
+ 114Bh	Canopus Co.
+ 114Ch	Annabooks
+ 114Dh	IC Corporation
+ 114Eh	Nikon Systems Inc
+ 114Fh	Digi International
+ 1150h	Thinking Machines Corp.
+ 1151h	JAE Electronics Inc.
+ 1152h	Megatek
+ 1153h	Land Win Electronic Corp.
+ 1154h	Melco Inc.
+ 1155h	Pine Technology Ltd.
+ 1156h	Periscope Engineering
  1159h	MuTech
  1193h	Zeinet
  120Eh	Cyclades
  1C1Ch	Symphony
  1DE1h	TekRAM
  5333h	S3
+ 5700h	Netpower
  8086h	Intel
  9004h	Adaptec
  907Fh	Atronics
- EDD8h	"HER"
+ EDD8h	Ark Logic Inc
 SeeAlso: #0585
 
 Bitfields for PCI Configuration Command Register:
@@ -4004,7 +4058,7 @@ SeeAlso: #0585,#0595
 Format of PCI Configuration data for Intel 82434 Cache/DRAM Controller:
 Offset	Size	Description	(Table 0597)
  00h 64 BYTEs	header (see #0585)
-		(vendor ID 8086h, device ID 0484h)
+		(vendor ID 8086h, device ID 04A3h)
  40h 16 BYTEs	unused (hard-wired to 00h)
  50h	BYTE	secondary (L2) cache control???
 		bit 0: ???
@@ -4048,9 +4102,75 @@ Offset	Size	Description	(Table 0597)
  78h	WORD	???
  7Ah  2 BYTEs	???
  7Ch	DWORD	???
+		bit 13: byte merging enabled
  80h 128 BYTEs	unused???
 Note:	the 82434 is part of the Intel Neptune chipset
-SeeAlso: #0598
+SeeAlso: #3176,#0598
+
+Format of PCI Configuration data for Intel 82424 Cache Controller:
+Offset	Size	Description	(Table 3177)
+ 00h 64 BYTEs	header (see #0585)
+		(vendor ID 8086h, device ID 0483h)
+ 40h	BYTE	bus number
+ 41h	BYTE	subordinate bus number
+ 42h	BYTE	disconnect timer
+ 50h	BYTE	host CPU selection
+ 51h	BYTE	deturbo frequency control
+		when deturbo mode is selected (see PORT 0CF9h), the chipset
+		  places a hold on the memory bus for a fraction of the
+		  time inversely proportional to the value in this register
+		  (i.e. C0h = 1/4, 80h = 1/2, 40h = 3/4, 20h = 7/8, etc.)
+ 52h	BYTE	secondary cache control
+ 53h	BYTE	write buffer control
+ 54h	BYTE	PCI features control
+ 55h	BYTE	DRAM Operation Mode Select
+ 56h	BYTE	System Exception Handling
+ 57h	BYTE	SMM Control Register
+ 59h  7	BYTEs	Programmable Attribute Map registers 0-6
+ 60h  4 BYTEs	DRAM Row Boundary registers 0-3
+ 64h  4 BYTEs	unused???
+ 68h	WORD	Memory Hole-0
+ 6Ah	WORD	Memory Hole-1
+Note:	the above field names are those given by EduWARE's PCI Configuration
+	  Manager v1.2
+SeeAlso: #0597,#0598
+ 
+Format of PCI Configuration data for Intel 82378 ISA Bridge:
+Offset	Size	Description	(Table 3176)
+ 00h 64 BYTEs	header (see #0585)
+		(vendor ID 8086h, device ID 0484h)
+ 40h	BYTE	PCI Control
+ 41h	BYTE	PCI Arbiter Control
+ 42h	BYTE	PCI Arbiter Priority Control
+ 43h	BYTE	unused??? (00h)
+ 44h	BYTE	MEMCS# Control
+ 45h	BYTE	MEMCS# Bottom of Hole
+ 46h	BYTE	MEMCS# Top of Hole
+ 47h	BYTE	MEMCS# Top of Memory
+ 48h	BYTE	ISA Address Decoder Control
+ 49h	BYTE	ISA Address Decoder ROM Block Enable
+ 4Ah	BYTE	ISA Address Decoder Bottom of Hole
+ 4Bh	BYTE	ISA Address Decoder Top of Hole
+ 4Ch	BYTE	ISA Controller Recovery Time
+ 4Dh	BYTE	ISA Clock Divisor
+ 4Eh	BYTE	Utility Bus Chip Select Enable A
+ 4Fh	BYTE	Utility Bus Chip Select Enable B
+ 50h  4 BYTEs	unused???
+ 54h	BYTE	MEMCS# Attribute Register #1
+ 55h	BYTE	MEMCS# Attribute Register #2
+ 56h	BYTE	MEMCS# Attribute Register #3
+ 57h	BYTE	Scatter/Gather Relocation Base Adress
+ 80h	WORD	BIOS timer base address (see PORT 0078h)
+		bits 15-1 are bits 15-1 of BIOS timer port address
+		bit 0: timer enabled (if disabled, other bits ignored)
+ 82h 30 BYTEs	unused???
+ A0h	BYTE	??? (08h)
+ A1h  7 BYTEs	unused???
+ A8h	BYTE	??? (0Fh)
+ A9h 87 BYTEs	unused???
+Note:	the above field names are those given by EduWARE's PCI Configuration
+	  Manager v1.2
+SeeAlso: #0597
 
 Format of PCI Configuration data for Intel 82425EX PSC:
 Offset	Size	Description	(Table 0598)
@@ -4099,7 +4219,7 @@ Offset	Size	Description	(Table 0598)
  AEh	BYTE	clock throttle STPCLK# high timer
  AFh	BYTE	???
  B0h 80 BYTEs	unused???
-SeeAlso: #0585,#0597
+SeeAlso: #0585,#3177,#0597
 
 Bitfields for Intel 82425EX PCI control register:
 Bit(s)	Description	(Table 0599)
@@ -4200,7 +4320,7 @@ Notes:	this function may require up to 1024 byte of stack; it will not enable
 	  interrupts if they were disabled before making the call
 	the meanings of BL and BH on entry were exchanged between the initial
 	  drafts of the specification and final implementation
-SeeAlso: AX=B18Bh
+SeeAlso: AX=B108h,AX=B10Ch,AX=B10Dh,AX=B18Bh,INT 2F/AX=1684h/BX=304Ch
 --------X-1AB10C-----------------------------
 INT 1A - Intel PCI BIOS v2.0c - WRITE CONFIGURATION WORD
 	AX = B10Ch
@@ -4217,7 +4337,7 @@ Notes:	this function may require up to 1024 byte of stack; it will not enable
 	  interrupts if they were disabled before making the call
 	the meanings of BL and BH on entry were exchanged between the initial
 	  drafts of the specification and final implementation
-SeeAlso: AX=B18Ch
+SeeAlso: AX=B109h,AX=B10Bh,AX=B10Dh,AX=B18Ch,INT 2F/AX=1684h/BX=304Ch
 --------X-1AB10D-----------------------------
 INT 1A - Intel PCI BIOS v2.0c - WRITE CONFIGURATION DWORD
 	AX = B10Dh
@@ -4234,7 +4354,7 @@ Notes:	this function may require up to 1024 byte of stack; it will not enable
 	  interrupts if they were disabled before making the call
 	the meanings of BL and BH on entry were exchanged between the initial
 	  drafts of the specification and final implementation
-SeeAlso: AX=B18Dh
+SeeAlso: AX=B10Ah,AX=B10Bh,AX=B10Ch,AX=B18Dh,INT 2F/AX=1684h/BX=304Ch
 --------X-1AB10EBX0000-----------------------
 INT 1A - Intel PCI BIOS v2.1+ - GET IRQ ROUTING INFORMATION
 	AX = B10Eh
@@ -4250,7 +4370,7 @@ Return: CF clear if successful
 	CF set on error
 	    AH = error code (59h) (see #0605)
 	    WORD ES:[DI] = required size of buffer
-SeeAlso: AX=B10Fh,AX=B406h
+SeeAlso: AX=B10Fh,AX=B406h,INT 2F/AX=1684h/BX=304Ch
 --------X-1AB10F-----------------------------
 INT 1A - Intel PCI BIOS v2.1+ - SET PCI IRQ
 	AX = B10Fh
@@ -5793,7 +5913,9 @@ INT 21 - DOS 1+ - TERMINATE PROGRAM
 	CS = PSP segment
 Notes:	Microsoft recommends using INT 21/AH=4Ch for DOS 2+
 	execution continues at the address stored in INT 22 after DOS performs
-	  whatever cleanup it needs to do
+	  whatever cleanup it needs to do (restoring the INT 22,INT 23,INT 24
+	  vectors from the PSP assumed to be located at offset 0000h in the
+	  segment indicated by the stack copy of CS, etc.)
 	if the PSP is its own parent, the process's memory is not freed; if
 	  INT 22 additionally points into the terminating program, the
 	  process is effectively NOT terminated
@@ -5804,21 +5926,30 @@ INT 21 - DOS 1+ - READ CHARACTER FROM STANDARD INPUT, WITH ECHO
 	AH = 01h
 Return: AL = character read
 Notes:	^C/^Break are checked, and INT 23 executed if read
+	^P toggles the DOS-internal echo-to-printer flag
+	^Z is not interpreted, thus not causing an EOF if input is redirected
 	character is echoed to standard output
 	standard input is always the keyboard and standard output the screen
 	  under DOS 1.x, but they may be redirected under DOS 2+
 SeeAlso: AH=06h,AH=07h,AH=08h,AH=0Ah
+--------v-21010F-----------------------------
+INT 21 - VIRUS - "Susan" - INSTALLATION CHECK
+	AX = 010Fh
+Return: AX = 7553h ("Su") if resident
+SeeAlso: INT 16/AH=DDh"VIRUS",INT 21/AX=0B56h
 --------D-2102-------------------------------
 INT 21 - DOS 1+ - WRITE CHARACTER TO STANDARD OUTPUT
 	AH = 02h
 	DL = character to write
 Return: AL = last character output (despite the official docs which state
-		nothing is returned) (at least DOS 3.3-5.0)
+		nothing is returned) (at least DOS 2.1-5.0)
 Notes:	^C/^Break are checked, and INT 23 executed if pressed
 	standard output is always the screen under DOS 1.x, but may be
 	  redirected under DOS 2+
 	the last character output will be the character in DL unless DL=09h
 	  on entry, in which case AL=20h as tabs are expanded to blanks
+	if standard output is redirected to a file, no error checks (write-
+	  protected, full media, etc.) are performed
 SeeAlso: AH=06h,AH=09h
 --------D-2103-------------------------------
 INT 21 - DOS 1+ - READ CHARACTER FROM STDAUX
@@ -5849,7 +5980,7 @@ INT 21 - DOS 1+ - DIRECT CONSOLE OUTPUT
 	AH = 06h
 	DL = character (except FFh)
 Return: AL = character output (despite official docs which state nothing is
-		returned) (at least DOS 3.3-5.0)
+		returned) (at least DOS 2.1-5.0)
 Notes:	does not check ^C/^Break
 	writes to standard output, which is always the screen under DOS 1.x,
 	  but may be redirected under DOS 2+
@@ -5896,7 +6027,7 @@ INT 21 - DOS 1+ - WRITE STRING TO STANDARD OUTPUT
 	AH = 09h
 	DS:DX -> '$'-terminated string
 Return: AL = 24h (the '$' terminating the string, despite official docs which
-		state that nothing is returned) (at least DOS 3.3-5.0)
+		state that nothing is returned) (at least DOS 2.1-5.0)
 Notes:	^C/^Break are checked, and INT 23 is called if either pressed
 	standard output is always the screen under DOS 1.x, but may be
 	  redirected under DOS 2+
@@ -5944,7 +6075,7 @@ SeeAlso: AH=06h"INPUT",AX=4406h
 INT 21 - VIRUS - "Perfume" - INSTALLATION CHECK
 	AX = 0B56h
 Return: AX = 4952h if resident
-SeeAlso: AX=0D20h,INT 12/AX=4350h/BX=4920h,INT 13/AH=F2h
+SeeAlso: AX=0D20h,INT 12/AX=4350h/BX=4920h,INT 13/AH=F2h,INT 21/AX=010Fh
 --------D-210C-------------------------------
 INT 21 - DOS 1+ - FLUSH BUFFER AND READ STANDARD INPUT
 	AH = 0Ch
@@ -6017,7 +6148,7 @@ Notes:	(DOS 3.1+) file opened for read/write in compatibility mode
 	an unopened FCB has the drive, filename, and extension fields filled
 	  in and all other bytes cleared
 	not supported by MS Windows 3.0 DOSX.EXE DOS extender
-	DR-DOS checks password attached with AX=4303h
+	DR DOS checks password attached with AX=4303h
 BUG:	APPEND for DOS 3.3+ corrupts DX if the file is not found
 SeeAlso: AH=10h,AH=16h,AH=3Dh,AX=4303h
 
@@ -6174,7 +6305,7 @@ Offset	Size	Description	(Table 0654)
  08h  3 BYTEs	blank-padded file extension
  0Bh	BYTE	attributes
  0Ch 10 BYTEs	reserved
-		used by DR-DOS to store file password
+		used by DR DOS to store file password
  16h	WORD	time of creation or last update (see #0951 at AX=5700h)
  18h	WORD	date of creation or last update (see #0952 at AX=5700h)
  1Ah	WORD	starting cluster number
@@ -6209,7 +6340,7 @@ Notes:	DOS 1.25+ deletes everything in the current directory (including
 	  removed without deleting the files they contain.
 	currently-open files should not be deleted
 	MS-DOS allows deletion of read-only files with an extended FCB, whereas
-	  Novell NetWare, DR-DOS 6, and Novell DOS 7 do not
+	  Novell NetWare, DR DOS 6, and Novell DOS 7 do not
 SeeAlso: AH=41h,INT 2F/AX=1113h
 --------D-2114-------------------------------
 INT 21 - DOS 1+ - SEQUENTIAL READ FROM FCB FILE
@@ -6267,7 +6398,7 @@ Return: AL = status
 	    FFh no matching files,file is read-only, or new name already exists
 Notes:	subdirectories may be renamed using an extended FCB with the
 	  appropriate attribute, as may volume labels
-	DR-DOS checks password attached with AX=4303h before permitting rename
+	DR DOS checks password attached with AX=4303h before permitting rename
 SeeAlso: AH=0Fh,AH=13h,AX=4303h,AH=56h,INT 2F/AX=1111h
 --------D-2118-------------------------------
 INT 21 - DOS 1+ - NULL FUNCTION FOR CP/M COMPATIBILITY
@@ -6281,7 +6412,12 @@ INT 21 - VIRUS - "Tasha Yar" - INSTALLATION CHECK
 	AX = 1812h
 Return: AL = 00h if resident
 	DX = 4310h if resident
-SeeAlso: INT 16/AH=DDh"VIRUS",INT 21/AX=2C2Ch"VIRUS"
+SeeAlso: INT 21/AH=0B56h"VIRUS",INT 21/AX=18FFh,INT 21/AX=2C2Ch"VIRUS"
+--------v-2118FF-----------------------------
+INT 21 - VIRUS - "Pathogen:SMEG" - INSTALLATION CHECK
+	AX = 18FFh
+Return: AX = E701h if resident
+SeeAlso: INT 21/AX=1812h"VIRUS",INT 21/AX=2080h"VIRUS"
 --------D-2119-------------------------------
 INT 21 - DOS 1+ - GET CURRENT DEFAULT DRIVE
 	AH = 19h
@@ -6384,6 +6520,11 @@ Return: AL = 00h
 Note:	corresponds to the CP/M BDOS function "get/set default user
 	  (sublibrary) number", which is meaningless under MS-DOS
 SeeAlso: AH=18h,AH=1Dh,AH=1Eh,AX=4459h
+--------v-212080-----------------------------
+INT 21 - VIRUS - "New-Year" - INSTALLATION CHECK
+	AX = 2080h
+Return: AH = 00h if resident (normal DOS return would be AX = 2000h)
+SeeAlso: INT 21/AX=18FFh"VIRUS",INT 21/AX=2C2Ch"VIRUS"
 --------D-2121-------------------------------
 INT 21 - DOS 1+ - READ RANDOM RECORD FROM FCB FILE
 	AH = 21h
@@ -6429,7 +6570,7 @@ Return: AL = status
 	    FFh failed (no matching file found)
 Notes:	not supported by MS Windows 3.0 DOSX.EXE DOS extender
 	MS-DOS returns nonsense if the FCB record number field is set to a very
-	  large positive number, and status FFh if negative; DR-DOS returns the
+	  large positive number, and status FFh if negative; DR DOS returns the
 	  correct file size in both cases
 BUG:	APPEND for DOS 3.3+ corrupts DX if the file is not found
 SeeAlso: AH=42h
@@ -6451,7 +6592,7 @@ Notes:	this function is preferred over direct modification of the interrupt
 	  vector table
 	some DOS extenders place an API on this function, as it is not
 	  directly meaningful in protected mode
-	under DR-DOS 5.0+, this function does not use any of the DOS-internal
+	under DR DOS 5.0+, this function does not use any of the DOS-internal
 	  stacks and may thus be called at any time
 	Novell NetWare (except the new DOS Requester) monitors the offset of
 	  any INT 24 set, and if equal to the value at startup, substitutes
@@ -8314,7 +8455,7 @@ Notes:	the OS/2 v1.x Compatibility Box returns major version 0Ah (10)
 	  correct value
 	the "Chicago" beta returns version 7.00 (reported in
 	  _Microsoft_Systems_Journal_, August 1994).
-	DR-DOS 5.0 and 6.0 report version 3.31; Novell DOS 7 reports IBM v6.00,
+	DR DOS 5.0 and 6.0 report version 3.31; Novell DOS 7 reports IBM v6.00,
 	  which some software displays as IBM DOS v6.10 (because of the version
 	  mismatch in true IBM DOS, as mentioned above)
 	generic MS-DOS 3.30, Compaq MS-DOS 3.31, and others identify themselves
@@ -8347,7 +8488,7 @@ Values for DOS OEM number:
  5Eh	RxDOS
  66h	PhysTechSoft (PTS-DOS)
  99h	General Software's Embedded DOS
- EEh	DR-DOS
+ EEh	DR DOS
  EFh	Novell DOS
  FDh	FreeDOS
  FFh	Microsoft, Phoenix
@@ -8402,7 +8543,7 @@ INT 21 - VIRUS - "Jackal" - INSTALLATION CHECK
 	CX = 6B63h ('kc')
 	DX = 6C61h ('la')
 Return: BX = ???
-SeeAlso: AX=2C2Ch"VIRUS",AX=33DAh"VIRUS"
+SeeAlso: AX=2C2Ch"VIRUS",AX=3032h"VIRUS"
 --------G-213022-----------------------------
 INT 21 - StopPrg v2.0 - INSTALLATION CHECK
 	AX = 3022h
@@ -8412,11 +8553,17 @@ Return: AX = DOS version (see AH=30h)
 Program: StopPrg is a resident program aborter by MAK-TRAXON's Prophet
 Note:	StopPrg may be temporarily disabled by storing 9090h in the word at
 	  0000h:04FEh
+--------v-213032-----------------------------
+INT 21 - VIRUS - "Uruguay" - INSTALLATION CHECK
+	AX = 3032h
+	DX = 1234h
+Return: AX = 5678h if resident
+SeeAlso: AX=3000h/BX=614Ah"VIRUS",AX=30F1h"VIRUS"
 --------v-2130F1-----------------------------
 INT 21 - VIRUS - "Dutch-555"/"Quit 1992" - INSTALLATION CHECK
 	AX = 30F1h
 Return: AL = 00h if resident
-SeeAlso: AH=30h/DX=ABCDh,AX=330Fh,AX=33DAh
+SeeAlso: AH=30h/DX=ABCDh,AX=3032h,AX=330Fh,AX=33DAh
 ----------2130FFCX4445-----------------------
 INT 21 - DESQ??? - INSTALLATION CHECK
 	AX = 30FFh
@@ -8456,7 +8603,7 @@ Notes:	the OS/2 compatibility box supports the DOS 3.3 version of this call
 	  desirable.
 	undocumented prior to the release of DOS 5.0; only the DOS 4.0+
 	  version of the DPB has been documented, however
-	supported by DR-DOS 3.41+; DR-DOS 3.41-6.0 return the same data as
+	supported by DR DOS 3.41+; DR DOS 3.41-6.0 return the same data as
 	  MS-DOS 3.31
 SeeAlso: AH=1Fh,AH=52h
 
@@ -8508,7 +8655,7 @@ INT 21 - DOS 2+ - EXTENDED BREAK CHECKING
 		    00h off, check only on character I/O functions
 		    01h on, check on all DOS functions
 		Return: (Novell DOS 7) DL = old state of extended Break checks
-Note:	under DOS 3.1+ and DR-DOS, this function does not use any of the
+Note:	under DOS 3.1+ and DR DOS, this function does not use any of the
 	  DOS-internal stacks and may thus be called at any time
 SeeAlso: AX=3302h
 --------D-213302-----------------------------
@@ -8519,8 +8666,8 @@ Return: DL = old state of extended BREAK checking
 Notes:	this function does not use any of the DOS-internal stacks and may thus
 	  be called at any time; one possible use is modifying Control-Break
 	  checking from within an interrupt handler or TSR
-	not supported by DR-DOS through version 6.0; newly-supported by
-	  Novell DOS 7
+	not supported by DR DOS through version 6.0 (error code 01h);
+	  newly-supported by Novell DOS 7
 SeeAlso: AH=33h
 --------D-213303-----------------------------
 INT 21 - DOS 4.0+ - UNUSED
@@ -8574,7 +8721,7 @@ Notes:	this function always returns the true version number, unlike AH=30h,
 	Novell DOS 7 returns IBM v6.00, which some software displays as
 	  IBM DOS v6.10 (because of the version mismatch in true IBM DOS
 	  mentioned for INT 21/AH=30h)
-BUG:	DR-DOS 5.0 and 6.0 return CF set/AX=0001h for INT 21/AH=33h
+BUG:	DR DOS 5.0 and 6.0 return CF set/AX=0001h for INT 21/AH=33h
 	  subfunctions other than 00h-02h and 05h, while MS-DOS returns AL=FFh
 	  for invalid subfunctions
 SeeAlso: AH=30h,INT 2F/AX=122Fh
@@ -8630,7 +8777,7 @@ Notes:	this function executes on the DOS stack, and thus cannot be called
 	  then zeros it on completion
 	the critical error flag is the byte immediately following InDOS in
 	  DOS 2.x, and the byte BEFORE the InDOS flag in DOS 3.0+ and
-	  DR-DOS 3.41+ (except COMPAQ DOS 3.0, where the critical error flag
+	  DR DOS 3.41+ (except COMPAQ DOS 3.0, where the critical error flag
 	  is located 1AAh bytes BEFORE the critical section flag)
 	for DOS 3.1+, an undocumented call exists to get the address of the
 	  critical error flag (see AX=5D06h)
@@ -8641,7 +8788,7 @@ INT 21 - DOS 2+ - GET INTERRUPT VECTOR
 	AH = 35h
 	AL = interrupt number
 Return: ES:BX -> current interrupt handler
-Note:	under DR-DOS 5.0+, this function does not use any of the DOS-internal
+Note:	under DR DOS 5.0+, this function does not use any of the DOS-internal
 	  stacks and may thus be called at any time
 SeeAlso: AH=25h,AX=2503h
 --------E-213501-----------------------------
@@ -8763,7 +8910,7 @@ BUG:	Novell DOS 7's COMMAND.COM fails to honor the SwitChar setting for
 	  command tail (i.e. COMMAND /?)
 Notes:	documented in some OEM versions of some releases of DOS
 	supported by OS/2 compatibility box
-	always returns AL=00h/DL=2Fh for MS-DOS 5+ and DR-DOS 3.41-6.0
+	always returns AL=00h/DL=2Fh for MS-DOS 5+ and DR DOS 3.41-6.0
 	Novell DOS 7 COMMAND.COM indicates switch characters other than '/'
 	  by changing the first backslash (and only the first one) in the
 	  path it prints for PROMPT $p with a forward slash
@@ -8777,7 +8924,7 @@ Return: AL = status
 	    FFh unsupported subfunction
 Notes:	documented in some OEM versions of some releases of DOS
 	supported by OS/2 compatibility box and Novell DOS 7
-	ignored by MS-DOS 5+ and DR-DOS 3.41-6.0; DR-DOS 6.0 and Novell DOS 7
+	ignored by MS-DOS 5+ and DR DOS 3.41-6.0; DR DOS 6.0 and Novell DOS 7
 	  leave AX unchanged
 SeeAlso: AX=3700h
 --------D-2137-------------------------------
@@ -8798,7 +8945,7 @@ Notes:	all versions of DOS from 2.00 allow \DEV\ to be prepended to device
 	  names without generating an error even if the directory \DEV does
 	  not actually exist (other paths generate an error if they do not
 	  exist).
-	although MS-DOS 3.3+, DR-DOS 3.41+, and Novell DOS 7 accept these
+	although MS-DOS 3.3+, DR DOS 3.41+, and Novell DOS 7 accept these
 	  calls, they have no effect, and AL=02h always returns DL=FFh (except
 	  for Novell DOS 7, which leaves AX unchanged for both subfunctions)
 --------k-2137D0BX899D-----------------------
@@ -8996,30 +9143,30 @@ Values for country code:
  020h	Belgium
  021h	France
  022h	Spain
- 024h	Hungary (not supported by DR-DOS 5.0)
- 026h	Yugoslavia (not supported by DR-DOS 5.0)
+ 024h	Hungary (not supported by DR DOS 5.0)
+ 026h	Yugoslavia (not supported by DR DOS 5.0)
  027h	Italy
  029h	Switzerland
- 02Ah	Czechoslovakia/Tjekia (not supported by DR-DOS 5.0)
- 02Bh	Austria (DR-DOS 5.0)
+ 02Ah	Czechoslovakia/Tjekia (not supported by DR DOS 5.0)
+ 02Bh	Austria (DR DOS 5.0)
  02Ch	United Kingdom
  02Dh	Denmark
  02Eh	Sweden
  02Fh	Norway
- 030h	Poland (not supported by DR-DOS 5.0)
+ 030h	Poland (not supported by DR DOS 5.0)
  031h	Germany
- 037h	Brazil (not supported by DR-DOS 5.0)
- 03Dh	International English [Australia in DR-DOS 5.0]
- 051h	Japan (DR-DOS 5.0, MS-DOS 5.0+)
- 052h	Korea (DR-DOS 5.0)
+ 037h	Brazil (not supported by DR DOS 5.0)
+ 03Dh	International English [Australia in DR DOS 5.0]
+ 051h	Japan (DR DOS 5.0, MS-DOS 5.0+)
+ 052h	Korea (DR DOS 5.0)
  056h	China (MS-DOS 5.0+)
  058h	Taiwan (MS-DOS 5.0+)
  05Ah	Turkey (MS-DOS 5.0+)
  15Fh	Portugal
  162h	Iceland
  166h	Finland
- 311h	Middle East/Saudi Arabia (DR-DOS 5.0,MS-DOS 5.0+)
- 3CCh	Israel (DR-DOS 5.0,MS-DOS 5.0+)
+ 311h	Middle East/Saudi Arabia (DR DOS 5.0,MS-DOS 5.0+)
+ 3CCh	Israel (DR DOS 5.0,MS-DOS 5.0+)
 --------D-2138--DXFFFF-----------------------
 INT 21 - DOS 3.0+ - SET COUNTRY CODE
 	AH = 38h
@@ -9084,7 +9231,7 @@ Return: CF clear if successful
 	    AX = error code (03h,04h,05h) (see #0960 at AH=59h)
 Notes:	if a file with the given name exists, it is truncated to zero length
 	under the FlashTek X-32 DOS extender, the pointer is in DS:EDX
-	DR-DOS checks the system password or explicitly supplied password at
+	DR DOS checks the system password or explicitly supplied password at
 	  the end of the filename against the reserved field in the directory
 	  entry before allowing access
 SeeAlso: AH=16h,AH=3Dh,AH=5Ah,AH=5Bh,AH=93h,INT 2F/AX=1117h
@@ -9113,7 +9260,7 @@ Notes:	file pointer is set to start of file
 	  and access restrictions
 	files may be opened even if given the hidden or system attributes
 	under the FlashTek X-32 DOS extender, the pointer is in DS:EDX
-	DR-DOS checks the system password or explicitly supplied password at
+	DR DOS checks the system password or explicitly supplied password at
 	  the end of the filename against the reserved field in the directory
 	  entry before allowing access
 	sharing modes are only effective on local drives if SHARE is loaded

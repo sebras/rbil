@@ -1,5 +1,5 @@
 Interrupt List, part 6 of 14
-This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------D-215F00-----------------------------
 INT 21 - DOS 3.1+ network - GET REDIRECTION MODE
 	AX = 5F00h
@@ -119,7 +119,7 @@ Notes:	the local session number allows sharing the redirector's session number
 	if an error is caused on the NETBIOS LSN, the redirector may be unable
 	  to correctly recover from errors
 	the DOS kernel calls INT 2F/AX=111Eh with AX on top of the stack
-	supported by DR-DOS 5.0
+	supported by DR DOS 5.0
 	also supported by 10NET v5.0
 SeeAlso: AX=5F06h"Network",INT 2F/AX=111Eh
 --------O-215F05-----------------------------
@@ -1692,7 +1692,7 @@ Desc:	determine the canonical name of the specified filename or path,
 Notes:	the input path need not actually exist
 	letters are uppercased, forward slashes converted to backslashes,
 	  asterisks converted to appropriate number of question marks, and
-	  file and directory names are truncated to 8.3 if necessary.  (DR-DOS
+	  file and directory names are truncated to 8.3 if necessary.  (DR DOS
 	  3.41 and 5.0 do not expand asterisks)
 	'.' and '..' in the path are resolved
 	filespecs on local drives always start with "d:", those on network
@@ -1735,7 +1735,7 @@ Notes:	the input path need not actually exist
 	  blanks.  Novell DOS 7 NWCDEX as of the 11/16/94 update returns the
 	  same canonical path as MSCDEX; earlier revisions returned
 	  "Cdex.D:\path", where "D" is the CD-ROM drive letter
-SeeAlso: AX=5FB3h,AX=7160h,INT 2F/AX=1123h,INT 2F/AX=1221h
+SeeAlso: AX=5FB3h,AX=7160h/CX=0000h,INT 2F/AX=1123h,INT 2F/AX=1221h
 --------D-2161-------------------------------
 INT 21 - DOS 3.0+ - UNUSED (RESERVED FOR NETWORK USE)
 	AH = 61h
@@ -1846,7 +1846,7 @@ INT 21 - DOS 3.2+ internal - SET DEVICE DRIVER LOOKAHEAD FLAG
 			before INT 21/AH=01h,08h,0Ah
 	    nonzero don't call driver function 5
 Return: nothing (MS-DOS)
-	CF set, AX=error code??? (DR-DOS 5.0, which does not support this call)
+	CF set, AX=error code??? (DR DOS 5.0, which does not support this call)
 Notes:	this function is called by the DOS 3.3+ PRINT.COM
 	under MS-DOS, this function does not use any of the DOS-internal stacks
 	  and may thus be called at any time, even during another DOS call
@@ -2172,7 +2172,7 @@ Return: CF set on error
 		01h yes
 		02h neither yes nor no
 Note:	supported by Novell DOS 7, though prior to Update 14, the results
-	  depended on the kernal variant rather than the COUNTRY= setting
+	  depended on the kernel variant rather than the COUNTRY= setting
 --------D-2165-------------------------------
 INT 21 U - DOS 4.0+ internal - COUNTRY-DEPENDENT FILENAME CAPITALIZATION
 	AH = 65h
@@ -2188,9 +2188,10 @@ INT 21 U - DOS 4.0+ internal - COUNTRY-DEPENDENT FILENAME CAPITALIZATION
 Return: CF set on error
 	    AX = error code (see #0960 at AH=59h)
 	CF clear if successful
-Note:	nonfunctional in DOS 4.00 through 6.00 due to a bug (the code sets a
+Note:	nonfunctional in MS-DOS 4.00 through 6.00 due to a bug (the code sets a
 	  pointer depending on the high bit of AL, but doesn't clear the
-	  bit before branching by function number).
+	  bit before branching by function number).  Supported and
+	  functional(!) in Novell DOS 7 (Update 15)
 --------D-216601-----------------------------
 INT 21 - DOS 3.3+ - GET GLOBAL CODE PAGE TABLE
 	AX = 6601h
@@ -2248,7 +2249,7 @@ Notes:	if BX <= 20, no action is taken if the handle limit has not yet been
 	  the portion of the JFT being retained
 BUGS:	the original release of DOS 3.30 allocates a full 64K for the handle
 	  table on requests for an even number of handles
-	DR-DOS 3.41 and 5.0 will lose track of any open file handles beyond
+	DR DOS 3.41 and 5.0 will lose track of any open file handles beyond
 	  the portion of the JFT retained after the call; MS-DOS will indicate
 	  error 04h if any of the JFT entries to be removed are open
 SeeAlso: AH=26h,AH=86h
@@ -2305,7 +2306,7 @@ Offset	Size	Description	(Table 1041)
  06h 11 BYTEs	volume label or "NO NAME    " if none present
  11h  8 BYTEs	(AL=00h only) filesystem type--string "FAT12   " or "FAT16   "
 --------O-2169-------------------------------
-INT 21 - DR-DOS 5.0 - NULL FUNCTION
+INT 21 - DR DOS 5.0 - NULL FUNCTION
 	AH = 69h
 Return: AL = 00h
 SeeAlso: AH=18h
@@ -2397,7 +2398,7 @@ Return: CF set on error
 	   CX = status (see #1042)
 Notes:	the PC LAN Program only supports DL=01h, DL=10h/sharing=compatibility,
 	  and DL=12h
-	DR-DOS reportedly does not support this function and does not return
+	DR DOS reportedly does not support this function and does not return
 	  an "invalid function call" error when this function is used.
 	the documented bits of BX are stored in the SFT when the file is opened
 	  (see #0928,#0929)
@@ -2697,27 +2698,66 @@ Return: CF clear if successful
 Note:	this function is only available when IFSMgr is running, not under bare
 	  MS-DOS 7
 SeeAlso: AX=714Eh,AX=71A1h
---------D-217160-----------------------------
-INT 21 - Windows95 - LONG FILENAME - "TRUENAME" - CANONICALIZE FILENAME OR PATH
+--------D-217160CX0000-----------------------
+INT 21 - Windows95 - LONG FILENAME - "TRUENAME" - CANONICALIZE PATH
 	AX = 7160h
-	CX = ??? (apparently must be 0002h)
+	CX = 0000h
 	DS:SI -> ASCIZ filename or path
-	ES:DI -> 128-byte buffer for canonicalized name
+	ES:DI -> 261-byte buffer for canonicalized name
 Return: CF set on error
 	    AX = error code
 		02h invalid component in directory path or drive letter only
 		03h malformed path or invalid drive letter
 	    ES:DI buffer unchanged
 	CF clear if successful
-	    AH = 00h
-	    AL = destroyed (00h or 5Ch or last char of current dir on drive)
-	    buffer filled with qualified name of form D:\PATH\FILE.EXT or
-	      \\MACHINE\PATH\FILE.EXT
+	    ES:DI buffer filled with fully qualified name
+Desc:	determine the canonical name of the specified filename or path,
+	  corresponding to the undocumented TRUENAME command in COMMAND.COM
+Note:	if a complete path is given, the result will be a short-form complete
+	  path; otherwise, the given relative path is appended to the
+	  short-form current directory name, '.'/'..'/'...'/etc. are resolved,
+	  and the final result uppercased without converting any remaining
+	  long-form names to short-form
+SeeAlso: AH=60h,AX=7160h/CX=0001h
+--------D-217160CX0001-----------------------
+INT 21 - Windows95 - LONG FILENAME - GET SHORT (8.3) FILENAME FOR FILE
+	AX = 7160h
+	CX = 0001h
+	DS:SI -> ASCIZ long filename or path
+	ES:DI -> 67-byte buffer for short filename
+Return: CF set on error
+	    AX = error code
+		02h invalid component in directory path or drive letter only
+		03h malformed path or invalid drive letter
+	    ES:DI buffer unchanged
+	CF clear if successful
+	    ES:DI buffer filled with equivalent short filename (full path,
+		  even if relative path given, and all uppercase)
+Note:	this call returns the short name for any long-filename portions of
+	  the provided pathname or filename
+SeeAlso: AH=60h,AX=7160h/CX=0000h,AX=7160h/CX=0002h
+--------D-217160CX0002-----------------------
+INT 21 - Windows95 - LONG FILENAME - GET CANONICAL LONG FILENAME OR PATH
+	AX = 7160h
+	CX = 0002h
+	DS:SI -> ASCIZ short filename or path
+	ES:DI -> 261-byte buffer for canonicalized long name
+Return: CF set on error
+	    AX = error code
+		02h invalid component in directory path or drive letter only
+		03h malformed path or invalid drive letter
+	    ES:DI buffer unchanged
+	CF clear if successful
+	    ES:DI buffer filled with qualified long name (can contain
+		  lowercase letters)
 Desc:	determine the canonical name of the specified filename or path,
 	  corresponding to the undocumented TRUENAME command in COMMAND.COM
 Note:	this call returns the short name for any long-filename portions of
 	  the provided pathname or filename
-SeeAlso: AH=60h
+BUG:	even though the maximum length of a complete long pathname is 260
+	  characters, Windows95 returns CF set/AX=0003h even if the file
+	  exists whenever the full pathname is more than 255 characters
+SeeAlso: AH=60h,AX=7160h/CX=0000h,AX=7160h/CX=0001h
 --------D-2171A0-----------------------------
 INT 21 - Windows95 - LONG FILENAME - GET VOLUME INFORMATION
 	AX = 71A0h
@@ -2813,10 +2853,15 @@ Return: AX = 6177h
 Note:	WATCH.COM is part of the "TSR" package by TurboPower Software
 SeeAlso: INT 16/AX=7761h
 --------v-217BCE-----------------------------
-INT 21 - VIRUS - "Whisper"/"Taipan" - INSTALLATION CHECK???
+INT 21 - VIRUS - "Whisper"/"Taipan" - INSTALLATION CHECK
 	AX = 7BCEh
-Return: ???
-SeeAlso: AX=7700h,AH=7Fh"VIRUS"
+Return: AX = 7BCEh if resident (???)
+SeeAlso: AX=5454h"VIRUS",AX=7700h,AX=7BCFh,AH=7Fh"VIRUS"
+--------v-217BCF-----------------------------
+INT 21 - VIRUS - "Tai-Pan.666"/"Doom II Death" - INSTALLATION CHECK
+	AX = 7BCFh
+Return: AX = 7BCFh if resident
+SeeAlso: AX=7BCEh"VIRUS",AH=7Fh"VIRUS"
 --------v-217F-------------------------------
 INT 21 - VIRUS - "Squeaker" - INSTALLATION CHECK
 	AH = 7Fh
@@ -3379,6 +3424,11 @@ Offset	Size	Description	(Table 1058)
 100h 256 BYTEs	3270 buffer code to ASCII translate table
 200h 256 BYTEs	3270 buffer code to EBCDIC translate table
 300h 256 BYTEs	EBCDIC to 3270 buffer code translate table
+--------v-21B3-------------------------------
+INT 21 - VIRUS - "Requires" - INSTALLATION CHECK
+	AH = B3h
+Return: AX = 9051h if resident
+SeeAlso: AH=7Fh"VIRUS",AX=B974h"VIRUS"
 --------N-21B300-----------------------------
 INT 21 U - Novell NetWare - CHECK LIP/PACKET SIGNING/IPX CHECKSUM SUPPORT???
 	AX = B300h
@@ -3687,6 +3737,11 @@ INT 21 U - Novell NetWare - "SpecialAttachableFunction"
 	    ES:BX -> function to invoke on AH=B9h when AL<>FFh
 Note:	this function is no longer used or supported by current versions of
 	  NetWare
+--------v-21B974-----------------------------
+INT 21 - VIRUS - "Tracker" - INSTALLATION CHECK
+	AX = B974h
+Return: AX = 2888h if resident
+SeeAlso: AH=B3h"VIRUS",AH=D0h"VIRUS"
 --------N-21BA-------------------------------
 INT 21 U - Novell NetWare - "ReturnCommandComPointers"
 	AH = BAh
@@ -4262,11 +4317,22 @@ Notes:	this function is supported by NetWare 4.6+, Advanced NetWare 1.0+,
 	locks on logical record names are advisory and may be ignored by other
 	  applications
 SeeAlso: AH=BCh,AH=D1h,AH=D2h,AH=D4h,AH=EBh
+--------v-21D0-------------------------------
+INT 21 - VIRUS - "MALAGA" - INSTALLATION CHECK
+	AH = D0h
+Return: AX = 00D0h if resident
+SeeAlso: AH=B3h"VIRUS",AX=D000h"VIRUS"
 --------v-21D000-----------------------------
 INT 21 - VIRUS - "Fellowship" - INSTALLATION CHECK
 	AX = D000h
 Return: BX = 1234h if resident
-SeeAlso: AH=CCh"VIRUS",AH=D5h"VIRUS",AX=D5AAh
+SeeAlso: AH=CCh"VIRUS",AH=D0h"VIRUS",AX=D000h"Warlock",AH=D5h"VIRUS",AX=D5AAh
+--------v-21D000-----------------------------
+INT 21 - VIRUS - "Warlock" - INSTALLATION CHECK
+	AX = D000h
+	CF clear
+Return: CF set if resident (normal DOS return would be CF clear)
+SeeAlso: AX=D000h"VIRUS",AH=D5h"VIRUS"
 --------N-21D1-------------------------------
 INT 21 - Novell NetWare - SYNCHRONIZATION SERVICES - LOCK LOGICAL RECORD SET
 	AH = D1h
@@ -4454,6 +4520,16 @@ INT 21 - PCMag PCMANAGE/DCOMPRES - TURN ON/OFF
 	    0000h turn on
 	    0001h turn off
 SeeAlso: AX=FEDCh
+--------v-21DC28-----------------------------
+INT 21 - VIRUS - "Monika" - INSTALLATION CHECK
+	AX = DC28h
+Return: AX = 1973h if resident
+SeeAlso: AX=D000h"VIRUS",AX=DCBAh"VIRUS"
+--------v-21DCBA-----------------------------
+INT 21 - VIRUS - "Red Spider" - INSTALLATION CHECK
+	AX = DCBAh
+Return: AX = ABCDh if resident
+SeeAlso: AX=DC28h"VIRUS",AX=DEFEh"VIRUS"
 --------N-21DD-------------------------------
 INT 21 - Novell NetWare - WORKSTATION - SET NetWare ERROR MODE
 	AH = DDh
@@ -4531,7 +4607,12 @@ SeeAlso: AX=DEADh"90210",AX=DEDEh"VIRUS"
 INT 21 - VIRUS - "Brothers" - INSTALLATION CHECK
 	AX = DEDEh
 Return: AH = 41h if resident
-SeeAlso: AX=DEADh"Shifting",AH=E0h"VIRUS"
+SeeAlso: AX=DEADh"Shifting",AX=DEFEh"VIRUS"
+--------v-21DEFE-----------------------------
+INT 21 - VIRUS - "Maze" - INSTALLATION CHECK
+	AX = DEFEh
+Return: AX = ABCDh if resident
+SeeAlso: AX=DCBAh"VIRUS",AX=DEDEh"VIRUS",AH=E0h"VIRUS"
 --------N-21DF--DL00-------------------------
 INT 21 - Novell NetWare - PRINT SERVICES - START LPT CAPTURE
 	AH = DFh
@@ -5822,7 +5903,7 @@ Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 	  Alloy NTNX
 SeeAlso: AH=E2h/SF=01h,AH=E2h/SF=06h,AH=E3h/SF=D7h,AX=F216h/SF=1Ah
 
-Format of NetWare request buffer:
+Format of NetWare "Get Path from Directory Entry" request buffer:
 Offset	Size	Description	(Table 1141)
  00h	WORD	0004h (length of following data)
  02h	BYTE	1Ah (subfunction "Get Path From Directory Entry")
@@ -5830,7 +5911,7 @@ Offset	Size	Description	(Table 1141)
  04h	WORD	(big-endian) directory entry number
 SeeAlso: #1142,#1382
 
-Format of NetWare reply buffer:
+Format of NetWare "Get Path from Directory Entry" reply buffer:
 Offset	Size	Description	(Table 1142)
  00h	WORD	(call) size of following results record (max 200h)
  02h 256 BYTEs	path
@@ -6233,13 +6314,13 @@ Notes:	this function is supported by Advanced NetWare 2.1+
 	  zero
 SeeAlso: AH=E3h/SF=0Ch,AH=E3h/SF=11h,AX=F217h/SF=12h
 
-Format of NetWare request buffer:
+Format of NetWare "Get Serial Number" request buffer:
 offset	 size	description	(Table 1167)
  00h	 WORD	0001h (length of following data)
  02h	 BYTE	12h (subfunction "Get Serial Number")
 SeeAlso: #1168,#1427
 
-Format of NetWare reply buffer:
+Format of NetWare "Get Serial Number" reply buffer:
 offset	 size	description	(Table 1168)
  00h	 WORD	(call) 0006h (size of following results buffer)
  02h   4 BYTEs	(big-endian) NetWare server serial number
@@ -6276,12 +6357,10 @@ INT 21 - Novell NetWare - CONNECTION SERVICES - LOGIN TO FILE SERVER
 	ES:DI -> reply buffer (see #1172)
 Return: AL = status
 	    00h successful
-Desc:	this function retrieves a list indicating the connection numbers under
-	  which a bindery object is logged into the default file server
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=D7h"NetWare",AH=F1h"NetWare",AX=F217h/SF=14h
 
-Format of NetWare request buffer:
+Format of NetWare "Login to File Server" request buffer:
 Offset	Size	Description	(Table 1171)
  00h	WORD	length of following data (max B3h)
  02h	BYTE	14h (subfunction "Login To File Server")
@@ -6308,7 +6387,7 @@ Desc:	this function retrieves a list indicating the connection numbers under
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=DCh"NetWare",AH=E3h/SF=16h,AX=F217h/SF=15h
 
-Format of NetWare request buffer:
+Format of NetWare "Get Object Connection Numbers" request buffer:
 Offset	Size	Description	(Table 1173)
  00h	WORD	length of following data (max 33h)
  02h	BYTE	15h (subfunction "Get Object Connection Numbers")
@@ -6317,7 +6396,7 @@ Offset	Size	Description	(Table 1173)
  06h  N BYTEs	object's name
 SeeAlso: #1174,#1429
 
-Format of NetWare reply buffer:
+Format of NetWare "Get Object Connection Numbers" reply buffer:
 Offset	Size	Description	(Table 1174)
  00h	WORD	(call) length of following results buffer (max 65h)
  02h	BYTE	number of connections
@@ -6333,13 +6412,13 @@ Return: AL = status
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=D7h,AH=DCh"NetWare",AH=E3h/SF=14h
 
-Format of NetWare request buffer:
+Format of NetWare "Get Connection Information" request buffer:
 Offset	Size	Description	(Table 1175)
  00h	WORD	0002h (length of following data)
  02h	BYTE	16h (subfunction "Get Connection Information")
  03h	BYTE	logical connection number (01h-64h)
 
-Format of NetWare reply buffer:
+Format of NetWare "Get Connection Information" reply buffer:
 Offset	Size	Description	(Table 1176)
  00h	WORD	(call) 003Eh (length of following results buffer)
  02h	DWORD	(big-endian) object ID for object logged in on the connection
@@ -6731,7 +6810,7 @@ Return: AL = status (see #1199)
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=39h,AH=E3h/SF=3Ch,AH=E3h/SF=3Dh,AX=F217h/SF=3Eh
 
-Format of NetWare request buffer:
+Format of NetWare "Write Property Value" request buffer:
 Offset	Size	Description	(Table 1202)
  00h	WORD	length of following data (max C5h)
  02h	BYTE	3Eh (subfunction "Write Property Value")
@@ -6855,7 +6934,7 @@ Desc:	delete the specified object from a set property
 Note:	this function is supported by Advanced NetWare 1.0+ and Alloy NTNX
 SeeAlso: AH=E3h/SF=40h,AH=E3h/SF=42h,AH=E3h/SF=43h,AX=F217h/SF=42h
 
-Format of NetWare request buffer:
+Format of NetWare "Delete Bindery Object from Set" request buffer:
 Offset	Size	Description	(Table 1210)
  00h	WORD	length of following data (max 75h)
  02h	BYTE	42h (subfunction "Delete Bindery Object from Set")
@@ -7747,7 +7826,7 @@ Notes:	this function is supported by Advanced NetWare 2.1+
 	  OPERATOR property for the caller's object ID
 SeeAlso: AH=E3h/SF=C9h,AH=E3h/SF=D1h,AX=F217h/SF=C8h
 
-Format of NetWare request buffer:
+Format of NetWare "Check Console Privileges" request buffer:
 Offset	Size	Description	(Table 1267)
  00h	WORD	0001h (length of following data)
  02h	BYTE	C8h (subfunction "Check Console Privileges")

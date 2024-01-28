@@ -1,5 +1,5 @@
 Interrupt List, part 7 of 14
-This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------N-21E7-------------------------------
 INT 21 - Novell NetWare - FILE SERVER - GET FILE SERVER DATE AND TIME
 	AH = E7h
@@ -126,6 +126,11 @@ Return: AL = directory handle
 Note:	this function is supported by NetWare 4.0+, Advanced NetWare 1.0+, and
 	  Alloy NTNX
 SeeAlso: AH=E2h/SF=00h,AH=E2h/SF=01h,AH=E2h/SF=0Ah
+--------v-21E900-----------------------------
+INT 21 - VIRUS - "Dark End" - INSTALLATION CHECK
+	AX = E900h
+Return: AX = 1234h if resident
+SeeAlso: AX=DEFEh"VIRUS",AX=EC27h"VIRUS"
 --------N-21E905-----------------------------
 INT 21 - Novell NetWare shell 3.01 - MAP A FAKE ROOT DIRECTORY
 	AX = E905h
@@ -306,11 +311,16 @@ INT 21 - OS/286, OS/386 - BLOCK TRANSFER
 	AH = ECh
 	???
 Return: ???
+--------v-21EC27-----------------------------
+INT 21 - VIRUS - "Halloween.1839" - INSTALLATION CHECK
+	AX = EC27h
+Return: AX = 4A52h ("JR") if resident
+SeeAlso: AH=E7h"VIRUS",AX=E900h"VIRUS",AX=EC59h"VIRUS"
 --------v-21EC59-----------------------------
 INT 21 - VIRUS - "Terror" - INSTALLATION CHECK
 	AX = EC59h
 Return: BP = EC59h if resident
-SeeAlso: AH=E7h"VIRUS",AH=EEh"VIRUS"
+SeeAlso: AX=EC27h"VIRUS",AH=EEh"VIRUS"
 --------N-21ED-------------------------------
 INT 21 - Novell NetWare - SYNCHRONIZATION SERVICES - CLEAR FILE
 	AH = EDh
@@ -347,7 +357,12 @@ INT 21 - VIRUS - "Jerusalem-G", "Pregnant" - INSTALLATION CHECK
 	AH = EEh
 Return: AX = 0300h if "Jerusalem-G" resident
 	AL = 05h if "Pregnant" resident
-SeeAlso: AH=DDh"VIRUS",AX=EC59h,AH=F0h"VIRUS"
+SeeAlso: AH=DDh"VIRUS",AX=EC59h,AH=EFh"VIRUS"
+--------v-21EF-------------------------------
+INT 21 - VIRUS - "Mabuhay"/"June 12th" - INSTALLATION CHECK
+	AH = EFh
+Return: AX = 025Bh if resident
+SeeAlso: AX=EC27h"VIRUS",AH=EEh"VIRUS",AH=F0h"VIRUS"
 --------N-21EF00-----------------------------
 INT 21 - Novell NetWare - WORKSTATION - GET DRIVE HANDLE TABLE
 	AX = EF00h
@@ -8711,7 +8726,7 @@ Notes:	this function is supported by Advanced NetWare 2.0+
 	both source and destination must be on the same file server
 SeeAlso: AH=3Ch,AH=3Fh
 
-Format of NetWare request buffer:
+Format of NetWare "File Server File Copy" request buffer:
 Offset	Size	Description	(Table 1780)
  00h	WORD	source file handle (as returned by AH=3Ch or AH=3Dh)
  02h	WORD	destination file handle

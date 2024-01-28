@@ -1,5 +1,5 @@
 Interrupt List, part 8 of 14
-This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------D-21F9-------------------------------
 INT 21 - DOS v2.11-2.13 - OEM FUNCTION
 	AH = F9h
@@ -34,6 +34,11 @@ INT 21 - DoubleDOS - TURN OFF TASK SWITCHING
 Return: task switching turned off
 SeeAlso: AH=EAh"DoubleDOS",AH=F9h"DoubleDOS",AH=FBh"DoubleDOS"
 SeeAlso: INT FA"DoubleDOS"
+--------v-21FA-------------------------------
+INT 21 - VIRUS - "Cinderella 2" - INSTALLATION CHECK
+	AH = FAh
+Return: AH = F9h if resident
+SeeAlso: AH=F0h"VIRUS",AX=FBA0h"VIRUS"
 --------v-21FA--DX5945-----------------------
 INT 21 U - PC Tools v7+ VDEFEND, VSAFE, VWATCH - API
 	AH = FAh
@@ -59,12 +64,17 @@ SeeAlso: INT FB"DoubleDOS"
 INT 21 - VIRUS - "Cinderella" - INSTALLATION CHECK
 	AH = FBh
 Return: AH = 00h if resident
-SeeAlso: AH=F9h"VIRUS",AX=FB0Ah
+SeeAlso: AH=F9h"VIRUS",AH=FAh"VIRUS",AX=FB0Ah
 --------v-21FB0A-----------------------------
 INT 21 - VIRUS - "dBASE" - INSTALLATION CHECK
 	AX = FB0Ah
 Return: AX = 0AFBh if resident
-SeeAlso: AH=FBh"VIRUS",AH=FCh"VIRUS"
+SeeAlso: AH=FBh"VIRUS",AX=FBA0h"VIRUS",AH=FCh"VIRUS"
+--------v-21FBA0-----------------------------
+INT 21 - VIRUS - "Groove" - INSTALLATION CHECK
+	AX = FBA0h
+Return: AX = 0ABFh if resident
+SeeAlso: AX=FB0Ah"VIRUS",AH=FCh"VIRUS"
 --------D-21FC-------------------------------
 INT 21 - DOS v2.11-2.13 - OEM FUNCTION
 	AH = FCh
@@ -84,7 +94,12 @@ SeeAlso: AH=ECh"DoubleDOS",INT FC"DoubleDOS"
 INT 21 - VIRUS - "Troi" - INSTALLATION CHECK
 	AH = FCh
 Return: AL = A5h if resident
-SeeAlso: AX=FB0Ah"VIRUS",AH=FDh"VIRUS"
+SeeAlso: AX=FBA0h"VIRUS",AX=FC03h"VIRUS",AH=FDh"VIRUS"
+--------v-21FC03-----------------------------
+INT 21 - VIRUS - "Invisible" - INSTALLATION CHECK
+	AX = FC03h
+Return: AX = 03FCh if resident
+SeeAlso: AH=FCh"VIRUS",AH=FDh"VIRUS"
 --------D-21FD-------------------------------
 INT 21 - DOS v2.11-2.13 - OEM FUNCTION
 	AH = FDh
@@ -94,7 +109,7 @@ SeeAlso: AH=F8h"OEM",AH=FCh"OEM",AH=FEh"OEM"
 INT 21 - VIRUS - "Border" - INSTALLATION CHECK
 	AH = FDh
 Return: AH = 13h if resident
-SeeAlso: AH=FCh"VIRUS",AH=FEh"VIRUS"
+SeeAlso: AH=FCh"VIRUS",AX=FDACh"VIRUS",AH=FEh"VIRUS"
 --------s-21FD12BX3457-----------------------
 INT 21 - Gravis UltraSound - MegaEm/MEGA_EM - INSTALLATION CHECK
 	AX = FD12h
@@ -108,6 +123,11 @@ Return: AX = 5678h if installed
 Program: MegaEm is a protected-mode SoundBlaster, SoundCanvas, and MT-32
 	  emulator for the Gravis UltraSound
 SeeAlso: INT 2F/AX=CD00h/BX=464Fh,INT 7E/AX=00FEh"SBOS"
+--------v-21FDAC-----------------------------
+INT 21 - VIRUS - "Delwin" - INSTALLATION CHECK
+	AX = FDACh
+Return: AX = 02E3h if resident
+SeeAlso: AH=FDh"VIRUS",AH=FEh"VIRUS"
 --------D-21FE-------------------------------
 INT 21 - DOS v2.11-2.13 - OEM FUNCTION
 	AH = FEh
@@ -123,7 +143,7 @@ SeeAlso: AH=EEh"DoubleDOS",INT FE"DoubleDOS"
 INT 21 - VIRUS - "483" - INSTALLATION CHECK
 	AH = FEh
 Return: AH = 00h if resident
-SeeAlso: AH=FDh"VIRUS",AX=FE01h
+SeeAlso: AX=FDACh"VIRUS",AX=FE01h
 --------v-21FE01-----------------------------
 INT 21 - VIRUS - "Flip" - INSTALLATION CHECK
 	AX = FE01h
@@ -216,7 +236,7 @@ INT 21 - VIRUS - "Sunday", "Tumen 0.5", "Hero" - INSTALLATION CHECK
 	AH = FFh
 Return: AH = 00h if "Tumen 0.5" or "Hero" resident
 	AX = 0400h if "Sunday" resident
-SeeAlso: AX=FEDCh"VIRUS",AX=FF0Fh
+SeeAlso: AX=FEDCh"VIRUS",AX=FF01h"VIRUS"
 --------E-21FF-------------------------------
 INT 21 UP - Rational Systems DOS/4GW - API
 	AH = FFh
@@ -411,6 +431,11 @@ INT 21 - Rational Systems DOS/4G - INSTALLATION CHECK
 Return: AL <> 00h if installed
 	    GS = segment of kernel if nonzero
 SeeAlso: INT 15/AX=BF02h
+--------v-21FF01-----------------------------
+INT 21 - VIRUS - "Drop" - INSTALLATION CHECK
+	AX = FF01h
+Return: AX = 01FFh if resident
+SeeAlso: AH=FEh"VIRUS",AX=FF0Fh"VIRUS"
 --------N-21FF04-----------------------------
 INT 21 - TopWare Network OS v5.10+ - GET/SET DEFAULT FILE PROTECTION ATTRIBS
 	AX = FF04h
@@ -860,7 +885,7 @@ Return: AH = 00h abort program
 ---DOS 2+---
 	CF clear
 Return: all registers preserved
-	return via RETF with CF set or (MS-DOS 1,DR-DOS) RETF 2 with CF set
+	return via RETF with CF set or (MS-DOS 1,DR DOS) RETF 2 with CF set
 	    DOS will abort program with errorlevel 0
 	else (RETF/RETF 2 with CF clear or IRET with CF ignored)
 	    interrupted DOS call is restarted
@@ -999,9 +1024,9 @@ Notes:	original flags are left on stack, and must be popped by caller
 	  32M of the partition
 BUGS:	DOS 3.1 through 3.3 set the word at ES:[BP+1Eh] to FFFFh if AL is an
 	  invalid drive number
-	DR-DOS 3.41 will return with a jump instead of RETF, leaving the
+	DR DOS 3.41 will return with a jump instead of RETF, leaving the
 	  wrong number of bytes on the stack; use the huge-partition version
-	  (INT 25/CX=FFFFh) for all partition sizes under DR-DOS 3.41
+	  (INT 25/CX=FFFFh) for all partition sizes under DR DOS 3.41
 SeeAlso: INT 13/AH=02h,INT 25/CX=FFFFh,INT 26
 
 (Table 1800)
@@ -1137,9 +1162,9 @@ Notes:	original flags are left on stack, and must be popped by caller
 	  32M of the partition
 BUGS:	DOS 3.1 through 3.3 set the word at ES:[BP+1Eh] to FFFFh if AL is an
 	  invalid drive number
-	DR-DOS 3.41 will return with a jump instead of RETF, leaving the
+	DR DOS 3.41 will return with a jump instead of RETF, leaving the
 	  wrong number of bytes on the stack; use the huge-partition version
-	  (INT 26/CX=FFFFh) for all partition sizes under DR-DOS 3.41
+	  (INT 26/CX=FFFFh) for all partition sizes under DR DOS 3.41
 SeeAlso: INT 13/AH=03h,INT 25,INT 26/CX=FFFFh
 --------D-26----CXFFFF-----------------------
 INT 26 - DOS 3.31+ - ABSOLUTE DISK WRITE (>32M hard-disk partition)
@@ -2190,7 +2215,7 @@ BUG:	RM386 v6.00-6.02 (as distributed with Helix's Netroom v3.x) contains
 	  a stack bug in its protected-mode INT 2D handler which causes a crash
 	  when INT 2D is invoked from V86 mode
 --------t-2D---------------------------------
-INT 2D - ALTERNATE MULTIPLEX INTERRUPT SPECIFICATION (AMIS) [v3.5.1]
+INT 2D - ALTERNATE MULTIPLEX INTERRUPT SPECIFICATION (AMIS) [v3.5.2]
 	AH = multiplex number
 	AL = function
 	    00h installation check
@@ -2291,15 +2316,15 @@ Notes:	programs should not use fixed multiplex numbers; rather, a program
 	  protocol header and hook list entry).
 	the signature string and description may be used by memory mappers
 	  to display the installed programs
-	users of this proposal should adhere to the IBM interrupt sharing
-	  protocol (see #1825), which will permit removal of TSRs in
-	  arbitrary order and interrupt handler reordering.  All TSRs
-	  following this proposal should be removable, though they need not
-	  keep the code for removing themselves resident; it is acceptable
-	  for a separate program to perform the removal.
+	to be considered fully compliant, users of this proposal must adhere
+	  to the IBM interrupt sharing protocol (see #1825), which will permit
+	  removal of TSRs in arbitrary order and interrupt handler reordering.
+	  All TSRs following this proposal should be removable, though they
+	  need not keep the code for removing themselves resident; it is
+	  acceptable for a separate program to perform the removal.
 	A sample implementation including example TSRs and utility programs
 	  may be found in a separate package distributed as AMISLnnn.ZIP
-	  (AMISL091.ZIP as of this writing).
+	  (AMISL092.ZIP as of this writing).
 	Please let me know if you choose to follow this proposal.  The
 	  signature and a list of the private API calls you use would be
 	  appreciated, as well.
@@ -2356,6 +2381,7 @@ Notes:	except for bit 7, the shift states correspond exactly to the return
 		Alt-key tap (DESQview):	 B8h 0000h 0007h 08h
 		Shf-Shf-N (NOTE.COM):	 31h 0003h 000Ch 00h
 Index:	hotkeys;AMIS
+SeeAlso: #0005
 
 Bitfields for type of AMIS hotkey checking:
 Bit(s)	Description	(Table 1822)
@@ -2367,6 +2393,7 @@ Bit(s)	Description	(Table 1822)
  5	checks on INT 16/AH=10h,11h,12h
  6	checks on INT 16/AH=20h,21h,22h
  7	reserved (0)
+SeeAlso: #1821
 
 Bitfields for AMIS shift states:
 Bit(s)	Description	(Table 1823)
@@ -2390,6 +2417,7 @@ Notes:	if bit 2 is set, either control key may be pressed for the hotkey; if
 	  bits 8 and 10 are both set, then both control keys must be pressed.
 	  Similarly for bits 3 and 9/11, as well as 7 and 0/1.
 	the SysReq key is often labeled SysRq
+SeeAlso: #1821,#1824
 
 Bitfields for AMIS hotkey flags:
 Bit(s)	Description	(Table 1824)
@@ -2399,7 +2427,10 @@ Bit(s)	Description	(Table 1824)
  3	hotkey will not activate if other keys pressed/released before hotkey
 	  press is completed
  4	this key is remapped into some other key
- 5-7	reserved (0)
+ 5	this key is conditionally chained (sometimes passed on, sometimes
+	  swallowed)
+ 6-7	reserved (0)
+SeeAlso: #1821,#1823
 
 Format of interrupt sharing protocol interrupt handler entry point:
 Offset	Size	Description	(Table 1825)
@@ -2416,7 +2447,7 @@ Offset	Size	Description	(Table 1825)
 SeeAlso: INT F1"Common ISDN API",#3158
 
 (Table 1826)
-Values of AMIS signatures known to be in use:
+Values for AMIS signatures known to be in use:
  'Byrial J' 'EKLAVO  '	permits keyboard entry of Esperanto accented letters
  'CoveSoft' 'Burnout+'	shareware screen saver Burnout Plus
  'Crynwr  ' 'SPELLER '	TSR spelling-checker
@@ -2438,12 +2469,21 @@ Values of AMIS signatures known to be in use:
  'Pino Nav' 'Keybit  '	Pino Navato's KEYBIT Lite Italian keyboard driver v4+
  'PowrQuot' 'CAPRITSR'
  'R-Ware  ' 'dLite   '	run-time data decompression TSR
+ 'Ralf B  ' 'disaXXYY'  RBdisabl -- disable key scancode XX w/ shift states YY
  'Ralf B  ' 'FASTMOUS'	example TSR included with sample AMIS library code
+ 'Ralf B  ' 'NoBreak '  disable Ctrl-@, Ctrl-C, and Ctrl-Break keys
  'Ralf B  ' 'NOLPT n '	example TSR -- turn LPTn into bit-bucket
  'Ralf B  ' 'NOTE    '	example TSR -- popup note-taker
+ 'Ralf B  ' 'RBclock '  RBclock -- on-screen real-time clock
+ 'Ralf B  ' 'RBclockE'  RBclock -- on-screen elapsed-time clock
+ 'Ralf B  ' 'RBdvorak'  Dvorak keyboard mapping w/ opt Esc/~, LCtrl/CapsLk swap
+ 'Ralf B  ' 'RBkcount'  display count of keystrokes on screen
  'Ralf B  ' 'RBkeyswp'	RBkeyswap v3.0+ -- swap Esc/~ and LCtrl/CapsLock keys
+ 'Ralf B  ' 'RBnoboot'  disable Ctrl-Alt-Del key combination
+ 'Ralf B  ' 'ShftCaps'  require Shift-CapsLock to turn on CapsLock
+ 'Ralf B  ' 'ShftNumL'  require Shift-NumLock to turn off NumLock
  'Ralf B  ' 'SWITCHAR'	example TSR -- add switchar() support removed from DOS5
- 'Ralf B  ' 'VGABLANK'	example TSR -- VGA-only screen blanker
+ 'Ralf B  ' 'VGABLANK'	VGA-only screen blanker
  'Sally IS' 'Mdisk   '	removeable, resizeable RAMdisk
  'Sally IS' 'Scr2Tex '	screen dumper with output in (La)Tex format
  'Thaco	  ' 'NEST    '	Eirik Pedersen's programmer's delimiter matcher
@@ -2584,7 +2624,7 @@ SeeAlso: INT 2D/AL=11h"CDTSR",INT 2D/AL=12h"CDTSR",INT 2D/AL=13h"CDTSR"
 
 Format of CDTSR internal variable structure:
 Offset	Size	Description	(Table 1833)
- 00h	BYTE	hotkey scan code
+ 00h	BYTE	hotkey scan code (see #0005)
  01h	BYTE	hotkey shift states
  02h	BYTE	flag: repeat
  03h	BYTE	flag: custom repeat
@@ -2594,7 +2634,7 @@ Offset	Size	Description	(Table 1833)
  0Dh	DWORD	current disk play position, in frames
  11h	BYTE	number of entries in track program
  12h	BYTE	index into track program currently playing (FFh if not playing)
- 13h 100 BYTEs	track program
+ 13h 100 BYTEs	track program (each byte contains one track number)
  77h	BYTE	saved cursor end scan line
  78h	BYTE	saved cursor start scan line
  79h	BYTE	currently playing track
@@ -2605,6 +2645,25 @@ Offset	Size	Description	(Table 1833)
  80h	DWORD	begin of custom repeat, in frames
  84h	DWORD	end of custom repeat, in frames
  88h	WORD	track program index of top list item
+--------K-2D--10-----------------------------
+INT 2D - KEYBIT Lite v5+ - GET POINTER TO STATUS BYTE
+        AL = 10h
+        AH = AMIS multiplex number for KEYBIT Lite
+Return: DX:BX -> status byte (see #3174)
+Program: KEYBIT Lite is an enhanced Italian keyboard driver by Pino Navato.
+SeeAlso: INT 2D"AMIS"
+
+Bitfields for KEYBIT Lite status byte:
+Bit(s)  Description     (Table 3174)
+ 7      KEYBIT Lite active
+ 6      E-mail support active
+ 5-0    reserved
+Notes:  E-mail support is one of the original features of KEYBIT Lite.  It is
+          the automatic conversion of the 8-bits ASCII chars produced by some
+          keys available on Italian keyboards to couples of 7-bits chars.
+        Message editors should always enable e-mail support, they should also
+          restore its original status before exiting.
+        The user can change both status bits by hotkeys.
 --------d-2D--11-----------------------------
 INT 2D - dLite 1.0+ - CHECK FOR dPressed FILE AND GET ORIGINAL SIZE
 	AL = 11h
@@ -2708,6 +2767,8 @@ Return: AL = status
 	    FFh reference set
 Note:	this function is only available if the extended API has been installed
 	  in the resident portion
+Program: DTown Utilities is a shareware programmer's utility TSR by Jeroen van
+	  Disseldorp
 SeeAlso: INT 2D/AL=10h"DTown",INT 2D/AL=20h,INT 2D/AL=50h
 --------b-2D--DC-----------------------------
 INT 2D C - DAISY.SYS - BROADCAST: CHAIN RESCANNED
@@ -2715,13 +2776,12 @@ INT 2D C - DAISY.SYS - BROADCAST: CHAIN RESCANNED
 	AH = AMIS multiplex number for signature 'DAISYCHA' 'INDRIVER'
 	DL = LPT Port Rescanned
 Program: DAISY.SYS is a daisy chain manager for parallel port peripherals
-	  conforming to the Advanced Parallel Port Committee's daisy chain
-	  specification.
+	  conforming to the IEEE 1284.3 Committee's daisy chain specification.
 Desc:	This Broadcast is sent whenever daisy chain IDs are reassigned to
 	  warn parallel port device drivers that their daisy chain ID may
 	  have been changed.
 Note:	This function is a callout from DAISY.SYS, NOT a call into DAISY.SYS
-SeeAlso: INT 17/AX=0200h"Advanced Parallel Port",#0514
+SeeAlso: INT 17/AX=0200h"Enhanced Parallel Port",#0514,#1826
 --------l-2E---------------------------------
 INT 2E U - DOS 2+ - PASS COMMAND TO COMMAND INTERPRETER FOR EXECUTION
 	DS:SI -> commandline to execute (see #1834)
@@ -3153,7 +3213,7 @@ Notes:	called at start of COMMAND.COM's default critical error handler if
 	  installed by a user program, allowing partial or complete overriding
 	  of the default error messages
 	subfunction 02h is called by many DOS 4 external programs
-	DR-DOS's COMMAND.COM appends additional info ("0 files copied") to the
+	DR DOS's COMMAND.COM appends additional info ("0 files copied") to the
 	  returned string
 SeeAlso: AX=0500h,AX=122Eh,INT 24
 --------U-2F0600-----------------------------
@@ -3163,7 +3223,7 @@ Return: AL = status
 	    00h not installed
 	    01h not installed, but not OK to install
 	    FFh installed
-Notes:	ASSIGN is not a TSR in DR-DOS 5.0; it is internally replaced by SUBST
+Notes:	ASSIGN is not a TSR in DR DOS 5.0; it is internally replaced by SUBST
 	  (see INT 21/AH=52h)
 	undocumented prior to the release of DOS 5.0
 SeeAlso: AX=0601h,INT 21/AH=52h
@@ -3183,7 +3243,7 @@ Return: AL = status
 	    FFh installed
 Desc:	determine whether the internal support code used by DRIVER.SYS is
 	  present; it is always present in DOS 3.2+
-Note:	supported by DR-DOS 5.0
+Note:	supported by DR DOS 5.0
 --------D-2F0801-----------------------------
 INT 2F U - DRIVER.SYS support - ADD NEW BLOCK DEVICE
 	AX = 0801h
@@ -3193,14 +3253,14 @@ Notes:	moves down internal list of drive data tables, copying and modifying
 	  the drive description flags word for tables referencing same physical
 	  drive
 	the data table is appended to the chain of tables
-	supported by DR-DOS 5.0
+	supported by DR DOS 5.0
 SeeAlso: AX=0803h
 --------D-2F0802-----------------------------
 INT 2F U - DRIVER.SYS support - EXECUTE DEVICE DRIVER REQUEST
 	AX = 0802h
 	ES:BX -> device driver request header (see #1845)
 Return: request header updated as per requested operation
-Notes:	supported by DR-DOS 5.0
+Notes:	supported by DR DOS 5.0
 	DOS 3.2 executes this function on any AL value from 02h through F7h;
 	  DOS 4.0+ executes this function on AL=02h and AL=04h-F7h
 	the command codes (see #1843) and structures described below apply
@@ -3307,7 +3367,7 @@ Offset	Size	Description	(Table 1845)
  0Eh	DWORD	transfer address
  12h	WORD	(call) number of bytes to read/write
 		(ret) actual number of bytes read or written
----command codes 04h,08h,09h (except Compaq DOS 3.31, DR-DOS 6)---
+---command codes 04h,08h,09h (except Compaq DOS 3.31, DR DOS 6)---
  0Dh	BYTE	media descriptor (block devices only)
  0Eh	DWORD	transfer address
  12h	WORD	byte count (character devices) or sector count (block devices)
@@ -3316,7 +3376,7 @@ Offset	Size	Description	(Table 1845)
  1Ah	DWORD	(DOS 4.0+) 32-bit starting sector number (block devices with
 		  device attribute word bit 1 set only) if starting sector
 		  number above is FFFFh (see INT 21/AH=52h)
----command codes 04h,08h,09h (Compaq DOS 3.31, DR-DOS 6)---
+---command codes 04h,08h,09h (Compaq DOS 3.31, DR DOS 6)---
  0Dh	BYTE	media descriptor (block devices only)
  0Eh	DWORD	transfer address
  12h	WORD	byte count (character devices) or sector count (block devices)
@@ -3517,7 +3577,7 @@ Offset	Size	Description	(Table 1848)
 INT 2F U - DOS 4.0+ DRIVER.SYS support - GET DRIVE DATA TABLE LIST
 	AX = 0803h
 Return: DS:DI -> first drive data table in list (see #1849,#1850,#1851)
-Note:	not available under DR-DOS 5.0
+Note:	not available under DR DOS 5.0
 SeeAlso: AX=0801h
 
 Format of DOS 3.30 drive data table:
@@ -3669,11 +3729,11 @@ Notes:	supported by OS/2 v1.3+ compatibility box, which always returns AL=FFh
 	  installed even when it is not
 SeeAlso: AX=1080h,INT 21/AH=52h
 --------d-2F1001-----------------------------
-INT 2F U - DR-DOS 6.0 SHARE internal - SET ???
+INT 2F U - DR DOS 6.0 SHARE internal - SET ???
 	AX = 1001h
 	DX:BX -> ???function
 Notes:	this function is also supported by SuperStor, a disk-compression
-	  program by Addstor which is bundled with DR-DOS 6.0, and the
+	  program by Addstor which is bundled with DR DOS 6.0, and the
 	  Novell DOS 7 DELWATCH.EXE
 	the default handler for the pointer set by this call under DELWATCH
 	  simply returns with CF set
@@ -3702,7 +3762,7 @@ Return: AL = status
 	    FFh checking was already off
 Note:	(see AX=1080h)
 SeeAlso: AX=1000h,AX=1080h
-----------2F10FE-----------------------------
+--------O-2F10FE-----------------------------
 INT 2F U - Novell DOS 7 DELWATCH.EXE - INSTALLATION CHECK
 	AX = 10FEh
 Return: AX = 20FFh if installed and active
@@ -3778,7 +3838,7 @@ Call DELWATCH private entry point with:
 Return: AX = 0000h, CX = 0001h if DELWATCH busy
 	registers unchanged if AH >= 0Fh on entry
 --------O-2F10FF-----------------------------
-INT 2F U - Multiplex - DR-DOS 5.0 - ???
+INT 2F U - Multiplex - DR DOS 5.0 - ???
 	AX = 10FFh
 	ES:BX -> ???
 Note:	sets pointer in kernel
@@ -4301,7 +4361,7 @@ INT 2F CU - NETWORK REDIRECTOR - QUALIFY REMOTE FILENAME
 	DS:SI -> ASCIZ filename to canonicalize
 	ES:DI -> 128-byte buffer for qualified name
 Return: CF set if not resolved
-Notes:	called by MS-DOS 3.1+ kernel, but not called by DR-DOS 5.0 unless the
+Notes:	called by MS-DOS 3.1+ kernel, but not called by DR DOS 5.0 unless the
 	  filename matches the name of a character device
 	called first when DOS attempts to resolve a filename (unless inside an
 	  AX=5D00h server call); if this fails, DOS resolves the name locally
@@ -4780,7 +4840,7 @@ Return: CF clear if successful
 	    BX = relative entry number in system file table containing entry
 	    AX destroyed
 	CF set if BX greater than FILES=
-Note:	supported by DR-DOS 5+
+Note:	supported by DR DOS 5+
 SeeAlso: AX=1220h
 --------D-2F1217-----------------------------
 INT 2F U - DOS 3.0+ internal - GET CURRENT DIRECTORY STRUCTURE FOR DRIVE
@@ -4834,7 +4894,7 @@ Return: AX, CX destroyed
 	DX = checksum
 	DS:SI -> first byte after checksummed range
 Notes:	used by DOS to determine day count since 1/1/80 given a date
-	supported by DR-DOS 5.0+
+	supported by DR DOS 5.0+
 SeeAlso: AX=121Dh
 --------D-2F121D-----------------------------
 INT 2F U - DOS 3.0+ internal - SUM MEMORY
@@ -4847,7 +4907,7 @@ Return: AL = byte which exceeded limit
 	DX = remainder after adding first CX bytes
 	DS:SI -> byte beyond the one which exceeded the limit
 Notes:	used by DOS to determine year or month given day count since 1/1/80
-	supported by DR-DOS 5.0+
+	supported by DR DOS 5.0+
 SeeAlso: AX=121Ch
 --------D-2F121E-----------------------------
 INT 2F U - DOS 3.0+ internal - COMPARE FILENAMES
@@ -4855,7 +4915,7 @@ INT 2F U - DOS 3.0+ internal - COMPARE FILENAMES
 	DS:SI -> first ASCIZ filename
 	ES:DI -> second ASCIZ filename
 Return: ZF set if filenames equivalent, ZF clear if not
-Note:	supported by DR-DOS 5.0+
+Note:	supported by DR DOS 5.0+
 SeeAlso: AX=1211h,AX=1221h
 --------D-2F121F-----------------------------
 INT 2F U - DOS 3.0+ internal - BUILD CURRENT DIRECTORY STRUCTURE
@@ -4874,7 +4934,7 @@ Return: CF set on error
 	    ES:DI -> JFT entry for file handle in current process
 Notes:	the byte pointed at by ES:DI contains the number of the SFT for the
 	  file handle, or FFh if the handle is not open
-	supported by DR-DOS 5.0+
+	supported by DR DOS 5.0+
 SeeAlso: AX=1216h,AX=1229h
 --------D-2F1221-----------------------------
 INT 2F U - DOS 3.0+ internal - CANONICALIZE FILE NAME
@@ -4925,7 +4985,7 @@ INT 2F U - DOS 3.0+ internal - GET LENGTH OF ASCIZ STRING
 	AX = 1225h
 	DS:SI -> ASCIZ string
 Return: CX = length of string
-Note:	supported by DR-DOS 5.0+
+Note:	supported by DR DOS 5.0+
 SeeAlso: AX=1212h
 --------D-2F1226-----------------------------
 INT 2F U - DOS 3.3+ internal - OPEN FILE
@@ -5049,8 +5109,8 @@ SeeAlso: INT 21/AH=44h
 INT 2F U - DOS 3.3+ internal - GET DEVICE CHAIN
 	AX = 122Ch
 Return: BX:AX -> header of second device driver (NUL is first) in driver chain
-Note:	although this function exists in DR-DOS 5.0 and Novell DOS 7, it
-	  always returns 0000h:0000h
+Note:	although this function exists in DR DOS 5.0 and Novell DOS 7, it
+	  always returns 0000h:0000h prior to Novell DOS 7 Update 15
 SeeAlso: INT 21/AH=52h
 --------D-2F122D-----------------------------
 INT 2F U - DOS 3.3+ internal - GET EXTENDED ERROR CODE
@@ -5115,7 +5175,7 @@ Notes:	this function needs to access COMMAND.COM if the messages were not
 	  loaded into memory permanently with /MSG; the caller should assume
 	  that the returned message will be overwritten by the next call of
 	  the function
-	supported by DR-DOS 5.0
+	supported by DR DOS 5.0
 
 (Table 1864)
 Values for parameter errors:
@@ -5133,10 +5193,10 @@ Values for parameter errors:
 INT 2F U - DOS 4.x internal - SET DOS VERSION NUMBER TO RETURN
 	AX = 122Fh
 	DX = DOS version number (0000h = return true DOS version)
-Note:	not available under DR-DOS 5.0 or 6.0
+Note:	not available under DR DOS 5.0 or 6.0
 SeeAlso: INT 21/AH=30h,INT 21/AX=3306h
 --------m-2F12FFBX0006-----------------------
-INT 2F U - DR-DOS 6, Novell DOS 7 - EMM386.EXE - VIDEO MEMORY SPACE CONTROL
+INT 2F U - DR DOS 6, Novell DOS 7 - EMM386.EXE - VIDEO MEMORY SPACE CONTROL
 	AX = 12FFh
 	BX = 0006h
 	DX = 0000h
@@ -5258,7 +5318,7 @@ Return: AL = 00h not installed, OK to install
 	     FFh installed
 Notes:	this function is called by the DOS v3.3+ kernel
 	supported by OS/2 v1.3+ compatibility box, which always returns AL=FFh
-	supported by DR-DOS 5.0
+	supported by DR DOS 5.0
 	documented for MS-DOS 5+, but undocumented in prior versions
 SeeAlso: AX=1401h"NLSFUNC",AX=1402h"NLSFUNC"
 --------D-2F1400-----------------------------
@@ -5373,7 +5433,7 @@ Notes:	this function is called by the DOS v3.3+ kernel on INT 21/AH=38h
 	code page structure apparently only needed for COUNTRY.SYS pathname
 SeeAlso: AX=1402h,AX=1403h,INT 21/AH=38h"GET"
 --------U-2F14FE-----------------------------
-INT 2F U - DR-DOS 5.0 NLSFUNC - GET EXTENDED COUNTRY INFORMATION
+INT 2F U - DR DOS 5.0 NLSFUNC - GET EXTENDED COUNTRY INFORMATION
 	AX = 14FEh
 	BX = code page (FFFFh=global code page) (see #1040 at INT 21/AX=6602h)
 	DX = country ID (FFFFh=current country) (see #0699 at INT 21/AH=38h)
@@ -5389,13 +5449,13 @@ INT 2F U - DR-DOS 5.0 NLSFUNC - GET EXTENDED COUNTRY INFORMATION
 Return: CF clear if successful
 	    DS:SI -> requested information
 	CF set on error
-Notes:	DR-DOS 5.0 NLSFUNC returns CF set and AX=0001h if AL was not 00h, FEh,
+Notes:	DR DOS 5.0 NLSFUNC returns CF set and AX=0001h if AL was not 00h, FEh,
 	  or FFh on entry.
-	the DR-DOS kernel calls this function on INT 21/AX=6501h
-	the value in CL is not range-checked by the DR-DOS 5.0 NLSFUNC
+	the DR DOS kernel calls this function on INT 21/AX=6501h
+	the value in CL is not range-checked by the DR DOS 5.0 NLSFUNC
 SeeAlso: #1868,AX=14FFh,INT 21/AH=65h
 
-Format of DR-DOS COUNTRY.SYS file:
+Format of DR DOS COUNTRY.SYS file:
 Offset	Size	Description	(Table 1868)
  00h 126 BYTEs	copyright notice (terminated with Ctrl-Z, padded with NULs)
  7Eh	WORD	signature EDC1h
@@ -5408,12 +5468,12 @@ Offset	Size	Description	(Table 1868)
 			  01h-07h
  var	var	country information
 --------U-2F14FF-----------------------------
-INT 2F U - DR-DOS 5.0 NLSFUNC - PREPARE CODE PAGE
+INT 2F U - DR DOS 5.0 NLSFUNC - PREPARE CODE PAGE
 	AX = 14FFh
 	BX = code page (see #1040 at INT 21/AX=6602h)
 Return: AX = ???
 	ZF set if AX=0000h
-Notes:	DR-DOS 5.0 NLSFUNC returns CF set and AX=0001h if AL was not 00h, FEh,
+Notes:	DR DOS 5.0 NLSFUNC returns CF set and AX=0001h if AL was not 00h, FEh,
 	  or FFh on entry.
 	passes codepage preparation request to each character device supporting
 	  the generic IOCTL call
@@ -5533,6 +5593,7 @@ INT 2F - CD-ROM - GET DRIVE DEVICE LIST
 Return: buffer filled, for each drive letter
 	  BYTE	subunit number in driver
 	  DWORD address of device driver header
+Note:	reportedly returns AX=0000h and an invalid address under Windows95
 --------d-2F1502-----------------------------
 INT 2F - CD-ROM - GET COPYRIGHT FILE NAME
 	AX = 1502h
@@ -5592,8 +5653,9 @@ INT 2F - CD-ROM - ABSOLUTE DISK READ
 	SI:DI = starting sector number
 	DX = number of sectors to read
 Return: CF set on error
-	    AL = error code (15=invalid drive,21=not ready)
+	    AL = error code (0Fh invalid drive,15h not ready)
 	CF clear if successful
+Note:	reportedly returns error 15h (not ready) under Windows95
 SeeAlso: AX=1509h
 --------d-2F1509-----------------------------
 INT 2F - CD-ROM - ABSOLUTE DISK WRITE
@@ -5621,9 +5683,10 @@ INT 2F - CD-ROM v2.00+ - GET MSCDEX.EXE VERSION (GET VERSION)
 	AX = 150Ch
 Return: BH = major version
 	BL = minor version
-Notes:	MSCDEX.EXE versions prior to 2.00 return BX=0
+Notes:	MSCDEX.EXE versions prior to 2.00 return BX=0000h
 	Corel's CORELCDX.COM v1.01d returns 2.20, v1.12a returns 2.21
 	Meridian Data's CDNETEX.EXE returns its own version number, e.g. 4.70
+	Windows95 returns v2.95
 SeeAlso: AX=1500h
 --------d-2F150D-----------------------------
 INT 2F - CD-ROM v2.00+ - GET CD-ROM DRIVE LETTERS
@@ -6924,7 +6987,7 @@ SeeAlso: #1897
 Format of PHARLAPX PasteKey structure:
 Offset	Size	Description	(Table 1899)
  00h	BYTE	ASCII code
- 01h	BYTE	scan code
+ 01h	BYTE	scan code (see #0005)
  02h	WORD	shift states
 SeeAlso: #1897
 
@@ -7005,14 +7068,14 @@ SeeAlso: AX=1684h/BX=0034h
 Call Plug-and-Play Configuration Access entry point with:
 	AX = function
 	    0000h "CA_GetVersion"
-	    0001h "CA_PCI_Read_Config_Byte"
-	    0002h "CA_PCI_Read_Config_Word"
-	    0003h "CA_PCI_Read_Config_DWord"
-	    0004h "CA_PCI_Write_Config_Byte"
-	    0005h "CA_PCI_Write_Config_Word"
-	    0006h "CA_PCI_Write_Config_DWord"
-	    0007h "CA_PCI_Generate_Special_Cycle"
-	    0008h "CA_PCI_Get_Routing_Options"
+	    0001h "CA_PCI_Read_Config_Byte" (see also INT 1Ah/AX=B108h)
+	    0002h "CA_PCI_Read_Config_Word" (see also INT 1Ah/AX=B109h)
+	    0003h "CA_PCI_Read_Config_DWord" (see also INT 1Ah/AX=B10Ah)
+	    0004h "CA_PCI_Write_Config_Byte" (see also INT 1Ah/AX=B10Bh)
+	    0005h "CA_PCI_Write_Config_Word" (see also INT 1Ah/AX=B10Ch)
+	    0006h "CA_PCI_Write_Config_DWord" (see also INT 1Ah/AX=B10Dh)
+	    0007h "CA_PCI_Generate_Special_Cycle" (see also INT 1Ah/AX=B106h)
+	    0008h "CA_PCI_Get_Routing_Options" (see also INT 1Ah/AX=B10Eh)
 	    000Bh "CA_PnPISA_Get_Info"
 	    000Ch "CA_PnPISA_Read_Config_Byte"
 	    000Dh "CA_PnPISA_Write_Config_Byte"
@@ -7218,6 +7281,7 @@ Values for DPMI vendor-specific API names:
  "386MAX"	386MAX v6.00+
  "HELIX_DPMI"	Helix Netroom's DPMI server
  "Phar Lap"	Phar Lap 286|DOS-Extender RUN286 (see #1914)
+ "RATIONAL DOS/4G"  DOS/4G, DOS/4GW
 
 (Table 1913)
 Call Windows-support ("MS-DOS") entry point with:
@@ -7740,6 +7804,42 @@ INT 2F U - AVATAR.SYS v0.11 - ???
 Return: AX = ???
 SeeAlso: AX=1A00h/BX=4156h,AX=1A7Bh
 --------V-2F1AA5-----------------------------
+INT 2F - ANSIPLUS v4.03+ - GET/SET ANSIPLUS INTERNAL VARIABLES
+	AX = 1AA3h
+	BH = function
+	    00h get current/default colors
+		Return: CH = default colors
+			CL = current colors
+	    01h set current/default colors
+		CH = default colors (00h = leave unchanged)
+		CL = current colors
+	    02h get current subscreen region
+		Return: BH,BL = true screen rows,columns
+			CH,CL = top left row,column of region
+			DH,DL = bottom right row,column of region
+	    03h set subscreen region
+		CH,CL = top left row,column of region
+		DH,DL = bottom right row,column of region
+	    04h get driver features (bits 0-31)
+		Return: DX:CX = current feature bits
+	    05h set driver features (bits 0-31)
+		DX:CX = feature bits
+	    06h get driver features (bits 32-63)
+		Return: DX:CX = current feature bits
+	    07h set driver features (bits 32-63)
+		DX:CX = feature bits
+	    other: reserved for future use
+SeeAlso: AX=1AA4h,AX=1AA5h
+--------V-2F1AA5-----------------------------
+INT 2F - ANSIPLUS v4.02+ - GET/SET ANSIPLUS SMOOTH SCROLLING RATE
+	AX = 1AA4h
+	BL = function
+	    00h get scrolling rate
+	    01h set scrolling rate
+	        BH = new minimum scrolling rate in scan lines per retrace
+Return: BH = smooth scrolling rate
+SeeAlso: AX=1AA3h,AX=1AA5h
+--------V-2F1AA5-----------------------------
 INT 2F - ANSIPLUS v4.00+ - GET/SET ANSIPLUS CLIPBOARD
 	AX = 1AA5h
 	DH = subfunction
@@ -7760,7 +7860,7 @@ Return: AL = status
 	ES:BX -> ANSIPLUS local clipboard data
 	CX = number of bytes currently in local clipboard
 	DX = maximum size of local clipboard
-SeeAlso: AX=1A00h/BX=414Eh,AX=1AA6h
+SeeAlso: AX=1A00h/BX=414Eh,AX=1AA4h,AX=1AA6h
 --------V-2F1AA6-----------------------------
 INT 2F - ANSIPLUS v4.00+ - ENABLE/DISABLE ANSIPLUS DRIVER
 	AX = 1AA6h
@@ -7879,9 +7979,6 @@ INT 2F U - AVATAR.SYS v0.11 - ???
 Return: AX = 0000h if DX was nonzero
 	???
 SeeAlso: AX=1A00h/BX=4156h,AX=1A72h
---------V-2F1AAC-----------------------------
-INT 2F - ANSIPLUS v3.00+ - LOAD CHARACTER GENERATOR
-	AX = 1AACh
 --------m-2F1B00-----------------------------
 INT 2F U - DOS 4+ XMA2EMS.SYS extension internal - INSTALLATION CHECK
 	AX = 1B00h
@@ -7903,20 +8000,20 @@ Notes:	this corresponds to the data edited out of the INT 67/AH=58h call
 	FASTOPEN makes this call with AL = FFh
 SeeAlso: AX=1B00h
 --------V-2F2300-----------------------------
-INT 2F - DR-DOS 5.0 GRAFTABL - INSTALLATION CHECK
+INT 2F - DR DOS 5.0 GRAFTABL - INSTALLATION CHECK
 	AX = 2300h
 Return: AH = FFh
 Note:	this installation check does not follow the usual format
 SeeAlso: AH=23h,AX=2E00h
 --------V-2F23-------------------------------
-INT 2F - DR-DOS 5.0 GRAFTABL - GET GRAPHICS DATA
+INT 2F - DR DOS 5.0 GRAFTABL - GET GRAPHICS DATA
 	AH = 23h
 	AL nonzero
 Return: AH = FFh
 	ES:BX -> graphics data (8 bytes for each character from 80h to FFh)
 SeeAlso: AX=2300h,AX=2E00h
 --------T-2F2700-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - INSTALLATION CHECK
+INT 2F - DR DOS 6.0 TaskMAX - INSTALLATION CHECK
 	AX = 2700h
 Return: AL = status
 	    00h not installed
@@ -7924,13 +8021,13 @@ Return: AL = status
 Note:	the TaskMAX API is also supported by Novell DOS 7 TASKMGR in both
 	  taskswitching and multitasking modes
 --------T-2F2701-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - GET STATUS
+INT 2F - DR DOS 6.0 TaskMAX - GET STATUS
 	AX = 2701h
 Return: AX = maximum simultaneous tasks
 	BX = index into TASK_IDS of current foreground task
 	CX = currently-active tasks
 	DX = version number (DL = major, DH = minor)
-	    (DR-DOS 6.0 = 0001h, Novell DOS 7 = 0002h)
+	    (DR DOS 6.0 = 0001h, Novell DOS 7 = 0002h)
 	ES:SI -> TASK_IDS
 	ES:DI -> name table (array of 8-byte names, NUL-terminated if <8 chars)
 Notes:	do not attempt to create a new task if CX == AX
@@ -7938,14 +8035,14 @@ Notes:	do not attempt to create a new task if CX == AX
 	  position within the internal task name table
 SeeAlso: AX=2714h,AX=2716h
 --------T-2F2702-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - GET PER-TASK EMS LIMIT
+INT 2F - DR DOS 6.0 TaskMAX - GET PER-TASK EMS LIMIT
 	AX = 2702h
 Return: DX = maximum pages INT 67/AH=42h will report available
 Note:	TaskMAX does not limit EMS allocations other than by limiting the
 	  amount which is reported as being available at a given time
 SeeAlso: AX=2703h,INT 67/AH=42h
 --------T-2F2703-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - SET PER-TASK EMS LIMIT
+INT 2F - DR DOS 6.0 TaskMAX - SET PER-TASK EMS LIMIT
 	AX = 2703h
 	DX = maximum pages INT 67/AH=42h should report available
 Return: DX = new maximum for reporting
@@ -7953,7 +8050,7 @@ Note:	the TaskMAX API is also supported by Novell DOS 7 TASKMGR in
 	  both taskswitching and multitasking modes
 SeeAlso: AX=2702h,INT 67/AH=42h
 --------T-2F2704-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - REGISTER/UNREGISTER TASK MANAGER
+INT 2F - DR DOS 6.0 TaskMAX - REGISTER/UNREGISTER TASK MANAGER
 	AX = 2704h
 	DL = subfunction
 	    00h unregister task manager
@@ -7968,7 +8065,7 @@ Notes:	a task manager replaces TaskMAX's menu system with its own user
 SeeAlso: AX=2705h
 Index:	hotkeys;TaskMAX
 --------T-2F2705-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - ENABLE/DISABLE DIRECT SWITCHING
+INT 2F - DR DOS 6.0 TaskMAX - ENABLE/DISABLE DIRECT SWITCHING
 	AX = 2705h
 	DL = subfunction
 	    00h disable keystrokes for switching to next/prev/specified task
@@ -7977,7 +8074,7 @@ Return: nothing
 Note:	should only be called by a registered task manager (see AX=2704h)
 SeeAlso: AX=2704h,AX=2706h
 --------T-2F2706-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - SWITCH TO SPECIFIED TASK
+INT 2F - DR DOS 6.0 TaskMAX - SWITCH TO SPECIFIED TASK
 	AX = 2706h
 	DX = task index (see AX=2701h) of task to be activated
 Return: DX = task index of previously-active task
@@ -7985,7 +8082,7 @@ Note:	the TaskMAX API is also supported by Novell DOS 7 TASKMGR in
 	  both taskswitching and multitasking modes
 SeeAlso: AX=2705h,AX=2707h,AX=2715h
 --------T-2F2707-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - CREATE NEW TASK
+INT 2F - DR DOS 6.0 TaskMAX - CREATE NEW TASK
 	AX = 2707h
 	DS:DX -> ASCIZ pathname of executable
 	ES:BX -> parameter block (see #1929)
@@ -8001,7 +8098,7 @@ Offset	Size	Description	(Table 1929)
  06h	DWORD	pointer to first FCB to be copied into child's PSP
  0Ah	DWORD	pointer to second FCB to be copied into child's PSP
 --------T-2F2708-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - DELETE TASK
+INT 2F - DR DOS 6.0 TaskMAX - DELETE TASK
 	AX = 2708h
 	DX = task index
 Return: DX = FFFFh (task deleted)
@@ -8011,7 +8108,7 @@ Notes:	this call should only be used for abnormal task termination, after
 	switches to specified task first
 SeeAlso: AX=2707h
 --------T-2F2709-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - NAME TASK
+INT 2F - DR DOS 6.0 TaskMAX - NAME TASK
 	AX = 2709h
 	DX = task index
 	DS:SI -> 8-byte name (8 NULs = remove name)
@@ -8025,7 +8122,7 @@ Note:	the task retains the given name until it terminates or the name is
 	  removed by specifying a name of 8 NULs.
 SeeAlso: AX=2701h,AX=2707h
 --------T-2F270A-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - CONVERT TASK INDEX TO TASK ID
+INT 2F - DR DOS 6.0 TaskMAX - CONVERT TASK INDEX TO TASK ID
 	AX = 270Ah
 	DX = task index
 Return: DX = task ID (FFFFh if index invalid)
@@ -8033,7 +8130,7 @@ Note:	task IDs stay constant, while indexes can change when other tasks are
 	  deleted
 SeeAlso: AX=2701h,AX=270Bh
 --------T-2F270B-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - CONVERT TASK ID TO TASK INDEX
+INT 2F - DR DOS 6.0 TaskMAX - CONVERT TASK ID TO TASK INDEX
 	AX = 270Bh
 	DX = task ID
 Return: DX = task index (FFFFh if task not active)
@@ -8041,13 +8138,13 @@ Note:	the TaskMAX API is also supported by Novell DOS 7 TASKMGR in both
 	  taskswitching and multitasking modes
 SeeAlso: AX=270Ah
 --------T-2F270C-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - CHECK OPEN FILES
+INT 2F - DR DOS 6.0 TaskMAX - CHECK OPEN FILES
 	AX = 270Ch
 	DX = task index
 Return: AX = number of files currently open for specified task
 SeeAlso: AX=2708h
 --------T-2F270D-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - CHECK IF TASK RUNNING PRIMARY COMMAND INTERPRETER
+INT 2F - DR DOS 6.0 TaskMAX - CHECK IF TASK RUNNING PRIMARY COMMAND INTERPRETER
 	AX = 270Dh
 	DX = task index
 Return: DX = status
@@ -8057,7 +8154,7 @@ Note:	TaskMAX will return 0001h if the specified task has spawned another
 	  command interpreter with AX=2707h
 SeeAlso: AX=2707h,AX=270Ch
 --------T-2F270E-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - GET/SET TEXT PASTE LEAD-IN
+INT 2F - DR DOS 6.0 TaskMAX - GET/SET TEXT PASTE LEAD-IN
 	AX = 270Eh
 	CX = length of string (max 15 keystrokes, 0000h to get current string)
 	DS:SI -> pasting lead-in string (character/scan-code pairs)
@@ -8066,7 +8163,7 @@ Note:	the specified sequence of keystrokes is sent to the application before
 	  every line of a text-mode spreadsheet paste
 SeeAlso: AX=270Fh,AX=2710h,AX=2713h
 --------T-2F270F-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - GET/SET NUMERIC PASTE LEAD-IN
+INT 2F - DR DOS 6.0 TaskMAX - GET/SET NUMERIC PASTE LEAD-IN
 	AX = 270Fh
 	CX = length of string (max 15 keystrokes, 0000h to get current string)
 	DS:SI -> pasting lead-in string (character/scan-code pairs)
@@ -8075,7 +8172,7 @@ Note:	the specified sequence of keystrokes is sent to the application before
 	  every number in a numeric-mode spreadsheet paste
 SeeAlso: AX=270Eh,AX=2710h,AX=2711h,AX=2713h
 --------T-2F2710-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - GET/SET PASTE LINE TERMINATOR STRING
+INT 2F - DR DOS 6.0 TaskMAX - GET/SET PASTE LINE TERMINATOR STRING
 	AX = 2710h
 	CX = length of string (max 15 keystrokes, 0000h to get current string)
 	DS:SI -> pasting terminator string (character/scan-code pairs)
@@ -8084,17 +8181,17 @@ Note:	the specified sequence of keystrokes is sent to the application after
 	  every line of a spreadsheet paste operation
 SeeAlso: AX=270Eh,AX=270Fh,AX=2713h
 --------T-2F2711-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - GET/SET NUMERIC PASTE DECIMAL POINT
+INT 2F - DR DOS 6.0 TaskMAX - GET/SET NUMERIC PASTE DECIMAL POINT
 	AX = 2711h
 	DX = ASCII code for separator (FFFFh to get current)
 Return: DL = current separator character
 SeeAlso: AX=270Fh
 --------T-2F2712-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - INITIATE EXPORTING TASK DATA
+INT 2F - DR DOS 6.0 TaskMAX - INITIATE EXPORTING TASK DATA
 	AX = 2712h
 	DX = task index
 --------T-2F2713-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - INITIATE PASTE OPERATION
+INT 2F - DR DOS 6.0 TaskMAX - INITIATE PASTE OPERATION
 	AX = 2713h
 	DX = task index
 	CX = paste mode
@@ -8103,7 +8200,7 @@ INT 2F - DR-DOS 6.0 TaskMAX - INITIATE PASTE OPERATION
 	    0002h text
 SeeAlso: AX=270Eh,AX=270Fh,AX=2710h,AX=2711h
 --------T-2F2714-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - GET SWAP SPACE INFO
+INT 2F - DR DOS 6.0 TaskMAX - GET SWAP SPACE INFO
 	AX = 2714h
 Return: CX = total KB of swap space
 	DX = available KB of swap space
@@ -8111,19 +8208,19 @@ Note:	the TaskMAX API is also supported by Novell DOS 7 TASKMGR in both
 	  taskswitching and multitasking modes
 SeeAlso: AX=2701h
 --------T-2F2715-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - SWITCH TO TASK MANAGER
+INT 2F - DR DOS 6.0 TaskMAX - SWITCH TO TASK MANAGER
 	AX = 2715h
 Return: only after calling task is again selected
 SeeAlso: AX=2706h
 --------T-2F2716-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - GET PASTE BUFFER STATUS
+INT 2F - DR DOS 6.0 TaskMAX - GET PASTE BUFFER STATUS
 	AX = 2716h
 Return: AX = 0000h if AX=2716h,AX=2717h,AX=2718h supported
 	    CX = bytes in paste buffer
 	    DX = current generation number (updated after every copy operation)
 SeeAlso: AX=2701h,AX=2713h,AX=2714h,AX=2717h,AX=2718h
 --------T-2F2717-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - PASTE DATA DIRECTLY TO APPLICATION BUFFER
+INT 2F - DR DOS 6.0 TaskMAX - PASTE DATA DIRECTLY TO APPLICATION BUFFER
 	AX = 2717h
 	CX = bytes in destination buffer
 	ES:DI -> destination buffer
@@ -8134,7 +8231,7 @@ Note:	the destination buffer may be too small if another task adds more data
 	  to the paste buffer after the AX=2716h call but before this call
 SeeAlso: AX=2713h,AX=2716h,AX=2718h
 --------T-2F2718-----------------------------
-INT 2F - DR-DOS 6.0 TaskMAX - COPY DATA DIRECTLY INTO PASTE BUFFER
+INT 2F - DR DOS 6.0 TaskMAX - COPY DATA DIRECTLY INTO PASTE BUFFER
 	AX = 2718h
 	CX = bytes in source buffer
 	DS:SI -> source buffer (plain ASCII, lines terminated with CR LF)

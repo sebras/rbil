@@ -1,5 +1,5 @@
 Interrupt List, part 3 of 14
-This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------T-1513-------------------------------
 INT 15 - VMiX - "sys_wake" - WAKE SLEEPING PROCESS
 	AH = 13h
@@ -882,10 +882,10 @@ SeeAlso: INT 06"HP 95LX",INT 60/DI=0100h
 --------B-154F-------------------------------
 INT 15 C - KEYBOARD - KEYBOARD INTERCEPT (AT model 3x9,XT2,XT286,CONV,PS)
 	AH = 4Fh
-	AL = hardware scan code
+	AL = hardware scan code (see #0005)
 	CF set
-Return: CF set
-	   AL = hardware scan code
+Return: CF set to continue processing scan code
+	   AL = possibly-altered hardware scan code (see #0005)
 	CF clear
 	   scan code should be ignored
 Notes:	called by INT 09 handler to translate scan codes; the INT 09 code does
@@ -2141,8 +2141,8 @@ INT 15 - HUNTER 16 - GET ROM BIOS VERSION
 	AH = 6Bh
 Return: BH = version number (ASCII)
 	BL = release number (ASCII)
-	CH = minor release number (ASCII)
-	CL = minor release number (ASCII)
+	CH = major??? release number (ASCII)
+	CL = minor??? release number (ASCII)
 SeeAlso: AH=6Ch
 --------b-156C------------------------------------
 INT 15 - HUNTER 16 - GET SERIAL NUMBER
@@ -2621,7 +2621,7 @@ Notes:	TSRs which wish to allocate extended memory to themselves often hook
 	not all BIOSes correctly return the carry flag, making this call
 	  unreliable unless one first checks whether it is supported through
 	  a mechanism other than calling the function and testing CF
-SeeAlso: AH=87h,AH=C7h,AX=DA88h
+SeeAlso: AH=87h,AH=8Ah"Phoenix",AH=C7h,AX=DA88h
 --------b-1588------------------------------------
 INT 15 - HUNTER 16 - GET POWER UP KEYS
 	AH = 88h
@@ -2708,8 +2708,13 @@ Return: AH = status
 	    00h success
 	    FFh failure
 Desc:	Enable or disable Power Input. When Power Input is disabled the AC
-	  adaptor will neither charge the batteries nor supply power to the
+	  adapter will neither charge the batteries nor supply power to the
 	  Hunter 16. Disable Power Input if using Alkaline batteries.
+--------b-158A-------------------------------
+INT 15 - Phoenix BIOS v4.0 - GET BIG MEMORY SIZE
+	AH = 8Ah
+Return: DX:AX = extended memory size in K
+SeeAlso: AH=88h,AX=E801h,AX=E820h
 --------b-158B------------------------------------
 INT 15 - HUNTER 16 - GET/SET CHARGER TEMPERATURE OVERRIDE
 	AH = 8Bh
@@ -3661,8 +3666,9 @@ model prodID   version	  date		product number	  /hdd
  FCh	9Eh *		../..x..   Toshiba T3400CT
  FCh	BAh	V1.30	02/16x95   Toshiba T2150CDS/CDT
  FCh	BBh	V1.30	01/25x95   Toshiba T2100/CS/CT
- FCh	BCh ???		../..x..   Toshiba T2450CT
+ FCh    BCh     V1.20   12/05x94   Toshiba T2450CT
  FCh	BEh		../..x..   Toshiba T4850CT
+ FCh    CAh     V5.10   08/18x95   Toshiba 400CDT
  FCh	???		../.. ..   Toshiba T1900S
  FCh	???		../.. ..   Toshiba T1900CT
  FCh	???		../.. ..   Toshiba T4900CT
@@ -5938,24 +5944,21 @@ Return: BH = 01h
 Note:	used by Compaq's SOFTPAQ number 0718 INT10_04.SYS to determine whether
 	  the fix that driver applies is required (will not install if BX on
 	  return is other than 010Eh or 010Fh)
+SeeAlso: AX=E802h
 --------b-15E801-----------------------------
-INT 15 - Compaq Contura - GET ???
+INT 15 - Phoenix BIOS v4.0 - GET MEMORY SIZE FOR >64M CONFIGURATIONS
 	AX = E801h
-Return: CF clear
-	AX = extended memory in K (read from CMOS locations 30h and 31h)
-	BH = ???
-	BL = ???
-	CX = extended memory in K (read from CMOS locations 17h and 18h)
-	DX = ???
-Note:	also supported by 3/8/93 DESKPRO/i and 7/26/93 LTE Lite 386 ROM BIOS
-SeeAlso: AX=E802h"Compaq"
---------b-15E801-----------------------------
-INT 15 - Dell XPS P90 - DISPLAY MEMORY FOR >64M CONFIGURATIONS
-	AX = E801h
-Return: AX = extended memory size in K??? (max 3C00h = 15MB)
-	BX = extended memory size in 64K blocks???
-Note:	supported by the A03 level (6/14/94) and later XPS P90 BIOSes
-SeeAlso: AX=E820h"Dell"
+Return: CF clear if successful
+	    AX = extended memory between 1M and 16M, in K (max 3C00h = 15MB)
+	    BX = extended memory above 16M, in 64K blocks
+	    CX = configured memory 1M to 16M, in K
+	    DX = configured memory above 16M, in 64K blocks
+	CF set on error
+Notes:	supported by the A03 level (6/14/94) and later XPS P90 BIOSes, as well
+	  as the Compaq Contura, 3/8/93 DESKPRO/i, and 7/26/93 LTE Lite 386 ROM
+	  BIOS
+	supported by AMI BIOSes dated 8/23/94 or later
+SeeAlso: AH=8Ah"Phoenix",AX=E802h,AX=E820h"Phoenix",AX=E881h"Phoenix"
 --------b-15E802-----------------------------
 INT 15 - Compaq Contura - GET ???
 	AX = E802h
@@ -5965,24 +5968,46 @@ Return: CF clear
 	CX = 0000h
 Note:	this function is also supported by the LTE Lite 25c, 25E, and 486; not
 	  supported by LTE Lite 20 and 25.
-SeeAlso: AX=E801h"Compaq"
+SeeAlso: AX=E801h"Phoenix"
 --------b-15E820-----------------------------
-INT 15 - Dell XPS P90 - GET MEMORY MAP
+INT 15 - Phoenix BIOS v4.0 - GET SYSTEM MEMORY MAP
 	AX = E820h
 	EDX = 534D4150h ('SMAP')
-	EBX = ??? or 00000000h for default
-	ECX = number of bytes to copy
-	ES:DI -> buffer for result
+	EBX = continuation value or 00000000h to start at beginning of map
+	ECX = number of bytes to copy ( >= 20 bytes)
+	ES:DI -> buffer for result (see #3175)
 Return: CF clear if successful
+	    EAX = 534D4150h ('SMAP')
 	    ES:DI buffer filled
 	    EBX = next offset from which to copy or 00000000h if all done
-	    high word of ECX may be cleared
+	    ECX = actual length returned in bytes
 	CF set on error
 	    AH = error code (86h) (see #0390 at INT 15/AH=80h)
 Notes:	supported by the A03 level (6/14/94) and later XPS P90 BIOSes
+	supported by AMI BIOSes dated 8/23/94 or later
 	a maximum of 20 bytes will be transferred at one time, even if ECX is
 	  higher
-SeeAlso: AX=E801h"Dell"
+SeeAlso: AX=E801h"Phoenix",AX=E881h
+
+Format of Phoenix BIOS system memory map address range descriptor:
+Offset	Size	Description	(Table 3175)
+ 00h	QWORD	base address
+ 08h	QWORD	length in bytes
+ 10h	DWORD	type of address range
+		01h memory, available to OS
+		02h reserved, not available
+		other: not defined
+--------b-15E881-----------------------------
+INT 15 - Phoenix BIOS v4.0 - GET MEMORY SIZE FOR >64M CONFIGURATIONS (32-bit)
+	AX = E881h
+Return: CF clear if successful
+	    EAX = extended memory between 1M and 16M, in K (max 3C00h = 15MB)
+	    EBX = extended memory above 16M, in 64K blocks
+	    ECX = configured memory 1M to 16M, in K
+	    EDX = configured memory above 16M, in 64K blocks
+	CF set on error
+Note:	supported by AMI BIOSes dated 8/23/94 or later
+SeeAlso: AX=E801h"Phoenix",AX=E820h"Phoenix"
 --------m-15F200CX454D-----------------------
 INT 15 - Tandon memory mapper - Tandon MAPPER HARDWARE INITIALISATION CHECK ???
 	AX = F200h
@@ -6008,7 +6033,7 @@ Notes:	on extended keyboards, this function discards any extended keystrokes,
 	some (older) clone BIOSes do not discard extended keystrokes and manage
 	  function AH=00h and AH=10h the same
 	the K3PLUS v6.00+ INT 16 BIOS replacement doesn't discard extended
-          keystrokes (same as with functions 10h and 20h), but will always
+	  keystrokes (same as with functions 10h and 20h), but will always
 	  translate prefix E0h to 00h. This allows old programs to use extended
 	  keystrokes and should not cause compatibility problems
 SeeAlso: AH=01h,AH=05h,AH=10h,AH=20h,AX=AF4Dh"K3PLUS",INT 18/AH=00h
@@ -6026,7 +6051,7 @@ Note:	if a keystroke is present, it is not removed from the keyboard buffer;
 	some (older) clone BIOSes do not discard extended keystrokes and manage
 	  function AH=00h and AH=10h the same
 	the K3PLUS v6.00+ INT 16 BIOS replacement doesn't discard extended
-          keystrokes (same as with functions 10h and 20h), but will always
+	  keystrokes (same as with functions 10h and 20h), but will always
 	  translate prefix E0h to 00h. This allows old programs to use extended
 	  keystrokes and should not cause compatibility problems
 SeeAlso: AH=00h,AH=11h,AH=21h,INT 18/AH=01h
@@ -6093,7 +6118,7 @@ SeeAlso: AH=03h,AH=04h"KEYBOARD",AX=AF4Dh
 --------B-1605-------------------------------
 INT 16 - KEYBOARD - STORE KEYSTROKE IN KEYBOARD BUFFER (AT/PS w enh keybd only)
 	AH = 05h
-	CH = scan code
+	CH = BIOS scan code
 	CL = ASCII character
 Return: AL = status
 	    00h if successful
@@ -6995,14 +7020,16 @@ Values for HP Vectra scancodes and BIOS keycodes for V_RAW translator:
  CCP-Ins	68h	00/E1h	 00/C7h	   00/ADh    00/93H
  CCP-Del	69h	00/E2h	 00/C8h	   00/AEh    00/94H
  CCP-CNTR	6Ah	00/E3h	 00/C9h	   00/AFh    00/95H
- F1		70h	00/E9h	 00/CFh	   00/B5h    00/9BH
- F2		71h	00/EAh	 00/D0h	   00/B6h    00/9CH
- F3		72h	00/EBh	 00/D1h	   00/B7h    00/9DH
- F4		73h	00/ECh	 00/D2h	   00/B8h    00/9EH
- F5		74h	00/EDh	 00/D3h	   00/B9h    00/9FH
- F6		75h	00/EEh	 00/D4h	   00/BAh    00/A0H
- F7		76h	00/EFh	 00/D5h	   00/BBh    00/A1H
- F8		77h	00/F0h	 00/D6h	   00/BCh    00/A2H
+ f1		70h	00/E9h	 00/CFh	   00/B5h    00/9BH
+ f2		71h	00/EAh	 00/D0h	   00/B6h    00/9CH
+ f3		72h	00/EBh	 00/D1h	   00/B7h    00/9DH
+ f4		73h	00/ECh	 00/D2h	   00/B8h    00/9EH
+ f5		74h	00/EDh	 00/D3h	   00/B9h    00/9FH
+ f6		75h	00/EEh	 00/D4h	   00/BAh    00/A0H
+ f7		76h	00/EFh	 00/D5h	   00/BBh    00/A1H
+ f8		77h	00/F0h	 00/D6h	   00/BCh    00/A2H
+Note:	only HP-specific codes are listed in this table; see INT 09 for a full
+	  list of standard scan codes
 SeeAlso: #0005,#0482
 --------b-166F08-----------------------------
 INT 16 - HP Vectra EX-BIOS - "F16_KBD" - GET KEYBOARD INFORMATION
@@ -7680,7 +7707,7 @@ SeeAlso: AX=D724h/CX=00CBh,AX=D724h/CX=00CCh
 INT 16 - VIRUS - "Frumble" - INSTALLATION CHECK
 	AH = DDh
 Return: AL = DDh if resident
-SeeAlso: INT 13/AX=FD50h,INT 21/AX=0B56h
+SeeAlso: INT 13/AX=FD50h,INT 21/AX=010Fh,INT 21/AX=0B56h
 --------s-16DFDF-----------------------------
 INT 16 U - Corel PowerSCSI - FDAUDIO.COM - INSTALLATION CHECK
 	AX = DFDFh
@@ -7954,7 +7981,7 @@ SeeAlso: AH=F0h,AH=F1h
 INT 16 U - NORTON GUIDES - INSTALLATION CHECK
 	AX = F398h
 Return: AX = 6A73h ("js")
-	BH = scan code of current hot key
+	BH = BIOS scan code of current hot key
 	BL = ASCII code of current hot key
 Note:	NG.EXE was written by John Socha
 --------b-16F400-----------------------------

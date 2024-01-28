@@ -1,5 +1,5 @@
 Interrupt List, part 14 of 14
-This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 ----------80---------------------------------
 INT 80 - Q-PRO4 - ???
 --------r-80---------------------------------
@@ -4727,16 +4727,16 @@ INT FF - PC/FORTH - GRAPHICS API
 	SS:SP -> FORTH return stack
 	details of parameters not available
 --------!---Admin----------------------------
-Highest Table Number = 3170
+Highest Table Number = 3177
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER48A through INTER48D (preferably the original
+quartet of archives named INTER49A through INTER49D (preferably the original
 authenticated PKZIP archives), the utility programs in a fifth archive
-called INTER48E.ZIP, and the WinHelp-related programs in a sixth archive
-named INTER48F.ZIP.
+called INTER49E.ZIP, and the WinHelp-related programs in a sixth archive
+named INTER49F.ZIP.
 
-This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------!---CONTACT_INFO---------------------
 Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
 UUCP: {uunet,harvard}!pobox.com!ralf

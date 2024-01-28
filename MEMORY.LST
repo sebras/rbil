@@ -1,5 +1,5 @@
-MEMORY MAP			Release 48		Last Change 10/29/95
-This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+MEMORY MAP			Release 49		Last Change 2/11/96
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 
 --------H-M00000000--------------------------
 MEM 0000h:0000h R - INTERRUPT VECTOR TABLE
@@ -1314,7 +1314,8 @@ Size:	BYTE
 --------J-M00500001--------------------------
 MEM 0050h:0001h - NEC PC-9800 series - SCREEN MODE
 Size:	BYTE
-Note:	if bit 3 set, the screen is in high-resolution mode
+Note:	if bit 3 set, the screen is in high-resolution mode (start memory at
+	  segment E000h instead of A000h)
 ----------M00500004--------------------------
 MEM 0050h:0004h - MS-DOS - LOGICAL DRIVE FOR SINGLE-FLOPPY SYSTEM (A: / B:)
 Size:	BYTE
@@ -1994,11 +1995,11 @@ Highest Table Number = M073
 --------!---FILELIST-------------------------
 Please redistribute all of the files comprising the interrupt list (listed at
 the beginning of the list and in INTERRUP.1ST) unmodified as a group, in a
-quartet of archives named INTER48A through INTER48D (preferably the original
+quartet of archives named INTER49A through INTER49D (preferably the original
 authenticated PKZIP archives), and the utility programs in a two additional
-archives called INTER48E.ZIP and INTER48F.ZIP
+archives called INTER49E.ZIP and INTER49F.ZIP
 
-This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
 --------!---CONTACT_INFO---------------------
 Internet: ralf@pobox.com (currently forwards to ralf@telerama.lm.com)
 UUCP: {uunet,harvard}!pobox.com!ralf

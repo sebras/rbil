@@ -1,5 +1,5 @@
 Interrupt List, part 9 of 14
-This compilation is Copyright (c) 1989,1990,1991,1992,1993,1994,1995 Ralf Brown
+Copyright (c) 1989,1990,1991,1992,1993,1994,1995,1996 Ralf Brown
 --------m-2F4300-----------------------------
 INT 2F - EXTENDED MEMORY SPECIFICATION (XMS) v2+ - INSTALLATION CHECK
 	AX = 4300h
@@ -2479,7 +2479,7 @@ INT 2F - TesSeRact RAM-RESIDENT PROGRAM INTERFACE
 				ES:BX -> user parameter block (see #2026)
 			    nonzero failed
 	    02h check if hotkey in use
-		CL = scan code of hot key
+		CL = scan code of hot key (see #0005)
 		Return: AX = FFFFh hot key conflicts with another TSR
 			     otherwise safe to use the hotkey
 	    03h replace default critical error handler
@@ -2496,7 +2496,7 @@ INT 2F - TesSeRact RAM-RESIDENT PROGRAM INTERFACE
 		CX = TSR ID number
 		DL = number of additional hot keys to allocate
 		DS:SI -> table of hot keys
-			BYTE  hotkey scan code
+			BYTE  hotkey scan code (see #0005)
 			BYTE  hotkey shift state
 			BYTE  flag value to pass to TSR (nonzero)
 		Return: AX = nonzero, unable to install hot keys
@@ -2579,7 +2579,7 @@ Offset	Size	Description	(Table 2026)
  00h  8 BYTEs	blank-padded TSR name
  08h	WORD	TSR ID number
  0Ah	DWORD	bitmap of supported functions
- 0Eh	BYTE	scan code of primary hotkey
+ 0Eh	BYTE	scan code of primary hotkey (see #0005)
 		00h = pop up when shift states match
 		FFh = no popup (if shift state also FFh)
  0Fh	BYTE	shift state of primary hotkey
@@ -6591,7 +6591,7 @@ Note:	DOS 5+ DISPLAY.SYS chains to previous handler if AL is not one of the
 	  subfunctions listed here
 SeeAlso: AX=AD01h"DISPLAY",AX=AD02h"DISPLAY"
 --------O-2FAD00-----------------------------
-INT 2F U - DR-DOS 3.41-5.0, Novell DOS 7 KEYB - INSTALLATION CHECK
+INT 2F U - DR DOS 3.41-5.0, Novell DOS 7 KEYB - INSTALLATION CHECK
 	AX = AD00h
 Return: AX = FFFFh if installed
 	flags destroyed
@@ -6606,7 +6606,7 @@ Return: CF clear if successful
 	    AX = 0000h
 SeeAlso: AX=AD02h"DISPLAY"
 --------O-2FAD01-----------------------------
-INT 2F U - DR-DOS 3.41,5.0 KEYB - GET CONFIGURATION
+INT 2F U - DR DOS 3.41,5.0 KEYB - GET CONFIGURATION
 	AX = AD01h
 Return: BX = current code page (see #1040 at INT 21/AX=6602h)
 	CX = current keyboard layout (0100h = US, 0102h = foreign)
@@ -6822,18 +6822,20 @@ Return: DS:SI buffer updated
 Notes:	this call requests execution of the command which a previous call to
 	  AX=AE00h indicated was resident
 	APPEND hooks this call
-BUG:	Novell DOS 7.0's COMMAND.COM will attempt to run a disk program with
-	  the indicated name even if the returned length byte is zero, because
-	  the register used to flag this case is clobbered without first
-	  checking it.	The workaround is to set the command name buffer to
-	  "REM" followed by enough blanks to pad out the original command's
-	  length, which will also work with MS-DOS 6.
+BUG:	Novell DOS 7.0's COMMAND.COM (prior to Update 12) will attempt to run
+	  a disk program with the indicated name even if the returned length
+	  byte is zero, because the register used to flag this case is
+	  clobbered without first checking it.	The workaround is to set the
+	  command name buffer to "REM" followed by enough blanks to pad out
+	  the original command's length, which will also work with MS-DOS 6.
 	  (from padgett@tccslr.dnet.mmc.com)
 SeeAlso: AX=AE00h
 --------O-2FAF00-----------------------------
 INT 2F - WinDOS v2.11 - INSTALLATION CHECK
 	AX = AF00h
 Return: AL = FFh if installed
+Program: WinDOS is a DOS clone (claimed to be mostly MS-DOS 5.0 API compatible)
+	  written by Heiko Goemann
 SeeAlso: AX=AF01h"WinDOS",INT 21/AH=30h
 ----------2FAF00-----------------------------
 INT 2F U - ???
@@ -8528,7 +8530,7 @@ Index:	screen saver;DIMWIT
 Format of DIMWIT TSR configuration data:
 Offset	Size	Description	(Table 2198)
  00h	WORD	blanking delay in clock ticks
- 02h	BYTE	instant-blanking hotkey scan code
+ 02h	BYTE	instant-blanking hotkey scan code (see #0005)
 		Ctrl and Alt must also be pressed
 --------V-2FC001ES0000-----------------------
 INT 2F - AD-DOS - GET RESIDENT CODE SEGMENT
