@@ -4,6 +4,7 @@
                           by Ralf Brown
                               12/87
                            Updated 6/88
+			   Updated 4/90
 
 
 What is an interrupt?
@@ -74,3 +75,29 @@ How does an interrupt work?
    interrupt handler has to preserve ALL registers, since the 
    interrupt could have happened anywhere.
 
+
+GLOSSARY
+--------
+API (Application Program[ming] Interface)
+   An API is the set of function calls and services that a
+   program makes available to other processes (applications).
+   Each function or service has a set format which specifies
+   the values to be supplied by the caller and the values
+   which are returned.	Because of this interface
+   specification, the underlying organization of the
+   function or service can be changed without affecting the
+   applications which use it.  For example, the DOS INT 21h
+   file access functions remained unchanged between DOS 2.x
+   and DOS 3.x, even though the internal data structures and
+   code organization changed significantly.
+
+NMI (Non-Maskable Interrupt)
+   Most external (hardware) interrupts can be disabled by the
+   CLI (CLear Interrupt enable flag) instruction when the CPU
+   is executing critical code that should not be interrupted,
+   such as switching from one stack to another.  However, there
+   are some situations so dire that the CPU must act on them
+   immediately no matter what else it is doing, even if it has
+   disabled interrupts.  The Non-Maskable Interrupt serves
+   precisely this purpose, as it cannot be disabled (masked) by
+   the CPU.

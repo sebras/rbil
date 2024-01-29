@@ -1,17 +1,18 @@
-Interrupt List		Release 90.1	Last change 1/6/90
+Interrupt List		Release 90.2	Last change 4/28/90
 
 Please distribute all of the following files (unmodified) together in an
-archive called INTER190:
+archive called INTER290:
         INTERRUP.1ST	this file
-        INTERRUP.A	INT 00 through INT 27 \ total 274 pages at 60 lines
-	INTERRUP.B	INT 28 through INT FF / per page, 296 with INTPRINT -p
+        INTERRUP.A	INT 00 through INT 1F \ total 320 pages at 60 lines
+	INTERRUP.B	INT 20 through INT 3F  >per page, 346 with INTPRINT -p
+	INTERRUP.C	INT 40 through INT FF / 
         INTERRUP.PRI	a brief primer on interrupts
 	INTPRINT.COM	a simple formatter that also generates the list summary
 	INTPRINT.DOC	instructions for INTPRINT
 	INTPRINT.C	source code for INTPRINT
 
-Concatenate INTERRUP.A and INTERRUP.B with
-	COPY /B INTERRUP.A+INTERRUP.B INTERRUP.LST
+Concatenate INTERRUP.A, .B, and .C with
+	COPY /B INTERRUP.A+INTERRUP.B+INTERRUP.C INTERRUP.LST
 to create an interrupt list file identical to my master copy.
 
 Use INTPRINT to generate the INTERRUP.SUM which used to be included in the
@@ -26,13 +27,15 @@ interrupt listing in any way, provided my name and addresses and the names of
 all contributers are preserved, as well as the information on how to obtain
 new releases.
 
+Please send corrections/additions to me rather than distributing a modified
+version of the list, so that all may benefit from your contribution.
+
 This version of the list reverts to the public domain one year after the
 date of its release, with the sincere hope that the credits and availability
 information are retained.
 ---------------------------------------------
 If the list is more than three months old by the time you get it, there is
-probably a newer release out already (however, due to a probable lack of
-time this semester, v90.2 is likely to be delayed until June).
+probably a newer release out already (v90.3 is planned for mid to late July).
 
 The newest release of this list is available in these places (please do not
 ask me to email it, it is just too large for that):
@@ -40,13 +43,13 @@ ask me to email it, it is just too large for that):
 On the ARPAnet, by standard anonymous FTP from CS.CMU.EDU [128.2.222.173].
 	Change directly to directory /afs/cs.cmu.edu/user/ralf/pub and get the
 	file interrup.zip which is a link to the current version.  You MUST
-	change 	directory first because of the way CMU's anonymous FTP works.
-	ZIP unarchivers for MSDOS and BSD Unix are available in the "zip"
+	change directory first because of the way CMU's anonymous FTP works.
+	ZIP unarchivers for MSDOS and BSD Unix are available in the "archivers"
 	subdirectory.  
 
 On FIDOnet, from The Gas Passer BBS 1:129/46 1-412-648-6326 1200/2400/9600 HST
 	as file INTERnyy.ZIP, where nyy stands for release 'n' of year 'yy',
-	in file area #18 (User Uploads) or #9 (Miscellaneous Goodies).  ZIP
+	in file area #18 (User Uploads) or #20 (Programmer's Corner).  ZIP
 	executables are in file area #19.  First-time callers may download.
 	File Requests.
 
@@ -57,12 +60,11 @@ archives.
 
 Secondary Distribution Points (the list will be available here within a day or
 so of release):
-ARPA:	on WSMR-SIMTEL20.ARMY.MIL [26.2.0.74] as file INTERnyy.ARC in directory
-	PD1:<MSDOS.SYSUTL>, where nyy stands for release n of year yy.  Note
+ARPA:	on WSMR-SIMTEL20.ARMY.MIL [26.2.0.74] as file INTERnyy.ZIP in directory
+	PD1:<MSDOS.INFO>, where nyy stands for release n of year yy.  Note
         that you must use mode "tenex" or "type L 8" to successfully FTP the
 	file.  
 FIDO:	SyncPoint BBS 1:261/1008 1-301-529-2584 (new number!) File Requests.
-	First-time callers may download.
 
 Additional Distribution Points:
 BITnet: you may retrieve the copy on WSMR-SIMTEL20.ARMY.MIL via the following
@@ -74,7 +76,10 @@ BITnet: you may retrieve the copy on WSMR-SIMTEL20.ARMY.MIL via the following
 		    TRICKLE at DB0FUB11 (Germany)
 		    TRICKLE at DKTC11 (Denmark)
 		    TRICKLE at AWIWUW11 (Austria)
-		    LISTSERV at FINTUVM (Finland) (alias MAMMUTTI.UTU.FI)
+		    TRICKLE at EB0UB011 (Spain)
+		    TRICKLE at BANUFS11 (Belgium)
+	(elsewhere) TRICKLE at TAUNIVM (Israel)
+FIDO:	boards belonging to the DVNET distribution system
 CompuServe: in the IBM Programming Forum Library 6 as INTnyy.*
 
 According to Mark Seiffert, the list is available
@@ -93,11 +98,6 @@ According to Mark Seiffert, the list is available
  >
  >The file will be uuencoded, chopped up and sent. Btoa may be used instead
  >of uuencode, use SET BTOA instead of SET UUENCODE.
-
-I am looking for volunteers with FTP to upload new releases to BBSs on the West
-Coast or outside the US on a regular basis (preferably boards which allow
-first-time callers to download and support file requests).  I would send you
-mail as soon as the new list is available for FTP on CS.CMU.EDU.
 ---------------------------------------------
 DISCLAIMER:  I verify the information contained in this list to the best of my
 ability, but I cannot be held responsible for any problems caused by use or
@@ -178,6 +178,12 @@ among them
 11/89 Barry Burke      Barry=Burke%3PM%Banyan@thing.banyan.com  Banyan VINES
 11/89 Christian Franke franke@rwthinf.uucp	      ATI EGA Wonder, WP5.0
  1/90 Norman Walsh     NORM@IONAACAD.BITNET	      Inset API
+ 1/90 Andrew Schulman  76320.302@CompuServe.COM	      Phar Lap 386/DOS extender
+ 1/90 Dan Prather      72765.1330@CompuServe.COM      IBM 3270 Workst Prog API
+ 3/90 Roger Bowler     rbowler@cix     Fido 2:252/10  IBM 3270, Amstrad PC1512
+ 3/90 Mike Baszczak				      SQL Base
+ 4/90 Rick Wagner      rick@nrc.com		      PC Network RECEIVER.COM
+ 4/90 Ralf Brown       ralf@cs.cmu.edu		      more DOS 3.3 internals
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -202,9 +208,9 @@ Also contributing:
  Mark Seiffert <marks%%mgse@rex.cs.tulane.edu>, Lewis Paper,
  Marco Lumachi <RARCHI06@IMIPOLI.BITNET>, Michael Dickson <mcd@ccsitn.att.com>,
  Dave Bennett <74635.1671@CompuServe.com>,Andrew Torda <torda@hgrrug52.bitnet>,
- Andrew Schulman <76320.302@CompuServe.com>,
- Paul Williamson <pwilliamson@drzeus.qualcomm.com>,
- James Birdsall <jwbirdsa@phoenix.princeton.edu>
+ Paul Williamson <pwilliamson@drzeus.qualcomm.com>, Jan Ceuleers 2:295/27,
+ James Birdsall <jwbirdsa@phoenix.princeton.edu>, 
+ Edwin Floyd <76067.747@CompuServe.COM>
 ---------------------------------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -354,6 +360,25 @@ EMS4 hardware configuration info data format cribbed from
 "MS-DOS Extensions Quick Reference" by Ray Duncan.  Added 1/4/90.
 
 PC-IPC API from PC-IPC documentation.  Added by Ralf Brown, 1/5/90.
+
+Imtec and Genoa 6400 video modes from VPIC v2.3 config files.  Added by Ralf
+Brown, 1/12/90.
+
+LANtastic API info derived from "LANtastic (tm) Network Operating System
+Technical Reference Manual", provided by Edwin Floyd <76067.747@CompuServe.COM>
+Added by Ralf Brown, 1/90.
+
+Phar Lap 386/DOS-extender API extracted from Phar Lap's manual.  Added 1/90.
+
+IBM 3270 Workstation Program API derived from "IBM 3270 Workstation Program
+Version 1.10, Programming Guide", dated December 1987.  Added 2/90.
+
+VESA SuperVGA BIOS extensions derived from Dr. Dobb's Journal, April 1990.
+Added by Ralf Brown, 3/25/90.
+
+Additional undocumented DOS 4 info gleaned from _Developing_Applications_Using_
+_DOS_, by Christopher, Feigenbaum, and Saliga.  Added by Ralf Brown, 3/29/90
+and 3/31/90.
 ---------------------------------------------
 Key to system abbreviations
 (unless otherwise indicated, a function is available on all systems)
@@ -399,8 +424,8 @@ What they're saying about this list:
    IBM PC.  A great thing to have on your hard disk if you don't have
    a Ray Duncan or Peter Norton book handy."
       _Turbo_Technix_, July/August 1988, p. 157.
-[and that was about the 1/30/88 version, which is about one-fourth the size of
- the current version....]
+[and that was about the 1/30/88 version, which is less than one-fourth the size
+ of the current version....]
 ---------------------------------------------
 If you know of any information not in the list, or which is stated incorrectly,
 please let me know!  This list would be a pale shadow of its current self if it
@@ -416,7 +441,7 @@ Address e-mail to:
 	ARPA: ralf@cs.cmu.edu
 	UUCP: {ucbvax,harvard}!cs.cmu.edu!ralf
 	BIT:  ralf%cs.cmu.edu@cmuccvb
-	FIDO: Ralf Brown 1:129/46  (new address!)
+	FIDO: Ralf Brown 1:129/46 
 		or post a message to the DR_DEBUG echo
 	CompuServe:   >INTERNET:ralf@cs.cmu.edu
 
@@ -427,7 +452,7 @@ Snail mail:
 	Pittsburgh, PA 15213
 	   (please enclose a SASE or e-mail address if you want a speedy reply)
 
-I reply to all submissions and inquiries.  If you do not receive a reply within
-a reasonable time, send your message again, giving a better return path (on 
-UUCP, a bang path starting at harvard or ucbvax; elsewhere, a path starting 
+I reply to all e-mail submissions and inquiries.  If you do not receive a reply
+within a reasonable time, send your message again, giving a better return path
+(on UUCP, a bang path starting at harvard or ucbvax; elsewhere, a path starting
 from the ARPA Internet).
