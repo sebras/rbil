@@ -24,7 +24,7 @@ INT 29 - DOS 2+ internal - FAST PUTCHAR
 Return: nothing
 Notes:	this interrupt is called from the DOS output routines if output is
 	  going to a device rather than a file, and the device driver's
-	  attribute word has bit 3 (04h) set.
+	  attribute word has bit 4 (10h) set.
 	the default handler under DOS 2.x and 3.x simply calls INT 10/AH=0Eh
 	the default handler under DESQview 2.2 understands the <Esc>[2J
 	  screen-clearing sequence, calls INT 10/AH=0Eh for all others
@@ -80,6 +80,7 @@ INT 2A - NETBIOS - NETWORK PRINT-STREAM CONTROL
 	     03h flush printer output and start new print job
 Return: CF set on error
 	    AX = error code
+	CF clear if successful
 Note:	subfunction 03h is equivalent to Ctrl/Alt/keypad-*
 SeeAlso: INT 21/AX=5D08h,5D09h, INT 2F/AX=1125h
 ---------------------------------------------
@@ -109,19 +110,27 @@ INT 2A - Microsoft Networks - BEGIN DOS CRITICAL SECTION
 	    05h  DOS 4+ IFSFUNC
 	    06h  DOS 4+ IFSFUNC
 	    08h  ASSIGN.COM
-Note:	normally hooked to avoid interrupting a critical section, rather than
+Notes:	normally hooked to avoid interrupting a critical section, rather than
 	  called
-SeeAlso: AH=81h,82h,87h, INT 21/AX=5D06h,5D0Bh
+	the handler should ensure that none of the critical sections are
+	  reentered, usually by suspending a task which attempts to reenter
+	  an active critical section
+SeeAlso: AH=81h, AH=82h, AH=87h, INT 21/AX=5D06h,5D0Bh
 ---------------------------------------------
 INT 2A - Microsoft Networks - END DOS CRITICAL SECTION
 	AH = 81h
 	AL = critical section number (00h-0Fh) (see AH=80h)
-SeeAlso: AH=80h,82h,87h
+Notes:	normally hooked rather than called
+	the handler should reawaken any tasks which were suspended due to an
+	  attempt to enter the specified critical section
+SeeAlso: AH=80h, AH=82h, AH=87h
 ---------------------------------------------
-INT 2A - Microsoft Networks - END CRITICAL SECTIONS 0 THROUGH 7
+INT 2A - Microsoft Networks - END DOS CRITICAL SECTIONS 0 THROUGH 7
 	AH = 82h
-Note:	called by the INT 21h function dispatcher for function 0 and functions
+Notes:	called by the INT 21h function dispatcher for function 0 and functions
 	  greater than 0Ch except 59h, and on process termination
+	the handler should reawaken any tasks which were suspended due to an
+	  attempt to enter one of the critical sections 0 through 7
 SeeAlso: AH=81h
 ---------------------------------------------
 INT 2A - Microsoft Networks - KEYBOARD BUSY LOOP
@@ -237,12 +246,14 @@ INT 2F - Multiplex - DOS 3+ PRINT.COM - REMOVE FILE
 	DS:DX -> ASCIZ file name (wildcards allowed)
 Return: CF set on error
 	    AX = error code
+	CF clear if successful
 SeeAlso: AX=0103h
 ---------------------------------------------
 INT 2F - Multiplex - DOS 3+ PRINT.COM - REMOVE ALL FILES
 	AX = 0103h
 Return: CF set on error
 	    AX = error code
+	CF clear if successful
 SeeAlso: AX=0102h
 ---------------------------------------------
 INT 2F - Multiplex - DOS 3+ PRINT.COM - HOLD QUEUE/GET STATUS
@@ -267,6 +278,7 @@ INT 2F - Multiplex - DOS 3+ PRINT.COM - RESTART QUEUE
 	AX = 0105h
 Return: CF set on error
 	   AX = error code
+	CF clear if successful
 SeeAlso: AX=0104h
 ---------------------------------------------
 INT 2F - Multiplex - DOS 3.3+ PRINT.COM - CHECK IF ERROR ON OUTPUT DEVICE
@@ -616,6 +628,7 @@ INT 2F - Multiplex - NETWORK REDIRECTOR - REMOVE REMOTE DIRECTORY
 	SDA CDS pointer -> current directory structure for drive with dir
 Return: CF set on error
 	    AX = DOS error code (see INT 21/AH=59h)
+	CF clear if successful
 Note:	called by DOS 3.1+ kernel
 SeeAlso: AX=1103h, AX=1105h, INT 21/AH=3Ah
 ---------------------------------------------
@@ -626,6 +639,7 @@ INT 2F - Multiplex - DOS 4 IFSFUNC.EXE - REMOVE REMOTE DIRECTORY
 	SDA CDS pointer -> current directory structure for drive with dir
 Return: CF set on error
 	    AX = DOS error code (see INT 21/AH=59h)
+	CF clear if successful
 Note:	appears to be identical to AX=1101h
 SeeAlso: AX=1101h
 ---------------------------------------------
@@ -636,6 +650,7 @@ INT 2F - Multiplex - NETWORK REDIRECTOR - MAKE REMOTE DIRECTORY
 	SDA CDS pointer -> current directory structure for drive with dir
 Return: CF set on error
 	    AX = DOS error code (see INT 21/AH=59h)
+	CF clear if successful
 Note:	called by DOS 3.1+ kernel
 SeeAlso: AX=1101h, AX=1105h, INT 21/AH=39h
 ---------------------------------------------
@@ -646,6 +661,7 @@ INT 2F - Multiplex - DOS 4 IFSFUNC.EXE - MAKE REMOTE DIRECTORY
 	SDA CDS pointer -> current directory structure for drive with dir
 Return: CF set on error
 	    AX = DOS error code (see INT 21/AH=59h)
+	CF clear if successful
 Note:	appears to be identical to AX=1103h
 SeeAlso: AX=1103h
 ---------------------------------------------
@@ -656,6 +672,7 @@ INT 2F - Multiplex - NETWORK REDIRECTOR - CHDIR
 	SDA CDS pointer -> current directory structure for drive with dir
 Return: CF set on error
 	    AX = DOS error code (see INT 21/AH=59h)
+	CF clear if successful
 Note:	called by DOS 3.1+ kernel
 SeeAlso: AX=1101h, AX=1103h, INT 21/AH=3Bh
 ---------------------------------------------
@@ -876,7 +893,8 @@ INT 2F - Multiplex - NETWORK REDIRECTOR - FINDFIRST
 Return: CF set on error
 	    AX = DOS error code (see INT 21/AH=59h)
 	CF clear if successful
-	    [DTA] = updated findfirst search data (bit 7 of first byte must be set)
+	    [DTA] = updated findfirst search data
+		    (bit 7 of first byte must be set)
 	    [DTA+15h] = standard directory entry for file
 Note:	called by DOS 3.1+ kernel
 SeeAlso: AX=111Ch, INT 21/AH=4Eh
@@ -888,7 +906,8 @@ INT 2F - Multiplex - NETWORK REDIRECTOR - FINDNEXT
 Return: CF set on error
 	    AX = DOS error code (see INT 21/AH=59h)
 	CF clear if successful
-	    [DTA] = updated findfirst search data (bit 7 of first byte must be set)
+	    [DTA] = updated findfirst search data
+		    (bit 7 of first byte must be set)
 	    [DTA+15h] = standard directory entry for file
 Note:	called by DOS 3.1+ kernel
 SeeAlso: AX=111Bh, INT 21/AH=4Fh
@@ -1048,6 +1067,7 @@ INT 2F - Multiplex - DOS 4 IFSFUNC.EXE - ???
 	???
 Return: CF set on error
 	    AX = DOS error code (see INT 21/AH=59h)
+	CF clear if successful
 Note:	called by DOS 4.0 kernel
 ---------------------------------------------
 INT 2F - Multiplex - DOS 4 IFSFUNC.EXE - ???
@@ -1095,6 +1115,7 @@ INT 2F - Multiplex - DOS 4 IFSFUNC.EXE - ???
 	???
 Return: CF set on error
 	    AX = DOS error code (see INT 21/AH=59h)
+	CF clear if successful
 Note:	called by DOS 4.0 kernel
 SeeAlso: INT 21/AH=6Bh
 ---------------------------------------------
@@ -1424,6 +1445,7 @@ INT 2F - Multiplex - DOS 3.3+ internal - CLOSE FILE
 	BX = file handle
 Return: CF set on error
 	    AL = 06h invalid file handle
+	CF clear if successful
 Notes:	can only be called from within DOS (assumes SS=DOS CS)
 	equivalent to INT 21/AH=3Eh
 SeeAlso: AX=1106h,1201h,1226h, INT 21/AH=3Eh
@@ -1656,6 +1678,7 @@ INT 2F - Multiplex - CDROM - GET COPYRIGHT FILE NAME
 	CX = drive number (0=A:)
 Return: CF set if drive is not a CDROM drive
 	    AX = 15 (invalid drive)
+	CF clear if successful
 SeeAlso: AX=1503h
 ---------------------------------------------
 INT 2F - Multiplex - CDROM - GET ABSTRACT FILE NAME
@@ -1664,6 +1687,7 @@ INT 2F - Multiplex - CDROM - GET ABSTRACT FILE NAME
 	CX = drive number (0=A:)
 Return: CF set if drive is not a CDROM drive
 	    AX = 15 (invalid drive)
+	CF clear if successful
 SeeAlso: AX=1502h
 ---------------------------------------------
 INT 2F - Multiplex - CDROM - GET BIBLIOGRAPHIC DOC FILE NAME
@@ -1672,6 +1696,7 @@ INT 2F - Multiplex - CDROM - GET BIBLIOGRAPHIC DOC FILE NAME
 	CX = drive number (0=A:)
 Return: CF set if drive is not a CDROM drive
 	    AX = 15 (invalid drive)
+	CF clear if successful
 ---------------------------------------------
 INT 2F - Multiplex - CDROM - READ VTOC
 	AX = 1505h
@@ -1703,6 +1728,7 @@ INT 2F - Multiplex - CDROM - ABSOLUTE DISK READ
 	DX = number of sectors to read
 Return: CF set on error
 	    AL = error code (15=invalid drive,21=not ready)
+	CF clear if successful
 SeeAlso: AX=1509h
 ---------------------------------------------
 INT 2F - Multiplex - CDROM - ABSOLUTE DISK WRITE
@@ -1753,6 +1779,7 @@ INT 2F - Multiplex - CDROM 2.00 - GET/SET VOLUME DESCRIPTOR PREFERENCE
 	CX = drive number (0=A:)
 Return: CF set on error
 	    AX = error code (15=invalid drive,1=invalid function)
+	CF clear if successful
 ---------------------------------------------
 INT 2F - Multiplex - CDROM 2.00 - GET DIRECTORY ENTRY
 	AX = 150Fh
@@ -1794,10 +1821,178 @@ INT 2F - Multiplex - CDROM 2.10 - SEND DEVICE DRIVER REQUEST
 	CX = CD-ROM drive letter (0 = A, 1 = B, etc)
 	ES:BX -> CD-ROM device driver request header (see AX=0802h)
 ---------------------------------------------
+INT 2F - Multiplex - MS WINDOWS - ENHANCED WINDOWS INSTALLATION CHECK
+	AX = 1600h
+Return: AL = 00h if Enhanced Windows 3.x or Windows/386 2.x not running
+	AL = 80h if Enhanced Windows 3.x or Windows/386 2.x not running
+	AL = 01h if Windows/386 2.x running
+	AL = FFh if Windows/386 2.x running
+	AL = anything else
+	    AL = Windows major version number >= 3
+	    AH = Windows minor version number
+Note:	INT 2F/AH=16h comprises an API for non-Windows programs (DOS device
+	  drivers, TSRs, and applications) to cooperate with multitasking
+	  Windows/386 2.x and Windows 3.x and higher enhanced mode.
+	certain calls are also supported in the Microsoft 80286 DOS extender in
+	  Windows standard mode
+SeeAlso: AX=4680h
+---------------------------------------------
+INT 2Fh - Multiplex - MS WINDOWS/386 2.x - GET API ENTRY POINT
+	AX = 1602h
+Return: ES:DI -> Windows/386 2.x API procedure entry point
+Notes:	this interface is supported in Windows 3.x only for compatibility
+	to get the current virtual machine (VM) ID in Windows/386 2.x:
+	    AX = 0000h
+	    ES:DI -> return address
+	    JUMP to address returned from INT 2F/AX=1602h
+	After JUMP, at return address:
+	    VX??? = current VM ID.
+---------------------------------------------
+INT 2Fh - Multiplex - MS WINDOWS - ENHANCED WINDOWS & 286 DOSX INIT BROADCAST
+	AX = 1605h
+	ES:BX = 0000h:0000h
+	DS:SI = 0000h:0000h
+	CX = 0000h
+	DX = flags
+	    bit 0 = 0 if enhanced Windows initialization
+	    bit 0 = 1 if Microsoft 286 DOS extender initialization
+	    bits 1-15 reserved (undefined)
+Return: CX = 0000h if okay for Windows to load
+        CX <> 0 if Windows should not load
+Note:	the enhanced Windows loader and Microsoft 286 DOS extender will
+	  broadcast an INT 2F/AX=1605h call when initializing.  Any DOS device
+	  driver or TSR can watch for this broadcast and return the appropriate
+	  values.  If the driver or TSR returns CX <> 0, it is also its
+	  responsibility to display an error message.
+---------------------------------------------
+INT 2Fh - Multiplex - MS WINDOWS - ENHANCED WINDOWS & 286 DOSX EXIT BROADCAST
+	AX = 1606h
+	DX = flags
+            bit 0 = 0 if enhanced Windows exit
+            bit 0 = 1 if Microsoft 286 DOS extender exit
+	    bits 1-15 reserved (undefined)
+Return: CX = 0000h if okay for Windows to load
+	CX <> 0 if Windows should not load
+Note:	if the init broadcast fails (AX=1605h returned CX <> 0), then this
+	  broadcast will be issued immediately.
+---------------------------------------------
+INT 2Fh - Multiplex - MS WINDOWS - VIRTUAL DEVICE CALL OUT API
+	AX = 1607h
+	BX = virtual device ID (see INT 2Fh AX=1684h)
+Note:	more of a convention than an API, this call specifies a standard
+	  mechanism for enhanced Windows virtual devices (VxD's) to talk to DOS
+	  device drivers and TSRs
+---------------------------------------------
+INT 2Fh - Multiplex - MS WINDOWS - ENHANCED WINDOWS INIT COMPLETE BROADCAST
+	AX = 1608h
+---------------------------------------------
+INT 2Fh - Multiplex - MS WINDOWS - ENHANCED WINDOWS BEGIN EXIT BROADCAST
+	AX = 1609h
+---------------------------------------------
+INT 2Fh - Multiplex - MS WINDOWS - RELEASE CURRENT VIRTUAL MACHINE TIME-SLICE
+	AX = 1680h
+Return: AL = 00h if the call is supported
+	AL = 80h (unchanged) if the call is not supported
+Notes:	programs can use this function, even when not running under Windows in
+	  386 enhanced mode, because OS/2 can use the call to detect idleness
+	  even though it does not support the complete enhanced Windows API. 
+	this call will be supported in OS/2 2.0 for multitasking DOS
+	  applications
+	does not block the program; it just gives up the remainder of the time
+	  slice
+---------------------------------------------
+INT 2Fh - Multiplex - MS WINDOWS 3+ - BEGIN CRITICAL SECTION
+	AX = 1681h
+Notes:	used to prevent a task switch from occurring
+	should be followed by an INT 2F/AX=1682h call as soon as possible
+	not supported in Windows/386 2.x. Get INDOS flag with INT 21/AH=34h and
+	  and increment by hand.
+SeeAlso: AX=1682h, INT 21/AH=34h
+---------------------------------------------
+INT 2Fh - Multiplex - MS WINDOWS 3+ - END CRITICAL SECTION
+	AX = 1682h
+Note:	not supported in Windows/386 2.x.  Get INDOS flag with INT 21/AH=34h
+	  and decrement by hand.
+SeeAlso: AX=1681h, INT 21/AH=34h
+---------------------------------------------
+INT 2Fh - Multiplex - MS WINDOWS 3+ - GET CURRENT VIRTUAL MACHINE ID
+	AX = 1683h
+Return: BX = current virtual machine (VM) ID
+Notes:	Windows itself currently runs in VM 1, but this can't be relied upon
+	VM IDs are reused when VMs are destroyed
+	an ID of 0 will never be returned
+SeeAlso: AX=1684h, AX=1685h
+---------------------------------------------
+INT 2F - Multiplex - MS WINDOWS - GET DEVICE API ENTRY POINT
+	AX = 1684h
+	BX = virtual device (VxD) ID (see below)
+	ES:DI = 0000h:0000h
+Return: ES:DI -> VxD API entry point, or 0:0 if the VxD does not support an API
+Note:	some enhanced Windows virtual devices provide services that
+	  applications can access.  For example, the Virtual Display Device
+	  (VDD) provides an API used in turn by WINOLDAP.
+SeeAlso: AX=1683h
+
+Values for VxD ID:
+ 01h	VMM		Virtual Machine Manager
+ 02h	Debug
+ 03h	VPICD		Virtual Prog. Interrupt Controller (PIC) Device
+ 04h	VDMAD		Virtual Direct Memory Access (DMA) Device
+ 05h	VTD		Virtual Timer Device
+ 06h	V86MMGR		Virtual 8086 Mode Device
+ 07h	PAGESWAP	Paging Device
+ 08h	Parity
+ 09h	Reboot
+ 0Ah	VDD		Virtual Display Device (GRABBER)
+ 0Bh	VSD		Virtual Sound Device
+ 0Ch	VMD		Virtual Mouse Device
+ 0Dh	VKD		Virtual Keyboard Device
+ 0Eh	VCD		Virtual COMM Device
+ 0Fh	VPD		Virtual Printer Device
+ 10h	VHD		Virtual Hard Disk Device
+ 11h	VMCPD
+ 12h	EBIOS		Reserve EBIOS page (e.g., on PS/2)
+ 13h	BIOSXLAT	Map ROM BIOS API between prot & V86 mode
+ 14h	VNETBIOS	Virtual NetBIOS Device
+ 15h	DOSMGR
+ 16h	WINLOAD
+ 17h	SHELL
+ 18h	VMPoll
+ 19h	VPROD
+ 1Ah	DOSNET		assures network integrity across VMs
+ 1Bh	VFD		Virtual Floppy Device
+ 1Ch	VDD2		Secondary display adapter
+ 1Dh	WINDEBUG
+ 1Eh	TSRLoad		TSR instance utility
+Note:   The high bit of the VxD ID is reserved for future use. The
+        next 10 bits are the OEM # which is assigned by Microsoft. The
+        low 5 bits are the device number. 
+---------------------------------------------
+INT 2F - Multiplex - MS WINDOWS - SWITCH VMs AND CALLBACK
+	AX = 1685h
+	BX = VM ID of virtual machine to switch to
+	CX = flags
+		bit 0 wait until interrupts enabled
+		bit 1 wait until critical section unowned
+		bits 2-15 reserved (zero)
+	DX:SI = priority boost (see VMM.INC)
+	ES:DI -> FAR procedure to callback
+Return: CF set on error
+	    AX = error code
+		01h invalid VM ID
+		02h invalid priority boost
+		03h invalid flags
+	CF clear if successful
+	    event will be or has been called
+Note:	some DOS devices, such as networks, need to call functions in a
+	  specific VM. This call forces the appropriate VM to be installed.
+SeeAlso: AX=1683h, INT 15/AX=1117h
+---------------------------------------------
 INT 2F - Multiplex - DOS Protected-Mode Interface - DETECT MODE
 	AX = 1686h
 Return: AX = 0000h if operating in protected mode under DPMI
-	AX nonzero if in real/V86 mode or no DPMI
+	AX nonzero if in real/V86 mode or no DPMI (INT 31 not available)
+SeeAlso: AX=1687h
 ---------------------------------------------
 INT 2F - Multiplex - DOS Protected-Mode Interface - INSTALLATION CHECK
 	AX = 1687h
@@ -1809,6 +2004,7 @@ Return: AX = 0000h if installed
 	    DL = DPMI minor version
 	    SI = number of paragraphs of DOS extender private data
 	    ES:DI -> DPMI mode-switch entry point
+SeeAlso: AX=1686h
 
 Call mode switch entry point with:
 	AX = flags
@@ -2051,6 +2247,21 @@ INT 2F - Multiplex - DOS 4+ ANSI.SYS internal - INSTALLATION CHECK
 	AX = 1A00h
 Return: AL = FFh if installed
 ---------------------------------------------
+INT 2F - Multiplex - AVATAR.SYS - INSTALLATION CHECK
+	AX = 1A00h
+Return: AL = FFh if installed
+	    CF clear
+	    BX = AVATAR protocol level supported
+	    CX = driver type
+		0000h AVATAR.SYS
+		4456h DVAVATAR.COM inside DESQview window
+	    DX = 0016h
+Notes:	AVATAR may be distinguished from ANSI because ANSI does not change
+	  BX, CX, or DX
+	AVATAR.SYS is a CON replacement by George Adam Stanislav which
+	  interprets AVATAR command codes in the same way that ANSI interprets
+	  ANSI command codes
+---------------------------------------------
 INT 2F - Multiplex - DOS 4+ ANSI.SYS internal - GET/SET DISPLAY INFORMATION
 	AX = 1A01h
 	CL = 7Fh for GET
@@ -2081,11 +2292,41 @@ Offset	Size	Description
 		00h if /L not in effect
 		01h if /L in effect
 ---------------------------------------------
+INT 2F - Multiplex - AVATAR.SYS - SET DRIVER STATE
+	AX = 1A21h (AL='!')
+	DS:SI -> command string with one or more state characters
+	CX = length of command string
+Return: CF set on error (invalid subfunction)
+	CF clear if successful
+Note:	the characters in the state string are interpreted left to right, and
+	  need not be in any particular order
+SeeAlso: AX=1A3Fh
+
+Values of state characters:
+ 'a'	activate driver
+ 'd'	disable driver
+ 'f'	use fast screen output
+ 'g'	always convert gray keys (+ and -) to function keys
+ 'G'	never convert gray keys
+ 'l'	convert gray keys only when ScrollLock active
+ 's'	use slow screen output
+ 't'	Tandy 1000 keyboard (not yet implemented)
+---------------------------------------------
+INT 2F - Multiplex - AVATAR.SYS - QUERY DRIVER STATE
+	AX = 1A3Fh (AL='?')
+	ES:DI -> buffer
+	CX = length of buffer in bytes
+Return: CF clear
+	CX = actual size of returned info
+Note:	the returned information consists of multiple letters whose meanings
+	  are described under AX=1A21h
+SeeAlso: AX=1A21h
+---------------------------------------------
 INT 2F - Multiplex - DOS 4+ XMA2EMS.SYS extension internal - INSTALLATION CHECK
 	AX = 1B00h
 Return: AL = FFh if installed
 Note:	XMA2EMS.SYS extension is only installed if DOS has page frames to hide.
-	This extension hooks onto INT 67 AH=58h and returns from that call data
+	This extension hooks onto INT 67/AH=58h and returns from that call data
 	  which excludes the physical pages being used by DOS.
 SeeAlso: AX=1B01h
 ---------------------------------------------
@@ -2096,7 +2337,7 @@ Return: AX = FFFFh if failed (no such hidden page)
 	AX = 0000h if OK, then
 	     ES = segment of page frame
 	     DI = physical page number
-Note:	this corresponds to the data edited out of the INT 67 AH=58h call
+Note:	this corresponds to the data edited out of the INT 67/AH=58h call
 SeeAlso: AX=1BFFh
 ---------------------------------------------
 INT 2F - Multiplex - DOS 4+ XMA2EMS.SYS internal??? - ???
@@ -2310,6 +2551,15 @@ INT 2F - Multiplex - F-DLOCK.EXE
 	    0001h uninstall
 Note:	F-DLOCK is part of the F-PROT virus/trojan protection package by
 	  Fridrik Skulason
+---------------------------------------------
+INT 2F - Multiplex - MS Windows 3 - INSTALLATION CHECK
+	AX = 4680h
+Return: AX = 0000h MS Windows 3.0 running in real (/R) or standard (/S) mode
+	   nonzero  no Windows, Windows prior to 3.0, or Windows3 in enhanced
+		    mode
+Note:	not officially documented, but Microsoft has indicated that they
+	  intend to provide an installation check which works in all modes
+SeeAlso: AX=1600h
 ---------------------------------------------
 INT 2F - Multiplex - TesSeRact RAM-RESIDENT PROGRAM INTERFACE
 	AX = 5453h
@@ -2532,7 +2782,7 @@ INT 2F - Multiplex - DOS 3.3+ DISPLAY.SYS internal - GET ???
 	ES:DI -> user buffer
 	CX = size of buffer
 Return: CF set if buffer too small
-	CF clear on success
+	CF clear if successful
 ---------------------------------------------
 INT 2F - Multiplex - DOS 4+ DISPLAY.SYS internal - ???
 	AX = AD04h
@@ -2601,6 +2851,7 @@ INT 2F - Multiplex - DOS 3.3+ KEYB.COM internal - SET KEYBOARD CODE PAGE
 	BX = code page
 Return: CF set on error
 	    AX = 0001h (code page not available)
+	CF clear if successful
 Note:	called by DISPLAY.SYS
 SeeAlso: AX=AD82h
 ---------------------------------------------
@@ -2636,7 +2887,7 @@ INT 2F - Multiplex - DOS 3.3+ internal - INSTALLABLE COMMAND - EXECUTE
 	DX = FFFFh
 	DS:SI -> buffer
 Return: buffer at DS:SI filled with a length byte followed by the uppercase
-	  internal command to execute (if length <> 0)
+	  internal command to execute (if length not 0)
 Notes:	this call requests execution of the command which a previous call to
 	  AX=AE00h indicated was resident
 	APPEND hooks this call
@@ -3602,6 +3853,9 @@ INT 2F - Multiplex - BANYAN VINES v4+ - GET BANV INTERRUPT NUMBER
 Return: AX = 0000h installed
 	    BX = interrupt number (60h to 66h)
 	   nonzero not present
+Note:	if AX is nonzero, VINES 3.x or earlier may be installed, thus it is
+	  necessary to examine the four bytes preceding the handlers for
+	  INT 60 through INT 66 for the string "BANV"
 ---------------------------------------------
 INT 2F - Multiplex - DESQview 2.26 External Dev Interface - INSTALLATION CHECK
 	AX = DE00h
@@ -5037,6 +5291,14 @@ INT 4A - AT/CONV/PS - User Alarm
 SeeAlso: INT 1A/AH=06h
 ---------------------------------------------
 INT 4A - Z100 - Slave 8259 - S100 vectored line 2
+---------------------------------------------
+INT 4B - MicroChannel 80386+ - DMA SERVICES INTERFACE
+Note:	this interface allows MicroChannel machines running in virtual 8086
+	  mode with paging enabled to emulate the DMA function, virtual memory
+	  applications to interrogate or modify the physical addresses that a
+	  bus master BIOS/device driver programs into the bus master device,
+	  and to lock virtual memory pages into a physical address
+SeeAlso: INT 31
 ---------------------------------------------
 INT 4B - Z100 - Slave 8259 - S100 vectored line 3
 ---------------------------------------------

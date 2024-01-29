@@ -1,16 +1,17 @@
-Interrupt List		Release 90.3	Last change 7/15/90
+Interrupt List		Release 90.4	Last change 8/5/90
 
 Please distribute all of the following files (unmodified) together in an
-archive called INTER390:
+archive called INTER490:
         INTERRUP.1ST	this file
         INTERRUP.A	INT 00 through INT 1F \
-	INTERRUP.B	INT 20 through INT 27  \ total 372 pages at 60 lines
-	INTERRUP.C	INT 28 through INT 5F  / per page, 403 with INTPRINT -p
+	INTERRUP.B	INT 20 through INT 27  \ total 380 pages at 60 lines
+	INTERRUP.C	INT 28 through INT 5F  / per page, 412 with INTPRINT -p
 	INTERRUP.D	INT 60 through INT FF / 
         INTERRUP.PRI	a brief primer on interrupts
 	INTPRINT.COM	a simple formatter that also generates the list summary
 	INTPRINT.DOC	instructions for INTPRINT
 	INTPRINT.C	source code for INTPRINT
+	MEMORY.LST	format of the BIOS data area
 
 Concatenate INTERRUP.A, .B, .C, and .D with
 	COPY /B INTERRUP.A+INTERRUP.B+INTERRUP.C+INTERRUP.D INTERRUP.LST
@@ -36,7 +37,7 @@ date of its release, with the sincere hope that the credits and availability
 information are retained.
 ---------------------------------------------
 If the list is more than three months old by the time you get it, there is
-probably a newer release out already (v90.4 is planned for early October).
+probably a newer release out already (but v90.5 may not be released until Dec).
 
 The newest release of this list is available in these places (please do not
 ask me to email it, it is just too large for that):
@@ -188,6 +189,10 @@ among them
  5/90 Mike Weaver      1:264/610		      DESQview XDI
  6/90 Les Moskowitz    1:261/1008		      APL*PLUS/PC
  6/90 Ralf Brown       ralf@cs.cmu.edu		      more DOS 4.0 internals
+ 6/90 Robin Walker     rdhw@uk.ac.cambridge.phoenix   BIOS data segment format
+ 7/90 Andrew Schulman  76320.302@CompuServe.COM	      MSWindows INT 2F/AH=16h
+ 7/90 Ben Myers	       0003571400@mcimail.com	      Tseng ET4000, misc
+ 8/90 G. Adam Stanislav 1:129/39		      AVATAR.SYS
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -209,13 +214,14 @@ Also contributing:
  Peter Sawatzki <FE617@DHAFEU11.BITNET>, Victor Poon <vipoon@sbcs.sunysb.edu>,
  Richard D. Morris <gu.morris@science.utah.edu>, RS Tse 3:700/1,
  Mark Scase <coa44@SEQ1.KEELE.AC.UK>, Erik Liljencrantz <d88-eli@nada.kth.se>,
- Mark Seiffert <marks%%mgse@rex.cs.tulane.edu>, Lewis Paper,
+ Mark Seiffert <marks%%mgse@rex.cs.tulane.edu>, Lewis Paper (Minnesota),
  Marco Lumachi <RARCHI06@IMIPOLI.BITNET>, Michael Dickson <mcd@ccsitn.att.com>,
  Dave Bennett <74635.1671@CompuServe.com>,Andrew Torda <torda@hgrrug52.bitnet>,
  Paul Williamson <pwilliamson@drzeus.qualcomm.com>, Jan Ceuleers 2:295/27,
  James Birdsall <jwbirdsa@phoenix.princeton.edu>, David G. Thomas,
- Edwin Floyd <76067.747@CompuServe.COM>, Ben Myers <0003571400@mcimail.com>,
- James West 1:140/26
+ Edwin Floyd <76067.747@CompuServe.COM>, James West 1:140/26,
+ Simon Phipps <sphipps@compulink.co.uk>,
+ John P. Vias <72260.1601@CompuServe.COM>
 ---------------------------------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -402,6 +408,12 @@ Ralf Brown, 6/8/90.
 DOS Protected Mode Interface version 0.9 API from the May 15,1990 version of
 the specification.  Intel Corp. order number 240763-001.  Added by Ralf Brown,
 July 13-14, 1990.
+
+MSWindows INT 2F/AH=16h info gleaned from Microsoft Windows 3.0 Device Driver
+Kit and the March 1990 issue of Computer Language.  Added 7/17/90.
+
+Tseng ET4000 chipset mode info from _ET4000_Graphics_Controller_Data_Book_ by
+Tseng Labs, Inc., Newtown, PA (215)968-0502.  Added 7/25/90.
 ---------------------------------------------
 Key to system abbreviations
 (unless otherwise indicated, a function is available on all systems)
@@ -465,7 +477,7 @@ Address e-mail to:
 	ARPA: ralf@cs.cmu.edu
 	UUCP: {ucbvax,harvard}!cs.cmu.edu!ralf
 	BIT:  ralf%cs.cmu.edu@cmuccvma
-	FIDO: Ralf Brown 1:129/3.1 (new address!)
+	FIDO: Ralf Brown 1:129/3.1
 		or post a message to the DR_DEBUG echo
 	CompuServe:   >INTERNET:ralf@cs.cmu.edu
 

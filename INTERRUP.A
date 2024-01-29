@@ -1,17 +1,18 @@
-Interrupt List		Release 90.3	Last change 7/15/90
+Interrupt List		Release 90.4	Last change 8/5/90
 This compilation is Copyright (c) 1989, 1990 Ralf Brown
 ---------------------------------------------
 Please redistribute the following files unmodified as a group, in an archive
-named INTER390:
+named INTER490:
 	INTERRUP.1ST	the read-me file, containing credits, availability info
 	INTERRUP.A	INT 00 through INT 1F \
-	INTERRUP.B	INT 20 through INT 27  \ total 372 pages at 60 lines
-	INTERRUP.C	INT 28 through INT 5F  / per page, 403 with INTPRINT -p
+	INTERRUP.B	INT 20 through INT 27  \ total 380 pages at 60 lines
+	INTERRUP.C	INT 28 through INT 5F  / per page, 412 with INTPRINT -p
 	INTERRUP.D	INT 60 through INT FF /
 	INTERRUP.PRI	a brief introduction to interrupts
 	INTPRINT.COM	a simple formatter that also generates the list summary
 	INTPRINT.DOC	instructions for INTPRINT
 	INTPRINT.C	source code for INTPRINT
+	MEMORY.LST	format of the BIOS data area
 ---------------------------------------------
 If you notice any mistakes or omissions, please let me know!  It is only with
 YOUR help that the list can continue to grow at the current rate.  Please send
@@ -25,7 +26,7 @@ that it's already been addressed.
 ARPA: ralf@cs.cmu.edu
 UUCP: {ucbvax,harvard}!cs.cmu.edu!ralf
 BIT:  ralf%cs.cmu.edu@cmuccvma
-FIDO: Ralf Brown 1:129/3.1 (new address!)
+FIDO: Ralf Brown 1:129/3.1
 	or post a message to the DR_DEBUG echo
 CIS:  >INTERNET:ralf@cs.cmu.edu 
 
@@ -214,118 +215,133 @@ INT 10 - VIDEO - SET VIDEO MODE
 	AL = mode (graphics mode if graphics resolution listed)
 		 text  pixel graphic colors disp scrn  system
 		 resol	box  resoltn	    page addr
-	   00h = 40x25	8x8	     B&W      8	 B800 CGA
-	       = 40x25	8x14	     B&W      8	 B800 ATI VIP
-	   01h = 40x25	8x8	      16      8	 B800 CGA
-	       = 40x25	8x14	      16      8	 B800 ATI VIP
-	   02h = 80x25	8x8	     B&W      4	 B800 CGA
-	       = 80x25	8x8	     B&W      8	 B800 EGA,MCGA,VGA
-	       = 80x25	8x14	     B&W      8	 B800 ATI VIP
-	   03h = 80x25	8x8	      16      4	 B800 CGA
-	       = 80x25	8x8	      16      8	 B800 EGA,MCGA,VGA
-	   04h = 40x25	8x8  320x200   4      1	 B800 CGA
-	   05h = 40x25	8x8  320x200 4 gray   1	 B800 CGA
-	   06h = 80x25	8x8  640x200 B&W      1	 B800 CGA
-	   07h = 80x25	9x14	     mono     1	 B000 MDA,Hercules
-	       = 80x25			      8	      EGA,VGA
-	       = 80x25	9x14	     mono	 B000 ATI VIP
-	   08h = 20x25	8x8  160x200  16	 B800 PCjr,Tandy 1000
-	       = 132x25 8x8	      16	 B800 ATI EGA/VGA Wonder **
-	       = 132x25 8x8	     mono	 B000 ATI EGA/VGA Wonder **
-	   09h = 40x25	8x8  320x200  16	 B800 PCjr,Tandy 1000
-	   0Ah = 80x25	8x8  640x200   4	 B800 PCjr,Tandy 1000
+	   00h = 40x25	8x8	       B&W     8 B800 CGA
+	       = 40x25	8x14	       B&W     8 B800 ATI VIP
+	   01h = 40x25	8x8	        16     8 B800 CGA
+	       = 40x25	8x14	        16     8 B800 ATI VIP
+	   02h = 80x25	8x8	       B&W     4 B800 CGA
+	       = 80x25	8x8	       B&W     8 B800 EGA,MCGA,VGA
+	       = 80x25	8x14	       B&W     8 B800 ATI VIP
+	   03h = 80x25	8x8	        16     4 B800 CGA
+	       = 80x25	8x8	        16     8 B800 EGA,MCGA,VGA
+	   04h = 40x25	8x8   320x200    4     1 B800 CGA
+	   05h = 40x25	8x8   320x200 4 gray   1 B800 CGA
+	   06h = 80x25	8x8   640x200  B&W     1 B800 CGA
+	   07h = 80x25	9x14	      mono     1 B000 MDA,Hercules
+	       = 80x25			       8      EGA,VGA
+	       = 80x25	9x14	      mono	 B000 ATI VIP
+	   08h = 20x25	8x8   160x200   16	 B800 PCjr,Tandy 1000
+	       = 132x25 8x8	        16	 B800 ATI EGA/VGA Wonder **
+	       = 132x25 8x8	      mono	 B000 ATI EGA/VGA Wonder **
+	   09h = 40x25	8x8   320x200   16	 B800 PCjr,Tandy 1000
+	   0Ah = 80x25	8x8   640x200    4	 B800 PCjr,Tandy 1000
 	   0Bh = reserved (used internally by EGA BIOS)
 	   0Ch = reserved (used internally by EGA BIOS)
-	   0Dh = 40x25	8x8  320x200  16      8	 A000 EGA,VGA
-	   0Eh = 80x25	8x8  640x200  16      4	 A000 EGA,VGA
-	   0Fh = 80x25	8x14 640x350 mono     2	 A000 EGA,VGA
-	   10h = 80x25	8x14 640x350 4or16    2	 A000 EGA,VGA
-	   11h = 80x30	8x16 640x480 mono	 A000 VGA,MCGA,ATI EGA,ATI VIP
-	   12h = 80x30	8x16 640x480 16/256k	 A000 VGA,ATI VIP
-	       = 80x30	8x16 640x480 16/64	 A000 ATI EGA Wonder
-	   13h = 40x25	8x8  320x200 256/256k	 A000 VGA,MCGA,ATI VIP
-	   14h = 80x25	8x8  640x200		      Lava Chrome II EGA
-	       =	     640x400  16	      Tecmar VGA/AD
-	   15h = 80x25	8x14 640x350		      Lava Chrome II EGA
-	   16h = 80x25	8x14 640x350		      Lava Chrome II EGA
-	       =	     800x600  16	      Tecmar VGA/AD
-	   17h = 80x34	8x14 640x480		      Lava Chrome II EGA
+	   0Dh = 40x25	8x8   320x200   16     8 A000 EGA,VGA
+	   0Eh = 80x25	8x8   640x200   16     4 A000 EGA,VGA
+	   0Fh = 80x25	8x14  640x350 mono     2 A000 EGA,VGA
+	   10h = 80x25	8x14  640x350 4or16    2 A000 EGA,VGA
+	   11h = 80x30	8x16  640x480 mono	 A000 VGA,MCGA,ATI EGA,ATI VIP
+	   12h = 80x30	8x16  640x480  16/256k	 A000 VGA,ATI VIP
+	       = 80x30	8x16  640x480  16/64	 A000 ATI EGA Wonder
+	   13h = 40x25	8x8   320x200 256/256k	 A000 VGA,MCGA,ATI VIP
+	   14h = 80x25	8x8   640x200		      Lava Chrome II EGA
+	       =	      640x400   16	      Tecmar VGA/AD
+	   15h = 80x25	8x14  640x350		      Lava Chrome II EGA
+	   16h = 80x25	8x14  640x350		      Lava Chrome II EGA
+	       =	      800x600   16	      Tecmar VGA/AD
+	   17h = 80x34	8x14  640x480		      Lava Chrome II EGA
 	       = 132x25				      Tecmar VGA/AD
-	   18h = 132x44 8x8	     mono	      Tseng Labs EVA
-	       = 80x34	8x14 640x480		      Lava Chrome II EGA
-	       =	     1024x768 16	      Tecmar VGA/AD
-	   19h = 132x25 8x14	     mono	      Tseng Labs EVA
-	   1Ah = 132x28 8x13	     mono	      Tseng Labs EVA
-	       =	     640x350 256	      Tecmar VGA/AD
-	   1Bh =	     640x400 256	      Tecmar VGA/AD
-	   1Ch =	     640x480 256	      Tecmar VGA/AD
-	   1Dh =	     800x600 256	      Tecmar VGA/AD
-	   21h = 80x43	8x8  720x348 mono	      DESQview 2.x+Hercules ***
+	   18h = 132x44 8x8	      mono	      Tseng Labs EVA
+	       = 132x44 8x8	      16/256   2 B000 Tseng ET4000 chipset
+	       = 80x34	8x14  640x480		      Lava Chrome II EGA
+	       =	     1024x768   16	      Tecmar VGA/AD
+	   19h = 132x25 8x14	      mono	      Tseng Labs EVA
+	       = 132x25 8x14	      16/256   4 B000 Tseng ET4000 chipset
+	   1Ah = 132x28 8x13	      mono	      Tseng Labs EVA
+	       = 132x28 8x13	      16/256   4 B000 Tseng ET4000 chipset
+	       =	      640x350  256	      Tecmar VGA/AD
+	   1Bh =	      640x400  256	      Tecmar VGA/AD
+	   1Ch =	      640x480  256	      Tecmar VGA/AD
+	   1Dh =	      800x600  256	      Tecmar VGA/AD
+	   21h = 80x43	8x8   720x348 mono	      DESQview 2.x+Hercules ***
 	   22h = 132x44 8x8			      Tseng Labs EVA
+	       = 132x44 8x8	      16/256   2 B800 Tseng ET4000 chipset
 	       = 132x44 8x8			      Ahead Systems EGA2001
 	       = 132x43				      Allstar Peacock (VGA)
-	       = 132x44 	      16	      Orchid Prodesigner VGA
-	       = 80x43	8x8  720x348 mono	      DESQview 2.x+Hercules ***
+	       = 132x44 	        16	      Orchid Prodesigner VGA
+	       = 80x43	8x8   720x348 mono	      DESQview 2.x+Hercules ***
 	   23h = 132x25 6x14			      Tseng Labs EVA
+	       = 132x25 8x14          16/256   4 B800 Tseng ET4000 chipset
 	       = 132x25 8x14			      Ahead Systems EGA2001
-	       = 132x25 8x8	      16	 B800 ATI EGA Wonder,ATI VIP
+	       = 132x25 8x8	        16	 B800 ATI EGA Wonder,ATI VIP
 	       = 132x28				      Allstar Peacock (VGA)
-	       = 132x28		      16	      Orchid Prodesigner VGA
+	       = 132x28		        16	      Orchid Prodesigner VGA
 	   24h = 132x28 6x13			      Tseng Labs EVA
+	       = 132x28 8x13	      16/256   4 B800 Tseng ET4000 chipset
 	       = 132x25				      Allstar Peacock (VGA)
-	       = 132x25		      16	      Orchid Prodesigner VGA
-	   25h = 80x60	8x8  640x480		      Tseng Labs EVA
-	       =	     640x480  16	      VEGA VGA
-	       = 80x60	8x8  640x480  16	 A000 Orchid Prodesigner VGA
+	       = 132x25 	        16	      Orchid Prodesigner VGA
+	   25h = 80x60	8x8   640x480		      Tseng Labs EVA
+	       = 80x60  8x8   640x480 16/256   1 A000 Tseng ET4000 chipset
+	       =	      640x480   16	      VEGA VGA
+	       = 80x60	8x8   640x480   16	 A000 Orchid Prodesigner VGA
 	   26h = 80x60	8x8			      Tseng Labs EVA
-	       = 80x60	8x8  640x480		      Ahead Systems EGA2001
+	       = 80x60  8x8	      16/256   2 B800 Tseng ET4000 chipset
+	       = 80x60	8x8   640x480		      Ahead Systems EGA2001
 	       = 80x60				      Allstar Peacock (VGA)
-	       = 80x60	 	      16	      Orchid ProDesigner VGA
-	   27h =	     720x512  16	      VEGA VGA
-	       =	     720x512  16	      Genoa
-	       = 132x25 8x8	     mono	 B000 ATI EGA Wonder,ATI VIP
+	       = 80x60	 	        16	      Orchid ProDesigner VGA
+	   27h =	      720x512   16	      VEGA VGA
+	       =	      720x512   16	      Genoa
+	       = 132x25 8x8	      mono	 B000 ATI EGA Wonder,ATI VIP
 	   28h = ???x???			      VEGA VGA
-	   29h =	     800x600  16	      VEGA VGA
-	       = 100x37 8x16 800x600  16	 A000 Orchid
-	       =	     800x600  16	 A000 STB,Genoa,Sigma
-	       =	     800x600  16	      Allstar Peacock (VGA)
+	   29h =	      800x600   16	      VEGA VGA
+	       = 100x37 8x16  800x600   16	 A000 Orchid
+	       =	      800x600   16	 A000 STB,Genoa,Sigma
+	       =	      800x600   16	      Allstar Peacock (VGA)
+	       = 100x37 8x16  800x600 16/256   1 A000 Tseng ET4000 chipset
 	   2Ah = 100x40 			      Allstar Peacock (VGA)
-	       = 100x40 8x16	      16	      Orchid Prodesigner VGA
-	   2Dh =	     640x350 256	      VEGA VGA
-	       =	     640x350 256/256k	 A000 Orchid, Genoa, STB
-	   2Eh =	     640x480 256	      VEGA VGA
-	       = 80x30	8x16 640x480 256/256k	 A000 Orchid
-	       =	     640x480 256/256k	 A000 STB,Genoa,Sigma
-	   2Fh =	     720x512 256	      VEGA VGA
-	       =	     720x512 256	      Genoa
-	   30h =	     800x600 256	      VEGA VGA
-	       = 100x37 8x16 800x600 256/256k	 A000 Orchid 
-	       =	     800x600 256/256k	 A000 STB,Genoa,Sigma
-	       =	     720x350   2	      3270 PC
-	       =	     800x600 256	      Cardinal
-	       =	     ???x???		 B800 AT&T 6300
-	   33h = 132x44 8x8	      16	 B800 ATI EGA Wonder,ATI VIP
-	   36h =	     960x720  16	      VEGA VGA
-	       =	     960x720  16	      STB
-	   37h =	    1024x768  16	      VEGA VGA
-	       = 128x48 8x16 1024x768 16	 A000 Orchid
-	       =	    1024x768  16	 A000 STB,Genoa,Sigma
-	       = 132x44 8x8	     mono	 B800 ATI EGA Wonder,ATI VIP
-	   38h =	    1024x768 256	      STB VGA/EM-16 Plus (1MB)
-	   40h = 80x25	8x16 640x400   2      1  B800 AT&T 6300, AT&T VDC600
-	       = 80x25	8x16 640x400   2      1  B800 Compaq Portable
+	       = 100x40 8x16	        16	      Orchid Prodesigner VGA
+	       = 100x40 8x15	      16/256   4 B800 Tseng ET4000 chipset
+	   2Dh =	      640x350  256	      VEGA VGA
+	       =	      640x350 256/256k	 A000 Orchid, Genoa, STB
+	       = 80x25  8x14  640x350 256/256k 1 A000 Tseng ET4000 chipset
+	   2Eh =	      640x480  256	      VEGA VGA
+	       = 80x30	8x16  640x480 256/256k	 A000 Orchid
+	       =	      640x480 256/256k	 A000 STB,Genoa,Sigma
+	       = 80x30  8x16  640x480 256/256k 1 A000 Tseng ET4000 chipset
+	   2Fh =	      720x512  256	      VEGA VGA
+	       =	      720x512  256	      Genoa
+	       = 80x25  8x16  640x400 256/256k 1 A000 Tseng ET4000 chipset
+	   30h =	      800x600  256	      VEGA VGA
+	       = 100x37 8x16  800x600 256/256k	 A000 Orchid 
+	       =	      800x600 256/256k	 A000 STB,Genoa,Sigma
+	       =	      720x350    2	      3270 PC
+	       =	      800x600  256	      Cardinal
+	       =	      ???x???		 B800 AT&T 6300
+	       = 100x37 8x16  800x600 256/256k 1 A000 Tseng ET4000 chipset
+	   33h = 132x44 8x8	        16	 B800 ATI EGA Wonder,ATI VIP
+	   36h =	      960x720   16	      VEGA VGA
+	       =	      960x720   16	      STB
+	   37h =	     1024x768   16	      VEGA VGA
+	       = 128x48 8x16 1024x768   16	 A000 Orchid
+	       =	     1024x768   16	 A000 STB,Genoa,Sigma
+	       = 132x44 8x8	      mono	 B800 ATI EGA Wonder,ATI VIP
+	   38h =	     1024x768  256	      STB VGA/EM-16 Plus (1MB)
+	       = 128x48 8x16 1024x768 256/256k 1 A000 Tseng ET4000 chipset
+	   40h = 80x25	8x16  640x400    2     1 B800 AT&T 6300, AT&T VDC600
+	       = 80x25	8x16  640x400    2     1 B800 Compaq Portable
 	       = 80x43				      VEGA VGA, Tecmar VGA/AD
 	       = 80x43				      Video7 V-RAM VGA
 	       = 80x43				      Tatung VGA
-	   41h =	     640x200  16      1	      AT&T 6300
+	   41h =	      640x200   16     1      AT&T 6300
 	       = 132x25 			      VEGA VGA
 	       = 132x25				      Tatung VGA
 	       = 132x25				      Video7 V-RAM VGA
-	   42h = 80x25	8x16 640x400  16	      AT&T 6300, AT&T VDC600
+	   42h = 80x25	8x16  640x400   16	      AT&T 6300, AT&T VDC600
 	       = 132x43 			      VEGA VGA
 	       = 132x43				      Tatung VGA
 	       = 132x43				      Video7 V-RAM VGA
-	   43h = unsupported 640x200 of 640x400 viewport  AT&T 6300
+	   43h = unsupported  640x200 of 640x400 viewport  AT&T 6300
 	       = 80x60				      VEGA VGA
 	       = 80x60				      Tatung VGA
 	       = 80x60				      Video7 V-RAM VGA
@@ -335,146 +351,149 @@ INT 10 - VIDEO - SET VIDEO MODE
 	       = 100x60				      Video7 V-RAM VGA
 	   45h = 132x28				      Tatung VGA
 	       = 132x28				      Video7 V-RAM VGA
-	   46h = 100x40 8x15 800x600   2	      AT&T VDC600
-	   47h = 100x37 8x16 800x600  16	      AT&T VDC600
-	   48h = 80x50	8x8  640x400   2	 B800 AT&T 6300, AT&T VDC600
-	   49h = 80x30	8x16 640x480		      Lava Chrome II EGA
+	   46h = 100x40 8x15  800x600    2	      AT&T VDC600
+	   47h = 100x37 8x16  800x600   16	      AT&T VDC600
+	   48h = 80x50	8x8   640x400    2	 B800 AT&T 6300, AT&T VDC600
+	   49h = 80x30	8x16  640x480		      Lava Chrome II EGA
 	   4Dh = 120x25 			      VEGA VGA
 	   4Eh = 120x43 			      VEGA VGA
 	   4Fh = 132x25 			      VEGA VGA
-	   50h = 132x25 9x14	     mono	      Ahead Systems EGA2001
-	       = 80x30	8x16 640x480  16	      Paradise EGA-480
-	       = 80x43		     mono	      VEGA VGA
-	       =	     640x480 mono???	      Taxan 565 EGA
+	   50h = 132x25 9x14	      mono	      Ahead Systems EGA2001
+	       = 80x30	8x16  640x480   16	      Paradise EGA-480
+	       = 80x43		      mono	      VEGA VGA
+	       =	      640x480 mono???	      Taxan 565 EGA
 	       = 80x34				      Lava Chrome II EGA
-	       = 132x25 8x14	      16      8  B800 OAK Technologies VGA-16
+	       = 132x25 8x14	        16     8 B800 OAK Technologies VGA-16
 	   51h = 80x30	8x16			      Paradise EGA-480
 	       = 80x30				      Lava Chrome II EGA
-	       = 80x34	8x14 640x480  16	      ATI EGA Wonder
-	       = 132x25 	     mono	      VEGA VGA
-	       = 132x43 8x8           16      5  B800 OAK Technologies VGA-16
-	   52h = 132x44 9x8	     mono	      Ahead Systems EGA2001
-	       = 132x43 	     mono	      VEGA VGA
-	       = 94x29	8x14 752x410  16	      ATI EGA Wonder
+	       = 80x34	8x14  640x480   16	      ATI EGA Wonder
+	       = 132x25 	      mono	      VEGA VGA
+	       = 132x43 8x8             16     5 B800 OAK Technologies VGA-16
+	   52h = 132x44 9x8	      mono	      Ahead Systems EGA2001
+	       = 132x43 	      mono	      VEGA VGA
+	       = 94x29	8x14  752x410   16	      ATI EGA Wonder
 	       = 80x60				      Lava Chrome II EGA
-	       = 100x75	8x8  800x600  16      1  A000 OAK Technologies VGA-16
-	   53h = 100x40 8x14 800x560  16	      ATI EGA Wonder,ATI VIP
+	       = 100x75	8x8   800x600   16     1 A000 OAK Technologies VGA-16
+	   53h = 100x40 8x14  800x560   16	      ATI EGA Wonder,ATI VIP
 	       = 132x43 			      Lava Chrome II EGA
 	   54h = 132x43 8x8			      Paradise EGA-480
-	       = 132x43 7x9	     16/256k	 B800 Paradise VGA
-	       = 132x43 8x9	     16/256k	 B800 Paradise VGA on multisync
+	       = 132x43 7x9	      16/256k	 B800 Paradise VGA
+	       = 132x43 8x9	      16/256k	 B800 Paradise VGA on multisync
 	       = 132x43				      Taxan 565 EGA
 	       = 132x43				      AST VGA Plus
 	       = 132x43				      Hewlett-Packard D1180A
-	       = 132x43 7x9	      16	      AT&T VDC600
+	       = 132x43 7x9	        16	      AT&T VDC600
 	       = 132x25 			      Lava Chrome II EGA
-	       = 100x42 8x14 800x600  16	 A000 ATI EGA Wonder, VGA Wondr
+	       = 100x42 8x14  800x600   16	 A000 ATI EGA Wonder, VGA Wondr
 	   55h = 132x25 8x14			      Paradise EGA-480
-	       = 132x25 7x16	     16/256k	 B800 Paradise VGA
-	       = 132x25 8x16	     16/256k	 B800 Paradise VGA on multisync
+	       = 132x25 7x16	      16/256k	 B800 Paradise VGA
+	       = 132x25 8x16	      16/256k	 B800 Paradise VGA on multisync
 	       = 132x25				      Taxan 565 EGA
 	       = 132x25				      AST VGA Plus
 	       = 132x25				      Hewlett-Packard D1180A
-	       = 132x25 7x16	      16	      AT&T VDC600
-	       = 80x66	8x8	     16/256k	 A000 ATI VIP
-	       = 94x29	8x14 752x410		      Lava Chrome II EGA
-	   56h = 132x43 8x8	     3???     2	 B000 NSI Smart EGA+
-	       = 132x43 7x9	       4	 B000 Paradise VGA
-	       = 132x43 8x9	       4	 B000 Paradise VGA on multisync
-	       = 132x43 	     mono	      Taxan 565 EGA
-	       = 132x43 7x9	       2	      AT&T VDC600
-	   57h = 132x25 8x14	     3???     4  B000 NSI Smart EGA+
-	       = 132x25 7x16	       4	 B000 Paradise VGA
-	       = 132x25 8x16	       4	 B000 Paradise VGA on multisync
-	       = 132x25 	     mono	      Taxan 565 EGA
-	       = 132x25 7x16	       2	      AT&T VDC600
-	   58h = 100x75 8x8  800x600 16/256k	 A000 Paradise VGA
-	       = 100x75 8x8  800x600  16	      AT&T VDC600
-	       = 80x33	8x14	      16	 B800 ATI EGA Wonder,ATI VIP
-	       =	     800x600  16	      AST VGA Plus, Compaq VGA
-	       =	     800x600  16	      Dell VGA
-	       =	     800x600  16	      Hewlett-Packard D1180A
-	   59h = 100x75 8x8  800x600   2	 A000 Paradise VGA
-	       = 100x75 8x8  800x600   2	      AT&T VDC600
-	       = 80x66	8x8	     16/256k	 A000 ATI VIP
-	       =	     800x600   2	      AST VGA Plus, Compaq VGA
-	       =	     800x600   2	      Dell VGA
-	       =	     800x600   2	      Hewlett-Packard D1180A
-	   5Bh =	     800x600  16	      Maxxon, SEFCO TVGA, Imtec
-	       =	     640x350 256	      Genoa 6400
-	   5Ch =	     640x400 256	      Logix, ATI Prism Elite
-	       =	     640x400 256	      Maxxon, SEFCO TVGA, Imtec
-	       =	     640x400 256	      Zymos Poach
-	       =	     640x480 256	      Genoa 6400
-	   5Dh =	     640x480 256	      Logix, ATI Prism Elite
-	       =	     640x480 256	      Maxxon, SEFCO TVGA, Imtec
-	       =	     640x480 256	      Zymos Poach
-	   5Eh =	     640x400 256	      Paradise VGA,VEGA VGA
-	       =	     640x400 256	      AST VGA Plus
-	       =	     640x400 256	      Compaq VGA, Dell VGA
-	       = 80x25	8x16 640x400 256	      AT&T VDC600
-	       =	     800x600  16	      Logix, ATI Prism Elite
-	       =	     800x600 256	      Genoa 6400
-	       =	     800x600 256	      Zymos Poach
-	   5Fh =	     640x480 256	      Paradise VGA
-	       =	     640x480 256	      AST VGA Plus
-	       =	     640x480 256	      Compaq VGA, Dell VGA
-	       =	     640x480 256	      Hewlett-Packard D1180A
-	       = 80x30	8x16 640x480 256	      AT&T VDC600 (512K)
-	       =	    1024x768  16	      Logix, ATI Prism Elite
-	       =	    1024x768  16	      Maxxon, Genoa 6400, Imtec
-	       =	    1024x768  16	      Zymos Poach
-	   60h = 80x???      ???x400		      Corona/Cordata BIOS 4.10+
-	       =	     752x410		      VEGA VGA
-	       =	     752x410  16	      Tatung VGA
-	       =	     752x410  16	      Video7 V-RAM VGA
-	       =	     640x400 256	      Ahead B
-	   61h =	     ???x400		      Corona/Cordata BIOS 4.10+
-	       =	     720x540		      VEGA VGA
-	       =	     720x540  16	      Tatung VGA
-	       =	     720x540  16	      Video7 V-RAM VGA
-	       =	     640x400 256	 A000 ATI VGA Wonder
-	       =	     640x480 256	      Ahead B
-	   62h =	     800x600		      VEGA VGA
-	       =	     800x600  16	      Tatung VGA
-	       =	     800x600  16	      Video7 V-RAM VGA
-	       =	     640x480 256	 A000 ATI VGA Wonder
-	       =	     800x600 256	      Ahead B
-	   63h =	    1024x768   2	      Video7 V-RAM VGA
-	       =	     800x600 256	 A000 ATI VGA Wonder
-	       =	    1024x768 256	      Ahead B (1MB)
-	   64h =	    1024x768   4	      Video7 V-RAM VGA
-	   65h =	    1024x768  16	      Video7 V-RAM VGA
-	       =	    1024x768  16	 A000 ATI VGA Wonder
-	   66h =	     640x400 256	      Tatung VGA
-	       =	     640x400 256	      Video7 V-RAM VGA
-	   67h =	     640x480 256	      Video7 V-RAM VGA
-	       =	    1024x768   4	 A000 ATI VGA Wonder
-	   69h =	     720x540 256	      Video7 V-RAM VGA
-	   6Ah =	     800x600  16	      VESA standard interface
-	       =	     800x600  16	      Ahead B, Genoa 6400
-	       =	     800x600  16	      Zymos Poach
-	   70h =	     800x600  16	      Cardinal
+	       = 132x25 7x16	        16	      AT&T VDC600
+	       = 80x66	8x8	      16/256k	 A000 ATI VIP
+	       = 94x29	8x14  752x410		      Lava Chrome II EGA
+	       = 128x48 8x16 1024x768 16/256k	 A000 ATI VGA Wonder v4+  *!
+	   56h = 132x43 8x8	      3???     2 B000 NSI Smart EGA+
+	       = 132x43 7x9	         4	 B000 Paradise VGA
+	       = 132x43 8x9	         4	 B000 Paradise VGA on multisync
+	       = 132x43 	      mono	      Taxan 565 EGA
+	       = 132x43 7x9	         2	      AT&T VDC600
+	   57h = 132x25 8x14	      3???     4 B000 NSI Smart EGA+
+	       = 132x25 7x16	         4	 B000 Paradise VGA
+	       = 132x25 8x16	         4	 B000 Paradise VGA on multisync
+	       = 132x25 	      mono	      Taxan 565 EGA
+	       = 132x25 7x16	         2	      AT&T VDC600
+	   58h = 100x75 8x8   800x600 16/256k	 A000 Paradise VGA
+	       = 100x75 8x8   800x600   16	      AT&T VDC600
+	       = 80x33	8x14	        16	 B800 ATI EGA Wonder,ATI VIP
+	       =	      800x600   16	      AST VGA Plus, Compaq VGA
+	       =	      800x600   16	      Dell VGA
+	       =	      800x600   16	      Hewlett-Packard D1180A
+	   59h = 100x75 8x8   800x600    2	 A000 Paradise VGA
+	       = 100x75 8x8   800x600    2	      AT&T VDC600
+	       = 80x66	8x8	      16/256k	 A000 ATI VIP
+	       =	      800x600    2	      AST VGA Plus, Compaq VGA
+	       =	      800x600    2	      Dell VGA
+	       =	      800x600    2	      Hewlett-Packard D1180A
+	   5Bh =	      800x600   16	      Maxxon, SEFCO TVGA, Imtec
+	       =	      640x350  256	      Genoa 6400
+	       = 80x30  8x16			 B800 ATI VGA Wonder (undoc)
+	   5Ch =	      640x400  256	      Logix, ATI Prism Elite
+	       =	      640x400  256	      Maxxon, SEFCO TVGA, Imtec
+	       =	      640x400  256	      Zymos Poach
+	       =	      640x480  256	      Genoa 6400
+	   5Dh =	      640x480  256	      Logix, ATI Prism Elite
+	       =	      640x480  256	      Maxxon, SEFCO TVGA, Imtec
+	       =	      640x480  256	      Zymos Poach
+	   5Eh =	      640x400  256	      Paradise VGA,VEGA VGA
+	       =	      640x400  256	      AST VGA Plus
+	       =	      640x400  256	      Compaq VGA, Dell VGA
+	       = 80x25	8x16  640x400  256	      AT&T VDC600
+	       =	      800x600   16	      Logix, ATI Prism Elite
+	       =	      800x600  256	      Genoa 6400
+	       =	      800x600  256	      Zymos Poach
+	   5Fh =	      640x480  256	      Paradise VGA
+	       =	      640x480  256	      AST VGA Plus
+	       =	      640x480  256	      Compaq VGA, Dell VGA
+	       =	      640x480  256	      Hewlett-Packard D1180A
+	       = 80x30	8x16  640x480  256	      AT&T VDC600 (512K)
+	       =	     1024x768   16	      Logix, ATI Prism Elite
+	       =	     1024x768   16	      Maxxon, Genoa 6400, Imtec
+	       =	     1024x768   16	      Zymos Poach
+	   60h = 80x???       ???x400		      Corona/Cordata BIOS 4.10+
+	       =	      752x410		      VEGA VGA
+	       =	      752x410   16	      Tatung VGA
+	       =	      752x410   16	      Video7 V-RAM VGA
+	       =	      640x400  256	      Ahead B
+	   61h =	      ???x400		      Corona/Cordata BIOS 4.10+
+	       =	      720x540		      VEGA VGA
+	       =	      720x540   16	      Tatung VGA
+	       =	      720x540   16	      Video7 V-RAM VGA
+	       =	      640x400  256	 A000 ATI VGA Wonder
+	       =	      640x480  256	      Ahead B
+	   62h =	      800x600		      VEGA VGA
+	       =	      800x600   16	      Tatung VGA
+	       =	      800x600   16	      Video7 V-RAM VGA
+	       =	      640x480  256	 A000 ATI VGA Wonder
+	       =	      800x600  256	      Ahead B
+	   63h =	     1024x768    2	      Video7 V-RAM VGA
+	       =	      800x600  256	 A000 ATI VGA Wonder
+	       =	     1024x768  256	      Ahead B (1MB)
+	   64h =	     1024x768    4	      Video7 V-RAM VGA
+	   65h =	     1024x768   16	      Video7 V-RAM VGA
+	       =	     1024x768   16	 A000 ATI VGA Wonder
+	   66h =	      640x400  256	      Tatung VGA
+	       =	      640x400  256	      Video7 V-RAM VGA
+	   67h =	      640x480  256	      Video7 V-RAM VGA
+	       =	     1024x768    4	 A000 ATI VGA Wonder
+	   69h =	      720x540  256	      Video7 V-RAM VGA
+	   6Ah =	      800x600   16	      VESA standard interface
+	       =	      800x600   16	      Ahead B, Genoa 6400
+	       =	      800x600   16	      Zymos Poach
+	       = 100x42 8x14  800x600		 A000 ATI VGA Wonder (undoc)
+	   70h =	      800x600   16	      Cardinal
 	       = extended mode set (see AX=0070h)     Everex Micro Enhancer EGA
-	   71h = 100x35 8x16 800x600 16of64	 A000 NSI Smart EGA+
-	       =	     960x720  16	      Cardinal
-	   72h =	    1024x768  16	      Cardinal
-	   74h =	     640x400   2	 B800 Toshiba 3100 AT&T mode
-	       =	    1024x768  16	      Ahead B
-	   78h =	     640x400 256	      STB VGA/EM-16 Plus
-	       =	     640x400 256	      Cardinal
-	   79h =	     640x480 256	      Cardinal
-	   7Ah =	     720x540 256	      Cardinal
-	   7Ch =	     512x512  16	      Genoa
-	   7Dh =	     512x512 256	      Genoa
+	   71h = 100x35 8x16  800x600 16of64	 A000 NSI Smart EGA+
+	       =	      960x720   16	      Cardinal
+	   72h =	     1024x768   16	      Cardinal
+	   74h =	      640x400    2	 B800 Toshiba 3100 AT&T mode
+	       =	     1024x768   16	      Ahead B
+	   78h =	      640x400  256	      STB VGA/EM-16 Plus
+	       =	      640x400  256	      Cardinal
+	   79h =	      640x480  256	      Cardinal
+	   7Ah =	      720x540  256	      Cardinal
+	   7Ch =	      512x512   16	      Genoa
+	   7Dh =	      512x512  256	      Genoa
 	   7Eh = special mode set (see AX=007Eh)      Paradise VGA, AT&T VDC600
 	   7Fh = special function set (see AX=007Fh)  Paradise VGA, AT&T VDC600
-	   82h = 80x25		     B&W	      AT&T VDC overlay mode *
+	   82h = 80x25		       B&W	      AT&T VDC overlay mode *
 	   83h = 80x25				      AT&T VDC overlay mode *
-	   86h =	     640x200 B&W	      AT&T VDC overlay mode *
-	   C0h =	     640x400   2/prog pallet  AT&T VDC overlay mode *
+	   86h =	      640x200  B&W	      AT&T VDC overlay mode *
+	   C0h =	      640x400  2/prog pallet  AT&T VDC overlay mode *
 	   C4h = disable output 		      AT&T VDC overlay mode *
-	   D0h =	     640x400   2	 B800 DEC VAXmate AT&T mode
+	   D0h =	      640x400    2	 B800 DEC VAXmate AT&T mode
 
  *  for AT&T VDC overlay modes, BL contains the DEB mode, which may be 06h,
 	  40h, or 44h
@@ -486,7 +505,11 @@ INT 10 - VIDEO - SET VIDEO MODE
       resident
  *** DESQview intercepts calls to change into these two modes (21h is page 0,
       22h is page 1) even if there is no Hercules graphics board installed
+ *! ATI BIOS v4-1.00 has a text-scrolling bug in this mode
+
 Notes:	IBM standard modes do not clear the screen if the high bit of AL is set
+	the Tseng ET4000 chipset is used by the Orchid Prodesigner II, Diamond
+	  SpeedSTAR VGA, Groundhog Graphics Shadow VGA
 SeeAlso: AX=0070h,007Eh,6F05h
 ---------------------------------------------
 INT 10 - VIDEO - Everex Micro Enhancer EGA - EXTENDED MODE SET
@@ -1029,6 +1052,36 @@ INT 10 - VIDEO - ALTERNATE FUNC SELECT (ATI,Tatung,Taxan) - ENHANCED FEATURES
 		AL = video mode
 		Return: ES:BP -> table suitable for mode AL (and subfnc BL=05h)
 			BP = FFFFh on error
+
+Format of ATI VGA Wonder video mode table:
+Offset	Size	Description
+ 00h	BYTE	number of columns
+ 01h	BYTE	maximum row (number of rows - 1)
+ 02h	BYTE	scan lines per row
+ 03h	WORD	video buffer size in bytes
+ 05h  4 BYTEs	values for Sequencer registers 1-4
+ 09h	BYTE	value for Miscellaneous Output register
+ 0Ah 25 BYTEs	values for CRTC registers 00h-18h
+		00h horizontal total size (chars)
+		01h horizontal displayed (chars)
+		02h horizontal sync position (chars)
+		03h horizontal sync width (chars)
+		04h vertical total size (char rows)
+		05h vertical total adjust (scan lines)
+		06h vertical displayed (char rows)
+		07h vertical sync position (char rows)
+		08h interlace mode
+		09h max scan line in row
+		0Ah cursor start scan line
+		0Bh cursor end scan line
+		0Ch screen memory start (high)
+		0Dh screen memory start (low)
+		0Eh cursor address (high)
+		0Fh cursor address (low)
+		10h light pen (high)
+		11h light pen (low)
+ 23h 20 BYTEs	default palette (values for Attribute Controller regs 00h-13h)
+ 37h  9 BYTEs	values for Graphics Controller registers 00h-08h
 ---------------------------------------------
 INT 10 - VIDEO - WRITE STRING (AT,XT286,PS,EGA,VGA)
 	AH = 13h
@@ -2436,60 +2489,78 @@ INT 13 - QCACHE - GET INFO
 	DS:DX -> buffer for info
 Return: ???
 ---------------------------------------------
-INT 13 - PCTools 5.5 PC-CACHE - ???
+INT 13 - Super PC Kwik/PC-Cache 5.5 - ???
 	AH = 81h
 	SI = 4358h
 	???
 Return: ???
+Note:	PC Tools PC Cache 5.5 is an OEM version of Super PC Kwik, and thus
+	  supports this call
 ---------------------------------------------
-INT 13 - PCTools 5.5 PC-CACHE - ???
+INT 13 - Super PC Kwik/PC-Cache 5.5 - ???
 	AH = 82h
 	SI = 4358h
 	???
 Return: ???
+Note:	PC Tools PC Cache 5.5 is an OEM version of Super PC Kwik, and thus
+	  supports this call
 ---------------------------------------------
-INT 13 - PCTools 5.5 PC-CACHE - ???
+INT 13 - Super PC Kwik/PC-Cache 5.5 - ???
 	AH = 83h
 	SI = 4358h
 	???
 Return: ???
+Note:	PC Tools PC Cache 5.5 is an OEM version of Super PC Kwik, and thus
+	  supports this call
 ---------------------------------------------
-INT 13 - PCTools 5.5 PC-CACHE - ???
+INT 13 - Super PC Kwik/PC-Cache 5.5 - ???
 	AH = 84h
 	SI = 4358h
 	???
 Return: ???
+Note:	PC Tools PC Cache 5.5 is an OEM version of Super PC Kwik, and thus
+	  supports this call
 ---------------------------------------------
-INT 13 - PCTools 5.5 PC-CACHE - ???
+INT 13 - Super PC Kwik/PC-Cache 5.5 - ???
 	AH = 85h
 	SI = 4358h
 	???
 Return: ???
+Note:	PC Tools PC Cache 5.5 is an OEM version of Super PC Kwik, and thus
+	  supports this call
 ---------------------------------------------
-INT 13 - PCTools 5.5 PC-CACHE - GET RESIDENT CODE SEGMENT
+INT 13 - Super PC Kwik - GET RESIDENT CODE SEGMENT
 	AH = A0h
 	SI = 4358h
 	???
 Return: AX = segment of resident code
 	???
+Note:	PC Tools PC Cache 5.5 is an OEM version of Super PC Kwik, and thus
+	  supports this call
 ---------------------------------------------
-INT 13 - PCTools 5.5 PC-CACHE - FLUSH CACHE
+INT 13 - Super PC Kwik - FLUSH CACHE
 	AH = A1h
 	SI = 4358h
 	???
 Return: ???
+Note:	PC Tools PC Cache 5.5 is an OEM version of Super PC Kwik, and thus
+	  supports this call
 ---------------------------------------------
-INT 13 - PCTools 5.5 PC-CACHE - ???
+INT 13 - Super PC Kwik - ???
 	AH = A2h
 	SI = 4358h
 	???
 Return: ???
+Note:	PC Tools PC Cache 5.5 is an OEM version of Super PC Kwik, and thus
+	  supports this call
 ---------------------------------------------
-INT 13 - PCTools 5.5 PC-CACHE - ???
+INT 13 - Super PC Kwik - ???
 	AH = B0h
 	SI = 4358h
 	???
 Return: ???
+Note:	PC Tools PC Cache 5.5 is an OEM version of Super PC Kwik, and thus
+	  supports this call
 ---------------------------------------------
 INT 13 - SWBIOS - SET 1024 CYLINDER FLAG
 	AH = EEh
@@ -3013,7 +3084,8 @@ Offset	Size	Description
  26h	BYTE	initial system UART setup byte
  27h	BYTE	initial external UART setup byte
  28h 24 BYTEs	available for user application
-Note: bytes 00h-0Dh are the same on the IBM AT
+Note:	bytes 00h-0Dh are the same on the IBM AT as they are used/updated by
+	  the clock chip
 ---------------------------------------------
 INT 15 - VMiX - I/O CHANNEL OBJECT MANAGER
 	AH = 01h
@@ -4850,7 +4922,10 @@ INT 15 - SYSTEM - EVENT WAIT (AT,XT286,CONV,PS)
 	ES:BX -> event flag (bit 7 set when interval expires)
 	CX:DX = number of microseconds to wait (only accurate to 977 us)
 Return: CF set if function already busy
-SeeAlso: AH=86h
+Note:	the resolution of the wait period is 977 microseconds on most systems
+	  because most BIOSes use the 1/1024 second fast interrupt from the AT
+	  real-time clock chip which is available on INT 70
+SeeAlso: AH=86h, INT 70
 ---------------------------------------------
 INT 15 - SYSTEM - READ JOYSTICK (AT,XT2,XT286,PS)
 	AH = 84h
@@ -4877,7 +4952,10 @@ INT 15 - SYSTEM - WAIT (AT,XT2,XT286,CONV,PS)
 	CX,DX = number of microseconds to wait (only accurate to 977 us)
 Return: CF clear: after wait elapses
 	CF set: immediately due to error
-SeeAlso: AH=83h
+Note:	the resolution of the wait period is 977 microseconds on most systems
+	  because most BIOSes use the 1/1024 second fast interrupt from the AT
+	  real-time clock chip which is available on INT 70
+SeeAlso: AH=83h, INT 70
 ---------------------------------------------
 INT 15 - EXTENDED MEMORY - BLOCK MOVE (AT,XT286,PS)
 	AH = 87h
@@ -4907,6 +4985,9 @@ INT 15 - EXTENDED MEMORY - GET MEMORY SIZE (AT,XT286,PS)
 	AH = 88h
 Return: AX = memory size in K
 SeeAlso: AH=87h
+Note:	TSRs which wish to allocate extended memory to themselves often hook
+	  this call, and return a reduced memory size.  They are then free to
+	  use the memory between the new and old sizes at will.
 ---------------------------------------------
 INT 15 - SYSTEM - SWITCH TO VIRTUAL MODE (AT,XT286,PS50+)
 	AH = 89h
@@ -4924,6 +5005,7 @@ INT 15 - SYSTEM - SWITCH TO VIRTUAL MODE (AT,XT286,PS50+)
 	CX = offset into protected-mode CS to jump to
 Return: CF set on error
 	   AH = 0FFh  error enabling address line 20
+	in protected mode at specified address if successful
 SeeAlso: INT 67/AX=DE0Ch
 ---------------------------------------------
 INT 15 - OS HOOK - DEVICE BUSY LOOP (AT,XT2,XT286,CONV,PS)
@@ -4989,12 +5071,14 @@ Model  Submdl  Rev	BIOS date	System
  FDh	*	*	06/01/83	PCjr
  FCh	*	*	01/10/84	AT models 068,099 6 MHz 20MB
  FCh	00h	01h	06/10/85	AT model  239	  6 MHz 30MB
+ FCh	00h	<> 01h	  ???		7531/2 Industrial AT
  FCh	01h	00h	11/15/85	AT models 319,339 8 MHz, Enh Keyb, 3.5"
  FCh	01h	???	  ???		Compaq 286/386
  FCh	02h	00h	04/21/86	PC XT-286
  FCh	04h	00h	02/13/87     ** PS/2 Model 50
  FCh	04h	03h	04/18/88	PS/2 Model 50Z
  FCh	05h	00h	02/13/87     ** PS/2 Model 60
+ FCh	06h	???	  ???		7552 "Gearbox"
  FCh	09h	02h	06/28/89	PS/2 Model 30-286
  FCh	81h	00h	01/15/88	Phoenix 386 BIOS v1.10 10a
  FBh	00h	01h	01/10/86	PC XT, Enh Keyb, 3.5" support
@@ -5012,8 +5096,11 @@ Model  Submdl  Rev	BIOS date	System
  F8h	09h	03h	03/17/89	PS/2 Model 70 some models
  F8h	0Ch	00h	11/02/88	PS/2 Model 55SX
  F8h	1Bh	00h	10/02/89	PS/2 Model 70-486
+ 9Ah	*	*	  ???		Compaq XT/Compaq Plus
+ 30h	???	???	  ???		Sperry PC
+ 2Dh	*	*	  ???		Compaq PC/Compaq Deskpro
 
-    * This BIOS call not implemented in these early versions.
+    * This BIOS call is not implemented in these early versions.
       Read Model byte at F000h:FFFEh and BIOS date at F000h:FFF5h.
    ** These BIOS versions require the DASDDRVR.SYS patches.
 ---------------------------------------------
@@ -5116,6 +5203,7 @@ INT 15 - SYSTEM - ENABLE/DISABLE WATCHDOG TIMEOUT (PS50+)
 	     01h enable
 		BX = timer counter
 Return: CF set on error
+	CF clear if successful
 Note:	the watchdog timer generates an NMI
 ---------------------------------------------
 INT 15 - SYSTEM - PROGRAMMABLE OPTION SELECT (PS50+)
@@ -6529,6 +6617,7 @@ INT 1A - CLOCK - SET SYSTEM-TIMER DAY COUNTER (XT2,PS)
 	AH = 0Bh
 	CX = count of days since Jan 1,1980
 Return: CF set on error
+	CF clear if successful
 SeeAlso: AH=0Ah
 ---------------------------------------------
 INT 1A - WORD PERFECT 5.0 Third Party Interface - INSTALLATION CHECK

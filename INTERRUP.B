@@ -115,7 +115,12 @@ INT 21 - DOS - SELECT DISK
 	AH = 0Eh
 	DL = new default drive number (0 = A, 1 = B, etc.)
 Return: AL = number of logical drives
-SeeAlso: AH=19h
+Notes:	under Novell NetWare, the return value is always 32, the number of
+	  drives that NetWare supports
+	under DOS 3+, the return value is the greatest of 5, the value of
+	  LASTDRIVE= in CONFIG.SYS, and the number of drives actually present
+	otherwise, the return value is the highest drive actually present
+SeeAlso: AH=19h, AH=DBh
 ---------------------------------------------
 INT 21 - DOS - OPEN DISK FILE
 	AH = 0Fh
@@ -443,7 +448,7 @@ Return: CF clear if successful
 INT 21 - Phar Lap 386/DOS-Extender - CONVERT LINEAR TO PHYSICAL ADDRESS
 	AX = 2509h
 	EBX = linear address to convert
-Return: CF clear if successfule
+Return: CF clear if successful
 	    ECX = physical address (carry flag clear)
 	CF set if linear address not mapped in page tables
 ---------------------------------------------
@@ -592,7 +597,7 @@ INT 21 - Phar Lap 386/DOS-Extender - ALIAS SEGMENT DESCRIPTOR
 	BX = segment selector of descriptor in GDT or LDT
 	CL = access-rights byte for alias descriptor
 	CH = use-type bit (USE16 or USE32) for alias descriptor
-Return: CF clear on success
+Return: CF clear if successful
 	    AX = segment selector for created alias
 	CF set on error
 	    EAX = error code
@@ -613,7 +618,7 @@ SeeAlso: AX=2515h
 INT 21 - Phar Lap 386/DOS-Extender - GET SEGMENT ATTRIBUTES
 	AX = 2515h
 	BX = segment selector of descriptor in GDT or LDT
-Return: CF clear
+Return: CF clear if successful
 	    CL = access-rights byte for segment
 	    CH = use-type bit (USE16 or USE32)
 	ECX<16-31> destroyed
@@ -830,8 +835,10 @@ INT 21 - DOS - CREATE PSP
 	AH = 26h
 	DX = segment number at which to set up PSP
 Return: current PSP is copied to specified segment
-Note:	new PSP is updated with memory size information; INTs 22h, 23h, 24h
+Notes:	new PSP is updated with memory size information; INTs 22h, 23h, 24h
 	  taken from interrupt vector table
+	(DOS 2+) DOS assumes that the caller's CS is the segment of the PSP to
+	  copy
 SeeAlso: AH=50h,51h,55h,62h,67h
 
 Format of PSP:
@@ -840,6 +847,7 @@ Offset	Size	Description
  02h  	WORD	memory size in paragraphs
  04h	BYTE	unused
  05h  5 BYTEs	CP/M entry point (FAR jump to 000C0h)
+		BUG: (DOS 2+) PSPs created by INT 21/AH=4Bh point at 000BEh
  06h	WORD	CP/M compatibility--size of first segment for .COM files
  0Ah	DWORD	terminate address (old INT 22h)
  0Eh	DWORD	break address (old INT 23h)
@@ -1296,6 +1304,7 @@ Return: AL = FFh unsupported subfunction
 	DL = current switch character
 Notes:	documented in some OEM versions of some releases of DOS
 	supported by OS/2 compatibility box
+SeeAlso: AX=3701h
 ---------------------------------------------
 INT 21 - DOS 2+ internal - SET SWITCHAR
 	AX = 3701h
@@ -1303,6 +1312,7 @@ INT 21 - DOS 2+ internal - SET SWITCHAR
 Return: AL = FFh unsupported subfunction
 Notes:	documented in some OEM versions of some releases of DOS
 	supported by OS/2 compatibility box
+SeeAlso: AX=3700h
 ---------------------------------------------
 INT 21 - DOS 2.x and 4.0 only internal - AVAILDEV
 	AH = 37h
@@ -1395,6 +1405,7 @@ INT 21 - DOS 2+ - CREATE A SUBDIRECTORY (MKDIR)
 	DS:DX -> ASCIZ pathname (may include drive)
 Return: CF set on error
 	    AX = error code (03h,05h) (see AH=59h)
+	CF clear if successful
 Note:	all directories in the given path except the last must exist
 SeeAlso: AH=3Ah,3Bh, INT 2F/AX=1103h
 ---------------------------------------------
@@ -1403,6 +1414,7 @@ INT 21 - DOS 2+ - REMOVE A DIRECTORY ENTRY (RMDIR)
 	DS:DX -> ASCIZ pathname (may include drive)
 Return: CF set on error
 	    AX = error code (03h,05h,06h,10h) (see AH=59h)
+	CF clear if successful
 SeeAlso: AH=39h,3Bh, INT 2F/AX=1101h
 ---------------------------------------------
 INT 21 - DOS 2+ - CHANGE THE CURRENT DIRECTORY (CHDIR)
@@ -1410,6 +1422,7 @@ INT 21 - DOS 2+ - CHANGE THE CURRENT DIRECTORY (CHDIR)
 	DS:DX -> ASCIZ directory name (may include drive)
 Return: CF set on error
 	    AX = error code (03h) (see AH=59h)
+	CF clear if successful
 Note:	if new directory name includes a drive letter, the default drive is
 	  not changed, only the current directory on that drive
 SeeAlso: AH=47h, INT 2F/AX=1105h
@@ -1493,6 +1506,7 @@ INT 21 - DOS 2+ - CLOSE A FILE WITH HANDLE
 	BX = file handle
 Return: CF set on error
 	    AX = error code (06h) (see AH=59h)
+	CF clear if successful
 Note:	if the file was written to, the time and date stamps are set to the
 	  current time
 SeeAlso: AH=10h,3Ch,3Dh, INT 2F/AX=1106h,1227h
@@ -1530,6 +1544,7 @@ INT 21 - DOS 2+ - DELETE A FILE (UNLINK)
 	DS:DX -> ASCIZ pathname of file to delete (no wildcards allowed)
 Return: CF set on error
 	    AX = error code (02h,05h) (see AH=59h)
+	CF clear if successful
 Note:	(DOS 3.1+) wildcards are allowed if invoked via AX=5D00h, in which case
 	  the filespec must be canonical (as returned by AH=60h)
 SeeAlso: AH=13h,AX=5D00h,AH=60h, INT 2F/AX=1113h
@@ -1570,6 +1585,7 @@ INT 21 - DOS 2+ - PUT FILE ATTRIBUTES (CHMOD)
 	DS:DX -> ASCIZ file name
 Return: CF set on error
 	    AX = error code (01h,02h,03h,05h) (see AH=59h)
+	CF clear if successful
 Note:	will not change volume label or directory attributes
 SeeAlso: AX=4300h, INT 2F/AX=110Eh
 ---------------------------------------------
@@ -1605,6 +1621,7 @@ INT 21 - DOS 2+ - IOCTL - SET DEVICE INFORMATION
 	DL = device information to set (bits 0-7 from function 0)
 Return: CF set on error
 	    AX = error code (see AH=59h)
+	CF clear if successful
 SeeAlso: AX=4400h, INT 2F/AX=122Bh
 ---------------------------------------------
 INT 21 - DOS 2+ - IOCTL - READ CHARACTER DEVICE CONTROL STRING
@@ -1977,6 +1994,7 @@ INT 21 - DOS 3+ - IOCTL - SET SHARING RETRY COUNT
 	DX = retry count (default 3)
 Return: CF set on error
 	    AX = error code (see AH=59h)
+	CF clear if successful
 Note:	delay is dependent on processor speed (value in CX specifies number of
 	  64K-iteration empty loops to execute)
 SeeAlso: AH=52h, INT 2F/AX=1224h,122Bh
@@ -2158,6 +2176,7 @@ INT 21 - DOS 3.2+ - IOCTL - SET LOGICAL DRIVE MAP
 	BL = physical drive number (0=default)
 Return: CF set on error
 	    AX = error code (see AH=59h)
+	CF clear if successful
 Note:	maps logical drives to physical drives, similar to DOS's treatment of
 	  a single physical floppy drive as both A: and B:
 SeeAlso: AX=440Eh, INT 2F/AX=122Bh
@@ -2178,6 +2197,7 @@ INT 21 - DOS 2+ - FORCE DUPLICATE HANDLE (FORCDUP,DUP2)
 	CX = new file handle
 Return: CF set on error
 	    AX = error code (04h,06h) (see AH=59h)
+	CF clear if successful
 Notes:	closes file with handle BX if it is still open
 	moving file pointer for either handle will also move it for the other
 SeeAlso: AH=45h
@@ -2188,6 +2208,7 @@ INT 21 - DOS 2+ - GET CURRENT DIRECTORY
 	DS:SI points to 64-byte buffer area
 Return: CF set on error
 	    AX = error code (0Fh) (see AH=59h)
+	CF clear if successful
 Note:	the returned path does not include a drive or the initial backslash
 SeeAlso: AH=3Bh
 ---------------------------------------------
@@ -2206,6 +2227,7 @@ INT 21 - DOS 2+ - FREE MEMORY
 	ES = segment address of area to be freed
 Return: CF set on error
 	    AX = error code (07h,09h) (see AH=59h)
+	CF clear if successful
 SeeAlso: AH=48h,4Ah
 ---------------------------------------------
 INT 21 - DOS 2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)
@@ -2215,6 +2237,7 @@ INT 21 - DOS 2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)
 Return: CF set on error
 	    AX = error code (07h,08h,09h) (see AH=59h)
 	    BX = maximum size possible for the block (if AX=08h)
+	CF clear if successful
 Notes:	under PCDOS 2.1 and 3.1 and MSDOS 3.2 and 3.3, if there is insufficient
 	  memory to expand the block as much as requested, the block will be
 	  made as large as possible
@@ -2317,7 +2340,14 @@ Notes:	for search attributes other than 08h, all files with at MOST the
 	  device without wildcards.  DOS 2.x returns attribute 00h, size 0,
 	  and the current date and time.  DOS 3+ returns attribute 40h and the
 	  current date and time.
-SeeAlso: AH=11h,4Fh,AX=4301h, INT 2F/AX=111Bh
+BUG:	under DOS 3.x and 4.x, the second and subsequent calls to this function
+	  with a character device name (no wildcards) and search attributes
+	  which include the volume-label bit (08h) will fail unless there is
+	  an intervening DOS call which implicitly or explicity performs a
+	  directory search without the volume-label bit.  Such implicit
+	  searches are performed by CREATE (AH=3Ch), OPEN (AH=3Dh), UNLINK
+	  (AH=41h), and RENAME (AH=56h)
+SeeAlso: AH=11h, AH=4Fh, AX=4301h, INT 2F/AX=111Bh
 
 Format of FindFirst data block:
 Offset	Size	Description
@@ -2360,7 +2390,7 @@ Return: CF set on error
 	    AX = error code (12h) (see AH=59h)
 	CF clear if successful
 	    [DTA] = data block (see AH=4Eh)
-SeeAlso: AH=12h,4Eh
+SeeAlso: AH=12h, AH=4Eh
 ---------------------------------------------
 INT 21 - DOS 2+ internal - SET PSP SEGMENT
 	AH = 50h
@@ -2380,6 +2410,7 @@ Notes:	under DOS 2.x, this function cannot be invoked inside an INT 28h
 	under DOS 3+, this function does not use any of the DOS-internal stacks
 	  and is thus fully reentrant
 	supported by OS/2 compability box
+	identical to the documented AH=62h
 SeeAlso: AH=26h,50h,62h
 ---------------------------------------------
 INT 21 - DOS 2+ internal - GET LIST OF LISTS
@@ -2861,7 +2892,12 @@ Offset	Size	Description
  06h	WORD	device strategy entry point
 		call with ES:BX -> request header (see INT 2F/AX=0802h)
  08h	WORD	device interrupt entry point
+---character device---
  0Ah  8 BYTEs	blank-padded character device name
+---block device---
+ 0Ah	BYTE	number of subunits (drives) supported by driver
+ 0Bh  7 BYTEs	unused
+---
  12h	WORD	(CD-ROM driver) reserved, must be 0000h
  14h	BYTE	(CD-ROM driver) drive letter (must initially be 00h)
  15h	BYTE	(CD-ROM driver) number of units
@@ -3271,9 +3307,12 @@ SeeAlso: AH=2Eh
 INT 21 - DOS 2+ internal - CREATE PSP
 	AH = 55h
 	DX = segment number at which to set up PSP (see AH=26h)
-	SI = value to place in memory size field at DX:[0002h]
-Note:	like AH=26h but creates "child" PSP rather than copying existing one
-SeeAlso: AH=26h
+	SI = (DOS 3+) value to place in memory size field at DX:[0002h]
+Notes:	like AH=26h but creates "child" PSP rather than copying existing one,
+	  incrementing the reference count for each inherited file
+	(DOS 2+) sets current PSP to DX
+	(DOS 3+) marks "no inherit" file handles as closed in child PSP
+SeeAlso: AH=26h, AH=50h
 ---------------------------------------------
 INT 21 - DOS 2+ - RENAME A FILE
 	AH = 56h
@@ -3281,6 +3320,7 @@ INT 21 - DOS 2+ - RENAME A FILE
 	ES:DI -> ASCIZ new name
 Return: CF set on error
 	    AX = error code (02h,03h,05h,11h) (see AH=59h)
+	CF clear if successful
 Notes:	allows move between directories on same logical volume
 	(DOS 3+) allows renaming of directories
 	(DOS 3.1+) wildcards are allowed if invoked via AX=5D00h, in which case
@@ -3313,6 +3353,7 @@ INT 21 - DOS 2+ - SET FILE'S DATE/TIME
 	DX = date to be set (see AX=5700h)
 Return: CF set on error
 	    AX = error code (01h,06h) (see AH=59h)
+	CF clear if successful
 SeeAlso: AX=5700h
 ---------------------------------------------
 INT 21 - DOS 4.0 - GET ???
@@ -3499,7 +3540,7 @@ INT 21 - DOS 3+ - CREATE NEW FILE
 Return: CF set on error
 	    AX = error code (03h,04h,05h,50h) (see AH=59h)
 	CF clear if successful
-	DS:DX -> path name
+	    AX = file handle
 Note:	unlike function 3Ch, function 5Bh will fail if the file already exists
 SeeAlso: AH=3Ch,5Ah
 ---------------------------------------------
@@ -3512,6 +3553,7 @@ INT 21 - DOS 3+ - LOCK/UNLOCK FILE ACCESS
 	SI:DI = size of region to lock
 Return: CF set on error
 	    AX = error code (01h,06h,21h) (see AH=59h)
+	CF clear if successful
 Note:	error returned unless SHARE or network installed
 SeeAlso: AX=440Bh, INT 2F/AX=110Ah,110Bh
 ---------------------------------------------
@@ -3548,6 +3590,7 @@ INT 21 - DOS 3.1+ internal - COMMIT ALL FILES FOR SPECIFIED COMPUTER/PROCESS
 		process ID fields used
 Return: CF set on error
 	    AX = error code (see AH=59h)
+	CF clear if successful
 Notes:	flushes buffers and updates directory entries for each file which has
 	  been written to; if remote file, calls INT 2F/AX=1107h
 	the computer ID and process ID are stored but ignored under DOS 3.3
@@ -3660,7 +3703,10 @@ Offset	Size	Description
  38h 26 BYTEs	device driver request header
  52h	DWORD	pointer to device driver entry point (used in calling driver)
  56h 22 BYTEs	device driver request header
- 6Ch 26 BYTEs	device driver request header
+ 6Ch 22 BYTEs	device driver request header
+ 82h	BYTE	type of PSP copy (00h=simple for INT 21/AH=26h, FFh=make child)
+ 83h	BYTE	??? apparently not reference by kernel
+ 84h	WORD	???
  86h	WORD	???
  88h  2 BYTEs	???
  8Ah  6 BYTEs	CLOCK$ transfer record (see AH=52h)
@@ -3988,6 +4034,7 @@ INT 21 - DOS 3.1 + Microsoft Networks - SET PRINTER SETUP
 	DS:SI -> string buffer
 Return: CF set on error
 	    AX = error code (01h) (see AH=59h)
+	CF clear if successful
 SeeAlso: AX=5E03h, INT 2F/AX=111Fh
 ---------------------------------------------
 INT 21 - DOS 3.1 + Microsoft Networks - GET PRINTER SETUP
@@ -4006,6 +4053,7 @@ INT 21 - DOS 3.1 + Microsoft Networks - SET PRINTER MODE
 	    bit 0: set if binary, clear if text (tabs expanded to blanks)
 Return: CF set on error
 	    AX = error code (see AH=59h)
+	CF clear if successful
 Note:	calls INT 2F/AX=111Fh with 5E04h on stack
 SeeAlso: AX=5E05h, INT 2F/AX=111Fh
 ---------------------------------------------
@@ -4042,6 +4090,7 @@ INT 21 - DOS 3.1 + network - SET REDIRECTION MODE
 	    01h on
 Return: CF set on error
 	    AX = error code (see AH=59h)
+	CF clear if successful
 Note:	when redirection is off, the local device (if any) rather than the
 	  remote device is used
 SeeAlso: AX=5F00h, INT 2F/AX=111Eh
@@ -4072,6 +4121,7 @@ INT 21 - DOS 3.1 + Microsoft Networks, Banyan VINES - REDIRECT DEVICE
 	ES:DI -> destination ASCIZ network path + ASCIZ password
 Return: CF set on error
 	    AX = error code (01h,03h,05h,08h,54h,55h,57h) (see AH=59h)
+	CF clear if successful
 SeeAlso: AX=5F02h,5F04h, INT 2F/AX=111Eh
 ---------------------------------------------
 INT 21 - DOS 3.1 + Microsoft Networks, Banyan VINES - CANCEL REDIRECTION
@@ -4079,6 +4129,7 @@ INT 21 - DOS 3.1 + Microsoft Networks, Banyan VINES - CANCEL REDIRECTION
 	DS:SI -> ASCIZ device name or network path
 Return: CF set on error
 	    AX = error code (01h,0Fh,57h) (see AH=59h)
+	CF clear if successful
 SeeAlso: AX=5F03h, INT 2F/AX=111Eh
 ---------------------------------------------
 INT 21 - DOS 4.x + Microsoft Networks - GET REDIRECTION LIST EXTENDED ENTRY
@@ -4498,10 +4549,11 @@ Return: AL = 00h
 ---------------------------------------------
 INT 21 - DOS 3+ - GET PSP ADDRESS
 	AH = 62h
-Return: BX = segment address of PSP
-Note:	under DOS 3+, this function does not use any of the DOS-internal stacks
+Return: BX = current PSP segment address (see AH=26h for format)
+Notes:	under DOS 3+, this function does not use any of the DOS-internal stacks
 	  and is thus fully reentrant
-SeeAlso: AH=51h
+	identical to the undocumented AH=51h
+SeeAlso: AH=50h, AH=51h
 ---------------------------------------------
 INT 21 - DOS 2.25 only - GET LEAD BYTE TABLE (2-BYTE CHARACTER SUPPORT)
 	AH = 63h
@@ -4515,6 +4567,7 @@ INT 21 - DOS 2.25 only - GET LEAD BYTE TABLE (2-BYTE CHARACTER SUPPORT)
 		Return:	DL = interim console flag
 Return: CF set on error
 	    AX = error code (01h) (see AH=59h)
+	CF clear if successful
 Note:	does not preserve any registers other than SS:SP
 ---------------------------------------------
 INT 21 - Asian DOS 3.2+ only - GET DOUBLE BYTE CHARACTER SET LEAD TABLE
@@ -4658,6 +4711,7 @@ INT 21 - DOS 4.x internal - COUNTRY-DEPENDENT CHARACTER CAPITALIZATION
 		DS:DX -> ASCIZ string to capitalize
 Return: CF set on error
 	    AX = error code (see AH=59h)
+	CF clear if successful
 ---------------------------------------------
 INT 21 - DOS 4.x internal - DETERMINE IF CHARACTER REPRESENTS YES/NO RESPONSE
 	AX = 6523h
@@ -4683,6 +4737,7 @@ INT 21 - DOS 4.x internal - COUNTRY-DEPENDENT FILENAME CAPITALIZATION
 		DS:DX -> ASCIZ filename to capitalize
 Return: CF set on error
 	    AX = error code (see AH=59h)
+	CF clear if successful
 Note:	nonfunctional in DOS 4.00 and 4.01 due to a bug
 ---------------------------------------------
 INT 21 - DOS 3.3+ - GET GLOBAL CODE PAGE TABLE
@@ -4705,6 +4760,7 @@ INT 21 - DOS 3.3+ - SET GLOBAL CODE PAGE TABLE
 	DX = system code page (active page at boot time)
 Return: CF set on error
 	    AX = error code (see AH=59h)
+	CF clear if successful
 SeeAlso: AX=6601h
 ---------------------------------------------
 INT 21 - DOS 3.3+ - SET HANDLE COUNT
@@ -4713,7 +4769,7 @@ INT 21 - DOS 3.3+ - SET HANDLE COUNT
 Return: CF set if error (and error code in AX)
 Notes:	if BX <= 20, no action is taken
 	only the first 20 handles are copied to child processes in DOS 3.3
-	a bug in DOS 3.3 results in requests for an even number of handles
+	a bug in DOS 3.30 results in requests for an even number of handles
 	  allocating a full 64K for the handle table
 SeeAlso: AH=26h
 ---------------------------------------------
@@ -4722,7 +4778,7 @@ INT 21 - DOS 3.3+ - COMMIT FILE, WRITE ALL BUFFERED DATA TO DISK
 	BX = file handle
 Return: CF set on error 
 	    AX = error code (see AH=59h)
-Note:	if BX <= 20, no action is taken
+	CF clear if successful
 SeeAlso: AX=5D01h, INT 2F/AX=1107h
 ---------------------------------------------
 INT 21 - DOS 4.0 internal - GET/SET DISK SERIAL NUMBER

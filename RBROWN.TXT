@@ -4,15 +4,15 @@ The MSDOS Interrupt List
 	A comprehensive listing of functions available through interrupt
 	calls on IBM PCs and compatibles.  Includes both documented and
 	undocumented functions.
-	Current version: INTER390
+	Current version: INTER490
 
 RBcomm
 	A DESQview-aware communications program which sports seamless DSZ,
 	PCZ, or PUMA integration for file transfers; ANSI/VT100/VT52/AVATAR
-	emulation (including 132 columns); speeds to 57600 bps; keyboard
-	macros; dialing directory; and more.  Runs in 65K with DSZ, 42K
-	without.
-	Current version: RBCOMM31
+	emulation (including 132 columns); speeds to 57600 bps; a powerful
+	macro language; dialing directory; and more.  Runs in 65K with DSZ,
+	41K without.
+	Current version: RBCOMM32
 
 DV-GLUE
 	DESQview API bindings for Turbo C.

@@ -184,6 +184,7 @@ INT 60 - FTP Driver - SEND PACKET
 	CX = length
 Return: CF set on error
 	    DH = error code (see AX=01FFh)
+	CF clear if successful
 ---------------------------------------------
 INT 60 - SYS_PROF.EXE - CLEAR PROFILING TABLE
 	AH = 04h
@@ -195,6 +196,7 @@ INT 60 - FTP Driver - TERMINATE DRIVER FOR HANDLE
 	BX = handle
 Return: CF set on error
 	   DH = error code (see AX=01FFh)
+	CF clear if successful
 ---------------------------------------------
 INT 60 - FTP Driver - GET ADDRESS
 	AH = 06h
@@ -212,6 +214,7 @@ INT 60 - FTP Driver - RESET INTERFACE
 	BX = handle
 Return: CF set on error
 	    DH = error code (see AX=01FFh)
+	CF clear if successful
 ---------------------------------------------
 INT 60 - Banyan VINES, 3com - GET STATION ADDRESS
 	AH = 0Ch
@@ -270,6 +273,7 @@ INT 60 - FTP Driver - SET RECEIVE MODE
 	    06h all packets
 Return: CF set on error
 	   DH = error code
+	CF clear if successful
 SeeAlso: AH=21h
 ---------------------------------------------
 INT 60 - FTP Driver - GET RECEIVE MODE
@@ -1346,6 +1350,8 @@ INT 64 - Oracle SQL Protected Mode Executive - ???
 INT 64 - Novell NetWare - LOW-LEVEL API
 Note:	equivalent to INT 7A
 ---------------------------------------------
+INT 64 - Data General DG10 - MicroECLIPSE COPROCESSOR INTERFACE
+---------------------------------------------
 INT 64 - Extended Batch Language v3.14+
 	AH = function
 	    00h to 5Fh chained to previous handler
@@ -1393,6 +1399,8 @@ INT 65 - reserved for user interrupt
 ---------------------------------------------
 INT 65 - Adaptec controllers - DRIVE 1 DATA
 ---------------------------------------------
+INT 65 - Data General DG10 - MicroECLIPSE COPROCESSOR INTERFACE
+---------------------------------------------
 INT 65 - SD.COM v6.2
    The unregistered version of SD62.COM uses the low byte of this vector to
    count the number of invocations, displaying a registration reminder each
@@ -1401,6 +1409,8 @@ INT 65 - SD.COM v6.2
 INT 66 - reserved for user interrupt
 ---------------------------------------------
 INT 66 - Adaptec controllers - DRIVE 1 DATA
+---------------------------------------------
+INT 66 - Data General DG10 - MicroECLIPSE COPROCESSOR INTERFACE
 ---------------------------------------------
 INT 66 - THESPLUS - UNINSTALL
 	AX = FFFEh
@@ -2664,10 +2674,14 @@ INT 68 - APPC/PC - SET PASSTHROUGH
 INT 69 - Zenith AT BIOS - ???
    called by INT 09 handler
 ---------------------------------------------
+INT 69 - DECnet DOS - DATA LINK LAYER PROGRAM
+---------------------------------------------
 INT 6A - OPTHELP.COM
 Notes:	OPTHELP is an optionally-resident help system for SLR Systems's OPTASM
 	  assembler
 	may be configured to use any interrupt from 60h to 7Fh (default 6Ah)
+---------------------------------------------
+INT 6A - DECnet DOS - LOCAL AREA TRANSPORT PROGRAM
 ---------------------------------------------
 INT 6B - Ungermann-Bass NETCI
 	???
@@ -2682,7 +2696,19 @@ Note:	used by IBM, Paradise, Video7, and NCR
 INT 6D - ATI VGA Wonder - VIDEO BIOS ENTRY POINT
    points at the original INT 10 entry point set up by the ATI BIOS
 ---------------------------------------------
-INT 6E - unused
+INT 6D - DECnet DOS - DATA LINK LAYER PROGRAM
+---------------------------------------------
+INT 6E - DECnet DOS - DECnet NETWORK PROCESS API
+Notes:	this is the main DECnet DOS access, and is described in Digital manual
+	  AA-EB46B-TV ("DECnet-DOS Programmer's Reference Manual")
+	there is a signature/data area immediately prior to the interrupt
+	  handler which may be used as an installation check
+
+Format of signature area:
+Offset	Size	Description
+ -5	BYTE	major version number
+ -4	BYTE	minor version number
+ -3   3 BYTEs	signature (ASCII "DNP")
 ---------------------------------------------
 INT 6F - HP ES-12 EXTENDED BIOS - READ CMOS MEMORY
 	BP = 0012h
@@ -2788,6 +2814,7 @@ INT 6F - 10-NET - STATUS OF NODE
 	DS:DX -> 512-byte status record (see below)
 Return: CF set on error
 	    AX = error code (see AH=00h)
+	CF clear if successful
 
 Format of node status record:
 Offset	Size	Description
@@ -2903,6 +2930,7 @@ INT 6F - 10-NET - SEND
 	DS:DX -> data (max 1024 bytes)
 Return: CF set on error
 	    AX = error code (see AH=00h)
+	CF clear if successful
 SeeAlso: AH=05h
 ---------------------------------------------
 INT 6F - 10-NET - RECEIVE
@@ -2929,6 +2957,7 @@ INT 6F - 10-NET - LOCK HANDLE
 Return: CF set on error
 	    AX = error code (see also AH=00h)
 		0002h file not found
+	CF clear if successful
 SeeAlso: AH=08h, INT 21/AH=5Ch
 ---------------------------------------------
 INT 6F - 10-NET - UNLOCK HANDLE
@@ -2940,6 +2969,7 @@ INT 6F - 10-NET - UNLOCK HANDLE
 Return: CF set on error
 	    AX = error code (see also AH=00h)
 		0002h file not found
+	CF clear if successful
 SeeAlso: AH=07h, INT 21/AH=5Ch
 ---------------------------------------------
 INT 6F - 10-NET - SUBMIT
@@ -3030,6 +3060,7 @@ Return: CF set on error
 	    AX = error code (see also AH=00h)
 		FF17h device not mounted
 		FF18h already spooling to named device
+	CF clear if successful
 
 Format of Spool/Print record:
 Offset	Size	Description
@@ -3132,6 +3163,7 @@ INT 6F - 10-NET - LOCK FCB
 Return: CF set on error
 	    AX = error code (see also AH=00h)
 		2 file not found
+	CF clear if successful
 SeeAlso: AH=12h
 ---------------------------------------------
 INT 6F - 10-NET - UNLOCK FCB
@@ -3145,6 +3177,7 @@ INT 6F - 10-NET - UNLOCK FCB
 Return: CF set on error
 	    AX = error code (see also AH=00h)
 		2 file not found
+	CF clear if successful
 SeeAlso: AH=11h
 ---------------------------------------------
 INT 6F - 10-NET v3.3 - GET REMOTE CONFIGURATION TABLE ADDRESS
@@ -3193,6 +3226,7 @@ INT 6F - 10-NET v3.3 - SET SHARED DEVICE ENTRY
 	ES:DI -> valid shared device table entry
 Return: CF set on error
 	    AX = error code (see AH=00h)
+	CF clear if successful
 SeeAlso: AX=1501h,1503h
 ---------------------------------------------
 INT 6F - 10-NET v3.3 - DELETE SHARED DEVICE ENTRY
@@ -3201,6 +3235,7 @@ INT 6F - 10-NET v3.3 - DELETE SHARED DEVICE ENTRY
 	DS:SI -> node ID, 12 bytes blank-padded
 Return: CF set on error
 	    AX = error code (see AH=00h)
+	CF clear if successful
 SeeAlso: AX=1501h,1502h
 ---------------------------------------------
 INT 6F - 10-NET v3.3 - MOUNT
@@ -3210,6 +3245,7 @@ INT 6F - 10-NET v3.3 - MOUNT
 	DS:DX -> node ID, 12 bytes blank-padded
 Return: CF set on error
 	    AX = error code (see AH=00h)
+	CF clear if successful
 SeeAlso: AH=18h
 ---------------------------------------------
 INT 6F - 10-NET v3.3 - UNMOUNT
@@ -3221,6 +3257,7 @@ INT 6F - 10-NET v3.3 - UNMOUNT
 	    04h,05h COMx
 Return: CF set on error
 	    AX = error code (see AH=00h)
+	CF clear if successful
 SeeAlso: AH=17h
 ---------------------------------------------
 INT 70 - IRQ8 - AT/XT286/PS50+ - REAL-TIME CLOCK
@@ -3254,7 +3291,15 @@ Note:	may be masked by setting bit 7 on I/O port A1h
 ---------------------------------------------
 INT 78 - not used
 ---------------------------------------------
-INT 79 - not used
+INT 79 - AVATAR.SYS - FAST GET KEYSTROKE
+Return: CF set if no keystroke available
+	    AX = FFFFh
+	CF clear if key pressed
+	    AX = keystroke
+Notes:	if a keystroke is available, it is removed from the keyboard buffer
+	  before being returned
+	AVATAR.SYS is a CON driver by George Adam Stanislav which interprets
+	  AVATAR command codes just as ANSI.SYS interprets ANSI commands
 ---------------------------------------------
 INT 7A - Novell NetWare - LOW-LEVEL API
 	???
@@ -3936,6 +3981,25 @@ Session Parameters for function 09h:
  NEWRET		use HLLAPI v3.0 return code conventions
  OLDRET		use HLLAPI v2.0 return code conventions
 ---------------------------------------------
+INT 7F - CONVERGENT TECHNOLOGIES ClusterShare CTOS ACCESS VECTOR
+	AL = request ID
+	    01h "Request"/"RequestDirect"
+		ES:BX -> pRq
+	        DX ignored
+	    04h "Wait"
+		ES:BX -> ppMsgRet
+		DX = exchange
+	    05h "AllocExch"
+		ES:BX -> pExchRet
+	    06h "DeAllocExch"
+		DX = exchange
+	    07h "Check"
+		ES:BX -> ppMsgRet
+		DX = exchange
+	CX = 4354h ('CT')
+Return: AX = status
+	    0000h successful
+---------------------------------------------
 INT 80 - Q-PRO4 - ???
 ---------------------------------------------
 INT 80 - reserved for BASIC
@@ -4214,7 +4278,8 @@ INT B3 - ZIPKEY - CONVERT STATE CODE TO TWO-LETTER ABBREVIATION
 	AH = 72h
 	BL = ZIPKEY state code
 Return: CF set on error
-	AX = abbreviation, in upper case
+	CF clear if successful
+	    AX = abbreviation, in upper case
 SeeAlso: AH=71h,73h
 ---------------------------------------------
 INT B3 - ZIPKEY - CONVERT STATE CODE TO STATE NAME
@@ -4222,7 +4287,8 @@ INT B3 - ZIPKEY - CONVERT STATE CODE TO STATE NAME
 	BL = ZIPKEY state code
 	ES:DI -> buffer for name
 Return: CF set on error
-	ES:DI points one byte beyond end of name
+	CF clear if successful
+	    ES:DI points one byte beyond end of name
 SeeAlso: AH=72h
 ---------------------------------------------
 INT B3 - ZIPKEY - CONVERT ZIPCODE TO ASCII DIGITS
@@ -4231,7 +4297,8 @@ INT B3 - ZIPKEY - CONVERT ZIPCODE TO ASCII DIGITS
 	CH = last two digits of zipcode (0-99)
 	ES:DI -> buffer
 Return: CF set on error
-	ES:DI points one byte beyond end of digit string
+	CF clear if successful
+	    ES:DI points one byte beyond end of digit string
 ---------------------------------------------
 INT B3 - ZIPKEY - LOOK UP STATE CODE FOR ZIPCODE
 	AH = 75h
@@ -4314,6 +4381,7 @@ INT B3 - ZIPKEY - RESTORE ZIPKEY CONTEXT
 	    FFh if none
 	CX:DX = internal code returned by AH=7Bh
 Return: CF set on error
+	CF clear if successful
 SeeAlso: AH=7Bh
 ---------------------------------------------
 INT B3 - ZIPKEY - REQUEST POP UP
@@ -4587,7 +4655,7 @@ INT FF - AT/XT286/PS50+ - destroyed by return from protected mode
 INT FF - Z100 - WARM BOOT
 ---------------------------------------------
 Please redistribute the following files unmodified as a group, in an archive
-named INTER390:
+named INTER490:
 	INTERRUP.1ST	the read-me file, containing credits, availability info
 	INTERRUP.A	INT 00 through INT 1F
 	INTERRUP.B	INT 20 through INT 27
@@ -4597,11 +4665,12 @@ named INTER390:
 	INTPRINT.COM	a simple formatter that also generates the list summary
 	INTPRINT.DOC	instructions for INTPRINT
 	INTPRINT.C	source code for INTPRINT
+	MEMORY.LST	format of the BIOS data area
 This compilation is Copyright (c) 1989, 1990 Ralf Brown
 ---------------------------------------------
 ARPA: ralf@cs.cmu.edu
 UUCP: {ucbvax,harvard}!cs.cmu.edu!ralf
 BIT:  ralf%cs.cmu.edu@cmuccvma
-FIDO: Ralf Brown 1:129/3.1 (new address!)
+FIDO: Ralf Brown 1:129/3.1
 	or post a message to the DR_DEBUG echo
 CIS:  >INTERNET:ralf@cs.cmu.edu

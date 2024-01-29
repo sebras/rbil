@@ -1,17 +1,18 @@
-Interrupt List		Release 90.3	Last change 7/15/90
+Interrupt List		Release 90.4	Last change 8/5/90
 This compilation is Copyright (c) 1989, 1990 Ralf Brown
 ---------------------------------------------
 Please redistribute the following files unmodified as a group, in an archive
-named INTER390:
+named INTER490:
 	INTERRUP.1ST	the read-me file, containing credits, availability info
 	INTERRUP.A	INT 00 through INT 1F \
-	INTERRUP.B	INT 20 through INT 27  \ total 372 pages at 60 lines
-	INTERRUP.C	INT 28 through INT 5F  / per page, 403 with INTPRINT -p
+	INTERRUP.B	INT 20 through INT 27  \ total 380 pages at 60 lines
+	INTERRUP.C	INT 28 through INT 5F  / per page, 412 with INTPRINT -p
 	INTERRUP.D	INT 60 through INT FF /
 	INTERRUP.PRI	a brief introduction to interrupts
 	INTPRINT.COM	a simple formatter that also generates the list summary
 	INTPRINT.DOC	instructions for INTPRINT
 	INTPRINT.C	source code for INTPRINT
+	MEMORY.LST	format of the BIOS data area
 ---------------------------------------------
 If you notice any mistakes or omissions, please let me know!  It is only with
 YOUR help that the list can continue to grow at the current rate.  Please send
@@ -25,7 +26,7 @@ that it's already been addressed.
 ARPA: ralf@cs.cmu.edu
 UUCP: {ucbvax,harvard}!cs.cmu.edu!ralf
 BIT:  ralf%cs.cmu.edu@cmuccvma
-FIDO: Ralf Brown 1:129/3.1 (new address!)
+FIDO: Ralf Brown 1:129/3.1
 	or post a message to the DR_DEBUG echo
 CIS:  >INTERNET:ralf@cs.cmu.edu 
 
@@ -214,118 +215,133 @@ INT 10 - VIDEO - SET VIDEO MODE
 	AL = mode (graphics mode if graphics resolution listed)
 		 text  pixel graphic colors disp scrn  system
 		 resol	box  resoltn	    page addr
-	   00h = 40x25	8x8	     B&W      8	 B800 CGA
-	       = 40x25	8x14	     B&W      8	 B800 ATI VIP
-	   01h = 40x25	8x8	      16      8	 B800 CGA
-	       = 40x25	8x14	      16      8	 B800 ATI VIP
-	   02h = 80x25	8x8	     B&W      4	 B800 CGA
-	       = 80x25	8x8	     B&W      8	 B800 EGA,MCGA,VGA
-	       = 80x25	8x14	     B&W      8	 B800 ATI VIP
-	   03h = 80x25	8x8	      16      4	 B800 CGA
-	       = 80x25	8x8	      16      8	 B800 EGA,MCGA,VGA
-	   04h = 40x25	8x8  320x200   4      1	 B800 CGA
-	   05h = 40x25	8x8  320x200 4 gray   1	 B800 CGA
-	   06h = 80x25	8x8  640x200 B&W      1	 B800 CGA
-	   07h = 80x25	9x14	     mono     1	 B000 MDA,Hercules
-	       = 80x25			      8	      EGA,VGA
-	       = 80x25	9x14	     mono	 B000 ATI VIP
-	   08h = 20x25	8x8  160x200  16	 B800 PCjr,Tandy 1000
-	       = 132x25 8x8	      16	 B800 ATI EGA/VGA Wonder **
-	       = 132x25 8x8	     mono	 B000 ATI EGA/VGA Wonder **
-	   09h = 40x25	8x8  320x200  16	 B800 PCjr,Tandy 1000
-	   0Ah = 80x25	8x8  640x200   4	 B800 PCjr,Tandy 1000
+	   00h = 40x25	8x8	       B&W     8 B800 CGA
+	       = 40x25	8x14	       B&W     8 B800 ATI VIP
+	   01h = 40x25	8x8	        16     8 B800 CGA
+	       = 40x25	8x14	        16     8 B800 ATI VIP
+	   02h = 80x25	8x8	       B&W     4 B800 CGA
+	       = 80x25	8x8	       B&W     8 B800 EGA,MCGA,VGA
+	       = 80x25	8x14	       B&W     8 B800 ATI VIP
+	   03h = 80x25	8x8	        16     4 B800 CGA
+	       = 80x25	8x8	        16     8 B800 EGA,MCGA,VGA
+	   04h = 40x25	8x8   320x200    4     1 B800 CGA
+	   05h = 40x25	8x8   320x200 4 gray   1 B800 CGA
+	   06h = 80x25	8x8   640x200  B&W     1 B800 CGA
+	   07h = 80x25	9x14	      mono     1 B000 MDA,Hercules
+	       = 80x25			       8      EGA,VGA
+	       = 80x25	9x14	      mono	 B000 ATI VIP
+	   08h = 20x25	8x8   160x200   16	 B800 PCjr,Tandy 1000
+	       = 132x25 8x8	        16	 B800 ATI EGA/VGA Wonder **
+	       = 132x25 8x8	      mono	 B000 ATI EGA/VGA Wonder **
+	   09h = 40x25	8x8   320x200   16	 B800 PCjr,Tandy 1000
+	   0Ah = 80x25	8x8   640x200    4	 B800 PCjr,Tandy 1000
 	   0Bh = reserved (used internally by EGA BIOS)
 	   0Ch = reserved (used internally by EGA BIOS)
-	   0Dh = 40x25	8x8  320x200  16      8	 A000 EGA,VGA
-	   0Eh = 80x25	8x8  640x200  16      4	 A000 EGA,VGA
-	   0Fh = 80x25	8x14 640x350 mono     2	 A000 EGA,VGA
-	   10h = 80x25	8x14 640x350 4or16    2	 A000 EGA,VGA
-	   11h = 80x30	8x16 640x480 mono	 A000 VGA,MCGA,ATI EGA,ATI VIP
-	   12h = 80x30	8x16 640x480 16/256k	 A000 VGA,ATI VIP
-	       = 80x30	8x16 640x480 16/64	 A000 ATI EGA Wonder
-	   13h = 40x25	8x8  320x200 256/256k	 A000 VGA,MCGA,ATI VIP
-	   14h = 80x25	8x8  640x200		      Lava Chrome II EGA
-	       =	     640x400  16	      Tecmar VGA/AD
-	   15h = 80x25	8x14 640x350		      Lava Chrome II EGA
-	   16h = 80x25	8x14 640x350		      Lava Chrome II EGA
-	       =	     800x600  16	      Tecmar VGA/AD
-	   17h = 80x34	8x14 640x480		      Lava Chrome II EGA
+	   0Dh = 40x25	8x8   320x200   16     8 A000 EGA,VGA
+	   0Eh = 80x25	8x8   640x200   16     4 A000 EGA,VGA
+	   0Fh = 80x25	8x14  640x350 mono     2 A000 EGA,VGA
+	   10h = 80x25	8x14  640x350 4or16    2 A000 EGA,VGA
+	   11h = 80x30	8x16  640x480 mono	 A000 VGA,MCGA,ATI EGA,ATI VIP
+	   12h = 80x30	8x16  640x480  16/256k	 A000 VGA,ATI VIP
+	       = 80x30	8x16  640x480  16/64	 A000 ATI EGA Wonder
+	   13h = 40x25	8x8   320x200 256/256k	 A000 VGA,MCGA,ATI VIP
+	   14h = 80x25	8x8   640x200		      Lava Chrome II EGA
+	       =	      640x400   16	      Tecmar VGA/AD
+	   15h = 80x25	8x14  640x350		      Lava Chrome II EGA
+	   16h = 80x25	8x14  640x350		      Lava Chrome II EGA
+	       =	      800x600   16	      Tecmar VGA/AD
+	   17h = 80x34	8x14  640x480		      Lava Chrome II EGA
 	       = 132x25				      Tecmar VGA/AD
-	   18h = 132x44 8x8	     mono	      Tseng Labs EVA
-	       = 80x34	8x14 640x480		      Lava Chrome II EGA
-	       =	     1024x768 16	      Tecmar VGA/AD
-	   19h = 132x25 8x14	     mono	      Tseng Labs EVA
-	   1Ah = 132x28 8x13	     mono	      Tseng Labs EVA
-	       =	     640x350 256	      Tecmar VGA/AD
-	   1Bh =	     640x400 256	      Tecmar VGA/AD
-	   1Ch =	     640x480 256	      Tecmar VGA/AD
-	   1Dh =	     800x600 256	      Tecmar VGA/AD
-	   21h = 80x43	8x8  720x348 mono	      DESQview 2.x+Hercules ***
+	   18h = 132x44 8x8	      mono	      Tseng Labs EVA
+	       = 132x44 8x8	      16/256   2 B000 Tseng ET4000 chipset
+	       = 80x34	8x14  640x480		      Lava Chrome II EGA
+	       =	     1024x768   16	      Tecmar VGA/AD
+	   19h = 132x25 8x14	      mono	      Tseng Labs EVA
+	       = 132x25 8x14	      16/256   4 B000 Tseng ET4000 chipset
+	   1Ah = 132x28 8x13	      mono	      Tseng Labs EVA
+	       = 132x28 8x13	      16/256   4 B000 Tseng ET4000 chipset
+	       =	      640x350  256	      Tecmar VGA/AD
+	   1Bh =	      640x400  256	      Tecmar VGA/AD
+	   1Ch =	      640x480  256	      Tecmar VGA/AD
+	   1Dh =	      800x600  256	      Tecmar VGA/AD
+	   21h = 80x43	8x8   720x348 mono	      DESQview 2.x+Hercules ***
 	   22h = 132x44 8x8			      Tseng Labs EVA
+	       = 132x44 8x8	      16/256   2 B800 Tseng ET4000 chipset
 	       = 132x44 8x8			      Ahead Systems EGA2001
 	       = 132x43				      Allstar Peacock (VGA)
-	       = 132x44 	      16	      Orchid Prodesigner VGA
-	       = 80x43	8x8  720x348 mono	      DESQview 2.x+Hercules ***
+	       = 132x44 	        16	      Orchid Prodesigner VGA
+	       = 80x43	8x8   720x348 mono	      DESQview 2.x+Hercules ***
 	   23h = 132x25 6x14			      Tseng Labs EVA
+	       = 132x25 8x14          16/256   4 B800 Tseng ET4000 chipset
 	       = 132x25 8x14			      Ahead Systems EGA2001
-	       = 132x25 8x8	      16	 B800 ATI EGA Wonder,ATI VIP
+	       = 132x25 8x8	        16	 B800 ATI EGA Wonder,ATI VIP
 	       = 132x28				      Allstar Peacock (VGA)
-	       = 132x28		      16	      Orchid Prodesigner VGA
+	       = 132x28		        16	      Orchid Prodesigner VGA
 	   24h = 132x28 6x13			      Tseng Labs EVA
+	       = 132x28 8x13	      16/256   4 B800 Tseng ET4000 chipset
 	       = 132x25				      Allstar Peacock (VGA)
-	       = 132x25		      16	      Orchid Prodesigner VGA
-	   25h = 80x60	8x8  640x480		      Tseng Labs EVA
-	       =	     640x480  16	      VEGA VGA
-	       = 80x60	8x8  640x480  16	 A000 Orchid Prodesigner VGA
+	       = 132x25 	        16	      Orchid Prodesigner VGA
+	   25h = 80x60	8x8   640x480		      Tseng Labs EVA
+	       = 80x60  8x8   640x480 16/256   1 A000 Tseng ET4000 chipset
+	       =	      640x480   16	      VEGA VGA
+	       = 80x60	8x8   640x480   16	 A000 Orchid Prodesigner VGA
 	   26h = 80x60	8x8			      Tseng Labs EVA
-	       = 80x60	8x8  640x480		      Ahead Systems EGA2001
+	       = 80x60  8x8	      16/256   2 B800 Tseng ET4000 chipset
+	       = 80x60	8x8   640x480		      Ahead Systems EGA2001
 	       = 80x60				      Allstar Peacock (VGA)
-	       = 80x60	 	      16	      Orchid ProDesigner VGA
-	   27h =	     720x512  16	      VEGA VGA
-	       =	     720x512  16	      Genoa
-	       = 132x25 8x8	     mono	 B000 ATI EGA Wonder,ATI VIP
+	       = 80x60	 	        16	      Orchid ProDesigner VGA
+	   27h =	      720x512   16	      VEGA VGA
+	       =	      720x512   16	      Genoa
+	       = 132x25 8x8	      mono	 B000 ATI EGA Wonder,ATI VIP
 	   28h = ???x???			      VEGA VGA
-	   29h =	     800x600  16	      VEGA VGA
-	       = 100x37 8x16 800x600  16	 A000 Orchid
-	       =	     800x600  16	 A000 STB,Genoa,Sigma
-	       =	     800x600  16	      Allstar Peacock (VGA)
+	   29h =	      800x600   16	      VEGA VGA
+	       = 100x37 8x16  800x600   16	 A000 Orchid
+	       =	      800x600   16	 A000 STB,Genoa,Sigma
+	       =	      800x600   16	      Allstar Peacock (VGA)
+	       = 100x37 8x16  800x600 16/256   1 A000 Tseng ET4000 chipset
 	   2Ah = 100x40 			      Allstar Peacock (VGA)
-	       = 100x40 8x16	      16	      Orchid Prodesigner VGA
-	   2Dh =	     640x350 256	      VEGA VGA
-	       =	     640x350 256/256k	 A000 Orchid, Genoa, STB
-	   2Eh =	     640x480 256	      VEGA VGA
-	       = 80x30	8x16 640x480 256/256k	 A000 Orchid
-	       =	     640x480 256/256k	 A000 STB,Genoa,Sigma
-	   2Fh =	     720x512 256	      VEGA VGA
-	       =	     720x512 256	      Genoa
-	   30h =	     800x600 256	      VEGA VGA
-	       = 100x37 8x16 800x600 256/256k	 A000 Orchid 
-	       =	     800x600 256/256k	 A000 STB,Genoa,Sigma
-	       =	     720x350   2	      3270 PC
-	       =	     800x600 256	      Cardinal
-	       =	     ???x???		 B800 AT&T 6300
-	   33h = 132x44 8x8	      16	 B800 ATI EGA Wonder,ATI VIP
-	   36h =	     960x720  16	      VEGA VGA
-	       =	     960x720  16	      STB
-	   37h =	    1024x768  16	      VEGA VGA
-	       = 128x48 8x16 1024x768 16	 A000 Orchid
-	       =	    1024x768  16	 A000 STB,Genoa,Sigma
-	       = 132x44 8x8	     mono	 B800 ATI EGA Wonder,ATI VIP
-	   38h =	    1024x768 256	      STB VGA/EM-16 Plus (1MB)
-	   40h = 80x25	8x16 640x400   2      1  B800 AT&T 6300, AT&T VDC600
-	       = 80x25	8x16 640x400   2      1  B800 Compaq Portable
+	       = 100x40 8x16	        16	      Orchid Prodesigner VGA
+	       = 100x40 8x15	      16/256   4 B800 Tseng ET4000 chipset
+	   2Dh =	      640x350  256	      VEGA VGA
+	       =	      640x350 256/256k	 A000 Orchid, Genoa, STB
+	       = 80x25  8x14  640x350 256/256k 1 A000 Tseng ET4000 chipset
+	   2Eh =	      640x480  256	      VEGA VGA
+	       = 80x30	8x16  640x480 256/256k	 A000 Orchid
+	       =	      640x480 256/256k	 A000 STB,Genoa,Sigma
+	       = 80x30  8x16  640x480 256/256k 1 A000 Tseng ET4000 chipset
+	   2Fh =	      720x512  256	      VEGA VGA
+	       =	      720x512  256	      Genoa
+	       = 80x25  8x16  640x400 256/256k 1 A000 Tseng ET4000 chipset
+	   30h =	      800x600  256	      VEGA VGA
+	       = 100x37 8x16  800x600 256/256k	 A000 Orchid 
+	       =	      800x600 256/256k	 A000 STB,Genoa,Sigma
+	       =	      720x350    2	      3270 PC
+	       =	      800x600  256	      Cardinal
+	       =	      ???x???		 B800 AT&T 6300
+	       = 100x37 8x16  800x600 256/256k 1 A000 Tseng ET4000 chipset
+	   33h = 132x44 8x8	        16	 B800 ATI EGA Wonder,ATI VIP
+	   36h =	      960x720   16	      VEGA VGA
+	       =	      960x720   16	      STB
+	   37h =	     1024x768   16	      VEGA VGA
+	       = 128x48 8x16 1024x768   16	 A000 Orchid
+	       =	     1024x768   16	 A000 STB,Genoa,Sigma
+	       = 132x44 8x8	      mono	 B800 ATI EGA Wonder,ATI VIP
+	   38h =	     1024x768  256	      STB VGA/EM-16 Plus (1MB)
+	       = 128x48 8x16 1024x768 256/256k 1 A000 Tseng ET4000 chipset
+	   40h = 80x25	8x16  640x400    2     1 B800 AT&T 6300, AT&T VDC600
+	       = 80x25	8x16  640x400    2     1 B800 Compaq Portable
 	       = 80x43				      VEGA VGA, Tecmar VGA/AD
 	       = 80x43				      Video7 V-RAM VGA
 	       = 80x43				      Tatung VGA
-	   41h =	     640x200  16      1	      AT&T 6300
+	   41h =	      640x200   16     1      AT&T 6300
 	       = 132x25 			      VEGA VGA
 	       = 132x25				      Tatung VGA
 	       = 132x25				      Video7 V-RAM VGA
-	   42h = 80x25	8x16 640x400  16	      AT&T 6300, AT&T VDC600
+	   42h = 80x25	8x16  640x400   16	      AT&T 6300, AT&T VDC600
 	       = 132x43 			      VEGA VGA
 	       = 132x43				      Tatung VGA
 	       = 132x43				      Video7 V-RAM VGA
-	   43h = unsupported 640x200 of 640x400 viewport  AT&T 6300
+	   43h = unsupported  640x200 of 640x400 viewport  AT&T 6300
 	       = 80x60				      VEGA VGA
 	       = 80x60				      Tatung VGA
 	       = 80x60				      Video7 V-RAM VGA
@@ -335,146 +351,149 @@ INT 10 - VIDEO - SET VIDEO MODE
 	       = 100x60				      Video7 V-RAM VGA
 	   45h = 132x28				      Tatung VGA
 	       = 132x28				      Video7 V-RAM VGA
-	   46h = 100x40 8x15 800x600   2	      AT&T VDC600
-	   47h = 100x37 8x16 800x600  16	      AT&T VDC600
-	   48h = 80x50	8x8  640x400   2	 B800 AT&T 6300, AT&T VDC600
-	   49h = 80x30	8x16 640x480		      Lava Chrome II EGA
+	   46h = 100x40 8x15  800x600    2	      AT&T VDC600
+	   47h = 100x37 8x16  800x600   16	      AT&T VDC600
+	   48h = 80x50	8x8   640x400    2	 B800 AT&T 6300, AT&T VDC600
+	   49h = 80x30	8x16  640x480		      Lava Chrome II EGA
 	   4Dh = 120x25 			      VEGA VGA
 	   4Eh = 120x43 			      VEGA VGA
 	   4Fh = 132x25 			      VEGA VGA
-	   50h = 132x25 9x14	     mono	      Ahead Systems EGA2001
-	       = 80x30	8x16 640x480  16	      Paradise EGA-480
-	       = 80x43		     mono	      VEGA VGA
-	       =	     640x480 mono???	      Taxan 565 EGA
+	   50h = 132x25 9x14	      mono	      Ahead Systems EGA2001
+	       = 80x30	8x16  640x480   16	      Paradise EGA-480
+	       = 80x43		      mono	      VEGA VGA
+	       =	      640x480 mono???	      Taxan 565 EGA
 	       = 80x34				      Lava Chrome II EGA
-	       = 132x25 8x14	      16      8  B800 OAK Technologies VGA-16
+	       = 132x25 8x14	        16     8 B800 OAK Technologies VGA-16
 	   51h = 80x30	8x16			      Paradise EGA-480
 	       = 80x30				      Lava Chrome II EGA
-	       = 80x34	8x14 640x480  16	      ATI EGA Wonder
-	       = 132x25 	     mono	      VEGA VGA
-	       = 132x43 8x8           16      5  B800 OAK Technologies VGA-16
-	   52h = 132x44 9x8	     mono	      Ahead Systems EGA2001
-	       = 132x43 	     mono	      VEGA VGA
-	       = 94x29	8x14 752x410  16	      ATI EGA Wonder
+	       = 80x34	8x14  640x480   16	      ATI EGA Wonder
+	       = 132x25 	      mono	      VEGA VGA
+	       = 132x43 8x8             16     5 B800 OAK Technologies VGA-16
+	   52h = 132x44 9x8	      mono	      Ahead Systems EGA2001
+	       = 132x43 	      mono	      VEGA VGA
+	       = 94x29	8x14  752x410   16	      ATI EGA Wonder
 	       = 80x60				      Lava Chrome II EGA
-	       = 100x75	8x8  800x600  16      1  A000 OAK Technologies VGA-16
-	   53h = 100x40 8x14 800x560  16	      ATI EGA Wonder,ATI VIP
+	       = 100x75	8x8   800x600   16     1 A000 OAK Technologies VGA-16
+	   53h = 100x40 8x14  800x560   16	      ATI EGA Wonder,ATI VIP
 	       = 132x43 			      Lava Chrome II EGA
 	   54h = 132x43 8x8			      Paradise EGA-480
-	       = 132x43 7x9	     16/256k	 B800 Paradise VGA
-	       = 132x43 8x9	     16/256k	 B800 Paradise VGA on multisync
+	       = 132x43 7x9	      16/256k	 B800 Paradise VGA
+	       = 132x43 8x9	      16/256k	 B800 Paradise VGA on multisync
 	       = 132x43				      Taxan 565 EGA
 	       = 132x43				      AST VGA Plus
 	       = 132x43				      Hewlett-Packard D1180A
-	       = 132x43 7x9	      16	      AT&T VDC600
+	       = 132x43 7x9	        16	      AT&T VDC600
 	       = 132x25 			      Lava Chrome II EGA
-	       = 100x42 8x14 800x600  16	 A000 ATI EGA Wonder, VGA Wondr
+	       = 100x42 8x14  800x600   16	 A000 ATI EGA Wonder, VGA Wondr
 	   55h = 132x25 8x14			      Paradise EGA-480
-	       = 132x25 7x16	     16/256k	 B800 Paradise VGA
-	       = 132x25 8x16	     16/256k	 B800 Paradise VGA on multisync
+	       = 132x25 7x16	      16/256k	 B800 Paradise VGA
+	       = 132x25 8x16	      16/256k	 B800 Paradise VGA on multisync
 	       = 132x25				      Taxan 565 EGA
 	       = 132x25				      AST VGA Plus
 	       = 132x25				      Hewlett-Packard D1180A
-	       = 132x25 7x16	      16	      AT&T VDC600
-	       = 80x66	8x8	     16/256k	 A000 ATI VIP
-	       = 94x29	8x14 752x410		      Lava Chrome II EGA
-	   56h = 132x43 8x8	     3???     2	 B000 NSI Smart EGA+
-	       = 132x43 7x9	       4	 B000 Paradise VGA
-	       = 132x43 8x9	       4	 B000 Paradise VGA on multisync
-	       = 132x43 	     mono	      Taxan 565 EGA
-	       = 132x43 7x9	       2	      AT&T VDC600
-	   57h = 132x25 8x14	     3???     4  B000 NSI Smart EGA+
-	       = 132x25 7x16	       4	 B000 Paradise VGA
-	       = 132x25 8x16	       4	 B000 Paradise VGA on multisync
-	       = 132x25 	     mono	      Taxan 565 EGA
-	       = 132x25 7x16	       2	      AT&T VDC600
-	   58h = 100x75 8x8  800x600 16/256k	 A000 Paradise VGA
-	       = 100x75 8x8  800x600  16	      AT&T VDC600
-	       = 80x33	8x14	      16	 B800 ATI EGA Wonder,ATI VIP
-	       =	     800x600  16	      AST VGA Plus, Compaq VGA
-	       =	     800x600  16	      Dell VGA
-	       =	     800x600  16	      Hewlett-Packard D1180A
-	   59h = 100x75 8x8  800x600   2	 A000 Paradise VGA
-	       = 100x75 8x8  800x600   2	      AT&T VDC600
-	       = 80x66	8x8	     16/256k	 A000 ATI VIP
-	       =	     800x600   2	      AST VGA Plus, Compaq VGA
-	       =	     800x600   2	      Dell VGA
-	       =	     800x600   2	      Hewlett-Packard D1180A
-	   5Bh =	     800x600  16	      Maxxon, SEFCO TVGA, Imtec
-	       =	     640x350 256	      Genoa 6400
-	   5Ch =	     640x400 256	      Logix, ATI Prism Elite
-	       =	     640x400 256	      Maxxon, SEFCO TVGA, Imtec
-	       =	     640x400 256	      Zymos Poach
-	       =	     640x480 256	      Genoa 6400
-	   5Dh =	     640x480 256	      Logix, ATI Prism Elite
-	       =	     640x480 256	      Maxxon, SEFCO TVGA, Imtec
-	       =	     640x480 256	      Zymos Poach
-	   5Eh =	     640x400 256	      Paradise VGA,VEGA VGA
-	       =	     640x400 256	      AST VGA Plus
-	       =	     640x400 256	      Compaq VGA, Dell VGA
-	       = 80x25	8x16 640x400 256	      AT&T VDC600
-	       =	     800x600  16	      Logix, ATI Prism Elite
-	       =	     800x600 256	      Genoa 6400
-	       =	     800x600 256	      Zymos Poach
-	   5Fh =	     640x480 256	      Paradise VGA
-	       =	     640x480 256	      AST VGA Plus
-	       =	     640x480 256	      Compaq VGA, Dell VGA
-	       =	     640x480 256	      Hewlett-Packard D1180A
-	       = 80x30	8x16 640x480 256	      AT&T VDC600 (512K)
-	       =	    1024x768  16	      Logix, ATI Prism Elite
-	       =	    1024x768  16	      Maxxon, Genoa 6400, Imtec
-	       =	    1024x768  16	      Zymos Poach
-	   60h = 80x???      ???x400		      Corona/Cordata BIOS 4.10+
-	       =	     752x410		      VEGA VGA
-	       =	     752x410  16	      Tatung VGA
-	       =	     752x410  16	      Video7 V-RAM VGA
-	       =	     640x400 256	      Ahead B
-	   61h =	     ???x400		      Corona/Cordata BIOS 4.10+
-	       =	     720x540		      VEGA VGA
-	       =	     720x540  16	      Tatung VGA
-	       =	     720x540  16	      Video7 V-RAM VGA
-	       =	     640x400 256	 A000 ATI VGA Wonder
-	       =	     640x480 256	      Ahead B
-	   62h =	     800x600		      VEGA VGA
-	       =	     800x600  16	      Tatung VGA
-	       =	     800x600  16	      Video7 V-RAM VGA
-	       =	     640x480 256	 A000 ATI VGA Wonder
-	       =	     800x600 256	      Ahead B
-	   63h =	    1024x768   2	      Video7 V-RAM VGA
-	       =	     800x600 256	 A000 ATI VGA Wonder
-	       =	    1024x768 256	      Ahead B (1MB)
-	   64h =	    1024x768   4	      Video7 V-RAM VGA
-	   65h =	    1024x768  16	      Video7 V-RAM VGA
-	       =	    1024x768  16	 A000 ATI VGA Wonder
-	   66h =	     640x400 256	      Tatung VGA
-	       =	     640x400 256	      Video7 V-RAM VGA
-	   67h =	     640x480 256	      Video7 V-RAM VGA
-	       =	    1024x768   4	 A000 ATI VGA Wonder
-	   69h =	     720x540 256	      Video7 V-RAM VGA
-	   6Ah =	     800x600  16	      VESA standard interface
-	       =	     800x600  16	      Ahead B, Genoa 6400
-	       =	     800x600  16	      Zymos Poach
-	   70h =	     800x600  16	      Cardinal
+	       = 132x25 7x16	        16	      AT&T VDC600
+	       = 80x66	8x8	      16/256k	 A000 ATI VIP
+	       = 94x29	8x14  752x410		      Lava Chrome II EGA
+	       = 128x48 8x16 1024x768 16/256k	 A000 ATI VGA Wonder v4+  *!
+	   56h = 132x43 8x8	      3???     2 B000 NSI Smart EGA+
+	       = 132x43 7x9	         4	 B000 Paradise VGA
+	       = 132x43 8x9	         4	 B000 Paradise VGA on multisync
+	       = 132x43 	      mono	      Taxan 565 EGA
+	       = 132x43 7x9	         2	      AT&T VDC600
+	   57h = 132x25 8x14	      3???     4 B000 NSI Smart EGA+
+	       = 132x25 7x16	         4	 B000 Paradise VGA
+	       = 132x25 8x16	         4	 B000 Paradise VGA on multisync
+	       = 132x25 	      mono	      Taxan 565 EGA
+	       = 132x25 7x16	         2	      AT&T VDC600
+	   58h = 100x75 8x8   800x600 16/256k	 A000 Paradise VGA
+	       = 100x75 8x8   800x600   16	      AT&T VDC600
+	       = 80x33	8x14	        16	 B800 ATI EGA Wonder,ATI VIP
+	       =	      800x600   16	      AST VGA Plus, Compaq VGA
+	       =	      800x600   16	      Dell VGA
+	       =	      800x600   16	      Hewlett-Packard D1180A
+	   59h = 100x75 8x8   800x600    2	 A000 Paradise VGA
+	       = 100x75 8x8   800x600    2	      AT&T VDC600
+	       = 80x66	8x8	      16/256k	 A000 ATI VIP
+	       =	      800x600    2	      AST VGA Plus, Compaq VGA
+	       =	      800x600    2	      Dell VGA
+	       =	      800x600    2	      Hewlett-Packard D1180A
+	   5Bh =	      800x600   16	      Maxxon, SEFCO TVGA, Imtec
+	       =	      640x350  256	      Genoa 6400
+	       = 80x30  8x16			 B800 ATI VGA Wonder (undoc)
+	   5Ch =	      640x400  256	      Logix, ATI Prism Elite
+	       =	      640x400  256	      Maxxon, SEFCO TVGA, Imtec
+	       =	      640x400  256	      Zymos Poach
+	       =	      640x480  256	      Genoa 6400
+	   5Dh =	      640x480  256	      Logix, ATI Prism Elite
+	       =	      640x480  256	      Maxxon, SEFCO TVGA, Imtec
+	       =	      640x480  256	      Zymos Poach
+	   5Eh =	      640x400  256	      Paradise VGA,VEGA VGA
+	       =	      640x400  256	      AST VGA Plus
+	       =	      640x400  256	      Compaq VGA, Dell VGA
+	       = 80x25	8x16  640x400  256	      AT&T VDC600
+	       =	      800x600   16	      Logix, ATI Prism Elite
+	       =	      800x600  256	      Genoa 6400
+	       =	      800x600  256	      Zymos Poach
+	   5Fh =	      640x480  256	      Paradise VGA
+	       =	      640x480  256	      AST VGA Plus
+	       =	      640x480  256	      Compaq VGA, Dell VGA
+	       =	      640x480  256	      Hewlett-Packard D1180A
+	       = 80x30	8x16  640x480  256	      AT&T VDC600 (512K)
+	       =	     1024x768   16	      Logix, ATI Prism Elite
+	       =	     1024x768   16	      Maxxon, Genoa 6400, Imtec
+	       =	     1024x768   16	      Zymos Poach
+	   60h = 80x???       ???x400		      Corona/Cordata BIOS 4.10+
+	       =	      752x410		      VEGA VGA
+	       =	      752x410   16	      Tatung VGA
+	       =	      752x410   16	      Video7 V-RAM VGA
+	       =	      640x400  256	      Ahead B
+	   61h =	      ???x400		      Corona/Cordata BIOS 4.10+
+	       =	      720x540		      VEGA VGA
+	       =	      720x540   16	      Tatung VGA
+	       =	      720x540   16	      Video7 V-RAM VGA
+	       =	      640x400  256	 A000 ATI VGA Wonder
+	       =	      640x480  256	      Ahead B
+	   62h =	      800x600		      VEGA VGA
+	       =	      800x600   16	      Tatung VGA
+	       =	      800x600   16	      Video7 V-RAM VGA
+	       =	      640x480  256	 A000 ATI VGA Wonder
+	       =	      800x600  256	      Ahead B
+	   63h =	     1024x768    2	      Video7 V-RAM VGA
+	       =	      800x600  256	 A000 ATI VGA Wonder
+	       =	     1024x768  256	      Ahead B (1MB)
+	   64h =	     1024x768    4	      Video7 V-RAM VGA
+	   65h =	     1024x768   16	      Video7 V-RAM VGA
+	       =	     1024x768   16	 A000 ATI VGA Wonder
+	   66h =	      640x400  256	      Tatung VGA
+	       =	      640x400  256	      Video7 V-RAM VGA
+	   67h =	      640x480  256	      Video7 V-RAM VGA
+	       =	     1024x768    4	 A000 ATI VGA Wonder
+	   69h =	      720x540  256	      Video7 V-RAM VGA
+	   6Ah =	      800x600   16	      VESA standard interface
+	       =	      800x600   16	      Ahead B, Genoa 6400
+	       =	      800x600   16	      Zymos Poach
+	       = 100x42 8x14  800x600		 A000 ATI VGA Wonder (undoc)
+	   70h =	      800x600   16	      Cardinal
 	       = extended mode set (see AX=0070h)     Everex Micro Enhancer EGA
-	   71h = 100x35 8x16 800x600 16of64	 A000 NSI Smart EGA+
-	       =	     960x720  16	      Cardinal
-	   72h =	    1024x768  16	      Cardinal
-	   74h =	     640x400   2	 B800 Toshiba 3100 AT&T mode
-	       =	    1024x768  16	      Ahead B
-	   78h =	     640x400 256	      STB VGA/EM-16 Plus
-	       =	     640x400 256	      Cardinal
-	   79h =	     640x480 256	      Cardinal
-	   7Ah =	     720x540 256	      Cardinal
-	   7Ch =	     512x512  16	      Genoa
-	   7Dh =	     512x512 256	      Genoa
+	   71h = 100x35 8x16  800x600 16of64	 A000 NSI Smart EGA+
+	       =	      960x720   16	      Cardinal
+	   72h =	     1024x768   16	      Cardinal
+	   74h =	      640x400    2	 B800 Toshiba 3100 AT&T mode
+	       =	     1024x768   16	      Ahead B
+	   78h =	      640x400  256	      STB VGA/EM-16 Plus
+	       =	      640x400  256	      Cardinal
+	   79h =	      640x480  256	      Cardinal
+	   7Ah =	      720x540  256	      Cardinal
+	   7Ch =	      512x512   16	      Genoa
+	   7Dh =	      512x512  256	      Genoa
 	   7Eh = special mode set (see AX=007Eh)      Paradise VGA, AT&T VDC600
 	   7Fh = special function set (see AX=007Fh)  Paradise VGA, AT&T VDC600
-	   82h = 80x25		     B&W	      AT&T VDC overlay mode *
+	   82h = 80x25		       B&W	      AT&T VDC overlay mode *
 	   83h = 80x25				      AT&T VDC overlay mode *
-	   86h =	     640x200 B&W	      AT&T VDC overlay mode *
-	   C0h =	     640x400   2/prog pallet  AT&T VDC overlay mode *
+	   86h =	      640x200  B&W	      AT&T VDC overlay mode *
+	   C0h =	      640x400  2/prog pallet  AT&T VDC overlay mode *
 	   C4h = disable output 		      AT&T VDC overlay mode *
-	   D0h =	     640x400   2	 B800 DEC VAXmate AT&T mode
+	   D0h =	      640x400    2	 B800 DEC VAXmate AT&T mode
 
  *  for AT&T VDC overlay modes, BL contains the DEB mode, which may be 06h,
 	  40h, or 44h
@@ -486,7 +505,11 @@ INT 10 - VIDEO - SET VIDEO MODE
       resident
  *** DESQview intercepts calls to change into these two modes (21h is page 0,
       22h is page 1) even if there is no Hercules graphics board installed
+ *! ATI BIOS v4-1.00 has a text-scrolling bug in this mode
+
 Notes:	IBM standard modes do not clear the screen if the high bit of AL is set
+	the Tseng ET4000 chipset is used by the Orchid Prodesigner II, Diamond
+	  SpeedSTAR VGA, Groundhog Graphics Shadow VGA
 SeeAlso: AX=0070h,007Eh,6F05h
 ---------------------------------------------
 INT 10 - VIDEO - Everex Micro Enhancer EGA - EXTENDED MODE SET
@@ -1029,6 +1052,36 @@ INT 10 - VIDEO - ALTERNATE FUNC SELECT (ATI,Tatung,Taxan) - ENHANCED FEATURES
 		AL = video mode
 		Return: ES:BP -> table suitable for mode AL (and subfnc BL=05h)
 			BP = FFFFh on error
+
+Format of ATI VGA Wonder video mode table:
+Offset	Size	Description
+ 00h	BYTE	number of columns
+ 01h	BYTE	maximum row (number of rows - 1)
+ 02h	BYTE	scan lines per row
+ 03h	WORD	video buffer size in bytes
+ 05h  4 BYTEs	values for Sequencer registers 1-4
+ 09h	BYTE	value for Miscellaneous Output register
+ 0Ah 25 BYTEs	values for CRTC registers 00h-18h
+		00h horizontal total size (chars)
+		01h horizontal displayed (chars)
+		02h horizontal sync position (chars)
+		03h horizontal sync width (chars)
+		04h vertical total size (char rows)
+		05h vertical total adjust (scan lines)
+		06h vertical displayed (char rows)
+		07h vertical sync position (char rows)
+		08h interlace mode
+		09h max scan line in row
+		0Ah cursor start scan line
+		0Bh cursor end scan line
+		0Ch screen memory start (high)
+		0Dh screen memory start (low)
+		0Eh cursor address (high)
+		0Fh cursor address (low)
+		10h light pen (high)
+		11h light pen (low)
+ 23h 20 BYTEs	default palette (values for Attribute Controller regs 00h-13h)
+ 37h  9 BYTEs	values for Graphics Controller registers 00h-08h
 ---------------------------------------------
 INT 10 - VIDEO - WRITE STRING (AT,XT286,PS,EGA,VGA)
 	AH = 13h
@@ -2436,60 +2489,78 @@ INT 13 - QCACHE - GET INFO
 	DS:DX -> buffer for info
 Return: ???
 ---------------------------------------------
-INT 13 - PCTools 5.5 PC-CACHE - ???
+INT 13 - Super PC Kwik/PC-Cache 5.5 - ???
 	AH = 81h
 	SI = 4358h
 	???
 Return: ???
+Note:	PC Tools PC Cache 5.5 is an OEM version of Super PC Kwik, and thus
+	  supports this call
 ---------------------------------------------
-INT 13 - PCTools 5.5 PC-CACHE - ???
+INT 13 - Super PC Kwik/PC-Cache 5.5 - ???
 	AH = 82h
 	SI = 4358h
 	???
 Return: ???
+Note:	PC Tools PC Cache 5.5 is an OEM version of Super PC Kwik, and thus
+	  supports this call
 ---------------------------------------------
-INT 13 - PCTools 5.5 PC-CACHE - ???
+INT 13 - Super PC Kwik/PC-Cache 5.5 - ???
 	AH = 83h
 	SI = 4358h
 	???
 Return: ???
+Note:	PC Tools PC Cache 5.5 is an OEM version of Super PC Kwik, and thus
+	  supports this call
 ---------------------------------------------
-INT 13 - PCTools 5.5 PC-CACHE - ???
+INT 13 - Super PC Kwik/PC-Cache 5.5 - ???
 	AH = 84h
 	SI = 4358h
 	???
 Return: ???
+Note:	PC Tools PC Cache 5.5 is an OEM version of Super PC Kwik, and thus
+	  supports this call
 ---------------------------------------------
-INT 13 - PCTools 5.5 PC-CACHE - ???
+INT 13 - Super PC Kwik/PC-Cache 5.5 - ???
 	AH = 85h
 	SI = 4358h
 	???
 Return: ???
+Note:	PC Tools PC Cache 5.5 is an OEM version of Super PC Kwik, and thus
+	  supports this call
 ---------------------------------------------
-INT 13 - PCTools 5.5 PC-CACHE - GET RESIDENT CODE SEGMENT
+INT 13 - Super PC Kwik - GET RESIDENT CODE SEGMENT
 	AH = A0h
 	SI = 4358h
 	???
 Return: AX = segment of resident code
 	???
+Note:	PC Tools PC Cache 5.5 is an OEM version of Super PC Kwik, and thus
+	  supports this call
 ---------------------------------------------
-INT 13 - PCTools 5.5 PC-CACHE - FLUSH CACHE
+INT 13 - Super PC Kwik - FLUSH CACHE
 	AH = A1h
 	SI = 4358h
 	???
 Return: ???
+Note:	PC Tools PC Cache 5.5 is an OEM version of Super PC Kwik, and thus
+	  supports this call
 ---------------------------------------------
-INT 13 - PCTools 5.5 PC-CACHE - ???
+INT 13 - Super PC Kwik - ???
 	AH = A2h
 	SI = 4358h
 	???
 Return: ???
+Note:	PC Tools PC Cache 5.5 is an OEM version of Super PC Kwik, and thus
+	  supports this call
 ---------------------------------------------
-INT 13 - PCTools 5.5 PC-CACHE - ???
+INT 13 - Super PC Kwik - ???
 	AH = B0h
 	SI = 4358h
 	???
 Return: ???
+Note:	PC Tools PC Cache 5.5 is an OEM version of Super PC Kwik, and thus
+	  supports this call
 ---------------------------------------------
 INT 13 - SWBIOS - SET 1024 CYLINDER FLAG
 	AH = EEh
@@ -3013,7 +3084,8 @@ Offset	Size	Description
  26h	BYTE	initial system UART setup byte
  27h	BYTE	initial external UART setup byte
  28h 24 BYTEs	available for user application
-Note: bytes 00h-0Dh are the same on the IBM AT
+Note:	bytes 00h-0Dh are the same on the IBM AT as they are used/updated by
+	  the clock chip
 ---------------------------------------------
 INT 15 - VMiX - I/O CHANNEL OBJECT MANAGER
 	AH = 01h
@@ -4850,7 +4922,10 @@ INT 15 - SYSTEM - EVENT WAIT (AT,XT286,CONV,PS)
 	ES:BX -> event flag (bit 7 set when interval expires)
 	CX:DX = number of microseconds to wait (only accurate to 977 us)
 Return: CF set if function already busy
-SeeAlso: AH=86h
+Note:	the resolution of the wait period is 977 microseconds on most systems
+	  because most BIOSes use the 1/1024 second fast interrupt from the AT
+	  real-time clock chip which is available on INT 70
+SeeAlso: AH=86h, INT 70
 ---------------------------------------------
 INT 15 - SYSTEM - READ JOYSTICK (AT,XT2,XT286,PS)
 	AH = 84h
@@ -4877,7 +4952,10 @@ INT 15 - SYSTEM - WAIT (AT,XT2,XT286,CONV,PS)
 	CX,DX = number of microseconds to wait (only accurate to 977 us)
 Return: CF clear: after wait elapses
 	CF set: immediately due to error
-SeeAlso: AH=83h
+Note:	the resolution of the wait period is 977 microseconds on most systems
+	  because most BIOSes use the 1/1024 second fast interrupt from the AT
+	  real-time clock chip which is available on INT 70
+SeeAlso: AH=83h, INT 70
 ---------------------------------------------
 INT 15 - EXTENDED MEMORY - BLOCK MOVE (AT,XT286,PS)
 	AH = 87h
@@ -4907,6 +4985,9 @@ INT 15 - EXTENDED MEMORY - GET MEMORY SIZE (AT,XT286,PS)
 	AH = 88h
 Return: AX = memory size in K
 SeeAlso: AH=87h
+Note:	TSRs which wish to allocate extended memory to themselves often hook
+	  this call, and return a reduced memory size.  They are then free to
+	  use the memory between the new and old sizes at will.
 ---------------------------------------------
 INT 15 - SYSTEM - SWITCH TO VIRTUAL MODE (AT,XT286,PS50+)
 	AH = 89h
@@ -4924,6 +5005,7 @@ INT 15 - SYSTEM - SWITCH TO VIRTUAL MODE (AT,XT286,PS50+)
 	CX = offset into protected-mode CS to jump to
 Return: CF set on error
 	   AH = 0FFh  error enabling address line 20
+	in protected mode at specified address if successful
 SeeAlso: INT 67/AX=DE0Ch
 ---------------------------------------------
 INT 15 - OS HOOK - DEVICE BUSY LOOP (AT,XT2,XT286,CONV,PS)
@@ -4989,12 +5071,14 @@ Model  Submdl  Rev	BIOS date	System
  FDh	*	*	06/01/83	PCjr
  FCh	*	*	01/10/84	AT models 068,099 6 MHz 20MB
  FCh	00h	01h	06/10/85	AT model  239	  6 MHz 30MB
+ FCh	00h	<> 01h	  ???		7531/2 Industrial AT
  FCh	01h	00h	11/15/85	AT models 319,339 8 MHz, Enh Keyb, 3.5"
  FCh	01h	???	  ???		Compaq 286/386
  FCh	02h	00h	04/21/86	PC XT-286
  FCh	04h	00h	02/13/87     ** PS/2 Model 50
  FCh	04h	03h	04/18/88	PS/2 Model 50Z
  FCh	05h	00h	02/13/87     ** PS/2 Model 60
+ FCh	06h	???	  ???		7552 "Gearbox"
  FCh	09h	02h	06/28/89	PS/2 Model 30-286
  FCh	81h	00h	01/15/88	Phoenix 386 BIOS v1.10 10a
  FBh	00h	01h	01/10/86	PC XT, Enh Keyb, 3.5" support
@@ -5012,8 +5096,11 @@ Model  Submdl  Rev	BIOS date	System
  F8h	09h	03h	03/17/89	PS/2 Model 70 some models
  F8h	0Ch	00h	11/02/88	PS/2 Model 55SX
  F8h	1Bh	00h	10/02/89	PS/2 Model 70-486
+ 9Ah	*	*	  ???		Compaq XT/Compaq Plus
+ 30h	???	???	  ???		Sperry PC
+ 2Dh	*	*	  ???		Compaq PC/Compaq Deskpro
 
-    * This BIOS call not implemented in these early versions.
+    * This BIOS call is not implemented in these early versions.
       Read Model byte at F000h:FFFEh and BIOS date at F000h:FFF5h.
    ** These BIOS versions require the DASDDRVR.SYS patches.
 ---------------------------------------------
@@ -5116,6 +5203,7 @@ INT 15 - SYSTEM - ENABLE/DISABLE WATCHDOG TIMEOUT (PS50+)
 	     01h enable
 		BX = timer counter
 Return: CF set on error
+	CF clear if successful
 Note:	the watchdog timer generates an NMI
 ---------------------------------------------
 INT 15 - SYSTEM - PROGRAMMABLE OPTION SELECT (PS50+)
@@ -6529,6 +6617,7 @@ INT 1A - CLOCK - SET SYSTEM-TIMER DAY COUNTER (XT2,PS)
 	AH = 0Bh
 	CX = count of days since Jan 1,1980
 Return: CF set on error
+	CF clear if successful
 SeeAlso: AH=0Ah
 ---------------------------------------------
 INT 1A - WORD PERFECT 5.0 Third Party Interface - INSTALLATION CHECK
@@ -6743,7 +6832,12 @@ INT 21 - DOS - SELECT DISK
 	AH = 0Eh
 	DL = new default drive number (0 = A, 1 = B, etc.)
 Return: AL = number of logical drives
-SeeAlso: AH=19h
+Notes:	under Novell NetWare, the return value is always 32, the number of
+	  drives that NetWare supports
+	under DOS 3+, the return value is the greatest of 5, the value of
+	  LASTDRIVE= in CONFIG.SYS, and the number of drives actually present
+	otherwise, the return value is the highest drive actually present
+SeeAlso: AH=19h, AH=DBh
 ---------------------------------------------
 INT 21 - DOS - OPEN DISK FILE
 	AH = 0Fh
@@ -7071,7 +7165,7 @@ Return: CF clear if successful
 INT 21 - Phar Lap 386/DOS-Extender - CONVERT LINEAR TO PHYSICAL ADDRESS
 	AX = 2509h
 	EBX = linear address to convert
-Return: CF clear if successfule
+Return: CF clear if successful
 	    ECX = physical address (carry flag clear)
 	CF set if linear address not mapped in page tables
 ---------------------------------------------
@@ -7220,7 +7314,7 @@ INT 21 - Phar Lap 386/DOS-Extender - ALIAS SEGMENT DESCRIPTOR
 	BX = segment selector of descriptor in GDT or LDT
 	CL = access-rights byte for alias descriptor
 	CH = use-type bit (USE16 or USE32) for alias descriptor
-Return: CF clear on success
+Return: CF clear if successful
 	    AX = segment selector for created alias
 	CF set on error
 	    EAX = error code
@@ -7241,7 +7335,7 @@ SeeAlso: AX=2515h
 INT 21 - Phar Lap 386/DOS-Extender - GET SEGMENT ATTRIBUTES
 	AX = 2515h
 	BX = segment selector of descriptor in GDT or LDT
-Return: CF clear
+Return: CF clear if successful
 	    CL = access-rights byte for segment
 	    CH = use-type bit (USE16 or USE32)
 	ECX<16-31> destroyed
@@ -7458,8 +7552,10 @@ INT 21 - DOS - CREATE PSP
 	AH = 26h
 	DX = segment number at which to set up PSP
 Return: current PSP is copied to specified segment
-Note:	new PSP is updated with memory size information; INTs 22h, 23h, 24h
+Notes:	new PSP is updated with memory size information; INTs 22h, 23h, 24h
 	  taken from interrupt vector table
+	(DOS 2+) DOS assumes that the caller's CS is the segment of the PSP to
+	  copy
 SeeAlso: AH=50h,51h,55h,62h,67h
 
 Format of PSP:
@@ -7468,6 +7564,7 @@ Offset	Size	Description
  02h  	WORD	memory size in paragraphs
  04h	BYTE	unused
  05h  5 BYTEs	CP/M entry point (FAR jump to 000C0h)
+		BUG: (DOS 2+) PSPs created by INT 21/AH=4Bh point at 000BEh
  06h	WORD	CP/M compatibility--size of first segment for .COM files
  0Ah	DWORD	terminate address (old INT 22h)
  0Eh	DWORD	break address (old INT 23h)
@@ -7924,6 +8021,7 @@ Return: AL = FFh unsupported subfunction
 	DL = current switch character
 Notes:	documented in some OEM versions of some releases of DOS
 	supported by OS/2 compatibility box
+SeeAlso: AX=3701h
 ---------------------------------------------
 INT 21 - DOS 2+ internal - SET SWITCHAR
 	AX = 3701h
@@ -7931,6 +8029,7 @@ INT 21 - DOS 2+ internal - SET SWITCHAR
 Return: AL = FFh unsupported subfunction
 Notes:	documented in some OEM versions of some releases of DOS
 	supported by OS/2 compatibility box
+SeeAlso: AX=3700h
 ---------------------------------------------
 INT 21 - DOS 2.x and 4.0 only internal - AVAILDEV
 	AH = 37h
@@ -8023,6 +8122,7 @@ INT 21 - DOS 2+ - CREATE A SUBDIRECTORY (MKDIR)
 	DS:DX -> ASCIZ pathname (may include drive)
 Return: CF set on error
 	    AX = error code (03h,05h) (see AH=59h)
+	CF clear if successful
 Note:	all directories in the given path except the last must exist
 SeeAlso: AH=3Ah,3Bh, INT 2F/AX=1103h
 ---------------------------------------------
@@ -8031,6 +8131,7 @@ INT 21 - DOS 2+ - REMOVE A DIRECTORY ENTRY (RMDIR)
 	DS:DX -> ASCIZ pathname (may include drive)
 Return: CF set on error
 	    AX = error code (03h,05h,06h,10h) (see AH=59h)
+	CF clear if successful
 SeeAlso: AH=39h,3Bh, INT 2F/AX=1101h
 ---------------------------------------------
 INT 21 - DOS 2+ - CHANGE THE CURRENT DIRECTORY (CHDIR)
@@ -8038,6 +8139,7 @@ INT 21 - DOS 2+ - CHANGE THE CURRENT DIRECTORY (CHDIR)
 	DS:DX -> ASCIZ directory name (may include drive)
 Return: CF set on error
 	    AX = error code (03h) (see AH=59h)
+	CF clear if successful
 Note:	if new directory name includes a drive letter, the default drive is
 	  not changed, only the current directory on that drive
 SeeAlso: AH=47h, INT 2F/AX=1105h
@@ -8121,6 +8223,7 @@ INT 21 - DOS 2+ - CLOSE A FILE WITH HANDLE
 	BX = file handle
 Return: CF set on error
 	    AX = error code (06h) (see AH=59h)
+	CF clear if successful
 Note:	if the file was written to, the time and date stamps are set to the
 	  current time
 SeeAlso: AH=10h,3Ch,3Dh, INT 2F/AX=1106h,1227h
@@ -8158,6 +8261,7 @@ INT 21 - DOS 2+ - DELETE A FILE (UNLINK)
 	DS:DX -> ASCIZ pathname of file to delete (no wildcards allowed)
 Return: CF set on error
 	    AX = error code (02h,05h) (see AH=59h)
+	CF clear if successful
 Note:	(DOS 3.1+) wildcards are allowed if invoked via AX=5D00h, in which case
 	  the filespec must be canonical (as returned by AH=60h)
 SeeAlso: AH=13h,AX=5D00h,AH=60h, INT 2F/AX=1113h
@@ -8198,6 +8302,7 @@ INT 21 - DOS 2+ - PUT FILE ATTRIBUTES (CHMOD)
 	DS:DX -> ASCIZ file name
 Return: CF set on error
 	    AX = error code (01h,02h,03h,05h) (see AH=59h)
+	CF clear if successful
 Note:	will not change volume label or directory attributes
 SeeAlso: AX=4300h, INT 2F/AX=110Eh
 ---------------------------------------------
@@ -8233,6 +8338,7 @@ INT 21 - DOS 2+ - IOCTL - SET DEVICE INFORMATION
 	DL = device information to set (bits 0-7 from function 0)
 Return: CF set on error
 	    AX = error code (see AH=59h)
+	CF clear if successful
 SeeAlso: AX=4400h, INT 2F/AX=122Bh
 ---------------------------------------------
 INT 21 - DOS 2+ - IOCTL - READ CHARACTER DEVICE CONTROL STRING
@@ -8605,6 +8711,7 @@ INT 21 - DOS 3+ - IOCTL - SET SHARING RETRY COUNT
 	DX = retry count (default 3)
 Return: CF set on error
 	    AX = error code (see AH=59h)
+	CF clear if successful
 Note:	delay is dependent on processor speed (value in CX specifies number of
 	  64K-iteration empty loops to execute)
 SeeAlso: AH=52h, INT 2F/AX=1224h,122Bh
@@ -8786,6 +8893,7 @@ INT 21 - DOS 3.2+ - IOCTL - SET LOGICAL DRIVE MAP
 	BL = physical drive number (0=default)
 Return: CF set on error
 	    AX = error code (see AH=59h)
+	CF clear if successful
 Note:	maps logical drives to physical drives, similar to DOS's treatment of
 	  a single physical floppy drive as both A: and B:
 SeeAlso: AX=440Eh, INT 2F/AX=122Bh
@@ -8806,6 +8914,7 @@ INT 21 - DOS 2+ - FORCE DUPLICATE HANDLE (FORCDUP,DUP2)
 	CX = new file handle
 Return: CF set on error
 	    AX = error code (04h,06h) (see AH=59h)
+	CF clear if successful
 Notes:	closes file with handle BX if it is still open
 	moving file pointer for either handle will also move it for the other
 SeeAlso: AH=45h
@@ -8816,6 +8925,7 @@ INT 21 - DOS 2+ - GET CURRENT DIRECTORY
 	DS:SI points to 64-byte buffer area
 Return: CF set on error
 	    AX = error code (0Fh) (see AH=59h)
+	CF clear if successful
 Note:	the returned path does not include a drive or the initial backslash
 SeeAlso: AH=3Bh
 ---------------------------------------------
@@ -8834,6 +8944,7 @@ INT 21 - DOS 2+ - FREE MEMORY
 	ES = segment address of area to be freed
 Return: CF set on error
 	    AX = error code (07h,09h) (see AH=59h)
+	CF clear if successful
 SeeAlso: AH=48h,4Ah
 ---------------------------------------------
 INT 21 - DOS 2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)
@@ -8843,6 +8954,7 @@ INT 21 - DOS 2+ - ADJUST MEMORY BLOCK SIZE (SETBLOCK)
 Return: CF set on error
 	    AX = error code (07h,08h,09h) (see AH=59h)
 	    BX = maximum size possible for the block (if AX=08h)
+	CF clear if successful
 Notes:	under PCDOS 2.1 and 3.1 and MSDOS 3.2 and 3.3, if there is insufficient
 	  memory to expand the block as much as requested, the block will be
 	  made as large as possible
@@ -8945,7 +9057,14 @@ Notes:	for search attributes other than 08h, all files with at MOST the
 	  device without wildcards.  DOS 2.x returns attribute 00h, size 0,
 	  and the current date and time.  DOS 3+ returns attribute 40h and the
 	  current date and time.
-SeeAlso: AH=11h,4Fh,AX=4301h, INT 2F/AX=111Bh
+BUG:	under DOS 3.x and 4.x, the second and subsequent calls to this function
+	  with a character device name (no wildcards) and search attributes
+	  which include the volume-label bit (08h) will fail unless there is
+	  an intervening DOS call which implicitly or explicity performs a
+	  directory search without the volume-label bit.  Such implicit
+	  searches are performed by CREATE (AH=3Ch), OPEN (AH=3Dh), UNLINK
+	  (AH=41h), and RENAME (AH=56h)
+SeeAlso: AH=11h, AH=4Fh, AX=4301h, INT 2F/AX=111Bh
 
 Format of FindFirst data block:
 Offset	Size	Description
@@ -8988,7 +9107,7 @@ Return: CF set on error
 	    AX = error code (12h) (see AH=59h)
 	CF clear if successful
 	    [DTA] = data block (see AH=4Eh)
-SeeAlso: AH=12h,4Eh
+SeeAlso: AH=12h, AH=4Eh
 ---------------------------------------------
 INT 21 - DOS 2+ internal - SET PSP SEGMENT
 	AH = 50h
@@ -9008,6 +9127,7 @@ Notes:	under DOS 2.x, this function cannot be invoked inside an INT 28h
 	under DOS 3+, this function does not use any of the DOS-internal stacks
 	  and is thus fully reentrant
 	supported by OS/2 compability box
+	identical to the documented AH=62h
 SeeAlso: AH=26h,50h,62h
 ---------------------------------------------
 INT 21 - DOS 2+ internal - GET LIST OF LISTS
@@ -9489,7 +9609,12 @@ Offset	Size	Description
  06h	WORD	device strategy entry point
 		call with ES:BX -> request header (see INT 2F/AX=0802h)
  08h	WORD	device interrupt entry point
+---character device---
  0Ah  8 BYTEs	blank-padded character device name
+---block device---
+ 0Ah	BYTE	number of subunits (drives) supported by driver
+ 0Bh  7 BYTEs	unused
+---
  12h	WORD	(CD-ROM driver) reserved, must be 0000h
  14h	BYTE	(CD-ROM driver) drive letter (must initially be 00h)
  15h	BYTE	(CD-ROM driver) number of units
@@ -9899,9 +10024,12 @@ SeeAlso: AH=2Eh
 INT 21 - DOS 2+ internal - CREATE PSP
 	AH = 55h
 	DX = segment number at which to set up PSP (see AH=26h)
-	SI = value to place in memory size field at DX:[0002h]
-Note:	like AH=26h but creates "child" PSP rather than copying existing one
-SeeAlso: AH=26h
+	SI = (DOS 3+) value to place in memory size field at DX:[0002h]
+Notes:	like AH=26h but creates "child" PSP rather than copying existing one,
+	  incrementing the reference count for each inherited file
+	(DOS 2+) sets current PSP to DX
+	(DOS 3+) marks "no inherit" file handles as closed in child PSP
+SeeAlso: AH=26h, AH=50h
 ---------------------------------------------
 INT 21 - DOS 2+ - RENAME A FILE
 	AH = 56h
@@ -9909,6 +10037,7 @@ INT 21 - DOS 2+ - RENAME A FILE
 	ES:DI -> ASCIZ new name
 Return: CF set on error
 	    AX = error code (02h,03h,05h,11h) (see AH=59h)
+	CF clear if successful
 Notes:	allows move between directories on same logical volume
 	(DOS 3+) allows renaming of directories
 	(DOS 3.1+) wildcards are allowed if invoked via AX=5D00h, in which case
@@ -9941,6 +10070,7 @@ INT 21 - DOS 2+ - SET FILE'S DATE/TIME
 	DX = date to be set (see AX=5700h)
 Return: CF set on error
 	    AX = error code (01h,06h) (see AH=59h)
+	CF clear if successful
 SeeAlso: AX=5700h
 ---------------------------------------------
 INT 21 - DOS 4.0 - GET ???
@@ -10127,7 +10257,7 @@ INT 21 - DOS 3+ - CREATE NEW FILE
 Return: CF set on error
 	    AX = error code (03h,04h,05h,50h) (see AH=59h)
 	CF clear if successful
-	DS:DX -> path name
+	    AX = file handle
 Note:	unlike function 3Ch, function 5Bh will fail if the file already exists
 SeeAlso: AH=3Ch,5Ah
 ---------------------------------------------
@@ -10140,6 +10270,7 @@ INT 21 - DOS 3+ - LOCK/UNLOCK FILE ACCESS
 	SI:DI = size of region to lock
 Return: CF set on error
 	    AX = error code (01h,06h,21h) (see AH=59h)
+	CF clear if successful
 Note:	error returned unless SHARE or network installed
 SeeAlso: AX=440Bh, INT 2F/AX=110Ah,110Bh
 ---------------------------------------------
@@ -10176,6 +10307,7 @@ INT 21 - DOS 3.1+ internal - COMMIT ALL FILES FOR SPECIFIED COMPUTER/PROCESS
 		process ID fields used
 Return: CF set on error
 	    AX = error code (see AH=59h)
+	CF clear if successful
 Notes:	flushes buffers and updates directory entries for each file which has
 	  been written to; if remote file, calls INT 2F/AX=1107h
 	the computer ID and process ID are stored but ignored under DOS 3.3
@@ -10288,7 +10420,10 @@ Offset	Size	Description
  38h 26 BYTEs	device driver request header
  52h	DWORD	pointer to device driver entry point (used in calling driver)
  56h 22 BYTEs	device driver request header
- 6Ch 26 BYTEs	device driver request header
+ 6Ch 22 BYTEs	device driver request header
+ 82h	BYTE	type of PSP copy (00h=simple for INT 21/AH=26h, FFh=make child)
+ 83h	BYTE	??? apparently not reference by kernel
+ 84h	WORD	???
  86h	WORD	???
  88h  2 BYTEs	???
  8Ah  6 BYTEs	CLOCK$ transfer record (see AH=52h)
@@ -10616,6 +10751,7 @@ INT 21 - DOS 3.1 + Microsoft Networks - SET PRINTER SETUP
 	DS:SI -> string buffer
 Return: CF set on error
 	    AX = error code (01h) (see AH=59h)
+	CF clear if successful
 SeeAlso: AX=5E03h, INT 2F/AX=111Fh
 ---------------------------------------------
 INT 21 - DOS 3.1 + Microsoft Networks - GET PRINTER SETUP
@@ -10634,6 +10770,7 @@ INT 21 - DOS 3.1 + Microsoft Networks - SET PRINTER MODE
 	    bit 0: set if binary, clear if text (tabs expanded to blanks)
 Return: CF set on error
 	    AX = error code (see AH=59h)
+	CF clear if successful
 Note:	calls INT 2F/AX=111Fh with 5E04h on stack
 SeeAlso: AX=5E05h, INT 2F/AX=111Fh
 ---------------------------------------------
@@ -10670,6 +10807,7 @@ INT 21 - DOS 3.1 + network - SET REDIRECTION MODE
 	    01h on
 Return: CF set on error
 	    AX = error code (see AH=59h)
+	CF clear if successful
 Note:	when redirection is off, the local device (if any) rather than the
 	  remote device is used
 SeeAlso: AX=5F00h, INT 2F/AX=111Eh
@@ -10700,6 +10838,7 @@ INT 21 - DOS 3.1 + Microsoft Networks, Banyan VINES - REDIRECT DEVICE
 	ES:DI -> destination ASCIZ network path + ASCIZ password
 Return: CF set on error
 	    AX = error code (01h,03h,05h,08h,54h,55h,57h) (see AH=59h)
+	CF clear if successful
 SeeAlso: AX=5F02h,5F04h, INT 2F/AX=111Eh
 ---------------------------------------------
 INT 21 - DOS 3.1 + Microsoft Networks, Banyan VINES - CANCEL REDIRECTION
@@ -10707,6 +10846,7 @@ INT 21 - DOS 3.1 + Microsoft Networks, Banyan VINES - CANCEL REDIRECTION
 	DS:SI -> ASCIZ device name or network path
 Return: CF set on error
 	    AX = error code (01h,0Fh,57h) (see AH=59h)
+	CF clear if successful
 SeeAlso: AX=5F03h, INT 2F/AX=111Eh
 ---------------------------------------------
 INT 21 - DOS 4.x + Microsoft Networks - GET REDIRECTION LIST EXTENDED ENTRY
@@ -11126,10 +11266,11 @@ Return: AL = 00h
 ---------------------------------------------
 INT 21 - DOS 3+ - GET PSP ADDRESS
 	AH = 62h
-Return: BX = segment address of PSP
-Note:	under DOS 3+, this function does not use any of the DOS-internal stacks
+Return: BX = current PSP segment address (see AH=26h for format)
+Notes:	under DOS 3+, this function does not use any of the DOS-internal stacks
 	  and is thus fully reentrant
-SeeAlso: AH=51h
+	identical to the undocumented AH=51h
+SeeAlso: AH=50h, AH=51h
 ---------------------------------------------
 INT 21 - DOS 2.25 only - GET LEAD BYTE TABLE (2-BYTE CHARACTER SUPPORT)
 	AH = 63h
@@ -11143,6 +11284,7 @@ INT 21 - DOS 2.25 only - GET LEAD BYTE TABLE (2-BYTE CHARACTER SUPPORT)
 		Return:	DL = interim console flag
 Return: CF set on error
 	    AX = error code (01h) (see AH=59h)
+	CF clear if successful
 Note:	does not preserve any registers other than SS:SP
 ---------------------------------------------
 INT 21 - Asian DOS 3.2+ only - GET DOUBLE BYTE CHARACTER SET LEAD TABLE
@@ -11286,6 +11428,7 @@ INT 21 - DOS 4.x internal - COUNTRY-DEPENDENT CHARACTER CAPITALIZATION
 		DS:DX -> ASCIZ string to capitalize
 Return: CF set on error
 	    AX = error code (see AH=59h)
+	CF clear if successful
 ---------------------------------------------
 INT 21 - DOS 4.x internal - DETERMINE IF CHARACTER REPRESENTS YES/NO RESPONSE
 	AX = 6523h
@@ -11311,6 +11454,7 @@ INT 21 - DOS 4.x internal - COUNTRY-DEPENDENT FILENAME CAPITALIZATION
 		DS:DX -> ASCIZ filename to capitalize
 Return: CF set on error
 	    AX = error code (see AH=59h)
+	CF clear if successful
 Note:	nonfunctional in DOS 4.00 and 4.01 due to a bug
 ---------------------------------------------
 INT 21 - DOS 3.3+ - GET GLOBAL CODE PAGE TABLE
@@ -11333,6 +11477,7 @@ INT 21 - DOS 3.3+ - SET GLOBAL CODE PAGE TABLE
 	DX = system code page (active page at boot time)
 Return: CF set on error
 	    AX = error code (see AH=59h)
+	CF clear if successful
 SeeAlso: AX=6601h
 ---------------------------------------------
 INT 21 - DOS 3.3+ - SET HANDLE COUNT
@@ -11341,7 +11486,7 @@ INT 21 - DOS 3.3+ - SET HANDLE COUNT
 Return: CF set if error (and error code in AX)
 Notes:	if BX <= 20, no action is taken
 	only the first 20 handles are copied to child processes in DOS 3.3
-	a bug in DOS 3.3 results in requests for an even number of handles
+	a bug in DOS 3.30 results in requests for an even number of handles
 	  allocating a full 64K for the handle table
 SeeAlso: AH=26h
 ---------------------------------------------
@@ -11350,7 +11495,7 @@ INT 21 - DOS 3.3+ - COMMIT FILE, WRITE ALL BUFFERED DATA TO DISK
 	BX = file handle
 Return: CF set on error 
 	    AX = error code (see AH=59h)
-Note:	if BX <= 20, no action is taken
+	CF clear if successful
 SeeAlso: AX=5D01h, INT 2F/AX=1107h
 ---------------------------------------------
 INT 21 - DOS 4.0 internal - GET/SET DISK SERIAL NUMBER
@@ -12493,7 +12638,7 @@ INT 29 - DOS 2+ internal - FAST PUTCHAR
 Return: nothing
 Notes:	this interrupt is called from the DOS output routines if output is
 	  going to a device rather than a file, and the device driver's
-	  attribute word has bit 3 (04h) set.
+	  attribute word has bit 4 (10h) set.
 	the default handler under DOS 2.x and 3.x simply calls INT 10/AH=0Eh
 	the default handler under DESQview 2.2 understands the <Esc>[2J
 	  screen-clearing sequence, calls INT 10/AH=0Eh for all others
@@ -12549,6 +12694,7 @@ INT 2A - NETBIOS - NETWORK PRINT-STREAM CONTROL
 	     03h flush printer output and start new print job
 Return: CF set on error
 	    AX = error code
+	CF clear if successful
 Note:	subfunction 03h is equivalent to Ctrl/Alt/keypad-*
 SeeAlso: INT 21/AX=5D08h,5D09h, INT 2F/AX=1125h
 ---------------------------------------------
@@ -12578,19 +12724,27 @@ INT 2A - Microsoft Networks - BEGIN DOS CRITICAL SECTION
 	    05h  DOS 4+ IFSFUNC
 	    06h  DOS 4+ IFSFUNC
 	    08h  ASSIGN.COM
-Note:	normally hooked to avoid interrupting a critical section, rather than
+Notes:	normally hooked to avoid interrupting a critical section, rather than
 	  called
-SeeAlso: AH=81h,82h,87h, INT 21/AX=5D06h,5D0Bh
+	the handler should ensure that none of the critical sections are
+	  reentered, usually by suspending a task which attempts to reenter
+	  an active critical section
+SeeAlso: AH=81h, AH=82h, AH=87h, INT 21/AX=5D06h,5D0Bh
 ---------------------------------------------
 INT 2A - Microsoft Networks - END DOS CRITICAL SECTION
 	AH = 81h
 	AL = critical section number (00h-0Fh) (see AH=80h)
-SeeAlso: AH=80h,82h,87h
+Notes:	normally hooked rather than called
+	the handler should reawaken any tasks which were suspended due to an
+	  attempt to enter the specified critical section
+SeeAlso: AH=80h, AH=82h, AH=87h
 ---------------------------------------------
-INT 2A - Microsoft Networks - END CRITICAL SECTIONS 0 THROUGH 7
+INT 2A - Microsoft Networks - END DOS CRITICAL SECTIONS 0 THROUGH 7
 	AH = 82h
-Note:	called by the INT 21h function dispatcher for function 0 and functions
+Notes:	called by the INT 21h function dispatcher for function 0 and functions
 	  greater than 0Ch except 59h, and on process termination
+	the handler should reawaken any tasks which were suspended due to an
+	  attempt to enter one of the critical sections 0 through 7
 SeeAlso: AH=81h
 ---------------------------------------------
 INT 2A - Microsoft Networks - KEYBOARD BUSY LOOP
@@ -12706,12 +12860,14 @@ INT 2F - Multiplex - DOS 3+ PRINT.COM - REMOVE FILE
 	DS:DX -> ASCIZ file name (wildcards allowed)
 Return: CF set on error
 	    AX = error code
+	CF clear if successful
 SeeAlso: AX=0103h
 ---------------------------------------------
 INT 2F - Multiplex - DOS 3+ PRINT.COM - REMOVE ALL FILES
 	AX = 0103h
 Return: CF set on error
 	    AX = error code
+	CF clear if successful
 SeeAlso: AX=0102h
 ---------------------------------------------
 INT 2F - Multiplex - DOS 3+ PRINT.COM - HOLD QUEUE/GET STATUS
@@ -12736,6 +12892,7 @@ INT 2F - Multiplex - DOS 3+ PRINT.COM - RESTART QUEUE
 	AX = 0105h
 Return: CF set on error
 	   AX = error code
+	CF clear if successful
 SeeAlso: AX=0104h
 ---------------------------------------------
 INT 2F - Multiplex - DOS 3.3+ PRINT.COM - CHECK IF ERROR ON OUTPUT DEVICE
@@ -13085,6 +13242,7 @@ INT 2F - Multiplex - NETWORK REDIRECTOR - REMOVE REMOTE DIRECTORY
 	SDA CDS pointer -> current directory structure for drive with dir
 Return: CF set on error
 	    AX = DOS error code (see INT 21/AH=59h)
+	CF clear if successful
 Note:	called by DOS 3.1+ kernel
 SeeAlso: AX=1103h, AX=1105h, INT 21/AH=3Ah
 ---------------------------------------------
@@ -13095,6 +13253,7 @@ INT 2F - Multiplex - DOS 4 IFSFUNC.EXE - REMOVE REMOTE DIRECTORY
 	SDA CDS pointer -> current directory structure for drive with dir
 Return: CF set on error
 	    AX = DOS error code (see INT 21/AH=59h)
+	CF clear if successful
 Note:	appears to be identical to AX=1101h
 SeeAlso: AX=1101h
 ---------------------------------------------
@@ -13105,6 +13264,7 @@ INT 2F - Multiplex - NETWORK REDIRECTOR - MAKE REMOTE DIRECTORY
 	SDA CDS pointer -> current directory structure for drive with dir
 Return: CF set on error
 	    AX = DOS error code (see INT 21/AH=59h)
+	CF clear if successful
 Note:	called by DOS 3.1+ kernel
 SeeAlso: AX=1101h, AX=1105h, INT 21/AH=39h
 ---------------------------------------------
@@ -13115,6 +13275,7 @@ INT 2F - Multiplex - DOS 4 IFSFUNC.EXE - MAKE REMOTE DIRECTORY
 	SDA CDS pointer -> current directory structure for drive with dir
 Return: CF set on error
 	    AX = DOS error code (see INT 21/AH=59h)
+	CF clear if successful
 Note:	appears to be identical to AX=1103h
 SeeAlso: AX=1103h
 ---------------------------------------------
@@ -13125,6 +13286,7 @@ INT 2F - Multiplex - NETWORK REDIRECTOR - CHDIR
 	SDA CDS pointer -> current directory structure for drive with dir
 Return: CF set on error
 	    AX = DOS error code (see INT 21/AH=59h)
+	CF clear if successful
 Note:	called by DOS 3.1+ kernel
 SeeAlso: AX=1101h, AX=1103h, INT 21/AH=3Bh
 ---------------------------------------------
@@ -13345,7 +13507,8 @@ INT 2F - Multiplex - NETWORK REDIRECTOR - FINDFIRST
 Return: CF set on error
 	    AX = DOS error code (see INT 21/AH=59h)
 	CF clear if successful
-	    [DTA] = updated findfirst search data (bit 7 of first byte must be set)
+	    [DTA] = updated findfirst search data
+		    (bit 7 of first byte must be set)
 	    [DTA+15h] = standard directory entry for file
 Note:	called by DOS 3.1+ kernel
 SeeAlso: AX=111Ch, INT 21/AH=4Eh
@@ -13357,7 +13520,8 @@ INT 2F - Multiplex - NETWORK REDIRECTOR - FINDNEXT
 Return: CF set on error
 	    AX = DOS error code (see INT 21/AH=59h)
 	CF clear if successful
-	    [DTA] = updated findfirst search data (bit 7 of first byte must be set)
+	    [DTA] = updated findfirst search data
+		    (bit 7 of first byte must be set)
 	    [DTA+15h] = standard directory entry for file
 Note:	called by DOS 3.1+ kernel
 SeeAlso: AX=111Bh, INT 21/AH=4Fh
@@ -13517,6 +13681,7 @@ INT 2F - Multiplex - DOS 4 IFSFUNC.EXE - ???
 	???
 Return: CF set on error
 	    AX = DOS error code (see INT 21/AH=59h)
+	CF clear if successful
 Note:	called by DOS 4.0 kernel
 ---------------------------------------------
 INT 2F - Multiplex - DOS 4 IFSFUNC.EXE - ???
@@ -13564,6 +13729,7 @@ INT 2F - Multiplex - DOS 4 IFSFUNC.EXE - ???
 	???
 Return: CF set on error
 	    AX = DOS error code (see INT 21/AH=59h)
+	CF clear if successful
 Note:	called by DOS 4.0 kernel
 SeeAlso: INT 21/AH=6Bh
 ---------------------------------------------
@@ -13893,6 +14059,7 @@ INT 2F - Multiplex - DOS 3.3+ internal - CLOSE FILE
 	BX = file handle
 Return: CF set on error
 	    AL = 06h invalid file handle
+	CF clear if successful
 Notes:	can only be called from within DOS (assumes SS=DOS CS)
 	equivalent to INT 21/AH=3Eh
 SeeAlso: AX=1106h,1201h,1226h, INT 21/AH=3Eh
@@ -14125,6 +14292,7 @@ INT 2F - Multiplex - CDROM - GET COPYRIGHT FILE NAME
 	CX = drive number (0=A:)
 Return: CF set if drive is not a CDROM drive
 	    AX = 15 (invalid drive)
+	CF clear if successful
 SeeAlso: AX=1503h
 ---------------------------------------------
 INT 2F - Multiplex - CDROM - GET ABSTRACT FILE NAME
@@ -14133,6 +14301,7 @@ INT 2F - Multiplex - CDROM - GET ABSTRACT FILE NAME
 	CX = drive number (0=A:)
 Return: CF set if drive is not a CDROM drive
 	    AX = 15 (invalid drive)
+	CF clear if successful
 SeeAlso: AX=1502h
 ---------------------------------------------
 INT 2F - Multiplex - CDROM - GET BIBLIOGRAPHIC DOC FILE NAME
@@ -14141,6 +14310,7 @@ INT 2F - Multiplex - CDROM - GET BIBLIOGRAPHIC DOC FILE NAME
 	CX = drive number (0=A:)
 Return: CF set if drive is not a CDROM drive
 	    AX = 15 (invalid drive)
+	CF clear if successful
 ---------------------------------------------
 INT 2F - Multiplex - CDROM - READ VTOC
 	AX = 1505h
@@ -14172,6 +14342,7 @@ INT 2F - Multiplex - CDROM - ABSOLUTE DISK READ
 	DX = number of sectors to read
 Return: CF set on error
 	    AL = error code (15=invalid drive,21=not ready)
+	CF clear if successful
 SeeAlso: AX=1509h
 ---------------------------------------------
 INT 2F - Multiplex - CDROM - ABSOLUTE DISK WRITE
@@ -14222,6 +14393,7 @@ INT 2F - Multiplex - CDROM 2.00 - GET/SET VOLUME DESCRIPTOR PREFERENCE
 	CX = drive number (0=A:)
 Return: CF set on error
 	    AX = error code (15=invalid drive,1=invalid function)
+	CF clear if successful
 ---------------------------------------------
 INT 2F - Multiplex - CDROM 2.00 - GET DIRECTORY ENTRY
 	AX = 150Fh
@@ -14263,10 +14435,178 @@ INT 2F - Multiplex - CDROM 2.10 - SEND DEVICE DRIVER REQUEST
 	CX = CD-ROM drive letter (0 = A, 1 = B, etc)
 	ES:BX -> CD-ROM device driver request header (see AX=0802h)
 ---------------------------------------------
+INT 2F - Multiplex - MS WINDOWS - ENHANCED WINDOWS INSTALLATION CHECK
+	AX = 1600h
+Return: AL = 00h if Enhanced Windows 3.x or Windows/386 2.x not running
+	AL = 80h if Enhanced Windows 3.x or Windows/386 2.x not running
+	AL = 01h if Windows/386 2.x running
+	AL = FFh if Windows/386 2.x running
+	AL = anything else
+	    AL = Windows major version number >= 3
+	    AH = Windows minor version number
+Note:	INT 2F/AH=16h comprises an API for non-Windows programs (DOS device
+	  drivers, TSRs, and applications) to cooperate with multitasking
+	  Windows/386 2.x and Windows 3.x and higher enhanced mode.
+	certain calls are also supported in the Microsoft 80286 DOS extender in
+	  Windows standard mode
+SeeAlso: AX=4680h
+---------------------------------------------
+INT 2Fh - Multiplex - MS WINDOWS/386 2.x - GET API ENTRY POINT
+	AX = 1602h
+Return: ES:DI -> Windows/386 2.x API procedure entry point
+Notes:	this interface is supported in Windows 3.x only for compatibility
+	to get the current virtual machine (VM) ID in Windows/386 2.x:
+	    AX = 0000h
+	    ES:DI -> return address
+	    JUMP to address returned from INT 2F/AX=1602h
+	After JUMP, at return address:
+	    VX??? = current VM ID.
+---------------------------------------------
+INT 2Fh - Multiplex - MS WINDOWS - ENHANCED WINDOWS & 286 DOSX INIT BROADCAST
+	AX = 1605h
+	ES:BX = 0000h:0000h
+	DS:SI = 0000h:0000h
+	CX = 0000h
+	DX = flags
+	    bit 0 = 0 if enhanced Windows initialization
+	    bit 0 = 1 if Microsoft 286 DOS extender initialization
+	    bits 1-15 reserved (undefined)
+Return: CX = 0000h if okay for Windows to load
+        CX <> 0 if Windows should not load
+Note:	the enhanced Windows loader and Microsoft 286 DOS extender will
+	  broadcast an INT 2F/AX=1605h call when initializing.  Any DOS device
+	  driver or TSR can watch for this broadcast and return the appropriate
+	  values.  If the driver or TSR returns CX <> 0, it is also its
+	  responsibility to display an error message.
+---------------------------------------------
+INT 2Fh - Multiplex - MS WINDOWS - ENHANCED WINDOWS & 286 DOSX EXIT BROADCAST
+	AX = 1606h
+	DX = flags
+            bit 0 = 0 if enhanced Windows exit
+            bit 0 = 1 if Microsoft 286 DOS extender exit
+	    bits 1-15 reserved (undefined)
+Return: CX = 0000h if okay for Windows to load
+	CX <> 0 if Windows should not load
+Note:	if the init broadcast fails (AX=1605h returned CX <> 0), then this
+	  broadcast will be issued immediately.
+---------------------------------------------
+INT 2Fh - Multiplex - MS WINDOWS - VIRTUAL DEVICE CALL OUT API
+	AX = 1607h
+	BX = virtual device ID (see INT 2Fh AX=1684h)
+Note:	more of a convention than an API, this call specifies a standard
+	  mechanism for enhanced Windows virtual devices (VxD's) to talk to DOS
+	  device drivers and TSRs
+---------------------------------------------
+INT 2Fh - Multiplex - MS WINDOWS - ENHANCED WINDOWS INIT COMPLETE BROADCAST
+	AX = 1608h
+---------------------------------------------
+INT 2Fh - Multiplex - MS WINDOWS - ENHANCED WINDOWS BEGIN EXIT BROADCAST
+	AX = 1609h
+---------------------------------------------
+INT 2Fh - Multiplex - MS WINDOWS - RELEASE CURRENT VIRTUAL MACHINE TIME-SLICE
+	AX = 1680h
+Return: AL = 00h if the call is supported
+	AL = 80h (unchanged) if the call is not supported
+Notes:	programs can use this function, even when not running under Windows in
+	  386 enhanced mode, because OS/2 can use the call to detect idleness
+	  even though it does not support the complete enhanced Windows API. 
+	this call will be supported in OS/2 2.0 for multitasking DOS
+	  applications
+	does not block the program; it just gives up the remainder of the time
+	  slice
+---------------------------------------------
+INT 2Fh - Multiplex - MS WINDOWS 3+ - BEGIN CRITICAL SECTION
+	AX = 1681h
+Notes:	used to prevent a task switch from occurring
+	should be followed by an INT 2F/AX=1682h call as soon as possible
+	not supported in Windows/386 2.x. Get INDOS flag with INT 21/AH=34h and
+	  and increment by hand.
+SeeAlso: AX=1682h, INT 21/AH=34h
+---------------------------------------------
+INT 2Fh - Multiplex - MS WINDOWS 3+ - END CRITICAL SECTION
+	AX = 1682h
+Note:	not supported in Windows/386 2.x.  Get INDOS flag with INT 21/AH=34h
+	  and decrement by hand.
+SeeAlso: AX=1681h, INT 21/AH=34h
+---------------------------------------------
+INT 2Fh - Multiplex - MS WINDOWS 3+ - GET CURRENT VIRTUAL MACHINE ID
+	AX = 1683h
+Return: BX = current virtual machine (VM) ID
+Notes:	Windows itself currently runs in VM 1, but this can't be relied upon
+	VM IDs are reused when VMs are destroyed
+	an ID of 0 will never be returned
+SeeAlso: AX=1684h, AX=1685h
+---------------------------------------------
+INT 2F - Multiplex - MS WINDOWS - GET DEVICE API ENTRY POINT
+	AX = 1684h
+	BX = virtual device (VxD) ID (see below)
+	ES:DI = 0000h:0000h
+Return: ES:DI -> VxD API entry point, or 0:0 if the VxD does not support an API
+Note:	some enhanced Windows virtual devices provide services that
+	  applications can access.  For example, the Virtual Display Device
+	  (VDD) provides an API used in turn by WINOLDAP.
+SeeAlso: AX=1683h
+
+Values for VxD ID:
+ 01h	VMM		Virtual Machine Manager
+ 02h	Debug
+ 03h	VPICD		Virtual Prog. Interrupt Controller (PIC) Device
+ 04h	VDMAD		Virtual Direct Memory Access (DMA) Device
+ 05h	VTD		Virtual Timer Device
+ 06h	V86MMGR		Virtual 8086 Mode Device
+ 07h	PAGESWAP	Paging Device
+ 08h	Parity
+ 09h	Reboot
+ 0Ah	VDD		Virtual Display Device (GRABBER)
+ 0Bh	VSD		Virtual Sound Device
+ 0Ch	VMD		Virtual Mouse Device
+ 0Dh	VKD		Virtual Keyboard Device
+ 0Eh	VCD		Virtual COMM Device
+ 0Fh	VPD		Virtual Printer Device
+ 10h	VHD		Virtual Hard Disk Device
+ 11h	VMCPD
+ 12h	EBIOS		Reserve EBIOS page (e.g., on PS/2)
+ 13h	BIOSXLAT	Map ROM BIOS API between prot & V86 mode
+ 14h	VNETBIOS	Virtual NetBIOS Device
+ 15h	DOSMGR
+ 16h	WINLOAD
+ 17h	SHELL
+ 18h	VMPoll
+ 19h	VPROD
+ 1Ah	DOSNET		assures network integrity across VMs
+ 1Bh	VFD		Virtual Floppy Device
+ 1Ch	VDD2		Secondary display adapter
+ 1Dh	WINDEBUG
+ 1Eh	TSRLoad		TSR instance utility
+Note:   The high bit of the VxD ID is reserved for future use. The
+        next 10 bits are the OEM # which is assigned by Microsoft. The
+        low 5 bits are the device number. 
+---------------------------------------------
+INT 2F - Multiplex - MS WINDOWS - SWITCH VMs AND CALLBACK
+	AX = 1685h
+	BX = VM ID of virtual machine to switch to
+	CX = flags
+		bit 0 wait until interrupts enabled
+		bit 1 wait until critical section unowned
+		bits 2-15 reserved (zero)
+	DX:SI = priority boost (see VMM.INC)
+	ES:DI -> FAR procedure to callback
+Return: CF set on error
+	    AX = error code
+		01h invalid VM ID
+		02h invalid priority boost
+		03h invalid flags
+	CF clear if successful
+	    event will be or has been called
+Note:	some DOS devices, such as networks, need to call functions in a
+	  specific VM. This call forces the appropriate VM to be installed.
+SeeAlso: AX=1683h, INT 15/AX=1117h
+---------------------------------------------
 INT 2F - Multiplex - DOS Protected-Mode Interface - DETECT MODE
 	AX = 1686h
 Return: AX = 0000h if operating in protected mode under DPMI
-	AX nonzero if in real/V86 mode or no DPMI
+	AX nonzero if in real/V86 mode or no DPMI (INT 31 not available)
+SeeAlso: AX=1687h
 ---------------------------------------------
 INT 2F - Multiplex - DOS Protected-Mode Interface - INSTALLATION CHECK
 	AX = 1687h
@@ -14278,6 +14618,7 @@ Return: AX = 0000h if installed
 	    DL = DPMI minor version
 	    SI = number of paragraphs of DOS extender private data
 	    ES:DI -> DPMI mode-switch entry point
+SeeAlso: AX=1686h
 
 Call mode switch entry point with:
 	AX = flags
@@ -14520,6 +14861,21 @@ INT 2F - Multiplex - DOS 4+ ANSI.SYS internal - INSTALLATION CHECK
 	AX = 1A00h
 Return: AL = FFh if installed
 ---------------------------------------------
+INT 2F - Multiplex - AVATAR.SYS - INSTALLATION CHECK
+	AX = 1A00h
+Return: AL = FFh if installed
+	    CF clear
+	    BX = AVATAR protocol level supported
+	    CX = driver type
+		0000h AVATAR.SYS
+		4456h DVAVATAR.COM inside DESQview window
+	    DX = 0016h
+Notes:	AVATAR may be distinguished from ANSI because ANSI does not change
+	  BX, CX, or DX
+	AVATAR.SYS is a CON replacement by George Adam Stanislav which
+	  interprets AVATAR command codes in the same way that ANSI interprets
+	  ANSI command codes
+---------------------------------------------
 INT 2F - Multiplex - DOS 4+ ANSI.SYS internal - GET/SET DISPLAY INFORMATION
 	AX = 1A01h
 	CL = 7Fh for GET
@@ -14550,11 +14906,41 @@ Offset	Size	Description
 		00h if /L not in effect
 		01h if /L in effect
 ---------------------------------------------
+INT 2F - Multiplex - AVATAR.SYS - SET DRIVER STATE
+	AX = 1A21h (AL='!')
+	DS:SI -> command string with one or more state characters
+	CX = length of command string
+Return: CF set on error (invalid subfunction)
+	CF clear if successful
+Note:	the characters in the state string are interpreted left to right, and
+	  need not be in any particular order
+SeeAlso: AX=1A3Fh
+
+Values of state characters:
+ 'a'	activate driver
+ 'd'	disable driver
+ 'f'	use fast screen output
+ 'g'	always convert gray keys (+ and -) to function keys
+ 'G'	never convert gray keys
+ 'l'	convert gray keys only when ScrollLock active
+ 's'	use slow screen output
+ 't'	Tandy 1000 keyboard (not yet implemented)
+---------------------------------------------
+INT 2F - Multiplex - AVATAR.SYS - QUERY DRIVER STATE
+	AX = 1A3Fh (AL='?')
+	ES:DI -> buffer
+	CX = length of buffer in bytes
+Return: CF clear
+	CX = actual size of returned info
+Note:	the returned information consists of multiple letters whose meanings
+	  are described under AX=1A21h
+SeeAlso: AX=1A21h
+---------------------------------------------
 INT 2F - Multiplex - DOS 4+ XMA2EMS.SYS extension internal - INSTALLATION CHECK
 	AX = 1B00h
 Return: AL = FFh if installed
 Note:	XMA2EMS.SYS extension is only installed if DOS has page frames to hide.
-	This extension hooks onto INT 67 AH=58h and returns from that call data
+	This extension hooks onto INT 67/AH=58h and returns from that call data
 	  which excludes the physical pages being used by DOS.
 SeeAlso: AX=1B01h
 ---------------------------------------------
@@ -14565,7 +14951,7 @@ Return: AX = FFFFh if failed (no such hidden page)
 	AX = 0000h if OK, then
 	     ES = segment of page frame
 	     DI = physical page number
-Note:	this corresponds to the data edited out of the INT 67 AH=58h call
+Note:	this corresponds to the data edited out of the INT 67/AH=58h call
 SeeAlso: AX=1BFFh
 ---------------------------------------------
 INT 2F - Multiplex - DOS 4+ XMA2EMS.SYS internal??? - ???
@@ -14779,6 +15165,15 @@ INT 2F - Multiplex - F-DLOCK.EXE
 	    0001h uninstall
 Note:	F-DLOCK is part of the F-PROT virus/trojan protection package by
 	  Fridrik Skulason
+---------------------------------------------
+INT 2F - Multiplex - MS Windows 3 - INSTALLATION CHECK
+	AX = 4680h
+Return: AX = 0000h MS Windows 3.0 running in real (/R) or standard (/S) mode
+	   nonzero  no Windows, Windows prior to 3.0, or Windows3 in enhanced
+		    mode
+Note:	not officially documented, but Microsoft has indicated that they
+	  intend to provide an installation check which works in all modes
+SeeAlso: AX=1600h
 ---------------------------------------------
 INT 2F - Multiplex - TesSeRact RAM-RESIDENT PROGRAM INTERFACE
 	AX = 5453h
@@ -15001,7 +15396,7 @@ INT 2F - Multiplex - DOS 3.3+ DISPLAY.SYS internal - GET ???
 	ES:DI -> user buffer
 	CX = size of buffer
 Return: CF set if buffer too small
-	CF clear on success
+	CF clear if successful
 ---------------------------------------------
 INT 2F - Multiplex - DOS 4+ DISPLAY.SYS internal - ???
 	AX = AD04h
@@ -15070,6 +15465,7 @@ INT 2F - Multiplex - DOS 3.3+ KEYB.COM internal - SET KEYBOARD CODE PAGE
 	BX = code page
 Return: CF set on error
 	    AX = 0001h (code page not available)
+	CF clear if successful
 Note:	called by DISPLAY.SYS
 SeeAlso: AX=AD82h
 ---------------------------------------------
@@ -15105,7 +15501,7 @@ INT 2F - Multiplex - DOS 3.3+ internal - INSTALLABLE COMMAND - EXECUTE
 	DX = FFFFh
 	DS:SI -> buffer
 Return: buffer at DS:SI filled with a length byte followed by the uppercase
-	  internal command to execute (if length <> 0)
+	  internal command to execute (if length not 0)
 Notes:	this call requests execution of the command which a previous call to
 	  AX=AE00h indicated was resident
 	APPEND hooks this call
@@ -16071,6 +16467,9 @@ INT 2F - Multiplex - BANYAN VINES v4+ - GET BANV INTERRUPT NUMBER
 Return: AX = 0000h installed
 	    BX = interrupt number (60h to 66h)
 	   nonzero not present
+Note:	if AX is nonzero, VINES 3.x or earlier may be installed, thus it is
+	  necessary to examine the four bytes preceding the handlers for
+	  INT 60 through INT 66 for the string "BANV"
 ---------------------------------------------
 INT 2F - Multiplex - DESQview 2.26 External Dev Interface - INSTALLATION CHECK
 	AX = DE00h
@@ -17507,6 +17906,14 @@ SeeAlso: INT 1A/AH=06h
 ---------------------------------------------
 INT 4A - Z100 - Slave 8259 - S100 vectored line 2
 ---------------------------------------------
+INT 4B - MicroChannel 80386+ - DMA SERVICES INTERFACE
+Note:	this interface allows MicroChannel machines running in virtual 8086
+	  mode with paging enabled to emulate the DMA function, virtual memory
+	  applications to interrogate or modify the physical addresses that a
+	  bus master BIOS/device driver programs into the bus master device,
+	  and to lock virtual memory pages into a physical address
+SeeAlso: INT 31
+---------------------------------------------
 INT 4B - Z100 - Slave 8259 - S100 vectored line 3
 ---------------------------------------------
 INT 4C - Z100 - Slave 8259 - S100 vectored line 4
@@ -17846,6 +18253,7 @@ INT 60 - FTP Driver - SEND PACKET
 	CX = length
 Return: CF set on error
 	    DH = error code (see AX=01FFh)
+	CF clear if successful
 ---------------------------------------------
 INT 60 - SYS_PROF.EXE - CLEAR PROFILING TABLE
 	AH = 04h
@@ -17857,6 +18265,7 @@ INT 60 - FTP Driver - TERMINATE DRIVER FOR HANDLE
 	BX = handle
 Return: CF set on error
 	   DH = error code (see AX=01FFh)
+	CF clear if successful
 ---------------------------------------------
 INT 60 - FTP Driver - GET ADDRESS
 	AH = 06h
@@ -17874,6 +18283,7 @@ INT 60 - FTP Driver - RESET INTERFACE
 	BX = handle
 Return: CF set on error
 	    DH = error code (see AX=01FFh)
+	CF clear if successful
 ---------------------------------------------
 INT 60 - Banyan VINES, 3com - GET STATION ADDRESS
 	AH = 0Ch
@@ -17932,6 +18342,7 @@ INT 60 - FTP Driver - SET RECEIVE MODE
 	    06h all packets
 Return: CF set on error
 	   DH = error code
+	CF clear if successful
 SeeAlso: AH=21h
 ---------------------------------------------
 INT 60 - FTP Driver - GET RECEIVE MODE
@@ -19008,6 +19419,8 @@ INT 64 - Oracle SQL Protected Mode Executive - ???
 INT 64 - Novell NetWare - LOW-LEVEL API
 Note:	equivalent to INT 7A
 ---------------------------------------------
+INT 64 - Data General DG10 - MicroECLIPSE COPROCESSOR INTERFACE
+---------------------------------------------
 INT 64 - Extended Batch Language v3.14+
 	AH = function
 	    00h to 5Fh chained to previous handler
@@ -19055,6 +19468,8 @@ INT 65 - reserved for user interrupt
 ---------------------------------------------
 INT 65 - Adaptec controllers - DRIVE 1 DATA
 ---------------------------------------------
+INT 65 - Data General DG10 - MicroECLIPSE COPROCESSOR INTERFACE
+---------------------------------------------
 INT 65 - SD.COM v6.2
    The unregistered version of SD62.COM uses the low byte of this vector to
    count the number of invocations, displaying a registration reminder each
@@ -19063,6 +19478,8 @@ INT 65 - SD.COM v6.2
 INT 66 - reserved for user interrupt
 ---------------------------------------------
 INT 66 - Adaptec controllers - DRIVE 1 DATA
+---------------------------------------------
+INT 66 - Data General DG10 - MicroECLIPSE COPROCESSOR INTERFACE
 ---------------------------------------------
 INT 66 - THESPLUS - UNINSTALL
 	AX = FFFEh
@@ -20326,10 +20743,14 @@ INT 68 - APPC/PC - SET PASSTHROUGH
 INT 69 - Zenith AT BIOS - ???
    called by INT 09 handler
 ---------------------------------------------
+INT 69 - DECnet DOS - DATA LINK LAYER PROGRAM
+---------------------------------------------
 INT 6A - OPTHELP.COM
 Notes:	OPTHELP is an optionally-resident help system for SLR Systems's OPTASM
 	  assembler
 	may be configured to use any interrupt from 60h to 7Fh (default 6Ah)
+---------------------------------------------
+INT 6A - DECnet DOS - LOCAL AREA TRANSPORT PROGRAM
 ---------------------------------------------
 INT 6B - Ungermann-Bass NETCI
 	???
@@ -20344,7 +20765,19 @@ Note:	used by IBM, Paradise, Video7, and NCR
 INT 6D - ATI VGA Wonder - VIDEO BIOS ENTRY POINT
    points at the original INT 10 entry point set up by the ATI BIOS
 ---------------------------------------------
-INT 6E - unused
+INT 6D - DECnet DOS - DATA LINK LAYER PROGRAM
+---------------------------------------------
+INT 6E - DECnet DOS - DECnet NETWORK PROCESS API
+Notes:	this is the main DECnet DOS access, and is described in Digital manual
+	  AA-EB46B-TV ("DECnet-DOS Programmer's Reference Manual")
+	there is a signature/data area immediately prior to the interrupt
+	  handler which may be used as an installation check
+
+Format of signature area:
+Offset	Size	Description
+ -5	BYTE	major version number
+ -4	BYTE	minor version number
+ -3   3 BYTEs	signature (ASCII "DNP")
 ---------------------------------------------
 INT 6F - HP ES-12 EXTENDED BIOS - READ CMOS MEMORY
 	BP = 0012h
@@ -20450,6 +20883,7 @@ INT 6F - 10-NET - STATUS OF NODE
 	DS:DX -> 512-byte status record (see below)
 Return: CF set on error
 	    AX = error code (see AH=00h)
+	CF clear if successful
 
 Format of node status record:
 Offset	Size	Description
@@ -20565,6 +20999,7 @@ INT 6F - 10-NET - SEND
 	DS:DX -> data (max 1024 bytes)
 Return: CF set on error
 	    AX = error code (see AH=00h)
+	CF clear if successful
 SeeAlso: AH=05h
 ---------------------------------------------
 INT 6F - 10-NET - RECEIVE
@@ -20591,6 +21026,7 @@ INT 6F - 10-NET - LOCK HANDLE
 Return: CF set on error
 	    AX = error code (see also AH=00h)
 		0002h file not found
+	CF clear if successful
 SeeAlso: AH=08h, INT 21/AH=5Ch
 ---------------------------------------------
 INT 6F - 10-NET - UNLOCK HANDLE
@@ -20602,6 +21038,7 @@ INT 6F - 10-NET - UNLOCK HANDLE
 Return: CF set on error
 	    AX = error code (see also AH=00h)
 		0002h file not found
+	CF clear if successful
 SeeAlso: AH=07h, INT 21/AH=5Ch
 ---------------------------------------------
 INT 6F - 10-NET - SUBMIT
@@ -20692,6 +21129,7 @@ Return: CF set on error
 	    AX = error code (see also AH=00h)
 		FF17h device not mounted
 		FF18h already spooling to named device
+	CF clear if successful
 
 Format of Spool/Print record:
 Offset	Size	Description
@@ -20794,6 +21232,7 @@ INT 6F - 10-NET - LOCK FCB
 Return: CF set on error
 	    AX = error code (see also AH=00h)
 		2 file not found
+	CF clear if successful
 SeeAlso: AH=12h
 ---------------------------------------------
 INT 6F - 10-NET - UNLOCK FCB
@@ -20807,6 +21246,7 @@ INT 6F - 10-NET - UNLOCK FCB
 Return: CF set on error
 	    AX = error code (see also AH=00h)
 		2 file not found
+	CF clear if successful
 SeeAlso: AH=11h
 ---------------------------------------------
 INT 6F - 10-NET v3.3 - GET REMOTE CONFIGURATION TABLE ADDRESS
@@ -20855,6 +21295,7 @@ INT 6F - 10-NET v3.3 - SET SHARED DEVICE ENTRY
 	ES:DI -> valid shared device table entry
 Return: CF set on error
 	    AX = error code (see AH=00h)
+	CF clear if successful
 SeeAlso: AX=1501h,1503h
 ---------------------------------------------
 INT 6F - 10-NET v3.3 - DELETE SHARED DEVICE ENTRY
@@ -20863,6 +21304,7 @@ INT 6F - 10-NET v3.3 - DELETE SHARED DEVICE ENTRY
 	DS:SI -> node ID, 12 bytes blank-padded
 Return: CF set on error
 	    AX = error code (see AH=00h)
+	CF clear if successful
 SeeAlso: AX=1501h,1502h
 ---------------------------------------------
 INT 6F - 10-NET v3.3 - MOUNT
@@ -20872,6 +21314,7 @@ INT 6F - 10-NET v3.3 - MOUNT
 	DS:DX -> node ID, 12 bytes blank-padded
 Return: CF set on error
 	    AX = error code (see AH=00h)
+	CF clear if successful
 SeeAlso: AH=18h
 ---------------------------------------------
 INT 6F - 10-NET v3.3 - UNMOUNT
@@ -20883,6 +21326,7 @@ INT 6F - 10-NET v3.3 - UNMOUNT
 	    04h,05h COMx
 Return: CF set on error
 	    AX = error code (see AH=00h)
+	CF clear if successful
 SeeAlso: AH=17h
 ---------------------------------------------
 INT 70 - IRQ8 - AT/XT286/PS50+ - REAL-TIME CLOCK
@@ -20916,7 +21360,15 @@ Note:	may be masked by setting bit 7 on I/O port A1h
 ---------------------------------------------
 INT 78 - not used
 ---------------------------------------------
-INT 79 - not used
+INT 79 - AVATAR.SYS - FAST GET KEYSTROKE
+Return: CF set if no keystroke available
+	    AX = FFFFh
+	CF clear if key pressed
+	    AX = keystroke
+Notes:	if a keystroke is available, it is removed from the keyboard buffer
+	  before being returned
+	AVATAR.SYS is a CON driver by George Adam Stanislav which interprets
+	  AVATAR command codes just as ANSI.SYS interprets ANSI commands
 ---------------------------------------------
 INT 7A - Novell NetWare - LOW-LEVEL API
 	???
@@ -21598,6 +22050,25 @@ Session Parameters for function 09h:
  NEWRET		use HLLAPI v3.0 return code conventions
  OLDRET		use HLLAPI v2.0 return code conventions
 ---------------------------------------------
+INT 7F - CONVERGENT TECHNOLOGIES ClusterShare CTOS ACCESS VECTOR
+	AL = request ID
+	    01h "Request"/"RequestDirect"
+		ES:BX -> pRq
+	        DX ignored
+	    04h "Wait"
+		ES:BX -> ppMsgRet
+		DX = exchange
+	    05h "AllocExch"
+		ES:BX -> pExchRet
+	    06h "DeAllocExch"
+		DX = exchange
+	    07h "Check"
+		ES:BX -> ppMsgRet
+		DX = exchange
+	CX = 4354h ('CT')
+Return: AX = status
+	    0000h successful
+---------------------------------------------
 INT 80 - Q-PRO4 - ???
 ---------------------------------------------
 INT 80 - reserved for BASIC
@@ -21876,7 +22347,8 @@ INT B3 - ZIPKEY - CONVERT STATE CODE TO TWO-LETTER ABBREVIATION
 	AH = 72h
 	BL = ZIPKEY state code
 Return: CF set on error
-	AX = abbreviation, in upper case
+	CF clear if successful
+	    AX = abbreviation, in upper case
 SeeAlso: AH=71h,73h
 ---------------------------------------------
 INT B3 - ZIPKEY - CONVERT STATE CODE TO STATE NAME
@@ -21884,7 +22356,8 @@ INT B3 - ZIPKEY - CONVERT STATE CODE TO STATE NAME
 	BL = ZIPKEY state code
 	ES:DI -> buffer for name
 Return: CF set on error
-	ES:DI points one byte beyond end of name
+	CF clear if successful
+	    ES:DI points one byte beyond end of name
 SeeAlso: AH=72h
 ---------------------------------------------
 INT B3 - ZIPKEY - CONVERT ZIPCODE TO ASCII DIGITS
@@ -21893,7 +22366,8 @@ INT B3 - ZIPKEY - CONVERT ZIPCODE TO ASCII DIGITS
 	CH = last two digits of zipcode (0-99)
 	ES:DI -> buffer
 Return: CF set on error
-	ES:DI points one byte beyond end of digit string
+	CF clear if successful
+	    ES:DI points one byte beyond end of digit string
 ---------------------------------------------
 INT B3 - ZIPKEY - LOOK UP STATE CODE FOR ZIPCODE
 	AH = 75h
@@ -21976,6 +22450,7 @@ INT B3 - ZIPKEY - RESTORE ZIPKEY CONTEXT
 	    FFh if none
 	CX:DX = internal code returned by AH=7Bh
 Return: CF set on error
+	CF clear if successful
 SeeAlso: AH=7Bh
 ---------------------------------------------
 INT B3 - ZIPKEY - REQUEST POP UP
@@ -22249,7 +22724,7 @@ INT FF - AT/XT286/PS50+ - destroyed by return from protected mode
 INT FF - Z100 - WARM BOOT
 ---------------------------------------------
 Please redistribute the following files unmodified as a group, in an archive
-named INTER390:
+named INTER490:
 	INTERRUP.1ST	the read-me file, containing credits, availability info
 	INTERRUP.A	INT 00 through INT 1F
 	INTERRUP.B	INT 20 through INT 27
@@ -22259,11 +22734,12 @@ named INTER390:
 	INTPRINT.COM	a simple formatter that also generates the list summary
 	INTPRINT.DOC	instructions for INTPRINT
 	INTPRINT.C	source code for INTPRINT
+	MEMORY.LST	format of the BIOS data area
 This compilation is Copyright (c) 1989, 1990 Ralf Brown
 ---------------------------------------------
 ARPA: ralf@cs.cmu.edu
 UUCP: {ucbvax,harvard}!cs.cmu.edu!ralf
 BIT:  ralf%cs.cmu.edu@cmuccvma
-FIDO: Ralf Brown 1:129/3.1 (new address!)
+FIDO: Ralf Brown 1:129/3.1
 	or post a message to the DR_DEBUG echo
 CIS:  >INTERNET:ralf@cs.cmu.edu
