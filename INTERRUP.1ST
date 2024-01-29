@@ -1,11 +1,11 @@
-Interrupt List		Release 90.4	Last change 8/5/90
+Interrupt List		Release 90.5		Last change 10/14/90
 
 Please distribute all of the following files (unmodified) together in an
-archive called INTER490:
+archive called INTER590:
         INTERRUP.1ST	this file
         INTERRUP.A	INT 00 through INT 1F \
-	INTERRUP.B	INT 20 through INT 27  \ total 380 pages at 60 lines
-	INTERRUP.C	INT 28 through INT 5F  / per page, 412 with INTPRINT -p
+	INTERRUP.B	INT 20 through INT 27  \ total 418 pages at 60 lines
+	INTERRUP.C	INT 28 through INT 5F  / per page, 452 with INTPRINT -p
 	INTERRUP.D	INT 60 through INT FF / 
         INTERRUP.PRI	a brief primer on interrupts
 	INTPRINT.COM	a simple formatter that also generates the list summary
@@ -25,9 +25,9 @@ See INTPRINT.DOC for details.
 
 This compilation is (c) Copyright 1989, 1990 Ralf Brown
 Permission is granted to use and redistribute the files comprising the
-interrupt listing in any way, provided my name and addresses and the names of
-all contributers are preserved, as well as the information on how to obtain
-new releases.
+interrupt listing in any way (including conversion to another format), provided
+that my name and addresses and the names of all contributers are preserved, as
+well as the information on how to obtain new releases.
 
 Please send corrections/additions to me rather than distributing a modified
 version of the list, so that all may benefit from your contribution.
@@ -37,7 +37,7 @@ date of its release, with the sincere hope that the credits and availability
 information are retained.
 ---------------------------------------------
 If the list is more than three months old by the time you get it, there is
-probably a newer release out already (but v90.5 may not be released until Dec).
+probably a newer release out already (next is planned for early January)
 
 The newest release of this list is available in these places (please do not
 ask me to email it, it is just too large for that):
@@ -75,7 +75,6 @@ BITnet: you may retrieve the copy on WSMR-SIMTEL20.ARMY.MIL via the following
 		    LISTSERV@NDSUVM1 (alias VM1.NODAK.EDU)
         (in Europe) TRICKLE at TREARN (Turkey)
 		    TRICKLE at IMIPOLI (Italy)
-		    TRICKLE at DB0FUB11 (Germany)
 		    TRICKLE at DKTC11 (Denmark)
 		    TRICKLE at AWIWUW11 (Austria)
 		    TRICKLE at EB0UB011 (Spain)
@@ -109,6 +108,25 @@ sure it works the same way in your version of the software (and please let me
 know whether or not it works the same way).  Information marked with "???" is
 known to be incomplete or guesswork.
 ---------------------------------------------
+Key to system abbreviations
+(unless otherwise indicated, a function is available on all systems)
+	PC	IBM PC
+	XT	IBM PC XT
+	PORT	IBM PC Portable (uses same BIOS as XT)
+	Jr	IBM PCjr
+	AT	IBM PC AT
+	XT2	IBM PC XT 2
+	XT286	IBM PC XT/286
+	CONV	IBM Convertible
+	PS	IBM PS/2, any model
+	PS30	IBM PS/2 Model 30 and below
+	PS50+	IBM PS/2 Models 50,60,70,80
+	CGA	Color Graphics Adapter
+	EGA	Enhanced Graphics Adapter
+	VGA	Video Graphics Array
+	MCGA	Multi-Color Graphics Array
+	TopView TopView/DESQview/TaskView/OmniView/other compatibles
+---------------------------------------------
 This list is the result of the time and effort of a large number of people,
 among them
  1/85 Janet Jack  (original list)
@@ -132,7 +150,7 @@ among them
 11/87 Bill White       wwhite@teknowledge-vaxc.arpa   DOS 3.3
 11/87 Richard Hargrove harvard!killer!richardh        EGA
 12/87 Vincent Broman   broman@bugs.nosc.mil           Cordata BIOS/Minix
-12/87 Dennis Grinberg  grinberg@cs.cmu.edu	      MCGA/VGA
+12/87 Dennis Grinberg  dennis+@cs.cmu.edu	      MCGA/VGA
  1/88 Brad Davis       tektronix!sequent!gssc!bradd   GSS, DGIS
  2/88 D. Spinellis     dds%cc.imperial.ac.uk          Herc GRAFIX Dev Toolkit
  3/88 Michael A. Moran Michael@cup.portal.com         VGA INT 10h
@@ -192,7 +210,21 @@ among them
  6/90 Robin Walker     rdhw@uk.ac.cambridge.phoenix   BIOS data segment format
  7/90 Andrew Schulman  76320.302@CompuServe.COM	      MSWindows INT 2F/AH=16h
  7/90 Ben Myers	       0003571400@mcimail.com	      Tseng ET4000, misc
+ 7/90 Ralf Brown       ralf@cs.cmu.edu		      DPMI 0.9 API
  8/90 G. Adam Stanislav 1:129/39		      AVATAR.SYS
+ 8/90 Robin Walker     RDHW@phoenix.cambridge.ac.uk   more DOS internals
+ 8/90 Michael A Shiels mshiels@masnet.uucp	      Quarterdeck INT 2F/AH=D2h
+ 8/90		       mjm@bmbcomp.uucp		      Logitech INT 33
+ 9/90 Michael A Shiels mshiels@masnet.uucp	      IBM/Yale & 3com INT 14
+ 9/90 Michael A Shiels mshiels@masnet.uucp	      INT 6B, Starlan INT 2A/5B
+ 9/90 Michael A Shiels mshiels@masnet.uucp	      DECnet INT 69/INT 6A
+ 9/90 Michael A Shiels mshiels@masnet.uucp	      Topware NOS, Win3 EGA.SYS
+ 9/90 David Maxey				      misc undoc DOS
+ 9/90 Roger Bowler     rbowler@cix.uucp		      Attachmate Extra API
+ 9/90 Ben Myers	       0003571400@mcimail.com	      FRIEZE API
+ 9/90 Michael A Shiels mshiels@masnet.uucp	      VDS, Sangoma, misc
+ 9/90 Rob Luursema     robl@idca.tds.philips.nl	      EISA BIOS calls
+10/90 Stepehn Bean     70575.406@compuserve.com	      more DECnet INT 69/INT 6A
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -203,7 +235,7 @@ Also contributing:
  John Werner <aptr@tut.cc.rochester.edu>, Pete Fales <att!ttrde!pfales>,
  David Herron <david@ms.uky.edu>, Otto J. Makela <MAKELA_O%FINJYU.BITNET>,
  Risto Lankinen via Markku Savela <msa@clinet.fi>, Darryl Gregorash 1:140/86,
- Skule Johansen <S_Johansen%AVH.UNIT.UNINett%NORUNIX.BITNET>,
+ Skule Johansen <S_Johansen%AVH.UNIT.UNINett%NORUNIX.BITNET>, Bob Fehrenbach,
  Everett Kaser <everett@hpcvlx.hp.com>, David Dyck <dcd@tc.fluke.COM>,
  Mark Davis <davis@cs.unc.edu>, Sergio Fogel <sergio%TECHUNIX.BITNET>,
  James P. Kiely <kiely%lownlab@harvard.harvard.edu>,
@@ -220,8 +252,11 @@ Also contributing:
  Paul Williamson <pwilliamson@drzeus.qualcomm.com>, Jan Ceuleers 2:295/27,
  James Birdsall <jwbirdsa@phoenix.princeton.edu>, David G. Thomas,
  Edwin Floyd <76067.747@CompuServe.COM>, James West 1:140/26,
- Simon Phipps <sphipps@compulink.co.uk>,
- John P. Vias <72260.1601@CompuServe.COM>
+ Simon Phipps <sphipps@compulink.co.uk>, Glen Kriekenbeck <glenk@East.Sun.COM>,
+ John P. Vias <72260.1601@CompuServe.COM>, <frotz%drivax@uunet.uu.net>,
+ Naota Kimura <abcscnuk@csuna.csun.edu>, George W. Pogue <gwp@trsvax.UUCP>,
+ William L. Peavy <70042.2310@compuserve.com>, Dmitry Stefankov (Moscow, USSR),
+ Michael D. Lawler <mdlawler@bsu-cs.bsu.edu>, Norbert Juffa (Karlsruhe, FRG)
 ---------------------------------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -414,25 +449,24 @@ Kit and the March 1990 issue of Computer Language.  Added 7/17/90.
 
 Tseng ET4000 chipset mode info from _ET4000_Graphics_Controller_Data_Book_ by
 Tseng Labs, Inc., Newtown, PA (215)968-0502.  Added 7/25/90.
----------------------------------------------
-Key to system abbreviations
-(unless otherwise indicated, a function is available on all systems)
-	PC	IBM PC
-	XT	IBM PC XT
-	PORT	IBM PC Portable (uses same BIOS as XT)
-	Jr	IBM PCjr
-	AT	IBM PC AT
-	XT2	IBM PC XT 2
-	XT286	IBM PC XT/286
-	CONV	IBM Convertible
-	PS	IBM PS/2, any model
-	PS30	IBM PS/2 Model 30 and below
-	PS50+	IBM PS/2 Models 50,60,70,80
-	CGA	Color Graphics Adapter
-	EGA	Enhanced Graphics Adapter
-	VGA	Video Graphics Array
-	MCGA	Multi-Color Graphics Array
-	TopView TopView/DESQview/TaskView/OmniView/other compatibles
+
+Additional Packet Driver API calls extracted from version 1.09 of the "PC/TCP
+Packet Driver Specification" Sept 14, 1989, by FTP Software, Inc.,
+26 Princess St, Wakefield, MA 01880-3004.  Added by Ralf Brown, 8/29/90.
+
+Video FOSSIL INT 14 API extracted from Fidonet document FSC-0021 version 1.00
+by Rick Moore, dated May 23, 1988.  Added by Ralf Brown, 9/12/90.
+
+Additional DESQview API info (mostly for v2.2+ calls) extracted from
+_DESQview_API_Reference_, provided by Quarterdeck Office Systems,150 Pico Blvd,
+Santa Monica, CA 90405.  Added by Ralf Brown, 9/90.
+
+LANtastic v3.0 calls derived from the online "LANtastic (tm) Network Operating
+System Technical Reference Manual", file date 6/13/90.  Added by Ralf Brown,
+10/6/90.
+
+Additional DECnet DOS INT 69/INT 6A info derived from the "DECnet DOS
+Programmer's Reference Manual" (AA-EB46C-TV).  Added 10/13/90.
 ---------------------------------------------
 To keep the lawyers happy:
 
@@ -441,7 +475,7 @@ IBM, PC, PCjr, PC/XT, PC/AT, XT/286, PS/2, TopView are trademarks of IBM Corp.
 Compaq is a registered trademark of Compaq Corp.
 Turbo C and Turbo Pascal are registered trademarks of Borland International
 Tandy 1000 is a registered trademark of Tandy Corp.
-DESQview is a trademark of Quarterdeck Office Systems
+DESQview, QEMM-386, and QRAM are trademarks of Quarterdeck Office Systems
 TaskView and OmniView are trademarks of Sunny Hill Software
 10-Net is a trademark of Fox Research, Inc.
 Mouse Systems is a trademark of Mouse Systems Corp.
@@ -460,8 +494,8 @@ What they're saying about this list:
    IBM PC.  A great thing to have on your hard disk if you don't have
    a Ray Duncan or Peter Norton book handy."
       _Turbo_Technix_, July/August 1988, p. 157.
-[and that was about the 1/30/88 version, which is less than one-fifth the size
- of the current version....]
+[and that was about the 1/30/88 version, which is about one-sixth the size of
+ the current version....]
 ---------------------------------------------
 If you know of any information not in the list, or which is stated incorrectly,
 please let me know!  This list would be a pale shadow of its current self if it
@@ -486,8 +520,9 @@ Snail mail:
 	School of Computer Science
 	Carnegie Mellon University
 	Pittsburgh, PA 15213
-	   (please enclose a SASE or e-mail address if you want a speedy reply)
-	   (an air-mail letter costs two international return coupons)
+	   (Letters which enclose a Self-Addressed Stamped Envelope or e-mail
+	    address will be given priority.  An overseas air-mail letter costs
+	    two international return coupons.)
 
 I reply to all e-mail submissions and inquiries.  If you do not receive a reply
 within a reasonable time, send your message again, giving a better return path

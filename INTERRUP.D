@@ -1,5 +1,3 @@
-INT 60 - reserved for user interrupt
----------------------------------------------
 INT 60 - Zero Bug Virus
    The "Zero Bug" virus hooks this vector.  Purpose unknown.
 ---------------------------------------------
@@ -59,7 +57,7 @@ Notes:	Arbiter may use any interrupt from 60h to 66h (parameterized)
 	Arbiter makes a PC disk look like a slow disk over an SNA link to an
 	  IBM mainframe
 ---------------------------------------------
-INT 60 - FTP Driver - PC/TCP Packet Driver Specification
+INT 60 - FTP Packet Driver - PC/TCP Packet Driver Specification
    The handler for the interrupt will start with a 3-byte jump instruction, 
    followed by the ASCIZ string "PKT DRVR".  To find the interrupt being used
    by the driver, an application should scan through interrupt vectors 60h to
@@ -72,9 +70,9 @@ Return: AX = 0000h    profiling is off
 Note:	SYS_PROF.EXE is the TSR portion of a profiler from Micro Cornucopia #47
 SeeAlso: AH=01h"SYS_PROF",02h"SYS_PROF"
 ---------------------------------------------
-INT 60 - FTP Driver - DRIVER INFO
+INT 60 - FTP Packet Driver - BASIC FUNC - GET DRIVER INFO
 	AX = 01FFh
-	BX = handler returned by function 02h
+	BX = handle returned by function 02h
 Return: CF set on error
 	    DH = error code (see below)
 	CF clear if successful
@@ -83,10 +81,14 @@ Return: CF set on error
 	    DX = interface type (see below)
 	    CL = number
 	    DS:SI -> name
-	    AL = driver type
+	    AL = driver functions supported
 		01h basic
-		02h extended
+		02h basic and extended
+		05h basic and high-performance
+		06h basic, high-performance, and extended
 		FFh not installed
+Note:	the handle in BX is optional for drivers written to v1.07 or later of
+	  the packet driver specification
 
 Values for error code:
 	01h invalid handle number
@@ -101,6 +103,9 @@ Values for error code:
 	0Ah type accessed but never released
 	0Bh bad command
 	0Ch packet could not be sent
+	0Dh hardware address could not be changed
+	0Eh hardware address has a bad length or format
+	0Fh could not reset interface
 
 Values for Network Interface classes/types:
     Class 01h  Ethernet/IEEE 802.3	 
@@ -118,25 +123,78 @@ Values for Network Interface classes/types:
 	0Dh 3COM 3C523
 	0Eh Western Digital WD8003
 	0Fh Spider Systems S4
+	10h Torus Frame Level
+	11h 10Net Communications
+	12h Gateway PC-bus
+	13h Gateway AT-bus
+	14h Gateway MCA-bus
+	15h IMC PCnic
+	16h IMC PCnic II
+	17h IMC PCnic 8-bit
+	18h Tigan Communications
+	19h Micromatic Research
+	1Ah Clarkson "Multiplexor"
+	1Bh D-Link 8-bit
+	1Ch D-Link 16-bit
+	1Dh D-Link PS/2
+	1Eh Research Machines 8
+	1Fh Research Machines 16
+	20h Research Machines MCA
+	21h Radix Microsystems EXM1 16-bit
+	22h Interlan Ni9210
+	23h Interlan Ni6510
+	24h Vestra LANMASTER 16-bit
+	25h Vestra LANMASTER 8-bit
+	26h Allied Telesis PC/XT/AT
+	27h Allied Telesis NEC PC-98
+	28h Allied Telesis Fujitsu FMR
+	29h Ungermann-Bass NIC/PS2
+	2Ah Tiara LANCard/E AT
+	2Bh Tiara LANCard/E MC
+	2Ch Tiara LANCard/E TP
+	2Dh Spider Communications SpiderComm 8
+	2Eh Spider Communications SpiderComm 16
+	2Fh AT&T Starlan NAU
+	30h AT&T Starlan-10 NAU
+	31h AT&T Ethernet NAU
+	32h Intel smart card
     Class 02h  ProNET-10
 	01h Proteon p1300
+	02h Proteon p1800
     Class 03h  IEEE 802.5/ProNet-4
 	01h IBM Token-Ring Adapter
 	02h Proteon p1340
 	03h Proteon p1344
+	04h Gateway PC-bus
+	05h Gateway AT-bus
+	06h Gateway MCA-bus
     Class 04h  Omninet
     Class 05h  Appletalk
     Class 06h  Serial Line
-    Class 07h  StarLAN
+	01h Clarkson 8250-SLIP
+	02h Clarkson "Multiplexor"
+    Class 07h  StarLAN (subsumed by Ethernet class)
     Class 08h  ARCnet
-	01h Datapoint RIM	
+	01h Datapoint RIM
+    Class 09h  AX.25
+    Class 0Ah  KISS
+    Class 0Bh  IEEE 802.3 with 802.2 headers
+	types same as for class 01h
+    Class 0Ch  FDDI with 802.2 headers
+    Class 0Dh  Internet X.25
+	01h Western Digital
+	02h Frontier Technology
+    Class 0Eh  N.T. LANSTAR (encapsulating DIX Ethernet)
+	01h NT LANSTAR/8
+	02h NT LANSTAR/MC
+Note: class and type numbers are cleared through FTP Software
 ---------------------------------------------
 INT 60 - SYS_PROF.EXE - TURN PROFILING OFF
 	AH = 01h
 Note:	SYS_PROF.EXE is the TSR portion of a profiler from Micro Cornucopia #47
 SeeAlso: AH=00h"SYS_PROF",02h"SYS_PROF"
 ---------------------------------------------
-INT 60 - FTP Driver - ACCESS TYPE
+INT 60 - FTP Packet Driver - BASIC FUNC - ACCESS TYPE
 	AH = 02h
 	AL = interface class
 	BX = interface type
@@ -153,8 +211,9 @@ SeeAlso: AH=03h"FTP"
 Receiver is called with
 	AX = subfunction
 	    00h application to return pointer to buffer in ES:DI
-		ES:DI = 0000h:0000h means throw away packet
-	    01h copy to DS:SI buffer completed
+		returned ES:DI = 0000h:0000h means throw away packet
+	    01h copy completed
+		DS:SI -> buffer
 	BX = handle
 	CX = buffer length
 when a packet is received
@@ -164,7 +223,7 @@ INT 60 - SYS_PROF.EXE - TURN PROFILING ON
 Note:	SYS_PROF.EXE is the TSR portion of a profiler from Micro Cornucopia #47
 SeeAlso: AH=00h"SYS_PROF",01h"SYS_PROF"
 ---------------------------------------------
-INT 60 - FTP Driver - RELEASE TYPE
+INT 60 - FTP Packet Driver - BASIC FUNC - RELEASE TYPE
 	AH = 03h
 	BX = handle
 Return: CF set on error
@@ -178,27 +237,29 @@ Return: ES:BX -> profiling table
 Note:	SYS_PROF.EXE is the TSR portion of a profiler from Micro Cornucopia #47
 SeeAlso: AH=04h"SYS_PROF"
 ---------------------------------------------
-INT 60 - FTP Driver - SEND PACKET
+INT 60 - FTP Packet Driver - BASIC FUNC - SEND PACKET
 	AH = 04h
 	DS:SI -> buffer
 	CX = length
 Return: CF set on error
 	    DH = error code (see AX=01FFh)
 	CF clear if successful
+Note:	the buffer may be modified immediately upon return from this call
+SeeAlso: AH=0Bh
 ---------------------------------------------
 INT 60 - SYS_PROF.EXE - CLEAR PROFILING TABLE
 	AH = 04h
 Note:	SYS_PROF.EXE is the TSR portion of a profiler from Micro Cornucopia #47
 SeeAlso: AH=03h"SYS_PROF"
 ---------------------------------------------
-INT 60 - FTP Driver - TERMINATE DRIVER FOR HANDLE
+INT 60 - FTP Packet Driver - BASIC FUNC - TERMINATE DRIVER FOR HANDLE
 	AH = 05h
 	BX = handle
 Return: CF set on error
 	   DH = error code (see AX=01FFh)
 	CF clear if successful
 ---------------------------------------------
-INT 60 - FTP Driver - GET ADDRESS
+INT 60 - FTP Packet Driver - BASIC FUNC - GET ADDRESS
 	AH = 06h
 	BX = handle
 	ES:DI -> buffer
@@ -209,12 +270,50 @@ Return: CF set on error
 	    CX = length	
 Note:	copies the local net address associated with the handle into the buffer
 ---------------------------------------------
-INT 60 - FTP Driver - RESET INTERFACE
+INT 60 - FTP Packet Driver - BASIC FUNC - RESET INTERFACE
 	AH = 07h
 	BX = handle
 Return: CF set on error
 	    DH = error code (see AX=01FFh)
 	CF clear if successful
+---------------------------------------------
+INT 60 - FTP Packet Driver 1.09+ - HIGH-PERF FUNC - GET PARAMETERS
+	AH = 0Ah
+Return: CF set on error
+	    DH = error code (0Bh) (see AX=01FFh)
+	CF clear if successful
+	    ES:DI -> parameter table (see below)
+
+Format of parameter table:
+Offset	Size	Description
+ 00h	BYTE	major revision of packet driver spec driver conforms to
+ 01h	BYTE	minor revision of packet driver spec
+ 02h	BYTE	length of this structure in bytes
+ 03h	BYTE	length of a MAC-layer address
+ 04h	WORD	maximum transfer unit, including MAC headers
+ 06h	WORD	buffer size for multicast addr
+ 08h	WORD	number of receive buffers (one less than back-to-back MTU rcvs)
+ 0Ah	WORD	number of transmit buffers
+ 0Ch	WORD	interrupt number to hook for post-EOI processing, 00h=none
+---------------------------------------------
+INT 60 - FTP Packet Driver 1.09+ - HIGH-PERF FUNC - ASYNCHRONOUS SEND PACKET
+	AH = 0Bh
+	DS:SI -> buffer
+	CX = length of buffer
+	ES:DI -> FAR function to call when buffer becomes available
+Return: CF set on error
+	    DH = error code (0Bh,0Ch) (see AX=01FFh)
+	CF clear if successful
+Note:	unlike function 04h, the buffer is not available for modification as
+	  soon as the call returns; the buffer may be queued by the driver and
+	  not processed until later
+SeeAlso: AH=04h"Packet Driver"
+
+Completion function called with:
+	AX = result
+	    00h copy OK
+	    nonzero error
+	ES:DI -> buffer passed to INT 60/AH=0Bh call
 ---------------------------------------------
 INT 60 - Banyan VINES, 3com - GET STATION ADDRESS
 	AH = 0Ch
@@ -261,8 +360,8 @@ Return: AL = status (see also AH=11h)
 	    1 semaphore not locked
 SeeAlso: AH=11h,12h
 ---------------------------------------------
-INT 60 - FTP Driver - SET RECEIVE MODE
-	AH = 20h
+INT 60 - FTP Packet Driver - EXTENDED FUNC - SET RECEIVE MODE
+	AH = 14h
 	BX = handle
 	CX = mode
 	    01h turn off receiver
@@ -272,24 +371,42 @@ INT 60 - FTP Driver - SET RECEIVE MODE
 	    05h mode 3 plus all multicast packets
 	    06h all packets
 Return: CF set on error
-	   DH = error code
+	   DH = error code (01h,08h) (see AX=01FFh)
 	CF clear if successful
-SeeAlso: AH=21h
+SeeAlso: AH=15h
 ---------------------------------------------
-INT 60 - FTP Driver - GET RECEIVE MODE
-	AH = 21h
+INT 60 - FTP Packet Driver - EXTENDED FUNC - GET RECEIVE MODE
+	AH = 15h
 	BX = handle
 Return: CF set on error
-	    DH = error code (see AX=01FFh)
+	    DH = error code (01h) (see AX=01FFh)
 	CF clear if successful
 	    AX = mode	
-SeeAlso: AH=20h
+SeeAlso: AH=14h
 ---------------------------------------------
-INT 60 - FTP Driver - GET STATISTICS
-	AH = 24h
+INT 60 - FTP Packet Driver - EXTENDED FUNC - SET MULTICAST LIST
+	AH = 16h
+	ES:DI -> multicast list
+	CX = length of list in bytes
+Return: CF set on error
+	    DH = error code (06h,09h,0Eh) (see AX=01FFh)
+	CF clear if successful
+SeeAlso: AX=17h
+---------------------------------------------
+INT 60 - FTP Packet Driver - EXTENDED FUNC - GET MULTICAST LIST
+	AH = 17h
+Return: CF set on error
+	    DH = error code (06h,09h) (see AX=01FFh)
+	CF clear if successful
+	    ES:DI -> multicast addresses (do not modify)
+	    CX = bytes of multicast addresses currently in use
+SeeAlso: AH=16h
+---------------------------------------------
+INT 60 - FTP Packet Driver - EXTENDED FUNC - GET STATISTICS
+	AH = 18h
 	BX = handle
 Return: CF set on error
-	    DH = error code
+	    DH = error code (01h) (see AX=01FFh)
 	CF clear if successful
 	    DS:SI -> statistics (see below)
 
@@ -302,6 +419,15 @@ Offset	Size	Description
  10h	DWORD	errors in
  14h	DWORD	errors out
  18h	DWORD	packets dropped	
+---------------------------------------------
+INT 60 - FTP Packet Driver - EXTENDED FUNC - SET NETWORK ADDRESS
+	AH = 19h
+	ES:DI -> address
+	CX = length of address
+Return: CF set on error
+	    DH = error code (0Dh,0Eh) (see AX=01FFh)
+	CF clear if successful
+	    CX = length
 ---------------------------------------------
 INT 61 - reserved for user interrupt
 ---------------------------------------------
@@ -1327,6 +1453,9 @@ Return: AX = 0000h installed
 	    DS:DX buffer contains revision number as
 		10000d * major_ver + 100d * minor_ver + patch_revision
 ---------------------------------------------
+INT 61 - Sangoma CCIP (CCPOP 3270 resident module) INTERFACE
+	BX:DX -> control block
+---------------------------------------------
 INT 62 - reserved for user interrupt
 ---------------------------------------------
 INT 62 - Adaptec and OMTI controllers - DRIVE 0 DATA
@@ -2109,6 +2238,8 @@ Offset	Size	Description
  0Eh	WORD	value for TR
  10h	PWORD	CS:EIP of protected mode entry-point
 ---------------------------------------------
+INT 67 - Sangoma CCPOP 3270 resident module
+---------------------------------------------
 INT 68 - APPC/PC
 	AH = 01h
 	DS:DX -> control block
@@ -2671,10 +2802,96 @@ INT 68 - APPC/PC - SET PASSTHROUGH
 	AH = FFh
 	DS:DX -> passthrough exit routine
 ---------------------------------------------
+INT 68 - Sangoma CCPOP 3270 resident module
+---------------------------------------------
 INT 69 - Zenith AT BIOS - ???
    called by INT 09 handler
 ---------------------------------------------
-INT 69 - DECnet DOS - DATA LINK LAYER PROGRAM
+INT 69 - DECnet DOS CTERM - INSTALLATION CHECK
+	AX = 0100h
+Return: AL = FFh if present
+SeeAlso: AX=010Fh
+---------------------------------------------
+INT 69 - DECnet DOS CTERM - SEND BYTE
+	AX = 0101h
+	BL = character
+	DX = session handle
+Return: AH >= 80h on error
+SeeAlso: AX=0102h
+---------------------------------------------
+INT 69 - DECnet DOS CTERM - READ BYTE
+	AX = 0102h
+	DX = session handle
+Return: AH >= 80h on error
+	AH < 80h if successful
+	    AL = character
+SeeAlso: AX=0101h
+---------------------------------------------
+INT 69 - DECnet DOS CTERM - STATUS
+	AX = 0103h
+	DX = session handle
+Return: AH status flags
+	    bit 7 session has been aborted
+		6 DECnet error
+		1 trace data available
+		0 receive data available
+	AL = reason code if DECnet error
+	    00h normal disconnect
+	    01h unknown message from host
+	    02h protocol violation from host
+	    03h could not process the initiate message
+	    04h error receiving message from host
+	    05h error sending message to host
+	    06h error checking for message from host
+	    07h remote system does not support CTERM
+	    08h remote system does not support correct protocol version
+	    09h did not receive BIND message from host
+	    0Ah could not send BIND message to host
+	    0Bh no more sessions available
+	    0Ch session does not exist
+	    0Dh not enough memory to complete operation
+	    0Eh connection has broken
+SeeAlso: AX=0104h
+---------------------------------------------
+INT 69 - DECnet DOS CTERM - DECnet STATUS
+	AX = 0104h
+	DX = session handle
+Return: AX = reason code (see AX=0103h)
+Note:	use this call when AX=0103h returns a DECnet error
+SeeAlso: AX=0103h
+---------------------------------------------
+INT 69 - DECnet DOS CTERM - OPEN SESSION
+	AX = 0105h
+	DS:BX -> ASCIZ node name
+	ES:DX -> buffer for session control block (see INT 6A/AH=D0h)
+Return: AX <= 0 on error
+	AX > 0 session handle
+SeeAlso: AX=0103h,AX=0106h,AX=010Ah
+---------------------------------------------
+INT 69 - DECnet DOS CTERM - CLOSE SESSION
+	AX = 0106h
+	DX = session handle
+Return: AH = 00h good close
+	   other error code (see AX=0103h)
+SeeAlso: AX=0103h,AX=0105h
+---------------------------------------------
+INT 69 - DECnet DOS CTERM - GET SESSION CONTROL BLOCK SIZE
+	AX = 010Ah
+Return: AX = length of session control block in bytes
+SeeAlso: AX=0105h
+---------------------------------------------
+INT 69 - DECnet DOS CTERM - GET DECnet SOCKET
+	AX = 010Bh
+	DX = session handle
+Return: AX > 0  DECnet socket for the session
+	   = 0  no match for handle
+---------------------------------------------
+INT 69 - DECnet DOS CTERM - DEINSTALL CTERM
+	AX = 010Fh
+Return: AH = 00h succesful uninstall
+	   other error code
+Note:	CTERM must have been the last TSR loaded in order to deinstall it
+SeeAlso: AX=0100h
 ---------------------------------------------
 INT 6A - OPTHELP.COM
 Notes:	OPTHELP is an optionally-resident help system for SLR Systems's OPTASM
@@ -2682,9 +2899,158 @@ Notes:	OPTHELP is an optionally-resident help system for SLR Systems's OPTASM
 	may be configured to use any interrupt from 60h to 7Fh (default 6Ah)
 ---------------------------------------------
 INT 6A - DECnet DOS - LOCAL AREA TRANSPORT PROGRAM
+Note:	the 3 bytes preceding the interrupt handler are "LAT"; this serves as
+	  the installation check
 ---------------------------------------------
-INT 6B - Ungermann-Bass NETCI
-	???
+INT 6A - DECnet DOS LOCAL AREA TRANSPORT - SEND BYTE
+	AH = 01h
+	AL = character
+	DH = FFh
+	DL = handle
+Return: AH >= 80h on error
+SeeAlso: AH=02h
+---------------------------------------------
+INT 6A - DECnet DOS LOCAL AREA TRANSPORT - READ BYTE
+	AH = 02h
+	DH = FFh
+	DL = handle
+Return: AH < 80h if successful
+	    AL = character
+	AH >= 80h on error
+SeeAlso: AH=01h
+---------------------------------------------
+INT 6A - DECnet DOS LOCAL AREA TRANSPORT - STATUS
+	AH = 03h
+	DH = FFh
+	DL = handle
+Return: AH = status flags
+	    bit 5 transmit buffer empty
+		3 session in start state
+		2 session not active
+		1 unable to queue transmit data
+		0 receive data available
+---------------------------------------------
+INT 6A - DECnet DOS LOCAL AREA TRANSPORT - OPEN SESSION
+	AH = D0h
+	AL = FFh no password
+	   = 0Fh password at ES:DI
+	DH = FFh
+	DS:BX -> LAT session control block (see below)
+	ES:DI -> 16-byte blank-padded password
+Return: AH = 00h success
+	    DL = handle
+SeeAlso: AX=D000h
+
+Format of LAT Session Control Block:
+Offset	Size	Description
+ 00h 18 BYTEs	service name
+ 12h 18 BYTEs	node name (future use)
+ 24h 18 BYTEs	port name (future use)
+ 36h	DWORD	-> session stopped post routine
+ 3Ah	DWORD	-> service table overflow post routine
+ 3Eh	DWORD	-> transmit post routine
+ 42h	DWORD	-> receive post routine
+ 46h	WORD	session status
+		04h circuit failure
+		08h stop slot received
+ 48h	WORD	slot state (LAT driver use)
+ 4Ah	WORD	local credits (LAT driver use)
+ 4Ch	DWORD	-> VCB (LAT driver use)
+ 50h	WORD	backward slot (LAT driver use)
+ 52h	WORD	forward slot (LAT driver use)
+ 54h	WORD	remote slot ID (LAT driver use)
+ 56h	WORD	local slot ID (LAT driver use)
+ 58h	WORD	slot byte count (LAT driver use)
+ 5Ah	BYTE	remote credits (LAT driver use)
+ 5Bh 255 BYTEs	transmitted data slot
+15Ah	BYTE	number of receive data slots (4 recommended)
+15Bh	BYTE	number of occupied slots
+15Ch	BYTE	index of next receive slot to use
+15Dh	BYTE	index of current receive slot
+15Eh	WORD	pointer to first received character
+160h  N WORDs	pointers to receive slots (buffers); each is 259 bytes
+Note:	set post routines to 0000h:0000h if polled operation will be used
+---------------------------------------------
+INT 6A - DECnet DOS LOCAL AREA TRANSPORT - CLOSE SESSION
+	AX = D000h
+	DH = FFh
+	DL = handle
+Return: AX = 0000h successful
+	   = 0001h no such session
+	   = 0002h session not running, try again later
+SeeAlso: AH=D0h
+---------------------------------------------
+INT 6A - DECnet DOS LOCAL AREA TRANSPORT - SEND BREAK
+	AX = D100h
+	DH = FFh
+	DL = handle
+Return: AX = 0000h if successful
+	AH bit 7 set is unable to send break
+---------------------------------------------
+INT 6A - DECnet DOS LOCAL AREA TRANSPORT - RESET LAT COUNTERS
+	AX = D300h
+	DH = FFh
+SeeAlso: AX=D400h
+---------------------------------------------
+INT 6A - DECnet DOS LOCAL AREA TRANSPORT - COPY LAT COUNTERS
+	AX = D400h
+	DH = FFh
+	CX = buffer size
+	ES:BX -> buffer for LAT counters
+Return: AX = 0000h counters copied into buffer
+	   = FFFFh buffer too small
+SeeAlso: AX=D300h
+---------------------------------------------
+INT 6A - DECnet DOS LOCAL AREA TRANSPORT - GET NEXT LAT SERVICE NAME
+	AX = D500h
+	DH = FFh
+	ES:BX -> 17-byte buffer for name
+Return: AH = 00h if successful
+	   ES:BX buffer filled
+	AX = FFFFh if end of table or no name available
+Notes:	use this function to get the names of the hosts on the network
+	successive calls are necessary to get all names
+SeeAlso: AX=D600h
+---------------------------------------------
+INT 6A - DECnet DOS LOCAL AREA TRANSPORT - LAT SERVICE TABLE RESET
+	AX = D600h
+	DH = FFh
+Return: AX = number of service table entries
+	BX = 0000h service table has not overflowed
+	   = FFFFh service table has overflowed
+SeeAlso: AX=D500h
+---------------------------------------------
+INT 6B - Novell NASI/NACS, Ungermann-Bass Net One SERIAL I/O - INSTALL CHECK
+	AH = 02h
+	AL nonzero
+Return: AL = 00h if present and OK
+---------------------------------------------
+INT 6B - Novell NASI/NACS, Ungermann-Bass Net One SERIAL I/O - BUFFERED WRITE
+	AX = 0000h
+	CX = length
+	ES:BX -> buffer
+Return: CX = number of bytes written
+---------------------------------------------
+INT 6B - Novell NASI/NACS, Ungermann-Bass Net One SERIAL I/O - BUFFERED READ
+	AX = 0100h
+	CX = length of buffer
+	ES:BX -> buffer
+Return: CX = number of bytes read
+---------------------------------------------
+INT 6B - Novell NASI/NACS, Ungermann-Bass Net One SERIAL I/O - CONTROL
+	AX = 0600h
+	CX = command
+	    02h send break
+	    04h disconnect
+	    06h hold
+---------------------------------------------
+INT 6B - Novell NASI/NACS, Ungermann-Bass Net One SERIAL I/O - GET STATUS
+	AX = 0700h
+Return: CH <> 00h if connection active
+---------------------------------------------
+INT 6B - Tandy SCHOOLMATE PLUS - API
+	AH = 6Bh
+	AL = E0h to FFh
 ---------------------------------------------
 INT 6C - system resume vector (CONVERTIBLE)
 ---------------------------------------------
@@ -3262,32 +3628,46 @@ SeeAlso: AH=17h
 ---------------------------------------------
 INT 70 - IRQ8 - AT/XT286/PS50+ - REAL-TIME CLOCK
 Note:	may be masked by setting bit 0 on I/O port A1h
+SeeAlso: INT 58
 ---------------------------------------------
 INT 71 - IRQ9 - AT/XT286/PS50+ - LAN ADAPTER 1
 Notes:	may be masked by setting bit 1 on I/O port A1h
 	rerouted to INT 0A by BIOS
-SeeAlso: INT 0A
+	under DESQview, only the INT 15h vector and BASIC segment address (the
+	  word at 0000h:0510h) may be assumed to be valid for the handler's
+	  process
+SeeAlso: INT 0A, INT 59
 ---------------------------------------------
 INT 72 - IRQ10 - AT/XT286/PS50+ - RESERVED
 Note:	may be masked by setting bit 2 on I/O port A1h
+SeeAlso: INT 5A
 ---------------------------------------------
 INT 73 - IRQ11 - AT/XT286/PS50+ - RESERVED
 Note:	may be masked by setting bit 3 on I/O port A1h
+SeeAlso: INT 5B
 ---------------------------------------------
 INT 74 - IRQ12 - PS50+ - MOUSE INTERRUPT
-Note:	may be masked by setting bit 4 on I/O port A1h
-SeeAlso: INT 33
+Notes:	may be masked by setting bit 4 on I/O port A1h
+	under DESQview, only the INT 15h vector and BASIC segment address (the
+	  word at 0000h:0510h) may be assumed to be valid for the handler's
+	  process
+SeeAlso: INT 33, INT 5C
 ---------------------------------------------
 INT 75 - IRQ13 - AT/XT286/PS50+ - 80287 ERROR
 Notes:	may be masked by setting bit 5 on I/O port A1h
 	rerouted to INT 02 by BIOS
+	under DESQview, only the INT 15h vector and BASIC segment address (the
+	  word at 0000h:0510h) may be assumed to be valid for the handler's
+	  process
+SeeAlso: INT 5D
 ---------------------------------------------
 INT 76 - IRQ14 - AT/XT286/PS50+ - FIXED DISK
 Note:	may be masked by setting bit 6 on I/O port A1h
-SeeAlso: INT 0E"IRQ6"
+SeeAlso: INT 0E"IRQ6", INT 5E
 ---------------------------------------------
 INT 77 - IRQ15 - AT/XT286/PS50+ - RESERVED
 Note:	may be masked by setting bit 7 on I/O port A1h
+SeeAlso: INT 5F
 ---------------------------------------------
 INT 78 - not used
 ---------------------------------------------
@@ -3300,10 +3680,16 @@ Notes:	if a keystroke is available, it is removed from the keyboard buffer
 	  before being returned
 	AVATAR.SYS is a CON driver by George Adam Stanislav which interprets
 	  AVATAR command codes just as ANSI.SYS interprets ANSI commands
+SeeAlso: INT 29
 ---------------------------------------------
 INT 7A - Novell NetWare - LOW-LEVEL API
 	???
 SeeAlso: INT 64
+---------------------------------------------
+INT 7A - Topware Network Operating System - ???
+	AL = ???
+	???
+Return: ???
 ---------------------------------------------
 INT 7A - AutoCAD Device Interface
 	???
@@ -3689,6 +4075,8 @@ Values for status code:
  5Dh incompatible lock type
  5Eh permission error
 ---------------------------------------------
+INT 7B - Eicon Access API (3270/5250 gateways)
+---------------------------------------------
 INT 7C - IBM REXX88PC command language
 	???
 ---------------------------------------------
@@ -3985,7 +4373,7 @@ INT 7F - CONVERGENT TECHNOLOGIES ClusterShare CTOS ACCESS VECTOR
 	AL = request ID
 	    01h "Request"/"RequestDirect"
 		ES:BX -> pRq
-	        DX ignored
+		DX ignored
 	    04h "Wait"
 		ES:BX -> ppMsgRet
 		DX = exchange
@@ -4175,6 +4563,9 @@ INT 90 - APL*PLUS/PC - USED BY PORT 10 PRINTER DRIVER
 INT 91 - used by BASIC while in interpreter
 ---------------------------------------------
 INT 92 - used by BASIC while in interpreter
+---------------------------------------------
+INT 92 - Sangoma X.25 INTERFACE PROGRAM
+	BX:DX -> control block
 ---------------------------------------------
 INT 93 - used by BASIC while in interpreter
 ---------------------------------------------
@@ -4624,6 +5015,10 @@ INT F0 - compiled BASIC - ORIGINAL INT 08 VECTOR
 ---------------------------------------------
 INT F1 - reserved for user interrupt
 ---------------------------------------------
+INT F1 - SPEECH.COM - CONVERT TEXT STRING TO SPEECH
+	DS:BX -> '$'-terminated text string
+Note:	SPEECH.COM is a resident text-to-speech converter by Douglas Sisco
+---------------------------------------------
 INT F2 - reserved for user interrupt
 ---------------------------------------------
 INT F3 - reserved for user interrupt
@@ -4655,7 +5050,7 @@ INT FF - AT/XT286/PS50+ - destroyed by return from protected mode
 INT FF - Z100 - WARM BOOT
 ---------------------------------------------
 Please redistribute the following files unmodified as a group, in an archive
-named INTER490:
+named INTER590:
 	INTERRUP.1ST	the read-me file, containing credits, availability info
 	INTERRUP.A	INT 00 through INT 1F
 	INTERRUP.B	INT 20 through INT 27

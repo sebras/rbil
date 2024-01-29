@@ -1,7 +1,6 @@
 /***********************************************************************/
-/* Copyright (c) 1989, 1990  Ralf Brown 			       */
-/* May be freely redistributed provided no fee is charged, this notice */
-/* remains intact, and any changes are clearly marked as such	       */
+/* INTPRINT.C by Ralf Brown.  Donated to the Public Domain.	       */
+/* Please do not remove my name from any copies or derivatives.        */
 /***********************************************************************/
 /* Program History:						       */
 /*   v1.00  4/23/89  initial public release			       */
@@ -11,12 +10,13 @@
 /*		     labels					       */
 /*   v1.20  6/8/90   added -r					       */
 /*   v1.30  7/14/90  added -b, tables now stay aligned on odd indents  */
+/*   v1.40  10/6/90  added -B based on changes by Naoto Kimura, -w     */
 /***********************************************************************/
 
 #include <stdio.h>
 #include <string.h>
 
-#define VERSION "1.30"
+#define VERSION "1.40"
 
 #define MAXLINE 81   /* at most 80 chars per line (plus newline) */
 #define MAXPAGE 200  /* at most 200 lines per page */
@@ -28,6 +28,12 @@
 #define TRUE !FALSE
 #endif
 
+#define EPSON_BOLD_ON	"\033E"
+#define EPSON_BOLD_OFF	"\033F"
+#define EPSON_ELITE_ON	"\033M"
+#define EPSON_ELITE_OFF "\033P"
+#define EPSON_LEFT_MARG "\033l"
+
 #ifdef __TURBOC__
 #  define PROTOTYPES
 #  include <stdlib.h>
@@ -36,7 +42,9 @@ void _setenvp(void) {} /* don't need the environment, so don't include it */
 int isspace(char c) { return (c == ' ' || c == '\t') ; }
 #else
 /*#define PROTOTYPES  /* uncomment if compiler supports ANSI-style prototypes */
+#define _Cdecl
 #  include <ctype.h>
+
 char *itoa(num,buf,radix)   /* not everybody has the same itoa() as TurboC */
 int num ;                   /* minimal implementation */
 char *buf ;
@@ -76,7 +84,7 @@ void summarize(FILE *summary, int line, int pages_printed) ;
 void start_format(char *line) ;
 void print_line(char *line) ;
 void print_buffer(int first, int last, int lines_per_page, int total_lines, int use_FF) ;
-void main(int argc, char **argv) ;
+void _Cdecl main(int argc, char **argv) ;
 #endif /* PROTOTYPES */
 
 /***********************************************/
@@ -87,11 +95,13 @@ char summary_line[MAXLINE] ;
 
 int pages_printed = 0 ;
 int indent = 0 ;
+int widow_length = 10 ;  /* number of lines to scan for good place to break */
 int page_numbers = FALSE ;
 int do_summary = FALSE ;
 int do_formats = FALSE ;
 int IBM_chars = FALSE ;
 int boldface = FALSE ;
+int Epson_bold = FALSE ;
 int echo_format = FALSE ;
 FILE *summary ;
 FILE *formats ;
@@ -105,7 +115,7 @@ void usage()
 {
    fputs("INTPRINT v", stderr) ;
    fputs(VERSION, stderr) ;
-   fputs(" Copyright (c) 1989,1990 Ralf Brown. Free for non-commercial use.\n\n",stderr) ;
+   fputs(" by Ralf Brown.  Donated to the Public Domain.\n\n",stderr) ;
    fputs("Usage: intprint [options] [lines [page_size]] <intlist >output\n",stderr) ;
    fputs("\t'lines' defaults to 60\n",stderr) ;
    fputs("\tif page_size is given, only linefeeds will be used to advance\n",stderr) ;
@@ -113,11 +123,13 @@ void usage()
    fputs("\t-p\tadd page numbers\n",stderr) ;
    fputs("\t-nN\tassume N pages have been printed from previous parts\n",stderr) ;
    fputs("\t-rN:M\tprint only pages N through M\n",stderr) ;
-   fputs("\t-b\tboldface title lines and Return:/Note:\n",stderr) ;
+   fputs("\t-wN\tscan N lines from bottom of page for good place to break\n",stderr) ;
    fputs("\t-e\tassume 'elite' mode (96 characters per line)\n",stderr) ;
    fputs("\t-iN\tindent output N spaces\n",stderr) ;
    fputs("\t-E\tspecifies that the printer is an Epson FX80 or compatible\n",stderr) ;
    fputs("\t\t-E forces -e -i8\n",stderr) ;
+   fputs("\t-b\tboldface title lines and Return:/Note:\n",stderr) ;
+   fputs("\t-B\tboldface using Epson control codes instead of overprinting\n",stderr) ;
    fputs("\t-I\tprinter supports IBM graphics characters\n",stderr) ;
    fputs("\t-sfile\twrite a one-line-per-function summary to 'file'\n",stderr) ;
    fputs("\t-ffile\twrite all data structures to 'file'\n",stderr) ;
@@ -129,9 +141,14 @@ void usage()
 void indent_line(fp)
 FILE *fp ;
 {
-   int ind ;
+   int ind = indent ;
 
-   for (ind = 0 ; ind < indent ; ind++)
+   while (ind >= 8)
+      {
+      fputc('\t',fp) ;
+      ind -= 8 ;
+      }
+   while (ind-- > 0)
       fputc(' ', fp) ;
 }
 
@@ -173,8 +190,18 @@ FILE *fp ;
       if (strncmp(line,"INT ",4) == 0)
 	 {
 	 indent_line(fp) ;
-	 fputs(line,fp) ;
-	 fputc('\r',fp) ;
+	 if (Epson_bold)
+	    {
+	    fputs(EPSON_BOLD_ON,fp) ;
+	    fputs(line,fp) ;
+	    fputs(EPSON_BOLD_OFF,fp) ;
+	    line = NULL ;
+	    }
+	 else
+	    {
+	    fputs(line,fp) ;
+	    fputc('\r',fp) ;
+	    }
 	 }
       else if (strncmp(line,"Return:",7) == 0 || strncmp(line,"Note:",5) == 0 ||
 	       strncmp(line,"Notes:",6) == 0 || strncmp(line,"BUG:",4) == 0 ||
@@ -183,29 +210,44 @@ FILE *fp ;
 	 strncpy(bold,line,sizeof bold) ;
 	 *strchr(bold,':') = '\0' ;
          indent_line(fp) ;
-	 fputs(bold,fp) ;
-	 fputc('\r',fp) ;
-	 }
-      }
-   indent_line(fp) ;
-   if (indent % 8)
-      {
-      while (*line)
-	 {
-	 if (*line == '\t')
-	    do {
-	       fputc(' ',fp) ;
-	       } while (++pos % 8) ;
+	 if (Epson_bold)
+	    {
+	    fputs(EPSON_BOLD_ON,fp) ;
+	    fputs(bold,fp) ;
+	    fputs(EPSON_BOLD_OFF,fp) ;
+	    pos = strlen(bold) ;     /* we're no longer at the left edge of the */
+	    line += pos ;	     /* line, so figure out where we are */
+	    }
 	 else
 	    {
-	    fputc(*line,fp) ;
-	    pos++ ;
+	    fputs(bold,fp) ;
+	    fputc('\r',fp) ;
 	    }
-	 line++ ;
 	 }
       }
-   else
-      fputs(line,fp) ;
+   if (line && *line)
+      {
+      if (pos == 0)	    /* are we currently at the left edge of the line? */
+	 indent_line(fp) ;  /* if yes, indent the desired amount */
+      if (indent % 8)
+	 {
+	 while (*line)
+	    {
+	    if (*line == '\t')
+	       do {
+		  fputc(' ',fp) ;
+		  } while (++pos % 8) ;
+	    else
+	       {
+	       fputc(*line,fp) ;
+	       pos++ ;
+	       }
+	    line++ ;
+	    }
+	 }
+      else
+	 fputs(line,fp) ;
+      }
    fputc('\n',fp) ;
 }
 
@@ -240,11 +282,11 @@ int lines ;
 {
    int i ;
 
-   for (i = 0 ; i < 10 ; i++)
+   for (i = 0 ; i < widow_length ; i++)
       {
       if (strcmp(buffer[lines-i-1],"\n") == 0 ||
           strlen(buffer[lines-i-1]) == 0 ||
-          divider_line(buffer[lines-i-1]))
+	  divider_line(buffer[lines-i-1]))
          return lines - i ;
       }
    return lines ;
@@ -425,7 +467,7 @@ int use_FF ;
 
 /***********************************************/
 
-void main(argc,argv)
+void _Cdecl main(argc,argv)
 int argc ;
 char *argv[] ;
 {
@@ -457,7 +499,10 @@ char *argv[] ;
          case 'p':
             page_numbers = TRUE ;
             break ;
-	 case 'b':
+	 case 'B':
+	    Epson_bold = TRUE ;
+	    /* fall through to -b */
+         case 'b':
 	    boldface = TRUE ;
 	    break ;
          case 'n':
@@ -479,6 +524,9 @@ char *argv[] ;
          case 'f':
             formats_file = argv[1]+2 ;
             break ;
+	 case 'w':
+	    widow_length = atoi(argv[1]+2) ;
+	    break ;
          default:
             usage() ;
          }
@@ -513,6 +561,12 @@ char *argv[] ;
       {
       fputs("Surely you jest!  At least 20 and at most 200 lines per page.\n\n", stderr) ;
       usage() ;
+      }
+   if (widow_length < 3 || widow_length > lines_per_page / 2)
+      {
+      fputs("Widow lines (-w) must be set to at least 3 and at most one-half of the\n",stderr) ;
+      fputs("page length.  Using default of 10 lines.\n",stderr) ;
+      widow_length = 10 ;
       }
 #ifdef __TURBOC__
    setvbuf(stdin,NULL,_IOFBF,10240) ;  /* use larger disk buffers */
@@ -556,7 +610,8 @@ char *argv[] ;
    if (Epson_mode)
       {
       indent = 0 ;  /* -E overrides -e and -i */
-      fputs("\033M\033l\007", stdout) ;
+      fputs(EPSON_ELITE_ON,stdout) ;
+      fputs("\033l\007", stdout) ;
       }
    if (page_numbers)
       body_lines = lines_per_page - 2 ;
@@ -573,7 +628,8 @@ char *argv[] ;
       print_buffer(last_line,body_lines,lines_per_page,total_lines,use_FF) ;
    if (Epson_mode)
       {
-      fputs("\033M\033l", stdout) ;  /* cancel Elite mode and indent */
+      fputs(EPSON_ELITE_OFF,stdout) ;
+      fputs("\033l", stdout) ;       /* cancel Elite mode and indent */
       fputc('\0', stdout) ;
       }
    fflush(stdout) ;

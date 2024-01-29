@@ -1,12 +1,11 @@
-[This file was provided by Robin Walker.  I have not yet made any changes
- other than this note.	--Ralf]
+[This file was provided by Robin Walker.  --Ralf]
 
 Format of BIOS Data Segment at segment 40h:
 		{items in curly braces not documented by IBM}
 Offset	Size	Description
  00h	WORD	Base I/O address of 1st serial I/O port, zero if none
  02h	WORD	Base I/O address of 2nd serial I/O port, zero if none
- O4h	WORD	Base I/O address of 3rd serial I/O port, zero if none
+ 04h	WORD	Base I/O address of 3rd serial I/O port, zero if none
  06h	WORD	Base I/O address of 4th serial I/O port, zero if none
 		    Note: Above fields filled in turn by POST as it finds serial
 		    ports. POST never leaves gaps. DOS and BIOS serial device
@@ -64,7 +63,7 @@ Offset	Size	Description
  19h	BYTE	Keyboard: Alt-nnn keypad workspace
  1Ah	WORD	Keyboard: ptr to next character in keyboard buffer
  1Ch	WORD	Keyboard: ptr to first free slot in keyboard buffer
- 1Eh 16 WORDS	Keyboard circular buffer (but see 80h, 82h for override)
+ 1Eh 16 WORDs	Keyboard circular buffer (but see 80h, 82h for override)
  3Eh	BYTE	Diskette recalibrate status:
 		    bit 7 =1 Diskette hardware interrupt occurred
 		    bits 6-4 reserved
@@ -97,12 +96,12 @@ Offset	Size	Description
 			    09h DMA across 64k boundary
 			    0Ch media type unknown
 			    10h CRC error on read
- 42h  7 BYTES	Diskette/Fixed disk status/command bytes
+ 42h  7 BYTEs	Diskette/Fixed disk status/command bytes
  49h	BYTE	Video current mode
  4Ah	WORD	Video columns on screen
  4Ch	WORD	Video page (regen buffer) size in bytes
  4Eh	WORD	Video current page start address in regen buffer
- 50h 16 BYTES	Video cursor position (col, row) for eight pages, 0 based
+ 50h 16 BYTEs	Video cursor position (col, row) for eight pages, 0 based
  60h	WORD	Video cursor type, 6845 compatible, hi=startline, lo=endline
  62h	BYTE	Video current page number
  63h	WORD	Video CRT controller base address: color=03D4h, mono=03B4h
@@ -148,8 +147,10 @@ Offset	Size	Description
  75h	BYTE	Fixed disk: number of fixed disk drives
  76h	BYTE	Fixed disk: control byte    {IBM document only for XT}
  77h	BYTE	Fixed disk: I/O port offset {IBM document only for XT}
- 78h  4 BYTES	Parallel devices 1-4 time-out counters [PS: only 1-3]
- 7Ch  4 BYTES	Serial devices 1-4 time-out counters
+ 78h  3 BYTEs	Parallel devices 1-3 time-out counters
+ 7Bh	BYTE	parallel device 4 time-out counter [non-PS]
+		bit 5 set if Virtual DMA Spec supported [PS] (see INT 4B)
+ 7Ch  4 BYTEs	Serial devices 1-4 time-out counters
  80h	WORD	Keyboard buffer start as offset from segment 40h (normally 1Eh)
  82h	WORD	Keyboard buffer end+1 as offset from segment 40h (normally 3Eh)
 		[XT BIOS dated 11/08/82 ends here]
@@ -273,7 +274,7 @@ Offset	Size	Description
 		    bit 7 =1 wait time elapsed
 		    bits 6-1 reserved
 		    bit 0 =1 INT 15h, AH=86h has occurred
- A1h  7 BYTES	reserved for network adapters (oh really?)
+ A1h  7 BYTEs	reserved for network adapters (oh really?)
  A4h	DWORD	[PS/2 Mod 30] Saved Fixed Disk Interrupt Vector
  A8h	DWORD	Video: EGA/MCGA/VGA ptr to Video Save Pointer Table (see below)
  ACh-AFh	reserved
@@ -284,9 +285,9 @@ Offset	Size	Description
 		    signature "FILE SYSTEM DRIVER",00h occurs 3 bytes beyond
 		    this entry point.
  B4h	WORD	reserved
- B6h  3 BYTES	reserved for POST?
- B9h  7 BYTES	???
- C0h 14 BYTES	reserved
+ B6h  3 BYTEs	reserved for POST?
+ B9h  7 BYTEs	???
+ C0h 14 BYTEs	reserved
  CEh	WORD	count of days since last boot?
  D0h-EFh	reserved
  F0h-FFh	reserved for user
@@ -295,9 +296,9 @@ Offset	Size	Description
 Format of Extended BIOS Data Area (see 40:0Eh for ptr) [PS only]
 Offset	Size	Description
  00h	BYTE	Length of EBDA in kilobytes
- 01h 15 BYTES	reserved
+ 01h 15 BYTEs	reserved
  17h	BYTE	Number of entries in POST error log (0-5)
- 18h  5 WORDS	POST error log (each word is a POST error number)
+ 18h  5 WORDs	POST error log (each word is a POST error number)
  19h-21h	reserved
  22h	DWORD	Pointing Device Driver entry point
  26h	BYTE	Pointing Device Flags 1
@@ -311,7 +312,7 @@ Offset	Size	Description
 		   bit 7:    =1 device driver far call flag
 		   bits 6-3: reserved
 		   bits 2-0: package size
- 28h  7 BYTES	Pointing Device Auxiliary Device Data
+ 28h  7 BYTEs	Pointing Device Auxiliary Device Data
  2Fh	BYTE	reserved
  30h	DWORD	Vector for INT 07h stored here during 80387 interrupt
  34h	DWORD	Vector for INT 01h stored here during INT 07h emulation
@@ -319,8 +320,8 @@ Offset	Size	Description
  39h	WORD	Timer3: Watchdog timer initial count
  3Bh	BYTE	??? seen non-zero on Model 30
  3Ch	BYTE	???
- 3Dh 16 BYTES	Fixed Disk parameter table for drive 0 (oh really?)
- 4Dh 16 BYTES	Fixed Disk parameter table for drive 1 (oh really?)
+ 3Dh 16 BYTEs	Fixed Disk parameter table for drive 0 (oh really?)
+ 4Dh 16 BYTEs	Fixed Disk parameter table for drive 1 (oh really?)
 		    Neither of above seen on any Model 30, 50, 60 yet.
  5Dh-6Bh	???
  6Ch	BYTE	Fixed disk: (=FFh on ESDI systems)
@@ -370,11 +371,11 @@ Offset	Size	Description
  01h	BYTE	Rows on screen minus one	  (see 40h:84h)
  02h	BYTE	Height of character in scan lines (see 40h:85h)
  03h	WORD	Size of video buffer		  (see 40h:4Ch)
- 05h  4 BYTES	Values for Sequencer Registers 1-4
+ 05h  4 BYTEs	Values for Sequencer Registers 1-4
  09h	BYTE	Value for Miscellaneous Output Register
- 0Ah 25 BYTES	Values for CRTC Registers 00h-18h
- 23h 20 BYTES	Values for Attribute Controller Registers 00h-13h
- 37h  9 BYTES	Values for Graphics Controller Registers 00h-08h
+ 0Ah 25 BYTEs	Values for CRTC Registers 00h-18h
+ 23h 20 BYTEs	Values for Attribute Controller Registers 00h-13h
+ 37h  9 BYTEs	Values for Graphics Controller Registers 00h-08h
  
 Format of Video Parameter Table [MCGA only] {guesswork from inspection}:
     - 16 triplet BYTEs of R,G,B DAC info for 16 colors;
@@ -399,7 +400,7 @@ Offset	Size	Description
  02h	BYTE	Height of character in scan lines (see 40h:85h)
  03h	WORD	Size of video buffer		  (see 40h:4Ch)
  05h	WORD	??? always zero
- 07h 21 BYTES	Video data registers 00h-14h to port 3D5h indexed by 3D4h
+ 07h 21 BYTEs	Video data registers 00h-14h to port 3D5h indexed by 3D4h
  1Ch	BYTE	PEL Mask to port 3C6h
  1Dh	BYTE	CGA Mode Control to port 3D8h
  1Eh	BYTE	CGA Border Control to port 3D9h
@@ -407,7 +408,7 @@ Offset	Size	Description
  
 Format of Video Parameter Dynamic Save Area [EGA, VGA only]:
 Offset	Size	Description
- 00h 16 BYTES	Last data written to Attribute Controller Palette Registers 0-15
+ 00h 16 BYTEs	Last data written to Attribute Controller Palette Registers 0-15
  10h	BYTE	Last data written to Attribute Controller Overscan Register
  11h-FFh	Reserved
 		Note: Need for table was that EGA registers were write-only.
@@ -424,7 +425,7 @@ Offset	Size	Description
  04h	WORD	Code of first character in font table, normally 0
  06h	DWORD	ptr to font table
  0Ah	BYTE	Displayable rows (FFh=use maximum calculated value)
- 0Bh	BYTES	Array of mode values to which this font is to pertain
+ 0Bh	BYTEs	Array of mode values to which this font is to pertain
 	BYTE	FFh end of array
  
 Format of Second Alphanumeric Character Set Override:
@@ -434,7 +435,7 @@ Offset	Size	Description
  01h	BYTE	Character generator RAM bank to load, normally non-zero
  02h	BYTE	reserved
  03h	DWORD	ptr to font table
- 07h	BYTES	Array of mode values to which this font is to pertain
+ 07h	BYTEs	Array of mode values to which this font is to pertain
 	BYTE	FFh end of array
  
 Format of Graphics Character Set Override:
@@ -442,7 +443,7 @@ Offset	Size	Description
  00h	BYTE	Number of displayable character rows
  01h	WORD	Length in bytes of each character in font table
  03h	DWORD	ptr to font table
- 07h	BYTES	Array of mode values to which this font is to pertain
+ 07h	BYTEs	Array of mode values to which this font is to pertain
 	BYTE	FFh end of array
  
 Format of Display Combination Code Table [VGA only]:
@@ -451,7 +452,7 @@ Offset	Size	Description
  01h	BYTE	Version number
  02h	BYTE	Maximum display type code that can appear in DCC table
  03h	BYTE	reserved
- 04h	ARRAY OF 2 BYTES Each pair of bytes gives a valid display combination
+ 04h	ARRAY OF 2 BYTEs Each pair of bytes gives a valid display combination
 		    Meaning of each byte:
 			00h	no display
 			01h	MDA with mono display
@@ -483,5 +484,5 @@ Offset	Size	Description
  0Eh	WORD	Index (0-255) of first video DAC Color register in table
  10h	DWORD	ptr to table of video DAC Color registers to override
 			Table is ??? triplets ??? of BYTEs???
- 14h	BYTES	array of mode values to which this profile is to pertain
+ 14h	BYTEs	array of mode values to which this profile is to pertain
 	BYTE	FFh end of array

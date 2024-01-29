@@ -1,13 +1,8 @@
-			    INTPRINT v1.30
+			    INTPRINT v1.40
                             by Ralf Brown
 
-The INTPRINT program is
-	(c) Copyright 1989, 1990 Ralf Brown.  All Rights Reserved.
-INTPRINT, its source code, and this documentation may be freely
-redistributed, but may not be included as part of any work other than
-the interrupt list maintained by Ralf Brown.  If any changes are made to
-the program or its documentation, the original version must be included
-with the modified version.
+The INTPRINT program is hereby donated to the public domain, with the sincere
+hope that proper credit will be retained in all copies and derivatives.
 
 ------------------------------------------------------------------------------
 
@@ -21,7 +16,8 @@ Usage:
    intprint [options] [lines_per_page [page_length]] <interrup.lst [>outfile]
 
 where the options are:
-	-b    boldface the title lines, Return:, and Notes:
+	-b    boldface the title lines, Return:, and Notes: by overprinting
+	-B    boldface by sending Epson control sequences
 
         -p    print the page number at the bottom center of each page
 
@@ -51,6 +47,10 @@ where the options are:
 	      a portion is formatted for printing.
 	      NOTE: you must put the page numbers immediately after the 'r',
 	      no blanks are allowed.
+
+	-wN   (widow lines) search N lines from the end of the page for a
+	      good place to break.  The default is ten lines; the valid
+	      range is from 3 to one-half of the page length.
 
         -sfile  create a one-line-per-function summary and write it to "file"
               if -n is also given, the summary will be appended to "file",
