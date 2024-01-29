@@ -1,8 +1,0 @@
-    Title   : Video interrupts and calls                                       
-    Keywords: VIDEO MODES INTERRUPTS BIOS CALLS GRAPHICS PROGRAMING            
-                                                                               
-    Before you start programing a graphics program you should what everyone is 
-    using and expects. This file contains all the video interrupts and calls   
-    you will need.                                                             
-                                                                               
-                                                                               
