@@ -1,57 +1,67 @@
 Interrupt List
-Release 88.7   Last change 9/17/88
+Release 88.8   Last change 10/29/88
 
 Please distribute all of the following files together:
-        INTERRUP.LST   the actual list, ~130 pages at 60 lines per page
-        INTERRUP.SUM   a one-line-per-function summary, 14 pages
-        INTERRUP.PRI   a brief primer on interrupts
         INTERRUP.1ST   this file
+        INTERRUP.LST   the actual list, ~155 pages at 60 lines per page
+        INTERRUP.SUM   a one-line-per-function summary, 15 pages
+        INTERRUP.PRI   a brief primer on interrupts
 -----------------------------------------------------------
 The newest release of this list is always available in two places:
 
-On FIDOnet, as file INTERnyy.ARC on the Second Opinion 1:129/31 (412) 826-0822,
+On FIDOnet, as file INTERnyy.ZOO on the Second Opinion 1:129/31 (412) 826-0822,
         where nyy stands for the nth release of year yy.  File Requests 23 hrs.
 On the ARPAnet, by standard anonymous FTP from SIMTEL20.ARMY.MIL as file
 	PD1:<MSDOS.SYSUTL>INTERRUP.ARC.  Note that you must use mode "tenex"
 	or "type L 8" to successfully transfer the file.
 
-The list is also posted to the USEnet newsgroup comp.sys.ibm.pc several times
-per year, concurrent with a new release of the list.
+The list is also posted to USEnet in either comp.sys.ibm.pc or
+comp.binaries.ibm.pc several times per year, concurrent with a new release of
+the list.  Since comp.binaries.ibm.pc is archived, you will be able to find a
+fairly recent release in the various UUCP archives.
 -----------------------------------------------------------
 This list is the result of the time and effort of a large number of people,
 among them
-  1/85	Janet Jack  (original list)
-  1/85	J. Weaver Jr.
-  2/85	John Cooper
-  2/85	Skip Gilbrech
-	Bob Jack
-  4/85	Jim Kyle
-  8/85	John Ruschmeyer    <ihnp4!vax135!petsd!moncol!john>
-  8/85	Bill Frolik	   <ihnp4!hplabs!hp-pcd!bill>
-  8/85	Ross M. Greenberg  <greenber%timeinc.uucp@brl.arpa>
+ 1/85 Janet Jack  (original list)
+ 1/85 J. Weaver Jr.
+ 2/85 John Cooper
+ 2/85 Skip Gilbrech
+      Bob Jack
+ 4/85 Jim Kyle
+ 8/85 John Ruschmeyer   <ihnp4!vax135!petsd!moncol!john>
+ 8/85 Bill Frolik       <ihnp4!hplabs!hp-pcd!bill>
+ 8/85 Ross M. Greenberg <greenber%timeinc.uucp@brl.arpa>
 
-    87  Mike Morearty   <...!ucbvax!cory!morearty> \   early 1987
-        Ed Nather       <...!ut-sally!nather>       >  several undocumented DOS
-        Pete Holzmann   <{pyramid}!octopus!pete>   /   calls in another list
+   87 Mike Morearty    ...!ucbvax!cory!morearty   \   early 1987
+      Ed Nather        ...!ut-sally!nather         >  several undocumented DOS
+      Pete Holzmann    {pyramid}!octopus!pete     /   calls in another list
 
-    87  Dan Lanciani    <ddl@harvard.harvard.edu>      various, incl. NetBIOS
-  7/87  Ralf Brown      <ralf@cs.cmu.edu> INT 24h and DOS func 59h error codes
- 10/87  Ralf Brown      <ralf@cs.cmu.edu>              list maintainer
- 11/87  Dan Davison     <dd@lanl.gov>                  DOS 3.3 function calls
- 11/87	Bill White	<wwhite@teknowledge-vaxc.arpa> DOS 3.3
- 11/87  Richard Hargrove <harvard!killer!richardh>     EGA
- 12/87  Vincent Broman  <broman@bugs.nosc.mil>         Cordata BIOS/Minix
- 12/87  Dennis Grinberg <grinberg@bimacs.bitnet>       MCGA/VGA
-  1/88	Brad Davis	<tektronix!sequent!gssc!bradd> GSS, DGIS
-  2/88  D. Spinellis    <dds%cc.imperial.ac.uk>        Herc GRAFIX Dev Toolkit
-  3/88  Michael A. Moran <Michael@cup.portal.com>      VGA INT 10h
-  4/88  Richard Marks   <rmarks@KSP.Unisys.COM> Undocumented dir search fields
-  5/88  Robert Goldsmith <rpg%security@mitre-bedford.arpa> AT&T DEB adapter
-  7/88  Gary E. Miller  <Gary_Edmunds_Miller@cup.portal.com> Paradise VGA
-  8/88  John Lefor      <jal@ee.rochester.edu>         XMS spec
-  9/88  Dan Lanciani    <ddl@harvard.harvard.edu>      miscellaneous
-  9/88  Howard Johnson  <Howard_Reed_Johnson@cup.portal.com> NetWare overview
-  9/88  Finn Thoegerson <via mcvax!daimi!fab>          10-NET, miscellaneous
+   87 Dan Lanciani     ddl@harvard.harvard.edu        various, incl. NetBIOS
+ 7/87 Ralf Brown       ralf@cs.cmu.edu                INT 24h and DOS func 59h
+10/87 Ralf Brown       ralf@cs.cmu.edu                list maintainer
+11/87 Dan Davison      dd@lanl.gov                    DOS 3.3 function calls
+11/87 Bill White       wwhite@teknowledge-vaxc.arpa   DOS 3.3
+11/87 Richard Hargrove harvard!killer!richardh        EGA
+12/87 Vincent Broman   broman@bugs.nosc.mil           Cordata BIOS/Minix
+12/87 Dennis Grinberg  grinberg@bimacs.bitnet         MCGA/VGA
+ 1/88 Brad Davis       tektronix!sequent!gssc!bradd   GSS, DGIS
+ 2/88 D. Spinellis     dds%cc.imperial.ac.uk          Herc GRAFIX Dev Toolkit
+ 3/88 Michael A. Moran Michael@cup.portal.com         VGA INT 10h
+ 3/88 Ralf Brown       ralf@cs.cmu.edu		      DESQview API
+ 4/88 Richard Marks    rmarks@KSP.Unisys.COM          undoc dir search fields
+ 5/88 Robert Goldsmith rpg%security@mitre-bedford.arpa AT&T DEB adapter
+ 7/88 Gary E. Miller   Gary_Edmunds_Miller@cup.portal.com  Paradise VGA
+ 8/88 John Lefor       jal@ee.rochester.edu           XMS spec
+ 9/88 Dan Lanciani     ddl@harvard.harvard.edu        miscellaneous
+ 9/88 Howard Johnson   Howard_Reed_Johnson@cup.portal.com  NetWare overview
+ 9/88 Finn Thoegerson  via mcvax!daimi!fab            10-NET, miscellaneous
+ 9/88 Michael Shiels   mshiels@watmath.waterloo.edu   FOSSIL spec
+10/88 Michael Shiels   mshiels@ziebmef.uucp           ATI VIP INT 10h
+                       BMB Compuscience Canada Ltd.
+10/88 Michael Shiels   mshiels@ziebmef.uucp           FTP Driver spec
+10/88 Helmut Waelder   ZRWA001@DTUZDV1.BITNET         data structures, misc
+10/88 Helmut Waelder   ZRWA001@DTUZDV1.BITNET         more 10-NET functions
+10/88 Ge van Geldorp   VLRUO02@HDETUD1.BITNET         Novell NetWare
 
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -84,12 +94,13 @@ Added 3/4/88.  Some additional TopView INT 15 info gleaned from "glue" routines
 by John Navas.
 
 Quarterdeck's flyer on its overpriced API specs and tools provided sufficient
-clues as to functionality to allow figuring out a large number of INT 15h calls.
+clues as to functionality to allow figuring out a large number of DESQview
+INT 15h calls.
 
 MS Mouse driver calls derived from PC Magazine, Vol 6 #13.  Added 3/29/88.
 
 Non-video PS/2 BIOS calls derived from _IBM_ROM_BIOS_ by Ray Duncan.
-Added 7/6/88.
+Added by Ralf Brown, 7/6/88.
 
 EEMS function calls derived from PC Tech Journal, May 1987.  Added by Ralf
 Brown, 7/11/88.
@@ -104,17 +115,32 @@ PC Mouse information derived from the "PC Mouse Reference Manual version 4.00"
 APPC/PC INT 68h information derived from "Advanced Program-to-Program
 Communication for the IBM Personal Computer, Programming Guide", second
 edition, Dec 1986.
+
+CDROM function call information derived from "Microsoft MS-DOS CD-ROM
+Extensions Function Requests", dated May 28, 1988.  Added by Ralf Brown,
+9/19/88.
+
+Novell NetWare function names from a 9/23/88 post by Marc Guyott
+<mguyott@mirror.TMC.COM>.  Added 9/30/88.
+
+Miscellaneous data structures contributed by Helmut Waelder derived from
+descriptions in "MS-DOS Encyclopedia".
+
+Additional 10-Net INT 6F info from 10-Net version 3.3.10.
+
+Additional Novell NetWare info from "Advanced NetWare 2.0 Reference".
 -----------------------------------------------------------
 What they're saying about this list:
   "A cornucopia of descriptions of interrupt and function calls on the
    IBM PC.  A great thing to have on your hard disk if you don't have
    a Ray Duncan or Peter Norton book handy."
       _Turbo_Technix_, July/August 1988, p. 157.
-[and that was about the 1/30/88 version, which is much smaller than the
- current version....]
+[and that was about the 1/30/88 version, which is less than half the size of
+ the current version....]
 -----------------------------------------------------------
 If you know of any information which is not in the list, or which is incorrect,
-please let me know!
+please let me know!  This list would be a pale shadow of its current self if it
+weren't for everybody's input.
 
 	 Ralf Brown
 
@@ -124,3 +150,7 @@ Address e-mail to:
 	 BIT:  ralf%cs.cmu.edu@cmuccvma          /
          FIDO: Ralf Brown 1:129/31
                or post a message to the DR_DEBUG echo
+
+I reply to all submissions and inquiries.  If you do not receive a reply within
+a week, send your message again, giving a better return path (on UUCP, one 
+starting from harvard or ucbvax).

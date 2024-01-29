@@ -27,7 +27,9 @@ INT AH AL		Description
  0E -- -- IRQ6 - DISKETTE INTERRUPT
  0E -- -- internal - PAGE FAULT (80386 native mode)
  0F -- -- IRQ7 - PRINTER INTERRUPT
+ 10 -- -- internal - COPROCESSOR ERROR (80286/80386)
  10 00 -- VIDEO - SET VIDEO MODE
+ 10 00 70 VIDEO - Everex Micro Enhancer EGA - EXTENDED MODE SET
  10 00 7E VIDEO - Paradise VGA - SET SPECIAL MODE
  10 00 7F VIDEO - Paradise VGA - EXTENDED FUNCTIONS
  10 01 -- VIDEO - SET CURSOR CHARACTERISTICS
@@ -82,9 +84,10 @@ INT AH AL		Description
  10 71 -- VIDEO - GET INCRAM ADDRESSES (TANDY 1000)
  10 72 -- VIDEO - SCROLL SCREEN RIGHT (TANDY 1000)
  10 73 -- VIDEO - SCROLL SCREEN LEFT (TANDY 1000)
- 10 80 -- VIDEO (DESQview) - SET ???
+ 10 80 -- VIDEO (DESQview) - SET ??? HANDLER
  10 81 -- VIDEO (DESQview) - GET ???
  10 82 -- VIDEO (DESQview) - GET CURRENT WINDOW INFO
+ 10 BF -- VIDEO - Compaq Portable Extensions
  10 F0 -- Microsoft Mouse driver EGA support - READ ONE REGISTER
  10 F1 -- Microsoft Mouse driver EGA support - WRITE ONE REGISTER
  10 F2 -- Microsoft Mouse driver EGA support - READ REGISTER RANGE
@@ -127,11 +130,39 @@ INT AH AL		Description
  13 19 -- FIXED DISK - PARK HEADS (XT286,PS)
  13 1A -- ESDI FIXED DISK - FORMAT UNIT (PS)
  14 00 -- SERIAL I/O - INITIALIZE USART
+ 14 00 -- FOSSIL (Fido/Opus/Seadog Standard Interface Level) - INITIALIZE
  14 01 -- SERIAL I/O - TRANSMIT CHARACTER
  14 02 -- SERIAL I/O - RECEIVE CHARACTER
+ 14 02 -- FOSSIL - RECEIVE CHARACTER WITH WAIT
  14 03 -- SERIAL I/O - GET USART STATUS
  14 04 -- SERIAL I/O - EXTENDED INITIALIZE (CONVERTIBLE,PS)
+ 14 04 -- FOSSIL - INITIALIZE DRIVER
  14 05 -- SERIAL I/O - EXTENDED COMMUNICATION PORT CONTROL (CONVERTIBLE,PS)
+ 14 05 -- FOSSIL - DEINITIALIZE DRIVER
+ 14 06 -- FOSSIL - RAISE/LOWER DTR
+ 14 07 -- FOSSIL - RETURN TIMER TICK PARAMETERS
+ 14 08 -- FOSSIL - FLUSH OUTPUT BUFFER WAITING TILL ALL OUTPUT IS DONE
+ 14 09 -- FOSSIL - PURGE OUTPUT BUFFER THROWING AWAY ALL PENDING OUTPUT
+ 14 0A -- FOSSIL - PURGE INTPUT BUFFER THROWING AWAY ALL PENDING INPUT
+ 14 0B -- FOSSIL - TRANSMIT NO WAIT
+ 14 0C -- FOSSIL - NON-DESTRUCTIVE READ AHEAD
+ 14 0D -- FOSSIL - KEYBOARD READ WITHOUT WAIT
+ 14 0E -- FOSSIL - KEYBOARD READ WITH WAIT
+ 14 0F -- FOSSIL - ENABLE/DISABLE FLOW CONTROL
+ 14 10 -- FOSSIL - EXTENDED ^C/^K CHECKING AND TRANSMIT ON/OFF
+ 14 11 -- FOSSIL - SET CURRENT CURSOR LOCATION
+ 14 12 -- FOSSIL - READ CURRENT CURSOR LOCATION
+ 14 13 -- FOSSIL - SINGLE CHARACTER ANSI WRITE TO SCREEN
+ 14 14 -- FOSSIL - ENABLE OR DISABLE WATCHDOG PROCESSING
+ 14 15 -- FOSSIL - WRITE CHARACTER TO SCREEN USING BIOS SUPPORT ROUTINES
+ 14 16 -- FOSSIL - INSERT/DELETE FUNCTION FROM TIMER TICK CHAIN
+ 14 17 -- FOSSIL - REBOOT SYSTEM
+ 14 18 -- FOSSIL - READ BLOCK
+ 14 19 -- FOSSIL - WRITE BLOCK
+ 14 1A -- FOSSIL - BREAK BEGIN OR END
+ 14 1B -- FOSSIL - RETURN INFORMATION ABOUT THE DRIVER
+ 14 7E -- FOSSIL - INSTALL AN EXTERNAL APPLICATION FUNCTION
+ 14 7F -- FOSSIL - REMOVE AN EXTERNAL APPLICATION FUNCTION
  15 00 -- CASSETTE - TURN ON MOTOR (PC,Jr)
  15 01 -- CASSETTE - TURN OFF MOTOR (PC,Jr)
  15 02 -- CASSETTE - READ DATA BLOCKS (PC,Jr)
@@ -192,7 +223,7 @@ INT AH AL		Description
  15 12 -- TopView - SEND MESSAGE - "REDRAW" - REDRAW WINDOW
  15 12 -- TopView - SEND MESSAGE - "SETICON" - SPECIFY POINTER ICON
  15 12 -- TopView - SEND MESSAGE - "SETESC" - SET ESCAPE ROUTINE ADDRESS
- 15 12 -- TopView - SEND MESSAGE - "LOCK" - REQUEST EXCLUSIVE ACCESS TO RESOURCE
+ 15 12 -- TopView - SEND MESSAGE - "LOCK" - REQUEST EXCLUSIVE ACCESS TO RESOURC
  15 20 -- PRINT.COM - ??? (AT,XT286,PS50+)
  15 21 -- SYSTEM - POWER-ON SELF-TEST ERROR LOG (PS50+)
  15 40 -- READ/MODIFY PROFILES (CONVERTIBLE)
@@ -213,7 +244,7 @@ INT AH AL		Description
  15 89 -- SYSTEM - SWITCH TO VIRTUAL MODE (AT,XT286,PS50+)
  15 90 -- OS HOOK - DEVICE BUSY LOOP (AT,XT2,XT286,CONV,PS)
  15 91 -- OS HOOK - SET FLAG AND COMPLETE INTERRUPT (AT,XT2,XT286,CONV,PS)
- 15 C0 -- SYSTEM - GET CONFIGURATION (XT after 1/10/86,AT mdl 3x9,CONV,XT286,PS)
+ 15 C0 -- SYSTEM - GET CONFIGURATION (XT after 1/10/86,AT mdl 3x9,CONV,XT286,PS
  15 C1 -- SYSTEM - RETURN EXTENDED-BIOS DATA-AREA SEGMENT ADDRESS (PS)
  15 C2 -- POINTING DEVICE BIOS INTERFACE (PS,DESQview 2.x)
  15 C3 -- ENABLE/DISABLE WATCHDOG TIMEOUT (PS50+)
@@ -343,20 +374,20 @@ INT AH AL		Description
  21 43 -- DOS 2+ - GET/PUT FILE ATTRIBUTES (CHMOD)
  21 44 00 DOS 2+ - IOCTL - GET DEVICE INFORMATION
  21 44 01 DOS 2+ - IOCTL - SET DEVICE INFORMATION
- 21 44 02 DOS 2+ - IOCTL - READ DEVICE CONTROL STRING
- 21 44 03 DOS 2+ - IOCTL - WRITE DEVICE CONTROL STRING
+ 21 44 02 DOS 2+ - IOCTL - READ CHARACTER DEVICE CONTROL STRING
+ 21 44 03 DOS 2+ - IOCTL - WRITE CHARACTER DEVICE CONTROL STRING
  21 44 04 DOS 2+ - IOCTL - READ BLOCK DEVICE CONTROL STRING
  21 44 05 DOS 2+ - IOCTL - WRITE BLOCK DEVICE CONTROL STRING
- 21 44 06 DOS 2+ - IOCTL - GET OUTPUT STATUS
+ 21 44 06 DOS 2+ - IOCTL - GET INPUT STATUS
  21 44 07 DOS 2+ - IOCTL - GET OUTPUT STATUS
  21 44 08 DOS 3.x - IOCTL - BLOCK DEVICE CHANGEABLE
  21 44 09 DOS 3.x - IOCTL - BLOCK DEVICE LOCAL
  21 44 0A DOS 3.x - IOCTL - HANDLE LOCAL
  21 44 0B DOS 3.x - IOCTL - SET SHARING RETRY COUNT
- 21 44 0C DOS 3.3 - IOCTL - GENERIC
- 21 44 0D DOS 3.3 - IOCTL - BLOCK DEVICE REQUEST
- 21 44 0E DOS 3.3 - IOCTL - GET LOGICAL DEVICE
- 21 44 0F DOS 3.3 - IOCTL - SET LOGICAL DEVICE
+ 21 44 0C DOS 3.2 - IOCTL - GENERIC
+ 21 44 0D DOS 3.2 - IOCTL - BLOCK DEVICE REQUEST
+ 21 44 0E DOS 3.2 - IOCTL - GET LOGICAL DRIVE MAP
+ 21 44 0F DOS 3.2 - IOCTL - SET LOGICAL DRIVE MAP
  21 45 -- DOS 2+ - CREATE DUPLICATE HANDLE (DUP)
  21 46 -- DOS 2+ - FORCE DUPLICATE HANDLE (FORCDUP,DUP2)
  21 47 -- DOS 2+ - GET CURRENT DIRECTORY
@@ -395,82 +426,82 @@ INT AH AL		Description
  21 61 -- DOS 3.x Internal - UNUSED
  21 62 -- DOS 3.x - GET PSP ADDRESS
  21 63 -- DOS 2.25 only - GET LEAD BYTE TABLE
- 21 64 -- DOS 3.3 Internal - ???
+ 21 64 -- DOS 3.2 Internal - ???
  21 65 -- DOS 3.3 - GET EXTENDED COUNTRY INFORMATION
  21 66 -- DOS 3.3 - GET/SET GLOBAL CODE PAGE TABLE
  21 67 -- DOS 3.3 - SET HANDLE COUNT
  21 68 -- DOS 3.3 - COMMIT FILE, WRITE ALL BUFFERED DATA TO DISK
  21 6C 00 DOS 4.0 - EXTENDED OPEN/CREATE
- 21 B6 -- Novell NetWare - ???
- 21 B8 -- Novell NetWare - ???
- 21 BB -- Novell NetWare - ???
- 21 BC -- Novell NetWare - ???
- 21 BD -- Novell NetWare - ???
- 21 BE -- Novell NetWare - ???
- 21 BF -- Novell NetWare - ???
- 21 C0 -- Novell NetWare - ???
- 21 C1 -- Novell NetWare - ???
- 21 C2 -- Novell NetWare - ???
- 21 C3 -- Novell NetWare - ???
- 21 C4 -- Novell NetWare - ???
- 21 C5 -- Novell NetWare - ???
- 21 C6 -- Novell NetWare - ???
- 21 C7 -- Novell NetWare - ???
- 21 C8 -- Novell NetWare - ???
- 21 C9 -- Novell NetWare - ???
- 21 CA -- Novell NetWare - ???
- 21 CB -- Novell NetWare - ???
- 21 CC -- Novell NetWare - ???
- 21 CD -- Novell NetWare - ???
- 21 CE -- Novell NetWare - ???
- 21 CF -- Novell NetWare - ???
- 21 D0 -- Novell NetWare - ???
- 21 D1 -- Novell NetWare - ???
- 21 D2 -- Novell NetWare - ???
- 21 D3 -- Novell NetWare - ???
- 21 D4 -- Novell NetWare - ???
- 21 D5 -- Novell NetWare - ???
- 21 D6 -- Novell NetWare - ???
- 21 D7 -- Novell NetWare - ???
- 21 DA -- Novell NetWare - ???
- 21 DB -- Novell NetWare - ???
- 21 DC -- Novell NetWare - GET STATION NUMBER
- 21 DD -- Novell NetWare - ???
- 21 DE -- Novell NetWare - SET BROADCAST MODE
- 21 DF -- Novell NetWare - ???
- 21 E0 -- Novell NetWare - ???
- 21 E1 -- Novell NetWare - BROADCAST MESSAGES
- 21 E2 -- Novell NetWare - ???
- 21 E3 -- Novell NetWare - CONNECTION CONTROL
- 21 E4 -- Novell NetWare - ???
+ 21 B6 -- Novell NetWare SFT Level II - EXTENDED FILE ATTRIBUTES
+ 21 B8 -- Novell Advanced NetWare 2.0+ - PRINT JOBS
+ 21 BB -- Novell NetWare 4.0 - SET END OF JOB STATUS
+ 21 BC -- Novell NetWare 4.6 - LOG PHYSICAL RECORD
+ 21 BD -- Novell NetWare 4.6 - RELEASE PHYSICAL RECORD
+ 21 BE -- Novell NetWare 4.6 - CLEAR PHYSICAL RECORD
+ 21 BF -- Novell NetWare 4.6 - LOG RECORD (FCB)
+ 21 C0 -- Novell NetWare 4.6 - RELEASE RECORD (FCB)
+ 21 C1 -- Novell NetWare 4.6 - CLEAR RECORD (FCB)
+ 21 C2 -- Novell NetWare 4.6 - LOCK PHYSICAL RECORD SET
+ 21 C3 -- Novell NetWare 4.6 - RELEASE PHYSICAL RECORD SET
+ 21 C4 -- Novell NetWare 4.6 - CLEAR PHYSICAL RECORD SET
+ 21 C5 -- Novell NetWare 4.6 - SEMAPHORES
+ 21 C6 -- Novell NetWare 4.6 - GET OR SET LOCK MODE
+ 21 C7 -- Novell NetWare 4.0 - TTS
+ 21 C8 -- Novell NetWare 4.0 - BEGIN LOGICAL FILE LOCKING
+ 21 C9 -- Novell NetWare 4.0 - END LOGICAL FILE LOCKING
+ 21 CA -- Novell NetWare 4.0 - LOG PERSONAL FILE (FCB)
+ 21 CB -- Novell NetWare 4.0 - LOCK FILE SET
+ 21 CC -- Novell NetWare 4.0 - RELEASE FILE (FCB)
+ 21 CD -- Novell NetWare 4.0 - RELEASE FILE SET
+ 21 CE -- Novell NetWare 4.0 - CLEAR FILE (FCB)
+ 21 CF -- Novell NetWare 4.0 - CLEAR FILE SET
+ 21 D0 -- Novell NetWare 4.6 - LOG LOGICAL RECORD
+ 21 D1 -- Novell NetWare 4.6 - LOCK LOGICAL RECORD SET
+ 21 D2 -- Novell NetWare 4.0 - RELEASE LOGICAL RECORD
+ 21 D3 -- Novell NetWare 4.0 - RELEASE LOGICAL RECORD SET
+ 21 D4 -- Novell NetWare 4.0 - CLEAR LOGICAL RECORD
+ 21 D5 -- Novell NetWare 4.0 - CLEAR LOGICAL RECORD SET
+ 21 D6 -- Novell NetWare 4.0 - END OF JOB
+ 21 D7 -- Novell NetWare 4.0 - SYSTEM LOGOUT
+ 21 DA -- Novell NetWare 4.0 - GET VOLUME STATISTICS
+ 21 DB -- Novell NetWare 4.0 - GET NUMBER OF LOCAL DRIVES
+ 21 DC -- Novell NetWare 4.0 - GET STATION NUMBER
+ 21 DD -- Novell NetWare 4.0 - SET ERROR MODE
+ 21 DE -- Novell NetWare 4.0 - SET BROADCAST MODE
+ 21 DF -- Novell NetWare 4.0 - CAPTURE
+ 21 E0 -- Novell NetWare 4.0 - PRINT SPOOLING
+ 21 E1 -- Novell NetWare 4.0 - BROADCAST MESSAGES
+ 21 E2 -- Novell NetWare 4.0 - DIRECTORY FUNCTIONS
+ 21 E3 -- Novell NetWare 4.0 - CONNECTION CONTROL
+ 21 E4 -- Novell NetWare 4.0 - SET FILE ATTRIBUTES (FCB)
  21 E4 00 DoubleDos - INSTALLATION CHECK
- 21 E5 -- Novell NetWare - ???
- 21 E6 -- Novell NetWare - ???
- 21 E7 -- Novell NetWare - ???
- 21 E8 -- Novell NetWare - ???
- 21 E9 -- Novell NetWare - ???
- 21 EA -- Novell NetWare - ???
+ 21 E5 -- Novell NetWare 4.0 - UPDATE FILE SIZE (FCB)
+ 21 E6 -- Novell NetWare 4.0 - COPY FILE TO FILE (FCB)
+ 21 E7 -- Novell NetWare 4.0 - GET FILE SERVER DATE AND TIME
+ 21 E8 -- Novell NetWare 4.6 - SET FCB RE-OPEN MODE
+ 21 E9 -- Novell NetWare 4.6 - SHELL'S "GET BASE STATUS"
+ 21 EA -- Novell NetWare 4.6 - RETURN SHELL VERSION
  21 EA -- DoubleDos - TURN OFF TASK SWITCHING
- 21 EB -- Novell NetWare - ???
+ 21 EB -- Novell NetWare 4.6 - LOG FILE
  21 EB -- DoubleDos - TURN ON TASK SWITCHING
- 21 EC -- Novell NetWare - ???
+ 21 EC -- Novell NetWare 4.6 - RELEASE FILE
  21 EC -- DoubleDos - GET VIRTUAL SCREEN ADDRESS
- 21 ED -- Novell NetWare - ???
- 21 EE -- Novell NetWare - GET NODE ADDRESS
+ 21 ED -- Novell NetWare - CLEAR FILE
+ 21 EE -- Novell NetWare 4.6 - GET PHYSICAL STATION NUMBER
  21 EE -- DoubleDos - GIVE AWAY TIME TO OTHER TASKS
- 21 EF -- Novell NetWare - ???
- 21 F0 -- Novell NetWare - ???
- 21 F1 -- Novell NetWare - ???
+ 21 EF -- Novell Advanced NetWare 1.0+ - GET DRIVE INFO
+ 21 F0 -- Novell Advanced NetWare 1.0+ - CONNECTION ID
+ 21 F1 -- Novell Advanced NetWare 1.0+ - FILE SERVER CONNECTION
  21 F2 -- Novell NetWare - ???
- 21 F3 -- Novell NetWare - ???
+ 21 F3 -- Novell Advanced NetWare 2.0+ - FILE SERVER FILE COPY
  21 FF -- CED - INSTALLABLE COMMANDS
  22 -- -- DOS - TERMINATE ADDRESS
  23 -- -- DOS - CONTROL "C" EXIT ADDRESS
  24 -- -- DOS - FATAL ERROR HANDLER ADDRESS
- 25 -- -- DOS - ABSOLUTE DISK READ (except DOS 4.0/COMPAQ DOS 3.31 >32M partitn)
+ 25 -- -- DOS - ABSOLUTE DISK READ (except DOS 4.0/COMPAQ DOS 3.31 >32M partitn
  25 -- -- DOS 4.0/COMPAQ DOS 3.31 - ABSOLUTE DISK READ (>32M hard-disk partitn)
  26 -- -- DOS - ABSOLUTE DISK WRITE (except DOS 4.0/COMPAQ DOS 3.31 >32M partn)
- 26 -- -- DOS 4.0/COMPAQ DOS 3.31 - ABSOLUTE DISK WRITE (>32M hard-disk partitn)
+ 26 -- -- DOS 4.0/COMPAQ DOS 3.31 - ABSOLUTE DISK WRITE (>32M hard-disk partitn
  27 -- -- DOS - TERMINATE BUT STAY RESIDENT
  28 -- -- DOS Internal - KEYBOARD BUSY LOOP
  29 -- -- DOS Internal - FAST PUTCHAR
@@ -489,6 +520,7 @@ INT AH AL		Description
  2D -- -- Internal routine for MSDOS (IRET)
  2E -- -- DOS 2+ Internal - EXECUTE COMMAND
  2F -- -- notes
+ 2F -- -- BMB Compuscience Canada Utilities Interface
  2F 01 00 Multiplexor - PRINT - INSTALLATION CHECK
  2F 01 01 Multiplexor - PRINT - SUBMIT FILE
  2F 01 02 Multiplexor - PRINT - REMOVE FILE
@@ -499,6 +531,7 @@ INT AH AL		Description
  2F 05 -- Multiplexor - DOS 3.x CRITICAL ERROR HANDLER - HANDLE ERROR
  2F 06 00 Multiplexor - ASSIGN - INSTALLATION CHECK
  2F 06 01 Multiplexor - ASSIGN - GET MEMORY SEGMENT
+ 2F 08 -- Multiplexor - DRIVER.SYS
  2F 10 00 Multiplexor - SHARE - INSTALLATION CHECK
  2F 11 00 Multiplexor - NETWORK REDIRECTOR - INSTALLATION CHECK
  2F 11 01 Multiplexor - NETWORK REDIRECTOR - ???
@@ -547,7 +580,7 @@ INT AH AL		Description
  2F 12 0D Multiplexor - DOS 3.x internal services - GET DATE AND TIME
  2F 12 0E Multiplexor - DOS 3.x internal services - ??? ALL DISK BUFFERS
  2F 12 0F Multiplexor - DOS 3.x internal services - ???
- 2F 12 10 Multiplexor - DOS 3.x internal services - FIND DIRTY/CLEAN??? BUFFER
+ 2F 12 10 Multiplexor - DOS 3.x internal services - FIND DIRTY BUFFER
  2F 12 11 Multiplexor - DOS 3.x internal services - NORMALIZE ASCIZ FILENAME
  2F 12 12 Multiplexor - DOS 3.x internal services - GET LENGTH OF ASCIZ STRING
  2F 12 13 Multiplexor - DOS 3.x internal services - UPPERCASE CHARACTER
@@ -563,17 +596,35 @@ INT AH AL		Description
  2F 12 1D Multiplexor - DOS 3.x internal services - ???
  2F 12 1E Multiplexor - DOS 3.x internal services - COMPARE FILENAMES
  2F 12 1F Multiplexor - DOS 3.x internal services - BUILD DRIVE INFO BLOCK
- 2F 12 20 Multiplexor - DOS 3.x internal services - GET SYSTEM FILE TABLE NUMBER
+ 2F 12 20 Multiplexor - DOS 3.x internal services - GET SYSTEM FILE TABLE NUMBE
  2F 12 21 Multiplexor - DOS 3.x internal services - ???
  2F 12 22 Multiplexor - DOS 3.x internal services - ???
- 2F 12 23 Multiplexor - DOS 3.x internal services - CHECK IF CHARACTER DEVICE???
+ 2F 12 23 Multiplexor - DOS 3.x internal services - CHECK IF CHARACTER DEVICE??
  2F 12 24 Multiplexor - DOS 3.x internal services - DELAY
  2F 12 25 Multiplexor - DOS 3.x internal services - GET LENGTH OF ASCIZ STRING
+ 2F 14 -- Multiplexor - NLSFUNC.COM
+ 2F 15 00 Multiplexor - CDROM - INSTALLATION CHECK
+ 2F 15 01 Multiplexor - CDROM - GET DRIVE DEVICE LIST
+ 2F 15 02 Multiplexor - CDROM - GET COPYRIGHT FILE NAME
+ 2F 15 03 Multiplexor - CDROM - GET ABSTRACT FILE NAME
+ 2F 15 04 Multiplexor - CDROM - GET BIBLIOGRAPHIC DOC FILE NAME
+ 2F 15 05 Multiplexor - CDROM - READ VTOC
+ 2F 15 06 Multiplexor - CDROM - TURN DEBUGGING ON
+ 2F 15 07 Multiplexor - CDROM - TURN DEBUGGING OFF
+ 2F 15 08 Multiplexor - CDROM - ABSOLUTE DISK READ
+ 2F 15 09 Multiplexor - CDROM - ABSOLUTE DISK WRITE
+ 2F 15 0A Multiplexor - CDROM - RESERVED
+ 2F 15 0B Multiplexor - CDROM 2.00 - DRIVE CHECK
+ 2F 15 0C Multiplexor - CDROM 2.00 - GET MSCDEX.EXE VERSION
+ 2F 15 0D Multiplexor - CDROM 2.00 - GET CDROM DRIVE LETTERS
+ 2F 15 0E Multiplexor - CDROM 2.00 - GET/SET VOLUME DESCRIPTOR PREFERENCE
+ 2F 15 0F Multiplexor - CDROM 2.00 - GET DIRECTORY ENTRY
  2F 43 00 Multiplexor - XMS - INSTALLATION CHECK
  2F 43 10 Multiplexor - XMS - GET DRIVER ADDRESS
  2F 64 00 Multiplexor - SCRNSAV2.COM - INSTALLATION CHECK
  2F 7A 00 Multiplexor - Novell NetWare - INSTALLATION CHECK
  2F AA 00 Multiplexor - VIDCLOCK.COM - INSTALLATION CHECK
+ 2F B0 -- Multiplexor - GRAFTABL.COM or DISPLAY.SYS
  2F B7 00 Multiplexor - APPEND - INSTALLATION CHECK
  2F B7 01 Multiplexor - APPEND - ???
  2F B7 02 Multiplexor - APPEND - VERSION CHECK
@@ -584,7 +635,8 @@ INT AH AL		Description
  2F F7 00 Multiplexor - AUTOPARK.COM - INSTALLATION CHECK
  2F F7 01 Multiplexor - AUTOPARK.COM - SET PARKING DELAY
  30 -- -- (NOT A VECTOR!) FAR JuMP instruction for CP/M-style calls
- 32 -- -- not used
+ 31 -- -- overwritten by CP/M jump instruction in INT 30h
+ 32 -- -- reserved
  33 00 00 MS MOUSE - RESET DRIVER AND READ STATUS
  33 00 01 MS MOUSE - SHOW MOUSE CURSOR
  33 00 02 MS MOUSE - HIDE MOUSE CURSOR
@@ -646,6 +698,7 @@ INT AH AL		Description
  4E -- -- reserved
  4F -- -- reserved
  50 -- -- 57 - IRQ0-IRQ7 relocated by DESQview
+ 50 -- -- 57 - IRQ0-IRQ7 relocated by IBM 3278 emulation control program	 
  58 -- -- reserved
  59 -- -- GSS Computer Graphics Interface (GSS*CGI)
  5A -- -- Cluster adapter BIOS entry address
@@ -656,9 +709,20 @@ INT AH AL		Description
  5E -- -- reserved
  5F -- -- reserved
  60 -- -- reserved for user interrupt
+ 60 -- -- FTP Driver - PC/TCP Packet Driver Specification
+ 60 01 FF FTP Driver - DRIVER INFO
+ 60 02 -- FTP Driver - ACCESS TYPE
+ 60 03 -- FTP Driver - RELEASE TYPE
+ 60 04 -- FTP Driver - SEND PACKET
+ 60 05 -- FTP Driver - TERMINATE DRIVER FOR HANDLE
+ 60 06 -- FTP Driver - GET ADDRESS
+ 60 07 -- FTP Driver - RESET INTERFACE
  60 11 -- 10-NET - LOCK AND WAIT
  60 12 -- 10-NET - LOCK
  60 13 -- 10-NET - UNLOCK
+ 60 20 -- FTP Driver - SET RECEIVE MODE
+ 60 21 -- FTP Driver - GET RECEIVE MODE
+ 60 24 -- FTP Driver - GET STATISTICS
  61 -- -- reserved for user interrupt
  62 -- -- reserved for user interrupt
  63 -- -- reserved for user interrupt
@@ -718,7 +782,8 @@ INT AH AL		Description
  6A -- -- unused
  6B -- -- unused
  6C -- -- system resume vector (CONVERTIBLE)
- 6D -- -- unused
+ 6C -- -- DOS 3.2 Realtime Clock update
+ 6D -- -- Paradise VGA - internal
  6E -- -- unused
  6F -- -- Novell NetWare - PCOX API (3270 PC terminal interface)
  6F 00 -- 10-NET - LOGIN
@@ -729,12 +794,22 @@ INT AH AL		Description
  6F 05 -- 10-NET - RECEIVE
  6F 07 -- 10-NET - LOCK HANDLE
  6F 08 -- 10-NET - UNLOCK HANDLE
+ 6F 09 -- 10-NET - SUBMIT
+ 6F 0A -- 10-NET - CHAT
  6F 0B -- 10-NET - LOCK SEMAPHORE, RETURN IMMEDIATELY
  6F 0C -- 10-NET - UNLOCK SEMAPHORE
  6F 0D -- 10-NET - WHO
  6F 0E -- 10-NET - SPOOL/PRINT
+ 6F 10 -- 10-NET - ATTACH/DETACH PRINTER
  6F 11 -- 10-NET - LOCK FCB
  6F 12 -- 10-NET - UNLOCK FCB
+ 6F 13 -- 10-NET v3.3 - GET REMOTE CONFIGURATION TABLE ADDRESS
+ 6F 14 -- 10-NET v3.3 - GET REMOTE MEMORY
+ 6F 15 01 10-NET v3.3 - GET SHARED DEVICE ENTRY
+ 6F 15 02 10-NET v3.3 - SET SHARED DEVICE ENTRY
+ 6F 15 03 10-NET v3.3 - DELETE SHARED DEVICE ENTRY
+ 6F 17 -- 10-NET v3.3 - MOUNT
+ 6F 18 -- 10-NET v3.3 - UNMOUNT
  70 -- -- IRQ8 (AT/XT286/PS50+) - REAL-TIME CLOCK
  71 -- -- IRQ9 (AT/XT286/PS50+) - LAN ADAPTER 1
  72 -- -- IRQ10 (AT/XT286/PS50+) - RESERVED
@@ -746,6 +821,7 @@ INT AH AL		Description
  78 -- -- not used
  79 -- -- not used
  7A -- -- Novell NetWare - LOW-LEVEL API
+ 7A -- -- AutoCAD Device Interface
  7B -- -- not used
  7C -- -- not used
  7D -- -- not used
@@ -762,6 +838,8 @@ INT AH AL		Description
  E0 -- -- CP/M-86 function calls
  E4 00 05 Logitech Modula v2.0 - MonitorEntry
  E4 00 06 Logitech Modula v2.0 - MonitorExit
+ EF -- -- GEM - INTERFACE
+ F0 -- -- used by BASIC while in interpreter
  F1 -- -- reserved for user interrupt
  F2 -- -- reserved for user interrupt
  F3 -- -- reserved for user interrupt
