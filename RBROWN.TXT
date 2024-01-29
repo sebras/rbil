@@ -1,0 +1,53 @@
+PD and Freeware by Ralf Brown:
+
+The MSDOS Interrupt List
+	A comprehensive listing of functions available through interrupt
+	calls on IBM PCs and compatibles.
+	Current version: INTER190
+
+RBcomm
+	A DESQview-aware communications program which sports seamless DSZ or
+	PCZ integration for file transfers, ANSI/VT100/VT52/AVATAR emulation
+	(incl 132 columns), speeds to 57600 bps, keyboard macros, and more.
+	Runs in 65K with DSZ, 40K without.
+	Current version: RBCOMM30
+
+DV-GLUE
+	DESQview API bindings for Turbo C.
+	Current version: DVGLUE10
+			 DVGLUL10
+			 DVGLU101
+
+DVKPOLL
+	"Poor man's version" of TAME.  Makes programs give up CPU time when
+	they are in an idle loop polling the keyboard for keystrokes.
+	Current version: DVKPOLL2
+
+DVINT
+	An extract of the MSDOS Interrupt List containing the DESQview API
+	calls.
+	Current version: DVINT189
+
+-------------
+Availability:
+-------------
+
+On the ARPAnet, by standard anonymous FTP from CS.CMU.EDU [128.2.222.173].
+	Change directly to directory /afs/cs.cmu.edu/user/ralf/pub
+	(directories above this are not accessible via anonymous FTP)
+
+On FIDOnet, from The Gas Passer BBS 1:129/46 1-412-648-6326 1200/2400/9600 HST
+	File Requests.
+
+Secondary Distribution Points (available here within a day or so of release):
+ARPA:	on WSMR-SIMTEL20.ARMY.MIL [26.2.0.74] as file INTERnyy.ARC in directory
+	PD1:<MSDOS.SYSUTL>, where nyy stands for release n of year yy.  Note
+        that you must use mode "tenex" or "type L 8" to successfully FTP the
+	file.  
+FIDO:	SyncPoint BBS 1:261/1008 1-301-529-2584 File Requests.
+	First-time callers may download.
+
+
+DV-GLUE, DVKPOLL, and RBcomm are also available on Fidonet BBSs
+belonging to DVNet.  DV-GLUE is not currently available from CS.CMU.EDU.
+DVINT is available only on DVNet.

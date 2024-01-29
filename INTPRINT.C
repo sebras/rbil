@@ -1,5 +1,5 @@
 /***********************************************/
-/* Copyright (c) 1989  Ralf Brown              */
+/* Copyright (c) 1989, 1990  Ralf Brown        */
 /* May be freely redistributed provided no fee */
 /* is charged, this notice remains intact,     */
 /* and any changes are clearly marked as such  */
@@ -8,12 +8,14 @@
 /*   v1.00  4/23/89  initial public release    */
 /*                   with 4/30/89 list         */
 /*   v1.10  5/21/89  added -I and -f           */
+/*   v1.11  1/6/90   fixed #endif's for complr */
+/*		     which don't handle labels */
 /***********************************************/
 
 #include <stdio.h>
 #include <string.h>
 
-#define VERSION "1.10"
+#define VERSION "1.11"
 
 #define MAXLINE 81   /* at most 80 chars per line (plus newline) */
 #define MAXPAGE 200  /* at most 200 lines per page */
@@ -56,7 +58,7 @@ int radix ;
          }
    return buf ;
 }
-#endif __TURBOC__
+#endif /* __TURBOC__ */
 
 /***********************************************/
 
@@ -72,7 +74,7 @@ void start_format(char *line) ;
 void print_line(char *line) ;
 void print_buffer(int first, int last, int lines_per_page, int total_lines, int use_FF) ;
 void main(int argc, char **argv) ;
-#endif PROTOTYPES
+#endif /* PROTOTYPES */
 
 /***********************************************/
 
@@ -96,7 +98,7 @@ void usage()
 {
    fputs( "INTPRINT v", stderr ) ;
    fputs( VERSION, stderr ) ;
-   fputs( " Copyright (c) 1989  Ralf Brown.  Free for non-commercial use.\n\n", stderr ) ;
+   fputs( " Copyright (c) 1989,1990 Ralf Brown.  Free for non-commercial use.\n\n", stderr ) ;
    fputs( "Usage: intprint [options] [lines [page_size]] <intlist >output\n", stderr );
    fputs( "\t'lines' defaults to 60\n", stderr ) ;
    fputs( "\tif page_size is given, only linefeeds will be used to advance\n", stderr ) ;
@@ -109,6 +111,7 @@ void usage()
    fputs( "\t\t-E overrides -e and forces -i8\n", stderr ) ;
    fputs( "\t-I\tprinter supports IBM graphics characters\n", stderr ) ;
    fputs( "\t-sfile\twrite a one-line-per-function summary to 'file'\n", stderr ) ;
+   fputs( "\t-ffile\twrite all data structures to 'file'\n", stderr ) ;
    exit(1) ;
 }
 
@@ -445,7 +448,7 @@ char *argv[] ;
       setvbuf(summary,NULL,_IOFBF,4096) ;
    if (do_formats)
       setvbuf(formats,NULL,_IOFBF,4096) ;
-#endif __TURBOC__
+#endif /* __TURBOC__ */
    if (do_summary && pages_printed == 0)
       {           /* create header, but only on first part */
       indent_line(summary) ;

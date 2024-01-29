@@ -1,10 +1,10 @@
-Interrupt List		Release 89.5	Last change 10/7/89
+Interrupt List		Release 90.1	Last change 1/6/90
 
 Please distribute all of the following files (unmodified) together in an
-archive called INTER589:
+archive called INTER190:
         INTERRUP.1ST	this file
-        INTERRUP.A	INT 00 through INT 27 \ total 242 pages at 60 lines
-	INTERRUP.B	INT 28 through INT FF / per page, 263 with INTPRINT -p
+        INTERRUP.A	INT 00 through INT 27 \ total 274 pages at 60 lines
+	INTERRUP.B	INT 28 through INT FF / per page, 296 with INTPRINT -p
         INTERRUP.PRI	a brief primer on interrupts
 	INTPRINT.COM	a simple formatter that also generates the list summary
 	INTPRINT.DOC	instructions for INTPRINT
@@ -20,7 +20,7 @@ See INTPRINT.DOC for details.
 ---------------------------------------------
 	NOTICE		NOTICE		NOTICE		NOTICE
 
-This compilation is (c) Copyright 1989 Ralf Brown
+This compilation is (c) Copyright 1989, 1990 Ralf Brown
 Permission is granted to use and redistribute the files comprising the
 interrupt listing in any way, provided my name and addresses and the names of
 all contributers are preserved, as well as the information on how to obtain
@@ -31,21 +31,24 @@ date of its release, with the sincere hope that the credits and availability
 information are retained.
 ---------------------------------------------
 If the list is more than three months old by the time you get it, there is
-probably a newer release out already (next is planned for mid-Dec/early Jan).  
+probably a newer release out already (however, due to a probable lack of
+time this semester, v90.2 is likely to be delayed until June).
+
 The newest release of this list is available in these places (please do not
 ask me to email it, it is just too large for that):
 
 On the ARPAnet, by standard anonymous FTP from CS.CMU.EDU [128.2.222.173].
-	Change to directory /afs/cs.cmu.edu/user/ralf/pub and get the file 
-	interrup.zip which is a link to the current version.  You MUST change
-	directory first because of the way CMU's anonymous FTP works.  ZIP
-	unarchivers for MSDOS and BSD Unix are available in the "zip" 
+	Change directly to directory /afs/cs.cmu.edu/user/ralf/pub and get the
+	file interrup.zip which is a link to the current version.  You MUST
+	change 	directory first because of the way CMU's anonymous FTP works.
+	ZIP unarchivers for MSDOS and BSD Unix are available in the "zip"
 	subdirectory.  
 
 On FIDOnet, from The Gas Passer BBS 1:129/46 1-412-648-6326 1200/2400/9600 HST
 	as file INTERnyy.ZIP, where nyy stands for release 'n' of year 'yy',
 	in file area #18 (User Uploads) or #9 (Miscellaneous Goodies).  ZIP
 	executables are in file area #19.  First-time callers may download.
+	File Requests.
 
 The list is also posted to USEnet in comp.binaries.ibm.pc about three times per
 year, concurrent with a new release of the list.  Since comp.binaries.ibm.pc is
@@ -58,7 +61,7 @@ ARPA:	on WSMR-SIMTEL20.ARMY.MIL [26.2.0.74] as file INTERnyy.ARC in directory
 	PD1:<MSDOS.SYSUTL>, where nyy stands for release n of year yy.  Note
         that you must use mode "tenex" or "type L 8" to successfully FTP the
 	file.  
-FIDO:	SyncPoint BBS 1-301-529-2584 (new number!) File Requests.
+FIDO:	SyncPoint BBS 1:261/1008 1-301-529-2584 (new number!) File Requests.
 	First-time callers may download.
 
 Additional Distribution Points:
@@ -170,6 +173,11 @@ among them
  9/89 Dan Lanciani     ddl@husc6.harvard.edu	      Z100, Taxan video BIOS
  9/89 Robin Walker     rdhw@uk.ac.cambridge.phoenix   more DOS 4 data struc
 10/89 Robin Walker     rdhw@uk.ac.cambridge.phoenix   DOS 3.0 data struc
+10/89 John DesRosiers  via Marc Bertrand 1:167/1      Ontrack INT 13 extensions
+11/89 Ge van Geldorp   ge@dutlru2.tudelft.nl	      master boot record
+11/89 Barry Burke      Barry=Burke%3PM%Banyan@thing.banyan.com  Banyan VINES
+11/89 Christian Franke franke@rwthinf.uucp	      ATI EGA Wonder, WP5.0
+ 1/90 Norman Walsh     NORM@IONAACAD.BITNET	      Inset API
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -190,10 +198,13 @@ Also contributing:
  Stuart R. Kemp <kemp@umn-cs.cs.umn.edu>, Les Moskowitz 1:261/1055,
  Peter Sawatzki <FE617@DHAFEU11.BITNET>, Victor Poon <vipoon@sbcs.sunysb.edu>,
  Richard D. Morris <gu.morris@science.utah.edu>, RS Tse 3:700/1,
- John DesRosiers via Marc Bertrand 1:167/1,Mark Scase <coa44@SEQ1.KEELE.AC.UK>,
- Mark Seiffert <marks%%mgse@rex.cs.tulane.edu>,
- Marco Lumachi <RARCHI06@IMIPOLI.BITNET>, 
- Dave Bennett <74635.1671@CompuServe.COM>
+ Mark Scase <coa44@SEQ1.KEELE.AC.UK>, Erik Liljencrantz <d88-eli@nada.kth.se>,
+ Mark Seiffert <marks%%mgse@rex.cs.tulane.edu>, Lewis Paper,
+ Marco Lumachi <RARCHI06@IMIPOLI.BITNET>, Michael Dickson <mcd@ccsitn.att.com>,
+ Dave Bennett <74635.1671@CompuServe.com>,Andrew Torda <torda@hgrrug52.bitnet>,
+ Andrew Schulman <76320.302@CompuServe.com>,
+ Paul Williamson <pwilliamson@drzeus.qualcomm.com>,
+ James Birdsall <jwbirdsa@phoenix.princeton.edu>
 ---------------------------------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -325,6 +336,24 @@ Btrieve API derived from the Btrieve Reference Manual, Rev. 2.0.  Added 9/7/89.
 
 The Hercules GraphX manual, edition 2.1. Aug 1986, was used to fill in gaps
 in coverage.  Info added 9/7/89.
+
+Banyan VINES info summarized from _VINES_Programmer's_Interface_(DOS)_, June88
+revision, provided by Barry Burke <Barry=Burke%3PM%Banyan@thing.banyan.com>.
+Added by Ralf Brown, 11/89.
+
+ZIPKEY programmatic interface extracted from ZIPKEY documentation.  Added by
+Ralf Brown, 12/15/89.
+
+File sharing behavior from July 1987 PC Tech Journal.  Added by Ralf Brown,
+12/21/89.
+
+Inset API derived from "Inset Extended Specification" 11/23/88 by Inset Systems
+Added 1/4/90.
+
+EMS4 hardware configuration info data format cribbed from
+"MS-DOS Extensions Quick Reference" by Ray Duncan.  Added 1/4/90.
+
+PC-IPC API from PC-IPC documentation.  Added by Ralf Brown, 1/5/90.
 ---------------------------------------------
 Key to system abbreviations
 (unless otherwise indicated, a function is available on all systems)
@@ -359,6 +388,9 @@ Mouse Systems is a trademark of Mouse Systems Corp.
 NetWare is a registered trademark of Novell, Inc.
 TesSeRact is a trademark of the TesSeRact Development Team.
 PC Tools is a trademark of Central Point Software, Inc.
+HALO'88 is a trademark of Media Cybernetics.
+Banyan is a registered trademark of Banyan Systems, Inc.
+StreetTalk, VINES, and Banyan Network Server are trademarks of Banyan Sys, Inc.
 Various other names are trademarks or registered trademarks of their respective
     holders
 ---------------------------------------------
@@ -381,12 +413,12 @@ prevent future interrupt conflicts).
 	 Ralf Brown
 
 Address e-mail to:
-	ARPA: ralf@cs.cmu.edu                   \
-	UUCP: {ucbvax,harvard}!cs.cmu.edu!ralf   > preferred
-	BIT:  ralf%cs.cmu.edu@cmuccvb           /
+	ARPA: ralf@cs.cmu.edu
+	UUCP: {ucbvax,harvard}!cs.cmu.edu!ralf
+	BIT:  ralf%cs.cmu.edu@cmuccvb
 	FIDO: Ralf Brown 1:129/46  (new address!)
 		or post a message to the DR_DEBUG echo
-	CompuServe:   >INTERNET:ralf@cs.cmu.edu   is supposed to work
+	CompuServe:   >INTERNET:ralf@cs.cmu.edu
 
 Snail mail:
 	Ralf Brown
