@@ -1,30 +1,48 @@
 Interrupt List
-Release 89.1   Last change 2/24/89
+Release 89.2   Last change 4/30/89
 
 Please distribute all of the following files (unmodified) together in an
-archive called INTER189:
+archive called INTER289:
         INTERRUP.1ST	this file
-        INTERRUP.A	INT 00 through INT 5F  \ total 173 pages at
-	INTERRUP.B	INT 60 through INT FF  / 60 lines per page
-        INTERRUP.SUM	a one-line-per-function summary, 17 pages
+        INTERRUP.A	INT 00 through INT 5F  \ total 199 pages at 60 lines
+	INTERRUP.B	INT 60 through INT FF  / per page, 215 with INTPRINT -p
         INTERRUP.PRI	a brief primer on interrupts
+	INTPRINT.COM	a simple formatter that also generates the list summary
+	INTPRINT.DOC	instructions for INTPRINT
+	INTPRINT.C	source code for INTPRINT
 
 Concatenate INTERRUP.A and INTERRUP.B with
 	COPY /B INTERRUP.A+INTERRUP.B INTERRUP.LST
 to create an interrupt list file identical to my master copy.
----------------------------------------------
-If the list is more than ten weeks old by the time you get it, there is
-probably a newer release out already.  The newest release of this list is
-available in these places (please do not ask me to email it, it is just too
-large for that):
 
-On the ARPAnet, by standard anonymous FTP from CS.CMU.EDU.  Change to directory
-	/afs/cs.cmu.edu/user/ralf/pub and get file interrup.zoo which is a link
-	to the current version.  A ZOO unarchiver is also available in this
-	directory as file looz.exe.  "looz x interrup" will extract the list.
-On FIDOnet, on the Second Opinion 1:129/31 1-412-826-0822 as file INTERnyy.ZOO,
+Use INTPRINT to generate the INTERRUP.SUM which used to be included in the
+archive.  See INTPRINT.DOC for details.
+---------------------------------------------
+			NOTICE
+
+Apparently, an implicit copyright now exists (since April 1, 1989), so I hereby
+grant an unlimited license to use and redistribute the files comprising the
+interrupt list, provided no fee is charged and my name and the names of all
+contributers are preserved (as an exception, pay BBS's which do not charge an
+additional fee for file downloads may carry the interrupt list).  In other
+words, do what you want with the list, but don't try to claim it as your own or
+make money off of it.
+---------------------------------------------
+If the list is more than three months old by the time you get it, there is
+probably a newer release out already (v89.3 is planned for mid to late July).  
+The newest release of this list is available in these places (please do not ask
+me to email it, it is just too large for that):
+
+On the ARPAnet, by standard anonymous FTP from CS.CMU.EDU [128.2.222.173].
+	Change to directory /afs/cs.cmu.edu/user/ralf/pub and get the file 
+	interrup.zip which is a link to the current version.  You MUST change
+	directory first because of the way CMU's anonymous FTP works.  ZIP
+	unarchivers for MSDOS and BSD Unix are available in the "zip" 
+	subdirectory.  
+
+On FIDOnet, on the Second Opinion 1:129/31 1-412-826-0822 as file INTERnyy.ZIP,
         where nyy stands for the release n of year yy.  File Requests 23 hrs.
-	ZOO executables are in file area 10.
+	ZIP executables are in file area 10.
 
 The list is also posted to USEnet in comp.binaries.ibm.pc about three times per
 year, concurrent with a new release of the list.  Since comp.binaries.ibm.pc is
@@ -32,12 +50,13 @@ archived, you will be able to find a fairly recent release in the various UUCP
 archives.
 
 Secondary Distribution Points:
-ARPA:	on WSMR-SIMTEL20.ARMY.MIL [26.0.0.74] as file INTERnyy.ARC in directory
+ARPA:	on WSMR-SIMTEL20.ARMY.MIL [26.2.0.74] as file INTERnyy.ARC in directory
 	PD1:<MSDOS.SYSUTL>, where nyy stands for release n of year yy.  Note
         that you must use mode "tenex" or "type L 8" to successfully FTP the
 	file.
 BITnet: you may retrieve the copy on WSMR-SIMTEL20.ARMY.MIL via
-        (in the US) LISTSERV@RPICICGE or LISTSERV@NDSUVM1
+        (in the US) LISTSERV@RPIECS (alias VM.ECS.RPI.EDU)
+		    LISTSERV@NDSUVM1 (alias VM1.NODAK.EDU)
         (in Europe) TRICKLE at TREARN (Turkey)
 		    TRICKLE at IMIPOLI (Italy)
 		    TRICKLE at DB0FUB11 (Germany)
@@ -45,17 +64,12 @@ BITnet: you may retrieve the copy on WSMR-SIMTEL20.ARMY.MIL via
 		    TRICKLE at AWIWUW11 (Austria)
 FIDO:	SyncPoint BBS 1-301-682-2731 File Requests
 ---------------------------------------------
-I intend to release future versions compressed with PKZIP (except the copy on
-SIMTEL20 until a version of PKZIP is available for it), as testing shows that
-the current list compresses to ~136k with PKZIP, versus ~181k for ZOO or PKARC
-and ~195k for PKARC -oct.
----------------------------------------------
 DISCLAIMER:  I verify the information contained in this list to the best of my
 ability, but I cannot be held responsible for any problems caused by use or
 misuse of the information, especially for those functions not officially 
 documented.  If it is marked "internal", you should check it carefully to make
 sure it works the same way in your version of the software (and please let me
-know if it works differently).
+know whether or not it works the same).
 ---------------------------------------------
 This list is the result of the time and effort of a large number of people,
 among them
@@ -104,7 +118,31 @@ among them
 12/88 Ying-Kuen K. Hwang  khwang@wyse.com	      ESDI fixed disk calls
  1/89 Ari Huttunen     mcvax!saha.hut.fi!t36273c      additional INT 33 calls
  1/89 Duncan Murdoch   dmurdoch@watdcsu.waterloo.edu  undoc fields in DOS data
+ 3/89 Helmut Waelder   ZRWA001@DTUZDV1.BITNET	      more DOS 4.0 calls
+ 4/89 Robert Seals     rds95@leah.Albany.EDU          ATI VGA Wonder modes
+ 4/89 Ge van Geldorp   VLRUO02@HDETUD1.BITNET         pcANYWHERE API
+ 4/89 Robin Walker     rdhw@uk.ac.cam.phx	      undoc DOS 4 data struc
+ 4/89 Robin Walker     rdhw@uk.ac.cam.phx	      DOS 4.0 shell API
 
+Also contributing:
+ Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
+ Shalom Krischer <actnyc!srk@uunet.UU.NET>, Greg Pasquariello <moss!picuxa!gp>,
+ Rich Goldschmidt <rlgvax!golds>, Marty Leisner <Leisner.Henr@Xerox.COM>,
+ Dave Guggisberg <daveg@cv.hp.com>, David Dyck <dcd@tc.fluke.COM>,
+ Thomas Hundt <hundt@flash.bellcore.com>, <zlatuska@UDEL.EDU>
+ John Werner <aptr@tut.cc.rochester.edu>, Pete Fales <att!ttrde!pfales>,
+ David Herron <david@ms.uky.edu>, Brad Templeton <brad@looking.uucp>,
+ Risto Lankinen via Markku Savela <msa@clinet.fi>,
+ Skule Johansen <S_Johansen%AVH.UNIT.UNINett%NORUNIX.BITNET>,
+ Otto J. Makela <MAKELA_O%FINJYU.BITNET>,Everett Kaser <hplabs!hp-pcd!everett>,
+ Mark Davis <davis@cs.unc.edu>, Sergio Fogel <sergio%TECHUNIX.BITNET>,
+ James P. Kiely <kiely%lownlab@harvard.harvard.edu>,
+ W.F. Schroeder <unido!nixpbe!schroeder.pad@uunet.UU.NET>,
+ Russ Nelson <nelson@pear.ecs.clarkson.edu>, 
+ Ralph Heredia <att!attmail!rheredia>, Nelluri Reddy <reddy@uc.msc.umn.edu>,
+ Stuart Richard Kemp <kemp@umn-cs.cs.umn.edu>, Michael Ho <ho@fergvax.unl.edu>,
+ Jonathan Story <jspc!Jonathan@uunet.UU.NET>
+---------------------------------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
 
@@ -158,7 +196,7 @@ APPC/PC INT 68h information derived from "Advanced Program-to-Program
 Communication for the IBM Personal Computer, Programming Guide", second
 edition, Dec 1986.
 
-CDROM function call information derived from "Microsoft MS-DOS CD-ROM
+CD-ROM function call information derived from "Microsoft MS-DOS CD-ROM
 Extensions Function Requests", dated May 28, 1988.  Added by Ralf Brown,
 9/19/88.
 
@@ -166,7 +204,7 @@ Novell NetWare function names from a 9/23/88 post by Marc Guyott
 <mguyott@mirror.TMC.COM>.  Added by Ralf Brown, 9/30/88.
 
 Miscellaneous data structures contributed by Helmut Waelder derived from
-descriptions in "MS-DOS Encyclopedia".
+descriptions in _MS-DOS_Encyclopedia_.
 
 Additional 10-Net INT 6F info from 10-Net version 3.3.10.
 
@@ -196,14 +234,28 @@ HLLAPI functions derived from PC Tech Journal, Jan 1989.  Added by Ralf Brown,
 Virtual Control Program Interface functions derived from "Virtual Control 
 Program Interface, Revision 1.0, December 1987", copyright Phar Lap Software
 and Quarterdeck Office Systems.  Added by Ralf Brown, 2/21/89.
+
+DOS 4.0 calls submitted by Helmut Waelder are largely derived from _Advanced_
+_MSDOS_Programming_, by Ray Duncan, Second Edition.
+
+pcANYWHERE API functions derived from the pcANYWHERE v2.10 User's Guide. 4/7/89
+
+Communicating Applications Specification API derived from "DCA/Intel 
+Communicating Applications Specification, Version 1.0A", Sep 1988, copyright
+Digital Communications Associates, Inc and Intel Corp.  Added by Ralf Brown,
+4/18/89.
+
+Image Processing Interface API derived from "Intel Image Processing Interface
+Specification, Version 1.0", copyright 1989 Intel Corp.  Added by Ralf Brown,
+4/19/89.
 ---------------------------------------------
 What they're saying about this list:
   "A cornucopia of descriptions of interrupt and function calls on the
    IBM PC.  A great thing to have on your hard disk if you don't have
    a Ray Duncan or Peter Norton book handy."
       _Turbo_Technix_, July/August 1988, p. 157.
-[and that was about the 1/30/88 version, which is a little over one-third the
- size of the current version....]
+[and that was about the 1/30/88 version, which is about one-third the size of
+ the current version....]
 ---------------------------------------------
 If you know of any information not in the list, or which is stated incorrectly,
 please let me know!  This list would be a pale shadow of its current self if it
@@ -218,7 +270,7 @@ prevent future interrupt conflicts).
 Address e-mail to:
 	 ARPA: ralf@cs.cmu.edu                   \
 	 UUCP: {ucbvax,harvard}!cs.cmu.edu!ralf   > preferred
-	 BIT:  ralf%cs.cmu.edu@cmuccvma          /
+	 BIT:  ralf%cs.cmu.edu@cmuccvb           /
          FIDO: Ralf Brown 1:129/31
                or post a message to the DR_DEBUG echo
 

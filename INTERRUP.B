@@ -977,58 +977,63 @@ Routines defined by LU_LU_PASSWORD_EXIT, CREATE_TP_EXIT, and SYSTEM_LOG_EXIT
 pointers are called by pushing the DWORD pointer to the verb on the stack and
 then performing a FAR call.
 
-ACCESS_LU_LU_PW verb:
-     12 BYTEs reserved
-	WORD  1900h
-      8 BYTEs (high byte first) logical unit ID
-      8 BYTEs (high byte first) logical unit name
-      8 BYTEs (high byte first) partner logical unit name
-     17 BYTEs (counted string) partner fully qualified logical unit name
-	BYTE  password available (0=no, 1=yes)
-      8 BYTEs password
-CREATE_TP verb:
-     12 BYTEs reserved
-	WORD  2300h
-      6 BYTEs 0
-	DWORD (high byte first) sense code
-	      00000000h    Ok
-	      080F6051h    SECURITY_NOT_VALID
-	      084B6031h    TP_NOT_AVAIL_RETRY
-	      084C0000h    TP_NOT_AVAIL_NO_RETRY
-	      10086021h    TP_NAME_NOT_RECOGNIZED
-	      10086034h    CONVERSATION_TYPE_MISMATCH
-	      10086041h    SYNC_LEVEL_NOT_SUPPORTED
-      8 BYTEs (high byte first) TP ID
-      8 BYTEs (high byte first) logical unit ID
-	DWORD (high byte first) conversation ID
-	BYTE  0 basic conversation, 1 mapped conversation
-	BYTE  0 no sync level, 1 confirm
-	BYTE  reserved
-     65 BYTEs (counted string) transaction program name
-      6 BYTEs 0
-	WORD  length of ERROR_LOG_DATA to return
-	DWORD pointer to ERROR_LOG_DATA buffer
-      8 BYTEs (high byte first) partner logical unit name
-     18 BYTEs (counted string) partner fully qualified logical unit name
-      8 BYTEs (high byte first) mode name
-     12 BYTEs 0
-     11 BYTEs (counted string) password
-     11 BYTEs (counted string) user ID
-	BYTE  0 verification should be performed
-	      1 already verified
-SYSLOG verb:
-     12 BYTEs reserved
-	WORD  2600h
-     10 BYTEs 0
-	WORD  (high byte first) type
-	DWORD (high byte first) subtype
-	DWORD pointer to ADDITIONAL_INFO
-	DWORD (high byte first) conversation ID
-      8 BYTEs (high byte first) TP ID
-      8 BYTEs (high byte first) physical unit or logical unit name
-	WORD  length of data
-	DWORD pointer to data
-	BYTE  0
+Format of ACCESS_LU_LU_PW verb:
+Offset	Size	Description
+ 00h 12 BYTEs	reserved
+ 0Ch	WORD	1900h
+ 0Eh  8 BYTEs	(high byte first) logical unit ID
+ 16h  8 BYTEs	(high byte first) logical unit name
+ 1Eh  8 BYTEs	(high byte first) partner logical unit name
+ 26h 17 BYTEs	(counted string) partner fully qualified logical unit name
+ 37h	BYTE	password available (0=no, 1=yes)
+ 38h  8 BYTEs	password
+
+Format of CREATE_TP verb:
+Offset	Size	Description
+ 00h 12 BYTEs	reserved
+ 0Ch	WORD	2300h
+ 0Eh  6 BYTEs	0
+ 14h	DWORD	(high byte first) sense code
+		00000000h	Ok
+		080F6051h	SECURITY_NOT_VALID
+		084B6031h	TP_NOT_AVAIL_RETRY
+		084C0000h	TP_NOT_AVAIL_NO_RETRY
+		10086021h	TP_NAME_NOT_RECOGNIZED
+		10086034h	CONVERSATION_TYPE_MISMATCH
+		10086041h	SYNC_LEVEL_NOT_SUPPORTED
+ 18h  8 BYTEs	(high byte first) TP ID
+ 20h  8 BYTEs	(high byte first) logical unit ID
+ 28h	DWORD	(high byte first) conversation ID
+ 2Ch	BYTE	0 basic conversation, 1 mapped conversation
+ 2Dh	BYTE	0 no sync level, 1 confirm
+ 2Eh	BYTE	reserved
+ 2Fh 65 BYTEs	(counted string) transaction program name
+ 70h  6 BYTEs	0
+ 76h	WORD	length of ERROR_LOG_DATA to return
+ 78h	DWORD	pointer to ERROR_LOG_DATA buffer
+ 7Ch  8 BYTEs	(high byte first) partner logical unit name
+ 84h 18 BYTEs	(counted string) partner fully qualified logical unit name
+ 96h  8 BYTEs	(high byte first) mode name
+ 9Eh 12 BYTEs	0
+ AAh 11 BYTEs	(counted string) password
+ B5h 11 BYTEs	(counted string) user ID
+ C0h	BYTE	0 verification should be performed
+		1 already verified
+
+Format of SYSLOG verb:
+Offset	Size	Description
+ 00h 12 BYTEs	reserved
+ 0Ch	WORD	2600h
+ 0Eh 10 BYTEs	0
+ 18h	WORD	(high byte first) type
+ 1Ah	DWORD	(high byte first) subtype
+ 1Eh	DWORD	pointer to ADDITIONAL_INFO
+ 22h	DWORD	(high byte first) conversation ID
+ 26h  8 BYTEs	(high byte first) TP ID
+ 2Eh  8 BYTEs	(high byte first) physical unit or logical unit name
+ 36h	WORD	length of data
+ 38h	DWORD	pointer to data
+ 3Ch	BYTE	0
 ---------------------------------------------
 INT 68 - APPC/PC
 	AH = 02h
@@ -1216,108 +1221,120 @@ if verb=1300h (Wait), then control block continues:
 ---------------------------------------------
 INT 68 - APPC/PC
 	AH = 03h
-	DS:DX -> control block
-		12 BYTEs reserved
-		   WORD  verb (action)
-		 6 BYTEs 0
-		   DWORD (high byte first) return code (see AH=01h)
-		   WORD  0
-		 8 BYTEs (high byte first) logical unit ID
-if verb=2400h (TP Started), control block continues:
-      8 BYTEs (high byte first) TP ID
-if verb=2800h (Get ALLOCATE), control block continues:
-	BYTE  type
+	DS:DX -> control block (see below)
+
+Format of control block:
+Offset	Size	Description
+ 00h 12 BYTEs	reserved
+ 0Ch	WORD	verb (action)
+ 0Eh  6 BYTEs	0
+ 14h	DWORD	(high byte first) return code (see AH=01h)
+ 18h	WORD	0
+ 1Ah  8 BYTEs	(high byte first) logical unit ID
+---if verb=2400h (TP Started), control block continues---
+ 22h  8 BYTEs	(high byte first) TP ID
+---if verb=2800h (Get ALLOCATE), control block continues---
+ 22h	BYTE	type
 		0 dequeue
 		1 test
-	DWORD pointer to CREATE_TP record
-if verb=2A00h (Change Logical Unit). control block continues:
-	DWORD pointer to CREATE_TP_EXIT routine
+ 23h	DWORD	pointer to CREATE_TP record
+---if verb=2A00h (Change Logical Unit). control block continues---
+ 22h	DWORD	pointer to CREATE_TP_EXIT routine
 		FFFFFFFFh reject incoming ALLOCATEs
 		00000000h queue ALLOCATEs
-	DWORD 0
-	DWORD pointer to SYSTEM_LOG_EXIT routine, FFFFFFFFh = don't log errors
-	DWORD 0
-	BYTE  maximum TPs
-	BYTE  0 stop QUEUE_ALLOCATEs
-	      1 resume QUEUE_ALLOCATEs
-	DWORD pointer to LU_LU_PASSWORD_EXIT routine, FFFFFFFFh = no exit
-	DWORD 0
+ 26h	DWORD	00000000h
+ 2Ah	DWORD	pointer to SYSTEM_LOG_EXIT routine, FFFFFFFFh= don't log errors
+ 2Eh	DWORD	00000000h
+ 32h	BYTE	maximum TPs
+ 33h	BYTE	0 stop QUEUE_ALLOCATEs
+		1 resume QUEUE_ALLOCATEs
+ 34h	DWORD	pointer to LU_LU_PASSWORD_EXIT routine, FFFFFFFFh = no exit
+ 38h	DWORD	00000000h
 ---------------------------------------------
 INT 68 - APPC/PC
 	AH = 04h
-	DS:DX -> control block
-		12 BYTEs reserved
-		   WORD  verb (action)
-			2500h TP_ENDED
-			2900h TP_VALID
-		 6 BYTEs 0
-		   DWORD (high byte first) return code (see AH=01h)
-		   WORD  0
-		 8 BYTEs (high byte first) TP_ID
-		   DWORD -> CREATE_TP record (only if verb = 2900h)
+	DS:DX -> control block (see below)
+
+Format of control block:
+Offset	Size	Description
+ 00h 12 BYTEs	reserved
+ 0Ch	WORD	verb (action)
+		2500h TP_ENDED
+		2900h TP_VALID
+ 0Eh  6 BYTEs	0
+ 14h	DWORD	(high byte first) return code (see AH=01h)
+ 18h	WORD	0
+ 1Ah  8 BYTEs	(high byte first) TP_ID
+ 22h	DWORD -> CREATE_TP record (only if verb = 2900h)
 ---------------------------------------------
 INT 68 - APPC/PC - TRANSFER MSG DATA
 	AH = 05h
-	DS:DX -> control block
-		12 BYTEs reserved
-		   WORD  1C00h
-		   BYTE  0 user defined
-			 1 NMVT
-			 2 alert subvectors
-			 3 PDSTATS subvectors
-		 5 BYTEs 0
-		   DWORD (high byte first) return code (see AH=01h)
-		12 BYTEs 0
-		   BYTE  if bit 0 clear, add correlation subvector
-			 if bit 1 clear, add product set ID subvector
-			 if bit 2 clear, do SYSLOG
-			 if bit 3 clear, send SSCP_PU_SESSION
-		   BYTE  0
-		   WORD  length of data
-		 N BYTEs data
+	DS:DX -> control block (see below)
+
+Format of control block:
+Offset	Size	Description
+ 00h 12 BYTEs	reserved
+ 0Ch	WORD	1C00h
+ 0Eh	BYTE	00h user defined
+		01h NMVT
+		02h alert subvectors
+		03h PDSTATS subvectors
+ 0Fh  5 BYTEs	0
+ 14h	DWORD	(high byte first) return code (see AH=01h)
+ 18h 12 BYTEs	0
+ 24h	BYTE	if bit 0 clear, add correlation subvector
+		if bit 1 clear, add product set ID subvector
+		if bit 2 clear, do SYSLOG
+		if bit 3 clear, send SSCP_PU_SESSION
+ 25h	BYTE	0
+ 26h	WORD	length of data
+ 28h  N BYTEs	data
 ---------------------------------------------
 INT 68 - APPC/PC - CHANGE NUMBER OF SESSIONS
 	AH = 06h
-	DS:DX -> control block
-		12 BYTEs reserved
-		   WORD  1500h
-		 6 BYTEs 0
-		   WORD  (high byte first) primary return code (see AH=02h)
-		   DWORD (high byte first) secondary return code (see AH=01h)
-			0000h accepted
-			0001h negotiated
-			0003h bad logical unit ID
-			0004h allocation failure, no retry
-			0005h allocation failure, retry
-			0151h can't raise limits
-			0153h all modes must reset
-			0154h bad SNASVCMG limits
-			0155h minimum greater than total
-			0156h mode closed (prim return code = 1)
-			      CNOS mode closed (prim return code = 18h)
-			0157h bad mode name (prim return code = 1)
-			      CNOS bad mode name (prim return code = 18h)
-			0159h reset SNA drains
-			015Ah single not SRC response
-			015Bh bad partner logical unit
-			015Ch exceeds maximum allowed
-			015Dh change SRC drains
-			015Eh logical unit detached
-			015Fh CNOS command race reject
-		 8 BYTEs (high byte first) logical unit ID
-		 8 BYTEs blanks
-		 8 BYTEs (high byte first) partner logical unit name
-		 8 BYTEs (high byte first) mode name
-		   BYTE  bit 7: use MODE_NAME_SELECT_ALL rather than MODE_NAME
-			 bit 6: set negotiable values
-		   BYTE  partner logical unit mode session limit
-		   BYTE  minimum CONWINNERS_SOURCE
-		   BYTE  maximum CONWINNERS_TARGET
-		   BYTE  automatic activation
-		   BYTE  0
-		   BYTE  bit 7: drain targer
-			 bit 6: drain source
-			 bit 5: target responsible, not source
+	DS:DX -> control block (see below)
+
+Format of control block:
+Offset	Size	Description
+ 00h 12 BYTEs	reserved
+ 0Ch	WORD	1500h
+ 0Eh  6 BYTEs	0
+ 14h	WORD	(high byte first) primary return code (see AH=02h)
+ 16h	DWORD	(high byte first) secondary return code (see AH=01h)
+ 		  0000h accepted
+		  0001h negotiated
+		  0003h bad logical unit ID
+		  0004h allocation failure, no retry
+		  0005h allocation failure, retry
+		  0151h can't raise limits
+		  0153h all modes must reset
+		  0154h bad SNASVCMG limits
+		  0155h minimum greater than total
+		  0156h mode closed (prim return code = 1)
+			CNOS mode closed (prim return code = 18h)
+		  0157h bad mode name (prim return code = 1)
+			CNOS bad mode name (prim return code = 18h)
+		  0159h reset SNA drains
+		  015Ah single not SRC response
+		  015Bh bad partner logical unit
+		  015Ch exceeds maximum allowed
+		  015Dh change SRC drains
+		  015Eh logical unit detached
+		  015Fh CNOS command race reject
+ 1Ah  8 BYTEs	(high byte first) logical unit ID
+ 22h  8 BYTEs	blanks
+ 2Ah  8 BYTEs	(high byte first) partner logical unit name
+ 32h  8 BYTEs	(high byte first) mode name
+ 3Ah	BYTE	bit 7: use MODE_NAME_SELECT_ALL rather than MODE_NAME
+		bit 6: set negotiable values
+ 3Bh	BYTE	partner logical unit mode session limit
+ 3Ch	BYTE	minimum CONWINNERS_SOURCE
+ 3Dh	BYTE	maximum CONWINNERS_TARGET
+ 3Eh	BYTE	automatic activation
+ 3Fh	BYTE	0
+ 40h	BYTE	bit 7: drain target
+		bit 6: drain source
+		bit 5: target responsible, not source
 ---------------------------------------------
 INT 68 - APPC/PC - PASSTHROUGH
 	AH = 07h
@@ -1330,21 +1347,24 @@ INT 68 - APPC/PC - ENABLE/DISABLE APPC
 ---------------------------------------------
 INT 68 - APPC/PC - CONVERT
 	AH = FBh
-	DS:DX -> control block
-		12 BYTEs reserved
-		   WORD  1A00h
-		 6 BYTEs 0
-		   DWORD (high byte first) return code
-		   BYTE  conversion
-			   0 ASCII to EBCDIC
-			   1 EBCDIC to ASCII
-		   BYTE  character set
-			   0 AE
-			   1 A
-			   2 G
-		   WORD  length of string to convert
-		   DWORD pointer to source
-		   DWORD pointer to target
+	DS:DX -> control block (see below)
+
+Format of control block:
+Offset	Size	Description
+ 00h 12 BYTEs	reserved
+ 0Ch	WORD	1A00h
+ 0Eh  6 BYTEs	0
+ 14h	DWORD	(high byte first) return code
+ 18h	BYTE	conversion
+		   00h ASCII to EBCDIC
+		   01h EBCDIC to ASCII
+ 19h	BYTE	character set
+		   0 AE
+		   1 A
+		   2 G
+ 1Ah	WORD	length of string to convert
+ 1Ch	DWORD	pointer to source
+ 20h	DWORD	pointer to target
 ---------------------------------------------
 INT 68 - APPC/PC - ENABLE/DISABLE MESSAGE TRACING
 	AH = FCh
@@ -1357,19 +1377,21 @@ INT 68 - APPC/PC - ENABLE/DISABLE API VERB TRACING
 	AL = 00h disable tracing
 	     01h enable tracing
 ---------------------------------------------
-INT 68 - APPC/PC - TRACE DESTINATION
+INT 68 - APPC/PC - SET TRACE DESTINATION
 	AH = FEh
 	AL = trace destinations
 	    bit 0  storage (DS:DX -> trace stats record)
 	    bit 1  display
 	    bit 2  file (trace written to file OUTPUT.PC)
 	    bit 3  printer
-Trace Statistics Record
-	DWORD  pointer to storage trace buffer
-	WORD   max number of 80-byte records in trace
-	WORD   (high-order byte first!) current record number (must init to 0)
-	DWORD  (high-order byte first!) number of records written (init to 0)
-	DWORD  reserved
+
+Format of Trace Statistics Record:
+Offset	Size	Description
+ 00h	DWORD	pointer to storage trace buffer
+ 04h	WORD	max number of 80-byte records in trace
+ 06h	WORD	(high-order byte first!) current record number (must init to 0)
+ 08h	DWORD	(high-order byte first!) number of records written (init to 0)
+ 0Ch	DWORD	reserved
 Note: do not move record while trace is active
 ---------------------------------------------
 INT 68 - APPC/PC - SET PASSTHROUGH
@@ -1378,7 +1400,10 @@ INT 68 - APPC/PC - SET PASSTHROUGH
 ---------------------------------------------
 INT 69 - unused
 ---------------------------------------------
-INT 6A - unused
+INT 6A - OPTHELP.COM
+Notes:	OPTHELP is an optionally-resident help system for SLR Systems's OPTASM
+	assembler
+	may be configured to use any interrupt from 60h to 7Fh
 ---------------------------------------------
 INT 6B - unused
 ---------------------------------------------
@@ -1390,6 +1415,22 @@ INT 6D - VGA - internal
 Note: used by IBM, Paradise, Video7, and NCR
 ---------------------------------------------
 INT 6E - unused
+---------------------------------------------
+INT 6F - HP ES-12 EXTENDED BIOS - READ CMOS MEMORY
+	BP = 0012h
+	AH = 22h
+	BL = address of CMOS byte to read
+Return: AH = status
+	AL = byte read
+	BP, DS destroyed
+---------------------------------------------
+INT 6F - HP ES-12 EXTENDED BIOS - WRITE CMOS MEMORY
+	BP = 0012h
+	AH = 24h
+	BL = address of CMOS byte to write
+	AL = new value
+Return: AH = status
+	BP, DS destroyed
 ---------------------------------------------
 INT 6F - Novell NetWare - PCOX API (3270 PC terminal interface)
 ---------------------------------------------
@@ -1472,42 +1513,43 @@ Return: CX = number of files closed
 ---------------------------------------------
 INT 6F - 10-NET - STATUS OF NODE
 	AH = 02h
-	DS:DX -> 512-byte record
-		8 BYTEs user name (0 if none)
-		  BYTE	station type
-			0  workstation
-			1  superstation
-			2  gateway station
-			3  gateway active
-			4  logged into multiple superstations
-			5  reserved
-	       24 BYTEs list of superstations logged into more than one
-			superstation
-	       12 BYTEs node ID
-		  WORD	message count for this station (send for user node,
-			receive for superstations)
-	for superstations only:
-		  WORD	drives allocated (bit 0=A:, bit 1=B:,...)
-		  BYTE	user service flag
-			bit 7: gate
-			    6: print permit on
-			    4: SUBMIT is on
-			    3: mail waiting for node
-			    2: calendar waiting for you
-			    1: news waiting for you
-			    0: mail waiting for you
-		  BYTE	printers allocated (bit 0=LPT1,...)
-		  BYTE	number of unprinted spool files
-		  BYTE	number of opened files
-		  BYTE	number of logged on nodes
-		  BYTE	primary drive (1=A:)
-		  BYTE	reserved
-		N BYTEs list of logged on node IDs (each 12 bytes, max 37 IDs)
-		(continues at offset 1F4h)
-		3 BYTEs time: sec/min/hrs
-		3 BYTEs date: day/mon/year-1980
+	DS:DX -> 512-byte status record (see below)
 Return: CF set on error
 	    AX = error code (see function 00h)
+
+Format of node status record:
+Offset	Size	Description
+ 00h  8 BYTEs	user name (0 if none)
+ 08h	BYTE	station type
+		   00h workstation
+		   01h superstation
+		   02h gateway station
+		   03h gateway active
+		   04h logged into multiple superstations
+		   05h reserved
+ 09h 24 BYTEs	list of superstations logged into more than one superstation
+ 21h 12 BYTEs	node ID
+ 2Dh	WORD	message count for this station (send for user node, receive for
+		superstations)
+---for superstations only---
+ 2Fh	WORD	drives allocated (bit 0=A:, bit 1=B:,...)
+ 31h	BYTE	user service flag
+		bit 7: gate
+		    6: print permit on
+		    4: SUBMIT is on
+		    3: mail waiting for node
+		    2: calendar waiting for you
+		    1: news waiting for you
+		    0: mail waiting for you
+ 32h	BYTE	printers allocated (bit 0=LPT1,...)
+ 33h	BYTE	number of unprinted spool files
+ 34h	BYTE	number of opened files
+ 35h	BYTE	number of logged on nodes
+ 36h	BYTE	primary drive (1=A:)
+ 37h	BYTE	reserved
+ 38h  N BYTEs	list of logged on node IDs (each 12 bytes, max 37 IDs)
+1F4h  3 BYTEs	time: sec/min/hrs
+1F7h  3 BYTEs	date: day/mon/year-1980
 ---------------------------------------------
 INT 6F - 10-NET - GET ADDRESS OF CONFIGURATION TABLE
 	AH = 03h
@@ -1689,90 +1731,94 @@ Return: CL = number of records returned (responding stations)
 ---------------------------------------------
 INT 6F - 10-NET - SPOOL/PRINT
 	AH = 0Eh
-	DS:DX -> record
-		WORD  operation code
-		      0 initiate spool
-		      1 abort print
-		      2 close spool
-		      3 delete spool
-		      4 print
-		      5 get report info
-		      6 set chat template
-		      7 queue
-		      8 return queue
-		      9 queue non-spooled file for printing
-	     11 BYTEs file name in FCB format
-	(if operation code = 00h or 06h, record continues)
-		BYTE  notification
-			bit 7: queue to top
-			bit 6: do ID page
-			bit 5: no form feed
-			bit 4: reserved
-			bit 3: explicity queuing only
-			bit 2: notify at print completion
-			bit 1: notify server operator/reply
-			bit 0: notify at print start
-		BYTE  days to keep (FFh=forever)
-		BYTE  bits 0,1: device (1=LPT1)
-		      bits 4-7: remote drive to store spool file (1=A,...)
-		WORD  length of following data area
-	      N BYTEs up to 64 bytes of description
-	(if operation code = 03h, record continues)
-	      8 BYTEs user ID to associate with filename
-	(if operation code = 04h, record continues)
-		WORD  block number
-	      8 BYTEs user ID to associate with filename
-	(if operation code = 05h, record continues)
-		BYTE  RRN to start retrieve
-		BYTE  bits 0,1: local print device (LPTx)
-		      bit 3: if set, return entries for all users
-		WORD  length of following area
-	      N BYTEs up to 1500 bytes to receive $SCNTL records returned
-	(if operation code = 07h, record continues)
-		BYTE  queue number
-		BYTE  bits 0,1: local print device (LPTx)
-		WORD  number of bytes of test print to be done
-		BYTE  code: 01h prnt device
-			    02h test print count
-			    03h prn
-	(if operation code = 08h, record continues)
-		BYTE  queue location or $SCNTL location to start access
-			returns next item for access:
-				00h-7Fh queued items
-				80h-FEh non-queued, non-printed items
-				FFh	no more items
-		WORD  unused
-		WORD  length of following area
-	      N BYTEs up to 64 bytes to receive $SCNTL records
-	(if operation code = 09h, record continues)
-	      3 BYTEs unused
-	      N BYTEs path to non-spooled file to be queued for printing
+	DS:DX -> spool/print record (see below)
 Return: CF set on error
 	    AX = error code (see also function 00h)
 		FF17h device not mounted
 		FF18h already spooling to named device
 
-$SCNTL record:
-      8 BYTEs user ID
-     11 BYTEs filename in FCB format
-      6 BYTEs node ID
-      3 BYTEs creation date
-	BYTE  flags
-	      bit 7: queue to top
-		  6: do ID page
-		  5: no form feed at end
-		  4: reserved
-		  3: explicit queueing only
-		  2: notify at completion
-		  1: notify server operator/reply
-		  0: notify at start
-	BYTE  retention time in days
-	BYTE  printing device (LPTx)
-      3 BYTEs date last printed (0 = never)
-	BYTE  device containing spoolfile
-	WORD  bytes to print for test print
-	WORD  block number to start print
-	BYTE  reserved
+Format of Spool/Print record:
+Offset	Size	Description
+ 00h	WORD	operation code
+		   00h initiate spool
+		   01h abort print
+		   02h close spool
+		   03h delete spool
+		   04h print
+		   05h get report info
+		   06h set chat template
+		   07h queue
+		   08h return queue
+		   09h queue non-spooled file for printing
+ 02h 11 BYTEs	file name in FCB format
+---if operation code = 00h or 06h, record continues---
+ 0Dh	BYTE	notification
+		bit 7: queue to top
+		bit 6: do ID page
+		bit 5: no form feed
+		bit 4: reserved
+		bit 3: explicity queuing only
+		bit 2: notify at print completion
+		bit 1: notify server operator/reply
+		bit 0: notify at print start
+ 0Eh	BYTE	days to keep (FFh=forever)
+ 0Fh	BYTE	bits 0,1: device (1=LPT1)
+		bits 4-7: remote drive to store spool file (1=A,...)
+ 10h	WORD	length of following data area
+ 12h  N BYTEs	up to 64 bytes of description
+---if operation code = 03h, record continues---
+ 0Dh  8 BYTEs	user ID to associate with filename
+---if operation code = 04h, record continues---
+ 0Dh	WORD	block number
+ 0Fh  8 BYTEs	user ID to associate with filename
+---if operation code = 05h, record continues---
+ 0Dh	BYTE	RRN to start retrieve
+ 0Eh	BYTE	bits 0,1: local print device (LPTx)
+		bit 3: if set, return entries for all users
+ 0Fh	WORD	length of following area
+ 11h  N BYTEs	up to 1500 bytes to receive $SCNTL records returned
+--if operation code = 07h, record continues---
+ 0Dh	BYTE	queue number
+ 0Eh	BYTE	bits 0,1: local print device (LPTx)
+ 0Fh	WORD	number of bytes of test print to be done
+ 11h	BYTE	code: 01h print device
+		      02h test print count
+		      03h prn
+---if operation code = 08h, record continues---
+ 0Dh	BYTE	queue location or $SCNTL location to start access
+			returns next item for access:
+				00h-7Fh queued items
+				80h-FEh non-queued, non-printed items
+				FFh	no more items
+ 0Eh	WORD	unused
+ 10h	WORD	length of following area
+ 12h  N BYTEs	up to 64 bytes to receive $SCNTL records
+---if operation code = 09h, record continues---
+ 0Dh  3 BYTEs	unused
+ 10h  N BYTEs	path to non-spooled file to be queued for printing
+
+Format of $SCNTL record:
+Offset	Size	Description
+ 00h  8 BYTEs	user ID
+ 08h 11 BYTEs	filename in FCB format
+ 13h  6 BYTEs	node ID
+ 19h  3 BYTEs	creation date
+ 1Ch	BYTE	flags
+		bit 7: queue to top
+		    6: do ID page
+		    5: no form feed at end
+		    4: reserved
+		    3: explicit queueing only
+		    2: notify at completion
+		    1: notify server operator/reply
+		    0: notify at start
+ 1Dh	BYTE	retention time in days
+ 1Eh	BYTE	printing device (LPTx)
+ 1Fh  3 BYTEs	date last printed (0 = never)
+ 22h	BYTE	device containing spoolfile
+ 23h	WORD	bytes to print for test print
+ 25h	WORD	block number to start print
+ 27h	BYTE	reserved
 ---------------------------------------------
 INT 6F - 10-NET - ATTACH/DETACH PRINTER
 	AH = 10h
@@ -2016,13 +2062,42 @@ INT 85 - reserved for BASIC
 ---------------------------------------------
 INT 86 - Relocated (by NETBIOS) INT 18
 ---------------------------------------------
-INT 86 to F0 - used by BASIC while in interpreter
+INT 86 - used by BASIC while in interpreter
+---------------------------------------------
+INT 87 - used by BASIC while in interpreter
+---------------------------------------------
+INT 88 - used by BASIC while in interpreter
+---------------------------------------------
+INT 89 - used by BASIC while in interpreter
+---------------------------------------------
+INT 8A - used by BASIC while in interpreter
+---------------------------------------------
+INT 8B - used by BASIC while in interpreter
+---------------------------------------------
+INT 8C - used by BASIC while in interpreter
+---------------------------------------------
+INT 8D - used by BASIC while in interpreter
+---------------------------------------------
+INT 8E - used by BASIC while in interpreter
+---------------------------------------------
+INT 8F - used by BASIC while in interpreter
+---------------------------------------------
+INT 90 to F0 - used by BASIC while in interpreter
 ---------------------------------------------
 INT A4 - Right Hand Man API
 	function number in AH
-Note: Right-Hand Man is a TSR desk-top utility
+Note: Right-Hand Man is a TSR desk-top utility, and only hooks this interrupt
+	while popped up
 ---------------------------------------------
 INT E0 - CP/M-86 function calls
+---------------------------------------------
+INT E0 - used by BASIC while in interpreter
+---------------------------------------------
+INT E1 - used by BASIC while in interpreter
+---------------------------------------------
+INT E2 - used by BASIC while in interpreter
+---------------------------------------------
+INT E3 - used by BASIC while in interpreter
 ---------------------------------------------
 INT E4 - Logitech Modula v2.0 - MonitorEntry
 	AX = 0005h
@@ -2030,6 +2105,30 @@ INT E4 - Logitech Modula v2.0 - MonitorEntry
 ---------------------------------------------
 INT E4 - Logitech Modula v2.0 - MonitorExit
 	AX = 0006h
+---------------------------------------------
+INT E4 - used by BASIC while in interpreter
+---------------------------------------------
+INT E5 - used by BASIC while in interpreter
+---------------------------------------------
+INT E6 - used by BASIC while in interpreter
+---------------------------------------------
+INT E7 - used by BASIC while in interpreter
+---------------------------------------------
+INT E8 - used by BASIC while in interpreter
+---------------------------------------------
+INT E9 - used by BASIC while in interpreter
+---------------------------------------------
+INT EA - used by BASIC while in interpreter
+---------------------------------------------
+INT EB - used by BASIC while in interpreter
+---------------------------------------------
+INT EC - used by BASIC while in interpreter
+---------------------------------------------
+INT ED - used by BASIC while in interpreter
+---------------------------------------------
+INT EE - used by BASIC while in interpreter
+---------------------------------------------
+INT EF - used by BASIC while in interpreter
 ---------------------------------------------
 INT EF - GEM - INTERFACE
 	CX = 0473h
@@ -2069,16 +2168,18 @@ INT FF - AT/XT286/PS50+ - destroyed by return from protected mode
 ---------------------------------------------
 INT FF - Z100 - WARM BOOT
 ---------------------------------------------
-Please redistribute the following files (unmodified) as a group, in an archive
-named INTER189:
+Please redistribute the following files unmodified as a group, in an archive
+named INTER289:
+	INTERRUP.1ST	the read-me file, containing credits
 	INTERRUP.A	INT 00 through INT 5F
 	INTERRUP.B	INT 60 through INT FF
-	INTERRUP.SUM	a one-line-per-function summary
 	INTERRUP.PRI	a brief introduction to interrupts
-	INTERRUP.1ST	the read-me file, containing credits
+	INTPRINT.COM	a simple formatter that also generates the list summary
+	INTPRINT.DOC	instructions for INTPRINT
+	INTPRINT.C	source code for INTPRINT
 ---------------------------------------------
 ARPA: ralf@cs.cmu.edu			 \
 UUCP: {ucbvax,harvard}!cs.cmu.edu!ralf	  > preferred
-BIT:  ralf%cs.cmu.edu@cmuccvma		 /
+BIT:  ralf%cs.cmu.edu@cmuccvb		 /
 FIDO: Ralf Brown 1:129/31
 	or post a message to the DR_DEBUG echo
