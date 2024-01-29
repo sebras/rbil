@@ -1,29 +1,29 @@
-Interrupt List		Release 90.5		Last change 10/14/90
+Interrupt List		Release 91.1		Last change 1/5/91
 
 Please distribute all of the following files (unmodified) together in an
-archive called INTER590:
+archive called INTER191 (preferably the original authenticated PKZIP archive):
         INTERRUP.1ST	this file
         INTERRUP.A	INT 00 through INT 1F \
-	INTERRUP.B	INT 20 through INT 27  \ total 418 pages at 60 lines
-	INTERRUP.C	INT 28 through INT 5F  / per page, 452 with INTPRINT -p
+	INTERRUP.B	INT 20 through INT 27  \ total 448 pages at 60 lines
+	INTERRUP.C	INT 28 through INT 5F  / per page, 483 with INTPRINT -p
 	INTERRUP.D	INT 60 through INT FF / 
         INTERRUP.PRI	a brief primer on interrupts
 	INTPRINT.COM	a simple formatter that also generates the list summary
 	INTPRINT.DOC	instructions for INTPRINT
 	INTPRINT.C	source code for INTPRINT
 	MEMORY.LST	format of the BIOS data area
+	INT2QH.*	program for converting list to QuickHelp database
 
 Concatenate INTERRUP.A, .B, .C, and .D with
 	COPY /B INTERRUP.A+INTERRUP.B+INTERRUP.C+INTERRUP.D INTERRUP.LST
 to create an interrupt list file identical to my master copy.
 
-Use INTPRINT to generate the INTERRUP.SUM which used to be included in the
-archive, or to generate a new file containing only data structure formats.
-See INTPRINT.DOC for details.
+Use INTPRINT to generate a one-line-per-call summary file and/or a file
+containing only data structure formats.  See INTPRINT.DOC for details.
 ---------------------------------------------
 	NOTICE		NOTICE		NOTICE		NOTICE
 
-This compilation is (c) Copyright 1989, 1990 Ralf Brown
+This compilation is (c) Copyright 1989, 1990, 1991 Ralf Brown
 Permission is granted to use and redistribute the files comprising the
 interrupt listing in any way (including conversion to another format), provided
 that my name and addresses and the names of all contributers are preserved, as
@@ -37,7 +37,7 @@ date of its release, with the sincere hope that the credits and availability
 information are retained.
 ---------------------------------------------
 If the list is more than three months old by the time you get it, there is
-probably a newer release out already (next is planned for early January)
+probably a newer release out already (v91.2 is planned for late March).
 
 The newest release of this list is available in these places (please do not
 ask me to email it, it is just too large for that):
@@ -48,6 +48,9 @@ On the ARPAnet, by standard anonymous FTP from CS.CMU.EDU [128.2.222.173].
 	change directory first because of the way CMU's anonymous FTP works.
 	Don't forget to set mode "binary" or "type L 8"!  ZIP unarchivers for
 	MSDOS and BSD Unix are available in the "archivers" subdirectory.  
+	Note that my directory is occasionally unavailable due to fileserver
+	downtime.  If you get an "access denied" type error, try again in a
+	few hours.
 
 On FIDOnet, from Doctor's Inn BBS 1:129/53 1-412-881-7757 1200/2400/9600 HST
 	as file INTERnyy.ZIP, where nyy stands for release 'n' of year 'yy',
@@ -80,8 +83,9 @@ BITnet: you may retrieve the copy on WSMR-SIMTEL20.ARMY.MIL via the following
 		    TRICKLE at EB0UB011 (Spain)
 		    TRICKLE at BANUFS11 (Belgium)
 	(elsewhere) TRICKLE at TAUNIVM (Israel)
-FIDO:	boards belonging to the DVNET distribution system
-CompuServe: in the IBM Programming Forum Library 6 as INTnyy.*
+FIDO:	boards belonging to the PDN (Programmer's Distribution Network) system
+CompuServe: in the IBM Programming Forum Library 6 as INTnyy.* or INTERn.* (the
+	sysops occasionally switch back and forth...)
 
 According to Mark Seiffert, the list is available
  >on MostAnyNet via mail from my archive server as file
@@ -121,6 +125,7 @@ Key to system abbreviations
 	PS	IBM PS/2, any model
 	PS30	IBM PS/2 Model 30 and below
 	PS50+	IBM PS/2 Models 50,60,70,80
+	CP386	Compaq Portable 386
 	CGA	Color Graphics Adapter
 	EGA	Enhanced Graphics Adapter
 	VGA	Video Graphics Array
@@ -180,14 +185,14 @@ among them
  3/89 Helmut Waelder   ZRWA001@DTUZDV1.BITNET	      more DOS 4.0 calls
  4/89 Robert Seals     rds95@leah.Albany.EDU          ATI VGA Wonder modes
  4/89 Ge van Geldorp   VLRUO02@HDETUD1.BITNET         pcANYWHERE API
- 4/89 Robin Walker     rdhw@uk.ac.cam.phx	      undoc DOS 4 data struc
- 4/89 Robin Walker     rdhw@uk.ac.cam.phx	      DOS 4.0 shell API
+ 4/89 Robin Walker     rdhw@uk.ac.cambridge.phoenix   undoc DOS 4 data struc
+ 4/89 Robin Walker     rdhw@uk.ac.cambridge.phoenix   DOS 4.0 shell API
  4/89 Ralf Brown       ralf@cs.cmu.edu		      DCA/Intel CAS API
  4/89 Ralf Brown       ralf@cs.cmu.edu		      Intel Image Proc Interf
- 5/89 Robin Walker     rdhw@uk.ac.cam.phx	      multiplex int calls
+ 5/89 Robin Walker     rdhw@uk.ac.cambridge.phoenix   multiplex int calls
  6/89 Peter Sawatzki   FE617@DHAFEU11.BITNET	      Video7 extended INT 10
  7/89 Wes Cowley       wes@cup.portal.com	      SHARE.EXE hooks
- 9/89 Robin Walker     rdhw@uk.ac.cam.phx	      more DOS 4 data struc
+ 9/89 Robin Walker     rdhw@uk.ac.cambridge.phoenix   more DOS 4 data struc
  9/89 Stuart R. Kemp   kemp@umn-cs.cs.umn.edu	      Halo88
  9/89 Urs Zurbuchen    mcvax!norad!netto!uzurbuch     Btrieve API
  9/89 Dan Lanciani     ddl@husc6.harvard.edu	      Z100, Taxan video BIOS
@@ -212,7 +217,7 @@ among them
  7/90 Ben Myers	       0003571400@mcimail.com	      Tseng ET4000, misc
  7/90 Ralf Brown       ralf@cs.cmu.edu		      DPMI 0.9 API
  8/90 G. Adam Stanislav 1:129/39		      AVATAR.SYS
- 8/90 Robin Walker     RDHW@phoenix.cambridge.ac.uk   more DOS internals
+ 8/90 Robin Walker     rdhw@phoenix.cambridge.ac.uk   more DOS internals
  8/90 Michael A Shiels mshiels@masnet.uucp	      Quarterdeck INT 2F/AH=D2h
  8/90		       mjm@bmbcomp.uucp		      Logitech INT 33
  9/90 Michael A Shiels mshiels@masnet.uucp	      IBM/Yale & 3com INT 14
@@ -224,7 +229,17 @@ among them
  9/90 Ben Myers	       0003571400@mcimail.com	      FRIEZE API
  9/90 Michael A Shiels mshiels@masnet.uucp	      VDS, Sangoma, misc
  9/90 Rob Luursema     robl@idca.tds.philips.nl	      EISA BIOS calls
-10/90 Stepehn Bean     70575.406@compuserve.com	      more DECnet INT 69/INT 6A
+10/90 Stephen Bean     70575.406@compuserve.com	      more DECnet INT 69/INT 6A
+10/90 Maxime Dallaire  1:167/163		      Carbon Copy Plus 5.0 API
+11/90 Dan Fandrich     shad04@ccu.UManitoba.CA	      SCSI calls
+11/90 Ben Myers	       0003571400@mcimail.com	      Everex Viewpoint VGA
+11/90 Michael A Shiels mshiels@masnet.uucp	      AppleTalk/IBM802.2 INT 5C
+11/90 Mark Livingstone markl@csource.oz.au	      TVGA video modes
+11/90 Michael A Shiels mshiels@masnet.uucp	      LPTx, X00 calls
+12/90 Michael A Shiels mshiels@masnet.uucp	      Compaq BIOS, Ad Lib
+12/90 Michael A Shiels mshiels@masnet.uucp	      PCSpool,Disk Spool II
+12/90 Michael A Shiels mshiels@masnet.uucp	      OmniView, misc
+12/90 Michael A Shiels mshiels@masnet.uucp	      Cswitch, HIGHUMM.SYS,misc
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
@@ -238,7 +253,7 @@ Also contributing:
  Skule Johansen <S_Johansen%AVH.UNIT.UNINett%NORUNIX.BITNET>, Bob Fehrenbach,
  Everett Kaser <everett@hpcvlx.hp.com>, David Dyck <dcd@tc.fluke.COM>,
  Mark Davis <davis@cs.unc.edu>, Sergio Fogel <sergio%TECHUNIX.BITNET>,
- James P. Kiely <kiely%lownlab@harvard.harvard.edu>,
+ James P. Kiely <kiely%lownlab@harvard.harvard.edu>, Kevin Gillett 1:153/101,
  W.F. Schroeder <unido!nixpbe!schroeder.pad@uunet.UU.NET>, <zlatuska@UDEL.EDU>,
  Russ Nelson <nelson@pear.ecs.clarkson.edu>,  Michael Ho <ho@fergvax.unl.edu>,
  Ralph Heredia <att!attmail!rheredia>, Nelluri Reddy <reddy@uc.msc.umn.edu>,
@@ -256,7 +271,9 @@ Also contributing:
  John P. Vias <72260.1601@CompuServe.COM>, <frotz%drivax@uunet.uu.net>,
  Naota Kimura <abcscnuk@csuna.csun.edu>, George W. Pogue <gwp@trsvax.UUCP>,
  William L. Peavy <70042.2310@compuserve.com>, Dmitry Stefankov (Moscow, USSR),
- Michael D. Lawler <mdlawler@bsu-cs.bsu.edu>, Norbert Juffa (Karlsruhe, FRG)
+ Michael D. Lawler <mdlawler@bsu-cs.bsu.edu>, Norbert Juffa (Karlsruhe, FRG),
+ Chris Blum <76625.1041@compuserve.com>, Klaus Hartnegg <HAKL@DFRRUF1.BITNET>,
+ 72260.1601@compuserve.com
 ---------------------------------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -273,7 +290,7 @@ Information on LIM EMS 3.2 functions was derived from _Advanced_MSDOS_, by
 Ray Duncan. Added by Ralf Brown 11/19/87.
 
 Information on LIM EMS 4.0 functions was derived from the transcription of
-the specification by Dick Flanagan.  Added by Ralf Brown, 11/20/87
+the specification by Dick Flanagan.  Added by Ralf Brown, 11/20/87.
 
 Some of the information on MCGA/VGA BIOS calls was derived from _Byte_,
 Volume 12 Number 12.
@@ -331,7 +348,7 @@ he'd given this list more credit than
    DOSINFO.ARC, DOSERROR.DOC, DOSTIPS.TXT, etc."
 considering that most of his interrupt listing is derived from this one (a
 majority of that with only formatting changes), AND he's asking a $15 shareware
-registration.
+registration [newer versions do give better credit].
 
 Compaq speed setting calls derived from the Compaq DeskPro 386 Technical
 Reference Guide.
@@ -467,6 +484,100 @@ System Technical Reference Manual", file date 6/13/90.  Added by Ralf Brown,
 
 Additional DECnet DOS INT 69/INT 6A info derived from the "DECnet DOS
 Programmer's Reference Manual" (AA-EB46C-TV).  Added 10/13/90.
+
+Carbon Copy Plus API derived from the Carbon Copy Plus user's manual.  Added
+11/2/90.
+
+CMC International SCSI driver TARGA.DEV API derived from its source code.
+Added 11/2/90.
+
+Everex Viewpoint VGA calls derived from Everex Viewpoint Owner's Manual and
+Reference Guide, version 1.0.  Added 11/3/90.
+
+VESA SuperVGA BIOS 1.1 extensions extracted from VESA standard #VS900602.
+Added by Ralf Brown, 12/9/90.
+
+PCSpool API derived from PC Magazine, Vol 10 Number 1 (Jan 15,1991).  Added
+12/20/90.
+
+STARLITE calls derived from _General_Software_Project_STARLITE_Architecture_
+_Specification_, Final Draft, October 1, 1990, provided by Stephen Jones
+of General Software.  Added by Ralf Brown, 1/5/91.
+---------------------------------------------
+The following have provided API reference materials at no charge:
+
+Banyan Systems, Inc.		(Banyan VINES)
+115 Flanders Road
+Westboro, MA 01581
+Voice: (508) 898-1000
+FAX:   (508) 898-3604
+
+General Software		(STARLITE architecture [OEM DOS, SMP DOS])
+P.O. Box 2571
+Redmond, WA 98703
+
+Intel Literature		(DOS Protected-Mode Interface)
+3065 Bowers Avenue
+Box 58065
+Santa Clara, CA 95051-8065
+Voice: (800) 548-4725
+
+Microsoft Corporation		(CD-ROM Extensions)
+16011 NE 36th Way
+Box 97017
+Redmond, WA 98073-9717
+Voice: (206) 882-8080
+FAX:   (206) 883-8101
+
+Phar Lap Software, Inc.		(Virtual Control Program Interface)
+60 Aberdeen Avenue
+Cambridge, MA 02138
+Voice: (617) 661-1510
+
+Quarterdeck Office Systems	(DESQview 2.26)
+150 Pico Boulevard
+Santa Monica, CA 90405
+Voice: (213) 392-9701
+FAX:   (213) 399-3802
+BBS:   (213) 396-3904
+
+Video Electronics Standards Association (VESA SuperVGA BIOS extensions)
+1330 South Bascom Avenue, Suite D
+San Jose, CA 95128-4502
+Voice: (408) 971-7525
+FAX:   (408) 286-8988
+---------------------------------------------
+Other addresses:
+
+Artisoft Inc.			(LANtastic)
+575 East River Rd.
+Tucson, AZ 85704
+Voice: (602) 293-6363
+
+Borland International Inc.	(Turbo Pascal, Turbo C)
+1800 Green Hills Rd.
+Scotts Valley, CA 95066
+Voice: (408) 438-8400
+
+Budget Software Company		(Disk Spool II)
+P. O. Box 12282
+12162 E. Mississippi Ave.
+Aurora, CO  80012-3499
+Voice: (303) 695-9095
+
+Compaq Computer Corporation
+20555 S.H. 249
+Houston, TX 77070
+
+Digital Research, Inc.		(GEM, DR DOS, Concurrent DOS)
+70 Garden Ct., Box DRI
+Monterey, CA 93942
+Voice: (408) 649-3896
+
+Eicon Technology Corporation
+2196 32nd Avenue
+Montreal, Quebec, Canada H8T 3H7
+Voice: (514) 631-2592
 ---------------------------------------------
 To keep the lawyers happy:
 
@@ -486,6 +597,7 @@ HALO'88 is a trademark of Media Cybernetics.
 Banyan is a registered trademark of Banyan Systems, Inc.
 StreetTalk, VINES, and Banyan Network Server are trademarks of Banyan Sys, Inc.
 386/DOS-Extender is a trademark of Phar Lap Software, Inc.
+Carbon Copy Plus is a trademark of Meridian Technology, Inc.
 Various other names are trademarks or registered trademarks of their respective
     holders
 ---------------------------------------------
@@ -494,8 +606,8 @@ What they're saying about this list:
    IBM PC.  A great thing to have on your hard disk if you don't have
    a Ray Duncan or Peter Norton book handy."
       _Turbo_Technix_, July/August 1988, p. 157.
-[and that was about the 1/30/88 version, which is about one-sixth the size of
- the current version....]
+[and that was about the 1/30/88 version, which is less than one-sixth the size
+ of the current version....]
 ---------------------------------------------
 If you know of any information not in the list, or which is stated incorrectly,
 please let me know!  This list would be a pale shadow of its current self if it
