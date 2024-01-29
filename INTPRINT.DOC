@@ -1,3 +1,15 @@
+                            INTPRINT v1.1
+                            by Ralf Brown
+
+The INTPRINT program is (c) Copyright 1989 Ralf Brown.  All Rights Reserved.
+INTPRINT, its source code, and this documentation may be freely redistributed,
+but may not be included as part of any work other than the interrupt list
+maintained by Ralf Brown.  If any changes are made to the program or its
+documentation, the original version must be included with the modified
+version.
+
+------------------------------------------------------------------------------
+
 INTPRINT.COM is a VERY simple formatter for the interrupt list.  Use
 this program to prevent widow or orphan lines at the beginning or end of a
 function call, number the pages, center the printout in elite (12 cps) mode,
@@ -13,10 +25,14 @@ where the options are:
 
         -iN   indent the output N spaces.  The output device is assumed to be
               at least 80+N characters wide.
+              NOTE: you must put the number immediately after the 'i', no
+              blanks are allowed.
 
         -E    assume the printer is an Epson FX80 or compatible, and send
               control sequences to place the printer in elite mode and center
               the printout.  This option overrides -e and forces -i8
+
+        -I    assume the printer is capable of producing IBM character graphics
 
         -p    print the page number at the bottom center of each page
 
@@ -35,6 +51,11 @@ where the options are:
               NOTE: you must put the filename immediately after the 's', no
               blanks are allowed.
 
+        -ffile  create a file containing only the data structures described
+              in the interrupt list.
+              NOTE: you must put the filename immediately after the 'f', no
+              blanks are allowed.
+
 Options may not be combined; "-ep" is illegal and the "p" will be ignored.
 
 Lines_per_page specifies how many lines to print on each page (including the
@@ -46,12 +67,15 @@ feeds are used to skip to the next page.
 
 The file to be formatted is read from standard input, and the formatted result
 is sent to standard output.  Both may be redirected using the standard Unix or
-MSDOS redirection characters < and >.  If you only want a summary file,
-redirect the output to the null device ("NUL" under MSDOS, "/dev/null" under
-Unix).
+MSDOS redirection characters < and >.  If you only want a summary file or
+data formats file, redirect the output to the null device ("NUL" under MSDOS,
+"/dev/null" under Unix).
+
+------------------------------------------------------------------------------
 
 EXAMPLES:
 ---------
+
         Print the interrupt list with page numbers, and create a summary file,
         without concatenating INTERRUP.A and INTERRUP.B:
 
@@ -68,12 +92,23 @@ EXAMPLES:
 
                 C> intprint -E 54 <interrup.lst >prn
 
-        Print the interrupt list using 120 lines on every 132-line page:
+        Print the interrupt list using 120 lines on every 132-line page, and
+        make divider lines using IBM character graphics:
 
-                C> intprint 120 132 <interrup.lst >prn
+                C> intprint -I 120 132 <interrup.lst >prn
 
+------------------------------------------------------------------------------
 
+BUGS:
+-----
 
+Various aligned tables break when the indentation is other than a multiple of
+eight.
+
+------------------------------------------------------------------------------
+
+PORTABILITY:
+------------
 
 INTPRINT.C contains the source code for INTPRINT, for those people who are
 using the interrupt list on a machine which does not run MSDOS.  This code has

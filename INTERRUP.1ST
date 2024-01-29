@@ -1,11 +1,10 @@
-Interrupt List
-Release 89.2   Last change 4/30/89
+Interrupt List		Release 89.4	Last change 7/22/89
 
 Please distribute all of the following files (unmodified) together in an
-archive called INTER289:
+archive called INTER489:
         INTERRUP.1ST	this file
-        INTERRUP.A	INT 00 through INT 5F  \ total 199 pages at 60 lines
-	INTERRUP.B	INT 60 through INT FF  / per page, 215 with INTPRINT -p
+        INTERRUP.A	INT 00 through INT 27 \ total 223 pages at 60 lines
+	INTERRUP.B	INT 28 through INT FF / per page, 241 with INTPRINT -p
         INTERRUP.PRI	a brief primer on interrupts
 	INTPRINT.COM	a simple formatter that also generates the list summary
 	INTPRINT.DOC	instructions for INTPRINT
@@ -16,22 +15,25 @@ Concatenate INTERRUP.A and INTERRUP.B with
 to create an interrupt list file identical to my master copy.
 
 Use INTPRINT to generate the INTERRUP.SUM which used to be included in the
-archive.  See INTPRINT.DOC for details.
+archive, or to generate a new file containing only data structure formats.
+See INTPRINT.DOC for details.
 ---------------------------------------------
-			NOTICE
+	NOTICE		NOTICE		NOTICE		NOTICE
 
-Apparently, an implicit copyright now exists (since April 1, 1989), so I hereby
-grant an unlimited license to use and redistribute the files comprising the
-interrupt list, provided no fee is charged and my name and the names of all
-contributers are preserved (as an exception, pay BBS's which do not charge an
-additional fee for file downloads may carry the interrupt list).  In other
-words, do what you want with the list, but don't try to claim it as your own or
-make money off of it.
+This compilation is (c) Copyright 1989 Ralf Brown
+Permission is granted to use and redistribute the files comprising the
+interrupt listing in any way, provided my name and addresses and the names of
+all contributers are preserved, as well as the information on how to obtain
+new releases.
+
+This version of the list reverts to the public domain one year after the
+date of its release, with the sincere hope that the credits and availability
+information are retained.
 ---------------------------------------------
 If the list is more than three months old by the time you get it, there is
-probably a newer release out already (v89.3 is planned for mid to late July).  
-The newest release of this list is available in these places (please do not ask
-me to email it, it is just too large for that):
+probably a newer release out already (v89.5 is planned for early October).  
+The newest release of this list is available in these places (please do not
+ask me to email it, it is just too large for that):
 
 On the ARPAnet, by standard anonymous FTP from CS.CMU.EDU [128.2.222.173].
 	Change to directory /afs/cs.cmu.edu/user/ralf/pub and get the file 
@@ -40,21 +42,28 @@ On the ARPAnet, by standard anonymous FTP from CS.CMU.EDU [128.2.222.173].
 	unarchivers for MSDOS and BSD Unix are available in the "zip" 
 	subdirectory.  
 
-On FIDOnet, on the Second Opinion 1:129/31 1-412-826-0822 as file INTERnyy.ZIP,
-        where nyy stands for the release n of year yy.  File Requests 23 hrs.
-	ZIP executables are in file area 10.
+On FIDOnet, from The Gas Passer BBS 1:129/46 1-412-648-6326 1200/2400/9600 HST
+	as file INTERnyy.ZIP, where nyy stands for release 'n' of year 'yy',
+	in file area #18 (User Uploads) or #9 (Miscellaneous Goodies).  ZIP
+	executables are in file area #19.  First-time callers may download.
 
 The list is also posted to USEnet in comp.binaries.ibm.pc about three times per
 year, concurrent with a new release of the list.  Since comp.binaries.ibm.pc is
 archived, you will be able to find a fairly recent release in the various UUCP
 archives.
 
-Secondary Distribution Points:
+Secondary Distribution Points (the list will be available here within a day or
+so of release):
 ARPA:	on WSMR-SIMTEL20.ARMY.MIL [26.2.0.74] as file INTERnyy.ARC in directory
 	PD1:<MSDOS.SYSUTL>, where nyy stands for release n of year yy.  Note
         that you must use mode "tenex" or "type L 8" to successfully FTP the
-	file.
-BITnet: you may retrieve the copy on WSMR-SIMTEL20.ARMY.MIL via
+	file.  
+FIDO:	SyncPoint BBS 1-301-682-2731 File Requests.
+	First-time callers may download.
+
+Additional Distribution Points:
+BITnet: you may retrieve the copy on WSMR-SIMTEL20.ARMY.MIL via the following
+	automated mail servers:
         (in the US) LISTSERV@RPIECS (alias VM.ECS.RPI.EDU)
 		    LISTSERV@NDSUVM1 (alias VM1.NODAK.EDU)
         (in Europe) TRICKLE at TREARN (Turkey)
@@ -62,14 +71,22 @@ BITnet: you may retrieve the copy on WSMR-SIMTEL20.ARMY.MIL via
 		    TRICKLE at DB0FUB11 (Germany)
 		    TRICKLE at DKTC11 (Denmark)
 		    TRICKLE at AWIWUW11 (Austria)
-FIDO:	SyncPoint BBS 1-301-682-2731 File Requests
+		    LISTSERV at FINTUVM (Finland)
+CompuServe: on the IBM Forum as INTnyy.*
+
+	Any volunteers with FTP to upload new releases to BBSs on the West
+	Coast or outside the US on a regular basis? (preferably boards which
+	allow first-time callers to download and support file requests)  I 
+	would send you mail as soon as the new list is available for FTP on
+	CS.CMU.EDU.
 ---------------------------------------------
 DISCLAIMER:  I verify the information contained in this list to the best of my
 ability, but I cannot be held responsible for any problems caused by use or
 misuse of the information, especially for those functions not officially 
 documented.  If it is marked "internal", you should check it carefully to make
 sure it works the same way in your version of the software (and please let me
-know whether or not it works the same).
+know whether or not it works the same way).  Information marked with "???" is
+known to be incomplete or guesswork.
 ---------------------------------------------
 This list is the result of the time and effort of a large number of people,
 among them
@@ -89,7 +106,7 @@ among them
 
    87 Dan Lanciani     ddl@harvard.harvard.edu        various, incl. NetBIOS
  7/87 Ralf Brown       ralf@cs.cmu.edu                INT 24h and DOS func 59h
-10/87 Ralf Brown       ralf@cs.cmu.edu                list maintainer
+10/87 Ralf Brown       ralf@cs.cmu.edu                become list maintainer
 11/87 Dan Davison      dd@lanl.gov                    DOS 3.3 function calls
 11/87 Bill White       wwhite@teknowledge-vaxc.arpa   DOS 3.3
 11/87 Richard Hargrove harvard!killer!richardh        EGA
@@ -107,6 +124,7 @@ among them
  9/88 Howard Johnson   Howard_Reed_Johnson@cup.portal.com  NetWare overview
  9/88 Finn Thoegerson  via mcvax!daimi!fab            10-NET, miscellaneous
  9/88 Michael Shiels   mshiels@watmath.waterloo.edu   FOSSIL spec
+ 9/88 Ralf Brown       ralf@cs.cmu.edu		      Microsoft CD-ROM API
 10/88 Michael Shiels   mshiels@ziebmef.uucp           ATI VIP INT 10h
                        BMB Compuscience Canada Ltd.
 10/88 Michael Shiels   mshiels@ziebmef.uucp           FTP Driver spec
@@ -115,33 +133,40 @@ among them
 10/88 Ge van Geldorp   VLRUO02@HDETUD1.BITNET         Novell NetWare
 10/88 Ralf Brown       ralf@cs.cmu.edu                INT 2F/AH=12h
 11/88 Clarence A Dold  cdold@starfish.Convergent.COM  Compaq386 speed settings
+11/88 Ralf Brown       ralf@cs.cmu.edu		      TesSeRact API
 12/88 Ying-Kuen K. Hwang  khwang@wyse.com	      ESDI fixed disk calls
  1/89 Ari Huttunen     mcvax!saha.hut.fi!t36273c      additional INT 33 calls
  1/89 Duncan Murdoch   dmurdoch@watdcsu.waterloo.edu  undoc fields in DOS data
+ 2/89 Ralf Brown       ralf@cs.cmu.edu		      VCPI API
  3/89 Helmut Waelder   ZRWA001@DTUZDV1.BITNET	      more DOS 4.0 calls
  4/89 Robert Seals     rds95@leah.Albany.EDU          ATI VGA Wonder modes
  4/89 Ge van Geldorp   VLRUO02@HDETUD1.BITNET         pcANYWHERE API
  4/89 Robin Walker     rdhw@uk.ac.cam.phx	      undoc DOS 4 data struc
  4/89 Robin Walker     rdhw@uk.ac.cam.phx	      DOS 4.0 shell API
+ 4/89 Ralf Brown       ralf@cs.cmu.edu		      DCA/Intel CAS API
+ 4/89 Ralf Brown       ralf@cs.cmu.edu		      Intel Image Proc Interf
+ 5/89 Robin Walker     rdhw@uk.ac.cam.phx	      multiplex int calls
+ 6/89 Peter Sawatzki   FE617@DHAFEU11.BITNET	      Video7 extended INT 10
+ 7/89 Wes Cowley       wes@cup.portal.com	      SHARE.EXE hooks
 
 Also contributing:
  Dan Crocker <enchant@oliveb.ATC.OLIVETTI.COM>, George Smith <gbs@nsc.nsc.com>,
  Shalom Krischer <actnyc!srk@uunet.UU.NET>, Greg Pasquariello <moss!picuxa!gp>,
  Rich Goldschmidt <rlgvax!golds>, Marty Leisner <Leisner.Henr@Xerox.COM>,
- Dave Guggisberg <daveg@cv.hp.com>, David Dyck <dcd@tc.fluke.COM>,
- Thomas Hundt <hundt@flash.bellcore.com>, <zlatuska@UDEL.EDU>
+ Dave Guggisberg <daveg@cv.hp.com>,Jonathan Story <jspc!Jonathan@uunet.UU.NET>,
+ Thomas Hundt <hundt@flash.bellcore.com>, Brad Templeton <brad@looking.uucp>,
  John Werner <aptr@tut.cc.rochester.edu>, Pete Fales <att!ttrde!pfales>,
- David Herron <david@ms.uky.edu>, Brad Templeton <brad@looking.uucp>,
- Risto Lankinen via Markku Savela <msa@clinet.fi>,
+ David Herron <david@ms.uky.edu>, Otto J. Makela <MAKELA_O%FINJYU.BITNET>,
+ Risto Lankinen via Markku Savela <msa@clinet.fi>, Darryl Gregorash 1:140/86,
  Skule Johansen <S_Johansen%AVH.UNIT.UNINett%NORUNIX.BITNET>,
- Otto J. Makela <MAKELA_O%FINJYU.BITNET>,Everett Kaser <hplabs!hp-pcd!everett>,
+ Everett Kaser <hplabs!hp-pcd!everett>, David Dyck <dcd@tc.fluke.COM>,
  Mark Davis <davis@cs.unc.edu>, Sergio Fogel <sergio%TECHUNIX.BITNET>,
  James P. Kiely <kiely%lownlab@harvard.harvard.edu>,
- W.F. Schroeder <unido!nixpbe!schroeder.pad@uunet.UU.NET>,
- Russ Nelson <nelson@pear.ecs.clarkson.edu>, 
+ W.F. Schroeder <unido!nixpbe!schroeder.pad@uunet.UU.NET>, <zlatuska@UDEL.EDU>,
+ Russ Nelson <nelson@pear.ecs.clarkson.edu>,  Michael Ho <ho@fergvax.unl.edu>,
  Ralph Heredia <att!attmail!rheredia>, Nelluri Reddy <reddy@uc.msc.umn.edu>,
- Stuart Richard Kemp <kemp@umn-cs.cs.umn.edu>, Michael Ho <ho@fergvax.unl.edu>,
- Jonathan Story <jspc!Jonathan@uunet.UU.NET>
+ Stuart R. Kemp <kemp@umn-cs.cs.umn.edu>, Les Moskowitz 1:261/1055,
+ Peter Sawatzki <FE617@DHAFEU11.BITNET>
 ---------------------------------------------
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -243,11 +268,59 @@ pcANYWHERE API functions derived from the pcANYWHERE v2.10 User's Guide. 4/7/89
 Communicating Applications Specification API derived from "DCA/Intel 
 Communicating Applications Specification, Version 1.0A", Sep 1988, copyright
 Digital Communications Associates, Inc and Intel Corp.  Added by Ralf Brown,
-4/18/89.
+4/18/89.  Available on Intel's BBS at 503-645-6275.
 
 Image Processing Interface API derived from "Intel Image Processing Interface
 Specification, Version 1.0", copyright 1989 Intel Corp.  Added by Ralf Brown,
-4/19/89.
+4/19/89.  Available on Intel's BBS at 503-645-6275.
+
+More TesSeRact RAM-resident API calls derived from the documentation to the 
+TesSeRact library v1.1.  Added by Ralf Brown, 4/30/89.
+
+CD-ROM 2.10 function calls derived from "Microsoft MS-DOS CD-ROM Extensions
+Function Requests Specification, 29 March 1989".  Added by Ralf Brown, 6/2/89.
+
+Video7 VGA extended INT 10 calls derived from Video Seven VGA Technical
+Reference Manual, dated 6/30/88.
+
+Additional video modes gleaned from configuration file for FRACTINT v8.0.
+Added by Ralf Brown, 6/26/89.
+---------------------------------------------
+Key to system abbreviations
+(unless otherwise indicated, a function is available on all systems)
+	PC	IBM PC
+	XT	IBM PC XT
+	PORT	IBM PC Portable (uses same BIOS as XT)
+	Jr	IBM PCjr
+	AT	IBM PC AT
+	XT2	IBM PC XT 2
+	XT286	IBM PC XT/286
+	CONV	IBM Convertible
+	PS	IBM PS/2, any model
+	PS30	IBM PS/2 Model 30 and below
+	PS50+	IBM PS/2 Models 50,60,70,80
+	CGA	Color Graphics Adapter
+	EGA	Enhanced Graphics Adapter
+	VGA	Video Graphics Array
+	MCGA	Multi-Color Graphics Array
+	TopView TopView/DESQview/TaskView/OmniView/other compatibles
+---------------------------------------------
+To keep the lawyers happy:
+
+Microsoft, MS, MS DOS, OS/2 are trademarks of Microsoft Corp.
+IBM, PC, PCjr, PC/XT, PC/AT, XT/286, PS/2, TopView are trademarks of IBM Corp.
+Compaq is a registered trademark of Compaq Corp.
+Turbo C and Turbo Pascal are registered trademarks of Borland International
+Tandy 1000 is a registered trademark of Tandy Corp.
+DESQview is a trademark of Quarterdeck Office Systems
+TaskView and OmniView are trademarks of Sunny Hill Software
+10-Net is a trademark of Fox Research, Inc.
+Mouse Systems is a trademark of Mouse Systems Corp.
+NetWare is a trademark of Novell, Inc.
+TesSeRact is a trademark of the TesSeRact Development Team.
+PC Tools is a trademark of Central Point Software, Inc.
+Various other names are trademarks or registered trademarks of their respective
+    companies
 ---------------------------------------------
 What they're saying about this list:
   "A cornucopia of descriptions of interrupt and function calls on the
@@ -268,11 +341,18 @@ prevent future interrupt conflicts).
 	 Ralf Brown
 
 Address e-mail to:
-	 ARPA: ralf@cs.cmu.edu                   \
-	 UUCP: {ucbvax,harvard}!cs.cmu.edu!ralf   > preferred
-	 BIT:  ralf%cs.cmu.edu@cmuccvb           /
-         FIDO: Ralf Brown 1:129/31
-               or post a message to the DR_DEBUG echo
+	ARPA: ralf@cs.cmu.edu                   \
+	UUCP: {ucbvax,harvard}!cs.cmu.edu!ralf   > preferred
+	BIT:  ralf%cs.cmu.edu@cmuccvb           /
+	FIDO: Ralf Brown 1:129/46  (new address!)
+		or post a message to the DR_DEBUG echo
+
+Snail mail:
+	Ralf Brown
+	School of Computer Science
+	Carnegie Mellon University
+	Pittsburgh, PA 15213
+	   (please enclose a SASE or e-mail address if you want a speedy reply)
 
 I reply to all submissions and inquiries.  If you do not receive a reply within
 a reasonable time, send your message again, giving a better return path (on 
