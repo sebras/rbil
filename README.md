@@ -8,6 +8,7 @@ Thank you!
 
 | Version | Release date | Links |
 | --- | --- | --- |
+| [90.3](https://github.com/sebras/rbil/tree/release-90.3/) | 1990/07/15 | [interrupts](https://raw.githubusercontent.com/sebras/rbil/release-90.3/INTERRUP.LST) [credits](https://raw.githubusercontent.com/sebras/rbil/release-90.3/INTERRUP.1ST) |
 | [90.2](https://github.com/sebras/rbil/tree/release-90.2/) | 1990/04/28 | [interrupts](https://raw.githubusercontent.com/sebras/rbil/release-90.2/INTERRUP.LST) [credits](https://raw.githubusercontent.com/sebras/rbil/release-90.2/INTERRUP.1ST) |
 | [90.1](https://github.com/sebras/rbil/tree/release-90.1/) | 1990/01/06 | [interrupts](https://raw.githubusercontent.com/sebras/rbil/release-90.1/INTERRUP.LST) [credits](https://raw.githubusercontent.com/sebras/rbil/release-90.1/INTERRUP.1ST) |
 | [89.5](https://github.com/sebras/rbil/tree/release-89.5/) | 1989/10/07 | [interrupts](https://raw.githubusercontent.com/sebras/rbil/release-89.5/INTERRUP.LST) [credits](https://raw.githubusercontent.com/sebras/rbil/release-89.5/INTERRUP.1ST) |

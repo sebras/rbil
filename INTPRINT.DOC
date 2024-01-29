@@ -1,4 +1,4 @@
-			    INTPRINT v1.11
+			    INTPRINT v1.30
                             by Ralf Brown
 
 The INTPRINT program is
@@ -21,13 +21,17 @@ Usage:
    intprint [options] [lines_per_page [page_length]] <interrup.lst [>outfile]
 
 where the options are:
-        -e    assume printer is in elite mode (96 characters per line), and
-              indent the output eight spaces to center the printout.
+	-b    boldface the title lines, Return:, and Notes:
+
+        -p    print the page number at the bottom center of each page
 
         -iN   indent the output N spaces.  The output device is assumed to be
               at least 80+N characters wide.
               NOTE: you must put the number immediately after the 'i', no
               blanks are allowed.
+
+        -e    assume printer is in elite mode (96 characters per line), and
+              indent the output eight spaces to center the printout.
 
         -E    assume the printer is an Epson FX80 or compatible, and send
               control sequences to place the printer in elite mode and center
@@ -35,14 +39,18 @@ where the options are:
 
         -I    assume the printer is capable of producing IBM character graphics
 
-        -p    print the page number at the bottom center of each page
-
         -nN   assume N pages have already been printed, and start numbering
               at N+1.  This option allows you to create a properly-numbered
               printout even if there is not enough disk space to concatenate
               the parts of the interrupt list.  See the examples below.
               NOTE: you must put the number immediately after the 'n', no
               blanks are allowed.
+
+	-rN:M print only pages N through M.  The entire input is processed
+	      for use in -s and -f summaries (see below) even though only
+	      a portion is formatted for printing.
+	      NOTE: you must put the page numbers immediately after the 'r',
+	      no blanks are allowed.
 
         -sfile  create a one-line-per-function summary and write it to "file"
               if -n is also given, the summary will be appended to "file",
@@ -78,11 +86,14 @@ EXAMPLES:
 ---------
 
         Print the interrupt list with page numbers, and create a summary file,
-        without concatenating INTERRUP.A and INTERRUP.B:
+	without concatenating INTERRUP.A, INTERRUP.B, and INTERRUP.C:
 
                 A> intprint -sb:interrup.sum -p <interrup.a >prn
-		167 pages.   [screen output from INTPRINT]
-		A> intprint -sb:interrup.sum -p -n167 <interrup.b >prn
+		116 pages.   [screen output from INTPRINT]
+		A> intprint -sb:interrup.sum -p -n116 <interrup.b >prn
+		261 pages.   [screen output from INTPRINT]
+		A> intprint -sb:interrup.sum -p -n261 <interrup.c >prn
+		386 pages.   [screen output from INTPRINT]
 
         Create only a summary file:
 
@@ -99,13 +110,10 @@ EXAMPLES:
 
                 C> intprint -I 120 132 <interrup.lst >prn
 
-------------------------------------------------------------------------------
+	Print only pages 123 through 127, assuming that 106 pages are contained
+	in the first section of the list:
 
-BUGS:
------
-
-Various aligned tables break when the indentation is other than a multiple of
-eight.
+		C> intprint -n106 -r123:127 <interrup.b >prn
 
 ------------------------------------------------------------------------------
 
@@ -114,5 +122,5 @@ PORTABILITY:
 
 INTPRINT.C contains the source code for INTPRINT, for those people who are
 using the interrupt list on a machine which does not run MSDOS.  This code has
-been tested with Turbo C and Mach (BSD 4.3) "cc".
+been tested with Turbo C and Mach (BSD 4.3 Unix) "cc".
 

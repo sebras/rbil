@@ -1,21 +1,22 @@
-/***********************************************/
-/* Copyright (c) 1989, 1990  Ralf Brown        */
-/* May be freely redistributed provided no fee */
-/* is charged, this notice remains intact,     */
-/* and any changes are clearly marked as such  */
-/***********************************************/
-/* Program History:                            */
-/*   v1.00  4/23/89  initial public release    */
-/*                   with 4/30/89 list         */
-/*   v1.10  5/21/89  added -I and -f           */
-/*   v1.11  1/6/90   fixed #endif's for complr */
-/*		     which don't handle labels */
-/***********************************************/
+/***********************************************************************/
+/* Copyright (c) 1989, 1990  Ralf Brown 			       */
+/* May be freely redistributed provided no fee is charged, this notice */
+/* remains intact, and any changes are clearly marked as such	       */
+/***********************************************************************/
+/* Program History:						       */
+/*   v1.00  4/23/89  initial public release			       */
+/*		     with 4/30/89 list				       */
+/*   v1.10  5/21/89  added -I and -f				       */
+/*   v1.11  1/6/90   fixed #endif's for compilers which don't handle   */
+/*		     labels					       */
+/*   v1.20  6/8/90   added -r					       */
+/*   v1.30  7/14/90  added -b, tables now stay aligned on odd indents  */
+/***********************************************************************/
 
 #include <stdio.h>
 #include <string.h>
 
-#define VERSION "1.11"
+#define VERSION "1.30"
 
 #define MAXLINE 81   /* at most 80 chars per line (plus newline) */
 #define MAXPAGE 200  /* at most 200 lines per page */
@@ -30,6 +31,7 @@
 #ifdef __TURBOC__
 #  define PROTOTYPES
 #  include <stdlib.h>
+int _Cdecl isatty(int handle) ;
 void _setenvp(void) {} /* don't need the environment, so don't include it */
 int isspace(char c) { return (c == ' ' || c == '\t') ; }
 #else
@@ -67,6 +69,7 @@ void usage(void) ;
 void indent_line(FILE *fp) ;
 void put_line(FILE *fp, int len) ;
 int divider_line(char *line) ;
+void output_line(char *line,FILE *fp) ;
 void fill_buffer(int lines, int lines_per_page) ;
 int find_page_break(int lines) ;
 void summarize(FILE *summary, int line, int pages_printed) ;
@@ -88,30 +91,36 @@ int page_numbers = FALSE ;
 int do_summary = FALSE ;
 int do_formats = FALSE ;
 int IBM_chars = FALSE ;
+int boldface = FALSE ;
 int echo_format = FALSE ;
 FILE *summary ;
 FILE *formats ;
+
+int first_page = 0 ;
+int last_page = 9999 ;
 
 /***********************************************/
 
 void usage()
 {
-   fputs( "INTPRINT v", stderr ) ;
-   fputs( VERSION, stderr ) ;
-   fputs( " Copyright (c) 1989,1990 Ralf Brown.  Free for non-commercial use.\n\n", stderr ) ;
-   fputs( "Usage: intprint [options] [lines [page_size]] <intlist >output\n", stderr );
-   fputs( "\t'lines' defaults to 60\n", stderr ) ;
-   fputs( "\tif page_size is given, only linefeeds will be used to advance\n", stderr ) ;
-   fputs( "Options:\n", stderr ) ;
-   fputs( "\t-p\tcauses pages to be numbered\n", stderr ) ;
-   fputs( "\t-nN\tassume N pages have been printed from previous parts\n", stderr ) ;
-   fputs( "\t-e\tassume 'elite' mode (96 characters per line)\n", stderr ) ;
-   fputs( "\t-iN\tindent output N spaces\n", stderr ) ;
-   fputs( "\t-E\tspecifies that the printer is an Epson FX80 or compatible\n", stderr ) ;
-   fputs( "\t\t-E overrides -e and forces -i8\n", stderr ) ;
-   fputs( "\t-I\tprinter supports IBM graphics characters\n", stderr ) ;
-   fputs( "\t-sfile\twrite a one-line-per-function summary to 'file'\n", stderr ) ;
-   fputs( "\t-ffile\twrite all data structures to 'file'\n", stderr ) ;
+   fputs("INTPRINT v", stderr) ;
+   fputs(VERSION, stderr) ;
+   fputs(" Copyright (c) 1989,1990 Ralf Brown. Free for non-commercial use.\n\n",stderr) ;
+   fputs("Usage: intprint [options] [lines [page_size]] <intlist >output\n",stderr) ;
+   fputs("\t'lines' defaults to 60\n",stderr) ;
+   fputs("\tif page_size is given, only linefeeds will be used to advance\n",stderr) ;
+   fputs("Options:\n",stderr) ;
+   fputs("\t-p\tadd page numbers\n",stderr) ;
+   fputs("\t-nN\tassume N pages have been printed from previous parts\n",stderr) ;
+   fputs("\t-rN:M\tprint only pages N through M\n",stderr) ;
+   fputs("\t-b\tboldface title lines and Return:/Note:\n",stderr) ;
+   fputs("\t-e\tassume 'elite' mode (96 characters per line)\n",stderr) ;
+   fputs("\t-iN\tindent output N spaces\n",stderr) ;
+   fputs("\t-E\tspecifies that the printer is an Epson FX80 or compatible\n",stderr) ;
+   fputs("\t\t-E forces -e -i8\n",stderr) ;
+   fputs("\t-I\tprinter supports IBM graphics characters\n",stderr) ;
+   fputs("\t-sfile\twrite a one-line-per-function summary to 'file'\n",stderr) ;
+   fputs("\t-ffile\twrite all data structures to 'file'\n",stderr) ;
    exit(1) ;
 }
 
@@ -123,7 +132,7 @@ FILE *fp ;
    int ind ;
 
    for (ind = 0 ; ind < indent ; ind++)
-      fputc( ' ', fp ) ;
+      fputc(' ', fp) ;
 }
 
 /***********************************************/
@@ -152,20 +161,75 @@ char *line ;
 
 /***********************************************/
 
+void output_line(line,fp)
+char *line ;
+FILE *fp ;
+{
+   int pos = 0 ;
+   char bold[10] ;
+
+   if (boldface)
+      {
+      if (strncmp(line,"INT ",4) == 0)
+	 {
+	 indent_line(fp) ;
+	 fputs(line,fp) ;
+	 fputc('\r',fp) ;
+	 }
+      else if (strncmp(line,"Return:",7) == 0 || strncmp(line,"Note:",5) == 0 ||
+	       strncmp(line,"Notes:",6) == 0 || strncmp(line,"BUG:",4) == 0 ||
+	       strncmp(line,"SeeAlso:",8) == 0)
+	 {
+	 strncpy(bold,line,sizeof bold) ;
+	 *strchr(bold,':') = '\0' ;
+         indent_line(fp) ;
+	 fputs(bold,fp) ;
+	 fputc('\r',fp) ;
+	 }
+      }
+   indent_line(fp) ;
+   if (indent % 8)
+      {
+      while (*line)
+	 {
+	 if (*line == '\t')
+	    do {
+	       fputc(' ',fp) ;
+	       } while (++pos % 8) ;
+	 else
+	    {
+	    fputc(*line,fp) ;
+	    pos++ ;
+	    }
+	 line++ ;
+	 }
+      }
+   else
+      fputs(line,fp) ;
+   fputc('\n',fp) ;
+}
+
+/***********************************************/
+
 void fill_buffer(lines,lines_per_page)
 int lines, lines_per_page ;
 {
-   int i ;
+   int i, last ;
 
    if (lines)
       for (i = lines ; i < lines_per_page ; i++)
-         strcpy( buffer[i-lines], buffer[i] ) ;
+	 strcpy(buffer[i-lines], buffer[i]) ;
    else
       lines = lines_per_page ;
    for (i = lines_per_page - lines ; i < lines_per_page ; i++)
       {
       buffer[i][0] = '\0' ;  /* force empty line in case of EOF */
-      fgets( buffer[i], sizeof(buffer[i]), stdin ) ;
+      fgets(buffer[i], sizeof(buffer[i]), stdin) ;
+      last = strlen(buffer[i]) - 1 ;
+      if (last < 0)
+	 last = 0 ;
+      if (buffer[i][last] == '\n')
+	 buffer[i][last] = '\0' ;  /* strip the newline */
       }
 }
 
@@ -198,7 +262,7 @@ int line, pages_printed ;
    int len ;
 
    s = buffer[line] ;
-   if (strncmp(s, "INT ", 4 ) == 0)   /* start of an entry? */
+   if (strncmp(s, "INT ", 4) == 0)   /* start of an entry? */
       {
       summary_line[3] = summary_line[0] = ' ' ;
       summary_line[1] = s[4] ;   /* output interrupt number */
@@ -216,7 +280,7 @@ int line, pages_printed ;
          i = 0 ;
       if (i)
          {
-         while (*s && *s != '=' )
+	 while (*s && *s != '=')
             s++ ;
          s++ ;  /* skip the equal sign */
          while (*s && isspace(*s))
@@ -252,7 +316,7 @@ int line, pages_printed ;
          }
       if (page_numbers)
          {
-         itoa(pages_printed+1,num,10) ; /* pages_printed not incremented until later */
+	 itoa(pages_printed,num,10) ;
          for (i = strlen(num) ; i < 3 ; i++)
             summary_line[len++] = ' ' ;
          strcpy(summary_line+len,num) ;
@@ -265,15 +329,11 @@ int line, pages_printed ;
       while (*s && isspace(*s))
          s++ ;
       max_descrip = (page_numbers ? MAXLINE-16 : MAXLINE-12) ;
-      for (i = 0 ; i < max_descrip && *s && *s != '\n' ; i++)
+      for (i = 0 ; i < max_descrip && *s ; i++)
          summary_line[len++] = *s++ ;
-      summary_line[len++] = '\n' ;
       summary_line[len] = '\0' ;
       if (do_summary)
-         {
-         indent_line(summary) ;
-         fputs(summary_line,summary) ;
-         }
+	 output_line(summary_line,summary) ;
       }
 }
 
@@ -287,6 +347,7 @@ char *line ;
    fputc('\n',formats) ;
    indent_line(formats) ;
    fputs(summary_line,formats) ;
+   fputc('\n',formats) ;
    indent_line(formats) ;
    fputc('\t',formats) ;
    fputs(line+10,formats) ;
@@ -299,25 +360,20 @@ char *line ;
 void print_line(line)
 char *line ;
 {
-   if (*line == '\0' || *line == '\n' || divider_line(line))
-      echo_format = FALSE ;
-   if (*line && *line != '\n')
+   if (*line)
       {
-      indent_line(stdout) ;
       if (divider_line(line))
          {
+	 indent_line(stdout) ;
          put_line(stdout,79) ;
          fputc('\n', stdout) ;
          echo_format = FALSE ;
          }
       else
          {
-         fputs(line, stdout) ;
+	 output_line(line, stdout) ;
          if (echo_format)
-            {
-            indent_line(formats) ;
-            fputs(line,formats) ;
-            }
+	    output_line(line,formats) ;
          }
       }
    else
@@ -335,32 +391,36 @@ int use_FF ;
 {
    int i, ind ;
 
+   pages_printed++ ;
    for (i = first ; i < last ; i++)
       {
-      print_line(buffer[i]) ;
+      if (pages_printed >= first_page && pages_printed <= last_page)
+	 print_line(buffer[i]) ;
       if (do_summary || do_formats)  /* need summary lines if doing formats */
          summarize(summary,i,pages_printed) ;
       if (do_formats && strncmp(buffer[i],"Format of ",10) == 0)
          start_format(buffer[i]) ;
       }
-   pages_printed++ ;
-   if (page_numbers)
+   if (pages_printed >= first_page && pages_printed <= last_page)
       {
-      for (i = last - first ; i < lines_per_page - 1 ; i++)
-         fputc( '\n', stdout ) ;
-      indent_line(stdout) ;
-      for (ind = 0 ; ind < 38 ; ind++) /* normal indent + 38 spaces */
-         fputc( ' ', stdout ) ;
-      fputs( "- ", stdout ) ;
-      itoa( pages_printed, num, 10 ) ;
-      fputs( num, stdout ) ;
-      fputs( " -\n", stdout ) ;
+      if (page_numbers)
+	 {
+	 for (i = last - first ; i < lines_per_page - 1 ; i++)
+	    fputc('\n', stdout) ;
+	 indent_line(stdout) ;
+	 for (ind = 0 ; ind < 38 ; ind++) /* normal indent + 38 spaces */
+	    fputc(' ', stdout) ;
+	 fputs("- ", stdout) ;
+	 itoa(pages_printed, num, 10) ;
+	 fputs(num, stdout) ;
+	 fputs(" -\n", stdout) ;
+	 }
+      if (use_FF)
+	 fputc('\f', stdout) ;
+      else
+	 for (i = page_numbers?lines_per_page:(last-first) ; i<total_lines ; i++)
+	    fputc('\n', stdout) ;
       }
-   if (use_FF)
-      fputc( '\f', stdout ) ;
-   else
-      for (i = page_numbers?lines_per_page:(last-first) ; i<total_lines ; i++)
-         fputc( '\n', stdout ) ;
 }
 
 /***********************************************/
@@ -377,7 +437,10 @@ char *argv[] ;
    int body_lines ;
    char *summary_file = NULL ;
    char *formats_file = NULL ;
+   char *last_page_num ;
 
+   if (argc == 1 && isatty(0))
+      usage() ;   /* give help if invoked with no args and keybd input */
    while (argc >= 2 && argv[1][0] == '-')
       {
       switch (argv[1][1])
@@ -394,11 +457,21 @@ char *argv[] ;
          case 'p':
             page_numbers = TRUE ;
             break ;
+	 case 'b':
+	    boldface = TRUE ;
+	    break ;
          case 'n':
-            pages_printed = atoi( argv[1]+2 ) ;
+	    pages_printed = atoi(argv[1]+2) ;
             break ;
+	 case 'r':
+	    first_page = atoi(argv[1]+2) ;
+	    last_page_num = strchr(argv[1]+2, ':') ;
+	    last_page = last_page_num ? atoi(last_page_num+1) : 0 ;
+	    if (last_page == 0)
+	       last_page = 9999 ;
+	    break ;
          case 'i':
-            indent = atoi( argv[1]+2 ) ;
+	    indent = atoi(argv[1]+2) ;
             break ;
          case 's':
             summary_file = argv[1]+2 ;
@@ -413,15 +486,15 @@ char *argv[] ;
       argc-- ;
       }
    if (summary_file && *summary_file)
-      if ((summary = fopen( summary_file, pages_printed ? "a":"w" )) != NULL)
+      if ((summary = fopen(summary_file, pages_printed ? "a":"w")) != NULL)
          do_summary = TRUE ;
       else
-         fputs( "unable to open summary file\n", stderr ) ;
+	 fputs("unable to open summary file\n", stderr) ;
    if (formats_file && *formats_file)
-      if ((formats = fopen( formats_file, pages_printed ? "a":"w" )) != NULL)
+      if ((formats = fopen(formats_file, pages_printed ? "a":"w")) != NULL)
          do_formats = TRUE ;
       else
-         fputs( "unable to open formats file\n", stderr ) ;
+	 fputs("unable to open formats file\n", stderr) ;
    if (argc >= 2)
       lines_per_page = atoi(argv[1]) ;
    if (argc == 3)
@@ -438,7 +511,7 @@ char *argv[] ;
       usage() ;
    if (lines_per_page < 20 || lines_per_page > MAXPAGE)
       {
-      fputs( "Surely you jest!  At least 20 and at most 200 lines per page.\n\n", stderr ) ;
+      fputs("Surely you jest!  At least 20 and at most 200 lines per page.\n\n", stderr) ;
       usage() ;
       }
 #ifdef __TURBOC__
@@ -483,13 +556,13 @@ char *argv[] ;
    if (Epson_mode)
       {
       indent = 0 ;  /* -E overrides -e and -i */
-      fputs( "\033M\033l\007", stdout ) ;
+      fputs("\033M\033l\007", stdout) ;
       }
-   last_line = 0 ;
    if (page_numbers)
       body_lines = lines_per_page - 2 ;
    else
       body_lines = lines_per_page ;
+   last_line = 0 ;
    while (!feof(stdin))
       {
       fill_buffer(last_line,body_lines) ;
@@ -500,13 +573,13 @@ char *argv[] ;
       print_buffer(last_line,body_lines,lines_per_page,total_lines,use_FF) ;
    if (Epson_mode)
       {
-      fputs( "\033M\033l", stdout ) ;  /* cancel Elite mode and indent */
-      fputc( '\0', stdout ) ;
+      fputs("\033M\033l", stdout) ;  /* cancel Elite mode and indent */
+      fputc('\0', stdout) ;
       }
    fflush(stdout) ;
-   itoa( pages_printed, num, 10 ) ;
-   fputs( num, stderr ) ;
-   fputs( " pages\n", stderr) ;
+   itoa(pages_printed, num, 10) ;
+   fputs(num, stderr) ;
+   fputs(" pages\n", stderr) ;
    if (do_summary)
       fclose(summary) ;
    if (do_formats)

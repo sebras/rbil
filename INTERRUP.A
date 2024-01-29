@@ -1,12 +1,13 @@
-Interrupt List		Release 90.2	Last change 4/28/90
+Interrupt List		Release 90.3	Last change 7/15/90
 This compilation is Copyright (c) 1989, 1990 Ralf Brown
 ---------------------------------------------
 Please redistribute the following files unmodified as a group, in an archive
-named INTER290:
+named INTER390:
 	INTERRUP.1ST	the read-me file, containing credits, availability info
-	INTERRUP.A	INT 00 through INT 1F \ total 320 pages at 60 lines
-	INTERRUP.B	INT 20 through INT 3F  >per page, 346 with INTPRINT -p
-	INTERRUP.C	INT 40 through INT FF /
+	INTERRUP.A	INT 00 through INT 1F \
+	INTERRUP.B	INT 20 through INT 27  \ total 372 pages at 60 lines
+	INTERRUP.C	INT 28 through INT 5F  / per page, 403 with INTPRINT -p
+	INTERRUP.D	INT 60 through INT FF /
 	INTERRUP.PRI	a brief introduction to interrupts
 	INTPRINT.COM	a simple formatter that also generates the list summary
 	INTPRINT.DOC	instructions for INTPRINT
@@ -23,8 +24,8 @@ that it's already been addressed.
 
 ARPA: ralf@cs.cmu.edu
 UUCP: {ucbvax,harvard}!cs.cmu.edu!ralf
-BIT:  ralf%cs.cmu.edu@cmuccvb
-FIDO: Ralf Brown 1:129/46
+BIT:  ralf%cs.cmu.edu@cmuccvma
+FIDO: Ralf Brown 1:129/3.1 (new address!)
 	or post a message to the DR_DEBUG echo
 CIS:  >INTERNET:ralf@cs.cmu.edu 
 
@@ -62,7 +63,7 @@ Notes:	this is what makes the T command of DEBUG work for single-stepping
 	  (unless you have a very early 8088 with a microcode bug)
 SeeAlso: INT 03
 ---------------------------------------------
-INT 01 - internal hardware - DEBUGGING EXCEPTIONS (80386)
+INT 01 - 80386+ internal hardware - DEBUGGING EXCEPTIONS
    Instruction address breakpoint fault - will return to execute instruction
    Data address breakpoint trap - will return to following instruction
    General detect fault, debug registers in use
@@ -301,6 +302,7 @@ INT 10 - VIDEO - SET VIDEO MODE
 	       = 100x37 8x16 800x600 256/256k	 A000 Orchid 
 	       =	     800x600 256/256k	 A000 STB,Genoa,Sigma
 	       =	     720x350   2	      3270 PC
+	       =	     800x600 256	      Cardinal
 	       =	     ???x???		 B800 AT&T 6300
 	   33h = 132x44 8x8	      16	 B800 ATI EGA Wonder,ATI VIP
 	   36h =	     960x720  16	      VEGA VGA
@@ -309,6 +311,7 @@ INT 10 - VIDEO - SET VIDEO MODE
 	       = 128x48 8x16 1024x768 16	 A000 Orchid
 	       =	    1024x768  16	 A000 STB,Genoa,Sigma
 	       = 132x44 8x8	     mono	 B800 ATI EGA Wonder,ATI VIP
+	   38h =	    1024x768 256	      STB VGA/EM-16 Plus (1MB)
 	   40h = 80x25	8x16 640x400   2      1  B800 AT&T 6300, AT&T VDC600
 	       = 80x25	8x16 640x400   2      1  B800 Compaq Portable
 	       = 80x43				      VEGA VGA, Tecmar VGA/AD
@@ -344,14 +347,17 @@ INT 10 - VIDEO - SET VIDEO MODE
 	       = 80x43		     mono	      VEGA VGA
 	       =	     640x480 mono???	      Taxan 565 EGA
 	       = 80x34				      Lava Chrome II EGA
+	       = 132x25 8x14	      16      8  B800 OAK Technologies VGA-16
 	   51h = 80x30	8x16			      Paradise EGA-480
 	       = 80x30				      Lava Chrome II EGA
 	       = 80x34	8x14 640x480  16	      ATI EGA Wonder
 	       = 132x25 	     mono	      VEGA VGA
+	       = 132x43 8x8           16      5  B800 OAK Technologies VGA-16
 	   52h = 132x44 9x8	     mono	      Ahead Systems EGA2001
 	       = 132x43 	     mono	      VEGA VGA
 	       = 94x29	8x14 752x410  16	      ATI EGA Wonder
 	       = 80x60				      Lava Chrome II EGA
+	       = 100x75	8x8  800x600  16      1  A000 OAK Technologies VGA-16
 	   53h = 100x40 8x14 800x560  16	      ATI EGA Wonder,ATI VIP
 	       = 132x43 			      Lava Chrome II EGA
 	   54h = 132x43 8x8			      Paradise EGA-480
@@ -398,15 +404,18 @@ INT 10 - VIDEO - SET VIDEO MODE
 	       =	     640x350 256	      Genoa 6400
 	   5Ch =	     640x400 256	      Logix, ATI Prism Elite
 	       =	     640x400 256	      Maxxon, SEFCO TVGA, Imtec
+	       =	     640x400 256	      Zymos Poach
 	       =	     640x480 256	      Genoa 6400
 	   5Dh =	     640x480 256	      Logix, ATI Prism Elite
 	       =	     640x480 256	      Maxxon, SEFCO TVGA, Imtec
+	       =	     640x480 256	      Zymos Poach
 	   5Eh =	     640x400 256	      Paradise VGA,VEGA VGA
 	       =	     640x400 256	      AST VGA Plus
 	       =	     640x400 256	      Compaq VGA, Dell VGA
 	       = 80x25	8x16 640x400 256	      AT&T VDC600
 	       =	     800x600  16	      Logix, ATI Prism Elite
 	       =	     800x600 256	      Genoa 6400
+	       =	     800x600 256	      Zymos Poach
 	   5Fh =	     640x480 256	      Paradise VGA
 	       =	     640x480 256	      AST VGA Plus
 	       =	     640x480 256	      Compaq VGA, Dell VGA
@@ -414,6 +423,7 @@ INT 10 - VIDEO - SET VIDEO MODE
 	       = 80x30	8x16 640x480 256	      AT&T VDC600 (512K)
 	       =	    1024x768  16	      Logix, ATI Prism Elite
 	       =	    1024x768  16	      Maxxon, Genoa 6400, Imtec
+	       =	    1024x768  16	      Zymos Poach
 	   60h = 80x???      ???x400		      Corona/Cordata BIOS 4.10+
 	       =	     752x410		      VEGA VGA
 	       =	     752x410  16	      Tatung VGA
@@ -432,6 +442,7 @@ INT 10 - VIDEO - SET VIDEO MODE
 	       =	     800x600 256	      Ahead B
 	   63h =	    1024x768   2	      Video7 V-RAM VGA
 	       =	     800x600 256	 A000 ATI VGA Wonder
+	       =	    1024x768 256	      Ahead B (1MB)
 	   64h =	    1024x768   4	      Video7 V-RAM VGA
 	   65h =	    1024x768  16	      Video7 V-RAM VGA
 	       =	    1024x768  16	 A000 ATI VGA Wonder
@@ -442,10 +453,18 @@ INT 10 - VIDEO - SET VIDEO MODE
 	   69h =	     720x540 256	      Video7 V-RAM VGA
 	   6Ah =	     800x600  16	      VESA standard interface
 	       =	     800x600  16	      Ahead B, Genoa 6400
-	   70h = extended mode set (see AX=0070h)     Everex Micro Enhancer EGA
+	       =	     800x600  16	      Zymos Poach
+	   70h =	     800x600  16	      Cardinal
+	       = extended mode set (see AX=0070h)     Everex Micro Enhancer EGA
 	   71h = 100x35 8x16 800x600 16of64	 A000 NSI Smart EGA+
+	       =	     960x720  16	      Cardinal
+	   72h =	    1024x768  16	      Cardinal
 	   74h =	     640x400   2	 B800 Toshiba 3100 AT&T mode
 	       =	    1024x768  16	      Ahead B
+	   78h =	     640x400 256	      STB VGA/EM-16 Plus
+	       =	     640x400 256	      Cardinal
+	   79h =	     640x480 256	      Cardinal
+	   7Ah =	     720x540 256	      Cardinal
 	   7Ch =	     512x512  16	      Genoa
 	   7Dh =	     512x512 256	      Genoa
 	   7Eh = special mode set (see AX=007Eh)      Paradise VGA, AT&T VDC600
@@ -540,10 +559,13 @@ INT 10 - VIDEO - SET CURSOR CHARACTERISTICS
 	AH = 01h
 	CH bits 0-4 = start line for cursor in character cell
 	   bits 5-6 = blink attribute
-		     (00=normal, 01=invisible, 10=slow, 11=fast)
+		     (00=normal, 01=invisible, 10=slow, 11=fast on CGA/mono)
+		     (00=normal, other=invisible on EGA/VGA)
 	CL bits 0-4 = end line for cursor in character cell
 Note:	buggy on EGA systems--BIOS remaps cursor shape in 43 line modes, but
 	  returns unmapped cursor shape
+BUG:	AMI 386 BIOS and AST Premier 386 BIOS will lock up the system if AL
+	  is not equal to the current video mode
 SeeAlso: AH=03h
 ---------------------------------------------
 INT 10 - VIDEO - SET CURSOR POSITION
@@ -1424,6 +1446,7 @@ Return: AL = 4Fh function supported
 	AH = status
 	    00h successful
 	    01h failed
+SeeAlso: AX=4F03h
 
 Values for VESA video mode
  100h	640x400x256
@@ -1442,6 +1465,7 @@ Return: AL = 4Fh function supported
 	    00h successful
 	    01h failed
 	BX = video mode
+SeeAlso: AX=4F02h
 ---------------------------------------------
 INT 10 - VESA SuperVGA BIOS - SAVE/RESTORE SuperVGA VIDEO STATE
 	AX = 4F04h
@@ -1599,7 +1623,7 @@ INT 10 - VIDEO - SET VIDEO MODE (Video7 VGA, VEGA EXTENDED EGA/VGA)
 	   77h =	     640x480 256gray	     Video7 VGA
 	   78h =	     720x540 256gray	     Video7 VGA
 	   79h =	     800x600 256gray	     (future)
-SeeAlso: AH=00h,AX=0070h,007Eh,6F04h
+SeeAlso: AH=00h,AX=0070h,AX=007Eh,AX=6F04h
 ---------------------------------------------
 INT 10 - VIDEO - SELECT AUTOSWITCH MODE (V7VGA,VEGA VGA)
 	AX = 6F06h
@@ -1755,11 +1779,11 @@ Return: DL = video adapter type
 	    02h ???  / Hercules InColor
 	    FFh non-Hercules 
 	DH = ???
-Note:	MSHERC.COM is a support program for Microsoft Quick-C which makes its
-	  graphics library compatible with a Hercules card by adding video
-	  modes 08h and 88h, and supporting text in the new graphics modes.
-	  While in mode 08h or 88h, INT 10 supports the Hercules card much
-	  like a CGA.
+Note:	MSHERC.COM is a support program for the Microsoft Quick languages which
+	  makes their graphics libraries compatible with a Hercules card by
+	  adding video modes 08h and 88h, and supporting text in the new
+	  graphics modes.  While in mode 08h or 88h, INT 10 supports the
+	  Hercules card much like a CGA.
 ---------------------------------------------
 INT 10 - Microsoft Mouse driver EGA support - READ ONE REGISTER
 	AH = F0h
@@ -1901,7 +1925,7 @@ INT 10 - VIDEO (TopView) - UPDATE REAL SCREEN FROM VIDEO BUFFER
 	ES = segment of video buffer
 Note:	avoid CX=0000h
 ---------------------------------------------
-INT 11 - internal hardware - ALIGNMENT CHECK - (80486)
+INT 11 - 80486 internal hardware - ALIGNMENT CHECK
    Bit AC in the EFLAGS register enables this interrupt on a memory reference
      on a mis-aligned address when in privilege mode 3.
 ---------------------------------------------
@@ -1926,6 +1950,10 @@ Return: AX = equipment flag bits
 	    13	  serial printer installed (PCjr)
 		  internal modem installed (PC/Convertible)
 	    14,15 number of printers
+---Compaq and many other 386/486 machines--
+	EAX bit 23: page tables set so that Weitek coprocessor addressable in
+			real mode
+	    bit 24: Weitek math coprocessor present
 SeeAlso: INT 12
 ---------------------------------------------
 INT 12 - MEMORY SIZE
@@ -3273,12 +3301,12 @@ INT 15 - TopView - "BEGINC" - BEGIN CRITICAL REGION
 	AX = 101Bh
 Return: task-switching temporarily disabled
 Note:	will not task-switch until END CRITICAL REGION (AX = 101Ch) called
-SeeAlso: AX=101Ch
+SeeAlso: AX=101Ch,DE13h
 ---------------------------------------------
 INT 15 - TopView - "ENDC" - END CRITICAL REGION
 	AX = 101Ch
 Return: task-switching enabled
-SeeAlso: AX=101Bh
+SeeAlso: AX=101Bh,DE13h
 ---------------------------------------------
 INT 15 - TopView - "STOP" - STOP TASK
 	AX = 101Dh
@@ -3476,7 +3504,7 @@ INT 15 - DESQview 2.0 - KEYBOARD MOUSE CONTROL
 ---------------------------------------------
 INT 15 - TopView commands
 	AH = 11h
-	AL = various
+	AL = various (except 17h)
 Note:	in DESQview 2.x, these function calls are identical to AH=DEh, so
 	  see those below
 SeeAlso: AH=DEh
@@ -3487,12 +3515,12 @@ INT 15 - VMiX - EXECUTE SHELL SYSTEM COMMANDS
 			request (max len = 127)
 Return: AX = status
 ---------------------------------------------
-INT 15 - DESQview 2.2 - "ASSERTMAP" - GET/SET MAPPING CONTEXT
+INT 15 - DESQview 2.2+ - "ASSERTMAP" - GET/SET MAPPING CONTEXT
 	AX = 1117h
 	BX = 0000h	get current mapping context without setting
 	     nonzero	set new mapping context
 Return: BX = mapping context in effect before call
-Notes:	this function differs from AX = DE17h
+Notes:	this function differs from AX = DE17h for DESQview v2.20 through 2.25
 	mapping contexts determine conventional-memory addressability; setting
 	  a mapping context ensures that the associated program and data areas
 	  are in memory for access.  Usable by drivers, TSRs and shared
@@ -3582,7 +3610,7 @@ Return: STACK: DWORD length of directory
 	       DWORD address of directory
 
 Format of panel file:
-Offset	Size	Descriptoin
+Offset	Size	Description
  00h  2 BYTEs	C0h C3h
  02h	BYTE	number of panels in file
  03h	for each panel in file:
@@ -4896,6 +4924,7 @@ INT 15 - SYSTEM - SWITCH TO VIRTUAL MODE (AT,XT286,PS50+)
 	CX = offset into protected-mode CS to jump to
 Return: CF set on error
 	   AH = 0FFh  error enabling address line 20
+SeeAlso: INT 67/AX=DE0Ch
 ---------------------------------------------
 INT 15 - OS HOOK - DEVICE BUSY LOOP (AT,XT2,XT286,CONV,PS)
 	AH = 90h
@@ -4952,10 +4981,11 @@ Offset	Size	Description
 
 Values for model/submodel/revision:
 Model  Submdl  Rev	BIOS date	System
- FFh	*	*	04/24/81	PC
- FFh	*	*	10/19/81	PC
- FFh	*	*	10/27/82	PC
- FEh	*	*	11/08/82	PC XT
+ FFh	*	*	04/24/81	PC (original)
+ FFh	*	*	10/19/81	PC (some bugfixes)
+ FFh	*	*	10/27/82	PC (HD, 640K, EGA support)
+ FEh	*	*	08/16/82	PC XT
+ FEh	*	*	11/08/82	PC XT and Portable
  FDh	*	*	06/01/83	PCjr
  FCh	*	*	01/10/84	AT models 068,099 6 MHz 20MB
  FCh	00h	01h	06/10/85	AT model  239	  6 MHz 30MB
@@ -4976,9 +5006,12 @@ Model  Submdl  Rev	BIOS date	System
  F8h	00h	00h	03/30/87     ** PS/2 Model 80 16MHz
  F8h	01h	00h	10/07/87	PS/2 Model 80 20MHz
  F8h	04h	02h	04/11/88	PS/2 Model 70, at least model -121
+ F8h	04h	03h	03/17/89	PS/2 Model 70, at least model -M61
  F8h	09h	???	  ???		PS/2 Model 70 some models
  F8h	09h	02h	04/11/88	PS/2 Model 70 some models
+ F8h	09h	03h	03/17/89	PS/2 Model 70 some models
  F8h	0Ch	00h	11/02/88	PS/2 Model 55SX
+ F8h	1Bh	00h	10/02/89	PS/2 Model 70-486
 
     * This BIOS call not implemented in these early versions.
       Read Model byte at F000h:FFFEh and BIOS date at F000h:FFF5h.
@@ -5232,6 +5265,7 @@ INT 15 - DESQview 2.2 - GET CRITICAL NESTING COUNT
 	AX = DE13h
 Return: BX = number of calls to BEGINC (see INT 15/AX=101Bh) without matching
 	     ENDC (see INT 15/AX=101Ch)
+SeeAlso: AX=101Bh,101Ch,DE1Bh,DE1Ch
 ---------------------------------------------
 INT 15 - DESQview 2.2 - GET OBJECT TYPE
 	AX = DE14h
@@ -5261,10 +5295,21 @@ Return: BL = 00h post system error
 	     01h return carry flag set
 SeeAlso: AX=DE15h
 ---------------------------------------------
-INT 15 - DESQview 2.2 - reserved
+INT 15 - DESQview 2.20-2.25 - reserved
 	AX = DE17h
 Return: pops up "Programming error" window
-Note:	AX = 1117h is NOT identical to this call
+Note:	AX = 1117h is NOT identical to this call under DESQview 2.20 thru 2.25
+---------------------------------------------
+INT 15 - DESQview 2.26+ - "ASSERTMAP" - GET/SET MAPPING CONTEXT
+	AX = 1117h
+	BX = 0000h	get current mapping context without setting
+	     nonzero	set new mapping context
+Return: BX = mapping context in effect before call
+Notes:	mapping contexts determine conventional-memory addressability; setting
+	  a mapping context ensures that the associated program and data areas
+	  are in memory for access.  Usable by drivers, TSRs and shared
+	  programs.
+	Caller need not be running under DESQview
 ---------------------------------------------
 INT 15 - DESQview 2.2 - ???
 	AX = DE18h
@@ -5280,15 +5325,69 @@ INT 15 - DESQview 2.2 - ???
 		    ES:DI -> 18-byte buffer to hold ???
 Note:	calls video driver (NOP for Hercules driver,probably CGA and MCGA also)
 ---------------------------------------------
-INT 15 - DESQview 2.26 - ???
+INT 15 - DESQview 2.26 - ALLOCATE "COMMON" MEMORY
 	AX = DE19h
-	???
+	BX = number of bytes to allocate
+Return: AX = 0000h successful
+		ES:DI -> allocated block
+	     0001h insufficient memory
+SeeAlso: AX=DE0Ch,DE1Ah
+---------------------------------------------
+INT 15 - DESQview 2.26 - DEALLOCATE "COMMON" MEMORY
+	AX = DE1Ah
+	DS:SI -> previously allocated block
 Return: ???
+SeeAlso: AX=DE0Dh,DE19h
+---------------------------------------------
+INT 15 - DESQview 2.26 - DECREMENT CRITICAL NESTING COUNT
+	AX = DE1Bh
+Return: nothing
+SeeAlso: AX=DE13h,DE1Ch
+---------------------------------------------
+INT 15 - DESQview 2.26 - INCREMENT CRITICAL NESTING COUNT
+	AX = DE1Ch
+Return: nothing
+SeeAlso: AX=DE13h,DE1Bh
 ---------------------------------------------
 INT 15 - DESQview 2.26 - ???
-	AX = DE1Ah
+	AX = DE1Dh
+	DX = segment of ??? object
 	???
+Return: AX = ???
+---------------------------------------------
+INT 15 - DESQview 2.26 - GET TRUE VIDEO PARAMETERS
+	AX = DE1Eh
+Return: BL = actual video mode (may differ from INT 10/AH=0Fh return)
+	CL = actual number of rows on screen
+	CH = actual number of columns on screen
+SeeAlso: INT 10/AH=0Fh
+---------------------------------------------
+INT 15 - DESQview 2.26 - GET ???
+	AX = DE1Fh
+Return: BX = segment of ??? object or 0000h if none
+---------------------------------------------
+INT 15 - DESQview 2.26 - INTERRUPT ANOTHER TASK
+	AX = DE20h
+	BX = segment of handle of task to interupt
+	DX:CX -> interrupt routine
 Return: ???
+---------------------------------------------
+INT 15 - DESQview 2.26 - CONTROL 386 SCREEN VIRTUALIZATION
+	AX = DE21h
+	BX = 0000h turn off
+	     nonzero turn on
+Return: BX = old state of virtualization
+---------------------------------------------
+INT 15 - DESQview 2.26 - GET TASK MEMORY STATUS
+	AX = DE22h
+	DX = segment of task handle
+Return: DX = total amount of memory in paragraphs
+	BX = amount of system memory in paragraphs
+	CX = largest block of system memory available in paragraphs
+	AX = flags
+	    bit 0: system memory resides in shared memory
+	        1: process's memory is swapped out
+	        2: system memory is swapped out
 ---------------------------------------------
 INT 16 - KEYBOARD - READ CHAR FROM BUFFER, WAIT IF EMPTY
 	AH = 00h
@@ -5593,6 +5692,31 @@ Return: AL = type
 	    00h if 11-bit AT keyboard is in use
 	    01h if 9-bit PC keyboard is in use 
 ---------------------------------------------
+INT 16 - PC Tools v6.0 DESKTOP API - ???
+	AX = FFADh
+	???
+Return: ???
+---------------------------------------------
+INT 16 - PC Tools v6.0 DESKTOP API - ???
+	AX = FFAEh
+	???
+Return: ???
+---------------------------------------------
+INT 16 - PC Tools v6.0 DESKTOP API - ???
+	AX = FFAFh
+	???
+Return: ???
+---------------------------------------------
+INT 16 - PC Tools v6.0 DESKTOP API - ???
+	AX = FFB0h
+	???
+Return: ???
+---------------------------------------------
+INT 16 - PC Tools v6.0 DESKTOP API - ???
+	AX = FFB1h
+	???
+Return: ???
+---------------------------------------------
 INT 16 - PC Tools v5.5 DESKTOP API - ???
 	AX = FFB2h
 Return: DS:SI -> ???
@@ -5705,9 +5829,10 @@ INT 16 - PC Tools v5.1 DESKTOP API - ???
 Return: ???
 Note:	available only when popped up
 ---------------------------------------------
-INT 16 - PC Tools v5.1 DESKTOP API - ???
+INT 16 - PC Tools v5.1 DESKTOP API - CHECK WHETHER DESKTOP LOADED RESIDENT
 	AX = FFC5h
-Return: BL = ???
+Return: BL = nonzero if loaded resident
+	   = 00h if nonresident
 Note:	available only when popped up
 ---------------------------------------------
 INT 16 - PC Tools v5.1 DESKTOP API - SET ???
@@ -5901,6 +6026,11 @@ INT 16 - PC Tools v5.1 PCShell API - ???
 	BX = 0008h
 	???
 Return: ???
+---------------------------------------------
+INT 16 - PC Tools v6.0 PCShell API - GET ???
+	AX = FFDDh
+	BX = 0009h
+Return: DS:SI -> ???
 ---------------------------------------------
 INT 16 - PC Tools v5.1 DESKTOP API - ???
 	AX = FFDEh
@@ -6254,9 +6384,13 @@ INT 19 - DISK BOOT
    then load the operating system's bootstrap loader (contained in the first
    sector of the active partition) and give it control.
 
-Note:	to accomplish a warm boot equivalent to Ctrl-Alt-Del, store 1234h in
-	0040h:0072h and jump to FFFFh:0000h.  For a cold boot equivalent to
-	a reset, store 0000h at 0040h:0072h before jumping.
+Notes:	to accomplish a warm boot equivalent to Ctrl-Alt-Del, store 1234h in
+	  0040h:0072h and jump to FFFFh:0000h.  For a cold boot equivalent to
+	  a reset, store 0000h at 0040h:0072h before jumping.
+	VDISK.SYS hooks this interrupt to allow applications to find out how
+	  much extended memory has been used by VDISKs (the three bytes at
+	  offset 2Ch in the INT 19 handler's segment contain the linear address
+	  of the first free extended memory).
 
 Format of hard disk master boot sector:
 Offset	Size	Description
