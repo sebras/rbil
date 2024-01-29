@@ -1,28 +1,35 @@
-			       Interrupt Summary
-			       -----------------
+			Interrupt Summary
+			-----------------
 
-INT/AH/AL                  Description
+INT AH AL		Description
 ----------------------------------------------------------------------
- 00 -- -- HARDWARE - DIVIDE ERROR
- 01 -- -- HARDWARE - SINGLE-STEP
- 02 -- -- HARDWARE - NMI (NON-MASKABLE INTERRUPT)
- 03 -- -- HARDWARE - 1-BYTE INTERRUPT
- 04 -- -- HARDWARE - OVERFLOW
+ 00 -- -- internal - DIVIDE ERROR
+ 01 -- -- internal - SINGLE-STEP
+ 02 -- -- hardware - NMI (NON-MASKABLE INTERRUPT)
+ 03 -- -- ONE-BYTE INTERRUPT
+ 04 -- -- internal - OVERFLOW
  05 -- -- PRINT-SCREEN KEY
- 05 -- -- BOUND CHECK FAILED (80186/80286 internal interrupt)
- 06 -- -- UNDEFINED OPCODE (80286 internal interrupt)
- 07 -- -- NO MATH UNIT AVAILABLE (80286 internal interrupt)
-
- 08 -- -- 0F - VECTORED HARDWARE LINES
-
- 08 -- -- DOUBLE FAULT (80286 protected-mode internal)
- 09 -- -- MATH UNIT PROTECTION FAULT (80286 protected-mode internal)
- 0A -- -- INVALID TASK STATE SEGMENT (80286 protected-mode internal)
- 0B -- -- NOT PRESENT (80286 protected-mode internal)
- 0C -- -- STACK FAULT (80286 protected-mode internal)
- 0D -- -- GENERAL PROTECTION VIOLATION (80286 internal interrupt)
- 0E -- -- PAGE FAULT (80386 native-mode internal interrupt)
+ 05 -- -- internal - BOUND CHECK FAILED (80186/80286)
+ 06 -- -- internal - UNDEFINED OPCODE (80286)
+ 07 -- -- internal - NO MATH UNIT AVAILABLE (80286)
+ 08 -- -- IRQ0 - TIMER INTERRUPT
+ 08 -- -- internal - DOUBLE FAULT (80286 protected mode)
+ 09 -- -- IRQ1 - KEYBOARD INTERRUPT
+ 09 -- -- internal - MATH UNIT PROTECTION FAULT (80286 protected mode)
+ 0A -- -- IRQ2 - EGA VERTICAL RETRACE
+ 0A -- -- internal - INVALID TASK STATE SEGMENT (80286 protected-mode)
+ 0B -- -- IRQ3 - COM2 INTERRUPT
+ 0B -- -- internal - NOT PRESENT (80286 protected-mode)
+ 0C -- -- IRQ4 - COM1 INTERRUPT
+ 0C -- -- internal - STACK FAULT (80286 protected-mode)
+ 0D -- -- IRQ5 - FIXED DISK (PC), LPT2 (AT/PS)
+ 0D -- -- internal - GENERAL PROTECTION VIOLATION (80286)
+ 0E -- -- IRQ6 - DISKETTE INTERRUPT
+ 0E -- -- internal - PAGE FAULT (80386 native mode)
+ 0F -- -- IRQ7 - PRINTER INTERRUPT
  10 00 -- VIDEO - SET VIDEO MODE
+ 10 00 7E VIDEO - Paradise VGA - SET SPECIAL MODE
+ 10 00 7F VIDEO - Paradise VGA - EXTENDED FUNCTIONS
  10 01 -- VIDEO - SET CURSOR CHARACTERISTICS
  10 02 -- VIDEO - SET CURSOR POSITION
  10 03 -- VIDEO - READ CURSOR POSITION
@@ -75,8 +82,8 @@ INT/AH/AL                  Description
  10 71 -- VIDEO - GET INCRAM ADDRESSES (TANDY 1000)
  10 72 -- VIDEO - SCROLL SCREEN RIGHT (TANDY 1000)
  10 73 -- VIDEO - SCROLL SCREEN LEFT (TANDY 1000)
- 10 80 -- VIDEO (DESQview) - ???
- 10 81 -- VIDEO (DESQview) - ???
+ 10 80 -- VIDEO (DESQview) - SET ???
+ 10 81 -- VIDEO (DESQview) - GET ???
  10 82 -- VIDEO (DESQview) - GET CURRENT WINDOW INFO
  10 F0 -- Microsoft Mouse driver EGA support - READ ONE REGISTER
  10 F1 -- Microsoft Mouse driver EGA support - WRITE ONE REGISTER
@@ -105,16 +112,16 @@ INT/AH/AL                  Description
  13 0A -- FIXED DISK - READ LONG (XT,AT,XT286,PS)
  13 0B -- FIXED DISK - WRITE LONG (XT,AT,XT286,PS)
  13 0C -- FIXED DISK - SEEK TO CYLINDER (XT,AT,XT286,PS)
- 13 0D -- FIXED DISK - ALTERNATE DISK RESET (XT,PORT,AT,XT286,PS)
- 13 0E -- FIXED DISK - READ SECTOR BUFFER (XT,PORT,PS)
- 13 0F -- FIXED DISK - WRITE SECTOR BUFFER (XT,PORT,PS)
+ 13 0D -- FIXED DISK - ALTERNATE DISK RESET (XT,AT,XT286,PS)
+ 13 0E -- FIXED DISK - READ SECTOR BUFFER (XT,PS)
+ 13 0F -- FIXED DISK - WRITE SECTOR BUFFER (XT,PS)
  13 10 -- FIXED DISK - TEST FOR DRIVE READY (XT,AT,XT286,PS)
- 13 11 -- FIXED DISK - RECALIBRATE DRIVE (XT,PORT,AT,XT286,PS)
- 13 12 -- FIXED DISK - CONTROLER RAM DIAGNOSTIC (XT,PORT,PS)
- 13 13 -- FIXED DISK - DRIVE DIAGNOSTIC (XT,PORT,PS)
- 13 14 -- FIXED DISK - CONTROLLER DIAGNOSTICS (XT,PORT,AT,XT286,PS)
+ 13 11 -- FIXED DISK - RECALIBRATE DRIVE (XT,AT,XT286,PS)
+ 13 12 -- FIXED DISK - CONTROLER RAM DIAGNOSTIC (XT,PS)
+ 13 13 -- FIXED DISK - DRIVE DIAGNOSTIC (XT,PS)
+ 13 14 -- FIXED DISK - CONTROLLER DIAGNOSTICS (XT,AT,XT286,PS)
  13 15 -- DISK - GET TYPE (AT,XT2,XT286,CONV,PS)
- 13 16 -- FLOPPY - CHANGE OF DISK STATUS (AT,XT2,XT286,CONV,PS)
+ 13 16 -- FLOPPY DISK - CHANGE OF DISK STATUS (AT,XT2,XT286,CONV,PS)
  13 17 -- DISK - SET TYPE (AT,XT2,XT286,CONV,PS)
  13 18 -- DISK - SET MEDIA TYPE FOR FORMAT (AT model 3x9,XT2,XT286,PS)
  13 19 -- FIXED DISK - PARK HEADS (XT286,PS)
@@ -123,18 +130,17 @@ INT/AH/AL                  Description
  14 01 -- SERIAL I/O - TRANSMIT CHARACTER
  14 02 -- SERIAL I/O - RECEIVE CHARACTER
  14 03 -- SERIAL I/O - GET USART STATUS
- 14 04 -- SERIAL I/O - EXTENDED INITIALIZE (CONVERTIBLE???,PS)
- 14 05 -- SERIAL I/O - EXTENDED COMMUNICATION PORT CONTROL (CONVERTIBLE???,PS)
+ 14 04 -- SERIAL I/O - EXTENDED INITIALIZE (CONVERTIBLE,PS)
+ 14 05 -- SERIAL I/O - EXTENDED COMMUNICATION PORT CONTROL (CONVERTIBLE,PS)
  15 00 -- CASSETTE - TURN ON MOTOR (PC,Jr)
  15 01 -- CASSETTE - TURN OFF MOTOR (PC,Jr)
  15 02 -- CASSETTE - READ DATA BLOCKS (PC,Jr)
  15 03 -- CASSETTE - WRITE DATA BLOCKS (PC,Jr)
- 15 0F -- SYSTEM - FORMAT UNIT PERIODIC INTERRUPT (PS ESDI drives only)
  15 10 00 TopView - "PAUSE" - GIVE UP CPU TIME
  15 10 01 TopView - "GETMEM" - ALLOCATE "SYSTEM" MEMORY
  15 10 02 TopView - "PUTMEM" - DEALLOCATE "SYSTEM" MEMORY
  15 10 03 TopView - "PRINTC" - DISPLAY CHARACTER/ATTRIBUTE ON SCREEN
- 15 10 -- TopView - UNIMPLEMENTED IN DV 2.00
+ 15 10 -- TopView - UNIMPLEMENTED IN DV 2.0x
  15 10 13 TopView - "GETBIT" - DEFINE A 2ND-LEVEL INTERRUPT HANDLER
  15 10 14 TopView - "FREEBIT" - UNDEFINE A 2ND-LEVEL INTERRUPT HANDLER
  15 10 15 TopView - "SETBIT" - SCHEDULE ONE OR MORE 2ND-LEVEL INTERRUPTS
@@ -148,16 +154,16 @@ INT/AH/AL                  Description
  15 10 1D TopView - "STOP" - STOP TASK
  15 10 1E TopView - "START" - START TASK
  15 10 1F TopView - "DISPEROR" - POP-UP ERROR WINDOW
- 15 10 20 TopView - UNIMPLEMENTED IN DV 2.00
+ 15 10 20 TopView - UNIMPLEMENTED IN DV 2.0x
  15 10 21 TopView - "PGMINT" - INTERRUPT ANOTHER TASK
  15 10 22 TopView - "GETVER" - GET VERSION
  15 10 23 TopView - "POSWIN" - POSITION WINDOW
  15 10 24 TopView - "GETBUF" - GET VIRTUAL SCREEN INFO
  15 10 25 TopView - "USTACK" - SWITCH BACK TO USER'S STACK
- 15 10 -- DESQview (TopView???) - UNIMPLEMENTED IN DV 2.00
- 15 10 2B DESQview (TopView???) - "POSTTASK" - AWAKEN TASK
- 15 10 2C DESQview (TopView???) - START NEW APPLICATION IN NEW PROCESS
- 15 10 2D DESQview (TopView???) - ???
+ 15 10 -- DESQview (TopView???) - UNIMPLEMENTED IN DV 2.0x
+ 15 10 2B DESQview 2.0 (TopView???) - "POSTTASK" - AWAKEN TASK
+ 15 10 2C DESQview 2.0 (TopView???) - START NEW APPLICATION IN NEW PROCESS
+ 15 10 2D DESQview 2.0 - KEYBOARD MOUSE CONTROL
  15 11 -- TopView commands
  15 12 -- TopView - SEND MESSAGE - "HANDLE" - RETURN OBJECT HANDLE
  15 12 -- TopView - SEND MESSAGE - "NEW" - CREATE NEW OBJECT
@@ -213,9 +219,9 @@ INT/AH/AL                  Description
  15 C3 -- ENABLE/DISABLE WATCHDOG TIMEOUT (PS50+)
  15 C4 -- PROGRAMMABLE OPTION SELECT (PS50+)
  15 DE 00 DESQview - GET PROGRAM NAME
- 15 DE 01 DESQview - UPDATE OPEN MENU???
- 15 DE 02 DESQview - UNIMPLEMENTED IN DV 2.00
- 15 DE 03 DESQview - UNIMPLEMENTED IN DV 2.00
+ 15 DE 01 DESQview - UPDATE "OPEN WINDOW" MENU
+ 15 DE 02 DESQview - UNIMPLEMENTED IN DV 2.0x
+ 15 DE 03 DESQview - UNIMPLEMENTED IN DV 2.0x
  15 DE 04 DESQview - GET AVAILABLE COMMON MEMORY
  15 DE 05 DESQview - GET AVAILABLE CONVENTIONAL MEMORY
  15 DE 06 DESQview - GET AVAILABLE EXPANDED MEMORY
@@ -227,10 +233,10 @@ INT/AH/AL                  Description
  15 DE 0C DESQview 2.0 - "GETMEM" - ALLOCATE "SYSTEM" MEMORY
  15 DE 0D DESQview 2.0 - "PUTMEM" - DEALLOCATE "SYSTEM" MEMORY
  15 DE 0E DESQview 2.0 - FIND MAILBOX BY NAME
- 15 DE 0F DESQview 2.0 - ???
+ 15 DE 0F DESQview 2.0 - ENABLE DESQview EXTENSIONS
  15 DE 10 DESQview 2.0 - "PUSHKEY" - PUT KEY INTO KEYBOARD INPUT STREAM
  15 DE 11 DESQview 2.0 - ENABLE/DISABLE AUTOMATIC JUSTIFICATION OF WINDOW
- 15 DE 12 DESQview 2.01 - SELECT CALLING CONVENTION???
+ 15 DE 12 DESQview 2.01 - ???
  16 00 -- KEYBOARD - READ CHAR FROM BUFFER, WAIT IF EMPTY
  16 01 -- KEYBOARD - CHECK BUFFER, DO NOT CLEAR
  16 02 -- KEYBOARD - GET SHIFT STATUS
@@ -335,7 +341,22 @@ INT/AH/AL                  Description
  21 41 -- DOS 2+ - DELETE A FILE (UNLINK)
  21 42 -- DOS 2+ - MOVE FILE READ/WRITE POINTER (LSEEK)
  21 43 -- DOS 2+ - GET/PUT FILE ATTRIBUTES (CHMOD)
- 21 44 -- DOS 2+ - IOCTL
+ 21 44 00 DOS 2+ - IOCTL - GET DEVICE INFORMATION
+ 21 44 01 DOS 2+ - IOCTL - SET DEVICE INFORMATION
+ 21 44 02 DOS 2+ - IOCTL - READ DEVICE CONTROL STRING
+ 21 44 03 DOS 2+ - IOCTL - WRITE DEVICE CONTROL STRING
+ 21 44 04 DOS 2+ - IOCTL - READ BLOCK DEVICE CONTROL STRING
+ 21 44 05 DOS 2+ - IOCTL - WRITE BLOCK DEVICE CONTROL STRING
+ 21 44 06 DOS 2+ - IOCTL - GET OUTPUT STATUS
+ 21 44 07 DOS 2+ - IOCTL - GET OUTPUT STATUS
+ 21 44 08 DOS 3.x - IOCTL - BLOCK DEVICE CHANGEABLE
+ 21 44 09 DOS 3.x - IOCTL - BLOCK DEVICE LOCAL
+ 21 44 0A DOS 3.x - IOCTL - HANDLE LOCAL
+ 21 44 0B DOS 3.x - IOCTL - SET SHARING RETRY COUNT
+ 21 44 0C DOS 3.3 - IOCTL - GENERIC
+ 21 44 0D DOS 3.3 - IOCTL - BLOCK DEVICE REQUEST
+ 21 44 0E DOS 3.3 - IOCTL - GET LOGICAL DEVICE
+ 21 44 0F DOS 3.3 - IOCTL - SET LOGICAL DEVICE
  21 45 -- DOS 2+ - CREATE DUPLICATE HANDLE (DUP)
  21 46 -- DOS 2+ - FORCE DUPLICATE HANDLE (FORCDUP,DUP2)
  21 47 -- DOS 2+ - GET CURRENT DIRECTORY
@@ -362,7 +383,9 @@ INT/AH/AL                  Description
  21 5C -- DOS 3.x - LOCK/UNLOCK FILE ACCESS
  21 5D 06 DOS 3.x Internal - GET ADDRESS OF CRITICAL ERROR FLAG
  21 5D -- DOS 3.x Internal - ???
+ 21 5D 0A DOS 3.1+ internal - SET EXTENDED ERROR INFORMATION
  21 5E 00 DOS 3.1 + Microsoft Networks - GET MACHINE NAME
+ 21 5E 01 DOS 3.1 + Microsoft Networks - SET MACHINE NAME
  21 5E 02 DOS 3.1 + Microsoft Networks - SET PRINTER SETUP
  21 5E 03 DOS 3.1 + Microsoft Networks - GET PRINTER SETUP
  21 5F 02 DOS 3.1 + Microsoft Networks - GET REDIRECTION LIST ENTRY
@@ -377,19 +400,77 @@ INT/AH/AL                  Description
  21 66 -- DOS 3.3 - GET/SET GLOBAL CODE PAGE TABLE
  21 67 -- DOS 3.3 - SET HANDLE COUNT
  21 68 -- DOS 3.3 - COMMIT FILE, WRITE ALL BUFFERED DATA TO DISK
+ 21 6C 00 DOS 4.0 - EXTENDED OPEN/CREATE
+ 21 B6 -- Novell NetWare - ???
+ 21 B8 -- Novell NetWare - ???
+ 21 BB -- Novell NetWare - ???
+ 21 BC -- Novell NetWare - ???
+ 21 BD -- Novell NetWare - ???
+ 21 BE -- Novell NetWare - ???
+ 21 BF -- Novell NetWare - ???
+ 21 C0 -- Novell NetWare - ???
+ 21 C1 -- Novell NetWare - ???
+ 21 C2 -- Novell NetWare - ???
+ 21 C3 -- Novell NetWare - ???
+ 21 C4 -- Novell NetWare - ???
+ 21 C5 -- Novell NetWare - ???
+ 21 C6 -- Novell NetWare - ???
+ 21 C7 -- Novell NetWare - ???
+ 21 C8 -- Novell NetWare - ???
+ 21 C9 -- Novell NetWare - ???
+ 21 CA -- Novell NetWare - ???
+ 21 CB -- Novell NetWare - ???
+ 21 CC -- Novell NetWare - ???
+ 21 CD -- Novell NetWare - ???
+ 21 CE -- Novell NetWare - ???
+ 21 CF -- Novell NetWare - ???
+ 21 D0 -- Novell NetWare - ???
+ 21 D1 -- Novell NetWare - ???
+ 21 D2 -- Novell NetWare - ???
+ 21 D3 -- Novell NetWare - ???
+ 21 D4 -- Novell NetWare - ???
+ 21 D5 -- Novell NetWare - ???
+ 21 D6 -- Novell NetWare - ???
+ 21 D7 -- Novell NetWare - ???
+ 21 DA -- Novell NetWare - ???
+ 21 DB -- Novell NetWare - ???
+ 21 DC -- Novell NetWare - GET STATION NUMBER
+ 21 DD -- Novell NetWare - ???
+ 21 DE -- Novell NetWare - SET BROADCAST MODE
+ 21 DF -- Novell NetWare - ???
+ 21 E0 -- Novell NetWare - ???
+ 21 E1 -- Novell NetWare - BROADCAST MESSAGES
+ 21 E2 -- Novell NetWare - ???
+ 21 E3 -- Novell NetWare - CONNECTION CONTROL
+ 21 E4 -- Novell NetWare - ???
  21 E4 00 DoubleDos - INSTALLATION CHECK
+ 21 E5 -- Novell NetWare - ???
+ 21 E6 -- Novell NetWare - ???
+ 21 E7 -- Novell NetWare - ???
+ 21 E8 -- Novell NetWare - ???
+ 21 E9 -- Novell NetWare - ???
+ 21 EA -- Novell NetWare - ???
  21 EA -- DoubleDos - TURN OFF TASK SWITCHING
+ 21 EB -- Novell NetWare - ???
  21 EB -- DoubleDos - TURN ON TASK SWITCHING
+ 21 EC -- Novell NetWare - ???
  21 EC -- DoubleDos - GET VIRTUAL SCREEN ADDRESS
+ 21 ED -- Novell NetWare - ???
+ 21 EE -- Novell NetWare - GET NODE ADDRESS
  21 EE -- DoubleDos - GIVE AWAY TIME TO OTHER TASKS
+ 21 EF -- Novell NetWare - ???
+ 21 F0 -- Novell NetWare - ???
+ 21 F1 -- Novell NetWare - ???
+ 21 F2 -- Novell NetWare - ???
+ 21 F3 -- Novell NetWare - ???
  21 FF -- CED - INSTALLABLE COMMANDS
  22 -- -- DOS - TERMINATE ADDRESS
  23 -- -- DOS - CONTROL "C" EXIT ADDRESS
  24 -- -- DOS - FATAL ERROR HANDLER ADDRESS
- 25 -- -- DOS - ABSOLUTE DISK READ (except COMPAQ DOS 3.31 >32M partition)
- 25 -- -- COMPAQ DOS 3.31 - ABSOLUTE DISK READ (>32M hard-disk partition)
- 26 -- -- DOS - ABSOLUTE DISK WRITE (except COMPAQ DOS 3.31 >32M partition)
- 26 -- -- COMPAQ DOS 3.31 - ABSOLUTE DISK WRITE (>32M hard-disk partition)
+ 25 -- -- DOS - ABSOLUTE DISK READ (except DOS 4.0/COMPAQ DOS 3.31 >32M partitn)
+ 25 -- -- DOS 4.0/COMPAQ DOS 3.31 - ABSOLUTE DISK READ (>32M hard-disk partitn)
+ 26 -- -- DOS - ABSOLUTE DISK WRITE (except DOS 4.0/COMPAQ DOS 3.31 >32M partn)
+ 26 -- -- DOS 4.0/COMPAQ DOS 3.31 - ABSOLUTE DISK WRITE (>32M hard-disk partitn)
  27 -- -- DOS - TERMINATE BUT STAY RESIDENT
  28 -- -- DOS Internal - KEYBOARD BUSY LOOP
  29 -- -- DOS Internal - FAST PUTCHAR
@@ -398,9 +479,11 @@ INT/AH/AL                  Description
  2A 04 -- Microsoft Networks - EXECUTE NETBIOS
  2A 05 00 Microsoft Networks - GET NETWORK RESOURCE INFORMATION
  2A 06 -- NETBIOS 1.10 - NETWORK PRINT-STREAM CONTROL
- 2A 20 -- ???
- 2A 82 -- Microsoft Networks? - ???
-
+ 2A 20 01 ???
+ 2A 80 -- Microsoft Networks - BEGIN DOS CRITICAL SECTION
+ 2A 81 -- Microsoft Networks - END DOS CRITICAL SECTION
+ 2A 82 -- Microsoft Networks - SERVER HOOK
+ 2A 84 -- Microsoft Networks - KEYBOARD BUSY LOOP
  2B -- -- Internal routine for MSDOS (IRET)
  2C -- -- Internal routine for MSDOS (IRET)
  2D -- -- Internal routine for MSDOS (IRET)
@@ -412,13 +495,85 @@ INT/AH/AL                  Description
  2F 01 03 Multiplexor - PRINT - REMOVE ALL FILES
  2F 01 04 Multiplexor - PRINT - HOLD QUEUE/GET STATUS
  2F 01 05 Multiplexor - PRINT - RESTART QUEUE
+ 2F 05 00 Multiplexor - DOS 3.x CRITICAL ERROR HANDLER - INSTALLATION CHECK
+ 2F 05 -- Multiplexor - DOS 3.x CRITICAL ERROR HANDLER - HANDLE ERROR
  2F 06 00 Multiplexor - ASSIGN - INSTALLATION CHECK
  2F 06 01 Multiplexor - ASSIGN - GET MEMORY SEGMENT
  2F 10 00 Multiplexor - SHARE - INSTALLATION CHECK
- 2F 10 -- Multiplexor - SHARE - ???
- 2F 10 -- Multiplexor - MSDOS Internal - ???
- 2F 11 -- Multiplexor - MSDOS Internal - ???
- 2F 12 -- Multiplexor - MSDOS Internal - ???
+ 2F 11 00 Multiplexor - NETWORK REDIRECTOR - INSTALLATION CHECK
+ 2F 11 01 Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 03 Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 05 Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 06 Multiplexor - NETWORK REDIRECTOR - CLOSE REMOTE FILE
+ 2F 11 07 Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 08 Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 09 Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 0A Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 0B Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 0C Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 0E Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 0F Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 11 Multiplexor - NETWORK REDIRECTOR - RENAME FILE???
+ 2F 11 13 Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 16 Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 17 Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 18 Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 19 Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 1B Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 1C Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 1D Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 1E Multiplexor - NETWORK REDIRECTOR - DO REDIRECTION
+ 2F 11 1F Multiplexor - NETWORK REDIRECTOR - PRINTER SETUP
+ 2F 11 20 Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 21 Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 22 Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 23 Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 24 Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 25 Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 11 26 Multiplexor - NETWORK REDIRECTOR - ???
+ 2F 12 00 Multiplexor - DOS 3.x internal services - INSTALLATION CHECK
+ 2F 12 01 Multiplexor - DOS 3.x internal services - CLOSE FILE???
+ 2F 12 02 Multiplexor - DOS 3.x internal services - GET INTERRUPT ADDRESS
+ 2F 12 03 Multiplexor - DOS 3.x internal services - GET DOS DATA SEGMENT
+ 2F 12 04 Multiplexor - DOS 3.x internal services - NORMALIZE PATH SEPARATOR
+ 2F 12 05 Multiplexor - DOS 3.x internal services - OUTPUT CHARACTER
+ 2F 12 06 Multiplexor - DOS 3.x internal services - INVOKE CRITICAL ERROR
+ 2F 12 07 Multiplexor - DOS 3.x internal services - MOVE DISK BUFFER???
+ 2F 12 08 Multiplexor - DOS 3.x internal services - DECREMENT WORD
+ 2F 12 09 Multiplexor - DOS 3.x internal services - ???
+ 2F 12 0A Multiplexor - DOS 3.x internal services - ???
+ 2F 12 0B Multiplexor - DOS 3.x internal services - ???
+ 2F 12 0C Multiplexor - DOS 3.x internal services - ???
+ 2F 12 0D Multiplexor - DOS 3.x internal services - GET DATE AND TIME
+ 2F 12 0E Multiplexor - DOS 3.x internal services - ??? ALL DISK BUFFERS
+ 2F 12 0F Multiplexor - DOS 3.x internal services - ???
+ 2F 12 10 Multiplexor - DOS 3.x internal services - FIND DIRTY/CLEAN??? BUFFER
+ 2F 12 11 Multiplexor - DOS 3.x internal services - NORMALIZE ASCIZ FILENAME
+ 2F 12 12 Multiplexor - DOS 3.x internal services - GET LENGTH OF ASCIZ STRING
+ 2F 12 13 Multiplexor - DOS 3.x internal services - UPPERCASE CHARACTER
+ 2F 12 14 Multiplexor - DOS 3.x internal services - COMPARE FAR POINTERS
+ 2F 12 15 Multiplexor - DOS 3.x internal services - ???
+ 2F 12 16 Multiplexor - DOS 3.x internal services - GET ADDRESS OF SYSTEM FCB
+ 2F 12 17 Multiplexor - DOS 3.x internal services - SET DEFAULT DRIVE ???
+ 2F 12 18 Multiplexor - DOS 3.x internal services - GET ???
+ 2F 12 19 Multiplexor - DOS 3.x internal services - ???
+ 2F 12 1A Multiplexor - DOS 3.x internal services - GET FILE'S DRIVE
+ 2F 12 1B Multiplexor - DOS 3.x internal services - SET ???
+ 2F 12 1C Multiplexor - DOS 3.x internal services - CHECKSUM MEMORY
+ 2F 12 1D Multiplexor - DOS 3.x internal services - ???
+ 2F 12 1E Multiplexor - DOS 3.x internal services - COMPARE FILENAMES
+ 2F 12 1F Multiplexor - DOS 3.x internal services - BUILD DRIVE INFO BLOCK
+ 2F 12 20 Multiplexor - DOS 3.x internal services - GET SYSTEM FILE TABLE NUMBER
+ 2F 12 21 Multiplexor - DOS 3.x internal services - ???
+ 2F 12 22 Multiplexor - DOS 3.x internal services - ???
+ 2F 12 23 Multiplexor - DOS 3.x internal services - CHECK IF CHARACTER DEVICE???
+ 2F 12 24 Multiplexor - DOS 3.x internal services - DELAY
+ 2F 12 25 Multiplexor - DOS 3.x internal services - GET LENGTH OF ASCIZ STRING
+ 2F 43 00 Multiplexor - XMS - INSTALLATION CHECK
+ 2F 43 10 Multiplexor - XMS - GET DRIVER ADDRESS
+ 2F 64 00 Multiplexor - SCRNSAV2.COM - INSTALLATION CHECK
+ 2F 7A 00 Multiplexor - Novell NetWare - INSTALLATION CHECK
+ 2F AA 00 Multiplexor - VIDCLOCK.COM - INSTALLATION CHECK
  2F B7 00 Multiplexor - APPEND - INSTALLATION CHECK
  2F B7 01 Multiplexor - APPEND - ???
  2F B7 02 Multiplexor - APPEND - VERSION CHECK
@@ -426,6 +581,8 @@ INT/AH/AL                  Description
  2F B8 03 Multiplexor - Network - GET CURRENT POST ADDRESS
  2F B8 04 Multiplexor - Network - SET NEW POST ADDRESS
  2F B8 09 Multiplexor - Network - VERSION CHECK
+ 2F F7 00 Multiplexor - AUTOPARK.COM - INSTALLATION CHECK
+ 2F F7 01 Multiplexor - AUTOPARK.COM - SET PARKING DELAY
  30 -- -- (NOT A VECTOR!) FAR JuMP instruction for CP/M-style calls
  32 -- -- not used
  33 00 00 MS MOUSE - RESET DRIVER AND READ STATUS
@@ -445,6 +602,7 @@ INT/AH/AL                  Description
  33 00 0E MS MOUSE - LIGHT PEN EMULATION OFF
  33 00 0F MS MOUSE - DEFINE MICKEY/PIXEL RATIO
  33 00 10 MS MOUSE - DEFINE SCREEN REGION FOR UPDATING
+ 33 00 12 PCMOUSE - SET LARGE GRAPHICS CURSOR BLOCK
  33 00 13 MS MOUSE - DEFINE DOUBLE-SPEED THRESHOLD
  33 00 14 MS MOUSE - EXCHANGE INTERRUPT SUBROUTINES
  33 00 15 MS MOUSE - RETURN DRIVER STORAGE REQUIREMENTS
@@ -452,6 +610,9 @@ INT/AH/AL                  Description
  33 00 17 MS MOUSE - RESTORE DRIVER STATE
  33 00 1D MS MOUSE - DEFINE DISPLAY PAGE NUMBER
  33 00 1E MS MOUSE - RETURN DISPLAY PAGE NUMBER
+ 33 00 42 PCMOUSE - GET MSMOUSE STORAGE REQUIREMENTS
+ 33 00 50 PCMOUSE - SAVE MSMOUSE STATE
+ 33 00 52 PCMOUSE - RESTORE MSMOUSE STATE
  34 -- -- Turbo C/Microsoft languages - Floating Point emulation
  35 -- -- Turbo C/Microsoft languages - Floating Point emulation
  36 -- -- Turbo C/Microsoft languages - Floating Point emulation
@@ -470,6 +631,7 @@ INT/AH/AL                  Description
  42 -- -- Z100 - ???
  43 -- -- EGA/VGA/PS - User font table
  44 -- -- EGA/VGA/CONV/PS - EGA/PCjr fonts, characters 00h to 7Fh
+ 44 -- -- Novell NetWare - HIGH-LEVEL LANGUAGE API
  44 -- -- Z100 - ???
  45 -- -- Z100 - ???
  46 -- -- Secondary Fixed Disk Params (see INT 41h) (AT,XT286,PS except ESDI)
@@ -483,17 +645,20 @@ INT/AH/AL                  Description
  4D -- -- reserved
  4E -- -- reserved
  4F -- -- reserved
- 50 -- -- -> IRQ0-IRQ7 relocated by DESQview
+ 50 -- -- 57 - IRQ0-IRQ7 relocated by DESQview
  58 -- -- reserved
  59 -- -- GSS Computer Graphics Interface (GSS*CGI)
  5A -- -- Cluster adapter BIOS entry address
- 5B -- -- reserved
+ 5B -- -- Used by cluster adapter
  5C -- -- NETBIOS INTERFACE
  5C -- -- TOPS INTERFACE
  5D -- -- reserved
  5E -- -- reserved
  5F -- -- reserved
  60 -- -- reserved for user interrupt
+ 60 11 -- 10-NET - LOCK AND WAIT
+ 60 12 -- 10-NET - LOCK
+ 60 13 -- 10-NET - UNLOCK
  61 -- -- reserved for user interrupt
  62 -- -- reserved for user interrupt
  63 -- -- reserved for user interrupt
@@ -509,8 +674,8 @@ INT/AH/AL                  Description
  67 46 -- LIM EMS - GET EMM VERSION
  67 47 -- LIM EMS - SAVE MAPPING CONTEXT
  67 48 -- LIM EMS - RESTORE MAPPING CONTEXT
- 67 49 -- LIM EMS - reserved
- 67 4A -- LIM EMS - reserved
+ 67 49 -- LIM EMS - reserved - GET I/O PORT ADDRESSES
+ 67 4A -- LIM EMS - reserved - GET TRANSLATION ARRAY
  67 4B -- LIM EMS - GET NUMBER OF EMM HANDLES
  67 4C -- LIM EMS - GET PAGES OWNED BY HANDLE
  67 4D -- LIM EMS - GET PAGES FOR ALL HANDLES
@@ -536,18 +701,51 @@ INT/AH/AL                  Description
  67 68 -- EEMS - GET ADDRESSES OF ALL PAGE FRAMES IN SYSTEM
  67 69 -- EEMS - MAP PAGE INTO FRAME
  67 6A -- EEMS - PAGE MAPPING
- 68 -- -- unused
+ 68 01 -- APPC/PC
+ 68 02 -- APPC/PC
+ 68 03 -- APPC/PC
+ 68 04 -- APPC/PC
+ 68 05 -- APPC/PC - TRANSFER MSG DATA
+ 68 06 -- APPC/PC - CHANGE NUMBER OF SESSIONS
+ 68 07 -- APPC/PC - PASSTHROUGH
+ 68 FA -- APPC/PC - ENABLE/DISABLE APPC
+ 68 FB -- APPC/PC - CONVERT
+ 68 FC -- APPC/PC - ENABLE/DISABLE MESSAGE TRACING
+ 68 FD -- APPC/PC - ENABLE/DISABLE API VERB TRACING
+ 68 FE -- APPC/PC - TRACE DESTINATION
+ 68 FF -- APPC/PC - SET PASSTHROUGH
  69 -- -- unused
  6A -- -- unused
  6B -- -- unused
  6C -- -- system resume vector (CONVERTIBLE)
  6D -- -- unused
  6E -- -- unused
- 6F -- -- unused
- 70 -- -- -> AT/XT286/PS50+ VECTORED HARDWARE LINES
+ 6F -- -- Novell NetWare - PCOX API (3270 PC terminal interface)
+ 6F 00 -- 10-NET - LOGIN
+ 6F 01 -- 10-NET - LOGOFF
+ 6F 02 -- 10-NET - STATUS OF NODE
+ 6F 03 -- 10-NET - GET ADDRESS OF CONFIGURATION TABLE
+ 6F 04 -- 10-NET - SEND
+ 6F 05 -- 10-NET - RECEIVE
+ 6F 07 -- 10-NET - LOCK HANDLE
+ 6F 08 -- 10-NET - UNLOCK HANDLE
+ 6F 0B -- 10-NET - LOCK SEMAPHORE, RETURN IMMEDIATELY
+ 6F 0C -- 10-NET - UNLOCK SEMAPHORE
+ 6F 0D -- 10-NET - WHO
+ 6F 0E -- 10-NET - SPOOL/PRINT
+ 6F 11 -- 10-NET - LOCK FCB
+ 6F 12 -- 10-NET - UNLOCK FCB
+ 70 -- -- IRQ8 (AT/XT286/PS50+) - REAL-TIME CLOCK
+ 71 -- -- IRQ9 (AT/XT286/PS50+) - LAN ADAPTER 1
+ 72 -- -- IRQ10 (AT/XT286/PS50+) - RESERVED
+ 73 -- -- IRQ11 (AT/XT286/PS50+) - RESERVED
+ 74 -- -- IRQ12 (PS50+) - MOUSE INTERRUPT
+ 75 -- -- IRQ13 (AT/XT286/PS50+) - 80287 ERROR
+ 76 -- -- IRQ14 (AT/XT286/PS50+) - FIXED DISK
+ 77 -- -- IRQ15 (AT/XT286/PS50+) - RESERVED
  78 -- -- not used
  79 -- -- not used
- 7A -- -- not used
+ 7A -- -- Novell NetWare - LOW-LEVEL API
  7B -- -- not used
  7C -- -- not used
  7D -- -- not used
@@ -560,7 +758,7 @@ INT/AH/AL                  Description
  84 -- -- reserved for BASIC
  85 -- -- reserved for BASIC
  86 -- -- Relocated (by NETBIOS) INT 18
- 86 -- -- -> used by BASIC while in interpreter
+ 86 -- -- F0 - used by BASIC while in interpreter
  E0 -- -- CP/M-86 function calls
  E4 00 05 Logitech Modula v2.0 - MonitorEntry
  E4 00 06 Logitech Modula v2.0 - MonitorExit
@@ -577,6 +775,6 @@ INT/AH/AL                  Description
  FB -- -- USART Rx READY (keyboard) (TANDY???)
  FC -- -- reserved for user interrupt
  FD -- -- reserved for user interrupt
- FE -- -- destroyed by return from protected mode on PC/AT
- FF -- -- destroyed by return from protected mode on PC/AT
+ FE -- -- AT/XT286/PS50+ - destroyed by return from protected mode
+ FF -- -- AT/XT286/PS50+ - destroyed by return from protected mode
  FF -- -- Z100 - WARM BOOT
