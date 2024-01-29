@@ -1,25 +1,49 @@
 Interrupt List
-Release 88.8   Last change 10/29/88
+Release 88.9   Last change 12/17/88
 
-Please distribute all of the following files together:
+Please distribute all of the following files together in an archive called
+INTER988:
         INTERRUP.1ST   this file
-        INTERRUP.LST   the actual list, ~155 pages at 60 lines per page
+        INTERRUP.LST   the actual list, 162 pages at 60 lines per page
         INTERRUP.SUM   a one-line-per-function summary, 15 pages
         INTERRUP.PRI   a brief primer on interrupts
------------------------------------------------------------
-The newest release of this list is always available in two places:
+---------------------------------------------
+If the list is more than ten weeks old by the time you get it, there is
+probably a newer release out already.  The newest release of this list is
+available in these places:
 
-On FIDOnet, as file INTERnyy.ZOO on the Second Opinion 1:129/31 (412) 826-0822,
-        where nyy stands for the nth release of year yy.  File Requests 23 hrs.
-On the ARPAnet, by standard anonymous FTP from SIMTEL20.ARMY.MIL as file
-	PD1:<MSDOS.SYSUTL>INTERRUP.ARC.  Note that you must use mode "tenex"
-	or "type L 8" to successfully transfer the file.
+On the ARPAnet, by standard anonymous FTP from CS.CMU.EDU.  You want file
+	/afs/cs.cmu.edu/user/ralf/pub/interrup.zoo which is a link to the
+	current version.
+On FIDOnet, on the Second Opinion 1:129/31 1-412-826-0822 as file INTERnyy.ZOO,
+        where nyy stands for the release n of year yy.  File Requests 23 hrs.
 
 The list is also posted to USEnet in either comp.sys.ibm.pc or
 comp.binaries.ibm.pc several times per year, concurrent with a new release of
 the list.  Since comp.binaries.ibm.pc is archived, you will be able to find a
-fairly recent release in the various UUCP archives.
------------------------------------------------------------
+somewhat recent (< 6 months old) release in the various UUCP archives.
+
+Secondary Distribution Points:
+ARPA:	on WSMR-SIMTEL20.ARMY.MIL as file INTERnyy.ARC in directory
+	PD1:<MSDOS.SYSUTL>, where nyy stands for release n of year yy.  Note
+        that you must use mode "tenex" or "type L 8" to successfully FTP the
+	file.
+BITnet: you may retrieve the copy on WSMR-SIMTEL20.ARMY.MIL via
+        (in the US) LISTSERV@RPICICGE or LISTSERV@NDSUVM1
+        (in Europe) TRICKLE at TREARN (Turkey)
+		    TRICKLE at IMIPOLI (Italy)
+		    TRICKLE at DB0FUB11 (Germany)
+		    TRICKLE at DKTC11 (Denmark)
+		    TRICKLE at AWIWUW11 (Austria)
+FIDO:	SyncPoint BBS 1-301-682-2731 File Requests
+---------------------------------------------
+DISCLAIMER:  I verify the information contained in this list to the best of my
+ability, but I cannot be held responsible for any problems caused by use or
+misuse of the information, especially for those functions not officially 
+documented.  If it is marked "internal", you should check it carefully to make
+sure it works the same way in your version of the software (and please let me
+know if it works differently).
+---------------------------------------------
 This list is the result of the time and effort of a large number of people,
 among them
  1/85 Janet Jack  (original list)
@@ -62,6 +86,8 @@ among them
 10/88 Helmut Waelder   ZRWA001@DTUZDV1.BITNET         data structures, misc
 10/88 Helmut Waelder   ZRWA001@DTUZDV1.BITNET         more 10-NET functions
 10/88 Ge van Geldorp   VLRUO02@HDETUD1.BITNET         Novell NetWare
+10/88 Ralf Brown       ralf@cs.cmu.edu                INT 2F/AH=12h
+11/88 Clarence A Dold  cdold@starfish.Convergent.COM  Compaq386 speed settings
 
 Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
 Dan Kegel 3/87.
@@ -129,7 +155,22 @@ descriptions in "MS-DOS Encyclopedia".
 Additional 10-Net INT 6F info from 10-Net version 3.3.10.
 
 Additional Novell NetWare info from "Advanced NetWare 2.0 Reference".
------------------------------------------------------------
+
+Three miscellaneous calls from an info package by Dave Williams.  I do wish
+he'd given this list more credit than
+   "various text files downloaded from BBS systems - INTERRUP.ARC, BIOSDOS.ZOO,
+   DOSINFO.ARC, DOSERROR.DOC, DOSTIPS.TXT, etc."
+considering that most of his interrupt listing is derived from this one (a
+majority of that with only formatting changes), AND he's asking a $15 shareware
+registration.
+
+Compaq speed setting calls derived from the Compaq DeskPro 386 Technical
+Reference Guide.
+
+TesSeRact RAM-resident API calls derived from the documentation to the 
+TesSeRact library v1.0, available on BBSs as TESS_10.ARC.  Added by Ralf Brown,
+11/29/88.
+---------------------------------------------
 What they're saying about this list:
   "A cornucopia of descriptions of interrupt and function calls on the
    IBM PC.  A great thing to have on your hard disk if you don't have
@@ -137,8 +178,8 @@ What they're saying about this list:
       _Turbo_Technix_, July/August 1988, p. 157.
 [and that was about the 1/30/88 version, which is less than half the size of
  the current version....]
------------------------------------------------------------
-If you know of any information which is not in the list, or which is incorrect,
+---------------------------------------------
+If you know of any information not in the list, or which is stated incorrectly,
 please let me know!  This list would be a pale shadow of its current self if it
 weren't for everybody's input.
 
@@ -152,5 +193,6 @@ Address e-mail to:
                or post a message to the DR_DEBUG echo
 
 I reply to all submissions and inquiries.  If you do not receive a reply within
-a week, send your message again, giving a better return path (on UUCP, one 
-starting from harvard or ucbvax).
+a reasonable time, send your message again, giving a better return path (on 
+UUCP, a bang path starting at harvard or ucbvax; elsewhere, a path starting 
+from the ARPAnet).

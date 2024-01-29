@@ -73,4 +73,3 @@ How does an interrupt work?
    certain ones can on IBM PC's, XT's, and AT's), then the 
    interrupt handler has to preserve ALL registers, since the 
    interrupt could have happened anywhere.
-
