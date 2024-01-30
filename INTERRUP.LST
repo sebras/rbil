@@ -1,15 +1,5 @@
- 1-Aug-85 22:07:23-PDT,58657;000000000001
-From: "Ross M. Greenberg" <greenber%timeinc.uucp@brl>
-Subject: List of DOS Interrupts
-Date: 29 Jul 85 23:03:59 GMT
-To: INFO-IBMPC@USC-ISIB.ARPA
-
-
-
-==========================================================================
-
 		Interrupt List for MS-DOS (2.xx only)
-    			(With some notes on Dos 3.xx) 
+     
 
          Additions and corrections to Bob Jack's SANYO-oriented 
          file describing the INT structure. Includes list of all 
@@ -24,11 +14,12 @@ To: INFO-IBMPC@USC-ISIB.ARPA
     Addition  Skip Gilbrech  February 1985
     Corrections & additions Bob Jack
     Ongoing Additions and Cxns Jim Kyle  April 1985
-    Recent Additions and Corrections:		(7/25/85)
+    Recent Edit: Ross M. Greenberg (ihnp4!timeinc!greenber)  7/25/85
+    Recent Additions and Corrections:
 		John Ruschmeyer (...!ihnp4!vax135!petsd!moncol!john)
-		Bill Frolik (...!ihnp4!hplabs!hp-pcd!bill)
     		Ross M. Greenberg (...!ihnp4!timeinc!greenber)
-
+		Bill Frolik (...!ihnp4!hplabs!hp-pcd!bill)
+		Roy J. Mongiovi (...!ihnp4!gatech!gitpyr!roy)
 
 -----------------------------------------------------------
  INT 0 - DIVIDE ERROR
@@ -72,7 +63,9 @@ To: INFO-IBMPC@USC-ISIB.ARPA
  response to IRQ 0 through IRQ 7 (if enabled via port 21).
 	IRQ0	-	Timer interrupt
 	IRQ1	-	Keyboard interrupt
-	IRQ4	-	serial controller
+	IRQ3	-	RS232 port (com2:)
+	IRQ4	-	serial controller (com1:)
+	IRQ5	-	fixed disk
 	IRQ6	-	diskette interrupt
 	IRQ7	-	PPI interrupt
  -----------------------------------------------------------
@@ -970,13 +963,13 @@ INT 10 - VIDEO - SET VIDEO MODE
     On Return:
        AL = 0
  -----------------------------------------------------------
- INT 21 - Internal - unknown but like FN 32 (MSDOS generic)
-    REG AH = 1fH
-    Other registers unknown
-    On Return:
+ INT 21 - GET DEFAULT DRIVE PARAMETER BLOCK (MSDOS generic, undoc.)
+    REG AH = 1FH
+    On return:
        REG AL = 00 = No Error
 		FF = Error
-       Unknown vector returned in ES:BX.
+	   (DS:BX) = ADDRESS OF DRIVE PARAMETER BLOCK.
+	(THIS JUST INVOKES FUNCTION 32H WITH DL = 0)
  -----------------------------------------------------------
  INT 21 - Internal - does nothing (MSDOS generic)
     REG AH = 20H
@@ -1138,13 +1131,49 @@ INT 10 - VIDEO - SET VIDEO MODE
     ON RETURN:
 	REG AX = RETURN CODE (RETRIEVEABLE BY FUNCTION 4DH)
  -----------------------------------------------------------
- INT 21 - Internal - unknown (MSDOS generic)
+ INT 21 - GET DRIVE PARAMETER BLOCK (MSDOS generic, undocumented)
     REG AH = 32H
-    Other registers unknown
-    On Return:
-       REG AL = 00 = No Error
-		FF = Error
-       Unknown vector returned in ES:BX.
+	DL = DRIVE NUMBER
+		0 = DEFAULT, 1 = A, ETC.
+    ON RETURN:
+	REG AL = 0FFH IF INVALID DRIVE NUMBER, ELSE
+	    DS:BX = ADDRESS OF DRIVE PARAMETER BLOCK.
+
+		STRUCTURE OF DOS DRIVE PARAMETER BLOCK:
+
+DPBLOCK 	STRUCT		;OFFSET
+DISK_OFFSET	DB	?	;  0.  DRIVE NUMBER (0 = A, ETC.)
+UNIT_OFFSET	DB	?	;  1.  UNIT NUMBER WITHIN DEVICE DRIVER
+SECTOR_SIZE	DW	?	;  2.  NUMBER OF BYTES PER SECTOR
+MAX_CLUSTER	DB	?	;  4.  LARGEST SECTOR NUMBER IN CLUSTER
+				;      ADD ONE FOR NUMBER OF SECTORS/CLUSTER
+LOG2_SECTORS	DB	?	;  5.  LOG BASE TWO OF THE CLUSTER SIZE
+RESERVED	DW	?	;  6.  NUMBER OF RESERVED (BOOT) SECTORS
+FAT_COUNT	DB	?	;  8.  NUMBER OF COPIES OF THE FAT
+ROOT_COUNT	DW	?	;  9.  NUMBER OF ROOT DIRECTORY ENTRIES
+DATA_START	DW	?	; 11.  FIRST SECTOR OF DATA ON MEDIUM
+MAX_NUMBER	DW	?	; 13.  LARGEST POSSIBLE CLUSTER NUMBER
+				;      SUBTRACT ONE FOR NUMBER OF CLUSTERS
+FAT_SECTORS	DB	?	; 15.  NUMBER OF SECTORS IN ONE FAT COPY
+ROOT_START	DW	?	; 16.  FIRST SECTOR OF ROOT DIRECTORY
+DEVICE_ADDR	DD	?	; 18.  CORRESPONDING DEVICE DRIVER ADDRESS
+DESCRIPTOR	DB	?	; 22.  MEDIA DESCRIPTOR BYTE FOR MEDIUM
+VALID_BYTE	DB	?	; 23.  0FFH INDICATES BLOCK MUST BE REBUILT
+NEXT_BLOCK	DD	?	; 24.  ADDRESS OF NEXT DEVICE BLOCK IN LIST
+
+;	FROM THIS POINT ON, DOS 3 DIFFERS FROM 2:
+
+		IF	DOS2
+DIR_START	DW	?	; 28.  STARTING CLUSTER OF CURRENT DIRECTORY
+				;      ZERO INDICATES THE ROOT DIRECTORY
+PATH_NAME	DB	64 DUP (?)
+				; 30.  ASCIIZ CURRENT DIRECTORY PATH STRING
+		ELSE	DOS3
+;		ON MY XT, THIS WAS ALWAYS:
+		DW	0
+		DW	0FFFFH
+		ENDIF
+DPBLOCK 	ENDS
  -----------------------------------------------------------
  INT 21 - Get or Set CONTROL-BREAK (MSDOS generic)
     REG AH = 33H
@@ -1596,6 +1625,9 @@ INT 10 - VIDEO - SET VIDEO MODE
  -----------------------------------------------------------
  INT 31 - UNKNOWN
  -----------------------------------------------------------
+ INT 33 - USED BY MICROSOFT MOUSE
+    FUNCTIONS AND PARAMETERS UNKNOWN
+ -----------------------------------------------------------
  INT F8 - INTERVAL TIMER (10 MSEC)
     PARAMETERS UNKNOWN
  -----------------------------------------------------------
@@ -1605,12 +1637,3 @@ INT 10 - VIDEO - SET VIDEO MODE
  INT FB - USART Rx READY (keyboard)
     PARAMETERS UNKNOWN
  -----------------------------------------------------------
-
-
-
--- 
-------------------------------------------------------------------
-Ross M. Greenberg  @ Time Inc, New York 
-              --------->{vax135 | ihnp4}!timeinc!greenber<---------
-
-            
