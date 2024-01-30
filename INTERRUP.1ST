@@ -1,0 +1,66 @@
+This list is the result of the time and effort of a large number of people,
+among them
+  1/85	Janet Jack  (original list)
+  1/85	J. Weaver Jr.
+  2/85	John Cooper
+  2/85	Skip Gilbrech
+	Bob Jack
+  4/85	Jim Kyle
+  8/85	John Ruschmeyer    <ihnp4!vax135!petsd!moncol!john>
+  8/85	Bill Frolik	   <ihnp4!hplabs!hp-pcd!bill>
+  8/85	Ross M. Greenberg  <greenber%timeinc.uucp@brl.arpa>
+
+    87	Mike Morearty	<...!ucbvax!cory!morearty> \  early 1987
+	Ed Nather	<...!ut-sally!nather>	    > several undocumented DOS
+	Pete Holzmann	<{pyramid}!octopus!pete>   /  calls in another list
+
+    87	Dan Lanciani	<ddl@harvard.harvard.edu> various, incl. NetBIOS func
+    87	Ralf Brown	<ralf@cs.cmu.edu> INT 24h and DOS func 59h error codes
+ 11/87	Dan Davison	<dd@lanl.gov>	  DOS 3.3 function calls
+ 11/87	Bill White	<wwhite@teknowledge-vaxc.arpa> DOS 3.3
+ 11/87	Richard Hargrove <killer!richardh@harvard.harvard.edu> EGA
+ 12/87	Vincent Broman	<broman@bugs.nosc.mil> Cordata BIOS/Minix
+ 12/87	Dennis Grinberg <grinberg@bimacs.bitnet> MCGA/VGA
+  1/88	Brad Davis	<tektronix!sequent!gssc!bradd> GSS, DGIS
+  2/88	D. Spinellis	<dds%cc.imperial.ac.uk> Herc GRAFIX Dev Toolkit
+  3/88	Michael A. Moran <Michael@cup.portal.com> VGA INT 10h
+  4/88	Richard Marks	<rmarks@KSP.Unisys.COM> Undocumented dir search fields
+  5/88	Robert Goldsmith <rpg%security@mitre-bedford.arpa> AT&T DEB adapter
+
+Information on Tseng/Ahead/Paradise EGA video modes from a list posted by
+Dan Kegel 3/87.
+
+Information on the INT 10h functions supported by the EGA BIOS was derived
+from the article "Graphic Enhancement" found in the April 1985 _PC Tech
+Journal_, pages 58ff., and is marked with the string (EGA). jrh.
+
+Information on functions unique to the Portable PC and the Convertible was
+derived from a similar list compiled by David E. Powell, and added by
+Ralf Brown 11/14/87.
+
+Information on LIM EMS 3.2 functions was derived from _Advanced_MSDOS_, by
+Ray Duncan. Added by Ralf Brown 11/19/87.
+
+Information on LIM EMS 4.0 functions was derived from the transcription of
+the specification by Dick Flanagan.  Added by Ralf Brown, 11/20/87
+
+Some of the information on MCGA/VGA BIOS calls was derived from _Byte_,
+Volume 12 Number 12.
+
+Various and sundry info on which machines support which calls was derived from
+the BIOS comparison in _Byte_, Volume 12 Number 12 and added by Ralf Brown,
+1/4/88.
+
+COMPAQ DOS 3.31 INT 25/26 from a posting by John Lefor, 1/25/88.
+
+TopView INT 15/AH=12h info from macro definitions by Daniel T. Travison Jr.
+Added 3/4/88.  Some additional TopView INT 15 info gleaned from "glue" routines
+by John Navas.
+
+Quarterdeck's flyer on its overpriced API specs and tools provided sufficient
+clues as to functionality to allow figuring out a large number of INT 15h calls.
+
+MS Mouse driver calls derived from PC Magazine, Vol 6 #13.  Added 3/29/88.
+
+Non-video PS/2 BIOS calls derived from _IBM_ROM_BIOS_ by Ray Duncan.
+Added 7/6/88.
